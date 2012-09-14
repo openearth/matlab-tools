@@ -13,6 +13,18 @@ function [retrieval_method,fmt] = snc_read_backend(ncfile)
 %
 %See also: snctools, snc_format
 
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 14 Sep 2012
+% Created with Matlab version: 7.14.0.739 (R2012a)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+
 import ucar.nc2.dods.*    
 import ucar.nc2.*
 
@@ -48,11 +60,6 @@ mv = version('-release');
 
 fmt = snc_format(ncfile);
 
-if getpref('SNCTOOLS','USE_NETCDF_JAVA')
-    retrieval_method = retrieval_methods.java;
-    return
-end
-
 % These cases have no alternatives.
 if strcmp(fmt,fmts.HDF4) 
     switch(mv)
@@ -84,7 +91,7 @@ elseif strcmp(fmt,fmts.URL)
                 % Still, use netcdf-java for SSL.
                 retrieval_method = retrieval_methods.java; 
                 fmt = fmts.netcdf_java;
-            elseif getpref('SNCTOOLS','USE_NETCDF_JAVA',false) % redundant, as already handled at above
+            elseif getpref('SNCTOOLS','USE_NETCDF_JAVA',false)
                 % Force the use of netcdf-java if the user
                 % really want it.
                 retrieval_method = retrieval_methods.java; 
