@@ -34,7 +34,7 @@ function [c,v] = classify2unique(x,varargin)
    m = ~isnan(x);
    v  = unique(x(find(m)));
    
-   if any(m(:))
+   if any(~m(:))
        v = sort([OPT.nanval v(:)']);
    end
    nv = length(v);

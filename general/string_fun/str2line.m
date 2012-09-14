@@ -30,7 +30,7 @@ function line1D = str2line(str2D,varargin)
 %   
 %   l = "aap_noot_mies_"
 %
-%See also: LINE2STR, SPRINTF, STRCAT, STRVCAT, CELLSTR
+%See also: LINE2STR, SPRINTF, STRCAT, STRVCAT, CELLSTR, STRTOKENS2CELL
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2006 Delft University of Technology

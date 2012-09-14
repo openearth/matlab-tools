@@ -5,7 +5,7 @@ function cu = cumunique(x)
 %
 %See also: unique, cumsum, strdiff
 
-[~,j]=unique(x)
+[~,j]=unique(x);
 u = repmat(0,size(x));
 u(j) = 1;
 cu = cumsum(u);

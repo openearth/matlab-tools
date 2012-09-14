@@ -17,7 +17,7 @@ function C = strtokens2cell(STR,DELIM)
 %  
 %      'a'    'b'
 %
-% See also: STRTOK
+% See also: STRTOK, STR2LINE
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2006 Deltares
