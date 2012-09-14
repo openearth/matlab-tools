@@ -102,7 +102,7 @@ y_origin     = 6e5;%606250;
 y_factor     = -1;
 % x and y range of whole tiled area
 x_min = x_origin-4*40000;
-x_max = x_origin+3*40000;
+x_max = x_origin+4*40000;
 y_min = y_origin-12*25000;
 y_max = y_origin+25000;
 
