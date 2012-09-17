@@ -2,19 +2,19 @@ function varargout = get_d3d_output_times(varargin);
 %            
 % 
 % The function get_d3d_output_times gets the output times from any Delft3D
-% trim-*.dat or trih-*.dat file (and stores it in the specified output argument)
+% trim-*.dat or trih-*.dat file (and stores it in the specified output argument) as datenums
 %
-% The function works the same as qpread(file_ID,'dataset','times')
-% or vs_time(file_ID), though it can be up to 50 times faster
+% The functions' results are the same as qpread(file_ID,'dataset','times')
+% or (a part of) vs_time(file_ID), though it can be up to 50 times faster
 %
 % The function can be called in 3 different ways:
 % 
 % (1) Call get_d3d_output_times and select a valid file from the pop-up menu
-% (2) Add the file-location as a (text-string) argument in the function
+% (2) Add the file-location (as a text-string) input argument in the function
 % (3) Use a file structure handle, generated from e.g. vs_use or qpfopen
-%     Usefull when multiple operations are executed on a file
+%     Usefull when multiple operations are executed in your script
 %
-% A second output argument can be added to get the files' timestep (in seconds)*
+% (*) A second output argument can be added to get the files' timestep (in seconds)
 %
 %
 % Examples:
@@ -35,6 +35,7 @@ function varargout = get_d3d_output_times(varargin);
 % (*)
 % [trih_times timestep] = get_d3d_output_times(...);
 %
+% Use datestr(get_d3d_output_times(...)) to quickly get to regular dates and times
 %
 % Freek Scheel - 2012
 % freek.scheel@deltares.nl
