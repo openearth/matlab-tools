@@ -37,6 +37,7 @@ function varargout = get_d3d_output_times(varargin);
 %
 %
 % Freek Scheel - 2012
+% freek.scheel@deltares.nl
 % +31(0)88 355 82 41
 %
 
