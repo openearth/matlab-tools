@@ -67,18 +67,39 @@ else
     end
     if any(isCatalogNc)
         OPT.catalognc = OPT.urls{isCatalogNc};
-        OPT.urls      = []; % throw away urls from catalog as it's order is not in any sorted order: not related to catalog.nc contents
+        try
+            urls = nc_varget(OPT.catalognc,'urlPath');
+            % check whether urlPaths is not flipped (transposed)
+            if find(size(urls) == sum(~isCatalogNc)) == 2
+                % transpose
+                urls = urls';
+            end
+            if size(urls,1) == sum(~isCatalogNc) &&...
+                    size(urls,1) == length(unique(cellstr(urls)))
+                % use urls from catalog.nc provided that the matrix of
+                % urlPaths is not flipped AND the urls are not cut off
+                OPT.urls = urls;
+            else
+                % otherwise, ignore catalog.nc and use the remaining urls
+                OPT.urls = OPT.urls(~isCatalogNc);
+                OPT.catalognc  = [];
+            end
+        catch
+            OPT.urls = OPT.urls(~isCatalogNc);
+            OPT.catalognc  = [];
+        end
+%         OPT.urls      = []; % throw away urls from catalog as it's order is not in any sorted order: not related to catalog.nc contents
     end
 end
 
 if ~isempty(OPT.catalognc)
-    OPT.urls      = cellstr([nc_varget(OPT.catalognc,'urlPath')]);
-
-    % temporary fix of very weird bug!!! Occasionally the char matrix or urlPaths in
-    % the catalog nc gets flipped!!!! If this happens flip it back.
-    if ~strcmp(OPT.urls{1}(end-2:end),'.nc')
-        OPT.urls = cellstr(char(OPT.urls)');
-    end
+%     OPT.urls      = cellstr([nc_varget(OPT.catalognc,'urlPath')]);
+% 
+%     % temporary fix of very weird bug!!! Occasionally the char matrix or urlPaths in
+%     % the catalog nc gets flipped!!!! If this happens flip it back.
+%     if ~strcmp(OPT.urls{1}(end-2:end),'.nc')
+%         OPT.urls = cellstr(char(OPT.urls)');
+%     end
     
     if isempty(fileparts(OPT.urls{1}))
         fp=fileparts(OPT.catalognc);
