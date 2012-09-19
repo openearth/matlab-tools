@@ -1,5 +1,5 @@
 function conn = pg_connectdb(db, varargin)
-%PG_CONNECTDB  Creates a JDBC connection to a PostgreSQL database
+%PG_CONNECTDB  Creates a JDBC connection to a PostgreSQL database with database toolbox
 %
 %   Creates a JDBC connection to a PostgreSQL database. A JDBC
 %   driver should be loaded first, see PG_SETTINGS and README.txt.

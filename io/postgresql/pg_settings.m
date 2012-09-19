@@ -56,22 +56,22 @@ OPT = setproperty(OPT,varargin);
 
    if any(strfind(version('-java'),'Java 1.6')) | ...
       any(strfind(version('-java'),'Java 1.7'))
-      java2add = path2os([fileparts(mfilename('fullpath')),filesep,'postgresql-9.1-902.jdbc4.jar']);
+      java2add = 'postgresql-9.1-902.jdbc4.jar';
    else
-      java2add = path2os([fileparts(mfilename('fullpath')),filesep,'postgresql-9.1-902.jdbc3.jar']);
+      java2add = 'postgresql-9.1-902.jdbc3.jar';
    end
    
    dynjavaclasspath = path2os(javaclasspath);
-   indices          = strfind(javaclasspath,java2add);
+   indices          = strfind(javaclasspath,path2os([fileparts(mfilename('fullpath')),filesep,java2add]));
     
     if isempty(cell2mat(indices))
 
        if OPT.check
-        disp('checked status PostgreSQL: JDBC NOT present.')
+        disp(['checked status PostgreSQL: JDBC NOT present: ',java2add]);
         OK = -1;
        else
-        javaaddpath (java2add)
-        disp('PostgreSQL: JDBC driver added.')
+        javaaddpath (path2os([fileparts(mfilename('fullpath')),filesep,java2add]))
+        disp(['PostgreSQL: JDBC driver added: ',java2add]);
         OK = 1;
        end
        
@@ -79,7 +79,7 @@ OPT = setproperty(OPT,varargin);
     elseif ~(OPT.quiet)
 
        if OPT.check
-        disp('checked status PostgreSQL: JDBC present.')
+        disp(['checked status PostgreSQL: JDBC present: ',java2add]);
         OK = 1;
        else
         disp(['PostgreSQL: JDBC driver not added, already there: ',java2add]);

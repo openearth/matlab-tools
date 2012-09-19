@@ -92,23 +92,23 @@ switch upper(type)
         strSQLSelect    = builtSQLSelect(varargin{1});
         strSQLWhere     = builtSQLWhere(varargin{2});
         
-        strSQL = sprintf('SELECT %s FROM %s %s', strSQLSelect, table, strSQLWhere);
+        strSQL = sprintf('SELECT %s FROM "%s" %s', strSQLSelect, table, strSQLWhere);
         
     case 'INSERT'
         strSQLInsert    = builtSQLInsert(varargin{1});
         
-        strSQL = sprintf('INSERT INTO %s %s', table, strSQLInsert);
+        strSQL = sprintf('INSERT INTO "%s" %s', table, strSQLInsert);
         
     case 'UPDATE'
         strSQLUpdate    = builtSQLUpdate(varargin{1});
         strSQLWhere     = builtSQLWhere(varargin{2});
         
-        strSQL = sprintf('UPDATE %s %s %s', table, strSQLUpdate, strSQLWhere);
+        strSQL = sprintf('UPDATE "%s" %s %s', table, strSQLUpdate, strSQLWhere);
         
     case 'DELETE'
         strSQLWhere     = builtSQLWhere(varargin{1});
         
-        strSQL = sprintf('DELETE FROM %s %s', table, strSQLWhere);
+        strSQL = sprintf('DELETE FROM "%s" %s', table, strSQLWhere);
 end
 
 function strSQL = builtSQLSelect(fields)
@@ -132,6 +132,7 @@ strSQL = '';
 if isstruct(where)
     
     f = fieldnames(where);
+    f = cellfun(@(x) ['"',x,'"'],f,'Uniform',0); % needed to deal with case-sensitive column names
 
     if ~isempty(where) && ~isempty(f)
 

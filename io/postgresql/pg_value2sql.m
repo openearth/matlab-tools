@@ -81,7 +81,9 @@ for i = 1:length(varargin)
                 varargout{i} = 'FALSE';
             end
         case 'double'
-            varargout{i} = num2str(varargin{i});
+            varargout{i} = ['''',num2str(varargin{i}),''''];
+        case 'single'
+            varargout{i} = ['''',num2str(varargin{i}),''''];
         case 'cell'
             if ~isempty(varargin{i})
                 if isa(varargin{i}{1}, 'function_handle')
