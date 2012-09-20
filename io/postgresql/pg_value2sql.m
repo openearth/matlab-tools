@@ -81,9 +81,9 @@ for i = 1:length(varargin)
                 varargout{i} = 'FALSE';
             end
         case 'double'
-            varargout{i} = ['''',num2str(varargin{i}),''''];
+            varargout{i} = [nums2str(varargin{i},'),(')]; % leading and trailing bracket in calling function PG_QUERY
         case 'single'
-            varargout{i} = ['''',num2str(varargin{i}),''''];
+            varargout{i} = [nums2str(varargin{i},'),(')]; % leading and trailing bracket in calling function PG_QUERY
         case 'cell'
             if ~isempty(varargin{i})
                 if isa(varargin{i}{1}, 'function_handle')

@@ -81,6 +81,8 @@ function varargout = pg_insert_struct(conn, table, sqlValues, varargin)
 % $HeadURL$
 % $Keywords: $
 
+OPT.debug = 0;
+
 %% read input
 
 sqlWhere = [];
@@ -112,6 +114,10 @@ for i = 1:n
     end
     
     strSQL = pg_query('INSERT', table, sqlValues(min(l1,i)));
+    
+    if OPT.debug
+        disp(strSQL)
+    end
     
     pg_exec(conn, strSQL);
     
