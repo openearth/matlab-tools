@@ -64,7 +64,7 @@ function pg_error(rs)
 
 %% display error
 
-if isstruct(rs)
+if isstruct(rs) | isobject(rs)
     %if isprop(rs, 'Message') && isprop(rs, 'SQLQuery')
         if ~isempty(rs.Message)
             fprintf(2,rs.SQLQuery);

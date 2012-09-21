@@ -122,7 +122,11 @@ for i = 1:n
     pg_exec(conn, strSQL);
     
     if nargout >= i
-        varargout{i} = pg_getid(conn, table, sqlWhere(min(l2,i)));
+       if l2>0
+           varargout{i} = pg_getid(conn, table, sqlWhere(min(l2,i)));
+       else
+           varargout{i} = [];
+       end
     end
     
 end

@@ -1,35 +1,28 @@
-function pg_cleartable(conn, table, varargin)
-%PG_CLEARTABLE  Deletes all contents from a table
+function f = pg_quote(f)
+%PG_QUOTE wrap identifiers (table, column names) in " quotes to enable mixed upper/lower case
 %
-%   Deletes all contents from a table and resets the primary key counter.
+% f = pg_quote(f) where f is a cellstr of a char. This is
+% needed to deal with case-sensitive table and column names known
+% as quoted or delimited indentifiers.
 %
-%   Syntax:
-%   pg_cleartable(conn, table, varargin)
+% Quoting an identifier makes it case-sensitive, whereas unquoted names are 
+% always folded to lower case. For example, the identifiers FOO, foo, and 
+% "foo" are considered the same by PostgreSQL, but "Foo" and "FOO" are 
+% different from these three and each other. (The folding of unquoted names to
+% lower case in PostgreSQL is incompatible with the SQL standard, which says 
+% that unquoted names should be folded to upper case. Thus, foo should be 
+% equivalent to "FOO" not "foo" according to the standard. If you want to 
+% write portable applications you are advised to always quote a particular name
+% or never quote it.). With PG_QUOTE you can always quote them.
 %
-%   Input:
-%   conn      = Database connection object
-%   table     = Table to be cleared
-%   varargin  = none
-%
-%   Output:
-%   none
-%
-%   Example
-%   conn = pg_connectdb('someDatabase');
-%   pg_cleartable(conn, 'someTable');
-%
-%   See also pg_getpk, pg_gettables
+%See also: postgresql
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2012 Deltares
-%       Bas Hoonhout
+%   Copyright (C) 2012 Tu Delft / Deltares
+%       Gerben J. de Boer
 %
-%       bas.hoonhout@deltares.nl
-%
-%       Rotterdamseweg 185
-%       2629HD Delft
-%       Netherlands
+%       g.j.deboer@tudelft.nl / gerben.deboer@deltares.nl
 %
 %   This library is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -52,9 +45,6 @@ function pg_cleartable(conn, table, varargin)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 30 Jul 2012
-% Created with Matlab version: 7.14.0.739 (R2012a)
-
 % $Id$
 % $Date$
 % $Author$
@@ -62,10 +52,8 @@ function pg_cleartable(conn, table, varargin)
 % $HeadURL$
 % $Keywords: $
 
-%% delete contents
-
-pg_exec(conn, sprintf('DELETE FROM %s', pg_quote(table)));
-
-%% reset sequence
-pg_exec(conn, sprintf('SELECT setval(''"%s_%s_seq"'', 1, FALSE)', table, pg_getpk(conn, table)));
-
+if ischar(f)
+   f = ['"',f,'"'];
+else
+   f = cellfun(@(x) ['"',x,'"'],f,'Uniform',0); % needed to deal with case-sensitive column names
+end

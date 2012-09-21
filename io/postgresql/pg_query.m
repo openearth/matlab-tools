@@ -114,7 +114,7 @@ end
 function strSQL = builtSQLSelect(fields)
 
 strSQL = '*';
-fields = quote_identifiers(fields);
+fields = pg_quote(fields);
 
 if ~isempty(fields)
     if iscell(fields{1})
@@ -132,7 +132,7 @@ strSQL = '';
 
 if isstruct(where)
     
-    f = quote_identifiers(fieldnames(where));
+    f = pg_quote(fieldnames(where));
 
     if ~isempty(where) && ~isempty(f)
 
@@ -162,7 +162,7 @@ strSQL = '';
 
 if isstruct(insert)
     
-    f = quote_identifiers(fieldnames(insert));
+    f = pg_quote(fieldnames(insert));
 
     if ~isempty(insert) && ~isempty(f)
 
@@ -180,7 +180,7 @@ strSQL = '';
 
 if isstruct(update)
     
-    f = quote_identifiers(fieldnames(update));
+    f = pg_quote(fieldnames(update));
 
     if ~isempty(update) && ~isempty(f)
 
@@ -191,8 +191,3 @@ if isstruct(update)
         strSQL      = sprintf(' SET %s ', concat(concat([f v],' = '),', '));
     end
 end
-
-function f = quote_identifiers(f)
-%QUOTE_IDENTIFIERS  wrap name in " quotes to allow for mixed upper/lower case
-
-f = cellfun(@(x) ['"',x,'"'],f,'Uniform',0); % needed to deal with case-sensitive column names

@@ -19,6 +19,7 @@
 % pg_cleartable                  - Deletes all contents from a table
 %
 % low-level SQL query: for explanation see <a href="http://www.postgresql.org/docs/current/static/sql.html">SQL primer</a> 
+% pg_quote                       - Wrap identifiers (table, column names) in " quotes to enable mixed upper/lower case
 % pg_query                       - Builts a SQL query string from structures
 % pg_exec                        - Executes a SQL query
 % pg_fetch                       - Executes a SQL query and fetches the result
@@ -26,3 +27,11 @@
 % pg_value2sql                   - Makes a cell array of arbitrary values suitable for the use in an SQL query
 %
 %See also: database, netcdf, save, load
+
+% useful links
+
+% http://www.cybertec.at/postgresql_produkte/pg_matlab-matlab-postgresql-integration/
+% http://www.mathworks.com/matlabcentral/fileexchange/3027
+% http://www-css.fnal.gov/dsg/external/freeware/mysql-vs-pgsql.html
+% http://www.serverwatch.com/trends/article.php/3883441/Top-10-Enterprise-Database-Systems-to-Consider.htm
+% http://philip.greenspun.com/panda/
