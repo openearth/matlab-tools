@@ -63,10 +63,14 @@ function pg_error(rs)
 % $Keywords: $
 
 %% display error
+%  ingore return message of comment lines
+%  this message is instalation-dependend (dutch) so 
+%  we catch it by checking for comment in the matlab client here
 
 if isstruct(rs) | isobject(rs)
     %if isprop(rs, 'Message') && isprop(rs, 'SQLQuery')
-        if ~isempty(rs.Message)
+        if ~isempty(rs.Message) & ...
+            ~strcmp(strtok(rs.SQLQuery),'--') % Geen resultaten werden teruggegeven door de query.
             fprintf(2,rs.SQLQuery);
             error(rs.Message);
         end
