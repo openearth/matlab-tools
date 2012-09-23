@@ -57,20 +57,21 @@ varargin = prob_checkinput(varargin{:});
 
 % defaults
 OPT = struct(...
-    'stochast', struct(),... % stochast structure
-    'x2zFunction', @x2z,...  % Function to transform x to z    
-    'x2zVariables', {{}},... % additional variables to use in x2zFunction
-    'method', 'matrix',...   % z-function method 'matrix' (default) or 'loop'
-    'maxiter', 50,...        % maximum number of iterations
-    'DerivativeSides', 1,... % 1 or 2 sided derivatives
-    'startU', 0,...          % start value for elements of u-vector
-    'du', .3,...             % step size for dz/du / Perturbation Value
-    'epsZ', .01,...          % stop criteria for change in z-value
-    'maxdZ', 0.1,...         % second stop criterion for change in z-value
-    'epsBeta', .01,...       % stop criteria for change in Beta-value
-    'Relaxation', .25,...    % Relaxation value
-    'dudistfactor', 0,...    % power factor to apply different du to each variable based on the response
-    'logconvergence', '' ... % optionally specify file here to log convergence status
+    'stochast', struct(),...  % stochast structure
+    'x2zFunction', @x2z,...   % Function to transform x to z    
+    'x2zVariables', {{}},...  % additional variables to use in x2zFunction
+    'method', 'matrix',...    % z-function method 'matrix' (default) or 'loop'
+    'maxiter', 50,...         % maximum number of iterations
+    'DerivativeSides', 1,...  % 1 or 2 sided derivatives
+    'startU', 0,...           % start value for elements of u-vector
+    'du', .3,...              % step size for dz/du / Perturbation Value
+    'epsZ', .01,...           % stop criteria for change in z-value
+    'maxdZ', 0.1,...          % second stop criterion for change in z-value
+    'epsBeta', .01,...        % stop criteria for change in Beta-value
+    'Relaxation', .25,...     % Relaxation value
+    'dudistfactor', 0,...     % power factor to apply different du to each variable based on the response
+    'MaxItStepSize', inf, ... % maximum allowed stepsize per iteration in U-space
+    'logconvergence', '' ...  % optionally specify file here to log convergence status
     );
 
 % overrule default settings by property pairs, given in varargin
@@ -159,7 +160,7 @@ dzdu = zeros(OPT.maxiter,Nstoch);
 %% start FORM iteration procedure
 while NextIter
     % derive a new series of u-values for the next iteration
-    [u id_low id_upp] = prescribeU(currentU, u, du, Relaxation, rel_ids);
+    [u id_low id_upp] = prescribeU(currentU, u, du, Relaxation, rel_ids, OPT.MaxItStepSize);
     
     Iter = Iter + 1;
     % check whether current iteration is the first one
@@ -334,10 +335,14 @@ result.Output.designpoint = struct(designpoint{:},...
     'BSS', 1 - sum((result.Output.u(end,:)-OPT.startU).^2)/sum(result.Output.u(end,:).^2));
 
 %% subfunction to predefine a series of u-values
-function [u id_low id_upp] = prescribeU(currentU, u, du, Relaxation, rel_ids)
+function [u id_low id_upp] = prescribeU(currentU, u, du, Relaxation, rel_ids, MaxItStepSize)
 Calc = size(u,1); 
 if ~isempty(u)
-    currentU = diff([u(end,:); currentU]) .* Relaxation + u(end,:);
+    step = diff([u(end,:); currentU]) .* Relaxation;
+    stepsize = sqrt(step*step');
+    stepsizeCorrected = min(stepsize,MaxItStepSize);
+    currentU = (stepsizeCorrected/stepsize)*step + u(end,:);
+%   currentU = diff([u(end,:); currentU]) .* Relaxation + u(end,:);
 end
 u = [u; repmat(currentU, size(du,1), 1) + du];
 
