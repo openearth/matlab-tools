@@ -98,26 +98,35 @@ x = (1:n)';
 y=cumsum(mean(result.Output.idFail,2).*result.Output.P_corr)./x;
 
 
-p = round(logspace(0,log10(n),OPT.naccuracy));
-a = nan(size(p))';
-for i = 1:length(a)
-    ii   = p(i);
-    COV  = sqrt(mean((y(1:ii)-y(ii)).^2))/y(ii);
-    a(i) = norm_inv((OPT.confidence+1)/2,0,1)*COV*y(ii);
-end
+% p = round(logspace(0,log10(n),OPT.naccuracy));
+% a = nan(size(p))';
+% for i = 1:length(a)
+%     ii   = p(i);
+%     COV  = sqrt(mean((y(1:ii)-y(ii)).^2))/y(ii);
+%     a(i) = norm_inv((OPT.confidence+1)/2,0,1)*COV*y(ii);
+% end
+% 
+% Acy = a(end);
+% Acy_rel = Acy/Pf*100;
+% nf = sum(result.Output.idFail);
 
-Acy = a(end);
-Acy_rel = Acy/Pf*100;
-nf = sum(result.Output.idFail);
+% relative error epsilon
+kk=norm_inv((OPT.confidence+1)/2,0,1);   % k-value for desired confidence interval
+Acy_rel=kk*sqrt((1-y)./(x.*y));          % relative error epsilon
+a = Acy_rel.*y;                          % absolute error in P-f
+
 
 %% plot convergence
 
 figure; hold on;
 
-plot(x,y,'-b');
+plot(x,y,'-g');
 plot([1 n],Pf*[1 1],'-r');
-plot(p,y(p)+a,'-g');
-plot(p,y(p)-a,'-g');
+plot(x,y+a,'-b');
+plot(x,max(0,y-a),'-b');
+
+% plot(p,y(p)+a,'-g');
+% plot(p,y(p)-a,'-g');
 
 xlabel('Number of samples [-]');
 ylabel('Probability [-]');
