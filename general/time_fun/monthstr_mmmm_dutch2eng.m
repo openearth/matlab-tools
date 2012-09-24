@@ -1,5 +1,5 @@
 function S = monthstr_mmm_dutch2eng(s)
-%MONTHSTR_MMM_DUTCH2ENG  translates occurences of Oktober
+%MONTHSTR_MMMM_DUTCH2ENG  translates occurences of Oktober
 %
 %   For use of dutch dates with datenum. Capitalizes the entire string.
 %

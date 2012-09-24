@@ -1,5 +1,5 @@
 function time = datenum2udunits(datenumber,isounits)
-%UDUNITS2DATENUM   converts date(s) in ISO 8601 units to Matlab datenumber(s)
+%datenum2udunits   converts date(s) in ISO 8601 units to Matlab datenumber(s)
 %
 %    [time,<zone>] = udunits2datenum(datenumber,isounits)
 %

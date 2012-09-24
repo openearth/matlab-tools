@@ -1,14 +1,16 @@
 function str = nums2str(X,varargin)
-%NUMS2STR   Num2str for whole array with specified seperation symbol.
+%NUMS2STR   NUM2STR for whole array with specified seperation symbol.
 %
 % str = nums2str(...) same as num2str, but puts
 % '_' between succesive numbers.
 %
 % E.g. nums2str([1,2]) = '1_2'
 %
-% NUM2STR(X,SEPARATOR) puts separator
-% between numbers rather than '_'.
+% NUM2STR(X,SEPARATOR) puts separator between numbers rather than '_'.
 % NUM2STR(X,SEPARATOR,FORMAT) puts separator
+%
+% Example: % to get '(1),(2),(3)'
+% ['(',nums2str([1 2 3],'),('),')']
 %
 % See also: num2str
 
