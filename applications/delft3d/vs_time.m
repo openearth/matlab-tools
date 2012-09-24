@@ -1,24 +1,24 @@
 function varargout = vs_time(NFSstruct,varargin),
-%VS_TIME   Read time information from NEFIS file
+%VS_TIME   Read time information from NEFIS files into datenumbers
 %
-% T = vs_time(NEFIS_file_handle)
+% T = vs_time(delft3d_file)
 % Read all time data from NEFIS into a struct.
 %
 % Implemented:
-% - comfile   (FLOW)
-% - trimfile  (FLOW)
-% - trih file (FLOW)
-% - hwgxyfile (WAVE)
-% - trk file  (PART)
-% - ada/hda file  (WAQ)
+% - comfile      (delf3d-FLOW)
+% - trimfile     (delf3d-FLOW)
+% - trih file    (delf3d-FLOW)
+% - hwgxyfile    (delf3d-WAVE)
+% - trk file     (delf3d-PART)
+% - ada/hda file (delf3d-WAQ)
 %
-% T = vs_time(NEFIS_file_handle,timeindices)
+% T = vs_time(delft3d_file,timeindices)
 % reads only the timesteps with index in timeindices:
 %
-% E.g. vs_time(NEFIS_file_handle,[1 2]) returns the 1st and 2nd
+% E.g. vs_time(delft3d_file,[1 2]) returns the 1st and 2nd
 % times. timeindices = 0 returns all available times (default).
 %
-% T = vs_time(NEFIS_file_handle,timeindices,1) returns only
+% T = vs_time(delft3d_file,timeindices,1) returns only
 % a matlab datenum values array.
 %
 % - nt          # simulated timesteps
@@ -61,6 +61,10 @@ function varargout = vs_time(NFSstruct,varargin),
 % $Revision$
 % $HeadURL$
 % 2009 sep 28: added implementation of WAQ ada/hda files [Yann Friocourt]
+
+if ischar(NFSstruct)
+   NFSstruct = vs_use(NFSstruct);
+end
 
 if nargin>1
    Tindex = varargin{1};

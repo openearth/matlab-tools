@@ -8,20 +8,21 @@
 
 %% settings
 
-   OPT.fname   = 'trim-RUNID.def';
-   OPT.export  = 1;
-   OPT.pause   = 0;
-   OPT.uvscale = 1e4; % 1 m/s becomes x m
-   OPT.wscale  = 2e3; % 1 m/s becomes x m
-   OPT.axis    = [-50e3 0 0 100e3 -20 2];
+   OPT.directory = 'H:\delft\DELFT3D\tide_neap_wind\';
+   OPT.RUNIDs    = {'d17','w17','e17','p17',  'd77','w77','e77','p77',  'd27','w27','e27','p27',  'd37','w37','e37','p37',  'u17'}; % {}; % 
+   OPT.export    = 1;
+   OPT.pause     = 0;
+   OPT.uvscale   = 1e4; % 1 m/s becomes x m
+   OPT.wscale    = 2e3; % 1 m/s becomes x m
+   OPT.axis      = [-50e3 0 0 100e3 -20 2];
    
-   OPT.clim    = [25 35];
-   OPT.scalar  = 'salinity'
-   OPT.title   = 'salinity [psu]';
+   OPT.clim      = [25 35];
+   OPT.scalar    = 'salinity'
+   OPT.title     = 'salinity [psu]';
 
-   OPT.clim    = [11.5 12.5];
-   OPT.scalar  = 'temperature';
-   OPT.title   = 'temperature [\circ C]';
+   OPT.clim      = [11.5 12.5];
+   OPT.scalar    = 'temperature';
+   OPT.title     = 'temperature [\circ C]';
 
 %% spatial subset settings
 %  plot not all point as matlab is too slow for that,
@@ -35,10 +36,14 @@
    OPT.mmax = 151;
    OPT.nmin = 1;
    OPT.nmax = 210;
+   
+for iRUNID=1:length(OPT.RUNIDs)
+
+   OPT.RUNID = OPT.RUNIDs{iRUNID};
  
 %% load and plot
 
-   H = vs_use(OPT.fname);
+   H = vs_use([OPT.directory,filesep,'trim-',OPT.RUNID,'.dat']);
    T = vs_time(H);
    G = vs_meshgrid2dcorcen(H);
    
@@ -159,7 +164,7 @@
    %% export
 
       if OPT.export
-      print2screensizeoverwrite([fileparts(H.DatExt),filesep,OPT.scalar,'_',num2str(it,'%0.2d')])
+      print2screensizeoverwrite([fileparts(H.DatExt),filesep,'movies',filesep,OPT.RUNID,'_',OPT.scalar,'_',num2str(it,'%0.2d')])
       end
    
       if OPT.pause
@@ -167,5 +172,7 @@
       end
       
    end
+   
+end % RUNIDs   
    
 %% EOF

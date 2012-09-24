@@ -1,5 +1,5 @@
 function varargout = get_d3d_output_times(varargin);
-%            
+%GET_D3D_OUTPUT_TIMES
 % 
 % The function get_d3d_output_times gets the output times from any Delft3D
 % trim-*.dat or trih-*.dat file (and stores it in the specified output argument) as datenums
@@ -37,6 +37,10 @@ function varargout = get_d3d_output_times(varargin);
 %
 % Use datestr(get_d3d_output_times(...)) to quickly get to regular dates and times
 %
+%See also: vs_time
+
+warning('vs_time has the same functionality, and can handle more NEFIS types.')
+
 % Freek Scheel - 2012
 % freek.scheel@deltares.nl
 % +31(0)88 355 82 41
