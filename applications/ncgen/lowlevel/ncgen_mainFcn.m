@@ -341,17 +341,19 @@ fns1(ismember(vertcat(fns1.hash),source_file_hash,'rows')) = [];
 b = length(fns1);
 fprintf(OPT.main.log,'%d of %d source files were skipped as they where already processed.\n',a-b,a);
 
-% append history attribute
-for ii = 1:length(nc_fns)
-    % read current history attribute
-    current_history_att = info(ii).Attributes(strcmp({info(ii).Attributes.Name},'history')).Value;
-    new_history_att     = OPT.write.schema.Attributes(strcmp({OPT.write.schema.Attributes.Name},'history')).Value;
-    temp                =  strfind(current_history_att,new_history_att);
-    
-    % if the new history attribute is not already in the netcdf files,
-    % append it.
-    if isempty(temp)
-        ncwriteatt([nc_fns(ii).pathname nc_fns(ii).name],'/',...
-            'history',[current_history_att char(10) new_history_att])
+if any(strcmp({OPT.write.schema.Attributes.Name},'history'))
+    % append history attribute if it is defined
+    for ii = 1:length(nc_fns)
+        % read current history attribute
+        current_history_att = info(ii).Attributes(strcmp({info(ii).Attributes.Name},'history')).Value;
+        new_history_att     = OPT.write.schema.Attributes(strcmp({OPT.write.schema.Attributes.Name},'history')).Value;
+        temp                =  strfind(current_history_att,new_history_att);
+        
+        % if the new history attribute is not already in the netcdf files,
+        % append it.
+        if isempty(temp)
+            ncwriteatt([nc_fns(ii).pathname nc_fns(ii).name],'/',...
+                'history',[current_history_att char(10) new_history_att])
+        end
     end
 end
