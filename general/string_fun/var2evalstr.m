@@ -147,7 +147,7 @@ for i = 1:length(varargin)
                 case 'cell'
                     evalstr = [evalstr cell2evalstr(eval(['variable' idstr]), 'basevarname', [basevarname idstr], 'precision', prec, 'delimiter', delimiter)]; %#ok<AGROW>
                 otherwise
-                    error('field type not implemented: ',class(aaa))
+                    error('field type not implemented: %s',class(variable))
             end
         end
     end
