@@ -169,3 +169,8 @@ B = interp1(cdata(1,:),cdata(4,:),xi);
 
 %% collect data
 cmap = [R' G' B']/255;
+
+%% make sure all values are between 0 and 1
+% needed because of floating point rounding errors
+cmap(cmap>1) = 1;
+cmap(cmap<0) = 0;

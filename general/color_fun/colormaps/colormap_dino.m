@@ -90,7 +90,7 @@ map = [148    0  211
 
 if nargin==0
    varargout = {map, labels};
-elseif isnumeric(varargin{1}) & ~isnan(varargin{1})
+elseif isnumeric(varargin{1}) && ~isnan(varargin{1})
    indices   = varargin{1};
    varargout = {{labels{indices}}};
 else % allow any nesting of labels, and return same structure
