@@ -8,6 +8,10 @@ function varargout = KMLmerge_files(varargin)
 %
 %    OPT = KMLmerge_files()
 %
+%
+%  D = dir2('a pathname','no_dirs',1,'file_incl','kml')
+%  KMLmerge_files('sourceFiles',strcat({D.pathname}, {D.name})','fileName','merge.kmz');
+%
 %See also: googleplot
 
 %% set properties

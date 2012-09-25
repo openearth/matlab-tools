@@ -51,36 +51,52 @@ end
 % convert to java image 
 jimg = im2java(img); 
 
-
+%%
 % create the frame 
 frame = javax.swing.JFrame; 
+
 % remove decorations 
 frame.setUndecorated(true) 
 
+% set text layer
+textPane = javax.swing.JTextPane;
+textPane.setContentType('text/html')
+% set content in html
+html = '<h1><center>test</center></h1>';
+textPane.setText(html)
+% make transparent
+textPane.setOpaque(0)
 
-% put the image in the frame 
+% set icon layer
 icon = javax.swing.ImageIcon(jimg); 
-label = javax.swing.JLabel(icon); 
-frame.getContentPane.add(label); 
-frame.pack; 
+iconPane = javax.swing.JLabel;
+iconPane.setIcon(icon); 
 
+% put them together in layered pane
+layeredPane = javax.swing.JLayeredPane;
+layeredPane.add(iconPane, javax.swing.JLayeredPane.DEFAULT_LAYER)
+layeredPane.add(textPane, javax.swing.JLayeredPane.PALETTE_LAYER)
 
+% set size of both layers to size of image
+iconPane.setBounds( 0, 0,  siz(1), siz(2)); 
+textPane.setBounds( 0, 0,  siz(1), siz(2));
+
+frame.setContentPane(layeredPane);
+
+%%
 % set the size and location of the frame 
 frame.setSize(siz(1),siz(2)); 
 frame.setLocation(pos(1) * d.width - siz(1)/2, ... 
                    pos(2) * d.height - siz(2)/2); 
 
-
 % ta-daaaa 
 frame.show; 
 frame.setAlwaysOnTop(1)
-
 
 % now create the timer to close the thing again 
 t = timer('TimerFcn',@(a,b,c) frame.hide, ... 
            'ExecutionMode', 'SingleShot', 'StartDelay', time); 
 start(t); 
-
 
 % output arguments 
 if nargout > 0 
