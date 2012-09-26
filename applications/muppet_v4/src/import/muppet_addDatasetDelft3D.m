@@ -189,7 +189,7 @@ for ii=i1:i2
             case 3
                 par.dimensions.quantity='vector3d';
             case 4
-                par.dimensions.quantity='location2d';
+                par.dimensions.quantity='location';
             case 5
                 par.dimensions.quantity='boolean'; % 0/1 Inactive cells, etc.
             otherwise
