@@ -151,7 +151,7 @@ if ~isempty(var)
             else
                 varstring=deblank(num2str(var));
             end
-        case{'int'}
+        case{'int','integer'}
             varstring=num2str(var);
         case{'date'}
             varstring=datestr(var,'yyyymmdd');
