@@ -173,7 +173,7 @@ else
             refreshDischarges;
             
         case{'opensrcfile'}
-            handles=ddb_readSrcFile(handles);
+            handles=ddb_readSrcFile(handles,ad);
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','discharges');
             setHandles(handles);
             refreshDischarges;
