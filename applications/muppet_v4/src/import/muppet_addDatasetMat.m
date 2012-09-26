@@ -48,7 +48,7 @@ dataset.parameterxequal=1;
 dataset.parameteryequal=1;
 dataset.parameterzequal=1;
 dataset.adjustname=1;
-
+dataset.filename
 s=load(dataset.filename);
 
 for j=1:length(s.parameters)
@@ -102,8 +102,7 @@ for ii=1:length(s.parameters)
     par.dimensions.nrn=s.parameters(ii).parameter.dimensions(4);
     par.dimensions.nrk=s.parameters(ii).parameter.dimensions(5);
     
-    par.dimensions.datatype='location';
-    par.dimensions.quantity='location';
+%    par.dimensions.datatype='location';
     if isfield(s.parameters(ii).parameter,'quantity')
         par.dimensions.quantity=s.parameters(ii).parameter.quantity;
     end
@@ -136,6 +135,13 @@ m=dataset.m;
 n=dataset.n;
 k=dataset.k;
 timestep=dataset.timestep;
+
+if m==0
+    m=[];
+end
+if n==0
+    n=[];
+end
 
 if isempty(m)
     if dataset.dimensions.nrm>0
@@ -196,16 +202,16 @@ else
         end
     else
         % Constant
-        if m==0 || length(m)>1
-            if n==0 || length(n)>1
+        if length(m)>1
+            if length(n)>1
                 shp='map2d';
-            elseif k==0 || length(k)>1
+            elseif length(k)>1
                 shp='crossection2dm';
             else
                 shp='crossection1dm';
             end
-        elseif n==0 || length(n)>1
-            if k==0 || length(k)>1
+        elseif length(n)>1
+            if length(k)>1
                 shp='crossection2dn';
             else
                 shp='crossection1dn';
@@ -233,27 +239,33 @@ vname='v';
 valname='val';
 
 switch shp
+    case{'polyline'}
+                dataset.x=parameter.x;
+                dataset.y=parameter.y;
+                dataset.type='polyline2d';
+                dataset.tc='c';
+        
     case{'timestackstation'}
         
     case{'timeseriesstation'}
         switch dataset.dimensions.quantity
             case{'location'}
                 timestep=1:length(parameter.time);
-                dataset.x=parameter.(xname)(istation,timestep);
-                dataset.y=parameter.(yname)(istation,timestep);
-                dataset.time=parameter.time;
+                dataset.x=parameter.(xname)(timestep,istation);
+                dataset.y=parameter.(yname)(timestep,istation);
+                dataset.times=parameter.time;
                 dataset.type='track';
                 dataset.tc='c';
             case{'vector'}
                 dataset.x=parameter.time;
-                dataset.u=parameter.(uname)(timestep,istation);
-                dataset.v=parameter.(vname)(timestep,istation);
+                dataset.u=parameter.(uname)(istation,timestep);
+                dataset.v=parameter.(vname)(istation,timestep);
                 dataset.type='timeseriesvector';
                 dataset.tc='c';
             otherwise
                 % scalar
                 dataset.x=parameter.time;
-                dataset.y=parameter.(valname)(timestep,istation);
+                dataset.y=parameter.(valname)(istation,timestep);
                 dataset.type='timeseriesscalar';
                 dataset.tc='c';
         end
@@ -263,7 +275,36 @@ switch shp
     case{'timestackk'}
     case{'timeseries'}
     case{'map2d'}
+        switch dataset.dimensions.quantity
+            case{'scalar'}
+                dataset.x=parameter.x;
+                dataset.y=parameter.y;
+                dataset.z=parameter.val;
+                dataset.zz=parameter.val;
+                dataset.type='map2dscalar';
+                dataset.tc='c';
+            case{'vector'}
+                dataset.x=parameter.x;
+                dataset.y=parameter.y;
+                dataset.u=parameter.u;
+                dataset.v=parameter.v;
+                dataset.type='map2dvector2d';
+                dataset.tc='c';
+        end
     case{'crossection1dm'}
+        switch dataset.dimensions.quantity
+            case{'location'}
+                dataset.x=parameter.x;
+                dataset.y=parameter.y;
+                dataset.type='polyline2d';
+                dataset.tc='c';
+            otherwise
+                % scalar
+                dataset.x=parameter.time;
+                dataset.y=parameter.(valname)(istation,timestep);
+                dataset.type='timeseriesscalar';
+                dataset.tc='c';
+        end
     case{'crossection1dn'}
     case{'crossection2dm'}
     case{'crossection2dn'}
