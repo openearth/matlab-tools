@@ -15,14 +15,20 @@ function plt=muppet_updateLimits(plt,opt)
 unit=0.01;
 
 plt.position=plt.position*unit;
-plt.fscale=111111;
+
+switch plt.coordinatesystem.type
+    case{'geographic'}
+        plt.fscale=111111;
+    otherwise
+        plt.fscale=1;
+end
 
 switch opt
     case{'editsubplotsize'}
         plt=editsubplotsize(plt);
     case{'editheight'}
         % Change ymax
-        plt=editheight(plt);
+        plt=editsubplotsize(plt);
     case{'editxmin'}
         % Change xmax
         plt=editxmin(plt);
@@ -87,14 +93,13 @@ plt=computescale(plt);
 
 %%
 function plt=editxmax(plt)
-% Compute new ymax
-plt=setprojectionlimits(plt);
+
+% XMax edited in gui, compute new scale and ymax
+
 switch plt.projection
     case{'equirectangular'}
-        plt.xmin=plt.xminproj;
-        plt.xmax=plt.xmaxproj;
-        plt.ymin=plt.yminproj;
-        plt.ymax=plt.ymaxproj;
+        plt.scale=(plt.xmax-plt.xmin)/plt.position(3);
+        plt.ymax=plt.ymin+plt.scale*plt.position(4);
     case{'mercator'}
         plt.xmin=plt.xminproj;
         plt.xmax=plt.xmaxproj;
@@ -105,7 +110,8 @@ switch plt.projection
         [plt.xmax,dummy]=albers(plt.xmaxproj,plt.yminproj,plt.labda0,plt.phi0,plt.phi1,plt.phi2,'inverse');
         [dummy,plt.ymax]=albers(plt.xminproj,plt.ymaxproj,plt.labda0,plt.phi0,plt.phi1,plt.phi2,'inverse');
 end
-plt=computescale(plt);
+plt=setprojectionlimits(plt);
+%plt=computescale(plt);
 
 %%
 function plt=editymin(plt)
@@ -194,22 +200,22 @@ switch plt.projection
         plt.xmax=plt.xmaxproj;
         plt.ymin=plt.yminproj;
         plt.ymax=plt.ymaxproj;
-        [plt.xmin,plt.xmax,plt.xtick]=roundlimits(plt.xmin,plt.xmax);
-        [plt.ymin,plt.ymax,plt.ytick]=roundlimits(plt.ymin,plt.ymax);
+%         [plt.xmin,plt.xmax,plt.xtick]=roundlimits(plt.xmin,plt.xmax);
+%         [plt.ymin,plt.ymax,plt.ytick]=roundlimits(plt.ymin,plt.ymax);
     case{'mercator'}
         plt.xmin=plt.xminproj;
         plt.xmax=plt.xmaxproj;
         plt.ymin=invmerc(plt.yminproj);
         plt.ymax=invmerc(plt.ymaxproj);
-        [plt.xmin,plt.xmax,plt.xtick]=roundlimits(plt.xmin,plt.xmax);
-        [plt.ymin,plt.ymax,plt.ytick]=roundlimits(plt.ymin,plt.ymax);
+%         [plt.xmin,plt.xmax,plt.xtick]=roundlimits(plt.xmin,plt.xmax);
+%         [plt.ymin,plt.ymax,plt.ytick]=roundlimits(plt.ymin,plt.ymax);
     case{'albers'}
         plt.projection='albers';
         [plt.xmin,plt.ymin]=albers(plt.xminproj,plt.yminproj,plt.labda0,plt.phi0,plt.phi1,plt.phi2,'inverse');
         [plt.xmax,dummy]=albers(plt.xmaxproj,plt.yminproj,plt.labda0,plt.phi0,plt.phi1,plt.phi2,'inverse');
         [dummy,plt.ymax]=albers(plt.xminproj,plt.ymaxproj,plt.labda0,plt.phi0,plt.phi1,plt.phi2,'inverse');
-        [x1dummy,x2dummy,plt.xtick]=roundlimits(plt.xmin,plt.xmax);
-        [y1dummy,y2dummy,plt.ytick]=roundlimits(plt.ymin,plt.ymax);
+%         [x1dummy,x2dummy,plt.xtick]=roundlimits(plt.xmin,plt.xmax);
+%         [y1dummy,y2dummy,plt.ytick]=roundlimits(plt.ymin,plt.ymax);
 end
 
 plt=computescale(plt);
@@ -273,7 +279,7 @@ switch plt.projection
         plt.xmaxproj=xlm(2);
         plt.ymaxproj=ylm(3);
 end
-plt=adjustprojectionlimits(plt);
+%plt=adjustprojectionlimits(plt);
 
 %%
 function plt=adjustprojectionlimits(plt)
@@ -296,7 +302,7 @@ function plt=computescale(plt)
 
 switch plt.projection
     case{'equirectangular'}
-        plt.scale=round(plt.fscale*(plt.xmax-plt.xmin)*cos(pi*(0.5*(plt.ymin+plt.ymax)*pi/180))/plt.position(3));
+        plt.scale=round(plt.fscale*(plt.xmax-plt.xmin)/plt.position(3));
     case{'mercator'}
         plt.scale=round(plt.fscale*(merc(plt.ymax)-merc(plt.ymin))/plt.position(4));
     case{'albers'}

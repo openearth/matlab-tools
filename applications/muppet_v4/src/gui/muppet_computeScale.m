@@ -1,4 +1,4 @@
-function [xl,yl,scale]=muppet_updateLimits(xl,yl,sz,projection,opt)
+function [xl,yl,scale]=muppet_computeScale(xl,yl,sz,projection,opt)
 
 scale=[];
 scale=(xl(2)-xl(1))/(0.01*sz(1));

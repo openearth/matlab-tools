@@ -139,7 +139,7 @@ element(nelm).element.position=[width-90 20 70 25];
 
 xml.element=element;
 
-xml=gui_fillXMLValues(xml);
+xml=gui_fillXMLvalues(xml);
 
 [dataset,ok]=gui_newWindow(dataset,'element',xml.element,'tag','uifigure','width',width,'height',height, ...
     'createcallback',@selectParameter,'title',dataset.filetypelongname,'modal',0);

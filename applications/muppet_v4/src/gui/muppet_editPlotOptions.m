@@ -184,7 +184,7 @@ element(nelm).element.tag='ok';
 
 xml.element=element;
 
-xml=gui_fillXMLValues(xml);
+xml=gui_fillXMLvalues(xml);
 
 [dataset,ok]=gui_newWindow(dataset,'element',xml.element,'tag','uifigure','width',width,'height',height,'title',[handles.datatype(idtype).datatype.longname]);
 

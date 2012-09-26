@@ -2,7 +2,7 @@ function muppet_gui(varargin)
 
 if isempty(varargin)
     handles=getHandles;
-    gui_newWindow(handles,'xmldir','c:\work\checkouts\OpenEarthTools\trunk\matlab\applications\muppet4\xml\','xmlfile','muppetgui.xml','modal',0, ...
+    gui_newWindow(handles,'xmldir',handles.xmldir,'xmlfile','muppetgui.xml','modal',0, ...
         'getfcn',@getHandles,'setfcn',@setHandles,'tag','muppetgui','Color',[0.941176 0.941176 0.941176]);
     newSession;
 else
@@ -478,7 +478,23 @@ setHandles(handles);
 %%
 function editCLim
 handles=getHandles;
-handles=muppet_refreshColorMap(handles);
+plt=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot;
+cdif=plt.cmax-plt.cmin;
+cmin=plt.cmin;
+cmax=plt.cmax;
+cstep=plt.cstep;
+
+if cmax<=cmin || cstep>cdif || cstep<0.01*cdif
+%     set(handles.EditCMin,'BackgroundColor',[1 0 0]);
+%     set(handles.EditCMax,'BackgroundColor',[1 0 0]);
+%     set(handles.EditCStep,'BackgroundColor',[1 0 0]);
+else
+%     set(handles.EditCMin,'BackgroundColor',[1 1 1]);
+%     set(handles.EditCMax,'BackgroundColor',[1 1 1]);
+%     set(handles.EditCStep,'BackgroundColor',[1 1 1]);
+    handles=muppet_refreshColorMap(handles);
+end
+
 setHandles(handles);
 
 %%
