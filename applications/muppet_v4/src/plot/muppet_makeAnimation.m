@@ -2,10 +2,10 @@ function muppet_makeAnimation(handles,ifig)
 
 animationsettings=handles.animationsettings;
 
-% animationsettings.frameRate=20;
-% animationsettings.startTime=datenum(2012,8,17);
-% animationsettings.stopTime=datenum(2012,8,18);
-% animationsettings.timestep=900;
+animationsettings.framerate=20;
+animationsettings.starttime=datenum(2010,7,22);
+animationsettings.stoptime=datenum(2010,7,28,0,0,0);
+animationsettings.timestep=3600;
 % animationsettings.avifilename='test.avi';
 
 % Make temporary Data structure
@@ -39,7 +39,7 @@ end
 %% Prepare first temporary figure
 handles.figures(ifig).figure.units='centimeters';
 handles.figures(ifig).figure.cm2pix=1;
-handles.figures(ifig).figure.fontReduction=1;
+handles.figures(ifig).figure.fontreduction=1;
 
 if exist(animationsettings.avifilename,'file')
     delete(animationsettings.avifilename);
@@ -74,7 +74,7 @@ if ~isempty(animationsettings.avifilename)
     if ~strcmpi(animationsettings.avifilename(end-2:end),'gif')
         AviHandle = writeavi('initialize');
         AviHandle = writeavi('open', AviHandle,animationsettings.avifilename);
-        AviHandle = writeavi('addvideo', AviHandle, animationsettings.frameRate, sz(1),sz(2), 24, AviOps);
+        AviHandle = writeavi('addvideo', AviHandle, animationsettings.framerate, sz(1),sz(2), 24, AviOps);
     end
 end 
 
@@ -103,35 +103,35 @@ try
         for id=1:length(datasets)
             if ~datasets(id).dataset.combineddataset
                 % Check to see if this a time-varying dataset
-                if datasets(id).dataset.tc=='t'
-                    % First see if available times exactly match current
-                    % time
-                    iTime=find(abs(datasets(id).dataset.availabletimes-t)<1/864000, 1, 'first');
-                    if ~isempty(iTime)
-                        % Exact time found
-                        datasets(id).dataset.DateTime=datasets(id).dataset.availabletimes(iTime);
-                        Data=UpdateDatasets(Data,0,iTime,id);
-                    else
-                        % Averaging between surrounding times
-                        iTime1=find(datasets(id).dataset.availabletimes-1e-4<t,1,'last');
-                        Data1=UpdateDatasets(Data,0,iTime1,id);
-                        iTime2=find(datasets(id).dataset.availabletimes+1e-4>=t,1,'first');
-                        Data2=UpdateDatasets(Data,0,iTime2,id);
-                        t1=datasets(id).dataset.availabletimes(iTime1);
-                        t2=datasets(id).dataset.availabletimes(iTime2);
-                        dt=t2-t1;
-                        tFrac2=(t-t1)/dt;
-                        tFrac1=1-tFrac2;
-                        switch lower(datasets(id).dataset.Type)
-                            case{'2dvector'}
-                                datasets(id).dataset.u  = tFrac1*Data1(id).u  + tFrac2*Data2(id).u;
-                                datasets(id).dataset.v  = tFrac1*Data1(id).v  + tFrac2*Data2(id).v;
-                            case{'2dscalar'}
-                                datasets(id).dataset.z  = tFrac1*Data1(id).z  + tFrac2*Data2(id).z;
-                                datasets(id).dataset.zz = tFrac1*Data1(id).zz + tFrac2*Data2(id).zz;
-                        end
-                    end
-                end
+%                 if datasets(id).dataset.tc=='t'
+%                     % First see if available times exactly match current
+%                     % time
+%                     iTime=find(abs(datasets(id).dataset.availabletimes-t)<1/864000, 1, 'first');
+%                     if ~isempty(iTime)
+%                         % Exact time found
+%                         datasets(id).dataset.DateTime=datasets(id).dataset.availabletimes(iTime);
+%                         Data=UpdateDatasets(Data,0,iTime,id);
+%                     else
+%                         % Averaging between surrounding times
+%                         iTime1=find(datasets(id).dataset.availabletimes-1e-4<t,1,'last');
+%                         Data1=UpdateDatasets(Data,0,iTime1,id);
+%                         iTime2=find(datasets(id).dataset.availabletimes+1e-4>=t,1,'first');
+%                         Data2=UpdateDatasets(Data,0,iTime2,id);
+%                         t1=datasets(id).dataset.availabletimes(iTime1);
+%                         t2=datasets(id).dataset.availabletimes(iTime2);
+%                         dt=t2-t1;
+%                         tFrac2=(t-t1)/dt;
+%                         tFrac1=1-tFrac2;
+%                         switch lower(datasets(id).dataset.Type)
+%                             case{'2dvector'}
+%                                 datasets(id).dataset.u  = tFrac1*Data1(id).u  + tFrac2*Data2(id).u;
+%                                 datasets(id).dataset.v  = tFrac1*Data1(id).v  + tFrac2*Data2(id).v;
+%                             case{'2dscalar'}
+%                                 datasets(id).dataset.z  = tFrac1*Data1(id).z  + tFrac2*Data2(id).z;
+%                                 datasets(id).dataset.zz = tFrac1*Data1(id).zz + tFrac2*Data2(id).zz;
+%                         end
+%                     end
+%                 end
             end
         end
         
@@ -155,19 +155,11 @@ try
         %% Update time bars
         for j=1:handles.figures(ifig).figure.nrsubplots
             for k=1:handles.figures(ifig).figure.subplots(j).subplot.nrdatasets
-                if isfield(handles.figures(ifig).figure.subplots(j).subplot.datasets(k).dataset,'timebar')
-                    if handles.figures(ifig).figure.subplots(j).subplot.datasets(k).dataset.timebar(1)>0
-                        AvailableDate=str2double(datestr(t,'yyyymmdd'));
-                        AvailableTime=str2double(datestr(t,'HHMMSS'));
-                        handles.figures(ifig).figure.subplots(j).subplot.datasets(k).dataset.timebar=[AvailableDate AvailableTime];
-                    end
-                end
-                if isfield(handles.figures(ifig).figure.subplots(j).subplot.datasets(k).dataset,'markertime')
-                    handles.figures(ifig).figure.subplots(j).subplot.datasets(k).dataset.markertime=t;
-                end
+                handles.figures(ifig).figure.subplots(j).subplot.datasets(k).dataset.bartime=t;
+                handles.figures(ifig).figure.subplots(j).subplot.datasets(k).dataset.markertime=t;
             end
         end
-        handles.datasets=data;
+        handles.datasets=datasets;
         
         %% Make the figure
         
@@ -175,6 +167,7 @@ try
         str=num2str(iblock+10000);
         figname=[animationsettings.prefix str(2:end) '.png'];
         handles.figures(ifig).figure.filename=figname;
+        handles.figures(ifig).figure.outputfile=figname;
         handles.figures(ifig).figure.format='png';
         
         % And export the figure

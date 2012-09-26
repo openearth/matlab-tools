@@ -93,12 +93,12 @@ else
         'MarkerFaceColor',colorlist('getrgb','color',opt.markerfacecolor),'MarkerEdgeColor',colorlist('getrgb','color',opt.markeredgecolor));
 end
 
-if ~isempty(opt.timebar.time)
-    xt(1)=opt.timebar.time-xback;
-    xt(2)=opt.timebar.time-xback;
+if ~isempty(opt.timebar)
+    xt(1)=opt.bartime-xback;
+    xt(2)=opt.bartime-xback;
     yt(1)=plt.ymin;
     yt(2)=plt.ymax;
-    h3=plot(xt,yt,'r','Linewidth',3);
+    plot(xt,yt,'r','Linewidth',3);
 end
 
 plt.datasets(k).dataset.handle=h1;

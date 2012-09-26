@@ -42,7 +42,7 @@ switch lower(plt.datasets(id).dataset.plotroutine)
         handles=PlotSamples(handles,ifig,isub,id,mode);
     case {'plotvectors','plotcoloredvectors'}
         % Colored vectors don't work under 2007b!
-        handles=PlotVectors(handles,ifig,isub,id,mode);
+        handles=muppet_plotVectors(handles,ifig,isub,id);
     case {'plotfeather'}
         handles=muppet_plotFeather(handles,ifig,isub,id);
     case {'plotcurvedarrows','plotcoloredcurvedarrows'}
