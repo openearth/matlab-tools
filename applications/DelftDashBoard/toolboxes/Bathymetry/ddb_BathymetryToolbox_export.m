@@ -243,5 +243,12 @@ function savePolygon
 handles=getHandles;
 x=handles.Toolbox(tb).Input.polygonX;
 y=handles.Toolbox(tb).Input.polygonY;
-landboundary('write',handles.Toolbox(tb).Input.polygonFile,x',y');
+if size(x,1)==1
+    x=x';
+end
+if size(y,1)==1
+    y=y';
+end
+
+landboundary('write',handles.Toolbox(tb).Input.polygonFile,x,y);
 
