@@ -70,6 +70,9 @@ function getHYCOM(url, outname, outdir, par, xl, yl, dx, dy, t, s, daynum)
 % $Keywords: $
 
 %% Download Hycom data
+
+url='http://tds.hycom.org/thredds/dodsC/datasets/GLBa0.08/expt_90.9/data';
+
 fname=url;
 
 %daynum=nc_varget(fname,'MT');
@@ -186,6 +189,8 @@ switch lower(par)
     case{'waterlevel'}
         disp('Downloading water level ...');
         tic
+        
+        
         data=nc_varget(fname,'ssh',[it1-1 imin-1 jmin-1],[nt id jd]);
         toc
         if ndims(data)==2
