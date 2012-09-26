@@ -181,8 +181,10 @@ if ~isempty(var)
                         pathname=pathname(1:end-1);
                     end
                 end
-                if strcmp(currentpath,pathname)
+                if strcmpi(currentpath,pathname)
                     pathname='';
+                else
+                    pathname=[pathname filesep];
                 end
                 varstring=['"' pathname filename ext '"'];
             else
@@ -198,7 +200,7 @@ if ~isempty(var)
             varstring=['"' var '"'];
             
         otherwise
-            varstring=['"' var '"'];
+            varstring=['"' deblank(var) '"'];
     end
     if iwrite
         txt=[repmat(' ',1,nindent) info.keyword repmat(' ',1,max(keywordlength-length(info.keyword),1)) varstring];

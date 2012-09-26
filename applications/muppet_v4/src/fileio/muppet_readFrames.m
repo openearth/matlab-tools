@@ -1,4 +1,4 @@
-function frames=muppet_readframes(pth)
+function frames=muppet_readFrames(pth)
 
 txt=ReadTextFile([pth 'settings' filesep 'frames' filesep 'frames.def']);
  

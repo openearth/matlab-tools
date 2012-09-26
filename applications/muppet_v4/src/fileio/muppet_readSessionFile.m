@@ -200,6 +200,7 @@ for ifig=1:handles.nrfigures
     figr=muppet_setDefaultFigureProperties(handles);
     figr.nrsubplots=fig(ifig).ns;
 
+    % Figure info
     i1=fig(ifig).i1;
     i2=fig(ifig).i2-1;
     [keywords,values]=readkeywordvaluepairs(str,i1,i2);
@@ -207,6 +208,19 @@ for ifig=1:handles.nrfigures
         figr=readoption(figr,handles.figureoption,keywords{j},values{j});
     end
 
+    % Set frame text (if not already set)
+    if isfield(figr,'frame')
+       ifr=strmatch(lower(figr.frame),lower(handles.frames.names),'exact');
+       if ~isempty(ifr)
+           for itxt=1:length(handles.frames.frame(ifr).frame.text)
+               if isempty(figr.frametext(itxt).frametext.text)
+                   figr.frametext(itxt).frametext.text=' ';
+               end
+           end
+       end
+    end
+
+    % Output settings
     i1=fig(ifig).i3;
     i2=fig(ifig).i4;
     [keywords,values]=readkeywordvaluepairs(str,i1,i2);

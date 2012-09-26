@@ -17,6 +17,7 @@ muppet_writeOption(handles.figureoption(k).figureoption,fig,fid,3,11);
 k=muppet_findIndex(handles.figureoption,'figureoption','name','backgroundcolor');
 muppet_writeOption(handles.figureoption(k).figureoption,fig,fid,3,11);
 
+% Frame texts
 if ~ilayout
     for ii=1:50
         k=muppet_findIndex(handles.figureoption,'figureoption','name',['frametext' num2str(ii)]);
