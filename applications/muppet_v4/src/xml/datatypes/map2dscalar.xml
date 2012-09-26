@@ -24,23 +24,32 @@
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>clim</name>
+        <name>linegroup</name>
       </plotoption>
       <plotoption>
-        <name>linegroup</name>
+        <name>climgroup</name>
+      </plotoption>
+      <plotoption>
+        <name>contourlabelgroup</name>
       </plotoption>
       <plotoption>
         <name>adddategroup</name>
       </plotoption>
     </plotroutine>
     <plotroutine>
-      <name>plotcontourmapandlines</name>
+      <name>plotcontourmaplines</name>
       <longname>Contour Map and Lines</longname>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
         <name>linegroup</name>
+      </plotoption>
+      <plotoption>
+        <name>climgroup</name>
+      </plotoption>
+      <plotoption>
+        <name>contourlabelgroup</name>
       </plotoption>
       <plotoption>
         <name>adddategroup</name>
