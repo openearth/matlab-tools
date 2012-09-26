@@ -32,6 +32,7 @@
     <element>
       <keyword>EdgeColor</keyword>
       <style>selectcolor</style>
+      <includenone>yes</includenone>
       <variable>edgecolor</variable>
       <default>Black</default>
       <text>Edge Color</text>
@@ -41,6 +42,7 @@
     <element>
       <keyword>FaceColor</keyword>
       <style>selectcolor</style>
+      <includenone>yes</includenone>
       <variable>facecolor</variable>
       <default>Red</default>
       <text>Face Color</text>

@@ -28,7 +28,7 @@
       </check>
       <style>selectmarkersize</style>
       <variable>markersize</variable>
-      <type>integer</type>
+      <type>int</type>
       <text>Size</text>
       <position>240 40 100 20</position>
       <dependency>

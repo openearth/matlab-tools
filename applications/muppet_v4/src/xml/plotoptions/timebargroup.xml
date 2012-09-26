@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<root>
+  <plotoption>
+    <name>timebargroup</name>
+    <element>
+      <name>timebar</name>
+      <keyword>TimeBar</keyword>
+      <default>0</default>
+      <style>checkbox</style>
+      <type>boolean</type>
+      <variable>timebar</variable>
+      <text>Time Bar</text>
+      <position>50 0 50 20</position>
+    </element>
+    <element>
+      <keyword>BarTime</keyword>
+      <variable>bartime</variable>
+      <text>Time</text>
+      <check>
+        <variable>timebar</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+      <style>edit</style>
+      <position>180 0 120 20</position>
+      <type>datetime</type>
+      <dependency>
+        <action>enable</action>
+        <checkfor>all</checkfor>
+        <check>
+          <variable>timebar</variable>
+          <operator>eq</operator>
+          <value>1</value>
+        </check>
+      </dependency>
+    </element>
+  </plotoption>
+</root>

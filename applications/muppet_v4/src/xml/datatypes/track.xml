@@ -7,6 +7,9 @@
     <plotroutine>
       <name>plotpolyline</name>
       <plotoption>
+        <name>plotroutine</name>
+      </plotoption>
+      <plotoption>
         <name>linegroup</name>
       </plotoption>
       <plotoption>

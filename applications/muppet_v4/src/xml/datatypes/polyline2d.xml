@@ -8,6 +8,9 @@
     <plotroutine>
       <name>plotpolyline</name>
       <plotoption>
+        <name>plotroutine</name>
+      </plotoption>
+      <plotoption>
         <name>linegroup</name>
       </plotoption>
       <plotoption>
@@ -22,6 +25,9 @@
     <type>xy</type>
     <plotroutine>
       <name>plotpolyline</name>
+      <plotoption>
+        <name>plotroutine</name>
+      </plotoption>
       <plotoption>
         <name>linecolor</name>
         <default>black</default>

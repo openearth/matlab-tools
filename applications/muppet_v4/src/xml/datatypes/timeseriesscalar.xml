@@ -10,34 +10,16 @@
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>linedata</name>
+        <name>linegroup</name>
       </plotoption>
       <plotoption>
-        <name>linecolor</name>
-      </plotoption>
-      <plotoption>
-        <name>linestyle</name>
-      </plotoption>
-      <plotoption>
-        <name>linewidth</name>
-      </plotoption>
-      <plotoption>
-        <name>markerdata</name>
-      </plotoption>
-      <plotoption>
-        <name>marker</name>
-      </plotoption>
-      <plotoption>
-        <name>markersize</name>
-      </plotoption>
-      <plotoption>
-        <name>markeredgecolor</name>
-      </plotoption>
-      <plotoption>
-        <name>markerfacecolor</name>
+        <name>markergroup</name>
       </plotoption>
       <plotoption>
         <name>legendtext</name>
+      </plotoption>
+      <plotoption>
+        <name>timebargroup</name>
       </plotoption>
     </plotroutine>
   </plot>
