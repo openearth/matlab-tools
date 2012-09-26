@@ -85,7 +85,7 @@ axis off;
 set(ax,'Tag','frametextaxis','UserData',ifig);
 
 for ii=1:length(frame.text)
-    if ~isempty(fig.frametext(ii).frametext.text) || fig.cm2pix==1
+    if ~isempty(deblank(fig.frametext(ii).frametext.text)) || fig.cm2pix==1
         tx=text(textposition{ii}(1),textposition{ii}(2),fig.frametext(ii).frametext.text);hold on;
         set(tx,'Color',colorlist('getrgb','color',frame.text(ii).text.fontcolor));
     else

@@ -130,7 +130,7 @@ if strcmpi(opt.plotroutine,'plotcontourmap') && opt.contourlabels
 end
 
 if opt.contourlabels
-    hh=clabel(c,h,'LabelSpacing',opt.labelspacing);
+    hh=clabel(c,h,'LabelSpacing',opt.labels.spacing);
     set(hh,'FontName',opt.labels.font.weight,'FontSize',opt.labels.font.size*handles.figures(ifig).figure.fontreduction, ...
         'FontWeight',opt.labels.font.weight,'FontAngle',opt.labels.font.angle);
     set(hh,'Color',colorlist('getrgb','color',opt.labels.font.color));
