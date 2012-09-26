@@ -45,8 +45,8 @@ switch lower(el.style)
 
         % Set text
         if ~isempty(el.text)
-            if isfield(el.text,'variable')
-                val=gui_getValue(el,el.text.variable);
+            if isfield(el.text,'text')
+                val=gui_getValue(el,el.text.text.variable);
                 % Text
                 set(el.texthandle,'String',val);
                 setTextPosition(el.texthandle,el.position,el.textposition);
@@ -59,8 +59,8 @@ switch lower(el.style)
         set(el.handle,'Value',val);
         % Set text
         if ~isempty(el.text)
-            if isfield(el.text,'variable')
-                val=gui_getValue(el,el.text.variable);
+            if isfield(el.text,'text')
+                val=gui_getValue(el,el.text.text.variable);
                 % Text
                 set(el.handle,'String',val);
                 % Length of string is known
@@ -71,7 +71,7 @@ switch lower(el.style)
                 set(el.handle,'Position',pos);
             end
         end
-
+        
     case{'togglebutton'}
 
         val=gui_getValue(el,el.variable);
@@ -97,8 +97,8 @@ switch lower(el.style)
                 end
         end
         
-        if isfield(el.text,'variable')
-            val=gui_getValue(el,el.text.variable);
+        if isfield(el.text,'text')
+            val=gui_getValue(el,el.text.text.variable);
             % Text
             set(el.handle,'String',val);
         end
