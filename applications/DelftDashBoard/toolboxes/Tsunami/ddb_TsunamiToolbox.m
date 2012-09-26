@@ -1,10 +1,10 @@
-function ddb_TsunamiToolbox(varargin)
-%DDB_TSUNAMITOOLBOX  One line description goes here.
+function ddb_TsunamiToolbox_okada(varargin)
+%DDB_TSUNAMITOOLBOX_OKADA  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   ddb_TsunamiToolbox(varargin)
+%   ddb_TsunamiToolbox_okada(varargin)
 %
 %   Input:
 %   varargin =
@@ -13,7 +13,7 @@ function ddb_TsunamiToolbox(varargin)
 %
 %
 %   Example
-%   ddb_TsunamiToolbox
+%   ddb_TsunamiToolbox_okada
 %
 %   See also
 
@@ -92,7 +92,7 @@ else
         case{'drawfaultline'}
             drawFaultLine;
         case{'computewaterlevel'}
-            computeWaterLevel;
+            computeWaterLevel(varargin{2});
         case{'loaddata'}
             loadTableData;
         case{'savedata'}
@@ -425,7 +425,7 @@ for i=1:length(handles.Toolbox(tb).Input.segmentLon)
 end
 
 %%
-function computeWaterLevel
+function computeWaterLevel(opt)
 
 handles=getHandles;
 
@@ -453,30 +453,40 @@ if ~isempty(pathname)
     
     try
                 
-        xs=handles.Toolbox(tb).Input.segmentX;
-        ys=handles.Toolbox(tb).Input.segmentY;
-        wdts=handles.Toolbox(tb).Input.segmentWidth;
-        depths=handles.Toolbox(tb).Input.segmentDepth;
-        dips=handles.Toolbox(tb).Input.segmentDip;
-        sliprakes=handles.Toolbox(tb).Input.segmentSlipRake;
-        slips=handles.Toolbox(tb).Input.segmentSlip;
-        
-        % Compute tsunami wave (in projected coordinate system)
-        [xx,yy,zz]=ddb_computeTsunamiWave2(xs,ys,depths,dips,wdts,sliprakes,slips);
-        
-        % Plot figure (first convert to geographic coordinate system)
-        if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
-            oldSys.name=handles.Toolbox(tb).Input.utmZone;
-            oldSys.type='projected';
-            newSys.name='WGS 84';
-            newSys.type='geographic';
-            [xx1,yy1]=ddb_coordConvert(xx,yy,oldSys,newSys);
-        else
-            oldSys=handles.screenParameters.coordinateSystem;
-            newSys.name='WGS 84';
-            newSys.type='geographic';
-            [xx1,yy1]=ddb_coordConvert(xx,yy,oldSys,newSys);
+        switch opt
+            case{'fromparameters'}
+                xs=handles.Toolbox(tb).Input.segmentX;
+                ys=handles.Toolbox(tb).Input.segmentY;
+                wdts=handles.Toolbox(tb).Input.segmentWidth;
+                depths=handles.Toolbox(tb).Input.segmentDepth;
+                dips=handles.Toolbox(tb).Input.segmentDip;
+                sliprakes=handles.Toolbox(tb).Input.segmentSlipRake;
+                slips=handles.Toolbox(tb).Input.segmentSlip;
+                
+                % Compute tsunami wave (in projected coordinate system!)
+                [xx,yy,zz]=ddb_computeTsunamiWave2(xs,ys,depths,dips,wdts,sliprakes,slips);
+
+                % Plot figure (first convert to geographic coordinate system)
+                if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
+                    oldSys.name=handles.Toolbox(tb).Input.utmZone;
+                    oldSys.type='projected';
+                    newSys.name='WGS 84';
+                    newSys.type='geographic';
+                    [xx1,yy1]=ddb_coordConvert(xx,yy,oldSys,newSys);
+                else
+                    oldSys=handles.screenParameters.coordinateSystem;
+                    newSys.name='WGS 84';
+                    newSys.type='geographic';
+                    [xx1,yy1]=ddb_coordConvert(xx,yy,oldSys,newSys);
+                end
+                
+            otherwise
+                % Load tsunami wave (in geographic coordinate system!)
+                [xx,yy,zz]=readsurfergrid(handles.Toolbox(tb).Input.gridFile);
+                [xx1,yy1]=meshgrid(xx,yy);
+
         end
+        
         ddb_plotInitialTsunami(handles,xx1,yy1,zz);
         
         % Interpolate initial tsunami wave onto model grid(s)
@@ -486,16 +496,29 @@ if ~isempty(pathname)
             yz=handles.Model(md).Input(id).gridYZ;
             mmax=size(xz,1);
             nmax=size(xz,2);
+
             
-            % If in geographic coordinate system, convert grids first to
-            % projected coordinate system
-            if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
-                oldSys=handles.screenParameters.coordinateSystem;
-                newSys.name=handles.Toolbox(tb).Input.utmZone;
-                newSys.type='projected';
-                [xz,yz]=ddb_coordConvert(xz,yz,oldSys,newSys);
+            switch opt
+                case{'fromparameters'}                    
+                    % If in geographic coordinate system, convert grids first to
+                    % projected coordinate system
+                    if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
+                        oldSys=handles.screenParameters.coordinateSystem;
+                        newSys.name=handles.Toolbox(tb).Input.utmZone;
+                        newSys.type='projected';
+                        [xz,yz]=ddb_coordConvert(xz,yz,oldSys,newSys);
+                    end
+                otherwise
+                    % If in projected coordinate system, convert grids first to
+                    % geographic coordinate system
+                    if strcmpi(handles.screenParameters.coordinateSystem.type,'projected')
+                        oldSys=handles.screenParameters.coordinateSystem;
+                        newSys.name='WGS 84';
+                        newSys.type='geographic';
+                        [xz,yz]=ddb_coordConvert(xz,yz,oldSys,newSys);
+                    end
             end
-            
+        
             zz(isnan(zz))=0;
             xz(isnan(xz))=0;
             yz(isnan(yz))=0;

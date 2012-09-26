@@ -127,3 +127,5 @@ handles.Toolbox(ii).Input.segmentWidth=0;
 handles.Toolbox(ii).Input.segmentFocalDepth=0;
 handles.Toolbox(ii).Input.segmentSlip=0.0;
 
+% File
+handles.Toolbox(ii).Input.gridFile='';

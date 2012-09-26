@@ -10,14 +10,14 @@
     <tab>
       <tag>okada</tag>
       <tabstring>Okada</tabstring>
-      <callback>ddb_TsunamiToolbox_okada</callback>
+      <callback>ddb_TsunamiToolbox</callback>
       <formodel>delft3dflow</formodel>
       <element>Tsunami.okada.xml</element>
     </tab>
     <tab>
       <tag>file</tag>
       <tabstring>File</tabstring>
-      <callback>ddb_TsunamiToolbox_okada</callback>
+      <callback>ddb_TsunamiToolbox</callback>
       <formodel>delft3dflow</formodel>
       <element>Tsunami.file.xml</element>
     </tab>
