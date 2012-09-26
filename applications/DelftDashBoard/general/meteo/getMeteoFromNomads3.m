@@ -76,7 +76,7 @@ ntry=1;
 
 urlstr = getMeteoUrl(meteosource,cycledate,cyclehour);
 switch lower(meteosource)
-    case{'gfs1p0','gfs0p5','ncep_gfs_analysis','ncepncar_reanalysis','ncepncar_reanalysis_2','ncep_gfs_analysis_precip'}
+    case{'gfs1p0','gfs0p5','ncep_gfs_analysis','ncepncar_reanalysis','ncepncar_reanalysis_2','ncep_gfs_analysis_precip','nam_hawaiinest'}
         xlim=mod(xlim,360);
 end
 

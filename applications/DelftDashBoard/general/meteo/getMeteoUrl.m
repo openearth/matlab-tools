@@ -115,4 +115,6 @@ switch lower(meteosource)
         mstr=num2str(month(cycledate),'%0.2i');
         dr=[ystr mstr '/'];
         urlstr=['http://nomads.ncdc.noaa.gov/dods/NCEP_NARR_DAILY/' dr datestr(cycledate,'yyyymmdd') '/narr-a_221_' datestr(cycledate,'yyyymmdd') '_' num2str(cyclehour,'%0.2i') '00_000'];
+    case{'nam_hawaiinest'}
+        urlstr=['http://nomads.ncep.noaa.gov:9090/dods/nam/nam' datestr(cycledate,'yyyymmdd') '/nam_hawaiinest_' num2str(cyclehour,'%0.2i') 'z'];
 end
