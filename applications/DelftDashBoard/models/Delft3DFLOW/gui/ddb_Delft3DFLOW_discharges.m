@@ -182,7 +182,7 @@ else
             ddb_saveSrcFile(handles,ad);
             
         case{'opendisfile'}
-            handles=ddb_readDisFile(handles);
+            handles=ddb_readDisFile(handles,ad);
             setHandles(handles);
             
         case{'savedisfile'}
