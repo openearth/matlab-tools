@@ -6,7 +6,7 @@ handles.mode=1;
 handles.muppetpath='c:\delft3d\w32\muppet\';
 handles.sessionfile='';
 handles.currentpath=pwd;
-handles.xmldir='c:\work\checkouts\OpenEarthTools\trunk\matlab\applications\muppet4\xml\';
+handles.xmldir='c:\work\checkouts\OpenEarthTools\trunk\matlab\applications\muppet_v4\src\xml\';
 
 handles=muppet_readXmlFiles(handles);
 
@@ -31,34 +31,7 @@ handles.outputresolutiontexts={'50','100','150','200','300','450','600'};
 handles.outputresolutions=[50 100 150 200 300 450 600];
 handles.renderers={'ZBuffer','Painters','OpenGL'};
 
-handles.animationsettings.frameRate=5;
-handles.animationsettings.selectbits=24;
-handles.animationsettings.keepfigures=0;
-handles.animationsettings.makekmz=0;
-handles.animationsettings.avifilename='anim.avi';
-handles.animationsettings.prefix='anim';
-handles.animationsettings.starttime=datenum(2012,8,18);
-handles.animationsettings.stoptime=datenum(2012,8,19);
-handles.animationsettings.timestep=3600;
-
-archstr = computer('arch');
-switch lower(archstr)
-    case{'w32','win32'}
-        % win 32
-        handles.animationsettings.avioptions.fccHandler=1684633187;
-        handles.animationsettings.avioptions.KeyFrames=0;
-        handles.animationsettings.avioptions.Quality=10000;
-        handles.animationsettings.avioptions.BytesPerSec=300;
-        handles.animationsettings.avioptions.Parameters=[99 111 108 114];
-    case{'w64','win64'}
-        % win 64 - MSVC1
-        handles.animationsettings.avioptions.fccHandler=1668707181;
-        handles.animationsettings.avioptions.KeyFrames=15;
-        handles.animationsettings.avioptions.Quality=7500;
-        handles.animationsettings.avioptions.BytesPerSec=300;
-        handles.animationsettings.avioptions.Parameters=[75 0 0 0];
-end
-
+handles=muppet_initializeAnimationSettings(handles);
 
 handles.nrdatasets=0;
 handles.nrcombineddatasets=0;
