@@ -11,8 +11,8 @@ opt.linestyle='-';
 opt.linewidth=0.5;
 
 opt.marker='none';
-opt.markeredgecolor='k';
-opt.markerfacecolor='k';
+opt.markeredgecolor='black';
+opt.markerfacecolor='black';
 opt.markersize=10;
 
 opt.legendtext='';
@@ -106,6 +106,8 @@ opt.timebar.time=[];
 
 opt.timemarker=0;
 opt.markertime=datenum(2000,1,1);
+opt.timebar=0;
+opt.bartime=datenum(2000,1,1);
 
 opt.usecustomcontours=0;
 opt.custumcontours=[0 1 2];
