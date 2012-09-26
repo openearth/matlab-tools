@@ -78,6 +78,8 @@ else
             exportFigure;
         case{'plotfigure'}
             plotFigure;
+        case{'editanimationsettings'}
+            editAnimationSettings;
         case{'makeanimation'}
             makeAnimation;
     end
@@ -93,6 +95,7 @@ if ok
     handles=muppet_updateDatasetNames(handles);
     handles=muppet_updateSubplotNames(handles);
     handles=muppet_updateDatasetInSubplotNames(handles);
+    handles=muppet_initializeAnimationSettings(handles);
     setHandles(handles);
     muppet_updateGUI;
 end
@@ -549,7 +552,6 @@ setHandles(handles);
 
 %%
 function exportFigure
-handles=getHandles;
 muppet_exportFigure(handles,handles.activefigure,'export');
 
 %%
@@ -557,7 +559,10 @@ function plotFigure
 muppet_preview;
 
 %%
+function editAnimationSettings
+muppet_animationSettings;
+
+%%
 function makeAnimation
 handles=getHandles;
 muppet_makeAnimation(handles,handles.activefigure);
-
