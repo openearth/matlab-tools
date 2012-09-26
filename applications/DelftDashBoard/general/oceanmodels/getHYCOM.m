@@ -71,8 +71,6 @@ function getHYCOM(url, outname, outdir, par, xl, yl, dx, dy, t, s, daynum)
 
 %% Download Hycom data
 
-url='http://tds.hycom.org/thredds/dodsC/datasets/GLBa0.08/expt_90.9/data';
-
 fname=url;
 
 %daynum=nc_varget(fname,'MT');
