@@ -99,7 +99,10 @@ pi = [xi(:),yi(:)];
 fi = zeros(size(pi,1),1);
 
 % Find enclosing triangle of points in pi
-i = tsearch(p(:,1),p(:,2),t,pi(:,1),pi(:,2));
+% i = tsearch(p(:,1),p(:,2),t,pi(:,1),pi(:,2));
+% tic
+i = tsearchn(p,t,pi);
+% toc
 
 % Deal with points oustide convex hull
 in = ~isnan(i); 
