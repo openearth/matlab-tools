@@ -66,11 +66,11 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
     handles.Model(md).Input(id).gridX=x;
     handles.Model(md).Input(id).gridY=y;
     [handles.Model(md).Input(id).gridXZ,handles.Model(md).Input(id).gridYZ]=getXZYZ(x,y);
+    handles.Model(md).Input(id).kcs=determineKCS(handles.Model(md).Input(id).gridX,handles.Model(md).Input(id).gridY);
     if ~isempty(handles.Model(md).Input(id).encFile)
         mn=ddb_enclosure('read',[handles.Model(md).Input(id).encFile]);
         [handles.Model(md).Input(id).gridX,handles.Model(md).Input(id).gridY]=ddb_enclosure('apply',mn,handles.Model(md).Input(id).gridX,handles.Model(md).Input(id).gridY);
     end
-    handles.Model(md).Input(id).kcs=determineKCS(handles.Model(md).Input(id).gridX,handles.Model(md).Input(id).gridY);
     nans=zeros(size(handles.Model(md).Input(id).gridX));
     nans(nans==0)=NaN;
     handles.Model(md).Input(id).depth=nans;
@@ -116,9 +116,9 @@ if ~isempty(handles.Model(md).Input(id).corFile)
     end
 end
 if ~isempty(handles.Model(md).Input(id).bctFile)
-%     % Don't load bct file
-%     handles.Model(md).Input(id).bctFileLoaded=0;
-    handles=ddb_readBctFile(handles,id);
+    try
+        handles=ddb_readBctFile(handles,id);
+    end
 end
 if ~isempty(handles.Model(md).Input(id).bchFile)
     handles=ddb_readBchFile(handles,id);
@@ -127,7 +127,9 @@ if ~isempty(handles.Model(md).Input(id).bcqFile)
     handles=ReadBcqFile(handles,id);
 end
 if ~isempty(handles.Model(md).Input(id).bccFile)
-    handles=ddb_readBccFile(handles,id);
+    try
+        handles=ddb_readBccFile(handles,id);
+    end
 end
 if ~isempty(handles.Model(md).Input(id).obsFile)
     handles=ddb_readObsFile(handles,id);
@@ -143,9 +145,6 @@ if ~isempty(handles.Model(md).Input(id).dryFile)
 end
 if ~isempty(handles.Model(md).Input(id).thdFile)
     handles=ddb_readThdFile(handles,id);
-end
-if ~isempty(handles.Model(md).Input(id).w2dFile)
-    handles=ddb_read2DWFile(handles,id);
 end
 if ~isempty(handles.Model(md).Input(id).wndFile)
     handles=ddb_readWndFile(handles,id);
