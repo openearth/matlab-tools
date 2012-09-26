@@ -1,4 +1,4 @@
-clear variables;%close all;
+function muppet4(varargin)
 
 handles.selectfigureoption=1;
 handles.muppetversion='4.0';
@@ -6,7 +6,7 @@ handles.mode=1;
 handles.muppetpath='c:\delft3d\w32\muppet\';
 handles.sessionfile='';
 handles.currentpath=pwd;
-handles.xmldir='c:\work\checkouts\OpenEarthTools\trunk\matlab\applications\muppet_v4\src\xml\';
+handles.xmldir='d:\checkouts\OpenEarthTools\trunk\matlab\applications\muppet_v4\src\xml\';
 
 handles=muppet_readXmlFiles(handles);
 
@@ -71,7 +71,16 @@ handles=muppet_updateDatasetInSubplotNames(handles);
 
 setHandles(handles);
 
-muppet_gui;
 
-handles=muppet_refreshColorMap(handles);
-
+if ~isempty(varargin)
+    mupfile=varargin{1};
+    curdir=pwd;
+    pth=fileparts(mupfile);
+    cd(pth);
+    [handles,ok]=muppet_newSession(handles,mupfile);
+    muppet_exportFigure(handles,1,'export');
+    cd(curdir);
+else
+    muppet_gui;
+   handles=muppet_refreshColorMap(handles);
+end
