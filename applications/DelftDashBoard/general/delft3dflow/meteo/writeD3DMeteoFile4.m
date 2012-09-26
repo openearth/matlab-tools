@@ -76,8 +76,8 @@ function writeD3DMeteoFile4(meteodir, meteoname, rundir, fname, xlim, ylim, coor
 parameter={'u','v','p'};
 vsn='1.03';
 
-dx=100000;
-dy=100000;
+dx=5000;
+dy=5000;
 
 for i=1:length(varargin)
     if ischar(varargin{i})
@@ -166,6 +166,10 @@ for ipar=1:npar
             meteostr='cloudiness';
             unitstr='%';
             extstr='amc';
+        case{'swrad'}
+            meteostr='sw_radiation_flux';
+            unitstr='W/m2';
+            extstr='ams';
     end
     
     flist=dir([meteodir meteoname '.' parameter{ipar} '.*.mat']);
