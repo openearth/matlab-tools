@@ -75,6 +75,7 @@ handles.Model(md).Input(id).encFile=MDF.filgrd;
 handles.Model(md).Input(id).MMax=MDF.mnkmax(1);
 handles.Model(md).Input(id).NMax=MDF.mnkmax(2);
 handles.Model(md).Input(id).KMax=MDF.mnkmax(3);
+handles.Model(md).Input(id).lastKMax=handles.Model(md).Input(id).KMax;
 handles.Model(md).Input(id).thick=MDF.thick;
 handles.Model(md).Input(id).dryFile=MDF.fildry;
 handles.Model(md).Input(id).thdFile=MDF.filtd;
