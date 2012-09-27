@@ -3,7 +3,7 @@ function cu = cumunique(x)
 %
 %   B = cumunique(A)
 %
-%See also: unique, cumsum, strdiff
+%See also: unique, cumsum, strdiff, cummax, cummin
 
 [~,j]=unique(x);
 u = repmat(0,size(x));
