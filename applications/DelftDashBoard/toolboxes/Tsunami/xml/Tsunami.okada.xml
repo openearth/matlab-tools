@@ -15,7 +15,7 @@
     <position>110 100 40 20</position>
     <text>Magnitude (Mw)</text>
     <textposition>left</textposition>
-    <callback>ddb_TsunamiToolbox_okada</callback>
+    <callback>ddb_TsunamiToolbox</callback>
     <option1>editmw</option1>
     <format>%12.2f</format>
     <variable>Mw</variable>
@@ -28,7 +28,7 @@
     <position>110 75 40 20</position>
     <text>Fault Length (km)</text>
     <textposition>left</textposition>
-    <callback>ddb_TsunamiToolbox_okada</callback>
+    <callback>ddb_TsunamiToolbox</callback>
     <option1>editlength</option1>
     <enable>0</enable>
     <format>%12.1f</format>
@@ -42,7 +42,7 @@
     <position>110 50 40 20</position>
     <text>Fault Width (km)</text>
     <textposition>left</textposition>
-    <callback>ddb_TsunamiToolbox_okada</callback>
+    <callback>ddb_TsunamiToolbox</callback>
     <option1>editwidth</option1>
     <enable>0</enable>
     <format>%12.1f</format>
@@ -56,7 +56,7 @@
     <position>110 25 40 20</position>
     <text>Slip (m)</text>
     <textposition>left</textposition>
-    <callback>ddb_TsunamiToolbox_okada</callback>
+    <callback>ddb_TsunamiToolbox</callback>
     <option1>editslip</option1>
     <enable>0</enable>
     <format>%12.1f</format>
@@ -142,7 +142,7 @@
     <position>430 15 40 20</position>
     <text>Total Length (km)</text>
     <textposition>left</textposition>
-    <callback>ddb_TsunamiToolbox_okada</callback>
+    <callback>ddb_TsunamiToolbox</callback>
     <option1>editlength</option1>
     <enable>0</enable>
     <format>%12.1f</format>
@@ -155,7 +155,7 @@
     <style>pushbutton</style>
     <position>860 100 100 20</position>
     <text>Load Tsunami</text>
-    <callback>ddb_TsunamiToolbox_okada</callback>
+    <callback>ddb_TsunamiToolbox</callback>
     <option1>loaddata</option1>
     <tooltipstring>Load tsunami table data</tooltipstring>
   </element>
@@ -164,7 +164,7 @@
     <style>pushbutton</style>
     <position>860 75 100 20</position>
     <text>Save Tsunami</text>
-    <callback>ddb_TsunamiToolbox_okada</callback>
+    <callback>ddb_TsunamiToolbox</callback>
     <option1>savedata</option1>
     <tooltipstring>Save tsunami table data</tooltipstring>
   </element>
@@ -173,7 +173,7 @@
     <style>pushbutton</style>
     <position>860 45 100 20</position>
     <text>Draw Fault Line</text>
-    <callback>ddb_TsunamiToolbox_okada</callback>
+    <callback>ddb_TsunamiToolbox</callback>
     <option1>drawfaultline</option1>
   </element>
   <element>
@@ -181,7 +181,7 @@
     <style>pushbutton</style>
     <position>860 20 100 20</position>
     <text>Compute Tsunami</text>
-    <callback>ddb_TsunamiToolbox_okada</callback>
+    <callback>ddb_TsunamiToolbox</callback>
     <option1>computewaterlevel</option1>
     <option2>fromparameters</option2>
     <tooltipstring>Compute initial tsunami wave</tooltipstring>

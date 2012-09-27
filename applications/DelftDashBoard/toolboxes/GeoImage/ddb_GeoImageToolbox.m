@@ -113,11 +113,8 @@ zmlev=min(zmlev,23);
 handles.Toolbox(tb).Input.zoomLevelStrings{1}=['auto (' num2str(zmlev) ')'];
 
 setHandles(handles);
-% setUIElement('editxmin');
-% setUIElement('editxmax');
-% setUIElement('editymin');
-% setUIElement('editymax');
-% setUIElement('selectzoomlevel');
+
+gui_updateActiveTab;
 
 %%
 function editOutline

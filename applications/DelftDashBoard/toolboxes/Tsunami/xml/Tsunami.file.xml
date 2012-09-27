@@ -9,7 +9,7 @@
     <variable>handles.Toolbox(tb).Input.gridFile</variable>
     <extension>*.asc</extension>
     <selectiontext>Select tsunami grid file</selectiontext>
-    <callback>ddb_TsunamiToolbox_okada</callback>
+    <callback>ddb_TsunamiToolbox</callback>
     <option1>selectgridfile</option1>
   </element>
   <element>
@@ -17,7 +17,7 @@
     <style>pushbutton</style>
     <position>10 70 130 20</position>
     <text>Make Ini File</text>
-    <callback>ddb_TsunamiToolbox_okada</callback>
+    <callback>ddb_TsunamiToolbox</callback>
     <option1>computewaterlevel</option1>
     <option2>fromfile</option2>
     <tooltipstring>Create initial tsunami wave</tooltipstring>

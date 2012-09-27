@@ -97,16 +97,13 @@ handles.Toolbox(tb).Input.yLim(1)=y0;
 handles.Toolbox(tb).Input.xLim(2)=x0+dx;
 handles.Toolbox(tb).Input.yLim(2)=y0+dy;
 setHandles(handles);
-% setUIElement('tidedatabasepanel.export.editxmin');
-% setUIElement('tidedatabasepanel.export.editxmax');
-% setUIElement('tidedatabasepanel.export.editymin');
-% setUIElement('tidedatabasepanel.export.editymax');
+
+gui_updateActiveTab;
 
 %%
 function selectModel
 handles=getHandles;
 setHandles(handles);
-% % setUIElements('tidedatabasepanel.export');
 
 %%
 function exportData
