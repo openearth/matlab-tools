@@ -13,7 +13,7 @@ function [phiflocs] = flocfactor(c, cgel, d50, sal, salmax)
 %   salmax: salinity at which flocculation is maximum (ppt)
 %
 % Output:
-%   phifloc: flocculation factor, a multiplication factor for the 
+%   phifloc: flocculation factor, a multiplication factor for the
 %               sediment fall velocity (-)
 %
 % Example:
@@ -24,8 +24,8 @@ function [phiflocs] = flocfactor(c, cgel, d50, sal, salmax)
 %   Waves. I: Initiation of Motion, Bed Roughness, and Bed-Load Transport.
 %   Journal of Hydraulic Engineering, 133(6), 649-667
 %
-%   Van Rijn, L., 2007b. Unified View of Sediment Transport by Currents and 
-%   Waves. II: Suspended Transport. 
+%   Van Rijn, L., 2007b. Unified View of Sediment Transport by Currents and
+%   Waves. II: Suspended Transport.
 %   Journal of Hydraulic Engineering, 133(6), 668-689.
 
 
@@ -34,7 +34,7 @@ function [phiflocs] = flocfactor(c, cgel, d50, sal, salmax)
 %   Copyright (C) 2010 Alkyon Hydraulic Consultancy & Research
 %       grasmeijerb
 %
-%       bart.grasmeijer@alkyon.nl	
+%       bart.grasmeijer@alkyon.nl
 %
 %       P.O. Box 248
 %       8300 AE Emmeloord
@@ -55,9 +55,9 @@ function [phiflocs] = flocfactor(c, cgel, d50, sal, salmax)
 %   --------------------------------------------------------------------
 
 % This tool is part of <a href="http://OpenEarth.nl">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and 
+% OpenEarthTools is an online collaboration to share and manage data and
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute 
+% Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
@@ -75,25 +75,31 @@ function [phiflocs] = flocfactor(c, cgel, d50, sal, salmax)
 
 dsand = 62e-6;
 
-drel = (dsand./d50-1);
-i = drel>3;
-drel(i) = 3;
-
-logc = (4+log10(2.*c./cgel));
-i = logc>10;
-logc(i) = 10;
-
-phifloc = logc.^drel;
-i = phifloc<1;
-phifloc(i) = 1;
-
-phifloc(c<0.1) = 1;
-
-phiflocs = (phifloc-1).*sal./salmax+1;
-i = find(sal>salmax);
-if ~isempty(i) && length(phifloc)==1
-    phiflocs(i)=phifloc;
-end
-if ~isempty(i) && length(phifloc)>1
-    phiflocs(i)=phifloc(i);
+if d50<dsand
+    
+    drel = (dsand./d50-1);
+    i = drel>3;
+    drel(i) = 3;
+    
+    logc = (4+log10(2.*c./cgel));
+    i = logc>10;
+    logc(i) = 10;
+    
+    phifloc = logc.^drel;
+    i = phifloc<1;
+    phifloc(i) = 1;
+    
+    phifloc(c<0.1) = 1;
+    
+    phiflocs = (phifloc-1).*sal./salmax+1;
+    i = find(sal>salmax);
+    if ~isempty(i) && length(phifloc)==1
+        phiflocs(i)=phifloc;
+    end
+    if ~isempty(i) && length(phifloc)>1
+        phiflocs(i)=phifloc(i);
+    end
+    
+else
+    phiflocs = 1;
 end
