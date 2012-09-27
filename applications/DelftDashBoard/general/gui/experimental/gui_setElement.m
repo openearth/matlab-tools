@@ -246,15 +246,21 @@ switch lower(el.style)
                     otherwise
                         val=num2str(val);
                 end
-                str=[el.prefix ' ' val ' ' el.suffix];
+                
+                if iscell(val)
+                    str=val;
+                else
+                    str=[el.prefix ' ' val ' ' el.suffix];
+                end
                 set(el.handle,'String',str);
                 
                 pos=el.position;
-%                 if length(pos)<4
-                    ext=get(el.handle,'Extent');
-                    pos(3)=ext(3);
-                    pos(4)=15;
-%                 end
+                ext=get(el.handle,'Extent');
+                if iscell(val)
+                    pos(2)=pos(2)+pos(4)-ext(4);
+                end
+                pos(3)=ext(3);
+                pos(4)=15;
                 set(el.handle,'Position',pos);
             end
         end
