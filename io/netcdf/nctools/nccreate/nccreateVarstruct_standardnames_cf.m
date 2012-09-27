@@ -44,7 +44,7 @@ OPT = rmfield(OPT,{'long_name','units','definition'});
 varstruct = nccreateVarstruct(OPT);
 
 function list = getList()
-% input below is auto generated
+% iput below is auto generated
 list.standard_names = {
     'time'
     'altitude'
@@ -68,6 +68,7 @@ list.standard_names = {
     'wind_to_direction'
     'sea_water_x_velocity'
     'sea_water_y_velocity'
+    'upward_sea_water_velocity'
     'northward_sea_water_velocity'
     'eastward_sea_water_velocity'
     'direction_of_sea_water_velocity'
@@ -75,6 +76,7 @@ list.standard_names = {
     'mass_concentration_of_suspended_matter_in_sea_water'
     'water_surface_height_above_reference_datum'
     'water_surface_reference_datum_altitude'
+    'sea_water_temperature'
 };
 
 list.long_names = {
@@ -100,6 +102,7 @@ list.long_names = {
     'Wind direction'
     'Sea water x velocity'
     'Sea water y velocity'
+    'Sea water z velocity'
     'Sea water northward velocity'
     'Sea water eastward velocity'
     'Sea water velocity direction'
@@ -107,6 +110,7 @@ list.long_names = {
     'Mass concentration of suspended matter in sea water'
     'Water surface height above reference datum'
     'Water surface referernce datum altitude'
+    'Sea water temperature'
 };
 
 list.units = {
@@ -134,19 +138,21 @@ list.units = {
     'm/s'
     'm/s'
     'm/s'
+    'm/s'
     'degree'
     'm/s'
     'kg/m3'
     'm'
     'm'
+    'K'
 };
 
 list.definitions = {
     'Variables representing time must always explicitly include the units attribute; there is no default value. The units attribute takes a string value formatted as per the recommendations in the Udunits package.'
     'Altitude is the (geometric) height above the geoid, which is the reference geopotential surface. The geoid is similar to mean sea level.'
     'Depth is the vertical distance below the surface. Depth is positive downward.'
-    'Latitude is positive northward; its units of degree_north (or equivalent) indicate this explicitly.'
-    'Longitude is positive eastward; its units of degree_east (or equivalent) indicate this explicitly.'
+    'Latitude is positive northward; its units of degree_north (or equivalent) indicate this explicitly. '
+    'Longitude is positive eastward; its units of degree_east (or equivalent) indicate this explicitly. '
     ''
     ''
     'A period is an interval of time, or the time-period of an oscillation.'
@@ -164,6 +170,7 @@ list.definitions = {
     'Wind is defined as a two-dimensional (horizontal) air velocity vector, with no vertical component. In meteorological reports, the direction of the wind vector is usually (but not always) given as the direction from which it is blowing (wind_from_direction) (westerly, northerly, etc.).'
     'A velocity is a vector quantity. "x" indicates a vector component along the grid x-axis, when this is not true longitude, positive with increasing x.'
     'A velocity is a vector quantity. "y" indicates a vector component along the grid y-axis, when this is not true latitude, positive with increasing y.'
+    'A velocity is a vector quantity. "Upward" indicates a vector component which is positive when directed upward (negative downward).'
     'A velocity is a vector quantity. "Northward" indicates a vector component which is positive when directed northward (negative southward).'
     'A velocity is a vector quantity. "Eastward" indicates a vector component which is positive when directed eastward (negative westward).'
     '"direction_of_X" means direction of a vector, a bearing. A velocity is a vector quantity.'
@@ -171,5 +178,6 @@ list.definitions = {
     'Mass concentration means mass per unit volume and is used in the construction mass_concentration_of_X_in_Y, where X is a material constituent of Y. A chemical species denoted by X may be described by a single term such as ''nitrogen'' or a phrase such as ''nox_expressed_as_nitrogen''.'
     'water_surface_height_above_reference_datum ''Water surface height above reference datum'' means the height of the upper surface of a body of liquid water, such as sea, lake or river, above an arbitrary reference datum. The altitude of the datum should be provided in a variable with standard name water_surface_reference_datum_altitude. The surface called "surface" means the lower boundary of the atmosphere.'
     'Altitude is the (geometric) height above the geoid, which is the reference geopotential surface. The geoid is similar to mean sea level. ''Water surface reference datum altitude'' means the altitude of the arbitrary datum referred to by a quantity with standard name ''water_surface_height_above_reference_datum''. The surface called "surface" means the lower boundary of the atmosphere.'
+    'Sea water temperature is the in situ temperature of the sea water. To specify the depth at which the temperature applies use a vertical coordinate variable or scalar coordinate variable. There are standard names for sea_surface_temperature, sea_surface_skin_temperature, sea_surface_subskin_temperature and sea_surface_foundation_temperature which can be used to describe data located at the specified surfaces. For observed data, depending on the period during which the observation was made, the measured in situ temperature was recorded against standard "scales". These historical scales include the International Practical Temperature Scale of 1948 (IPTS-48; 1948-1967), the International Practical Temperature Scale of 1968 (IPTS-68, Barber, 1969; 1968-1989) and the International Temperature Scale of 1990 (ITS-90, Saunders 1990; 1990 onwards). Conversion of data between these scales follows t68 = t48 - (4.4 x 10e-6) * t48(100 - t - 48); t90 = 0.99976 * t68. Observations made prior to 1948 (IPTS-48) have not been documented and therefore a conversion cannot be certain. Differences between t90 and t68 can be up to 0.01 at temperatures of 40 C and above; differences of 0.002-0.007 occur across the standard range of ocean temperatures (-10 - 30 C). The International Equation of State of Seawater 1980 (EOS-80, UNESCO, 1981) and the Practical Salinity Scale (PSS-78) were both based on IPTS-68, while the Thermodynamic Equation of Seawater 2010 (TEOS-10) is based on ITS-90. References: Barber, 1969, doi: 10.1088/0026-1394/5/2/001; UNESCO, 1981; Saunders, 1990, WOCE Newsletter, 10, September 1990.'
 };
     
