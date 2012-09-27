@@ -64,12 +64,12 @@ function OPT = syncdirs(source, destination,varargin)
 
 %%
 OPT.remove_files_from_destination   = false;  
-OPT.prevent_network_destination     = false;   % double check if destination is not a network adres 
 OPT.source_dir_excl                 = '';
 OPT.source_file_incl                = '.*';
 OPT.destination_dir_excl            = '';
 OPT.destination_file_incl           = '.*';
 OPT.ignorefiledate                  = false;
+OPT.checkByMD5Hash                  = false; % use this to compare files by their hash. This is usefull when you want to ignore file dates, but
 OPT.extraBytesForWaitbar            = 40;  % To compensate for the the reduced throughput when copying many small files add some bytes to their size (this is only for the waitbar) 
 OPT.log                             = 1;
 
@@ -79,17 +79,6 @@ if nargin==0;
     return;
 end
 %% code
-
-
-if OPT.prevent_network_destination
-    if ~isempty(regexp(destination,'^\\\\','once'))
-        error('the destination is a network adres')
-    end
-
-end
-
-
-
 
 % create destination if it does not exist yet
 if ~exist(destination,'dir')
@@ -128,10 +117,17 @@ for ii = 2:length(D_dest)
                 remove_file = false;
             else
                 % for files compare file date...
-                if isequal(D_dest(ii).datenum,D_srce(loc(ii)).datenum) || OPT.ignorefiledate 
-                    % and file size
+                if OPT.ignorefiledate || isequal(D_dest(ii).datenum,D_srce(loc(ii)).datenum)
+                    % and file size...
                     if isequal(D_dest(ii).bytes,D_srce(loc(ii)).bytes  )
-                        remove_file = false;
+                        % and finally compare md5 hash
+                        if ~OPT.checkByMD5Hash || isequal(...
+                                CalcMD5([D_dest(ii)     .pathname D_dest(ii)     .name],'File','dec'),...
+                                CalcMD5([D_srce(loc(ii)).pathname D_srce(loc(ii)).name],'File','dec'));
+                            
+                            % only if all these conditions are met, set the remove file flag to false
+                            remove_file = false;
+                        end
                     end
                 end
             end
