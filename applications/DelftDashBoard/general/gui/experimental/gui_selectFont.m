@@ -168,7 +168,7 @@ n=n+1;
 xml.element(n).element.style='pushok';
 xml.element(n).element.position='230 20 50 20';
 
-xml=gui_fillXMLValues(xml);
+xml=gui_fillXMLvalues(xml);
 
 [font,ok]=gui_newWindow(font,'element',xml.element,'height',500,'width',300,'title','Select Font','modal',1, ...
     'createcallback',@gui_selectFont,'createinput','selectfont');
