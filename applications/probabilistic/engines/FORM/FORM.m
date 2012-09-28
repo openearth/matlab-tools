@@ -137,7 +137,17 @@ end
 rel_ids = {id_low id_upp};
 
 % predefine series of u-combinations
-if length(OPT.startU) == Nstoch
+if isa(OPT.startU, 'function_handle')
+    % evaluate function
+    startU = OPT.startU();
+    if isempty(startU)
+        % use zeros if startU is empty
+        startU = zeros(1,Nstoch);
+    elseif isscalar(startU)
+        % repeat Nstoch times if startU is single value
+        startU = ones(1,Nstoch)*startU;
+    end
+elseif length(OPT.startU) == Nstoch
     startU = OPT.startU;
 elseif isscalar(OPT.startU)
     startU = ones(1,Nstoch)*OPT.startU;
@@ -324,15 +334,21 @@ result = struct(...
         'designpoint', [] ...
     ));
 
+if isa(OPT.startU, 'function_handle')
+    % save finalU to prefs, in order to be available as startU for another
+    % calculation
+    setpref('FORM', 'finalU', result.Output.u(end,:))
+end
+
 designpoint = cell(1, 2*size(x,2));
 designpoint(1:2:length(designpoint)) = {stochast.Name};
 designpoint(2:2:length(designpoint)) = num2cell(x(end,:));
 result.Output.designpoint = struct(designpoint{:},...
     'finalP', result.Output.P(end,:),...
     'finalU', result.Output.u(end,:),...
-    'startU', OPT.startU,...
-    'distU', sqrt(sum((result.Output.u(end,:)-OPT.startU).^2)),...
-    'BSS', 1 - sum((result.Output.u(end,:)-OPT.startU).^2)/sum(result.Output.u(end,:).^2));
+    'startU', startU,...
+    'distU', sqrt(sum((result.Output.u(end,:)-startU).^2)),...
+    'BSS', 1 - sum((result.Output.u(end,:)-startU).^2)/sum(result.Output.u(end,:).^2));
 
 %% subfunction to predefine a series of u-values
 function [u id_low id_upp] = prescribeU(currentU, u, du, Relaxation, rel_ids, MaxItStepSize)

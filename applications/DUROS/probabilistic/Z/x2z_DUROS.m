@@ -68,6 +68,8 @@ try
         'D50', [],...
         'Duration', [],...
         'Accuracy', [],...
+        'Angle', 0,...
+        'AngleFcn', @(Angle) interp1(50:-10:0, [0.2809 0.3011 0.2686 0.188 0.074 0], Angle),...
         'R', [],...
         'zRef', 5);
 
@@ -89,11 +91,16 @@ zInitial = OPT.zInitial(~isnan(OPT.zInitial));
 % reference for retreat distance
 xRef = max(findCrossings(xInitial, zInitial, [min(xInitial) max(xInitial)]', ones(2,1)*OPT.zRef));
 
+if isscalar(OPT.Angle) && ~isscalar(OPT.D50)
+    OPT.Angle = repmat(OPT.Angle, size(OPT.D50));
+end
+
 for i = 1:length(OPT.D50)
 %     try
         %% set calculation values for additional volume
         DuneErosionSettings('set',...
-            'AdditionalVolume', [num2str(OPT.Duration(i)) '*Volume + ' num2str(OPT.Accuracy(i)) '*Volume'],... % string voor het bepalen van het toeslagvolume gedurende de berekening (afslagvolume is negatief)
+            'AdditionalErosionMax', false,...
+            'AdditionalVolume', [num2str(OPT.Duration(i)) '*Volume + ' num2str(OPT.AngleFcn(OPT.Angle(i))) '*Volume + ' num2str(OPT.Accuracy(i)) '*Volume'],... % string voor het bepalen van het toeslagvolume gedurende de berekening (afslagvolume is negatief)
             'BoundaryProfile', false,...       % Grensprofiel berekenen is niet nodig, gebruiken we niet
             'FallVelocity', {@getFallVelocity 'a' 0.476 'b' 2.18 'c' 3.226 'D50'});
 
@@ -114,6 +121,7 @@ for i = 1:length(OPT.D50)
         if length(result) > 1
             OPT.Duration(i) = -result(2).Volumes.Volume*OPT.Duration(i);
             OPT.Accuracy(i) = -result(2).Volumes.Volume*OPT.Accuracy(i);
+            OPT.Angle(i) = -result(2).Volumes.Volume*OPT.Angle(i);
         end
 
         z(i,:) = OPT.Resistance - RD(i);
