@@ -9,8 +9,6 @@ function plotMCConvergence(result, varargin)
 %   Input:
 %   result    = result structure from MC routine
 %   varargin  = confidence:     confidence used in computation of accuracy
-%               naccuracy:      number of locations where accuracy is
-%                               computed
 %
 %   Output:
 %   none
@@ -23,7 +21,7 @@ function plotMCConvergence(result, varargin)
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2012 Deltares
-%       Dorothea Kaste
+%       Ferdinand Diermanse
 %
 %       dorothea.kaste@deltares.nl
 %
@@ -65,8 +63,7 @@ function plotMCConvergence(result, varargin)
 %% read options
 
 OPT = struct(...
-    'confidence',       .95,    ...
-    'naccuracy',        100     ...
+    'confidence',       .95    ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -90,43 +87,24 @@ if ~isfield(result.Output,'idFail') || ~isfield(result.Output,'Calc') || ~isfiel
 end
 
 %% compute accuracy
-
-n = result.Output.Calc;
-Pf = result.Output.P_f;
-
-x = (1:n)';
-y=cumsum(mean(result.Output.idFail,2).*result.Output.P_corr)./x;
-
-
-% p = round(logspace(0,log10(n),OPT.naccuracy));
-% a = nan(size(p))';
-% for i = 1:length(a)
-%     ii   = p(i);
-%     COV  = sqrt(mean((y(1:ii)-y(ii)).^2))/y(ii);
-%     a(i) = norm_inv((OPT.confidence+1)/2,0,1)*COV*y(ii);
-% end
-% 
-% Acy = a(end);
-% Acy_rel = Acy/Pf*100;
-% nf = sum(result.Output.idFail);
-
-% relative error epsilon
-kk=norm_inv((OPT.confidence+1)/2,0,1);   % k-value for desired confidence interval
-Acy_rel=kk*sqrt((1-y)./(x.*y));          % relative error epsilon
-a = Acy_rel.*y;                          % absolute error in P-f
+Estresult = MCEstimator(result.Output.idFail, result.Output.P_corr, OPT.confidence);
+Pz = Estresult.P_z;
+Pf = Estresult.P_f;
+Acy_absV = Estresult.Acy_absV;
+Acy_abs = Estresult.Acy_abs;
+Acy_rel = Estresult.Acy_rel;
 
 
 %% plot convergence
+n = result.Output.Calc;
+cumNsamps = (1:n)';
 
 figure; hold on;
 
-plot(x,y,'-g');
+plot(cumNsamps,Pz,'-g');
 plot([1 n],Pf*[1 1],'-r');
-plot(x,y+a,'-b');
-plot(x,max(0,y-a),'-b');
-
-% plot(p,y(p)+a,'-g');
-% plot(p,y(p)-a,'-g');
+plot(cumNsamps,Pz+Acy_absV,'-b');
+plot(cumNsamps,max(0,Pz-Acy_absV),'-b');
 
 xlabel('Number of samples [-]');
 ylabel('Probability [-]');
@@ -143,6 +121,6 @@ grid on;
 set(gca,'XScale','log');
 set(gca,'YScale','log');
 
-title(sprintf('P_f = %2.1e ; Accuracy = %2.1e (%2.1f%%) ; N = %d ; N_f = %d', ...
-        Pf, Acy, Acy_rel, n, nf));
+title(sprintf('P_f = %2.1e ; Accuracy = %2.1e (%2.1f%%) ; N = %d ', ...
+        Pf, Acy_abs, 100*Acy_rel, n ));
         

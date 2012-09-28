@@ -156,6 +156,7 @@ active      = ~cellfun(@isempty, {stochast.Distr}) &     ...
               ~strcmp('deterministic', cellfun(@func2str, {stochast.Distr}, 'UniformOutput', false));
 
 n = 1;
+
 while (~useAccuracy && n==1) || (useAccuracy && ( ...
         ~isfinite(Acy_abs) || ~isfinite(Acy_rel)    || ...
         (relAccuracy && Acy_rel > minAccuracy)      || ...
@@ -190,18 +191,13 @@ while (~useAccuracy && n==1) || (useAccuracy && ( ...
     % determine failures
     z(idx,:)    = prob_zfunctioncall(OPT, stochast, x(idx,:));
     idFail(idx,:) = z(idx,:) < 0;
-
-    % determine probability of failure
-    P_z         = cumsum(mean(idFail,2).*P_corr)./[1:n*OPT.NrSamples]';
-    P_f         = P_z(end);
-
-    % compute accuracy
-    COV  = sqrt(mean((P_z-P_f).^2))/P_f;
-    Acy_abs = norm_inv((OPT.confidence+1)/2,0,1)*COV*P_f;
-    Acy_rel = Acy_abs/P_f;
     
-    P_z(P_z==0) = NaN;
-    P_f(P_z==0) = NaN;
+    % estimate failure probability and confidence inteval
+    EstResult = MCEstimator(idFail,P_corr,OPT.confidence);
+    P_f = EstResult.P_f;
+    Acy_abs = EstResult.Acy_abs;   % last value of the absoluut error 
+    Acy_rel =EstResult.Acy_abs/P_f;            
+           
     
     if OPT.verbose
         fprintf('%04d: P_f = %3.2e, Acy = %3.2e (%3.2f%%)\n', n, P_f, Acy_abs, Acy_rel*100);
