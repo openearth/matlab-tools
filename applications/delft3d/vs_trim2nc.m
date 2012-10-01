@@ -485,7 +485,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       end
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:XZ map-const:KCS TEMPOUT:XWAT TEMPOUT:CODW map-const:COORDINATES');
       if any(strcmp('grid_x',OPT.var)) & any(strcmp('grid_y',OPT.var))
-      attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'grid_x grid_y');
+      attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'grid_x');
       end
       nc.Variables(ifld) = struct('Name'       , 'x', ...
                                   'Datatype'   , OPT.type, ...
@@ -505,7 +505,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       end
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:YZ map-const:KCS TEMPOUT:YWAT TEMPOUT:CODW map-const:COORDINATES');
       if any(strcmp('grid_x',OPT.var)) & any(strcmp('grid_y',OPT.var))
-      attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'grid_x grid_y');
+      attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'grid_y');
       end
       nc.Variables(ifld) = struct('Name'       , 'y', ...
                                   'Datatype'   , OPT.type, ...
@@ -571,7 +571,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cen.lon(:)) max(G.cen.lon(:))]);
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:XZ map-const:KCS TEMPOUT:XWAT map-const:CODW map-const:COORDINATES');
       if any(strcmp('grid_longitude',OPT.var)) & any(strcmp('grid_latitude',OPT.var))   
-      attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'grid_longitude grid_latitude');
+      attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'grid_longitude');
       end
       nc.Variables(ifld) = struct('Name'       , 'longitude', ...
                                   'Datatype'   , OPT.type, ...
@@ -590,7 +590,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cen.lat(:)) max(G.cen.lat(:))]);
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:YZ map-const:KCS map-const:YWAT map-const:CODW map-const:COORDINATES');
       if any(strcmp('grid_longitude',OPT.var)) & any(strcmp('grid_latitude',OPT.var))   
-      attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'grid_longitude grid_latitude');
+      attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'grid_latitude');
       end
       nc.Variables(ifld) = struct('Name'       , 'latitude', ...
                                   'Datatype'   , OPT.type, ...
@@ -747,8 +747,8 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'comment'      , 'Value', '');
       % NB for values at corners there is no bounds matrix
       attr(end+1)  = struct('Name', 'comment'      ,  'Value', '');
-      dims(1)  = struct('Name', 'grid_n'   ,'Length',ncdimlen.grid_n);
-      dims(2)  = struct('Name', 'grid_m'   ,'Length',ncdimlen.grid_m);
+      dims(    1)  = struct('Name', 'grid_n'   ,'Length',ncdimlen.grid_n);
+      dims(    2)  = struct('Name', 'grid_m'   ,'Length',ncdimlen.grid_m);
       nc.Variables(ifld) = struct('Name'       , 'grid_depth', ...
                                   'Datatype'   , OPT.type, ...
                                   'Dimensions' , dims, ... % special case
