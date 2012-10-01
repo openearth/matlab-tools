@@ -10,50 +10,51 @@ close_it = true;
 % Try it as a local file.  If not a local file, try as
 % via HTTP, then as dods
 if isa(ncfile,'ucar.nc2.NetcdfFile')
-	jncid = ncfile;
-	close_it = false;
+    jncid = ncfile;
+    close_it = false;
 elseif isa(ncfile,'ucar.nc2.dods.DODSNetcdfFile')
-	jncid = ncfile;
-	close_it = false;
+    jncid = ncfile;
+    close_it = false;
 elseif exist(ncfile,'file')
     % non-opendap HTTP?
-	jncid = NetcdfFile.open(ncfile);
+    fid = fopen(ncfile);
+    ncfile = fopen(fid);
+    fclose(fid);
+    jncid = NetcdfFile.open(ncfile);
 else
-	try 
-		jncid = NetcdfFile.open(ncfile);
-	catch %#ok<CTCH>
-		try
+    try 
+        jncid = NetcdfFile.open(ncfile);
+    catch %#ok<CTCH>
+        try
             jncid = snc_opendap_open(ncfile);
-		catch %#ok<CTCH>
-			error ( 'snctools:nc_varget_java:fileOpenFailure', ...
-				'Could not open ''%s'' with java backend.' , ncfile);
-		end
-	end
+        catch %#ok<CTCH>
+            error ( 'snctools:nc_varget_java:fileOpenFailure', ...
+                'Could not open ''%s'' with java backend.' , ncfile);
+        end
+    end
 end
 
 % Get the variable object
 jvarid = jncid.findVariable(varname);
 if isempty ( jvarid )
     error('snctools:varget:java:noSuchVariable', ...
-	    'findVariable failed on variable ''%s'', file ''%s''.',...
+        'findVariable failed on variable ''%s'', file ''%s''.',...
         varname,ncfile);
 end
 
 
 varinfo = nc_getvarinfo_java ( jncid, jvarid );
 var_size = varinfo.Size;
+if any(var_size==0)
+    values = zeros(var_size); % values = [];
+    return
+end
 
 theDataType = jvarid.getDataType();
 theDataTypeString = char ( theDataType.toString() ) ;
 
 [start,count,stride] = get_indexing(jvarid,varinfo,varargin{:});
 
-% If no data has been written to an unlimited variable, then there's 
-% nothing to do.  Just return.
-if prod(var_size) == 0
-	values = [];
-	return
-end
 
 try
     
@@ -96,7 +97,7 @@ values = squeeze(values);
 
 % If we were passed an open java file id, don't close it upon exit.
 if close_it
-	close ( jncid );
+    close ( jncid );
 end
 
 

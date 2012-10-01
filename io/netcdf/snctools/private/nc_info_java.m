@@ -20,6 +20,9 @@ elseif isa(ncfile,'ucar.nc2.dods.DODSNetcdfFile')
 	ncfile = char(jncid.getLocation());
 	close_it = false;
 elseif exist(ncfile,'file')
+    fid = fopen(ncfile);
+    ncfile = fopen(fid);
+    fclose(fid);
 	jncid = NetcdfFile.open(ncfile);
 else
 	try 

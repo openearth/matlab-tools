@@ -21,7 +21,7 @@ end
 
 %--------------------------------------------------------------------------
 function attval = attget_2007b(jncid,varname,attribute_name,close_it)
-
+% 2007b and later allow us to catch errors.
 
 try
     attval = attget ( jncid, varname, attribute_name );
@@ -54,6 +54,9 @@ elseif isa(ncfile,'ucar.nc2.dods.DODSNetcdfFile')
 	jncid = ncfile;
 	close_it = false;
 elseif exist(ncfile,'file')
+    fid = fopen(ncfile);
+    ncfile = fopen(fid);
+    fclose(fid);
 	jncid = NetcdfFile.open(ncfile);
 else
 	try 
@@ -148,6 +151,11 @@ end
 
 % Ok, so it's numeric data.
 % convert it to a numeric array.
+if jatt.getLength == 0
+    values = [];
+    return;
+end
+
 j_array = jatt.getValues();
 values = j_array.copyTo1DJavaArray();
 values = values';

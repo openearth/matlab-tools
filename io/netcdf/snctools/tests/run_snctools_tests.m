@@ -175,14 +175,10 @@ v = version('-release');
 if ~strcmp(v,'14')
     % HDF4 not supported on R14.
     run_hdf4_read_tests;
-    if getpref('SNCTOOLS','TEST_HDF4_WRITE',false)
-        run_hdf4_write_tests;
-    else
-        fprintf('\tHDF4 write testing filtered out where TEST_HDF4_WRITE preference set to false.\n');
-    end
+
+    % We don't bother with HDF4 writing anymore.
 end
 
-v = version('-release');
 switch(v)
     case { '14','2006a','2006b','2007a','2007b','2008a'}
         fprintf('\ttmw testing filtered out on release %s...\n', v);
@@ -258,8 +254,6 @@ test_nc_getbuffer;
 test_nc_info;
 test_nc_getdiminfo;
 test_nc_isdim;
-test_snc2mat;
-%test_nc_getall;
 test_nc_dump;
 
 %--------------------------------------------------------------------------
@@ -292,13 +286,22 @@ function run_nc4_enhanced_read_tests()
 
 v = version('-release');
 switch(v)
-    case {'2006a','2006b','2007a','2007b','2008a','2008b','2009a','2009b','2010a','2010b','2011a'}
+    case {'2006a','2006b','2007a','2007b','2008a','2008b','2009a', ...
+            '2009b','2010a','2010b','2011a'}
         fprintf('\tfiltering out enhanced-model tests on %s.\n', v);
         return;
 end
 
+
 mode = 'netcdf4-enhanced';
-fprintf('\tTesting %s...\n',mode);
+fprintf('\tTesting %s... \n',mode);
+
+v = nc_info('example.nc');
+if strcmp(v.Format,'netcdf-java')
+    fprintf('\t\tFiltering out enhanced-model tests when netcdf-java is the read backend.\n');
+    return;
+end
+
 test_nc_varget(mode);
 test_nc_info(mode);
 test_nc_attget(mode);

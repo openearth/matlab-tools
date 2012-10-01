@@ -82,7 +82,11 @@ nc_addvar(ncfile,v);
 % If we try to write '_FillValue' as an attribute and if the file is netcdf-4,
 % we should error out.
 info = nc_info(ncfile);
-if strcmp(info.Format,'NetCDF-4 Classic')
+if strcmp(info.Format,'netcdf-java')
+    
+    fprintf('\tSkipping test_write_fill_value test... ');
+    
+elseif strcmp(info.Format,'NetCDF-4 Classic')
 
 	% This should issue an error.
 	try

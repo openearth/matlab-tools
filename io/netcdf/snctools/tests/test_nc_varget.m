@@ -87,7 +87,9 @@ function test_enhanced_atomic_datatypes(ncfile)
 
 % int64 datatypes should NOT be scaled into double precision
 act_data = nc_varget(ncfile,'y');
-exp_data = int64([0:9]');
+
+exp_data = 0:9;
+exp_data = int64(exp_data');
 
 if ~isequal(act_data,exp_data)
     error('failed');
@@ -497,6 +499,26 @@ return
 
 
 %--------------------------------------------------------------------------
+function test_zero_size ( ncfile )
+% If the variable is empty, then we shouldn't necessarily error out.
+
+expSize = [0 4];
+
+if getpref('SNCTOOLS','PRESERVE_FVD',false)
+    expSize = fliplr(expSize);
+end
+data = nc_varget(ncfile,'c');
+actSize = size(data);
+if ~isequal(actSize,expSize)
+    error('Zero size mismatch.');
+end
+
+
+
+
+
+
+%--------------------------------------------------------------------------
 function test_inf_count ( ncfile )
 % If the count has Inf anywhere, treat that as meaning to "retrieve unto
 % the end of the file.
@@ -655,8 +677,6 @@ copyfile(ncfile,'foo.nc');
 ncfile = 'foo.nc';
 
 info = nc_info(ncfile);
-
-nc_adddim(ncfile,'time',0);
 
 clear v;
 if ~strcmp(info.Format,'HDF4')
@@ -899,6 +919,7 @@ test_read_single_value_from_2d_variable(ncfile);
 test_read3x2hyperslabFrom2dVariable ( ncfile );
 test_stride_with_negative_count ( ncfile );
 test_inf_count ( ncfile );
+test_zero_size ( ncfile );
 
 test_read_singleton_variable ( ncfile );
 test_readFullDoublePrecisionVariable ( ncfile );
@@ -916,6 +937,7 @@ regression_NegSize(ncfile);
 
 test_bad_fill_value(testroot);
 test_bad_missing_value(testroot);
+test_not_full_path;
 
 v = version('-release');
 switch(v)
@@ -933,7 +955,18 @@ return
 
 
 
-
+%--------------------------------------------------------------------------
+function test_not_full_path()
+% verify that we can read from a file that is on the matlab path.
+v = version('-release');
+switch(v)
+    case {'14','2006a','2006b','2007a','2007b','2008a'}
+        % no example.nc yet
+        return;
+    otherwise
+        % It's enough that we do not error out.
+        data = nc_varget('example.nc','temperature');
+end
 %--------------------------------------------------------------------------
 function test_indices_are_cols(ncfile)
 

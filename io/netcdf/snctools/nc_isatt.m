@@ -9,7 +9,7 @@ function tf = nc_isatt(ncfile,varname,attrname)
 %   in the example file shipped with R2008b.
 %       bool = nc_isatt('example.nc',nc_global,'creation_date);
 %
-%   See also nc_isvar, nc_isdim
+%   See also nc_isvar, nc_is_dim.
 
 retrieval_method = snc_read_backend(ncfile);
 switch(retrieval_method)

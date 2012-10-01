@@ -297,6 +297,12 @@ cmd = sprintf('nc_dump(''%s'')',ncfile);
 act_data = evalc(cmd);
 exp_data = d.netcdf.classic3.(majority).(rel);
 
+% Remove backend dependency
+p = strfind(act_data,ncfile);
+act_data = act_data(p:end);
+p = strfind(exp_data,ncfile);
+exp_data = exp_data(p:end);
+
 if ~strcmp(act_data,exp_data)
     error('failed');
 end

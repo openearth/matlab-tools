@@ -44,7 +44,8 @@ catch me
     switch(me.identifier)
         case { 'MATLAB:imagesci:netcdf:libraryFailure', ... % 2011b
                 'MATLAB:netcdf:inqVarID:enotvar:variableNotFound', ... % 2011a
-                'MATLAB:netcdf:inqVarID:variableNotFound' }            % 2010a
+                'MATLAB:netcdf:inqVarID:variableNotFound', ...      % 2010a
+                'snctools:attget:java:variableNotFound' }
             return
         otherwise
             rethrow(me);

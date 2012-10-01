@@ -133,12 +133,7 @@ end
 nc_attput ( ncfile, nc_global, 'emptyAtt', '' );
 x = nc_attget ( ncfile, nc_global, 'emptyAtt' );
 
-if ( ~ischar(x) )
-    error('class of retrieved attribute was not char.' );
-end
-
-
-if ( numel(x) ~= 0 )
+if ~isempty(x)
     error ( 'retrieved attribute was not empty' );
 end
 

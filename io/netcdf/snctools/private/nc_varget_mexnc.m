@@ -26,6 +26,11 @@ try
     end
 
     var_size = determine_varsize_mex(ncid,dimids,nvdims,preserve_fvd);
+    if any(var_size==0)
+        values = zeros(var_size); % values = [];
+        return
+    end
+
     [start,count,stride] = snc_get_indexing(nvdims,var_size,varargin{:});
     
 

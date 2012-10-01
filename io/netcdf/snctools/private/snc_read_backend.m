@@ -13,18 +13,6 @@ function [retrieval_method,fmt] = snc_read_backend(ncfile)
 %
 %See also: snctools, snc_format
 
-%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 14 Sep 2012
-% Created with Matlab version: 7.14.0.739 (R2012a)
-
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
-% $Keywords: $
-
-
 import ucar.nc2.dods.*    
 import ucar.nc2.*
 
@@ -60,7 +48,7 @@ mv = version('-release');
 
 fmt = snc_format(ncfile);
 
-% These cases have no alternatives.
+% For HDF4, there is no alternative.
 if strcmp(fmt,fmts.HDF4) 
     switch(mv)
         case {'14','2006a','2006b','2007a','2007b','2008a','2008b', ...
@@ -72,8 +60,19 @@ if strcmp(fmt,fmts.HDF4)
 
     fmt = fmts.HDF4;
     return
+end
 
-elseif strcmp(fmt,fmts.URL) 
+DEBUG = 0;
+if DEBUG
+    % Set DEBUG to 1 to force use of netcdf-java at all times.
+    % You shouldn't have to do this unless you are trying to
+    % find a bug somewhere.
+    retrieval_method = retrieval_methods.java; 
+    fmt = fmts.netcdf_java;
+    return
+end
+
+if strcmp(fmt,fmts.URL) 
 
     % URLs must be handled by netcdf-java until R2012a.
     switch(mv)
@@ -85,13 +84,14 @@ elseif strcmp(fmt,fmts.URL)
             end
             retrieval_method = retrieval_methods.java; 
             fmt = fmts.netcdf_java;
+
         otherwise
             % 12a and above has native matlab support for opendap.
             if strcmpi(ncfile(1:5),'https')
                 % Still, use netcdf-java for SSL.
                 retrieval_method = retrieval_methods.java; 
                 fmt = fmts.netcdf_java;
-            elseif getpref('SNCTOOLS','USE_NETCDF_JAVA',false)
+            elseif getpref('SNCTOOLS','USE_NETCDF_JAVA',false) % redundant, as already handled at above
                 % Force the use of netcdf-java if the user
                 % really want it.
                 retrieval_method = retrieval_methods.java; 

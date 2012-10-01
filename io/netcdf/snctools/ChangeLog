@@ -1,6 +1,22 @@
+* September 29 2012 John Evans <john.g.evans.ne@gmail.com> -r4012
+- Fixed bug in netcdf-java backend where a file on the matlab path 
+- wouldn't be read.
+- Added debug code to force use of netcdf-java for all reading.
+- Minor test modifications.
+
+* September 25 2012 John Evans <john.g.evans.ne@gmail.com> -r4009
+- Fixed minor testing bug.
+
+* September 22 2012 John Evans <john.g.evans.ne@gmail.com> -r4007
+- Not erroring out on zero-size variables.
+
+* September 14 2012 John Evans <john.g.evans.ne@gmail.com> -r4005
+- No longer testing SNC2MAT or HDF4 writes.
+- Crosslinked NC_ISVAR, NC_ISDIM, NC_ISATT help.
+
 * July 19 2012 John Evans <john.g.evans.ne@gmail.com> -r4000
-- Added USE_NETCDF_JAVA preference to allow forced use of netcdf-java on 
-- R2012a
+- Added USE_NETCDF_JAVA preference to allow forced use of netcdf-java 
+- instead of tmw for opendap reads.
 
 * May 28 2012 John Evans <john.g.evans.ne@gmail.com> -r3998
 - Fixed testing issue with GRIB setup.

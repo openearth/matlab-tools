@@ -7,7 +7,7 @@ function tf = nc_isvar(ncfile,varname)
 %   Example (requires R2008b):
 %       bool = nc_isvar('example.nc','temperature')
 %       
-%   See also nc_isatt, nc_isdim
+%   See also nc_isatt, nc_isdim.
 
 % Both inputs must be character
 if nargin ~= 2
