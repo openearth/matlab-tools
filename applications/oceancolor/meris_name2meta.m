@@ -1,7 +1,8 @@
 function varargout = meris_name2meta(name,keyword),
 %MERIS_NAME2META  retrieves meta-information from MERIS filename.
 %
-% D     = MERIS_NAME2META(filename) where D is a struct
+% D     = MERIS_NAME2META(filename) where D is a struct and filename
+%         is a char with 1 filename or a cell with multiple filenames
 % val   = MERIS_NAME2META(filename,keyword) gets only the 
 %         requested field 'keyword' from D, handy for use in expressions.
 % dummy = MERIS_NAME2META() returns dummy example output struct

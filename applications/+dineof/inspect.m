@@ -1,5 +1,5 @@
 function inspect(data, time, mask, dataf, S,varargin)
-%INSPECT  inspect DINEOF results for inspection via plot
+%inspect  inspect DINEOF results for inspection via plot
 %
 %   dineof.inspect(data, time, mask, dataf, D)
 %

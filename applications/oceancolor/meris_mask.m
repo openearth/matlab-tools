@@ -10,9 +10,9 @@ function mask = meris_mask(l2_flags,bits,varargin),
 %                 1   where pixels should be KEPT
 %                 NaN where pixels should be REMOVED
 %
-% Example to remove land and clouds: (note land is only true where there are no clouds!)
+% Example to remove coastlines, land and clouds: (note land is only true where there are no clouds!)
 %
-% SAT.mask     = meris_mask(SAT.l2_flags,[22 23]);
+% SAT.mask     = meris_mask(SAT.l2_flags,[13 22 23]);
 %
 %See also: BITAND, MERIS_NAME2META, MERIS_FLAGS, DEC2BIN, BIN2DEC, SEAWIFS_MASK
  

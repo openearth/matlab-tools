@@ -1,7 +1,7 @@
-function D = meris_WaterInsight_load(fname)
+function D = meris_WaterInsight_load(fname,varargin)
 %MERIS_WaterInsight_LOAD  load bundle of processed MERIS *.mat files as defined by WaterInsight
 %
-%    D = load(fname)
+%    D = meris_WaterInsight_load(fname)
 %
 % loads data and meta-data from:
 %
@@ -47,6 +47,11 @@ function D = meris_WaterInsight_load(fname)
 % $HeadURL$
 % $Keywords: $
 
+
+   OPT.debug = 0; % does not load data (mat files)
+   
+   OPT = setproperty(OPT,varargin);
+
 %% Get meta info
 
    D = meris_name2meta(fname);
@@ -66,6 +71,8 @@ function D = meris_WaterInsight_load(fname)
    D.flags                       = meris_flags;
    
    % units
+
+if ~OPT.debug
 
 %% Load data
   tmp_fnam=[filepathstr(D.filename),filesep,D.basename,'_hydropt74.mat'];
@@ -115,6 +122,8 @@ function D = meris_WaterInsight_load(fname)
    D = rmfield(D,'biglat');
    D = rmfield(D,'c'     );
    D = rmfield(D,'dc'    );
+
+end
 
 %% Append meta-info
 %  http://www.mumm.ac.be/OceanColour/Sensors/meris.php

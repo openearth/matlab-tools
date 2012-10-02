@@ -1,12 +1,15 @@
 function meris2nc(outputfile,D,varargin);
-%MERIS2NC   save MERIS object as netCDF file
+%MERIS2NC   save ONE MERIS object as netCDF file
 %
 %   meris2nc(outputfile,D)
 %
 % where D is a MERIS object (struct) as returned by either
 % MERIS_WATERINSIGHT_LOAD or MERIS_IVMMOS2_LOAD.
 %
-%See also: OCEANCOLOR, SEAWIFS_CREATE, NLW2SPM
+% See L2BIN2NC for storing a time series of binned
+% MERIS images.
+%
+%See also: OCEANCOLOR, SEAWIFS_CREATE, NLW2SPM, L2BIN2NC
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -100,10 +103,10 @@ function meris2nc(outputfile,D,varargin);
    
 %% 2 Create dimensions
    
+      nc_add_dimension(outputfile, 'time'         ,           1);  % use time as last dimension so for one time the matrices are simply 2D 
       nc_add_dimension(outputfile, 'dim1'         ,      size(D.l2_flags,1)); 
       nc_add_dimension(outputfile, 'dim2'         ,      size(D.l2_flags,2)); 
-      nc_add_dimension(outputfile, 'time'         ,           1);  % use time as last dimension so for one time the matrices are simply 2D 
-      nc_add_dimension(outputfile, 'band'         ,      size(D.Kd,3));  
+      nc_add_dimension(outputfile, 'band'         ,      length(D.bands.wavelength));  
       nc_add_dimension(outputfile, 'L2_flags_bits',    length(D.flags.bit));
       nc_add_dimension(outputfile, 'strlen1'      , size(char(D.flags.name),2));
 
@@ -128,6 +131,24 @@ function meris2nc(outputfile,D,varargin);
       nc(ifld).Attribute(8) = struct('Name', 'SIOP'       ,'Value',         D.metaData.SIOP);
       nc(ifld).Attribute(9) = struct('Name', 'fname'      ,'Value',         D.metaData.fName);
 
+   %% Time
+   %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#time-coordinate
+   %  time is a dimension, so there are two options:
+   %  * the variable name needs the same as the dimension
+   %    http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984551
+   %  * there needs to be an indirect mapping through the coordinates attribute
+   %    http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984605
+      
+        ifld = ifld + 1;
+      nc(ifld).Name         = 'time';
+      nc(ifld).Nctype       = 'double';                        % !!!! % float not sufficient as datenums are big: double
+      nc(ifld).Dimension    = {'time'}; % {'locations','time'} % does not work in ncBrowse, nor in Quickplot (is indirect time mapping)
+      nc(ifld).Attribute(1) = struct('Name', 'long_name'          ,'Value', 'time');
+      nc(ifld).Attribute(2) = struct('Name', 'units'              ,'Value', ['days since ',datestr(OPT.refdatenum,'yyyy-mm-dd'),' 00:00:00 ',D.timezone]);
+      nc(ifld).Attribute(3) = struct('Name', 'standard_name'      ,'Value', 'time');
+      nc(ifld).Attribute(4) = struct('Name', '_FillValue'         ,'Value', OPT.fillvalue);
+      nc(ifld).Attribute(5) = struct('Name', 'axis'               ,'Value', 'time');
+
    %% Coordinate system
    %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#appendix-grid-mappings
    
@@ -145,10 +166,10 @@ function meris2nc(outputfile,D,varargin);
       nc(ifld).Name         = 'longitude';
       nc(ifld).Nctype       = 'double';                       % !!!!
       nc(ifld).Dimension    = {'dim1','dim2','time'};
-      nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'longitude');
+      nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'pixel centers longitude');
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'degrees_east');
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'longitude'); % standard name
-      nc(ifld).Attribute(4) = struct('Name', 'axis'           ,'Value', 'longitude');
+      nc(ifld).Attribute(4) = struct('Name', 'axis'           ,'Value', 'X');
 
    %% Latitude
    %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
@@ -157,10 +178,10 @@ function meris2nc(outputfile,D,varargin);
       nc(ifld).Name         = 'latitude';
       nc(ifld).Nctype       = 'double';                       % !!!!
       nc(ifld).Dimension    = {'dim1','dim2','time'};
-      nc(ifld).Attribute(1) = struct('Name', 'long_name'          ,'Value', 'latitude');
+      nc(ifld).Attribute(1) = struct('Name', 'long_name'          ,'Value', 'pixel centers latitude');
       nc(ifld).Attribute(2) = struct('Name', 'units'              ,'Value', 'degrees_north');
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'      ,'Value', 'latitude'); % standard name
-      nc(ifld).Attribute(4) = struct('Name', 'axis'               ,'Value', 'latitude');
+      nc(ifld).Attribute(4) = struct('Name', 'axis'               ,'Value', 'Y');
       end
 
       if isfield(D,'x') & isfield(D,'y')
@@ -188,24 +209,6 @@ function meris2nc(outputfile,D,varargin);
       nc(ifld).Attribute(3) = struct('Name', 'standard_name'      ,'Value', 'projection_y_coordinate'); % standard name
       nc(ifld).Attribute(4) = struct('Name', 'axis'               ,'Value', 'Y');
       end
-
-   %% Time
-   %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#time-coordinate
-   %  time is a dimension, so there are two options:
-   %  * the variable name needs the same as the dimension
-   %    http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984551
-   %  * there needs to be an indirect mapping through the coordinates attribute
-   %    http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984605
-      
-        ifld = ifld + 1;
-      nc(ifld).Name         = 'time';
-      nc(ifld).Nctype       = 'double';                        % !!!! % float not sufficient as datenums are big: double
-      nc(ifld).Dimension    = {'time'}; % {'locations','time'} % does not work in ncBrowse, nor in Quickplot (is indirect time mapping)
-      nc(ifld).Attribute(1) = struct('Name', 'long_name'          ,'Value', 'time');
-      nc(ifld).Attribute(2) = struct('Name', 'units'              ,'Value', ['days since ',datestr(OPT.refdatenum,'yyyy-mm-dd'),' 00:00:00 ',D.timezone]);
-      nc(ifld).Attribute(3) = struct('Name', 'standard_name'      ,'Value', 'time');
-      nc(ifld).Attribute(4) = struct('Name', '_FillValue'         ,'Value', OPT.fillvalue);
-      nc(ifld).Attribute(5) = struct('Name', 'axis'               ,'Value', 'time');
 
    %% Parameters with standard names
    %  * http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/
@@ -317,10 +320,9 @@ function meris2nc(outputfile,D,varargin);
       nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'MERIS Level 2 flags');
       nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', '24 bit bytestring'); 
       nc(ifld).Attribute(3) = struct('Name', 'coordinates'    ,'Value', 'latitude longitude time x y');
-      nc(ifld).Attribute(4) = struct('Name', 'comment'        ,'Value', 'Refer to ESA flag codings'); 
-      nc(ifld).Attribute(5) = struct('Name', 'comment'        ,'Value', 'example bit numbers (=string index-1)'); 
-      nc(ifld).Attribute(6) = struct('Name', 'comment'        ,'Value', 'refer to: '); 
-      end
+      nc(ifld).Attribute(4) = struct('Name', 'comment1'       ,'Value', 'Refer to ESA flag codings'); 
+      nc(ifld).Attribute(5) = struct('Name', 'comment2'       ,'Value', 'example bit numbers (=string index-1)'); 
+      nc(ifld).Attribute(6) = struct('Name', 'comment3'       ,'Value', 'refer to: '); 
       
         ifld = ifld + 1;
       nc(ifld).Name         = 'L2_flags_name';
@@ -333,6 +335,7 @@ function meris2nc(outputfile,D,varargin);
       nc(ifld).Nctype       = 'int';                       % !!!!
       nc(ifld).Dimension    = {'L2_flags_bits'};
       nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'MERIS Level 2 flags bits');      
+      end
       
       if isfield(D,'chisq')
         ifld = ifld + 1;

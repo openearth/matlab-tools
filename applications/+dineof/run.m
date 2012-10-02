@@ -233,7 +233,7 @@ function varargout = run(data, time, mask, varargin)
    varid.lon = netcdf.defVar(NCid,OPT.lonname,'double' ,dimid.space); 
    varid.lat = netcdf.defVar(NCid,OPT.latname,'double' ,dimid.space); 
 
-   netcdf.putAtt(NCid,varid.lat,'long_name'    ,'longitude');
+   netcdf.putAtt(NCid,varid.lon,'long_name'    ,'longitude');
    netcdf.putAtt(NCid,varid.lon,'standard_name','longitude');
    netcdf.putAtt(NCid,varid.lon,'units'        ,'degrees_east');
 
@@ -272,14 +272,14 @@ function varargout = run(data, time, mask, varargin)
    end
    
    %% clean up any previous runs
-   if exist('meandata.val'    );delete('meandata.val'    );end
-   if exist('neofretained.val');delete('neofretained.val');end
-   if exist('outputEof.lftvec');delete('outputEof.lftvec');end
-   if exist('outputEof.rghvec');delete('outputEof.rghvec');end
-   if exist('outputEof.varEx' );delete('outputEof.varEx' );end
-   if exist('outputEof.vlsng' );delete('outputEof.vlsng' );end
-   if exist('valc.dat'        );delete('valc.dat'        );end
-   if exist('valosclast.dat'  );delete('valosclast.dat'  );end
+   if exist('meandata.val'    )==2;delete('meandata.val'    );end
+   if exist('neofretained.val')==2;delete('neofretained.val');end
+   if exist('outputEof.lftvec')==2;delete('outputEof.lftvec');end
+   if exist('outputEof.rghvec')==2;delete('outputEof.rghvec');end
+   if exist('outputEof.varEx' )==2;delete('outputEof.varEx' );end
+   if exist('outputEof.vlsng' )==2;delete('outputEof.vlsng' );end
+   if exist('valc.dat'        )==2;delete('valc.dat'        );end
+   if exist('valosclast.dat'  )==2;delete('valosclast.dat'  );end
    
    %% run
    disp('Running DINEOF, please wait ...')
