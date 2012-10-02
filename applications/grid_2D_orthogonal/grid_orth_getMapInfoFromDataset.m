@@ -78,7 +78,7 @@ else
                     size(urls,1) == length(unique(cellstr(urls)))
                 % use urls from catalog.nc provided that the matrix of
                 % urlPaths is not flipped AND the urls are not cut off
-                OPT.urls = urls;
+                OPT.urls = cellstr(urls);
             else
                 % otherwise, ignore catalog.nc and use the remaining urls
                 OPT.urls = OPT.urls(~isCatalogNc);
