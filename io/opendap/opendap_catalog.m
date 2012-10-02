@@ -202,6 +202,11 @@ else
    
    try
       
+      [~,status]   = urlread(OPT.url);
+      if status==0
+          fprintf(2,['skipped catalog, offline: ',OPT.url])
+      else
+          
       D   = xml_read(OPT.url,pref);
       
       if OPT.debug
@@ -222,6 +227,8 @@ else
 
       nc_file_list   = opendap_catalog_dataset(D,OPT);
       nc_folder_list = []; % TO DO
+      
+      end
 
    catch
       if ~(OPT.log==1) % ALWAYS report skipped items
