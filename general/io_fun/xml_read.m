@@ -196,7 +196,7 @@ else         % we assume xmlfile is a filename
         error('Failed to read XML file %s: \n%s',xmlfile, getReport(ME));
       end
     catch %#ok<CTCH> catch for mablab versions prior to 7.5
-      error('Failed to read XML file %s\n',xmlfile);
+        error('Failed to read XML file %s\n',xmlfile);
     end
   end
 end
