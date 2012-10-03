@@ -84,7 +84,7 @@ else
         str{find(cellfun(@isempty, str),1)} = sprintf(['%' num2str(maxlengthNumber) 'i  %' num2str(maxlengthParameter) 's  %' num2str(maxlengthAlfa) 's  %' num2str(maxlengthX) 's\n'], i, [result.Input(i).Name blanks(nrblanks)], num2str(result.Output.alpha(i), '%5.3E'), num2str(result.Output.x(result.Output.Calc(end),i), '%5.3E'));
     end
 
-    str{find(cellfun(@isempty, str),1)} = sprintf('\nz-value (Resistance = %g)\n', result.settings.Resistance);
+%     str{find(cellfun(@isempty, str),1)} = sprintf('\nz-value (Resistance = %g)\n', result.settings.Resistance);
     for i = [1 result.Output.Calc(end)]
         str{find(cellfun(@isempty, str),1)} = sprintf(['%' num2str(length(num2str(result.Output.Calc(end)))) 'i  %5.3E\n'], i, result.Output.z(i));
     end
