@@ -173,23 +173,22 @@ function str = var2params(varname, value, maxStringLength)
 
 % derive number of blanks to line out the '=' signs
 nrBlanks = maxStringLength - length(varname);
-% create first part of line
-str = sprintf('%s%s = ', varname, blanks(nrBlanks));
 % create last part of line, taking the type into account
 s=whos('value');
 switch s.class
     case 'char'
-        str = sprintf('%s', str, value);
-    case 'logical'
-        str = sprintf('%s%d', str, value);
-    case 'int'
-        str = sprintf('%s%d', str, value);
-    case 'double'
-        if value == round(value)
-            str = sprintf('%s%d', str, value);
-        else
-            str = sprintf('%s%f', str, value);
+        str = sprintf(' %s', value);
+    case {'logical' 'int' 'double'}
+        str = '';
+        value = num2cell(value);
+        for i = 1:length(value)
+            if ~strcmpi(s.class,'double') || value{i} == round(value{i})
+                str = sprintf('%s %d', str, value{i});
+            else
+                str = sprintf('%s %f', str, value{i});
+            end
         end
     otherwise
-        str = sprintf('%s%s', str, value);
+        str = sprintf( '%s', value);
 end
+str = sprintf('%s%s =%s', varname, blanks(nrBlanks), str);
