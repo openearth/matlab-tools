@@ -22,9 +22,11 @@ function [x y z] = xb_grid_finalise(x, y, z, varargin)
 %                                                   sandwalls
 %                               seaward_flatten:    flatten offshore
 %                                                   boundary
-%                               landward_extend:    extend lanward border
+%                               landward_extend:    extend landward border
 %                                                   with specified
 %                                                   elevation 
+%                               landward_polder:    add polder at -5 at
+%                                                   landward side of model
 %                               seaward_extend:     extend seaward border
 %                                                   to a certain depth
 %
@@ -283,7 +285,20 @@ function [x y z] = landward_extend(x, y, z, OPT)
     y = yn;
     z = zn;
     
-    xb_verbose(2,'Extand in landward direction until given level');
+    xb_verbose(2,'Extend in landward direction until given level');
+    xb_verbose(3,'Cells',n);
+    xb_verbose(3,'Level',OPT.z0);
+    
+function [x y z] = landward_polder(x, y, z, OPT)
+    n = OPT.n;
+    z0 = -OPT.z0;
+    
+    for i = 1:size(z,1)
+        z(i,end-n:end) = interp1(x(i,[end-n end]),[z0 z(i,end)],x(i,end-n:end));
+        z(i,end-2*n-1:end-n-1) = interp1(x(i,[end-2*n-1 end-n-1]),[z(i,end-2*n-1) z0],x(i,end-2*n-1:end-n-1));
+    end
+    
+    xb_verbose(2,'Add polder to landward boundary');
     xb_verbose(3,'Cells',n);
     xb_verbose(3,'Level',OPT.z0);
     
