@@ -66,7 +66,7 @@ strLogical = {'FALSE' 'TRUE'};
 
 verbose = xb_getpref('verbose');
 
-if ~isempty(varargin)
+if verbose && ~isempty(varargin)
     
     ind = repmat('    ',1,level);
     str = varargin{1};
