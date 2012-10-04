@@ -31,6 +31,9 @@ function varargout = ghostscript(cmd)
 % 27/4/11 - Find 64-bit Ghostscript on Windows. Thanks to Paul Durack and
 % Shaun Kline for pointing out the issue
 
+% 4/5/11 - Thanks to David Chorlian for pointing out an alternative
+% location for gs on linux.
+
 % Call ghostscript
 [varargout{1:nargout}] = system(sprintf('"%s" %s', gs_path, cmd));
 return
@@ -78,11 +81,17 @@ if ispc
             end
         end
     end
+    if check_store_gs_path(path)
+        return
+    end
 else
-    path = '/usr/local/bin/gs';
-end
-if check_store_gs_path(path)
-    return
+    bin = {'/usr/bin/gs', '/usr/local/bin/gs'};
+    for a = 1:numel(bin)
+        path = bin{a};
+        if check_store_gs_path(path)
+            return
+        end
+    end
 end
 % Ask the user to enter the path
 while 1
@@ -109,7 +118,7 @@ while 1
         end
     end
 end
-error('Ghostscript not found.');
+error('Ghostscript not found. Have you installed it from www.ghostscript.com?');
 
 function good = check_store_gs_path(path)
 % Check the path is valid

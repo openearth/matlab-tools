@@ -32,7 +32,7 @@
 %             output. A larger value gives a higher quality. quality > 100
 %             gives lossless output. Default: ghostscript prepress default.
 
-% Copyright (C) Oliver Woodford 2009-2010
+% Copyright (C) Oliver Woodford 2009-2011
 
 % Suggestion of appending pdf files provided by Matt C at:
 % http://www.mathworks.com/matlabcentral/fileexchange/23629
@@ -42,12 +42,19 @@
 % Thank you to Scott for pointing out the subsampling of very small images,
 % which was fixed for lossless compression settings.
 
+% 9/12/2011 Pass font path to ghostscript.
+
 function eps2pdf(source, dest, crop, append, gray, quality)
 % Intialise the options string for ghostscript
 options = ['-q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -dPDFSETTINGS=/prepress -sOutputFile="' dest '"'];
 % Set crop option
 if nargin < 3 || crop
     options = [options ' -dEPSCrop'];
+end
+% Set the font path
+fp = font_path();
+if ~isempty(fp)
+    options = [options ' -sFONTPATH="' fp '"'];
 end
 % Set the grayscale option
 if nargin > 4 && gray
@@ -102,3 +109,26 @@ if status
 end
 return
 
+% Function to return (and create, where necessary) the font path
+function fp = font_path()
+fp = user_string('gs_font_path');
+if ~isempty(fp)
+    return
+end
+% Create the path
+% Start with the default path
+fp = getenv('GS_FONTPATH');
+% Add on the typical directories for a given OS
+if ispc
+    if ~isempty(fp)
+        fp = [fp ';'];
+    end
+    fp = [fp getenv('WINDIR') filesep 'Fonts'];
+else
+    if ~isempty(fp)
+        fp = [fp ':'];
+    end
+    fp = [fp '/usr/share/fonts:/usr/local/share/fonts:/usr/share/fonts/X11:/usr/local/share/fonts/X11:/usr/share/fonts/truetype:/usr/local/share/fonts/truetype'];
+end
+user_string('gs_font_path', fp);
+return

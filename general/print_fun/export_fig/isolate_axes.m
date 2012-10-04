@@ -17,9 +17,11 @@
 % OUT:
 %    fh - The handle of the created figure.
 
-% Copyright (C) Oliver Woodford 2011
+% Copyright (C) Oliver Woodford 2011-2012
 
 % Thank you to Rosella Blatt for reporting a bug to do with axes in GUIs
+% 16/3/2012 Moved copyfig to its own function. Thanks to Bob Fratantonio
+% for pointing out that the function is also used in export_fig.m.
 
 function fh = isolate_axes(ah, vis)
 % Make sure we have an array of handles
@@ -104,19 +106,5 @@ for a = 1:numel(ah)
         ph = [ph; h];
         h = get(h, 'parent');
     end
-end
-return
-
-function fh = copyfig(fh)
-% Is there a legend?
-if isempty(findobj(fh, 'Type', 'axes', 'Tag', 'legend'))
-    % Safe to copy using copyobj
-    fh = copyobj(fh, 0);
-else
-    % copyobj will change the figure, so save and then load it instead
-    tmp_nam = [tempname '.fig'];
-    hgsave(fh, tmp_nam);
-    fh = hgload(tmp_nam);
-    delete(tmp_nam);
 end
 return

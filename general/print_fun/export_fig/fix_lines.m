@@ -40,9 +40,9 @@ if fh == -1
 end
 try
     fstrm = fread(fh, '*char')';
-catch
+catch ex
     fclose(fh);
-    rethrow(lasterror);
+    rethrow(ex);
 end
 fclose(fh);
 
@@ -112,9 +112,9 @@ if ~isempty(ind)
 end
 
 % Isolate line style definition section
-first_sec = findstr(fstrm, '% line types:');
+first_sec = strfind(fstrm, '% line types:');
 [second_sec remaining] = strtok(fstrm(first_sec+1:end), '/');
-[dummy remaining] = strtok(remaining, '%');
+[remaining remaining] = strtok(remaining, '%');
 
 % Define the new styles, including the new GR format
 % Dot and dash lengths have two parts: a constant amount plus a line width
@@ -146,9 +146,9 @@ try
     fwrite(fh, second_sec, 'char*1');
     fprintf(fh, '%s\r', new_style{:});
     fwrite(fh, remaining, 'char*1');
-catch
+catch ex
     fclose(fh);
-    rethrow(lasterror);
+    rethrow(ex);
 end
 fclose(fh);
 return

@@ -6,6 +6,7 @@
 %   export_fig filename
 %   export_fig filename -format1 -format2
 %   export_fig ... -nocrop
+%   export_fig ... -transparent
 %   export_fig ... -native
 %   export_fig ... -m<val>
 %   export_fig ... -r<val>
@@ -14,6 +15,7 @@
 %   export_fig ... -<renderer>
 %   export_fig ... -<colorspace>
 %   export_fig ... -append
+%   export_fig ... -bookmark
 %   export_fig(..., handle)
 %
 % This function saves a figure or single axes to one or more vector and/or
@@ -40,9 +42,11 @@
 % Note that the background color and figure dimensions are reproduced
 % (the latter approximately, and ignoring cropping & magnification) in the
 % output file. For transparent background (and semi-transparent patch
-% objects), set the figure (and axes) 'Color' property to 'none'; pdf, eps
-% and png are the only file formats to support a transparent background,
-% whilst the png format alone supports transparency of patch objects.
+% objects), use the -transparent option or set the figure 'Color' property
+% to 'none'. To make axes transparent set the axes 'Color' property to
+% 'none'. Pdf, eps and png are the only file formats to support a
+% transparent background, whilst the png format alone supports transparency
+% of patch objects.
 %
 % The choice of renderer (opengl, zbuffer or painters) has a large impact
 % on the quality of output. Whilst the default value (opengl for bitmaps,
@@ -77,6 +81,8 @@
 %                              of formats are valid.
 %   -nocrop - option indicating that the borders of the output are not to
 %             be cropped.
+%   -transparent - option indicating that the figure background is to be
+%                  made transparent (png, pdf and eps output only).
 %   -m<val> - option where val indicates the factor to magnify the
 %             on-screen figure dimensions by when generating bitmap
 %             outputs. Default: '-m1'.
@@ -114,6 +120,8 @@
 %   -append - option indicating that if the file (pdfs only) already
 %             exists, the figure is to be appended as a new page, instead
 %             of being overwritten (default).
+%   -bookmark - option to indicate that a bookmark with the name of the
+%               figure is to be created in the output file (pdf only).
 %   handle - The handle of the figure or axes (can be an array of handles
 %            of several axes, but these must be in the same figure) to be
 %            saved. Default: gcf.
@@ -128,7 +136,7 @@
 %
 %   See also PRINT, SAVEAS.
 
-% Copyright (C) Oliver Woodford 2008-2011
+% Copyright (C) Oliver Woodford 2008-2012
 
 % The idea of using ghostscript is inspired by Peder Axensten's SAVEFIG
 % (fex id: 10889) which is itself inspired by EPS2PDF (fex id: 5782).
@@ -150,13 +158,24 @@
 % Thanks to Tammy Threadgill for reporting a bug where an axes is not
 % isolated from gui objects.
 
+% 23/02/12: Ensure that axes limits don't change during printing
+% 14/03/12: Fix bug in fixing the axes limits (thanks to Tobias Lamour for
+%           reporting it).
+% 02/05/12: Incorporate patch of Petr Nechaev (many thanks), enabling
+%           bookmarking of figures in pdf files.
+% 09/05/12: Incorporate patch of Arcelia Arrieta (many thanks), to keep
+%           tick marks fixed.
+
 function [im alpha] = export_fig(varargin)
+% Make sure the figure is rendered correctly _now_ so that properties like
+% axes limits are up-to-date.
+drawnow;
 % Parse the input arguments
 [fig options] = parse_args(nargout, varargin{:});
 % Isolate the subplot, if it is one
 cls = strcmp(get(fig(1), 'Type'), 'axes');
 if cls
-    % Given handles of one or more axes
+    % Given handles of one or more axes, so isolate them from the rest
     fig = isolate_axes(fig);
 else
     old_mode = get(fig, 'InvertHardcopy');
@@ -178,6 +197,19 @@ if isbitmap(options) && magnify ~= 1
         set(fontu, 'FontUnits', 'points');
     end
 end
+% MATLAB "feature": axes limits and tick marks can change when printing
+Hlims = findall(fig, 'Type', 'axes');
+if ~cls
+    % Record the old axes limit and tick modes
+    Xlims = make_cell(get(Hlims, 'XLimMode'));
+    Ylims = make_cell(get(Hlims, 'YLimMode'));
+    Zlims = make_cell(get(Hlims, 'ZLimMode'));
+    Xtick = make_cell(get(Hlims, 'XTickMode'));
+    Ytick = make_cell(get(Hlims, 'YTickMode'));
+    Ztick = make_cell(get(Hlims, 'ZTickMode'));
+end
+% Set all axes limit and tick modes to manual, so the limits and ticks can't change
+set(Hlims, 'XLimMode', 'manual', 'YLimMode', 'manual', 'ZLimMode', 'manual', 'XTickMode', 'manual', 'YTickMode', 'manual', 'ZTickMode', 'manual');
 % Set to print exactly what is there
 set(fig, 'InvertHardcopy', 'off');
 % Set the renderer
@@ -194,8 +226,7 @@ end
 % Do the bitmap formats first
 if isbitmap(options)
     % Get the background colour
-    tcol = get(fig, 'Color');
-    if isequal(tcol, 'none') && (options.png || options.alpha)
+    if options.transparent && (options.png || options.alpha)
         % Get out an alpha channel
         % MATLAB "feature": black colorbar axes can change to white and vice versa!
         hCB = findobj(fig, 'Type', 'axes', 'Tag', 'Colorbar');
@@ -217,6 +248,7 @@ if isbitmap(options)
         pos = get(fig, 'Position');
         % Set the background colour to black, and set size in case it was
         % changed internally
+        tcol = get(fig, 'Color');
         set(fig, 'Color', 'k', 'Position', pos);
         % Correct the colorbar axes colours
         set(hCB(yCol==0), 'YColor', [0 0 0]);
@@ -235,7 +267,7 @@ if isbitmap(options)
         % Downscale the image
         A = downsize(single(A), options.aa_factor);
         % Set the background colour (and size) back to normal
-        set(fig, 'Color', 'none', 'Position', pos);
+        set(fig, 'Color', tcol, 'Position', pos);
         % Compute the alpha map
         alpha = round(sum(B - A, 3)) / (255 * 3) + 1;
         A = alpha;
@@ -256,7 +288,7 @@ if isbitmap(options)
             % Compute the resolution
             res = options.magnify * get(0, 'ScreenPixelsPerInch') / 25.4e-3;
             % Save the png
-            imwrite(A, [options.name '.png'], 'Alpha', alpha, 'ResolutionUnit', 'meter', 'XResolution', res, 'YResolution', res);
+            imwrite(A, [options.name '.png'], 'Alpha', double(alpha), 'ResolutionUnit', 'meter', 'XResolution', res, 'YResolution', res);
             % Clear the png bit
             options.png = false;
         end
@@ -282,20 +314,17 @@ if isbitmap(options)
         end
     else
         % Print large version to array
-        if isequal(tcol, 'none')
+        if options.transparent
             % MATLAB "feature": apparently figure size can change when changing
             % colour in -nodisplay mode
             pos = get(fig, 'Position');
+            tcol = get(fig, 'Color');
             set(fig, 'Color', 'w', 'Position', pos);
             A = print2array(fig, magnify, renderer);
-            set(fig, 'Color', 'none', 'Position', pos);
+            set(fig, 'Color', tcol, 'Position', pos);
             tcol = 255;
         else
-            A = print2array(fig, magnify, renderer);
-            tcol = tcol * 255;
-            if ~isequal(tcol, round(tcol))
-                tcol = squeeze(A(1,1,:));
-            end
+            [A tcol] = print2array(fig, magnify, renderer);
         end
         % Crop the background
         if options.crop
@@ -379,12 +408,24 @@ if isvector(options)
     try
         % Generate an eps
         print2eps(tmp_nam, fig, p2eArgs{:});
+        % Remove the background, if desired
+        if options.transparent && ~isequal(get(fig, 'Color'), 'none')
+            eps_remove_background(tmp_nam);
+        end
+        % Add a bookmark to the PDF if desired
+        if options.bookmark
+            fig_nam = get(fig, 'Name');
+            if isempty(fig_nam)
+                warning('export_fig:EmptyBookmark', 'Bookmark requested for figure with no name. Bookmark will be empty.');
+            end
+            add_bookmark(tmp_nam, fig_nam);
+        end
         % Generate a pdf
         eps2pdf(tmp_nam, pdf_nam, 1, options.append, options.colourspace==2, options.quality);
-    catch
+    catch ex
         % Delete the eps
         delete(tmp_nam);
-        rethrow(lasterror);
+        rethrow(ex);
     end
     % Delete the eps
     delete(tmp_nam);
@@ -392,12 +433,12 @@ if isvector(options)
         try
             % Generate an eps from the pdf
             pdf2eps(pdf_nam, [options.name '.eps']);
-        catch
+        catch ex
             if ~options.pdf
                 % Delete the pdf
                 delete(pdf_nam);
             end
-            rethrow(lasterror);
+            rethrow(ex);
         end
         if ~options.pdf
             % Delete the pdf
@@ -411,6 +452,10 @@ if cls
 else
     % Reset the hardcopy mode
     set(fig, 'InvertHardcopy', old_mode);
+    % Reset the axes limit and tick modes
+    for a = 1:numel(Hlims)
+        set(Hlims(a), 'XLimMode', Xlims{a}, 'YLimMode', Ylims{a}, 'ZLimMode', Zlims{a}, 'XTickMode', Xtick{a}, 'YTickMode', Ytick{a}, 'ZTickMode', Ztick{a});
+    end
 end
 return
 
@@ -420,6 +465,7 @@ function [fig options] = parse_args(nout, varargin)
 fig = get(0, 'CurrentFigure');
 options = struct('name', 'export_fig_out', ...
                  'crop', true, ...
+                 'transparent', false, ...
                  'renderer', 0, ... % 0: default, 1: OpenGL, 2: ZBuffer, 3: Painters
                  'pdf', false, ...
                  'eps', false, ...
@@ -431,8 +477,9 @@ options = struct('name', 'export_fig_out', ...
                  'append', false, ...
                  'im', nout == 1, ...
                  'alpha', nout == 2, ...
-                 'aa_factor', 4, ...
+                 'aa_factor', 3, ...
                  'magnify', 1, ...
+                 'bookmark', false, ...
                  'quality', []);
 native = false; % Set resolution to native of an image
 
@@ -445,6 +492,8 @@ for a = 1:nargin-1
             switch lower(varargin{a}(2:end))
                 case 'nocrop'
                     options.crop = false;
+                case {'trans', 'transparent'}
+                    options.transparent = true;
                 case 'opengl'
                     options.renderer = 1;
                 case 'zbuffer'
@@ -473,6 +522,8 @@ for a = 1:nargin-1
                     options.aa_factor = str2double(varargin{a}(3));
                 case 'append'
                     options.append = true;
+                case 'bookmark'
+                    options.bookmark = true;
                 case 'native'
                     native = true;
                 otherwise
@@ -490,12 +541,26 @@ for a = 1:nargin-1
                     end
             end
         else
-            name = varargin{a};
-            if numel(name) > 3 && name(end-3) == '.' && any(strcmpi(name(end-2:end), {'pdf', 'eps', 'png', 'tif', 'jpg', 'bmp'}))
-                options.(lower(name(end-2:end))) = true;
-                name = name(1:end-4);
+            [p options.name ext] = fileparts(varargin{a});
+            if ~isempty(p)
+                options.name = [p filesep options.name];
             end
-            options.name = name;
+            switch lower(ext)
+                case {'.tif', '.tiff'}
+                    options.tif = true;
+                case {'.jpg', '.jpeg'}
+                    options.jpg = true;
+                case '.png'
+                    options.png = true;
+                case '.bmp'
+                    options.bmp = true;
+                case '.eps'
+                    options.eps = true;
+                case '.pdf'
+                    options.pdf = true;
+                otherwise
+                    options.name = varargin{a};
+            end
         end
     end
 end
@@ -508,6 +573,11 @@ end
 % Set the default format
 if ~isvector(options) && ~isbitmap(options)
     options.png = true;
+end
+
+% Check whether transparent background is wanted (old way)
+if isequal(get(fig, 'Color'), 'none')
+    options.transparent = true;
 end
 
 % If requested, set the resolution to the native vertical resolution of the
@@ -570,9 +640,9 @@ catch
     % Lowpass filter - use Gaussian as is separable, so faster
     % Compute the 1d Gaussian filter
     filt = (-factor-1:factor+1) / (factor * 0.6);
-    filt = single(exp(-filt .* filt));
+    filt = exp(-filt .* filt);
     % Normalize the filter
-    filt = filt / sum(filt, 'native');
+    filt = single(filt / sum(filt));
     % Filter the image
     padding = floor(numel(filt) / 2);
     for a = 1:size(A, 3)
@@ -656,10 +726,78 @@ v = [max(t-1, 1) min(b+1, h) max(l-1, 1) min(r+1, w)];
 A = A(v(1):v(2),v(3):v(4),:);
 return
 
+function eps_remove_background(fname)
+% Remove the background of an eps file
+% Open the file
+fh = fopen(fname, 'r+');
+if fh == -1
+    error('Not able to open file %s.', fname);
+end
+% Read the file line by line
+while true
+    % Get the next line
+    l = fgets(fh);
+    if isequal(l, -1)
+        break; % Quit, no rectangle found
+    end
+    % Check if the line contains the background rectangle
+    if isequal(regexp(l, ' *0 +0 +\d+ +\d+ +rf *[\n\r]+', 'start'), 1)
+        % Set the line to whitespace and quit
+        l(1:regexp(l, '[\n\r]', 'start', 'once')-1) = ' ';
+        fseek(fh, -numel(l), 0);
+        fprintf(fh, l);
+        break;
+    end
+end
+% Close the file
+fclose(fh);
+return
+
 function b = isvector(options)
 b = options.pdf || options.eps;
 return
 
 function b = isbitmap(options)
 b = options.png || options.tif || options.jpg || options.bmp || options.im || options.alpha;
+return
+
+% Helper function
+function A = make_cell(A)
+if ~iscell(A)
+    A = {A};
+end
+return
+
+function add_bookmark(fname, bookmark_text)
+% Adds a bookmark to the temporary EPS file after %%EndPageSetup
+% Read in the file
+fh = fopen(fname, 'r');
+if fh == -1
+    error('File %s not found.', fname);
+end
+try
+    fstrm = fread(fh, '*char')';
+catch ex
+    fclose(fh);
+    rethrow(ex);
+end
+fclose(fh);
+
+% Include standard pdfmark prolog to maximize compatibility
+fstrm = strrep(fstrm, '%%BeginProlog', sprintf('%%%%BeginProlog\n/pdfmark where {pop} {userdict /pdfmark /cleartomark load put} ifelse'));
+% Add page bookmark
+fstrm = strrep(fstrm, '%%EndPageSetup', sprintf('%%%%EndPageSetup\n[ /Title (%s) /OUT pdfmark',bookmark_text));
+
+% Write out the updated file
+fh = fopen(fname, 'w');
+if fh == -1
+    error('Unable to open %s for writing.', fname);
+end
+try
+    fwrite(fh, fstrm, 'char*1');
+catch ex
+    fclose(fh);
+    rethrow(ex);
+end
+fclose(fh);
 return
