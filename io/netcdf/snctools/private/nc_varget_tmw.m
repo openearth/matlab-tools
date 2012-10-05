@@ -1,6 +1,17 @@
 function [data,info] = nc_varget_tmw(ncfile,varname,varargin)
 % TMW backend for NC_VARGET.
 
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 05 Oct 2012
+% Created with Matlab version: 7.14.0.739 (R2012a)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
 try
     [data,info] = varget_nc(ncfile,varname,varargin{:});
 catch me
