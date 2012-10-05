@@ -57,7 +57,7 @@ lon  = 10*cos(time) + (1:n)/40;
 z    = 'clampToGround';
 
 % test simple case
-KMLtrack(lat,lon,z,time,'fileName',KML_testdir('KMLtrack_test1.kml'));
+KMLtrack(lat,lon,z,time);
 
 % add data
 data(1).name  = 'a number';
@@ -66,7 +66,7 @@ data(1).value = 1:n;
 data(2).name  = 'Some text';
 data(2).value = cellstr(num2str(sqrt(1:n)'));
 
-KMLtrack(lat,lon,'clampToGround',time,'data',data,'fileName',KML_testdir('KMLtrack_test2.kml'),...
+KMLtrack(lat,lon,'clampToGround',time,'data',data,...
     'trackName','test track','lineColor',[0 1 0],'lineWidth',2);
 testresult = 1;
 
