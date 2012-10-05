@@ -7,9 +7,9 @@
 %% Specify what you want
 
    D.filename    = 'Vlie_basin_example.asc';
-   [D.x,D.y]     = meshgrid((110:.1:135).*1e3,...
-                            (571:.1:590).*1e3); % define the grid where you want data, in [m]. This does not have to be a an orthogonal grid.
-   D.data_url    = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen_remapped/catalog.html';
+   [D.x,D.y]     = meshgrid((100:.1:145).*1e3,...
+                            (521:.1:590).*1e3); % define the grid where you want data, in [m]. This does not have to be a an orthogonal grid.
+   D.data_url    = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/kustlidar/catalog.html';
 
    %% get tile names where to get data from
    %  You only do this only once,
@@ -23,9 +23,9 @@
   %                 'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen_remapped/vaklodingenKB122_1716.nc',...
   %                 'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen_remapped/vaklodingenKB122_1514.nc'}
    
-   D.t0          = datenum(1997,1,1); % we want data from ABOUT this time, with ...
+   D.t0          = datenum(2004,1,1); % we want data from ABOUT this time, with ...
    D.dtmax       = 8*366;             % ... max 8 years time offset and ...
-   D.order       = 'backward';        % ... only older data (not forward)
+   D.order       = '|nearest|';        % ... only older data (not forward)
 
 %% Get data           
 
@@ -73,7 +73,7 @@
    plot(L.x,L.y,'k')
    tickmap('xy')
    
-   print2screensize([D.filename,'.png'])
+   %print2screensize([D.filename,'.png'])
 
 %% save
-   arcgridwrite(D.filename,D.x,D.y,D.z)
+   %arcgridwrite(D.filename,D.x,D.y,D.z)

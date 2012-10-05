@@ -55,7 +55,7 @@ function varargout=nc_cf_gridset_getData(xi,yi,varargin)
 % $HeadURL$
 % $Keywords: $
 
-OPT.bathy       = 'http://opendap.deltares.nl:8080/opendap/rijkswaterstaat/vaklodingen_remapped/catalog.xml';
+OPT.bathy       ='http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml';
 % can be cellstr of ncfiles as well, with last one being topex/gebco to fill holes
 
 OPT.xname       = 'x'; % search for projection_x_coordinate, or longitude, or ...
@@ -103,7 +103,6 @@ OPT = setproperty(OPT,varargin);
    else
        list = opendap_catalog(OPT.bathy);
    end
-   
 %% fill holes with samples of nearest/latest/first time
 
    xmin = min(xi(:));
@@ -112,21 +111,21 @@ OPT = setproperty(OPT,varargin);
    ymax = max(yi(:));
 
    for ifile=1:length(list)
-       
+      
       if OPT.disp
-          fprintf(1,['Inquiring file ', num2str(ifile,'%0.4d'),' of ', num2str(length(list),'%0.4d')]);
+          fprintf(1,['Inquiring file ', num2str(ifile,'%0.4d'),' of ', num2str(length(list),'%0.4d'),': ',filenameext(list{ifile})]);
       end
    
       BB.X  = nc_actual_range(list{ifile},OPT.xname);BB.X = BB.X([1 2 2 1 1]);
       if ~(BB.X(2) < xmin | BB.X(1) > xmax)
       BB.Y  = nc_actual_range(list{ifile},OPT.yname);BB.Y = BB.Y([1 1 2 2 1]);
-      if ~(BB.Y(2) < ymin | BB.Y(1) > ymax)
+      if ~(BB.Y(3) < ymin | BB.Y(1) > ymax)
       bb_selection = inpolygon(xi,yi,BB.X,BB.Y);
-
+      
       if any(bb_selection(:))
 
       if OPT.disp
-          fprintf(1,[': ',filenameext(list{ifile})]);
+          %fprintf(1,[': ',filenameext(list{ifile})]);
       end          
     %% find valid dates
        
@@ -193,9 +192,10 @@ OPT = setproperty(OPT,varargin);
                  % ' days (#',num2str(sum(~isnan(Z(:))),'%+0.5d'),' data points)'
 
           %% extract remaining destination data
-
+             %F = TriScatteredInterp(X(:),Y(:),Z(:),OPT.method);
+             %dzi(mask) = F(xi(mask),yi(mask));
              dzi(mask) = interp2(X,Y,Z,... % Z should be [y by x]
-                                  xi(mask),yi(mask),OPT.method);
+                                  xi(mask),yi(mask),OPT.method); 
 
           %% find and add increment
           
