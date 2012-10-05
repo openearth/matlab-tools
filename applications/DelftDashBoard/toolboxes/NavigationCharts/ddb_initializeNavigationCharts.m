@@ -83,6 +83,7 @@ if isdir([handles.toolBoxDir 'navigationcharts'])
                         handles.Toolbox(ii).Input.databases{k}=lst(i).name;
                         handles.Toolbox(ii).Input.charts(k).box=s.Box;
                     else
+                        handles.Toolbox(ii).Input.databases=[];
                         disp([handles.toolBoxDir 'NavigationCharts' filesep lst(i).name filesep lst(i).name '.mat not found!']);
                     end
             end
