@@ -89,6 +89,11 @@ for ii = 1:length(D)
         continue
     end
     ncschema         = ncinfo(source_file);
+    
+    % work around for bug http://www.mathworks.com/support/bugreports/819646
+    [ncschema.Dimensions([ncschema.Dimensions.Unlimited]).Length] = deal(inf);
+    [ncschema.Dimensions([ncschema.Dimensions.Unlimited]).Unlimited] = deal(false);
+    
     ncwriteschema(destination_file,ncschema);
     variable_names   = {ncschema.Variables.Name};
     for iVariable = 1:length(variable_names)
