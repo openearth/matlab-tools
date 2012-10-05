@@ -7,7 +7,7 @@ function OK = pg_test(varargin)
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2012 Tu Delft / Deltares
+%   Copyright (C) 2012 Tu Delft / Deltares for Building with Nature
 %       Gerben J. de Boer
 %
 %       g.j.deboer@tudelft.nl / gerben.deboer@deltares.nl
@@ -68,7 +68,7 @@ if any(strmatch(OPT.table,tables))
           disp([conn.Instance,':',table,':',column])
       end
    end
-   error(['request table for pg_tets is already in database:',OPT.table])
+   error(['request table for pg_test is already in database:',OPT.table])
 end
 %% add datemodel for testing
 % http://archives.postgresql.org/pgsql-performance/2004-11/msg00350.php

@@ -1,6 +1,6 @@
 -- Simple datamodel for use in pg_test.m
 -- pg_test_template.sql
--- Replace "/" with required table name
+-- Replace "?" with required table name
 -- % $Id: pg_quote.m 7264 2012-09-21 11:27:43Z boer_g $
 -- % $Date: 2012-09-21 13:27:43 +0200 (vr, 21 sep 2012) $
 -- % $Author: boer_g $

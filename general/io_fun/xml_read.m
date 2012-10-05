@@ -193,6 +193,13 @@ else         % we assume xmlfile is a filename
       try
         DOMnode = xmlread(xmlfile);
       catch ME
+        if isurl(xmlfile)
+          [~,status]   = urlread(xmlfile);
+          if status==0
+            fprintf(2,[xmlfile,'\n']);
+            fprintf(2,[' may be offline or you are not connected to the internet: Online source not available\n']);
+          end
+        end
         error('Failed to read XML file %s: \n%s',xmlfile, getReport(ME));
       end
     catch %#ok<CTCH> catch for mablab versions prior to 7.5

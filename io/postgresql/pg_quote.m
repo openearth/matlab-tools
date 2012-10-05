@@ -19,7 +19,7 @@ function f = pg_quote(f)
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2012 Tu Delft / Deltares
+%   Copyright (C) 2012 Tu Delft / Deltares for Building with Nature
 %       Gerben J. de Boer
 %
 %       g.j.deboer@tudelft.nl / gerben.deboer@deltares.nl

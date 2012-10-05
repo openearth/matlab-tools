@@ -142,7 +142,7 @@ function varargout = opendap_catalog(varargin)
 
 %% remote vs. local url
 
-if length(OPT.url) < 11 | (~strcmpi(OPT.url(1:4),'http') && ~strcmpi(OPT.url(end-2:end),'xml'))
+if length(OPT.url) < 11 | (~isurl(OPT.url) && ~strcmpi(OPT.url(end-2:end),'xml'))
 
    if OPT.maxlevel > 1
       fprintf(2,'opendap_catalog: maxlevel set to Inf, because local file system cannot distuinguish between level depths.\n')
@@ -163,7 +163,7 @@ if length(OPT.url) < 11 | (~strcmpi(OPT.url(1:4),'http') && ~strcmpi(OPT.url(end
       nc_folder_list = OPT.url;
    end
 
-else
+else % catalog resides on web
 
    %% replace html into xml or warn
 
@@ -202,11 +202,6 @@ else
    
    try
       
-      [~,status]   = urlread(OPT.url);
-      if status==0
-          fprintf(2,['skipped catalog, offline: ',OPT.url])
-      else
-          
       D   = xml_read(OPT.url,pref);
       
       if OPT.debug
@@ -214,7 +209,7 @@ else
         dprintf(OPT.log,['fieldnames: ',str2line(fieldnames(D),'s',','),'\n'])
        %dprintf(OPT.log,D.ATTRIBUTE,'\n')
       end
-   
+
    %% check
    
       if isfield(D.ATTRIBUTE,'xmlns') % thredds_COLON_xmlns
@@ -228,8 +223,6 @@ else
       nc_file_list   = opendap_catalog_dataset(D,OPT);
       nc_folder_list = []; % TO DO
       
-      end
-
    catch
       if ~(OPT.log==1) % ALWAYS report skipped items
       dprintf(      1,['Skipped erronous ',                         '   catalog: ',OPT.url,'\n'])
