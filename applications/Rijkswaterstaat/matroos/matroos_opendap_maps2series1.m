@@ -88,8 +88,8 @@ warning('very preliminary test version')
    x2   = nc_varget(['https://',user,':',passwd,'@',D.urlPath{end}(8:end)],'x');
    y2   = nc_varget(['https://',user,':',passwd,'@',D.urlPath{end}(8:end)],'y');
    
-   if ~isequalwithequalnans(D.x,x) & ...
-      ~isequalwithequalnans(D.y,y)
+   if ~isequalwithequalnans(D.x,x2) & ... % changed from (x,y) to (x2,y2)
+      ~isequalwithequalnans(D.y,y2)
       error('This Matroos dataset does not have a persistent grid topology.')
    end
 
