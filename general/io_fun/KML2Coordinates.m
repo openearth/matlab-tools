@@ -23,7 +23,7 @@ function varargout = KML2Coordinates(FileName)
 % See also: googleplot, line, patch
 
 if strcmp(FileName(end-3:end),'.kmz')
-    unzip('Copy_of_pathtest.kmz');
+    unzip(FileName);
     fid = fopen([FileName(1:end-4) '.kml']);
 elseif strcmp(FileName(end-3:end),'.kml')
 	fid = fopen(FileName);
