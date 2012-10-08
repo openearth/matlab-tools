@@ -67,23 +67,16 @@ function rs = pg_exec(conn, sql, varargin)
 prefs = getpref('postgresql');
 
 if ~isstruct(prefs) || ~isfield(prefs, 'passive') || ~prefs.passive
-    
     rs = exec(conn, sql);
-
     pg_error(rs);
-    
-else
-    
-    if ~isfield(prefs, 'file') || isempty(prefs.file)
-    
-        disp(sql);
+end
+
+if isstruct(prefs) && isfield(prefs, 'verbose') && prefs.verbose
+	disp(sql);
+end
         
-    else
-        
-        fid = fopen(prefs.file, 'a');
-        fprintf(fid, '%s\n', sql);
-        fclose(fid);
-        
-    end
-    
+if isstruct(prefs) && isfield(prefs, 'file') && ~isempty(prefs.file)
+    fid = fopen(prefs.file, 'a');
+    fprintf(fid, '%s\n', sql);
+    fclose(fid);
 end

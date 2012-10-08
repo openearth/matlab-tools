@@ -80,7 +80,7 @@ for i = 1:length(varargin)
             else
                 varargout{i} = 'FALSE';
             end
-        case 'double'
+        case {'double' 'int8' 'int16' 'int32' 'int64'}
             varargout{i} = [nums2str(varargin{i},'),(')]; % leading and trailing bracket in calling function PG_QUERY
         case 'single'
             varargout{i} = [nums2str(varargin{i},'),(')]; % leading and trailing bracket in calling function PG_QUERY

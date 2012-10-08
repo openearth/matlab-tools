@@ -64,6 +64,17 @@ function rs = pg_fetch(conn, sql, varargin)
 
 %% execute sql query
 
-rs = fetch(conn, sql);
+prefs = getpref('postgresql');
 
+rs = fetch(conn, sql);
 pg_error(rs);
+
+if isstruct(prefs) && isfield(prefs, 'verbose') && prefs.verbose
+	disp(sql);
+end
+        
+if isstruct(prefs) && isfield(prefs, 'file') && ~isempty(prefs.file)
+    fid = fopen(prefs.file, 'a');
+    fprintf(fid, '%s\n', sql);
+    fclose(fid);
+end
