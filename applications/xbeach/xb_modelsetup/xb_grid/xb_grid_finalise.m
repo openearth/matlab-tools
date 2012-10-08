@@ -318,6 +318,6 @@ function [xn yn zn] = seaward_extend(x, y, z, OPT)
 
     zn = interp2(xt,yt,zt,xn,yn);
     
-    xb_verbose(2,'Extand in seaward direction until given level');
+    xb_verbose(2,'Extend in seaward direction until given level');
     xb_verbose(3,'Cells',OPT.n);
     xb_verbose(3,'Level',zmin);

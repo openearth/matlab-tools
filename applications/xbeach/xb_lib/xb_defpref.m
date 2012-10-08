@@ -59,23 +59,24 @@ function xb_defpref()
 % $Keywords: $
 
 %% general
-setpref('xbeach', 'version', 1.0);
-setpref('xbeach', 'verbose', false);
+setpref('xbeach', 'version', 1.0);          % toolbox version
+setpref('xbeach', 'verbose', false);        % set verbose output of especially modelsetup functions
 
 %% xb_io
-setpref('xbeach', 'dat_method', '');
+setpref('xbeach', 'dat_method', '');        % determine method for partial reading of dat files (memory/read)
+setpref('xbeach', 'binary_factor', '');     % fraction of obscure ascii characters in file to be interpreted as binary
 
 %% xb_human
-setpref('xbeach', 'interactive', true);
+setpref('xbeach', 'interactive', true);     % enable interactive links in output
 
 %% xb_modelsetup
-setpref('xbeach', 'grid_finalise', {});
+setpref('xbeach', 'grid_finalise', {});     % default grid finalization options
 
 %% xb_run
-setpref('xbeach', 'ssh_user', '');
-setpref('xbeach', 'ssh_pass', '');
+setpref('xbeach', 'ssh_user', '');          % default ssh user
+setpref('xbeach', 'ssh_pass', '');          % default ssh password
 
-setpref('xbeach', 'runs', []);
-setpref('xbeach', 'queue', []);
+setpref('xbeach', 'runs', []);              % system variable to store most recent runs
+setpref('xbeach', 'queue', []);             % system variable to queue runs
 
-setpref('xbeach', 'interval', []);
+setpref('xbeach', 'interval', []);          % default check interval for runs to finish
