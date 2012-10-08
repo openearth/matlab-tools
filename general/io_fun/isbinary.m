@@ -77,7 +77,13 @@ fclose(fid);
 
 %% search for non-ascii characters
 
-if ~any(data < 32 & ~ismember(data, [9 10 13])) && ~all(data > 126 | data == 63)
+if isempty(varargin) || isempty(varargin{1}) || varargin{1}<0
+    fraction = .5;
+else
+    fraction = varargin{1};
+end
+
+if ~any(data < 32 & ~ismember(data, [9 10 13])) && sum(data > 126 | data == 63)/length(data) < fraction
     binary = false;
 else
     binary = true;
