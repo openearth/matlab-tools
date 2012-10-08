@@ -1,5 +1,5 @@
 function theta = polyline_segment_angles(x,y)
-%POLYLINE_SEGMENT_ANGLES  Angle of line segments in polyline
+%POLYLINE_SEGMENT_ANGLES  Angle of line segments in polyline in radians
 %
 %   More detailed description goes here.
 %
@@ -105,8 +105,14 @@ function theta = polyline_segment_angles(x,y)
 % $Keywords: $
 
 %% code
-dx          = x(2:end,:) - x(1:end-1,:);
-dy          = y(2:end,:) - y(1:end-1,:);
+assert(isequal(size(x),size(y)),'x and y must be the same size')
+if isvector(x)
+    dx          = x(2:end) - x(1:end-1);
+    dy          = y(2:end) - y(1:end-1);
+else    
+    dx          = x(2:end,:) - x(1:end-1,:);
+    dy          = y(2:end,:) - y(1:end-1,:);
+end
 theta       = atan(dx./dy);
 theta(dy<0) = theta(dy<0)+pi();
 theta       = mod(theta,2*pi);

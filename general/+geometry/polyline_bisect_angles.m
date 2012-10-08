@@ -91,5 +91,4 @@ function theta_bisect = polyline_bisect_angles(x,y)
 theta_segment             = geometry.polyline_segment_angles(x,y);
 theta_1                   = theta_segment([1 1:end]) - pi;
 theta_2                   = theta_segment([1:end 1]);
-% theta_2(theta_2<theta_1)  = theta_2(theta_2<theta_1) + 2*pi;
 theta_bisect              = (theta_1 + theta_2)/2;
