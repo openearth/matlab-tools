@@ -1,0 +1,237 @@
+function ticklabel_format(ax, varargin)
+%TICKLABEL_FORMAT  Brings text formatting power to tick labels
+%
+%   Replaces the original ticklabels with normal text objects. The text
+%   objects can be formatted using a custom or existing formatting
+%   function. This formatting function accepts as a first argument the
+%   vector with tick values and returns a cell array with tick labels. The
+%   tick labels may be cell arrays itself. In that case it will be a
+%   multiline tick label.
+%
+%   A listener is attached to the axis object in order to keep the tick
+%   labels updated. Any arguments passed to this function that are not
+%   recognized are passed further to the text object function, enclosing
+%   all formatting options of the text objects itself.
+%
+%   Several formatting functions are available named ticklabel_format_*.
+%   The ticklabel_format_multiline_scalable function facilitates an easy
+%   implementation of ticklabels that scale with the zoom factor and run
+%   over multiple lines.
+%
+%   Syntax:
+%   ticklabel_format(ax, varargin)
+%
+%   Input:
+%   ax        = Axis for which ticklabels should be set
+%   varargin  = name/value pairs:
+%               FormatFcn:          function handle to formatting function
+%               FormatFcnVariables: optional cell array with parameters for
+%                                   formatting function
+%               Dimension:          dimension of axis to be formatted (x/y)
+%
+%               Any other parameters are pased through to the text object
+%               function and therefore are typical text formatting
+%               properties.
+%
+%   Output:
+%   none
+%
+%   Example
+%   figure; axes;
+%   ticklabel_format(gca)
+%
+%   figure; axes;
+%   ticklabel_format(gca, 'FormatFcn', @custom_format)
+%
+%   figure; axes;
+%   ticklabel_format(gca, 'FormatFcn', @(x) arrayfun(@(y) sprintf('%05.1f', y), x, 'UniformOutput', false))
+%
+%   figure; axes;
+%   ticklabel_format(gca, 'FormatFcn', @(x) arrayfun(@(y) datestr(y), x, 'UniformOutput', false))
+%
+%   See also ticklabel_format_default, ticklabel_format_multiline_scalable,
+%   ticklabel_format_multiline_scalable_datestr
+
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2012 Deltares
+%       Bas Hoonhout
+%
+%       bas.hoonhout@deltares.nl
+%
+%       Rotterdamseweg 185
+%       2629HD Delft
+%       Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 09 Oct 2012
+% Created with Matlab version: 7.14.0.739 (R2012a)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%% define options
+OPT = struct(                   ...
+    'FormatFcn', @ticklabel_format_default, ...
+    'FormatFcnVariables', {{}}, ...
+    'Dimension', 'x'                );
+
+%% define shortcuts
+
+shortcuts = find(cellfun(@ischar, varargin));
+shortcuts = shortcuts(~cellfun(@isempty, regexp(varargin(shortcuts), '^-.+')));
+
+if ~isempty(shortcuts)
+    for i = 1:length(shortcuts)
+        if ischar(varargin{shortcuts(i)})
+            switch varargin{shortcuts(i)}
+                case '-default'
+                    OPT.FormatFcn = @ticklabel_format_default;
+                    OPT.FormatFcnVariables = {};
+                case '-datetime'
+                    OPT.FormatFcn = @ticklabel_format_multiline_scalable_datestr;
+                    OPT.FormatFcnVariables = {};
+            end
+        end
+    end
+    varargin(shortcuts) = [];
+end
+
+%% read options
+
+% seperate extra options from default text options
+i = 1;
+while i < length(varargin)
+    f = varargin{i};
+    if any(strcmpi(f, fieldnames(OPT)))
+        OPT.(f) = varargin{i+1};
+        varargin(i:i+1) = [];
+        i = i - 2;
+    end
+    i = i + 2;
+end
+
+%% set callback functions
+
+% store object
+OPT.Object = ax;
+
+% define callback function call
+fcn = {@update_axes, OPT, varargin};
+
+% attach listener
+p1 = sprintf('%sTick', upper(OPT.Dimension));
+p2 = sprintf('%sXTickListener', upper(OPT.Dimension));
+
+hax = handle(ax);
+prp = findprop(hax, p1);
+lis = handle.listener(hax, prp, 'PropertyPostSet', fcn);
+setappdata(ax, p2, lis);
+
+% set axes
+feval(fcn{1}, ax, '', fcn{2:end});
+
+end
+
+%% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% function to update tick labels
+function update_axes(obj, event, OPT, args)
+
+    % get axes and figure objects
+    ax   = get_axes(OPT.Object);
+    fig  = get_figure(OPT.Object);
+    
+    % get current units
+    uax  = get(ax, 'Units');
+    ufig = get(fig, 'Units');
+    
+    % set units to normalized
+    set(fig, 'Units', 'normalized');
+    set(ax,  'Units', 'normalized');
+    
+    % determine parameter names based on dimension
+    p1 = sprintf('%sTick', upper(OPT.Dimension));
+    p2 = sprintf('%sTickLabel', upper(OPT.Dimension));
+    p3 = sprintf('%sLim', upper(OPT.Dimension));
+    
+    % get current ticks, limits and remove ticklabels
+    tck = get(ax, p1);
+    lim = get(ax, p3);
+    set(ax, p2, ' ');
+    
+    % evaluate tick labels
+    lbl = feval(OPT.FormatFcn, tck, OPT.FormatFcnVariables{:});
+    
+    % remove old tick labels
+    delete(findobj(fig, 'Tag', 'XTickLabel'));
+    
+    % add all tick labels
+    for i = 1:length(tck)
+        
+        % determine location of current tick label
+        x0 = (tck(i)-lim(1))/diff(lim);
+        y0 = -.01;
+        
+        switch OPT.Dimension
+            case 'y'
+                y = x0;
+                x = y0;
+            otherwise
+                x = x0;
+                y = y0;
+        end
+        
+        % set current tick label
+        text(x, y, lbl{i}, ...
+            'Units', 'normalized', ...
+            'Tag', 'XTickLabel', ...
+            'HorizontalAlignment', 'center', ...
+            'VerticalAlignment', 'top', ...
+            args{:});
+    end
+    
+    % restore units
+    set(ax,  'Units', uax );
+    set(fig, 'Units', ufig);
+    
+end
+
+% function that returns the axis object
+function ax = get_axes(obj)
+    fig = get_figure(obj);
+    ax  = findobj(fig, 'Type', 'Axes', 'Tag', '');
+end
+
+% function that returns the figure object
+function fig = get_figure(obj)
+    if strcmpi(get(obj, 'Type'), 'figure')
+        fig = obj;
+    else
+        fig = get_figure(get(obj, 'Parent'));
+    end
+end
