@@ -70,7 +70,7 @@ function [] = donar_donarMat2nc(donarMat,filename)
                 nc(idim).Attribute(    1) = struct('Name', 'long_name'      ,'Value', donarMat.(thefields{ifield}).name);
                 nc(idim).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', donarMat.(thefields{ifield}).standard_name);
                 nc(idim).Attribute(end+1) = struct('Name', 'units'          ,'Value', donarMat.(thefields{ifield}).hdr.EHD{2});
-                nc(idim).Attribute(end+1) = struct('Name', 'units_long_name','Value', code2name(donarMat.(thefields{ifield}).hdr.EHD{2},'donar','ehd'));
+                nc(idim).Attribute(end+1) = struct('Name', 'units_long_name','Value', ehd2unitname(donarMat.(thefields{ifield}).hdr.EHD{2}));
                 
                 if ~isempty(donarMat.(thefields{ifield}).deltares_name)
                    nc(idim).Attribute(end+1) = struct('Name', 'deltares_name'  ,'Value', donarMat.(thefields{ifield}).deltares_name);  

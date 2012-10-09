@@ -5,16 +5,17 @@ function  data = donar_flagValues(thefield,data)
 % Code 3: Negative depth
     
 
-    %%%%%%%%%%%%%%%%
-    % Flag values out of the model domain: Code 1
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Flag values out of the model domain: Code 1 %
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     theindices = inmask(data(:,1),data(:,2),'lonlat');
     numcol = size(data,2) + 1;
     data(~theindices,numcol) = 1; 
     clear theindices
 
-    %%%%%%%%%%%%%%
-    % Flag "unfeasible" variable values: Code 2
-    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Flag "unfeasible" variable values: Code 2 %
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     switch lower(thefield)
         case{'zuurstof'}
             % 0 < zuurstof
@@ -26,7 +27,7 @@ function  data = donar_flagValues(thefield,data)
             data(theindices,numcol) = data(theindices,numcol)*10+2;
         case{'zuurgraad'}
             % 7 < pH < 9 
-            theindices = (data(:,6) > 9 | data(:,6) < 7);
+            theindices = (data(:,6) > 14 | data(:,6) < 0);
             data(theindices,numcol) = data(theindices,numcol)*10+2;
         case{'saliniteit'}
             % 0 < saliniteit < 36
@@ -45,8 +46,9 @@ function  data = donar_flagValues(thefield,data)
     end
     clear theindices
     
-    %%%%%%%%%%%%%%%%
-    % Flag values with negative depths: Code 3.
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Flag values with negative depths: Code 3 %
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     theindices = data(:,3) < 0;
     data(theindices,numcol) = data(theindices,numcol)*10 + 3; % 
     clear theindices
