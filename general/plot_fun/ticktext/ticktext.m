@@ -165,9 +165,9 @@ end
 
 % function to update tick labels
 function update_axes(obj, event, OPT, args)
-
+    
     % get axes and figure objects
-    ax   = get_axes(OPT.Object);
+    ax   = OPT.Object;
     fig  = get_figure(OPT.Object);
     
     % get current units
@@ -192,7 +192,7 @@ function update_axes(obj, event, OPT, args)
     lbl = feval(OPT.FormatFcn, tck, OPT.FormatFcnVariables{:});
     
     % remove old tick labels
-    delete(findobj(fig, 'Tag', 'XTickLabel'));
+    delete(findobj(ax, 'Tag', p2));
     
     % add all tick labels
     for i = 1:length(tck)
@@ -213,7 +213,7 @@ function update_axes(obj, event, OPT, args)
         % set current tick label
         text(x, y, lbl{i}, ...
             'Units', 'normalized', ...
-            'Tag', 'XTickLabel', ...
+            'Tag', p2, ...
             'HorizontalAlignment', 'center', ...
             'VerticalAlignment', 'top', ...
             args{:});
@@ -223,12 +223,6 @@ function update_axes(obj, event, OPT, args)
     set(ax,  'Units', uax );
     set(fig, 'Units', ufig);
     
-end
-
-% function that returns the axis object
-function ax = get_axes(obj)
-    fig = get_figure(obj);
-    ax  = findobj(fig, 'Type', 'Axes', 'Tag', '');
 end
 
 % function that returns the figure object
