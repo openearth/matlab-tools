@@ -54,14 +54,14 @@ OPT = setproperty(OPT, varargin{:});
 %   - negative model values are replaced by NaNs
 %   - missing model values are interpolated (linearly) in time to obs. times
 
-tmpTime = cat(1, squeeze(ModelTimePoints), squeeze(ObsTime));
+tmpTime = cat(2, squeeze(ModelTimePoints), squeeze(ObsTime));
 [STATS.datenum, idx] = sort(tmpTime);
 
 newData.model = interp1(squeeze(ModelTimePoints), ...
     squeeze(ModelValues), squeeze(ObsTime));       
 newData.obs = NaN + zeros(size(squeeze(ModelTimePoints)));
-tmpData.model = cat(1, squeeze(ModelValues), squeeze(newData.model));
-tmpData.obs = cat(1, squeeze(newData.obs), squeeze(ObsValues));
+tmpData.model = cat(2, squeeze(ModelValues), squeeze(newData.model));
+tmpData.obs = cat(2, squeeze(newData.obs), squeeze(ObsValues));
 combined_all.ModelTimePoints = tmpTime(idx);
 combined_all.ObsTime = tmpTime(idx);
 combined_all.ModelValues = tmpData.model(idx);
