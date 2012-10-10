@@ -1,21 +1,28 @@
-function labels = ticklabel_format_default(ticks)
-%TICKLABEL_FORMAT_DEFAULT  One line description goes here.
+function labels = ticktext_datetime(ticks)
+%TICKTEXT_DATETIME  Multiline scalable datetime formatting function for ticktext labels
 %
-%   More detailed description goes here.
+%   Multiline scalable datetime formatting function for ticktext labels.
+%   Using the following formats:
+%
+%       'yyyy'
+%       'mmm-yyyy'
+%       'dd-mmm-yyyy'
+%       {'dd-mmm-yyyy' 'HH:MM'}
+%       {'dd-mmm-yyyy' 'HH:MM:SS'}
 %
 %   Syntax:
-%   varargout = ticklabel_format_default(varargin)
+%   labels = ticktext_datetime(ticks)
 %
 %   Input:
-%   varargin  =
+%   ticks     = Array with datenum tick values
 %
 %   Output:
-%   varargout =
+%   labels    = Cell array with ticktext labels
 %
 %   Example
-%   ticklabel_format_default
+%   labels = ticktext_datetime(now+[0 1 2 3])
 %
-%   See also
+%   See also ticktext, ticktext_multiline_scalable
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -61,24 +68,13 @@ function labels = ticklabel_format_default(ticks)
 
 %% determine ticklabels
 
-formats = {  ...
-    '%1.0',  ...
-    '%3.1f', ...
-    '%4.2f', ...
-    '%5.3f', ...
-    '%6.4f', ...
-    '%6e'        };
+formats = {                     ...
+    'yyyy',                     ...
+    'mmm-yyyy',                 ...
+    'dd-mmm-yyyy',              ...
+    {'dd-mmm-yyyy' 'HH:MM'},    ...
+    {'dd-mmm-yyyy' 'HH:MM:SS'}      };
 
-fcn = @sprintfr;
+fcn = @datestr;
 
-labels = ticklabel_format_multiline_scalable(ticks, fcn, formats);
-
-end
-
-%% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-function str = sprintfr(value, format)
-
-    str = sprintf(format, value);
-    
-end
+labels = ticktext_multiline_scalable(ticks, fcn, formats);

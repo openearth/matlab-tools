@@ -1,21 +1,24 @@
-function labels = ticklabel_format_multiline_scalable_datestr(ticks)
-%TICKLABEL_FORMAT_MULTILINE_SCALABLE_DATESTR  One line description goes here.
+function distinct = ticktext_isdistinct(labels)
+%TICKTEXT_ISDISTINCT  Check if labels are distinct
 %
-%   More detailed description goes here.
+%   Check if labels are distinct by mering all lines per tick and comparing
+%   the resulting strings.
 %
 %   Syntax:
-%   varargout = ticklabel_format_multiline_scalable_datestr(varargin)
+%   distinct = ticktext_isdistinct(labels)
 %
 %   Input:
-%   varargin  =
+%   labels    = Cell array structure with ticktext labels
 %
 %   Output:
-%   varargout =
+%   distinct  = Boolean indicating whether values are distinct
 %
 %   Example
-%   ticklabel_format_multiline_scalable_datestr
+%   if ticktext_isdistinct(labels)
+%       break
+%   end
 %
-%   See also
+%   See also ticktext, ticktext_multiline_scalable
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -49,7 +52,7 @@ function labels = ticklabel_format_multiline_scalable_datestr(ticks)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 09 Oct 2012
+% Created: 10 Oct 2012
 % Created with Matlab version: 7.14.0.739 (R2012a)
 
 % $Id$
@@ -59,15 +62,7 @@ function labels = ticklabel_format_multiline_scalable_datestr(ticks)
 % $HeadURL$
 % $Keywords: $
 
-%% determine ticklabels
+%% check if labels are distinct
 
-formats = {                     ...
-    'yyyy',                     ...
-    'mmm-yyyy',                 ...
-    'dd-mmm-yyyy',              ...
-    {'dd-mmm-yyyy' 'HH:MM'},    ...
-    {'dd-mmm-yyyy' 'HH:MM:SS'}      };
-
-fcn = @datestr;
-
-labels = ticklabel_format_multiline_scalable(ticks, fcn, formats);
+merged   = cellfun(@cell2mat, labels, 'UniformOutput', false);
+distinct = length(unique(merged)) == length(merged);

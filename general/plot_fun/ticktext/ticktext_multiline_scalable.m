@@ -1,21 +1,37 @@
-function labels = ticklabel_format_multiline_scalable(ticks, fcn, formats)
-%TICKLABEL_FORMAT_MULTILINE_SCALABLE  One line description goes here.
+function labels = ticktext_multiline_scalable(ticks, fcn, formats)
+%TICKTEXT_MULTILINE_SCALABLE  Creates multiline scalable ticktext labels
 %
-%   More detailed description goes here.
+%   Creates multiline scalable ticktext labels using a user-specified
+%   formatting function and a set of multiline formats. For eacht tick
+%   value a ticktext label is constructud using the formatting function
+%   (e.g. datestr or sprintf) and the first format specification from the
+%   formats cell array. If the resulting ticktext labels are not distinct
+%   the next format is used until the values are distinct or the last
+%   format specification is reached.
+%   Each format specification can be a cell array itself. In that case the
+%   ticktext labels will be multiline labels.
+%   This function is in principle a helper function for other ticktext
+%   label formatting functions, but can be used for custom purposes as
+%   well.
 %
 %   Syntax:
-%   varargout = ticklabel_format_multiline_scalable(varargin)
+%   labels = ticktext_multiline_scalable(ticks, fcn, formats)
 %
 %   Input:
-%   varargin  =
+%   ticks     = Array with tick values
+%   fcn       = Function handle of formatting function
+%   formats   = Cell array with multiline formats for different scales
 %
 %   Output:
-%   varargout =
+%   labels    = Cell array with ticktext labels
 %
 %   Example
-%   ticklabel_format_multiline_scalable
+%   labels = ticktext_multiline_scalable(ticks, @sprintf, ...
+%                   {'%1.0' '%3.1f' '%4.2f' '%5.3f' '%6.4f' '%6e'});
+%   labels = ticktext_multiline_scalable(ticks, @datestr, ...
+%                   {'yyyy' 'mmm-yyyy' 'dd-mmm-yyyy' {'dd-mmm-yyyy' 'HH:MM'} {'dd-mmm-yyyy' 'HH:MM:SS'}});
 %
-%   See also
+%   See also ticktext, ticktext_isdistinct
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -76,8 +92,7 @@ for i = 1:length(formats)
         end
     end
 
-    l = cellfun(@cell2mat, labels, 'UniformOutput', false);
-    if length(unique(l)) == length(l)
+    if ticktext_isdistinct(labels)
         break
     end
 end

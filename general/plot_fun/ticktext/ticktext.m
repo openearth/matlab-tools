@@ -1,5 +1,5 @@
-function ticklabel_format(ax, varargin)
-%TICKLABEL_FORMAT  Brings text formatting power to tick labels
+function ticktext(ax, varargin)
+%TICKTEXT  Brings text formatting power to tick labels
 %
 %   Replaces the original ticklabels with normal text objects. The text
 %   objects can be formatted using a custom or existing formatting
@@ -13,13 +13,13 @@ function ticklabel_format(ax, varargin)
 %   recognized are passed further to the text object function, enclosing
 %   all formatting options of the text objects itself.
 %
-%   Several formatting functions are available named ticklabel_format_*.
-%   The ticklabel_format_multiline_scalable function facilitates an easy
-%   implementation of ticklabels that scale with the zoom factor and run
-%   over multiple lines.
+%   Several formatting functions are available named ticktext_*. The
+%   ticktext_multiline_scalable function facilitates an easy implementation
+%   of ticklabels that scale with the zoom factor and run over multiple
+%   lines.
 %
 %   Syntax:
-%   ticklabel_format(ax, varargin)
+%   ticktext(ax, varargin)
 %
 %   Input:
 %   ax        = Axis for which ticklabels should be set
@@ -38,19 +38,18 @@ function ticklabel_format(ax, varargin)
 %
 %   Example
 %   figure; axes;
-%   ticklabel_format(gca)
+%   ticktext(gca)
 %
 %   figure; axes;
-%   ticklabel_format(gca, 'FormatFcn', @custom_format)
+%   ticktext(gca, 'FormatFcn', @custom_format)
 %
 %   figure; axes;
-%   ticklabel_format(gca, 'FormatFcn', @(x) arrayfun(@(y) sprintf('%05.1f', y), x, 'UniformOutput', false))
+%   ticktext(gca, 'FormatFcn', @(x) arrayfun(@(y) sprintf('%05.1f', y), x, 'UniformOutput', false))
 %
 %   figure; axes;
-%   ticklabel_format(gca, 'FormatFcn', @(x) arrayfun(@(y) datestr(y), x, 'UniformOutput', false))
+%   ticktext(gca, 'FormatFcn', @(x) arrayfun(@(y) datestr(y), x, 'UniformOutput', false))
 %
-%   See also ticklabel_format_default, ticklabel_format_multiline_scalable,
-%   ticklabel_format_multiline_scalable_datestr
+%   See also ticktext_default, ticktext_datetime, ticktext_multiline_scalable
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -96,7 +95,7 @@ function ticklabel_format(ax, varargin)
 
 %% define options
 OPT = struct(                   ...
-    'FormatFcn', @ticklabel_format_default, ...
+    'FormatFcn', @ticktext_default, ...
     'FormatFcnVariables', {{}}, ...
     'Dimension', 'x'                );
 
@@ -110,11 +109,16 @@ if ~isempty(shortcuts)
         if ischar(varargin{shortcuts(i)})
             switch varargin{shortcuts(i)}
                 case '-default'
-                    OPT.FormatFcn = @ticklabel_format_default;
+                    OPT.FormatFcn = @ticktext_default;
                     OPT.FormatFcnVariables = {};
                 case '-datetime'
-                    OPT.FormatFcn = @ticklabel_format_multiline_scalable_datestr;
+                    OPT.FormatFcn = @ticktext_datetime;
                     OPT.FormatFcnVariables = {};
+                case '-datetime2'
+                    OPT.FormatFcn = @ticktext_datetime2;
+                    OPT.FormatFcnVariables = {};
+                case '-categories'
+                    OPT.FormatFcn = @ticktext_categories;
             end
         end
     end
