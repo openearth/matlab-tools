@@ -74,24 +74,28 @@ end
 
 if iscell(strs)
     
-    if any(size(strs)==1)
-
-        str = sprintf([sep '%s'], strs{:});
-
-        if length(str) > length(sep)
-            str = str(length(sep)+1:end);
-        end
-
+    if isempty(strs)
+        str = [];
     else
+        if any(size(strs)==1)
 
-        str = cell(size(strs,1),1);
+            str = sprintf([sep '%s'], strs{:});
 
-        for i = 1:size(strs,1)
+            if length(str) > length(sep)
+                str = str(length(sep)+1:end);
+            end
 
-            str{i} = concat(strs(i,:), sep);
+        else
+
+            str = cell(size(strs,1),1);
+
+            for i = 1:size(strs,1)
+
+                str{i} = concat(strs(i,:), sep);
+
+            end
 
         end
-
     end
     
 elseif ischar(strs)

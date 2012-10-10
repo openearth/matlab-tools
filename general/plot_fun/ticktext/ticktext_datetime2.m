@@ -8,11 +8,7 @@ function labels = ticktext_datetime2(ticks)
 %   distinct value from the resulting labels and uses the entire labels
 %   only for the first tick:
 %
-%       'yyyy'
-%       'mmm-yyyy'
-%       'dd-mmm-yyyy'
-%       {'dd-mmm-yyyy' 'HH:MM'}
-%       {'dd-mmm-yyyy' 'HH:MM' 'SS'}
+%       {'yyyy' 'mmm' 'dd' 'HH:MM' 'SS'}
 %
 %   Syntax:
 %   labels = ticktext_datetime2(ticks)
@@ -72,12 +68,7 @@ function labels = ticktext_datetime2(ticks)
 
 %% determine ticklabels
 
-formats = {                         ...
-    'yyyy',                         ...
-    'mmm-yyyy',                     ...
-    'dd-mmm-yyyy',                  ...
-    {'dd-mmm-yyyy' 'HH:MM'},        ...
-    {'dd-mmm-yyyy' 'HH:MM' 'SS'}        };
+formats = {{'yyyy' 'mmm' 'dd' 'HH:MM' 'SS'}};
 
 fcn = @datestr;
 
@@ -88,24 +79,40 @@ labels  = cell(size(labels0));
 % of ticktext label lines. Include the entire range of ticklabels for the
 % first and last tick to set the scope.
 for i = 1:length(labels0)
-    if i > 1
-        j1 = 0;
-    else
-        j1 = 1;
-    end
+    n  = length(labels0{i});
+    j2 = n;
+    eq = true(1,n);
     
-    j2 = length(labels0{i});
-    for j = 1:length(labels0{i})
-        if j1 == 0
-            if ~strcmpi(labels0{i}{j}, labels0{i-1}{j})
-                j1 = j;
-            end
-        else
-            if ~isempty(regexp(labels0{i}{j},'^[0:]+$','once'))
-                j2 = j-1;
-                break;
-            end
+    for j = 0:n-1
+        % skip zero time and first day of the month (e.g. 00:00, 00:00:00 or 01)
+        if isempty(regexp(labels0{i}{end-j},'^[0:]+$','once')) && ...
+           isempty(regexp(labels0{i}{end-j},'^01$','once')) && ...
+           isempty(regexp(labels0{i}{end-j},'^Jan$','once'))
+            j2 = n-j;
+            break;
         end
     end
-    labels{i} = labels0{i}(max(j1,1):j2);
+        
+    if i == 1
+        % use full notation for first tick
+        j1 = 1;
+    else
+        for j = 0:n-1
+            eq(n-j) = strcmpi(labels0{i}{end-j}, labels0{i-1}{end-j});
+        end
+        j1 = find(~eq,1,'first');
+    end
+    
+    labels{i} = {};
+    
+    if j1 <= 3
+        % date
+        labels{i} = [labels{i} {concat(labels0{i}(min(j2,3):-1:min(j1,2)),'-')}];
+    end
+    if j2 > 3
+        % time
+        labels{i} = [labels{i} {concat(labels0{i}(max(j1,4):j2),':')}];
+    end
+    
+    labels{i} = labels{i}(~cellfun(@isempty, labels{i}));
 end
