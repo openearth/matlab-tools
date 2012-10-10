@@ -148,13 +148,7 @@ OPT.Object = ax;
 fcn = {@update_axes, OPT, varargin};
 
 % attach listener
-p1 = sprintf('%sTick', upper(OPT.Dimension));
-p2 = sprintf('%sXTickListener', upper(OPT.Dimension));
-
-hax = handle(ax);
-prp = findprop(hax, p1);
-lis = handle.listener(hax, prp, 'PropertyPostSet', fcn);
-setappdata(ax, p2, lis);
+attach_listener(ax, OPT, fcn);
 
 % set axes
 feval(fcn{1}, ax, '', fcn{2:end});
@@ -162,6 +156,23 @@ feval(fcn{1}, ax, '', fcn{2:end});
 end
 
 %% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% function to attach listener
+function attach_listener(ax, OPT, fcn)
+    
+    p = { ...
+        sprintf('%sTick', upper(OPT.Dimension)), ...
+    	sprintf('%sLim', upper(OPT.Dimension))      };
+
+    hax = handle(ax);
+    
+    for i = 1:length(p)
+        prp = findprop(hax, p{i});
+        lis = handle.listener(hax, prp, 'PropertyPostSet', fcn);
+        setappdata(ax, [p{i} 'Listener'], lis);
+    end
+
+end
 
 % function to update tick labels
 function update_axes(obj, event, OPT, args)
@@ -222,6 +233,9 @@ function update_axes(obj, event, OPT, args)
     % restore units
     set(ax,  'Units', uax );
     set(fig, 'Units', ufig);
+    
+    % re-set auto mode
+    %set(ax, 'XTickLabelMode', 'auto');
     
 end
 

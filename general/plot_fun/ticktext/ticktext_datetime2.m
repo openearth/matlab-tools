@@ -6,7 +6,7 @@ function labels = ticktext_datetime2(ticks)
 %   number of ticktext label lines.
 %   It uses the following formats, but only selects the lowest level
 %   distinct value from the resulting labels and uses the entire labels
-%   only for the first and last tick:
+%   only for the first tick:
 %
 %       'yyyy'
 %       'mmm-yyyy'
@@ -88,7 +88,7 @@ labels  = cell(size(labels0));
 % of ticktext label lines. Include the entire range of ticklabels for the
 % first and last tick to set the scope.
 for i = 1:length(labels0)
-    if i > 1 && i < length(labels0)
+    if i > 1
         j1 = 0;
     else
         j1 = 1;
