@@ -1,6 +1,8 @@
 function varargout = plotMap(varargin)
 %plotMap Plot a D-Flow FM unstructured map.
 %
+%   NB For faster scalar map plots, please use dflowfm.readFlowGeom2tri.
+%
 %     G  = dflowfm.readNet(ncfile) 
 %     D  = dflowfm.readMap(ncfile,<it>) 
 %    <h> = dflowfm.plotMap(G,D,<keyword,value>) 
@@ -27,7 +29,7 @@ function varargout = plotMap(varargin)
 %
 %   Apply any plot lay-out before plotMap: much fatser.
 %
-%   See also dflowfm, delft3d
+%   See also dflowfm, delft3d, readFlowGeom2tri
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 Deltares

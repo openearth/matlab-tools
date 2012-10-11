@@ -9,7 +9,9 @@ function varargout = fillDep(varargin)
 % * out     input nc mapfile (same as 'ncfile' with depth + timestamps added)
 % * ...
 %
-%   See also dflowfm, delft3d, nc_cf_gridset_getData, opendap_catalog
+% The output file of dflowfm.writeNet can be used as input for dflowfm.fillDep.
+%
+%   See also dflowfm, delft3d, nc_cf_gridset_getData, opendap_catalog, writeNet
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2011 Deltares
@@ -56,6 +58,11 @@ function varargout = fillDep(varargin)
    OPT.datenum     = datenum(2010,7,1); % get from mdu
    OPT.ddatenummax = datenum(10,1,1); % temporal search window in years (for direction see 'order')
    OPT.order       = ''; % RWS: Specifieke Operator Laatste/Dichtsbij/Prioriteit
+   OPT.xname       = 'NetNode_x';
+   OPT.yname       = 'NetNode_y';
+   OPT.zname       = 'NetNode_z';
+   OPT.tname       = 'NetNode_t';
+   OPT.fname       = 'NetNode_file';
 
    OPT.debug       = 0;
 
@@ -66,10 +73,10 @@ function varargout = fillDep(varargin)
    end
    
 %% Load grid
-
-   G             = dflowfm.readNet(OPT.ncfile);
-   G.cor.z       = G.cor.z.*nan; % G.cor.z       = nc_varget(OPT.ncfile,'NetNode_z')';
-   G.cor.datenum = G.cor.z.*nan; % G.cor.datenum = nc_varget(OPT.ncfile,'NetNode_t')';
+   G.cor.x       = nc_varget(OPT.ncfile, OPT.xname)';
+   G.cor.y       = nc_varget(OPT.ncfile, OPT.yname)';
+   G.cor.z       = G.cor.x.*nan; % G.cor.z       = nc_varget(OPT.ncfile,OPT.zname)';
+   G.cor.datenum = G.cor.x.*nan; % G.cor.datenum = nc_varget(OPT.ncfile,OPT.tname)';
    
    if ~isempty(OPT.poly)
       [P.x,P.y]         = landboundary('read',OPT.poly);
@@ -87,6 +94,11 @@ function varargout = fillDep(varargin)
    OPT2 = OPT;
    OPT2 = rmfield(OPT2,'ncfile');
    OPT2 = rmfield(OPT2,'out');
+   OPT2.xname = 'x';
+   OPT2.yname = 'y';
+   OPT2 = rmfield(OPT2,'zname');
+   OPT2 = rmfield(OPT2,'tname');
+   OPT2 = rmfield(OPT2,'fname');
 
    %% fill holes with samples of nearest/latest/first in time
    [zi,ti,fi,fi_legend]=nc_cf_gridset_getData(G.cor.x,G.cor.y,   OPT2);
@@ -108,12 +120,12 @@ function varargout = fillDep(varargin)
 
    copyfile(OPT.ncfile,OPT.out)
 
-   nc_varput(OPT.out,'NetNode_z',G.cor.z);
+   nc_varput(OPT.out,OPT.zname,G.cor.z);
    
 %% add date of sample points to ncfile (not in unstruc output)
    
    clear nc
-   nc.Name      = 'NetNode_t';
+   nc.Name      = OPT.tname;
    nc.Nctype    = 'double';
    nc.Dimension = { 'nNetNode' };
    nc.Attribute(1).Name  = 'units';
@@ -125,12 +137,12 @@ function varargout = fillDep(varargin)
    % TO DO: perhaps turn this into flagged data too?
    nc_addvar(OPT.out,nc);  
   
-   nc_varput(OPT.out,'NetNode_t',G.cor.datenum - datenum(1970,1,1));
+   nc_varput(OPT.out,OPT.tname,G.cor.datenum - datenum(1970,1,1));
 
 %% add data source to ncfile (not in unstruc output)
 
    clear nc
-   nc.Name      = 'NetNode_file';
+   nc.Name      = OPT.fname;
    nc.Nctype    = 'int';
    nc.Dimension = { 'nNetNode' };
    nc.Attribute(1).Name  = 'files';
@@ -143,5 +155,5 @@ function varargout = fillDep(varargin)
    nc.Attribute(3).Value = str2line(fi_legend,'s',' ');
    nc_addvar(OPT.out,nc);  
   
-   nc_varput(OPT.out,'NetNode_file',int8(G.cor.files));
+   nc_varput(OPT.out,OPT.fname,int8(G.cor.files));
    

@@ -16,6 +16,7 @@
 %
 % Read/plot grid (no time)
 %  dflowfm.readNet            - Reads network data of unstructured net.
+%  dflowfm.writeNet           - Write network nodes of unstructured net.
 %  dflowfm.plotNet            - Plot an unstructured grid.
 %  dflowfm.plotNetkml         - Plot an unstructured grid as Google Earth kml file (beta).
 %  dflowfm.peri2cell          - turn perimeter matrix into cell
