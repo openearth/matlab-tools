@@ -102,25 +102,52 @@ end
 
 ax  = findobj(fh,'Type','axes','Tag','');
 uit = findobj(fh,'Type','uitable');
+axis(ax,'equal')
 
 % create plot grid
 lim         = linspace(-10,10,100);
 [gx gy]     = meshgrid(lim,lim);
 
 % plot response surface
-d = find(ARS.active, 2);
+d = find(ARS(1).active, 2);
 
-if ARS.hasfit
-    dat         = zeros(numel(gx),sum(ARS.active));
+if any([ARS.hasfit])
+    dat         = zeros(numel(gx),sum(ARS(1).active));
     dat(:,d)    = [gx(:) gy(:)];
-    rsz         = reshape(polyvaln(ARS.fit,dat), size(gx));
+    if size(ARS,2) == 1
+        rsz         = reshape(polyvaln(ARS.fit,dat), size(gx));
+    else
+        rsz = nan(size(gx));
+        if size(ARS(cat(1,ARS.hasfit)),2) > 1
+            u_DP = cat(1,ARS.u_DP);
+            if size(u_DP,1) < size(cat(1,ARS.hasfit),1)
+%                 keyboard
+            else
+                u_DP = u_DP(cat(1,ARS.hasfit),:);
+            end
+            
+            distances   = pointdistance_pairs(u_DP,dat);
+            [distmin filter]  = min(distances,[],1);
+            filter = reshape(filter, size(gx));
+        else
+            filter = ones(size(gx))*find(cat(1,ARS.hasfit));
+        end
+        for ii = 1:size(ARS,2)
+            if ARS(ii).hasfit
+                rsz_temp(:,:) = reshape(polyvaln(ARS(ii).fit,dat), size(gx));
+                rsz(filter == ii) = rsz_temp(filter == ii);
+            end
+        end
+    end
 
     ph = findobj(ax,'Tag','ARS');
     if isempty(ph)
         ph = pcolor(ax,gx,gy,rsz);
+        clim(ax,[-1 1])
         set(ph,'Tag','ARS','DisplayName','ARS');
         colorbar('peer',ax);
         shading(ax,'flat');
+        colormap(ax,flipud(cbrewer('div','PuOr',200,'cubic'))) %JPDB other colormap for the markers to be visible
     else
         set(ph,'CData',rsz)
     end
@@ -132,24 +159,37 @@ up = un.*repmat(beta(:),1,size(un,2));
 ph1 = findobj(ax,'Tag','P1');
 ph2 = findobj(ax,'Tag','P2');
 ph3 = findobj(ax,'Tag','P3');
+dps = findobj(ax,'Tag','DPs');
 
-if isempty(ph1) || isempty(ph2) || isempty(ph3)
+u_dps = cat(1,ARS.u_DP);
+
+if isempty(ph1) || isempty(ph2) || isempty(ph3) || isempty(dps)
     ph1 = scatter(ax,un(~converged,d(1)),un(~converged,d(2)),'MarkerEdgeColor','b');
     ph2 = scatter(ax,up(notexact,  d(1)),up(notexact,  d(2)),'MarkerEdgeColor','r');
     ph3 = scatter(ax,up(exact,     d(1)),up(exact,     d(2)),'MarkerEdgeColor','g');
+    if ~isempty(u_dps)
+        dps = scatter(ax,u_dps(:,1),u_dps(:,2),[],'c','filled','MarkerEdgeColor','k');
+    end
 
     set(ph1,'Tag','P1','DisplayName','not converged');
     set(ph2,'Tag','P2','DisplayName','approximated');
     set(ph3,'Tag','P3','DisplayName','exact');
+    if ~isempty(u_dps)
+        set(dps,'Tag','DPs','DisplayName','design points');
+    end
 else
     set(ph1,'XData',un(~converged,d(1)),'YData',un(~converged,d(2)));
     set(ph2,'XData',up(notexact,  d(1)),'YData',up(notexact,  d(2)));
     set(ph3,'XData',up(exact,     d(1)),'YData',up(exact,     d(2)));
+    
+    if ~isempty(u_dps)
+        set(dps,'XData',u_dps(:,1),'YData',u_dps(:,2));
+    end
 end
 
 % plot beta sphere
-[x1,y1] = cylinder(ARS.betamin,100);
-[x2,y2] = cylinder(ARS.betamin+ARS.dbeta,100);
+[x1,y1] = cylinder(min([ARS.betamin]),100);
+[x2,y2] = cylinder(min([ARS.betamin])+min([ARS.dbeta]),100);
 
 ph1 = findobj(ax,'Tag','B1');
 ph2 = findobj(ax,'Tag','B2');
@@ -157,8 +197,8 @@ ph2 = findobj(ax,'Tag','B2');
 if isempty(ph1) || isempty(ph2)
     plot(ax,0,0,'ok','DisplayName','origin');
     
-    ph1 = plot(ax,x1(1,:),y1(1,:),':k');
-    ph2 = plot(ax,x2(1,:),y2(1,:),'-k');
+    ph1 = plot(ax,x1(1,:),y1(1,:),':r');
+    ph2 = plot(ax,x2(1,:),y2(1,:),'-r');
 
     set(ph1,'Tag','B1','DisplayName','\beta_{min}');
     set(ph2,'Tag','B2','DisplayName','\beta_{threshold}');
@@ -173,7 +213,7 @@ ylabel(ax,'u_2');
 
 title(ax,sprintf('%4.3f%%', progress*100));
 
-legend(ax,'-DynamicLegend','Location','NorthWest');
+legend(ax,'-DynamicLegend','Location','NorthWestOutside');
 legend(ax,'show');
 
 % update table contents
