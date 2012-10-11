@@ -106,19 +106,23 @@ end
 path = struct('root', inputname(1), 'self', '', 'parent', '', 'obj', inputname(1), ...
     'fullself', inputname(1), 'fullparent', '');
 if isfield(xs, 'path')
+    if iscell(xs.path)
+        xs.path = concat(xs.path, '.');
+    end
     p = regexp(xs.path, '\.', 'split');
-    path.root = p{1};
-    path.self = sprintf('.%s', p{2:end});
-    path.self = path.self(2:end);
-    path.fullself = sprintf('%s, ''%s''', path.root, path.self);
-    path.obj = sprintf('xs_get(%s, ''%s'')', path.root, path.self);
     
-    path.parent = path.root;
+    path.root     = p{1};
+    path.self     = sprintf('.%s', p{2:end});
+    path.self     = path.self(2:end);
+    path.fullself = sprintf('%s, ''%s''', path.root, path.self);
+    path.obj      = sprintf('xs_get(%s, ''%s'')', path.root, path.self);
+    
+    path.parent     = path.root;
     path.fullparent = path.root;
     
     if length(p) > 2
-        path.parent = sprintf('.%s', p{2:end-1});
-        path.parent = path.parent(2:end);
+        path.parent     = sprintf('.%s', p{2:end-1});
+        path.parent     = path.parent(2:end);
         path.fullparent = sprintf('%s, ''%s''', path.root, path.parent);
     end
 end

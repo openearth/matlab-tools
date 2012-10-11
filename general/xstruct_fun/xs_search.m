@@ -1,4 +1,4 @@
-function [xsf m mn vdu ndu] = xs_search(xs,varargin)
+function result = xs_search(xs,varargin)
 %XS_SEARCH  Simple search routine for XStructs
 %
 %   Searches names and values in an XStruct for certain patterns. Uses
@@ -140,12 +140,13 @@ for i = 1:length(xs.data)
     % search substructure, if available
     if xs_check(v)
         v.path     = [xs.path{:} {n}];
-        [xsf.data(i).value idx idxn vdui ndui] = xs_search(v,varargin{:});
-        if any(idx)
-            mn{i}  = idxn;
+        subresult = xs_search(v,varargin{:});
+        xsf.data(i).value = subresult.filtered;
+        if ~isempty(subresult) && any(subresult.indices)
+            mn{i}             = subresult.indices_nested;
+            vdu               = unique([vdu subresult.values]);
+            ndu               = unique([ndu subresult.names]);
         end
-        vdu = unique([vdu vdui]);
-        ndu = unique([ndu ndui]);
     else
 
         % if variable class is supported, search for matches
@@ -167,3 +168,11 @@ m = cellfun(@(x)~islogical(x)||x,mn);
 if length(dbs)<=1 || ~strcmpi(dbs(end-1).name, mfilename)
     xsf.data = xsf.data(m);
 end
+
+% build result structure
+result = struct( ...
+    'filtered',         xsf,     ...
+    'indices',          find(m), ...
+    'indices_nested',   {mn},    ...
+    'names',            {ndu},   ...
+    'values',           {vdu}       );
