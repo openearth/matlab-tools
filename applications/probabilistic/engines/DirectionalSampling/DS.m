@@ -174,16 +174,16 @@ OPT = struct(...
     'x2zVariables',     {{}},               ...                             % Additional variables for the x2zFunction
     'P2xFunction',      @P2x,               ...                             % Function handle to transform P to x
     'P2xVariables',     {{}},               ...                             % Additional variables for the P2xFunction
-    'z20Function',      @find_zero_poly2,   ...                             % Function handle to find z=0 along a line
+    'z20Function',      @find_zero_poly4,   ...                             % Function handle to find z=0 along a line
     'z20Variables',     {{}},               ...                             % Additional variables for the z20Function
     'ARS',              true,               ...                             % Boolean indicating whether to use ARS or not
-    'ARSgetFunction',   @prob_ars_get,      ...                             % Function handle to evaluate the z-value for a combination 
+    'ARSgetFunction',   @prob_ars_get_mult, ...                             % Function handle to evaluate the z-value for a combination 
                                             ...                                 of unit vector u and distance beta based on an ARS structure
     'ARSgetVariables',  {{}},               ...                             % Additional variables to the ARSgetFunction
-    'ARSsetFunction',   @prob_ars_set2,     ...                             % Function handle to update ARS structure based on a set
+    'ARSsetFunction',   @prob_ars_set_mult, ...                             % Function handle to update ARS structure based on a set
                                             ...                                 of vectors u and corresponding z-values
     'ARSsetVariables',  {{}},               ...                             % Additional variables to the ARSsetFunction
-    'DesignPointDetection',  true,          ...                             % Boolean switch for using automated detection of DPs (and using multiple ARS's)
+    'DesignPointDetection', true,           ...                             % Boolean switch for using automated detection of DPs (and using multiple ARS's)
     'beta1',            4,                  ...                             % Initial beta value in line search
     'dbeta',            .1,                 ...                             % Initial beta threshold for beta sphere
     'Pratio',           .4,                 ...                             % Maximum fraction of failure probability determined by approximated samples
@@ -294,7 +294,7 @@ while Pr > OPT.Pratio || ~isempty(reevaluate)                               % WH
             if nrandmatrix == OPT.maxsamples
                 error('Maximum number of random directions reached!')
             else
-                nrandmatrix     = nrandmatrix + 1;                              % increase counter randmatrix use
+                nrandmatrix = nrandmatrix + 1;                              % increase counter randmatrix use
             end
             
             % transform P to u

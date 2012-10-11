@@ -147,7 +147,8 @@ if any([ARS.hasfit])
         set(ph,'Tag','ARS','DisplayName','ARS');
         colorbar('peer',ax);
         shading(ax,'flat');
-        colormap(ax,flipud(cbrewer('div','PuOr',200,'cubic'))) %JPDB other colormap for the markers to be visible
+%        colormap(ax,flipud(cbrewer('div','PuOr',200,'cubic'))) %JPDB other colormap for the markers to be visible
+        colormap('gray');
     else
         set(ph,'CData',rsz)
     end

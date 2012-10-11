@@ -111,18 +111,16 @@ if length(ARS.z) >= 1+nva+nva*(nva+1)/2
 
     ARS.fit     = polyfitn(ARS.u(notinf&notout,:), ARS.z(notinf&notout), 2);
  
-    if ~any(isnan(ARS.fit.Coefficients)) && ~any(isinf(ARS.fit.Coefficients)) && ARS.fit.RMSE < 1  
+    if check_fit(ARS.fit)
         ARS.hasfit  = true;
-        i           = find(b == min(b(abs(z(isfinite(z)))<OPT.epsZ)));
-        ARS.beta_DP = b(i);
-        ARS.u_DP    = u(i,:);
     else 
         ARS.hasfit  = false;
         ARS.fit     = struct();
-        ARS.beta_DP = nan;
-        ARS.u_DP    = nan(1,sum(ARS.active));
-%         keyboard
     end
+    
+    i           = find(b == min(b(abs(z(isfinite(z)))<OPT.epsZ)));
+    ARS.beta_DP = b(i);
+	ARS.u_DP    = u(i,:);
 
 % derive 2nd degree response surface with no cross terms
 elseif length(ARS.z) >= 2*nva+1
@@ -130,7 +128,7 @@ elseif length(ARS.z) >= 2*nva+1
     pfmat       = [zeros(1,nva); eye(nva); 2*eye(nva)];
     ARS.fit     = polyfitn(ARS.u(notinf&notout,:), ARS.z(notinf&notout), pfmat);
 
-    if ~any(isnan(ARS.fit.Coefficients)) && ~any(isinf(ARS.fit.Coefficients)) && ARS.fit.RMSE < 1
+    if check_fit(ARS.fit)
         ARS.hasfit  = true;
         i           = find(b == min(b(abs(z(isfinite(z)))<OPT.epsZ)));
         ARS.beta_DP = b(i);
@@ -140,18 +138,42 @@ elseif length(ARS.z) >= 2*nva+1
         ARS.fit     = struct();
         ARS.beta_DP = nan;
         ARS.u_DP    = nan(1,sum(ARS.active));
-%         keyboard
     end
 else
     ARS.beta_DP = nan;
     ARS.u_DP    = nan(1,sum(ARS.active));
 end
 
+% hij werkt vooralsnog alleen als alle variabelen actief zijn. Als niet
+% alle variabelen actief zijn moet de procedure m.i. aangepast worden
+% zodanig dat de ARS-fit alleen op de actieve variabelen wordt uitgevoerd. 
 
+% in een later stadium kan de procedure nog verbeterd worden door niet in 1
+% keer de stap te maken van "geen cross-terms" naar "alle cross-terms". De
+% cross-terms kunnen we eventueel wellicht gradueel laten opvoeren door
+% eerst alleen de cross-terms te introduceren voor de belangrijkste
+% variabelen, d.w.z. de variabelen die de z-functie het sterkst
+% beinvloeden. Maar dit is nog even toekomstmuziek.
 
-% hij werkt vooralsnog alleen als alle variabelen actief zijn. Als niet alle variabelen actief zijn moet de procedure m.i. aangepast worden zodanig dat de ARS-fit alleen op de actieve variabelen wordt uitgevoerd.
+end
 
-% in een later stadium kan de procedure nog verbeterd worden door niet in 1 keer de stap te maken van "geen cross-terms" naar "alle cross-terms". De cross-terms kunnen we eventueel wellicht gradueel laten opvoeren door eerst alleen de cross-terms te introduceren voor de belangrijkste variabelen, d.w.z. de variabelen die de z-functie het sterkst beinvloeden. Maar dit is nog even toekomstmuziek.
+%% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% FUNCTION: check fit for extreme characteristics
+function valid = check_fit(fit)
 
+    valid = false;
+    
+    if ~any(isnan(fit.Coefficients)) && ...
+       ~any(isinf(fit.Coefficients)) && ...
+       ~any(fit.Coefficients > 1e10) && ...
+       ~any(isnan(fit.ParameterVar)) && ...
+       ~any(isinf(fit.ParameterVar)) && ...
+       ~any(fit.ParameterVar > 1e10) && ...
+       fit.RMSE < 1
+    
+        valid = true;
+        
+    end
+end
 
