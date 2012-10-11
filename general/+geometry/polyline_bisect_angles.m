@@ -40,6 +40,7 @@ function theta_bisect = polyline_bisect_angles(x,y)
 %         [x;  x + offset * sin(theta_bisect)],...
 %         [y;  y + offset * cos(theta_bisect)],'k-',...
 %         'lineWidth',2);
+%     text(x,y,cellfun(@num2str,num2cell(1:length(x)),'UniformOutput',false))
 %     axis equal
 %     legend([h1(1),h2(1),h3(1)],'polyline','segment angle','bisect')
 %
@@ -91,4 +92,5 @@ function theta_bisect = polyline_bisect_angles(x,y)
 theta_segment             = geometry.polyline_segment_angles(x,y);
 theta_1                   = theta_segment([1 1:end]) - pi;
 theta_2                   = theta_segment([1:end 1]);
+theta_2(theta_2<theta_1)  = theta_2(theta_2<theta_1) + 2*pi;
 theta_bisect              = (theta_1 + theta_2)/2;
