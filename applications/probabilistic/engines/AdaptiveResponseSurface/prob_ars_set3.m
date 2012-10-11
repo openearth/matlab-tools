@@ -106,21 +106,14 @@ notinf      = all(isfinite(ARS.u),2) & isfinite(ARS.z);
 notout      = abs(ARS.z)<=OPT.maxZ;
 nva         = sum(ARS.active);
 
+i           = find(b == min(b(abs(z(isfinite(z)))<OPT.epsZ)));
+ARS.beta_DP = b(i);
+ARS.u_DP    = u(i,:);
+
 % derive 2nd degree response surface with all cross terms
 if length(ARS.z) >= 1+nva+nva*(nva+1)/2
 
     ARS.fit     = polyfitn(ARS.u(notinf&notout,:), ARS.z(notinf&notout), 2);
- 
-    if check_fit(ARS.fit)
-        ARS.hasfit  = true;
-    else 
-        ARS.hasfit  = false;
-        ARS.fit     = struct();
-    end
-    
-    i           = find(b == min(b(abs(z(isfinite(z)))<OPT.epsZ)));
-    ARS.beta_DP = b(i);
-	ARS.u_DP    = u(i,:);
 
 % derive 2nd degree response surface with no cross terms
 elseif length(ARS.z) >= 2*nva+1
@@ -128,20 +121,13 @@ elseif length(ARS.z) >= 2*nva+1
     pfmat       = [zeros(1,nva); eye(nva); 2*eye(nva)];
     ARS.fit     = polyfitn(ARS.u(notinf&notout,:), ARS.z(notinf&notout), pfmat);
 
-    if check_fit(ARS.fit)
-        ARS.hasfit  = true;
-        i           = find(b == min(b(abs(z(isfinite(z)))<OPT.epsZ)));
-        ARS.beta_DP = b(i);
-        ARS.u_DP    = u(i,:);
-    else
-        ARS.hasfit  = false;
-        ARS.fit     = struct();
-        ARS.beta_DP = nan;
-        ARS.u_DP    = nan(1,sum(ARS.active));
-    end
+end
+
+if check_fit(ARS.fit)
+    ARS.hasfit  = true;
 else
-    ARS.beta_DP = nan;
-    ARS.u_DP    = nan(1,sum(ARS.active));
+    ARS.hasfit  = false;
+    ARS.fit     = struct();
 end
 
 % hij werkt vooralsnog alleen als alle variabelen actief zijn. Als niet
@@ -164,16 +150,18 @@ function valid = check_fit(fit)
 
     valid = false;
     
-    if ~any(isnan(fit.Coefficients)) && ...
-       ~any(isinf(fit.Coefficients)) && ...
-       ~any(fit.Coefficients > 1e10) && ...
-       ~any(isnan(fit.ParameterVar)) && ...
-       ~any(isinf(fit.ParameterVar)) && ...
-       ~any(fit.ParameterVar > 1e10) && ...
-       fit.RMSE < 1
-    
-        valid = true;
-        
+    if ~isempty(fit) && ~isempty(fieldnames(fit))
+        if ~any(isnan(fit.Coefficients)) && ...
+           ~any(isinf(fit.Coefficients)) && ...
+           ~any(fit.Coefficients > 1e10) && ...
+           ~any(isnan(fit.ParameterVar)) && ...
+           ~any(isinf(fit.ParameterVar)) && ...
+           ~any(fit.ParameterVar > 1e10) && ...
+           fit.RMSE < 1
+
+            valid = true;
+
+        end
     end
 end
 

@@ -277,7 +277,7 @@ while Pr > OPT.Pratio || ~isempty(reevaluate)                               % WH
     while COV > minCOV || ~isempty(reevaluate)                              % WHILE: iterate while coefficient of variation has not reached it's required minimum or
                                                                             %   there are samples left to be reevaluated due to an increase of the beta sphere 
                                                                             %   or finalisation of the process
-%         try %jpdb added for non convergence
+        
         % if no samples within beta sphere are left to reevaluate, draw new
         % directions
         if isempty(reevaluate)                                              % IF: check if no samples are left for reevaluation
@@ -358,21 +358,24 @@ while Pr > OPT.Pratio || ~isempty(reevaluate)                               % WH
 
         % exact line search
         if ~OPT.ARS || ~any([ARS.hasfit]) || ~any(converged) || ...         % IF: check if ARS should not be used, is not available, no converged samples are available
-                (abs(b(end)) <= max([ARS.betamin])+max([ARS.dbeta]) && ca)  %   or an approximated and converged result is available that is within the beta sphere
-            
-            ii          = [1 2];                                            % select origin and initial estimate as starting values for exact line search
+                (abs(b(end)) <= max([ARS.betamin])+max([ARS.dbeta]) && ca) || ...  %   or an approximated and converged result is available that is within the beta sphere
+                (~ca && isnan(z(end)) && isempty(bn))
+                
+            ii          = 1;                                                % select origin and initial estimate as starting values for exact line search
             
             if OPT.ARS && any([ARS.hasfit])
-%                 ii      = unique([ii find(abs(z)==min(abs(z)),1,'first')]); % also select approximated sample closest to zero, if available
-                ii      = unique([1 find(abs(z)==min(abs(z)),1,'first')]);         % also select approximated sample closest to zero, if available
+                ii      = unique([ii find(abs(z)==min(abs(z)),1,'first')]);         % also select approximated sample closest to zero, if available
                 if length(ii) == 1
                     b   = [b OPT.beta1];
                     z   = [z beta2z(OPT, un(idx,:), OPT.beta1)];
                     be  = [be OPT.beta1];
                     ze  = [ze z(end)];
+                    n   = n + 1;
                     
-                    ii  = [1 find(z==z(end),1,'last')];
+                    ii  = [ii find(z==z(end),1,'last')];
                 end
+            else
+                ii = [ii 2];
             end
 
             [bn zn nn ce] = feval(  ...                                     % start exact line search to find zero crossing along sampled direction given the
@@ -404,8 +407,7 @@ while Pr > OPT.Pratio || ~isempty(reevaluate)                               % WH
         nb              = length(beta);                                     % total number of samples drawn so far
         
         % update response surface
-        if OPT.ARS && ~isempty(ze) %&& nrandmatrix >= 10
-%             keyboard  
+        if OPT.ARS && ~isempty(ze)
             ue          = beta2u(un(idx,:),be(:));                          % determine sample vector in standard normal space (u*beta)  
             ARS        	= feval( ...                                        % compute ARS based on exact samples
                 OPT.ARSsetFunction,     ...

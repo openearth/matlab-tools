@@ -90,7 +90,9 @@ fh = findobj('Tag','DSprogress');
 if isempty(fh)
     fh = figure('Tag','DSprogress');
 
-    subplot(3,1,[1 2]); hold on;
+    s1 = subplot(3,1,[1 2]); hold on;
+    
+    set(s1, 'Color', 'none'); box on;
 
     uitable( ...
         'Units','normalized', ...
@@ -104,55 +106,10 @@ ax  = findobj(fh,'Type','axes','Tag','');
 uit = findobj(fh,'Type','uitable');
 axis(ax,'equal')
 
-% create plot grid
-lim         = linspace(-10,10,100);
-[gx gy]     = meshgrid(lim,lim);
-
-% plot response surface
 d = find(ARS(1).active, 2);
 
-if any([ARS.hasfit])
-    dat         = zeros(numel(gx),sum(ARS(1).active));
-    dat(:,d)    = [gx(:) gy(:)];
-    if size(ARS,2) == 1
-        rsz         = reshape(polyvaln(ARS.fit,dat), size(gx));
-    else
-        rsz = nan(size(gx));
-        if size(ARS(cat(1,ARS.hasfit)),2) > 1
-            u_DP = cat(1,ARS.u_DP);
-            if size(u_DP,1) < size(cat(1,ARS.hasfit),1)
-%                 keyboard
-            else
-                u_DP = u_DP(cat(1,ARS.hasfit),:);
-            end
-            
-            distances   = pointdistance_pairs(u_DP,dat);
-            [distmin filter]  = min(distances,[],1);
-            filter = reshape(filter, size(gx));
-        else
-            filter = ones(size(gx))*find(cat(1,ARS.hasfit));
-        end
-        for ii = 1:size(ARS,2)
-            if ARS(ii).hasfit
-                rsz_temp(:,:) = reshape(polyvaln(ARS(ii).fit,dat), size(gx));
-                rsz(filter == ii) = rsz_temp(filter == ii);
-            end
-        end
-    end
-
-    ph = findobj(ax,'Tag','ARS');
-    if isempty(ph)
-        ph = pcolor(ax,gx,gy,rsz);
-        clim(ax,[-1 1])
-        set(ph,'Tag','ARS','DisplayName','ARS');
-        colorbar('peer',ax);
-        shading(ax,'flat');
-%        colormap(ax,flipud(cbrewer('div','PuOr',200,'cubic'))) %JPDB other colormap for the markers to be visible
-        colormap('gray');
-    else
-        set(ph,'CData',rsz)
-    end
-end
+% plot response surface
+[gx gy gz] = plotARS(ARS);
 
 % plot DS samples
 up = un.*repmat(beta(:),1,size(un,2));
@@ -161,10 +118,14 @@ ph1 = findobj(ax,'Tag','P1');
 ph2 = findobj(ax,'Tag','P2');
 ph3 = findobj(ax,'Tag','P3');
 dps = findobj(ax,'Tag','DPs');
+prs = findobj(ax,'Tag','ARS');
 
 u_dps = cat(1,ARS.u_DP);
 
-if isempty(ph1) || isempty(ph2) || isempty(ph3) || isempty(dps)
+if isempty(ph1) || isempty(ph2) || isempty(ph3) || isempty(dps) || isempty(prs)
+    
+    prs = pcolor(ax,gx,gy,gz);
+    
     ph1 = scatter(ax,un(~converged,d(1)),un(~converged,d(2)),'MarkerEdgeColor','b');
     ph2 = scatter(ax,up(notexact,  d(1)),up(notexact,  d(2)),'MarkerEdgeColor','r');
     ph3 = scatter(ax,up(exact,     d(1)),up(exact,     d(2)),'MarkerEdgeColor','g');
@@ -172,13 +133,16 @@ if isempty(ph1) || isempty(ph2) || isempty(ph3) || isempty(dps)
         dps = scatter(ax,u_dps(:,1),u_dps(:,2),[],'c','filled','MarkerEdgeColor','k');
     end
 
+    set(prs,'Tag','ARS','DisplayName','ARS');
     set(ph1,'Tag','P1','DisplayName','not converged');
     set(ph2,'Tag','P2','DisplayName','approximated');
     set(ph3,'Tag','P3','DisplayName','exact');
+    
     if ~isempty(u_dps)
         set(dps,'Tag','DPs','DisplayName','design points');
     end
 else
+    set(prs,'CData',gz)
     set(ph1,'XData',un(~converged,d(1)),'YData',un(~converged,d(2)));
     set(ph2,'XData',up(notexact,  d(1)),'YData',up(notexact,  d(2)));
     set(ph3,'XData',up(exact,     d(1)),'YData',up(exact,     d(2)));
@@ -211,6 +175,11 @@ end
 % create labels
 xlabel(ax,'u_1');
 ylabel(ax,'u_2');
+
+colorbar('peer',ax);
+colormap('gray');
+%shading(ax,'flat');
+clim(ax,[-1 1]);
 
 title(ax,sprintf('%4.3f%%', progress*100));
 

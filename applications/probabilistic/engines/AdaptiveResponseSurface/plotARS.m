@@ -1,32 +1,32 @@
-function [z ARS] = prob_ars_get_mult(u, varargin)
-%PROB_ARS_GET_MULT  One line description goes here.
+function [gx gy rsz] = plotARS(ARS)
+%PLOTARS  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   varargout = prob_ars_total(varargin)
+%   varargout = plotARS(varargin)
 %
-%   Input: For <keyword,value> pairs call prob_ars_total() without arguments.
+%   Input: For <keyword,value> pairs call plotARS() without arguments.
 %   varargin  =
 %
 %   Output:
 %   varargout =
 %
 %   Example
-%   prob_ars_total
+%   plotARS
 %
 %   See also
 
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2012 Deltares
-%       Joost den Bieman
+%       Bas Hoonhout
 %
-%       joost.denbieman@deltares.nl
+%       bas.hoonhout@deltares.nl
 %
-%       P.O. Box 177
-%       2600 MH Delft
-%       The Netherlands
+%       Rotterdamseweg 185
+%       2629HD Delft
+%       Netherlands
 %
 %   This library is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -49,8 +49,8 @@ function [z ARS] = prob_ars_get_mult(u, varargin)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 27 Sep 2012
-% Created with Matlab version: 7.12.0.635 (R2011a)
+% Created: 11 Oct 2012
+% Created with Matlab version: 7.14.0.739 (R2012a)
 
 % $Id$
 % $Date$
@@ -59,35 +59,36 @@ function [z ARS] = prob_ars_get_mult(u, varargin)
 % $HeadURL$
 % $Keywords: $
 
-%% Settings
+%%
 
-OPT = struct(...
-    'ARS',      prob_ars_struct_mult ...
-);
+d = find(ARS(1).active, 2);
 
-OPT = setproperty(OPT, varargin{:});
+% create plot grid
+lim         = linspace(-10,10,100);
+[gx gy]     = meshgrid(lim,lim);
 
-%% read fit
+rsz = nan(size(gx));
 
-ARS = OPT.ARS;
-if length(ARS) > 1
+if any([ARS.hasfit])
     
-    z_all     = nan(size(ARS));
-    distances = nan(size(ARS));
+    dat         = zeros(numel(gx),sum(ARS(1).active));
+    dat(:,d)    = [gx(:) gy(:)];
     
-    for i=1:length(ARS)
+    if length(ARS) == 1
+        rsz     = reshape(polyvaln(ARS.fit, dat), size(gx));
+    else
+        rsz     = nan(size(gx));
         
-        distances(i)    = pointdistance_pairs(ARS(i).u_DP,u);              % Calculate distance between approximated point and ARS design point
+        u_DP = cat(1,ARS.u_DP);
+        distances   = pointdistance_pairs(u_DP,dat);
+        [dm filter] = min(distances,[],1);
+        filter      = reshape(filter, size(gx));
         
-        if ARS(i).hasfit                                                        % Check if the ARS has a good fit
-            z_all(i)   = polyvaln(ARS(i).fit, u(:,ARS(1).active));
-        else
-            z_all(i)   = nan;
+        for ii = 1:length(ARS)
+            if ARS(ii).hasfit
+                rsz_temp(:,:)     = reshape(polyvaln(ARS(ii).fit,dat), size(gx));
+                rsz(filter == ii) = rsz_temp(filter == ii);
+            end
         end
     end
-    
-    [d ii]  = nanmin(distances);
-    z       = z_all(ii);                                                              % The approximation is the value from the ARS of the closest design point
-else
-    z       = polyvaln(ARS.fit, u(:,ARS.active));
 end
