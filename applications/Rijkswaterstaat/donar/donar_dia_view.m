@@ -92,7 +92,7 @@ function ui_build(obj)
     
     uitable(pobj, 'Tag', 'TableMeta');
     
-    axes;
+    ticktext(axes, '-datetime2');
     
     ui_resize(pobj, []);
     

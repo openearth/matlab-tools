@@ -112,8 +112,7 @@ uhdr     = uhdr(i);
 %% read fields
 
 % determine number of parts
-ipart = find(strcmpi(shdr,uhdr{1}));
-npart = length(ipart);
+npart = max(cellfun(@(x) sum(strcmpi(shdr,x)), uhdr));
 
 i1 = max(OPT.from,1);
 i2 = min(OPT.to,npart);
@@ -126,92 +125,104 @@ else
     i2 = max(OPT.index);
 end
 
-D = xs_empty();
+D  = xs_empty();
+Ds = xs_empty();
 
 % save header
 D.header = regexprep(contents(1:ihdr(1)-1),'\s','');
 
-ii = 1;
-for i = OPT.index
+mhdr   = cell2struct(num2cell(false(size(uhdr))),uhdr,2);
+ipart  = 1;
+iblock = 1;
+for i = 1:length(ihdr)
+    
+    % register current header
+	mhdr.(shdr{i}) = true;
     
     if OPT.verbose
-        waitbar((i-i1+1)/(i2-i1+1),wb,sprintf('Reading %d/%d...',i,npart));
+        waitbar((ipart-i1+1)/(i2-i1+1),wb,sprintf('Reading %d/%d...',ipart,npart));
     end
     
-    j1 = ipart(i);
+    j1 = ihdr(i)+length(shdr{i})+3;
     
-    if i == npart
-        j2 = length(ipart);
+    if i == length(ihdr)
+        j2 = length(contents);
     else
-        j2 = ipart(i+1)-1;
+        j2 = ihdr(i+1)-1;
     end
-    
-    Ds = xs_empty();
-    
-    for j = j1:j2
         
-        str = contents(ihdr(j)+6:ihdr(j+1)-1);
-        
-        Dss = xs_empty();
-        
-        % check if this is a meta or data block
-        if ~isempty(regexpi(str,'[a-zA-Z]{3}','start'))
-            % meta
-            
-            % split all lines
-            re = regexpi(str,'(\w{3});(.*?)\s*\n','tokens');
-            re = reshape([re{:}],2,length(re))';
-            
-            val = cellfun(@(x)regexpi(x,';','split'),re(:,2),'UniformOutput',false);
-            
-            % uniquefy names
-            while length(unique(re(:,1)))<length(re(:,1))
-                re(:,1) = cellfun(@(x1,x2)[x1 '_' x2{1}],re(:,1),val,'UniformOutput',false);
-                val     = cellfun(@(x)x(2:end),val,'UniformOutput',false);
+    str = contents(j1:j2);
+
+    Dss = xs_empty();
+
+    % check if this is a meta or data block
+    if ~isempty(regexpi(str,'[a-zA-Z]{3}','start'))
+        % meta
+
+        % split all lines
+        re = regexpi(str,'(\w{3});(.*?)\s*\n','tokens');
+        re = reshape([re{:}],2,length(re))';
+
+        val = cellfun(@(x)regexpi(x,';','split'),re(:,2),'UniformOutput',false);
+
+        % uniquefy names
+        while length(unique(re(:,1)))<length(re(:,1))
+            re(:,1) = cellfun(@(x1,x2)[x1 '_' x2{1}],re(:,1),val,'UniformOutput',false);
+            val     = cellfun(@(x)x(2:end),val,'UniformOutput',false);
+        end
+
+        % unpack single valued cell arrays
+        idx = cellfun(@length,val)==1;
+        val(idx) = cellfun(@(x)x{1},val(idx),'UniformOutput',false);
+
+        Dss.data = struct('name',re(:,1),'value',val);
+    else
+        % data
+
+        if ~OPT.nodata
+
+            % remove all line breaks
+            str = regexprep(str,'[\r\n]','');
+
+            % split primary axes steps (two intertwined, weirdo!)
+            re = regexpi(str,'/|:','split');
+
+            % split primary axes in secondary axes steps, if present (again
+            % two intertwined!)
+            s = {};
+            for k = 1:2
+                s1 = cellfun(@(x)regexpi(x,'[;\\]+','split'),re(k:2:end),'UniformOutput',false)';
+                s2 = cellfun(@str2double,s1,'UniformOutput',false);
+
+                s{k} = cell2mat(s2);
+                s{k}(abs(s{k})>1e6) = nan;
             end
+
+            % store two primary axes separately
+            n = min(cellfun(@(x)size(x,1),s));
+
+            Dss.data = struct('name',{'data1' 'data2'},'value',{s{1}(1:n,:) s{2}(1:n,:)});
+        end
+    end
+
+    Dss = xs_meta(Dss, mfilename, 'donar_block_item');
+    Ds  = xs_set(Ds,shdr{i},Dss);
+    
+    % check if this is the end of the last part or a new part will start in
+    % the next iteration, if any of the two is true then store result
+    if i == length(ihdr) || mhdr.(shdr{i+1})
+        
+        if ismember(ipart, OPT.index)
+            Ds = xs_meta(Ds, mfilename, 'donar_block');
+            D = xs_set(D,sprintf('block%03d',iblock),Ds);
+            iblock = iblock + 1;
             
-            % unpack single valued cell arrays
-            idx = cellfun(@length,val)==1;
-            val(idx) = cellfun(@(x)x{1},val(idx),'UniformOutput',false);
-            
-            Dss.data = struct('name',re(:,1),'value',val);
-        else
-            % data
-            
-            if ~OPT.nodata
-            
-                % remove all line breaks
-                str = regexprep(str,'[\r\n]','');
-
-                % split primary axes steps (two intertwined, weirdo!)
-                re = regexpi(str,'/|:','split');
-
-                % split primary axes in secondary axes steps, if present (again
-                % two intertwined!)
-                s = {};
-                for k = 1:2
-                    s1 = cellfun(@(x)regexpi(x,'[;\\]+','split'),re(k:2:end),'UniformOutput',false)';
-                    s2 = cellfun(@str2double,s1,'UniformOutput',false);
-
-                    s{k} = cell2mat(s2);
-                    s{k}(abs(s{k})>1e6) = nan;
-                end
-
-                % store two primary axes separately
-                n = min(cellfun(@(x)size(x,1),s));
-
-                Dss.data = struct('name',{'data1' 'data2'},'value',{s{1}(1:n,:) s{2}(1:n,:)});
-            end
+            Ds = xs_empty();
         end
         
-        Dss = xs_meta(Dss, mfilename, 'donar_block_item');
-        Ds = xs_set(Ds,shdr{j},Dss);
+        ipart = ipart + 1;
+        mhdr  = cell2struct(cellfun(@(x) false, struct2cell(mhdr), 'UniformOutput', false), fieldnames(mhdr));
     end
-    
-    Ds = xs_meta(Ds, mfilename, 'donar_block');
-    D = xs_set(D,sprintf('block%03d',ii),Ds);
-    
-    ii = ii + 1;
 end
 
 D = xs_meta(D, mfilename, 'donar', abspath(fname));
