@@ -1,4 +1,4 @@
-function [xsf m mn] = xs_search(xs,varargin)
+function [xsf m mn vdu ndu] = xs_search(xs,varargin)
 %XS_SEARCH  Simple search routine for XStructs
 %
 %   Searches names and values in an XStruct for certain patterns. Uses
@@ -91,6 +91,10 @@ if ~isfield(xs,'path'); xs.path = {inputname(1)}; end;
 
 %% search XStruct
 
+% store unique values and fields
+vdu = {};
+ndu = {};
+
 % intialize index vectors
 m  = false(1,length(xs.data));
 mn = num2cell(m);
@@ -106,38 +110,50 @@ for i = 1:length(xs.data)
     % read name/value pair for current field
     n = xs.data(i).name;
     v = xs.data(i).value;
+    
+    % determine variable class and convert to string representation
+    if xs_check(v)
+        vd = sprintf('<a href="matlab:xs_show(%s, ''%s'');">nested</a>', xs.path{1}, [b2 n]);
+    else
+        switch class(v)
+            case {'logical' 'single' 'double' 'int8' 'int16' 'int32' 'int64'}
+                vd = num2str(v(:)');
+            case 'char'
+                vd = v;
+            case 'cell'
+                vd = sprintf('%s ',v{:});
+            otherwise
+                vd = [];
+        end
+    end
 
     % match field name
     if strfilter(n,varargin)
-        fprintf('%-20s: %s\n',[b '.' n],n);
+        ndu = unique([ndu {n}]);
+        if ~xs_check(v)
+            vdu = unique([vdu {vd}]);
+        end
+        fprintf('%-20s: %s\n',[b '.' n],vd);
         mn{i} = true;
     end
 
     % search substructure, if available
     if xs_check(v)
         v.path     = [xs.path{:} {n}];
-        [xsf.data(i).value idx idxn] = xs_search(v,varargin{:});
+        [xsf.data(i).value idx idxn vdui ndui] = xs_search(v,varargin{:});
         if any(idx)
             mn{i}  = idxn;
         end
+        vdu = unique([vdu vdui]);
+        ndu = unique([ndu ndui]);
     else
-
-        % determine variable class and convert to string representation
-        switch class(v)
-            case {'logical' 'single' 'double' 'int8' 'int16' 'int32' 'int64'}
-                v = num2str(v(:)');
-            case 'char'
-                % do nothing
-            case 'cell'
-                v = sprintf('%s ',v{:});
-            otherwise
-                v = [];
-        end
 
         % if variable class is supported, search for matches
         if ~isempty(v)
             if strfilter(v,varargin)
-                fprintf('%-20s: %s\n',[b '.' n],v);
+                ndu = unique([ndu {n}]);
+                vdu = unique([vdu {vd}]);
+                fprintf('%-20s: %s\n',[b '.' n],vd);
                 mn{i} = true;
             end
         end

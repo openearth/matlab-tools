@@ -84,7 +84,7 @@ for i = 1:length(labels0)
     eq = true(1,n);
     
     for j = 0:n-1
-        % skip zero time and first day of the month (e.g. 00:00, 00:00:00 or 01)
+        % skip zero time and first day of the month (e.g. 00:00, 00:00:00, 01 or Jan)
         if isempty(regexp(labels0{i}{end-j},'^[0:]+$','once')) && ...
            isempty(regexp(labels0{i}{end-j},'^01$','once')) && ...
            isempty(regexp(labels0{i}{end-j},'^Jan$','once'))
