@@ -1,5 +1,5 @@
 function ypred = polyvaln(polymodel,indepvar)
-% polyvaln: evaluates a polynomial model as a function of its variables
+% polyvaln evaluates a polynomial model as a function of its variables
 % usage: ypred = polyvaln(polymodel,indepvar)
 %
 % arguments: (input)

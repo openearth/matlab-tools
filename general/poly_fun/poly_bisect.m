@@ -1,5 +1,5 @@
 function theta = poly_bisect(x, y, varargin)
-%POLY_THETA  Finds the bisects of a polygon
+%poly_bisect  Finds the bisects of a polygon
 %
 %   Bisects at end and start points of a polygon are not strictly spoken
 %   not defined. However this function returns the otrthogonals at end

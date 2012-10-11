@@ -1,5 +1,5 @@
 function polymodel = polyfitn(indepvar,depvar,modelterms)
-% polyfitn: fits a general polynomial regression model in n dimensions
+% polyfitn fits a general polynomial regression model in n dimensions
 % usage: polymodel = polyfitn(indepvar,depvar,modelterms)
 %
 % Polyfitn fits a polynomial regression model of one or more

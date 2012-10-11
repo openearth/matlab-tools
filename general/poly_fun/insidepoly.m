@@ -1,4 +1,6 @@
 function [inpoly onboundary] = insidepoly(varargin)
+%insidepoly   inpolygon variant (PIP: point in polygon)
+%
 % [inpoly onboundary] = insidepoly(X, Y, PX, PY)
 % 
 % Check if (X,Y) are inside the interior of a 2D polygon delimited by the
@@ -50,7 +52,7 @@ function [inpoly onboundary] = insidepoly(varargin)
 % files must be compiled by lauching insidepoly_install.m
 %
 % See also: inpolygon, inpoly, insidepoly_dblengine, insidepoly_sglengine
-%
+
 % Acknowlegment: The idea of sorting coordinates is first implemented by
 % Darren Engwirda, http://www.mathworks.com/matlabcentral/fileexchange/10391
 %

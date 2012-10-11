@@ -74,13 +74,9 @@ elseif size(connectivity,2)==3
 
    duo.ends = reshape([connectivity(:,[1 2 2 3 3 1])]',[2 size(connectivity,1)*3])';
    
-%% remove double segments sort segments on nearness
+%% remove double segments and sort segments on nearness
 
-   duo.ends =     sort(duo.ends,2); % lowest point per segment 1 col
-   duo.ends = sortrows(duo.ends,[1 2]); % sort on point nu so we can use diff to trace doubles
-   d            = diff(duo.ends,[],1);
-   d = find(d(:,1)==0 & d(:,2)==0);
-   duo.ends(d,:)=[];
+   duo.ends = poly_segment_unique(duo.ends);
    
 elseif size(connectivity,2)>3
 
