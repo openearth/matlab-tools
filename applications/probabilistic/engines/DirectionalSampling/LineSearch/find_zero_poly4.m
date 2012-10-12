@@ -62,6 +62,7 @@ function [bn zn n converged] = find_zero_poly4(un, b, z, varargin)
 %% Settings
 OPT = struct(...
     'animate',          false,              ...
+    'verbose',          true,              ...
     'zFunction',        '',                 ...
     'betamax',          8.3,                ...    
     'maxorder',         2,                  ...    
@@ -206,7 +207,9 @@ while iter < OPT.maxiter && ~converged
         
         if abs(z(end))<OPT.epsZ && b(end)>0
             converged = true;
-%             fprintf('Found Z=0 with polynomial fit! \n')
+            if OPT.verbose
+                fprintf('Found Z=0 with polynomial fit! \n')
+            end
             break
         end
     end
@@ -234,9 +237,13 @@ if ~converged
                 z   = [z zu];
                 zn  = [zn zu];
                 
-                ii  = isort(abs(z));
-                il  = ii(b(ii)==0);
+                ii  = isort(b);
                 iu  = ii(b(ii)==OPT.betamax);
+                if zu < 0
+                    il  = ii(find(b(ii)<b(iu),1,'last'));
+                else
+                    il  = ii(b(ii)==0);
+                end
             else
                 il  = ii(b(ii)==0);
                 iu  = ii(2);
@@ -302,7 +309,9 @@ if ~converged
 
         if abs(z(end))<OPT.epsZ && b(end)>0
             converged = true;
-%             fprintf('Found Z=0 with bisection! \n')
+            if OPT.verbose
+                fprintf('Found Z=0 with bisection! \n')
+            end
         end
     end
 end
