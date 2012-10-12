@@ -142,7 +142,9 @@ addtxt = '';ITHK_io_writeKML(kmltxt,addtxt,sens);
 %          S.PP(sens).output.kml_ecology_benthos{3}, S.PP(sens).output.kml_ecology_juvenilefish, ...
 %          S.PP(sens).output.kml_dunes_duneclasses2,S.PP(sens).output.kml_dunes_habitatrichness2];
 % addtxt = '_coast+benthos+foreshore+dunes';ITHK_io_writeKML(kmltxt,addtxt,sens);
-% 
+
+
+
 % kmltxt = [S.PP(sens).output.kml];
 % addtxt = '_CL';ITHK_io_writeKML(kmltxt,addtxt,sens);
 % 
@@ -161,40 +163,40 @@ addtxt = '';ITHK_io_writeKML(kmltxt,addtxt,sens);
 % kmltxt = [S.PP(sens).output.kml_costs_direct0,S.PP(sens).output.kml_costs_direct2,S.PP(sens).output.kml_costs_direct3];
 % addtxt = '_costs2';ITHK_io_writeKML(kmltxt,addtxt,sens);
 % 
-% kmltxt = [S.PP(sens).output.kml_dunes_duneclasses,S.PP(sens).output.kml_dunes_habitatrichness];
+% kmltxt = [S.PP(sens).output.kml_dunes_duneclasses,S.PP(sens).output.kml_dunes_habitatrichness,S.PP(sens).output.kml_dunes_dunedynamics];
 % addtxt = '_dunes';ITHK_io_writeKML(kmltxt,addtxt,sens);
-% kmltxt = [S.PP(sens).output.kml_dunes_duneclasses2,S.PP(sens).output.kml_dunes_habitatrichness2];
+% kmltxt = [S.PP(sens).output.kml_dunes_duneclasses2,S.PP(sens).output.kml_dunes_habitatrichness2,S.PP(sens).output.kml_dunes_dunedynamics2];
 % addtxt = '_dunes2';ITHK_io_writeKML(kmltxt,addtxt,sens);
-
-%kmltxt = [S.PP(sens).output.kml_recreation_beachwidth,S.PP(sens).output.kml_recreation_dunearea];
-%addtxt = '_recreation';ITHK_io_writeKML(kmltxt,addtxt,sens);
-%kmltxt = [S.PP(sens).output.kml_recreation_beachwidth2,S.PP(sens).output.kml_recreation_dunearea2];
-%addtxt = '_recreation2';ITHK_io_writeKML(kmltxt,addtxt,sens);
-
-%kmltxt = [S.PP(sens).output.kml_economy_drinkwater];
-%addtxt = '_drinkingwater';ITHK_io_writeKML(kmltxt,addtxt,sens);
-%kmltxt = [S.PP(sens).output.kml_economy_drinkwater2];
-%addtxt = '_drinkingwater2';ITHK_io_writeKML(kmltxt,addtxt,sens);
-
-%kmltxt = [S.PP(sens).output.kml_economy_fishery];
-%addtxt = '_fishery';ITHK_io_writeKML(kmltxt,addtxt,sens);
-%kmltxt = [S.PP(sens).output.kml_economy_fishery2];
-%addtxt = '_fishery2';ITHK_io_writeKML(kmltxt,addtxt,sens);
-
-%kmltxt = [S.PP(sens).output.kml_residential_groundwater];
-%addtxt = '_groundwater';ITHK_io_writeKML(kmltxt,addtxt,sens);
-%kmltxt = [S.PP(sens).output.kml_residential_groundwater2];
-%addtxt = '_groundwater2';ITHK_io_writeKML(kmltxt,addtxt,sens);
-
-%kmltxt = [S.PP(sens).output.kml_residential_realestate];
-%addtxt = '_realestate';ITHK_io_writeKML(kmltxt,addtxt,sens);
-%kmltxt = [S.PP(sens).output.kml_residential_realestate2];
-%addtxt = '_realestate2';ITHK_io_writeKML(kmltxt,addtxt,sens);
-
-%kmltxt = [S.PP(sens).output.kml_safety_dykering,S.PP(sens).output.kml_safety_structures];
-%addtxt = '_safety';ITHK_io_writeKML(kmltxt,addtxt,sens);
-%kmltxt = [S.PP(sens).output.kml_safety_dykering2,S.PP(sens).output.kml_safety_structures2];
-%addtxt = '_safety2';ITHK_io_writeKML(kmltxt,addtxt,sens);
+% 
+% kmltxt = [S.PP(sens).output.kml_recreation_beachwidth,S.PP(sens).output.kml_recreation_dunearea];
+% addtxt = '_recreation';ITHK_io_writeKML(kmltxt,addtxt,sens);
+% kmltxt = [S.PP(sens).output.kml_recreation_beachwidth2,S.PP(sens).output.kml_recreation_dunearea2];
+% addtxt = '_recreation2';ITHK_io_writeKML(kmltxt,addtxt,sens);
+% 
+% kmltxt = [S.PP(sens).output.kml_economy_drinkwater];
+% addtxt = '_drinkingwater';ITHK_io_writeKML(kmltxt,addtxt,sens);
+% kmltxt = [S.PP(sens).output.kml_economy_drinkwater2];
+% addtxt = '_drinkingwater2';ITHK_io_writeKML(kmltxt,addtxt,sens);
+% 
+% kmltxt = [S.PP(sens).output.kml_economy_fishery];
+% addtxt = '_fishery';ITHK_io_writeKML(kmltxt,addtxt,sens);
+% kmltxt = [S.PP(sens).output.kml_economy_fishery2];
+% addtxt = '_fishery2';ITHK_io_writeKML(kmltxt,addtxt,sens);
+% 
+% kmltxt = [S.PP(sens).output.kml_residential_groundwater];
+% addtxt = '_groundwater';ITHK_io_writeKML(kmltxt,addtxt,sens);
+% kmltxt = [S.PP(sens).output.kml_residential_groundwater2];
+% addtxt = '_groundwater2';ITHK_io_writeKML(kmltxt,addtxt,sens);
+% 
+% kmltxt = [S.PP(sens).output.kml_residential_realestate];
+% addtxt = '_realestate';ITHK_io_writeKML(kmltxt,addtxt,sens);
+% kmltxt = [S.PP(sens).output.kml_residential_realestate2];
+% addtxt = '_realestate2';ITHK_io_writeKML(kmltxt,addtxt,sens);
+% 
+% kmltxt = [S.PP(sens).output.kml_safety_dykering,S.PP(sens).output.kml_safety_structures];
+% addtxt = '_safety';ITHK_io_writeKML(kmltxt,addtxt,sens);
+% kmltxt = [S.PP(sens).output.kml_safety_dykering2,S.PP(sens).output.kml_safety_structures2];
+% addtxt = '_safety2';ITHK_io_writeKML(kmltxt,addtxt,sens);
 
 
 

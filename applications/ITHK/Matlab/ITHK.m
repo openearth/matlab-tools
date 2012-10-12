@@ -104,29 +104,38 @@ cd(toolpath);
 ss = strfind(toolpath,'\');
 baseDir = toolpath(1:ss(end));
 
+% create global struct
 global S
 disp('Matlab called by Interactive Tool')
 
-%% Create structure
 S = struct;
 S.EPSG = load(which('EPSG.mat'));
 
+%% Process input
+S.userinput = ITHK_process_webinput(measure,lat,lon,impl,len,vol*1e6,fill,tin,varNameIn,slr,coast,eco,dunes,costs,economy,safety,recreation,residency);
+
 %Read settings
-if web ==1
-    S.settings = xml_load(which('ITHK_settings_web.xml'));
-else
-    S.settings = xml_load(which('ITHK_settings.xml'));%d:\2011\InteractiveTool_Kustatelier\Matlab\settings2.xml
-end
-%baseDir = S.settings.basedir;
+S.settings = xml_load(which('ITHK_settings.xml'));
 S.settings.basedir = baseDir;
 
 % subdirectories
 S.settings.inputdir            = [baseDir 'Matlab\preprocessing\input\'];
-S.settings.outputdir           = [baseDir 'UB model\'];
-
-% Process web input
-%S.userinput = process_webinput(lat,lon,mag,time,name,measure,implementation);
-S.userinput = ITHK_process_webinput(measure,lat,lon,impl,len,vol*1e6,fill,tin,varNameIn,slr,coast,eco,dunes,costs,economy,safety,recreation,residency,web);
+S.settings.rundir              = [baseDir 'UB model\input\'];
+S.settings.outputdir           = [baseDir 'UB model\output\' S.userinput.name filesep]; 
+if ~isdir(S.settings.outputdir)
+    mkdir(S.settings.outputdir);
+elseif ~isempty(dir(S.settings.outputdir))
+    flist = dir(S.settings.outputdir);
+    for ii=1:length(flist)
+        switch lower(flist(ii).name)
+            case{'.','..','.svn'}
+            otherwise
+                delete([S.settings.outputdir flist(ii).name]);
+        end
+    end
+end
+copyfile([S.settings.rundir],S.settings.outputdir);
+%S.settings.outputdir           = [baseDir 'UB model\'];
 
 %% Preprocessing Unibest Interactive Tool
 for ii=1:1%length(sensitivities)
@@ -137,10 +146,10 @@ for ii=1:1%length(sensitivities)
     ITHK_runUB;
     disp('running Unibest completed');
     
-    %% Create output dir
-    if ~isdir([S.settings.outputdir 'output' filesep S.userinput.name])
-       mkdir([S.settings.outputdir 'output' filesep S.userinput.name]);
-    end 
+%     %% Create output dir
+%     if ~isdir([S.settings.outputdir 'output' filesep S.userinput.name])
+%        mkdir([S.settings.outputdir 'output' filesep S.userinput.name]);
+%     end 
 
     %% Extract UB (PRN) results for current & reference scenario
     PRNfileName = [S.userinput.name,'.PRN']; 
@@ -149,9 +158,10 @@ for ii=1:1%length(sensitivities)
 
     %% Postprocessing Unibest Interactive Tool
     ITHK_postprocessing(ii);
-    ITHK_cleanup(ii)
+%     ITHK_cleanup(ii)
 end
-save([S.settings.outputdir 'output' filesep S.userinput.name filesep S.userinput.name,'.mat'],'-struct','S')
+% save([S.settings.outputdir 'output' filesep S.userinput.name filesep S.userinput.name,'.mat'],'-struct','S')
+save([S.settings.outputdir filesep S.userinput.name,'.mat'],'-struct','S')
 outputKML=fileread(S.PP.output.kmlFileName);
 disp('postprocessing Unibest Interactive Tool completed');
 %}

@@ -129,14 +129,14 @@ for jj = 1:length(S.userinput.phases)
             % For distr, plot rectangle
             else
                 idsupp = idRANGE(1:end-1);%id1:id2;
-                for jj=1:length(idsupp)-1
-                    alpha = atan((y0(idsupp(jj)+1)-y0(idsupp(jj)))/(x0(idsupp(jj)+1)-x0(idsupp(jj))));
+                for kk=1:length(idsupp)-1
+                    alpha = atan((y0(idsupp(kk)+1)-y0(idsupp(kk)))/(x0(idsupp(kk)+1)-x0(idsupp(kk))));
                     if alpha>0
-                        x2(jj)     = x0(idsupp(jj))+0.5*sVectorLength*h*cos(alpha+pi()/2);
-                        y2(jj)     = y0(idsupp(jj))+0.5*sVectorLength*h*sin(alpha+pi()/2);
+                        x2(kk)     = x0(idsupp(kk))+0.5*sVectorLength*h*cos(alpha+pi()/2);
+                        y2(kk)     = y0(idsupp(kk))+0.5*sVectorLength*h*sin(alpha+pi()/2);
                     elseif alpha<=0
-                        x2(jj)     = x0(idsupp(jj))+0.5*sVectorLength*h*cos(alpha-pi()/2);
-                        y2(jj)     = y0(idsupp(jj))+0.5*sVectorLength*h*sin(alpha-pi()/2);
+                        x2(kk)     = x0(idsupp(kk))+0.5*sVectorLength*h*cos(alpha-pi()/2);
+                        y2(kk)     = y0(idsupp(kk))+0.5*sVectorLength*h*sin(alpha-pi()/2);
                     end
                 end
                 xpoly=[x0(idsupp)' fliplr(x2) x0(idsupp(1))];

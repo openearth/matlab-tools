@@ -84,6 +84,11 @@ if S.userinput.indicators.recreation == 1
     PLOTscale2   = str2double(S.settings.indicators.recreation.beachwidth.PLOTscale2);     % PLOT setting : subtract this part (e.g. 0.9 means that plot runs from 90% to 100% of initial shorewidth)(default initial value can be replaced by setting in ITHK_settings.xml)
     PLOToffset   = str2double(S.settings.indicators.recreation.beachwidth.PLOToffset);         % PLOT setting : plot bar at this distance offshore [m] (default initial value can be replaced by setting in ITHK_settings.xml)
     PLOTicons    = S.settings.indicators.recreation.beachwidth.icons;
+    if isfield(S,'weburl')
+        for kk=1:length(PLOTicons)
+            PLOTicons(kk).url = [S.weburl '/img/hk/' strtrim(PLOTicons(kk).url)];
+        end
+    end    
     colour       = {[1 1 0],[0.95 0.6 0.0]};
     fillalpha    = 0.7;
     popuptxt     = {'Beach recreation','Beach width as a proxy for beach recreation'};

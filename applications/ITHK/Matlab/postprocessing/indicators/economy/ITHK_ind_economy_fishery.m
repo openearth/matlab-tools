@@ -97,6 +97,11 @@ if S.userinput.indicators.economy == 1
     PLOTscale2   = str2double(S.settings.indicators.economy.fishery.PLOTscale2);     % PLOT setting : subtract this part (e.g. 0.9 means that plot runs from 90% to 100% of initial shorewidth)(default initial value can be replaced by setting in ITHK_settings.xml)
     PLOToffset   = str2double(S.settings.indicators.economy.fishery.PLOToffset);     % PLOT setting : plot bar at this distance offshore [m](default initial value can be replaced by setting in ITHK_settings.xml)
     PLOTicons    = S.settings.indicators.economy.fishery.icons;
+    if isfield(S,'weburl')
+        for kk=1:length(PLOTicons)
+            PLOTicons(kk).url = [S.weburl '/img/hk/' strtrim(PLOTicons(kk).url)];
+        end
+    end    
     colour       = {[0.1 0.1 0.8],[1 0.2 0.4]};
     fillalpha    = 0.7;
     popuptxt     = {'Fishery','Indirect impact of coastline changes on fishery.'};

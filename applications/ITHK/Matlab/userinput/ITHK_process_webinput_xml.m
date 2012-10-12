@@ -1,4 +1,4 @@
-function S = ITHK_process_webinput_xml(xml,web)
+function S = ITHK_process_webinput_xml(xml)
 
 %% Process input from Viewer
 if isfield(xml.data,'features')
@@ -197,4 +197,3 @@ if isfield(xml.data,'settings')
     S.indicators.residency = xml.data.settings.Residency;
     S.indicators.slr = xml.data.settings.Sea_level_rise; 
 end
-S.web = web;

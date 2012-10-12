@@ -158,7 +158,11 @@ if S.userinput.indicators.costs == 1
             N.VOL        =   S.userinput.nourishment(ii).volume;
             N.WIDTH      =   S.userinput.nourishment(ii).width;
             N.volperm    =   N.VOL/N.WIDTH;
-            N.id         =   S.userinput.nourishment(ii).idRANGE(:);
+            if length(S.userinput.nourishment(ii).idRANGE(:))>size(S.PP(sens).coast.zcoast,1);
+                N.id         =   S.userinput.nourishment(ii).idRANGE(1:end-1);
+            else
+                N.id         =   S.userinput.nourishment(ii).idRANGE(:);
+            end
             N.id2        =   S.userinput.nourishment(ii).idRANGE2(:);
             N.distance   =   distance;
             costs.nourishment.props(ii) = N;
@@ -247,6 +251,11 @@ if S.userinput.indicators.costs == 1
     PLOTscale2   = str2double(S.settings.indicators.costs.direct.PLOTscale2);     % PLOT setting : subtract this part (e.g. 0.9 means that plot runs from 90% to 100% of initial shorewidth)(default initial value can be replaced by setting in ITHK_settings.xml)
     PLOToffset   = str2double(S.settings.indicators.costs.direct.PLOToffset);     % PLOT setting : plot bar at this distance offshore [m](default initial value can be replaced by setting in ITHK_settings.xml)
     PLOTicons    = S.settings.indicators.costs.direct.icons;
+    if isfield(S,'weburl')
+        for kk=1:length(PLOTicons)
+            PLOTicons(kk).url = [S.weburl '/img/hk/' strtrim(PLOTicons(kk).url)];
+        end
+    end
     colour       = {[0.7 0.0 0.7],[0.3 1 0.3]};
     fillalpha    = 0.7;
     popuptxt     = {'Direct costs','Direct costs of nourishments on the coast'};

@@ -104,15 +104,16 @@ function ITHK_xml(h,xml)
 cd(toolpath);
 ss = strfind(toolpath,'\');
 baseDir = toolpath(1:ss(end));
-web = 1; % for now
 
 % create global struct
 global S
 S = struct;
 S.EPSG = load(which('EPSG.mat'));
-disp(['Running web-based test function - ' datestr(now)]);
 
 S.h = h;
+if isfield(xml,'weburl')
+    S.weburl=xml.weburl;
+end
 S.statusFilename=['status_' xml.uniqueID '.xml'];
 
 %Go up one dir
@@ -127,16 +128,10 @@ ITHK_update_status(status);
 %disp('Matlab called by Interactive Tool')
 
 %% Process input
-%S.userinput = process_webinput(lat,lon,mag,time,name,measure,implementation);
-%xml = xml_read('xml_Xuan.xml');
-S.userinput = ITHK_process_webinput_xml(xml,1);
+S.userinput = ITHK_process_webinput_xml(xml);
 
 %Read settings
-if web ==1
-    S.settings = xml_load(which('ITHK_settings_web.xml'));
-else
-    S.settings = xml_load(which('ITHK_settings.xml'));%d:\2011\InteractiveTool_Kustatelier\Matlab\settings2.xml
-end
+S.settings = xml_load(which('ITHK_settings.xml'));
 S.settings.basedir = baseDir;
 
 % subdirectories
@@ -156,7 +151,6 @@ elseif ~isempty(dir(S.settings.outputdir))
     end
 end
 copyfile([S.settings.rundir],S.settings.outputdir);
-%S.settings.outputdir           = [baseDir 'UB model\'];
 
 %% Preprocessing Unibest Interactive Tool
 for ii=1:1%length(sensitivities)
@@ -166,11 +160,6 @@ for ii=1:1%length(sensitivities)
     %% Running Unibest Interactive Tool
     ITHK_runUB;
     disp('running Unibest completed');
-    
-%     %% Create output dir
-%     if ~isdir([S.settings.outputdir 'output' filesep S.userinput.name])
-%        mkdir([S.settings.outputdir 'output' filesep S.userinput.name]);
-%     end 
 
     %% Extract UB (PRN) results for current & reference scenario
     PRNfileName = [S.userinput.name,'.PRN']; 
@@ -189,8 +178,8 @@ disp('postprocessing Unibest Interactive Tool completed');
 %Make output xml
 outputFilename=['output_' xml.uniqueID '.xml'];
 
-root.item.kmlTitle='Test result';
-root.item.kmlFile=[S.userinput.name '.kml'];
+root.item.item.kmlTitle='Test result';
+root.item.item.kmlFile=[S.userinput.name '.kml'];
 
 xml_write(outputFilename,root);
 
@@ -201,7 +190,7 @@ cd(S.h,'..');
 cd(S.h,'kml');
 
 mput(S.h,S.PP.output.kmlFileName);
-delete(root.item.kmlFile);
+delete(root.item.item.kmlFile);
 
 %Then write output xml to server
 %Go up one dir

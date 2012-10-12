@@ -59,7 +59,7 @@ end
 iconfiles = struct;
 for kk=1:length(icons)
     iconclass(kk)      = str2double(icons(kk).class);
-    if S.userinput.web == 1
+    if isfield(S,'weburl')
         iconfiles(kk).url  = strtrim(icons(kk).url);
     else
         iconfiles(kk).url  = which(strtrim(icons(kk).url));
