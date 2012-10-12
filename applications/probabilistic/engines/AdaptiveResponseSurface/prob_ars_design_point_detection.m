@@ -64,8 +64,7 @@ function [b_DPs b_other u_DPs u_other z_DPs z_other iii] = prob_ars_design_point
 OPT = struct(...
     'ARS', [], ...
     'epsZ',             1e-2,                   ...                         % Precision for Z=0
-    'dist_betamin',     0.5,                    ...                         % Distance criterium for detecting separate design points           
-    'dbeta',            0.1                     ...                         % Determines search radius for design points
+    'dist_betamin',     0.5                     ...                         % Distance criterium for detecting separate design points           
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -87,7 +86,7 @@ ii      = isort(b_DPs);
 
 betamin = b_DPs(ii(1));                                                     % Find smallest beta for Z=0 points
 
-ii      = b_DPs<(betamin*(1+OPT.dbeta));                                    % Find other points with close to the same beta
+ii      = b_DPs<(betamin*(1+max([OPT.ARS.dbeta])));                             % Find other points with close to the same beta
 
 b_other = [b_other; b_DPs(~ii,:)];                                          % Points that are not design points
 u_other = [u_other; u_DPs(~ii,:)];                                          

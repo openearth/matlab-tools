@@ -220,9 +220,10 @@ active      = ~cellfun(@isempty, {stochast.Distr}) &     ...
 
 % set random seed
 if isnan(OPT.seed)
-    OPT.seed = rand('seed');
+    OPT.seed = sum(100*clock);
 end
-rand('seed', OPT.seed)
+rng('default');
+rng(OPT.seed);
 randmatrix = rand(sum(active), OPT.maxsamples);                             % predetermined samples (with a fixed seed)
 nrandmatrix = 1;                                                            % counter for number of times the randmatrix is used
 
@@ -253,7 +254,7 @@ reevaluate  = [];                                                           % in
 
 % initialize response surface (and beta sphere) 
 
-ARS         = prob_ars_struct_mult(          ...
+ARS         = prob_ars_struct_mult(     ...
                 'active', active,       ...                                 % active stochasts                
                 'b', 0,                 ...                                 % vector lengths (beta)
                 'u', zeros(1,N),        ...                                 % vectors corresponding to exact samples (un*beta)
@@ -358,8 +359,8 @@ while Pr > OPT.Pratio || ~isempty(reevaluate)                               % WH
 
         % exact line search
         if ~OPT.ARS || ~any([ARS.hasfit]) || ~any(converged) || ...         % IF: check if ARS should not be used, is not available, no converged samples are available
-                (abs(b(end)) <= max([ARS.betamin])+max([ARS.dbeta]) && ca) || ...  %   or an approximated and converged result is available that is within the beta sphere
-                (~ca && isnan(z(end)) && isempty(bn))
+            (abs(b(end)) <= min([ARS.betamin])+max([ARS.dbeta]) && ca) || ... % or an approximated and converged result is available that is within the beta sphere
+            (~ca && isnan(z(end)) && isempty(zn) && isempty(bn))            %   or an approximated line search resulten in nan's indicating that a sector with a design point, but without ARS is sampled
                 
             ii          = 1;                                                % select origin and initial estimate as starting values for exact line search
             
@@ -419,13 +420,10 @@ while Pr > OPT.Pratio || ~isempty(reevaluate)                               % WH
                 OPT.ARSsetVariables{:}      );
             
             if ce
-                for nnn = 1:size(ARS,2)
-                    ARS(nnn).betamin = min([ARS(nnn).betamin sqrt(sum(ue(end,:).^2,2))]); % update beta sphere in case of convergence of exact result
-                end
-                
+                [ARS.betamin] = deal(min([ARS.betamin be(end)]));           % update beta sphere in case of convergence of exact result
             end
-%             keyboard 
-            if any([ARS.hasfit]) && isnan(nARS)                               % IF: check if initial ARS is computed
+            
+            if any([ARS.hasfit]) && isnan(nARS)                             % IF: check if initial ARS is computed
                 
                 nARS    = n;                                                % register number of evaluations needed for initial ARS
                 
@@ -479,12 +477,6 @@ while Pr > OPT.Pratio || ~isempty(reevaluate)                               % WH
             reevaluate(1) = [];                                             % reevaluation of first sample in line finished, pop it from the list
         end
         
-%         catch %jpdb
-%             fprintf('*** Warning: Maximum number of random directions reached! *** seed: %10.2f', OPT.seed)
-%             fprintf('\n')
-%             enoughsamples = false;                                          % not enough samples
-%             break;                                                          % abort computation, break from loop               
-%         end
     end
     
     if enoughsamples == false
@@ -495,21 +487,21 @@ while Pr > OPT.Pratio || ~isempty(reevaluate)                               % WH
     if Pr > OPT.Pratio                                                      % IF: check if required ratio of failure probability determined by approximated 
                                                                             %   samples is not yet reached
                                                                             
-        betas       = abs(beta(notexact&beta>0));                           % determine approximated beta values candidate for reevaluation
+        betas       = beta(notexact&beta>0);                                % determine approximated beta values candidate for reevaluation
         idx         = isort(betas);                                         % sort selected beta values
         
         if ~isempty(idx)
-            for nnn = 1:size(ARS,2)
-                ARS(nnn).dbeta   = abs(betas(idx(1)))-ARS(nnn).betamin;          % increase beta threshold so a new sample fits in the beta sphere
-            end
-            reevaluate  = find(abs(beta) <= ARS(1).betamin+ARS(1).dbeta & ...   % determine indices of approximated samples within new beta sphere
+            [ARS.dbeta] = deal(betas(idx(1))-min([ARS.betamin]));
+            
+            reevaluate  = ...                                               % determine indices of approximated samples within new beta sphere
+                find(abs(beta) <= min([ARS.betamin])+max([ARS.dbeta]) & ...
                 notexact);
         end
     end
     
     if isempty(reevaluate) && ~finalise                                     % IF: check if no samples are left for reevaluation and finalisation has not yet started
         
-        reevaluate  = find(notexact);                                       % select all approximated points for reevaluation (if they happen to be in the beta sphere)
+        %reevaluate  = find(notexact);                                       % select all approximated points for reevaluation (if they happen to be in the beta sphere)
         finalise    = true;                                                 % start finalisation
         
     end
