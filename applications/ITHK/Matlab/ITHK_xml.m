@@ -109,12 +109,11 @@ baseDir = toolpath(1:ss(end));
 global S
 S = struct;
 S.EPSG = load(which('EPSG.mat'));
-
+S.xml = xml;
 S.h = h;
 if isfield(xml,'weburl')
     S.weburl=xml.weburl;
 end
-S.statusFilename=['status_' xml.uniqueID '.xml'];
 
 %Go up one dir
 cd(S.h,'..');
@@ -124,9 +123,12 @@ cd(S.h,'status');
 
 %Write status xml file
 status='Matlab called by Interactive Tool';
-ITHK_update_status(status);
-%disp('Matlab called by Interactive Tool')
-
+try
+    sendWebStatus(status,S.xml);
+catch
+    disp(status);
+end
+    
 %% Process input
 S.userinput = ITHK_process_webinput_xml(xml);
 
@@ -155,11 +157,21 @@ copyfile([S.settings.rundir],S.settings.outputdir);
 %% Preprocessing Unibest Interactive Tool
 for ii=1:1%length(sensitivities)
     ITHK_preprocessing(ii);
-    disp('preprocessing Unibest Interactive Tool completed')
+    status='preprocessing Unibest Interactive Tool completed';
+    try
+        sendWebStatus(status,S.xml);
+    catch
+        disp(status);
+    end        
 
     %% Running Unibest Interactive Tool
     ITHK_runUB;
-    disp('running Unibest completed');
+    status = 'running Unibest completed';
+    try
+        sendWebStatus(status,S.xml);
+    catch
+        disp(status);
+    end
 
     %% Extract UB (PRN) results for current & reference scenario
     PRNfileName = [S.userinput.name,'.PRN']; 
@@ -172,7 +184,12 @@ for ii=1:1%length(sensitivities)
 end
 save([S.settings.outputdir filesep S.userinput.name,'.mat'],'-struct','S')
 outputKML=fileread(S.PP.output.kmlFileName);
-disp('postprocessing Unibest Interactive Tool completed');
+status = 'postprocessing Unibest Interactive Tool completed';
+try
+    sendWebStatus(status,S.xml);
+catch
+    disp(status);
+end
 
 %% Output result to server
 %Make output xml

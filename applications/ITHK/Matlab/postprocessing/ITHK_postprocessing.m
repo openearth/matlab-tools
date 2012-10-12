@@ -58,7 +58,11 @@ function ITHK_postprocessing(sens)
 %% code
 
 global S
-
+status='ITHK postprocessing';
+try
+    sendWebStatus(status,S.xml);
+catch
+end
 fprintf('ITHK postprocessing\n');
 
 S.PP(sens).output.kmlfiles = {'S.PP(sens).output.kml','S.PP(sens).output.kml_groyne','S.PP(sens).output.kml_nourishment','S.PP(sens).output.kml_revetment'};
