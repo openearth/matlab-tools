@@ -430,7 +430,7 @@ while Pr > OPT.Pratio || ~isempty(reevaluate)                               % WH
             end
         end
         
-        ndir            = (n-nARS)/(sum(exact)-2*sum(ARS(1).active)+1);        % compute average number of exact evaluations needed per sample, which is
+        ndir            = (n-nARS)/(sum(exact)-2*sum(ARS(1).active)+1);     % compute average number of exact evaluations needed per sample, which is
                                                                             %   the quotient of the number of exact evaluations made minus the number of 
                                                                             %   exact evaluations needed for the initial ARS and the number of exact and
                                                                             %   converged samples minus the mimimum number of samples needed for the inital
@@ -495,13 +495,13 @@ while Pr > OPT.Pratio || ~isempty(reevaluate)                               % WH
             
             reevaluate  = ...                                               % determine indices of approximated samples within new beta sphere
                 find(abs(beta) <= min([ARS.betamin])+max([ARS.dbeta]) & ...
-                notexact);
+                ~exact);
         end
     end
     
     if isempty(reevaluate) && ~finalise                                     % IF: check if no samples are left for reevaluation and finalisation has not yet started
         
-        %reevaluate  = find(notexact);                                       % select all approximated points for reevaluation (if they happen to be in the beta sphere)
+        reevaluate  = find(~exact);                                         % select all approximated points for reevaluation (if they happen to be in the beta sphere)
         finalise    = true;                                                 % start finalisation
         
     end

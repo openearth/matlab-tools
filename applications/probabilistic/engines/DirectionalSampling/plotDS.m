@@ -162,13 +162,13 @@ end
 
 % plot beta sphere
 [x1,y1] = cylinder(min([ARS.betamin]),100);
-[x2,y2] = cylinder(min([ARS.betamin])+min([ARS.dbeta]),100);
+[x2,y2] = cylinder(min([ARS.betamin])+max([ARS.dbeta]),100);
 
 ph1 = findobj(ax,'Tag','B1');
 ph2 = findobj(ax,'Tag','B2');
 
 if isempty(ph1) || isempty(ph2)
-    plot(ax,0,0,'ok','DisplayName','origin');
+    plot(ax,0,0,'+k','DisplayName','origin');
     
     ph1 = plot(ax,x1(1,:),y1(1,:),':r');
     ph2 = plot(ax,x2(1,:),y2(1,:),'-r');

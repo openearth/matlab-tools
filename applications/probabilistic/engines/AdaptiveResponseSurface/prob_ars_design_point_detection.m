@@ -82,7 +82,7 @@ b_other = b(~i,:);
 u_other = u(~i,:);
 z_other = z(~i);                                               
 
-ii      = b_DPs<(min([OPT.ARS.dbeta])+max([OPT.ARS.dbeta]));                % Find other points with close to the same beta
+ii      = b_DPs<(min([OPT.ARS.betamin])+max([OPT.ARS.dbeta]));              % Find other points with close to the same beta
 
 b_other = [b_other; b_DPs(~ii,:)];                                          % Points that are not design points
 u_other = [u_other; u_DPs(~ii,:)];                                          
