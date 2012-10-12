@@ -63,6 +63,7 @@ function [bn zn n converged] = find_zero_poly4(un, b, z, varargin)
 OPT = struct(...
     'animate',          false,              ...
     'zFunction',        '',                 ...
+    'betamax',          8.3,                ...    
     'maxorder',         2,                  ...    
     'maxiter',          5,                  ...                             % Maximum iterations for finding z=0
     'maxbisiter',       5,                  ...
@@ -81,6 +82,11 @@ bn          = [];
 zn          = [];
 converged   = false;
         
+%% Filter NaN's from input
+
+b = b(~isnan(z));
+z = z(~isnan(z));
+
 %% Check for origin (b=0)
 
 if ~any(b == 0)
@@ -117,9 +123,19 @@ end
 
 while iter < OPT.maxiter && ~converged 
     
-    % Use bisection when encountering NaN of Inf
-    if any(isnan(z)) || any(isinf(z))
-        break
+    if length(z) == 1
+        zi  = [feval(OPT.zFunction, un, OPT.betamax)];
+        
+        % Use bisection when zi is NaN
+        if isnan(zi)
+            iter    = Inf;
+            break
+        else
+            b   = [b OPT.betamax];
+            z   = [z zi];
+            bn  = [bn OPT.betamax];
+            zn  = [zn zi];
+        end
     end
     
     order   = min(OPT.maxorder, length(z)-1);
@@ -166,8 +182,15 @@ while iter < OPT.maxiter && ~converged
         if ~isempty(b0)
             n   = n + 1;
             
-            b   = [b b0];
             z0  = feval(OPT.zFunction, un, b0);
+            
+            % Use bisection when encountering NaN of Inf
+            if isnan(z0) || isinf(z0)
+                iter    = Inf;
+                break
+            end
+            
+            b   = [b b0];
             z   = [z z0];
             bn  = [bn b0];
             zn  = [zn z0];
@@ -192,10 +215,7 @@ end
 %% Line search by bisection
 
 if ~converged
-    
-    % remove nan's from initial results
-    b = b(~isnan(z));
-    z = z(~isnan(z));
+
     while ~converged && bisiter < OPT.maxbisiter
         ii  = isort(abs(z));
         
@@ -205,9 +225,9 @@ if ~converged
                 iu  = ii(find(z(ii)<0 ,1 ,'first'));
 
                 il  = ii(find(b(ii)<b(iu),1,'last'));
-            elseif ~any(z<0) && ~any(b == 8.3)
-                b   = [b 8.3];
-                bn  = [bn 8.3];
+            elseif ~any(z<0) && ~any(b == OPT.betamax)
+                b   = [b OPT.betamax];
+                bn  = [bn OPT.betamax];
                 zu  = feval(OPT.zFunction, un, bn(end));
                 n   = n + 1;
                 
@@ -216,7 +236,7 @@ if ~converged
                 
                 ii  = isort(abs(z));
                 il  = ii(b(ii)==0);
-                iu  = ii(b(ii)==8.3);
+                iu  = ii(b(ii)==OPT.betamax);
             else
                 il  = ii(b(ii)==0);
                 iu  = ii(2);
@@ -243,9 +263,25 @@ if ~converged
             end
         elseif bisiter > 0 && isnan(z(end))
             iu  = ii(b(ii)==b0);
+        elseif bisiter > 0 && ~isnan(z(end)) && any(isnan(zs))
+            if bs(~isnan(zs)) <= b(end)
+                iu  = ii(b(ii)==b(end))
+            elseif bs(~isnan(zs)) > b(end)
+                il  = ii(b(ii)==b(end))
+            end
         end
+        
         bs  = [b(il) b(iu)];
         zs  = [z(il) z(iu)];
+        
+        if all(bs<0)                                                        % Abort if the interval is completely located in negative beta area
+            break
+        elseif any(bs<0) && any(bs>=0)                                      % If one beta of the interval is negative, set that one to b=0
+            in      = ii(b(ii)==0);
+            bs(bs<0)= b(in);
+            zs(bs<0)= z(in);
+        end
+        
         b0  = mean(bs);
         z0  = feval(OPT.zFunction, un, b0);
         b   = [b b0];
@@ -253,14 +289,14 @@ if ~converged
         bn  = [bn b0];
         zn  = [zn z0];
         
-        if OPT.animate && exist('p')
+        if OPT.animate && exist('p','var')
             find_zero_plot(OPT,b0,b,z,bs,zs,bn,zn,p);
         end
         
         n   = n + 1;
         bisiter     = bisiter + 1;
         
-        if ~isnan(z0)
+        if isnan(z0)
             OPT.maxbisiter  = 10;                                           % Use more iterations when encountering NaN's
         end
 
@@ -271,6 +307,7 @@ if ~converged
     end
 end
 
-% remove nan's from final results
+%% Filter NaN's from output
+
 bn  = bn(~isnan(zn));
 zn  = zn(~isnan(zn));
