@@ -20,7 +20,7 @@ function varargout = KML2Coordinates(FileName)
 %       KMLline(lat,lon,'fileName','holland_fillable.kml','lineColor',[1 .5 0],'lineWidth', 2);
 %       p = KML2Coordinates('holland_fillable.kml');
 %
-% See also: googleplot, line, patch
+% See also: googleplot, line, patch, KMl2ldb
 
 if strcmp(FileName(end-3:end),'.kmz')
     unzip(FileName);

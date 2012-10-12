@@ -69,15 +69,18 @@ function varargout = readNet(ncfile,X,Y,varargin)
 
       NetNode_mask = ~isnan(X) & ~isnan(Y);
       if length(size(X)==2)
-          [ContourLink,NetLink]=quat2net(X,Y);
+          [ContourLink,NetLink]=quat2net(X,Y,'sub2ind',0); % subsind is used because we skip nan coordinates here
           vals = find(isnan(X));
           
-          % adjust pointer for removal of nans
-          adjust = 0.*NetLink;
-          for i=1:length(vals)
-             adjust = adjust + (NetLink >=vals(i));
-          end
-          NetLink = NetLink - adjust;
+% ORDERS OF MAGNITUDE TOO SLOW, use sub2ind option in quat2net
+%           %% adjust pointer for removal of nans
+%           % this step takes much time !!!
+%           adjust = 0.*NetLink;
+%           for i=1:length(vals)
+%              adjust = adjust + (NetLink >=vals(i));
+%           end
+%           NetLink = NetLink - adjust;
+          %%
           
       else
           warning('NetLink calculation only implemented for curvi-linear meshes')
@@ -144,6 +147,8 @@ function varargout = readNet(ncfile,X,Y,varargin)
       attr(end+1)  = struct('Name', 'coordinates'   , 'Value', [OPT.xname ' ' OPT.yname]);
       attr(end+1)  = struct('Name', 'grid_mapping'  , 'Value', 'projected_coordinate_system');
       attr(end+1)  = struct('Name', 'actual_range'  , 'Value', [nan nan]);
+warning([mfilename,'agree with developer on _FillValue'])
+      attr(end+1)  = struct('Name', '_FillValue'    , 'Value', -999); % this initializes at NaN rather than 9.9692e36
       nc.Variables(ifld) = struct('Name'       , OPT.zname, ...
                                   'Datatype'   , 'double', ...
                                   'Dimensions' , nc.Dimensions(1), ...

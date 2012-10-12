@@ -1,10 +1,10 @@
 function [inpoly onboundary] = insidepoly(varargin)
-%insidepoly   inpolygon variant (PIP: point in polygon)
+%insidepoly   faster variant of INPOLYGON (PIP: point in polygon)
 %
 % [inpoly onboundary] = insidepoly(X, Y, PX, PY)
 % 
-% Check if (X,Y) are inside the interior of a 2D polygon delimited by the
-% polygon vertices (PX,PY).
+% Check if (X,Y) are inside the interior of a 2D polygon 
+% delimited by the polygon vertices (PX,PY).
 %
 % INPUTS:
 %   - X, Y: arrays of same size, coordinates of N data points

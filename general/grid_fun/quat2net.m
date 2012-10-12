@@ -1,7 +1,7 @@
-function [q,bi] = quat2net(x,y)
+function [q,bi,varargout] = quat2net(x,y,varargin)
 %QUAT2NET quadrangulates a mesh into a network
 %
-% [q,bi] = quat2net(x,y)
+%    [q,bi] = quat2net(x,y)
 %
 % where x and y are plaid matrices as returned by NDGRID
 % or MESHGRID, q and bi are integer pointer arrays into
@@ -9,7 +9,8 @@ function [q,bi] = quat2net(x,y)
 % bi indexes the separate face segment after removal of overlap
 % between adjacenent quadrangles. % q and bi fail when you swap 
 % x and y afterwards, for instance upon interchanging 
-% NDGRID and MESHGRID arrays.
+% NDGRID and MESHGRID arrays. Use [..] = quat2net(x,y,'sub2ind',0) 
+% to make sure q and bi index into x(~isnan(x)), by default 
 %
 % Example:
 %
@@ -62,9 +63,20 @@ function [q,bi] = quat2net(x,y)
 % $Revision$
 % $HeadURL$
 
-q  = quat(x,y);
+
+OPT.sub2ind = 1;
+OPT.debug   = 1;
+OPT = setproperty(OPT,varargin);
+
+q  = quat(x,y,'sub2ind',OPT.sub2ind);
 bi = repmat(0,[size(q,1)*4 2]);
-for iq=1:size(q,1)
+nq = size(q,1);
+for iq=1:nq
+   if OPT.debug
+      if mod(iq,100)==0
+      disp([mfilename,' progress ',num2str(100.*iq/nq),' %'])
+      end
+   end
    bi((iq-1)*4+1:iq*4,:) = [q(iq,:); q(iq,[2 3 4 1])]';
 end
 bi = poly_bi_unique(bi);

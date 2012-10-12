@@ -1,5 +1,5 @@
 function OPT = ncgen_surface_asc(varargin)
-%NCGEN_SURFACE_XYZ  One line description goes here.
+%NCGEN_SURFACE_ASC  process snapshot files into (x,y,t) netCDF tiles
 %
 %   More detailed description goes here.
 %
@@ -15,7 +15,7 @@ function OPT = ncgen_surface_asc(varargin)
 %   Example
 %   ncgen_surface_xyz
 %
-%   See also
+%   See also: NCGEN
 
 %% Copyright notice
 %   --------------------------------------------------------------------

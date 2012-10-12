@@ -119,8 +119,11 @@ function varargout = fillDep(varargin)
 %% save
 
    copyfile(OPT.ncfile,OPT.out)
+   
+   G.cor.z(isnan(G.cor.z))=-999; % implicity default value of DFlow-FM
 
    nc_varput(OPT.out,OPT.zname,G.cor.z);
+   nc_attput(OPT.out,OPT.zname,'actual_range',[min(G.cor.z) max(G.cor.z)]);
    
 %% add date of sample points to ncfile (not in unstruc output)
    
@@ -134,6 +137,8 @@ function varargout = fillDep(varargin)
    nc.Attribute(2).Value = 'time';
    nc.Attribute(3).Name  = 'long_name';
    nc.Attribute(3).Value = 'recording time of depth sounding';
+   nc.Attribute(4).Name  = 'actual_range';
+   nc.Attribute(4).Value = [datestr(min(G.cor.datenum)) ' ' datestr(max(G.cor.datenum))];
    % TO DO: perhaps turn this into flagged data too?
    nc_addvar(OPT.out,nc);  
   
@@ -153,6 +158,8 @@ function varargout = fillDep(varargin)
    nc.Attribute(2).Value = unique(G.cor.files);
    nc.Attribute(3).Name  = 'flag_meanings';
    nc.Attribute(3).Value = str2line(fi_legend,'s',' ');
+   nc.Attribute(4).Name  = 'actual_range';
+   nc.Attribute(4).Value = [min(G.cor.files) max(G.cor.files)];
    nc_addvar(OPT.out,nc);  
   
    nc_varput(OPT.out,OPT.fname,int8(G.cor.files));

@@ -46,7 +46,8 @@ function q = quat(x,y,varargin)
 %          2     3     5     6
 %
 % Note: pointers to quadrangles with a NaN-vertex are removed, 
-% yet the pointers q still expect the NaNs to be in (x,y).
+% yet the pointers q still expect the NaNs to be in (x,y). Use
+% [] = quat(x,y,'sub2ind',0) to make sure q indexes into x(~isnan(x)).
 %
 % see also: TRIQUAT, TRI2QUAT, DELAUNAY, quat2net
 
@@ -78,8 +79,9 @@ function q = quat(x,y,varargin)
 %   USA
 %   -------------------------------------------------------------------- 
 
-%OPT.indexnan = 1;
-%OPT = setProperty(OPT,varargin);
+OPT.sub2ind = 1;
+
+OPT = setProperty(OPT,varargin);
 
 szcor1 = size(x,1);
 szcor2 = size(x,2);
@@ -92,12 +94,15 @@ q   = repmat(0,[szcen1*szcen2 4]);
 mncor  = -1;
 mncen  = 0;
 
+if ~(OPT.sub2ind)
+   index_nonan = cumsum(~isnan(x(:)));
+end
 
-%% first walk alomng 1st dimension, 
-%% while keeping the 2nd dimension constant
+%% first walk along 1st dimension, 
+%  while keeping the 2nd dimension constant
 
 for ncen=1:szcen2
-
+    
    for mcen=1:szcen1
    
       mncen = mncen + 1;
@@ -110,7 +115,11 @@ for ncen=1:szcen2
                     
       if ~any(isnan(x(indices)))
       
-         q(mncen,:) = indices;                    
+         if OPT.sub2ind
+            q(mncen,:) = indices;
+         else
+            q(mncen,:) = index_nonan(indices);
+         end
                     
       end
 
