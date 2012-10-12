@@ -90,9 +90,17 @@ fh = findobj('Tag','DSprogress');
 if isempty(fh)
     fh = figure('Tag','DSprogress');
 
-    s1 = subplot(3,1,[1 2]); hold on;
+    s    = [];
+    s(1) = subplot(3,1,[1 2]); hold on;
+    s(2) = axes('Position',get(s(1),'Position')); hold on;
     
-    set(s1, 'Color', 'none'); box on;
+    linkaxes(s,'xy');
+    
+    set(s, 'Color', 'none'); box on;
+    set(s(1),'XTick',[],'YTick',[],'Tag','axARS');
+    set(s(2),'Tag','axSamples');
+    
+    axis(s,'equal')
 
     uitable( ...
         'Units','normalized', ...
@@ -102,13 +110,13 @@ if isempty(fh)
         'RowName', {'N' 'P' 'Accuracy' 'Ratio'});
 end
 
-ax  = findobj(fh,'Type','axes','Tag','');
+ax  = findobj(fh,'Type','axes','Tag','axSamples');
 uit = findobj(fh,'Type','uitable');
-axis(ax,'equal')
 
 d = find(ARS(1).active, 2);
 
 % plot response surface
+axARS = findobj(fh,'Type','axes','Tag','axARS');
 [gx gy gz] = plotARS(ARS);
 
 % plot DS samples
@@ -118,13 +126,13 @@ ph1 = findobj(ax,'Tag','P1');
 ph2 = findobj(ax,'Tag','P2');
 ph3 = findobj(ax,'Tag','P3');
 dps = findobj(ax,'Tag','DPs');
-prs = findobj(ax,'Tag','ARS');
+prs = findobj(axARS,'Tag','ARS');
 
 u_dps = cat(1,ARS.u_DP);
 
 if isempty(ph1) || isempty(ph2) || isempty(ph3) || isempty(dps) || isempty(prs)
     
-    prs = pcolor(ax,gx,gy,gz);
+    prs = pcolor(axARS,gx,gy,gz);
     
     ph1 = scatter(ax,un(~converged,d(1)),un(~converged,d(2)),'MarkerEdgeColor','b');
     ph2 = scatter(ax,up(notexact,  d(1)),up(notexact,  d(2)),'MarkerEdgeColor','r');
@@ -176,10 +184,12 @@ end
 xlabel(ax,'u_1');
 ylabel(ax,'u_2');
 
-colorbar('peer',ax);
-colormap('gray');
-%shading(ax,'flat');
-clim(ax,[-1 1]);
+colorbar('peer',axARS);
+colormap(axARS,'gray');
+shading(axARS,'flat');
+clim(axARS,[-1 1]);
+
+set(axARS,'Position',get(ax,'Position'));
 
 title(ax,sprintf('%4.3f%%', progress*100));
 
