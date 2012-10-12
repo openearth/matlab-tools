@@ -398,7 +398,7 @@ while Pr > OPT.Pratio || ~isempty(reevaluate)                               % WH
         end
 
         % store exit status
-        converged(idx)  = ~any(~isfinite(z)) && ...                         % register sample as converged in case the z value is finite and the final result is converged
+        converged(idx)  = isfinite(z(end)) && ...                         % register sample as converged in case the z value is finite and the final result is converged
             ((~exact(idx) && ca) || ce);
         notexact(idx)   = ~exact(idx) && converged(idx);                    % register sample as not exact in case the result is converged, but approximated
         exact(idx)      = exact(idx) && converged(idx);                     % register sample as exact in case the result is both converged and exact
