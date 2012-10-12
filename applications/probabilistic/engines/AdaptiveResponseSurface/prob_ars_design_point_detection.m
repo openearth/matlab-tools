@@ -80,13 +80,9 @@ z_DPs   = z(i);
 
 b_other = b(~i,:);
 u_other = u(~i,:);
-z_other = z(~i);
+z_other = z(~i);                                               
 
-ii      = isort(b_DPs);
-
-betamin = b_DPs(ii(1));                                                     % Find smallest beta for Z=0 points
-
-ii      = b_DPs<(betamin*(1+max([OPT.ARS.dbeta])));                             % Find other points with close to the same beta
+ii      = b_DPs<(min([OPT.ARS.dbeta])+max([OPT.ARS.dbeta]));                % Find other points with close to the same beta
 
 b_other = [b_other; b_DPs(~ii,:)];                                          % Points that are not design points
 u_other = [u_other; u_DPs(~ii,:)];                                          
