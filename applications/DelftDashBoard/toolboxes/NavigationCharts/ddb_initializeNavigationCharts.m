@@ -97,7 +97,9 @@ handles.Toolbox(ii).Input.showSoundings=1;
 handles.Toolbox(ii).Input.showContours=1;
 handles.Toolbox(ii).Input.activeChartName='';
 
-if isempty(handles.Toolbox(ii).Input.databases)
+if ~isfield(handles.Toolbox(ii).Input,'databases')
+    set(handles.GUIHandles.Menu.Toolbox.NavigationCharts,'Enable','off');
+elseif isempty(handles.Toolbox(ii).Input.databases)
     set(handles.GUIHandles.Menu.Toolbox.NavigationCharts,'Enable','off');
 end
 
