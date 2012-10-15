@@ -1,4 +1,4 @@
-function ARS = prob_ars_set_mult(b, u, z, varargin)
+function ARS = prob_ars_set_mult(u, z, varargin)
 %PROB_ARS_SET_MULT One line description goes here.
 %
 %   More detailed description goes here.
@@ -64,7 +64,7 @@ function ARS = prob_ars_set_mult(b, u, z, varargin)
 OPT = struct(...
     'ARS',                  prob_ars_struct_mult,   ...                     % ARS structure
     'DesignPointDetection', true,                   ...                     % Boolean switch for automatic detection of design points                
-    'DesignPointFunction',  @prob_ars_design_point_detection, ...           % Design point detection function 
+    'DesignPointFunction',  @prob_ars_split,        ...           % Design point detection function 
     'ARSsetFunction',       @prob_ars_set3,         ...                     % Function handle to update ARS structure based on a set
                                                     ...                         of vectors u and corresponding z-values
     'ARSsetVariables',      {{}}                    ...                     % Additional variables to the ARSsetFunction
@@ -74,66 +74,32 @@ OPT = setproperty(OPT, varargin{:});
 
 %% Include points from ARS structure
 
-ARS     = OPT.ARS;
+ARS = OPT.ARS;
 
-b       = [cat(1,ARS.b); b'];                                               % Include beta values already present in ARS structure
-u       = [cat(1,ARS.u); u];                                                % Include u values already present in ARS structure
-z       = [cat(1,ARS.z); z'];                                               % Include z values already present in ARS structure
+b   = [cat(1,ARS.b); sqrt(sum(u.^2,2))];
+u   = [cat(1,ARS.u); u];
+z   = [cat(1,ARS.z); z(:)];  
 
 %% Design point detection
 
 if OPT.DesignPointDetection
-    [b_DPs b_other u_DPs u_other z_DPs z_other i]   = feval(    ...             % Find design points and cluster the other points to them
-        OPT.DesignPointFunction,  ...
-        b, ...
-        u, ...
-        z, ...
-        'ARS', ARS ...
-        );
-    
-    nr_DPs = size(z_DPs,1);
+    ARS    = feval(OPT.DesignPointFunction, ARS, u, b, z);
+    nr_DPs = length(ARS);
 else
-    nr_DPs = 1;                                                             % Only one ARS
-    
-    b_DPs   = nan;
-    u_DPs   = nan(1,size(u,2));
-    z_DPs   = nan;
-    b_other     = b;
-    u_other     = u;
-    z_other     = z;
+    nr_DPs = 1;
+
+    ARS.u  = u;
+    ARS.b  = b;
+    ARS.z  = z;
 end
 
 %% Generate ARS's
 
-
-
-if nr_DPs>1
-    for n = 1:nr_DPs
-        ii = find(i==n);
-        bi  = [b_DPs(n); b_other(ii,:)];
-        ui  = [u_DPs(n,:); u_other(ii,:)];
-        zi  = [z_DPs(n); z_other(ii)];
-        ARS(n)  = feval( ...                                                % Compute ARS based on exact samples
-            OPT.ARSsetFunction,     ...
-            bi,                     ...
-            ui,                     ...
-            zi,                     ...
-            'nr_DPs', nr_DPs,       ... 
-            'n', n,                 ...
-            'ARS',ARS,              ...
-            OPT.ARSsetVariables{:}      );
-    end
-else                                                                        
-    % Generate only a single ARS
-    bi  = [b_DPs; b_other];
-    ui  = [u_DPs; u_other];
-    zi  = [z_DPs; z_other];
-    
-    ARS(1)  = feval( ...                                                    % Compute ARS based on exact samples
+for n = 1:nr_DPs
+    ARS(n)  = feval(            ...
         OPT.ARSsetFunction,     ...
-        bi,                     ...    
-        ui,                     ...
-        zi,                     ...
-        'ARS',ARS,              ...
+        ARS(n).u,               ...
+        ARS(n).z,               ...
+        'ARS',ARS(n),           ...
         OPT.ARSsetVariables{:}      );
 end

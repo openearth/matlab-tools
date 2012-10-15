@@ -1,32 +1,32 @@
-function ARS = prob_ars_struct_mult(varargin)
-%PROB_ARS_STRUCT  One line description goes here.
+function idx = prob_ars_inbetasphere(ARS, beta)
+%PROB_ARS_INBETASPHERE  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   varargout = prob_ars_struct(varargin)
+%   varargout = prob_ars_inbetasphere(varargin)
 %
-%   Input:
+%   Input: For <keyword,value> pairs call prob_ars_inbetasphere() without arguments.
 %   varargin  =
 %
 %   Output:
 %   varargout =
 %
 %   Example
-%   prob_ars_struct
+%   prob_ars_inbetasphere
 %
-%   See also 
+%   See also
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2011 Deltares
+%   Copyright (C) 2012 Deltares
 %       Bas Hoonhout
 %
-%       bas.hoonhout@deltares.nl	
+%       bas.hoonhout@deltares.nl
 %
-%       P.O. Box 177
-%       2600 MH Delft
-%       The Netherlands
+%       Rotterdamseweg 185
+%       2629HD Delft
+%       Netherlands
 %
 %   This library is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -43,14 +43,14 @@ function ARS = prob_ars_struct_mult(varargin)
 %   --------------------------------------------------------------------
 
 % This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and 
+% OpenEarthTools is an online collaboration to share and manage data and
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute 
+% Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 24 Aug 2011
-% Created with Matlab version: 7.9.0.529 (R2009b)
+% Created: 15 Oct 2012
+% Created with Matlab version: 7.14.0.739 (R2012a)
 
 % $Id$
 % $Date$
@@ -59,23 +59,6 @@ function ARS = prob_ars_struct_mult(varargin)
 % $HeadURL$
 % $Keywords: $
 
-%% create ARS struct
+%% check which betas are in beta sphere
 
-ARS = struct( ...
-    'hasfit',   false,  ...
-    'active',   [],     ...
-    'b',        [],     ...
-    'u',        [],     ...
-    'z',        [],     ...
-    'b_BS',     [],     ...
-    'u_BS',     [],     ...
-    'z_BS',     [],     ...
-    'idx_BS',   [],     ...
-    'betamin',  Inf,    ...
-    'dbeta',    Inf,    ...
-    'b_DP',     [],     ...
-    'u_DP',     [],     ...
-    'idx_DP',   [],     ...
-    'fit',      struct());
-
-ARS = setproperty(ARS, varargin{:});
+idx = beta <= min([ARS.betamin])+max([ARS.dbeta]) & beta > 0;

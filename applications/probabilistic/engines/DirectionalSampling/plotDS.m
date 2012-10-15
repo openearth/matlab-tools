@@ -122,6 +122,7 @@ axARS = findobj(fh,'Type','axes','Tag','axARS');
 % plot DS samples
 up = un.*repmat(beta(:),1,size(un,2));
 
+phr = findobj(ax,'Tag','PRS');
 ph1 = findobj(ax,'Tag','P1');
 ph2 = findobj(ax,'Tag','P2');
 ph3 = findobj(ax,'Tag','P3');
@@ -129,11 +130,13 @@ dps = findobj(ax,'Tag','DPs');
 prs = findobj(axARS,'Tag','ARS');
 
 u_dps = cat(1,ARS.u_DP);
+u_ARS = cat(1,ARS.u);
 
 if isempty(ph1) || isempty(ph2) || isempty(ph3) || isempty(dps) || isempty(prs)
     
     prs = pcolor(axARS,gx,gy,gz);
     
+    phr = scatter(u_ARS(:,1),u_ARS(:,2),20,'.c');
     ph1 = scatter(ax,un(~converged,d(1)),un(~converged,d(2)),'MarkerEdgeColor','b');
     ph2 = scatter(ax,up(notexact,  d(1)),up(notexact,  d(2)),'MarkerEdgeColor','r');
     ph3 = scatter(ax,up(exact,     d(1)),up(exact,     d(2)),'MarkerEdgeColor','g');
@@ -142,6 +145,7 @@ if isempty(ph1) || isempty(ph2) || isempty(ph3) || isempty(dps) || isempty(prs)
     end
 
     set(prs,'Tag','ARS','DisplayName','ARS');
+    set(phr,'Tag','PRS','DisplayName','ARS evaluations');
     set(ph1,'Tag','P1','DisplayName','not converged');
     set(ph2,'Tag','P2','DisplayName','approximated');
     set(ph3,'Tag','P3','DisplayName','exact');
@@ -151,6 +155,7 @@ if isempty(ph1) || isempty(ph2) || isempty(ph3) || isempty(dps) || isempty(prs)
     end
 else
     set(prs,'CData',gz)
+    set(phr,'XData',u_ARS(:,1),'YData',u_ARS(:,2));
     set(ph1,'XData',un(~converged,d(1)),'YData',un(~converged,d(2)));
     set(ph2,'XData',up(notexact,  d(1)),'YData',up(notexact,  d(2)));
     set(ph3,'XData',up(exact,     d(1)),'YData',up(exact,     d(2)));
@@ -189,8 +194,6 @@ colormap(axARS,'gray');
 shading(axARS,'flat');
 clim(axARS,[-1 1]);
 
-set(axARS,'Position',get(ax,'Position'));
-
 title(ax,sprintf('%4.3f%%', progress*100));
 
 legend(ax,'-DynamicLegend','Location','NorthWestOutside');
@@ -205,5 +208,7 @@ data = { ...
 
 set(uit,'Data',data);
 set(ax,'XLim',[min(gx(:)) max(gx(:))],'YLim',[min(gy(:)) max(gy(:))]);
+
+set(axARS,'Position',get(ax,'Position'));
 
 drawnow;

@@ -186,6 +186,7 @@ OPT = struct(...
     'DesignPointDetection', true,           ...                             % Boolean switch for using automated detection of DPs (and using multiple ARS's)
     'beta1',            4,                  ...                             % Initial beta value in line search
     'dbeta',            .1,                 ...                             % Initial beta threshold for beta sphere
+    'dist_betamin',     1,                  ...
     'Pratio',           .4,                 ...                             % Maximum fraction of failure probability determined by approximated samples
     'minsamples',       50,                 ...                             % Minimum number of samples needed before convergence is being checked
     'maxsamples',       1000,               ...                               % Maximum number of samples being renerated
@@ -220,7 +221,7 @@ active      = ~cellfun(@isempty, {stochast.Distr}) &     ...
 
 % set random seed
 if isnan(OPT.seed)
-    OPT.seed = sum(100*clock);
+    OPT.seed = sum(10*clock);
 end
 rng('default');
 rng(OPT.seed);
@@ -247,6 +248,7 @@ z           = [];                                                           % ev
 un          = nan(0,N);                                                     % unit vectors for all samples (directions)
 beta        = nan(0,1);                                                     % final beta values for all samples
 zval        = nan(0,1);                                                     % final z-values for all samples
+exact2      = false(0,1);
 exact       = false(0,1);                                                   % boolean indicating for all samples if the result is converged and exact
 notexact    = false(0,1);                                                   % boolean indicating for all samples if the result is converged and not exact
 converged   = false(0,1);                                                   % boolean indicating for all samples if the result is converged
@@ -266,14 +268,13 @@ Pr          = Inf;                                                          % fr
 enoughsamples = true;                                                       % boolean indicating whether the maximum number of samples is enough (OPT.maxsamples)
 finalise    = false;                                                        % boolean indicating the final iteration in which all not exact samples 
                                                                             %   left within the beta sphere are reevaluated, if any
-                                                                            
+
+COV         = Inf;                                                          % coefficient of variation
 
 % start iterations
 while Pr > OPT.Pratio || ~isempty(reevaluate)                               % WHILE: iterate while fraction of failure probability determined by approximated samples 
                                                                             %   is too large or there are samples left to be reevaluated due to an increase 
                                                                             %   of the beta sphere or finalisation of the process
-    
-    COV         = Inf;                                                      % coefficient of variation
     
     while COV > minCOV || ~isempty(reevaluate)                              % WHILE: iterate while coefficient of variation has not reached it's required minimum or
                                                                             %   there are samples left to be reevaluated due to an increase of the beta sphere 
@@ -292,18 +293,19 @@ while Pr > OPT.Pratio || ~isempty(reevaluate)                               % WH
             P(:, active)    = randmatrix(:,nrandmatrix)';                   % sampled probability
             P(:,~active)	= .5;                                           % probability of inactive stochasts (expected value)
             
-            if nrandmatrix == OPT.maxsamples
-                error('Maximum number of random directions reached!')
-            else
-                nrandmatrix = nrandmatrix + 1;                              % increase counter randmatrix use
-            end
-            
             % transform P to u
             u               = norm_inv(P,0,1);                              % realisations in standard normal space
 
             % normalize u
             ul              = sqrt(sum(u.^2,2));                            % vector length in standard normal space
             un(idx,:)       = u./repmat(ul,1,N);                            % unit vector in standard normal space (direction)
+            
+            if nrandmatrix == OPT.maxsamples
+                warning('Maximum number of random directions reached!')
+                enoughsamples = false;
+            else
+                nrandmatrix = nrandmatrix + 1;                              % increase counter randmatrix use
+            end
             
         else
             % reevaluate first sample in line
@@ -357,49 +359,65 @@ while Pr > OPT.Pratio || ~isempty(reevaluate)                               % WH
             z           = [z  zn];                                          % add evaluated z values to corresponding vector with all results
         end
 
+        if any(exact2)
+            distances   = pointdistance_pairs(un(end,:)*min([ARS.betamin]), ...
+                                              un(exact2,:)*min([ARS.betamin])); % Calculate distances between design points
+            distances   = triu(distances);
+        else
+            distances   = [];
+        end
+        
         % exact line search
-        if ~OPT.ARS || ~any([ARS.hasfit]) || ~any(converged) || ...         % IF: check if ARS should not be used, is not available, no converged samples are available
-            (abs(b(end)) <= min([ARS.betamin])+max([ARS.dbeta]) && ca) || ... % or an approximated and converged result is available that is within the beta sphere
-            (~ca && isnan(z(end)) && isempty(zn) && isempty(bn))            %   or an approximated line search resulten in nan's indicating that a sector with a design point, but without ARS is sampled
-                
-            ii          = 1;                                                % select origin and initial estimate as starting values for exact line search
+        if Pr > OPT.Pratio || COV > minCOV || ~finalise
             
-            if OPT.ARS && any([ARS.hasfit])
-                ii      = unique([ii find(abs(z)==min(abs(z)),1,'first')]);         % also select approximated sample closest to zero, if available
-                if length(ii) == 1
-                    b   = [b OPT.beta1];
-                    z   = [z beta2z(OPT, un(idx,:), OPT.beta1)];
-                    be  = [be OPT.beta1];
-                    ze  = [ze z(end)];
-                    n   = n + 1;
-                    
-                    ii  = [ii find(z==z(end),1,'last')];
+            no_ars_available    = ~OPT.ARS || ~any([ARS.hasfit]) || ~any(converged);
+            is_in_beta_sphere   = (prob_ars_inbetasphere(ARS, b(end)) && ca);
+            is_close_to_new_dp  = (~ca && isnan(z(end)) && isempty(zn) && isempty(bn));
+            is_in_new_sector    = ~any(distances < sqrt(N)*OPT.dist_betamin & distances > 0);
+            
+            if no_ars_available || is_in_beta_sphere || ...
+                    is_close_to_new_dp || is_in_new_sector ...              % IF: check if direction should be evaluated exactly
+
+                ii          = 1;                                            % select origin and initial estimate as starting values for exact line search
+
+                if OPT.ARS && any([ARS.hasfit])                             % also select approximated sample closest to zero, if available
+                    ii      = unique([ii find(abs(z)==min(abs(z)),1,'first')]);
+                    if length(ii) == 1
+                        b   = [b OPT.beta1];
+                        z   = [z beta2z(OPT, un(idx,:), OPT.beta1)];
+                        be  = [be OPT.beta1];
+                        ze  = [ze z(end)];
+                        n   = n + 1;
+
+                        ii  = [ii find(z==z(end),1,'last')];
+                    end
+                else
+                    ii = [ii 2];
                 end
-            else
-                ii = [ii 2];
+
+                [bn zn nn ce] = feval(  ...                                 % start exact line search to find zero crossing along sampled direction given the
+                    OPT.z20Function,   ...                                      selected beta and z values and return the evaluated beta and z values, the number
+                    un(idx,:),          ...                                     of evaluations and a flag indicating convergence
+                    b(ii),              ...
+                    z(ii),              ...
+                    'zFunction', @(x,y)beta2z(OPT,x,y), OPT.z20Variables{:});   % use model as z evaluation function
+
+                be          = [be bn];                                      % add evaluated beta values to corresponding vector with exact results
+                ze          = [ze zn];                                      % add evaluated z values to corresponding vector with exact results
+
+                b           = [b  bn];                                      % add evaluated beta values to corresponding vector with all results
+                z           = [z  zn];                                      % add evaluated z values to corresponding vector with all results
+
+                n           = n+nn;                                         % increase evaluation counter
+
+                exact(idx)  = true;                                         % register evaluation as exact (temporarily)
             end
-
-            [bn zn nn ce] = feval(  ...                                     % start exact line search to find zero crossing along sampled direction given the
-                OPT.z20Function,   ...                                         selected beta and z values and return the evaluated beta and z values, the number
-                un(idx,:),          ...                                         of evaluations and a flag indicating convergence
-                b(ii),              ...
-                z(ii),              ...
-                'zFunction', @(x,y)beta2z(OPT,x,y), OPT.z20Variables{:});   % use model as z evaluation function
-
-            be          = [be bn];                                          % add evaluated beta values to corresponding vector with exact results
-            ze          = [ze zn];                                          % add evaluated z values to corresponding vector with exact results
-            
-            b           = [b  bn];                                          % add evaluated beta values to corresponding vector with all results
-            z           = [z  zn];                                          % add evaluated z values to corresponding vector with all results
-            
-            n           = n+nn;                                             % increase evaluation counter
-
-            exact(idx)  = true;                                             % register evaluation as exact (temporarily)
         end
 
         % store exit status
-        converged(idx)  = isfinite(z(end)) && ...                         % register sample as converged in case the z value is finite and the final result is converged
+        converged(idx)  = isfinite(z(end)) && ...                           % register sample as converged in case the z value is finite and the final result is converged
             ((~exact(idx) && ca) || ce);
+        exact2(idx)     = exact(idx);
         notexact(idx)   = ~exact(idx) && converged(idx);                    % register sample as not exact in case the result is converged, but approximated
         exact(idx)      = exact(idx) && converged(idx);                     % register sample as exact in case the result is both converged and exact
         beta(idx)       = b(end);                                           % register final beta value for output
@@ -412,7 +430,6 @@ while Pr > OPT.Pratio || ~isempty(reevaluate)                               % WH
             ue          = beta2u(un(idx,:),be(:));                          % determine sample vector in standard normal space (u*beta)  
             ARS        	= feval( ...                                        % compute ARS based on exact samples
                 OPT.ARSsetFunction,     ...
-                be,                     ...
                 ue,                     ...
                 ze,                     ...
                 'ARS',ARS,              ...
@@ -424,9 +441,7 @@ while Pr > OPT.Pratio || ~isempty(reevaluate)                               % WH
             end
             
             if any([ARS.hasfit]) && isnan(nARS)                             % IF: check if initial ARS is computed
-                
                 nARS    = n;                                                % register number of evaluations needed for initial ARS
-                
             end
         end
         
@@ -477,6 +492,10 @@ while Pr > OPT.Pratio || ~isempty(reevaluate)                               % WH
             reevaluate(1) = [];                                             % reevaluation of first sample in line finished, pop it from the list
         end
         
+        if enoughsamples == false
+            break;                                                          % break from outer loop if maxsamples is not enough
+        end
+        
     end
     
     if enoughsamples == false
@@ -487,22 +506,24 @@ while Pr > OPT.Pratio || ~isempty(reevaluate)                               % WH
     if Pr > OPT.Pratio                                                      % IF: check if required ratio of failure probability determined by approximated 
                                                                             %   samples is not yet reached
                                                                             
-        betas       = beta(notexact&beta>0);                                % determine approximated beta values candidate for reevaluation
+        betas       = beta(notexact&beta>min([ARS.betamin]));               % determine approximated beta values candidate for reevaluation
         idx         = isort(betas);                                         % sort selected beta values
         
         if ~isempty(idx)
             [ARS.dbeta] = deal(betas(idx(1))-min([ARS.betamin]));
             
             reevaluate  = ...                                               % determine indices of approximated samples within new beta sphere
-                find(abs(beta) <= min([ARS.betamin])+max([ARS.dbeta]) & ...
-                ~exact);
+                find(prob_ars_inbetasphere(ARS, beta) & notexact);
         end
+        
+        finalise = false;
     end
     
     if isempty(reevaluate) && ~finalise                                     % IF: check if no samples are left for reevaluation and finalisation has not yet started
         
         reevaluate  = find(~exact);                                         % select all approximated points for reevaluation (if they happen to be in the beta sphere)
         finalise    = true;                                                 % start finalisation
+        [ARS.dbeta] = deal(max([ARS.b_DP]) - min([ARS.betamin]));
         
     end
 end

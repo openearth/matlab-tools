@@ -106,17 +106,20 @@ end
 if ~converged && any(abs(z)<OPT.epsZ)
     
     id = find(abs(z)<OPT.epsZ,1,'first');
-    zi = feval(OPT.zFunction, un, b(id));
     
-    n  = n+1;
-    bn = b(id);
-    zn = zi;
-    
-    z(id)   = zi;
-    
-    if abs(zn)<OPT.epsZ
-        % limit state already available, abort
-        converged   = true;
+    if b(id)>0
+        zi = feval(OPT.zFunction, un, b(id));
+
+        n  = n+1;
+        bn = b(id);
+        zn = zi;
+
+        z(id)   = zi;
+
+        if abs(zn)<OPT.epsZ
+            % limit state already available, abort
+            converged   = true;
+        end
     end
 end
 
@@ -272,9 +275,9 @@ if ~converged
             iu  = ii(b(ii)==b0);
         elseif bisiter > 0 && ~isnan(z(end)) && any(isnan(zs))
             if bs(~isnan(zs)) <= b(end)
-                iu  = ii(b(ii)==b(end))
+                iu  = ii(b(ii)==b(end));
             elseif bs(~isnan(zs)) > b(end)
-                il  = ii(b(ii)==b(end))
+                il  = ii(b(ii)==b(end));
             end
         end
         

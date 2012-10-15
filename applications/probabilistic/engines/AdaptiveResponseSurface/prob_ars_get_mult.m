@@ -80,7 +80,7 @@ if length(ARS) > 1
         distances(i)    = pointdistance_pairs(ARS(i).u_DP,un*min([ARS.betamin]));              % Calculate distance between approximated point and ARS design point
         
         if ARS(i).hasfit                                                        % Check if the ARS has a good fit
-            z_all(i)   = polyvaln(ARS(i).fit, u(:,ARS(1).active));
+            z_all(i)   = polyvaln(ARS(i).fit, u(:,ARS(i).active));
         else
             z_all(i)   = nan;
         end

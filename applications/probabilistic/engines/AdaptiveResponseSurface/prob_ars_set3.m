@@ -1,4 +1,4 @@
-function ARS = prob_ars_set3(b, u, z, varargin)
+function ARS = prob_ars_set3(u, z, varargin)
 %PROB_ARS_SET2  One line description goes here.
 %
 %   More detailed description goes here.
@@ -64,71 +64,33 @@ function ARS = prob_ars_set3(b, u, z, varargin)
 OPT = struct(...
     'ARS',      prob_ars_struct,    ...
     'maxZ',     Inf,                ...
-    'epsZ',     1e-2,               ...
-    'nr_DPs',   1,                  ...
-    'n',        1                   ...
+    'epsZ',     1e-2                ...
 );
 
 OPT = setproperty(OPT, varargin{:});
 
-%% add data
+ARS = OPT.ARS;
 
-if size(OPT.ARS,2)==OPT.n
-    ARS             = OPT.ARS(OPT.n);
-else
-    ARS             = prob_ars_struct_mult;
-    ARS.active      = OPT.ARS(1).active;
-    ARS.dbeta       = OPT.ARS(1).dbeta;
-%     keyboard
-end
-
-ARS.b           = [b(:)];
-ARS.u           = [u(:,ARS.active)];
-ARS.z           = [z(:)];
-% ARS.b           = [ARS.b ; b(:)];
-% ARS.u           = [ARS.u ; u(:,ARS.active)];
-% ARS.z           = [ARS.z ; z(:)];
-
-% remove beta=0 (for mulitple ARS's) test
-b               = ARS.b;
-u               = ARS.u;
-z               = ARS.z;
-
-if OPT.nr_DPs > 1
-    ii  = b==0;
-    b   = b(~ii);
-    u   = u(~ii,:);
-    z   = z(~ii);
-end
 %% fit data
 
-notinf      = all(isfinite(ARS.u),2) & isfinite(ARS.z);
-notout      = abs(ARS.z)<=OPT.maxZ;
+notinf      = all(isfinite(u),2) & isfinite(z);
+notout      = abs(z)<=OPT.maxZ;
 nva         = sum(ARS.active);
-
-i           = find(b == min(b(abs(z(isfinite(z)))<OPT.epsZ)));
-ARS.beta_DP = b(i);
-ARS.u_DP    = u(i,:);
 
 % derive 2nd degree response surface with all cross terms
 if length(ARS.z) >= 1+nva+nva*(nva+1)/2
 
-    ARS.fit     = polyfitn(ARS.u(notinf&notout,:), ARS.z(notinf&notout), 2);
+    ARS.fit     = polyfitn(u(notinf&notout,:), z(notinf&notout), 2);
 
 % derive 2nd degree response surface with no cross terms
 elseif length(ARS.z) >= 2*nva+1
 
     pfmat       = [zeros(1,nva); eye(nva); 2*eye(nva)];
-    ARS.fit     = polyfitn(ARS.u(notinf&notout,:), ARS.z(notinf&notout), pfmat);
+    ARS.fit     = polyfitn(u(notinf&notout,:), z(notinf&notout), pfmat);
 
 end
 
-if check_fit(ARS.fit)
-    ARS.hasfit  = true;
-else
-    ARS.hasfit  = false;
-    ARS.fit     = struct();
-end
+ARS.hasfit = check_fit(ARS.fit);
 
 % hij werkt vooralsnog alleen als alle variabelen actief zijn. Als niet
 % alle variabelen actief zijn moet de procedure m.i. aangepast worden
@@ -150,16 +112,23 @@ function valid = check_fit(fit)
 
     valid = false;
     
+    maxcoeff = 1e5;
+    
     if ~isempty(fit) && ~isempty(fieldnames(fit))
         if ~any(isnan(fit.Coefficients)) && ...
            ~any(isinf(fit.Coefficients)) && ...
-           ~any(fit.Coefficients > 1e3) && ...
+           ~any(fit.Coefficients > maxcoeff) && ...
            ~any(isnan(fit.ParameterVar)) && ...
            ~any(isinf(fit.ParameterVar)) && ...
-           ~any(fit.ParameterVar > 1e3) && ...
-           fit.RMSE < 1
+           ~any(fit.ParameterVar > maxcoeff) && ...
+           fit.RMSE/max(1,max(abs(fit.Coefficients))) < 1
 
             valid = true;
+            
+        else
+            
+            %fprintf('ARS fit failed: max coef: %3.2f ; max var: %3.2f ; RMSE: %3.2f\n', ...
+            %    max(fit.Coefficients), max(fit.ParameterVar), fit.RMSE);
 
         end
     end
