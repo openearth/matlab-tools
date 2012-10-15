@@ -14,10 +14,14 @@ function varargout=VS_LET_VECTOR_COR(NFStruct,GroupName,GroupIndex,ElementNames,
 %         been interpolated to the cornert points as well..
 %
 %   [U,V,UKSI,UETA]=vs_let_vector_cor(..);
-%
 %   Returns also the original velocities at the velocity points
 %   NOTE that those have different dimesions than each other 
 %   and than the zeta array.
+%
+%   [U,V,UKSI,UETA,u,v]=vs_let_vector_cor(..);
+%   Returns also the velocities at the corner points in LOCAL 
+%   orientation (skipping step v above). Note when only these are needed
+%   [~,~,~,~,u,v] = vs_let_vector_cor(..) can be used.
 %
 %   Dummy rows are not returned, so only 
 %   n: [2 nmax-1]
@@ -314,6 +318,9 @@ function varargout=VS_LET_VECTOR_COR(NFStruct,GroupName,GroupIndex,ElementNames,
      return;
    elseif nargout==4, % U,V,UKSI,VETA
      varargout={cor.U cor.V u.UKSI v.VETA};
+     return;
+   elseif nargout==6, % U,V,UKSI,VETA
+     varargout={cor.U cor.V u.UKSI v.VETA cor.u cor.v};
      return;
    end;
 
