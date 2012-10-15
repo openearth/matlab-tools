@@ -358,22 +358,27 @@ while Pr > OPT.Pratio || ~isempty(reevaluate)                               % WH
             b           = [b  bn];                                          % add evaluated beta values to corresponding vector with all results
             z           = [z  zn];                                          % add evaluated z values to corresponding vector with all results
         end
-
-        if any(exact2)
-            distances   = pointdistance_pairs(un(end,:)*min([ARS.betamin]), ...
-                                              un(exact2,:)*min([ARS.betamin])); % Calculate distances between design points
-            distances   = triu(distances);
-        else
-            distances   = [];
-        end
         
         % exact line search
         if Pr > OPT.Pratio || COV > minCOV || ~finalise
             
             no_ars_available    = ~OPT.ARS || ~any([ARS.hasfit]) || ~any(converged);
             is_in_beta_sphere   = (prob_ars_inbetasphere(ARS, b(end)) && ca);
-            is_close_to_new_dp  = (~ca && isnan(z(end)) && isempty(zn) && isempty(bn));
-            is_in_new_sector    = ~any(distances < sqrt(N)*OPT.dist_betamin & distances > 0);
+            
+            if OPT.DesignPointDetection
+                if any(exact2)
+                    distances   = triu(pointdistance_pairs(un(end,:)    * min([ARS.betamin]),   ...
+                                                           un(exact2,:) * min([ARS.betamin])));
+                else
+                    distances   = [];
+                end
+                
+                is_close_to_new_dp  = (~ca && isnan(z(end)) && isempty(zn) && isempty(bn));
+                is_in_new_sector    = ~any(distances < sqrt(N)*OPT.dist_betamin & distances > 0);
+            else
+                is_close_to_new_dp  = false;
+                is_in_new_sector    = false;
+            end
             
             if no_ars_available || is_in_beta_sphere || ...
                     is_close_to_new_dp || is_in_new_sector ...              % IF: check if direction should be evaluated exactly
