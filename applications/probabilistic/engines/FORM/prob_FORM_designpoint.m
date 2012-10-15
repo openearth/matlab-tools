@@ -1,4 +1,4 @@
-function varargout = prob_FORM_designpoint(result, varargin)
+function data = prob_FORM_designpoint(result, varargin)
 %PROB_FORM_DESIGNPOINT  One line description goes here.
 %
 %   More detailed description goes here.
@@ -63,7 +63,10 @@ function varargout = prob_FORM_designpoint(result, varargin)
 %%
 OPT = struct(...
     'rowdelimiter', '\n',...
-    'columndelimiter', '');
+    'columndelimiter', '',...
+    'sigfigs', 3,...
+    'sortVar', 'alphas',...
+    'sortFcn', @(v) sort(v.^2, 2, 'descend'));
 % return defaults (aka introspection)
 if nargin==0;
     varargout = OPT;
@@ -72,20 +75,20 @@ end
 OPT = setproperty(OPT, varargin );
 % overwrite defaults with user arguments
 %% code
-varnames = cellfun(@(x) x, {result.Input.Name}, 'uniformoutput', false);
-varvalues = cellfun(@(x) result.Output.designpoint.(x), varnames);
-alphas = result.Output.alpha;
+data.varnames = cellfun(@(x) x, {result.Input.Name}, 'uniformoutput', false);
+data.varvalues = cellfun(@(x) result.Output.designpoint.(x), data.varnames);
+data.alphas = result.Output.alpha;
 
-Omag = round(log10(varvalues));
-dec = zeros(size(Omag));
-dec(Omag<0) = -Omag(Omag<0)+2;
-dec(Omag>=0) = -Omag(Omag>=0)+2;
-dec(~isfinite(Omag)) = 1;
+[~, ix] = OPT.sortFcn(data.(OPT.sortVar));
+
+varnames = data.varnames(ix);
+varvalues = data.varvalues(ix);
+alphas = data.alphas(ix);
 
 headerstrings = {'Variable' 'Value' 'alpha^2 * 100 [%]'};
 
 maxstrlength = max(cellfun(@length, [varnames headerstrings(1)]));
-maxnumlength = max([dec length(headerstrings{2})]) + 2;
+maxnumlength = max([cellfun(@(x) length(sprintf(['%.' num2str(OPT.sigfigs) 'g'], x)), num2cell(varvalues)), length(headerstrings{2})]) + 2;
 maxperclength = max([4 length(headerstrings{3})]);
 
 rowdelimiters = repmat({OPT.rowdelimiter}, 1, length(varnames));
@@ -99,7 +102,7 @@ header = sprintf(...
 formats = [...
     repmat({['%-' num2str(maxstrlength+1) 's']}, 1, length(varnames));...
     columndelimiters;...
-    cellfun(@(x) ['%' num2str(maxnumlength+1) '.' num2str(x) 'f '], num2cell(dec), 'uniformoutput', false);...
+    repmat({['%' num2str(maxnumlength+1) '.' num2str(OPT.sigfigs) 'g ']}, 1, length(varnames));...
     columndelimiters;...
     repmat({['%' num2str(maxperclength+1) '.1f ']}, 1, length(varnames));...
     rowdelimiters];
