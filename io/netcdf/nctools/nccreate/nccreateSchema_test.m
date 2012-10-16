@@ -73,10 +73,14 @@ for ii = 1:length(Format)
     if exist(testfile,'file')
         delete(testfile);
     end
+    
+    % write the schema
     ncwriteschema(testfile,schema)
     
+    % read schema frum created file
     schema2 = ncinfo(testfile);
     
+    % test if both are equal
     testresult(ii) = isequal(schema,schema2);
 end
     
