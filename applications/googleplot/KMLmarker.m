@@ -18,11 +18,11 @@ function varargout = KMLmarker(varargin)
 %  * html                   = cellstr with text per point (shown when highlighted)
 %                             by default equal to value of c
 %  * OPT.iconnormalState    = marker, default 'http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png'
-%                                       see also, http://www.mymapsplus.com/Markers,
+%                                       see also, http://mapicons.nicolasmollet.com/,
+%                                       http://www.mymapsplus.com/Markers,
 %                                       http://www.visual-case.it/cgi-bin/vc/GMapsIcons.pl
-%                                       http://www.benjaminkeen.com/?p=105
-%                                       http://code.google.com/p/google-maps-icons/
 %                                       http://www.scip.be/index.php?Page=ArticlesGE02&Lang=EN
+%                                       
 %  * OPT.iconhighlightState = marker for highlighted state, defaults to
 %                             marker for normalstate
 %
