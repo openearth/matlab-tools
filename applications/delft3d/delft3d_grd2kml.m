@@ -87,8 +87,8 @@ function OPT = delft3d_grd2kml(grdfile,varargin)
       OPT.fillAlpha = 1;
    end
    
-   disp(['min z & cLim(1): ',num2str(min(-G.cen.dep(:))),' & ',num2str(OPT2.cLim(1))]);
-   disp(['max z & cLim(2): ',num2str(max(-G.cen.dep(:))),' & ',num2str(OPT2.cLim(2))]);
+   disp(['min z & cLim(1): ',num2str(min(-G.cor.dep(:))),' & ',num2str(OPT2.cLim(1))]);
+   disp(['max z & cLim(2): ',num2str(max(-G.cor.dep(:))),' & ',num2str(OPT2.cLim(2))]);
    
    if OPT.debug
        TMP = figure;
@@ -103,15 +103,16 @@ function OPT = delft3d_grd2kml(grdfile,varargin)
    
    OPT2.fileName = [filename(grdfile),'_3D.kml'];
    
-   KMLsurf  (G.cor.lat,G.cor.lon,-G.cor.dep,... % at corners for z !!
-                                 -G.cen.dep,OPT2);
+   KMLsurf  (G.cor.lat(1:3:end,1:3:end),...
+             G.cor.lon(1:3:end,1:3:end),...
+            -G.cor.dep(1:3:end,1:3:end),OPT2);
    OPT2.fileName  = [filename(grdfile),'_2D.kml'];
    OPT2.zScaleFun =  @(z)'clampToGround';
    
-   KMLpcolor(G.cor.lat,G.cor.lon,-G.cen.dep,OPT2);
+   %KMLpcolor(G.cor.lat,G.cor.lon,-G.cen.dep,OPT2);
 
    OPT2.fileName  = [filename(grdfile),'_mesh.kml'];
 
-   %KMLmesh  (G.cor.lat,G.cor.lon,'clampToGround',OPT2);
+   %KMLmesh  (G.cor.lat,G.cor.lon,'clampToGround','fileName',OPT2.fileName);
 
 %%EOF

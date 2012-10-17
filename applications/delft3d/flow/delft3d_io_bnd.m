@@ -6,7 +6,8 @@ function varargout=delft3d_io_bnd(cmd,varargin),
 %  D = delft3d_io_bnd('read' ,filename,<G>);
 %
 % where G = delft3d_io_grd() also returns mn, x and y
-% of each boundary segment
+% of each boundary segment. Useful for interpolating boundary
+% conditions from 2D maps (nesting).
 %
 %       delft3d_io_bnd('write',filename,D);
 %
@@ -29,7 +30,7 @@ function varargout=delft3d_io_bnd(cmd,varargin),
 %           delft3d_io_fou, delft3d_io_grd, delft3d_io_ini, delft3d_io_mdf,
 %           delft3d_io_obs, delft3d_io_restart,             delft3d_io_src,
 %           delft3d_io_tem, delft3d_io_thd, delft3d_io_wnd,
-%           bct2bca
+%           bct2bca, d3d_attrib
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2005 Delft University of Technology
@@ -144,16 +145,16 @@ else
             S.DATA(i).mn(2):S.DATA(i).mn(4));
         
         if S.DATA(i).mn(1)==mmax+1
-            S.DATA(i).mn(1)= mmax;
+           S.DATA(i).mn(1)= mmax;
         end
         if S.DATA(i).mn(2)==nmax+1
-            S.DATA(i).mn(2)= nmax;
+           S.DATA(i).mn(2)= nmax;
         end
         if S.DATA(i).mn(3)==mmax+1
-            S.DATA(i).mn(3)= mmax;
+           S.DATA(i).mn(3)= mmax;
         end
         if S.DATA(i).mn(4)==nmax+1
-            S.DATA(i).mn(4)= nmax;
+           S.DATA(i).mn(4)= nmax;
         end
         
         S.DATA(i).alfa         = fscanf(fid,'%f'  ,1);
@@ -162,9 +163,9 @@ else
         
         %if threeD
         if strcmpi('C',S.DATA(i).bndtype) | ...
-                strcmpi('Q',S.DATA(i).bndtype) | ...
-                strcmpi('T',S.DATA(i).bndtype) | ...
-                strcmpi('R',S.DATA(i).bndtype)
+           strcmpi('Q',S.DATA(i).bndtype) | ...
+           strcmpi('T',S.DATA(i).bndtype) | ...
+           strcmpi('R',S.DATA(i).bndtype)
             
             [S.DATA(i).vert_profile,rec] = strtok(rec); %,fscanf(fid,'%20c',1);
             
@@ -199,7 +200,7 @@ else
         try % for conversion to unstruc use labelA as pli number and labelB as sequence number inside that pli
             
             [S.DATA(i).pli_name,rec]  = strtok(rec);
-            S.DATA(i).pli_nr         = str2num(strtok(rec));
+             S.DATA(i).pli_nr         = str2num(strtok(rec));
             
         catch
         end
@@ -237,10 +238,6 @@ else
     
 end
 
-
-
-% ------------------------------------
-% ------------------------------------
 % ------------------------------------
 
 function iostat=Local_write(filename,S),
@@ -302,8 +299,3 @@ for i=1:length(S.DATA)
 end;
 fclose(fid);
 iostat=1;
-
-% ------------------------------------
-% ------------------------------------
-% ------------------------------------
-

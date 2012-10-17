@@ -48,7 +48,7 @@ function varargout=delft3d_io_dis(cmd,varargin),
 %           delft3d_io_fou, delft3d_io_grd, delft3d_io_ini, delft3d_io_mdf, 
 %           delft3d_io_obs, delft3d_io_restart,             delft3d_io_src, 
 %           delft3d_io_tem, delft3d_io_thd, delft3d_io_wnd, 
-%           delft3d_io_wnd, delft3d_io_tem, delft3d_io_mdf, 
+%           delft3d_io_wnd, delft3d_io_tem, delft3d_io_mdf, d3d_attrib
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2006-2008 Delft University of Technology

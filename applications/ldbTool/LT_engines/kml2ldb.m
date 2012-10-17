@@ -11,7 +11,7 @@ function ldb=kml2ldb(saveOutput,inFile)
 % inFile:       input kml-file (optional)
 % ldb:          output ldb [Mx2} array
 %
-% See also: LDBTOOL, KML2LDB3D, LDB2KML, GOOGLEPLOT
+% See also: LDBTOOL, KML2LDB3D, LDB2KML, GOOGLEPLOT, KML2Coordinates
 
 %% Copyright notice
 %   --------------------------------------------------------------------
