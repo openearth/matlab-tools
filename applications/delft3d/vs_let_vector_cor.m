@@ -221,7 +221,7 @@ function varargout=VS_LET_VECTOR_COR(NFStruct,GroupName,GroupIndex,ElementNames,
      u.kfu = vs_let(NFStruct,'map-series',GroupIndex,'KFU',{nu,mu},varargin{:});%
      v.kfv = vs_let(NFStruct,'map-series',GroupIndex,'KFV',{nv,mv},varargin{:});%
    end;
-   
+
    for k=1:size(u.UKSI,4)
       u.UKSI(:,:,:,k)=u.UKSI(:,:,:,k).*u.kfu;
       v.VETA(:,:,:,k)=v.VETA(:,:,:,k).*v.kfv;
