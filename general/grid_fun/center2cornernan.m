@@ -1,10 +1,12 @@
 function xcor = center2cornernan(xcen)
-%CENTER2CORNERNAN
+%CENTER2CORNERNAN interpolate data from grid corners to grid centers
 %
 % matrixcor = center2cornernan(matrixcen)
 %
 % Inter and extrapolates a 2D array linearly to obtain corner value
 % from center values. The corner array is none bigger on both dimensions.
+%
+%See also: corner2center
 
 
 %   --------------------------------------------------------------------
@@ -36,25 +38,21 @@ function xcor = center2cornernan(xcen)
 %   --------------------------------------------------------------------
 
    %% Initialize with nan
-   %% ------------------------
  
       xcor = nan.*zeros([size(xcen,1)+1,size(xcen,2)+1]);
 
   %% Give value to those corner points that have 
-  %% 4 active center points around
-  %% and do not change them with 'internal extrapolations
-  %% ------------------------
+  %  4 active center points around
+  %  and do not change them with 'internal extrapolations
 
       xcor(2:end-1,2:end-1) = corner2center(xcen);
    
   %% Orthogonal mirroring (only of still empty values)
-  %% ------------------------
   
      xcor = mirror_in_1st_dimension(xcen ,xcor ) ;
      xcor = mirror_in_1st_dimension(xcen',xcor')';
 
   %% Diagonal mirroring  (only of still empty values)
-  %% ------------------------
   
      xcor =        mirror_in_diagonal(       xcen ,       xcor ) ;
      xcor = fliplr(mirror_in_diagonal(fliplr(xcen),fliplr(xcor)));
@@ -147,7 +145,6 @@ function xcor = mirror_in_1st_dimension(xcen,xcor)
         for n=1:size(xcen,2)-1
 
            %% mirror back when not yet filled in
-           %% -------------------------------------
 
            if isnan(xcor(m  ,n+1))
            xcor(m  ,n+1) = (+ 3*xcen(m  ,n  ) ...
@@ -157,7 +154,6 @@ function xcor = mirror_in_1st_dimension(xcen,xcor)
            end
            
            %% mirror forward when not yet filled in
-           %% -------------------------------------
            
            if isnan(xcor(m+2,n+1))
            xcor(m+2,n+1) = (-   xcen(m  ,n  ) ...
@@ -208,7 +204,6 @@ function xcor = mirror_in_diagonal(xcen,xcor)
         for n=1:size(xcen,2)-1
 
            %% mirror back when not yet filled in
-           %% -------------------------------------
 
            if isnan(xcor(m  ,n  ))
            xcor(m  ,n  ) =  + 3*xcen(m  ,n  )/2 ...
@@ -218,7 +213,6 @@ function xcor = mirror_in_diagonal(xcen,xcor)
            end
            
            %% mirror forward when not yet filled in
-           %% -------------------------------------
            
            if isnan(xcor(m+2,n+2))
            xcor(m+2,n+2) =  -   xcen(m  ,n  )/2 ...

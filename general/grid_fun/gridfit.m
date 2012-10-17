@@ -1,5 +1,5 @@
 function [zgrid,xgrid,ygrid] = gridfit(x,y,z,xnodes,ynodes,varargin)
-% gridfit: estimates a surface on a 2d grid, based on scattered data
+% gridfit estimates a surface on a 2d grid, based on scattered data
 %
 % Retrieved from the Matlab File Exchange on 12 sept 2010 from:
 % http://www.mathworks.de/matlabcentral/fileexchange/8998

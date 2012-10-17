@@ -1,9 +1,9 @@
-function ZI = griddata_nearest(X,Y,Z,XI,YI,varargin)
+function varargout = griddata_nearest(X,Y,Z,XI,YI,varargin)
 %GRIDDATA_NEAREST Data gridding and surface fitting.
 %
 %     ZI = griddata_nearest(X,Y,Z,XI,YI)
 %
-%   GRIDDATA_NEAREST fits a surface of the form Z = F(X,Y) to the
+%   GRIDDATA_NEAREST fits a surface of the form ZI = F(XI,YI) to the
 %   data in the (usually) nonuniformly-spaced vectors (X,Y,Z).
 %   GRIDDATA_NEAREST interpolates this surface at the points specified by
 %   (XI,YI) to produce ZI. XI and YI are usually a uniform grid (as
@@ -25,6 +25,10 @@ function ZI = griddata_nearest(X,Y,Z,XI,YI,varargin)
 %   where keyword 'Rmax' discards cases where the distance > Rmax.
 %   This prevents for instance filling through clouds or land 
 %   with neighbouring sea pixel values.
+%
+%   [ZI,I] = griddata_nearest(..) optionally returns index I into 
+%   (X,Y,Z) to retrieve the position (X(I),Y(I)) of the nearest
+%   pixel used to construct ZI.
 %
 %   See also: GRIDDATA, GRIDDATA_AVERAGE, GRIDDATA_REMAP, INTERP2, BIN2
 
@@ -73,11 +77,15 @@ OPT.quiet = false;
 
 if nargin==0;ZI = OPT;return;end
 
-OPT  = setproperty(OPT,varargin{:});
+OPT  = setproperty(OPT,varargin);
 
 ZI   = NaN((size(XI)));
 R    = NaN((size(X )));
 npix = length(XI(:));
+
+if nargout==2
+   index = zeros(size(XI));
+end
 
 %% print commandline waitbar
 if ~OPT.quiet
@@ -92,20 +100,16 @@ for ipix = 1:npix % index in new (orthogonal) grid
     % the following if statements check if the distance between the current
     % point in the output grid is possibly within the search range of a
     % gridpoint. This is checked by comparing the previous distance to the
-    % closest point and the distance between two concecutive points on the
+    % closest point and the distance between two consecutive points on the
     % new grid.
     if pix.distance > OPT.Rmax
-        if pix.distance > OPT.Rmax + sqrt(...
-                (XI(ipix) - XI(ipix-1)).^2 + ...
-                (YI(ipix) - YI(ipix-1)).^2);
-            
-            pix.distance = pix.distance-sqrt(...
-                (XI(ipix) - XI(ipix-1)).^2 + ...
-                (YI(ipix) - YI(ipix-1)).^2);
+        dR    = sqrt((XI(ipix) - XI(ipix-1)).^2 + ...
+                     (YI(ipix) - YI(ipix-1)).^2);
+        if pix.distance > OPT.Rmax + dR;
+           pix.distance = pix.distance-dR;
         else % update distance
-            R = sqrt(...
-                (XI(ipix) - X).^2 + ...
-                (YI(ipix) - Y).^2);
+            R = sqrt((XI(ipix) - X).^2 + ...
+                     (YI(ipix) - Y).^2);
             [pix.distance,pix.index] = min(R(:)); % index in old (random point) grid
         end
     else % update distance
@@ -120,6 +124,7 @@ for ipix = 1:npix % index in new (orthogonal) grid
     if (pix.distance < OPT.Rmax)
         ZI(ipix)                 = Z(pix.index);
     end
+
     if ~OPT.quiet 
         if mod(ipix-1,floor(npix/100))==0
             if mod(ipix-1,floor(npix/10))==0
@@ -130,9 +135,19 @@ for ipix = 1:npix % index in new (orthogonal) grid
         end
     end
     
+   if nargout==2
+      index(ipix) = pix.index;
+   end
+
 end % ipix
 
 if ~OPT.quiet
     fprintf('\n');
 end
 %% EOF
+
+if nargout==1
+   varargout = {ZI};
+elseif nargout==2
+   varargout = {ZI,index};
+end
