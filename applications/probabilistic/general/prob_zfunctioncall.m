@@ -65,8 +65,12 @@ function [z OPT] = prob_zfunctioncall(OPT, stochast, x, varargin)
 
 %% call z-function
 
+if ~iscell(OPT.x2zFunction)
+    OPT.x2zFunction = {OPT.x2zFunction};
+end
+
 % check z-function
-z_input = getInputVariables(OPT.x2zFunction);
+z_input = getInputVariables(OPT.x2zFunction{1});
 
 % derive z based on x
 if strcmp(OPT.method, 'matrix')
@@ -83,12 +87,15 @@ end
 function [z OPT] = zfuntioncall(OPT, stochast, x, z_input)
 
     [inputargs OPT] = get_inputargs(OPT, x, stochast, z_input);
-    z               = feval(OPT.x2zFunction, inputargs{:}, OPT.x2zVariables{:});
+    
+    for icell = 1:length(OPT.x2zFunction)
+        z(icell)    = feval(OPT.x2zFunction{icell}, inputargs{:}, OPT.x2zVariables{:});
+    end
 
 function [inputargs OPT] = get_inputargs(OPT, x, stochast, z_input)
 
     if any(ismember({'samples' 'Resistance'}, z_input))
-        warning('OET:probabilistic:deprecated',  [ ...
+        error('OET:probabilistic:deprecated',  [ ...
             'The argument list of the Z-function you are using is deprecated. ' ...
             'Please use the new argument list using the "variables" option and ' ...
             'a varargin cell array.']);
@@ -110,7 +117,7 @@ function [inputargs OPT] = get_inputargs(OPT, x, stochast, z_input)
             OPT.x2zVariables(i3:i3+1) = [];
         end
     else
-        inputargs = x2inputargs(OPT.x2zFunction, x, stochast);
+        inputargs = x2inputargs(OPT.x2zFunction{1}, x, stochast);
     end
     
 function samples = x2samples(x, variable_names)
