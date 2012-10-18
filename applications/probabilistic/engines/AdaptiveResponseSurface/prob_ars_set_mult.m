@@ -1,4 +1,4 @@
-function ARS = prob_ars_set_mult(u, z, varargin)
+function ARS = prob_ars_set_mult(u, z_tot, varargin)
 %PROB_ARS_SET_MULT One line description goes here.
 %
 %   More detailed description goes here.
@@ -76,26 +76,46 @@ OPT = setproperty(OPT, varargin{:});
 
 ARS = OPT.ARS;
 
-b   = [cat(1,ARS.b); sqrt(sum(u.^2,2))];
-u   = [cat(1,ARS.u); u];
-z   = [cat(1,ARS.z); z(:)];  
+if size(z_tot,2) == 1
+    ui  = [cat(1,ARS.u); u];
+    bi  = [cat(1,ARS.b); sqrt(sum(u.^2,2))];
+    zi  = [cat(1,ARS.z); z_tot(:)];
+end
 
 %% Design point detection
 
 if OPT.DesignPointDetection
-    ARS    = feval(OPT.DesignPointFunction, ARS, u, b, z);
-    nr_DPs = length(ARS);
+    ARS    = feval(OPT.DesignPointFunction, ARS, ui, bi, zi);
+    nr_ARS = length(ARS);
+elseif size(z_tot,2) > 1 && ~OPT.DesignPointDetection
+    nr_ARS  = size(z_tot,2);
+    ui  = [cat(1,ARS(1).u); u];
+    bi  = [cat(1,ARS(1).b); sqrt(sum(u.^2,2))];
+    zi  = cat(2,ARS.z);
+    
+    ARS0            = ARS;
+    ARS             = repmat(prob_ars_struct_mult, 1, nr_ARS);
+    [ARS.b]         = deal(bi);
+    [ARS.u]         = deal(ui);
+    [ARS.active]    = deal(ARS0.active);
+    [ARS.betamin]   = deal(ARS0.betamin);
+    [ARS.dbeta]     = deal(ARS0.dbeta);
+    [ARS.aggregateFunction]     = deal(ARS0.aggregateFunction);
+    
+    for i = 1:nr_ARS
+        ARS(i).z    = [zi(:,i); z_tot(:,i)];
+    end
 else
-    nr_DPs = 1;
+    nr_ARS = 1;
 
-    ARS.u  = u;
-    ARS.b  = b;
-    ARS.z  = z;
+    ARS.u  = ui;
+    ARS.b  = bi;
+    ARS.z  = zi;
 end
 
 %% Generate ARS's
 
-for n = 1:nr_DPs
+for n = 1:nr_ARS
     ARS(n)  = feval(            ...
         OPT.ARSsetFunction,     ...
         ARS(n).u,               ...

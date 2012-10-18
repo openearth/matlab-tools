@@ -80,15 +80,25 @@ if any([ARS.hasfit])
         rsz     = nan(size(gx));
         
         u_DP = cat(1,ARS.u_DP);
-        distances   = pointdistance_pairs(u_DP,dat);
-        [dm filter] = min(distances,[],1);
-        filter      = reshape(filter, size(gx));
-        
-        for ii = 1:length(ARS)
-            if ARS(ii).hasfit
-                rsz_temp(:,:)     = reshape(polyvaln(ARS(ii).fit,dat), size(gx));
-                rsz(filter == ii) = rsz_temp(filter == ii);
+        if ~isempty(u_DP)
+            distances   = pointdistance_pairs(u_DP,dat);
+            [dm filter] = min(distances,[],1);
+            filter      = reshape(filter, size(gx));
+            
+            for ii = 1:length(ARS)
+                if ARS(ii).hasfit
+                    rsz_temp(:,:)     = reshape(polyvaln(ARS(ii).fit,dat), size(gx));
+                    rsz(filter == ii) = rsz_temp(filter == ii);
+                end
             end
+        else
+            for ii = 1:length(ARS)
+                if ARS(ii).hasfit
+                    rsz_temp(ii,:,:)     = reshape(polyvaln(ARS(ii).fit,dat), size(gx));
+                end
+            end
+            rsz = feval(@prob_aggregate_z, rsz_temp,'aggregateFunction', ARS(1).aggregateFunction);
+            rsz = squeeze(rsz);
         end
     end
 end

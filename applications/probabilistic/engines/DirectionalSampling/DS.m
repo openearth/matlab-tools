@@ -170,8 +170,11 @@ varargin = prob_checkinput(varargin{:});
 OPT = struct(...
     'stochast',         struct(),           ...                             % Stochast structure
     'seed',             NaN,                ...                             % Seed for random generator
-    'x2zFunction',      @x2z,               ...                             % Function handle to transform x to z
+    'x2zFunction',      {@x2z},             ...                             % Function handle to transform x to z
     'x2zVariables',     {{}},               ...                             % Additional variables for the x2zFunction
+    'aggregate',        true,               ...                             % Boolean indicating the need for aggregation
+    'aggregateFunction',[],                 ...                             % Aggregation function for combining multiple failure functions
+    'aggregateVariables',{{}},              ...                             % Additional variables for the aggregation function
     'P2xFunction',      @P2x,               ...                             % Function handle to transform P to x
     'P2xVariables',     {{}},               ...                             % Additional variables for the P2xFunction
     'z20Function',      @find_zero_poly4,   ...                             % Function handle to find z=0 along a line
@@ -183,16 +186,17 @@ OPT = struct(...
     'ARSsetFunction',   @prob_ars_set_mult, ...                             % Function handle to update ARS structure based on a set
                                             ...                                 of vectors u and corresponding z-values
     'ARSsetVariables',  {{}},               ...                             % Additional variables to the ARSsetFunction
-    'DesignPointDetection', true,           ...                             % Boolean switch for using automated detection of DPs (and using multiple ARS's)
+    'DesignPointDetection', false,           ...                             % Boolean switch for using automated detection of DPs (and using multiple ARS's)
+    'epsZ',             1e-2,               ...
     'beta1',            4,                  ...                             % Initial beta value in line search
     'dbeta',            .1,                 ...                             % Initial beta threshold for beta sphere
     'dist_betamin',     1,                  ...
     'Pratio',           .4,                 ...                             % Maximum fraction of failure probability determined by approximated samples
-    'minsamples',       50,                 ...                             % Minimum number of samples needed before convergence is being checked
+    'minsamples',       0,                 ...                             % Minimum number of samples needed before convergence is being checked
     'maxsamples',       1000,               ...                               % Maximum number of samples being renerated
     'confidence',       .95,                ...                             % Confidence interval in convergence criterium
     'accuracy',         .2,                 ...                             % Accuracy in convergence criterium
-    'plot',             false,              ...                             % Boolean indicating whether to plot result
+    'plot',             true,              ...                             % Boolean indicating whether to plot result
     'animate',          false,              ...                             % Boolean indicating whether to animate progress
                                             ...
     'method',           'matrix',           ...                             % Future option: Evaluation method of z-values (matrix or loop) used 
@@ -230,7 +234,10 @@ nrandmatrix = 1;                                                            % co
 
 % compute origin
 b0          = 0;                                                            % beta value of origin
-z0          = beta2z(OPT, zeros(1,N), b0);                                  % z-value of origin
+z0_tot      = beta2z(OPT, zeros(1,N), b0);                                  % z-value of origin
+
+z0  = feval(@prob_aggregate_z, z0_tot, ...
+    'aggregateFunction', OPT.aggregateFunction);
 
 if z0<0
     error('Origin is part of failure area. This situation is currently not supported.');
@@ -260,7 +267,8 @@ ARS         = prob_ars_struct_mult(     ...
                 'active', active,       ...                                 % active stochasts                
                 'b', 0,                 ...                                 % vector lengths (beta)
                 'u', zeros(1,N),        ...                                 % vectors corresponding to exact samples (un*beta)
-                'z', z0,                ...                                 % z-values corresponding to vectors
+                'z', z0_tot,            ...                                 % z-values corresponding to vectors
+                'aggregateFunction',    OPT.aggregateFunction, ...
                 'dbeta', OPT.dbeta);                                        % beta threshold used to select relevant vectors
             
 % initialize stop criterias
@@ -316,20 +324,25 @@ while Pr > OPT.Pratio || ~isempty(reevaluate)                               % WH
         if OPT.ARS && any([ARS.hasfit]) && any(converged)                     % IF: check if ARS should be used, is available and converged samples are available
             
             ba          = OPT.beta1;                                        % initialize beta vector for approximated results with initial beta value
-            za          = feval(                ...                         % initialize z vector for approximated results using evaluation of 
+            za_tot      = feval(                ...                         % initialize z vector for approximated results using evaluation of 
                 OPT.ARSgetFunction,             ...                             z-value with initial beta and ARS
                 un(idx,active).*OPT.beta1,      ...
                 'ARS',ARS,OPT.ARSgetVariables{:}    );
+            za          = feval(@prob_aggregate_z, za_tot, ...
+                'aggregateFunction', OPT.aggregateFunction);
 
             be          = [];                                               % initialize beta vector for exact results
             ze          = [];                                               % initialize z vector for exact results
+            ze_tot      = [];
         else
             n           = n+1;                                              % increase evaluation counter
             
             ba          = [];                                               % initialize beta vector for approximated results
             za          = [];                                               % initialize z vector for approximated results
             be          = OPT.beta1;                                        % initialize beta vector for exact results with initial beta value
-            ze          = beta2z(OPT, un(idx,:), OPT.beta1);                % initialize z vector for exact results using evaluation of z-value with initial beta
+            ze_tot      = beta2z(OPT, un(idx,:), OPT.beta1);                % initialize z vector for exact results using evaluation of z-value with initial beta
+            ze          = feval(@prob_aggregate_z, ze_tot, ...
+                'aggregateFunction', OPT.aggregateFunction);
         end
         
         b               = real([b0 ba be]);                                 % initialize beta vector for all results using origin and first estimate
@@ -341,14 +354,16 @@ while Pr > OPT.Pratio || ~isempty(reevaluate)                               % WH
         % approximate line search
         if OPT.ARS && any([ARS.hasfit]) && any(converged)                   % IF: check if ARS should be used, is available and converged samples are available
 
-            [bn zn nn ca] = feval(          ...                             % start approximated line search to find zero crossing along sampled direction given 
+            [bn zn zn_tot nn ca]    = feval(...                             % start approximated line search to find zero crossing along sampled direction given 
                 @OPT.z20Function,           ...                                 the available beta and z values and the ARS and return the evaluated beta and
                 un(idx,active),             ...                                 z values, the number of evaluations and a flag indicating convergence
                 b, z,                       ...
-                'zFunction', @(x,y)feval(   ...                             % use ARS as z evaluation function
+                'aggregateFunction', OPT.aggregateFunction, ...             % use aggregationfunction
+                'zFunction', @(x,y)feval(               ...                 % use ARS as z evaluation function
                     OPT.ARSgetFunction,                 ...
                     x.*y,                               ...
                     'ARS',ARS,                          ...
+                    'DesignPointDetection', OPT.DesignPointDetection, ...
                     OPT.ARSgetVariables{:}  ),          ...
                 OPT.z20Variables{:}                             );
  
@@ -361,10 +376,10 @@ while Pr > OPT.Pratio || ~isempty(reevaluate)                               % WH
         
         % exact line search
         if Pr > OPT.Pratio || COV > minCOV || ~finalise
-            
+
             no_ars_available    = ~OPT.ARS || ~any([ARS.hasfit]) || ~any(converged);
             is_in_beta_sphere   = (prob_ars_inbetasphere(ARS, b(end)) && ca);
-            
+
             if OPT.DesignPointDetection
                 if any(exact2)
                     distances   = triu(pointdistance_pairs(un(end,:)    * min([ARS.betamin]),   ...
@@ -388,27 +403,32 @@ while Pr > OPT.Pratio || ~isempty(reevaluate)                               % WH
                 if OPT.ARS && any([ARS.hasfit])                             % also select approximated sample closest to zero, if available
                     ii      = unique([ii find(abs(z)==min(abs(z)),1,'first')]);
                     if length(ii) == 1
-                        b   = [b OPT.beta1];
-                        z   = [z beta2z(OPT, un(idx,:), OPT.beta1)];
-                        be  = [be OPT.beta1];
-                        ze  = [ze z(end)];
-                        n   = n + 1;
+                        b       = [b OPT.beta1];
+                        z1      = beta2z(OPT, un(idx,:), OPT.beta1);
+                        z       = [z feval(@prob_aggregate_z, z1, ...
+                                'aggregateFunction', OPT.aggregateFunction)];
+                        be      = [be OPT.beta1];
+                        ze      = [ze z(end)];
+                        ze_tot  = [ze_tot; z1];
+                        n       = n + 1;
 
-                        ii  = [ii find(z==z(end),1,'last')];
+                        ii      = [ii find(z==z(end),1,'last')];
                     end
                 else
                     ii = [ii 2];
                 end
 
-                [bn zn nn ce] = feval(  ...                                 % start exact line search to find zero crossing along sampled direction given the
-                    OPT.z20Function,   ...                                      selected beta and z values and return the evaluated beta and z values, the number
-                    un(idx,:),          ...                                     of evaluations and a flag indicating convergence
-                    b(ii),              ...
-                    z(ii),              ...
+                [bn zn zn_tot nn ce]    = feval(...                         % start exact line search to find zero crossing along sampled direction given the
+                    OPT.z20Function,            ...                          selected beta and z values and return the evaluated beta and z values, the number
+                    un(idx,:),                  ...                          of evaluations and a flag indicating convergence
+                    b(ii),                      ...
+                    z(ii),                      ...
+                    'aggregateFunction', OPT.aggregateFunction, ...         % use aggregationfunction
                     'zFunction', @(x,y)beta2z(OPT,x,y), OPT.z20Variables{:});   % use model as z evaluation function
 
                 be          = [be bn];                                      % add evaluated beta values to corresponding vector with exact results
                 ze          = [ze zn];                                      % add evaluated z values to corresponding vector with exact results
+                ze_tot       = [ze_tot; zn_tot];
 
                 b           = [b  bn];                                      % add evaluated beta values to corresponding vector with all results
                 z           = [z  zn];                                      % add evaluated z values to corresponding vector with all results
@@ -436,7 +456,7 @@ while Pr > OPT.Pratio || ~isempty(reevaluate)                               % WH
             ARS        	= feval( ...                                        % compute ARS based on exact samples
                 OPT.ARSsetFunction,     ...
                 ue,                     ...
-                ze,                     ...
+                ze_tot,                  ...
                 'ARS',ARS,              ...
                 'DesignPointDetection', OPT.DesignPointDetection, ...
                 OPT.ARSsetVariables{:}      );
@@ -470,7 +490,11 @@ while Pr > OPT.Pratio || ~isempty(reevaluate)                               % WH
                                                                             %   and a valid probability of failure is obtained
                                                                             
             sigma       = sqrt(1/(nb*(nb-1))*sum((dP-Pf).^2));              % standard deviation of the contributions to the probability of failure of all samples
-            COV         = sigma/Pf;                                         % updated coefficient of variation (sigma/mu)
+            if sigma ~= 0 && isreal(sigma) && ~isnan(sigma)
+                COV = sigma/Pf;                                             % updated coefficient of variation (sigma/mu)
+            else
+                COV = 1e10;
+            end
 
         end
         
@@ -528,8 +552,10 @@ while Pr > OPT.Pratio || ~isempty(reevaluate)                               % WH
         
         reevaluate  = find(~exact);                                         % select all approximated points for reevaluation (if they happen to be in the beta sphere)
         finalise    = true;                                                 % start finalisation
-        [ARS.dbeta] = deal(max([ARS.b_DP]) - min([ARS.betamin]));
         
+        if OPT.DesignPointDetection
+            [ARS.dbeta] = deal(max([ARS.b_DP]) - min([ARS.betamin]));
+        end
     end
 end
 
@@ -582,7 +608,20 @@ function [z x u P] = beta2z(OPT, un, beta)
     [x u P] = beta2x(OPT, un, beta);
     
     nf      = ~any(~isfinite(x),2);
-    if any(nf); z(nf) = prob_zfunctioncall(OPT, OPT.stochast, x(nf,:)); end;
+    
+    if ~iscell(OPT.x2zFunction)
+        OPT.x2zFunction = {OPT.x2zFunction};
+    end
+    
+    if length(OPT.x2zFunction) > 1
+        aggregate = false;
+    else
+        aggregate = true;
+    end
+    
+    if any(nf); 
+        z(nf,:) = prob_zfunctioncall(OPT, OPT.stochast, x(nf,:),'aggregate',aggregate); 
+    end;
     z(~nf)  = -Inf;
 end
 

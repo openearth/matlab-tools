@@ -62,7 +62,8 @@ function [z ARS] = prob_ars_get_mult(u, varargin)
 %% Settings
 
 OPT = struct(...
-    'ARS',      prob_ars_struct_mult ...
+    'ARS',      prob_ars_struct_mult,   ...
+    'DesignPointDetection', false       ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -70,9 +71,9 @@ OPT = setproperty(OPT, varargin{:});
 %% read fit
 
 ARS = OPT.ARS;
-if length(ARS) > 1
+if length(ARS) > 1 && OPT.DesignPointDetection
     
-    z_all     = nan(size(ARS));
+    z_tot     = nan(size(ARS));
     distances = nan(size(ARS));
     
     for i=1:length(ARS)
@@ -80,14 +81,24 @@ if length(ARS) > 1
         distances(i)    = pointdistance_pairs(ARS(i).u_DP,un*min([ARS.betamin]));              % Calculate distance between approximated point and ARS design point
         
         if ARS(i).hasfit                                                        % Check if the ARS has a good fit
-            z_all(i)   = polyvaln(ARS(i).fit, u(:,ARS(i).active));
+            z_tot(i)   = polyvaln(ARS(i).fit, u(:,ARS(i).active));
         else
-            z_all(i)   = nan;
+            z_tot(i)   = nan;
         end
     end
     
     [d ii]  = nanmin(distances);
-    z       = z_all(ii);                                                              % The approximation is the value from the ARS of the closest design point
+    z       = z_tot(ii);                                                              % The approximation is the value from the ARS of the closest design point
+elseif length(ARS) > 1 && ~OPT.DesignPointDetection
+    for i=1:length(ARS)
+        if ARS(i).hasfit
+            z(i) = polyvaln(ARS(i).fit, u(:,ARS(i).active));
+        else
+            z(i) = nan;
+        end
+        z   = z(~isnan(z));
+    end
+    z   = feval(@prob_aggregate_z, z,'aggregateFunction', ARS(1).aggregateFunction);
 else
     z       = polyvaln(ARS.fit, u(:,ARS.active));
 end

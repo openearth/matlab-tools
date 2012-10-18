@@ -1,4 +1,4 @@
-function [bn zn n converged] = find_zero_poly4(un, b, z, varargin)
+function [bn zn zn_tot n converged] = find_zero_poly4(un, b, z, varargin)
 %find_zero_poly4 
 %
 %   More detailed description goes here.
@@ -62,8 +62,9 @@ function [bn zn n converged] = find_zero_poly4(un, b, z, varargin)
 %% Settings
 OPT = struct(...
     'animate',          false,              ...
-    'verbose',          true,              ...
+    'verbose',          false,              ...
     'zFunction',        '',                 ...
+    'aggregateFunction', [],                ...
     'betamax',          8.3,                ...    
     'maxorder',         2,                  ...    
     'maxiter',          5,                  ...                             % Maximum iterations for finding z=0
@@ -81,6 +82,7 @@ bisiter     = 0;
 b0          = [];
 bn          = [];
 zn          = [];
+zn_tot      = [];
 converged   = false;
         
 %% Filter NaN's from input
@@ -92,8 +94,11 @@ z = z(~isnan(z));
 
 if ~any(b == 0)
     keyboard
-    b   = [0 b];
-    z   = [feval(OPT.zFunction, un, b(1)) z];
+    b       = [0 b];
+    z0_tot  = feval(OPT.zFunction, un, b(1));
+    zn_tot  = [zn_tot; z0_tot];
+    z       = [feval(@prob_aggregate_z, zi, 'aggregateFunction', OPT.aggregateFunction) z];
+    
     
     n   = n + 1;
 elseif any(b == 0) && z(b == 0) <= 0
@@ -108,11 +113,13 @@ if ~converged && any(abs(z)<OPT.epsZ)
     id = find(abs(z)<OPT.epsZ,1,'first');
     
     if b(id)>0
-        zi = feval(OPT.zFunction, un, b(id));
+        zi_tot  = feval(OPT.zFunction, un, b(id));
+        zi      = feval(@prob_aggregate_z, zi_tot, 'aggregateFunction', OPT.aggregateFunction);
 
-        n  = n+1;
-        bn = b(id);
-        zn = zi;
+        n       = n+1;
+        bn      = b(id);
+        zn_tot  = zi_tot;
+        zn      = zi;
 
         z(id)   = zi;
 
@@ -128,17 +135,19 @@ end
 while iter < OPT.maxiter && ~converged 
     
     if length(z) == 1
-        zi  = [feval(OPT.zFunction, un, OPT.betamax)];
+        zi_tot  = feval(OPT.zFunction, un, OPT.betamax);
+        zi      = feval(@prob_aggregate_z, zi, 'aggregateFunction', OPT.aggregateFunction)
         
         % Use bisection when zi is NaN
         if isnan(zi)
             iter    = Inf;
             break
         else
-            b   = [b OPT.betamax];
-            z   = [z zi];
-            bn  = [bn OPT.betamax];
-            zn  = [zn zi];
+            b       = [b OPT.betamax];
+            z       = [z zi];
+            bn      = [bn OPT.betamax];
+            zn      = [zn zi];
+            zn_tot  = [zn_tot; zi_tot];
         end
     end
     
@@ -184,9 +193,10 @@ while iter < OPT.maxiter && ~converged
         
         % Evaluate zFunction at b0
         if ~isempty(b0)
-            n   = n + 1;
+            n       = n + 1;
             
-            z0  = feval(OPT.zFunction, un, b0);
+            z0_tot  = feval(OPT.zFunction, un, b0);
+            z0      = feval(@prob_aggregate_z, z0_tot, 'aggregateFunction', OPT.aggregateFunction);
             
             % Use bisection when encountering NaN of Inf
             if isnan(z0) || isinf(z0)
@@ -194,10 +204,11 @@ while iter < OPT.maxiter && ~converged
                 break
             end
             
-            b   = [b b0];
-            z   = [z z0];
-            bn  = [bn b0];
-            zn  = [zn z0];
+            b       = [b b0];
+            z       = [z z0];
+            bn      = [bn b0];
+            zn      = [zn z0];
+            zn_tot  = [zn_tot; z0_tot];
             
             if OPT.animate
                 find_zero_plot(OPT,b0,b,z,bs,zs,bn,zn,p);
@@ -211,7 +222,7 @@ while iter < OPT.maxiter && ~converged
         if abs(z(end))<OPT.epsZ && b(end)>0
             converged = true;
             if OPT.verbose
-                fprintf('Found Z=0 with polynomial fit! \n')
+%                 fprintf('Found Z=0 with polynomial fit! \n')
             end
             break
         end
@@ -232,16 +243,18 @@ if ~converged
 
                 il  = ii(find(b(ii)<b(iu),1,'last'));
             elseif ~any(z<0) && ~any(b == OPT.betamax)
-                b   = [b OPT.betamax];
-                bn  = [bn OPT.betamax];
-                zu  = feval(OPT.zFunction, un, bn(end));
-                n   = n + 1;
+                b       = [b OPT.betamax];
+                bn      = [bn OPT.betamax];
+                zu_tot  = feval(OPT.zFunction, un, bn(end));
+                zu      = feval(@prob_aggregate_z, zu_tot, 'aggregateFunction', OPT.aggregateFunction);
+                n       = n + 1;
                 
-                z   = [z zu];
-                zn  = [zn zu];
+                z       = [z zu];
+                zn      = [zn zu];
+                zn_tot  = [zn_tot; zu_tot];
                 
-                ii  = isort(b);
-                iu  = ii(b(ii)==OPT.betamax);
+                ii      = isort(b);
+                iu      = ii(b(ii)==OPT.betamax);
                 if zu < 0
                     il  = ii(find(b(ii)<b(iu),1,'last'));
                 else
@@ -292,12 +305,14 @@ if ~converged
             zs(bs<0)= z(in);
         end
         
-        b0  = mean(bs);
-        z0  = feval(OPT.zFunction, un, b0);
-        b   = [b b0];
-        z   = [z z0];
-        bn  = [bn b0];
-        zn  = [zn z0];
+        b0      = mean(bs);
+        z0_tot  = feval(OPT.zFunction, un, b0);
+        z0      = feval(@prob_aggregate_z, z0, 'aggregateFunction', OPT.aggregateFunction);
+        b       = [b b0];
+        z       = [z z0];
+        bn      = [bn b0];
+        zn      = [zn z0];
+        zn_tot  = [zn_tot; z0_tot];
         
         if OPT.animate && exist('p','var')
             find_zero_plot(OPT,b0,b,z,bs,zs,bn,zn,p);
@@ -313,7 +328,7 @@ if ~converged
         if abs(z(end))<OPT.epsZ && b(end)>0
             converged = true;
             if OPT.verbose
-                fprintf('Found Z=0 with bisection! \n')
+%                 fprintf('Found Z=0 with bisection! \n')
             end
         end
     end
@@ -321,5 +336,5 @@ end
 
 %% Filter NaN's from output
 
-bn  = bn(~isnan(zn));
-zn  = zn(~isnan(zn));
+bn      = bn(~isnan(zn));
+zn      = zn(~isnan(zn));
