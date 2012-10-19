@@ -1,5 +1,5 @@
 function [distance,xD,yD,segmentInd,type] = distance_from_polyline(x,y,xv,yv)
-%GEOMETRY.DISTANCE_FROM_POLYLINE calculates the shortest distance of a coordinate to a (poly)line
+%DISTANCE_FROM_POLYLINE calculates the shortest distance of a coordinate to a (poly)line
 %
 %   More detailed description goes here.
 %

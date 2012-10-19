@@ -8,11 +8,11 @@ function varargout = matroos_opendap_maps2series2mn2ascii(R,varargin)
 % R = nc2struct(fname)
 % matroos_opendap_maps2series2mn2ascii(R,'filename','hmcn_kustfijn',...
 %                                       'timselect',[5:10:552 552],...
-%                                       'timrelpath','tim')
+%                                      'timrelpath','tim')
 %
 %See also: MATROOS_OPENDAP_MAPS2SERIES2MN, DFLOWFM, NOOS_WRITE
 
-warning('very preliminary test version')
+warning('beta version')
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -37,7 +37,7 @@ warning('very preliminary test version')
 %   GNU General Public License for more details.
 %
 %   You should have received a copy of the GNU General Public License
-%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
 % This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.

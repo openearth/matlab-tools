@@ -1,5 +1,5 @@
 function [dist] = distance_from_point_in_direction(point_x,point_y,rad,x,y)
-%GEOMETRY.DISTANCE_FROM_POINT_IN_DIRECTION calculates the distance
+%DISTANCE_FROM_POINT_IN_DIRECTION calculates the distance
 %
 %   More detailed description goes here.
 %
