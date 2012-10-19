@@ -134,16 +134,21 @@ function repeatCheck(obj, event, xb, OPT)
 if ~xb_check_run(xb)
     stop(obj); delete(obj);
     
-    if OPT.display
-        disp([upper(mfilename) ': Job ' xs_get(xb, 'name') ' (' num2str(xs_get(xb, 'id')) ') finished']);
-    end
-    
     % halleluja
     if OPT.sound
         try
             load handel;
             sound(y,Fs);
         end
+    end
+    
+    if OPT.display
+        msg = sprintf([ 'XBeach run "%s" [%d] has finished. \n' ...
+                        'Model output is stored in the following location: \n\n' ...
+                        '%s' ], ...
+                        xs_get(xb, 'name'), xs_get(xb, 'id'), xs_get(xb, 'path'));
+    
+        msgbox(msg,'Run has finished','warn','modal')
     end
     
     % fire callback function

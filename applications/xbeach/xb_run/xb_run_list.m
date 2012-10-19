@@ -124,9 +124,10 @@ if ~isempty(runs) && iscell(runs)
         fprintf('<a href="matlab:xb_run_unregister(''%s''); xb_run_list;">delete</a> | ', num2str(xb.id))
         fprintf('<a href="matlab:xb_view(''%s'');">view</a> | ', fpath)
         fprintf('<a href="matlab:cd(''%s'');">cd</a> | ', fpath)
-        fprintf('<a href="matlab:runs{%d}">get</a>', length(runs)-i+1)
+        fprintf('<a href="matlab:runs = xb_getpref(''runs''); runs{%d}">get</a> | ', length(runs)-i+1)
+        fprintf('<a href="matlab:runs = xb_getpref(''runs''); xb_check_run(runs{%d},''repeat'',true); show_info_box(runs{%d});">warn</a>', length(runs)-i+1)
         fprintf('\n');
-
+        
         disp(' ');
     end
 else
@@ -142,3 +143,11 @@ function str = shortdisp(str, n)
 if length(str) > n
     str = [str(1:floor((n-5)/2)) ' ... ' str(end-ceil((n-5)/2-1):end)];
 end
+
+function show_info_box(run)
+    msg = sprintf([ 'Warning is enabled for XBeach run "%s" [%d]. \n' ...
+                    'A message will be displayed once the run has finished. \n\n' ...
+                    'Location: %s' ], ...
+                    xs_get(run, 'name'), xs_get(run, 'id'), xs_get(run, 'path'));
+    
+    msgbox(msg,'Warning enabled','warn','modal');

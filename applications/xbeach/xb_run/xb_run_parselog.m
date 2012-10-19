@@ -79,7 +79,7 @@ elseif exist(fpath, 'file');
     errfile = fullfile(fpath, 'XBerror.txt');
 end
 
-xb = xb_empty;
+xb = xs_empty;
 
 %% parse error log
 
