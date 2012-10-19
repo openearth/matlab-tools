@@ -1,31 +1,32 @@
-function varargout = griddata_near1(X,Y,XI,YI,np,varargin)
+function varargout = griddata_near1(X,Y,XI,YI,npts,varargin)
 %griddata_near1  2-step data gridding and surface fitting
 %
-%     [PI,RI] = GRIDDATA_NEAR1(X,Y,XI,YI,npts);
+%     [PI,RI,<WI>] = GRIDDATA_NEAR1(X,Y,  XI,YI,npts); % NO Z !!!
+%      ZI          = GRIDDATA_NEAR2(X,Y,Z,XI,YI,PI,WI);
 %
 % returns the indices of the datapoints in (X,Y) that are 
 % closest to (XI,YI). The distance between (XI,YI) and (X,Y)
 % is returned in RI, it can be used to calculate weights WI.
-% npts is the number points from (X,Y) that are to be used 
-% for each (XI,YI) element. For interpolating from lines, npts
-% is usually 2, for interpolating from triangular meshes npts is 3,
-% and form interpolating from orthogonal or curvi-linear grids
+% npts is the number of points from (X,Y) that are to be used 
+% for interpolating each (XI,YI) element. For interpolating from lines, 
+% npts is usually 2, for interpolating from triangular meshes npts is 3,
+% and for interpolating from orthogonal or curvi-linear grids
 % npts is 4, but npts can have any integer value. npts is used as 
 % the first dimension for PI,RI,WI so that their size is [npts size(XI)].
 %
 % The combination GRIDDATA_NEAR1 and GRIDDATA_NEAR2 allows to 
 % repeatedly interpolate multiple fields from one static topology (X,Y)
-% to another static toplogy (XI,YI) . For instance, to interpolate
+% to another static toplogy (XI,YI). For instance, to interpolate
 % numerous time dependendent fields defined on one static topology.
-% For interpolating from GCM (general circulation models) this is usually 
-% referred to as nesting.
+% For interpolating local boundary conditions from an overall GCM 
+% (general circulation models) this is usually referred to as nesting.
 %
-% [PI,RI,WI] = griddata_near1(..) returns weight using 
-% inverse quadratic method that add up to one per (XI,YI).
-% [PI,RI,WI] can be used in griddata_nearest2(...) to do the actual
+% [PI,RI,WI] = griddata_near1(..) returns weight WI using 
+% an inverse quadratic method that add up to 1 per (XI,YI).
+% [PI,RI,WI] can be used in GRIDDATA_NEAREST2(...) to do the actual
 % interpolation. WI has size [npts size(XI)], so that sum(B.WI,1) is 1.
 %
-%See also: GRIDDATA_NEAREST2, GRIDDATA, GRIDDATA_NEAREST, GRIDDATA_REMAP, INTERP2, BIN2
+%See also: GRIDDATA_NEAR2, GRIDDATA, GRIDDATA_NEAREST, GRIDDATA_REMAP, INTERP2, BIN2
 %          TriScatteredInterp, DELFT3D_IO_ADM, NESTING
 
 %% Copyright notice
@@ -76,10 +77,10 @@ if nargin==0;ZI = OPT;return;end
 
 OPT  = setproperty(OPT,varargin);
 
-PI   = zeros([np (size(XI))]);
-RI   = zeros([np (size(XI))]);
+PI   = zeros([npts (size(XI))]);
+RI   = zeros([npts (size(XI))]);
 if nargout > 2
-WI   = zeros([np (size(XI))]);
+WI   = zeros([npts (size(XI))]);
 end
 R    =   NaN((size(X )));
 npix =      length(XI(:));
@@ -100,17 +101,17 @@ pix.distance = 0;
 for ipix = 1:npix % index in new (orthogonal) grid
   R = sqrt((XI(ipix) - X).^2 + ...
            (YI(ipix) - Y).^2);
-  for ip = 1:np
+  for ipts = 1:npts
       
-    if ip > 1
-        R(PI(1:ip-1,ipix)) = Inf;
+    if ipts > 1
+        R(PI(1:ipts-1,ipix)) = Inf;
     end
 
     [pix.distance,pix.index] = min(R(:)); % index in old (random point) grid
     
     if (pix.distance < OPT.Rmax)
-        PI(ip,ipix) = pix.index;
-        RI(ip,ipix) = pix.distance;
+        PI(ipts,ipix) = pix.index;
+        RI(ipts,ipix) = pix.distance;
     end
 
     if ~OPT.quiet 
@@ -122,18 +123,18 @@ for ipix = 1:npix % index in new (orthogonal) grid
             end
         end
     end
-  end % ip
+  end % ipts
   if nargout > 2
       WI(:,ipix) = 1./(PI(:,ipix));
       WI(:,ipix) = WI(:,ipix)./sum(WI(:,ipix));
   end
 end % ipix
 
-rank = length(size(PI));
 
 % keep npts as first dimension for easy selection on it: 
 % PI(ipts,:) works for any dimensionality of PI
 
+%rank = length(size(PI));
 %PI = permute(PI,[2:rank 1]);
 %RI = permute(RI,[2:rank 1]);
 %WI = permute(WI,[2:rank 1]);
