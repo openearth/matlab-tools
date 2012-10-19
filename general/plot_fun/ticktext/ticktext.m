@@ -206,6 +206,7 @@ function update_axes(obj, event, OPT, args)
     delete(findobj(ax, 'Tag', p2));
     
     % add all tick labels
+    axes(ax);
     for i = 1:length(tck)
         
         % determine location of current tick label
@@ -233,9 +234,6 @@ function update_axes(obj, event, OPT, args)
     % restore units
     set(ax,  'Units', uax );
     set(fig, 'Units', ufig);
-    
-    % re-set auto mode
-    %set(ax, 'XTickLabelMode', 'auto');
     
 end
 
