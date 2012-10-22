@@ -186,17 +186,17 @@ OPT = struct(...
     'ARSsetFunction',   @prob_ars_set_mult, ...                             % Function handle to update ARS structure based on a set
                                             ...                                 of vectors u and corresponding z-values
     'ARSsetVariables',  {{}},               ...                             % Additional variables to the ARSsetFunction
-    'DesignPointDetection', false,           ...                             % Boolean switch for using automated detection of DPs (and using multiple ARS's)
+    'DesignPointDetection', false,          ...                             % Boolean switch for using automated detection of DPs (and using multiple ARS's)
     'epsZ',             1e-2,               ...
     'beta1',            4,                  ...                             % Initial beta value in line search
     'dbeta',            .1,                 ...                             % Initial beta threshold for beta sphere
     'dist_betamin',     1,                  ...
     'Pratio',           .4,                 ...                             % Maximum fraction of failure probability determined by approximated samples
-    'minsamples',       0,                 ...                             % Minimum number of samples needed before convergence is being checked
+    'minsamples',       0,                  ...                             % Minimum number of samples needed before convergence is being checked
     'maxsamples',       1000,               ...                               % Maximum number of samples being renerated
     'confidence',       .95,                ...                             % Confidence interval in convergence criterium
     'accuracy',         .2,                 ...                             % Accuracy in convergence criterium
-    'plot',             true,              ...                             % Boolean indicating whether to plot result
+    'plot',             false,              ...                             % Boolean indicating whether to plot result
     'animate',          false,              ...                             % Boolean indicating whether to animate progress
                                             ...
     'method',           'matrix',           ...                             % Future option: Evaluation method of z-values (matrix or loop) used 
@@ -489,12 +489,13 @@ while Pr > OPT.Pratio || ~isempty(reevaluate)                               % WH
         if sum(dP>0)>OPT.minsamples && Pf > 0                               % IF: check if the minimum number of samples to check convergence is reached
                                                                             %   and a valid probability of failure is obtained
                                                                             
-            sigma       = sqrt(1/(nb*(nb-1))*sum((dP-Pf).^2));              % standard deviation of the contributions to the probability of failure of all samples
-            if sigma ~= 0 && isreal(sigma) && ~isnan(sigma)
-                COV = sigma/Pf;                                             % updated coefficient of variation (sigma/mu)
-            else
-                COV = 1e10;
-            end
+%             sigma       = sqrt(1/(nb*(nb-1))*sum((dP-Pf).^2));              % standard deviation of the contributions to the probability of failure of all samples
+%             if sigma ~= 0 && isreal(sigma) && ~isnan(sigma)
+%                 COV = sigma/Pf;                                             % updated coefficient of variation (sigma/mu)
+%             else
+%                 COV = Inf;
+%             end
+            COV = sqrt((1-Pf)/(nb*Pf));
 
         end
         

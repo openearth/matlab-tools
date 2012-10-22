@@ -64,7 +64,7 @@ function ARS = prob_ars_set_mult(u, z_tot, varargin)
 OPT = struct(...
     'ARS',                  prob_ars_struct_mult,   ...                     % ARS structure
     'DesignPointDetection', true,                   ...                     % Boolean switch for automatic detection of design points                
-    'DesignPointFunction',  @prob_ars_split,        ...           % Design point detection function 
+    'DesignPointFunction',  @prob_ars_split,        ...                     % Design point detection function 
     'ARSsetFunction',       @prob_ars_set3,         ...                     % Function handle to update ARS structure based on a set
                                                     ...                         of vectors u and corresponding z-values
     'ARSsetVariables',      {{}}                    ...                     % Additional variables to the ARSsetFunction

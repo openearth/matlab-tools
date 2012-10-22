@@ -189,10 +189,17 @@ end
 xlabel(ax,'u_1');
 ylabel(ax,'u_2');
 
+cm = colormap('gray');
+
 colorbar('peer',axARS);
-colormap(axARS,'gray');
+colormap(axARS,[flipud(cm) ; cm]);
 shading(axARS,'flat');
-clim(axARS,[-1 1]);
+
+if ~isempty(gz) && ~all(isnan(gz(:)))
+    clim(axARS,[-1 1]*std(abs(gz(:))));
+else
+    clim(axARS,[-1 1]);
+end
 
 title(ax,sprintf('%4.3f%%', progress*100));
 

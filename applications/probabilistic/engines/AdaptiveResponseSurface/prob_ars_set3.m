@@ -81,16 +81,22 @@ nva         = sum(ARS.active);
 if length(ARS.z) >= 1+nva+nva*(nva+1)/2
 
     ARS.fit     = polyfitn(u(notinf&notout,:), z(notinf&notout), 2);
+    ARS.hasfit  = true;
 
 % derive 2nd degree response surface with no cross terms
 elseif length(ARS.z) >= 2*nva+1
 
     pfmat       = [zeros(1,nva); eye(nva); 2*eye(nva)];
     ARS.fit     = polyfitn(u(notinf&notout,:), z(notinf&notout), pfmat);
+    ARS.hasfit  = true;
+    
+else
+    
+    ARS.hasfit  = false;
 
 end
 
-ARS.hasfit = check_fit(ARS.fit);
+%ARS.hasfit = check_fit(ARS.fit);
 
 % hij werkt vooralsnog alleen als alle variabelen actief zijn. Als niet
 % alle variabelen actief zijn moet de procedure m.i. aangepast worden
