@@ -131,9 +131,8 @@ end
          
         %ST.grdang    = squeeze(vs_let(trih,OPT.GrpName,'GRDANG',{1,ST.index}));
          ST.angle     = squeeze(vs_let(trih,OPT.GrpName,'ALFAS' ,{  ST.index},'quiet'));
-         ST.angle_explanation =  vs_get_elm_def(trih,'ALFAS','Description');
-         
-         ST.kmax        =  squeeze(vs_let(trih,OPT.GrpName,'KMAX'));
+         ST.angle_explanation =  vs_get_elm_def(trih,'ALFAS','Description','quiet');
+         ST.kmax        =  squeeze(vs_let(trih,OPT.GrpName,'KMAX','quiet'));
          ST.coordinates =  vs_let(trih,'his-const','COORDINATES'      ,'quiet');
          ST.layer_model =  vs_let(trih,'his-const','LAYER_MODEL'      ,'quiet');
          ST.coordinates =  strtrim(permute(ST.coordinates,[1 3 2]));

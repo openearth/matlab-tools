@@ -536,6 +536,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cor.x(:)) max(G.cor.x(:))]);
       attr(end+1)  = struct('Name', 'grid_mapping' , 'Value', 'CRS');
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:XCOR TEMPOUT:CODB map-const:COORDINATES');
+      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'OpenEarth Matlab function nc_cf_bounds2cor.m reshapes it to a regular 2D array');
       nc.Variables(ifld) = struct('Name'       , 'grid_x', ...
                                   'Datatype'   , OPT.type, ...
                                   'Dimensions' , nmcor.dims, ...
@@ -550,6 +551,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cor.y(:)) max(G.cor.y(:))]);
       attr(end+1)  = struct('Name', 'grid_mapping' , 'Value', 'CRS');
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:YCOR TEMPOUT:CODB map-const:COORDINATES');
+      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'OpenEarth Matlab function nc_cf_bounds2cor.m reshapes it to a regular 2D array');
       nc.Variables(ifld) = struct('Name'       , 'grid_y', ...
                                   'Datatype'   , OPT.type, ...
                                   'Dimensions' , nmcor.dims, ...
@@ -833,9 +835,9 @@ function varargout = vs_trim2nc(vsfile,varargin)
       ifld     = ifld + 1;clear attr dims
       if (~any(strfind(G.coordinates,'CART'))) % CARTESIAN, CARTHESIAN (old bug)
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'eastward_sea_water_velocity'); % surface_geostrophic_sea_water_x_velocity_assuming_sea_level_for_geoid
-      else					     
+      else
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'sea_water_x_velocity'); % surface_geostrophic_sea_water_x_velocity_assuming_sea_level_for_geoid
-      end					     
+      end
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'velocity, x-component');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm/s');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayer);
@@ -851,9 +853,9 @@ function varargout = vs_trim2nc(vsfile,varargin)
       ifld     = ifld + 1;clear attr dims
       if (~any(strfind(G.coordinates,'CART'))) % CARTESIAN, CARTHESIAN (old bug)
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'northward_sea_water_velocity'); % surface_geostrophic_sea_water_y_velocity_assuming_sea_level_for_geoid
-      else					     
+      else
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'sea_water_y_velocity'); % surface_geostrophic_sea_water_y_velocity_assuming_sea_level_for_geoid
-      end					     
+      end 
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'velocity, y-component');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm/s');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayer);

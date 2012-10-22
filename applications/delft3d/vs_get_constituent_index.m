@@ -259,8 +259,12 @@ end
       end
       end
    end
-
-   fldnames = fieldnames(IND);
+   
+   if exist('IND','var')
+      fldnames = fieldnames(IND);
+   else
+       IND = struct([]);
+   end
 
    if    nargout==0
       if ~exist('IND')

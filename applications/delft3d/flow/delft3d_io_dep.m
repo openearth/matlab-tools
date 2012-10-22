@@ -51,7 +51,7 @@ function G = delft3d_io_dep(varargin)
 %           delft3d_io_crs, delft3d_io_dep, delft3d_io_dry, delft3d_io_eva,
 %           delft3d_io_fou, delft3d_io_grd, delft3d_io_ini, delft3d_io_mdf,
 %           delft3d_io_obs, delft3d_io_restart,             delft3d_io_src,
-%           delft3d_io_tem, delft3d_io_thd, delft3d_io_wnd,
+%           delft3d_io_tem, delft3d_io_thd, delft3d_io_wnd, wldep
 
 %   delft3d_io_dep('write',FILENAME,MATRIX) where MATRIX is defined at the corner points.
 %   or

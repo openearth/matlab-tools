@@ -74,7 +74,7 @@ if ~isstruct(trih)
    ST.Description = 'DFLOW monitoring point (*.obs) time serie.';
    error('This is a netCDD file: use dflow.indexHis instead')
    else
-   trih = vs_use(trih);
+   trih = vs_use(trih,'quiet');
    end
 end
 
@@ -107,7 +107,7 @@ end
 
 %% Load all station names
 
-   namst = squeeze(vs_let(trih(1),OPT.GrpName,OPT.ElmName));
+   namst = squeeze(vs_let(trih(1),OPT.GrpName,OPT.ElmName,'quiet'));
    
    nstat = size(namst,1);
 
@@ -115,14 +115,13 @@ end
 %  when a match has been found
 
 switch method
-
 case 'list' %this one should be first in case
 
     if strcmp(trih.SubType,'Delft3D-trih')
 
-        mn  = squeeze(vs_let(trih(1),OPT.GrpName,'MNSTAT'));
-        xy  = squeeze(vs_let(trih(1),OPT.GrpName,'XYSTAT'));
-        ang = squeeze(vs_let(trih(1),OPT.GrpName,'ALFAS'));
+        mn  = squeeze(vs_let(trih(1),OPT.GrpName,'MNSTAT','quiet'));
+        xy  = squeeze(vs_let(trih(1),OPT.GrpName,'XYSTAT','quiet'));
+        ang = squeeze(vs_let(trih(1),OPT.GrpName,'ALFAS' ,'quiet'));
 
         if nargout==0
 

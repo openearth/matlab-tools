@@ -1,5 +1,5 @@
 function delft3d_wnd_from_nc(varargin)
-%DELFT3D_WND_FROM_NC transforms netCDf wind file to delft3d *.wnd file
+%DELFT3D_WND_FROM_NC transforms netCDF wind file to delft3d *.wnd file
 %
 %  delft3d_wnd_from_nc(<keyword,value>)
 %
