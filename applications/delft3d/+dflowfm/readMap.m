@@ -85,7 +85,7 @@ function varargout = readMap(ncfile,varargin)
 
 %% read cen data
 
-   cen.mask = G.cen.n; % not an index array yet as nc_varget cna only handle one range
+   cen.mask = G.cen.n; % not an index array yet as nc_varget can only handle one range
 
    if OPT.zwl & nc_isvar (ncfile, 's1');
    D.cen.zwl  = nc_varget(ncfile, 's1' ,[it-1 0],[1 cen.mask]); % Waterlevel

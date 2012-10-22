@@ -6,6 +6,7 @@ function varargout = plotMap(varargin)
 %     G  = dflowfm.readNet(ncfile) 
 %     D  = dflowfm.readMap(ncfile,<it>) 
 %    <h> = dflowfm.plotMap(G,D,<keyword,value>) 
+%    <h> = dflowfm.plotMap(G,center_matrix,<keyword,value>) 
 %          % or 
 %    <h> = dflowfm.plotMap(ncfile,<it>,<keyword,value>);
 %
@@ -28,6 +29,32 @@ function varargout = plotMap(varargin)
 %   Note: every flow cell is plotted individually as a patch: slow.
 %
 %   Apply any plot lay-out before plotMap: much fatser.
+%
+%   Example: plot maximum velocity
+%
+%     ncfile    = 'p01k3_map.nc';
+%     G         = dflowfm.readNet(ncfile);
+%     T.datenum = nc_cf_time(ncfile);
+%
+%     %% statistics
+%     umax = zeros(size(G.cen.x));
+%     for it=1:length(T.datenum)
+%        ucx = ncread(ncfile,'ucx',[1 it],[Inf 1])';%ucx = nc_varget(ncfile,'ucx',[(it-1) 0],[1 Inf])';
+%        ucy = ncread(ncfile,'ucy',[1 it],[Inf 1])';%ucy = nc_varget(ncfile,'ucy',[(it-1) 0],[1 Inf])';
+%       [uth,ur] = cart2pol(ucx,ucy);
+%        umax = max(umax, ur);
+%     end   
+%     delft3d_io_xyz('write', [filename(ncfile),'_umax.xyz'],G.cen.x,G.cen.y,umax);
+%      
+%     %% lay-out
+%     clim([0 2])
+%     colorbarwithvtext('max(u) [m/s]')
+%     dflowfm.plotMap(G,umax)
+%     axis equal
+%     axis([100 220 540 620].*1e3)
+%     tickmap('xy')
+%     grid on
+%     title(['Maximum velocity for in period ',datestr(T.datenum(1)),' - ',datestr(T.datenum(end))])
 %
 %   See also dflowfm, delft3d, readFlowGeom2tri
 
@@ -77,21 +104,27 @@ function varargout = plotMap(varargin)
       return
    else
       if ischar(varargin{1})
-      ncfile   = varargin{1};
-      G        = dflowfm.readNet(ncfile);
+         ncfile   = varargin{1};
+         G        = dflowfm.readNet(ncfile);
       else
-      G        = varargin{1};
+         G        = varargin{1};
       end
       
       nextarg = 3;
       if ~odd(nargin)
-        if isnumeric(varargin{2}) & ischar(varargin{1}) % only output file, not input file
+        if isnumeric(varargin{2}) & isscalar(varargin{2}) & ischar(varargin{1}) % only output file, not input file
           it      = varargin{2};
           D       = dflowfm.readMap(ncfile,it);
+        elseif isnumeric(varargin{2}) & isscalar(varargin{2}) & ~ischar(varargin{1})
+          error('when timestep/data is supplied the first argument should be ''ncfile''.')
+        elseif isnumeric(varargin{2}) & ~isscalar(varargin{2})
+          it      = varargin{2};
+          OPT.parameter     = 'auto';
+          D.cen.(OPT.parameter) = varargin{2};
         elseif isstruct(varargin{2})
           D       = varargin{2};
         else
-          error('when timestep is supplied the first argument should be ''ncfile''.')
+          error('??')
         end
       else
         D       = dflowfm.readMap(ncfile); % readMap gets last it
