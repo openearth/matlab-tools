@@ -86,8 +86,8 @@ function varargout = KMLpatch3(lat,lon,z,varargin)
 
     OPT.cLim               = [];
     OPT.zScaleFun          = @(z) (z+0).*1;
-    OPT.timeIn             = [];
-    OPT.timeOut            = [];
+    OPT.timeIn             = now;%[];
+    OPT.timeOut            = now;%[];
     OPT.dateStrStyle       = 'yyyy-mm-ddTHH:MM:SS';
     OPT.colorbar           = 0;
     OPT.fillColor          = [];
