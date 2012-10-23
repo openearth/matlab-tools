@@ -1,17 +1,29 @@
 function varargout = grid_orth_getDataFromNetCDFGrids(mapurls, minx, maxx, miny, maxy, varargin)
 %GRID_ORTH_GETDATAFROMNETCDFGRIDS Get data in fixed orthogonal grid from bundle of netCDF files.
 %
-%   [X, Y, Z, Ztime] = grid_orth_getDataFromNetCDFGrids(mapurls, minx, maxx, miny, maxy, <keyword,value>)
+%   [X, Y, Z, Ztime,<Ztile>] = grid_orth_getDataFromNetCDFGrids(mapurls, minx, maxx, miny, maxy, <keyword,value>)
 %
 % extracts data from a series of netCDF files to fill a defined orthogonal grid.
 % Only data at grid intersection lines is read, no min/max/mean is performed.
 %
-% Example: start at @ http://opendap.deltares.nl
+% Example: set of tiles from THREDDS catalog
 %
 %    url     = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml'
 %    mapurls = opendap_catalog(url);
 %
-%    [X, Y, Z, Ztime] = grid_orth_getDataFromNetCDFGrids(mapurls, 90e3, 100e3, 300e3, 400e3,'dx',200,'dy',200);
+%    [X, Y, Z, Ztime,Ztile] = grid_orth_getDataFromNetCDFGrids(mapurls, 90e3, 100e3, 300e3, 400e3,'dx',200,'dy',200);
+%
+% Example: 2 manually specified netCDF files covering Marsdiep
+%
+%    mapurls = {'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/vaklodingenKB121_2120.nc',...
+%               'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/vaklodingenKB122_2120.nc'};
+%
+%    [X, Y, Z, Ztime,Ztile] = grid_orth_getDataFromNetCDFGrids(mapurls, 108010, 112010, 551010, 558010,...
+%                                                              'dx',100,'dy',100,'searchinterval',-3.6e3);
+%
+%   subplot(1,3,1);pcolorcorcen(X,Y,Z    ,[.5 .5 .5]);axis equal;colorbarwithhtext('z [m]','horiz')
+%   subplot(1,3,2);pcolorcorcen(X,Y,Ztime,[.5 .5 .5]);axis equal;colorbarwithhtext('t [t]','horiz')
+%   subplot(1,3,3);pcolorcorcen(X,Y,Ztile,[.5 .5 .5]);axis equal,colorbarwithhtext('f [#]','horiz')
 %
 % For additional keywords see: grid_orth_getDataFromNetCDFGrid
 %
@@ -71,7 +83,7 @@ OPT.datathinning    = 1;     % stride with which to skip through the data
 OPT.inputtimes      = [];    % starting points (in Matlab epoch time)
 %???% 
 
-OPT.starttime       = [];    % this is a datenum of the starting time to search
+OPT.starttime       = now;   % this is a datenum of the starting time to search
 OPT.searchinterval  = -730;  % this indicates the search window (nr of days, '-': backward in time, '+': forward in time)
 OPT.min_coverage    = .25;   % coverage percentage (can be several, e.g. [50 75 90]
 OPT.plotresult      = 1;     % 0 = off; 1 = on;
@@ -148,6 +160,9 @@ X      = ones(nrofrows,1); X=X*x;      %X = roundoff(X, 6); - no longer needed i
 Y      = ones(1,nrcols);   Y=y'*Y;     %Y = roundoff(Y, 6); - no longer needed if roundoff is already called above 
 Z      = ones(size(X));    Z(:,:)=nan;
 Ztime  = Z;
+if nargout>4
+Ztile  = Z;
+end
 
 % clear unused variables to save memory
 clear x y minx maxx miny maxy
@@ -156,7 +171,7 @@ clear x y minx maxx miny maxy
 for i = 1:length(mapurls)
     % report on progress
     disp(' ')
-    [pathstr, name, ext] = fileparts(mapurls{i,1}); %#ok<*NASGU>
+    [pathstr, name, ext] = fileparts(mapurls{i}); %#ok<*NASGU>
     disp(['Processing (' num2str(i) '/' num2str(length(mapurls)) ') : ' name ext])
     
     % get data and plot
@@ -185,8 +200,13 @@ for i = 1:length(mapurls)
     % add values to Ztemps matrix
     Ztime(idsLargeGrid) = zt(idsSmallGrid); 
     
+    if nargout>4
+    % add values to lineage matrix
+    Ztile(idsLargeGrid) = i;
+    end
+    
     % clear unused variables to save memory
     clear z zt
 end
 
-varargout = {X, Y, Z, Ztime};
+varargout = {X, Y, Z, Ztime, Ztile};
