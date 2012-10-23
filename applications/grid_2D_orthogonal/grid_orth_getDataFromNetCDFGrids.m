@@ -18,6 +18,9 @@ function varargout = grid_orth_getDataFromNetCDFGrids(mapurls, minx, maxx, miny,
 %    mapurls = {'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/vaklodingenKB121_2120.nc',...
 %               'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/vaklodingenKB122_2120.nc'};
 %
+%    mapurls = {'F:\opendap.deltares.nl\thredds\dodsC\opendap\rijkswaterstaat\vaklodingen\vaklodingenKB121_2120.nc',...
+%               'F:\opendap.deltares.nl\thredds\dodsC\opendap\rijkswaterstaat\vaklodingen\vaklodingenKB122_2120.nc'};
+%
 %    [X, Y, Z, Ztime,Ztile] = grid_orth_getDataFromNetCDFGrids(mapurls, 108010, 112010, 551010, 558010,...
 %                                                              'dx',100,'dy',100,'searchinterval',-3.6e3);
 %
@@ -27,7 +30,11 @@ function varargout = grid_orth_getDataFromNetCDFGrids(mapurls, minx, maxx, miny,
 %
 % For additional keywords see: grid_orth_getDataFromNetCDFGrid
 %
-% See also: grid_2D_orthogonal, grid_orth_getDataFromNetCDFGrid, nc_cf_gridset_getData
+% Note that grid_orth_getDataFromNetCDFGrids returns only data at the original grid
+% vertices or integer increments thereof. For interpolation to an independent grid
+% choose nc_cf_gridset_getData.
+%
+% See also: nc_cf_gridset_getData, grid_2D_orthogonal, grid_orth_getDataFromNetCDFGrid
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -209,4 +216,8 @@ for i = 1:length(mapurls)
     clear z zt
 end
 
-varargout = {X, Y, Z, Ztime, Ztile};
+if nargout<5
+   varargout = {X, Y, Z, Ztime};
+elseif nargout==5
+   varargout = {X, Y, Z, Ztime, Ztile};
+end
