@@ -170,7 +170,7 @@ dd.Z = (d1.Z - d2.Z);
 fh = figure('tag','gridPlot');clf;
 ah = axes;
 [fh,ah] = UCIT_prepareFigureN(0, fh, 'UL', ah);
-UCIT_plotlandBoundary(d.ldb,'none'); % plot land boundary
+UCIT_plotLandboundary(d.ldb,'none'); % plot land boundary
 
 surf(d.X,d.Y,dd.Z);shading interp;view(2);hold on;
 cm = colormap(['erosed']);

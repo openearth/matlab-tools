@@ -189,7 +189,8 @@ if ~(isempty(xstart) || isempty(ystart) || isempty(xcount) || isempty(ycount))
                     try
                         ids2add = ~isnan(Z_next) & isnan(Z);    % helpul to be in a variable as the nature of Z changes in the next two lines
                     catch
-                        xx=0
+                        xx=0;
+                        ids2add = [];
                     end
                     
                     
