@@ -239,8 +239,10 @@ end
 
 
 if DataProperties(nr).DateTime~=0% & M2>M1 & N2>N1
-    Data.X=Data.X(1:MStep:end,1:NStep:end);
-    Data.Y=Data.Y(1:MStep:end,1:NStep:end);
+    Data.X = squeeze(Data.X);
+    Data.Y = squeeze(Data.Y);
+    Data.X = Data.X(1:MStep:end,1:NStep:end);
+    Data.Y = Data.Y(1:MStep:end,1:NStep:end);
     if isfield(Data,'Z')
         Data.Z=Data.Z(1:MStep:end,1:NStep:end,:);
     end
@@ -476,6 +478,7 @@ else
                 for i=2:size(y,2);
                     x(:,i)=x(:,1);
                 end
+                Val = squeeze(Val);
                 z1=Val(:,1:end-1);
                 z2=Val(:,2:end);
                 z3=0.5*(z1+z2);
