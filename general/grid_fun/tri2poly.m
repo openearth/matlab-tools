@@ -76,7 +76,7 @@ elseif size(connectivity,2)==3
    
 %% remove double segments and sort segments on nearness
 
-   duo.ends = poly_segment_unique(duo.ends);
+   duo.ends = poly_bi_unique(duo.ends);
    
 elseif size(connectivity,2)>3
 
