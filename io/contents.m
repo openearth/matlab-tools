@@ -2,7 +2,7 @@
 %
 % OpenEarthTools Input/Output toolboxes.
 %
-%   Binary Large OBjecs (BLOB):
+%   Binary Large OBjects (BLOBs):
 %   h4tools             - HDF4 tools
 %   netcdf              - netCDF tools
 %   * snctools          - simple netCDF IO
@@ -17,6 +17,6 @@
 %   Meta-data:
 %   inspire             - mangle EU INSPIRE meta-data
 %
-% See also: OpenEarthTools: general, applications
+% See also: OpenEarthTools: general, applications, h5, database, arcgis
 
 % http://earthdata.nasa.gov/our-community/esdswg/standards-process-spg/rfc

@@ -44,12 +44,12 @@ OPT.db     = 'postgres';
 OPT.schema = 'public';
 OPT.user   = '';
 OPT.pass   = '';
-OPT.table  = 'AaB7';
+OPT.table  = 'AaB07';
 
 OPT = setproperty(OPT,varargin);
 
 %% connect
-if ~pg_settings('check',1)
+if ~(pg_settings('check',1)==1)
    pg_settings
 end
 if isempty(OPT.user)
@@ -59,6 +59,7 @@ conn=pg_connectdb(OPT.db,'user',OPT.user,'pass',OPT.pass,'schema',OPT.schema);
 
 %% show contents
 tables = pg_gettables(conn);
+add_table = 1;
 if any(strmatch(OPT.table,tables))
    for itab=1:length(tables)
       table = tables{itab};
@@ -68,35 +69,60 @@ if any(strmatch(OPT.table,tables))
           disp([conn.Instance,':',table,':',column])
       end
    end
-   error(['request table for pg_test is already in database:',OPT.table])
+   warning(['request table for pg_test is already in database:',OPT.table])
+   add_table = 0;
 end
-%% add datemodel for testing
+   OK = [];
+
+%% add datamodel for testing
 % http://archives.postgresql.org/pgsql-performance/2004-11/msg00350.php
 % http://dba.stackexchange.com/questions/322/what-are-the-drawbacks-with-using-uuid-or-guid-as-a-primary-key
-sql   = loadstr('pg_test_template.sql');
-for i=1:length(sql)
-    sqlstr = strrep(sql{i},'?',OPT.table);
-    pg_exec(conn,sqlstr);
+if    add_table
+   sql   = loadstr('pg_test_template.sql');
+   for i=1:length(sql)
+       sqlstr = strrep(sql{i},'?',OPT.table);
+       pg_exec(conn,sqlstr);
+   end
+
+   %% do test
+      pg_cleartable(conn,OPT.table) % reset values and serial
+   pg_insert_struct(conn,OPT.table,struct('Value','3.1416'       ,'ObservationTime', '1648-10-24 00:01:00+1')); % 1
+   pg_insert_struct(conn,OPT.table,struct('Value',[3.1416 3.1416],'ObservationTime',['1648-10-24 00:02:00+1';'1648-10-24 00:03:00+1'])); % 2 3
+   pg_insert_struct(conn,OPT.table,struct('Value','2'            ,'ObservationTime', '1648-10-24 00:04:00+1')); % 4
+   pg_insert_struct(conn,OPT.table,struct('Value',[2 2]          ,'ObservationTime',['1648-10-24 00:05:00+1';'1648-10-24 00:06:00+1'])); % 4 5
+
+% pg_exec(conn,'INSERT INTO "TEST03"  ("Value", "ObservationTime") VALUES (7,''2004-10-19 10:23:54+0''), (8,''2012-10-19 10:23:54+0'')')
+
+
 end
 
-%% do test
-OK = [];
-   pg_cleartable(conn,OPT.table) % reset values and serial
-pg_insert_struct(conn,OPT.table,struct('Value','3.1416'));        % 1
-pg_insert_struct(conn,OPT.table,struct('Value',[3.1416 3.1416])); % 2 3
-pg_insert_struct(conn,OPT.table,struct('Value','2'));             % 4
-pg_insert_struct(conn,OPT.table,struct('Value',[2 2]));           % 4 5
+D = pg_select_struct(conn,OPT.table,struct([])); % all
+OK(end+1) = isequal(cell2mat({D{:,1}}),[1 2 3 4 5 6]);
+OK(end+1) = isequal(    char({D{:,2}}),['1648-10-24 00:01:00.0';'1648-10-24 00:02:00.0';'1648-10-24 00:03:00.0';'1648-10-24 00:04:00.0';'1648-10-24 00:05:00.0';'1648-10-24 00:06:00.0']);
+char({D{:,2}})
+warning('timezone not included yet')
 
 D = pg_select_struct(conn,OPT.table,struct('Value','2'));
 OK(end+1) = isequal(cell2mat({D{:,1}}),[4 5 6]);
+OK(end+1) = isequal(    char({D{:,2}}),['1648-10-24 00:04:00.0';'1648-10-24 00:05:00.0';'1648-10-24 00:06:00.0']);
+char({D{:,2}})
+warning('timezone not included yet')
 
 D = pg_select_struct(conn,OPT.table,struct('Value',2));
 OK(end+1) = isequal(cell2mat({D{:,1}}),[4 5 6]);
+OK(end+1) = isequal(    char({D{:,2}}),['1648-10-24 00:04:00.0';'1648-10-24 00:05:00.0';'1648-10-24 00:06:00.0']);
+char({D{:,2}})
+warning('timezone not included yet')
 
 D = pg_select_struct(conn,OPT.table,struct('Value','3.1416'));
 OK(end+1) = isequal(cell2mat({D{:,1}}),[1 2 3]);
+OK(end+1) = isequal(    char({D{:,2}}),['1648-10-24 00:01:00.0';'1648-10-24 00:02:00.0';'1648-10-24 00:03:00.0']);
+char({D{:,2}})
+warning('timezone not included yet')
 
 % for reals, the selection does not work if numeric data 
 % are supplied, perhaps due to machine precision issues
 D = pg_select_struct(conn,OPT.table,struct('Value',3.1416));
 %isequal(cell2mat({D{:,1}}),[1 2 3])
+
+OK = OK & add_table; % make it fail if table were already present

@@ -162,15 +162,33 @@ strSQL = '';
 
 if isstruct(insert)
     
-    f = pg_quote(fieldnames(insert));
+    f = fieldnames(insert);
+    
+    % make column vectors, to unify numeric and char(date) variables
+    for i=1:length(f)
+        if isnumeric(insert.(f{i}))
+            insert.(f{i}) = insert.(f{i})(:);
+        end
+    end
+    
+    f = pg_quote(f);
 
     if ~isempty(insert) && ~isempty(f)
 
         v           = struct2cell(insert);
+        
+        % make loop for inserting combined numeric-char column vectors
+        % (instead of scalars)
+        for i=1:size(v{1},1)
+           v1 = cellfun(@(x) x(i,:),v,'UniformOutput',0);
+           [v1{:}]      = pg_value2sql(v1{:});
+           if i==1
+           strSQL      =  sprintf(' (%s) VALUES (%s) ', concat(f,', '), concat(v1, ', '));
+           else
+           strSQL      = [strSQL, sprintf(',(%s) ', concat(v1, ', '))];
+           end
+        end
 
-        [v{:}]      = pg_value2sql(v{:});
-
-        strSQL      = sprintf(' (%s) VALUES (%s) ', concat(f,', '), concat(v, ', '));
     end
 end
 

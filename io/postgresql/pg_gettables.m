@@ -72,3 +72,5 @@ OPT = setproperty(OPT,varargin{:});
 %% list tables
 
 tables = pg_fetch(conn, 'SELECT tablename FROM pg_tables WHERE schemaname NOT IN (''pg_catalog'',''information_schema'')');
+
+warning('Any sequences in table not yet removed. TO DO.')
