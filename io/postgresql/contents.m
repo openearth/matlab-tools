@@ -25,6 +25,9 @@
 % pg_fetch                       - Executes a SQL query and fetches the result
 % pg_error                       - Checks a SQL query result for errors
 % pg_value2sql                   - Makes a cell array of arbitrary values suitable for the use in an SQL query
+% pg_datenum                     - conversion between Matlab datenumbers and PG datetime
+% pg_test                        - unit test for postgresql
+% pg_tutorial                    - example with OPeNDAP time series for postgresql
 %
 %See also: database, netcdf, save, load
 
