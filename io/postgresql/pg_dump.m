@@ -3,7 +3,7 @@ function pg_dump(conn,varargin)
 %
 % PG_DUMP(conn) shows alls tables with all columns
 % PG_DUMP(conn, table_name) shows only requested tables where
-% table_name is a cellstr.
+% table_name is a char or cellstr.
 %
 % Example: pg_test datamodel
 %  pg_dump(conn,{'TEST01'})

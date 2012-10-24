@@ -1,12 +1,17 @@
-function sructcmp(s1, s2, seps)
-%STRUCTCMP compare structures,
+function OK = structcmp(s1, s2, seps)
+%STRUCTCMP compare structures with tolerenace
 %
 %    structcmp(s1, s2, seps)
 %
 % compare structures, allowing for different field
-% sets and values within a tolerance of seps
+% sets and values within a tolerance of seps.
 %
-%See also: struct_fun, isequal, , isequalwithnans
+% STRUCTCMP does not pay attention to the order of fields
+% 
+%
+%See also: struct_fun, isequal, isequalwithnans
+
+OK = true;
 
 if nargin == 2
   seps = 1e-4;
@@ -14,6 +19,7 @@ end
 
 if length(s1) ~= length(s2)
   fprintf(2, 'lengths of structure arrays differ\n');
+  OK = false;
 end
 
 if length(s1) > length(s2)
@@ -27,6 +33,7 @@ if length(f1) ~= length(f2)
   fprintf(2, 'field sets differ\n');
   f1
   f2
+  OK = false;
 end
 
 if length(f1) > length(f2)
@@ -56,6 +63,7 @@ for i = 1:length(s1)
         [m1,n1]
         [m2,n2]
         b = 0;
+       OK = false;
       end
     end
   end
