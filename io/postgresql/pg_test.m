@@ -44,7 +44,7 @@ OPT.db     = 'postgres';
 OPT.schema = 'public';
 OPT.user   = '';
 OPT.pass   = '';
-OPT.table  = 'AaB08';
+OPT.table  = 'AaB21';
 
 OPT = setproperty(OPT,varargin);
 
@@ -97,35 +97,51 @@ conn=pg_connectdb(OPT.db,'user',OPT.user,'pass',OPT.pass,'schema',OPT.schema);
    pg_insert_struct(conn,OPT.table,struct('Value','2'            ,'ObservationTime', '1648-10-24 00:04:00+1')); % 4
    pg_insert_struct(conn,OPT.table,struct('Value',[2 2]          ,'ObservationTime',['1648-10-24 00:05:00+1';'1648-10-24 00:06:00+1'])); % 4 5
    
+   D0 = struct('ObservationID',1:6,'ObservationTime',datenum(1648,10,24,0,1:6,0)','Value',[3.1416 3.1416 3.1416 2 2 2]);
+   
 %% extract re-add data
    
-   D = pg_select_struct(conn,OPT.table,struct([])); % all
-   OK(end+1) = isequal(cell2mat({D{:,1}}),[1 2 3 4 5 6]);
-   OK(end+1) = isequal(    char({D{:,2}}),['1648-10-24 00:01:00.0';'1648-10-24 00:02:00.0';'1648-10-24 00:03:00.0';'1648-10-24 00:04:00.0';'1648-10-24 00:05:00.0';'1648-10-24 00:06:00.0']);
-   char({D{:,2}})
-   warning('timezone not included yet')
+   R = pg_select_struct(conn,OPT.table,struct('Value','2'));
+   OK(end+1) = isequal(cell2mat({R{:,1}}),[4 5 6]);
+   OK(end+1) = isequal(    char({R{:,2}}),['1648-10-24 00:04:00.0';'1648-10-24 00:05:00.0';'1648-10-24 00:06:00.0']);
+   disp(char({R{:,2}}))
+   disp('warning: timezone not included yet')
    
-   D = pg_select_struct(conn,OPT.table,struct('Value','2'));
-   OK(end+1) = isequal(cell2mat({D{:,1}}),[4 5 6]);
-   OK(end+1) = isequal(    char({D{:,2}}),['1648-10-24 00:04:00.0';'1648-10-24 00:05:00.0';'1648-10-24 00:06:00.0']);
-   char({D{:,2}})
-   warning('timezone not included yet')
+   R = pg_select_struct(conn,OPT.table,struct('Value',2));
+   OK(end+1) = isequal(cell2mat({R{:,1}}),[4 5 6]);
+   OK(end+1) = isequal(    char({R{:,2}}),['1648-10-24 00:04:00.0';'1648-10-24 00:05:00.0';'1648-10-24 00:06:00.0']);
+   disp(char({R{:,2}}))
+   disp('warning: timezone not included yet')
    
-   D = pg_select_struct(conn,OPT.table,struct('Value',2));
-   OK(end+1) = isequal(cell2mat({D{:,1}}),[4 5 6]);
-   OK(end+1) = isequal(    char({D{:,2}}),['1648-10-24 00:04:00.0';'1648-10-24 00:05:00.0';'1648-10-24 00:06:00.0']);
-   char({D{:,2}})
-   warning('timezone not included yet')
-   
-   D = pg_select_struct(conn,OPT.table,struct('Value','3.1416'));
-   OK(end+1) = isequal(cell2mat({D{:,1}}),[1 2 3]);
-   OK(end+1) = isequal(    char({D{:,2}}),['1648-10-24 00:01:00.0';'1648-10-24 00:02:00.0';'1648-10-24 00:03:00.0']);
-   char({D{:,2}})
-   warning('timezone not included yet')
+   R = pg_select_struct(conn,OPT.table,struct('Value','3.1416'));
+   OK(end+1) = isequal(cell2mat({R{:,1}}),[1 2 3]);
+   OK(end+1) = isequal(    char({R{:,2}}),['1648-10-24 00:01:00.0';'1648-10-24 00:02:00.0';'1648-10-24 00:03:00.0']);
+   disp(char({R{:,2}}))
+   disp('warning: timezone not included yet')
    
    % for reals, the selection does not work if numeric data 
    % are supplied, perhaps due to machine precision issues
-   D = pg_select_struct(conn,OPT.table,struct('Value',3.1416));
+   R = pg_select_struct(conn,OPT.table,struct('Value',3.1416));
    %isequal(cell2mat({D{:,1}}),[1 2 3])
+
+%% extract all, and convert to struct
    
-   OK = OK;
+   R = pg_select_struct(conn,OPT.table,struct([])); % all
+   OK(end+1) = isequal(cell2mat({R{:,1}}),[1 2 3 4 5 6]);
+   OK(end+1) = isequal(    char({R{:,2}}),['1648-10-24 00:01:00.0';'1648-10-24 00:02:00.0';'1648-10-24 00:03:00.0';'1648-10-24 00:04:00.0';'1648-10-24 00:05:00.0';'1648-10-24 00:06:00.0']);
+   disp(char({R{:,2}}))
+   disp('warning: timezone not included yet');
+   
+   [nams,typs] = pg_getcolumns(conn,OPT.table);
+
+   D = pg_fetch2struct(R,nams,typs);
+   
+   OK(end+1) = structcmp(D,D0,1e-6);
+   
+%% test column name data-type query
+   
+   for i=1:length(nams)
+   [~,t] = pg_getcolumns(conn,OPT.table,{nams{i}});
+   typs2{i,1} = char(t);
+   end
+   OK(end+1) = isequal(typs,typs2);

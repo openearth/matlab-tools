@@ -7,15 +7,15 @@ function rs = pg_select_struct(conn, table, sqlWhere, varargin)
 %   specified. By default, all columns are returned.
 %
 %   Syntax:
-%   rs = pg_select_struct(conn, table, sqlWhere, varargin)
+%   rs = pg_select_struct(conn, table, sqlWhere, <column_names>)
 %
 %   Input:
-%   conn      = Database connection object
-%   table     = Name of table to be queried
-%   sqlWhere  = structure with fields corresponding to the table columns
-%               and values that should match the selected columns.
-%               Use struct([]) to get the entire table columns.
-%   varargin  = Columns to be returned
+%   conn          = Database connection object
+%   table         = Name of table to be queried
+%   sqlWhere      = structure with fields corresponding to the table columns
+%                   and values that should match the selected columns.
+%                   Use struct([]) to get the entire table columns.
+%   column_names  = Columns to be returne das cellstr or list of char.
 %
 %   Output:
 %   rs        = Cell array with resulting records
@@ -25,6 +25,7 @@ function rs = pg_select_struct(conn, table, sqlWhere, varargin)
 %   rs = pg_select_struct(conn, 'someTable', struct('id', 1));
 %   rs = pg_select_struct(conn, 'someTable', struct('id', 2), 'someColumn');
 %   rs = pg_select_struct(conn, 'someTable', struct('id', 3), 'Column_1', 'Column_2');
+%   rs = pg_select_struct(conn, 'someTable', struct('id', 3),{'Column_1', 'Column_2'});
 %   rs = pg_select_struct(conn, 'someTable', struct([])     , 'Column_1')
 %
 %   See also pg_insert_struct, pg_update_struct, pg_upsert_struct

@@ -4,6 +4,7 @@
 %See also: SNCTOOLS, NC_CF_STATIONTIMESERIES,...
 %          NC_CF_GRID_TUTORIAL,...
 %          NC_CF_STATIONTIMESERIES_WRITE_TUTORIAL
+%          pg_stationTimeSeries_tutorial
 
 %% subset > 100 year Rijkswaterstaat time series at Hoek van Holland
 %  The full timeseries (15MB) is a bit slow to handle via OPeNDAP.

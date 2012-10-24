@@ -1,26 +1,41 @@
-function columns = pg_getcolumns(conn, table, varargin)
-%PG_GETCOLUMNS  List all columns in a given table
+function [column_name, data_type,data_length] = pg_getcolumns(conn, table, column_name0)
+%PG_GETCOLUMNS  List all column_names, their data_types and length from a given table
 %
 %   List all columns in a given table in the current database. Returns a
-%   list with column names. Ignores system columns like cmin and cmax.
+%   cellstr list with column names with the following SQL statements:
+%      SELECT column_name, data_type FROM information_schema.columns WHERE table_name = ''table''
+%      SELECT count(*)               FROM "table"
 %
 %   Syntax:
-%   columns = pg_getcolumns(conn, table, varargin)
+%   [column_name,<data_type>,<data_length>] = pg_getcolumns(conn, table,<column_name0>)
 %
 %   Input:
-%   conn      = Database connection object
-%   table     = Table name
-%   varargin  = none
+%   conn         = Database connection object
+%   table        = Table name
+%   column_name0 = optional cellstr array with columns names for which to
+%                  query datatype, for use in pg_fetch2struct in combination
+%                  with pg_select_struct.
 %
 %   Output:
-%   columns   = Cell array with column names
+%   column_name = Cell array with column names
+%   data_type   = Cell array with column data names (optional)
+%   data_length = Length of the table, and all of its columns
 %
-%   Example
-%   conn = pg_connectdb('someDatabase');
-%   tables = pg_gettables(conn);
-%   columns = pg_getcolumns(conn, tables{1});
+%   Example: get overview of contents of table
 %
-%   See also pg_connectdb, pg_gettables
+%     conn            = pg_connectdb('someDatabase');
+%     tables          = pg_gettables(conn);
+%     [nam, typ, siz] = pg_getcolumns(conn, tables{1});
+%
+%   Example 2: use PG_GETCOLUMNS to convert requested
+%              subset of columns to struct from pg_test datamodel.
+%
+%     columns = {'Value','ObservationTime'};
+%     R = pg_select_struct(conn,table,struct([]),columns);
+%     [nams,typs]=pg_getcolumns(conn,table,columns);
+%     D = pg_fetch2struct(R,nams,typs);
+%
+%   See also pg_connectdb, pg_gettables, pg_fetch2struct
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -66,13 +81,40 @@ function columns = pg_getcolumns(conn, table, varargin)
 
 %% read options
 
-OPT = struct();
+% low-level: don't
+% skip dropped tables like "........pg.dropped.1......." (http://forums.whirlpool.net.au/archive/497602)
+%strSQL = sprintf('SELECT attname FROM pg_attribute, pg_type WHERE typname = ''%s'' AND attrelid = typrelid AND attname NOT IN (''tableoid'',''cmax'',''xmax'',''cmin'',''xmin'',''ctid'') AND attisdropped NOT IN (TRUE)', table);
+%rs     = pg_fetch(conn, strSQL);
 
-OPT = setproperty(OPT,varargin{:});
+% high-level: do
+% ?? why does "" encapsulation not work here ??
+% somehow order is  reversed, so we reverse it back
 
-%% list tables
-%  skip dropped tables like "........pg.dropped.1......." (http://forums.whirlpool.net.au/archive/497602)
+strSQL = ['SELECT column_name, data_type FROM information_schema.columns WHERE table_name = ''',table,''''];
+rs     = pg_fetch(conn, strSQL);
 
-strSQL = sprintf('SELECT attname FROM pg_attribute, pg_type WHERE typname = ''%s'' AND attrelid = typrelid AND attname NOT IN (''tableoid'',''cmax'',''xmax'',''cmin'',''xmin'',''ctid'') AND attisdropped NOT IN (TRUE)', table);
+if nargin > 2
+   for i=1:length(column_name0)
+      tmp = strmatch(column_name0{i}, {rs{:,1}}, 'exact');
+      if isempty(tmp)
+         error(['column_name "','" not found in table ',table])
+      else
+         indices(i) = tmp;
+      end
+   end
+else
+   indices = size(rs,1):-1:1;
+end
 
-columns = pg_fetch(conn, strSQL);
+
+
+column_name = {rs{indices,1}}';
+if nargout > 1
+ data_type = {rs{indices,2}}';
+ if nargout > 2
+  % ?? why does '''' encapsulation not work here ??
+  strSQL = ['SELECT count(*) FROM ',pg_quote(table)];
+  data_length = pg_fetch(conn, strSQL);
+  data_length = data_length{1};
+ end
+end

@@ -1,8 +1,8 @@
-%PG_TUTORIAL tutorial for postgresql toolbox with simple scalar time series
+%pg_stationTimeSeries_tutorial  tutorial for postgresql toolbox with simple scalar time series
 %
 % For the simple test datamodel see "pg_test_template.sql".
 %
-%See also: postgresql
+%See also: postgresql, nc_cf_stationTimeSeries_tutorial
 %          http://publicwiki.deltares.nl/display/OET/OPeNDAP+access+with+Matlab
 
 %% Copyright notice
@@ -80,21 +80,26 @@ conn=pg_connectdb(OPT.db,'user',OPT.user,'pass',OPT.pass,'schema',OPT.schema);
 
    pg_cleartable(conn,OPT.table) % reset values and serial
 
-   D0 = nc2struct('http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/waterbase/concentration_of_suspended_matter_in_sea_water/id410-DELFZBTHVN.nc')
+  %D0 = nc2struct('F:\opendap.deltares.nl\thredds\dodsC\opendap\rijkswaterstaat\waterbase\concentration_of_suspended_matter_in_sea_water\id410-DELFZBTHVN.nc');
+   D0 = nc2struct('http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/waterbase/concentration_of_suspended_matter_in_sea_water/id410-DELFZBTHVN.nc');
 
-   pg_insert_struct(conn,OPT.table,struct('Value',D0.concentration_of_suspended_matter_in_water,...
+   pg_insert_struct(conn,OPT.table,struct('Value',D0.concentration_of_suspended_matter_in_sea_water,...
                                 'ObservationTime',pg_datenum(D0.datenum))); % 2 3
 
-%% get these data
+%% get the data into struct (exclude "ObservationID" column)
 
-   R = pg_select_struct(conn,OPT.table,struct([])); % all
+   [nams, typs] = pg_getcolumns(conn,OPT.table);
+   
+   OPT.columns = {'Value','ObservationTime'};
   
-   D.ObservationID =            [R{:,1}];
-   D.datenum       = pg_datenum({R{:,2}});
-   D.Value         =            [R{:,3}];
+   R = pg_select_struct(conn,OPT.table,struct([]),OPT.columns); % all
+   
+   [nams,typs]=pg_getcolumns(conn,OPT.table,OPT.columns);
+   
+   D = pg_fetch2struct(R,nams,typs);
    
 %% plot   
 
-   plot(D.datenum,D.Value)
+   plot(D.ObservationTime,D.Value)
    datetick('x')
    grid on

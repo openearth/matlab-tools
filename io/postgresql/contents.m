@@ -38,3 +38,5 @@
 % http://www-css.fnal.gov/dsg/external/freeware/mysql-vs-pgsql.html
 % http://www.serverwatch.com/trends/article.php/3883441/Top-10-Enterprise-Database-Systems-to-Consider.htm
 % http://philip.greenspun.com/panda/
+% http://humdoi.mae.ufl.edu/~prabirbarooah/Research/instructions.html
+% http://www.tech.plym.ac.uk/spmc/links/matlab/matlab_database.html
