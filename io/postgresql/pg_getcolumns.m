@@ -35,7 +35,7 @@ function [column_name, data_type,data_length] = pg_getcolumns(conn, table, colum
 %     [nams,typs]=pg_getcolumns(conn,table,columns);
 %     D = pg_fetch2struct(R,nams,typs);
 %
-%   See also pg_connectdb, pg_gettables, pg_fetch2struct
+%   See also pg_connectdb, pg_gettables, pg_fetch2struct, pg_table2struct
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -105,8 +105,6 @@ if nargin > 2
 else
    indices = size(rs,1):-1:1;
 end
-
-
 
 column_name = {rs{indices,1}}';
 if nargout > 1

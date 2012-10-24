@@ -1,5 +1,5 @@
 function D = pg_fetch2struct(R,nams,typs)
-%pg_fetch2struct  parse resultsset cell into struct 
+%pg_fetch2struct  parse cell from pg_fetch or pg_select_struct into struct 
 %
 % PG_FETCH2STRUCT parses a ResultsSet cell as returned by PG_FETCH 
 % or PG_SELECT_STRUCT into a struct using the table column_names
@@ -58,23 +58,36 @@ function D = pg_fetch2struct(R,nams,typs)
 % $HeadURL$
 
    for i=1:length(nams) % 1-based column index
+   
+      nam = mkvar(nams{i}); % remove special characters
 
-      if     strcmp(typs{i},'real'                       );D.(nams{i}) =            [R{:,i}]';
-      elseif strcmp(typs{i},'double precision'           );D.(nams{i}) =            [R{:,i}]';
+      if     strcmp(typs{i},'real'                       ); D.(nam)     =     single([R{:,i}])';
+      elseif strcmp(typs{i},'double precision'           ); D.(nam)     =            [R{:,i}]';
+      elseif strcmp(typs{i},'numeric'                    ); D.(nam)     =            [R{:,i}]';
 
-      elseif strcmp(typs{i},'timestamp with time zone'   );D.(nams{i}) = pg_datenum({R{:,i}})';
-      elseif strcmp(typs{i},'timestamp without time zone');D.(nams{i}) = pg_datenum({R{:,i}})';
+      elseif strcmp(typs{i},'date'                       ); D.(nam)     = pg_datenum({R{:,i}})';
+      elseif strcmp(typs{i},'time without time zone'     ); D.(nam)     = pg_datenum({R{:,i}})';
+      elseif strcmp(typs{i},'time with time zone'        );[D.(nam),...
+                                                            D.timezone] = pg_datenum({R{:,i}});
+      elseif strcmp(typs{i},'timestamp without time zone'); D.(nam)     = pg_datenum({R{:,i}})';
+      elseif strcmp(typs{i},'timestamp with time zone'   );[D.(nam),...
+                                                            D.timezone] = pg_datenum({R{:,i}});
 
-      elseif strcmp(typs{i},'integer'                    );D.(nams{i}) =      int32([R{:,i}])';
-      elseif strcmp(typs{i},'bigint'                     );D.(nams{i}) =      int64([R{:,i}])';
+      elseif strcmp(typs{i},'serial'                     ); D.(nam)     =       int8([R{:,i}])'; %int4
+      elseif strcmp(typs{i},'smallint'                   ); D.(nam)     =       int8([R{:,i}])'; %int2
+      elseif strcmp(typs{i},'integer'                    ); D.(nam)     =       int8([R{:,i}])'; %int4
+      elseif strcmp(typs{i},'bigint'                     ); D.(nam)     =       int8([R{:,i}])'; %int8
 
-      elseif strcmp(typs{i},'text'                       );D.(nams{i}) =            {R{:,i}}';
-      elseif strcmp(typs{i},'character varying'          );D.(nams{i}) =            {R{:,i}}';
-      elseif strcmp(typs{i},'character'                  );D.(nams{i}) =        char(R{:,i});
+      elseif strcmp(typs{i},'boolean'                    ); D.(nam)     =     logical([R{:,i}])';
 
-      elseif strcmp(typs{i},'USER-DEFINED'               );D.(nams{i}) =            {R{:,i}}';
+      elseif strcmp(typs{i},'text'                       ); D.(nam)     =            {R{:,i}}';
+      elseif strcmp(typs{i},'character varying'          ); D.(nam)     =            {R{:,i}}';
+      elseif strcmp(typs{i},'character'                  ); D.(nam)     =        char(R{:,i});
+      elseif strcmp(typs{i},'uuid'                       ); D.(nam)     =            {R{:,i}}';
+
+      elseif strcmp(typs{i},'USER-DEFINED'               ); D.(nam)     =            {R{:,i}}';
           
-      else                                                 D.(nams{i}) =            {R{:,i}}';
+      else                                                  D.(nam)     =            {R{:,i}}';
       
          fprintf(2,[mfilename, ': datatype not yet implemented: ',typs{i},' \n'])
 

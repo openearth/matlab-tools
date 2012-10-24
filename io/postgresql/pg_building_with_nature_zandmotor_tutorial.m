@@ -30,23 +30,10 @@ OPT.pass   = '';
                'parameter_hilucs','parameter_physical','parameter_sediment','parameter_worms',...
                'quality','unit',...
                'value_age_class','value_broken','value_length_class'};
-
+               
    for i=1:length(tables)
-   
       table = tables{i};
-
-      [nams,typs,table_size(i)]= pg_getcolumns(conn,table);
-      
-      if table_size(i) > 42524 % current size of subset of WoRMS species list
-          
-           D.(table) = [];
-           
-      else
-   
-         R = pg_select_struct(conn,table,struct([]));
-      
-         D.(table) = pg_fetch2struct(R,nams, typs);
-         
-      end
-   
+      pg_dump(conn,table)
+      disp('loading ...')
+      D.(table) = pg_table2struct(conn,table,[],42524);
    end

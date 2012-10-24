@@ -4,13 +4,20 @@
 % pg_settings                    - Load toolbox for JDBC connection to a PostgreSQL database
 % pg_connectdb                   - Creates a JDBC connection to a PostgreSQL database
 % 
-% high-level READ,INSPECT:
+% Highest-level READ,INSPECT:
+% pg_dump                        - Display overview of tables, columns and sizes of database schema
 % pg_gettables                   - List all tables in current database
-% pg_getcolumns                  - List all columns in a given table
+% pg_getcolumns                  - List all column_names, their data_types and length from a given table
+% pg_table2struct                - Load all or some columns of PostgreSQL table into struct
+%
+% High-level READ,INSPECT:
 % pg_getpk                       - Retrieve name of primary key for given table
 % pg_getid                       - Retrieves primary key value for specific record in given table
 % pg_getids                      - Retrieves primary key value for many records in given table
 % pg_select_struct               - Selects records from a table based on a structure
+% pg_fetch2struct                - parse cell from pg_fetch or pg_select_struct into struct 
+% pg_stationTimeSeries_tutorial  - tutorial for postgresql toolbox with simple scalar time series
+% pg_building_with_nature_zandmotor_tutorial - extract all tables with all columns into one struct
 %
 % WRITE,CHANGE:
 % pg_insert_struct               - Inserts a structure into a table
@@ -18,7 +25,7 @@
 % pg_upsert_struct               - Updates existing records or inserts it otherwise
 % pg_cleartable                  - Deletes all contents from a table
 %
-% low-level SQL query: for explanation see <a href="http://www.postgresql.org/docs/current/static/sql.html">SQL primer</a> 
+% Low-level SQL query: for explanation see <a href="http://www.postgresql.org/docs/current/static/sql.html">SQL primer</a> 
 % pg_quote                       - Wrap identifiers (table, column names) in " quotes to enable mixed upper/lower case
 % pg_query                       - Builts a SQL query string from structures
 % pg_exec                        - Executes a SQL query
@@ -27,11 +34,10 @@
 % pg_value2sql                   - Makes a cell array of arbitrary values suitable for the use in an SQL query
 % pg_datenum                     - conversion between Matlab datenumbers and PG datetime
 % pg_test                        - unit test for postgresql
-% pg_tutorial                    - example with OPeNDAP time series for postgresql
 %
 %See also: database, netcdf, save, load
 
-% useful links
+% some possibly useful links
 
 % http://www.cybertec.at/postgresql_produkte/pg_matlab-matlab-postgresql-integration/
 % http://www.mathworks.com/matlabcentral/fileexchange/3027

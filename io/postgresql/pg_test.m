@@ -44,7 +44,7 @@ OPT.db     = 'postgres';
 OPT.schema = 'public';
 OPT.user   = '';
 OPT.pass   = '';
-OPT.table  = 'AaB21';
+OPT.table  = 'AaB22';
 
 OPT = setproperty(OPT,varargin);
 
@@ -56,6 +56,8 @@ if isempty(OPT.user)
 [OPT.user,OPT.pass] = pg_credentials();
 end
 conn=pg_connectdb(OPT.db,'user',OPT.user,'pass',OPT.pass,'schema',OPT.schema);
+
+pg_dump(conn)
 
 %% show existing contents
 
@@ -135,6 +137,10 @@ conn=pg_connectdb(OPT.db,'user',OPT.user,'pass',OPT.pass,'schema',OPT.schema);
    [nams,typs] = pg_getcolumns(conn,OPT.table);
 
    D = pg_fetch2struct(R,nams,typs);
+   
+   if isfield(D,'timezone')
+       D =  rmfield(D,'timezone');
+   end
    
    OK(end+1) = structcmp(D,D0,1e-6);
    

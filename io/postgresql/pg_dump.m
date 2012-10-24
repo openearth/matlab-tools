@@ -1,36 +1,27 @@
-function tables = pg_gettables(conn, varargin)
-%PG_GETTABLES  List all tables in current database
+function pg_dump(conn,varargin)
+%PG_DUMP  Display overview of tables, columns and sizes of database schema
 %
-%   List all tables in current database. Return a list with table names in
-%   given database connection. Ignores system tables like pg_catalog and
-%   information_schema.
+% PG_DUMP(conn) shows alls tables with all columns
+% PG_DUMP(conn, table_name) shows only requested tables where
+% table_name is a cellstr.
 %
-%   Syntax:
-%   tables = pg_gettables(conn, varargin)
+% Example: pg_test datamodel
+%  pg_dump(conn,{'TEST01'})
+%  pg_dump(conn) 
 %
-%   Input:
-%   conn      = Database connection object
-%   varargin  = none
+%  TEST01(6) :
+%      ObservationID(integer)
+%      ObservationTime(timestamp with time zone)
+%      Value(real)
 %
-%   Output:
-%   tables    = Cell array with table names
-%
-%   Example
-%   conn = pg_connectdb('someDatabase');
-%   tables = pg_gettables(conn);
-%
-%   See also pg_connectdb, pg_getcolumns, pg_table2struct
+%See also: nc_dump, postgresql, netcdf
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2012 Deltares
-%       Bas Hoonhout
+%   Copyright (C) 2012 Tu Delft / Deltares for Building with Nature
+%       Gerben J. de Boer
 %
-%       bas.hoonhout@deltares.nl
-%
-%       Rotterdamseweg 185
-%       2629HD Delft
-%       Netherlands
+%       g.j.deboer@tudelft.nl / gerben.deboer@deltares.nl
 %
 %   This library is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -53,22 +44,30 @@ function tables = pg_gettables(conn, varargin)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 27 Jul 2012
-% Created with Matlab version: 7.14.0.739 (R2012a)
-
 % $Id$
 % $Date$
 % $Author$
 % $Revision$
 % $HeadURL$
-% $Keywords: $
 
-%% read options
+   if nargin>1
+      tables = varargin{1};
+      if ischar(tables);tables = cellstr(tables);end
+   else
+      tables = pg_gettables(conn);
+   end
 
-OPT = struct();
+   for i=1:length(tables)
+      table = tables{i};
+      try % ERROR: relation "topology" does not exist
+      [column_name,data_type,data_length] = pg_getcolumns(conn, table);
 
-OPT = setproperty(OPT,varargin{:});
-
-%% list tables
-
-tables = pg_fetch(conn, 'SELECT tablename FROM pg_tables WHERE schemaname NOT IN (''pg_catalog'',''information_schema'')');
+     %disp([repmat('-',size(table))])
+      disp([table,'(',num2str(data_length),') :'])
+      for j=1:length(column_name)
+         disp(['    ',column_name{j},'(',data_type{j},')'])
+      end
+      disp(' ')
+      end
+   end
+   
