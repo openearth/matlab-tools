@@ -90,13 +90,17 @@ function ui_build(obj)
         'String', '', 'Min', 1, 'Max', 1, ...
         'Callback', @ui_set_data);
     
+    uicontrol(pobj, 'Style', 'popupmenu', 'Tag', 'SelectPart', ...
+        'String', '', 'Min', 1, 'Max', 1, ...
+        'Callback', @ui_set_table);
+    
     uitable(pobj, 'Tag', 'TableMeta');
     
-    ticktext(axes, '-datetime2');
-    
-    ui_resize(pobj, []);
+    axes;
     
     ui_set_block(obj);
+    
+    ui_resize(pobj, []);
     
 end
 
@@ -107,6 +111,7 @@ function ui_resize(obj, event)
 
     set(get_obj(obj, 'SelectBlock'),'Position', [[.00 .25].*winsize [.25 .75].*winsize]);
     set(get_obj(obj, 'SelectData'), 'Position', [[.00 .00].*winsize [.25 .25].*winsize]);
+    set(get_obj(obj, 'SelectPart'), 'Position', [[.25 .25].*winsize [.75 .00].*winsize+[.00 22]]);
     set(get_obj(obj, 'TableMeta'),  'Position', [[.25 .00].*winsize [.75 .25].*winsize]);
 
     set(get_axis(obj),'Units','pixels','Position', [[.35 .35].*winsize [.55 .55].*winsize]); box on;
@@ -117,25 +122,46 @@ function ui_set_block(obj, event)
     
     info           = get_info(obj);
     info.block     = get_selected(obj,'SelectBlock');
-    info.blockn    = find(strcmpi(info.block{1},info.blocklistc));
     
+    blockname      = regexprep(info.block, '^(block\d+).*?$', '$1');
+    info.blockn    = find(strcmpi(blockname,info.blocklistc));
+    
+    % read block
     block = info.input.data(info.blockn).value;
 
+    % read parts
+    parts          = {block.data.name};
+    idx            = cellfun(@(x) length(x)==3 && ~strcmpi(x,'WRD'), parts);
+    info.partlist  = concat(parts(idx), '|');
+    set(get_obj(obj,'SelectPart'),'String',info.partlist);
+    
+    % read data
     if xs_exist(block,'WRD')
         WRD            = xs_get(block,'WRD');
         dat            = {WRD.data.name};
-        info.datalist  = sprintf('|%s', dat{:});
-        info.datalist  = info.datalist(2:end);
-
-        set(get_obj(obj,'SelectData'),'String',info.datalist);
+        info.datalist  = concat(dat, '|');
+    else
+        info.datalist  = '';
     end
-
+    
+    set(get_obj(obj,'SelectData'),'String',info.datalist);
     set_info(obj,info);
 
-    if xs_exist(block,'W3H')
-        W3H            = xs_get(block,'W3H');
-        f              = {W3H.data.name};
-        v              = {W3H.data.value};
+    ui_set_table(obj);
+    
+    ui_set_data(obj);
+end
+
+function ui_set_table(obj, event)
+
+    info           = get_info(obj);
+    block          = info.input.data(info.blockn).value;
+    info.part      = get_selected(obj,'SelectPart');
+
+    if xs_exist(block,info.part)
+        part           = xs_get(block,info.part);
+        f              = {part.data.name};
+        v              = {part.data.value};
         idx            = ~cellfun(@iscell,v);
         v(idx)         = cellfun(@(x){x},v(idx),'UniformOutput',false);
         l              = cellfun(@(x)length(x),v);
@@ -148,9 +174,11 @@ function ui_set_block(obj, event)
         end
 
         set(get_obj(obj,'TableMeta'),'Data',dat,'RowName',f,'ColumnWidth',{150});
+    else
+        set(get_obj(obj,'TableMeta'),'Data',[],'RowName',{});
     end
     
-    ui_set_data(obj);
+    set_info(obj,info);
 end
 
 function ui_set_data(obj, event)
@@ -175,10 +203,14 @@ function ui_read(obj)
         D = info.input;
     	
         % generate block list
-        info.blocklist = sprintf('|%s', D.data.name);
-        info.blocklist = info.blocklist(2:end);
+        info.blocklistc = {D.data.name};
         
-        info.blocklistc = regexp(info.blocklist,'\|','split');
+        lengths         = cellfun(@(x) sum(cellfun(@length, {x.data.name}) == 3), ...
+                                    {D.data.value});
+        info.blocklist  = concat( ...
+                            cellfun(@(x,y) sprintf('%s (%d)', x, y), ...
+                            info.blocklistc, num2cell(lengths), ...
+                            'UniformOutput', false), '|');
     end
     
     set_info(obj,info);
@@ -214,7 +246,8 @@ function ui_plot(obj)
                     set(gca,'XLim',minmax(t));
                 end
 
-                set(ax,'XTickLabel',datestr(get(ax,'XTick'),'dd-mmm-yyyy'));
+                %set(ax,'XTickLabel',datestr(get(ax,'XTick'),'dd-mmm-yyyy'));
+                ticktext(ax, '-datetime2');
 
                 xlabel('time');
             else
