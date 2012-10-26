@@ -102,7 +102,7 @@ classdef LineSearch < handle
             this.MaxIterationsBisection = MaxIterationsBisection;
         end
         
-        %MaxIterationsBisection setter
+        %MaxErrorZ setter
         function set.MaxErrorZ(this, MaxErrorZ)
             ProbabilisticChecks.CheckInputClass(MaxErrorZ,'double')
                                 
@@ -117,6 +117,16 @@ classdef LineSearch < handle
         
         %Find Z=0 for an ARS
         function FindZeroARS(this,ARS)
+            
+        end
+        
+        %Find Z=0 by fitting polynomial
+        function FitPolynomial(this)
+            
+        end
+        
+        %Find Z=0 by performing Bisection
+        function Bisection(this)
             
         end
     end

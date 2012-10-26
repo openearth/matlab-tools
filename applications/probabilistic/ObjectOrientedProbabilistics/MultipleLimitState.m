@@ -109,6 +109,11 @@ classdef MultipleLimitState < LimitState
             end
             zvalue          = feval(this.AggregateFunction, input);
             this.ZValues    = [this.ZValues zvalue];
+            
+            this.EvaluationIsExact          = [this.EvaluationIsExact; true];
+            this.EvaluationIsConverged      = [this.EvaluationIsConverged; false];
+            this.EvaluationIsApproximated   = [this.EvaluationIsApproximated; false];
+            this.EvaluationIsRandom         = [this.EvaluationIsRandom; true];
         end
     end
 end

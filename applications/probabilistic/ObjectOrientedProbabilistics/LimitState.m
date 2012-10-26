@@ -60,8 +60,12 @@ classdef LimitState < handle
         ZValues
         EvaluationIsExact
         EvaluationIsConverged
-        EvaluationIsApproximate
+        EvaluationIsApproximated
         EvaluationIsRandom
+    end
+    
+    properties (Dependent)
+        NumberRandomVariables
     end
         
     %% Methods
@@ -93,7 +97,7 @@ classdef LimitState < handle
         %Set RandomVariables
         function set.RandomVariables(this, RandomVariables)
             ProbabilisticChecks.CheckInputClass(RandomVariables,'RandomVariable')
-            this.RandomVariables    = RandomVariables;
+            this.RandomVariables        = RandomVariables;
 %             
 %             RandomVariables(size(RandomVariablesInput,1),1)     = RandomVariable;
 %             this.RandomVariables                                = RandomVariables;
@@ -106,6 +110,11 @@ classdef LimitState < handle
         
         %% Getters
 
+        %Get number of random variables
+        function numberrandomvariables = get.NumberRandomVariables(this)
+            numberrandomvariables   = length(this.RandomVariables);
+        end
+            
         %% Other methods       
         %Evaluate LSF at given point in U (standard normal) space
         function zvalue = Evaluate(this, un, beta, RandomVariables)
@@ -114,15 +123,20 @@ classdef LimitState < handle
             xvalues     = NaN(1,length(RandomVariables));
             input       = cell(2,size(RandomVariables));
             for i=1:length(RandomVariables)
-                xvalues(i)  = RandomVariables{i}.GetXValue(uvalues(i));
-                input{1,i}  = RandomVariables{i}.Name;
+                xvalues(i)  = RandomVariables(i).GetXValue(uvalues(i));
+                input{1,i}  = RandomVariables(i).Name;
                 input{2,i}  = xvalues(i);
             end
-            this.Betas      = [this.Betas beta];
+            this.BetaValues = [this.BetaValues beta];
             this.XValues    = [this.XValues; xvalues];
             this.UValues    = [this.UValues; uvalues];
             zvalue          = this.EvaluateAtX(input);
             this.ZValues    = [this.ZValues; zvalue];
+            
+            this.EvaluationIsExact          = [this.EvaluationIsExact; true];
+            this.EvaluationIsConverged      = [this.EvaluationIsConverged; false];
+            this.EvaluationIsApproximated   = [this.EvaluationIsApproximated; false];
+            this.EvaluationIsRandom         = [this.EvaluationIsRandom; true];
         end
         
         %Evaluate LSF at given point in X space

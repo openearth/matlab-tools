@@ -98,8 +98,13 @@ classdef ProbabilisticMethod < handle
         
         
         %% Other methods
-        function GenerateRandomSamples(this)
+        function randomsamples = GenerateRandomSamples(this, NumberSamples, NumberRandomVariables)
+            rng('default');
+            if ~isempty(this.Seed)
+                rng(this.Seed);
+            end
             
+            randomsamples   = rand(NumberSamples,NumberRandomVariables);                                    
         end
     end
     

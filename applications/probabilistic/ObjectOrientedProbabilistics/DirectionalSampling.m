@@ -50,11 +50,14 @@ classdef DirectionalSampling < ProbabilisticMethod
     %% Properties
     
     properties
-        MaxNumberDirections
-        MinCOV
+        MaxCOV
         MaxPRatio
         SolutionConverged
+        StopCalculation
         IndexQueue
+        UNormalVector
+        DirectionIndex
+        MaxNumberDirections
     end
     
     properties (Dependent = true)
@@ -102,41 +105,58 @@ classdef DirectionalSampling < ProbabilisticMethod
         %% Getters
         
         function pfexact = get.PfExact(this)
-            pfexact = [this.LimitState.Betas(this.LimitState.EvaluationIsConverged && this.LimitState.EvaluationIsExact)]; %chi^2 met 
+            pfexact = this.LimitState.Betas(this.LimitState.EvaluationIsConverged && this.LimitState.EvaluationIsExact && this.LimitState.EvaluationIsRandom); %chi^2
+        end
+        
+        function pfapproximated = get.PfApproximated(this)
+            pfapproximated = this.LimitState.Betas(this.LimitState.EvaluationIsApproximated && this.LimitState.EvaluationIsRandom); %chi^2
+        end
+        
+        %% Main Directional Sampling Loop
+        function CalculatePf(this)
+            
+            %Construct matrix with random directions
+            randomP             = this.GenerateRandomSamples(this.MaxNumberDirections, this.LimitState.NumberRandomVariables);
+            u                   = norm_inv(randomP,0,1);
+            uLength             = sqrt(sum(u.^2,2));
+            this.UNormalVector  = u./repmat(uLength,1,this.LimitState.NumberRandomVariables);
+            
+            %Compute origin
+            this.LimitState.Evaluate(zeros(1,this.LimitState.NumberRandomVariables),0,this.LimitState.RandomVariables);
+            
+            %Perform line searches through random directions until solution converges
+            while ~this.StopCalculation
+                this.DirectionIndex = this.DirectionIndex + 1;
+                
+                this.IndexQueue     = this.DirectionIndex;
+                
+                %initiate LineSearch (either exact or approximated, depending on whether there is a fit)
+           
+                %if linesearch converged: UpdateFit, UpdatePf and CheckConvergence
+            
+                %if CheckConvergence = true, alle
+                %this.LimitState.EvaluationIsApproximated in de queue
+            
+                %daarna nog een keer checkconvergence
+                if this.SolutionConverged && isempty(this.IndexQueue)
+                    this.CheckConvergence;
+                    if this.SolutionConverged
+                        this.StopCalculation    = true;
+                    end
+                end
+            end
+            %Aanmaken en vullen Results object
         end
         
         %% Other methods
         
         %Set default values
         function SetDefaults(this)
-            this.MinCOV                 = 0.1;
+            this.MaxCOV                 = 0.1;
             this.MaxPRatio              = 0.4;
             this.MaxNumberDirections    = 1000;
             this.SolutionConverged      = false;
-        end
-        
-        %Calculate Pf using Directional Sampling
-        function CalculatePf(this)
-            %method that actually performs directional sampling
-            
-            %draw MaxNumberDirections different direction
-            %normalize to un            
-            
-            %Compute origin
-            
-            %Loop
-            
-            % richting uitkiezen en in the queue zetten
-            
-            %initiate LineSearch (either exact or approximated, depending on whether there is a fit)
-           
-            %if linesearch converged: UpdateFit, UpdatePf and CheckConvergence
-            
-            %if CheckConvergence = true, alle
-            %this.LimitState.EvaluationIsApproximated in de queue
-            %daarna nog een keer checkconvergence
-            
-            %Aanmaken en vullen Results object
+            this.StopCalculation        = false;
         end
         
         %Exact evaluation
@@ -149,7 +169,16 @@ classdef DirectionalSampling < ProbabilisticMethod
         
         %Check convergence
         function CheckConvergence(this)
-            
+            if this.DirectionIndex < this.MaxNumberDirections
+                if this.PRatio < this.MaxPRatio && this.COV < this.MaxCOV
+                    this.SolutionConverged = true;
+                else
+                    this.SolutionConverged = false;
+                end
+            else
+                warning('Maximum number of random directions reached!')
+                this.StopCalculation    = true;
+            end
         end
         
         %Calculate the failure probabilities

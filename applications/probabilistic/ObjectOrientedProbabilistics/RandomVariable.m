@@ -101,7 +101,7 @@ classdef RandomVariable < handle
         %Get XValue and save the associated P (both in the usual and in the standard normal space)
         function xvalue = GetXValue(this, u)
             P       = norm_cdf(u,0,1);
-            xvalue    = feval(this.Distribution,P,this.DistributionParams{:});
+            xvalue    = feval(this.Distribution,P,this.DistributionParameters{:});
             this.PValues    = [this.PValues P];
         end
     end
