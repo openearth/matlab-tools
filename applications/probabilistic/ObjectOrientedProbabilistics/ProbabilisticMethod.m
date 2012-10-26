@@ -1,0 +1,110 @@
+classdef ProbabilisticMethod < handle
+    %PROBABILISTICMETHOD  One line description goes here.
+    %
+    %   More detailed description goes here.
+    %
+    %   See also ProbabilisticMethod.ProbabilisticMethod
+    
+    %% Copyright notice
+    %   --------------------------------------------------------------------
+    %   Copyright (C) 2012 Deltares
+    %       Joost den Bieman
+    %
+    %       joost.denbieman@deltares.nl
+    %
+    %       P.O. Box 177
+    %       2600 MH Delft
+    %       The Netherlands
+    %
+    %   This library is free software: you can redistribute it and/or
+    %   modify it under the terms of the GNU Lesser General Public
+    %   License as published by the Free Software Foundation, either
+    %   version 2.1 of the License, or (at your option) any later version.
+    %
+    %   This library is distributed in the hope that it will be useful,
+    %   but WITHOUT ANY WARRANTY; without even the implied warranty of
+    %   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    %   Lesser General Public License for more details.
+    %
+    %   You should have received a copy of the GNU Lesser General Public
+    %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
+    %   --------------------------------------------------------------------
+    
+    % This tool is part of <a href="http://OpenEarth.nl">OpenEarthTools</a>.
+    % OpenEarthTools is an online collaboration to share and manage data and
+    % programming tools in an open source, version controlled environment.
+    % Sign up to recieve regular updates of this function, and to contribute
+    % your own tools.
+    
+    %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+    % Created: 25 Oct 2012
+    % Created with Matlab version: 7.14.0.739 (R2012a)
+    
+    % $Id$
+    % $Date$
+    % $Author$
+    % $Revision$
+    % $HeadURL$
+    % $Keywords: $
+    
+    %% Properties
+    properties
+        LimitState
+    end
+
+    properties (SetAccess = protected)
+        ConfidenceInterval
+        Accuracy
+        Seed
+    end
+    
+    properties (Dependent = true)
+        Pf
+    end
+    
+    %% Methods
+    methods
+        %% Constructor
+        function this = ProbabilisticMethod% (confidenceInterval,accuracy)
+            %PROBABILISTICMETHOD  One line description goes here.
+            %
+            %   More detailed description goes here.
+            %
+            %   Syntax:
+            %   this = ProbabilisticMethod(varargin)
+            %
+            %   Input:
+            %   varargin  =
+            %
+            %   Output:
+            %   this       = Object of class "ProbabilisticMethod"
+            %
+            %   Example
+            %   ProbabilisticMethod
+            %
+            %   See also ProbabilisticMethod
+
+        end
+        
+        %% Setters
+        %Set LimitState
+        function set.LimitState(this, LimitState)
+            ProbabilisticChecks.CheckInputClass(LimitState,'LimitState')
+            
+            this.LimitState = LimitState;
+        end
+                
+        %% Getters
+        
+        
+        %% Other methods
+        function GenerateRandomSamples(this)
+            
+        end
+    end
+    
+    %% Abstract methods
+    methods (Abstract)
+        CalculatePf(this, LimitState)
+    end
+end
