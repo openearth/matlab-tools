@@ -1,5 +1,5 @@
 function dir = uv2dir(u,v,convention)
-% UV2DIR derives the direction (in cartesian or nautical convention) from the u and v data
+% dir =UV2DIR(u,v,convention) derives the direction (in cartesian or nautical convention) from the u and v data
 % 
 % u = u or x vector of parameter
 % v = v or y vector of parameter
