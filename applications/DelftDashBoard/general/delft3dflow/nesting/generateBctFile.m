@@ -247,8 +247,8 @@ for n=1:nr
                 % Water level
                 openBoundaries(n).nrTimeSeries=length(times);
                 openBoundaries(n).timeSeriesT=times;
-                openBoundaries(n).timeSeriesA=squeeze(wl);
-                openBoundaries(n).timeSeriesB=squeeze(wl);
+                openBoundaries(n).timeSeriesA=squeeze(wl(n,1,:));
+                openBoundaries(n).timeSeriesB=squeeze(wl(n,2,:));
                 
             case{'r','x'}
                 
