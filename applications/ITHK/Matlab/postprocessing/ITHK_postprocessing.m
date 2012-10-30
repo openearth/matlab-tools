@@ -111,11 +111,18 @@ S.PP(sens).output.kmlfiles = {'S.PP(sens).output.kml','S.PP(sens).output.kml_gro
 %     S.PP(sens).output.kml = [S.PP(sens).output.kml disclaimer];
 % end
 
-kmltxt = [];
 for ii=1:length(S.PP(sens).output.kmlfiles)
+    kmltxt = [];
     kmltxt = [kmltxt eval(S.PP(sens).output.kmlfiles{ii})];
+    addstr = regexp (S.PP.output.kmlfiles{ii}, '_', 'split');
+    if length(addstr)>1
+        S.PP(sens).output.addtxt{ii} = ['_' addstr{2:end}];
+    else
+        S.PP(sens).output.addtxt{ii} = '_CL';
+    end
+    ITHK_io_writeKML(kmltxt,S.PP(sens).output.addtxt{ii},sens);
 end
-addtxt = '';ITHK_io_writeKML(kmltxt,addtxt,sens);
+% addtxt = '';ITHK_io_writeKML(kmltxt,addtxt,sens);
 
 %kmltxt = [S.PP(sens).output.kml, S.PP(sens).output.kml_groyne, ...
 %          S.PP(sens).output.kml_nourishment, S.PP(sens).output.kml_revetment, ...
@@ -201,9 +208,6 @@ addtxt = '';ITHK_io_writeKML(kmltxt,addtxt,sens);
 % addtxt = '_safety';ITHK_io_writeKML(kmltxt,addtxt,sens);
 % kmltxt = [S.PP(sens).output.kml_safety_dykering2,S.PP(sens).output.kml_safety_structures2];
 % addtxt = '_safety2';ITHK_io_writeKML(kmltxt,addtxt,sens);
-
-
-
 
 % S.settings.indicators.costs.direct.PLOToffset='10000';
 % S.settings.indicators.costs.direct.locationtype='1';

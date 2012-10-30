@@ -194,10 +194,17 @@ end
 %% Output result to server
 %Make output xml
 outputFilename=['output_' xml.uniqueID '.xml'];
-
-root.item.item.kmlTitle='Test result';
-root.item.item.kmlFile=[S.userinput.name '.kml'];
-
+for jj=1:1%length(sensitivities)
+    if length(S.PP(jj).output.kmlfiles)>1
+        for ii=1:length(S.PP(jj).output.kmlfiles)
+            root(ii).kmlTitle=strrep(S.PP(jj).output.addtxt{ii}(2:end),'_','');
+            root(ii).kmlFile=[S.userinput.name S.PP(jj).output.addtxt{ii} '.kml'];
+        end
+    else
+        root.item.kmlFile=strrep(S.PP(jj).output.addtxt{ii}(2:end),'_','');
+        root.item.kmlTitle=[S.userinput.name S.PP(jj).output.addtxt{ii} '.kml'];
+    end
+end
 xml_write(outputFilename,root);
 
 %First copy KML
@@ -206,8 +213,17 @@ cd(S.h,'..');
 %Go into kml dir
 cd(S.h,'kml');
 
-mput(S.h,S.PP.output.kmlFileName);
-delete(root.item.item.kmlFile);
+for jj=1:1%length(sensitivities)
+    if length(S.PP(jj).output.kmlfiles)>1
+         for ii=1:length(S.PP(jj).output.kmlfiles)
+            mput(S.h,[S.settings.outputdir root(ii).kmlFile]);
+            %delete(root(ii).kmlFile);
+        end
+    else
+        mput(S.h,[S.settings.outputdir root.item.kmlFile]);
+        %delete(root.item.kmlFile);
+    end
+end
 
 %Then write output xml to server
 %Go up one dir
