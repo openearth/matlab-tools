@@ -1,7 +1,7 @@
 function oetsettings(varargin)
-%OETSETTINGS   enable the OpenEarthTools matlab tools by adding all relevant matlab paths.
+%OETSETTINGS   enable the openearthtools matlab tools by adding all relevant matlab paths.
 %
-% OpenEarthTools is a collection of open source tools intended to be licensed under the (<a href="http://www.gnu.org/licenses/licenses.html">GNU (Lesser) Public License</a>).
+% openearthtools is a collection of open source tools intended to be licensed under the (<a href="http://www.gnu.org/licenses/licenses.html">GNU (Lesser) Public License</a>).
 %
 % In order to suppress this information, run the function with input argument quiet:
 % "oetsettings('quiet');" or "oetsettings quiet"
@@ -9,21 +9,21 @@ function oetsettings(varargin)
 % By default oetsettings generates a tutorial search database (only if no current database 
 % or current database is outdated). Suppressed generation: "oetsettings(...,'searchdb',false);"
 % 
-% For more information on OpenEarthTools refer to the following sources:
+% For more information on openearthtools refer to the following sources:
 % * wiki:               <a href="http://OpenEarth.nl">OpenEarth.nl</a>, <a href="http://OpenEarth.nl">OpenEarth.eu</a>
-% * 1. Subversion, data <a href="https://repos.deltares.nl/repos/OpenEarthRawData/trunk/">https://repos.deltares.nl/repos/OpenEarthRawData/trunk/matlab</a>
-% *    ,,        models <a href="https://repos.deltares.nl/repos/OpenEartModels/trunk/">https://repos.deltares.nl/repos/OpenEartModels/trunk/matlab</a>
-% *    ,,         tools <a href="https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab">https://repos.deltares.nl/repos/OpenEarthTools/trunk/matlab</a>
+% * 1. Subversion, data <a href="https://svn.oss.deltares.nl/repos/openearthrawdata/trunk/">https://svn.oss.deltares.nl/repos/openearthrawdata/trunk/matlab</a>
+% *    ,,        models <a href="https://svn.oss.deltares.nl/repos/openearthmodels/trunk/">https://svn.oss.deltares.nl/repos/openearthmodels/trunk/matlab</a>
+% *    ,,         tools <a href="https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab">https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab</a>
 % * 2. OPeNDAP/netCDF   <a href="http://opendap.deltares.nl">http://opendap.deltares.nl</a>
 % * 3. Google Earth     <a href="http://kml.deltares.nl">http://kml.deltares.nl</a>, opendap
-% * Matlab: + Scroll through the OpenEarthTools directories 
+% * Matlab: + Scroll through the openearthtools directories 
 %           + use help     : help netcdf, help general, help applications
 %           + use lookfor  : lookfor google, lookfor 
 %           + use doc      : doc xbeach, doc swan
 %           + use tutorials: doc tutorials, also on www.openearth.nl
 %
 %See also:    oetsettings: path, restoredefaultpath, addpathfast,
-%          OpenEarthTools: general, applications, io, tutorials
+%          openearthtools: general, applications, io, tutorials
 %              highlights: convertcoordinates, googleplot, opendap
 % OET matlab coding style: oetnewfun, setproperty
 
@@ -52,8 +52,8 @@ function oetsettings(varargin)
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
-% This tools is part of <a href="http://OpenEarth.eu">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and 
+% This tools is part of <a href="http://OpenEarth.eu">openearthtools</a>.
+% openearthtools is an online collaboration to share and manage data and 
 % programming tools in an open source, version controlled environment.
 % Sign up to recieve regular updates of this function, and to contribute 
 % your own tools.
@@ -87,7 +87,7 @@ function oetsettings(varargin)
 %% Acknowledge user we started adding the toolbox
 
    if ~(OPT.quiet)
-       disp('Adding <a href="http://OpenEarth.deltares.nl">OpenEarthTools</a>, please wait ...')
+       disp('Adding <a href="http://OpenEarth.deltares.nl">openearthtools</a>, please wait ...')
        disp(' ')
    end
       
@@ -118,7 +118,7 @@ function oetsettings(varargin)
                 searchDbVersion.DocVersion ~= docInfo.datenum; %#ok<NODEF>
         end
         if createSearchDb
-            disp('Creating <a href="http://OpenEarth.deltares.nl">OpenEarthTools</a> search database, please wait ...')
+            disp('Creating <a href="http://OpenEarth.deltares.nl">openearthtools</a> search database, please wait ...')
             try % does not work when using read-only checkout
                 DocumentationExists = exist(fullfile(docSearchDir,'helptoc.xml'),'file');
                 if DocumentationExists && exist('builddocsearchdb','file')
@@ -131,7 +131,7 @@ function oetsettings(varargin)
             catch
                 warning('OET:NoSearchDB',...
                     ['Could not build search database because %s is read-only. \n'...'
-                    'the OpenEarthTools help documentation is still available in the matlab help navigator.'],...
+                    'the openearthtools help documentation is still available in the matlab help navigator.'],...
                     docSearchDir);
             end
         end
