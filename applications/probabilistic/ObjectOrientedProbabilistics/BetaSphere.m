@@ -51,10 +51,10 @@ classdef BetaSphere < handle
     properties
         BetaSphereLowerLimit
         BetaSphereMargin
+        MinBeta
     end
     
     properties (Dependent)
-        MinBeta
         BetaSphereUpperLimit
     end
     
@@ -84,10 +84,7 @@ classdef BetaSphere < handle
         end
         
         %% Getters
-%         function MinBeta = get.MinBeta(this)
-%             MinBeta = min(this.Betas(this.EvaluationIsExact));
-%         end
-        
+        %Get upper limit of Beta sphere
         function BetaSphereUpperLimit = get.BetaSphereUpperLimit(this)
             BetaSphereUpperLimit = this.MinBeta + this.BetaSphereMargin;
         end
@@ -99,8 +96,32 @@ classdef BetaSphere < handle
         end
 
         %Calculate MinBeta
-        function MinBeta = CalculateMinBeta(this, LimitState)
-            MinBeta = min(this.Betas(LimitState.EvaluationIsExact));
+        function CalculateMinBeta(this, limitState, approachesZero)
+            this.MinBeta = min(limitState.BetaValues(limitState.EvaluationIsExact & approachesZero));
+        end
+        
+        %Check if point is in Beta Sphere
+        function inBetaSphere = IsInBetaSphere(this, beta, limitState, approachesZero)
+            this.CalculateMinBeta(limitState, approachesZero)
+            if ~isempty(this.MinBeta)
+                if beta <= this.BetaSphereUpperLimit && beta > 0
+                    inBetaSphere = true;
+                else
+                    inBetaSphere = false;
+                end
+            else
+                inBetaSphere = false;
+            end
+        end
+        
+        %Update BetaSphereMargin
+        function UpdateBetaSphereMargin(this, beta, limitState, approachesZero)
+            this.CalculateMinBeta(limitState, approachesZero)
+            if beta > this.MinBeta
+                this.BetaSphereMargin   = beta - this.MinBeta;
+            else
+                warning('Given beta < MinBeta!')
+            end
         end
     end
 end

@@ -54,6 +54,9 @@ classdef AdaptiveResponseSurface < handle
     properties (SetAccess = private)
         Fit
         GoodFit
+        MaxCoefficient
+        MaxRootMeanSquareError
+        ModelTerms
     end
     
     %% Methods
@@ -77,6 +80,8 @@ classdef AdaptiveResponseSurface < handle
             %   AdaptiveResponseSurface
             %
             %   See also AdaptiveResponseSurface
+            
+            this.SetDefaults
         end
         
         %% Setters
@@ -88,10 +93,59 @@ classdef AdaptiveResponseSurface < handle
         %% Getters
         
         %% Other methods
-        %update ARS fit
-        function UpdateFit(this, LimitState)
-            this.Fit    = [];
-            this.GoodFit = [];
+        
+        %Evaluate the ARS at a given point
+        function zvalue = Evaluate(this, un, beta)
+            uvalues     = un.*beta;
+            zvalue      = polyvaln(this.Fit, uvalues);
+        end
+        
+        %Update ARS fit
+        function UpdateFit(this, limitState)
+            this.DetermineModelTerms(limitState);
+            if ~isempty(this.ModelTerms)
+                this.Fit    = polyfitn(limitState.UValues(limitState.EvaluationIsExact,:), limitState.ZValues(limitState.EvaluationIsExact), this.ModelTerms);
+            end
+            this.CheckFit
+        end
+        
+        %Check fit quality
+        function CheckFit(this)
+            if ~isempty(this.Fit) && ~isempty(fieldnames(this.Fit))
+                if ~any(isnan(this.Fit.Coefficients)) && ...
+                        ~any(isinf(this.Fit.Coefficients)) && ...
+                        ~any(this.Fit.Coefficients > this.MaxCoefficient) && ...
+                        ~any(isnan(this.Fit.ParameterVar)) && ...
+                        ~any(isinf(this.Fit.ParameterVar)) && ...
+                        ~any(this.Fit.ParameterVar > this.MaxCoefficient) && ...
+                        this.Fit.RMSE/max(1,max(abs(this.Fit.Coefficients))) < this.MaxRootMeanSquareError
+                    this.GoodFit    = true;
+                else
+                    this.GoodFit    = false;
+                end
+            else
+                this.GoodFit    = false;
+            end
+        end
+        
+        %Determine modelterms in polynomial fit depending on number of
+        %variables
+        function DetermineModelTerms(this, limitState)
+            nrVariables = limitState.NumberRandomVariables; 
+            if  sum(limitState.EvaluationIsExact) >= 1 + nrVariables + nrVariables*(nrVariables + 1)/2
+                this.ModelTerms = 2;
+            elseif sum(limitState.EvaluationIsExact) >= 2*nrVariables + 1
+                this.ModelTerms = [zeros(1,nrVariables); eye(nrVariables); 2*eye(nrVariables)];
+            else
+                this.ModelTerms = []; 
+            end
+        end
+
+        %Set default values
+        function SetDefaults(this)
+            this.GoodFit                = false;
+            this.MaxCoefficient         = 1e5;
+            this.MaxRootMeanSquareError = 1;
         end
     end
 end

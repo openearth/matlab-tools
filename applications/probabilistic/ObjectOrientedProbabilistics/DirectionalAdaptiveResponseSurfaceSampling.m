@@ -1,9 +1,9 @@
-classdef MultipleLimitState < LimitState
-    %MULTIPLELIMITSTATE  One line description goes here.
+classdef DirectionalAdaptiveResponseSurfaceSampling < DirectionalSampling
+    %DIRECTIONALADAPTIVERESPONSESURFACESAMPLING  One line description goes here.
     %
     %   More detailed description goes here.
     %
-    %   See also MultipleLimitState.MultipleLimitState
+    %   See also DirectionalAdaptiveResponseSurfaceSampling.DirectionalAdaptiveResponseSurfaceSampling
     
     %% Copyright notice
     %   --------------------------------------------------------------------
@@ -37,7 +37,7 @@ classdef MultipleLimitState < LimitState
     % your own tools.
     
     %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-    % Created: 26 Oct 2012
+    % Created: 29 Oct 2012
     % Created with Matlab version: 7.14.0.739 (R2012a)
     
     % $Id$
@@ -49,59 +49,29 @@ classdef MultipleLimitState < LimitState
     
     %% Properties
     properties
-        LimitStates
-        AggregateFunction
+        
     end
     
     %% Methods
     methods
-        %% Constructor
-        function this = MultipleLimitState(limitStates, aggregateFunction)
-            %MULTIPLELIMITSTATE  One line description goes here.
+        function this = DirectionalAdaptiveResponseSurfaceSampling(varargin)
+            %DIRECTIONALADAPTIVERESPONSESURFACESAMPLING  One line description goes here.
             %
             %   More detailed description goes here.
             %
             %   Syntax:
-            %   this = MultipleLimitState(varargin)
+            %   this = DirectionalAdaptiveResponseSurfaceSampling(varargin)
             %
             %   Input:
             %   varargin  =
             %
             %   Output:
-            %   this       = Object of class "MultipleLimitState"
+            %   this       = Object of class "DirectionalAdaptiveResponseSurfaceSampling"
             %
             %   Example
-            %   MultipleLimitState
+            %   DirectionalAdaptiveResponseSurfaceSampling
             %
-            %   See also MultipleLimitState
-            
-            ProbabilisticChecks.CheckInputClass(limitStates,'LimitState')
-            ProbabilisticChecks.CheckInputClass(aggregateFunction,'function_handle')
-            this.LimitStates        = limitStates;
-            this.AggregateFunction  = aggregateFunction;
-        end
-        
-        %% Setters       
-        %Set AggregateFunction
-        function set.AggregateFunction(this, aggregateFunction)
-            ProbabilisticChecks.CheckInputClass(aggregateFunction,'function_handle')
-            this.AggregateFunction  = aggregateFunction;
-        end
-        
-        %% Other methods
-        function zvalue = Evaluate(this,un, beta, randomVariables)
-            input   = cell(length(this.LimitStates),2);
-            for i=1:length(this.LimitStates)
-                input{i,2}  = this.LimitStates(i).Name;
-                input{i,2}  = Evaluate@LimitState(un, beta, randomVariables);
-            end
-            zvalue          = feval(this.AggregateFunction, input);
-            this.ZValues    = [this.ZValues zvalue];
-            
-            this.EvaluationIsExact          = [this.EvaluationIsExact; true];
-            this.EvaluationIsConverged      = [this.EvaluationIsConverged; false];
-            this.EvaluationIsApproximated   = [this.EvaluationIsApproximated; false];
-            this.EvaluationIsRandom         = [this.EvaluationIsRandom; true];
+            %   See also DirectionalAdaptiveResponseSurfaceSampling
         end
     end
 end

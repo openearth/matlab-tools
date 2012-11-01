@@ -53,13 +53,10 @@ classdef ProbabilisticMethod < handle
     end
 
     properties (SetAccess = protected)
+        Pf
         ConfidenceInterval
         Accuracy
         Seed
-    end
-    
-    properties (Dependent = true)
-        Pf
     end
     
     %% Methods
@@ -93,14 +90,21 @@ classdef ProbabilisticMethod < handle
             
             this.LimitState = LimitState;
         end
-                
+           
+        %Set Seed
+        function set.Seed(this, seed)
+            ProbabilisticChecks.CheckInputClass(seed,'double')
+            
+            this.Seed   = seed;
+        end
+        
         %% Getters
         
         
         %% Other methods
         function randomsamples = GenerateRandomSamples(this, NumberSamples, NumberRandomVariables)
-            rng('default');
             if ~isempty(this.Seed)
+                rng('default');
                 rng(this.Seed);
             end
             

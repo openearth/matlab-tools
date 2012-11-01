@@ -59,9 +59,8 @@ classdef LimitState < handle
         UValues
         ZValues
         EvaluationIsExact
-        EvaluationIsConverged
-        EvaluationIsApproximated
-        EvaluationIsRandom
+        EvaluationIsEnabled
+        ResponseSurface
     end
     
     properties (Dependent)
@@ -98,14 +97,6 @@ classdef LimitState < handle
         function set.RandomVariables(this, RandomVariables)
             ProbabilisticChecks.CheckInputClass(RandomVariables,'RandomVariable')
             this.RandomVariables        = RandomVariables;
-%             
-%             RandomVariables(size(RandomVariablesInput,1),1)     = RandomVariable;
-%             this.RandomVariables                                = RandomVariables;
-%             for i=1:length(RandomVariablesInput)
-%                 this.RandomVariables(i).Name                    = RandomVariablesInput{i,1};
-%                 this.RandomVariables(i).Distribution            = RandomVariablesInput{i,2};
-%                 this.RandomVariables(i).DistributionParameters  = RandomVariablesInput{i,3};
-%             end
         end
         
         %% Getters
@@ -117,26 +108,32 @@ classdef LimitState < handle
             
         %% Other methods       
         %Evaluate LSF at given point in U (standard normal) space
-        function zvalue = Evaluate(this, un, beta, RandomVariables)
-            ProbabilisticChecks.CheckInputClass(RandomVariables,'RandomVariable')
+        function zvalue = Evaluate(this, un, beta, randomVariables)
+            ProbabilisticChecks.CheckInputClass(randomVariables,'RandomVariable')
             uvalues     = un.*beta;
-            xvalues     = NaN(1,length(RandomVariables));
-            input       = cell(2,size(RandomVariables));
-            for i=1:length(RandomVariables)
-                xvalues(i)  = RandomVariables(i).GetXValue(uvalues(i));
-                input{1,i}  = RandomVariables(i).Name;
-                input{2,i}  = xvalues(i);
+            input       = cell(2,length(randomVariables));
+            for i=1:length(randomVariables)
+                xvalue      = randomVariables(i).GetXValue(uvalues(i));
+                
+                if isempty(xvalue)
+                    break
+                end
+                input{1,i}  = randomVariables(i).Name;
+                input{2,i}  = xvalue;
             end
-            this.BetaValues = [this.BetaValues beta];
-            this.XValues    = [this.XValues; xvalues];
-            this.UValues    = [this.UValues; uvalues];
-            zvalue          = this.EvaluateAtX(input);
-            this.ZValues    = [this.ZValues; zvalue];
             
-            this.EvaluationIsExact          = [this.EvaluationIsExact; true];
-            this.EvaluationIsConverged      = [this.EvaluationIsConverged; false];
-            this.EvaluationIsApproximated   = [this.EvaluationIsApproximated; false];
-            this.EvaluationIsRandom         = [this.EvaluationIsRandom; true];
+            if isempty(xvalue)
+                zvalue          = [];
+            else
+                this.BetaValues = [this.BetaValues; beta];
+                this.XValues    = [this.XValues; [input{2,:}]];
+                this.UValues    = [this.UValues; uvalues];
+                zvalue          = this.EvaluateAtX(input);
+                this.ZValues    = [this.ZValues; zvalue];
+                
+                this.EvaluationIsExact          = logical([this.EvaluationIsExact; true]);
+                this.EvaluationIsEnabled        = logical([this.EvaluationIsEnabled; true]);
+            end
         end
         
         %Evaluate LSF at given point in X space
@@ -144,14 +141,38 @@ classdef LimitState < handle
             zvalue          = feval(this.LimitStateFunction,input{:});
         end
         
-%         %Evaluate LSF at given point in X space
-%         function Aggregate(this)
-%             zvalues         = NaN(size(this.LimitStates));
-%             for i=1:length(this.LimitStates)
-%                 zvalues(i)  = this.LimitStates{1}.ZValues(end);
-%             end
-%             zaggregate      = feval(this.AggregateFunction,zvalues);
-%             this.ZValues    = [this.ZValues zaggregate];
-%         end
+        %Approximate LSF at given point using the ResponseSurface
+        function zvalue = Approximate(this, un, beta)
+            if ~this.CheckAvailabilityARS
+                error('No ARS (with a good fit) available!')
+            else
+                this.BetaValues = [this.BetaValues; beta];
+                uvalues         = un.*beta;
+                this.UValues    = [this.UValues; uvalues];
+                zvalue          = this.ResponseSurface.Evaluate(un, beta);
+                this.ZValues    = [this.ZValues; zvalue];
+                
+                this.EvaluationIsExact          = logical([this.EvaluationIsExact; false]);
+                this.EvaluationIsEnabled        = logical([this.EvaluationIsEnabled; true]);
+            end
+        end
+        
+        %Check if a response surface is available and has a good fit
+        function arsAvailable = CheckAvailabilityARS(this)
+            if isempty(this.ResponseSurface) || (~isempty(this.ResponseSurface) && ~this.ResponseSurface.GoodFit)
+                arsAvailable    = false;
+            elseif ~isempty(this.ResponseSurface) && this.ResponseSurface.GoodFit
+                arsAvailable    = true;
+            end
+        end
+        
+        %Check if origin is available
+        function CheckOrigin(this)
+            if ~any(this.BetaValues == 0)
+                error('Origin not available in LimitState');
+            elseif any(this.BetaValues  == 0) && this.ZValues(this.BetaValues == 0) <= 0
+                error('Failure at origin of limit state is not supported by this line search algorithm');
+            end
+        end
     end
 end
