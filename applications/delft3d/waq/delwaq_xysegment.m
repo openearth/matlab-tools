@@ -12,7 +12,13 @@ function gridStruct = delwaq_xysegment(lgaFile)
 %   email: sandra.gaytan@deltares.com
 %--------------------------------------------------------------------------
 
-gridStruct = delwaq('open',lgaFile);
+if ischar(lgaFile)
+    gridStruct = delwaq('open',lgaFile);
+elseif isstruct(lgaFile)
+    gridStruct = lgaFile;
+    clear lgaFile;
+end
+
 [Xcen Ycen] = corner2center(gridStruct.X,gridStruct.Y);
 s_coll = [];
 xcen = [];
