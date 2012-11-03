@@ -41,12 +41,14 @@ set(h1,'color',colorlist('getrgb','color',opt.linecolor));
 set(h1,'Linestyle',opt.linestyle);
 set(h1,'Linewidth',opt.linewidth);
 
-if ~isempty(opt.timebar.time)
-    xt(1)=opt.timebar.time-xback;
-    xt(2)=opt.timebar.time-xback;
-    yt(1)=plt.ymin;
-    yt(2)=plt.ymax;
-    plot(xt,yt,'r','Linewidth',3);
+if opt.timebar
+    if ~isempty(opt.timebar.time)
+        xt(1)=opt.timebar.time-xback;
+        xt(2)=opt.timebar.time-xback;
+        yt(1)=plt.ymin;
+        yt(2)=plt.ymax;
+        plot(xt,yt,'r','Linewidth',3);
+    end
 end
 
 plt.datasets(k).dataset.handle=h1;

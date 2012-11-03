@@ -1,28 +1,10 @@
-function tp=muppet_findDataShape(dataset)
+function tp=muppet_findDataShape(sz,timestep,istation,m,n,k)
 
-m=dataset.m;
-n=dataset.n;
-k=dataset.k;
-timestep=dataset.timestep;
-
-if isempty(m)
-    m=1;
-end
-if isempty(n)
-    n=1;
-end
-if isempty(k)
-    k=1;
-end
-if isempty(timestep)
-    timestep=1;
-end
-
-if ~isempty(dataset.station)
+if sz(2)>0
     % Data from station
-    if timestep==0 || length(timestep)>1
+    if length(timestep)>1
         % Time varying
-        if k==0 || length(k)>1
+        if length(k)>1
             tp='timestackstation';
         else
             tp='timeseriesstation';
@@ -33,29 +15,29 @@ if ~isempty(dataset.station)
     end
 else
     % Data from matrix
-    if timestep==0 || length(timestep)>1
+    if length(timestep)>1
         % Time-varying
-        if m==0 || length(m)>1
+        if length(m)>1
             tp='timestackm';
-        elseif n==0 || length(n)>1
+        elseif length(n)>1
             tp='timestackn';
-        elseif k==0 || length(k)>1
+        elseif length(k)>1
             tp='timestackk';
         else
             tp='timeseries';
         end            
     else
         % Constant
-        if m==0 || length(m)>1
-            if n==0 || length(n)>1
+        if length(m)>1
+            if length(n)>1
                 tp='map2d';
-            elseif k==0 || length(k)>1
+            elseif length(k)>1
                 tp='crossection2dm';
             else
                 tp='crossection1dm';
             end
-        elseif n==0 || length(n)>1
-            if k==0 || length(k)>1
+        elseif length(n)>1
+            if length(k)>1
                 tp='crossection2dn';
             else
                 tp='crossection1dn';

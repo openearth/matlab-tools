@@ -32,6 +32,7 @@ opt.xdecimals=-1;
 opt.xscale='linear';
 opt.xtickmultiply=1.0;
 opt.xtickadd=0.0;
+opt.xticklabels=[];
 
 % Y Axis
 opt.ymin=[];
@@ -47,6 +48,7 @@ opt.ydecimalsright=-1;
 opt.yscale='linear';
 opt.ytickmultiply=1.0;
 opt.ytickadd=0.0;
+opt.yticklabels=[];
 
 % Scale
 opt.scale=[];

@@ -1,0 +1,773 @@
+function muppet_datasetGUI(varargin)
+
+makewindow=0;
+for ii=1:length(varargin)
+    if ischar(varargin{ii})
+        switch lower(varargin{ii})
+            case{'makewindow'}
+                makewindow=1;
+            case{'filename'}
+                filename=varargin{ii+1};
+            case{'filetype'}
+                filetype=varargin{ii+1};
+            case{'adddataset'}
+                addDataset;
+            case{'selectparameter'}
+                selectParameter;
+            case{'selectcomponent'}
+                selectComponent;
+            case{'selectxcoordinate'}
+                selectXCoordinate;
+            case{'editstation'}
+                editStation(varargin{ii+1});
+            case{'edittime'}
+                editTime(varargin{ii+1});
+            case{'editm'}
+                editM(varargin{ii+1});
+            case{'editn'}
+                editN(varargin{ii+1});
+            case{'editk'}
+                editK(varargin{ii+1});
+            case{'selectblock'}
+                selectBlock;
+            case{'selectquantity','selectucomponent','selectvcomponent'}
+                refreshDatasetName;                
+        end
+    end
+end
+
+if makewindow
+    makeGUI(filetype,filename)
+end
+
+%%
+function makeGUI(filetype,filename)
+
+handles=getHandles;
+
+dataset.name='';
+
+% Find file type
+ift=muppet_findIndex(handles.filetype,'filetype','name',filetype);
+options=handles.filetype(ift).filetype.option;
+callback=str2func(handles.filetype(ift).filetype.callback);
+dataset.callback=callback;
+
+% Get info from file (load parameter dimensions)
+dataset.filename=filename;
+dataset=feval(callback,'read',dataset);
+
+% Check if parameters are present, otherwise make parameters structure
+if ~isfield(dataset,'parameters')
+    dataset.parameters(1).parameter=dataset;
+    dataset.parameters(1).parameter.active=1;
+    dataset.parameters(1).parameter.parametername='';
+    dataset.parameters(1).parameter.size=[0 0 0 0 0];
+    dataset.parameters(1).parameter=muppet_setDefaultParameterProperties(dataset.parameters(1).parameter);
+end
+
+% Store everything (!) in parameters structure
+for j=1:length(dataset.parameters)
+    % Copy dataset structure to parameter structure
+    dataset.parameters(j).parameter.filename=filename;
+    dataset.parameters(j).parameter.filetype=filetype;
+    dataset.parameters(j).parameter.callback=callback;
+    % Set default m, n, k, station, time etc. 
+    dataset.parameters(j).parameter=muppet_setDefaultDatasetProperties(dataset.parameters(j).parameter);
+    dataset.parameternames{j}=dataset.parameters(j).parameter.parametername;
+end
+
+% Set default GUI options
+dataset=setDefaultGUIOptions(dataset);
+
+height=0;
+width=0;
+% First determine width and height of gui
+for ii=1:length(options)
+    % Find corresponding gui element
+    id=muppet_findIndex(handles.dataproperty,'dataproperty','name',options(ii).option.name);
+    if ~isempty(id)
+        % Include in gui
+        height=height+handles.dataproperty(id).dataproperty.height+10;
+        width=max(handles.dataproperty(id).dataproperty.width,width);
+    end
+end
+
+width=width+40;
+height=height+140;
+
+width=max(width,350);
+
+% And now build the elements
+posy=height-10;
+nelm=0;
+
+for ii=1:length(options)
+  % Find corresponding gui element
+  id=muppet_findIndex(handles.dataproperty,'dataproperty','name',options(ii).option.name);
+  if ~isempty(id)
+    % Include in gui
+    posy=posy-handles.dataproperty(id).dataproperty.height-10;
+    if isfield(handles.dataproperty(id).dataproperty,'element')
+      for jj=1:length(handles.dataproperty(id).dataproperty.element)
+        nelm=nelm+1;
+        el=handles.dataproperty(id).dataproperty.element(jj).element;
+        pos=str2num(el.position);
+        el.position=[pos(1)+20 posy+pos(2) pos(3) pos(4)];
+        element(nelm).element=el;
+      end
+    end
+  end
+end
+
+% Dataset name
+nelm=nelm+1;
+element(nelm).element.style='edit';
+element(nelm).element.position=[60 60 width-80 20];
+element(nelm).element.variable='name';
+element(nelm).element.text='Name';
+element(nelm).element.dependency.dependency.action='enable';
+element(nelm).element.dependency.dependency.checkfor='all';
+element(nelm).element.dependency.dependency.checks.check.variable='parameters(s.activeparameter).parameter.active';
+element(nelm).element.dependency.dependency.checks.check.value='1';
+element(nelm).element.dependency.dependency.checks.check.operator='eq';
+
+% Cancel
+nelm=nelm+1;
+element(nelm).element.style='pushcancel';
+element(nelm).element.position=[width-250 20 70 25];
+
+% Add
+nelm=nelm+1;
+element(nelm).element.style='pushbutton';
+element(nelm).element.position=[width-170 20 70 25];
+element(nelm).element.text='Add';
+element(nelm).element.callback='muppet_datasetGUI';
+element(nelm).element.option1='adddataset';
+element(nelm).element.dependency.dependency.action='enable';
+element(nelm).element.dependency.dependency.checkfor='all';
+element(nelm).element.dependency.dependency.check.check.variable='parameters(s.activeparameter).parameter.active';
+element(nelm).element.dependency.dependency.check.check.value='1';
+element(nelm).element.dependency.dependency.check.check.operator='eq';
+
+% OK
+nelm=nelm+1;
+element(nelm).element.style='pushok';
+element(nelm).element.position=[width-90 20 70 25];
+
+xml.element=element;
+
+xml=gui_fillXMLvalues(xml);
+
+[dataset,ok]=gui_newWindow(dataset,'element',xml.element,'tag','uifigure','width',width,'height',height, ...
+    'createcallback',@selectParameter,'title',handles.filetype(ift).filetype.longname,'modal',0);
+% gui_newWindow(dataset,'element',xml.element,'tag','uifigure','width',width,'height',height, ...
+%     'createcallback',@selectParameter,'title',dataset.filetypelongname,'modal',0);
+
+%%
+function selectParameter(varargin)
+
+dataset=gui_getUserData;
+ipar=dataset.activeparameter;
+
+if dataset.parameters(ipar).parameter.size(1)>0
+    dataset.timelist=dataset.parameters(ipar).parameter.timelist;
+else
+    dataset.timelist={''};
+end
+
+gui_setUserData(dataset);
+
+updateDimensions;
+
+refreshDatasetName;
+
+%%
+function selectComponent(varargin)
+
+dataset=gui_getUserData;
+
+% Find other parameters with same quantity
+for ii=1:length(dataset.parameters)
+    if strcmpi(dataset.parameters(ii).parameter.quantity,dataset.parameters(dataset.activeparameter).parameter.quantity)
+        dataset.parameters(ii).parameter.component=dataset.parameters(dataset.activeparameter).parameter.component;
+    end
+end
+
+gui_setUserData(dataset);
+
+refreshDatasetName;
+
+%%
+function selectXCoordinate(varargin)
+
+dataset=gui_getUserData;
+
+parameter=dataset.parameters(dataset.activeparameter).parameter;
+
+dataset.parameters(dataset.activeparameter).parameter.previousxcoordinate=parameter.xcoordinate;
+
+% Find other parameters with same shape
+for ii=1:length(dataset.parameters)
+    if dataset.parameters(ii).parameter.size==parameter.size
+      dataset.parameters(ii).parameter.xcoordinate=parameter.xcoordinate;
+      dataset.parameters(ii).parameter.previousxcoordinate=parameter.xcoordinate;
+    end
+end
+
+gui_setUserData(dataset);
+
+refreshDatasetName;
+
+%%
+function editStation(opt)
+
+dataset=gui_getUserData;
+ip=dataset.activeparameter;
+parameter=dataset.parameters(ip).parameter;
+
+switch opt
+    case{'select'}
+        parameter.station=parameter.stations{parameter.stationfromlist};
+        parameter.stationnumber=parameter.stationfromlist;
+        parameter.previousstationnumber=parameter.stationnumber;
+    case{'selectall'}
+        if parameter.selectallstations
+            parameter.stationnumber=0;
+            parameter.station='';
+        else
+            parameter.stationnumber=parameter.previousstationnumber;
+            parameter.station=parameter.stations{parameter.stationnumber};
+        end
+end
+
+% Find other parameters with same dimensions and set values the same
+for ii=1:length(dataset.parameters)
+    if dataset.parameters(ii).parameter.size(2)==parameter.size(2)
+        dataset.parameters(ii).parameter.station=parameter.station;
+        dataset.parameters(ii).parameter.stationnumber=parameter.stationnumber;
+        dataset.parameters(ii).parameter.previousstationnumber=parameter.previousstationnumber;
+        dataset.parameters(ii).parameter.selectallstations=parameter.selectallstations;
+    end
+end
+
+dataset.parameters(ip).parameter=parameter;
+
+gui_setUserData(dataset);
+
+refreshDatasetName;
+
+%%
+function selectBlock
+dataset=gui_getUserData;
+ip=dataset.activeparameter;
+parameter=dataset.parameters(ip).parameter;
+for ii=1:length(dataset.parameters)
+    if dataset.parameters(ii).parameter.nrblocks==parameter.nrblocks
+        dataset.parameters(ii).parameter.block=parameter.block;
+    end
+end
+
+%%
+function editTime(opt)
+
+dataset=gui_getUserData;
+ip=dataset.activeparameter;
+parameter=dataset.parameters(ip).parameter;
+
+switch opt
+    case{'edit'}        
+        it=indexstring('read',parameter.timesteptext);
+        if it>parameter.size(1) || it<1 || isnan(it)
+            parameter.timesteptext=indexstring('write',parameter.timestep);
+            it=parameter.timestep;
+        end
+        parameter.timestep=it;
+        parameter.previoustimestep=parameter.timestep;
+        parameter.timestepsfromlist=parameter.timestep;
+    case{'select'}
+        parameter.timestep=parameter.timestepsfromlist;
+        parameter.previoustimestep=parameter.timestep;
+        parameter.timesteptext=indexstring('write',parameter.timestep);
+    case{'selectall'}        
+        if parameter.selectalltimes
+            parameter.timestep=0;
+            parameter.timesteptext=indexstring('write',parameter.previoustimestep);
+        else
+            parameter.timestep=parameter.previoustimestep;
+            parameter.timesteptext=indexstring('write',parameter.timestep);            
+        end
+    case{'showtimes'}
+        if isempty(parameter.times)
+            times=feval(dataset.callback,'gettimes');
+            parameter.times=times;
+            for it=1:length(times)
+                parameter.timelist{it}=datestr(times(it),0);
+            end
+            dataset.timelist=parameter.timelist;
+        end
+        % Find other parameters with same dimensions and set values the same
+        for ii=1:length(dataset.parameters)
+            if dataset.parameters(ii).parameter.size(1)==parameter.size(1)
+                dataset.parameters(ii).parameter.times=parameter.times;
+                dataset.parameters(ii).parameter.timelist=parameter.timelist;
+            end
+        end        
+end
+
+% Find other parameters with same dimensions and set values the same
+for ii=1:length(dataset.parameters)
+    if dataset.parameters(ii).parameter.size(1)==parameter.size(1)
+        dataset.parameters(ii).parameter.timestep=parameter.timestep;
+        dataset.parameters(ii).parameter.previoustimestep=parameter.previoustimestep;
+        dataset.parameters(ii).parameter.timestepsfromlist=parameter.timestepsfromlist;
+        dataset.parameters(ii).parameter.selectalltimes=parameter.selectalltimes;
+        dataset.parameters(ii).parameter.showtimes=parameter.showtimes;
+        dataset.parameters(ii).parameter.timesteptext=parameter.timesteptext;
+    end
+end
+
+dataset.parameters(ip).parameter=parameter;
+
+gui_setUserData(dataset);
+
+updateDimensions;
+
+refreshDatasetName;
+
+%%
+function editM(opt)
+
+dataset=gui_getUserData;
+ip=dataset.activeparameter;
+parameter=dataset.parameters(ip).parameter;
+
+switch opt
+    case{'edit'}
+        parameter.m=indexstring('read',parameter.mtext);
+        parameter.previousm=parameter.m;
+    case{'selectall'}        
+        if parameter.selectallm
+            parameter.m=0;
+            parameter.mtext=indexstring('write',parameter.previousm);
+        else
+            parameter.m=parameter.previousm;
+            parameter.mtext=indexstring('write',parameter.m);
+        end
+end
+
+% Find other parameters with same dimensions and set values the same
+for ii=1:length(dataset.parameters)
+    if dataset.parameters(ii).parameter.size(3)==parameter.size(3)
+        dataset.parameters(ii).parameter.m=parameter.m;
+        dataset.parameters(ii).parameter.previousm=parameter.previousm;
+        dataset.parameters(ii).parameter.mtext=parameter.mtext;
+        dataset.parameters(ii).parameter.selectallm=parameter.selectallm;
+    end
+end
+
+dataset.parameters(ip).parameter=parameter;
+
+gui_setUserData(dataset);
+
+updateDimensions;
+
+refreshDatasetName;
+
+%%
+function editN(opt)
+
+dataset=gui_getUserData;
+ip=dataset.activeparameter;
+parameter=dataset.parameters(ip).parameter;
+
+switch opt
+    case{'edit'}
+        parameter.n=indexstring('read',parameter.ntext);
+        parameter.previousn=parameter.n;
+    case{'selectall'}        
+        if parameter.selectalln
+            parameter.n=0;
+            parameter.ntext=indexstring('write',parameter.previousn);
+        else
+            parameter.n=parameter.previousn;
+            parameter.ntext=indexstring('write',parameter.n);
+        end
+end
+
+% Find other parameters with same dimensions and set values the same
+for ii=1:length(dataset.parameters)
+    if dataset.parameters(ii).parameter.size(4)==parameter.size(4)
+        dataset.parameters(ii).parameter.n=parameter.n;
+        dataset.parameters(ii).parameter.previousn=parameter.previousn;
+        dataset.parameters(ii).parameter.ntext=parameter.ntext;
+        dataset.parameters(ii).parameter.selectalln=parameter.selectalln;
+    end
+end
+
+dataset.parameters(ip).parameter=parameter;
+
+gui_setUserData(dataset);
+
+updateDimensions;
+
+refreshDatasetName;
+
+%%
+function editK(opt)
+
+dataset=gui_getUserData;
+ip=dataset.activeparameter;
+parameter=dataset.parameters(ip).parameter;
+
+switch opt
+    case{'edit'}
+        parameter.k=indexstring('read',parameter.ktext);
+        parameter.previousk=parameter.k;
+    case{'selectall'}        
+        if parameter.selectallk
+            parameter.k=0;
+            parameter.ktext=indexstring('write',parameter.previousk);
+        else
+            parameter.k=parameter.previousk;
+            parameter.ktext=indexstring('write',parameter.k);
+        end
+end
+
+% Find other parameters with same dimensions and set values the same
+for ii=1:length(dataset.parameters)
+    if dataset.parameters(ii).parameter.size(5)==parameter.size(5)
+        dataset.parameters(ii).parameter.k=parameter.k;
+        dataset.parameters(ii).parameter.previousk=parameter.previousk;
+        dataset.parameters(ii).parameter.ktext=parameter.ktext;
+        dataset.parameters(ii).parameter.selectallk=parameter.selectallk;
+    end
+end
+
+dataset.parameters(ip).parameter=parameter;
+
+gui_setUserData(dataset);
+
+updateDimensions;
+
+refreshDatasetName;
+
+%%
+function updateDimensions
+
+dataset=gui_getUserData;
+
+shp=muppet_findDataShape(dataset.parameters(dataset.activeparameter).parameter);
+
+switch lower(shp)
+    case{'crossection1dm','crossection1dn','crossection2dm','crossection2dn'}
+        dataset.parameters(dataset.activeparameter).parameter.xcoordinate='pathdistance';
+        dataset.parameters(dataset.activeparameter).parameter.xcoordinate=dataset.parameters(dataset.activeparameter).parameter.previousxcoordinate;
+    otherwise
+        dataset.parameters(dataset.activeparameter).parameter.xcoordinate=[];
+end
+
+gui_setUserData(dataset);
+
+%%
+function addDataset
+
+handles=getHandles;
+dataset=gui_getUserData;
+
+ii=strmatch(lower(dataset.name),lower(handles.datasetnames),'exact');
+if ~isempty(ii)
+    % Dataset already exists
+    muppet_giveWarning('text','A dataset with this name already exists!');
+    return
+end
+
+% Copy entire parameters structure back to dataset structure
+fldnames=fieldnames(dataset.parameters(dataset.activeparameter).parameter);
+for j=1:length(fldnames)
+    switch fldnames{j}
+        case{'name'}
+        otherwise
+            dataset.(fldnames{j})=dataset.parameters(dataset.activeparameter).parameter.(fldnames{j});
+    end
+end
+
+if isfield(dataset,'parameters')
+    dataset.parameter=dataset.parameters(dataset.activeparameter).parameter.parametername;
+end
+
+% Remove parameters structure
+dataset=rmfield(dataset,'parameters');
+dataset=rmfield(dataset,'timelist');
+
+% Check dimensions
+dims=[0 0 0 0];
+if ~isempty(dataset.m)
+    if dataset.m==0 || length(dataset.m)>1
+        dims(1)=1;
+    end
+end
+if ~isempty(dataset.n)
+    if dataset.n==0 || length(dataset.n)>1
+        dims(2)=1;
+    end
+end
+if ~isempty(dataset.k)
+    if dataset.k==0 || length(dataset.k)>1
+        dims(3)=1;
+    end
+end
+if ~isempty(dataset.timestep)
+    if dataset.timestep==0 || length(dataset.timestep)>1
+        dims(4)=1;
+    end
+end
+
+ndims=sum(dims);
+
+if ndims>2
+    muppet_giveWarning('text',['It is not possible to import ' num2str(ndims) '-dimensional datasets !']);
+    return
+end
+
+handles=muppet_addDataset(handles,dataset);
+
+setHandles(handles);
+
+%%
+function refreshDatasetName
+
+dataset=gui_getUserData;
+    
+ipar=dataset.activeparameter;
+
+if dataset.parameters(ipar).parameter.adjustname
+    
+    parameter=dataset.parameters(ipar).parameter;
+    
+    if parameter.active
+
+        parstr=parameter.parametername;
+        if parameter.nrquantities>1
+            if strcmpi(parameter.quantity,'vector2d') || strcmpi(parameter.quantity,'vector3d')
+                parstr=[parameter.ucomponent '-' parameter.vcomponent];
+            end
+        end
+        
+        compstr='';
+        tstr='';
+        statstr='';
+        mstr='';
+        nstr='';
+        kstr='';
+        runidstr='';
+        
+        switch parameter.quantity
+          case{'vector2d','vector3d'}
+            if ~isempty(parameter.component)
+              if ~strcmpi(parameter.component,'vector')
+                switch parameter.component
+                  case{'vector'}
+                    str='vector';
+                  case{'vectorsplitxy'}
+                    str='vector (split x,y)';
+                  case{'vectorsplitmn'}
+                    str='vector (split m,n)';
+                  case{'magnitude'}
+                    str='magnitude';
+                  case{'angleradians'}
+                    str='angle (radians)';
+                  case{'angledegrees'}
+                    str='angle (degrees)';
+                  case{'xcomponent'}
+                    str='x component';
+                  case{'ycomponent'}
+                    str='y component';
+                  case{'mcomponent'}
+                    str='m component';
+                  case{'ncomponent'}
+                    str='n component';
+                end                
+                compstr=[ ' - ' str];
+              end
+            end
+        end
+        
+        if parameter.size(1)>0
+            if parameter.timestep>0
+                if ~isempty(parameter.times)
+                    tstr=[' - ' datestr(parameter.times(parameter.timestep),0)];
+                end
+            end
+        end
+        
+        if ~isempty(parameter.station)
+            statstr=[ ' - ' parameter.stations{parameter.stationnumber}];
+        end
+        
+        if ~isempty(parameter.m)
+            if parameter.m>0
+                mstr=[' - M=' num2str(parameter.m)];
+            end
+        end
+        
+        if ~isempty(parameter.n)
+            if parameter.n>0
+                nstr=[' - N=' num2str(parameter.n)];
+            end
+        end
+        
+        if ~isempty(parameter.k)
+            if parameter.k>0
+                kstr=[' - K=' num2str(parameter.k)];
+            end
+        end
+        
+        if isfield(parameter,'runid')
+            runidstr=[' - ' runid];
+        end
+        
+        dataset.name=[parstr compstr statstr tstr mstr nstr kstr runidstr];
+        
+    else
+        dataset.name='';
+    end
+    
+    gui_setUserData(dataset);
+    
+end
+
+%%
+function dataset=setDefaultGUIOptions(dataset)
+
+% Always at least one parameter
+dataset.timelist={''};
+
+for ii=1:length(dataset.parameters)
+    
+    if dataset.parameters(ii).parameter.active
+        
+        parameter=dataset.parameters(ii).parameter;
+        
+%         % Copy dataset fields to parameter fields, do NOT copy dimensions, as
+%         % these have been determined in reading of file
+%         fldnames=fieldnames(dataset);
+%         for j=1:length(fldnames)
+%             switch fldnames{j}
+%                 case{'dimensions'}
+%                 case{'parameters'} % Don't copy parameters, this creates an infinite loop that eats memory !!!
+%                 otherwise
+%                     parameter.(fldnames{j})=dataset.(fldnames{j});
+%             end
+%         end
+        
+        parameter.previousm=1;
+        parameter.mtext='';
+        parameter.mmaxtext='';
+        parameter.selectallm=0;
+        parameter.previousn=1;
+        parameter.ntext='';
+        parameter.nmaxtext='';
+        parameter.selectalln=0;
+        parameter.previousk=1;
+        parameter.ktext='';
+        parameter.kmaxtext='';
+        parameter.selectallk=0;
+        parameter.showtimes=0;
+        parameter.selectalltimes=0;
+        parameter.previoustimestep=1;
+        parameter.timesteptext='';
+        parameter.timestepsfromlist=1;
+        parameter.tmaxtext='';
+        parameter.timelist={''};
+        parameter.stationnumber=1;
+        parameter.previousstationnumber=1;
+        parameter.selectallstations=0;
+        parameter.stationsfromlist=1;
+        
+        if parameter.size(3)>0 && parameter.size(4)>0
+            parameter.m=0;
+            parameter.previousm=1;
+            parameter.mtext='1';
+            parameter.mmaxtext=num2str(parameter.size(3));
+            parameter.selectallm=1;
+            parameter.n=0;
+            parameter.previousn=1;
+            parameter.ntext='1';
+            parameter.nmaxtext=num2str(parameter.size(4));
+            parameter.selectalln=1;
+        end
+        
+        if parameter.size(1)>0
+            parameter.tmaxtext=num2str(parameter.size(1));
+            if ~isempty(parameter.times)
+                parameter.showtimes=1;
+            else
+                parameter.showtimes=0;
+            end
+            if parameter.size(3)==0 && parameter.size(4)==0
+                % Time series
+                parameter.timestep=0;
+                parameter.previoustimestep=1;
+                parameter.timesteptext='1';
+                parameter.selectalltimes=1;
+            else
+                % Map
+                parameter.timestep=1;
+                parameter.previoustimestep=1;
+                parameter.timesteptext='1';
+                parameter.selectalltimes=0;
+            end
+            if parameter.size(1)>0
+                if ~isempty(parameter.times)
+                    timelist=datestr(parameter.times,0);
+                    for it=1:length(parameter.times)
+                        parameter.timelist{it}=timelist(it,:);
+                    end
+                end
+            end
+        end
+        
+        if parameter.size(5)>0
+            parameter.k=1;
+            parameter.previousk=1;
+            parameter.ktext='1';
+            parameter.kmaxtext=num2str(parameter.size(5));
+            parameter.selectallk=0;
+        end
+        
+        if parameter.size(2)>0
+            parameter.stationnumber=1;
+            parameter.previousstationnumber=1;
+            parameter.selectallstations=0;
+            parameter.station=parameter.stations{1};
+            parameter.stationfromlist=1;
+        end
+        
+        switch lower(parameter.quantity)
+            case{'vector2d','vector3d'}
+                parameter.component='vector';
+            otherwise
+                parameter.component=[];
+        end
+
+        if parameter.nrblocks>0
+            parameter.block=1;
+        end
+
+        parameter.ucomponent='';
+        parameter.vcomponent='';
+        if parameter.nrquantities>1
+            parameter.component='vector';
+            parameter.ucomponent=dataset.parameters(1).parameter.parametername;
+            parameter.vcomponent=dataset.parameters(2).parameter.parametername;
+        end
+        
+        parameter.previousxcoordinate='pathdistance';
+        
+        dataset.parameters(ii).parameter=parameter;
+    end
+end
+
+dataset.activeparameter=1;
+

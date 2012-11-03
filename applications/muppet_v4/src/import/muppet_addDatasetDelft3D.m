@@ -45,32 +45,22 @@ function dataset=read(dataset,parameter)
 
 % Should move to xml file
 
-dataset.parametertimesequal=1;
-dataset.parameterstationsequal=1;
-dataset.parameterxequal=1;
-dataset.parameteryequal=1;
-dataset.parameterzequal=1;
-dataset.adjustname=1;
-
 switch dataset.filename(end-2:end)
     case{'map','ada'}
         % Delwaq
-        filterspec={'*.lga', '*.lga'};
-        [filename, pathname, filterindex] = uigetfile(filterspec);
-        dataset.lgafile=[pathname filename];
-        fid=qpfopen(dataset.filename,dataset.lgafile);
+        if isempty(dataset.lgafile)
+            % No lga file specified
+            filterspec={'*.lga', '*.lga'};
+            [filename, pathname, filterindex] = uigetfile(filterspec);
+            dataset.lgafile=[pathname filename];
+        end
+        fid=qpfopen(dataset.filename,lgafile);
     otherwise
         fid=qpfopen(dataset.filename);
-        
+        dataset.lgafile=[];
 end
-
-dataset.fid=fid;
 
 dataproperties=qpread(fid);
-
-for j=1:length(dataproperties)
-    dataset.parameternames{j}=dataproperties(j).Name;
-end
 
 if isempty(parameter)
     % Find info for all parameters
@@ -82,18 +72,7 @@ else
     i2=idata;
 end
 
-% Dimensions of datasets
-maxdims=[0 0 0 0 0];
-for idim=1:5
-    for ii=i1:i2
-        if dataproperties(ii).DimFlag(idim) && maxdims(idim)==0
-            sz=qpread(fid,dataproperties(ii).Name,'size');
-            maxdims=max(maxdims,sz);
-        end
-    end
-end
-
-% Coordinate System
+%% Coordinate System
 tp='projected';
 switch fid.SubType
     case{'Delft3D-trih'}
@@ -109,108 +88,73 @@ switch lower(deblank(tp))
         cs.type='projected';        
 end
 
-% Times
-times=[];
-switch fid.SubType
-    case{'Delft3D-trih'}
-        % Don't read times from time series as this can take forever and is
-        % not absolutely necessary at this stage
-    otherwise
-        % Find first parameter with times
-        for ii=i1:i2
-            if dataproperties(ii).DimFlag(1)>0
-                times=qpread(fid,dataproperties(ii).Name,'times');
-                break
-            end
-        end
-end
+ii=0;
 
-% Find first parameter with stations
-for ii=i1:i2
-    if dataproperties(ii).DimFlag(2)>0
-        stations=qpread(fid,dataproperties(ii).Name,'stations');
-        break
-    end
-end
-
-for ii=i1:i2
+for j=i1:i2
     
-    % Set default parameter properties
+    ii=ii+1;
+    
     par=[];
 
-    par.dimensions.coordinatesystem=cs;
+    % Set default parameter properties (just the dimensions)
+    par=muppet_setDefaultParameterDimensions(par);
     
-    par.dimensions.parametername=dataproperties(ii).Name;
-
-    par.dimensions.nrm=0;
-    par.dimensions.nrn=0;
-    par.dimensions.nrk=0;
-
-    par.dimensions.nrt=0;
-    par.dimensions.times=times;
+    par.fid=fid;
+    par.lgafile=dataset.lgafile;
+    par.dataproperties=dataproperties;    
+    par.parametertimesequal=1;
+    par.parameterstationsequal=1;
+    par.parameterxequal=1;
+    par.parameteryequal=1;
+    par.parameterzequal=1;
+    par.adjustname=1;
     
-    par.dimensions.nrstations=0;
-    par.dimensions.stations={''};
+    par.parametername=dataproperties(ii).Name;
     
-    par.dimensions.nrdomains=0;
-    par.dimensions.domains={''};
+    par.size=qpread(fid,1,dataproperties(ii),'size');
 
-    par.dimensions.nrsubfields=0;
-    par.dimensions.subfields={''};
+    % Times
+    if dataproperties(ii).DimFlag(1)>0 && par.size(1)<1000
+        % Only read times when there are less than 1,000
+        par.times=qpread(fid,dataproperties(ii),'times');
+    end
 
-    par.dimensions.datatype='scalar';
+    % Stations
+    if dataproperties(ii).DimFlag(2)>0
+        par.stations=qpread(fid,dataproperties(ii),'stations');
+    end
 
+    par.coordinatesystem=cs;
+    
     if sum(dataproperties(ii).DimFlag)>0
-        if dataproperties(ii).DimFlag(1)
-            par.dimensions.nrt=maxdims(1);
-            par.dimensions.times=times;
-        end
-        if dataproperties(ii).DimFlag(2)
-            par.dimensions.nrstations=maxdims(2);
-            par.dimensions.stations=stations;
-        end
-        if dataproperties(ii).DimFlag(3)
-            par.dimensions.nrm=maxdims(3);
-        end
-        if dataproperties(ii).DimFlag(4)
-            par.dimensions.nrn=maxdims(4);
-        end
-        if dataproperties(ii).DimFlag(5)
-            par.dimensions.nrk=maxdims(5);
-        end
-        par.dimensions.nval=dataproperties(ii).NVal;
+
+        par.nval=dataproperties(ii).NVal;
+
         switch dataproperties(ii).NVal
             case 0
-                par.dimensions.quantity='grid'; % Grids, open boundaries etc.
+                par.quantity='grid'; % Grids, open boundaries etc.
             case 1
-                par.dimensions.quantity='scalar';
+                par.quantity='scalar';
             case 2
-                par.dimensions.quantity='vector2d';
+                par.quantity='vector2d';
             case 3
-                par.dimensions.quantity='vector3d';
+                par.quantity='vector3d';
             case 4
-                par.dimensions.quantity='location';
+                par.quantity='location';
             case 5
-                par.dimensions.quantity='boolean'; % 0/1 Inactive cells, etc.
+                par.quantity='boolean'; % 0/1 Inactive cells, etc.
             otherwise
-                par.dimensions.quantity='unknown';
+                par.quantity='unknown';
         end
         active=1;
     else
         active=0;
     end
         
-    if isempty(parameter)
-        dataset.parameters(ii).parameter.dimensions=par.dimensions;
-        dataset.parameters(ii).parameter.active=active;
-    else
-        dataset.dimensions=par.dimensions;
-    end
+    dataset.parameters(ii).parameter=par;
+    dataset.parameters(ii).parameter.active=active;
     
 end
-
-dataset.nrparameters=length(dataproperties);
-
 
 %%
 function times=getTimes
@@ -230,55 +174,77 @@ end
 %%
 function dataset=import(dataset)
 
-parameter=dataset.parameter;
+fid=dataset.fid;
 
+parameter=dataset.parametername;
+
+for ii=1:length(dataset.dataproperties)
+    parameternames{ii}=dataset.dataproperties(ii).Name;
+end
+
+ipar=strmatch(lower(parameter),lower(parameternames),'exact');
+dataproperties=dataset.dataproperties(ipar);
+
+timestep=dataset.timestep;
 m=dataset.m;
 n=dataset.n;
 k=dataset.k;
-timestep=dataset.timestep;
+istation=0;
 
-if isempty(m)
-    if dataset.dimensions.nrm>0
-        m=0;
-    else
-        m=1;
-    end
-end
-if isempty(n)
-    if dataset.dimensions.nrn>0
-        n=0;
-    else
-        n=1;
-    end
-end
-if isempty(k)
-    if dataset.dimensions.nrk>0
-        k=0;
-    else
-        k=1;
-    end
-end
-if isempty(timestep)
-    if dataset.dimensions.nrt>0
-        timestep=0;
-    else
-        timestep=1;
-    end
-end
+% Check to see if all data along dimension if required
 
-fid=dataset.fid;
-
-%% Times
-if dataset.dimensions.nrt>0
-    % Check to see if times need to be loaded (only for partial time series)
-    if isempty(dataset.dimensions.times)
-        if dataset.timestep~=0
-            times=qpread(fid,parameter,'times');
+% Time
+if dataset.size(1)>0
+    % Times available
+    if ~isempty(dataset.time)
+        % Specific time given, determine time step        
+        if isempty(dataset.times)
+            % No times specified yet, read them first
+            dataset.times=qpread(fid,dataproperties,'times');
         end
-    else
-        times=dataset.dimensions.times;
+        timestep=find(dataset.times>dataset.time-1.0e-5 & dataset.times<dataset.time+1.0e-5);
+        if isempty(timestep)
+            str{1}=['Error! Time ' datestr(dataset.time,'yyyymmdd HHMMSS') ' not found in file ' dataset.filename '!'];
+            str{2}='Dataset skipped';
+            strv=strvcat(str{1},str{2});
+            uiwait(errordlg(strv,'Error','modal'));
+            muppet_writeErrorLog(str);
+            return
+        end
+    end
+    if isempty(timestep)
+        % All times selected
+        timestep=0;
+    end
+    if length(timestep)==1 && timestep~=0
+        dataset.time=dataset.times(timestep);
+    end
+    dataset.timestep=[];
+end
+
+%% Station (stations have already been read)
+if dataset.size(2)>0
+    % Find station number
+    if ~isempty(dataset.station)
+        istation=strmatch(dataset.station,dataset.stations,'exact');
     end
 end
+
+% M
+if dataset.size(3)>0 && isempty(m)
+    m=0;
+end
+
+% N
+if dataset.size(4)>0 && isempty(n)
+    n=0;
+end
+
+% K
+if dataset.size(5)>0 && isempty(k)
+    k=0; % All layers
+end
+
 
 % % Morphological times (in case of MORFAC)
 % morphtimes=[];
@@ -298,55 +264,12 @@ end
 
 % Find time (when given by time)
 
-itime=[];
-
-if ~isempty(dataset.time)
-    % Time given, determine time step
-    if dataset.dimensions.nrt>1
-        itime=find(times>dataset.time-1.0e-5 & times<dataset.time+1.0e-5);
-        timestep=itime;
-        if isempty(itime)
-            str{1}=['Error! Time ' datestr(dataset.time,'yyyymmdd HHMMSS') ' not found in file ' dataset.filename '!'];
-            str{2}='Dataset skipped';
-            strv=strvcat(str{1},str{2});
-            uiwait(errordlg(strv,'Error','modal'));
-            muppet_writeErrorLog(str);
-            return
-        end
-    else        
-        itime=1;
-        timestep=1;
-    end
-    if length(itime)>1
-        % Multiple times found
-        itime=itime(1);
-    end
-elseif ~isempty(timestep)
-    if dataset.dimensions.nrt>1
-        % Time step given, determine time
-        if timestep~=0 && length(timestep)==1 % What about multiple timesteps?
-            itime=timestep;
-            if itime>0
-                dataset.time=times(itime);
-            end
-        end
-    end
-end
-
-%% Stations (have already been read)
-% Find station number
-istation=0;
-if isfield(dataset,'station')
-    if ~isempty(dataset.station)
-        istation=strmatch(dataset.station,dataset.dimensions.stations,'exact');
-    end
-end
 
 %% Domains
 idomain=1;
 if isfield(dataset,'domain')
     if ~isempty(dataset.domain)
-        idomain=strmatch(dataset.domain,dataset.dimensions.domains,'exact');
+        idomain=strmatch(dataset.domain,dataset.domains,'exact');
     end
 end
 
@@ -398,103 +321,89 @@ end
 %     SedNr=0;
 % end
 
+% Determine shape of original data
 
-% Find out the shape of data that is required
-if ~isempty(dataset.station)
-    % Data from station
+shpmat=[0 0 0 0 0];
+% Time
+if dataset.size(1)>0
     if timestep==0 || length(timestep)>1
-        % Time varying
-        if k==0 || length(k)>1
-            tp='timestackstation';
-        else
-            tp='timeseriesstation';
-        end
+        shpmat(1)=2;
     else
-        % Profile
-        tp='profilestation';
+        shpmat(1)=1;
     end
-    % Set input arguments
-    switch tp
-        case{'timeseriesstation'}
-            arg{1}=timestep;
-            arg{2}=istation;
-        case{'timestackstation'}
-            arg{1}=timestep;
-            arg{2}=istation;
-            if dataset.dimensions.nrk>0
-                arg{3}=k;
-            end
-        case{'profilestation'}
-            arg{1}=itime;
-            arg{2}=istation;
-            if dataset.dimensions.nrk>0
-                arg{3}=k;
-            end
-    end
-else
-    % Data from matrix
-    if timestep==0 || length(timestep)>1
-        % Time-varying
-        if m==0 || length(m)>1
-            tp='timestackm';
-        elseif n==0 || length(n)>1
-            tp='timestackn';
-        elseif k==0 || length(k)>1
-            tp='timestackk';
-        else
-            tp='timeseries';
-        end            
+end
+% Stations
+if dataset.size(2)>0
+    if istation==0 || length(istation)>1
+        shpmat(2)=2;        
     else
-        % Constant
-        if m==0 || length(m)>1
-            if n==0 || length(n)>1
-                tp='map2d';
-            elseif k==0 || length(k)>1
-                tp='crossection2dm';
-            else
-                tp='crossection1dm';
-            end
-        elseif n==0 || length(n)>1
-            if k==0 || length(k)>1
-                tp='crossection2dn';
-            else
-                tp='crossection1dn';
-            end
-        else
-            tp='profile';
-        end
+        shpmat(2)=1;        
     end
-    % Set input arguments
-    if dataset.dimensions.nrt>0
-        arg{1}=timestep;
-        arg{2}=m;
-        arg{3}=n;
-        if dataset.dimensions.nrk>0
-            arg{4}=k;
-        end
+end
+% M
+if dataset.size(3)>0
+    if m==0 || length(m)>1
+        shpmat(3)=2;        
     else
-        arg{1}=m;
-        arg{2}=n;
-        if dataset.dimensions.nrk>0
-            arg{3}=k;
-        end
+        shpmat(3)=1;        
+    end
+end
+% N
+if dataset.size(4)>0
+    if n==0 || length(n)>1
+        shpmat(4)=2;        
+    else
+        shpmat(4)=1;        
+    end
+end
+% K
+if dataset.size(5)>0
+    if k==0 || length(k)>1
+        shpmat(5)=2;        
+    else
+        shpmat(5)=1;        
     end
 end
 
-% Load data
+%% Determine input arguments for qp_read
+
+inparg{1}=timestep;
+inparg{2}=istation;
+inparg{3}=m;
+inparg{4}=n;
+inparg{5}=k;
+
+arg=[];
+narg=0;
+for ii=1:5
+    if shpmat(ii)==1 || shpmat(ii)==2
+        narg=narg+1;
+        arg{narg}=inparg{ii};    
+    end
+end
+
+%% Load data
 switch length(arg)
     case 1
-        d=qpread(fid,idomain,parameter,'griddata',arg{1});
+        d=qpread(fid,idomain,dataproperties,'griddata',arg{1});
     case 2
-        d=qpread(fid,idomain,parameter,'griddata',arg{1},arg{2});
+        d=qpread(fid,idomain,dataproperties,'griddata',arg{1},arg{2});
     case{3}
-        d=qpread(fid,idomain,parameter,'griddata',arg{1},arg{2},arg{3});
+        d=qpread(fid,idomain,dataproperties,'griddata',arg{1},arg{2},arg{3});
     case{4}
-        d=qpread(fid,idomain,parameter,'griddata',arg{1},arg{2},arg{3},arg{4});
+        d=qpread(fid,idomain,dataproperties,'griddata',arg{1},arg{2},arg{3},arg{4});
 end
 
-% Determine component
-switch dataset.dimensions.quantity
+% Squeeze data
+fldnames=fieldnames(d);
+for ii=1:length(fldnames)
+    if isnumeric(d.(fldnames{ii}))
+        d.(fldnames{ii})=squeeze(d.(fldnames{ii}));
+    end
+end
+
+%% Determine component
+switch dataset.quantity
     case{'vector2d','vector3d'}
         if isempty(dataset.component)
             dataset.component='vector';
@@ -503,33 +412,32 @@ switch dataset.dimensions.quantity
         switch lower(dataset.component)
             case('magnitude')
                 d.Val=sqrt(d.XComp.^2+d.YComp.^2);
-                dataset.dimensions.quantity='scalar';
+                dataset.quantity='scalar';
             case('angle (radians)')
                 d.Val=mod(0.5*pi-atan2(d.YComp,d.XComp),2*pi);
-                dataset.dimensions.quantity='scalar';
+                dataset.quantity='scalar';
             case('angle (degrees)')
                 d.Val=mod(0.5*pi-atan2(d.YComp,d.XComp),2*pi)*180/pi;
-                dataset.dimensions.quantity='scalar';
+                dataset.quantity='scalar';
             case('m-component')
                 d.Val=d.XComp;
-                dataset.dimensions.quantity='scalar';
+                dataset.quantity='scalar';
             case('n-component')
                 d.Val=d.YComp;
-                dataset.dimensions.quantity='scalar';
+                dataset.quantity='scalar';
             case('x-component')
                 d.Val=d.XComp;
-                dataset.dimensions.quantity='scalar';
+                dataset.quantity='scalar';
             case('y-component')
                 d.Val=d.YComp;
-                dataset.dimensions.quantity='scalar';
+                dataset.quantity='scalar';
         end
 end
 
-% Compute y value for cross sections
+%% Compute y value for cross sections
 plotcoordinate=[];
-switch tp
-    case{'timestackm','timestackn','crossection2dm','crossection1dm','crossection2dn','crossection1dn'}
-        switch(lower(dataset.plotcoordinate))
+if (shpmat(3)==1 && shpmat(4)>1) || (shpmat(3)>1 && shpmat(4)==1) 
+        switch(lower(dataset.xcoordinate))
             case{'x'}
                 x=squeeze(d.X);
             case{'y'}
@@ -543,6 +451,8 @@ switch tp
         plotcoordinate=x;
 end
 
+%% Copy data to dataset structure
+
 % Set empty values
 dataset.x=[];
 dataset.x=[];
@@ -555,11 +465,14 @@ dataset.u=[];
 dataset.v=[];
 dataset.w=[];
 
-switch tp
-    case{'timeseriesstation','timeseries'}
+for ii=1:5    
+    shpstr(ii)=num2str(shpmat(ii));
+end
+switch shpstr
+    case{'21000','21001','20110','20111'}
         dataset.type='timeseries';
         dataset.x=d.Time;
-        switch dataset.dimensions.quantity
+        switch dataset.quantity
             case{'scalar'}
                 dataset.y=d.Val;
             case{'vector2d'}
@@ -569,11 +482,11 @@ switch tp
                 dataset.u=d.XComp;
                 dataset.v=d.YComp;
         end
-    case{'timestackstation','timestackk'}
+    case{'21002','20112'}
         dataset.type='timestack';
         dataset.x=d.Time;
         dataset.y=d.Z;
-        switch dataset.dimensions.quantity
+        switch dataset.quantity
             case{'scalar'}
                 dataset.y=d.Val;
             case{'vector2d'}
@@ -585,10 +498,11 @@ switch tp
                 dataset.u=d.XComp;
                 dataset.v=d.ZComp;
         end
-    case{'profilestation','profile'}
+    case{'11002','10112'}
+        % Profile
         dataset.type='xy';
         dataset.y=d.Z;
-        switch dataset.dimensions.quantity
+        switch dataset.quantity
             case{'scalar'}
                 dataset.x=d.Val;
             case{'vector2d'}
@@ -600,41 +514,39 @@ switch tp
                 dataset.u=d.XComp;
                 dataset.v=d.ZComp;
         end
-    case{'timestackm','timestackn'}
+    case{'20212','20122'}
         dataset.type='timestack';
         dataset.x=d.Time;
         dataset.y=plotcoordinate;
-        switch dataset.dimensions.quantity
+        switch dataset.quantity
             case{'scalar'}
                 dataset.y=d.Val;
             case{'vector2d'}
                 dataset.u=d.XComp;
                 dataset.v=d.YComp;
         end
-    case{'map2d'}
+    case{'10220','10221','00220','00221'}
         dataset.type='map2d';
         dataset.x=d.X;
         dataset.y=d.Y;
-        switch dataset.dimensions.quantity
+        switch dataset.quantity
             case{'scalar','boolean'}
                 dataset.z=d.Val;
             case{'grid'}
                 dataset.xdam=d.XDam;
                 dataset.ydam=d.YDam;
             case{'vector2d'}
-                % Why would you want this ?
                 dataset.u=d.XComp;
                 dataset.v=d.YComp;
             case{'vector3d'}
-                % Why would you want this ?
                 dataset.u=d.XComp;
                 dataset.v=d.YComp;
         end
-    case{'crossection2dm','crossection2dn'}
+    case{'10212','10122','00212','00122'}
         dataset.type='crossection2d';
         dataset.x=plotcoordinate;
         dataset.y=d.Z;
-        switch dataset.dimensions.quantity
+        switch dataset.quantity
             case{'scalar'}
                 dataset.z=d.Val;
             case{'vector2d'}
@@ -644,10 +556,10 @@ switch tp
                 dataset.u=d.XComp;
                 dataset.v=d.ZComp;
         end
-    case{'crossection1dm','crossection1dn'}
+    case{'10210','10120','00210','00120','10211','10121','00211','00121'}
         dataset.type='crossection1d';
         dataset.x=plotcoordinate;
-        switch dataset.dimensions.quantity
+        switch dataset.quantity
             case{'scalar'}
                 dataset.y=d.Val;
             case{'vector2d'}
@@ -665,18 +577,17 @@ dataset.xz=dataset.x;
 dataset.yz=dataset.y;
 dataset.zz=dataset.z;
 
-dataset.type=[dataset.type dataset.dimensions.quantity];
+dataset.type=[dataset.type dataset.quantity];
 
-if isempty(dataset.time) || dataset.dimensions.nrt<=1
+% z or d
+if isfield(dataproperties,'Loc')
+    dataset.location=dataproperties.Loc;
+end
+
+if dataset.size(1)==0 || (dataset.size(1)>1 && (timestep==0 || length(timestep)>1))
     dataset.tc='c';
 else
     dataset.tc='t';
-    dataset.availabletimes=times;
+    dataset.availabletimes=dataset.times;
 %    dataset.availablemorphtimes=data.morphtimes;
-end
-
-if isfield(dataset,'time')
-    if isfield(dataset,'timestep')
-        dataset=rmfield(dataset,'timestep');
-    end
 end

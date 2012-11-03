@@ -57,6 +57,9 @@
     </element>
     <element>
       <keyword>FieldThinningFactor1</keyword>
+      <check>
+        <operator>ne</operator>
+      </check>
       <style>edit</style>
       <variable>fieldthinningfactor1</variable>
       <default>1</default>
@@ -76,6 +79,9 @@
     </element>
     <element>
       <keyword>FieldThinningFactor2</keyword>
+      <check>
+        <operator>ne</operator>
+      </check>
       <style>edit</style>
       <variable>fieldthinningfactor2</variable>
       <default>1</default>
@@ -95,6 +101,9 @@
     </element>
     <element>
       <keyword>FieldThinningFactor</keyword>
+      <check>
+        <operator>ne</operator>
+      </check>
       <style>edit</style>
       <variable>fieldthinningfactor</variable>
       <default>1</default>

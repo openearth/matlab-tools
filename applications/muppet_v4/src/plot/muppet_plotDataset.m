@@ -76,12 +76,14 @@ switch lower(plt.datasets(id).dataset.plotroutine)
         DrawCurvedArrow(Data,Ax,Plt,handles.DefaultColors,opt2,2);
     case{'textbox','rectangle','ellipse','arrow','doublearrow','line'}
         muppet_addAnnotation(handles.figures(ifig).figure,ifig,isub,id);
+    case {'plottidalellipse'}
+        handles=muppet_plotTidalEllipse(handles,ifig,isub,id);
 end
 
 clrbar=[];
 if opt.plotcolorbar
     opt.shadesbar=0;
-    clrbar=muppet_setColorBar(handles,ifig,isub,nr);
+    clrbar=muppet_setColorBar(handles.figures(ifig).figure,ifig,isub,nr);
 end
 opt.colorbarhandle=clrbar;
 

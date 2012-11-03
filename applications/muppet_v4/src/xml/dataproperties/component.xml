@@ -6,7 +6,7 @@
   <element>
     <style>popupmenu</style>
     <text>Component</text>
-    <variable>parameters(s.activeparameter).parameter.component</variable>
+    <variable>component</variable>
     <type>string</type>
     <tooltipstring>Select component</tooltipstring>
     <position>60 0 270 20</position>
@@ -37,12 +37,12 @@
       <action>enable</action>
       <checkfor>any</checkfor>
       <check>
-        <variable>parameters(s.activeparameter).parameter.dimensions.datatype</variable>
+        <variable>quantity</variable>
         <value>vector2d</value>
         <operator>eq</operator>
       </check>
       <check>
-        <variable>parameters(s.activeparameter).parameter.dimensions.datatype</variable>
+        <variable>quantity</variable>
         <value>vector3d</value>
         <operator>eq</operator>
       </check>

@@ -225,22 +225,28 @@ function plt=changeall(plt)
 
 switch plt.projection
     case{'equirectangular'}
+        [plt.xmin,plt.xmax,plt.xtick]=roundlimits(plt.xmin,plt.xmax);
+        [plt.ymin,plt.ymax,plt.ytick]=roundlimits(plt.ymin,plt.ymax);
         plt=setprojectionlimits(plt);
+        plt=adjustprojectionlimits(plt);
         plt.xmin=plt.xminproj;
         plt.xmax=plt.xmaxproj;
         plt.ymin=plt.yminproj;
         plt.ymax=plt.ymaxproj;
+    case{'mercator'}
         [plt.xmin,plt.xmax,plt.xtick]=roundlimits(plt.xmin,plt.xmax);
         [plt.ymin,plt.ymax,plt.ytick]=roundlimits(plt.ymin,plt.ymax);
-    case{'mercator'}
         plt=setprojectionlimits(plt);
+        plt=adjustprojectionlimits(plt);
         plt.xmin=plt.xminproj;
         plt.xmax=plt.xmaxproj;
         plt.ymin=invmerc(plt.yminproj);
         plt.ymax=invmerc(plt.ymaxproj);
+    case{'albers'}
         [plt.xmin,plt.xmax,plt.xtick]=roundlimits(plt.xmin,plt.xmax);
         [plt.ymin,plt.ymax,plt.ytick]=roundlimits(plt.ymin,plt.ymax);
-    case{'albers'}
+        plt=setprojectionlimits(plt);
+        plt=adjustprojectionlimits(plt);
         plt.projection='albers';
         plt.labda0=0.5*(plt.xmin+plt.xmax);
         plt.phi0=0.5*(plt.ymin+plt.ymax);
@@ -250,8 +256,6 @@ switch plt.projection
         [plt.xmin,plt.ymin]=albers(plt.xminproj,plt.yminproj,plt.labda0,plt.phi0,plt.phi1,plt.phi2,'inverse');
         [plt.xmax,dummy]=albers(plt.xmaxproj,plt.yminproj,plt.labda0,plt.phi0,plt.phi1,plt.phi2,'inverse');
         [dummy,plt.ymax]=albers(plt.xminproj,plt.ymaxproj,plt.labda0,plt.phi0,plt.phi1,plt.phi2,'inverse');
-        [x1dummy,x2dummy,plt.xtick]=roundlimits(plt.xmin,plt.xmax);
-        [y1dummy,y2dummy,plt.ytick]=roundlimits(plt.ymin,plt.ymax);
 end
 
 plt=computescale(plt);

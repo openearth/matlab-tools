@@ -6,7 +6,7 @@
     <element>
     <style>popupmenu</style>
     <text>X Axis</text>
-    <variable>parameters(s.activeparameter).parameter.xcoordinate</variable>
+    <variable>xcoordinate</variable>
     <type>string</type>
     <tooltipstring>Select x axis</tooltipstring>
     <position>60 0 270 20</position>
@@ -20,12 +20,12 @@
     <listvalue>reversepathdistance</listvalue>
     <listvalue>xcoordinate</listvalue>
     <listvalue>ycoordinate</listvalue>
-    <defaultvalue>xcoordinate</defaultvalue>
+    <defaultvalue>pathdistance</defaultvalue>
     <dependency>
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>parameters(s.activeparameter).parameter.xcoordinate</variable>
+        <variable>xcoordinate</variable>
         <value>isempty</value>
         <operator>ne</operator>
       </check>

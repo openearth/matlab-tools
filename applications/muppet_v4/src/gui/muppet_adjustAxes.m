@@ -177,8 +177,8 @@ switch plt.type
             case{'map2d','3d'}
                 
                 if newplot
-                    if isfield(data.dimensions,'coordinatesystem')
-                        plt.coordinatesystem=data.dimensions.coordinatesystem;
+                    if isfield(data,'coordinatesystem')
+                        plt.coordinatesystem=data.coordinatesystem;
                     else
                         plt.coordinatesystem.name='unspecified';                        
                         plt.coordinatesystem.type='projected';
@@ -186,7 +186,7 @@ switch plt.type
                     switch plt.coordinatesystem.type
                         case{'geographic'}
                             plt.projection='mercator';
-                            plt.projection='albers';
+%                            plt.projection='albers';
                             plt.labda0=0.5*(xmin+xmax);
                             plt.labda0=xmin-10;
                             plt.phi0=0.5*(ymin+ymax);

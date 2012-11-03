@@ -2,7 +2,7 @@ function muppet_preview
 
 handles=getHandles;
 
-if handles.mode==1
+%if handles.mode==1
     wb = waitbox('Preparing figure...');
     try
         handles=muppet_makeFigure(handles,handles.activefigure,'preview');
@@ -32,9 +32,9 @@ if handles.mode==1
 %    figure(handles.activefigure);    
     delete('curvecpos.*.dat');
     muppet_setPlotEdit(0);
-else
-    handles.Figure(888)=handles.Figure(handles.ActiveFigure);
-    handles.Figure(888).Axis(1)=handles.Figure(handles.ActiveFigure).Axis(1);
-    handles.Figure(888).Axis(1).Plot=handles.Figure(handles.ActiveFigure).Axis(1).Plot;
-    handles=GUI_DataProcessing('handles',handles);
-end
+% else
+%     handles.Figure(888)=handles.Figure(handles.ActiveFigure);
+%     handles.Figure(888).Axis(1)=handles.Figure(handles.ActiveFigure).Axis(1);
+%     handles.Figure(888).Axis(1).Plot=handles.Figure(handles.ActiveFigure).Axis(1).Plot;
+%     handles=GUI_DataProcessing('handles',handles);
+% end

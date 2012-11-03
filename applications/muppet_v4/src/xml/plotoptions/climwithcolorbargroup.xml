@@ -96,7 +96,6 @@
         </check>
       </dependency>
     </element>
-
     <element>
       <keyword>ColorMap</keyword>
       <style>popupmenu</style>
@@ -109,17 +108,26 @@
       <tooltipstring>Select color map</tooltipstring>
       <position>60 10 70 20</position>
     </element>
-
     <element>
       <keyword>ColorBar</keyword>
       <style>checkbox</style>
       <variable>plotcolorbar</variable>
+      <type>boolean</type>
       <default>0</default>
       <text>Color Bar</text>
       <tooltipstring>Separate color bar for this dataset</tooltipstring>
       <position>160 10 70 20</position>
     </element>
-
+    <element>
+      <keyword>ColorBarPosition</keyword>
+      <variable>colorbar.position</variable>
+      <type>real</type>
+      <check>
+        <variable>plotcolorbar</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </element>
     <element>
       <style>pushbutton</style>
       <callback>muppet_editColorBar</callback>
@@ -136,7 +144,6 @@
         </check>
       </dependency>
     </element>
-
     <element>
       <variable>customcontours</variable>
       <type>real</type>
@@ -148,8 +155,5 @@
         <operator>eq</operator>
       </check>
     </element>
-    
-    
-    
   </plotoption>
 </root>

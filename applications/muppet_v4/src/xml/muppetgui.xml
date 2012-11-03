@@ -372,10 +372,29 @@
     <text>Data Properties</text>
   </element>
   <element>
-    <tag>datasettext</tag>
     <style>text</style>
-    <position>30 405 260 70</position>
-    <variable>datasettext</variable>
+    <position>25 460 260 15</position>
+    <variable>datasettext1</variable>
+  </element>
+  <element>
+    <style>text</style>
+    <position>25 445 260 15</position>
+    <variable>datasettext2</variable>
+  </element>
+  <element>
+    <style>text</style>
+    <position>25 430 260 15</position>
+    <variable>datasettext3</variable>
+  </element>
+  <element>
+    <style>text</style>
+    <position>25 415 260 15</position>
+    <variable>datasettext4</variable>
+  </element>
+  <element>
+    <style>text</style>
+    <position>25 400 260 15</position>
+    <variable>datasettext5</variable>
   </element>
   <element>
     <tag>subplotpropertiespanel</tag>
@@ -386,7 +405,7 @@
   <element>
     <tag>subplotpositiontext</tag>
     <style>text</style>
-    <position>330 455 40 20</position>
+    <position>330 460 40 20</position>
     <text>Position</text>
     <dependency>
       <action>enable</action>
@@ -401,7 +420,7 @@
   <element>
     <tag>subplotsizetext</tag>
     <style>text</style>
-    <position>380 455 40 20</position>
+    <position>385 460 40 20</position>
     <text>Size</text>
     <dependency>
       <action>enable</action>
@@ -1780,8 +1799,45 @@
   <element>
     <tag>textcoordinatesystemname</tag>
     <style>text</style>
-    <position>690 283</position>
-    <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.coordinatesystem.text</variable>
+    <position>700 283</position>
+    <prefix>Name : </prefix> 
+    <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.coordinatesystem.name</variable>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type</variable>
+        <value>map2d</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <tag>radiocoordinatesystemprojected</tag>
+    <style>radiobutton</style>
+    <position>700 263</position>
+    <text>Projected</text>
+    <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.coordinatesystem.type</variable>
+    <value>projected</value>
+    <enable>0</enable>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type</variable>
+        <value>map2d</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <tag>radiocoordinatesystemgeographic</tag>
+    <style>radiobutton</style>
+    <position>770 263</position>
+    <text>Geographic</text>
+    <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.coordinatesystem.type</variable>
+    <value>geographic</value>
+    <enable>0</enable>
     <dependency>
       <action>visible</action>
       <checkfor>all</checkfor>

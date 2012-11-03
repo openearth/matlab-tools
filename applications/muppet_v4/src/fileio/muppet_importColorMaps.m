@@ -1,6 +1,6 @@
 function colormaps=muppet_importColorMaps(pth)
 
-a=dir([pth 'settings' filesep 'colormaps' filesep '*.clrmap']);
+a=dir([pth '*.clrmap']);
 nr=length(a);
  
 for i=1:nr
@@ -9,7 +9,7 @@ for i=1:nr
  
     colormaps(i).name=name(1:end-7);
 
-    fid=fopen([pth 'settings' filesep 'colormaps' filesep name]);
+    fid=fopen([pth filesep name]);
  
     tx0=fgets(fid);
     tx0=fgets(fid);

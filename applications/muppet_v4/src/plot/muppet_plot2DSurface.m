@@ -8,7 +8,8 @@ opt=plt.datasets(id).dataset;
 data.x=data.x(1:opt.fieldthinningfactor1:end,1:opt.fieldthinningfactor1:end);
 data.y=data.y(1:opt.fieldthinningfactor1:end,1:opt.fieldthinningfactor1:end);
 data.z=data.z(1:opt.fieldthinningfactor1:end,1:opt.fieldthinningfactor1:end);
-data.zz=data.zz(1:opt.fieldthinningfactor1:end,1:opt.fieldthinningfactor1:end);
+data.zz=data.z(1:opt.fieldthinningfactor1:end,1:opt.fieldthinningfactor1:end);
+%data.zz=data.zz(1:opt.fieldthinningfactor1:end,1:opt.fieldthinningfactor1:end);
 
 if plt.axesequal==0
     vertscale=(plt.ymax-plt.ymin)/plt.position(4);

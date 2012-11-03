@@ -62,9 +62,8 @@ for ii=1:length(flist)
     handles.plottype(ii).plottype=xml.plottype(1).plottype;
 end
 
-
 %% Frames (also do str2num here, which is not consistent with other xml files, but that's okay)
-dr=[handles.muppetpath 'settings\frames\'];
+dr=[handles.settingsdir 'frames' filesep];
 flist=dir([dr '*.xml']);
 n=0;
 for ii=1:length(flist)

@@ -12,7 +12,7 @@
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>parameters(s.activeparameter).parameter.dimensions.nrn</variable>
+        <variable>size(4)</variable>
         <value>0</value>
         <operator>gt</operator>
       </check>
@@ -23,14 +23,14 @@
     <callback>muppet_datasetGUI</callback>
     <option1>editn</option1>
     <option2>selectall</option2>
-    <variable>parameters(s.activeparameter).parameter.gui.selectalln</variable>
+    <variable>selectalln</variable>
     <position>70 0 35 20</position>
     <text>All</text>
     <dependency>
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>parameters(s.activeparameter).parameter.dimensions.nrn</variable>
+        <variable>size(4)</variable>
         <value>0</value>
         <operator>gt</operator>
       </check>
@@ -41,19 +41,19 @@
     <callback>muppet_datasetGUI</callback>
     <option1>editn</option1>
     <option2>edit</option2>
-    <variable>parameters(s.activeparameter).parameter.gui.ntext</variable>
+    <variable>ntext</variable>
     <type>string</type>
     <position>110 0 190 20</position>
     <dependency>
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>parameters(s.activeparameter).parameter.dimensions.nrn</variable>
+        <variable>size(4)</variable>
         <value>0</value>
         <operator>gt</operator>
       </check>
       <check>
-        <variable>parameters(s.activeparameter).parameter.gui.selectalln</variable>
+        <variable>selectalln</variable>
         <value>0</value>
         <operator>eq</operator>
       </check>
@@ -61,13 +61,13 @@
   </element>
   <element>
     <style>text</style>
-    <variable>parameters(s.activeparameter).parameter.gui.nmaxtext</variable>
+    <variable>nmaxtext</variable>
     <position>305 0 30 20</position>
     <dependency>
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>parameters(s.activeparameter).parameter.dimensions.nrn</variable>
+        <variable>size(4)</variable>
         <value>0</value>
         <operator>gt</operator>
       </check>

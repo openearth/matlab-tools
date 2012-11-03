@@ -1,58 +1,48 @@
-function opt=muppet_setDefaultDatasetProperties(varargin)
+function dataset=muppet_setDefaultDatasetProperties(dataset)
 
-opt.combineddataset=0;
+%% General
+dataset.name='';
+dataset.filename='';
+dataset.filetype='';
+dataset.combineddataset=0;
+dataset.runid=[];
 
-opt.parameter=[];
-opt.datatype=[];
+%% Data
+dataset.x=[];
+dataset.y=[];
+dataset.z=[];
+dataset.xz=[];
+dataset.yz=[];
+dataset.zz=[];
+dataset.u=[];
+dataset.v=[];
+dataset.w=[];
+dataset.times=[];
 
-opt.x=[];
-opt.y=[];
-opt.z=[];
-opt.xz=[];
-opt.yz=[];
-opt.zz=[];
+%% Options
+dataset.parameter='';
+dataset.ucomponent='';
+dataset.vcomponent='';
+dataset.m=[];
+dataset.n=[];
+dataset.k=[];
+dataset.timestep=[];
+dataset.block=[];
+dataset.time=[];
+dataset.station=[];
+dataset.domain=[];
+dataset.subfield=[];
+dataset.xcoordinate='pathdistance';
+dataset.ycoordinate=[];
+dataset.quantity=[];
+dataset.component=[];
+dataset.tc='c';
+dataset.nrquantities=1;
 
-% M
-opt.m=[];
-
-% N
-opt.n=[];
-
-% K
-opt.k=[];
-
-% Times
-opt.timestep=[];
-opt.block=[];
-opt.time=[];
-
-% Stations
-opt.station=[];
-
-% Domain
-opt.domain=[];
-
-% Subfield
-opt.subfield=[];
-
-opt.xcoordinate=[];
-opt.ycoordinate=[];
-
-opt.component=[];
-
-% File
-opt.fid=[];
-
-% Parameters
-opt.nrparameters=0;
-
-% Delft3D
-opt.lgafile=[];
-
-% GUI
-opt.adjustname=1;
-opt.parametertimesequal=0;
-opt.parameterstationsequal=0;
-opt.paramaterxequal=0;
-opt.paramateryequal=0;
-opt.paramaterzequal=0;
+% % GUI
+% dataset.adjustname=1;
+% dataset.parametertimesequal=0;
+% dataset.parameterstationsequal=0;
+% dataset.paramaterxequal=0;
+% dataset.paramateryequal=0;
+% dataset.paramaterzequal=0;

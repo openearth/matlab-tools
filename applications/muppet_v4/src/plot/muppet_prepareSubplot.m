@@ -13,7 +13,7 @@ switch lower(plt.type)
             axes(leftaxis);
         end
     case {'xy'}
-        muppet_setXYPlot(Fig,Ax);
+        muppet_setXYPlot(handles,ifig,isub);
         if plt.rightaxis
             set(gca,'Color','white');
             rightaxis=axes;

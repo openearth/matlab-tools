@@ -2,7 +2,7 @@ function muppet_giveWarning(varargin)
 
 h=getHandles;
 
-imgpath=[h.muppetpath 'settings' filesep 'icons' filesep];
+imgpath=[h.settingsdir 'icons' filesep];
 fig = MakeNewWindow('Warning',[260 272],'modal',[imgpath 'deltares.gif']);
 cl=get(gcf,'Color');
 txt=varargin{2};

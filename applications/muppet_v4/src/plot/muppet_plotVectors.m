@@ -22,43 +22,45 @@ z=zeros(size(x));
 z=z+500;
 w=zeros(size(u));
 
-% if Ax.AxesEqual==0
-%     VertScale=(Ax.YMax-Ax.YMin)/Ax.Position(4);
-%     HoriScale=(Ax.XMax-Ax.XMin)/Ax.Position(3);
+% if plt.AxesEqual==0
+%     VertScale=(plt.YMax-plt.YMin)/plt.Position(4);
+%     HoriScale=(plt.XMax-plt.XMin)/plt.Position(3);
 %     multiY=HoriScale/VertScale;
 % else
 %     multiY=1.0;
 % end
-multiY=1.0;
+multiy=1.0;
 multiv=opt.verticalvectorscaling;
-opt.unitvector=1000;
+
 if strcmpi(opt.plotroutine,'plotvectors')
-    qv=quiver3(x,multiY*y,z,opt.unitvector*u,multiv*opt.unitvector*v,w,0);hold on;
+    % Regular vectors
+    qv=quiver3(x,multiy*y,z,opt.unitvector*u,multiv*opt.unitvector*v,w,0);hold on;
     set(qv,'Color',colorlist('getrgb','color',opt.vectorcolor));
 else
-    if ~opt.PlotColorBar
-        if strcmpi(Ax.ContourType,'limits')
-            col=[Ax.CMin:(Ax.CMax-Ax.CMin)/64:Ax.CMax];
+    % Colored vectors
+    if ~opt.plotcolorbar
+        if strcmpi(plt.contourtype,'limits')
+            col=plt.cmin:(plt.cmax-plt.cmin)/64:plt.cmax;
         else
-            col=Ax.Contours;
+            col=plt.contours;
         end
         ncol=size(col,2)-1;
-        clmap=GetColors(handles.ColorMaps,Ax.ColMap,ncol);
+        clmap=muppet_getColors(handles.colormaps,opt.colormap,ncol);
         colormap(clmap);
         caxis([col(2) col(end-1)]);
-        qv=quiver3(x,multiY*y,z,opt.UnitVector*u,multiV*opt.UnitVector*v,w,0);hold on;
+        qv=quiver3(x,multiy*y,z,opt.unitvector*u,multiv*opt.unitvector*v,w,0);hold on;
         qv=mp_colquiver(qv,sqrt(u.^2+v.^2));
     else
         colorfix;
-        col=[opt.CMin:(opt.CMax-opt.CMin)/64:opt.CMax];
+        col=opt.cmin:(opt.cmax-opt.cmin)/64:opt.cmax;
         ncol=size(col,2)-1;
-        clmap=GetColors(handles.ColorMaps,opt.ColMap,ncol);
+        clmap=muppet_getColors(handles.colormaps,opt.colormap,ncol);
         colormap(clmap);
         caxis([col(2) col(end-1)]);
-        qv=quiver3(x,multiY*y,z,opt.UnitVector*u,multiV*opt.UnitVector*v,w,0);hold on;
+        qv=quiver3(x,multiy*y,z,opt.unitvector*u,multiv*opt.unitvector*v,w,0);hold on;
         qv=mp_colquiver(qv,sqrt(u.^2+v.^2));
         colorfix;
-        clmap=GetColors(handles.ColorMaps,Ax.ColMap,ncol);
+        clmap=muppet_getColors(handles.colormaps,plt.colormap,ncol);
         colormap(clmap);
     end
 end

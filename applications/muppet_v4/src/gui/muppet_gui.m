@@ -1,10 +1,12 @@
 function muppet_gui(varargin)
 
 if isempty(varargin)
+    newSession('firsttime');
     handles=getHandles;
     gui_newWindow(handles,'xmldir',handles.xmldir,'xmlfile','muppetgui.xml','modal',0, ...
         'getfcn',@getHandles,'setfcn',@setHandles,'tag','muppetgui','Color',[0.941176 0.941176 0.941176]);
-    newSession;
+    muppet_refreshColorMap(handles);
+    muppet_updateGUI;
 else
     opt=lower(varargin{1});
     switch opt
@@ -86,18 +88,30 @@ else
 end
 
 %%
-function newSession
+function newSession(varargin)
+if isempty(varargin)
+    % gui already open
+    iopt=1;
+else
+    % gui has not yet been opened
+    iopt=0;
+end
 handles=getHandles;
-filename=[handles.muppetpath 'settings' filesep 'layouts' filesep 'default.mup'];
+filename=[handles.settingsdir 'layouts' filesep 'default.mup'];
 handles.sessionfile='';
 [handles,ok]=muppet_newSession(handles,filename);
 if ok
     handles=muppet_updateDatasetNames(handles);
+    handles=muppet_updateFigureNames(handles);
     handles=muppet_updateSubplotNames(handles);
     handles=muppet_updateDatasetInSubplotNames(handles);
     handles=muppet_initializeAnimationSettings(handles);
-    setHandles(handles);
-    muppet_updateGUI;
+    setHandles(handles);    
+    if iopt
+        muppet_refreshColorMap(handles);
+        selectDataset;
+        muppet_updateGUI;
+    end
 end
 
 %%
@@ -113,6 +127,7 @@ if pathname~=0
         handles=muppet_updateSubplotNames(handles);
         handles=muppet_updateDatasetInSubplotNames(handles);
         setHandles(handles);
+        selectDataset;
         muppet_updateGUI;
     end
 else
@@ -148,7 +163,7 @@ end
 function importLayout
 
 handles=getHandles;
-[filename pathname]=uigetfile([handles.muppetpath 'settings' filesep 'layouts' filesep '*.mup']);
+[filename pathname]=uigetfile([handles.settingsdir 'layouts' filesep '*.mup']);
 if pathname~=0
     handles.nrfigures=0;
     handles.figures=[];
@@ -185,9 +200,36 @@ setHandles(handles);
 %%
 function selectDataset
 handles=getHandles;
-txt1=['Name : ' handles.datasets(handles.activedataset).dataset.name];
-txt2=['Type : ' handles.datasets(handles.activedataset).dataset.type];
-handles.datasettext={txt1,txt2};
+if handles.nrdatasets>0
+    idtype=muppet_findIndex(handles.datatype,'datatype','name',handles.datasets(handles.activedataset).dataset.type);
+    [pathname,filename,ext]=fileparts(handles.datasets(handles.activedataset).dataset.filename);
+    currentpath=pwd;
+    if ~strcmpi(currentpath,pathname)
+        filename=[pathname filename ext];
+    else
+        filename=[filename ext];
+    end
+    txt1=['Name : ' handles.datasets(handles.activedataset).dataset.name];
+    txt2=['File: ' filename];
+    txt3=['Type : ' handles.datatype(idtype).datatype.longname];
+    if isempty(handles.datasets(handles.activedataset).dataset.time)
+        txt4='';
+    else
+        txt4=['Time : ' datestr(handles.datasets(handles.activedataset).dataset.time)];
+    end
+    txt5='';
+else
+    txt1='';
+    txt2='';
+    txt3='';
+    txt4='';
+    txt5='';
+end
+handles.datasettext1=txt1;
+handles.datasettext2=txt2;
+handles.datasettext3=txt3;
+handles.datasettext4=txt4;
+handles.datasettext5=txt5;
 setHandles(handles);
 
 %%
@@ -201,6 +243,7 @@ end
 if pathname~=0
     muppet_datasetGUI('makewindow','filename',[pathname filename],'filetype',handles.filetype(filterindex).filetype.name);
 end
+selectDataset;
 
 %%
 function deleteDataset
@@ -228,6 +271,7 @@ if ok
     [handles.datasets handles.activedataset handles.nrdatasets] = UpDownDeleteStruc(handles.datasets, handles.activedataset, 'delete');
     handles=muppet_updateDatasetNames(handles);
     setHandles(handles);
+    selectDataset;
 end
 
 %%
@@ -241,7 +285,10 @@ function selectSubplot
 handles=getHandles;
 handles=muppet_updateDatasetInSubplotNames(handles);
 handles.activedatasetinsubplot=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.activedataset;
-handles=muppet_refreshColorMap(handles);
+muppet_refreshColorMap(handles);
+txt1=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.coordinatesystem.name;
+txt2=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.coordinatesystem.type;
+handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.coordinatesystem.text=[txt1 ' - ' txt2];
 setHandles(handles);
 
 %%
@@ -492,7 +539,7 @@ else
 %     set(handles.EditCMin,'BackgroundColor',[1 1 1]);
 %     set(handles.EditCMax,'BackgroundColor',[1 1 1]);
 %     set(handles.EditCStep,'BackgroundColor',[1 1 1]);
-    handles=muppet_refreshColorMap(handles);
+    muppet_refreshColorMap(handles);
 end
 
 setHandles(handles);
@@ -568,6 +615,7 @@ setHandles(handles);
 
 %%
 function exportFigure
+handles=getHandles;
 muppet_exportFigure(handles,handles.activefigure,'export');
 
 %%

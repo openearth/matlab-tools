@@ -8,7 +8,7 @@ if nargin==3
     delete(h);
     plt=fig.subplots(isub).subplot;
 else
-    % Color bar belonging to data set in subplot
+    % Color bar belonging to dataset in subplot
     kk=varargin{1};
     h=findobj(gcf,'Tag','colorbar','UserData',[ifig,isub,kk]);
     % Delete existing color bar
@@ -37,7 +37,15 @@ clmap=muppet_getColors(handles.colormaps,plt.colormap,nocol);
 clrbar=axes;
  
 if plt.colorbar.type==1
- 
+
+    if isempty(plt.colorbar.position)
+        pos(1)=fig.subplots(isub).subplot.position(1)+1;
+        pos(2)=fig.subplots(isub).subplot.position(2)+1;
+        pos(3)=0.5;
+        pos(4)=fig.subplots(isub).subplot.position(4)-2;
+        plt.colorbar.position=pos;
+    end
+    
     if plt.colorbar.position(4)>plt.colorbar.position(3)
  
         for i=1:nocol

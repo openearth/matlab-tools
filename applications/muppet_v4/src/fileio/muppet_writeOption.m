@@ -99,6 +99,10 @@ if isfield(info,'check')
                     if checkvariable>checkvalue
                         iok=0;
                     end
+                case{'notempty'}
+                    if isempty(deblank(checkvariable))
+                        iok=0;
+                    end
             end
         end
     end

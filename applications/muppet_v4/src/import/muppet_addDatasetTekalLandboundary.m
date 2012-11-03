@@ -5,13 +5,13 @@ switch lower(opt)
     % Do as much as possible here and not in import function
     dataset.adjustname=0;
     [pathstr,name,ext]=fileparts(dataset.filename);
-%    dataset.name=name;
+    dataset.name=name;
   case{'import'}
     [x,y]=landboundary('read',dataset.filename);
     dataset.x=x;
     dataset.y=y;
     dataset.type = 'polyline2d';
     dataset.tc='c';
-    dataset.dimensions.coordinatesystem.name='WGS 84';
-    dataset.dimensions.coordinatesystem.type='geographic';    
+%     dataset.dimensions.coordinatesystem.name='WGS 84';
+%     dataset.dimensions.coordinatesystem.type='geographic';    
 end

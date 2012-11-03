@@ -210,14 +210,16 @@ for ifig=1:handles.nrfigures
 
     % Set frame text (if not already set)
     if isfield(figr,'frame')
-       ifr=strmatch(lower(figr.frame),lower(handles.frames.names),'exact');
-       if ~isempty(ifr)
-           for itxt=1:length(handles.frames.frame(ifr).frame.text)
-               if isempty(figr.frametext(itxt).frametext.text)
-                   figr.frametext(itxt).frametext.text=' ';
-               end
-           end
-       end
+        ifr=strmatch(lower(figr.frame),lower(handles.frames.names),'exact');
+        if ~isempty(ifr)
+            if isfield(handles.frames.frame(ifr).frame,'text')
+                for itxt=1:length(handles.frames.frame(ifr).frame.text)
+                    if isempty(figr.frametext(itxt).frametext.text)
+                        figr.frametext(itxt).frametext.text=' ';
+                    end
+                end
+            end
+        end
     end
 
     % Output settings

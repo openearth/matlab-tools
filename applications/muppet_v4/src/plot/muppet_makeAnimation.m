@@ -3,9 +3,9 @@ function muppet_makeAnimation(handles,ifig)
 animationsettings=handles.animationsettings;
 
 animationsettings.framerate=20;
-animationsettings.starttime=datenum(2010,7,22);
-animationsettings.stoptime=datenum(2010,7,28,0,0,0);
-animationsettings.timestep=3600;
+% animationsettings.starttime=datenum(2010,7,22);
+% animationsettings.stoptime=datenum(2010,7,28,0,0,0);
+% animationsettings.timestep=3600;
 % animationsettings.avifilename='test.avi';
 
 % Make temporary Data structure
@@ -103,15 +103,17 @@ try
         for id=1:length(datasets)
             if ~datasets(id).dataset.combineddataset
                 % Check to see if this a time-varying dataset
-%                 if datasets(id).dataset.tc=='t'
-%                     % First see if available times exactly match current
-%                     % time
-%                     iTime=find(abs(datasets(id).dataset.availabletimes-t)<1/864000, 1, 'first');
-%                     if ~isempty(iTime)
-%                         % Exact time found
-%                         datasets(id).dataset.DateTime=datasets(id).dataset.availabletimes(iTime);
+                if datasets(id).dataset.tc=='t'
+                    % First see if available times exactly match current
+                    % time
+                    itime=find(abs(datasets(id).dataset.times-t)<1/864000, 1, 'first');
+                     if ~isempty(itime)
+                         % Exact time found
+                         datasets(id).dataset.timestep=itime;
+                         datasets(id).dataset.time=datasets(id).dataset.times(itime);
+                         datasets(id).dataset=feval(datasets(id).dataset.callback,'import',datasets(id).dataset);
 %                         Data=UpdateDatasets(Data,0,iTime,id);
-%                     else
+                     else
 %                         % Averaging between surrounding times
 %                         iTime1=find(datasets(id).dataset.availabletimes-1e-4<t,1,'last');
 %                         Data1=UpdateDatasets(Data,0,iTime1,id);
@@ -130,8 +132,8 @@ try
 %                                 datasets(id).dataset.z  = tFrac1*Data1(id).z  + tFrac2*Data2(id).z;
 %                                 datasets(id).dataset.zz = tFrac1*Data1(id).zz + tFrac2*Data2(id).zz;
 %                         end
-%                     end
-%                 end
+                     end
+                end
             end
         end
         

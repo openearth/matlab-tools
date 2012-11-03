@@ -17,19 +17,19 @@ switch plt.xscale
                 xticks=plt.xmin:plt.xtick:plt.xmax;
                 set(gca,'xtick',xticks);
 
-                if plt.decimalsx>=0
-                    frmt=['%0.' num2str(plt.decimalsx) 'f'];
+                if plt.xdecimals>=0
+                    frmt=['%0.' num2str(plt.xdecimals) 'f'];
                     for i=1:size(xticks,2)
                         val=plt.xtickmultiply*xticks(i)+plt.xtickadd;
                         xlabls{i}=sprintf(frmt,val);
                     end
                     set(gca,'xticklabel',xlabls);
-                elseif plt.decimalsx==-999.0
+                elseif plt.xdecimals==-999.0
                     for i=1:size(xticks,2)
                         xlabls{i}='';
                     end
                     set(gca,'xticklabel',xlabls);
-                elseif plt.decimalsx==-1 && (plt.xtickmultiply~=1 || plt.xtickadd~=0)
+                elseif plt.xdecimals==-1 && (plt.xtickmultiply~=1 || plt.xtickadd~=0)
                     for i=1:size(xticks,2)
                         val=plt.xtickmultiply*xticks(i)+plt.xtickadd;
                         xlabls{i}=sprintf('%0.5g',val);
@@ -50,7 +50,7 @@ switch plt.xscale
                 set(gca,'xtick',xticks);
 
                 for i=1:(plt.xmax-plt.xmin+1);
-                    xlab{i}=plt.xtcklab{i+plt.xmin-1};
+                    xlab{i}=plt.xticklabels{i+plt.xmin-1};
                 end
                 xticklabel_rotate([],315,xlab);
             else
@@ -96,19 +96,19 @@ switch plt.yscale
             yticks=plt.ymin:plt.ytick:plt.ymax;
             set(gca,'ytick',yticks);
 
-            if plt.decimalsy>=0
-                frmt=['%0.' num2str(plt.decimalsy) 'f'];
+            if plt.ydecimals>=0
+                frmt=['%0.' num2str(plt.ydecimals) 'f'];
                 for i=1:size(yticks,2)
                     val=plt.ytickmultiply*yticks(i)+plt.ytickadd;
                     ylabls{i}=sprintf(frmt,val);
                 end
                 set(gca,'yticklabel',ylabls);
-            elseif plt.decimalsy==-999.0
+            elseif plt.ydecimals==-999.0
                 for i=1:size(yticks,2)
                     ylabls{i}='';
                 end
                 set(gca,'yticklabel',ylabls);
-            elseif plt.decimalsy==-1 && (plt.ytickmultiply~=1 || plt.ytickadd~=0)
+            elseif plt.ydecimals==-1 && (plt.ytickmultiply~=1 || plt.ytickadd~=0)
                 for i=1:size(yticks,2)
                     val=plt.ytickmultiply*yticks(i)+plt.ytickadd;
                     ylabls{i}=sprintf('%0.5g',val);

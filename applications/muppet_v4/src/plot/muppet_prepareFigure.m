@@ -58,14 +58,14 @@ else
 
     try
         fh = get(gcf,'JavaFrame'); % Get Java Frame
-        fh.setFigureIcon(javax.swing.ImageIcon([handles.muppetpath 'settings' filesep 'icons' filesep 'deltares.gif']));
+        fh.setFigureIcon(javax.swing.ImageIcon([handles.settingsdir 'icons' filesep 'deltares.gif']));
     end
 
     fig.zoom='none';
     set(figh,'menubar','none');
     tbh=uitoolbar(gcf);
 
-    icons=load([handles.muppetpath 'settings' filesep 'icons' filesep 'ico.mat']);
+    icons=load([handles.settingsdir 'icons' filesep 'ico.mat']);
     c=icons.icon;
 
     h = uitoggletool(tbh,'Separator','off','HandleVisibility','on','ToolTipString','Zoom In');
@@ -146,19 +146,19 @@ else
     h = uipushtool(tbh,'Separator','on','HandleVisibility','on','ToolTipString','Draw Polyline');
     set(h,'ClickedCallback',{@muppet_UIDrawFreeHand,1});
     set(h,'Tag','UIPushToolDrawPolyline');
-    cda=single(MakeIcon([handles.muppetpath 'settings' filesep 'icons' filesep 'polyline.bmp'],18,0.99));
+    cda=single(MakeIcon([handles.settingsdir 'icons' filesep 'polyline.bmp'],18,0.99));
     set(h,'cdata',cda);
 
     h = uipushtool(tbh,'Separator','off','HandleVisibility','on','ToolTipString','Draw Spline');
     set(h,'ClickedCallback',{@muppet_UIDrawFreeHand,2});
     set(h,'Tag','UIPushToolSpline');
-    cda=single(MakeIcon([handles.muppetpath 'settings' filesep 'icons' filesep 'spline.bmp'],18,0.99));
+    cda=single(MakeIcon([handles.settingsdir 'icons' filesep 'spline.bmp'],18,0.99));
     set(h,'cdata',cda);
 
     h = uipushtool(tbh,'Separator','off','HandleVisibility','on','ToolTipString','Draw Curved Arrow');
     set(h,'ClickedCallback',{@muppet_UIDrawFreeHand,3});
     set(h,'Tag','UIPushToolDrawCurvedVector');
-    cda=single(MakeIcon([handles.muppetpath 'settings' filesep 'icons' filesep 'curvec2.bmp'],18,0.99));
+    cda=single(MakeIcon([handles.settingsdir 'icons' filesep 'curvec2.bmp'],18,0.99));
     set(h,'cdata',cda);
 
     h = uipushtool(tbh,'Separator','off','HandleVisibility','on','ToolTipString','Add Text');

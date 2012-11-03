@@ -11,6 +11,7 @@
       <style>checkbox</style>
       <variable>adddatestring</variable>
       <type>boolean</type>
+      <keyword>AddDate</keyword>
       <default>0</default>
       <check>
         <operator>ne</operator>
@@ -100,7 +101,7 @@
       <keyword>AddDatePrefix</keyword>
       <default>Date : </default>
       <check>
-        <operator>ne</operator>
+        <operator>notempty</operator>
       </check>
       <check>
         <variable>adddatestring</variable>
@@ -126,7 +127,7 @@
       <keyword>AddDateSuffix</keyword>
       <default> </default>
       <check>
-        <operator>ne</operator>
+        <operator>notempty</operator>
       </check>
       <check>
         <variable>adddatestring</variable>

@@ -63,7 +63,7 @@ end
 function editAviOptions
 h=gui_getUserData;
 aviops=writeavi('getoptions', h.selectbits);
-h.aviOptions=aviops;
+h.avioptions=aviops;
 gui_setUserData(h);
 
 %%

@@ -35,6 +35,7 @@ for isub=1:fig.nrsubplots
             % Check for change in position
             if fig.subplots(isub).subplot.positionchanged
                 handles.figures(ifig).figure.subplots(isub).subplot.position=fig.subplots(isub).subplot.position;
+                fig.subplots(isub).subplot.positionchanged=0;
             end
             
             % Check for change in limits
@@ -65,42 +66,50 @@ for isub=1:fig.nrsubplots
                         handles.figures(ifig).figure.subplots(isub).subplot.ymin=fig.subplots(isub).subplot.ymin;
                         handles.figures(ifig).figure.subplots(isub).subplot.ymax=fig.subplots(isub).subplot.ymax;
                 end
+                fig.subplots(isub).subplot.limitschanged=0;
             end
             
             % Color Bar
             if fig.subplots(isub).subplot.colorbar.changed
                 handles.figures(ifig).figure.subplots(isub).subplot.colorbar.position=fig.subplots(isub).subplot.colorbar.position;
+                fig.subplots(isub).subplot.colorbar.changed=0;
             end
             
             % Legend
             if fig.subplots(isub).subplot.legend.changed
                 handles.figures(ifig).figure.subplots(isub).subplot.legend.position=fig.subplots(isub).subplot.legend.position;
+                fig.subplots(isub).subplot.legend.changed=0;
             end
             
             % Vector Legend
             if fig.subplots(isub).subplot.vectorlegend.changed
                 handles.figures(ifig).figure.subplots(isub).subplot.vectorlegend.position=fig.subplots(isub).subplot.vectorlegend.position;
+                fig.subplots(isub).subplot.vectorlegend.changed=0;
             end
             
             % North Arrow
             if fig.subplots(isub).subplot.northarrow.changed
                 handles.figures(ifig).figure.subplots(isub).subplot.northarrow.position=fig.subplots(isub).subplot.northarrow.position;
+                fig.subplots(isub).subplot.northarrow.changed=0;
             end
             
             % Scale Bar
             if fig.subplots(isub).subplot.scalebar.changed
                 handles.figures(ifig).figure.subplots(isub).subplot.scalebar.position=fig.subplots(isub).subplot.scalebar.position;
                 handles.figures(ifig).figure.subplots(isub).subplot.scalebar.text=fig.subplots(isub).subplot.scalebar.text;
+                fig.subplots(isub).subplot.scalebar.changed=0;
             end
             
-            fig.subplots(isub).subplot.positionchanged=0;
-            fig.subplots(isub).subplot.limitschanged=0;
-            fig.subplots(isub).subplot.colorbar.changed=0;
-            fig.subplots(isub).subplot.legend.changed=0;
-            fig.subplots(isub).subplot.vectorlegend.changed=0;
-            fig.subplots(isub).subplot.northarrow.changed=0;
-            fig.subplots(isub).subplot.scalebar.changed=0;
-            
+    end
+
+    % And now the dataset (check for changes in colorbar)
+    for id=1:fig.subplots(isub).subplot.nrdatasets
+        if fig.subplots(isub).subplot.datasets(id).dataset.plotcolorbar
+            if fig.subplots(isub).subplot.datasets(id).dataset.colorbar.changed
+                handles.figures(ifig).figure.subplots(isub).subplot.datasets(id).dataset.colorbar.position=fig.subplots(isub).subplot.datasets(id).dataset.colorbar.position;
+                fig.subplots(isub).subplot.datasets(id).dataset.colorbar.changed=0;
+            end            
+        end
     end
     
 end

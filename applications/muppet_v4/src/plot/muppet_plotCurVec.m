@@ -31,8 +31,6 @@ y1=data.y;
 u=data.u;
 v=data.v;
 
-handles.animationsettings.timestep=600;
-
 timestep=0;
 if ~isempty(handles.animationsettings.timestep)
     timestep=handles.animationsettings.timestep;

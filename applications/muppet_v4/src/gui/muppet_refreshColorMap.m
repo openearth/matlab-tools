@@ -1,4 +1,4 @@
-function handles=muppet_refreshColorMap(handles)
+function muppet_refreshColorMap(handles)
 
 plt=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot;
 

@@ -98,8 +98,21 @@ opt.cstep=0.1;
 opt.cmax=1;
 
 opt.plotcolorbar=0;
-opt.colorbar.position=[0 0 1 1];
 opt.colormap='jet';
+opt.shadesbar=0;
+opt.colorbar.position=[];
+opt.colorbar.decimals=-1;
+opt.colorbar.type=1;
+opt.colorbar.label='';
+opt.colorbar.labelposition='top';
+opt.colorbar.unit='';
+opt.colorbar.labelincrement=1;
+opt.colorbar.font.name='Helvetica';
+opt.colorbar.font.size=8;
+opt.colorbar.font.angle='normal';
+opt.colorbar.font.weight='normal';
+opt.colorbar.font.color='black';
+opt.colorbar.changed=0;
 
 opt.plottimebar=0;
 opt.timebar.time=[];
@@ -111,3 +124,5 @@ opt.bartime=datenum(2000,1,1);
 
 opt.usecustomcontours=0;
 opt.custumcontours=[0 1 2];
+
+opt.thinning=1;
