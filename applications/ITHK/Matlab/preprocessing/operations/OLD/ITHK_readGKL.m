@@ -69,7 +69,7 @@ fid=fopen(GKLfilename);
 lin=fgetl(fid);
 % Read number of locations
 lin=fgetl(fid);
-nloc=STRREAD(lin,'%d');;
+nloc=strread(lin,'%d');;
 %Read comment line
 lin=fgetl(fid);
 if isempty(nloc)
@@ -80,6 +80,6 @@ end
 %Read data
 for i=1:nloc
    lin = fgetl(fid);
-   [x(i) y(i) ray_file(i) ]=STRREAD(lin,'%f%f%s');
+   [x(i) y(i) ray_file(i) ]=strread(lin,'%f%f%s');
 end
 fclose(fid);
