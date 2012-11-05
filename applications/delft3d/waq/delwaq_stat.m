@@ -20,7 +20,7 @@ function structOut = delwaq_stat(File,File2Save,SubstanceNames,IntervalTime,Type
 %       'log'  - Natural logarithm: log(File)
 %       'log10'- Base 10 logarithm: log10(File)
 % 
-%   See also: DELWAQ, DELWAQ_CONC, DELWAQ_RES, DELWAQ_TIME, DELWAQ_DIFF, 
+%   See also: DELWAQ, DELWAQ_CONC, DELWAQ_RES, DELWAQ_DATENUM, DELWAQ_DIFF, 
 %             DELWAQ_INTERSECT
 
 %   Copyright 2011 Deltares, the Netherlands
