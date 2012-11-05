@@ -63,7 +63,8 @@ OPT = struct(...
 OPT = setproperty(OPT, varargin{:});
 
 %% get standard names info from xls file
-[num, txt, raw] = xlsread('nc_cf_standard_names_catalogue.xls','Sheet1');
+[num, txt, raw] = xlsread('nc_cf_standard_names_catalogue.xls','Sheet1', ...
+                          'basic');
 
 ids = cellfun(@isnan, raw(6:end,1), 'UniformOutput', false);ids = ~vertcat(ids{:});
 txt = txt([false; false; false; false; false; ids],:);

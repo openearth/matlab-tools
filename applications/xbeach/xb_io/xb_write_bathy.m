@@ -93,6 +93,10 @@ for i = 1:length(f)
         fname = fullfile(OPT.path, OPT.(f{i}));
         if isnumeric(data)
             save(fname, '-ascii', 'data');
+        elseif isstruct(data)
+            % We have struct in a struct....
+            d = xs_get(data, f{i});
+            save(fname, '-ascii', 'd');    
         else
             fid = fopen(fname, 'w');
             fprintf(fid, '%s', data);

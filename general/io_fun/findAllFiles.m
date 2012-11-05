@@ -107,7 +107,8 @@ function varargout = findAllFiles(varargin)
        end
        
    else
-       [a b] = system(['find ' OPT.basepath ' -iname ' OPT.pattern_incl]);
+       % Go to path to return relative paths....
+       [a b] = system(['cd ' OPT.basepath '; find . -iname ''' OPT.pattern_incl '''; cd - > /dev/null']);
    end
 
 if strcmpi(strtrim(b),'File Not Found') || isempty(strtrim(b)) % NB b(end) = char(10) % empty for unix/osx
