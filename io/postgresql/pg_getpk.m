@@ -70,6 +70,8 @@ OPT = struct();
 OPT = setproperty(OPT,varargin{:});
 
 %% list tables
+%  http://wiki.postgresql.org/wiki/Retrieve_primary_key_columns
+%  http://postgresql.1045698.n5.nabble.com/how-to-find-primary-key-field-name-td4893701.html
 
 strSQL = sprintf('SELECT pg_attribute.attname FROM pg_index, pg_class, pg_attribute WHERE pg_class.oid = ''%s''::regclass AND indrelid = pg_class.oid AND pg_attribute.attrelid = pg_class.oid AND pg_attribute.attnum = any(pg_index.indkey) AND indisprimary', pg_quote(table));
 

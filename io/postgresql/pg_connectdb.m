@@ -20,14 +20,16 @@ function conn = pg_connectdb(db, varargin)
 %   Output:
 %   conn      = Database connection object
 %
-%   Example
-%   conn = pg_connectdb('someDatabase')
-%   conn = pg_connectdb('anotherDatabase','host','posgresql.deltares.nl')
-%   conn = pg_connectdb('anotherDatabase','schema','someSchema')
+%   Example:
 %
-%   Test: connecting to the empty database of a virgin local Win32 PostgreSQL 9.1
-%   conn = pg_connectdb('postgres','user','postgres','pass','MyPassword')
-%   conn = pg_connectdb('postgres','user','postgres','pass','MyPassword','schema','public')
+%    conn = pg_connectdb('someDatabase')
+%    conn = pg_connectdb('anotherDatabase','host','posgresql.deltares.nl')
+%    conn = pg_connectdb('anotherDatabase','schema','someSchema')
+%
+%   Example:connecting to the empty database of a virgin local Win32 PostgreSQL 9.1
+%
+%    conn = pg_connectdb('postgres','user','postgres','pass','MyPassword')
+%    conn = pg_connectdb('postgres','user','postgres','pass','MyPassword','schema','public')
 %
 %   See also database, pg_exec, pg_fetch, pg_select_struct, pg_insert_struct,
 %   pg_update_struct, pg_getpk, pg_getid

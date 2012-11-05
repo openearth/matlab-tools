@@ -18,6 +18,7 @@
 % pg_fetch2struct                - parse cell from pg_fetch or pg_select_struct into struct 
 % pg_stationTimeSeries_tutorial  - tutorial for postgresql toolbox with simple scalar time series
 % pg_building_with_nature_zandmotor_tutorial - extract all tables with all columns into one struct
+% pg_ewkt                        - parse PostGIS Extended Well-Known Binary (EWKB) hexadecimal geometry object
 %
 % WRITE,CHANGE:
 % pg_insert_struct               - Inserts a structure into a table
@@ -46,3 +47,4 @@
 % http://philip.greenspun.com/panda/
 % http://humdoi.mae.ufl.edu/~prabirbarooah/Research/instructions.html
 % http://www.tech.plym.ac.uk/spmc/links/matlab/matlab_database.html
+% http://www.roseindia.net/tutorial/java/jdbc/index.html

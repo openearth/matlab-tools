@@ -9,14 +9,15 @@ function strSQL = pg_query(type, table, varargin)
 %   a cell array.
 %
 %   Syntax:
-%   strSQL = pg_query(type, table, varargin)
+%   strSQL = pg_query(type, table, <sqlWhere>)
 %
 %   Input:
 %   type      = Type of query (SELECT/INSERT/UPDATE/DELETE)
 %   table     = Table name
-%   varargin  = SELECT query:
+%   sqlWhere  = optional SELECT query.
 %                   1:  Cell array with field list (empty = *)
-%                   2:  Structure for WHERE clause
+%                   2:  Structure for WHERE clause (for '==' requests)
+%                   3:  character with SQL code ( for '<' and '>' requests)
 %               INSERT query:
 %                   1:  Structure for VALUES clause
 %               UPDATE query:
@@ -154,6 +155,11 @@ if isstruct(where)
         
         strSQL      = sprintf(' WHERE %s ', concat(fv,' AND '));
     end
+    
+elseif ischar(where)
+
+   strSQL = where;
+
 end
 
 function strSQL = builtSQLInsert(insert)
