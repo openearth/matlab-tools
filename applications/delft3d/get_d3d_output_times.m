@@ -37,9 +37,9 @@ function varargout = get_d3d_output_times(varargin);
 %
 % Use datestr(get_d3d_output_times(...)) to quickly get to regular dates and times
 %
-%See also: vs_time
+% See also: vs_time qpread
 
-warning('vs_time has the same functionality, and can handle more NEFIS types.')
+warning('WarnTests:convertTest','vs_time has expanded functionality, and can handle more NEFIS types. \nUse this script when interested in considerable speed increase with less functionality.')
 
 % Freek Scheel - 2012
 % freek.scheel@deltares.nl
@@ -49,8 +49,8 @@ warning('vs_time has the same functionality, and can handle more NEFIS types.')
 if isempty(varargin);
     file_name = [];
     [file_name file_dir] = uigetfile('*.dat','Select a Delft3D trim or trih file');
-    if isempty(file_name)==1
-        error('Please specify a trim-*.dat or trih-*.dat file');
+    if file_name==0
+        error('No trim-*.dat or trih-*.dat file selected');
     end
     file_ID = vs_use([file_dir file_name],'quiet');
 elseif isstruct(varargin{1,1})==1;
