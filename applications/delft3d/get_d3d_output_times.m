@@ -5,7 +5,7 @@ function varargout = get_d3d_output_times(varargin);
 % trim-*.dat or trih-*.dat file (and stores it in the specified output argument) as datenums
 %
 % The functions' results are the same as qpread(file_ID,'dataset','times')
-% or (a part of) vs_time(file_ID), though it can be up to 50 times faster
+% or (a part of) vs_time(file_ID), though it can be up to 50(!) times faster
 %
 % The function can be called in 3 different ways:
 % 
@@ -47,7 +47,11 @@ warning('vs_time has the same functionality, and can handle more NEFIS types.')
 %
 
 if isempty(varargin);
+    file_name = [];
     [file_name file_dir] = uigetfile('*.dat','Select a Delft3D trim or trih file');
+    if isempty(file_name)==1
+        error('Please specify a trim-*.dat or trih-*.dat file');
+    end
     file_ID = vs_use([file_dir file_name],'quiet');
 elseif isstruct(varargin{1,1})==1;
     file_ID = varargin{1,1};
