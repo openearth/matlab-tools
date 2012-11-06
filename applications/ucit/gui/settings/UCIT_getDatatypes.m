@@ -128,28 +128,6 @@ end
    datatypes.grid.cellsize{i}     =  20;
    datatypes.grid.datatype{i}     =  'Jarkus';
   
-   %% Vaklodingen (python, release 2010)
-
-   i = i + 1;
-   datatypes.grid.names{i}        =  'Vaklodingen 20m [release 2010]';
-   datatypes.grid.urls {i}        =  'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen_r2010/';
-   datatypes.grid.catalog{i}      =  'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen_r2010/catalog.xml';
-   datatypes.grid.ldbs{i}         =  'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc'; % this one is broken on opendap.deltares.nl due since TDS 4.2
-   datatypes.grid.axes{i}         =  1E5*[-0.239487 2.901701 2.999500 6.787223];
-   datatypes.grid.cellsize{i}     =  20;
-   datatypes.grid.datatype{i}     =  'vaklodingen'; % for rws_*
-  
-   %% Vaklodingen (matlab remapped, release 2011)
-
-   i = i + 1;
-   datatypes.grid.names{i}        =  'Vaklodingen 20m [remapped, r2011]';
-   datatypes.grid.urls {i}        =  'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen_r2011/';
-   datatypes.grid.catalog{i}      =  'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen_r2011/catalog.xml';
-   datatypes.grid.ldbs{i}         =  'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc'; % this one is broken on opendap.deltares.nl due since TDS 4.2
-   datatypes.grid.axes{i}         =  1E5*[-0.239487 2.901701 2.999500 6.787223];
-   datatypes.grid.cellsize{i}     =  20;
-   datatypes.grid.datatype{i}     =  'vaklodingen'; % for rws_*
-  
    %% Vaklodingen (matlab ncgen, release 2012)
 
    i = i + 1;
@@ -198,9 +176,9 @@ end
    %% Kustlidar (test)
 
    i = i + 1;
-   datatypes.grid.names{i}        =  'AHN Kusthoogte 5m (test/next release)';
-   datatypes.grid.urls {i}        =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/kustlidar/';
-   datatypes.grid.catalog{i}      =  'http://dtvirt5.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/kustlidar/catalog.xml';
+   datatypes.grid.names{i}        =  'AHN Kusthoogte 5m (test/next release 2012)';
+   datatypes.grid.urls {i}        =  'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/kusthoogte/';
+   datatypes.grid.catalog{i}      =  'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/kusthoogte/catalog.xml';
    datatypes.grid.ldbs{i}         =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc';
    datatypes.grid.axes{i}         =  1E5*[-0.239487 2.901701 2.999500 6.787223];
    datatypes.grid.cellsize{i}     =  5;
