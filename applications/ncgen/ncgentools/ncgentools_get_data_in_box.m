@@ -137,7 +137,12 @@ for ii = files_to_search
     
     switch OPT.t_method
         case 'last_in_range'
-            t_start = find(t_nc == max(t_nc(t_nc<=OPT.t_range(2))));
+            t_found = max(t_nc(t_nc<=OPT.t_range(2)));
+            if ~isempty(t_found)
+                t_start = find(t_nc == max(t_nc(t_nc<=OPT.t_range(2))));
+            else
+                t_start = [];
+            end
             t_count = 1;
         case 'linear_interpolated'
             assert(t_sorted)
