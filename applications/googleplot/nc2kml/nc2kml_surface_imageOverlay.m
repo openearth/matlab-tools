@@ -378,7 +378,7 @@ if OPT.colorbar
         'CBalpha',              OPT.CBalpha,...
         'CBtemplateHor',        OPT.CBtemplateHor,...
         'CBtemplateVer',        OPT.CBtemplateVer);
-    clrbarstring = strrep(clrbarstring,'<Icon><href>colorbar_',['<Icon><href>' ['KML' filesep 'colorbar'] '_']);
+    clrbarstring = strrep(clrbarstring, '<Icon><href>colorbar_', '<Icon><href>KML/colorbar_');
     output = [output clrbarstring];
 end
 
@@ -597,7 +597,7 @@ for level = OPT2.highestLevel:OPT2.lowestLevel
                         '<TimeStamp><when>%s</when></TimeStamp>\n',...
                         pngFile(1:underscorePos-1));
                 end
-                subfolder = ['..\' pngFile(1:underscorePos-1) '\'];
+                subfolder = ['../' pngFile(1:underscorePos-1) '/'];
             else
                 subfolder = '';
                 OPT2.timeSpan  = '';
