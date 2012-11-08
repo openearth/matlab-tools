@@ -115,5 +115,6 @@ classdef ProbabilisticMethod < handle
     %% Abstract methods
     methods (Abstract)
         CalculatePf(this, LimitState)
+        plot(this)
     end
 end

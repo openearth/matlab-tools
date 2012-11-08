@@ -133,6 +133,9 @@ classdef LimitState < handle
                 
                 this.EvaluationIsExact          = logical([this.EvaluationIsExact; true]);
                 this.EvaluationIsEnabled        = logical([this.EvaluationIsEnabled; true]);
+                if length(this.EvaluationIsEnabled) ~= length(this.EvaluationIsExact)
+                    keyboard
+                end
             end
         end
         
@@ -154,6 +157,9 @@ classdef LimitState < handle
                 
                 this.EvaluationIsExact          = logical([this.EvaluationIsExact; false]);
                 this.EvaluationIsEnabled        = logical([this.EvaluationIsEnabled; true]);
+                if length(this.EvaluationIsEnabled) ~= length(this.EvaluationIsExact)
+                    keyboard
+                end
             end
         end
         
@@ -173,6 +179,89 @@ classdef LimitState < handle
             elseif any(this.BetaValues  == 0) && this.ZValues(this.BetaValues == 0) <= 0
                 error('Failure at origin of limit state is not supported by this line search algorithm');
             end
+        end
+        
+        %Plot limit state (and response surface if applicable)
+        function plot(this, figureHandle, evaluationApproachesZero)
+            if isempty(figureHandle)
+                if isempty(findobj(figureHandle,'Type','figure','Tag','LimitStatePlot'))
+                    figureHandle = figure('Tag','LimitStatePlot');
+                else
+                    figureHandle = findobj('Type','figure','Tag','LimitStatePlot');
+                end
+            end
+            
+            s    = [];
+            s(1) = subplot(3,1,[1 2]); hold on;
+            s(2) = axes('Position',get(s(1),'Position')); hold on;
+            
+            linkaxes(s,'xy');
+            
+            set(s, 'Color', 'none'); box on;
+            set(s(1),'XTick',[],'YTick',[],'Tag','axARS');
+            set(s(2),'Tag','axSamples');
+            
+            axis(s,'equal')
+            
+            uitable( ...
+                'Units','normalized', ...
+                'Position',[0.09 0.05 0.82 0.25],...
+                'Data', [], ...
+                'ColumnName', {'total', 'exact', 'approx', 'not converged' 'model'},...
+                'RowName', {'N' 'P' 'Accuracy' 'Ratio'});
+
+        
+            axisHandle  = findobj(figureHandle,'Type','axes','Tag','axSamples');
+            uitHandle   = findobj(figureHandle,'Type','uitable');
+            
+            ph1 = findobj(axisHandle,'Tag','P1');
+            ph2 = findobj(axisHandle,'Tag','P2');
+            ph3 = findobj(axisHandle,'Tag','P3');
+            ph4 = findobj(axisHandle,'Tag','P4');
+            
+            if  isempty(ph1) || isempty(ph2) || isempty(ph3) || isempty(ph4)
+                
+                ph1 = scatter(axisHandle,this.UValues(~this.EvaluationIsExact & this.EvaluationIsEnabled & ~evaluationApproachesZero,1),this.UValues(~this.EvaluationIsExact & this.EvaluationIsEnabled & ~evaluationApproachesZero,2),'+','MarkerEdgeColor','b');
+                ph2 = scatter(axisHandle,this.UValues(~this.EvaluationIsExact & this.EvaluationIsEnabled & evaluationApproachesZero,1),this.UValues(~this.EvaluationIsExact & this.EvaluationIsEnabled & evaluationApproachesZero,2),'MarkerEdgeColor','c');
+                ph3 = scatter(axisHandle,this.UValues(this.EvaluationIsExact & this.EvaluationIsEnabled & evaluationApproachesZero,1),this.UValues(this.EvaluationIsExact & this.EvaluationIsEnabled & evaluationApproachesZero,2),'MarkerEdgeColor','g');
+                ph4 = scatter(axisHandle,this.UValues(this.EvaluationIsExact & this.EvaluationIsEnabled & ~evaluationApproachesZero,1),this.UValues(this.EvaluationIsExact & this.EvaluationIsEnabled & ~evaluationApproachesZero,2),'+','MarkerEdgeColor','m');
+                
+                set(ph1,'Tag','P1','DisplayName','not converged (approximated)');
+                set(ph2,'Tag','P2','DisplayName','approximated');
+                set(ph3,'Tag','P3','DisplayName','exact');
+                set(ph4,'Tag','P3','DisplayName','not converged (exact)');
+            else
+                set(ph1,'XData',this.UValues(~this.EvaluationIsExact & this.EvaluationIsEnabled & ~evaluationApproachesZero,1),'YData',this.UValues(~this.EvaluationIsExact & this.EvaluationIsEnabled & ~evaluationApproachesZero,2));
+                set(ph2,'XData',this.UValues(~this.EvaluationIsExact & this.EvaluationIsEnabled & evaluationApproachesZero,1),'YData',this.UValues(~this.EvaluationIsExact & this.EvaluationIsEnabled & evaluationApproachesZero,2));
+                set(ph3,'XData',this.UValues(this.EvaluationIsExact & this.EvaluationIsEnabled & evaluationApproachesZero,1),'YData',this.UValues(this.EvaluationIsExact & this.EvaluationIsEnabled & evaluationApproachesZero,2));
+                set(ph4,'XData',this.UValues(this.EvaluationIsExact & this.EvaluationIsEnabled & ~evaluationApproachesZero,1),'YData',this.UValues(this.EvaluationIsExact & this.EvaluationIsEnabled & ~evaluationApproachesZero,2));
+            end
+            
+            if ~isempty(this.BetaSphere)
+                this.BetaSphere.plot(axisHandle);
+            end
+            
+            xlabel(axisHandle,'u_1');
+            ylabel(axisHandle,'u_2');
+
+            legend(axisHandle,'-DynamicLegend','Location','NorthWestOutside');
+            legend(axisHandle,'show');
+            
+            data = { ...
+                0 sum(this.EvaluationIsExact & evaluationApproachesZero) sum(~this.EvaluationIsExact & evaluationApproachesZero) 0   sum(this.EvaluationIsExact) ; ...
+                0          0        0           ''                0            ; ...
+                0     ''         ''            ''                0            ; ...
+                0 0    0       ''                0   };
+            
+            set(uitHandle,'Data',data);
+            set(axisHandle,'XLim',[-5 5],'YLim',[-5 5]);
+            
+            if ~isempty(this.ResponseSurface)
+                axARS           = findobj('Type','axes','Tag','axARS');
+                this.ResponseSurface.plot(figureHandle, axARS);
+                set(axARS,'Position',get(axisHandle,'Position'));
+            end            
+            drawnow;
         end
     end
 end

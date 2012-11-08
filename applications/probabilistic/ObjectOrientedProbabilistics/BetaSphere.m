@@ -123,5 +123,38 @@ classdef BetaSphere < handle
                 warning('Given beta < MinBeta!')
             end
         end
+        
+        %plot betasphere
+        function plot(this, axisHandle)
+            if isempty(axisHandle)
+                if isempty(findobj('Type','axis','Tag','BetaSphereAxes'))
+                    axisHandle      = axes('Tag','BetaSphereAxes');
+                    hold on
+                else
+                    axisHandle      = findobj('Type','axes','Tag','BetaSphereAxes');
+                end
+            else
+                hold on
+            end
+            
+            [x1,y1] = cylinder(this.MinBeta,100);
+            [x2,y2] = cylinder(this.BetaSphereUpperLimit,100);
+            
+            ph1 = findobj(axisHandle,'Tag','B1');
+            ph2 = findobj(axisHandle,'Tag','B2');
+            
+            if isempty(ph1) || isempty(ph2)
+                plot(axisHandle,0,0,'+k','DisplayName','origin');
+                
+                ph1 = plot(axisHandle,x1(1,:),y1(1,:),':r');
+                ph2 = plot(axisHandle,x2(1,:),y2(1,:),'-r');
+                
+                set(ph1,'Tag','B1','DisplayName','\beta_{min}');
+                set(ph2,'Tag','B2','DisplayName','\beta_{threshold}');
+            else
+                set(ph1,'XData',x1(1,:),'YData',y1(1,:));
+                set(ph2,'XData',x2(1,:),'YData',y2(1,:));
+            end
+        end
     end
 end

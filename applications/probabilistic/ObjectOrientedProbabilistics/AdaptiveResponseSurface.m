@@ -144,8 +144,44 @@ classdef AdaptiveResponseSurface < handle
         %Set default values
         function SetDefaults(this)
             this.GoodFit                = false;
-            this.MaxCoefficient         = 1e5;
+            this.MaxCoefficient         = 5e2;%1e5;
             this.MaxRootMeanSquareError = 1;
+        end
+        
+        %plot response surface
+        function plot(this, figureHandle, axARS)
+            if isempty(figureHandle) && isempty(axARS)
+                if isempty(findobj('Type','axes','Tag','axARS'))
+                    axARS           = axes('Tag','axARS');
+                else
+                    axARS           = findobj('Type','axes','Tag','axARS');
+                end
+            end
+
+            lim             = linspace(-10,10,100);
+            [xGrid yGrid]   = meshgrid(lim,lim);
+            grid            = [xGrid(:) yGrid(:)];
+            if this.GoodFit
+                zGrid   = reshape(polyvaln(this.Fit, grid), size(xGrid));
+            else
+                zGrid   = NaN(size(xGrid));
+            end
+            
+            phars = findobj(axARS,'Tag','ARS');
+            
+            if isempty(phars)
+                phars = pcolor(axARS,xGrid,yGrid,zGrid);
+                set(phars,'Tag','ARS','DisplayName','ARS');
+            else
+                set(phars,'CData',zGrid);
+            end
+            
+            cm = colormap('gray');
+            
+            colorbar('peer',axARS);
+            colormap(axARS,[flipud(cm) ; cm]);
+            shading(axARS,'flat');
+            clim(axARS,[-1 1]);
         end
     end
 end

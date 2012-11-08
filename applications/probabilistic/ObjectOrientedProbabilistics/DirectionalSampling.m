@@ -128,7 +128,7 @@ classdef DirectionalSampling < ProbabilisticMethod
             if sum(this.LimitState.EvaluationIsExact) > 0
                 try
                 dpfexact    = (1-chi2_cdf(this.LimitState.BetaValues(this.EvaluationApproachesZero & this.LimitState.EvaluationIsExact & this.LimitState.EvaluationIsEnabled & this.LimitState.BetaValues > 0).^2,length(this.LimitState.RandomVariables)))/this.NrDirectionsEvaluated;
-                catch
+                catch 
                     keyboard
                 end
             elseif sum(this.LimitState.EvaluationIsExact) == 0
@@ -179,12 +179,12 @@ classdef DirectionalSampling < ProbabilisticMethod
 %             sigma   = sqrt(1/(n*(n-1))*sum(([this.dPfExact; this.dPfApproximated]-this.Pf).^2)); 
 %             sigma2  = sqrt((1/n)*sum(([this.dPfExact; this.dPfApproximated]-(this.Pf/n)).^2)); 
             sigma   = sqrt(1/(this.NrDirectionsEvaluated*(this.NrDirectionsEvaluated-1))*sum((this.dPf-this.Pf).^2)); 
-            sigma2  = sqrt((1/this.NrDirectionsEvaluated)*sum((this.dPf-(this.Pf/this.NrDirectionsEvaluated)).^2)); 
+%             sigma2  = sqrt((1/this.NrDirectionsEvaluated)*sum((this.dPf-(this.Pf/this.NrDirectionsEvaluated)).^2)); 
         end
         
         %Get EvaluationApproachesZero
         function evaluationApproachesZero = get.EvaluationApproachesZero(this)
-            evaluationApproachesZero = abs(this.LimitState.ZValues) < this.LineSearcher.MaxErrorZ & this.LimitState.BetaValues > 0;
+            evaluationApproachesZero = (abs(this.LimitState.ZValues) < this.LineSearcher.MaxErrorZ) & this.LimitState.BetaValues > 0;
         end
         
         %% Main Directional Sampling Loop
@@ -230,9 +230,9 @@ classdef DirectionalSampling < ProbabilisticMethod
                         
                         if this.LineSearcher.SearchConverged && ~this.LineSearcher.ApproximateUsingARS
                             this.LimitState.ResponseSurface.UpdateFit(this.LimitState)
-                            if this.LastIteration
-                                this.LastIteration      = false;
-                            end
+%                             if this.LastIteration
+%                                 this.LastIteration      = false;
+%                             end
                         end
                         
                         if ~isempty(this.ReevaluateIndices)
@@ -260,7 +260,6 @@ classdef DirectionalSampling < ProbabilisticMethod
                     this.StopCalculation    = true;
                 end
             end
-            %Aanmaken en vullen Results object
         end
         
         %% Other methods
@@ -361,6 +360,12 @@ classdef DirectionalSampling < ProbabilisticMethod
         %Calculate the failure probabilities
         function UpdatePf(this)
             this.Pf = this.PfExact + this.PfApproximated;
+        end
+        
+        %Plot directional sampling results
+        function plot(this)
+            figureHandle = figure('Tag','ProbabilisticMethodResults');
+            this.LimitState.plot(figureHandle, this.EvaluationApproachesZero)
         end
     end
 end

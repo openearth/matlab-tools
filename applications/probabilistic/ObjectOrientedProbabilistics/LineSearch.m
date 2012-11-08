@@ -189,12 +189,12 @@ classdef LineSearch < handle
                 this.ZValues        = [this.ZValues; zvalue];
             else
                 zvalue              = limitState.Evaluate(un, beta, randomVariables);
-                this.NrEvaluations  = this.NrEvaluations + 1;
                 if isempty(zvalue)
                     varargout       = zvalue;
                 else
-                    this.BetaValues = [this.BetaValues; beta];
-                    this.ZValues    = [this.ZValues; zvalue];
+                    this.NrEvaluations  = this.NrEvaluations + 1;
+                    this.BetaValues     = [this.BetaValues; beta];
+                    this.ZValues        = [this.ZValues; zvalue];
                 end
             end
         end
