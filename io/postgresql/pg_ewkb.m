@@ -11,6 +11,16 @@ function varargout = pg_ewkb(s)
 % (EPSG) reference number (for EWKB, default []), and the x and y
 % and optionally (if present) z coordinates in doubles.
 %
+% You can also download the <a href="http://www.vividsolutions.com/jts">JTS java toolbox</a>:
+%
+%   javaaddpath('your_location\jts-1.8.jar') % load java toolbox
+%   reader   = com.vividsolutions.jts.io.WKBReader(); % use java toolbox
+%   geometry = reader.read(rdr.hexToBytes(hex));
+%   srid     = geometry.getSRID;
+%   x        = geometry.getX; % g.getCoordinate.x
+%   y        = geometry.getY; % g.getCoordinate.y
+%   z        = geometry.getCoordinate.z;
+%
 %See also: pg_datenum, shape
 
 %% Copyright notice

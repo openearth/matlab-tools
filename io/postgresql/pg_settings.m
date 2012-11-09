@@ -9,14 +9,10 @@ function OK = pg_settings(varargin)
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2012 Deltares
+%   Copyright (C) 2012 Tu Delft / Deltares for Building with Nature
 %       Gerben J. de Boer
 %
-%       gerben.deboer@deltares.nl
-%
-%       Rotterdamseweg 185
-%       2629HD Delft
-%       Netherlands
+%       g.j.deboer@tudelft.nl / gerben.deboer@deltares.nl
 %
 %   This library is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -39,15 +35,11 @@ function OK = pg_settings(varargin)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 27 Jul 2012
-% Created with Matlab version: 7.14.0.739 (R2012a)
-
 % $Id$
 % $Date$
 % $Author$
 % $Revision$
 % $HeadURL$
-% $Keywords: $
 
 OPT.check = 0;
 OPT.quiet = 0;
@@ -61,10 +53,10 @@ OPT = setproperty(OPT,varargin);
       java2add = 'postgresql-9.1-902.jdbc3.jar';
    end
    
-   dynjavaclasspath = path2os(javaclasspath);
-   indices          = strfind(javaclasspath,path2os([fileparts(mfilename('fullpath')),filesep,java2add]));
+   alljavaclasspath = path2os(javaclasspath('-all')); % can also be in static path
+   indices          = strfind(alljavaclasspath,path2os([fileparts(mfilename('fullpath')),filesep,java2add]));
     
-    if isempty(cell2mat(indices))
+   if isempty(cell2mat(indices))
 
        if OPT.check
         disp(['checked status PostgreSQL: JDBC NOT present: ',java2add]);
@@ -76,7 +68,7 @@ OPT = setproperty(OPT,varargin);
        end
        
    
-    elseif ~(OPT.quiet)
+   elseif ~(OPT.quiet)
 
        if OPT.check
         disp(['checked status PostgreSQL: JDBC present: ',java2add]);
