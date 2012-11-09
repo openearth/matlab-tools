@@ -126,7 +126,7 @@ classdef BetaSphere < handle
         
         %plot betasphere
         function plot(this, axisHandle)
-            if isempty(axisHandle)
+            if nargin < 2 || isempty(axisHandle)
                 if isempty(findobj('Type','axis','Tag','BetaSphereAxes'))
                     axisHandle      = axes('Tag','BetaSphereAxes');
                     hold on

@@ -89,19 +89,52 @@ classdef MultipleLimitState < LimitState
         end
         
         %% Other methods
-        function zvalue = Evaluate(this,un, beta, randomVariables)
+        %Evaluate multiple limit states
+        function zvalue = Evaluate(this, un, beta, randomVariables)
             input   = cell(length(this.LimitStates),2);
             for i=1:length(this.LimitStates)
-                input{i,2}  = this.LimitStates(i).Name;
-                input{i,2}  = Evaluate@LimitState(un, beta, randomVariables);
+                input{i,1}  = this.LimitStates(i).Name;
+                input{i,2}  = Evaluate@LimitState(this.LimitStates(i), un, beta, randomVariables);
             end
-            zvalue          = feval(this.AggregateFunction, input);
-            this.ZValues    = [this.ZValues zvalue];
+            zvalue          = this.Aggregate([input{:,2}]);
+            this.BetaValues = [this.BetaValues; beta];
+            this.UValues    = [this.UValues; un.*beta];
+            this.ZValues    = [this.ZValues; zvalue];
             
-            this.EvaluationIsExact          = [this.EvaluationIsExact; true];
-            this.EvaluationIsConverged      = [this.EvaluationIsConverged; false];
-            this.EvaluationIsApproximated   = [this.EvaluationIsApproximated; false];
-            this.EvaluationIsRandom         = [this.EvaluationIsRandom; true];
+            this.EvaluationIsExact      = [this.EvaluationIsExact; true];
+            this.EvaluationIsEnabled    = [this.EvaluationIsEnabled; true];
+        end
+        
+        %Approximate multiple limit states
+        function zvalue = Approximate(this, un, beta)
+            zvalues = NaN(length(this.LimitStates),1);
+            for i=1:length(this.LimitStates)
+                if this.LimitStates(i).CheckAvailabilityARS
+                    zvalues(i,1)    = this.LimitStates(i).Approximate(un, beta);
+                else
+                    zvalues(i,1)    = this.LimitStates(i).Evaluate(un, beta, this.RandomVariables);
+                end
+            end
+            this.BetaValues = [this.BetaValues; beta];
+            uvalues         = un.*beta;
+            this.UValues    = [this.UValues; uvalues];
+            zvalue          = this.Aggregate(zvalues);
+            this.ZValues    = [this.ZValues; zvalue];
+            
+            this.EvaluationIsExact          = logical([this.EvaluationIsExact; false]);
+            this.EvaluationIsEnabled        = logical([this.EvaluationIsEnabled; true]);
+        end
+        
+        %aggregate calculated z values
+        function zvalue = Aggregate(this, zvalues)
+            zvalue  = feval(this.AggregateFunction, zvalues);
+        end
+        
+        %Update all response surfaces
+        function UpdateResponseSurface(this)
+            for i=1:length(this.LimitStates)
+                this.LimitStates(i).UpdateResponseSurface;
+            end
         end
     end
 end

@@ -133,9 +133,6 @@ classdef LimitState < handle
                 
                 this.EvaluationIsExact          = logical([this.EvaluationIsExact; true]);
                 this.EvaluationIsEnabled        = logical([this.EvaluationIsEnabled; true]);
-                if length(this.EvaluationIsEnabled) ~= length(this.EvaluationIsExact)
-                    keyboard
-                end
             end
         end
         
@@ -157,9 +154,6 @@ classdef LimitState < handle
                 
                 this.EvaluationIsExact          = logical([this.EvaluationIsExact; false]);
                 this.EvaluationIsEnabled        = logical([this.EvaluationIsEnabled; true]);
-                if length(this.EvaluationIsEnabled) ~= length(this.EvaluationIsExact)
-                    keyboard
-                end
             end
         end
         
@@ -179,6 +173,11 @@ classdef LimitState < handle
             elseif any(this.BetaValues  == 0) && this.ZValues(this.BetaValues == 0) <= 0
                 error('Failure at origin of limit state is not supported by this line search algorithm');
             end
+        end
+        
+        %Update response surface
+        function UpdateResponseSurface(this)
+            this.ResponseSurface.UpdateFit(this)
         end
         
         %Plot limit state (and response surface if applicable)
@@ -221,10 +220,10 @@ classdef LimitState < handle
             
             if  isempty(ph1) || isempty(ph2) || isempty(ph3) || isempty(ph4)
                 
-                ph1 = scatter(axisHandle,this.UValues(~this.EvaluationIsExact & this.EvaluationIsEnabled & ~evaluationApproachesZero,1),this.UValues(~this.EvaluationIsExact & this.EvaluationIsEnabled & ~evaluationApproachesZero,2),'+','MarkerEdgeColor','b');
+                ph1 = scatter(axisHandle,this.UValues(~this.EvaluationIsExact & this.EvaluationIsEnabled & ~evaluationApproachesZero & this.BetaValues > 0,1),this.UValues(~this.EvaluationIsExact & this.EvaluationIsEnabled & ~evaluationApproachesZero & this.BetaValues > 0,2),'+','MarkerEdgeColor','b');
                 ph2 = scatter(axisHandle,this.UValues(~this.EvaluationIsExact & this.EvaluationIsEnabled & evaluationApproachesZero,1),this.UValues(~this.EvaluationIsExact & this.EvaluationIsEnabled & evaluationApproachesZero,2),'MarkerEdgeColor','c');
                 ph3 = scatter(axisHandle,this.UValues(this.EvaluationIsExact & this.EvaluationIsEnabled & evaluationApproachesZero,1),this.UValues(this.EvaluationIsExact & this.EvaluationIsEnabled & evaluationApproachesZero,2),'MarkerEdgeColor','g');
-                ph4 = scatter(axisHandle,this.UValues(this.EvaluationIsExact & this.EvaluationIsEnabled & ~evaluationApproachesZero,1),this.UValues(this.EvaluationIsExact & this.EvaluationIsEnabled & ~evaluationApproachesZero,2),'+','MarkerEdgeColor','m');
+                ph4 = scatter(axisHandle,this.UValues(this.EvaluationIsExact & this.EvaluationIsEnabled & ~evaluationApproachesZero  & this.BetaValues > 0,1),this.UValues(this.EvaluationIsExact & this.EvaluationIsEnabled & ~evaluationApproachesZero  & this.BetaValues > 0,2),'+','MarkerEdgeColor','m');
                 
                 set(ph1,'Tag','P1','DisplayName','not converged (approximated)');
                 set(ph2,'Tag','P2','DisplayName','approximated');
@@ -254,11 +253,11 @@ classdef LimitState < handle
                 0 0    0       ''                0   };
             
             set(uitHandle,'Data',data);
-            set(axisHandle,'XLim',[-5 5],'YLim',[-5 5]);
+            set(axisHandle,'XLim',[-6 6],'YLim',[-6 6]);
             
             if ~isempty(this.ResponseSurface)
                 axARS           = findobj('Type','axes','Tag','axARS');
-                this.ResponseSurface.plot(figureHandle, axARS);
+                this.ResponseSurface.plot(axARS);
                 set(axARS,'Position',get(axisHandle,'Position'));
             end            
             drawnow;

@@ -144,13 +144,13 @@ classdef AdaptiveResponseSurface < handle
         %Set default values
         function SetDefaults(this)
             this.GoodFit                = false;
-            this.MaxCoefficient         = 5e2;%1e5;
+            this.MaxCoefficient         = 1e5; %5e2; testing
             this.MaxRootMeanSquareError = 1;
         end
         
         %plot response surface
-        function plot(this, figureHandle, axARS)
-            if isempty(figureHandle) && isempty(axARS)
+        function plot(this, axARS)
+            if nargin < 2 || isempty(axARS)
                 if isempty(findobj('Type','axes','Tag','axARS'))
                     axARS           = axes('Tag','axARS');
                 else
@@ -158,7 +158,7 @@ classdef AdaptiveResponseSurface < handle
                 end
             end
 
-            lim             = linspace(-10,10,100);
+            lim             = linspace(-10,10,1000);
             [xGrid yGrid]   = meshgrid(lim,lim);
             grid            = [xGrid(:) yGrid(:)];
             if this.GoodFit

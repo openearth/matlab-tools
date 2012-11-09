@@ -153,8 +153,8 @@ classdef LineSearch < handle
             this.ZValues    = [this.ZValues; limitState.ZValues(limitState.BetaValues == 0)];
             
             if ~isempty(this.StartBeta) || ~isempty(this.StartZ)
-                this.BetaValues     = [this.BetaValues; this.StartBeta];
-                this.ZValues        = [this.ZValues; this.StartZ];
+%                 this.BetaValues     = [this.BetaValues; this.StartBeta];
+%                 this.ZValues        = [this.ZValues; this.StartZ];
             else
                 this.EvaluatePoint(limitState, un, this.BetaFirstPoint, randomVariables);
             end
@@ -202,18 +202,28 @@ classdef LineSearch < handle
         %Find Z=0 by fitting polynomial
         function FitPolynomial(this, un, limitState, randomVariables)
             while this.IterationsFit <= this.MaxIterationsFit && ~this.SearchConverged
-                order   = min(this.MaxOrderFit, length(this.ZValues)-1);
+                if length(this.ZValues) == 1
+                    order   = 1;
+                else
+                    order   = min(this.MaxOrderFit, length(this.ZValues)-1);
+                end
+                
                 for o = order:-1:1
-                    ii  = isort(abs(this.ZValues));
-                    bs  = this.BetaValues(ii(1:(o+1)));
-                    zs  = this.ZValues(ii(1:(o+1)));
+                    if length(this.ZValues)>1
+                        ii  = isort(abs(this.ZValues));
+                        bs  = this.BetaValues(ii(1:(o+1)));
+                        zs  = this.ZValues(ii(1:(o+1)));
+                    elseif length(this.ZValues) == 1
+                        bs      = [this.BetaValues; this.StartBeta];
+                        zs      = [this.ZValues; this.StartZ];
+                    end
                     
                     this.Fit    = polyfit(bs, zs ,o);
                     if this.CheckFit
                         this.Roots  = roots(this.Fit);
                         if this.CheckRoots
                             this.EvaluatePoint(limitState, un, this.Roots, randomVariables);
-                            %                             this.plot(bs,zs)
+%                             this.plot(bs,zs)
                         end
                     end
                     this.CheckConvergence(limitState)
@@ -344,9 +354,13 @@ classdef LineSearch < handle
                         ii          = ii(isort(this.Roots(ii)));
                         this.Roots  = this.Roots(ii(1));
                         goodRoots   = true;
-                    else
-                        this.Roots  = max(this.Roots(i1));
-                        goodRoots   = true;
+                    elseif all(this.Roots < 0)
+                        this.Roots  = max(this.Roots(i1)<0);
+                        if ~isempty(this.Roots)
+                            goodRoots   = true;
+                        else
+                            goodRoots   = false;
+                        end
                     end
                 else
                     goodRoots   = false;

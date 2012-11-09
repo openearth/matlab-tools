@@ -126,11 +126,7 @@ classdef DirectionalSampling < ProbabilisticMethod
         %Get dPfExact
         function dpfexact = get.dPfExact(this)
             if sum(this.LimitState.EvaluationIsExact) > 0
-                try
                 dpfexact    = (1-chi2_cdf(this.LimitState.BetaValues(this.EvaluationApproachesZero & this.LimitState.EvaluationIsExact & this.LimitState.EvaluationIsEnabled & this.LimitState.BetaValues > 0).^2,length(this.LimitState.RandomVariables)))/this.NrDirectionsEvaluated;
-                catch 
-                    keyboard
-                end
             elseif sum(this.LimitState.EvaluationIsExact) == 0
                 dpfexact    = 0;
             end
@@ -222,17 +218,18 @@ classdef DirectionalSampling < ProbabilisticMethod
                             this.LineSearcher.StartZ    = this.LimitState.ZValues(end);
                             this.LineSearcher.PerformSearch(this.UNormalVector(this.IndexQueue(iq),:), this.LimitState, this.LimitState.RandomVariables);
                             this.AssignUNormalIndices(this.LineSearcher.NrEvaluations, this.IndexQueue(iq));
+%                             this.plot
                         end
                         
                         this.UpdatePf
                         
                         this.CheckCOV;
-                        
                         if this.LineSearcher.SearchConverged && ~this.LineSearcher.ApproximateUsingARS
-                            this.LimitState.ResponseSurface.UpdateFit(this.LimitState)
-%                             if this.LastIteration
-%                                 this.LastIteration      = false;
-%                             end
+                            this.LimitState.UpdateResponseSurface
+%                             this.LimitState.ResponseSurface.UpdateFit(this.LimitState)
+                            if this.LastIteration
+                                this.LastIteration      = false;
+                            end
                         end
                         
                         if ~isempty(this.ReevaluateIndices)
@@ -293,20 +290,6 @@ classdef DirectionalSampling < ProbabilisticMethod
                 error('Failure at origin is not supported!');
             end
         end
-        
-%         %Check convergence
-%         function CheckConvergence(this)
-%             if this.NrDirectionsEvaluated < this.MaxNumberDirections
-%                 if this.CheckPRatio && this.CheckCOV
-%                     this.SolutionConverged = true;
-%                 else
-%                     this.SolutionConverged = false;
-%                 end
-%             else
-%                 warning('Maximum number of random directions reached!')
-%                 this.StopCalculation    = true;
-%             end
-%         end
         
         %Check PRatio
         function goodRatio = CheckPRatio(this)
