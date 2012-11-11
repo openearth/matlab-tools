@@ -559,7 +559,8 @@ P.latlon       = 1; % labels x to lon, and y to lat if spherical
       %% trimfile, wavm file
       case {'Delft3D-trim','Delft3D-hwgxy'}
       
-         [~,~,G.v.guv,G.u.gvu,G.u.guu,G.v.gvv] = grid_corner2perimeter(G.cor.x,G.cor.y);
+         [dummy1,dummy2,G.v.guv,G.u.gvu,G.u.guu,G.v.gvv] = grid_corner2perimeter(G.cor.x,G.cor.y);
+         clear dummy1; clear dummy2;
 
          %% At the boundary the comfile gives realistic boundary-perpendicular distances
          %  while with this method they are undefined (NaN).
