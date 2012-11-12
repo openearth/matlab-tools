@@ -66,51 +66,55 @@ strLogical = {'FALSE' 'TRUE'};
 
 verbose = xb_getpref('verbose');
 
-if verbose && ~isempty(varargin)
+if ~isempty(verbose) && ~isempty(varargin)
     
-    ind = repmat('    ',1,level);
-    str = varargin{1};
+    if verbose
     
-    if ~iscell(str); str = {str}; end;
-    
-    for i = 1:length(str)
-    
-        switch str{i}
-            case '---'
-                fprintf(['\n' repmat('-',1,60) '\n']);
-            otherwise
-                if length(varargin) > 1
-                    fprintf('%-25s : ', [ind str{i}]);
-                else
-                    fprintf('%-25s   ', [ind str{i}]);
-                end
-        end
+        ind = repmat('    ',1,level);
+        str = varargin{1};
 
-        for j = 2:length(varargin)
-            
-            data = varargin{j};
-            
-            if ~iscell(data); data = {data}; end;
-            
-            if length(data) >= i
-                switch class(data{i})
-                    case 'logical'
-                        fprintf('%-15s', strLogical{data{i}+1});
-                    case 'double'
-                        if data{i} == round(data{i})
-                            fprintf('%10d', data{i});
-                        else
-                            fprintf('%10.4f', data{i});
-                        end
-                    case 'char'
-                        fprintf('%-15s', data{i});
-                    otherwise
-                        fprintf('%-15s', '<structure>');
+        if ~iscell(str); str = {str}; end;
+
+        for i = 1:length(str)
+
+            switch str{i}
+                case '---'
+                    fprintf(['\n' repmat('-',1,60) '\n']);
+                otherwise
+                    if length(varargin) > 1
+                        fprintf('%-25s : ', [ind str{i}]);
+                    else
+                        fprintf('%-25s   ', [ind str{i}]);
+                    end
+            end
+
+            for j = 2:length(varargin)
+
+                data = varargin{j};
+
+                if ~iscell(data); data = {data}; end;
+
+                if length(data) >= i
+                    switch class(data{i})
+                        case 'logical'
+                            fprintf('%-15s', strLogical{data{i}+1});
+                        case 'double'
+                            if data{i} == round(data{i})
+                                fprintf('%10d', data{i});
+                            else
+                                fprintf('%10.4f', data{i});
+                            end
+                        case 'char'
+                            fprintf('%-15s', data{i});
+                        otherwise
+                            fprintf('%-15s', '<structure>');
+                    end
                 end
             end
-        end
 
-        fprintf('\n');
+            fprintf('\n');
+
+        end
         
     end
     
