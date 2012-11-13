@@ -1170,6 +1170,9 @@ function varargout = vs_trim2nc(vsfile,varargin)
                                   'Dimensions' , nmkt.dims, ...
                                   'Attributes' , attr,...
                                   'FillValue'  , []); % this doesn't do anything
+      else
+         ind=strcmp(OPT.var,'temperature');
+         OPT.var(ind) = [];          
       end
       end
 
@@ -1427,7 +1430,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       ncwriteatt(ncfile,'depth'     ,'actual_range',[min(-G.cen.dep(:)) max(-G.cen.dep(:))]);
       end      
 
-      if     any(strcmp('grid_depth',OPT.var))
+      if     any(strcmp('grid_depth',OPT.var)) && isfield(G.cor,'dep')
       ncwrite   (ncfile,'grid_depth',G.cor.dep,[2 2]); % positive down !
       ncwriteatt(ncfile,'grid_depth','actual_range',[min(-G.cor.dep(:)) max(-G.cor.dep(:))]);
       end      
