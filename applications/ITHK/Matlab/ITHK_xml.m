@@ -197,10 +197,14 @@ outputFilename=['output_' xml.uniqueID '.xml'];
 for jj=1:1%length(sensitivities)
     if length(S.PP(jj).output.kmlfiles)>1
         for ii=1:length(S.PP(jj).output.kmlfiles)
+            root(ii).tool = xml.tool;
+            root(ii).scenario = xml.data.scenarioname;
             root(ii).kmlTitle=strrep(S.PP(jj).output.addtxt{ii}(2:end),'_','');
             root(ii).kmlFile=[S.userinput.name S.PP(jj).output.addtxt{ii} '.kml'];
         end
     else
+        root.item.tool = xml.tool;
+	    root.item.scenario = xml.data.scenarioname;
         root.item.kmlFile=strrep(S.PP(jj).output.addtxt{ii}(2:end),'_','');
         root.item.kmlTitle=[S.userinput.name S.PP(jj).output.addtxt{ii} '.kml'];
     end
