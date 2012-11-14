@@ -21,6 +21,8 @@ function varargout = vs_trim2nc(vsfile,varargin)
 % you can also select only a subset with keyword 'var'. Call VS_TRIM2NC() 
 % without argument to find out which CF-required, primary and derived 
 % variables are available in resp. 'var_cf', 'var_primary' and 'var_derived'.
+% x/y/epsg or lat/.lon are ALWAYS written to the netCDF depending on
+% whether your grid is CARTESIAN or SPHERICAL.
 % You can also pass the NEFIS names shown by vs_disp() and 'var_nefis', e.g.:
 %
 %   vs_trim2nc('P:\aproject\trim-n15.dat','var',{'S1'})
@@ -252,7 +254,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       dy = diff(G.cen.x,[],1);
       dx = diff(G.cen.y,[],2);
       end
-      if vs_get_elm_size(F,'DPS0') > 0
+      if ~isequal(vs_get_elm_size(F,'DPS0'),0)
       G.cen.dep  =  vs_let_scalar(F,'map-const' ,'DPS0' ,'quiet').*G.cen.mask; % depth is positive down
       else % legacy
       G.cen.dep  =  vs_let_scalar(F,'map-const' ,'DP0'  ,'quiet').*G.cen.mask; % depth is positive down
@@ -264,7 +266,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       if strcmpi(strtrim(G.dryflp),'DP')
       G.cor.dep  = nan.*G.cor.mask; % never specified, non-existent
       else
-      if vs_get_elm_size(F,'DP') > 0 % legacy
+      if ~isequal(vs_get_elm_size(F,'DP'),0) % legacy
       G.cor.dep  = permute(vs_let(F,'map-const','DP'    ,'quiet'),[2 3 1]);
       end
       end
@@ -288,19 +290,25 @@ function varargout = vs_trim2nc(vsfile,varargin)
       %end
       end
 
-   %% world coordinates
+   %% add world coordinates coordinate attribute AND as variables to file
 
       if any(strfind(G.coordinates,'CART')) % CARTESIAN, CARTHESIAN (old bug)
          coordinates  = 'x y';
+         ind=strcmp(OPT.var,'x'        );if all(ind==0);OPT.var{end+1} = 'x'        ;end
+         ind=strcmp(OPT.var,'y'        );if all(ind==0);OPT.var{end+1} = 'y'        ;end
+         if isempty(OPT.epsg)
+         fprintf(2,'No EPSG code specified for CARTESIAN grid, your grid is not CF compliant:\n')
+         fprintf(2,'(latitude,longitude) cannot be calculated from (x,y)!\n')
+         end
       else
          coordinates  = 'latitude longitude';
+         ind=strcmp(OPT.var,'longitude');if all(ind==0);OPT.var{end+1} = 'longitude';end
+         ind=strcmp(OPT.var,'latitude' );if all(ind==0);OPT.var{end+1} = 'latitude' ;end
       end
       
-      if any(strfind(G.coordinates,'CART')) | ~isempty(OPT.epsg) % CARTESIAN, CARTHESIAN (old bug)
-      if ~isempty(OPT.epsg)
+      if any(strfind(G.coordinates,'CART')) & ~isempty(OPT.epsg) % CARTESIAN, CARTHESIAN (old bug)
      [G.cen.lon,G.cen.lat] = convertCoordinates(G.cen.x,G.cen.y,'CS1.code',OPT.epsg,'CS2.code',4326);
      [G.cor.lon,G.cor.lat] = convertCoordinates(G.cor.x,G.cor.y,'CS1.code',OPT.epsg,'CS2.code',4326);
-      end
       end
       
    %% orthogonal ?
@@ -310,10 +318,17 @@ function varargout = vs_trim2nc(vsfile,varargin)
       if (all(dx(:)==0 | isnan(dx(:)))) & ...
          (all(dy(:)==0 | isnan(dy(:))))
          G.orthogonal = 1;
-         cen.x = unique(G.cen.x ,'rows') ;cen.x = cen.x(1,:); % The UNIQUE call is needed 
-         cen.y = unique(G.cen.y','rows')';cen.y = cen.y(:,1); % because some cells may be NaN
-         cor.x = unique(G.cor.x ,'rows') ;cor.x = cor.x(1,:); % for instance due to islands
-         cor.y = unique(G.cor.y','rows')';cor.y = cor.y(:,1); % represented by permanantly dry cells.
+         if any(strfind(G.coordinates,'SPHE'))         
+         cen.m = unique(G.cen.lon ,'rows') ;cen.m = cen.m(1,:); % The UNIQUE call is needed 
+         cen.n = unique(G.cen.lat','rows')';cen.n = cen.n(:,1); % because some cells may be NaN
+         cor.m = unique(G.cor.lon ,'rows') ;cor.m = cor.m(1,:); % for instance due to islands
+         cor.n = unique(G.cor.lat','rows')';cor.n = cor.n(:,1); % represented by permanantly dry cells.
+         else
+         cen.m = unique(G.cen.x   ,'rows') ;cen.m = cen.m(1,:); % The UNIQUE call is needed 
+         cen.n = unique(G.cen.y'  ,'rows')';cen.n = cen.n(:,1); % because some cells may be NaN
+         cor.m = unique(G.cor.x   ,'rows') ;cor.m = cor.m(1,:); % for instance due to islands
+         cor.n = unique(G.cor.y'  ,'rows')';cor.n = cor.n(:,1); % represented by permanantly dry cells.
+         end
       else
          G.orthogonal = 0;
       end
@@ -329,7 +344,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       coordinatesLayer        = [coordinates]; % implicit via formula_terms att
       coordinatesLayerInterf  = [coordinates]; % implicit via formula_terms att
       elseif strmatch('Z-MODEL', G.layer_model)
-      warning('Z-MODEL has not yet been tested.')
+      fprintf(2,'Z-MODEL has not yet been tested.\n')
       G.ZK          =  vs_let(F,'map-const'     ,'ZK'               ,'quiet');
       coordinatesLayer        = [coordinates ' Layer'];
       coordinatesLayerInterf  = [coordinates ' LayerInterf'];
@@ -472,7 +487,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
                                   'FillValue'  , []); % this doesn't do anything
       end
 
-      if any(strcmp('x',OPT.var)) & any(strcmp('y',OPT.var))
+      if any(strcmp('x',OPT.var)) && any(strcmp('y',OPT.var))
       ifld     = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'projection_x_coordinate');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'grid cell centres, x-coordinate');
@@ -484,7 +499,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'grid_mapping' , 'Value', 'CRS');
       end
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:XZ map-const:KCS TEMPOUT:XWAT TEMPOUT:CODW map-const:COORDINATES');
-      if any(strcmp('grid_x',OPT.var)) & any(strcmp('grid_y',OPT.var))
+      if any(strcmp('grid_x',OPT.var)) && any(strcmp('grid_y',OPT.var))
       attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'grid_x');
       end
       nc.Variables(ifld) = struct('Name'       , 'x', ...
@@ -504,7 +519,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'grid_mapping' , 'Value', 'CRS');
       end
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:YZ map-const:KCS TEMPOUT:YWAT TEMPOUT:CODW map-const:COORDINATES');
-      if any(strcmp('grid_x',OPT.var)) & any(strcmp('grid_y',OPT.var))
+      if any(strcmp('grid_x',OPT.var)) && any(strcmp('grid_y',OPT.var))
       attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'grid_y');
       end
       nc.Variables(ifld) = struct('Name'       , 'y', ...
@@ -526,7 +541,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       end
       end
 
-      if any(strcmp('grid_x',OPT.var)) & any(strcmp('grid_y',OPT.var))
+      if any(strcmp('grid_x',OPT.var)) && any(strcmp('grid_y',OPT.var))
       ifld     = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'projection_x_coordinate');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'grid cell corners, x-coordinate');
@@ -615,7 +630,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
 
       end
 
-      if any(strcmp('grid_longitude',OPT.var))
+      if any(strcmp('grid_longitude',OPT.var)) && any(strcmp('grid_latitude',OPT.var))
       ifld     = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'longitude');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'grid cell corners, longitude-coordinate');
@@ -629,9 +644,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
                                   'Dimensions' , nmcor.dims, ...
                                   'Attributes' , attr,...
                                   'FillValue'  , []); % this doesn't do anything
-      end
-      
-      if any(strcmp('grid_latitude',OPT.var))
+
       ifld     = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'latitude');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'grid cell corners, latitude-coordinate');
@@ -815,6 +828,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
 %% 3 Create variables: momentum and mass conservation
 
       if any(strcmp('waterlevel',OPT.var))
+      if ~isequal(vs_get_elm_size(F,'S1'),0)
       ifld     = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'sea_surface_height'); % sea_surface_elevation
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'water level');
@@ -829,9 +843,15 @@ function varargout = vs_trim2nc(vsfile,varargin)
                                   'Dimensions' , nmt.dims, ...
                                   'Attributes' , attr,...
                                   'FillValue'  , []); % this doesn't do anything
+      else
+         ind=strcmp(OPT.var,'waterlevel');
+         OPT.var(ind) = [];      
+         fprintf(2,'Variable not in trim file, skipped: waterlevel\n')
       end
-
+      end
+      
       if any(strcmp('velocity',OPT.var))
+      if ~isequal(vs_get_elm_size(F,'U1'),0) || ~isequal(vs_get_elm_size(F,'V1'),0)
       ifld     = ifld + 1;clear attr dims
       if (~any(strfind(G.coordinates,'CART'))) % CARTESIAN, CARTHESIAN (old bug)
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'eastward_sea_water_velocity'); % surface_geostrophic_sea_water_x_velocity_assuming_sea_level_for_geoid
@@ -867,9 +887,15 @@ function varargout = vs_trim2nc(vsfile,varargin)
                                   'Dimensions' , nmkt.dims, ...
                                   'Attributes' , attr,...
                                   'FillValue'  , []); % this doesn't do anything
+      else
+         ind=strcmp(OPT.var,'velocity');
+         OPT.var(ind) = [];      
+         fprintf(2,'Variable not in trim file, skipped: velocity\n')
+      end
       end
       
       if any(strcmp('velocity_omega',OPT.var))
+      if ~isequal(vs_get_elm_size(F,'W'),0)
       ifld     = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'upward_sea_water_velocity');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'relative layer velocity, z-component'); % holds for z and sigma layers
@@ -884,9 +910,15 @@ function varargout = vs_trim2nc(vsfile,varargin)
                                   'Dimensions' , nmkit.dims, ...
                                   'Attributes' , attr,...
                                   'FillValue'  , []); % this doesn't do anything
+      else
+         ind=strcmp(OPT.var,'velocity_omega');
+         OPT.var(ind) = [];      
+         fprintf(2,'Variable not in trim file, skipped: velocity_omega\n')
+      end
       end
       
       if any(strcmp('velocity_z',OPT.var))
+      if ~isequal(vs_get_elm_size(F,'WPHY'),0)
       ifld     = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'upward_sea_water_velocity');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'velocity, z-component');
@@ -901,12 +933,15 @@ function varargout = vs_trim2nc(vsfile,varargin)
                                   'Dimensions' , nmkt.dims, ...
                                   'Attributes' , attr,...
                                   'FillValue'  , []); % this doesn't do anything
+      else
+         ind=strcmp(OPT.var,'velocity_z');
+         OPT.var(ind) = [];      
+         fprintf(2,'Variable not in trim file, skipped: velocity_z\n')
+      end
       end
 
       if any(strcmp('tau',OPT.var))
-      if vs_get_elm_size(F,'TAUKSI')==0
-          warning('tau (map-series:TAUKSI map-const:TAUETA) not in file, skipped.')
-      else
+      if ~isequal(vs_get_elm_size(F,'TAUKSI'),0) || ~isequal(vs_get_elm_size(F,'TAUETA'),0)
       ifld     = ifld + 1;clear attr dims
       if (~any(strfind(G.coordinates,'CART'))) % CARTESIAN, CARTHESIAN (old bug)
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'surface_downward_northward_stress');
@@ -942,15 +977,17 @@ function varargout = vs_trim2nc(vsfile,varargin)
                                   'Dimensions' , nmt.dims, ...
                                   'Attributes' , attr,...
                                   'FillValue'  , []); % this doesn't do anything
+      else
+         ind=strcmp(OPT.var,'tau');
+         OPT.var(ind) = [];      
+         fprintf(2,'Variable not in trim file, skipped: tau\n')
       end
       end
       
 %% 3 Create variables: scalars
 
       if any(strcmp('density',OPT.var))
-      if vs_get_elm_size(F,'RHO')==0
-          warning('density (map-series:RHO) not in file, skipped.')
-      else
+      if ~isequal(vs_get_elm_size(F,'RHO'),0)
       ifld     = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'sea_water_density');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'density');
@@ -964,6 +1001,10 @@ function varargout = vs_trim2nc(vsfile,varargin)
                                   'Dimensions' , nmkt.dims, ...
                                   'Attributes' , attr,...
                                   'FillValue'  , []); % this doesn't do anything
+      else % remove if not present in trim file
+         ind=strcmp(OPT.var,'density');
+         OPT.var(ind) = [];      
+         fprintf(2,'Variable not in trim file, skipped: density\n')
       end
       end
       
@@ -1134,7 +1175,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
                                   'FillValue'  , []); % this doesn't do anything
       end
       else
-         warning('PEA not yet implemented for Z-MODEL')
+         fprintf(2,'Variable not in trim file, skipped: PEA not yet implemented for Z-MODEL.\n')
       end
 
       if any(strcmp('salinity',OPT.var))
@@ -1152,6 +1193,10 @@ function varargout = vs_trim2nc(vsfile,varargin)
                                   'Dimensions' , nmkt.dims, ...
                                   'Attributes' , attr,...
                                   'FillValue'  , []); % this doesn't do anything
+      else % remove if not present in trim file
+         ind=strcmp(OPT.var,'salinity');
+         OPT.var(ind) = [];      
+         fprintf(2,'Variable not in trim file, skipped: salinity \n')
       end
       end
 
@@ -1170,9 +1215,10 @@ function varargout = vs_trim2nc(vsfile,varargin)
                                   'Dimensions' , nmkt.dims, ...
                                   'Attributes' , attr,...
                                   'FillValue'  , []); % this doesn't do anything
-      else
+      else % remove if not present in trim file
          ind=strcmp(OPT.var,'temperature');
-         OPT.var(ind) = [];          
+         OPT.var(ind) = [];      
+         fprintf(2,'Variable not in trim file, skipped: temperature\n')
       end
       end
 
@@ -1191,6 +1237,10 @@ function varargout = vs_trim2nc(vsfile,varargin)
                                   'Dimensions' , nmkit.dims, ...
                                   'Attributes' , attr,...
                                   'FillValue'  , []); % this doesn't do anything
+      else % remove if not present in trim file
+         ind=strcmp(OPT.var,'tke');
+         OPT.var(ind) = [];      
+         fprintf(2,'Variable not in trim file, skipped: tke\n')
       end
       end
 
@@ -1209,13 +1259,15 @@ function varargout = vs_trim2nc(vsfile,varargin)
                                   'Dimensions' , nmkit.dims, ...
                                   'Attributes' , attr,...
                                   'FillValue'  , []); % this doesn't do anything
+      else % remove if not present in trim file
+         ind=strcmp(OPT.var,'eps');
+         OPT.var(ind) = [];      
+         fprintf(2,'Variable not in trim file, skipped: eps\n')
       end
       end
       
       if any(strcmp('viscosity_z',OPT.var))
-      if vs_get_elm_size(F,'VICWW')==0
-          warning('viscosity_z (map-series:VICWW) not in file, skipped.')
-      else
+      if ~isequal(vs_get_elm_size(F,'VICWW'),0)
       ifld     = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'standard_name', 'Value', '');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'Vertical eddy viscosity-3D');
@@ -1229,13 +1281,15 @@ function varargout = vs_trim2nc(vsfile,varargin)
                                   'Dimensions' , nmkit.dims, ...
                                   'Attributes' , attr,...
                                   'FillValue'  , []); % this doesn't do anything
+      else
+         ind=strcmp(OPT.var,'viscosity_z');
+         OPT.var(ind) = [];      
+         fprintf(2,'Variable not in trim file, skipped: viscosity_z\n')
       end
       end
       
       if any(strcmp('diffusivity_z',OPT.var))
-      if vs_get_elm_size(F,'VICWW')==0
-          warning('diffusivity_z (map-series:DICWW) not in file, skipped.')
-      else
+      if ~isequal(vs_get_elm_size(F,'VICWW'),0)
       ifld     = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'standard_name', 'Value', '');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'Vertical eddy diffusivity-3D');
@@ -1249,13 +1303,15 @@ function varargout = vs_trim2nc(vsfile,varargin)
                                   'Dimensions' , nmkit.dims, ...
                                   'Attributes' , attr,...
                                   'FillValue'  , []); % this doesn't do anything
+      else
+         ind=strcmp(OPT.var,'diffusivity_z');
+         OPT.var(ind) = [];      
+         fprintf(2,'Variable not in trim file, skipped: diffusivity_z\n')
       end
       end
       
       if any(strcmp('Ri',OPT.var))
-      if vs_get_elm_size(F,'VICWW')==0
-          warning('Ri (map-series:RICH) not in file, skipped.')
-      else
+      if ~isequal(vs_get_elm_size(F,'VICWW'),0)
       ifld     = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'standard_name', 'Value', '');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'Richardson number');
@@ -1269,6 +1325,10 @@ function varargout = vs_trim2nc(vsfile,varargin)
                                   'Dimensions' , nmkit.dims, ...
                                   'Attributes' , attr,...
                                   'FillValue'  , []); % this doesn't do anything
+      else
+         ind=strcmp(OPT.var,'Ri');
+         OPT.var(ind) = [];      
+         fprintf(2,'Variable not in trim file, skipped: Ri\n')
       end
       end
 
@@ -1313,6 +1373,10 @@ function varargout = vs_trim2nc(vsfile,varargin)
                                   'Attributes' , attr,...
                                   'FillValue'  , []); % this doesn't do anything
 
+   else
+      ind=strcmp(OPT.var,'sediment');
+      OPT.var(ind) = [];      
+      fprintf(2,'Variable not in trim file, skipped: sediment\n')
    end % isfield
 
 % TO DO: 
@@ -1351,9 +1415,8 @@ function varargout = vs_trim2nc(vsfile,varargin)
       ncwrite   (ncfile,'m'             , [1:G.mmax    ]');
       ncwrite   (ncfile,'n'             , [1:G.nmax    ]');
       else
-      ncwrite   (ncfile,'m'             , [nan    ; cen.x(:)              ;nan    ]);
-      ncwrite   (ncfile,'n'             , [nan    ; cen.y(:)              ;nan    ]);
-      warning('leading and trailing nan values make ncbrowse crash')
+      ncwrite   (ncfile,'m'             , [cen.m(1); cen.m(:);cen.m(end)]); % leading and trailing NaN values make ncbrowse ...
+      ncwrite   (ncfile,'n'             , [cen.n(1); cen.n(:);cen.n(end)]); % ... crash so replicate adjacent values
       end
 
       if strmatch('SIGMA-MODEL', G.layer_model)
@@ -1516,7 +1579,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
          R.velocity_z   = [min(R.velocity_z(1),min(matrix(:))) max(R.velocity_z(2),max(matrix(:)))];
          end
          
-         if any(strcmp('tau',OPT.var)) & vs_get_elm_size(F,'TAUKSI')~=0
+         if any(strcmp('tau',OPT.var)) & ~isequal(vs_get_elm_size(F,'TAUKSI'),0) & ~isequal(vs_get_elm_size(F,'TAUETA'),0)
         [D.tau_x,D.tau_y] = vs_let_vector_cen(F, 'map-series',{it},{'TAUKSI','TAUETA'}, {0,0,0},'quiet');
          D.tau_x = permute(D.tau_x,[2 3 1]).*G.cen.mask;
          D.tau_y = permute(D.tau_y,[2 3 1]).*G.cen.mask;
@@ -1571,25 +1634,25 @@ function varargout = vs_trim2nc(vsfile,varargin)
          end
          end
          
-         if any(strcmp('viscosity_z',OPT.var)) & vs_get_elm_size(F,'VICWW')>0
+         if any(strcmp('viscosity_z',OPT.var)) &  ~isequal(vs_get_elm_size(F,'VICWW'),0)
          matrix = apply_mask(vs_let_scalar(F,'map-series' ,{it},'VICWW','quiet'),G.cen.mask);
          ncwrite   (ncfile,'viscosity_z', matrix,[2,2,1,i]);
          R.viscosity_z = [min(R.viscosity_z(1),min(matrix(:))) max(R.viscosity_z(2),max(matrix(:)))];
          end
          
-         if any(strcmp('diffusivity_z',OPT.var)) & vs_get_elm_size(F,'DICWW')>0
+         if any(strcmp('diffusivity_z',OPT.var)) & ~isequal(vs_get_elm_size(F,'DICWW'),0)
          matrix = apply_mask(vs_let_scalar(F,'map-series' ,{it},'DICWW','quiet'),G.cen.mask);
          ncwrite   (ncfile,'diffusivity_z', matrix,[2,2,1,i]);
          R.diffusivity_z = [min(R.diffusivity_z(1),min(matrix(:))) max(R.diffusivity_z(2),max(matrix(:)))];
          end
          
-         if any(strcmp('Ri',OPT.var)) & vs_get_elm_size(F,'RICH')>0
+         if any(strcmp('Ri',OPT.var)) & ~isequal(vs_get_elm_size(F,'RICH'),0)
          matrix = apply_mask(vs_let_scalar(F,'map-series' ,{it},'RICH','quiet'),G.cen.mask);
          ncwrite   (ncfile,'Ri', matrix,[2,2,1,i]);
          R.Ri = [min(R.Ri(1),min(matrix(:))) max(R.Ri(2),max(matrix(:)))];
          end
 
-         if (any(strcmp('density',OPT.var)) | any(strcmp('pea',OPT.var))) & vs_get_elm_size(F,'RHO')~=0
+         if (any(strcmp('density',OPT.var)) | any(strcmp('pea',OPT.var))) & ~isequal(vs_get_elm_size(F,'RHO'),0)
          matrix = apply_mask(vs_let_scalar(F,'map-series' ,{it},'RHO'      , {0 0 0},'quiet'),G.cen.mask);
          if any(strcmp('density',OPT.var))
          ncwrite   (ncfile,'density', matrix,[2,2,1,i]); % 1-based
@@ -1599,7 +1662,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
          if strmatch('SIGMA-MODEL', G.layer_model)
 
             if any(strcmp('pea',OPT.var))
-            G.cen.intf.z  = zeros(size(G.cen.x,1),size(G.cen.x,2),G.kmax+1);
+            G.cen.intf.z  = zeros(G.nmax-2,G.mmax-2,G.kmax+1);
             for k = 1:G.kmax+1
                G.cen.intf.z(:,:,k) = G.sigma_intf(k).*(G.cen.zwl + G.cen.dep) - G.cen.dep; % dep is positive down
             end
