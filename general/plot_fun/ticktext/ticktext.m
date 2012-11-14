@@ -177,64 +177,70 @@ end
 % function to update tick labels
 function update_axes(obj, event, OPT, args)
     
-    % get axes and figure objects
-    ax   = OPT.Object;
-    fig  = get_figure(OPT.Object);
+    stack = dbstack;
     
-    % get current units
-    uax  = get(ax, 'Units');
-    ufig = get(fig, 'Units');
-    
-    % set units to normalized
-    set(fig, 'Units', 'normalized');
-    set(ax,  'Units', 'normalized');
-    
-    % determine parameter names based on dimension
-    p1 = sprintf('%sTick', upper(OPT.Dimension));
-    p2 = sprintf('%sTickLabel', upper(OPT.Dimension));
-    p3 = sprintf('%sLim', upper(OPT.Dimension));
-    
-    % get current ticks, limits and remove ticklabels
-    tck = get(ax, p1);
-    lim = get(ax, p3);
-    set(ax, p2, ' ');
-    
-    % evaluate tick labels
-    lbl = feval(OPT.FormatFcn, tck, OPT.FormatFcnVariables{:});
-    
-    % remove old tick labels
-    delete(findobj(ax, 'Tag', p2));
-    
-    % add all tick labels
-    axes(ax);
-    for i = 1:length(tck)
+    % check if we are not dealing with recurrent calls
+    if ~(length(stack)>1 && strcmpi(stack(1:2).name) && strcmpi(stack(1:2).file))
         
-        % determine location of current tick label
-        x0 = (tck(i)-lim(1))/diff(lim);
-        y0 = -.01;
-        
-        switch OPT.Dimension
-            case 'y'
-                y = x0;
-                x = y0;
-            otherwise
-                x = x0;
-                y = y0;
+        % get axes and figure objects
+        ax   = OPT.Object;
+        fig  = get_figure(OPT.Object);
+
+        % get current units
+        uax  = get(ax, 'Units');
+        ufig = get(fig, 'Units');
+
+        % set units to normalized
+        set(fig, 'Units', 'normalized');
+        set(ax,  'Units', 'normalized');
+
+        % determine parameter names based on dimension
+        p1 = sprintf('%sTick', upper(OPT.Dimension));
+        p2 = sprintf('%sTickLabel', upper(OPT.Dimension));
+        p3 = sprintf('%sLim', upper(OPT.Dimension));
+
+        % get current ticks, limits and remove ticklabels
+        tck = get(ax, p1);
+        lim = get(ax, p3);
+        set(ax, p2, ' ');
+
+        % evaluate tick labels
+        lbl = feval(OPT.FormatFcn, tck, OPT.FormatFcnVariables{:});
+
+        % remove old tick labels
+        delete(findobj(ax, 'Tag', p2));
+
+        % add all tick labels
+        axes(ax);
+        for i = 1:length(tck)
+
+            % determine location of current tick label
+            x0 = (tck(i)-lim(1))/diff(lim);
+            y0 = -.01;
+
+            switch OPT.Dimension
+                case 'y'
+                    y = x0;
+                    x = y0;
+                otherwise
+                    x = x0;
+                    y = y0;
+            end
+
+            % set current tick label
+            text(x, y, lbl{i}, ...
+                'Units', 'normalized', ...
+                'Tag', p2, ...
+                'HorizontalAlignment', 'center', ...
+                'VerticalAlignment', 'top', ...
+                args{:});
         end
+
+        % restore units
+        set(ax,  'Units', uax );
+        set(fig, 'Units', ufig);
         
-        % set current tick label
-        text(x, y, lbl{i}, ...
-            'Units', 'normalized', ...
-            'Tag', p2, ...
-            'HorizontalAlignment', 'center', ...
-            'VerticalAlignment', 'top', ...
-            args{:});
     end
-    
-    % restore units
-    set(ax,  'Units', uax );
-    set(fig, 'Units', ufig);
-    
 end
 
 % function that returns the figure object

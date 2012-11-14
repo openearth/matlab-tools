@@ -101,6 +101,8 @@ xlabel('time');
 ylabel('value');
 title('');
 
+ticktext(gca, '-datetime2');
+
 %% plot number of exceedances
 
 s2 = subplot(3,1,2); hold on;

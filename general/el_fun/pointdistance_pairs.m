@@ -64,17 +64,19 @@ function distances = pointdistance_pairs(a,b)
 % $Keywords: $
 
 %% Dimension check
-distances = NaN(size(a,1),size(b,1));
-
-%% Dimension check
 if size(a,2)~=size(b,2)
     error('a and b have to have the same number of columns');
 end
 
+%% Calculcate dimensions
+
+n1 = size(a,1);
+n2 = size(b,1);
+nd = size(a,2);
+
 %% Calculate distances
-for i = 1:size(a,1)
-    for ii = 1:size(b,1)
-        distances(i,ii) = sqrt(sum((a(i,:)-b(ii,:)).^2));
-    end
-end
-        
+
+a  = repmat(reshape(a,[n1 1  nd]),[1  n2 1]);
+b  = repmat(reshape(b,[1  n2 nd]),[n1 1  1]);
+
+distances = squeeze(sqrt(sum((a-b).^2,3)));

@@ -460,7 +460,7 @@ function ui_read(obj)
                         info.type = 'input';
 
                         % read variables
-                        info.vars = {'depfile.depfile'};
+                        info.vars = {'bathymetry' 'non-erodible layer' 'water levels' 'wave height' 'wave period'};
 
                         info.tm = [0 1];
                         info.t  = [0 1];
@@ -632,7 +632,7 @@ function data = ui_getdata(obj, info, vars, slider)
             case 'input'
                 for i = 1:n
                     idx = (j-1)*n+i;
-                    data{idx}(1,:,:) = xs_get(info.input{j}, vars{:});
+                    data{idx}(1,:,:) = get_inputdata(info.input{j}, vars{i});
                     data{idx} = data{idx}(1,ri+[0:rl-1],:);
                 end
             case 'output_xb'
@@ -914,5 +914,16 @@ function set_enable(obj, opt)
         set(get_obj(obj, 'ToggleDiff'), 'Enable', 'off');
         set(get_obj(obj, 'Slider2'), 'Enable', 'off');
         set(get_obj(obj, 'ToggleAnimate'), 'Enable', 'off');
+    end
+end
+
+function data = get_inputdata(obj, var)
+    switch var
+        case 'bathymetry'
+            data = xs_get(obj, 'depfile.depfile');
+        case 'non-erodible layer'
+            data = xs_get(obj, 'depfile.depfile') - xs_get(obj, 'ne_layer.ne_layer');
+        case {'water levels' 'wave height' 'wave period'}
+            data = nan;
     end
 end

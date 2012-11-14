@@ -67,13 +67,33 @@ function fpath = abspath(fpath)
 fpath = fullfile(fpath, '');
 
 % check if path is relative
-if isempty(fpath) ...
-        || (ispc() && (length(fpath) < 2 || fpath(2) ~= ':')) ...
-        || (isunix() && ~any(strcmp(fpath(1), {filesep '~'})))
-    p = regexp(fullfile(pwd, fpath), filesep, 'split');
+isRelative = false;
+if ispc()
+    if length(fpath) < 2 || ...
+            (fpath(2) ~= ':' && ~strcmpi(repmat(filesep,1,2), fpath(1:2)))
+        isRelative = true;
+    end
+elseif isunix()
+    if ~any(strcmp(fpath(1), {filesep '~'}))
+        isRelative = true;
+    end
 else
-    p = regexp(fpath, filesep, 'split');
+    error('Unsupported operating system');
 end
+
+if isRelative
+    fpath = fullfile(pwd, fpath);
+end
+
+if ispc()
+    root  = fpath(1:2);
+    fpath = fpath(3:end);
+elseif isunix()
+    root  = fpath(1);
+    fpath = fpath(2:end);
+end
+
+p = regexp(fpath, filesep, 'split');
 
 % remove '.' elements
 p = p(~strcmp(p, '.'));
@@ -89,7 +109,7 @@ while i <= length(p)
 end
 
 % glue path together
-fpath = fullfile(p{:}, '');
+fpath = fullfile(root, p{:}, '');
 
 % help unix users
 if isunix && ...

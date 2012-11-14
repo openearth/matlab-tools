@@ -131,7 +131,7 @@ for i = 1:length(names)
     fpath = fullfile(fdir, filename);
     
     % check if file is binary
-    if isbinary(fpath, 'fraction', xb_getpref('binary_factor'))
+    if isbinary(fpath, xb_getpref('binary_factor'))
         
         % determine dimensions
         if ~isempty(OPT.dims)
