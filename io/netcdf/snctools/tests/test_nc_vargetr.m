@@ -46,12 +46,11 @@ sz = info.Size;
 exp_data = 1:24;
 
 pvd = getpref('SNCTOOLS','PRESERVE_FVD',false);
-if pvd
-    exp_data = reshape(exp_data,sz);
-else
-    exp_data = reshape(exp_data,fliplr(sz));
-    exp_data = exp_data';
+if ~pvd
+    exp_data = reshape(exp_data,fliplr(sz))';
 end
+exp_data = reshape(exp_data,sz);
+
 exp_data(1) = -1;  % This would be NaN via NC_VARGET
 
 if ~isequal(data,exp_data)

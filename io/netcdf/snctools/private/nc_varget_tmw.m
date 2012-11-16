@@ -1,17 +1,6 @@
 function [data,info] = nc_varget_tmw(ncfile,varname,varargin)
 % TMW backend for NC_VARGET.
 
-%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 05 Oct 2012
-% Created with Matlab version: 7.14.0.739 (R2012a)
-
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
-% $Keywords: $
-
 try
     [data,info] = varget_nc(ncfile,varname,varargin{:});
 catch me
@@ -20,7 +9,7 @@ catch me
             data = varget_hdf5(ncfile,varname,varargin{:});
             
             % Revisit this at some point.
-            info.Datatype = 'enhanced';
+            info.Datatype = 'enhanced';          
         otherwise
             rethrow(me);
     end
@@ -67,7 +56,7 @@ end
 
 % The assumption is that ncid is ID for the group (possibly the root group)
 % containing the named variable, which had better not have a slash in the
-% name.
+% name.  
 preserve_fvd = nc_getpref('PRESERVE_FVD');
 
 varid=netcdf.inqVarID(gid,varname);
@@ -88,58 +77,58 @@ var_size = get_varsize(gid,varid,preserve_fvd);
 if any(var_size==0)
     values = zeros(var_size); % values = [];
     return
-else
-    
-    [start,count,stride] = snc_get_indexing(nvdims,var_size,varargin{:});
-    
-    % R2008b expects to preserve the fastest varying dimension, so if the
-    % user didn't want that, we have to reverse the indices.
-    if ~preserve_fvd
-        start = fliplr(start);
-        count = fliplr(count);
-        stride = fliplr(stride);
-    end
-    
-    
-    % Pack up the input parameters to the netcdf package function.
-    ncargs{1} = gid;
-    ncargs{2} = varid;
-    if nvdims ~= 0
-        if ~isempty(start)
-            ncargs{3} = start;
-        end
-        if ~isempty(count)
-            ncargs{4} = count;
-        end
-        if ~isempty(stride)
-            ncargs{5} = stride;
-        end
-    end
-    
-    
-    values = netcdf.getVar(ncargs{:});
-    
-    
-    % If it's a 1D vector, make it a column vector.  Otherwise permute the
-    % data to make up for the row-major-order-vs-column-major-order issue.
-    if isvector(values)
-        if (size(values,2) > 1)
-            % same as 'ISROW' (2010b).  If it's already a column, then we don't
-            % need to do anything.
-            values = values(:);
-        end
-    elseif ~preserve_fvd
-        % In other words, if we generally need to permute AND if we have a
-        % real 2D or higher matrix, then go ahead and permute.
-        pv = fliplr ( 1:ndims(values) );
-        values = permute(values,pv);
-    end
-    
-    
-    
-    % remove any singleton dimensions.
-    values = squeeze(values);
 end
+
+[start,count,stride] = snc_get_indexing(nvdims,var_size,varargin{:});
+
+% R2008b expects to preserve the fastest varying dimension, so if the
+% user didn't want that, we have to reverse the indices.
+if ~preserve_fvd
+    start = fliplr(start);
+    count = fliplr(count);
+    stride = fliplr(stride);
+end
+
+
+% Pack up the input parameters to the netcdf package function.
+ncargs{1} = gid;
+ncargs{2} = varid;
+if nvdims ~= 0
+    if ~isempty(start)
+        ncargs{3} = start;
+    end
+    if ~isempty(count)
+        ncargs{4} = count;
+    end
+    if ~isempty(stride)
+        ncargs{5} = stride;
+    end
+end
+
+
+values = netcdf.getVar(ncargs{:});
+
+
+% If it's a 1D vector, make it a column vector.  Otherwise permute the
+% data to make up for the row-major-order-vs-column-major-order issue.
+if isvector(values)
+    if (size(values,2) > 1)
+        % same as 'ISROW' (2010b).  If it's already a column, then we don't
+        % need to do anything.
+        values = values(:);
+    end
+elseif ~preserve_fvd
+    % In other words, if we generally need to permute AND if we have a
+    % real 2D or higher matrix, then go ahead and permute.
+    pv = fliplr ( 1:ndims(values) );
+    values = permute(values,pv);
+end
+
+
+
+% remove any singleton dimensions.
+values = squeeze(values);
+
 
 
 %-----------------------------------------------------------------------
@@ -183,20 +172,20 @@ for j = 1:numel(varargin)
     end
 end
 values = h5read(ncfile,['/' varname],varargin{:});
-
+            
 if ~preserve_fvd
     values = permute(values, ndims(values):-1:1 );
 end
-
+            
 
 %--------------------------------------------------------------------------
 function handle_error(e)
 
 v = version('-release');
 
-
+ 
 switch(e.identifier)
-    
+
     case 'MATLAB:imagesci:netcdf:libraryFailure'
         
         switch(v)

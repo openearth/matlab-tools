@@ -1,4 +1,11 @@
-* September 29 2012 John Evans <john.g.evans.ne@gmail.com> -r4012
+* October 30 2012 John Evans <john.g.evans.ne@gmail.com> -r4024
+- Fixed indexing bug that crept into java backend.
+
+* October 10 2012 John Evans <john.g.evans.ne@gmail.com> -r4020
+- Added THREDDS_DUMP and THREDDS_INFO to top-level.
+- Fixed bugs in OPeNDAP string handling.
+
+* September 29 2012 John Evans <john.g.evans.ne@gmail.com> -r4015
 - Fixed bug in netcdf-java backend where a file on the matlab path 
 - wouldn't be read.
 - Added debug code to force use of netcdf-java for all reading.

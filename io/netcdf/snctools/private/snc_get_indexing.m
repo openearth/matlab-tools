@@ -42,7 +42,7 @@ stride = stride(:)';
 % If the user had set non-positive numbers in "count", then we replace them
 % with what we need to get the rest of the variable.
 negs = find((count<0) | isinf(count));
-count(negs) = (var_size(negs) - start(negs)) ./ stride(negs);
+count(negs) = floor((var_size(negs) - start(negs)) ./ stride(negs));
 
 
 % Ok, now do some final validation.

@@ -74,8 +74,6 @@ catch %#ok<CTCH>
 end
 
 
-
-
 % Permute?
 if (numel(var_size) == 1) ...
         && (strcmp(theDataType,'String') || strcmp(theDataType,'char'))
@@ -85,9 +83,13 @@ elseif length(var_size) == 1
 else
     preserve_fvd = nc_getpref('PRESERVE_FVD');
     if preserve_fvd
-        pv = fliplr ( 1:length(var_size) );
-        values = permute(values,pv);
+        values = permute(values,numel(var_size):-1:1);
+    else
+        rdims = var_size;
+        values = reshape(values,count);
     end
+
+
 end                                                                                   
 
 % And finally, remove any singleton dimensions.

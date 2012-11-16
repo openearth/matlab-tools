@@ -32,7 +32,6 @@ warning('on', 'SNCTOOLS:nc_archive_buffer:deprecated' );
 warning('on', 'SNCTOOLS:nc_datatype_string:deprecated' );
 warning('on', 'SNCTOOLS:nc_diff:deprecated' );
 warning('on', 'SNCTOOLS:nc_getall:dangerous' );
-warning('on', 'SNCTOOLS:snc2mat:deprecated' );
 
         
 
@@ -76,7 +75,6 @@ warning('off', 'SNCTOOLS:nc_archive_buffer:deprecated' );
 warning('off', 'SNCTOOLS:nc_datatype_string:deprecated' );
 warning('off', 'SNCTOOLS:nc_diff:deprecated' );
 warning('off', 'SNCTOOLS:nc_getall:dangerous' );
-warning('off', 'SNCTOOLS:snc2mat:deprecated' );
 
 
 
@@ -118,6 +116,7 @@ end
 
 run_http_tests;
 run_grib_tests;
+run_thredds_tests;
 
 % Don't use java for opendap tests on 2012a
 switch(v)
@@ -364,6 +363,33 @@ fprintf('\t\tjava http testing filtered out when either of SNCTOOLS preferences 
 fprintf('\n\t\t''TEST_REMOTE'' or ''TEST_HTTP'' is false.\n');
 
 return
+
+%--------------------------------------------------------------------------
+function run_thredds_tests()
+fprintf('\tTesting THREDDS... ');
+
+v = version('-release');
+switch(v)
+	case '14'
+        fprintf('\n\t\tTHREDDS testing filtered out on R14.\n');
+        return
+end
+
+import ucar.nc2.*
+if ~exist('NetcdfFile','class')
+    fprintf('\n\t\tTHREDDS testing filtered out when netcdf-java is not available.\n');
+    return
+end
+
+
+if getpref('SNCTOOLS','TEST_REMOTE',false)
+    test_thredds_info;
+    return
+end
+
+fprintf('\n');
+fprintf('\t\tTHREDDS testing filtered out when SNCTOOLS preference ');
+fprintf('\n\t\t''TEST_REMOTE'' is false.\n');
 
 %--------------------------------------------------------------------------
 function run_grib_tests()

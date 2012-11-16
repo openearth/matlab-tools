@@ -965,7 +965,7 @@ switch(v)
         return;
     otherwise
         % It's enough that we do not error out.
-        data = nc_varget('example.nc','temperature');
+        nc_varget('example.nc','temperature');
 end
 %--------------------------------------------------------------------------
 function test_indices_are_cols(ncfile)
@@ -984,6 +984,8 @@ end
 function run_opendap_tests()
 
 test_readOpendapVariable;
+test_1D_char_opendap_variable;
+test_2D_char_opendap_variable;
 
 v = version('-release');
 switch(v)
@@ -995,17 +997,52 @@ end
 return
 
 
+%--------------------------------------------------------------------------
+function test_1D_char_opendap_variable ()
+% Should be 65 chars long.
+url = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/test/matlab-ncread-error-classic-65.nc';
+data = nc_varget(url,'str');
+if numel(data) ~= 65
+    error('failed');
+end
+return
 
 
+%--------------------------------------------------------------------------
+function test_2D_char_opendap_variable ()
+% 2D strings seem to be treated differently.
 
+pfd = getpref('SNCTOOLS','PRESERVE_FVD');
 
+url = 'http://www.marine.csiro.au/dods/nph-dods/dods-data/test_data/test_1.nc';
+info = nc_info(url);
+actData = nc_varget(url,'uchar2');
 
+expData = ['defghijklmn';
+           'fghijklmnop';
+           'hijklmnopqr';
+           'jklmnopqrst';
+           'lmnopqrstuv';
+           'nopqrstuvwx';
+           'pqrstuvwxyz';
+           'rstuvwxyzab';
+           'ccccccccccc';
+           'ccccccccccc';
+           'ccccccccccc';
+           'ccccccccccc' ];
+expData = num2cell(expData);
 
+if pfd
+    expData = expData';
+end
 
+if strcmp(info.Format,'netcdf-java')
+    if ~isequal(actData,expData)
+        error('failed');
+    end
+end
 
-
-
-
+return
 
 
 %--------------------------------------------------------------------------

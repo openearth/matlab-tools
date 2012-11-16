@@ -91,7 +91,7 @@ if strcmp(fmt,fmts.URL)
                 % Still, use netcdf-java for SSL.
                 retrieval_method = retrieval_methods.java; 
                 fmt = fmts.netcdf_java;
-            elseif getpref('SNCTOOLS','USE_NETCDF_JAVA',false) % redundant, as already handled at above
+            elseif getpref('SNCTOOLS','USE_NETCDF_JAVA',false)
                 % Force the use of netcdf-java if the user
                 % really want it.
                 retrieval_method = retrieval_methods.java; 

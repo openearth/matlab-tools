@@ -5,32 +5,32 @@ classic model netCDF-3 and netCDF-4 files.  It can use up to three
 backends for this:
 
     1) tmw, the MathWorks native netCDF package
-    2) mexnc, the original open source mex-file
-    3) netcdf-java from Unidata
+    2) netcdf-java from Unidata
+    3) mexnc, the original open source mex-file
 
 For most cases, snctools <default> support for various read/write 
 configurations is summarized in the table below.  
 
 
-       | netcdf-3 | netcdf-3 | netcdf-4 | netcdf-4 | netcdf-4 | netcdf-4 | opendap
-       | classic  | classic  | classic  | classic  | enhanced | enhanced | (SSL: 0=no, 
-       | read     | write    | read     | write    | read     | write 	 |  else netcdf-java 
-       |          |          |          |          |          |       	 |  version method)
--------+----------+----------+----------+----------+----------+----------+----------
-R2012a | tmw      | tmw      | tmw      | tmw      | tmw,java | -        | java(4.2), tmw(0)
-R2011b | tmw      | tmw      | tmw      | tmw      | tmw,java | -        | java(4.2) 
-R2011a | tmw      | tmw      | tmw      | tmw      | tmw,java | -        | java(4.2) 
-R2010b | tmw      | tmw      | tmw      | tmw      | tmw,java | -        | java(4.2) 
-R2010a | tmw      | tmw      | java     | -        | java     | -        | java(4.2)     
-R2009b | tmw      | tmw      | java     | -        | java     | -        | java(4.2)     
-R2009a | tmw      | tmw      | java     | -        | java     | -        | java(4.2)     
-R2008b | tmw      | tmw      | java     | -        | java     | -        | java(4.2)     
-R2008a | java     | mexnc    | java     | -        | java     | -        | java(4.2)     
-R2007b | java     | mexnc    | java     | -        | java     | -        | java(4.2)     
-R2007a | java     | mexnc    | java     | -        | java     | -        | java(4.1)     
-R2006b | java     | mexnc    | java     | -        | java     | -        | java(4.1)     
-R2006a | java     | mexnc    | java     | -        | java     | -        | java(4.1)     
-R14    | java     | mexnc    | -        | -        | -        | -        | -        
+       | netcdf-3 | netcdf-3 | netcdf-4 | netcdf-4 | netcdf-4 | netcdf-4
+       | classic  | classic  | classic  | classic  | enhanced | enhanced
+       | read     | write    | read     | write    | read     | write
+-------+----------+----------+----------+----------+----------+----------
+R2012b | tmw      | tmw      | tmw      | tmw      | tmw,java | - 
+R2012a | tmw      | tmw      | tmw      | tmw      | tmw,java | - 
+R2011b | tmw      | tmw      | tmw      | tmw      | tmw,java | - 
+R2011a | tmw      | tmw      | tmw      | tmw      | tmw,java | - 
+R2010b | tmw      | tmw      | tmw      | tmw      | tmw,java | - 
+R2010a | tmw      | tmw      | java     | -        | java     | - 
+R2009b | tmw      | tmw      | java     | -        | java     | - 
+R2009a | tmw      | tmw      | java     | -        | java     | - 
+R2008b | tmw      | tmw      | java     | -        | java     | - 
+R2008a | java     | mexnc    | java     | -        | java     | - 
+R2007b | java     | mexnc    | java     | -        | java     | - 
+R2007a | java     | mexnc    | java     | -        | java     | - 
+R2006b | java     | mexnc    | java     | -        | java     | - 
+R2006a | java     | mexnc    | java     | -        | java     | - 
+R14    | java     | mexnc    | -        | -        | -        | - 
 
 
 There are two exceptions to note.  The mexnc backend is only required
@@ -139,26 +139,38 @@ USE_NETCDF_JAVA
 +-----------------------------------------------------------------------
 BUG Reports You Should Know About
 
-1)  Experimental GRIB2 Support
+1)  OPeNDAP errors
 
-     If you have the netcdf-java jar file on your matlab javaclasspath,
-     you can try read GRIB2 files as if they were netcdf files.  This is
-     a bit experimental, though.  And if your version of MATLAB is R2008a
-     or below, you should take a look at Technical Solution 1-2Z4RS7 on
-     the Mathworks web site, http://www.mathworks.com.  This describes a
-     workaround for dealing with a conflict with the ucarunits.jar file
-     that used to ship with MATLAB until R2008b.  As of March 25, 2010,
-     the URL for this technical solution was at
+    There is a bug in the netCDF library that ships with MATLAB versions
+    R2012a and R2012.  Please reference the following URL for an official
+    workaround.
 
-     http://www.mathworks.com/support/solutions/en/data/1-2Z4RS7/?solution=1-2Z4RS7
+    http://www.mathworks.com/support/bugreports/854995
 
-2)  Segfaults on certain strided read operations.  
+    The bug does not affect the netcdf-java backend, so you may work 
+    around this by setting the USE_NETCDF_JAVA preference to true.  This
+    will only affect OPeNDAP retrievals.
+
+2)  Experimental GRIB2 Support
+
+    If you have the netcdf-java jar file on your matlab javaclasspath,
+    you can try read GRIB2 files as if they were netcdf files.  This is
+    a bit experimental, though.  And if your version of MATLAB is R2008a
+    or below, you should take a look at Technical Solution 1-2Z4RS7 on
+    the Mathworks web site, http://www.mathworks.com.  This describes a
+    workaround for dealing with a conflict with the ucarunits.jar file
+    that used to ship with MATLAB until R2008b.  As of March 25, 2010,
+    the URL for this technical solution was at
+
+    http://www.mathworks.com/support/solutions/en/data/1-2Z4RS7/?solution=1-2Z4RS7
+
+3)  Segfaults on certain strided read operations.  
 
     Affects versions R2008a and R2009a.  Please consult this URL.
 
     http://www.mathworks.com/support/bugreports/522794
 
-3)  Empty Attributes
+4)  Empty Attributes
 
     MATLAB versions R2008b thru R2009b incorrectly disallowed the creation
     of empty attributes, which are quite clearly legal.  The bug is
@@ -167,7 +179,7 @@ BUG Reports You Should Know About
 
     http://www.mathworks.com/support/bugreports/609383
 
-4)  Out-of-memory error with negative indices.  Affects R2008b through
+5)  Out-of-memory error with negative indices.  Affects R2008b through
     R2010a, but this only affects those who would use mexnc or the native
     netcdf package directly, not snctools users.  Please consult this URL.
 

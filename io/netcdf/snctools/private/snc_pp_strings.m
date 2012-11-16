@@ -11,15 +11,20 @@ elseif strcmp(version('-release'),'14')
 end
 
 
-% Java says that the variable is laid out in row-major order.
-if numel(shape) == 1
-    values = cell([1 shape]);
-else
-    values = cell(shape);
-end
+% Make it a 1D vector until we know how to shape it properly.
+values = cell([1 prod(shape)]);
 
-for j = 1:prod(shape)
-    values{j} = jdata.getObject(j-1);
+
+switch class(jdata.getObject(0))
+    case 'opendap.dap.DString'
+        for j = 1:prod(shape)
+            values{j} = char(jdata.getObject(j-1).getValue());
+        end
+        
+    otherwise       
+        for j = 1:prod(shape)
+            values{j} = jdata.getObject(j-1);
+        end
 end
 
 % If just a single string, then do not store it as a cell array.
