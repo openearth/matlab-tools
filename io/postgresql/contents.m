@@ -1,8 +1,15 @@
 %Toolbox for <a href="http://www.postgresql.org/">PostgreSQL</a> relational database management system
 %
+% This toolbox requires you to (i) obtain a license for the official
+% Mathwork database toolbox, although we are working on using
+% (ii) the PostgreSQL JDBC driver directly, circumventing the need for a 
+% license for the database toolbox. Currently the JDBC method is only  
+% implemented for only for PG_CONNECTDB_JDBC and PG_EXEC_JDBC.
+%
 % START:
 % pg_settings                    - Load toolbox for JDBC connection to a PostgreSQL database
-% pg_connectdb                   - Creates a JDBC connection to a PostgreSQL database
+% pg_connectdb                   - Creates a JDBC connection to a PostgreSQL database for database toolbox
+% pg_connectdb_jdbc              - ,,                                                 for JDBC jar file (no database toolbox needed)
 % 
 % Highest-level READ,INSPECT:
 % pg_dump                        - Display overview of tables, columns and sizes of database schema
@@ -29,7 +36,8 @@
 % Low-level SQL query: for explanation see <a href="http://www.postgresql.org/docs/current/static/sql.html">SQL primer</a> 
 % pg_quote                       - Wrap identifiers (table, column names) in " quotes to enable mixed upper/lower case
 % pg_query                       - Builts a SQL query string from structures
-% pg_exec                        - Executes a SQL query
+% pg_exec                        - Executes a SQL query with database toolbox
+% pg_exec_jdbc                   - ,,                   using JDBC jar file (no database toolbox needed)
 % pg_fetch                       - Executes a SQL query and fetches the result
 % pg_error                       - Checks a SQL query result for errors
 % pg_value2sql                   - Makes a cell array of arbitrary values suitable for the use in an SQL query

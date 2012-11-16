@@ -1,9 +1,14 @@
 function OK = pg_settings(varargin)
 %PG_SETTINGS  Load toolbox for JDBC connection to a PostgreSQL database
 %
-% PG_SETTINGS() adds correct JDBC to java path. You need to do this
-% every Matlab session. Alternatively make sure it is available and 
-% listed in the following file: <matlabroot>/toolbox/local/classpath.txt
+% PG_SETTINGS() adds correct JDBC to dynamic java path. You need to 
+% do this every Matlab session when you want to use PostgreSQL.
+%
+
+% Alternatively you can let load it automatically into the static
+% java path by adding it to in the following file that is read
+% every new Matlab session: % <matlabroot>/toolbox/local/classpath.txt
+% The static jave path has better performance than the dynamci path.
 %
 %See also postgresql, http://jdbc.postgresql.org/download.html, netcdf_settings
 
@@ -53,7 +58,7 @@ OPT = setproperty(OPT,varargin);
       java2add = 'postgresql-9.1-902.jdbc3.jar';
    end
    
-   alljavaclasspath = path2os(javaclasspath('-all')); % can also be in static path
+   alljavaclasspath = path2os(javaclasspath('-all')); % can also be in static path in <matlabroot>/toolbox/local/classpath.txt
    indices          = strfind(alljavaclasspath,path2os([fileparts(mfilename('fullpath')),filesep,java2add]));
     
    if isempty(cell2mat(indices))

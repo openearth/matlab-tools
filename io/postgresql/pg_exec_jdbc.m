@@ -1,36 +1,33 @@
-function rs = pg_exec(conn, sql, varargin)
-%PG_EXEC  Executes a SQL query and returns a cursor object
+function rs = pg_exec_jdbc(conn, sql, varargin)
+%PG_EXEC_JDBC  Executes a SQL query and returns a cursor object
 %
-%   Executes a SQL query with the licensed Mathworks database toolbox 
+%   Executes a SQL query with JDBC jar file directly (licensed
+%   Mathworks database toolbox not needed) 
 %   and checks the result for errors. Returns the result set.
 %
 %   Syntax:
-%   rs = pg_exec(conn, sql, varargin)
+%   rs = pg_exec_jdbc(conn, sql, varargin)
 %
 %   Input:
-%   conn      = Database connection object created with PG_CONNECTDB
+%   conn      = Database connection object created with PG_CONNECTDB_JDBC
 %   sql       = SQL query string
 %   varargin  = none
 %
 %   Output:
 %   rs        = Result set from SQL query
 %
-%   Example
-%   conn = pg_connectdb('someDatabase');
-%   pg_exec(conn, 'DELETE FROM someTable WHERE someColumn = 1');
+%   Example:
+%   conn = pg_connectdb_jdbc('someDatabase');
+%   pg_exec_jdbc(conn, 'DELETE FROM someTable WHERE someColumn = 1');
 %
-%   See also PG_CONNECTDB, pg_fetch, pg_select_struct, pg_insert_struct, pg_update_struct, exec
+%   See also PG_CONNECTDB_JDBC, pg_fetch, pg_select_struct, pg_insert_struct, pg_update_struct, exec
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2012 Deltares
-%       Bas Hoonhout
+%   Copyright (C) 2012 Deltares for Building with Nature
+%       Gerben J. de Boer
 %
-%       bas.hoonhout@deltares.nl
-%
-%       Rotterdamseweg 185
-%       2629HD Delft
-%       Netherlands
+%       gerben.deboer@deltares.nl
 %
 %   This library is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -53,9 +50,6 @@ function rs = pg_exec(conn, sql, varargin)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 27 Jul 2012
-% Created with Matlab version: 7.14.0.739 (R2012a)
-
 % $Id$
 % $Date$
 % $Author$
@@ -67,9 +61,44 @@ function rs = pg_exec(conn, sql, varargin)
 
 prefs = getpref('postgresql');
 
+
 if ~isstruct(prefs) || ~isfield(prefs, 'passive') || ~prefs.passive
-    rs = exec(conn, sql);
-    pg_error(rs);
+
+   %% A test query
+
+   pstat = conn.prepareStatement(sql);
+   rsraw = pstat.executeQuery();
+
+   %% Parse the results into a cell array with the highest possible
+   %  data type for each column.
+
+   count=0;
+   rs = {};
+   while rsraw.next()
+       count=count+1;
+       icol = 0;
+       while 1
+           icol = icol + 1;
+           try
+              rs{count,icol}=rsraw.getDouble(icol);
+           catch
+              try
+                 rs{count,icol}=rsraw.getInt(icol);
+              catch
+                 try
+                    rs{count,icol}=char(rsraw.getString(icol));
+                 catch
+                    break
+                 end
+              end
+           end
+       end
+   end
+
+   pstat.close();
+   rsraw.close();
+   pg_error(rs);
+   
 end
 
 if isstruct(prefs) && isfield(prefs, 'verbose') && prefs.verbose

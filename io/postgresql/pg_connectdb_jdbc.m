@@ -1,5 +1,5 @@
-function conn = pg_connectdb(db, varargin)
-%PG_CONNECTDB  Creates a JDBC connection to a PostgreSQL database with database toolbox
+function conn = pg_connectdb_jdbc(db, varargin)
+%PG_CONNECTDB_JDBC  Creates a JDBC connection to a PostgreSQL database with database toolbox
 %
 %   Creates a JDBC connection to a PostgreSQL database with the database toolbox.
 %   A JDBC driver should be loaded first, see PG_SETTINGS and README.txt.
@@ -7,7 +7,7 @@ function conn = pg_connectdb(db, varargin)
 %   session.
 %
 %   Syntax:
-%   conn = pg_connectdb(db, <keyword,value>)
+%   conn = pg_connectdb_jdbc(db, <keyword,value>)
 %
 %   Input:
 %   db        = Name of database to connect to
@@ -22,28 +22,23 @@ function conn = pg_connectdb(db, varargin)
 %
 %   Example:
 %
-%    conn = pg_connectdb('someDatabase')
-%    conn = pg_connectdb('anotherDatabase','host','posgresql.deltares.nl')
-%    conn = pg_connectdb('anotherDatabase','schema','someSchema')
+%    conn = pg_connectdb_jdbc('someDatabase')
+%    conn = pg_connectdb_jdbc('anotherDatabase','host','posgresql.deltares.nl')
+%    conn = pg_connectdb_jdbc('anotherDatabase','schema','someSchema')
 %
 %   Example:connecting to the empty database of a virgin local Win32 PostgreSQL 9.1
 %
-%    conn = pg_connectdb('postgres','user','postgres','pass','MyPassword')
-%    conn = pg_connectdb('postgres','user','postgres','pass','MyPassword','schema','public')
+%    conn = pg_connectdb_jdbc('postgres','user','postgres','pass','MyPassword')
+%    conn = pg_connectdb_jdbc('postgres','user','postgres','pass','MyPassword','schema','public')
 %
-%   See also database, pg_connectdb_jdbc, pg_exec, pg_fetch, pg_select_struct, pg_insert_struct,
-%   pg_update_struct, pg_getpk, pg_getid
+%   See also pg_exec_jdbc
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2012 Deltares
-%       Bas Hoonhout
+%   Copyright (C) 2012 Deltares for Building with Nature
+%       Gerben J. de Boer
 %
-%       bas.hoonhout@deltares.nl
-%
-%       Rotterdamseweg 185
-%       2629HD Delft
-%       Netherlands
+%       gerben.deboer@deltares.nl
 %
 %   This library is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -66,9 +61,6 @@ function conn = pg_connectdb(db, varargin)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 27 Jul 2012
-% Created with Matlab version: 7.14.0.739 (R2012a)
-
 % $Id$
 % $Date$
 % $Author$
@@ -91,25 +83,26 @@ function conn = pg_connectdb(db, varargin)
 
 %% connect to database
 
-   conn = database( ...
-    db, ...
-    OPT.user, ...
-    OPT.pass, ...
-    'org.postgresql.Driver', ...
-    ['jdbc:postgresql://' OPT.host ':' num2str(OPT.port) '/' db]);
+   props = java.util.Properties;
+   props.setProperty('user'    , OPT.user);
+   props.setProperty('password', OPT.pass);
+
+   driver = org.postgresql.Driver;
+   url    = ['jdbc:postgresql://' OPT.host ':' num2str(OPT.port) '/' db];
+   conn   = driver.connect(url, props);
 
 %% display message on error
 
-   if ~isempty(conn.message)
+   if isempty(conn)
        if pg_settings('check',1)<0
        disp('run PG_Settings first')
        end
-       error(conn.message)
    else
        
        % set default schema, if given
        if ~isempty(OPT.schema)
-           exec(conn, sprintf('SET search_path TO %s', OPT.schema));
+           error(['schema not implemented in ',mfilename])
+          %pg_exec_jdbc(conn, sprintf('SET search_path TO %s', OPT.schema));
        end
        
    end
