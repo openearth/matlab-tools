@@ -58,12 +58,13 @@ warning('beta version')
    OPT.grd         = ''; % delft3d grd file for boundary positions
    OPT.bnd         = ''; % delft3d bnd file for boundary positions
    OPT.bct         = ''; % delft3d bct file whose tables will be updated
+   OPT.varname     = 'elev';
    
    if nargin==0
       varargout = {OPT};return
    end
 
-   OPT = setproperty(OPT,varargin)
+   OPT = setproperty(OPT,varargin);
 
 %% load BCT locations
 
@@ -100,7 +101,7 @@ warning('beta version')
 
    BCT   = bct_io('read',OPT.bct);
    tmask = R.datenum >= OPT.RefDate;
-   ZI              = griddata_near2(R.x,R.y,R.data(:,tmask),B.x,B.y,B.PI,B.WI);
+   ZI              = griddata_near2(R.x,R.y,R.(OPT.varname)(:,tmask),B.x,B.y,B.PI,B.WI);
    nbct  = sum(tmask);
    np    = size(B.WI,1);
    for ibnd=1:length(B.DATA)

@@ -81,24 +81,29 @@ warning('TO DO: let m and n be only small arrays with corner points indices, and
 
 %% initialize
 
-   OPT.basePath   = 'http://opendap-matroos.deltares.nl/thredds/dodsC/'; % same server as catalog.xml
-   OPT.source     = 'hmcn_kustfijn';
-   OPT.datenum    = datenum([2009 2009],[12 12],[1 2]);
-  %OPT.m          = {[4:109],[      4],[4:70]}; % to main land
-   OPT.m          = {[4: 66],      [4],[4:70]}; % to interface N'Sea & W'Sea
-   OPT.n          = {[  122],[122:545],[ 545]};
-   OPT.f          = [-1,1,1];
-   OPT.var        = 'SEP';
-   OPT.debug      = 0;
-   OPT.path       = 'F:\checkouts\mcmodels\effect-chain-waddenzee\HYDRODYNAMICA\unstruc_kinda_dd\';
-   OPT.timrelpath = 'tim';
-   OPT.RefDate    = []; %datenum(2009,12,1); % if not 'NOOS' or datenum(), else ISO8601 'yyyy-mm-dd HH:MM:SS' or []
+   OPT.basePath     = 'http://opendap-matroos.deltares.nl/thredds/dodsC/'; % same server as catalog.xml
+   OPT.source       = 'hmcn_kustfijn';
+   OPT.datenum      = datenum([2009 2009],[12 12],[1 2]);
+  %OPT.m            = {[4:109],[      4],[4:70]}; % to main land
+   OPT.m            = {[4: 66],      [4],[4:70]}; % to interface N'Sea & W'Sea
+   OPT.n            = {[  122],[122:545],[ 545]};
+   OPT.f            = [-1,1,1];
+   OPT.var          = 'SEP';
+   OPT.debug        = 0;
+   OPT.path         = 'F:\checkouts\mcmodels\effect-chain-waddenzee\HYDRODYNAMICA\unstruc_kinda_dd\';
+   OPT.nan          = 0;
+  [OPT.user,OPT.passwd] = matroos_user_password();
+   OPT.nodatavalue  = 0;
    
    if nargin==0
       varargout = {OPT};return
    end
 
    OPT = setproperty(OPT,varargin);
+   
+   if ~isempty(OPT.path)
+      OPT.path = path2os([OPT.path,filesep]);
+   end
 
 %% load cached meta-data from matroos_opendap_maps2series1
 
@@ -106,6 +111,10 @@ warning('TO DO: let m and n be only small arrays with corner points indices, and
       matroos_opendap_maps2series1('source',OPT.source,'basePath',OPT.basePath);
    else
       D = load(OPT.source);
+   end
+   
+   if strcmpi(OPT.var,'SEP')
+      OPT.varname = 'elev'; % GETM name
    end
 
 %% process temporal OPeNDAP slice indices
@@ -120,19 +129,19 @@ warning('TO DO: let m and n be only small arrays with corner points indices, and
    R.source   = OPT.source;
    R.basePath = OPT.basePath;
 
-   sz.data = cellfun(@(x,y) max(length(x),length(y)),OPT.m,OPT.n);
+   sz.(OPT.varname) = cellfun(@(x,y) max(length(x),length(y)),OPT.m,OPT.n);
    sz.d0   = [0 cumsum(cellfun(@(x,y) max(length(x),length(y)),OPT.m,OPT.n))]+1;sz.d0 = sz.d0(1:end-1);
    sz.d1   = [  cumsum(cellfun(@(x,y) max(length(x),length(y)),OPT.m,OPT.n))];
-   R.x     = repmat(nan,[1 sum(sz.data)]);
-   R.y     = repmat(nan,[1 sum(sz.data)]);
-   R.m     = repmat(nan,[1 sum(sz.data)]);
-   R.n     = repmat(nan,[1 sum(sz.data)]);
-   R.ind   = repmat(nan,[1 sum(sz.data)]);
+   R.x     = repmat(nan,[1 sum(sz.(OPT.varname))]);
+   R.y     = repmat(nan,[1 sum(sz.(OPT.varname))]);
+   R.m     = repmat(nan,[1 sum(sz.(OPT.varname))]);
+   R.n     = repmat(nan,[1 sum(sz.(OPT.varname))]);
+   R.ind   = repmat(nan,[1 sum(sz.(OPT.varname))]);
    clc
    for j=1:length(OPT.m)
         dx = [];dm = [];
         dy = [];dn = [];
-      for jj=1:sz.data(j)
+      for jj=1:sz.(OPT.varname)(j)
         nr = (sz.d0(j)+jj-1);
         if length(OPT.m{j})==1
            m = OPT.m{j}( 1);n = OPT.n{j}(jj);
@@ -162,36 +171,34 @@ warning('TO DO: let m and n be only small arrays with corner points indices, and
    
 %% request 2D data slices along constant m or n indices
 
-  [user,passwd]  = matroos_user_password;
-
-tic
-for it=1:length(OPT.t)
-
-    disp(['time: ',num2str(it,'%0.4d'),' / ',num2str(length(OPT.t),'%0.4d')])
-    [dtime,zone] = nc_cf_time(['https://',user,':',passwd,'@',D.urlPath{OPT.t(it)}(8:end)],'time');
-    time  = [time(:)' dtime(:)'];
-    ddata = repmat(nan,[sum(sz.data) length(dtime)]);
-
-    for j=1:length(OPT.m)  
-    disp(['    locs: ',num2str(j,'%0.4d'),' / ',num2str(length(OPT.m),'%0.4d')])
-         m0 = OPT.m{j}(1);
-         n0 = OPT.n{j}(1);
-         Nm = length(OPT.m{j});
-         Nn = length(OPT.n{j});
-         %disp([m0 n0 Nn Nm])
-         dddata = nc_varget(['https://',user,':',passwd,'@',D.urlPath{OPT.t(it)}(8:end)],OPT.var,[1 m0 n0]-1,[Inf Nm Nn])';
-         if OPT.f(j)==-1
-         ddata(sz.d0(j):sz.d1(j),:) =  flipud(dddata);
-         else
-         ddata(sz.d0(j):sz.d1(j),:) =  dddata;
-         end
-    end
-    data = [data ddata];
-toc    
-end
-
-R.datenum = time;clear time
-R.data    = data;clear data
+   tic
+   for it=1:length(OPT.t)
+   
+       disp(['time: ',num2str(it,'%0.4d'),' / ',num2str(length(OPT.t),'%0.4d')])
+       [dtime,zone] = nc_cf_time(['https://',OPT.user,':',OPT.passwd,'@',D.urlPath{OPT.t(it)}(8:end)],'time');
+       time  = [time(:)' dtime(:)'];
+       ddata = repmat(nan,[sum(sz.(OPT.varname)) length(dtime)]);
+   
+       for j=1:length(OPT.m)  
+       disp(['    locs: ',num2str(j,'%0.4d'),' / ',num2str(length(OPT.m),'%0.4d')])
+            m0 = OPT.m{j}(1);
+            n0 = OPT.n{j}(1);
+            Nm = length(OPT.m{j});
+            Nn = length(OPT.n{j});
+            %disp([m0 n0 Nn Nm])
+            dddata = nc_varget(['https://',OPT.user,':',OPT.passwd,'@',D.urlPath{OPT.t(it)}(8:end)],OPT.var,[1 m0 n0]-1,[Inf Nm Nn])';
+            if OPT.f(j)==-1
+            ddata(sz.d0(j):sz.d1(j),:) =  flipud(dddata);
+            else
+            ddata(sz.d0(j):sz.d1(j),:) =  dddata;
+            end
+       end
+       data = [data ddata];
+   toc    
+   end
+   
+   R.datenum       = time;clear time
+   R.(OPT.varname) = data;clear data
 
 %% construct name for overall data and extract pivot corner indices
 
@@ -218,42 +225,66 @@ R.data    = data;clear data
    
    R.pathdistance = distance(R.x,R.y);
    R.history      = ['Timeseries created at ',datestr(now),' by $HeadURL$ $Id$'];
+
+
+%% remove nans by temporal interpolation
+
+   if ~OPT.nan
+
+      matfile = [OPT.path,OPT.source,'_',mnstr,'_',datestr(R.datenum(1),'yyyymmdd'),'_',datestr(R.datenum(end),'yyyymmdd'),'_nan.mat'];
+      ncfile  = [OPT.path,OPT.source,'_',mnstr,'_',datestr(R.datenum(1),'yyyymmdd'),'_',datestr(R.datenum(end),'yyyymmdd'),'_nan.nc'];
+
+      save(matfile,'-struct','R')
+      struct2nc(ncfile,R);
+
+      %  fill period where area is dry by values just before/after drying.
+      %  Othe rwould would be spatila interpolation or constant value.
+      
+      for i=1:length(R.x)
+         mask=isnan(R.(OPT.varname)(i,:));
+         if any(mask)
+            %close
+             j=find(~mask);
+            %plot(R.datenum(j),R.(OPT.varname)(i,j),'r','linewidth',2)
+            %hold on
+            %plot(R.datenum,R.(OPT.varname)(i,:),'b','linewidth',2)
+            %datetick('x')
+             if all(mask)
+             R.(OPT.varname)(i,:) = OPT.nodatavalue;
+             else
+             R.(OPT.varname)(i,:) = interp1(R.datenum(j),R.(OPT.varname)(i,j),R.datenum,'linear',OPT.nodatavalue);
+             end
+            %plot(R.datenum(j),R.(OPT.varname)(i,j),'g')
+            %pausedisp
+         end
+      end
    
-   if ~isempty(OPT.path)
-      OPT.path = path2os([OPT.path,filesep]);
    end
+
+%% save
    
-    matfile = [OPT.path,OPT.source,'_',mnstr,'_',datestr(R.datenum(1),'yyyymmdd'),'_',datestr(R.datenum(end),'yyyymmdd'),'.mat'];
-    ncfile  = [OPT.path,OPT.source,'_',mnstr,'_',datestr(R.datenum(1),'yyyymmdd'),'_',datestr(R.datenum(end),'yyyymmdd'),'.nc'];
+   matfile = [OPT.path,OPT.source,'_',mnstr,'_',datestr(R.datenum(1),'yyyymmdd'),'_',datestr(R.datenum(end),'yyyymmdd'),'.mat'];
+   ncfile  = [OPT.path,OPT.source,'_',mnstr,'_',datestr(R.datenum(1),'yyyymmdd'),'_',datestr(R.datenum(end),'yyyymmdd'),'.nc'];
 
-    save(matfile,'-struct','R')
-    struct2nc(ncfile,R);
-
+   save(matfile,'-struct','R')
+   matroos_opendap_maps2series2mn2nc(R,ncfile);
+    
 %% Assess 2D polygon-time array
 
    if OPT.debug
-     R = nc2struct(ncfile)
-     
-     %%
+   
+     R = nc2struct(ncfile);
      
      close
      it=':';
-     pcolorcorcen(R.datenum(it),R.pathdistance,R.data(1:597,it)); %,[.5 .5 .5])
+     pcolorcorcen(R.datenum(it),R.nbdyp,R.(OPT.varname)(1:597,it)); %,[.5 .5 .5])
      datetick('x')
      tickmap('y')
-     hline(R.pathdistance(find(diff(R.ind))),'k'); % corners
-     hline(R.pathdistance(43),'k--') % interface N'Sea and W'zee 
+     hline(R.nbdyp(find(diff(R.ind))),'k'); % corners
+     hline(R.nbdyp(43),'k--') % interface N'Sea and W'zee 
      ylabel('distance along polygon')
      xlabel([datestr(xlim1(1),'yyyy-mmm-dd HH:MM') '  \rightarrow  ', datestr(xlim1(1),'yyyy-mmm-dd HH:MM')])
      print2screensize('matroos_opendap_maps2series3')
    end
-
-%% Split 2D array into polygon (*.pli) with ascii time series at corners (*.tim)
-   if ~isempty(OPT.RefDate)
-   matroos_opendap_maps2series2mn2ascii(R,'filename',[OPT.path,OPT.source,'_',mnstr,'.pli'],...
-                                              'path',OPT.path,...
-                                        'timrelpath',OPT.timrelpath,...
-                                           'RefDate',OPT.RefDate);
-   end                                       
                                            
    varargout = {R};                                           

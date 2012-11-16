@@ -1,4 +1,4 @@
-function varargout = matroos_opendap_maps2series2mn2ascii(R,varargin)
+function matroos_opendap_maps2series2mn2ascii(R,varargin)
 %MATROOS_OPENDAP_MAPS2SERIES2MN2ASCII subsidiary of matroos_opendap_maps2series2mn
 %
 % You can reload the netCDF file written by MATROOS_OPENDAP_MAPS2SERIES2MN
@@ -61,6 +61,11 @@ warning('beta version')
    OPT.header      = 0; % not sure whether can Dflow-FM handle comments ....
    OPT.only_future = 1; % chop all dates before RefDate (no negative times), not sure whether can Dflow-FM handle negs ....
    OPT.timselect   = ':';
+   OPT.source      = ''; % CF keyword
+   OPT.mcor        = [];
+   OPT.ncor        = [];
+   OPT.varname     = 'elev';
+   
    
    if nargin==0
       varargout = {OPT};return
@@ -89,12 +94,11 @@ warning('beta version')
 %% split 2D array into polygon (*.pli) with ascii time series at corners (*.tim)
 
    fid = fopen([OPT.path,OPT.filename],'w');
-   fprintf(fid,'* basePath=%s\n',char(R.basePath));
-   fprintf(fid,'* source=%s\n',char(R.source));
+   fprintf(fid,'* %s\n',char(OPT.source));
    fprintf(fid,'* created at %s\n',datestr(now));
    fprintf(fid,'* created by %s\n','$Id');
-   fprintf(fid,'* m=%s\n',num2str(R.mcor));
-   fprintf(fid,'* n=%s\n',num2str(R.ncor));
+   fprintf(fid,'* m=%s\n',num2str(OPT.mcor));
+   fprintf(fid,'* n=%s\n',num2str(OPT.ncor));
    fprintf(fid,'%s\n','BLOCK');
    fprintf(fid,'%d %d\n',length(R.x),2);
    
@@ -108,7 +112,7 @@ warning('beta version')
       else
          fprintf(fid,'%f %f %s\n',R.x(j),R.y(j),['''',timname,'''']); % x,y, <yet unused name of associated data file>
 
-         if any(isnan(R.data(j,:)))
+         if any(isnan(R.(OPT.varname)(j,:)))
             disp(['Warning: ',timname,' contains NaN ',num2str(j)])
          else
             disp(['Confirm: ',timname,' is OK ',num2str(j)])
@@ -118,8 +122,7 @@ warning('beta version')
          mkpath([OPT.path,OPT.timrelpath])
          fid2 = fopen([OPT.path,OPT.timrelpath,filesep,timname],'w');
          if OPT.header
-            fprintf(fid2,'# basePath=%s\n',char(R.basePath));
-            fprintf(fid2,'# source=%s\n',char(R.source));
+            fprintf(fid2,'# %s\n',char(R.source));
             fprintf(fid2,'# created at %s\n',datestr(now));
             fprintf(fid2,'# created by %s\n','$Id');
             fprintf(fid2,'# m=%g\n',R.m(j));
@@ -145,7 +148,7 @@ warning('beta version')
             % make minutes
             minutes = (R.datenum(it) - OPT.RefDate)*24*60;
             if ~(minutes > 0 & OPT.only_future)
-            fprintf(fid2,'%g %f\n',minutes,R.data(j,it));
+            fprintf(fid2,'%g %f\n',minutes,R.(OPT.varname)(j,it));
             else
             end
             else % ISO
