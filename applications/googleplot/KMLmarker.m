@@ -157,7 +157,7 @@ if  ischar(OPT.name);OPT.name = cellstr(OPT.name  );end
 
 % Icon's
 if isempty(OPT.iconnormalState)
-    iconnormalState = '';
+    iconnormalState = 'http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png';
 else
     iconnormalState =    [' <Icon><href>'    OPT.iconnormalState '</href></Icon>\n'];
 end
