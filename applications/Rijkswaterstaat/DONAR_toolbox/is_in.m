@@ -65,7 +65,7 @@ if nargin==0
         end
     end
     
-     dprintf('CPU=%.2f sec', etime(clock,t0))
+     dsprintf('CPU=%.2f sec', etime(clock,t0))
      PerfMember=Perf;
     save Perf PerfMember Ratio -append
 %     PerfSimple=Perf;
@@ -94,7 +94,7 @@ if nargin==0
 %         aa=rem(a,N-1);
 %         uaa=unique(aa);
 %         tic;b=is_in(aa,uaa);
-%         dprintf('N=%d toc=%f',N,toc)
+%         dsprintf('N=%d toc=%f',N,toc)
 %     end
 
     %Outcomes with fixed length(h) and length(g)=N

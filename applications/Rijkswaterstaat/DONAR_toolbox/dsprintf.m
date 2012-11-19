@@ -1,5 +1,5 @@
-function msg=dprintf(varargin)
-% dprintf - shortcut for disp(sprintf(formatstr,arg1,arg2,..arg14))
+function msg=dsprintf(varargin)
+% dsprintf - shortcut for disp(sprintf(formatstr,arg1,arg2,..arg14))
 %
 %CALL
 %  dsprintf(formatstr,arg1,arg2,..arg14)

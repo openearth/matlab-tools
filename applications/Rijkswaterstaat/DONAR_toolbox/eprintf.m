@@ -11,7 +11,7 @@ function eprintf(varargin)
 % OUTPUT:
 % a string is displayed in the command window
 %
-% See also: sprintf, disp, dprintf
+% See also: sprintf, disp, dsprintf
 
 %Nanne van der Zijpp
 %MobiData

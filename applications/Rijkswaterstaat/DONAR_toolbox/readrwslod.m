@@ -85,7 +85,7 @@ if nargin==1;
     else
         %interpreteer velden
         for k=1:length(rawlocs)
-            %dprintf('%d(%d)',k,length(rawlocs));
+            %dsprintf('%d(%d)',k,length(rawlocs));
             %lees datum uit regel 1
             [dates] = sscanf(rawlocs(k).str1,'%d',3);
             locs(k).longdate=dates(1)+100*dates(2)+10000*getyear(dates(3),0);

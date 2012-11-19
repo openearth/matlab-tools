@@ -42,7 +42,7 @@ yr(selset)=yr(selset)+1900;
 %             yr=1900+yr;
 %         end
 %         if VERBOSE
-%             dprintf('LET OP! jaaraanduiding %d (verwerkt als %d) is niet eenduidig!',yr,yr1);
+%             dsprintf('LET OP! jaaraanduiding %d (verwerkt als %d) is niet eenduidig!',yr,yr1);
 %         end
 %     else
 %         yr1=yr;
