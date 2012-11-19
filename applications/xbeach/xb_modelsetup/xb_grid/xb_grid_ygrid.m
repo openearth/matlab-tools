@@ -113,7 +113,7 @@ else
         ygr = min(yin):OPT.dymin:max(yin);
         
         xb_verbose(2,'Create equidistant alongshore grid');
-        xb_verbose(2,'Grid size',dymin);
+        xb_verbose(2,'Grid size',OPT.dymin);
     else
         % variable, two-dimensional grid
         
