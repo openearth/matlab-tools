@@ -122,7 +122,7 @@ cd(S.h,'..');
 cd(S.h,'status');
 
 %Write status xml file
-status='Matlab called by Interactive Tool';
+status='Interactive Design Tool activated';
 try
     sendWebStatus(status,S.xml);
 catch
@@ -157,7 +157,7 @@ copyfile([S.settings.rundir],S.settings.outputdir);
 %% Preprocessing Unibest Interactive Tool
 for ii=1:1%length(sensitivities)
     ITHK_preprocessing(ii);
-    status='preprocessing Unibest Interactive Tool completed';
+    status='preprocessing Interactive Design Tool completed';
     try
         sendWebStatus(status,S.xml);
     catch
@@ -184,7 +184,7 @@ for ii=1:1%length(sensitivities)
 end
 save([S.settings.outputdir filesep S.userinput.name,'.mat'],'-struct','S')
 outputKML=fileread(S.PP.output.kmlFileName);
-status = 'postprocessing Unibest Interactive Tool completed';
+status = 'postprocessing Interactive Design Tool completed';
 try
     sendWebStatus(status,S.xml);
 catch
@@ -212,6 +212,12 @@ end
 xml_write(outputFilename,root);
 
 %First copy KML
+status = 'Uploading output';
+try
+    sendWebStatus(status,S.xml);
+catch
+    disp(status);
+end
 %Go up one dir
 cd(S.h,'..');
 %Go into kml dir
