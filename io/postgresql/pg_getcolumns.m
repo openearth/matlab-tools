@@ -93,6 +93,10 @@ function [column_name, data_type,data_length] = pg_getcolumns(conn, table, colum
 strSQL = ['SELECT column_name, data_type FROM information_schema.columns WHERE table_name = ''',table,''''];
 rs     = pg_fetch(conn, strSQL);
 
+if isempty(rs) && isnumeric(rs); % required for combi: empty tables & database_toolbox license
+    rs = {};
+end
+
 if nargin > 2
    for i=1:length(column_name0)
       tmp = strmatch(column_name0{i}, {rs{:,1}}, 'exact');

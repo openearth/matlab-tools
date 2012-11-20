@@ -1,7 +1,9 @@
 function rs = pg_fetch(conn, sql, varargin)
 %PG_FETCH  Executes a SQL query and imports database data into matlab
 %
-%   Executes a SQL query, fetches the result and checks the result for
+%   Executes a SQL query with the (i) licensed Mathworks database
+%   toolbox or otherwise with (ii) the JDBC driver directly
+%   fetches the result and checks the result for
 %   errors. Returns the resulting data in a cell array or matrix.
 %
 %   Syntax:
@@ -16,6 +18,7 @@ function rs = pg_fetch(conn, sql, varargin)
 %   rs        = Fetched data from result set from SQL query
 %
 %   Example
+%   conn = pg_connectdb('someDatabase');
 %   pg_fetch(conn, 'SELECT * FROM someTable');
 %
 %   See also pg_exec, pg_select_struct, pg_insert_struct, pg_update_struct, fetch
@@ -30,6 +33,10 @@ function rs = pg_fetch(conn, sql, varargin)
 %       Rotterdamseweg 185
 %       2629HD Delft
 %       Netherlands
+%
+%   JDBC: Copyright (C) 2012 Deltares for Building with Nature
+%       Gerben J. de Boer
+%       gerben.deboer@deltares.nl
 %
 %   This library is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -64,17 +71,62 @@ function rs = pg_fetch(conn, sql, varargin)
 
 %% execute sql query
 
-prefs = getpref('postgresql');
+   prefs = getpref('postgresql');
 
-rs = fetch(conn, sql);
-pg_error(rs);
+   % inspect conn object to find out whether is was created with
+   % the licensed database toolbox or the JDCB driver directly.
+   OPT.database_toolbox = 0;
+   try
+       if any(strfind(char(conn.Constructor),'mathworks'))
+           OPT.database_toolbox = 1;
+       end
+   end
 
-if isstruct(prefs) && isfield(prefs, 'verbose') && prefs.verbose
-	disp(sql);
-end
-        
-if isstruct(prefs) && isfield(prefs, 'file') && ~isempty(prefs.file)
-    fid = fopen(prefs.file, 'a');
-    fprintf(fid, '%s\n', sql);
-    fclose(fid);
-end
+   if OPT.database_toolbox
+       rs = fetch(conn, sql);
+   else
+      % http://docs.oracle.com/javase/7/docs/api/java/sql/PreparedStatement.html
+      pstat = conn.prepareStatement(sql);
+      rsraw = pstat.executeQuery();
+
+      count=0;
+      rs = {};
+      while rsraw.next()
+          count=count+1;
+          icol = 0;
+          while 1
+              icol = icol + 1;
+              try
+                 rs{count,icol}=rsraw.getDouble(icol);
+              catch
+                 try
+                    rs{count,icol}=rsraw.getInt(icol);
+                 catch
+                    try
+                       rs{count,icol}=char(rsraw.getString(icol));
+                    catch
+                       % reached end
+                       % error('datatype not implemented')
+                       break
+                    end
+                 end
+              end
+          end
+      end
+
+      pstat.close();
+      rsraw.close();
+      
+   end
+
+   pg_error(rs);
+
+   if isstruct(prefs) && isfield(prefs, 'verbose') && prefs.verbose
+   	disp(sql);
+   end
+           
+   if isstruct(prefs) && isfield(prefs, 'file') && ~isempty(prefs.file)
+       fid = fopen(prefs.file, 'a');
+       fprintf(fid, '%s\n', sql);
+       fclose(fid);
+   end

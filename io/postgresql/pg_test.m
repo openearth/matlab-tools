@@ -40,11 +40,12 @@ function OK = pg_test(varargin)
 % $HeadURL$
 % $Keywords: $
 
-OPT.db     = 'postgres';
-OPT.schema = 'public';
-OPT.user   = '';
-OPT.pass   = '';
-OPT.table  = 'AaB22';
+OPT.db               = 'postgres';
+OPT.schema           = 'public';
+OPT.user             = '';
+OPT.pass             = '';
+OPT.table            = 'AaB34';
+OPT.database_toolbox = 1;
 
 OPT = setproperty(OPT,varargin);
 
@@ -55,7 +56,7 @@ end
 if isempty(OPT.user)
 [OPT.user,OPT.pass] = pg_credentials();
 end
-conn=pg_connectdb(OPT.db,'user',OPT.user,'pass',OPT.pass,'schema',OPT.schema);
+conn=pg_connectdb(OPT.db,'user',OPT.user,'pass',OPT.pass,'database_toolbox',OPT.database_toolbox);
 
 pg_dump(conn)
 
@@ -67,15 +68,16 @@ pg_dump(conn)
       for itab=1:length(tables)
          table = tables{itab};
          columns = pg_getcolumns(conn,table);
+         disp([OPT.db,':',table])
          for icol=1:length(columns)
              column = columns{icol};
-             disp([conn.Instance,':',table,':',column])
+             disp([OPT.db,':',table,':',column])
          end
       end
       warning(['request table for pg_test is already in database:',OPT.table])
       add_table = 0;
    end
-
+   
 %% add datamodel for testing
 % http://archives.postgresql.org/pgsql-performance/2004-11/msg00350.php
 % http://dba.stackexchange.com/questions/322/what-are-the-drawbacks-with-using-uuid-or-guid-as-a-primary-key
@@ -83,41 +85,44 @@ pg_dump(conn)
    if    add_table
       sql   = loadstr('pg_test_template.sql');
       for i=1:length(sql)
-          sqlstr = strrep(sql{i},'?',OPT.table);
+          sqlstr = strrep(sql{i},'?',OPT.table)
           pg_exec(conn,sqlstr);
       end
       OK = 1;
    else
       OK = 0;
    end % add_table
-
+   
 %% remove and re-add data
-
    pg_cleartable   (conn,OPT.table) % reset values and serial
+   
    pg_insert_struct(conn,OPT.table,struct('Value','3.1416'       ,'ObservationTime', '1648-10-24 00:01:00+1')); % 1
    pg_insert_struct(conn,OPT.table,struct('Value',[3.1416 3.1416],'ObservationTime',['1648-10-24 00:02:00+1';'1648-10-24 00:03:00+1'])); % 2 3
    pg_insert_struct(conn,OPT.table,struct('Value','2'            ,'ObservationTime', '1648-10-24 00:04:00+1')); % 4
    pg_insert_struct(conn,OPT.table,struct('Value',[2 2]          ,'ObservationTime',['1648-10-24 00:05:00+1';'1648-10-24 00:06:00+1'])); % 4 5
    
    D0 = struct('ObservationID',1:6,'ObservationTime',datenum(1648,10,24,0,1:6,0)','Value',[3.1416 3.1416 3.1416 2 2 2]);
-   
+
 %% extract re-add data
    
    R = pg_select_struct(conn,OPT.table,struct('Value','2'));
    OK(end+1) = isequal(cell2mat({R{:,1}}),[4 5 6]);
-   OK(end+1) = isequal(    char({R{:,2}}),['1648-10-24 00:04:00.0';'1648-10-24 00:05:00.0';'1648-10-24 00:06:00.0']);
+   tmp = pg_datenum(char({R{:,2}}));
+   OK(end+1) = isequal(tmp,datenum(['1648-10-24 00:04:00';'1648-10-24 00:05:00';'1648-10-24 00:06:00']));
    disp(char({R{:,2}}))
    disp('warning: timezone not included yet')
    
    R = pg_select_struct(conn,OPT.table,struct('Value',2));
    OK(end+1) = isequal(cell2mat({R{:,1}}),[4 5 6]);
-   OK(end+1) = isequal(    char({R{:,2}}),['1648-10-24 00:04:00.0';'1648-10-24 00:05:00.0';'1648-10-24 00:06:00.0']);
+   tmp = pg_datenum(char({R{:,2}}));
+   OK(end+1) = isequal(tmp,datenum(['1648-10-24 00:04:00';'1648-10-24 00:05:00';'1648-10-24 00:06:00']));
    disp(char({R{:,2}}))
    disp('warning: timezone not included yet')
    
    R = pg_select_struct(conn,OPT.table,struct('Value','3.1416'));
    OK(end+1) = isequal(cell2mat({R{:,1}}),[1 2 3]);
-   OK(end+1) = isequal(    char({R{:,2}}),['1648-10-24 00:01:00.0';'1648-10-24 00:02:00.0';'1648-10-24 00:03:00.0']);
+   tmp = pg_datenum(char({R{:,2}}));
+   OK(end+1) = isequal(tmp,datenum(['1648-10-24 00:01:00';'1648-10-24 00:02:00';'1648-10-24 00:03:00']));
    disp(char({R{:,2}}))
    disp('warning: timezone not included yet')
    
@@ -130,7 +135,8 @@ pg_dump(conn)
    
    R = pg_select_struct(conn,OPT.table,struct([])); % all
    OK(end+1) = isequal(cell2mat({R{:,1}}),[1 2 3 4 5 6]);
-   OK(end+1) = isequal(    char({R{:,2}}),['1648-10-24 00:01:00.0';'1648-10-24 00:02:00.0';'1648-10-24 00:03:00.0';'1648-10-24 00:04:00.0';'1648-10-24 00:05:00.0';'1648-10-24 00:06:00.0']);
+   tmp = pg_datenum(char({R{:,2}}));
+   OK(end+1) = isequal(tmp,datenum(['1648-10-24 00:01:00.0';'1648-10-24 00:02:00.0';'1648-10-24 00:03:00.0';'1648-10-24 00:04:00.0';'1648-10-24 00:05:00.0';'1648-10-24 00:06:00.0']));
    disp(char({R{:,2}}))
    disp('warning: timezone not included yet');
    

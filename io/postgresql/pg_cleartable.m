@@ -67,5 +67,6 @@ function pg_cleartable(conn, table, varargin)
 pg_exec(conn, sprintf('DELETE FROM %s', pg_quote(table)));
 
 %% reset sequence
-pg_exec(conn, sprintf('SELECT setval(''"%s_%s_seq"'', 1, FALSE)', table, pg_getpk(conn, table)));
+pk = char(pg_getpk(conn, table));
+pg_exec(conn, sprintf('SELECT setval(''"%s_%s_seq"'', 1, FALSE)', table, pk));
 

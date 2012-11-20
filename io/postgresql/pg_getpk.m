@@ -75,4 +75,6 @@ OPT = setproperty(OPT,varargin{:});
 
 strSQL = sprintf('SELECT pg_attribute.attname FROM pg_index, pg_class, pg_attribute WHERE pg_class.oid = ''%s''::regclass AND indrelid = pg_class.oid AND pg_attribute.attrelid = pg_class.oid AND pg_attribute.attnum = any(pg_index.indkey) AND indisprimary', pg_quote(table));
 
-varargout = pg_fetch(conn, strSQL);
+rs = pg_fetch(conn, strSQL);
+
+varargout = {rs};

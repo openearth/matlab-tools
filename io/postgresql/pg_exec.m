@@ -1,7 +1,8 @@
 function rs = pg_exec(conn, sql, varargin)
 %PG_EXEC  Executes a SQL query and returns a cursor object
 %
-%   Executes a SQL query with the licensed Mathworks database toolbox 
+%   Executes a SQL query with the (i) licensed Mathworks database
+%   toolbox or otherwise with (ii) the JDBC driver directly
 %   and checks the result for errors. Returns the result set.
 %
 %   Syntax:
@@ -31,6 +32,10 @@ function rs = pg_exec(conn, sql, varargin)
 %       Rotterdamseweg 185
 %       2629HD Delft
 %       Netherlands
+%
+%   JDBC: Copyright (C) 2012 Deltares for Building with Nature
+%       Gerben J. de Boer
+%       gerben.deboer@deltares.nl
 %
 %   This library is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -68,8 +73,42 @@ function rs = pg_exec(conn, sql, varargin)
 prefs = getpref('postgresql');
 
 if ~isstruct(prefs) || ~isfield(prefs, 'passive') || ~prefs.passive
-    rs = exec(conn, sql);
-    pg_error(rs);
+
+   % inspect conn object to find out whether is was created with
+   % the licensed database toolbox or the JDCB driver directly.
+   OPT.database_toolbox = 0;
+   try
+       if any(strfind(char(conn.Constructor),'mathworks'))
+           OPT.database_toolbox = 1;
+       end
+   end
+   
+   if any(strfind('--',strtok(sql)))
+      % JDBC fails for comments because nothing is returned
+   else
+      if OPT.database_toolbox
+         rs = exec(conn, sql);
+      else
+         % http://www.coderanch.com/t/301594/JDBC/databases/Difference-execute-executeQuery-executeUpdate
+         % http://docs.oracle.com/javase/7/docs/api/java/sql/PreparedStatement.html
+         % executeQuery()  --- This is used generally for reading the content of the database. The output will be in the form of ResultSet. Generally SELECT statement is used.
+         % executeUpdate() --- This is generally used for altering the databases. Generally DROP TABLE or DATABASE, INSERT into TABLE, UPDATE TABLE, DELETE from TABLE statements will be used in this. The output will be in the form of int. This int value denotes the number of rows affected by the query.
+         % execute()       --- If you dont know which method to be used for executing SQL statements, this method can be used. This will return a boolean. TRUE indicates the result is a ResultSet and FALSE indicates it has the int value which denotes number of rows affected by the query.            
+         pstat = conn.prepareStatement(sql);
+         if any(strfind('CREATE ALTER DROP INSERT UPDATE DELETE',strtok(sql)))
+            rs = pstat.executeUpdate();
+            %disp(['executeUpdate : ',sql])
+            %pausedisp
+         else
+            rs = pstat.executeQuery()
+            rs.close();
+            %disp(['executeQuery  : ',sql])
+            %pausedisp
+         end
+         pstat.close();
+      end
+      pg_error(rs);
+   end
 end
 
 if isstruct(prefs) && isfield(prefs, 'verbose') && prefs.verbose
