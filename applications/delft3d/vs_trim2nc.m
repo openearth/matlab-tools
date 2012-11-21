@@ -173,6 +173,10 @@ function varargout = vs_trim2nc(vsfile,varargin)
 
       F = vs_use(vsfile,'quiet');
       
+      if ~strcmp(F.SubType,'Delft3D-trim')
+         error([mfilename ' works only for Delft3D-trim file, perhaps you needed vs_trih2nc for the Delft3D-trih file.'])
+      end
+      
       T = vs_time(F,OPT.time);
       if OPT.time==0
       OPT.time = 1:length(T.datenum);
@@ -346,8 +350,8 @@ function varargout = vs_trim2nc(vsfile,varargin)
       elseif strmatch('Z-MODEL', G.layer_model)
       fprintf(2,'Z-MODEL has not yet been tested.\n')
       G.ZK          =  vs_let(F,'map-const'     ,'ZK'               ,'quiet');
-      coordinatesLayer        = [coordinates ' Layer'];
-      coordinatesLayerInterf  = [coordinates ' LayerInterf'];
+      coordinatesLayer        = [coordinates]; % ' Layer'
+      coordinatesLayerInterf  = [coordinates]; % ' LayerInterf'
       end
 
 %% 2 Create dimensions
@@ -385,7 +389,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       end
 
 %% 2 Create dimension combinations
-% TO DO: why is field 'Length' needed, NCWRITESCHEMA should be able to find this out itself
+%    TO DO: why is field 'Length' needed, NCWRITESCHEMA should be able to find this out itself
 
    % 1D
        time.dims(1) = struct('Name', 'time'            ,'Length',ncdimlen.time);
@@ -1175,6 +1179,10 @@ function varargout = vs_trim2nc(vsfile,varargin)
                                   'FillValue'  , []); % this doesn't do anything
       end
       else
+         ind=strcmp(OPT.var,'pea');
+         OPT.var(ind) = [];      
+         ind=strcmp(OPT.var,'dpeadt');
+         OPT.var(ind) = [];      
          fprintf(2,'Variable not in trim file, skipped: PEA not yet implemented for Z-MODEL.\n')
       end
 

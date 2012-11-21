@@ -51,7 +51,6 @@ function varargout = delwaq_time(Struct,varargin)
 % $HeadURL$
 
    %% Set defaults for keywords
-   %% ----------------------
 
       OPT.mod       = 100; % display notification eveyr 100 steps, set 1 or Inf for no disp
       OPT.ndigits   = ceil(log10(Struct.NTimes));
@@ -59,7 +58,6 @@ function varargout = delwaq_time(Struct,varargin)
       OPT.datenum   = 0; 
       
    %% Return defaults
-   %% ----------------------
 
       if nargin==0
          varargout = {OPT};
@@ -69,7 +67,6 @@ function varargout = delwaq_time(Struct,varargin)
    %% Cycle keywords in input argument list to overwrite default values.
    %% Align code lines as much as possible to allow for block editing in textpad.
    %% Only start <keyword,value> pairs after the REQUIRED arguments. 
-   %% ----------------------
       
       iargin = 1;
       
@@ -90,7 +87,6 @@ function varargout = delwaq_time(Struct,varargin)
       end; 
       
    %% Initialize
-   %% ----------------------
       
       T.datenum       = repmat(NaN,[1 Struct.NTimes]);
       T.datenum_units = 'days since 0 Jan. 0000 00:00';
@@ -100,7 +96,6 @@ function varargout = delwaq_time(Struct,varargin)
       OPT.Segment     = 1;                  % dummy
    
    %% Time loop
-   %% -----------------------
 
       for it=1:Struct.NTimes
       

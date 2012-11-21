@@ -8,9 +8,10 @@ function varargout = L2bin2nc(ncfile,varargin);
 % spatio-temporal coordinates and meta-data:
 % * time is a vector of datenums. The length of time
 %   determines how long the time dimension will be (which
-%   is not set to unlimited by default ti increase performance).
-% * lat, lon and mask are matrices at pixel centres.
-% * latbounds, lonbounds are optional pixels corner
+%   is not set to unlimited by default to increase performance).
+% * lat, lon and mask are required matrices defined at pixel centres.
+% * latbounds, lonbounds are optional pixel corner to be mapped
+%   with CF bounds attribute.
 % * Name, standard_name, long_name, units define the variables
 %   to be added, with Attributes extra atributes can be added.
 %   Use char when adding one variable (recommended), use cellstr
@@ -23,9 +24,9 @@ function varargout = L2bin2nc(ncfile,varargin);
 % time series of remote sensing images. Data has to be added 
 % seperately, in a loop to avoid memory issues.
 %
-% The resulting netCDF file can be used in DINEOF 3.0.
+% The resulting netCDF file can readily be used in DINEOF 3.0.
 %
-% Example: turn directory of MERIS mat files (VU-IVM/WaterInsight) ino 1 netCDF file
+% Example: turn directory of MERIS mat files (VU-IVM/WaterInsight) into 1 netCDF file
 %
 %      ncfile  = 'L3.nc';
 %      matdir  = 'F:\checkouts\OpenEarthTools\matlab\applications\oceancolor\test\';
@@ -37,7 +38,7 @@ function varargout = L2bin2nc(ncfile,varargin);
 %         [datenumsorted,ind] = sort([M.datenum]);
 %         M = M(ind); % sort files on date
 %
-%      %% create netCDF file (no data yet, only meta-data)
+%      %% create netCDF file (no data yet, only meta-data and [x,y,t] axes )
 %
 %         D      = meris_WaterInsight_load([matdir,filesep,M(1).filename]);
 %         D.mask = meris_mask(D.l2_flags,[13 23]);
@@ -51,7 +52,7 @@ function varargout = L2bin2nc(ncfile,varargin);
 %                         'standard_name','concentration_of_suspended_matter_in_sea_water',...
 %                             'long_name','suspended particulate matter',...
 %                                 'units','g m-3');
-%      %% fill netCDF file (add data) per time slice, to avoid memory issues.
+%      %% now gradually fill netCDF file (add data) per time slice, to avoid memory issues.
 %      
 %         for j=1:length(M)
 %          D = meris_WaterInsight_load([matdir,filesep,M(j).filename]);
@@ -138,7 +139,7 @@ function varargout = L2bin2nc(ncfile,varargin);
       error('At least Matlab release R2011a is required for writing netCDF files due tue NCWRITESCHEMA.')
    end
 
-   OPT      = setproperty(OPT,varargin{:});
+   OPT      = setproperty(OPT,varargin);
 
 %% CF attributes
 
@@ -173,13 +174,13 @@ function varargout = L2bin2nc(ncfile,varargin);
 %    TO DO: why is field 'Length' needed, NCWRITESCHEMA should be able to find this out itself
 
    % 1D: time
-   time.dims(1) = struct('Name', 'time'           ,'Length',ncdimlen.time);
-      m.dims(1) = struct('Name', 'dim1'           ,'Length',ncdimlen.dim1);
-      n.dims(1) = struct('Name', 'dim2'           ,'Length',ncdimlen.dim2);
+   time.dims(1)  = struct('Name', 'time'           ,'Length',ncdimlen.time);
+      m.dims(1)  = struct('Name', 'dim1'           ,'Length',ncdimlen.dim1);
+      n.dims(1)  = struct('Name', 'dim2'           ,'Length',ncdimlen.dim2);
 						       
    % 2D: lat,lon centers					       
-   nm.dims(1) = struct('Name', 'dim2'             ,'Length',ncdimlen.dim2);
-   nm.dims(2) = struct('Name', 'dim1'             ,'Length',ncdimlen.dim1);
+   nm.dims(1)    = struct('Name', 'dim2'             ,'Length',ncdimlen.dim2);
+   nm.dims(2)    = struct('Name', 'dim1'             ,'Length',ncdimlen.dim1);
 
    % 3D: grid corners
    nmcor.dims(1) = struct('Name', 'bounds4'       ,'Length',ncdimlen.bounds4);
@@ -187,9 +188,9 @@ function varargout = L2bin2nc(ncfile,varargin);
    nmcor.dims(3) = struct('Name', 'dim1'          ,'Length',ncdimlen.dim1);
 
    % 3D: data product
-   nmt.dims(1) = struct('Name', 'dim2'            ,'Length',ncdimlen.dim2);
-   nmt.dims(2) = struct('Name', 'dim1'            ,'Length',ncdimlen.dim1);
-   nmt.dims(3) = struct('Name', 'time'            ,'Length',ncdimlen.time);
+   nmt.dims(1)   = struct('Name', 'dim2'            ,'Length',ncdimlen.dim2);
+   nmt.dims(2)   = struct('Name', 'dim1'            ,'Length',ncdimlen.dim1);
+   nmt.dims(3)   = struct('Name', 'time'            ,'Length',ncdimlen.time);
 
    %% time
    %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#time-coordinate
@@ -217,7 +218,7 @@ function varargout = L2bin2nc(ncfile,varargin);
       ifld     = ifld + 1;clear attr dims
       attr = nc_cf_grid_mapping(OPT.epsg); % will also add KNMI ADAGUC proj4_params
       nc.Variables(ifld) = struct('Name'      , 'crs', ...
-                                  'Datatype'  , 'int32', ...  % !!!! % float not sufficient as datenums are big: double
+                                  'Datatype'  , 'int32', ...
                                   'Dimensions', [], ...
                                   'Attributes' , attr,...
                                   'FillValue'  , []);
@@ -273,6 +274,7 @@ function varargout = L2bin2nc(ncfile,varargin);
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'X');
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', OPT.fillvalue);
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(OPT.lon(:)) max(OPT.lon(:))]);
+      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'OpenEarth Matlab function nc_cf_bounds2cor.m reshapes it to a regular 2D array');
       nc.Variables(ifld) = struct('Name'       , 'lonbounds', ...
                                   'Datatype'   , OPT.type, ...
                                   'Dimensions' , nmcor.dims, ...
@@ -288,6 +290,7 @@ function varargout = L2bin2nc(ncfile,varargin);
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Y');
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value',  OPT.fillvalue);
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(OPT.lat(:)) max(OPT.lat(:))]);
+      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'OpenEarth Matlab function nc_cf_bounds2cor.m reshapes it to a regular 2D array');
       nc.Variables(ifld) = struct('Name'       , 'latbounds', ...
                                   'Datatype'   , OPT.type, ...
                                   'Dimensions' , nmcor.dims, ...
@@ -336,10 +339,12 @@ function varargout = L2bin2nc(ncfile,varargin);
       
       ifld = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'long_name'      ,'Value', 'mask');
-      attr(end+1)  = struct('Name', 'units'          ,'Value', '0/1');
+      attr(end+1)  = struct('Name', 'units'          ,'Value', '1');
       attr(end+1)  = struct('Name', 'actual_range'   ,'Value', [0 1]);
       attr(end+1)  = struct('Name', 'coordinates'    ,'Value', 'lat lon');
       attr(end+1)  = struct('Name', 'grid_mapping'   ,'Value', 'crs');
+      attr(end+1)  = struct('Name', 'flag_values'    ,'Value', [0 1]);
+      attr(end+1)  = struct('Name', 'flag_meanings'  ,'Value', 'inactive active');
       attr(end+1)  = struct('Name', '_FillValue'     , 'Value', intmax('int32'));
 
       nc.Variables(ifld) = struct('Name'       , 'mask', ...
