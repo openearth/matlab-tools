@@ -61,13 +61,5 @@ function data = running_median_filter(data,window)
 
 %% code
 narginchk(2,2)
-    if ~strcmpi(class(data),'double')
-        data = double(data);
-        warning('running_median_filter:DataTypeChaged:data converted to double')
-    end
-     if ~strcmpi(class(window),'uint16')
-        window = uint16(window);
-        warning('running_median_filter:DataTypeChaged:window converted to uint16')
-     end
     
-data = running_median_filter(data,window);
+data = running_median_filter(double(data),uint16(window));

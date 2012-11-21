@@ -121,6 +121,8 @@ assert(isvector(x));
 assert(isequal(size(x),size(y)));
 assert(issorted(x));
 narginchk(3,4);
+assert(~any(isnan(x)));
+assert(~any(isnan(y)));
 assert(isscalar(tolerance));
 % also allow three inputs
 if nargin==3
