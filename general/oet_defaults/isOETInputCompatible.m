@@ -91,8 +91,8 @@ if ismember('varargin', input)
         % remove comments
         str = regexprep(str,'%.*?\n','');
         
-        if ~isempty(regexpi(str, '=\s*setproperty\s*\(\s*.+,\s*varargin{:}\s*\)')) | ...
-                ~isempty(regexpi(str, '=\s*struct\s*\(\s*varargin{:}\s*\)'))
+        if ~isempty(regexpi(str, '=\s*setproperty\s*\(\s*.+,\s*varargin.*\)')) | ...
+                ~isempty(regexpi(str, '=\s*struct\s*\(\s*varargin.*\)'))
             iscompatible = true;
         end
     end

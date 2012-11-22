@@ -73,10 +73,10 @@ function result = MCEstimator(idFail,P_corr, Confidence)
 % $HeadURL$
 
     N = length(P_corr);
-    cumNsamps = (1:N)';
-    gx = mean(idFail,2).*P_corr;          % individual values of the MC estimator
+    cumNsamps = repmat((1:N)', 1, size(idFail,2));
+    gx = idFail .* repmat(P_corr, 1, size(idFail,2));          % individual values of the MC estimator
     P_z         = cumsum(gx)./cumNsamps;  % evolution of the MC estimator
-    P_f         = P_z(end);               % resulting end value of the MC estimator
+    P_f         = P_z(end,:);               % resulting end value of the MC estimator
 
     % compute accurracy 
     kk=norm_inv((Confidence+1)/2,0,1);       % k-value for desired confidence interval
@@ -87,8 +87,8 @@ function result = MCEstimator(idFail,P_corr, Confidence)
 
     Sigma = sqrt(Variance);    % standard deviation
     Acy_absV = Sigma*kk;       % limit of the absolute error in P_f (with certainty related to kk) 
-    Acy_abs = Acy_absV(end);   % last value of the absoluut error 
-    Acy_rel =Acy_abs/P_f;      % relative error 
+    Acy_abs = Acy_absV(end,:);   % last value of the absoluut error 
+    Acy_rel =Acy_abs./P_f;      % relative error 
     
     % store results in strcuture
     result = struct(...

@@ -106,10 +106,7 @@ if ~exist(ncfile, 'file')
     
     nc_add_dimension(OPT.ncfile, 'n_samples', n_samples)
     
-    n_params = 0;
-    for i = 1:length(MCresult.Input)
-        n_params = max([n_params max(length(MCresult.Input(i).Params))]);
-    end
+    n_params = max(cellfun(@length, {MCresult.Input.Params}));
     nc_add_dimension(OPT.ncfile, 'n_params', n_params)
     
     nc_add_dimension(OPT.ncfile, 'stringsize', stringsize);

@@ -196,10 +196,11 @@ while (~useAccuracy && n==1) || (useAccuracy && ( ...
     EstResult = MCEstimator(idFail,P_corr,OPT.confidence);
     P_f = EstResult.P_f;
     Acy_abs = EstResult.Acy_abs;   % last value of the absoluut error 
-    Acy_rel =EstResult.Acy_abs/P_f;            
+    Acy_rel = EstResult.Acy_abs ./ P_f;            
            
     
     if OPT.verbose
+        % TODO: make proper printing of multiple P_f values possible
         fprintf('%04d: P_f = %3.2e, Acy = %3.2e (%3.2f%%)\n', n, P_f, Acy_abs, Acy_rel*100);
     end
     

@@ -74,7 +74,10 @@ end
 
 %% importance sampling
 
+% convert P to u, between boundaries f1 and f2 (actually u1, u2)
 u       = f1+P*diff([f1 f2]);
+% since u is standard normally distributed, convert u back to uniformly
+% distributed P with norm_cdf
 P       = norm_cdf(u,0,1);
 
 %% correction factor
