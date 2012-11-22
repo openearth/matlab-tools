@@ -253,14 +253,16 @@ STRINGSIZE = 100;
     nc_varput(filename, 'rsp_lon', rsplon)
     
     
-    
-    if strcmp('angle', fieldnames(grid))
+    if isfield(grid,'angle')
+%     if strcmp('angle', fieldnames(grid)) % <= OLD CODE will not trigger "if", if angle is not first field!!! RPN 22-11-2012
         nc_varput(filename, 'angle'          , grid.angle);
     end
-    if strcmp('meanHighWater', fieldnames(grid))
+    if isfield(grid,'meanHighWater')
+%     if strcmp('meanHighWater', fieldnames(grid)) % <= OLD CODE will not trigger "if", if meanHighWater is not first field!!! RPN 22-11-2012
         nc_varput(filename, 'mean_high_water', grid.meanHighWater);
     end
-    if strcmp('meanLowWater', fieldnames(grid))
+    if isfield(grid,'meanLowWater')
+%     if strcmp('meanLowWater', fieldnames(grid)) % <= OLD CODE will not trigger "if", if meanLowWater is not first field!!! RPN 22-11-2012
         nc_varput(filename, 'mean_low_water' , grid.meanLowWater);
     end
 
@@ -275,10 +277,11 @@ STRINGSIZE = 100;
     nc_addvar(filename, s);
 
 %% Print header    
-    try	
-    	system(['ncdump -vyear,id,cross_shore_distance ' filename]);
-    catch
-        disp('can not find the ncdump command, not a problem');
-    end
+%     try	
+        disp('Will try to run ncdump, no problem if command is not found')
+    	system(['ncdump -vyear,id,cross_shore_distance ' filename]); % system will not be catched by try in this way, RPN 22-11-2012
+%     catch
+%         disp('can not find the ncdump command, not a problem');
+%     end
 
 end % function jarkus_grid2netcdf
