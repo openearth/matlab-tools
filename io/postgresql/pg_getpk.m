@@ -5,7 +5,7 @@ function varargout = pg_getpk(conn, table, varargin)
 %   returns its name.
 %
 %   Syntax:
-%   varargout = pg_getpk(conn, table, varargin)
+%   pk_name = pg_getpk(conn, table, varargin)
 %
 %   Input:
 %   conn      = Database connection object
@@ -13,7 +13,7 @@ function varargout = pg_getpk(conn, table, varargin)
 %   varargin  = none
 %
 %   Output:
-%   varargout = Name of primary key
+%   pk_name   = Name of primary key
 %
 %   Example
 %   conn = pg_connectdb('someDatabase');

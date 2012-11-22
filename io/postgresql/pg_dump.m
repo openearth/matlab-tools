@@ -60,14 +60,19 @@ function pg_dump(conn,varargin)
    for i=1:length(tables)
       table = tables{i};
       try % ERROR: relation "topology" does not exist
-      [column_name,data_type,data_length] = pg_getcolumns(conn, table);
+         [column_name,data_type,data_length] = pg_getcolumns(conn, table);
+         pk_name = pg_getpk(conn, table);
 
-     %disp([repmat('-',size(table))])
-      disp([table,'(',num2str(data_length),') :'])
-      for j=1:length(column_name)
-         disp(['    ',column_name{j},'(',data_type{j},')'])
-      end
-      disp(' ')
+        %disp([repmat('-',size(table))])
+         disp([table,' (',num2str(data_length),'):'])
+         for j=1:length(column_name)
+         if strcmpi(column_name{j},pk_name)
+            disp(['    ',column_name{j},' (',data_type{j},') [PK]'])
+         else
+            disp(['    ',column_name{j},' (',data_type{j},')'])
+         end
+         end
+         disp(' ')
       end
    end
    
