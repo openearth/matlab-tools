@@ -220,11 +220,18 @@ STRINGSIZE = 100;
     nc_addvar(filename, s);
 
     s.Name      = 'origin';
+%     id=1 non-overlap     beach data
+%     id=2     overlap     beach data
+%     id=3     interpolation     data (between beach and off shore)
+%     id=4     overlap off shore data
+%     id=5 non-overlap off shore data
     s.Nctype    = nc_short;
     s.Dimension = {'time', 'alongshore', 'cross_shore'};
+%     s.Attribute = struct('Name' ,{'long_name'         , 'comment'},...
+%                          'Value',{'measurement method', 'Measurement method 1:TO DO, 3:TO DO, 5:TO DO used short for space considerations'});
     s.Attribute = struct('Name' ,{'long_name'         , 'comment'},...
-                         'Value',{'measurement method', 'Measurement method 1:TO DO, 3:TO DO, 5:TO DO used short for space considerations'});
-    nc_addvar(filename, s);    
+                         'Value',{'measurement method', '1:beach only, 2:beach overlap, 3:interpolation, 4:sea overlap, 5:sea only'});
+     nc_addvar(filename, s);    
     
 %% Store index variables
     nc_varput(filename, 'time'    , grid.time, [0], [length(grid.time)]);
