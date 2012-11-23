@@ -61,9 +61,9 @@ function ddb_compile
 
 %%
 
-matlabfolder='n:\Applications\Matlab\Matlab2012a_64\';
-compilefolder='d:\delftdashboardsetup\';
-ddbsettingsdir='d:\ddbsettings\';
+matlabfolder='n:/Applications/Matlab/Matlab2012a_64/';
+compilefolder='d:/delftdashboardsetup/';
+ddbsettingsdir='d:/ddbsettings/';
 
 % Throw away compilefolder
 if exist(compilefolder,'dir')
@@ -86,13 +86,13 @@ mkdir(ddbsettingsdir);
 inipath=[fileparts(fileparts(fileparts(which('DelftDashBoard')))) filesep];
 
 %% Remove statistics toolbox paths
-statspath=[matlabfolder 'toolbox\stats'];
+statspath=[matlabfolder 'toolbox' filesep 'stats'];
 rmpath(statspath);
-statspath=[matlabfolder 'toolbox\stats\stats'];
+statspath=[matlabfolder 'toolbox' filesep 'stats' filesep 'stats'];
 rmpath(statspath);
-statspath=[matlabfolder 'toolbox\stats\classreg'];
+statspath=[matlabfolder 'toolbox' filesep 'stats' filesep 'classreg'];
 rmpath(statspath);
-statspath=[matlabfolder 'toolbox\stats\statsdemos'];
+statspath=[matlabfolder 'toolbox' filesep 'stats' filesep 'statsdemos'];
 rmpath(statspath);
 
 fid=fopen([inipath 'complist'],'wt');
@@ -225,7 +225,7 @@ ddb_copyAllFilesToDataFolder(inipath,compiledatadir,additionalToolboxDir);
 
 disp('Start compiling ...');
 
-mcc('-m','-v','-d',exedir,'DelftDashBoard.m','-B','complist','-a',ddbsettingsdir,'-a','..\..\io\netcdf\netcdfAll-4.2.jar');
+mcc('-m','-v','-d',exedir,'DelftDashBoard.m','-B','complist','-a',ddbsettingsdir,'-a','../../io/netcdf/netcdfAll-4.2.jar');
 
 % copyfile('exe2\delftdashboard.exe',exedir);
 % rmdir('exe','s');
@@ -234,7 +234,7 @@ mcc('-m','-v','-d',exedir,'DelftDashBoard.m','-B','complist','-a',ddbsettingsdir
 Revision = '$Revision$';
 eval([strrep(Revision(Revision~='$'),':','=') ';']);
 
-dos(['copy ' fileparts(which('ddsettings')) '\main\menu\ddb_aboutDelftDashBoard.txt ' fileparts(which('ddsettings')) filesep 'exe']);
+dos(['copy ' fileparts(which('ddsettings')) filesep 'main' filesep 'menu' filesep 'ddb_aboutDelftDashBoard.txt ' fileparts(which('ddsettings')) filesep 'exe']);
 strrep(fullfile(fileparts(which('ddsettings')),'exe','ddb_aboutDelftDashBoard.txt'),'$revision',num2str(Revision));
 
 delete('complist');

@@ -109,7 +109,7 @@ else
     end
 end
 
-wnd=MakeNewWindow('Astronomic Boundary Conditions',[750 600],'modal',[h.settingsDir '\icons\deltares.gif']);
+wnd=MakeNewWindow('Astronomic Boundary Conditions',[750 600],'modal',[h.settingsDir filesep 'icons' filesep 'deltares.gif']);
 
 uipanel('Title','Component Sets','Units','pixels','Position',[20 370 360 210],'Tag','UIControl');
 for i=1:handles.nrAstronomicComponentSets

@@ -106,10 +106,10 @@ xmldir=handles.Model(md).xmlDir;
 switch lower(handles.Model(md).Input.boundaries(iac).alongboundary)
     case{'uniform'}
         xmlfile='Delft3DWAVE.editboundaryconditionsuniform.xml';
-        [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir '\icons\deltares.gif']);
+        [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir filesep 'icons' filesep 'deltares.gif']);
     case{'varying'}
         xmlfile='Delft3DWAVE.editboundaryconditionsvarying.xml';
-        [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir '\icons\deltares.gif'],'modal',0);
+        [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir filesep 'icons' filesep 'deltares.gif'],'modal',0);
 end
 
 
@@ -132,10 +132,10 @@ xmldir=handles.Model(md).xmlDir;
 % switch lower(handles.Model(md).Input.boundaries(iac).alongboundary)
 %     case{'uniform'}
         xmlfile='Delft3DWAVE.editspectralspace.xml';
-        [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir '\icons\deltares.gif']);
+        [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir filesep 'icons' filesep 'deltares.gif']);
 %     case{'varying'}
 %         xmlfile='Delft3DWAVE.editboundaryconditionsvarying.xml';
-%         [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir '\icons\deltares.gif'],'modal',0);
+%         [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir filesep 'icons' filesep 'deltares.gif'],'modal',0);
 % end
 
 if ok

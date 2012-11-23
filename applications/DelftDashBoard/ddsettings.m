@@ -2,7 +2,7 @@ disp(' ');
 disp('You can start DelftDashBoard by typing ddb or DelftDashBoard in the Matlab command prompt.');
 disp(' ');
 disp('First time users are recommended to change the data directory. Simply copy the data folder');
-disp('to another directory (on a disk with plenty of space), and change the path in DelftDashBoard.ini.')
+disp('to another directory (on a disk with plenty of space), and change the path in delftdashboard.ini.')
 disp('This data folder is used to cache bathymetry and shoreline data, as well as a number of other utilities,');
 disp('and it can become very large (several gigabytes).');
 disp(' ');

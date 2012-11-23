@@ -79,10 +79,10 @@ handles.shorelines.names = names;
 handles.shorelines.nrShorelines = length(handles.shorelines.(fld{1}));
 
 %% For the time being...
-% if exist([handles.shorelineDir '\Shorelines.def'])==2
-%     txt=ReadTextFile([handles.shorelineDir '\Shorelines.def']);
+% if exist([handles.shorelineDir filesep 'Shorelines.def'])==2
+%     txt=ReadTextFile([handles.shorelineDir filesep 'Shorelines.def']);
 % else
-%     error(['Shorelines defintion file ''' [handles.shorelineDir '\Shorelines.def'] ''' not found!']);
+%     error(['Shorelines defintion file ''' [handles.shorelineDir filesep 'Shorelines.def'] ''' not found!']);
 % end
 % 
 % k=0;

@@ -78,13 +78,13 @@ function ddcompile2(varargin)
 
 inipath=[fileparts(fileparts(fileparts(which('DelftDashBoard')))) filesep];
 
-mkdir('exe\data');
-mkdir('exe\bin');
+mkdir('exe/data');
+mkdir('exe/bin');
 
-statspath='Y:\app\MATLAB2009b\toolbox\stats';
+statspath='Y:/app/MATLAB2009b/toolbox/stats';
 rmpath(statspath);
 
-delete('exe\*');
+delete('exe/*');
 
 fid=fopen('complist','wt');
 
@@ -209,27 +209,27 @@ end
 %% Include icon
 try
     fid=fopen('earthicon.rc','wt');
-    fprintf(fid,'%s\n','ConApp ICON settings\icons\Earth-icon32x32.ico');
+    fprintf(fid,'%s\n','ConApp ICON settings/icons/Earth-icon32x32.ico');
     fclose(fid);
-    system(['"' matlabroot '\sys\lcc\bin\lrc" /i "' pwd '\earthicon.rc"']);
+    system(['"' matlabroot '/sys/lcc/bin/lrc" /i "' pwd '/earthicon.rc"']);
 end
 
 %% Generate data folder in exe folder
 
 
-mkdir('exe\data');
+mkdir('exe/data');
 inipath=
 
 ddb_copyAllFilesToDataFolder(inipath,ddbdir,additionalToolboxDir);
 
 
-mcc -m -v -d exe DelftDashBoard.m -B complist -a ddbsettings -a ..\..\io\netcdf\toolsUI-4.1.jar -M earthicon.res
+mcc -m -v -d exe DelftDashBoard.m -B complist -a ddbsettings -a ../../io/netcdf\toolsUI-4.1.jar -M earthicon.res
 
 % make about.txt file
 Revision = '$Revision$';
 eval([strrep(Revision(Revision~='$'),':','=') ';']);
 
-dos(['copy ' fileparts(which('ddsettings')) '\main\menu\ddb_aboutDelftDashBoard.txt ' fileparts(which('ddsettings')) filesep 'exe']);
+dos(['copy ' fileparts(which('ddsettings')) '/main/menu/ddb_aboutDelftDashBoard.txt ' fileparts(which('ddsettings')) filesep 'exe']);
 strrep(fullfile(fileparts(which('ddsettings')),'exe','ddb_aboutDelftDashBoard.txt'),'$revision',num2str(Revision));
 
 delete('complist');

@@ -62,7 +62,7 @@ function ddb_Delft3DFLOW_editSediments
 %%
 handles=getHandles;
 
-MakeNewWindow('Processes :  Sediments',[360 290],'modal',[handles.settingsDir '\icons\deltares.gif']);
+MakeNewWindow('Processes :  Sediments',[360 290],'modal',[handles.settingsDir filesep 'icons' filesep 'deltares.gif']);
 
 if handles.Model(md).Input(ad).nrSediments>0
     for i=1:handles.Model(md).Input(ad).nrSediments

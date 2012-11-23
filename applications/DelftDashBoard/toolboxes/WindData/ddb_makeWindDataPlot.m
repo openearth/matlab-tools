@@ -69,7 +69,7 @@ if isempty(windData)
     return;
 end
 
-fig=MakeNewWindow('Wind Data Time Series',[600 400],[handles.SettingsDir '\icons\deltares.gif']);
+fig=MakeNewWindow('Wind Data Time Series',[600 400],[handles.SettingsDir filesep 'icons' filesep 'deltares.gif']);
 set(fig,'renderer','painters');
 figure(fig);
 

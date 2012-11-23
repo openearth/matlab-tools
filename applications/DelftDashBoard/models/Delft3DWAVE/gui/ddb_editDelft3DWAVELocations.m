@@ -3,7 +3,7 @@ function ddb_editDelft3DWAVELocations
 handles=getHandles;
 fig0=gcf;
 
-fig1=MakeNewWindow('Output locations',[400 350],[handles.settingsDir '\icons\deltares.gif']);
+fig1=MakeNewWindow('Output locations',[400 350],[handles.settingsDir filesep 'icons' filesep 'deltares.gif']);
 
 hp = uipanel('Units','pixels','Position',[5 5 390 340],'Tag','UIControl');
 

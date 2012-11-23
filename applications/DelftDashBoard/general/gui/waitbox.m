@@ -149,7 +149,7 @@ set(f,'HandleVisibility','callback','visible','on');
 if ~isempty(handles)
     if isfield(handles,'settingsDir')
         fh = get(f,'JavaFrame'); % Get Java Frame
-        fh.setFigureIcon(javax.swing.ImageIcon([handles.settingsDir '\icons\deltares.gif']));
+        fh.setFigureIcon(javax.swing.ImageIcon([handles.settingsDir filesep 'icons' filesep 'deltares.gif']));
     end
 end
 

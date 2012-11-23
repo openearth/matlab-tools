@@ -105,7 +105,7 @@ set(handles.GUIHandles.Axis,'xlim',[-180 180],'ylim',[-90 90],'zlim',[-12000 100
 hold on;
 zoom v6 on;
 
-load([handles.settingsDir 'colormaps\earth.mat']);
+load([handles.settingsDir 'colormaps' filesep 'earth.mat']);
 handles.GUIData.ColorMaps.Earth=earth;
 
 setHandles(handles);
@@ -122,13 +122,13 @@ ddb_updateDataInScreen;
 
 handles=getHandles;
 
-load([handles.settingsDir 'geo\worldcoastline.mat']);
+load([handles.settingsDir 'geo' filesep 'worldcoastline.mat']);
 handles.GUIData.WorldCoastLine5000000(:,1)=wclx;
 handles.GUIData.WorldCoastLine5000000(:,2)=wcly;
 
 setHandles(handles);
 
-c=load([handles.settingsDir 'geo\cities.mat']);
+c=load([handles.settingsDir 'geo' filesep 'cities.mat']);
 for i=1:length(c.cities)
     handles.GUIData.cities.Lon(i)=c.cities(i).Lon;
     handles.GUIData.cities.Lat(i)=c.cities(i).Lat;

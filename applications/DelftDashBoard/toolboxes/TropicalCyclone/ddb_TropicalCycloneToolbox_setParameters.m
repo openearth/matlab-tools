@@ -103,7 +103,7 @@ xmldir=handles.Toolbox(tb).xmlDir;
 xmlfile='TropicalCyclone.initialtrackparameters.xml';
 
 h=handles.Toolbox(tb).Input;
-[h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir '\icons\deltares.gif']);
+[h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir filesep 'icons' filesep 'deltares.gif']);
 
 if ok
     

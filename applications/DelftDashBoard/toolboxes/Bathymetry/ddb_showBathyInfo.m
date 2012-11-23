@@ -1,13 +1,13 @@
 function ddb_showBathyInfo(handles,iac)
 
-fig = MakeNewWindow('Warning',[260 272],'modal',[h.settingsDir '\icons\deltares.gif']);
+fig = MakeNewWindow('Warning',[260 272],'modal',[h.settingsDir filesep 'icons' filesep 'deltares.gif']);
 cl=get(gcf,'Color');
 ax=axes;
 set(ax,'units','pixels');
 set(ax,'position',[20 121 221 131]);
 tx=uicontrol(fig,'style','text','string',txt,'position',[20 61 221 41],'horizontalalignment','center','backgroundcolor',cl);
 if ~isempty(h)
-    StatName=[h.settingsDir '\icons\god2.jpg'];
+    StatName=[h.settingsDir filesep 'icons' filesep 'god2.jpg'];
     c = imread(StatName,'jpeg');
     image(c);
     tick(gca,'x','none');tick(gca,'y','none');

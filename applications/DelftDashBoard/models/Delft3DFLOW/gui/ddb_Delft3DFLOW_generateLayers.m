@@ -75,7 +75,7 @@ if isempty(varargin)
     
     h=handles.Model(md).Input(ad);
 
-    [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir '\icons\deltares.gif']);
+    [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir filesep 'icons' filesep 'deltares.gif']);
 
     if ok
         handles.Model(md).Input(ad)=h;

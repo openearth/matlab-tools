@@ -65,9 +65,9 @@ function ddb_plotTimeSeries(times, prediction, name)
 
 handles=getHandles;
 
-fig=MakeNewWindow('Time Series',[600 400],[handles.settingsDir '\icons\deltares.gif']);
+fig=MakeNewWindow('Time Series',[600 400],[handles.settingsDir filesep 'icons' filesep 'deltares.gif']);
 
-c=load([handles.settingsDir '\icons\icons_muppet.mat']);
+c=load([handles.settingsDir filesep 'icons' filesep 'icons_muppet.mat']);
 
 figure(fig);
 

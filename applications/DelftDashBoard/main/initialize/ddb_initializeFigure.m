@@ -62,7 +62,7 @@ function ddb_initializeFigure
 %%
 handles=getHandles;
 
-handles.GUIHandles.mainWindow=MakeNewWindow('Delft Dashboard',[1100 700],[handles.settingsDir '\icons\deltares.gif']);
+handles.GUIHandles.mainWindow=MakeNewWindow('Delft Dashboard',[1100 700],[handles.settingsDir filesep 'icons' filesep 'deltares.gif']);
 h=handles.GUIHandles.mainWindow;
 
 set(h,'Tag','MainWindow','Visible','off');
@@ -76,7 +76,7 @@ handles.backgroundColor=get(h,'Color');
 figure(h);
 
 fh = get(h,'JavaFrame'); % Get Java Frame
-fh.setFigureIcon(javax.swing.ImageIcon([handles.settingsDir '\icons\deltares.gif']));
+fh.setFigureIcon(javax.swing.ImageIcon([handles.settingsDir filesep 'icons' filesep 'deltares.gif']));
 
 set(h,'toolbar','figure');
 set(h,'Tag','MainWindow');

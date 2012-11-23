@@ -60,7 +60,7 @@ function handles = ddb_dmSelector(handles,figTitle,data,names,locs)
 % $Keywords: $
 
 %%
-dmFig = makeNewWindow(figTitle,[600 400],[handles.SettingsDir '\icons\deltares.gif']);
+dmFig = makeNewWindow(figTitle,[600 400],[handles.SettingsDir filesep 'icons' filesep 'deltares.gif']);
 
 % static items
 dataTxt = uicontrol('Parent',dmFig,'Units','normalized','Style','text','Tag','ddb_dmDataTxt','String','Data set',...

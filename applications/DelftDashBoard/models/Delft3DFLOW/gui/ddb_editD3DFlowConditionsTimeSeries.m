@@ -71,7 +71,7 @@ handles.Bnd=h.Model(md).Input(ad).openBoundaries(ibnd);
 
 prf=handles.Bnd.profile;
 
-MakeNewWindow('Time Series Boundary Conditions',[470 470],'modal',[h.settingsDir '\icons\deltares.gif']);
+MakeNewWindow('Time Series Boundary Conditions',[470 470],'modal',[h.settingsDir filesep 'icons' filesep 'deltares.gif']);
 
 uipanel('Title','Time Series', 'Units','pixels','Position',[40 80 390 230],'Tag','UIControl');
 

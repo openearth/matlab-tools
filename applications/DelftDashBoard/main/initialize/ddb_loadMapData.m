@@ -63,7 +63,7 @@ function ddb_loadMapData
 handles=getHandles;
 
 % Earth colormap
-load([handles.settingsDir 'colormaps\earth.mat']);
+load([handles.settingsDir 'colormaps' filesep 'earth.mat']);
 handles.mapData.colorMaps.earth=earth;
 
 % World coastline

@@ -242,7 +242,7 @@ ii=get(handles.GUIHandles.ListStations,'Value');
 station=handles.Toolbox(tb).Input.WindDataStations.name{ii};
 windData=handles.Toolbox(tb).Input.windData;
 
-fig=MakeNewWindow('Analyzed Wind Data',[600 400],[handles.SettingsDir '\icons\deltares.gif']);
+fig=MakeNewWindow('Analyzed Wind Data',[600 400],[handles.SettingsDir filesep 'icons' filesep 'deltares.gif']);
 set(fig,'renderer','painters');
 figure(fig);
 [hS,hD]=ddb_windAnalyzer(windData,'Daily');

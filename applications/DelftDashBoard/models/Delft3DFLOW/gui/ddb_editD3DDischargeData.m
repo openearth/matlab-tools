@@ -88,7 +88,7 @@ if strcmpi(Dis.type,'momentum')
     k=k+2;
 end
 
-fig=MakeNewWindow('Discharge',[k*80+200 260],'modal',[handles.settingsDir '\icons\deltares.gif']);
+fig=MakeNewWindow('Discharge',[k*80+200 260],'modal',[handles.settingsDir filesep 'icons' filesep 'deltares.gif']);
 
 k=0;
 

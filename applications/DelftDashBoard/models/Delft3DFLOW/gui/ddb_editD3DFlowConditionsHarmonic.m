@@ -64,7 +64,7 @@ h=getHandles;
 
 handles=h.Model(md).Input(ad);
 
-MakeNewWindow('Harmonic Boundary Conditions',[750 600],[h.settingsDir '\icons\deltares.gif']);
+MakeNewWindow('Harmonic Boundary Conditions',[750 600],[h.settingsDir filesep 'icons' filesep 'deltares.gif']);
 
 uipanel('Title','Harmonics', 'Units','pixels','Position',[40 100 540 245],'Tag','UIControl');
 

@@ -62,7 +62,7 @@ function ddb_editViewSettings
 %%
 h=getHandles;
 
-f=MakeNewWindow('View Settings',[210 230],'modal',[h.settingsDir '\icons\deltares.gif']);
+f=MakeNewWindow('View Settings',[210 230],'modal',[h.settingsDir filesep 'icons' filesep 'deltares.gif']);
 
 str={'Earth','Jet'};
 ii=strmatch(h.screenParameters.colorMap,str,'exact');

@@ -64,7 +64,7 @@ h=getHandles;
 
 % fig0=gcf;
 
-fig=MakeNewWindow('Select UTM Zone',[950 550],[h.settingsDir '\icons\deltares.gif'],'modal');
+fig=MakeNewWindow('Select UTM Zone',[950 550],[h.settingsDir filesep 'icons' filesep 'deltares.gif'],'modal');
 
 set(fig,'Renderer','opengl');
 

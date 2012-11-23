@@ -64,7 +64,7 @@ h=guidata(findobj('Tag','MainWindow'));
 
 handles=h.Model(md).Input(ad);
 
-fig=MakeNewWindow('Horizontal Large Eddy Simulation',[300 250],'modal',[handles.SettingsDir '\icons\deltares.gif']);
+fig=MakeNewWindow('Horizontal Large Eddy Simulation',[300 250],'modal',[handles.SettingsDir filesep 'icons' filesep 'deltares.gif']);
 
 bgc=get(fig,'Color');
 

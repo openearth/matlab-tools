@@ -65,7 +65,7 @@ handles=getHandles;
 if isdeployed
     dr=[ctfroot filesep 'ddbsettings' filesep 'toolboxes'];
 else
-    ddb_root = fileparts(which('DelftDashBoard.ini'));
+    ddb_root = fileparts(which('delftdashboard.ini'));
     dr=[ddb_root filesep 'toolboxes'];
 end
 

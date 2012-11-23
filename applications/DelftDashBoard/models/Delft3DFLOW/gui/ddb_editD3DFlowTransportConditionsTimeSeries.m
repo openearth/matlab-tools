@@ -98,8 +98,8 @@ end
 
 % prf=handles.Bnd.profile;
 
-%MakeNewWindow('Time Series Transport Boundary Conditions',[590 490],'modal',[h.settingsDir '\icons\deltares.gif']);
-MakeNewWindow('Time Series Transport Boundary Conditions',[590 490],[h.settingsDir '\icons\deltares.gif']);
+%MakeNewWindow('Time Series Transport Boundary Conditions',[590 490],'modal',[h.settingsDir filesep 'icons' filesep 'deltares.gif']);
+MakeNewWindow('Time Series Transport Boundary Conditions',[590 490],[h.settingsDir filesep 'icons' filesep 'deltares.gif']);
 
 uipanel('Title','Time Series', 'Units','pixels','Position',[40 80 510 230],'Tag','UIControl');
 

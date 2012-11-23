@@ -64,7 +64,7 @@ h=getHandles;
 
 handles=h.Toolbox(tb);
 
-MakeNewWindow('Plot Options',[800 650],'modal',[h.SettingsDir '\icons\deltares.gif']);
+MakeNewWindow('Plot Options',[800 650],'modal',[h.SettingsDir filesep 'icons' filesep 'deltares.gif']);
 
 s=handles.Layers;
 layers=fieldnames(s);

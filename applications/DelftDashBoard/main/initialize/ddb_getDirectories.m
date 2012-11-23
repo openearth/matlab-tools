@@ -81,7 +81,7 @@ else
     
     % Check existence of ini file DelftDashBoard.ini
     
-    inifile=[inipath filesep 'DelftDashBoard.ini'];
+    inifile=[inipath filesep 'delftdashboard.ini'];
     
     if ~exist(inifile,'file')
         

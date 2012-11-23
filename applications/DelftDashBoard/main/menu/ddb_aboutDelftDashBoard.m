@@ -60,13 +60,13 @@ function ddb_aboutDelftDashBoard(handles)
 % $Keywords: $
 
 %%
-MakeNewWindow('About Delft Dashboard',[400 400],'modal',[handles.settingsDir '\icons\deltares.gif']);
+MakeNewWindow('About Delft Dashboard',[400 400],'modal',[handles.settingsDir filesep 'icons' filesep 'deltares.gif']);
 set(gcf,'Resize','off');
 ax=axes;
 set(ax,'Units','pixels');
 set(ax,'Position',[0 0 400 400]);
 
-StatName=[handles.settingsDir '\icons\delftdashboard.jpg'];
+StatName=[handles.settingsDir filesep 'icons' filesep 'delftdashboard.jpg'];
 c = imread(StatName,'jpeg');
 image(c);
 tick(gca,'x','none');tick(gca,'y','none');%axis equal;

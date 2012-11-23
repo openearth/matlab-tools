@@ -61,8 +61,8 @@ function ddcompile3
 
 %%
 
-matlabfolder='n:\Applications\Matlab\Matlab2012a_64\';
-compilefolder='d:\delftdashboardsetup\';
+matlabfolder='n:/Applications/Matlab/Matlab2012a_64/';
+compilefolder='d:/delftdashboardsetup/';
 
 
 if ~exist(compilefolder,'dir')
@@ -76,13 +76,13 @@ mkdir([compilefolder 'bin']);
 inipath=[fileparts(fileparts(fileparts(which('DelftDashBoard')))) filesep];
 
 %% Remove statistics toolbox paths
-statspath=[matlabfolder 'toolbox\stats'];
+statspath=[matlabfolder 'toolbox' filesep 'stats'];
 rmpath(statspath);
-statspath=[matlabfolder 'toolbox\stats\stats'];
+statspath=[matlabfolder 'toolbox' filesep 'stats' filesep 'stats'];
 rmpath(statspath);
-statspath=[matlabfolder 'toolbox\stats\classreg'];
+statspath=[matlabfolder 'toolbox' filesep 'stats' filesep 'classreg'];
 rmpath(statspath);
-statspath=[matlabfolder 'toolbox\stats\statsdemos'];
+statspath=[matlabfolder 'toolbox' filesep 'stats' filesep 'statsdemos'];
 rmpath(statspath);
 
 fid=fopen([inipath 'complist'],'wt');
@@ -219,23 +219,23 @@ fclose(fid);
 %% Include icon
 try
     fid=fopen('earthicon.rc','wt');
-    fprintf(fid,'%s\n','ConApp ICON settings\icons\Earth-icon32x32.ico');
+    fprintf(fid,'%s\n','ConApp ICON settings/icons/Earth-icon32x32.ico');
     fclose(fid);
-    system(['"' matlabroot '\sys\lcc\bin\lrc" /i "' pwd '\earthicon.rc"']);
+    system(['"' matlabroot '/sys/lcc/bin/lrc" /i "' pwd '/earthicon.rc"']);
 end
 
 %% Generate data folder in exe folder
 % ddb_copyAllFilesToDataFolder(inipath,[inipath filesep 'exe' filesep 'data' filesep],additionalToolboxDir,DataDir);
 
 %mcc -m -v -d exe\bin DelftDashBoard.m -B complist -a ddbsettings -a ..\..\io\netcdf\toolsUI-4.1.jar -M earthicon.res
-copyfile('settings\icons\earthicon.res','.\');
-mcc -m -v -d exe\bin DelftDashBoard.m -B complist -a ddbsettings -a ..\..\io\netcdf\netcdfAll-4.2.jar -M earthicon.res
+copyfile('settings/icons/earthicon.res','./');
+mcc -m -v -d exe/bin DelftDashBoard.m -B complist -a ddbsettings -a ../../io/netcdf/netcdfAll-4.2.jar -M earthicon.res
 
 % make about.txt file
 Revision = '$Revision$';
 eval([strrep(Revision(Revision~='$'),':','=') ';']);
 
-dos(['copy ' fileparts(which('ddsettings')) '\main\menu\ddb_aboutDelftDashBoard.txt ' fileparts(which('ddsettings')) filesep 'exe']);
+dos(['copy ' fileparts(which('ddsettings')) filesep 'main' filesep 'menu' filesep 'ddb_aboutDelftDashBoard.txt ' fileparts(which('ddsettings')) filesep 'exe']);
 strrep(fullfile(fileparts(which('ddsettings')),'exe','ddb_aboutDelftDashBoard.txt'),'$revision',num2str(Revision));
 
 delete('complist');

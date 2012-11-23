@@ -92,7 +92,7 @@ for i=1:length(handles.CoordinateData.CoordinateSystems)
     end
 end
 
-MakeNewWindow('Coordinate Details',[400 600],'modal',[handles.SettingsDir '\icons\deltares.gif']);
+MakeNewWindow('Coordinate Details',[400 600],'modal',[handles.SettingsDir filesep 'icons' filesep 'deltares.gif']);
 
 handles.SelectCS = uicontrol(gcf,'Style','listbox','String','','Position', [ 30 180 340 390],'BackgroundColor',[1 1 1]);
 
