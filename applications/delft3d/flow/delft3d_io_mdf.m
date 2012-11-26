@@ -114,7 +114,6 @@ function varargout=delft3d_io_mdf(cmd,varargin),
 % $HeadURL$
 
 %% Get filename from GUI
-%% ------------------
 
 if (nargin ==1) & strcmpi(cmd,'read')
 
@@ -142,7 +141,6 @@ end
 %disp   ('Reading and writing of comment lines not supported yet.')
 
 %% Switch read/write
-%% ------------------
 
 switch lower(cmd)
 
@@ -202,7 +200,11 @@ case 'new'
      error('too much output parameters: 1 or 2')
   
   end
-
+  
+otherwise 
+        
+   error(['option not implemented:',cmd])
+   
 end;
 
 % ------------------------------------
@@ -212,7 +214,6 @@ end;
 function varargout=Local_read(fname,varargin),
 
 %% Input
-%% ------------------------
 
    OPT.case = 'lower';
 
@@ -236,7 +237,6 @@ STRUCT.iostat       = -3;
 
 
 %% Locate
-%% ------------------------
 
 tmp = dir(fname);
 
@@ -254,7 +254,6 @@ elseif length(tmp)>0
    fid              = fopen(STRUCT.filename,'r');
 
    %% Open
-   %% ------------------------
 
    if fid < 0
       
@@ -265,7 +264,6 @@ elseif length(tmp)>0
    elseif fid > 2
 
    %% Read
-   %% ------------------------
 
    %-% try
 
@@ -299,13 +297,11 @@ elseif length(tmp)>0
             keyword_last     = keyword;
 
             %% remove = sign and leading/trailing blanks
-            %% ------------------------
             equalsignposition = findstr(value,'=');
             value             = strtrim(value(equalsignposition+1:end));
          end
          
          %% Look for strings
-         %% ------------------------
 
          if ~strcmpi(keyword,'commnt')
          [string,strstat] = strselect(value,'#');
@@ -317,7 +313,6 @@ elseif length(tmp)>0
          end
          
          %% Assign value
-         %% --------------------------------------
          if strcmpi(keyword,'commnt')
                             count.comment  = count.comment + 1;
             STRUCT.comments{count.comment} = value;
@@ -332,7 +327,6 @@ elseif length(tmp)>0
       end % while
       
       %% Extract sensible data
-      %% --------------------------------------
 
       STRUCT.data.datenum = time2datenum(STRUCT.keywords.itdate) + ...
                                         [STRUCT.keywords.tstart:...
@@ -340,7 +334,6 @@ elseif length(tmp)>0
                                          STRUCT.keywords.tstop]./60./24;
       
       %% Finished succesfully
-      %% --------------------------------------
 
       STRUCT.linecount = count.line;
       fclose(fid);
@@ -375,7 +368,6 @@ function iostat=Local_write(OS,filename,STRUC,varargin),
    iostat       = 1;
 
 %% Input
-%% ---------
 
    OPT.case = 'lower';
    
@@ -417,8 +409,7 @@ function iostat=Local_write(OS,filename,STRUC,varargin),
       value    = STRUC.(keyword);
       
       %% HANDLE SPECIAL CASES (A LOT)
-      %% that makes tdatom or GUI fail to read these items
-      %% --------------------------------
+      %  that makes tdatom or GUI fail to read these items
       
       if iscell(value)
          value0 = value;
@@ -513,13 +504,12 @@ function iostat=Local_write(OS,filename,STRUC,varargin),
       end       
       
       %% Write key word and value
-      %% --------------------------------
 
       for i=1:size(value,1)
          if i==1
-            fprintf (fid,'%s= %s \n',keyword6,value(i,:));
+            fprintf (fid,'%s = %s \n',keyword6,value(i,:));
          else
-            fprintf (fid,'%s %s \n','       ',value(i,:)); % where value needs multiple lines but keyword not
+            fprintf (fid,'%s  %s \n','       ',value(i,:)); % where value needs multiple lines but keyword not
          end
       end
    

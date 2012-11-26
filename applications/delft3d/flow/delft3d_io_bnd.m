@@ -11,7 +11,9 @@ function varargout=delft3d_io_bnd(cmd,varargin),
 %
 %       delft3d_io_bnd('write',filename,D);
 %
-% writes boundary struct to *.bnd file format.
+% writes boundary struct to *.bnd file format. The data structure 
+% fields that are actually required for writing are returned when 
+% calling delft3d_io_bnd() without arguments.
 %
 % Example:
 %  LBD = nc2struct('http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/northsea.nc','include',{'x','y'})
@@ -72,7 +74,18 @@ function varargout=delft3d_io_bnd(cmd,varargin),
 % 2008 Jul 11: * made it work when Labels have length < 11 [Anton de Fockert]
 %              * removed useless threeD keyword [Anton de Fockert]
 
-if nargin ==1
+if nargin ==0
+    bnd.DATA.name         = '--Unnamed--234567890]';
+    bnd.DATA.bndtype      = '{Z} | C | N | Q | T | R';
+    bnd.DATA.datatype     = '{A} | H | Q | T';
+    bnd.DATA.mn           = [0 0 0 0];
+    bnd.DATA.alfa         = nan;
+    bnd.DATA.vert_profile = '[ {Uniform} | Logarithmic | 3D profile]';
+    bnd.DATA.labelA       = '--Unnamed--2';
+    bnd.DATA.labelB 	     = '--Unnamed--2';
+    varargout = {bnd};
+    return
+elseif nargin ==1
     error(['At least 2 input arguments required: delft3d_io_bnd(''read''/''write'',filename)'])
 end
 
