@@ -107,6 +107,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
    OPT.var_nefis      = {'XZ','YZ','XWAT','YWAT','XCOR','YCOR','DP','DP0','DPS','DPSO','KCS','S1','U1','V1','WPHY','TAUKSI','TAUETA','RTUR1','R1','RHO'};
    OPT.var            = {OPT.var_cf{:},OPT.var_primary{:}};
    OPT.var_all        = {OPT.var_cf{:},OPT.var_primary{:},OPT.var_derived{:}};
+   OPT.dump           = 1;
 
    if nargin==0
       varargout = {OPT};
@@ -1734,8 +1735,12 @@ function varargout = vs_trim2nc(vsfile,varargin)
         end
       end
         
-      if OPT.debug
-        nc_dump(ncfile)
+      if isnumeric(OPT.dump) && OPT.dump==1
+         nc_dump(ncfile);
+      else
+         fid = fopen(OPT.dump,'w');
+         nc_dump(ncfile,fid);
+         fclose(fid);
       end
 
 %% EOF      

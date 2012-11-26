@@ -87,8 +87,8 @@ function MDF = getm2delft3d(varargin)
    D.cor.z = corner2center(D.bathymetry);
    
    MDF = delft3d_io_mdf('read',OPT.mdf);
-   MDF.keywords.filcco  = strrep(OPT.topo   ,'.nc','cartesian.grd'  );
-   MDF.keywords.commnt  = strrep(OPT.topo   ,'.nc','spherical.grd'  );
+   MDF.keywords.commnt  = strrep(OPT.topo   ,'.nc','cartesian.grd'  );
+   MDF.keywords.filcco  = strrep(OPT.topo   ,'.nc','spherical.grd'  );
    MDF.keywords.filgrd  = strrep(OPT.topo   ,'.nc','.enc'           );
    MDF.keywords.fildep  = strrep(OPT.topo   ,'.nc','_at_centers.dep');
    MDF.keywords.fildry  = strrep(OPT.topo   ,'.nc','.dry'           );
@@ -98,8 +98,8 @@ function MDF = getm2delft3d(varargin)
    MDF.keywords.mnkmax  = [fliplr(size(D.bathymetry)) 1];
    MDF.keywords.anglat  = D.proj_lat;
 
-   wlgrid('write','FileName',MDF.keywords.filcco,'X',D.cor.x'  ,'Y',D.cor.y'  ,'CoordinateSystem','Cartesian');
-   wlgrid('write','FileName',MDF.keywords.commnt,'X',D.cor.lon','Y',D.cor.lat','CoordinateSystem','Spherical');
+   wlgrid('write','FileName',MDF.keywords.commnt,'X',D.cor.x'  ,'Y',D.cor.y'  ,'CoordinateSystem','Cartesian');
+   wlgrid('write','FileName',MDF.keywords.filcco,'X',D.cor.lon','Y',D.cor.lat','CoordinateSystem','Spherical');
   %wlgrid('write','FileName',MDF.keywords.filcco,'X',D.xx(2:end-1),'Y',D.yx(2:end-1)); % this would keep land cells in and gives too many dry points
 
    D.enclosure = enclosure('extract',D.cor.x',D.cor.y');
@@ -241,10 +241,10 @@ function MDF = getm2delft3d(varargin)
 %% save new mdf with all links to new delft3d include files
 
    MDF.keywords.itdate = datestr(OPT.reference_time,'yyyy-mm-dd');
-   MDF.keywords.tstart = B.minutes(  1);
-   MDF.keywords.tstop  = B.minutes(end);
-   MDF.keywords.flmap  = [B.minutes(1)   120  B.minutes(end)];
-   MDF.keywords.flhis  = [B.minutes(1)    10  B.minutes(end)];
+   MDF.keywords.tstart =  B.minutes(tmask(  1));
+   MDF.keywords.tstop  =  B.minutes(tmask(end));
+   MDF.keywords.flmap  = [B.minutes(tmask(  1)) 120  B.minutes(tmask(end))];
+   MDF.keywords.flhis  = [B.minutes(tmask(  1))  10  B.minutes(tmask(end))];
                           %123456789012345678901234567890
    MDF.keywords.runtxt = ['GETM converted to Delft3D from',...
                           filenameext(OPT.topo   ),',',...

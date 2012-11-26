@@ -13,7 +13,7 @@ function varargout = delwaq_map2nc(varargin)
 %   OPT.mapfile       = [workdir,filesep,'MyWaqSimulation.map'];
 %   OPT.ncfile        = [workdir,filesep,'MyWaqSimulation_Tau_kmax.nc'];
 %   OPT.SubsName      = 'Tau';
-%   OPT.standard_name = 'magnitude_of_surface_downward_stress'; % seehttp://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/20/cf-standard-name-table.html: 
+%   OPT.standard_name = 'magnitude_of_surface_downward_stress'; % see http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/20/cf-standard-name-table.html: 
 %   OPT.long_name     = '|bed shear stress|';
 %   OPT.units         = 'N/m2'; % Pa
 %   OPT.k             = Inf; % use integer or Inf for last layer index: kmax
@@ -112,6 +112,7 @@ function varargout = delwaq_map2nc(varargin)
    end
    
    for it=1:D.NTimes
+
        disp([num2str(it,'%0.4d'),'/',num2str(D.NTimes,'%0.4d'),'=',num2str(100*it/D.NTimes,'%05.1f'),'%'])
        
       [t,vector] = delwaq('read',D,OPT.SubsName,0,it);

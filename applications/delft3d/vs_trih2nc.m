@@ -87,6 +87,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       OPT.quiet          = 'quiet';
       OPT.mode           = 'clobber'; %'64bit_offset' creates a netcdf-3 file with 64-bit offset that cannot be used with Ncbrowse 
       OPT.stride         = 1; % write chunks per layer in case of large 3D matrices
+      OPT.dump           = 1;
       
       if nargin==0
          varargout = {OPT};
@@ -519,8 +520,14 @@ function varargout = vs_trih2nc(vsfile,varargin)
       nc_varput(ncfile, 'station_angle'       , G.angle);
       nc_varput(ncfile, 'station_m_index'     , G.m);
       nc_varput(ncfile, 'station_n_index'     , G.n);
+      if any(strfind(G.coordinates,'CARTESIAN'))
       nc_varput(ncfile, 'station_x_coordinate', G.x);
       nc_varput(ncfile, 'station_y_coordinate', G.y);
+      end
+      if (~isempty(OPT.epsg)) | (~any(strfind(G.coordinates,'CARTESIAN')))      
+      nc_varput(ncfile, 'station_longitude'  , G.lon);
+      nc_varput(ncfile, 'station_latitude'   , G.lat);
+      end
       nc_varput(ncfile, 'time'         , T.datenum - OPT.refdatenum);
       nc_varput(ncfile, 'k'            , [1:G.kmax   ]');
       if (~isempty(OPT.epsg)) | (~any(strfind(G.coordinates,'CARTESIAN')))
@@ -609,6 +616,14 @@ function varargout = vs_trih2nc(vsfile,varargin)
       end   
       end
       if isfield(I,'temperature')
+      end
+      
+      if isnumeric(OPT.dump) && OPT.dump==1
+         nc_dump(ncfile);
+      else
+         fid = fopen(OPT.dump,'w');
+         nc_dump(ncfile,fid);
+         fclose(fid);
       end
       
 %% EOF      
