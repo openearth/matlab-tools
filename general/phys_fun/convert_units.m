@@ -1,4 +1,4 @@
-function Factor=convert_units(InUnits,OutUnits);
+function Factor=convert_units(InUnits0,OutUnits0,varargin);
 %CONVERT_UNITS    Unit conversion function
 %
 %    factor = convert_units(InUnits,OutUnits)
@@ -12,8 +12,13 @@ function Factor=convert_units(InUnits,OutUnits);
 %   Output : - factor:   Multiplication factor for converting input units to
 %                        output units.
 %
-% * Powers expressed as m3 or m^3 are both allowed.
+% * Powers can be expressed as: m3, m^3, m+3, m^-3
+% * brackets are allowed
+% * loose numbers are considered as multipliers rather than as powers
+%   when seperated from alphabet characters by spaces: convert_units('m 3','m')= 3
 % * % is considered as a factor 0.01
+% * multiplicative elements should be seperated by either a space or a *
+%    so this is not allowed: 'm^3kg^-1'
 %
 % Example : 
 %
@@ -36,6 +41,7 @@ function Factor=convert_units(InUnits,OutUnits);
 % 2008 jan 23: removed refs to constants [Gerben J. de Boer]
 % 2008 apr 14: added plural versions [Gerben J. de Boer]
 % 2010 apr 26: allow cases like m2 in addition to m^2 [Gerben J. de Boer]
+% 2012 nov   : made parsing work for \/, intermediate spaces and for signs in powers
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
 % Created: 08 Sep 2012
@@ -48,35 +54,16 @@ function Factor=convert_units(InUnits,OutUnits);
 % $HeadURL$
 % $Keywords: $
 
+debug = 0;
 
 %% deal with % character
 
-    InUnits = strrep( InUnits,'%','0.01');
-   OutUnits = strrep(OutUnits,'%','0.01');
-   percent  = 0.01; % same as in UD units
-
-%% replace all occurences like m2 with m^2
-
-   ind      = regexpi(InUnits,'[abcdefghijklmnopqrstuvwxyz]\d');
-   jj = 0;
-   for ii=1:length(ind)
-      InUnits = strrep(InUnits,[InUnits(ind(ii)+jj)     InUnits(ind(ii)+jj+1)],...
-                               [InUnits(ind(ii)+jj) '^' InUnits(ind(ii)+jj+1)]);
-      jj = jj + 1;
-   end
-   
-   ind      = regexpi(OutUnits,'[abcdefghijklmnopqrstuvwxyz]\d');
-   jj = 0;
-   for ii=1:length(ind)
-      OutUnits = strrep(OutUnits,[OutUnits(ind(ii)+jj)     OutUnits(ind(ii)+jj+1)],...
-                                 [OutUnits(ind(ii)+jj) '^' OutUnits(ind(ii)+jj+1)]);
-      jj = jj + 1;
-   end
-   
-   %InUnits
-   %OutUnits
+    InUnits = beautify( InUnits0);
+   OutUnits = beautify(OutUnits0);
 
 %% start unit conversion
+
+   percent         = 0.01; % same as in UD units
 
    %% Definitions  
    % ---------------------
@@ -212,6 +199,8 @@ function Factor=convert_units(InUnits,OutUnits);
    %% Pressure units 
    % ---------------------
    Pa              = 1;                       % pascal
+   Pascal          = Pa;                      % pascal
+   pascal          = Pa;                      % pascal
    hPa             = 100;                     % hectopascal
    bar             = 1e5;                     % bar
    mbar            = 100;                     % millibar
@@ -236,6 +225,7 @@ function Factor=convert_units(InUnits,OutUnits);
    grs              = gr;                     % grams
    gram             = gr;                     % grams
    grams            = gr;                     % grams
+   g                = gr;                     % grams
    
    kg               = 1;                      % kilograms
    kgs              = kg;                     % kilograms
@@ -266,8 +256,42 @@ function Factor=convert_units(InUnits,OutUnits);
 
 % Find conversion factor 
 %---------------------
+   if debug
+      disp(['InUnits  ', InUnits0 ,' beautified to ',InUnits , ' = ',num2str(eval(InUnits) )])
+      disp(['OutUnits ', OutUnits0,' beautified to ',OutUnits, ' = ',num2str(eval(OutUnits))])
+   end
+
    F1              = eval(InUnits);
    F2              = eval(OutUnits);
    Factor          = F1./F2;
 
 %% EOF
+
+
+function str = beautify(str)
+
+   % fortran stlye multiplication
+   str = strrep(str,'**','^'   );
+
+   % percentages
+   str = strrep(str,'%' ,'0.01');
+
+   % remove double white spaces fo any kind (tab, space,...)
+   ind = Inf;while ~isempty(ind);ind      = regexpi(str,'\s\s')         ;str(ind  )=[];;end
+
+   % remove spaces before or after multiplication or division */\
+   ind = Inf;while ~isempty(ind);ind      = regexpi(str,'\s[\\/*]{1,1}');str(ind  )=[];;end
+   ind = Inf;while ~isempty(ind);ind      = regexpi(str,'[\\/*]{1,1}\s');str(ind  )=[];;end
+
+   % replace all occurences like m2 with m^2 and m-2 with m^-2
+   ind      = regexpi(str,'[abcdefghijklmnopqrstuvwxyz][-+]*\d');
+   jj = 0;
+   for ii=1:length(ind)
+      str = strrep(str,[str(ind(ii)+jj)     str(ind(ii)+jj+1)],...
+                       [str(ind(ii)+jj) '^' str(ind(ii)+jj+1)]);
+      jj = jj + 1;
+   end
+
+   % turn loose elements into multiplication string
+   ind = Inf;while ~isempty(ind);ind      = regexpi(str,'\s[\\/*]{1,1}');str(ind  )=[];;end
+   str = strrep(str,' ' ,'*'   );
