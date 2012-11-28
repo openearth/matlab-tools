@@ -6,20 +6,24 @@ function varargout = plotNet(varargin)
 %          dflowfm.plotNetkml(ncfile,<keyword,value>) 
 %
 %   plots a D-Flow FM unstructured net (centers, corners, contours),
-%   as kml file. Note that G only when G is a *_map.nc file it will contain
+%   as kml file. Note that only when G is a *_map.nc file it will contain
 %   the node links, otherwise (*_net.nc) only the nodes (corner dots).
 %
 %   The following optional <keyword,value> pairs have been implemented:
-%    * axis: only grid inside axis is plotted, use [] for while grid.
-%            for axis to be be a polygon, supply a struct axis.x, axis.y.
+%    * axis: only grid inside axis is plotted, use [] (default) for while grid.
+%      For axis to be be a polygon, supply a struct axis.x, axis.y.
 %   Struct with KML properties, if [] they are not plotted.
-%    * cor:  a struct with KMLmarker properties for corners
+%    * cor:  a struct with KMLmarker properties for corners.
 %    * cen:  a struct with KMLmarker properties for centers (bug still: cor overrules cen in Google Earth)
-%    * peri: a struct with KMLline properties for connection line
-%   Defaults values can be requested with OPT = dflowfm.plotNet().
+%            Set to [] if you do not want corner or center dots.
+%    * peri: a struct with KMLline properties for connection line.
+%            Only possible when G comes from a *_map.nc. Plotting will
+%            take some time as it connects the faces in to long line segments
+%            for fast viewing in Google Earth. All flow cell boundaries are
+%            plotted as chained NaN-separated line: fast to plot, slow to create.
+%            These data are saved to *_peri.nc for reuse with KMLline.
 %
-%   Note: all flow cell boundaries are plotted as chained NaN-separated line: 
-%   fast to plot, slow to create.
+%   Defaults values can be requested with OPT = dflowfm.plotNet().
 %
 %   See also dflowfm, delft3d
 
@@ -61,22 +65,24 @@ function varargout = plotNet(varargin)
 %% input
 
 %  arguments to plot(x,y,OPT.keyword{:})
-   OPT.cen = struct(... % KMLpatch3()
+   OPT.cen = struct(... % KMLmarker()
          'iconnormalState','http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png',...
         'colornormalState',[0 0 1],... % blue
         'scalenormalState',0.2,... % less is not shown in GE
                  'kmlName','flow cells (centres)',...
      'scalehighlightState',0.2); % no mouse-over
-   OPT.cor  = struct(... % KMLpatch3()
+   OPT.cor  = struct(... % KMLmarker()
          'iconnormalState','http://svn.openlaszlo.org/sandbox/ben/smush/circle-white.png',...
         'colornormalState',[1 1 0],... % yellow
         'scalenormalState',0.2,... % less is not shown in GE
                  'kmlName','nodes (corners)',...
      'scalehighlightState',0.2); % no mouse-over
-   OPT.axis     = []; % [x0 x1 y0 y1] or polygon OPT.axis.x, OPT.axis.y
-   OPT.fileName = [];
-   OPT.peri     = struct('lineWidth',1,'kmlName','faces'); % KMLline
-   OPT.epsg     = 28992;
+   OPT.axis           = []; % [x0 x1 y0 y1] or polygon OPT.axis.x, OPT.axis.y
+   OPT.fileName       = [];
+   OPT.peri           = KMLline;
+   OPT.peri.kmlName   = 'faces';
+   OPT.peri.zScaleFun = @(z)(z+20).*5; % same as KMLsurf
+   OPT.epsg           = 28992; % Dutch
    
    if nargin==0
       varargout = {OPT};
@@ -180,13 +186,23 @@ function varargout = plotNet(varargin)
      sourceFiles{end+1} = [tmpname,'_peri.kml'];
      OPT.peri.fileName = sourceFiles{end};
      
-    [peri.x peri.y]=tri2poly(G.cor.Link',G.cor.x,G.cor.y,'log',2);
+     if isfield(G.cor,'z')
+    [peri.x peri.y peri.z]=tri2poly(G.cor.Link',G.cor.x,G.cor.y,G.cor.z,'log',2);
+     else
+    [peri.x peri.y       ]=tri2poly(G.cor.Link',G.cor.x,G.cor.y        ,'log',2);
+     end
      
     % TO DO check whether x and y are not already spherical 
     [peri.lon,peri.lat] = convertCoordinates(peri.x,peri.y,'CS1.code',OPT.epsg,'CS2.code',4326);
      
+     struct2nc([tmpname,'_peri.nc'],peri);
+     
      disp('plotting KMLline segments, please wait ...')
-     h = KMLline(peri.lat,peri.lon,OPT.peri);
+     if isfield(G.cor,'z')
+     h = KMLline(peri.lat,peri.lon,peri.z,OPT.peri);
+     else
+     h = KMLline(peri.lat,peri.lon       ,OPT.peri);
+     end
    
    elseif ~isempty(OPT.peri)
       disp('Cell boundaries (peri) not present in file, not plotted.')

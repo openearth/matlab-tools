@@ -1,5 +1,5 @@
 function varargout = readFlowGeom2tri(varargin)
-%readNet   Reads flow geometry data of a D-Flow FM unstructured net as a set of triangles
+%readNet   Reads network as triangles only for speed-up with TRISURF
 %
 %     G = dflowfm.readFlowGeom2tri(ncfile) 
 %
@@ -18,7 +18,7 @@ function varargout = readFlowGeom2tri(varargin)
 %
 % The triangulation allows much faster plots than plotting per
 % patch as dflowfm.plotMap, but can only handle data at corners 
-% currently, not data at centers where dflowfm.plotMap assumed data.
+% currently, not data at centers where dflowfm.plotMap assumes scalars.
 %
 % Example:
 %
@@ -91,9 +91,9 @@ function varargout = readFlowGeom2tri(varargin)
    D.n(5)     = sum(nface==5); % become 3 triangles each
    D.n(6)     = sum(nface==6); % become 4 triangles each
    ntri       = sum(D.n.*[0 0 1 2 3 4]);
-   D.tri      = repmat(int32(0),[ntri 3]);
+   D.tri      = repmat(int32(0),[ntri 3]); % pre-allocate for speed
    
-%% 3: re-use exisitng triangles
+%% 3: re-use existing triangles
 
    ind = find(nface==3);
    D.tri(1:length(ind),:)     = D.map(ind,1:3);

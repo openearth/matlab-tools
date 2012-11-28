@@ -16,18 +16,28 @@ function fid = delft3d_io_meteo_write(filehandle,time,data,varargin)
 %    grid_file        = default, ['temp.grd']; % if no (relative) path specified, will be written in same path as amx file
 %                                              % but with LOCAL reference to grd file inside amx file
 %    quantity         = 'air_pressure'     ,'x_wind','y_wind','relative_humidity','air_temperature','cloudiness'
-%    unit             = 'millibar','pascal','m s-1'          ,'%'                ,'Celsius'        ,'%'
+%    unit             = 'Pa','mbar'        ,'m s-1'          ,'%'                ,'Celsius'        ,'%'
 %    refdatenum       = default, datenum(1970,1,1);
 %    timezone         = default, '+00:00';
 %    OS               = end of line type, default, 'unix';
 %    newgrid          = whether to write header block, default, 0;
 %    writegrd         = whether to write grd, default true; can be set to
-%                       false if grd was already written in first time step
-%                       and all time steps have the same grd
+%                       false if grd was already written in 1st time step
+%                       or for previous quantities
 %    CoordinateSystem = to be passed to WLGRID, 'Cartesian' or 'Spherical';
 %    fmt              = '%7g';
 %
-%See also: DELFT3D_IO_METEO, KNMI, GRIB
+% NOTE 1 that wind directions need to be in the local coordinate
+% system of the model, so you need to (i) transform the grid coordinates AND (ii)
+% rotate the winds if you want to use zonal/meridional winds for a cartesian model.
+%
+% NOTE 2 to test the IO of the meteo by Delft3D run a fake simulation
+% on the meteo grid itself, with meteo time step identical to the meteo
+% interval. Add keywords to mdf file to make them end up in trim file:
+% airout and heaout. Use depth of 1e3 m to prevent crash.
+
+%
+%See also: DELFT3D_IO_METEO, KNMI, GRIB, NETCDF
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -74,7 +84,7 @@ function fid = delft3d_io_meteo_write(filehandle,time,data,varargin)
 %% Options
 %-----------------------------
 
-OPT.header           = {[]};
+OPT.header           = '';
 
 OPT.filetype         = 'meteo_on_curvilinear_grid';
 OPT.nodata_value     = -999;

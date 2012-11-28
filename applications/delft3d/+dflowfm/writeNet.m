@@ -1,5 +1,5 @@
 function varargout = readNet(ncfile,X,Y,varargin)
-%writeNet   Writes network nodes of a D-Flow FM unstructured net.
+%writeNet   Write network nodes of unstructured net from curvilinear mesh
 %
 %     dflowfm.writeNet(ncfile,x,y,<keyword,value>) 
 %
