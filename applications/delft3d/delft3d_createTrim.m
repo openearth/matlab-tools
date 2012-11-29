@@ -112,7 +112,7 @@ if isempty(trimOut)
     trimOutPath=trimInPath;
     trimOutName=[trimInName,'-ini']; 
 else
-    [trimOutPath trimOutName trimOutExt]=filepart(trimOut);
+    [trimOutPath trimOutName trimOutExt]=fileparts(trimOut);
 end %end if isempty(trimOut)
 
 %Set empty trimOutPath
