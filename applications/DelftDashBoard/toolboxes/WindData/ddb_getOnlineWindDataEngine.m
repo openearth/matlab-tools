@@ -80,14 +80,14 @@ for ii=1:numberOfDays
 
     currentDate=startDate+ii-1;
 
-    [s status]=urlread(['http://www.weatherunderground.com/history' stationID datestr(currentDate,10)...
+    [s status]=ddb_urlread(['http://www.weatherunderground.com/history' stationID datestr(currentDate,10)...
         '/' datestr(currentDate,5) '/' datestr(currentDate,7) '/DailyHistory.html?req_city=NA&req_state=NA&req_statename=NA&format=1']);
 
     if status==0
         tic
         g=warndlg({'The connection is lost, trying to reconnect in 30 seconds... ',['times ' num2str(round(toc)) ' seconds']},'Online source not available');
         while status==0&toc<30
-            [s status]=urlread(['http://www.weatherunderground.com/history' stationID datestr(currentDate,10)...
+            [s status]=ddb_urlread(['http://www.weatherunderground.com/history' stationID datestr(currentDate,10)...
                 '/' datestr(currentDate,5) '/' datestr(currentDate,7) '/DailyHistory.html?req_city=NA&req_state=NA&req_statename=NA&format=1']);
         end
         close(g)

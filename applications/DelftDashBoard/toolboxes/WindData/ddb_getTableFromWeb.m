@@ -33,7 +33,7 @@ function out = ddb_getTableFromWeb(url,tableID)
 
 % Call functionality to update the HTML with MATLAB hooks to grab data
 % urlText = activeBrowser.getHtmlText;
-urlText = urlread(url);
+urlText = ddb_urlread(url);
 pageString = updateHTML(urlText);
 out = getHTMLTable(pageString,tableID);
 % activeBrowser.setHtmlText(newUrlText);

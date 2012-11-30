@@ -164,7 +164,7 @@ switch lower(ldb.type)
                                     mkdir(localdir);
                                 end
                                 try
-                                    urlwrite([remotedir filename],[localdir filename]);
+                                    ddb_urlwrite([remotedir filename],[localdir filename]);
                                 end
                             end
                             ncfile=[localdir filename];

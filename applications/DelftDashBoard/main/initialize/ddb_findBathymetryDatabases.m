@@ -89,7 +89,7 @@ for i=1:handles.bathymetry.nrDatasets
                                 mkdir(localdir);
                             end
                             % Try to copy nc meta file
-                            urlwrite(fname,[localdir 'temp.nc']);
+                            ddb_urlwrite(fname,[localdir 'temp.nc']);
                             if exist([localdir 'temp.nc'],'file')
                                 % Try reading the local file. Sometimes it gets
                                 % messed up when you're connected to a network

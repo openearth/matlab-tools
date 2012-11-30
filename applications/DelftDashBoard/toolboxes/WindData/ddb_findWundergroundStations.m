@@ -85,7 +85,7 @@ name=[];
 
 tic;
 while toc<3 % look during t seconds for stations
-    s=urlread(['http://stationdata.wunderground.com/cgi-bin/stationdata?maxlat=' num2str(maxlat) '&minlat=' num2str(minlat) '&maxlon=' num2str(maxlon) '&minlon=' num2str(minlon) '&iframe=1&module=1']);
+    s=ddb_urlread(['http://stationdata.wunderground.com/cgi-bin/stationdata?maxlat=' num2str(maxlat) '&minlat=' num2str(minlat) '&maxlon=' num2str(maxlon) '&minlon=' num2str(minlon) '&iframe=1&module=1']);
     ss=strread(s,'%s','delimiter',';');
     
     idStation=find(~cellfun('isempty',regexp(ss,'\[''id''\]')));

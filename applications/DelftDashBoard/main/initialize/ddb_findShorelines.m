@@ -89,7 +89,7 @@ for i=1:handles.shorelines.nrShorelines
                                 mkdir(localdir);
                             end
                             % Try to copy nc meta file
-                            urlwrite(fname,[localdir 'temp.nc']);
+                            ddb_urlwrite(fname,[localdir 'temp.nc']);
                             if exist([localdir 'temp.nc'],'file')
                                 x0=nc_varget([localdir 'temp.nc'],'origin_x');
                                 movefile([localdir 'temp.nc'],[localdir handles.shorelines.shoreline(i).name '.nc']);

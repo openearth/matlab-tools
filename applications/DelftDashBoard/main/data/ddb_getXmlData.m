@@ -67,7 +67,7 @@ newdata=[];
 if exist(file)==2
     data=xml_load(file);
     try
-        urlwrite(url,[localdir filesep 'temp.xml']);
+        ddb_urlwrite(url,[localdir filesep 'temp.xml']);
         serverdata = xml_load([localdir filesep 'temp.xml']);
         delete([localdir filesep 'temp.xml']); %cleanup
     catch
@@ -83,7 +83,7 @@ else
         if ~isdir(localdir)
            mkdir(localdir); 
         end
-        urlwrite(url,file);
+        ddb_urlwrite(url,file);
         data=xml_load(file);
         % All data needs to be updated
         fld = fieldnames(data);

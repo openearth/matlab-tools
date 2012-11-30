@@ -132,7 +132,7 @@ switch datatype
                 if ~exist(handles.Bathymetry.Dataset(ii).URL,'dir')
                     mkdir(handles.Bathymetry.Dataset(ii).URL);
                 end
-                urlwrite([ddb_opendap_fileS 'bathymetry/' name '/' name '.nc'],[handles.Bathymetry.Dataset(ii).URL filesep name '.nc']);
+                ddb_urlwrite([ddb_opendap_fileS 'bathymetry/' name '/' name '.nc'],[handles.Bathymetry.Dataset(ii).URL filesep name '.nc']);
                 % copy tiles
                 hW  = waitbar(0,'Please wait while downloading tiles...');
                 tiles = opendap_catalog([ddb_opendap_catalog 'bathymetry/' name '/catalog.html'],'maxlevel',Inf);
@@ -143,7 +143,7 @@ switch datatype
                     if ~isempty(dir)
                         mkdir([dataDir 'bathymetry' filesep name],dir);
                     end
-                    urlwrite(tiles{t},[dataDir 'bathymetry' filesep name filesep dir filesep tname]);
+                    ddb_urlwrite(tiles{t},[dataDir 'bathymetry' filesep name filesep dir filesep tname]);
                     waitbar(t/length(tiles),hW);
                 end
                 close(hW);
@@ -176,7 +176,7 @@ switch datatype
                 if ~exist(handles.TideModels.Model(ii).URL,'dir')
                     mkdir(handles.TideModels.Model(ii).URL);
                 end
-                urlwrite([ddb_opendap_fileS 'tidemodels/' name '.nc'],[handles.TideModels.Model(ii).URL filesep name '.nc']);
+                ddb_urlwrite([ddb_opendap_fileS 'tidemodels/' name '.nc'],[handles.TideModels.Model(ii).URL filesep name '.nc']);
                 % copy tiles (no tiles for tidemodels!
             end
             fprintf(fid,'%s\n\n',['    useCache ' cache]);
@@ -207,7 +207,7 @@ switch datatype
                 if ~exist(handles.Shorelines.Shoreline(ii).URL,'dir')
                     mkdir(handles.Shorelines.Shoreline(ii).URL);
                 end
-                urlwrite([ddb_opendap_fileS 'shorelines/' name '/' name '.nc'],[handles.Shorelines.Shoreline(ii).URL filesep name '.nc']);
+                ddb_urlwrite([ddb_opendap_fileS 'shorelines/' name '/' name '.nc'],[handles.Shorelines.Shoreline(ii).URL filesep name '.nc']);
                 % copy tiles
                 hW  = waitbar(0,'Please wait while downloading tiles...');
                 tiles = opendap_catalog([ddb_opendap_catalog 'shorelines/' name '/catalog.html'],'maxlevel',Inf);
@@ -218,7 +218,7 @@ switch datatype
                     if ~isempty(dir)
                         mkdir([dataDir 'shorelines' filesep name],dir);
                     end
-                    urlwrite(tiles{t},[dataDir 'shorelines' filesep name filesep dir filesep tname]);
+                    ddb_urlwrite(tiles{t},[dataDir 'shorelines' filesep name filesep dir filesep tname]);
                     waitbar(t/length(tiles),hW);
                 end
                 close(hW);

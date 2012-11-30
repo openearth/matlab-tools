@@ -1703,7 +1703,7 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
 
                 % Get the latest version date from the File Exchange webpage
                 baseUrl = 'http://www.mathworks.com/matlabcentral/fileexchange/';
-                webPage = urlread([baseUrl 'loadFile.do?objectId=14317']);
+                webPage = ddb_urlread([baseUrl 'loadFile.do?objectId=14317']);
                 modIdx = strfind(webPage,'Modification Comments');
                 if ~isempty(modIdx)
                     webPage = webPage(modIdx:end);
@@ -1726,7 +1726,7 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
                             switch answer
                                 case 'Yes'  % => Yes: download & install newer file
                                     try
-                                        webPage = urlread([baseUrl '/download.do?objectId=14317&fn=findjobj&fe=.m']);
+                                        webPage = ddb_urlread([baseUrl '/download.do?objectId=14317&fn=findjobj&fe=.m']);
                                         webPage = regexprep(webPage,[char(13),char(10)],'\n');  %convert to OS-dependent EOL
                                         fid = fopen(which(mfilename),'wt');
                                         fprintf(fid,'%s',webPage);

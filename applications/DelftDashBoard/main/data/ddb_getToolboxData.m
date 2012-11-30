@@ -73,7 +73,7 @@ try
             % Copy files from server
             for ii=1:length(toolboxdata.file)
                 if  toolboxdata.file(ii).update == 1 || ~exist([handles.Toolbox(a).dataDir filesep toolboxdata.file(ii).name],'file')
-                    urlwrite(toolboxdata.file(ii).URL,[handles.Toolbox(a).dataDir filesep toolboxdata.file(ii).name]);
+                    ddb_urlwrite(toolboxdata.file(ii).URL,[handles.Toolbox(a).dataDir filesep toolboxdata.file(ii).name]);
                 end
             end
         end
