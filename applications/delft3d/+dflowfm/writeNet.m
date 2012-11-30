@@ -12,8 +12,8 @@ function varargout = readNet(ncfile,X,Y,varargin)
 %  X([4 9])=nan;Y([4 9])=nan;
 %  deletefile(ncfile)
 %  dflowfm.writeNet(ncfile,X,Y)
-%  dflowfm.plotNet(ncfile)
-%  D = nc2struct(ncfile)
+%  dflowfm.plotNet (ncfile)
+%  D =    nc2struct(ncfile)
 %  hold on
 %  poly_bi_plot(D.NetLink,D.NetNode_x,D.NetNode_y,'r','linewidth',2);
 %

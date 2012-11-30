@@ -15,7 +15,8 @@ function varargout = plotMap(varargin)
 %   to read the unstructured grid G once, and update D and plotMap.
 %   Note that you need to read the grid G from the map file (*_map.nc),
 %   not from the grid input file (*_net.nc) beause that lacks the
-%   node connectivity information.
+%   node connectivity information. The network itself is not plotted, 
+%   since plotMap chops all cells into triangles before plotting.
 %
 %   The following optional <keyword,value> pairs have been implemented:
 %    * axis: only grid inside axis is plotted, use [] for while grid.
@@ -26,17 +27,27 @@ function varargout = plotMap(varargin)
 %    * patch
 %   Defaults values can be requested with OPT = dflowfm.plotNet().
 %
-%   Note: every flow cell is plotted individually as a patch: slow.
-%
-%   Apply any plot lay-out before plotMap: much fatser.
-%
 %   Example: plot maximum velocity
 %
-%     ncfile    = 'p01k3_map.nc';
+%     ncfile    = 'WORKDIR\RUNID_map.nc';
 %     G         = dflowfm.readNet(ncfile);
 %     T.datenum = nc_cf_time(ncfile);
 %
-%     %% statistics
+%     %% movie of waterlevels
+%     for it=1:length(T.datenum)
+%       D  = dflowfm.readMap(G,it);
+%       dflowfm.plotMap(G,D);
+%       caxis([-1 1])
+%       colorbarwithvtext('\eta [m]')
+%       title(datestr(T.datenum(it)))
+%       axis equal
+%       axis([100 220 540 620].*1e3)
+%       tickmap('xy')
+%       grid on
+%       pausedisp([num2str(it)])
+%     end
+%
+%     %% statistics of velocities
 %     umax = zeros(size(G.cen.x));
 %     for it=1:length(T.datenum)
 %        ucx = ncread(ncfile,'ucx',[1 it],[Inf 1])';%ucx = nc_varget(ncfile,'ucx',[(it-1) 0],[1 Inf])';
@@ -47,9 +58,9 @@ function varargout = plotMap(varargin)
 %     delft3d_io_xyz('write', [filename(ncfile),'_umax.xyz'],G.cen.x,G.cen.y,umax);
 %      
 %     %% lay-out
+%     dflowfm.plotMap(G,umax)
 %     clim([0 2])
 %     colorbarwithvtext('max(u) [m/s]')
-%     dflowfm.plotMap(G,umax)
 %     axis equal
 %     axis([100 220 540 620].*1e3)
 %     tickmap('xy')
@@ -163,36 +174,52 @@ else
    else
       cen.mask = inpolygon(G.cen.x,G.cen.y,OPT.axis.x,OPT.axis.y);
    end
-   
-   peri.mask1 = find(cen.mask(G.cen.LinkType(cen.mask)==1));
-   peri.mask  = find(cen.mask(G.cen.LinkType(cen.mask)~=1)); % i.e. 0=closed or 2=between 2D elements
-   
-   if ~iscell(G.peri.x) % can also be done in readNet
-     [x,y] = dflowfm.peri2cell(G.peri.x(:,peri.mask),G.peri.y(:,peri.mask));
-   else
-      x = G.peri.x;
-      y = G.peri.y;
-   end
 
-%% lay out !!!! before plotting patches: much faster !!!
-
-   if OPT.layout
-      hold on
-      axis equal
-      grid on
-      title(D.datestr)
+   % the PATCH method is slow and is superseded in favour of TRISURFCORCEN after PATCH2TRI 
+   if ~(isfield(G,'tri') & isfield(G,'map3'))
+   
+      peri.mask1 = find(cen.mask(G.cen.LinkType(cen.mask)==1));
+      peri.mask  = find(cen.mask(G.cen.LinkType(cen.mask)~=1)); % i.e. 0=closed or 2=between 2D elements
+      
+      if ~iscell(G.peri.x) % can also be done in readNet
+        [x,y] = dflowfm.peri2cell(G.peri.x(:,peri.mask),G.peri.y(:,peri.mask));
+      else
+         x = G.peri.x;
+         y = G.peri.y;
+      end
+      
    end
 
 %% plot
 
-   h = repmat(0,[1 length(x)]);
-   for icen=1:length(x)
-      h(icen) = patch(x{icen},y{icen},D.cen.(OPT.parameter)(peri.mask(icen)));
-   end
+   % the PATCH method is slow and is superseded in favour of TRISURFCORCEN after PATCH2TRI 
+   if (isfield(G,'tri') & isfield(G,'map3'))
+   
+      h = trisurfcorcen(G.tri,G.cor.x,G.cor.y,D.cen.(OPT.parameter)(G.map3));
+      set(h,'edgeColor','none'); % we do not want to see the triangle edges as they do not exist on D-Flow FM network
+      % If you want to see edges, overlay the them with plotNet.
+      %shading flat; % automaticcally done by trisurfcorcen, as it is the only correct option for center values
+      view(0,90);
+      
+   else
 
-  %shading flat; % not needed an slow
-  
-   set(h,OPT.patch{:});
+      % lay out !!!! before plotting patches: much faster for patches
+      if OPT.layout
+         hold on
+         axis equal
+         grid on
+         title(D.datestr)
+      end
+
+      h = repmat(0,[1 length(x)]);
+      for icen=1:length(x)
+      % use partly trisurf
+         h(icen) = patch(x{icen},y{icen},D.cen.(OPT.parameter)(peri.mask(icen)));
+      end
+      %shading flat; % not needed an slow
+      set(h,OPT.patch{:});
+      
+   end
    
 end
    

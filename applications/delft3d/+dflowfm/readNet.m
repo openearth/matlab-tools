@@ -129,7 +129,7 @@ function varargout = readNet(varargin)
    G.cen.flag_values   = nc_attget(ncfile, 'FlowLinkType','flag_values');
    G.cen.flag_meanings = nc_attget(ncfile, 'FlowLinkType','flag_meanings');
    G.cen.flag_meanings = strread(G.cen.flag_meanings,'%s');
-
+   
    end 
 
 %% < read network: links between corners and centers too: output file >
@@ -139,6 +139,11 @@ function varargout = readNet(varargin)
    % make sure orientation is [n x 6], just like a delaunay tri is [n x 3]
    G.link              = nc_varget(ncfile, 'NetElemNode');
    G.bnd               = nc_varget(ncfile, 'BndLink')';
+   
+      if nc_isvar(ncfile, 'NetNode_x')
+      % new pointers for chopping up into triangles to be used in plotMap
+     [G.tri,G.map3,G.ntyp] = patch2tri(G.cor.x,G.cor.y,G.link);
+      end
 
    end 
 

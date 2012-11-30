@@ -55,7 +55,7 @@ function varargout = readMap(ncfile,varargin)
 
    if isstruct(ncfile)
       G      = ncfile;
-      ncfile = G.file.name
+      ncfile = G.file.name;
    else
       G      = dflowfm.readNet(ncfile);
    end
