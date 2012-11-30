@@ -45,9 +45,10 @@ function varargout = quiverlegend(x,y,u,v,uvfac,qcolor,qtext,varargin)
 %       2600 GA Delft
 %       The Netherlands
 %
-%   This library is free software; you can redistribute it and/or
+%
+%   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
-%   License as published by the Free Software Foundation; either
+%   License as published by the Free Software Foundation, either
 %   version 2.1 of the License, or (at your option) any later version.
 %
 %   This library is distributed in the hope that it will be useful,
@@ -56,9 +57,7 @@ function varargout = quiverlegend(x,y,u,v,uvfac,qcolor,qtext,varargin)
 %   Lesser General Public License for more details.
 %
 %   You should have received a copy of the GNU Lesser General Public
-%   License along with this library; if not, write to the Free Software
-%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
-%   USA
+%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
 qtextplacement    = 'top';
@@ -93,15 +92,14 @@ hold on
               
    
    %% 3 cases are dealt with: 
-   %% - horizontal
-   %% - vertical
-   %% - oblique
-   %% The reason for this is that for the case where the u and v scales
-   %% are different, the horizontal and vertical cases need to be handled differently
-   %% (for the annotation text).
-   %% For equal u and v scales, the horizontal and vertical 
-   %% are just special cases of oblique of course.
-   %% --------------------------------
+   %  - horizontal
+   %  - vertical
+   %  - oblique
+   %  The reason for this is that for the case where the u and v scales
+   %  are different, the horizontal and vertical cases need to be handled differently
+   %  (for the annotation text).
+   %  For equal u and v scales, the horizontal and vertical 
+   %  are just special cases of oblique of course.
 
    % VerticalAlignment  : [ top | cap | {middle} | baseline | bottom ]
    % HorizontalAlignment: [ {left} | center | right ]
@@ -109,7 +107,6 @@ hold on
    if (abs(u) < 1e-10)
   
       %% vertical arrow
-      %% --------------------------------
   
            ang                 = 90; % [deg]
       if     strcmp(qtextplacement,'tip')       
@@ -148,7 +145,6 @@ hold on
    elseif (abs(v) < 1e-10)
   
       %% horizontal  arrow
-      %% --------------------------------
   
            ang                 = 0; % [deg]
       if     strcmp(qtextplacement,'tip')       
@@ -187,7 +183,6 @@ hold on
     else      
     
       %% oblique arrow
-      %% --------------------------------
       
            [ang,U]             = cart2pol(u,v); %[rad]
             ang                = rad2deg(ang) ; %[deg]
@@ -258,7 +253,6 @@ hold on
 %-%end
 
 %% Return handles
-%% ---------
 
 if    nargout==1
    varargout = {h};

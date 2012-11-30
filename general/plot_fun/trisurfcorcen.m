@@ -3,29 +3,29 @@ function varargout = trisurfcorcen(tri,x,y,varargin);
 %
 %    p = trisurfcorcen(tri,x,y,z,c);
 %
-% always plots triangle correclty w.r.t height
-% and color.
+% always plots triangle correclty w.r.t height and color.
 %
-% z and c can be defined at either the centers (face) or 
-% or the corners (vertices) of the traingle:
+% z and c can be defined at either the centers of the 
+% triangle leading to 'shading interp' look, or 
+% or the corners (vertices) of the triangle leading to
+% 'shading flat' look.
 %
-% - z at corners: surface is continuous
-% - z at centers: surface is stepwise
+% - z at corners: surface is continuous (bilinear)
+% - z at centers: surface is stepwise (stairs)
 % 
-% - c at corners: shading interp (continous)
-% - c at centers: shading flat   (stepwise)
+% - c at corners: shading interp (continous, smooth look)
+% - c at centers: shading flat   (stepwise, stairs look)
 %
-% If z or c is a constant, it is assumed to be at the edges.
+% If z or c is a constant, it is assumed to be at the vertices.
 %
-% There are four 3D options:
+% There are 2 3D, affecting only colors:
 %
-%    p = trisurfcorcen(tri,xcor,ycor,zcor,ccor);
-%    p = trisurfcorcen(tri,xcor,ycor,zcor,cCEN);
-%    p = trisurfcorcen(tri,xcor,ycor,zCEN,ccor);
-%    p = trisurfcorcen(tri,xcor,ycor,zCEN,cCEN);
+%    p = trisurfcorcen(tri,xcor,ycor,zcor,ccor); % shading interp, default of trisurf
+%    p = trisurfcorcen(tri,xcor,ycor,zcor,cCEN); % shading flat
 %
-% There are two 2D options for which z is set to zero
-% !unlike! TRISURF which sets c = z.
+% There are also two 2D options for which z is set 
+% to zero !unlike! TRISURF which sets c = z always.
+% This is in fact the pcolor-counterpart for triangles.
 %
 %    p = trisurfcorcen(tri,xcor,ycor,zcor);
 %    p = trisurfcorcen(tri,xcor,ycor,zCEN);
@@ -75,36 +75,34 @@ function varargout = trisurfcorcen(tri,x,y,varargin);
 %   --------------------------------------------------------------------
 
 if nargin     == 4
-   %% 2D plot (flat z)
+   % 2D plot (flat z)
    c = varargin{1};
    z = 0;
 elseif nargin == 5
-   %% 3D plot
+   % 3D plot
    z = varargin{1};
    c = varargin{2};
 end   
 
 %% z is constant
-%% Surface is flat.
-%% ------------------------------------------
+%  Surface is flat.
+
    if isscalar(z)
    
       if equalsize(size(x),size(c))
          
-         %% same as trisurf 
-         %% z at corners constant (no jumps at edges)
-         %% c at corners (shading interp)
-         %% ---------------------------------
+         %  same as trisurf 
+         %  z at corners constant (no jumps at edges)
+         %  c at corners (shading interp)
          
          p = trisurf(tri,x,y,repmat(z,size(x)),c); 
          set(p,'FaceColor','interp');
          
       else % c
       
-         %% same as trisurf 
-         %% z at corners constant (no jumps at edges)
-         %% c at centers (shading flat)
-         %% ---------------------------------
+         %  same as trisurf 
+         %  z at corners constant (no jumps at edges)
+         %  c at centers (shading flat)
       
          p = trisurf(tri,x,y,repmat(z,size(x)),c);
          set(p,'FaceColor','flat'); % same as default
@@ -112,27 +110,24 @@ end
       end % c
 
 %% z at corners
-%% Surface is continuous (linear).
-%% ------------------------------------------
+%  Surface is continuous (linear).
 
    elseif equalsize(size(x),size(z))
 
       if equalsize(size(x),size(c))
       
-         %% same as trisurf 
-         %% z at corners (no jumps at edges)
-         %% c at corners (shading interp)
-         %% ---------------------------------
+         %  same as trisurf 
+         %  z at corners (no jumps at edges)
+         %  c at corners (shading interp)
       
          p = trisurf(tri,x,y,z,c);  % same trisurf(...)
          set(p,'FaceColor','interp');
 
       else % c
       
-         %% same as trisurf 
-         %% z at corners (no jumps at edges)
-         %% c at centers (shading flat)
-         %% ---------------------------------
+         %  same as trisurf 
+         %  z at corners (no jumps at edges)
+         %  c at centers (shading flat)
       
          % x = x(tri)';
          % y = y(tri)';
@@ -147,28 +142,28 @@ end
    else % z
    
 %% z at centers
-%% surface discontinuous (piecewise constant)
-%% ------------------------------------------
+%  surface discontinuous (piecewise constant)
+%  Make c,z column vectors for replication
 
       x = x(tri)';
       y = y(tri)';
       if equalsize(size(z),size(c))
       
-         %% z at centers (do jumps at edges)
-         %% c at centers (shading flat)
-         %% ---------------------------------
+         
+         %  z at centers (do jumps at edges)
+         %  c at centers (shading flat)
       
-         z = repmat(z,[1 3])';
-         c = repmat(c,[1 3])';
+         z = repmat(z(:),[1 3])';
+         c = repmat(c(:),[1 3])';
          p = fill3(x,y,z,c);  % new mode for 2D for both z and c
          
       else
 
-         %% z at centers (do jumps at edges)
-         %% c at corners (shading interp)
-         %% ---------------------------------
+         %  z at centers (do jumps at edges)
+         %  c at corners (shading interp)
 
-         z = repmat(z,[1 3])';
+         z = repmat(z(:),[1 3])';
+         c = c(:);
          c = c(tri)';
          p = fill3(x,y,z,c);  % new mode for 2D for both z and c
          
@@ -183,10 +178,6 @@ daspect(data_aspectratio)
 if nargout==1
    varargout = {p};
 end
-
-%% ==================================
-%% ==================================
-%% ==================================
 
 function ok = equalsize(size1,size2)
 % equalsize

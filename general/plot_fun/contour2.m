@@ -38,27 +38,22 @@ function varargout=contour2(xcen,ycen,ccen,values,varargin)
 %       2600 GA Delft
 %       The Netherlands
 %
-%   This library is free software; you can redistribute it and/or
-%   modify it under the terms of the GNU Lesser General Public
-%   License as published by the Free Software Foundation; either
-%   version 2.1 of the License, or (at your option) any later version.
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
 %
 %   This library is distributed in the hope that it will be useful,
 %   but WITHOUT ANY WARRANTY; without even the implied warranty of
-%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-%   Lesser General Public License for more details.
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
 %
-%   You should have received a copy of the GNU Lesser General Public
-%   License along with this library; if not, write to the Free Software
-%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
-%   USA or 
-%   http://www.gnu.org/licenses/licenses.html,
-%   http://www.gnu.org/,
-%   http://www.fsf.org/
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
 
-U.squeeze    = 1;
+U.squeeze   = 1;
 U.zposition = 1e12;
 
    if U.squeeze
@@ -108,7 +103,7 @@ U.zposition = 1e12;
          
       end
       
-         color = 'k';
+         color = [];
       if nargin==5
          color = varargin{1};
       end
@@ -123,13 +118,19 @@ U.zposition = 1e12;
       L.zero.linewidth  = 2;
        L.neg.linewidth  = 1;
        
+       if isempty(color)
+       L.pos.color      = [1 0 0];
+      L.zero.color      = [0 1 0];
+       L.neg.color      = [0 0 1];
+       else
        L.pos.color      = color;
       L.zero.color      = color;
        L.neg.color      = color;
+       end
 
    %% Return arguments
 
-      release = version('-release');
+      release =  version('-release');
       if (strcmp(version('-release'),'14'   )|...
           strcmp(version('-release'),'2006a')|...
           strcmp(version('-release'),'2006b')|...
@@ -154,6 +155,7 @@ U.zposition = 1e12;
             cn = [];
             hn = [];
          end
+         do_z = 1;
       elseif strcmp(version('-release'),'13')
          if ~isempty(levels.pos )
             [cp,hp]=contour(     xcen,ycen,ccen,levels.pos ,'r');
@@ -174,7 +176,8 @@ U.zposition = 1e12;
             cn = [];
             hn = [];
          end
-      else
+         do_z = 1;
+      else % 2008a+
         %error('contour2 only works for matlab versions R13, R14, 2006a, 2006b, 2007a (to fix bug in these versions)')
          if ~isempty(levels.pos )
             [cp,hp]=contour(     xcen,ycen,ccen,levels.pos) ;
@@ -195,6 +198,7 @@ U.zposition = 1e12;
             cn = [];
             hn = [];
          end
+         do_z = 2;
       end
       
       setlineprop(hp,L.pos );
@@ -227,9 +231,12 @@ U.zposition = 1e12;
    %% Position contour high to prevent them to dissapear 
    %  below a pcolor object.
 
+      if do_z==1
       for ih = 1:length(h)
-         zdata = U.zposition + 0.*get(h(ih),'xdata');
+         zdata = get(h(ih),'zdata')
+         %U.zposition./2 + 0.*get(h(ih),'zdata');
          set(h(ih),'zdata',zdata);
+      end
       end
 
    %% Return arguments
