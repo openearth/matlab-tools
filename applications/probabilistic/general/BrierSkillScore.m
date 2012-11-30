@@ -22,6 +22,15 @@ function [BSS alpha beta gamma epsilon] = BrierSkillScore(xc, zc, xm, zm, x0, z0
 %                             values to
 %       'verbose' : - true for displaying messages
 %                   - false for suppressing messages
+%       'numerator' : - [] empty for no prescribed numerator in BSS
+%                          equation
+%                     - <numerator> value is used as the numerator in
+%                       BSS equation (required if BSS is used as skill
+%                       parameter according to Ruessink&Kuriyama (2008) in
+%                       which the numerator is used as the expected
+%                       difference depending on delta T
+%                       PLEASE NOTE THAT IF M&E DECOMPOSITION IS USED
+%                       NUMERATOR IS IGNORED!
 %
 %   Output:
 %   BSS     = Brier Skill Score
@@ -82,7 +91,8 @@ function [BSS alpha beta gamma epsilon] = BrierSkillScore(xc, zc, xm, zm, x0, z0
 OPT = struct(...
     'equidistant', false,... % either false or # gridcells
     'lower_threshold', [],...
-    'verbose', true);
+    'verbose', true,...
+    'numerator',[]);
 
 if ~isempty(varargin) && ischar(varargin{1})
     OPT = setproperty(OPT, varargin{:});
@@ -141,7 +151,11 @@ end
 if nargout < 2
     %% calculate BSS only
     mse_p = sum( (zm_new - zc_new).^2 .* weight );
-    mse_0 = sum( (zm_new - z0_new).^2 .* weight );
+    if isempty(OPT.numerator)
+        mse_0 = sum( (zm_new - z0_new).^2 .* weight );
+    else
+        mse_0 = OPT.numerator;
+    end
     BSS = 1. - (mse_p/mse_0);
     
 else
@@ -150,6 +164,10 @@ else
     % coefficients in model verification. Monthly Weather Review,  117  (1989), pp. 572–581.
     % also described in J. Sutherland , A.H. Peet, R.L. Soulsby, 2004 (DOI: 10.1016/j.coastaleng.2004.07.015)
     % BSS = (alpha - beta - gamma + epsilon)/(1 + epsilon)
+    
+    if ~isempty(OPT.numerator)
+        warning('Specified numerator is NOT used!')
+    end
     
     % correlation including weight
     r = corr_weighted([(zc_new-z0_new);(zm_new-z0_new)]', weight);
