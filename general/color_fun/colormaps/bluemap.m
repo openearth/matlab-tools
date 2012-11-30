@@ -1,7 +1,5 @@
 function col = bluemap(m)
-%EROSED
-%   Copyright 1984-2002 The MathWorks, Inc. 
-%   $Revision$  $Date$
+%bluemap
 
 col(:,1)=[
    0

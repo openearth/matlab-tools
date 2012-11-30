@@ -1,5 +1,5 @@
 function varargout = KML2Coordinates(FileName)
-% KML2POLYGONCOORDINATES transforms .kml polygons/paths into a Matlab cell
+% KML2COORDINATES transforms .kml polygons/paths into a Matlab cell
 % 
 %   varargout = KML2COORDINATES(FileName) 
 %   returns a cell of arrays MX3. 
@@ -18,9 +18,15 @@ function varargout = KML2Coordinates(FileName)
 %       lat = nc_varget(FileName,'lat');
 %       lon = nc_varget(FileName,'lon');
 %       KMLline(lat,lon,'fileName','holland_fillable.kml','lineColor',[1 .5 0],'lineWidth', 2);
-%       p = KML2Coordinates('holland_fillable.kml');
 %
-% See also: googleplot, line, patch, KMl2ldb
+%       p = KML2Coordinates('holland_fillable.kml');
+%       p.lon = tmp{1}(:,1);
+%       p.lat = tmp{1}(:,2);
+%       [p.x,p.y]=convertCoordinates(p.lon,p.lat,'CS1.code',4326,'CS2.code',28992)
+%       plot(p.x,p.y)
+%       landboundary('write','doc.ldb',p.x,p.y)
+%
+% See also: googleplot, line, patch, KMl2ldb, landboundary
 
 if strcmp(FileName(end-3:end),'.kmz')
     unzip(FileName);

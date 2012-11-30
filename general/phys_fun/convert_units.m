@@ -56,7 +56,7 @@ function Factor=convert_units(InUnits0,OutUnits0,varargin);
 
 debug = 0;
 
-%% deal with % character
+%% beautify
 
     InUnits = beautify( InUnits0);
    OutUnits = beautify(OutUnits0);

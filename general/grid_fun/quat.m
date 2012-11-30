@@ -1,53 +1,48 @@
 function q = quat(x,y,varargin)
 %QUAT quadrangulates a mesh into quadrangles.
 %
-%    q = quat(x,y) quadrangulates a mesh into quadrangles.
+%    q = quat(x,y) quadrangulates a plaid mesh into quadrangles.
 %
-% Behaviour is similar to delaunay(x,y) that
-% can be used to triangulate a mesh inti triangles.
+% Behaviour is similar to DELAUNAY(x,y) that
+% can be used to triangulate a mesh into triangles.
 % 
 % It returns an array of indices into the (x,y) matrices
 % where the first dimension walks the quadrangles and 
 % the second dimension are the 4 1D indices into the 
-% (x,y) matrices. Like the results of delaunay where
+% (x,y) matrices. Like the results of DELAUNAY where
 % the first dimension walks the traingles and the second 
 % dimension contains the 3 1D indices into the (x,y) matrices.
 %
 % Example:
-%                                                          
-%     Array of corner points measures 3 x 2.               
-%     Array of center points measures 2 x 1.               
-%                                                          
-%     o-------o-------o.....> 1st matlab dimension         
-%     |1      |2      |3                                   
-%     |   A   |   B   |                                    
-%     |       |       |                                    
-%     o-------o-------o                                    
-%     .4       5       6 indices when treating 2D array as 1D array
-%     .                  walking 1st dimension first.
-%     .                                                    
-%     v                                                    
-%                                                          
-%     2nd matlab dimension                                 
-%                                                          
-%     Quadrangle A is spanned by corner indices [1 2 4 5]  
-%     Quadrangle B is spanned by corner indices [2 3 5 6]  
-%                                                          
-%     Note that the number of quadrangles is equal         
-%     to the number of cell centers.                       
-%                                                          
-%     So:
-%                                                          
-%     >> quat(x,y)
-%     
-%     ans =
-%     
-%          1     2     4     5
-%          2     3     5     6
+%                                          
+%     Array of corner points measures 3 x 2
+%     Array of center points measures 2 x 1
+%                                          
+%     o-------o    indices when treating 2D array as 1D array: x(:) or y(:)
+%     |3      |6   walking 1st Matlab dimension first.
+%     |   B   |  
+%     |       |       
+%     o-------o                   o-------o-------o  
+%     |2      |5                  |2      |4      |6 
+%     |   A   |                   |   A'  |   B'  |  
+%     |       |                   |       |       |  
+%     o-------o                   o-------o-------o  ---> 2nd Matlab dimension
+%     .1       4                   1       3       5
 %
+%     x = [0 1;0 1;0 1]         % x' = [0 0 0;1;1;1]
+%     y = [0 0;1 1;2 2]	        % y' = [0 1 2;0 1 2]
+%     quat(x,y)                   
+%                                 quat(x',y')   
+%
+%   % [1 2 5 4] % Quadrangle A    [1 2 4 3] % Quadrangle A'
+%   % [2 3 6 5]	% Quadrangle B	  [3 4 6 5] % Quadrangle B'
+%                                                          
+%     Note that the number of quadrangles is equal to the number of cell centers.                       
+%                                                          
 % Note: pointers to quadrangles with a NaN-vertex are removed, 
 % yet the pointers q still expect the NaNs to be in (x,y). Use
-% [] = quat(x,y,'sub2ind',0) to make sure q indexes into x(~isnan(x)).
+% [] = quat(x,y,'sub2ind',0) to make sure q indexes into x(~isnan(x))
+% rather then into x. itself
 %
 % see also: TRIQUAT, TRI2QUAT, DELAUNAY, quat2net
 
@@ -81,7 +76,7 @@ function q = quat(x,y,varargin)
 
 OPT.sub2ind = 1;
 
-OPT = setProperty(OPT,varargin);
+OPT = setproperty(OPT,varargin);
 
 szcor1 = size(x,1);
 szcor2 = size(x,2);
@@ -97,6 +92,21 @@ mncen  = 0;
 if ~(OPT.sub2ind)
    index_nonan = cumsum(~isnan(x(:)));
 end
+
+% isnan(x):
+%  0  0  0  1
+%  0  0  1  0
+%  0  1  0  0
+
+% index_nonan:
+%  1  2  3==3
+%  4  5==5  6
+%  7==7  8  9
+
+% indices:
+%  1  2  3  4
+%  5  6  7  8
+%  9 10 11 12
 
 %% first walk along 1st dimension, 
 %  while keeping the 2nd dimension constant

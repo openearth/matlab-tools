@@ -1,5 +1,7 @@
-function pausedisp
+function pausedisp(varargin)
 %PAUSEDISP   calls pause after displaying 'Pause, press key to continue ...'
+%
+% pausedisp(txt) displays txt instead of default message
 %
 %See also: PAUSE
 
@@ -38,7 +40,11 @@ function pausedisp
 % $HeadURL$
 % $Keywords: $
 
-   disp('Pause, press key to continue ...')
+   if nargin==0
+      disp('Pause, press key to continue ...')
+   else
+      disp(varargin)
+   end
 
    pause
 

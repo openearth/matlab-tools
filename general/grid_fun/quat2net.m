@@ -1,34 +1,52 @@
 function [q,bi,varargout] = quat2net(x,y,varargin)
 %QUAT2NET quadrangulates a mesh into a network
 %
-%    [q,bi] = quat2net(x,y)
+%    [quad,bi  ] = quat2net(x,y)
+%    [map4,map2] = quat2net(x,y)
 %
 % where x and y are plaid matrices as returned by NDGRID
-% or MESHGRID, q and bi are integer pointer arrays into
-% vectors [x(:),y(:)]. q indexes the perimeter of quadrangles,
-% bi indexes the separate face segment after removal of overlap
-% between adjacenent quadrangles. % q and bi fail when you swap 
-% x and y afterwards, for instance upon interchanging 
-% NDGRID and MESHGRID arrays. Use [..] = quat2net(x,y,'sub2ind',0) 
-% to make sure q and bi index into x(~isnan(x)), by default 
+% or MESHGRID, quad (nx4) and bi (nx2) are integer pointer 
+% arrays into vectors [x(:),y(:)], behaving like tri (nx3) 
+% in TRISURF. For proper understanding think of them as 
+% pointer mappers using 2,3 or 4 target coordinates per row:
+% bi -> map2, tri -> map3, quad -> map4. quad indexes the  
+% perimeter of quadrangles, bi indexes the separate face segment  
+% after removal of overlap between adjacenent quadrangles.
 %
-% Example:
+% quad and bi fail when you swap x and y afterwards, for instance
+% upon interchanging NDGRID and MESHGRID arrays. quad and bi are 
+% meant to work on (x,y) or (x(:),y(:)).
 %
-%   subplot(1,2,1)
-%   [x,y]=ndgrid(1:3,1:4);
-%   x([3 10])=nan;y([3 10])=nan;% nans are taken care off, and not included
-%   [q,bi]=quat2net(x,y);
-%   pcolor(x,y,x.*0);
-%   hold on
-%   poly_bi_plot(bi,x,y,'r--')
-%   
-%   subplot(1,2,2)
-%   [xm,ym]=meshgrid(1:3,1:4);
-%   xm([3 10])=nan;ym([3 10])=nan;% nans are taken care off, and not included
-%   [qm,bim]=quat2net(xm,ym);
-%   pcolor(xm,ym,xm.*0);
-%   hold on
-%   poly_bi_plot(bim,xm,ym,'r--')
+% Use [..] = quat2net(x,y,'sub2ind',0) to make sure q and bi pointer
+% into x(~isnan(x)), by default rather than info the full arrays.
+%
+% Example: NDGRID vs MESHGRID orientation
+%
+%  del = [3 10];
+%  
+%  subplot(1,2,1)
+%  [x,y]=ndgrid(1:3,1:4);
+%  plot(x(del),y(del),'rx','markersize',15,'linewidth',2)
+%  hold on
+%  x(del)=nan;y(del)=nan;% nans are taken care off, and not included
+%  [q,bi]=quat2net(x,y);
+%  pcolor(x,y,x.*0);
+%  text(x(:),y(:),num2str([1:12]'),'color','b')
+%  poly_bi_plot(bi,x   ,y   ,'r--')
+%  poly_bi_plot(bi,x(:),y(:),'b:','linewidth',2)
+%  title({'ndgrid',''})
+%  
+%  subplot(1,2,2)
+%  [xm,ym]=meshgrid(1:3,1:4);
+%  plot(xm(del),ym(del),'rx','markersize',15,'linewidth',2)
+%  hold on
+%  xm(del)=nan;ym(del)=nan;% nans are taken care off, and not included
+%  [qm,bim]=quat2net(xm,ym);
+%  pcolor(xm,ym,xm.*0);
+%  text(x(:),y(:),num2str([1:12]'),'color','b')
+%  poly_bi_plot(bim,xm   ,ym   ,'r--')
+%  poly_bi_plot(bim,xm(:),ym(:),'b:','linewidth',2)%
+%  title({'meshgrid',''})
 %
 %See also: quat, dflowfm, poly_bi_unique
 
@@ -80,4 +98,3 @@ for iq=1:nq
    bi((iq-1)*4+1:iq*4,:) = [q(iq,:); q(iq,[2 3 4 1])]';
 end
 bi = poly_bi_unique(bi);
-
