@@ -41,25 +41,29 @@ STRINGSIZE = 100;
                          'Value',{'identifier','sum of area code (x1000000) and alongshore coordinate'});
     nc_addvar(filename, s);
     
+    [flag_values,flag_meanings]=jarkus_area_definition;
+     flag_meanings = str2line(flag_meanings,'s',' ');
+    
     s.Name      = 'areacode';
     s.Nctype    = nc_int;
     s.Dimension = {'alongshore'};
-    s.Attribute = struct('Name' ,{'long_name','comment'},...
-                         'Value',{'area code','codes for the 15 coastal areas as defined by rijkswaterstaat'});
+    s.Attribute = struct('Name' ,{'long_name','flag_values','flag_meanings','flag_comment'       ,'comment'},...
+                         'Value',{'area code', flag_values , flag_meanings ,'points to: areaname','codes for the 15 coastal areas as defined by Rijkswaterstaat'});
     nc_addvar(filename, s);
 
     s.Name      = 'areaname';
     s.Nctype    = nc_char;
+    
     s.Dimension = {'alongshore', 'stringsize'};
-    s.Attribute = struct('Name' ,{'long_name','comment'},...
-                         'Value',{'area name','names for the 15 coastal areas as defined by rijkswaterstaat'});
+    s.Attribute = struct('Name' ,{'long_name','flag_comment'        ,'comment'},...
+                         'Value',{'area name','indexed in: areacode','names for the 15 coastal areas as defined by Rijkswaterstaat'});
     nc_addvar(filename, s);
 
     s.Name      = 'alongshore';
     s.Nctype    = nc_double;
     s.Dimension = {'alongshore'};
     s.Attribute = struct('Name' ,{'long_name'             , 'units', 'comment'},...
-                         'Value',{'alongshore coordinate', 'm'     , 'alongshore coordinate within the 15 coastal areas as defined by rijkswaterstaat'});
+                         'Value',{'alongshore coordinate', 'm'     , 'alongshore coordinate within the 15 coastal areas as defined by Rijkswaterstaat'});
     nc_addvar(filename, s);
     
     s.Name      = 'cross_shore';
@@ -160,6 +164,7 @@ STRINGSIZE = 100;
     nc_addvar(filename, s);
     
 %% Some extra variables for convenience
+
     s.Name      = 'max_cross_shore_measurement';
     s.Nctype    = nc_int;
     s.Dimension = {'time', 'alongshore'};
@@ -229,11 +234,14 @@ STRINGSIZE = 100;
     s.Dimension = {'time', 'alongshore', 'cross_shore'};
 %     s.Attribute = struct('Name' ,{'long_name'         , 'comment'},...
 %                          'Value',{'measurement method', 'Measurement method 1:TO DO, 3:TO DO, 5:TO DO used short for space considerations'});
-    s.Attribute = struct('Name' ,{'long_name'         , 'comment'},...
-                         'Value',{'measurement method', '1:beach only, 2:beach overlap, 3:interpolation, 4:sea overlap, 5:sea only'});
-     nc_addvar(filename, s);    
+    flag_values   = [ 1          2             3             4           5        ];
+    flag_meanings = {'beach_only beach_overlap interpolation sea_overlap sea_only'};
+    s.Attribute = struct('Name' ,{'long_name'         , 'flag_values','flag_meanings','comment'},...
+                         'Value',{'measurement method',  flag_values , flag_meanings ,'1:beach only, 2:beach overlap, 3:interpolation, 4:sea overlap, 5:sea only'});
+    nc_addvar(filename, s);    
     
 %% Store index variables
+
     nc_varput(filename, 'time'    , grid.time, [0], [length(grid.time)]);
     nc_varput(filename, 'id'      , grid.id);
     nc_varput(filename, 'areacode', grid.areaCode);
@@ -250,7 +258,9 @@ STRINGSIZE = 100;
     
     nc_varput(filename, 'rsp_x'      , grid.x_0);
     nc_varput(filename, 'rsp_y'      , grid.y_0);
-    % converte coordinates
+    
+% add WGS84 [lat,lon]
+    
     [lon,lat,OPT]=convertCoordinates(grid.X,grid.Y,'CS1.code',28992,'CS2.code',4326);
     nc_varput(filename, 'lat', lat);
     nc_varput(filename, 'lon', lon);
@@ -285,8 +295,11 @@ STRINGSIZE = 100;
 
 %% Print header    
 %     try	
-        disp('Will try to run ncdump, no problem if command is not found')
-    	system(['ncdump -vyear,id,cross_shore_distance ' filename]); % system will not be catched by try in this way, RPN 22-11-2012
+%     disp('Will try to run ncdump, no problem if command is not found')
+%     system(['ncdump -vyear,id,cross_shore_distance ' filename]); % system will not be catched by try in this way, RPN 22-11-2012
+
+      nc_dump(filename)
+
 %     catch
 %         disp('can not find the ncdump command, not a problem');
 %     end

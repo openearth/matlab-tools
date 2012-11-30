@@ -26,7 +26,7 @@ function S = vaklodingen_definition(varargin)
 % * BoundingBox, <X,Y> from shaperead
 % * xname, yname, name and <x,y>
 %
-%See also: vaklodingen, nc_multibeam, snctools, arcgis, nc_cf_gridset
+%See also: vaklodingen, nc_multibeam, snctools, arcgis, nc_cf_gridset, jarkus_area_definition
 
  OPT.debug = 0;
  OPT.epsg  = 28992;
