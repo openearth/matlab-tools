@@ -3,17 +3,20 @@ function varargout = readNet(varargin)
 %
 %     G = dflowfm.readNet(ncfile) 
 %
-%   reads the network  network (grid) data from a D-Flow FM NetCDF file. 
+%   reads the network network (grid) data from a D-Flow FM NetCDF file. 
 %    cor: node = corner data (incl. connectivity)
 %    cen: flow = circumcenter = center data (incl. connectivity)
 %   peri: perimeter  = contour data
 %   face: links (connections)
 %
+% Implemented are the *_net.nc (input), *_map.nc (output)
+% and *_flowgeom.nc (output).
+%
 % NOTE: cor and cen are exactly identical objects but their 
 % meaning in the network differs. G.link contains the relation
 % between the cor and cen object.
 %
-% See also: dflowfm, delft3d
+% See also: dflowfm, delft3d, grid_fun, patch2tri
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 Deltares
@@ -55,7 +58,7 @@ function varargout = readNet(varargin)
    OPT.cen       = 1; % whether to load cen data 
    OPT.cor       = 1; % ,,
    OPT.peri      = 1; % ,,
-   OPT.link      = 0; % ,,
+   OPT.link      = 1; % ,,
    OPT.face      = 0; % ,,
    
    if nargin==0
@@ -70,13 +73,16 @@ function varargout = readNet(varargin)
 
    G.file.name         = ncfile;
    
+   if nc_isvar(ncfile, 'NetNode_x'); % not for *_flowgeom.nc
    G.cor.x             = nc_varget(ncfile, 'NetNode_x')';
    G.cor.y             = nc_varget(ncfile, 'NetNode_y')';
    G.cor.z             = nc_varget(ncfile, 'NetNode_z')';
    G.cor.n             = size(G.cor.x,2);
+   end
    
 %% read network: links between corners only: input file
 
+   if nc_isvar(ncfile, 'NetNode_x'); % not for *_flowgeom.nc
    G.cor.Link          = nc_varget(ncfile, 'NetLink')';     % link between two netnodes
    G.cor.LinkType      = nc_varget(ncfile, 'NetLinkType')'; % link between two netnodes
    G.cor.nLink         = size(G.cor.Link      ,2);
@@ -84,6 +90,7 @@ function varargout = readNet(varargin)
    G.cor.flag_values   = nc_attget(ncfile, 'NetLinkType','flag_values');
    G.cor.flag_meanings = nc_attget(ncfile, 'NetLinkType','flag_meanings');
    G.cor.flag_meanings = strread(G.cor.flag_meanings,'%s');
+   end
  
 %% < read network: centers too: output file >
 
@@ -119,8 +126,8 @@ function varargout = readNet(varargin)
    G.cen.LinkType      = nc_varget(ncfile, 'FlowLinkType')'; % link between two flownodes
    G.cen.nLink         = size(G.cen.Link      ,2);
 
-   G.cen.flag_values   = nc_attget(ncfile, 'NetLinkType','flag_values');
-   G.cen.flag_meanings = nc_attget(ncfile, 'NetLinkType','flag_meanings');
+   G.cen.flag_values   = nc_attget(ncfile, 'FlowLinkType','flag_values');
+   G.cen.flag_meanings = nc_attget(ncfile, 'FlowLinkType','flag_meanings');
    G.cen.flag_meanings = strread(G.cen.flag_meanings,'%s');
 
    end 
@@ -129,7 +136,8 @@ function varargout = readNet(varargin)
 
    if nc_isvar(ncfile, 'NetElemNode') & OPT.link
    
-   G.link              = nc_varget(ncfile, 'NetElemNode')';
+   % make sure orientation is [n x 6], just like a delaunay tri is [n x 3]
+   G.link              = nc_varget(ncfile, 'NetElemNode');
    G.bnd               = nc_varget(ncfile, 'BndLink')';
 
    end 
