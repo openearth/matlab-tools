@@ -43,7 +43,7 @@ function pausedisp(varargin)
    if nargin==0
       disp('Pause, press key to continue ...')
    else
-      disp(varargin)
+      disp(char(varargin))
    end
 
    pause

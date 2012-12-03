@@ -37,7 +37,7 @@ function fid = delft3d_io_meteo_write(filehandle,time,data,varargin)
 % airout and heaout. Use depth of 1e3 m to prevent crash.
 
 %
-%See also: DELFT3D_IO_METEO, KNMI, GRIB, NETCDF
+%See also: DELFT3D_IO_METEO, KNMI, GRIB, NETCDF, DELFT3D_IO_METEO_WRITE_TUTORIAL
 
 %% Copyright notice
 %   --------------------------------------------------------------------

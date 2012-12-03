@@ -93,7 +93,7 @@ function varargout = struct2nc(outputfile,D,varargin)
    OPT.pause             = 0;
    OPT.debug             = 0;
    OPT.header            = 0;
-   OPT.mode              = 'classic';% 'classic','64bit_offset','netcdf4-classic','netcdf4' 
+   OPT.mode              = 'clobber'; %'classic';% 'classic','64bit_offset','netcdf4-classic','netcdf4' 
    
    if nargin==0
       varargout = {OPT};

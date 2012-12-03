@@ -17,7 +17,6 @@
 %  dflowfm.plotNet            - Plot an unstructured grid (net).
 %  dflowfm.plotNetkml         - Plot a net for Google Earth (kml), connecting segments for performance
 %  dflowfm.peri2cell          - turn perimeter matrix into cell
-%  dflowfm.readFlowGeom2tri   - Reads network as triangles only for speed-up with TRISURF
 %
 % POST-PROCESSING:  Read/plot map (per timestep)
 %  dflowfm.readMap            - Reads solution data on an unstructured net.

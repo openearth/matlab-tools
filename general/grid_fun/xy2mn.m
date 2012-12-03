@@ -18,8 +18,8 @@ function varargout = xy2mn(x,y,xv,yv,varargin)
 % [m,n,mn,eps] = xy2mn(...)
 % where mn = the linear index, and eps the distance.
 %
-% for Delft3D: use the G.cend output from delft3d_io_grd to get the center 
-% points of the grid with extrapolated dummy row/col: 1:nmax   x 1:mmax
+% For Delft3D:  (i) use m=m+1; n=n+1 to take care of the dummy rows/columns.
+% For Delft3D: (ii) check [n,m] (vs_let, delft3d_io_grd) vs. [m,n] (wlgrid)
 %
 % Example:
 %   [x,y,z] = peaks;

@@ -68,8 +68,8 @@
   <!-- down? although listed at http://www.sccoos.org/data/apis/ -->
   <catalogRef xlink:href="http://sccoos-obs0.ucsd.edu:8080/thredds/catalog.xml"                                        xlink:title="University California San Diego (UCSD) Southern California Coastal Current Observing System (SCCOOS) (US)"           name=""/>
   <catalogRef xlink:href="http://hfrnet.ucsd.edu/thredds/catalog.xml"                                                  xlink:title="University California San Diego (UCSD) (US)"           name=""/>
-  <catalogRef xlink:href="http://uhslc.soest.hawaii.edu/thredds/catalog.xml"                                           xlink:title="University of Hawaii Sea Level Centre (US)"           name=""/>
-  <catalogRef xlink:href="http://oos.soest.hawaii.edu/thredds/catalog.xml"                                             xlink:title="University of Hawaii Ocean Observing System (HIOSS) (US)"           name=""/>
+  <catalogRef xlink:href="http://uhslc.soest.hawaii.edu/thredds/catalog.xml"                                           xlink:title="University of Hawaii (SOEST) Sea Level Centre (US)"           name=""/>
+  <catalogRef xlink:href="http://oos.soest.hawaii.edu/thredds/catalog.xml"                                             xlink:title="University of Hawaii (SOEST) Ocean Observing System (HIOSS) (US)"           name=""/>
   <catalogRef xlink:href="http://eosdap.hdfgroup.uiuc.edu:8080/opendap/catalog.xml"                                    xlink:title="University of Illinois HDFgroup (US)" name=""/>
   <catalogRef xlink:href="http://www.smast.umassd.edu:8080/thredds/catalog.xml"                                        xlink:title="University of Massachusetts Dartmourth (US)" name=""/>
   <catalogRef xlink:href="http://warnercnr.colostate.edu/thredds/catalog.xml"                                          xlink:title="University Calorado (US)"       name=""/>
