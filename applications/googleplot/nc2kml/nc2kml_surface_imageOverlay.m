@@ -80,6 +80,7 @@ OPT.description     = ['generated: ' datestr(now())];
 OPT.colorbar        = true;
 OPT.highestLevel    = 1;
 OPT.lowestLevel     = 15;
+OPT.z_scale_factor  = 1;
 
 if nargin==0
     varargout = {OPT};
@@ -103,6 +104,7 @@ OPT = setproperty(OPT,varargin);
 %% create kml directory if it does not yet exist
 if exist(OPT.path_kml,'dir')
     rmdir(OPT.path_kml,'s')
+    pause(5)
 end
 mkpath(OPT.path_kml);
 
@@ -111,6 +113,9 @@ mkpath(OPT.path_kml);
 merge_tiles(OPT);
 write_kml(OPT,minlat,maxlat,minlon,maxlon);
 
+multiWaitbar('fig2png_merge_tiles','close')
+multiWaitbar('merge_all_tiles','close')
+multiWaitbar('kml_print_all_tiles','close')
 
 function [minlat,maxlat,minlon,maxlon] = print_tiles(OPT)
 
@@ -129,6 +134,7 @@ material([0.87 0.1 0.07 150]);
 shading interp;lighting phong;axis off;
 axis tight;view(0,90);
 lightangle(hl,180,70);
+
 
 clim(OPT.cLim);
 colormap(OPT.colorMap(OPT.colorSteps));
@@ -172,7 +178,7 @@ for ii = 1:length(ncfiles);
     z_count(time_dim) = 1;
     for jj = size(date4GE,1)-1:-1:1
         % load z data
-        z = ncread(url,OPT.var_name,...
+        z = OPT.z_scale_factor * ncread(url,OPT.var_name,...
             z_start0 + time_dim*(jj-1),z_count);
         
         % rearrange array into order [x,y]
