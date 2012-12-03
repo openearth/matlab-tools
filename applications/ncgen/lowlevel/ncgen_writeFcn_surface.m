@@ -54,8 +54,8 @@ if ~exist(ncfile,'file')
             [lon,lat] = convertCoordinates(x,y,'persistent','CS1.code',OPT.schema.EPSGcode,'CS2.code',4326);
             
             % write lat and lon variables
-            ncwrite(ncfile,'lat',lat);
-            ncwrite(ncfile,'lon',lon);
+            ncwrite(ncfile,'lat',int32(lat));
+            ncwrite(ncfile,'lon',int32(lon));
             
             % write attributes
             %  first calculate coordinates of corner points of bounding box (half cell size larger than min/max coordinates)

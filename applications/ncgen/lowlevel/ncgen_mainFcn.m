@@ -317,6 +317,10 @@ for ii = length(nc_fns):-1:1
         source_file_hash = [source_file_hash; ncread(ncfile,'source_file_hash')']; %#ok<AGROW>
     end
 end
+%Remove rows with all nan's
+source_file_hash = source_file_hash(~all(isnan(source_file_hash),2),:);
+%Remove rows with all zero's
+source_file_hash = source_file_hash(~all((source_file_hash==0),2),:);
 
 if ~outdated
     % check hashes
