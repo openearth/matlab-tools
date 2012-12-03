@@ -1,23 +1,24 @@
 function varargout=delft3d_io_obs(cmd,varargin),
 %DELFT3D_IO_OBS   read/write observations points file (*.obs) <<beta version!>>
 %
-%  OBS = delft3d_io_obs('read' ,filename);
+%    OBS        = delft3d_io_obs('read' ,'filename.obs');
+%   [x,y,namst] = delft3d_io_obs('read' ,'filename.obs');
 %
-%        delft3d_io_obs('write',filename,OBS);
+%    reads all lines from an *.obs observation point file into
+%    a struct with fields x,y and name. 
+%
+%        delft3d_io_obs('write','filename.obs',OBS);
+%        delft3d_io_obs('write','filename.obs',x,y,namst);
 %
 % where OBS is a struct with fields 'm','n','namst'
 % where namst is read as a 2C char array, but can also be a cellstr.
 %
 %  OBS = delft3d_io_obs('read' ,filename,G);
+%  [x,y,namst] = delft3d_io_obs('read' ,filename,G);
 %
 % also returns the x and y coordinates, where G = delft3d_io_grd('read',...)
 %
-% See also: delft3d_io_ann, delft3d_io_bca, delft3d_io_bch, delft3d_io_bnd, 
-%           delft3d_io_crs, delft3d_io_dep, delft3d_io_dry, delft3d_io_eva, 
-%           delft3d_io_fou, delft3d_io_grd, delft3d_io_ini, delft3d_io_mdf, 
-%           delft3d_io_obs, delft3d_io_restart,             delft3d_io_src, 
-%           delft3d_io_tem, delft3d_io_thd, delft3d_io_wnd, d3d_attrib
-%           XY2MN
+% See also: dflowfm.opendap2obs, delft3d_io_xyn, XY2MN, delft3d, d3d_attrib
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2005-8 Delft University of Technology
@@ -55,26 +56,32 @@ function varargout=delft3d_io_obs(cmd,varargin),
 % $HeadURL$
 
 if nargin ==1
-   error(['AT least 2 input arguments required: delft3d_io_obs(''read''/''write'',filename)'])
+   error(['At least 2 input arguments required: ',mfilename,'(''read''/''write'',filename)'])
 end
 
 switch lower(cmd),
 case 'read',
-  STRUCT=Local_read(varargin{:});
-  if nargout ==1
+ [STRUCT,iostat]=Local_read(varargin{:});
+  if nargout==1
      varargout = {STRUCT};
-  elseif nargout >1
-     error('too much output paramters: 0 or 1')
+  elseif nargout ==2
+     varargout = {STRUCT.x,STRUCT.y};
+  elseif nargout ==3
+     varargout = {STRUCT.x,STRUCT.y,STRUCT.name};
+  elseif nargout ==4
+    error('too much output parameters: [1..3]')
   end
-  if STRUCT.iostat<0,
+  
+  if iostat<0,
      error(['Error opening file: ',varargin{1}])
   end;
+  
 case 'write',
   iostat=Local_write(varargin{:});
   if nargout ==1
      varargout = {iostat};
   elseif nargout >1
-     error('too much output paramters: 0 or 1')
+    error('too much output parameters: [0..1]')
   end
   if iostat<0,
      error(['Error opening file: ',varargin{1}])
@@ -107,15 +114,15 @@ S.filename = varargin{1};
          end
       end
    
-      S.iostat  = 1;
+      iostat  = 1;
    catch
-      S.iostat  = -1;
+      iostat  = -1;
    end
 
 if nargout==1
    varargout = {S};   
 else
-   varargout = {S,S.iostat};   
+   varargout = {S,iostat};   
 end
 
 
@@ -124,43 +131,43 @@ end
 % ------------------------------------
 % ------------------------------------
 
-function iostat=Local_write(filename,STRUCT,varargin),
+function iostat=Local_write(varargin)
 
+   filename     = varargin{1};
    iostat       = 1;
    fid          = fopen(filename,'w');
-   
-   if nargin==3
-   OS = varargin{1};
-   else
    OS           = 'windows'; % or 'unix'
-   end
    
-   if ~isfield(STRUCT,'namst')
-      STRUCT.namst = [];
-      for iobs=1:length(STRUCT.m)
-         STRUCT.namst = strvcat(STRUCT.namst,['(',num2str(STRUCT.m(iobs)),...
-                                              ',',...
-                                                  num2str(STRUCT.n(iobs)),...
-                                              ')']);
+   if     nargin ==2
+      D       = varargin{2};
+   elseif nargin >3
+      D.m     = varargin{2};
+      D.n     = varargin{3};
+      if nargin==4
+      D.namst = varargin{4};
+      end
+   end   
+   
+   if ~isfield(D,'namst')
+      D.namst = [];
+      for iobs=1:length(D.m)
+         D.namst = strvcat(D.namst,['(',num2str(D.m(iobs)),',',...
+                                        num2str(D.n(iobs)),')']);
       end
    end
    
-   STRUCT.namst = cellstr(STRUCT.namst);
+   D.namst = cellstr(D.namst);
    
-   for iobs=1:length(STRUCT.m)
+   for iobs=1:length(D.m)
    
-      fprintfstringpad(fid,20,STRUCT.namst{iobs});
+      fprintfstringpad(fid,20,D.namst{iobs});
       
-      fprintf(fid,' %7d',STRUCT.m    (iobs  ));
-      fprintf(fid,' %7d',STRUCT.n    (iobs  ));
+      fprintf(fid,' %7d',D.m    (iobs  ));
+      fprintf(fid,' %7d',D.n    (iobs  ));
       fprinteol(fid,OS)
       
    end
 
-fclose(fid);
-iostat=1;
+   iostat = fclose(fid);
 
-% ------------------------------------
-% ------------------------------------
-% ------------------------------------
-
+%% EOF

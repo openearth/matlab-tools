@@ -11,7 +11,7 @@ function varargout=delft3d_io_mdf(cmd,varargin),
 %
 %  [DATA,iostat] = delft3d_io_mdf('new')
 %
-% loads a template ewith all known keywords (incl. mutually exclusive ones)
+% loads an empty template with all known keywords (incl. mutually exclusive ones).
 %
 % Note that the keywords in the mdf file are not case sensitive,
 % whereas the field names in matlab are case sensitive. When reading file
@@ -183,7 +183,7 @@ case 'write'
 case 'new'
 
   basepath = fileparts(mfilename('fullpath'));
-  fname    = [basepath,filesep,'template_extensions.mdf'];
+  fname    = [basepath,filesep,'template_gui.mdf'];
   
   if     nargout ==1
   
@@ -272,14 +272,14 @@ elseif length(tmp)>0
       while 1
 
          %% get line
-         %% ------------------------
+         %  ------------------------
 
          newline          = fgetl(fid);
          if ~ischar(newline);break, end % -1 when eof
          count.line=count.line+1;
 
          %% Keyword
-         %% ------------------------
+         %  ------------------------
 
          keyword  = deblank(newline(1:6));
          
@@ -296,7 +296,7 @@ elseif length(tmp)>0
          if ~isempty(keyword)
             keyword_last     = keyword;
 
-            %% remove = sign and leading/trailing blanks
+            % remove = sign and leading/trailing blanks
             equalsignposition = findstr(value,'=');
             value             = strtrim(value(equalsignposition+1:end));
          end

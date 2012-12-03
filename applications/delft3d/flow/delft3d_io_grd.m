@@ -6,8 +6,8 @@ function varargout = delft3d_io_grd(varargin)
 % reads coordinates of corner and center points and of
 % center points where the dummy rows are filled by mirroring.
 %
-%   G.cor  represents corner points without dummy row/col:          1:nmax-1 x 1:mmax-1
-%   G.cen  represents center points without dummy row/col:          2:nmax-1 x 2:mmax-1
+%   G.cor  represents corner points without dummy row/col:           1:nmax-1 x 1:mmax-1
+%   G.cen  represents center points without dummy row/col:           2:nmax-1 x 2:mmax-1
 %   G.cend represents center points with extrapolated dummy row/col: 1:nmax   x 1:mmax
 %
 %   for xy2mn: use the G.cend output
@@ -125,7 +125,7 @@ end
       G.mmax         = size(TMP.X,1)+1;% GJ de Boer, swapped 2009 apr 22, swapped back 2010 mar 16 for use with $Id$
       G.nmax         = size(TMP.X,2)+1;% GJ de Boer, swapped 2009 apr 22, swapped back 2010 mar 16 for use with $Id$
       
-      %% make sure n is first dimension, just like vs_ functionaility.
+      %% make sure n is first dimension, just like vs_ functionality.
       G.cor.x        = TMP.X';
       G.cor.y        = TMP.Y';
       G.cor.x_units  = '';
@@ -147,8 +147,8 @@ end
       G.u.comment    = 'ksi-velocity faces without dummy rows/columns (2:nmax-1) x (1:mmax-1)';
       G.v.comment    = 'eta-velocity faces without dummy rows/columns (1:nmax-1) x (2:mmax-1)';
 
-      G.cend.x       = center2corner(G.cor.x);
-      G.cend.y       = center2corner(G.cor.y);
+      G.cend.x       = addrowcol(corner2centernan(G.cor.x),[-1 1],[-1 1],nan);
+      G.cend.y       = addrowcol(corner2centernan(G.cor.y),[-1 1],[-1 1],nan);
       
       [G.cor.encx,G.cor.ency] = enclosure('coordinates',G.cor.x,G.cor.y);
 

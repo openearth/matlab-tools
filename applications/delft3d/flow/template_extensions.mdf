@@ -9,11 +9,11 @@ Runtxt= #012345678901234567890123456789#
         #012345678901234567890123456789#
         #012345678901234567890123456789#
         #012345678901234567890123456789#
-Filcco= #g04.grd#
+Filcco= #*.grd#
 Fmtcco= #FR#
 Anglat=  0.0000000e+000
 Grdang=  0.0000000e+000
-Filgrd= #g04.enc#
+Filgrd= #*.enc#
 Fmtgrd= #FR#
 MNKmax= 65 134 5
 Thick =  2.0000000e+001
@@ -188,13 +188,13 @@ Zmodel= #Y#
 Zbot  = -20
 Ztop  =  1
 Keva  = 1
-Fileva= ##
+Fileva= #*.eva#
 Evaint= #N#
 Maseva= #N#
-Flwq  = 0 60 1052640
-ilAggr= 2 1 1 1 1 1 1 1 1 1 1 1 1
+Flwq  = 0 0 0
+ilAggr= 0
 WaqAgg= #active only#
-Corbnd=#*.bcr#
+Corbnd= #*.bcr#
 Fwndgu= #*.amu#
 Fwndgv= #*.amv#
 Fwndgp= #*.amp#

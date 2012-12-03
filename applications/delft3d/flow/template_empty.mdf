@@ -1,26 +1,22 @@
 Commnt= template with all known keywords (incl. mutually exclusive ones)
 Ident = #Delft3D-FLOW  .03.02 3.40.04#
-Runtxt= #012345678901234567890123456789#
-        #012345678901234567890123456789#
-        #012345678901234567890123456789#
-        #012345678901234567890123456789#
-        #012345678901234567890123456789#
-        #012345678901234567890123456789#
-        #012345678901234567890123456789#
-        #012345678901234567890123456789#
-        #012345678901234567890123456789#
-Filcco= #g04.grd#
+Runtxt= #                              #
+        #                              #
+        #                              #
+        #                              #
+        #                              #
+        #                              #
+        #                              #
+        #                              #
+        #                              #
+Filcco= ##
 Fmtcco= #FR#
 Anglat=  0.0000000e+000
 Grdang=  0.0000000e+000
-Filgrd= #g04.enc#
+Filgrd= ##
 Fmtgrd= #FR#
-MNKmax= 65 134 5
-Thick =  2.0000000e+001
-         2.0000000e+001
-         2.0000000e+001
-         2.0000000e+001
-         2.0000000e+001
+MNKmax= 0 0 0
+Thick =  100
 Fildep= ##
 Fmtdep= #FR#
 Depuni=  1.0000000e+001
@@ -35,17 +31,17 @@ MNbar = [.]
 MNwlos= [.]
 Itdate= #1970-01-01#
 Tunit = #M#
-Tstart=  0.0000000e+000
-Tstop =  2.8800000e+003
+Tstart=  0
+Tstop =  0
 Dt    = 10.0
 Tzone = 0
-Sub1  = #STWI#
-Sub2  = # CW#
-Namc1 = #Sediment01          #
-Namc2 = #Sedimentaa          #
-Namc3 = #Sediment____        #
-Namc4 = #Sediment02          #
-Namc5 = #Sediment03          #
+Sub1  = #    #
+Sub2  = #   #
+Namc1 = #                    #
+Namc2 = #                    #
+Namc3 = #                    #
+Namc4 = #                    #
+Namc5 = #                    #
 Wnsvwp= #N#
 Filwnd= ##
 Fmtwnd= #FR#
@@ -54,26 +50,10 @@ Filic = ##
 Zeta0 =  0.0000000e+000
 U0    = [.]
 V0    = [.]
-S0    =  3.1000000e+001
-         3.1000000e+001
-         3.1000000e+001
-         3.1000000e+001
-         3.1000000e+001
-T0    =  1.5000000e+001
-         1.5000000e+001
-         1.5000000e+001
-         1.5000000e+001
-         1.5000000e+001
-C01   =  9.0000000e+001
-         9.0000000e+001
-         9.0000000e+001
-         9.0000000e+001
-         9.0000000e+001
-C02   =  7.0000000e+000
-         7.0000000e+000
-         7.0000000e+000
-         7.0000000e+000
-         7.0000000e+000
+S0    = [.]
+T0    = [.]
+C01   = [.]
+C02   = [.]
 I0    =  0.0000000e+000
 Restid= ##
 Filbnd= ##
@@ -178,23 +158,23 @@ Filfou= ##
 Fmtfou= #FR#
 Online= #N#
 Prmap = [.]
-Prhis = 750.000 0.000000 60.0000
-Flmap =  0.0000000e+000 120.0  2.8800000e+003
-Flhis =  0.0000000e+000 10.0  2.8800000e+003
-Flpp  =  0.0000000e+000 0.0  0.0000000e+000
-Flrst = 1440.0
-BarocP = #Y#
+Prhis =  0 0 0
+Flmap =  0 0 0
+Flhis =  0 0 0
+Flpp  =  0 0 0
+Flrst =  0
+BarocP= #Y#
 Zmodel= #Y#
 Zbot  = -20
 Ztop  =  1
 Keva  = 1
-Fileva= #*.eva#
+Fileva= ##
 Evaint= #N#
 Maseva= #N#
-Flwq  = 0 120 2.8800000e+003
-ilAggr= 1 1 1 1 1
+Flwq  = 0 0 0
+ilAggr= 0
 WaqAgg= #active only#
-Corbnd=#*.bcr#
+Corbnd= ##
 Fwndgu= ##
 Fwndgv= ##
 Fwndgp= ##
