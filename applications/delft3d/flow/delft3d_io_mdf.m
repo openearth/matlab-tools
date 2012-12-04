@@ -9,9 +9,11 @@ function varargout=delft3d_io_mdf(cmd,varargin),
 % where iostat= 1 when writing was succesful, 
 % and iostat=-1/-2/-3 when error finding/opening/reading file.
 %
-%  [DATA,iostat] = delft3d_io_mdf('new')
+%  [DATA,iostat] = delft3d_io_mdf('new',<template_*.mdf>)
 %
-% loads an empty template with all known keywords (incl. mutually exclusive ones).
+% loads an template, where template_extensions.mdf  and template_empty.mdf
+% contain all known keywords (incl. % mutually exclusive ones) and
+% template_gui.mdf only returns the default one from  the GUI (default).
 %
 % Note that the keywords in the mdf file are not case sensitive,
 % whereas the field names in matlab are case sensitive. When reading file
@@ -183,7 +185,11 @@ case 'write'
 case 'new'
 
   basepath = fileparts(mfilename('fullpath'));
-  fname    = [basepath,filesep,'template_gui.mdf'];
+  if nargin==2
+     fname    = [basepath,filesep,varargin{1}]
+  else
+     fname    = [basepath,filesep,'template_gui.mdf'];
+  end
   
   if     nargout ==1
   
@@ -239,6 +245,14 @@ STRUCT.iostat       = -3;
 %% Locate
 
 tmp = dir(fname);
+
+% ones in matlab path
+if length(tmp)==0 & exist(fname,'file')==2
+    clear tmp
+    tmp.name = filename(fname);
+    tmp.date = '';
+    tmp.bytes= '';
+end
 
 if length(tmp)==0
    

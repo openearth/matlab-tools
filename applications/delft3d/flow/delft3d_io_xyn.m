@@ -139,7 +139,7 @@ function [D,iostat]=Local_read(varargin)
    iostat = fclose(fid);
    
    if ~isempty(OPT.epsg)
-   [D.lon,D.lat] = convertcoordinates(D.x,D.y,'CS1.code',OPT.epsg,'CS2.code',4326);
+   [D.lon,D.lat] = convertCoordinates(D.x,D.y,'CS1.code',OPT.epsg,'CS2.code',4326);
    end
    
    varargout = {D,iostat};   

@@ -1,10 +1,11 @@
 function varargout=delft3d_io_src(cmd,varargin),
 %DELFT3D_IO_SRC   read/write open source locations file <<beta version!>>
 %
-%  DATA=delft3d_io_src('read' ,filename);
-%  DATA=delft3d_io_src('read' ,filename,mmax,nmax);
+%  S=delft3d_io_src('read' ,filename);
+%    delft3d_io_src('write',filename,S);
+%    delft3d_io_src('write',filename,S.DATA);
 %
-%       delft3d_io_src('write',filename,DATA);
+% here S.DATA has required fields 'name', 'interpolation', 'm', 'n', 'k'
 %
 % See also: delft3d_io_ann, delft3d_io_bca, delft3d_io_bch, delft3d_io_bnd, 
 %           delft3d_io_crs, delft3d_io_dep, delft3d_io_dry, delft3d_io_eva, 
@@ -82,15 +83,15 @@ function STRUCT=Local_read(varargin),
 
 STRUCT.filename = varargin{1};
 
-   mmax = Inf;
-   nmax = Inf;
-if nargin==3 
-   mmax = varargin{2};
-   nmax = varargin{3};
-elseif nargin==4 
-   mmax = varargin{3};
-   nmax = varargin{4};
-end   
+%   mmax = Inf;
+%   nmax = Inf;
+%if nargin==3 
+%   mmax = varargin{2};
+%   nmax = varargin{3};
+%elseif nargin==4 
+%   mmax = varargin{3};
+%   nmax = varargin{4};
+%end   
 
 fid          = fopen(STRUCT.filename,'r');
 if fid==-1
@@ -103,18 +104,18 @@ else
    
       i = i + 1;
    
-      STRUCT.DATA(i).name         = fscanf(fid,'%20c',1); 
-      STRUCT.DATA(i).interpolation= fscanf(fid,'%1s' ,1);
-      STRUCT.DATA(i).m            = fscanf(fid,'%i'  ,1);
-      STRUCT.DATA(i).n            = fscanf(fid,'%i'  ,1);
-      STRUCT.DATA(i).k            = fscanf(fid,'%i'  ,1);
+      STRUCT.DATA(i).name          = fscanf(fid,'%20c',1); 
+      STRUCT.DATA(i).interpolation = fscanf(fid,'%1s' ,1);
+      STRUCT.DATA(i).m             = fscanf(fid,'%i'  ,1);
+      STRUCT.DATA(i).n             = fscanf(fid,'%i'  ,1);
+      STRUCT.DATA(i).k             = fscanf(fid,'%i'  ,1);
       
-      if STRUCT.DATA(i).m==mmax+1
-         STRUCT.DATA(i).m= mmax;
-      end
-      if STRUCT.DATA(i).n==nmax+1
-         STRUCT.DATA(i).n= nmax;
-      end
+     % if STRUCT.DATA(i).m==mmax+1
+     %    STRUCT.DATA(i).m= mmax;
+     % end
+     % if STRUCT.DATA(i).n==nmax+1
+     %    STRUCT.DATA(i).n= nmax;
+     % end
       
       restofline = fgetl(fid); % read rest of line
       
@@ -141,11 +142,15 @@ end
 % ------------------------------------
 % ------------------------------------
 
-function iostat=Local_write(filename,STRUCT),
+function iostat=Local_write(filename,varargin),
 
 iostat       = 1;
 fid          = fopen(filename,'w');
 OS           = 'windows';
+
+if ~isfield(varargin{1},'DATA')
+    STRUCT.DATA = varargin{1};
+end
 
 for i=1:length(STRUCT.DATA)
 

@@ -58,12 +58,18 @@ function MDF = getm2delft3d(varargin)
 %  $Keywords: $
 
    OPT.topo           = '*.nc';
+  %OPT.topoc          = '*.nc';
    OPT.bdyinfo        = '*.dat';
    OPT.bdy            = '*.nc';
-   OPT.reference_time = datenum(2003,1,1);
+   OPT.riverinfo      = '*.dat';
+   OPT.river          = '*.nc';
+
+   OPT.reference_time = datenum(2003,1,1); % overwrites on in mdf, used for *.bct and *.dis
    OPT.mdf            = '*.mdf';
    OPT.points_per_bnd = 2;
    OPT.ntmax          = Inf; % fro debugging save only so many boundary time points
+   OPT.workdir        = '';
+   OPT.RUNID          = mfilename;
    
    OPT = setproperty(OPT,varargin);
    
@@ -87,11 +93,11 @@ function MDF = getm2delft3d(varargin)
    D.cor.z = corner2center(D.bathymetry);
    
    MDF = delft3d_io_mdf('read',OPT.mdf);
-   MDF.keywords.commnt  = strrep(OPT.topo   ,'.nc','cartesian.grd'  );
-   MDF.keywords.filcco  = strrep(OPT.topo   ,'.nc','spherical.grd'  );
-   MDF.keywords.filgrd  = strrep(OPT.topo   ,'.nc','.enc'           );
-   MDF.keywords.fildep  = strrep(OPT.topo   ,'.nc','_at_centers.dep');
-   MDF.keywords.fildry  = strrep(OPT.topo   ,'.nc','.dry'           );
+   MDF.keywords.commnt  = [filename(OPT.topo),'_cartesian.grd' ];
+   MDF.keywords.filcco  = [filename(OPT.topo),'_spherical.grd' ];
+   MDF.keywords.filgrd  = [filename(OPT.topo),'.enc'           ];
+   MDF.keywords.fildep  = [filename(OPT.topo),'_at_centers.dep'];
+   MDF.keywords.fildry  = [filename(OPT.topo),'.dry'           ];
    MDF.keywords.dpsopt  = 'DP';
    MDF.keywords.dpuopt  = 'MIN'; % required in combination with depth at centers
 
@@ -99,13 +105,13 @@ function MDF = getm2delft3d(varargin)
    MDF.keywords.anglat  = D.proj_lat;
 
    wlgrid('write','FileName',MDF.keywords.commnt,'X',D.cor.x'  ,'Y',D.cor.y'  ,'CoordinateSystem','Cartesian');
-   wlgrid('write','FileName',MDF.keywords.filcco,'X',D.cor.lon','Y',D.cor.lat','CoordinateSystem','Spherical');
-  %wlgrid('write','FileName',MDF.keywords.filcco,'X',D.xx(2:end-1),'Y',D.yx(2:end-1)); % this would keep land cells in and gives too many dry points
+   wlgrid('write','FileName',[OPT.workdir,MDF.keywords.filcco],'X',D.cor.lon','Y',D.cor.lat','CoordinateSystem','Spherical');
+  %wlgrid('write','FileName',[OPT.workdir,MDF.keywords.filcco],'X',D.xx(2:end-1),'Y',D.yx(2:end-1)); % this would keep land cells in and gives too many dry points
 
    D.enclosure = enclosure('extract',D.cor.x',D.cor.y');
-   enclosure('write',        MDF.keywords.filgrd,D.enclosure);
+   enclosure('write',        [OPT.workdir,MDF.keywords.filgrd],D.enclosure);
 
-   wldep ('write',           MDF.keywords.fildep,'',D.bathymetry'); % includes 2 dummy rows/cols
+   wldep ('write',           [OPT.workdir,MDF.keywords.fildep],'',D.bathymetry'); % includes 2 dummy rows/cols
    wldep ('write',strrep(OPT.topo,'.nc','_at_corners.dep'),'',addrowcol(D.cor.z',1,1,nan)); % includes 2 dummy rows/cols
 
 %% dry points: those not yet excluded by removing vertices
@@ -118,7 +124,7 @@ function MDF = getm2delft3d(varargin)
    [n,m] = find(D.cen.mask);
    %pcolorcorcen(D.cen.mask);
    %plot(m,n,'ko');
-   delft3d_io_dry('write',MDF.keywords.fildry,m+1,n+1);
+   delft3d_io_dry('write',[OPT.workdir,MDF.keywords.fildry],m+1,n+1);
    
 %% save mask for ascii diff comparison with supplied GETM mask
 
@@ -227,17 +233,97 @@ function MDF = getm2delft3d(varargin)
       
       fclose(fid);
       
-      MDF.keywords.filbnd  = strrep(OPT.bdyinfo,'.dat', [num2str(dseg),'.bnd']);
-      MDF.keywords.filbct  = strrep(OPT.bdyinfo,'.dat', [num2str(dseg),'.bct']);
+      MDF.keywords.filbnd  = [filename(OPT.bdyinfo), '_',num2str(dseg),'.bnd'];
+      MDF.keywords.filbct  = [filename(OPT.bdyinfo), '_',num2str(dseg),'.bct'];
 
-      delft3d_io_bnd('write',strrep(OPT.bdyinfo,'.dat',              '0.bnd'),Bnd0);
-      delft3d_io_bnd('write',MDF.keywords.filbnd,Bnd);
-      bct_io        ('write',MDF.keywords.filbct,Bct);
+      delft3d_io_bnd('write',[filename(OPT.bdyinfo),                 '_0.bnd'],Bnd0);
+      delft3d_io_bnd('write',[OPT.workdir,MDF.keywords.filbnd],Bnd);
+      bct_io        ('write',[OPT.workdir,MDF.keywords.filbct],Bct);
       
       clear Bct Bnd
 
    end % dseg
 
+%% discharge locations
+
+      fid      = fopen(OPT.riverinfo,'r');
+      rec      = fgetl(fid);
+      nriver = str2num(strtok(rec));
+
+      rec    = fgetl(fid);
+      ipnt = 0;
+      name0  = '';
+      
+      while ~(isnumeric(rec)|isempty(strtok(rec)))
+         [m   ,rec] = strtok(rec);
+         [n   ,rec] = strtok(rec);
+         [name,rec] = strtok(rec);
+
+          ipnt = ipnt + 1;
+          R(ipnt).name          = name;
+          R(ipnt).interpolation = 'Y';
+          R(ipnt).m             = str2num(m);
+          R(ipnt).n             = str2num(n);
+          R(ipnt).k             = 0;
+
+         %if ~strcmpi(name,name0);
+         %   a = iriver + 1;
+         %   R(iriver).m    = [];
+         %   R(iriver).n    = [];
+         %   R(iriver).name = name;
+         %end
+         %R(iriver).m(end+1)    = str2num(m);
+         %R(iriver).n(end+1)    = str2num(n);
+         %name0 = name;
+
+         rec      = fgetl(fid);
+      end
+      
+      fclose(fid);
+      
+      MDF.keywords.filsrc = [filename(OPT.riverinfo),'.src'];
+      MDF.keywords.fildis = [filename(OPT.river)    ,'.dis'];
+      
+      delft3d_io_src('write',[OPT.workdir,MDF.keywords.filsrc],R);
+     %% 
+     [Dis.station_names,~,Dis.station_indices] = unique({R.name});
+     
+     for i=1:length(Dis.station_names)
+         ind = find(Dis.station_indices==i);
+         for j=1:length(ind)
+         R(ind(j)).ipeer = j;
+         R(ind(j)).npeer = length(ind);
+         R(ind(j)).peers = ind;
+         end
+     end
+      
+%% discharge data 
+
+   Q.time      = ncread   (OPT.river,'time');
+   Q.timeunits = ncreadatt(OPT.river,'time','units');
+   Q.datenum   = udunits2datenum(Q.time,Q.timeunits);
+   Q.minutes   = (Q.datenum - OPT.reference_time)*24*60;
+   clear Dis
+   for ipnt=1:length(R)
+
+      Dis.Table(ipnt).Name          = ['Discharge:',num2str(ipnt),' ',R(ipnt).name,' (',num2str(R(ipnt).ipeer),'/',num2str(R(ipnt).npeer),')'];
+      Dis.Table(ipnt).Contents      = 'regular';
+      Dis.Table(ipnt).Location      = R(ipnt).name;
+      Dis.Table(ipnt).TimeFunction  = 'non-equidistant';
+      Dis.Table(ipnt).ReferenceTime = str2num(datestr(OPT.reference_time,'yyyymmdd'));
+      Dis.Table(ipnt).TimeUnit      = 'minutes';
+      Dis.Table(ipnt).Interpolation = 'linear';
+      Dis.Table(ipnt).Parameter(1)  = struct('Name','time','Unit','[min]');
+      Dis.Table(ipnt).Parameter(2)  = struct('Name','flux/discharge rate','Unit','[m3/s]');
+      Q.Q                           = ncread(OPT.river,R(ipnt).name)./R(ipnt).npeer; % distribute evenly over peers
+      Q.Q(isnan(Q.Q))               = 0;
+      Dis.Table(ipnt).Data          = [Q.minutes,Q.Q];
+      Dis.Table(ipnt).Format        = '%d %g';
+   
+   end
+   
+   bct_io('write',[OPT.workdir,MDF.keywords.fildis],Dis);
+   
 %% save new mdf with all links to new delft3d include files
 
    MDF.keywords.itdate = datestr(OPT.reference_time,'yyyy-mm-dd');
@@ -253,4 +339,4 @@ function MDF = getm2delft3d(varargin)
                           '$Id$ ',...
                           '$HeadURL$'];
                       
-   delft3d_io_mdf('write',strrep(OPT.topo   ,'.nc','.mdf'),MDF.keywords);
+   delft3d_io_mdf('write',[OPT.workdir,OPT.RUNID,'.mdf'],MDF.keywords);

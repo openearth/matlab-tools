@@ -1,10 +1,12 @@
-function delft3d_io_meteo_write_example
+function varargout = delft3d_io_meteo_write_example(varargin)
 %DELFT3D_IO_METEO_WRITE_EXAMPLE
 %
 % Example how to convert a set of netCDF meteo files to
 % meteo files for Delft3D. It also creates an mdf
 % file that can readily be used to check the meteo
-% files with Delf3D itself.
+% files with Delf3D itself. You can also use this 
+% tutorial as function with by specifying <keyword,value>
+% arguments.
 %
 %See also: netcdf, delft3d_io_meteo_write
 
@@ -48,14 +50,10 @@ function delft3d_io_meteo_write_example
 %  $HeadURL$
 %  $Keywords: $
 
-   if nargin==0
-      return
-   end
-
    OPT.ncfiles        = {'meteo\CFSR.NS.2003.nc','meteo\CFSR.NS.2004.nc'};
    OPT.refdatenum     = datenum(2003,1,1); % for mdf test file
    OPT.period         = datenum(2003,11,[1 8]);
-   
+
 %% map parameters from netcf file to delft3d parameters
 
    OPT.lon           = 'lon';
@@ -69,6 +67,13 @@ function delft3d_io_meteo_write_example
    OPT.amext         = {'amp'         ,'amu'   ,'amv'   ,'amr'              ,'amt'            ,'amc'};
    OPT.amunits       = {'Pa'          ,'m s-1' ,'m s-1' ,'%'                ,'Celsius'        ,'%'};
    OPT.amkeyword     = {'fwndgp'      ,'fwndgu','fwndgv','fwndgr'           ,'fwndgt'         ,'fwndgc'};
+
+   if nargin==0
+      varargout = {OPT};
+      return
+   end
+   
+   OPT = setproperty(OPT,varargin)
 
 %% load space dimensions
 
