@@ -198,6 +198,13 @@ function varargout = matroos_get_series(varargin);
    [t,v,h] = noos_read(allLines,'varname',OPT.unit);
 
    if ~isempty(t)
+      % re-format the variables h,t and v
+      % this is necessary if only one location was read with noos_read.m (in fact noos_read.m is not providing a suitable format in that case)
+      if isnumeric(t)
+          h={h};
+          t={t};
+          v={v};
+      end
       for iloc=1:length(t)
       D(iloc) = matroos_noos_header2meta(h{iloc}); % not official NOOS, so not in NOOS_READ
       end

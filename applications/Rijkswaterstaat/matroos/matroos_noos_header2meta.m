@@ -66,6 +66,9 @@ function M = matroos_noos_header2meta(header)
 % $Keywords: $
 
 M = [];
+if isstr(header)
+    header = {header};
+end
 
 for i=1:length(header)
 
