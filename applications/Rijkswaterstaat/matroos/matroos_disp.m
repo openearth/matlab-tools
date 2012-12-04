@@ -78,8 +78,10 @@ function varargout = matroos_disp(varargin)
 
    indexu   = strmatch(OPT.unit  ,D.units );
    indexs   = strmatch(OPT.source,D.source);
+   indexl   = strmatch(OPT.loc  ,D.loc );
    index    = intersect(indexu,indexs);
-
+   index  = intersect(index,indexl);
+   
    locs    = {D.loc{index}}';
    sources = {D.source{index}}';
    units   = {D.units{index}}';
