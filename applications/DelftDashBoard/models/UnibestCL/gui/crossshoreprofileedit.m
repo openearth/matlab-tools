@@ -1,5 +1,8 @@
 function crossshoreprofileedit(X,Y)
-
+if ~exist('md','var')
+    global md
+    md=1;
+end
 % X=[0:100];
 % Y=4-(X).^0.5;
 handles.ActiveModel.Nr=4;
