@@ -50,10 +50,25 @@ function X = truncnorm_inv(P, mu, sigma, LowLim, UppLim)
 % $Revision$
 % $HeadURL$
 
-%%
+%% checks
 if max(P)>1 & min(P)<0 %#ok<AND2>
     error('values should be between 0 and 1')
 end
-X = norm_inv(P, mu, sigma); % Normally distributed value(s) with mean "mu" and standard deviation "sigma"  
-X(X>UppLim)=UppLim;    % apply upper limit
-X(X<LowLim)=LowLim;    % apply lower limit
+
+if LowLim>UppLim
+   error('lower limit should be <= upper limit'); 
+end
+if ~isscalar(LowLim) || ~isscalar(UppLim)
+   error('limits of truncated normal should be scalars');
+end
+
+%% deal probabilities of non-exceedance for upper and lower limits
+PL = norm_cdf(LowLim, mu, sigma);
+PU = norm_cdf(UppLim, mu, sigma);
+
+% transform input P, taking upper and lower limit into account
+Ptrans = P*PU+(1-P)*PL;
+
+% call inverse of the normal distribution function
+X = norm_inv(Ptrans, mu, sigma); % Normally distributed value(s) with mean "mu" and standard deviation "sigma"  
+
