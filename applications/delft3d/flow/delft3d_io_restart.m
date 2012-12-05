@@ -191,7 +191,11 @@ end
    %% Parameters
    
       MDF.keywords.sub1   = char(upper(MDF.keywords.sub1  ));
+      if D.kmax > 1
       MDF.keywords.tkemod = char(lower(MDF.keywords.tkemod));
+      else
+      MDF.keywords.tkemod = [];    
+      end
    
       j=0;
       j=j+1;PAR.nlayers(j)= [     1];PAR.names{j} = 'waterlevel';
@@ -200,27 +204,55 @@ end
       
       if ~(isempty(strfind(char(MDF.keywords.sub1(1)),'S'       )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'salinity'     ;end
       if ~(isempty(strfind(char(MDF.keywords.sub1(2)),'T'       )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'temperature'  ;end
-
+      
       if  (isfield(             MDF.keywords,'namc1')             );
       if ~(isempty(strtrim(char(MDF.keywords.namc1 )            )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent1' ;end
       end
-
+      
       if  (isfield(             MDF.keywords,'namc2')             );
       if ~(isempty(strtrim(char(MDF.keywords.namc2 )            )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent2' ;end
       end
-
+      
       if  (isfield(             MDF.keywords,'namc3')             );
       if ~(isempty(strtrim(char(MDF.keywords.namc3 )            )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent3' ;end
       end
-
+      
       if  (isfield(             MDF.keywords,'namc4')             );
       if ~(isempty(strtrim(char(MDF.keywords.namc4 )            )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent4' ;end
       end
-
+      
       if  (isfield(             MDF.keywords,'namc5')             );
       if ~(isempty(strtrim(char(MDF.keywords.namc5 )            )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent5' ;end
       end
-
+      
+      if  (isfield(             MDF.keywords,'namc6')             );
+      if ~(isempty(strtrim(char(MDF.keywords.namc6 )            )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent6' ;end
+      end
+      
+      if  (isfield(             MDF.keywords,'namc7')             );
+      if ~(isempty(strtrim(char(MDF.keywords.namc7 )            )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent7' ;end
+      end
+      
+      if  (isfield(             MDF.keywords,'namc8')             );
+      if ~(isempty(strtrim(char(MDF.keywords.namc8 )            )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent8' ;end
+      end
+      
+      if  (isfield(             MDF.keywords,'namc9')             );
+      if ~(isempty(strtrim(char(MDF.keywords.namc9 )            )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent9' ;end
+      end
+      
+      if  (isfield(             MDF.keywords,'namc10')             );
+      if ~(isempty(strtrim(char(MDF.keywords.namc10 )            )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent10' ;end
+      end
+      
+      if  (isfield(             MDF.keywords,'namc11')             );
+      if ~(isempty(strtrim(char(MDF.keywords.namc11 )            )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent11' ;end
+      end
+      
+      if  (isfield(             MDF.keywords,'namc12')             );
+      if ~(isempty(strtrim(char(MDF.keywords.namc12 )            )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent12' ;end
+      end
+      
       if ~(isempty(strfind (char(MDF.keywords.tkemod),'k-epsilon')));j=j+1;PAR.nlayers(j)= [D.kmax+1];PAR.names{j} = 'tke'          ;
                                                                      j=j+1;PAR.nlayers(j)= [D.kmax+1];PAR.names{j} = 'dissipation'  ;end
       if ~(isempty(strfind (char(MDF.keywords.tkemod),'k-l'      )));j=j+1;PAR.nlayers(j)= [D.kmax+1];PAR.names{j} = 'tke'          ;end
@@ -506,6 +538,13 @@ function iostat=Local_write(fname,DAT,varargin),
                if isfield(DAT,'constituent3');WRITEfortranbinaryrecord(fid,DAT.constituent3);end
                if isfield(DAT,'constituent4');WRITEfortranbinaryrecord(fid,DAT.constituent4);end
                if isfield(DAT,'constituent5');WRITEfortranbinaryrecord(fid,DAT.constituent5);end
+               if isfield(DAT,'constituent6');WRITEfortranbinaryrecord(fid,DAT.constituent6);end
+               if isfield(DAT,'constituent7');WRITEfortranbinaryrecord(fid,DAT.constituent7);end
+               if isfield(DAT,'constituent8');WRITEfortranbinaryrecord(fid,DAT.constituent8);end
+               if isfield(DAT,'constituent9');WRITEfortranbinaryrecord(fid,DAT.constituent9);end
+               if isfield(DAT,'constituent10');WRITEfortranbinaryrecord(fid,DAT.constituent10);end
+               if isfield(DAT,'constituent11');WRITEfortranbinaryrecord(fid,DAT.constituent11);end
+               if isfield(DAT,'constituent12');WRITEfortranbinaryrecord(fid,DAT.constituent12);end
                if isfield(DAT,'tke'         );WRITEfortranbinaryrecord(fid,DAT.tke         );end
                if isfield(DAT,'dissipation' );WRITEfortranbinaryrecord(fid,DAT.dissipation );end
                if isfield(DAT,'ufiltered'   );WRITEfortranbinaryrecord(fid,DAT.ufiltered   );end
