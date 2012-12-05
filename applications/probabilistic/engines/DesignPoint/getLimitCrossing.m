@@ -124,7 +124,8 @@ if sign(z1) ~= sign(z2)
     jRange = [0 1];
 
     % search for Z = 0 along a-c line by bifurcation
-    while abs(crossing.z) > OPT.precision && n < OPT.maxIterations && dz > 0
+    %while abs(crossing.z) > OPT.precision && n < OPT.maxIterations && dz > 0
+    while (abs(crossing.z) > OPT.precision || dz > 0) && n < OPT.maxIterations 
             
         j = mean(jRange);
 
