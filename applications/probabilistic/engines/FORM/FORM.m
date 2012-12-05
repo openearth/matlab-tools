@@ -164,7 +164,8 @@ Converged = false;          % logical to indicate whether convergence criteria h
 Calc = 0;                   % number of calculations so far
 Iter = 0;                   % number of iterations so far
 [z, betas, criteriumZ, criteriumZ2, criteriumBeta] = deal(NaN(OPT.maxiter,1));  % preallocate 
-[P alphas x] = deal(NaN(OPT.DerivativeSides*sum(active)*OPT.maxiter+1,Nstoch));
+[P x] = deal(NaN(OPT.DerivativeSides*sum(active)*OPT.maxiter+1,Nstoch));
+alphas = NaN(OPT.maxiter,Nstoch);
 dzdu = zeros(OPT.maxiter,Nstoch);
 
 %% start FORM iteration procedure
