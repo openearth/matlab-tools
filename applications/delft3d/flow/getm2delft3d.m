@@ -104,7 +104,7 @@ function MDF = getm2delft3d(varargin)
    MDF.keywords.mnkmax  = [fliplr(size(D.bathymetry)) 1];
    MDF.keywords.anglat  = D.proj_lat;
 
-   wlgrid('write','FileName',MDF.keywords.commnt,'X',D.cor.x'  ,'Y',D.cor.y'  ,'CoordinateSystem','Cartesian');
+   wlgrid('write','FileName',[OPT.workdir,MDF.keywords.commnt],'X',D.cor.x'  ,'Y',D.cor.y'  ,'CoordinateSystem','Cartesian');
    wlgrid('write','FileName',[OPT.workdir,MDF.keywords.filcco],'X',D.cor.lon','Y',D.cor.lat','CoordinateSystem','Spherical');
   %wlgrid('write','FileName',[OPT.workdir,MDF.keywords.filcco],'X',D.xx(2:end-1),'Y',D.yx(2:end-1)); % this would keep land cells in and gives too many dry points
 
@@ -128,7 +128,7 @@ function MDF = getm2delft3d(varargin)
    
 %% save mask for ascii diff comparison with supplied GETM mask
 
-   fid = fopen('mask.txt','w');
+   fid = fopen([OPT.workdir,'mask.txt'],'w');
    for row=size(D.bathymetry,1):-1:1
       fprintf(fid,'%1d ',~isnan(D.bathymetry(row,1:end-1)));
       fprintf(fid,'%1d' ,~isnan(D.bathymetry(row,  end  ))); % no trailing space
@@ -235,8 +235,9 @@ function MDF = getm2delft3d(varargin)
       
       MDF.keywords.filbnd  = [filename(OPT.bdyinfo), '_',num2str(dseg),'.bnd'];
       MDF.keywords.filbct  = [filename(OPT.bdyinfo), '_',num2str(dseg),'.bct'];
+      MDF.keywords.commnt  = [filename(OPT.bdyinfo),                 '_0.bnd'];
 
-      delft3d_io_bnd('write',[filename(OPT.bdyinfo),                 '_0.bnd'],Bnd0);
+      delft3d_io_bnd('write',[OPT.workdir,MDF.keywords.commnt],Bnd0);
       delft3d_io_bnd('write',[OPT.workdir,MDF.keywords.filbnd],Bnd);
       bct_io        ('write',[OPT.workdir,MDF.keywords.filbct],Bct);
       
@@ -260,6 +261,7 @@ function MDF = getm2delft3d(varargin)
          [name,rec] = strtok(rec);
 
           ipnt = ipnt + 1;
+          R(ipnt).getm_name     = name; $% for access of netCDF file
           R(ipnt).name          = name;
           R(ipnt).interpolation = 'Y';
           R(ipnt).m             = str2num(m);
@@ -281,29 +283,31 @@ function MDF = getm2delft3d(varargin)
       
       fclose(fid);
       
-      MDF.keywords.filsrc = [filename(OPT.riverinfo),'.src'];
-      MDF.keywords.fildis = [filename(OPT.river)    ,'.dis'];
-      
-      delft3d_io_src('write',[OPT.workdir,MDF.keywords.filsrc],R);
-     %% 
      [Dis.station_names,~,Dis.station_indices] = unique({R.name});
      
-     for i=1:length(Dis.station_names)
+      for i=1:length(Dis.station_names)
          ind = find(Dis.station_indices==i);
          for j=1:length(ind)
          R(ind(j)).ipeer = j;
          R(ind(j)).npeer = length(ind);
          R(ind(j)).peers = ind;
+         if R(ind(j)).npeer > 1
+         R(ind(j)).name  = [R(ind(j)).name,'_',num2str(R(ind(j)).ipeer)]; % unique names required in Delft3D
          end
-     end
+         end
+      end
       
+      MDF.keywords.filsrc = [filename(OPT.riverinfo),'.src'];
+      MDF.keywords.fildis = [filename(OPT.river)    ,'.dis'];
+      delft3d_io_src('write',[OPT.workdir,MDF.keywords.filsrc],R);
+
 %% discharge data 
 
    Q.time      = ncread   (OPT.river,'time');
    Q.timeunits = ncreadatt(OPT.river,'time','units');
    Q.datenum   = udunits2datenum(Q.time,Q.timeunits);
    Q.minutes   = (Q.datenum - OPT.reference_time)*24*60;
-   clear Dis
+
    for ipnt=1:length(R)
 
       Dis.Table(ipnt).Name          = ['Discharge:',num2str(ipnt),' ',R(ipnt).name,' (',num2str(R(ipnt).ipeer),'/',num2str(R(ipnt).npeer),')'];
@@ -315,7 +319,7 @@ function MDF = getm2delft3d(varargin)
       Dis.Table(ipnt).Interpolation = 'linear';
       Dis.Table(ipnt).Parameter(1)  = struct('Name','time','Unit','[min]');
       Dis.Table(ipnt).Parameter(2)  = struct('Name','flux/discharge rate','Unit','[m3/s]');
-      Q.Q                           = ncread(OPT.river,R(ipnt).name)./R(ipnt).npeer; % distribute evenly over peers
+      Q.Q                           = ncread(OPT.river,R(ipnt).getm_name)./R(ipnt).npeer; % distribute evenly over peers
       Q.Q(isnan(Q.Q))               = 0;
       Dis.Table(ipnt).Data          = [Q.minutes,Q.Q];
       Dis.Table(ipnt).Format        = '%d %g';
@@ -340,3 +344,16 @@ function MDF = getm2delft3d(varargin)
                           '$HeadURL$'];
                       
    delft3d_io_mdf('write',[OPT.workdir,OPT.RUNID,'.mdf'],MDF.keywords);
+
+%% save config file for ready-start linux simulation
+
+   fid = fopen([OPT.workdir,'config_flow2d3d.ini'],'w');
+   fprintf(fid,'%s \n', '[FileInformation]');
+   fprintf(fid,'%s \n', '   FileCreatedBy    = $Id$');
+   t = now;[d,w]=weekday(now);
+   fprintf(fid,'%s \n',['   FileCreationDate = ',w, datestr(t,' mmm dd HH:MM:SS yyyy')]);
+   fprintf(fid,'%s \n', '   FileVersion      = 00.01');
+   fprintf(fid,'%s \n', '[Component]');
+   fprintf(fid,'%s \n', '   Name    = flow2d3d');
+   fprintf(fid,'%s \n',['   MDFfile = ',OPT.RUNID]);
+   fclose(fid);

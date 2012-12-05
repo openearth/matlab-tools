@@ -72,10 +72,10 @@ function varargout = udunits2datenum(varargin)
       isounits{irow} = [b ' ' celltime{irow}(ind:end)];
       end
       time = str2num(char(time));
-      time = time(:)';
+      time = double(time(:)');% to prevent erroneous roundoff
       
    elseif nargin==2
-      time      = varargin{1};
+      time      = double(varargin{1}); % to prevent erroneous roundoff
       isounits  = cellstr(varargin{2});
    end   
    
