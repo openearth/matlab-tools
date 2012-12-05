@@ -57,7 +57,7 @@ if isnumeric(X) & isnumeric(Y)
             y1 = Y(idplus(ii));
             y2 = Y(idplus(ii)+1);
             x_zerocross(ii)      = x1 + (x2-x1)/(y2-y1)*(level-y1);
-            id_zerocross(ii)     = mean(idplus) + (level-y1)/(y2-y1);
+            id_zerocross(ii)     = mean(idplus(ii)) + (level-y1)/(y2-y1);
         end
         for iii=1:length(idmin)
             x1 = X(idmin(iii));
@@ -65,12 +65,12 @@ if isnumeric(X) & isnumeric(Y)
             y1 = Y(idmin(iii));
             y2 = Y(idmin(iii)+1);
             x_zerocross(iii+length(idplus))      = x1 + (x2-x1)/(y2-y1)*(level-y1);
-            id_zerocross(iii+length(idplus))     = mean(idmin) + (level-y1)/(y2-y1);
+            id_zerocross(iii+length(idplus))     = mean(idmin(iii)) + (level-y1)/(y2-y1);
         end
         for iiii=1:length(idzero)
             x1 = X(idzero(iiii));
             x_zerocross(iiii+length(idplus)+length(idmin))      = x1;
-            id_zerocross(iiii+length(idplus)+length(idmin))     = mean(idzero);
+            id_zerocross(iiii+length(idplus)+length(idmin))     = mean(idzero(iiii));
         end
         if isempty(idplus) & isempty(idmin) & isempty(idzero)
             %fprintf('warning cannot find crossing point!\n');
