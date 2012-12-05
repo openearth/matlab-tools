@@ -92,7 +92,7 @@ end;
 % ------------------------------------
 % ------------------------------------
 
-function S=Local_read(varargin),
+function [S,iostat] = Local_read(varargin)
 
 S.filename = varargin{1};
 
