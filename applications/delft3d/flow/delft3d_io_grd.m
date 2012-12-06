@@ -206,6 +206,16 @@ end
       G.cor.y   = varargin{4};
       end
       
+      % take care of stupid default nodatavalue (0,0)
+      ind = find(G.cor.x==0 & G.cor.y==0);
+      if length(ind)==1
+         G.cor.x(ind) = 0.001; % 1 mm won't hurt, even in flume setting
+         G.cor.y(ind) = 0.001;
+         warning('replaced single occurance of coordinate(0,0) with (0.001,0.001)')
+      elseif any(ind)
+         warning('multiple occurances of coordinates (0,0) found, Delft3D will consider all of them as inactive corner vertex leading to 4 dry points.')
+      end
+      
       if action=='o'
       OK   = wlgrid(cmd,fname,G.cor.x,G.cor.y);
       else

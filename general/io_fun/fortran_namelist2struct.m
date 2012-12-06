@@ -4,7 +4,7 @@ function D = fortran_namelist2struct(fname,varargin)
 %    D = fortran_namelist2struct(fname,<D>)
 %
 % parses namelist fname to struct D. Optionally D can
-% be supplied as well, so that field of D are overwritten.
+% be supplied as well, so that fields of D are overwritten.
 %
 % NB: only scalars are implemented: RHS grammer is an error and 
 % LHS side grammer is replaced by MKVAR: m(:) = 3 will be m___ = 3
@@ -93,7 +93,9 @@ while ~isnumeric(rec)
           if     strcmpi(val(1),'''') & strcmpi(val(end),'''')
              val = val(2:end-1);
           elseif strcmpi(val(1),'.') & strcmpi(val(end),'.')
-             %  bool
+             if     strcmpi(val(2),'t');val = true;  % (.TRUE.  or any value beginning with T, .T, t, or .t)
+             elseif strcmpi(val(2),'f');val = false; % (.FALSE. or any value beginning with F, .F, f, or .f)
+             end
           else
              val = str2num(val);
           end
