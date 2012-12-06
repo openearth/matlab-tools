@@ -8,7 +8,7 @@ function varargout = fgetl_no_comment_line(fid,commentchar,varargin);
 % By default allow_empty_lines is false
 % so all lines with only linefeeds are skipped
 %
-% At end of file '' is returned.
+% At end of file -1 is returned, just like fgetl.
 %
 % [string,n]= fgetl_no_comment_line(); returns number of read lines.
 %
@@ -68,7 +68,6 @@ end
     
        rec = fgetl(fid);
        if rec==-1
-          rec = '';
           break
        else
           if remove_spaces_at_start
