@@ -81,6 +81,7 @@ OPT.colorbar        = true;
 OPT.highestLevel    = 1;
 OPT.lowestLevel     = 15;
 OPT.z_scale_factor  = 1;
+OPT.lighting_effects = true;
 
 if nargin==0
     varargout = {OPT};
@@ -129,12 +130,18 @@ x       = linspace(0,1,100);
 z       = kron([10 1;5 1],peaks(50))-rand(100);
 z       = (z - min(z(:))) / (max(z(:)) -  min(z(:)));
 h       = surf(x,y,z);
-hl      = light;
-material([0.87 0.1 0.07 150]);
-shading interp;lighting phong;axis off;
-axis tight;view(0,90);
-lightangle(hl,180,70);
 
+if OPT.lighting_effects
+    hl      = light;
+    material([0.87 0.1 0.07 150]);
+    shading interp;lighting phong;axis off;
+    axis tight;view(0,90);
+    lightangle(hl,180,70);
+else
+    shading interp;
+    axis off;
+    axis tight;view(0,90);
+end
 
 clim(OPT.cLim);
 colormap(OPT.colorMap(OPT.colorSteps));
@@ -176,7 +183,7 @@ for ii = 1:length(ncfiles);
     z_start0 = [1 1 1];
     z_count  = [z_dim_info.Dimensions.Length];
     z_count(time_dim) = 1;
-    for jj = size(date4GE,1)-1:-1:1
+    for jj = 1%size(date4GE,1)-1:-1:1
         % load z data
         z = OPT.z_scale_factor * ncread(url,OPT.var_name,...
             z_start0 + time_dim*(jj-1),z_count);
@@ -666,6 +673,7 @@ function ncfiles = get_nc_files(path_netcdf)
 %     else % local path
 ncfiles = dir2(path_netcdf,...
     'file_incl','\.nc$',...
+    ...'file_incl','x0709250y8616375\.nc$',...
     'file_excl','^catalog\.nc$',...
     'case_sensitive',false,...
     'no_dirs',true,...

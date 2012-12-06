@@ -152,10 +152,8 @@ else
    D.S   = min(D.lat(:));
    D.W   = min(D.lon(:));
    D.E   = max(D.lon(:));
-
-   OPT.basecode           = KML_figure_tiler_SmallestTileThatContainsAllData(D); %'0'; 
-   OPT.highestLevel       = length(OPT.basecode);  %1
-   OPT.lowestLevel        = OPT.highestLevel+4; % a guess
+   
+   OPT.basecode = KML_figure_tiler_SmallestTileThatContainsAllData(D); 
 end
 
 OPT.h    = h;  % handle to input surf object
@@ -170,6 +168,19 @@ axis(OPT.ax,'normal')
 end
 
 OPT = setproperty(OPT, varargin);
+
+if isempty(OPT.lowestLevel)
+    OPT.lowestLevel = length(OPT.basecode)+4;
+end
+
+if isempty(OPT.highestLevel)
+    OPT.highestLevel = min(length(OPT.basecode),OPT.lowestLevel);
+end
+
+if length(OPT.basecode)>(OPT.lowestLevel-1)
+    OPT.basecode = OPT.basecode(1:(OPT.lowestLevel-1));
+end
+
 % If individual pixels have individual alpha levels....
 % if ndims(OPT.alpha) == 2
 %     D.alpha = OPT.alpha;
