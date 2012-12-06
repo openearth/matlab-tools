@@ -1,4 +1,4 @@
-function [output,status] = urlread(urlChar,method,params)
+function [output,status] = ddb_urlread(urlChar,method,params)
 %URLREAD Returns the contents of a URL as a string.
 %   S = URLREAD('URL') reads the content at a URL into a string, S.  If the
 %   server returns binary data, the string will contain garbage.
@@ -69,7 +69,7 @@ end
 
 % Create a urlConnection.
 [urlConnection,errorid,errormsg] = urlreadwrite(mfilename,urlChar);
-urlConnection.setReadTimeout(5000); % timeout in 5 seconds
+urlConnection.setReadTimeout(100); % timeout in 100 ms
 if isempty(urlConnection)
     if catchErrors, return
     else error(errorid,errormsg);

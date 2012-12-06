@@ -1,4 +1,4 @@
-function [output,status] = urlwrite(urlChar,location,method,params)
+function [output,status] = ddb_urlwrite(urlChar,location,method,params)
 %URLWRITE Save the contents of a URL to a file.
 %   URLWRITE(URL,FILENAME) saves the contents of a URL to a file.  FILENAME
 %   can specify the complete path to a file.  If it is just the name, it will
@@ -74,7 +74,7 @@ end
 
 % Create a urlConnection.
 [urlConnection,errorid,errormsg] = urlreadwrite(mfilename,urlChar);
-urlConnection.setReadTimeout(5000); % timeout in 5 seconds
+urlConnection.setReadTimeout(100); % timeout in 100 ms
 if isempty(urlConnection)
     if catchErrors, return
     else error(errorid,errormsg);
