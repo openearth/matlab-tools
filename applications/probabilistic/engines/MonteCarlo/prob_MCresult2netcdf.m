@@ -74,10 +74,11 @@ OPT = setproperty(OPT, varargin{:});
 
 %%
 if ~isscalar(MCresult)
-    nMCresult = length(MCresult);
-    for iMCresult = 1:nMCresult
-        ncfile = prob_MCresult2netcdf(MCresult(iMCresult), varargin{:});
-    end
+    ncfiles = cellfun(@(res) prob_MCresult2netcdf(res, varargin{:}), num2cell(MCresult),...
+        'uniformoutput', false);
+    % ncfiles should be a cell array with identical contents in each
+    % element; just pick the first one
+    ncfile = ncfiles{1};
     return
 end
 
@@ -213,6 +214,9 @@ if ~exist(ncfile, 'file')
 else
     % append to existing file
     start_3d = [length(nc_varget(ncfile, 'run_id')) 0 0];
+    history = nc_attget(OPT.ncfile, nc_global, 'history');
+    nc_attput(OPT.ncfile, nc_global,...
+        'history', sprintf('%s\nrun_id %g appended on %s', history, OPT.run_id, datestr(now));
 end
 
 count_3d = [length(MCresult) n_samples n_variables];
