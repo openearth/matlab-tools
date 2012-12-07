@@ -78,6 +78,7 @@ OPT = struct( ...
     'name', ['xb_' datestr(now, 'YYYYmmddHHMMSS')], ...
     'binary', '', ...
     'nodes', 1, ...
+    'queuetype', 'normal', ...
     'mpitype', '' ...
 );
 
@@ -102,7 +103,13 @@ fprintf(fid,'cd %s\n', rpath);
 fprintf(fid,'. /opt/sge/InitSGE\n');
 fprintf(fid,'. /opt/intel/fc/10/bin/ifortvars.sh\n');
 fprintf(fid,'dos2unix mpi.sh\n');
-fprintf(fid,'qsub -V -N %s mpi.sh\n', OPT.name);
+if strcmp(OPT.queuetype,'normal')
+    fprintf(fid,'qsub -V -N %s mpi.sh\n', OPT.name);
+elseif strcmp(OPT.queuetype,'normal-i7')
+    fprintf(fid,'qsub -V -N %s -q normal-i7 mpi.sh\n', OPT.name);
+else
+    error(['Unknown queue type [' OPT.mpitype ']. Possible types are: normal & normal-i7']);
+end
 
 fprintf(fid,'exit\n');
 
@@ -129,7 +136,13 @@ switch upper(OPT.mpitype)
         if OPT.nodes > 1
             fprintf(fid,'export LD_LIBRARY_PATH="/opt/openmpi-1.4.3-gcc/lib/:${LD_LIBRARY_PATH}"\n');
             fprintf(fid,'export PATH="/opt/mpich2/bin/:${PATH}"\n');
-            %fprintf(fid,'export NSLOTS=`expr $NSLOTS \\* 2`\n');
+            if strcmp(OPT.queuetype,'normal')
+                fprintf(fid,'export NSLOTS=`expr $NSLOTS \\* 2`\n');
+            elseif strcmp(OPT.queuetype,'normal-i7')
+                fprintf(fid,'export NSLOTS=`expr $NSLOTS \\* 4`\n');
+            else
+                error(['Unknown queue type [' OPT.mpitype ']. Possible types are: normal & normal-i7']);
+            end
             fprintf(fid,'awk ''{print $1":"1}'' $PE_HOSTFILE > $(pwd)/machinefile\n');
             %fprintf(fid,'awk ''{print $1":"1}'' $PE_HOSTFILE >> $(pwd)/machinefile\n');
             fprintf(fid,'mpdboot -n $NHOSTS --rsh=/usr/bin/rsh -f $(pwd)/machinefile\n');
