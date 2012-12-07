@@ -96,13 +96,13 @@ if isempty(OPT.mpitype); OPT.mpitype = xb_getprefdef('mpitype', 'MPICH2'); end;
 
 fname = [name '.sh'];
 
-fid = fopen(fullfile(lpath, fname), 'wt');
+fid = fopen(fullfile(lpath, fname), 'w');
 
 fprintf(fid,'#!/bin/sh\n');
 fprintf(fid,'cd %s\n', rpath);
 fprintf(fid,'. /opt/sge/InitSGE\n');
 fprintf(fid,'. /opt/intel/fc/10/bin/ifortvars.sh\n');
-fprintf(fid,'dos2unix mpi.sh\n');
+% fprintf(fid,'dos2unix mpi.sh\n');
 if strcmp(OPT.queuetype,'normal')
     fprintf(fid,'qsub -V -N %s mpi.sh\n', OPT.name);
 elseif strcmp(OPT.queuetype,'normal-i7')
@@ -121,7 +121,7 @@ if ~ismember(OPT.binary(1), {'/' '~' '$'})
     OPT.binary = ['$(pwd)/' OPT.binary];
 end
 
-fid = fopen(fullfile(lpath, 'mpi.sh'), 'wt');
+fid = fopen(fullfile(lpath, 'mpi.sh'), 'w');
 
 switch upper(OPT.mpitype)
     case 'OPENMPI'
