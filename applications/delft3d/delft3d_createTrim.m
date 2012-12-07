@@ -11,7 +11,7 @@ function nfsOut = delft3d_createTrim(trimIn,trimOut,time,varargin)
 %   files (see example). 
 %
 %   Syntax:
-%   delft3d_createTrim(trimIn,trimOut,<groupName>,<timeGroup>)
+%   delft3d_createTrim(trimIn,trimOut,time,<groupName>,<timeGroup>)
 %
 %   Input:
 %   trimIn  = [string] filepath to input trim file
@@ -21,7 +21,10 @@ function nfsOut = delft3d_createTrim(trimIn,trimOut,time,varargin)
 %             be called <trimIn>-ini
 %   time    = [datenum] Time of the data in the output file
 %   <groupName> = [string] groupname to be copied. Groupnames are the same 
-%                 as groupnames for vs_let
+%                 as groupnames for vs_let. Alternatively one can also
+%                 input {groupName,elementName1,elementName2,...}. In this
+%                 case only the elements with the name
+%                 elementName1,elementName2, etc. will be copied
 %   <groupTime> = [datenum] the time in trimIn for which the data in the
 %                 group <groupName> has to be copied to trimOut. If
 %                 <groupTime> is empty the last time step will be used.
@@ -153,9 +156,21 @@ if ~isempty(varargin)
     groupNames=varargin(1:2:end-1); 
     groupTimes=local_timeIndex(t,varargin(2:2:end));
     
+    %Find element names
+    elementNames=cell(1,length(groupNames)); 
+    for l=1:length(groupNames)
+       if length(groupNames{l})==1 
+           elementNames{l}=[];
+       else
+           elementNames{l}=groupNames{l}(2:end);
+           groupNames{l}=groupNames{l}{1}; 
+       end %end if length
+    end %end for l
+    
 else
     
     groupNames={};
+    elementNames={};
     groupTimes=[];
     
 end %end varargin
@@ -179,15 +194,20 @@ for k=1:length(groupDef)
     %Check if data from the output time or another time have to be copied
     iGroup=find( strcmpi(groupDef{k},groupNames),1); 
     
-
-    
+   
     if isempty(iGroup) 
         %Data have to be copied from default time
         iMax=nfsIn.GrpDat(k).SizeDim;
         vs_copy(nfsIn,nfsOut,'*',[],groupDef{k},{min(iT,iMax)}); 
     else
         %Data have to be copied from other time
-        vs_copy(nfsIn,nfsOut,'*',[],groupNames{iGroup},{groupTimes(iGroup)}); 
+        if isempty(elementNames{iGroup})
+            %All elements have to be copied
+            vs_copy(nfsIn,nfsOut,'*',[],groupNames{iGroup},{groupTimes(iGroup)}); 
+        else
+            %Only a limited list has to be copied
+            vs_copy(nfsIn,nfsOut,'*',[],groupNames{iGroup},{groupTimes(iGroup)},elementNames{iGroup}); 
+        end %end if isempty
     end %end if
         
 end %end for k
