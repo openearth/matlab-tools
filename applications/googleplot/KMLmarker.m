@@ -78,8 +78,8 @@ OPT.markerAlpha         =  1;
 OPT.labelAlpha          =  0;
 OPT.html                = [];
 OPT.name                = [];
-OPT.iconnormalState     =  '';
-OPT.iconhighlightState  =  '';
+OPT.iconnormalState     =  'http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png';
+OPT.iconhighlightState  =  'http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png';
 OPT.scalenormalState    =  0.8;
 OPT.scalehighlightState =  1.0;
 OPT.colornormalState    =  []; % [1 1 0] = yellow
@@ -140,7 +140,7 @@ end
 %% get filename, gui for filename, if not set yet
 
 if isempty(OPT.fileName)
-    [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as',[mfilename,'.kml']);
+    [fileName, filePath] = uiputfile({'*.kmz','Zipped KML file';'*.kml','KML file + separate image files'},'Save as',[mfilename,'.kmz']);
     OPT.fileName = fullfile(filePath,fileName);
 end
 
@@ -156,6 +156,7 @@ if  ischar(OPT.html);OPT.html = cellstr(OPT.html  );end
 if  ischar(OPT.name);OPT.name = cellstr(OPT.name  );end
 
 % Icon's
+pngNames = {};
 if isempty(OPT.iconnormalState)
     iconnormalState = 'http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png';
 else
@@ -377,12 +378,37 @@ multiWaitbar('closeall');
 
 %% compress to kmz?
 
-if strcmpi  ( OPT.fileName(end),'z')
-    movefile( OPT.fileName,[OPT.fileName(1:end-3) 'kml'])
-    zip     ( OPT.fileName,[OPT.fileName(1:end-3) 'kml']);
-    movefile([OPT.fileName '.zip'],OPT.fileName)
-    delete  ([OPT.fileName(1:end-3) 'kml'])
-end
+   if strcmpi  ( OPT.fileName(end),'z')
+
+      % download/copy dot images for inclusion in kmz
+      if isurl(OPT.iconnormalState   );
+         pngNames{end+1} = fullfile(fileparts(OPT.fileName),filenameext(OPT.iconnormalState   ));
+         urlwrite(OPT.iconnormalState   ,pngNames{end});
+      else
+         pngNames{end+1} = fullfile(fileparts(OPT.fileName),[filename(OPT.iconnormalState   ),'_copy',fileext(OPT.iconnormalState   )]);
+         copyfile(OPT.iconnormalState   ,pngNames{end}); % always make copy, even from lcal file, due to delete below
+      end
+      
+      if ~strcmpi(OPT.iconnormalState,OPT.iconhighlightState)
+      if isurl(OPT.iconhighlightState);
+         pngNames{end+1} = fullfile(fileparts(OPT.fileName),filenameext(OPT.iconhighlightState));
+         urlwrite(OPT.iconhighlightState,pngNames{end});
+      else
+         pngNames{end+1} = fullfile(fileparts(OPT.fileName),[filename(OPT.iconhighlightState),'_copy',fileext(OPT.iconhighlightState)]);
+         copyfile(OPT.iconnormalState   ,pngNames{end}); % always make copy, even from lcal file, due to delete below
+      end
+      end
+
+      movefile( OPT.fileName,[OPT.fileName(1:end-3) 'kml'])
+      files = [{[OPT.fileName(1:end-3) 'kml']},pngNames];
+      zip     ( OPT.fileName,files);
+      for ii = 1:length(files)
+          delete  (files{ii})
+      end
+      movefile([OPT.fileName '.zip'],OPT.fileName)
+      delete  ([OPT.fileName(1:end-3) 'kml'])
+      
+   end
 
 %% openInGoogle?
 

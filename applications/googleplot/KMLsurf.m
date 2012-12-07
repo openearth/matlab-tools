@@ -126,7 +126,7 @@ function varargout = KMLsurf(lat,lon,z,varargin)
 %% get filename, gui for filename, if not set yet
 
    if isempty(OPT.fileName)
-      [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as',[mfilename,'.kml']);
+    [fileName, filePath] = uiputfile({'*.kmz','Zipped KML file';'*.kml','KML file + separate image files'},'Save as',[mfilename,'.kmz']);
       OPT.fileName = fullfile(filePath,fileName);
    end
 
@@ -195,6 +195,8 @@ if ~(OPT.fileName==-1)
    if OPT.colorbar
      [clrbarstring,pngNames] = KMLcolorbar(OPT);
       output = [output clrbarstring];
+   else
+      pngNames = {};
    end
    
 %% STYLE
@@ -306,14 +308,20 @@ if ~(OPT.fileName==-1)
    fprintf(OPT.fid,output);
    fclose(OPT.fid);
 
-%% compress to kmz?
-% TO DO: add pngNames of colorbar
+%% compress to kmz and include image fileds
 
    if strcmpi  ( OPT.fileName(end-2:end),'kmz')
-       movefile( OPT.fileName,[OPT.fileName(1:end-3) 'kml'])
-       zip     ( OPT.fileName,[OPT.fileName(1:end-3) 'kml']);
-       movefile([OPT.fileName '.zip'],OPT.fileName)
-       delete  ([OPT.fileName(1:end-3) 'kml'])
+      movefile( OPT.fileName,[OPT.fileName(1:end-3) 'kml'])
+      if OPT.colorbar
+          files = [{[OPT.fileName(1:end-3) 'kml']},pngNames];
+      else
+          files =  {[OPT.fileName(1:end-3) 'kml']};
+      end
+      zip     ( OPT.fileName,files);
+      for ii = 1:length(files)
+          delete  (files{ii})
+      end
+      movefile([OPT.fileName '.zip'],OPT.fileName)
    end
 
 %% openInGoogle?

@@ -129,5 +129,7 @@ Flmap  =  0 0 0
 Flhis  =  0 0 0
 Flpp   =  0 0 0
 Flrst  =  0
-Commnt =                  
-Commnt =                  
+Commnt = BarocP=NO(Y) switches off(on) the baroclinic pressure term at the open boundary
+BarocP = #Y#
+Commnt = Cstbnd=yes sets cross-boundary gradient of along-boundary velocities to zero, instead of along-boundary velocities themselves to 0
+Cstbnd = #NO#

@@ -151,7 +151,7 @@ function varargout = KMLpatch3(lat,lon,z,varargin)
 %% get filename, gui for filename, if not set yet
 
    if isempty(OPT.fileName)
-      [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as',[mfilename,'.kml']);
+    [fileName, filePath] = uiputfile({'*.kmz','Zipped KML file';'*.kml','KML file + separate image files'},'Save as',[mfilename,'.kmz']);
       OPT.fileName = fullfile(filePath,fileName);
    end
 
@@ -203,6 +203,8 @@ function varargout = KMLpatch3(lat,lon,z,varargin)
    if OPT.colorbar
       [clrbarstring,pngNames] = KMLcolorbar(OPT);
       output = [output clrbarstring];
+   else
+      pngNames = {};
    end
 
 %% STYLE
@@ -328,26 +330,26 @@ function varargout = KMLpatch3(lat,lon,z,varargin)
    fprintf(OPT.fid,output);
    fclose(OPT.fid);
 
-%% compress to kmz?
+%% compress to kmz and include image fileds
 
    if strcmpi  ( OPT.fileName(end-2:end),'kmz')
-       movefile( OPT.fileName,[OPT.fileName(1:end-3) 'kml'])
-       if OPT.colorbar
-           files = [{[OPT.fileName(1:end-3) 'kml']},pngNames];
-       else
-           files = {OPT.fileName(1:end-3) 'kml'};
-       end
-       zip     ( OPT.fileName,files);
-       for ii = 1:length(files)
-           delete  (files{ii})
-       end
-       movefile([OPT.fileName '.zip'],OPT.fileName)
+      movefile( OPT.fileName,[OPT.fileName(1:end-3) 'kml'])
+      if OPT.colorbar
+          files = [{[OPT.fileName(1:end-3) 'kml']},pngNames];
+      else
+          files =  {[OPT.fileName(1:end-3) 'kml']};
+      end
+      zip     ( OPT.fileName,files);
+      for ii = 1:length(files)
+          delete  (files{ii})
+      end
+      movefile([OPT.fileName '.zip'],OPT.fileName)
    end
 
 %% openInGoogle?
 
    if OPT.openInGE
-       system(OPT.fileName);
+      system(OPT.fileName);
    end
    
    varargout = {};

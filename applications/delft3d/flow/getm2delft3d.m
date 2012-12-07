@@ -68,7 +68,7 @@ function MDF = getm2delft3d(varargin)
    OPT.reference_time = datenum(2003,1,1); % overwrites on in mdf, used for *.bct and *.dis
    OPT.mdf            = '*.mdf';
    OPT.points_per_bnd = 2;
-   OPT.ntmax          = Inf; % fro debugging save only so many boundary time points
+   OPT.ntmax          = []; % for debugging save only so many boundary time points: [] means adapt to sim time, Inf is everything
    OPT.workdir        = '';
    OPT.RUNID          = mfilename;
    
@@ -146,13 +146,13 @@ function MDF = getm2delft3d(varargin)
    if getm.domain.f_plane
    MDF.keywords.filcco  = [filename(OPT.topo),'_cartesian.grd'];
    filcc2               = [filename(OPT.topo),'_spherical.grd'];
-%--wlgrid('write','FileName',[OPT.workdir,MDF.keywords.filcco],'X',D.cor.x'  ,'Y',D.cor.y'  ,'CoordinateSystem','Cartesian');
-%--wlgrid('write','FileName',[OPT.workdir,             filcc2],'X',D.cor.lon','Y',D.cor.lat','CoordinateSystem','Spherical');
+   wlgrid('write','FileName',[OPT.workdir,MDF.keywords.filcco],'X',D.cor.x'  ,'Y',D.cor.y'  ,'CoordinateSystem','Cartesian');
+   wlgrid('write','FileName',[OPT.workdir,             filcc2],'X',D.cor.lon','Y',D.cor.lat','CoordinateSystem','Spherical');
    else
    MDF.keywords.filcco  = [filename(OPT.topo),'_spherical.grd'];
    filcc2               = [filename(OPT.topo),'_cartesian.grd'];
-%--wlgrid('write','FileName',[OPT.workdir,MDF.keywords.filcco],'X',D.cor.lon','Y',D.cor.lat','CoordinateSystem','Spherical');
-%--wlgrid('write','FileName',[OPT.workdir,             filcc2],'X',D.cor.x'  ,'Y',D.cor.y'  ,'CoordinateSystem','Cartesian');
+   wlgrid('write','FileName',[OPT.workdir,MDF.keywords.filcco],'X',D.cor.lon','Y',D.cor.lat','CoordinateSystem','Spherical');
+   wlgrid('write','FileName',[OPT.workdir,             filcc2],'X',D.cor.x'  ,'Y',D.cor.y'  ,'CoordinateSystem','Cartesian');
    end
   %wlgrid('write','FileName',[OPT.workdir,MDF.keywords.filcco],'X',D.xx(2:end-1),'Y',D.yx(2:end-1)); % this would keep land cells defined and thus yield too many dry points
 
@@ -195,16 +195,15 @@ function MDF = getm2delft3d(varargin)
 %  boundary positions not truly generic yet, should be via az matrix to get remove 
 %  internal corners at connections of vertical e/w and horizontal n/s boundaries
    
-   B = nc2struct(OPT.bdy,'include',{'elev','time'});
+   B         = nc2struct(OPT.bdy,'include',{'elev','time'});
    B.minutes = (B.datenum-OPT.reference_time)*24*60;
 
-%  tmask = 1:min(length(B.minutes),OPT.ntmax);
-   
+   if isempty(OPT.ntmax)
    tmask = find(B.datenum >= datenum(getm.time.start,'yyyy-mm-dd hh:MM:ss') & ...
                 B.datenum <= datenum(getm.time.stop ,'yyyy-mm-dd hh:MM:ss'));
-                
-   disp(length(tmask))                
-   disp(length(B.minutes))                
+   else
+   tmask = 1:min(length(B.minutes),OPT.ntmax);
+   end
    
    nsub = getm.m3d.calc_salt + getm.m3d.calc_temp;
    
@@ -215,7 +214,8 @@ function MDF = getm2delft3d(varargin)
       sidenames = {'west', 'north', 'east', 'south'};
       bndtype   = {'N','','Z',''}; % ZERO_GRADIENT,SOMMERFELD,CLAMPED,FLATHER_ELEV
       
-      nseg = 0;
+      nseg1   = 0; % number of segments per boundary stretch
+      nsegcum = 0; % total number of segments for entire model
       for iside = 1:4 % compass directions
          rec = fgetl_no_comment_line(fid,'#!');
          n   = str2num(strtok(rec));
@@ -258,23 +258,24 @@ function MDF = getm2delft3d(varargin)
       
             % multiple grid cells per segment: as bct has two columns, we recommend
             % to merge at least 2 seperate GETM points into one 2-point Delft3D segment
-            nseg  = ceil(length(m)./dseg);
-            tmp.m = pad(m,nseg*dseg,m(end)); % make array artificially somewhat larger if dseg does not fit integer # times in boundary.
-            tmp.n = pad(n,nseg*dseg,n(end));
+            nsegcum = nsegcum+nseg1;
+            nseg1   = ceil(length(m)./dseg);
+            tmp.m   = pad(m,nseg1*dseg,m(end)); % make array artificially somewhat larger if dseg does not fit integer # times in boundary.
+            tmp.n   = pad(n,nseg1*dseg,n(end));
 
-            for j = 1:nseg
-            ind0 = (j-1)*dseg+1; % indices into overall bct indices from GETM
-            ind1 = (j  )*dseg;   % indices into overall bct indices from GETM
+            for iseg1 = 1:nseg1
+            ind0 = (iseg1-1)*dseg+1; % indices into overall bct indices from GETM
+            ind1 = (iseg1  )*dseg;   % indices into overall bct indices from GETM
+            isegcum = nsegcum + iseg1;
+            Bnd.DATA(isegcum).name               = [sidenames{iside},'_',num2str(i),'_',num2str(iseg1)];
+            Bnd.DATA(isegcum).bndtype            = bndtype{vals(4)}; %'{Z} | C | N | Q | T | R'
+            Bnd.DATA(isegcum).datatype           = 'T';              %'{A} | H | Q | T'
+            Bnd.DATA(isegcum).mn                 = [tmp.m(ind0) tmp.n(ind0) tmp.m(ind1) tmp.n(ind1)];
+            Bnd.DATA(isegcum).alfa               = 0;
       
-            Bnd.DATA(j).name               = [sidenames{iside},'_',num2str(i),'_',num2str(j)];
-            Bnd.DATA(j).bndtype            = bndtype{vals(4)}; %'{Z} | C | N | Q | T | R'
-            Bnd.DATA(j).datatype           = 'T';              %'{A} | H | Q | T'
-            Bnd.DATA(j).mn                 = [tmp.m(ind0) tmp.n(ind0) tmp.m(ind1) tmp.n(ind1)];
-            Bnd.DATA(j).alfa               = 0;
-      
-            Bxt.Table(1).Name               = ['Boundary Section : ',num2str(j)];
+            Bxt.Table(1).Name               = ['Boundary Section : ',num2str(iseg1)];
             Bxt.Table(1).Contents           = 'Uniform';
-            Bxt.Table(1).Location           = [sidenames{iside},'_',num2str(i),'_',num2str(j)];
+            Bxt.Table(1).Location           = [sidenames{iside},'_',num2str(i),'_',num2str(iseg1)];
             Bxt.Table(1).TimeFunction       = 'non-equidistant';
             Bxt.Table(1).ReferenceTime      = str2num(datestr(OPT.reference_time,'yyyymmdd'));
             Bxt.Table(1).TimeUnit           = 'minutes';
@@ -284,16 +285,16 @@ function MDF = getm2delft3d(varargin)
             Bxt.Table(1).Data               = [];
             Bxt.Table(1).Format             = '';
 
-            Bct.Table(j)                   = Bxt.Table;
-            Bct.Table(j).Parameter(2).Name = 'water elevation (z)  end A';
-            Bct.Table(j).Parameter(2).Unit = '[m]';
-            Bct.Table(j).Parameter(3).Name = 'water elevation (z)  end B';
-            Bct.Table(j).Parameter(3).Unit = '[m]';
-            Bct.Table(j).Data              = ([B.minutes(tmask),B.elev(tmask,ind0),B.elev(tmask,ind1)]);
-            Bct.Table(j).Format            = '% 6g % .3f % .3f'; % time int in minutes, waterlevel float in mm
+            Bct.Table(isegcum)                   = Bxt.Table;
+            Bct.Table(isegcum).Parameter(2).Name = 'water elevation (z)  end A';
+            Bct.Table(isegcum).Parameter(2).Unit = '[m]';
+            Bct.Table(isegcum).Parameter(3).Name = 'water elevation (z)  end B';
+            Bct.Table(isegcum).Parameter(3).Unit = '[m]';
+            Bct.Table(isegcum).Data              = ([B.minutes(tmask),B.elev(tmask,ind0),B.elev(tmask,ind1)]);
+            Bct.Table(isegcum).Format            = '% 6g % .3f % .3f'; % time int in minutes, waterlevel float in mm
       
             if getm.m3d.calc_salt
-            js = (j-1)*nsub+1;
+            js = (isegcum-1)*nsub+1;
             Bcc.Table(js)                   = Bxt.Table;
             Bcc.Table(js).Parameter(2).Name = 'Salinity             end A uniform';
             Bcc.Table(js).Parameter(2).Unit = '[ppt]';
@@ -304,7 +305,7 @@ function MDF = getm2delft3d(varargin)
             end
       
             if getm.m3d.calc_temp
-            jt = (j-1)*nsub+1+getm.m3d.calc_salt;
+            jt = (isegcum-1)*nsub+1+getm.m3d.calc_salt;
             Bcc.Table(jt)                   = Bxt.Table;
             Bcc.Table(jt).Parameter(2).Name = 'Temperature          end A uniform';
             Bcc.Table(jt).Parameter(2).Unit = '[°C]';
@@ -314,7 +315,7 @@ function MDF = getm2delft3d(varargin)
             Bcc.Table(jt).Format            = '% 6g % .3f % .3f'; % time int in minutes, waterlevel float in mm
             end
 
-            end % j = 1:nseg
+            end % j = 1:nseg1
             
             BND.NTables = length(Bnd.DATA);
             
@@ -402,7 +403,7 @@ function MDF = getm2delft3d(varargin)
 for iq=2:-1:1
     
    if iq==2
-      getm0 = getm;
+      getm0               = getm;
       getm.m3d.calc_temp  = 0;
       getm.m3d.calc_salt  = 0;
       MDF.keywords.fildis = [filename(OPT.river)    ,'_Q_only.dis'];
@@ -459,7 +460,7 @@ for iq=2:-1:1
    
    bct_io('write',[OPT.workdir,MDF.keywords.fildis],Dis);
    
-   if iq==2;getm = getm0; end % restore
+   if iq==1;getm = getm0; end % restore
    
 end   
 

@@ -101,7 +101,7 @@ end
 %% get filename, gui for filename, if not set yet
 
 if isempty(OPT.fileName)
-    [fileName, filePath] = uiputfile({'*.kml','KML file';'*.kmz','Zipped KML file'},'Save as',[mfilename,'.kml']);
+    [fileName, filePath] = uiputfile({'*.kmz','Zipped KML file';'*.kml','KML file + separate image files'},'Save as',[mfilename,'.kmz']);
     OPT.fileName = fullfile(filePath,fileName);
 end
 
@@ -137,6 +137,9 @@ lon    = lon(mask);
 lat    = lat(mask);
 c      =   c(mask);
 if ~isempty(OPT.name)
+if ischar(OPT.name)
+OPT.name = cellstr(OPT.name);
+end
 OPT.name = {OPT.name{mask}};
 end
 if ~isempty(OPT.html)
@@ -186,6 +189,7 @@ if OPT.colorbar
     OPT.CBvisible = OPT.visible;
     [clrbarstring,pngNames] = KMLcolorbar(OPT);
 else
+    pngNames = {};
     clrbarstring = '';
 end
 
@@ -238,7 +242,7 @@ for ii = 1:OPT.CBcolorSteps
                 ' </Style>' eol];
         end
     else
-        if ~(OPT.scalenormalState==OPT.scalehighlightState & OPT.iconnormalState==OPT.iconhighlightState)
+        if ~(OPT.scalenormalState==OPT.scalehighlightState & strcmpi(OPT.iconnormalState,OPT.iconhighlightState))
             output = [output ...
                 '<StyleMap id="cmarker_',num2str(ii,'%0.3d'),'map">' eol...
                 ' <Pair><key>normal</key><styleUrl>#cmarker_',num2str(ii,'%0.3d'),'n</styleUrl></Pair>' eol...
@@ -436,20 +440,45 @@ fprintf(OPT.fid,'%s',output);
 
 fclose(OPT.fid);
 
-%% compress to kmz?
+
+%% compress to kmz and include image fileds
 
    if strcmpi  ( OPT.fileName(end-2:end),'kmz')
-       movefile( OPT.fileName,[OPT.fileName(1:end-3) 'kml'])
-       zip     ( OPT.fileName,[OPT.fileName(1:end-3) 'kml']);
-       movefile([OPT.fileName '.zip'],OPT.fileName)
-       delete  ([OPT.fileName(1:end-3) 'kml'])
+
+      % download/copy dot images for inclusion in kmz
+      if isurl(OPT.iconnormalState   );
+         pngNames{end+1} = fullfile(fileparts(OPT.fileName),filenameext(OPT.iconnormalState   ));
+         urlwrite(OPT.iconnormalState   ,pngNames{end});
+      else
+         pngNames{end+1} = fullfile(fileparts(OPT.fileName),[filename(OPT.iconnormalState   ),'_copy',fileext(OPT.iconnormalState   )]);
+         copyfile(OPT.iconnormalState   ,pngNames{end}); % always make copy, even from lcal file, due to delete below
+      end
+      
+      if ~strcmpi(OPT.iconnormalState,OPT.iconhighlightState)
+      if isurl(OPT.iconhighlightState);
+         pngNames{end+1} = fullfile(fileparts(OPT.fileName),filenameext(OPT.iconhighlightState));
+         urlwrite(OPT.iconhighlightState,pngNames{end});
+      else
+         pngNames{end+1} = fullfile(fileparts(OPT.fileName),[filename(OPT.iconhighlightState),'_copy',fileext(OPT.iconhighlightState)]);
+         copyfile(OPT.iconnormalState   ,pngNames{end}); % always make copy, even from lcal file, due to delete below
+      end
+      end
+   
+      movefile( OPT.fileName,[OPT.fileName(1:end-3) 'kml'])
+      files = [{[OPT.fileName(1:end-3) 'kml']},pngNames];
+      zip     ( OPT.fileName,files);
+      for ii = 1:length(files)
+          delete  (files{ii})
+      end
+      movefile([OPT.fileName '.zip'],OPT.fileName);
+      
    end
 
 %% openInGoogle?
 
-if OPT.openInGE
-    system(OPT.fileName);
-end
+   if OPT.openInGE
+      system(OPT.fileName);
+   end
 
 %% Output
 
