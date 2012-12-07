@@ -159,7 +159,7 @@ if ~isempty(varargin)
     %Find element names
     elementNames=cell(1,length(groupNames)); 
     for l=1:length(groupNames)
-       if length(groupNames{l})==1 
+       if ~iscell(groupNames{l})
            elementNames{l}=[];
        else
            elementNames{l}=groupNames{l}(2:end);
