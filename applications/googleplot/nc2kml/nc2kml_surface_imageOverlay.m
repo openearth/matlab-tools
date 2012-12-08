@@ -183,7 +183,7 @@ for ii = 1:length(ncfiles);
     z_start0 = [1 1 1];
     z_count  = [z_dim_info.Dimensions.Length];
     z_count(time_dim) = 1;
-    for jj = 1%size(date4GE,1)-1:-1:1
+    for jj = size(date4GE,1)-1:-1:1
         % load z data
         z = OPT.z_scale_factor * ncread(url,OPT.var_name,...
             z_start0 + time_dim*(jj-1),z_count);
