@@ -36,10 +36,10 @@ OPT = setproperty(OPT,varargin);
 netcdf_index = ncgentools_get_data_in_box(OPT.path_netcdf);
 
 %% Part 1: generate tiles
-% generate_tiles(OPT,netcdf_index)
+generate_tiles(OPT,netcdf_index)
 
 %% Part 2: merge tiles at lower levels
-% merge_tiles(OPT)
+merge_tiles(OPT)
 
 %% Part 3: write KML
 dataBounds.E = max(netcdf_index.geospatialCoverage_eastwest(:));
