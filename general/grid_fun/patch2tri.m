@@ -14,22 +14,22 @@ function varargout = patch2tri(corx,cory,map,varargin)
 %    trisurf(tri,xcor,ycor,zcor)       plots vertex (corner) data zcor and
 %    trisurf(tri,xcor,ycor,zcen(map3)) plots patch (center) data zcen
 %
-%                                                              
-%                                                              
-%  +-------+--------+              +-------+--------+          
-%  |       |        |              | 3    /|\     3 |          
-%  |       |        |              |    /  |  \     |          
-%  |  4    |   5    |              |  /    |    \   |          
-%  |       |        |              |/    3 | 3    \ |          
-%  +-------+        +-----+        +-------+--------+-----+    
-%            \     /       \                 \  3  /|\   3|\   
-%             \   /          \                \   / | \   |  \ 
-%               +      6      +                 +  3|  \  | 3 +
-%                 \          /                    \ |   \ |  / 
-%                  \       /                       \| 3  \|/   
-%                   +-----+                         +-----+    
+%  +                                   +                               
+%  | \                                 | \                             
+%  |   \                               |   \                           
+%  | 3   \                             |     \                         
+%  +-------+--------+                  +-------+--------+              
+%  |       |        |                  |    /  |  \     |              
+%  |  4    |   5    |                  |  /    |    \   |              
+%  +-------+        +---------+        +-------+--------+---------+    
+%           \      /           \                \      /|\        |\   
+%             \  /               \                \  /  |  \      |  \ 
+%               +        6        +                 +   |    \    |   +
+%                 \              /                    \ |      \  |  / 
+%                  \           /                       \|        \|/   
+%                   +---------+                         +---------+    
 %
-% See also: TRISUFRCORCEN, QUAT2NET, QUAT, TRIQUAT, DELAUNAY
+% See also: TRISURFCORCEN, QUAT2NET, QUAT, TRIQUAT, DELAUNAY
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2011-12 Deltares
