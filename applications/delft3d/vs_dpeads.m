@@ -26,10 +26,10 @@ function D = vs_dpeads(vsfile,it,varargin)
 %   equation to investigate tidal straining and advection of stratification in 
 %   a region of freshwater influence, Ocean Modeling, 22(1-2) <a href="http://dx.doi.org/10.1016/j.ocemod.2007.12.003">doi:10.1016/j.ocemod.2007.12.003</a>.
 %
-%    Uses a central difference scheme with gradients defined at centers (water level 
-%    points). Dummy rows and columns are not returned, as in VS_LET_SCALAR. 
+% Uses a central difference scheme with gradients defined at centers (water level 
+% points). Dummy rows and columns are not returned, as in VS_LET_SCALAR. 
 %
-% For the temporal (LHS) gradient see VS_TRIM2NC, that allows to  extract 
+% For the temporal (LHS) gradient, see VS_TRIM2NC, that allows to  extract 
 % both the spatial RHS and temporal LHS gradients at once to one netCDF file.
 %
 % See also: VS_TRIM2NC, DELFT3D, PEA_SIMPSON_ET_AL_1990, VS_USE, VS_LET_SCALAR
@@ -219,9 +219,14 @@ function D = vs_dpeads(vsfile,it,varargin)
                                           int.dicww(:,:,1:end-1).*int.ddensitydz(:,:,1:end-1))./G.cen.cent.dz(:,:,2:end-1);
 
       if strcmp(OPT.mixing(1:4),'zero')
-      cen.dphidt_mixing = 0.*cen.dphidt_updown;
+      % Top and bottom layer values were initialized zero, just keep them like that.
       elseif strcmp(OPT.mixing(1:3),'lin')
-      % assume linear profile of nu*drhodz in top and bottom layer
+      % Assume linear profile of nu*drhodz in top and bottom layer,
+      % with end-values zero at free surface interface and bed interface.
+      % For bottom we should use f(bed_shear_stress) and 
+      % for surface we should use f(wind_speed) mixing, so this is
+      % an underestimation of nu*drhodz, but necesarrily of dphidt_mixing
+      % as that depends on the density distribution too.
       cen.dphidt_mixing(:,:,1      ) = + (1./OPT.prandtlschmidt).*...
                                          (int.dicww(:,:,2      ).*int.ddensitydz(:,:,2) -   0)./G.cen.cent.dz(:,:,1      );
       cen.dphidt_mixing(:,:,end    ) = + (1./OPT.prandtlschmidt).*...

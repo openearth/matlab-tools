@@ -140,7 +140,7 @@ function iostat=Local_write(varargin)
    
    if     nargin ==2
       D       = varargin{2};
-   elseif nargin >3
+   elseif nargin >2
       D.m     = varargin{2};
       D.n     = varargin{3};
       if nargin==4

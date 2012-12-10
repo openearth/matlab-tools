@@ -30,39 +30,16 @@ function varargout=delft3d_io_mdf(cmd,varargin),
 % Comment lines are read but cannot not be written to mdf file.
 %
 % Storage flags for map data (trim only)
-% 
-%     SMhydr  1 water level
-%     SMhydr  2 U and 
-%     SMhydr  3 V and  
-%     SMhydr  4 magnitude and
-%     SMhydr  5 direction
-%     SMhydr  6 w and omega velocities 
-%     
-%     SMproc  1 salinity
-%     SMproc  2 temperature
-%     SMproc  3 constituent1
-%     SMproc  4 constituent2
-%     SMproc  5 constituent3
-%     SMproc  6 constituent4
-%     SMproc  7 constituent5
-%     SMproc  8 intensity spiral motion
-%     SMproc  9 turbulent energy k
-%     SMproc 10 turbulent dissipation eps
-%     
-%     SMderv  1 U Bed shear stress
-%     SMderv  2 V Bed shear stress
-%     SMderv  3 vertical eddy viscosity
-%     SMderv  4 vertical eddy diffisuvity
-%               Ri if either of both are selected
-%     SMderv  5 density
-%     SMderv  6 HLES
-% 
+%     SMhydr(1:6)  - water level, U, V, magnitude, direction, w/omega velocities 
+%     SMproc(1:2)  - salinity, temperature
+%     SMproc(3:7)  - constituent1, .., constituent5
+%     SMproc(8)    - intensity spiral motion
+%     SMproc(9:10) - turbulent energy k and dissipation eps
+%     SMderv(1:2)  - U and V Bed shear stress
+%     SMderv(3:4)  - vertical eddy viscosity and diffisuvity and Ri if either of both are selected
+%     SMderv(5:6)  - density and HLES
 %
-% See also: delft3d_io_ann, delft3d_io_bca, delft3d_io_bch, delft3d_io_bnd, 
-%           delft3d_io_crs, delft3d_io_dep, delft3d_io_dry, delft3d_io_eva, 
-%           delft3d_io_fou, delft3d_io_grd, delft3d_io_ini, delft3d_io_mdf, 
-%           delft3d_io_obs, delft3d_io_restart,             delft3d_io_src, 
-%           delft3d_io_tem, delft3d_io_thd, delft3d_io_wnd, 
+% See also: delft3d 
 
 % Mar 13 2006: added keyword for upper/lower case
 % Dec 19 2005: changes a few special cases when writing

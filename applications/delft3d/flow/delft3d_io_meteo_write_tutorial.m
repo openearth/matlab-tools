@@ -53,20 +53,25 @@ function varargout = delft3d_io_meteo_write_example(varargin)
    OPT.ncfiles        = {'meteo\CFSR.NS.2003.nc','meteo\CFSR.NS.2004.nc'};
    OPT.refdatenum     = datenum(2003,1,1); % for mdf test file
    OPT.period         = datenum(2003,11,[1 8]);
+   OPT.workdir        = '';
 
-%% map parameters from netcf file to delft3d parameters
+%% map parameters from netcf file to delft3d parameters:
+%  For functional conversions, make sure all required variables
+%  are loaded before by setting respective OPT.amkeep for to 1.
+%  Last loaded dataset (incl itself) is always called data.
 
    OPT.lon           = 'lon';
    OPT.lat           = 'lat';
-   OPT.varnames      = {'slp'         ,'u10'   ,'v10'   ,'sh'               ,'t2'             ,'tcc'};
-  %CONVERT_UNITS does not work on 'degree Celsius' so we specify conversion factors
-  %OPT.varunits      = {'Pascal'      ,'m/s'   ,'m/s'   ,'kg/kg'            ,'degree Celsius' ,'1'};
-   OPT.amfac         = [1              1         1       100                 1                 100  ];
+   OPT.varnames      = {'slp'         ,'u10'   ,'v10'   ,'t2'             ,'tcc'        'dev2'                                     };%,'rh'               };
+  %CONVERT_UNITS does not work on 'degree Celsius' so we specify conversion factors  
+  %OPT.varunits      = {'Pascal'      ,'m/s'   ,'m/s'   ,'deg_C'          ,'1'         'deg_C'                                     };%,'1'                };
+   OPT.amfac         = {1             ,1        ,1      ,1                ,100          ,'relative_humidity(''wmo_water'',t2,data)'};%, 100                ];
+   OPT.amkeep        = [0              0         0       1                 0            0                                          ];%, 0                  ];
 
-   OPT.amnames       = {'air_pressure','x_wind','y_wind','relative_humidity','air_temperature','cloudiness'};
-   OPT.amext         = {'amp'         ,'amu'   ,'amv'   ,'amr'              ,'amt'            ,'amc'};
-   OPT.amunits       = {'Pa'          ,'m s-1' ,'m s-1' ,'%'                ,'Celsius'        ,'%'};
-   OPT.amkeyword     = {'fwndgp'      ,'fwndgu','fwndgv','fwndgr'           ,'fwndgt'         ,'fwndgc'};
+   OPT.amnames       = {'air_pressure','x_wind','y_wind','air_temperature','cloudiness','relative_humidity'                        };%,'relative_humidity'};
+   OPT.amext         = {'amp'         ,'amu'   ,'amv'   ,'amt'            ,'amc'        'amr'                                      };%,'amr'              };
+   OPT.amunits       = {'Pa'          ,'m s-1' ,'m s-1' ,'Celsius'        ,'%'          '%'                                        };%,'%'                };
+   OPT.amkeyword     = {'fwndgp'      ,'fwndgu','fwndgv','fwndgt'         ,'fwndgc'     'fwndgr'                                   };%,'fwndgr'           };
 
    if nargin==0
       varargout = {OPT};
@@ -101,23 +106,36 @@ function varargout = delft3d_io_meteo_write_example(varargin)
 %% create delft3d ascii file headers (and add 1st timestep)
 
    MDF = delft3d_io_mdf('new');
-
+   
    ifile = files2proces(1);
    for ivar=1:length(OPT.varnames)
    data = ncread(OPT.ncfiles{1},OPT.varnames{ivar},[1 1 1],[Inf Inf 1]);
+   
+   if OPT.amkeep(ivar)
+     %disp([OPT.varnames{ivar},' = data;']);
+      eval([OPT.varnames{ivar},' = data;']);
+   end
+   if isnumeric(OPT.amfac{ivar})
+      data = data.*OPT.amfac{ivar};
+   else
+      data = eval(OPT.amfac{ivar});
+   end
+
    amfilename = [filename(OPT.ncfiles{ifile}),'.',OPT.amext{ivar}];
    grdfile    = [filename(OPT.ncfiles{ifile}),'.grd'];
    encfile    = [filename(OPT.ncfiles{ifile}),'.enc'];
-   fid(ivar) = delft3d_io_meteo_write([filename(OPT.ncfiles{ifile}),'.',OPT.amext{ivar}],...
-       T(ifile).datenum(T(ifile).start),data.*OPT.amfac(ivar),D.lon,D.lat,...
+   
+   fid(ivar) = delft3d_io_meteo_write([OPT.workdir,filename(OPT.ncfiles{ifile}),'.',OPT.amext{ivar}],...
+       T(ifile).datenum(T(ifile).start),data,D.lon,D.lat,...
        'CoordinateSystem','Spherical',...
               'grid_file',grdfile,...
                'quantity',OPT.amnames{ivar},...
                    'unit',OPT.amunits{ivar},...
                'writegrd',ivar==1,... % only needed once
                  'header',['source: ',OPT.ncfiles{1}]);
-             
+   ADD.keywords.(OPT.amkeyword{ivar}) = amfilename;        
    MDF.keywords.(OPT.amkeyword{ivar}) = amfilename;
+
    end
    
    T(1).start          = min(T(1).start + 1,T(1).stop); % do not add 1st timestep again
@@ -125,7 +143,8 @@ function varargout = delft3d_io_meteo_write_example(varargin)
    MDF.keywords.filgrd = encfile;
    MDF.keywords.mnkmax = [size(data)+1 1];
    MDF.keywords.sub1   = '  W '; % activate wind
-   MDF.keywords.Wnsvwp = 'Y';    % spatially varying meteo input
+   MDF.keywords.wnsvwp = 'Y';    % spatially varying meteo input
+   ADD.keywords.wnsvwp = 'Y';    % spatially varying meteo input
    MDF.keywords.airout = 'yes';  % save p,u,v  to trim file
    MDF.keywords.heaout = 'yes';  % save rh,c,t to trim file
    MDF.keywords.itdate = datestr(OPT.refdatenum,'yyyy-mm-dd');
@@ -150,7 +169,18 @@ function varargout = delft3d_io_meteo_write_example(varargin)
           
           for ivar=1:length(OPT.varnames)
           data = ncread(OPT.ncfiles{ifile},OPT.varnames{ivar},[1 1 it],[Inf Inf 1]);
-          delft3d_io_meteo_write(fid(ivar),D.time,data.*OPT.amfac(ivar));
+
+          if OPT.amkeep(ivar)
+            %disp([OPT.varnames{ivar},' = data;']);
+             eval([OPT.varnames{ivar},' = data;']);
+          end
+          if isnumeric(OPT.amfac{ivar})
+             data = data.*OPT.amfac{ivar};
+          else
+             data = eval(OPT.amfac{ivar});
+          end
+
+          delft3d_io_meteo_write(fid(ivar),D.time,data);
           end   
       end
    end
@@ -165,3 +195,4 @@ function varargout = delft3d_io_meteo_write_example(varargin)
 
    delft3d_io_mdf('write',[filename(OPT.ncfiles{1}),'.mdf'],MDF.keywords);
    
+   varargout = {ADD};

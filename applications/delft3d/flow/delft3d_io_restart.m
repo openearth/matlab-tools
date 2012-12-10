@@ -1,17 +1,17 @@
 function varargout=DELFT3D_IO_RESTART(cmd,varargin),
-%DELFT3D_IO_RESTART   Read/write Delft3D binary restart file <<beta version!>>
+%DELFT3D_IO_RESTART   Read/write Delft3D binary restart file 
 %
 % [DAT,<iostat>] = DELFT3D_IO_RESTART('read' ,restartfilename,mdffile)
 %
 %   reads a Delft3D binary restart file, and needs also to read the mdffile to be able
 %   to infer the contents of the restart, that contains no meta-information whatsoever.
-%   The requires meta-information ca also be supplied by the user instead:
+%   The requires meta-information can also be supplied by the user instead:
 %
 %   [DAT,<iostat>] = DELFT3D_IO_RESTART('read' ,filename,[mmax nmax],nlayers,parameternames);	
 %   [DAT,<iostat>] = DELFT3D_IO_RESTART('read' ,filename,GRID       ,nlayers,parameternames);	
 %
 %   where [mmax nmax], nlayers and parameternames are normally determined from
-%   the 5 *.mdf fields mnkmax, sub1, tkemod, namc1 .. namc5.
+%   the 5 *.mdf fields mnkmax, sub1, tkemod, namc1, .., namc5.
 %
 %   Alternatively, parameternames can be supplied as a struct with 2 fields, 
 %   where all possible names and layers combinations are (<..> being optional):

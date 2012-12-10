@@ -204,7 +204,7 @@ elseif strcmpi(OPT.filetype,'meteo_on_curvilinear_grid')
         
         OPT.header = cellstr(OPT.header);
         for ii=1:length(OPT.header)
-            fprintf  (fid,['# ',OPT.header{ii}]);
+            fprintf  (fid,'%s',['# ',OPT.header{ii}]);
             fprinteol(fid,OPT.OS);
         end
         

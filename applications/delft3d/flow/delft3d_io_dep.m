@@ -254,6 +254,7 @@ else strcmpi(cmd,'write');
     OPT.unit        = '[m]';
     OPT.positive    = 'down';
     OPT.mfilename   = 'unknown mfilename';
+    OPT.meta        = 0;
     
     OPT = setproperty(OPT,varargin{4:end});
     
@@ -305,40 +306,44 @@ else strcmpi(cmd,'write');
         platform = 'windows';
     end
     
-    metainfo = {['File type                       = Delft3d FLOW depth file (*.dep) (http://www.wldelft.nl/soft/d3d/intro/index.html)'],...
-        ['variable                        = ',OPT.name],...
-        ['nodatavalue                     = ',num2str(OPT.nodatavalue)],...
-        ['position                        = ',position],...
-        ['units                           = ',OPT.unit],...
-        ['positive                        = ',OPT.positive],...
-        ['dummy rows                      = ',positiondummyvalue],...
-        ['dummy columns                   = ',positiondummyvalue],...
-        ['size (incl. dummy rows/columns) = ',num2str(size(D3Dmatrix,1)),' ',num2str(size(D3Dmatrix,2))],...
-        ['File written by                 = delft3d_io_dep.m ',delft3d_io_dep_version, '; called from ', OPT.mfilename],...
-        ['date time                       = ',datestr(now,31)],...
-        ['matlab version                  = ',version],...
-        ['platform                        = ',platform]};
-    
-    tmpfile1 = gettmpfilename(pwd);
-    wldep('write',tmpfile1,D3Dmatrix);
-    tmpfile2 = gettmpfilename(pwd);
-    fid  = fopen(tmpfile2,'w');
-    
-    for ii=1:length(metainfo)
-        fprintf(fid,'* ');
-        fprintf(fid,char(metainfo{ii}));
-        fprinteol(fid,platform);
-    end
-    fclose(fid);
-    
-    if isunix
-        error('unix not implemented yet')
+    if ~OPT.meta % meta does not load in GUI
+       wldep('write',fname,D3Dmatrix);
     else
-        % put meta info
-        doscommand = ['!copy ',tmpfile1,' + ',tmpfile2,' ',fname];
-        eval(doscommand);
-        delete(tmpfile1);
-        delete(tmpfile2);
+       metainfo = {['File type                       = Delft3d FLOW depth file (*.dep) (http://www.wldelft.nl/soft/d3d/intro/index.html)'],...
+           ['variable                        = ',OPT.name],...
+           ['nodatavalue                     = ',num2str(OPT.nodatavalue)],...
+           ['position                        = ',position],...
+           ['units                           = ',OPT.unit],...
+           ['positive                        = ',OPT.positive],...
+           ['dummy rows                      = ',positiondummyvalue],...
+           ['dummy columns                   = ',positiondummyvalue],...
+           ['size (incl. dummy rows/columns) = ',num2str(size(D3Dmatrix,1)),' ',num2str(size(D3Dmatrix,2))],...
+           ['File written by                 = delft3d_io_dep.m ',delft3d_io_dep_version, '; called from ', OPT.mfilename],...
+           ['date time                       = ',datestr(now,31)],...
+           ['matlab version                  = ',version],...
+           ['platform                        = ',platform]};
+       
+       tmpfile1 = gettmpfilename(pwd);
+       wldep('write',tmpfile1,D3Dmatrix);
+       tmpfile2 = gettmpfilename(pwd);
+       fid  = fopen(tmpfile2,'w');
+       
+       for ii=1:length(metainfo)
+           fprintf(fid,'* ');
+           fprintf(fid,char(metainfo{ii}));
+           fprinteol(fid,platform);
+       end
+       fclose(fid);
+       
+       if isunix
+           error('unix not implemented yet')
+       else
+           % put meta info
+           doscommand = ['!copy ',tmpfile1,' + ',tmpfile2,' ',fname];
+           eval(doscommand);
+           delete(tmpfile1);
+           delete(tmpfile2);
+       end
     end
     
 end

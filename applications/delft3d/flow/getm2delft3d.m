@@ -91,11 +91,15 @@ function MDF = getm2delft3d(varargin)
       getm.domain.crit_depth       = .3;
       getm.domain.min_depth        = .1;
       getm.domain.kdum             = 1;
+      getm.m2d.elev_method         = 1;
+      getm.m2d.elev_const          = 0;
       getm.m2d.Am                  = 1;
       getm.m2d.An_const            = 1;
       getm.m3d.avmback             = 1e-6;
       getm.m3d.avhback             = 1e-6;
+      getm.temp.temp_method        = 1;
       getm.temp.temp_const         = 15;
+      getm.salt.salt_method        = 1;
       getm.salt.salt_const         = 31;
       getm.rivers.use_river_salt   = 1; % delft3d cannot neglect it
       getm.rivers.use_river_temp   = 1; % delft3d cannot neglect it
@@ -113,8 +117,10 @@ function MDF = getm2delft3d(varargin)
    MDF.keywords.vicoww  = getm.m3d.avmback;
    MDF.keywords.dicoww  = getm.m3d.avhback;
    MDF.keywords.thick   = repmat(100/getm.domain.kdum,[getm.domain.kdum 1]);
-   if getm.m3d.calc_salt; MDF.keywords.sub1(1) = 'S';MDF.keywords.s0 = repmat(getm.salt.salt_const,size(MDF.keywords.thick));end % calc_* means it solves the equation (d3d has no ...
-   if getm.m3d.calc_temp; MDF.keywords.sub1(2) = 'T';MDF.keywords.t0 = repmat(getm.temp.temp_const,size(MDF.keywords.thick));;end % ... diagnostic mode, getm.param.runtype is irrelevant)
+   MDF.keywords.denfrm = 'UNESCO'; % d3d default
+   if ~(getm.eqstate.eqstate_method==2)
+      warning('equation of state not implemented in delft3d, only Eckertand Unesco (default)')
+   end
    
    switch getm.domain.vel_depth_method
    case 0, MDF.keywords.dpuopt = 'mean';
@@ -191,6 +197,41 @@ function MDF = getm2delft3d(varargin)
    end
    fclose(fid);
    
+%% initial conditions
+
+   if getm.m2d.elev_method==1
+      MDF.keywords.zeta0 = getm.m2d.elev_const;
+   else
+      INI.waterlevel = f(getm.m2d.elev_file);
+   end
+   
+   % calc_* means it solves the equation (d3d has no diagnostic mode, getm.param.runtype is irrelevant)
+    
+   if getm.m3d.calc_salt;
+      MDF.keywords.sub1(2) = 'T';
+      if     getm.temp.temp_method==0
+         warning('hotstart not yet implemented')
+      elseif getm.temp.temp_method==1
+         MDF.keywords.t0      = repmat(getm.temp.temp_const,size(MDF.keywords.thick));
+      else
+         warning('hotstart not yet implemented')
+         %INI.temperature = f(getm.m2d.temp_file,getm.m2d.temp_name,getm.m2d.temp_field_no);
+      end
+   end
+
+   if getm.m3d.calc_temp;
+      MDF.keywords.sub1(1) = 'S';
+      if     getm.salt.salt_method==0
+         warning('hotstart not yet implemented')
+      elseif getm.salt.salt_method==1
+         MDF.keywords.s0      = repmat(getm.salt.salt_const,size(MDF.keywords.thick));
+      else
+         warning('hotstart not yet implemented')
+        %INI.salinity    = f(getm.m2d.elev_file,getm.m2d.salt_name,getm.m2d.salt_field_no);
+      end
+   end
+   
+
 %% boundary locations and conditions
 %  boundary positions not truly generic yet, should be via az matrix to get remove 
 %  internal corners at connections of vertical e/w and horizontal n/s boundaries
@@ -463,12 +504,6 @@ for iq=2:-1:1
    if iq==1;getm = getm0; end % restore
    
 end   
-
-B.minutes(tmask(  1))
-B.minutes(tmask(end))   
-
-MDF.keywords.tstart
-MDF.keywords.tstop 
 
 %% save new mdf with all links to new delft3d include files
 

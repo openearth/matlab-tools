@@ -130,7 +130,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
        error(['file does not exist: ',vsfile])
    end
    if (tmp.bytes > 2^31)  & strcmpi(OPT.Format,'classic')
-      fprintf(2,'Delft3D NEFIS files larger than 2 Gb cannot be mapped entirely to netCDF classic format, set keyword vs_trim2nc(...,''Format'',''64bit'').\n')
+      fprintf(2,'> Delft3D NEFIS files larger than 2 Gb cannot be mapped entirely to netCDF classic format, set keyword vs_trim2nc(...,''Format'',''64bit'').\n')
    end
 
    OPT      = setproperty(OPT,varargin{:});
@@ -302,8 +302,8 @@ function varargout = vs_trim2nc(vsfile,varargin)
          ind=strcmp(OPT.var,'x'        );if all(ind==0);OPT.var{end+1} = 'x'        ;end
          ind=strcmp(OPT.var,'y'        );if all(ind==0);OPT.var{end+1} = 'y'        ;end
          if isempty(OPT.epsg)
-         fprintf(2,'No EPSG code specified for CARTESIAN grid, your grid is not CF compliant:\n')
-         fprintf(2,'(latitude,longitude) cannot be calculated from (x,y)!\n')
+         fprintf(2,'> No EPSG code specified for CARTESIAN grid, your grid is not CF compliant:\n')
+         fprintf(2,'> (latitude,longitude) cannot be calculated from (x,y)!\n')
          end
       else
          coordinates  = 'latitude longitude';
@@ -349,7 +349,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       coordinatesLayer        = [coordinates]; % implicit via formula_terms att
       coordinatesLayerInterf  = [coordinates]; % implicit via formula_terms att
       elseif strmatch('Z-MODEL', G.layer_model)
-      fprintf(2,'Z-MODEL has not yet been tested.\n')
+      fprintf(2,'> Z-MODEL has not yet been tested.\n')
       G.ZK          =  vs_let(F,'map-const'     ,'ZK'               ,'quiet');
       coordinatesLayer        = [coordinates]; % ' Layer'
       coordinatesLayerInterf  = [coordinates]; % ' LayerInterf'
@@ -851,7 +851,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       else
          ind=strcmp(OPT.var,'waterlevel');
          OPT.var(ind) = [];      
-         fprintf(2,'Variable not in trim file, skipped: waterlevel\n')
+         fprintf(2,'> Variable not in trim file, skipped: waterlevel\n')
       end
       end
       
@@ -895,7 +895,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       else
          ind=strcmp(OPT.var,'velocity');
          OPT.var(ind) = [];      
-         fprintf(2,'Variable not in trim file, skipped: velocity\n')
+         fprintf(2,'> Variable not in trim file, skipped: velocity\n')
       end
       end
       
@@ -918,7 +918,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       else
          ind=strcmp(OPT.var,'velocity_omega');
          OPT.var(ind) = [];      
-         fprintf(2,'Variable not in trim file, skipped: velocity_omega\n')
+         fprintf(2,'> Variable not in trim file, skipped: velocity_omega\n')
       end
       end
       
@@ -941,7 +941,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       else
          ind=strcmp(OPT.var,'velocity_z');
          OPT.var(ind) = [];      
-         fprintf(2,'Variable not in trim file, skipped: velocity_z\n')
+         fprintf(2,'> Variable not in trim file, skipped: velocity_z\n')
       end
       end
 
@@ -985,7 +985,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       else
          ind=strcmp(OPT.var,'tau');
          OPT.var(ind) = [];      
-         fprintf(2,'Variable not in trim file, skipped: tau\n')
+         fprintf(2,'> Variable not in trim file, skipped: tau\n')
       end
       end
       
@@ -1009,7 +1009,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       else % remove if not present in trim file
          ind=strcmp(OPT.var,'density');
          OPT.var(ind) = [];      
-         fprintf(2,'Variable not in trim file, skipped: density\n')
+         fprintf(2,'> Variable not in trim file, skipped: density\n')
       end
       end
       
@@ -1184,7 +1184,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
          OPT.var(ind) = [];      
          ind=strcmp(OPT.var,'dpeadt');
          OPT.var(ind) = [];      
-         fprintf(2,'Variable not in trim file, skipped: PEA not yet implemented for Z-MODEL.\n')
+         fprintf(2,'> Variable not in trim file, skipped: PEA not yet implemented for Z-MODEL.\n')
       end
 
       if any(strcmp('salinity',OPT.var))
@@ -1205,7 +1205,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       else % remove if not present in trim file
          ind=strcmp(OPT.var,'salinity');
          OPT.var(ind) = [];      
-         fprintf(2,'Variable not in trim file, skipped: salinity \n')
+         fprintf(2,'> Variable not in trim file, skipped: salinity \n')
       end
       end
 
@@ -1227,7 +1227,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       else % remove if not present in trim file
          ind=strcmp(OPT.var,'temperature');
          OPT.var(ind) = [];      
-         fprintf(2,'Variable not in trim file, skipped: temperature\n')
+         fprintf(2,'> Variable not in trim file, skipped: temperature\n')
       end
       end
 
@@ -1249,7 +1249,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       else % remove if not present in trim file
          ind=strcmp(OPT.var,'tke');
          OPT.var(ind) = [];      
-         fprintf(2,'Variable not in trim file, skipped: tke\n')
+         fprintf(2,'> Variable not in trim file, skipped: tke\n')
       end
       end
 
@@ -1271,7 +1271,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       else % remove if not present in trim file
          ind=strcmp(OPT.var,'eps');
          OPT.var(ind) = [];      
-         fprintf(2,'Variable not in trim file, skipped: eps\n')
+         fprintf(2,'> Variable not in trim file, skipped: eps\n')
       end
       end
       
@@ -1293,7 +1293,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       else
          ind=strcmp(OPT.var,'viscosity_z');
          OPT.var(ind) = [];      
-         fprintf(2,'Variable not in trim file, skipped: viscosity_z\n')
+         fprintf(2,'> Variable not in trim file, skipped: viscosity_z\n')
       end
       end
       
@@ -1315,7 +1315,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       else
          ind=strcmp(OPT.var,'diffusivity_z');
          OPT.var(ind) = [];      
-         fprintf(2,'Variable not in trim file, skipped: diffusivity_z\n')
+         fprintf(2,'> Variable not in trim file, skipped: diffusivity_z\n')
       end
       end
       
@@ -1337,7 +1337,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       else
          ind=strcmp(OPT.var,'Ri');
          OPT.var(ind) = [];      
-         fprintf(2,'Variable not in trim file, skipped: Ri\n')
+         fprintf(2,'> Variable not in trim file, skipped: Ri\n')
       end
       end
 
@@ -1385,7 +1385,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
    else
       ind=strcmp(OPT.var,'sediment');
       OPT.var(ind) = [];      
-      fprintf(2,'Variable not in trim file, skipped: sediment\n')
+      fprintf(2,'> Variable not in trim file, skipped: sediment\n')
    end % isfield
 
 % TO DO: 

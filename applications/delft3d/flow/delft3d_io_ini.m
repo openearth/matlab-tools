@@ -1,10 +1,13 @@
 function varargout=delft3d_io_ini(cmd,varargin),
-%DELFT3D_IO_INI   read/write Delft3D initial fields file. <<beta version!>>
+%DELFT3D_IO_INI   read/write Delft3D initial fields file
 %
-%   DATA = delft3d_io_ini('read',filename,mdffilename);
+%     DATA = delft3d_io_ini('read',filename,mdffilename);
 %
-%          delft3d_io_ini('write',filename,DATA) % or delft3d_io_ini(..,DATA.data);
-%          delft3d_io_ini('write',filename,PLATFORM,DATA);
+%   reads a struct with fields: waterlevel,u,v, salinity,temperature
+%   constituent1,...,constituent5, secondaryflow
+%
+%     delft3d_io_ini('write',filename,DATA) % or delft3d_io_ini(..,DATA.data);
+%     delft3d_io_ini('write',filename,PLATFORM,DATA);
 %
 %   where platform can be
 %   - u<nix>   , l<inux>
@@ -12,7 +15,7 @@ function varargout=delft3d_io_ini(cmd,varargin),
 %
 %   and where data can be a struct, where the data are 
 %   written to the *.ini file in the order of the fieldnames
-%   where the field names order should be (use orderfields)
+%   where the fieldnames ORDER should be (actual names does not matter, use ORDERFIELDS)
 %   1. Water elevation                                    (   1 matrix  ).
 %   2. U-velocities                                       (Kmax matrices).
 %   3. V-velocities                                       (Kmax matrices).
@@ -26,11 +29,10 @@ function varargout=delft3d_io_ini(cmd,varargin),
 %   or it operates similar to trirst by passing a list of matrices:
 %      delft3d_io_ini('write',filename,PLATFORM,waterlevel,u,v,...);
 %
-% See also: delft3d_io_ann, delft3d_io_bca, delft3d_io_bch, delft3d_io_bnd, 
-%           delft3d_io_crs, delft3d_io_dep, delft3d_io_dry, delft3d_io_eva, 
-%           delft3d_io_fou, delft3d_io_grd, delft3d_io_ini, delft3d_io_mdf, 
-%           delft3d_io_obs, delft3d_io_restart,             delft3d_io_src, 
-%           delft3d_io_tem, delft3d_io_thd, delft3d_io_wnd, 
+% tke and dissipation can not be used as inpout with ini files,
+% use delft3d_io_restart instead.
+%
+% See also: ORDERFIELDS, delft3d_io_restart, delft3d
 
 % $Id$
 % $Date$
@@ -148,11 +150,11 @@ end
       if ~(isempty(strfind (char(MDF.keywords.sub1(1)),'S'       )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'salinity'     ;end
       if ~(isempty(strfind (char(MDF.keywords.sub1(2)),'T'       )));j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'temperature'  ;end
       if ~(isempty(strfind (char(MDF.keywords.sub2(2)),'C'       )))
-          if sum(strcmp(fieldnames(MDF.keywords),'namc1'))>0         ;j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent1' ;end
-          if sum(strcmp(fieldnames(MDF.keywords),'namc2'))>0         ;j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent2' ;end
-          if sum(strcmp(fieldnames(MDF.keywords),'namc3'))>0         ;j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent3' ;end
-          if sum(strcmp(fieldnames(MDF.keywords),'namc4'))>0         ;j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent4' ;end
-          if sum(strcmp(fieldnames(MDF.keywords),'namc5'))>0         ;j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent5' ;end
+          if sum(strcmp(fieldnames(MDF.keywords),'namc1'))>0        ;j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent1' ;end
+          if sum(strcmp(fieldnames(MDF.keywords),'namc2'))>0        ;j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent2' ;end
+          if sum(strcmp(fieldnames(MDF.keywords),'namc3'))>0        ;j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent3' ;end
+          if sum(strcmp(fieldnames(MDF.keywords),'namc4'))>0        ;j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent4' ;end
+          if sum(strcmp(fieldnames(MDF.keywords),'namc5'))>0        ;j=j+1;PAR.nlayers(j)= [D.kmax  ];PAR.names{j} = 'constituent5' ;end
       end
       if ~(isempty(strfind (char(MDF.keywords.sub1(4)),'I'       )));j=j+1;PAR.nlayers(j)= [       1];PAR.names{j} = 'secondaryflow';end
       if ~(isempty(strfind (char(MDF.keywords.sub1(4)),'I'       )));disp('Not tested for secondary flow yet .......');end
