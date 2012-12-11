@@ -67,6 +67,7 @@ OPT.var_att  = {'units','standard_name','long_name'};
 OPT.urlPath  = 'D:\products\nc\rijkswaterstaat\vaklodingen\combined';
 OPT.urlPathrep = OPT.urlPath; % option to replace the local path by the intended web url
 OPT.catalogname = '';
+OPT.mode = 'clobber';
 OPT = setproperty(OPT,varargin{:});
 
 % if nargin==0;
@@ -102,6 +103,10 @@ for ii = length(urls):-1:1
         D.urlPath{ii}   = ncfile;
     else
         D.urlPath{ii} = strrep(ncfile, OPT.urlPath, OPT.urlPathrep);
+        if regexp(D.urlPath{ii}, '^http')
+            % make sure all slashes are correct in case of an http url
+            D.urlPath{ii} = path2os(D.urlPath{ii}, 'http');
+        end
     end
     % loop each variable in each nc file.
     %  - if it has a 'geospatial standardname', determine the range of the variable
@@ -253,7 +258,8 @@ for ii = 1:length(fields)
     end
 end
 
-struct2nc(OPT.catalogname,D,M);
+struct2nc(OPT.catalogname,D,M,...
+    'mode', OPT.mode);
 
 function [actual_range] = get_actual_range(ncfile,varname,sz)
 
