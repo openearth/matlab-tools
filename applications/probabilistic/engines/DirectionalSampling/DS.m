@@ -229,7 +229,7 @@ if isnan(OPT.seed)
 end
 rng('default');
 rng(OPT.seed);
-randmatrix = rand(sum(active), OPT.maxsamples);                             % predetermined samples (with a fixed seed)
+randmatrix = rand(OPT.maxsamples, sum(active));                             % predetermined samples (with a fixed seed)
 nrandmatrix = 1;                                                            % counter for number of times the randmatrix is used
 
 % compute origin
@@ -244,7 +244,7 @@ if z0<0
 end
 
 % iniate counters
-n           = 1;                                                            % exact evaluation counter
+n           = length(OPT.x2zFunction);                                      % exact evaluation counter (counts every evaluation of an individual limit state)
 nARS        = nan;                                                          % number of evaluations needed for initial ARS
 
 % initiate computational vectors
@@ -298,7 +298,7 @@ while Pr > OPT.Pratio || ~isempty(reevaluate)                               % WH
             converged(idx)  = false;
 
             P               = nan(OPT.NrSamples, N);
-            P(:, active)    = randmatrix(:,nrandmatrix)';                   % sampled probability
+            P(:, active)    = randmatrix(nrandmatrix,:);                    % sampled probability
             P(:,~active)	= .5;                                           % probability of inactive stochasts (expected value)
             
             % transform P to u
@@ -335,7 +335,7 @@ while Pr > OPT.Pratio || ~isempty(reevaluate)                               % WH
             ze          = [];                                               % initialize z vector for exact results
             ze_tot      = [];
         else
-            n           = n+1;                                              % increase evaluation counter
+            n           = n + length(OPT.x2zFunction);                      % increase evaluation counter
             
             ba          = [];                                               % initialize beta vector for approximated results
             za          = [];                                               % initialize z vector for approximated results
@@ -410,7 +410,7 @@ while Pr > OPT.Pratio || ~isempty(reevaluate)                               % WH
                         be      = [be OPT.beta1];
                         ze      = [ze z(end)];
                         ze_tot  = [ze_tot; z1];
-                        n       = n + 1;
+                        n       = n + length(OPT.x2zFunction);
 
                         ii      = [ii find(z==z(end),1,'last')];
                     end
@@ -433,7 +433,7 @@ while Pr > OPT.Pratio || ~isempty(reevaluate)                               % WH
                 b           = [b  bn];                                      % add evaluated beta values to corresponding vector with all results
                 z           = [z  zn];                                      % add evaluated z values to corresponding vector with all results
 
-                n           = n+nn;                                         % increase evaluation counter
+                n           = n + nn*length(OPT.x2zFunction);               % increase evaluation counter
 
                 exact(idx)  = true;                                         % register evaluation as exact (temporarily)
             end
@@ -489,13 +489,13 @@ while Pr > OPT.Pratio || ~isempty(reevaluate)                               % WH
         if sum(dP>0)>OPT.minsamples && Pf > 0                               % IF: check if the minimum number of samples to check convergence is reached
                                                                             %   and a valid probability of failure is obtained
                                                                             
-%             sigma       = sqrt(1/(nb*(nb-1))*sum((dP-Pf).^2));              % standard deviation of the contributions to the probability of failure of all samples
-%             if sigma ~= 0 && isreal(sigma) && ~isnan(sigma)
-%                 COV = sigma/Pf;                                             % updated coefficient of variation (sigma/mu)
-%             else
-%                 COV = Inf;
-%             end
-            COV = sqrt((1-Pf)/(nb*Pf));
+            sigma       = sqrt(1/(nb*(nb-1))*sum((dP-Pf).^2));              % standard deviation of the contributions to the probability of failure of all samples
+            if sigma ~= 0 && isreal(sigma) && ~isnan(sigma)
+                COV = sigma/Pf;                                             % updated coefficient of variation (sigma/mu)
+            else
+                COV = Inf;
+            end
+%             COV = sqrt((1-Pf)/(nb*Pf));
 
         end
         
