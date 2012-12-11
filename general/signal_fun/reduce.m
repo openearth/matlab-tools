@@ -119,10 +119,35 @@ title(sprintf('tolerance set at %.1f ==> %d points needed',tolerance,length(ind)
 %% input check
 assert(isvector(x));
 assert(isequal(size(x),size(y)));
+% assert(issorted(x));
+
+if ~issorted(x)
+    %Detect time corrections
+    i_corr = find(abs(diff(x))>0.1, 1,'first' );
+    if ~isempty(i_corr)
+        %Reduce dataset to the largest part
+        if i_corr>0.5*numel(x)
+            x = x(1:i_corr);
+            y = y(1:i_corr);
+        else
+            x = x(i_corr:end);
+            y = y(i_corr:end);
+        end
+    end
+end
 assert(issorted(x));
+
 narginchk(3,4);
-assert(~any(isnan(x)));
-assert(~any(isnan(y)));
+
+% assert(~any(isnan(x)));
+% assert(~any(isnan(y)));
+%Remove nan's
+if ~any(isnan(x)) || ~any(isnan(y))
+    i_nan = isnan(x) | isnan(y);
+    x = x(~i_nan);
+    y = y(~i_nan);
+end
+
 assert(isscalar(tolerance));
 % also allow three inputs
 if nargin==3
