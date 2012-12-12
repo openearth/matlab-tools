@@ -24,13 +24,13 @@ OPT.lighting_effects = true;
 OPT.bgcolor          = [100 155 100];
 OPT.debug = 1;
 OPT.timerange       = [-inf inf];%[now-7 now];
+OPT.continue_from_last = true;
 
 if nargin==0
     return
 end
 
 OPT = setproperty(OPT,varargin);
-
 
 %% Part 0: index all netcdf files
 netcdf_index = ncgentools_get_data_in_box(OPT.path_netcdf);
@@ -57,6 +57,21 @@ for ii = 1:length(netcdf_index.urlPath)
 end
 times = unique(times);
 times(times < OPT.timerange(1) | times > OPT.timerange(2)) = [];
+
+
+%% determine timesteps already completed, and skip those
+% if 0.png exists in folder, than it is complete
+D = dir2(OPT.path_kml,'file_incl','^0\.png$','dir_excl','colorbar','depth',1);
+D = D([D.isdir]);
+D([D.bytes] == 0) = [];
+completed_dates = datenum({D(2:end).name},OPT.dateStrStyle);
+
+times(ismember(times,completed_dates)) = [];
+
+if isempty(times)
+    return
+end
+
 time_str = datestr(times,OPT.dateStrStyle);
 
 for ii = 1:length(times)
@@ -75,7 +90,7 @@ tile_folders(1) = []; % remove basedir
 for ii = 1:length(tile_folders)
     tile_folders(ii).folderdate = datenum(tile_folders(ii).name,OPT.dateStrStyle);
 end
-tile_folders([tile_folders.folderdate] >= OPT.timerange(1)) = [];
+tile_folders([tile_folders.folderdate] > min(times)) = [];
 [~,ind] = sort([tile_folders.folderdate]); %newest last
 tile_folders = tile_folders(ind);
 previous_tiles = struct('name',{},'date',{},'bytes',{},'isdir',{},'datenum',{},'pathname',{},'folderdate',{});
@@ -91,9 +106,9 @@ end
 previous_tiles = previous_tiles(ind);
 
 %% generate list of files to print
-tiles = findAllTiles(netcdf_index,OPT.lowestLevel);
+tiles = findAllTiles(netcdf_index,OPT.lowestLevel,[min(times) max(times)]);
 
-%% othyer preparations
+%% other preparations
 fig = make_figure(...
     OPT.cLim,...
     OPT.colorMap(OPT.colorSteps),...
@@ -116,7 +131,7 @@ for ii = 1:1:length(tiles)
     multiWaitbar('Generating tiles',(ii-1) / length(tiles),'label',sprintf('Generating tile: %s',tiles(ii).code))
     try
         data = ncgentools_get_data_in_box(netcdf_index,...
-            't_range',OPT.timerange,...
+            't_range',[min(times) max(times)],...
             'x_range',x_range(ii,:),...
             'y_range',y_range(ii,:),...
             'x_stride',1,...
@@ -162,14 +177,19 @@ end
 multiWaitbar('Generating tiles',1)
 
 function merge_tiles(OPT)
-tile_folders = dir2(OPT.path_kml,'file_excl','.*','depth',0,'dir_excl','colorbar');
+
+tile_folders = dir2(OPT.path_kml,'file_incl','^0\.png$','dir_excl','colorbar','depth',1);
+tile_folders = tile_folders([tile_folders.isdir]);  % remove files
 tile_folders(1) = []; % remove basedir
+if isempty(tile_folders)
+    return
+end
 for ii = 1:length(tile_folders)
     tile_folders(ii).folderdate = datenum(tile_folders(ii).name,OPT.dateStrStyle);
 end
-tile_folders([tile_folders.folderdate] < OPT.timerange(1)) = [];
-[~,ind] = sort([tile_folders.folderdate]); %newest last
+[~,ind] = sort([tile_folders.folderdate]); % newest last
 tile_folders = tile_folders(ind);
+
 tiles_this_level = struct('name',{},'date',{},'bytes',{},'isdir',{},'datenum',{},'pathname',{},'folderdate',{});
 for ii = 1:length(tile_folders)
     tiles_this_level_tmp = dir2([tile_folders(ii).pathname tile_folders(ii).name],'file_incl',['^[0-9]{' num2str(OPT.lowestLevel) '}\.png$'],'no_dirs',1,'depth',0);
@@ -189,17 +209,21 @@ while length(tiles_this_level(1).name) > 5
     end
     
     for ii = 1:length(tile_folders)
+        % determine which files to make
         ind1 = find([tiles_this_level.folderdate] == tile_folders(ii).folderdate);
         [~,ind2] = unique({potential_tiles_to_make(ind1).name});
         tiles_to_make = potential_tiles_to_make(ind1(ind2));
-        
-        ind3 = find([tiles_this_level.folderdate] <= tile_folders(ii).folderdate);
-        for jj = 1:length(tiles_to_make)
-            ind4 = find(strcmpi(tiles_to_make(jj).name,{potential_tiles_to_make(ind3).name}));
-            % find the newest tiles of all tiles not newer that the tile to
-            % be made
-            [~,ind5] = unique({tiles_this_level(ind3(ind4)).name},'last');
-            merge_a_tile(tiles_this_level(ind3(ind4(ind5))),tiles_to_make(jj),OPT.dim)
+        % but only actualy make the tiles for folders that don't already contain a 0.png file
+        if tile_folders(ii).bytes == 0 
+            ind3 = find([tiles_this_level.folderdate] <= tile_folders(ii).folderdate);
+            for jj = 1:length(tiles_to_make)
+                % ind4 are all tiles that can be used of all dates
+                ind4 = find(strcmpi(tiles_to_make(jj).name,{potential_tiles_to_make(ind3).name}));
+                % find the newest tiles of all tiles not newer that the tile to
+                % be made
+                [~,ind5] = unique({tiles_this_level(ind3(ind4)).name},'last');
+                merge_a_tile(tiles_this_level(ind3(ind4(ind5))),tiles_to_make(jj),OPT.dim)
+            end
         end
         tiles_next_level = [tiles_next_level; tiles_to_make];
     end
@@ -269,20 +293,28 @@ PNGfileName = [merged_tile.pathname merged_tile.name];
 imwrite(imS,PNGfileName,'Alpha',aaS ,...
     'Author','$HeadURL$');
 
-function tiles = findAllTiles(netcdf_index,lowestLevel)
+function tiles = findAllTiles(netcdf_index,lowestLevel,time_range)
 tiles = struct('N',{},'S',{},'W',{},'E',{},'code',{});
 
 for ii = 1:length(netcdf_index.urlPath)
-    % determine all tiles within the dataBounds
-    dataBounds.E = max(netcdf_index.geospatialCoverage_eastwest(ii,:));
-    dataBounds.W = min(netcdf_index.geospatialCoverage_eastwest(ii,:));
-    dataBounds.N = max(netcdf_index.geospatialCoverage_northsouth(ii,:));
-    dataBounds.S = min(netcdf_index.geospatialCoverage_northsouth(ii,:));
-    tileBounds.N =  180;
-    tileBounds.S = -180;
-    tileBounds.W = -180;
-    tileBounds.E =  180;
-    tiles = [tiles findTiles('0',lowestLevel,dataBounds,tileBounds)];
+    % determine if covergae in in time range
+    c = textscan(netcdf_index.timeCoverage{ii},'%s - %s');
+    in_timerange = ...
+        time_range(1) < datenum(c{2},'yyyy-mm-ddTHH:MM:SS') && ...
+        time_range(2) > datenum(c{1},'yyyy-mm-ddTHH:MM:SS');
+    
+    if in_timerange
+        % determine all tiles within the dataBounds
+        dataBounds.E = max(netcdf_index.geospatialCoverage_eastwest(ii,:));
+        dataBounds.W = min(netcdf_index.geospatialCoverage_eastwest(ii,:));
+        dataBounds.N = max(netcdf_index.geospatialCoverage_northsouth(ii,:));
+        dataBounds.S = min(netcdf_index.geospatialCoverage_northsouth(ii,:));
+        tileBounds.N =  180;
+        tileBounds.S = -180;
+        tileBounds.W = -180;
+        tileBounds.E =  180;
+        tiles = [tiles findTiles('0',lowestLevel,dataBounds,tileBounds)];
+    end
 end
 
 [~,ind] = unique({tiles.code});
@@ -475,7 +507,7 @@ output = [output sprintf([...
     '<Style><ListStyle>\n'...
     '  <listItemType>checkHideChildren</listItemType>\n'...
     '</ListStyle></Style>\n'...
-    '<Link><href>0.kml</href></Link>'...
+    '<Link><href>0.kmz</href></Link>'...
     '</NetworkLink>\n'])];
 
 % create link to static kml's
@@ -499,7 +531,7 @@ for ii = 1:length(tile_folders)
         '<Link><href>%s</href></Link>'... % link
         '</NetworkLink>\n'],...
         tile_folders(ii).name,...
-        [tile_folders(ii).name '/0.kml'])];
+        [tile_folders(ii).name '/0.kmz'])];
 end
 output = [output '</Folder>'];
 output = [output '</Folder>'];
@@ -540,6 +572,13 @@ fclose(fid);
 
 function kml_static(tiles,dimension,destPath,dateFolder,drawOrder)
 
+kmlname = fullfile(destPath,'0.kml');
+kmzname = fullfile(destPath,'0.kmz');
+% skip writing kml if it already exists
+if exist(kmzname,'file')
+    return
+end
+
 highestLevel = min([tiles.level]);
 lowestLevel  = max([tiles.level]);
 OPT.minLod0        =     -1;
@@ -579,7 +618,6 @@ for ii = 1:length(tiles)
         subPath,tiles(ii).name,...
         B.N,B.S,B.W,B.E)];
 end
-kmlname = fullfile(destPath,'0.kml');
 fid=fopen(kmlname,'w');
 OPT_header = struct(...
     'name',name,...
@@ -592,6 +630,11 @@ fprintf(fid,'%s',output);
 
 % close KML
 fclose(fid);
+
+zip     (kmzname,kmlname);
+delete  (kmlname)
+movefile([kmzname,'.zip'],kmzname);
+       
 
 function kml_dynamic(destPath,tiles,dimension)
 [~,ind1]     = max([tiles.folderdatenum]);
@@ -606,7 +649,7 @@ name = '';
 
 output = '';
 
-% find all uniqye tile codes
+% find all unique tile codes
 [names,~,ind1] = unique({tiles.name});
 [names,ind2] = sort(names);
 for ii = 1:length(names)
@@ -655,6 +698,7 @@ for ii = 1:length(names)
         overlay)];
 end
 kmlname = fullfile(destPath,'0.kml');
+kmzname = fullfile(destPath,'0.kmz');
 fid=fopen(kmlname,'w');
 OPT_header = struct(...
     'name',name,...
@@ -667,3 +711,7 @@ fprintf(fid,'%s',output);
 
 % close KML
 fclose(fid);
+
+zip     (kmzname,kmlname);
+delete  (kmlname)
+movefile([kmzname,'.zip'],kmzname);
