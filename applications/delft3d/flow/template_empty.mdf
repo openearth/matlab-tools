@@ -16,7 +16,7 @@ Grdang =  0.0000000e+000
 Filgrd = ##
 Fmtgrd = #FR#
 MNKmax = 0 0 0
-Thick  =  100
+Thick  = 100
 Fildep = ##
 Fmtdep = #FR#
 Depuni =  1.0000000e+001
@@ -197,5 +197,5 @@ Heaout = #yes#
 Commnt = BarocP=NO(Y) switches off(on) the baroclinic pressure term at the open boundary
 BarocP = #Y#
 Commnt = Cstbnd=yes sets cross-boundary gradient of along-boundary velocities to zero, instead of along-boundary velocities themselves to 0
-Cstbnd = #NO#
+Cstbnd = #Y#
 DenFrm = #UNESCO#

@@ -91,7 +91,7 @@ function varargout = delft3d_io_meteo_write_example(varargin)
    for ifile=1:length(OPT.ncfiles)
       T(ifile).count   = nc_getdiminfo(OPT.ncfiles{ifile},'time','Length')-1;
       T(ifile).datenum =    nc_cf_time(OPT.ncfiles{ifile},'time');
-      T(ifile).dt      =    unique(diff(T(ifile).datenum (ifile)));
+      T(ifile).dt      =    mode(diff(T.datenum)); % unique(diff(T(ifile).datenum (ifile))); % deal with hick-ups operational model
       index = find(T(ifile).datenum >= OPT.period(1) & ...
                    T(ifile).datenum <= OPT.period(2));
       if ~isempty(index)
@@ -108,7 +108,7 @@ function varargout = delft3d_io_meteo_write_example(varargin)
    MDF = delft3d_io_mdf('new');
    
    ifile = files2proces(1);
-   for ivar=1:length(OPT.varnames)
+ for ivar=1:length(OPT.varnames)
    data = ncread(OPT.ncfiles{1},OPT.varnames{ivar},[1 1 1],[Inf Inf 1]);
    
    if OPT.amkeep(ivar)
@@ -121,11 +121,11 @@ function varargout = delft3d_io_meteo_write_example(varargin)
       data = eval(OPT.amfac{ivar});
    end
 
-   amfilename = [filename(OPT.ncfiles{ifile}),'.',OPT.amext{ivar}];
-   grdfile    = [filename(OPT.ncfiles{ifile}),'.grd'];
-   encfile    = [filename(OPT.ncfiles{ifile}),'.enc'];
+   amfilename = [mkvar(filename(OPT.ncfiles{ifile})),'.',OPT.amext{ivar}]; % cannot handle internal "."
+   grdfile    = [      filename(OPT.ncfiles{ifile}),'.grd'];
+   encfile    = [      filename(OPT.ncfiles{ifile}),'.enc'];
    
-   fid(ivar) = delft3d_io_meteo_write([OPT.workdir,filename(OPT.ncfiles{ifile}),'.',OPT.amext{ivar}],...
+   fid(ivar) = delft3d_io_meteo_write([OPT.workdir,amfilename],...
        T(ifile).datenum(T(ifile).start),data,D.lon,D.lat,...
        'CoordinateSystem','Spherical',...
               'grid_file',grdfile,...
@@ -135,16 +135,16 @@ function varargout = delft3d_io_meteo_write_example(varargin)
                  'header',['source: ',OPT.ncfiles{1}]);
    ADD.keywords.(OPT.amkeyword{ivar}) = amfilename;        
    MDF.keywords.(OPT.amkeyword{ivar}) = amfilename;
-
-   end
+ end
+   MDF.keywords.wnsvwp = 'Y';    % spatially varying meteo input
+   ADD.keywords.wnsvwp = 'Y';    % spatially varying meteo input
    
    T(1).start          = min(T(1).start + 1,T(1).stop); % do not add 1st timestep again
    MDF.keywords.filcco = grdfile;
    MDF.keywords.filgrd = encfile;
    MDF.keywords.mnkmax = [size(data)+1 1];
-   MDF.keywords.sub1   = '  W '; % activate wind
-   MDF.keywords.wnsvwp = 'Y';    % spatially varying meteo input
-   ADD.keywords.wnsvwp = 'Y';    % spatially varying meteo input
+   MDF.keywords.sub1   = ' TW '; % activate temperature and wind
+   MDF.keywords.ktemp  = 5; % ocean heat model
    MDF.keywords.airout = 'yes';  % save p,u,v  to trim file
    MDF.keywords.heaout = 'yes';  % save rh,c,t to trim file
    MDF.keywords.itdate = datestr(OPT.refdatenum,'yyyy-mm-dd');
@@ -163,7 +163,7 @@ function varargout = delft3d_io_meteo_write_example(varargin)
    for ifile=files2proces
       for it=T(ifile).start:T(ifile).stop
           
-          disp(['file: ',num2str(ifile),' progress: ',num2str(100*it/T(ifile).count,'%07.3f'),' %'])
+          disp(['file: ',num2str(ifile),' progress: ',num2str(100*it/T(ifile).count,'%07.3f'),' %', datestr(T(ifile).datenum(it))])
           
           D.time = T(ifile).datenum(it); %nc_cf_time(OPT.ncfiles{ifile},'time',it);
           
@@ -191,8 +191,8 @@ function varargout = delft3d_io_meteo_write_example(varargin)
        fclose(fid(ivar));
    end
 
-%% save mdf for test simulation
+%% save mdf for unit test simulation
 
-   delft3d_io_mdf('write',[filename(OPT.ncfiles{1}),'.mdf'],MDF.keywords);
+   delft3d_io_mdf('write',[OPT.workdir,mkvar(filename(OPT.ncfiles{1})),'.mdf'],MDF.keywords); % cannot handle internal "."
    
    varargout = {ADD};

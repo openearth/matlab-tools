@@ -1,4 +1,4 @@
-function tidalcycle(G, F, C, T, ETA0, VEL0);
+function tidalcycle(x,y, F, C, T, ETA0, VEL0);
 %delft3d_kelvin_wave.TIDALCYCLE  quick-n-dirty visual assessment of delft3d_kelvin_wave_* 
 %
 %See also: delft3d_kelvin_wave
@@ -32,8 +32,8 @@ end;
 
 polygon.x = [OPT.xlim(1) OPT.xlim(2) OPT.xlim(2) OPT.xlim(1)];
 polygon.y = [OPT.ylim(1) OPT.ylim(1) OPT.ylim(2) OPT.ylim(2)];
-boolmask  = inpolygon(G.coast.x,G.coast.y,polygon.x,polygon.y);
-mask      = ones(size(G.coast.x));  
+boolmask  = inpolygon(x,y,polygon.x,polygon.y);
+mask      = ones(size(x));  
 mask(~boolmask) = nan;
 
 for time=T.t
@@ -49,21 +49,21 @@ for time=T.t
     end
 
        hold off;
-       S(1) = surf        (G.coast.x.*mask,G.coast.y.*mask,real(ETA.complex).*mask);
+       S(1) = surf        (x.*mask,y.*mask,real(ETA.complex).*mask);
        hold on;
        if OPT.plotabs
-       M(1) = surf        (G.coast.x.*mask,G.coast.y.*mask, abs(ETA.complex).*mask);
-       M(2) = surf        (G.coast.x.*mask,G.coast.y.*mask,-abs(ETA.complex).*mask);
+       M(1) = surf        (x.*mask,y.*mask, abs(ETA.complex).*mask);
+       M(2) = surf        (x.*mask,y.*mask,-abs(ETA.complex).*mask);
        end
-       %Q(:,1) = quiver3   (G.coast.x.*mask,...
-       %                    G.coast.y.*mask,...
-       %                    G.coast.x.*0,...
+       %Q(:,1) = quiver3   (x.*mask,...
+       %                    y.*mask,...
+       %                    x.*0,...
        %                    OPT.velscale.*real(VEL.complex).*mask.*0,...
        %                    OPT.velscale.*real(VEL.complex).*mask   ,...
        %                    OPT.velscale.*real(VEL.complex).*mask.*0,0);
                        
-       set         (gca,'xlim',[min(G.coast.x(:)) max(G.coast.x(:))]);
-       set         (gca,'ylim',[min(G.coast.y(:)) max(G.coast.y(:))]);
+       set         (gca,'xlim',[min(x(:)) max(x(:))]);
+       set         (gca,'ylim',[min(y(:)) max(y(:))]);
        set         (gca,'zlim',[-1.0 1.0]);
        
        
@@ -104,21 +104,21 @@ for time=T.t
     end
     
        hold off;
-       S(1) = surf        (G.coast.x.*mask,G.coast.y.*mask,real(VEL.complex).*mask);
+       S(1) = surf        (x.*mask,y.*mask,real(VEL.complex).*mask);
        hold on;
        if OPT.plotabs
-       M(1) = mesh        (G.coast.x.*mask,G.coast.y.*mask, abs(VEL.complex).*mask);
-       M(2) = mesh        (G.coast.x.*mask,G.coast.y.*mask,-abs(VEL.complex).*mask);
+       M(1) = mesh        (x.*mask,y.*mask, abs(VEL.complex).*mask);
+       M(2) = mesh        (x.*mask,y.*mask,-abs(VEL.complex).*mask);
        end
-       Q(:,1) = quiver3   (G.coast.x.*mask,...
-                           G.coast.y.*mask,...
-                           G.coast.x.*0,...
+       Q(:,1) = quiver3   (x.*mask,...
+                           y.*mask,...
+                           x.*0,...
                            OPT.velscale.*real(VEL.complex).*mask.*0,...
                            OPT.velscale.*real(VEL.complex).*mask   ,...
                            OPT.velscale.*real(VEL.complex).*mask.*0,0);
                        
-       set         (gca,'xlim',[min(G.coast.x(:)) max(G.coast.x(:))]);
-       set         (gca,'ylim',[min(G.coast.y(:)) max(G.coast.y(:))]);	
+       set         (gca,'xlim',[min(x(:)) max(x(:))]);
+       set         (gca,'ylim',[min(y(:)) max(y(:))]);	
        set         (gca,'zlim',[-1 1]);
        
        daaspect = get(gca,'dataaspectratio');
@@ -143,21 +143,21 @@ for time=T.t
     end
     
        hold off;
-       S(1) = surf        (G.coast.x.*mask,G.coast.y.*mask,real(NEU.complex).*mask);
+       S(1) = surf        (x.*mask,y.*mask,real(NEU.complex).*mask);
        hold on;
        if OPT.plotabs
-       M(1) = mesh        (G.coast.x.*mask,G.coast.y.*mask, abs(NEU.complex).*mask);
-       M(2) = mesh        (G.coast.x.*mask,G.coast.y.*mask,-abs(NEU.complex).*mask);
+       M(1) = mesh        (x.*mask,y.*mask, abs(NEU.complex).*mask);
+       M(2) = mesh        (x.*mask,y.*mask,-abs(NEU.complex).*mask);
        end
-       Q(:,1) = quiver3   (G.coast.x.*mask,...
-                           G.coast.y.*mask,...
-                           G.coast.x.*0,...
+       Q(:,1) = quiver3   (x.*mask,...
+                           y.*mask,...
+                           x.*0,...
                            OPT.velscale.*real(VEL.complex).*mask.*0,...
                            OPT.velscale.*real(VEL.complex).*mask   ,...
                            OPT.velscale.*real(VEL.complex).*mask.*0,0);
                        
-       set         (gca,'xlim',[min(G.coast.x(:)) max(G.coast.x(:))]);
-       set         (gca,'ylim',[min(G.coast.y(:)) max(G.coast.y(:))]);
+       set         (gca,'xlim',[min(x(:)) max(x(:))]);
+       set         (gca,'ylim',[min(y(:)) max(y(:))]);
        set         (gca,'zlim',[-1 1].*1e-5);
        
        set         (gca,'dataaspectratio',[1 1 .2e-9]);

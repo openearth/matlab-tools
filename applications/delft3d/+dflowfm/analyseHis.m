@@ -208,8 +208,10 @@ end
 for id=1:length(OPT.station_name);
 
    disp(['>> Processing ',OPT.station_name{id}])
-   disp(['>>            ',OPT.station_data_url{id}])
-   disp(['>>            ',OPT.station_period{id}])
+   disp(['>> ---------- ',OPT.station_data_url{id}])
+   if ~isempty(OPT.station_period{id})
+   disp(['>> ---------- ',datestr(OPT.station_period{id}(1)),' - ',datestr(OPT.station_period{id}(2))])
+   end
     
    im = strmatch(OPT.station_name{id},M.station_name);
   
@@ -296,11 +298,11 @@ for id=1:length(OPT.station_name);
 %  TO DO: show density of points
 
         figure(FIG(2));subplot_meshgrid(1,1,.05,.05);clf
-        
-        maxe =      max(DM.(OPT.varname) - D.(OPT.varname));
-        mine =      min(DM.(OPT.varname) - D.(OPT.varname));
-        rmse =      rms(DM.(OPT.varname) - D.(OPT.varname));
-        R    = corrcoef(DM.(OPT.varname)  ,D.(OPT.varname));R = R(2,1); % same as (2,1)
+        mask = (~isnan(DM.(OPT.varname))) & (~isnan(D.(OPT.varname))); % begin/endpooints might be NaN in case of to time zone shift
+        maxe =      max(DM.(OPT.varname)(mask) - D.(OPT.varname)(mask));
+        mine =      min(DM.(OPT.varname)(mask) - D.(OPT.varname)(mask));
+        rmse =      rms(DM.(OPT.varname)(mask) - D.(OPT.varname)(mask));
+        R    = corrcoef(DM.(OPT.varname)(mask)  ,D.(OPT.varname)(mask));R = R(2,1); % same as (2,1)
         
         fmte = '%+1.3f'; %
         txte = {[' R    = ',num2str(R   ,fmte)],...

@@ -1,4 +1,4 @@
-function main
+function main(varargin)
 %DELFT3D_KELVIN_WAVE.MAIN    MAIN SCRIPT for harmonic kelvin wave OBC 
 %
 %See also: delft3d_kelvin_wave
@@ -42,137 +42,40 @@ function main
 
 %% Initialize
 
-   U.workdir     = ['F:\DELFT3D\PECS\tide_neap2\' filesep ]; % pwd
+   OPT.grdlayout   = 33;
+   OPT.debug       = 0;
+   OPT.x           = [];
+   OPT.y           = [];
+   OPT.d_sea       = [];
 
-   U.grd         = '155x356.grd';   % [130x331] + 25 stretch
-   U.bnd         = '155x356_0.bnd';
-   U.gridoption  = 330; % in d3d_grd_square_basin
+%% Define a delft3d grid
 
-   U.grd         = '155x235.grd';   % [130x210] + 25 stretch
-   U.bnd         = '155x235_0.bnd';
-   U.gridoption  = 33; % in d3d_grd_square_basin
+   if isempty(OPT.x)
+   [OPT,G] = delft3d_kelvin_wave.grids(OPT);
+   end
 
-   U.Neumann     = 0; % 1 = modifies Riemann boundary to Neumann boundary
-   U.R0          = 1; % 1 = modifies Riemann boundary to zero Riemann boundary
-   U.U0          = 0; 
-   U.writebch    = 1;
-   U.writeini    = 1;
-   U.debug       = 0;
+%% Physics settings for kelvin wave
 
-   disp(U)
+   [F,  C] = delft3d_kelvin_wave.input(OPT.d_sea);
 
-%% Generate harmonic boundary data
-
-   G               = delft3d_kelvin_wave.grids(U.gridoption,'save',[U.workdir filesep U.grd]); %[U.workdir,U.grd])
-   G.base.x        =   -2250;
-   G.base.y        = -725671;
-   G.base.y        =   250;
-   G.angle         = 0;
-   G.D0            = 20;
-
-   [G, F, C   ]    = delft3d_kelvin_wave.input(G);
-
-   U.bchfilename   = ['Depth_',num2str(G.D0),'_ks_',num2str(C.Ks),'_amplitudes_',num2str(F.eta0),'.bch'];
+%% Calculate harmonic response in entire basin
 
    for ifreq=1:length(C.Tt)
-      [ETA0(ifreq), VEL0(ifreq)] = delft3d_kelvin_wave.calculation(G, F, C,ifreq);
+      [ETA0(ifreq), VEL0(ifreq)] = delft3d_kelvin_wave.calculation(OPT.x,OPT.y, OPT.d_sea, F, C, ifreq);
    end
 
-%% Plot tidal results
+%% Plot tidal results in entire basin
 
-    if U.debug
-       delft3d_kelvin_wave.plot      (G, ETA0, VEL0,C);
-       figure
-       delft3d_kelvin_wave.ampphase  (G, ETA0, VEL0);
-       T.t = (0:0.5:12).*3600;
-       delft3d_kelvin_wave.tidalcycle(G, F, C, T, ETA0, VEL0);
-    end
-
-%% Save harmonic boundary data in Delft3D format
-
-   BND = delft3d_io_bnd('read',[U.workdir,U.bnd],G.mmax,G.nmax);
-
-   BCH.amplitudes  = zeros(2,BND.NTables,length(C.w));
-   BCH.phases      = zeros(2,BND.NTables,length(C.w));
-
-   % now add the constant offset
-   BCH.frequencies = [360./C.Tt.*3600]; % [s] to [deg/hour]
-   BCH.a0          = zeros(2,BND.NTables,1); % a0 separate, so not in frequencies: no 3D amplitudes and phases required
-
-   for ifreq = 1:length(find(~(BCH.frequencies)==0))
-
-      for i=1:BND.NTables
-
-         if strcmp('Z',upper(BND.DATA(i).bndtype))
-
-            BCH.amplitudes(1,i,ifreq)  =          ETA0(ifreq).abs          (BND.DATA(i).mn(1),BND.DATA(i).mn(2));
-            BCH.phases    (1,i,ifreq)  = -rad2deg(ETA0(ifreq).arg          (BND.DATA(i).mn(1),BND.DATA(i).mn(2)));
-
-            BCH.amplitudes(2,i,ifreq)  =          ETA0(ifreq).abs          (BND.DATA(i).mn(3),BND.DATA(i).mn(4));
-            BCH.phases    (2,i,ifreq)  = -rad2deg(ETA0(ifreq).arg          (BND.DATA(i).mn(3),BND.DATA(i).mn(4)));
-
-         elseif strcmp('R',upper(BND.DATA(i).bndtype)) & U.Neumann
-
-            BCH.amplitudes(1,i,ifreq)  =          ETA0(ifreq).abs_d_eta_d_y(BND.DATA(i).mn(1),BND.DATA(i).mn(2));
-            BCH.phases    (1,i,ifreq)  = -rad2deg(ETA0(ifreq).arg_d_eta_d_y(BND.DATA(i).mn(1),BND.DATA(i).mn(2)));
-
-            BCH.amplitudes(2,i,ifreq)  =          ETA0(ifreq).abs_d_eta_d_y(BND.DATA(i).mn(3),BND.DATA(i).mn(4));
-            BCH.phases    (2,i,ifreq)  = -rad2deg(ETA0(ifreq).arg_d_eta_d_y(BND.DATA(i).mn(3),BND.DATA(i).mn(4)));
-
-         elseif strcmp('R',upper(BND.DATA(i).bndtype)) & U.R0
-
-            BCH.amplitudes(1,i,ifreq)  = 0.*      ETA0(ifreq).abs_d_eta_d_y(BND.DATA(i).mn(1),BND.DATA(i).mn(2));
-            BCH.phases    (1,i,ifreq)  = 0.*     (ETA0(ifreq).arg_d_eta_d_y(BND.DATA(i).mn(1),BND.DATA(i).mn(2)));
-
-            BCH.amplitudes(2,i,ifreq)  = 0.*      ETA0(ifreq).abs_d_eta_d_y(BND.DATA(i).mn(3),BND.DATA(i).mn(4));
-            BCH.phases    (2,i,ifreq)  = 0.*     (ETA0(ifreq).arg_d_eta_d_y(BND.DATA(i).mn(3),BND.DATA(i).mn(4)));
-
-
-         elseif strcmp('R',upper(BND.DATA(i).bndtype))
-
-            BCH.amplitudes(1,i,ifreq)  =          VEL0(ifreq).abs          (BND.DATA(i).mn(1),BND.DATA(i).mn(2)) + ...
-                                  sqrt(C.g./G.D).*ETA0(ifreq).abs          (BND.DATA(i).mn(1),BND.DATA(i).mn(2));
-            BCH.phases    (1,i,ifreq)  =      0.*(VEL0(ifreq).arg          (BND.DATA(i).mn(1),BND.DATA(i).mn(2))) + ...
-                                              0.*(ETA0(ifreq).arg_d_eta_d_y(BND.DATA(i).mn(1),BND.DATA(i).mn(2)));
-
-            BCH.amplitudes(2,i,ifreq)  =          VEL0(ifreq).abs          (BND.DATA(i).mn(3),BND.DATA(i).mn(4)) + ...
-                                  sqrt(C.g./G.D).*ETA0(ifreq).abs          (BND.DATA(i).mn(3),BND.DATA(i).mn(4));
-            BCH.phases    (2,i,ifreq)  =      0.*(VEL0(ifreq).arg          (BND.DATA(i).mn(3),BND.DATA(i).mn(4))) + ...
-                                              0.*(ETA0(ifreq).arg          (BND.DATA(i).mn(3),BND.DATA(i).mn(4)));
-
-         elseif strcmp('C',upper(BND.DATA(i).bndtype)) & U.U0;
-
-            BCH.amplitudes(1,i,ifreq)  = 0.*      VEL0(ifreq).abs          (BND.DATA(i).mn(1),BND.DATA(i).mn(2));
-            BCH.phases    (1,i,ifreq)  = 0.*     (VEL0(ifreq).arg          (BND.DATA(i).mn(1),BND.DATA(i).mn(2)));
-
-            BCH.amplitudes(2,i,ifreq)  = 0.*      VEL0(ifreq).abs          (BND.DATA(i).mn(3),BND.DATA(i).mn(4));
-            BCH.phases    (2,i,ifreq)  = 0.*     (VEL0(ifreq).arg          (BND.DATA(i).mn(3),BND.DATA(i).mn(4)));
-
-         elseif strcmp('C',upper(BND.DATA(i).bndtype))
-
-            BCH.amplitudes(1,i,ifreq)  =          VEL0(ifreq).abs          (BND.DATA(i).mn(1),BND.DATA(i).mn(2));
-            BCH.phases    (1,i,ifreq)  = -rad2deg(VEL0(ifreq).arg          (BND.DATA(i).mn(1),BND.DATA(i).mn(2)));
-
-            BCH.amplitudes(2,i,ifreq)  =          VEL0(ifreq).abs          (BND.DATA(i).mn(3),BND.DATA(i).mn(4));
-            BCH.phases    (2,i,ifreq)  = -rad2deg(VEL0(ifreq).arg          (BND.DATA(i).mn(3),BND.DATA(i).mn(4)));
-
-         end
-
-      end % for i=1:BND.NTables
-
-   end % for ifreq = length(BCH.frequencies)
-   
-   save BCH
-
-   if U.writebch
-      ok=delft3d_io_bch('write',[U.workdir,U.bchfilename],BCH);
+   if OPT.debug
+      delft3d_kelvin_wave.plot      (OPT.x,OPT.y, ETA0, VEL0,C);
+      figure
+      delft3d_kelvin_wave.ampphase  (OPT.x,OPT.y, ETA0, VEL0);
+      T.t = (0:0.5:12).*3600;
+      delft3d_kelvin_wave.tidalcycle(OPT.x,OPT.y, F, C, T, ETA0, VEL0);
    end
 
-   % DOES NOT WORK, ADD ALL SPECTRAL COMPONENTS FIRST
-   %if U.writeini
-   %ok=delft3d_io_ini('write',[U.workdir,'kelvin',num2str(G.D,'%.3i'),'.ini'],addrowcol(real      (ETA0.complex ),0),...
-   %                                                                          addrowcol(zeros(size(ETA0.complex)),0),...
-   %                                                                          addrowcol(real      (VEL0.complex ),0));
-   %end                                                                  
+%% Save results to Delft3D basin on boundary location definitions in delft3d_kelvin_wave.grids
+
+   delft3d_kelvin_wave.save2bch(OPT,G,ETA0,VEL0,C)
 
 %% EOF

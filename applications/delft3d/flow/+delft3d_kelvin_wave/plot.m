@@ -1,4 +1,4 @@
-function S = plot(G, ETA0, VEL0,C);
+function S = plot(x,y, ETA0, VEL0,C);
 %DELFT3D_KELVIN_WAVE.PLOT   quick-n-dirty visual assessment of delft3d_kelvin_wave_* 
 %
 %See also: delft3d_kelvin_wave
@@ -16,8 +16,8 @@ OPT.zscale = 2e-5;
 
 polygon.x = [OPT.xlim(1) OPT.xlim(2) OPT.xlim(2) OPT.xlim(1)];
 polygon.y = [OPT.ylim(1) OPT.ylim(1) OPT.ylim(2) OPT.ylim(2)];
-boolmask  = inpolygon(G.cen.x,G.cen.y,polygon.x,polygon.y);
-mask      = ones(size(G.cen.x));  
+boolmask  = inpolygon(x,y,polygon.x,polygon.y);
+mask      = ones(size(x));  
 mask(~boolmask) = nan;
 
 
@@ -29,11 +29,10 @@ mask(~boolmask) = nan;
     
        T.t = (0:2:12).*3600;
        for i = 1:length(T.t);
-       clf
-       S = my_plot(G.cen.x.*mask,G.cen.y.*mask,ETA0.abs(2:end-1,2:end-1).*mask,'|\eta|');
+       S = my_plot(x.*mask,y.*mask,ETA0.abs.*mask,'|\eta|');
        hold on
-       S3 = my_plot(G.cen.x.*mask,G.cen.y.*mask,-ETA0.abs(2:end-1,2:end-1).*mask,'|\eta|');
-       S2 = my_plot(G.cen.x.*mask,G.cen.y.*mask,-real(ETA0.complex(2:end-1,2:end-1).*exp(1i*C.w.*T.t(i))).*mask,'|\eta|');
+       S3 = my_plot(x.*mask,y.*mask,-ETA0.abs.*mask,'|\eta|');
+       S2 = my_plot(x.*mask,y.*mask,-real(ETA0.complex.*exp(1i*C.w.*T.t(i))).*mask,'|\eta|');
        title([num2str(T.t(i)./3600),' hr'])
        end
 
@@ -45,7 +44,7 @@ mask(~boolmask) = nan;
        subplot(3,3,2)
     end
     
-       S = my_plot(G.cen.x.*mask,G.cen.y.*mask,ETA0.arg(2:end-1,2:end-1).*OPT.argscaling.*mask,'arg(\eta)',180/pi);
+       S = my_plot(x.*mask,y.*mask,ETA0.arg.*OPT.argscaling.*mask,'arg(\eta)',180/pi);
        set         (gca,'zlim',[-pi pi].*OPT.argscaling);
     
 %%
@@ -55,7 +54,7 @@ mask(~boolmask) = nan;
        subplot(3,3,3)
     end
     
-       S = my_plot(G.cen.x.*mask,G.cen.y.*mask,VEL0.abs(2:end-1,2:end-1).*mask,'|v|');
+       S = my_plot(x.*mask,y.*mask,VEL0.abs.*mask,'|v|');
 
 %%
 
@@ -66,7 +65,7 @@ mask(~boolmask) = nan;
        subplot(3,3,4)
     end
     
-       S = my_plot(G.cen.x.*mask,G.cen.y.*mask,VEL0.arg(2:end-1,2:end-1).*OPT.argscaling.*mask,'arg(v)',180/pi) 
+       S = my_plot(x.*mask,y.*mask,VEL0.arg.*OPT.argscaling.*mask,'arg(v)',180/pi) 
        set         (gca,'zlim',[-pi pi].*OPT.argscaling);
 
 %% -------------------------------------------------

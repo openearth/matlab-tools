@@ -1,9 +1,12 @@
-function varargout = calculation(G, F, C,varargin)
+function varargout = calculation(x,y,d, F, C,varargin)
 %DELFT3D_KELVIN_WAVE.CALCULATION   analytical solution (iterative friction) of Kelvin wave
 %
-%  [ETA,<VEL>] = delft3d_kelvin_wave_calculation(G, F, C,<ifreq>)
+%  [ETA,<VEL>] = delft3d_kelvin_wave.calculation(x,y,d, F, C,<ifreq>)
 %
-% For documentation please refer to:
+% where x is the alongshore axis, y the crossshore axis and d is the depth.
+% F and C are strucs with settings provided by delft3d_kelvin_wave.input.
+%
+% For documentation of the methods please refer to:
 %
 % * Jacobs, Walter, 2004. Modelling the Rhine River Plume 
 %   MSc. thesis, TU Delft, Civil Engineering.
@@ -73,10 +76,10 @@ function varargout = calculation(G, F, C,varargin)
 
 %% Initialize
 
-   VEL.abs0         = repmat((1+0i),size(G.coast.x));
-   VEL.complex      = repmat((1+0i),size(G.coast.x));
-   VEL.abs          = repmat((1+0i),size(G.coast.x));
-   VEL.arg          = repmat((1+0i),size(G.coast.x));
+   VEL.abs0         = repmat((1+0i),size(x));
+   VEL.complex      = repmat((1+0i),size(x));
+   VEL.abs          = repmat((1+0i),size(x));
+   VEL.arg          = repmat((1+0i),size(x));
 
    while max(OPT.v_residue(:)) > OPT.v_residue_min; 
        
@@ -87,22 +90,22 @@ function varargout = calculation(G, F, C,varargin)
       VEL.abs0         = VEL.abs0 + OPT.relaxation.*(VEL.abs - VEL.abs0);
       VEL.abs          = nan;
    
-      kappa            = (8/(3*pi))*C.Cf*(VEL.abs0/G.D0);      % [1/s] linearised friction parameter in alongshore direction
+      kappa            = ((8/(3*pi))*C.Cf).*(VEL.abs0./d);     % [1/s] linearised friction parameter in alongshore direction
       sigma            = kappa./C.w;                           % [-]   relation between friction and inertia
         
    %% General
    
-      k                = i*C.k0.*        (1 - 1i*sigma).^0.5;  % [-] Alongshore variation
-      m                = (C.f./C.c0).*1./(1 - 1i*sigma).^0.5;  % [-] Cross-shore variation
+      k                = (i*C.k0).*      (1 - 1i.*sigma).^0.5;  % [-] Alongshore variation
+      m                = (C.f./C.c0).*1./(1 - 1i.*sigma).^0.5;  % [-] Cross-shore variation
       
    %% Water level
       
-      ETA.complex      = F.eta0.*exp(  G.coast.x.*m ...
-                                     - G.coast.y.*k ...
+      ETA.complex      = F.eta0.*exp(  x.*m ...        % cross
+                                     - y.*k ...        % along
                                      + 1i*C.w.*T.t0...
-                                     + i*F.alpha) ;            % [m]   water level
-      ETA.abs          = abs  (ETA.complex);                   % [m/s] amplitude of velocity
-      ETA.arg          = angle(ETA.complex);                   % [rad] phase of velocity
+                                     + i*F.alpha) ;    % [m]   water level
+      ETA.abs          = abs  (ETA.complex);           % [m/s] amplitude of velocity
+      ETA.arg          = angle(ETA.complex);           % [rad] phase of velocity
    
    %% Velocity
       
@@ -116,12 +119,12 @@ function varargout = calculation(G, F, C,varargin)
       if OPT.plot_iteration
    
          subplot(1,2,1)
-         surfcorcen(G.coast.x,G.coast.y,VEL.abs,[.5 .5 .5])
+         surfcorcen(x,y,VEL.abs,[.5 .5 .5])
          view(220,40)
          title(['Velocity, max velocity residue: ',num2str(max(OPT.v_residue(:))),' > limit of ',num2str(OPT.v_residue_min)])
    
          subplot(1,2,2)
-         surfcorcen(G.coast.x,G.coast.y,ETA.abs,[.5 .5 .5])
+         surfcorcen(x,y,ETA.abs,[.5 .5 .5])
          view(220,40)
          title(['Water level, iteration :',num2str(OPT.n_iterations)])
          

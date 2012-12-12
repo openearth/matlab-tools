@@ -8,7 +8,7 @@ function varargout=delft3d_io_obs(cmd,varargin),
 %    a struct with fields x,y and name. 
 %
 %        delft3d_io_obs('write','filename.obs',OBS);
-%        delft3d_io_obs('write','filename.obs',x,y,namst);
+%        delft3d_io_obs('write','filename.obs',m,n,namst);
 %
 % where OBS is a struct with fields 'm','n','namst'
 % where namst is read as a 2C char array, but can also be a cellstr.

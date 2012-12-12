@@ -91,6 +91,8 @@ function MDF = getm2delft3d(varargin)
       getm.domain.crit_depth       = .3;
       getm.domain.min_depth        = .1;
       getm.domain.kdum             = 1;
+      getm.meteo.metforcing        = 0;
+      getm.meteo.met_method        = 1;
       getm.m2d.elev_method         = 1;
       getm.m2d.elev_const          = 0;
       getm.m2d.Am                  = 1;
@@ -119,9 +121,8 @@ function MDF = getm2delft3d(varargin)
    MDF.keywords.thick   = repmat(100/getm.domain.kdum,[getm.domain.kdum 1]);
    MDF.keywords.denfrm = 'UNESCO'; % d3d default
    if ~(getm.eqstate.eqstate_method==2)
-      warning('equation of state not implemented in delft3d, only Eckertand Unesco (default)')
+      warning('equation of state not implemented in delft3d, only Eckert & Unesco (default)')
    end
-   
    switch getm.domain.vel_depth_method
    case 0, MDF.keywords.dpuopt = 'mean';
    case 1, MDF.keywords.dpuopt = 'min';
@@ -149,12 +150,15 @@ function MDF = getm2delft3d(varargin)
    
    D.cor.z = corner2center(D.bathymetry);
    
-   if getm.domain.f_plane
+   if getm.domain.f_plane & ~(getm.meteo.metforcing)
    MDF.keywords.filcco  = [filename(OPT.topo),'_cartesian.grd'];
    filcc2               = [filename(OPT.topo),'_spherical.grd'];
    wlgrid('write','FileName',[OPT.workdir,MDF.keywords.filcco],'X',D.cor.x'  ,'Y',D.cor.y'  ,'CoordinateSystem','Cartesian');
    wlgrid('write','FileName',[OPT.workdir,             filcc2],'X',D.cor.lon','Y',D.cor.lat','CoordinateSystem','Spherical');
    else
+   if getm.domain.f_plane
+   warning('delft3d cannot handle f_plane and spatially varying meteo simultaneously: using spatially varying Coriolis parameter with spherical coordinates')
+   end
    MDF.keywords.filcco  = [filename(OPT.topo),'_spherical.grd'];
    filcc2               = [filename(OPT.topo),'_cartesian.grd'];
    wlgrid('write','FileName',[OPT.workdir,MDF.keywords.filcco],'X',D.cor.lon','Y',D.cor.lat','CoordinateSystem','Spherical');
@@ -197,6 +201,28 @@ function MDF = getm2delft3d(varargin)
    end
    fclose(fid);
    
+%% meteo forcing
+
+   if getm.meteo.metforcing
+      MDF.keywords.sub1(3) = 'W';
+      if getm.m3d.calc_temp
+         if getm.meteo.calc_met
+            MDF.keywords.ktemp = 5;
+         else
+            warning('find new ktemp number for direct meteo flux prescription (Deepak)')
+         end
+      end
+      if     getm.meteo.met_method==1
+         MDF.keywords.filwnd = 'todo.wnd';
+         MDF.keywords.filtem = 'todo.tem';
+         warning('to do: *.wnd + *.tem')
+      elseif getm.meteo.met_method==2
+         MDF.keywords.wnsvwp  = 'Y';
+         disp('run delft3d_io_meteo_write_tutorial.m for spatial meteo files')
+      end
+   end
+  
+
 %% initial conditions
 
    if getm.m2d.elev_method==1
@@ -440,14 +466,17 @@ function MDF = getm2delft3d(varargin)
       delft3d_io_src('write',[OPT.workdir,MDF.keywords.filsrc],R);
 
 %% discharge data 
+%  first create file without T/S and last one with T/S
 
-for iq=2:-1:1
-    
-   if iq==2
+for iq=1:2
+
+   if iq==1
       getm0               = getm;
       getm.m3d.calc_temp  = 0;
       getm.m3d.calc_salt  = 0;
       MDF.keywords.fildis = [filename(OPT.river)    ,'_Q_only.dis'];
+   else
+      MDF.keywords.fildis = [filename(OPT.river)    ,'.dis'];
    end
 
    Q.time      = ncread   (OPT.river,'time');
@@ -501,7 +530,7 @@ for iq=2:-1:1
    
    bct_io('write',[OPT.workdir,MDF.keywords.fildis],Dis);
    
-   if iq==1;getm = getm0; end % restore
+   if iq==1;getm = getm0; end % restore getm after 1st call
    
 end   
 
