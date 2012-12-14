@@ -11,7 +11,7 @@ function MDF = getm2delft3d(varargin)
 % Delft3D:
 % * mdf            - empty settings file for Delft3D input
 % * reference_time - reference time for Delft3D input
-% * points_per_bnd - stride for converting GETM bdy values to Delft3D segments:
+% * points_per_bnd - stride for converting GETM bdy values to Delft3D bnd segments:
 %                    is at least 2 because Delft3D has boundary segments that
 %                    connect 2 endpoints, whereas GETM has seperate boundary points
 %
@@ -274,20 +274,20 @@ function MDF = getm2delft3d(varargin)
    
    nsub = getm.m3d.calc_salt + getm.m3d.calc_temp;
    
-   for dseg = 2:max(OPT.points_per_bnd,2); % we recommend 2 for best preventing unnecesarry duplication in bct columns
+   for dbnd = 2:max(OPT.points_per_bnd,2); % we recommend 2 for best preventing unnecesarry duplication in bct columns
 
       fid       = fopen(OPT.bdyinfo,'r');
-      nbnd      = 0;
       sidenames = {'west', 'north', 'east', 'south'};
-      bndtype   = {'N','','Z',''}; % ZERO_GRADIENT,SOMMERFELD,CLAMPED,FLATHER_ELEV
-      
-      nseg1   = 0; % number of segments per boundary stretch
-      nsegcum = 0; % total number of segments for entire model
+      bndtype   = {'N','','Z','',''}; % ZERO_GRADIENT,SOMMERFELD,CLAMPED,FLATHER_ELEV
+      nbnd.getm = 0; % total number of getm bnd points   for entire model
+      nbnd.d3d  = 0; % total number of d3d  bnd segments for entire model
+      nbnd.loc  = 0; % local number of d3d  bnd segments for entire model for current  side
+      nbnd.cum  = 0; % local number of d3d  bnd segments for entire model for previous sides
       for iside = 1:4 % compass directions
          rec = fgetl_no_comment_line(fid,'#!');
          n   = str2num(strtok(rec));
          for i=1:n
-            nbnd = nbnd + 1;
+            nbnd.getm = nbnd.getm + 1;
             rec  = fgetl_no_comment_line(fid,'#!');
             vals = str2num(rec);
       
@@ -317,32 +317,34 @@ function MDF = getm2delft3d(varargin)
       
             % all grid cells per segment for quick overview
             % and ASCII comparison of GETM bdyinfo file with Delft3D bnd file
-            Bnd0.DATA(nbnd).name         = [sidenames{iside},num2str(i)];
-            Bnd0.DATA(nbnd).bndtype      = bndtype{vals(4)}; %'{Z} | C | N | Q | T | R'
-            Bnd0.DATA(nbnd).datatype     = 'T';              %'{A} | H | Q | T'
-            Bnd0.DATA(nbnd).mn           = mn;
-            Bnd0.DATA(nbnd).alfa         = 0;
+            Bnd0.DATA(nbnd.getm).name         = [sidenames{iside},num2str(i)];
+            Bnd0.DATA(nbnd.getm).bndtype      = bndtype{vals(4)}; %'{Z} | C | N | Q | T | R'
+            Bnd0.DATA(nbnd.getm).datatype     = 'T';              %'{A} | H | Q | T'
+            Bnd0.DATA(nbnd.getm).mn           = mn;
+            Bnd0.DATA(nbnd.getm).alfa         = 0;
       
             % multiple grid cells per segment: as bct has two columns, we recommend
             % to merge at least 2 seperate GETM points into one 2-point Delft3D segment
-            nsegcum = nsegcum+nseg1;
-            nseg1   = ceil(length(m)./dseg);
-            tmp.m   = pad(m,nseg1*dseg,m(end)); % make array artificially somewhat larger if dseg does not fit integer # times in boundary.
-            tmp.n   = pad(n,nseg1*dseg,n(end));
+            nbnd.d3d = nbnd.d3d  + nbnd.loc;
+            nbnd.loc = ceil(length(m)./dbnd);
+            tmp.m    = pad(m,nbnd.loc*dbnd,m(end)); % make array artificially somewhat larger if dseg does not fit integer # times in boundary.
+            tmp.n    = pad(n,nbnd.loc*dbnd,n(end));
 
-            for iseg1 = 1:nseg1
-            ind0 = (iseg1-1)*dseg+1; % indices into overall bct indices from GETM
-            ind1 = (iseg1  )*dseg;   % indices into overall bct indices from GETM
-            isegcum = nsegcum + iseg1;
-            Bnd.DATA(isegcum).name               = [sidenames{iside},'_',num2str(i),'_',num2str(iseg1)];
-            Bnd.DATA(isegcum).bndtype            = bndtype{vals(4)}; %'{Z} | C | N | Q | T | R'
-            Bnd.DATA(isegcum).datatype           = 'T';              %'{A} | H | Q | T'
-            Bnd.DATA(isegcum).mn                 = [tmp.m(ind0) tmp.n(ind0) tmp.m(ind1) tmp.n(ind1)];
-            Bnd.DATA(isegcum).alfa               = 0;
+            for ibnd1 = 1:nbnd.loc
+            ind0    = (ibnd1-1)*dbnd+1; % indices into (m,n) indices from local GETM section
+            ind1    = (ibnd1  )*dbnd;   % indices into (m,n) indices from local GETM section
+            ibndcum = nbnd.d3d + ibnd1;
+            ipnt0   = nbnd.cum + ind0;  % indices into (m,n) indices of overall GETM bdy file
+            ipnt1   = nbnd.cum + ind1;  % indices into (m,n) indices of overall GETM bdy file
+            Bnd.DATA(ibndcum).name               = [sidenames{iside},'_',num2str(i),'_',num2str(ibnd1)];
+            Bnd.DATA(ibndcum).bndtype            = bndtype{vals(4)}; %'{Z} | C | N | Q | T | R'
+            Bnd.DATA(ibndcum).datatype           = 'T';              %'{A} | H | Q | T'
+            Bnd.DATA(ibndcum).mn                 = [tmp.m(ind0) tmp.n(ind0) tmp.m(ind1) tmp.n(ind1)];
+            Bnd.DATA(ibndcum).alfa               = 0;
       
-            Bxt.Table(1).Name               = ['Boundary Section : ',num2str(iseg1)];
+            Bxt.Table(1).Name               = ['Boundary Section : ',num2str(ibnd1)];
             Bxt.Table(1).Contents           = 'Uniform';
-            Bxt.Table(1).Location           = [sidenames{iside},'_',num2str(i),'_',num2str(iseg1)];
+            Bxt.Table(1).Location           = [sidenames{iside},'_',num2str(i),'_',num2str(ibnd1)];
             Bxt.Table(1).TimeFunction       = 'non-equidistant';
             Bxt.Table(1).ReferenceTime      = str2num(datestr(OPT.reference_time,'yyyymmdd'));
             Bxt.Table(1).TimeUnit           = 'minutes';
@@ -352,16 +354,16 @@ function MDF = getm2delft3d(varargin)
             Bxt.Table(1).Data               = [];
             Bxt.Table(1).Format             = '';
 
-            Bct.Table(isegcum)                   = Bxt.Table;
-            Bct.Table(isegcum).Parameter(2).Name = 'water elevation (z)  end A';
-            Bct.Table(isegcum).Parameter(2).Unit = '[m]';
-            Bct.Table(isegcum).Parameter(3).Name = 'water elevation (z)  end B';
-            Bct.Table(isegcum).Parameter(3).Unit = '[m]';
-            Bct.Table(isegcum).Data              = ([B.minutes(tmask),B.elev(tmask,ind0),B.elev(tmask,ind1)]);
-            Bct.Table(isegcum).Format            = '% 6g % .3f % .3f'; % time int in minutes, waterlevel float in mm
+            Bct.Table(ibndcum)                   = Bxt.Table;
+            Bct.Table(ibndcum).Parameter(2).Name = 'water elevation (z)  end A';
+            Bct.Table(ibndcum).Parameter(2).Unit = '[m]';
+            Bct.Table(ibndcum).Parameter(3).Name = 'water elevation (z)  end B';
+            Bct.Table(ibndcum).Parameter(3).Unit = '[m]';
+            Bct.Table(ibndcum).Data              = ([B.minutes(tmask),B.elev(tmask,ipnt0),B.elev(tmask,ipnt1)]);
+            Bct.Table(ibndcum).Format            = '% 6g % .3f % .3f'; % time int in minutes, waterlevel float in mm
       
             if getm.m3d.calc_salt
-            js = (isegcum-1)*nsub+1;
+            js = (ibndcum-1)*nsub+1;
             Bcc.Table(js)                   = Bxt.Table;
             Bcc.Table(js).Parameter(2).Name = 'Salinity             end A uniform';
             Bcc.Table(js).Parameter(2).Unit = '[ppt]';
@@ -372,7 +374,7 @@ function MDF = getm2delft3d(varargin)
             end
       
             if getm.m3d.calc_temp
-            jt = (isegcum-1)*nsub+1+getm.m3d.calc_salt;
+            jt = (ibndcum-1)*nsub+1+getm.m3d.calc_salt;
             Bcc.Table(jt)                   = Bxt.Table;
             Bcc.Table(jt).Parameter(2).Name = 'Temperature          end A uniform';
             Bcc.Table(jt).Parameter(2).Unit = '[°C]';
@@ -382,19 +384,19 @@ function MDF = getm2delft3d(varargin)
             Bcc.Table(jt).Format            = '% 6g % .3f % .3f'; % time int in minutes, waterlevel float in mm
             end
 
-            end % j = 1:nseg1
+            end % j = 1:nbnd.loc
             
             BND.NTables = length(Bnd.DATA);
-            
+            nbnd.cum = nbnd.cum + length(m);
+            disp(['nbnd.cum:',num2str(nbnd.cum)])
          end % i=1:n
-
       end % iside
       
       fclose(fid);
       
-      MDF.keywords.filbnd  = [filename(OPT.bdyinfo), '_',num2str(dseg),'.bnd'];
-      MDF.keywords.filbct  = [filename(OPT.bdyinfo), '_',num2str(dseg),'.bct'];
-      MDF.keywords.filbcc  = [filename(OPT.bdyinfo), '_',num2str(dseg),'.bcc'];
+      MDF.keywords.filbnd  = [filename(OPT.bdyinfo), '_',num2str(dbnd),'.bnd'];
+      MDF.keywords.filbct  = [filename(OPT.bdyinfo), '_',num2str(dbnd),'.bct'];
+      MDF.keywords.filbcc  = [filename(OPT.bdyinfo), '_',num2str(dbnd),'.bcc'];
       MDF.keywords.commnt  = [filename(OPT.bdyinfo),                 '_0.bnd'];
  
       delft3d_io_bnd('write',[OPT.workdir,MDF.keywords.commnt],Bnd0);
@@ -404,7 +406,7 @@ function MDF = getm2delft3d(varargin)
       
       clear Bct Bcc Bnd
 
-   end % dseg
+   end % dbnd
 
    MDF.keywords.rettis  = repmat(MDF.keywords.rettis,[BND.NTables 1]);
    MDF.keywords.rettib  = repmat(MDF.keywords.rettib,[BND.NTables 1]);

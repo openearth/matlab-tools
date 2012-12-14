@@ -1,5 +1,5 @@
 function varargout = KNMI_potwind_get_url(varargin)
-%KNMI_POTWIND_GET_URL   gets all potwind data from KNMI website
+%KNMI_POTWIND_GET_URL   downloads potwind data from KNMI and make netCDF
 %
 %   knmi_potwind_get_url(<basepath>)
 %
@@ -90,10 +90,9 @@ function varargout = KNMI_potwind_get_url(varargin)
 
    OPT = setproperty(OPT,varargin{:});
 
-   if OPT.download
+if OPT.download
 
 %% Settings
-
    
    if ~(exist(OPT.directory_raw)==7)
       disp('The following target path ')
@@ -148,7 +147,8 @@ function varargout = KNMI_potwind_get_url(varargin)
                   [OPT.directory_raw,'/',OPT.files{ifile}]); 
          
       end   
-   end
+
+end % download
 
 %% Transform to *.nc files (directly from zipped files)
 

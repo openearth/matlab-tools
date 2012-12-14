@@ -1,5 +1,5 @@
 function varargout = knmi_etmgeg_get_url(varargin)
-%KNMI_ETMGEG_GET_URL   gets all etmgeg data from KNMI website
+%KNMI_ETMGEG_GET_URL   downloads etmgeg data from KNMI and make netCDF
 %
 %   KNMI_ETMGEG_GET_URL(<basepath>)
 %
@@ -51,7 +51,7 @@ function varargout = knmi_etmgeg_get_url(varargin)
 % * nc       : switch whether to make netCDF from unzipped data (default 0)
 % * opendap  : switch whether to put netCDF files on OPeNDAP server (default 0)
 % * url      : base url from where to download (default 
-%              http://www.knmi.nl/klimatologie/onderzoeksgegevens/potentiele_wind/)
+%              http://www.knmi.nl/klimatologie/daggegevens/)
 %
 %See also: KNMI_POTWIND, KNMI_ETMGEG, KNMI_POTWIND_GET_URL
 
@@ -104,11 +104,11 @@ function varargout = knmi_etmgeg_get_url(varargin)
    OPT.directory_raw   = [basepath,filesep,'raw'      ,filesep]; % zip files
    OPT.directory_nc    = [basepath,filesep,'processed',filesep];
    OPT.url             = '"./datafiles3/'; % unique string to recognize datafiles in html page
-   OPT.preurl          = 'http://www.knmi.nl/klimatologie//daggegevens/'; % prefix to relative link in OPT.url
+   OPT.preurl          = 'http://www.knmi.nl/klimatologie/daggegevens/'; % prefix to relative link in OPT.url
 
    OPT = setproperty(OPT,varargin{:});
 
-   if OPT.download
+if OPT.download
 
 %% Settings
 
@@ -163,7 +163,8 @@ function varargout = knmi_etmgeg_get_url(varargin)
                   [OPT.directory_raw,filesep,filenameext(OPT.files{ifile})]); 
          
       end   
-   end
+
+end % download
 
 %% Transform to *.nc files (directly from zipped files)
 

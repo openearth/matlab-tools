@@ -37,8 +37,6 @@ function knmi_potwind2nc(varargin)
    OPT.refdatenum        = datenum(1970,1,1); % linux  datenumber convention
    OPT.fillvalue         = nan; % NaNs do work in netcdf API
    
-   OPT.stationTimeSeries = 0; % last items to adhere to for upcoming convenction, but not yet supported by QuickPlot
-   
 %% File loop
 
    OPT.directory_raw     = 'F:\checkouts\OpenEarthRawData\knmi\potwind\raw\';            % []; %
@@ -98,8 +96,8 @@ for ifile=1:length(OPT.files)
    nc_attput(outputfile, nc_global, 'comment'       , '');
    nc_attput(outputfile, nc_global, 'version'       , str2line(D.version  ,'s',';'));
 						    
-   nc_attput(outputfile, nc_global, 'Conventions'   , 'CF-1.4');
-   nc_attput(outputfile, nc_global, 'CF:featureType', 'stationTimeSeries');  % https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions
+   nc_attput(outputfile, nc_global, 'Conventions'   , 'CF-1.6');
+   nc_attput(outputfile, nc_global, 'featureType'   , 'timeSeries');  % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#featureType
    						    
    nc_attput(outputfile, nc_global, 'stationnumber' , D.stationnumber);
    nc_attput(outputfile, nc_global, 'stationname'   , D.stationname);
@@ -134,21 +132,22 @@ for ifile=1:length(OPT.files)
    ifld = 0;
    
    %% Station number: allows for exactly same variables when multiple timeseries in one netCDF file
+   %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#time-series-data
    
       ifld = ifld + 1;
-   nc(ifld).Name         = 'station_id';
+   nc(ifld).Name         = 'platform_id';
    nc(ifld).Nctype       = 'float'; % no double needed
    nc(ifld).Dimension    = {'locations'};
-   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'station identification number');
-   nc(ifld).Attribute(2) = struct('Name', 'standard_name'  ,'Value', 'station_id');
-
-   % Station long name
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'platform identification code');
+   nc(ifld).Attribute(2) = struct('Name', 'cf_role'        ,'Value', 'timeseries_id');
+   nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'platform_id');
 
       ifld = ifld + 1;
-   nc(ifld).Name         = 'station_name';
+   nc(ifld).Name         = 'platform_name';
    nc(ifld).Nctype       = 'char';
    nc(ifld).Dimension    = {'locations','name_strlen1'};
-   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'station name');
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'platform name');
+   nc(ifld).Attribute(2) = struct('Name', 'standard_name'  ,'Value', 'platform_name');
 
    %% Define dimensions in this order:
    %  time,z,y,x
@@ -166,6 +165,7 @@ for ifile=1:length(OPT.files)
    nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'station longitude');
    nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'degrees_east');
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'longitude');
+   nc(ifld).Attribute(4) = struct('Name', 'axis'           ,'Value', 'X');
     
    %% Latitude
    % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
@@ -177,6 +177,7 @@ for ifile=1:length(OPT.files)
    nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'station latitude');
    nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 'degrees_north');
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'latitude');
+   nc(ifld).Attribute(4) = struct('Name', 'axis'           ,'Value', 'Y');
 
    %% Time
    % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#time-coordinate
@@ -191,16 +192,13 @@ for ifile=1:length(OPT.files)
       ifld = ifld + 1;
    nc(ifld).Name         = 'time';
    nc(ifld).Nctype       = 'double'; % float not sufficient as datenums are big: doubble
-   if OPT.stationTimeSeries
-   nc(ifld).Dimension    = {'locations','time'}; % QuickPlot error: plots dimensions instead of datestr
-   else
-   nc(ifld).Dimension    = {'time'}; % {'locations','time'} % does not work in ncBrowse, nor in Quickplot (is indirect time mapping)
-   end
+   nc(ifld).Dimension    = {'time'};
    nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'time');
    nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value',['days since ',datestr(OPT.refdatenum,'yyyy-mm-dd'),' 00:00:00 ',OPT.timezone]);
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'time');
    nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
-  %nc(ifld).Attribute(5) = struct('Name', 'bounds'         ,'Value', '');
+   nc(ifld).Attribute(5) = struct('Name', 'axis'           ,'Value', 'T');
+  %nc(ifld).Attribute(6) = struct('Name', 'bounds'         ,'Value', '');
    
    %% Parameters with standard names
    % * http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/
@@ -215,9 +213,7 @@ for ifile=1:length(OPT.files)
    nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
    nc(ifld).Attribute(5) = struct('Name', 'KNMI_name'      ,'Value', 'UP');
    nc(ifld).Attribute(6) = struct('Name', 'cell_bounds'    ,'Value', 'point');
-   if OPT.stationTimeSeries
    nc(ifld).Attribute(7) = struct('Name', 'coordinates'    ,'Value', 'lat lon');  % QuickPlot error
-   end
 
       ifld = ifld + 1;
    nc(ifld).Name         = 'wind_from_direction';
@@ -229,9 +225,7 @@ for ifile=1:length(OPT.files)
    nc(ifld).Attribute(4) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue);
    nc(ifld).Attribute(5) = struct('Name', 'KNMI_name'      ,'Value', 'DD');
    nc(ifld).Attribute(6) = struct('Name', 'cell_bounds'    ,'Value', 'point');
-   if OPT.stationTimeSeries
    nc(ifld).Attribute(7) = struct('Name', 'coordinates'    ,'Value', 'lat lon');  % QuickPlot error
-   end
 
    %% Parameters without standard names
 
@@ -240,36 +234,32 @@ for ifile=1:length(OPT.files)
    nc(ifld).Nctype       = 'int';
    nc(ifld).Dimension    = {'locations','time'};
    nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'quality code wind speed');
-   nc(ifld).Attribute(2) = struct('Name', 'comment'        ,'Value',['-1 = no data,',...
-                                                                                  '0   = valid data,',...
-                                                                                  '2   = data taken from WIKLI-archives,',...
-                                                                                  '3   = wind direction in degrees computed from points of the compass,',...
-                                                                                  '6   = added data,',...
-                                                                                  '7   = missing data,',...
-                                                                                  '100 = suspected data']);
+   nc(ifld).Attribute(2) = struct('Name', 'comment'        ,'Value',['-1  = no data,',...
+                                                                     '0   = valid data,',...
+                                                                     '2   = data taken from WIKLI-archives,',...
+                                                                     '3   = wind direction in degrees computed from points of the compass,',...
+                                                                     '6   = added data,',...
+                                                                     '7   = missing data,',...
+                                                                     '100 = suspected data']);
    nc(ifld).Attribute(3) = struct('Name', 'KNMI_name'      ,'Value', 'QUP');
    nc(ifld).Attribute(4) = struct('Name', 'cell_bounds'    ,'Value', 'point');
-   if OPT.stationTimeSeries
    nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'lat lon');  % QuickPlot error
-   end
 
       ifld = ifld + 1;
    nc(ifld).Name         = 'wind_from_direction_quality';
    nc(ifld).Nctype       = 'int';
    nc(ifld).Dimension    = {'locations','time'};
    nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'quality code nautical wind direction');
-   nc(ifld).Attribute(2) = struct('Name', 'comment'        ,'Value',['-1 = no data,',...
-                                                                                         '0   = valid data,',...
-                                                                                         '2   = data taken from WIKLI-archives,',...
-                                                                                         '3   = wind direction in degrees computed from points of the compass,',...
-                                                                                         '6   = added data,',...
-                                                                                         '7   = missing data,',...
-                                                                                         '100 = suspected data']);
+   nc(ifld).Attribute(2) = struct('Name', 'comment'        ,'Value',['-1  = no data,',...
+                                                                     '0   = valid data,',...
+                                                                     '2   = data taken from WIKLI-archives,',...
+                                                                     '3   = wind direction in degrees computed from points of the compass,',...
+                                                                     '6   = added data,',...
+                                                                     '7   = missing data,',...
+                                                                     '100 = suspected data']);
    nc(ifld).Attribute(3) = struct('Name', 'KNMI_name'      ,'Value', 'QQD');
    nc(ifld).Attribute(4) = struct('Name', 'cell_bounds'    ,'Value', 'point');
-   if OPT.stationTimeSeries
    nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'lat lon');  % QuickPlot error
-   end
 
    % Filename of origin
 
@@ -278,8 +268,9 @@ for ifile=1:length(OPT.files)
    nc(ifld).Nctype       = 'int';
    nc(ifld).Dimension    = {'locations','time'};
    nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'KNMI file number of origin');
-   nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', '#');
-   nc(ifld).Attribute(3) = struct('Name', 'comment'        ,'Value', str2line(filename(char(OPT.files{ifile}))));
+   nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', 1);
+   nc(ifld).Attribute(3) = struct('Name', 'flag_values'    ,'Value', 1:length(OPT.files{ifile}));
+   nc(ifld).Attribute(4) = struct('Name', 'flag_meanings'  ,'Value', str2line(filename(char(OPT.files{ifile})),'s',' '));
 
 %% 4 Create variables with attibutes
 % When variable definitons are created before actually writing the
@@ -295,8 +286,8 @@ for ifile=1:length(OPT.files)
 
    nc_varput(outputfile, 'lon'                        , D.lon);
    nc_varput(outputfile, 'lat'                        , D.lat);
-   nc_varput(outputfile, 'station_id'                 , str2num(D.stationnumber));
-   nc_varput(outputfile, 'station_name'               , D.stationname);
+   nc_varput(outputfile, 'platform_id'                , str2num(D.stationnumber));
+   nc_varput(outputfile, 'platform_name'              , D.stationname);
    nc_varput(outputfile, 'time'                       , D.datenum-OPT.refdatenum);
    nc_varput(outputfile, 'wind_speed'                 , D.UP(:)');
    nc_varput(outputfile, 'wind_from_direction'        , D.DD(:)'); % does not work with NaNs.
