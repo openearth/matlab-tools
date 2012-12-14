@@ -16,9 +16,9 @@ OPT = setproperty(OPT,varargin);
       end
       n = length(ATT.geospatialCoverage_northsouth);
       
-      if strcmpi(OPT.datatype,'stationtimeseries')
-      D.station_id                    = ATT.station_id;            
-      D.station_name                  = ATT.station_name;          
+      if strcmpi(OPT.datatype,'timeseries')
+      D.platform_id                   = ATT.platform_id;            
+      D.platform_name                 = ATT.platform_name;          
       D.number_of_observations        = cell2mat(ATT.number_of_observations);
       end
 

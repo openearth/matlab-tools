@@ -22,8 +22,10 @@ function D = nc_harvest(ncfiles,varargin)
 %See also: NC_INFO, nc_dump, NC_ACTUAL_RANGE, NC_HARVEST1, OPENDAP_CATALOG, 
 %          thredds_dump, thredds_info, nc_harvest2xml
 
-   OPT.disp = ''; %'multiWaitbar';
-   OPT.flat = 1; % flat is multi-layered struct, else struct with vectors
+   OPT.disp          = ''; %'multiWaitbar';
+   OPT.flat          = 1; % flat is multi-layered struct, else struct with vectors
+   OPT.platform_id   = 'platform_id'; % CF-1.6, older: 'station_id'
+   OPT.platform_name = 'platform_name'; % CF-1.6, older: 'station_name'
    
    OPT = setproperty(OPT,varargin);
    
@@ -81,8 +83,8 @@ function D = nc_harvest(ncfiles,varargin)
                D.Conventions = cell(1,n);
              D.terms_for_use = cell(1,n);
                 D.disclaimer = cell(1,n);
-                D.station_id = cell(1,n);
-              D.station_name = cell(1,n);
+         D.(OPT.platform_id) = cell(1,n);
+       D.(OPT.platform_name) = cell(1,n);
     D.number_of_observations = cell(1,n);
         
    end
@@ -142,8 +144,8 @@ function D = nc_harvest(ncfiles,varargin)
                  D.Conventions{i} =            d.Conventions;
                D.terms_for_use{i} =          d.terms_for_use;
                   D.disclaimer{i} =             d.disclaimer;
-                  D.station_id{i} =             d.station_id;
-                D.station_name{i} =           d.station_name;
+           D.(OPT.platform_id){i} =            d.(OPT.platform_id);
+         D.(OPT.platform_name){i} =          d.(OPT.platform_name);
       D.number_of_observations{i} = d.number_of_observations;
 
       end

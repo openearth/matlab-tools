@@ -60,8 +60,6 @@ OPT.wgs84              = 4326;
 OPT.att_name           = {''};
 OPT.att_val            = {''};
 
-OPT.stationTimeSeries  = 0; % last items to adhere to for upcoming convenction, but not yet supported by QuickPlot
-
 %% File loop
 
 %OPT.directory_raw      = 'P:\mcdata\OpenEarthRawData\rijkswaterstaat\waterbase\cache\';        % [];%
@@ -262,8 +260,8 @@ for ivar=[OPT.donar_wnsnum]
             nc_attput(ncfile, nc_global, 'comment'         , 'The structure of this netCDF file is described in: https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions, http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.5/cf-conventions.html#id2867470');
             nc_attput(ncfile, nc_global, 'version'         , D.version);
             
-            nc_attput(ncfile, nc_global, 'Conventions'     , 'CF-1.5, UM Aquo 2010 proof of concept, SeaDataNet proof of concept'); % these are independent conventions, so separate by comma: http://www.unidata.ucar.edu/software/netcdf/conventions.html
-            nc_attput(ncfile, nc_global, 'CF:featureType'  , 'timeSeries');  % https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions
+            nc_attput(ncfile, nc_global, 'Conventions'     , 'CF-1.6, UM Aquo 2010 proof of concept, SeaDataNet proof of concept'); % these are independent conventions, so separate by comma: http://www.unidata.ucar.edu/software/netcdf/conventions.html
+            nc_attput(ncfile, nc_global, 'featureType'     , 'timeSeries');  % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#featureType
             
             nc_attput(ncfile, nc_global, 'terms_for_use'   , 'These data can be used freely for research purposes provided that the following source is acknowledged: Rijkswaterstaat.');
             nc_attput(ncfile, nc_global, 'disclaimer'      , 'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.');
@@ -334,24 +332,23 @@ for ivar=[OPT.donar_wnsnum]
             clear nc
             ifld = 0;
             
-            % Station number: allows for exactly same variables when multiple
-            % timeseries in one netCDF file (future extension)
+   %% Station number: allows for exactly same variables when multiple timeseries in one netCDF file
+   %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#time-series-data
             
             ifld = ifld + 1;
-            nc(ifld).Name         = 'station_id';
+            nc(ifld).Name         = 'platform_id';
             nc(ifld).Nctype       = 'char';
             nc(ifld).Dimension    = {'locations','name_strlen1'};
-            nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'station ID');
-            nc(ifld).Attribute(2) = struct('Name', 'standard_name'  ,'Value', 'station_id'); % standard name
-            
-            % Station long name
+            nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'platform identification code');
+            nc(ifld).Attribute(2) = struct('Name', 'cf_role'        ,'Value', 'timeseries_id');
+            nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'platform_id');
             
             ifld = ifld + 1;
-            nc(ifld).Name         = 'station_name';
+            nc(ifld).Name         = 'platform_name';
             nc(ifld).Nctype       = 'char';
             nc(ifld).Dimension    = {'locations','name_strlen2'};
-            nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'station name');
-            nc(ifld).Attribute(2) = struct('Name', 'standard_name'  ,'Value', 'station_name'); % standard name
+            nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'platform name');
+            nc(ifld).Attribute(2) = struct('Name', 'standard_name'  ,'Value', 'platform_name');
             
             % Define dimensions in this order:
             % [time,z,y,x]
@@ -498,11 +495,7 @@ for ivar=[OPT.donar_wnsnum]
             ifld = ifld + 1;
             nc(ifld).Name             = 'time';
             nc(ifld).Nctype           = 'double'; % float not sufficient as datenums are big: doubble
-            if OPT.stationTimeSeries
-                nc(ifld).Dimension        = {'locations','time'}; % QuickPlot error: plots dimensions instead of datestr
-            else
-                nc(ifld).Dimension        = {'time'}; % {'locations','time'} % does not work in ncBrowse, nor in Quickplot (is indirect time mapping)
-            end
+            nc(ifld).Dimension        = {'time'};
             nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'time');
             nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', ['days since ',datestr(OPT.refdatenum,'yyyy-mm-dd'),' 00:00:00 ',OPT.timezone]);
             nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'time');
@@ -526,9 +519,7 @@ for ivar=[OPT.donar_wnsnum]
             
             nc(ifld).Attribute(end+1) = struct('Name', '_FillValue'     ,'Value', single(OPT.fillvalue)); % needs to be same type as data itself (i.e. single)
             nc(ifld).Attribute(end+1) = struct('Name', 'cell_methods'   ,'Value', 'time: point area: point');
-            if OPT.stationTimeSeries
-                nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'lat lon');  % QuickPlot error
-            end
+            nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'lat lon');  % QuickPlot error
             
             % custom atts
             for jj=1:length(OPT.att_name)0
@@ -547,20 +538,20 @@ for ivar=[OPT.donar_wnsnum]
             
             %% 5 Fill variables
             
-            nc_varput(ncfile, 'station_id'  , D.data.locationcode);
-            nc_varput(ncfile, 'station_name', D.data.location);
-            nc_varput(ncfile, 'lon'         , D.data.lon);
-            nc_varput(ncfile, 'lat'         , D.data.lat);
+            nc_varput(ncfile, 'platform_id'  , D.data.locationcode);
+            nc_varput(ncfile, 'platform_name', D.data.location);
+            nc_varput(ncfile, 'lon'          , D.data.lon);
+            nc_varput(ncfile, 'lat'          , D.data.lat);
             if ~(D.data.epsg==OPT.wgs84) % sometimes x/y are already wgs84, then no need for x/y
-                nc_varput(ncfile, 'x'           , D.data.x);
-                nc_varput(ncfile, 'y'           , D.data.y);
+                nc_varput(ncfile, 'x'        , D.data.x);
+                nc_varput(ncfile, 'y'        , D.data.y);
             end
-            nc_varput(ncfile, 'z'           , D.data.z(:)');  % orientation matters because netCDF variable is 2D: [location x time]
-            nc_varput(ncfile, 'time'        , D.data.datenum(:)' - OPT.refdatenum);
-            nc_varput(ncfile, OPT.name      , D.data.(OPT.name)(:)');  % orientation matters because netCDF variable is 2D: [location x time]
-            nc_varput(ncfile, 'wgs84'       , OPT.wgs84);
+            nc_varput(ncfile, 'z'            , D.data.z(:)');  % orientation matters because netCDF variable is 2D: [location x time]
+            nc_varput(ncfile, 'time'         , D.data.datenum(:)' - OPT.refdatenum);
+            nc_varput(ncfile, OPT.name       , D.data.(OPT.name)(:)');  % orientation matters because netCDF variable is 2D: [location x time]
+            nc_varput(ncfile, 'wgs84'        , OPT.wgs84);
             if nc_isvar(ncfile,'epsg')
-                nc_varput(ncfile, 'epsg'        , D.data.epsg); % always keep as, because when x/y are wgs84 they refer to epsg
+                nc_varput(ncfile, 'epsg'     , D.data.epsg); % always keep as, because when x/y are wgs84 they refer to epsg
             end
             
             %% 6 Check

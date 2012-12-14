@@ -13,7 +13,7 @@ function varargout = nc_harvest1(varargin)
 
    OPT.disp           = ''; %'multiWaitbar';
    OPT.separator      = ';'; % for long names
-   OPT.datatype       = 'stationtimeseries'; % CF data types (grid, stationtimeseries upcoming CF standard https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions)
+   OPT.datatype       = 'timeSeries'; % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#discrete-sampling-geometries
    OPT.catalog_entry  = {'title',...
                          'institution',...
                          'source',...
@@ -25,10 +25,25 @@ function varargout = nc_harvest1(varargin)
                          'Conventions',...
                          'terms_for_use',...
                          'disclaimer'};
+                         
+%% File
 
-   if strcmpi(OPT.datatype,'stationtimeseries')
-      OPT.catalog_entry{end+1} = 'station_id'            ;
-      OPT.catalog_entry{end+1} = 'station_name'          ;
+   if isempty(varargin{1})
+      varargout = {ATT};
+      return
+   elseif isstruct(varargin{1})
+      fileinfo = varargin{1};
+      ncfile   = fileinfo.Filename;
+   elseif ~isstruct(varargin{1})
+      ncfile   = varargin{1};
+      fileinfo = nc_info(ncfile);
+   end
+   
+   OPT = setproperty(OPT,{varargin{2:end}});                      
+
+   if strcmpi(OPT.datatype,'timeseries')
+      OPT.catalog_entry{end+1} = 'platform_id'            ;
+      OPT.catalog_entry{end+1} = 'platform_name'          ;
       OPT.catalog_entry{end+1} = 'number_of_observations';
    end
 
@@ -53,19 +68,6 @@ function varargout = nc_harvest1(varargin)
      ATT.(fldname) = '';
    end
    
-%% File
-
-   if isempty(varargin{1})
-      varargout = {ATT};
-      return
-   elseif isstruct(varargin{1})
-      fileinfo = varargin{1};
-      ncfile   = fileinfo.Filename;
-   elseif ~isstruct(varargin{1})
-      ncfile   = varargin{1};
-      fileinfo = nc_info(ncfile);
-   end
-   
 %% get relevant global attributes
 %  using above read fileinfo
     
@@ -82,7 +84,6 @@ function varargout = nc_harvest1(varargin)
 %% Cycle datasets
 %  get all standard_name (and prevent doubles)
 %  get actual_range attribute instead if present for lat, lon, time
-
 
    idat = 1;
 
@@ -102,7 +103,7 @@ function varargout = nc_harvest1(varargin)
       % cycle all attributes
       natt = length(fileinfo.Dataset(idat).Attribute);
       for iatt=1:natt
-          
+      
           if strcmpi(OPT.disp,'multiWaitbar')
           multiWaitbar([mfilename,'2'],iatt/natt,'label','Cycling attributes ...')
           end
@@ -197,27 +198,27 @@ function varargout = nc_harvest1(varargin)
                   ATT.timeCoverage.start   = min(ATT.timeCoverage.start,time(1));
                   ATT.timeCoverage.end     = max(ATT.timeCoverage.end  ,time(2));
       
-                  if strcmpi(OPT.datatype,'stationtimeseries')
+                  if strcmpi(OPT.datatype,'timeseries')
                      ATT.number_of_observations = fileinfo.Dataset(idat).Size;
                   end
       
               end
       
-           % get stationtimeseries specifics
+           % get timeseries specifics
            
-              if strcmpi(OPT.datatype,'stationtimeseries')
-           
-                  if strcmpi(Value,'station_id')
-                      ATT.station_id  = nc_varget(ncfile, fileinfo.Dataset(idat).Name);
-                      if isnumeric(ATT.station_id)
-                      ATT.station_id = num2str(ATT.station_id);
+              if strcmpi(OPT.datatype,'timeSeries')
+              
+                  if strcmpi(Value,'platform_id')
+                      ATT.platform_id  = nc_varget(ncfile, fileinfo.Dataset(idat).Name);
+                      if isnumeric(ATT.platform_id)
+                      ATT.platform_id = num2str(ATT.platform_id);
                       end
-                      ATT.station_id = ATT.station_id(:)';
+                      ATT.platform_id = ATT.platform_id(:)';
                   end
            
-                  if strcmpi(Value,'station_name')
-                      ATT.station_name = nc_varget(ncfile, fileinfo.Dataset(idat).Name);
-                      ATT.station_name = ATT.station_name(:)';
+                  if strcmpi(Value,'platform_name')
+                      ATT.platform_name = nc_varget(ncfile, fileinfo.Dataset(idat).Name);
+                      ATT.platform_name = ATT.platform_name(:)';
                   end
            
               end

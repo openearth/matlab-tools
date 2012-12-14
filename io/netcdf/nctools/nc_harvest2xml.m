@@ -4,8 +4,7 @@ function nc_harvest2xml(xmlname,D,varargin)
 % D = nc_harvest    (opendap_url)
 %     nc_harvest2xml(xmlname,D)
 %
-% writes non-flat nc_harvest object D to THREDDS
-% catalog.xml file.
+% writes non-flat nc_harvest object D to THREDDS catalog.xml file.
 %
 %See also: nc_harvest, nc_harvest2xml, thredds_dump, thredds_info
 

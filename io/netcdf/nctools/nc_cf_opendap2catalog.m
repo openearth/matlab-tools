@@ -85,7 +85,7 @@ function varargout = nc_cf_opendap2catalog(varargin)
 %   catalog = nc2struct('catalog.nc')
 %   Element = structfun(@(x) (x(1)),catalog,'UniformOutput',0)
 %
-% For the stationtimeseries some extra information is loaded.
+% For the CF timeseries some extra information is loaded.
 %
 %SEE ALSO: NC_HARVEST1,NC_HARVEST, NC_INFO, NC_ACTUAL_RANGE, 
 %          STRUCT2NC, NC2STRUCT, OPENDAP_CATALOG, SNCTOOLS
@@ -133,7 +133,7 @@ OPT.save           = 0; % save catalog in directory
 OPT.catalog_dir    = [];
 OPT.catalog_name   = 'catalog'; % exclude from indexing
 OPT.separator      = ';'; % for long names
-OPT.datatype       = 'stationtimeseries'; % CF data types (grid, stationtimeseries upcoming CF standard https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions)
+OPT.datatype       = 'timeseries'; % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#discrete-sampling-geometries
 OPT.disp           = 'multiWaitbar';
 OPT.datestr        = 'yyyy-mm-ddTHH:MM:SS'; % default for high-freq timeseries
 
@@ -229,9 +229,9 @@ for entry=1:length(OPT.files)
    ATT.standard_names{entry}                =  ATT1.standard_name;
    ATT.long_names    {entry}                =  ATT1.long_name;
    
-   if strcmpi(OPT.datatype,'stationtimeseries')
-   ATT.station_id{entry}              = ATT1.station_id;            
-   ATT.station_name{entry}            = ATT1.station_name;          
+   if strcmpi(OPT.datatype,'timeSeries')
+   ATT.platform_id{entry}             = ATT1.platform_id;            
+   ATT.platform_name{entry}           = ATT1.platform_name;          
    ATT.number_of_observations{entry}  = ATT1.number_of_observations;
    end
     
@@ -270,7 +270,7 @@ ATT.timeCoverage  = cellfun(@(x) datestrnan(x),ATT.datenum, 'UniformOutput', fal
            ATT.(OPT.varname{ivar})(entry,1:length(data)) = data;
        end
    end
-
+   
 %% store database (mat file, netCDF file, xls file, ..... and perhaps some day as xml file)
 
    if OPT.save
@@ -281,7 +281,6 @@ ATT.timeCoverage  = cellfun(@(x) datestrnan(x),ATT.datenum, 'UniformOutput', fal
    elseif nargout==0
        
        warning('output neither stored with ''save'' keyword, nor returned as argument: saved as ATT.mat.')
-       save ATT
        
    end
 

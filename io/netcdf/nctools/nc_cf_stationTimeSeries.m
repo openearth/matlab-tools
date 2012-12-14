@@ -21,7 +21,7 @@ function varargout = nc_cf_stationTimeSeries(ncfile,varargin)
 % the following assumption <MUST> be valid:
 %  * lat, lon and time coordinates must always exist as defined in the CF convenctions.
 %
-% The plot contains (ncfile, station_id, lon, lat) in title and (long_name, units) as ylabel.
+% The plot contains (ncfile, platform_id, lon, lat) in title and (long_name, units) as ylabel.
 %
 %  [D,M] = nc_cf_stationTimeSeries(ncfile,<varname>,<keyword,value>)
 %
@@ -133,9 +133,13 @@ function varargout = nc_cf_stationTimeSeries(ncfile,varargin)
    
 %% Check whether is indeed time series
 
-   index = findstrinstruct(fileinfo.Attribute,'Name','CF:featureType');
+   index = findstrinstruct(fileinfo.Attribute,'Name','featureType');
    if isempty(index)
-      warning(['netCDF file might not be a proper stationTimeSeries, it lacks Attribute CF:featureType=stationTimeSeries'])
+      warning(['netCDF file might not be a proper CF timeSeries, it lacks CF-1.6 Attribute featureType'])
+   else
+       if ~strcmpi(fileinfo.Attribute(index).Value,'timeSeries')
+          warning(['netCDF file might not be a proper CF timeSeries, it lacks CF-1.6 Attribute featureType=timeSeries'])
+       end
    end
 
 %% Get datenum
@@ -170,32 +174,32 @@ function varargout = nc_cf_stationTimeSeries(ncfile,varargin)
    
 %% Get location info   
 
-   idname          = nc_varfind(fileinfo, 'attributename', 'standard_name', 'attributevalue', 'station_id');
+   idname          = nc_varfind(fileinfo, 'attributename', 'standard_name', 'attributevalue', 'platform_id');
    if ~isempty(idname)
-    D.station_id   = nc_varget(ncfile,idname);
-    if isnumeric(D.station_id)
-    D.station_id   = num2str(D.station_id);
+    D.platform_id   = nc_varget(ncfile,idname);
+    if isnumeric(D.platform_id)
+    D.platform_id   = num2str(D.platform_id);
     else
-    D.station_id   =         D.station_id;
+    D.platform_id   =         D.platform_id;
     end
-   elseif nc_isvar(ncfile,'station_id')
-    D.station_id   = nc_varget(ncfile,'station_id');    
+   elseif nc_isvar(ncfile,'platform_id')
+    D.platform_id   = nc_varget(ncfile,'platform_id');    
    else
-    D.station_id = '';
-    disp('warning: no unique station id specified')
+    D.platform_id = '';
+    disp('warning: no unique platform id specified')
    end
    
-   D.station_name = D.station_id(:)'; % default
+   D.platform_name = D.platform_id(:)'; % default
 
-   stname          = nc_varfind(fileinfo, 'attributename', 'long_name', 'attributevalue', 'station_name');
+   stname          = nc_varfind(fileinfo, 'attributename', 'long_name', 'attributevalue', 'platform_name');
    if ~isempty(stname)
-    D.station_name = nc_varget(ncfile,stname);
-   elseif nc_isvar(ncfile,'station_name')
-    D.station_name = nc_varget(ncfile,'station_name');  
+    D.platform_name = nc_varget(ncfile,stname);
+   elseif nc_isvar(ncfile,'platform_name')
+    D.platform_name = nc_varget(ncfile,'platform_name');  
    else
-    idname         = nc_varfind(fileinfo, 'attributename', 'long_name', 'attributevalue', 'station_name');
+    idname         = nc_varfind(fileinfo, 'attributename', 'long_name', 'attributevalue', 'platform_name');
     if ~isempty(stname)
-    D.station_name = nc_varget(ncfile,stname);
+    D.platform_name = nc_varget(ncfile,stname);
     end
    end
 
@@ -290,7 +294,7 @@ function varargout = nc_cf_stationTimeSeries(ncfile,varargin)
       datetick('x')
       grid     on
       title   ({mktex(filenameext(fileinfo.Filename)),...
-               ['"',mktex(D.station_name(:)'),'"',...
+               ['"',mktex(D.platform_name(:)'),'"',...
                 ' (',num2str(D.lon(1)),'\circE',...
                  ',',num2str(D.lat(1)),'\circN)']})
               
