@@ -76,7 +76,7 @@ OPT.fill_variable_name = 'z';
 OPT = setproperty(OPT,varargin);
 
 if nargin==0;
-    varargout = OPT;
+    varargout = {OPT};
     return;
 end
 %% code

@@ -49,6 +49,10 @@ dataBounds.S = min(netcdf_index.geospatialCoverage_northsouth(:));
 write_kml(OPT,dataBounds);
 
 function generate_tiles(OPT,netcdf_index)
+% create output directory if it doesn't exist yet
+if ~exist(OPT.path_kml,'dir')
+    mkpath(OPT.path_kml)
+end
 
 %% get all unique times
 times = [];
@@ -635,7 +639,6 @@ zip     (kmzname,kmlname);
 delete  (kmlname)
 movefile([kmzname,'.zip'],kmzname);
        
-
 function kml_dynamic(destPath,tiles,dimension)
 [~,ind1]     = max([tiles.folderdatenum]);
 timeOutStrMax = tiles(ind1).folderdatestr;
