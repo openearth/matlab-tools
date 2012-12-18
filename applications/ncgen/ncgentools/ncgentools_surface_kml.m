@@ -150,7 +150,7 @@ for ii = 1:length(tiles)
         wtf=true
     end
     if all(isnan(data.z(:)))
-        returnmessage(OPT.debug,'Skipped %d\n',ii)
+        returnmessage(OPT.debug,'%s skipped\n',tiles(ii).code)
         continue
     else
         data.lat = data.lat - tiles(ii).S;
@@ -174,7 +174,7 @@ for ii = 1:length(tiles)
             try
                 [im,mask] = print_tile(fig,OPT.dim,OPT.dimExt,...
                     fullfile(OPT.path_kml,time_str(times==data.t(iTime),:),[tiles(ii).code '.png']),...
-                    OPT.bgcolor,OPT.filledInTime,im,mask,OPT.debug);
+                    OPT.bgcolor,OPT.filledInTime,im,mask,OPT.debug,[tiles(ii).code '/' time_str(times==data.t(iTime),:)]);
             catch
                 wtf=true;
             end
@@ -394,15 +394,15 @@ else
     fig.hl = [];
 end
 
-function [im,mask] = print_tile(fig,dim,dimExt,PNGfileName,bgcolor,mergeExistingTiles,prevIm,prevMask,debug)
+function [im,mask] = print_tile(fig,dim,dimExt,PNGfileName,bgcolor,mergeExistingTiles,prevIm,prevMask,debug,debugname)
 if exist(PNGfileName,'file')
-    returnmessage(debug,'%s skipped\n',PNGfileName);
+    returnmessage(debug,'%s skipped\n',debugname);
     % read that image so to be able to merge it with the next
     [im,~,alpha] = imread(PNGfileName);
     mask = repmat(alpha==0,[1 1 3]);
     return
 else
-    returnmessage(debug,'%s added\n',PNGfileName);
+    returnmessage(debug,'%s added\n',debugname);
 end
 % TO DO error when gca has no data at moment of plotting
 print(fig.hf,'-dpng','-r1',PNGfileName);
