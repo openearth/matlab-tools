@@ -68,8 +68,11 @@ times(times < OPT.timerange(1) | times > OPT.timerange(2)) = [];
 D = dir2(OPT.path_kml,'file_incl','^0\.png$','dir_excl','colorbar','depth',1);
 D = D([D.isdir]);
 D([D.bytes] == 0) = [];
-completed_dates = datenum({D(2:end).name},OPT.dateStrStyle);
-
+if ~isempty({D(2:end).name})
+    completed_dates = datenum({D(2:end).name},OPT.dateStrStyle);
+else
+    completed_dates = [];
+end
 times(ismember(times,completed_dates)) = [];
 
 if isempty(times)
@@ -131,7 +134,7 @@ delta = [-1 1]* delta;
 
 multiWaitbar('Generating tiles','reset','color',[.6 0 .2])
 %% start loop
-for ii = 1:1:length(tiles)
+for ii = 1:length(tiles)
     multiWaitbar('Generating tiles',(ii-1) / length(tiles),'label',sprintf('Generating tile: %s',tiles(ii).code))
     try
         data = ncgentools_get_data_in_box(netcdf_index,...
