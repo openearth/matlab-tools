@@ -364,7 +364,7 @@ function fig = make_figure(cLim,cMap,lighting_effects,dim,dimExt,bgcolor,level)
 level = 20;
 fig.hf = figure('visible','off');
 fig.ha = axes('parent',fig.hf,'position',[0 0 1 1]);
-colormap(cMap)
+colormap(cMap);
 % scale x to lot/lon range
 x = linspace(0,360 / (2^level),90);
 z = peaks(90) +cos(peaks(90))+cos(magic(90))/5;
@@ -390,7 +390,6 @@ if lighting_effects
     material([0.3,	0.7,	0.5,	15,		1.0]);
     lighting phong;
     lightangle(fig.hl,180,60);
-    get(fig.hl)
 else
     fig.hl = [];
 end
