@@ -1,7 +1,7 @@
 function varargout = nc_cf_opendap2catalog(varargin)
 %NC_CF_OPENDAP2CATALOG   harvester for netCDF-CF in THREDDS OPeNDAP catalogues: returns meta-data
 %
-% NB We are preparing to replace nc_cf_opendap2catalog with nc_harvest.
+% NB We are preparing to replace nc_cf_opendap2catalog with nc_cf_harvest.
 %
 %   ATT = nc_cf_opendap2catalog(<baseurl>,<keyword,value>)
 %   ATT = nc_cf_opendap2catalog(<files>  ,<keyword,value>)
@@ -11,24 +11,24 @@ function varargout = nc_cf_opendap2catalog(varargin)
 % on top of the crawler OPENDAP_CATALOG. Each node is harvested with 
 % nc_cf_file2catalog. The full catalog is written to file nc2struct:
 %
-%  +-----------------------------------+
-%  |Harvest loop:                      |
-%  |nc_cf_opendap2catalog (NC_HARVEST) |
-%  |   +-------------------------------+
-%  |   |crawler:                       |
-%  |   |OPENDAP_CATALOG                |
-%  |   +-------------------------------+
-%  |   |for each dataset node:         |
-%  |   |   +---------------------------+
-%  |   |   |harvester:                 |
-%  |   |   |NC_HARVEST1                |
-%  |.. +---+---------------------------+
-%  |   :Store meta-data in cache:      |
-%  |   :NC_CF_OPENDAP2CATALOG2nc       |
-%  |   :+---STRUCT2NC                  |
-%  |   :NC_CF_OPENDAP2CATALOG2xls      |
-%  |   :+---STRUCT2XLS                 |
-%  +---+-------------------------------+
+%  +--------------------------------------+
+%  |Harvest loop:                         |
+%  |nc_cf_opendap2catalog (NC_CF_HARVEST) |
+%  |   +----------------------------------+
+%  |   |crawler:                          |
+%  |   |OPENDAP_CATALOG                   |
+%  |   +----------------------------------+
+%  |   |for each dataset node:            |
+%  |   |   +------------------------------+
+%  |   |   |harvester:                    |
+%  |   |   |NC_CF_HARVEST1                |
+%  |.. +---+------------------------------+
+%  |   :Store meta-data in cache:         |
+%  |   :NC_CF_OPENDAP2CATALOG2nc          |
+%  |   :+---STRUCT2NC                     |
+%  |   :NC_CF_OPENDAP2CATALOG2xls         |
+%  |   :+---STRUCT2XLS                    |
+%  +---+----------------------------------+
 %
 % Set 'maxlevel' to crawl deeper (default 1). When you query a local directory, 
 % and you want the resulting catalog.nc to work on a server, use keyword
@@ -87,7 +87,7 @@ function varargout = nc_cf_opendap2catalog(varargin)
 %
 % For the CF timeseries some extra information is loaded.
 %
-%SEE ALSO: NC_HARVEST1,NC_HARVEST, NC_INFO, NC_ACTUAL_RANGE, 
+%SEE ALSO: NC_CF_HARVEST1, NC_CF_HARVEST, NC_INFO, NC_ACTUAL_RANGE, 
 %          STRUCT2NC, NC2STRUCT, OPENDAP_CATALOG, SNCTOOLS
 %          NC_CF_OPENDAP2CATALOG2NC, NC_CF_OPENDAP2CATALOG2XLS, NC_CF_OPENDAP2CATALOG2KML
 
@@ -216,7 +216,7 @@ for entry=1:length(OPT.files)
    urlPath            = OPT.urlPathFcn(OPT.filename);
    ATT.urlPath{entry} = urlPath;
    
-   ATT1 = nc_harvest1(OPT.filename);
+   ATT1 = nc_cf_harvest1(OPT.filename);
    
    ATT.projectionEPSGcode{entry}            =  ATT1.projectionEPSGcode;
    ATT.geospatialCoverage_northsouth{entry} = [ATT1.geospatialCoverage.northsouth.start ATT1.geospatialCoverage.northsouth.end];

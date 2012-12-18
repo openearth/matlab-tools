@@ -174,7 +174,7 @@ function OPT = nc_cf_opendap2catalog2kml(ATT,varargin)
 %% labels
 
    output = [output, '<Folder>'];
-   output = [output, '<name>Stations</name>'];
+   output = [output, '<name>Platforms</name>'];
 
 %% generate markers
 %  TO DO: pre-allocate output (printing images takes longer, so speed-up will be marginal)?
@@ -198,7 +198,7 @@ function OPT = nc_cf_opendap2catalog2kml(ATT,varargin)
     
        ncfile = OPT.varPathFcn(D.urlPath{ii});
        
-           [DATA,META] = nc_cf_stationTimeSeries(ncfile,varname,'plot',OPT.preview*2);
+           [DATA,META] = nc_cf_timeseries(ncfile,varname,'plot',OPT.preview*2);
        units.(varname) = META.(varname).units;
        
        if ~isempty(OPT.resolveName)

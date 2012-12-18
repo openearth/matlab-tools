@@ -12,7 +12,7 @@ OPT.plot      = 0;
 %% get full time series: order  5.0 seconds.
 
    tic
-   D = nc_cf_stationTimeSeries(ncfile,'sea_surface_height','plot',OPT.plot);
+   D = nc_cf_timeseries(ncfile,'sea_surface_height','plot',OPT.plot);
    S0.datenum   = find(D.datenum > OPT.datenum(1) & D.datenum < OPT.datenum(2));
    toc
 

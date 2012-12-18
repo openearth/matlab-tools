@@ -86,4 +86,4 @@ end
    
 %% use query
 
-   [D,M]=nc_cf_stationTimeSeries([OPT.baseurl,filename(char(C.urlPath(index(1),:))),'.nc']);
+   [D,M]=nc_cf_timeseries([OPT.baseurl,filename(char(C.urlPath(index(1),:))),'.nc']);

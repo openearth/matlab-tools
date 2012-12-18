@@ -46,7 +46,7 @@
 %          NC_CF_GRID_WRITE_LAT_LON_ORTHOGONAL_TUTORIAL, 
 %          NC_CF_GRID_WRITE_LAT_LON_CURVILINEAR_TUTORIAL, 
 %          NC_CF_GRID_WRITE_X_Y_ORTHOGONAL_TUTORIAL,
-%          NC_CF_STATIONTIMESERIES
+%          nc_cf_timeseries
 
 % This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a> under the <a href="http://www.gnu.org/licenses/gpl.html">GPL</a> license.
 
@@ -90,9 +90,11 @@
 
   [OPT.x,OPT.y,log]           = convertCoordinates(OPT.lon,OPT.lat,'CS1.code',OPT.wgs84.code,'CS2.code',OPT.epsg.code);
 
-  %% Define variable (define some data)
-
-   OPT.val                    = [1 2 3 4 5;6 7 8 9 10;11 12 nan 14 15]; % use ncols as 1st array dimension to get correct plot in ncBrowse (snctools swaps for us)
+%% Define variable (define some data)
+%  checkersboard to test plot with one nan-hole
+   OPT.val                    = [  1 102   3 104   5;...
+                                 106   7 108   9 110;...
+                                  11 112 nan 114  15]; % use ncols as 1st array dimension to get correct plot in ncBrowse (snctools swaps for us)
    OPT.varname                = 'depth';       % free to choose: will appear in netCDF tree
    OPT.units                  = 'm';           % from UDunits package: http://www.unidata.ucar.edu/software/udunits/
    OPT.long_name              = 'bottom depth';% free to choose: will appear in plots
@@ -139,7 +141,7 @@
    if ~isempty(OPT.time)
    nc_add_dimension(ncfile, 'time', 1); % if you would like to include more instances of the same grid, 
                                         % you can optionally use 'time' as a 3rd dimension. see 
-   end                                  % nc_cf_stationTimeSeries_write_tutorial for info on time.          
+   end                                  % nc_cf_timeseries_write_tutorial for info on time.          
 
 %% 3.a Create coordinate variables: x and y
 
@@ -173,7 +175,6 @@
    nc(ifld).Nctype       = nc_int;
    nc(ifld).Dimension    = {};
    nc(ifld).Attribute    = nc_cf_grid_mapping(OPT.epsg.code);
-   var2evalstr(nc(ifld).Attribute)
 
 %% 3.c Create coordinate variables: longitude
 %      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#longitude-coordinate
@@ -214,8 +215,6 @@
    nc(ifld).Dimension    = {};
    nc(ifld).Attribute    = nc_cf_grid_mapping(OPT.wgs84.code); % contains ADAGUC attributes, although ADAGUC cannot handle the curvilinear file generated here
    
-   var2evalstr(nc(ifld).Attribute)
-   
 %% 3z   Optionally create time dimension
 
    if ~isempty(OPT.time)
@@ -251,7 +250,7 @@
    nc(ifld).Name             = OPT.varname;
    nc(ifld).Nctype           = nc_type(OPT.val_type);
    if ~isempty(OPT.time)
-   nc(ifld).Dimension        = {'time','col','row'}
+   nc(ifld).Dimension        = {'time','col','row'};
    else
    nc(ifld).Dimension        = {'col','row'};
    end
@@ -284,18 +283,16 @@
    nc_varput(ncfile, OPT.varname    , permute(OPT.val,[3 1 2]));
    else
    nc_varput(ncfile, OPT.varname    , OPT.val       );
-
-
    end
       
 %% 6   Check file summary
    
    nc_dump(ncfile);
    fid = fopen(fullfile(fileparts(mfilename('fullpath')),[mfilename,'.cdl']),'w');
-   fprintf(fid,'%s\n', '// The netCDF CF conventions for grids are defined here:')
-   fprintf(fid,'%s\n', '// http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.5/ch05s06.html')
-   fprintf(fid,'%s\n', '// This grid file can be loaded into matlab with nc_cf_grid.m')
-   fprintf(fid,'%s\n',['// To create this netCDF file with Matlab please see ',mfilename])
+   fprintf(fid,'%s\n', '// The netCDF CF conventions for grids are defined here:');
+   fprintf(fid,'%s\n', '// http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.5/ch05s06.html');
+   fprintf(fid,'%s\n', '// This grid file can be loaded into matlab with nc_cf_grid.m');
+   fprintf(fid,'%s\n',['// To create this netCDF file with Matlab please see ',mfilename]);
    nc_dump(ncfile,fid);
    fclose(fid)
 
@@ -303,7 +300,7 @@
 
    Da.dep   = nc_varget(ncfile,'depth');
    Da.lat   = nc_varget(ncfile,'lon');
-   Da.lon   = nc_varget(ncfile,'lat')
+   Da.lon   = nc_varget(ncfile,'lat');
 
 %% 7.b Load the data: using standard_names and coordinate attribute
 
@@ -312,12 +309,12 @@
 
    coords   = nc_attget(ncfile,depname,'coordinates');
   [ax1,coords] = strtok(coords); ax2 = strtok(coords);
-   if strcmpi(nc_attget(ncfile,ax1,'standard_name'),'latitude')
+   if strcmpi(nc_attget(ncfile,ax1,'standard_name'),'latitude');
    Db.lat   = nc_varget(ncfile,ax1);
-   Db.lon   = nc_varget(ncfile,ax2)
+   Db.lon   = nc_varget(ncfile,ax2);
    else
    Db.lat   = nc_varget(ncfile,ax2);
-   Db.lon   = nc_varget(ncfile,ax1)
+   Db.lon   = nc_varget(ncfile,ax1);
    end
 
 %% 7.c Load the data: using a dedicated function developed for grids

@@ -9,7 +9,7 @@ function varargout = nc_cf_opendap2catalog_test
    FIG(2) = figure;nc_cf_grid_write_lat_lon_curvilinear_tutorial
    FIG(3) = figure;nc_cf_grid_write_x_y_orthogonal_tutorial
    FIG(4) = figure;nc_cf_grid_write_x_y_curvilinear_tutorial
-   FIG(5) = figure;nc_cf_stationTimeSeries_write_tutorial
+   FIG(5) = figure;nc_cf_timeseries_write_tutorial
    
    delete(FIG)
    
@@ -19,7 +19,7 @@ function varargout = nc_cf_opendap2catalog_test
 
    CATALOG = nc_cf_opendap2catalog(d,'save',1);
    
-   ok(1) = any(strmatch([d,filesep,'nc_cf_stationTimeSeries_write_tutorial.nc']       ,CATALOG.urlPath))
+   ok(1) = any(strmatch([d,filesep,'nc_cf_timeseries_write_tutorial.nc']              ,CATALOG.urlPath))
    ok(2) = any(strmatch([d,filesep,'nc_cf_grid_write_lat_lon_orthogonal_tutorial.nc'] ,CATALOG.urlPath))
    ok(3) = any(strmatch([d,filesep,'nc_cf_grid_write_lat_lon_curvilinear_tutorial.nc'],CATALOG.urlPath))
    ok(4) = any(strmatch([d,filesep,'nc_cf_grid_write_x_y_orthogonal_tutorial.nc']     ,CATALOG.urlPath))

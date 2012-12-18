@@ -34,7 +34,7 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
 %
 %    [D,M]=nc_cf_grid([directory,'knmi/NOAA/mom/1990_mom/5/N19900501T025900_SST.nc'],'SST')
 %
-%See also: SNCTOOLS, NC_CF_STATIONTIMESERIES
+%See also: SNCTOOLS, nc_cf_timeseries
 
 % HYRAX does not work, nor does it show tree in ncBrowse, but does plot in ncBrowse.
 %    directory = 'http://opendap.deltares.nl:8080/opendap/'                %               [OpenEarth OPeNDAP HYRAX production server]

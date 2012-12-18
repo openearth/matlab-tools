@@ -23,7 +23,7 @@ function varargout = nc_cf_time(ncfile,varargin)
 %  base              = 'http://opendap.deltares.nl:8080/thredds/dodsC';
 % [D.datenum,D.zone] = nc_cf_time([base,'/opendap/knmi/potwind/potwind_343_2001.nc'],'time')
 %
-%See also: NC_CF_STATIONTIMESERIES, NC_CF_GRID, UDUNITS2DATENUM
+%See also: nc_cf_timeseries, NC_CF_GRID, UDUNITS2DATENUM
 
 %% Copyright notice
 %   --------------------------------------------------------------------
