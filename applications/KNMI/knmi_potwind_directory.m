@@ -9,6 +9,20 @@ function names = knmi_potwind_directory(directory,varargin)
 %
 %See also: KNMI_POTWIND, KNMI_POTWIND_GET_URL, KNMI_POTWIND_MULTI
 
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
 %% Keyword,value
 
   %OPT = setproperty(OPT,varargin{:});

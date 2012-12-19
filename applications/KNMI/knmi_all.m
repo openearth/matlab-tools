@@ -1,9 +1,23 @@
-function knmi_all
+%function knmi_all
 %KNMI_ALL    download potwind + etmgeg from web, transform to netCDF, make kml,  make catalog.
 %
 %See also: KNMI_POTWIND_GET_URL,         KNMI_ETMGEG_GET_URL
 %          KNMI_POTWIND2NC,              KNMI_ETMGEG2NC
 %          NC_CF_STATIONTIMESERIES2META, NC_CF_DIRECTORY2CATALOG, NC_CF_STATIONTIMESERIES2KMLOVERVIEW
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
 
    clear all
    close all
@@ -12,7 +26,7 @@ function knmi_all
 
 %% Initialize
 
-   OPT.download             = 0; % get fresh downloads from rws and remove existing ones to subdir old
+   OPT.download             = 0; % get fresh downloads
    OPT.make_nc              = 1;
    OPT.make_catalog         = 1; % loading a cached one does not work at the moment
    OPT.make_kml             = 1;
@@ -24,10 +38,11 @@ function knmi_all
    urlbase = 'http://opendap.deltares.nl:8080';               % production server (links)
    kmlbase = 'D:\kml.deltares.nl\';                           % @ local, no links to other kml or images any more
 
-   subdirs     = {'potwind','etmgeg'}; % take 9 and 14 mins respectively
-   varnames    = {'wind_speed','air_temperature_mean'};
+   subdirs     = {'potwind','etmgeg','uurgeg'}; % take 9 and 14 mins respectively
+   varnames    = {'wind_speed','air_temperature_mean','air_temperature_mean'};
    resolveUrls = {'http://www.knmi.nl/klimatologie/onderzoeksgegevens/potentiele_wind/',...
-                  'http://www.knmi.nl/klimatologie/daggegevens/download.html'};
+                  'http://www.knmi.nl/klimatologie/daggegevens/download.html',...
+                  'http://www.knmi.nl/klimatologie/uurgegevens/'};
    
    multiWaitbar(mfilename,0,'label','Looping substances.','color',[0.3 0.8 0.3])
 
@@ -61,6 +76,14 @@ n = n+1;
                                 'directory_raw'  , OPT.directory_raw,...
                                 'directory_nc'   , OPT.directory_nc,...
                                 'nc'             , OPT.make_nc)
+   elseif strcmpi(subdir,'uurgeg')
+   
+   KNMI_uurgeg_get_url         ('download'       , OPT.download,...
+                                'directory_raw'  , OPT.directory_raw,...
+                                'directory_nc'   , OPT.directory_nc,...
+                                'nc'             , OPT.make_nc)
+   else
+       error('unknown subdir')
    end
 
 
@@ -97,7 +120,7 @@ n = n+1;
       OPT2.description        = ['<hr> This is a proof-of-concept demo of how wind time series from '...
                                  'KNMI could be presented in Google Earth for easy navigation in time space. '...
                                  'The data in this proof-of-concept demo is a cache that is updated a few times per year. For up-to-date '...
-                                 'data and meta-data please visit the original source provided by KNMI: <a href="http://www.knmi.nl/klimatologie/onderzoeksgegevens/potentiele_wind/">KNMI potentiele_wind</a>.'....
+                                 'data and meta-data please visit the original source provided by <a href="http://www.knmi.nl/">KNMI</a>.'....
                                  '<hr><table bgcolor="#333333" cellpadding="3" cellspacing="1"><tbody><tr><td colspan="2" bgcolor="#666666"><div style="color:#FFFFFF;">Credits:</div></td></tr>',...
 	                             '<tr><td    bgcolor="#FFFFFF">data source     </td><td bgcolor="#FFFFFF">KNMI</td></tr>',...
 	                             '<tr><td    bgcolor="#FFFFFF">data source url </td><td bgcolor="#FFFFFF">http://www.KNMI.nl</td></tr>',...
@@ -115,7 +138,7 @@ n = n+1;
       OPT2.logokmlName        = {'Overheids logo','OpenEarth logo'};
       OPT2.overlayXY          = {[.5 1],[0 0.00]};
       OPT2.screenXY           = {[.5 1],[0 0.03]};
-      OPT2.imName             = {'http://www.knmi.nl/images/logo_knmi_venw.png',[fileparts(oetlogo),filesep,'OpenEarth-logo-blurred-white-background4kml.png'];};
+      OPT2.imName             = {'http://www.knmi.nl/images/logo_knmi_venw_engels.png',[fileparts(oetlogo),filesep,'OpenEarth-logo-blurred-white-background4kml.png'];};
       OPT2.logoName           = {'overheid4GE.png','oet4GE.png'};
 
       OPT2.varPathFcn         = @(s) path2os(strrep(s,['http://opendap.deltares.nl/thredds/dodsC/opendap/'],ncbase),filesep); % use local netCDF files for preview/statistics when CATALOG refers already to server

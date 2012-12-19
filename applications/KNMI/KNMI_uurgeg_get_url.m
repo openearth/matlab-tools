@@ -1,11 +1,11 @@
-function varargout = KNMI_potwind_get_url(varargin)
-%KNMI_POTWIND_GET_URL   downloads potwind data from KNMI and make netCDF
+function varargout = KNMI_uurgeg_get_url(varargin)
+%KNMI_uurgeg_get_url   downloads uurgeg data from KNMI and make netCDF
 %
-%   knmi_potwind_get_url(<basepath>)
+%   KNMI_uurgeg_GET_URL(<basepath>)
 %
-% downloads all potwind data from KNMI website and stores relative to 'basepath' in:
+% downloads all uurgeg data from KNMI website and stores relative to 'basepath' in:
 %
-%   .\raw\
+%   .\OpenEarthRawData\KNMI\uurgeg\raw\
 %
 % Implemented <keyword,value> pairs are:
 % * download : switch whether to download from url (default 1)
@@ -13,24 +13,15 @@ function varargout = KNMI_potwind_get_url(varargin)
 % * nc       : switch whether to make netCDF from unzipped data (default 0)
 % * opendap  : switch whether to put netCDF files on OPeNDAP server (default 0)
 % * url      : base url from where to download (default 
-%              http://www.knmi.nl/klimatologie/onderzoeksgegevens/potentiele_wind/)
-% Example:
-%   OPT.download = 1;
-%   OPT.directory_raw = 'c:\Data\wind_from_knmi\raw\';
-%   OPT.directory_nc = 'c:\Data\wind_from_knmi\nc\';
-%   OPT.make_nc = 1;
-%   KNMI_potwind_get_url        ('download'       , OPT.download,...
-%                                'directory_raw'  , OPT.directory_raw,...
-%                                'directory_nc'   , OPT.directory_nc,...
-%                                'nc'             , OPT.make_nc)
+%              http://www.knmi.nl/klimatologie/uurgegevens/)
 %
-%See also: wind_plot, KNMI_POTWIND, KNMI_ETMGEG, KNMI_ETMGEG_GET_URL
+%See also: KNMI_POTWIND, KNMI_ETMGEG, KNMI_POTWIND_GET_URL, KNMI_ETMGEG_GET_URL
 
 %   --------------------------------------------------------------------
-%   Copyright (C) 2008 Deltares
+%   Copyright (C) 2012 Deltares
 %       G (Gerben).J. de Boer
 %
-%       gerben.deboer@deltares.nl	
+%       gerben.deboer@deltares.nl 
 %
 %       Deltares
 %       P.O. Box 177
@@ -66,7 +57,7 @@ function varargout = KNMI_potwind_get_url(varargin)
 % $Keywords: $
 
    if nargin < 1
-      error('syntax: KNMI_potwind_get_url(basepath)')
+      error('syntax: KNMI_uurgeg_get_url(basepath)')
    end
    
       basepath = '';
@@ -76,21 +67,22 @@ function varargout = KNMI_potwind_get_url(varargin)
    end
 
 %% Set <keyword,value> pairs
-   
-   OPT.debug           = 0; % load local download.html from OPT.directory_raw
+
+   OPT.debug           = 0; % load local download.html from DIR.raw
    OPT.download        = 1;
-   OPT.nc              = 1;
+   OPT.nc              = 0;
    OPT.opendap         = 1; 
    OPT.directory_raw   = [basepath,filesep,'raw'      ,filesep]; % zip files
    OPT.directory_nc    = [basepath,filesep,'processed',filesep];
-   OPT.url             =  'http://www.knmi.nl/klimatologie/onderzoeksgegevens/potentiele_wind/'; %datafiles/
+   OPT.url             = '"datafiles/'; % unique string to recognize datafiles in html page
+   OPT.preurl          = 'http://www.knmi.nl/klimatologie/uurgegevens/'; % prefix to relative link in OPT.url
 
    OPT = setproperty(OPT,varargin{:});
 
 if OPT.download
 
 %% Settings
-   
+
    if ~(exist(OPT.directory_raw)==7)
       disp('The following target path ')
       disp(OPT.directory_raw)
@@ -98,22 +90,23 @@ if OPT.download
       pause
       mkpath(OPT.directory_raw)
    end   
-
+   
 %% Load website
 
    if ~(OPT.debug)
-   website   = urlread ('http://www.knmi.nl/klimatologie/onderzoeksgegevens/potentiele_wind/');
-
-   
-               urlwrite('http://www.knmi.nl/klimatologie/onderzoeksgegevens/potentiele_wind/',...
+   website   = urlread ('http://www.knmi.nl/klimatologie/uurgegevens/');
+               urlwrite('http://www.knmi.nl/klimatologie/uurgegevens/',...
                         [OPT.directory_raw,'download.html']);
    else
-   website = urlread(['file:///',OPT.directory_raw,filesep,'download.html'])
+   website = urlread(['file:///',OPT.directory_raw,filesep,'download.html']);
    end
 
 %% Extract names of files to be downloaded from webpage
 
-   indices   = strfind(website,'"potwind_');
+   indices = strfind(website,OPT.url);
+   
+   % includes current running year:  jaar.txt
+   % includes current running month: maand.txt
    
    nfile     = 0;
    for index=indices
@@ -123,10 +116,9 @@ if OPT.download
       nfile  = nfile +1;
       
       %% mind to leave out "" brackets
-      OPT.files{nfile} = website(index+1:index+dindex(2)-1);
+      OPT.files{nfile} = [OPT.preurl,website(index+1:index+dindex(2)-1)];
    
    end
-
    nfile = length(OPT.files);
    
 %% Download *.zip files
@@ -138,10 +130,8 @@ if OPT.download
          disp(['Downloading: ',num2str(ifile),'/',num2str(nfile),': ',OPT.files{ifile}]);
          multiWaitbar(mfilename,ifile/nfile,'label',['Processing station: ',OPT.files{ifile}])
          
-         mkpath([OPT.directory_raw,'/',filepathstr(OPT.files{ifile})])
-         
-         urlwrite([OPT.url  ,'/',OPT.files{ifile}],... % *.zip
-                  [OPT.directory_raw,'/',OPT.files{ifile}]); 
+         urlwrite([OPT.files{ifile}],... % *.zip
+                  [OPT.directory_raw,filesep,filenameext(OPT.files{ifile})]); 
          
       end   
 
@@ -151,9 +141,8 @@ end % download
 
    if OPT.nc
       
-         knmi_potwind2nc('directory_raw'  ,OPT.directory_raw,...
-                         'directory_nc'   ,OPT.directory_nc)
-   
+         knmi_uurgeg2nc('directory_raw'  ,OPT.directory_raw,...
+                         'directory_nc'  ,OPT.directory_nc)
    end
    
 %% Output 

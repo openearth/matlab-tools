@@ -25,7 +25,7 @@ function knmi_potwind2nc(varargin)
 % In this example time is both a dimension and a variables.
 % The actual datenum values do not show up as a parameter in ncBrowse.
 %
-%See also: KNMI_POTWIND, SNCTOOLS, KNMI_POTWIND_GET_URL, KNMI_ETMGEG2NC_TIME_DIRECT
+%See also: wind_plot, KNMI_POTWIND, SNCTOOLS, KNMI_POTWIND_GET_URL, KNMI_ETMGEG2NC_TIME_DIRECT
 
 %% Initialize
 

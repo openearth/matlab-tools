@@ -1,7 +1,7 @@
-function knmi_etmgeg2nc(varargin)
-%KNMI_ETMGEG2NC  transforms directory of etmgeg ASCII files into directory of netCDF files
+function knmi_uurgeg2nc(varargin)
+%KNMI_UURGEG2NC  transforms directory of uurgeg ASCII files into directory of netCDF files
 %
-%     knmi_etmgeg2nc(<keyword,value>) 
+%     knmi_uurgeg2nc(<keyword,value>) 
 %
 %  where the following <keyword,value> pairs have been implemented:
 %
@@ -15,8 +15,8 @@ function knmi_etmgeg2nc(varargin)
 %   * pause          pause between files (default 0)
 %
 % Example:
-%  knmi_etmgeg2nc ('directory_raw','P:\mcdata\OpenEarthRawData\knmi\etmgeg\raw\',...
-%                  'directory_nc', 'P:\mcdata\opendap\knmi\etmgeg\')
+%  knmi_uurgeg2nc ('directory_raw','P:\mcdata\OpenEarthRawData\knmi\uurgeg\raw\',...
+%                  'directory_nc', 'P:\mcdata\opendap\knmi\uurgeg\')
 %
 %  Timeseries data definition:
 %   * https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions (full definition)
@@ -25,7 +25,9 @@ function knmi_etmgeg2nc(varargin)
 % In this example time is both a dimension and a variables.
 % The actual datenum values do not show up as a parameter in ncBrowse.
 %
-%See also: KNMI_ETMGEG, SNCTOOLS, KNMI_ETMGEG_GET_URL, KNMI_POTWIND2NC_TIME_DIRECT
+%See also: KNMI_uurgeg, SNCTOOLS, KNMI_uurgeg_GET_URL, KNMI_POTWIND2NC_TIME_DIRECT
+
+% based on knmi_etmgeg2nc.m
 
 % This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
 % OpenEarthTools is an online collaboration to share and manage data and
@@ -53,9 +55,9 @@ function knmi_etmgeg2nc(varargin)
 
 %% File loop
 
-   OPT.directory_raw     = 'F:\checkouts\OpenEarthRawData\knmi\etmgeg\raw\';%[]; %
-   OPT.directory_nc      = 'F:\checkouts\opendap\knmi\etmgeg\';             %[]; %
-   OPT.mask              = 'etmgeg*';
+   OPT.directory_raw     = 'F:\checkouts\OpenEarthRawData\knmi\uurgeg\raw\';%[]; %
+   OPT.directory_nc      = 'F:\checkouts\opendap\knmi\uurgeg\';             %[]; %
+   OPT.mask              = 'uurgeg*';
    OPT.ext               = '';
    
 %% Keyword,value
@@ -68,13 +70,13 @@ function knmi_etmgeg2nc(varargin)
 
 for ifile=1:length(OPT.files)  
 
-   OPT.filename = [OPT.directory_raw, filesep, OPT.files(ifile).name]; % e.g. 'etmgeg_273.txt'
+   OPT.filename = [OPT.directory_raw, filesep, OPT.files(ifile).name]; % e.g. 'uurgeg_273.txt'
 
    disp(['Processing ',num2str(ifile),'/',num2str(length(OPT.files)),': ',filename(OPT.filename)])
 
 %% 0 Read raw data
 
-   D                                = knmi_etmgeg(OPT.filename);
+   D                                = knmi_uurgeg(OPT.filename);
    D.version                        = '';
 
 %% 1a Create file
@@ -107,7 +109,7 @@ for ifile=1:length(OPT.files)
    nc_attput(outputfile, nc_global, 'featureType'   , 'timeSeries');  % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#featureType
    
    nc_attput(outputfile, nc_global, 'stationnumber' , unique(D.data.STN));
-   nc_attput(outputfile, nc_global, 'stationname'   , D.stationname);
+   nc_attput(outputfile, nc_global, 'stationname'   , D.platform_name);
 
    nc_attput(outputfile, nc_global, 'terms_for_use' , 'These data can be used freely for research purposes provided that the following source is acknowledged: KNMI.');
    nc_attput(outputfile, nc_global, 'disclaimer'    , 'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.');
@@ -128,8 +130,8 @@ for ifile=1:length(OPT.files)
 %% 2 Create dimensions
 
    nc_add_dimension(outputfile, 'time'        , length(D.datenum))
-   nc_add_dimension(outputfile, 'locations'   , size(D.stationname,1)); %
-   nc_add_dimension(outputfile, 'name_strlen1', size(D.stationname,2)); % for multiple stations get max length
+   nc_add_dimension(outputfile, 'locations'   , size(D.platform_name,1)); %
+   nc_add_dimension(outputfile, 'name_strlen1', size(D.platform_name,2)); % for multiple stations get max length
 
 %% 3 Create variables
    clear nc
@@ -246,7 +248,7 @@ for ifile=1:length(OPT.files)
    nc_varput(outputfile, 'lon'                                             , D.lon);
    nc_varput(outputfile, 'lat'                                             , D.lat);
    nc_varput(outputfile, 'platform_id'                                     , unique(D.data.STN));
-   nc_varput(outputfile, 'platform_name'                                   , D.stationname);
+   nc_varput(outputfile, 'platform_name'                                   , D.platform_name);
    nc_varput(outputfile, 'time'                                            , D.datenum - OPT.refdatenum);
    
    

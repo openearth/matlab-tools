@@ -1,30 +1,31 @@
-function varargout = knmi_etmgeg(varargin)
-%KNMI_ETMGEG   Reads KNMI ASCII climate time series
+function varargout = knmi_uurgeg(varargin)
+%KNMI_UURGEg   Reads KNMI ASCII climate time series
 %
-%    W = knmi_etmgeg(filename) 
+%    W = knmi_uurgeg(filename) 
 %
 % reads a wind file (can be zipped) from
 %    http://www.knmi.nl/klimatologie/daggegevens/download.html
 % into a struct W.
 %
-%    [W,iostat] = knmi_etmgeg(filename) 
+%    [W,iostat] = knmi_uurgeg(filename) 
 %
 % returns error status in iostat (OK/cancel/file not found/)
 %
-%    W = knmi_etmgeg(filename,<keyword,value>) 
+%    W = knmi_uurgeg(filename,<keyword,value>) 
 %
 % where the following optional <keyword,value> pairs are implemented:
 % (see: http://www.knmi.nl/samenw/hydra/meta_data/dir_codes.htm
 % * debug    : debug or not (default 0
-% * version  : version of knmi_etmgeg.csv descriptor to be used (default 'current')
+% * version  : version of knmi_uurgeg.csv descriptor to be used (default 'current')
 % * nheader  : number of header lines skip (default: corrent for current version)
 %
 % Missing data are filled in with NaN.
 %
 % NOTE THAT THE VALUES FROM THE FILE HAVE BEEN MULTIPLIED WITH A FACTOR TO GET SI-UNITS.
 %
-% See also: KNMI_POTWIND, KNMI_ETMGEG2NC, KNMI_ETMGEG_GET_URL, KNMI_ETMGEG_STATIONS
+% See also: KNMI_POTWIND, KNMI_uurgeg2NC, KNMI_uurgeg_GET_URL, KNMI_etmgeg_STATIONS
 
+% based on knmi_etmgeg.m
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Deltares
 %       G.J.de Boer
@@ -72,9 +73,9 @@ function varargout = knmi_etmgeg(varargin)
 
    if mod(nargin,2)     == 0 
      [shortfilename, pathname, filterindex] = uigetfile( ...
-        {'etmgeg*.*' ,'KNMI climate time series (etmgeg*.*)'; ...
+        {'uurgeg*.*' ,'KNMI climate time series (uurgeg*.*)'; ...
          '*.*'       ,'All Files (*.*)'}, ...
-         'KNMI climate time series (etmgeg*.*)');
+         'KNMI climate time series (uurgeg*.*)');
       
       if ~ischar(shortfilename) % uigetfile cancelled
          W.filename     = [];
@@ -101,7 +102,7 @@ function varargout = knmi_etmgeg(varargin)
 
       OPT.debug         = 0;
       OPT.version       = 'current';
-      OPT.nheader       = 49; % 35; 27; due to 9 extra parameters in datafiles2, another extra 15 in datafiles3
+      OPT.nheader       = 33;
 
       OPT = setproperty(OPT,varargin{2:end});
    
@@ -128,7 +129,7 @@ function varargout = knmi_etmgeg(varargin)
          unzip(W.file.name,tempdir);
          deletezip   = fname;
       else
-         fname = W.file.name
+         fname = W.file.name;
       end
 
 %% Read header
@@ -140,7 +141,7 @@ function varargout = knmi_etmgeg(varargin)
       
 %% Extract meta-info for use in interpretation
 
-      W               = xls2struct([fileparts(mfilename('fullpath')),filesep,'knmi_etmgeg.',OPT.version,'.csv']);
+      W               = xls2struct([fileparts(mfilename('fullpath')),filesep,'knmi_uurgeg.',OPT.version,'.csv']);
       if iscell(W.slope)
       W.slope         = [W.slope{:}]; % all numeric now
       end
@@ -158,25 +159,10 @@ function varargout = knmi_etmgeg(varargin)
       W.file.bytes    = tmp.bytes;
       
 %% Read data
-      
-%     1        2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17
-%   ------------------------------------------------------------------------------------------------------
-% older  STN,YYYYMMDD,DDVEC,   FG,  FHX,   FX,   TG,   TN,   TX,   SQ,   SP,   DR,   RH,   PG,  VVN,   NG,   UG
-% older
-% older  235,20010101,  177,   88,  110,  170,   40,    9,   76,    0,    0,   71,   88, 9944,   22,    8,   93
-%   ------------------------------------------------------------------------------------------------------
-% datafiles2
-% old    STN,YYYYMMDD,DDVEC,   FG,  FHX,  FHN,   FX,   TG,   TN,   TX, T10N,   SQ,   SP,    Q,   DR,   RH,   PG,  PGX,  PGN,  VVN,  VVX,   NG,   UG,   UX,   UN, EV24
-% old   
-% old    210,19510101,  202,  108,  190,   51,     ,   15,   -9,   42,     ,     ,     ,     ,     ,     , 9882, 9947, 9821,     ,     ,    7,     ,     ,     ,     ,
-%          RAW = textscan(fid,'%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n','delimiter',',');
-%   ------------------------------------------------------------------------------------------------------
-% datafiles3
-%        STN,YYYYMMDD,DDVEC,FHVEC,   FG,  FHX, FHXH,  FHN, FHNH,  FXX, FXXH,   TG,   TN,  TNH,   TX,  TXH, T10N,T10NH,   SQ,   SP,    Q,   DR,   RH,  RHX, RHXH,   PG,   PX,  PXH,   PN,  PNH,  VVN, VVNH,  VVX, VVXH,   NG,   UG,   UX,  UXH,   UN,  UNH, EV24
-%        210,19510101,  202,   93,  108,  190,   17,   51,   23,     ,     ,   15,   -9,    1,   42,   18,     ,     ,     ,     ,     ,     ,     ,     ,     , 9882, 9947,     , 9821,     ,     ,     ,     ,     ,    7,     ,     ,     ,     ,     ,     ,
-%   ------------------------------------------------------------------------------------------------------
+%        STN,YYYYMMDD,   HH,   DD,   FH,   FF,   FX,    T,  T10,   TD,   SQ,    Q,   DR,   RH,    P,   VV,    N,    U,   WW,   IX,    M,    R,    S,    O,    Y
+%        210,19510101,    1,  200,     ,   93,     ,   -4,     ,     ,     ,     ,     ,     , 9947,     ,    8,     ,    5,     ,     ,     ,     ,     ,     
          
-         RAW = textscan(fid,'%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n','delimiter',',');
+         RAW = textscan(fid,'%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n','delimiter',',');
          
          for icol=1:length(W.knmi_name)
 
@@ -191,7 +177,8 @@ function varargout = knmi_etmgeg(varargin)
             end
             
          end
-         W.datenum = time2datenum(W.data.YYYYMMDD);
+         
+         W.datenum = time2datenum(W.data.YYYYMMDD) + W.data.HH./24;
          fclose(fid);
          
    end % if length(tmp)==0

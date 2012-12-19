@@ -39,26 +39,37 @@ function W = knmi_potwind_multi(fnames,varargin)
 %       2600 GA Delft
 %       The Netherlands
 %
-%   This library is free software; you can redistribute it and/or
-%   modify it under the terms of the GNU Lesser General Public
-%   License as published by the Free Software Foundation; either
-%   version 2.1 of the License, or (at your option) any later version.
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
 %
 %   This library is distributed in the hope that it will be useful,
 %   but WITHOUT ANY WARRANTY; without even the implied warranty of
-%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-%   Lesser General Public License for more details.
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
 %
-%   You should have received a copy of the GNU Lesser General Public
-%   License along with this library; if not, write to the Free Software
-%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
-%   USA
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
 %   -------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
 
    OPT.debug = 0;
 
 %% read all
-%  ---------------------------
 
    for ii=1:length(fnames)
    w(ii) = knmi_potwind(fnames{ii},varargin{:}); 
@@ -70,7 +81,6 @@ function W = knmi_potwind_multi(fnames,varargin)
 
 %% Set result equal to first file
 %  and delete array fields
-%  ---------------------------
 
    W               = w(1);
    W.DD            = [];
@@ -89,13 +99,12 @@ function W = knmi_potwind_multi(fnames,varargin)
    W.read.at       = [];
    
 %% merge, where later overwrites earlier
-%  ---------------------------
 
    w(end+1).datenum = Inf; % add axtra dummy file to allow processing of last file in loop
    
    for ii=[1:length(w)-1]
        
-      %% Copy relevant non-overlapping parts of time series
+   %% Copy relevant non-overlapping parts of time series
 
       mask            = w(ii).datenum < min(w(ii+1).datenum);
 
@@ -106,8 +115,7 @@ function W = knmi_potwind_multi(fnames,varargin)
       W.datenum       = [W.datenum(:)'             w(ii).datenum(mask)']';
       W.origin_number = [W.origin_number(:)' ii+0.*w(ii).datenum(mask)']'; % 1 for 1st file, 2 for 2nd etc.
 
-      %% Check all     meta-info that is non unique per file
-      %  ---------------------------
+   %% Check all     meta-info that is non unique per file
 
      %if ~strcmpi        (w(ii).comments,w(1).comments        );   error('meta-info not unique for comments        ');end %          comments: {1x22 cell}
       if ~strcmpi(   w(ii).stationnumber,w(1).stationnumber   );   error('meta-info not unique for stationnumber   ');end %     stationnumber: '252'
@@ -132,8 +140,7 @@ function W = knmi_potwind_multi(fnames,varargin)
       if ~strcmpi(       w(ii).read.with,w(1).read.with       );   error('meta-info not unique for read.with       ');end %          iomethod: [1x80 char]
       if ~isequal(   w(ii).read.iostatus,w(1).read.iostatus   );   error('meta-info not unique for read.iostatus   ');end %          iostatus: 1
 
-      %% Copy  remaing meta-info that is     unique per file
-      %  ---------------------------
+   %% Copy  remaing meta-info that is     unique per file
 
       W.file.name{ii}  = w(ii).file.name ;
       W.file.date{ii}  = w(ii).file.date ;
@@ -145,7 +152,8 @@ function W = knmi_potwind_multi(fnames,varargin)
    
    end
    
-   %% debug
+%% debug
+
    if OPT.debug
        TMP = figure;
        plot    (W.datenum,W.origin_number,'.-')

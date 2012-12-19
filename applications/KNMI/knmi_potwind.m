@@ -29,7 +29,7 @@ function varargout = knmi_potwind(varargin)
 %
 % * pol2cart:  adds also u and v wind components to speed UP and direction DD
 %
-% See also: CART2POL, POL2CART, DEGN2DEGUC, DEGUC2DEGN, HMCZ_WIND_READ
+% See also: wind_plot, CART2POL, POL2CART, DEGN2DEGUC, DEGUC2DEGN, HMCZ_WIND_READ
 %           KNMI_ETMGEG, KNMI_POTWIND_MULTI
 
 % uses time2datenum (OET)

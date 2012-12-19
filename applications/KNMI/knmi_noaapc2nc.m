@@ -9,6 +9,20 @@
 %
 %See also: KNMI_NOAAPC_READ
 
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
 % TO DO: find out polar_stereographic parameters to EPSG
 % TO DO: save data with scale_factor and add_offset to UINT8 to sace space
 % TO DO: add composite info (to cell_methods)
