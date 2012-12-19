@@ -364,7 +364,7 @@ function varargout = xls2struct(fname,varargin)
 
       for ifld   = 1:nfld
       
-         fldname         = mkvar(char(fldnames{ifld}));
+         fldname         = mkvar(strtrim(char(fldnames{ifld})));
          
          if isempty(fldname)
             break
