@@ -1,5 +1,5 @@
 function varargout = wind_plot(t,D,F,varargin)
-%WIND_PLOT   Wind rose of direction and intensity
+%WIND_PLOT   Wind rose of direction and intensity and feathers
 % 
 %   Syntax:
 %      [HANDLES,DATA] = WIND_PLOT(t,D,I,<keyword,value>)
@@ -14,8 +14,8 @@ function varargout = wind_plot(t,D,F,varargin)
 %   Optional keywords:
 %       - dtype     type of input directions D, standard or meteo, affects:
 %                   (i) 0-convention and (ii) visual interpetation (to/from)
-%                   if meteo,     0=from North, 90=from East , etc
-%                   if not meteo, 0=to   East , 90=to   North, etc (default)
+%                   if 'meteo',     0=from North, 90=from East , etc
+%                   if not 'meteo', 0=to   East , 90=to   North, etc (default)
 %       - Ulim      velocity range, used scale directions to axis
 %
 %   For all keywords, call wind_plot()
@@ -62,16 +62,22 @@ function varargout = wind_plot(t,D,F,varargin)
 % $Keywords: $
 
 %% varargin options:
-   OPT.Ulim    = [0 10];
-   OPT.dtype   = 'meteo';
 
-   OPT.thleg   = '\theta [\circ]';
-   OPT.thlabel = 'wind from direction [\circ]';
-   OPT.thcolor = 'r';
+   OPT.dtype    = 'meteo';
+   OPT.tlim     = [];
 
-   OPT.Uleg    = '|U| [m/s]';
-   OPT.Ulabel  = 'wind speed [m/s]';
-   OPT.Ucolor  = 'b';
+   OPT.Ulim     = [0 15];
+   OPT.Uleg     = '|U| [m/s]';
+   OPT.Ulabel   = 'wind speed [m/s]';
+   OPT.Ucolor   = 'b';
+
+   OPT.thleg    = '\theta [\circ]';
+   OPT.thlabel  = 'wind from direction [\circ]';
+   OPT.thcolor  = 'r';
+
+   OPT.f_scale  = 1;  % uy can be read in y-axis if f_scale==1, because f_aspect is applied on the x-axis.
+   OPT.f_aspect = []; % [] is automatic
+   OPT.f_level  = []; % [] is mean(Ulim)
    
    OPT = setproperty(OPT, varargin{:});
    
@@ -82,11 +88,13 @@ function varargout = wind_plot(t,D,F,varargin)
    end
 
 %% directions conversion:
+
    if ~isequal(OPT.dtype,'meteo')
      D=deguc2degN(D);
    end
 
 %% plot U
+
    plot    (t,F ,'color',OPT.Ucolor,'DisplayName',OPT.Uleg);
    hold     on
    ylim    (OPT.Ulim)
@@ -106,6 +114,7 @@ function varargout = wind_plot(t,D,F,varargin)
    ylim    (OPT.Ulim)
 
 %% plot th
+
    plot    (t,D./360.*OPT.Ulim(2),        'color',OPT.thcolor,...
                                     'DisplayName',OPT.thleg,...
                                           'color',OPT.thcolor);
@@ -117,5 +126,35 @@ function varargout = wind_plot(t,D,F,varargin)
                                        'rotation',90,...
                               'verticalalignment','top',...
                             'horizontalalignment','center',...
-                                          'color',OPT.thcolor)
+                                          'color',OPT.thcolor);
+                                      
+%% plot feathers
+
+   if ~isempty(OPT.tlim)
+      xlim(OPT.tlim([1 end]))
+   else
+      xlim(t([1 end]))
+   end
+   
+   grid on
+   
+   if isempty(OPT.f_aspect)
+      da = daspect;OPT.f_aspect = da(2)./da(1);
+   elseif length(OPT.f_aspect)==2 % based on period
+      xlim0 = xlim;
+      xlim(OPT.f_aspect([1 end]))
+      da = daspect;OPT.f_aspect = da(2)./da(1);
+      xlim(xlim0)
+   end
+   
+   if isempty(OPT.f_level)
+      OPT.f_level = range(OPT.Ulim)/2;
+   end
+   
+   ux = cosd(degN2deguc(D)).*F;%ux(end)
+   uy = sind(degN2deguc(D)).*F;%uy(end)
+
+   quiver(t,0.*t+OPT.f_level,ux.*OPT.f_scale./OPT.f_aspect,... % distort x, not y, so we can ready uy at y-axis scale
+                             uy.*OPT.f_scale,0,'.k')
+                                          
 
