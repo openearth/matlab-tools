@@ -1,4 +1,4 @@
-function [x1 y1] = poly_simplify(x, y, tolerance, varargin)
+function [x1,y1,ii] = poly_simplify(x, y, tolerance, varargin)
 %POLY_SIMPLIFY  Simple algortihm for vertexx reduction of polygons
 %
 %   Methods supported are fast and slow. The slower method returns less

@@ -6,7 +6,7 @@ function varargout = KMLtrack(lat,lon,z,time,varargin)
 % creates a kml file of a lat/lon/time track
 %
 % z is either the same size as lat and lon, or a char string like
-% 'clampedToGround'
+% 'clampToGround'
 %
 % coordinates (lat,lon) are in decimal degrees.
 %   LON is converted to a value in the range -180..180)
@@ -245,7 +245,7 @@ end
 if addData
     for ii=1:size(lat,2)
         OPT_schema.name = ['schema' num2str(ii)] ;
-        output = [output KML_schema(OPT.data(:,ii),OPT_schema)]; %#ok<AGROW>
+        output = [output KML_schema(OPT.data(ii,:),OPT_schema)]; %#ok<AGROW>
     end
 end
 
@@ -276,7 +276,7 @@ for ii=1:size(lat,2)
         
         if iscell(OPT.trackName);           OPT_track.name = OPT.trackName{ii};     else  OPT_track.name         = OPT.trackName;       end
         if iscell(OPT.extendedData);OPT_track.extendedData = OPT.extendedData{ii};  else  OPT_track.extendedData = OPT.extendedData;    end
-        if addData;                                dataTmp = OPT.data(:,ii);        else                 dataTmp = [];                  end
+        if addData;                                dataTmp = OPT.data(ii,:);        else                 dataTmp = [];                  end
         if ~isempty(OPT.heading);               headingTmp = OPT.heading(:,ii);     else              headingTmp = [];                  end
         if is3D;                                      zTmp = z(:,ii);               else                    zTmp = z;                   end
         
@@ -289,7 +289,7 @@ for ii=1:size(lat,2)
         
         % write output to file if output is full, and reset
         if kk>1e6
-            fprintf(OPT.fid,       output(1:kk-1));
+            fprintf(OPT.fid,'%s',output(1:kk-1));
             if nargout==1;
                 kmlcode = [kmlcode output(1:kk-1)]; %#ok<AGROW>
             end
@@ -301,7 +301,7 @@ end
 
 % print output
 
-fprintf(OPT.fid,       output(1:kk-1));if nargout==1;kmlcode = [kmlcode output(1:kk-1)];end
+fprintf(OPT.fid,'%s',output(1:kk-1));if nargout==1;kmlcode = [kmlcode output(1:kk-1)];end
 
 if ischar(OPT.fileName)
     
