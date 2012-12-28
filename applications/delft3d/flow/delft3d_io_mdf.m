@@ -29,6 +29,9 @@ function varargout=delft3d_io_mdf(cmd,varargin),
 %
 % Comment lines are read but cannot not be written to mdf file.
 %
+% To control the order of keywors in the mdf file, or to write onyl a subset,
+% use keyword selection, e.g.: delft3d_io_mdf('write',filename,'selection',{'runtxt','mnkmax'});
+%
 % Storage flags for map data (trim only)
 %     SMhydr(1:6)  - water level, U, V, magnitude, direction, w/omega velocities 
 %     SMproc(1:2)  - salinity, temperature
@@ -39,7 +42,7 @@ function varargout=delft3d_io_mdf(cmd,varargin),
 %     SMderv(3:4)  - vertical eddy viscosity and diffisuvity and Ri if either of both are selected
 %     SMderv(5:6)  - density and HLES
 %
-% See also: delft3d 
+% See also: delft3d, python module "openearthtools.io.delft3d.mdf"
 
 % Mar 13 2006: added keyword for upper/lower case
 % Dec 19 2005: changes a few special cases when writing
@@ -200,19 +203,7 @@ function varargout=Local_read(fname,varargin),
 
    OPT.case = 'lower';
 
-if odd(nargin)
-   i=1;
-   while i<=nargin-1,
-     if ischar(varargin{i}),
-       switch lower(varargin{i})
-       case 'case'      ;i=i+1;OPT.case = varargin{i};
-       otherwise
-          error(sprintf('Invalid string argument: %s.',varargin{i}));
-       end
-     end;
-     i=i+1;
-   end;
-end
+   OPT = setproperty(OPT,varargin);
 
 STRUCT.filename     = fname;
 STRUCT.case         = OPT.case;
@@ -299,7 +290,7 @@ elseif length(tmp)>0
          if strstat ==1
             value = string;
          else
-            value =str2num(value);
+            value =str2num(value); % vectorized !!
          end
          end
          
@@ -355,26 +346,15 @@ end
 
 function iostat=Local_write(OS,filename,STRUC,varargin),
 
-   STRUC.commnt = ['Written by delft3d_io_mdf.m of G.J. de Boer on ',datestr(now)];
-   iostat       = 1;
+   STRUC.commnt  = ['Written by delft3d_io_mdf.m of G.J. de Boer on ',datestr(now)];
+   iostat        = 1;
 
 %% Input
 
-   OPT.case = 'lower';
+   OPT.case      = 'lower';
+   OPT.selection = {};
    
-   if odd(nargin)
-      i=1;
-      while i<=nargin-3,
-        if ischar(varargin{i}),
-          switch lower(varargin{i})
-          case 'case'      ;i=i+1;OPT.case = varargin{i};
-          otherwise
-             error(sprintf('Invalid string argument: %s.',varargin{i}));
-          end
-        end;
-        i=i+1;
-      end;
-   end
+   OPT = setproperty(OPT,varargin);
 
    fid          = fopen(filename,'w');
    if     strcmpi(lower(OS(1)),'u')
@@ -383,22 +363,31 @@ function iostat=Local_write(OS,filename,STRUC,varargin),
       EOL = '\r\n';
    end
    
-   if    strcmpi(OPT.case,'lower')
-      fldnames = lower(fieldnames(STRUC));
-   elseif strcmpi(OPT.case,'upper') 
-      fldnames = upper(fieldnames(STRUC));
-   elseif strcmpi(OPT.case,'auto') 
-      fldnames =      (fieldnames(STRUC));
+   if ~isempty(OPT.selection)
+      fldnames = OPT.selection;
    else
-      error('case should be lower/upper/auto')
+      if    strcmpi(OPT.case,'lower')
+         fldnames = lower(fieldnames(STRUC));
+      elseif strcmpi(OPT.case,'upper') 
+         fldnames = upper(fieldnames(STRUC));
+      elseif strcmpi(OPT.case,'auto') 
+         fldnames =      (fieldnames(STRUC));
+      else
+         error('case should be lower/upper/auto')
+      end
    end
    
    for i=1:length(fldnames)
    
       keyword  = char(fldnames{i});
       keyword6 = pad(keyword,6,' ');
-      value    = STRUC.(keyword);
       
+      if ~isfield(STRUC,keyword)
+         error(['"',keyword,'" is not a valid mdf keyword, please mind that keywords are case-sesitive'])
+      else
+         value    = STRUC.(keyword);
+      end
+   
       %% HANDLE SPECIAL CASES (A LOT)
       %  that makes tdatom or GUI fail to read these items
       
