@@ -16,15 +16,15 @@ function varargout = vs_trih2nc(vsfile,varargin)
 % Example how to use this netCDF file: read all
 %   H = nc2struct(ncfile)
 %
-% Example how to use this netCDF file: select one station
-%   dflowfm.indexHis(ncfile,<station_name>);
+% Example how to use this netCDF file: select one platform
+%   dflowfm.indexHis(ncfile,<platform_name>);
 %   ind = 48;
-%   D.station_name = nc_varget (ncfile,'station_name',[  ind-1 0],[ 1 -1   ]);
-%   D.eta          = nc_varget (ncfile,'waterlevel'  ,[0 ind-1  ],[-1  1   ]);
-%   D.u            = nc_varget (ncfile,'u_x'         ,[0 ind-1 0],[-1  1 -1]);
-%   D.v            = nc_varget (ncfile,'u_y'         ,[0 ind-1 0],[-1  1 -1]);
-%   D.dep          = nc_varget (ncfile,'depth'       ,[  ind-1  ],[1]);
-%   D.datenum      = nc_cf_time(ncfile)
+%   D.platform_name = nc_varget (ncfile,'platform_name',[  ind-1 0],[ 1 -1   ]);
+%   D.eta           = nc_varget (ncfile,'waterlevel'   ,[0 ind-1  ],[-1  1   ]);
+%   D.u             = nc_varget (ncfile,'u_x'          ,[0 ind-1 0],[-1  1 -1]);
+%   D.v             = nc_varget (ncfile,'u_y'          ,[0 ind-1 0],[-1  1 -1]);
+%   D.dep           = nc_varget (ncfile,'depth'        ,[  ind-1  ],[1]);
+%   D.datenum       = nc_cf_time(ncfile)
 %
 %See also: snctools, vs_use, dflowfm, delft3d_io_obs, dflowfm.indexHis
 
@@ -139,7 +139,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       nc_attput(ncfile, nc_global, 'comment'       , '');
       nc_attput(ncfile, nc_global, 'version'       , ['$Id$ $HeadURL$ ', M.version]);
    						   
-      nc_attput(ncfile, nc_global, 'Conventions'   , 'CF-1.4');
+      nc_attput(ncfile, nc_global, 'Conventions'   , 'CF-1.6');
       nc_attput(ncfile, nc_global, 'CF:featureType', 'Grid');  % https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions
    
       nc_attput(ncfile, nc_global, 'terms_for_use' ,['These data can be used freely for research purposes provided that the following source is acknowledged: ',OPT.institution]);
@@ -176,7 +176,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
 
       ifld = 0;
       ifld     = ifld + 1;clear attr;d3d_name = 'NAMST';
-      attr(    1)  = struct('Name', 'standard_name', 'Value', 'station_name');
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'platform_name');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', vs_get_elm_def(F,d3d_name,'Description'));
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
       nc(ifld) = struct('Name', 'station_name', ...

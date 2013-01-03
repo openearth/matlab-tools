@@ -97,20 +97,20 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
      [M,Ma] = nc2struct(ncmodel{ifile});% Load model    data
      [D,Da] = nc2struct(ncdata{ifile}) ;% Load observed data
      D.title = '';
-     if isfield(D,'station_name')
-         D.station_name = make1D(char(D.station_name))';
-         D.title = [D.title,D.station_name];
-     elseif isfield(M,'station_name')
-         D.station_name = make1D(char(M.station_name))';
-         D.title = [D.title,D.station_name];
+     if isfield(D,'platform_name')
+         D.platform_name = make1D(char(D.platform_name))';
+         D.title = [D.title,D.platform_name];
+     elseif isfield(M,'platform_name')
+         D.platform_name = make1D(char(M.platform_name))';
+         D.title = [D.title,D.platform_name];
      end
      
-     if isfield(D,'station_id')
-        D.station_id   = make1D(char(D.station_id  ))';
-        D.title = [D.title,' (', D.station_name,') '];
-     elseif isfield(M,'station_id')
-        D.station_id   = make1D(char(M.station_id  ))';
-        D.title = [D.title,' (', D.station_name,') '];
+     if isfield(D,'platform_id')
+        D.platform_id   = make1D(char(D.platform_id  ))';
+        D.title = [D.title,' (', D.platform_name,') '];
+     elseif isfield(M,'platform_id')
+        D.platform_id   = make1D(char(M.platform_id  ))';
+        D.title = [D.title,' (', D.platform_name,') '];
      end
      
      if isfield(D,'longitude') & isfield(D,'latitude')
@@ -432,11 +432,11 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
                %if ~isempty(OPT.verticaloffset)
                %   txt.D.both{OPT.verticaloffset(ifile)  } = [txt.D.amp  ,' ',Da.amplitude.units,' | ',txt.D.phase,' ',Da.phase.units];
                %   txt.M.both{OPT.verticaloffset(ifile)+1} = [txt.M.amp  ,' ',Ma.amplitude.units,' | ',txt.M.phase,' ',Ma.phase.units];
-               %   txt.M.both{OPT.verticaloffset(ifile)+2} = [char(D.station_id)];
+               %   txt.M.both{OPT.verticaloffset(ifile)+2} = [char(D.platform_id)];
                %else
                   txt.D.both{1}                           = [txt.D.amp  ,' ',Da.amplitude.units,' | ',txt.D.phase,' ',Da.phase.units];
                   txt.M.both{2}                           = [txt.M.amp  ,' ',Ma.amplitude.units,' | ',txt.M.phase,' ',Ma.phase.units];
-                  txt.M.both{3}                           = [char(D.station_id)];
+                  txt.M.both{3}                           = [char(D.platform_id)];
                %end
                
                text(D.longitude(1),D.latitude(1),'.')

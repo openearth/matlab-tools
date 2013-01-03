@@ -47,11 +47,15 @@ function varargout=delft3d_io_tem(cmd,varargin),
 %   rather than the pre-defined names. Make sure the field is 
 %   the time in minutes since midnight at reference date.
 %
-% See also: delft3d_io_ann, delft3d_io_bca, delft3d_io_bch, delft3d_io_bnd, 
-%           delft3d_io_crs, delft3d_io_dep, delft3d_io_dry, delft3d_io_eva, 
-%           delft3d_io_fou, delft3d_io_grd, delft3d_io_ini, delft3d_io_mdf, 
-%           delft3d_io_obs, delft3d_io_restart,             delft3d_io_src, 
-%           delft3d_io_tem, delft3d_io_thd, delft3d_io_wnd, 
+% http://www.ncdc.noaa.gov/oa/climate/rcsg/cdrom/ismcs/alphanum.html
+% http://weather.noaa.gov/tg/site.shtml
+% http://www.wunderground.com
+% http://www.windfinder.com/
+% http://www.weer.nl/wereldweer/waarnemingen/hobsid/
+% http://weather.gladstonefamily.net/site
+% http://www.weatheronline.co.uk/
+% 
+% See also: delft3d_io_eva, KNMI_uurgeg, delft3d_io_meteo, delft3d_io_meteo_write
      
 % >>> same m file structure as delft3d_io_wnd.m
      

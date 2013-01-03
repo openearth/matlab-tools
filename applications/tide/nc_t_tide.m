@@ -62,23 +62,23 @@ function varargout = nc_t_tide(varargin)
 
 %% Input
 
-   OPT.station_id   = ' ';
-   OPT.station_name = ' ';
-   OPT.period       = [];
-   OPT.lat          = NaN;
-   OPT.lon          = NaN;
-   OPT.units        = '?';
-   OPT.ascfile      = '';
-   OPT.ncfile       = '';
-   OPT.ddatenumeps  = 1e-8;
-   OPT.synth        = 2;
-   OPT.sort         = 'freq';
+   OPT.platform_id   = ' ';
+   OPT.platform_name = ' ';
+   OPT.period        = [];
+   OPT.lat           = NaN;
+   OPT.lon           = NaN;
+   OPT.units         = '?';
+   OPT.ascfile       = '';
+   OPT.ncfile        = '';
+   OPT.ddatenumeps   = 1e-8;
+   OPT.synth         = 2;
+   OPT.sort          = 'freq';
    
-   OPT.title        = ' ';
-   OPT.institution  = ' ';
-   OPT.source       = ' ';
-   OPT.history      = ' ';
-   OPT.email        = ' ';
+   OPT.title         = ' ';
+   OPT.institution   = ' ';
+   OPT.source        = ' ';
+   OPT.history       = ' ';
+   OPT.email         = ' ';
 
    if nargin==0
       varargout = {OPT};
@@ -147,12 +147,12 @@ else
 
 end
 
-      D.station_id     = OPT.station_id  ;  
-      D.station_name   = OPT.station_name;
-      D.longitude      = OPT.lon;
-      D.latitude       = OPT.lat;
-      D.time           = OPT.period(1) - datenum(1970,1,1);
-      D.period         = OPT.period' - datenum(1970,1,1);
+      D.platform_id     = OPT.platform_id  ;  
+      D.platform_name   = OPT.platform_name;
+      D.longitude       = OPT.lon;
+      D.latitude        = OPT.lat;
+      D.time            = OPT.period(1) - datenum(1970,1,1);
+      D.period          = OPT.period' - datenum(1970,1,1);
 
 %% Save struct to netCDF file
       
@@ -174,32 +174,32 @@ end
    nc_adddim      (OPT.ncfile,'frequency',length(D.frequency));
    nc_adddim      (OPT.ncfile,'strlen0'  ,1);
    nc_adddim      (OPT.ncfile,'strlen1'  ,size(char(D.component_name),2));
-   if ~isempty(D.station_id)
-   nc_adddim      (OPT.ncfile,'strlen2'  ,length(D.station_id));
+   if ~isempty(D.platform_id)
+   nc_adddim      (OPT.ncfile,'strlen2'  ,length(D.platform_id));
    end
-   if ~isempty(D.station_name)
-   nc_adddim      (OPT.ncfile,'strlen3'  ,length(D.station_name));
+   if ~isempty(D.platform_name)
+   nc_adddim      (OPT.ncfile,'strlen3'  ,length(D.platform_name));
    end
    nc_adddim      (OPT.ncfile,'time'     ,1);
    nc_adddim      (OPT.ncfile,'bounds'   ,2);
   
-  if ~isempty(D.station_id)   
-   nc.Name = 'station_id';
+  if ~isempty(D.platform_id)   
+   nc.Name = 'platform_id';
    nc.Datatype     = 'char';
    nc.Dimension    = {'strlen0','strlen2'}; % 2D, otherwise matlab does not load it correctly
    nc.Attribute(1) = struct('Name', 'long_name'      ,'Value', 'Rijkswaterstaat DONAR code of station');
-   nc.Attribute(2) = struct('Name', 'standard_name'  ,'Value', 'station_id');
+   nc.Attribute(2) = struct('Name', 'standard_name'  ,'Value', 'platform_id');
    nc_addvar         (OPT.ncfile,nc);
-   nc_varput         (OPT.ncfile,nc.Name,D.station_id(:)');clear nc
+   nc_varput         (OPT.ncfile,nc.Name,D.platform_id(:)');clear nc
   end
-  if ~isempty(D.station_name)   
-   nc.Name = 'station_name';
+  if ~isempty(D.platform_name)   
+   nc.Name = 'platform_name';
    nc.Datatype     = 'char';
    nc.Dimension    = {'strlen0','strlen3'}; % 2D, otherwise matlab does not load it correctly
    nc.Attribute(1) = struct('Name', 'long_name'      ,'Value', 'name of station');
-   nc.Attribute(2) = struct('Name', 'standard_name'  ,'Value', 'station_name');
+   nc.Attribute(2) = struct('Name', 'standard_name'  ,'Value', 'platform_name');
    nc_addvar         (OPT.ncfile,nc);
-   nc_varput         (OPT.ncfile,nc.Name,D.station_name(:)');clear nc
+   nc_varput         (OPT.ncfile,nc.Name,D.platform_name(:)');clear nc
   end
   if ~(isempty(D.longitude) | isempty(D.latitude))
    nc.Name = 'longitude';
