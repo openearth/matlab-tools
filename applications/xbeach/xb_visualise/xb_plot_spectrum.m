@@ -74,7 +74,7 @@ OPT = struct( ...
 
 OPT = setproperty(OPT, varargin{:});
 
-if ~xs_exist(xb, 'Snn*') || ~xs_exist(xb, 'f')
+if ~xs_exist(xb, 'Snn') || ~xs_exist(xb, 'f')
     error('No spectrum data found');
 end
 
@@ -84,9 +84,8 @@ fh = figure; hold on;
 
 f   = xs_get(xb,'f');
 S   = xs_get(xb,'Snn');
-S_f = xs_get(xb,'Snn_f');
 
-l   = max([size(S,2) size(S_f,2)]);
+l   = size(S,2);
 n   = ceil(sqrt(l));
 m   = ceil(l/n);
 
@@ -94,15 +93,13 @@ sp  = nan(1,l);
 for i = 1:l
     sp(i) = subplot(m,n,i); hold on;
     
-    if ~isempty(S);     plot(f,S  (:,i),'-b','DisplayName','raw');  end;
-    if ~isempty(S_f);   plot(f,S_f(:,i),'-r','DisplayName','smooth');  end;
+    if ~isempty(S);     plot(f,S  (:,i),'-b');  end;
 
     yl = ylim;
 
     title(num2str(i));
     xlabel(['f [' OPT.units ']']);
     ylabel(['S_{\eta\eta} [' OPT.units2 ']']);
-    legend show;
     
     if xs_exist(xb, 'SETTINGS.fsplit')
         fsplit = xs_get(xb, 'SETTINGS.fsplit');

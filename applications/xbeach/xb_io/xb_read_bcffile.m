@@ -68,6 +68,10 @@ OPT = struct( ...
 
 OPT = setproperty(OPT, varargin{:});
 
+if ~exist(filename, 'file')
+    error('File not found');
+end
+
 %% read file
 
 [fdir fname] = fileparts(filename);
