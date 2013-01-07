@@ -277,7 +277,7 @@ fldsCell      = regexp(flds2,'[^\.]*','match');
 fldsCellLen   = cellfun(@length,fldsCell);
 % check if all field names are valid to assign
 allFieldNames  = [fldsCell{:}];
-validFieldName = cellfun(@isvarname,allFieldNames);
+validFieldName = cellfun(@(x) (isvarname(x) | iskeyword(x)),allFieldNames); % a field like 'case' is allowed also, but is not a valid varname
 if ~all(validFieldName)
     error('SETPROPERTY:invalidFieldName',...
         '\nThe following field name is not valid: %s',allFieldNames{~validFieldName});

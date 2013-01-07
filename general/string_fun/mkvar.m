@@ -16,7 +16,7 @@ function stringout = mkvar(stringin,varargin);
 %
 % GENVARNAME does the same but insert nasty hex codes, whereas MKVAR inserts a '_'.
 %
-% See also: ISLETTER, MKTEX, MKHTML, GENVARNAME
+% See also: ISVARNAME, ISLETTER, MKTEX, MKHTML, GENVARNAME
 
 %   --------------------------------------------------------------------
 %   Idea: Howard E. Motteler from http://www.csee.umbc.edu/%7Emotteler/index.html

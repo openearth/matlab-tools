@@ -132,8 +132,10 @@ end
          D.(fldname) = nc_varget(fileinfo.Filename,fldname_nc);
          if OPT.time2datenum
             if strcmp(fldname_nc,'time')
-               D.datenum = nc_cf_time(fileinfo.Filename,fldname);
-               disp([mfilename,': added extra variable with Matlab datenum=f(',fldname,')'])
+               if nc_isatt(fileinfo.Filename,'time','units')
+                  D.datenum = nc_cf_time(fileinfo.Filename,fldname);
+                 disp([mfilename,': added extra variable with Matlab datenum=f(',fldname,')'])
+               end
             else
              if ~isempty(fileinfo.Dataset(idat).Attribute);
              j = strmatch('standard_name',{fileinfo.Dataset(idat).Attribute.Name}, 'exact');
