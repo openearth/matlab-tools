@@ -19,13 +19,13 @@ function varargout=DELFT3D_IO_RESTART(cmd,varargin),
 %   nlayers:        [  1            16   16  
 %                    <16>               <16>
 %                    <16>           ... <16>           
-%                    <17>               <17>
+%                     17                 17 
 %                      1                 1 ]
 %   parameternames: {'waterlevel'   'u' 'v' 
-%                    'salinity'         'temperature'
-%                    'constituent1' ... 'constituent5' 
+%                   <'salinity'>       <'temperature'>
+%                   <'constituent1' ... 'constituent5'> 
 %                    'tke'              'dissipation'          
-%                    'ufiltered'        'ufiltered'}
+%                    'ufiltered'        'vfiltered'}
 %
 % iostat = DELFT3D_IO_RESTART('write',filename,DAT.data,<platform>);
 %
@@ -498,12 +498,12 @@ function iostat=Local_write(fname,DAT,varargin),
   %% Open
 
       switch lower(OS);
-      case {'pc','pcwin','dos','windows','l','ieee-le'},
+      case {'pc','pcwin','dos','windows','l','linux','ieee-le'},
         fid=fopen(fname,'w','l');
       case {'hp','sg','sgi','sgi64','unix','b','sol','sol2','ieee-be'},
         fid=fopen(fname,'w','b');
       otherwise,
-        error(sprintf('Unsupported file format: %s.',PC));
+        error(sprintf('Unsupported file format: %s.',OS));
       end;
 
       if fid < 0

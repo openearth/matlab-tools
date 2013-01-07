@@ -69,15 +69,22 @@ function MDF = getm2delft3d(varargin)
    OPT.mdf            = '*.mdf';
    OPT.points_per_bnd = 2;
    OPT.ntmax          = []; % for debugging save only so many boundary time points: [] means adapt to sim time, Inf is everything
-   OPT.workdir        = '';
+   OPT.d3ddir         = '';
+   OPT.getmdir        = '';
    OPT.RUNID          = mfilename;
+   OPT.nan.dis        = 0; % value to use for filling of NaNs
+   OPT.kmax           = [];
    
    OPT = setproperty(OPT,varargin);
    
 %% 
 
    if ~isempty(OPT.inp)
-      getm = fortran_namelist2struct(OPT.inp)
+      getm = fortran_namelist2struct(OPT.inp);
+      if ~isempty(OPT.kmax)
+      getm.domain.kdum = OPT.kmax;
+      end
+      
    else
    % initialize getm with flow defaults
       getm.param.title             = '';
@@ -116,9 +123,14 @@ function MDF = getm2delft3d(varargin)
    MDF.keywords.dryflc  = getm.domain.min_depth;
    MDF.keywords.vicouv  = getm.m2d.Am;
    MDF.keywords.dicouv  = getm.m2d.An_const;
-   MDF.keywords.vicoww  = getm.m3d.avmback;
-   MDF.keywords.dicoww  = getm.m3d.avhback;
-   MDF.keywords.thick   = repmat(100/getm.domain.kdum,[getm.domain.kdum 1]);
+   MDF.keywords.vicoww  = max(getm.m3d.avmback,1e-5); % Guus Stelling, pers.com.
+   MDF.keywords.dicoww  =     getm.m3d.avhback;
+   MDF.keywords.thick   = repmat(roundoff(100/getm.domain.kdum,4),[getm.domain.kdum 1]);
+   err = 100-sum(MDF.keywords.thick);
+   if err > 0
+      MDF.keywords.thick(1) = MDF.keywords.thick(1) + err;
+      warning(['adapted thick(1) to get sum 100% with: ',num2str(err)])
+   end
    MDF.keywords.denfrm = 'UNESCO'; % d3d default
    if ~(getm.eqstate.eqstate_method==2)
       warning('equation of state not implemented in delft3d, only Eckert & Unesco (default)')
@@ -129,6 +141,11 @@ function MDF = getm2delft3d(varargin)
    case 2, MDF.keywords.dpuopt = 'upw';
    end
    MDF.keywords.dpuopt  = 'MIN'; % required in combination with depth at centers
+   
+   if ~exist(OPT.d3ddir,'dir')
+       mkpath(OPT.d3ddir)
+       disp(['Created: ',OPT.d3ddir])
+   end
 
 
 %% grid and depth and dry
@@ -153,18 +170,18 @@ function MDF = getm2delft3d(varargin)
    if getm.domain.f_plane & ~(getm.meteo.metforcing)
    MDF.keywords.filcco  = [filename(OPT.topo),'_cartesian.grd'];
    filcc2               = [filename(OPT.topo),'_spherical.grd'];
-   wlgrid('write','FileName',[OPT.workdir,MDF.keywords.filcco],'X',D.cor.x'  ,'Y',D.cor.y'  ,'CoordinateSystem','Cartesian');
-   wlgrid('write','FileName',[OPT.workdir,             filcc2],'X',D.cor.lon','Y',D.cor.lat','CoordinateSystem','Spherical');
+   wlgrid('write','FileName',[OPT.d3ddir,filesep,MDF.keywords.filcco],'X',D.cor.x'  ,'Y',D.cor.y'  ,'CoordinateSystem','Cartesian');
+   wlgrid('write','FileName',[OPT.d3ddir,filesep,             filcc2],'X',D.cor.lon','Y',D.cor.lat','CoordinateSystem','Spherical');
    else
    if getm.domain.f_plane
    warning('delft3d cannot handle f_plane and spatially varying meteo simultaneously: using spatially varying Coriolis parameter with spherical coordinates')
    end
    MDF.keywords.filcco  = [filename(OPT.topo),'_spherical.grd'];
    filcc2               = [filename(OPT.topo),'_cartesian.grd'];
-   wlgrid('write','FileName',[OPT.workdir,MDF.keywords.filcco],'X',D.cor.lon','Y',D.cor.lat','CoordinateSystem','Spherical');
-   wlgrid('write','FileName',[OPT.workdir,             filcc2],'X',D.cor.x'  ,'Y',D.cor.y'  ,'CoordinateSystem','Cartesian');
+   wlgrid('write','FileName',[OPT.d3ddir,filesep,MDF.keywords.filcco],'X',D.cor.lon','Y',D.cor.lat','CoordinateSystem','Spherical');
+   wlgrid('write','FileName',[OPT.d3ddir,filesep,             filcc2],'X',D.cor.x'  ,'Y',D.cor.y'  ,'CoordinateSystem','Cartesian');
    end
-  %wlgrid('write','FileName',[OPT.workdir,MDF.keywords.filcco],'X',D.xx(2:end-1),'Y',D.yx(2:end-1)); % this would keep land cells defined and thus yield too many dry points
+  %wlgrid('write','FileName',[OPT.d3ddir,filesep,MDF.keywords.filcco],'X',D.xx(2:end-1),'Y',D.yx(2:end-1)); % this would keep land cells defined and thus yield too many dry points
 
    MDF.keywords.filgrd  = [filename(OPT.topo),'.enc'           ];
    MDF.keywords.fildep  = [filename(OPT.topo),'_at_centers.dep'];
@@ -172,12 +189,11 @@ function MDF = getm2delft3d(varargin)
    MDF.keywords.dpsopt  = 'DP';
    MDF.keywords.mnkmax  = [fliplr(size(D.bathymetry)) getm.domain.kdum];
 
-
    D.enclosure = enclosure('extract',D.cor.x',D.cor.y');
-   enclosure('write',        [OPT.workdir,MDF.keywords.filgrd],D.enclosure);
+   enclosure('write',[OPT.d3ddir,filesep,MDF.keywords.filgrd],D.enclosure);
 
-   wldep ('write',           [OPT.workdir,MDF.keywords.fildep],'',D.bathymetry'); % includes 2 dummy rows/cols
-   wldep ('write',strrep(OPT.topo,'.nc','_at_corners.dep'),'',addrowcol(D.cor.z',1,1,nan)); % includes 2 dummy rows/cols
+   wldep    ('write',[OPT.d3ddir,filesep,MDF.keywords.fildep],'',D.bathymetry'); % includes 2 dummy rows/cols
+   wldep    ('write',[OPT.d3ddir,filesep,strrep(MDF.keywords.fildep,'center','corner')],'',addrowcol(D.cor.z',1,1,nan)); % includes 2 dummy rows/cols
 
 %% dry points: those not yet excluded by removing vertices
 %  all inactive T-cells with 4 real vertices: (i) a square, (ii) a c or u shape, or (iii) a ||-shape.
@@ -189,11 +205,11 @@ function MDF = getm2delft3d(varargin)
    [n,m] = find(D.cen.mask);
    %pcolorcorcen(D.cen.mask);
    %plot(m,n,'ko');
-   delft3d_io_dry('write',[OPT.workdir,MDF.keywords.fildry],m+1,n+1);
+   delft3d_io_dry('write',[OPT.d3ddir,filesep,MDF.keywords.fildry],m+1,n+1);
    
 %% save mask for ascii diff comparison with supplied GETM mask
 
-   fid = fopen([OPT.workdir,'mask.txt'],'w');
+   fid = fopen([OPT.d3ddir,filesep,'mask.txt'],'w');
    for row=size(D.bathymetry,1):-1:1
       fprintf(fid,'%1d ',~isnan(D.bathymetry(row,1:end-1)));
       fprintf(fid,'%1d' ,~isnan(D.bathymetry(row,  end  ))); % no trailing space
@@ -225,45 +241,101 @@ function MDF = getm2delft3d(varargin)
 
 %% initial conditions
 
+   INI = struct();
+
    if getm.m2d.elev_method==1
       MDF.keywords.zeta0 = getm.m2d.elev_const;
    else
-      INI.waterlevel = f(getm.m2d.elev_file);
+      % INI.waterlevel = f(getm.m2d.elev_file);
+      INI.waterlevel = repmat(0,MDF.keywords.mnkmax(1:2));
+      warning('ini/hotstart not yet implemented, zeros inserted for waterlevel')
    end
    
    % calc_* means it solves the equation (d3d has no diagnostic mode, getm.param.runtype is irrelevant)
     
+   if getm.temp.temp_method ==3 |  getm.salt.salt_method ==3
+      if ~isfield(INI,'waterlevel')
+      INI.waterlevel = repmat(0,MDF.keywords.mnkmax(1:2));
+      end
+      INI.u = repmat(0,MDF.keywords.mnkmax);
+      INI.v = repmat(0,MDF.keywords.mnkmax);
+      warning('ini/hotstart not yet implemented, zeros inserted for (u,v)')
+   end   
+
+
    if getm.m3d.calc_salt;
       MDF.keywords.sub1(2) = 'T';
       if     getm.temp.temp_method==0
-         warning('hotstart not yet implemented')
+         warning('GETM hotstart not yet implemented')
       elseif getm.temp.temp_method==1
-         MDF.keywords.t0      = repmat(getm.temp.temp_const,size(MDF.keywords.thick));
+         if isfield(INI,'waterlevel')
+         INI.temperature = repmat(getm.temp.temp_const,MDF.keywords.mnkmax);
+         else
+         MDF.keywords.t0 = repmat(getm.temp.temp_const,size(MDF.keywords.thick));
+         end
+      elseif getm.temp.temp_method==2
+         warning('GETM homogenous stratification not yet implemented')
       else
-         warning('hotstart not yet implemented')
-         %INI.temperature = f(getm.m2d.temp_file,getm.m2d.temp_name,getm.m2d.temp_field_no);
+         INI.temperature = repmat(0,MDF.keywords.mnkmax);
+         warning('ini/hotstart not yet implemented 3D z/sigma interpolation, replicated bottom layer')
+         tmp.zax  = ncread([OPT.getmdir, filesep,getm.temp.temp_file],'zax');
+         tmp.time = ncread([OPT.getmdir, filesep,getm.temp.temp_file],'time');
+         tmp.data = ncread([OPT.getmdir, filesep,getm.temp.temp_file],getm.temp.temp_name,[1 1 1 getm.temp.temp_field_no],[Inf Inf Inf 1]); % 1-based indices
+         INI.temperature = interp_z2sigma(tmp.zax - getm.domain.maxdepth,tmp.data,(d3d_sigma(MDF.keywords.thick./100)),0,-D.bathymetry');
       end
    end
 
    if getm.m3d.calc_temp;
       MDF.keywords.sub1(1) = 'S';
       if     getm.salt.salt_method==0
-         warning('hotstart not yet implemented')
+         warning('GETM hotstart not yet implemented')
       elseif getm.salt.salt_method==1
-         MDF.keywords.s0      = repmat(getm.salt.salt_const,size(MDF.keywords.thick));
+         if isfield(INI,'waterlevel')
+         INI.salinity    = repmat(getm.salt.salt_const,MDF.keywords.mnkmax);
+         else
+         MDF.keywords.s0 = repmat(getm.salt.salt_const,size(MDF.keywords.thick));
+         end
+      elseif getm.salt.salt_method==2
+         warning('GETM homogenous stratification not yet implemented')
       else
-         warning('hotstart not yet implemented')
-        %INI.salinity    = f(getm.m2d.elev_file,getm.m2d.salt_name,getm.m2d.salt_field_no);
+         INI.salinity = repmat(0,MDF.keywords.mnkmax);
+         warning('ini/hotstart not yet implemented 3D z/sigma interpolation, replicated bottom layer')
+         tmp.zax  = ncread([OPT.getmdir, filesep,getm.salt.salt_file],'zax');
+         tmp.time = ncread([OPT.getmdir, filesep,getm.salt.salt_file],'time');
+         tmp.data = ncread([OPT.getmdir, filesep,getm.salt.salt_file],getm.salt.salt_name,[1 1 1 getm.temp.temp_field_no],[Inf Inf Inf 1]); % 1-based indices
+         INI.salinity = interp_z2sigma(tmp.zax - getm.domain.maxdepth,tmp.data,(d3d_sigma(MDF.keywords.thick./100)),0,-D.bathymetry');
+
       end
    end
+   clear tmp
    
-
+   INI.tke         = repmat(0,MDF.keywords.mnkmax+[0 0 1]); % at sigma-faces
+   INI.dissipation = repmat(0,MDF.keywords.mnkmax+[0 0 1]); % at sigma-faces
+   INI.ufiltered   = repmat(0,MDF.keywords.mnkmax(1:2));
+   INI.vfiltered   = repmat(0,MDF.keywords.mnkmax(1:2));
+   
+   if ~isempty(fieldnames(INI)) % use rst, ini becomes way too big
+      MDF.keywords.restid = [filename(OPT.topo)]; % t11.20040118.120000
+      delft3d_io_restart('write',[OPT.d3ddir,filesep,'tri-rst.',MDF.keywords.restid],INI,'linux');
+   end
+   
 %% boundary locations and conditions
 %  boundary positions not truly generic yet, should be via az matrix to get remove 
 %  internal corners at connections of vertical e/w and horizontal n/s boundaries
    
    B         = nc2struct(OPT.bdy,'include',{'elev','time'});
    B.minutes = (B.datenum-OPT.reference_time)*24*60;
+   
+   % fill NaN gaps (drying overall model) with linear interpolation in time '
+   
+   npnt = size(B.elev,2);
+   for ipnt=1:npnt
+       mask = isnan(B.elev(:,ipnt)); 
+       if any(mask)
+          disp(num2str(ipnt))
+          B.elev(:,ipnt) = interp1(B.time(~mask),B.elev(~mask,ipnt),B.time);
+       end
+   end   
 
    if isempty(OPT.ntmax)
    tmask = find(B.datenum >= datenum(getm.time.start,'yyyy-mm-dd hh:MM:ss') & ...
@@ -399,10 +471,10 @@ function MDF = getm2delft3d(varargin)
       MDF.keywords.filbcc  = [filename(OPT.bdyinfo), '_',num2str(dbnd),'.bcc'];
       MDF.keywords.commnt  = [filename(OPT.bdyinfo),                 '_0.bnd'];
  
-      delft3d_io_bnd('write',[OPT.workdir,MDF.keywords.commnt],Bnd0);
-      delft3d_io_bnd('write',[OPT.workdir,MDF.keywords.filbnd],Bnd);
-      bct_io        ('write',[OPT.workdir,MDF.keywords.filbct],Bct);
-      bct_io        ('write',[OPT.workdir,MDF.keywords.filbcc],Bcc);
+      delft3d_io_bnd('write',[OPT.d3ddir,filesep,MDF.keywords.commnt],Bnd0);
+      delft3d_io_bnd('write',[OPT.d3ddir,filesep,MDF.keywords.filbnd],Bnd);
+      bct_io        ('write',[OPT.d3ddir,filesep,MDF.keywords.filbct],Bct);
+      bct_io        ('write',[OPT.d3ddir,filesep,MDF.keywords.filbcc],Bcc);
       
       clear Bct Bcc Bnd
 
@@ -465,7 +537,7 @@ function MDF = getm2delft3d(varargin)
       
       MDF.keywords.filsrc = [filename(OPT.riverinfo),'.src'];
       MDF.keywords.fildis = [filename(OPT.river)    ,'.dis'];
-      delft3d_io_src('write',[OPT.workdir,MDF.keywords.filsrc],R);
+      delft3d_io_src('write',[OPT.d3ddir,filesep,MDF.keywords.filsrc],R);
 
 %% discharge data 
 %  first create file without T/S and last one with T/S
@@ -489,7 +561,7 @@ for iq=1:2
    for ipnt=1:length(R)
 
       Q.Q             = ncread(OPT.river,R(ipnt).getm_name)./R(ipnt).npeer; % distribute evenly over peers
-      Q.Q(isnan(Q.Q)) = 0;
+      Q.Q(isnan(Q.Q)) = OPT.nan.dis;
 
       Dis.Table(ipnt).Name             = ['Discharge:',num2str(ipnt),' ',R(ipnt).name,' (',num2str(R(ipnt).ipeer),'/',num2str(R(ipnt).npeer),')'];
       Dis.Table(ipnt).Contents         = 'regular';
@@ -530,7 +602,7 @@ for iq=1:2
    
    end
    
-   bct_io('write',[OPT.workdir,MDF.keywords.fildis],Dis);
+   bct_io('write',[OPT.d3ddir,filesep,MDF.keywords.fildis],Dis);
    
    if iq==1;getm = getm0; end % restore getm after 1st call
    
@@ -560,11 +632,11 @@ end
                           '$Revision$ ',...
                           '$HeadURL$'];
                       
-   delft3d_io_mdf('write',[OPT.workdir,OPT.RUNID,'.mdf'],MDF.keywords);
+   delft3d_io_mdf('write',[OPT.d3ddir,filesep,OPT.RUNID,'.mdf'],MDF.keywords);
 
 %% save config file for ready-start linux simulation
 
-   fid = fopen([OPT.workdir,'config_flow2d3d.ini'],'w');
+   fid = fopen([OPT.d3ddir,filesep,'config_flow2d3d.ini'],'w');
    fprintf(fid,'%s \n', '[FileInformation]');
    fprintf(fid,'%s \n', '   FileCreatedBy    = $Id$');
    t = now;[d,w]=weekday(now);
