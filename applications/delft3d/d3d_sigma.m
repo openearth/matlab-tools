@@ -38,7 +38,7 @@ function varargout = d3d_sigma(thick,varargin);
 %  D3D_SIGMA(thick,epsilon) checks whether the fractions 
 %  add up to 1 within accuracy 'epsilon', which is by default 0.001.
 %
-% See also: delft3d, D3D_Z
+% See also: delft3d, D3D_Z, interp_z2sigma
 
 % Subfunctions:
 % ------------------------------------------

@@ -108,8 +108,6 @@ function varargout = vs_trih2nc(vsfile,varargin)
 
       F = vs_use(vsfile,OPT.quiet);
       
-      G = vs_trih_station(F);
-      
       T.datenum = vs_time(F,OPT.time,'quiet');
       if OPT.time==0
       OPT.time = 1:length(T.datenum);
@@ -119,7 +117,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       M.version     = ['Delft3D-FLOW version : ',strtrim(vs_get(F,'his-version','FLOW-SYSTXT',OPT.quiet)),', file version: ',strtrim(vs_get(F,'his-version','FILE-VERSION',OPT.quiet))];
       M.description = vs_get(F,'his-version','FLOW-RUNTXT',OPT.quiet);
 
-%% 1a Create file (add all NEFIS 'map-version' group info)
+%% 1a Create file (add all NEFIS 'his-version' group info)
 
       nc_create_empty (ncfile,OPT.mode)
 
@@ -147,24 +145,56 @@ function varargout = vs_trih2nc(vsfile,varargin)
    
       nc_attput(ncfile, nc_global, 'description'   , str2line(M.description));
 
-%% Add discovery information (test):
+%% Coordinate system
 
-      %  http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/InvCatalogSpec.html
-   
-      if ~isempty(OPT.epsg)
+      G.kmax        =                 vs_let(F,'his-const','KMAX'       ,'quiet');
+      G.coordinates = strtrim(permute(vs_let(F,'his-const','COORDINATES','quiet'),[1 3 2]));
+
+      G.m         = squeeze(vs_let(F,'his-const','MNSTAT',{1,0},'quiet'));
+      G.n         = squeeze(vs_let(F,'his-const','MNSTAT',{2,0},'quiet'));
+      
+      G.x         = squeeze(vs_let(F,'his-const','XYSTAT',{1,0},'quiet'));
+      G.y         = squeeze(vs_let(F,'his-const','XYSTAT',{2,0},'quiet'));
+      G.angle     = squeeze(vs_let(F,'his-const','ALFAS' ,      'quiet'));
+      G.kmax      = squeeze(vs_let(F,'his-const','KMAX'  ,'quiet'));
+      G.name      = permute(vs_let(F,'his-const','NAMST' ,      'quiet'),[2 3 1]);
+
+   %% add world coordinates coordinate attribute AND as variables to file
+
+      if any(strfind(G.coordinates,'CART')) % CARTESIAN, CARTHESIAN (old bug)
+         coordinates  = 'x y';
+         if isempty(OPT.epsg)
+         fprintf(2,'> No EPSG code specified for CARTESIAN grid, your grid is not CF compliant:\n')
+         fprintf(2,'> (latitude,longitude) cannot be calculated from (x,y)!\n')
+         end
+      else
+         coordinates  = 'latitude longitude';
+      end
+      
+      if any(strfind(G.coordinates,'CART')) & ~isempty(OPT.epsg) % CARTESIAN, CARTHESIAN (old bug)
      [G.lon,G.lat] = convertCoordinates(G.x,G.y,'CS1.code',OPT.epsg,'CS2.code',4326);
      [G.lon,G.lat] = convertCoordinates(G.x,G.y,'CS1.code',OPT.epsg,'CS2.code',4326);
-
-      nc_attput(ncfile, nc_global, 'geospatial_lat_min'  , min(G.lon(:)));
-      nc_attput(ncfile, nc_global, 'geospatial_lat_max'  , max(G.lon(:)));
-      nc_attput(ncfile, nc_global, 'geospatial_lon_min'  , min(G.lon(:)));
-      nc_attput(ncfile, nc_global, 'geospatial_lon_max'  , max(G.lon(:)));
-      nc_attput(ncfile, nc_global, 'geospatial_lat_units', 'degrees_north');
-      nc_attput(ncfile, nc_global, 'geospatial_lon_units', 'degrees_east' );
+      else
+      G.lon = G.x;
+      G.lat = G.y;
       end
 
-      nc_attput(ncfile, nc_global, 'time_coverage_start' , datestr(T.datenum(  1),'yyyy-mm-ddPHH:MM:SS'));
-      nc_attput(ncfile, nc_global, 'time_coverage_end'   , datestr(T.datenum(end),'yyyy-mm-ddPHH:MM:SS'));
+   %% vertical: z/sigma
+
+      G.layer_model = strtrim(permute(vs_let(F,'his-const','LAYER_MODEL','quiet'),[1 3 2]));
+
+      if strmatch('SIGMA-MODEL', G.layer_model)
+      G.sigma_dz      =  vs_let(F,'his-const','THICK','quiet');   
+     [G.sigma_cent,...
+      G.sigma_intf]   = d3d_sigma(G.sigma_dz);
+      coordinatesLayer        = [coordinates]; % implicit via formula_terms att
+      coordinatesLayerInterf  = [coordinates]; % implicit via formula_terms att
+      elseif strmatch('Z-MODEL', G.layer_model)
+      fprintf(2,'> Z-MODEL has not yet been tested.\n')
+      G.ZK          =  vs_let(F,'his-const'     ,'ZK'               ,'quiet');
+      coordinatesLayer        = [coordinates]; % ' Layer'
+      coordinatesLayerInterf  = [coordinates]; % ' LayerInterf'
+      end
 
 %% 2 Create dimensions
 
@@ -278,43 +308,26 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'altitude');
       attr(    1)  = struct('Name', 'long_name'    , 'Value', vs_get_elm_def(F,d3d_name,'Description'));
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
-      attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Z');
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
       attr(end+1)  = struct('Name', 'positive'     , 'Value', 'down');
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
       attr(end+1)  = struct('Name', 'comment'      , 'Value', '');
       nc(ifld) = struct('Name', 'depth', ...
           'Nctype'   , OPT.type, ...
           'Dimension', {{'Station'}}, ...
           'Attribute', attr);
 
-      ifld     = ifld + 1;clear attr
-      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'layer index');
-      attr(end+1)  = struct('Name', 'units'        , 'Value', '1');
-      attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Z');
-      attr(end+1)  = struct('Name', 'positive'     , 'Value', 'down');
-      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'The surface layer has index k=1, the bottom layer has index kmax.');
-      nc(ifld) = struct('Name', 'k', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'Layer'}}, ...
-          'Attribute', attr);
-
-      ifld     = ifld + 1;clear attr;
-      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'sigma thickness at layer midpoints');
-      attr(end+1)  = struct('Name', 'units'        , 'Value', '%');
-      attr(end+1)  = struct('Name', 'positive'     , 'Value', 'up');
-      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'The surface layer has index k=1 and is sigma=0, the bottom layer has index kmax and is sigma=-1.');
-      nc(ifld) = struct('Name', 'THICK', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'Layer'}}, ...
-          'Attribute', attr);
+      if strmatch('SIGMA-MODEL', G.layer_model)
 
       ifld     = ifld + 1;clear attr;
       attr(    1)  = struct('Name', 'long_name'    , 'Value', 'sigma at layer midpoints');
       attr(end+1)  = struct('Name', 'standard_name', 'Value', 'ocean_sigma_coordinate');
       attr(end+1)  = struct('Name', 'positive'     , 'Value', 'up');
-      attr(end+1)  = struct('Name', 'formula_terms', 'Value', 'sigma: sigma eta: waterlevel depth: depth'); % requires depth to be positive !!
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'formula_terms', 'Value', 'sigma: Layer eta: waterlevel depth: depth'); % requires depth to be positive !!
       attr(end+1)  = struct('Name', 'comment'      , 'Value', 'The surface layer has index k=1 and is sigma=0, the bottom layer has index kmax and is sigma=-1.');
-      nc(ifld) = struct('Name', 'sigma', ...
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'his-const:KMAX his-const:LAYER_MODEL his-const:THICK');
+      nc(ifld) = struct('Name', 'Layer', ...
           'Nctype'   , OPT.type, ...
           'Dimension', {{'Layer'}}, ...
           'Attribute', attr);
@@ -323,13 +336,47 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(    1)  = struct('Name', 'long_name'    , 'Value', 'sigma at layer interfaces');
       attr(end+1)  = struct('Name', 'standard_name', 'Value', 'ocean_sigma_coordinate');
       attr(end+1)  = struct('Name', 'positive'     , 'Value', 'up');
-      attr(end+1)  = struct('Name', 'formula_terms', 'Value', 'sigma: sigmaInterf eta: waterlevel depth: depth'); % requires depth to be positive !!
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'formula_terms', 'Value', 'sigma: LayerInterf eta: waterlevel depth: depth'); % requires depth to be positive !!
       attr(end+1)  = struct('Name', 'comment'      , 'Value', 'The surface layer has index k=1 and is sigma=0, the bottom layer has index kmax and is sigma=-1.');
-      nc(ifld) = struct('Name', 'sigmaInterf', ...
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'his-const:KMAX his-const:LAYER_MODEL his-const:THICK');
+      nc(ifld) = struct('Name', 'LayerInterf', ...
           'Nctype'   , OPT.type, ...
           'Dimension', {{'LayerInterf'}}, ...
           'Attribute', attr);
       
+      elseif strmatch('Z-MODEL', G.layer_model)
+
+      ifld     = ifld + 1;clear attr;
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'z at layer midpoints');
+      attr(end+1)  = struct('Name', 'standard_name', 'Value', 'altitude');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
+      attr(end+1)  = struct('Name', 'positive'     , 'Value', 'up');
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'formula_terms', 'Value', 'sigma: Layer eta: waterlevel depth: depth'); % requires depth to be positive !!
+      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'The bottom layer has index k=1 and is the bottom depth, the surface layer has index kmax and is z=free water surface.');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'his-const:KMAX his-const:LAYER_MODEL his-const:ZK');
+      nc(ifld) = struct('Name', 'Layer', ...
+          'Nctype'   , OPT.type, ...
+          'Dimension', {{'Layer'}}, ...
+          'Attribute', attr);
+          
+      ifld     = ifld + 1;clear attr;
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'z at layer interfaces');
+      attr(end+1)  = struct('Name', 'standard_name', 'Value', 'altitude');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
+      attr(end+1)  = struct('Name', 'positive'     , 'Value', 'up');
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'formula_terms', 'Value', 'sigma: LayerInterf eta: waterlevel depth: depth'); % requires depth to be positive !!
+      attr(end+1)  = struct('Name', 'comment'      , 'Value', 'The bottom layer has index k=1 and is the bottom depth, the surface layer has index kmax and is z=free water surface.');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'his-const:KMAX his-const:LAYER_MODEL his-const:ZK');
+      nc(ifld) = struct('Name', 'LayerInterf', ...
+          'Nctype'   , OPT.type, ...
+          'Dimension', {{'LayerInterf'}}, ...
+          'Attribute', attr);
+      
+      end % z/sigma
+
       ifld     = ifld + 1;clear attr
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'time');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'time');
@@ -347,11 +394,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', vs_get_elm_def(F,d3d_name,'Description'));
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
       attr(end+1)  = struct('Name', 'positive'     , 'Value', 'up');
-      if isempty(OPT.epsg)
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
-      else
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
-      end
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
@@ -368,11 +411,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       end
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', vs_get_elm_def(F,d3d_name,'Description'));
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm/s');
-      if isempty(OPT.epsg)
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
-      else
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
-      end
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
@@ -389,11 +428,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       end
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', vs_get_elm_def(F,d3d_name,'Description'));
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm/s');
-      if isempty(OPT.epsg)
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
-      else
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
-      end
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
@@ -412,11 +447,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       end      
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', vs_get_elm_def(F,d3d_name,'Description'));
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'N m-2');
-      if isempty(OPT.epsg)
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
-      else
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
-      end
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
@@ -434,11 +465,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       end
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', vs_get_elm_def(F,d3d_name,'Description'));
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'N m-2');
-      if isempty(OPT.epsg)
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
-      else
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
-      end
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
@@ -456,11 +483,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'sea_water_salinity');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', vs_get_elm_def(F,d3d_name,'Description'));
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'psu');
-      if isempty(OPT.epsg)
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
-      else
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
-      end
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
@@ -475,11 +498,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
 %       attr(    1)  = struct('Name', 'standard_name', 'Value', 'specific_kinetic_energy_of_sea_water');
 %       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'k');       % not in NEFIS file
 %       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm2 s-2');  % not in NEFIS file 
-%       if isempty(OPT.epsg)
-%       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
-%       else
-%       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
-%       end
+%       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
 %       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'ZTUR');
 %       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
 %       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
@@ -492,11 +511,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
 %       attr(    1)  = struct('Name', 'standard_name', 'Value', 'ocean_kinetic_energy_dissipation_per_unit_area_due_to_vertical_friction');
 %       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'eps');    % not in NEFIS file
 %       attr(end+1)  = struct('Name', 'units'        , 'Value', 'W m-2');  % not in NEFIS file
-%       if isempty(OPT.epsg)
-%       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'x y');
-%       else
-%       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'latitude longitude');
-%       end
+%       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
 %       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'ZTUR');
 %       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
 %       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
@@ -529,23 +544,28 @@ function varargout = vs_trih2nc(vsfile,varargin)
       nc_varput(ncfile, 'station_latitude'   , G.lat);
       end
       nc_varput(ncfile, 'time'         , T.datenum - OPT.refdatenum);
-      nc_varput(ncfile, 'k'            , [1:G.kmax   ]');
       if (~isempty(OPT.epsg)) | (~any(strfind(G.coordinates,'CARTESIAN')))
       nc_varput(ncfile, 'station_longitude'    ,G.lon);
       nc_varput(ncfile, 'station_latitude'     ,G.lat);
       end      
       
-      THICK = vs_let(F,'his-const','THICK',OPT.quiet);
-     [sigma,sigmaInterf] = d3d_sigma(THICK); % [0 .. 1]
+      if strmatch('SIGMA-MODEL', G.layer_model)
+      data = vs_let(F,'his-const','THICK','quiet');
+     [sigma,sigmaInterf] = d3d_sigma(data); % [0 .. 1]
+      nc_varput(ncfile,'Layer'         ,sigma-1);
+      nc_attput(ncfile,'Layer'         ,'actual_range',[min(sigma(:)-1) max(sigma(:)-1)]);
       
-      nc_varput(ncfile,'THICK',THICK);
-      nc_attput(ncfile,'THICK','actual_range',[min(THICK) max(THICK)]);
+      nc_varput(ncfile,'LayerInterf'   ,sigmaInterf-1);
+      nc_attput(ncfile,'LayerInterf'   ,'actual_range',[min(sigmaInterf(:)-1) max(sigmaInterf(:)-1)]); % [-1 0]
+      elseif strmatch('Z-MODEL', G.layer_model)
 
-      nc_varput(ncfile,'sigma',sigma-1);
-      nc_attput(ncfile,'sigma','actual_range',[min(sigma(:)-1) max(sigma(:)-1)]);
-
-      nc_varput(ncfile,'sigmaInterf',sigmaInterf-1);
-      nc_attput(ncfile,'sigmaInterf','actual_range',[min(sigmaInterf(:)-1) max(sigmaInterf(:)-1)]); % [-1 1]
+      Layer = corner2center1(G.ZK);
+      nc_varput(ncfile,'Layer'         ,Layer);
+      nc_attput(ncfile,'Layer'         ,'actual_range',[min(Layer(:)) max(Layer(:))]);
+      
+      nc_varput(ncfile,'LayerInterf'   ,G.ZK);
+      nc_attput(ncfile,'LayerInterf'   ,'actual_range',[min(G.ZK(:)) max(G.ZK(:))]);
+      end
       
       data = vs_let(F,'his-const','DPS',OPT.quiet);
       nc_varput(ncfile,'depth',data);
