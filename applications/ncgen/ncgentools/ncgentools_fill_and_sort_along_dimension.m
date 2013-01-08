@@ -71,7 +71,7 @@ OPT.dimension_name = 'time';
 % with only that dimension)
 
 % variable to fill
-OPT.fill_variable_name = 'z';
+OPT.fill_variable_name = {};
 
 OPT = setproperty(OPT,varargin);
 
@@ -81,69 +81,131 @@ if nargin==0;
 end
 %% code
 
-mkpath(destination);
-delete2(dir2(destination,'no_dirs',1));
-D = dir2(source,'depth',0,'no_dirs',1,'file_incl','\.nc$','file_excl','catalog');
+if exist(source,'dir')
+    directory_mode = true;
+elseif exist(source,'file')
+    directory_mode = false;
+else
+    error('source could not be found')
+end
 
-multiWaitbar('processing...','reset')
-for ii = 1:length(D);
-    source_file      = [D(ii).pathname D(ii).name];
-    destination_file = fullfile(destination,D(ii).name);
-    ncschema         = ncinfo(source_file);
+if isempty(destination)
+    overwrite = true;
+elseif strcmpi(sorce,destination)
+    overwrite = true;
+else
+    overwrite = false;
+end
 
-    % work around for bug http://www.mathworks.com/support/bugreports/819646
-    [ncschema.Dimensions([ncschema.Dimensions.Unlimited]).Length] = deal(inf);
-    [ncschema.Dimensions([ncschema.Dimensions.Unlimited]).Unlimited] = deal(false);
-    
+if directory_mode && ~overwrite
+    if ~exist(destination,'dir')
+        mkpath(destination,'dir')
+        delete2(dir2(destination,'no_dirs',1,'file_incl','\.nc$'));
+    end
+end
+
+if directory_mode
+    D = dir2(source,'depth',0,'no_dirs',1,'file_incl','\.nc$','file_excl','catalog');
+end
+
+
+if directory_mode
+    multiWaitbar('processing files...','reset')
+    multiWaitbar('processing variables...','reset','color',[0.2 0.3 0.7])
+    for ii = 1:length(D);
+        source_file = [D(ii).pathname D(ii).name];
+        if overwrite
+            destination_file = source_file;
+        else
+            destination_file = fullfile(destination,D(ii).name);
+        end
+        fill_and_sort(overwrite,source_file,destination_file,OPT.dimension_name,OPT.fill_variable_name)
+        multiWaitbar('processing files...',ii/length(D));
+    end
+    multiWaitbar('processing files...','close');
+else
+    multiWaitbar('processing variables...','reset','color',[0.2 0.3 0.7])
+    source_file = source;
+    if overwrite
+        destination = source;
+    end
+    fill_and_sort(overwrite,source,destination,OPT.dimension_name,OPT.fill_variable_name)
+end
+multiWaitbar('processing variables...','close')
+
+function fill_and_sort(overwrite,source,destination,dimension_name,fill_variable_name)
+multiWaitbar('processing variables...','reset','label',destination)
+ncschema         = ncinfo(source);
+
+% work around for bug http://www.mathworks.com/support/bugreports/819646
+[ncschema.Dimensions([ncschema.Dimensions.Unlimited]).Length] = deal(inf);
+[ncschema.Dimensions([ncschema.Dimensions.Unlimited]).Unlimited] = deal(false);
+
+if ~overwrite
     % write schema
-    ncwriteschema(destination_file,ncschema);
-    
-    variable_names   = {ncschema.Variables.Name};
-        
-    % determine new order
-    c                = ncread(source_file,OPT.dimension_name);
+    ncwriteschema(destination,ncschema);
+end
+
+variable_names   = {ncschema.Variables.Name};
+
+% determine new order
+c                = ncread(source,dimension_name);
+if ~issorted(c)
+    isunsorted = true;
     [~,new_order]    = sort(c);
-    
-    if isempty(c)
+else
+    isunsorted = false;
+end
+
+for iVariable = 1:length(variable_names)
+    if isunsorted && ~isempty(ncschema.Variables(iVariable).Dimensions)
+        dimension_names = {ncschema.Variables(iVariable).Dimensions.Name};
+        sort_dimensions = strcmpi(dimension_names,dimension_name);
+    else
+        sort_dimensions = [];
+    end
+        
+    if  overwrite && ...
+            ~any(sort_dimensions) && ...
+            ~any(strcmpi(variable_names{iVariable},fill_variable_name))
         continue
     end
     
-    for iVariable = 1:length(variable_names)
-        % read variable
-        c = ncread(source_file,variable_names{iVariable});
-        
-        % rearrange variable to new_order
-        if ~isempty(ncschema.Variables(iVariable).Dimensions)
-            dimension_names = {ncschema.Variables(iVariable).Dimensions.Name};
-            n = strcmpi(dimension_names,OPT.dimension_name);
-            if any(n)
-                index    = repmat({':'},ndims(c),1);
-                index(n) = {new_order};
-                c        = c(index{:});
-            end
-        end
-        
-        % fill variable if needed
-        if strcmpi(variable_names{iVariable},OPT.fill_variable_name)
-            index     = repmat({':'},ndims(c),1);
-            index(n)  = {1};
-            c_current = c(index{:});
-
-            for jj = 2:length(new_order)
-                c_previous  = c_current;
-                
-                index       = repmat({':'},ndims(c),1);
-                index(n)    = {jj};
-                c_current   = c(index{:});
-                
-                c_current(isnan(c_current)) = c_previous(isnan(c_current));
-                
-                c(index{:}) = c_current;
-            end
-        end
-        ncwrite(destination_file,variable_names{iVariable},c);
+    
+    % read variable
+    c = ncread(source,variable_names{iVariable});
+    
+    % rearrange variable to new_order
+    if any(sort_dimensions)
+        index                  = repmat({':'},ndims(c),1);
+        index(sort_dimensions) = {new_order};
+        c                      = c(index{:});
     end
-    multiWaitbar('processing...',ii/length(D));
+   
+    
+    % fill variable if needed
+    if any(strcmpi(variable_names{iVariable},fill_variable_name)) && ...
+            sum(sort_dimensions) == 1
+        index                   = repmat({':'},ndims(c),1);
+        index(sort_dimensions)  = {1};
+        c_current               = c(index{:});
+        
+        for jj = 2:length(c(sort_dimensions))
+            c_previous  = c_current;
+            
+            index       = repmat({':'},ndims(c),1);
+            index(n)    = {jj};
+            c_current   = c(index{:});
+            
+            c_current(isnan(c_current)) = c_previous(isnan(c_current));
+            
+            c(index{:}) = c_current;
+        end
+    end
+    ncwrite(destination,variable_names{iVariable},c);
+    multiWaitbar('processing variables...',iVariable/length(variable_names))
 end
+
+
 
 
