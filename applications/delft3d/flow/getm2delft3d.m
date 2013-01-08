@@ -62,6 +62,7 @@ function MDF = getm2delft3d(varargin)
   %OPT.topoc          = '*.nc';
    OPT.bdyinfo        = '*.dat';
    OPT.bdy            = '*.nc';
+   OPT.bdy3d          = '*.nc';
    OPT.riverinfo      = '*.dat';
    OPT.river          = '*.nc';
 
@@ -98,6 +99,8 @@ function MDF = getm2delft3d(varargin)
       getm.domain.crit_depth       = .3;
       getm.domain.min_depth        = .1;
       getm.domain.kdum             = 1;
+      getm.domain.z0_method        = 0;
+      getm.domain.z0_const         = 0.001;
       getm.meteo.metforcing        = 0;
       getm.meteo.met_method        = 1;
       getm.m2d.elev_method         = 1;
@@ -113,7 +116,7 @@ function MDF = getm2delft3d(varargin)
       getm.rivers.use_river_salt   = 1; % delft3d cannot neglect it
       getm.rivers.use_river_temp   = 1; % delft3d cannot neglect it
    end
-   
+
    MDF  = delft3d_io_mdf('new');
    MDF.keywords.runtxt = getm.param.title;
    MDF.keywords.tstart = (datenum(getm.time.start,'yyyy-mm-dd hh:MM:ss') - OPT.reference_time)*24*60;
@@ -147,12 +150,11 @@ function MDF = getm2delft3d(varargin)
        disp(['Created: ',OPT.d3ddir])
    end
 
-
 %% grid and depth and dry
 %  chop fully dry part from grid vertices (4 surrounding dry points)
 %  to exclude it from computational domain
 
-  [D,M] = nc2struct(OPT.topo,'exclude',{'latc','lonc','convc'});
+  [D,M] = nc2struct(OPT.topo,'exclude',{'latc','lonc','convc','z0'});
   
   [D.cor.x,D.cor.y]=meshgrid(D.xx(2:end-1),D.yx(2:end-1));
    D.cor.mask = corner2centernan(isnan(D.bathymetry));
@@ -192,7 +194,7 @@ function MDF = getm2delft3d(varargin)
    D.enclosure = enclosure('extract',D.cor.x',D.cor.y');
    enclosure('write',[OPT.d3ddir,filesep,MDF.keywords.filgrd],D.enclosure);
 
-   wldep    ('write',[OPT.d3ddir,filesep,MDF.keywords.fildep],'',D.bathymetry'); % includes 2 dummy rows/cols
+   wldep    ('write',[OPT.d3ddir,filesep,MDF.keywords.fildep],'',D.bathymetry'); % already includes 2 dummy rows/cols
    wldep    ('write',[OPT.d3ddir,filesep,strrep(MDF.keywords.fildep,'center','corner')],'',addrowcol(D.cor.z',1,1,nan)); % includes 2 dummy rows/cols
 
 %% dry points: those not yet excluded by removing vertices
@@ -217,6 +219,19 @@ function MDF = getm2delft3d(varargin)
    end
    fclose(fid);
    
+%% roughness
+
+   MDF.keywords.roumet = 'Z'; % only option in GETM anyway
+   if getm.domain.z0_method==0
+      MDF.keywords.ccofu  =  getm.domain.z0_const;
+      MDF.keywords.ccofv  =  getm.domain.z0_const;
+   elseif getm.domain.z0_method==1
+      D.z0 = ncread(OPT.topo,'z0');
+      MDF.keywords.filrgh  = ['z0_at_centers.dep'];
+      wldep    ('write',[OPT.d3ddir,filesep,MDF.keywords.filrgh],'',D.z0); % already includes 2 dummy rows/cols
+      fprintf(2,'space varying roughness not yet tested')
+   end
+
 %% meteo forcing
 
    if getm.meteo.metforcing
@@ -237,7 +252,6 @@ function MDF = getm2delft3d(varargin)
          disp('run delft3d_io_meteo_write_tutorial.m for spatial meteo files')
       end
    end
-  
 
 %% initial conditions
 
@@ -319,34 +333,40 @@ function MDF = getm2delft3d(varargin)
       delft3d_io_restart('write',[OPT.d3ddir,filesep,'tri-rst.',MDF.keywords.restid],INI,'linux');
    end
    
-%% boundary locations and conditions
-%  boundary positions not truly generic yet, should be via az matrix to get remove 
+%% BAROTROPIC and BAROCLINIC BOUNDARY LOCATIONS AND CONDITIONS
+%  boundary positions not truly generic yet, should be via az matrix to remove 
 %  internal corners at connections of vertical e/w and horizontal n/s boundaries
    
-   B         = nc2struct(OPT.bdy,'include',{'elev','time'});
-   B.minutes = (B.datenum-OPT.reference_time)*24*60;
-   
+   B.time       = ncread(OPT.bdy  ,'time');
+   B.datenum    = udunits2datenum(B.time,ncreadatt(OPT.bdy  ,'time','units'));
+   B.minutes    = (B.datenum-OPT.reference_time)*24*60;
+
+   C.zax        = ncread(OPT.bdy3d,'zax');
+   C.time       = ncread(OPT.bdy3d,'time');
+   C.datenum    = udunits2datenum(C.time,ncreadatt(OPT.bdy3d,'time','units'));
+   C.minutes    = (C.datenum-OPT.reference_time)*24*60;
+   C.bathymetry = ncread(OPT.bdy  ,'bathymetry'); % for z2sigma
+   C.kmax       = MDF.keywords.mnkmax(3);
+
    % fill NaN gaps (drying overall model) with linear interpolation in time '
-   
-   npnt = size(B.elev,2);
-   for ipnt=1:npnt
-       mask = isnan(B.elev(:,ipnt)); 
-       if any(mask)
-          disp(num2str(ipnt))
-          B.elev(:,ipnt) = interp1(B.time(~mask),B.elev(~mask,ipnt),B.time);
-       end
-   end   
+      
+   if isempty(OPT.ntmax)
+   bctmask = find(B.datenum >= datenum(getm.time.start,'yyyy-mm-dd hh:MM:ss') & ...
+                  B.datenum <= datenum(getm.time.stop ,'yyyy-mm-dd hh:MM:ss'));
+   else
+   bctmask = 1:min(length(B.minutes),OPT.ntmax);
+   end
 
    if isempty(OPT.ntmax)
-   tmask = find(B.datenum >= datenum(getm.time.start,'yyyy-mm-dd hh:MM:ss') & ...
-                B.datenum <= datenum(getm.time.stop ,'yyyy-mm-dd hh:MM:ss'));
+   bccmask = find(C.datenum >= datenum(getm.time.start,'yyyy-mm-dd hh:MM:ss') & ...
+                  C.datenum <= datenum(getm.time.stop ,'yyyy-mm-dd hh:MM:ss'));
    else
-   tmask = 1:min(length(B.minutes),OPT.ntmax);
+   bccmask = 1:min(length(C.minutes),OPT.ntmax);
    end
-   
+
    nsub = getm.m3d.calc_salt + getm.m3d.calc_temp;
    
-   for dbnd = 2:max(OPT.points_per_bnd,2); % we recommend 2 for best preventing unnecesarry duplication in bct columns
+   for dbnd = max(OPT.points_per_bnd,2); % we recommend 2 for best preventing unnecesarry duplication in bct columns
 
       fid       = fopen(OPT.bdyinfo,'r');
       sidenames = {'west', 'north', 'east', 'south'};
@@ -357,8 +377,9 @@ function MDF = getm2delft3d(varargin)
       nbnd.cum  = 0; % local number of d3d  bnd segments for entire model for previous sides
       for iside = 1:4 % compass directions
          rec = fgetl_no_comment_line(fid,'#!');
-         n   = str2num(strtok(rec));
-         for i=1:n
+         n4  = str2num(strtok(rec));
+         for i4=1:n4
+             
             nbnd.getm = nbnd.getm + 1;
             rec  = fgetl_no_comment_line(fid,'#!');
             vals = str2num(rec);
@@ -387,22 +408,25 @@ function MDF = getm2delft3d(varargin)
 
             end % odd
       
-            % all grid cells per segment for quick overview
-            % and ASCII comparison of GETM bdyinfo file with Delft3D bnd file
+         % all grid cells per segment for quick overview
+         % and ASCII comparison of GETM bdyinfo file with Delft3D bnd file
             Bnd0.DATA(nbnd.getm).name         = [sidenames{iside},num2str(i)];
             Bnd0.DATA(nbnd.getm).bndtype      = bndtype{vals(4)}; %'{Z} | C | N | Q | T | R'
             Bnd0.DATA(nbnd.getm).datatype     = 'T';              %'{A} | H | Q | T'
             Bnd0.DATA(nbnd.getm).mn           = mn;
             Bnd0.DATA(nbnd.getm).alfa         = 0;
       
-            % multiple grid cells per segment: as bct has two columns, we recommend
-            % to merge at least 2 seperate GETM points into one 2-point Delft3D segment
+         % multiple grid cells per segment: as bct has two columns, we recommend
+         % to merge at least 2 seperate GETM points into one 2-point Delft3D segment
             nbnd.d3d = nbnd.d3d  + nbnd.loc;
             nbnd.loc = ceil(length(m)./dbnd);
             tmp.m    = pad(m,nbnd.loc*dbnd,m(end)); % make array artificially somewhat larger if dseg does not fit integer # times in boundary.
             tmp.n    = pad(n,nbnd.loc*dbnd,n(end));
 
             for ibnd1 = 1:nbnd.loc
+                
+            disp([mfilename, ': processing bct/bcc of side:',num2str(iside),'/4  -  section:',num2str(i4),'/',num2str(n4),'  -  point:',num2str(ibnd1), '/', num2str(nbnd.loc)])
+                
             ind0    = (ibnd1-1)*dbnd+1; % indices into (m,n) indices from local GETM section
             ind1    = (ibnd1  )*dbnd;   % indices into (m,n) indices from local GETM section
             ibndcum = nbnd.d3d + ibnd1;
@@ -414,6 +438,7 @@ function MDF = getm2delft3d(varargin)
             Bnd.DATA(ibndcum).mn                 = [tmp.m(ind0) tmp.n(ind0) tmp.m(ind1) tmp.n(ind1)];
             Bnd.DATA(ibndcum).alfa               = 0;
       
+         % data table header
             Bxt.Table(1).Name               = ['Boundary Section : ',num2str(ibnd1)];
             Bxt.Table(1).Contents           = 'Uniform';
             Bxt.Table(1).Location           = [sidenames{iside},'_',num2str(i),'_',num2str(ibnd1)];
@@ -426,42 +451,89 @@ function MDF = getm2delft3d(varargin)
             Bxt.Table(1).Data               = [];
             Bxt.Table(1).Format             = '';
 
+         % load subset waterlevel data and interpolate to bcc time vector (for z2signma interpolation)
+            B.elev = ncread(OPT.bdy,'elev',[ipnt0,bctmask(1)],[2,length(bctmask)],[dbnd-1,1])';
+            for itmp=1:2
+               mask = isnan(B.elev(:,itmp)); 
+               if any(mask)
+                  B.elev(:,itmp) = interp1(B.time(bctmask(~mask)),B.elev(~mask,itmp),B.time(bctmask));
+               end
+            end
+      
+            C.elev(:,1) = interp1(B.datenum(bctmask),B.elev(:,1), C.datenum,'linear');
+            C.elev(:,2) = interp1(B.datenum(bctmask),B.elev(:,2), C.datenum,'linear');
+
+         % fill any leading and trailing nans due to non-overlapping elev-T/S period
+            for itmp=1:2
+            mask = isnan(C.elev(:,itmp)); %if any(mask)
+            ind=find(mask);tr = find(diff(ind)>1);
+            if all(mask(ind(1:tr)))
+                C.elev(ind(1:tr),itmp) = C.elev(ind(tr)+1,1);
+            else
+                error('non-leading/trailing NaN values in bcc elev data')
+            end
+            if all(mask(ind(tr+1:end)))
+                C.elev(ind(tr+1:end),itmp) = C.elev(ind(tr+1)-1,1);        
+            else
+                error('non-leading/trailing NaN values in bcc elev data')
+            end
+            end
+
             Bct.Table(ibndcum)                   = Bxt.Table;
             Bct.Table(ibndcum).Parameter(2).Name = 'water elevation (z)  end A';
             Bct.Table(ibndcum).Parameter(2).Unit = '[m]';
             Bct.Table(ibndcum).Parameter(3).Name = 'water elevation (z)  end B';
             Bct.Table(ibndcum).Parameter(3).Unit = '[m]';
-            Bct.Table(ibndcum).Data              = ([B.minutes(tmask),B.elev(tmask,ipnt0),B.elev(tmask,ipnt1)]);
-            Bct.Table(ibndcum).Format            = '% 6g % .3f % .3f'; % time int in minutes, waterlevel float in mm
-      
+            Bct.Table(ibndcum).Data              = ([B.minutes(bctmask),B.elev(:,1),B.elev(:,2)]);
+            Bct.Table(ibndcum).Format            = '%15.7f % .3f % .3f'; % time int in minutes, waterlevel float in mm
+          
+         % load subset constituent data
+            C.raw  = permute(ncread(OPT.bdy3d,'temp',[1,ipnt0,bccmask(1)],[Inf,2,length(bccmask)],[1,dbnd-1,1]),[3 2 1]);
+            C.data(:,1,:) = interp_z2sigma(C.zax,C.raw(:,1,:),(d3d_sigma(MDF.keywords.thick./100)),C.elev(:,1),C.bathymetry([ipnt0]));
+            C.data(:,2,:) = interp_z2sigma(C.zax,C.raw(:,2,:),(d3d_sigma(MDF.keywords.thick./100)),C.elev(:,2),C.bathymetry([ipnt1]));
+
             if getm.m3d.calc_salt
             js = (ibndcum-1)*nsub+1;
             Bcc.Table(js)                   = Bxt.Table;
-            Bcc.Table(js).Parameter(2).Name = 'Salinity             end A uniform';
-            Bcc.Table(js).Parameter(2).Unit = '[ppt]';
-            Bcc.Table(js).Parameter(3).Name = 'Salinity             end B uniform';
-            Bcc.Table(js).Parameter(3).Unit = '[ppt]';
-            Bcc.Table(js).Data              = ([MDF.keywords.tstart MDF.keywords.s0(1) MDF.keywords.s0(1);MDF.keywords.tstop MDF.keywords.s0(1) MDF.keywords.s0(1);]);
-            Bcc.Table(js).Format            = '% 6g % .3f % .3f'; % time int in minutes, waterlevel float in mm
+            for k=1:C.kmax
+            Bcc.Table(js).Parameter(1+k         ).Name = ['Salinity             end A  layer ',num2str(k)];
+            Bcc.Table(js).Parameter(1+k         ).Unit = '[ppt]';
             end
+            for k=1:C.kmax
+            Bcc.Table(js).Parameter(1+k+C.kmax).Name = ['Salinity             end B  layer ',num2str(k)];
+            Bcc.Table(js).Parameter(1+k+C.kmax).Unit = '[ppt]';
+            end
+            fmt = ['%15.7f',repmat('% .2f',[1 C.kmax*2])];
+            Bcc.Table(js).Data              = [C.minutes(bccmask),permute(C.data(:,1,:),[1 3 2]),permute(C.data(:,2,:),[1 3 2])];
+            Bcc.Table(js).Format            = fmt; % time int in minutes, salt/temp float in 1% precision
+            end
+
+            C.raw         = permute(ncread(OPT.bdy3d,'salt',[1,ipnt0,bccmask(1)],[Inf,2,length(bccmask)],[1,dbnd-1,1]),[3 2 1]);
+            C.data(:,1,:) = interp_z2sigma(C.zax,C.raw(:,1,:),(d3d_sigma(MDF.keywords.thick./100)),C.elev(:,1),C.bathymetry([ipnt0]));
+            C.data(:,2,:) = interp_z2sigma(C.zax,C.raw(:,2,:),(d3d_sigma(MDF.keywords.thick./100)),C.elev(:,2),C.bathymetry([ipnt1]));
       
             if getm.m3d.calc_temp
             jt = (ibndcum-1)*nsub+1+getm.m3d.calc_salt;
             Bcc.Table(jt)                   = Bxt.Table;
-            Bcc.Table(jt).Parameter(2).Name = 'Temperature          end A uniform';
-            Bcc.Table(jt).Parameter(2).Unit = '[°C]';
-            Bcc.Table(jt).Parameter(3).Name = 'Temperature          end B uniform';
-            Bcc.Table(jt).Parameter(3).Unit = '[°C]';
-            Bcc.Table(jt).Data              = ([MDF.keywords.tstart MDF.keywords.t0(1) MDF.keywords.t0(1);MDF.keywords.tstop MDF.keywords.t0(1) MDF.keywords.t0(1);]);
-            Bcc.Table(jt).Format            = '% 6g % .3f % .3f'; % time int in minutes, waterlevel float in mm
+            for k=1:C.kmax
+            Bcc.Table(jt).Parameter(1+k         ).Name =['Temperature          end A  layer ',num2str(k)];
+            Bcc.Table(jt).Parameter(1+k         ).Unit = '[°C]';
             end
-
-            end % j = 1:nbnd.loc
+            for k=1:C.kmax
+            Bcc.Table(jt).Parameter(1+k+C.kmax).Name =['Temperature          end B  layer ',num2str(k)];
+            Bcc.Table(jt).Parameter(1+k+C.kmax).Unit = '[°C]';
+            Bcc.Table(js).Data              = [C.minutes(bccmask),permute(C.data(:,1,:),[1 3 2]),permute(C.data(:,2,:),[1 3 2])];
+            end
+            fmt = ['%15.7f',repmat('% .2f',[1 C.kmax*2])];
+            Bcc.Table(jt).Format            =fmt; % time int in minutes, salt/temp float in 1% precision
+            end
             
+            end % ibnd1 = 1:nbnd.loc
+
             BND.NTables = length(Bnd.DATA);
             nbnd.cum = nbnd.cum + length(m);
             disp(['nbnd.cum:',num2str(nbnd.cum)])
-         end % i=1:n
+         end % i4=1:n4
       end % iside
       
       fclose(fid);

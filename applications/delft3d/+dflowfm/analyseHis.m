@@ -182,7 +182,8 @@ if ischar(OPT.platform_data_url)
     
    dataurls = opendap_catalog(OPT.ncbase);
    %% loop model platform index (im) and find associated data platform index (id)
-   for im=1:length(M.platform_name); if ismember(M.platform_name{im},OPT.platform_name) | isempty(OPT.platform_name)
+   for im=1:length(M.platform_name);
+     if ismember(upper(M.platform_name{im}),upper(OPT.platform_name)) | isempty(OPT.platform_name)
     
    % TODO replace (i) by more intelligent query based on location instead
    % of name, or wait for RDF names with uuids
@@ -191,10 +192,11 @@ if ischar(OPT.platform_data_url)
      if all(bool==0)
         error(['No matching data found in ',OPT.platform_data_url]);
      end
-     id = strmatch(M.platform_name{im},OPT.platform_name);
+     id = strmatch(upper(M.platform_name{im}),upper(OPT.platform_name));
      OPT.platform_data_url{id} = dataurls{bool};
      
-   end;end
+     end;
+   end
    
 elseif length(OPT.platform_data_url) ~=length(OPT.platform_name)
 
@@ -214,12 +216,12 @@ end
 for id=1:length(OPT.platform_name);
 
    disp(['>> Processing ',OPT.platform_name{id}])
-   disp(['>> ---------- ',OPT.platform_data_url{id}])
    if ~isempty(OPT.platform_period{id})
+   disp(['>> ---------- ',OPT.platform_data_url{id}])
    disp(['>> ---------- ',datestr(OPT.platform_period{id}(1)),' - ',datestr(OPT.platform_period{id}(2))])
    end
     
-   im = strmatch(OPT.platform_name{id},M.platform_name);
+   im = strmatch(upper(OPT.platform_name{id}),upper(M.platform_name));
   
 %%  Load associated observational data
 
@@ -282,6 +284,10 @@ for id=1:length(OPT.platform_name);
         %% interpolate model to data times in common timezone
 
         DM.(OPT.varname) = interp1(M.datenum,M.(OPT.varname)(:,im),D.datenum)';  % mind getpref ('SNCTOOLS','PRESERVE_FVD')==0
+        if prod(size(DM.(OPT.varname)))==0
+            fprintf(2,['data ',datestr(D.datenum(1)),'-',datestr(D.datenum(1)),' and model ',datestr(D.datenum(1)),'-',datestr(D.datenum(1)),' periods do not overlap.'])
+        end
+
         DM.(OPT.varname) = reshape(DM.(OPT.varname),size(D.(OPT.varname)));
     
 %% plot timeseries difference
