@@ -307,8 +307,8 @@ for ii = 1:length(netcdf_index.urlPath)
     % determine if covergae in in time range
     c = textscan(netcdf_index.timeCoverage{ii},'%s - %s');
     in_timerange = ...
-        time_range(1) < datenum(c{2},'yyyy-mm-ddTHH:MM:SS') && ...
-        time_range(2) > datenum(c{1},'yyyy-mm-ddTHH:MM:SS');
+        time_range(1) <= datenum(c{2},'yyyy-mm-ddTHH:MM:SS') && ...
+        time_range(2) >= datenum(c{1},'yyyy-mm-ddTHH:MM:SS');
     
     if in_timerange
         % determine all tiles within the dataBounds

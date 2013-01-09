@@ -343,7 +343,7 @@ end
 a = length(fns1);
 fns1(ismember(vertcat(fns1.hash),source_file_hash,'rows')) = [];
 b = length(fns1);
-fprintf(OPT.main.log,'%d of %d source files were skipped as they where already processed.\n',a-b,a);
+fprintf(OPT.main.log,'%d of %d source files were skipped as they were already processed.\n',a-b,a);
 
 if any(strcmp({OPT.write.schema.Attributes.Name},'history'))
     % append history attribute if it is defined

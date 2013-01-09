@@ -131,8 +131,13 @@ if existing_z % then existing nc file already has data
 end
 
 %% Write z data
-ncwrite(ncfile,'z',data.z,[1 1 iTimestamp]);
-
+try
+    ncwrite(ncfile,'z',data.z,[1 1 iTimestamp]);
+catch
+    max(data.z(:))
+    min(data.z(:))
+    iTimestamp
+end
 % read current actual range of z
 z_actual_range = ncreadatt(ncfile, 'z', 'actual_range');
 

@@ -91,7 +91,7 @@ OPT.dir_excl  = '';
 OPT       = setproperty(OPT,varargin{:});
 
 if nargin==0;
-    varargout = OPT;
+    status = OPT;
     return;
 end
 %%
@@ -111,7 +111,7 @@ end
 if OPT.quiet
     flags = [flags ' /NDL /NFL'];
 else
-    flags = [flags ' /NFL /ETA /FP'];
+    flags = [flags ' /ETA /FP'];
 end
 
 [status,result] = robocopy(source,destination,flags,OPT.quiet);

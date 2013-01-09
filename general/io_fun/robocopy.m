@@ -194,8 +194,11 @@ function [status,result] = robocopy(source,destination,flags,quiet)
 % $Keywords: $
 
 %%
-robocopy_path = fullfile(fileparts(mfilename('fullpath')),'private','robocopy','robocopy.exe');
-
+if isdeployed
+    robocopy_path = 'robocopy.exe';
+else
+    robocopy_path = fullfile(fileparts(mfilename('fullpath')),'private','robocopy','robocopy.exe');
+end
 dosstring = sprintf('%s "%s " "%s " %s',robocopy_path,source,destination,flags);
 
 if quiet

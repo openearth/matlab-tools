@@ -105,5 +105,5 @@ for ii = 1:length(D)
     end
     multiWaitbar('processing...',ii/length(D));
 end
-
+multiWaitbar('processing...','close');
 

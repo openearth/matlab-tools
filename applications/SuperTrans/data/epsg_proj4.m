@@ -104,6 +104,7 @@ else
         end
     catch
         str = sprintf('failed to retreive well known text of EPSG code %d',epsg_code);
-        fprintf(2,[mfilename,': cannot get proj4, please work online to be able to access http://spatialreference.org \n'])
+        fprintf(2,'%s: cannot get proj4, please work online to be able to access %s,\n  or place a proj4 file manually at %s\n',...
+            mfilename,'http://spatialreference.org',fullfile(epsg_tempdir,epsg_proj4_filename));
     end
 end
