@@ -251,7 +251,7 @@ end
 
 % print styles
 
-fprintf(OPT.fid,output);if nargout==1;kmlcode = output;end % collect all kml for function output
+fprintf(OPT.fid,'%s',output);if nargout==1;kmlcode = output;end % collect all kml for function output
 
 %% generate contents
 %  preallocate output

@@ -273,7 +273,12 @@ end
 %% print and clear output
 
 output = [output '<!--############################-->\n'];
-fprintf(OPT.fid,output);
+
+if nargout ==1
+    kmlcode = sprintf(output);
+else
+    fprintf(OPT.fid,output);
+end
 
 output = repmat(char(1),1,1e5);
 kk = 1;
@@ -350,7 +355,11 @@ for ii=1:nn
     
     % write output to file if output is full, and reset
     if kk>1e5
-        fprintf(OPT.fid,'%s',output(1:kk-1));
+        if nargout ==1
+            kmlcode = [kmlcode sprintf('%s',output(1:kk-1))];
+        else
+            fprintf(OPT.fid,'%s',output(1:kk-1));
+        end
         kk = 1;
         output = repmat(char(1),1,1e5);
     end
@@ -360,8 +369,11 @@ end
 %% print and clear output
 
 % print output
-
-fprintf(OPT.fid,'%s',output(1:kk-1));
+if nargout ==1
+    kmlcode = [kmlcode sprintf('%s',output(1:kk-1))];
+else
+    fprintf(OPT.fid,'%s',output(1:kk-1));
+end
 
 %% FOOTER
 
@@ -416,8 +428,8 @@ if OPT.openInGE
     system(OPT.fileName);
 end
 
-if nargout > 0
-   varargout = {OPT};
+if nargout ==1
+  varargout = {kmlcode};
 end
 
 %% EOF
