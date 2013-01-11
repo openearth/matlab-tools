@@ -80,7 +80,7 @@ end
 
 S2 = structfun(@(x) (element(x,i)),S1,'Uniform',0);
 
-if nargin ==0
+if nargin == 1
    S2 = repmat(S2,SIZE);
    for i=1:prod(SIZE)
       S2(i) = structfun(@(x) (element(x,i)),S1,'Uniform',0);
