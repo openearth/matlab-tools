@@ -13,20 +13,21 @@ function smatrix = interp_z2sigma(z, zmatrix, sigma, eta, depth, varargin)
 % sz = size(zmatrix) or sz = size(smatrix).
 %
 % The interpolation method can also be supplied as <keyword,value>
-% pairs (not as direct arguments interp1) and are passed to INTERP1.
+% pairs (not as direct arguments as in INTERP1) and are passed to INTERP1.
 % By default method is 'linear' in the z-range, and 'nearest' outside
-% the z-range, meaning that linear interpolation with "saturate" at the values
-% at the extremes of the z-domain (NB an combination not available in interp1).
+% the z-range, meaning that linear interpolation will "saturate" outside the values
+% at the extremes of the z-domain (NB a combination not available in INTERP1).
 %
 %   smatrix = INTERP_Z2SIGMA(z, zmatrix, sigma, eta, 'method',method,'extrap',extrap)
 %
-% Example: a waterlevel of 0m (MSL) at a 20m deep location.
-%          We have z-data of salinity [34 32 31] at 3 levels: [0 20 40] m 
-%          (beause the deepest z-model location is 40 m deep) and want to 
-%          interpolate to 30 sigma layers.
+% Example: A waterlevel of 0m (MSL) at a 20m deep location. We have
+%          salinity data [34 32 31] at 3 z-levels positive down: [0 20 40] m  relative to
+%          a reference level at zmax=-40 (the deepest z-model location is
+%          40 m deep) and want to interpolate to 30 sigma layers
+%          spaces between 0 (MSL) and -20 (the depth)
 %
 %          zmax = 40;
-%          interp_z2sigma([0 20 40]-zmax,[34 32 31],linspace(0,1,30),0,-20)
+%          interp_z2sigma(-[0 20 40],[34 32 31],linspace(0,1,30),0,-20)
 %
 %See also: interp1, d3d_sigma, d3d_z
 
@@ -96,7 +97,7 @@ end
 smatrix = repmat(0,[sz(1:2) length(sigma)]);
 
 if strcmpi(OPT.extrap,'nearest')
-   OPT.extrap = 'extrap';
+   OPT.extrap = nan; % will be filled later on
    nearest    = 1;
    else
    nearest    = 0;
@@ -109,7 +110,7 @@ for m=1:sz(1)
       
       smatrix(m,n,:) = interp1(z,permute(zmatrix(m,n,:),[3 2 1]),sigma_z_values,OPT.method,OPT.extrap);
       
-      % chop upper and lower layer to neraest values where sigma exceeds z-domain
+      % chop upper and lower layer to nearest values where sigma exceeds z-domain
       if nearest
          zmask = find(sigma_z_values > z(end));smatrix(m,n,zmask) = zmatrix(m,n,end);
          zmask = find(sigma_z_values < z(  1));smatrix(m,n,zmask) = zmatrix(m,n,1  );
