@@ -1,4 +1,4 @@
-function  donar_plot_monthlyHist(donarMatFile,sensorname,thefontsize)
+function  donar_plot_monthlyHist(donarMat,sensorname,variable,thefontsize,varargin)
 %DONAR_MULTIYEAR_BOXPLOTS Makes Box-Whiskers plots from "donarmat files"
 %   with the use of DONAR_DIA2DONARMAT. 
 %
@@ -19,53 +19,62 @@ function  donar_plot_monthlyHist(donarMatFile,sensorname,thefontsize)
 % -------------------------------------------------------------------------    
 
 
-    load(donarMatFile);
-
-    thefields = fields(thecompend);
-
-    the_path2file = donarMatFile(1:max(findstr(donarMatFile,'\')));
-    thedir = [the_path2file,'donar_dia_TeX\figures\'];
-    if ~exist(thedir), mkdir(thedir); end
-
-
-    minX = now;
-    maxX = datenum('01-Jan-1800');
-    for j = 1:length(thefields)
-
-        thecompend.(thefields{j}).data(:,4) = thecompend.(thefields{j}).data(:,4) + thecompend.(thefields{j}).referenceDate;
-
-        minX = min(minX,min(thecompend.(thefields{j}).data(:,4)));
-        maxX = max(maxX,max(thecompend.(thefields{j}).data(:,4)));
+    if ischar(donarMat)
+        disp(['Loading: ',donarMat]);
+        donarMat = importdata(donarMat);
+    elseif ~isstruct(donarMat)
+        error('Unrecognized input type for donarMat')
     end
+    
+    if nargin > 4
+        histbins = varargin{1};
+    end
+    
+    thefields = fields(donarMat);
+    if isempty(thefields(strcmpi(thefields,variable)))
+        disp('Variable not found in file.')
+        return;
+    end
+    
+    donarMat.(variable).data(:,4) = donarMat.(variable).data(:,4) + donarMat.(variable).referenceDate;
+  
+    thedates = [month(donarMat.(variable).data(:,4))];
 
-    for j = 1:length(thefields)
+    cont = 1;
+    h = figure;
+    set(gcf,'PaperPositionMode','auto')
+    set(gcf,'position',[414, 86, 1050, 890])
 
-        thedates = [month(thecompend.(thefields{j}).data(:,4))];
-
-        cont = 1;
-        h = figure('visible','off');
-
-        uniquemonth = unique(thedates);
-        for imonth = uniquemonth'
-            the_indices = (thedates(:,1) == imonth);
-            thefig = subplot(3,4,imonth,'parent',h);
-            [n,x] = hist(thecompend.(thefields{j}).data(the_indices,5),15);
-            bar(x,n/sum(the_indices)*100)
-            shading flat;          
-            title([monthstr(imonth,'mmmm'),char(10),' (',num2str(sum(the_indices)),' Obs)'],'fontsize',thefontsize+2)
-            xlabel([upper(thecompend.(thefields{j}).deltares_name(1)),strrep(thecompend.(thefields{j}).deltares_name(2:end),'_',' '),' [',thecompend.(thefields{j}).hdr.EHD{2},']'],'fontsize',thefontsize)
-            ylabel('Number of Observations [%]','fontsize',thefontsize)
-            set(gca,'fontsize',thefontsize)
+    uniquemonth = unique(thedates);
+    for imonth = uniquemonth'
+        the_indices = (thedates(:,1) == imonth);
+        
+        subplot(3,4,imonth,'parent',h);
+        [n,x] = hist(donarMat.(variable).data(the_indices,5),histbins);
+        bar(x,n./sum(the_indices).*100);
+        
+        if strcmpi(sensorname,'fb')
+            legend(sensorname,'location','northeast') 
+        else
+            legend(sensorname,'location','northwest')
         end
-        cont = cont+1;
-
-        [ax4,h3] = suplabel([sensorname,': ',num2str(year(minX)),' - ',num2str(year(maxX))],'t');
-        set(h3,'FontSize',thefontsize+2,'fontweight','bold')
-        fileName = [sensorname,'_monthly_hist','_',num2str(year(minX)),'-',num2str(year(maxX)),'_',thecompend.(thefields{j}).deltares_name];
-        disp(['Saving ',thedir,fileName])
-        print('-depsc2',[thedir,fileName]);
-        print('-dpng',[thedir,fileName]);
-        close;
+        
+        xlim([min(x)-5 max(x)+5]);
+        a = get(gca,'xticklabels');
+        a(2:2:end,:) = ' ';
+        set(gca,'xticklabels',a);
+        
+        shading flat;          
+        title([monthstr(imonth,'mmmm'),char(10),' (',num2str(sum(the_indices)),' Obs)'],'fontsize',thefontsize+2)
+        
+        if strcmpi(sensorname,'ctd') || strcmpi(sensorname,'scanfish')
+            xlabel('Upoly0 [-]','fontsize',thefontsize)
+        else
+            xlabel([upper(donarMat.(variable).deltares_name(1)),strrep(donarMat.(variable).deltares_name(2:end),'_',' '),' [',donarMat.(variable).hdr.EHD{2},']'],'fontsize',thefontsize)
+        end
+        ylabel('Number of Observations [%]','fontsize',thefontsize)
+        set(gca,'fontsize',thefontsize)
     end
+    cont = cont+1;
 end
     

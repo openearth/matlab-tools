@@ -20,7 +20,7 @@ function compare_donar_meris(the_donar_files,the_meris_files,the_grid_file,varia
         disp(['Loading: ',the_donar_files{i}]);
         thecompend = importdata(the_donar_files{i});
              
-        
+        % Check if the variable of interest is in the file
         allfields = fields(thecompend);
         thefield = allfields(strcmpi(allfields,variable));
         if isempty(thefield)
@@ -32,9 +32,9 @@ function compare_donar_meris(the_donar_files,the_meris_files,the_grid_file,varia
 
 
 
-%->     %%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % Get the segment numbers %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%
+%->     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % Get the segment numbers for the donar data %
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         disp('Getting the segment numbers')
         [the_segnr,x,y] = delwaq_xy2segnr(thegrid,thecompend.(variable).data(:,1),thecompend.(variable).data(:,2),'ll');            
         unique_segnrs = unique(the_segnr);
@@ -45,8 +45,6 @@ function compare_donar_meris(the_donar_files,the_meris_files,the_grid_file,varia
 % ->    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % Organize the information by day and segment number %
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-        
         the_day = fix(thecompend.(variable).data(:,4));
         [unique_days,~,days_index] = unique(the_day);
         numdays = length(unique_days);
@@ -59,7 +57,9 @@ function compare_donar_meris(the_donar_files,the_meris_files,the_grid_file,varia
             disp(['Analyzing day: ',num2str(iday),' of ',num2str(numdays)]);
             
             [unique_segnrs,~,segnrs_index] = unique(the_segnr( days_index == iday ));
-
+            
+            % Open the MERIS file for the corresponding year, only open
+            % another meris file if the year changed no?
             if year(unique_days(iday) + thecompend.(variable).referenceDate) ~= current_year
                 current_year = year(unique_days(iday) + thecompend.(variable).referenceDate);
                 disp(['Opening meris file for year: ', num2str(current_year)]);
@@ -68,6 +68,7 @@ function compare_donar_meris(the_donar_files,the_meris_files,the_grid_file,varia
 
             
             cont = 1;
+            % Check segment by segment.
             for iseg = unique_segnrs',              
                 
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

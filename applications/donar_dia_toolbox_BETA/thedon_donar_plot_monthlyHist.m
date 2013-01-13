@@ -1,20 +1,21 @@
-%% Make time plots and histograms.
-   
-    clc; clear; close all, fclose all; clear;
-
-     thedonarfiles = { ...
+    clc; close all, fclose all; clear;
+    
+    
+    addpath('d:\Dropbox\Deltares\Matlab\donar_dia_toolbox_BETA\utilities\')
+    
+    thedonarfiles = { ...
         'p:\1204561-noordzee\data\svnchkout\donar_dia\raw_and_nc\dia_ctd\mat\CTD_2003_the_compend.mat'; ...
         'p:\1204561-noordzee\data\svnchkout\donar_dia\raw_and_nc\dia_ctd\mat\CTD_2004_the_compend.mat'; ...
         'p:\1204561-noordzee\data\svnchkout\donar_dia\raw_and_nc\dia_ctd\mat\CTD_2005_the_compend.mat'; ...
         'p:\1204561-noordzee\data\svnchkout\donar_dia\raw_and_nc\dia_ctd\mat\CTD_2006_the_compend.mat'; ...
         'p:\1204561-noordzee\data\svnchkout\donar_dia\raw_and_nc\dia_ctd\mat\CTD_2007_the_compend.mat'; ...
         'p:\1204561-noordzee\data\svnchkout\donar_dia\raw_and_nc\dia_ctd\mat\CTD_2008_the_compend.mat'; ...
-        
+
         'p:\1204561-noordzee\data\svnchkout\donar_dia\raw_and_nc\dia_ferry\mat\FerryBox_2005_the_compend.mat'; ...
         'p:\1204561-noordzee\data\svnchkout\donar_dia\raw_and_nc\dia_ferry\mat\FerryBox_2006_the_compend.mat'; ...
         'p:\1204561-noordzee\data\svnchkout\donar_dia\raw_and_nc\dia_ferry\mat\FerryBox_2007_the_compend.mat'; ...
         'p:\1204561-noordzee\data\svnchkout\donar_dia\raw_and_nc\dia_ferry\mat\FerryBox_2008_the_compend.mat'; ...
-        
+
         'p:\1204561-noordzee\data\svnchkout\donar_dia\raw_and_nc\dia_meetvis\mat\ScanFish_2003_the_compend.mat'; ...
         'p:\1204561-noordzee\data\svnchkout\donar_dia\raw_and_nc\dia_meetvis\mat\ScanFish_2004_the_compend.mat'; ...
         'p:\1204561-noordzee\data\svnchkout\donar_dia\raw_and_nc\dia_meetvis\mat\ScanFish_2005_the_compend.mat'; ...
@@ -23,8 +24,8 @@
         'p:\1204561-noordzee\data\svnchkout\donar_dia\raw_and_nc\dia_meetvis\mat\ScanFish_2008_the_compend.mat'; ...
     };
 
-    warning off;
-    
+    thefontsize = 20;
+        
     ctd_cont   = 1;
     ferry_cont = 1;
     scan_cont  = 1;
@@ -47,7 +48,7 @@
             
             ctd_cont = ctd_cont+1;
         elseif strfind(lower(thedonarfiles{i}),'ferry')
-            sensor_name = 'Ferrybox';
+            sensor_name = 'FerryBox';
             
             if ferry_cont == 1
                 ferry.(variable) = donarMat.(variable);
@@ -57,7 +58,7 @@
             
             ferry_cont = ferry_cont+1;
         elseif strfind(lower(thedonarfiles{i}),'meetvis')
-            sensor_name = 'Meetvis';
+            sensor_name = 'ScanFish';
             
             if scan_cont == 1
                 scan.(variable) = donarMat.(variable);
@@ -70,25 +71,30 @@
         
         clear donarMat
     end
+    
     %%
-        
-        ctd.turbidity.data( ctd.turbidity.data(:,5) < 60,: ) =[];
-        donar_plot_campaign_maps(ctd,'turbidity',[pwd,filesep],20,20);
-        title('CTD: Upoly0 [-]','fontweight','bold')
-        fileName = 'themap_CTD_turbidity';
-        print('-dpng',fileName);
-        close;
-        
-        ferry.turbidity.data( ferry.turbidity.data(:,5) > 3,: ) =[];
-        donar_plot_campaign_maps(ferry,'turbidity',[pwd,filesep],20,5);
-        title('FerryBox: Turbidity [NTU]','fontweight','bold')
-        fileName = 'themap_FerryBox_turbidity';
-        print('-dpng',fileName);
-        close;
-        
-        scan.turbidity.data( scan.turbidity.data(:,5) < 60,: ) =[];
-        donar_plot_campaign_maps(scan,'turbidity',[pwd,filesep],20,20);
-        title('ScanFish: Upoly0 [-]','fontweight','bold')
-        fileName = 'themap_ScanFish_turbidity';
-        print('-dpng',fileName);
-        close;
+    close all
+    
+    histbin = [0:110/(12-1):110];
+    donar_plot_monthlyHist(ctd,'CTD',variable,12,histbin)
+    legend('CTD')
+    fileName = ['monthly_hist_CTD_',variable];
+    disp(['Saving ',fileName])
+    print('-dpng',fileName);
+    
+    
+    histbin = [0:50/(11-1):50];
+    donar_plot_monthlyHist(ferry,'FB',variable,11,histbin)
+    legend('FerryBox')
+    fileName = ['monthly_hist_FerryBox_',variable];
+    disp(['Saving ',fileName])
+    print('-dpng',fileName);
+    
+    
+    histbin = [0:110/(12-1):110];
+    donar_plot_monthlyHist(scan,'SF',variable,12,histbin)
+    legend('SCanFish')
+    fileName = ['monthly_hist_ScanFish_',variable];
+    disp(['Saving ',fileName])
+    print('-dpng',fileName);
+    

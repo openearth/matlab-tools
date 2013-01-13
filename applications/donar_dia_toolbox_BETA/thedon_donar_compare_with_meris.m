@@ -10,13 +10,13 @@ if false
     
     the_donar_files = { ...
         
-        %'p:\1204561-noordzee\data\svnchkout\donar_dia\raw_and_nc\dia_meetvis\ScanFish_2003_the_compend.mat'; ...
-        %'p:\1204561-noordzee\data\svnchkout\donar_dia\raw_and_nc\dia_meetvis\ScanFish_2004_the_compend.mat'; ...
-        %'p:\1204561-noordzee\data\svnchkout\donar_dia\raw_and_nc\dia_meetvis\ScanFish_2005_the_compend.mat'; ...
-        %'p:\1204561-noordzee\data\svnchkout\donar_dia\raw_and_nc\dia_meetvis\ScanFish_2006_the_compend.mat'; ...
-        %'p:\1204561-noordzee\data\svnchkout\donar_dia\raw_and_nc\dia_meetvis\ScanFish_2007_the_compend.mat'; ...
-        %'p:\1204561-noordzee\data\svnchkout\donar_dia\raw_and_nc\dia_meetvis\ScanFish_2008_the_compend.mat'; ...
-        %'p:\1204561-noordzee\data\svnchkout\donar_dia\raw_and_nc\dia_meetvis\ScanFish_2009_the_compend.mat'; ...
+%         'p:\1204561-noordzee\data\svnchkout\donar_dia\raw_and_nc\dia_meetvis\ScanFish_2003_the_compend.mat'; ...
+%         'p:\1204561-noordzee\data\svnchkout\donar_dia\raw_and_nc\dia_meetvis\ScanFish_2004_the_compend.mat'; ...
+%         'p:\1204561-noordzee\data\svnchkout\donar_dia\raw_and_nc\dia_meetvis\ScanFish_2005_the_compend.mat'; ...
+%         'p:\1204561-noordzee\data\svnchkout\donar_dia\raw_and_nc\dia_meetvis\ScanFish_2006_the_compend.mat'; ...
+%         'p:\1204561-noordzee\data\svnchkout\donar_dia\raw_and_nc\dia_meetvis\ScanFish_2007_the_compend.mat'; ...
+%         'p:\1204561-noordzee\data\svnchkout\donar_dia\raw_and_nc\dia_meetvis\ScanFish_2008_the_compend.mat'; ...
+%         'p:\1204561-noordzee\data\svnchkout\donar_dia\raw_and_nc\dia_meetvis\ScanFish_2009_the_compend.mat'; ...
     
         %'p:\1204561-noordzee\data\svnchkout\donar_dia\raw_and_nc\dia_ctd\CTD_2003_the_compend.mat'; ...    
         %'p:\1204561-noordzee\data\svnchkout\donar_dia\raw_and_nc\dia_ctd\CTD_2004_the_compend.mat'; ...    
@@ -101,34 +101,121 @@ end
             
         end
     end
-
+    
+    scanfish(:,3) = -log(scanfish(:,3)/100);
+    ctd(:,3)      = -log(ctd(:,3)/100);
+    
+    scanfish( scanfish(:,3) < -2  ,:) = [];
+    
+    % ScanFish y CTD
     figure
-    plot(ferrybox(:,3),ferrybox(:,4),'.b',scanfish(:,3),scanfish(:,4),'.g',ctd(:,3),ctd(:,4),'.r')
-    legend('Ferrybox','ScanFish','CTD'); 
+    plot(scanfish(:,3),scanfish(:,4),'.g',log(ctd(:,3)/100),ctd(:,4),'.r')
+    xlim([-1.5 0.1])
+    legend('ScanFish','CTD'); 
+    axis square;
+    ylabel('MERIS','fontsize',16);
+    xlabel('log(0.01*Upoly0)','fontsize',16)
+    set(gca,'fontsize',16)
+    
+    % Only FerryBox
+    figure
+    plot(ferrybox(:,3),ferrybox(:,4),'.b')
+    legend('Ferrybox'); 
     axis square;
     ylabel('MERIS','fontsize',16);
     set(gca,'fontsize',16)
     
 %%    
-    figure
-    set(gcf,'position',[3 225 1637 473])
-    set(gcf,'PaperPositionMode','auto')
+%     figure
+%     set(gcf,'position',[3 225 1637 473])
+%     set(gcf,'PaperPositionMode','auto')
     
-    subplot(1,3,1)
+    close all
+    
+    % CTD
+    h1 = figure
+    set(gcf,'position',[852         0         575         551])
+    set(gcf,'PaperPositionMode','auto')
     plot(ctd(:,3),ctd(:,4),'.r','markersize',20)
+    
     thefit  = polyfit(ctd( ~isnan(ctd(:,3)) & ~isnan(ctd(:,4)) ,3),ctd( ~isnan(ctd(:,3)) & ~isnan(ctd(:,4)) ,4),1)
     hold on
-    plot([0;max(xlim)],[thefit(2),thefit(1)*max(xlim)+thefit(2)], '-.k')
+    xlim(xlim)
+    corrcoef(ctd( ~isnan(ctd(:,3)) & ~isnan(ctd(:,4)) ,3),ctd( ~isnan(ctd(:,3)) & ~isnan(ctd(:,4)) ,4))
+    plot([min(xlim);max(xlim)],[thefit(1)*min(xlim)+thefit(2),thefit(1)*max(xlim)+thefit(2)], '-.k')
+    
     legend('Observations',['meris = ',num2str(thefit(1)),'*CTD',num2str(thefit(2),'%+6.4f')])
     ylabel('MERIS [mg/l]','fontsize',16);
-    xlabel('CTD','fontsize',16);
+    xlabel('CTD: -log(0.01*Upoly0)','fontsize',16);
     axis square;
-    set(gca,'fontsize',12)
+    set(gca,'fontsize',13)
     
+    filename = ['d:\Dropbox\Deltares\MoS-3\reporting\Garcia Report\figures\comparison_with_meris\ctd_vs_meris'];
+    disp(['saving : ',filename]);
+    print('-dpng',filename);
+    saveas(h1,filename,'fig');
     
-    subplot(1,3,2)
+    % Scanfish
+    h2 = figure
+    set(gcf,'position',[852         0         575         551])   
+    set(gcf,'PaperPositionMode','auto')
+    plot(scanfish(:,3),scanfish(:,4),'.g','markersize',20)
     
+    thefit  = polyfit(scanfish( ~isnan(scanfish(:,3)) & ~isnan(scanfish(:,4)) ,3),scanfish( ~isnan(scanfish(:,3)) & ~isnan(scanfish(:,4)) ,4),1)
+    hold on
+    xlim(xlim)
+    corrcoef(scanfish( ~isnan(scanfish(:,3)) & ~isnan(scanfish(:,4)) ,3),scanfish( ~isnan(scanfish(:,3)) & ~isnan(scanfish(:,4)) ,4))
+    plot([min(xlim);max(xlim)],[thefit(1)*min(xlim)+thefit(2),thefit(1)*max(xlim)+thefit(2)], '-.k')
+    
+    legend('Observations',['meris = ',num2str(thefit(1)),'*SF',num2str(thefit(2),'%+6.4f')])
+    ylabel('MERIS [mg/l]','fontsize',16);
+    xlabel('ScanFish: -log(0.01*Upoly0)','fontsize',16);
+    axis square;
+    set(gca,'fontsize',13)
+    
+    filename = ['d:\Dropbox\Deltares\MoS-3\reporting\Garcia Report\figures\comparison_with_meris\scanfish_vs_meris'];
+    disp(['saving : ',filename]);
+    print('-dpng',filename);
+    saveas(h2,filename,'fig');
+    
+    %% Scanfish
+    
+    h5 = figure
+    set(gcf,'position',[852         0         575         551])   
+    set(gcf,'PaperPositionMode','auto')
+    plot(scanfish( scanfish(:,3)< 8 ,3),scanfish( scanfish(:,3)< 8 ,4),'.g','markersize',20)
+    
+    scanfish = scanfish(scanfish(:,3) < 8,:);
+    % scanfish(:,3)< 8
+    
+    [ scanfish(~isnan(scanfish(:,3)) & ~isnan(scanfish(:,4)) ,3), ...
+      scanfish(~isnan(scanfish(:,3)) & ~isnan(scanfish(:,4)) ,4)]
+    thefit  = polyfit( ...
+                   scanfish( ~isnan(scanfish( scanfish(:,3)< 8 ,3)) & ~isnan(scanfish( scanfish(:,3)< 8 ,4)) ,3), ...
+                   scanfish( ~isnan(scanfish( scanfish(:,3)< 8 ,3)) & ~isnan(scanfish( scanfish(:,3)< 8 ,4)) ,4), ...
+                   1)
+    hold on
+    xlim(xlim)
+    corrcoef(scanfish( ~isnan(scanfish(:,3)) & ~isnan(scanfish(:,4)) ,3),scanfish( ~isnan(scanfish(:,3)) & ~isnan(scanfish(:,4)) ,4))
+    plot([min(xlim);max(xlim)],[thefit(1)*min(xlim)+thefit(2),thefit(1)*max(xlim)+thefit(2)], '-.k')
+    
+    legend('Observations',['meris = ',num2str(thefit(1)),'*SF',num2str(thefit(2),'%+6.4f')])
+    ylabel('MERIS [mg/l]','fontsize',16);
+    xlabel('ScanFish: -log(0.01*Upoly0)','fontsize',16);
+    axis square;
+    set(gca,'fontsize',13)
+    
+    filename = ['d:\Dropbox\Deltares\MoS-3\reporting\Garcia Report\figures\comparison_with_meris\clipped_scanfish_vs_meris'];
+    disp(['saving : ',filename]);
+    print('-dpng',filename);
+    saveas(h5,filename,'fig');
+    
+    %% Ferrybox
+    h3 = figure
+    set(gcf,'position',[852         0         575         551])
+    set(gcf,'PaperPositionMode','auto')
     plot(ferrybox(:,3),ferrybox(:,4),'.b','markersize',20)
+    
     thefit  = polyfit(ferrybox( ~isnan(ferrybox(:,3)) & ~isnan(ferrybox(:,4)) ,3),ferrybox( ~isnan(ferrybox(:,3)) & ~isnan(ferrybox(:,4)) ,4),1)
     corrcoef(ferrybox( ~isnan(ferrybox(:,3)) & ~isnan(ferrybox(:,4)) ,3),ferrybox( ~isnan(ferrybox(:,3)) & ~isnan(ferrybox(:,4)) ,4))
     hold on
@@ -138,37 +225,29 @@ end
     xlabel('FerryBox','fontsize',16);
     xlim(ylim)
     axis square;
-    set(gca,'fontsize',12)
+    set(gca,'fontsize',13)
     
-    subplot(1,3,3)
-    plot(scanfish(:,3),scanfish(:,4),'.g','markersize',20)
-    thefit  = polyfit(scanfish( ~isnan(scanfish(:,3)) & ~isnan(scanfish(:,4)) ,3),scanfish( ~isnan(scanfish(:,3)) & ~isnan(scanfish(:,4)) ,4),1)
-    corrcoef(scanfish( ~isnan(scanfish(:,3)) & ~isnan(scanfish(:,4)) ,3),scanfish( ~isnan(scanfish(:,3)) & ~isnan(scanfish(:,4)) ,4))
-    hold on
-    plot([0;max(xlim)],[thefit(2),thefit(1)*max(xlim)+thefit(2)], '-.k')
-    legend('Observations',['meris = ',num2str(thefit(1)),'*SF',num2str(thefit(2),'%+6.4f')])
+    filename = ['d:\Dropbox\Deltares\MoS-3\reporting\Garcia Report\figures\comparison_with_meris\ferry_vs_meris'];
+    disp(['saving : ',filename]);
+    print('-dpng',filename);
+    saveas(h3,filename,'fig');
     
-    ylabel('MERIS [mg/l]','fontsize',16);
-    xlabel('ScanFish','fontsize',16);
-    axis square;
-    set(gca,'fontsize',12)
-    print('-dpng','donar_vs_meris');
-    
-    
-    %%
-    
-    figure
-    set(gcf,'position',[360   278   560   420])
+    %Ferrybox Zoom in
+    h4 = figure
+    set(gcf,'position',[852         0         575         551])
     set(gcf,'PaperPositionMode','auto')
-    
-    plot(ferrybox(ferrybox(:,3)<5,3),ferrybox(ferrybox(:,3)<5,4),'.b','markersize',20)
-    thefit  = polyfit(ferrybox( ~isnan(ferrybox(:,3)) & ~isnan(ferrybox(:,4)) & ferrybox(:,3)<5 ,3), ferrybox( ~isnan(ferrybox(:,3)) & ~isnan(ferrybox(:,4)) & ferrybox(:,3)<5 ,4),1)
-    corrcoef(ferrybox( ~isnan(ferrybox(:,3)) & ~isnan(ferrybox(:,4)) & ferrybox(:,3)<5 ,3), ferrybox( ~isnan(ferrybox(:,3)) & ~isnan(ferrybox(:,4)) & ferrybox(:,3)<5 ,4) )
+    plot(ferrybox(ferrybox(:,3)<3,3),ferrybox(ferrybox(:,3)<3,4),'.b','markersize',20)
+    thefit  = polyfit(ferrybox( ~isnan(ferrybox(:,3)) & ~isnan(ferrybox(:,4)) & ferrybox(:,3)<3 ,3), ferrybox( ~isnan(ferrybox(:,3)) & ~isnan(ferrybox(:,4)) & ferrybox(:,3)<3 ,4),1)
+    corrcoef(ferrybox( ~isnan(ferrybox(:,3)) & ~isnan(ferrybox(:,4)) & ferrybox(:,3)<3 ,3), ferrybox( ~isnan(ferrybox(:,3)) & ~isnan(ferrybox(:,4)) & ferrybox(:,3)<3 ,4) )
     hold on
     plot([0;max(xlim)],[thefit(2),thefit(1)*max(xlim)+thefit(2)], '-.k')
     legend('Observations',['meris = ',num2str(thefit(1)),'*FB',num2str(thefit(2),'%+6.4f')])
     ylabel('MERIS [mg/l]','fontsize',16);
     xlabel('FerryBox','fontsize',16);
     axis square;
-    set(gca,'fontsize',12)
-    print('-dpng','ferrybox_vs_meris');
+    set(gca,'fontsize',13)
+    
+    filename = ['d:\Dropbox\Deltares\MoS-3\reporting\Garcia Report\figures\comparison_with_meris\clipped_ferry_vs_meris'];
+    disp(['saving : ',filename]);
+    print('-dpng',filename);
+    saveas(h4 ,filename,'fig');

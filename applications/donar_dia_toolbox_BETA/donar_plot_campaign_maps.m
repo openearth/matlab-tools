@@ -1,4 +1,4 @@
-function donar_plot_campaign_maps(donarMat,sensorname,variable,thedir,thefontsize,themarkersize)
+function donar_plot_campaign_maps(donarMat,variable,thedir,thefontsize,themarkersize)
     
     if ischar(donarMat)
         disp(['Loading: ',donarMat]);
@@ -36,8 +36,8 @@ function donar_plot_campaign_maps(donarMat,sensorname,variable,thedir,thefontsiz
     set(gcf,'PaperPositionMode','auto');
     plot_map('lonlat','color',[0.5,0.5,0.5]);   
     hold on;
-
-    plot_xyColor(donarMat.(variable).data(:,1),donarMat.(variable).data(:,2),donarMat.(variable).data(:,6),themarkersize);
+    
+    plot_xyColor(donarMat.(variable).data( donarMat.(variable).data(:,3) < 500 ,1),donarMat.(variable).data( donarMat.(variable).data(:,3) < 500 ,2),donarMat.(variable).data( donarMat.(variable).data(:,3) < 500 ,5),themarkersize);
 
     title([upper(donarMat.(variable).deltares_name(1)),lower(strrep(donarMat.(variable).deltares_name(2:end),'_',' '))], ...
         'FontWeight','bold', ...
