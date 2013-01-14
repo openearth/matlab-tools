@@ -86,7 +86,7 @@ function MDF = getm2delft3d(varargin)
    
    % switch off generating a particiular external files, while mdf stays identical to speed up debugging other external files
    OPT.write.grd      = 1;
-   OPT.write.dep      = 1;   
+   OPT.write.dep      = 1; % requires OPT.write.grd for sigma levels  
    OPT.write.bct      = 1;
    OPT.write.bcc      = 1; % requires OPT.write.bct for sigma levels
    OPT.write.rst      = 1; % requires OPT.write.dep for sigma levels
@@ -424,7 +424,7 @@ function MDF = getm2delft3d(varargin)
                    C.datenum <= datenum(getm.time.stop ,'yyyy-mm-dd hh:MM:ss'));
     if MDF.keywords.tstart < C.minutes(bccmask(  1))
         if OPT.bdy3d_nudge
-           warning([mfilename,' shifted bdy3d time from ',datestr(C.datenum(bccmask(  1))),'to',datestr(datenum(getm.time.start,'yyyy-mm-dd hh:MM:ss'))]);
+           warning([mfilename,' shifted bdy3d time from ',datestr(C.datenum(bccmask(  1))),' to ',datestr(datenum(getm.time.start,'yyyy-mm-dd hh:MM:ss'))]);
            C.datenum(1:bccmask(1)) = datenum(getm.time.start,'yyyy-mm-dd hh:MM:ss');
            C.minuts (1:bccmask(1)) = MDF.keywords.tstart;
         else
@@ -433,7 +433,7 @@ function MDF = getm2delft3d(varargin)
     end
     if MDF.keywords.tstop  > C.minutes(bccmask(end));
         if OPT.bdy3d_nudge
-           warning([mfilename,' shifted bdy3d time from ',datestr(C.datenum(bccmask(  1))),'to',datestr(datenum(getm.time.start,'yyyy-mm-dd hh:MM:ss'))]);
+           warning([mfilename,' shifted bdy3d time from ',datestr(C.datenum(bccmask(  1))),' to ',datestr(datenum(getm.time.start,'yyyy-mm-dd hh:MM:ss'))]);
            C.datenum(bccmask(end):end) = datenum(getm.time.stop ,'yyyy-mm-dd hh:MM:ss');
            C.minutes(bccmask(end):end) = MDF.keywords.tstop;
         else

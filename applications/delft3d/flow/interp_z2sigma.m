@@ -71,8 +71,9 @@ function smatrix = interp_z2sigma(z, zmatrix, sigma, eta, depth, varargin)
 %  $HeadURL$
 %  $Keywords: $
 
-OPT.method = 'linear';
-OPT.extrap = 'nearest';
+   OPT.method = 'linear';
+   OPT.extrap = 'nearest';
+  %OPT.debug  = 0;
 
 OPT = setproperty(OPT,varargin);
 
@@ -103,6 +104,13 @@ if strcmpi(OPT.extrap,'nearest')
    nearest    = 0;
 end
 
+% check whether array order of z is in positive z direction (k=1 is surface or bottom)
+if z(1) > z(end);
+   top=1;bot=length(z);
+else
+   bot=1;top=length(z);
+end
+
 for m=1:sz(1)
    for n=1:sz(2)
    
@@ -110,11 +118,28 @@ for m=1:sz(1)
       
       smatrix(m,n,:) = interp1(z,permute(zmatrix(m,n,:),[3 2 1]),sigma_z_values,OPT.method,OPT.extrap);
       
+      % if OPT.debug
+      %    TMP = figure();
+      %    plot(permute(zmatrix(m,n,:),[3 2 1]),z,'r.-','DisplayName','z input');
+      %    hold on
+      %    plot(permute(smatrix(m,n,:),[3 2 1]),sigma_z_values,'b.','DisplayName','\sigma output');
+      % end
+      
       % chop upper and lower layer to nearest values where sigma exceeds z-domain
       if nearest
-         zmask = find(sigma_z_values > z(end));smatrix(m,n,zmask) = zmatrix(m,n,end);
-         zmask = find(sigma_z_values < z(  1));smatrix(m,n,zmask) = zmatrix(m,n,1  );
+         zmask = sigma_z_values > z(top);smatrix(m,n,zmask) = zmatrix(m,n,top);
+         zmask = sigma_z_values < z(bot);smatrix(m,n,zmask) = zmatrix(m,n,bot);
       end
+      
+      % if OPT.debug
+      %    plot(permute(smatrix(m,n,:),[3 2 1]),sigma_z_values,'bo','DisplayName','\sigma output filtered');
+      %    grid on
+      %    legend show
+      %    xlabel('data')
+      %    ylabel('z')
+      %    pausedisp
+      %    try;close(TMP);end
+      % end
    
    end
 end
