@@ -1,5 +1,6 @@
 function dir = uv2dir(u,v,convention)
-% dir =UV2DIR(u,v,convention) derives the direction (in cartesian or nautical convention) from the u and v data
+% dir = uv2dir(u,v,convention)
+% UV2DIR derives the direction (in cartesian or nautical convention) from the u and v data
 % 
 % u = u or x vector of parameter
 % v = v or y vector of parameter
@@ -9,16 +10,22 @@ function dir = uv2dir(u,v,convention)
 % 'cartesian', the direction to where the vector points
 % 'nautical', the direction where the vector comes from
 % if no convention is assigned, 'cartesian'  convention is applied
+% note that both convention are considered clockwise from geographic North
 
 % created by E.Moerman 24-11-2011
+% adjusted by E.Moerman 06-03-2012 to allow for Matrix handling
 
 if nargin == 2,
     convention='cartesian';
 end;
 
-u = u(:);
-v = v(:);
-dir = zeros(size(u));
+if size(u,2)== 1
+    u = u(:);
+    v = v(:);
+    dir = zeros(length(u));
+else
+    dir = zeros(size(u,1),size(u,2));
+end
 
 if strcmpi(convention,'cartesian')
     dir = mod(atan2(u,v)*180/pi,360);
