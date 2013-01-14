@@ -81,6 +81,8 @@ function MDF = getm2delft3d(varargin)
    OPT.fmt.elev       = ' %+.3f'; % waterlevel float in mm
    OPT.fmt.salt       = ' %.2f'; % 1% precision
    OPT.fmt.temp       = ' %.2f'; % 1% precision
+   OPT.min_salt       = 0;    % getm has different valid range (incl ice) than delft3d (> 0)
+   OPT.min_temp       = 0.01; % getm has different valid range (incl ice) than delft3d (> 0)
    
    % switch off generating a particiular external files, while mdf stays identical to speed up debugging other external files
    OPT.write.grd      = 1;
@@ -149,6 +151,11 @@ function MDF = getm2delft3d(varargin)
    MDF.keywords.dryflc = getm.domain.min_depth;
    MDF.keywords.vicouv = getm.m2d.Am;
    MDF.keywords.dicouv = getm.m2d.An_const;
+   MDF.keywords.forfww = 'Y';% hardcoded for now
+   MDF.keywords.sigcor = 'Y';% hardcoded for now
+   MDF.keywords.tlfsmo = 720;% hardcoded for now
+   if OPT.min_salt <0;error('min_salt should be >=0 in Delft3D');end
+   if OPT.min_temp <0;error('min_temp should be >=0 in Delft3D');end
    MDF.keywords.vicoww = max(getm.m3d.avmback,1e-5); % Guus Stelling, pers.com.: min 1e-5
    warning([mfilename,' added vertical background viscosity of 1e-5'])
    MDF.keywords.dicoww =     getm.m3d.avhback;
@@ -462,7 +469,9 @@ function MDF = getm2delft3d(varargin)
             % vertical boundaries: East + West
                 mn = [vals(1) vals(2) vals(1) vals(3)];
       
-                % remove 'corners'
+                nbnd.dcum = length(mn(2):mn(4)); % number of point in this section, incl. corners that are irelevant for Delft3D
+                
+                % remove 'corners' for Delt3D *.bnd file, but NOTE they are still indices of bdy files
                 mn(2) = max(mn(2),     2);
                 mn(4) = min(mn(4),MDF.keywords.mnkmax(2)-1);
                 n  = mn(2):mn(4);
@@ -472,8 +481,10 @@ function MDF = getm2delft3d(varargin)
       
             % horizontal boundaries: North + South
                 mn = [vals(2) vals(1) vals(3) vals(1)];
+
+                nbnd.dcum = length(mn(1):mn(3)); % number of point in this section
       
-                % remove 'corners'
+                % remove 'corners' for Delt3D *.bnd file, but NOTE they are still indices of bdy files
                 mn(1) = max(mn(1),     2);
                 mn(3) = min(mn(3),MDF.keywords.mnkmax(1)-1);
                 m  = mn(1):mn(3);
@@ -492,19 +503,21 @@ function MDF = getm2delft3d(varargin)
          % multiple grid cells per segment: as bct has two columns, we recommend
          % to merge at least 2 seperate GETM points into one 2-point Delft3D segment
             nbnd.d3d = nbnd.d3d  + nbnd.loc;
-            nbnd.loc = ceil(length(m)./dbnd);
+            nbnd.loc = ceil(length(m)./dbnd); % note CEIL, it extends beyond local GEMT section
             tmp.m    = pad(m,nbnd.loc*dbnd,m(end)); % make array artificially somewhat larger if dseg does not fit integer # times in boundary.
             tmp.n    = pad(n,nbnd.loc*dbnd,n(end));
 
             for ibnd1 = 1:nbnd.loc
                 
-            disp([mfilename, ': processing bct/bcc of side:',num2str(iside),'/4  -  section:',num2str(i4),'/',num2str(n4),'  -  point:',num2str(ibnd1), '/', num2str(nbnd.loc)])
                 
-            ind0    = (ibnd1-1)*dbnd+1; % indices into (m,n) indices from local GETM section
-            ind1    = (ibnd1  )*dbnd;   % indices into (m,n) indices from local GETM section
+            ind0    =     (ibnd1-1)*dbnd+1;          % 1-based indices into (m,n) indices from local GETM section
+            ind1    = min((ibnd1  )*dbnd,nbnd.dcum); % 1-based indices into (m,n) indices from local GETM section
             ibndcum = nbnd.d3d + ibnd1;
-            ipnt0   = nbnd.cum + ind0;  % indices into (m,n) indices of overall GETM bdy file
-            ipnt1   = nbnd.cum + ind1;  % indices into (m,n) indices of overall GETM bdy file
+            ipnt0   = nbnd.cum + ind0;  % 1-based indices into (m,n) indices of overall GETM bdy file
+            ipnt1   = nbnd.cum + ind1;  % 1-based indices into (m,n) indices of overall GETM bdy file
+
+            disp([mfilename, ': processing bc* side:',num2str(iside),'/4  sctn: ',num2str(i4),'/',num2str(n4),'  pnt: ',sprintf('%4d',ibnd1), '/', sprintf('%-4d',nbnd.loc),'  getm-bdy-idx: ',sprintf('%4d',ipnt0),'..',sprintf('%-4d',ipnt1)])
+
             Bnd.DATA(ibndcum).name               = [sidenames{iside},'_',num2str(i4),'_',num2str(ibnd1)];
             Bnd.DATA(ibndcum).bndtype            = bndtype{vals(4)}; %'{Z} | C | N | Q | T | R'
             Bnd.DATA(ibndcum).datatype           = 'T';              %'{A} | H | Q | T'
@@ -525,8 +538,15 @@ function MDF = getm2delft3d(varargin)
             Bxt.Table(1).Format             = '';
 
          % load subset waterlevel data and interpolate to bcc time vector (for z2sigma interpolation)
+         % NB stride is smaller at end of section so do not use stride=dbnd !!!
+         
             if OPT.write.bct
-            B.elev = ncread(OPT.bdy,'elev',[ipnt0,bctmask(1)],[2,length(bctmask)],[dbnd-1,1])';
+            if ipnt0==ipnt1
+            B.elev(:,2) = ncread(OPT.bdy,'elev',[ipnt0,bctmask(1)],[1,length(bctmask)],[1,1])';
+            B.elev(:,1) = B.elev(:,2);
+            else
+            B.elev = ncread(OPT.bdy,'elev',[ipnt0,bctmask(1)],[2,length(bctmask)],[(ipnt1-ipnt0),1])';
+            end
             for itmp=1:2
                mask = isnan(B.elev(:,itmp));
                if any(mask)
@@ -619,14 +639,20 @@ function MDF = getm2delft3d(varargin)
             % ----------------------------------------------------------------------------
             
          % fill bcc object with salt
-
-            C.raw  = permute(ncread(OPT.bdy3d,'salt',[1,ipnt0,bccmask(1)],[Inf,2,length(bccmask)],[1,dbnd-1,1]),[3 2 1]);
+         
+            if ipnt0==ipnt1
+            C.raw(:,2,:) = permute(ncread(OPT.bdy3d,'salt',[1,ipnt0,bccmask(1)],[Inf,1,length(bccmask)],[1,1,1]),[3 2 1]);
+            C.raw(:,1,:) = C.raw(:,2,:);
+            else
+            C.raw  = permute(ncread(OPT.bdy3d,'salt',[1,ipnt0,bccmask(1)],[Inf,2,length(bccmask)],[1,(ipnt1-ipnt0),1]),[3 2 1]);
+            end
+            
             if any(C.raw(:)) < 0;error('salt < 0'); end
             C.data(:,1,:) = interp_z2sigma(-C.zax,C.raw(:,1,:),(d3d_sigma(MDF.keywords.thick./100)),C.elev(:,1),-C.bathymetry([ipnt0]));
             C.data(:,2,:) = interp_z2sigma(-C.zax,C.raw(:,2,:),(d3d_sigma(MDF.keywords.thick./100)),C.elev(:,2),-C.bathymetry([ipnt1]));
-            if any(C.data(:) < 0);
-            warning('salt < 0: all set to 0 so delft3d at least starts up.');
-            C.data(C.data(:)<0)=0;
+            if any(C.data(:) < OPT.min_salt);
+            warning('salt < min_salt: all set to min_salt (>0) so delft3d at least starts up.');
+            C.data(C.data(:)<OPT.min_salt)=0;
             end
 
             if getm.m3d.calc_salt
@@ -648,13 +674,18 @@ function MDF = getm2delft3d(varargin)
 
          % fill bcc object with temp
 
-            C.raw         = permute(ncread(OPT.bdy3d,'temp',[1,ipnt0,bccmask(1)],[Inf,2,length(bccmask)],[1,dbnd-1,1]),[3 2 1]);
+            if ipnt0==ipnt1
+            C.raw(:,2,:) = permute(ncread(OPT.bdy3d,'temp',[1,ipnt0,bccmask(1)],[Inf,1,length(bccmask)],[1,1,1]),[3 2 1]);
+            C.raw(:,1,:) = C.raw(:,2,:);                
+            else
+            C.raw  = permute(ncread(OPT.bdy3d,'temp',[1,ipnt0,bccmask(1)],[Inf,2,length(bccmask)],[1,(ipnt1-ipnt0),1]),[3 2 1]);
+            end
             if any(C.raw(:)) < 0;warning('temp < 0');end
             C.data(:,1,:) = interp_z2sigma(-C.zax,C.raw(:,1,:),(d3d_sigma(MDF.keywords.thick./100)),C.elev(:,1),-C.bathymetry([ipnt0]));
             C.data(:,2,:) = interp_z2sigma(-C.zax,C.raw(:,2,:),(d3d_sigma(MDF.keywords.thick./100)),C.elev(:,2),-C.bathymetry([ipnt1]));
-            if any(C.data(:) < 0);
-            warning('temp < 0: all set to 0 so delft3d at least starts up.');
-            C.data(C.data(:)<0)=0;
+            if any(C.data(:) < OPT.min_temp);
+            warning('temp < min_temp: all set to min_temp (>0) so delft3d at least starts up.');
+            C.data(C.data(:)<OPT.min_temp)=0;
             end
       
             if getm.m3d.calc_temp
@@ -678,7 +709,7 @@ function MDF = getm2delft3d(varargin)
             end % ibnd1 = 1:nbnd.loc
 
             BND.NTables = length(Bnd.DATA);
-            nbnd.cum = nbnd.cum + length(m);
+            nbnd.cum = nbnd.cum + nbnd.dcum;
             disp(['nbnd.cum:',num2str(nbnd.cum)])
          end % i4=1:n4
       end % iside

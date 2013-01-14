@@ -54,6 +54,7 @@ function varargout = delft3d_io_meteo_write_example(varargin)
    OPT.refdatenum     = datenum(2003,1,1); % for mdf test file
    OPT.period         = datenum(2003,11,[1 8]);
    OPT.workdir        = '';
+   OPT.write_amx      = 1; % external data files can be switched off during debugging
 
 %% map parameters from netcf file to delft3d parameters:
 %  For functional conversions, make sure all required variables
@@ -125,6 +126,7 @@ function varargout = delft3d_io_meteo_write_example(varargin)
    grdfile    = [      filename(OPT.ncfiles{ifile}),'.grd'];
    encfile    = [      filename(OPT.ncfiles{ifile}),'.enc'];
    
+   if OPT.write_amx
    fid(ivar) = delft3d_io_meteo_write([OPT.workdir,amfilename],...
        T(ifile).datenum(T(ifile).start),data,D.lon,D.lat,...
        'CoordinateSystem','Spherical',...
@@ -133,6 +135,7 @@ function varargout = delft3d_io_meteo_write_example(varargin)
                    'unit',OPT.amunits{ivar},...
                'writegrd',ivar==1,... % only needed once
                  'header',['source: ',OPT.ncfiles{1}]);
+   end %OPT.write_amx
    ADD.keywords.(OPT.amkeyword{ivar}) = amfilename;        
    MDF.keywords.(OPT.amkeyword{ivar}) = amfilename;
  end
@@ -160,6 +163,7 @@ function varargout = delft3d_io_meteo_write_example(varargin)
 
 %% pump rest of times teps from netcdf to delft3d ascii file
 
+   if OPT.write_amx
    for ifile=files2proces
       for it=T(ifile).start:T(ifile).stop
           
@@ -190,6 +194,7 @@ function varargout = delft3d_io_meteo_write_example(varargin)
    for ivar=1:length(OPT.varnames)
        fclose(fid(ivar));
    end
+   end %OPT.write_amx
 
 %% save mdf for unit test simulation
 
