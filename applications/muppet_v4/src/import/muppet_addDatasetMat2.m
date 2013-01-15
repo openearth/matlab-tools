@@ -107,10 +107,20 @@ if isfield(parameter,dataset.timename)
     t=parameter.(dataset.timename)(timestep);
 end
 if isfield(parameter,dataset.xname)
-    x=parameter.(dataset.xname)(m,n);
+    switch dataset.quantity
+        case{'location'}
+            x=parameter.(dataset.xname)(timestep,m);
+        otherwise
+            x=parameter.(dataset.xname)(m,n);
+    end
 end
 if isfield(parameter,dataset.yname)
-    y=parameter.(dataset.yname)(m,n);
+    switch dataset.quantity
+        case{'location'}
+            y=parameter.(dataset.yname)(timestep,m);
+        otherwise
+            y=parameter.(dataset.yname)(m,n);
+    end
 end
 if isfield(parameter,dataset.zname)
     z=parameter.(dataset.zname)(m,n);
@@ -134,6 +144,10 @@ dataset.uamplitude=uamplitude;
 dataset.vamplitude=vamplitude;
 dataset.uphase=uphase;
 dataset.vphase=vphase;
+
+if strcmpi(dataset.quantity,'vector')
+    dataset.quantity='vector2d';
+end
 
 % Determine component
 switch dataset.quantity
@@ -273,11 +287,11 @@ switch tc
     case{'t'}
         dataset.tc='c';
     case{'c'}
-        if orishp(1)=='1'
-            dataset.tc='t';
-        else
+%         if orishp(1)=='1'
+%             dataset.tc='t';
+%         else
             dataset.tc='c';
-        end
+%         end
 end
 
 % switch shp

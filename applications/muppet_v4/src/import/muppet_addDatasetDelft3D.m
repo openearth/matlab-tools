@@ -109,7 +109,8 @@ for j=i1:i2
     par.parameterzequal=1;
     par.adjustname=1;
     
-    par.parametername=dataproperties(ii).Name;
+%    par.parametername=dataproperties(ii).Name;
+    par.name=dataproperties(ii).Name;
     
     par.size=qpread(fid,1,dataproperties(ii),'size');
 
@@ -176,7 +177,7 @@ function dataset=import(dataset)
 
 fid=dataset.fid;
 
-parameter=dataset.parametername;
+parameter=dataset.parameter;
 
 for ii=1:length(dataset.dataproperties)
     parameternames{ii}=dataset.dataproperties(ii).Name;

@@ -21,14 +21,14 @@ switch ann.plotroutine
     case 'textbox'
         set(an,'position',ann.position);
         set(an,'string',ann.string);
-        set(an,'fontname',ann.font.name);
-        set(an,'fontsize',ann.font.size*fig.fontreduction);
-        set(an,'fontsize',ann.font.size);
-        set(an,'fontweight',ann.font.weight);
-        set(an,'fontangle',ann.font.angle);
-        set(an,'color',colorlist('getrgb','color',ann.font.color));
-        set(an,'HorizontalAlignment',ann.font.horizontalalignment);
-        set(an,'VerticalAlignment',ann.font.verticalalignment);
+        set(an,'fontname',ann.fontgroup.name);
+        set(an,'fontsize',ann.fontgroup.size*fig.fontreduction);
+%         set(an,'fontsize',ann.font.size);
+        set(an,'fontweight',ann.fontgroup.weight);
+        set(an,'fontangle',ann.fontgroup.angle);
+        set(an,'color',colorlist('getrgb','color',ann.fontgroup.color));
+        set(an,'HorizontalAlignment',ann.fontgroup.horizontalalignment);
+        set(an,'VerticalAlignment',ann.fontgroup.verticalalignment);
         if ann.box
             set(an,'backgroundcolor',colorlist('getrgb','color',ann.backgroundcolor));
             set(an,'Edgecolor',colorlist('getrgb','color',ann.linecolor));

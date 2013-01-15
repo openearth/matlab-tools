@@ -83,7 +83,7 @@ end
 clrbar=[];
 if opt.plotcolorbar
     opt.shadesbar=0;
-    clrbar=muppet_setColorBar(handles.figures(ifig).figure,ifig,isub,nr);
+    clrbar=muppet_setColorBar(handles.figures(ifig).figure,ifig,isub,id);
 end
 opt.colorbarhandle=clrbar;
 

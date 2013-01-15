@@ -225,7 +225,7 @@ if dataset.size(1)>0
         end
         if dataset.size(3)==0 && dataset.size(4)==0
             % Time series
-            dataset.timestep=0;
+            dataset.timestep=[];
             dataset.previoustimestep=1;
             dataset.timesteptext='1';
             dataset.selectalltimes=1;

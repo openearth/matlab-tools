@@ -66,4 +66,4 @@ end
 
 handles=muppet_updateSubplotNames(handles);
 handles=muppet_updateDatasetInSubplotNames(handles);
-handles=muppet_refreshColorMap(handles);
+muppet_refreshColorMap(handles);
