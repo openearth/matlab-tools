@@ -1,21 +1,19 @@
 function varargout = nc2kml_surface_imageOverlay(varargin)
-%NC2KML_SURFACE_IMAGEOVERLAY  One line description goes here.
+%NC2KML_SURFACE_IMAGEOVERLAY  make kml tree of (x,y,t) netCDF bathymetry tiles
 %
-%   More detailed description goes here.
+%   NC2KML_SURFACE_IMAGEOVERLAY makes a kml tree with KMLFIGURE_TILER
+%   from a collection of (x,y,t) netCDF tiles generated with NCGEN.
 %
 %   Syntax:
-%   varargout = kmlgen_surface_imageOverlay(varargin)
+%   kmlgen_surface_imageOverlay(<keyword,value>)
 %
 %   Input:
-%   varargin  =
-%
-%   Output:
-%   varargout =
+%   For <keyword,value> pairs call kmlgen_surface_imageOverlay()
 %
 %   Example
 %   kmlgen_surface_imageOverlay
 %
-%   See also
+%   See also: ncgen, KMLfigure_tiler
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -61,7 +59,7 @@ function varargout = nc2kml_surface_imageOverlay(varargin)
 % $Keywords: $
 
 %%
-OPT                 = KMLcolorbar;
+OPT                 = KMLfigure_tiler();
 
 OPT.path_netcdf     = '';
 OPT.path_kml        = '';
@@ -233,7 +231,7 @@ for ii = 1:length(ncfiles);
         multiWaitbar('kml_print_all_tiles',(ii - (jj / size(date4GE,1)))/length(ncfiles),...
             'label',sprintf('%s - %s',url,datestr(date(jj),29)))
         
-        KMLfigure_tiler(h,lat,lon,z,...
+        KMLfigure_tiler(h,lat,lon,z,OPT,... % pass back all overwritten-defaults here, requires setproperty 7189+
             'highestLevel'      ,OPT.highestLevel,...
             'lowestLevel'       ,OPT.lowestLevel,...
             'timeIn'            ,date4GE(jj),...
@@ -246,6 +244,7 @@ for ii = 1:length(ncfiles);
             'makeKML'           ,false,... % 0 (done in this mfile)!
             'mergeExistingTiles',true,...  % 1 ! overwrite tiles, don't remove anything
             'dim'               ,OPT.dim,...
+            'baseUrl'           ,OPT.baseUrl,... % needed for web-access to kml tree
             'basePath'          ,OPT.path_kml);
         
         % keep track of min and max

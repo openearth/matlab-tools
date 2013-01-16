@@ -147,8 +147,14 @@ coordPrintString = sprintf('%%3.%df,%%3.%df,%%3.3f\\n',OPT.precision,OPT.precisi
 for ii = 1:size(coords_index,1)
     % coordinateString
     coordinateString  = sprintf(...
-        coordPrintString,...coords);
-        coordinates(:,coords_index(ii,1):coords_index(ii,2)));
+    coordPrintString,...coords);
+    coordinates(:,coords_index(ii,1):coords_index(ii,2)));
+
+    if iscellstr(OPT.name)
+       name = OPT.name{ii};
+    else
+       name = OPT.name;
+    end
         
     % generate output
     output = [output sprintf([...
@@ -166,7 +172,7 @@ for ii = 1:size(coords_index,1)
         '</coordinates>\n',...
         '</LineString>\n'...
         '</Placemark>\n'],...
-        OPT.name,visibility,timeSpan,OPT.name,OPT.styleName,extrude,tessellate,altitudeMode,coordinateString)];
+        OPT.name,visibility,timeSpan,name,OPT.styleName,extrude,tessellate,altitudeMode,coordinateString)];
 end
 
 varargout = {output};

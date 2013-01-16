@@ -111,7 +111,7 @@ function varargout = KMLline(lat,lon,varargin)
    OPT.tessellate    = ~OPT.is3D;
    OPT.zScaleFun     = @(z) (z+0)*1;
    OPT.fid           = -1;
-   OPT.name          = '';
+   OPT.name          = ''; % name of each line, for unique name per line make sure name is cellstr with length size(D.x,1)
    
    if nargin==0
       varargout = {OPT};
@@ -296,8 +296,8 @@ output = '';
          % update linestyle
          OPT_line.styleName = ['line_style' num2str(OPT.line_nr(ii))];
          % update timeIn and timeOut if multiple times are defined
-         if length(OPT.timeIn )>1,OPT_line.timeIn  = datestr(OPT.timeIn (ii),OPT.dateStrStyle);end
-         if length(OPT.timeOut)>1,OPT_line.timeOut = datestr(OPT.timeOut(ii),OPT.dateStrStyle);end
+         if length(OPT.timeIn )>1,OPT_line.timeIn  = datestrnan(OPT.timeIn (ii),OPT.dateStrStyle,'');end
+         if length(OPT.timeOut)>1,OPT_line.timeOut = datestrnan(OPT.timeOut(ii),OPT.dateStrStyle,'');end
          if OPT.is3D&&OPT.fill
              OPT_fill.styleName = ['fill_style' num2str(OPT.fill_nr(ii))];
              if length(OPT.timeIn )>1, OPT_fill.timeIn = datestr(OPT.timeIn (ii),OPT.dateStrStyle);end
@@ -306,7 +306,7 @@ output = '';
          
          % set line label
          if iscell(OPT.name)
-             if length(OPT.name) >= ii
+             if length(OPT.name) >= 1
                 OPT_line.name = OPT.name{ii};
              else
                 OPT_line.name = '';
