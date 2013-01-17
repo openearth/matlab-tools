@@ -57,8 +57,10 @@ if isdeployed
     handles.muppetdir=[fileparts(exedir) filesep];
     handles.xmldir=[ctfroot filesep 'xml' filesep];
 else
-    if exist('muppet.ini','file')
-        fid=fopen('muppet.ini','r');
+    % Muppet.ini file must sit in the same directory as muppet.m (or muppet4.m)
+    mppath=fileparts(which('muppet4'));
+    if exist([mppath filesep 'muppet.ini'],'file')
+        fid=fopen([mppath filesep 'muppet.ini'],'r');
         pth = fgetl(fid);
         fclose(fid);
         if ~strcmpi(pth(end),filesep)
@@ -66,10 +68,10 @@ else
         end
         handles.muppetdir=pth;
     else
-        error('File muppet.ini not found!');
+        % No muppet.ini, use muppet directory in code repository
+        handles.muppetdir=[fileparts(mppath) filesep];
     end
-    inipath=fileparts(which('muppet4'));
-    handles.xmldir=[inipath filesep 'xml' filesep];    
+    handles.xmldir=[mppath filesep 'xml' filesep];
 end
 
 handles.settingsdir=[handles.muppetdir 'settings' filesep];

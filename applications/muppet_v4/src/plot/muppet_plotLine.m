@@ -101,5 +101,5 @@ if ~isempty(opt.timebar)
     plot(xt,yt,'r','Linewidth',3);
 end
 
-plt.datasets(k).dataset.handle=h1;
-handles.figures(i).figure.subplots(j).subplot=plt;
+% Set handle
+handles.figures(i).figure.subplots(j).subplot.datasets(k).dataset.handle=h1;
