@@ -11,8 +11,8 @@ function rws_waterbase_all
 
 %% Initialize
 
-   OPT.download       = 1; % get fresh downloads from rws and move exisitng to sub dir old
-   OPT.make_nc        = 1; % makes also temporary mat files, moves exisiting nc to old subdir
+   OPT.download       = 0; % get fresh downloads from rws and move exisitng to sub dir old
+   OPT.make_nc        = 0; % makes also temporary mat files, moves exisiting nc to old subdir
    OPT.make_catalog   = 1; % otherwise load existing one
    OPT.make_kml       = 0; % processing all kml only takas about 4 hours
    OPT.baseurl        = 'http://live.waterbase.nl';
@@ -21,11 +21,11 @@ function rws_waterbase_all
     %ncbase = '/Users/fedorbaart/Downloads/rws/nc/'; % @ local, change this for your own computer
    %kmlbase = '/Users/fedorbaart/Downloads/rws/kml/';% @ local, change this... no links to other kml or images any more
 
-   rawbase = 'F:\checkouts\OpenEarthRawData\rijkswaterstaat\waterbase\cache\';    % @ local
-    ncbase = 'F:\opendap.deltares.nl\thredds\dodsC\opendap\'; % @ local
+   rawbase = 'd:\checkouts\waterbase\cache\';    % @ local
+    ncbase = 'd:\opendap.deltares.nl\thredds\dodsC\opendap\'; % @ local
    kmlbase = 'D:\kml.deltares.nl\';
 
-   urlbase = 'http://opendap.deltares.nl:8080'; % production server (links)
+   urlbase = 'http://opendap.deltares.nl'; % production server (links)
 
 %% Parameter choice
 
@@ -34,6 +34,7 @@ function rws_waterbase_all
                     332  346  347  360  363  ... % KjN   N   N  O2 PO4
                     364  380  491  492  493  ... %   P P04 NH4 N02 N03
                     541  560 1083    1  377 ];   % DSe  Si DOC zwl  pH (0=all or select number from 'donar_wnsnum' column in rws_waterbase_name2standard_name.xls)
+   
    % donar_wnsnum = [410] % Use this if you want only an update of one some specific parameter.
    % DO get 1 always after 54 to make sure catalog and kml of 1 contains 54 as well.
    
@@ -116,13 +117,14 @@ function rws_waterbase_all
                    'urlPathFcn',@(s) path2os(strrep(s,ncbase,['http://opendap.deltares.nl/thredds/dodsC/opendap/']),'h'),... % dir where to LINK to for netCDF
                       'varname','',...
                          'disp','multiWaitbar');
-   else
-   CATALOG = nc2struct([OPT.directory_nc,'catalog.nc']);
    end
 
 %% Make KML overview with links to netCDFs on http://opendap.deltares.nl THREDDS
       
    if OPT.make_kml
+      if (~OPT.make_catalog)
+        CATALOG = nc2struct([OPT.directory_nc,'catalog.nc']);
+      end
 
       OPT2.fileName           = [OPT.directory_kml,filesep,subdir,'.kml'];
       OPT2.kmlName            = ['Rijkswaterstaat time series ' subdir];
