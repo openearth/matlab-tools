@@ -26,7 +26,7 @@ xml=[];
 try
     xml=xml2struct3([dr filesep xmlfile],'structuretype',1);
 catch
-    error(['Error in readGUIElementsXML. Could not load xml file ' dr elxml]);
+    error(['Error in readGUIElementsXML. Could not load xml file ' dr xmlfile]);
 end
 
 % Convert to new format !!!

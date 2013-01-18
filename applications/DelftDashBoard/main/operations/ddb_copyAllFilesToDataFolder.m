@@ -115,7 +115,7 @@ dr=fileparts(which('EPSG.mat'));
 copyfile([dr filesep 'EPSG.mat'],[datadir 'supertrans']);
 copyfile([dr filesep 'EPSG_ud.mat'],[datadir 'supertrans']);
 % Copy supertrans.xml from repo data folder to DDB data folder
-copyfile([repodatadir 'supertrans\supertrans.xml'],[datadir 'supertrans']);
+copyfile([repodatadir 'supertrans\SuperTrans.xml'],[datadir 'supertrans']);
 
 % Find toolboxes and copy xml files to data folders
 flist=dir([inipath 'toolboxes']);

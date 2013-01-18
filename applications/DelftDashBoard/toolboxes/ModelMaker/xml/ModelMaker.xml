@@ -19,14 +19,14 @@
       <formodel>dflowfm</formodel>
       <tabstring>Quick Mode</tabstring>
       <callback>ddb_ModelMakerToolbox_quickMode_DFlowFM</callback>
-      <element>modelmaker.quickmode.dflowfm.xml</element>
+      <element>ModelMaker.quickmode.dflowfm.xml</element>
     </tab>
     <tab>
       <tag>quickmode.delft3dwave</tag>
       <formodel>delft3dwave</formodel>
       <tabstring>Quick Mode</tabstring>
       <callback>ddb_ModelMakerToolbox_quickMode_Delft3DWAVE</callback>
-      <element>modelmaker.quickmode.delft3dwave.xml</element>
+      <element>ModelMaker.quickmode.delft3dwave.xml</element>
     </tab>
     <tab>
       <tag>bathymetry.delft3dflow</tag>
