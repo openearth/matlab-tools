@@ -95,12 +95,14 @@ xb = xb_read_params(filename);
 if OPT.read_paths
     
     % add non-referenced files
-    instat = xs_get(xb, 'instat');
-    if ((isnumeric(instat) && ismember(instat, [2, 3])) || ...
-            (ischar(instat) && ismember(xs_get(xb, 'instat'), {'ts_1', 'ts_2'}))) && ...
-            ~xs_exist(xb, 'ezsfile') && ...
-            exist('bc/gen.ezs', 'file')
-        xb = xs_set(xb, 'ezsfile', 'bc/gen.ezs');
+    if xs_exist(xb, 'instat')
+        instat = xs_get(xb, 'instat');
+        if ((isnumeric(instat) && ismember(instat, [2, 3])) || ...
+                (ischar(instat) && ismember(xs_get(xb, 'instat'), {'ts_1', 'ts_2'}))) && ...
+                ~xs_exist(xb, 'ezsfile') && ...
+                exist('bc/gen.ezs', 'file')
+            xb = xs_set(xb, 'ezsfile', 'bc/gen.ezs');
+        end
     end
     
     fdir = fileparts(filename);
@@ -109,7 +111,7 @@ if OPT.read_paths
         if ischar(xb.data(i).value)
             fpath = fullfile(fdir, xb.data(i).value);
 
-            if exist(fpath, 'file')
+            if exist(fpath, 'file') && isempty(regexpi(fpath, '\.nc$', 'once'))
                 switch xb.data(i).name
                     case {'bcfile' 'ezsfile'}
                         % read waves
@@ -132,7 +134,7 @@ if OPT.read_paths
                             fid = fopen(fpath, 'r');
                             data = fread(fid, '*char')';
                             fclose(fid);
-                            
+
                             value = xs_set(value, 'data', data);
                             value = xs_meta(value, mfilename, 'data', fpath);
                         end
