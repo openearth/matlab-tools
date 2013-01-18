@@ -148,6 +148,6 @@ for jj=1:length(Xc)
     idinY1(jj)=find(idY1==closest_id(jj));
 end
 %
-Y1new = interp1(Xr(closest_id),Y1(idinY1)',Xr(idY1));
+Y1new = interp1(Xr(unique(closest_id)),Y1(unique(idinY1))',Xr(idY1));
 % Plot figure
 %figure();plot(Xr(closest_id),Y1(idinY1)','r*');hold on;plot(Xr(idY1),Y1new,'k-');
