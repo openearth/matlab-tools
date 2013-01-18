@@ -66,6 +66,10 @@ if ~isstruct(xs)
     valid = false;
 elseif ~all(ismember({'date' 'type' 'function' 'data'}, fieldnames(xs)))
     valid = false;
-elseif ~all(ismember({'name', 'value'}, fieldnames(xs.data)))
-    valid = false;
+else
+    for i = 1:length(xs)
+        if ~all(ismember({'name', 'value'}, fieldnames(xs(i).data)))
+            valid = false;
+        end
+    end
 end

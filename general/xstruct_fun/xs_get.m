@@ -99,7 +99,10 @@ varargout = cell(1,nargout);
 
 n = 1;
 for i = 1:length(vars)
-    idx = strfilter({xs.data.name}, vars{i});
+    inf = regexp(vars{i}, '^(?<var>.+?)(?<id>\[\d+\])?$', 'names');
+    inf.id = str2num(inf.id);
+    
+    idx = strfilter({xs.data.name}, inf.var);
     if any(idx)
         for j = find(idx)
             out = struct;
@@ -109,13 +112,16 @@ for i = 1:length(vars)
             if isscalar(OPT.type)
                 out = out.(OPT.type{itype});
             end
+            if length(out)>1 && ~isempty(inf.id) && inf.id<=length(out)
+                out = out(inf.id);
+            end
             varargout{n} = out;
             n = n + 1;
         end
-    elseif strfind(vars{i},'.')
+    elseif strfind(inf.var,'.')
         
         sub = xs;
-        field = vars{i};
+        field = inf.var;
         while true
             re = regexp(field,'^(?<sub>.+?)\.(?<field>.+)$','names');
             if ~isempty(re)

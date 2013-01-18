@@ -73,6 +73,14 @@ function xs_show(xs, varargin)
 
 if ~xs_check(xs); error('Invalid XStruct'); end;
 
+% show structure array
+if length(xs)>1
+    for i = 1:length(xs)
+        xs_show(xs(i), varargin{:});
+    end
+    return;
+end
+
 % determine namespace
 namespace = regexp(xs.function,'^(.+?)_','tokens');
 namespace = namespace{1}{1};
@@ -89,7 +97,13 @@ if ~isempty(varargin)
         if xs_exist(xs, varargin{i}) == 1
             val = xs_get(xs, varargin{i});
             if xs_check(val)
-                val.path = [inputname(1) '.' varargin{i}];
+                if length(val)>1
+                    for j = 1:length(val)
+                        val(j).path = sprintf('%s.%s[%d]', inputname(1), varargin{i}, j);
+                    end
+                else
+                    val.path = [inputname(1) '.' varargin{i}];
+                end
                 xs_show(val);
             else
                 vars = [vars{:} varargin(i)];

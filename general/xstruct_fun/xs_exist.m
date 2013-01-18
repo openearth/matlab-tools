@@ -66,20 +66,24 @@ function n = xs_exist(xs, varargin)
 
 %% check existance
 
+n = 0;
+
 if ~xs_check(xs); error('Invalid XStruct'); end;
 
-n = 0;
-for i = 1:length(varargin)
-    idx = strfilter({xs.data.name}, varargin{i});
-    if any(idx)
-        n = n+sum(idx);
-    else
-        re = regexp(varargin{i},'^(?<sub>.+?)\.(?<field>.+)$','names');
-        if ~isempty(re)
-            sub = xs_get(xs, re.sub);
-            if xs_check(sub)
-                if any(strfilter({sub.data.name}, re.field))
-                    n = n+1;
+if length(xs)>1
+    % structure array support
+    n = n + max(arrayfun(@(x) xs_exist(x, varargin{:}), xs));
+else
+    for i = 1:length(varargin)
+        idx = strfilter({xs.data.name}, varargin{i});
+        if any(idx)
+            n = n+sum(idx);
+        else
+            re = regexp(varargin{i},'^(?<sub>.+?)\.(?<field>.+)$','names');
+            if ~isempty(re)
+                sub = xs_get(xs, re.sub);
+                if xs_check(sub)
+                    n = n + xs_exist(sub, re.field);
                 end
             end
         end
