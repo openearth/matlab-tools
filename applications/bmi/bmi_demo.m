@@ -15,10 +15,10 @@ yk = bmi_var_get(bmidll, 'yk');
 
 % Create online visualization
 dt = 1.0;
-for i=1:100
+for i=1:1000
     bmi_update(bmidll, dt);
     s1 = bmi_var_get(bmidll, 's1');
     plot3(xk(1:420), yk(1:420), s1(1:420), '.')
-    pause(0.1)
+    zlim([0,6]);
 end
 bmi_finalize(bmidll)

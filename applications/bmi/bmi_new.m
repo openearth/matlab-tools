@@ -1,5 +1,5 @@
 function [bmidll] = bmi_new(dll)
-header = 'd:\checkouts\dflowfm_esmf\c\bmi_c\bmi.h';
+header = 'bmi.h';
 [dlldir, bmidll, dllext] = fileparts(dll);
 addpath(dlldir)
 loadlibrary([bmidll dllext], header) %, 'mfilename', 'bmiheader')
