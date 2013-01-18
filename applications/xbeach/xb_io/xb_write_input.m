@@ -97,10 +97,13 @@ if OPT.write_files
                 case {'xfile' 'yfile' 'depfile' 'ne_layer'}
                     % write bathymetry file by file
                     xb.data(i).value = xb_write_bathy(sub, 'path', fdir);
+                case {'shipfile'}
+                    % read shipfile
+                    xb.data(i).value = xb_write_ship(sub, 'path', fdir);
                 otherwise
                     % assume file to be a grid and try writing it
                     try
-                        xb.data(i).value = [xb.data(i).name '.txt'];
+                        xb.data(i).value = unknown_filename(xb, i);
                         fname = fullfile(fdir, xb.data(i).value);
                         data = xs_get(sub, 'data');
                         if isnumeric(data)
@@ -131,3 +134,23 @@ end
 %% write params.txt file
 
 xb_write_params(filename, xb)
+
+end
+
+%% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+function fname = unknown_filename(xb, i)
+
+    prefix = '';
+    
+    if isfield(xb, 'file') && ~isempty(xb.file)
+        [fdir, fname, fext] = fileparts(xb.file);
+        
+        if ~strcmpi([fname fext], 'params.txt')
+            prefix = [fname '_'];
+        end
+    end
+    
+    fname = [prefix xb.data(i).name '.txt'];
+
+end

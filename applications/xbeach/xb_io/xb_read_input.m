@@ -122,6 +122,9 @@ if OPT.read_paths
                     case {'xfile' 'yfile' 'depfile' 'ne_layer'}
                         % read bathymetry
                         value = xb_read_bathy(xb.data(i).name, fpath);
+                    case {'shipfile'}
+                        % read shipfile
+                        value = xb_read_ship(fpath);
                     otherwise
                         % assume file to be a grid and try reading it
                         value = xs_empty();
