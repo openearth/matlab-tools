@@ -1,32 +1,26 @@
-function str = concat(strs, sep)
-%CONCAT  Concatenate a cell array of strings using a seperator
+function s = pg_write_ewkt(S)
+%PG_WRITE_EWKT  Write WKT struct to string
 %
-%   Concatenate a cell array of strings using a seperator. The default
-%   seperator is a space. A cell array will be concatenated over the
-%   largest dimension, while a cell matrix will be concatenated over the
-%   second dimension.
+%   Write a WKT (Well Known Text) struct to a string
 %
 %   Syntax:
-%   str = concat(strs, varargin)
+%   s = pg_write_ewkt(S)
 %
 %   Input:
-%   strs      = cell array of strings
-%   sep       = separator
+%   S         = WKT struct
 %
 %   Output:
-%   str       = concatenated string
+%   s         = WKT string
 %
 %   Example
-%   concat({'The' 'bear' 'is' 'loose'});
-%   concat({'One' 'two' 'three'}, ',');
-%   concat({'First' 'line' ; 'Second' 'line'}, ' ');
-%   concat(concat({'key_1' 'value_1' ; 'key_2' 'value_2'}, ' = '), ' AND ');
+%   WKT = pg_write_ewkt(S)
+%   S   = pg_read_ewkt(WKT)
 %
-%   See also strtok, regexp, sprintf
+%   See also pg_read_ewkt, pg_read_ewkb, pg_write_ewkb
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2012 Deltares
+%   Copyright (C) 2013 Deltares
 %       Bas Hoonhout
 %
 %       bas.hoonhout@deltares.nl
@@ -56,8 +50,8 @@ function str = concat(strs, sep)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 27 Jul 2012
-% Created with Matlab version: 7.14.0.739 (R2012a)
+% Created: 18 Jan 2013
+% Created with Matlab version: 8.0.0.783 (R2012b)
 
 % $Id$
 % $Date$
@@ -66,46 +60,60 @@ function str = concat(strs, sep)
 % $HeadURL$
 % $Keywords: $
 
-%% concatenate strings
+%% check input
 
-if nargin == 1
-    sep = ' ';
+if ischar(S)
+    % read wkb is input is string
+    S = pg_read_wkb(S);
 end
 
-l = length(sprintf(sep));
+if ~isstruct(S) || ~isfield(S, 'type')
+    % check if input is a valid struct
+    error('Input should be a struct from pg_read_ewkb.m');
+end
 
-if iscell(strs)
-    
-    if isempty(strs)
-        str = [];
-    else
-        if any(size(strs)==1)
-
-            str = sprintf([sep '%s'], strs{:});
-
-            if length(str) > l
-                str = str(l+1:end);
-            end
-
-        else
-
-            str = cell(size(strs,1),1);
-
-            for i = 1:size(strs,1)
-
-                str{i} = concat(strs(i,:), sep);
-
-            end
-
-        end
+if length(S) > 1
+    % structure array
+    s = cell(size(S));
+    for i = 1:length(S)
+        s{i} = pg_write_ewkt(S(i));
     end
-    
-elseif ischar(strs)
-    
-    str = strs;
-    
+    return
+end
+
+s = '';
+
+%% write srid
+
+if isfield(S, 'srid') && S.srid>0
+    s = [s sprintf('SRID=%d;', S.srid)];
+end
+
+%% write type
+
+s = [s upper(S.type)];
+
+%% write coordinates
+
+coords = S.coords;
+
+if ~iscell(S.coords)
+    coords = {coords};
+end
+
+n1 = length(coords);
+c1 = cell(n1, 1);
+for i = 1:n1
+    n2 = size(coords{i},1);
+    c2 = cell(n2,1);
+    for j = 1:n2
+        c2{j} = sprintf('%10.4f %10.4f', coords{i}(j,1), coords{i}(j,2));
+    end
+    c1{i} = sprintf('(%s)', concat(c2, ',\n'));
+end
+
+if iscell(S.coords)
+    s = [s sprintf('(%s)', concat(c1, ','))];
 else
-    
-    error('Invalid input');
-    
+    s = [s concat(c1, ',')];
 end

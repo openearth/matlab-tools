@@ -1,32 +1,26 @@
-function str = concat(strs, sep)
-%CONCAT  Concatenate a cell array of strings using a seperator
+function S = pg_read_ewkt(s)
+%PG_READ_EWKT  Read WKT string into struct
 %
-%   Concatenate a cell array of strings using a seperator. The default
-%   seperator is a space. A cell array will be concatenated over the
-%   largest dimension, while a cell matrix will be concatenated over the
-%   second dimension.
+%   Read a WKT (Well Known Text) string into struct
 %
 %   Syntax:
-%   str = concat(strs, varargin)
+%   S = pg_read_ewkt(s)
 %
-%   Input:
-%   strs      = cell array of strings
-%   sep       = separator
+%   Input: 
+%   s         = WKT string
 %
 %   Output:
-%   str       = concatenated string
+%   S         = WKT struct
 %
 %   Example
-%   concat({'The' 'bear' 'is' 'loose'});
-%   concat({'One' 'two' 'three'}, ',');
-%   concat({'First' 'line' ; 'Second' 'line'}, ' ');
-%   concat(concat({'key_1' 'value_1' ; 'key_2' 'value_2'}, ' = '), ' AND ');
+%   S = pg_read_ewkt(s)
+%   s = pg_write_ewkt(S)
 %
-%   See also strtok, regexp, sprintf
+%   See also pg_write_ewkt, pg_read_ewkb, pg_write_ewkb
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2012 Deltares
+%   Copyright (C) 2013 Deltares
 %       Bas Hoonhout
 %
 %       bas.hoonhout@deltares.nl
@@ -56,8 +50,8 @@ function str = concat(strs, sep)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 27 Jul 2012
-% Created with Matlab version: 7.14.0.739 (R2012a)
+% Created: 18 Jan 2013
+% Created with Matlab version: 8.0.0.783 (R2012b)
 
 % $Id$
 % $Date$
@@ -66,46 +60,42 @@ function str = concat(strs, sep)
 % $HeadURL$
 % $Keywords: $
 
-%% concatenate strings
+%% parse text
 
-if nargin == 1
-    sep = ' ';
+S = regexp(s, '(?<srid>\s*SRID\s*=\s*\d+\s*;)?\s*(?<type>\w+)\s*\((?<coords>.*)\)\s*$', 'names');
+
+if isempty(S)
+    error('Cannot parse WKT string');
 end
 
-l = length(sprintf(sep));
+%% parse srid
 
-if iscell(strs)
-    
-    if isempty(strs)
-        str = [];
-    else
-        if any(size(strs)==1)
-
-            str = sprintf([sep '%s'], strs{:});
-
-            if length(str) > l
-                str = str(l+1:end);
-            end
-
-        else
-
-            str = cell(size(strs,1),1);
-
-            for i = 1:size(strs,1)
-
-                str{i} = concat(strs(i,:), sep);
-
-            end
-
-        end
-    end
-    
-elseif ischar(strs)
-    
-    str = strs;
-    
+if isfield(S, 'srid') && ~isempty(S.srid)
+    S.srid = str2num(regexprep(S.srid, '\s*SRID\s*=\s*(\d+)\s*;', '$1'));
 else
-    
-    error('Invalid input');
-    
+    S.srid = 0;
 end
+
+%% parse coords
+
+coords = regexp(S.coords, '\((.*?)\)', 'tokens');
+
+if isempty(coords)
+    coords = {{S.coords}};
+end
+
+S.coords = {};
+for i = 1:length(coords)
+    coords2 = regexp(coords{i}{1}, '\s*,\s*', 'split');
+    for j = 1:length(coords2)
+        S.coords{i}(j,:) = cellfun(@str2num, regexp(coords2{j}, '\s+', 'split'));
+    end
+end
+
+if length(S.coords) == 1
+    S.coords = S.coords{i};
+end
+
+%% parse dims
+
+S.dims = {'x' 'y'};
