@@ -65,6 +65,25 @@ function handles = ddb_generateBoundaryLocationsDelft3DFLOW(handles, id, filenam
 
 if ~isempty(handles.Model(md).Input(id).grdFile)
     if ~isempty(handles.Model(md).Input(id).depFile)
+
+        % Clear existing boundaries
+        handles.Model(md).Input(id).openBoundaries=[];
+        handles.Model(md).Input(id).openBoundaries(1).name='';
+        handles.Model(md).Input(id).openBoundaries(1).M1=[];
+        handles.Model(md).Input(id).openBoundaries(1).M2=[];
+        handles.Model(md).Input(id).openBoundaries(1).N1=[];
+        handles.Model(md).Input(id).openBoundaries(1).N2=[];        
+        handles.Model(md).Input(id).openBoundaries(1).alpha=0.0;
+        handles.Model(md).Input(id).openBoundaries(1).compA='unnamed';
+        handles.Model(md).Input(id).openBoundaries(1).compB='unnamed';
+        handles.Model(md).Input(id).openBoundaries(1).type='Z';
+        handles.Model(md).Input(id).openBoundaries(1).forcing='A';
+        handles.Model(md).Input(id).openBoundaries(1).profile='Uniform';
+        handles.Model(md).Input(id).openBoundaryNames={''};
+        handles.Model(md).Input(id).nrOpenBoundaries=0;        
+        handles.Model(md).Input(id).activeOpenBoundary=1;        
+        handles.Model(md).Input(id).activeOpenBoundaries=1;        
+        handles=ddb_Delft3DFLOW_plotAttributes(handles,'delete','openboundaries');
         
         d=handles.Toolbox(tb).Input.sectionLength;
         zmax=handles.Toolbox(tb).Input.zMax;
@@ -96,8 +115,8 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
             mstart=0;
             mend=0;
             m=2;
-            while m<mmax
-                while m<mmax
+            while m<=mmax
+                while m<=mmax
                     % Find start point
                     if ~isnan(x(m,n(j))) && ~isnan(x(m-1,n(j))) && ...
                             handles.Model(md).Input(id).depth(m,n(j))<zmax
@@ -107,9 +126,9 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
                         m=m+1;
                     end
                 end
-                m=m+1;
+%                m=m+1;
                 mend=0;
-                while m<mstart+d && m<=mmax
+                while m<=mstart+d-1 && m<=mmax
                     % Find end point
                     if ~isnan(x(m,n(j))) && ~isnan(x(m-1,n(j))) && ...
                             handles.Model(md).Input(id).depth(m,n(j))<zmax
@@ -165,8 +184,8 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
             nstart=0;
             nend=0;
             n=2;
-            while n<nmax
-                while n<nmax
+            while n<=nmax
+                while n<=nmax
                     % Find start point
                     if ~isnan(x(m(j),n)) && ~isnan(x(m(j),n-1)) && ...
                             handles.Model(md).Input(id).depth(m(j),n)<zmax
@@ -176,9 +195,9 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
                         n=n+1;
                     end
                 end
-                n=n+1;
+%                 n=n+1;
                 nend=0;
-                while n<nstart+d && n<=nmax
+                while n<nstart+d-1 && n<=nmax
                     % Find end point
                     if ~isnan(x(m(j),n)) && ~isnan(x(m(j),n-1)) && ...
                             handles.Model(md).Input(id).depth(m(j),n)<zmax
