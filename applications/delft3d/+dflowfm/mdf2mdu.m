@@ -43,8 +43,15 @@ function varargout = mdf2mdu(varargin)
    GRD      = delft3d_io_grd('read',MDF.keywords.filcco);
    DEP      = delft3d_io_dep('read',MDF.keywords.fildep,GRD,'dpsopt',MDF.keywords.dpsopt);
    BND      = delft3d_io_bnd('read',MDF.keywords.filbnd,GRD);
-   if     ~isempty(MDF.keywords.filana)
-  [BCA,BND] = delft3d_io_bca('read',MDF.keywords.filana,BND);
+
+   if     isempty(MDF.keywords.filbca)
+   if    ~isempty(MDF.keywords.filana)
+      MDF.keywords.filbca = MDF.keywords.filana;
+   end
+   end
+
+   if     ~isempty(MDF.keywords.filbca)
+  [BCA,BND] = delft3d_io_bca('read',MDF.keywords.filbca,BND);
    OPT.typ  = 'cmp'; % 'tim' for time series or 'cmp' for bca
    elseif ~isempty(MDF.keywords.filbct)
     if exist([filename(MDF.keywords.filbct),'.mat'])
@@ -100,7 +107,7 @@ function varargout = mdf2mdu(varargin)
       fid = fopen([filename(OPT.mdf),'_debug.pli'],'w');
       fprintf(fid,'BLOCK\n');
       fprintf(fid,'%d %d\n',2*5,2);%BND.NTables,2);
-      if     ~isempty(MDF.keywords.filana)
+      if     ~isempty(MDF.keywords.filbca)
          for i=1:BND.NTables
             fprintf(fid,'%10.3f %10.3f ''%s''\n',BND.x(i,1),BND.y(i,1),BND.DATA(i).labelA);
             fprintf(fid,'%10.3f %10.3f ''%s''\n',BND.x(i,2),BND.y(i,2),BND.DATA(i).labelB);

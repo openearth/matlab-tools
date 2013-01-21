@@ -58,13 +58,13 @@ end
 % name
 if ~isempty(CS.name),
     name = strcmpi(CS.name,STD.coordinate_reference_system.coord_ref_sys_name);
-    %also check for aproximate matches, is nothing turned up
+    %also check for approximate matches, is nothing turned up
     if sum(name)==0
-        disp('WARNING: no exact match of coordinate system name is found, aproximate match tried')
+        disp('WARNING: no exact match of coordinate system name is found, approximate match tried')
         name = strfind(lower(STD.coordinate_reference_system.coord_ref_sys_name),lower(CS.name));
         name = ~cellfun('isempty',name);
         if sum(name)==0
-            error('no aproximate match of coordinate system name is found')
+            error('no approximate match of coordinate system name is found')
         end
     end
 else

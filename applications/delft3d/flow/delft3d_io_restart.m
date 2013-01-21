@@ -34,7 +34,7 @@ function varargout=DELFT3D_IO_RESTART(cmd,varargin),
 %
 %   iostat = DELFT3D_IO_RESTART('write',filename,DAT.data,<platform>,1);	
 %   where DAT is a struct with any fieldname, that are written in the order
-%   the fields are present in the struct, rather than in the fixex order 
+%   the fields are present in the struct, rather than in the fixed order 
 %   assumed by delft3d (not recommended).
 %
 %   Where platform can be

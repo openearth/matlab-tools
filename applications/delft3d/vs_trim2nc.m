@@ -1067,7 +1067,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'J/m3/s');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
-      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.y = [Inf -Inf];
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.Ay = [Inf -Inf];
       attr(end+1)  = struct('Name', 'references'   , 'Value', 'de Boer et al, Ocean Modelling 2008. http://dx.doi.org/10.1016/j.ocemod.2007.12.003');
       nc.Variables(ifld) = struct('Name'       , 'Ay', ...
                                   'Datatype'   , OPT.type, ...
@@ -1523,34 +1523,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
 
       i = 0;
       
-%% initialize [min,max] ranges
-
-      if any(strcmp('waterlevel'    ,OPT.var));R.waterlevel      = [Inf -Inf];end
-      if any(strcmp('velocity'      ,OPT.var));R.velocity_x      = [Inf -Inf];
-                                               R.velocity_y      = [Inf -Inf];end
-      if any(strcmp('velocity_omega',OPT.var));R.velocity_omega  = [Inf -Inf];end
-      if any(strcmp('velocity_z'    ,OPT.var));R.velocity_z      = [Inf -Inf];end
-      if any(strcmp('tau'           ,OPT.var));R.tau_x           = [Inf -Inf];
-                                               R.tau_y           = [Inf -Inf];end
-      if any(strcmp('pea'           ,OPT.var));R.pea             = [Inf -Inf];end
-      if any(strcmp('salinity'      ,OPT.var));R.salinity        = [Inf -Inf];end
-      if any(strcmp('temperature'   ,OPT.var));R.temperature     = [Inf -Inf];end
-      if any(strcmp('tke'           ,OPT.var));R.tke             = [Inf -Inf];end
-      if any(strcmp('eps'           ,OPT.var));R.eps             = [Inf -Inf];end
-      if any(strcmp('sediment'      ,OPT.var));R.suspsedconc     = [Inf -Inf];end
-      if any(strcmp('viscosity_z'   ,OPT.var));R.viscosity_z     = [Inf -Inf];end
-      if any(strcmp('diffusivity_z' ,OPT.var));R.diffusivity_z   = [Inf -Inf];end
-      if any(strcmp('Ri'            ,OPT.var));R.Ri              = [Inf -Inf];end
-      if any(strcmp('dpeads'        ,OPT.var));R.Ax              = [Inf -Inf];
-                                               R.Ay              = [Inf -Inf];
-                                               R.Sx              = [Inf -Inf];
-                                               R.Sy              = [Inf -Inf];
-                                               R.Cx              = [Inf -Inf];
-                                               R.Cy              = [Inf -Inf];
-                                               R.Nx              = [Inf -Inf];
-                                               R.Ny              = [Inf -Inf];
-                                               R.Wz              = [Inf -Inf];
-                                               R.Mz              = [Inf -Inf];end
+%% add data per time slice (to save memory for laarge files)
 
       for it = OPT.time % it is index in NEFIS file
       i = i + 1;        % i  is index in netCDF file

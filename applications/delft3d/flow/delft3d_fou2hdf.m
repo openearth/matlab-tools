@@ -74,12 +74,11 @@ function varargout = delft3d_fou2hdf(directory,RUNID,varargin);
    % - data are stored as single precision
    % - the data struct are defined global
    
-   U.single = 1;
+   OPT.single = 1;
    
-   global MATLAB_STRUCT TEKAL_DATA_STRUCT
+   global MAT TEK
    
-   % TEKAL_DATA_STRUCT and
-   % MATLAB_STRUCT are defined as global variables,
+   % TEK and MAT are defined as global variables,
    % to save memory with large 3D files so Matlab does not make
    % a copy when passing these variables to fou2struct3d.
 
@@ -99,19 +98,20 @@ function varargout = delft3d_fou2hdf(directory,RUNID,varargin);
 if exist(matfile,'file')==2
    
    disp(['Loading mat fourier file, please wait ...'])
-   MATLAB_STRUCT = load(matfile);
+   MAT = load(matfile);
 
 else
    
    if exist(tekmatfile,'file')==2
       
-      t0 = clock;
       disp(['Loading mat version of ASCII fourier file, please wait ...'])
-      TEKAL_DATA_STRUCT = load(tekmatfile);
-      etime(clock,t0)
+      t0  = clock;
+      TEK = load(tekmatfile);
+      dt  = etime(clock,t0);
+      disp([' ,, in ',num2str(dt),' sec.'])
       
       %% Transform all data to single:
-      %% - to save matlab memory (Noter that when casting later to MATLAB_STRUCT 
+      %% - to save matlab memory (Noter that when casting later to MAT 
       %    we have a temporary duplication of all fourier info.)
       %  - to save hdf disk space
       %  The ASCII TEKAL file has 7 digits per number,
@@ -120,78 +120,76 @@ else
       %  we perform it anyway here now.
       %  --------------------------------
       
-      if U.single
-         for ifield=1:length(TEKAL_DATA_STRUCT.Field)
-            TEKAL_DATA_STRUCT.Field(ifield).Data = single(TEKAL_DATA_STRUCT.Field(ifield).Data);
+      if OPT.single
+         for ifield=1:length(TEK.Field)
+            TEK.Field(ifield).Data = single(TEK.Field(ifield).Data);
          end
       end
       
    else
       
       disp(['Reading ASCII fourier file, please wait ...'])
-      
-      t0 = clock;
-      TEKAL_DATA_STRUCT = tekal('open',tekfile);
-      dt = etime(clock,t0);
-      
-      disp(['Read ASCII fourier file in ',num2str(dt),' sec.'])
+      t0  = clock;
+      TEK = tekal('open',tekfile);
+      dt  = etime(clock,t0);
+      dt  = etime(clock,t0);
+      disp([' ,, in ',num2str(dt),' sec.'])
 
       %% Transform all data to single:
-      %  - to save matlab memory (Noter that when casting later to MATLAB_STRUCT 
+      %  - to save matlab memory (Note that when casting later to MAT 
       %    we have a temporary duplication of all fourier info.)
       %  - to save hdf disk space
       %  The ASCII TEKAL file has 7 digits per number,
       %  which is effectively also single precision, so there's no loss of data.
       %  --------------------------------
 
-      if U.single
-         for ifield=1:length(TEKAL_DATA_STRUCT.Field)
-            TEKAL_DATA_STRUCT.Field(ifield).Data = single(TEKAL_DATA_STRUCT.Field(ifield).Data);
+      if OPT.single
+         for ifield=1:length(TEK.Field)
+            TEK.Field(ifield).Data = single(TEK.Field(ifield).Data);
          end
       end
       
-      save(tekmatfile,'-STRUCT','TEKAL_DATA_STRUCT','-V6');
+      save(tekmatfile,'-STRUCT','TEK','-V6');
    
    end
    
-   %% Cast TEKAL_DATA_STRUCT to MATLAB_STRUCT
-   %  In fou2struct3d MATLAB_STRUCT and TEKAL_DATA_STRUCT are also defined global
+   %% Cast TEK to MAT
+   %  In fou2struct3d MAT and TEK are also defined global
    %  Other solution is to include fou2struct3d to this file and 
    %  make it a nested function.
    %  --------------------------------
    
-   t0 = clock;
    disp(['Parsing ASCII fourier file data to matlab struct, please wait ...'])
-   MATLAB_STRUCT     = delft3d_fou2struct3d(TEKAL_DATA_STRUCT);
-   dt = etime(clock,t0);
-   disp(['Parsed ASCII fourier file data to matlab struct in ',num2str(dt),' sec.'])
+   t0  = clock;
+   MAT = delft3d_fou2struct3d(TEK);
+   dt  = etime(clock,t0);
+   disp([' ,, in ',num2str(dt),' sec.'])
    
-   clear global TEKAL_DATA_STRUCT
-   %TEKAL_DATA_STRUCT = struct([]);
+   clear global TEK %TEK = struct([]);
    
-   save(matfile,'-STRUCT','MATLAB_STRUCT','-V6');
+   save(matfile,'-STRUCT','MAT','-V6');
 
 end
 
 %% Add meta information
 %----------------------------------
 
-   MATLAB_STRUCT.directory            = directory;
-   MATLAB_STRUCT.RUNID                = RUNID;
+   MAT.directory   = directory;
+   MAT.RUNID       = RUNID;
    
-   MATLAB_STRUCT.created_at_date      = datestr(now,31);
-   MATLAB_STRUCT.created_by_author    = 'G.J. de Boer <g.j.deboer@tudelft.nl>';
-   MATLAB_STRUCT.created_by_project   = 'Dissertation';
-   MATLAB_STRUCT.created_by_institute = 'Delft Univsersity of Technology';
-   MATLAB_STRUCT.created_from_file    = tekfile;
+   MAT.Id          = '$Id$';
+   MAT.Date        = '$Date$';
+   MAT.Author      = '$Author$';
+   MAT.Revision    = '$Revision$';
+   MAT.HeadURL     = '$HeadURL$';
    
    %% Obtain reference date from mdf file, otherwise 
-   %% phase information is utterly useless (dueto nodal corrections).
+   %% phase information is utterly useless (due to nodal corrections).
    
    try
-      mdf                             = delft3d_io_mdf('read',[directory,filesep,RUNID,'.mdf'],'case','lower');
-      MATLAB_STRUCT.reference_datenum = time2datenum(mdf.keywords.itdate);
-      MATLAB_STRUCT.reference_date    = datestr     (MATLAB_STRUCT.reference_datenum);
+      mdf                   = delft3d_io_mdf('read',[directory,filesep,RUNID,'.mdf'],'case','lower');
+      MAT.reference_datenum = time2datenum(mdf.keywords.itdate);
+      MAT.reference_date    = datestr     (MAT.reference_datenum);
    catch
       disp(['Cannot add reference time, because '])
       warning(['mdf file ',RUNID,'.mdf is not found in ',directory])
@@ -200,7 +198,7 @@ end
 %% Save to HDF
 %----------------------------------
 
-   status        = hdfvsave(hdffile,MATLAB_STRUCT,varargin{:});
+   status        = hdfvsave(hdffile,MAT,varargin{:});
 
 %% Output
 %----------------------------------
@@ -214,9 +212,8 @@ end
    if nargout==1
       varargout = {status};
    elseif nargout==2
-      varargout = {MATLAB_STRUCT,status};
+      varargout = {MAT,status};
    end
    
-   clear global MATLAB_STRUCT
-   %MATLAB_STRUCT = struct([]);
+   clear global MAT %MAT = struct([]);
 
