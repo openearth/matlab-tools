@@ -41,7 +41,8 @@ function varargout = vs_trim2nc(vsfile,varargin)
 % Note:  you can make an nc_dump cdl ascii file a char for keyword dump:
 %        vs_trim2nc('tst.dat','dump','tst.cdl');
 %
-%See also: netcdf, snctools, NCWRITESCHEMA, NCWRITE, VS_USE, DELFT3D2NC
+%See also: vs_trih2nc for trih-*.dat delft3d-flow history file,
+%          netcdf, snctools, NCWRITESCHEMA, NCWRITE, VS_USE, DELFT3D2NC
 
 % TO DO keep consistency up-to-date with delft3d_to_netcdf.exe of Bert Jagers
 % TO DO add bedload en avg sediment
@@ -869,10 +870,11 @@ function varargout = vs_trim2nc(vsfile,varargin)
       ifld     = ifld + 1;clear attr dims
       if (~any(strfind(G.coordinates,'CART'))) % CARTESIAN, CARTHESIAN (old bug)
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'eastward_sea_water_velocity'); % surface_geostrophic_sea_water_x_velocity_assuming_sea_level_for_geoid
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'velocity, lon-component');
       else
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'sea_water_x_velocity'); % surface_geostrophic_sea_water_x_velocity_assuming_sea_level_for_geoid
-      end
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'velocity, x-component');
+      end
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm/s');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayer);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
@@ -887,10 +889,11 @@ function varargout = vs_trim2nc(vsfile,varargin)
       ifld     = ifld + 1;clear attr dims
       if (~any(strfind(G.coordinates,'CART'))) % CARTESIAN, CARTHESIAN (old bug)
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'northward_sea_water_velocity'); % surface_geostrophic_sea_water_y_velocity_assuming_sea_level_for_geoid
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'velocity, lat-component');
       else
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'sea_water_y_velocity'); % surface_geostrophic_sea_water_y_velocity_assuming_sea_level_for_geoid
-      end 
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'velocity, y-component');
+      end 
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm/s');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayer);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
@@ -1243,9 +1246,9 @@ function varargout = vs_trim2nc(vsfile,varargin)
       if any(strcmp('tke',OPT.var))
       if isfield(I,'turbulent_energy')
       ifld     = ifld + 1;clear attr dims
-      attr(    1)  = struct('Name', 'standard_name', 'Value', '');
-      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'turbulent kinetic energy');
-      attr(end+1)  = struct('Name', 'units'        , 'Value', 'm2/s2');
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'specific_kinetic_energy_of_sea_water'); %?
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'turbulent kinetic energy'); % not in NEFIS file
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'm2/s2');  % not in NEFIS file 
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayerInterf);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.tke = [Inf -Inf];
@@ -1265,9 +1268,9 @@ function varargout = vs_trim2nc(vsfile,varargin)
       if any(strcmp('eps',OPT.var))
       if isfield(I,'energy_dissipation')
       ifld     = ifld + 1;clear attr dims
-      attr(    1)  = struct('Name', 'standard_name', 'Value', '');
-      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'turbulent energy dissipation');
-      attr(end+1)  = struct('Name', 'units'        , 'Value', 'm2/s3');
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'ocean_kinetic_energy_dissipation_per_unit_area_due_to_vertical_friction'); %?
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'turbulent energy dissipation'); % not in NEFIS file
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'm2/s3'): % 'W m-2'); % not in NEFIS file
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayerInterf);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.eps = [Inf -Inf];
