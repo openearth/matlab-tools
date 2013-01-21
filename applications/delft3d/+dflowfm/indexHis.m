@@ -97,8 +97,21 @@ switch method
 
 case 'list' %this one should be first in case
 
+   if nc_isvar(ncfile,'station_longitude')
+   lon  = nc_varget(ncfile,'station_longitude');
+   lat  = nc_varget(ncfile,'station_latitude');
+   else
+   lon  = repmat(nan,[nstat 1]);
+   lat  = repmat(nan,[nstat 1]);
+   end
+   if nc_isvar(ncfile,'station_x_coordinate')
    x   = nc_varget(ncfile,'station_x_coordinate');
    y   = nc_varget(ncfile,'station_y_coordinate');
+   else
+   x = repmat(nan,[nstat 1]);
+   y = repmat(nan,[nstat 1]);
+   end
+   
    if strcmpi(OPT.type,'mn');
    m   = nc_varget(ncfile,'station_m_index');
    n   = nc_varget(ncfile,'station_n_index');   
@@ -113,11 +126,11 @@ case 'list' %this one should be first in case
        disp(['| ',ncfile])
        if strcmpi(OPT.type,'mn');
        disp('+------------------------------------------------------------------------->')
-       disp('| index         name         m    n     angle  x and y')
+       disp('| index         name         m    n     angle  (lon,lat) (x,y)')
        disp('+-----+--------------------+-----------+-----+---------------------------->')
        else
        disp('+--------------------------------------------------------------------------->')
-       disp('| index         name                            x and y')
+       disp('| index         name                            (lon,lat) (x,y)')
        disp('+-----+----------------------------------------+---------------------------->')
        end
 
@@ -130,14 +143,18 @@ case 'list' %this one should be first in case
                pad(num2str(m    (istat)          ),-5 ,' '),' ',...
                pad(num2str(n    (istat)          ),-5 ,' '),' ',...
                pad(num2str(ang  (istat),'%+3.1f' ),-5 ,' '),' ',...
+               pad(num2str(lon  (istat),'%+9.5f' ),-10,' '),' ',...
+               pad(num2str(lat  (istat),'%+9.5f' ), 10,' '),' ',...
                pad(num2str(x    (istat),'%+16.6f'),-14,' '),' ',...
-               pad(num2str(y    (istat),'%+16.6f'),-14,' ')]);
+               pad(num2str(y    (istat),'%+16.6f'), 14,' ')]);
        else
            disp([' ',...
                pad(num2str(      istat           ), -5,' '),' ',...
                pad(        namst(istat,:)         , 40,' '),' ',...
+               pad(num2str(lon  (istat),'%+9.5f' ),-10,' '),' ',...
+               pad(num2str(lat  (istat),'%+9.5f' ), 10,' '),' ',...
                pad(num2str(x    (istat),'%+16.6f'),-14,' '),' ',...
-               pad(num2str(y    (istat),'%+16.6f'),-14,' ')]);
+               pad(num2str(y    (istat),'%+16.6f'), 14,' ')]);
        end
 
        end

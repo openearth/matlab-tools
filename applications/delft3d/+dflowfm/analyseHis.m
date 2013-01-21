@@ -96,7 +96,7 @@ function varargout = analyseHis(varargin)
    OPT.platform_period   = {}; % & associated periods
    OPT.units            = [];
    OPT.timezone         = '+00:00'; % common time zone for data and model comparison in plots
-   OPT.model_timezone   = '+01:00'; % time zone of model is not present in model output (model is not time zone aware)
+   OPT.model_timezone   = []; % time zone of model is not present in model output (model is not time zone aware)
 
    OPT.pause            = 0;
    OPT.standard_name    = 'sea_surface_height';
@@ -164,6 +164,17 @@ end
    M.lon                     = nan;
    M.lat                     = nan;
    Mmeta.(OPT.varname).units = nc_attget(OPT.nc,OPT.hisname,'units'); % in case there is no data
+   if isempty(Mmeta.datenum.timezone )
+       fprintf(2,['model has no explicit timezone, check whether it is indeed GMT.'])
+   end
+   if ~isempty(OPT.model_timezone)
+       Mmeta.datenum.timezone = OPT.model_timezone;
+       fprintf(2,['overruled model timezone ',char(Mmeta.datenum.timezone),' with ',OPT.model_timezone])
+   else
+       fprintf(2,['used model timezone from model results attributes: ',char(Mmeta.datenum.timezone)])
+   end
+
+   M.datenum = M.datenum - timezone_code2datenum(char(Mmeta.datenum.timezone)) + timezone_code2datenum(OPT.timezone);
 
 %% prepare
 
@@ -242,21 +253,10 @@ for id=1:length(OPT.platform_name);
      unitsfac = convert_units(char(Dmeta.(OPT.varname).units),char(Mmeta.(OPT.varname).units));
      end
      
-     if ~isequal(Mmeta.datenum.timezone,Dmeta.datenum.timezone)
-     disp(['time zones of model and data differ, model: "',...
-               char(Mmeta.datenum.timezone),'"   - data: "',...
-               char(Dmeta.datenum.timezone),'":',...
-               'converted to common timezone: ',OPT.timezone]);
-     
-     if isempty(char(Mmeta.datenum.timezone))
-         Mmeta.datenum.timezone = OPT.model_timezone;
+     if isempty(Dmeta.datenum.timezone )
+         fprintf(2,['data has no explicit timezone, check whether it is indeed GMT.'])
      end
-
-     M.datenum = M.datenum - timezone_code2datenum(char(Mmeta.datenum.timezone)) ...
-                           + timezone_code2datenum(OPT.timezone);
-     D.datenum = D.datenum - timezone_code2datenum(char(Dmeta.datenum.timezone)) ...
-                           + timezone_code2datenum(OPT.timezone);
-     end
+     D.datenum = D.datenum - timezone_code2datenum(char(Dmeta.datenum.timezone)) + timezone_code2datenum(OPT.timezone);
      
      % copy meta-data that is not in model output (yet ...)
      M.lon           = D.lon;

@@ -10,12 +10,15 @@ function varargout = vs_trim2nc(vsfile,varargin)
 % on keyword 'epsg' to obtain a CF compliant netCDF file. Corner
 % coordinates are added via the CF-1.6 bounds convention [m n bounds].
 % Work for sigma (see OET tests) as well as z layers.
+% Do specify timezone and epsg code, to conform to CF standard and facilitate reuse.
 %
 % Example:
 %
-%   vs_trim2nc('P:\aproject\trim-n15.dat','epsg',28992,'time',5,'var,{'waterlevel','velocity','x','y'})
+%   vs_trim2nc('P:\aproject\trim-n15.dat','epsg',28992,'time',5,'var,{'waterlevel','velocity','x','y'},...
+%                                    ,'timezone',timezone_code2iso('GMT'))
 %
-%   vs_trim2nc(vsfile,ncfile,'var',{'waterlevel','pea','dpeadt','dpeads','x','y','grid_x','grid_y'});
+%   vs_trim2nc(vsfile,ncfile,'var',{'waterlevel','pea','dpeadt','dpeads','x','y','grid_x','grid_y'},...
+%                                    ,'timezone','+01:00')
 %
 % By default it converts all native delft3d output variables, but 
 % you can also select only a subset with keyword 'var'. Call VS_TRIM2NC() 
@@ -35,8 +38,10 @@ function varargout = vs_trim2nc(vsfile,varargin)
 %       '<east|north>ward_sea_water_velocity'      vs 'sea_water_<x|y>_velocity'
 %       'surface_downward_<east|north>ward_stress' vs 'surface_downward<x|y>_stress'
 % Note : for big Delft3D NEFIS 5.0 files set keyword ...,'Format','64bit',...
+% Note:  you can make an nc_dump cdl ascii file a char for keyword dump:
+%        vs_trim2nc('tst.dat','dump','tst.cdl');
 %
-%See also: VS_USE, DELFT3D2NC, NCWRITESCHEMA, NCWRITE, SNCTOOLS, NETCDF
+%See also: netcdf, snctools, NCWRITESCHEMA, NCWRITE, VS_USE, DELFT3D2NC
 
 % TO DO keep consistency up-to-date with delft3d_to_netcdf.exe of Bert Jagers
 % TO DO add bedload en avg sediment
@@ -90,7 +95,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
    OPT.refdatenum     = datenum(0000,0,0); % matlab datenumber convention: A serial date number of 1 corresponds to Jan-1-0000. Gives wrong dates in ncbrowse due to different calendars. Must use doubles here.
    OPT.refdatenum     = datenum(1970,1,1); % linux  datenumber convention
    OPT.institution    = '';
-   OPT.timezone       = timezone_code2iso('GMT');
+   OPT.timezone       = ''; %timezone_code2iso('GMT');
    OPT.time           = 0;
    OPT.epsg           = [];
    OPT.type           = 'single'; %'double'; % the nefis file is by default single precision, se better isn't useful
@@ -439,6 +444,10 @@ function varargout = vs_trim2nc(vsfile,varargin)
       end
 
 %% time
+
+      if isempty(OPT.timezone)
+         fprintf(2,'> No model timezone supplied, timezone could be added to netCDF file. This will be interpreted as GMT! \n')
+      end
      
       ifld     = 1;clear attr dims
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'time');
@@ -830,7 +839,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
                                   'FillValue'  , []); % this doesn't do anything
       end
 
-%% 3 Create variables: momentum and mass conservation
+%% 3 Create (primary) variables: momentum and mass conservation
 
       if any(strcmp('waterlevel',OPT.var))
       if ~isequal(vs_get_elm_size(F,'S1'),0)

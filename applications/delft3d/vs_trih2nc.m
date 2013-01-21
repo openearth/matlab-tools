@@ -1,17 +1,19 @@
 function varargout = vs_trih2nc(vsfile,varargin)
-%vs_trih2nc  Convert part of a Delft3D trih file to netCDF (BETA)
+%vs_trih2nc  Convert part of a Delft3D trih file to netCDF-CF
 %
 %   vs_trih2nc(NEFISfile,<'keyword',value>)
 %   vs_trih2nc(NEFISfile,<netCDFfile>,<'keyword',value>)
 %
-% converts Delft3D trih file (NEFIS file) to a netCDF file in 
-% the same directory with extension replaced by nc.
+% converts Delft3D trih file (NEFIS file) to a netCDF file which has
+% default name <RUNID>_his.nc to conform with default dflowfm history output.
+% Do specify timezone and epsg code, to conform to CF standard and facilitate reuse.
 %
 % Example:
 %
-%   vs_trih2nc('P:\aproject\trih-n15.dat','epsg',28992)
+%   vs_trih2nc('P:\aproject\trih-n15.dat','epsg',28992,'timezone',timezone_code2iso('GMT'))
 %
-% nc looks same as nc of dflowfm, so it loads well into Quickplot.
+% nc looks same as history nc of dflowfm, so be used in dflowfm.analyseHis, and
+% loads well into Quickplot. 
 %
 % Example how to use this netCDF file: read all
 %   H = nc2struct(ncfile)
@@ -26,7 +28,10 @@ function varargout = vs_trih2nc(vsfile,varargin)
 %   D.dep           = nc_varget (ncfile,'depth'        ,[  ind-1  ],[1]);
 %   D.datenum       = nc_cf_time(ncfile)
 %
-%See also: snctools, vs_use, dflowfm, delft3d_io_obs, dflowfm.indexHis
+% Note:  you can make an nc_dump cdl ascii file a char for keyword dump:
+%        vs_trih2nc('tst.dat','dump','tst.cdl');
+%
+%See also: netcdf, snctools, vs_use, dflowfm, delft3d_io_obs, dflowfm.indexHis, dflowfm.analyseHis
 
 % TO DO add morphological! depth
 % TO DO check consistency with delft3d_to_netcdf.exe of Bert Jagers
@@ -79,7 +84,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       OPT.refdatenum     = datenum(0000,0,0); % matlab datenumber convention: A serial date number of 1 corresponds to Jan-1-0000. Gives wring date sin ncbrowse due to different calenders. Must use doubles here.
       OPT.refdatenum     = datenum(1970,1,1); % lunix  datenumber convention
       OPT.institution    = '';
-      OPT.timezone       = timezone_code2iso('GMT');
+      OPT.timezone       = ''; %timezone_code2iso('GMT');
       OPT.debug          = 0;
       OPT.time           = 0; % subset of time indices in NEFIS file, 1-based
       OPT.epsg           = 28992;
@@ -204,7 +209,25 @@ function varargout = vs_trih2nc(vsfile,varargin)
       nc_add_dimension(ncfile, 'Layer'            , G.kmax  );
       nc_add_dimension(ncfile, 'LayerInterf'      , G.kmax+1);
 
-      ifld = 0;
+
+%% time
+
+      if isempty(OPT.timezone)
+         fprintf(2,'> No model timezone supplied, timezone could be added to netCDF file. This will be interpreted as GMT! \n')
+      end
+
+      ifld     = 1;clear attr dims
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'time');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'time');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', ['days since ',datestr(OPT.refdatenum,'yyyy-mm-dd'),' 00:00:00 ',OPT.timezone]);
+      attr(end+1)  = struct('Name', 'axis'         , 'Value', 'T');
+      nc(ifld) = struct('Name', 'time', ...
+          'Nctype'   , 'double', ... % !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+          'Dimension', {{'time'}}, ...
+          'Attribute', attr);
+
+%% platforms/stations/observation points
+
       ifld     = ifld + 1;clear attr;d3d_name = 'NAMST';
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'platform_name');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', vs_get_elm_def(F,d3d_name,'Description'));
@@ -243,6 +266,8 @@ function varargout = vs_trih2nc(vsfile,varargin)
           'Nctype'   , OPT.type, ...
           'Dimension', {{'Station'}}, ...
           'Attribute', attr);
+
+%% horizontal coordinates: (x,y) and (lon,lat), on centres and corners
 
    if any(strfind(G.coordinates,'CARTESIAN'))
    
@@ -304,18 +329,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
 
    end
 
-      ifld     = ifld + 1;clear attr; d3d_name = 'DPS';
-      attr(    1)  = struct('Name', 'standard_name', 'Value', 'altitude');
-      attr(    1)  = struct('Name', 'long_name'    , 'Value', vs_get_elm_def(F,d3d_name,'Description'));
-      attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
-      attr(end+1)  = struct('Name', 'positive'     , 'Value', 'down');
-      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
-      attr(end+1)  = struct('Name', 'comment'      , 'Value', '');
-      nc(ifld) = struct('Name', 'depth', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'Station'}}, ...
-          'Attribute', attr);
+%% vertical coordinates
 
       if strmatch('SIGMA-MODEL', G.layer_model)
 
@@ -377,17 +391,22 @@ function varargout = vs_trih2nc(vsfile,varargin)
       
       end % z/sigma
 
-      ifld     = ifld + 1;clear attr
-      attr(    1)  = struct('Name', 'standard_name', 'Value', 'time');
-      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'time');
-      attr(end+1)  = struct('Name', 'units'        , 'Value', ['days since ',datestr(OPT.refdatenum,'yyyy-mm-dd'),' 00:00:00 ',OPT.timezone]);
-      attr(end+1)  = struct('Name', 'axis'         , 'Value', 'T');
-      nc(ifld) = struct('Name', 'time', ...
-          'Nctype'   , 'double', ... % !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
-          'Dimension', {{'time'}}, ...
-          'Attribute', attr);
+%% bathymetry
 
-%% 3 Create variables
+      ifld     = ifld + 1;clear attr; d3d_name = 'DPS';
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'altitude');
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', vs_get_elm_def(F,d3d_name,'Description'));
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
+      attr(end+1)  = struct('Name', 'positive'     , 'Value', 'down');
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
+      attr(end+1)  = struct('Name', 'comment'      , 'Value', '');
+      nc(ifld) = struct('Name', 'depth', ...
+          'Nctype'   , OPT.type, ...
+          'Dimension', {{'Station'}}, ...
+          'Attribute', attr);
+          
+%% 3 Create (primary) variables: momentum and mass conservation
 
       ifld     = ifld + 1;clear attr; d3d_name = 'ZWL';
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'sea_surface_elevation');
