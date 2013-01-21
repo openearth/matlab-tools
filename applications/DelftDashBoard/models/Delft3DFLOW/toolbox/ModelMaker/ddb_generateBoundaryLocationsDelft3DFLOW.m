@@ -115,9 +115,10 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
             mstart=0;
             mend=0;
             m=2;
-            while m<=mmax
+            while m<mmax
+                % New boundary section
                 while m<=mmax
-                    % Find start point
+                    % Find start point of boundary section
                     if ~isnan(x(m,n(j))) && ~isnan(x(m-1,n(j))) && ...
                             handles.Model(md).Input(id).depth(m,n(j))<zmax
                         mstart=m;
@@ -126,19 +127,20 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
                         m=m+1;
                     end
                 end
-%                m=m+1;
                 mend=0;
                 while m<=mstart+d-1 && m<=mmax
-                    % Find end point
+                    % Find end point of boundary section
                     if ~isnan(x(m,n(j))) && ~isnan(x(m-1,n(j))) && ...
                             handles.Model(md).Input(id).depth(m,n(j))<zmax
                         mend=m;
+                        m=m+1;
                     else
                         break
                     end
-                    m=m+1;
                 end
                 if mstart>0 && mend>0
+                    % Start and end point found, this is a real boundary
+                    % section
                     nb=nb+1;
                     nd=nd+1;
                     handles.Model(md).Input(id).openBoundaries(nb).M1=mstart;
@@ -184,7 +186,7 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
             nstart=0;
             nend=0;
             n=2;
-            while n<=nmax
+            while n<nmax
                 while n<=nmax
                     % Find start point
                     if ~isnan(x(m(j),n)) && ~isnan(x(m(j),n-1)) && ...
@@ -197,16 +199,17 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
                 end
 %                 n=n+1;
                 nend=0;
-                while n<nstart+d-1 && n<=nmax
+                while n<=nstart+d-1 && n<=nmax
                     % Find end point
                     if ~isnan(x(m(j),n)) && ~isnan(x(m(j),n-1)) && ...
                             handles.Model(md).Input(id).depth(m(j),n)<zmax
                         nend=n;
+                        n=n+1;
                     else
                         break
                     end
-                    n=n+1;
                 end
+%                n=n+1;
                 if nstart>0 && nend>0
                     nb=nb+1;
                     nd=nd+1;
