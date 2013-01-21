@@ -7,8 +7,8 @@ function [c,v] = classify2unique(x,varargin)
 % that: X(X==V(i))==V(i) for i=1:length(V). 
 % NaN values in X get index 0, but can be set with keyword 'nanval'
 % [C,V] = classify2unique(x,<keyword,value>). V is sorted, so
-% the value for nan determiend where it end up in V (start or end).
-% Use '-Inf' or 'Inf' to ensure leading or trailing value for NaN.
+% the value for nan determines where it ends up in V (start or end).
+% Use '-Inf' or 'Inf' to ensure leading or trailing position for NaN.
 %
 % Example: plotting fields of unique datenum values
 % as returned by nc_cf_gridset_getData, incl. NaNs:

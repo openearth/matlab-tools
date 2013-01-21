@@ -1,10 +1,10 @@
 function S = datestrnan(varargin)
-%DATESTRNAN   datestr that doe snot crash on NaNs
+%DATESTRNAN   datestr-version that does not crash on NaNs
 %
 %    S = DATESTRNAN(...,FillSymbol) where FillSymbol 
 %    is the symbol returned in case of NaNs,
 %
-%    S = DATESTRNAN(V) uses default FillSymbol =' '
+%    S = DATESTRNAN(V) uses default FillSymbol =''
 %
 %    Example
 %    S = datestrnan([nan now],'yyyy','*')
