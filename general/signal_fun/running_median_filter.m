@@ -61,5 +61,5 @@ function data = running_median_filter(data,window)
 
 %% code
 narginchk(2,2)
-assert(~any(isnan(data) || isinf(data)),'NaN''s and Inf''s are not accepted by running_median_filter');
+assert(~any(isnan(data) | isinf(data)),'NaN''s and Inf''s are not accepted by running_median_filter');
 data = running_median_filter(double(data),uint16(window));
