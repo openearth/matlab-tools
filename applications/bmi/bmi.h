@@ -4,6 +4,9 @@ void update(double* dt);
 
 void get_1d_double(char* var_name, double** x);
 
+// Pass 2d as vector
+void get_2d_double(char* var_name, double** x);
+
 void get_var_rank(char* var_name, int* rank);
 
 void get_var_type(char* var_name, char* c_type_name);
