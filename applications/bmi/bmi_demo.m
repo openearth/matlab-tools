@@ -9,21 +9,57 @@ config_file = 'd:\checkouts\cases_unstruc\e00_unstruc\f04_bottomfriction\c016_2D
 [bmidll] = bmi_new(dll);
 bmi_initialize(bmidll, config_file);
 
-
-
 %%
 % Get the node locations
 xk = bmi_var_get(bmidll, 'xk');
 X = bmi_var_get(bmidll, 'flowelemcontour_x');
 yk = bmi_var_get(bmidll, 'yk');
+zk = bmi_var_get(bmidll, 'zk');
 Y = bmi_var_get(bmidll, 'flowelemcontour_y');
+nodes = bmi_var_get(bmidll, 'flowelemnode');
+% nodes(1,:) should be 1,42,43,2
+
+
+xs1 = mean(xk(nodes),2);
+ys1 = mean(yk(nodes),2);
+
+
 % Create online visualization
 dt = 1.0;
-for i=1:100
+for i=1:200
     bmi_update(bmidll, dt);
     s1 = bmi_var_get(bmidll, 's1');
-    plot3(xk(1:size(s1,1)), yk(1:size(s1,1)), s1, '.')
+    
+    % This is not quite what I hoped for....
+    clf;
+    material metal
+    patchinfo.Faces = nodes;
+    patchinfo.Vertices = [xk,yk,zk];
+    p = patch(patchinfo,'FaceColor','black');
+    set(gca,'CLim',[0 5])
+    set(p, 'FaceAlpha',0.3)
+
+    zks1(nodes(:,1)) = s1;
+    zks1(nodes(:,2)) = s1;
+    zks1(nodes(:,3)) = s1;
+    zks1(nodes(:,4)) = s1;
+
+    patchinfo.Faces = nodes;
+    patchinfo.Vertices = [xk,yk,zks1'];
+    p = patch(patchinfo,'FaceColor','blue');
+    set(gca,'CLim',[0 5])
+    set(p, 'FaceAlpha',0.2,'FaceLighting','phong',...
+    'AmbientStrength',.3,'DiffuseStrength',.8,...
+    'SpecularStrength',.9,'SpecularExponent',25)
+    view(3);
+    light('Position',[0 0 10])
+    lightangle(-45,30)
+
+    
     zlim([0,6]);
-    pause(0.01);
+    xlim([-250,250]);
+    ylim([-250,250]);
+    pause(0.001);
+    hold off
 end
-bmi_finalize(bmidll)
+bmi_finalize(bmidll);

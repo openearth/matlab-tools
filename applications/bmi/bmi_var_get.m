@@ -17,7 +17,14 @@ end
 % Ensure a row vector
 shape = shape(:)';
 values = zeros(shape);
-
+switch type_name
+    case 'int'
+        values = int32(values);
+    case 'float'
+        values = single(values);
+    case 'double'
+        values = double(values);
+end
 % Dynamicly create the function name, only int, float and double supported
 functionname = sprintf('get_%dd_%s', rank_, type_name);
 [name, values] = calllib(bmidll, functionname, var_name, values);
