@@ -91,7 +91,7 @@ end
 
 if isempty(destination)
     overwrite = true;
-elseif strcmpi(sorce,destination)
+elseif strcmpi(source,destination)
     overwrite = true;
 else
     overwrite = false;
@@ -99,7 +99,7 @@ end
 
 if directory_mode && ~overwrite
     if ~exist(destination,'dir')
-        mkpath(destination,'dir')
+        mkpath(destination)
         delete2(dir2(destination,'no_dirs',1,'file_incl','\.nc$'));
     end
 end
