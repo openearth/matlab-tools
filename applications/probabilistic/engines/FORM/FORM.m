@@ -58,6 +58,7 @@ varargin = prob_checkinput(varargin{:});
 % defaults
 OPT = struct(...
     'stochast', struct(),...  % stochast structure
+    'CorrMatrix',[], ...      % matrix with correlation coefficients (for Gaussian correlation)
     'x2zFunction', @x2z,...   % Function to transform x to z    
     'x2zVariables', {{}},...  % additional variables to use in x2zFunction
     'method', 'matrix',...    % z-function method 'matrix' (default) or 'loop'
@@ -183,7 +184,7 @@ while NextIter
     Calc = Calc(end)+1 : size(u,1);
     
     % convert u to P and x
-    [P(Calc,:) x(Calc,:)] = u2Px(stochast, u(Calc,:));
+    [P(Calc,:) x(Calc,:)] = u2Px(stochast, u(Calc,:), 'CorrMatrix', OPT.CorrMatrix);
     
     if any(any(~isfinite(x(Calc,:))))
         % non-finite x-values will cause problems in z-function
