@@ -49,7 +49,16 @@ classdef DirectionalAdaptiveResponseSurfaceSampling < DirectionalSampling
     
     %% Properties
     properties
-        
+        MaxPRatio
+    end
+    
+    properties (Dependent = true)
+        PfExact
+        PfApproximated
+        dPfExact
+        dPfApproximated
+        dPf
+        PRatio
     end
     
     %% Methods
@@ -72,6 +81,86 @@ classdef DirectionalAdaptiveResponseSurfaceSampling < DirectionalSampling
             %   DirectionalAdaptiveResponseSurfaceSampling
             %
             %   See also DirectionalAdaptiveResponseSurfaceSampling
+            
+            ProbabilisticChecks.CheckInputClass(limitState,'LimitState');
+            ProbabilisticChecks.CheckInputClass(lineSearcher,'LineSearch');
+            ProbabilisticChecks.CheckInputClass(confidenceInterval,'double');
+            ProbabilisticChecks.CheckInputClass(accuracy,'double');
+            ProbabilisticChecks.CheckInputClass(seed,'double');
+            
+            this.LimitState         = limitState;
+            this.LineSearcher       = lineSearcher;
+            this.ConfidenceInterval = confidenceInterval;
+            this.Accuracy           = accuracy;  
+            this.Seed               = seed;
+            
+            this.SetDefaults
         end
+        
+        %% Setters
+        
+        %% Getters
+        
+        %Get PfExact
+        function pfexact = get.PfExact(this)
+            pfexact     = sum(this.dPfExact);
+        end
+        
+        %Get dPfExact
+        function dpfexact = get.dPfExact(this)
+            if sum(this.LimitState.EvaluationIsExact) > 0
+                dpfexact    = (1-chi2_cdf(this.LimitState.BetaValues(this.EvaluationApproachesZero & this.LimitState.EvaluationIsExact & this.LimitState.EvaluationIsEnabled & this.LimitState.BetaValues > 0).^2,length(this.LimitState.RandomVariables)))/this.NrDirectionsEvaluated;
+            elseif sum(this.LimitState.EvaluationIsExact) == 0
+                dpfexact    = 0;
+            end
+        end
+        
+        %Get PfApproximated
+        function pfapproximated = get.PfApproximated(this)
+            pfapproximated  = sum(this.dPfApproximated);
+        end
+        
+        %Get dPfApproximated
+        function dpfapproximated = get.dPfApproximated(this)
+            if sum(~this.LimitState.EvaluationIsExact) > 0
+                dpfapproximated = (1-chi2_cdf(this.LimitState.BetaValues(this.EvaluationApproachesZero & ~this.LimitState.EvaluationIsExact& this.LimitState.EvaluationIsEnabled & this.LimitState.BetaValues > 0).^2,length(this.LimitState.RandomVariables)))/this.NrDirectionsEvaluated;
+            elseif sum(~this.LimitState.EvaluationIsExact) == 0
+                dpfapproximated = 0;
+            end
+        end
+        
+        %Get dP
+        function dpf = get.dPf(this)
+            dpf = [this.dPfExact; this.dPfApproximated; zeros(size(this.LimitState.BetaValues(this.LimitState.BetaValues <= 0)))];
+        end
+        
+        %Get PRatio
+        function pratio = get.PRatio(this)
+            if ~isempty(this.Pf) && ~isempty(this.PfApproximated)
+                pratio  = this.PfApproximated/this.Pf;
+            else
+                pratio  = Inf;
+            end
+        end
+        
+        %% Main Adaptive Directional Importance Sampling Loop
+        function CalculatePf(this)
+        end
+        
+        %% Other methods
+           
+        %Set default values
+        function SetDefaults(this)
+            this.MaxCOV                     = 0.1;
+            this.MaxPRatio                  = 0.4;
+            this.MinNrDirections            = 0;
+            this.MaxNrDirections            = 1000;
+            this.SolutionConverged          = false;
+            this.StopCalculation            = false;
+            this.NrDirectionsEvaluated      = 0;
+            this.LastIteration              = false;
+            this.Abort                      = false;
+        end
+        
     end
 end

@@ -61,10 +61,12 @@ classdef LimitState < handle
         EvaluationIsExact
         EvaluationIsEnabled
         ResponseSurface
+%         StartUpMethods
     end
     
     properties (Dependent)
         NumberRandomVariables
+        NumberExactEvaluations
     end
         
     %% Methods
@@ -105,10 +107,14 @@ classdef LimitState < handle
         function numberrandomvariables = get.NumberRandomVariables(this)
             numberrandomvariables   = length(this.RandomVariables);
         end
-            
+        
+        function numberexactevaluations = get.NumberExactEvaluations(this)
+            numberexactevaluations = sum(this.EvaluationIsExact);
+        end
+           
         %% Other methods       
         %Evaluate LSF at given point in U (standard normal) space
-        function zvalue = Evaluate(this, un, beta, randomVariables)
+        function zvalue = Evaluate(this, un, beta, randomVariables, varargin)
             ProbabilisticChecks.CheckInputClass(randomVariables,'RandomVariable')
             uvalues     = un.*beta;
             input       = cell(2,length(randomVariables));
@@ -132,7 +138,17 @@ classdef LimitState < handle
                 this.ZValues    = [this.ZValues; zvalue];
                 
                 this.EvaluationIsExact          = logical([this.EvaluationIsExact; true]);
-                this.EvaluationIsEnabled        = logical([this.EvaluationIsEnabled; true]);
+                if ~isempty(varargin)
+                    if (strcmp(varargin{1},'disable') && varargin{2} == true)
+                        this.EvaluationIsEnabled        = logical([this.EvaluationIsEnabled; false]);
+                    elseif (strcmp(varargin{1},'disable') && varargin{2} == false)
+                        this.EvaluationIsEnabled        = logical([this.EvaluationIsEnabled; true]);
+                    else
+                        error('The only valid values for the keyword "disable" are true or false')
+                    end
+                else
+                    this.EvaluationIsEnabled        = logical([this.EvaluationIsEnabled; true]);
+                end
             end
         end
         
@@ -142,7 +158,7 @@ classdef LimitState < handle
         end
         
         %Approximate LSF at given point using the ResponseSurface
-        function zvalue = Approximate(this, un, beta)
+        function zvalue = Approximate(this, un, beta, varargin)
             if ~this.CheckAvailabilityARS
                 error('No ARS (with a good fit) available!')
             else
@@ -153,7 +169,17 @@ classdef LimitState < handle
                 this.ZValues    = [this.ZValues; zvalue];
                 
                 this.EvaluationIsExact          = logical([this.EvaluationIsExact; false]);
-                this.EvaluationIsEnabled        = logical([this.EvaluationIsEnabled; true]);
+                if ~isempty(varargin)
+                    if (strcmp(varargin{1},'disable') && varargin{2} == true)
+                        this.EvaluationIsEnabled        = logical([this.EvaluationIsEnabled; false]);
+                    elseif (strcmp(varargin{1},'disable') && varargin{2} == false)
+                        this.EvaluationIsEnabled        = logical([this.EvaluationIsEnabled; true]);
+                    else
+                        error('The only valid values for the keyword "disable" are true or false')
+                    end
+                else
+                    this.EvaluationIsEnabled        = logical([this.EvaluationIsEnabled; true]);
+                end
             end
         end
         
@@ -167,11 +193,14 @@ classdef LimitState < handle
         end
         
         %Check if origin is available
-        function CheckOrigin(this)
+        function originZ = CheckOrigin(this)
+            originZ = [];
             if ~any(this.BetaValues == 0)
                 error('Origin not available in LimitState');
             elseif any(this.BetaValues  == 0) && this.ZValues(this.BetaValues == 0) <= 0
                 error('Failure at origin of limit state is not supported by this line search algorithm');
+            elseif any(this.BetaValues  == 0) && this.ZValues(this.BetaValues == 0) > 0
+                originZ = this.ZValues(this.BetaValues == 0);
             end
         end
         
@@ -247,7 +276,7 @@ classdef LimitState < handle
             legend(axisHandle,'show');
             
             data = { ...
-                0 sum(this.EvaluationIsExact & evaluationApproachesZero) sum(~this.EvaluationIsExact & evaluationApproachesZero) 0   sum(this.EvaluationIsExact) ; ...
+                0 sum(this.EvaluationIsExact & evaluationApproachesZero) sum(~this.EvaluationIsExact & evaluationApproachesZero) 0   this.NumberExactEvaluations ; ...
                 0          0        0           ''                0            ; ...
                 0     ''         ''            ''                0            ; ...
                 0 0    0       ''                0   };

@@ -50,6 +50,7 @@ classdef AdaptiveResponseSurface < handle
     %% Properties
     properties
         Name
+        CheckQualityARS
     end
     properties (SetAccess = private)
         Fit
@@ -62,7 +63,7 @@ classdef AdaptiveResponseSurface < handle
     %% Methods
     methods
         %% Constructor
-        function this = AdaptiveResponseSurface(varargin)
+        function this = AdaptiveResponseSurface
             %ADAPTIVERESPONSESURFACE  One line description goes here.
             %
             %   More detailed description goes here.
@@ -105,7 +106,7 @@ classdef AdaptiveResponseSurface < handle
             this.DetermineModelTerms(limitState);
             if ~isempty(this.ModelTerms)
                 this.Fit    = polyfitn(limitState.UValues(limitState.EvaluationIsExact,:), limitState.ZValues(limitState.EvaluationIsExact), this.ModelTerms);
-            end
+            end 
             this.CheckFit
         end
         
@@ -118,7 +119,8 @@ classdef AdaptiveResponseSurface < handle
                         ~any(isnan(this.Fit.ParameterVar)) && ...
                         ~any(isinf(this.Fit.ParameterVar)) && ...
                         ~any(this.Fit.ParameterVar > this.MaxCoefficient) && ...
-                        this.Fit.RMSE/max(1,max(abs(this.Fit.Coefficients))) < this.MaxRootMeanSquareError
+                        this.Fit.RMSE/max(1,max(abs(this.Fit.Coefficients))) < this.MaxRootMeanSquareError || ...
+                        ~this.CheckQualityARS
                     this.GoodFit    = true;
                 else
                     this.GoodFit    = false;
@@ -144,8 +146,9 @@ classdef AdaptiveResponseSurface < handle
         %Set default values
         function SetDefaults(this)
             this.GoodFit                = false;
-            this.MaxCoefficient         = 1e5; %5e2; testing
+            this.MaxCoefficient         = 1e5;
             this.MaxRootMeanSquareError = 1;
+            this.CheckQualityARS        = true;
         end
         
         %plot response surface
@@ -159,7 +162,7 @@ classdef AdaptiveResponseSurface < handle
             end
 
             lim             = linspace(-10,10,1000);
-            [xGrid yGrid]   = meshgrid(lim,lim);
+            [xGrid, yGrid]   = meshgrid(lim,lim);
             grid            = [xGrid(:) yGrid(:)];
             if this.GoodFit
                 zGrid   = reshape(polyvaln(this.Fit, grid), size(xGrid));

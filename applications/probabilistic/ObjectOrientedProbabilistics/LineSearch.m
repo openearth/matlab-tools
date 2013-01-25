@@ -67,6 +67,8 @@ classdef LineSearch < handle
         ApproximateUsingARS
         StartBeta
         StartZ
+        OriginZ
+        DisablePoints
     end
     
     properties (Access = private)
@@ -147,15 +149,12 @@ classdef LineSearch < handle
             this.Reset
             
             this.SwitchExactApproximate(limitState, varargin{:})
-            limitState.CheckOrigin
+            this.OriginZ    = limitState.CheckOrigin;
             
             this.BetaValues = [this.BetaValues; 0];
             this.ZValues    = [this.ZValues; limitState.ZValues(limitState.BetaValues == 0)];
             
-            if ~isempty(this.StartBeta) || ~isempty(this.StartZ)
-%                 this.BetaValues     = [this.BetaValues; this.StartBeta];
-%                 this.ZValues        = [this.ZValues; this.StartZ];
-            else
+            if isempty(this.StartBeta) || isempty(this.StartZ)
                 this.EvaluatePoint(limitState, un, this.BetaFirstPoint, randomVariables);
             end
                 
@@ -183,12 +182,16 @@ classdef LineSearch < handle
         %Call LimitState to either evaluate or approximate a certain point
         function varargout = EvaluatePoint(this, limitState, un, beta, randomVariables)
             if this.ApproximateUsingARS
-                this.BetaValues     = [this.BetaValues; beta];
-                zvalue              = limitState.Approximate(un, beta);
-                this.NrEvaluations  = this.NrEvaluations + 1;
-                this.ZValues        = [this.ZValues; zvalue];
+                zvalue              = limitState.Approximate(un, beta, 'disable', this.DisablePoints);
+                if isempty(zvalue)
+                    varargout       = zvalue;
+                else
+                    this.NrEvaluations  = this.NrEvaluations + 1;
+                    this.BetaValues     = [this.BetaValues; beta];
+                    this.ZValues        = [this.ZValues; zvalue];
+                end
             else
-                zvalue              = limitState.Evaluate(un, beta, randomVariables);
+                zvalue              = limitState.Evaluate(un, beta, randomVariables, 'disable', this.DisablePoints);
                 if isempty(zvalue)
                     varargout       = zvalue;
                 else
@@ -230,8 +233,8 @@ classdef LineSearch < handle
                     if this.SearchConverged
                         break
                     end
+                    this.IterationsFit  = this.IterationsFit + 1;
                 end
-                this.IterationsFit  = this.IterationsFit + 1;
                 if this.SearchConverged
                     break
                 end
@@ -317,7 +320,7 @@ classdef LineSearch < handle
         
         %Check convergence of line search
         function CheckConvergence(this, limitState)
-            if abs(limitState.ZValues(end)) < this.MaxErrorZ && limitState.BetaValues(end) > 0
+            if (abs(limitState.ZValues(end))/limitState.CheckOrigin) < this.MaxErrorZ && limitState.BetaValues(end) > 0
                 this.SearchConverged                    = true;
             end
         end
@@ -330,7 +333,7 @@ classdef LineSearch < handle
             this.BetaValues             = [];
             this.ZValues                = [];
             this.ApproximateUsingARS    = false;
-            this.MaxIterationsBisection = 5;
+            this.MaxIterationsBisection = 4;
             this.NrEvaluations          = 0;
         end
         
@@ -394,8 +397,8 @@ classdef LineSearch < handle
             this.BetaFirstPoint             = 4;
             this.MaxBeta                    = 8.3;
             this.MaxOrderFit                = 2;
-            this.MaxIterationsFit           = 5;
-            this.MaxIterationsBisection     = 5;
+            this.MaxIterationsFit           = 4;
+            this.MaxIterationsBisection     = 4;
             this.MaxErrorZ                  = 1e-2;
             this.SearchConverged            = false;
             this.IterationsFit              = 0;
@@ -404,6 +407,8 @@ classdef LineSearch < handle
             this.plotBetaLowerBound         = -5;
             this.plotBetaUpperBound         = 10;
             this.NrEvaluations              = 0;
+            this.OriginZ                    = [];
+            this.DisablePoints              = false;
         end
     end
 end

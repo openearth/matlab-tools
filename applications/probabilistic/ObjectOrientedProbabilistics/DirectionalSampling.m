@@ -51,7 +51,7 @@ classdef DirectionalSampling < ProbabilisticMethod
     
     properties
         MaxCOV
-        MaxPRatio
+        MinNrDirections
         SolutionConverged
         StopCalculation
         IndexQueue
@@ -67,11 +67,8 @@ classdef DirectionalSampling < ProbabilisticMethod
     
     properties (Dependent = true)
         PfExact
-        PfApproximated
         dPfExact
-        dPfApproximated
         dPf
-        PRatio
         COV
         StandardDeviation
         EvaluationApproachesZero
@@ -132,34 +129,11 @@ classdef DirectionalSampling < ProbabilisticMethod
             end
         end
         
-        %Get PfApproximated
-        function pfapproximated = get.PfApproximated(this)
-            pfapproximated  = sum(this.dPfApproximated);
-        end
-        
-        %Get dPfApproximated
-        function dpfapproximated = get.dPfApproximated(this)
-            if sum(~this.LimitState.EvaluationIsExact) > 0
-                dpfapproximated = (1-chi2_cdf(this.LimitState.BetaValues(this.EvaluationApproachesZero & ~this.LimitState.EvaluationIsExact& this.LimitState.EvaluationIsEnabled & this.LimitState.BetaValues > 0).^2,length(this.LimitState.RandomVariables)))/this.NrDirectionsEvaluated;
-            elseif sum(~this.LimitState.EvaluationIsExact) == 0
-                dpfapproximated = 0;
-            end
-        end
-        
         %Get dP
         function dpf = get.dPf(this)
-            dpf = [this.dPfExact; this.dPfApproximated; zeros(size(this.LimitState.BetaValues(this.LimitState.BetaValues <= 0)))];
+            dpf = [this.dPfExact; zeros(size(this.LimitState.BetaValues(this.LimitState.BetaValues <= 0)))];
         end
-        
-        %Get PRatio
-        function pratio = get.PRatio(this)
-            if ~isempty(this.Pf) && ~isempty(this.PfApproximated)
-                pratio  = this.PfApproximated/this.Pf;
-            else
-                pratio  = Inf;
-            end
-        end
-        
+               
         %Get COV
         function cov = get.COV(this)
             if this.StandardDeviation ~= 0 && isreal(this.StandardDeviation) && ~isnan(this.StandardDeviation)
@@ -180,7 +154,7 @@ classdef DirectionalSampling < ProbabilisticMethod
         
         %Get EvaluationApproachesZero
         function evaluationApproachesZero = get.EvaluationApproachesZero(this)
-            evaluationApproachesZero = (abs(this.LimitState.ZValues) < this.LineSearcher.MaxErrorZ) & this.LimitState.BetaValues > 0;
+            evaluationApproachesZero = ((abs(this.LimitState.ZValues)/this.LineSearcher.OriginZ) < this.LineSearcher.MaxErrorZ) & this.LimitState.BetaValues > 0;
         end
         
         %% Main Directional Sampling Loop
@@ -199,7 +173,7 @@ classdef DirectionalSampling < ProbabilisticMethod
                     else
                         this.IndexQueue             = this.ReevaluateIndices(1);
                     end
-                    this.IndexQueue %temp output
+%                     this.IndexQueue %temp output
                     this.CheckMaxNrDirections
                     
                     for iq = 1:length(this.IndexQueue)
@@ -223,10 +197,9 @@ classdef DirectionalSampling < ProbabilisticMethod
                         
                         this.UpdatePf
                         
-                        this.CheckCOV;
+                        this.CheckConvergence;
                         if this.LineSearcher.SearchConverged && ~this.LineSearcher.ApproximateUsingARS
                             this.LimitState.UpdateResponseSurface
-%                             this.LimitState.ResponseSurface.UpdateFit(this.LimitState)
                             if this.LastIteration
                                 this.LastIteration      = false;
                             end
@@ -238,7 +211,7 @@ classdef DirectionalSampling < ProbabilisticMethod
                     end
                 end
                 
-                if ~this.CheckPRatio
+                if ~this.CheckPRatio && this.PfApproximated ~= 0
                     beta    = min(this.LimitState.BetaValues(this.LimitState.EvaluationIsEnabled & ~this.LimitState.EvaluationIsExact & this.EvaluationApproachesZero & this.LimitState.BetaValues > 0));
                     idx     = find(this.LimitState.BetaValues == beta, 1, 'first');
                     this.LimitState.BetaSphere.UpdateBetaSphereMargin(beta, this.LimitState, this.EvaluationApproachesZero);
@@ -252,9 +225,9 @@ classdef DirectionalSampling < ProbabilisticMethod
                     this.LastIteration      = true;
                 end
                 
-                %daarna nog een keer checkconvergence
                 if this.SolutionConverged && isempty(this.ReevaluateIndices) && this.CheckPRatio
                     this.StopCalculation    = true;
+                    this.LimitState.DetermineNumberExactEvaluations
                 end
             end
         end
@@ -264,7 +237,7 @@ classdef DirectionalSampling < ProbabilisticMethod
         %Set default values
         function SetDefaults(this)
             this.MaxCOV                     = 0.1;
-            this.MaxPRatio                  = 0.4;
+            this.MinNrDirections            = 0;
             this.MaxNrDirections            = 1000;
             this.SolutionConverged          = false;
             this.StopCalculation            = false;
@@ -291,24 +264,26 @@ classdef DirectionalSampling < ProbabilisticMethod
             end
         end
         
-        %Check PRatio
-        function goodRatio = CheckPRatio(this)
-            if this.PRatio < this.MaxPRatio 
-                goodRatio   = true;
-            else 
-                goodRatio   = false;
-            end 
-        end
-        
         %Check COV
         function goodCOV = CheckCOV(this)
             if this.COV < this.MaxCOV
                 goodCOV = true;
-                this.SolutionConverged = true;
+%                 if this.CheckPRatio
+%                     this.SolutionConverged = true;
+%                 end
             else 
                 goodCOV = false;
-                this.SolutionConverged = false;
+%                 this.SolutionConverged = false;
             end 
+        end
+        
+        %Check convergence of the solution
+        function CheckConvergence(this)
+            if this.CheckPRatio && this.CheckCOV && this.NrDirectionsEvaluated > this.MinNrDirections
+                this.SolutionConverged = true;
+            else
+                this.SolutionConverged = false;
+            end
         end
         
         %Check if maximum nr of directions is exceeded

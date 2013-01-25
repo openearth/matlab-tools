@@ -88,41 +88,75 @@ classdef MultipleLimitState < LimitState
             this.AggregateFunction  = aggregateFunction;
         end
         
+        %% Getters
+         
         %% Other methods
         %Evaluate multiple limit states
-        function zvalue = Evaluate(this, un, beta, randomVariables)
+        function zvalue = Evaluate(this, un, beta, randomVariables, varargin)
             input   = cell(length(this.LimitStates),2);
             for i=1:length(this.LimitStates)
                 input{i,1}  = this.LimitStates(i).Name;
                 input{i,2}  = Evaluate@LimitState(this.LimitStates(i), un, beta, randomVariables);
             end
             zvalue          = this.Aggregate([input{:,2}]);
-            this.BetaValues = [this.BetaValues; beta];
-            this.UValues    = [this.UValues; un.*beta];
-            this.ZValues    = [this.ZValues; zvalue];
-            
-            this.EvaluationIsExact      = [this.EvaluationIsExact; true];
-            this.EvaluationIsEnabled    = [this.EvaluationIsEnabled; true];
+            if ~isempty(zvalue)
+                this.BetaValues = [this.BetaValues; beta];
+                this.UValues    = [this.UValues; un.*beta];
+                this.ZValues    = [this.ZValues; zvalue];
+                
+                this.EvaluationIsExact      = [this.EvaluationIsExact; true];
+                if ~isempty(varargin)
+                    if (strcmp(varargin{1},'disable') && varargin{2} == true)
+                        this.EvaluationIsEnabled        = logical([this.EvaluationIsEnabled; false]);
+                    elseif (strcmp(varargin{1},'disable') && varargin{2} == false)
+                        this.EvaluationIsEnabled        = logical([this.EvaluationIsEnabled; true]);
+                    else
+                        error('The only valid values for the keyword "disable" are true or false')
+                    end
+                else
+                    this.EvaluationIsEnabled        = logical([this.EvaluationIsEnabled; true]);
+                end
+            end
         end
         
         %Approximate multiple limit states
-        function zvalue = Approximate(this, un, beta)
+        function zvalue = Approximate(this, un, beta, varargin)
             zvalues = NaN(length(this.LimitStates),1);
             for i=1:length(this.LimitStates)
                 if this.LimitStates(i).CheckAvailabilityARS
                     zvalues(i,1)    = this.LimitStates(i).Approximate(un, beta);
                 else
-                    zvalues(i,1)    = this.LimitStates(i).Evaluate(un, beta, this.RandomVariables);
+                    ztemporary      = this.LimitStates(i).Evaluate(un, beta, this.RandomVariables);
+                    if ~isempty(ztemporary)
+                        zvalues(i,1)    = ztemporary;
+                    else
+                        zvalues(i,1)    = NaN;
+                    end
                 end
             end
-            this.BetaValues = [this.BetaValues; beta];
-            uvalues         = un.*beta;
-            this.UValues    = [this.UValues; uvalues];
-            zvalue          = this.Aggregate(zvalues);
-            this.ZValues    = [this.ZValues; zvalue];
             
-            this.EvaluationIsExact          = logical([this.EvaluationIsExact; false]);
-            this.EvaluationIsEnabled        = logical([this.EvaluationIsEnabled; true]);
+            if ~any(isnan(zvalues))
+                this.BetaValues = [this.BetaValues; beta];
+                uvalues         = un.*beta;
+                this.UValues    = [this.UValues; uvalues];
+                zvalue          = this.Aggregate(zvalues);
+                this.ZValues    = [this.ZValues; zvalue];
+                
+                this.EvaluationIsExact          = logical([this.EvaluationIsExact; false]);
+                if ~isempty(varargin)
+                    if (strcmp(varargin{1},'disable') && varargin{2} == true)
+                        this.EvaluationIsEnabled        = logical([this.EvaluationIsEnabled; false]);
+                    elseif (strcmp(varargin{1},'disable') && varargin{2} == false)
+                        this.EvaluationIsEnabled        = logical([this.EvaluationIsEnabled; true]);
+                    else
+                        error('The only valid values for the keyword "disable" are true or false')
+                    end
+                else
+                    this.EvaluationIsEnabled        = logical([this.EvaluationIsEnabled; true]);
+                end
+            else
+                zvalue = [];
+            end
         end
         
         %aggregate calculated z values
@@ -135,6 +169,25 @@ classdef MultipleLimitState < LimitState
             for i=1:length(this.LimitStates)
                 this.LimitStates(i).UpdateResponseSurface;
             end
+        end
+        
+        %Check if one or more ARS's are available
+        function arsAvailable = CheckAvailabilityARS(this)
+            arsAvailable    = false;
+            for i = 1:length(this.LimitStates)
+                if this.LimitStates(i).CheckAvailabilityARS
+                    arsAvailable    = true;
+                end
+            end
+        end
+        
+        %determine the number of exact limit state function evaluations
+        function DetermineNumberExactEvaluations(this)
+            numberexactevaluations = 0;
+            for i=1:length(this.LimitStates)
+                numberexactevaluations = numberexactevaluations + sum(this.LimitStates(i).EvaluationIsExact);
+            end
+            this.NumberExactEvaluations = numberexactevaluations;
         end
     end
 end

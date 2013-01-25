@@ -50,6 +50,7 @@ classdef ProbabilisticMethod < handle
     %% Properties
     properties
         LimitState
+        StartUpMethods
     end
 
     properties (SetAccess = protected)
@@ -58,11 +59,11 @@ classdef ProbabilisticMethod < handle
         Accuracy
         Seed
     end
-    
+       
     %% Methods
     methods
         %% Constructor
-        function this = ProbabilisticMethod% (confidenceInterval,accuracy)
+        function this = ProbabilisticMethod
             %PROBABILISTICMETHOD  One line description goes here.
             %
             %   More detailed description goes here.
@@ -90,6 +91,13 @@ classdef ProbabilisticMethod < handle
             
             this.LimitState = LimitState;
         end
+        
+        %Set StartUpMethods
+        function set.StartUpMethods(this, StartUpMethods)
+            ProbabilisticChecks.CheckInputClass(StartUpMethods,'StartUpMethod')
+            
+            this.StartUpMethods = StartUpMethods;
+        end
            
         %Set Seed
         function set.Seed(this, seed)
@@ -109,6 +117,14 @@ classdef ProbabilisticMethod < handle
             end
             
             randomsamples   = rand(NumberSamples,NumberRandomVariables);                                    
+        end
+        
+        function check = ContainsStartUpMethod(this)
+            if ~isempty(this.LimitState.ResponseSurface) && ~isempty(this.LimitState.StartUpMethods)
+                check   = true;
+            else
+                check   = false;
+            end
         end
     end
     
