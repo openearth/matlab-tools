@@ -1,4 +1,4 @@
-function [P x] = u2Px(stochast, u)
+function [P x] = u2Px(stochast, u, varargin)
 %U2PX  Transform standard normal variable to probability and variable value.
 %
 %   More detailed description goes here.
@@ -55,6 +55,33 @@ function [P x] = u2Px(stochast, u)
 % $Author$
 % $Revision$
 % $HeadURL$
+
+
+%% settings
+OPT = struct(...
+    'CorrMatrix',[] ...      % matrix with correlation coefficients (for Gaussian correlation)
+    );
+
+% overrule default settings by property pairs, given in varargin
+OPT = setproperty(OPT, varargin{:});
+
+%% apply (Gaussian) correlation on u-variables
+C=OPT.CorrMatrix;
+if ~isempty(C)    
+    
+    % check if C is symetric
+    if ~isequal(C',C)
+       error('correlation matrix should be symetric'); 
+    end
+    
+    % derive P for whic PP'=C, through Cholesky-decomposition
+    P = Cholesky(C);
+    
+    % apply corelation on u
+    u = u*P';
+end
+
+
 
 %% allocate x, being same size as u
 x = zeros(size(u));
