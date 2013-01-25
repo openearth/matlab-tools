@@ -71,7 +71,8 @@ function [OPT, Set, Default] = KMLtrisurf(tri,lat,lon,z,varargin)
 
    OPT.precision          = 8;
    OPT.tessellate         = false;
-
+   OPT.is3D               = true;
+   
 if nargin==0
   return
 end
@@ -85,10 +86,18 @@ end
        disp('warning: No surface could be constructed, because there was no valid height data provided...') %#ok<WNTAG>
        return
    end
-   
-   lat = lat(:);
-   lon = lon(:);
-   z   = z(:);
+
+%% determine if 3D
+if strcmpi(z,'clampToGround') || ~OPT.is3D
+   OPT.is3D = false;
+else
+   OPT.is3D = true;
+end
+
+%% vectorize inputs
+lat = lat(:);
+lon = lon(:);
+z   = z(:);
 
 %% assign c if it is given
 
@@ -194,9 +203,15 @@ end
    
    for ii=1:size(tri,1)
        OPT_poly.styleName = sprintf('style%d',c(ii));
-       newOutput = KML_poly(lat(tri(ii,[1:3 1])),...
-                            lon(tri(ii,[1:3 1])),...
-                OPT.zScaleFun(z(tri(ii,[1:3 1]))),OPT_poly);  % make sure that LAT(:),LON(:), Z(:) have correct dimension nx1
+       if OPT.is3D
+           newOutput = KML_poly(lat(tri(ii,[1:3 1])),...
+               lon(tri(ii,[1:3 1])),...
+               OPT.zScaleFun(z(tri(ii,[1:3 1]))),OPT_poly);  % make sure that LAT(:),LON(:), Z(:) have correct dimension nx1
+       else
+           newOutput = KML_poly(lat(tri(ii,[1:3 1])),...
+               lon(tri(ii,[1:3 1])),...
+               'clampToGround',OPT_poly);  % make sure that LAT(:),LON(:), Z(:) have correct dimension nx1
+       end
        output(kk:kk+length(newOutput)-1) = newOutput;
        kk = kk+length(newOutput);
        if kk>1e5
