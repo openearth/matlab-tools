@@ -83,6 +83,11 @@ xv(mynans) = [];
 yv(mynans) = [];
 zv(mynans) = [];
 [XR,YR] = meshgrid(min(xv):DXR:max(xv),min(yv):DYR:max(yv));
-F = TriScatteredInterp(xv,yv,zv);
-ZR = F(XR,YR);
+
+try
+  F = TriScatteredInterp(xv,yv,zv);
+  ZR = F(XR,YR);
+catch
+  ZR=griddata(xv,yv,zv,XR,YR);
+end
 
