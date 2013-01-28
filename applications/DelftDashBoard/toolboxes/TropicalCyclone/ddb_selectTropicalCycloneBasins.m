@@ -54,6 +54,9 @@ function handles = ddb_selectTropicalCycloneBasins(handles)
 %               warning message and immediately returns.  (RSL)
 %  19 Jan 2012  Upgraded subfunc. find_tc_polygon to provide better
 %               coloring of the basin polygons.  (RSL)
+%  28 Jan 2013  Updated subfunc. find_tc_polygon to add support for names,
+%               abbreviations & colors for the recently added TC basins
+%               (Indian Ocean, Southern Hemisphere).  (RSL)
 %
 %*******************************************************************************
 
@@ -230,6 +233,9 @@ function [bname,bfname,babbrev,hpatch] = find_tc_polygon(poly_dir,itype,x,y)
 %               basin_color using vectors of RGB values; changed the
 %               'patch' commands to use these modified/new parameters.
 %               (RSL)
+%  28 Jan 2013  Updated the basin-specific parameters (basin*) to include
+%               the recently added basins (Indian Ocean, Southern
+%               Hemisphere) & colors for them.  (RSL)
 %
 %*******************************************************************************
 
@@ -250,16 +256,18 @@ xav = nanmean(nanmean(x));
 yav = nanmean(nanmean(y));
 
 %  Define the basin names and abbreviations.
-basins = {'Atlantic','Central Pacific','East Pacific','West Pacific'};
-basins_abbr = {'at','cp','ep','wp'};
+basins = {'Atlantic','Central Pacific','East Pacific','Indian Ocean','Southern Hemisphere','West Pacific'};
+basins_abbr = {'at','cp','ep','io','sh','wp'};
 %  Colors for the polygon edges:
-basin_edge_color = ['r','g','y','b'];
+basin_edge_color = ['r','y','g','m','c','b'];
 %  Colors for the basin polygons (experimentally derived; had to use GIMP
 %  to determine the RGB values of patches drawn using the above colors with
 %  different values of 'edgealpha').
 basin_color = [255/255,179/255,179/255;...
-    191/255,255/255,143/255;...
     255/255,255/255,191/255;...
+    191/255,255/255,143/255;...
+    217/255,27/255,224/255;...
+    27/255,224/255,181/255;...
     128/255,128/255,255/255];
 nb = size(basins,2);  % Number of basins.
 llabel = 'Unknown';  % Init. the basin name for the user prompt
