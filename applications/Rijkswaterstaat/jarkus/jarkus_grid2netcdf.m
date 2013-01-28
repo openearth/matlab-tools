@@ -234,10 +234,10 @@ STRINGSIZE = 100;
     s.Dimension = {'time', 'alongshore', 'cross_shore'};
 %     s.Attribute = struct('Name' ,{'long_name'         , 'comment'},...
 %                          'Value',{'measurement method', 'Measurement method 1:TO DO, 3:TO DO, 5:TO DO used short for space considerations'});
-    flag_values   = [ 1          2             3             4           5        ];
-    flag_meanings = {'beach_only beach_overlap interpolation sea_overlap sea_only'};
-    s.Attribute = struct('Name' ,{'long_name'         , 'flag_values','flag_meanings','comment'},...
-                         'Value',{'measurement method',  flag_values , flag_meanings ,'1:beach only, 2:beach overlap, 3:interpolation, 4:sea overlap, 5:sea only'});
+    flag_values   = [ 1          2             3             4           5        ]; 
+%     flag_meanings = {'beach_only beach_overlap interpolation sea_overlap sea_only'};
+    s.Attribute = struct('Name' ,{'long_name'         , 'flag_values','flag_meanings'},...
+                         'Value',{'measurement method',  flag_values  ,'1:beach only, 2:beach overlap, 3:interpolation, 4:sea overlap, 5:sea only'});
     nc_addvar(filename, s);    
     
 %% Store index variables
