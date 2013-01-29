@@ -1,18 +1,19 @@
-function X =  Hist_inv(P, XP)
-% Hist_INV  inverse of the discrete probability distribution 
+function P =  Hist_pdf(X, XP)
+% Hist_pdf  pdf the discrete probability distribution 
 %
-% inverse cdf of a discrete probability distribution, with a finite number of outcomes. A
-% All possible discrete realisations and asociated probabilities of occurrence are described by a "table"
+% determines the probabilitie of occurrence of X-values, based on a discrete probability distribution, 
+% with a finite number of outcomes. All possible discrete realisations and asociated probabilities of
+% occurrence are described by a "table"
 %
 % input
-%    - P:    array of probabilties of non-exceedance. All elements of this array have to be between 0 and 1
+%    - X:    x-values for which probabilities are determined
 %    - XP:   nx2 table with x-values and asociated probabilities of exceedance 
 
 % output
-%    - X:     x-values, asociated with input P
+%    - P:    probabilities of occurence of X-values 
 %
 %   Example
-%   X =  Hist_inv(P, XP)
+%   X =  Hist_pdf(P, XP)
 %
 %   See also
 
@@ -63,14 +64,9 @@ if length(unique(XP(:,1)))<n
    error('X-values of input table should be unique'); 
 end
 
-%% derive X-values
-XPs=sortrows(XP,1);     % sort values of lookup table in ascending order
-Plookup = [0; cumsum(XPs(:,2))];
-X = NaN(size(P));
-for j=1:n
-    index = P>=Plookup(j) & P<=Plookup(j+1);
-    X(index) = XPs(j,1);    
+%% derive P-values
+[memberyn, index] = ismember(X, XP(:,1));
+if ~all(memberyn)
+   error('input X contains values that are not available in table XP');
 end
-
-
-
+P = XP(index,2);
