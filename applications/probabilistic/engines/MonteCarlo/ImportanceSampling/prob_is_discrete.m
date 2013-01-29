@@ -72,6 +72,6 @@ X  =  Hist_inv(P, XP2);
 P =  Hist_cdf(X, XP1);  % new probability of non-exceedance
 
 %% correction factor
-P1 =  Hist_pdf(X, XP1);
-P2 =  Hist_pdf(X, XP2);
-P_corr = P1./P2;
+P1 =  Hist_pdf(X, XP1);  % prob. of occurrence according to original distribution
+P2 =  Hist_pdf(X, XP2);  % prob. of occurrence according to IS distribution
+P_corr = P1./P2;         % ratio
