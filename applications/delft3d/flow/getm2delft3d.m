@@ -188,6 +188,7 @@ function MDF = getm2delft3d(varargin)
 %  to exclude it from computational domain
    if OPT.write.grd
   [D,M] = nc2struct(OPT.topo,'exclude',{'latc','lonc','convc','z0'});
+   D.bathymetry(D.bathymetry==M.bathymetry.missing_value)=NaN; % missing_value in netCDF has incorrect datatype, so we have to apply it ourselves.
   
   [D.cor.x,D.cor.y]=meshgrid(D.xx(2:end-1),D.yx(2:end-1));
    D.cor.mask = corner2centernan(isnan(D.bathymetry));

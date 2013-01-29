@@ -5,7 +5,7 @@ function varargout=delft3d_io_obs(cmd,varargin),
 %   [x,y,namst] = delft3d_io_obs('read' ,'filename.obs');
 %
 %    reads all lines from an *.obs observation point file into
-%    a struct with fields x,y and name. 
+%    a struct with fields m, n and name. 
 %
 %        delft3d_io_obs('write','filename.obs',OBS);
 %        delft3d_io_obs('write','filename.obs',m,n,namst);
