@@ -1,19 +1,19 @@
 function P =  Hist_pdf(X, XP)
-% Hist_pdf  pdf the discrete probability distribution 
+% Hist_pdf  pdf of the discrete probability distribution 
 %
-% determines the probabilitie of occurrence of X-values, based on a discrete probability distribution, 
+% determines the probability of occurrence of X-values, based on a discrete probability distribution, 
 % with a finite number of outcomes. All possible discrete realisations and asociated probabilities of
 % occurrence are described by a "table"
 %
 % input
 %    - X:    x-values for which probabilities are determined
-%    - XP:   nx2 table with x-values and asociated probabilities of exceedance 
+%    - XP:   nx2 table with x-values and asociated probabilities of occurrence 
 
 % output
 %    - P:    probabilities of occurence of X-values 
 %
 %   Example
-%   X =  Hist_pdf(P, XP)
+%   P =  Hist_pdf(X, XP)
 %
 %   See also
 
@@ -53,16 +53,22 @@ function P =  Hist_pdf(X, XP)
 if size(XP,2)>2 && size(XP,1)==2
     XP=XP';
 end
-n=size(XP,1);
 if size(XP,2)~=2 
    error('input table has wrong dimensions'); 
 end
 if sum(XP(:,2))~=1 
     error('sum of probabilities is not equal to 1'); 
 end
-if length(unique(XP(:,1)))<n
+if any(XP(:,2))<0
+   error('probabilities should be positive'); 
+end
+if length(unique(XP(:,1)))<size(XP,1);
    error('X-values of input table should be unique'); 
 end
+
+%% remove zeros
+ind0 = XP(:,2)==0;
+XP(ind0,:)=[];
 
 %% derive P-values
 [memberyn, index] = ismember(X, XP(:,1));
