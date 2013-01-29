@@ -8,7 +8,7 @@ function arcgridwrite(fileName,X,Y,Z,varargin)
 %
 %   Note that the xll and yll are half a cell size to the left and to the
 %   bottom of the minimum x and y in the input data (bug fix since revision
-%   7966)
+%   7969)
 %
 %   Important optional argument is 'flipud'
 %   when Y is going up in the input you should set this to 1 (default)
