@@ -82,6 +82,7 @@ if isempty(writeFcn);  writeFcn  = @(~,~)  struct('undefined',true); else  asser
 OPT.main.log            = 1;
 OPT.main.file_incl      = '.*';
 OPT.main.dir_incl       = '.*';
+OPT.main.dir_excl       = '.svn$';  % regex style pattern to exclude
 OPT.main.zip            = false; % specify if source files are compressed or not
 OPT.main.zip_file_incl  = '.*';
 OPT.main.case_sensitive = false;
@@ -137,9 +138,9 @@ multiWaitbar('Generating netcdf from source files...',          'reset', 'Color'
 % initialise cache dir and locate source files
 if OPT.main.zip
     if ~exist(OPT.main.path_unzip_tmp,'dir'); mkpath(OPT.main.path_unzip_tmp); end
-    fns1 = dir2(OPT.main.path_source,'file_incl',OPT.main.zip_file_incl,'dir_incl',OPT.main.dir_incl,'no_dirs',true,'depth',OPT.main.dir_depth,'case_sensitive',OPT.main.case_sensitive);
+    fns1 = dir2(OPT.main.path_source,'file_incl',OPT.main.zip_file_incl,'dir_incl',OPT.main.dir_incl,'dir_excl',OPT.main.dir_excl,'no_dirs',true,'depth',OPT.main.dir_depth,'case_sensitive',OPT.main.case_sensitive);
 else
-    fns1 = dir2(OPT.main.path_source,'file_incl',OPT.main.file_incl,'dir_incl',OPT.main.dir_incl,'no_dirs',true,'depth',OPT.main.dir_depth,'case_sensitive',OPT.main.case_sensitive);
+    fns1 = dir2(OPT.main.path_source,'file_incl',OPT.main.file_incl,'dir_incl',OPT.main.dir_incl,'dir_excl',OPT.main.dir_excl,'no_dirs',true,'depth',OPT.main.dir_depth,'case_sensitive',OPT.main.case_sensitive);
     % get the timestamp from the file date
     fns1 = get_date_from_filename(OPT,fns1);
     % sort with ascending data date
@@ -214,7 +215,7 @@ uncompress(fullfile(fns1.pathname,fns1.name),...
     'outpath',fullfile(OPT.main.path_unzip_tmp),'gui',OPT.main.unzip_with_gui,'quiet',true);
 
 % read the output of unpacked files
-fns2 = dir2(OPT.main.path_unzip_tmp,'file_incl',OPT.main.file_incl,'dir_incl',OPT.main.dir_incl,'no_dirs',true,'depth',OPT.main.dir_depth,'case_sensitive',OPT.main.case_sensitive);
+fns2 = dir2(OPT.main.path_unzip_tmp,'file_incl',OPT.main.file_incl,'dir_incl',OPT.main.dir_incl,'dir_excl',OPT.main.dir_excl,'no_dirs',true,'depth',OPT.main.dir_depth,'case_sensitive',OPT.main.case_sensitive);
 
 [fns2.hash] = deal(fns1.hash); % hash of zipped file is passed
 

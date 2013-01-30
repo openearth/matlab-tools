@@ -104,7 +104,7 @@ function varargout = struct2nc(outputfile,D,varargin)
 
    if odd(nargin)
        M           = varargin{1};
-       varargin{1} = [];
+       varargin(1) = [];
        attnames    = fieldnames(M);
        natt        = length(attnames);
    else
