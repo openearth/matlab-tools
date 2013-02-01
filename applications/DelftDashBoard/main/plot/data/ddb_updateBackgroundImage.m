@@ -111,7 +111,7 @@ switch handles.GUIData.backgroundImageType
         if strcmpi(dataCoord.type,'geographic')
             maxcellsize=maxcellsize*111111;
         end
-        [x0,y0,z,ok]=ddb_getBathy(handles,xl0,yl0,'bathymetry',handles.screenParameters.backgroundBathymetry,'maxcellsize',maxcellsize);
+        [x0,y0,z,ok]=ddb_getBathymetry(handles.bathymetry,xl0,yl0,'bathymetry',handles.screenParameters.backgroundBathymetry,'maxcellsize',maxcellsize);
         if ok && size(x0,1)>1 && size(x0,1)>1
             % Now convert to current coordinate system
             res=(xl(2)-xl(1))/(pos(3)/imageQuality);
