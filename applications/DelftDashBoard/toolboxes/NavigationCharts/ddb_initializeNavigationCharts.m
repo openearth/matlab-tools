@@ -65,8 +65,8 @@ ii=strmatch('NavigationCharts',{handles.Toolbox(:).name},'exact');
 
 ddb_getToolboxData(handles.Toolbox(ii).dataDir,ii);
 
-handles.Toolbox(ii).longName='Navigation Charts';
-handles.Toolbox(ii).databases=[];
+handles.Toolbox(ii).Input.longName='Navigation Charts';
+handles.Toolbox(ii).Input.databases=[];
 handles.Toolbox(ii).Input.charts=[];
 if isdir([handles.toolBoxDir 'navigationcharts'])
     lst=dir([handles.toolBoxDir 'NavigationCharts']);
@@ -85,6 +85,7 @@ if isdir([handles.toolBoxDir 'navigationcharts'])
                     else
                         handles.Toolbox(ii).Input.databases=[];
                         disp([handles.toolBoxDir 'NavigationCharts' filesep lst(i).name filesep lst(i).name '.mat not found!']);
+                        handles.Toolbox(ii).Input.databases=[];
                     end
             end
         end
