@@ -153,7 +153,7 @@
   <element>
     <tag>loaddata</tag>
     <style>pushbutton</style>
-    <position>860 100 100 20</position>
+    <position>860 105 100 20</position>
     <text>Load Tsunami</text>
     <callback>ddb_TsunamiToolbox</callback>
     <option1>loaddata</option1>
@@ -162,7 +162,7 @@
   <element>
     <tag>savedata</tag>
     <style>pushbutton</style>
-    <position>860 75 100 20</position>
+    <position>860 80 100 20</position>
     <text>Save Tsunami</text>
     <callback>ddb_TsunamiToolbox</callback>
     <option1>savedata</option1>
@@ -171,7 +171,7 @@
   <element>
     <tag>drawfaultline</tag>
     <style>pushbutton</style>
-    <position>860 45 100 20</position>
+    <position>860 55 100 20</position>
     <text>Draw Fault Line</text>
     <callback>ddb_TsunamiToolbox</callback>
     <option1>drawfaultline</option1>
@@ -185,5 +185,13 @@
     <option1>computewaterlevel</option1>
     <option2>fromparameters</option2>
     <tooltipstring>Compute initial tsunami wave</tooltipstring>
+  </element>
+  <element>
+    <tag>saveascfile</tag>
+    <style>checkbox</style>
+    <position>740 20</position>
+    <text>Save ESRI Grid File</text>
+    <variable>saveESRIGridFile</variable>
+    <tooltipstring>Automatically save ESRI grid file (ASCII) of initial tsunami wave (in geographic coordinates)</tooltipstring>
   </element>
 </root>

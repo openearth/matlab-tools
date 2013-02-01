@@ -317,10 +317,13 @@ switch lower(opt)
             utmz = fix( ( x(1) / 6 ) + 31);
             if y(1)>0
                 utmZone=['WGS 84 / UTM zone ' num2str(utmz) 'N'];
+                utmZoneShort=[num2str(utmz) 'N'];
             else
                 utmZone=['WGS 84 / UTM zone ' num2str(utmz) 'S'];
+                utmZoneShort=[num2str(utmz) 'S'];
             end
             handles.Toolbox(tb).Input.utmZone=utmZone;
+            handles.Toolbox(tb).Input.utmZoneShort=utmZoneShort;
             cs1.name=utmZone;
             cs1.type='projected';
     end
@@ -341,7 +344,6 @@ end
 
 %%
 function handles=updateTsunamiValues(handles,opt)
-
 
 switch opt
     case{'mw'}
@@ -465,6 +467,25 @@ if ~isempty(pathname)
                 
                 % Compute tsunami wave (in projected coordinate system!)
                 [xx,yy,zz]=ddb_computeTsunamiWave2(xs,ys,depths,dips,wdts,sliprakes,slips);
+                
+                if handles.Toolbox(tb).Input.saveESRIGridFile
+                    % Write tsunami asc file (in geographic coordinates)
+                    xmn=min(min(xx));
+                    xmx=max(max(xx));
+                    ymn=min(min(yy));
+                    ymx=max(max(yy));
+                    oldSys.name=handles.Toolbox(tb).Input.utmZone;
+                    oldSys.type='projected';
+                    newSys.name='WGS 84';
+                    newSys.type='geographic';
+                    [xmn,ymn]=ddb_coordConvert(xmn,ymn,oldSys,newSys);
+                    [xmx,ymx]=ddb_coordConvert(xmx,ymx,oldSys,newSys);
+                    [xgeo,ygeo]=meshgrid(xmn:0.02:xmx,ymn:0.02:ymx);
+                    [xutm,yutm]=ddb_coordConvert(xgeo,ygeo,newSys,oldSys);
+                    zgeo=interp2(xx,yy,zz,xutm,yutm);
+                    ascfile=[filenames{1}(1:end-4) '.asc'];
+                    arcgridwrite(ascfile,xgeo,ygeo,zgeo);
+                end
 
                 % Plot figure (first convert to geographic coordinate system)
                 if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
@@ -482,8 +503,9 @@ if ~isempty(pathname)
                 
             otherwise
                 % Load tsunami wave (in geographic coordinate system!)
-                [xx,yy,zz]=readsurfergrid(handles.Toolbox(tb).Input.gridFile);
-                [xx1,yy1]=meshgrid(xx,yy);
+                [xx yy zz info] = arc_asc_read(handles.Toolbox(tb).Input.gridFile);
+                xx1=xx;
+                yy1=yy;
 
         end
         
@@ -491,55 +513,29 @@ if ~isempty(pathname)
         
         % Interpolate initial tsunami wave onto model grid(s)
         for id=1:handles.Model(md).nrDomains
-            
+                        
             xz=handles.Model(md).Input(id).gridXZ;
             yz=handles.Model(md).Input(id).gridYZ;
-            mmax=size(xz,1);
-            nmax=size(xz,2);
 
-            
+            oldSys=handles.screenParameters.coordinateSystem;
+            newSys.name='WGS 84';
+            newSys.type='geographic';
+
             switch opt
                 case{'fromparameters'}                    
                     % If in geographic coordinate system, convert grids first to
                     % projected coordinate system
                     if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
-                        oldSys=handles.screenParameters.coordinateSystem;
                         newSys.name=handles.Toolbox(tb).Input.utmZone;
                         newSys.type='projected';
-                        [xz,yz]=ddb_coordConvert(xz,yz,oldSys,newSys);
-                    end
-                otherwise
-                    % If in projected coordinate system, convert grids first to
-                    % geographic coordinate system
-                    if strcmpi(handles.screenParameters.coordinateSystem.type,'projected')
-                        oldSys=handles.screenParameters.coordinateSystem;
-                        newSys.name='WGS 84';
-                        newSys.type='geographic';
-                        [xz,yz]=ddb_coordConvert(xz,yz,oldSys,newSys);
                     end
             end
-        
-            zz(isnan(zz))=0;
-            xz(isnan(xz))=0;
-            yz(isnan(yz))=0;
-            iniwl0=interp2(xx,yy,zz,xz,yz);
+
+            interpolateTsunamiToGrid('xgrid',xz,'ygrid',yz,'gridcs',oldSys,'tsunamics',newSys, ...
+                'xtsunami',xx,'ytsunami',yy,'ztsunami',zz,'inifile',filenames{id});
             
-            iniwl0=reshape(iniwl0,mmax,nmax);
-            
-            u=zeros(mmax+1,nmax+1);
-            iniwl=u;
-            
-            iniwl(1:end-1,1:end-1)=iniwl0;
-            iniwl(isnan(iniwl))=0;
-            
-            if exist(filenames{id},'file')
-                delete(filenames{id});
-            end
             handles.Model(md).Input(id).iniFile=filenames{id};
             handles.Model(md).Input(id).initialConditions='ini';
-            ddb_wldep('append',filenames{id},iniwl,'negate','n','bndopt','n');
-            ddb_wldep('append',filenames{id},u,'negate','n','bndopt','n');
-            ddb_wldep('append',filenames{id},u,'negate','n','bndopt','n');
             
         end
         

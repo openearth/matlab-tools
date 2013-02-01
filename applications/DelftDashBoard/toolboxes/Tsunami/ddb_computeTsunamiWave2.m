@@ -1,4 +1,4 @@
-function [xg,yg,zg]=ddb_computeTsunamiWave(xs,ys,depths,dips,wdts,sliprakes,slips)
+function [xg,yg,zg]=ddb_computeTsunamiWave2(xs,ys,depths,dips,wdts,sliprakes,slips)
 % Generates 20 initial tsunami wave transects along fault line and
 % interpolates onto rectangular grid.
 
