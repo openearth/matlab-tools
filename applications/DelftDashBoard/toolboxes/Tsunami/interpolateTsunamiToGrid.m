@@ -1,4 +1,23 @@
 function interpolateTsunamiToGrid(varargin)
+% Generates initial conditions file for Delft3D from tsunami input (ArcInfo ASCII grid) 
+%
+% Input (works with keyword-value pairs):
+%
+% inifile     = filename of Delft3D ini file
+% grdfile     = filename of Delft3D grid file
+% tsunamifile = filename of ArcInfo grid file
+% 
+% Example:
+%
+% interpolateTsunamiToGrid('inifile','run09.ini','grdfile','chile_coarse.grd','tsunamifile','chile09.asc');
+%
+% If the model grid is not in lat-lon (WGS 84), the coordinate system of the grid needs to be specified!
+%
+% e.g. 
+%
+% gridcs.name='WGS 84 / UTM zone 18S';
+% gridcs.type='projected';
+% interpolateTsunamiToGrid('inifile','run09.ini','grdfile','chile_coarse.grd','tsunamifile','chile09.asc','gridcs',gridcs);
 
 % Defaults
 OPT.kmax=1;
