@@ -1,7 +1,7 @@
 function handles = muppet_getDirectories(handles)
-%MUPPET_GETDIRECTORIES  One line description goes here.
+%MUPPET_GETDIRECTORIES
 %
-%   More detailed description goes here.
+%   Defines handles.muppetdir, handles.xmldir and handles.settingsdir
 %
 %   Syntax:
 %   [handles ok] = muppet_getDirectories(handles)
