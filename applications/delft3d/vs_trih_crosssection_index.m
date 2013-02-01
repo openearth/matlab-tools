@@ -105,9 +105,11 @@ switch method
 case 'list' %this one should be first in case
 
    mn1  = squeeze(vs_let(trih(1),'his-const','MNTRA',{[1 2],0}));
-   xy1  = squeeze(vs_let(trih(1),'his-const','XYTRA',{[3 4],0}));
-   mn2  = squeeze(vs_let(trih(1),'his-const','MNTRA',{[1 2],0}));
-   xy2  = squeeze(vs_let(trih(1),'his-const','XYTRA',{[3 4],0}));
+   mn2  = squeeze(vs_let(trih(1),'his-const','MNTRA',{[3 4],0}));
+   
+   xy  = squeeze(vs_let(trih(1),'his-const','XYTRA',{0,0}));
+   xy  = reshape(xy,[],4); 
+   xy1  = xy(:,1:2)'; xy2=xy(:,3:4)';
    
    if nargout==0
    
