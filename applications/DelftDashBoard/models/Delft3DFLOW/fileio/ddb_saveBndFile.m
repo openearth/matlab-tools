@@ -1,17 +1,14 @@
-function handles = ddb_saveBndFile(handles, id)
+function ddb_saveBndFile(openBoundaries,filename)
 %DDB_SAVEBNDFILE  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   handles = ddb_saveBndFile(handles, id)
+%   ddb_saveBndFile(openBoundaries,filename)
 %
 %   Input:
 %   handles =
 %   id      =
-%
-%   Output:
-%   handles =
 %
 %   Example
 %   ddb_saveBndFile
@@ -61,23 +58,23 @@ function handles = ddb_saveBndFile(handles, id)
 % $Keywords: $
 
 %%
-fid=fopen(handles.Model(md).Input(id).bndFile,'w');
+fid=fopen(filename,'w');
 
-nr=handles.Model(md).Input(id).nrOpenBoundaries;
+nr=length(openBoundaries);
 
 % Astronomic
 for n=1:nr
-    if handles.Model(md).Input(id).openBoundaries(n).forcing=='A'
-        name=handles.Model(md).Input(id).openBoundaries(n).name;
-        m1=handles.Model(md).Input(id).openBoundaries(n).M1;
-        n1=handles.Model(md).Input(id).openBoundaries(n).N1;
-        m2=handles.Model(md).Input(id).openBoundaries(n).M2;
-        n2=handles.Model(md).Input(id).openBoundaries(n).N2;
-        alpha=handles.Model(md).Input(id).openBoundaries(n).alpha;
-        typ=handles.Model(md).Input(id).openBoundaries(n).type;
-        prof=handles.Model(md).Input(id).openBoundaries(n).profile;
-        compa=handles.Model(md).Input(id).openBoundaries(n).compA;
-        compb=handles.Model(md).Input(id).openBoundaries(n).compB;
+    if openBoundaries(n).forcing=='A'
+        name=openBoundaries(n).name;
+        m1=openBoundaries(n).M1;
+        n1=openBoundaries(n).N1;
+        m2=openBoundaries(n).M2;
+        n2=openBoundaries(n).N2;
+        alpha=openBoundaries(n).alpha;
+        typ=openBoundaries(n).type;
+        prof=openBoundaries(n).profile;
+        compa=openBoundaries(n).compA;
+        compb=openBoundaries(n).compB;
         switch typ,
             case{'C','Q','T','R'}
                 fprintf(fid,'%s %s %s %5.0f %5.0f %5.0f %5.0f %15.7e %s %s %s\n',[name repmat(' ',1,20-length(name)) ] ,typ,'A',m1,n1,m2,n2,alpha,prof,compa,compb);
@@ -89,15 +86,15 @@ end
 
 % Harmonic
 for n=1:nr
-    if handles.Model(md).Input(id).openBoundaries(n).forcing=='H'
-        name=handles.Model(md).Input(id).openBoundaries(n).name;
-        m1=handles.Model(md).Input(id).openBoundaries(n).M1;
-        n1=handles.Model(md).Input(id).openBoundaries(n).N1;
-        m2=handles.Model(md).Input(id).openBoundaries(n).M2;
-        n2=handles.Model(md).Input(id).openBoundaries(n).N2;
-        alpha=handles.Model(md).Input(id).openBoundaries(n).alpha;
-        typ=handles.Model(md).Input(id).openBoundaries(n).type;
-        prof=handles.Model(md).Input(id).openBoundaries(n).profile;
+    if openBoundaries(n).forcing=='H'
+        name=openBoundaries(n).name;
+        m1=openBoundaries(n).M1;
+        n1=openBoundaries(n).N1;
+        m2=openBoundaries(n).M2;
+        n2=openBoundaries(n).N2;
+        alpha=openBoundaries(n).alpha;
+        typ=openBoundaries(n).type;
+        prof=openBoundaries(n).profile;
         switch typ,
             case{'C','Q','T','R'}
                 fprintf(fid,'%s %s %s %5.0f %5.0f %5.0f %5.0f %15.7e %s\n',[name repmat(' ',1,20-length(name)) ] ,typ,'H',m1,n1,m2,n2,alpha,prof);
@@ -109,15 +106,15 @@ end
 
 % Time series
 for n=1:nr
-    if handles.Model(md).Input(id).openBoundaries(n).forcing=='T'
-        name=handles.Model(md).Input(id).openBoundaries(n).name;
-        m1=handles.Model(md).Input(id).openBoundaries(n).M1;
-        n1=handles.Model(md).Input(id).openBoundaries(n).N1;
-        m2=handles.Model(md).Input(id).openBoundaries(n).M2;
-        n2=handles.Model(md).Input(id).openBoundaries(n).N2;
-        alpha=handles.Model(md).Input(id).openBoundaries(n).alpha;
-        typ=handles.Model(md).Input(id).openBoundaries(n).type;
-        prof=handles.Model(md).Input(id).openBoundaries(n).profile;
+    if openBoundaries(n).forcing=='T'
+        name=openBoundaries(n).name;
+        m1=openBoundaries(n).M1;
+        n1=openBoundaries(n).N1;
+        m2=openBoundaries(n).M2;
+        n2=openBoundaries(n).N2;
+        alpha=openBoundaries(n).alpha;
+        typ=openBoundaries(n).type;
+        prof=openBoundaries(n).profile;
         switch typ,
             case{'C','Q','T','R'}
                 fprintf(fid,'%s %s %s %5.0f %5.0f %5.0f %5.0f %15.7e %s\n',[name repmat(' ',1,20-length(name)) ] ,typ,'T',m1,n1,m2,n2,alpha,prof);
@@ -129,15 +126,15 @@ end
 
 % QH-relation
 for n=1:nr
-    if handles.Model(md).Input(id).openBoundaries(n).forcing=='Q'
-        name=handles.Model(md).Input(id).openBoundaries(n).name;
-        m1=handles.Model(md).Input(id).openBoundaries(n).M1;
-        n1=handles.Model(md).Input(id).openBoundaries(n).N1;
-        m2=handles.Model(md).Input(id).openBoundaries(n).M2;
-        n2=handles.Model(md).Input(id).openBoundaries(n).N2;
-        alpha=handles.Model(md).Input(id).openBoundaries(n).alpha;
-        typ=handles.Model(md).Input(id).openBoundaries(n).type;
-        prof=handles.Model(md).Input(id).openBoundaries(n).profile;
+    if openBoundaries(n).forcing=='Q'
+        name=openBoundaries(n).name;
+        m1=openBoundaries(n).M1;
+        n1=openBoundaries(n).N1;
+        m2=openBoundaries(n).M2;
+        n2=openBoundaries(n).N2;
+        alpha=openBoundaries(n).alpha;
+        typ=openBoundaries(n).type;
+        prof=openBoundaries(n).profile;
         switch typ,
             case{'C','Q','T','R'}
                 fprintf(fid,'%s %s %s %5.0f %5.0f %5.0f %5.0f %15.7e %s\n',[name repmat(' ',1,20-length(name)) ] ,typ,'Q',m1,n1,m2,n2,alpha,prof);

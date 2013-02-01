@@ -81,7 +81,7 @@ if handles.Model(md).Input(id).nrOpenBoundaries>0
         end
         handles.Model(md).Input(id).bndFile=filename;
     end
-    ddb_saveBndFile(handles,id);
+    ddb_saveBndFile(handles.Model(md).Input(id).openBoundaries,handles.Model(md).Input(id).bndFile);
     
     handles=ddb_countOpenBoundaries(handles,id);
     
