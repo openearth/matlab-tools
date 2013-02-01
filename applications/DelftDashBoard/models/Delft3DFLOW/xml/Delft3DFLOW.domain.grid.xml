@@ -159,6 +159,8 @@
     <variable>handles.Model(md).Input(ad).layerType</variable>
     <type>string</type>
     <value>Z</value>
+    <callback>ddb_Delft3DFLOW_grid</callback>
+    <option1>selectzmodel</option1>
     <dependency>
       <action>on</action>
       <checkfor>all</checkfor>
@@ -176,6 +178,8 @@
     <variable>handles.Model(md).Input(ad).zTop</variable>
     <type>real</type>
     <text>Z top (m)</text>
+    <callback>ddb_Delft3DFLOW_grid</callback>
+    <option1>editztop</option1>
     <dependency>
       <action>enable</action>
       <checkfor>all</checkfor>
@@ -198,6 +202,8 @@
     <variable>handles.Model(md).Input(ad).zBot</variable>
     <type>real</type>
     <text>Z bottom (m)</text>
+    <callback>ddb_Delft3DFLOW_grid</callback>
+    <option1>editzbot</option1>
     <dependency>
       <action>enable</action>
       <checkfor>all</checkfor>
