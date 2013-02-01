@@ -1,6 +1,6 @@
 function [timestep,istation,m,n,k]=muppet_findDataIndices(dataset)
 
-% Time can be defined by timestep and by actual time
+%% Time can be defined by timestep and by actual time
 if isempty(dataset.time) && ~isempty(dataset.timestep)
     % time step
     timestep=dataset.timestep;
@@ -19,14 +19,14 @@ else
     timestep=dataset.timestep;
 end
 
-% Station
+%% Station
 if ~isempty(dataset.station)
     istation=strmatch(dataset.station,dataset.stations,'exact');
 else
     istation=1:dataset.size(2);
 end
 
-% M
+%% M
 if isempty(dataset.m)
     if dataset.size(3)>0
         m=1:dataset.size(3);
@@ -37,7 +37,7 @@ else
     m=dataset.m;
 end
 
-% N
+%% N
 if isempty(dataset.n)
     if dataset.size(4)>0
         n=1:dataset.size(4);
@@ -48,7 +48,7 @@ else
     n=dataset.n;
 end
 
-% K
+%% K
 if isempty(dataset.k)
     if dataset.size(5)>0
         k=1:dataset.size(5);

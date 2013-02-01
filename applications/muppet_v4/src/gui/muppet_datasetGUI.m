@@ -57,7 +57,6 @@ dataset.callback=callback;
 
 % Get info from file (load parameter dimensions)
 dataset.filename=filename;
-
 dataset=feval(callback,'read',dataset);
 
 % Check if parameters are present, otherwise make parameters structure
@@ -69,7 +68,7 @@ if ~isfield(dataset,'parameters')
     dataset.parameters(1).parameter=muppet_setDefaultParameterProperties(dataset.parameters(1).parameter);
 end
 
-% Parameter names
+% Make list of parameter names
 for j=1:length(dataset.parameters)
     dataset.parameternames{j}=dataset.parameters(j).parameter.name;
 end
@@ -80,6 +79,7 @@ dataset.size=[0 0 0 0 0];
 dataset.quantity='scalar';
 dataset.nrblocks=0;
 
+% GUI stuff
 dataset.previousm=1;
 dataset.mtext='';
 dataset.mmaxtext='';
@@ -107,6 +107,8 @@ dataset.stationsfromlist=1;
 dataset.xcoordinate='pathdistance';
 dataset.component='vector';
 dataset.stations={''};
+
+% Build GUI
 
 height=0;
 width=0;
@@ -203,7 +205,8 @@ oldsize=dataset.size;
 oldquantity=dataset.quantity;
 oldnrblocks=dataset.nrblocks;
 
-% Copy entire parameter structure to dataset structure
+% Copy entire parameter structure (of selected parameter) to dataset
+% structure (but skip name subfield)
 fldnames=fieldnames(dataset.parameters(ipar).parameter);
 for ii=1:length(fldnames)
     switch fldnames{ii}
@@ -324,6 +327,7 @@ else
     dataset.kmaxtext='';
 end
 
+% Quantity
 if ~strcmpi(dataset.quantity,oldquantity)
     switch lower(dataset.quantity)
         case{'vector2d','vector3d'}
@@ -333,6 +337,7 @@ if ~strcmpi(dataset.quantity,oldquantity)
     end
 end
 
+% Block
 if dataset.nrblocks>0
     if dataset.nrblocks~=oldnrblocks
         dataset.block=1;
@@ -577,6 +582,7 @@ if isempty(dataset.time) && ~isempty(dataset.times)
     dataset.timestep=[];
 end
 
+% Import data
 dataset=feval(dataset.callback,'import',dataset);
 
 nrd=handles.nrdatasets+1;
@@ -687,117 +693,3 @@ if dataset.adjustname
     gui_setUserData(dataset);
     
 end
-
-% %%
-% function dataset=setDefaultGUIOptions(dataset)
-% 
-% % Always at least one parameter
-% dataset.timelist={''};
-%         
-% dataset.previousm=1;
-% dataset.mtext='';
-% dataset.mmaxtext='';
-% dataset.selectallm=0;
-% dataset.previousn=1;
-% dataset.ntext='';
-% dataset.nmaxtext='';
-% dataset.selectalln=0;
-% dataset.previousk=1;
-% dataset.ktext='';
-% dataset.kmaxtext='';
-% dataset.selectallk=0;
-% dataset.showtimes=0;
-% dataset.selectalltimes=0;
-% dataset.previoustimestep=1;
-% dataset.timesteptext='';
-% dataset.timestepsfromlist=1;
-% dataset.tmaxtext='';
-% dataset.timelist={''};
-% dataset.stationnumber=1;
-% dataset.previousstationnumber=1;
-% dataset.selectallstations=0;
-% dataset.stationsfromlist=1;
-% 
-% if dataset.size(3)>0 && dataset.size(4)>0
-%     dataset.m=0;
-%     dataset.previousm=1;
-%     dataset.mtext='1';
-%     dataset.mmaxtext=num2str(dataset.size(3));
-%     dataset.selectallm=1;
-%     dataset.n=0;
-%     dataset.previousn=1;
-%     dataset.ntext='1';
-%     dataset.nmaxtext=num2str(dataset.size(4));
-%     dataset.selectalln=1;
-% end
-% 
-% if dataset.size(1)>0
-%     dataset.tmaxtext=num2str(dataset.size(1));
-%     if ~isempty(dataset.times)
-%         dataset.showtimes=1;
-%     else
-%         dataset.showtimes=0;
-%     end
-%     if dataset.size(3)==0 && dataset.size(4)==0
-%         % Time series
-%         dataset.timestep=0;
-%         dataset.previoustimestep=1;
-%         dataset.timesteptext='1';
-%         dataset.selectalltimes=1;
-%     else
-%         % Map
-%         dataset.timestep=1;
-%         dataset.previoustimestep=1;
-%         dataset.timesteptext='1';
-%         dataset.selectalltimes=0;
-%     end
-%     if dataset.size(1)>0
-%         if ~isempty(dataset.times)
-%             timelist=datestr(dataset.times,0);
-%             for it=1:length(dataset.times)
-%                 dataset.timelist{it}=timelist(it,:);
-%             end
-%         end
-%     end
-% end
-% 
-% if dataset.size(5)>0
-%     dataset.k=1;
-%     dataset.previousk=1;
-%     dataset.ktext='1';
-%     dataset.kmaxtext=num2str(dataset.size(5));
-%     dataset.selectallk=0;
-% end
-% 
-% if dataset.size(2)>0
-%     dataset.stationnumber=1;
-%     dataset.previousstationnumber=1;
-%     dataset.selectallstations=0;
-%     dataset.station=dataset.stations{1};
-%     dataset.stationfromlist=1;
-% end
-% 
-% switch lower(dataset.quantity)
-%     case{'vector2d','vector3d'}
-%         dataset.component='vector';
-%     otherwise
-%         dataset.component=[];
-% end
-% 
-% if dataset.nrblocks>0
-%     dataset.block=1;
-% end
-% 
-% dataset.ucomponent='';
-% dataset.vcomponent='';
-% if dataset.nrquantities>1
-%     dataset.component='vector';
-%     dataset.ucomponent=dataset.parameters(1).parameter.name;
-%     dataset.vcomponent=dataset.parameters(1).parameter.name;
-% end
-% 
-% dataset.previousxcoordinate='pathdistance';
-% 
-% dataset.datasets(ii).dataset=dataset;
-%         
-% dataset.activeparameter=1;

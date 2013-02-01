@@ -1,5 +1,7 @@
 function tp=muppet_findDataShape(sz,timestep,istation,m,n,k)
 
+% Determines shape of required dataset
+
 if sz(2)>0
     % Data from station
     if length(timestep)>1

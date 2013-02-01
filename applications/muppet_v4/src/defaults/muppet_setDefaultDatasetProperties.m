@@ -34,15 +34,7 @@ dataset.domain=[];
 dataset.subfield=[];
 dataset.xcoordinate='pathdistance';
 dataset.ycoordinate=[];
-dataset.quantity=[];
+dataset.quantity='scalar';
 dataset.component=[];
 dataset.tc='c';
 dataset.nrquantities=1;
-
-% % GUI
-% dataset.adjustname=1;
-% dataset.parametertimesequal=0;
-% dataset.parameterstationsequal=0;
-% dataset.paramaterxequal=0;
-% dataset.paramateryequal=0;
-% dataset.paramaterzequal=0;

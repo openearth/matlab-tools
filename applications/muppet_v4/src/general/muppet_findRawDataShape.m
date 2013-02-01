@@ -1,5 +1,7 @@
 function shpstr=muppet_findRawDataShape(sz)
 
+% Makes shape string of data size vector
+
 shpmat=[0 0 0 0 0];
 % Time
 if sz(1)>0

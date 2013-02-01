@@ -67,6 +67,7 @@ if isempty(parameter)
     i1=1;
     i2=length(dataproperties);
 else
+    % Parameter is given (from mup file)
     idata=strmatch(lower(parameter),lower(parameters),'exact');
     i1=idata;
     i2=idata;
@@ -74,10 +75,12 @@ end
 
 %% Coordinate System
 tp='projected';
-switch fid.SubType
-    case{'Delft3D-trih'}
-    case{'Delft3D-trim'}
-        tp=vs_get(fid,'map-const','COORDINATES','quiet');
+if isfield(fid,'SubType')
+    switch fid.SubType
+        case{'Delft3D-trih'}
+        case{'Delft3D-trim'}
+            tp=vs_get(fid,'map-const','COORDINATES','quiet');
+    end
 end
 switch lower(deblank(tp))
     case{'spherical'}
@@ -90,6 +93,7 @@ end
 
 ii=0;
 
+% Get info for each parameter
 for j=i1:i2
     
     ii=ii+1;
@@ -324,47 +328,7 @@ end
 
 % Determine shape of original data
 
-shpmat=[0 0 0 0 0];
-% Time
-if dataset.size(1)>0
-    if timestep==0 || length(timestep)>1
-        shpmat(1)=2;
-    else
-        shpmat(1)=1;
-    end
-end
-% Stations
-if dataset.size(2)>0
-    if istation==0 || length(istation)>1
-        shpmat(2)=2;        
-    else
-        shpmat(2)=1;        
-    end
-end
-% M
-if dataset.size(3)>0
-    if m==0 || length(m)>1
-        shpmat(3)=2;        
-    else
-        shpmat(3)=1;        
-    end
-end
-% N
-if dataset.size(4)>0
-    if n==0 || length(n)>1
-        shpmat(4)=2;        
-    else
-        shpmat(4)=1;        
-    end
-end
-% K
-if dataset.size(5)>0
-    if k==0 || length(k)>1
-        shpmat(5)=2;        
-    else
-        shpmat(5)=1;        
-    end
-end
+shpmat=muppet_determineShapeMatrix(dataset.size,timestep,istation,m,n,k);
 
 %% Determine input arguments for qp_read
 
@@ -402,6 +366,10 @@ for ii=1:length(fldnames)
         d.(fldnames{ii})=squeeze(d.(fldnames{ii}));
     end
 end
+
+
+
+
 
 %% Determine component
 switch dataset.quantity
@@ -453,6 +421,8 @@ if (shpmat(3)==1 && shpmat(4)>1) || (shpmat(3)>1 && shpmat(4)==1)
 end
 
 %% Copy data to dataset structure
+dataset=muppet_copyToDataStructure(dataset,d)
+
 
 % Set empty values
 dataset.x=[];
@@ -530,6 +500,11 @@ switch shpstr
         dataset.type='map2d';
         dataset.x=d.X;
         dataset.y=d.Y;
+        switch d.XUnits
+            case{'deg'}
+                dataset.coordinatesystem.name='WGS 84';
+                dataset.coordinatesystem.type='geographic';
+        end
         switch dataset.quantity
             case{'scalar','boolean'}
                 dataset.z=d.Val;

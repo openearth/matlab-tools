@@ -100,7 +100,6 @@ for ipar=1:length(s.parameters)
 end
 
 [timestep,istation,m,n,k]=muppet_findDataIndices(dataset);
-orishp=muppet_findRawDataShape(dataset.size);
 shp=muppet_findDataShape(dataset.size,timestep,istation,m,n,k);
 
 if isfield(parameter,dataset.timename)
@@ -126,15 +125,15 @@ if isfield(parameter,dataset.zname)
     z=parameter.(dataset.zname)(m,n);
 end
 
-% Get values
-val=extractmatrix(parameter,dataset.valname,orishp,timestep,istation,m,n,k);
-u=extractmatrix(parameter,dataset.uname,orishp,timestep,istation,m,n,k);
-v=extractmatrix(parameter,dataset.vname,orishp,timestep,istation,m,n,k);
-w=extractmatrix(parameter,dataset.wname,orishp,timestep,istation,m,n,k);
-uamplitude=extractmatrix(parameter,dataset.uamplitudename,orishp,timestep,istation,m,n,k);
-vamplitude=extractmatrix(parameter,dataset.vamplitudename,orishp,timestep,istation,m,n,k);
-uphase=extractmatrix(parameter,dataset.uphasename,orishp,timestep,istation,m,n,k);
-vphase=extractmatrix(parameter,dataset.vphasename,orishp,timestep,istation,m,n,k);
+% Get values (and store in same structure format as qpread)
+val=extractmatrix(parameter,dataset.valname,dataset.size,timestep,istation,m,n,k);
+u=extractmatrix(parameter,dataset.uname,dataset.size,timestep,istation,m,n,k);
+v=extractmatrix(parameter,dataset.vname,dataset.size,timestep,istation,m,n,k);
+w=extractmatrix(parameter,dataset.wname,dataset.size,timestep,istation,m,n,k);
+uamplitude=extractmatrix(parameter,dataset.uamplitudename,dataset.size,timestep,istation,m,n,k);
+vamplitude=extractmatrix(parameter,dataset.vamplitudename,dataset.size,timestep,istation,m,n,k);
+uphase=extractmatrix(parameter,dataset.uphasename,dataset.size,timestep,istation,m,n,k);
+vphase=extractmatrix(parameter,dataset.vphasename,dataset.size,timestep,istation,m,n,k);
 
 dataset.val=val;
 dataset.u=u;
@@ -294,344 +293,29 @@ switch tc
 %         end
 end
 
-% switch shp
-%     case{'polyline'}
-%         dataset.x=parameter.(dataset.xname);
-%         dataset.y=parameter.(dataset.yname);
-%         dataset.type='polyline2d';
-%         dataset.tc='c';
-%     case{'timestackstation'}        
-%     case{'timeseriesstation'}
-%         switch dataset.quantity
-%             case{'location'}
-%                 timestep=1:length(parameter.(dataset.timename));
-%                 dataset.x=parameter.(dataset.xname)(timestep,istation);
-%                 dataset.y=parameter.(dataset.yname)(timestep,istation);
-%                 dataset.times=parameter.(dataset.timename);
-%                 dataset.type='track';
-%                 dataset.tc='c';
-%             case{'vector'}
-%                 dataset.x=parameter.(dataset.timename);
-%                 dataset.u=parameter.(dataset.uname)(timestep,istation);
-%                 dataset.v=parameter.(dataset.vname)(timestep,istation);
-%                 dataset.type='timeseriesvector';
-%                 dataset.tc='c';
-%             otherwise
-%                 % scalar
-%                 dataset.x=parameter.(dataset.timename);
-%                 dataset.y=parameter.(dataset.valname)(timestep,istation);
-%                 dataset.type='timeseriesscalar';
-%                 dataset.tc='c';
-%         end
-%     case{'profilestation'}
-%     case{'timestackm'}
-%     case{'timestackn'}
-%     case{'timestackk'}
-%     case{'timeseries'}
-%     case{'map2d'}
-%         dataset.x=parameter.(dataset.xname)(m,n);
-%         dataset.y=parameter.(dataset.yname)(m,n);
-%         switch orishp
-%             case{'00110','00111'}
-%                 switch dataset.quantity
-%                     case{'scalar'}
-%                         dataset.z=squeeze(parameter.(dataset.valname)(m,n));
-%                         dataset.type='map2dscalar';
-%                         dataset.tc='c';
-%                     case{'vector2d'}
-%                         dataset.u=squeeze(parameter.(dataset.uname)(m,n));
-%                         dataset.v=squeeze(parameter.(dataset.vname)(m,n));
-%                         dataset.type='map2dvector2d';
-%                         dataset.tc='c';
-%                 end
-%             case{'10110'}
-%                 switch dataset.quantity
-%                     case{'scalar'}
-%                         dataset.z=parameter.(dataset.valname)(timestep,m,n);
-%                         dataset.type='map2dscalar';
-%                         dataset.tc='t';
-%                     case{'vector2d'}
-%                         dataset.u=squeeze(parameter.(dataset.uname)(timestep,m,n));
-%                         dataset.v=squeeze(parameter.(dataset.vname)(timestep,m,n));
-%                         dataset.type='map2dvector2d';
-%                         dataset.tc='t';
-%                 end
-%             case{'10111'}
-%                 switch dataset.quantity
-%                     case{'scalar'}
-%                         dataset.z=parameter.(dataset.valname)(timestep,m,n,k);
-%                         dataset.type='map2dscalar';
-%                         dataset.tc='t';
-%                     case{'vector2d'}
-%                         dataset.u=squeeze(parameter.(dataset.uname)(timestep,m,n,k));
-%                         dataset.v=squeeze(parameter.(dataset.vname)(timestep,m,n,k));
-%                         dataset.type='map2dvector2d';
-%                         dataset.tc='t';
-%                 end
-%         end
-%     case{'crossection1dm'}
-%         switch dataset.quantity
-%             case{'location'}
-%                 dataset.x=parameter.(dataset.xname);
-%                 dataset.y=parameter.(dataset.yname);
-%                 dataset.type='polyline2d';
-%                 dataset.tc='c';
-%             case{'vector2d'}
-%                 dataset.x=parameter.(dataset.xname);
-%                 dataset.y=parameter.(dataset.yname);
-%                 dataset.x=parameter.(dataset.timename);
-%                 dataset.y=parameter.(dataset.valname)(istation,timestep);
-%                 dataset.type='timeseriesscalar';
-%                 dataset.tc='t';
-%             case{'scalar'}
-%                 dataset.x=parameter.(dataset.timename);
-%                 dataset.y=parameter.(dataset.valname)(istation,timestep);
-%                 dataset.type='timeseriesscalar';
-%                 dataset.tc='t';
-%             otherwise
-%                 % scalar
-%         end
-%     case{'crossection1dn'}
-%     case{'crossection2dm'}
-%     case{'crossection2dn'}
-%     case{'profile'}        
-% end
-
-
-% % Determine component
-% switch dataset.quantity
-%     case{'vector2d','vector3d'}
-%         if isempty(dataset.component)
-%             dataset.component='vector';
-%         end
-%         % Vector, compute components if necessary
-%         switch lower(dataset.component)
-%             case('magnitude')
-%                 d.Val=sqrt(d.XComp.^2+d.YComp.^2);
-%                 dataset.quantity='scalar';
-%             case('angle (radians)')
-%                 d.Val=mod(0.5*pi-atan2(d.YComp,d.XComp),2*pi);
-%                 dataset.quantity='scalar';
-%             case('angle (degrees)')
-%                 d.Val=mod(0.5*pi-atan2(d.YComp,d.XComp),2*pi)*180/pi;
-%                 dataset.quantity='scalar';
-%             case('m-component')
-%                 d.Val=d.XComp;
-%                 dataset.quantity='scalar';
-%             case('n-component')
-%                 d.Val=d.YComp;
-%                 dataset.quantity='scalar';
-%             case('x-component')
-%                 d.Val=d.XComp;
-%                 dataset.quantity='scalar';
-%             case('y-component')
-%                 d.Val=d.YComp;
-%                 dataset.quantity='scalar';
-%         end
-% end
-%
-% % Compute y value for cross sections
-% plotcoordinate=[];
-% switch tp
-%     case{'timestackm','timestackn','crossection2dm','crossection1dm','crossection2dn','crossection1dn'}
-%         switch(lower(dataset.plotcoordinate))
-%             case{'x'}
-%                 x=squeeze(d.X);
-%             case{'y'}
-%                 x=squeeze(d.Y);
-%             case{'pathdistance'}
-%                 x=pathdistance(squeeze(d.X),squeeze(d.Y));
-%             case{'revpathdistance'}
-%                 x=pathdistance(squeeze(d.X),squeeze(d.Y));
-%                 x=x(end:-1:1);
-%         end
-%         plotcoordinate=x;
-% end
-%
-% % Set empty values
-% dataset.x=[];
-% dataset.x=[];
-% dataset.y=[];
-% dataset.z=[];
-% dataset.xz=[];
-% dataset.yz=[];
-% dataset.zz=[];
-% dataset.u=[];
-% dataset.v=[];
-% dataset.w=[];
-%
-% switch tp
-%     case{'timeseriesstation','timeseries'}
-%         dataset.type='timeseries';
-%         dataset.x=d.Time;
-%         switch dataset.quantity
-%             case{'scalar'}
-%                 dataset.y=d.Val;
-%             case{'vector2d'}
-%                 dataset.u=d.XComp;
-%                 dataset.v=d.YComp;
-%             case{'vector3d'}
-%                 dataset.u=d.XComp;
-%                 dataset.v=d.YComp;
-%         end
-%     case{'timestackstation','timestackk'}
-%         dataset.type='timestack';
-%         dataset.x=d.Time;
-%         dataset.y=d.Z;
-%         switch dataset.quantity
-%             case{'scalar'}
-%                 dataset.y=d.Val;
-%             case{'vector2d'}
-%                 % Why would you want this ?
-%                 dataset.u=d.XComp;
-%                 dataset.v=d.YComp;
-%             case{'vector3d'}
-%                 % Why would you want this ?
-%                 dataset.u=d.XComp;
-%                 dataset.v=d.ZComp;
-%         end
-%     case{'profilestation','profile'}
-%         dataset.type='xy';
-%         dataset.y=d.Z;
-%         switch dataset.quantity
-%             case{'scalar'}
-%                 dataset.x=d.Val;
-%             case{'vector2d'}
-%                 % Why would you want this ?
-%                 dataset.u=d.XComp;
-%                 dataset.v=d.YComp;
-%             case{'vector3d'}
-%                 % Why would you want this ?
-%                 dataset.u=d.XComp;
-%                 dataset.v=d.ZComp;
-%         end
-%     case{'timestackm','timestackn'}
-%         dataset.type='timestack';
-%         dataset.x=d.Time;
-%         dataset.y=plotcoordinate;
-%         switch dataset.quantity
-%             case{'scalar'}
-%                 dataset.y=d.Val;
-%             case{'vector2d'}
-%                 dataset.u=d.XComp;
-%                 dataset.v=d.YComp;
-%         end
-%     case{'map2d'}
-%         dataset.type='map2d';
-%         dataset.x=d.X;
-%         dataset.y=d.Y;
-%         switch dataset.quantity
-%             case{'scalar','boolean'}
-%                 dataset.z=d.Val;
-%             case{'grid'}
-%                 dataset.xdam=d.XDam;
-%                 dataset.ydam=d.YDam;
-%             case{'vector2d'}
-%                 % Why would you want this ?
-%                 dataset.u=d.XComp;
-%                 dataset.v=d.YComp;
-%             case{'vector3d'}
-%                 % Why would you want this ?
-%                 dataset.u=d.XComp;
-%                 dataset.v=d.YComp;
-%         end
-%     case{'crossection2dm','crossection2dn'}
-%         dataset.type='crossection2d';
-%         dataset.x=plotcoordinate;
-%         dataset.y=d.Z;
-%         switch dataset.quantity
-%             case{'scalar'}
-%                 dataset.z=d.Val;
-%             case{'vector2d'}
-%                 dataset.u=d.XComp;
-%                 dataset.v=d.YComp;
-%             case{'vector3d'}
-%                 dataset.u=d.XComp;
-%                 dataset.v=d.ZComp;
-%         end
-%     case{'crossection1dm','crossection1dn'}
-%         dataset.type='crossection1d';
-%         dataset.x=plotcoordinate;
-%         switch dataset.quantity
-%             case{'scalar'}
-%                 dataset.y=d.Val;
-%             case{'vector2d'}
-%                 % Why would you want this ?
-%                 dataset.u=d.XComp;
-%                 dataset.v=d.YComp;
-%             case{'vector3d'}
-%                 % Why would you want this ?
-%                 dataset.u=d.XComp;
-%                 dataset.v=d.ZComp;
-%         end
-% end
-%
-% dataset.xz=dataset.x;
-% dataset.yz=dataset.y;
-% dataset.zz=dataset.z;
-%
-% dataset.type=[dataset.type dataset.quantity];
-%
-% if isempty(dataset.time) || dataset.size(1)<=1
-%     dataset.tc='c';
-% else
-%     dataset.tc='t';
-%     dataset.availabletimes=times;
-% %    dataset.availablemorphtimes=data.morphtimes;
-% end
-%
-% if isfield(dataset,'time')
-%     if isfield(dataset,'timestep')
-%         dataset=rmfield(dataset,'timestep');
-%     end
-% end
-
-% function parameter=expandmatrix(parameter,fld,orishp)
-% 
-% if isfield(parameter,fld)
-%     if ~isempty(parameter.(fld))
-%         
-%         p=parameter.(fld);
-%         parameter.(fld)=[];
-%         
-%         for ii=1:length(orishp)
-%             switch orishp(ii)
-%                 case{'1'}
-%                     s{ii}=':';
-%                 otherwise
-%                     s{ii}='1';
-%             end
-%         end
-%         
-%         evalstr=['parameter.(fld)(' s{1} ',' s{2} ',' s{3} ',' s{4} ',' s{5} ')=p;'];
-%         eval(evalstr);
-%         
-%     end
-% end
-
-function val=extractmatrix(parameter,fld,orishp,timestep,istation,m,n,k)
+function val=extractmatrix(parameter,fld,sz,timestep,istation,m,n,k)
 
 nind=0;
 val=[];
 if isfield(parameter,fld)
     if ~isempty(parameter.(fld))
-            if orishp(1)=='1'
+            if sz(1)>0
                 nind=nind+1;
                 str{nind}='timestep';
             end
-            if orishp(2)=='1'
+            if sz(2)>0
                 nind=nind+1;
                 str{nind}='istation';
             end
-            if orishp(3)=='1'
+            if sz(3)>0
                 nind=nind+1;
                 str{nind}='m';
             end
-            if orishp(4)=='1'
+            if sz(4)>0
                 nind=nind+1;
                 str{nind}='n';
             end
-            if orishp(5)=='1'
+            if sz(5)>0
                 nind=nind+1;
                 str{nind}='k';
             end
