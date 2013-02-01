@@ -113,6 +113,7 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
 
         for ib=1:nb
             % Initialize
+            handles.Model(md).Input(id).openBoundaries=delft3dflow_setDefaultBoundaryType(handles.Model(md).Input(id).openBoundaries,ib);
             handles.Model(md).Input(id).openBoundaries=delft3dflow_initializeOpenBoundary(handles.Model(md).Input(id).openBoundaries,ib, ...
                 t0,t1,nrsed,nrtrac,nrharmo,x,y,depthZ,kcs);
             % Set boundary name in one cell array

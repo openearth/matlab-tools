@@ -109,8 +109,16 @@ switch opt
             filename=[runid '.mdf'];
             handles=ddb_readMDF(handles,filename,id);
             handles=ddb_readAttributeFiles(handles,id);
+
+            xl(1)=min(min(handles.Model(md).Input(id).gridX));
+            xl(2)=max(max(handles.Model(md).Input(id).gridX));
+            yl(1)=min(min(handles.Model(md).Input(id).gridY));
+            yl(2)=max(max(handles.Model(md).Input(id).gridY));
+            handles=ddb_zoomTo(handles,xl,yl,0.1);
+            
             setHandles(handles);
             ddb_plotDelft3DFLOW('plot','active',0,'visible',1,'domain',ad);
+            ddb_updateDataInScreen;
             gui_updateActiveTab;
         end
     case {'opennew'}
@@ -134,8 +142,16 @@ switch opt
             filename=[runid '.mdf'];
             handles=ddb_readMDF(handles,filename,id);
             handles=ddb_readAttributeFiles(handles,id);
+
+            xl(1)=min(min(handles.Model(md).Input(id).gridX));
+            xl(2)=max(max(handles.Model(md).Input(id).gridX));
+            yl(1)=min(min(handles.Model(md).Input(id).gridY));
+            yl(2)=max(max(handles.Model(md).Input(id).gridY));
+            handles=ddb_zoomTo(handles,xl,yl,0.1);
+            
             setHandles(handles);
             ddb_plotDelft3DFLOW('plot','active',0,'visible',1,'domain',0);
+            ddb_updateDataInScreen;
             gui_updateActiveTab;
         end
 end

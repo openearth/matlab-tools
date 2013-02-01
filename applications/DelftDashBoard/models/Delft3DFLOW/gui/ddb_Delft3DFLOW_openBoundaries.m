@@ -426,12 +426,7 @@ if ok==1
     handles.Model(md).Input(ad).openBoundaries(iac).M2=m2;
     handles.Model(md).Input(ad).openBoundaries(iac).N2=n2;
     
-    handles.Model(md).Input(ad).openBoundaries(iac).alpha=0.0;
-    handles.Model(md).Input(ad).openBoundaries(iac).compA='unnamed';
-    handles.Model(md).Input(ad).openBoundaries(iac).compB='unnamed';
-    handles.Model(md).Input(ad).openBoundaries(iac).type='Z';
-    handles.Model(md).Input(ad).openBoundaries(iac).forcing='A';
-    handles.Model(md).Input(ad).openBoundaries(iac).profile='Uniform';
+    handles.Model(md).Input(ad).openBoundaries=delft3dflow_setDefaultBoundaryType(handles.Model(md).Input(ad).openBoundaries,iac);
     
     t0=handles.Model(md).Input(ad).startTime;
     t1=handles.Model(md).Input(ad).stopTime;
@@ -449,6 +444,7 @@ if ok==1
     handles.Model(md).Input(ad).openBoundaries(iac).name=['(' num2str(m1) ',' num2str(n1) ')...(' num2str(m2) ',' num2str(n2) ')'];
     handles.Model(md).Input(ad).openBoundaryNames{iac}=handles.Model(md).Input(ad).openBoundaries(iac).name;
     handles.Model(md).Input(ad).activeOpenBoundary=iac;
+    handles.Model(md).Input(ad).activeOpenBoundaries=iac;
     
     handles=ddb_countOpenBoundaries(handles,ad);
     
