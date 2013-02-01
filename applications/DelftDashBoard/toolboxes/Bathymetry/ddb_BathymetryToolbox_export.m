@@ -98,14 +98,12 @@ for i=1:length(handles.bathymetry.dataset(handles.Toolbox(tb).Input.activeDatase
     handles.Toolbox(tb).Input.zoomLevelText{i}=num2str(i);
 end
 setHandles(handles);
-% setUIElements('bathymetrypanel.export');
 
 %%
 function selectZoomLevel
 handles=getHandles;
 handles=setResolutionText(handles);
 setHandles(handles);
-% setUIElements('bathymetrypanel.export');
 
 %%
 function handles=setResolutionText(handles)
@@ -144,46 +142,54 @@ if handles.bathymetry.dataset(handles.Toolbox(tb).Input.activeDataset).isAvailab
     ylim(2)=max(yy);
     
     fname=filename;
-    handles.originalBackgroundBathymetry=handles.screenParameters.backgroundBathymetry;
-    handles.backgroundBathymetry=bset;
     
     zoomlevel=handles.Toolbox(tb).Input.activeZoomLevel;
     
-    [x,y,z,ok]=ddb_getBathy(handles,xlim,ylim,'zoomlevel',zoomlevel);
+    [x,y,z,ok]=ddb_getBathymetry(handles.bathymetry,xlim,ylim,'bathymetry',bset,'zoomlevel',zoomlevel);
     
-    [x,y]=ddb_coordConvert(x,y,cs,handles.screenParameters.coordinateSystem);
+    extension=filename(end-2:end);
     
-    handles.screenParameters.backgroundBathymetry=handles.originalBackgroundBathymetry;
+    switch lower(extension)
+        case{'xyz'}
+            
+            [x,y]=ddb_coordConvert(x,y,cs,handles.screenParameters.coordinateSystem);
+            
+            np=size(x,1)*size(x,2);
+            
+            x=reshape(x,[np,1]);
+            y=reshape(y,[np,1]);
+            z=reshape(z,[np,1]);
+            
+            in = inpolygon(x,y,handles.Toolbox(tb).Input.polygonX,handles.Toolbox(tb).Input.polygonY);
+            
+            x=x(in);
+            y=y(in);
+            z=z(in);
+            isn=isnan(z);
+            
+            %     if min(isn)==0
+            x=x(~isn);
+            y=y(~isn);
+            z=z(~isn);
+            %     end
+            
+            if strcmpi(handles.Toolbox(tb).Input.activeDirection,'down')
+                z=z*-1;
+            end
+            
+            data(:,1)=x;
+            data(:,2)=y;
+            data(:,3)=z;
+            
+            save(fname,'data','-ascii');
+            
+        case{'asc'}
+
+            arcgridwrite(filename,x,y,z);
+
     
-    np=size(x,1)*size(x,2);
-    
-    x=reshape(x,[np,1]);
-    y=reshape(y,[np,1]);
-    z=reshape(z,[np,1]);
-    
-    in = inpolygon(x,y,handles.Toolbox(tb).Input.polygonX,handles.Toolbox(tb).Input.polygonY);
-    
-    x=x(in);
-    y=y(in);
-    z=z(in);
-    isn=isnan(z);
-    
-    %     if min(isn)==0
-    x=x(~isn);
-    y=y(~isn);
-    z=z(~isn);
-    %     end
-    
-    if strcmpi(handles.Toolbox(tb).Input.activeDirection,'down')
-        z=z*-1;
     end
-    
-    data(:,1)=x;
-    data(:,2)=y;
-    data(:,3)=z;
-    
-    save(fname,'data','-ascii');
-    
+
     close(wb);
     
 end
@@ -192,13 +198,30 @@ end
 function drawPolygon
 handles=getHandles;
 ddb_zoomOff;
-h=findobj(gcf,'Tag','BathymetryPolygon');
+h=findobj(gcf,'Tag','bathymetrypolygon');
 if ~isempty(h)
     delete(h);
 end
-UIPolyline(gca,'draw','Tag','BathymetryPolygon','Marker','o','Callback',@changePolygon,'closed',1);
+
+handles.Toolbox(tb).Input.polygonX=[];
+handles.Toolbox(tb).Input.polygonY=[];
+handles.Toolbox(tb).Input.polyLength=0;
+
+handles.Toolbox(tb).Input.polygonhandle=gui_polyline('draw','tag','bathymetrypolygon','marker','o', ...
+    'createcallback',@createPolygon,'changecallback',@changePolygon, ...
+    'closed',1);
+
 setHandles(handles);
-% setUIElement('bathymetrypanel.export.savepolygon');
+
+%%
+function createPolygon(h,x,y)
+handles=getHandles;
+handles.Toolbox(tb).Input.polygonhandle=h;
+handles.Toolbox(tb).Input.polygonX=x;
+handles.Toolbox(tb).Input.polygonY=y;
+handles.Toolbox(tb).Input.polyLength=length(x);
+setHandles(handles);
+gui_updateActiveTab;
 
 %%
 function deletePolygon
@@ -206,13 +229,11 @@ handles=getHandles;
 handles.Toolbox(tb).Input.polygonX=[];
 handles.Toolbox(tb).Input.polygonY=[];
 handles.Toolbox(tb).Input.polyLength=0;
-h=findobj(gcf,'Tag','BathymetryPolygon');
+h=findobj(gcf,'Tag','bathymetrypolygon');
 if ~isempty(h)
     delete(h);
 end
 setHandles(handles);
-% setUIElement('bathymetrypanel.export.exportbathy');
-% setUIElement('bathymetrypanel.export.savepolygon');
 
 %%
 function changePolygon(x,y,varargin)
@@ -221,8 +242,6 @@ handles.Toolbox(tb).Input.polygonX=x;
 handles.Toolbox(tb).Input.polygonY=y;
 handles.Toolbox(tb).Input.polyLength=length(x);
 setHandles(handles);
-% setUIElement('bathymetrypanel.export.exportbathy');
-% setUIElement('bathymetrypanel.export.savepolygon');
 
 %%
 function loadPolygon
@@ -231,12 +250,11 @@ handles=getHandles;
 handles.Toolbox(tb).Input.polygonX=x;
 handles.Toolbox(tb).Input.polygonY=y;
 handles.Toolbox(tb).Input.polyLength=length(x);
-h=findobj(gca,'Tag','BathymetryPolygon');
+h=findobj(gca,'Tag','bathymetrypolygon');
 delete(h);
-UIPolyline(gca,'plot','Tag','BathymetryPolygon','Marker','o','Callback',@changePolygon,'closed',1,'x',x,'y',y);
+h=gui_polyline('plot','x',x,'y',y,'tag','bathymetrypolygon','marker','o');
+handles.Toolbox(tb).Input.polygonhandle=h;
 setHandles(handles);
-% setUIElement('bathymetrypanel.export.exportbathy');
-% setUIElement('bathymetrypanel.export.savepolygon');
 
 %%
 function savePolygon
@@ -251,4 +269,3 @@ if size(y,1)==1
 end
 
 landboundary('write',handles.Toolbox(tb).Input.polygonFile,x,y);
-

@@ -18,12 +18,14 @@
       <tabstring>Import</tabstring>
       <callback>ddb_BathymetryToolbox_import</callback>
       <element>Bathymetry.import.xml</element>
+      <enable>0</enable>
     </tab>
     <tab>
       <tag>merge</tag>
       <tabstring>Merge</tabstring>
       <callback>ddb_BathymetryToolbox_merge</callback>
       <element>Bathymetry.merge.xml</element>
+      <enable>0</enable>
     </tab>
   </element>
 </root>

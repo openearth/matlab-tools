@@ -95,7 +95,7 @@ xx=xlim(1):dx:xlim(2);
 yy=ylim(1):dy:ylim(2);
 [xg,yg]=meshgrid(xx,yy);
 
-[xb,yb,zb,ok]=ddb_getBathy(handles,xlim,ylim,'bathymetry',handles.screenParameters.backgroundBathymetry,'maxcellsize',dx);
+[xb,yb,zb,ok]=ddb_getBathymetry(handles.bathymetry,xlim,ylim,'bathymetry',handles.screenParameters.backgroundBathymetry,'maxcellsize',dx);
 
 zz=interp2(xb,yb,zb,xg,yg);
 

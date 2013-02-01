@@ -82,7 +82,7 @@ handles.Toolbox(ii).Input.bathymetry.nrZoom=5;
 
 handles.Toolbox(ii).Input.bathymetry.dataFile='';
 handles.Toolbox(ii).Input.bathymetry.dataName='';
-handles.Toolbox(ii).Input.bathymetry.dataDir=[handles.bathyDir];
+handles.Toolbox(ii).Input.bathymetry.dataDir=[handles.bathymetry.dir];
 handles.Toolbox(ii).Input.bathymetry.rawDataType='arcinfogrid';
 handles.Toolbox(ii).Input.bathymetry.rawDataTypeExtension='*.asc';
 handles.Toolbox(ii).Input.bathymetry.rawDataTypeSelectionText='Select Data File (ArcInfo ASCII grid file)';
@@ -128,7 +128,7 @@ handles.Toolbox(ii).Input.shoreline.nrCellsY=0;
 
 handles.Toolbox(ii).Input.shoreline.dataFile='';
 handles.Toolbox(ii).Input.shoreline.dataName='';
-handles.Toolbox(ii).Input.shoreline.dataDir=[handles.bathyDir];
+handles.Toolbox(ii).Input.shoreline.dataDir=[handles.bathymetry.dir];
 
 handles.Toolbox(ii).Input.shoreline.EPSGcode                     = 4326;
 handles.Toolbox(ii).Input.shoreline.EPSGname                     = 'WGS 84';

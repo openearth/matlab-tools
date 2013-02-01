@@ -263,7 +263,7 @@ if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=npmax
     
     [xlb,ylb]=ddb_coordConvert(xl,yl,coord,dataCoord);
     
-    [xx,yy,zz,ok]=ddb_getBathy(handles,xlb,ylb,'bathymetry',handles.screenParameters.backgroundBathymetry,'maxcellsize',dmin);
+    [xx,yy,zz,ok]=ddb_getBathymetry(handles.bathymetry,xlb,ylb,'bathymetry',handles.screenParameters.backgroundBathymetry,'maxcellsize',dmin);
     
     % xx and yy are in coordinate system of bathymetry (usually WGS 84)
     % convert bathy grid to active coordinate system

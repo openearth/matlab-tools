@@ -90,25 +90,12 @@
     <position>420 96</position>
   </element>
   <element>
-    <tag>selectexporttype</tag>
-    <style>popupmenu</style>
-    <text>Export Type</text>
-    <textposition>left</textposition>
-    <variable>activeExportType</variable>
-    <position>350 70 60 20</position>
-    <tooltipstring>Select zoom level</tooltipstring>
-    <type>string</type>
-    <listtext>
-      <variable>exportTypes</variable>
-    </listtext>
-  </element>
-  <element>
     <tag>selectpositivedirection</tag>
     <style>popupmenu</style>
     <text>Positive</text>
     <textposition>left</textposition>
     <variable>activeDirection</variable>
-    <position>350 45 60 20</position>
+    <position>350 70 60 20</position>
     <tooltipstring>Select positive up or down</tooltipstring>
     <type>string</type>
     <listtext>up</listtext>
@@ -126,7 +113,8 @@
     <option1>export</option1>
     <showfilename>no</showfilename>
     <extension>*.xyz</extension>
-    <selectiontext>Save bathy file</selectiontext>
+    <extension>*.asc</extension>
+    <selectiontext>Save bathymetry file</selectiontext>
     <tooltipstring>Export bathymetry</tooltipstring>
     <dependency>
       <action>enable</action>

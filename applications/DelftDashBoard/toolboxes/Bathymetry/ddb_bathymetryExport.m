@@ -141,7 +141,7 @@ if pathname~=0
         
         zoomlevel=get(handles.SelectZoomLevel,'Value');
         
-        [x,y,z,ok]=ddb_getBathy(handles,xlim,ylim,zoomlevel);
+        [x,y,z,ok]=ddb_getBathymetry(handles.bathymetry,xlim,ylim,zoomlevel);
         
         [x,y]=ddb_coordConvert(x,y,cs,handles.screenParameters.coordinateSystem);
         

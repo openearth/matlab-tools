@@ -222,7 +222,7 @@ makeNCBathyTiles(fname,dr,dataname,datatype,nrzoom,nx,ny,OPT);
 close(wb);
 
 % Now add data to data xml
-fname = [handles.bathyDir 'bathymetry.xml'];
+fname = [handles.bathymetry.dir 'bathymetry.xml'];
 xmldata = xml_load(fname);
 nd=length(xmldata)+1;
 xmldata(nd).dataset.name=dataname;
@@ -235,8 +235,8 @@ xmldata(nd).dataset.useCache='1';
 xml_save(fname,xmldata,'off');
 
 % And finally add it to the menu
-ddb_findBathymetryDatabases;
 handles=getHandles;
+handles.bathymetry=ddb_findBathymetryDatabases(handles.bathymetry);
 % Clear existing menu
 h=findobj(gcf,'Tag','menuBathymetry');
 ch=get(h,'Children');

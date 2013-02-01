@@ -243,7 +243,7 @@ obj_idx = find(strcmp({handles.Toolbox(idx).GUI.elements.tabs(tb_idx).elements.t
 % get the bathymetry file (just selected by user):
 file = handles.Toolbox(idx).Input.bathyFile;
 
-bathy_dir = handles.bathyDir;
+bathy_dir = handles.bathymetry.dir;
 
 
 res_val = handles.Toolbox(tb).Input.newbathyresolution;
@@ -316,7 +316,7 @@ handles.bathymetry.dataset(k).useCache=0;
 % next time:
 
 % update tiledbathymetry.def file (for future use in GUI)
-fid = fopen([handles.bathyDir,'tiledbathymetries.def'],'at+');
+fid = fopen([handles.bathymetry.dir,'tiledbathymetries.def'],'at+');
 
 fprintf(fid,'\n\n');
 
