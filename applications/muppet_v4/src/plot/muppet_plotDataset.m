@@ -1,6 +1,9 @@
 function handles=muppet_plotDataset(handles,ifig,isub,id,mode)
+% Plots dataset
 
+% Copy subplot properties to plt structure
 plt=handles.figures(ifig).figure.subplots(isub).subplot;
+
 
 if ~isfield(plt.datasets(id).dataset,'number')
     plt.datasets(id).dataset.number=[];
@@ -11,6 +14,7 @@ if ~isempty(nr)
     data=handles.datasets(nr).dataset;
 end
 
+% Copy plot options to opt structure
 opt=plt.datasets(id).dataset;
 
 if handles.figures(ifig).figure.cm2pix==1
@@ -19,20 +23,20 @@ else
     opt2=1;
 end
 
+%% Set empty handle (used in legend)
 handles.figures(ifig).figure.subplots(isub).subplot.datasets(id).dataset.handle=[];
 
+%% Plot dataset
 switch lower(plt.datasets(id).dataset.plotroutine)
     case {'plottimeseries','plotxy','plotxyseries','plotline','plotspline'}
         handles=muppet_plotLine(handles,ifig,isub,id);
     case {'plothistogram'}
-        handles=PlotHistogram(handles,ifig,isub,id,mode);
+        handles=muppet_plotHistogram(handles,ifig,isub,id);
     case {'plotstackedarea'}
         handles=PlotStackedArea(handles,ifig,isub,id,mode);
     case {'plotcontourmap','plotcontourmaplines','plotpatches','plotcontourlines','plotshadesmap'}
-%         handles=Plot2DSurface(handles,ifig,isub,id,mode);
         muppet_plot2DSurface(handles,ifig,isub,id);
     case {'plotgrid'}
-%        handles=PlotGrid(handles,ifig,isub,id,mode);
         handles=muppet_plotGrid(handles,ifig,isub,id);
     case {'plotannotation'},
         handles=PlotAnnotation(handles,ifig,isub,id,mode);
@@ -80,6 +84,7 @@ switch lower(plt.datasets(id).dataset.plotroutine)
         handles=muppet_plotTidalEllipse(handles,ifig,isub,id);
 end
 
+%% Add color bar for dataset (in addition to colorbar for subplot!)
 clrbar=[];
 if opt.plotcolorbar
     opt.shadesbar=0;
@@ -87,6 +92,7 @@ if opt.plotcolorbar
 end
 opt.colorbarhandle=clrbar;
 
+%% Add datestring
 if opt.adddatestring
     dstx=0.5*(plt.xmax-plt.xmin)/plt.position(3);
     dsty=0.5*(plt.ymax-plt.ymin)/plt.position(4);
