@@ -169,5 +169,8 @@ for id=1:length(datasets)
         
 end
 
+%z=internaldiffusion(z);
+%z(isnan(xg))=NaN;
+
 % Interpolated data in MSL, now convert to model datum
 z=z-verticaloffset;
