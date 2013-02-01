@@ -308,6 +308,9 @@ switch lower(opt)
     % water levels
 
     wl00=qpread(fid,1,'water level','data',isteps,istation);
+    dpt=qpread(fid,1,'water depth','data',isteps,istation);
+    wl00.Val(dpt.Val<0.01)=0.0;
+
     for k=1:length(s.wl.m)
         for i=1:4
             m=s.wl.mm(k,i);
