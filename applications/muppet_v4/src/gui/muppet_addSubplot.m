@@ -14,7 +14,7 @@ if ~addsubplotannotations
 
     s.name=['Subplot ' num2str(i0+1)];
     s.position=position;
-    [s,ok]=gui_newWindow(s,'xmldir','c:\work\checkouts\OpenEarthTools\trunk\matlab\applications\muppet4\xml\','xmlfile','newsubplot.xml');
+    [s,ok]=gui_newWindow(s, 'xmldir', handles.xmldir, 'xmlfile', 'newsubplot.xml');
     if ok
         name=s.name;
         position=s.position;
