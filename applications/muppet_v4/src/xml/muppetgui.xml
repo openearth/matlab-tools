@@ -27,6 +27,12 @@
       <option>savesessionas</option>
     </menuitem>
     <menuitem>
+      <label>Add dataset from URL ...</label>
+      <separator>on</separator>
+      <callback>muppet_gui</callback>
+      <option>adddatasetfromurl</option>
+    </menuitem>
+    <menuitem>
       <label>Exit</label>
       <separator>on</separator>
       <callback>muppet_gui</callback>

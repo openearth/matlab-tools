@@ -23,11 +23,6 @@
           <value>scalar</value>
           <operator>eq</operator>
         </check>
-        <check>
-          <variable>nrquantities</variable>
-          <value>1</value>
-          <operator>eq</operator>
-        </check>
       </dependency>
     </element>
   </dataproperty>

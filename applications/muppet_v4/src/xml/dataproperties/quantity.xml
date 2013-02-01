@@ -15,15 +15,6 @@
       <variable>quantities</variable>
     </listtext>
     <defaultvalue>scalar</defaultvalue>
-    <dependency>
-      <action>enable</action>
-      <checkfor>any</checkfor>
-      <check>
-        <variable>nrquantities</variable>
-        <value>1</value>
-        <operator>gt</operator>
-      </check>
-    </dependency>
   </element>
   </dataproperty>
 </root>
