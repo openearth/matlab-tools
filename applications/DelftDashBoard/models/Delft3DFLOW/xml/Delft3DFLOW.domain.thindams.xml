@@ -269,7 +269,7 @@
     <showfilename>no</showfilename>
     <extension>*.thd</extension>
     <selectiontext>Select thin dams file</selectiontext>
-    <onchange>ddb_Delft3DFLOW_thindams</onchange>
+    <onchange>ddb_Delft3DFLOW_thinDams</onchange>
     <option1>savefile</option1>
   </element>
 </root>
