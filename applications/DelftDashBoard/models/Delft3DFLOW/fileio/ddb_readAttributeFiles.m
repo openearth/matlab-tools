@@ -80,6 +80,7 @@ if ~isempty(handles.Model(md).Input(id).depFile)
     mmax=handles.Model(md).Input(id).MMax;
     nmax=handles.Model(md).Input(id).NMax;
     dp=ddb_wldep('read',handles.Model(md).Input(id).depFile,[mmax nmax]);
+    dp(dp==-999)=NaN;
     handles.Model(md).Input(id).depth=-dp(1:end-1,1:end-1);
     handles.Model(md).Input(id).depthZ=getDepthZ(handles.Model(md).Input(id).depth,handles.Model(md).Input(id).dpsOpt);
 end
