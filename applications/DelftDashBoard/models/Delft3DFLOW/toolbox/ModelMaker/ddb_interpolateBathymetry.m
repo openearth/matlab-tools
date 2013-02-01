@@ -1,10 +1,10 @@
-function z = ddb_interpolateBathymetry(handles,x,y,varargin)
+function z = ddb_interpolateBathymetry(bathymetry,x,y,varargin)
 %ddb_interpolateBathymetry  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   handles = ddb_interpolateBathymetry(handles, x,y, varargin)
+%   handles = ddb_interpolateBathymetry(bathymetry, x,y, varargin)
 %
 %   Input:
 %   handles  =
@@ -62,13 +62,13 @@ function z = ddb_interpolateBathymetry(handles,x,y,varargin)
 % $Keywords: $
 
 % Default (use background bathymetry)
-datasets{1}=handles.screenParameters.backgroundBathymetry;
+datasets{1}='gebco08';
 zmin=-100000;
 zmax=100000;
-startdates=floor(now);
-searchintervals=-1e5;
-verticaloffsets=0;
 verticaloffset=0;
+startdates=[];
+searchintervals=[];
+verticaloffsets=[];
     
 for i=1:length(varargin)
     if ischar(varargin{i})
@@ -87,12 +87,23 @@ for i=1:length(varargin)
                 verticaloffsets=varargin{i+1};
             case{'verticaloffset'}
                 verticaloffset=varargin{i+1};
+            case{'coordinatesystem'}
+                coord=varargin{i+1};
         end
     end
 end
-    
-coord=handles.screenParameters.coordinateSystem;
-    
+
+if isempty(startdates)
+startdates=zeros(length(datasets))+floor(now);
+end
+if isempty(searchintervals)
+searchintervals=zeros(length(datasets))-1e5;
+end
+if isempty(verticaloffsets)
+verticaloffsets=zeros(length(datasets))+0;
+end
+
+
 % Generate bathymetry
 
 % Fill matrix z with NaN values
@@ -102,7 +113,9 @@ z(z==0)=NaN;
 % x(isnan(x))=0;
 % y(isnan(y))=0;
 
-for idata=1:length(datasets)    
+for id=1:length(datasets)   
+    
+    idata=length(datasets)-id+1;
 
     xg=x;
     yg=y;
@@ -117,13 +130,13 @@ for idata=1:length(datasets)
     offset=verticaloffsets(idata);
     
     % Convert grid to cs of background image
-    iac=strmatch(lower(bathyset),lower(handles.bathymetry.datasets),'exact');
-    dataCoord.name=handles.bathymetry.dataset(iac).horizontalCoordinateSystem.name;
-    dataCoord.type=handles.bathymetry.dataset(iac).horizontalCoordinateSystem.type;
+    iac=strmatch(lower(bathyset),lower(bathymetry.datasets),'exact');
+    dataCoord.name=bathymetry.dataset(iac).horizontalCoordinateSystem.name;
+    dataCoord.type=bathymetry.dataset(iac).horizontalCoordinateSystem.type;
     [xg,yg]=ddb_coordConvert(xg,yg,coord,dataCoord);
     
     % Find minimum grid resolution for this dataset
-    [dmin,dmax]=findMinMaxGridSize(xg,yg,'cstype',handles.screenParameters.coordinateSystem.type);
+    [dmin,dmax]=findMinMaxGridSize(xg,yg,'cstype',coord.type);
     
     % Determine bounding box
     xl(1)=min(min(xg));
@@ -136,7 +149,7 @@ for idata=1:length(datasets)
     yl(1)=yl(1)-dbuf;
     yl(2)=yl(2)+dbuf;
     
-    [xx,yy,zz,ok]=ddb_getBathymetry(handles,xl,yl,'bathymetry',bathyset,'maxcellsize',dmin,'startdate',startdate,'searchinterval',searchinterval);
+    [xx,yy,zz,ok]=ddb_getBathymetry(bathymetry,xl,yl,'bathymetry',bathyset,'maxcellsize',dmin,'startdate',startdate,'searchinterval',searchinterval);
     
     % Convert to MSL
     zz=zz+offset;
@@ -146,8 +159,8 @@ for idata=1:length(datasets)
     zz(zz>zmx)=NaN;        
     
     isn=isnan(xg);
-    xg(isn)=0;
-    yg(isn)=0;    
+%    xg(isn)=0;
+%    yg(isn)=0;    
     % Copy new values (that are not NaN) to new bathymetry
     z0=interp2(xx,yy,zz,xg,yg);    
     z0(isn)=NaN;

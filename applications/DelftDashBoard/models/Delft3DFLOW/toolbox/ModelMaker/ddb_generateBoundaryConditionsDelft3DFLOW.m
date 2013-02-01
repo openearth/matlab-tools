@@ -371,7 +371,7 @@ try
 %     handles.Model(md).Input(id)=model;
     
     ddb_saveBcaFile(handles,id);
-    ddb_saveBndFile(handles,id);
+    ddb_saveBndFile(handles.Model(md).Input(id).openBoundaries,handles.Model(md).Input(id).bndFile);
     
 catch
     err='An error occured while generating boundary conditions!';

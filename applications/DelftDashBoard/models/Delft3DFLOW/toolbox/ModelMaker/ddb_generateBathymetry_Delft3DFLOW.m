@@ -78,8 +78,8 @@ if handles.Model(md).Input(id).MMax>0
     
     wb = waitbox('Generating bathymetry ...');
         
-    z = ddb_interpolateBathymetry(handles,xg,yg,'datasets',datasets,'startdates',startdates,'searchintervals',searchintervals, ...
-        'zmin',zmin,'zmax',zmax,'verticaloffsets',verticaloffsets,'verticaloffset',verticaloffset);
+    z = ddb_interpolateBathymetry(handles.bathymetry,xg,yg,'datasets',datasets,'startdates',startdates,'searchintervals',searchintervals, ...
+        'zmin',zmin,'zmax',zmax,'verticaloffsets',verticaloffsets,'verticaloffset',verticaloffset,'coordinatesystem',handles.screenParameters.coordinateSystem);
     
     switch opt
         case{'overwrite'}
