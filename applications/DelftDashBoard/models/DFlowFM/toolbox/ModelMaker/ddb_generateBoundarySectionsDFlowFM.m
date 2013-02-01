@@ -232,7 +232,7 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
         
         handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','openboundaries','visible',1,'active',0);
         
-        ddb_saveBndFile(handles,id);
+        ddb_saveBndFile(handles.Model(md).Input(id).openBoundaries,handles.Model(md).Input(id).bndFile);
         
     else
         ddb_giveWarning('Warning','First generate or load a bathymetry');
