@@ -5,7 +5,7 @@ function varargout = griddata_near2(X,Y,Z,XI,YI,PI,WI,varargin)
 %      ZI          = GRIDDATA_NEAR2(X,Y,Z,XI,YI,PI,WI);
 %
 %   griddata_near2 fits a surface of the form ZI = F(XI,YI) to the
-%   data in the (usually) nonuniformly-spaced vectors (X,Y,Z).
+%   data in the (usually) non-uniformly-spaced vectors (X,Y,Z).
 %   GRIDDATA_NEAREST interpolates this surface at the points specified by
 %   (XI,YI) to produce ZI. GRIDDATA_NEAREST1 is used first to 
 %   determine the required index pointers PI and interpolation weights WI.
@@ -16,7 +16,8 @@ function varargout = griddata_near2(X,Y,Z,XI,YI,PI,WI,varargin)
 %   to X,Y (e.g. time), that is returned also as extra dimension in ZI such
 %   that ZI has an extra dimension compared to XI,YI.
 %
-%   See also: GRIDDATA_NEAR1, GRIDDATA, GRIDDATA_NEAREST, GRIDDATA_REMAP, INTERP2, BIN2
+%See also: GRIDDATA_NEAR1, GRIDDATA, GRIDDATA_NEAREST, GRIDDATA_REMAP, INTERP2, BIN2
+%          TriScatteredInterp, DELFT3D_IO_ADM, NESTING, arbcross
 
 %% Copyright notice
 %   --------------------------------------------------------------------

@@ -214,7 +214,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
 %% time
 
       if isempty(OPT.timezone)
-         fprintf(2,'> No model timezone supplied, timezone could be added to netCDF file. This will be interpreted as GMT! \n')
+         fprintf(2,'> No model timezone supplied, timezone could NOT be added to netCDF file. This will be interpreted as GMT! \n')
       end
 
       ifld     = 1;clear attr dims

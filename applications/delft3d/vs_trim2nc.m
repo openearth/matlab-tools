@@ -447,7 +447,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
 %% time
 
       if isempty(OPT.timezone)
-         fprintf(2,'> No model timezone supplied, timezone could be added to netCDF file. This will be interpreted as GMT! \n')
+         fprintf(2,'> No model timezone supplied, timezone could NOT be added to netCDF file. This will be interpreted as GMT! \n')
       end
      
       ifld     = 1;clear attr dims
@@ -1270,7 +1270,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       ifld     = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'ocean_kinetic_energy_dissipation_per_unit_area_due_to_vertical_friction'); %?
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'turbulent energy dissipation'); % not in NEFIS file
-      attr(end+1)  = struct('Name', 'units'        , 'Value', 'm2/s3'): % 'W m-2'); % not in NEFIS file
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'm2/s3'); % 'W m-2'); % not in NEFIS file
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayerInterf);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.eps = [Inf -Inf];

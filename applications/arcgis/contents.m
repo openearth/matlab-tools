@@ -19,13 +19,14 @@
 %  info: http://www.gdal.org/ogr/drv_shapefile.html
 %  info: http://www.esri.com/library/whitepapers/pdfs/shapefile.pdf
 %
-%  arc_shape_read       - Read vector features and attributes from shapefile
-%                         Does not yet handle reading char attributes
-%  shape                - open, read and write shape file
-%  arc_shape2kml        - save ESRI shape file as Google Earth file
-%  ldbTool              - FYI: GUI interface for manipulation shape files (aka landboundaries)
+%  m_shaperead          - read shapefiles (part of m_map, native m code)
+%  shape                - open, read and write shape file (part of delf3d, native m code)
+%  arc_shape_read       - Read vector features and attributes, does not yet handle char attributes (mex code)
 %  shapeinfo            - (matlab mapping toolbox) Information about shapefile
 %  shaperead            - (matlab mapping toolbox) Read vector features and attributes from shapefile
 %  shapewrite           - (matlab mapping toolbox) Write geographic data structure to shapefile
+%
+%  arc_shape2kml        - save ESRI shape file as Google Earth file
+%  ldbTool              - FYI: GUI interface for manipulation shape files (aka landboundaries)
 %
 %See also: convertCoordinates, googlePlot, nc_cf_grid, nc_cf_gridset

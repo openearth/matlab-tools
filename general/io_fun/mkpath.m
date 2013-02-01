@@ -6,13 +6,8 @@ function mkpath(directory)
 %
 % When the path already exists, nothing is done.
 % 
-% G.J. de Boer, TU Delft, 
-% Environmental FLuid Mechanics
-% Dec. 2005
-%
 %See also: MKDIR,  EXIST, PATH2OS,    COPYFILE, CD, LAST_SUBDIR,
 %          DELETE, DIR,   FILEATTRIB, MOVEFILE, RMDIR.
-
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2005 Delft University of Technology

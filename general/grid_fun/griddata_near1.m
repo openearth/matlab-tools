@@ -16,7 +16,7 @@ function varargout = griddata_near1(X,Y,XI,YI,npts,varargin)
 %
 % The combination GRIDDATA_NEAR1 and GRIDDATA_NEAR2 allows to 
 % repeatedly interpolate multiple fields from one static topology (X,Y)
-% to another static toplogy (XI,YI). For instance, to interpolate
+% to another static topology (XI,YI). For instance, to interpolate
 % numerous time dependendent fields defined on one static topology.
 % For interpolating local boundary conditions from an overall GCM 
 % (general circulation models) this is usually referred to as nesting.
@@ -27,7 +27,7 @@ function varargout = griddata_near1(X,Y,XI,YI,npts,varargin)
 % interpolation. WI has size [npts size(XI)], so that sum(B.WI,1) is 1.
 %
 %See also: GRIDDATA_NEAR2, GRIDDATA, GRIDDATA_NEAREST, GRIDDATA_REMAP, INTERP2, BIN2
-%          TriScatteredInterp, DELFT3D_IO_ADM, NESTING
+%          TriScatteredInterp, DELFT3D_IO_ADM, NESTING, arbcross
 
 %% Copyright notice
 %   --------------------------------------------------------------------
