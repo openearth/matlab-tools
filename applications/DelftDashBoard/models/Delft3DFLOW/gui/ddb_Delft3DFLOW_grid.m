@@ -81,6 +81,12 @@ else
             loadLayers;
         case{'savelayers'}
             saveLayers;
+        case{'selectzmodel'}
+            selectZModel;
+        case{'editztop'}
+            editZTop;
+        case{'editzbot'}
+            editZBot;
     end
 end
 
@@ -139,9 +145,6 @@ if ~isempty(pathname)
         handles.Model(md).Input(ad).sumLayers=100;
         handles.Model(md).Input(ad).KMax=length(lyrs);
         setHandles(handles);
-        % setUIElement('delft3dflow.domain.domainpanel.grid.editkmax');
-        % setUIElement('delft3dflow.domain.domainpanel.grid.sumlayers');
-        % setUIElement('delft3dflow.domain.domainpanel.grid.layertable');
     else
         ddb_giveWarning('Text','Sum of layers does not equal 100%');
     end
@@ -179,5 +182,46 @@ if kmax~=kmax0
     end
     setHandles(handles);
     handles.Model(md).Input(ad).sumLayers=sum(handles.Model(md).Input(ad).thick);
-%     gui_updateActiveTab;
 end
+
+%%
+function selectZModel
+handles=getHandles;
+switch handles.Model(md).Input(ad).dpuOpt
+    case{'MEAN','UPW','MOR'}
+        handles.Model(md).Input(ad).dpuOpt='MIN';
+        setHandles(handles);
+        ddb_giveWarning('text','DPUOPT set to MIN in numerical options!');
+end
+
+
+
+%%
+function editZTop
+handles=getHandles;
+zmax=nanmax(nanmax(handles.Model(md).Input(ad).depth));
+if zmax>handles.Model(md).Input(ad).zTop
+    ButtonName = questdlg(['Maximum height model bathymetry (' num2str(zmax) ' m) exceeds Z Top! Adjust bathymetry?'], ...
+        'Adjust bathymetry?', ...
+        'No', 'Yes', 'Yes');
+    switch ButtonName
+        case 'Yes'
+            [filename, pathname, filterindex] = uiputfile('*.dep', 'Select depth file',handles.Model(md).Input(ad).depFile);
+            if ~isempty(pathname)
+                handles.Model(md).Input(ad).depFile=filename;                
+                handles.Model(md).Input(ad).depth=min(handles.Model(md).Input(ad).depth,handles.Model(md).Input(ad).zTop);
+                ddb_wldep('write',filename,handles.Model(md).Input(ad).depth);
+                handles=ddb_Delft3DFLOW_plotBathy(handles,'plot','domain',ad);
+            end
+    end    
+end
+setHandles(handles);
+
+%%
+function editZBot
+handles=getHandles;
+zmin=nanmin(nanmin(handles.Model(md).Input(ad).depth));
+if zmin<handles.Model(md).Input(ad).zBot
+    ddb_giveWarning('text',['Maximum depth in model (' num2str(zmin) ' m) exceeds Z Bot!']);
+end
+setHandles(handles);
