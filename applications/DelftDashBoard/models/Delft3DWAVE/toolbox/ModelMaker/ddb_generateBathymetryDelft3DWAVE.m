@@ -101,7 +101,7 @@ if ~isempty(handles.Model(md).Input.domains(id).grid)
     yl(1)=yl(1)-dbuf;
     yl(2)=yl(2)+dbuf;
     
-    [xx,yy,zz,ok]=ddb_getBathy(handles,xl,yl,'bathymetry',handles.screenParameters.backgroundBathymetry,'maxcellsize',dmin);
+    [xx,yy,zz,ok]=ddb_getBathymetry(handles.bathymetry,xl,yl,'bathymetry',handles.screenParameters.backgroundBathymetry,'maxcellsize',dmin);
     
     xg(isnan(xg))=0;
     yg(isnan(yg))=0;
