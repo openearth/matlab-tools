@@ -82,6 +82,13 @@ for i=1:length(varargin)
     end
 end
 
+openBoundaries(nb).alpha=0.0;
+openBoundaries(nb).compA='unnamed';
+openBoundaries(nb).compB='unnamed';
+openBoundaries(nb).type='Z';
+openBoundaries(nb).forcing='A';
+openBoundaries(nb).profile='Uniform';
+
 openBoundaries(nb).THLag=[0 0];
 
 [xb,yb,zb,alphau,alphav,side,orientation]=delft3dflow_getBoundaryCoordinates(openBoundaries(nb),x,y,depthZ,kcs,'coordinatesystem',cs);

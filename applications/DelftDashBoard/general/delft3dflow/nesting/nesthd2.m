@@ -17,52 +17,72 @@ isave=1;
 cs='projected';
 zcor=0;
 
-for i=1:length(varargin)
-    if ischar(varargin{i})
-        switch lower(varargin{i})
-            case{'openboundaries'}
-                openBoundaries=varargin{i+1};
-            case{'vertgrid'}
-                vertGrid=varargin{i+1};
-            case{'hisfile'}
-                hisfile=varargin{i+1};
-            case{'mdffile'}
-                mdffile=varargin{i+1};
-                [inputdir,runid,ext]=fileparts(mdffile);
-            case{'inputdir'}
-                inputdir=varargin{i+1};
-                if ~isempty(inputdir)
-                    if ~strcmpi(inputdir,filesep)
-                        inputdir=[inputdir filesep];
+if length(varargin)==1
+    % Read input from xml file
+    xmlfile=varargin{1};
+    xml=xml2struct3(xmlfile,'structuretype',1);
+    runid=xml.runid;
+    inputdir=xml.inputdir;
+    admfile=xml.admfile;
+    opt=xml.opt;
+    hisfile=xml.hisfile;
+    if isfield(xml,'zcor')
+        zcor=str2double(xml.zcor);
+    end
+    if isfield(xml,'starttime')
+        t0=datestr(xml.starttime,'yyyymmdd HHMMSS');
+    end
+    if isfield(xml,'stoptime')
+        t1=datestr(xml.stoptime,'yyyymmdd HHMMSS');
+    end
+else    
+    for i=1:length(varargin)
+        if ischar(varargin{i})
+            switch lower(varargin{i})
+                case{'openboundaries'}
+                    openBoundaries=varargin{i+1};
+                case{'vertgrid'}
+                    vertGrid=varargin{i+1};
+                case{'hisfile'}
+                    hisfile=varargin{i+1};
+                case{'mdffile'}
+                    mdffile=varargin{i+1};
+                    [inputdir,runid,ext]=fileparts(mdffile);
+                case{'inputdir'}
+                    inputdir=varargin{i+1};
+                    if ~isempty(inputdir)
+                        if ~strcmpi(inputdir,filesep)
+                            inputdir=[inputdir filesep];
+                        end
                     end
-                end
-            case{'runid'}
-                runid=varargin{i+1};
-            case{'admfile'}
-                admfile=varargin{i+1};
-            case{'zcor'}
-                zcor=varargin{i+1};
-            case{'stride'}
-                stride=varargin{i+1};
-            case{'opt'}
-                opt=varargin{i+1};
-            case{'save'}
-                if ischar(varargin{i+1})
-                    switch lower(varargin{i+1}(1))
-                        case{'y'}
-                            isave=1;
-                        case{'n'}
-                            isave=0;
+                case{'runid'}
+                    runid=varargin{i+1};
+                case{'admfile'}
+                    admfile=varargin{i+1};
+                case{'zcor'}
+                    zcor=varargin{i+1};
+                case{'stride'}
+                    stride=varargin{i+1};
+                case{'opt'}
+                    opt=varargin{i+1};
+                case{'save'}
+                    if ischar(varargin{i+1})
+                        switch lower(varargin{i+1}(1))
+                            case{'y'}
+                                isave=1;
+                            case{'n'}
+                                isave=0;
+                        end
+                    else
+                        isave=varargin{i+1};
                     end
-                else
-                    isave=varargin{i+1};
-                end
-            case{'starttime'}
-                t0=varargin{i+1};
-            case{'stoptime'}
-                t1=varargin{i+1};
-            case{'coordinatesystem'}
-                cs=varargin{i+1};
+                case{'starttime'}
+                    t0=varargin{i+1};
+                case{'stoptime'}
+                    t1=varargin{i+1};
+                case{'coordinatesystem'}
+                    cs=varargin{i+1};
+            end
         end
     end
 end

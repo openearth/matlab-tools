@@ -215,6 +215,17 @@ end
 
 %% Add time series from different sources
 wl=wlconst+wlastro+wl3d;
+% switch opt.current.BC.source
+%     case 1
+%         vel=velconst+velastro;
+%     case 2
+%         vel=velconst+velastro+vel4d;
+%     case 3
+%         vel=velconst+velastro+vel4d;
+%     case 4
+%         vel=velconst+velastro+vel4d;
+% end
+
 vel=velconst+velastro+vel4d;
 tanvel=tanvelconst+tanvelastro+tanvel4d;
 

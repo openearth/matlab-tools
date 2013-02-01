@@ -105,8 +105,13 @@ for i=1:nr
     end
     prediction=makeTidePrediction(times,comp,A,G,opt.latitude);
     
-    for k=1:flow.KMax
-        vel(i,1,k,:)=prediction;
+    switch openBoundaries(i).profile
+        case{'uniform'}
+            vel(i,1,:)=prediction;
+        otherwise
+            for k=1:flow.KMax
+                vel(i,1,k,:)=prediction;
+            end
     end
     
     ib=strmatch(openBoundaries(i).compB,compSet,'exact');
@@ -121,8 +126,13 @@ for i=1:nr
     end
     prediction=makeTidePrediction(times,comp,A,G,opt.latitude);
     
-    for k=1:flow.KMax
-        vel(i,2,k,:)=prediction;
+    switch openBoundaries(i).profile
+        case{'uniform'}
+            vel(i,2,:)=prediction;
+        otherwise
+            for k=1:flow.KMax
+                vel(i,2,k,:)=prediction;
+            end
     end
     
 end
