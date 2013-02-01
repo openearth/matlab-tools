@@ -117,6 +117,7 @@ title(sprintf('tolerance set at %.1f ==> %d points needed',tolerance,length(ind)
 % $Keywords: $
 
 %% input check
+assert(~isempty(x),'x is empty');
 assert(isvector(x),'x is not a vector');
 assert(isvector(y),'y is not a vector');
 assert(isequal(size(x),size(y)),'x and y are not equal in size');
@@ -130,7 +131,7 @@ if nargin==3
     maximum_nr_of_points = length(x);
 end
 assert(isscalar(maximum_nr_of_points));
-
+assert(maximum_nr_of_points>0);
 %% call mex function
 [indices,max_error,starts,ends,max_err_locs,max_err_vals] = reduce(double(x),double(y),double(tolerance),uint32(maximum_nr_of_points)); %#ok<ASGLU,NASGU>
 
