@@ -112,9 +112,18 @@
     <value>dissipation</value>
   </element>
   <element>
-    <tag>radioradiation</tag>
+    <tag>radiodissipation3d</tag>
     <style>radiobutton</style>
     <position>510 90</position>
+    <text>Wave dissipation (3D)</text>
+    <type>string</type>
+    <variable>handles.Model(md).Input.waveforces</variable>
+    <value>dissipation 3d</value>
+  </element>
+  <element>
+    <tag>radioradiation</tag>
+    <style>radiobutton</style>
+    <position>510 70</position>
     <text>Radiation Stress</text>
     <type>string</type>
     <variable>handles.Model(md).Input.waveforces</variable>
