@@ -374,7 +374,7 @@ else
                 switch lower(opt2)
                     case{'bnd'}
                         handles.Model(md).Input(ad).bndFile=filename;
-                        handles=ddb_saveBndFile(handles,ad);
+                        ddb_saveBndFile(handles.Model(md).Input(ad).openBoundaries,handles.Model(md).Input(ad).bndFile);
                     case{'bca'}
                         handles.Model(md).Input(ad).bcaFile=filename;
                         handles=ddb_saveBcaFile(handles,ad);
