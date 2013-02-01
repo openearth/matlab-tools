@@ -78,6 +78,7 @@ handles=getHandles;
 filename=handles.Model(md).Input(ad).depFile;
 try
     dp=ddb_wldep('read',filename,[handles.Model(md).Input(ad).MMax,handles.Model(md).Input(ad).NMax]);
+    dp(dp==-999)=NaN;
     handles.Model(md).Input(ad).depth=-dp(1:end-1,1:end-1);
     handles.Model(md).Input(ad).depth(handles.Model(md).Input(ad).depth==999.999)=NaN;
     handles.Model(md).Input(ad).depthZ=getDepthZ(handles.Model(md).Input(ad).depth,handles.Model(md).Input(ad).dpsOpt);
