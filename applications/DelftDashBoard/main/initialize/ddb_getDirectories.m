@@ -130,7 +130,7 @@ else
     
 end
 
-handles.bathyDir=[datadir 'bathymetry' filesep];
+handles.bathymetry.dir=[datadir 'bathymetry' filesep];
 handles.tideDir=[datadir 'tidemodels' filesep];
 handles.toolBoxDir=[datadir 'toolboxes' filesep];
 handles.additionalToolboxDir=additionalToolboxDir;

@@ -1,4 +1,4 @@
-function ddb_findBathymetryDatabases
+function bathymetry=ddb_findBathymetryDatabases(bathymetry)
 %DDB_FINDBATHYMETRYDATABASES  One line description goes here.
 %
 %   More detailed description goes here.
@@ -60,23 +60,22 @@ function ddb_findBathymetryDatabases
 % $Keywords: $
 
 %%
-handles=getHandles;
 
-handles=ddb_readTiledBathymetries(handles);
+bathymetry=ddb_readTiledBathymetries(bathymetry.dir);
 
-for i=1:handles.bathymetry.nrDatasets
-    handles.bathymetry.dataset(i).isAvailable=1;
-    switch lower(handles.bathymetry.dataset(i).type)
+for i=1:bathymetry.nrDatasets
+    bathymetry.dataset(i).isAvailable=1;
+    switch lower(bathymetry.dataset(i).type)
         case{'netcdftiles'}
-            localdir = [handles.bathyDir handles.bathymetry.dataset(i).name filesep];
+            localdir = [bathymetry.dir bathymetry.dataset(i).name filesep];
             % Check if data needs to be updated, because there is a new
             % version, or because the metadata file does not exist
-            if handles.bathymetry.dataset(i).update || ~exist([localdir handles.bathymetry.dataset(i).name '.nc'],'file')
+            if bathymetry.dataset(i).update || ~exist([localdir bathymetry.dataset(i).name '.nc'],'file')
                 % Data sits on OPeNDAP server
-                if strcmpi(handles.bathymetry.dataset(i).URL(1:4),'http')
+                if strcmpi(bathymetry.dataset(i).URL(1:4),'http')
                     % OpenDAP
-                    fname=[handles.bathymetry.dataset(i).URL '/' handles.bathymetry.dataset(i).name '.nc'];
-                    if handles.bathymetry.dataset(i).useCache
+                    fname=[bathymetry.dataset(i).URL '/' bathymetry.dataset(i).name '.nc'];
+                    if bathymetry.dataset(i).useCache
                         % First copy meta data file to local cache
                         % Try to delete old crap
                         if exist([localdir 'temp.nc'],'file')
@@ -95,9 +94,9 @@ for i=1:handles.bathymetry.nrDatasets
                                 % messed up when you're connected to a network
                                 % without internet connection!
                                 x0=nc_varget([localdir 'temp.nc'],'x0');
-                                movefile([localdir 'temp.nc'],[localdir handles.bathymetry.dataset(i).name '.nc']);
+                                movefile([localdir 'temp.nc'],[localdir bathymetry.dataset(i).name '.nc']);
                             end
-                            fname = [handles.bathyDir handles.bathymetry.dataset(i).name filesep handles.bathymetry.dataset(i).name '.nc'];
+                            fname = [bathymetry.dir bathymetry.dataset(i).name filesep bathymetry.dataset(i).name '.nc'];
                         catch
                             % If no access to openDAP server possible, check
                             % whether meta data file is already available in
@@ -117,15 +116,15 @@ for i=1:handles.bathymetry.nrDatasets
                                 disp(['line : ' num2str(err.stack(ie).line)]);
                             end
 
-                            disp(['Connection to OpenDAP server could not be made for bathymetry dataset ' handles.bathymetry.dataset(i).longName ' - try using cached data instead']);
-                            fname = [handles.bathyDir handles.bathymetry.dataset(i).name filesep handles.bathymetry.dataset(i).name '.nc'];
+                            disp(['Connection to OpenDAP server could not be made for bathymetry dataset ' bathymetry.dataset(i).longName ' - try using cached data instead']);
+                            fname = [bathymetry.dir bathymetry.dataset(i).name filesep bathymetry.dataset(i).name '.nc'];
                             if exist(fname,'file')
                                 % File already exists, continue
                             else
                                 % File does not exist, this should produce a
                                 % warning
-                                disp(['Bathymetry dataset ' handles.bathymetry.dataset(i).longName ' not available!']);
-                                handles.bathymetry.dataset(i).isAvailable=0;
+                                disp(['Bathymetry dataset ' bathymetry.dataset(i).longName ' not available!']);
+                                bathymetry.dataset(i).isAvailable=0;
                             end
                         end
                     else
@@ -133,21 +132,21 @@ for i=1:handles.bathymetry.nrDatasets
                     end
                 else
                     % Local
-                    fname=[handles.bathymetry.dataset(i).URL filesep handles.bathymetry.dataset(i).name '.nc'];
+                    fname=[bathymetry.dataset(i).URL filesep bathymetry.dataset(i).name '.nc'];
                     if exist(fname,'file')
                         % File already exists, continue
                     else
                         % File does not exist, this should produce a
                         % warning
-                        disp(['Bathymetry dataset ' handles.bathymetry.dataset(i).longName ' not available!']);
-                        handles.bathymetry.dataset(i).isAvailable=0;
+                        disp(['Bathymetry dataset ' bathymetry.dataset(i).longName ' not available!']);
+                        bathymetry.dataset(i).isAvailable=0;
                     end
                 end
             else
-              fname = [handles.bathyDir handles.bathymetry.dataset(i).name filesep handles.bathymetry.dataset(i).name '.nc'];
+              fname = [bathymetry.dir bathymetry.dataset(i).name filesep bathymetry.dataset(i).name '.nc'];
             end
             
-            if handles.bathymetry.dataset(i).isAvailable
+            if bathymetry.dataset(i).isAvailable
                 
                 x0=nc_varget(fname,'x0');
                 y0=nc_varget(fname,'y0');
@@ -162,83 +161,81 @@ for i=1:handles.bathymetry.nrDatasets
                     jav{k}=nc_varget(fname,['javailable' num2str(k)]);
                 end
                 
-                handles.bathymetry.dataset(i).horizontalCoordinateSystem.name=nc_attget(fname,'crs','coord_ref_sys_name');
+                bathymetry.dataset(i).horizontalCoordinateSystem.name=nc_attget(fname,'crs','coord_ref_sys_name');
                 tp=nc_attget(fname,'crs','coord_ref_sys_kind');
                 switch lower(tp)
                     case{'projected','proj','projection','xy','cartesian','cart'}
-                        handles.bathymetry.dataset(i).horizontalCoordinateSystem.type='Cartesian';
+                        bathymetry.dataset(i).horizontalCoordinateSystem.type='Cartesian';
                     case{'geographic','geographic 2d','geographic 3d','latlon','spherical'}
-                        handles.bathymetry.dataset(i).horizontalCoordinateSystem.type='Geographic';
+                        bathymetry.dataset(i).horizontalCoordinateSystem.type='Geographic';
                 end
                 
                 try
-                    handles.bathymetry.dataset(i).verticalCoordinateSystem.name=nc_attget(fname,'crs','vertical_reference_level');
+                    bathymetry.dataset(i).verticalCoordinateSystem.name=nc_attget(fname,'crs','vertical_reference_level');
                 catch
-                    handles.bathymetry.dataset(i).verticalCoordinateSystem.name='unknown';
+                    bathymetry.dataset(i).verticalCoordinateSystem.name='unknown';
                 end
                 
                 try
-                    handles.bathymetry.dataset(i).verticalCoordinateSystem.level=nc_attget(fname,'crs','difference_with_msl');
+                    bathymetry.dataset(i).verticalCoordinateSystem.level=nc_attget(fname,'crs','difference_with_msl');
                 catch
-                    handles.bathymetry.dataset(i).verticalCoordinateSystem.level=0;
+                    bathymetry.dataset(i).verticalCoordinateSystem.level=0;
                 end
 
                 try
-                    handles.bathymetry.dataset(i).verticalCoordinateSystem.units=nc_attget(fname,'crs','vertical_units');
+                    bathymetry.dataset(i).verticalCoordinateSystem.units=nc_attget(fname,'crs','vertical_units');
                 catch
-                    handles.bathymetry.dataset(i).verticalCoordinateSystem.units='m';
+                    bathymetry.dataset(i).verticalCoordinateSystem.units='m';
                 end
 
                 if length(dx)>1
-                    handles.bathymetry.dataset(i).refinementFactor=round(double(dx(2))/double(dx(1)));
+                    bathymetry.dataset(i).refinementFactor=round(double(dx(2))/double(dx(1)));
                 else
-                    handles.bathymetry.dataset(i).refinementFactor=1;
+                    bathymetry.dataset(i).refinementFactor=1;
                 end
                 
-                handles.bathymetry.dataset(i).nrZoomLevels=length(x0);
-                for k=1:handles.bathymetry.dataset(i).nrZoomLevels
-                    handles.bathymetry.dataset(i).zoomLevel(k).x0=double(x0(k));
-                    handles.bathymetry.dataset(i).zoomLevel(k).y0=double(y0(k));
-                    handles.bathymetry.dataset(i).zoomLevel(k).nx=double(nx(k));
-                    handles.bathymetry.dataset(i).zoomLevel(k).ny=double(ny(k));
-                    handles.bathymetry.dataset(i).zoomLevel(k).ntilesx=double(ntilesx(k));
-                    handles.bathymetry.dataset(i).zoomLevel(k).ntilesy=double(ntilesy(k));
-                    handles.bathymetry.dataset(i).zoomLevel(k).dx=double(dx(k));
-                    handles.bathymetry.dataset(i).zoomLevel(k).dy=double(dy(k));
-                    handles.bathymetry.dataset(i).zoomLevel(k).iAvailable=double(iav{k});
-                    handles.bathymetry.dataset(i).zoomLevel(k).jAvailable=double(jav{k});
+                bathymetry.dataset(i).nrZoomLevels=length(x0);
+                for k=1:bathymetry.dataset(i).nrZoomLevels
+                    bathymetry.dataset(i).zoomLevel(k).x0=double(x0(k));
+                    bathymetry.dataset(i).zoomLevel(k).y0=double(y0(k));
+                    bathymetry.dataset(i).zoomLevel(k).nx=double(nx(k));
+                    bathymetry.dataset(i).zoomLevel(k).ny=double(ny(k));
+                    bathymetry.dataset(i).zoomLevel(k).ntilesx=double(ntilesx(k));
+                    bathymetry.dataset(i).zoomLevel(k).ntilesy=double(ntilesy(k));
+                    bathymetry.dataset(i).zoomLevel(k).dx=double(dx(k));
+                    bathymetry.dataset(i).zoomLevel(k).dy=double(dy(k));
+                    bathymetry.dataset(i).zoomLevel(k).iAvailable=double(iav{k});
+                    bathymetry.dataset(i).zoomLevel(k).jAvailable=double(jav{k});
                 end
                 
                 
             end
-        case{'kaartblad'}
-            try
-                pth=fileparts(handles.bathymetry.dataset(i).URL);
-                firstfile=nc_varget(handles.bathymetry.dataset(i).URL,'urlPath');
-                firstfile=squeeze(firstfile(1,:));
-                firstfile=[pth '/' firstfile];
-%                epsgcode=nc_varget(handles.bathymetry.dataset(i).URL,'projectionEPSGcode',[0 0],[1 1]);
-                epsgcode=nc_attget(firstfile,'EPSG','epsg');
-                ii=find(handles.EPSG.coordinate_reference_system.coord_ref_sys_code==epsgcode);
-                name=handles.EPSG.coordinate_reference_system.coord_ref_sys_name{ii};
-                tp=handles.EPSG.coordinate_reference_system.coord_ref_sys_kind{ii};
-                switch lower(tp)
-                    case{'geographic 2d'}
-                        tp='geographic';
-                end
-                handles.bathymetry.dataset(i).horizontalCoordinateSystem.name=name;
-                handles.bathymetry.dataset(i).horizontalCoordinateSystem.type=tp;
-            catch
-                disp(['Bathymetry dataset ' handles.bathymetry.dataset(i).longName ' not available!']);
-                handles.bathymetry.dataset(i).isAvailable=0;
-            end
+%         case{'kaartblad'}
+%             try
+%                 pth=fileparts(bathymetry.dataset(i).URL);
+%                 firstfile=nc_varget(bathymetry.dataset(i).URL,'urlPath');
+%                 firstfile=squeeze(firstfile(1,:));
+%                 firstfile=[pth '/' firstfile];
+% %                epsgcode=nc_varget(bathymetry.dataset(i).URL,'projectionEPSGcode',[0 0],[1 1]);
+%                 epsgcode=nc_attget(firstfile,'EPSG','epsg');
+%                 ii=find(handles.EPSG.coordinate_reference_system.coord_ref_sys_code==epsgcode);
+%                 name=handles.EPSG.coordinate_reference_system.coord_ref_sys_name{ii};
+%                 tp=handles.EPSG.coordinate_reference_system.coord_ref_sys_kind{ii};
+%                 switch lower(tp)
+%                     case{'geographic 2d'}
+%                         tp='geographic';
+%                 end
+%                 bathymetry.dataset(i).horizontalCoordinateSystem.name=name;
+%                 bathymetry.dataset(i).horizontalCoordinateSystem.type=tp;
+%             catch
+%                 disp(['Bathymetry dataset ' bathymetry.dataset(i).longName ' not available!']);
+%                 bathymetry.dataset(i).isAvailable=0;
+%             end
     end
-    if ~isfield(handles.bathymetry.dataset(i),'source')
-        handles.bathymetry.dataset(i).source=[];
+    if ~isfield(bathymetry.dataset(i),'source')
+        bathymetry.dataset(i).source=[];
     end
 end
 
-disp([num2str(handles.bathymetry.nrDatasets) ' bathymetry datasets found!']);
-
-setHandles(handles);
+disp([num2str(bathymetry.nrDatasets) ' bathymetry datasets found!']);
 

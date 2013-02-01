@@ -1,4 +1,4 @@
-function handles = ddb_readTiledBathymetries(handles)
+function bathymetry = ddb_readTiledBathymetries(bathydir)
 %DDB_READTILEDBATHYMETRIES  One line description goes here.
 %
 %   More detailed description goes here.
@@ -61,20 +61,21 @@ function handles = ddb_readTiledBathymetries(handles)
 
 %% When enabled on OpenDAP
 % Check for updates on OpenDAP and add data to structure
-localdir = handles.bathyDir;
+localdir = bathydir;
 url = 'http://opendap.deltares.nl/static/deltares/delftdashboard/bathymetry/bathymetry.xml';
 xmlfile = 'bathymetry.xml';
-handles.bathymetry = ddb_getXmlData(localdir,url,xmlfile);
+bathymetry = ddb_getXmlData(localdir,url,xmlfile);
+bathymetry.dir=bathydir;
 
 % Add specific fields to structure
-fld = fieldnames(handles.bathymetry);
+fld = fieldnames(bathymetry);
 names = '';longNames = '';
-for ii=1:length(handles.bathymetry.(fld{1}))
-    handles.bathymetry.(fld{1})(ii).useCache = str2double(handles.bathymetry.(fld{1})(ii).useCache);
-    handles.bathymetry.(fld{1})(ii).edit = str2double(handles.bathymetry.(fld{1})(ii).edit);
-    names{ii}= handles.bathymetry.(fld{1})(ii).name;
-    longNames{ii} = handles.bathymetry.(fld{1})(ii).longName;
+for ii=1:length(bathymetry.(fld{1}))
+    bathymetry.(fld{1})(ii).useCache = str2double(bathymetry.(fld{1})(ii).useCache);
+    bathymetry.(fld{1})(ii).edit = str2double(bathymetry.(fld{1})(ii).edit);
+    names{ii}= bathymetry.(fld{1})(ii).name;
+    longNames{ii} = bathymetry.(fld{1})(ii).longName;
 end
-handles.bathymetry.datasets = names;
-handles.bathymetry.longNames = longNames;
-handles.bathymetry.nrDatasets = length(handles.bathymetry.(fld{1}));
+bathymetry.datasets = names;
+bathymetry.longNames = longNames;
+bathymetry.nrDatasets = length(bathymetry.(fld{1}));

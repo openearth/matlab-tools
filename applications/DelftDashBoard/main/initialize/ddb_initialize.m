@@ -71,7 +71,9 @@ switch lower(varargin{1}),
         ddb_findTideModels;
         
         disp('Finding bathymetry datasets ...');
-        ddb_findBathymetryDatabases;
+        handles=getHandles;
+        handles.bathymetry=ddb_findBathymetryDatabases(handles.bathymetry);
+        setHandles(handles);
         
         disp('Finding shorelines ...');
         ddb_findShorelines;
