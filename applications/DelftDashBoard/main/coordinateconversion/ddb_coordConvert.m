@@ -69,6 +69,10 @@ if strcmpi(OldSys.name,NewSys.name)
 end
 
 handles=getHandles;
+if isempty(handles)
+    handles.EPSG=load('EPSG');
+    setHandles(handles);
+end
 
 switch lower(OldSys.type)
     case{'cartesian','cart','xy','projection','projected','proj'}
