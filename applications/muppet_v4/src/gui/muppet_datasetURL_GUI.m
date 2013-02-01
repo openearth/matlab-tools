@@ -1,0 +1,71 @@
+function handles = muppet_datasetURL_GUI(handles, varargin)
+%MUPPET_DATASETURL_GUI  One line description goes here.
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   handles = muppet_datasetURL_GUI(varargin)
+%
+%   Input: For <keyword,value> pairs call muppet_datasetURL_GUI() without arguments.
+%   varargin  =
+%
+%   Output:
+%   handles =
+%
+%   Example
+%   muppet_datasetURL_GUI
+%
+%   See also
+
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2013 Deltares
+%       Kees den Heijer
+%
+%       Kees.denHeijer@Deltares.nl
+%
+%       Deltares
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 01 Feb 2013
+% Created with Matlab version: 8.0.0.783 (R2012b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%%
+s = struct();
+[s, ok] = gui_newWindow(s, 'xmldir', handles.xmldir, 'xmlfile', 'newurldataset.xml');
+
+iscatalog = ~isempty(regexpi(s.url, 'catalog.nc$', 'once'));
+
+if iscatalog
+    [urls, x_ranges, y_ranges] = grid_orth_getMapInfoFromDataset(s.url)
+end

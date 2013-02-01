@@ -61,10 +61,7 @@ if strcmpi(OPT.dataset(end-9:end),'catalog.nc')
 %% catalog.nc: check for presence of catalog.nc inside range of files listed in catalog.xml
 else
     OPT.urls    = opendap_catalog(OPT.dataset,'ignoreCatalogNc',0);
-    isCatalogNc = false(length(OPT.urls),1);
-    for ii = 1:length(OPT.urls)
-        isCatalogNc(ii) = strcmpi(OPT.urls{ii}(end-9:end),'catalog.nc');
-    end
+    isCatalogNc = ~cellfun(@isempty, regexpi(OPT.urls, 'catalog.nc$', 'once'));
     if any(isCatalogNc)
         OPT.catalognc = OPT.urls{isCatalogNc};
         try

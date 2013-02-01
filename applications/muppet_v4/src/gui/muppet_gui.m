@@ -18,6 +18,8 @@ else
             saveSession;
         case{'savesessionas'}
             saveSessionAs;
+        case{'adddatasetfromurl'}
+            addDatasetfromURL;
         case{'importlayout'}
             importLayout;
         case{'savelayout'}
@@ -158,6 +160,12 @@ if pathname~=0
   setHandles(handles);
   muppet_saveSessionFile(handles,handles.sessionfile,0);
 end
+
+%%
+function addDatasetfromURL
+handles = getHandles;
+handles=muppet_datasetURL_GUI(handles,[1 1 5 5],0);
+selectDataset;
 
 %%
 function importLayout
