@@ -1,4 +1,4 @@
-function getHYCOM(url, outname, outdir, par, xl, yl, dx, dy, t, s)
+function getHYCOM2(url, outname, outdir, par, xl, yl, dx, dy, t, s)
 %GETHYCOM  One line description goes here.
 %
 %   More detailed description goes here.
@@ -70,8 +70,6 @@ function getHYCOM(url, outname, outdir, par, xl, yl, dx, dy, t, s)
 % $Keywords: $
 
 %% Download Hycom data
-
-url='http://tds.hycom.org/thredds/dodsC/datasets/GLBa0.08/expt_90.9/data';
 
 nt=round(t(2)-t(1))+1;
 t=t(1):t(2);
