@@ -1,10 +1,10 @@
-function [x y z ok] = ddb_getBathymetry(handles, xl, yl, varargin)
+function [x y z ok] = ddb_getBathymetry(bathymetry, xl, yl, varargin)
 %DDB_GETBATHYMETRY  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   [x y z ok] = ddb_getBathy(handles, xl, yl, varargin)
+%   [x y z ok] = ddb_getBathymetry(handles, xl, yl, varargin)
 %
 %   Input:
 %   handles  =
@@ -70,6 +70,7 @@ ok              = 0;
 
 zoomlev         = 0;
 
+bathydir        = bathymetry.dir;
 bathy           = 'gebco08';
 startdate       = ceil(now);
 searchinterval  = -1e5;
@@ -96,16 +97,16 @@ end
 % tic
 % disp('Getting bathymetry data ...');
 
-iac       = strmatch(lower(bathy),lower(handles.bathymetry.datasets),'exact');
+iac       = strmatch(lower(bathy),lower(bathymetry.datasets),'exact');
 xsz       = xl(2)-xl(1);
 
-tp        = handles.bathymetry.dataset(iac).type;
+tp        = bathymetry.dataset(iac).type;
 
 switch lower(tp)
     
     %     case{'netcdf'}
     %
-    %         url=handles.bathymetry.dataset(iac).URL;
+    %         url=bathymetry.dataset(iac).URL;
     %
     % %         gridsize=nc_varget(url,'grid_size');
     %         gridsize=loaddap([url '?grid_size']);
@@ -178,16 +179,16 @@ switch lower(tp)
         % New tile type
         ok=1;
         
-        nLevels=handles.bathymetry.dataset(iac).nrZoomLevels;
+        nLevels=bathymetry.dataset(iac).nrZoomLevels;
         
         for i=1:nLevels
-            cellsizex(i)=handles.bathymetry.dataset(iac).zoomLevel(i).dx;
-            cellsizey(i)=handles.bathymetry.dataset(iac).zoomLevel(i).dy;
+            cellsizex(i)=bathymetry.dataset(iac).zoomLevel(i).dx;
+            cellsizey(i)=bathymetry.dataset(iac).zoomLevel(i).dy;
         end
         
         if zoomlev==0
             % Find zoom level based on resolution
-            if strcmpi(handles.bathymetry.dataset(iac).horizontalCoordinateSystem.type,'geographic')
+            if strcmpi(bathymetry.dataset(iac).horizontalCoordinateSystem.type,'geographic')
                 cellsizex=cellsizex*111111;
             end
             ilev=find(cellsizex<=maxcellsize,1,'last');
@@ -198,32 +199,32 @@ switch lower(tp)
             ilev=zoomlev;
         end
         
-        x0=handles.bathymetry.dataset(iac).zoomLevel(ilev).x0;
-        y0=handles.bathymetry.dataset(iac).zoomLevel(ilev).y0;
-        dx=handles.bathymetry.dataset(iac).zoomLevel(ilev).dx;
-        dy=handles.bathymetry.dataset(iac).zoomLevel(ilev).dy;
-        nx=handles.bathymetry.dataset(iac).zoomLevel(ilev).nx;
-        ny=handles.bathymetry.dataset(iac).zoomLevel(ilev).ny;
-        nnx=handles.bathymetry.dataset(iac).zoomLevel(ilev).ntilesx;
-        nny=handles.bathymetry.dataset(iac).zoomLevel(ilev).ntilesy;
-        vertunits=handles.bathymetry.dataset(iac).verticalCoordinateSystem.units;
+        x0=bathymetry.dataset(iac).zoomLevel(ilev).x0;
+        y0=bathymetry.dataset(iac).zoomLevel(ilev).y0;
+        dx=bathymetry.dataset(iac).zoomLevel(ilev).dx;
+        dy=bathymetry.dataset(iac).zoomLevel(ilev).dy;
+        nx=bathymetry.dataset(iac).zoomLevel(ilev).nx;
+        ny=bathymetry.dataset(iac).zoomLevel(ilev).ny;
+        nnx=bathymetry.dataset(iac).zoomLevel(ilev).ntilesx;
+        nny=bathymetry.dataset(iac).zoomLevel(ilev).ntilesy;
+        vertunits=bathymetry.dataset(iac).verticalCoordinateSystem.units;
         
         tilesizex=dx*nx;
         tilesizey=dy*ny;
         
         %% Directories and names
-        name=handles.bathymetry.dataset(iac).name;
+        name=bathymetry.dataset(iac).name;
         levdir=['zl' num2str(ilev,'%0.2i')];
         
         iopendap=0;
-        if strcmpi(handles.bathymetry.dataset(iac).URL(1:4),'http')
+        if strcmpi(bathymetry.dataset(iac).URL(1:4),'http')
             % OpenDAP
             iopendap=1;
-            remotedir=[handles.bathymetry.dataset(iac).URL '/' levdir '/'];
-            localdir=[handles.bathyDir name '\' levdir '\'];
+            remotedir=[bathymetry.dataset(iac).URL '/' levdir '/'];
+            localdir=[bathydir name '\' levdir '\'];
         else
             % Local
-            localdir=[handles.bathymetry.dataset(iac).URL '\' levdir '\'];
+            localdir=[bathymetry.dataset(iac).URL '\' levdir '\'];
             remotedir=localdir;
         end
         
@@ -235,7 +236,7 @@ switch lower(tp)
         % Make sure that tiles are read east +180 deg lon.
         iTileNrs=1:nnx;
         
-        if strcmpi(handles.bathymetry.dataset(iac).horizontalCoordinateSystem.type,'geographic') && x0<-179
+        if strcmpi(bathymetry.dataset(iac).horizontalCoordinateSystem.type,'geographic') && x0<-179
             % Probably a global dataset
             xx=[xx-360 xx xx+360];
             iTileNrs=[iTileNrs iTileNrs iTileNrs];
@@ -294,7 +295,7 @@ switch lower(tp)
                 
                 % First check whether file exists at at all
                 
-                iav=find(handles.bathymetry.dataset(iac).zoomLevel(ilev).iAvailable==itile & handles.bathymetry.dataset(iac).zoomLevel(ilev).jAvailable==j, 1);
+                iav=find(bathymetry.dataset(iac).zoomLevel(ilev).iAvailable==itile & bathymetry.dataset(iac).zoomLevel(ilev).jAvailable==j, 1);
                 
                 fv=NaN;
                 
@@ -303,7 +304,7 @@ switch lower(tp)
                     filename=[name '.zl' num2str(ilev,'%0.2i') '.' num2str(itile,'%0.5i') '.' num2str(j,'%0.5i') '.nc'];
                     
                     if iopendap
-                        if handles.bathymetry.dataset(iac).useCache
+                        if bathymetry.dataset(iac).useCache
                             % First check if file is available locally
                             if ~exist([localdir filename],'file')
                                 if ~exist(localdir,'dir')
@@ -321,7 +322,7 @@ switch lower(tp)
                         ncfile=[localdir filename];
                     end
                     
-                    if iopendap && ~handles.bathymetry.dataset(iac).useCache
+                    if iopendap && ~bathymetry.dataset(iac).useCache
                         try
                             zzz=nc_varget(ncfile, 'depth');
                             zzz=double(zzz);
@@ -381,13 +382,13 @@ switch lower(tp)
         
     case{'tiles'}
         
-        if isempty(handles.bathymetry.dataset(iac).refinementFactor)
+        if isempty(bathymetry.dataset(iac).refinementFactor)
             
             if zoomlev==0
                 ok=0;
-                for i=1:handles.bathymetry.dataset(iac).nrZoomLevels
-                    zmmin=handles.bathymetry.dataset(iac).zoomLevel(i).zoomLimits(1);
-                    zmmax=handles.bathymetry.dataset(iac).zoomLevel(i).zoomLimits(2);
+                for i=1:bathymetry.dataset(iac).nrZoomLevels
+                    zmmin=bathymetry.dataset(iac).zoomLevel(i).zoomLimits(1);
+                    zmmax=bathymetry.dataset(iac).zoomLevel(i).zoomLimits(2);
                     if xsz>=zmmin && xsz<=zmmax
                         iacz=i;
                         ok=1;
@@ -402,10 +403,10 @@ switch lower(tp)
                 iacz=zoomlev;
             end
             
-            tilesize=handles.bathymetry.dataset(iac).zoomLevel(iacz).tileSize;
-            gridsize=handles.bathymetry.dataset(iac).zoomLevel(iacz).gridCellSize;
+            tilesize=bathymetry.dataset(iac).zoomLevel(iacz).tileSize;
+            gridsize=bathymetry.dataset(iac).zoomLevel(iacz).gridCellSize;
             
-            if strcmpi(handles.bathymetry.dataset(iac).horizontalCoordinateSystem.type,'geographic')
+            if strcmpi(bathymetry.dataset(iac).horizontalCoordinateSystem.type,'geographic')
                 tilesize=dms2degrees(tilesize);
                 gridsize=dms2degrees(gridsize);
             end
@@ -417,11 +418,11 @@ switch lower(tp)
             nx=round((x1-x0)/tilesize);
             ny=round((y1-y0)/tilesize);
             
-            dirname1=handles.bathymetry.dataset(iac).directoryName;
-            dirname2=handles.bathymetry.dataset(iac).zoomLevel(iacz).directoryName;
-            fname=handles.bathymetry.dataset(iac).zoomLevel(iacz).fileName;
+            dirname1=bathymetry.dataset(iac).directoryName;
+            dirname2=bathymetry.dataset(iac).zoomLevel(iacz).directoryName;
+            fname=bathymetry.dataset(iac).zoomLevel(iacz).fileName;
             
-            dirstr=[handles.bathyDir '\' dirname1 '\' dirname2 '\'];
+            dirstr=[bathydir '\' dirname1 '\' dirname2 '\'];
             
             z=[];
             for i=1:nx
@@ -491,10 +492,10 @@ switch lower(tp)
             % New tile type
             ok=1;
             
-            tileMax=handles.bathymetry.dataset(iac).maxTileSize;
-            nLevels=handles.bathymetry.dataset(iac).nrZoomLevels;
-            nRef=handles.bathymetry.dataset(iac).refinementFactor;
-            nCell=handles.bathymetry.dataset(iac).nrCells;
+            tileMax=bathymetry.dataset(iac).maxTileSize;
+            nLevels=bathymetry.dataset(iac).nrZoomLevels;
+            nRef=bathymetry.dataset(iac).refinementFactor;
+            nCell=bathymetry.dataset(iac).nrCells;
             
             tileSizes(1)=tileMax;
             for i=2:nLevels
@@ -507,7 +508,7 @@ switch lower(tp)
             if zoomlev==0
                 ilev=find(tileSizes/dx<0.5,1,'first');
                 if isempty(ilev)
-                    ilev=handles.bathymetry.dataset(iac).nrZoomLevels;
+                    ilev=bathymetry.dataset(iac).nrZoomLevels;
                 end
             else
                 ilev=zoomlev;
@@ -523,18 +524,18 @@ switch lower(tp)
             nx=round((x1-x0)/tilesize);
             ny=round((y1-y0)/tilesize);
             
-            dirname1=handles.bathymetry.dataset(iac).directoryName;
+            dirname1=bathymetry.dataset(iac).directoryName;
             dirname2=['zoomlevel' num2str(ilev,'%0.2i')];
-            fname=[handles.bathymetry.dataset(iac).directoryName '.z' num2str(ilev,'%0.2i')];
+            fname=[bathymetry.dataset(iac).directoryName '.z' num2str(ilev,'%0.2i')];
             
-            dirstr=[handles.bathyDir '\' dirname1 '\' dirname2 '\'];
+            dirstr=[bathydir '\' dirname1 '\' dirname2 '\'];
             
             z=[];
             for i=1:nx
                 zz=[];
                 for j=1:ny
-                    iindex=i+floor((xl(1)-handles.bathymetry.dataset(iac).xOrigin)/tilesize);
-                    jindex=j+floor((yl(1)-handles.bathymetry.dataset(iac).yOrigin)/tilesize);
+                    iindex=i+floor((xl(1)-bathymetry.dataset(iac).xOrigin)/tilesize);
+                    jindex=j+floor((yl(1)-bathymetry.dataset(iac).yOrigin)/tilesize);
                     fnametile=[dirstr fname '.' num2str(iindex,'%0.6i') '.' num2str(jindex,'%0.6i') '.mat'];
                     if exist(fnametile,'file')
                         a=load(fnametile);
@@ -561,8 +562,8 @@ switch lower(tp)
         
     case{'gridded'}
         try
-            [x,y]=meshgrid(handles.bathymetry.dataset(iac).x, handles.bathymetry.dataset(iac).y);
-            z=handles.bathymetry.dataset(iac).z;
+            [x,y]=meshgrid(bathymetry.dataset(iac).x, bathymetry.dataset(iac).y);
+            z=bathymetry.dataset(iac).z;
             ok=1;
         catch
             ok=0;
@@ -571,7 +572,7 @@ switch lower(tp)
     case{'kaartblad'}
         % retreive data from specified dataset with grid_orth_getDataInPolygon
         [x, y, z]   = grid_orth_getDataInPolygon(...
-            'dataset'       , handles.bathymetry.dataset(iac).URL, ...
+            'dataset'       , bathymetry.dataset(iac).URL, ...
             'polygon'       , [xl(1) xl(2) xl(2) xl(1) xl(1);yl(1) yl(1) yl(2) yl(2) yl(1)]', ...
             'starttime'     , startdate, ...
             'searchinterval', searchinterval, ...
