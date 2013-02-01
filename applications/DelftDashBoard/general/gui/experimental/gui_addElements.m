@@ -949,10 +949,17 @@ else
     selectiontext=el.selectiontext;
 end
 
-if isfield(el.extension,'variable')
-    extension=gui_getValue(el,el.extension.variable);
+if isstruct(el.extension)
+    for ii=1:length(el.extension)
+        extension{ii,1}=el.extension(ii).extension;
+        extension{ii,2}=el.extension(ii).extension;
+    end
 else
-    extension=el.extension;
+    if isfield(el.extension,'variable')
+        extension=gui_getValue(el,el.extension.variable);
+    else
+        extension=el.extension;
+    end
 end
 
 [filename, pathname, filterindex] = uiputfile(extension,selectiontext,fnameori);
