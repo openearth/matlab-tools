@@ -67,5 +67,23 @@ s = struct();
 iscatalog = ~isempty(regexpi(s.url, 'catalog.nc$', 'once'));
 
 if iscatalog
-    [urls, x_ranges, y_ranges] = grid_orth_getMapInfoFromDataset(s.url)
+    urlPath = cellstr(nc_varget(s.url, 'urlPath'));
+    % check whether urlPath is correct (sometimes cropped to 64 characters, possibly leading to all identical urls)
+    if isequal(size(unique(urlPath)), size(urlPath))
+        urls = urlPath;
+        x_ranges = nc_varget(s.url, 'projectionCoverage_x');
+        y_ranges = nc_varget(s.url, 'projectionCoverage_y');
+    else
+        [urls, x_ranges, y_ranges] = grid_orth_getMapInfoFromDataset(s.url(1:end-10));
+    end
+else
+    [urls, x_ranges, y_ranges] = grid_orth_getMapInfoFromDataset(s.url);
 end
+
+pg = landboundary_da('read', s.polygonfile);
+
+[X, Y, Z, Ztime, OPT] = grid_orth_getDataInPolygon(...
+    'polygon', pg,...
+    'urls', urls,...
+    'x_ranges', x_ranges,...
+    'y_ranges', y_ranges);

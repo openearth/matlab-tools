@@ -14,6 +14,15 @@
     <textposition>left</textposition>
   </element>
   <element>
+    <tag>polygon</tag>
+    <style>edit</style>
+    <position>130 190 740 20</position>
+    <variable>polygonfile</variable>
+    <type>string</type>
+    <text>Polygon file</text>
+    <textposition>left</textposition>
+  </element>
+  <element>
     <tag>cancel</tag>
     <style>pushcancel</style>
     <position>40 30 70 20</position>
