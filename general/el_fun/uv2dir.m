@@ -19,19 +19,12 @@ if nargin == 2,
     convention='cartesian';
 end;
 
-if size(u,2)== 1
-    u = u(:);
-    v = v(:);
-    dir = zeros(length(u));
-else
-    dir = zeros(size(u,1),size(u,2));
-end
 
+% derive direction
 if strcmpi(convention,'cartesian')
     dir = mod(atan2(u,v)*180/pi,360);
-else if strcmpi(convention,'nautical')
-       dir = mod(atan2(-u,-v)*180/pi,360); 
-    end
+elseif strcmpi(convention,'nautical')
+    dir = mod(atan2(-u,-v)*180/pi,360);
 end
 
 dir(u==0&v==0) = NaN;
