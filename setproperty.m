@@ -171,7 +171,10 @@ switch(class(inputCell))
         inputCell = [{inputCell} varargin];
         varargin  = {};
     case 'cell'
-        % new syntax mode, do nothing
+        % recursively let setproperty peel all leading structs from cell
+        if isstruct(inputCell{1})
+           inputCell = {setproperty(inputCell{:})};
+        end
     otherwise
         error('SETPROPERTY:inputCell',...
             'Second input must be a cell, (or a char or struct for legacy syntax)')
