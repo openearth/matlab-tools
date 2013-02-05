@@ -280,7 +280,9 @@ switch lower(tp)
         % Start indices for each tile in larger matrix
         for i=1:nnnx
             %            iStartX(i)=find(abs(xx-x0Tiles(i))<1e-5);
-            iStartX(i)=find(abs(xx-x0Tiles(i))==min(abs(xx-x0Tiles(i))));
+            
+            iii1=find(abs(xx-x0Tiles(i))==min(abs(xx-x0Tiles(i))));
+            iStartX(i)=iii1(1);
         end
         
         %% Get tiles
