@@ -94,6 +94,7 @@ varargin = prob_checkinput(varargin{:});
 % defaults
 OPT = struct(...
     'stochast',     struct(),   ...     % stochast structure
+    'CorrMatrix',[],            ...     % matrix with correlation coefficients (for Gaussian correlation)
     'x2zFunction',  @x2z,       ...     % Function to transform x to z
     'x2zVariables', {{}},       ...     % additional variables to use in x2zFunction
     'method',       'matrix',   ...     % z-function method 'matrix' (default) or 'loop'
@@ -151,6 +152,7 @@ end
 stochast    = OPT.stochast;
 IS          = OPT.IS;
 
+
 % determine active stochasts
 active      = ~cellfun(@isempty, {stochast.Distr}) &     ...
               ~strcmp('deterministic', cellfun(@func2str, {stochast.Distr}, 'UniformOutput', false));
@@ -189,7 +191,8 @@ while (~useAccuracy && n==1) || (useAccuracy && ( ...
         P_exc(idx,1)                = prod(1-P(idx,active).*repmat(P_corr(idx,:),1,sum(active)),2);
 
         % transform P to x
-        x(idx,:)                    = feval(OPT.P2xFunction, stochast, P(idx,:));
+        x(idx,:)                    = feval(OPT.P2xFunction, stochast, P(idx,:), 'CorrMatrix', OPT.CorrMatrix);
+       
     end
 
     % determine failures
