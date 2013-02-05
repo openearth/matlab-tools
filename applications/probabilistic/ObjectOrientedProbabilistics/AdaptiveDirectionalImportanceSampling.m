@@ -51,6 +51,7 @@ classdef AdaptiveDirectionalImportanceSampling < DirectionalSampling
     properties
         MaxPRatio
         MinNrApproximatedPoints
+        MinNrLimitStatePoints
     end
     
     properties (Dependent = true)
@@ -124,6 +125,7 @@ classdef AdaptiveDirectionalImportanceSampling < DirectionalSampling
 
             this.ComputeOrigin
             
+            %Use start-up method if available
             if ~isempty(this.StartUpMethods)
                 this.StartUpMethods.StartUp(this.LimitState, this.LimitState.RandomVariables)
             end
@@ -150,31 +152,38 @@ classdef AdaptiveDirectionalImportanceSampling < DirectionalSampling
                         
                         this.AssignUNormalIndices(this.LineSearcher.NrEvaluations, this.IndexQueue(iq));
                         
+                        %Check whether last point needs to be evaluated
+                        %exactly (is in beta sphere)
                         if this.CheckExactEvaluationLastPoint
                             this.DisableEvaluations(this.UNormalIndexPerEvaluation == this.IndexQueue(iq));
                             this.LineSearcher.StartBeta = this.LimitState.BetaValues(end);
                             this.LineSearcher.StartZ    = this.LimitState.ZValues(end);
                             this.LineSearcher.PerformSearch(this.UNormalVector(this.IndexQueue(iq),:), this.LimitState, this.LimitState.RandomVariables);
                             this.AssignUNormalIndices(this.LineSearcher.NrEvaluations, this.IndexQueue(iq));
-%                             this.plot
+%                             this.plot; pause(0.1); close;
                         end
                         
                         this.UpdatePf
                         
                         this.CheckConvergence;
-                        if this.LineSearcher.SearchConverged && ~this.LineSearcher.ApproximateUsingARS
+                        
+                        if ~this.LineSearcher.ApproximateUsingARS
                             this.LimitState.UpdateResponseSurface
                             if this.LastIteration
                                 this.LastIteration      = false;
                             end
                         end
                         
+                        %Remove the first element of the reevaluate vector
+                        %(which was just reevaluated)
                         if ~isempty(this.ReevaluateIndices)
                             this.ReevaluateIndices(1)   = [];
                         end
                     end
                 end
                 
+                %Extend beta sphere to include closest approximated point,
+                %if PRatio is too large
                 if ~this.CheckPRatio && this.PfApproximated ~= 0
                     beta    = min(this.LimitState.BetaValues(this.LimitState.EvaluationIsEnabled & ~this.LimitState.EvaluationIsExact & this.EvaluationApproachesZero & this.LimitState.BetaValues > 0));
                     idx     = find(this.LimitState.BetaValues == beta, 1, 'first');
@@ -203,7 +212,8 @@ classdef AdaptiveDirectionalImportanceSampling < DirectionalSampling
             this.MaxPRatio                  = 0.4;
             this.MinNrDirections            = 50;
             this.MaxNrDirections            = 1000;
-            this.MinNrApproximatedPoints    = 50;
+            this.MinNrLimitStatePoints      = 0;
+            this.MinNrApproximatedPoints    = 0;
             this.SolutionConverged          = false;
             this.StopCalculation            = false;
             this.NrDirectionsEvaluated      = 0;
@@ -213,7 +223,7 @@ classdef AdaptiveDirectionalImportanceSampling < DirectionalSampling
              
         %Check convergence of the solution
         function CheckConvergence(this)
-            if this.CheckPRatio && this.CheckCOV && this.NrDirectionsEvaluated > this.MinNrDirections && (sum(~this.LimitState.EvaluationIsExact & this.EvaluationApproachesZero) >= this.MinNrApproximatedPoints)
+            if this.CheckPRatio && this.CheckCOV && this.NrDirectionsEvaluated > this.MinNrDirections && sum(this.EvaluationApproachesZero) >= this.MinNrLimitStatePoints  && (sum(~this.LimitState.EvaluationIsExact & this.EvaluationApproachesZero) >= this.MinNrApproximatedPoints) 
                 this.SolutionConverged = true;
             else
                 this.SolutionConverged = false;
@@ -227,6 +237,16 @@ classdef AdaptiveDirectionalImportanceSampling < DirectionalSampling
             else 
                 goodRatio   = false;
             end 
+        end
+             
+        %Check if previously approximated point needs to be evaluated
+        %exactly
+        function evaluateExact = CheckExactEvaluationLastPoint(this)
+            if this.LimitState.BetaSphere.IsInBetaSphere(this.LimitState.BetaValues(end), this.LimitState, this.EvaluationApproachesZero) && this.LineSearcher.SearchConverged && ~this.LimitState.EvaluationIsExact(end)
+                evaluateExact   = true;
+            else
+                evaluateExact   = false;
+            end
         end
         
         %Disable evaluations so that they aren't used to calculate Pf

@@ -180,8 +180,11 @@ classdef AdaptiveResponseSurface < handle
             end
             
             cm = colormap('gray');
+%             cm = colormap('cool');
+%             cm1 = colormap('spring');
             
             colorbar('peer',axARS);
+%             colormap(axARS,[cm; cm1]);
             colormap(axARS,[flipud(cm) ; cm]);
             shading(axARS,'flat');
             clim(axARS,[-1 1]);

@@ -93,11 +93,15 @@ classdef BetaSphere < handle
         %Set default values
         function SetDefaults(this)
             this.BetaSphereMargin   = 0.1;
+            this.MinBeta = Inf;
         end
 
         %Calculate MinBeta
         function CalculateMinBeta(this, limitState, approachesZero)
-            this.MinBeta = min(limitState.BetaValues(limitState.EvaluationIsExact & approachesZero));
+            minBeta = min(limitState.BetaValues(limitState.EvaluationIsExact & approachesZero));
+            if ~isempty(minBeta) && ~isnan(minBeta) && isfinite(minBeta) && minBeta > 0
+                this.MinBeta = minBeta;
+            end
         end
         
         %Check if point is in Beta Sphere

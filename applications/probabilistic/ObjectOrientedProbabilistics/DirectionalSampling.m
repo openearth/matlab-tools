@@ -294,16 +294,6 @@ classdef DirectionalSampling < ProbabilisticMethod
             end
         end
         
-        %Check if previously approximated point needs to be evaluated
-        %exactly
-        function evaluateExact = CheckExactEvaluationLastPoint(this)
-            if this.LineSearcher.SearchConverged && this.LimitState.BetaSphere.IsInBetaSphere(this.LimitState.BetaValues(end), this.LimitState, this.EvaluationApproachesZero) && ~this.LimitState.EvaluationIsExact(end)
-                evaluateExact   = true;
-            else
-                evaluateExact   = false;
-            end
-        end
-        
         %Fill the UNormalIndexPerEvaluation vector, to track the index of 
         %the  direction of each evaluation
         function AssignUNormalIndices(this, nrEvaluations, index)

@@ -117,6 +117,21 @@ classdef StartUpMethod < handle
             end
             this.UNormalVector  = un;
         end
+%         
+%         function ConstructUNormalVector(this, limitState)
+%             un  = zeros(4*limitState.NumberRandomVariables, limitState.NumberRandomVariables);
+%             for i = 1:(0.5*size(un,1))
+%                 un(i,ceil(i/2)) = (-1)^i;
+%             end
+%             
+%             for i = (0.5*size(un,1)+1):size(un,1)
+%                 un() = sqrt(2)*(-1)^i;
+%                 un() = sqrt(2)*(-1)^i;
+%             end
+%             this.UNormalVector  = un;
+%         end
+%         
+        
         
         % Set default values
 %         function SetDefaults(this)
