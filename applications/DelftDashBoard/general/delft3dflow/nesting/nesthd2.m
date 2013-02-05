@@ -837,11 +837,19 @@ for it=1:length(nest.t)
         % A
         z0=squeeze(z(it,:,1));
         val0=squeeze(val(it,:,1));
+
         imin=find(~isnan(z0)&~isnan(val0), 1 );
         imax=find(~isnan(z0)&~isnan(val0), 1, 'last' );
         z0=z0(imin:imax);
         val0=val0(imin:imax);
         
+        % Sometimes required in case of z layers
+        imax=find(isnan(z0), 1, 'first' );
+        if ~isempty(imax)
+            z0=z0(1:imax-1);
+            val0=val0(1:imax-1);
+        end
+
         if isempty(imin)
             error(['Boundary ' bnd.name ' - end A contains only NaNs']);
         end
@@ -856,6 +864,13 @@ for it=1:length(nest.t)
         imax=find(~isnan(z0)&~isnan(val0), 1, 'last' );
         z0=z0(imin:imax);
         val0=val0(imin:imax);
+        
+        % Sometimes required in case of z layers
+        imax=find(isnan(z0), 1, 'first' );
+        if ~isempty(imax)
+            z0=z0(1:imax-1);
+            val0=val0(1:imax-1);
+        end
         
         if isempty(imin)
             error(['Boundary ' bnd.name ' - end B contains only NaNs']);
@@ -910,6 +925,7 @@ for it=1:length(nest.t)
             z0=[12000 z0 -12000];
         end
         val0=[val0(1) val0 val0(end)];
+
         val1(it,:,1)=interp1(z0,val0,squeeze(-dplayer(1,:)));
         
         % B
