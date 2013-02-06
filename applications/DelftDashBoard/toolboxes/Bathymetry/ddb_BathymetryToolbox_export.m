@@ -236,7 +236,7 @@ end
 setHandles(handles);
 
 %%
-function changePolygon(x,y,varargin)
+function changePolygon(h,x,y,varargin)
 handles=getHandles;
 handles.Toolbox(tb).Input.polygonX=x;
 handles.Toolbox(tb).Input.polygonY=y;
@@ -252,7 +252,8 @@ handles.Toolbox(tb).Input.polygonY=y;
 handles.Toolbox(tb).Input.polyLength=length(x);
 h=findobj(gca,'Tag','bathymetrypolygon');
 delete(h);
-h=gui_polyline('plot','x',x,'y',y,'tag','bathymetrypolygon','marker','o');
+h=gui_polyline('plot','x',x,'y',y,'tag','bathymetrypolygon','marker','o', ...
+        'changecallback',@changePolygon);
 handles.Toolbox(tb).Input.polygonhandle=h;
 setHandles(handles);
 
