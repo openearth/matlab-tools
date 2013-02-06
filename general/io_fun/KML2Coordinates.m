@@ -1,16 +1,13 @@
-function varargout = KML2Coordinates(FileName)
+function varargout = KML2Coordinates(FileName,varargin)
 % KML2COORDINATES transforms .kml polygons/paths into a Matlab cell
 % 
-%   varargout = KML2COORDINATES(FileName) 
-%   returns a cell of arrays MX3. 
+%   [LAT,lon,z,<names>] = KML2COORDINATES(FileName,<keyword,value>) returns
+%   NaN-separated arrays (NOTE LAT 1sT), with a NaN between each placemark.
+
+%   out = KML2COORDINATES(FileName) returns a cell of arrays MX3. 
 %   The arrays are double arrays, each composed of xyz coordinates of the points 
-%   of the specific polygon (path). 
-%   Cell size depends on the number of polygons/paths in the file. 
-%   
-%   KML2COORDINATES parses the .kml (.kmz) file, looks for tag <coordinates>, and
-%   records the coordinates as an array of size MX3.
-%
-%   KML2COORDINATES reads Coordinates as x,y,z either displaced in column or in a row
+%   of the specific polygon (path).  Cell size depends on the number
+%   of polygons/paths (placemarks) in the file. 
 %
 %   Example:
 %       % polygons of buildings
@@ -26,45 +23,114 @@ function varargout = KML2Coordinates(FileName)
 %       plot(p.x,p.y)
 %       landboundary('write','doc.ldb',p.x,p.y)
 %
-% See also: googleplot, line, patch, KMl2ldb, landboundary
+% See also: googleplot, line, patch, KMl2ldb, landboundary, poly_fun
+
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
+
+OPT.method = 'xml'; % safes for comments etc, but slower
+
+OPT = setproperty(OPT,varargin);
 
 if strcmp(FileName(end-3:end),'.kmz')
     unzip(FileName);
-    fid = fopen([FileName(1:end-4) '.kml']);
+    kmlname = [FileName(1:end-4) '.kml'];
 elseif strcmp(FileName(end-3:end),'.kml')
-	fid = fopen(FileName);
+	kmlname = FileName;
 else
-	fid = fopen([FileName '.kml']);
+	kmlname = [FileName '.kml'];
 end
 
-jj  = 0;
-while ~feof(fid)
-    newline = textscan(fid, '%s', 1);
-    if strcmp(newline{:},'<coordinates>')
-        fgetl(fid);
-        jj = jj+1;
-        coordline = fgetl(fid);
-        
-        % coordinates x,y,z displaced in column
-        if length(regexp(coordline, ',')) == 2
-            kk = 0;
-            while ~strcmp(char(regexp(coordline,'</coordinates>','match')),'</coordinates>')
-                kk = kk+1;
-                coord{kk,:} = str2num(coordline);
-                coordline = fgetl(fid);
-            end
-            coordCell{jj} = cell2mat(coord);
-            clear coord;
-            
-        else % coordinates x,y,z displaced in a row
-            coord = (reshape(str2num(coordline),3,[]))';
-            coordCell{jj} = coord;
-            clear coord;
+switch OPT.method
+ case 'xml'
+    xml = xml_read(kmlname);
+    p = xml.Document.Placemark;
+    for jj=1:length(p)
+        names{jj} = p(jj).name;
+        if isnumeric(names{jj})
+            names{jj} = num2str(names{jj});
         end
-        
+    coordCell{jj} = (reshape(p(jj).LineString.coordinates,[],3))';
     end
 
-end
-fclose(fid);
+ case 'fgetl' % has issues for manually editged kml: <coordinates> in same line as </coordinates>
+	fid = fopen(kmlname);
+    jj  = 0;
+    while ~feof(fid)
+        next = 0;
+        newline = fgetl(fid);
+        if any(strfind(newline,'<coordinates>'))
+            ind1 = strfind(newline,'<coordinates>')+13;
+            ind2 = strfind(newline,'</coordinates>')-1;
+            if isempty(ind2);ind2 = length(newline);else;error('<coordinates> and </coordinates> on same line not yet implemented')end
+            coordline = newline(ind1:ind2) % remaining data in <coordinates> line
+            if isempty(coordline);
+            coordline = fgetl(fid);
+            end
+            jj = jj+1;
+            names{jj} = p(jj).Document.name;
+            % coordinates x,y,z can be column-wise, row-wise,
+            % or mixed,. end-tag coordinates can be 
+            % on same line as  x,y,z  or newline.
+                kk = 0;
+                t = char(regexp(coordline,'</coordinates>','match'));
+                while ~strcmp(t,'</coordinates>')
+                    kk = kk+1;
+                    coord{kk,:} = str2num(coordline);
+                    coordline = fgetl(fid);
+                    t = char(regexp(coordline,'</coordinates>','match'));
+                    % parse coord when end-tag is on same line
+                    if strcmp(t,'</coordinates>')
+                       ind = strfind(coordline,'</coordinates>');
+                       kk = kk+1;
+                       coord{kk,:} = str2num(coordline(1:ind-1));                       
+                    end
+                end
+                coordCell{jj} = cell2mat(coord);
+                clear coord;
 
-varargout = {coordCell};
+        end
+
+    end
+    fclose(fid);
+ end % case
+if nargout==1
+    varargout = {coordCell};
+elseif nargout>2
+    lon = cell2mat(cellfun(@(x) [x(1,:) nan],coordCell,'UniformOutput',0));
+    lat = cell2mat(cellfun(@(x) [x(2,:) nan],coordCell,'UniformOutput',0));
+    z   = cell2mat(cellfun(@(x) [x(3,:) nan],coordCell,'UniformOutput',0));
+    if nargout==3
+    varargout = {lat,lon,z}; 
+    elseif nargout==4
+    varargout = {lat,lon,z,names}; 
+    end
+end 
