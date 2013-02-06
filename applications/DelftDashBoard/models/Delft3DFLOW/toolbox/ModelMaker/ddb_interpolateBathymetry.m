@@ -159,8 +159,9 @@ for id=1:length(datasets)
     zz(zz>zmx)=NaN;        
     
     isn=isnan(xg);
-%    xg(isn)=0;
-%    yg(isn)=0;    
+    % Next two line are necessary in Matlab 2010b (and older?)
+    xg(isn)=0;
+    yg(isn)=0;
     % Copy new values (that are not NaN) to new bathymetry
     z0=interp2(xx,yy,zz,xg,yg);    
     z0(isn)=NaN;
@@ -168,9 +169,6 @@ for id=1:length(datasets)
     z(~isnan(z0))=z0(~isnan(z0));
         
 end
-
-%z=internaldiffusion(z);
-%z(isnan(xg))=NaN;
 
 % Interpolated data in MSL, now convert to model datum
 z=z-verticaloffset;
