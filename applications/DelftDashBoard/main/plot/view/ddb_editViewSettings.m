@@ -144,7 +144,11 @@ closereq;
 uiresume;
 
 if plotnew
-    ddb_plotBackgroundBathymetry(h);
+%    ddb_plotBackgroundBathymetry(h);
+    x11=h.GUIData.x;
+    y11=h.GUIData.y;
+    z11=h.GUIData.z;
+    ddb_plotBackgroundBathymetryImage(h,x11,y11,z11);
 end
 
 %%
