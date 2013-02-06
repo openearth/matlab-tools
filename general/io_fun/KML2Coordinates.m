@@ -3,7 +3,7 @@ function varargout = KML2Coordinates(FileName,varargin)
 % 
 %   [LAT,lon,z,<names>] = KML2COORDINATES(FileName,<keyword,value>) returns
 %   NaN-separated arrays (NOTE LAT 1sT), with a NaN between each placemark.
-
+%
 %   out = KML2COORDINATES(FileName) returns a cell of arrays MX3. 
 %   The arrays are double arrays, each composed of xyz coordinates of the points 
 %   of the specific polygon (path).  Cell size depends on the number
@@ -74,11 +74,11 @@ switch OPT.method
     xml = xml_read(kmlname);
     p = xml.Document.Placemark;
     for jj=1:length(p)
-        names{jj} = p(jj).name;
-        if isnumeric(names{jj})
-            names{jj} = num2str(names{jj});
-        end
-    coordCell{jj} = (reshape(p(jj).LineString.coordinates,[],3))';
+       names{jj} = p(jj).name;
+       if isnumeric(names{jj})
+           names{jj} = num2str(names{jj});
+       end
+       coordCell{jj} = reshape(p(jj).LineString.coordinates,3,[])';
     end
 
  case 'fgetl' % has issues for manually editged kml: <coordinates> in same line as </coordinates>
@@ -90,21 +90,24 @@ switch OPT.method
         if any(strfind(newline,'<coordinates>'))
             ind1 = strfind(newline,'<coordinates>')+13;
             ind2 = strfind(newline,'</coordinates>')-1;
-            if isempty(ind2);ind2 = length(newline);else;error('<coordinates> and </coordinates> on same line not yet implemented')end
-            coordline = newline(ind1:ind2) % remaining data in <coordinates> line
+            if isempty(ind2);ind2 = length(newline);else;error('<coordinates> and </coordinates> on same line not yet implemented');end
+            coordline = newline(ind1:ind2);% remaining data in <coordinates> line
             if isempty(coordline);
             coordline = fgetl(fid);
             end
             jj = jj+1;
-            names{jj} = p(jj).Document.name;
+            names{jj} = '';
             % coordinates x,y,z can be column-wise, row-wise,
             % or mixed,. end-tag coordinates can be 
             % on same line as  x,y,z  or newline.
                 kk = 0;
                 t = char(regexp(coordline,'</coordinates>','match'));
                 while ~strcmp(t,'</coordinates>')
-                    kk = kk+1;
-                    coord{kk,:} = str2num(coordline);
+                    coordline = reshape(str2num(coordline),3,[]);
+                    for ii=1:size(coordline,2)
+                       kk = kk+1;
+                       coord{kk,:} =  coordline(:,ii)';
+                    end
                     coordline = fgetl(fid);
                     t = char(regexp(coordline,'</coordinates>','match'));
                     % parse coord when end-tag is on same line
@@ -124,11 +127,14 @@ switch OPT.method
  end % case
 if nargout==1
     varargout = {coordCell};
-elseif nargout>2
-    lon = cell2mat(cellfun(@(x) [x(1,:) nan],coordCell,'UniformOutput',0));
-    lat = cell2mat(cellfun(@(x) [x(2,:) nan],coordCell,'UniformOutput',0));
-    z   = cell2mat(cellfun(@(x) [x(3,:) nan],coordCell,'UniformOutput',0));
-    if nargout==3
+elseif nargout>1
+    % make NaN-seperated polygons from seperate cells
+    lon = cell2mat(cellfun(@(x) [x(:,1)' nan],coordCell,'UniformOutput',0));lon = lon(1:end-1);
+    lat = cell2mat(cellfun(@(x) [x(:,2)' nan],coordCell,'UniformOutput',0));lat = lat(1:end-1);
+    z   = cell2mat(cellfun(@(x) [x(:,3)' nan],coordCell,'UniformOutput',0));lz  = z  (1:end-1);
+    if nargout==2
+    varargout = {lat,lon}; 
+    elseif nargout==3
     varargout = {lat,lon,z}; 
     elseif nargout==4
     varargout = {lat,lon,z,names}; 

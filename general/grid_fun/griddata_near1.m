@@ -73,7 +73,7 @@ OPT.ndisp = 100;
 OPT.Rmax  = Inf; % make this optionally same size as X and Y.
 OPT.quiet = false;
 
-if nargin==0;ZI = OPT;return;end
+if nargin==0;varargout = {OPT};return;end
 
 OPT  = setproperty(OPT,varargin);
 

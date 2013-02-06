@@ -122,7 +122,9 @@ function OUT = addrowcol(IN,varargin);
    
 %% Recursive algorithm
 
-   if length(border) >1
+   if length(border) ==0
+         OUT = IN;       
+   elseif length(border) >1
       
          OUT = IN;
          
