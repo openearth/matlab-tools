@@ -1,18 +1,18 @@
-function X = truncnorm_inv(P, mu, sigma, LowLim, UppLim)
-%TRUNCNORM_INV  inverse of the normal cumulative distribution function
-%(cdf), with fixed upper and lower limits
+function P = truncnorm_cdf(X, mu, sigma, LowLim, UppLim)
+%TRUNCNORM_CDF  cdf of the normal cumulative distribution function
+%with fixed upper and lower limits
 %
 %
 % input
-%    - P:      array of probabilties of non-exceedance. All elements of this array have to be between 0 and 1
+%    - X:      X-values
 %    - mu:     mean of the Gaussion distribution function
 %    - sigma:  standard deviation of the Gaussion distribution function
 %    - LowLim, UppLim: upper and lower limit of truncated normal
 % output
-%    - X:  Normally distributed value(s) with mean "mu" and standard deviation "sigma" distributed value(s)
+%    - P:      array of probabilties of non-exceedance. 
 %
 %   Example
-%   truncnorm_inv
+%   truncnorm_cdf
 %
 %   See also
 
@@ -49,10 +49,6 @@ function X = truncnorm_inv(P, mu, sigma, LowLim, UppLim)
 % $HeadURL$
 
 %% checks
-if max(P)>1 & min(P)<0 %#ok<AND2>
-    error('values should be between 0 and 1')
-end
-
 if LowLim>UppLim
    error('lower limit should be <= upper limit'); 
 end
@@ -64,9 +60,12 @@ end
 PL = norm_cdf(LowLim, mu, sigma);
 PU = norm_cdf(UppLim, mu, sigma);
 
-% transform input P, taking upper and lower limit into account
-Ptrans = P*PU+(1-P)*PL;
+% call cdf of the normal distribution function
+P1 = norm_cdf(X, mu, sigma);  % Normally distributed value(s) with mean "mu" and standard deviation "sigma"  
 
-% call inverse of the normal distribution function
-X = norm_inv(Ptrans, mu, sigma); % Normally distributed value(s) with mean "mu" and standard deviation "sigma"  
+% transform P, taking upper and lower limit into account
+P = (P1-PL)/(PU-PL);
+P(X<LowLim)=0;
+P(X>UppLim)=1;
+
 
