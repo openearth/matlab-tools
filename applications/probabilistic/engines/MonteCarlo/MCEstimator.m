@@ -18,8 +18,7 @@ function result = MCEstimator(idFail,P_corr, Confidence)
 %   Input:
 %   idFail:     vector with 1/0 values that indicate failure/no failure
 %   P_corr:     Corrections for importance sampling: f(x)/h(x)
-%   Confidence: k-value for desired confidence interval (i.e. k=1.96  = 95%
-%                confidence inteval
+%   Confidence: confidence interval (in case of 95%, put 0.95)
 %
 %   Output:
 %   result = structure with results:
