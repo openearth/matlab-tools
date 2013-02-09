@@ -1,13 +1,19 @@
-function result = MCEstimator(idFail,P_corr, Confidence)
-%MCConvidence  computes Monte Carlo estimator and convidence intervals 
-
-%   This routine derives the Monte carlo estimator for the probability of 
-%    failure and confidence intervals. It
-%   derives the variance of all N samples of gx. gx is the value of the 
-%   the Monte Carlo estimator. for Crude Monte carlo, gx is either 1
-%   (failure), or 0 (no failure). for impotance sampling, gx is either 0
-%   (no failure) or f(x)/h(x), where f(x) is the density function of random vector X
-%   and h(x) is the importance sampling distribution. 
+function result = MCEstimator(gx, P_corr, Confidence)
+% MCEstimator  computes Monte Carlo estimator and convidence intervals
+%
+%   This routine derives the Monte Carlo estimator of:
+%
+%           int(f(x)g(x)dx)
+%
+% in which x is a vector of random variables, f(x) is the pdf and g(x) can
+% be any function of x. In case of reliability analysis, g(x)=1 if x is in
+% the failure area and g(x)=0 otherwise. gx can also be the damage, or profit as
+% a function of x. The actual sampling procedure is executed
+% elsewhere (e.g. with module mc.m). The modules takes into account that
+% importance sampling has been applied.
+%
+%   the module derives the variance of all N samples of Pi. Pi is the value of the
+%   the Monte Carlo estimator.
 %
 %   Syntax:
 %   result = MC(stochast)
@@ -16,29 +22,28 @@ function result = MCEstimator(idFail,P_corr, Confidence)
 %       'NrSamples', 1000);
 %
 %   Input:
-%   idFail:     vector with 1/0 values that indicate failure/no failure
+%   gx:         function g(x)
 %   P_corr:     Corrections for importance sampling: f(x)/h(x)
 %   Confidence: confidence interval (in case of 95%, put 0.95)
 %
 %   Output:
 %   result = structure with results:
-%       gx:              % individual values of the MC estimator
+%       Pi:              % individual values of the MC estimator
 %       P_f:             % resulting end value of the MC estimator
 %       P_z:             % evolution of the MC estimator
 %       Acy_abs:         % absolute error in P_f (with certainty related to confidence interval)
-%       Acy_absV:        % evolution of 'Acy_abs' 
+%       Acy_absV:        % evolution of 'Acy_abs'
 %       Acy_rel:         % Acy_rel
-
-%   Example
-%   MC
 %
-%   See also MC, MCConfidence
-
+%   Example
+%   result = MCEstimator(gx, P_corr, Confidence)
+%   See also MC
+%
 %   --------------------------------------------------------------------
 %   Copyright (C) 2012 Deltares
 %       ferdinand Diermanse
 %
-%       ferdinand.diermanse@deltares.nl	
+%       ferdinand.diermanse@deltares.nl
 %
 %       Faculty of Civil Engineering and Geosciences
 %       P.O. Box 5048
@@ -71,30 +76,32 @@ function result = MCEstimator(idFail,P_corr, Confidence)
 % $Revision$
 % $HeadURL$
 
-    N = length(P_corr);
-    cumNsamps = repmat((1:N)', 1, size(idFail,2));
-    gx = idFail .* repmat(P_corr, 1, size(idFail,2));          % individual values of the MC estimator
-    P_z         = cumsum(gx)./cumNsamps;  % evolution of the MC estimator
-    P_f         = P_z(end,:);               % resulting end value of the MC estimator
+%% derive MC estimator
+N = length(P_corr);                           % number of samples
+cumNsamps = repmat((1:N)', 1, size(gx,2));    % numbers 1:n in 1 vector (or matrix)
+Pi = gx .* repmat(P_corr, 1, size(gx,2));     % individual values of the MC estimator
+P_z = cumsum(Pi)./cumNsamps;                  % evolution of the MC estimator
+P_f = P_z(end,:);                             % resulting end value of the MC estimator
 
-    % compute accurracy 
-    kk=norm_inv((Confidence+1)/2,0,1);       % k-value for desired confidence interval
-    diff = gx - P_z;   % deviation of individual estimators from mean
-    Variance = cumsum(diff.^2)./(cumNsamps.^2); % variance
-    Id1 = find(gx>0, 1, 'first');        % first 'failure'
-    Variance(1:Id1-1) = NaN;             % no valid variance estimate until at least 1 failure is sampled
+%% compute accurracy of estimate
+kk=norm_inv((Confidence+1)/2,0,1);       % k-value for desired confidence interval
+diff = Pi - P_z;                         % deviation of individual estimators from mean
+Variance = cumsum(diff.^2)./(cumNsamps.^2); % variance
+Id1 = find(abs(Pi)>0, 1, 'first');        % first 'failure'
+Variance(1:Id1-1) = NaN;                  % no valid variance estimate until at least 1 non-zero is sampled
 
-    Sigma = sqrt(Variance);    % standard deviation
-    Acy_absV = Sigma*kk;       % limit of the absolute error in P_f (with certainty related to kk) 
-    Acy_abs = Acy_absV(end,:);   % last value of the absoluut error 
-    Acy_rel =Acy_abs./P_f;      % relative error 
-    
-    % store results in strcuture
-    result = struct(...
-    'gx',           gx,   ...           % individual values of the MC estimator
+Sigma = sqrt(Variance);    % standard deviation
+Acy_absV = Sigma*kk;       % limit of the absolute error in P_f (with certainty related to kk)
+Acy_abs = Acy_absV(end,:); % last value of the absoluut error
+Acy_rel =Acy_abs./P_f;     % relative error
+
+% store results in strcuture
+result = struct(...
+    'Pi',           Pi,   ...           % individual values of the MC estimator
     'P_f',          P_f,       ...      % resulting end value of the MC estimator
     'P_z',          P_z,       ...      % evolution of the MC estimator
+    'Sigma',        Sigma,     ...      % evolution of the standard deviation of the error
     'Acy_abs',      Acy_abs,    ...     % absolute error in P_f (with certainty related to confidence interval)
-    'Acy_absV',     Acy_absV,   ...     % evolution of 'Acy_abs' 
-    'Acy_rel',      Acy_rel     ...      % Acy_rel
+    'Acy_absV',     Acy_absV,   ...     % evolution of 'Acy_abs'
+    'Acy_rel',      Acy_rel     ...     % Acy_rel
     );
