@@ -1,7 +1,7 @@
 function vs_trih2thalweg(vsfile,varargin)
-%vs_trih2thalweg x-sigma plane (cross section, thalweg) from delft3 history file
+%vs_trih2thalweg x-sigma plane (cross-section, thalweg) from delft3 history file
 %
-%  vs_trih2thalweg(vsfile,<keyword,valuye>)
+%  vs_trih2thalweg(vsfile, <keyword,valu,e>)
 %
 %See also: pcolorcorcen_sigma, vs_use
 
@@ -45,11 +45,11 @@ function vs_trih2thalweg(vsfile,varargin)
 %  $HeadURL$
 %  $Keywords: $
 
-OPT.epsg      = 28992; % epsg projection to do interpolation in and plot distances it
-OPT.ind       = 22:59; % indices (from *.obs) to interpolate from
+OPT.epsg      = 28992; % epsg projection to do interpolation in and plot distances in
+OPT.ind       = 28:766; % indices (from *.obs) to interpolate from
 OPT.wscale    = 100;   % exageration of vertical velocities in plot
 OPT.pause     = 0;
-OPT.kml       = 'teso_track.kml'; % endvertices of thalweg drawn in google earth
+OPT.kml       = 'Thalweg.kml'; % endvertices of thalweg drawn in google earth
 OPT.nkml      = 20; % number of subdivisions between kml endvertices
 OPT.txtleft   = 'Den Helder';
 OPT.txtright  = 'Texel';
@@ -58,6 +58,7 @@ OPT.txtflood  = 'FLOOD to Wadden Sea';
 OPT.ulegendx  = 500;
 OPT.ulegendz  = -25;
 OPT.pngsubdir = 'teso'; % subdir of dir of vsfile
+OPT.grd       = 'GRID18102012_1030.grd';
 
 OPT = setproperty(OPT,varargin);
 
@@ -71,7 +72,7 @@ OPT = setproperty(OPT,varargin);
    if any(strfind(lower(coordinates),'cart'))
    D.x    = permute(vs_let(h,'his-const' ,'XYSTAT',{1 OPT.ind}),[3 2 1]);
    D.y    = permute(vs_let(h,'his-const' ,'XYSTAT',{2 OPT.ind}),[3 2 1]);
-   [D.lon,D.lat] = convertCoordinates(D.lon,D.lat,'CS1.code',OPT.epsg,'CS2.code',4326);
+   [D.lon,D.lat] = convertCoordinates(D.x,D.y,'CS1.code',OPT.epsg,'CS2.code',4326);
    else
    D.lon  = permute(vs_let(h,'his-const' ,'XYSTAT',{1 OPT.ind}),[3 2 1]);
    D.lat  = permute(vs_let(h,'his-const' ,'XYSTAT',{2 OPT.ind}),[3 2 1]);
@@ -93,7 +94,7 @@ OPT = setproperty(OPT,varargin);
    D.salinity     = permute(vs_let(h,'his-series','GRO',{OPT.ind 0 tmp.salinity.index   }),[2 1 3]);
    fields{end+1} = 'salinity';units{end+1} = 'salinity';legend{end+1} = 'psu';
    end
-   if isfield(tmp,'emperature')
+   if isfield(tmp,'temperature')
    D.temperature  = permute(vs_let(h,'his-series','GRO',{OPT.ind 0 tmp.temperature.index}),[2 1 3]);
    fields{end+1} = 'temperature';units{end+1} = 'temperature';legend{end+1} = '\circC';
    end
@@ -102,9 +103,8 @@ OPT = setproperty(OPT,varargin);
 %  (idea: use arbcross after connecting dots into small matrix?)
 
    %L = nc2struct('d:\opendap.deltares.nl\thredds\dodsC\opendap\deltares\landboundaries\northsea.nc','include',{'lon','lat'})
-   [T.lat,T.lon] = KML2Coordinates(OPT.kml);
-   T.lat = linspace(T.lat(1),T.lat(2),OPT.nkml);
-   T.lon = linspace(T.lon(1),T.lon(2),OPT.nkml);
+   [T.lat,T.lon] = KML2Coordinates(OPT.kml);   
+   
    [T.x,T.y] = convertCoordinates(T.lon,T.lat,'CS1.code',4326,'CS2.code',OPT.epsg);
    [D.PI,D.RI,D.WI] = griddata_near1(D.x,D.y,        T.x,T.y,2);
    T.zwl            = griddata_near2(D.x,D.y,D.zwl  ,T.x,T.y,D.PI,D.WI);
