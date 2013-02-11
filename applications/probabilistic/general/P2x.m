@@ -1,4 +1,4 @@
-function x = P2x(stochast, P)
+function x = P2x(stochast, P, varargin)
 %P2X  One line description goes here.
 %
 %   More detailed description goes here.
@@ -53,6 +53,44 @@ function x = P2x(stochast, P)
 % $Author$
 % $Revision$
 % $HeadURL$
+
+
+%% settings
+OPT = struct(...
+    'CorrMatrix',[] ...      % matrix with correlation coefficients (for Gaussian correlation)
+    );
+
+% overrule default settings by property pairs, given in varargin
+OPT = setproperty(OPT, varargin{:});
+
+%% apply (Gaussian) correlation on u-variables
+C=OPT.CorrMatrix;
+if ~isempty(C)    
+    
+    % check if C is symetric
+    if ~isequal(C',C)
+       error('correlation matrix should be symetric'); 
+    end
+    
+    % derive  for whic PP'=C, through Cholesky-decomposition
+    Pm = Cholesky(C);
+    
+    %work around for values with P==1, happens with "discrete variables"
+    eps = 1E-12;
+    indP1 = P==1;
+    P(indP1)=1-eps; 
+    
+    % apply correlation 
+    u = norm_inv(P, 0, 1);
+    u = u*Pm';
+    P = norm_cdf(u, 0, 1);
+    
+    % finish work around
+    P(indP1&P==1-eps)=1;
+    
+end
+
+
 
 %% allocate x, being same size as P
 x = zeros(size(P));

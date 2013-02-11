@@ -74,11 +74,11 @@ if ~isempty(C)
        error('correlation matrix should be symetric'); 
     end
     
-    % derive P for whic PP'=C, through Cholesky-decomposition
-    P = Cholesky(C);
+    % derive  for whic PP'=C, through Cholesky-decomposition
+    Pm = Cholesky(C);
     
     % apply corelation on u
-    u = u*P';
+    u = u*Pm';
 end
 
 
