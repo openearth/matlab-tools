@@ -295,7 +295,8 @@ elseif length(tmp)>0
          end
          
          %% Assign value
-         if strcmpi(keyword,'commnt')
+         if isempty(keyword)
+         elseif strcmpi(keyword,'commnt')
                             count.comment  = count.comment + 1;
             STRUCT.comments{count.comment} = value;
          else

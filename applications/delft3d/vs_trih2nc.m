@@ -30,6 +30,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
 %
 % Note:  you can make an nc_dump cdl ascii file a char for keyword dump:
 %        vs_trih2nc('tst.dat','dump','tst.cdl');
+% Note:  you can save only a subset of stations, or reorder them, to netCDF file with keyword 'ind'
 %
 %See also: vs_trim2nc for trim-*.dat delft3d-flow map file,
 %          netcdf, snctools, vs_use, dflowfm, delft3d_io_obs, dflowfm.indexHis, dflowfm.analyseHis
@@ -88,12 +89,19 @@ function varargout = vs_trih2nc(vsfile,varargin)
       OPT.timezone       = ''; %timezone_code2iso('GMT');
       OPT.debug          = 0;
       OPT.time           = 0; % subset of time indices in NEFIS file, 1-based
-      OPT.epsg           = 28992;
+      OPT.epsg           = [];
       OPT.type           = 'float'; %'double'; % the nefis file is by default single precision
       OPT.quiet          = 'quiet';
       OPT.mode           = 'clobber'; %'64bit_offset' creates a netcdf-3 file with 64-bit offset that cannot be used with Ncbrowse 
       OPT.stride         = 1; % write chunks per layer in case of large 3D matrices
       OPT.dump           = 1;
+
+      OPT.ind            = 0; % index of stations to include in netCDF file, 0=all
+      OPT.trajectory     = 0; % consider 'Stations' dimension as spatial trajectory dimension
+
+      % TO DO: allow to transform sub-period too.
+      % TO DO: implement WI and PI from griddata_near2, and add rename dimension 'Station' to 'distance'
+      % TO DO: make QP fit for trajectory plotting
       
       if nargin==0
          varargout = {OPT};
@@ -124,7 +132,6 @@ function varargout = vs_trih2nc(vsfile,varargin)
       M.description = vs_get(F,'his-version','FLOW-RUNTXT',OPT.quiet);
 
 %% 1a Create file (add all NEFIS 'his-version' group info)
-
       nc_create_empty (ncfile,OPT.mode)
 
       %% Add overall meta info
@@ -133,7 +140,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       nc_attput(ncfile, nc_global, 'title'         , '');
       nc_attput(ncfile, nc_global, 'institution'   , OPT.institution);
       nc_attput(ncfile, nc_global, 'source'        , 'Delft3D trih file');
-      nc_attput(ncfile, nc_global, 'history'       ,['Original filename: ',vsfile,...
+      nc_attput(ncfile, nc_global, 'history'       ,['Original filename: ',filenameext(vsfile),...
                                                      ', version: ' ,M.version,...
                                                      ', file date:',M.datestr,...
                                                      ', tranformation to netCDF: $HeadURL$']);
@@ -156,35 +163,41 @@ function varargout = vs_trih2nc(vsfile,varargin)
       G.kmax        =                 vs_let(F,'his-const','KMAX'       ,'quiet');
       G.coordinates = strtrim(permute(vs_let(F,'his-const','COORDINATES','quiet'),[1 3 2]));
 
-      G.m         = squeeze(vs_let(F,'his-const','MNSTAT',{1,0},'quiet'));
-      G.n         = squeeze(vs_let(F,'his-const','MNSTAT',{2,0},'quiet'));
+      G.m           = squeeze(vs_let(F,'his-const','MNSTAT',{1,OPT.ind},'quiet'));
+      G.n           = squeeze(vs_let(F,'his-const','MNSTAT',{2,OPT.ind},'quiet'));
       
-      G.x         = squeeze(vs_let(F,'his-const','XYSTAT',{1,0},'quiet'));
-      G.y         = squeeze(vs_let(F,'his-const','XYSTAT',{2,0},'quiet'));
-      G.angle     = squeeze(vs_let(F,'his-const','ALFAS' ,      'quiet'));
-      G.kmax      = squeeze(vs_let(F,'his-const','KMAX'  ,'quiet'));
-      G.name      = permute(vs_let(F,'his-const','NAMST' ,      'quiet'),[2 3 1]);
+      G.angle       = squeeze(vs_let(F,'his-const','ALFAS' ,{  OPT.ind},'quiet'));
+      G.kmax        = squeeze(vs_let(F,'his-const','KMAX'  ,            'quiet'));
+      G.name        = permute(vs_let(F,'his-const','NAMST' ,{  OPT.ind},'quiet'),[2 3 1]);
 
-   %% add world coordinates coordinate attribute AND as variables to file
+   %% real and transform world coordinates,
+   %  define coordinate attribute
 
-      if any(strfind(G.coordinates,'CART')) % CARTESIAN, CARTHESIAN (old bug)
-         coordinates  = 'x y';
-         if isempty(OPT.epsg)
+   if any(strfind(G.coordinates,'CART')) % CARTESIAN, CARTHESIAN (old bug)
+      
+      G.x           = squeeze(vs_let(F,'his-const','XYSTAT',{1,OPT.ind},'quiet'));
+      G.y           = squeeze(vs_let(F,'his-const','XYSTAT',{2,OPT.ind},'quiet'));
+      coordinates   = 'x y';
+      if ~(isempty(OPT.epsg)||isnan(OPT.epsg))
+        [G.lon,G.lat] = convertCoordinates(G.x,G.y,'CS1.code',OPT.epsg,'CS2.code',4326);
+        [G.lon,G.lat] = convertCoordinates(G.x,G.y,'CS1.code',OPT.epsg,'CS2.code',4326);
+      else
          fprintf(2,'> No EPSG code specified for CARTESIAN grid, your grid is not CF compliant:\n')
          fprintf(2,'> (latitude,longitude) cannot be calculated from (x,y)!\n')
-         end
-      else
-         coordinates  = 'latitude longitude';
       end
       
-      if any(strfind(G.coordinates,'CART')) & ~isempty(OPT.epsg) % CARTESIAN, CARTHESIAN (old bug)
-     [G.lon,G.lat] = convertCoordinates(G.x,G.y,'CS1.code',OPT.epsg,'CS2.code',4326);
-     [G.lon,G.lat] = convertCoordinates(G.x,G.y,'CS1.code',OPT.epsg,'CS2.code',4326);
-      else
-      G.lon = G.x;
-      G.lat = G.y;
+   else
+   
+      G.lon         = squeeze(vs_let(F,'his-const','XYSTAT',{1,OPT.ind},'quiet'));
+      G.lat         = squeeze(vs_let(F,'his-const','XYSTAT',{2,OPT.ind},'quiet'));
+      coordinates   = 'latitude longitude';
+      if ~(isempty(OPT.epsg)||isnan(OPT.epsg))
+        [G.x  ,G.y  ] = convertCoordinates(G.lon,G.lat,'CS1.code',4326,'CS2.code',OPT.epsg);
+        [G.x  ,G.y  ] = convertCoordinates(G.lon,G.lat,'CS1.code',4326,'CS2.code',OPT.epsg);
       end
 
+   end
+   
    %% vertical: z/sigma
 
       G.layer_model = strtrim(permute(vs_let(F,'his-const','LAYER_MODEL','quiet'),[1 3 2]));
@@ -205,8 +218,14 @@ function varargout = vs_trih2nc(vsfile,varargin)
 %% 2 Create dimensions
 
       nc_add_dimension(ncfile, 'time'             , length(T.datenum));
-      nc_add_dimension(ncfile, 'Station'          , size(G.name,1))
+      if OPT.trajectory
+      dimname = 'Trajectory';
+      G.trajectory = distance(G.x,G.y);
+      else
+      dimname = 'Station';
       nc_add_dimension(ncfile, 'station_name_len' , size(G.name,2));
+      end
+      nc_add_dimension(ncfile, dimname            , size(G.name,1))
       nc_add_dimension(ncfile, 'Layer'            , G.kmax  );
       nc_add_dimension(ncfile, 'LayerInterf'      , G.kmax+1);
 
@@ -227,7 +246,23 @@ function varargout = vs_trih2nc(vsfile,varargin)
           'Dimension', {{'time'}}, ...
           'Attribute', attr);
 
-%% platforms/stations/observation points
+%% platforms/stations/observation points or trajectory
+
+   if OPT.trajectory
+
+      ifld     = ifld + 1;clear attr;
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'projection_x_coordinate');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'trajectory');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
+      attr(end+1)  = struct('Name', 'axis'         , 'Value', 'X');
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.trajectory(:)) max(G.trajectory(:))]);
+      nc(ifld) = struct('Name', 'Trajectory', ...
+          'Nctype'   , OPT.type, ...
+          'Dimension', {{dimname}}, ...
+          'Attribute', attr);
+
+   else
 
       ifld     = ifld + 1;clear attr;d3d_name = 'NAMST';
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'platform_name');
@@ -235,7 +270,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
       nc(ifld) = struct('Name', 'station_name', ...
           'Nctype'   , 'char', ...
-          'Dimension', {{'Station','station_name_len'}}, ...
+          'Dimension', {{dimname,'station_name_len'}}, ...
           'Attribute', attr);
 
       ifld     = ifld + 1;clear attr
@@ -246,7 +281,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.m(:)) max(G.m(:))]);
       nc(ifld) = struct('Name', 'station_m_index', ...
           'Nctype'   , OPT.type, ...	
-          'Dimension', {{'Station'}}, ...
+          'Dimension', {{dimname}}, ...
           'Attribute', attr);
       
       ifld     = ifld + 1;clear attr
@@ -257,7 +292,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.n(:)) max(G.n(:))]);
       nc(ifld) = struct('Name', 'station_n_index', ...
           'Nctype'   , OPT.type, ...
-          'Dimension', {{'Station'}}, ...
+          'Dimension', {{dimname}}, ...
           'Attribute', attr);
 
       ifld     = ifld + 1;clear attr;d3d_name = 'ALFAS';
@@ -265,12 +300,14 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
       nc(ifld) = struct('Name', 'station_angle', ...
           'Nctype'   , OPT.type, ...
-          'Dimension', {{'Station'}}, ...
+          'Dimension', {{dimname}}, ...
           'Attribute', attr);
+
+   end
 
 %% horizontal coordinates: (x,y) and (lon,lat), on centres and corners
 
-   if any(strfind(G.coordinates,'CARTESIAN'))
+   if any(strfind(G.coordinates,'CARTESIAN')) || ~isempty(OPT.epsg)
    
       ifld     = ifld + 1;clear attr
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'projection_x_coordinate');
@@ -280,9 +317,9 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'XYSTAT');
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.x(:)) max(G.x(:))]);
-      nc(ifld) = struct('Name', 'station_x_coordinate', ...
+      nc(ifld) = struct('Name', 'x', ...
           'Nctype'   , OPT.type, ...
-          'Dimension', {{'Station'}}, ...
+          'Dimension', {{dimname}}, ...
           'Attribute', attr);
       
       ifld     = ifld + 1;clear attr
@@ -293,26 +330,25 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'XYSTAT');
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.y(:)) max(G.y(:))]);
-      nc(ifld) = struct('Name', 'station_y_coordinate', ...
+      nc(ifld) = struct('Name', 'y', ...
           'Nctype'   , OPT.type, ...
-          'Dimension', {{'Station'}}, ...
+          'Dimension', {{dimname}}, ...
           'Attribute', attr);
-
    end
 
-   if (~isempty(OPT.epsg)) | (~any(strfind(G.coordinates,'CARTESIAN')))
+   if (~isempty(OPT.epsg)) || (~any(strfind(G.coordinates,'CARTESIAN')))
 
       ifld     = ifld + 1;clear attr
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'longitude');
-      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'lLongitude of station');
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'Longitude of station');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'degrees_east');
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'X');
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'XYSTAT');
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.lon(:)) max(G.lon(:))]);
-      nc(ifld) = struct('Name', 'station_longitude', ...
+      nc(ifld) = struct('Name', 'longitude', ...
           'Nctype'   , OPT.type, ...
-          'Dimension', {{'Station'}}, ...
+          'Dimension', {{dimname}}, ...
           'Attribute', attr);
       
       ifld     = ifld + 1;clear attr
@@ -323,9 +359,9 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'XYSTAT');
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.lat(:)) max(G.lat(:))]);
-      nc(ifld) = struct('Name', 'station_latitude', ...
+      nc(ifld) = struct('Name', 'latitude', ...
           'Nctype'   , OPT.type, ...
-          'Dimension', {{'Station'}}, ...
+          'Dimension', {{dimname}}, ...
           'Attribute', attr);
 
    end
@@ -404,7 +440,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'comment'      , 'Value', '');
       nc(ifld) = struct('Name', 'depth', ...
           'Nctype'   , OPT.type, ...
-          'Dimension', {{'Station'}}, ...
+          'Dimension', {{dimname}}, ...
           'Attribute', attr);
           
 %% 3 Create (primary) variables: momentum and mass conservation
@@ -420,7 +456,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
       nc(ifld) = struct('Name', 'waterlevel', ...
           'Nctype'   , OPT.type, ...
-          'Dimension', {{'time', 'Station'}}, ...
+          'Dimension', {{'time', dimname}}, ...
           'Attribute', attr);
 
       ifld     = ifld + 1;clear attr; d3d_name = 'ZKFS';
@@ -435,7 +471,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'flag_meanings', 'Value', 'inactive active ');
       nc(ifld) = struct('Name', 'mask', ...
           'Nctype'   , OPT.type, ...
-          'Dimension', {{'time', 'Station'}}, ...
+          'Dimension', {{'time', dimname}}, ...
           'Attribute', attr);
       
       ifld     = ifld + 1;clear attr;d3d_name = 'ZCURU';
@@ -453,7 +489,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.u_x = [Inf -Inf];
       nc(ifld) = struct('Name', 'u_x', ...
           'Nctype'   , OPT.type, ...
-          'Dimension', {{'time','Station','Layer'}}, ...
+          'Dimension', {{'time',dimname,'Layer'}}, ...
           'Attribute', attr);
       
       ifld     = ifld + 1;clear attr;d3d_name = 'ZCURV';
@@ -471,7 +507,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.u_y = [Inf -Inf];
       nc(ifld) = struct('Name', 'u_y', ...
           'Nctype'   , OPT.type, ...
-          'Dimension', {{'time','Station','Layer'}}, ...
+          'Dimension', {{'time',dimname,'Layer'}}, ...
           'Attribute', attr);
       
       ifld     = ifld + 1;clear attr;d3d_name = 'ZCURW';
@@ -485,7 +521,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.u_z = [Inf -Inf];
       nc(ifld) = struct('Name', 'u_z', ...
           'Nctype'   , OPT.type, ...
-          'Dimension', {{'time','Station','Layer'}}, ...
+          'Dimension', {{'time',dimname,'Layer'}}, ...
           'Attribute', attr);
        
 % (a) bottom shear stresses
@@ -505,7 +541,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'comment'      , 'Value', 'The bed shear stresses are in real world directions x and y');
       nc(ifld) = struct('Name', 'tau_x', ...
           'Nctype'   , OPT.type, ...
-          'Dimension', {{'time', 'Station'}}, ...
+          'Dimension', {{'time', dimname}}, ...
           'Attribute', attr);      
     
       ifld     = ifld + 1;clear attr; d3d_name = 'ZTAUET';
@@ -523,7 +559,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'comment'      , 'Value', 'The bed shear stresses are in real world directions x and y');
       nc(ifld) = struct('Name', 'tau_y', ...
           'Nctype'   , OPT.type, ...
-          'Dimension', {{'time', 'Station'}}, ...
+          'Dimension', {{'time', dimname}}, ...
           'Attribute', attr); 
       
  % (b) density: temperature + salinity
@@ -540,7 +576,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.density = [Inf -Inf];
       nc(ifld) = struct('Name', 'density', ...
           'Nctype'   , OPT.type, ...
-          'Dimension', {{'time','Station','Layer'}}, ...
+          'Dimension', {{'time',dimname,'Layer'}}, ...
           'Attribute', attr);
       end
  
@@ -556,7 +592,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.salinity = [Inf -Inf];
       nc(ifld) = struct('Name', 'salinity', ...
           'Nctype'   , OPT.type, ...
-          'Dimension', {{'time','Station','Layer'}}, ...
+          'Dimension', {{'time',dimname,'Layer'}}, ...
           'Attribute', attr);
  
       ifld     = ifld + 1;clear attr;
@@ -569,7 +605,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.temperature = [Inf -Inf];
       nc(ifld) = struct('Name', 'temperature', ...
           'Nctype'   , OPT.type, ...
-          'Dimension', {{'time','Station','Layer'}}, ...
+          'Dimension', {{'time',dimname,'Layer'}}, ...
           'Attribute', attr);
       end
    
@@ -587,7 +623,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.tke = [Inf -Inf];
       nc(ifld) = struct('Name', 'tke', ...
           'Nctype'   , OPT.type, ...
-          'Dimension', {{'time','Station','LayerInterf'}}, ...
+          'Dimension', {{'time',dimname,'LayerInterf'}}, ...
           'Attribute', attr);
 
       ifld     = ifld + 1;clear attr
@@ -600,7 +636,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.eps = [Inf -Inf];
       nc(ifld) = struct('Name', 'eps', ...
           'Nctype'   , OPT.type, ...
-          'Dimension', {{'time','Station','LayerInterf'}}, ...
+          'Dimension', {{'time',dimname,'LayerInterf'}}, ...
           'Attribute', attr);
       end
       
@@ -615,7 +651,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
       nc(ifld) = struct('Name', 'viscosity_z', ...
           'Nctype'   , OPT.type, ...
-          'Dimension', {{'time','Station','LayerInterf'}}, ...
+          'Dimension', {{'time',dimname,'LayerInterf'}}, ...
           'Attribute', attr);
       
       d3d_name = 'ZDICWW';
@@ -629,7 +665,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
       nc(ifld) = struct('Name', 'diffusivity_z', ...
           'Nctype'   , OPT.type, ...
-          'Dimension', {{'time','Station','LayerInterf'}}, ...
+          'Dimension', {{'time',dimname,'LayerInterf'}}, ...
           'Attribute', attr);
 
       d3d_name = 'ZRICH';
@@ -643,7 +679,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name');
       nc(ifld) = struct('Name', 'Ri', ...
           'Nctype'   , OPT.type, ...
-          'Dimension', {{'time','Station','Layer'}}, ...
+          'Dimension', {{'time',dimname,'Layer'}}, ...
           'Attribute', attr);
 
 %% 4 Create variables with attributes
@@ -657,22 +693,26 @@ function varargout = vs_trih2nc(vsfile,varargin)
 
 %% 5 Fill variables
 
+   if OPT.trajectory
+      nc_varput(ncfile, 'Trajectory'          , G.trajectory);
+   else
       nc_varput(ncfile, 'station_name'        , G.name);
       nc_varput(ncfile, 'station_angle'       , G.angle);
       nc_varput(ncfile, 'station_m_index'     , G.m);
       nc_varput(ncfile, 'station_n_index'     , G.n);
-      if any(strfind(G.coordinates,'CARTESIAN'))
-      nc_varput(ncfile, 'station_x_coordinate', G.x);
-      nc_varput(ncfile, 'station_y_coordinate', G.y);
+   end
+      if any(strfind(G.coordinates,'CARTESIAN')) || ~isempty(OPT.epsg)
+      nc_varput(ncfile, 'x', G.x);
+      nc_varput(ncfile, 'y', G.y);
       end
       if (~isempty(OPT.epsg)) | (~any(strfind(G.coordinates,'CARTESIAN')))      
-      nc_varput(ncfile, 'station_longitude'  , G.lon);
-      nc_varput(ncfile, 'station_latitude'   , G.lat);
+      nc_varput(ncfile, 'longitude'  , G.lon);
+      nc_varput(ncfile, 'latitude'   , G.lat);
       end
       nc_varput(ncfile, 'time'         , T.datenum - OPT.refdatenum);
       if (~isempty(OPT.epsg)) | (~any(strfind(G.coordinates,'CARTESIAN')))
-      nc_varput(ncfile, 'station_longitude'    ,G.lon);
-      nc_varput(ncfile, 'station_latitude'     ,G.lat);
+      nc_varput(ncfile, 'longitude'    ,G.lon);
+      nc_varput(ncfile, 'latitude'     ,G.lat);
       end      
       
       if strmatch('SIGMA-MODEL', G.layer_model)
@@ -693,68 +733,68 @@ function varargout = vs_trih2nc(vsfile,varargin)
       nc_attput(ncfile,'LayerInterf'   ,'actual_range',[min(G.ZK(:)) max(G.ZK(:))]);
       end
       
-      matrix = vs_let(F,'his-const','DPS',OPT.quiet);
+      matrix = vs_let(F,'his-const','DPS',{OPT.ind},OPT.quiet);
       nc_varput(ncfile,'depth',matrix);
       nc_attput(ncfile,'depth','actual_range',[min(matrix(:)) max(matrix(:))]);
 
-      matrix = vs_let(F,'his-series','ZWL',OPT.quiet);
+      matrix = vs_let(F,'his-series','ZWL',{OPT.ind},OPT.quiet);
       nc_varput(ncfile,'waterlevel',matrix);
       nc_attput(ncfile,'waterlevel','actual_range',[min(matrix(:)) max(matrix(:))]);
 
-      matrix = vs_let(F,'his-series','ZKFS',OPT.quiet);
+      matrix = vs_let(F,'his-series','ZKFS',{OPT.ind},OPT.quiet);
       nc_varput(ncfile,'mask',matrix);
       nc_attput(ncfile,'mask','actual_range',[min(matrix(:)) max(matrix(:))]);
 
       if OPT.stride
           for k=1:G.kmax
 
-              matrix = vs_let(F,'his-series','ZCURU',{0 k},OPT.quiet);
+              matrix = vs_let(F,'his-series','ZCURU',{OPT.ind,k},OPT.quiet);
               nc_varput(ncfile,'u_x',matrix,[0 0 k-1],[size(matrix) 1]);
               R.u_x(1) = min(R.u_x(1),min(matrix(:)));
               R.u_x(2) = max(R.u_x(2),max(matrix(:)));
 
-              matrix = vs_let(F,'his-series','ZCURV',{0 k},OPT.quiet);
+              matrix = vs_let(F,'his-series','ZCURV',{OPT.ind,k},OPT.quiet);
               nc_varput(ncfile,'u_y',matrix,[0 0 k-1],[size(matrix) 1]);
               R.u_y(1) = min(R.u_y(1),min(matrix(:)));
               R.u_y(2) = max(R.u_y(2),max(matrix(:)));
 
-              matrix = vs_let(F,'his-series','ZCURW',{0 k},OPT.quiet);
+              matrix = vs_let(F,'his-series','ZCURW',{OPT.ind,k},OPT.quiet);
               nc_varput(ncfile,'u_z',matrix,[0 0 k-1],[size(matrix) 1]);
               R.u_z(1) = min(R.u_z(1),min(matrix(:)));
               R.u_z(2) = max(R.u_z(2),max(matrix(:)));
 
           end
       else
-          matrix = vs_let(F,'his-series','ZCURU',OPT.quiet);
+          matrix = vs_let(F,'his-series','ZCURU',{OPT.ind,0},OPT.quiet);
           nc_varput(ncfile,'u_x',matrix);
           R.u_x = [min(matrix(:)) max(matrix(:))];
 
-          matrix = vs_let(F,'his-series','ZCURV',OPT.quiet);
+          matrix = vs_let(F,'his-series','ZCURV',{OPT.ind,0},OPT.quiet);
           nc_varput(ncfile,'u_y',matrix);
           R.u_y = [min(matrix(:)) max(matrix(:))];
 
-          matrix = vs_let(F,'his-series','ZCURW',OPT.quiet);
+          matrix = vs_let(F,'his-series','ZCURW',{OPT.ind,0},OPT.quiet);
           nc_varput(ncfile,'u_z',matrix);
           R.u_z = [min(matrix(:)) max(matrix(:))];
       end
       
-      matrix = vs_let(F,'his-series','ZTAUKS',OPT.quiet);
+      matrix = vs_let(F,'his-series','ZTAUKS',{OPT.ind},OPT.quiet);
       nc_varput(ncfile,'tau_x',matrix);
       nc_attput(ncfile,'tau_x','actual_range',[min(matrix(:)) max(matrix(:))]);
       
-      matrix = vs_let(F,'his-series','ZTAUET',OPT.quiet);
+      matrix = vs_let(F,'his-series','ZTAUET',{OPT.ind},OPT.quiet);
       nc_varput(ncfile,'tau_y',matrix);
       nc_attput(ncfile,'tau_y','actual_range',[min(matrix(:)) max(matrix(:))]);
 
       if OPT.stride
          for k=1:G.kmax
-            matrix = vs_let(F,'his-series','ZRHO',{0,k},OPT.quiet);
+            matrix = vs_let(F,'his-series','ZRHO',{OPT.ind,k},OPT.quiet);
             nc_varput(ncfile,'density',matrix,[0 0 k-1],[size(matrix) 1]);
             R.density(1) = min(R.density(1),min(matrix(:)));
             R.density(2) = max(R.density(2),max(matrix(:)));
          end
       else
-         matrix = vs_let(F,'his-series','ZRHO',{0,0},OPT.quiet);
+         matrix = vs_let(F,'his-series','ZRHO',{OPT.ind,0},OPT.quiet);
          nc_varput(ncfile,'density',matrix);
          R.density = [min(R.density(1),min(matrix(:))) max(R.density(2),max(matrix(:)))];
       end   
@@ -764,13 +804,13 @@ function varargout = vs_trih2nc(vsfile,varargin)
       if isfield(I,'salinity')  
       if OPT.stride
          for k=1:G.kmax
-            matrix = vs_let(F,'his-series','GRO',{0,k,I.salinity.index},OPT.quiet);
+            matrix = vs_let(F,'his-series','GRO',{OPT.ind,k,I.salinity.index},OPT.quiet);
             nc_varput(ncfile,'salinity',matrix,[0 0 k-1],[size(matrix) 1]);
             R.salinity(1) = min(R.salinity(1),min(matrix(:)));
             R.salinity(2) = max(R.salinity(2),max(matrix(:)));
          end
       else
-         matrix = vs_let(F,'his-series','GRO',{0,0,I.salinity.index},OPT.quiet);
+         matrix = vs_let(F,'his-series','GRO',{OPT.ind,0,I.salinity.index},OPT.quiet);
          nc_varput(ncfile,'salinity',matrix);
          R.salinity = [min(R.salinity(1),min(matrix(:))) max(R.salinity(2),max(matrix(:)))];
       end   
@@ -779,13 +819,13 @@ function varargout = vs_trih2nc(vsfile,varargin)
       if isfield(I,'temperature')
       if OPT.stride
          for k=1:G.kmax
-            matrix = vs_let(F,'his-series','GRO',{0,k,I.temperature.index},OPT.quiet);
+            matrix = vs_let(F,'his-series','GRO',{OPT.ind,k,I.temperature.index},OPT.quiet);
             nc_varput(ncfile,'temperature',matrix,[0 0 k-1],[size(matrix) 1]);
             R.temperature(1) = min(R.temperature(1),min(matrix(:)));
             R.temperature(2) = max(R.temperature(2),max(matrix(:)));
          end
       else
-         matrix = vs_let(F,'his-series','GRO',{0,0,I.temperature.index},OPT.quiet);
+         matrix = vs_let(F,'his-series','GRO',{OPT.ind,0,I.temperature.index},OPT.quiet);
          nc_varput(ncfile,'temperature',matrix);
          R.temperature = [min(R.temperature(1),min(matrix(:))) max(R.temperature(2),max(matrix(:)))];
       end   
@@ -796,13 +836,13 @@ function varargout = vs_trih2nc(vsfile,varargin)
       if isfield(I,'turbulent_energy')  
       if OPT.stride
          for k=1:G.kmax+1
-            matrix = vs_let(F,'his-series','ZTUR',{0,k,I.turbulent_energy.index},OPT.quiet);
+            matrix = vs_let(F,'his-series','ZTUR',{OPT.ind,k,I.turbulent_energy.index},OPT.quiet);
             nc_varput(ncfile,'tke',matrix,[0 0 k-1],[size(matrix) 1]);
             R.tke(1) = min(R.tke(1),min(matrix(:)));
             R.tke(2) = max(R.tke(2),max(matrix(:)));
          end
       else
-         matrix = vs_let(F,'his-series','ZTUR',{0,0,I.turbulent_energy.index},OPT.quiet);
+         matrix = vs_let(F,'his-series','ZTUR',{OPT.ind,0,I.turbulent_energy.index},OPT.quiet);
          nc_varput(ncfile,'tke',matrix);
          R.tke = [min(R.tke(1),min(matrix(:))) max(R.tke(2),max(matrix(:)))];
       end   
@@ -811,13 +851,13 @@ function varargout = vs_trih2nc(vsfile,varargin)
       if isfield(I,'energy_dissipation')  
       if OPT.stride
          for k=1:G.kmax+1
-            matrix = vs_let(F,'his-series','ZTUR',{0,k,I.energy_dissipation.index},OPT.quiet);
+            matrix = vs_let(F,'his-series','ZTUR',{OPT.ind,k,I.energy_dissipation.index},OPT.quiet);
             nc_varput(ncfile,'eps',matrix,[0 0 k-1],[size(matrix) 1]);
             R.eps(1) = min(R.eps(1),min(matrix(:)));
             R.eps(2) = max(R.eps(2),max(matrix(:)));
          end
       else
-         matrix = vs_let(F,'his-series','ZTUR',{0,0,I.energy_dissipation.index},OPT.quiet);
+         matrix = vs_let(F,'his-series','ZTUR',{OPT.ind,0,I.energy_dissipation.index},OPT.quiet);
          nc_varput(ncfile,'eps',matrix);
          R.eps = [min(R.eps(1),min(matrix(:))) max(R.eps(2),max(matrix(:)))];
       end   
@@ -825,43 +865,43 @@ function varargout = vs_trih2nc(vsfile,varargin)
 
       if OPT.stride
          for k=1:G.kmax+1
-            matrix = vs_let(F,'his-series','ZVICWW',{0,k},OPT.quiet);
+            matrix = vs_let(F,'his-series','ZVICWW',{OPT.ind,k},OPT.quiet);
             nc_varput(ncfile,'viscosity_z',matrix,[0 0 k-1],[size(matrix) 1]);
             R.viscosity_z(1) = min(R.viscosity_z(1),min(matrix(:)));
             R.viscosity_z(2) = max(R.viscosity_z(2),max(matrix(:)));
          end
       else
-         matrix = vs_let(F,'his-series','ZVICWW',{0,0},OPT.quiet);
+         matrix = vs_let(F,'his-series','ZVICWW',{OPT.ind,0},OPT.quiet);
          nc_varput(ncfile,'viscosity_z',matrix);
          R.viscosity_z = [min(R.viscosity_z(1),min(matrix(:))) max(R.viscosity_z(2),max(matrix(:)))];
       end   
 
       if OPT.stride
          for k=1:G.kmax+1
-            matrix = vs_let(F,'his-series','ZDICWW',{0,k},OPT.quiet);
+            matrix = vs_let(F,'his-series','ZDICWW',{OPT.ind,k},OPT.quiet);
             nc_varput(ncfile,'diffusivity_z',matrix,[0 0 k-1],[size(matrix) 1]);
             R.diffusivity_z(1) = min(R.diffusivity_z(1),min(matrix(:)));
             R.diffusivity_z(2) = max(R.diffusivity_z(2),max(matrix(:)));
          end
       else
-         matrix = vs_let(F,'his-series','ZDICWW',{0,0},OPT.quiet);
+         matrix = vs_let(F,'his-series','ZDICWW',{OPT.ind,0},OPT.quiet);
          nc_varput(ncfile,'diffusivity_z',matrix);
          R.diffusivity_z = [min(R.diffusivity_z(1),min(matrix(:))) max(R.diffusivity_z(2),max(matrix(:)))];
       end   
 
       if OPT.stride
          for k=1:G.kmax
-            matrix = vs_let(F,'his-series','ZRICH',{0,k},OPT.quiet);
+            matrix = vs_let(F,'his-series','ZRICH',{OPT.ind,k},OPT.quiet);
             nc_varput(ncfile,'Ri',matrix,[0 0 k-1],[size(matrix) 1]);
             R.Ri(1) = min(R.Ri(1),min(matrix(:)));
             R.Ri(2) = max(R.Ri(2),max(matrix(:)));
          end
       else
-         matrix = vs_let(F,'his-series','ZRICH',{0,0},OPT.quiet);
+         matrix = vs_let(F,'his-series','ZRICH',{OPT.ind,0},OPT.quiet);
          nc_varput(ncfile,'Ri',matrix);
          R.Ri = [min(R.Ri(1),min(matrix(:))) max(R.Ri(2),max(matrix(:)))];
-      end   
-
+      end
+   
 %% update actual ranges
 
       if exist('R','var')

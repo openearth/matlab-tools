@@ -32,7 +32,7 @@ function varargout = pcolorcorcen_sigma(x, sigma, eta, depth, c)
 %See also: pcolorcorcen, interp_z2sigma, d3d_sigma
 
 %%  --------------------------------------------------------------------
-%   Copyright (C) 2012 Deltares
+%   Copyright (C) 2013 Deltares
 %
 %       Gerben de Boer
 %
