@@ -29,6 +29,7 @@ STRINGSIZE = 100;
     
 %% Define and create dimensions    
     nc_add_dimension(filename, 'time'       , 0);
+    nc_add_dimension(filename, 'bounds2'    , 2);
     nc_add_dimension(filename, 'alongshore' , length(grid.id));
     nc_add_dimension(filename, 'cross_shore', length(grid.crossShoreCoordinate));
     nc_add_dimension(filename, 'stringsize' , STRINGSIZE);
@@ -77,8 +78,15 @@ STRINGSIZE = 100;
     s.Name      = 'time';
     s.Nctype    = nc_double;
     s.Dimension = {'time'};
-    s.Attribute = struct('Name' ,{'standard_name'          ,'axis' ,'units'                             ,'comment'         },...
-                         'Value',{'time'                   ,'T'    ,'days since 1970-01-01 00:00 +1:00' ,'measurement year see bathy and time_topo for more details'});
+    s.Attribute = struct('Name' ,{'standard_name'          ,'axis' ,'units'                 ,'cell_methods','bounds'     ,'comment'         },...
+                         'Value',{'time'                   ,'T'    ,'days since 1970-01-01' ,'mean'        ,'time_bounds','measurement year see bathy and time_topo for more details'});
+    nc_addvar(filename, s);
+
+    s.Name      = 'time_bounds';
+    s.Nctype    = nc_double;
+    s.Dimension = {'bounds2','time'};
+    s.Attribute = struct('Name' ,{'standard_name'          ,'units'                },...
+                         'Value',{'time'                   ,'days since 1970-01-01'});
     nc_addvar(filename, s);
 
     % smaller variables first
@@ -235,16 +243,17 @@ STRINGSIZE = 100;
 %     s.Attribute = struct('Name' ,{'long_name'         , 'comment'},...
 %                          'Value',{'measurement method', 'Measurement method 1:TO DO, 3:TO DO, 5:TO DO used short for space considerations'});
     flag_values   = [ 1          2             3             4           5        ]; 
-%     flag_meanings = {'beach_only beach_overlap interpolation sea_overlap sea_only'};
     s.Attribute = struct('Name' ,{'long_name'         , 'flag_values','flag_meanings'},...
-                         'Value',{'measurement method',  flag_values  ,'1:beach only, 2:beach overlap, 3:interpolation, 4:sea overlap, 5:sea only'});
+                         'Value',{'measurement method',  flag_values  ,'beach_only beach_overlap interpolation sea_overlap sea_only'});
     nc_addvar(filename, s);    
     
 %% Store index variables
 
-    nc_varput(filename, 'time'    , grid.time, [0], [length(grid.time)]);
-    nc_varput(filename, 'id'      , grid.id);
-    nc_varput(filename, 'areacode', grid.areaCode);
+    nc_varput(filename, 'time'        , grid.time    );
+    nc_varput(filename, 'time_bounds' , grid.timelims);
+
+    nc_varput(filename, 'id'          , grid.id);
+    nc_varput(filename, 'areacode'    , grid.areaCode);
 %    TODO: Hack to store whole array
     areanames = grid.areaName;
     areanames(:, size(areanames,2)+1:STRINGSIZE) = ' ';
