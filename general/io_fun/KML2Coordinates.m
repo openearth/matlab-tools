@@ -78,10 +78,14 @@ switch OPT.method
        if isnumeric(names{jj})
            names{jj} = num2str(names{jj});
        end
-       coordCell{jj} = reshape(p(jj).LineString.coordinates,3,[])';
+       if size(p(jj).LineString.coordinates,1) == 1
+           coordCell{jj} = reshape(p(jj).LineString.coordinates,3,[])';
+       else
+           coordCell{jj} = p(jj).LineString.coordinates;
+       end
     end
 
- case 'fgetl' % has issues for manually editged kml: <coordinates> in same line as </coordinates>
+ case 'fgetl' % has issues for manually edited kml: <coordinates> in same line as </coordinates>
 	fid = fopen(kmlname);
     jj  = 0;
     while ~feof(fid)
@@ -119,12 +123,12 @@ switch OPT.method
                 end
                 coordCell{jj} = cell2mat(coord);
                 clear coord;
-
         end
 
     end
     fclose(fid);
  end % case
+
 if nargout==1
     varargout = {coordCell};
 elseif nargout>1
