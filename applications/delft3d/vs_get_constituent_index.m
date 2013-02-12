@@ -77,7 +77,7 @@ function varargout = vs_get_constituent_index(NFSstruct,varargin)
 
 if (~(strcmp(NFSstruct.SubType,'Delft3D-waq-map') || ...
            strcmp(NFSstruct.SubType,'Delft3D-waq-history')))
-   [m,n,k] = vs_mnk(NFSstruct);
+   [m,n,k] = vs_mnk(NFSstruct,'quiet');
 end
 
 %   Salinity

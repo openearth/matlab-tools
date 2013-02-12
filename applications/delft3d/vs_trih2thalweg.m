@@ -1,9 +1,15 @@
 function vs_trih2thalweg(vsfile,varargin)
 %vs_trih2thalweg x-sigma plane (cross-section, thalweg) from delft3 history file
 %
-%  vs_trih2thalweg(vsfile, <keyword,valu,e>)
+%  vs_trih2thalweg(vsfile,<keyword,value>) converts trih file to netCDF
+%  using only obs points indicated with keyword 'ind'. Then loads
+%  netCDF ans makes movie of thalweg plots.
 %
-%See also: pcolorcorcen_sigma, vs_use
+% Example:
+%
+% vs_trih2thalweg('d:\project\run007\trih-2009_1.def','ind',[30:40 52:59],'epsg',28992)
+%
+%See also: pcolorcorcen_sigma, vs_use, vs_trih2nc
 
 %%  --------------------------------------------------------------------
 %   Copyright (C) 2013 Deltares
@@ -58,68 +64,73 @@ OPT.txtflood  = 'FLOOD to Wadden Sea';
 OPT.ulegendx  = 500;
 OPT.ulegendz  = -25;
 OPT.pngsubdir = 'teso'; % subdir of dir of vsfile
-OPT.grd       = 'GRID18102012_1030.grd';
+OPT.ncfile    = '';
+OPT.shading   = 'hybrid'; % {'interp','stretched','hybrid','flat'};
 
 OPT = setproperty(OPT,varargin);
 
 %% get data
 
-   h = vs_use(vsfile);
+   h = vs_use(vsfile,'quiet');
 
 %% get data
    
    coordinates = permute(vs_let(h,'his-const','COORDINATES'      ,'quiet'),[2 3 1]);
    if any(strfind(lower(coordinates),'cart'))
-   D.x    = permute(vs_let(h,'his-const' ,'XYSTAT',{1 OPT.ind}),[3 2 1]);
-   D.y    = permute(vs_let(h,'his-const' ,'XYSTAT',{2 OPT.ind}),[3 2 1]);
+   D.x    = permute(vs_let(h,'his-const' ,'XYSTAT',{1 OPT.ind},'quiet'),[3 2 1]);
+   D.y    = permute(vs_let(h,'his-const' ,'XYSTAT',{2 OPT.ind},'quiet'),[3 2 1]);
    [D.lon,D.lat] = convertCoordinates(D.x,D.y,'CS1.code',OPT.epsg,'CS2.code',4326);
    else
-   D.lon  = permute(vs_let(h,'his-const' ,'XYSTAT',{1 OPT.ind}),[3 2 1]);
-   D.lat  = permute(vs_let(h,'his-const' ,'XYSTAT',{2 OPT.ind}),[3 2 1]);
+   D.lon  = permute(vs_let(h,'his-const' ,'XYSTAT',{1 OPT.ind},'quiet'),[3 2 1]);
+   D.lat  = permute(vs_let(h,'his-const' ,'XYSTAT',{2 OPT.ind},'quiet'),[3 2 1]);
    [D.x,D.y] = convertCoordinates(D.lon,D.lat,'CS1.code',4326,'CS2.code',OPT.epsg);
    end
-   D.thick = vs_let(h,'his-const' ,'THICK');
-   D.kmax  = vs_let(h,'his-const' ,'KMAX');
-   T.datenum = vs_time(h,0,1);
    
-   D.zwl   = permute(vs_let(h,'his-series','ZWL'  ,{OPT.ind}  ),[2 1]);
-   D.depth = permute(vs_let(h,'his-const' ,'DPS'  ,{OPT.ind}  ),[2 1]);
-   
-   D.u     = permute(vs_let(h,'his-series','ZCURU',{OPT.ind 0}),[2 1 3]);
-   D.v     = permute(vs_let(h,'his-series','ZCURV',{OPT.ind 0}),[2 1 3]);
-   D.w     = permute(vs_let(h,'his-series','ZCURW',{OPT.ind 0}),[2 1 3]);
-   
-   tmp = vs_get_constituent_index(h);fields = {'u','v','w'};units = {'m/s','m/s','m/s'};legend = {'along channel velocity','cross channel velocity','vertical velocity'};
-   if isfield(tmp,'salinity')
-   D.salinity     = permute(vs_let(h,'his-series','GRO',{OPT.ind 0 tmp.salinity.index   }),[2 1 3]);
-   fields{end+1} = 'salinity';units{end+1} = 'salinity';legend{end+1} = 'psu';
+   if isempty(OPT.ncfile)
+       OPT.ncfile = [filepathstrname(vsfile),'_thalweg.nc'];
    end
-   if isfield(tmp,'temperature')
-   D.temperature  = permute(vs_let(h,'his-series','GRO',{OPT.ind 0 tmp.temperature.index}),[2 1 3]);
-   fields{end+1} = 'temperature';units{end+1} = 'temperature';legend{end+1} = '\circC';
+
+   if ~exist(OPT.ncfile)
+      vs_trih2nc(vsfile,OPT.ncfile,'ind',OPT.ind,'trajectory',1,'epsg',OPT.epsg);
+   else
+      disp(['For plotting used existing netCDF file: ',OPT.ncfile])
    end
+   
+   D = nc2struct(OPT.ncfile);
 
 %% interpolate to ship track, drawn as kml in google earth
 %  (idea: use arbcross after connecting dots into small matrix?)
 
    %L = nc2struct('d:\opendap.deltares.nl\thredds\dodsC\opendap\deltares\landboundaries\northsea.nc','include',{'lon','lat'})
    [T.lat,T.lon] = KML2Coordinates(OPT.kml);   
+   %T.lat = linspace(T.lat(1),T.lat(2),38);
+   %T.lon = linspace(T.lon(1),T.lon(2),38);
    
    [T.x,T.y] = convertCoordinates(T.lon,T.lat,'CS1.code',4326,'CS2.code',OPT.epsg);
    [D.PI,D.RI,D.WI] = griddata_near1(D.x,D.y,        T.x,T.y,2);
-   T.zwl            = griddata_near2(D.x,D.y,D.zwl  ,T.x,T.y,D.PI,D.WI);
-   T.depth          = griddata_near2(D.x,D.y,D.depth,T.x,T.y,D.PI,D.WI);
+   T.waterlevel     = griddata_near2(D.x,D.y,permute(D.waterlevel,[2 1]),T.x,T.y,D.PI,D.WI);
+   T.depth          = griddata_near2(D.x,D.y,D.depth                    ,T.x,T.y,D.PI,D.WI);
+   
+   fields = {'u_x','u_y','u_z','salinity','temperature'};
+   
+   T.kmax = size(D.u_x,3);
+   T.nt   = size(D.u_x,1);
    for ifld=1:length(fields)
        fld = fields{ifld};
-       T.(fld) = repmat(T.zwl.*nan,[D.kmax 1 1 1]);
-       for k=1:D.kmax
-       T.(fld)(k,:,:) = griddata_near2(D.lon,D.lat,D.(fld)(:,:,k),T.lon,T.lat,D.PI,D.WI);
+       T.(fld) = repmat(T.waterlevel.*nan,[T.kmax 1 1 1]);
+       for k=1:T.kmax
+       T.(fld)(k,:,:) = griddata_near2(D.longitude,D.latitude,permute(D.(fld)(:,:,k),[2 1]),T.lon,T.lat,D.PI,D.WI);
        end
    end
-   [T.sigma,T.sigma_bounds] = d3d_sigma(D.thick);
-   T.sigma        = T.sigma-1;
-   T.sigma_bounds = T.sigma_bounds-1;
-   T.track = distance(T.x,T.y);
+   T.datenum     = D.datenum;
+   T.track       = distance(T.x,T.y);
+   T.track_b     = center2corner1(T.track,'nearest'); % bounds for shading flat
+   T.depth_b     = center2corner1(T.depth,'nearest'); % bounds for shading flat
+   T.Layer       = D.Layer;
+   T.LayerInterf = D.LayerInterf;
+   T.sigma2plot      = T.Layer;
+   T.sigma2plot(1)   = 0;
+   T.sigma2plot(end) = -1;
 
 %% rotate to cross/along polygon
 
@@ -127,8 +138,7 @@ OPT = setproperty(OPT,varargin);
 
 %% thalweg plot
    close
-   AX = subplot_meshgrid(2,1,.05,.05,[nan .05],nan);axes(AX(1))
-   plot(T.track,-T.depth,'linewidth',3,'color',[.6 .3 0]);
+   AX = subplot_meshgrid(2,1,.05,[.01 .04],[nan .05],nan);axes(AX(1))
    hold on
    colormap(clrmap([1 0 0;.95 .95 .95;0 0 1],18))
    clim([-1.5 1.5])
@@ -137,28 +147,90 @@ OPT = setproperty(OPT,varargin);
    colorbarwithvtext([OPT.txtebb,' - along channel velocity -',OPT.txtflood],'position',get(AX(2),'position'))
    delete(AX(2))
    tickmap('x','format','%0.1f')
-   for it=100:size(T.u,3)
-      h1 = pcolorcorcen_sigma(T.track,T.sigma,T.zwl(1,:,it),T.depth, T.u(:,:,it));
+   hlegu = arrow2(OPT.ulegendx,OPT.ulegendz,1,OPT.wscale*0,2);
+   hlegv = arrow2(OPT.ulegendx,OPT.ulegendz,0,OPT.wscale*0.01,2);
+   text       (OPT.ulegendx,OPT.ulegendz,{'1 m/s'} ,'vert','top','horizontalalignment','cen');
+   text       (OPT.ulegendx,OPT.ulegendz,{'1 cm/s',''},'vert','top','horizontalalignment','left','verticalalignment','bot','rotation',90);
+   
+   plot([1e3 1250],[-24 -24],'--k','linewidth',3);plot([1250 1500],[-24 -24],'-k','linewidth',3)
+   plot([1e3 1250],[-25 -25],'--k','linewidth',2);plot([1250 1500],[-25 -25],'-k','linewidth',2)
+   plot([1e3 1250],[-26 -26],'--k','linewidth',1);plot([1250 1500],[-26 -26],'-k','linewidth',1)
+   plot(1400,-23,'ko','markersize',10,'MarkerFaceColor','b')
+   plot(1400,-23,'ko','markersize',4 ,'MarkerFaceColor','k')
+   plot(1100,-23,'ko','markersize',10,'MarkerFaceColor','r')
+   plot(1100,-23,'kx','markersize',10)
+   text(1500,-25,{' 0.5 m/s',' 0.2 m/s',' 0.1 m/s'})
+   text(xlim1(1),ylim1(1),[' \uparrow '  ,OPT.txtleft] ,'rotation',90,'verticalalignment','top')
+   text(xlim1(2),ylim1(1),[' \downarrow ',OPT.txtright],'rotation',90,'verticalalignment','bottom')
+   grid on
+   
+   for it=100:T.nt
+       
+      disp([num2str(it),'/',num2str(T.nt)])
+
+      if strcmpi(OPT.shading,'hybrid') || strcmpi(OPT.shading,'flat')
+      T.waterlevel_b = center2corner1(T.waterlevel(1,:,it),'nearest'); % bounds for shading flat
+      end
+      if strcmpi(OPT.shading,'flat')
+      h0 = plot(T.track_b,-T.depth_b,'linewidth',3,'color',[.6 .3 0]);
+      else
+      h0 = plot(T.track  ,-T.depth  ,'linewidth',3,'color',[.6 .3 0]);
+      end
+
+      % shading interp with 2 layer of shading flat for bands near free surface and bed
+      if strcmpi(OPT.shading,'hybrid')
+      hs = pcolorcorcen_sigma(T.track_b,T.LayerInterf(    1:2  ),T.waterlevel_b,T.depth_b, T.u_x(  1,:,it));
+      %some mismatch for nottom spikes
+      hb = pcolorcorcen_sigma(T.track_b,T.LayerInterf(end-1:end),T.waterlevel_b,T.depth_b, T.u_x(end,:,it));
+      set(hs,'EdgeColor','none')
+      set(hb,'EdgeColor','none')
+      end
+      
+      % shading interp: white bands near free surface and bed
+      if strcmpi(OPT.shading,'hybrid') | strcmpi(OPT.shading,'interp')
+      h1 = pcolorcorcen_sigma(T.track,T.Layer,T.waterlevel(1,:,it),T.depth, T.u_x(:,:,it));
       T.S = get(h1,'XData');
       T.Z = get(h1,'YData');
-      [~,h2] = contour2(T.S,T.Z,T.v(:,:,it),[-1 -.5 -.2 0 .2 .5 1],'k');
-      h3 = plot(T.track,T.zwl(:,:,it),'k');
-      h4 = arrow2(T.S,T.Z,T.v(:,:,it),OPT.wscale*T.w(:,:,it),2);
       
-      h5 = arrow2(OPT.ulegendx,OPT.ulegendz,1,OPT.wscale*0,2);
-      h6 = arrow2(OPT.ulegendx,OPT.ulegendz,0,OPT.wscale*0.01,2);
-      text       (OPT.ulegendx,OPT.ulegendz,'1 m/s' ,'vert','top','horizontalalignment','left');
-      text       (OPT.ulegendx,OPT.ulegendz,'1 cm/s','vert','top','horizontalalignment','left','verticalalignment','bot','rotation',90);
+      % shading interp strechted to fill white bands near free surface and bed
+      elseif strcmpi(OPT.shading,'stretched')
+      h1 = pcolorcorcen_sigma(T.track,T.sigma2plot,T.waterlevel(1,:,it),T.depth, T.u_x(:,:,it));
+      T.S = get(h1,'XData');
+      T.Z = get(h1,'YData');
+      
+      % shading flat
+      elseif strcmpi(OPT.shading,'flat')
+      h1 = pcolorcorcen_sigma(T.track_b,T.LayerInterf,T.waterlevel_b,T.depth_b, T.u_x(:,:,it));
+      T.S = get(h1,'XData');T.S = T.S(1:end-1,1:end-1);
+      T.Z = get(h1,'YData');T.Z = T.Z(1:end-1,1:end-1);
+      end
+      
+      [~,h2a] = contour(T.S,T.Z,T.u_y(:,:,it),[-.5 -.5],'--k','linewidth',3);
+      [~,h2b] = contour(T.S,T.Z,T.u_y(:,:,it),[-.2 -.2],'--k','linewidth',2);
+      [~,h2c] = contour(T.S,T.Z,T.u_y(:,:,it),[-.1 -.1],'--k','linewidth',1);
+      [~,h2d] = contour(T.S,T.Z,T.u_y(:,:,it),[  0   0],':k' ,'linewidth',1);
+      [~,h2e] = contour(T.S,T.Z,T.u_y(:,:,it),[ .1  .1], '-k','linewidth',1);
+      [~,h2f] = contour(T.S,T.Z,T.u_y(:,:,it),[ .2  .2], '-k','linewidth',2);
+      [~,h2g] = contour(T.S,T.Z,T.u_y(:,:,it),[ .5  .5], '-k','linewidth',3);
+      h3 = plot(T.track,T.waterlevel(:,:,it),'k');
+      h4 = arrow2(T.S,T.Z,T.u_y(:,:,it),OPT.wscale*T.u_z(:,:,it),2);
+      ht = text(0,1,datestr(T.datenum(it),' yyyy-mmm-dd HH:MM'),'units','normalized','verticalalignment','top');
 
-      text(xlim1(1),ylim1(1),[' \uparrow '  ,OPT.txtleft] ,'rotation',90,'verticalalignment','top')
-      text(xlim1(2),ylim1(1),[' \downarrow ',OPT.txtright],'rotation',90,'verticalalignment','bottom')
-      grid on
-      title(datestr(T.datenum(it),'yyyy-mmm-dd HH:MM'))
       print2screensizeoverwrite([fileparts(vsfile),filesep,OPT.pngsubdir,filesep,filename(vsfile),'_',datestr(T.datenum(it),'yyyy-mmm-dd_HHMM')])
+
       if OPT.pause
       pausedisp
       end
-      delete(h1,h2, h3,h4.head, h4.shaft, h5.head, h5.shaft, h6.head, h6.shaft)
-     
+      delete(h0,h1,h3,h4.head,h4.shaft,ht)
+      try;delete(h2a);end
+      try;delete(h2b);end
+      try;delete(h2c);end
+      try;delete(h2d);end
+      try;delete(h2e);end
+      try;delete(h2f);end
+      try;delete(h2g);end
+      try;delete(hs );end
+      try;delete(hb );end
    end
+
       
