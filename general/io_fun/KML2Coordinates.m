@@ -131,7 +131,7 @@ elseif nargout>1
     % make NaN-seperated polygons from seperate cells
     lon = cell2mat(cellfun(@(x) [x(:,1)' nan],coordCell,'UniformOutput',0));lon = lon(1:end-1);
     lat = cell2mat(cellfun(@(x) [x(:,2)' nan],coordCell,'UniformOutput',0));lat = lat(1:end-1);
-    z   = cell2mat(cellfun(@(x) [x(:,3)' nan],coordCell,'UniformOutput',0));lz  = z  (1:end-1);
+    z   = cell2mat(cellfun(@(x) [x(:,3)' nan],coordCell,'UniformOutput',0));z  = z  (1:end-1);
     if nargout==2
     varargout = {lat,lon}; 
     elseif nargout==3
