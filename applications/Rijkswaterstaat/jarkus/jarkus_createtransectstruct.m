@@ -41,5 +41,6 @@ function [transect] = jarkus_createtransectstruct()
     % row vector of altitude
     transect.altitude             = []; % m positive up
     transect.id                   = 0;
+    transect.timelims             = [];
 
 end % end function createtransectstruct

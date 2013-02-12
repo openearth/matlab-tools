@@ -31,6 +31,7 @@ function [grid] = jarkus_transect2grid(transectStruct)
 
  %% find all years
     grid.time                  = unique([transectStruct.time]); % unique output is sorted in ascending order
+    grid.timelims              = unique([transectStruct.timelims]', 'rows');
     
  %% compute cross-shore grid
     minCrossShoreCoordinate    = min([transectStruct.crossShoreCoordinate]); % cellfun is slow and not needed here: min(cellfun(@min, {transectStruct.crossShoreCoordinate}));
