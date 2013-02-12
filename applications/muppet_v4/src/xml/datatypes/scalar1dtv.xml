@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<root>
+  <name>scalar1dtv</name>
+  <longname>Scalar Time Series</longname>
+  <plot>
+    <type>timeseries</type>
+    <plotroutine>
+      <name>plotline</name>
+      <plotoption>
+        <name>plotroutine</name>
+      </plotoption>
+      <plotoption>
+        <name>linegroup</name>
+      </plotoption>
+      <plotoption>
+        <name>markergroup</name>
+      </plotoption>
+      <plotoption>
+        <name>legendtext</name>
+      </plotoption>
+      <plotoption>
+        <name>timebargroup</name>
+      </plotoption>
+    </plotroutine>
+  </plot>
+</root>
