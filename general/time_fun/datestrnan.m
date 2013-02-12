@@ -51,6 +51,9 @@ function S = datestrnan(varargin)
    else
    FillValue  = varargin{end};
    end
+   if length(FillValue)>1
+       error(['FillValue should be only one character, not:',FillValue])
+   end
    mask       = ~isnan(V);
    S2         = datestr(V(mask),varargin{2:end-1});
    sz         = size(S2); sz(1) = length(V);
