@@ -29,7 +29,7 @@ else
         case{'reloadxml'}
             reloadXmlFiles;
         case{'selectdataset'}
-            selectDataset;
+            muppet_selectDataset;
         case{'adddataset'}
             addDataset;
         case{'deletedataset'}
@@ -123,7 +123,7 @@ if ok
     setHandles(handles);    
     if iopt
         muppet_refreshColorMap(handles);
-        selectDataset;
+        muppet_selectDataset;
         muppet_updateGUI;
     end
 end
@@ -150,7 +150,7 @@ if pathname~=0
             end
         end        
         setHandles(handles);
-        selectDataset;
+        muppet_selectDataset;
         muppet_updateGUI;
     end
 else
@@ -171,7 +171,6 @@ if isempty(handles.sessionfile)
 end
 muppet_saveSessionFile(handles,handles.sessionfile,0);
 
-
 %%
 function saveSessionAs
 handles=getHandles;
@@ -184,9 +183,12 @@ end
 
 %%
 function addDatasetfromURL
-handles = getHandles;
-handles=muppet_datasetURL_GUI(handles,[1 1 5 5],0);
-selectDataset;
+handles=getHandles;
+muppet_selectDatasetFromURLType(handles);
+muppet_selectDataset;
+muppet_updateGUI;
+
+% handles=muppet_datasetURL_GUI(handles,[1 1 5 5],0);
 
 %%
 function importLayout
@@ -227,41 +229,6 @@ handles=muppet_readXmlFiles(handles);
 setHandles(handles);
 
 %%
-function selectDataset
-handles=getHandles;
-if handles.nrdatasets>0
-    idtype=muppet_findIndex(handles.datatype,'datatype','name',handles.datasets(handles.activedataset).dataset.type);
-    [pathname,filename,ext]=fileparts(handles.datasets(handles.activedataset).dataset.filename);
-    currentpath=pwd;
-    if ~strcmpi(currentpath,pathname)
-        filename=[pathname filename ext];
-    else
-        filename=[filename ext];
-    end
-    txt1=['Name : ' handles.datasets(handles.activedataset).dataset.name];
-    txt2=['File: ' filename];
-    txt3=['Type : ' handles.datatype(idtype).datatype.longname];
-    if isempty(handles.datasets(handles.activedataset).dataset.time)
-        txt4='';
-    else
-        txt4=['Time : ' datestr(handles.datasets(handles.activedataset).dataset.time)];
-    end
-    txt5='';
-else
-    txt1='';
-    txt2='';
-    txt3='';
-    txt4='';
-    txt5='';
-end
-handles.datasettext1=txt1;
-handles.datasettext2=txt2;
-handles.datasettext3=txt3;
-handles.datasettext4=txt4;
-handles.datasettext5=txt5;
-setHandles(handles);
-
-%%
 function addDataset
 
 handles=getHandles;
@@ -290,7 +257,7 @@ if pathname~=0
     handles.lastfiletype=filetypes{filterindex};
     setHandles(handles);
     muppet_datasetGUI('makewindow','filename',[pathname filename],'filetype',filetypes{filterindex});
-    selectDataset;
+    muppet_selectDataset;
 end
 
 %%
@@ -319,7 +286,7 @@ if ok
     [handles.datasets handles.activedataset handles.nrdatasets] = UpDownDeleteStruc(handles.datasets, handles.activedataset, 'delete');
     handles=muppet_updateDatasetNames(handles);
     setHandles(handles);
-    selectDataset;
+    muppet_selectDataset;
 end
 
 %%

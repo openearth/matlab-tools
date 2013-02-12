@@ -1,4 +1,4 @@
-function handles = muppet_datasetURL_GUI(handles, varargin)
+function varargout = muppet_addDatasetNCCatalog(varargin)
 %MUPPET_DATASETURL_GUI  One line description goes here.
 %
 %   More detailed description goes here.
@@ -61,26 +61,50 @@ function handles = muppet_datasetURL_GUI(handles, varargin)
 % $Keywords: $
 
 %%
-s = struct();
-[s, ok] = gui_newWindow(s, 'xmldir', handles.xmldir, 'xmlfile', 'newurldataset.xml');
 
-iscatalog = ~isempty(regexpi(s.url, 'catalog.nc$', 'once'));
+for ii=1:length(varargin)
+    if ischar(varargin{ii})
+        switch lower(varargin{ii})
+            case{'read'}
+                % Read file data
+                dataset=varargin{ii+1};
+                dataset.name='catalog';
+                dataset=read(dataset);
+                varargout{1}=dataset;
+            case{'import'}
+                % Import data
+                dataset=varargin{ii+1};
+                dataset=import(dataset);
+                varargout{1}=dataset;
+        end
+    end
+end
+
+%%
+function dataset=read(dataset)
+
+%%
+function dataset=import(dataset)
+
+url=dataset.filename;
+
+iscatalog = ~isempty(regexpi(url, 'catalog.nc$', 'once'));
 
 if iscatalog
-    urlPath = cellstr(nc_varget(s.url, 'urlPath'));
+    urlPath = cellstr(nc_varget(url, 'urlPath'));
     % check whether urlPath is correct (sometimes cropped to 64 characters, possibly leading to all identical urls)
     if isequal(size(unique(urlPath)), size(urlPath))
         urls = urlPath;
-        x_ranges = nc_varget(s.url, 'projectionCoverage_x');
-        y_ranges = nc_varget(s.url, 'projectionCoverage_y');
+        x_ranges = nc_varget(url, 'projectionCoverage_x');
+        y_ranges = nc_varget(url, 'projectionCoverage_y');
     else
-        [urls, x_ranges, y_ranges] = grid_orth_getMapInfoFromDataset(s.url(1:end-10));
+        [urls, x_ranges, y_ranges] = grid_orth_getMapInfoFromDataset(url(1:end-10));
     end
 else
-    [urls, x_ranges, y_ranges] = grid_orth_getMapInfoFromDataset(s.url);
+    [urls, x_ranges, y_ranges] = grid_orth_getMapInfoFromDataset(url);
 end
 
-pg = landboundary_da('read', s.polygonfile);
+pg = landboundary_da('read', dataset.polygonfile);
 
 [X, Y, Z, Ztime, OPT] = grid_orth_getDataInPolygon(...
     'polygon', pg,...
@@ -88,3 +112,9 @@ pg = landboundary_da('read', s.polygonfile);
     'x_ranges', x_ranges,...
     'y_ranges', y_ranges);
 
+dataset.x=x;
+dataset.y=y;
+dataset.z=z;
+
+dataset.type='scalar2dxy';
+dataset.tc='c';

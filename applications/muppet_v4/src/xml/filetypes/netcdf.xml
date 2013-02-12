@@ -5,6 +5,7 @@
   <title>NetCDF File</title>
   <filterspec>*.nc</filterspec>
   <callback>muppet_addDatasetQP</callback>
+  <fromurl>yes</fromurl>
   <option>
     <name>filetype</name>
   </option>

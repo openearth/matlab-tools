@@ -50,6 +50,8 @@ dataset.subfields={''};
 
 dataset.nrblocks=0;
 
+dataset.polygonfile='';
+
 dataset.adjustname=1;
 
 dataset.nrquantities=1;
@@ -59,3 +61,4 @@ dataset.selectedquantity='scalar';
 dataset.selectcoordinates=0;
 
 dataset.activeparameter=[];
+

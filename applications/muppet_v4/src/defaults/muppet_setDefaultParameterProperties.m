@@ -2,7 +2,7 @@ function opt=muppet_setDefaultParameterProperties(opt)
 
 % Store information about dimensions of different parameters
 
-opt.name='';
+%opt.name='';
 opt.datatype='unknown';
 opt.active=1;
 

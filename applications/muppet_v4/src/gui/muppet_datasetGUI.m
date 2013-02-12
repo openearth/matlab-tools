@@ -63,7 +63,7 @@ dataset=feval(callback,'read',dataset);
 if ~isfield(dataset,'parameters')
     dataset.parameters(1).parameter=dataset;
     dataset.parameters(1).parameter.active=1;
-    dataset.parameters(1).parameter.name='';
+%    dataset.parameters(1).parameter.name='';
     dataset.parameters(1).parameter.size=[0 0 0 0 0];
     dataset.parameters(1).parameter=muppet_setDefaultParameterProperties(dataset.parameters(1).parameter);
 end

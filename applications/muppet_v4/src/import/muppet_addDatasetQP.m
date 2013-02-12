@@ -237,7 +237,7 @@ end
 if isfield(dataproperties,'Loc')
     dataset.location=dataproperties.Loc;
 end
-dataset.location
+
 % From here on, everything should be the same for each type of datafile
 % d must always look like structure as imported from qpread
 
