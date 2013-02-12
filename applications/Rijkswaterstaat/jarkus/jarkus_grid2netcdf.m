@@ -23,7 +23,7 @@ STRINGSIZE = 100;
 	nc_attput( filename, nc_global, 'keywords_vocabulary', 'http://www.eionet.europa.eu/gemet');
 	nc_attput( filename, nc_global, 'standard_name_vocabulary', 'http://cf-pcmdi.llnl.gov/documents/cf-standard-names/');
     nc_attput( filename, nc_global, 'history', sprintf('Data received from Rijkswaterstaat\nNetCDF created on %s by %s on computer %s\\%s with script %s',...
-    datestr(now,31), getenv('USERNAME'), getenv('USERDOMAIN'), getenv('COMPUTER'), '$Id$'));
+    datestr(now,31), getenv('USERNAME'), getenv('USERDOMAIN'), getenv('COMPUTERNAME'), '$Id$'));
     nc_attput( filename, nc_global, 'institution', 'Rijkswaterstaat');
     nc_attput( filename, nc_global, 'source'     , 'on shore and off shore measurements');
     nc_attput( filename, nc_global, 'references' , sprintf(['Original source: http://www.watermarkt.nl/kustenzeebodem/\n' ...
