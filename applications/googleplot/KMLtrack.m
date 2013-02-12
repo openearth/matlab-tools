@@ -102,6 +102,7 @@ OPT.LookAtheading  = [];
 OPT.dateStrStyle   = 'yyyy-mm-ddTHH:MM:SS';
 OPT.visible        = true;
 OPT.extrude        = true;
+OPT.model          = '';
 OPT.tessellate     = true;
 OPT.zScaleFun      = @(z) (z+0)*1;
 OPT.fid            = -1;
@@ -131,6 +132,10 @@ if addData
         OPT.data(ii)    = determineDataType(OPT.data(ii));
         OPT.data(ii).id = num2str(ii);
     end
+end
+
+if ~isempty(OPT.model)
+    [model_path,model_name,model_ext] = fileparts(OPT.model);
 end
 
 % correct coordinates
@@ -262,6 +267,11 @@ kk = 1;
 OPT_track              = KML_track;
 OPT_track.dateStrStyle = OPT.dateStrStyle;
 OPT_track.extrude      = OPT.extrude;
+if ~isempty(OPT.model) && strcmpi  ( OPT.fileName(end-2:end),'kmz')
+    OPT_track.model        = [model_name model_ext];
+else
+    OPT_track.model        = OPT.model;
+end
         
 for ii=1:size(lat,2)
     % check if there is data to write
@@ -315,7 +325,11 @@ if ischar(OPT.fileName)
     
     if strcmpi  ( OPT.fileName(end-2:end),'kmz')
         movefile( OPT.fileName,[OPT.fileName(1:end-3) 'kml'])
-        zip     ( OPT.fileName,[OPT.fileName(1:end-3) 'kml']);
+        if isempty(OPT.model)
+            zip ( OPT.fileName,[OPT.fileName(1:end-3) 'kml']);
+        else
+            zip (OPT.fileName,{OPT.model,[OPT.fileName(1:end-3) 'kml']});
+        end
         movefile([OPT.fileName '.zip'],OPT.fileName)
         delete  ([OPT.fileName(1:end-3) 'kml'])
     end

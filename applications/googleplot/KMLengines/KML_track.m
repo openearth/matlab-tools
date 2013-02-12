@@ -50,6 +50,7 @@ OPT.name         = 'track';
 OPT.extendedData = '';
 OPT.tessellate   = [];
 OPT.schemaName   = [];
+OPT.model        = '';
 OPT.dateStrStyle = 'yyyy-mm-ddTHH:MM:SS';
 
 OPT = setproperty(OPT,varargin{:});
@@ -93,6 +94,20 @@ if  OPT.tessellate
 else
     tessellate = '';
 end
+%% preprocess model
+if  ~isempty(OPT.model)
+    model = sprintf([...
+        '<Model>\n'...
+        '  <altitudeMode>clampToGround</altitudeMode>\n'...
+        '  <Link>\n'...
+        '    <href>%s</href>\n'...
+        '  </Link>\n'...
+        '</Model>\n'],...
+        OPT.model);
+else
+    model = '';
+end
+
 
 %% preprocess extendedData
 if  isempty(OPT.extendedData)
@@ -174,12 +189,13 @@ for ii = 1:size(pieces,1)
         '<gx:Track>\n'...
         '%s'...                         % extrude
         '%s'...                         % altitudeMode
+        '%s'...                         % model
         '%s\n'...                       % timeString
         '%s\n'...                       % coordinateString
         '%s\n'...                       % angleString
         '%s\n'...                       % dataString
         '</gx:Track>\n'],...
-        extrude,altitudeMode,timeString,coordinateString,angleString,dataString)];
+        extrude,altitudeMode,model,timeString,coordinateString,angleString,dataString)];
 end
 
 %% generate output

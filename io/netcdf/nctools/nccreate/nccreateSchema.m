@@ -102,6 +102,10 @@ schema.Attributes   = {};
 schema.Groups       = [];
 schema.Format       = 'netcdf4'; % netcdf4 or classic
 
+if nargin == 0
+    return
+end
+
 schema = setproperty(schema,varargin);
 
 %% check format
