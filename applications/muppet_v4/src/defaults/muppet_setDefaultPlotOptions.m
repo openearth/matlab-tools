@@ -49,9 +49,14 @@ opt.elevation=0;
 opt.elevations=[-20 20];
 opt.whitevalue=0.9;
 opt.multiply=1;
+
 opt.headwidth=4;
 opt.arrowwidth=2;
+opt.headlength=8;
+opt.nrheads=1;
+opt.polylinetype='polyline';
 opt.maxdistance=0;
+
 opt.adddatestring=0;
 opt.adddate.position='upper-left';
 opt.adddate.prefix='Date : ';
@@ -86,6 +91,7 @@ opt.fieldthinningfactor1=1;
 opt.fieldthinningfactor2=1;
 opt.fieldthinningfactor=1;
 
+% CurVec
 opt.arrowthickness=0.05;
 opt.headthickness=0.15;
 opt.curveclength=600;

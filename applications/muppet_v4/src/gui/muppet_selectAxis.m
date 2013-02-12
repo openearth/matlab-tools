@@ -128,7 +128,7 @@ else
     nearaxis=inpolygon(posgcf(1),posgcf(2),outerx,outery) & ~inpolygon(posgcf(1),posgcf(2),innerx,innery);
     
     if distcorners(1)<5
-        switch iclosest,
+        switch iclosest
             case 1
                 setptr(gcf,'botl');
             case 2

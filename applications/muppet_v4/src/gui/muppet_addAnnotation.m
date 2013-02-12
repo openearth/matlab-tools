@@ -2,7 +2,7 @@ function an=muppet_addAnnotation(fig,i,isub,j)
 
 ann=fig.subplots(isub).subplot.datasets(j).dataset;
 
-an=findobj(gcf,'Tag','annotation','UserData',[i,j]);
+an=findall(gcf,'Tag','annotation','UserData',[i,j]);
 delete(an);
 
 an=annotation(ann.plotroutine);

@@ -41,14 +41,16 @@ if sum(hnd)>0
     set(leg,'FontAngle',plt.legend.font.angle);
     set(leg,'TextColor',colorlist('getrgb','color',plt.legend.font.color));
 
-    if ischar(plt.legend.position)
-        set(leg,'Location',plt.legend.position);
-    else
-        pos=plt.legend.position;
-        pos(3)=max(pos(3),0.2);
-        pos(4)=max(pos(4),0.2);
-        set(leg,'Position',pos*fig.cm2pix);
+    switch lower(plt.legend.positionstring)
+        case{'custom'}
+            pos=plt.legend.position;
+            pos(3)=max(pos(3),0.2);
+            pos(4)=max(pos(4),0.2);
+            set(leg,'Position',pos*fig.cm2pix);
+        otherwise
+            set(leg,'Location',plt.legend.position);
     end
+        
     set(leg,'Tag','legend');
     set(findobj(leg,'type','text'),'HitTest','off');
     legenddata.i=ifig;

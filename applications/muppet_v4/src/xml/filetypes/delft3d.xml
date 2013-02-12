@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <root>
-  <name>Delft3D</name>
+  <name>delft3d</name>
   <longname>Delft3D Output Files</longname>
   <title>Delft3D Output File</title>
   <filterspec>trim-*.dat;trih-*.dat;com-*.dat;wavm-*.dat;hwgxy*.dat;*.dat</filterspec>
-  <callback>muppet_addDatasetDelft3D</callback>
+  <callback>muppet_addDatasetQP</callback>
   <option>
     <name>filetype</name>
   </option>
@@ -21,7 +21,7 @@
     <name>subfield</name>
   </option>
   <option>
-    <name>xcoordinate</name>
+    <name>plotcoordinate</name>
   </option>
   <option>
     <name>component</name>

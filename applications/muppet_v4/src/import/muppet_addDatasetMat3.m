@@ -57,6 +57,10 @@ for ii=1:length(s.parameters)
     
     dataset.parameters(ii).parameter.coordinatesystem=cs;
     
+    if isfield(s.parameters(ii).parameter,'dimensions')
+        s.parameters(ii).parameter.size=s.parameters(ii).parameter.dimensions;
+    end
+    
     % Determine size (if not available in parameter structure)
     if isfield(s.parameters(ii).parameter,'size')
         dataset.parameters(ii).parameter.size=s.parameters(ii).parameter.size;
@@ -106,7 +110,8 @@ end
 
 [timestep,istation,m,n,k]=muppet_findDataIndices(dataset);
 
-shp=muppet_findDataShape(dataset.size,timestep,istation,m,n,k);
+%shp=muppet_findDataShape(dataset.size,timestep,istation,m,n,k);
+%dataset=muppet_determineDatasetShape(dataset,timestep,istation,m,n,k);
 
 if isfield(parameter,dataset.timename)
     d.Time=parameter.(dataset.timename)(timestep);
@@ -114,15 +119,23 @@ end
 if isfield(parameter,dataset.xname)
     switch dataset.quantity
         case{'location'}
-            d.X=parameter.(dataset.xname)(timestep,m);
+            if dataset.size(1)>0
+                d.X=parameter.(dataset.xname)(timestep,m);
+            else
+                d.X=parameter.(dataset.xname)(m);
+            end
         otherwise
-            d.Y=parameter.(dataset.xname)(m,n);
+            d.X=parameter.(dataset.xname)(m,n);
     end
 end
 if isfield(parameter,dataset.yname)
     switch dataset.quantity
         case{'location'}
-            d.Y=parameter.(dataset.yname)(timestep,m);
+            if dataset.size(1)>0
+                d.Y=parameter.(dataset.yname)(timestep,m);
+            else
+                d.Y=parameter.(dataset.yname)(m);
+            end
         otherwise
             d.Y=parameter.(dataset.yname)(m,n);
     end
@@ -146,177 +159,32 @@ if strcmpi(dataset.quantity,'vector')
     dataset.quantity='vector2d';
 end
 
+% dataset=muppet_determineDatasetShape(dataset,timestep,istation,m,n,k);
+
 %% From here on, everything should be the same for each type of datafile
 
-% Squeeze
-d=muppet_squeezeDataset(d);
+dataset=muppet_finishImportingDataset(dataset,d,timestep,istation,m,n,k);
 
-%% Determine component
-[dataset,d]=muppet_determineDatasetComponent(dataset,d);
-
-%% Copy data to dataset structure
-dataset=muppet_copyToDataStructure(dataset,d);
-
-%% Determine cell centres/corners
-dataset.xz=dataset.x;
-dataset.yz=dataset.y;
-dataset.zz=dataset.z;
-
-dataset.type=[dataset.type dataset.quantity];
-
-% z or d
-if isfield(dataproperties,'Loc')
-    dataset.location=dataproperties.Loc;
-end
-
-%% Set time-varying or constant
-dataset=muppet_setDatasetVaryingOrConstant(dataset,timestep);
-
-
-% % Determine component
-% switch dataset.quantity
-%     case{'vector2d','vector3d'}
-%         if isempty(dataset.component)
-%             dataset.component='vector';
-%         end
-%         % Vector, compute components if necessary
-%         switch lower(dataset.component)
-%             case('magnitude')
-%                 val=sqrt(u.^2+v.^2);
-%                 dataset.quantity='scalar';
-%             case('angle (radians)')
-%                 val=mod(0.5*pi-atan2(v,u),2*pi);
-%                 dataset.quantity='scalar';
-%             case('angle (degrees)')
-%                 val=mod(0.5*pi-atan2(v,u),2*pi)*180/pi;
-%                 dataset.quantity='scalar';
-%             case('m-component')
-%                 val=u;
-%                 dataset.quantity='scalar';
-%             case('n-component')
-%                 val=v;
-%                 dataset.quantity='scalar';
-%             case('x-component')
-%                 val=u;
-%                 dataset.quantity='scalar';
-%             case('y-component')
-%                 val=v;
-%                 dataset.quantity='scalar';
-%         end
-% end
+% % Squeeze
+% d=muppet_squeezeDataset(d);
 % 
-% %dataset.times=parameter.(dataset.timename);
+% %% Determine component
+% [dataset,d]=muppet_determineDatasetComponent(dataset,d);
 % 
-% % Compute y value for cross sections
-% plotcoordinate=[];
-% switch shp
-%     case{'timestackm','timestackn','crossection2dm','crossection1dm','crossection2dn','crossection1dn'}
-%         switch(lower(dataset.xcoordinate))
-%             case{'x'}
-%                 x=squeeze(x);
-%             case{'y'}
-%                 x=squeeze(y);
-%             case{'pathdistance'}
-%                 x=pathdistance(squeeze(x),squeeze(y));
-%             case{'revpathdistance'}
-%                 x=pathdistance(squeeze(x),squeeze(y));
-%                 x=x(end:-1:1);
-%         end
-%         plotcoordinate=x;
-% end
+% %% Copy data to dataset structure
+% dataset=muppet_copyToDataStructure(dataset,d,shpmat,plane,ndim);
 % 
-% % Determine coordinates
-% switch shp
-%     case{'polyline'}
-%         dataset.x=x;
-%         dataset.y=y;
-%         tp='polyline2d';
-%         tc='c';
-%         dataset.quantity='';
-%     case{'timestackstation'}
-%         dataset.x=t;
-%         dataset.y=z;
-%         dataset.z=val;
-%         tp='timestack';
-%         tc='t';
-%     case{'timeseriesstation'}
-%         switch dataset.quantity
-%             case{'location'}
-%                 dataset.x=x;
-%                 dataset.y=y;
-%                 tp='track';
-%                 tc='c';
-%                 dataset.quantity='';
-%             otherwise
-%                 dataset.x=t;
-%                 dataset.y=val;
-%                 tp='timeseries';
-%                 tc='t';
-%         end
-%     case{'profilestation'}
-%         dataset.x=val;
-%         dataset.y=z;
-%         tp='xy';
-%         tc='c';
-%     case{'timestackm','timestackn'}
-%         dataset.x=t;
-%         dataset.y=plotcoordinate;        
-%         dataset.z=val;
-%         tp='timestack';
-%         tc='t';
-%     case{'timestackk'}
-%         dataset.x=t;
-%         dataset.y=z;        
-%         dataset.z=val;
-%         tp='timestack';
-%         tc='t';
-%     case{'timeseries'}
-%         dataset.x=t;
-%         dataset.y=val;
-%         tp='timeseries';
-%         tc='t';
-%     case{'map2d'}
-%         dataset.x=x;
-%         dataset.y=y;
-%         dataset.z=val;
-%         tp='map2d';
-%         tc='c';
-%     case{'crossection1dm','crossection1dn'}
-%         dataset.x=plotcoordinate;
-%         dataset.y=val;
-%         tp='xy';
-%         tc='c';
-%     case{'crossection2dm','crossection2dn'}
-%         dataset.x=plotcoordinate;
-%         dataset.y=z;
-%         dataset.z=val;
-%         tp='crosssection2d';
-%         tc='c';
-%     case{'profile'}        
-%         dataset.x=val;
-%         dataset.y=z;
-%         tp='xy';
-%         tc='c';
-% end
+% %% Determine cell centres/corners
+% dataset.xz=dataset.x;
+% dataset.yz=dataset.y;
+% dataset.zz=dataset.z;
 % 
-% dataset.type=[tp dataset.quantity];
+% %dataset.type=[shp dataset.quantity];
+% dataset.type=[dataset.quantity num2str(ndim) 'd' plane];
 % 
-% % Exceptions
-% switch dataset.quantity
-%     case{'tidalellipse'}
-%         dataset.type='tidalellipse';
-% end
+% %% Set time-varying or constant
+% dataset=muppet_setDatasetVaryingOrConstant(dataset,timestep);
 % 
-% switch tc
-%     case{'t'}
-%         dataset.tc='c';
-%     case{'c'}
-% %         if orishp(1)=='1'
-% %             dataset.tc='t';
-% %         else
-%             dataset.tc='c';
-% %         end
-% end
 
 function val=extractmatrix(parameter,fld,sz,timestep,istation,m,n,k)
 
@@ -324,32 +192,32 @@ nind=0;
 val=[];
 if isfield(parameter,fld)
     if ~isempty(parameter.(fld))
-            if sz(1)>0
-                nind=nind+1;
-                str{nind}='timestep';
-            end
-            if sz(2)>0
-                nind=nind+1;
-                str{nind}='istation';
-            end
-            if sz(3)>0
-                nind=nind+1;
-                str{nind}='m';
-            end
-            if sz(4)>0
-                nind=nind+1;
-                str{nind}='n';
-            end
-            if sz(5)>0
-                nind=nind+1;
-                str{nind}='k';
-            end
-            sind='';
-            for ii=1:nind
-                sind=[sind str{ii} ','];
-            end
-            sind=sind(1:end-1);
-            evalstr=['val=squeeze(parameter.(fld)(' sind '));'];
-            eval(evalstr);
+        if sz(1)>0
+            nind=nind+1;
+            str{nind}='timestep';
+        end
+        if sz(2)>0
+            nind=nind+1;
+            str{nind}='istation';
+        end
+        if sz(3)>0
+            nind=nind+1;
+            str{nind}='m';
+        end
+        if sz(4)>0
+            nind=nind+1;
+            str{nind}='n';
+        end
+        if sz(5)>0
+            nind=nind+1;
+            str{nind}='k';
+        end
+        sind='';
+        for ii=1:nind
+            sind=[sind str{ii} ','];
+        end
+        sind=sind(1:end-1);
+        evalstr=['val=squeeze(parameter.(fld)(' sind '));'];
+        eval(evalstr);
     end
 end

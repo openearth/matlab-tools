@@ -140,8 +140,16 @@ else
     end
 end
 
+%
+iok=0;
+if isfield(info,'writeemptystring')
+    if strcmpi(info.writeemptystring,'y')
+        iok=1;
+    end
+end
+
 % Write option
-if ~isempty(var)
+if ~isempty(var) || iok
     if ~isfield(info,'type')
         info.type='string';
     end

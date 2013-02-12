@@ -421,7 +421,7 @@ if (shpmat(3)==1 && shpmat(4)>1) || (shpmat(3)>1 && shpmat(4)==1)
 end
 
 %% Copy data to dataset structure
-dataset=muppet_copyToDataStructure(dataset,d)
+dataset=muppet_copyToDataStructure(dataset,d);
 
 
 % Set empty values

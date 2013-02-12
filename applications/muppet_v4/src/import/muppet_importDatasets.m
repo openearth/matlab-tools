@@ -14,11 +14,7 @@ for id=1:handles.nrdatasets
             if isfield(dataset,'parameters')
                 % Multiple parameters available, copy appropriate data from parameters structure to
                 % dataset structure
-%                if dataset.nrquantities>1 % && dataset.quantity
-                    ii=muppet_findIndex(dataset.parameters,'parameter','name',dataset.parameter);
-%                else
-%                    ii=muppet_findIndex(dataset.parameters,'parameter','parametername',dataset.ucomponent);
-%                end
+                ii=muppet_findIndex(dataset.parameters,'parameter','name',dataset.parameter);
                 fldnames=fieldnames(dataset.parameters(ii).parameter);
                 for j=1:length(fldnames)
                     switch fldnames{j}

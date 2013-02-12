@@ -50,6 +50,8 @@ for j=1:fig.nrsubplots
             fig.subplots(j).subplot.scalebar.changed=0;
             fig.subplots(j).subplot.limitschanged=0;
             fig.subplots(j).subplot.positionchanged=0;
+            fig.subplots(j).subplot.annotationsadded=0;
+            fig.subplots(j).subplot.annotationschanged=0;
 
             if clfix
                 colorfix;

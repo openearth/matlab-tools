@@ -1,12 +1,9 @@
+<?xml version="1.0"?>
+<root>
   <title>Muppet</title>
   <width>920</width>
   <height>660</height>
   <tag>muppetgui</tag>
-  <menuitem>
-    <menuitem>
-      <label>test</label>
-    </menuitem>
-  </menuitem>
   <menuitem>
     <label>File</label>
     <menuitem>
@@ -28,6 +25,12 @@
       <label>Save Session As ...</label>
       <callback>muppet_gui</callback>
       <option>savesessionas</option>
+    </menuitem>
+    <menuitem>
+      <label>Add dataset from URL ...</label>
+      <separator>on</separator>
+      <callback>muppet_gui</callback>
+      <option>adddatasetfromurl</option>
     </menuitem>
     <menuitem>
       <label>Exit</label>
@@ -375,10 +378,29 @@
     <text>Data Properties</text>
   </element>
   <element>
-    <tag>datasettext</tag>
     <style>text</style>
-    <position>30 405 260 70</position>
-    <variable>datasettext</variable>
+    <position>25 460 260 15</position>
+    <variable>datasettext1</variable>
+  </element>
+  <element>
+    <style>text</style>
+    <position>25 445 260 15</position>
+    <variable>datasettext2</variable>
+  </element>
+  <element>
+    <style>text</style>
+    <position>25 430 260 15</position>
+    <variable>datasettext3</variable>
+  </element>
+  <element>
+    <style>text</style>
+    <position>25 415 260 15</position>
+    <variable>datasettext4</variable>
+  </element>
+  <element>
+    <style>text</style>
+    <position>25 400 260 15</position>
+    <variable>datasettext5</variable>
   </element>
   <element>
     <tag>subplotpropertiespanel</tag>
@@ -389,7 +411,7 @@
   <element>
     <tag>subplotpositiontext</tag>
     <style>text</style>
-    <position>330 455 40 20</position>
+    <position>330 460 40 20</position>
     <text>Position</text>
     <dependency>
       <action>enable</action>
@@ -404,7 +426,7 @@
   <element>
     <tag>subplotsizetext</tag>
     <style>text</style>
-    <position>380 455 40 20</position>
+    <position>385 460 40 20</position>
     <text>Size</text>
     <dependency>
       <action>enable</action>
@@ -461,6 +483,9 @@
     <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.position(3)</variable>
     <type>real</type>
     <tooltipstring>Edit x size of subplot</tooltipstring>
+    <callback>muppet_gui</callback>
+    <option1>editxylim</option1>
+    <option2>editwidth</option2>
     <dependency>
       <action>enable</action>
       <checkfor>all</checkfor>
@@ -478,6 +503,9 @@
     <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.position(4)</variable>
     <type>real</type>
     <tooltipstring>Edit y size of subplot</tooltipstring>
+    <callback>muppet_gui</callback>
+    <option1>editxylim</option1>
+    <option2>editheight</option2>
     <dependency>
       <action>enable</action>
       <checkfor>all</checkfor>
@@ -1320,6 +1348,7 @@
     <tooltipstring>Edit X min</tooltipstring>
     <callback>muppet_gui</callback>
     <option1>editxylim</option1>
+    <option2>editxmin</option2>
     <dependency>
       <action>enable</action>
       <checkfor>any</checkfor>
@@ -1351,6 +1380,7 @@
     <tooltipstring>Edit X max</tooltipstring>
     <callback>muppet_gui</callback>
     <option1>editxylim</option1>
+    <option2>editxmax</option2>
     <dependency>
       <action>enable</action>
       <checkfor>any</checkfor>
@@ -1485,6 +1515,7 @@
     <tooltipstring>Edit Y min</tooltipstring>
     <callback>muppet_gui</callback>
     <option1>editxylim</option1>
+    <option2>editymin</option2>
     <dependency>
       <action>enable</action>
       <checkfor>any</checkfor>
@@ -1521,6 +1552,7 @@
     <tooltipstring>Edit Y max</tooltipstring>
     <callback>muppet_gui</callback>
     <option1>editxylim</option1>
+    <option2>editymax</option2>
     <dependency>
       <action>enable</action>
       <checkfor>any</checkfor>
@@ -1675,6 +1707,7 @@
     <tooltipstring>Edit scale</tooltipstring>
     <callback>muppet_gui</callback>
     <option1>editxylim</option1>
+    <option2>editscale</option2>
     <format>%10.2f</format>
     <dependency>
       <action>enable</action>
@@ -1684,48 +1717,12 @@
         <value>map2d</value>
         <operator>eq</operator>
       </check>
-      <check>
-        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.axesequal</variable>
-        <value>1</value>
-        <operator>eq</operator>
-      </check>
-    </dependency>
-  </element>
-  <element>
-    <tag>toggleaxesequal</tag>
-    <style>checkbox</style>
-    <position>580 330 70 20</position>
-    <text>Axes Equal</text>
-    <textposition>left</textposition>
-    <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.axesequal</variable>
-    <type>integer</type>
-    <tooltipstring>Toggle axes equal</tooltipstring>
-    <callback>muppet_gui</callback>
-    <option1>toggleaxesequal</option1>
-    <dependency>
-      <action>enable</action>
-      <checkfor>any</checkfor>
-      <check>
-        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type</variable>
-        <value>map2d</value>
-        <operator>eq</operator>
-      </check>
-      <check>
-        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type</variable>
-        <value>xy</value>
-        <operator>eq</operator>
-      </check>
-      <check>
-        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type</variable>
-        <value>3d</value>
-        <operator>eq</operator>
-      </check>
     </dependency>
   </element>
   <element>
     <tag>toggleuserightaxis</tag>
     <style>checkbox</style>
-    <position>580 310 70 20</position>
+    <position>580 330 70 20</position>
     <text>Right Axis</text>
     <textposition>left</textposition>
     <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.rightaxis</variable>
@@ -1749,7 +1746,7 @@
   <element>
     <tag>editrightaxis</tag>
     <style>pushbutton</style>
-    <position>650 310 35 20</position>
+    <position>650 330 35 20</position>
     <text>Edit</text>
     <tooltipstring>Push to edit right axis</tooltipstring>
     <callback>muppet_gui</callback>
@@ -1772,7 +1769,7 @@
   <element>
     <tag>toggledrawbox</tag>
     <style>checkbox</style>
-    <position>580 290 70 20</position>
+    <position>580 310 70 20</position>
     <text>Draw Box</text>
     <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.drawbox</variable>
     <type>integer</type>
@@ -1790,7 +1787,7 @@
   <element>
     <tag>pushselectcoordinatesystem</tag>
     <style>pushbutton</style>
-    <position>580 260 110 20</position>
+    <position>580 280 110 20</position>
     <text>Coordinate System</text>
     <tooltipstring>Push to select coordinate system</tooltipstring>
     <callback>muppet_gui</callback>
@@ -1808,8 +1805,45 @@
   <element>
     <tag>textcoordinatesystemname</tag>
     <style>text</style>
-    <position>690 263</position>
-    <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.coordinatesystem.text</variable>
+    <position>700 283</position>
+    <prefix>Name : </prefix> 
+    <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.coordinatesystem.name</variable>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type</variable>
+        <value>map2d</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <tag>radiocoordinatesystemprojected</tag>
+    <style>radiobutton</style>
+    <position>700 263</position>
+    <text>Projected</text>
+    <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.coordinatesystem.type</variable>
+    <value>projected</value>
+    <enable>0</enable>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type</variable>
+        <value>map2d</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <tag>radiocoordinatesystemgeographic</tag>
+    <style>radiobutton</style>
+    <position>770 263</position>
+    <text>Geographic</text>
+    <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.coordinatesystem.type</variable>
+    <value>geographic</value>
+    <enable>0</enable>
     <dependency>
       <action>visible</action>
       <checkfor>all</checkfor>
@@ -2331,6 +2365,8 @@
     <value>portrait</value>
     <type>string</type>
     <tooltipstring>Set to portrait</tooltipstring>
+    <callback>muppet_gui</callback>
+    <option1>selectportrait</option1>
   </element>
   <element>
     <tag>radiolandscape</tag>
@@ -2341,6 +2377,8 @@
     <value>landscape</value>
     <type>string</type>
     <tooltipstring>Set to landscape</tooltipstring>
+    <callback>muppet_gui</callback>
+    <option1>selectlandscape</option1>
   </element>
   <element>
     <tag>selectfigurecolor</tag>
@@ -2483,3 +2521,4 @@
     <callback>muppet_gui</callback>
     <option1>plotfigure</option1>
   </element>
+</root>

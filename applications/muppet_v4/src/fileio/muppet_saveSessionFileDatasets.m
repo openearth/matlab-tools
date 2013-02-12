@@ -9,10 +9,12 @@ for id=1:handles.nrdatasets
         
         ift=muppet_findIndex(handles.filetype,'filetype','name',handles.datasets(id).dataset.filetype);
         
-        for ii=1:length(handles.filetype(ift).filetype.option)
-            idp=muppet_findIndex(handles.dataproperty,'dataproperty','name',handles.filetype(ift).filetype.option(ii).option.name);  
-            if ~isempty(idp)
-                muppet_writeOption(handles.dataproperty(idp).dataproperty,handles.datasets(id).dataset,fid,3,14);
+        if ~isempty(ift)
+            for ii=1:length(handles.filetype(ift).filetype.option)
+                idp=muppet_findIndex(handles.dataproperty,'dataproperty','name',handles.filetype(ift).filetype.option(ii).option.name);
+                if ~isempty(idp)
+                    muppet_writeOption(handles.dataproperty(idp).dataproperty,handles.datasets(id).dataset,fid,3,14);
+                end
             end
         end
         

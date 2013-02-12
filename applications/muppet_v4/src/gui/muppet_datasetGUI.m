@@ -74,10 +74,11 @@ for j=1:length(dataset.parameters)
 end
 
 dataset.parameter=dataset.parameters(1).parameter.name;
-dataset.activeparameter=1;
+if isempty(dataset.activeparameter)
+    dataset.activeparameter=1;
+end
 dataset.size=[0 0 0 0 0];
 dataset.quantity='scalar';
-dataset.nrblocks=0;
 
 % GUI stuff
 dataset.previousm=1;
@@ -104,7 +105,7 @@ dataset.previousstationnumber=1;
 dataset.selectallstations=0;
 dataset.stationsfromlist=1;
 
-dataset.xcoordinate='pathdistance';
+dataset.plotcoordinate='pathdistance';
 dataset.component='vector';
 dataset.stations={''};
 
@@ -337,14 +338,14 @@ if ~strcmpi(dataset.quantity,oldquantity)
     end
 end
 
-% Block
-if dataset.nrblocks>0
-    if dataset.nrblocks~=oldnrblocks
-        dataset.block=1;
-    end
-else
-    dataset.block=[];
-end
+% % Block
+% if dataset.nrblocks>0
+%     if dataset.nrblocks~=oldnrblocks
+%         dataset.block=dataset.blocks{1};
+%     end
+% else
+%     dataset.block=[];
+% end
     
 % dataset.ucomponent='';
 % dataset.vcomponent='';
@@ -517,13 +518,14 @@ function updateDimensions
 dataset=gui_getUserData;
 
 [timestep,istation,m,n,k]=muppet_findDataIndices(dataset);
-shp=muppet_findDataShape(dataset.size,timestep,istation,m,n,k);
 
-switch lower(shp)
-    case{'crossection1dm','crossection1dn','crossection2dm','crossection2dn'}
-        dataset.xcoordinate=dataset.previousxcoordinate;
+dataset=muppet_determineDatasetShape(dataset,timestep,istation,m,n,k);
+
+switch lower(dataset.plane)
+    case{'xz','xv','tx'}
+        dataset.plotcoordinate=dataset.previousxcoordinate;
     otherwise
-        dataset.xcoordinate=[];
+        dataset.plotcoordinate=[];
 end
 
 gui_setUserData(dataset);

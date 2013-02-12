@@ -10,7 +10,7 @@ switch lower(opt)
     [x,y]=landboundary('read',dataset.filename);
     dataset.x=x;
     dataset.y=y;
-    dataset.type = 'polyline2d';
+    dataset.type = 'location1dxy';
     dataset.tc='c';
 %     dataset.dimensions.coordinatesystem.name='WGS 84';
 %     dataset.dimensions.coordinatesystem.type='geographic';    

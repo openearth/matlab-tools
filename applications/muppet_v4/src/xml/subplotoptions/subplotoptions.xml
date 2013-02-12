@@ -533,6 +533,17 @@
     </check>
   </subplotoption>
   <subplotoption>
+    <name>scalebarlength</name>
+    <variable>scalebar.length</variable>
+    <type>real</type>
+    <keyword>ScaleBarLength</keyword>
+    <check>
+      <variable>plotscalebar</variable>
+      <operator>eq</operator>
+      <value>1</value>
+    </check>
+  </subplotoption>
+  <subplotoption>
     <name>scalebartext</name>
     <variable>scalebar.text</variable>
     <keyword>ScaleBarText</keyword>

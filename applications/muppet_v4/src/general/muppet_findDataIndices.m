@@ -1,4 +1,13 @@
-function [timestep,istation,m,n,k]=muppet_findDataIndices(dataset)
+function [timestep,istation,m,n,k,idomain]=muppet_findDataIndices(dataset)
+
+% Determines indices. Used in dataset gui 
+
+timestep=[];
+istation=[];
+m=[];
+n=[];
+k=[];
+idomain=[];
 
 %% Time can be defined by timestep and by actual time
 if isempty(dataset.time) && ~isempty(dataset.timestep)
@@ -30,8 +39,8 @@ end
 if isempty(dataset.m)
     if dataset.size(3)>0
         m=1:dataset.size(3);
-    else
-        m=1;
+%     else
+%         m=1;
     end
 else
     m=dataset.m;
@@ -41,8 +50,8 @@ end
 if isempty(dataset.n)
     if dataset.size(4)>0
         n=1:dataset.size(4);
-    else
-        n=1;
+%     else
+%         n=1;
     end
 else
     n=dataset.n;
@@ -52,9 +61,17 @@ end
 if isempty(dataset.k)
     if dataset.size(5)>0
         k=1:dataset.size(5);
-    else
-        k=1;
+%     else
+%         k=1;
     end
 else
     k=dataset.k;
+end
+
+%% Domain
+idomain=1;
+if isfield(dataset,'domain')
+    if ~isempty(dataset.domain)
+        idomain=strmatch(dataset.domain,dataset.domains,'exact');
+    end
 end

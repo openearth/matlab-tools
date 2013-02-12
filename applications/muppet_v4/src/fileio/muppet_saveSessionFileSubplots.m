@@ -57,7 +57,7 @@ else
         
         txt=['      Dataset "' plt.datasets(id).dataset.name '"'];
         fprintf(fid,'%s \n',txt);
-        try
+%         try
         for ii=1:length(plotoption)
             ipltopt=muppet_findIndex(handles.plotoption,'plotoption','name',plotoption(ii).plotoption.name);
             muppet_writeOption(handles.plotoption(ipltopt).plotoption,plt.datasets(id).dataset,fid,9,21);
@@ -67,9 +67,9 @@ else
                 end
             end
         end
-        catch
-            shite=1
-        end
+%         catch
+%             shite=1
+%         end
         
         txt='      EndDataset';
         fprintf(fid,'%s \n',txt);

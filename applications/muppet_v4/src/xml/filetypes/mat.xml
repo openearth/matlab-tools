@@ -4,7 +4,7 @@
   <longname>Binary MAT file</longname>
   <title>MAT File</title>
   <filterspec>*.mat</filterspec>
-  <callback>muppet_addDatasetMat2</callback>
+  <callback>muppet_addDatasetMat</callback>
   <option>
     <name>filetype</name>
   </option>
@@ -15,7 +15,7 @@
     <name>parameter</name>
   </option>
   <option>
-    <name>xcoordinate</name>
+    <name>plotcoordinate</name>
   </option>
   <option>
     <name>component</name>

@@ -69,7 +69,7 @@ else
     set(ax,'ButtonDownFcn',{@muppet_selectAxis});
     ax=findobj(figh,'Tag','colorbar');
     set(ax,'ButtonDownFcn',{@muppet_selectAxis});
-    ax=findobj(figh,'Tag','annotation');
+    ax=findall(figh,'Tag','annotation');
     set(ax,'ButtonDownFcn',{@muppet_selectAxis});
     set(h,'State','on');
 end

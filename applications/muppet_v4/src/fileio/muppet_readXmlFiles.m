@@ -53,6 +53,7 @@ flist=dir([dr 'filetypes' filesep '*.xml']);
 for ii=1:length(flist)
     xml=xml2struct3([dr 'filetypes' filesep flist(ii).name]);
     handles.filetype(ii).filetype=xml;
+    handles.filetypes{ii}=xml.name;
 end
 
 % Plot Types

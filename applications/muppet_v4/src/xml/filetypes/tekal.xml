@@ -12,10 +12,16 @@
     <name>filename</name>
   </option>
   <option>
+    <name>xcoordinate</name>
+  </option>
+  <option>
+    <name>ycoordinate</name>
+  </option>
+  <option>
     <name>quantity</name>
   </option>
   <option>
-    <name>parametername</name>
+    <name>parameter</name>
   </option>
   <option>
     <name>ucomponent</name>
@@ -24,7 +30,7 @@
     <name>vcomponent</name>
   </option>
   <option>
-    <name>xcoordinate</name>
+    <name>plotcoordinate</name>
   </option>
   <option>
     <name>component</name>
@@ -37,9 +43,6 @@
   </option>
   <option>
     <name>block</name>
-  </option>
-  <option>
-    <name>station</name>
   </option>
   <option>
     <name>m</name>

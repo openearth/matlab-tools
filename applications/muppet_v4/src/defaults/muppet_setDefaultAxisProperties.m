@@ -136,7 +136,8 @@ opt.font.color='black';
 % Legend
 opt.plotlegend=0;
 opt.legend.border=1;
-opt.legend.position='NorthEast';
+opt.legend.positionstring='NorthEast';
+opt.legend.position=[0 0 1 1];
 opt.legend.orientation='Vertical';
 opt.legend.font.name='Helvetica';
 opt.legend.font.size=8;
@@ -148,13 +149,26 @@ opt.legend.changed=0;
 
 % North Arrow
 opt.plotnortharrow=0;
+opt.northarrow.type='regular';
 opt.northarrow.position=[];
+opt.northarrow.font.name='Times';
+opt.northarrow.font.size=5;
+opt.northarrow.font.angle='normal';
+opt.northarrow.font.weight='normal';
+opt.northarrow.font.color='black';
 opt.northarrow.changed=0;
 
 % Scale Bar
 opt.plotscalebar=0;
+opt.scalebar.type='regular';
 opt.scalebar.position=[];
+opt.scalebar.length=0;
 opt.scalebar.text='';
+opt.scalebar.font.name='Helvetica';
+opt.scalebar.font.size=5;
+opt.scalebar.font.angle='normal';
+opt.scalebar.font.weight='normal';
+opt.scalebar.font.color='black';
 opt.scalebar.changed=0;
 
 % Vector Legend

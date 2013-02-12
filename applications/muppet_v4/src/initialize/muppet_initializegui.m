@@ -1,4 +1,4 @@
-function muppet_initializeGUI
+function muppet_initializegui
 
 % Initialization of GUI settings
 
@@ -26,5 +26,7 @@ handles.datasettext2='';
 handles.datasettext3='';
 handles.datasettext4='';
 handles.datasettext5='';
+
+handles.lastfiletype='delft3d';
 
 setHandles(handles);

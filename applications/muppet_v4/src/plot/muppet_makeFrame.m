@@ -99,7 +99,7 @@ for ii=1:length(frame.text)
     set(tx,'HorizontalAlignment',frame.text(ii).text.horizontalalignment);
     set(tx,'VerticalAlignment','baseline');
     set(tx,'Tag','frametext','UserData',[ifig,ii]);
-    set(tx,'ButtonDownFcn',{@muppet_selectFrameText});
+    set(tx,'ButtonDownFcn',@selectFrameText);
 end
 set(ax,'HitTest','off');
 set(ax,'Tag','frametextaxis');
@@ -149,3 +149,22 @@ for j=1:length(frame.logo)
     
 end
 
+%%
+function selectFrameText(src,eventdata)
+double_click = strcmp(get(gcf,'SelectionType'),'open');
+if double_click
+    fig=getappdata(gcf,'figure');
+    [fig,ok]=muppet_selectFrameText(fig);
+    if ok
+        fig.changed=1;
+        setappdata(gcf,'figure',fig);
+        nr=fig.number;
+        nft=length(fig.frametext);
+        for ift=1:nft
+            h=findobj(gcf,'tag','frametext','UserData',[nr,ift]);
+            if ~isempty(h)
+                set(h,'String',fig.frametext(ift).frametext.text);
+            end
+        end
+    end
+end

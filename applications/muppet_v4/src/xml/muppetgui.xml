@@ -1539,6 +1539,11 @@
         <value>timeseries</value>
         <operator>eq</operator>
       </check>
+      <check>
+        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type</variable>
+        <value>timestack</value>
+        <operator>eq</operator>
+      </check>
     </dependency>
   </element>
   <element>
@@ -1576,6 +1581,11 @@
         <value>timeseries</value>
         <operator>eq</operator>
       </check>
+      <check>
+        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type</variable>
+        <value>timestack</value>
+        <operator>eq</operator>
+      </check>
     </dependency>
   </element>
   <element>
@@ -1608,6 +1618,11 @@
       <check>
         <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type</variable>
         <value>timeseries</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type</variable>
+        <value>timestack</value>
         <operator>eq</operator>
       </check>
     </dependency>
@@ -1661,6 +1676,11 @@
         <value>timeseries</value>
         <operator>eq</operator>
       </check>
+      <check>
+        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type</variable>
+        <value>timestack</value>
+        <operator>eq</operator>
+      </check>
     </dependency>
   </element>
   <element>
@@ -1692,6 +1712,11 @@
       <check>
         <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type</variable>
         <value>timeseries</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type</variable>
+        <value>timestack</value>
         <operator>eq</operator>
       </check>
     </dependency>
@@ -1952,11 +1977,26 @@
     <tooltipstring>Plot legend</tooltipstring>
     <dependency>
       <action>enable</action>
-      <checkfor>all</checkfor>
+      <checkfor>any</checkfor>
       <check>
-        <variable>handles.figures(handles.activefigure).figure.nrsubplots</variable>
-        <value>0</value>
-        <operator>gt</operator>
+        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type</variable>
+        <value>map2d</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type</variable>
+        <value>xy</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type</variable>
+        <value>timeseries</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type</variable>
+        <value>timestack</value>
+        <operator>eq</operator>
       </check>
     </dependency>
   </element>
@@ -1995,11 +2035,16 @@
     <option1>togglevectorlegend</option1>
     <dependency>
       <action>enable</action>
-      <checkfor>all</checkfor>
+      <checkfor>any</checkfor>
       <check>
-        <variable>handles.figures(handles.activefigure).figure.nrsubplots</variable>
-        <value>0</value>
-        <operator>gt</operator>
+        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type</variable>
+        <value>map2d</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type</variable>
+        <value>xy</value>
+        <operator>eq</operator>
       </check>
     </dependency>
   </element>
@@ -2038,11 +2083,21 @@
     <option1>togglecolorbar</option1>
     <dependency>
       <action>enable</action>
-      <checkfor>all</checkfor>
+      <checkfor>any</checkfor>
       <check>
-        <variable>handles.figures(handles.activefigure).figure.nrsubplots</variable>
-        <value>0</value>
-        <operator>gt</operator>
+        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type</variable>
+        <value>map2d</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type</variable>
+        <value>xy</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type</variable>
+        <value>timestack</value>
+        <operator>eq</operator>
       </check>
     </dependency>
   </element>
@@ -2081,11 +2136,11 @@
     <option1>togglescalebar</option1>
     <dependency>
       <action>enable</action>
-      <checkfor>all</checkfor>
+      <checkfor>any</checkfor>
       <check>
-        <variable>handles.figures(handles.activefigure).figure.nrsubplots</variable>
-        <value>0</value>
-        <operator>gt</operator>
+        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type</variable>
+        <value>map2d</value>
+        <operator>eq</operator>
       </check>
     </dependency>
   </element>
@@ -2124,11 +2179,11 @@
     <option1>togglenortharrow</option1>
     <dependency>
       <action>enable</action>
-      <checkfor>all</checkfor>
+      <checkfor>any</checkfor>
       <check>
-        <variable>handles.figures(handles.activefigure).figure.nrsubplots</variable>
-        <value>0</value>
-        <operator>gt</operator>
+        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type</variable>
+        <value>map2d</value>
+        <operator>eq</operator>
       </check>
     </dependency>
   </element>
@@ -2405,7 +2460,7 @@
     </listvalue>
   </element>
   <element>
-    <tag>editfigures</tag>
+    <tag>editframetext</tag>
     <style>pushbutton</style>
     <position>510 60 70 20</position>
     <text>Frame Text</text>

@@ -101,7 +101,7 @@ for j=i1:i2
     par=[];
 
     % Set default parameter properties (just the dimensions)
-    par=muppet_setDefaultParameterDimensions(par);
+    par=muppet_setDefaultParameterProperties(par);
     
     par.fid=fid;
     par.lgafile=dataset.lgafile;
@@ -117,6 +117,9 @@ for j=i1:i2
     par.name=dataproperties(ii).Name;
     
     par.size=qpread(fid,1,dataproperties(ii),'size');
+    
+    % Bug in qpread?
+    par.size=par.size.*dataproperties(ii).DimFlag;
 
     % Times
     if dataproperties(ii).DimFlag(1)>0 && par.size(1)<1000
@@ -137,7 +140,7 @@ for j=i1:i2
 
         switch dataproperties(ii).NVal
             case 0
-                par.quantity='grid'; % Grids, open boundaries etc.
+                par.quantity='location'; % Grids, open boundaries etc.
             case 1
                 par.quantity='scalar';
             case 2
@@ -190,87 +193,29 @@ end
 ipar=strmatch(lower(parameter),lower(parameternames),'exact');
 dataproperties=dataset.dataproperties(ipar);
 
-timestep=dataset.timestep;
-m=dataset.m;
-n=dataset.n;
-k=dataset.k;
-istation=1;
-
-% Check to see if all data along dimension if required
-
-% Time
+% Read times (if they haven't been read yet)
 if dataset.size(1)>0
     % Times available
-    if ~isempty(dataset.time)
-        % Specific time given, determine time step        
-        if isempty(dataset.times)
-            % No times specified yet, read them first
-            dataset.times=qpread(fid,dataproperties,'times');
-        end
-        timestep=find(dataset.times>dataset.time-1.0e-5 & dataset.times<dataset.time+1.0e-5);
-        if isempty(timestep)
-            str{1}=['Error! Time ' datestr(dataset.time,'yyyymmdd HHMMSS') ' not found in file ' dataset.filename '!'];
-            str{2}='Dataset skipped';
-            strv=strvcat(str{1},str{2});
-            uiwait(errordlg(strv,'Error','modal'));
-            muppet_writeErrorLog(str);
-            return
-        end
-    end
-    if length(timestep)==1 && timestep~=0
-        dataset.time=dataset.times(timestep);
-    end
-    dataset.timestep=[];
-end
-
-%% Station (station names have already been read)
-if dataset.size(2)>0
-    % Find station number
-    if ~isempty(dataset.station)
-        istation=strmatch(dataset.station,dataset.stations,'exact');
+    if isempty(dataset.times)
+        % No times specified yet, read them first
+        dataset.times=qpread(fid,dataproperties,'times');
     end
 end
 
-%% Domains
-idomain=1;
-if isfield(dataset,'domain')
-    if ~isempty(dataset.domain)
-        idomain=strmatch(dataset.domain,dataset.domains,'exact');
-    end
-end
+% Find data indices
+[timestep,istation,m,n,k,idomain]=muppet_findDataIndices(dataset);
 
-% Determine shape of original data
-shpmat=muppet_determineShapeMatrix(dataset.size,timestep,istation,m,n,k);
-
-%% Load data
-
+%% Load data into structure d
 inparg{1}=timestep;
 inparg{2}=istation;
 inparg{3}=m;
 inparg{4}=n;
 inparg{5}=k;
 
-% Determine input arguments for qpread
-if shpmat(1)>0 && isempty(timestep)
-    inparg{1}=0;
-end
-if shpmat(2)>0 && isempty(istation)
-    inparg{2}=0;
-end
-if shpmat(3)>0 && isempty(m)
-    inparg{3}=0;
-end
-if shpmat(4)>0 && isempty(n)
-    inparg{4}=0;
-end
-if shpmat(5)>0 && isempty(k)
-    inparg{5}=0;
-end
-
 arg=[];
 narg=0;
 for ii=1:5
-    if shpmat(ii)>0
+    if dataset.size(ii)>0
         narg=narg+1;
         arg{narg}=inparg{ii};    
     end
@@ -288,28 +233,12 @@ switch length(arg)
         d=qpread(fid,idomain,dataproperties,'griddata',arg{1},arg{2},arg{3},arg{4});
 end
 
-%% From here on, everything should be the same for each type of datafile
-
-% Squeeze
-d=muppet_squeezeDataset(d);
-
-%% Determine component
-[dataset,d]=muppet_determineDatasetComponent(dataset,d);
-
-%% Copy data to dataset structure
-dataset=muppet_copyToDataStructure(dataset,d);
-
-%% Determine cell centres/corners
-dataset.xz=dataset.x;
-dataset.yz=dataset.y;
-dataset.zz=dataset.z;
-
-dataset.type=[dataset.type dataset.quantity];
-
 % z or d
 if isfield(dataproperties,'Loc')
     dataset.location=dataproperties.Loc;
 end
+dataset.location
+% From here on, everything should be the same for each type of datafile
+% d must always look like structure as imported from qpread
 
-%% Set time-varying or constant
-dataset=muppet_setDatasetVaryingOrConstant(dataset,timestep);
+dataset=muppet_finishImportingDataset(dataset,d,timestep,istation,m,n,k);

@@ -215,7 +215,7 @@ for ifig=1:handles.nrfigures
             if isfield(handles.frames.frame(ifr).frame,'text')
                 for itxt=1:length(handles.frames.frame(ifr).frame.text)
                     if isempty(figr.frametext(itxt).frametext.text)
-                        figr.frametext(itxt).frametext.text=' ';
+                        figr.frametext(itxt).frametext.text='';
                     end
                 end
             end
@@ -387,11 +387,11 @@ if ~isempty(ii)
     if isfield(info,'variable')
         varname0=info.variable;
     else
-        try
+%        try
         varname0=info.name;
-        catch
-            shite=1
-        end
+%        catch
+%            shite=1
+%        end
     end
     
     % Keyword found

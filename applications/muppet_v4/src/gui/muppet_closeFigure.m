@@ -26,7 +26,9 @@ catch
     str{3}=['File: ' err.stack(1).file];
     str{4}=['Line: ' num2str(err.stack(1).line)];
     strv=strvcat(str{1},str{2},str{3},str{4});
-    errordlg(strv,'Error');
     muppet_writeErrorLog(err);
-    delete(gcf);
+    fig=getappdata(gcf,'figure');
+    figh=fig.handle;
+    delete(figh);
+    errordlg(strv,'Error');
 end

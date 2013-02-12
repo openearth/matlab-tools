@@ -4,7 +4,7 @@
   <longname>NetCDF</longname>
   <title>NetCDF File</title>
   <filterspec>*.nc</filterspec>
-  <callback>muppet_addDatasetDelft3D</callback>
+  <callback>muppet_addDatasetQP</callback>
   <option>
     <name>filetype</name>
   </option>
@@ -24,7 +24,7 @@
     <name>vcomponent</name>
   </option>
   <option>
-    <name>xcoordinate</name>
+    <name>plotcoordinate</name>
   </option>
   <option>
     <name>component</name>

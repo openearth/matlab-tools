@@ -19,7 +19,7 @@
         <action>enable</action>
         <checkfor>any</checkfor>
         <check>
-          <variable>quantity</variable>
+          <variable>selectedquantity</variable>
           <value>scalar</value>
           <operator>eq</operator>
         </check>

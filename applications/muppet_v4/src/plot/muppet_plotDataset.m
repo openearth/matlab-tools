@@ -70,8 +70,10 @@ switch lower(plt.datasets(id).dataset.plotroutine)
         handles=PlotRose(handles,ifig,isub,id,mode);
     case {'plottext'}
         handles=muppet_plotText(handles,ifig,isub,id,1);
-    case {'drawpolyline'}
-        DrawPolyline(Data,Plt,handles.DefaultColors,opt);
+%    case {'drawpolyline'}
+%        DrawPolyline(Data,Plt,handles.DefaultColors,opt);
+    case {'plotinteractivepolyline'}
+        muppet_plotInteractivePolyline(handles,ifig,isub,id);
     case {'drawspline'}
         DrawSpline(Data,Plt,handles.DefaultColors,opt);
     case {'drawcurvedarrow'}

@@ -74,4 +74,25 @@
       <listtext>10</listtext>
     </element>
   </plotoption>
+  <plotoption>
+    <name>polylinetype</name>
+    <keyword>PolylineType</keyword>
+    <type>string</type>
+    <default>polyline</default>
+    <check>
+      <operator>ne</operator>
+    </check>
+    <element>
+      <style>popupmenu</style>
+      <position>30 0 100 20</position>
+      <type>string</type>
+      <text>Type</text>
+      <listtext>Polyline</listtext>
+      <listtext>Spline</listtext>
+      <listtext>Curved Arrow</listtext>
+      <listvalue>polyline</listvalue>
+      <listvalue>spline</listvalue>
+      <listvalue>curvedarrow</listvalue>
+    </element>
+  </plotoption>
 </root>

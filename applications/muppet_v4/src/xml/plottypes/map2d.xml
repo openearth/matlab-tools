@@ -168,6 +168,9 @@
     <name>scalebarposition</name>
   </option>
   <option>
+    <name>scalebarlength</name>
+  </option>
+  <option>
     <name>northarrow</name>
   </option>
   <option>

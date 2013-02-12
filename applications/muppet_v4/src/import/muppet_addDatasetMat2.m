@@ -56,7 +56,11 @@ for ii=1:length(s.parameters)
     dataset.parameters(ii).parameter.name=s.parameters(ii).parameter.name;
     
     dataset.parameters(ii).parameter.coordinatesystem=cs;
-    
+
+    if isfield(s.parameters(ii).parameter,'dimensions')
+        s.parameters(ii).parameter.size=s.parameters(ii).parameter.dimensions;
+    end
+
     % Determine size (if not available in parameter structure)
     if isfield(s.parameters(ii).parameter,'size')
         dataset.parameters(ii).parameter.size=s.parameters(ii).parameter.size;
@@ -108,7 +112,12 @@ end
 if isfield(parameter,dataset.xname)
     switch dataset.quantity
         case{'location'}
-            x=parameter.(dataset.xname)(timestep,m);
+            % track
+            if dataset.size(1)>0
+                x=parameter.(dataset.xname)(timestep,m);
+            else
+                x=parameter.(dataset.xname)(m);
+            end
         otherwise
             x=parameter.(dataset.xname)(m,n);
     end
@@ -116,7 +125,11 @@ end
 if isfield(parameter,dataset.yname)
     switch dataset.quantity
         case{'location'}
-            y=parameter.(dataset.yname)(timestep,m);
+            if dataset.size(1)>0
+                y=parameter.(dataset.yname)(timestep,m);
+            else
+                y=parameter.(dataset.yname)(m);
+            end
         otherwise
             y=parameter.(dataset.yname)(m,n);
     end

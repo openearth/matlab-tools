@@ -54,13 +54,14 @@ if plt.drawbox
             st=ht;
             xticks=datenum(yt,mt,dt,ht,mit,st);
         end
-        xlabls=datestr(xticks,char(plt.dateformat));
+%        xlabls=datestr(xticks,char(plt.dateformat));
+        xlabls=datestr(xticks,plt.datetickformat);
         set(gca,'xtick',xticks,'xticklabel',xlabls,'FontSize',8*fontred);
     else
         tick(gca,'x','none');
     end
 
-    if plt.addDate
+    if plt.adddate
         sz=size(xticks,2);
         scl=(plt.ymax-plt.ymin)/plt.position(4);
         ytxt=plt.ymin-0.6*scl;
@@ -72,7 +73,6 @@ if plt.drawbox
         end
     end
 
-
     if plt.ytick~=-999.0
         ytickstart=plt.ytick*floor(ylim(1)/plt.ytick);
         ytickstop=plt.ytick*ceil(ylim(2)/plt.ytick);
@@ -80,26 +80,26 @@ if plt.drawbox
         ytick=multi*ytick;
         set(gca,'ytick',ytick,'FontSize',10*fontred);
 
-        if plt.decimalsy>=0
-            frmt=['%0.' num2str(plt.decimalsy) 'f'];
+        if plt.ydecimals>=0
+            frmt=['%0.' num2str(plt.ydecimals) 'f'];
             for i=1:size(ytick,2)
                 val=plt.ytickmultiply*ytick(i)/multi+plt.ytickadd;
                 ylabls{i}=sprintf(frmt,val);
             end
             set(gca,'yticklabel',ylabls);
-        elseif plt.decimalsy==-1 && multi~=1
+        elseif plt.ydecimals==-1 && multi~=1
             frmt=['%0.' num2str(2) 'f'];
             for i=1:size(ytick,2)
                 val=plt.ytickmultiply*ytick(i)/multi+plt.ytickadd;
                 ylabls{i}=sprintf(frmt,val);
             end
             set(gca,'yticklabel',ylabls);
-        elseif plt.decimalsy==-999
+        elseif plt.ydecimals==-999
             for i=1:size(ytick,2)
                 ylabls{i}='';
             end
             set(gca,'yticklabel',ylabls);
-        elseif plt.decimalsy==-1 && (plt.ytickmultiply~=1 || plt.ytickadd~=0)
+        elseif plt.ydecimals==-1 && (plt.ytickmultiply~=1 || plt.ytickadd~=0)
             for i=1:size(ytick,2)
                 val=plt.ytickmultiply*ytick(i)/multi+plt.ytickadd;
                 ylabls{i}=sprintf('%0.5g',val);
@@ -107,7 +107,7 @@ if plt.drawbox
             set(gca,'yticklabel',ylabls);
         end
 
-        if plt.yGrid
+        if plt.ygrid
             set(gca,'Ygrid','on');
         else
             set(gca,'Ygrid','off');

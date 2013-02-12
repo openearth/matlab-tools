@@ -17,7 +17,8 @@ plt=fig.subplots(isub).subplot;
 
 scalebar=axes;
 
-len=plt.scalebar.position(3);
+%len=plt.scalebar.position(3);
+len=plt.scalebar.length;
 ht=len/20;
 nb=5;
 

@@ -58,7 +58,7 @@ switch(typ),
         fig.subplots(isub).subplot.datasets(j).dataset.linewidth=0.5;
 end
 
-set(h,'Tag','annotation','UserData',[ifig,j]);
+set(h,'Tag','annotation','UserData',[ifig j]);
 
 h=muppet_addAnnotation(fig,ifig,isub,j);
 

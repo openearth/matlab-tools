@@ -22,14 +22,14 @@ for isub=1:fig.nrsubplots
     switch fig.subplots(isub).subplot.type
         
         case{'annotation'}
-
+            
             % Annotations
             if fig.annotationschanged
                 handles.figures(ifig).figure.subplots(isub).subplot=fig.subplots(isub).subplot;
                 handles.figures(ifig).figure.nrannotations=fig.subplots(isub).subplot.nrdatasets;
                 fig.annotationschanged=0;
-            end        
-
+            end
+            
         otherwise
             
             % Check for change in position
@@ -100,20 +100,115 @@ for isub=1:fig.nrsubplots
                 fig.subplots(isub).subplot.scalebar.changed=0;
             end
             
-    end
-
-    % And now the dataset (check for changes in colorbar)
-    for id=1:fig.subplots(isub).subplot.nrdatasets
-        if fig.subplots(isub).subplot.datasets(id).dataset.plotcolorbar
-            if fig.subplots(isub).subplot.datasets(id).dataset.colorbar.changed
-                handles.figures(ifig).figure.subplots(isub).subplot.datasets(id).dataset.colorbar.position=fig.subplots(isub).subplot.datasets(id).dataset.colorbar.position;
-                fig.subplots(isub).subplot.datasets(id).dataset.colorbar.changed=0;
-            end            
-        end
+            
+            % And now the dataset (check for changes in colorbar)
+            %     for id=1:fig.subplots(isub).subplot.nrdatasets
+            %         if fig.subplots(isub).subplot.datasets(id).dataset.plotcolorbar
+            %             if fig.subplots(isub).subplot.datasets(id).dataset.colorbar.changed
+            %                 handles.figures(ifig).figure.subplots(isub).subplot.datasets(id).dataset.colorbar.position=fig.subplots(isub).subplot.datasets(id).dataset.colorbar.position;
+            %                 fig.subplots(isub).subplot.datasets(id).dataset.colorbar.changed=0;
+            %             end
+            %         end
+            %     end
+            
+            if fig.subplots(isub).subplot.annotationsadded
+                
+                % Annotations added?
+                nd0=handles.figures(ifig).figure.subplots(isub).subplot.nrdatasets;
+                nd1=fig.subplots(isub).subplot.nrdatasets;
+                
+                if nd1>nd0
+                    
+                    for ii=1:nd1-nd0
+                        
+                        nd2=nd0+ii;
+                        
+                        dataset=[];
+                        dataset=muppet_setDefaultDatasetProperties(dataset);
+                        
+                        % Determine name of new dataset
+                        imax=0;
+                        ipol=strmatch('polyline',handles.datasetnames);
+                        for n=1:length(ipol)
+                            nm=handles.datasetnames{ipol(n)};
+                            if length(nm)>8
+                                nm=deblank(nm(9:end));
+                                v=str2double(nm);
+                                if ~isnan(v)
+                                    imax=max(imax,v);
+                                end
+                            end
+                        end
+                        nm=['polyline ' num2str(imax+1)];
+                        
+                        % Find handle of new dataset
+                        hh=findobj(gcf,'tag','interactivepolyline');
+                        for ih=1:length(hh)
+                            options=getappdata(hh(ih),'options');
+                            if ~isempty(options)
+                                if ~isempty(options.userdata)
+                                    if options.userdata(2)==isub && options.userdata(3)==nd2
+                                        h=hh(ih);
+                                        break
+                                    end
+                                end
+                            end
+                        end
+                        
+                        % Add new dataset
+                        dataset.name=nm;
+                        dataset.type='interactivepolyline';
+                        dataset.filetype='interactivepolyline';
+                        dataset.filename='N/A';
+                        dataset.x=getappdata(h,'x');
+                        dataset.y=getappdata(h,'y');
+                        nrd=handles.nrdatasets+1;
+                        handles.nrdatasets=nrd;
+                        handles.datasetnames{nrd}=dataset.name;
+                        handles.activedataset=nrd;
+                        handles.datasets(nrd).dataset=dataset;
+                        
+                        % And now add datasets to subplot
+                        handles.figures(ifig).figure.subplots(isub).subplot.datasets(nd2).dataset=fig.subplots(isub).subplot.datasets(nd2).dataset;
+                        handles.figures(ifig).figure.subplots(isub).subplot.datasets(nd2).dataset.name=nm;
+                        handles.figures(ifig).figure.subplots(isub).subplot.datasets(nd2).dataset.plotroutine='plotinteractivepolyline';
+                        handles.figures(ifig).figure.subplots(isub).subplot.datasets(nd2).dataset.type='interactivepolyline';
+                        handles.figures(ifig).figure.subplots(isub).subplot.datasets(nd2).dataset.polylinetype=options.type;
+                        
+                    end
+                end
+                
+                handles.figures(ifig).figure.subplots(isub).subplot.nrdatasets=nd1;
+                handles=muppet_updateDatasetInSubplotNames(handles);
+                
+                fig.subplots(isub).subplot.annotationsadded=0;
+                
+            end
+            
+            if fig.subplots(isub).subplot.annotationschanged
+                hh=findobj(gcf,'Tag','interactivepolyline');
+                for id=1:length(hh)
+                    h=hh(id);
+                    options=getappdata(h,'options');
+                    if ~isempty(options)
+                        if ~isempty(options.userdata)
+                            if options.userdata(2)==isub
+                                id1=options.userdata(3);
+                                nm=fig.subplots(isub).subplot.datasets(id1).dataset.name;
+                                id2=strmatch(nm,handles.datasetnames,'exact');
+                                handles.datasets(id2).dataset.x=getappdata(h,'x');
+                                handles.datasets(id2).dataset.y=getappdata(h,'y');
+                            end
+                        end
+                    end
+                end
+                fig.subplots(isub).subplot.annotationschanged=0;
+            end
     end
     
 end
 
+handles.figures(ifig).figure.frametext=fig.frametext;
 fig.changed=0;
 setappdata(gcf,'figure',fig);
 

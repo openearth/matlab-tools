@@ -37,12 +37,12 @@
       <action>enable</action>
       <checkfor>any</checkfor>
       <check>
-        <variable>quantity</variable>
+        <variable>selectedquantity</variable>
         <value>vector2d</value>
         <operator>eq</operator>
       </check>
       <check>
-        <variable>quantity</variable>
+        <variable>selectedquantity</variable>
         <value>vector3d</value>
         <operator>eq</operator>
       </check>

@@ -5,7 +5,7 @@
   <element>
     <style>popupmenu</style>
     <text>Quantity</text>
-    <variable>quantity</variable>
+    <variable>selectedquantity</variable>
     <type>string</type>
     <tooltipstring>Select quantity</tooltipstring>
     <position>60 0 270 20</position>

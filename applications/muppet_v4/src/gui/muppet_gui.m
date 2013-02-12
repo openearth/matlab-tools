@@ -22,7 +22,7 @@ else
             addDatasetfromURL;
         case{'importlayout'}
             importLayout;
-        case{'savelayout'}
+        case{'savelayout'}            
             exportLayout;
         case{'exit'}
             close(gcf);
@@ -64,16 +64,28 @@ else
             editXYLim(varargin{2});
         case{'selectcoordinatesystem'}
             selectCoordinateSystem;
+        case{'editlegend'}
+            editLegend;
+        case{'editvectorlegend'}
+            editVectorLegend;
         case{'togglecolorbar'}
             toggleColorBar;
+        case{'editcolorbar'}
+            editColorBar;
         case{'togglevectorlegend'}
             toggleVectorLegend;
         case{'togglenortharrow'}
             toggleNorthArrow;
+        case{'editnortharrow'}
+            editNorthArrow;
         case{'togglescalebar'}
             toggleScaleBar;
+        case{'editscalebar'}
+            editScaleBar;
         case{'editclim'}
             editCLim;
+        case{'editframetext'}
+            editFrameText;
         case{'selectformat'}
             selectFormat;
         case{'selectportrait','selectlandscape'}
@@ -128,6 +140,15 @@ if pathname~=0
         handles=muppet_updateDatasetNames(handles);
         handles=muppet_updateSubplotNames(handles);
         handles=muppet_updateDatasetInSubplotNames(handles);
+        % Compute scale of 2d map plots
+        for ifig=1:handles.nrfigures
+            for isub=1:handles.figures(ifig).figure.nrsubplots
+                switch lower(handles.figures(ifig).figure.subplots(isub).subplot.type)
+                    case{'map2d'}
+                        handles.figures(ifig).figure.subplots(isub).subplot=muppet_updateLimits(handles.figures(ifig).figure.subplots(isub).subplot,'computescale');
+                end
+            end
+        end        
         setHandles(handles);
         selectDataset;
         muppet_updateGUI;
@@ -191,7 +212,7 @@ end
 function exportLayout
 
 handles=getHandles;
-[filename pathname]=uiputfile([handles.muppetpath 'settings' filesep 'layouts' filesep '*.mup']);
+[filename pathname]=uiputfile([handles.settingsdir 'layouts' filesep '*.mup']);
 if pathname~=0
     sessionfile=[pathname filename];
     muppet_saveSessionFile(handles,sessionfile,1);
@@ -242,16 +263,35 @@ setHandles(handles);
 
 %%
 function addDataset
+
 handles=getHandles;
+
+ilast=strmatch(lower(handles.lastfiletype),lower(handles.filetypes),'exact');
+filterspec{1,1}=handles.filetype(ilast).filetype.filterspec;
+filterspec{1,2}=handles.filetype(ilast).filetype.title;
+
+filetypes{1}=handles.filetype(ilast).filetype.name;
+
+n=1;
 for ii=1:length(handles.filetype)
-    filterspec{ii,1}=handles.filetype(ii).filetype.filterspec;
-    filterspec{ii,2}=handles.filetype(ii).filetype.title;
+    if ii~=ilast
+        if isfield(handles.filetype(ii).filetype,'filterspec')
+            n=n+1;
+            filetypes{n}=handles.filetype(ii).filetype.name;
+            filterspec{n,1}=handles.filetype(ii).filetype.filterspec;
+            filterspec{n,2}=handles.filetype(ii).filetype.title;
+        end
+    end
 end
+
 [filename, pathname, filterindex] = uigetfile(filterspec);
+
 if pathname~=0
-    muppet_datasetGUI('makewindow','filename',[pathname filename],'filetype',handles.filetype(filterindex).filetype.name);
+    handles.lastfiletype=filetypes{filterindex};
+    setHandles(handles);
+    muppet_datasetGUI('makewindow','filename',[pathname filename],'filetype',filetypes{filterindex});
+    selectDataset;
 end
-selectDataset;
 
 %%
 function deleteDataset
@@ -463,7 +503,6 @@ end
 %%
 function editXYLim(opt)
 handles=getHandles;
-
 plt=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot;
 switch lower(handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type)
     case{'map2d'}
@@ -471,6 +510,26 @@ switch lower(handles.figures(handles.activefigure).figure.subplots(handles.activ
         handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot=plt;
 end
 setHandles(handles);
+
+%%
+function editLegend
+handles=getHandles;
+s=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.legend;
+[s,ok]=gui_newWindow(s, 'xmldir', handles.xmldir, 'xmlfile', 'legend.xml');
+if ok
+    handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.legend=s;
+    setHandles(handles);
+end
+
+%%
+function editVectorLegend
+handles=getHandles;
+s=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.vectorlegend;
+[s,ok]=gui_newWindow(s, 'xmldir', handles.xmldir, 'xmlfile', 'vectorlegend.xml');
+if ok
+    handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.vectorlegend=s;
+    setHandles(handles);
+end
 
 %%
 function toggleColorBar
@@ -486,6 +545,16 @@ if isempty(plt.colorbar.position)
     handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot=plt;
 end
 setHandles(handles);
+
+%%
+function editColorBar
+handles=getHandles;
+s=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.colorbar;
+[s,ok]=gui_newWindow(s, 'xmldir', handles.xmldir, 'xmlfile', 'colorbar.xml');
+if ok
+    handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.colorbar=s;
+    setHandles(handles);
+end
 
 %%
 function toggleVectorLegend
@@ -516,6 +585,17 @@ end
 setHandles(handles);
 
 %%
+function editNorthArrow
+handles=getHandles;
+s=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.northarrow;
+[s,ok]=gui_newWindow(s, 'xmldir', handles.xmldir, 'xmlfile', 'northarrow.xml');
+if ok
+    handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.northarrow=s;
+    setHandles(handles);
+end
+
+
+%%
 function toggleScaleBar
 handles=getHandles;
 plt=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot;
@@ -524,11 +604,22 @@ if isempty(plt.scalebar.position)
     x0=1.5;
     y0=1.5;
     z0=round(0.04*plt.scale);
-    plt.scalebar.position=[x0 y0 z0];
+    plt.scalebar.position=[x0 y0];
+    plt.scalebar.length=z0;
     plt.scalebar.text=[num2str(z0) ' m'];
     handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot=plt;
 end
 setHandles(handles);
+
+%%
+function editScaleBar
+handles=getHandles;
+s=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.scalebar;
+[s,ok]=gui_newWindow(s, 'xmldir', handles.xmldir, 'xmlfile', 'scalebar.xml');
+if ok
+    handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.scalebar=s;
+    setHandles(handles);
+end
 
 %%
 function editCLim
@@ -551,6 +642,16 @@ else
 end
 
 setHandles(handles);
+
+%%
+function editFrameText
+handles=getHandles;
+fig=handles.figures(handles.activefigure).figure;
+[fig,ok]=muppet_selectFrameText(fig);
+if ok
+    handles.figures(handles.activefigure).figure=fig;
+    setHandles(handles);
+end
 
 %%
 function selectOrientation

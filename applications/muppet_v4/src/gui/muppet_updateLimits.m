@@ -26,7 +26,7 @@ end
 switch opt
     case{'editsubplotsize'}
         plt=editsubplotsize(plt);
-    case{'editheight'}
+    case{'editheight','editwidth'}
         % Change ymax
         plt=editsubplotsize(plt);
     case{'editxmin'}
@@ -53,13 +53,30 @@ switch opt
     case{'setprojectionlimits'}
         % Change xmax, ymax
         plt=setprojectionlimits(plt);
+    case{'computescale'}
+        plt=computescale(plt);
 end
 
 plt.position=plt.position/unit;
 
 %%
 function plt=editsubplotsize(plt)
+
 plt=setprojectionlimits(plt);
+
+% Re-centre axes
+xmean=0.5*(plt.xmin+plt.xmax);
+ymean=0.5*(plt.ymin+plt.ymax);
+scalex=(plt.xmax-plt.xmin)/plt.position(3);
+scaley=(plt.ymax-plt.ymin)/plt.position(4);
+
+scale=0.5*(scalex+scaley);
+
+plt.xminproj=xmean-0.5*plt.position(3)*scale/plt.fscale;
+plt.xmaxproj=xmean+0.5*plt.position(3)*scale/plt.fscale;
+plt.yminproj=ymean-0.5*plt.position(4)*scale/plt.fscale;
+plt.ymaxproj=ymean+0.5*plt.position(4)*scale/plt.fscale;
+
 switch plt.projection
     case{'equirectangular'}
         plt.xmin=plt.xminproj;
