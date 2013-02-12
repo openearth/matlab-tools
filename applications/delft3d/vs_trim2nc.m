@@ -97,10 +97,12 @@ function varargout = vs_trim2nc(vsfile,varargin)
    OPT.refdatenum     = datenum(1970,1,1); % linux  datenumber convention
    OPT.institution    = '';
    OPT.timezone       = ''; %timezone_code2iso('GMT');
-   OPT.time           = 0;
    OPT.epsg           = [];
    OPT.type           = 'single'; %'double'; % the nefis file is by default single precision, se better isn't useful
    OPT.debug          = 0;
+   OPT.time           = 0; % subset of time indices in NEFIS file, 1-based
+   OPT.dump           = 1;
+
    OPT.var_cf         = {'time','m','n','Layer','LayerInterf','longitude','latitude'};
    OPT.var_primary    = {'grid_m','grid_n','x','y','grid_x','grid_y','grid_longitude','grid_latitude','k',...
                          'grid_depth','depth','zactive','waterlevel','area',...
@@ -113,7 +115,6 @@ function varargout = vs_trim2nc(vsfile,varargin)
    OPT.var_nefis      = {'XZ','YZ','XWAT','YWAT','XCOR','YCOR','DP','DP0','DPS','DPSO','KCS','S1','U1','V1','WPHY','TAUKSI','TAUETA','RTUR1','R1','RHO'};
    OPT.var            = {OPT.var_cf{:},OPT.var_primary{:}};
    OPT.var_all        = {OPT.var_cf{:},OPT.var_primary{:},OPT.var_derived{:}};
-   OPT.dump           = 1;
 
    if nargin==0
       varargout = {OPT};
@@ -123,7 +124,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
    if verLessThan('matlab','7.12.0.635')
       error('At least Matlab release R2011a is required for writing netCDF files due tue NCWRITESCHEMA.')
    end
-   
+
    if ~odd(nargin)
       ncfile   = varargin{1};
       varargin = {varargin{2:end}};
@@ -143,7 +144,6 @@ function varargout = vs_trim2nc(vsfile,varargin)
 
 %% map NEFIS names to sensible netCDF names
 %  when adding new ones, update OPT.var_nefis, to allow for introspection
-   
 
    if any(strcmp('XZ',    OPT.var)) | any(strcmp('XWAT',OPT.var))
                                     OPT.x              = 1;end
@@ -184,18 +184,19 @@ function varargout = vs_trim2nc(vsfile,varargin)
          error([mfilename ' works only for Delft3D-trim file, perhaps you needed vs_trih2nc for the Delft3D-trih file.'])
       end
       
-      T = vs_time(F,OPT.time);
+      T.datenum = vs_time(F,OPT.time,'quiet');
       if OPT.time==0
       OPT.time = 1:length(T.datenum);
       end
-      
-      I             = vs_get_constituent_index(F);
-     [LSED,OK]      = vs_let(F,'map-const','LSED'  ,'quiet'); if OK==0;LSED=0  ;end
-     [LSEDBL,OK]    = vs_let(F,'map-const','LSEDBL','quiet'); if OK==0;LSEDBL=0;end
+      I = vs_get_constituent_index(F);
+
       M.datestr     = datestr(datenum(vs_get(F,'map-version','FLOW-SIMDAT' ,'quiet'),'yyyymmdd  HHMMSS'),31);
       M.version     =        [strtrim(vs_get(F,'map-version','FLOW-SYSTXT' ,'quiet')),', file version: ',...
                               strtrim(vs_get(F,'map-version','FILE-VERSION','quiet'))];
       M.description = vs_get(F,'map-version','FLOW-RUNTXT','quiet');
+
+     [LSED,OK]      = vs_let(F,'map-const','LSED'  ,'quiet'); if OK==0;LSED=0  ;end
+     [LSEDBL,OK]    = vs_let(F,'map-const','LSEDBL','quiet'); if OK==0;LSEDBL=0;end
       
 %% 1a Create file (add all NEFIS 'map-version' group info)
 
@@ -1415,7 +1416,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       var2evalstr(nc)
       end
 
-      delete(ncfile);
+      try;delete(ncfile);end
       disp(['vs_trim2nc: NCWRITESCHEMA: creating netCDF file: ',ncfile])
       ncwriteschema(ncfile, nc);			        
       disp(['vs_trim2nc: NCWRITE: filling  netCDF file: ',ncfile])

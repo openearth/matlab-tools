@@ -83,80 +83,97 @@ function varargout = vs_trih2nc(vsfile,varargin)
 
 %% keywords
 
-      OPT.refdatenum     = datenum(0000,0,0); % matlab datenumber convention: A serial date number of 1 corresponds to Jan-1-0000. Gives wring date sin ncbrowse due to different calenders. Must use doubles here.
-      OPT.refdatenum     = datenum(1970,1,1); % lunix  datenumber convention
-      OPT.institution    = '';
-      OPT.timezone       = ''; %timezone_code2iso('GMT');
-      OPT.debug          = 0;
-      OPT.time           = 0; % subset of time indices in NEFIS file, 1-based
-      OPT.epsg           = [];
-      OPT.type           = 'float'; %'double'; % the nefis file is by default single precision
-      OPT.quiet          = 'quiet';
-      OPT.mode           = 'clobber'; %'64bit_offset' creates a netcdf-3 file with 64-bit offset that cannot be used with Ncbrowse 
-      OPT.stride         = 1; % write chunks per layer in case of large 3D matrices
-      OPT.dump           = 1;
+   OPT.Format         = 'classic'; % '64bit','classic','netcdf4','netcdf4_classic'
+   OPT.refdatenum     = datenum(0000,0,0); % matlab datenumber convention: A serial date number of 1 corresponds to Jan-1-0000. Gives wrong dates in ncbrowse due to different calendars. Must use doubles here.
+   OPT.refdatenum     = datenum(1970,1,1); % linux  datenumber convention
+   OPT.institution    = '';
+   OPT.timezone       = ''; %timezone_code2iso('GMT');
+   OPT.epsg           = [];
+   OPT.type           = 'single'; %'double'; % the nefis file is by default single precision, se better isn't useful
+   OPT.debug          = 0;
+   OPT.time           = 0; % subset of time indices in NEFIS file, 1-based
+   OPT.dump           = 1;
 
-      OPT.ind            = 0; % index of stations to include in netCDF file, 0=all
-      OPT.trajectory     = 0; % consider 'Stations' dimension as spatial trajectory dimension
+   OPT.quiet          = 'quiet';
+   OPT.stride         = 1; % write chunks per layer in case of large 3D matrices
+   OPT.ind            = 0; % index of stations to include in netCDF file, 0=all
+   OPT.trajectory     = 0; % consider 'Stations' dimension as spatial trajectory dimension
 
       % TO DO: allow to transform sub-period too.
       % TO DO: implement WI and PI from griddata_near2, and add rename dimension 'Station' to 'distance'
       % TO DO: make QP fit for trajectory plotting
       
-      if nargin==0
-         varargout = {OPT};
-         return
-      end
-      
-      if ~odd(nargin)
-         ncfile   = varargin{1};
-         varargin = {varargin{2:end}};
-      else
-         runid  = filename(vsfile); runid = runid(6:end); % remove 'trih-'
-         ncfile = fullfile(fileparts(vsfile),[runid,'_his.nc']); % '_his' is same same as Delft3D-FM
-      end
+   if nargin==0
+      varargout = {OPT};
+      return
+   end
+   
+   if verLessThan('matlab','7.12.0.635')
+      error('At least Matlab release R2011a is required for writing netCDF files due tue NCWRITESCHEMA.')
+   end
 
-      OPT      = setproperty(OPT,varargin{:});
+   if ~odd(nargin)
+      ncfile   = varargin{1};
+      varargin = {varargin{2:end}};
+   else
+      runid    = filename(vsfile); runid = runid(6:end); % remove 'trih-'
+      ncfile   = fullfile(fileparts(vsfile),[runid,'_his.nc']); % '_his' is same same as Delft3D-FM
+   end
+
+   tmp=dir(vsfile);
+   if isempty(tmp)
+       error(['file does not exist: ',vsfile])
+   end
+   if (tmp.bytes > 2^31)  & strcmpi(OPT.Format,'classic')
+      fprintf(2,'> Delft3D NEFIS files larger than 2 Gb cannot be mapped entirely to netCDF classic format, set keyword vs_trim2nc(...,''Format'',''64bit'').\n')
+   end
+
+   OPT      = setproperty(OPT,varargin{:});
 
 %% 0 Read raw data
 
-      F = vs_use(vsfile,OPT.quiet);
+      F = vs_use(vsfile,'quiet');
+      
+      if ~strcmp(F.SubType,'Delft3D-trih')
+         error([mfilename ' works only for Delft3D-trih file, perhaps you needed vs_trim2nc for the Delft3D-trih file.'])
+      end
       
       T.datenum = vs_time(F,OPT.time,'quiet');
       if OPT.time==0
       OPT.time = 1:length(T.datenum);
       end
       I = vs_get_constituent_index(F);
-      M.datestr     = datestr(datenum(vs_get(F,'his-version','FLOW-SIMDAT',OPT.quiet),'yyyymmdd  HHMMSS'),31);
-      M.version     = ['Delft3D-FLOW version : ',strtrim(vs_get(F,'his-version','FLOW-SYSTXT',OPT.quiet)),', file version: ',strtrim(vs_get(F,'his-version','FILE-VERSION',OPT.quiet))];
+
+      M.datestr     = datestr(datenum(vs_get(F,'his-version','FLOW-SIMDAT' ,'quiet'),'yyyymmdd  HHMMSS'),31);
+      M.version     =        [strtrim(vs_get(F,'his-version','FLOW-SYSTXT' ,'quiet')),', file version: ',...
+                              strtrim(vs_get(F,'his-version','FILE-VERSION','quiet'))];
       M.description = vs_get(F,'his-version','FLOW-RUNTXT',OPT.quiet);
 
-%% 1a Create file (add all NEFIS 'his-version' group info)
-      nc_create_empty (ncfile,OPT.mode)
+%% 1a Create file (add all NEFIS 'map-version' group info)
 
       %% Add overall meta info
       %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#description-of-file-contents
    
-      nc_attput(ncfile, nc_global, 'title'         , '');
-      nc_attput(ncfile, nc_global, 'institution'   , OPT.institution);
-      nc_attput(ncfile, nc_global, 'source'        , 'Delft3D trih file');
-      nc_attput(ncfile, nc_global, 'history'       ,['Original filename: ',filenameext(vsfile),...
-                                                     ', version: ' ,M.version,...
-                                                     ', file date:',M.datestr,...
-                                                     ', tranformation to netCDF: $HeadURL$']);
-      nc_attput(ncfile, nc_global, 'references'    , '');
-      nc_attput(ncfile, nc_global, 'email'         , '');
-   
-      nc_attput(ncfile, nc_global, 'comment'       , '');
-      nc_attput(ncfile, nc_global, 'version'       , ['$Id$ $HeadURL$ ', M.version]);
-   						   
-      nc_attput(ncfile, nc_global, 'Conventions'   , 'CF-1.6');
-      nc_attput(ncfile, nc_global, 'CF:featureType', 'Grid');  % https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions
-   
-      nc_attput(ncfile, nc_global, 'terms_for_use' ,['These data can be used freely for research purposes provided that the following source is acknowledged: ',OPT.institution]);
-      nc_attput(ncfile, nc_global, 'disclaimer'    , 'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.');
-   
-      nc_attput(ncfile, nc_global, 'description'   , str2line(M.description));
+      nc = struct('Name','/','Format',OPT.Format);
+      nc.Attributes(    1) = struct('Name','title'              ,'Value',  '');
+      nc.Attributes(end+1) = struct('Name','institution'        ,'Value',  OPT.institution);
+      nc.Attributes(end+1) = struct('Name','source'             ,'Value',  'Delft3D trih file');
+      nc.Attributes(end+1) = struct('Name','history'            ,'Value', ['Original filename: ',filenameext(vsfile),...
+                                         ', ' ,M.version,...
+                                         ', file date:',M.datestr,...
+                                         ', transformation to netCDF: $HeadURL$ $Id$']);
+      nc.Attributes(end+1) = struct('Name','references'         ,'Value',  'http://svn.oss.deltares.nl');
+      nc.Attributes(end+1) = struct('Name','email'              ,'Value',  '');
+
+      nc.Attributes(end+1) = struct('Name','comment'            ,'Value',  '');
+      nc.Attributes(end+1) = struct('Name','version'            ,'Value',  M.version);
+
+      nc.Attributes(end+1) = struct('Name','Conventions'        ,'Value',  'CF-1.6');
+
+      nc.Attributes(end+1) = struct('Name','terms_for_use'      ,'Value', ['These data can be used freely for research purposes provided that the following source is acknowledged: ',OPT.institution]);
+      nc.Attributes(end+1) = struct('Name','disclaimer'         ,'Value',  'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.');
+
+      nc.Attributes(end+1) = struct('Name','delft3d_description','Value',  str2line(M.description));
 
 %% Coordinate system
 
@@ -217,18 +234,46 @@ function varargout = vs_trih2nc(vsfile,varargin)
 
 %% 2 Create dimensions
 
-      nc_add_dimension(ncfile, 'time'             , length(T.datenum));
+      ncdimlen.time        = length(T.datenum);
+      ncdimlen.Layer       = G.kmax  ;
+      ncdimlen.LayerInterf = G.kmax+1;
+
+      nc.Dimensions(    1) = struct('Name','time'            ,'Length',ncdimlen.time       );
+      nc.Dimensions(end+1) = struct('Name','Layer'           ,'Length',ncdimlen.Layer      );
+      nc.Dimensions(end+1) = struct('Name','LayerInterf'     ,'Length',ncdimlen.LayerInterf);
+
       if OPT.trajectory
       dimname = 'Trajectory';
+      if isfield(G,'x')
       G.trajectory = distance(G.x,G.y);
       else
-      dimname = 'Station';
-      nc_add_dimension(ncfile, 'station_name_len' , size(G.name,2));
+      G.trajectory = nan.*G.lon;
+      fprintf(2,'> trajectory has no distance: spherical coordinates need epsg code to calculate Euclidian distance.\n')
       end
-      nc_add_dimension(ncfile, dimname            , size(G.name,1))
-      nc_add_dimension(ncfile, 'Layer'            , G.kmax  );
-      nc_add_dimension(ncfile, 'LayerInterf'      , G.kmax+1);
+      else
+      dimname = 'Station';
+      ncdimlen.station_name_len = size(G.name,2);
+      nc.Dimensions(end+1) = struct('Name','station_name_len'     ,'Length',ncdimlen.station_name_len);
+      end
+      ncdimlen.(dimname) = size(G.name,1);
+      nc.Dimensions(end+1) = struct('Name',dimname          ,'Length',ncdimlen.(dimname));
+      
+%% 2 Create dimension combinations
+%    TO DO: why is field 'Length' needed, NCWRITESCHEMA should be able to find this out itself
 
+   % 2D	
+       s_t.dims(1) = struct('Name', dimname           ,'Length',ncdimlen.(dimname));
+       s_t.dims(2) = struct('Name', 'time'            ,'Length',ncdimlen.time);
+
+   % 3D
+       s_t_k.dims(1) = struct('Name', 'Layer'         ,'Length',ncdimlen.Layer);
+       s_t_k.dims(2) = struct('Name', dimname         ,'Length',ncdimlen.(dimname));
+       s_t_k.dims(3) = struct('Name', 'time'          ,'Length',ncdimlen.time);
+
+   % 3D
+       s_t_ki.dims(1) = struct('Name', 'LayerInterf'  ,'Length',ncdimlen.LayerInterf);
+       s_t_ki.dims(2) = struct('Name', dimname        ,'Length',ncdimlen.(dimname));
+       s_t_ki.dims(3) = struct('Name', 'time'         ,'Length',ncdimlen.time);
 
 %% time
 
@@ -241,10 +286,11 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'time');
       attr(end+1)  = struct('Name', 'units'        , 'Value', ['days since ',datestr(OPT.refdatenum,'yyyy-mm-dd'),' 00:00:00 ',OPT.timezone]);
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'T');
-      nc(ifld) = struct('Name', 'time', ...
-          'Nctype'   , 'double', ... % !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
-          'Dimension', {{'time'}}, ...
-          'Attribute', attr);
+      nc.Variables(ifld) = struct('Name'      , 'time', ...
+                                  'Datatype'  , 'double', ...
+                                  'Dimensions', struct('Name', 'time','Length',ncdimlen.time), ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []);
 
 %% platforms/stations/observation points or trajectory
 
@@ -257,21 +303,25 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'X');
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.trajectory(:)) max(G.trajectory(:))]);
-      nc(ifld) = struct('Name', 'Trajectory', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{dimname}}, ...
-          'Attribute', attr);
-
+      nc.Variables(ifld) = struct('Name'      , 'Trajectory', ...
+                                  'Datatype'  , OPT.type, ...
+                                  'Dimensions', struct('Name', dimname,'Length',ncdimlen.(dimname)), ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []);
+ 
    else
 
       ifld     = ifld + 1;clear attr;d3d_name = 'NAMST';
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'platform_name');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', vs_get_elm_def(F,d3d_name,'Description'));
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
-      nc(ifld) = struct('Name', 'station_name', ...
-          'Nctype'   , 'char', ...
-          'Dimension', {{dimname,'station_name_len'}}, ...
-          'Attribute', attr);
+      dims(    1)  = struct('Name', dimname           ,'Length',ncdimlen.(dimname));
+      dims(    2)  = struct('Name', 'station_name_len','Length',ncdimlen.station_name_len);
+      nc.Variables(ifld) = struct('Name'      , 'station_name', ...
+                                  'Datatype'  , 'char', ...
+                                  'Dimensions', dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []);
 
       ifld     = ifld + 1;clear attr
       attr(    1)  = struct('Name', 'long_name'    , 'Value', 'Delft3D-FLOW m index of station');
@@ -279,10 +329,11 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'MNSTAT');
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.m(:)) max(G.m(:))]);
-      nc(ifld) = struct('Name', 'station_m_index', ...
-          'Nctype'   , OPT.type, ...	
-          'Dimension', {{dimname}}, ...
-          'Attribute', attr);
+      nc.Variables(ifld) = struct('Name'      , 'station_m_index', ...
+                                  'Datatype'  , OPT.type, ...
+                                  'Dimensions', struct('Name', dimname,'Length',ncdimlen.(dimname)), ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []);
       
       ifld     = ifld + 1;clear attr
       attr(    1)  = struct('Name', 'long_name'    , 'Value', 'Delft3D-FLOW n index of station');
@@ -290,18 +341,20 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'MNSTAT');
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.n(:)) max(G.n(:))]);
-      nc(ifld) = struct('Name', 'station_n_index', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{dimname}}, ...
-          'Attribute', attr);
+      nc.Variables(ifld) = struct('Name'      , 'station_n_index', ...
+                                  'Datatype'  , OPT.type, ...
+                                  'Dimensions', struct('Name', dimname,'Length',ncdimlen.(dimname)), ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []);
 
       ifld     = ifld + 1;clear attr;d3d_name = 'ALFAS';
       attr(    1)  = struct('Name', 'long_name'    , 'Value', vs_get_elm_def(F,d3d_name,'Description'));
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
-      nc(ifld) = struct('Name', 'station_angle', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{dimname}}, ...
-          'Attribute', attr);
+      nc.Variables(ifld) = struct('Name'      , 'station_angle', ...
+                                  'Datatype'  , OPT.type, ...
+                                  'Dimensions', struct('Name', dimname,'Length',ncdimlen.(dimname)), ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []);
 
    end
 
@@ -317,10 +370,11 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'XYSTAT');
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.x(:)) max(G.x(:))]);
-      nc(ifld) = struct('Name', 'x', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{dimname}}, ...
-          'Attribute', attr);
+      nc.Variables(ifld) = struct('Name'      , 'x', ...
+                                  'Datatype'  , OPT.type, ...
+                                  'Dimensions', struct('Name', dimname,'Length',ncdimlen.(dimname)), ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []);
       
       ifld     = ifld + 1;clear attr
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'projection_y_coordinate');
@@ -330,10 +384,11 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'XYSTAT');
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.y(:)) max(G.y(:))]);
-      nc(ifld) = struct('Name', 'y', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{dimname}}, ...
-          'Attribute', attr);
+      nc.Variables(ifld) = struct('Name'      , 'y', ...
+                                  'Datatype'  , OPT.type, ...
+                                  'Dimensions', struct('Name', dimname,'Length',ncdimlen.(dimname)), ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []);
    end
 
    if (~isempty(OPT.epsg)) || (~any(strfind(G.coordinates,'CARTESIAN')))
@@ -346,10 +401,11 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'XYSTAT');
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.lon(:)) max(G.lon(:))]);
-      nc(ifld) = struct('Name', 'longitude', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{dimname}}, ...
-          'Attribute', attr);
+      nc.Variables(ifld) = struct('Name'      , 'longitude', ...
+                                  'Datatype'  , OPT.type, ...
+                                  'Dimensions', struct('Name', dimname,'Length',ncdimlen.(dimname)), ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []);
       
       ifld     = ifld + 1;clear attr
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'latitude');
@@ -359,10 +415,11 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'XYSTAT');
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.lat(:)) max(G.lat(:))]);
-      nc(ifld) = struct('Name', 'latitude', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{dimname}}, ...
-          'Attribute', attr);
+      nc.Variables(ifld) = struct('Name'      , 'latitude', ...
+                                  'Datatype'  , OPT.type, ...
+                                  'Dimensions', struct('Name', dimname,'Length',ncdimlen.(dimname)), ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []);
 
    end
 
@@ -378,10 +435,11 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'formula_terms', 'Value', 'sigma: Layer eta: waterlevel depth: depth'); % requires depth to be positive !!
       attr(end+1)  = struct('Name', 'comment'      , 'Value', 'The surface layer has index k=1 and is sigma=0, the bottom layer has index kmax and is sigma=-1.');
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'his-const:KMAX his-const:LAYER_MODEL his-const:THICK');
-      nc(ifld) = struct('Name', 'Layer', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'Layer'}}, ...
-          'Attribute', attr);
+      nc.Variables(ifld) = struct('Name'      , 'Layer', ...
+                                  'Datatype'  , OPT.type, ...
+                                  'Dimensions', struct('Name', 'Layer','Length',ncdimlen.Layer), ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []);
           
       ifld     = ifld + 1;clear attr;
       attr(    1)  = struct('Name', 'long_name'    , 'Value', 'sigma at layer interfaces');
@@ -391,10 +449,11 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'formula_terms', 'Value', 'sigma: LayerInterf eta: waterlevel depth: depth'); % requires depth to be positive !!
       attr(end+1)  = struct('Name', 'comment'      , 'Value', 'The surface layer has index k=1 and is sigma=0, the bottom layer has index kmax and is sigma=-1.');
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'his-const:KMAX his-const:LAYER_MODEL his-const:THICK');
-      nc(ifld) = struct('Name', 'LayerInterf', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'LayerInterf'}}, ...
-          'Attribute', attr);
+      nc.Variables(ifld) = struct('Name'      , 'LayerInterf', ...
+                                  'Datatype'  , OPT.type, ...
+                                  'Dimensions', struct('Name', 'LayerInterf','Length',ncdimlen.LayerInterf), ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []);
       
       elseif strmatch('Z-MODEL', G.layer_model)
 
@@ -407,10 +466,11 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'formula_terms', 'Value', 'sigma: Layer eta: waterlevel depth: depth'); % requires depth to be positive !!
       attr(end+1)  = struct('Name', 'comment'      , 'Value', 'The bottom layer has index k=1 and is the bottom depth, the surface layer has index kmax and is z=free water surface.');
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'his-const:KMAX his-const:LAYER_MODEL his-const:ZK');
-      nc(ifld) = struct('Name', 'Layer', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'Layer'}}, ...
-          'Attribute', attr);
+      nc.Variables(ifld) = struct('Name'      , 'Layer', ...
+                                  'Datatype'  , OPT.type, ...
+                                  'Dimensions', struct('Name', 'Layer','Length',ncdimlen.Layer), ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []);
           
       ifld     = ifld + 1;clear attr;
       attr(    1)  = struct('Name', 'long_name'    , 'Value', 'z at layer interfaces');
@@ -421,10 +481,11 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'formula_terms', 'Value', 'sigma: LayerInterf eta: waterlevel depth: depth'); % requires depth to be positive !!
       attr(end+1)  = struct('Name', 'comment'      , 'Value', 'The bottom layer has index k=1 and is the bottom depth, the surface layer has index kmax and is z=free water surface.');
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'his-const:KMAX his-const:LAYER_MODEL his-const:ZK');
-      nc(ifld) = struct('Name', 'LayerInterf', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'LayerInterf'}}, ...
-          'Attribute', attr);
+      nc.Variables(ifld) = struct('Name'      , 'LayerInterf', ...
+                                  'Datatype'  , OPT.type, ...
+                                  'Dimensions', struct('Name', 'LayerInterf','Length',ncdimlen.LayerInterf), ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []);
       
       end % z/sigma
 
@@ -438,10 +499,11 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
       attr(end+1)  = struct('Name', 'comment'      , 'Value', '');
-      nc(ifld) = struct('Name', 'depth', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{dimname}}, ...
-          'Attribute', attr);
+      nc.Variables(ifld) = struct('Name'      , 'depth', ...
+                                  'Datatype'  , OPT.type, ...
+                                  'Dimensions', struct('Name', dimname,'Length',ncdimlen.(dimname)), ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []);
           
 %% 3 Create (primary) variables: momentum and mass conservation
 
@@ -454,10 +516,11 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
-      nc(ifld) = struct('Name', 'waterlevel', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'time', dimname}}, ...
-          'Attribute', attr);
+      nc.Variables(ifld) = struct('Name'      , 'waterlevel', ...
+                                  'Datatype'  , OPT.type, ...
+                                  'Dimensions', s_t.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []);
 
       ifld     = ifld + 1;clear attr; d3d_name = 'ZKFS';
       attr(    1)  = struct('Name', 'standard_name', 'Value', '');
@@ -469,10 +532,11 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
       attr(end+1)  = struct('Name', 'flag_values'  , 'Value', [0 1]);
       attr(end+1)  = struct('Name', 'flag_meanings', 'Value', 'inactive active ');
-      nc(ifld) = struct('Name', 'mask', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'time', dimname}}, ...
-          'Attribute', attr);
+      nc.Variables(ifld) = struct('Name'      , 'mask', ...
+                                  'Datatype'  , OPT.type, ...
+                                  'Dimensions', s_t.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []);
       
       ifld     = ifld + 1;clear attr;d3d_name = 'ZCURU';
       if (~any(strfind(G.coordinates,'CART'))) % CARTESIAN, CARTHESIAN (old bug)
@@ -487,10 +551,11 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.u_x = [Inf -Inf];
-      nc(ifld) = struct('Name', 'u_x', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'time',dimname,'Layer'}}, ...
-          'Attribute', attr);
+      nc.Variables(ifld) = struct('Name'      , 'u_x', ...
+                                  'Datatype'  , OPT.type, ...
+                                  'Dimensions', s_t_k.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []);
       
       ifld     = ifld + 1;clear attr;d3d_name = 'ZCURV';
       if (~any(strfind(G.coordinates,'CART'))) % CARTESIAN, CARTHESIAN (old bug)
@@ -505,10 +570,11 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.u_y = [Inf -Inf];
-      nc(ifld) = struct('Name', 'u_y', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'time',dimname,'Layer'}}, ...
-          'Attribute', attr);
+      nc.Variables(ifld) = struct('Name'      , 'u_y', ...
+                                  'Datatype'  , OPT.type, ...
+                                  'Dimensions', s_t_k.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []);
       
       ifld     = ifld + 1;clear attr;d3d_name = 'ZCURW';
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'upward_sea_water_velocity');
@@ -519,10 +585,11 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.u_z = [Inf -Inf];
-      nc(ifld) = struct('Name', 'u_z', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'time',dimname,'Layer'}}, ...
-          'Attribute', attr);
+      nc.Variables(ifld) = struct('Name'      , 'u_z', ...
+                                  'Datatype'  , OPT.type, ...
+                                  'Dimensions', s_t_k.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []);
        
 % (a) bottom shear stresses
 
@@ -537,12 +604,13 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
-      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.tau_x = [Inf -Inf];
       attr(end+1)  = struct('Name', 'comment'      , 'Value', 'The bed shear stresses are in real world directions x and y');
-      nc(ifld) = struct('Name', 'tau_x', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'time', dimname}}, ...
-          'Attribute', attr);      
+      nc.Variables(ifld) = struct('Name'      , 'tau_x', ...
+                                  'Datatype'  , OPT.type, ...
+                                  'Dimensions', s_t.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []);
     
       ifld     = ifld + 1;clear attr; d3d_name = 'ZTAUET';
       if (~any(strfind(G.coordinates,'CART'))) % CARTESIAN, CARTHESIAN (old bug)
@@ -555,12 +623,13 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
-      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.tau_y = [Inf -Inf];
       attr(end+1)  = struct('Name', 'comment'      , 'Value', 'The bed shear stresses are in real world directions x and y');
-      nc(ifld) = struct('Name', 'tau_y', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'time', dimname}}, ...
-          'Attribute', attr); 
+      nc.Variables(ifld) = struct('Name'      , 'tau_y', ...
+                                  'Datatype'  , OPT.type, ...
+                                  'Dimensions', s_t.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []);
       
  % (b) density: temperature + salinity
  
@@ -574,10 +643,11 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.density = [Inf -Inf];
-      nc(ifld) = struct('Name', 'density', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'time',dimname,'Layer'}}, ...
-          'Attribute', attr);
+      nc.Variables(ifld) = struct('Name'      , 'density', ...
+                                  'Datatype'  , OPT.type, ...
+                                  'Dimensions', s_t_k.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []);
       end
  
       d3d_name = 'GRO';
@@ -590,10 +660,11 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.salinity = [Inf -Inf];
-      nc(ifld) = struct('Name', 'salinity', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'time',dimname,'Layer'}}, ...
-          'Attribute', attr);
+      nc.Variables(ifld) = struct('Name'      , 'salinity', ...
+                                  'Datatype'  , OPT.type, ...
+                                  'Dimensions', s_t_k.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []);
  
       ifld     = ifld + 1;clear attr;
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'sea_water_temperature');
@@ -603,10 +674,11 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.temperature = [Inf -Inf];
-      nc(ifld) = struct('Name', 'temperature', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'time',dimname,'Layer'}}, ...
-          'Attribute', attr);
+      nc.Variables(ifld) = struct('Name'      , 'temperature', ...
+                                  'Datatype'  , OPT.type, ...
+                                  'Dimensions', s_t_k.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []);
       end
    
  % (c) turbulence
@@ -621,10 +693,11 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.tke = [Inf -Inf];
-      nc(ifld) = struct('Name', 'tke', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'time',dimname,'LayerInterf'}}, ...
-          'Attribute', attr);
+      nc.Variables(ifld) = struct('Name'      , 'tke', ...
+                                  'Datatype'  , OPT.type, ...
+                                  'Dimensions', s_t_ki.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []);
 
       ifld     = ifld + 1;clear attr
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'ocean_kinetic_energy_dissipation_per_unit_area_due_to_vertical_friction'); %?
@@ -634,10 +707,11 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.eps = [Inf -Inf];
-      nc(ifld) = struct('Name', 'eps', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'time',dimname,'LayerInterf'}}, ...
-          'Attribute', attr);
+      nc.Variables(ifld) = struct('Name'      , 'eps', ...
+                                  'Datatype'  , OPT.type, ...
+                                  'Dimensions', s_t_ki.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []);
       end
       
       d3d_name = 'ZVICWW';
@@ -649,10 +723,11 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.viscosity_z = [Inf -Inf];
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
-      nc(ifld) = struct('Name', 'viscosity_z', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'time',dimname,'LayerInterf'}}, ...
-          'Attribute', attr);
+      nc.Variables(ifld) = struct('Name'      , 'viscosity_z', ...
+                                  'Datatype'  , OPT.type, ...
+                                  'Dimensions', s_t_ki.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []);
       
       d3d_name = 'ZDICWW';
       ifld     = ifld + 1;clear attr
@@ -663,10 +738,11 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.diffusivity_z = [Inf -Inf];
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
-      nc(ifld) = struct('Name', 'diffusivity_z', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'time',dimname,'LayerInterf'}}, ...
-          'Attribute', attr);
+      nc.Variables(ifld) = struct('Name'      , 'diffusivity_z', ...
+                                  'Datatype'  , OPT.type, ...
+                                  'Dimensions', s_t_ki.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []);
 
       d3d_name = 'ZRICH';
       ifld     = ifld + 1;clear attr
@@ -677,125 +753,136 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.Ri = [Inf -Inf];
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name');
-      nc(ifld) = struct('Name', 'Ri', ...
-          'Nctype'   , OPT.type, ...
-          'Dimension', {{'time',dimname,'Layer'}}, ...
-          'Attribute', attr);
+      nc.Variables(ifld) = struct('Name'      , 'Ri', ...
+                                  'Datatype'  , OPT.type, ...
+                                  'Dimensions', s_t_ki.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []);
 
-%% 4 Create variables with attributes
-   
-      for ifld=1:length(nc)
-         if OPT.debug
-            disp(var2evalstr(nc(ifld)))
-         end
-         nc_addvar(ncfile, nc(ifld));   
+%% 4 Create netCDF file
+
+      if OPT.debug
+      ls(ncfile)
+      var2evalstr(nc)
+      end
+
+      try;delete(ncfile);end
+      disp(['vs_trih2nc: NCWRITESCHEMA: creating netCDF file: ',ncfile])
+      ncwriteschema(ncfile, nc);			        
+      disp(['vs_trih2nc: NCWRITE: filling  netCDF file: ',ncfile])
+
+      if OPT.debug
+      fid = fopen([filepathstrname(ncfile),'.cdl'],'w');
+      nc_dump(ncfile,fid);
+      fclose(fid);
       end
 
 %% 5 Fill variables
 
    if OPT.trajectory
-      nc_varput(ncfile, 'Trajectory'          , G.trajectory);
+      ncwrite(ncfile, 'Trajectory'          , G.trajectory);
    else
-      nc_varput(ncfile, 'station_name'        , G.name);
-      nc_varput(ncfile, 'station_angle'       , G.angle);
-      nc_varput(ncfile, 'station_m_index'     , G.m);
-      nc_varput(ncfile, 'station_n_index'     , G.n);
+      ncwrite(ncfile, 'station_name'        , G.name);
+      ncwrite(ncfile, 'station_angle'       , G.angle);
+      ncwrite(ncfile, 'station_m_index'     , G.m);
+      ncwrite(ncfile, 'station_n_index'     , G.n);
    end
       if any(strfind(G.coordinates,'CARTESIAN')) || ~isempty(OPT.epsg)
-      nc_varput(ncfile, 'x', G.x);
-      nc_varput(ncfile, 'y', G.y);
+      ncwrite(ncfile, 'x', G.x);
+      ncwrite(ncfile, 'y', G.y);
       end
       if (~isempty(OPT.epsg)) | (~any(strfind(G.coordinates,'CARTESIAN')))      
-      nc_varput(ncfile, 'longitude'  , G.lon);
-      nc_varput(ncfile, 'latitude'   , G.lat);
+      ncwrite(ncfile, 'longitude'  , G.lon);
+      ncwrite(ncfile, 'latitude'   , G.lat);
       end
-      nc_varput(ncfile, 'time'         , T.datenum - OPT.refdatenum);
+      ncwrite(ncfile, 'time'         , T.datenum - OPT.refdatenum);
       if (~isempty(OPT.epsg)) | (~any(strfind(G.coordinates,'CARTESIAN')))
-      nc_varput(ncfile, 'longitude'    ,G.lon);
-      nc_varput(ncfile, 'latitude'     ,G.lat);
+      ncwrite(ncfile, 'longitude'    ,G.lon);
+      ncwrite(ncfile, 'latitude'     ,G.lat);
       end      
       
       if strmatch('SIGMA-MODEL', G.layer_model)
       matrix = vs_let(F,'his-const','THICK','quiet');
      [sigma,sigmaInterf] = d3d_sigma(matrix); % [0 .. 1]
-      nc_varput(ncfile,'Layer'         ,sigma-1);
-      nc_attput(ncfile,'Layer'         ,'actual_range',[min(sigma(:)-1) max(sigma(:)-1)]);
+      ncwrite   (ncfile,'Layer'         ,sigma-1);
+      ncwriteatt(ncfile,'Layer'         ,'actual_range',[min(sigma(:)-1) max(sigma(:)-1)]);
       
-      nc_varput(ncfile,'LayerInterf'   ,sigmaInterf-1);
-      nc_attput(ncfile,'LayerInterf'   ,'actual_range',[min(sigmaInterf(:)-1) max(sigmaInterf(:)-1)]); % [-1 0]
+      ncwrite   (ncfile,'LayerInterf'   ,sigmaInterf-1);
+      ncwriteatt(ncfile,'LayerInterf'   ,'actual_range',[min(sigmaInterf(:)-1) max(sigmaInterf(:)-1)]); % [-1 0]
       elseif strmatch('Z-MODEL', G.layer_model)
 
       Layer = corner2center1(G.ZK);
-      nc_varput(ncfile,'Layer'         ,Layer);
-      nc_attput(ncfile,'Layer'         ,'actual_range',[min(Layer(:)) max(Layer(:))]);
+      ncwrite   (ncfile,'Layer'         ,Layer);
+      ncwriteatt(ncfile,'Layer'         ,'actual_range',[min(Layer(:)) max(Layer(:))]);
       
-      nc_varput(ncfile,'LayerInterf'   ,G.ZK);
-      nc_attput(ncfile,'LayerInterf'   ,'actual_range',[min(G.ZK(:)) max(G.ZK(:))]);
+      ncwrite   (ncfile,'LayerInterf'   ,G.ZK);
+      ncwriteatt(ncfile,'LayerInterf'   ,'actual_range',[min(G.ZK(:)) max(G.ZK(:))]);
       end
       
       matrix = vs_let(F,'his-const','DPS',{OPT.ind},OPT.quiet);
-      nc_varput(ncfile,'depth',matrix);
-      nc_attput(ncfile,'depth','actual_range',[min(matrix(:)) max(matrix(:))]);
+      ncwrite   (ncfile,'depth',matrix);
+      ncwriteatt(ncfile,'depth','actual_range',[min(matrix(:)) max(matrix(:))]);
 
       matrix = vs_let(F,'his-series','ZWL',{OPT.ind},OPT.quiet);
-      nc_varput(ncfile,'waterlevel',matrix);
+      ncwrite(ncfile,'waterlevel',permute(matrix,[2 1]));
       nc_attput(ncfile,'waterlevel','actual_range',[min(matrix(:)) max(matrix(:))]);
 
       matrix = vs_let(F,'his-series','ZKFS',{OPT.ind},OPT.quiet);
-      nc_varput(ncfile,'mask',matrix);
+      ncwrite(ncfile,'mask',permute(matrix,[2 1]));
       nc_attput(ncfile,'mask','actual_range',[min(matrix(:)) max(matrix(:))]);
 
       if OPT.stride
           for k=1:G.kmax
 
               matrix = vs_let(F,'his-series','ZCURU',{OPT.ind,k},OPT.quiet);
-              nc_varput(ncfile,'u_x',matrix,[0 0 k-1],[size(matrix) 1]);
+              ncwrite(ncfile,'u_x',permute(matrix,[3 2 1]),[k 1 1]);
               R.u_x(1) = min(R.u_x(1),min(matrix(:)));
               R.u_x(2) = max(R.u_x(2),max(matrix(:)));
 
               matrix = vs_let(F,'his-series','ZCURV',{OPT.ind,k},OPT.quiet);
-              nc_varput(ncfile,'u_y',matrix,[0 0 k-1],[size(matrix) 1]);
+              ncwrite(ncfile,'u_y',permute(matrix,[3 2 1]),[k 1 1]);
               R.u_y(1) = min(R.u_y(1),min(matrix(:)));
               R.u_y(2) = max(R.u_y(2),max(matrix(:)));
 
               matrix = vs_let(F,'his-series','ZCURW',{OPT.ind,k},OPT.quiet);
-              nc_varput(ncfile,'u_z',matrix,[0 0 k-1],[size(matrix) 1]);
+              ncwrite(ncfile,'u_z',permute(matrix,[3 2 1]),[k 1 1]);
               R.u_z(1) = min(R.u_z(1),min(matrix(:)));
               R.u_z(2) = max(R.u_z(2),max(matrix(:)));
 
           end
       else
           matrix = vs_let(F,'his-series','ZCURU',{OPT.ind,0},OPT.quiet);
-          nc_varput(ncfile,'u_x',matrix);
+          ncwrite(ncfile,'u_x',permute(matrix,[3 2 1]));
           R.u_x = [min(matrix(:)) max(matrix(:))];
 
           matrix = vs_let(F,'his-series','ZCURV',{OPT.ind,0},OPT.quiet);
-          nc_varput(ncfile,'u_y',matrix);
+          ncwrite(ncfile,'u_y',permute(matrix,[3 2 1]));
           R.u_y = [min(matrix(:)) max(matrix(:))];
 
           matrix = vs_let(F,'his-series','ZCURW',{OPT.ind,0},OPT.quiet);
-          nc_varput(ncfile,'u_z',matrix);
+          ncwrite(ncfile,'u_z',permute(matrix,[3 2 1]));
           R.u_z = [min(matrix(:)) max(matrix(:))];
       end
       
       matrix = vs_let(F,'his-series','ZTAUKS',{OPT.ind},OPT.quiet);
-      nc_varput(ncfile,'tau_x',matrix);
-      nc_attput(ncfile,'tau_x','actual_range',[min(matrix(:)) max(matrix(:))]);
+      ncwrite   (ncfile,'tau_x',permute(matrix,[2 1]));
+      ncwriteatt(ncfile,'tau_x','actual_range',[min(matrix(:)) max(matrix(:))]);
+      R.tau_x = [min(matrix(:)) max(matrix(:))];
       
       matrix = vs_let(F,'his-series','ZTAUET',{OPT.ind},OPT.quiet);
-      nc_varput(ncfile,'tau_y',matrix);
-      nc_attput(ncfile,'tau_y','actual_range',[min(matrix(:)) max(matrix(:))]);
+      ncwrite   (ncfile,'tau_y',permute(matrix,[2 1]));
+      R.tau_y = [min(matrix(:)) max(matrix(:))];
 
       if OPT.stride
          for k=1:G.kmax
             matrix = vs_let(F,'his-series','ZRHO',{OPT.ind,k},OPT.quiet);
-            nc_varput(ncfile,'density',matrix,[0 0 k-1],[size(matrix) 1]);
+            ncwrite(ncfile,'density',permute(matrix,[3 2 1]),[k 1 1]);
             R.density(1) = min(R.density(1),min(matrix(:)));
             R.density(2) = max(R.density(2),max(matrix(:)));
          end
       else
          matrix = vs_let(F,'his-series','ZRHO',{OPT.ind,0},OPT.quiet);
-         nc_varput(ncfile,'density',matrix);
+         ncwrite(ncfile,'density',permute(matrix,[3 2 1]));
          R.density = [min(R.density(1),min(matrix(:))) max(R.density(2),max(matrix(:)))];
       end   
 
@@ -805,13 +892,13 @@ function varargout = vs_trih2nc(vsfile,varargin)
       if OPT.stride
          for k=1:G.kmax
             matrix = vs_let(F,'his-series','GRO',{OPT.ind,k,I.salinity.index},OPT.quiet);
-            nc_varput(ncfile,'salinity',matrix,[0 0 k-1],[size(matrix) 1]);
+            ncwrite(ncfile,'salinity',permute(matrix,[3 2 1]),[k 1 1]);
             R.salinity(1) = min(R.salinity(1),min(matrix(:)));
             R.salinity(2) = max(R.salinity(2),max(matrix(:)));
          end
       else
          matrix = vs_let(F,'his-series','GRO',{OPT.ind,0,I.salinity.index},OPT.quiet);
-         nc_varput(ncfile,'salinity',matrix);
+         ncwrite(ncfile,'salinity',permute(matrix,[3 2 1]));
          R.salinity = [min(R.salinity(1),min(matrix(:))) max(R.salinity(2),max(matrix(:)))];
       end   
       end
@@ -820,13 +907,13 @@ function varargout = vs_trih2nc(vsfile,varargin)
       if OPT.stride
          for k=1:G.kmax
             matrix = vs_let(F,'his-series','GRO',{OPT.ind,k,I.temperature.index},OPT.quiet);
-            nc_varput(ncfile,'temperature',matrix,[0 0 k-1],[size(matrix) 1]);
+            ncwrite(ncfile,'temperature',permute(matrix,[3 2 1]),[k 1 1]);
             R.temperature(1) = min(R.temperature(1),min(matrix(:)));
             R.temperature(2) = max(R.temperature(2),max(matrix(:)));
          end
       else
          matrix = vs_let(F,'his-series','GRO',{OPT.ind,0,I.temperature.index},OPT.quiet);
-         nc_varput(ncfile,'temperature',matrix);
+         ncwrite(ncfile,'temperature',permute(matrix,[3 2 1]));
          R.temperature = [min(R.temperature(1),min(matrix(:))) max(R.temperature(2),max(matrix(:)))];
       end   
       end
@@ -837,13 +924,13 @@ function varargout = vs_trih2nc(vsfile,varargin)
       if OPT.stride
          for k=1:G.kmax+1
             matrix = vs_let(F,'his-series','ZTUR',{OPT.ind,k,I.turbulent_energy.index},OPT.quiet);
-            nc_varput(ncfile,'tke',matrix,[0 0 k-1],[size(matrix) 1]);
+            ncwrite(ncfile,'tke',permute(matrix,[3 2 1]),[k 1 1]);
             R.tke(1) = min(R.tke(1),min(matrix(:)));
             R.tke(2) = max(R.tke(2),max(matrix(:)));
          end
       else
          matrix = vs_let(F,'his-series','ZTUR',{OPT.ind,0,I.turbulent_energy.index},OPT.quiet);
-         nc_varput(ncfile,'tke',matrix);
+         ncwrite(ncfile,'tke',permute(matrix,[3 2 1]));
          R.tke = [min(R.tke(1),min(matrix(:))) max(R.tke(2),max(matrix(:)))];
       end   
       end
@@ -852,13 +939,13 @@ function varargout = vs_trih2nc(vsfile,varargin)
       if OPT.stride
          for k=1:G.kmax+1
             matrix = vs_let(F,'his-series','ZTUR',{OPT.ind,k,I.energy_dissipation.index},OPT.quiet);
-            nc_varput(ncfile,'eps',matrix,[0 0 k-1],[size(matrix) 1]);
+            ncwrite(ncfile,'eps',permute(matrix,[3 2 1]),[k 1 1]);
             R.eps(1) = min(R.eps(1),min(matrix(:)));
             R.eps(2) = max(R.eps(2),max(matrix(:)));
          end
       else
          matrix = vs_let(F,'his-series','ZTUR',{OPT.ind,0,I.energy_dissipation.index},OPT.quiet);
-         nc_varput(ncfile,'eps',matrix);
+         ncwrite(ncfile,'eps',permute(matrix,[3 2 1]));
          R.eps = [min(R.eps(1),min(matrix(:))) max(R.eps(2),max(matrix(:)))];
       end   
       end
@@ -866,39 +953,39 @@ function varargout = vs_trih2nc(vsfile,varargin)
       if OPT.stride
          for k=1:G.kmax+1
             matrix = vs_let(F,'his-series','ZVICWW',{OPT.ind,k},OPT.quiet);
-            nc_varput(ncfile,'viscosity_z',matrix,[0 0 k-1],[size(matrix) 1]);
+            ncwrite(ncfile,'viscosity_z',permute(matrix,[3 2 1]),[k 1 1]);
             R.viscosity_z(1) = min(R.viscosity_z(1),min(matrix(:)));
             R.viscosity_z(2) = max(R.viscosity_z(2),max(matrix(:)));
          end
       else
          matrix = vs_let(F,'his-series','ZVICWW',{OPT.ind,0},OPT.quiet);
-         nc_varput(ncfile,'viscosity_z',matrix);
+         ncwrite(ncfile,'viscosity_z',permute(matrix,[3 2 1]));
          R.viscosity_z = [min(R.viscosity_z(1),min(matrix(:))) max(R.viscosity_z(2),max(matrix(:)))];
       end   
 
       if OPT.stride
          for k=1:G.kmax+1
             matrix = vs_let(F,'his-series','ZDICWW',{OPT.ind,k},OPT.quiet);
-            nc_varput(ncfile,'diffusivity_z',matrix,[0 0 k-1],[size(matrix) 1]);
+            ncwrite(ncfile,'diffusivity_z',permute(matrix,[3 2 1]),[k 1 1]);
             R.diffusivity_z(1) = min(R.diffusivity_z(1),min(matrix(:)));
             R.diffusivity_z(2) = max(R.diffusivity_z(2),max(matrix(:)));
          end
       else
          matrix = vs_let(F,'his-series','ZDICWW',{OPT.ind,0},OPT.quiet);
-         nc_varput(ncfile,'diffusivity_z',matrix);
+         ncwrite(ncfile,'diffusivity_z',permute(matrix,[3 2 1]));
          R.diffusivity_z = [min(R.diffusivity_z(1),min(matrix(:))) max(R.diffusivity_z(2),max(matrix(:)))];
       end   
 
       if OPT.stride
-         for k=1:G.kmax
+         for k=1:G.kmax+1
             matrix = vs_let(F,'his-series','ZRICH',{OPT.ind,k},OPT.quiet);
-            nc_varput(ncfile,'Ri',matrix,[0 0 k-1],[size(matrix) 1]);
+            ncwrite(ncfile,'Ri',permute(matrix,[3 2 1]),[k 1 1]);
             R.Ri(1) = min(R.Ri(1),min(matrix(:)));
             R.Ri(2) = max(R.Ri(2),max(matrix(:)));
          end
       else
          matrix = vs_let(F,'his-series','ZRICH',{OPT.ind,0},OPT.quiet);
-         nc_varput(ncfile,'Ri',matrix);
+         ncwrite(ncfile,'Ri',permute(matrix,[3 2 1]));
          R.Ri = [min(R.Ri(1),min(matrix(:))) max(R.Ri(2),max(matrix(:)))];
       end
    
