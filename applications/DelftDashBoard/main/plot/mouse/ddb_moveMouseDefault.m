@@ -62,5 +62,7 @@ function ddb_moveMouseDefault(imagefig, varargins, ptr)
 % $Keywords: $
 
 %%
+try
 ddb_updateCoordinateText(ptr);
+end
 
