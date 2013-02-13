@@ -1,9 +1,15 @@
 function [xs2,ys2]=spline2d(xp,yp)
 % Generates spline in xy spaces with equidistant points
 
+if length(xp)<2
+    xs2=xp;
+    ys2=yp;
+    return
+end
+
 xy=[xp';yp'];
 
-np=5;
+np=20;
 n=length(xp);
 
 t=1:n;
