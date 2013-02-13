@@ -112,7 +112,7 @@ switch nsys,
         end
     otherwise
         handles.screenParameters.xMaxRange=[-5000000 5000000];
-        handles.screenParameters.yMaxRange=[0 5000000];
+        handles.screenParameters.yMaxRange=[0 8000000];
 end
 
 [xl,yl]=CompXYLim(xl1,yl1,handles.screenParameters.xMaxRange,handles.screenParameters.yMaxRange);
