@@ -162,6 +162,17 @@ if 0 % set this to 1 to activate the local cache, and download it with OPENDAP_G
    datatypes.grid.datatype{i}     =  'vaklodingen'; % for rws_*
 end   
    
+   %% Zeeland outer deltas (test, matlab ncgen, release 2013)
+
+   i = i + 1;
+   datatypes.grid.names{i}        =  'Zeeland outer deltas 20m (test/next release r2013)';
+   datatypes.grid.urls {i}        =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/DienstZeeland/outer_deltas/';
+   datatypes.grid.catalog{i}      =  'http://dtvirt5.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/DienstZeeland/outer_deltas/catalog.xml';
+   datatypes.grid.ldbs{i}         =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc';
+   datatypes.grid.axes{i}         =  1E5*[-0.239487 2.901701 2.999500 6.787223];
+   datatypes.grid.cellsize{i}     =  20;
+   datatypes.grid.datatype{i}     =  'vaklodingen'; % for rws_*
+
    %% Kustlidar
 
    i = i + 1;
