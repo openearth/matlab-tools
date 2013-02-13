@@ -118,6 +118,9 @@ if OPT.superfast && ny == 2
     xgrid = xgrid(1,:);
     ygrid = ygrid(1,:);
     zgrid = zgrid(1,:);
+    if ~isempty(negrid)
+        negrid = negrid(1,:);
+    end
 end
 
 if OPT.posdwn
