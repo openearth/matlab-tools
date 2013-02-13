@@ -92,8 +92,9 @@ for i = 1 : length(yearArray)
     % should this be in jarkus_transect
     nc_varput(filename, 'min_cross_shore_measurement', minCrossBlock , [i-1, 0], [1, length(minCrossBlock)])
     nc_varput(filename, 'max_cross_shore_measurement', maxCrossBlock , [i-1, 0], [1, length(maxCrossBlock)])
+    nc_varput(filename, 'has_data',            ~isnan(maxCrossBlock) , [i-1, 0], [1, length(maxCrossBlock)])
     nc_varput(filename, 'min_altitude_measurement', minAltitBlock , [i-1, 0], [1, length(minAltitBlock)])
-    nc_varput(filename, 'max_altitude_measurement', minAltitBlock , [i-1, 0], [1, length(minAltitBlock)])
+    nc_varput(filename, 'max_altitude_measurement', maxAltitBlock , [i-1, 0], [1, length(minAltitBlock)])
     nc_varput(filename, 'time'      , year          , [i-1      ], [1                        ]);
     nc_varput(filename, 'time_topo' , timeTopoBlock , [i-1, 0   ], [1, length(timeTopoBlock) ]);
     nc_varput(filename, 'time_bathy', timeBathyBlock, [i-1, 0   ], [1, length(timeBathyBlock)]);
