@@ -65,7 +65,8 @@ Flow=handles.Model(md).Input(id);
 
 fname=Flow.disFile;
 
-Info=ddb_bct_io('read',fname);
+%Info=ddb_bct_io('read',fname);
+Info=bct_io('read',fname);
 
 for n=1:Flow.nrDischarges
     
