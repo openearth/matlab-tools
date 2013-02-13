@@ -377,27 +377,28 @@ end
 
 % perform finalise actions
 if ~islogical(OPT.finalise) && iscell(OPT.finalise)
+    xgrid_old = xgrid;
+    ygrid_old = ygrid;
+    
     [xgrid, ygrid, zgrid] = xb_grid_finalise(xgrid, ygrid, zgrid, 'actions', OPT.finalise);
 elseif OPT.finalise
+    xgrid_old = xgrid;
+    ygrid_old = ygrid;
+    
     [xgrid, ygrid, zgrid] = xb_grid_finalise(xgrid, ygrid, zgrid);
 end
 
 % adapt nelayer to finalised grid
 if (~islogical(OPT.finalise) && iscell(OPT.finalise)) || (islogical(OPT.finalise) && OPT.finalise)
     if ~isempty(OPT.ne)
-        d1 = size(zgrid, 1) - size(negrid, 1); d11 = floor(d1/2); d12 = ceil(d1/2);
-        d2 = size(zgrid, 2) - size(negrid, 2); d21 = floor(d2/2); d22 = ceil(d2/2);
-
-        if d1 < 0
-            negrid = negrid(d11+1:end-d12,:);
-        elseif d1 > 0
-            negrid = [repmat(negrid(1,:), d11, 1) ; negrid ; repmat(negrid(end,:), d12, 1)];
-        end
-
-        if d2 < 0
-            negrid = negrid(:,d21+1:end-d22);
-        elseif d2 > 0
-            negrid = [repmat(negrid(:,1), 1, d21) negrid repmat(negrid(:,end), 1, d22)];
+        negrid = interp2(xgrid_old,ygrid_old,negrid,xgrid,ygrid);
+        if any(any(isnan(negrid)))
+            distance = pointdistance_pairs([xgrid(isnan(negrid)) ygrid(isnan(negrid))], [xgrid(~isnan(negrid)) ygrid(~isnan(negrid))]);
+            [dummy nn_idx] = min(distance,[],2);
+            negrid_notnan = negrid(~isnan(negrid));
+            negrid(isnan(negrid)) = negrid_notnan(nn_idx);
+            
+            clear dummy xgrid_old ygrid_old negrid_notnan
         end
         
         xb_verbose(1,'Extend non-erodible layers to finalized grids');
