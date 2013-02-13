@@ -73,10 +73,12 @@ end
 % Default values
 options.linecolor='g';
 options.linewidth=1.5;
+options.linestyle='-';
 options.marker='';
 options.markeredgecolor='r';
 options.markerfacecolor='r';
 options.markersize=4;
+options.facecolor='r';
 options.maxpoints=10000;
 options.text=[];
 options.createcallback=[];
@@ -90,6 +92,12 @@ options.rightclickinput=[];
 options.closed=0;
 options.axis=gca;
 options.tag='';
+options.type='polyline';
+options.arrowwidth=2;
+options.headwidth=4;
+options.headlength=8;
+options.nrheads=1;
+options.userdata=[];
 
 % Not generic yet! DDB specific.
 options.windowbuttonupdownfcn=@ddb_setWindowButtonUpDownFcn;
@@ -108,6 +116,10 @@ for i=1:length(varargin)
                 options.linecolor=varargin{i+1};
             case{'linewidth','width'}
                 options.linewidth=varargin{i+1};
+            case{'linestyle'}
+                options.linestyle=varargin{i+1};
+            case{'facecolor'}
+                options.facecolor=varargin{i+1};
             case{'marker'}
                 options.marker=varargin{i+1};
             case{'markeredgecolor'}
@@ -144,6 +156,18 @@ for i=1:length(varargin)
                 options.windowbuttonmotionfcn=varargin{i+1};
             case{'axis'}
                 options.axis=varargin{i+1};
+            case{'type'}
+                options.type=varargin{i+1};
+            case{'arrowwidth'}
+                options.arrowwidth=varargin{i+1};
+            case{'headwidth'}
+                options.headwidth=varargin{i+1};
+            case{'headlength'}
+                options.headlength=varargin{i+1};
+            case{'nrheads'}
+                options.nrheads=varargin{i+1};
+            case{'userdata'}
+                options.userdata=varargin{i+1};
         end
     end
 end
@@ -158,24 +182,27 @@ switch lower(opt)
         
         hg=hggroup;
 
-        h=plot(x,y);
+        switch options.type
+            case{'polyline','spline'}
+                h=plot(x,y);
+                set(h,'Color',options.linecolor);
+                if ~isempty(options.marker)
+                    set(h,'Marker',options.marker);
+                    set(h,'MarkerEdgeColor',options.markeredgecolor);
+                    set(h,'MarkerFaceColor',options.markerfacecolor);
+                    set(h,'MarkerSize',options.markersize);
+                end
+            case{'curvedarrow'}
+                h=patch(x,y,'r');
+                set(h,'EdgeColor',options.linecolor);
+        end
 
         set(hg,'Visible','off');
-
-%        uistack(hg,'top');
         
         set(hg,'Tag',options.tag);
         set(h,'Parent',hg);
-        set(h,'Color',options.linecolor);
         set(h,'LineWidth',options.linewidth);
         setappdata(hg,'linehandle',h);
-        
-        if ~isempty(options.marker)
-            set(h,'Marker',options.marker);
-            set(h,'MarkerEdgeColor',options.markeredgecolor);
-            set(h,'MarkerFaceColor',options.markerfacecolor);
-            set(h,'MarkerSize',options.markersize);
-        end
         
         setappdata(hg,'x',[]);
         setappdata(hg,'y',[]);
@@ -274,7 +301,10 @@ end
 
 x=getappdata(hg,'x');
 y=getappdata(hg,'y');
+ax=getappdata(hg,'axis');
+
 options=getappdata(hg,'options');
+% userdata=get(hg,'UserData');
 
 % Delete temporary polyline
 delete(hg);
@@ -284,26 +314,40 @@ if ~isempty(x)
     hg=hggroup;
     set(hg,'Tag',options.tag);
     setappdata(hg,'options',options);
-    
-    h=plot(x,y,'g');
 
+    switch options.type
+        case{'polyline'}
+            h=plot(x,y,'g');
+            set(h,'Color',options.linecolor);
+        case{'spline'}
+            [xs,ys]=spline2d(x',y');
+            h=plot(xs,ys,'g');
+            set(h,'Color',options.linecolor);
+        case{'curvedarrow'}
+            [xp,yp]=muppet_makeCurvedArrow(x,y,'arrowwidth',options.arrowwidth, ...
+               'headwidth',options.headwidth,'headlength',options.headlength);            
+            h=patch(xp,yp,'r');
+            set(h,'EdgeColor',options.linecolor);
+            set(h,'FaceColor',options.facecolor);
+    end
+    
     set(h,'Parent',hg);
-    set(h,'Color',options.linecolor);
     set(h,'LineWidth',options.linewidth);
+    set(h,'LineStyle',options.linestyle);
     set(h,'HitTest','off');
-    set(h,'Tag',options.tag);
     setappdata(hg,'linehandle',h);
     setappdata(hg,'x',x);
     setappdata(hg,'y',y);
+
+    setappdata(hg,'axis',ax);
     
-    
+    % Markers
     for i=1:length(x)
         mh(i)=plot(x(i),y(i),['r' options.marker]);
         set(mh(i),'MarkerEdgeColor',options.markeredgecolor,'MarkerFaceColor',options.markerfacecolor,'MarkerSize',options.markersize,'LineStyle','none');
         set(mh(i),'ButtonDownFcn',{@moveVertex});
         setappdata(mh(i),'parent',h);
         setappdata(mh(i),'number',i);
-        set(mh(i),'Tag',options.tag);
         set(mh(i),'Parent',hg);
     end
     setappdata(hg,'markerhandles',mh);
@@ -314,11 +358,11 @@ if ~isempty(x)
             tx(i)=text(x(i),y(i),options.text{i});
             set(tx(i),'Tag',options.tag,'HitTest','off','Clipping','on');
             setappdata(tx(i),'number',i);
-            set(tx(i),'Tag',options.tag);
             set(tx(i),'Parent',hg);
         end
     end   
     setappdata(hg,'texthandles',tx);
+    setappdata(hg,'axis',ax);
     
     if ~isempty(options.createcallback) && strcmpi(opt,'withcallback')
         if isempty(options.createinput)
@@ -338,39 +382,62 @@ mouseclick=get(gcf,'SelectionType');
 options=getappdata(hg,'options');
 
 if strcmp(mouseclick,'normal')
+
     % Left click
-    
-    pos=get(options.axis, 'CurrentPoint');
-    posx=pos(1,1);
-    posy=pos(1,2);
-    
-    xl=get(options.axis,'XLim');
-    yl=get(options.axis,'YLim');
-    
-    if posx>=xl(1) && posx<=xl(2) && posy>=yl(1) && posy<=yl(2)
+
+    for iax=1:length(options.axis)
         
-        x=getappdata(hg,'x');
-        y=getappdata(hg,'y');
+        pos=get(options.axis(iax), 'CurrentPoint');
+        posx=pos(1,1);
+        posy=pos(1,2);
         
-        x=[x posx];
-        y=[y posy];
-                
-        setappdata(hg,'x',x);
-        setappdata(hg,'y',y);
+        xl=get(options.axis(iax),'XLim');
+        yl=get(options.axis(iax),'YLim');
         
-        h=getappdata(hg,'linehandle');
-        
-        set(h,'XData',x,'YData',y);
-        set(hg,'Visible','on');
-        
-        if length(x)==options.maxpoints
-            feval(options.windowbuttonupdownfcn);
-            feval(options.windowbuttonmotionfcn);
-            drawPolyline(hg);
+        if posx>=xl(1) && posx<=xl(2) && posy>=yl(1) && posy<=yl(2)
+            
+            x=getappdata(hg,'x');
+            y=getappdata(hg,'y');
+            
+            x=[x posx];
+            y=[y posy];
+            
+            setappdata(hg,'x',x);
+            setappdata(hg,'y',y);
+            
+            setappdata(hg,'axis',options.axis(iax));
+            setappdata(hg,'subplot',iax);
+            
+            h=getappdata(hg,'linehandle');
+
+            xp=x;
+            yp=y;
+            
+            switch options.type
+                case{'spline'}
+                    [xp,yp]=spline2d(x',y');
+                    set(h,'Marker','none');
+                case{'curvedarrow'}
+                    [xp,yp]=muppet_makeCurvedArrow(x,y,'arrowwidth',options.arrowwidth, ...
+                        'headwidth',options.headwidth,'headlength',options.headlength);
+            end
+
+            set(h,'XData',xp,'YData',yp);
+            set(hg,'Visible','on');
+            
+            if length(x)==options.maxpoints
+                feval(options.windowbuttonupdownfcn);
+                feval(options.windowbuttonmotionfcn);
+                drawPolyline(hg);
+            end
+            
+            break
+            
         end
     end
     
 else
+    
     % Right click
     if options.closed
         % Add last point
@@ -383,6 +450,7 @@ else
             setappdata(hg,'y',y);
         end
     end
+    set(gcf,'Pointer','arrow');
     feval(options.windowbuttonupdownfcn);
     feval(options.windowbuttonmotionfcn);
     drawPolyline(hg);
@@ -391,28 +459,31 @@ end
 %%
 function moveMouse(imagefig, varargins, hg)
 
-x=getappdata(hg,'x');
-y=getappdata(hg,'y');
-
 options=getappdata(hg,'options');
-h=getappdata(hg,'linehandle');
-
-np=length(x);
 
 pos=get(options.axis, 'CurrentPoint');
 posx=pos(1,1);
 posy=pos(1,2);
 
-xl=get(options.axis,'XLim');
-yl=get(options.axis,'YLim');
-if posx>=xl(1) && posx<=xl(2) && posy>=yl(1) && posy<=yl(2)
-    if np>0
-        x(np+1)=posx;
-        y(np+1)=posy;
-        set(h,'XData',x,'YData',y);
+inaxis=0;
+for iax=1:length(options.axis)
+    xl=get(options.axis(iax),'XLim');
+    yl=get(options.axis(iax),'YLim');
+    if posx>=xl(1) && posx<=xl(2) && posy>=yl(1) && posy<=yl(2)
+        inaxis=1;
     end
 end
-ddb_updateCoordinateText('crosshair');
+
+% If mouse cursor is within one of the axes, set mouse to cross hair
+if inaxis
+    set(gcf, 'Pointer', 'crosshair');
+else
+    set(gcf,'Pointer','arrow');
+end
+
+try
+    ddb_updateCoordinateText('crosshair');
+end
 
 %%
 function moveVertex(imagefig, varargins)
@@ -482,7 +553,19 @@ if options.closed
 end
 setappdata(hg,'x',x);
 setappdata(hg,'y',y);
-set(h,'XData',x,'YData',y);
+
+xp=x;
+yp=y;
+switch options.type
+    case{'spline'}
+        [xp,yp]=spline2d(x',y');
+    case{'curvedarrow'}
+        [xp,yp]=muppet_makeCurvedArrow(x,y,'arrowwidth',options.arrowwidth, ...
+            'headwidth',options.headwidth,'headlength',options.headlength);
+        set(h,'FaceColor','none');
+end
+
+set(h,'XData',xp,'YData',yp);
 
 if options.closed
     if nr==1
@@ -500,7 +583,9 @@ else
         set(tx(nr),'Position',[x(nr) y(nr)]);
     end
 end
-ddb_updateCoordinateText('arrow');
+try
+    ddb_updateCoordinateText('arrow');
+end
 
 %%
 function stopTrack(imagefig, varargins)
@@ -510,9 +595,6 @@ p=get(gcf,'CurrentObject');
 hg=get(p,'Parent');
 nr=getappdata(p,'number');
 
-h=getappdata(hg,'linehandle');
-tx=getappdata(hg,'texthandles');
-mh=getappdata(hg,'markerhandles');
 options=getappdata(hg,'options');
 x=getappdata(hg,'x');
 y=getappdata(hg,'y');
@@ -530,11 +612,7 @@ y(nr)=yi;
 setappdata(hg,'x',x);
 setappdata(hg,'y',y);
 
-set(h,'XData',x,'YData',y);
-set(mh(nr),'XData',x(nr),'YData',y(nr));
-if ~isempty(tx)
-    set(tx(nr),'Position',[x(nr) y(nr)]);
-end
+hg=drawPolyline(hg,'withoucallback');
 
 if ~isempty(options.changecallback)
     if isempty(options.changeinput)
