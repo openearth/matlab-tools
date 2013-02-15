@@ -30,6 +30,10 @@ function [xgrid ygrid zgrid negrid alpha xori yori] = xb_grid_optimize(varargin)
 %                           perform
 %               posdwn:     boolean flag that determines whether positive
 %                           z-direction is down
+%               world_coordinates:  
+%                           boolean to enable a grid defined in
+%                           world coordinates rather than XBeach model 
+%                           coordinates
 %               zdepth:     extent of model below mean sea level, which is
 %                           used if non-erodable layers are defined
 %
@@ -98,6 +102,7 @@ OPT = struct( ...
     'crop', true, ...
     'finalise', true, ...
     'posdwn', false, ...
+    'world_coordinates', false, ...
     'zdepth', 100 ...
 );
 
@@ -193,6 +198,7 @@ else
         
         fh = figure;
         pcolor(x_r, y_r, z_w);
+        axis equal;
         shading flat; colorbar;
 
         [xin yin] = ginput(2);
@@ -213,9 +219,6 @@ else
         xb_verbose(2,{'xmin' 'xmax' 'ymin' 'ymax'},{xmin xmax ymin ymax});
     end
 
-    % empty memory
-    clear x_r y_r
-
     % create dummy grid
     x_d = linspace(xmin, xmax, max(2,ceil((xmax-xmin)/cellsize)));
     y_d = linspace(ymin, ymax, max(2,ceil((xmax-xmin)/cellsize)));
@@ -224,14 +227,17 @@ else
     xb_verbose(2,'Cells X',length(x_d));
     xb_verbose(2,'Cells Y',length(y_d));
 
-    % rotate dummy grid to world coordinates
-    [x_d_w y_d_w] = xb_grid_rotate(x_d, y_d, alpha, 'origin', [xori yori]);
-    
-    xb_verbose(1,'Rotate interpolation grid to world coordinates');
-    xb_verbose(2,'Alpha',alpha);
-
     % interpolate elevation data to dummy grid
-    z_d = interp2(x_w, y_w, z_w, x_d_w, y_d_w);
+    [x_d y_d] = meshgrid(x_d,y_d);
+    try
+        z_d = interp2(x_r, y_r, z_w, x_d, y_d);
+        % use other interpolation method if necessary
+    catch error_message
+        warning(['INTERP2 cannot be used, interpolation can take a little longer: ' error_message.message]);
+        interpolant = TriScatteredInterp(x_r(:), y_r(:), z_w(:));
+        z_d = interpolant(x_d, y_d);
+        clear interpolant
+    end
     
     xb_verbose(1,'Interpolate bathymetry to interpolation grid');
 
@@ -243,7 +249,8 @@ end
 
 % remove nan's
 notnan = ~isnan(z_d_cs);
-x_d = x_d(notnan);
+x_d_1d = x_d(1,notnan);
+y_d_1d = y_d(:,1);
 z_d_cs = z_d_cs(notnan);
 
 xb_verbose(1,'Remove NaN''s from representative cross shore profile');
@@ -254,8 +261,8 @@ xb_verbose(2,'NaN''s',sum(~notnan));
 clear x_d_w y_d_w
 
 %% create xbeach grid
-[x_xb z_xb] = xb_grid_xgrid(x_d, z_d_cs, OPT.xgrid{:});
-[y_xb] = xb_grid_ygrid(y_d, OPT.ygrid{:});
+[x_xb z_xb] = xb_grid_xgrid(x_d_1d, z_d_cs, OPT.xgrid{:});
+[y_xb] = xb_grid_ygrid(y_d_1d, OPT.ygrid{:});
 
 % clear memory
 clear y_d z_d z_d_cs
@@ -294,12 +301,20 @@ else
     % 2D grid
 
     % rotate xbeach grid to world coordinates
-    [x_xb_w y_xb_w] = xb_grid_rotate(x_xb, y_xb, alpha, 'origin', [xori yori]);
+    [x_xb_w y_xb_w] = xb_grid_rotate(x_xb, y_xb, -alpha, 'origin', [xori yori]);
     
     xb_verbose(1,'Rotate combined grid to world coordinates');
 
     % interpolate elevation data to xbeach grid
-    zgrid = interp2(x_w, y_w, z_w, x_xb_w, y_xb_w);
+    try
+        zgrid = interp2(x_w, y_w, z_w, x_xb_w, y_xb_w);
+        % use other interpolation method if necessary
+    catch error_message
+        warning(['INTERP2 cannot be used, interpolation can take a little longer: ' error_message.message]);
+        interpolant = TriScatteredInterp(x_w(:), y_w(:), z_w(:));
+        zgrid = interpolant(x_xb_w, y_xb_w);
+        clear interpolant
+    end
     
     xb_verbose(1,'Interpolate bathymetry to combined grid');
 
@@ -403,6 +418,14 @@ if (~islogical(OPT.finalise) && iscell(OPT.finalise)) || (islogical(OPT.finalise
         
         xb_verbose(1,'Extend non-erodible layers to finalized grids');
     end
+end
+
+% convert to world coordinates if needed
+if OPT.world_coordinates
+    [xgrid ygrid] = xb_grid_rotate(xgrid, ygrid, -alpha, 'origin', [xori yori]);
+    alpha = 0;
+    xori = 0;
+    yori = 0;
 end
 
 %% output

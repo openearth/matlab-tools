@@ -87,10 +87,15 @@ end
 
 [cellsize xmin xmax ymin ymax] = xb_grid_resolution(x, y);
 
-xd = [xmin:cellsize:xmax];
-yd = [ymin:cellsize:ymax];
+xd = xmin:cellsize:xmax;
+yd = ymin:cellsize:ymax;
 
 [xd yd] = meshgrid(xd, yd);
+
+if x(end,1) == xmax &&  y(1,end) == ymax
+    xd = xd';
+    yd = yd';
+end
 
 zd = xb_grid_interpolate(x, y, z, xd, yd);
 

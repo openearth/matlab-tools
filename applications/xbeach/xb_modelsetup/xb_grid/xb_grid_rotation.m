@@ -84,6 +84,8 @@ if isempty(y); y = 0; end;
 [a b] = linreg(xc, yc);
 
 %% determine rotation
+[ix1 ix2] = find(x==max(max(x)),1,'first');
+[iy1 iy2] = find(y==max(max(y)),1,'first');
 
 alpha = 0;
 if ~isnan(b)
@@ -94,7 +96,7 @@ if ~isnan(b)
     if dim == 1
         alpha = alpha - sign(dir*b)*pi/2;
     else
-        if sign(dir*b) == -1
+        if sign(dir*b) == -1 && (ix2 == size(x,2) && iy1 == size(y,1))
             alpha = alpha + pi;
         end
     end

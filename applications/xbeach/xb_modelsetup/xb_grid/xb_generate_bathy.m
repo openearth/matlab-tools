@@ -37,6 +37,10 @@ function xb = xb_generate_bathy(varargin)
 %                           switched on, the provided grid is interpreted as
 %                           bathymetry and an optimal grid is defined, if
 %                           switched off, the provided grid is used as is.
+%               world_coordinates:  
+%                           boolean to enable a grid defined in
+%                           world coordinates rather than XBeach model 
+%                           coordinates
 %               superfast:  boolean to enable superfast 1D mode
 %
 %   Output:
@@ -106,6 +110,7 @@ OPT = struct( ...
     'posdwn', false, ...
     'zdepth', 100, ...
     'optimize', true, ...
+    'world_coordinates', false, ...
     'superfast', true ...
 );
 
@@ -142,11 +147,17 @@ end
 %% generate grid
 
 if OPT.optimize
+    if OPT.world_coordinates && islogical(OPT.crop)
+        if OPT.crop
+            OPT.crop = 'select';
+        end
+    end
+    
     [x y z ne alpha xori yori] = xb_grid_optimize( ...
         'x', OPT.x, 'y', OPT.y, 'z', OPT.z, 'ne', OPT.ne, ...
         'xgrid', OPT.xgrid, 'ygrid', OPT.ygrid, 'rotate', OPT.rotate, ...
         'crop', OPT.crop, 'finalise', OPT.finalise, 'posdwn', OPT.posdwn, ...
-        'zdepth', OPT.zdepth);
+        'world_coordinates', OPT.world_coordinates,'zdepth', OPT.zdepth);
 else
     [x y z ne alpha xori yori] = deal(OPT.x, OPT.y, OPT.z, OPT.ne, 0, NaN, NaN);
 end
