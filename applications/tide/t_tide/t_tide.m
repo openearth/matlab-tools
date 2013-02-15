@@ -88,8 +88,8 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin);
 %
 %   Resolution criterions for least-squares fit.        
 %       'rayleigh'       scalar - Rayleigh criteria, default = 1.
-%                        Matrix of strings - names of constituents to
-%                                   use (useful for testing purposes).
+%                        Matrix of strings or cellstr - names of constituents to use
+%                         (useful for testing). Note: case -sensitive, use UPPER case.
 %  
 %   Calculation of confidence limits (Boostrap not possible with non-equidistant time)
 %       'error'          'wboot'  - Boostrapped confidence intervals 
@@ -183,7 +183,8 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin);
 %                         isfinite for finite.
 %              23/ 3/11 - Corrected my conversion from psd to pwelch, thanks
 %                         to Dan Codiga and (especially) Evan Haug!
-%              25/ 7/12 - Gerben J. de Boer added support for non-equidistant time vector.
+%              25/ 7/12 - Gerben J. de Boer added support for
+%                         non-equidistant time vector and output sorting
 
 % Version 1.3
 % $Id$
@@ -724,13 +725,15 @@ else               % Complex time series
 end;
 
 %-----------------Sort   results---------------------------------------
+
 if     strcmp(sor(1:3), 'fre'); % default
-elseif strcmp(sor(1:4),'-fre');[dummy,index]=sort(fu          ,1,'descend');   
 elseif strcmp(sor(1:3), 'amp');[dummy,index]=sort(tidecon(:,1),1,'ascend' );
-elseif strcmp(sor(1:4),'-amp');[dummy,index]=sort(tidecon(:,1),1,'descend');
 elseif strcmp(sor(1:3), 'pha');[dummy,index]=sort(tidecon(:,3),1,'ascend' );
-elseif strcmp(sor(1:4),'-pha');[dummy,index]=sort(tidecon(:,3),1,'descend');
 elseif strcmp(sor(1:3), 'snr');[dummy,index]=sort(snr         ,1,'ascend' );
+
+elseif strcmp(sor(1:4),'-fre');[dummy,index]=sort(fu          ,1,'descend');   
+elseif strcmp(sor(1:4),'-amp');[dummy,index]=sort(tidecon(:,1),1,'descend');
+elseif strcmp(sor(1:4),'-pha');[dummy,index]=sort(tidecon(:,3),1,'descend');
 elseif strcmp(sor(1:4),'-snr');[dummy,index]=sort(snr         ,1,'descend');
 end
 

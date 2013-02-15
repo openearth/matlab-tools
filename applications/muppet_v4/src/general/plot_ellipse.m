@@ -1,5 +1,5 @@
 function handle=plot_ellipse(major,minor,inc,phase,pos,options,type)
-%PLOT_ELLIPSE   Draw ellipse using major, minor, inc and phase
+%PLOT_ELLIPSE   plot tidal ellipses on a map using major, minor, inc and phase
 %
 %   Syntax:
 %      HANDLE=PLOT_ELLIPSE(MAJOR,MINOR,INC,PHASE,POS,OPTYONS,TYPE)
@@ -24,8 +24,9 @@ function handle=plot_ellipse(major,minor,inc,phase,pos,options,type)
 %      figure
 %      plot_ellipse(2,1,45,20,[1 -1],'r'), axis equal
 %
-%   MMA 2-2003, martinho@fis.ua.pt
+%See also: plot_tidalellipses
 
+%   MMA 2-2003, martinho@fis.ua.pt
 %   Department of physics
 %   University of Aveiro
 
