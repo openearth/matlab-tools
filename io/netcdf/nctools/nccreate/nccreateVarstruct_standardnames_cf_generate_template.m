@@ -26,9 +26,11 @@ if isempty(n)
     error('standard name not found')
 end
 
-if isempty(OPT.long_name);  OPT.long_name  = list.long_names{n};  end
-if isempty(OPT.units);      OPT.units      = list.units{n};       end
-if isempty(OPT.definition); OPT.definition = list.definitions{n}; end
+if isempty(OPT.long_name);    OPT.long_name    = list.long_names{n};  end
+if isempty(OPT.units);        OPT.units        = list.units{n};       end
+if isempty(OPT.definition);   OPT.definition   = list.definitions{n}; end
+
+
 
 % add attributes belonging to the standard name
 OPT.Attributes =  [{...
