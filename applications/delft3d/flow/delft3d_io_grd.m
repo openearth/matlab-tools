@@ -147,8 +147,11 @@ end
       G.u.comment    = 'ksi-velocity faces without dummy rows/columns (2:nmax-1) x (1:mmax-1)';
       G.v.comment    = 'eta-velocity faces without dummy rows/columns (1:nmax-1) x (2:mmax-1)';
 
-      G.cend.x       = addrowcol(corner2centernan(G.cor.x),[-1 1],[-1 1],nan);
-      G.cend.y       = addrowcol(corner2centernan(G.cor.y),[-1 1],[-1 1],nan);
+     %G.cend.x       = addrowcol(corner2centernan(G.cor.x),[-1 1],[-1 1],nan);
+     %G.cend.y       = addrowcol(corner2centernan(G.cor.y),[-1 1],[-1 1],nan);
+      
+      G.cend.x       = center2corner(G.cor.x);
+      G.cend.y       = center2corner(G.cor.y);
       
       [G.cor.encx,G.cor.ency] = enclosure('coordinates',G.cor.x,G.cor.y);
 
