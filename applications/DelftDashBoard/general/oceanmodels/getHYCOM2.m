@@ -69,6 +69,10 @@ function getHYCOM2(url, outname, outdir, par, xl, yl, dx, dy, t, s)
 % $HeadURL$
 % $Keywords: $
 
+if ~exist(outdir,'dir')
+    mkdir(outdir);
+end
+
 %% Download Hycom data
 
 nt=round(t(2)-t(1))+1;
@@ -115,7 +119,7 @@ s.long_name=par;
 for it=1:nt
     
     yr=year(t(it));
-    ndays=t(it)-datenum(yr,1,1);
+    ndays=t(it)-datenum(yr,1,1)+1;
     tstr=[num2str(yr) '_' num2str(ndays,'%0.3i') '_00'];
     
     switch lower(par)
