@@ -1,11 +1,17 @@
 function varargout = readNet(ncfile,X,Y,varargin)
 %writeNet   Write network nodes of unstructured net from curvilinear mesh
 %
-%     dflowfm.writeNet(ncfile,x,y,<keyword,value>) 
+%  dflowfm.writeNet(ncfile,x,y,<Links>,<keyword,value>) 
+%
+%  If <Links> is privided, the x, y & Links (arrays) are directly written
+%  to a netCDF file with correct CF and DflowFM attributes. If <Links> is
+%  not provided, meshgrid is called on x and y (matrices), and 
+%  <Links> is calculated (this takes some time). Note that x, y & Links
+%  can be read with dflowfm.readNet (see Example 2).
 %
 % This file can be used as input for dflowfm.fillDep.
 %
-% Example:
+% Example 1:
 %
 %  ncfile = 'writeNet_test_net.nc';
 %  [X,Y]=meshgrid(1:3,1:4);
@@ -17,7 +23,16 @@ function varargout = readNet(ncfile,X,Y,varargin)
 %  hold on
 %  poly_bi_plot(D.NetLink,D.NetNode_x,D.NetNode_y,'r','linewidth',2);
 %
-% See also: dflowfm, delft3d, fillDep, quat2net
+%
+% Example 2:
+%
+%  FM_mesh = dflowfm.readNet('D_Flow_FM_net.nc');
+%  FM_mesh.cor.x = FM_mesh.cor.x + 50; (*)
+%  dflowfm.writeNet('New_D_Flow_FM_net.nc',FM_mesh.cor.x,FM_mesh.cor.y,FM_mesh.cor.Link);
+%
+%  (*) Manual adjustment, e.g. shift of 50 meters, for projected (UTM) zones only!
+%
+% See also: dflowfm, delft3d, fillDep, quat2net, dflowfm.readNet
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2012 Deltares
@@ -61,13 +76,22 @@ function varargout = readNet(ncfile,X,Y,varargin)
       return
    end
    
+   if ~odd(nargin)
+       NetLink = varargin{1};
+       varargin{1} = [];
+   else
+       NetLink     = [];
+   end
+   
    if verLessThan('matlab','7.12.0.635')
       error('At least Matlab release R2011a is required for writing netCDF files due tue NCWRITESCHEMA.')
    end
 
 %% determine links between active nodes
 
+      if isempty(NetLink)
       NetNode_mask = ~isnan(X) & ~isnan(Y);
+      nNetNode = sum(NetNode_mask(:));
       if length(size(X)==2)
           [ContourLink,NetLink]=quat2net(X,Y,'sub2ind',0); % subsind is used because we skip nan coordinates here
           vals = find(isnan(X));
@@ -85,6 +109,12 @@ function varargout = readNet(ncfile,X,Y,varargin)
       else
           warning('NetLink calculation only implemented for curvi-linear meshes')
       end
+      X = X(NetNode_mask(:));
+      Y = Y(NetNode_mask(:));
+      else
+      nNetNode = length(X);
+      NetLink = NetLink';
+      end      
 
 %% 1a Create file (add all NEFIS 'map-version' group info)
 
@@ -104,7 +134,7 @@ function varargout = readNet(ncfile,X,Y,varargin)
 
 %% 2 Create dimensions
 
-      nc.Dimensions(1) = struct('Name','nNetNode'       ,'Length',sum(NetNode_mask(:)));
+      nc.Dimensions(1) = struct('Name','nNetNode'       ,'Length',nNetNode);
       nc.Dimensions(2) = struct('Name','nNetLink'       ,'Length',size(NetLink,1));
       nc.Dimensions(3) = struct('Name','nNetLinkPts'    ,'Length',2);
       nc.Dimensions(4) = struct('Name','nBndLink'       ,'Length',1);
@@ -186,8 +216,8 @@ warning([mfilename,'agree with developer on _FillValue'])
 %% 5 Fill variables (always)
 %    Data is initialized as NaN due to attribute '_FillValue' in ncwriteschema.
       
-      ncwrite(ncfile,OPT.xname,X(NetNode_mask(:)));ncwriteatt(ncfile,OPT.xname,'actual_range',[min(X(NetNode_mask(:))) max(X(NetNode_mask(:)))]);
-      ncwrite(ncfile,OPT.yname,Y(NetNode_mask(:)));ncwriteatt(ncfile,OPT.yname,'actual_range',[min(Y(NetNode_mask(:))) max(Y(NetNode_mask(:)))]);
+      ncwrite(ncfile,OPT.xname,X(:));ncwriteatt(ncfile,OPT.xname,'actual_range',[min(X(:)) max(X(:))]);
+      ncwrite(ncfile,OPT.yname,Y(:));ncwriteatt(ncfile,OPT.yname,'actual_range',[min(Y(:)) max(Y(:))]);
       ncwrite(ncfile,'NetLink',NetLink');
       ncwrite(ncfile,'NetLinkType',repmat(int32(2),[1 size(NetLink,1)]));
 
