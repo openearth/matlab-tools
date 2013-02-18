@@ -46,7 +46,7 @@ function z=internaldiffusion(z,varargin)
 %   --------------------------------------------------------------------
 
 mask=ones(size(z));
-nsteps=50;
+nsteps=100;
 fac=0.2;
 
 for i=1:nargin-1
