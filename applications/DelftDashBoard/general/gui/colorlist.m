@@ -56,6 +56,7 @@ function varargout = colorlist(opt, varargin)
 global availableColors
 
 includenone=0;
+includeauto=0;
 filename=[];
 colorname=[];
 
@@ -71,6 +72,15 @@ for ii=1:length(varargin)
                         includenone=1;
                     else
                         includenone=0;
+                    end
+                end
+            case{'includeauto'}
+                includeauto=varargin{ii+1};
+                if ischar(includeauto)
+                    if strcmpi(includeauto(1),'y')
+                        includeauto=1;
+                    else
+                        includeauto=0;
                     end
                 end
             case{'color'}
@@ -106,6 +116,9 @@ switch lower(opt)
         lst=availableColors.list;
         if includenone
             lst{end+1}='none';
+        end
+        if includeauto
+            lst{end+1}='automatic';
         end
         varargout{1}=lst;
     case{'getrgb'}
