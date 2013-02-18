@@ -74,6 +74,7 @@ bathydir        = bathymetry.dir;
 bathy           = 'gebco08';
 startdate       = ceil(now);
 searchinterval  = -1e5;
+quiet=0;
 
 for i=1:length(varargin)
     if ischar(varargin{i})
@@ -88,6 +89,8 @@ for i=1:length(varargin)
                 startdate=varargin{i+1};
             case{'searchinterval'}
                 searchinterval=varargin{i+1};
+            case{'quiet'}
+                quiet=1;
         end
     end
 end
@@ -284,13 +287,35 @@ switch lower(tp)
             iii1=find(abs(xx-x0Tiles(i))==min(abs(xx-x0Tiles(i))));
             iStartX(i)=iii1(1);
         end
+
+        if ~quiet
+            wb = awaitbar(0,'Getting tiles ...');
+        end
         
+        tilen=0;
+        ntiles=nnnx*(iy2-iy1+1);
+
         %% Get tiles
         for i=1:nnnx
             
             itile=iTilesX(i);
             
             for j=iy1:iy2
+                
+                tilen=tilen+1;
+
+                if ~quiet
+                    str=['Getting bathymetry - tile ' num2str(tilen) ' of ' ...
+                        num2str(ntiles) ' ...'];
+                    [hh,abort2]=awaitbar(tilen/ntiles,wb,str);
+                    
+                    if abort2 % Abort the process by clicking abort button
+                        break;
+                    end;
+                    if isempty(hh); % Break the process when closing the figure
+                        break;
+                    end;
+                end
                 
                 zzz=zeros(ny,nx);
                 zzz(zzz==0)=NaN;
@@ -345,6 +370,13 @@ switch lower(tp)
                 end
                 z((j-iy1)*ny+1:(j-iy1+1)*ny,iStartX(i):iStartX(i)+nx-1)=zzz;
                 
+            end
+        end
+        
+        % Close waitbar
+        if ~quiet
+            if ~isempty(hh)
+                close(wb);
             end
         end
         
