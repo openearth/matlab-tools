@@ -14,6 +14,8 @@ else
     hm.cycle=floor(now);
 end
 
+hm.stoptime=hm.cycle+1000;
+
 hm.scenarioLongName=scn.longname;
 hm.scenarioShortName=scn.shortname;
 

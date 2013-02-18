@@ -4,6 +4,7 @@ function cosmos_makeMapKMZs(hm,m)
 model=hm.models(m);
 archivedir=[hm.archiveDir filesep model.continent filesep model.name filesep 'archive' filesep];
 cycledir=[archivedir hm.cycStr filesep];
+appendeddir=[archivedir 'appended' filesep];
 
 t=0;
 
@@ -56,7 +57,7 @@ try
                         s(id).data.X=xldb;
                         s(id).data.Y=yldb;
                     otherwise
-                        fname=[cycledir 'maps' filesep par{id} '.mat'];
+                        fname=[appendeddir 'maps' filesep par{id} '.mat'];
                         if exist(fname,'file')
                             s(id).data=load(fname);
                         else
