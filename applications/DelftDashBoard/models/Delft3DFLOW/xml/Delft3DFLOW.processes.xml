@@ -24,6 +24,8 @@
     <text>Salinity</text>
     <position>50 130</position>
     <variable>handles.Model(md).Input(ad).salinity.include</variable>
+    <onchange>ddb_Delft3DFLOW_processes</onchange>
+    <option1>checktemperature</option1>
   </element>
   <element>
     <tag>checktemperature</tag>
