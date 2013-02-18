@@ -74,8 +74,8 @@ for iw=1:length(hm.models(m).webSite)
         end
 
         if hm.models(i).run && incl
-            if hm.models(i).webSite(iw).positionToDisplay>=0
-                im=hm.models(i).webSite(iw).positionToDisplay;
+            if hm.models(i).webSite(iw2).positionToDisplay>=0
+                im=hm.models(i).webSite(iw2).positionToDisplay;
             else
                 im=im+1;            
             end
@@ -85,6 +85,6 @@ for iw=1:length(hm.models(m).webSite)
         
     end
 
-    struct2xml(fname,scenario);
+    struct2xml(fname,scenario,'includeattributes',1,'structuretype',0);
 
 end

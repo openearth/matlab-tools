@@ -142,7 +142,7 @@ for it=1:length(t)
 
 end
 
-struct2xml([dr fname],mdl);
+struct2xml([dr fname],mdl,'includeattributes',1,'structuretype',0);
 
 %%
 function rgb=makeColorMap(clmap,n)

@@ -34,6 +34,8 @@ try
 
             s=[];
 
+            nt=0;
+            
             for id=1:ndat
                 
                 plotRoutine=model.mapPlots(im).datasets(id).plotRoutine;
@@ -95,8 +97,8 @@ try
 
             end
             
-            AvailableTimes=s(1).data.Time;
             if nt>1
+                AvailableTimes=s(1).data.Time;
                 dt=86400*(AvailableTimes(2)-AvailableTimes(1));
                 n3=round(model.mapPlots(im).timeStep/dt);
                 n3=max(n3,1);
@@ -107,7 +109,6 @@ try
                 it1=1;
             end
             
-
             switch lower(plotRoutine)
 
                 case{'coloredvectors'}
@@ -275,6 +276,12 @@ try
                                     dmp.y=y;
                                     dmp.z=squeeze(data.Val);
                                     dmp.zz=squeeze(data.Val);
+                                    if ~isempty(model.mapPlots(im).datasets(id).cMinCutOff)
+                                        dmp.z(dmp.z<model.mapPlots(im).datasets(id).cMinCutOff)=NaN;
+                                    end
+                                    if ~isempty(model.mapPlots(im).datasets(id).cMaxCutOff)
+                                        dmp.z(dmp.z>model.mapPlots(im).datasets(id).cMaxCutOff)=NaN;
+                                    end
                                     
                                 end
                                 
@@ -311,6 +318,23 @@ try
                             writeMapKMZ('filename',[name '.' model.name],'dir',figdr,'filelist',flist,'colorbar',[name '.colorbar.png'],'xlim',xlim,'ylim',ylim,'deletefiles',1);
                         end
                         
+                    end
+
+                case{'argusmerged'}
+                    
+                    try
+                        station=model.mapPlots(im).datasets(id).argusstation;
+                        t=floor(hm.cycle)-1+0.5;
+                        figdr=[dr 'lastrun' filesep 'figures' filesep];
+                        xori=model.mapPlots(im).datasets(id).argusxorigin;
+                        yori=model.mapPlots(im).datasets(id).argusyorigin;
+                        wdt=model.mapPlots(im).datasets(id).arguswidth;
+                        hgt=model.mapPlots(im).datasets(id).argusheight;
+                        rot=model.mapPlots(im).datasets(id).argusrotation;
+                        csname=model.coordinateSystem;
+                        cstype=model.coordinateSystemType;
+                        kmzfile=['argusmerged.' model.name];
+                        argus2kmz(kmzfile,station,t,figdr,xori,yori,wdt,hgt,rot,csname,cstype);
                     end
                     
             end

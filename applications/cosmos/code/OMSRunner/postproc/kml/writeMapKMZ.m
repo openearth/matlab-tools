@@ -2,7 +2,7 @@ function writeMapKMZ(varargin)
 
 dr='.\';
 delfiles=0;
-colorbar='';
+colbar='';
 
 for i=1:length(varargin)
     if ischar(varargin{i})
@@ -63,9 +63,14 @@ fprintf(fid,'%s\n','</kml>');
 fclose(fid);
 
 fnames{1}=[dr filesep fname '.kml'];
-fnames{2}=[dr filesep colbar];
+nf=1;
+if ~isempty(colbar)
+    nf=nf+1;
+    fnames{nf}=[dr filesep colbar];
+end
 for it=1:length(flist)
-    fnames{it+2}=[dr filesep flist{it}];
+    nf=nf+1;
+    fnames{nf}=[dr filesep flist{it}];
 end
 
 zip([dr filesep fname '.zip'],fnames);

@@ -363,6 +363,6 @@ for iw=1:length(model.webSite)
         mdl.warnings(ih).warning=s;
     end
     
-    struct2xml(fname,mdl);
+    struct2xml(fname,mdl,'includeattributes',1,'structuretype',0);
 
 end

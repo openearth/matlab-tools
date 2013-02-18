@@ -1,6 +1,7 @@
 function cosmos_copyNCTimeSeriesToOPeNDAP(hm,m)
 
-hm.exeDir='F:\OpenEarthTools\data\cosmos\exe\';    
+% hm.exeDir='F:\OpenEarthTools\data\cosmos\exe\';    
+exeDir=[hm.dataDir filesep 'exe' filesep];    
 
 model=hm.models(m);
 archdir = model.archiveDir;
@@ -33,7 +34,7 @@ for istat=1:model.nrStations
                     fprintf(fid,'%s\n','close');
                     fprintf(fid,'%s\n','exit');
                     fclose(fid);
-                    system([hm.exeDir 'winscp.exe /console /script=scp.txt']);
+                    system([exeDir 'winscp.exe /console /script=scp.txt']);
                     delete('scp.txt');
                 catch
                     disp('Could not copy to OPeNDAP server!');

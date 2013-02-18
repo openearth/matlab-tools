@@ -363,7 +363,7 @@ try
             end
         end
         
-        struct2xml([dr 'lastrun' filesep 'figures' filesep 'forecast' filesep name '.xml'],fc);
+        struct2xml([dr 'lastrun' filesep 'figures' filesep 'forecast' filesep name '.xml'],fc,'includeattributes',1,'structuretype',0);
     end
     
 catch

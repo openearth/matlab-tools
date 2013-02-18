@@ -43,7 +43,7 @@ warningLevels=[0.15 0.3 0.5];
 [vcrsmax,ycrs,rips,warningLevel]=getRipCurrents(x,y,t,u,v,h,d,ref,warningLevels,dmin,dmax);
 
 %% Time stack figure
-ripCurrentTimeStack(figname,t,ycrs,vcrsmax,wl,rips,warningLevel,warningLevels,ref,geojpg,geojgw);
+ripCurrentTimestack(figname,t,ycrs,vcrsmax,wl,rips,warningLevel,warningLevels,ref,geojpg,geojgw);
 
 %% Individual time series figures per rip
 for ir=1:length(rips)
@@ -166,4 +166,4 @@ for ir=1:length(rips)
     
 end
 
-struct2xml(fname,hzrd);
+struct2xml(fname,hzrd,'includeattributes',1,'structuretype',0);

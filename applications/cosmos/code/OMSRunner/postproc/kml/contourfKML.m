@@ -96,7 +96,7 @@ if ~isempty(overlayfile)
     if ~isempty(url)
         url=[url '/'];
     end
-    [pathstr,namestr,ext,versn] = fileparts(overlayfile);
+    [pathstr,namestr,ext] = fileparts(overlayfile);
     fprintf(fid,'%s\n','<ScreenOverlay id="colorbar">');
     fprintf(fid,'%s\n','<Icon>');
     fprintf(fid,'%s\n',['<href>' url namestr ext '</href>']);

@@ -37,7 +37,7 @@ if model.extractData
                 cosmos_extractDataXBeachCluster(hm,m);
         end
         cosmos_convertTimeSeriesMat2NC(hm,m);
-        cosmos_copyNCTimeSeriesToOPeNDAP(hm,m)
+        cosmos_copyNCTimeSeriesToOPeNDAP(hm,m);
     catch
         WriteErrorLogFile(hm,['Something went wrong with extracting data from ' model.name]);
         %     hm.models(m).status='failed';
@@ -73,7 +73,7 @@ if model.DetermineHazards
                 %                 MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'hazards');
                 %                 determineHazardsWW3(hm,m);
             case{'xbeachcluster'}
-                makeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'hazards');
+                MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'hazards');
                 determineHazardsXBeachCluster(hm,m);
         end
     catch
@@ -125,6 +125,7 @@ if model.makeWebsite
     try
         cosmos_updateModelsXML(hm,m);
         cosmos_updateScenarioXML(hm,m);
+
     catch
         WriteErrorLogFile(hm,['Something went wrong while updating models.xml on local website for ' hm.models(m).name]);
         %         hm.models(m).status='failed';

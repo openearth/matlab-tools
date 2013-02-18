@@ -166,4 +166,4 @@ for ir=1:length(rips)
     
 end
 
-struct2xml(fname,hzrd);
+struct2xml(fname,hzrd,'includeattributes',1,'structuretype',0);
