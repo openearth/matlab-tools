@@ -45,7 +45,8 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin);
 %
 %   How to sort the component dimension in tables
 %       'sort'          '<->fre<q>' (default), '<->amp<litude>','<->snr,
-%                       '<->pha<se>' where prefix <-> means descending
+%                       '<->pha<se>' where prefix <-> means descending, or
+%                        <->column_number in tidecon array (see below)
 %
 %   Correction factor for prefiltering.
 %       'prefilt'        FS,CORR
@@ -726,23 +727,33 @@ end;
 
 %-----------------Sort   results---------------------------------------
 
-if     strcmp(sor(1:3), 'fre'); % default
-elseif strcmp(sor(1:3), 'amp');[dummy,index]=sort(tidecon(:,1),1,'ascend' );
-elseif strcmp(sor(1:3), 'pha');[dummy,index]=sort(tidecon(:,3),1,'ascend' );
-elseif strcmp(sor(1:3), 'snr');[dummy,index]=sort(snr         ,1,'ascend' );
+if isnumeric(sor)
+   if sor > 0
+   [dummy,index]=sort(tidecon(:,abs(sor)),1,'ascend' );
+   else
+   [dummy,index]=sort(tidecon(:,abs(sor)),1,'descend');
+   end
+else
 
-elseif strcmp(sor(1:4),'-fre');[dummy,index]=sort(fu          ,1,'descend');   
-elseif strcmp(sor(1:4),'-amp');[dummy,index]=sort(tidecon(:,1),1,'descend');
-elseif strcmp(sor(1:4),'-pha');[dummy,index]=sort(tidecon(:,3),1,'descend');
-elseif strcmp(sor(1:4),'-snr');[dummy,index]=sort(snr         ,1,'descend');
+   if strcmpi(sor(1),'-');
+      order = 'descend' ;
+   else
+      order = 'ascend' ;
+   end
+
+   if      any(strfind(sor,'fre')); index = 1:size(tidecon,1)% default
+   elseif  any(strfind(sor,'amp'))|any(strfind(sor,'fma'));[dummy,index]=sort(tidecon(:,1    ),1,order);
+   elseif  any(strfind(sor,'fmi'))                        ;[dummy,index]=sort(tidecon(:,3    ),1,order);
+   elseif  any(strfind(sor,'pha'))                        ;[dummy,index]=sort(tidecon(:,end-1),1,order);
+   elseif  any(strfind(sor,'snr'))                        ;[dummy,index]=sort(snr             ,1,order);
+   end   
 end
 
-if ~strcmp(sor(1:3),'fre')
-   nameu   = nameu(index,:);
-   fu      = fu(index);
+   nameu   =   nameu(index,:);
+   fu      =      fu(index);
    tidecon = tidecon(index,:);
-   snr     = snr(index);
-end
+   snr     =     snr(index);
+
 %-----------------Output results---------------------------------------
 
 if fid>1,
