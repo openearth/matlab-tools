@@ -69,6 +69,8 @@ verticaloffset=0;
 startdates=[];
 searchintervals=[];
 verticaloffsets=[];
+internaldiff=0;
+internaldiffusionrange=[-20000 20000];
     
 for i=1:length(varargin)
     if ischar(varargin{i})
@@ -89,20 +91,23 @@ for i=1:length(varargin)
                 verticaloffset=varargin{i+1};
             case{'coordinatesystem'}
                 coord=varargin{i+1};
+            case{'internaldiffusion'}
+                internaldiff=varargin{i+1};
+            case{'internaldiffusionrange'}
+                internaldiffusionrange=varargin{i+1};
         end
     end
 end
 
 if isempty(startdates)
-startdates=zeros(length(datasets))+floor(now);
+    startdates=zeros(length(datasets))+floor(now);
 end
 if isempty(searchintervals)
-searchintervals=zeros(length(datasets))-1e5;
+    searchintervals=zeros(length(datasets))-1e5;
 end
 if isempty(verticaloffsets)
-verticaloffsets=zeros(length(datasets))+0;
+    verticaloffsets=zeros(length(datasets))+0;
 end
-
 
 % Generate bathymetry
 
@@ -113,31 +118,30 @@ z(z==0)=NaN;
 % x(isnan(x))=0;
 % y(isnan(y))=0;
 
+% Find minimum grid resolution (in metres!) for this dataset
+[dmin,dmax]=findMinMaxGridSize(x,y,'cstype',coord.type);
+
 for id=1:length(datasets)   
-    
-    idata=length(datasets)-id+1;
+    % Loop through selected datasets    
 
     xg=x;
-    yg=y;
-
-    % Loop through selected datasets
+    yg=y;    
     
+    idata=length(datasets)-id+1;
     bathyset=datasets{idata};
     startdate=startdates(idata);
     searchinterval=searchintervals(idata);
     zmn=zmin(idata);
     zmx=zmax(idata);
     offset=verticaloffsets(idata);
-    
+
+        
     % Convert grid to cs of background image
     iac=strmatch(lower(bathyset),lower(bathymetry.datasets),'exact');
     dataCoord.name=bathymetry.dataset(iac).horizontalCoordinateSystem.name;
     dataCoord.type=bathymetry.dataset(iac).horizontalCoordinateSystem.type;
     [xg,yg]=ddb_coordConvert(xg,yg,coord,dataCoord);
-    
-    % Find minimum grid resolution for this dataset
-    [dmin,dmax]=findMinMaxGridSize(xg,yg,'cstype',coord.type);
-    
+        
     % Determine bounding box
     xl(1)=min(min(xg));
     xl(2)=max(max(xg));
@@ -170,5 +174,18 @@ for id=1:length(datasets)
         
 end
 
+
+if internaldiff
+    % Apply internal diffusion (for missing depth points)
+    isn=isnan(z);              % Missing indices in depth matrix
+    mask=zeros(size(z))+1;
+    mask(isnan(xg))=0;         % Missing indices in grid matrix    
+    z=internaldiffusion(z,'mask',mask);
+    isn2=logical(isn.*mask);   % Matrix of values that were filled by internal diffusion
+    z(isn2)=max(z(isn2),internaldiffusionrange(1));    
+    z(isn2)=min(z(isn2),internaldiffusionrange(2));    
+end
+
 % Interpolated data in MSL, now convert to model datum
 z=z-verticaloffset;
+
