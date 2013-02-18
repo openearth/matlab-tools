@@ -11,6 +11,8 @@ searchintervals=-1e5;
 filename=[];
 verticaloffsets=0;
 verticaloffset=0;
+internaldiff=0;
+internaldiffusionrange=[-20000 20000];
 
 for i=1:length(varargin)
     if ischar(varargin{i})
@@ -31,6 +33,10 @@ for i=1:length(varargin)
                 verticaloffset=varargin{i+1};
             case{'filename'}
                 filename=varargin{i+1};
+            case{'internaldiffusion'}
+                internaldiff=varargin{i+1};
+            case{'internaldiffusionrange'}
+                internaldiffusionrange=varargin{i+1};
         end
     end
 end
@@ -79,7 +85,8 @@ if handles.Model(md).Input(id).MMax>0
     wb = waitbox('Generating bathymetry ...');
         
     z = ddb_interpolateBathymetry(handles.bathymetry,xg,yg,'datasets',datasets,'startdates',startdates,'searchintervals',searchintervals, ...
-        'zmin',zmin,'zmax',zmax,'verticaloffsets',verticaloffsets,'verticaloffset',verticaloffset,'coordinatesystem',handles.screenParameters.coordinateSystem);
+        'zmin',zmin,'zmax',zmax,'verticaloffsets',verticaloffsets,'verticaloffset',verticaloffset, ...
+        'coordinatesystem',handles.screenParameters.coordinateSystem,'internaldiffusion',internaldiff,'internaldiffusionrange',internaldiffusionrange);
     
     switch opt
         case{'overwrite'}
@@ -100,6 +107,8 @@ if handles.Model(md).Input(id).MMax>0
     handles.Model(md).Input(id).depthZ=getDepthZ(z,handles.Model(md).Input(id).dpsOpt);
 
     handles.Model(md).Input(id).depFile=filename;
+
+    handles.Model(md).Input(id).depthSource='file';
 
     ddb_wldep('write',filename,z);
         
