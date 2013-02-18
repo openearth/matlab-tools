@@ -63,14 +63,14 @@ switch model.runEnv
 
         fclose(fid);
 
-    case{'h4'}
+    case{'h4','h4i7'}
         
         % H4 cluster
         
         if ~isempty(hm.clusterNode)
             clusterstr=[' -q ' hm.clusterNode];
         else
-            clusterstr='';
+            clusterstr=' -q normal-i7';
         end
         
         fid=fopen('run_h4.sh','wt');
