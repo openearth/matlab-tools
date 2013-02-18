@@ -1,16 +1,23 @@
-function varargout = pcolorcorcen_sigma(x, sigma, eta, depth, c)
+function varargout = pcolorcorcen_sigma(x, sigma, eta, depth, c,varargin)
 %PCOLORCORCEN_SIGMA  pcolor for x-sigma plane (cross section, thalweg)
 %
 % PCOLORCORCEN_SIGMA(x, sigma, eta, depth, c)
 % plots pcolor(x,, c) where z is calculated on-the-fly
 % according to the CF <a href="http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/apd.html">ocean_sigma_coordinate</a> formulation:
-% z = eta + sigma*(eta + depth) with sigma 0 at
-% the water level and -1 at the bed/bottom,
-% and depth positive DOWN.
+% z = eta + sigma*(eta + depth) with sigma 0 at the water level
+% and -1 at the bed/bottom, and depth positive DOWN.
+% Note eta and depth can be scalars (constant).
 %
 % Shading interp when length of x,eta & depth
 % is size(c,2), shading flat when lenghth of x, eta & depth
 % is one longer AND length(sigma) is size(c,1)+1
+%
+% Addition of bands with the the lowest and hightest sigma layers 
+% stretched to the depth and eta respectively can be chosen with
+% keyword pcolorcorcen_sigma(...,'interp','stretched').
+%
+% The real x-z coordinates can be requested from the handles, e.g.
+% h = pcolorcorcen_sigma(...); X = get(h,'XDATA'); Z = get(h,'YDATA');
 %
 % Example: thalweg slice through an estuary
 %
@@ -71,14 +78,38 @@ function varargout = pcolorcorcen_sigma(x, sigma, eta, depth, c)
 %  $HeadURL$
 %  $Keywords: $
 
+OPT.shading   = 'interp'; % {'interp','stretched'};
+
+OPT = setproperty(OPT,varargin);
+
+if length(depth)==1
+   depth = repmat(depth,size(x));
+end
+
+if length(eta)==1
+   eta   = repmat(eta  ,size(x));
+end
+
 [x,z]=meshgrid(x(:),sigma(:));
 
 for i=1:size(x,2)
     z(:,i) = eta(i) + sigma.*(eta(i) + depth(i));
 end
 
-if nargout==0
-   pcolorcorcen(x,z,c)
-else
-   varargout = {pcolorcorcen(x,z,c)};
+   h    = pcolorcorcen(x,z,c);
+
+if strcmpi(OPT.shading,'stretched')
+   holdstate = get(gca,'NextPlot');hold on
+   
+   zs = [eta(:),  eta(:) + sigma(2).*(eta(:) + depth(:))]'; % start at 2nd layert to have smoth transition
+   h(end+1) = pcolorcorcen(x(1:2,:),zs,c(1:2,:));
+
+   zs = [eta(:) + sigma(end-1).*(eta(:) + depth(:)),-depth(:)]';
+   h(end+1) = pcolorcorcen(x(end-1:end,:),zs,c(end-1:end,:)); % start at 2nd-last layert to have smoth transition
+
+   set(gca,'NextPlot',holdstate)
+end
+
+if nargout > 0
+    varargout = {h};
 end
