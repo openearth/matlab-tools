@@ -39,7 +39,7 @@ if nrst>0
         rstfil=rstfiles(j).name;
         dt=rstfil(end-18:end-4);
         rsttime=datenum(dt,'yyyymmdd.HHMMSS');
-        if rsttime<model.restartTime-3
+        if rsttime<model.restartTime-3 && model.deleterestartfiles
             delete([dr 'restart' filesep 'tri-rst' filesep rstfil]);
         end        
     end
@@ -96,8 +96,8 @@ if nhot>0
     end
 end
 
-inpdir=[dr filesep 'lastrun' filesep 'input'];
-outdir=[dr filesep 'lastrun' filesep 'output'];
+inpdir=[dr 'lastrun' filesep 'input'];
+outdir=[dr 'lastrun' filesep 'output'];
 
 [status,message,messageid]=movefile([rundir 'tri*'],outdir,'f');
 [status,message,messageid]=movefile([rundir 'com-*.*'],outdir,'f');
