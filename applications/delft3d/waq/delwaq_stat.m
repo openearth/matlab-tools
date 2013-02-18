@@ -145,10 +145,10 @@ for it = 2:Ntimes
            dataseg(dataseg==-999) = nan;
            if any(~isnan(dataseg))
               stat = getStatistics(dataseg,2,statId,Type);
-              D = cell2mat(struct2cell(stat));
-	      D = D';
-	      data(:,1) = D(:);
-              data(:,iseg) = cell2mat(struct2cell(stat));
+             D = cell2mat(struct2cell(stat));
+	         D = D';
+	         data(:,iseg) = D(:);
+%              data(:,iseg) = cell2mat(struct2cell(stat));
            end
         end %iseg
         structOut = delwaq('write',structOut,Times(it),data);
@@ -246,10 +246,10 @@ xStats.mean  = nanmean(x);
 xStats.var   = nanvar(x);
 xStats.std   = nanstd(x);
 
-if strcmp(statId,'error');
+%if strcmp(statId,'error');
    xStats.mse  = nanmean(x.^2);
    xStats.rmse = sqrt(xStats.mse);
-end
+%end
 %--------------------------------------------------------------------------
 % Percentile
 %--------------------------------------------------------------------------
