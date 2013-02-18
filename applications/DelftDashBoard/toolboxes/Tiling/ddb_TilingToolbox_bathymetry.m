@@ -216,10 +216,7 @@ if ~isempty(strmatch(handles.Toolbox(tb).Input.bathymetry.attributes.title,handl
     return;
 end
 
-
-wb = waitbox('Generating Tiles ...'); 
 makeNCBathyTiles(fname,dr,dataname,datatype,nrzoom,nx,ny,OPT);
-close(wb);
 
 % Now add data to data xml
 fname = [handles.bathymetry.dir 'bathymetry.xml'];

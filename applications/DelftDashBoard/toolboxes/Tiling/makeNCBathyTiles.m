@@ -69,9 +69,13 @@ function makeNCBathyTiles(fname1, dr, dataname, rawdatatype, nrzoom, nx, ny, OPT
 
 switch lower(rawdatatype)
     case{'arcinfogrid'}
+        wb = waitbox('Reading data file ...');
         [ncols,nrows,x00,y00,dx0]=readArcInfo(fname1,'info');
+        close(wb);
     case{'arcbinarygrid'}
+        wb = waitbox('Reading data file ...');
         [x,y,z,m] = arc_info_binary([fileparts(fname1) filesep]);
+        close(wb);
         z=flipud(z);
         y=fliplr(y);
         x00=m.X(1);
@@ -132,12 +136,30 @@ if imaketiles
         dy=dyk(k);
         nnx=nnxk(k);
         nny=nnyk(k);
+
         
         if k==1
+
+            wb = awaitbar(0,'Generating tiles ...');
             
+            tilen=0;
+
             for i=1:nnx
                 for j=1:nny
+
+                    tilen=tilen+1;
+
+                    str=['Generating tiles - tile ' num2str(tilen) ' of ' ...
+                        num2str(nnx*nny) ' ...'];
+                    [hh,abort2]=awaitbar(tilen/(nnx*nny),wb,str);
                     
+                    if abort2 % Abort the process by clicking abort button
+                        break;
+                    end;
+                    if isempty(hh); % Break the process when closing the figure
+                        break;
+                    end;
+
                     disp(['Processing ' num2str((i-1)*nny+j) ' of ' num2str(nnx*nny) ' ...']);
                     
                     xmin = x0(k)+(i-1)*nx*dx;
@@ -182,12 +204,34 @@ if imaketiles
                 end
             end
             
-        else
+            % Close waitbar
+            if ~isempty(hh)
+                close(wb);
+            end
             
+        else
+                        
             % Get tiles from lower zoom level
+            
+            wb = awaitbar(0,'Generating tiles ...');
+            
+            tilen=0;
             
             for i=1:nnx
                 for j=1:nny
+                    
+                    tilen=tilen+1;
+
+                    str=['Generating level ' num2str(k) ' of ' num2str(nrzoom) ' - tile ' num2str(tilen) ' of ' ...
+                        num2str(nnx*nny) ' ...'];
+                    [hh,abort2]=awaitbar(tilen/(nnx*nny),wb,str);
+                    
+                    if abort2 % Abort the process by clicking abort button
+                        break;
+                    end;
+                    if isempty(hh); % Break the process when closing the figure
+                        break;
+                    end;
                     
                     disp(['Processing ' num2str((i-1)*nny+j) ' of ' num2str(nnx*nny) ' ...']);
                     
@@ -275,7 +319,14 @@ if imaketiles
                         end
                     end
                 end
+                
             end
+            
+            % close waitbar
+            if ~isempty(hh)
+                close(wb);
+            end
+
         end
     end
 end
