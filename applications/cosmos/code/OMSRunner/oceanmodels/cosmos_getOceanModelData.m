@@ -43,13 +43,13 @@ for i=1:length(hm.oceanModels)
                     t0=floor(t0);
                     t1=ceil(t1);
                     
-                    daynum=nc_varget(url,'MT');
+%                    daynum=nc_varget(url,'MT');
                     
-                    getHYCOM(url,outname,outdir,'waterlevel',xlim,ylim,0.1,0.1,[t0 t1],s,daynum);
-                    getHYCOM(url,outname,outdir,'current_u',xlim,ylim,0.1,0.1,[t0 t1],s,daynum);
-                    getHYCOM(url,outname,outdir,'current_v',xlim,ylim,0.1,0.1,[t0 t1],s,daynum);
-                    getHYCOM(url,outname,outdir,'salinity',xlim,ylim,0.1,0.1,[t0 t1],s,daynum);
-                    getHYCOM(url,outname,outdir,'temperature',xlim,ylim,0.1,0.1,[t0 t1],s,daynum);
+                    getHYCOM2(url,outname,outdir,'waterlevel',xlim,ylim,0.1,0.1,[t0 t1],s);
+                    getHYCOM2(url,outname,outdir,'current_u',xlim,ylim,0.1,0.1,[t0 t1],s);
+                    getHYCOM2(url,outname,outdir,'current_v',xlim,ylim,0.1,0.1,[t0 t1],s);
+                    getHYCOM2(url,outname,outdir,'salinity',xlim,ylim,0.1,0.1,[t0 t1],s);
+                    getHYCOM2(url,outname,outdir,'temperature',xlim,ylim,0.1,0.1,[t0 t1],s);
             end
             
         catch
