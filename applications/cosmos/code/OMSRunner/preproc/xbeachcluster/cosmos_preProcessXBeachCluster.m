@@ -8,7 +8,7 @@ tmpdir=hm.tempDir;
 
 for i=1:np
     if model.profile(i).run
-        [status,message,messageid]=copyfile([model.dir 'input' filesep model.profile(i).name],[tmpdir filesep model.profile(i).name],'f');
+        [status,message,messageid]=copyfile([model.dir 'input' filesep model.profile(i).name],[tmpdir model.profile(i).name],'f');
     end
 end
 

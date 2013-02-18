@@ -51,8 +51,12 @@ fprintf(fid,'%s\n','   Description2     = ');
 fprintf(fid,'%s\n','   Description3     = ');
 fprintf(fid,'%s\n',['   ReferenceDate    = ' itdate]);
 fprintf(fid,'%s\n','   DirConvention    = nautical');
-fprintf(fid,'%s\n','   SimMode          = non-stationary');
-fprintf(fid,'%s\n',['   TimeStep         = ' num2str(model.waveTimeStep)]);
+if model.nonstationary
+    fprintf(fid,'%s\n','   SimMode          = non-stationary');
+    fprintf(fid,'%s\n',['   TimeStep         = ' num2str(model.waveTimeStep)]);
+else
+    fprintf(fid,'%s\n','   SimMode          = stationary');
+end
 fprintf(fid,'%s\n','   OnlyInputVerify  = false');
 if strcmpi(model.dirSpace,'circle')
     fprintf(fid,'%s\n','   DirSpace         = circle');
@@ -144,17 +148,18 @@ fprintf(fid,'%s\n',['   FlowBedLevel     = ' num2str(model.flowBedLevel)]);
 fprintf(fid,'%s\n',['   FlowVelocity     = ' num2str(model.flowVelocity)]);
 fprintf(fid,'%s\n',['   FlowWind         = ' num2str(model.flowWind)]);
 
-fprintf(fid,'%s\n','[Boundary]');
-% switch lower(hm.models(model.waveNestModelNr).type)
-%     case{'ww3'}
-%         fprintf(fid,'%s\n','   Definition = fromWWfile');
-%         fprintf(fid,'%s\n','   WWspecfile = ww3.spc');
-%     case{'delft3dflowwave'}
-%         fprintf(fid,'%s\n','   Definition       = fromsp2file');
-%         fprintf(fid,'%s\n',['   OverallSpecFile  = ' model.name '.sp2']);
-% end
-
-fprintf(fid,'%s\n','   Definition       = fromsp2file');
-fprintf(fid,'%s\n',['   OverallSpecFile  = ' model.name '.sp2']);
+if model.waveNested
+    fprintf(fid,'%s\n','[Boundary]');
+    % switch lower(hm.models(model.waveNestModelNr).type)
+    %     case{'ww3'}
+    %         fprintf(fid,'%s\n','   Definition = fromWWfile');
+    %         fprintf(fid,'%s\n','   WWspecfile = ww3.spc');
+    %     case{'delft3dflowwave'}
+    %         fprintf(fid,'%s\n','   Definition       = fromsp2file');
+    %         fprintf(fid,'%s\n',['   OverallSpecFile  = ' model.name '.sp2']);
+    % end
+    fprintf(fid,'%s\n','   Definition       = fromsp2file');
+    fprintf(fid,'%s\n',['   OverallSpecFile  = ' model.name '.sp2']);
+end
 
 fclose(fid);

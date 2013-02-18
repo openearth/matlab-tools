@@ -18,10 +18,10 @@ if isempty(model.flowRstFile) && model.makeIniFile
     wlbcafile=[model.name '.wl.bca'];
     curbndfile=[model.name '.current.bnd'];
     curbcafile=[model.name '.current.bca'];
-    wlconst=model.zLevel;
+    wlconst=model.zLevel+model.wlboundarycorrection;
     cs.name=model.coordinateSystem;
     cs.type=model.coordinateSystemType;
-    writeNestXML([tmpdir 'nest.xml'],tmpdir,model.runid,datafolder,dataname,wlbndfile,wlbcafile,curbndfile,curbcafile,wlconst,cs);
+    writeNestXML([tmpdir 'nest.xml'],tmpdir,model.runid,datafolder,dataname,wlbndfile,wlbcafile,curbndfile,curbcafile,wlconst,cs,'file');
     disp('Making ini file ...');
     makeBctBccIni('ini','nestxml',[tmpdir 'nest.xml'],'inpdir',tmpdir,'runid',model.runid,'workdir',tmpdir,'cs',cs);
     delete([tmpdir 'nest.xml']);
@@ -30,7 +30,7 @@ end
 %% Dummy.wnd
 writeDummyWnd(tmpdir);
 
-if model.includeTemperature
+if model.includeTemperature && model.includeHeatExchange
     %% Dummy.tmp
     writeDummyTem(tmpdir);
 end
@@ -55,10 +55,14 @@ if ~strcmpi(model.useMeteo,'none')
     
         meteodir=[hm.scenarioDir 'meteo' filesep model.useMeteo filesep];
 
-        if model.includeTemperature
+        if model.includeTemperature && model.includeHeatExchange
             par={'u','v','p','airtemp','relhum','cloudcover'};
         else
-            par={'u','v','p'};
+           if model.includeAirPressure
+               par={'u','v','p'};
+           else
+               par={'u','v'};
+           end
         end
         writeD3DMeteoFile4(meteodir,model.useMeteo,tmpdir,'meteo',model.xLim,model.yLim, ...
             coordsys,coordsystype,model.refTime,model.tFlowStart,model.tStop, ...
@@ -293,27 +297,44 @@ for i=1:hm.nrModels
         end
     end
 end
+fclose(fid);
+
 
 %% BeachWizard
-if ~isempty(model.beachWizard)
-    bwtimes=cosmos_findBWTimes(model.beachWizard);
-    it=find(bwtimes<=hm.cycle,1,'last');
-    url=['http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/beachwizard/output/' model.beachWizard '/' ...
-        model.beachWizard '.' datestr(bwtimes(it),'yyyymmdd.HHMMSS') '.nc'];    
-    x=nc_varget(url,'x');
-    y=nc_varget(url,'y');
-    z=nc_varget(url,'z');
-    grd=wlgrid('read',[tmpdir model.name '.grd']);
-    mmax=size(grd.X,1)+1;
-    nmax=size(grd.X,2)+1;
-    dep=wldep('read',[tmpdir model.name '.dep'],[mmax nmax]);
-    zbw0=griddata(x,y,z,grd.X,grd.Y);
-    zbw=zeros(size(dep));
-    zbw(zbw==0)=NaN;
-    zbw(1:end-1,1:end-1)=-zbw0; % Positive down!
-    dep(~isnan(zbw))=zbw(~isnan(zbw));
-    wldep('write',[tmpdir model.name '.dep'],dep);    
+
+try
+    if ~isempty(model.beachWizard)
+        
+        %         bwtimes=cosmos_findBWTimes(model.beachWizard);
+        %         it=find(bwtimes<=hm.cycle,1,'last');
+        %         url=['http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/beachwizard/output/' model.beachWizard '/' ...
+        %             model.beachWizard '.' datestr(bwtimes(it),'yyyymmdd.HHMMSS') '.nc'];
+        
+        % Try reading from p drive for now
+        dr='p:\argus\argusdata\beachWizard\jvspeijk\zboutput\';
+        flist=dir([dr '*.nc']);
+        for ii=1:length(flist)
+            tstr=flist(ii).name(end-17:end-3);
+            bwtimes(ii)=datenum(tstr,'yyyymmdd.HHMMSS');
+        end
+        it=find(bwtimes<=hm.cycle,1,'last');
+        url=[dr flist(it).name];
+        
+        x=nc_varget(url,'x');
+        y=nc_varget(url,'y');
+        z=nc_varget(url,'z');
+        grd=wlgrid('read',[tmpdir model.name '.grd']);
+        mmax=size(grd.X,1)+1;
+        nmax=size(grd.X,2)+1;
+        dep=wldep('read',[tmpdir model.name '.dep'],[mmax nmax]);
+        zbw0=griddata(x,y,z,grd.X,grd.Y);
+        zbw=zeros(size(dep));
+        zbw(zbw==0)=NaN;
+        zbw(1:end-1,1:end-1)=-zbw0; % Positive down!
+        dep(~isnan(zbw))=zbw(~isnan(zbw));
+        wldep('write',[tmpdir model.name '.dep'],dep);
+    end
 end
 
-fclose(fid);
+
 

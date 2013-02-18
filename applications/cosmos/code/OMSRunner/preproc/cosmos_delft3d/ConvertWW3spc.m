@@ -69,7 +69,7 @@ if ~strcmpi(coordsys,'wgs 84')
     convc=1;
     for it=1:length(spec.time);
         for ip=1:spec.nPoints
-            [spec.time(it).point(ip).lon,spec.time(it).point(ip).lat]=ConvertCoordinates(spec.time(it).point(ip).lon,spec.time(it).point(ip).lat,'persistent','CS1.name','WGS 84','CS1.type','geographic','CS2.name',coordsys,'CS2.type',coordsystype);
+            [spec.time(it).point(ip).lon,spec.time(it).point(ip).lat]=convertCoordinates(spec.time(it).point(ip).lon,spec.time(it).point(ip).lat,'persistent','CS1.name','WGS 84','CS1.type','geographic','CS2.name',coordsys,'CS2.type',coordsystype);
         end
     end
 end

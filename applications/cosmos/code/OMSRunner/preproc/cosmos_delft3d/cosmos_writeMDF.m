@@ -131,7 +131,14 @@ fprintf(fid,'%s\n','Tempw = 1.5000000e+001');
 fprintf(fid,'%s\n','Salw  = 3.1000000e+001');
 fprintf(fid,'%s\n','Rouwav= #FR84#');
 
-fprintf(fid,'%s\n',['Wstres= ' num2str(model.windStress(1)) '  ' num2str(model.windStress(2)) '  ' num2str(model.windStress(3)) '  ' num2str(model.windStress(4))]);
+if length(model.windStress)==4
+    fprintf(fid,'%s\n',['Wstres= ' num2str(model.windStress(1)) '  ' num2str(model.windStress(2)) '  ' num2str(model.windStress(3)) '  ' num2str(model.windStress(4))]);
+else
+    fprintf(fid,'%s\n',['Wstres= ' num2str(model.windStress(1)) '  ' num2str(model.windStress(2)) ...
+        '  ' num2str(model.windStress(3)) '  ' num2str(model.windStress(4)) ...
+        '  ' num2str(model.windStress(5)) '  ' num2str(model.windStress(6)) ...
+        ]);
+end
 
 fprintf(fid,'%s\n','Rhoa  = 1.0000000e+000');
 fprintf(fid,'%s\n','Betac = 5.0000000e-001');
@@ -141,7 +148,7 @@ if kmax>1
 else
     fprintf(fid,'%s\n','Tkemod= #            #');
 end
-if model.includeTemperature
+if model.includeTemperature && model.includeHeatExchange
     fprintf(fid,'%s\n','Ktemp = 5');
     fprintf(fid,'%s\n','Fclou =  0.0000000e+000');
     fprintf(fid,'%s\n','Sarea =  6.0000000e+009');
@@ -169,12 +176,12 @@ else
     fprintf(fid,'%s\n',['Ccofu = ' num2str(model.ccofu)]);
     fprintf(fid,'%s\n',['Ccofv = ' num2str(model.ccofu)]);
 end
-if ~isempty(model.Filedy)
-    fprintf(fid,'%s\n',['Filedy= #' model.Filedy '#']);
+if exist([inpdir model.name '.edy'],'file')
+    fprintf(fid,'%s\n',['Filedy= #' model.name '.edy' '#']);
 else
     fprintf(fid,'%s\n',['Vicouv= ' num2str(model.VicoUV)]);
 end
-fprintf(fid,'%s\n','Dicouv= 1.0000000e+000');
+fprintf(fid,'%s\n',['Dicouv= ' num2str(model.DicoUV)]);
 fprintf(fid,'%s\n','Htur2d= #N#');
 fprintf(fid,'%s\n','Irov  = 0');
 fprintf(fid,'%s\n','Iter  = 2');
@@ -218,6 +225,8 @@ fprintf(fid,'%s\n','Online= #N#');
 fprintf(fid,'%s\n','Waqmod= #N#');
 if strcmpi(model.type,'Delft3DFLOWWAVE')
     fprintf(fid,'%s\n','WaveOL= #Y#');
+end
+if strcmpi(model.type,'Delft3DFLOWWAVE') && ~model.roller
     fprintf(fid,'%s\n','TpsCom= #Y#');
 end
 fprintf(fid,'%s\n','Prhis = 0.0000000e+000  0.0000000e+000  0.0000000e+000');
@@ -226,7 +235,9 @@ fprintf(fid,'%s\n',['Flhis = ' tout '  ' dthis '  ' tstop]);
 fprintf(fid,'%s\n',['Flpp  = ' twav '   ' dtcom '  ' tstop]);
 fprintf(fid,'%s\n',['Flrst = ' dtrst]);
 if ~strcmpi(model.useMeteo,'none')
-    fprintf(fid,'%s\n','Filwp = #meteo.amp#');
+    if model.includeAirPressure
+        fprintf(fid,'%s\n','Filwp = #meteo.amp#');
+    end
     fprintf(fid,'%s\n','Filwu = #meteo.amu#');
     fprintf(fid,'%s\n','Filwv = #meteo.amv#');
     fprintf(fid,'%s\n','Wndgrd= #A#');
@@ -235,7 +246,7 @@ if ~strcmpi(model.useMeteo,'none')
     end
     fprintf(fid,'%s\n','AirOut= #YES#');
 end
-if model.includeTemperature
+if model.includeTemperature && model.includeHeatExchange
     fprintf(fid,'%s\n','Filwr = #meteo.amr#');
     fprintf(fid,'%s\n','Filwt = #meteo.amt#');
     fprintf(fid,'%s\n','Filwc = #meteo.amc#');

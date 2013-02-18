@@ -151,6 +151,21 @@ switch lower(model.type)
                 fprintf(fid,'%s\n','');
                 fprintf(fid,'%s\n','mv running.txt finished.txt');
                 fclose(fid);
+            case{'h4i7'}
+                fid=fopen([tmpdir 'run.sh'],'wt');
+                fprintf(fid,'%s\n','#!/bin/sh');
+                fprintf(fid,'%s\n','');                
+                fprintf(fid,'%s\n','argfile=config_flow2d3d.xml');
+                fprintf(fid,'%s\n','export ARCH=intel');
+                fprintf(fid,'%s\n',['export D3D_HOME=' hm.exedirflow]);
+                fprintf(fid,'%s\n','exedir=$D3D_HOME/flow2d3d/bin');
+                fprintf(fid,'%s\n','libdir=$D3D_HOME/flow2d3d/lib');
+                fprintf(fid,'%s\n','export LD_LIBRARY_PATH=$exedir:$libdir:$LD_LIBRARY_PATH'); 
+                fprintf(fid,'%s\n','date -u ''+%Y%m%d %H%M%S'' >> running.txt');                
+                fprintf(fid,'%s\n','$exedir/d_hydro.exe $argfile');
+                fprintf(fid,'%s\n','date -u ''+%Y%m%d %H%M%S'' >> running.txt');
+                fprintf(fid,'%s\n','mv running.txt finished.txt');
+                fclose(fid);                
         end
     case{'delft3dflowwave'}
         switch lower(model.runEnv)
