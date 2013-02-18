@@ -169,6 +169,7 @@ for isub=1:fig.nrsubplots
                         handles.datasets(nrd).dataset=dataset;
                         
                         % And now add datasets to subplot
+                        fig.subplots(isub).subplot.datasets(nd2).dataset.name=nm;
                         handles.figures(ifig).figure.subplots(isub).subplot.datasets(nd2).dataset=fig.subplots(isub).subplot.datasets(nd2).dataset;
                         handles.figures(ifig).figure.subplots(isub).subplot.datasets(nd2).dataset.name=nm;
                         handles.figures(ifig).figure.subplots(isub).subplot.datasets(nd2).dataset.plotroutine='plotinteractivepolyline';

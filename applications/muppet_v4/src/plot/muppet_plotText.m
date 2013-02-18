@@ -5,6 +5,7 @@ plt=fig.subplots(j).subplot;
 opt=plt.datasets(k).dataset;
 nr=muppet_findDatasetNumber(handles,opt.name);
 fontred=fig.fontreduction;
+data=handles.datasets(nr).dataset;
 
 if istring>0
     data.text=handles.datasets(nr).dataset.text{istring};
@@ -24,9 +25,9 @@ if data.curvature==0
     set(tx,'color',colorlist('getrgb','color',opt.font.color));
     set(tx,'HorizontalAlignment',opt.font.horizontalalignment);
     set(tx,'VerticalAlignment',opt.font.verticalalignment);
-    ext=get(tx,'Extent');
-    len=sqrt(ext(3)^2 + ext(4)^2);
-    set(tx,'rotation',data.rotation);
+%     ext=get(tx,'Extent');
+%     len=sqrt(ext(3)^2 + ext(4)^2);
+%     set(tx,'rotation',data.rotation);
     set(tx,'HitTest','off');
     set(tx,'Clipping','on');
     txc=-1;

@@ -39,11 +39,11 @@ switch lower(plt.datasets(id).dataset.plotroutine)
     case {'plotgrid'}
         handles=muppet_plotGrid(handles,ifig,isub,id);
     case {'plotannotation'},
-        handles=PlotAnnotation(handles,ifig,isub,id,mode);
+        handles=muppet_plotAnnotation(handles,ifig,isub,id);
     case {'plotcrosssections'}
         handles=PlotCrossSections(handles,ifig,isub,id,mode);
     case {'plotsamples'}
-        handles=PlotSamples(handles,ifig,isub,id,mode);
+        handles=muppet_plotSamples(handles,ifig,isub,id);
     case {'plotvectors','plotcoloredvectors'}
         % Colored vectors don't work under 2007b!
         handles=muppet_plotVectors(handles,ifig,isub,id);
@@ -59,9 +59,9 @@ switch lower(plt.datasets(id).dataset.plotroutine)
     case {'plotkub'}
         handles=PlotKub(handles,ifig,isub,id,mode);
     case {'plotlint'}
-        handles=PlotLint(handles,ifig,isub,id,mode);
+        handles=muppet_plotLint(handles,ifig,isub,id);
     case {'plotimage','plotgeoimage'}
-        handles=PlotImage(handles,ifig,isub,id,mode);
+        handles=muppet_plotImage(handles,ifig,isub,id);
     case {'plot3dsurface','plot3dsurfacelines'}
         handles=Plot3DSurface(handles,ifig,isub,id,mode);
     case {'plotpolygon3d'}

@@ -245,8 +245,9 @@ end
 switch plt.type
 
     case {'image'}
-        imagesize=size(data.x');
-        ysz=plt.position(3)*imagesize(2)/imagesize(1);
+        imagesize(1)=size(data.c,1);
+        imagesize(2)=size(data.c,2);
+        ysz=plt.position(3)*imagesize(1)/imagesize(2);
         plt.position(4)=round(ysz*10)/10;
         plt.drawbox=0;
         plt.axesequal=1;

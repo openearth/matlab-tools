@@ -47,7 +47,6 @@ opt.facecolor='Red';
 opt.polygonelevation=0;
 opt.elevation=0;
 opt.elevations=[-20 20];
-opt.whitevalue=0.9;
 opt.multiply=1;
 
 opt.headwidth=4;
@@ -70,8 +69,6 @@ opt.adddate.font.color='Black';
 opt.areatext=1;
 opt.decimals=0;
 opt.fillareas=1;
-opt.lintscale=1;
-opt.arrowcolor='Red';
 
 opt.plotwindrosetotals=1;
 opt.addwindroselegend=1;
@@ -110,7 +107,7 @@ opt.colorbar.position=[];
 opt.colorbar.decimals=-1;
 opt.colorbar.type=1;
 opt.colorbar.label='';
-opt.colorbar.labelposition='top';
+opt.coopt.lorbar.labelposition='top';
 opt.colorbar.unit='';
 opt.colorbar.labelincrement=1;
 opt.colorbar.font.name='Helvetica';
@@ -132,3 +129,13 @@ opt.usecustomcontours=0;
 opt.custumcontours=[0 1 2];
 
 opt.thinning=1;
+
+% Lint
+opt.decimals=0;
+opt.lintscale=1;
+opt.arrowcolor='red';
+opt.multiply=1;
+opt.unitarrow=1;
+
+opt.whitevalue=0.9;
+opt.opactiy=1;

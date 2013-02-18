@@ -413,7 +413,7 @@ if ~isempty(ii)
     end
     
     switch info.type
-        case{'real','int','realorstring'}
+        case{'real','int','integer','realorstring'}
             val=str2num(valuestr);
             if isempty(val)
                 % Must be a string

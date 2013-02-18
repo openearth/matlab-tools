@@ -62,3 +62,5 @@ dataset.selectcoordinates=0;
 
 dataset.activeparameter=[];
 
+dataset.georeferencefile='';
+
