@@ -64,7 +64,12 @@ for i=1:hm.nrMeteoDatasets
         cycleInterval=str2double(meteomodel.cycleInterval);
         dt=str2double(meteomodel.dt);
         
-        getMeteo(meteosource,meteoloc,t0,t1,xlim,ylim,outdir,cycleInterval,dt,parstr,pr,'tlastanalyzed',hm.meteo(i).tLastAnalyzed,'outputmeteoname',meteoname);
+        includesFirstTime=1;
+        if isfield(meteomodel,'includesfirsttime')
+            includesFirstTime=str2double(meteomodel.includesfirsttime);
+        end
+        
+        getMeteo(meteosource,meteoloc,t0,t1,xlim,ylim,outdir,cycleInterval,dt,parstr,pr,'tlastanalyzed',hm.meteo(i).tLastAnalyzed,'outputmeteoname',meteoname,'includesfirsttime',includesFirstTime);
         
         fid=fopen([outdir 'tlastanalyzed.txt'],'wt');
         fprintf(fid,'%s\n',datestr(hm.meteo(i).tLastAnalyzed,'yyyymmdd HHMMSS'));
