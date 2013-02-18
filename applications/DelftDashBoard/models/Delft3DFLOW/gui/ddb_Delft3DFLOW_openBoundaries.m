@@ -254,6 +254,12 @@ else
                             handles.Model(md).Input(ad).openBoundaries(n).profile='uniform';
                         end
                 end
+                if size(handles.Model(md).Input(ad).openBoundaries(n).timeSeriesA,2)<handles.Model(md).Input(ad).KMax
+                    for k=2:handles.Model(md).Input(ad).KMax
+                        handles.Model(md).Input(ad).openBoundaries(n).timeSeriesA(:,k)=handles.Model(md).Input(ad).openBoundaries(n).timeSeriesA(:,1);
+                        handles.Model(md).Input(ad).openBoundaries(n).timeSeriesB(:,k)=handles.Model(md).Input(ad).openBoundaries(n).timeSeriesB(:,1);
+                    end
+                end
             end
             setHandles(handles);
             refreshOpenBoundaries;
