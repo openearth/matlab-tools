@@ -1,4 +1,4 @@
-function varargout = MakeDir(dr,varargin)
+function makedir(dr,varargin)
 %MAKEDIR  One line description goes here.
 %
 %   More detailed description goes here.
