@@ -102,6 +102,7 @@ handles.Toolbox(ii).Input.updateParameters=1;
 handles.Toolbox(ii).Input.faulthandle=[];
 
 handles.Toolbox(ii).Input.saveESRIGridFile=0;
+handles.Toolbox(ii).Input.adjustBathymetry=0;
 
 % Earthquake info
 handles.Toolbox(ii).Input.Mw=0.0;

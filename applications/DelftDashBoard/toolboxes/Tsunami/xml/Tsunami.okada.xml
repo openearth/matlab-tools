@@ -187,6 +187,14 @@
     <tooltipstring>Compute initial tsunami wave</tooltipstring>
   </element>
   <element>
+    <tag>adjustbathymetry</tag>
+    <style>checkbox</style>
+    <position>620 20</position>
+    <text>Adjust Bathymetry</text>
+    <variable>adjustBathymetry</variable>
+    <tooltipstring>Also adjust model bathymetry</tooltipstring>
+  </element>
+  <element>
     <tag>saveascfile</tag>
     <style>checkbox</style>
     <position>740 20</position>

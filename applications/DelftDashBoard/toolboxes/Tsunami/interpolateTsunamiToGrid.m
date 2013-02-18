@@ -25,12 +25,15 @@ OPT.gridcs.name='WGS 84';
 OPT.gridcs.type='geographic';
 OPT.tsunamics.name='WGS 84';
 OPT.tsunamics.type='geographic';
+OPT.adjustbathymetry=0;
 
 OPT.inifile=[];
 
 OPT.xgrid=[];
 OPT.ygrid=[];
 OPT.grdfile=[];
+OPT.newdepfile=[];
+OPT.depth=[];
 
 OPT.xtsunami=[];
 OPT.ytsunami=[];
@@ -82,12 +85,12 @@ yz(isnan(yz))=0;
 iniwl0=interp2(xx,yy,zz,xz,yz);
 
 iniwl0=reshape(iniwl0,mmax,nmax);
+iniwl0(isnan(iniwl0))=0;
 
 u=zeros(mmax+1,nmax+1);
 iniwl=u;
 
 iniwl(1:end-1,1:end-1)=iniwl0;
-iniwl(isnan(iniwl))=0;
 
 if exist(OPT.inifile,'file')
     delete(OPT.inifile);
@@ -96,4 +99,9 @@ ddb_wldep('append',OPT.inifile,iniwl,'negate','n','bndopt','n');
 for k=1:OPT.kmax
     ddb_wldep('append',OPT.inifile,u,'negate','n','bndopt','n');
     ddb_wldep('append',OPT.inifile,u,'negate','n','bndopt','n');
+end
+
+if OPT.adjustbathymetry
+    newdepth=OPT.depth+iniwl0;
+    ddb_wldep('write',OPT.newdepfile,newdepth,'negate','y','bndopt','9');    
 end

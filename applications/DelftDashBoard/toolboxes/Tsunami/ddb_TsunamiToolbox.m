@@ -447,6 +447,10 @@ end
 for id=1:handles.Model(md).nrDomains
     [filename, pathname, filterindex] = uiputfile('*.ini', ['Select initial conditions file for domain ' upper(handles.Model(md).Input(id).runid)],'');
     filenames{id}=filename;
+    if handles.Toolbox(tb).Input.adjustBathymetry
+        [filename, pathname, filterindex] = uiputfile('*.dep', ['Select new depth file for domain ' upper(handles.Model(md).Input(id).runid)],'');
+        depfiles{id}=filename;
+    end
 end
         
 if ~isempty(pathname)
@@ -516,6 +520,7 @@ if ~isempty(pathname)
                         
             xz=handles.Model(md).Input(id).gridXZ;
             yz=handles.Model(md).Input(id).gridYZ;
+            dp=handles.Model(md).Input(id).depth;
 
             oldSys=handles.screenParameters.coordinateSystem;
             newSys.name='WGS 84';
@@ -531,12 +536,26 @@ if ~isempty(pathname)
                     end
             end
 
+            adjustBathymetry=handles.Toolbox(tb).Input.adjustBathymetry;
+            
             interpolateTsunamiToGrid('xgrid',xz,'ygrid',yz,'gridcs',oldSys,'tsunamics',newSys, ...
-                'xtsunami',xx,'ytsunami',yy,'ztsunami',zz,'inifile',filenames{id});
+                'xtsunami',xx,'ytsunami',yy,'ztsunami',zz,'inifile',filenames{id}, ...
+                'adjustbathymetry',adjustBathymetry,'depth',dp,'newdepfile',depfiles{id});
             
             handles.Model(md).Input(id).iniFile=filenames{id};
             handles.Model(md).Input(id).initialConditions='ini';
             
+            if handles.Toolbox(tb).Input.adjustBathymetry
+                handles.Model(md).Input(id).depFile=depfiles{id};
+                mmax=handles.Model(md).Input(id).MMax;
+                nmax=handles.Model(md).Input(id).NMax;
+                dp=ddb_wldep('read',handles.Model(md).Input(id).depFile,[mmax nmax]);
+                dp(dp==-999)=NaN;
+                handles.Model(md).Input(id).depth=-dp(1:end-1,1:end-1);
+                handles.Model(md).Input(id).depthZ=getDepthZ(handles.Model(md).Input(id).depth,handles.Model(md).Input(id).dpsOpt);
+                handles=ddb_Delft3DFLOW_plotBathy(handles,'plot','domain',id);                
+            end
+                        
         end
         
         close(wb);
