@@ -191,9 +191,58 @@
     </dependency>
   </element>
   <element>
+    <tag>checkinternaldiffusion</tag>
+    <style>checkbox</style>
+    <position>870 115 50 20</position>
+    <text>Internal Diffusion</text>
+    <type>integer</type>
+    <variable>handles.Toolbox(tb).Input.bathymetry.internalDiffusion</variable>
+    <tooltipstring>Apply internal diffusion to fill missing data points after generating bathymetry</tooltipstring>
+  </element>
+  <element>
+    <tag>editinternaldiffusionrange1</tag>
+    <style>edit</style>
+    <position>870 90 50 20</position>
+    <text>Minimum Elevation</text>
+    <textposition>left</textposition>
+    <type>real</type>
+    <variable>handles.Toolbox(tb).Input.bathymetry.internalDiffusionRange(1)</variable>
+    <tooltipstring>Minimum elevation of cell filled by internal diffusion</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.Toolbox(tb).Input.bathymetry.internalDiffusion</variable>
+        <type>integer</type>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <tag>editinternaldiffusionrange2</tag>
+    <style>edit</style>
+    <position>870 65 50 20</position>
+    <text>Maximum Elevation</text>
+    <textposition>left</textposition>
+    <type>real</type>
+    <variable>handles.Toolbox(tb).Input.bathymetry.internalDiffusionRange(2)</variable>
+    <tooltipstring>Maximum elevation of cell filled by internal diffusion</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.Toolbox(tb).Input.bathymetry.internalDiffusion</variable>
+        <type>integer</type>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
     <tag>editvertlevelmodel</tag>
     <style>edit</style>
-    <position>910 35 50 20</position>
+    <position>870 35 50 20</position>
     <text>Model Offset</text>
     <textposition>left</textposition>
     <type>real</type>
@@ -203,8 +252,8 @@
   <element>
     <tag>generatebathymetry</tag>
     <style>pushbutton</style>
-    <position>910 10 80 20</position>
-    <text>Generate</text>
+    <position>870 10 100 20</position>
+    <text>GENERATE</text>
     <callback>ddb_ModelMakerToolbox_bathymetry</callback>
     <option1>generatebathymetry</option1>
     <tooltipstring>Generate model bathymetry</tooltipstring>

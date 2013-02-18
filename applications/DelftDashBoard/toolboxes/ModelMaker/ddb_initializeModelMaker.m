@@ -127,6 +127,8 @@ handles.Toolbox(ii).Input.bathymetry.selectedDatasets(1).zMin=-10000;
 handles.Toolbox(ii).Input.bathymetry.selectedDatasets(1).startDate=datenum(2000,1,1);
 handles.Toolbox(ii).Input.bathymetry.selectedDatasets(1).searchInterval=5;
 handles.Toolbox(ii).Input.bathymetry.verticalDatum=0;
+handles.Toolbox(ii).Input.bathymetry.internalDiffusion=0;
+handles.Toolbox(ii).Input.bathymetry.internalDiffusionRange=[-20000 20000];
 
 %% Initial conditions
 handles.Toolbox(ii).Input.initialConditions.parameterList={'Water Level','Current'};

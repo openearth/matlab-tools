@@ -180,10 +180,12 @@ verticaloffset=handles.Toolbox(tb).Input.bathymetry.verticalDatum;
 switch lower(handles.Model(md).name)
     case{'delft3dflow'}
         handles=ddb_generateBathymetry_Delft3DFLOW(handles,ad,'datasets',datasets,'startdates',startdates,'searchintervals',searchintervals, ...
-            'zmin',zmin,'zmax',zmax,'verticaloffsets',verticaloffsets,'verticaloffset',verticaloffset);
+            'zmin',zmin,'zmax',zmax,'verticaloffsets',verticaloffsets,'verticaloffset',verticaloffset,'internaldiffusion', ...
+            handles.Toolbox(tb).Input.bathymetry.internalDiffusion,'internaldiffusionrange',handles.Toolbox(tb).Input.bathymetry.internalDiffusionRange);
     case{'delft3dwave'}
         handles=ddb_generateBathymetry_Delft3DWAVE(handles,awg,'datasets',datasets,'startdates',startdates,'searchintervals',searchintervals, ...
-            'zmin',zmin,'zmax',zmax,'verticaloffsets',verticaloffsets,'verticaloffset',verticaloffset);
+            'zmin',zmin,'zmax',zmax,'verticaloffsets',verticaloffsets,'verticaloffset',verticaloffset, ...
+            handles.Toolbox(tb).Input.bathymetry.internalDiffusion,'internaldiffusionrange',handles.Toolbox(tb).Input.bathymetry.internalDiffusionRange);
 end
 
 setHandles(handles);
