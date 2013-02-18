@@ -184,6 +184,11 @@ for i=1:length(element)
                         str{end+1}='none';
                     end
                 end
+                if isfield(element(i).element,'includeauto')
+                    if element(i).element.includeauto
+                        str{end+1}='automatic';
+                    end
+                end
                 set(element(i).element.handle,'String',str);
                 
                 % Set text
