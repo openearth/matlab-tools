@@ -1,10 +1,12 @@
 function cosmos_copyFiguresToLocalWebsite(hm,m)
 
 model=hm.models(m);
+archivedir=[hm.archiveDir filesep model.continent filesep model.name filesep 'archive' filesep];
+cycledir=[archivedir hm.cycStr filesep];
 
 dr=model.dir;
 cont=model.continent;
-dir1=[dr 'lastrun' filesep 'figures' filesep '*.*'];
+dir1=[cycledir 'figures' filesep '*.*'];
 dir2=[hm.webDir 'scenarios' filesep  hm.scenario filesep  cont  filesep  model.name filesep 'figures'];
 
 try
@@ -19,7 +21,7 @@ end
 
 if model.forecastplot.plot
     try
-        dir3=[dr 'lastrun' filesep 'figures' filesep 'forecast' filesep '*.*'];
+        dir3=[cycledir 'figures' filesep 'forecast' filesep '*.*'];
         MakeDir([hm.webDir 'zandmotor' filesep 'forecast' filesep],'results');
         MakeDir([hm.webDir 'zandmotor' filesep 'forecast' filesep],'results',hm.models(m).forecastplot.name);
         dir4=[hm.webDir 'zandmotor' filesep 'forecast' filesep 'results' filesep hm.models(m).forecastplot.name];

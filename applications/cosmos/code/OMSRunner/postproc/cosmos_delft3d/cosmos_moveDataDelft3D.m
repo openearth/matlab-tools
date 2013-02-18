@@ -7,11 +7,15 @@ rundir=[hm.jobDir model.name filesep];
 delete([rundir '*.exe']);
 delete([rundir 'finished.txt']);
 
+
+archivedir=[hm.archiveDir filesep model.continent filesep model.name filesep 'archive' filesep];
+cycledir=[archivedir hm.cycStr filesep];
+
 dr=model.dir;
 
-delete([dr 'lastrun' filesep 'input' filesep '*']);
+delete([cycledir 'input' filesep '*']);
 
-[status,message,messageid]=movefile([rundir 'tri-rst.rst'],[dr 'lastrun' filesep 'input'],'f');
+[status,message,messageid]=movefile([rundir 'tri-rst.rst'],[cycledir 'input'],'f');
 
 rstfiles=dir([rundir 'tri-rst.*']);
 
@@ -54,7 +58,7 @@ if exist(hot00,'file')
 end
 
 if exist(hot0,'file')
-    [status,message,messageid]=movefile(hot0,[dr 'lastrun' filesep 'input'],'f');
+    [status,message,messageid]=movefile(hot0,[cycledir 'input'],'f');
 end
 
 hotfiles=dir([rundir 'hot_1_*']);
@@ -96,8 +100,8 @@ if nhot>0
     end
 end
 
-inpdir=[dr 'lastrun' filesep 'input'];
-outdir=[dr 'lastrun' filesep 'output'];
+inpdir=[cycledir 'input'];
+outdir=[cycledir 'output'];
 
 [status,message,messageid]=movefile([rundir 'tri*'],outdir,'f');
 [status,message,messageid]=movefile([rundir 'com-*.*'],outdir,'f');

@@ -3,13 +3,15 @@ function cosmos_moveDataWW3(hm,m)
 model=hm.models(m);
 
 rundir=[hm.jobDir model.name filesep];
+archivedir=[hm.archiveDir filesep model.continent filesep model.name filesep 'archive' filesep];
+cycledir=[archivedir hm.cycStr filesep];
 
 delete([rundir 'out_grd.ww3']);
 
 dr=model.dir;
 
-inpdir=[dr 'lastrun' filesep 'input'];
-outdir=[dr 'lastrun' filesep 'output'];
+inpdir=[cycledir 'input'];
+outdir=[cycledir 'output'];
 
 [status,message,messageid]=movefile([rundir '*.inp'],inpdir,'f');
 [status,message,messageid]=movefile([rundir '*.bat'],inpdir,'f');

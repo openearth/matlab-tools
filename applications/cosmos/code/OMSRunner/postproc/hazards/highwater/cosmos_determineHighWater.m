@@ -3,10 +3,13 @@ function hm=cosmos_determineHighWater(hm,m,ih)
 model=hm.models(m);
 hazard=model.hazards(ih);
 
+archivedir=[hm.archiveDir filesep model.continent filesep model.name filesep 'archive' filesep];
+cycledir=[archivedir hm.cycStr filesep];
+
 maparchdir=[model.archiveDir hm.cycStr filesep 'maps' filesep];
 hisarchdir=[model.archiveDir hm.cycStr filesep 'timeseries' filesep];
 hazarchdir=[model.archiveDir hm.cycStr filesep 'hazards' filesep];
-figdir=[model.dir 'lastrun' filesep 'figures' filesep];
+figdir=[cycledir 'figures' filesep];
 datadir=[model.dir 'data' filesep];
 
 vel=load([maparchdir 'vel.mat']);
@@ -47,7 +50,7 @@ ripCurrentTimeStack(figname,t,ycrs,vcrsmax,wl,rips,warningLevel,warningLevels,re
 
 %% Individual time series figures per rip
 for ir=1:length(rips)
-    fn=[model.dir 'lastrun' filesep 'figures' filesep hazard.name '.ripcurrent' num2str(ir) '.png'];
+    fn=[cycledir 'figures' filesep hazard.name '.ripcurrent' num2str(ir) '.png'];
     data.x=rips(ir).t;
     data.y=rips(ir).vmax;
     data.color='k';
@@ -75,7 +78,7 @@ hzrd.html.value=[hazard.name '.html'];
 hzrd.html.type='char';
 
 %% Write html code
-fi2=fopen([model.dir 'lastrun' filesep 'figures' filesep hazard.name '.html'],'wt');
+fi2=fopen([cycledir 'figures' filesep hazard.name '.html'],'wt');
 fprintf(fi2,'%s\n','<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">');
 fprintf(fi2,'%s\n','<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">');
 fprintf(fi2,'%s\n','<head>');
@@ -152,7 +155,7 @@ for ir=1:length(rips)
     hzrd.warninglocations(ir).warninglocation.warninglevel.type='int';
 
     %% Write html code
-    fi2=fopen([model.dir 'lastrun' filesep 'figures' filesep hazard.name '.ripcurrent' num2str(ir) '.html'],'wt');
+    fi2=fopen([cycledir 'figures' filesep hazard.name '.ripcurrent' num2str(ir) '.html'],'wt');
     fprintf(fi2,'%s\n','<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">');
     fprintf(fi2,'%s\n','<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">');
     fprintf(fi2,'%s\n','<head>');

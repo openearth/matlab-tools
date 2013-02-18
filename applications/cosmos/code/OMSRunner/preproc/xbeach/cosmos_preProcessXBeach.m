@@ -7,11 +7,11 @@ tmpdir=hm.tempDir;
 cosmos_writeXBeachParams(hm,m);
 
 if hm.models(m).flowNested
-    NestingXBeachFlow(hm,m);
+    cosmos_nestingXBeachFlow(hm,m);
 end
 
 if hm.models(m).waveNested
-    NestingXBeachWave(hm,m);
+    cosmos_nestingXBeachWave(hm,m);
 end
 
 model=hm.models(m);

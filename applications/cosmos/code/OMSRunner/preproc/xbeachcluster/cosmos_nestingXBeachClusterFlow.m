@@ -4,7 +4,7 @@ mm=hm.models(m).flowNestModelNr;
 
 dr=hm.models(mm).dir;
 
-outputdir=[dr 'lastrun' filesep 'output' filesep];
+outputdir=[dr 'archive' hm.cycStr filesep 'output' filesep];
 
 [status,message,messageid]=copyfile([outputdir 'trih-*'],pwd,'f');
 

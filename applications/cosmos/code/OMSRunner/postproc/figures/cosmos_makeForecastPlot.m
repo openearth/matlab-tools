@@ -2,14 +2,16 @@ function cosmos_makeForecastPlot(hm,m)
 
 % Makes map plots and KMZs
 
+model=hm.models(m);
+archivedir=[hm.archiveDir filesep model.continent filesep model.name filesep 'archive' filesep];
+cycledir=[archivedir hm.cycStr filesep];
+
 t=0;
 
 name='';
 
 try
     
-    model=hm.models(m);
-    dr=model.dir;
     if model.forecastplot.plot
         
         [weather] = cosmos_urlReadWeather(model.forecastplot.weatherstation);
@@ -23,23 +25,23 @@ try
         
         name=model.forecastplot.name;
         
-        fname=[model.archiveDir hm.cycStr filesep 'maps' filesep 'vel.mat'];
+        fname=[cycledir 'maps' filesep 'vel.mat'];
         s(1).data=load(fname);
-        fname=[model.archiveDir hm.cycStr filesep 'maps' filesep 'bedlevel.mat'];
+        fname=[cycledir 'maps' filesep 'bedlevel.mat'];
         s(2).data=load(fname);
-        fname=[model.archiveDir hm.cycStr filesep 'maps' filesep 'waterdepth.mat'];
+        fname=[cycledir 'maps' filesep 'waterdepth.mat'];
         s(3).data=load(fname);
-        fname=[model.archiveDir hm.cycStr filesep 'timeseries' filesep 'wl.' model.forecastplot.wlstation '.mat'];
+        fname=[cycledir 'timeseries' filesep 'wl.' model.forecastplot.wlstation '.mat'];
         s(4).data=load(fname);
         
-        fname=[model.archiveDir hm.cycStr filesep 'timeseries' filesep 'hs.' model.forecastplot.wavestation '.mat'];
+        fname=[cycledir 'timeseries' filesep 'hs.' model.forecastplot.wavestation '.mat'];
         wav(1).data=load(fname);
-        fname=[model.archiveDir hm.cycStr filesep 'timeseries' filesep 'tp.' model.forecastplot.wavestation '.mat'];
+        fname=[cycledir 'timeseries' filesep 'tp.' model.forecastplot.wavestation '.mat'];
         wav(2).data=load(fname);
-        fname=[model.archiveDir hm.cycStr filesep 'timeseries' filesep 'wavdir.' model.forecastplot.wavestation '.mat'];
+        fname=[cycledir 'timeseries' filesep 'wavdir.' model.forecastplot.wavestation '.mat'];
         wav(3).data=load(fname);
         
-        fname=[model.archiveDir hm.cycStr filesep 'maps' filesep 'windvel.mat'];
+        fname=[cycledir 'maps' filesep 'windvel.mat'];
         wnd(1).data=load(fname);
         
         s(1).data.U(isnan(s(1).data.U)) = 0;
@@ -333,10 +335,10 @@ try
             set(gcf,'color','w')
             set(gcf,'renderer','zbuf')
             
-            if ~exist([dr 'lastrun' filesep 'figures' filesep 'forecast'],'dir')
-                mkdir([dr 'lastrun' filesep 'figures'],'forecast')
+            if ~exist([cycledir 'figures' filesep 'forecast'],'dir')
+                mkdir([cycledir 'figures'],'forecast')
             end
-            figname=[dr 'lastrun' filesep 'figures' filesep 'forecast' filesep name '_' datestr(timnowCET,'yyyymmddHH') '.png'];
+            figname=[cycledir 'figures' filesep 'forecast' filesep name '_' datestr(timnowCET,'yyyymmddHH') '.png'];
             print(gcf,'-dpng','-r400',figname);
             
             close(gcf)
@@ -363,7 +365,7 @@ try
             end
         end
         
-        struct2xml([dr 'lastrun' filesep 'figures' filesep 'forecast' filesep name '.xml'],fc,'includeattributes',1,'structuretype',0);
+        struct2xml([cycledir 'figures' filesep 'forecast' filesep name '.xml'],fc,'includeattributes',1,'structuretype',0);
     end
     
 catch

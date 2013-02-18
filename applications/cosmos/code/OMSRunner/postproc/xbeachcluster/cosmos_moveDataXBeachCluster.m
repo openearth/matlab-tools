@@ -7,7 +7,8 @@ if exist([rundir 'run.bat'],'file')
     delete([rundir 'run.bat']);
 end
 
-dr=hm.models(m).dir;
+archivedir=[hm.archiveDir filesep model.continent filesep model.name filesep 'archive' filesep];
+cycledir=[archivedir hm.cycStr filesep];
 
 lst=dir(rundir);
 for i=1:length(lst)
@@ -16,10 +17,10 @@ for i=1:length(lst)
             case{'.','..'}
             otherwise
                 
-                MakeDir([dr 'lastrun' filesep 'input'],lst(i).name);
-                MakeDir([dr 'lastrun' filesep 'output'],lst(i).name);
-                inpdir=[dr 'lastrun' filesep 'input' filesep lst(i).name filesep];
-                outdir=[dr 'lastrun' filesep 'output' filesep lst(i).name filesep];
+                MakeDir([cycledir 'input'],lst(i).name);
+                MakeDir([cycledir 'output'],lst(i).name);
+                inpdir=[cycledir 'input' filesep lst(i).name filesep];
+                outdir=[cycledir 'output' filesep lst(i).name filesep];
 
                 [status,message,messageid]=movefile([rundir lst(i).name filesep hm.models(m).runid '*.sp2'],inpdir,'f');
                 [status,message,messageid]=movefile([rundir lst(i).name filesep '*.zip'],inpdir,'f');

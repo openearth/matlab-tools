@@ -4,6 +4,22 @@ model=hm.models(m);
 
 mdl=model.name;
 
+archivedir=[hm.archiveDir filesep model.continent filesep model.name filesep 'archive' filesep];
+cycledir=[archivedir hm.cycStr filesep];
+appendeddir=[archivedir 'appended' filesep];
+
+if ~exist(archivedir,'dir')
+    mkdir(archivedir);
+end
+if ~exist(cycledir,'dir')
+    mkdir(cycledir);
+end
+
+if exist([model.dir filesep 'lastrun'],'dir')
+    movefile([model.dir filesep 'lastrun' filesep '*'],cycledir);
+    rmdir([model.dir filesep 'lastrun']);
+end
+
 if model.extractData
     try
         disp('Extracting Data ...');
@@ -11,29 +27,29 @@ if model.extractData
         set(hm.textModelLoopStatus,'String',['Status : extracting data - ' mdl ' ...']);drawnow;
         switch lower(model.type)
             case{'delft3dflow','delft3dflowwave'}
-                MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'timeseries');
-                MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'sp2');
-                MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'maps');
-                MakeDir(hm.archiveDir,model.continent,model.name,'archive','appended','timeseries');
-                MakeDir(hm.archiveDir,model.continent,model.name,'archive','appended','maps');
+                MakeDir(cycledir,'timeseries');
+                MakeDir(cycledir,'sp2');
+                MakeDir(cycledir,'maps');
+                MakeDir(appendeddir,'timeseries');
+                MakeDir(appendeddir,'maps');
                 cosmos_extractDataDelft3D(hm,m);
             case{'xbeach'}
-                MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'timeseries');
-                MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'maps');
-                MakeDir(hm.archiveDir,model.continent,model.name,'archive','appended','timeseries');
-                MakeDir(hm.archiveDir,model.continent,model.name,'archive','appended','maps');
-                ExtractDataXBeach(hm,m);
+                MakeDir(cycledir,'timeseries');
+                MakeDir(cycledir,'maps');
+                MakeDir(appendeddir,'timeseries');
+                MakeDir(appendeddir,'maps');
+                cosmos_extractDataXBeach(hm,m);
             case{'ww3'}
-                MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'timeseries');
-                MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'sp2');
-                MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'maps');
-                MakeDir(hm.archiveDir,model.continent,model.name,'archive','appended','timeseries');
-                MakeDir(hm.archiveDir,model.continent,model.name,'archive','appended','maps');
+                MakeDir(cycledir,'timeseries');
+                MakeDir(cycledir,'sp2');
+                MakeDir(cycledir,'maps');
+                MakeDir(appendeddir,'timeseries');
+                MakeDir(appendeddir,'maps');
                 cosmos_extractDataWW3(hm,m);
             case{'xbeachcluster'}
-                MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'netcdf');
-                MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'hazards');
-                MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'timeseries');
+                MakeDir(cycledir,'netcdf');
+                MakeDir(cycledir,'hazards');
+                MakeDir(cycledir,'timeseries');
                 cosmos_extractDataXBeachCluster(hm,m);
         end
         cosmos_convertTimeSeriesMat2NC(hm,m);
@@ -46,16 +62,16 @@ if model.extractData
     hm.models(m).extractDuration=toc;
 end
 
-if model.archiveInput
-    try
-        disp('Archiving input ...');
-        MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'input');
-        fname=[hm.archiveDir model.continent filesep model.name filesep 'archive' filesep hm.cycStr filesep 'input' filesep model.name '.zip'];
-        zip(fname,[model.dir 'lastrun' filesep 'input' filesep '*']);
-    catch
-        WriteErrorLogFile(hm,['Something went wrong with archiving input from ' model.name]);
-    end
-end
+% if model.archiveInput
+%     try
+%         disp('Archiving input ...');
+%         MakeDir(cycledir,'input');
+%         fname=[hm.archiveDir model.continent filesep model.name filesep 'archive' filesep hm.cycStr filesep 'input' filesep model.name '.zip'];
+%         zip(fname,[model.dir 'lastrun' filesep 'input' filesep '*']);
+%     catch
+%         WriteErrorLogFile(hm,['Something went wrong with archiving input from ' model.name]);
+%     end
+% end
 
 if model.DetermineHazards
     try
@@ -64,17 +80,17 @@ if model.DetermineHazards
         set(hm.textModelLoopStatus,'String',['Status : determining hazards - ' mdl ' ...']);drawnow;
         switch lower(model.type)
             case{'delft3dflow','delft3dflowwave'}
-                %                 MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'hazards');
+                %                 MakeDir(cycledir,'hazards');
                 %                 cosmos_determineHazardsDelft3D(hm,m);
             case{'xbeach'}
-                %                 MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'hazards');
+                %                 MakeDir(cycledir,'hazards');
                 %                 determineHazardsXBeach(hm,m);
             case{'ww3'}
-                %                 MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'hazards');
+                %                 MakeDir(cycledir,'hazards');
                 %                 determineHazardsWW3(hm,m);
             case{'xbeachcluster'}
-                MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'hazards');
-                determineHazardsXBeachCluster(hm,m);
+                MakeDir(cycledir,'hazards');
+                cosmos_determineHazardsXBeachCluster(hm,m);
         end
     catch
         WriteErrorLogFile(hm,['Something went wrong with determining hazards from ' model.name]);
@@ -125,7 +141,6 @@ if model.makeWebsite
     try
         cosmos_updateModelsXML(hm,m);
         cosmos_updateScenarioXML(hm,m);
-
     catch
         WriteErrorLogFile(hm,['Something went wrong while updating models.xml on local website for ' hm.models(m).name]);
         %         hm.models(m).status='failed';
@@ -162,9 +177,9 @@ if model.uploadFTP
     end
 end
 
-%%
-if hm.models(m).forecastplot.plot && hm.models(m).forecastplot.archive
-    MakeDir(hm.archiveDir,model.continent,model.name,'archive',hm.cycStr,'forecasts');
-    cosmos_archiveForecastPlots(hm,m);
-end
+% %%
+% if hm.models(m).forecastplot.plot && hm.models(m).forecastplot.archive
+%     MakeDir(cycledir,'forecasts');
+%     cosmos_archiveForecastPlots(hm,m);
+% end
 

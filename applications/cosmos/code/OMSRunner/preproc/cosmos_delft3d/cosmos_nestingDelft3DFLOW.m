@@ -1,8 +1,6 @@
-function NestingDelft3DFLOW(hm,m)
+function cosmos_nestingDelft3DFLOW(hm,m)
 
 tmpdir=hm.tempDir;
-
-curdir=pwd;
 
 model=hm.models(m);
 
@@ -30,7 +28,7 @@ switch lower(model.flowNestType)
 
         mm=model.flowNestModelNr;
         dr=hm.models(mm).dir;       
-        outputdir=[dr 'lastrun' filesep 'output' filesep];
+        outputdir=[dr 'archive' hm.cycStr filesep 'output' filesep];
         usematlabnesthd2=1;
 
         if usematlabnesthd2

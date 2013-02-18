@@ -1,9 +1,9 @@
 function cosmos_extractDataDelft3DMaps(hm,m)
 
 model=hm.models(m);
-dr=model.dir;
-outdir=[dr 'lastrun' filesep 'output' filesep];
-archdir = model.archiveDir;
+archivedir=[hm.archiveDir filesep model.continent filesep model.name filesep 'archive' filesep];
+cycledir=[archivedir hm.cycStr filesep];
+outdir=[cycledir filesep 'output' filesep];
 
 np=model.nrMapDatasets;
 
@@ -12,7 +12,7 @@ for ip=1:np
     try
 
         par=model.mapDatasets(ip).name;
-        fout=[archdir hm.cycStr filesep 'maps' filesep par '.mat'];
+        fout=[archivedir 'appended' filesep 'maps' filesep par '.mat'];
         
         data=[];
         

@@ -3,7 +3,7 @@ function cosmos_postFigures(hm,m)
 
 model=hm.models(m);
 
-locdir=[hm.webDir 'zandmotor' filesep 'forecast' filesep 'results' filesep hm.models(m).forecastplot.name];
+locdir=[hm.webDir 'zandmotor' filesep 'forecast' filesep 'results' filesep model.forecastplot.name];
 
 % Uploading figures
 
@@ -19,8 +19,8 @@ fprintf(fid,'%s\n',['mkdir forecast']);
 fprintf(fid,'%s\n',['cd forecast']);
 fprintf(fid,'%s\n',['mkdir results']);
 fprintf(fid,'%s\n',['cd results']);
-fprintf(fid,'%s\n',['mkdir ' hm.models(m).forecastplot.name]);
-fprintf(fid,'%s\n',['cd ' hm.models(m).forecastplot.name]);
+fprintf(fid,'%s\n',['mkdir ' model.forecastplot.name]);
+fprintf(fid,'%s\n',['cd ' model.forecastplot.name]);
 fprintf(fid,'%s\n','rm *.png');
 fprintf(fid,'%s\n','rm *.xml');
 fprintf(fid,'%s\n',['put ' locdir filesep '*.*']);

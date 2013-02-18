@@ -1,10 +1,10 @@
-function NestingXBeachWave(hm,m)
+function cosmos_nestingXBeachWave(hm,m)
 
 tmpdir=hm.tempDir;
 
 mm=hm.models(m).waveNestModelNr;
 
-outputdir=[hm.models(mm).dir 'lastrun' filesep 'output' filesep];
+outputdir=[hm.models(mm).dir 'archive' hm.cycStr filesep 'output' filesep];
 
 switch lower(hm.models(mm).type)
 

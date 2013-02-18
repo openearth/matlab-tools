@@ -1,7 +1,11 @@
 function hm=cosmos_determineHazards(hm,m)
 
+model=hm.models(m);
+archivedir=[hm.archiveDir filesep model.continent filesep model.name filesep 'archive' filesep];
+cycledir=[archivedir hm.cycStr filesep];
+
 % Create hazard xml folder and remove all existing xml files
-hazarchdir=[hm.models(m).archiveDir hm.cycStr filesep 'hazards' filesep];
+hazarchdir=[cycledir 'hazards' filesep];
 if ~exist(hazarchdir,'dir')
     mkdir(hazarchdir);
 end

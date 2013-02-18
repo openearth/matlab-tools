@@ -10,7 +10,7 @@ for ip=1:np
     
     profile=model.profile(ip).name;
     
-    inputdir=[inpdir profile filesep];
+    inputdir=[cycledir 'input' filesep profile filesep];
     archivedir=[cycledir 'netcdf' filesep profile filesep];
     xmldir=[cycledir filesep 'hazards' filesep profile filesep];
     

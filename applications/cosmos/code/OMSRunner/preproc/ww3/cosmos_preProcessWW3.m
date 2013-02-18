@@ -16,7 +16,7 @@ end
 if model.waveNested
     nr=model.waveNestNr;
     mm=model.waveNestModelNr;
-    outputdir=[hm.models(mm).dir 'lastrun' filesep 'output' filesep];
+    outputdir=[hm.models(mm).dir 'archive' hm.cycStr filesep 'output' filesep];
     fname=[outputdir 'nest' num2str(nr) '.ww3'];
     if exist(fname,'file')
         [success,message,messageid]=copyfile(fname,[tmpdir 'nest.ww3'],'f');

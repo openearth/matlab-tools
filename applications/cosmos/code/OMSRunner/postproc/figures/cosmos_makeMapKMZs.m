@@ -1,6 +1,10 @@
 function cosmos_makeMapKMZs(hm,m)
 % Makes map plots and KMZs
 
+model=hm.models(m);
+archivedir=[hm.archiveDir filesep model.continent filesep model.name filesep 'archive' filesep];
+cycledir=[archivedir hm.cycStr filesep];
+
 t=0;
 
 posfile=['.' filesep 'pos1.dat'];
@@ -13,9 +17,6 @@ name='';
 
 try
     
-    model=hm.models(m);
-    dr=model.dir;
-
     nmaps=length(model.mapPlots);
 
     for im=1:nmaps
@@ -46,7 +47,7 @@ try
 
                 switch lower(par{id})
                     case{'landboundary'}
-                        if exist([dr 'data' filesep model.name '.ldb'],'file')
+                        if exist([model.dir 'data' filesep model.name '.ldb'],'file')
                             [xldb,yldb]=landboundary('read',[dr 'data' filesep model.name '.ldb']);
                         else
                             xldb=[0;0.01;0.01];
@@ -55,7 +56,7 @@ try
                         s(id).data.X=xldb;
                         s(id).data.Y=yldb;
                     otherwise
-                        fname=[model.archiveDir hm.cycStr filesep 'maps' filesep par{id} '.mat'];
+                        fname=[cycledir 'maps' filesep par{id} '.mat'];
                         if exist(fname,'file')
                             s(id).data=load(fname);
                         else
@@ -113,14 +114,14 @@ try
 
                 case{'coloredvectors'}
                     % Quiver KML
-                    clrbarname=[dr 'lastrun' filesep 'figures' filesep name '.colorbar.png'];
+                    clrbarname=[cycledir 'figures' filesep name '.colorbar.png'];
                     cosmos_makeColorBar(clrbarname,'contours',clim(1):clim(2):clim(3),'colormap',clmap,'label',barlabel,'decimals',cdec);
                     xx=s(1).data.X;
                     yy=s(1).data.Y;
                     tim=s(id).data.Time(it1:n3:end);
                     uu=s(1).data.U(it1:n3:end,:,:);
                     vv=s(1).data.V(it1:n3:end,:,:);
-                    fdr=[dr 'lastrun' filesep 'figures' filesep];
+                    fdr=[cycledir 'figures' filesep];
                     thin=model.mapPlots(im).datasets.thinning;
                     thinX=model.mapPlots(im).datasets.thinningX;
                     thinY=model.mapPlots(im).datasets.thinningY;
@@ -140,14 +141,14 @@ try
 
                 case{'vectorxml'}
                     % Quiver KML
-                    clrbarname=[dr 'lastrun' filesep 'figures' filesep name '.colorbar.png'];
+                    clrbarname=[cycledir 'figures' filesep name '.colorbar.png'];
                     cosmos_makeColorBar(clrbarname,'contours',clim(1):clim(2):clim(3),'colormap',clmap,'label',barlabel,'decimals',cdec);
                     xx=s(1).data.X;
                     yy=s(1).data.Y;
                     tim=s(id).data.Time(it1:n3:end);
                     uu=s(1).data.U(it1:n3:end,:,:);
                     vv=s(1).data.V(it1:n3:end,:,:);
-                    fdr=[dr 'lastrun' filesep 'figures' filesep];
+                    fdr=[cycledir 'figures' filesep];
                     thin=model.mapPlots(im).datasets.thinning;
                     thinX=model.mapPlots(im).datasets.thinningX;
                     thinY=model.mapPlots(im).datasets.thinningY;
@@ -178,7 +179,7 @@ try
                     
                 case{'coloredcurvyarrows','coloredcurvylines'}
                     % Curvec KML
-                    clrbarname=[dr 'lastrun' filesep 'figures' filesep name '.colorbar.png'];
+                    clrbarname=[cycledir 'figures' filesep name '.colorbar.png'];
                     cosmos_makeColorBar(clrbarname,'contours',clim(1):clim(2):clim(3),'colormap',clmap,'label',barlabel,'decimals',cdec);
                     xx=s(1).data.X;
                     yy=s(1).data.Y;
@@ -188,7 +189,7 @@ try
                     tim=s(id).data.Time(it1:n3:end);
                     uu=s(1).data.U(it1:n3:end,:,:);
                     vv=s(1).data.V(it1:n3:end,:,:);
-                    fdr=[dr 'lastrun' filesep 'figures' filesep];
+                    fdr=[cycledir 'figures' filesep];
                     if ~isempty(model.mapPlots(im).datasets(1).polygon)
                         polxy=load([model.dir 'data' filesep model.mapPlots(im).datasets(1).polygon]);
                         if ~strcmpi(model.coordinateSystemType,'geographic')
@@ -230,7 +231,7 @@ try
                         it2=0;
                         t2=[];
                         
-                        clrbarname=[dr 'lastrun' filesep 'figures' filesep name '.colorbar.png'];
+                        clrbarname=[cycledir 'figures' filesep name '.colorbar.png'];
                         cosmos_makeColorBar(clrbarname,'contours',clim(1):clim(2):clim(3),'colormap',clmap,'label',barlabel,'decimals',cdec);
 
                         for it=it1:n3:nt
@@ -289,7 +290,7 @@ try
                                 t2(it2)=t;
                                 
                                 % Figure Properties
-                                figname=[dr 'lastrun' filesep 'figures' filesep name '.' datestr(t,'yyyymmdd.HHMMSS') '.png'];
+                                figname=[cycledir 'figures' filesep name '.' datestr(t,'yyyymmdd.HHMMSS') '.png'];
                                 
                                 xlim=model.xLimPlot;
                                 ylim=model.yLimPlot;
@@ -306,7 +307,7 @@ try
                             
                         end
                         
-                        figdr=[dr 'lastrun' filesep 'figures' filesep];
+                        figdr=[cycledir 'figures' filesep];
                         
                         flist=[];
                         
@@ -325,7 +326,7 @@ try
                     try
                         station=model.mapPlots(im).datasets(id).argusstation;
                         t=floor(hm.cycle)-1+0.5;
-                        figdr=[dr 'lastrun' filesep 'figures' filesep];
+                        figdr=[cycledir 'figures' filesep];
                         xori=model.mapPlots(im).datasets(id).argusxorigin;
                         yori=model.mapPlots(im).datasets(id).argusyorigin;
                         wdt=model.mapPlots(im).datasets(id).arguswidth;

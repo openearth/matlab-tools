@@ -1,28 +1,32 @@
 function cosmos_moveModelData(hm,m)
 
-dr=hm.models(m).dir;
 
-MakeDir(dr,'lastrun');
+model=hm.models(m);
+archivedir=[hm.archiveDir filesep model.continent filesep model.name filesep 'archive' filesep];
+cycledir=[archivedir hm.cycStr filesep];
+dr=model.dir;
 
-switch lower(hm.models(m).type)
+mkdir(cycledir);
+
+switch lower(model.type)
     case{'delft3dflow','delft3dflowwave','ww3','xbeach'}
         
-        [status,message,messageid]=rmdir([dr 'lastrun' filesep 'input'],'s');
-        [status,message,messageid]=rmdir([dr 'lastrun' filesep 'output'],'s');
-        [status,message,messageid]=rmdir([dr 'lastrun' filesep 'figures'],'s');
+        [status,message,messageid]=rmdir([cycledir 'input'],'s');
+        [status,message,messageid]=rmdir([cycledir 'output'],'s');
+        [status,message,messageid]=rmdir([cycledir 'figures'],'s');
         
-        delete([dr 'lastrun' filesep 'input' filesep '*']);
-        delete([dr 'lastrun' filesep 'output' filesep '*']);
-        delete([dr 'lastrun' filesep 'figures' filesep '*']);
+        delete([cycledir 'input' filesep '*']);
+        delete([cycledir 'output' filesep '*']);
+        delete([cycledir 'figures' filesep '*']);
         
         MakeDir(dr,'restart');
 end
 
-MakeDir(dr,'lastrun','input');
-MakeDir(dr,'lastrun','output');
-MakeDir(dr,'lastrun','figures');
+MakeDir(cycledir,'input');
+MakeDir(cycledir,'output');
+MakeDir(cycledir,'figures');
 
-switch lower(hm.models(m).type)
+switch lower(model.type)
     case{'delft3dflow','delft3dflowwave'}
         MakeDir(dr,'restart','hot');
         MakeDir(dr,'restart','tri-rst');
@@ -35,4 +39,4 @@ switch lower(hm.models(m).type)
         cosmos_moveDataXBeachCluster(hm,m);
 end
 
-[status,message,messageid]=rmdir([hm.jobDir hm.models(m).name], 's');
+[status,message,messageid]=rmdir([hm.jobDir model.name], 's');

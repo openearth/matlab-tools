@@ -1,9 +1,9 @@
 function cosmos_extractDataDelft3DTimeSeries3(hm,m)
 
 model=hm.models(m);
-dr=model.dir;
-outdir=[dr 'lastrun' filesep 'output' filesep];
-archdir = model.archiveDir;
+archivedir=[hm.archiveDir filesep model.continent filesep model.name filesep 'archive' filesep];
+cycledir=[archivedir hm.cycStr filesep];
+outdir=[cycledir filesep 'output' filesep];
 
 %% Time Series
 trihfile=[outdir 'trih-' model.runid '.dat'];
@@ -35,7 +35,7 @@ if exist(trihfile,'file')
                                 
                 s.Time=[];
                 s.Val=[];
-                fname=[archdir 'appended' filesep 'timeseries' filesep par '.' stName '.mat'];
+                fname=[archivedir 'appended' filesep 'timeseries' filesep par '.' stName '.mat'];
                 if exist(fname,'file')
                     s=load(fname);
                     
@@ -131,7 +131,7 @@ if exist(trihfile,'file')
                     s3.Time=data.Time;
                     s3.Val=data.Val;
                     
-                    fname=[archdir hm.cycStr filesep 'timeseries' filesep par '.' stName '.mat'];
+                    fname=[cycledir 'timeseries' filesep par '.' stName '.mat'];
                     save(fname,'-struct','s3','Parameter','Time','Val');
                     
                 end

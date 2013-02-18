@@ -1,4 +1,4 @@
-function NestingDelft3DWave(hm,m)
+function cosmos_nestingDelft3DWave(hm,m)
 
 model=hm.models(m);
 
@@ -10,7 +10,7 @@ mm=model.waveNestModelNr;
 
 % dr=model.dir;
 
-outputdir=[hm.models(mm).dir 'lastrun' filesep 'output' filesep];
+outputdir=[hm.models(mm).dir 'archive' hm.cycStr filesep 'output' filesep];
 
 switch lower(hm.models(mm).type)
 

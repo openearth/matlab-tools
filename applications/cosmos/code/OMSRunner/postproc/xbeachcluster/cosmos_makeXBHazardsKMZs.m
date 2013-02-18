@@ -1,7 +1,9 @@
-function makeXBHazardsKMZs(hm,m)
+function cosmos_makeXBHazardsKMZs(hm,m)
 
 model=hm.models(m);
-figdir=[model.dir 'lastrun' filesep 'figures' filesep];
+archdir=[hm.archiveDir filesep model.continent filesep model.name filesep 'archive' filesep];
+cycledir=[archdir hm.cycStr filesep];
+figdir=[cycledir 'figures' filesep];
 
 n=0;
 x0=[];
@@ -13,7 +15,7 @@ for i=1:model.nrProfiles
     
     prf=model.profile(i).name;
     
-    xmldir=[model.archiveDir hm.cycStr filesep 'hazards' filesep prf filesep];
+    xmldir=[cycledir 'hazards' filesep prf filesep];
     fname=[xmldir prf '.xml'];
        
     if exist(fname,'file')

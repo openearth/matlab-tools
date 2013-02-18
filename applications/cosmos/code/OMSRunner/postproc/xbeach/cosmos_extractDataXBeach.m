@@ -1,10 +1,10 @@
-function ExtractDataXBeach(hm,m)
+function cosmos_extractDataXBeach(hm,m)
 
 model=hm.models(m);
+archdir=[hm.archiveDir filesep model.continent filesep model.name filesep 'archive' filesep];
+cycledir=[archdir hm.cycStr filesep];
 
-dr=model.dir;
-
-outdir=[dr 'lastrun' filesep 'output' filesep];
+outdir=[cycledir 'output' filesep];
 
 XBdims=getdimensions(outdir);
 

@@ -1,4 +1,4 @@
-function NestingXBeachFlow(hm,m)
+function cosmos_nestingXBeachFlow(hm,m)
 
 tmpdir=hm.tempDir;
 
@@ -8,7 +8,7 @@ mm=hm.models(m).flowNestModelNr;
 
 dr=hm.models(mm).dir;
 
-outputdir=[dr 'lastrun' filesep 'output' filesep ''];
+outputdir=[dr 'archive' hm.cycStr filesep 'output' filesep ''];
 [success,message,messageid]=copyfile([outputdir 'trih-*'],tmpdir,'f');
 
 cd(tmpdir);

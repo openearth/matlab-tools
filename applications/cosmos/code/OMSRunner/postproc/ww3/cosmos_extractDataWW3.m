@@ -1,10 +1,12 @@
 function cosmos_extractDataWW3(hm,m)
 
 model=hm.models(m);
+archivedir=[hm.archiveDir filesep model.continent filesep model.name filesep 'archive' filesep];
+cycledir=[archivedir hm.cycStr filesep];
 
 %% Maps
 
-outdir=[model.dir 'lastrun' filesep 'output' filesep];
+outdir=[cycledir 'output' filesep];
 
 curdir=pwd;
 
@@ -31,7 +33,7 @@ else
     s.Time=times;
 end
 
-fout=[model.archiveDir hm.cycStr filesep 'maps' filesep par '.mat'];
+fout=[cycledir 'maps' filesep par '.mat'];
 
 if ndims(data.XComp)==3
     s.U=data.XComp(ifirst:end,:,:);
@@ -50,7 +52,7 @@ delete('ww3.grads');
 
 if model.nrStations>0
 
-    archdir=[model.archiveDir hm.cycStr filesep 'sp2' filesep];
+    archdir=[cycledir filesep 'sp2' filesep];
 
     % 2D spectra
     k=0;
@@ -119,7 +121,7 @@ if model.nrStations>0
             s3.Parameter='hs';
             s3.Val=hs(:,istat);
             s3.Time=t;
-            fname=[model.archiveDir hm.cycStr filesep 'timeseries' filesep 'hs.' st '.mat'];
+            fname=[cycledir filesep 'timeseries' filesep 'hs.' st '.mat'];
             save(fname,'-struct','s3','Parameter','Time','Val');
             
             % Tp
@@ -160,7 +162,7 @@ if model.nrStations>0
             s3.Parameter='tp';
             s3.Val=tp(:,istat);
             s3.Time=t;
-            fname=[model.archiveDir hm.cycStr filesep 'timeseries' filesep 'tp.' st '.mat'];
+            fname=[cycledir 'timeseries' filesep 'tp.' st '.mat'];
             save(fname,'-struct','s3','Parameter','Time','Val');
             
 %        end

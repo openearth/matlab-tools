@@ -30,11 +30,11 @@ if strcmpi(model.type,'delft3dflowwave')
 end
 
 if model.flowNested || strcmpi(model.flowNestType,'oceanmodel')
-    NestingDelft3DFLOW(hm,m);
+    cosmos_nestingDelft3DFLOW(hm,m);
 end
 
 if model.waveNested
-    NestingDelft3DWave(hm,m);
+    cosmos_nestingDelft3DWave(hm,m);
 end
 
 
