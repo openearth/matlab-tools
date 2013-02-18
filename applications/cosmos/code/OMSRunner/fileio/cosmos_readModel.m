@@ -186,6 +186,13 @@ else
     hm.models(i).priority=0;
 end
 
+hm.models(i).deleterestartfiles=1;
+if isfield(model,'deleterestartfiles')
+    if strcmpi(model.deleterestartfiles(1),'n') || strcmpi(model.deleterestartfiles(1),'0')
+        hm.models(i).deleterestartfiles=0;
+    end
+end
+
 %% Parameters
 
 if isfield(model,'roumet')
@@ -208,6 +215,11 @@ if isfield(model,'vicouv')
 else
     hm.models(i).VicoUV=1;
 end
+if isfield(model,'dicouv')
+    hm.models(i).DicoUV=str2double(model.dicouv);
+else
+    hm.models(i).DicoUV=1;
+end
 if isfield(model,'filedy')
     hm.models(i).Filedy=model.filedy;
 else
@@ -227,6 +239,13 @@ hm.models(i).SMVelo='euler';
 if isfield(model,'smvelo')
     if strcmpi(model.smvelo,'glm')
         hm.models(i).SMVelo='GLM';
+    end
+end
+
+hm.models(i).nonstationary=1;
+if isfield(model,'stationary')
+    if strcmpi(model.stationary(1),'y') || strcmpi(model.stationary(1),'1')
+        hm.models(i).nonstationary=0;
     end
 end
 
@@ -315,12 +334,28 @@ end
 
 hm.models(i).tmzRad=[];
 hm.models(i).includeTemperature=0;
+hm.models(i).includeHeatExchange=0;
 if isfield(model,'temperature')
     if strcmpi(model.temperature(1),'y')
         hm.models(i).includeTemperature=1;
+        hm.models(i).includeHeatExchange=1;
     end
     if isfield(model,'tmzrad')
         hm.models(i).tmzRad=str2double(model.tmzrad);
+    end
+end
+if isfield(model,'heatexchange')
+    if strcmpi(model.heatexchange(1),'y')
+        hm.models(i).includeHeatExchange=1;
+    else        
+        hm.models(i).includeHeatExchange=0;
+    end
+end
+
+hm.models(i).includeAirPressure=1;
+if isfield(model,'airpressure')
+    if strcmpi(model.airpressure(1),'n')
+        hm.models(i).includeAirPressure=0;
     end
 end
 
@@ -468,6 +503,14 @@ end
 hm.models(i).oceanModel='';
 if isfield(model,'oceanmodel')
     hm.models(i).oceanModel=model.oceanmodel;
+end
+hm.models(i).oceanmodelnesttype='file+astro';
+if isfield(model,'oceanmodelnesttype')
+    hm.models(i).oceanmodelnesttype=model.oceanmodelnesttype;
+end
+hm.models(i).wlboundarycorrection=0;
+if isfield(model,'wlboundarycorrection')
+    hm.models(i).wlboundarycorrection=str2double(model.wlboundarycorrection);
 end
 if isfield(model,'flownesttype')
     hm.models(i).flowNestType=model.flownesttype;
@@ -799,6 +842,16 @@ if isfield(model,'mapplots')
                 if isfield(model.mapplots(j).mapplot.datasets(k).dataset,'clim')
                     hm.models(i).mapPlots(j).datasets(k).cLim=str2num(model.mapplots(j).mapplot.datasets(k).dataset.clim);
                 end
+
+                hm.models(i).mapPlots(j).datasets(k).cMinCutOff=[];
+                if isfield(model.mapplots(j).mapplot.datasets(k).dataset,'cmincutoff')
+                    hm.models(i).mapPlots(j).datasets(k).cMinCutOff=str2num(model.mapplots(j).mapplot.datasets(k).dataset.cmincutoff);
+                end
+                
+                hm.models(i).mapPlots(j).datasets(k).cMaxCutOff=[];
+                if isfield(model.mapplots(j).mapplot.datasets(k).dataset,'cmaxcutoff')
+                    hm.models(i).mapPlots(j).datasets(k).cMaxCutOff=str2num(model.mapplots(j).mapplot.datasets(k).dataset.cmaxcutoff);
+                end
                 
                 hm.models(i).mapPlots(j).datasets(k).polygon=[];
                 if isfield(model.mapplots(j).mapplot.datasets(k).dataset,'polygon')
@@ -829,6 +882,34 @@ if isfield(model,'mapplots')
                 if isfield(model.mapplots(j).mapplot.datasets(k).dataset,'barlabel')
                     hm.models(i).mapPlots(j).datasets(k).barLabel=model.mapplots(j).mapplot.datasets(k).dataset.barlabel;
                 end
+
+                % Argus merged image
+                hm.models(i).mapPlots(j).datasets(k).argusstation=[];
+                if isfield(model.mapplots(j).mapplot.datasets(k).dataset,'argusstation')
+                    hm.models(i).mapPlots(j).datasets(k).argusstation=model.mapplots(j).mapplot.datasets(k).dataset.argusstation;
+                end
+                hm.models(i).mapPlots(j).datasets(k).argusxorigin=0;
+                if isfield(model.mapplots(j).mapplot.datasets(k).dataset,'argusxorigin')
+                    hm.models(i).mapPlots(j).datasets(k).argusxorigin=str2num(model.mapplots(j).mapplot.datasets(k).dataset.argusxorigin);
+                end
+                hm.models(i).mapPlots(j).datasets(k).argusyorigin=0;
+                if isfield(model.mapplots(j).mapplot.datasets(k).dataset,'argusyorigin')
+                    hm.models(i).mapPlots(j).datasets(k).argusyorigin=str2num(model.mapplots(j).mapplot.datasets(k).dataset.argusyorigin);
+                end
+                hm.models(i).mapPlots(j).datasets(k).arguswidth=0;
+                if isfield(model.mapplots(j).mapplot.datasets(k).dataset,'arguswidth')
+                    hm.models(i).mapPlots(j).datasets(k).arguswidth=str2num(model.mapplots(j).mapplot.datasets(k).dataset.arguswidth);
+                end
+                hm.models(i).mapPlots(j).datasets(k).argusheight=0;
+                if isfield(model.mapplots(j).mapplot.datasets(k).dataset,'argusheight')
+                    hm.models(i).mapPlots(j).datasets(k).argusheight=str2num(model.mapplots(j).mapplot.datasets(k).dataset.argusheight);
+                end
+                hm.models(i).mapPlots(j).datasets(k).argusrotation=0;
+                if isfield(model.mapplots(j).mapplot.datasets(k).dataset,'argusrotation')
+                    hm.models(i).mapPlots(j).datasets(k).argusrotation=str2num(model.mapplots(j).mapplot.datasets(k).dataset.argusrotation);
+                end
+                
+                
                 
             end
         end

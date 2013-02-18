@@ -98,7 +98,7 @@ hm.jobDir=[hm.jobDir hm.scenario filesep];
 hm.h4.path=[hm.h4.path hm.scenario '/'];
 hm.modelDir=[hm.scenarioDir 'models' filesep];
 hm.archiveDir=hm.modelDir;
-hm.tempDir=[hm.runDir 'temp' filesep];
+hm.tempDir=[hm.scenarioDir 'temp' filesep];
 hm.exeDir=[hm.dataDir 'exe' filesep];
 MakeDir(hm.tempDir);
 

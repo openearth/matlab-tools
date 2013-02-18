@@ -70,7 +70,11 @@ else
                 end
                 jj=strmatch(lower(pname{2}),lower(nm),'exact');
                 
+                try
                 out=s.(ptype1{1})(ii).(ptype2{1}).(ptype1{2})(jj).(ptype2{2}).(par);
+                catch
+                    shite=1
+                end
             end
             
     end
