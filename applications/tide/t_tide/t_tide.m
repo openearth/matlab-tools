@@ -155,10 +155,8 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin);
 %
 % Pawlowicz, R., B. Beardsley, and S. Lentz, "Classical Tidal 
 %   "Harmonic Analysis Including Error Estimates in MATLAB 
-%    using T_TIDE", <a href="http://www.eos.ubc.ca/~rich/#T_Tide">Computers and Geosciences, 28, 929-937 (2002)</a>.
-%
-% (citation of this article would be appreciated if you find the
-%  toolbox useful).
+%    using <a href="http://www.eos.ubc.ca/~rich/#T_Tide">"T_TIDE"</a>, <a href="http://dx.doi.org/10.1016/S0098-3004(02)00013-4">Computers and Geosciences, 28, 929-937 (2002)</a>.
+%   (citation would be appreciated if you find the toolbox useful).
 %
 %See also: UTide
 
@@ -184,10 +182,11 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin);
 %                         isfinite for finite.
 %              23/ 3/11 - Corrected my conversion from psd to pwelch, thanks
 %                         to Dan Codiga and (especially) Evan Haug!
-%              25/ 7/12 - Gerben J. de Boer added support for
-%                         non-equidistant time vector and output sorting
+%                Jul/12 - added support for non-equidistant time vector (Gerben J. de Boer)
+%                Feb/13 - added option to sort screen/txt output for rapid assessment (Gerben J. de Boer)
+%                Feb/13 - added option return z0 (different than regular mean) (Gerben J. de Boer)
 
-% Version 1.3
+% Version 1.3+
 % $Id$
 % $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/tide/nc_t_tide
 
@@ -235,7 +234,7 @@ while length(varargin)>0,
 	     fid=1;
 	   otherwise
 	     [fid,mesg]=fopen(filen,'w');
-	     if fid==-1, error(msg); end;
+	     if fid==-1, error(mesg); end;
 	  end;
       case 'ray',
          if isnumeric(varargin{2}),
@@ -512,7 +511,7 @@ elseif ~isempty(stime),    % Time only
 else   % No time, no latitude												   
   vu=zeros(length(ju)+length(jinf),1);  										   
   f=ones(length(ju)+length(jinf),1);											   
-   nodcor=['Phases at central time ',datestr(centraltime)];											   
+   nodcor=['Phases at central time ',datestr(centraltime,' ')]; % empty central time will be error in future releases
 end															   
 fprintf(['   ',nodcor,'\n']);												   
 
@@ -741,7 +740,7 @@ else
       order = 'ascend' ;
    end
 
-   if      any(strfind(sor,'fre')); index = 1:size(tidecon,1)% default
+   if      any(strfind(sor,'fre')); index = 1:size(tidecon,1);% default
    elseif  any(strfind(sor,'amp'))|any(strfind(sor,'fma'));[dummy,index]=sort(tidecon(:,1    ),1,order);
    elseif  any(strfind(sor,'fmi'))                        ;[dummy,index]=sort(tidecon(:,3    ),1,order);
    elseif  any(strfind(sor,'pha'))                        ;[dummy,index]=sort(tidecon(:,end-1),1,order);
@@ -807,9 +806,9 @@ xout=reshape(xout,inn,inm);
 switch nargout,
   case {0,3,4}
   case {1}
-   nameu = struct('name',nameu,'freq',fu,'tidecon',tidecon,'type',ltype);
+   nameu = struct('name',nameu,'freq',fu,'tidecon',tidecon,'type',ltype,'z0',z0,'dz0',dz0);
   case {2}   
-   nameu = struct('name',nameu,'freq',fu,'tidecon',tidecon,'type',ltype);
+   nameu = struct('name',nameu,'freq',fu,'tidecon',tidecon,'type',ltype,'z0',z0,'dz0',dz0);
    fu=xout;
 end;
    

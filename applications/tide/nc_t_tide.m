@@ -73,6 +73,7 @@ function varargout = nc_t_tide(varargin)
    OPT.ddatenumeps   = 1e-8;
    OPT.synth         = 2;
    OPT.sort          = 'freq';
+   OPT.refdatenum    = datenum(1970,1,1);
    
    OPT.title         = ' ';
    OPT.institution   = ' ';
@@ -107,7 +108,12 @@ else
    
       OPT = setproperty(OPT,varargin{3:end});
    
+      if ~isempty(OPT.period)
       mask = find(( t >= OPT.period(1)) & (t <= OPT.period(end)));
+      else
+      mask = 1:length(t);
+      OPT.period = [t(1) t(end)];
+      end
       dt = diff(t(mask)).*24; % hour
 
       if length(unique([dt])) > 1
@@ -123,13 +129,17 @@ else
          t_tide_err = 'cboot';
       end
       
+      output = 'none';
+      if ~isempty(OPT.ascfile)
       mkdir(fileparts(OPT.ascfile));
-      
+      output = [OPT.ascfile];
+      end
+     
       [tidestruc,pout]=t_tide(var(mask),...
                  'latitude'  ,OPT.lat,... % required for nodal corrections
                  'start'     ,t(mask(1)),...
                  'interval'  ,dt,... % in hours
-                 'output'    ,[OPT.ascfile],...
+                 'output'    ,output,...
                  'error'     ,t_tide_err,...
                  'sort'      ,OPT.sort,...
                  'synth'     ,OPT.synth);
@@ -138,21 +148,30 @@ else
 
       D.component_name  = tidestruc.name;
       D.frequency       = tidestruc.freq;
-      D.amplitude       = tidestruc.tidecon(:,1);
-      D.amplitude_error = tidestruc.tidecon(:,2);
-      D.phase           = tidestruc.tidecon(:,3);
-      D.phase_error     = tidestruc.tidecon(:,4);
-      D.snr             = (D.amplitude./D.amplitude_error).^2;  % signal to noise ratio (t_tide line 523)
+      if isreal(var)
+      V.data.fmaj       = tidestruc.tidecon(:,1);V.name.fmaj = 'amplitude'      ;V.units.fmaj = OPT.units     ;V.long_name.fmaj = 'amplitude of tidal component';
+      V.data.emaj       = tidestruc.tidecon(:,2);V.name.emaj = 'amplitude_error';V.units.emaj = OPT.units     ;V.long_name.emaj = 'estimate of error of amplitude of tidal component';
+      V.data.pha        = tidestruc.tidecon(:,3);V.name.pha  = 'phase'          ;V.units.pha  = 'degrees'     ;V.long_name.pha  = 'phase of tidal component';
+      V.data.epha       = tidestruc.tidecon(:,4);V.name.epha = 'phase_error'    ;V.units.epha = 'degrees'     ;V.long_name.epha = 'estimate of error of phase of tidal component';
+      else
+      V.data.fmaj       = tidestruc.tidecon(:,1);V.name.fmaj = 'sema'           ;V.units.fmaj = OPT.units     ;V.long_name.fmaj = 'major ellipse axis of tidal component';
+      V.data.emaj       = tidestruc.tidecon(:,2);V.name.emaj = 'sema_error'     ;V.units.emaj = OPT.units     ;V.long_name.emaj = 'estimate of error of major ellipse axis of tidal component';
+      V.data.fmin       = tidestruc.tidecon(:,3);V.name.fmin = 'semi'           ;V.units.fmin = OPT.units     ;V.long_name.fmin = 'minor ellipse axis of tidal component';
+      V.data.emin       = tidestruc.tidecon(:,4);V.name.emin = 'semi_error'     ;V.units.emin = OPT.units     ;V.long_name.emin = 'estimate of error of minor ellipse axis of tidal component';
+      V.data.finc       = tidestruc.tidecon(:,5);V.name.finc = 'inc'            ;V.units.finc = 'degrees_true';V.long_name.finc = 'ellipse orientation';
+      V.data.einc       = tidestruc.tidecon(:,6);V.name.einc = 'inc_error'      ;V.units.einc = 'degrees_true';V.long_name.einc = 'estimate of error of ellipse orientation';
+      V.data.pha        = tidestruc.tidecon(:,7);V.name.pha  = 'phase'          ;V.units.pha  = 'degrees'     ;V.long_name.pha  = 'phase of tidal component';
+      V.data.epha       = tidestruc.tidecon(:,8);V.name.epha = 'phase_error'    ;V.units.epha = 'degrees'     ;V.long_name.epha = 'estimate of error of phase of tidal component';
+      end
+      D.snr             = (V.data.fmaj./V.data.emaj).^2;  % signal to noise ratio (t_tide line 523)
+      
+      end
       D.significance    = D.snr > OPT.synth;
-
-end
 
       D.platform_id     = OPT.platform_id  ;  
       D.platform_name   = OPT.platform_name;
       D.longitude       = OPT.lon;
       D.latitude        = OPT.lat;
-      D.time            = OPT.period(1) - datenum(1970,1,1);
-      D.period          = OPT.period' - datenum(1970,1,1);
 
 %% Save struct to netCDF file
       
@@ -162,10 +181,10 @@ end
    nc_attput(OPT.ncfile, nc_global, 'institution'   , OPT.institution);
    nc_attput(OPT.ncfile, nc_global, 'source'        , OPT.source);
    nc_attput(OPT.ncfile, nc_global, 'history'       , OPT.history);
-   nc_attput(OPT.ncfile, nc_global, 'references'    , 'Pawlowicz, R., B. Beardsley, and S. Lentz, "Classical Tidal Harmonic Analysis Including Error Estimates in MATLAB using T_TIDE", Computers and Geosciences, 2002.');
+   nc_attput(OPT.ncfile, nc_global, 'references'    , 'Pawlowicz, R., B. Beardsley, and S. Lentz, "Classical Tidal Harmonic Analysis Including Error Estimates in MATLAB using T_TIDE", Computers and Geosciences, 2002. http://dx.doi.org/10.1016/S0098-3004(02)00013-4');
    nc_attput(OPT.ncfile, nc_global, 'email'         , OPT.email);
    
-   nc_attput(OPT.ncfile, nc_global, 'version'       , '$Id$');
+   nc_attput(OPT.ncfile, nc_global, 'version'       , '$HeadURL$ $Id$');
    nc_attput(OPT.ncfile, nc_global, 'Conventions'   , 'CF-1.4');
    nc_attput(OPT.ncfile, nc_global, 'disclaimer'    , 'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.');
    
@@ -227,19 +246,19 @@ end
    nc.Dimension    = {'time'};
    nc.Attribute(1) = struct('Name', 'long_name'      ,'Value', 'begin of interval of tidal analysis');
    nc.Attribute(2) = struct('Name', 'standard_name'  ,'Value', 'time');
-   nc.Attribute(3) = struct('Name', 'units'          ,'Value', 'days since 1970-01-01 00:00:00 +01:00');
+   nc.Attribute(3) = struct('Name', 'units'          ,'Value',['days since ',datestr(OPT.refdatenum,'yyyy-mm-dd HH:MM')]);
    nc.Attribute(4) = struct('Name', 'bounds'         ,'Value', 'period');
    nc_addvar         (OPT.ncfile,nc);
-   nc_varput         (OPT.ncfile,nc.Name,D.time);clear nc
+   nc_varput         (OPT.ncfile,nc.Name,t(mask(1)) - OPT.refdatenum);clear nc
 
    nc.Name = 'period';
    nc.Datatype     = 'double';
    nc.Dimension    = {'time','bounds'};
    nc.Attribute(1) = struct('Name', 'long_name'      ,'Value', 'begin and end of interval of tidal analysis');
    nc.Attribute(2) = struct('Name', 'standard_name'  ,'Value', 'time');
-   nc.Attribute(3) = struct('Name', 'units'          ,'Value', 'days since 1970-01-01 00:00:00 +01:00');
+   nc.Attribute(3) = struct('Name', 'units'          ,'Value',['days since ',datestr(OPT.refdatenum,'yyyy-mm-dd HH:MM')]);
    nc_addvar         (OPT.ncfile,nc);
-   nc_varput         (OPT.ncfile,nc.Name,D.period(:)');clear nc % 2D array so shape is relevant
+   nc_varput         (OPT.ncfile,nc.Name,squeeze(t(mask([1 end]))) - OPT.refdatenum);clear nc % 2D array so shape is relevant
 
    nc.Name = 'component_name';
    nc.Datatype     = 'char';
@@ -256,41 +275,19 @@ end
    nc_addvar         (OPT.ncfile,nc);
    nc_varput         (OPT.ncfile,nc.Name,D.frequency);clear nc
    
-   nc.Name = 'amplitude';
+fldnames = fieldnames(V.data);
+for ifld=1:length(fldnames)
+   fldname = fldnames{ifld};
+   nc.Name = V.name.(fldname);
    nc.Datatype     = 'double';
    nc.Dimension    = {'frequency'};
-   nc.Attribute(1) = struct('Name', 'long_name'      ,'Value', 'amplitude of tidal component');
-   nc.Attribute(2) = struct('Name', 'units'          ,'Value', OPT.units);
+   nc.Attribute(1) = struct('Name', 'long_name'      ,'Value', V.long_name.(fldname));
+   nc.Attribute(2) = struct('Name', 'units'          ,'Value',     V.units.(fldname));
    nc.Attribute(3) = struct('Name', 'cell_methods'   ,'Value', 'time: period area: point');
    nc_addvar         (OPT.ncfile,nc);
-   nc_varput         (OPT.ncfile,nc.Name,D.amplitude);clear nc
-   
-   nc.Name = 'amplitude_error';
-   nc.Datatype     = 'double';
-   nc.Dimension    = {'frequency'};
-   nc.Attribute(1) = struct('Name', 'long_name'      ,'Value', 'estimate of error of amplitude of tidal component');
-   nc.Attribute(2) = struct('Name', 'units'          ,'Value', OPT.units);
-   nc.Attribute(3) = struct('Name', 'cell_methods'   ,'Value', 'time: period area: point');
-   nc_addvar         (OPT.ncfile,nc);
-   nc_varput         (OPT.ncfile,nc.Name,D.phase);clear nc
-   
-   nc.Name = 'phase';
-   nc.Datatype     = 'double';
-   nc.Dimension    = {'frequency'};
-   nc.Attribute(1) = struct('Name', 'long_name'      ,'Value', 'phase of tidal component');
-   nc.Attribute(2) = struct('Name', 'units'          ,'Value', 'degree');
-   nc.Attribute(3) = struct('Name', 'cell_methods'   ,'Value', 'time: period area: point');
-   nc_addvar         (OPT.ncfile,nc);
-   nc_varput         (OPT.ncfile,nc.Name,D.phase);clear nc
-   
-   nc.Name = 'phase_error';
-   nc.Datatype     = 'double';
-   nc.Dimension    = {'frequency'};
-   nc.Attribute(1) = struct('Name', 'long_name'      ,'Value', 'estimate of error of phase of tidal component');
-   nc.Attribute(2) = struct('Name', 'units'          ,'Value', 'degree');
-   nc.Attribute(3) = struct('Name', 'cell_methods'   ,'Value', 'time: period area: point');
-   nc_addvar         (OPT.ncfile,nc);
-   nc_varput         (OPT.ncfile,nc.Name,D.phase);clear nc
+   nc_varput         (OPT.ncfile,nc.Name,V.data.(fldname));clear nc
+
+end
    
    nc.Name = 'significance';
    nc.Datatype     = 'int';
