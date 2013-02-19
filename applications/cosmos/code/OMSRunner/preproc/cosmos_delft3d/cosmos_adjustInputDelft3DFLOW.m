@@ -334,7 +334,6 @@ try
         dep(~isnan(zbw))=zbw(~isnan(zbw));
         wldep('write',[tmpdir model.name '.dep'],dep);
     end
+catch
+    WriteErrorLogFile(hm,'Something went wrong while getting bathymetry from BeachWizard - see oms.err');
 end
-
-
-
