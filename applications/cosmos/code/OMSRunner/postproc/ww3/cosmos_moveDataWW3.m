@@ -3,15 +3,11 @@ function cosmos_moveDataWW3(hm,m)
 model=hm.models(m);
 
 rundir=[hm.jobDir model.name filesep];
-archivedir=[hm.archiveDir filesep model.continent filesep model.name filesep 'archive' filesep];
-cycledir=[archivedir hm.cycStr filesep];
+inpdir=model.cycledirinput;
+outdir=model.cyclediroutput;
+restartdir=[model.dir 'restart' filesep];
 
 delete([rundir 'out_grd.ww3']);
-
-dr=model.dir;
-
-inpdir=[cycledir 'input'];
-outdir=[cycledir 'output'];
 
 [status,message,messageid]=movefile([rundir '*.inp'],inpdir,'f');
 [status,message,messageid]=movefile([rundir '*.bat'],inpdir,'f');
@@ -19,20 +15,19 @@ outdir=[cycledir 'output'];
 [status,message,messageid]=movefile([rundir '*.obs'],inpdir,'f');
 [status,message,messageid]=movefile([rundir '*.bot'],inpdir,'f');
 [status,message,messageid]=movefile([rundir 'wind.ww3'],inpdir,'f');
+
 % Don't copy restart file
 % [status,message,messageid]=movefile([rundir 'restart.ww3'],inpdir,'f');
-
-MakeDir(dr,'restart');
 
 % First check if the restart file exists in the run directory
 flist=dir([rundir 'restart.*.zip']);
 for ii=1:length(flist)
     fname=flist(ii).name;
-    [status,message,messageid]=movefile([rundir fname],[dr 'restart'],'f');
+    [status,message,messageid]=movefile([rundir fname],restartdir,'f');
 end
 
 % Throw away old restart files (10 days or older)
-rstfiles=dir([dr 'restart' filesep 'restart.*.zip']);
+rstfiles=dir([restartdir 'restart.*.zip']);
 nrst=length(rstfiles);
 if nrst>0
     for j=1:nrst
@@ -40,7 +35,7 @@ if nrst>0
         dt=rstfil(13:end-4);
         rsttime=datenum(dt,'yyyymmdd.HHMMSS');
         if rsttime<model.restartTime-10
-            delete([dr 'restart' filesep rstfil]);
+            delete([restartdir rstfil]);
         end        
     end
 end

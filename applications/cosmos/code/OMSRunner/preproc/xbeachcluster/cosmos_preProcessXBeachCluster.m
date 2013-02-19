@@ -6,11 +6,11 @@ np=model.nrProfiles;
 
 tmpdir=hm.tempDir;
 
-for i=1:np
-    if model.profile(i).run
-        [status,message,messageid]=copyfile([model.dir 'input' filesep model.profile(i).name],[tmpdir model.profile(i).name],'f');
-    end
-end
+% for i=1:np
+%     if model.profile(i).run
+%         [status,message,messageid]=copyfile([model.dir 'input' filesep model.profile(i).name],[tmpdir model.profile(i).name],'f');
+%     end
+% end
 
 if model.waveNested
     ok=cosmos_nestingXBeachClusterWave(hm,m);

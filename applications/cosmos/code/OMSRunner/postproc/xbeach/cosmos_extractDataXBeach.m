@@ -1,10 +1,8 @@
 function cosmos_extractDataXBeach(hm,m)
 
 model=hm.models(m);
-archdir=[hm.archiveDir filesep model.continent filesep model.name filesep 'archive' filesep];
-cycledir=[archdir hm.cycStr filesep];
 
-outdir=[cycledir 'output' filesep];
+outdir=model.cyclediroutput;
 
 XBdims=getdimensions(outdir);
 
@@ -83,7 +81,7 @@ for i = 1:length(fpars)
         
         s.Time(end+1)=s.Time(end)+1/24;
         
-        fname=[model.archiveDir hm.cycStr filesep 'maps' filesep par '.mat'];
+        fname=[model.cycledirmaps par '.mat'];
         switch length(parfiles)
             case 1
                 save(fname,'-struct','s','Parameter','Time','X','Y','Val');
@@ -95,7 +93,7 @@ end
 
 %% Time Series
 
-archdir=[model.archiveDir 'appended' filesep 'timeseries' filesep];
+archdir=[model.appendeddirtimeseries];
 
 points={'p1','p2'};
 npoints=2;

@@ -2,9 +2,9 @@ function cosmos_makeMapKMZs(hm,m)
 % Makes map plots and KMZs
 
 model=hm.models(m);
-archivedir=[hm.archiveDir filesep model.continent filesep model.name filesep 'archive' filesep];
-cycledir=[archivedir hm.cycStr filesep];
-appendeddir=[archivedir 'appended' filesep];
+
+fdr=model.cycledirfigures;
+appendeddirmaps=model.appendeddirmaps;
 
 t=0;
 
@@ -57,7 +57,7 @@ try
                         s(id).data.X=xldb;
                         s(id).data.Y=yldb;
                     otherwise
-                        fname=[appendeddir 'maps' filesep par{id} '.mat'];
+                        fname=[appendeddirmaps par{id} '.mat'];
                         if exist(fname,'file')
                             s(id).data=load(fname);
                         else
@@ -110,19 +110,18 @@ try
                 n3=1;
                 it1=1;
             end
-            
+          
             switch lower(plotRoutine)
 
                 case{'coloredvectors'}
                     % Quiver KML
-                    clrbarname=[cycledir 'figures' filesep name '.colorbar.png'];
+                    clrbarname=[fdr name '.colorbar.png'];
                     cosmos_makeColorBar(clrbarname,'contours',clim(1):clim(2):clim(3),'colormap',clmap,'label',barlabel,'decimals',cdec);
                     xx=s(1).data.X;
                     yy=s(1).data.Y;
                     tim=s(id).data.Time(it1:n3:end);
                     uu=s(1).data.U(it1:n3:end,:,:);
                     vv=s(1).data.V(it1:n3:end,:,:);
-                    fdr=[cycledir 'figures' filesep];
                     thin=model.mapPlots(im).datasets.thinning;
                     thinX=model.mapPlots(im).datasets.thinningX;
                     thinY=model.mapPlots(im).datasets.thinningY;
@@ -142,14 +141,13 @@ try
 
                 case{'vectorxml'}
                     % Quiver KML
-                    clrbarname=[cycledir 'figures' filesep name '.colorbar.png'];
+                    clrbarname=[fdr name '.colorbar.png'];
                     cosmos_makeColorBar(clrbarname,'contours',clim(1):clim(2):clim(3),'colormap',clmap,'label',barlabel,'decimals',cdec);
                     xx=s(1).data.X;
                     yy=s(1).data.Y;
                     tim=s(id).data.Time(it1:n3:end);
                     uu=s(1).data.U(it1:n3:end,:,:);
                     vv=s(1).data.V(it1:n3:end,:,:);
-                    fdr=[cycledir 'figures' filesep];
                     thin=model.mapPlots(im).datasets.thinning;
                     thinX=model.mapPlots(im).datasets.thinningX;
                     thinY=model.mapPlots(im).datasets.thinningY;
@@ -160,7 +158,7 @@ try
                         thinY=thin;
                     end
                     if ~isempty(model.mapPlots(im).datasets(1).polygon)
-                        polxy=load([model.dir 'data' filesep model.mapPlots(im).datasets(1).polygon]);
+                        polxy=load([model.datafolder 'data' filesep model.mapPlots(im).datasets(1).polygon]);
                         if ~strcmpi(model.coordinateSystemType,'geographic')
                             xp=squeeze(polxy(:,1));
                             yp=squeeze(polxy(:,2));
@@ -180,7 +178,7 @@ try
                     
                 case{'coloredcurvyarrows','coloredcurvylines'}
                     % Curvec KML
-                    clrbarname=[cycledir 'figures' filesep name '.colorbar.png'];
+                    clrbarname=[fdr name '.colorbar.png'];
                     cosmos_makeColorBar(clrbarname,'contours',clim(1):clim(2):clim(3),'colormap',clmap,'label',barlabel,'decimals',cdec);
                     xx=s(1).data.X;
                     yy=s(1).data.Y;
@@ -190,7 +188,6 @@ try
                     tim=s(id).data.Time(it1:n3:end);
                     uu=s(1).data.U(it1:n3:end,:,:);
                     vv=s(1).data.V(it1:n3:end,:,:);
-                    fdr=[cycledir 'figures' filesep];
                     if ~isempty(model.mapPlots(im).datasets(1).polygon)
                         polxy=load([model.dir 'data' filesep model.mapPlots(im).datasets(1).polygon]);
                         if ~strcmpi(model.coordinateSystemType,'geographic')
@@ -232,7 +229,7 @@ try
                         it2=0;
                         t2=[];
                         
-                        clrbarname=[cycledir 'figures' filesep name '.colorbar.png'];
+                        clrbarname=[fdr name '.colorbar.png'];
                         cosmos_makeColorBar(clrbarname,'contours',clim(1):clim(2):clim(3),'colormap',clmap,'label',barlabel,'decimals',cdec);
 
                         for it=it1:n3:nt
@@ -291,7 +288,7 @@ try
                                 t2(it2)=t;
                                 
                                 % Figure Properties
-                                figname=[cycledir 'figures' filesep name '.' datestr(t,'yyyymmdd.HHMMSS') '.png'];
+                                figname=[fdr name '.' datestr(t,'yyyymmdd.HHMMSS') '.png'];
                                 
                                 xlim=model.xLimPlot;
                                 ylim=model.yLimPlot;
@@ -307,9 +304,7 @@ try
                             end
                             
                         end
-                        
-                        figdr=[cycledir 'figures' filesep];
-                        
+                                                
                         flist=[];
                         
                         for it=1:length(t2)
@@ -317,7 +312,7 @@ try
                         end
                         
                         if ~isempty(flist)
-                            writeMapKMZ('filename',[name '.' model.name],'dir',figdr,'filelist',flist,'colorbar',[name '.colorbar.png'],'xlim',xlim,'ylim',ylim,'deletefiles',1);
+                            writeMapKMZ('filename',[name '.' model.name],'dir',fdr,'filelist',flist,'colorbar',[name '.colorbar.png'],'xlim',xlim,'ylim',ylim,'deletefiles',1);
                         end
                         
                     end
@@ -336,7 +331,7 @@ try
                         csname=model.coordinateSystem;
                         cstype=model.coordinateSystemType;
                         kmzfile=['argusmerged.' model.name];
-                        argus2kmz(kmzfile,station,t,figdr,xori,yori,wdt,hgt,rot,csname,cstype);
+                        argus2kmz(kmzfile,station,t,fdr,xori,yori,wdt,hgt,rot,csname,cstype);
                     end
                     
             end

@@ -1,8 +1,9 @@
 function cosmos_extractDataXBeachCluster(hm,m)
 
 model=hm.models(m);
-archivedir=[hm.archiveDir filesep model.continent filesep model.name filesep 'archive' filesep];
-cycledir=[archivedir hm.cycStr filesep];
+
+cycledirnetcdf=model.cycledirnetcdf;
+outdir=model.cyclediroutput;
 
 for ip=1:model.nrProfiles
     
@@ -12,16 +13,12 @@ for ip=1:model.nrProfiles
 
     disp(['Extracting data ' model.name ' - profile ' profile]);
 
-    inputdir=[cycledir 'input' filesep profile filesep];
-    outputdir=[cycledir 'output' filesep profile filesep];
-    archivedir=[cycledir 'netcdf' filesep profile filesep];
+    inputdir=[model.cycledirinput profile filesep];
+    outputdir=[outdir profile filesep];
+    archivedir=[cycledirnetcdf profile filesep];
     
     % Check if simulation has run
     if exist([outputdir 'dims.dat'],'file')
-        
-        if ~exist(archivedir,'dir')
-            mkdir(archivedir);
-        end
         
         tref=model.tFlowStart;
         

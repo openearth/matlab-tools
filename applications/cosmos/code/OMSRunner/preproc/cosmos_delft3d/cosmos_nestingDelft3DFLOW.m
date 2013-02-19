@@ -8,7 +8,7 @@ switch lower(model.flowNestType)
     case{'oceanmodel'}
 
         % Nesting in ocean model
-        datafolder=[hm.scenarioDir 'oceanmodels' filesep model.oceanModel filesep];
+        datafolder=[hm.oceanmodelsfolder model.oceanModel filesep];
         dataname=model.oceanModel;
         wlbndfile=[model.name '.wl.bnd'];
         wlbcafile=[model.name '.wl.bca'];
@@ -28,14 +28,14 @@ switch lower(model.flowNestType)
 
         mm=model.flowNestModelNr;
         dr=hm.models(mm).dir;       
-        outputdir=[dr 'archive' hm.cycStr filesep 'output' filesep];
+        outputdir=[dr 'archive' filesep 'output' filesep hm.cycStr filesep];
         usematlabnesthd2=1;
 
         if usematlabnesthd2
 
             runid1=model.runid;
             runid2=hm.models(mm).runid;
-            nstadm=[model.dir 'nesting' filesep model.name '.nst'];
+            nstadm=[model.datafolder 'nesting' filesep model.name '.nst'];
             zcor=hm.models(mm).zLevel-model.zLevel+model.zSeaLevelRise;
             
             hisfile=[outputdir 'trih-' runid2 '.dat'];

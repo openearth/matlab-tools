@@ -356,7 +356,7 @@ for iw=1:length(model.webSite)
     end
 
     %% Hazards
-    hazarchdir=[model.archiveDir hm.cycStr filesep 'hazards' filesep];
+    hazarchdir=model.cycledirhazards;
     flist=dir([hazarchdir '*.xml']);
     for ih=1:length(flist)
         s=xml2struct([hazarchdir flist(ih).name]);

@@ -1,9 +1,8 @@
 function cosmos_makeTimeSeriesPlots(hm,m)
 
 model=hm.models(m);
-archivedir=[hm.archiveDir filesep model.continent filesep model.name filesep 'archive' filesep];
-appendeddir=[archivedir 'appended' filesep];
-cycledir=[archivedir hm.cycStr filesep];
+appendeddir=model.appendeddirtimeseries;
+figdir=model.cycledirfigures;
 
 try
     
@@ -44,7 +43,7 @@ try
                     
                     switch lower(model.stations(i).plots(iplt).datasets(ip).type)
                         case{'computed'}
-                            fname=[appendeddir 'timeseries' filesep par '.' station '.mat'];
+                            fname=[appendeddir par '.' station '.mat'];
                             if exist(fname,'file')
                                 nd=nd+1;
                                 tms(nd).color='k';
@@ -165,8 +164,9 @@ try
                     ttl=[partit ' - ' model.stations(i).longName];
                     
                     % And export the figure
-                    figname=[cycledir 'figures' filesep par '.' station '.png'];
-                    cosmos_timeSeriesPlot(figname,tms,'ylabel',ylab,'title',ttl,'xlim',tlim,'ylim',ylim,'xticks',xticks,'yticks',yticks,'timelabel',model.stations(i).timeZoneString);
+                    figname=[figdir par '.' station '.png'];
+                    cosmos_timeSeriesPlot(figname,tms,'ylabel',ylab,'title',ttl,'xlim',tlim,'ylim',ylim,'xticks',xticks,'yticks',yticks, ...
+                        'timelabel',model.stations(i).timeZoneString);
                     
                     % Cell array for html code
                     ifg=ifg+1;
@@ -176,7 +176,7 @@ try
             end
             
             %% Write html code
-            fi2=fopen([cycledir 'figures' filesep station '.html'],'wt');
+            fi2=fopen([figdir station '.html'],'wt');
             fprintf(fi2,'%s\n','<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">');
             fprintf(fi2,'%s\n','<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">');
             fprintf(fi2,'%s\n','<head>');

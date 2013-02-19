@@ -33,11 +33,11 @@ for j=1:n
 
         % And it's not a WAVEWATCH III model
 
-        locfile=[hm.models(i).dir 'nesting' filesep model.name '.loc'];
+        locfile=[hm.models(i).datafolder 'nesting' filesep model.name '.loc'];
 
         if ~exist(locfile,'file') && strcmpi(hm.models(i).type,'delft3dflowwave') 
             % Find boundary points nested grid
-            grdname=[hm.models(i).dir 'input' filesep hm.models(i).name '_swn.grd'];
+            grdname=[hm.models(i).datafolder 'input' filesep hm.models(i).name '_swn.grd'];
             [xg,yg,enc]=wlgrid('read',grdname);
             nstep=10;
             [xb,yb]=getGridOuterCoordinates(xg,yg,nstep);
@@ -49,7 +49,7 @@ for j=1:n
             dx=model.dX;
             dy=model.dY;
 
-            depname=[model.dir filesep 'input' filesep model.name '.bot'];
+            depname=[model.datafolder 'input' filesep model.name '.bot'];
             
             if ~strcmpi(hm.models(i).coordinateSystem,model.coordinateSystem) || ~strcmpi(hm.models(i).coordinateSystemType,model.coordinateSystemType)
                 [xb,yb]=convertCoordinates(xb,yb,'persistent','CS1.name',hm.models(i).coordinateSystem,'CS1.type',hm.models(i).coordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');

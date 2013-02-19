@@ -1,34 +1,54 @@
 function hm=cosmos_readModels(hm)
 
-dirname=[hm.scenarioDir 'models' filesep];
+dirname=[hm.runDir 'models' filesep];
 
 continent=hm.continents;
 
-i=0;
-
-hm.models=[];
-
+%% Find all available models
+n=0;
 for jj=1:length(continent)
     cntdir=[dirname continent{jj}];
     if exist(cntdir,'dir')
         dr=dir(cntdir);
         for kk=1:length(dr)
-            if dr(kk).isdir && ~strcmpi(dr(kk).name(1),'.')
-
-                fname=[dirname continent{jj} filesep dr(kk).name filesep dr(kk).name '.xml'];                
-                i=i+1;
-                [hm,ok]=cosmos_readModel(hm,fname,i);
-
-                if ~ok
-                    i=i-1;
+            if dr(kk).isdir
+                switch dr(kk).name
+                    case{'.','..'}
+                    otherwise
+                        n=n+1;
+                        models{n}=dr(kk).name;
+                        continents{n}=continent{jj};
                 end
-
             end
         end
     end
 end
 
-hm.nrModels=i;
+% Models in scenario have already been read in cosmos_readScenario
+
+for im=1:length(hm.models)
+    
+    imd=strmatch(hm.models(im).name,models,'exact');
+
+    fname=[dirname continents{imd} filesep hm.models(im).name filesep hm.models(im).name '.xml'];
+    dr=[dirname continents{imd} filesep hm.models(im).name filesep];
+    [model,ok]=cosmos_readModel(hm,fname,dr);
+    
+    if ok
+        fld=fieldnames(model);
+        for ii=1:length(fld)
+            hm.models(im).(fld{ii})=model.(fld{ii});
+            hm.models(im).datafolder=[dirname continents{imd} filesep hm.models(im).name filesep];
+        end
+    else
+        disp([dr(kk).name ' skipped']);
+    end
+    
+end
+
+% Now determine which models are nested in these models
+
+hm.nrModels=length(hm.models);
 
 for i=1:hm.nrModels
     hm.modelNames{i}=hm.models(i).longName;
@@ -54,4 +74,3 @@ for i=1:hm.nrModels
         hm.models(mm).nestedWaveModels(n+1)=i;
     end
 end
-

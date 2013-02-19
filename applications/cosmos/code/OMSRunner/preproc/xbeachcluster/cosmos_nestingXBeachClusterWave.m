@@ -4,7 +4,7 @@ tmpdir=hm.tempDir;
 
 mm=hm.models(m).waveNestModelNr;
 
-outputdir=[hm.models(mm).dir 'archive' hm.cycStr filesep 'output' filesep];
+outputdir=[hm.models(mm).dir 'archive' filesep 'output' filesep hm.cycStr filesep];
 
 np=hm.models(m).nrProfiles;
 

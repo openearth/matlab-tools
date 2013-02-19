@@ -1,5 +1,7 @@
 function ExtractGrads(hm,m)
 
+model=hm.models(m);
+
 [hs0,header]=read_grads('ww3.ctl','HS');
 
 [tp0,header]=read_grads('ww3.ctl','PEAKP');
@@ -19,8 +21,6 @@ ww3.lat=header.YDEF.vec;
 
 % pars={'hs','tp'};
 
-archdir=hm.models(m).archiveDir;
-
 for i=1:n
 
     t=t0+(i-1)*dt;
@@ -35,7 +35,7 @@ for i=1:n
     hs=hs';
     hs(hs<-999)=NaN;
     s.Val=hs;
-    fout=[archdir 'appended' filesep 'maps' filesep 'hs.' datestr(t,'yyyymmdd.HHMMSS') '.mat'];
+    fout=[model.appendeddirmaps 'hs.' datestr(t,'yyyymmdd.HHMMSS') '.mat'];
     save(fout,'-struct','s','Parameter','Time','x','y','Val');
 
 
@@ -49,7 +49,7 @@ for i=1:n
     tp=tp';
     tp(tp<-999)=NaN;
     s.Val=tp;
-    fout=[archdir 'appended' filesep 'maps' filesep 'tp.' datestr(t,'yyyymmdd.HHMMSS') '.mat'];
+    fout=[model.appendeddirmaps 'tp.' datestr(t,'yyyymmdd.HHMMSS') '.mat'];
     save(fout,'-struct','s','Parameter','Time','x','y','Val');
 
     
@@ -110,7 +110,7 @@ hs=squeeze(hs0(:,:,1,ifirst:end));
 hs=permute(hs,[3 2 1]);
 hs(hs<-999)=NaN;
 s.Val=hs;
-fout=[archdir hm.cycStr filesep 'maps' filesep 'hs.mat'];
+fout=[model.cycledirmaps 'hs.mat'];
 save(fout,'-struct','s','Parameter','Time','X','Y','Val');
 
 clear hs hs0
@@ -126,5 +126,5 @@ tp=squeeze(tp0(:,:,1,ifirst:end));
 tp=permute(tp,[3 2 1]);
 tp(tp<-999)=NaN;
 s.Val=tp;
-fout=[archdir hm.cycStr filesep 'maps' filesep 'tp.mat'];
+fout=[model.cycledirmaps 'tp.mat'];
 save(fout,'-struct','s','Parameter','Time','X','Y','Val');

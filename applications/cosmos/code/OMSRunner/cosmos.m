@@ -5,6 +5,9 @@ delete(timerfind);
 hm=cosmos_readConfigFile;
 hm=cosmos_readScenario(hm);
 
+makedir([hm.scenarioDir 'joblist']);
+makedir([hm.scenarioDir 'cyclelist']);
+
 % Read all data
 wb = waitbox('Loading tide database ...');
 hm=getTideStations(hm);

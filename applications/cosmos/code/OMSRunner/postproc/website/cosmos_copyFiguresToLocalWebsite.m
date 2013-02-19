@@ -1,16 +1,15 @@
 function cosmos_copyFiguresToLocalWebsite(hm,m)
 
 model=hm.models(m);
-archivedir=[hm.archiveDir filesep model.continent filesep model.name filesep 'archive' filesep];
-cycledir=[archivedir hm.cycStr filesep];
+cycledir=model.cycledirfigures;
 
 dr=model.dir;
 cont=model.continent;
-dir1=[cycledir 'figures' filesep '*.*'];
+dir1=[cycledir '*.*'];
 dir2=[hm.webDir 'scenarios' filesep  hm.scenario filesep  cont  filesep  model.name filesep 'figures'];
 
 try
-    MakeDir([hm.webDir 'scenarios' filesep],hm.scenario,cont,model.name,'figures');
+    makedir([hm.webDir 'scenarios' filesep],hm.scenario,cont,model.name,'figures');
     delete([dir2 filesep '*.html']);
     delete([dir2 filesep '*.kmz']);
     delete([dir2 filesep '*.png']);
@@ -21,9 +20,9 @@ end
 
 if model.forecastplot.plot
     try
-        dir3=[cycledir 'figures' filesep 'forecast' filesep '*.*'];
-        MakeDir([hm.webDir 'zandmotor' filesep 'forecast' filesep],'results');
-        MakeDir([hm.webDir 'zandmotor' filesep 'forecast' filesep],'results',hm.models(m).forecastplot.name);
+        dir3=[cycledir 'forecast' filesep '*.*'];
+        makedir([hm.webDir 'zandmotor' filesep 'forecast' filesep],'results');
+        makedir([hm.webDir 'zandmotor' filesep 'forecast' filesep],'results',hm.models(m).forecastplot.name);
         dir4=[hm.webDir 'zandmotor' filesep 'forecast' filesep 'results' filesep hm.models(m).forecastplot.name];
         delete([dir4 filesep '*.xml']);
         delete([dir4 filesep '*.png']);

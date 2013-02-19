@@ -1,22 +1,23 @@
 function cosmos_nestingXBeachClusterFlow(hm,m)
 
-mm=hm.models(m).flowNestModelNr;
+model=hm.models(m);
+mm=model.flowNestModelNr;
 
 dr=hm.models(mm).dir;
 
-outputdir=[dr 'archive' hm.cycStr filesep 'output' filesep];
+outputdir=[dr 'archive' filesep 'output' filesep hm.cycStr filesep];
 
 [status,message,messageid]=copyfile([outputdir 'trih-*'],pwd,'f');
 
-np=hm.models(m).nrProfiles;
+np=model.nrProfiles;
 
-zcor=hm.models(mm).zLevel-hm.models(m).zLevel;
+zcor=hm.models(mm).zLevel-model.zLevel;
 
 for i=1:np
     
-    if hm.models(m).profile(i).run
+    if model.profile(i).run
         
-        id=hm.models(m).profile(i).name;
+        id=model.profile(i).name;
         
         tmpdir=hm.tempDir;
         
@@ -26,7 +27,7 @@ for i=1:np
             fprintf(fid,'%s\n','sea                  Z T     1     2     1     3  0.0000000e+000');
             fclose(fid);
             
-            [status,message,messageid]=copyfile([hm.models(m).dir 'nesting' filesep id filesep hm.models(m).name '.nst'],[pwd filesep 'xb.nst'],'f');
+            [status,message,messageid]=copyfile([model.datafolder 'nesting' filesep id filesep model.name '.nst'],[pwd filesep 'xb.nst'],'f');
             
             fid=fopen('nesthd2.inp','wt');
             
@@ -42,7 +43,7 @@ for i=1:np
             system([hm.exeDir 'nesthd2.exe < nesthd2.inp']);
             fid=fopen('smoothbct.inp','wt');
             fprintf(fid,'%s\n','temp.bct');
-            fprintf(fid,'%s\n',[hm.models(m).name '.bct']);
+            fprintf(fid,'%s\n',[model.name '.bct']);
             fprintf(fid,'%s\n','3');
             
             fclose(fid);
@@ -61,13 +62,13 @@ for i=1:np
             
             
         catch
-            WriteErrorLogFile(hm,['An error occured during nesting of XBeach in Delft3D-FLOW - ' hm.models(m).name ' profile ' hm.models(m).profile(i).name]);
+            WriteErrorLogFile(hm,['An error occured during nesting of XBeach in Delft3D-FLOW - ' model.name ' profile ' model.profile(i).name]);
         end
         
         %     cd(curdir);
         
-        ConvertBct2XBeach([hm.models(m).name '.bct'],[tmpdir id filesep 'tide.txt'],hm.models(m).tFlowStart);
-        delete([hm.models(m).name '.bct']);
+        ConvertBct2XBeach([model.name '.bct'],[tmpdir id filesep 'tide.txt'],model.tFlowStart);
+        delete([model.name '.bct']);
     end
 end
 

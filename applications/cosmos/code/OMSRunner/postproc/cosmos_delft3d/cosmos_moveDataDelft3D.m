@@ -3,19 +3,16 @@ function cosmos_moveDataDelft3D(hm,m)
 model=hm.models(m);
 
 rundir=[hm.jobDir model.name filesep];
+inpdir=model.cycledirinput;
+outdir=model.cyclediroutput;
+restartdir=[model.dir 'restart' filesep];
 
 delete([rundir '*.exe']);
 delete([rundir 'finished.txt']);
 
+%% Restart files
 
-archivedir=[hm.archiveDir filesep model.continent filesep model.name filesep 'archive' filesep];
-cycledir=[archivedir hm.cycStr filesep];
-
-dr=model.dir;
-
-delete([cycledir 'input' filesep '*']);
-
-[status,message,messageid]=movefile([rundir 'tri-rst.rst'],[cycledir 'input'],'f');
+[status,message,messageid]=movefile([rundir 'tri-rst.rst'],inpdir,'f');
 
 rstfiles=dir([rundir 'tri-rst.*']);
 
@@ -28,7 +25,7 @@ if nrst>0
         dt=rstfil(end-14:end);
         rsttime=datenum(dt,'yyyymmdd.HHMMSS');
         if abs(rsttime-model.restartTime)<0.01
-            zip([dr 'restart' filesep 'tri-rst' filesep rstfil '.zip'],[rundir rstfil]);
+            zip([restartdir 'tri-rst' filesep rstfil '.zip'],[rundir rstfil]);
             break
         end
     end
@@ -36,7 +33,7 @@ end
 delete([rundir 'tri-rst*']);
 
 % Throw away old restart files (3 days or older)
-rstfiles=dir([dr 'restart' filesep 'tri-rst' filesep 'tri-rst.*.zip']);
+rstfiles=dir([restartdir 'tri-rst' filesep 'tri-rst.*.zip']);
 nrst=length(rstfiles);
 if nrst>0
     for j=1:nrst
@@ -44,11 +41,10 @@ if nrst>0
         dt=rstfil(end-18:end-4);
         rsttime=datenum(dt,'yyyymmdd.HHMMSS');
         if rsttime<model.restartTime-3 && model.deleterestartfiles
-            delete([dr 'restart' filesep 'tri-rst' filesep rstfil]);
+            delete([restartdir 'tri-rst' filesep rstfil]);
         end        
     end
 end
-
 
 hot0=[rundir 'hot_1_' datestr(model.tWaveStart,'yyyymmdd.HHMMSS')];
 
@@ -58,7 +54,7 @@ if exist(hot00,'file')
 end
 
 if exist(hot0,'file')
-    [status,message,messageid]=movefile(hot0,[cycledir 'input'],'f');
+    [status,message,messageid]=movefile(hot0,inpdir,'f');
 end
 
 hotfiles=dir([rundir 'hot_1_*']);
@@ -72,14 +68,10 @@ if nhot>0
         hotfil=hotfiles(j).name;
         dt=hotfil(7:end);
         hottime=datenum(dt,'yyyymmdd.HHMMSS');
-        tstr=hotfil(16:end);
         if abs(hottime-model.restartTime)<0.01
-%            switch tstr
-%                case{'000000','060000','120000','180000'}
-                    [status,message,messageid]=copyfile([rundir hotfil],[dr 'restart' filesep 'hot'],'f');
-                    zip([dr 'restart' filesep 'hot' filesep hotfil '.zip'],[dr 'restart' filesep 'hot' filesep hotfil]);
-                    delete([dr 'restart' filesep 'hot' filesep hotfil]);
-%            end
+                    [status,message,messageid]=copyfile([rundir hotfil],[restartdir 'hot'],'f');
+                    zip([restartdir 'hot' filesep hotfil '.zip'],[restartdir 'hot' filesep hotfil]);
+                    delete([restartdir 'hot' filesep hotfil]);
             break;
         end
     end
@@ -87,7 +79,7 @@ end
 delete([rundir 'hot*']);
 
 % Throw away old hot files (3 days or older)
-hotfiles=dir([dr 'restart' filesep 'hot' filesep 'hot*.zip']);
+hotfiles=dir([restartdir 'hot' filesep 'hot*.zip']);
 nhot=length(hotfiles);
 if nhot>0
     for j=1:nhot
@@ -95,14 +87,12 @@ if nhot>0
         dt=hotfil(7:end-4);
         hottime=datenum(dt,'yyyymmdd.HHMMSS');
         if hottime<model.restartTime-3
-            delete([dr 'restart' filesep 'hot' filesep hotfil]);
+            delete([restartdir 'hot' filesep hotfil]);
         end        
     end
 end
 
-inpdir=[cycledir 'input'];
-outdir=[cycledir 'output'];
-
+%% Now move input and output files
 [status,message,messageid]=movefile([rundir 'tri*'],outdir,'f');
 [status,message,messageid]=movefile([rundir 'com-*.*'],outdir,'f');
 [status,message,messageid]=movefile([rundir 'wavm-*.d*'],outdir,'f');

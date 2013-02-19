@@ -4,7 +4,7 @@ model=hm.models(m);
 
 fid=fopen(fname,'wt');
 
-inpdir=[model.dir 'input' filesep];
+inpdir=[model.datafolder 'input' filesep];
 
 itdate=D3DTimeString(model.refTime,'itdatemdf');
 tstart=num2str((model.tFlowStart-model.refTime)*1440);

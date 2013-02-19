@@ -1,8 +1,6 @@
 function cosmos_determineHazardsXBeachCluster(hm,m)
 
 model=hm.models(m);
-archivedir=[hm.archiveDir filesep model.continent filesep model.name filesep 'archive' filesep];
-cycledir=[archivedir hm.cycStr filesep];
 
 np=hm.models(m).nrProfiles;
 
@@ -10,9 +8,9 @@ for ip=1:np
     
     profile=model.profile(ip).name;
     
-    inputdir=[cycledir 'input' filesep profile filesep];
-    archivedir=[cycledir 'netcdf' filesep profile filesep];
-    xmldir=[cycledir filesep 'hazards' filesep profile filesep];
+    inputdir=[model.cycledirinput profile filesep];
+    archivedir=[model.cycledirnetcdf  profile filesep];
+    xmldir=[model.cycledirhazards profile filesep];
     
     % Check if simulation has run
     if exist([archivedir profile '.nc'],'file')

@@ -12,7 +12,7 @@ cosmos_writeMDF(hm,m,mdffile);
 
 %% Check if ini file needs to be made (used in 3d simulations)
 if isempty(model.flowRstFile) && model.makeIniFile
-    datafolder=[hm.scenarioDir 'oceanmodels' filesep model.oceanModel filesep];
+    datafolder=[hm.oceanmodelsfolder model.oceanModel filesep];
     dataname=model.oceanModel;
     wlbndfile=[model.name '.wl.bnd'];
     wlbcafile=[model.name '.wl.bca'];
@@ -53,7 +53,7 @@ if ~strcmpi(model.useMeteo,'none')
             dy=[];
         end
     
-        meteodir=[hm.scenarioDir 'meteo' filesep model.useMeteo filesep];
+        meteodir=[hm.meteofolder model.useMeteo filesep];
 
         if model.includeTemperature && model.includeHeatExchange
             par={'u','v','p','airtemp','relhum','cloudcover'};
@@ -86,7 +86,7 @@ if ~strcmpi(model.useMeteo,'none')
                 dy=[];
             end
     
-            meteodir=[hm.scenarioDir 'meteo' filesep model.backupMeteo filesep];
+            meteodir=[hm.runDir 'meteo' filesep model.backupMeteo filesep];
 
             if model.includeTemperature
                 par={'u','v','p','airtemp','relhum','cloudcover'};
@@ -160,14 +160,14 @@ for i=1:hm.nrModels
                 switch lower(hm.models(i).type)
                     case{'xbeachcluster'}
                         id=hm.models(i).profile(ip).name;
-                        nstdir=[hm.models(i).dir 'nesting' filesep id filesep];
+                        nstdir=[hm.models(i).datafolder 'nesting' filesep id filesep];
                         
                         if ~exist(nstdir,'dir')
-                            MakeDir([hm.models(i).dir 'nesting'],id);
+                            makedir([hm.models(i).datafolder 'nesting'],id);
                         end
                         
                     otherwise
-                        nstdir=[hm.models(i).dir 'nesting' filesep];
+                        nstdir=[hm.models(i).datafolder 'nesting' filesep];
                 end
                 
                 nstobs=[nstdir model.name '.obs'];
@@ -232,9 +232,9 @@ for i=1:hm.nrModels
                             enc=enclosure('extract',xg,yg);
                             
                         case{'delft3dflow','delft3dflowwave'}
-                            grdname=[hm.models(i).dir 'input' filesep hm.models(i).name '.grd'];
+                            grdname=[hm.models(i).datafolder 'input' filesep hm.models(i).name '.grd'];
                             [xg,yg,enc]=wlgrid('read',grdname);
-                            [status,message,messageid]=copyfile([hm.models(i).dir 'input' filesep hm.models(i).name '.bnd'],[hm.tempDir 'temp.bnd'],'f');
+                            [status,message,messageid]=copyfile([hm.models(i).datafolder 'input' filesep hm.models(i).name '.bnd'],[hm.tempDir 'temp.bnd'],'f');
                     end
                             
                     if ~strcmpi(hm.models(i).coordinateSystem,model.coordinateSystem) || ~strcmpi(hm.models(i).coordinateSystemType,model.coordinateSystemType)

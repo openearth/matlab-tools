@@ -7,4 +7,4 @@ hm.continents{4}='asia';
 hm.continents{5}='europe';
 hm.continents{6}='africa';
 hm.continents{7}='australia';
-hm.continents{8}='world';
+hm.continents{8}='global';

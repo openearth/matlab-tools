@@ -1,7 +1,7 @@
 function cosmos_convertTimeSeriesMat2NC(hm,m)
 
 model=hm.models(m);
-archdir = model.archiveDir;
+archdir = model.appendeddirtimeseries;
 
 yr=year(hm.cycle);
 t0=datenum(yr,1,1);
@@ -18,7 +18,7 @@ for istat=1:model.nrStations
             par=model.stations(istat).datasets(i).parameter;
             parLongName=getParameterInfo(hm,par,'longname');
             
-            fname=[archdir 'appended' filesep 'timeseries' filesep par '.' stName '.mat'];
+            fname=[archdir par '.' stName '.mat'];
             
             if exist(fname,'file')
                 
@@ -63,7 +63,7 @@ for istat=1:model.nrStations
                 OPT.val_type               = 'single';      % 'single' or 'double'
                 OPT.fillvalue              = nan;
                 
-                ncfile=[archdir 'appended' filesep 'timeseries' filesep stName '.' par '.' num2str(yr) '.nc'];
+                ncfile=[archdir stName '.' par '.' num2str(yr) '.nc'];
                 
                 writeNC(ncfile,OPT);
             end

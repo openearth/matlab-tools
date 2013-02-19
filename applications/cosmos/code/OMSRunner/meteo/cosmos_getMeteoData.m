@@ -33,7 +33,7 @@ for i=1:hm.nrMeteoDatasets
 
         display(meteoname);
 
-        outdir=[hm.scenarioDir 'meteo' filesep meteoname filesep];
+        outdir=[hm.meteofolder meteoname filesep];
 
         s=xml_load([hm.dataDir 'meteo' filesep 'meteomodels.xml']);
         

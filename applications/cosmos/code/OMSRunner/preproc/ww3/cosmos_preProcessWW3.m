@@ -16,7 +16,7 @@ end
 if model.waveNested
     nr=model.waveNestNr;
     mm=model.waveNestModelNr;
-    outputdir=[hm.models(mm).dir 'archive' hm.cycStr filesep 'output' filesep];
+    outputdir=[hm.models(mm).dir 'archive' filesep 'output' filesep hm.cycStr filesep];
     fname=[outputdir 'nest' num2str(nr) '.ww3'];
     if exist(fname,'file')
         [success,message,messageid]=copyfile(fname,[tmpdir 'nest.ww3'],'f');
@@ -44,7 +44,7 @@ WriteWW3Shell(inpfile,model.tWaveStart,toutstart,model.tStop,dt,trststart,trstst
 ii=strmatch(lower(model.useMeteo),lower(hm.meteoNames),'exact');
 dt=hm.meteo(ii).timeStep;
 meteoname=model.useMeteo;
-meteodir=[hm.scenarioDir 'meteo' filesep meteoname filesep];
+meteodir=[hm.meteofolder meteoname filesep];
 
 [lon,lat]=WriteMeteoFileWW3(meteodir,meteoname,tmpdir,model.xLim,model.yLim,model.tWaveStart,model.tStop,dt,model.useDtAirSea);
 writeWW3_prepWind([tmpdir 'ww3_prep.inp'],lon,lat);

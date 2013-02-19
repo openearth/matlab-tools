@@ -15,10 +15,10 @@ cd(tmpdir);
 
 try
         
-    nstadm=[hm.models(m).dir 'nesting' filesep hm.models(m).name '.nst'];
+    nstadm=[hm.models(m).datafolder 'nesting' filesep hm.models(m).name '.nst'];
 
-    [status,message,messageid]=copyfile([hm.models(m).dir 'nesting' filesep hm.models(m).name '.bnd'],tmpdir,'f');
-    [status,message,messageid]=copyfile([hm.models(m).dir 'nesting' filesep hm.models(m).name '.nst'],tmpdir,'f');
+    [status,message,messageid]=copyfile([hm.models(m).datafolder 'nesting' filesep hm.models(m).name '.bnd'],tmpdir,'f');
+    [status,message,messageid]=copyfile([hm.models(m).datafolder 'nesting' filesep hm.models(m).name '.nst'],tmpdir,'f');
 
     fid=fopen('nesthd2.inp','wt');
 %    fprintf(fid,'%s\n',[hm.models(m).dir 'nesting' filesep hm.models(m).name '.bnd']);

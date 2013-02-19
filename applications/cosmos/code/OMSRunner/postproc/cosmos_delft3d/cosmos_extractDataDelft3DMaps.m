@@ -1,9 +1,9 @@
 function cosmos_extractDataDelft3DMaps(hm,m)
 
 model=hm.models(m);
-archivedir=[hm.archiveDir filesep model.continent filesep model.name filesep 'archive' filesep];
-cycledir=[archivedir hm.cycStr filesep];
-outdir=[cycledir filesep 'output' filesep];
+
+appendeddir=model.appendeddirmaps;
+outdir=model.cyclediroutput;
 
 np=model.nrMapDatasets;
 
@@ -12,7 +12,7 @@ for ip=1:np
     try
 
         par=model.mapDatasets(ip).name;
-        fout=[archivedir 'appended' filesep 'maps' filesep par '.mat'];
+        fout=[appendeddir par '.mat'];
         
         data=[];
         
@@ -73,7 +73,7 @@ for ip=1:np
             case{'meteo'}
                 ii=strmatch(model.useMeteo,hm.meteoNames,'exact');
                 dt=hm.meteo(ii).timeStep;
-                data = extractMeteoData([hm.scenarioDir 'meteo' filesep model.useMeteo filesep],model,dt,par);
+                data = extractMeteoData([hm.meteofolder model.useMeteo filesep],model,dt,par);
                 times = data.Time;
             case{'oil-map'}
                 %                data=getSurfaceOil(outdir,model.runid,'Ekofisk (floating)');

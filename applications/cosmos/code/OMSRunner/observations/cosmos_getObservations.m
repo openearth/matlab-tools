@@ -89,7 +89,7 @@ for i=1:nobs
 
         if ~isempty(t)
             % Make directory
-            MakeDir(hm.scenarioDir,'observations',db,idcode);
+            makedir(hm.scenarioDir,'observations',db,idcode);
             fname=[hm.scenarioDir 'observations' filesep db filesep idcode filesep plotpar{i} '.' idcode '.mat'];
             data.Name=idcode;
             data.Parameter=par;

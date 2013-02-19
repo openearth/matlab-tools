@@ -1,10 +1,9 @@
 function cosmos_copyNCTimeSeriesToOPeNDAP(hm,m)
 
-% hm.exeDir='F:\OpenEarthTools\data\cosmos\exe\';    
 exeDir=[hm.dataDir filesep 'exe' filesep];    
 
 model=hm.models(m);
-archdir = model.archiveDir;
+archdir = model.appendeddirtimeseries;
 
 for istat=1:model.nrStations
     
@@ -16,7 +15,7 @@ for istat=1:model.nrStations
             
             par=model.stations(istat).datasets(i).parameter;
             
-            ncfile=[archdir 'appended' filesep 'timeseries' filesep stName '.' par '.' num2str(year(hm.cycle)) '.nc'];
+            ncfile=[archdir stName '.' par '.' num2str(year(hm.cycle)) '.nc'];
             
             if exist(ncfile,'file')
                 try
@@ -29,7 +28,7 @@ for istat=1:model.nrStations
                     fprintf(fid,'%s\n',['mkdir ' hm.scenario '/' model.name]);
                     fprintf(fid,'%s\n',['cd ' hm.scenario '/' model.name]);
                     
-                    %     % Upload scenario xml
+                    % Upload scenario xml
                     fprintf(fid,'%s\n',['put ' ncfile]);  
                     fprintf(fid,'%s\n','close');
                     fprintf(fid,'%s\n','exit');
@@ -44,6 +43,3 @@ for istat=1:model.nrStations
     end
     
 end
-
-
-

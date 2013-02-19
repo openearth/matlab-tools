@@ -51,7 +51,7 @@ for i=1:nobs
     idcode=hm.tideStations{idb}.IDCode{iid};
     
     % Make directory
-    MakeDir(hm.scenarioDir,'observations',db,idcode);
+    makedir(hm.scenarioDir,'observations',db,idcode);
     
     disp(['Generating water level prediction for ' idcode ' from ' db ' ...']);
     

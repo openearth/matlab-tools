@@ -29,7 +29,7 @@ for i=1:length(hm.oceanModels)
 
         display(oceanname);
 
-        outdir=[hm.scenarioDir 'oceanmodels' filesep oceanname filesep];
+        outdir=[hm.oceanmodelsfolder oceanname filesep];
         
         try
             
@@ -39,7 +39,7 @@ for i=1:length(hm.oceanModels)
                     outname=hm.oceanModel(i).name;
                     s=load([hm.dataDir 'oceanmodels' filesep 'hycom_sp.mat']);
                     s=s.s;
-                    MakeDir(hm.scenarioDir,'oceanmodels',oceanname);
+                    makedir(hm.scenarioDir,'oceanmodels',oceanname);
                     t0=floor(t0);
                     t1=ceil(t1);
                     

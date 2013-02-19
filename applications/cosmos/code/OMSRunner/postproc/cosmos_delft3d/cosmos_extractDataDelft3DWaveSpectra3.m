@@ -1,9 +1,9 @@
 function cosmos_extractDataDelft3DWaveSpectra3(hm,m)
 
 model=hm.models(m);
-archivedir=[hm.archiveDir filesep model.continent filesep model.name filesep 'archive' filesep];
-cycledir=[archivedir hm.cycStr filesep];
-outdir=[cycledir filesep 'output' filesep];
+
+cycledir=model.cycledirsp2;
+outdir=model.cyclediroutput;
 
 if ~isdir([cycledir 'sp2'])
     mkdir([cycledir 'sp2']); %% sp2 Folder at line 24 cannot be created straight away from that line, dont know how to do it
@@ -28,7 +28,7 @@ for i=1:model.nrStations
 %                         getWaveSeparationFromSP2(([outdir sp2list(it).name]));
 %                     SP2Data.Station=stName;
                 end
-                fname=[cycledir 'sp2' filesep 'sp2.' stName '.mat'];
+                fname=[cycledir 'sp2.' stName '.mat'];
                 save(fname,'-struct','spec');
             catch
                 WriteErrorLogFile(hm,['Something went wrong reading SP2 data - ' hm.models(m).name]);
