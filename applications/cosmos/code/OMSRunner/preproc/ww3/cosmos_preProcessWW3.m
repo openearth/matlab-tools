@@ -38,15 +38,15 @@ dtrst=dtrst*86400;
 dt=3600;
 
 %% Write ww3_shel.inp
-WriteWW3Shell(inpfile,model.tWaveStart,toutstart,model.tStop,dt,trststart,trststop,dtrst,nestrid,x,y);
+writeWW3Shell(inpfile,model.tWaveStart,toutstart,model.tStop,dt,trststart,trststop,dtrst,nestrid,x,y);
 
 %% Get meteo data
-ii=strmatch(lower(model.useMeteo),lower(hm.meteoNames),'exact');
+ii=strmatch(lower(model.meteowind),lower(hm.meteoNames),'exact');
 dt=hm.meteo(ii).timeStep;
-meteoname=model.useMeteo;
+meteoname=model.meteowind;
 meteodir=[hm.meteofolder meteoname filesep];
 
-[lon,lat]=WriteMeteoFileWW3(meteodir,meteoname,tmpdir,model.xLim,model.yLim,model.tWaveStart,model.tStop,dt,model.useDtAirSea);
+[lon,lat]=writeMeteoFileWW3(meteodir,meteoname,tmpdir,model.xLim,model.yLim,model.tWaveStart,model.tStop,dt,model.useDtAirSea);
 writeWW3_prepWind([tmpdir 'ww3_prep.inp'],lon,lat);
 
 %% Pre and post-processing input files
