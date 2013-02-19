@@ -208,7 +208,21 @@ else
     end
 
     if ~islogical(OPT.crop) && isvector(OPT.crop)
-        [xmin xmax ymin ymax] = xb_grid_crop(x_r, y_r, z_w, 'crop', OPT.crop);
+        % rotate crop vector if needed
+        if abs(alpha) > 5
+            xcorners = [OPT.crop(1) OPT.crop(1)+OPT.crop(3)];
+            ycorners = [OPT.crop(2) OPT.crop(2)+OPT.crop(4)];
+            
+            xcorners_r = xori+cosd(alpha)*(xcorners-xori)+sind(alpha)*(ycorners-yori);
+            ycorners_r = yori-sind(alpha)*(xcorners-xori)+cosd(alpha)*(ycorners-yori);
+             
+            xmin = min(xcorners_r);
+            xmax = max(xcorners_r);
+            ymin = min(ycorners_r);
+            ymax = max(ycorners_r);
+        else
+            [xmin xmax ymin ymax] = xb_grid_crop(x_r, y_r, z_w, 'crop', OPT.crop);
+        end
         
         xb_verbose(1,'Cropping grid as requested');
         xb_verbose(2,{'xmin' 'xmax' 'ymin' 'ymax'},{xmin xmax ymin ymax});
