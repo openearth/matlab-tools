@@ -59,7 +59,7 @@ function x = conditionalWeibull_inv(P, omega, rho, alpha, sigma, lambda)
 if length(omega) == 2 && lambda ~= 1
     % in case of interpolation between 2 reference points: get x values of
     % reference point 2
-    x2 = conditionalWeibull(P, omega(2), rho(2), alpha(2), sigma(2));
+    x2 = conditionalWeibull_inv(P, omega(2), rho(2), alpha(2), sigma(2));
 end
     
 % transform P (probability of non-exceedance) to Fe (frequency of
