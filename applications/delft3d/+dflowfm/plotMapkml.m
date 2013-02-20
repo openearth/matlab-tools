@@ -12,10 +12,10 @@ function varargout = plotMapKML(varargin)
 %   to read the unstructured grid G once, and update D and plotMapkml.
 %
 %   The following optional <keyword,value> pairs have been implemented:
-%    * axis: only grid inside axis is plotted, use [] for while grid.
+%    * axis: only grid inside axis is plotted, use [] for whole grid.
 %            for axis to be be a polygon, supply a struct axis.x, axis.y.
 %    * parameter: field in D.cen to plot (default 1st field 'zwl')
-%   For user-defined paramter: simply add them to D before calling plotMapkml.
+%   For user-defined parameter: simply add them to D before calling plotMapkml.
 %   Defaults values can be requested with OPT = dflowfm.plotMapKML().
 %
 %   Note: every flow cell is plotted individually as a patch: slow.
