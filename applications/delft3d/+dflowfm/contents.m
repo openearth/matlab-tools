@@ -25,10 +25,11 @@
 %  dflowfm.add_CF_coordinates - appends CF coordinates to ncfile
 %
 % PRE-PROCESSING: Convert delft3d-flow model to  Delft3D-FM
-%  dflowfm.mdf2mdu     - convert Delft3D-flow model input to D-Flow FM model input
-%  dflowfm.opendap2obs - get list of observation points from netCDF (OPeNDAP) time series collection
-%  dflowfm.analyseHis  - validate waterlevels against netCDF-OPeNDAP data for time series and with t_tide
-%  dflowfm.indexHis    - show overview of locations incl. coordinates
-%  dflowfm.fillDep     - fill depth values from OPeNDAP data source (single grid or gridset of tiles)
+%  dflowfm.mdf2mdu              - convert Delft3D-flow model input to D-Flow FM model input
+%  dflowfm.opendap2obs          - get list of observation points from netCDF (OPeNDAP) time series collection
+%  dflowfm.analyseHis           - validate waterlevels against netCDF-OPeNDAP data for time series and with t_tide
+%  dflowfm.indexHis             - show overview of locations incl. coordinates
+%  dflowfm.fillDep              - fill depth values from OPeNDAP data source (single grid or gridset of tiles)
+%  dflowfm.obs_file_in_polygon  - construct an obervation file (*_obs.xyn) from all locations within a polygon
 %
 % See also: delft3d
