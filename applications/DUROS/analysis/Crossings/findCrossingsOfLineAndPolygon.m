@@ -70,7 +70,6 @@ for i = 1 : size(data,1)
         else
             % swap x and z values for vertical sections
             [zcr, xcr] = findCrossings(z1,x1,data(i,3:4)',data(i,1:2)', 'keeporiginalgrid');
-            assert(0,1)
         end
     catch ME
         if dbstate
