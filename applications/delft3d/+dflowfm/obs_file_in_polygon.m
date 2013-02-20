@@ -268,9 +268,11 @@ if nargout==1
 end
 
 if size(obs_X,2)>1
+    disp(' ');
     disp(['Succesfully generated observation file ' obs_file_loc(obs_file_loc_fileseps(end)+1:end) ' with ' num2str(size(obs_X,2)) ' observation points in ' num2str(round(toc)) ' seconds..']);
     disp(['File can be found in folder ''' obs_file_loc(1:obs_file_loc_fileseps(end)) '''']);
 else
+    disp(' ');
     disp(['Succesfully generated observation file ' obs_file_loc(obs_file_loc_fileseps(end)+1:end) ' with ' num2str(size(obs_X,2)) ' observation point in ' num2str(round(toc)) ' seconds..']);
     disp(['File can be found in folder ''' obs_file_loc(1:obs_file_loc_fileseps(end)) '''']);    
 end
