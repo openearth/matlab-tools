@@ -65,14 +65,18 @@ data = data(mask,:);
 [xcr_store, zcr_store] = deal([]);
 for i = 1 : size(data,1)
     try
-        [xcr, zcr] = findCrossings(x1,z1,data(i,1:2)',data(i,3:4)','keeporiginalgrid');
-    catch ME
-        if strcmp(ME.identifier, 'MATLAB:interp1:RepeatedValuesX')
-            % swap x and z values for vertical sections
-            [zcr, xcr] = findCrossings(z1,x1,data(i,3:4)',data(i,1:2)','keeporiginalgrid');
+        if ~isscalar(unique(data(i,1:2)))
+            [xcr, zcr] = findCrossings(x1,z1,data(i,1:2)',data(i,3:4)','keeporiginalgrid');
         else
-            [xcr, zcr] = deal([]);
+            % swap x and z values for vertical sections
+            [zcr, xcr] = findCrossings(z1,x1,data(i,3:4)',data(i,1:2)', 'keeporiginalgrid');
+            assert(0,1)
         end
+    catch ME
+        if dbstate
+            rethrow(ME)
+        end
+        [xcr, zcr] = deal([]);
     end
     if ~isempty(xcr)
         xcr_store = [xcr_store xcr];
