@@ -72,8 +72,13 @@ function S = vaklodingen_definition(varargin)
 
    if ~isempty(name)
       name = varargin{1};
-      xxx  = name(3:5);
-      yyyy = name(7:10);
+      if length(name) == 10
+          idx = 3;
+      else
+          idx = regexp(varargin{1}, '\d{3}_\d{4}');
+      end
+      xxx  = name(idx:idx+2);
+      yyyy = name(idx+4:idx+7);
    
       ix = strmatch( xxx,D.xname);
       iy = strmatch(yyyy,D.yname);
