@@ -82,7 +82,7 @@ for i=1:I;
         location             = tline{1};
         if strcmp(location,loc{teller});
             namecmp          = [pathout,'/',plibasis,'_',num2str(perm(teller,1),'%0.2d'),'_',num2str(perm(teller,2),'%0.4d'),'.cmp'];
-            namecmp          = fopen(namecmp,'w');
+            namecmp          = fopen(namecmp,'wt');
             for j=1:J;   
                 tline        = fgetl(fid1);
                 if tline < 0;

@@ -38,7 +38,7 @@ else
 end
 pliid       = get(handles.listbox5,'Value');       % listbox5 contains all pli-file (bct, bca, bcc)
 plientry    = get(handles.listbox5,'String');
-fid1        = fopen([pathout,'/',extname,'.ext'],'w');
+fid1        = fopen([pathout,'/',extname,'.ext'],'wt');
 
 % Write header of ext file
 fprintf(fid1,'%s\n','* QUANTITY    : waterlevelbnd, velocitybnd, dischargebnd, tangentialvelocitybnd, normalvelocitybnd  filetype=9         method=2,3');

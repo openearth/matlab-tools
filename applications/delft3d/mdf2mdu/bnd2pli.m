@@ -45,7 +45,8 @@ for i=1:10;
     tline   = fgetl(fid);
     if length(tline) >= 4;
         if strcmp(tline(1:4),' ETA');
-            startgrid   = i-2;      
+            startgrid   = i-2;  
+            break;
         end
     end
 end
@@ -176,8 +177,10 @@ for i=1:size(xb,1);
 end
 
 % Write the pli-files (separate file for each boundary)
-tellerhalf = 1;
-teller     = 1;
+tellerhalf   = 1;
+teller       = 1;
+filenameall  = [pathout,'/',modelshort,'_all.pli'];
+fidall       = fopen(filenameall,'wt');
 for i=1:q;
     name               = [modelshort,'_',num2str(i,'%0.2d')];
 	filename           = [pathout,'/',name,'.pli'];
@@ -188,12 +191,14 @@ for i=1:q;
 	ypolsq(ypolsq==0)  = [];
 	wripol(:,1)        = xpolsq';
 	wripol(:,2)        = ypolsq';
-	fid                = fopen(filename   ,'w');
-    fidsal             = fopen(filenamesal,'w');
+	fid                = fopen(filename   ,'wt');
+    fidsal             = fopen(filenamesal,'wt');
 	fprintf(fid   ,[name,'\n']);
     fprintf(fidsal,[name,'\n']);
+    fprintf(fidall,[name,'\n']);
 	fprintf(fid   ,['\t',num2str(size(wripol,1),'%6.0f'),'      2\n']);
 	fprintf(fidsal,['\t',num2str(size(wripol,1),'%6.0f'),'      2\n']);
+    fprintf(fidall,['\t',num2str(size(wripol,1),'%6.0f'),'      2\n']);
 	for j=1:size(wripol,1);
         if strcmp(D.DATA(teller).datatype,'A');
             extrastr   = [D.DATA(teller).labelA,'\t',D.DATA(teller).labelB];
@@ -213,12 +218,15 @@ for i=1:q;
                                bndname,                                 '\n'];
 	    fprintf(fid   ,writestr   );
         fprintf(fidsal,writestrsal);
+        fprintf(fidall,writestr   );
         tellerhalf     = tellerhalf + 0.5;
 		teller         = floor(tellerhalf);
     end
 	clear wripol;
-	fclose all;
+	fclose(fid);
+    fclose(fidsal);
 end
+fclose(fidall);
 
 % List the pli-files
 outputdir           = get(handles.edit2,'String');
@@ -230,11 +238,11 @@ for i=1:size(list,1);
     file            = list(i,:);
     file(file==' ') = [];
     if length(file)>7;
-        if strcmp(file(end-7:end),'_sal.pli');
+        if strcmp(file(end-7:end),'_sal.pli') == 1 & strcmp(file(end-7:end),'_all.pli') == 0;
             salfile(tellersal,:)   = [list(i,:),'    '];
             tellersal              = tellersal + 1;
         else
-            if strcmp(file(end-3:end),'.pli');
+            if strcmp(file(end-3:end),'.pli') == 1 & strcmp(file(end-7:end),'_all.pli') == 0;
                 plifile(teller,:)  = [list(i,:),'    '];
                 teller             = teller + 1;
             end

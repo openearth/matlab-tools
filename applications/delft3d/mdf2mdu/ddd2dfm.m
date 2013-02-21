@@ -489,12 +489,15 @@ function pushbutton9_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-if exist('doc/Conversion from Delft3D to DFM.pdf') == 0;
-    errordlg('Documentation is not available. Check if the pdf document in the doc directory is present.','Error');
-    return;
-else
-    winopen('doc/Conversion from Delft3D to DFM.pdf');
-end
+errordlg('Button is temporarily disabled due to incorrect path link under OpenEarth (known bug). Documentation can be found under directory ''doc''.','Known bug');
+return;
+
+% if exist('doc/Conversion from Delft3D to DFM.pdf') == 0;
+%     errordlg('Documentation is not available. Check if the pdf document in the doc directory is present.','Error');
+%     return;
+% else
+%     winopen('doc/Conversion from Delft3D to DFM.pdf');
+% end
 
 
 
