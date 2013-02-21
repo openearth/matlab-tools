@@ -22,25 +22,57 @@ function transect = mergetransects(transects)
     %           JARKUS_TRANSECT2NETCDF, JARKUS_GRID2NETCDF 
     % 
     
+%     % exceptions:
+%     if transects(1).year == 1970 && transects(1).areaCode == 9 && transects(1).alongshoreCoordinate == 10713
+%         % Delfland 1970 transect 10713
+%         % overlapping bathy and topo lead to zigzag pattern due different
+%         % grids and vertical difference of more than 0.5m
+%         % Inspection by John de Ronde and Kees den Heijer (2013-02-20) by
+%         % comparing with adjacent years led to the conclusion that the
+%         % bathy in that area is not reliable. It is deleted here
+%         [~, idxlw] = sort(arrayfun(@(x) (-max(x.crossShoreCoordinate)), transects), 'descend');
+%         idx = transects(idxlw(1)).crossShoreCoordinate < 100;
+%         transects(idxlw(1)).crossShoreCoordinate = transects(idxlw(1)).crossShoreCoordinate(idx);
+%         transects(idxlw(1)).origin = transects(idxlw(1)).origin(idx);
+%         transects(idxlw(1)).altitude = transects(idxlw(1)).altitude(idx);
+%         transects(idxlw(1)).n = sum(idx);
+%     end
+    
     % create sorting columns, most precise data at the end
     col1 = arrayfun(@(x) (-max(x.crossShoreCoordinate)), transects); % most landward maximum seaward last
     col2 = arrayfun(@(x) (x.timeBathy), transects); % latest dates at the end
     col3 = arrayfun(@(x) (x.timeTopo),  transects); % latest dates at the end
     col4 = arrayfun(@(x) (x.n),         transects); % largest at the end
     
-    [a, ia]   = sortrows([col1;col2;col3;col4]);
-    transect  = transects(1);
-    newX      = sort(unique([transects.crossShoreCoordinate]));
-    newH      = zeros(size(newX)) * NaN;
-    newOrigin = zeros(size(newX)) * NaN;
+    [~, ia]   = sortrows([col1(:) col2(:) col3(:) col4(:)]);
+    transects = transects(ia); % re-order transects
+    transect  = transects(1); % take the new first one as basis
+    newX      = unique([transects.crossShoreCoordinate]); % unique includes sorting
+    % create a temporary altitude array (H) that includes interpolated
+    % values per individual original transect to fill possible gaps
+    tmpH = cell2mat(cellfun(@(x,z) interp1(x,z,newX), {transects.crossShoreCoordinate}, {transects.altitude},...
+        'uniformoutput', false)');
+    % assuming that the order is right, find for each cross-shore point the
+    % index to be used
+    usedidx = diff([zeros(size(tmpH(1,:))); ~isnan(tmpH)]) == 1;
+    % pre-allocate tmpOrigin with zeros
+    tmpOrigin = zeros(size(tmpH));
     for k = 1 : length(transects)
-        [c, ia, ib]   = intersect(newX , transects(k).crossShoreCoordinate); % find ids transect k
-        newH(ia)      = transects(k).altitude(ib);
-        newOrigin(ia) = transects(k).origin(ib);
+        % get the indices of the cross-shore points avaible per transect
+        [~, ia, ib]   = intersect(newX , transects(k).crossShoreCoordinate); % find ids transect k
+        % fill row of concern in the tmpOrigin array
+        tmpOrigin(k,ia) = transects(k).origin(ib);
     end
-    transect.crossShoreCoordinate = newX; % assign new grid
-    transect.altitude             = newH; % assign new altitudes
-    transect.origin               = newOrigin; % assign new origins
+    % transform H and Origin arrays to vectors of the values to be used
+    newH = tmpH(usedidx);
+    newOrigin = tmpOrigin(usedidx);
+    % create a mask at the cross-shore locations where the origin was not
+    % defined (=0)
+    mask = newOrigin == 0;
+    transect.crossShoreCoordinate = newX(~mask); % assign new grid
+    transect.altitude             = newH(~mask); % assign new altitudes
+    transect.origin               = newOrigin(~mask); % assign new origins
+    transect.n                    = sum(~mask); % assign new n
 end
 
 %% Lookup variables
