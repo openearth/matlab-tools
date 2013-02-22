@@ -145,13 +145,9 @@ iostat       = 1;
 fid          = fopen(filename,'w');
 OS           = 'windows'; % or 'unix'
 
-error('not tested')
-for i=1:length(STRUCT.m)
+for i=1:size(STRUCT.m,1)
 
-   fprintf(fid,STRUCT.namst(i));
-   fprintf(fid,STRUCT.m    (i));
-   fprintf(fid,STRUCT.n    (i));
-
+   fprintf(fid,'%-20s %.3d %.3d %.3d %.3d',STRUCT.namst(i,:),STRUCT.m(i,1),STRUCT.n(i,1),STRUCT.m(i,2),STRUCT.n(i,2));
    if     strcmp(lower(OS(1)),'u')
       fprintf(fid,'\n');
    elseif strcmp(lower(OS(1)),'w')
