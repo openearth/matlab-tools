@@ -144,7 +144,17 @@ end
        
       G.cen.comment  = 'center points without dummy rows/columns (2:nmax-1) x (2:mmax-1)';
       
+	  
+	  G.u.x			 = 0.5*G.cor.x(1:end-1,:)+0.5*G.cor.x(2:end,:); 
+	  G.u.y			 = 0.5*G.cor.y(1:end-1,:)+0.5*G.cor.y(2:end,:); 
+	  G.u.x_units  = '';
+      G.u.y_units  = '';
       G.u.comment    = 'ksi-velocity faces without dummy rows/columns (2:nmax-1) x (1:mmax-1)';
+	  
+	  G.v.x          = 0.5*G.cor.x(:,1:end-1)+0.5*G.cor.x(:,2:end); 
+	  G.v.y          = 0.5*G.cor.y(:,1:end-1)+0.5*G.cor.y(:,2:end); 
+	  G.v.x_units  = '';
+      G.v.y_units  = '';
       G.v.comment    = 'eta-velocity faces without dummy rows/columns (1:nmax-1) x (2:mmax-1)';
 
      %G.cend.x       = addrowcol(corner2centernan(G.cor.x),[-1 1],[-1 1],nan);
