@@ -19,7 +19,7 @@ function P = conditionalWeibull_cdf(x, omega, rho, alpha, sigma, lambda)
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2013 <COMPANY>
+%   Copyright (C) 2013 Deltares
 %       hengst
 %
 %       Simon.denHengst@deltares.nl	
