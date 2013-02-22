@@ -1,4 +1,4 @@
-function P = conditionalWeibull_cdf(x, omega, rho, alpha, sigma)
+function P = conditionalWeibull_cdf(x, omega, rho, alpha, sigma, lambda)
 %CONDITIONALWEIBULL_CDF  One line description goes here.
 %
 %   More detailed description goes here.
@@ -61,6 +61,10 @@ function P = conditionalWeibull_cdf(x, omega, rho, alpha, sigma)
 % $Keywords: $
 
 %% code
+
+if length(omega) > 1 && lambda ~= 1
+    error('interpolation between multiple stations not included in this distribution');
+end
      
 % get the x, using Fe(P) and the coefficients
 Fe = rho(1).*exp(-(x./sigma(1)).^alpha(1)+(omega(1)./sigma(1)).^alpha(1)); 
