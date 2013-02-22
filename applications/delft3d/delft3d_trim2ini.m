@@ -11,7 +11,7 @@ function delft3d_trim2ini(mdffile,time,fileOut,varargin)
 %.dep file that is associated with mdffile. 
 %
 %Syntax:
-%  delft3d_trim2ini(nefis,timestep,fileOut,<keyword>,<value>)
+%  delft3d_trim2ini(mdffile,time,fileOut,<keyword>,<value>)
 %
 %Input:
 %   mdffile = [string] filepath of .mdf file of the simulation used to
@@ -25,6 +25,7 @@ function delft3d_trim2ini(mdffile,time,fileOut,varargin)
 %   sedmode = if it is a morphological simulation indicate whether to write
 %   .sdb files ('sdb') or .thk and .frc files ('thk' or 'frc') or no
 %   sediment files ('none')
+%   skip_constituent = [1xn double] do NOT copy the constituents in with these numbers. 
 %
 %Example
 %     delft3d_trim2ini('c:\mysim1\mysim.mdf',datenum('2012-01-01'),...
@@ -80,6 +81,7 @@ function delft3d_trim2ini(mdffile,time,fileOut,varargin)
 
 
 OPT.sedmode='sdb';
+OPT.skip_constituent=[]; 
 
 %set <keyword>,<values>
 OPT=setproperty(OPT,varargin);
@@ -108,7 +110,7 @@ t=vs_time(nefis); t=t.datenum;
 
 %find timestep closest to time
 if ~isempty(time)
-    if time<t(1) || time>t(end)
+    if time<t(1) | time>t(end)
         warning('warning: time outside simulated interval. Using first/last time step.');
     end
     timestep=find( abs(t-time)==min(abs(t-time)) ,1); 
@@ -172,7 +174,7 @@ end
 
 %constituents
 for k=1:3
-    if isfield(mdf.keywords,sprintf('namc%d',k))
+    if isfield(mdf.keywords,sprintf('namc%d',k)) & sum(k==OPT.skip_constituent)==0
         flag=flag+1; 
         data.(sprintf('%s%d','constituent',k))=squeeze(r1(:,:,:,:,flag)); 
     end
