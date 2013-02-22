@@ -178,15 +178,20 @@ if OPT.verbose; disp('Creating filters:'); end;
 
 % interpret special filters
 if isfield(FLTR, 'year')
-    years = datenum(FLTR.year'*[1 0 0]+ones(size(FLTR.year))'*[-1971 1 1])';
+    % get available times
+    t = nc_varget(OPT.url, 'time');
+    % only keep times that correspond to the year filter
+    years = t(ismember(year(t+datenum(1970,1,1)), FLTR.year));
     for i = 1:length(years)
         if isfield(FLTR, 'time')
-            FLTR.time = [FLTR.time years(i):years(i)+365];
+            % append years to the time filter
+            FLTR.time = [FLTR.time years(:)'];
         else
-            FLTR.time = years(i):years(i)+365;
+            % create time filter
+            FLTR.time = years;
         end
     end
-    
+    % remove the year filter, since it is no variable in the netcdf file
     FLTR = rmfield(FLTR, 'year');
 end
 
