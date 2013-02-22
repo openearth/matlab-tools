@@ -202,11 +202,18 @@ STRINGSIZE = 100;
                          'Value',{'Minimum cross shore measurement index', 'Index of the cross shore measurement (0 based)',        -9999});
     nc_addvar(filename, s);
     
-    s.Name      = 'has_data';
+%     s.Name      = 'has_data';
+%     s.Nctype    = nc_int;
+%     s.Dimension = {'time', 'alongshore'};
+%     s.Attribute = struct('Name' ,{'long_name'       , 'comment',                                'flag_values', 'flag_meanings'},...
+%                          'Value',{'Has data' ,        'Data availability per year per transect', 0:1,          'false true'});
+%     nc_addvar(filename, s);
+    
+    s.Name      = 'nsources';
     s.Nctype    = nc_int;
     s.Dimension = {'time', 'alongshore'};
-    s.Attribute = struct('Name' ,{'long_name'       , 'comment',                                'flag_values', 'flag_meanings'},...
-                         'Value',{'Has data' ,        'Data availability per year per transect', 0:1,          'false true'});
+    s.Attribute = struct('Name' ,{'long_name'              , 'comment'},...
+                         'Value',{'Number of data sources' , 'Transects that are based on more than one source should be interpreted with care'});
     nc_addvar(filename, s);
     
     s.Name      = 'max_altitude_measurement';

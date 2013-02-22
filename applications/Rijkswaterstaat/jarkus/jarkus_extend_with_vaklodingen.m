@@ -76,43 +76,47 @@ OPT = struct(...
 OPT = setproperty(OPT, varargin);
 
 %%
-if ~isscalar(jarkus_id) && ~isinteger(jarkus_id)
-    error('"id" must be a scalar and integer')
-end
-
-
-%%
-if ~OPT.jarkus_extend
-    tr = jarkus_transects('id', jarkus_id, 'year', jarkus_year);
-    tr = jarkus_interpolatenans(tr);
+if ~(isstruct(jarkus_id) && jarkus_check(jarkus_id, 'id', 'x', 'y', 'cross_shore'))
+    if ~isscalar(jarkus_id) && ~isinteger(jarkus_id)
+        error('"id" must be a scalar and integer')
+    end
+    
+    
+    %%
+    if ~OPT.jarkus_extend
+        tr = jarkus_transects('id', jarkus_id, 'year', jarkus_year);
+        tr = jarkus_interpolatenans(tr);
+    else
+        % retreive transect for all available years
+        tr = jarkus_transects('id', jarkus_id);
+        % interpolate nans in cross-shore direction (default)
+        tr = jarkus_interpolatenans(tr);
+        % interpolate nans in time
+        tr = jarkus_interpolatenans(tr,...
+            'interp', 'time', ...
+            'dim', 1);
+        % extrapolate nans in time with nearest neighbour method
+        tr = jarkus_interpolatenans(tr,...
+            'interp', 'time', ...
+            'dim', 1,...
+            'method', 'nearest', ...
+            'extrap', true);
+        % delete data of other years
+        skipid = ~ismember(year(tr.time + datenum(1970,1,1)), jarkus_year);
+        tr.time(skipid) = [];
+        tr.altitude(skipid,:,:) = [];
+    end
+    
+    nnid = sum(~isnan(squeeze(tr.altitude))) ~= 0;
 else
-    % retreive transect for all available years
-    tr = jarkus_transects('id', jarkus_id);
-    % interpolate nans in cross-shore direction (default)
-    tr = jarkus_interpolatenans(tr);
-    % interpolate nans in time
-    tr = jarkus_interpolatenans(tr,...
-        'interp', 'time', ...
-        'dim', 1);
-    % extrapolate nans in time with nearest neighbour method
-    tr = jarkus_interpolatenans(tr,...
-        'interp', 'time', ...
-        'dim', 1,...
-        'method', 'nearest', ...
-        'extrap', true);
-    % delete data of other years
-    skipid = ~ismember(year(tr.time + datenum(1970,1,1)), jarkus_year);
-    tr.time(skipid) = [];
-    tr.altitude(skipid,:,:) = [];
+    tr = jarkus_id;
+    nnid = true(size(tr.x));
 end
-
-nnid = sum(~isnan(squeeze(tr.altitude))) ~= 0;
 
 x = tr.x(nnid)';
 dx = mean(diff(x));
 y = tr.y(nnid)';
 dy = mean(diff(y));
-z = squeeze(tr.altitude(:,:,nnid));
 
 % x and y direction when going offshore
 x_direction = sign(dx);
@@ -122,7 +126,7 @@ px2y = polyfit(x,y,1);
 
 %% retreive extent of vaklodingen
 urls = opendap_catalog('http://opendap.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.html',...
-    'ignoreCatalogNc', false);
+    'ignoreCatalogNc', true);
 
 catalogidx = ~cellfun(@isempty, regexp(urls, 'catalog.nc$', 'match'));
 

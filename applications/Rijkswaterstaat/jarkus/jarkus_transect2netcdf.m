@@ -48,13 +48,22 @@ function transect = mergetransects(transects)
     transects = transects(ia); % re-order transects
     transect  = transects(1); % take the new first one as basis
     newX      = unique([transects.crossShoreCoordinate]); % unique includes sorting
+    
+    
     % create a temporary altitude array (H) that includes interpolated
     % values per individual original transect to fill possible gaps
     tmpH = cell2mat(cellfun(@(x,z) interp1(x,z,newX), {transects.crossShoreCoordinate}, {transects.altitude},...
         'uniformoutput', false)');
-    % assuming that the order is right, find for each cross-shore point the
-    % index to be used
-    usedidx = diff([zeros(size(tmpH(1,:))); ~isnan(tmpH)]) == 1;
+    % derive cross-shore distance between points
+    crossshorespacing = cellfun(@diff, {transects.crossShoreCoordinate}, 'uniformoutput', false);
+    settonan = false(size(tmpH));
+    % set H values to nan if gap is larger than 100 m
+    for k = find(cellfun(@max, crossshorespacing) > 100)
+        for ii = find(crossshorespacing{k} > 100)
+            settonan(k, newX > transects(k).crossShoreCoordinate(ii) & newX < transects(k).crossShoreCoordinate(ii+1)) = true;
+        end
+    end
+    tmpH(settonan) = NaN;
     % pre-allocate tmpOrigin with zeros
     tmpOrigin = zeros(size(tmpH));
     for k = 1 : length(transects)
@@ -63,6 +72,9 @@ function transect = mergetransects(transects)
         % fill row of concern in the tmpOrigin array
         tmpOrigin(k,ia) = transects(k).origin(ib);
     end
+    % assuming that the order is right, find for each cross-shore point the
+    % index to be used
+    usedidx = diff([zeros(size(tmpH(1,:))); ~isnan(tmpH)]) == 1 & cumsum(~isnan(tmpH),1) == 1;
     % transform H and Origin arrays to vectors of the values to be used
     newH = tmpH(usedidx);
     newOrigin = tmpOrigin(usedidx);
@@ -73,6 +85,7 @@ function transect = mergetransects(transects)
     transect.altitude             = newH(~mask); % assign new altitudes
     transect.origin               = newOrigin(~mask); % assign new origins
     transect.n                    = sum(~mask); % assign new n
+    transect.nsources             = sum(sum(usedidx,2)>0);
 end
 
 %% Lookup variables
@@ -101,6 +114,7 @@ for i = 1 : length(yearArray)
      maxAltitBlock = nan(size(transectIdArray)); % defaults to nan
      timeTopoBlock = nan(size(transectIdArray)); % write 1 per transect
     timeBathyBlock = nan(size(transectIdArray)); % write 1 per transect
+    nsources = zeros(size(transectIdArray));
     
     for j = 1 : length(transectIdArray)
         id = transectIdArray(j);
@@ -119,12 +133,13 @@ for i = 1 : length(yearArray)
            originBlock(j, ia) = transect.origin(ib);
          timeTopoBlock(j)     = transect.timeTopo;
         timeBathyBlock(j)     = transect.timeBathy;
-        
+        nsources(j)           = transect.nsources;
     end
     % should this be in jarkus_transect
     nc_varput(filename, 'min_cross_shore_measurement', minCrossBlock , [i-1, 0], [1, length(minCrossBlock)])
     nc_varput(filename, 'max_cross_shore_measurement', maxCrossBlock , [i-1, 0], [1, length(maxCrossBlock)])
-    nc_varput(filename, 'has_data',      int8(~isnan(maxCrossBlock)) , [i-1, 0], [1, length(maxCrossBlock)])
+    %nc_varput(filename, 'has_data',      int8(~isnan(maxCrossBlock)) , [i-1, 0], [1, length(maxCrossBlock)])
+    nc_varput(filename, 'nsources',                         nsources , [i-1, 0], [1, length(nsources)])
     nc_varput(filename, 'min_altitude_measurement', minAltitBlock , [i-1, 0], [1, length(minAltitBlock)])
     nc_varput(filename, 'max_altitude_measurement', maxAltitBlock , [i-1, 0], [1, length(minAltitBlock)])
     nc_varput(filename, 'time'      , year          , [i-1      ], [1                        ]);
