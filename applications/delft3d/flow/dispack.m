@@ -141,6 +141,20 @@ function DISout = dispack(DISin,varargin)
       %-----------------------------------------
       
       fldnames = fieldnames(DISin.data(itable));
+
+      % add user-defined constituents (e.g. sediment)
+      fldnames_def = {'datenum', 'datenum_units', 'Q_units', 'Q', 'volume_units', 'volume',...
+          'salinity_units', 'salinity', 'Name', 'Contents', 'Location',...
+          'TimeFunction', 'ReferenceTime','Interpolation'};
+      A = ~ismember(fldnames,fldnames_def);
+      Ainew = find(A==1);
+      for ia = 2:2:length(Ainew)
+          newpari = length(H.parameternames)+1;
+          H.parameternames(newpari) = fldnames(Ainew(ia));
+          H.parameterunits(newpari) = {DISin.data(itable).(char(fldnames(Ainew(ia-1))))};
+          H.tablenames(newpari) = fldnames(Ainew(ia));
+      end
+      % end of add user-defined constituents
       
       ncolumns = 1; % start with one for time
    
