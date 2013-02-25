@@ -109,13 +109,13 @@ if size(varargin,2)>3
 elseif isempty(varargin)
     uiwait(msgbox('No D-Flow FM map-file and polygon/landboundary defined, please select these now...','Map-file and polygon missing','modal'))
     [map_name, map_path] = uigetfile('*_map.nc', 'Select a D-Flow FM map output file (*_map.nc)');
-    if size(map_name==0,1)==1
+    if size(map_name==0,2)==1
         if map_name==0
             error('Aborted by user, since no *_map.nc file was selected');
         end
     end
     [pol_name, pol_path] = uigetfile({'*.pol;*.ldb'}, 'Select a polygon (*.pol) or landboundary (*.ldb) file');
-    if size(pol_name==0,1)==1
+    if size(pol_name==0,2)==1
         if pol_name==0
             error('Aborted by user, since no *.pol or *.ldb file was selected');
         end
@@ -133,7 +133,7 @@ elseif isempty(varargin)
 elseif size(varargin,2)==1
     uiwait(msgbox('No polygon/landboundary file defined, please select this now...','Polygon/landboundary missing','modal'))
     [pol_name, pol_path] = uigetfile({'*.pol;*.ldb'}, 'Select a polygon (*.pol) or landboundary (*.ldb) file');
-    if size(pol_name==0,1)==1
+    if size(pol_name==0,2)==1
         if pol_name==0
             error('Aborted by user, since no *.pol or *.ldb file was selected');
         end
