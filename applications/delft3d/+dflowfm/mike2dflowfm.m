@@ -47,7 +47,7 @@ function varargout = mike2dflowfm(varargin);
 %  Example 4:
 %    FM_structure_from_MIKE_mesh_1 = dflowfm.mike2dflowfm('D:/dflowfm/MIKE_mesh.mesh','default');
 %    FM_structure_from_MIKE_mesh_2 = dflowfm.readNet([pwd filesep 'output_net.nc']);
-%    % Both structures are identical
+%    % Both structures are identical (in x, y, z, Links etc.)
 %    
 %
 % See also: dflowfm, dflowfm.writeNet
