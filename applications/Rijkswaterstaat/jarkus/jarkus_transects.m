@@ -185,7 +185,7 @@ if isfield(FLTR, 'year')
     for i = 1:length(years)
         if isfield(FLTR, 'time')
             % append years to the time filter
-            FLTR.time = [FLTR.time years(:)'];
+            FLTR.time = [FLTR.time(:)' years(:)'];
         else
             % create time filter
             FLTR.time = years;
