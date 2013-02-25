@@ -118,6 +118,9 @@ end
 if size(varargin,2)==1
     uiwait(msgbox('No FM grid name was choosen, specify one now...','MIKE grid missing','modal'));
     varargin{2} = cell2mat(inputdlg('Specify an output name for the FM grid (*_net.nc) ','No output name specified',1,{'output_net.nc'}));
+    if isempty(varargin{2})
+        error('Aborted by user, since no output file was specified');
+    end
 end
     
 fm_file_out = varargin{2};
@@ -227,7 +230,7 @@ grd.cor.nLink = size(Links,1);
 grd.cor.flag_values = [0 1 2];
 grd.cor.flag_meanings = {'closed_link_between_2D_nodes';'link_between_1D_nodes';'link_between_2D_nodes';};
 
-dflowfm.writeNet(fm_file_out,grd.cor.x,grd.cor.y,grd.cor.Link);
+dflowfm.writeNet(fm_file_out,grd.cor.x,grd.cor.y,grd.cor.Link,grd.cor.z);
 
 disp(['D-Flow FM grid file saved as ' fm_file_out]);
 
