@@ -47,6 +47,14 @@ function varargout = readNet(ncfile,X,Y,varargin)
 %       2600 MH Delft
 %       The Netherlands
 %
+%   Revision:   Freek Scheel 2013
+%
+%     - Compatibility with readNet and writeNet (Addition of netLinks input)
+%     - When overwriting a file, it is first deleted (prevents errors due
+%       to net-cdf standard reading and writing approach when files are
+%       different in size)
+%     - Some minor tweaks and few issues resolved
+%
 %   This library is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
 %   the Free Software Foundation, either version 3 of the License, or
@@ -209,8 +217,17 @@ warning([mfilename,'agree with developer on _FillValue'])
 
 %% 4 Create netCDF file
 
+% Check if file already exists, if so, it must be deleted first, due to 
+% net-ncf file and save approach
+
+      if exist(ncfile)==2
+          warning(' ');
+          disp('File already exists, will be overwritten!');
+          delete(ncfile);
+      end
+
       if ~strcmpi(ncfile(end-6:end),'_net.nc')
-         warning('DfLow-FM grid file end with "_net.nc"')
+         warning('DfLow-FM grid file should end with "_net.nc"');
       end
 
       ncwriteschema(ncfile, nc);			        
