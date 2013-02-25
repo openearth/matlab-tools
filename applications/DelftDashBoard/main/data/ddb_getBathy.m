@@ -220,7 +220,7 @@ switch lower(tp)
             % OpenDAP
             iopendap=1;
             remotedir=[handles.bathymetry.dataset(iac).URL '/' levdir '/'];
-            localdir=[handles.bathyDir name filesep levdir filesep];
+            localdir=[handles.bathymetry.dir name filesep levdir filesep];
         else
             % Local
             localdir=[handles.bathymetry.dataset(iac).URL filesep levdir filesep];
@@ -421,7 +421,7 @@ switch lower(tp)
             dirname2=handles.bathymetry.dataset(iac).zoomLevel(iacz).directoryName;
             fname=handles.bathymetry.dataset(iac).zoomLevel(iacz).fileName;
             
-            dirstr=[handles.bathyDir filesep dirname1 filesep dirname2 filesep];
+            dirstr=[handles.bathymetry.dir filesep dirname1 filesep dirname2 filesep];
             
             z=[];
             for i=1:nx
@@ -527,7 +527,7 @@ switch lower(tp)
             dirname2=['zoomlevel' num2str(ilev,'%0.2i')];
             fname=[handles.bathymetry.dataset(iac).directoryName '.z' num2str(ilev,'%0.2i')];
             
-            dirstr=[handles.bathyDir filesep dirname1 filesep dirname2 filesep];
+            dirstr=[handles.bathymetry.dir filesep dirname1 filesep dirname2 filesep];
             
             z=[];
             for i=1:nx
