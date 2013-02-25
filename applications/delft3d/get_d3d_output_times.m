@@ -39,7 +39,7 @@ function varargout = get_d3d_output_times(varargin);
 %
 % See also: vs_time qpread
 
-warning('WarnTests:convertTest','vs_time has expanded functionality, and can handle more NEFIS types. \nUse this script when interested in considerable speed increase with less functionality.')
+warning('WarnTests:convertTest','vs_time has expanded functionality, and can handle more NEFIS types. \nOnly use this script when interested in considerable speed increase with less functionality/output.')
 
 % Freek Scheel - 2012
 % freek.scheel@deltares.nl
