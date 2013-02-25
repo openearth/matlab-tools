@@ -7,7 +7,7 @@ function varargout = mike2dflowfm(varargin);
 %    <output> = dflowfm.mike2dflowfm(<1>,<2>);
 %
 %    <1>      = Filename/Location for the MIKE mesh file (*.mesh, optional)
-%    <2>      = Filename/Location for the D-Flow FM grid file (*_net.nc optional)
+%    <2>      = Filename/Location for the D-Flow FM grid file (*_net.nc, optional)
 %    <output> = Output structure identical to dflowfm.readNet (optional)
 %
 %   Note that ALL input variables are optional, when simply calling
@@ -50,19 +50,7 @@ function varargout = mike2dflowfm(varargin);
 %    % Both structures are identical
 %    
 %
-%
-%
-%  Additional note (advanced users):
-%    If the user allows for observation points to be placed on netnode
-%    locations (so interpolation of the modelling results towards these
-%    points will be made), simply generate a grid structure from the
-%    *net.nc grid file using: grd = dflowfm.readNet('grid_net.nc') and then
-%    state: grd.cen = grd.cor to fool the function in advance. Note that
-%    this option removes the need for a *_map.nc file, though the locations
-%    of observation points are no longer on flownodes (might not be
-%    preferable).
-%
-% See also: dflowfm, dflowfm.readNet, inpolygon, landboundary, LDBTool
+% See also: dflowfm, dflowfm.writeNet
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2013 Deltares
