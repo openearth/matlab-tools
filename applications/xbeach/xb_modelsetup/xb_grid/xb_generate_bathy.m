@@ -136,7 +136,7 @@ if size(OPT.z,1) == 1
         xb_verbose(0,'Negate x-values to start with the lowest value');
     end
     
-    if mean(OPT.z(1:n)) > mean(OPT.x(n:end))
+    if mean(OPT.z(1:n)) > mean(OPT.z(n:end))
         OPT.x = -fliplr(OPT.x);
         OPT.z =  fliplr(OPT.z);
         

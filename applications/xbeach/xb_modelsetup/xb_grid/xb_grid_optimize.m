@@ -264,7 +264,11 @@ end
 % remove nan's
 notnan = ~isnan(z_d_cs);
 x_d_1d = x_d(1,notnan);
-y_d_1d = y_d(:,1);
+if ~isempty(y_d)
+    y_d_1d = y_d(:,1);
+else
+    y_d_1d = y_d;
+end
 z_d_cs = z_d_cs(notnan);
 
 xb_verbose(1,'Remove NaN''s from representative cross shore profile');
@@ -409,7 +413,7 @@ if ~islogical(OPT.finalise) && iscell(OPT.finalise)
     xgrid_old = xgrid;
     ygrid_old = ygrid;
     
-    [xgrid, ygrid, zgrid] = xb_grid_finalise(xgrid, ygrid, zgrid, 'actions', OPT.finalise);
+    [xgrid, ygrid, zgrid] = xb_grid_finalise(xgrid, ygrid, zgrid, OPT.finalise{:});
 elseif OPT.finalise
     xgrid_old = xgrid;
     ygrid_old = ygrid;

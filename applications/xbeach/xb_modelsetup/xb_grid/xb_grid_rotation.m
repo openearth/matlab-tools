@@ -96,7 +96,7 @@ if ~isnan(b)
     if dim == 1
         alpha = alpha - sign(dir*b)*pi/2;
     else
-        if sign(dir*b) == -1 && (ix2 == size(x,2) && iy1 == size(y,1))
+        if (sign(dir*b) == -1 && (ix2 == size(x,2) && iy1 == size(y,1))) || (sign(dir*b) == 1 && (ix1 == size(x,1) && iy2 == size(y,2)))
             alpha = alpha + pi;
         end
     end
