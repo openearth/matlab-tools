@@ -30,6 +30,9 @@
 %  dflowfm.analyseHis           - validate waterlevels against netCDF-OPeNDAP data for time series and with t_tide
 %  dflowfm.indexHis             - show overview of locations incl. coordinates
 %  dflowfm.fillDep              - fill depth values from OPeNDAP data source (single grid or gridset of tiles)
+%
+% VARIOUS TOOLS:
+%  dflowfm.mike2dflowfm         - convert a MIKE mesh (*.mesh file) to a D-Flow FM grid (*_net.nc)
 %  dflowfm.obs_file_in_polygon  - construct an obervation file (*_obs.xyn) from all locations within a polygon
 %
 % See also: delft3d
