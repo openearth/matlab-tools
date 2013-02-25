@@ -112,4 +112,4 @@ end
 D = dir(ncfile);
 timestr = datestr(D.datenum, 'ddd mmm dd hh:MM:SS yyyy');
 histstr = nc_attget(ncfile, nc_global, 'history');
-nc_attput(ncfile, nc_global, 'history', sprintf('%s: %s applied; %s\n%s', timestr, 'NaN values successively  (1) cross-shore linear interpolated, (2) linear interpolated in time and (3) nearest neighbour extrapolated in time', '$Id$', histstr));
+nc_attput(ncfile, nc_global, 'history', sprintf('%s: %s applied; %s\n%s', timestr, '$Id$', 'NaN values successively  (1) cross-shore linear interpolated, (2) linear interpolated in time and (3) nearest neighbour extrapolated in time', histstr));
