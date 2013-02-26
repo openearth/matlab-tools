@@ -24,7 +24,7 @@ end
 xml=[];
 
 try
-    xml=fastxml2struct([dr filesep xmlfile],'structuretype','short');
+    xml=xml2struct([dr filesep xmlfile],'structuretype','short');
 catch
     error(['Error in readGUIElementsXML. Could not load xml file ' dr xmlfile]);
 end

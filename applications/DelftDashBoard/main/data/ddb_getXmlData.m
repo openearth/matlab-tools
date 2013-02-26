@@ -66,12 +66,12 @@ serverdata = [];
 
 if exist(file,'file')
     % Local file exists
-    localdata=fastxml2struct(file,'structuretype','supershort');
+    localdata=xml2struct(file,'structuretype','supershort');
     try
         % Copy file on server to local folder
         ddb_urlwrite(url,[localdir filesep 'temp.xml']);
         % Read file from server
-        serverdata=fastxml2struct([localdir filesep 'temp.xml'],'structuretype','supershort');
+        serverdata=xml2struct([localdir filesep 'temp.xml'],'structuretype','supershort');
         % And delete file that was copied from server
         delete([localdir filesep 'temp.xml']); %cleanup
     catch
@@ -88,7 +88,7 @@ else
         % Copy file from server
         ddb_urlwrite(url,file);
         % Read file
-        localdata=fastxml2struct(file,'structuretype','supershort');
+        localdata=xml2struct(file,'structuretype','supershort');
         % All data files need to be updated
         fld = fieldnames(localdata);
         for ii=1:length(fld)

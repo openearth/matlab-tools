@@ -20,7 +20,7 @@ zcor=0;
 if length(varargin)==1
     % Read input from xml file
     xmlfile=varargin{1};
-    xml=fastxml2struct(xmlfile,'structuretype','short');
+    xml=xml2struct(xmlfile,'structuretype','short');
     runid=xml.runid;
     inputdir=xml.inputdir;
     admfile=xml.admfile;

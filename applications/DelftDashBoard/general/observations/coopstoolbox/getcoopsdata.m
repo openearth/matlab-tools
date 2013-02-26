@@ -239,7 +239,7 @@ MinMaxWL.minWaterLevel=str2double(MinMaxWL.minWaterLevel);
 %%
 function s=getDataInventory(id)
 url=['http://opendap.co-ops.nos.noaa.gov/axis/webservices/datainventory/response.jsp?stationId=' id '&format=xml&Submit=Submit'];
-xml=fastxml2struct(url,'structuretype','long','includeattributes');
+xml=xml2struct(url,'structuretype','long','includeattributes');
 for ipar=1:length(xml.Body.Body.DataInventory.DataInventory.station.station.parameter)
     s.parameters(ipar).longname=xml.Body.Body.DataInventory.DataInventory.station.station.parameter(ipar).parameter.ATTRIBUTES.name.value;
     s.parameters(ipar).firsttime=xml.Body.Body.DataInventory.DataInventory.station.station.parameter(ipar).parameter.ATTRIBUTES.first.value;

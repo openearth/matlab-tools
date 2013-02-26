@@ -1,10 +1,10 @@
-function s=fastxml2struct(varargin)
+function s=xml2struct(varargin)
 %FASTXML2STRUCT  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   s = fastxml2struct(fname)
+%   s = xml2struct(fname)
 %
 %   Input:
 %   fname =

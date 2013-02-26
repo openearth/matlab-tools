@@ -39,7 +39,7 @@ function capabilities=getCapabilities(inputfile,outputfile,setglobal)
 
 if isempty(inputfile)
     % Get data from NDBC SOS server
-    capabilities=fastxml2struct('http://sdf.ndbc.noaa.gov/sos/server.php?request=GetCapabilities&service=SOS','structuretype','long','includeroot');
+    capabilities=xml2struct('http://sdf.ndbc.noaa.gov/sos/server.php?request=GetCapabilities&service=SOS','structuretype','long','includeroot');
 else
     % Get data from file
     [pathstr,name,ext]=fileparts(inputfile);
@@ -47,7 +47,7 @@ else
         case{'mat'}            
             capabilities=load(inputfile);
         case{'xml'}
-            capabilities=fastxml2struct(inputfile,'structuretype','long','includeroot');
+            capabilities=xml2struct(inputfile,'structuretype','long','includeroot');
     end
 end
 

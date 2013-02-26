@@ -101,7 +101,7 @@ else
                 otherwise
                     fname=[dr filesep flist(i).name filesep 'xml' filesep flist(i).name '.xml'];
                     if exist(fname,'file')
-                        xml=fastxml2struct(fname,'structuretype','short');
+                        xml=xml2struct(fname,'structuretype','short');
                         switch lower(xml.enable)
                             case{'1','y','yes'}
                                 k=k+1;
@@ -125,7 +125,7 @@ else
                     otherwise
                         fname=[dr2 filesep flist(i).name filesep 'xml' filesep flist(i).name '.xml'];
                         if exist(fname,'file')
-                            xml=fastxml2struct(fname,'structuretype','short');
+                            xml=xml2struct(fname,'structuretype','short');
                             switch lower(xml.enable)
                                 case{'1','y','yes'}
                                     k=k+1;

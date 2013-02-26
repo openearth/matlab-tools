@@ -67,7 +67,7 @@ ddb_getToolboxData(handles.Toolbox(ii).dataDir,ii);
 
 dr=handles.Toolbox(ii).dataDir;
 
-s=fastxml2struct([dr 'ObservationStations.xml'],'structuretype','supershort');
+s=xml2struct([dr 'ObservationStations.xml'],'structuretype','supershort');
 
 for k=1:length(s.database)
 
