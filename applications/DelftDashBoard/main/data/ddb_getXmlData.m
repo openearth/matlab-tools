@@ -1,4 +1,4 @@
-function newdata = ddb_getXmlData(localdir,url,xmlfile)
+function localdata = ddb_getXmlData(localdir,url,xmlfile)
 %DDB_GETXMLDATA  One line description goes here.
 %
 %   More detailed description goes here.
@@ -61,96 +61,179 @@ function newdata = ddb_getXmlData(localdir,url,xmlfile)
 
 %% Check local xml-file else download from server
 file = [localdir filesep xmlfile];
+localdata  = [];
 serverdata = [];
-newdata=[];
 
-if exist(file)==2
-    data=xml_load(file);
+if exist(file,'file')
+    % Local file exists
+%    data=xml_load(file);
+    localdata=fastxml2struct(file,'structuretype','supershort');
     try
+        % Copy file on server to local folder
         ddb_urlwrite(url,[localdir filesep 'temp.xml']);
-        serverdata = xml_load([localdir filesep 'temp.xml']);
+        % Read file from server
+        serverdata=fastxml2struct([localdir filesep 'temp.xml'],'structuretype','supershort');
+        % And delete file that was copied from server
         delete([localdir filesep 'temp.xml']); %cleanup
     catch
         % Data cannot be updated
-        fld = fieldnames(data);
-        for aa=1:length(data)
-            data(aa).(fld{1}).update = 0;
-        end
-        warning(['Could not retrieve ''' xmlfile ''' from server, no data update!']);
+        disp(['Could not retrieve ' xmlfile ' from server, no data update!']);
+        return
     end 
 else
+    % Local file does not exist, so copy file from server (the should happen the first time DelftDashboard is started)
     try
+        % Make folder
         if ~isdir(localdir)
            mkdir(localdir); 
         end
+        % Copy file from server
         ddb_urlwrite(url,file);
-        data=xml_load(file);
-        % All data needs to be updated
-        fld = fieldnames(data);
-        for aa=1:length(data)
-            data(aa).(fld{1}).update = 1;
+        % Read file
+        localdata=fastxml2struct(file,'structuretype','supershort');
+        % All data files need to be updated
+        fld = fieldnames(localdata);
+        for ii=1:length(fld)
+            if strcmpi(fld{ii},'file')
+                for jj=1:length(localdata.(fld{ii}))
+                    localdata.(fld{ii})(jj).update = 1;
+                end
+            end
         end
     catch
-        warning(['Could not retrieve ''' xmlfile ''' from server']);
+        error(['Could not retrieve ' xmlfile ' from server']);
         return
     end
 end
 
-%% If local data already existed and update could be retrieved from server, check which data is in need for update
-if ~isempty(serverdata)
+iupdate=0;
+
+
+if isempty(localdata) && ~isempty(serverdata)
+
+    % New data file was loaded
+    localdata=serverdata;
+
+elseif ~isempty(localdata) && isempty(serverdata)
+
+    % Could not load data from server, so use local data
+    % Do nothing
+
+else
     
-    fld = fieldnames(data);
-    for aa=1:length(data)
-        names{aa} = data(aa).(fld{1}).name;
-        if isfield(data(aa).(fld{1}),'version')
-            versions(aa) = str2double(data(aa).(fld{1}).version);
-        else
-            versions(aa)=0;
+    % Both local data and server data exist, so try to merge the two by
+    % updating local data
+
+    % First set file update to zero for each field
+    fld = fieldnames(localdata);
+    for ii=1:length(fld)
+        for jlocal=1:length(localdata.(fld{ii}))
+            localdata.(fld{ii})(jlocal).update=0;
         end
-        data(aa).(fld{1}).update = 0;
     end
     
-    for bb=1:length(serverdata)
-        % Check for new datasets on server
-        if ~ismember(serverdata(bb).(fld{1}).name,names)
-            llength = length(data);
-            data(llength+1) = serverdata(bb);
-            data(llength+1).(fld{1}).update = 1;
-        else
-            % Check for version updates on server
-            [AA,id] = ismember(serverdata(bb).(fld{1}).name,names);
-            if isfield(serverdata(bb).(fld{1}),'version')
-                if versions(id) ~= str2double(serverdata(bb).(fld{1}).version);
-                    Qupdate = questdlg(['There is an update for ' serverdata(bb).(fld{1}).name...
-                        ', would you like to delete the old cache and update?'], ...
+    % Loop through server data
+
+    fld = fieldnames(serverdata);
+    
+    for ii=1:length(fld)
+        
+        if ~isfield(localdata,fld{ii})
+            % Field does not yet exist in local data, so create empty field
+            localdata.(fld{ii})=serverdata.(fld{ii});
+            for jlocal=1:length(localdata.(fld{ii}))
+                localdata.(fld{ii})(jlocal).update=1;
+            end
+            iupdate=1;
+        end
+
+        % There are three options:
+        % 1) entry is in local data and in server data
+        % 2) entry is in server data and not in local data
+        % 3) entry is in local data and not in server data (no need to do anything)
+
+        % Make an array of local data names
+        localdatanames={''};
+        for jlocal=1:length(localdata.(fld{ii}))
+            localdatanames{jlocal}=localdata.(fld{ii})(jlocal).name;
+        end
+
+        % Look for option 1
+        for jserver=1:length(serverdata.(fld{ii}))
+            name=serverdata.(fld{ii})(jserver).name;
+            isame=strmatch(lower(name),lower(localdatanames),'exact');
+            for k=1:length(isame)
+                jlocal=isame(k);
+                % Now check if server data has higher number
+                % Find versions
+                serverversion=0;
+                if isfield(serverdata.(fld{ii})(jserver),'version')
+                    if ~isempty(serverdata.(fld{ii})(jserver).version)
+                        serverversion=str2double(serverdata.(fld{ii})(jserver).version);
+                    end
+                end
+                localversion=0;
+                if isfield(localdata.(fld{ii})(jlocal),'version')
+                    if ~isempty(localdata.(fld{ii})(jlocal).version)
+                        localversion=str2double(localdata.(fld{ii})(jlocal).version);
+                    end
+                end
+                if serverversion>localversion
+                    % Update local data
+                    % A newer version was found somewhere, so ask user if he wants to
+                    % update
+                    Qupdate = questdlg(['There is an update for ' fld{ii} ' ' name ' in ' xmlfile ', would you like to delete the old cache and update?'], ...
                         'Update?', ...
                         'Yes', 'No', 'Yes');
-                    switch Qupdate,
-                        case 'Yes',
-                            data(id) = serverdata(bb);
-                            data(id).(fld{1}).update = 1;
-                            if isdir([localdir filesep serverdata(bb).(fld{1}).name])
-                                rmdir([localdir filesep serverdata(bb).(fld{1}).name],'s');
+                    switch Qupdate
+                        case{'Yes'}
+                            iupdate=1;
+                            % Copy fields from server data to local data
+                            fld2=fieldnames(serverdata.(fld{ii})(jserver));
+                            for kk=1:length(fld2)
+                                localdata.(fld{ii})(jlocal).(fld2{kk})=serverdata.(fld{ii})(jserver).(fld2{kk});
                             end
-                        case 'No',
-                            data(id).(fld{1}).update = 0;
+                            localdata.(fld{ii})(jlocal).update = 1;
+                            if isdir([localdir filesep name])
+                                rmdir([localdir filesep name],'s');
+                            end
+                        case{'No'}
                     end
                 end
             end
+        end                    
+                
+        % Now look for option 2
+        for jserver=1:length(serverdata.(fld{ii}))
+            name=serverdata.(fld{ii})(jserver).name;
+            isame=strmatch(lower(name),lower(localdatanames),'exact');
+            if isempty(isame)
+                % New data found on server
+                iupdate=1;
+                jlocal=length(localdata.(fld{ii}))+1;
+                fld2=fieldnames(serverdata.(fld{ii})(jserver));
+                for kk=1:length(fld2)
+                    localdata.(fld{ii})(jlocal).(fld2{kk})=serverdata.(fld{ii})(jserver).(fld2{kk});
+                end
+                localdata.(fld{ii})(jlocal).update = 1;
+            end
+        end
+        
+    end
+end
+
+if iupdate
+    % Write new local data file
+    % First remove update fields
+    tempdata=localdata;
+    % First set file update to zero for each field
+    fld = fieldnames(tempdata);
+    for ii=1:length(fld)
+        for jlocal=1:length(tempdata.(fld{ii}))
+            if isfield(tempdata.(fld{ii})(jlocal),'update')
+                tempdata.(fld{ii})=rmfield(tempdata.(fld{ii}),'update');
+            end
         end
     end
+    struct2xml(file,tempdata,'structuretype','supershort');
 end
-
-%% Convert data to DDB structure format (~= xml format)
-for cc=1:length(data)
-    fldnames=fieldnames(data(cc).(fld{1}));
-    for ifld=1:length(fldnames)
-        newdata.(fld{1})(cc).(fldnames{ifld}) = data(cc).(fld{1}).(fldnames{ifld});
-    end
-end
-
-%% Update local xml-file (without update field)
-for aa=1:length(data)
-    xmldata(aa).(fld{1}) = rmfield(data(aa).(fld{1}),'update');
-end
-xml_save([localdir filesep xmlfile],xmldata,'off');
