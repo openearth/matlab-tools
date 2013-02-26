@@ -90,6 +90,10 @@ lst=dir([dr '*.nc']);
 
 handles.Toolbox(ii).Input.databases={''};
 
+if length(lst)==0
+    error('No databases for tide stations found!');
+end
+
 for i=1:length(lst)
     disp(['Loading tide database ' lst(i).name(1:end-3) ' ...']);
     fname=[dr lst(i).name(1:end-3) '.nc'];
