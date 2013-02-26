@@ -65,11 +65,12 @@ if isempty(varargin)
     ddb_zoomOff;
     ddb_refreshScreen;
     handles=getHandles;
-    h=handles.Toolbox(tb).Input.observationstationshandle;
     ddb_plotObservationStations('activate');
+    h=handles.Toolbox(tb).Input.observationstationshandle;
     if isempty(h)
         plotObservationStations;
-        refreshObservations;        
+        refreshObservations;
+        refreshStationList;
     end
     gui_updateActiveTab;
 else
@@ -89,8 +90,50 @@ else
             viewObservationSignal;
         case{'exportsignal'}
             exportObservationSignal;
+        case{'exportallsignals'}
+            exportAllObservationSignals;
+        case{'drawpolygon'}
+            drawPolygon;
+        case{'deletepolygon'}
+            deletePolygon;
+        case{'exportoptions'}
+            editExportOptions;
+        case{'selectstationlistoption'}
+            refreshStationList;
+            refreshStationText;
     end
 end
+
+%%
+function selectObservationDatabase
+
+handles=getHandles;
+
+% First delete existing stations
+try
+    delete(handles.Toolbox(tb).Input.observationstationshandle);
+end
+
+handles.Toolbox(tb).Input.activeobservationstation=handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).activeobservationstation;
+
+handles.Toolbox(tb).Input.observationstationshandle=[];
+
+setHandles(handles);
+
+refreshStationList;
+plotObservationStations;
+selectObservationStation;
+
+%%
+function refreshStationList
+
+handles=getHandles;
+if handles.Toolbox(tb).Input.showstationnames
+    handles.Toolbox(tb).Input.stationlist=handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).stationnames;
+else
+    handles.Toolbox(tb).Input.stationlist=handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).stationids;
+end
+setHandles(handles);
 
 %%
 function addObservationPoints
@@ -111,121 +154,32 @@ switch lower(handles.Model(md).name)
         ddb_giveWarning('text',['Sorry, generation of observation points from stations is not supported for ' handles.Model(md).longName ' ...']);
 end
 
-%%
-function viewObservationSignal
-
-handles=getHandles;
-t0=handles.Toolbox(tb).Input.startTime;
-t1=handles.Toolbox(tb).Input.stopTime;
-iac=handles.Toolbox(tb).Input.activeDatabase;
-ii=handles.Toolbox(tb).Input.activeObservationStation;
-idcode=handles.Toolbox(tb).Input.database(iac).idCodes{ii};
-% url=[handles.Toolbox(tb).Input.database(iac).URL idcode '/' idcode 't9999.nc'];
-% url=[handles.Toolbox(tb).Input.database(iac).URL idcode '/' idcode 'h9999.nc'];
-time=[];
-data=[];
-
-wb = waitbox('Downloading data ...');
-
-try
-    
-%    [time,data]=getTimeSeriesFromNDBC(handles.Toolbox(tb).Input.database(iac).URL,t0,t1,idcode,'wave_height');
-
-    switch lower(handles.Toolbox(tb).Input.database(iac).shortName)
-        case{'ndbc'}
-            [time,data]=getTimeSeriesFromNDBC(handles.Toolbox(tb).Input.database(iac).URL,t0,t1,idcode,'wave_height');
-        case{'co-ops'}
-            [time,data]=getWLFromCoops(idcode,t0,t1);
-    end
-
-    %     time = nc_varget(url,'time');
-    %     time=double(time);
-    %     time=datenum(1970,1,1)+time/86400;
-    %     it1=find(time<=t0,1,'last');
-    %     it2=find(time>=t1,1,'first');
-    %     j=handles.Toolbox(tb).Input.activeParameter;
-    %     par='wave_height';
-    % %    data = nc_varget(url,handles.Toolbox(tb).Input.database(iac).parameters(ii).Name{j},[it1-1 0 0],[it2-it1+1 1 1]);
-    %     data = nc_varget(url,par,[it1-1 0 0],[it2-it1+1 1 1]);
-    %     time=time(it1:it2);
-    close(wb);
-    if ~isempty(time) && ~isempty(data)
-        stationName=handles.Toolbox(tb).Input.database(iac).stationNames{ii};
-        ddb_plotTimeSeries(time,data,stationName);
-    end
-        
-catch
-    
-    close(wb);
-    
-end
-
-
-%%
-function exportObservationSignal
-
-handles=getHandles;
-t0=handles.Toolbox(tb).Input.startTime;
-t1=handles.Toolbox(tb).Input.stopTime;
-iac=handles.Toolbox(tb).Input.activeDatabase;
-ii=handles.Toolbox(tb).Input.activeObservationStation;
-idcode=handles.Toolbox(tb).Input.database(iac).idCodes{ii};
-
-time=[];
-data=[];
-
-wb = waitbox('Downloading data ...');
-
-try
-    
-    switch lower(handles.Toolbox(tb).Input.database(iac).shortName)
-        case{'ndbc'}
-            [time,data]=getTimeSeriesFromNDBC(handles.Toolbox(tb).Input.database(iac).URL,t0,t1,idcode,'wave_height');
-        case{'co-ops'}
-            [time,data]=getWLFromCoops(idcode,t0,t1);
-    end
-    
-    %     time = nc_varget(url,'time');
-    %     time=double(time);
-    %     time=datenum(1970,1,1)+time/86400;
-    %     it1=find(time<=t0,1,'last');
-    %     it2=find(time>=t1,1,'first');
-    %     par='wave_height';
-    % %    data = nc_varget(url,handles.Toolbox(tb).Input.database(iac).parameters(ii).Name{1},[it1-1 0 0],[it2-it1+1 1 1]);
-    %     data = nc_varget(url,par,[it1-1 0 0],[it2-it1+1 1 1]);
-    %     time=time(it1:it2);
-    close(wb);
-catch
-    close(wb);
-end
-
-if ~isempty(time) && ~isempty(data)
-    stationName=handles.Toolbox(tb).Input.database(iac).stationNames{ii};
-    shortName=idcode;
-    fname=[shortName '.tek'];
-    exportTEK(data,time,fname,stationName);
-end
 
 %%
 function selectObservationStationFromMap(h,nr)
 handles=getHandles;
-handles.Toolbox(tb).Input.activeObservationStation=nr;    
+handles.Toolbox(tb).Input.activeobservationstation=nr;    
 setHandles(handles);    
 selectObservationStation;
 gui_updateActiveTab;
 
 %%
 function selectObservationStation
+
 handles=getHandles;
-iac=handles.Toolbox(tb).Input.activeDatabase;
 
-gui_pointcloud(handles.Toolbox(tb).Input.observationstationshandle,'change','activepoint',handles.Toolbox(tb).Input.activeObservationStation);
+iac=handles.Toolbox(tb).Input.activedatabase;
 
-handles.Toolbox(tb).Input.activeParameter=1;
-parameters=handles.Toolbox(tb).Input.database(iac).parameters(handles.Toolbox(tb).Input.activeObservationStation);
-for j=1:length(parameters.Name)
-    if parameters.Status(j)
-        handles.Toolbox(tb).Input.activeParameter=j;
+istat=handles.Toolbox(tb).Input.activeobservationstation;
+gui_pointcloud(handles.Toolbox(tb).Input.observationstationshandle,'change','activepoint',istat);
+
+handles.Toolbox(tb).Input.database(iac).activeobservationstation=istat;
+
+handles.Toolbox(tb).Input.activeparameter=1;
+parameters=handles.Toolbox(tb).Input.database(iac).parameters(istat);
+for j=1:length(parameters.name)
+    if parameters.status(j)
+        handles.Toolbox(tb).Input.activeparameter=j;
         break
     end
 end
@@ -234,32 +188,35 @@ setHandles(handles);
 
 refreshObservations;
 
+refreshStationText;
+
 %%
-function selectObservationDatabase
+function refreshStationText
+
 handles=getHandles;
-handles.Toolbox(tb).Input.activeObservationStation=1;
-% First delete existing stations
-try
-    delete(handles.Toolbox(tb).Input.observationstationshandle);
+
+iac=handles.Toolbox(tb).Input.activedatabase;
+istat=handles.Toolbox(tb).Input.activeobservationstation;
+
+if handles.Toolbox(tb).Input.showstationnames
+    handles.Toolbox(tb).Input.textstation=['Station ID : ' handles.Toolbox(tb).Input.database(iac).stationids{istat}];
+else
+    handles.Toolbox(tb).Input.textstation=['Station Name : ' handles.Toolbox(tb).Input.database(iac).stationnames{istat}];
 end
-handles.Toolbox(tb).Input.observationstationshandle=[];
+
 setHandles(handles);
-plotObservationStations;
-selectObservationStation;
 
 %%
 function plotObservationStations
 
 handles=getHandles;
 
-iac=handles.Toolbox(tb).Input.activeDatabase;
+iac=handles.Toolbox(tb).Input.activedatabase;
 
-x=handles.Toolbox(tb).Input.database(iac).xLoc;
-y=handles.Toolbox(tb).Input.database(iac).yLoc;
+x=handles.Toolbox(tb).Input.database(iac).xlocal;
+y=handles.Toolbox(tb).Input.database(iac).ylocal;
 
-cs0.name=handles.Toolbox(tb).Input.database(iac).coordinateSystem;
-cs0.type=handles.Toolbox(tb).Input.database(iac).coordinateSystemType;
-[x,y]=ddb_coordConvert(x,y,cs0,handles.screenParameters.coordinateSystem);
+[x,y]=ddb_coordConvert(x,y,handles.Toolbox(tb).Input.database(iac).coordinatesystem,handles.screenParameters.coordinateSystem);
 
 handles.Toolbox(tb).Input.database(iac).xLocLocal=x;
 handles.Toolbox(tb).Input.database(iac).yLocLocal=y;
@@ -269,7 +226,7 @@ xy=[x' y'];
 h=gui_pointcloud('plot','xy',xy,'selectcallback',@selectObservationStationFromMap,'tag','observationstations', ...
     'MarkerSize',5,'MarkerEdgeColor','k','MarkerFaceColor','y', ...
     'ActiveMarkerSize',6,'ActiveMarkerEdgeColor','k','ActiveMarkerFaceColor','r', ...
-    'activepoint',handles.Toolbox(tb).Input.activeObservationStation);
+    'activepoint',handles.Toolbox(tb).Input.activeobservationstation);
 
 handles.Toolbox(tb).Input.observationstationshandle=h;
 
@@ -279,31 +236,30 @@ setHandles(handles);
 function refreshObservations
 
 handles=getHandles;
-iac=handles.Toolbox(tb).Input.activeDatabase;
-ii=handles.Toolbox(tb).Input.activeObservationStation;
+iac=handles.Toolbox(tb).Input.activedatabase;
+ii=handles.Toolbox(tb).Input.activeobservationstation;
 parameters=handles.Toolbox(tb).Input.database(iac).parameters(ii);
-for j=1:length(parameters.Name)
+for j=1:length(parameters.name)
     iradio=num2str(j,'%0.2i');
     handles.Toolbox(tb).Input.(['radio' iradio]).value=0;
-    handles.Toolbox(tb).Input.(['radio' iradio]).text=parameters.Name{j};
-    if parameters.Status(j)
+    handles.Toolbox(tb).Input.(['radio' iradio]).text=parameters.name{j};
+    if parameters.status(j)
         handles.Toolbox(tb).Input.(['radio' iradio]).enable=1;
     else
         handles.Toolbox(tb).Input.(['radio' iradio]).enable=0;
     end
 end
-for j=length(parameters.Name)+1:14
+for j=length(parameters.name)+1:14
     iradio=num2str(j,'%0.2i');
     handles.Toolbox(tb).Input.(['radio' iradio]).value=-1;
     handles.Toolbox(tb).Input.(['radio' iradio]).text=['radio' iradio];
     handles.Toolbox(tb).Input.(['radio' iradio]).enable=0;
 end
 
-iradio=num2str(handles.Toolbox(tb).Input.activeParameter,'%0.2i');
+iradio=num2str(handles.Toolbox(tb).Input.activeparameter,'%0.2i');
 handles.Toolbox(tb).Input.(['radio' iradio]).value=1;
 
 setHandles(handles);
-
 
 %%
 function selectParameter(opt)
@@ -311,7 +267,7 @@ function selectParameter(opt)
 handles=getHandles;
 
 iopt=str2double(opt);
-handles.Toolbox(tb).Input.activeParameter=iopt;
+handles.Toolbox(tb).Input.activeparameter=iopt;
 
 for j=1:14
     iradio=num2str(j,'%0.2i');
@@ -323,3 +279,363 @@ iradio=num2str(iopt,'%0.2i');
 handles.Toolbox(tb).Input.(['radio' iradio]).value=1;
 
 setHandles(handles);
+
+%%
+function drawPolygon
+
+handles=getHandles;
+
+ddb_zoomOff;
+
+h=findobj(gcf,'Tag','observationspolygon');
+if ~isempty(h)
+    delete(h);
+end
+
+handles.Toolbox(tb).Input.polygonx=[];
+handles.Toolbox(tb).Input.polygony=[];
+handles.Toolbox(tb).Input.polygonlength=0;
+
+handles.Toolbox(tb).Input.polygonhandle=gui_polyline('draw','tag','observationspolygon','marker','o', ...
+    'createcallback',@createPolygon,'changecallback',@changePolygon, ...
+    'closed',1);
+
+setHandles(handles);
+
+%%
+function createPolygon(h,x,y)
+handles=getHandles;
+handles.Toolbox(tb).Input.polygonhandle=h;
+handles.Toolbox(tb).Input.polygonx=x;
+handles.Toolbox(tb).Input.polygony=y;
+handles.Toolbox(tb).Input.polygonlength=length(x);
+setHandles(handles);
+gui_updateActiveTab;
+
+%%
+function deletePolygon
+handles=getHandles;
+handles.Toolbox(tb).Input.polygonx=[];
+handles.Toolbox(tb).Input.polygony=[];
+handles.Toolbox(tb).Input.polygonlength=0;
+h=findobj(gcf,'Tag','observationspolygon');
+if ~isempty(h)
+    delete(h);
+end
+setHandles(handles);
+
+%%
+function changePolygon(h,x,y,varargin)
+handles=getHandles;
+handles.Toolbox(tb).Input.polygonx=x;
+handles.Toolbox(tb).Input.polygony=y;
+handles.Toolbox(tb).Input.polygonlength=length(x);
+setHandles(handles);
+
+function data=downloadObservations(iac,istation,ipar,iquiet)
+
+handles=getHandles;
+
+t0=handles.Toolbox(tb).Input.starttime;
+t1=handles.Toolbox(tb).Input.stoptime;
+idcode=handles.Toolbox(tb).Input.database(iac).stationids{istation};
+datum=handles.Toolbox(tb).Input.database(iac).datum;
+subset=handles.Toolbox(tb).Input.database(iac).subset;
+timezone=handles.Toolbox(tb).Input.database(iac).timezone;
+
+data=[];
+
+if ~isfield(handles.Toolbox(tb).Input,'downloadeddatasetnames')
+    handles.Toolbox(tb).Input.downloadeddatasetnames=[];
+end
+if ~isfield(handles.Toolbox(tb).Input,'downloadeddatasets')
+    handles.Toolbox(tb).Input.downloadeddatasets=[];
+end
+
+try    
+
+    if ~iquiet
+        wb = waitbox(['Downloading ' handles.Toolbox(tb).Input.database(iac).parameters(istation).name{ipar} ' from station ' handles.Toolbox(tb).Input.database(iac).stationnames{istation}]);
+    end
+
+    parameter=handles.Toolbox(tb).Input.database(iac).parameters(istation).name{ipar};
+    
+    downloadeddatasetname=[parameter '.' idcode '.' handles.Toolbox(tb).Input.database(iac).name '.' ...
+        datestr(t0,'yyyymmddHHMMSS') '.' datestr(t1,'yyyymmddHHMMSS') '.' ...
+        handles.Toolbox(tb).Input.database(iac).datum '.' handles.Toolbox(tb).Input.database(iac).subset '.' handles.Toolbox(tb).Input.database(iac).timezone];
+    
+    ii=strmatch(downloadeddatasetname,handles.Toolbox(tb).Input.downloadeddatasetnames,'exact');
+    
+    if isempty(ii)
+        % data not yet there       
+        f=handles.Toolbox(tb).Input.database(iac).callback;
+        % Now download
+        data=feval(f,'getobservations','tstart',t0,'tstop',t1,'id',idcode,'parameter',parameter,'datum',datum,'subset',subset,'timezone',timezone);        
+        if ~isempty(data)
+            n=length(handles.Toolbox(tb).Input.downloadeddatasets)+1;
+            if isempty(data.stationname)
+                data.stationname=handles.Toolbox(tb).Input.database(iac).stationnames{istation};
+            end
+            handles.Toolbox(tb).Input.downloadeddatasets(n).downloadeddataset=data;
+            handles.Toolbox(tb).Input.downloadeddatasetnames{n}=downloadeddatasetname;
+        end        
+    else
+        % data already there
+        data=handles.Toolbox(tb).Input.downloadeddatasets(ii).downloadeddataset;
+
+    end
+    
+    if ~iquiet
+        close(wb);
+    end
+    
+catch
+    if ~iquiet
+        close(wb);    
+    end
+end
+
+setHandles(handles);
+
+%%
+function viewObservationSignal
+
+handles=getHandles;
+
+iac=handles.Toolbox(tb).Input.activedatabase;
+istation=handles.Toolbox(tb).Input.activeobservationstation;
+ipar=handles.Toolbox(tb).Input.activeparameter;
+
+data=downloadObservations(iac,istation,ipar,0);
+
+if ~isempty(data)
+    ddb_plotTimeSeries2('makefigure',data);
+else
+    ddb_giveWarning('text','Sorry, there is no data available for this time period ...');
+end
+
+%%
+function exportObservationSignal
+
+handles=getHandles;
+
+iac=handles.Toolbox(tb).Input.activedatabase;
+istation=handles.Toolbox(tb).Input.activeobservationstation;
+ipar=handles.Toolbox(tb).Input.activeparameter;
+t0=handles.Toolbox(tb).Input.starttime;
+t1=handles.Toolbox(tb).Input.stoptime;
+
+data=downloadObservations(iac,istation,ipar,0);
+
+if isempty(data)
+    ddb_giveWarning('text','Sorry, there is no data available for this time period ...');
+    return
+end
+
+parameter=handles.Toolbox(tb).Input.database(iac).parameters(istation).name{ipar};
+
+parameter(parameter==' ')='';
+fname=parameter;
+if handles.Toolbox(tb).Input.includename
+    name=lower(handles.Toolbox(tb).Input.database(iac).stationnames{istation});
+    name=justletters(lower(name));
+    fname=[fname '.' name];
+end
+if handles.Toolbox(tb).Input.includeid
+    idcode=handles.Toolbox(tb).Input.database(iac).stationids{istation};
+    fname=[fname '.' idcode];
+end
+if handles.Toolbox(tb).Input.includedatabase
+    fname=[fname '.' handles.Toolbox(tb).Input.database(iac).name];
+end
+if handles.Toolbox(tb).Input.includetimestamp
+    fname=[fname '.' datestr(t0,'yyyymmdd') '.' datestr(t1,'yyyymmdd')];
+end
+
+if ~isempty(data)
+    switch(handles.Toolbox(tb).Input.exporttype)
+        case{'mat'}
+            [filename, pathname, filterindex] = uiputfile('*.mat', 'Select Mat File',[fname '.mat']);
+            if filename==0
+                return
+            end
+            filename=[pathname filename];
+            save(filename,'-struct','data');
+        case{'tek'}           
+            [filename, pathname, filterindex] = uiputfile('*.tek', 'Select Tekal File',[fname '.tek']);
+            if filename==0
+                return
+            end
+            filename=[pathname filename];
+            exportTEK2(data,filename);            
+    end
+end
+
+%%
+function exportAllObservationSignals
+
+handles=getHandles;
+
+iac=handles.Toolbox(tb).Input.activedatabase;
+
+x=handles.Toolbox(tb).Input.database(iac).xLocLocal;
+y=handles.Toolbox(tb).Input.database(iac).yLocLocal;
+
+inpol=inpolygon(x,y,handles.Toolbox(tb).Input.polygonx,handles.Toolbox(tb).Input.polygony);
+
+t0=handles.Toolbox(tb).Input.starttime;
+t1=handles.Toolbox(tb).Input.stoptime;
+
+wb = awaitbar(0,'Downloading data ...');
+
+% Count how many datasets there are
+nrdatasets=0;
+for istation=1:length(inpol)
+    if inpol(istation)
+        if handles.Toolbox(tb).Input.exportallparameters
+            nrdatasets=nrdatasets+length(handles.Toolbox(tb).Input.database(iac).parameters(istation).name);
+        else
+            % Find matching parameter for this station
+            ipar0=handles.Toolbox(tb).Input.activeparameter;
+            istat0=handles.Toolbox(tb).Input.activeobservationstation;
+            iparmatch=strmatch(handles.Toolbox(tb).Input.database(iac).parameters(istat0).name{ipar0},handles.Toolbox(tb).Input.database(iac).parameters(istation).name,'exact');
+            if ~isempty(iparmatch)
+                nrdatasets=nrdatasets+1;
+            end
+        end        
+    end
+end
+
+nr=0;
+
+[hh,abort2]=awaitbar(0.001,wb,'Downloading data ...');
+
+errorstrings=[];
+for istation=1:length(inpol)
+    
+    
+    
+    % Loop through stations
+    
+    if inpol(istation)
+        
+        ok=1;
+        if handles.Toolbox(tb).Input.exportallparameters
+            ipar1=1;
+            ipar2=length(handles.Toolbox(tb).Input.database(iac).parameters(istation).name);
+        else
+            % Find matching parameter for this station
+            ipar0=handles.Toolbox(tb).Input.activeparameter;
+            istat0=handles.Toolbox(tb).Input.activeobservationstation;
+            iparmatch=strmatch(handles.Toolbox(tb).Input.database(iac).parameters(istat0).name{ipar0},handles.Toolbox(tb).Input.database(iac).parameters(istation).name,'exact');
+            if isempty(iparmatch)
+                ok=0;
+            else
+                ipar1=iparmatch;
+                ipar2=ipar1;
+            end
+        end
+        
+        if ok
+            for ipar=ipar1:ipar2
+                
+                % Loop through parameters
+                nr=nr+1;
+                
+                parstr=handles.Toolbox(tb).Input.database(iac).parameters(istation).name{ipar};
+                ststr=handles.Toolbox(tb).Input.database(iac).stationnames{istation};
+                str=['Downloading ' parstr ' from ' ststr ' - dataset ' num2str(nr) ' of ' ...
+                    num2str(nrdatasets) ' ...'];
+                
+                [hh,abort2]=awaitbar(nr/nrdatasets,wb,str);
+                
+                if abort2 % Abort the process by clicking abort button
+                    break;
+                end;
+                if isempty(hh); % Break the process when closing the figure
+                    break;
+                end;
+                
+                data=downloadObservations(iac,istation,ipar,1);
+                
+                if isempty(data)
+                    
+                    n=length(errorstrings);
+                    errorstrings{n+1}=[handles.Toolbox(tb).Input.database(iac).stationnames{istation} ' - ' handles.Toolbox(tb).Input.database(iac).parameters(istation).name{ipar}];
+                    
+                else
+                    
+                    parameter=handles.Toolbox(tb).Input.database(iac).parameters(istation).name{ipar};
+                    
+                    parameter(parameter==' ')='';
+                    fname=parameter;
+                    if handles.Toolbox(tb).Input.includename
+                        name=lower(handles.Toolbox(tb).Input.database(iac).stationnames{istation});
+                        name=justletters(lower(name));
+                        fname=[fname '.' name];
+                    end
+                    if handles.Toolbox(tb).Input.includeid
+                        idcode=handles.Toolbox(tb).Input.database(iac).stationids{istation};
+                        fname=[fname '.' idcode];
+                    end
+                    if handles.Toolbox(tb).Input.includedatabase
+                        fname=[fname '.' handles.Toolbox(tb).Input.database(iac).name];
+                    end
+                    if handles.Toolbox(tb).Input.includetimestamp
+                        fname=[fname '.' datestr(t0,'yyyymmdd') '.' datestr(t1,'yyyymmdd')];
+                    end
+                    
+                    if ~isempty(data)
+                        switch(handles.Toolbox(tb).Input.exporttype)
+                            case{'mat'}
+                                filename=[fname '.mat'];
+                                save(filename,'-struct','data');
+                            case{'tek'}
+                                filename=[fname '.tek'];
+                                exportTEK2(data,filename);
+                        end
+                    end
+                end
+            end
+        end
+    end
+    if abort2 % Abort the process by clicking abort button
+        break;
+    end;
+    if isempty(hh); % Break the process when closing the figure
+        break;
+    end;
+end
+
+% close waitbar
+if ~isempty(hh)
+    close(wb);
+end
+
+if ~isempty(errorstrings)
+    h.errorstrings=errorstrings;
+    h.dummy=1;
+    xmldir=handles.Toolbox(tb).xmlDir;
+    xmlfile='observationstations.showerrors.xml';    
+    [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir filesep 'icons' filesep 'deltares.gif']);    
+end
+    
+%%
+function editExportOptions
+
+handles=getHandles;
+
+xmldir=handles.Toolbox(tb).xmlDir;
+xmlfile='observationstations.exportoptions.xml';
+
+h=handles.Toolbox(tb).Input;
+
+[h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir filesep 'icons' filesep 'deltares.gif']);
+
+if ok
+    
+    handles.Toolbox(tb).Input=h;
+    
+    setHandles(handles);
+
+end

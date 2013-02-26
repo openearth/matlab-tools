@@ -65,13 +65,23 @@ switch lower(option)
     case{'delete'}
         h=findobj(gca,'Tag','observationstations');
         delete(h);
+        h=findobj(gca,'Tag','observationspolygon');
+        delete(h);
     case{'activate'}
         h=findobj(gca,'Tag','observationstations');
         if ~isempty(h)
             set(h,'Visible','on');
         end
+        h=findobj(gca,'Tag','observationspolygon');
+        if ~isempty(h)
+            set(h,'Visible','on');
+        end
     case{'deactivate'}
         h=findobj(gca,'Tag','observationstations');
+        if ~isempty(h)
+            set(h,'Visible','off');
+        end
+        h=findobj(gca,'Tag','observationspolygon');
         if ~isempty(h)
             set(h,'Visible','off');
         end

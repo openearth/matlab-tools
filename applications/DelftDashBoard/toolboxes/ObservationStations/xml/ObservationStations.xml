@@ -10,82 +10,364 @@
     <text>Observation Stations</text>
   </element>
   <element>
+    <tag>selectobservationdatabase</tag>
+    <position>50 115 70 20</position>
+    <style>popupmenu</style>
+    <type>integer</type>
+    <variable>activedatabase</variable>
+    <onchange>ddb_ObservationStationsToolbox</onchange>
+    <option1>selectobservationdatabase</option1>
+    <tooltipstring>Select an observation stations database</tooltipstring>
+    <text>Database</text>
+    <textposition>above-left</textposition>
+    <listtext>
+      <variable>databaselongnames</variable>
+    </listtext>
+  </element>
+  <element>
+    <style>text</style>
+    <position>50 55 90</position>
+    <text>Show station :</text>
+  </element>
+  <element>
+    <style>radiobutton</style>
+    <position>50 35 90</position>
+    <variable>showstationnames</variable>
+    <value>1</value>
+    <text>Name</text>
+    <type>integer</type>
+    <onchange>ddb_ObservationStationsToolbox</onchange>
+    <option1>selectstationlistoption</option1>
+    <tooltipstring>Show stations in list by name</tooltipstring>
+  </element>
+  <element>
+    <style>radiobutton</style>
+    <position>50 15 90</position>
+    <variable>showstationnames</variable>
+    <value>0</value>
+    <text>ID</text>
+    <type>integer</type>
+    <onchange>ddb_ObservationStationsToolbox</onchange>
+    <option1>selectstationlistoption</option1>
+    <tooltipstring>Show stations in list by ID</tooltipstring>
+  </element>
+  <element>
     <tag>selectobservationstation</tag>
-    <position>50 20 250 130</position>
+    <position>130 30 180 120</position>
     <style>listbox</style>
     <type>integer</type>
-    <variable>activeObservationStation</variable>
+    <variable>activeobservationstation</variable>
     <onchange>ddb_ObservationStationsToolbox</onchange>
     <option1>selectobservationstation</option1>
     <tooltipstring>Select observation station</tooltipstring>
     <listtext>
-      <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activeDatabase).stationNames</variable>
+      <variable>stationlist</variable>
     </listtext>
   </element>
   <element>
-    <tag>makeobservationpoints</tag>
-    <style>pushbutton</style>
-    <position>310 130 130 20</position>
-    <text>Make Observation Points</text>
-    <callback>ddb_ObservationStationsToolbox</callback>
-    <option1>makeobservationpoints</option1>
-    <tooltipstring>Make observation points in model</tooltipstring>
+    <position>130 13 250 15</position>
+    <style>text</style>
+    <type>string</type>
+    <variable>textstation</variable>
   </element>
   <element>
     <tag>viewsignal</tag>
     <style>pushbutton</style>
-    <position>310 105 130 20</position>
-    <text>View Signal</text>
+    <position>320 130 130 20</position>
+    <text>Show Observations</text>
     <callback>ddb_ObservationStationsToolbox</callback>
     <option1>viewsignal</option1>
-    <tooltipstring>View observations for active station</tooltipstring>
+    <tooltipstring>View observations for selected parameter and station</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).download</variable>
+        <type>integer</type>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>exportsignal</tag>
     <style>pushbutton</style>
-    <position>310 80 130 20</position>
-    <text>Export Signal</text>
+    <position>320 105 130 20</position>
+    <text>Save Observations</text>
     <callback>ddb_ObservationStationsToolbox</callback>
     <option1>exportsignal</option1>
-    <tooltipstring>Export signal for active station</tooltipstring>
+    <tooltipstring>Save observations for selected parameter and station to file</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).download</variable>
+        <type>integer</type>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
-    <tag>selectobservationdatabase</tag>
-    <position>310 25 130 20</position>
+    <tag>selectexportformat</tag>
     <style>popupmenu</style>
-    <type>integer</type>
-    <variable>activeDatabase</variable>
-    <onchange>ddb_ObservationStationsToolbox</onchange>
-    <option1>selectobservationdatabase</option1>
-    <tooltipstring>Select an observation stations database</tooltipstring>
-    <listtext>
-      <variable>databases</variable>
-    </listtext>
+    <position>460 105 60 20</position>
+    <variable>exporttype</variable>
+    <type>string</type>
+    <tooltipstring>Save file type for observations data</tooltipstring>
+    <listtext>*.mat</listtext>
+    <listtext>*.tek</listtext>
+    <listvalue>mat</listvalue>
+    <listvalue>tek</listvalue>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).download</variable>
+        <type>integer</type>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <tag>drawpolygon</tag>
+    <style>pushbutton</style>
+    <position>320 80 130 20</position>
+    <text>Draw Polygon</text>
+    <callback>ddb_ObservationStationsToolbox</callback>
+    <option1>drawpolygon</option1>
+    <tooltipstring>Draw polygon (for exporting from all stations inside polygon)</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).download</variable>
+        <type>integer</type>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <tag>deletepolygon</tag>
+    <style>pushbutton</style>
+    <position>320 55 130 20</position>
+    <text>Delete Polygon</text>
+    <callback>ddb_ObservationStationsToolbox</callback>
+    <option1>deletepolygon</option1>
+    <tooltipstring>Delete polygon</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).download</variable>
+        <type>integer</type>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <tag>exportallsignals</tag>
+    <style>pushbutton</style>
+    <position>320 30 130 20</position>
+    <text>Save All Observations</text>
+    <callback>ddb_ObservationStationsToolbox</callback>
+    <option1>exportallsignals</option1>
+    <tooltipstring>Save all observations of selected parameter for stations inside polygon</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>polygonlength</variable>
+        <type>integer</type>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+      <check>
+        <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).download</variable>
+        <type>integer</type>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <tag>exportoptions</tag>
+    <style>pushbutton</style>
+    <position>460 30 60 20</position>
+    <text>Options ...</text>
+    <callback>ddb_ObservationStationsToolbox</callback>
+    <option1>exportoptions</option1>
+    <tooltipstring>Edit export options</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).download</variable>
+        <type>integer</type>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editstarttime</tag>
     <style>edit</style>
-    <position>510 130 110 20</position>
-    <variable>startTime</variable>
+    <position>610 130 110 20</position>
+    <variable>starttime</variable>
     <type>datetime</type>
     <text>Start Time</text>
     <textposition>left</textposition>
     <tooltipstring>Edit start time for signal to be viewed or exported</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).download</variable>
+        <type>integer</type>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editstoptime</tag>
     <style>edit</style>
-    <position>510 105 110 20</position>
-    <variable>stopTime</variable>
+    <position>610 105 110 20</position>
+    <variable>stoptime</variable>
     <type>datetime</type>
     <text>Stop Time</text>
     <textposition>left</textposition>
     <tooltipstring>Edit stop time for signal to be viewed or exported</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).download</variable>
+        <type>integer</type>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>popupmenu</style>
+    <position>610 75 110 20</position>
+    <type>string</type>
+    <text>Subset</text>
+    <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).subset</variable>
+    <tooltipstring>Select subset</tooltipstring>
+    <listtext>
+      <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).subsetnames</variable>
+    </listtext>
+    <listvalue>
+      <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).subsets</variable>
+    </listvalue>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).subset</variable>
+        <type>string</type>
+        <value>isempty</value>
+        <operator>ne</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).parameters(handles.Toolbox(tb).Input.activeobservationstation).name{handles.Toolbox(tb).Input.activeparameter}</variable>
+        <type>string</type>
+        <value>water level</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).download</variable>
+        <type>integer</type>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>popupmenu</style>
+    <position>610 50 110 20</position>
+    <type>string</type>
+    <text>Time Zone</text>
+    <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).timezone</variable>
+    <tooltipstring>Select subset</tooltipstring>
+    <listtext>
+      <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).timezones</variable>
+    </listtext>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).timezone</variable>
+        <type>string</type>
+        <value>isempty</value>
+        <operator>ne</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).download</variable>
+        <type>integer</type>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>popupmenu</style>
+    <position>610 25 110 20</position>
+    <type>string</type>
+    <text>Datum</text>
+    <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).datum</variable>
+    <tooltipstring>Select vertical datum</tooltipstring>
+    <listtext>
+      <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).datums</variable>
+    </listtext>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).subset</variable>
+        <type>string</type>
+        <value>isempty</value>
+        <operator>ne</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).parameters(handles.Toolbox(tb).Input.activeobservationstation).name{handles.Toolbox(tb).Input.activeparameter}</variable>
+        <type>string</type>
+        <value>water level</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).download</variable>
+        <type>integer</type>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>radio01</tag>
     <style>radiobutton</style>
-    <position>630 135 130</position>
+    <position>730 135 130</position>
     <variable>radio01.value</variable>
     <text>
       <variable>radio01.text</variable>
@@ -119,7 +401,7 @@
   <element>
     <tag>radio02</tag>
     <style>radiobutton</style>
-    <position>630 115 130</position>
+    <position>730 115 130</position>
     <variable>radio02.value</variable>
     <text>
       <variable>radio02.text</variable>
@@ -153,7 +435,7 @@
   <element>
     <tag>radio03</tag>
     <style>radiobutton</style>
-    <position>630 95 130</position>
+    <position>730 95 130</position>
     <variable>radio03.value</variable>
     <text>
       <variable>radio03.text</variable>
@@ -187,7 +469,7 @@
   <element>
     <tag>radio04</tag>
     <style>radiobutton</style>
-    <position>630 75 130</position>
+    <position>730 75 130</position>
     <variable>radio04.value</variable>
     <text>
       <variable>radio04.text</variable>
@@ -221,7 +503,7 @@
   <element>
     <tag>radio05</tag>
     <style>radiobutton</style>
-    <position>630 55 130</position>
+    <position>730 55 130</position>
     <variable>radio05.value</variable>
     <text>
       <variable>radio05.text</variable>
@@ -255,7 +537,7 @@
   <element>
     <tag>radio06</tag>
     <style>radiobutton</style>
-    <position>630 35 130</position>
+    <position>730 35 130</position>
     <variable>radio06.value</variable>
     <text>
       <variable>radio06.text</variable>
@@ -289,7 +571,7 @@
   <element>
     <tag>radio07</tag>
     <style>radiobutton</style>
-    <position>630 15 130</position>
+    <position>730 15 130</position>
     <variable>radio07.value</variable>
     <text>
       <variable>radio07.text</variable>
@@ -323,7 +605,7 @@
   <element>
     <tag>radio08</tag>
     <style>radiobutton</style>
-    <position>770 135 130</position>
+    <position>870 135 130</position>
     <variable>radio08.value</variable>
     <text>
       <variable>radio08.text</variable>
@@ -357,7 +639,7 @@
   <element>
     <tag>radio09</tag>
     <style>radiobutton</style>
-    <position>770 115 130</position>
+    <position>870 115 130</position>
     <variable>radio09.value</variable>
     <text>
       <variable>radio09.text</variable>
@@ -391,7 +673,7 @@
   <element>
     <tag>radio10</tag>
     <style>radiobutton</style>
-    <position>770 95 130</position>
+    <position>870 95 130</position>
     <variable>radio10.value</variable>
     <text>
       <variable>radio10.text</variable>
@@ -425,7 +707,7 @@
   <element>
     <tag>radio11</tag>
     <style>radiobutton</style>
-    <position>770 75 130</position>
+    <position>870 75 130</position>
     <variable>radio11.value</variable>
     <text>
       <variable>radio11.text</variable>
@@ -459,7 +741,7 @@
   <element>
     <tag>radio12</tag>
     <style>radiobutton</style>
-    <position>770 55 130</position>
+    <position>870 55 130</position>
     <variable>radio12.value</variable>
     <text>
       <variable>radio12.text</variable>
@@ -493,7 +775,7 @@
   <element>
     <tag>radio13</tag>
     <style>radiobutton</style>
-    <position>770 35 130</position>
+    <position>870 35 130</position>
     <variable>radio13.value</variable>
     <text>
       <variable>radio13.text</variable>
@@ -527,7 +809,7 @@
   <element>
     <tag>radio14</tag>
     <style>radiobutton</style>
-    <position>770 15 130</position>
+    <position>870 15 130</position>
     <variable>radio14.value</variable>
     <text>
       <variable>radio14.text</variable>
@@ -557,5 +839,14 @@
         <operator>eq</operator>
       </check>
     </dependency>
+  </element>
+  <element>
+    <tag>makeobservationpoints</tag>
+    <style>pushbutton</style>
+    <position>850 20 130 20</position>
+    <text>Make Observation Points</text>
+    <callback>ddb_ObservationStationsToolbox</callback>
+    <option1>makeobservationpoints</option1>
+    <tooltipstring>Make observation points in model</tooltipstring>
   </element>
 </root>
