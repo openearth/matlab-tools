@@ -87,7 +87,7 @@ if isfield(element,'dependency')
                     for k=1:length(dependency.check)
                         val=gui_getValue(element,dependency.check(k).check.variable);
                         if isempty(val)
-                          if strcmpi(dependency.check(k).check.value,'isempty')
+                          if ~strcmpi(dependency.check(k).check.value,'isempty')
                             ok=0;
                           end
                         elseif ischar(val)
