@@ -335,13 +335,25 @@ for ii=1:length(node.Children)
                 if ~isempty(attributes)
                     s.(name)(k).(name).ATTRIBUTES=attributes;
                 end
-%             case{'short'}
-%                 k=1;
-%                 if isfield(s,name)
-%                     k=length(s.(name))+1;
-%                 end
-%                 s.(name)(k).(name)=val;
-            case{'short','supershort'}
+            case{'short'}
+                k=1;
+                if isfield(s,name)
+                    % Field already exists
+                    if ~isstruct(s.(name))
+                        % But is not a structure yet
+                        oldval=s.(name);
+                        s.(name)=[];
+                        s.(name)(1).(name)=oldval;
+                        s.(name)(2).(name)=val;
+                    else                        
+                        k=length(s.(name))+1;
+                        s.(name)(k).(name)=val;
+                    end
+                else
+                    % Field does not yet exists
+                    s.(name)=val;
+                end
+            case{'supershort'}
                 k=1;
                 if isfield(s,name)
                     if ischar(s.(name)) || isempty(s.(name))
