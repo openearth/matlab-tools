@@ -64,7 +64,7 @@ handles=getHandles;
 
 posx=[];
 
-iac=handles.Toolbox(tb).Input.activeDatabase;
+iac=handles.Toolbox(tb).Input.activedatabase;
 %stationNames=handles.Toolbox(tb).Input.database(iac).idCodes;
 
 xg=handles.Model(md).Input(ad).gridX;
@@ -84,9 +84,9 @@ x=[x-360 x x+360];
 y=[y y y];
 k=0;
 for i=1:3
-    for j=1:length(handles.Toolbox(tb).Input.database(iac).idCodes)
+    for j=1:length(handles.Toolbox(tb).Input.database(iac).stationids)
         k=k+1;
-        stationNames{k}=handles.Toolbox(tb).Input.database(iac).idCodes{j};
+        stationNames{k}=handles.Toolbox(tb).Input.database(iac).stationids{j};
     end
 end
 
