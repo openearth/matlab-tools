@@ -81,7 +81,7 @@ for k=1:length(s.database)
         handles.Toolbox(ii).Input.database(k).(fld{j})=database.(fld{j});
     end
     handles.Toolbox(ii).Input.databaselongnames{k}=s.database(k).longname;
-    handles.Toolbox(tb).Input.database(k).activeobservationstation=1;
+    handles.Toolbox(ii).Input.database(k).activeobservationstation=1;
     
 end
 
