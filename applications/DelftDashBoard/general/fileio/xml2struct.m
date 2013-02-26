@@ -1,4 +1,4 @@
-function s = xml2struct(fname)
+function s = xml2struct(varargin)
 %XML2STRUCT  One line description goes here.
 %
 %   More detailed description goes here.
@@ -61,32 +61,139 @@ function s = xml2struct(fname)
 
 %%
 % Writes xml data to Matlab structure
-% For use in CoSMoS
 
-v=parseXML(fname);
+filename=[];
+xml=[];
+includeattributes=0;
+structuretype=1;
 
-s=getxmldata(v);
+if nargin==1
+    % Assuming input argument is filename
+    filename=varargin{1};
+else
+    for ii=1:length(varargin)
+        if ischar(varargin{ii})
+            switch lower(varargin{ii})
+                case{'filename'}
+                    filename=varargin{ii+1};
+                case{'xml'}
+                    xml=varargin{ii+1};
+                case{'includeattributes'}
+                    includeattributes=1;
+                case{'structuretype'}
+                    structuretype=varargin{ii+1};
+            end
+        end
+    end
+end
 
-function s=getxmldata(v)
+if ~isempty(filename)
+    node=parseXML('filename',filename);
+else
+    node=parseXML('xml',xml);
+end
+
+s=node2struct(node,includeattributes,structuretype);
+
+function s=node2struct(node,includeattributes,structuretype)
+
 s=[];
-for i=1:length(v.Children)
-    vv=v.Children(i);
-    if ~isempty(vv.Children)
-        if length(vv.Children)==1
-            if isempty(vv.Data)
-                s0=getfinalnode(vv);
-                fld=fieldnames(s0);
-                fld=fld{1};
-                s.(fld)=s0.(fld);
+
+for ii=1:length(node.Children)
+    
+    child=node.Children(ii);
+    
+    if (length(child.Children)==1 && isempty(child.Data)) || (isempty(child.Children) && ~isempty(child.Attributes))
+        
+        % Must be and end node
+
+        name=nocolon(child.Name);
+        if ~isempty(child.Children)
+            val=child.Children.Data;
+        else
+            val=[];
+        end
+        
+        attributes=getAttributes(child);
+        if ~isempty(val)
+            % Try to convert data to correct type
+            if ~isempty(attributes)
+                if isfield(attributes,'type')
+                    switch lower(attributes.type)
+                        case{'int','real'}
+                            val=str2num(val);
+                    end
+                end
+            end
+        end
+        
+        k=1;
+        if isfield(s,name)
+            % s.(name) has already been set
+            if ischar(s.(name))
+                k=2;
+            else
+                k=length(s.(name))+1;
+            end
+        end
+        
+        if includeattributes
+            s.(name)(k).(name)=val;
+            if ~isempty(attributes)
+                s.(name)(k).ATTRIBUTES=attributes;
             end
         else
-            n=0;
-            for j=1:length(vv.Children)
-                ch=vv.Children(j);
-                s0=getxmldata(ch);
-                if ~isempty(s0)
-                    n=n+1;
-                    s.(vv.Name)(n).(ch.Name)=s0;
+            if structuretype==1
+                s.(name)(k).(name)=val;
+            else
+                if ischar(val) || isempty(val)
+                    if k==1
+                        s.(name)=val;
+                    elseif k==2
+                        orival=s.(name);
+                        s.(name)=[];
+                        s.(name){1}=orival;
+                        s.(name){2}=val;
+                    else
+                        s.(name){k}=val;
+                    end
+                else
+                    s.(name)(k)=val;
+                end
+            end
+        end
+        
+    else
+        
+        % Next node
+        
+        s0=node2struct(child,includeattributes,structuretype);
+        
+        if ~isempty(s0)
+            name=nocolon(child.Name);
+            k=1;
+            if isfield(s,name)
+                % Field already exists
+                k=length(s.(name))+1;
+            end
+            if structuretype==1
+                s.(name)(k).(name)=s0;
+                if includeattributes
+                    attributes=getAttributes(child);
+                    if ~isempty(attributes)
+                        s.(name)(k).ATTRIBUTES=attributes;
+                    end
+                end
+            else
+                fldnames=fieldnames(s0);
+                for j=1:length(fldnames)
+                    s.(name)(k).(fldnames{j})=s0.(fldnames{j});
+                end                
+                if includeattributes
+                    attributes=getAttributes(child);
+                    if ~isempty(attributes)
+                        s.(name)(k).ATTRIBUTES=attributes;
+                    end
                 end
             end
         end
@@ -94,34 +201,63 @@ for i=1:length(v.Children)
 end
 
 %%
-function s=getfinalnode(v)
-fldname=v.Name;
-val=v.Children.Data;
-if ~isempty(v.Attributes)
-    typ=v.Attributes.Value;
-else
-    typ='char';
+function str=nocolon(str)
+n=find(str==':');
+if ~isempty(n)
+    n1=n(end)+1;
+    n2=length(str);
+%     if length(n)>1
+%         n2=n(2)-1;
+%     end        
+    str=str(n1:n2);
 end
-switch lower(typ)
-    case{'int','real'}
-        val=str2num(val);
-end
-s.(fldname)=val;
-% s.(fldname).value=val;
-% s.(fldname).type=typ;
 
-function theStruct = parseXML(filename)
-% PARSEXML Convert XML file to a MATLAB structure.
-try
-    tree = xmlread(filename);
-catch
-    error('Failed to read XML file %s.',filename);
+%%
+function attributes=getAttributes(child)
+
+attributes=[];
+if ~isempty(child.Attributes)
+    for ii=1:length(child.Attributes)
+        name=nocolon(child.Attributes(ii).Name);
+        attributes.(name)=child.Attributes(ii).Value;
+    end
 end
+
+%%
+function theStruct = parseXML(varargin)
+
+filename=[];
+
+for ii=1:length(varargin)
+    if ischar(varargin{ii})
+        switch lower(varargin{ii})
+            case{'filename'}
+                filename=varargin{ii+1};
+            case{'xml'}
+                xml=varargin{ii+1};
+        end
+    end
+end
+
+if ~isempty(filename)
+    % PARSEXML Convert XML file to a MATLAB structure.
+    try
+        tree = xmlread(filename);
+    catch
+        error('Failed to read XML file %s.',filename);
+    end
+else
+    tree=xml;
+end
+
+
 
 % Recurse over child nodes. This could run into problems
 % with very deeply nested trees.
 try
+%profile on
     theStruct = parseChildNodes(tree);
+%    profile viewer
 catch
     error('Unable to parse XML file %s.',filename);
 end
@@ -131,18 +267,23 @@ end
 function children = parseChildNodes(theNode)
 % Recurse over node children.
 children = [];
-if theNode.hasChildNodes
-    childNodes = theNode.getChildNodes;
-    numChildNodes = childNodes.getLength;
+if hasChildNodes(theNode)
+    childNodes = getChildNodes(theNode);
+    numChildNodes = getLength(childNodes);
     allocCell = cell(1, numChildNodes);
     
     children = struct(             ...
         'Name', allocCell, 'Attributes', allocCell,    ...
         'Data', allocCell, 'Children', allocCell);
     
+    n=0;
     for count = 1:numChildNodes
-        theChild = childNodes.item(count-1);
-        children(count) = makeStructFromNode(theChild);
+        theChild = item(childNodes,count-1);
+        nodeStruct = makeStructFromNode(theChild);
+        if ~isempty(nodeStruct)
+            n=n+1;
+            children(n) = nodeStruct;
+        end
     end
 end
 
@@ -150,16 +291,30 @@ end
 function nodeStruct = makeStructFromNode(theNode)
 % Create structure of node info.
 
-nodeStruct = struct(                        ...
-    'Name', char(theNode.getNodeName),       ...
-    'Attributes', parseAttributes(theNode),  ...
-    'Data', '',                              ...
-    'Children', parseChildNodes(theNode));
+name=char(getNodeName(theNode));
 
-if any(strcmp(methods(theNode), 'getData'))
-    nodeStruct.Data = char(theNode.getData);
-else
-    nodeStruct.Data = '';
+attributes=parseAttributes(theNode);
+children=parseChildNodes(theNode);
+nodeStruct = struct(                        ...
+    'Name', name,       ...
+    'Attributes', attributes,  ...
+    'Data', '',                              ...
+    'Children', children);
+
+nodeStruct.Data=[];
+
+if isempty(children)
+    try
+        text = toCharArray(getTextContent(theNode))';
+        if isempty(deblank(text))
+            text='';
+        end
+        nodeStruct.Data = text;
+    end
+end
+
+if isempty(nodeStruct.Attributes) && isempty(nodeStruct.Data) && isempty(nodeStruct.Children)
+    nodeStruct=[];
 end
 
 % ----- Subfunction PARSEATTRIBUTES -----
@@ -167,9 +322,9 @@ function attributes = parseAttributes(theNode)
 % Create attributes structure.
 
 attributes = [];
-if theNode.hasAttributes
+if hasAttributes(theNode)
     theAttributes = theNode.getAttributes;
-    numAttributes = theAttributes.getLength;
+    numAttributes = getLength(theAttributes);
     allocCell = cell(1, numAttributes);
     attributes = struct('Name', allocCell, 'Value', ...
         allocCell);
@@ -180,4 +335,3 @@ if theNode.hasAttributes
         attributes(count).Value = char(attrib.getValue);
     end
 end
-

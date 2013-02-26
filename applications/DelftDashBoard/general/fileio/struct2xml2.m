@@ -139,78 +139,85 @@ for k=1:length(fldnames)
     switch fldname
         case{'COMMENTS','PREFIX','ATTRIBUTES'}
         otherwise
-            switch structuretype
-                case{'long'}
-                    for j=1:length(s.(fldname))
-                        endnode=0;
-                        attributes=[];
-                        if isfield(s.(fldname)(j).(fldname),'ATTRIBUTES')
-                            attributes=s.(fldname)(j).(fldname).ATTRIBUTES;
-                        end
-                        prefix='';
-                        if isfield(s.(fldname)(j).(fldname),'PREFIX')
-                            prefix=s.(fldname)(j).(fldname).PREFIX;
-                        end
-                        % Find out if this is an end node
-                        if isfield(s.(fldname)(j).(fldname),'value')
-                            if ~isstruct(s.(fldname)(j).(fldname).value)
-                                % This is an end node
-                                name=fldname;
-                                value=s.(fldname)(j).(fldname).value;
-                                % Write end node
-                                writeendnode(fid,ilev,nindent,name,prefix,value,attributes,includeattributes);
-                                endnode=1;
+%            if ~isempty(s.(fldname))
+                switch structuretype
+                    case{'long'}
+                        for j=1:length(s.(fldname))
+                            endnode=0;
+                            attributes=[];
+                            try
+                            if isfield(s.(fldname)(j).(fldname),'ATTRIBUTES')
+                                attributes=s.(fldname)(j).(fldname).ATTRIBUTES;
+                            end
+                            catch
+                                shite=1
+                            end
+                            prefix='';
+                            if isfield(s.(fldname)(j).(fldname),'PREFIX')
+                                prefix=s.(fldname)(j).(fldname).PREFIX;
+                            end
+                            % Find out if this is an end node
+                            if isfield(s.(fldname)(j).(fldname),'value')
+                                if ~isstruct(s.(fldname)(j).(fldname).value)
+                                    % This is an end node
+                                    name=fldname;
+                                    value=s.(fldname)(j).(fldname).value;
+                                    % Write end node
+                                    writeendnode(fid,ilev,nindent,name,prefix,value,attributes,includeattributes);
+                                    endnode=1;
+                                end
+                            end
+                            if ~endnode
+                                % Not an end node
+                                writeopennode(fid,ilev,nindent,fldname,prefix,attributes,includeattributes);
+                                ilev=ilev+1;
+                                splitstruct(fid,s.(fldname)(j).(fldname),ilev,nindent,includeattributes,structuretype);
+                                ilev=ilev-1;
+                                writeclosenode(fid,ilev,nindent,fldname,prefix);
                             end
                         end
-                        if ~endnode
-                            % Not an end node
-                            writeopennode(fid,ilev,nindent,fldname,prefix,attributes,includeattributes);
-                            ilev=ilev+1;
-                            splitstruct(fid,s.(fldname)(j).(fldname),ilev,nindent,includeattributes,structuretype);
-                            ilev=ilev-1;
-                            writeclosenode(fid,ilev,nindent,fldname,prefix);
+                    case{'short'}
+                        for j=1:length(s.(fldname))
+                            attributes=[];
+                            prefix='';
+                            % Find out if this is an end node
+                            if ~isstruct(s.(fldname)(j).(fldname))
+                                % This is an end node
+                                name=fldname;
+                                value=s.(fldname)(j).(fldname);
+                                % Write end node
+                                writeendnode(fid,ilev,nindent,name,prefix,value,attributes,includeattributes);
+                            else
+                                % Not an end node
+                                writeopennode(fid,ilev,nindent,fldname,prefix,attributes,includeattributes);
+                                ilev=ilev+1;
+                                splitstruct(fid,s.(fldname)(j).(fldname),ilev,nindent,includeattributes,structuretype);
+                                ilev=ilev-1;
+                                writeclosenode(fid,ilev,nindent,fldname,prefix);
+                            end
                         end
-                    end
-                case{'short'}
-                    for j=1:length(s.(fldname))
+                        
+                    case{'supershort'}
                         attributes=[];
                         prefix='';
-                        % Find out if this is an end node
-                        if ~isstruct(s.(fldname)(j).(fldname))
+                        if ~isstruct(s.(fldname))
                             % This is an end node
                             name=fldname;
-                            value=s.(fldname)(j).(fldname);
+                            value=s.(fldname);
                             % Write end node
                             writeendnode(fid,ilev,nindent,name,prefix,value,attributes,includeattributes);
                         else
                             % Not an end node
-                            writeopennode(fid,ilev,nindent,fldname,prefix,attributes,includeattributes);
-                            ilev=ilev+1;
-                            splitstruct(fid,s.(fldname)(j).(fldname),ilev,nindent,includeattributes,structuretype);
-                            ilev=ilev-1;
-                            writeclosenode(fid,ilev,nindent,fldname,prefix);
+                            for j=1:length(s.(fldname))
+                                writeopennode(fid,ilev,nindent,fldname,prefix,attributes,includeattributes);
+                                ilev=ilev+1;
+                                splitstruct(fid,s.(fldname)(j),ilev,nindent,includeattributes,structuretype);
+                                ilev=ilev-1;
+                                writeclosenode(fid,ilev,nindent,fldname,prefix);
+                            end
                         end
-                    end                    
-                case{'supershort'}
-                    attributes=[];
-                    prefix='';
-                    if ~isstruct(s.(fldname))
-                        % This is an end node
-                        name=fldname;
-                        value=s.(fldname);
-                        % Write end node
-                        writeendnode(fid,ilev,nindent,name,prefix,value,attributes,includeattributes);
-                    else
-                        % Not an end node
-                        for j=1:length(s.(fldname))
-                            writeopennode(fid,ilev,nindent,fldname,prefix,attributes,includeattributes);
-                            ilev=ilev+1;
-                            splitstruct(fid,s.(fldname)(j),ilev,nindent,includeattributes,structuretype);
-                            ilev=ilev-1;
-                            writeclosenode(fid,ilev,nindent,fldname,prefix);
-                        end
-                    end
-            end
+                end
+%            end
     end
 end
 
@@ -299,7 +306,7 @@ if ~isempty(attributes)
     fldnames=fieldnames(attributes);
     for j=1:length(fldnames)
         switch lower(fldnames{j})
-            % Don't write format and value to xml file
+            % Don't write format to xml file
             case{'value','format'}
             otherwise
                 prefix='';
@@ -312,3 +319,4 @@ if ~isempty(attributes)
         attstr=[attstr ' ' name '="' value '"'];
     end
 end
+
