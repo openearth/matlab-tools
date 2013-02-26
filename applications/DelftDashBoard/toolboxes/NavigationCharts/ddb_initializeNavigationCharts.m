@@ -74,7 +74,7 @@ if isdir([handles.toolBoxDir 'navigationcharts'])
     % Read xml file
     dr=[handles.toolBoxDir 'navigationcharts' filesep'];
     
-    xml=xml2struct3([dr 'NavigationCharts.xml']);
+    xml=fastxml2struct([dr 'NavigationCharts.xml'],'structuretype','short');
 
     n=0;
     for jj=1:length(xml.file)
