@@ -67,7 +67,7 @@ for k=1:length(handles.Toolbox)
         handles=f(handles);
     catch
         name=handles.Toolbox(k).name;
-        disp(['An error occured while initializing ' name ' toolbox. Toolbox will be made inactive']);
+        disp(['An error occured while initializing ' name ' toolbox. Toolbox will be made inactive!']);
         set(handles.GUIHandles.Menu.Toolbox.(name),'Enable','off');
     end
 end
