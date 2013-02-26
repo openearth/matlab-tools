@@ -68,6 +68,17 @@ try
     url = ['http://opendap.deltares.nl/static/deltares/delftdashboard/toolboxes/' name '/' name '.xml'];
     xmlfile = [name '.xml'];
     toolboxdata = ddb_getXmlData(localdir,url,xmlfile);
+    
+    switch lower(name)
+        case{'observationstations'}
+            % Very (!) dirty work around for now
+            vrsn=str2double(handles.delftDashBoardVersion(end-3:end));
+            if vrsn>=7213
+                urlwrite(['http://opendap.deltares.nl/static/deltares/delftdashboard/toolboxes/' name '/ObservationStations.new.xml'],[localdir 'ObservationStations.xml']);
+                urlwrite(['http://opendap.deltares.nl/static/deltares/delftdashboard/toolboxes/' name '/ndbc.new.mat'],[localdir 'ndbc.mat']);
+            end
+    end
+
     if ~isempty(toolboxdata)
         if isfield(toolboxdata,'file')
             % Copy files from server
