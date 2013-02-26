@@ -335,14 +335,13 @@ for ii=1:length(node.Children)
                 if ~isempty(attributes)
                     s.(name)(k).(name).ATTRIBUTES=attributes;
                 end
-            case{'short'}
-                k=1;
-                if isfield(s,name)
-                    % Possible in case of shu
-                    k=length(s.(name))+1;
-                end
-                s.(name)(k).(name)=val;
-            case{'supershort'}
+%             case{'short'}
+%                 k=1;
+%                 if isfield(s,name)
+%                     k=length(s.(name))+1;
+%                 end
+%                 s.(name)(k).(name)=val;
+            case{'short','supershort'}
                 k=1;
                 if isfield(s,name)
                     if ischar(s.(name)) || isempty(s.(name))
