@@ -66,7 +66,6 @@ serverdata = [];
 
 if exist(file,'file')
     % Local file exists
-%    data=xml_load(file);
     localdata=fastxml2struct(file,'structuretype','supershort');
     try
         % Copy file on server to local folder
@@ -78,7 +77,6 @@ if exist(file,'file')
     catch
         % Data cannot be updated
         disp(['Could not retrieve ' xmlfile ' from server, no data update!']);
-        return
     end 
 else
     % Local file does not exist, so copy file from server (the should happen the first time DelftDashboard is started)
@@ -108,16 +106,26 @@ end
 
 iupdate=0;
 
-
 if isempty(localdata) && ~isempty(serverdata)
 
     % New data file was loaded
     localdata=serverdata;
+    fld = fieldnames(localdata);
+    for ii=1:length(fld)
+        for jlocal=1:length(localdata.(fld{ii}))
+            localdata.(fld{ii})(jlocal).update=0;
+        end
+    end
 
 elseif ~isempty(localdata) && isempty(serverdata)
 
     % Could not load data from server, so use local data
-    % Do nothing
+    fld = fieldnames(localdata);
+    for ii=1:length(fld)
+        for jlocal=1:length(localdata.(fld{ii}))
+            localdata.(fld{ii})(jlocal).update=0;
+        end
+    end
 
 else
     

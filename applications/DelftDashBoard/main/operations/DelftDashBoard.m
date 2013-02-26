@@ -63,9 +63,6 @@ handles.debugMode=0;
 
 % Add java paths for snc tools
 if isdeployed
-%     pth=[ctfroot filesep 'checkout' filesep 'OpenEarthTools' filesep 'trunk' filesep 'matlab' filesep 'io' filesep 'netcdf' filesep 'toolsUI-4.1.jar'];
-%     disp(['SNC jar file is : ' pth]);
-%     javaaddpath(pth);
     setpref ('SNCTOOLS','USE_JAVA'   , 1); % This requires SNCTOOLS 2.4.8 or better
     setpref ('SNCTOOLS','PRESERVE_FVD',0); % 0: backwards compatibility and consistent with ncBrowse
     setenv('MCR_CACHE_SIZE','64M');
@@ -86,40 +83,45 @@ end
 warning('off','MATLAB:HandleGraphics:ObsoletedProperty:JavaFrame');
 
 % Open Splash Screen
-frame=splash([handles.settingsDir 'icons' filesep 'DelftDashBoard.jpg'],30);
+frame=splash([handles.settingsDir 'icons' filesep 'DelftDashBoard.jpg'],50);
 
-setHandles(handles);
+profile on
 
-ddb_initialize('startup');
+try
+    
+    setHandles(handles);
+    
+    ddb_initialize('startup');
+    
+    handles=getHandles;
+    
+    % screenSize=get(0,'ScreenSize');
+    % pos=[1 29 screenSize(3) screenSize(4)-95];
+    % set(handles.GUIHandles.mainWindow,'Position',pos,'Visible','off');    
+    %set(handles.GUIHandles.mainWindow,'Visible','on');
+    
+    set(gcf,'Renderer','zbuffer');
+    
+    % Make Figure Visible
+    drawnow;
+        
+    %maximizeWindow('Delft Dashboard');
+    
+    pause(1);
+    
+    ddb_updateDataInScreen;
+    
+    set(handles.GUIHandles.mainWindow,'Visible','on');
+    
+    % Maximize Figure
+    %maximize(handles.GUIHandles.MainWindow);
+    
+    % Close Splash Screen
+    frame.hide;
+    
+catch exception   
+    frame.hide;    
+    disp(exception.getReport);
+end
 
-handles=getHandles;
-
-% screenSize=get(0,'ScreenSize');
-% pos=[1 29 screenSize(3) screenSize(4)-95];
-% set(handles.GUIHandles.mainWindow,'Position',pos,'Visible','off');
-
-%set(handles.GUIHandles.mainWindow,'Visible','on');
-
-set(gcf,'Renderer','zbuffer');
-
-% Make Figure Visible
-drawnow;
-
-
-%maximizeWindow('Delft Dashboard');
-
-pause(1);
-
-ddb_updateDataInScreen;
-
-set(handles.GUIHandles.mainWindow,'Visible','on');
-
-% Maximize Figure
-%maximize(handles.GUIHandles.MainWindow);
-
-% set(gcf,'Renderer','Painters');
-
-% Close Splash Screen
-frame.hide;
-
-% cd(curdir);
+profile viewer
