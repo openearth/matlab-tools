@@ -62,8 +62,14 @@ function ddb_initializeToolboxes
 %%
 handles=getHandles;
 for k=1:length(handles.Toolbox)
-    f=handles.Toolbox(k).iniFcn;
-    handles=f(handles);
+    try
+        f=handles.Toolbox(k).iniFcn;
+        handles=f(handles);
+    catch
+        name=handles.Toolbox(k).name;
+        disp(['An error occured while initializing ' name ' toolbox. Toolbox will be made inactive']);
+        set(handles.GUIHandles.Menu.Toolbox.(name),'Enable','off');
+    end
 end
 setHandles(handles);
 
