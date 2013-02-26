@@ -74,7 +74,7 @@ trh = jarkus_transects(...
 
 multiWaitbar('Interpolating transects',0)
 
-for idx = 2:length(trh.id)
+for idx = 1:length(trh.id)
     % loop over all id's
     id = trh.id(idx);
     tr = jarkus_transects('id', id, 'url', ncfile);
