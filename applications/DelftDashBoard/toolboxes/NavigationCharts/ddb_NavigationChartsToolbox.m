@@ -103,11 +103,10 @@ h=findobj(gca,'Tag','NavigationChartLayer');
 if ~isempty(h)
     delete(h);
 end
-handles.Toolbox(tb).Input.activeChart=1;
+handles.Toolbox(tb).Input.activeChart=0;
 handles.Toolbox(tb).Input.activeChartName='';
 handles=plotChartOutlines(handles);
 setHandles(handles);
-% setUIElement('textchartname');
 
 %%
 function pushSelectChart
@@ -127,7 +126,6 @@ if ~isempty(h)
 end
 
 %%
-
 function toggleShoreline
 handles=getHandles;
 iplt=handles.Toolbox(tb).Input.showShoreline;
@@ -197,26 +195,53 @@ posy=pos(1,2);
 xlim=get(gca,'xlim');
 ylim=get(gca,'ylim');
 
+iupdate=0;
+
 if posx>xlim(1) && posx<xlim(2) && posy>ylim(1) && posy<ylim(2)
+    
+    % Mouse within axis
     
     i=findBox(handles,posx,posy);
     
-    kar=findobj(gca,'Tag','BBoxENC');
-    set(kar,'Color','Blue');
-    set(kar,'LineWidth',1);
-    
-    handles.Toolbox(tb).Input.activeChartName='';
-    
     if ~isempty(i)
-        kar=findobj(gca,'Tag','BBoxENC','UserData',i);
-        set(kar,'Color','Red');
-        handles.Toolbox(tb).Input.activeChartName=handles.Toolbox(tb).Input.charts(iac).box(i).Description;
+        if ~strcmpi(handles.Toolbox(tb).Input.charts(iac).box(i).Description,handles.Toolbox(tb).Input.oldChartName)
+            % We've moved into a new chart
+            % Make old box blue again
+            kar=findobj(gca,'Tag','BBoxENC','UserData',handles.Toolbox(tb).Input.selectedChart);
+            if ~isempty(kar)
+                set(kar,'Color','Blue');
+                set(kar,'LineWidth',1);
+            end            
+            kar=findobj(gca,'Tag','BBoxENC','UserData',i);
+            set(kar,'Color',[1 0.5 0]);
+            set(kar,'LineWidth',2);
+            handles.Toolbox(tb).Input.activeChartName=handles.Toolbox(tb).Input.charts(iac).box(i).Description;
+            handles.Toolbox(tb).Input.oldChartName=handles.Toolbox(tb).Input.activeChartName;
+            iupdate=1;
+        end
+        handles.Toolbox(tb).Input.selectedChart=i;
+    else
+        % Outside of charts
+        if handles.Toolbox(tb).Input.activeChart>0
+            % Show chart selected originally
+            handles.Toolbox(tb).Input.activeChartName=handles.Toolbox(tb).Input.charts(iac).box(handles.Toolbox(tb).Input.activeChart).Description;
+        end
+        if ~strcmpi(handles.Toolbox(tb).Input.activeChartName,handles.Toolbox(tb).Input.oldChartName)
+            handles.Toolbox(tb).Input.oldChartName=handles.Toolbox(tb).Input.activeChartName;
+            kar=findobj(gca,'Tag','BBoxENC','UserData',handles.Toolbox(tb).Input.selectedChart);
+            if ~isempty(kar)
+                set(kar,'Color','Blue');
+                set(kar,'LineWidth',1);
+            end
+            iupdate=1;
+        end
+        handles.Toolbox(tb).Input.selectedChart=0;
     end
     
     setHandles(handles);
-    
-    % setUIElement('textchartname');
-    
+    if iupdate
+        gui_updateActiveTab;
+    end
 end
 
 %%
@@ -224,35 +249,15 @@ function selectArea(hObject,eventdata)
 
 handles=getHandles;
 
-pos = get(gca, 'CurrentPoint');
-posx=pos(1,1);
-posy=pos(1,2);
-xlim=get(gca,'xlim');
-ylim=get(gca,'ylim');
-
 iab=handles.Toolbox(tb).Input.activeDatabase;
 iac=handles.Toolbox(tb).Input.activeChart;
 
-handles.Toolbox(tb).Input.activeChartName=handles.Toolbox(tb).Input.charts(iab).box(iac).Description;
-
 switch get(gcf,'SelectionType')
-    case{'normal'}
-        
-        if posx>xlim(1) && posx<xlim(2) && posy>ylim(1) && posy<ylim(2)
-            i=findBox(handles,posx,posy);
-            if ~isempty(i)
-                handles=selectNavigationChart(handles,i);
-                handles.Toolbox(tb).Input.activeChartName=handles.Toolbox(tb).Input.charts(iab).box(i).Description;
-            else
-                % Make chart outlines blue again
-                kar=findobj(gca,'Tag','BBoxENC');
-                set(kar,'Color','Blue');
-                set(kar,'LineWidth',1);
-                % Make active chart outline red
-                kar=findobj(gca,'Tag','BBoxENC','UserData',iac);
-                set(kar,'Color','Red');
-                set(kar,'LineWidth',2);
-            end
+    case{'normal'}        
+        i=handles.Toolbox(tb).Input.selectedChart;
+        if i>0
+            handles=selectNavigationChart(handles,i);
+            handles.Toolbox(tb).Input.activeChartName=handles.Toolbox(tb).Input.charts(iab).box(i).Description;
         end
     otherwise
         % Make chart outlines blue again
@@ -267,7 +272,7 @@ end
 
 setHandles(handles);
 
-% setUIElement('textchartname');
+gui_updateActiveTab;
 
 ddb_setWindowButtonUpDownFcn;
 ddb_setWindowButtonMotionFcn;
@@ -288,8 +293,28 @@ handles.Toolbox(tb).Input.activeChart=i;
 
 wb=waitbox('Loading chart ...');
 name=handles.Toolbox(tb).Input.charts(iac).box(i).Name;
-fname=[handles.toolBoxDir 'NavigationCharts' filesep handles.Toolbox(tb).Input.databases{iac} filesep name filesep name '.mat'];
+dr=[handles.toolBoxDir 'NavigationCharts' filesep handles.Toolbox(tb).Input.charts(iac).name filesep];
+fname=[dr name filesep name '.mat'];
+
+if ~exist(fname,'file')
+    % File does not yet exist in cache, try to download it
+    if ~exist(dr,'dir')
+        mkdir(dr);        
+    end
+    if ~exist([dr name],'dir')
+        mkdir([dr name]);
+    end
+    try
+        ddb_urlwrite([handles.Toolbox(tb).Input.charts(iac).url '/' name '/' name '.mat'],fname);
+    catch
+        close(wb);
+        ddb_giveWarning('text','Sorry, an error occured while downloading the chart data ...');
+        return
+    end
+end
+
 s=load(fname);
+
 if isfield(s,'s')
     s=s.s;
 end
@@ -314,8 +339,6 @@ end
 close(wb);
 
 ddb_plotChartLayers(handles);
-
-setHandles(handles);
 
 %%
 function i=findBox(handles,x,y)

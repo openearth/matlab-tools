@@ -68,35 +68,37 @@ ddb_getToolboxData(handles.Toolbox(ii).dataDir,ii);
 handles.Toolbox(ii).Input.longName='Navigation Charts';
 handles.Toolbox(ii).Input.databases=[];
 handles.Toolbox(ii).Input.charts=[];
+
 if isdir([handles.toolBoxDir 'navigationcharts'])
-    lst=dir([handles.toolBoxDir 'NavigationCharts']);
-    k=0;
-    for i=1:length(lst)
-        if isdir([handles.toolBoxDir 'NavigationCharts' filesep lst(i).name])
-            switch(lst(i).name)
-                case{'.','..'}
-                otherwise
-                    if exist([handles.toolBoxDir 'NavigationCharts' filesep lst(i).name filesep lst(i).name '.mat'],'file')
-                        k=k+1;
-                        disp(['Loading navigation charts ' lst(i).name ' ...']);
-                        s=load([handles.toolBoxDir 'NavigationCharts' filesep lst(i).name filesep lst(i).name '.mat']);
-                        handles.Toolbox(ii).Input.databases{k}=lst(i).name;
-                        handles.Toolbox(ii).Input.charts(k).box=s.Box;
-                    else
-                        handles.Toolbox(ii).Input.databases=[];
-                        disp([handles.toolBoxDir 'NavigationCharts' filesep lst(i).name filesep lst(i).name '.mat not found!']);
-                        handles.Toolbox(ii).Input.databases=[];
-                    end
-            end
+
+    % Read xml file
+    dr=[handles.toolBoxDir 'navigationcharts' filesep'];
+    
+    xml=xml2struct3([dr 'NavigationCharts.xml']);
+
+    n=0;
+    for jj=1:length(xml.file)
+        if exist([dr xml.file(jj).file.name],'file')
+            n=n+1;
+            s=load([dr xml.file(jj).file.name]);
+            handles.Toolbox(ii).Input.charts(n).name=s.name;
+            handles.Toolbox(ii).Input.charts(n).longname=s.longname;
+            handles.Toolbox(ii).Input.charts(n).box=s.Box;
+            handles.Toolbox(ii).Input.charts(n).url=fileparts(xml.file(jj).file.URL);
+            handles.Toolbox(ii).Input.databases{n}=s.longname;            
         end
     end
+
 end
+
 handles.Toolbox(ii).Input.activeDatabase=1;
 handles.Toolbox(ii).Input.activeChart=1;
 handles.Toolbox(ii).Input.showShoreline=1;
 handles.Toolbox(ii).Input.showSoundings=1;
 handles.Toolbox(ii).Input.showContours=1;
 handles.Toolbox(ii).Input.activeChartName='';
+handles.Toolbox(ii).Input.oldChartName='';
+handles.Toolbox(tb).Input.selectedChart=1;
 
 if ~isfield(handles.Toolbox(ii).Input,'databases')
     set(handles.GUIHandles.Menu.Toolbox.NavigationCharts,'Enable','off');
