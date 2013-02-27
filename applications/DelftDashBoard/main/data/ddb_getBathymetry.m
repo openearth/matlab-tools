@@ -75,6 +75,7 @@ bathy           = 'gebco08';
 startdate       = ceil(now);
 searchinterval  = -1e5;
 quiet=0;
+justgettiles    = 0; 
 
 for i=1:length(varargin)
     if ischar(varargin{i})
@@ -179,6 +180,10 @@ switch lower(tp)
     
     case{'netcdftiles'}
         
+        x=[];
+        y=[];
+        z=[];
+        
         % New tile type
         ok=1;
         
@@ -194,224 +199,253 @@ switch lower(tp)
             if strcmpi(bathymetry.dataset(iac).horizontalCoordinateSystem.type,'geographic')
                 cellsizex=cellsizex*111111;
             end
-            ilev=find(cellsizex<=maxcellsize,1,'last');
-            if isempty(ilev)
-                ilev=1;
+            ilev1=find(cellsizex<=maxcellsize,1,'last');
+            if isempty(ilev1)
+                ilev1=1;
             end
+            ilev2=ilev1;
+        elseif zoomlev==-1
+            % Get all the data from each zoom level !
+            justgettiles=1;
+            ilev1=1;
+            ilev2=nLevels;
         else
-            ilev=zoomlev;
+            ilev1=zoomlev;
+            ilev2=ilev1;
         end
         
-        x0=bathymetry.dataset(iac).zoomLevel(ilev).x0;
-        y0=bathymetry.dataset(iac).zoomLevel(ilev).y0;
-        dx=bathymetry.dataset(iac).zoomLevel(ilev).dx;
-        dy=bathymetry.dataset(iac).zoomLevel(ilev).dy;
-        nx=bathymetry.dataset(iac).zoomLevel(ilev).nx;
-        ny=bathymetry.dataset(iac).zoomLevel(ilev).ny;
-        nnx=bathymetry.dataset(iac).zoomLevel(ilev).ntilesx;
-        nny=bathymetry.dataset(iac).zoomLevel(ilev).ntilesy;
-        vertunits=bathymetry.dataset(iac).verticalCoordinateSystem.units;
-        
-        tilesizex=dx*nx;
-        tilesizey=dy*ny;
-        
-        %% Directories and names
-        name=bathymetry.dataset(iac).name;
-        levdir=['zl' num2str(ilev,'%0.2i')];
-        
-        iopendap=0;
-        if strcmpi(bathymetry.dataset(iac).URL(1:4),'http')
-            % OpenDAP
-            iopendap=1;
-            remotedir=[bathymetry.dataset(iac).URL '/' levdir '/'];
-            localdir=[bathydir name '\' levdir '\'];
-        else
-            % Local
-            localdir=[bathymetry.dataset(iac).URL '\' levdir '\'];
-            remotedir=localdir;
-        end
-        
-        %% Tiles
-        
-        xx=x0:tilesizex:x0+(nnx-1)*tilesizex;
-        yy=y0:tilesizey:y0+(nny-1)*tilesizey;
-        
-        % Make sure that tiles are read east +180 deg lon.
-        iTileNrs=1:nnx;
-        
-        if strcmpi(bathymetry.dataset(iac).horizontalCoordinateSystem.type,'geographic') && x0<-179
-            % Probably a global dataset
-            xx=[xx-360 xx xx+360];
-            iTileNrs=[iTileNrs iTileNrs iTileNrs];
-        end
-        
-        % Required tile indices
-        ix1=find(xx<xl(1),1,'last');
-        if isempty(ix1)
-            ix1=1;
-        end
-        ix2=find(xx>xl(2),1,'first');
-        if ~isempty(ix2)
-            ix2=max(1,ix2-1);
-        else
-            ix2=length(xx);
-        end
-        iy1=find(yy<yl(1),1,'last');
-        if isempty(iy1)
-            iy1=1;
-        end
-        iy2=find(yy>yl(2),1,'first');
-        if ~isempty(iy2)
-            iy2=max(1,iy2-1);
-        else
-            iy2=length(yy);
-        end
-        
-        % Total number of tiles in x and y direction
-        nnnx=ix2-ix1+1;
-        nnny=iy2-iy1+1;
-        z=nan(nnny*ny,nnnx*nx);
-        
-        iTilesX=iTileNrs(ix1:ix2);
-        x0Tiles=xx(ix1:ix2);
-        
-        % Mesh of horizontal coordinates
-        xx=x0Tiles(1):dx:x0Tiles(end)+tilesizex-dx;
-        yy=y0+(iy1-1)*tilesizey:dy:y0+iy2*tilesizey-dy;
-        [x,y]=meshgrid(xx,yy);
-        
-        % Start indices for each tile in larger matrix
-        for i=1:nnnx
-            %            iStartX(i)=find(abs(xx-x0Tiles(i))<1e-5);
+        for ilev=ilev1:ilev2
             
-            iii1=find(abs(xx-x0Tiles(i))==min(abs(xx-x0Tiles(i))));
-            iStartX(i)=iii1(1);
-        end
-
-        if ~quiet
-            wb = awaitbar(0,'Getting tiles ...');
-        end
-        
-        tilen=0;
-        ntiles=nnnx*(iy2-iy1+1);
-
-        %% Get tiles
-        for i=1:nnnx
+            x0=bathymetry.dataset(iac).zoomLevel(ilev).x0;
+            y0=bathymetry.dataset(iac).zoomLevel(ilev).y0;
+            dx=bathymetry.dataset(iac).zoomLevel(ilev).dx;
+            dy=bathymetry.dataset(iac).zoomLevel(ilev).dy;
+            nx=bathymetry.dataset(iac).zoomLevel(ilev).nx;
+            ny=bathymetry.dataset(iac).zoomLevel(ilev).ny;
+            nnx=bathymetry.dataset(iac).zoomLevel(ilev).ntilesx;
+            nny=bathymetry.dataset(iac).zoomLevel(ilev).ntilesy;
+            vertunits=bathymetry.dataset(iac).verticalCoordinateSystem.units;
             
-            itile=iTilesX(i);
+            tilesizex=dx*nx;
+            tilesizey=dy*ny;
             
-            for j=iy1:iy2
+            %% Directories and names
+            name=bathymetry.dataset(iac).name;
+            levdir=['zl' num2str(ilev,'%0.2i')];
+            
+            iopendap=0;
+            if strcmpi(bathymetry.dataset(iac).URL(1:4),'http')
+                % OpenDAP
+                iopendap=1;
+                remotedir=[bathymetry.dataset(iac).URL '/' levdir '/'];
+                localdir=[bathydir name filesep levdir filesep];
+            else
+                % Local
+                localdir=[bathymetry.dataset(iac).URL filesep levdir filesep];
+                remotedir=localdir;
+            end
+            
+            %% Tiles
+            
+            xx=x0:tilesizex:x0+(nnx-1)*tilesizex;
+            yy=y0:tilesizey:y0+(nny-1)*tilesizey;
+            xxend=xx(end)+tilesizex;
+            yyend=yy(end)+tilesizey;
+            
+            % Make sure that tiles are read east +180 deg lon.
+            iTileNrs=1:nnx;
+            
+            if strcmpi(bathymetry.dataset(iac).horizontalCoordinateSystem.type,'geographic') && x0<-179
+                % Probably a global dataset
+                xx=[xx-360 xx xx+360];
+                iTileNrs=[iTileNrs iTileNrs iTileNrs];
+            end
+            
+            % Required tile indices
+            if xx(1)>xl(2) || yy(1)>yl(2) || xxend<xl(1) || yyend<yl(1)
+                ok=0;
+                disp('Tiles are outside of search range');
+                return
+            end
+            
+            ix1=find(xx<xl(1),1,'last');
+            if isempty(ix1)
+                ix1=1;
+            end
+            ix2=find(xx>xl(2),1,'first');
+            if ~isempty(ix2)
+                ix2=max(1,ix2-1);
+            else
+                ix2=length(xx);
+            end
+            
+            iy1=find(yy<yl(1),1,'last');
+            if isempty(iy1)
+                iy1=1;
+            end
+            iy2=find(yy>yl(2),1,'first');
+            if ~isempty(iy2)
+                iy2=max(1,iy2-1);
+            else
+                iy2=length(yy);
+            end
+            
+            % Total number of tiles in x and y direction
+            nnnx=ix2-ix1+1;
+            nnny=iy2-iy1+1;
+            
+            if ~justgettiles
+                % Allocate z
+                z=nan(nnny*ny,nnnx*nx);
+            end
+            
+            iTilesX=iTileNrs(ix1:ix2);
+            x0Tiles=xx(ix1:ix2);
+            
+            if ~justgettiles
+                % Mesh of horizontal coordinates
+                xx=x0Tiles(1):dx:x0Tiles(end)+tilesizex-dx;
+                yy=y0+(iy1-1)*tilesizey:dy:y0+iy2*tilesizey-dy;
+                [x,y]=meshgrid(xx,yy);
+            end
+            
+            % Start indices for each tile in larger matrix
+            for i=1:nnnx
+                iii1=find(abs(xx-x0Tiles(i))==min(abs(xx-x0Tiles(i))));
+                iStartX(i)=iii1(1);
+            end
+            
+            tilen=0;
+            ntiles=nnnx*(iy2-iy1+1);
+            
+            if ~quiet
+                wb = awaitbar(0,'Getting tiles ...');
+            end
+            
+            %% Get tiles
+            for i=1:nnnx
                 
-                tilen=tilen+1;
-
-                if ~quiet
-                    str=['Getting bathymetry - tile ' num2str(tilen) ' of ' ...
-                        num2str(ntiles) ' ...'];
-                    [hh,abort2]=awaitbar(tilen/ntiles,wb,str);
+                itile=iTilesX(i);
+                
+                for j=iy1:iy2
                     
-                    if abort2 % Abort the process by clicking abort button
-                        break;
-                    end;
-                    if isempty(hh); % Break the process when closing the figure
-                        break;
-                    end;
-                end
-                
-                zzz=zeros(ny,nx);
-                zzz(zzz==0)=NaN;
-                
-                % First check whether file exists at at all
-                
-                iav=find(bathymetry.dataset(iac).zoomLevel(ilev).iAvailable==itile & bathymetry.dataset(iac).zoomLevel(ilev).jAvailable==j, 1);
-                
-                fv=NaN;
-                
-                if ~isempty(iav)
+                    tilen=tilen+1;
                     
-                    filename=[name '.zl' num2str(ilev,'%0.2i') '.' num2str(itile,'%0.5i') '.' num2str(j,'%0.5i') '.nc'];
-                    
-                    if iopendap
-                        if bathymetry.dataset(iac).useCache
-                            % First check if file is available locally
-                            if ~exist([localdir filename],'file')
-                                if ~exist(localdir,'dir')
-                                    mkdir(localdir);
-                                end
-                                try
-                                    urlwrite([remotedir filename],[localdir filename]);
-                                end
-                            end
-                            ncfile=[localdir filename];
+                    % Waitbar
+                    if ~quiet
+                        if justgettiles
+                            str=['Getting bathymetry level ' num2str(ilev) ' of ' num2str(nLevels) ' - tile ' num2str(tilen) ' of ' ...
+                                num2str(ntiles) ' ...'];
                         else
-                            ncfile=[remotedir filename];
+                            str=['Getting bathymetry - tile ' num2str(tilen) ' of ' ...
+                                num2str(ntiles) ' ...'];
                         end
-                    else
-                        ncfile=[localdir filename];
+                        [hh,abort2]=awaitbar(tilen/ntiles,wb,str);
+                        if abort2 % Abort the process by clicking abort button
+                            break;
+                        end;
+                        if isempty(hh); % Break the process when closing the figure
+                            break;
+                        end;
+                    end
+                                       
+                    zzz=zeros(ny,nx);
+                    zzz(zzz==0)=NaN;
+                    
+                    % First check whether file exists at at all
+                    
+                    iav=find(bathymetry.dataset(iac).zoomLevel(ilev).iAvailable==itile & bathymetry.dataset(iac).zoomLevel(ilev).jAvailable==j, 1);
+                    
+                    fv=NaN;
+                    
+                    if ~isempty(iav)
+                        
+                        filename=[name '.zl' num2str(ilev,'%0.2i') '.' num2str(itile,'%0.5i') '.' num2str(j,'%0.5i') '.nc'];
+                        
+                        if iopendap
+                            if bathymetry.dataset(iac).useCache
+                                % First check if file is available locally
+                                if ~exist([localdir filename],'file')
+                                    if ~exist(localdir,'dir')
+                                        mkdir(localdir);
+                                    end
+                                    try
+                                        urlwrite([remotedir filename],[localdir filename]);
+                                    end
+                                end
+                                ncfile=[localdir filename];
+                            else
+                                ncfile=[remotedir filename];
+                            end
+                        else
+                            ncfile=[localdir filename];
+                        end
+                        
+                        if ~justgettiles
+                            if exist(ncfile,'file')
+                                zzz=nc_varget(ncfile, 'depth');
+                                zzz=double(zzz);
+                                fv=nc_attget(ncfile,'depth','fill_value');
+                                ok=1;
+                            end
+                        end
+                        
                     end
                     
-                    if iopendap && ~bathymetry.dataset(iac).useCache
-                        try
-                            zzz=nc_varget(ncfile, 'depth');
-                            zzz=double(zzz);
-                            fv=nc_attget(ncfile,'depth','fill_value');
-                            ok=1;
+                    if ~justgettiles
+                        if ~isnan(fv)
+                            zzz(zzz==fv)=NaN;
                         end
-                    else
-                        if exist(ncfile,'file')
-                            zzz=nc_varget(ncfile, 'depth');
-                            zzz=double(zzz);
-                            fv=nc_attget(ncfile,'depth','fill_value');
-                            ok=1;
-                        end
+                        z((j-iy1)*ny+1:(j-iy1+1)*ny,iStartX(i):iStartX(i)+nx-1)=zzz;
                     end
+                    
                 end
-                if ~isnan(fv)
-                    zzz(zzz==fv)=NaN;
+            end
+            
+            % Close waitbar
+            if ~quiet
+                if ~isempty(hh)
+                    close(wb);
                 end
-                z((j-iy1)*ny+1:(j-iy1+1)*ny,iStartX(i):iStartX(i)+nx-1)=zzz;
+            end
+
+            if ~justgettiles
+                
+                z(z<-15000)=NaN;
+                
+                %% Crop to requested limits
+                
+                ix1=find(xx<xl(1),1,'last');
+                if isempty(ix1)
+                    ix1=1;
+                end
+                ix2=find(xx>xl(2),1,'first');
+                if isempty(ix2)
+                    ix2=length(xx);
+                end
+                
+                iy1=find(yy<yl(1),1,'last');
+                if isempty(iy1)
+                    iy1=1;
+                end
+                iy2=find(yy>yl(2),1,'first');
+                if isempty(iy2)
+                    iy2=length(yy);
+                end
+                
+                x=x(iy1:iy2,ix1:ix2);
+                y=y(iy1:iy2,ix1:ix2);
+                z=z(iy1:iy2,ix1:ix2);
+                
+                % Convert to metres
+                switch lower(vertunits)
+                    case{'m'}
+                    case{'ft'}
+                        z=z*0.3048;
+                end
                 
             end
-        end
-        
-        % Close waitbar
-        if ~quiet
-            if ~isempty(hh)
-                close(wb);
-            end
-        end
-        
-        z(z<-15000)=NaN;
-        
-        
-        %% Crop to requested limits
-        
-        ix1=find(xx<xl(1),1,'last');
-        if isempty(ix1)
-            ix1=1;
-        end
-        ix2=find(xx>xl(2),1,'first');
-        if isempty(ix2)
-            ix2=length(xx);
-        end
-        
-        iy1=find(yy<yl(1),1,'last');
-        if isempty(iy1)
-            iy1=1;
-        end
-        iy2=find(yy>yl(2),1,'first');
-        if isempty(iy2)
-            iy2=length(yy);
-        end
-        
-        x=x(iy1:iy2,ix1:ix2);
-        y=y(iy1:iy2,ix1:ix2);
-        z=z(iy1:iy2,ix1:ix2);
-        
-        % Convert to metres
-        switch lower(vertunits)
-            case{'m'}
-            case{'ft'}
-                z=z*0.3048;
+            
         end
         
     case{'tiles'}

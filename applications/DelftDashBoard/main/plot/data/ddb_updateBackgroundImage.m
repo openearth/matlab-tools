@@ -118,20 +118,14 @@ switch handles.GUIData.backgroundImageType
             if ~strcmpi(coord.name,dataCoord.name) || ~strcmpi(coord.type,dataCoord.type)
                 % Interpolate on rectangular grid
                 [x11,y11]=meshgrid(xl(1):res:xl(2),yl(1):res:yl(2));
-%                 tic
-%                 disp('Converting coordinates ...');
                 [x2,y2]=ddb_coordConvert(x11,y11,coord,dataCoord);
-%                 toc
-%                 tic
-%                 disp('Interpolating data ...');
                 try
-                z11=interp2(x0,y0,z,x2,y2);
+                    z11=interp2(x0,y0,z,x2,y2);
                 catch
                     disp('Did not get any data!');
                     z11=zeros(size(x2));
                     z11(z11==0)=NaN;                  
                 end
-%                 toc
                 x11=xl(1):res:xl(2);
                 y11=yl(1):res:yl(2);
             else
@@ -145,7 +139,10 @@ switch handles.GUIData.backgroundImageType
             handles.GUIData.z=z11;
             
             handles=ddb_plotBackgroundBathymetryImage(handles,x11,y11,z11);
-            
+
+        else
+            h=handles.mapHandles.backgroundImage;
+            set(h,'XData',[],'YData',[],'CData',[]);
         end
         
     case{'satellite'}

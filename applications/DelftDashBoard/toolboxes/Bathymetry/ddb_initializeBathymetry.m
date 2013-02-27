@@ -117,6 +117,8 @@ handles.Toolbox(ii).Input.add_list = {};
 handles.Toolbox(ii).Input.bathy_to_cut = [];
 handles.Toolbox(ii).Input.add_list_idx = [];
 
-%handles.bathymetry.newDataset.autoLimits=1;
-
-
+handles.Toolbox(ii).Input.rectanglehandle=[];
+handles.Toolbox(ii).Input.rectanglex0=[];
+handles.Toolbox(ii).Input.rectanglex0=[];
+handles.Toolbox(ii).Input.rectangledx=[];
+handles.Toolbox(ii).Input.rectangledy=[];

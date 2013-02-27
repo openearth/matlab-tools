@@ -27,5 +27,12 @@
       <element>Bathymetry.merge.xml</element>
       <enable>0</enable>
     </tab>
+    <tab>
+      <tag>cache</tag>
+      <tabstring>Cache</tabstring>
+      <callback>ddb_BathymetryToolbox_fillcache</callback>
+      <element>Bathymetry.fillcache.xml</element>
+      <enable>1</enable>
+    </tab>
   </element>
 </root>

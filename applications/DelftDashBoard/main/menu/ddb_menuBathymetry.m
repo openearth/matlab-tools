@@ -82,6 +82,17 @@ for ii=1:length(ch)
 end
 
 set(hObject,'Checked','on');
+p=get(hObject,'Parent');
+pp=get(p,'Parent');
+ppp=get(pp,'Parent');
+if ppp==1
+    ch=get(pp,'Children');
+    set(ch,'ForegroundColor',[0 0 0]);    
+    set(p,'ForegroundColor',[0 0 1]);    
+else
+    ch=get(p,'Children');
+    set(ch,'ForegroundColor',[0 0 0]);    
+end
 iac=strmatch(lbl,handles.bathymetry.longNames,'exact');
 
 if ~strcmpi(handles.screenParameters.backgroundBathymetry,handles.bathymetry.datasets{iac})

@@ -63,13 +63,19 @@ function ddb_plotBathymetry(option, varargin)
 %%
 switch lower(option)
     case{'delete'}
-        h=findobj(gca,'Tag','BathymetryPolygon');
+        h=findobj(gca,'Tag','bathymetrypolygon');
+        delete(h);
+        h=findobj(gca,'Tag','bathymetryrectangle');
         delete(h);
     case{'activate'}
-        h=findobj(gca,'Tag','BathymetryPolygon');
+        h=findobj(gca,'Tag','bathymetrypolygon');
+        set(h,'Visible','on');
+        h=findobj(gca,'Tag','bathymetryrectangle');
         set(h,'Visible','on');
     case{'deactivate'}
-        h=findobj(gca,'Tag','BathymetryPolygon');
+        h=findobj(gca,'Tag','bathymetrypolygon');
+        set(h,'Visible','off');
+        h=findobj(gca,'Tag','bathymetryrectangle');
         set(h,'Visible','off');
 end
 

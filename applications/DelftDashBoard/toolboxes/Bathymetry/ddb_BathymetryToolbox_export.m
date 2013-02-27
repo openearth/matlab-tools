@@ -65,8 +65,11 @@ if isempty(varargin)
     ddb_zoomOff;
     ddb_refreshScreen;
     selectDataset;
-    % setUIElements('bathymetrypanel.export');
     ddb_plotBathymetry('activate');
+    h=findobj(gca,'Tag','bathymetrypolygon');
+    set(h,'Visible','on');
+    h=findobj(gca,'Tag','bathymetryrectangle');
+    set(h,'Visible','off');
 else
     %Options selected
     opt=lower(varargin{1});
