@@ -29,9 +29,10 @@ dt = 1.0;
 for i=1:200
     bmi_update(bmidll, dt);
     s1 = bmi_var_get(bmidll, 's1');
-    s1(1) = s1(1) + 10;
-    s1 = bmi_var_set(bmidll, 's1', s1);
-    disp(s1)
+    % Replace water level with 10m at cell 1 through 10
+    for i=1:10
+        bmi_set_1d_double_at_index(bmidll, 's1', i, 10);
+    end
     % This is not quite what I hoped for....
     clf;
     material metal
