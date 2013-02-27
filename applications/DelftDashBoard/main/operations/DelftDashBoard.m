@@ -85,8 +85,6 @@ warning('off','MATLAB:HandleGraphics:ObsoletedProperty:JavaFrame');
 % Open Splash Screen
 frame=splash([handles.settingsDir 'icons' filesep 'DelftDashBoard.jpg'],50);
 
-profile on
-
 try
     
     setHandles(handles);
@@ -123,5 +121,3 @@ catch exception
     frame.hide;    
     disp(exception.getReport);
 end
-
-profile viewer
