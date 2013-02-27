@@ -16,6 +16,10 @@ void get_var_type(char* var_name, char* c_type_name);
 
 void get_var_shape(char* var_name, int shape[6]);
 
+void set_1d_double(char* var_name, double** x);
+
+void set_2d_double(char* var_name, double** x);
+
 void set_1d_double_at_index(char* var_name, int* index, double* value);
 
 void finalize();

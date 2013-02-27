@@ -29,7 +29,9 @@ dt = 1.0;
 for i=1:200
     bmi_update(bmidll, dt);
     s1 = bmi_var_get(bmidll, 's1');
-    
+    s1(1) = s1(1) + 10;
+    s1 = bmi_var_set(bmidll, 's1', s1);
+    disp(s1)
     % This is not quite what I hoped for....
     clf;
     material metal
