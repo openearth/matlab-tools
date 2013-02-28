@@ -85,7 +85,7 @@ function s=xml2struct(varargin)
 
 filename=varargin{1};
 includeattributes=1;
-structuretype='long';
+structuretype='short';
 includeroot=0;
 
 for ii=1:length(varargin)
