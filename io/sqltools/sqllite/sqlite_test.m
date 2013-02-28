@@ -1,4 +1,4 @@
-function sqlite_test ()
+function mksqlite_test ()
 
 database = 'my_testdb';
 table = 'testtabelle';
