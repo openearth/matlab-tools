@@ -35,12 +35,14 @@ function D = jarkus_depthatX(X,z,x)
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
-x = x(find(~isnan(z)));
-z = z(find(~isnan(z)));
+x = x(~isnan(z));
+z = z(~isnan(z));
 
-if ~isempty(x) && max(x)>=X && min(x)<=X
-    b=max(find(x<X));
-    e=min(find(x>X));
+if find(x==X)
+    D=z(x==X);
+elseif ~isempty(x) && max(x)>X && min(x)<X
+    b=find(x<X, 1, 'last' );
+    e=find(x>X, 1 );
     
     D = z(b) - ( ((z(b)-z(e))/(x(b)-x(e))) * (x(b)-X) );
 else

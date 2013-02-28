@@ -138,7 +138,7 @@ elseif zz>1
     error('Z must be 2-dimensional');
 elseif mx~=mz
     error('X, Y and Z should be same size');
-elseif my~=mz
+elseif my~=nz
     error('X, Y and Z should be same size');
 elseif abs(dx-dy)>maxDiff;
     error('X- and Y- grid spacing should be equal');

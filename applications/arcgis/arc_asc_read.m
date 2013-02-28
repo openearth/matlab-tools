@@ -109,9 +109,10 @@ if exist(fname, 'file')
             end
 
             % fill matrix
-            z(size(z,1)-j+1,:) = zi;
-
-            j = j + 1;
+            if ~isempty(zi) %skip empty lines
+                z(size(z,1)-j+1,:) = zi;
+                j = j + 1;
+            end
         end
     end
 
@@ -122,7 +123,7 @@ if exist(fname, 'file')
    %y = info.YLLCORNER+[0  :1:info.NROWS    ]*info.CELLSIZE; % these are the corners that span the pixels
     x = info.XLLCORNER+[0.5:1:info.NCOLS-0.5]*info.CELLSIZE; % these are the CENTRES where the data reside
     y = info.YLLCORNER+[0.5:1:info.NROWS-0.5]*info.CELLSIZE; % these are the CENTRES where the data reside
-    z = reshape(z, info.NROWS, info.NCOLS)./OPT.zscale;
+    z = double(reshape(z, info.NROWS, info.NCOLS)./OPT.zscale);
     
 else
     disp(['File does not exist [' fname ']']);
