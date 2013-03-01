@@ -122,7 +122,7 @@ FLTR = setproperty(FLTR, varargin2{:});
 
 %% retrieve jarkus info
 
-transects = struct();
+transects = struct('url', OPT.url);
 dimensions = struct();
 
 % get jarkus info
@@ -142,8 +142,9 @@ if OPT.verbose; disp(['    OK']); disp(' '); end;
 % show jarkus info attributes
 if OPT.verbose && isfield(jInfo, 'Attribute')
     disp('Using JARKUS data:');
+    disp(['    ' transects.url]);
     for i = 1:length(jInfo.Attribute)
-        disp(['    ' jInfo.Attribute(i).Value]);
+        fprintf('\t%s: %s\n', jInfo.Attribute(i).Name, jInfo.Attribute(i).Value);
     end
     disp(' ');
 end
@@ -221,7 +222,7 @@ for i = datasetOrder'
                 dim = jInfo.Dataset(i).Dimension{j};
                 
                 if isfield(jDims, dim)
-                    if isfield(jDims.(dim), 'indices')
+                    if isfield(jDims.(dim), 'indices') && ~isempty(jDims.(dim).indices)
                         start(j) = min(jDims.(dim).indices);
                         count(j) = max(jDims.(dim).indices)-start(j)+1;
                     end
