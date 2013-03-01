@@ -75,8 +75,7 @@ if isempty(varargin)
             cs0.type='geographic';
             [platesx,platesy]=ddb_coordConvert(platesx,platesy,cs0,cs1);
         end
-        platesz=zeros(size(platesx))+50;
-        h=plot3(platesx,platesy,platesz);
+        h=plot(platesx,platesy);
         set(h,'Color',[1.0 0.5 0.00]);
         set(h,'Tag','Plates');
         set(h,'LineWidth',1.5);

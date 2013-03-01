@@ -142,18 +142,21 @@ handles=getHandles;
 
 switch lower(handles.Model(md).name)
     case{'delft3dflow'}
-        [filename, pathname, filterindex] = uiputfile('*.obs', 'Observation File Name',[handles.Model(md).Input(ad).attName '.obs']);
-        if pathname~=0
-            ddb_Delft3DFLOW_addObservationStations;
-            handles=getHandles;
-            handles.Model(md).Input(ad).obsFile=filename;
-            ddb_saveObsFile(handles,ad);
-            setHandles(handles);
+        if isempty(handles.Model(md).Input(ad).grdFile)
+            ddb_giveWarning('text','Please first generate or load a model grid!');
+        else
+            [filename, pathname, filterindex] = uiputfile('*.obs', 'Observation File Name',[handles.Model(md).Input(ad).attName '.obs']);
+            if pathname~=0
+                ddb_Delft3DFLOW_addObservationStations;
+                handles=getHandles;
+                handles.Model(md).Input(ad).obsFile=filename;
+                ddb_saveObsFile(handles,ad);
+                setHandles(handles);
+            end
         end
     otherwise
         ddb_giveWarning('text',['Sorry, generation of observation points from stations is not supported for ' handles.Model(md).longName ' ...']);
 end
-
 
 %%
 function selectObservationStationFromMap(h,nr)

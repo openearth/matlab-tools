@@ -122,6 +122,13 @@ argin{1}='Callback';
 argin{2}=@ddb_selectWorkingDirectory;
 handles=ddb_addMenuItem(handles,'File','Select Working Directory','Callback',@ddb_menuSelect,'argin',argin,'Separator','on');
 
+% Proxy settings
+argin=[];
+argin{1}='Callback';
+argin{2}=@ddb_setProxySettings;
+handles=ddb_addMenuItem(handles,'File','Proxy Settings ...','Callback',@ddb_menuSelect,'argin',argin,'Separator','on');
+
+% Exit
 argin=[];
 argin{1}='Callback';
 argin{2}=@ddb_menuExit;

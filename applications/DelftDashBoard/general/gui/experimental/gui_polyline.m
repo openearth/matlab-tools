@@ -221,7 +221,7 @@ switch lower(opt)
         setappdata(hg,'x',x);
         setappdata(hg,'y',y);
 
-        h=drawPolyline(hg,'nocallback');
+        h=plotPolyline(hg,'nocallback');
         
     case{'delete'}
 
@@ -291,7 +291,7 @@ else
 end
 
 %%
-function hg=drawPolyline(hg,varargin)
+function hg=plotPolyline(hg,varargin)
 % called to plot the polyline
 
 opt='withcallback';
@@ -335,6 +335,7 @@ if ~isempty(x)
     set(h,'LineWidth',options.linewidth);
     set(h,'LineStyle',options.linestyle);
     set(h,'HitTest','off');
+    
     setappdata(hg,'linehandle',h);
     setappdata(hg,'x',x);
     setappdata(hg,'y',y);
@@ -371,6 +372,8 @@ if ~isempty(x)
             feval(options.createcallback,options.createinput,hg,x,y);
         end
     end
+    
+    uistack(hg,'top');
     
 end
 
@@ -428,7 +431,7 @@ if strcmp(mouseclick,'normal')
             if length(x)==options.maxpoints
                 feval(options.windowbuttonupdownfcn);
                 feval(options.windowbuttonmotionfcn);
-                drawPolyline(hg);
+                plotPolyline(hg);
             end
             
             break
@@ -453,7 +456,7 @@ else
     set(gcf,'Pointer','arrow');
     feval(options.windowbuttonupdownfcn);
     feval(options.windowbuttonmotionfcn);
-    drawPolyline(hg);
+    plotPolyline(hg);
 end
 
 %%
@@ -612,7 +615,7 @@ y(nr)=yi;
 setappdata(hg,'x',x);
 setappdata(hg,'y',y);
 
-hg=drawPolyline(hg,'withoucallback');
+% hg=plotPolyline(hg,'withoutcallback');
 
 if ~isempty(options.changecallback)
     if isempty(options.changeinput)

@@ -76,8 +76,8 @@ function makefigure(data)
 
 handles=getHandles;
 
-xmldir=handles.Toolbox(tb).xmlDir;
-xmlfile='plottimeseries.xml';
+xmldir=[handles.settingsDir 'xml' filesep];
+xmlfile='delftdashboard.plottimeseries.xml';
 
 n=0;
 for ii=1:length(data.parameters)
