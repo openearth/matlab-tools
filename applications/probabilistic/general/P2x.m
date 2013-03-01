@@ -66,26 +66,18 @@ OPT = setproperty(OPT, varargin{:});
 %% apply (Gaussian) correlation on u-variables
 C=OPT.CorrMatrix;
 if ~isempty(C)    
-    
-    % check if C is symetric
-    if ~isequal(C',C)
-       error('correlation matrix should be symetric'); 
-    end
-    
-    % derive  for whic PP'=C, through Cholesky-decomposition
-    Pm = Cholesky(C);
-    
+  
     %work around for values with P==1, happens with "discrete variables"
     eps = 1E-12;
     indP1 = P==1;
-    P(indP1)=1-eps; 
-    
-    % apply correlation 
+    P(indP1)=1-eps;
+
+    % apply correlation
     u = norm_inv(P, 0, 1);
-    u = u*Pm';
+    u = ApplyCorrelation(u,C);
     P = norm_cdf(u, 0, 1);
-    
-    % finish work around
+
+    % finish the workaround
     P(indP1&P==1-eps)=1;
     
 end
