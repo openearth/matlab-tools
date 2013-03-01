@@ -67,20 +67,9 @@ OPT = setproperty(OPT, varargin{:});
 
 %% apply (Gaussian) correlation on u-variables
 C=OPT.CorrMatrix;
-if ~isempty(C)    
-    
-    % check if C is symetric
-    if ~isequal(C',C)
-       error('correlation matrix should be symetric'); 
-    end
-    
-    % derive  for whic PP'=C, through Cholesky-decomposition
-    Pm = Cholesky(C);
-    
-    % apply corelation on u
-    u = u*Pm';
+if ~isempty(C)        
+    u = ApplyCorrelation(u,C);
 end
-
 
 
 %% allocate x, being same size as u
