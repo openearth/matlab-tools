@@ -1,4 +1,4 @@
-function makeModels(modelprefix,xp,yp,overlap,dx,dy,distoff,dt,inclobs,bathymetry,bathy,cs,dr,iplot)
+function makeModelSeries(modelprefix,xp,yp,overlap,dx,dy,distoff,dt,inclobs,bathymetry,bathy,cs,dr,iplot,solver,Lfric,Hfric)
 
 diston=distoff;
 
@@ -134,6 +134,15 @@ for ig=1:ngrids
     z(isnan(x))=NaN;
     ddb_wldep('write',[dr filesep modelname filesep 'input' filesep modelname '.dep'],z);
     
+    % Creates RGH file, based on land/water grid cell
+    rgh=z;
+    rgh(rgh>=0)  =Lfric;        
+    rgh(rgh<0)   =Hfric;
+    rgh(isnan(rgh))=0.024;    
+    ddb_wldep('write',[dr filesep modelname filesep 'input' filesep modelname '.rgh'],-rgh);
+    ddb_wldep('append',[dr filesep modelname filesep 'input' filesep modelname '.rgh'],-rgh);
+    
+    
     %% Boundaries
 
     openBoundaries=[];
@@ -154,7 +163,7 @@ for ig=1:ngrids
     ymean=nanmean(nanmean(y));
     [xmean,ymean]=convertCoordinates(xmean,ymean,'CS2.name','WGS 84','CS2.type','geographic', ...
         'CS1.name',cs.name,'CS1.type',cs.type);
-    writeMDF([dr filesep modelname filesep 'input' filesep],modelname,size(x,1)+1,size(x,2)+1,ymean,dt,inclobs);    
+    writeMDF([dr filesep modelname filesep 'input' filesep],modelname,size(x,1)+1,size(x,2)+1,ymean,dt,inclobs,solver,Lfric,Hfric);  
     
     % XML
     xml=[];
@@ -168,7 +177,7 @@ for ig=1:ngrids
 end
 
 %
-function writeMDF(dr,modelname,mmax,nmax,anglat,dt,inclobs)
+function writeMDF(dr,modelname,mmax,nmax,anglat,dt,inclobs,solver,Lfric,Hfric)
 
 fid=fopen([dr filesep 'runflow.bat'],'wt');
 fprintf(fid,'%s\n','@ echo off');
@@ -205,16 +214,18 @@ fprintf(fid,'%s\n','Fmtdep= #FR#');
 fprintf(fid,'%s\n','Itdate= #2013-01-01#');
 fprintf(fid,'%s\n','Tunit = #M#');
 fprintf(fid,'%s\n','Tstart= 0.0000000e+000');
-fprintf(fid,'%s\n','Tstop = 1.2000000e+002');
+fprintf(fid,'%s\n','Tstop = RDURKEY');
+%fprintf(fid,'%s\n',['Tstop = ' num2str(rdur) ' ']);
 fprintf(fid,'%s\n',['Dt    = ' num2str(dt)]);
 fprintf(fid,'%s\n','Tzone = 0');
 fprintf(fid,'%s\n','Sub1  = #    #');
 fprintf(fid,'%s\n','Sub2  = #   #');
 fprintf(fid,'%s\n','Wnsvwp= #N#');
 fprintf(fid,'%s\n','Wndint= #Y#');
-fprintf(fid,'%s\n','Zeta0 = 0.0000000e+000');
-fprintf(fid,'%s\n','U0    = [.]');
-fprintf(fid,'%s\n','V0    = [.]');
+% fprintf(fid,'%s\n','Zeta0 = 0.0000000e+000');
+% fprintf(fid,'%s\n','U0    = [.]');
+% fprintf(fid,'%s\n','V0    = [.]');
+fprintf(fid,'%s\n',['Filic = #' modelname '.ini#']);
 fprintf(fid,'%s\n',['Filbnd= #' modelname '.bnd#']);
 fprintf(fid,'%s\n','Fmtbnd= #FR#');
 fprintf(fid,'%s\n',['FilbcT= #' modelname '.bct#']);
@@ -235,8 +246,9 @@ fprintf(fid,'%s\n','Fclou = 0.0000000e+000');
 fprintf(fid,'%s\n','Sarea = 0.0000000e+000');
 fprintf(fid,'%s\n','Temint= #Y#');
 fprintf(fid,'%s\n','Roumet= #M#');
-fprintf(fid,'%s\n','Ccofu = 2.0000000e-002');
-fprintf(fid,'%s\n','Ccofv = 2.0000000e-002');
+% fprintf(fid,'%s\n','Ccofu = 2.0000000e-002');
+% fprintf(fid,'%s\n','Ccofv = 2.0000000e-002');
+fprintf(fid,'%s\n',['Filrgh = #' modelname '.rgh#']);
 fprintf(fid,'%s\n','Xlo   = 0.0000000e+000');
 fprintf(fid,'%s\n','Vicouv= 1.0000000e+003');
 fprintf(fid,'%s\n','Dicouv= 1.0000000e+000');
@@ -254,7 +266,7 @@ fprintf(fid,'%s\n','Forfuv= #N#');
 fprintf(fid,'%s\n','Forfww= #N#');
 fprintf(fid,'%s\n','Sigcor= #N#');
 fprintf(fid,'%s\n','Trasol= #Cyclic-method#');
-fprintf(fid,'%s\n','Momsol= #Cyclic#');
+fprintf(fid,'%s\n',['Momsol= #' solver '#']);
 fprintf(fid,'%s\n','SMhydr= #YYYYY#');
 fprintf(fid,'%s\n','SMderv= #YYYYYY#');
 fprintf(fid,'%s\n','SMproc= #YYYYYYYYYY#');
@@ -277,9 +289,9 @@ if inclobs
     fprintf(fid,'%s\n','Fmtsta= #FR#');
 end
 fprintf(fid,'%s\n','Prhis = 0.0000000e+000  0.0000000e+000  0.0000000e+000');
-fprintf(fid,'%s\n','Flmap = 0.0000000e+000  1.0000000e+001  1.2000000e+002');
+fprintf(fid,'%s\n','Flmap = 0.0000000e+000  1.0000000e+001  RDURKEY');
 if inclobs
-    fprintf(fid,'%s\n','Flhis = 0.0000000e+000  1.0000000e+000  1.2000000e+002');
+    fprintf(fid,'%s\n','Flhis = 0.0000000e+000  1.0000000e+001  RDURKEY');
 else
     fprintf(fid,'%s\n','Flhis = 0.0000000e+000  0.0000000e+000  0.0000000e+000');
 end
@@ -291,5 +303,5 @@ fprintf(fid,'%s\n','Fmtfou= #FR#');
 fclose(fid);
 
 fid=fopen([dr filesep modelname '.fou'],'wt');
-fprintf(fid,'%s\n','wl         0.00      120.00     1     1.00000     0.00000  max');
+fprintf(fid,'%s\n',['wl         0.00      RDURKEY     1     1.00000     0.00000  max']);
 fclose(fid);
