@@ -243,17 +243,19 @@ function varargout = vs_trih2nc(vsfile,varargin)
       nc.Dimensions(end+1) = struct('Name','LayerInterf'     ,'Length',ncdimlen.LayerInterf);
 
       if OPT.trajectory
-      dimname = 'Trajectory';
-      if isfield(G,'x')
-      G.trajectory = distance(G.x,G.y);
+       nc.Attributes(end+1) = struct('Name','featureType'        ,'Value',  'trajectoryProfile');
+       dimname = 'Trajectory';
+       if isfield(G,'x')
+       G.trajectory = distance(G.x,G.y);
+       else
+       G.trajectory = nan.*G.lon;
+       fprintf(2,'> trajectory has no distance: spherical coordinates need epsg code to calculate Euclidian distance.\n')
+       end
       else
-      G.trajectory = nan.*G.lon;
-      fprintf(2,'> trajectory has no distance: spherical coordinates need epsg code to calculate Euclidian distance.\n')
-      end
-      else
-      dimname = 'Station';
-      ncdimlen.station_name_len = size(G.name,2);
-      nc.Dimensions(end+1) = struct('Name','station_name_len'     ,'Length',ncdimlen.station_name_len);
+       nc.Attributes(end+1) = struct('Name','featureType'        ,'Value',  'timeSeries');
+       dimname = 'Station';
+       ncdimlen.station_name_len = size(G.name,2);
+       nc.Dimensions(end+1) = struct('Name','station_name_len'     ,'Length',ncdimlen.station_name_len);
       end
       ncdimlen.(dimname) = size(G.name,1);
       nc.Dimensions(end+1) = struct('Name',dimname          ,'Length',ncdimlen.(dimname));
