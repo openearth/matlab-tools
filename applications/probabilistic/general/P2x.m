@@ -74,8 +74,8 @@ if ~isempty(C)
 
     % apply correlation
     u = norm_inv(P, 0, 1);
-    u = ApplyCorrelation(u,C);
-    P = norm_cdf(u, 0, 1);
+    [u, correlated] = ApplyCorrelation(u,C);
+    P(:,correlated) = norm_cdf(u(:,correlated), 0, 1);
 
     % finish the workaround
     P(indP1&P==1-eps)=1;

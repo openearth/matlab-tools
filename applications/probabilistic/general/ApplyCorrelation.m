@@ -1,7 +1,7 @@
-function  uCorr = ApplyCorrelation(u,C)
+function  [uCorr, correlated] = ApplyCorrelation(u,C)
 % ApplyCorrelation: apply correlation matrix on u-values 
 % if input u-values are independent and standard normally distrubuted, afterwards they will be 
-% correlation according to the Gausdsian correlation with correlation
+% correlation according to the Gaussian correlation with correlation
 % matrix C
 %
 % inverse cdf of a discrete probability distribution, with a finite number of outcomes. A
@@ -12,7 +12,8 @@ function  uCorr = ApplyCorrelation(u,C)
 %    - C:   nxn correlation matrix
 
 % output
-%    - uCorr:  correlated u-values
+%    - uCorr:      correlated u-values
+%    - correlated: indicator of random variables that are mutually correlated 
 %
 %   Example
 %   u =  ApplyCorrelation(u, C)
