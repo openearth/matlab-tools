@@ -1,31 +1,26 @@
 function DAT = rws_hmcz_astro_read(varargin)
-%RWS_HMCZ_WIND_READ   Reads ASCII wind file from www.hmcz.nl
+%RWS_HMCZ_ASTRO_READ   Reads ASCII astro file from www.hmcz.nl
 %
-%      D = rws_hmcz_wind_read('fname')
+%      D = rws_hmcz_astro_read('fname')
 %
-%   eeads ASCII wind data file from www.hmcz.nl of type 
-%   WNr2 (see 2nd line) that looks like:
+%   reads ASCII astro data file from www.hmcz.nl of type 
+%   WTA4 (see 2nd line) that looks like:
 %
 %   ----------------------------------------------------------
 %   20070101 0000 20070131 2350 10
-%   STAV WNr2
+%   STAV WTA4
 %               1            2            3            4            5            6            7            8 
 %   01-jan-2007 00:00          132          224          190          125          179           18          132            8 
 %   ...
 %   31-jan-2007 23:50           55          268           65           52           61            4           57            3 
 %   ----------------------------------------------------------
 %
-%   HMCZ_WIND_READ returns a struct D containing the data from the 
+%   HMCZ_ASTRO_READ returns a struct D containing the data from the 
 %   file 'fname' which includes the following fields:
 %
-%   1 WS10     10-min. scalair gemiddelde windsnelheid in [m/s]
-%   2 WR10     10-min. gemiddelde windrichting in [sex.grd. tov Nrd.]
-%   3 WS10MXS3 Max. 3-sec. windstoot in de afgelopen 10 min. in [m/s]
-%   4 WC10     10-min. scalair gemiddelde windsnelheid gecorrigeerd naar 10 m boven het zeeoppervlak in [m/s]
-%   5 WC10MXS3 Max. 3-sec windstoot in de afgelopen 10 minuten gecorrigeerd naar 10 m boven het zeeoppervlak in [m/s]
-%   6 WS10STD  Standaardafwijking van de windsnelheid in de afgelopen 10 min. in [m/s]
-%   7 WS10MX10 Max. 10 min.  lopend gemiddelde windsnelheid in de afgelopen 10 min. in [m/s]
-%   8 WR10STD  Standaardafwijking van de windrichting in de afgelopen 10 min. in [m/s]
+%   1 10 min. gemiddelde waterhoogte in [cm t.o.v. NAP] 
+
+%   
 %
 %   * The different blocks in the file are loaded as separate blocks.
 %   * Lines with a * are treated as NaNs.
