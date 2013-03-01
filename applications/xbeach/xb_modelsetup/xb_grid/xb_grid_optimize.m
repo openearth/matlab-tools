@@ -102,7 +102,7 @@ OPT = struct( ...
     'crop', true, ...
     'finalise', true, ...
     'posdwn', false, ...
-    'world_coordinates', false, ...
+    'world_coordinates', true, ...
     'zdepth', 100 ...
 );
 
@@ -243,8 +243,11 @@ else
 
     % interpolate elevation data to dummy grid
     [x_d y_d] = meshgrid(x_d,y_d);
+    
+    % rotate dummy grid to world coordinates to allow for use of interp2
+    [x_d_w y_d_w] = xb_grid_rotate(x_d, y_d, -alpha, 'origin', [xori yori]);
     try
-        z_d = interp2(x_r, y_r, z_w, x_d, y_d);
+        z_d = interp2(x_w', y_w', z_w', x_d_w, y_d_w);
         % use other interpolation method if necessary
     catch error_message
         warning(['INTERP2 cannot be used, interpolation can take a little longer: ' error_message.message]);
@@ -325,7 +328,7 @@ else
 
     % interpolate elevation data to xbeach grid
     try
-        zgrid = interp2(x_w, y_w, z_w, x_xb_w, y_xb_w);
+        zgrid = interp2(x_w', y_w', z_w', x_xb_w, y_xb_w);
         % use other interpolation method if necessary
     catch error_message
         warning(['INTERP2 cannot be used, interpolation can take a little longer: ' error_message.message]);
