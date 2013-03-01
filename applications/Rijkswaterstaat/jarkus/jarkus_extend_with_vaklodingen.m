@@ -24,14 +24,14 @@ function [trvk, tr] = jarkus_extend_with_vaklodingen(jarkus_id, jarkus_year, var
 %   Example
 %   transects = jarkus_extend_with_vaklodingen(7001503, 2010)
 %
-%   See also 
+%   See also
 
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2012 Delft University of Technology
 %       Kees den Heijer
 %
-%       C.denHeijer@TUDelft.nl	
+%       C.denHeijer@TUDelft.nl
 %
 %       Faculty of Civil Engineering and Geosciences
 %       P.O. Box 5048
@@ -53,9 +53,9 @@ function [trvk, tr] = jarkus_extend_with_vaklodingen(jarkus_id, jarkus_year, var
 %   --------------------------------------------------------------------
 
 % This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and 
+% OpenEarthTools is an online collaboration to share and manage data and
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute 
+% Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
@@ -77,9 +77,9 @@ OPT = setproperty(OPT, varargin);
 
 %%
 if ~(isstruct(jarkus_id) && jarkus_check(jarkus_id, 'id', 'x', 'y', 'cross_shore'))
-    if ~isscalar(jarkus_id) && ~isinteger(jarkus_id)
-        error('"id" must be a scalar and integer')
-    end
+    %     if ~isscalar(jarkus_id) && ~isinteger(jarkus_id)
+    %         error('"id" must be a scalar and integer')
+    %     end
     
     
     %%
@@ -110,19 +110,22 @@ if ~(isstruct(jarkus_id) && jarkus_check(jarkus_id, 'id', 'x', 'y', 'cross_shore
     nnid = sum(~isnan(squeeze(tr.altitude))) ~= 0;
 else
     tr = jarkus_id;
-    nnid = true(size(tr.x));
 end
 
-x = tr.x(nnid)';
-dx = mean(diff(x));
-y = tr.y(nnid)';
-dy = mean(diff(y));
+x = tr.x;
+dx = mean(diff(x,1,2), 2);
+y = tr.y;
+dy = mean(diff(y,1,2), 2);
+
+x_rsp = tr.x(:,tr.cross_shore==0);
+y_rsp = tr.y(:,tr.cross_shore==0);
 
 % x and y direction when going offshore
 x_direction = sign(dx);
 y_direction = sign(dy);
 
-px2y = polyfit(x,y,1);
+px2y = cellfun(@(xi,yi) polyfit(xi,yi,1), num2cell(x,2), num2cell(y,2),...
+    'uniformoutput', false);
 
 %% retreive extent of vaklodingen
 urls = opendap_catalog('http://opendap.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.html',...
@@ -160,7 +163,7 @@ x_to = projectionCoverage_x(:,2);
 y_from = projectionCoverage_y(:,1);
 y_to = projectionCoverage_y(:,2);
 
-rectangles = [x_from y_from ones(size(x_to))*10000  ones(size(y_to))*12500];
+rectangles = [x_from y_from x_to-x_from  y_to-y_from];
 
 % url = 'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/vaklodingen/vaklodingen.nc';
 % ids = nc_varget(url, 'id');
@@ -173,229 +176,172 @@ rectangles = [x_from y_from ones(size(x_to))*10000  ones(size(y_to))*12500];
 %% construct bounding boxes and find potential relevant ones
 x_rect = [x_from x_from x_to x_to x_from];
 y_rect = [y_from y_to y_to y_from y_from];
-rect_preselect = any(sign(x_rect - x(1)) == x_direction, 2) & ...
-	any(sign(y_rect - y(1)) == y_direction, 2) | ...
-    any(sign(x_rect - x(end)) == -x_direction, 2) & ...
-	any(sign(y_rect - y(end)) == -y_direction, 2);
 
-%% plot pre-selected area
-if OPT.debug
-    figure;
-    subplot(2,2,1);
-    ldbncfile = 'http://opendap.tudelft.nl/thredds/dodsC/data2/deltares/deltares/landboundaries/holland.nc';
-    plot(nc_varget(ldbncfile, 'x'), nc_varget(ldbncfile, 'y'))
-    hold on
-    for ii = 1:length(ids)
-        rectangle('position', rectangles(ii,:), 'tag', ids{ii}, 'edgecolor', 'b');
-    end
-    for ii = find(rect_preselect)'
-        rectangle('position', rectangles(ii,:),'tag', ids{ii}, 'edgecolor', 'r');
-    end
-    plot(x([1 end]),y([1 end]), 'r-o')
-end
-
-%% locate most landward and seaward points of extended transect
-if x_direction == 0
-    if y_direction < 0
-        y_0 = max(y_to(rect_preselect));
-        y_end = min(y_from(rect_preselect));
-    else
-        y_0 = min(y_from(rect_preselect));
-        y_end = max(y_to(rect_preselect));
-    end
-    [x_0, x_end] = deal(x(1));
-else
-    if x_direction < 0
-        x_0 = max(x_to(rect_preselect));
-        x_end = min(x_from(rect_preselect));
-    else
-        x_0 = min(x_from(rect_preselect));
-        x_end = max(x_to(rect_preselect));
-    end
-    y_0 = polyval(px2y, x_0);
-    y_end = polyval(px2y, x_end);
-end
-
-%% select the map areas that the transects is actually crossing
-[xcr(rect_preselect), ycr(rect_preselect)] = cellfun(@(xx,yy) findCrossingsOfLineAndPolygon([x(1) x_end], [y(1) y_end], xx, yy),...
-    num2cell(x_rect(rect_preselect,:), 2), num2cell(y_rect(rect_preselect,:), 2),...
-    'uniformoutput', false);
-
-rect_select = false(size(rect_preselect));
-rect_select(~cellfun(@isempty, xcr)) = true;
-
-%% plot selected area
-if OPT.debug
-    for sb = 1:2
-        subplot(2,2,sb)
-        for i = find(rect_select)'
-            rectangle('position', rectangles(i,:),...
-                'tag', strtrim(ids{i}),...
-                'edgecolor', 'r',...
-                'linewidth', 2);
+rect_select = false(size(ids,2), length(tr.id));
+for ii = 1:length(tr.id)
+    rect_preselect = any(sign(x_rect - x(ii,1)) == x_direction(ii), 2) & ...
+        any(sign(y_rect - y(ii,1)) == y_direction(ii), 2) | ...
+        any(sign(x_rect - x(end)) == -x_direction(ii), 2) & ...
+        any(sign(y_rect - y(end)) == -y_direction(ii), 2);
+    
+    %% plot pre-selected area
+    if OPT.debug
+        figure;
+        subplot(2,2,1);
+        ldbncfile = 'http://opendap.tudelft.nl/thredds/dodsC/data2/deltares/deltares/landboundaries/holland.nc';
+        plot(nc_varget(ldbncfile, 'x'), nc_varget(ldbncfile, 'y'))
+        hold on
+        for jj = 1:length(ids)
+            rectangle('position', rectangles(jj,:), 'tag', ids{jj}, 'edgecolor', 'b');
         end
+        for jj = find(rect_preselect)'
+            rectangle('position', rectangles(jj,:),'tag', ids{jj}, 'edgecolor', 'r');
+        end
+        plot(x(ii,[1 end]),y(ii,[1 end]), 'r-o')
     end
-    hold on
-    plot(x([1 end]),y([1 end]), 'r-o')
+    
+    %% locate most landward and seaward points of extended transect
+    if x_direction(ii) == 0
+        if y_direction < 0
+            y_0(ii) = max(y_to(rect_preselect));
+            y_end(ii) = min(y_from(rect_preselect));
+        else
+            y_0(ii) = min(y_from(rect_preselect));
+            y_end(ii) = max(y_to(rect_preselect));
+        end
+        [x_0(ii), x_end(ii)] = deal(x(ii,1));
+    else
+        if x_direction(ii) < 0
+            x_0(ii) = max(x_to(rect_preselect));
+            x_end(ii) = min(x_from(rect_preselect));
+        else
+            x_0(ii) = min(x_from(rect_preselect));
+            x_end(ii) = max(x_to(rect_preselect));
+        end
+        y_0(ii) = polyval(px2y{ii}, x_0(ii));
+        y_end(ii) = polyval(px2y{ii}, x_end(ii));
+    end
+    
+    %% select the map areas that the transects is actually crossing
+    xcr = cell(size(rect_preselect));
+    [xcr(rect_preselect), ycr(rect_preselect)] = cellfun(@(xx,yy) findCrossingsOfLineAndPolygon([x(ii,1) x_end(ii)], [y(ii,1) y_end(ii)], xx, yy),...
+        num2cell(x_rect(rect_preselect,:), 2), num2cell(y_rect(rect_preselect,:), 2),...
+        'uniformoutput', false);
+    
+    rect_select(ii,~cellfun(@isempty, xcr)) = true;
+    
+    %% plot selected area
+    if OPT.debug
+        for sb = 1:2
+            subplot(2,2,sb)
+            for i = find(rect_select)'
+                rectangle('position', rectangles(i,:),...
+                    'tag', strtrim(ids{i}),...
+                    'edgecolor', 'r',...
+                    'linewidth', 2);
+            end
+        end
+        hold on
+        plot(x(ii, [1 end]),y(ii, [1 end]), 'r-o')
+    end
+    
+    xe{ii} = [fliplr(x(ii,1):-dx(ii):x_0(ii)) x(ii,2):dx(ii):x_end(ii)];
+    ye{ii} = [fliplr(y(ii,1):-dy(ii):y_0(ii)) y(ii,2):dy(ii):y_end(ii)];
+    cse{ii} = round(sqrt((xe{ii} - x_rsp(ii)).^2 + (ye{ii} - y_rsp(ii)).^2));
+    cse{ii}(diff(cse{ii})<0) = -cse{ii}(diff(cse{ii})<0);
 end
+cse = unique(cat(2, cse{:}));
+xe = repmat(cse, length(tr.id), 1)/5 .* repmat(dx, 1, length(cse)) + repmat(x_rsp, 1, length(cse));
+ye = repmat(cse, length(tr.id), 1)/5 .* repmat(dy, 1, length(cse)) + repmat(y_rsp, 1, length(cse));
 
-%% retreive bathymetry data from vaklodingen
-% relevant ncfiles
-ncfiles = cellfun(@(id) ['http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/vaklodingen' id '.nc'], ids(rect_select),...
+kbgroups = unique(rect_select, 'rows');
+
+ncfiles = cellfun(@(id) ['http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/vaklodingen' id '.nc'], ids(sum(rect_select)~=0),...
     'UniformOutput', false);
-% unique years
 Ts = cellfun(@(ncfile) nc_varget(ncfile, 'time'), ncfiles,...
     'uniformoutput', false);
 years = cellfun(@(T) year(T + datenum(1970,1,1)), Ts,...
     'uniformoutput', false);
 uniqueyears = unique(cell2mat(years'));
-uniqueyears = uniqueyears(ismember(uniqueyears, jarkus_year));
+jarkus_year = uniqueyears(ismember(uniqueyears, jarkus_year));
+ze = NaN(length(jarkus_year), length(tr.id), length(cse));
 
-[xvl, yvl] = cellfun(@(ncfile) deal(nc_varget(ncfile, 'x'), nc_varget(ncfile, 'y')), ncfiles,...
-    'uniformoutput', false);
-xe = [fliplr(x(1):-dx:x_0) x(2):dx:x_end];
-ye = [fliplr(y(1):-dy:y_0) y(2):dy:y_end];
-ze = nan(length(uniqueyears), length(xe));
-for iyear = 1:length(uniqueyears)
-    % pre-allocate z
-    zvl = cellfun(@(X,Y) NaN(length(Y), length(X)), xvl, yvl,...
+for ig = 1:size(kbgroups,1)
+    %% retreive bathymetry data from vaklodingen
+    % relevant ncfiles
+    ncfiles = cellfun(@(id) ['http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/vaklodingen' id '.nc'], ids(kbgroups(ig,:)),...
+        'UniformOutput', false);
+    % unique years
+    Ts = cellfun(@(ncfile) nc_varget(ncfile, 'time'), ncfiles,...
         'uniformoutput', false);
-    for ii = 1:length(ncfiles)
-        tidx = find(ismember(years{ii}, uniqueyears(iyear)));
-        if ~isempty(tidx)
-            ncfile = ncfiles{ii};
-            if length(tidx) < 3
-                stt = tidx(1)-1; % start t
-                ctt = length(tidx); % count t
-                sdt = 1; % stride t
-                if length(tidx) == 2
-                    sdt = diff(tidx); % stride t
+    years = cellfun(@(T) year(T + datenum(1970,1,1)), Ts,...
+        'uniformoutput', false);
+    uniqueyears = unique(cell2mat(years'));
+    uniqueyears = uniqueyears(ismember(uniqueyears, jarkus_year));
+    
+    [xvl, yvl] = cellfun(@(ncfile) deal(nc_varget(ncfile, 'x'), nc_varget(ncfile, 'y')), ncfiles,...
+        'uniformoutput', false);
+    for iyear = 1:length(uniqueyears)
+        % pre-allocate z
+        zvl = cellfun(@(X,Y) NaN(length(Y), length(X)), xvl, yvl,...
+            'uniformoutput', false);
+        for ii = 1:length(ncfiles)
+            tidx = find(ismember(years{ii}, uniqueyears(iyear)));
+            if ~isempty(tidx)
+                ncfile = ncfiles{ii};
+                if length(tidx) < 3
+                    stt = tidx(1)-1; % start t
+                    ctt = length(tidx); % count t
+                    sdt = 1; % stride t
+                    if length(tidx) == 2
+                        sdt = diff(tidx); % stride t
+                    end
+                    ztmp  = nc_varget(ncfile, 'z', [stt 0 0], [ctt -1 -1], [sdt 1 1]);
+                else
+                    ztmp = cell(0);
+                    for it = 1:length(tidx)
+                        stt = tidx(it)-1;
+                        ztmp{it} = nc_varget(ncfile, 'z', [stt 0 0], [1 -1 -1]);
+                    end
+                    ztmp = permute(cat(3, ztmp{:}), [3 1 2]);
                 end
-                ztmp  = nc_varget(ncfile, 'z', [stt 0 0], [ctt -1 -1], [sdt 1 1]);
-            else
-                ztmp = cell(0);
-                for it = 1:length(tidx)
-                    stt = tidx(it)-1;
-                    ztmp{it} = nc_varget(ncfile, 'z', [stt 0 0], [1 -1 -1]);
+                if ndims(ztmp) == 3
+                    % index to pick only one z-value for each point, giving
+                    % preference to higher slices (earlier in time) an filling
+                    % up with missings at the lowest slice (independent from
+                    % this slice containing nans)
+                    idx = diff(cat(1,...
+                        zeros(1,size(ztmp,2), size(ztmp,3)),...
+                        ~isnan(ztmp(1:end-1,:,:)),...
+                        ones(1,size(ztmp,2), size(ztmp,3))),...
+                        1,1) == 1;
+                    zvl{ii} = ztmp(idx);
+                else
+                    zvl{ii} = ztmp;
                 end
-                ztmp = permute(cat(3, ztmp{:}), [3 1 2]);
-            end
-            if ndims(ztmp) == 3
-                % index to pick only one z-value for each point, giving
-                % preference to higher slices (earlier in time) an filling
-                % up with missings at the lowest slice (independent from
-                % this slice containing nans)
-                idx = diff(cat(1,...
-                    zeros(1,size(ztmp,2), size(ztmp,3)),...
-                    ~isnan(ztmp(1:end-1,:,:)),...
-                    ones(1,size(ztmp,2), size(ztmp,3))),...
-                    1,1) == 1;
-                zvl{ii} = ztmp(idx);
-            else
-                zvl{ii} = ztmp;
             end
         end
+        % merge grids
+        [X, Y, Z] = xb_grid_merge('x', xvl, 'y', yvl, 'z', zvl, 'maxsize', 'max');
+        
+        for jj = find(cellfun(@(rs) isequal(rs, kbgroups(ig,:)), num2cell(rect_select,2))')
+            ze(ismember(jarkus_year, uniqueyears(iyear)),jj,:) = interp2(X, Y, Z, xe(jj,:), ye(jj,:));
+        end
     end
-    % merge grids
-    [X, Y, Z] = xb_grid_merge('x', xvl, 'y', yvl, 'z', zvl, 'maxsize', 'max');
-    ze(iyear,:) = interp2(X, Y, Z, xe, ye);
+    
+    
     
 end
-
-tmask = cellfun(@all, cellfun(@isnan, num2cell(ze,2), 'uniformoutput', false));
-csmask = true(1,size(ze,2));
-csmask(find(sum(~isnan(ze) > 0), 1, 'first'):find(sum(~isnan(ze) > 0), 1, 'last')) = false;
-
-altitude = permute(ze(~tmask,~csmask), [1 3 2]);
-
-% altitude = nan(sum(~tmask), 1, sum(~csmask));
-% tidx = find(~tmask);
-% for it = 1:sum(~tmask)
-%     altitude(it,1,:) = ze(tidx(it),~csmask);
-% end
-
-xe = xe(~csmask);
-ye = ye(~csmask);
-
-id0 = tr.cross_shore == 0;
-ide0 = xe == tr.x(id0);
-% calculate distance to RSP
-cse = round(sqrt((xe - xe(ide0)).^2 + (ye - ye(ide0)).^2));
-cse(diff(cse)<0) = -cse(diff(cse)<0);
+tmask = ~any(any(~isnan(ze), 3), 2); % time mask
+amask = ~any(any(~isnan(ze), 3), 1); % alongshore mask
+nnid = squeeze(any(any(~isnan(ze), 1), 2));
+cmask = true(size(cse));
+cmask(find(nnid, 1, 'first'):find(nnid, 1, 'last')) = false;
 
 trvk = struct(...
-    'id', tr.id,...
+    'id', tr.id(~amask),...
     'time', datenum(uniqueyears(~tmask),7,1) - datenum(1970,1,1),...
-    'x', xe,...
-    'y', ye,...
-    'cross_shore', cse,...
-    'altitude', altitude);
-    
-    
-% for i = find(rect_select)'
-%     ncfile = ['http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/vaklodingen' ids{i} '.nc'];
-%     
-%     info = nc_info(ncfile);
-%     
-%     xvl{i} = nc_varget(ncfile, 'x');
-%     yvl{i} = nc_varget(ncfile, 'y');
-%     % derive length of time dimension
-%     nt = info.Dimension(strcmp({info.Dimension.Name}, 'time')).Length;
-%     % initially load latest measurement
-%     zvl{i}  = nc_varget(ncfile, 'z', [nt-1 0 0], [1 -1 -1]);
-%     % fill NaN's with older measurements
-%     for t = fliplr(1:nt)
-%         ii = isnan(zvl{i});
-%         zt = nc_varget(ncfile, 'z', [t-1 0 0], [1 -1 -1]);
-%         zvl{i}(ii) = zt(ii);
-%     end
-% end
-% [X Y Z] = xb_grid_merge('x', xvl(rect_select), 'y', yvl(rect_select), 'z', zvl(rect_select), 'maxsize', 'max');
-% 
-% %% plot bathymetry
-% if OPT.debug
-%     pc = pcolor(X,Y,Z);
-%     shading interp
-%     colorbar
-%     uistack(pc,'bottom')
-%     axis image
-% end
-% 
-% %% create common cross-shore grid and interpolate data
-% xe = x(1):dx:x_end;
-% ye = y(1):dy:y_end;
-% ze = interp2(X,Y,Z, xe, ye);
-% id0 = tr.cross_shore == 0;
-% ide0 = xe == tr.x(id0);
-% nnide = find(diff(~isnan([NaN ze NaN]))==1):find(diff(~isnan([NaN ze NaN]))==-1, 1, 'last')-1;
-% [xe, ye, ze] = deal(xe(nnide), ye(nnide), ze(nnide));
-% % calculate distance to RSP
-% cse = round(sqrt((xe - xe(ide0)).^2 + (ye - ye(ide0)).^2));
-% % change sign of first (landward) part of vector
-% cse(1:find(cse==0, 1, 'first')-1) = -cse(1:find(cse==0, 1, 'first')-1);
-% cs = tr.cross_shore(nnid);
-% cross_shore = unique([cse(:); cs(:)]');
-% 
-% %% plot cross-shore profile
-% if OPT.debug
-%     subplot(2,2,[3 4]);
-%     hold on
-%     
-%     plot(cross_shore(ismember(cross_shore, cse)), ze, tr.cross_shore(nnid), z)
-%     if x_direction < 0
-%         set(gca, 'xdir', 'reverse')
-%     end
-% end
-% 
-% %% combine data to structure
-% tr.x = xe;
-% tr.y = ye;
-% tr.altitude_jarkus = NaN(size(cross_shore));
-% tr.altitude_jarkus(ismember(cross_shore, cs)) = z;
-% tr.altitude_vakloding = NaN(size(cross_shore));
-% tr.altitude_vakloding(ismember(cross_shore, cse)) = ze; 
-% tr.altitude = tr.altitude_vakloding;
-% tr.altitude(ismember(cross_shore, cs)) = z;
-% tr.cross_shore = cross_shore;
-% 
-% transect = tr;
+    'x', xe(~amask,~cmask),...
+    'y', ye(~amask,~cmask),...
+    'cross_shore', cse(~cmask),...
+    'altitude', ze(~tmask, ~amask, ~cmask));
