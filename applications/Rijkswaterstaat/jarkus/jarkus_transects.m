@@ -1,4 +1,4 @@
-function [transects dimensions] = jarkus_transects(varargin)
+function [transects, dimensions] = jarkus_transects(varargin)
 %JARKUS_TRANSECTS  Retrieves a selection of JARKUS data from repository
 %
 %   Retrieves JARKUS data based on NetCDF protocol and stores it into a
@@ -137,7 +137,7 @@ if any(missing)
     if OPT.verbose; disp(['    ERROR: missing ' [required{missing}]]); end;
     return;
 end
-if OPT.verbose; disp(['    OK']); disp(' '); end;
+if OPT.verbose; disp('    OK'); disp(' '); end;
 
 % show jarkus info attributes
 if OPT.verbose && isfield(jInfo, 'Attribute')
@@ -167,11 +167,9 @@ if OPT.verbose; disp(' '); end;
 
 %% optimize filter generation
 
-sizes = zeros(size(jInfo.Dataset));
-for i = 1:length(jInfo.Dataset)
-    sizes(i) = prod(jInfo.Dataset(i).Size);
-end
-[dummy datasetOrder] = sort(sizes);
+sizes = cellfun(@prod, {jInfo.Dataset.Size});
+
+[~, datasetOrder] = sort(sizes);
 
 %% create filters
 
@@ -197,7 +195,7 @@ if isfield(FLTR, 'year')
 end
 
 % create dataset filters
-for i = datasetOrder'
+for i = datasetOrder
     name = jInfo.Dataset(i).Name;
     
     % check if filter for current dataset is available

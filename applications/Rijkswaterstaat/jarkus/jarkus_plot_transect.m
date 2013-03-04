@@ -65,7 +65,7 @@ function varargout = jarkus_plot_transect(varargin)
 
 %% defaults and input check
 % check number of input arguments
-error(nargchk(1, Inf, nargin))
+narginchk(1, Inf)
 
 if isscalar(varargin) && isstruct(varargin{1})
     % structure input argument is assumed to be created by jarkus_transects
@@ -93,7 +93,7 @@ if all(ismember(required_fields, fieldnames(tr)))
     % plot all transects at once (multiple years and/or transects)
     ph = plot(tr.cross_shore(nnid), altitude(:,nnid));
     % creat displaynames to be used in legend
-    [ids years] = meshgrid(tr.id, year((datenum(1970,1,1) + tr.time)));
+    [ids, years] = meshgrid(tr.id, year((datenum(1970,1,1) + tr.time)));
     ids = reshape(ids, prod(dims(1:2)), 1);
     years = reshape(years, prod(dims(1:2)), 1);
     if isscalar(unique(ids))
