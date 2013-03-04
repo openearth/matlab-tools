@@ -135,7 +135,7 @@ function varargout = plotNet(varargin)
         y    = poly_join({G.peri.y{peri.mask}});
      end
      
-     plot(x,y,OPT.peri{:});   
+     h.per = plot(x,y,OPT.peri{:});   
      hold on
    
    end
