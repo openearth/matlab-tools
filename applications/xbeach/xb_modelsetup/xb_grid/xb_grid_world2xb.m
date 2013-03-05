@@ -76,5 +76,5 @@ OPT = setproperty(OPT, varargin{:});
 x = x - xori;
 y = y - yori;
 
-[x y] = xb_grid_rotate(x, y, -alpha, 'units', OPT.units);
+[x y] = xb_grid_rotate(x, y, alpha, 'units', OPT.units);
 
