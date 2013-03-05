@@ -192,6 +192,7 @@ end
 [duration timestep] = xs_get(xb, 'duration', 'timestep');
 
 if isnan(duration); duration = OPT.maxduration; end;
+if size(duration,1) == max(size(duration)); duration = duration'; end;
 
 duration = roundoff(duration, 4);
 
