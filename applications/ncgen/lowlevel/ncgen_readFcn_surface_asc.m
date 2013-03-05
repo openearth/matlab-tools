@@ -22,7 +22,7 @@ if nargin==0 || isempty(OPT)
 else
     if datenum(version('-date'), 'mmmm dd, yyyy') < 734729
         % version 2011a and older
-        error(nargchk(3,3,nargin))
+        error(nargchk(3,3,nargin)) %#ok<NCHKN>
     else
         % version 2011b and newer
         narginchk(3,3)
@@ -86,19 +86,19 @@ end
 %  i.e. the centers [xllcenter +/- cellsize,yllcorner +/- cellsize]
 
 xllcenter = xllcorner+cellsize/2;
-yllcorner = yllcorner+cellsize/2;
+yllcenter = yllcorner+cellsize/2;
 
 %% write data to nc files
 
 minx    = xllcenter;
-miny    = yllcorner;
+miny    = yllcenter;
 maxx    = xllcenter + cellsize.*(ncols-1);
-maxy    = yllcorner + cellsize.*(nrows-1);
+maxy    = yllcenter + cellsize.*(nrows-1);
 % grid_spacing, grid_tilesize and grid_offset can be either scalars or
 % 2-element vectors indicating equal respectively seperately specified x
 % and y direction values.
-[grid_spacingx  grid_spacingy ] = deal(OPT.schema.grid_cellsize(1), OPT.schema.grid_cellsize(end));
-[grid_tilesizex grid_tilesizey] = deal(OPT.schema.grid_tilesize(1), OPT.schema.grid_tilesize(end));
+[grid_spacingx,  grid_spacingy ] = deal(OPT.schema.grid_cellsize(1), OPT.schema.grid_cellsize(end));
+[grid_tilesizex, grid_tilesizey] = deal(OPT.schema.grid_tilesize(1), OPT.schema.grid_tilesize(end));
 mapsizex = grid_spacingx * grid_tilesizex;
 mapsizey = grid_spacingy * grid_tilesizey;
 minx    = floor(minx/mapsizex)*mapsizex + OPT.schema.grid_offset(1);
