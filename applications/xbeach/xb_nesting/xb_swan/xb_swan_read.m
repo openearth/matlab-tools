@@ -89,8 +89,11 @@ for n = 1:length(files)
             fline = fgetl(fid); l = l + 1;
 
             % skip comments
-            if strcmp(strtok(fline),'$'); continue; end;
+            if strcmp(strtok(fline),'$') || ~isempty(regexp(fline,'^\s*$')) || isempty(fline); continue; end;
 
+            % determine time index
+            t = max(sp2(n).time.nr, 1);
+            
             % determine current part
             key = upper(strtok(fline));
             switch key
@@ -107,12 +110,12 @@ for n = 1:length(files)
 
                     sp2(n).time.nr = 0;
                     sp2(n).time.data = [];
-                case {'LOCATION','LONLAT'}
+                case {'LOCATIONS','LOCATION','LONLAT'}
                     % read location header
                     sp2(n).location = read_block(fid,2);
 
                     switch key
-                        case 'LOCATION'
+                        case {'LOCATIONS','LOCATION'}
                             sp2(n).location.type = 'xy';
                         case 'LONLAT'
                             sp2(n).location.type = 'lonlat';
@@ -147,15 +150,15 @@ for n = 1:length(files)
                     % read spectrum definition for current time and point
                     factor = read_double(fid);
                     data = read_matrix(fid,sp2(n).frequency.nr,sp2(n).direction.nr);
-
-                    sp2(n).spectrum.factor(sp2(n).time.nr,c) = factor;
-                    sp2(n).spectrum.data(sp2(n).time.nr,c,:,:) = factor.*data;
+                    
+                    sp2(n).spectrum.factor(t,c) = factor;
+                    sp2(n).spectrum.data(t,c,:,:) = factor.*data;
 
                     c = c + 1;
                 case 'NODATA'
                     % skip line, since no data
-                    sp2(n).spectrum.factor(sp2(n).time.nr,c) = nan;
-                    sp2(n).spectrum.data(sp2(n).time.nr,c,:,:) = nan;
+                    sp2(n).spectrum.factor(t,c) = nan;
+                    sp2(n).spectrum.data(t,c,:,:) = nan;
                     
                     c = c + 1;
                 otherwise
