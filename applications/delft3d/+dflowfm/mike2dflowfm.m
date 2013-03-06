@@ -185,10 +185,15 @@ for ii=1:size(Elmts,1)
         Links(tel,[1:2])=[Elmts(ii,1); Elmts(ii,2)];
         tel=tel+1;
         Links(tel,[1:2])=[Elmts(ii,2); Elmts(ii,3)];
-        tel=tel+1;
-        Links(tel,[1:2])=[Elmts(ii,3); Elmts(ii,4)];
-        tel=tel+1;
-        Links(tel,[1:2])=[Elmts(ii,4); Elmts(ii,1)];
+        if Elmts(ii,4)==0
+            tel=tel+1;
+            Links(tel,[1:2])=[Elmts(ii,3); Elmts(ii,1)];
+        else
+            tel=tel+1;
+            Links(tel,[1:2])=[Elmts(ii,3); Elmts(ii,4)];
+            tel=tel+1;
+            Links(tel,[1:2])=[Elmts(ii,4); Elmts(ii,1)];
+        end
     else
         error('Gridcell other than triangle or quadrangle found, not supported');
     end
