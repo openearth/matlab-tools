@@ -9,8 +9,8 @@ function print2a4(fname,varargin)
 %
 % PaperOrientation = 'h<orizontal>' = 'L<andscape>' or
 %                    'v<ertical>'   = 'P<ortrait>' (default) 
-% PaperOrientation = 'w<ide>' (default) or
-%                    't<all>'
+% Tall_Wide        = 'w<ide>' (default) or 't<all>'
+% resolution       = '-r200' (default) or 200 (screen: 93:1089x766, 87:1019 x 716)
 % OverWriteAppend  = 'o<verwrite>' or 'c<ancel>' or 'p<rompt>' (default)
 %
 %               +-------+                                        
@@ -29,9 +29,9 @@ function print2a4(fname,varargin)
 %  |< up      | |    v,w|                                                  
 %  +----------+ +-------+
 %                                                    
-% where print2a4('tst','v','t') matches screen best
+% where print2a4('tst','v','t') matches a screen best
 % where print2a4('tst','h','t') matches landscape figure on portrait printer best
-%       print2a4('tst','v','w') matches upright A4 best
+%       print2a4('tst','v','w') matches upright A4 best (report)
 %       ptint2a4('tst','v','w','o') overwrites the image created with the previous line
 %
 %See also: PRINT, PRINT2SCREENSIZE, PRINT2A4OVERWRITE
@@ -66,29 +66,31 @@ function print2a4(fname,varargin)
 %   --------------------------------------------------------------------
    
    %% where overwrite_append can be 
-   %% 'o' = overwrite
-   %% 'c' = cancel
-   %% 'p' = prompt (default, after which o/a/c can be chosen)
-   %% 'a' = append (no recommended as HDF is VERY inefficient 
-   %%               due to disk space fragmentation when appending data.)
-   %% -------------------------
+   %  'o' = overwrite
+   %  'c' = cancel
+   %  'p' = prompt (default, after which o/a/c can be chosen)
+   %  'a' = append (no recommended as HDF is VERY inefficient 
+   %                due to disk space fragmentation when appending data.)
    
    PaperOrientation = 'Portrait';
    if nargin>1
-      PaperOrientation = varargin{1};
-      if     lower(PaperOrientation(1))=='h' || ...
+       if ~isempty(varargin{1})
+       PaperOrientation = varargin{1};
+       if     lower(PaperOrientation(1))=='h' || ...
              lower(PaperOrientation(1))=='l'
-         PaperOrientation = 'Landscape';
-      elseif lower(PaperOrientation(1))=='v' || ...
+          PaperOrientation = 'Landscape';
+       elseif lower(PaperOrientation(1))=='v' || ...
              lower(PaperOrientation(1))=='p'
-         PaperOrientation = 'Portrait';
-      end
+          PaperOrientation = 'Portrait';
+       end
+       end
    end
 
    % A4 paper
    Longside    = 20.9; % [cm] Minus
    Shortside   = 29.7; % [cm]
    if nargin>2
+      if ~isempty(varargin{2})
       Tall_Wide = varargin{2};
       if     lower(Tall_Wide(1))=='w'
           % A4 paper
@@ -101,24 +103,30 @@ function print2a4(fname,varargin)
       else
           error(['''w<ide>'' or ''t<all>'' not ',Tall_Wide])
       end
+      end
    end
    
    resolution        = '-r200';
    if nargin > 3
+       if ~isempty(varargin{3})
        resolution = varargin{3};
+       if isnumeric(resolution)
        resolution = ['-r',num2str(round(resolution))];
+       end
+       end
    end
 
    overwrite_append  = 'p'; % prompt
    if nargin > 3
+       if ~isempty(varargin{4})
        overwrite_append = lower(varargin{4}(1));
        if ~ismember(overwrite_append,{'o','c','p'})
           error(['Invalid overwrite property: ' varargin{4}]);
-      end
+       end
+       end
    end
 
    %% Paper settings
-   %% --------------
 
    set(gcf,...
        'PaperType'       ,'A4',...

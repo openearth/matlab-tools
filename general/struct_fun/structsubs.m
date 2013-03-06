@@ -1,5 +1,5 @@
 function D2 = structsubs(D,ind)
-%STRUCTSUBS  make subset from all struct fields
+%STRUCTSUBS  make subset from all struct fields (as in database table-query)
 %
 % D2 = structsubs(D,ind) takes subset ind from
 % all field of struct D (array and cell field)

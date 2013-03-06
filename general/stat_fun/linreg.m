@@ -13,6 +13,9 @@ function [a, b, r2, r, k2] = linreg(x, y)
 %   Output:
 %   a           = linear regression parameter of coastline (y=a+b*x NOT y=a*x+b)
 %   b           = linear regression parameter of coastline (y=a+b*x NOT y=a*x+b)
+%   r2          = Coefficient of determination
+%   r           = Coefficient of correlation (sqrt(r2))
+%   k2          = Std. error of estimate
 %
 %   Example
 %   [a b] = linreg(x, y)

@@ -26,7 +26,7 @@ function phi = pea_simpson_et_al_1990(varargin)
 % layer thicknesses in this case, which must be indentical 
 % for all columns.
 %
-% See also: MEANWEIGHTED, D3D_SIGMA
+% See also: pea_simpson_et_al_1990_sigma, MEANWEIGHTED, D3D_SIGMA
 
    OPT.g       = 9.81;
    OPT.weights = [];

@@ -70,14 +70,17 @@ function varargout = wind_plot(t,D,F,varargin)
    OPT.Uleg     = '|U| [m/s]';
    OPT.Ulabel   = 'wind speed [m/s]';
    OPT.Ucolor   = 'b';
+   OPT.Uwidth   = 1.5;
 
    OPT.thleg    = '\theta [\circ]';
    OPT.thlabel  = 'wind from direction [\circ]';
    OPT.thcolor  = 'r';
+   OPT.thwidth  = 1.5;
 
    OPT.f_scale  = 1;  % uy can be read in y-axis if f_scale==1, because f_aspect is applied on the x-axis.
    OPT.f_aspect = []; % [] is automatic
    OPT.f_level  = []; % [] is mean(Ulim)
+   OPT.f_width  = 1.5; % [] is mean(Ulim)
    
    OPT = setproperty(OPT, varargin{:});
    
@@ -95,7 +98,7 @@ function varargout = wind_plot(t,D,F,varargin)
 
 %% plot U
 
-   plot    (t,F ,'color',OPT.Ucolor,'DisplayName',OPT.Uleg);
+   plot    (t,F ,'color',OPT.Ucolor,'DisplayName',OPT.Uleg,'linewidth',OPT.Uwidth)
    hold     on
    ylim    (OPT.Ulim)
    set(gca,'ytick',OPT.Ulim(2).*[0:.25:1]);
@@ -117,7 +120,7 @@ function varargout = wind_plot(t,D,F,varargin)
 
    plot    (t,D./360.*OPT.Ulim(2),        'color',OPT.thcolor,...
                                     'DisplayName',OPT.thleg,...
-                                          'color',OPT.thcolor);
+                                          'color',OPT.thcolor,'linewidth',OPT.thwidth)
    text    ([1 1 1 1 1],[0:.25:1],{' N\downarrow',' E\leftarrow',' S\uparrow',' W\rightarrow',' N\downarrow'},...
                                           'units','normalized',...
                             'horizontalalignment','left',...
@@ -155,6 +158,6 @@ function varargout = wind_plot(t,D,F,varargin)
    uy = sind(degN2deguc(D)).*F;%uy(end)
 
    quiver(t,0.*t+OPT.f_level,ux.*OPT.f_scale./OPT.f_aspect,... % distort x, not y, so we can ready uy at y-axis scale
-                             uy.*OPT.f_scale,0,'.k')
+                             uy.*OPT.f_scale,0,'.k','linewidth',OPT.f_width)
                                           
 

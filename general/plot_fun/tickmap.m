@@ -64,7 +64,7 @@ function varargout = tickmap(varargin)
 
 %%  Defaults
 
-   OPT.format               = '%.0f';
+   OPT.format               = '%.1f'; % make default useful for scales down 100's of m
    OPT.stride               = 1;
    OPT.units                = {' km',' km',' km'}; % 'x 1000';
    OPT.scale                = 1000;
