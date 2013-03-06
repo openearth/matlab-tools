@@ -1,5 +1,5 @@
 function varargout = nc_cf_timeseries(ncfile,varargin)
-%NC_CF_TIMESERIES   load/plot one variable from stationTimeSeries netCDF file
+%NC_CF_TIMESERIES   load/plot one variable from TimeSeries netCDF file
 %
 %  [D,M] = nc_cf_timeseries(ncfile)
 %  [D,M] = nc_cf_timeseries(ncfile,<varname>)
@@ -13,11 +13,13 @@ function varargout = nc_cf_timeseries(ncfile,varargin)
 %           When varname is not supplied, a dialog box is offered.
 %           when 'standard_name'==time, it is converted to datenum
 %
-% A stationTimeSeries netCDF file is defined in
-%   <a href="https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions">https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions</a>
+% A TimeSeries netCDF file is defined with:
+%   <a href="http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#featureType">CF featureType  attribute</a>
+%   <a href="http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#time-series-data">CF Apendix H.2. Time Series Data</a>
 % and must have global attributes:
-%  *  Conventions   : CF-1.4
-%  *  CF:featureType: stationTimeSeries
+%  *  Conventions="CF-1.6"
+%  *  featureType="timeSeries"
+% and variable attributes cf_role, and standard_names platform_id and platform_name
 % the following assumption <MUST> be valid:
 %  * lat, lon and time coordinates must always exist as defined in the CF convenctions.
 %

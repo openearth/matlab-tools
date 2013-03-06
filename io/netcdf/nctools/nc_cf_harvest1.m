@@ -351,7 +351,7 @@ function ATT = nc_cf_harvest1_init(OPT)
    if strcmpi(OPT.featuretype,'timeseries')
       OPT.catalog_entry{end+1} = 'platform_id'            ;
       OPT.catalog_entry{end+1} = 'platform_name'          ;
-      OPT.catalog_entry{end+1} = 'number_of_observations';
+      ATT.number_of_observations = nan;
    end
 
    for iatt  = 1:length(OPT.catalog_entry)

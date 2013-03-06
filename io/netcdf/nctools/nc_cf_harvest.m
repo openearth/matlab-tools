@@ -53,6 +53,9 @@ function D = nc_cf_harvest(ncfiles,varargin)
 %  |   +----------------------------------+
 %  |   |   NC_CF_HARVEST2xls              |
 %  |   |    using STRUCT2XLS              |
+%  |   +----------------------------------+
+%  |   |   NC_CF_HARVEST2kml              |
+%  |   |    for time series               |
 %  +---+----------------------------------+
 %
 % Example: where crawling, harvesting and caching to xml are separated
@@ -181,6 +184,18 @@ function D = nc_cf_harvest(ncfiles,varargin)
         D.dataSize                                = repmat(nan,[1 n]);
         D.date                                    = repmat(nan,[1 n]);
         
+                    D.title = cell(1,n);
+              D.institution = cell(1,n);
+                   D.source = cell(1,n);
+                  D.history = cell(1,n);
+               D.references = cell(1,n);
+                    D.email = cell(1,n);
+                  D.comment = cell(1,n);
+                  D.version = cell(1,n);
+              D.Conventions = cell(1,n);
+            D.terms_for_use = cell(1,n);
+               D.disclaimer = cell(1,n);
+        
         D.projectionEPSGcode = cell(1,n);
              D.variable_name = cell(1,n);
              D.standard_name = cell(1,n);
@@ -270,6 +285,19 @@ function D = nc_cf_harvest(ncfiles,varargin)
                   D.disclaimer{i} =             d.disclaimer;
            D.(OPT.platform_id){i} =      d.(OPT.platform_id);
          D.(OPT.platform_name){i} =    d.(OPT.platform_name);
+         
+                       D.title{i} =          d.title;
+                 D.institution{i} =    d.institution;
+                      D.source{i} =         d.source;
+                     D.history{i} =        d.history;
+                  D.references{i} =     d.references;
+                       D.email{i} =          d.email;
+                     D.comment{i} =        d.comment;
+                     D.version{i} =        d.version;
+                 D.Conventions{i} =    d.Conventions;
+               D.terms_for_use{i} =  d.terms_for_use;
+                  D.disclaimer{i} =     d.disclaimer;
+         
       end % flat
 
    end % i

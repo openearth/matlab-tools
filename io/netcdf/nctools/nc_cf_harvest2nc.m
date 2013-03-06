@@ -91,6 +91,18 @@ OPT = setproperty(OPT,varargin);
       D.projectionCoverage_y          = [ATT.geospatialCoverage_y_start     ;ATT.geospatialCoverage_y_end     ];
       D.geospatialCoverage_updown     = [ATT.geospatialCoverage_updown_start;ATT.geospatialCoverage_updown_end];
       
+                D.title =         ATT.title;
+          D.institution =   ATT.institution;
+               D.source =        ATT.source;
+              D.history =       ATT.history;
+           D.references =    ATT.references;
+                D.email =         ATT.email;
+              D.comment =       ATT.comment;
+              D.version =       ATT.version;
+          D.Conventions =   ATT.Conventions;
+        D.terms_for_use = ATT.terms_for_use;
+           D.disclaimer =    ATT.disclaimer;
+      
       struct2nc(ncname,D);
 
       nc_attput(ncname,nc_global,'comment','catalog.nc was created offline by $HeadURL$ from the associatec catalog.xml. Catalog.nc is a test development, please do not rely on it. Please join www.OpenEarth.eu and request a password to change $HeadURL$ until it harvests all meta-data you need.');
