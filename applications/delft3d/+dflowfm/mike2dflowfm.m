@@ -18,7 +18,8 @@ function varargout = mike2dflowfm(varargin);
 %
 %  <Filename/Location for the MIKE mesh file>
 %    A string containing the filename of the MIKE mesh (with or without
-%    folder location, with or without *.mesh extension) as function input
+%    folder location, with or without *.mesh extension) as function input.
+%    The MIKE mesh may contain both triangles and quadrangles.
 %
 %  <Filename/Location for the D-Flow FM grid file>
 %    A string containing the filename of the D-Flow FM grid file (with or 
