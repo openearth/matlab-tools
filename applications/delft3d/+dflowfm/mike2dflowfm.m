@@ -56,8 +56,10 @@ function varargout = mike2dflowfm(varargin);
 %   --------------------------------------------------------------------
 %   Copyright (C) 2013 Deltares
 %       Freek Scheel
-%
+%       +31(0)88 335 8241
 %       <freek.scheel@deltares.nl>;
+%
+%       Please contact me if errors occur.
 %
 %       Deltares
 %       P.O. Box 177
