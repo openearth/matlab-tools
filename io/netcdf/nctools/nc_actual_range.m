@@ -64,16 +64,18 @@ function actual_range = nc_actual_range(ncfile,varname)
    if ~isempty(info.Attribute)
       ind  = ismember({info.Attribute.Name}, 'standard_name');
       if any(ind)
+        standard_name = info.Attribute(ind).Value;
         if ~strcmpi({'latitude',...
                 'longitude',...
                 'projection_x_coordinate',...
                 'projection_y_coordinate',...
                 'time',...
-                'z'},info.Attribute(ind).Value);
+                'z'},standard_name);
          fprintf(1,['variable is not a CF coordinate variable and might not be contiguous: "%s"\n'],varname);
         end
       else
-         fprintf(1,['variable is not a CF coordinate variable and might not be contiguous: "%s"\n'],varname);
+        standard_name = [];          
+        fprintf(1,['variable is not a CF coordinate variable and might not be contiguous: "%s"\n'],varname);
       end
 
 %% read attribute if present
@@ -83,16 +85,20 @@ function actual_range = nc_actual_range(ncfile,varname)
       if sum(ind)==1
         actual_range = (info.Attribute(ind).Value);
         if ischar(actual_range); % not everyone knows you can insert matrices inside attributes, so some some put space separates strings in
-          actual_range = str2num(actual_range);
+           if strcmpi(standard_name,'time')
+              fullsearch = 1;  % easier than parsing time string, given time is hardly ever > 1 dimension anyway           
+           else
+              actual_range = str2num(actual_range);
+              fullsearch = 0;
+           end
         end
         actual_range = actual_range(:)';
-        fullsearch = 0;
       end
       
    else
       fprintf(1,['variable is not a CF coordinate variable and might not be contiguous: "%s"\n'],varname);
    end
-   
+
 %% read data
    
    if fullsearch

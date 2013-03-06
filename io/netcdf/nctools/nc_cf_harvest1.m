@@ -5,15 +5,62 @@ function varargout = nc_cf_harvest1(varargin)
 %
 % harvests (extracts) <a href="http://cf-pcmdi.llnl.gov/">CF meta-data</a> + <a href="http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/index.html">THREDDS catalog</a>
 % meta-data from one ncfile (netCDF file/OPeNDAP url)
-% into a multi-layered struct.
+% into a multi-layered struct that contains
+% * what : http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/v1.0.2/InvCatalogSpec.html#variables
+% * where: http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/v1.0.2/InvCatalogSpec.html#geospatialCoverage
+% * when : http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/v1.0.2/InvCatalogSpec.html#timeCoverage
 %
 % Use NC_CF_HARVEST to harvest a list of ncfiles (netCDF file/OPeNDAP url).
 %
-%See also: NC_INFO, nc_dump, NC_ACTUAL_RANGE, NC_CF_HARVEST, OPENDAP_CATALOG
+% struct = nc_cf_harvest1([],...) returns an empty example data structure
+%
+%See also: OPENDAP_CATALOG, NC_CF_HARVEST, nc_cf_harvest2xml, nc_cf_harvest2nc, nc_cf_harvest2xls
+%          thredds_dump, thredds_info,NC_INFO, nc_dump, NC_ACTUAL_RANGE, 
+%          ncgentools_generate_catalog
+
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011-2013 Deltares for Nationaal Modellen en Data centrum (NMDC),
+%                           Building with Nature and internal Eureka competition.
+%       Gerben J. de Boer
+%
+%       gerben.deboer@deltares.nl
+%
+%       Deltares
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tools is part of <a href="http://OpenEarth.Deltares.nl">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and 
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute 
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords$
 
    OPT.disp           = ''; %'multiWaitbar';
-   OPT.separator      = ';'; % for long names
-   OPT.datatype       = 'timeSeries'; % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#discrete-sampling-geometries
+   OPT.featuretype    = ''; %'timeseries' % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#discrete-sampling-geometries
    OPT.catalog_entry  = {'title',...
                          'institution',...
                          'source',...
@@ -25,10 +72,16 @@ function varargout = nc_cf_harvest1(varargin)
                          'Conventions',...
                          'terms_for_use',...
                          'disclaimer'};
+
+   if nargin==0
+      varargout = {OPT};
+      return
+   end
                          
 %% Instances initialize (to be able to return for introspection)
 %  global and timeseries catalog_entries added later, after setproperty.
-
+   
+   OPT = setproperty(OPT,{varargin{2:end}});                      
    ATT = nc_cf_harvest1_init(OPT);
 
 %% File
@@ -44,10 +97,6 @@ function varargout = nc_cf_harvest1(varargin)
       fileinfo = nc_info(ncfile);
    end
    
-   OPT = setproperty(OPT,{varargin{2:end}});                      
-
-   ATT = nc_cf_harvest1_init(OPT);
-   
 %% get relevant global attributes
 %  using above read fileinfo
     
@@ -62,7 +111,6 @@ function varargout = nc_cf_harvest1(varargin)
    end
    
 %% Cycle datasets
-%  get all standard_name (and prevent doubles)
 %  get actual_range attribute instead if present for lat, lon, time
 
    idat = 1;
@@ -71,6 +119,9 @@ function varargout = nc_cf_harvest1(varargin)
       ATT.urlPath = ncfile;
    else
       ATT.urlPath = filenameext(ncfile);
+      tmp = dir(ncfile);
+      ATT.dataSize = tmp.bytes;
+      ATT.date     = tmp.datenum;
    end
    
    ndat = length(fileinfo.Dataset);
@@ -82,6 +133,15 @@ function varargout = nc_cf_harvest1(varargin)
    
       % cycle all attributes
       natt = length(fileinfo.Dataset(idat).Attribute);
+
+      %% extract variable meta-data for 
+      %  http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/v1.0.2/InvCatalogSpec.html#variablesType  
+      %  always initialize, so position in *_name and units vector correspondents
+      ATT.variable_name{idat} = fileinfo.Dataset(idat).Name;
+      ATT.standard_name{idat} = '';
+      ATT.long_name    {idat} = '';
+      ATT.units        {idat} = '';
+      
       for iatt=1:natt
       
           if strcmpi(OPT.disp,'multiWaitbar')
@@ -90,16 +150,24 @@ function varargout = nc_cf_harvest1(varargin)
       
           Name  = fileinfo.Dataset(idat).Attribute(iatt).Name;
           
+       %% extract variable meta-data for 
+       %  http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/v1.0.2/InvCatalogSpec.html#variablesType  
+       %  always initialize, so position in *_name and units vector correspondents
+       %  and always make char
+       
+          if strcmpi(Name,'standard_name')   ;ATT.standard_name{idat} = fileinfo.Dataset(idat).Attribute(iatt).Value;end
+          if strcmpi(Name,'long_name')       ;ATT.long_name    {idat} = fileinfo.Dataset(idat).Attribute(iatt).Value;end
+          if strcmpi(Name,'units')           ;ATT.units        {idat} = fileinfo.Dataset(idat).Attribute(iatt).Value;end
+          if ~ischar(ATT.standard_name{idat});ATT.units{idat} = num2str(ATT.standard_name{idat});end
+          if ~ischar(ATT.long_name    {idat});ATT.units{idat} = num2str(ATT.long_name{idat}    );end
+          if ~ischar(ATT.units        {idat});ATT.units{idat} = num2str(ATT.units{idat}        );end
+
+       %% interpret for extraction all spatio-temporal meta-data
+          
           % get standard_name only ...
           if strcmpi(Name,'standard_name')
       
               standard_name_Value = fileinfo.Dataset(idat).Attribute(iatt).Value;
-              
-           % get standard names ... once
-           
-              if ~any(strfind(ATT.standard_name,standard_name_Value))  % remove redudant standard_name (can occur with statistics)
-                  ATT.standard_name = [ATT.standard_name standard_name_Value ' '];  % needs to be char
-              end
               
            % get spatial extent
            
@@ -178,7 +246,7 @@ function varargout = nc_cf_harvest1(varargin)
                   ATT.timeCoverage.start   = min(ATT.timeCoverage.start,time(1));
                   ATT.timeCoverage.end     = max(ATT.timeCoverage.end  ,time(2));
       
-                  if strcmpi(OPT.datatype,'timeseries')
+                  if strcmpi(OPT.featuretype,'timeseries')
                      ATT.number_of_observations = fileinfo.Dataset(idat).Size;
                   end
       
@@ -186,7 +254,7 @@ function varargout = nc_cf_harvest1(varargin)
       
            % get timeseries specifics
            
-              if strcmpi(OPT.datatype,'timeSeries')
+              if strcmpi(OPT.featuretype,'timeseries')
               
                   if strcmpi(standard_name_Value,'platform_id') | ... % CF-1.6
                      strcmpi(standard_name_Value,'station_id')      % < CF-1.6
@@ -207,20 +275,8 @@ function varargout = nc_cf_harvest1(varargin)
       
           end % loop standard_name
           
-          %% get long_name only ...
-          
-          if strcmpi(Name,'long_name')
-              
-              long_name_Value = fileinfo.Dataset(idat).Attribute(iatt).Value;
-              
-              % ... once
-              if ~any(strfind(ATT.long_name,[' ',long_name_Value]))   % remove redudant long_name (can occur with statistics)
-                 ATT.long_name = [ATT.long_name long_name_Value OPT.separator];  % needs to be char, ; separatred
-              end
-      
-          end % loop long_name
-          
       end % iatt
+      
    end % idat
 
 %% Instances initialize
@@ -269,26 +325,30 @@ function timeCoverage = timeCoverage_complete(timeCoverage)
 function ATT = nc_cf_harvest1_init(OPT)
 
    ATT.urlPath       = '';
+   ATT.dataSize      = nan;
+   ATT.date          = nan;
+
+% What: http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/v1.0.2/InvCatalogSpec.html#controlledVocabulary   
+   
+   ATT.variable_name = '';
+   ATT.standard_name = '';
+   ATT.units         = '';
+   ATT.long_name     = '';
+
+% Where: 
 
    ATT.geospatialCoverage.northsouth = geospatialCoverage_initialize();
    ATT.geospatialCoverage.eastwest   = geospatialCoverage_initialize();
    ATT.geospatialCoverage.updown     = geospatialCoverage_initialize();
-   ATT.timeCoverage                  = timeCoverage_initialize();
    ATT.geospatialCoverage.x          = geospatialCoverage_initialize();
    ATT.geospatialCoverage.y          = geospatialCoverage_initialize();
    ATT.projectionEPSGcode            = []; % NB does not allow use of cell2mat later on
    
-%   http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/v1.0.2/InvCatalogSpec.html#controlledVocabulary   
-%   
-%   ATT.variables.name          = '';
-%   ATT.variables.standard_name = '';
-%   ATT.variables.units         = '';
-%   ATT.variables.long_name     = '';
+% When: 
 
-   ATT.standard_name = '';
-   ATT.long_name     = '';
+   ATT.timeCoverage                  = timeCoverage_initialize();
    
-   if strcmpi(OPT.datatype,'timeseries')
+   if strcmpi(OPT.featuretype,'timeseries')
       OPT.catalog_entry{end+1} = 'platform_id'            ;
       OPT.catalog_entry{end+1} = 'platform_name'          ;
       OPT.catalog_entry{end+1} = 'number_of_observations';
