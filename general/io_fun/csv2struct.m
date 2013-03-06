@@ -14,8 +14,8 @@ function varargout = csv2struct(fname,varargin)
 % e.g. D = csv2struct('somefile.csv','delimiter',';','CommentStyle','%')
 %
 % Note: removal of double quotes needs to be specified explicitly for
-% column names and column values seperately with  keyword 'quotes'
-% with a two-element vector. Noe that viz. "korea, republic of" or
+% column names (1) and column values (2) seperately with keyword 'quotes'
+% with a two-element vector. Note that viz. "korea, republic of" or
 % "100,000" would otherwise yield two columns each due to their internal
 % comma's, e.g.
 %
@@ -107,16 +107,16 @@ function varargout = csv2struct(fname,varargin)
       end
 
       if length(OPT.quotes) > 1
-      if OPT.quotes(2)
-      fmt      = repmat('%q',[1 length(colnames)]);
-      else
-      fmt      = repmat('%s',[1 length(colnames)]);
-      end
+       if OPT.quotes(2)
+       fmt      = repmat('%q',[1 length(colnames)]);
+       else
+       fmt      = repmat('%s',[1 length(colnames)]);
+       end
       end
    
       if OPT.units
       rec      = fgetl_no_comment_line(fid,OPT.CommentStyle);
-      units    = textscan(rec,'%s','Delimiter',OPT.delimiter,'CommentStyle',OPT.CommentStyle);
+      units    = textscan(rec,fmt,'Delimiter',OPT.delimiter,'CommentStyle',OPT.CommentStyle);
       UNITS    = cellfun(@(x) x([2:end-1]),units{1},'UniformOutput',0);
       else
       UNITS    = [];

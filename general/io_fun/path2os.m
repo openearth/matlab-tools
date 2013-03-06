@@ -3,8 +3,8 @@ function string = path2os(string,input)
 %
 % string = path2os(string)
 %
-% Replaces all slashes (/ or \) with the
-% slash of the current Operating System.
+% Replaces all slashes (/ or \) with the slash of the 
+% current Operating System. string can be a cellstr.
 %
 % Options are:
 %
@@ -17,11 +17,10 @@ function string = path2os(string,input)
 % string = path2os(string,'l<inux>')  : /
 % string = path2os(string,'u<nix>')   : /
 %
-% Also removes redundant (double) slashes
-% that might have arisen when merging
-% pathnames like in d:\temp\\foo\\,
-% except for double slashes at the beginning of a path ,
-% as in //networkdrive/
+% Also removes redundant (double) slashes that might
+% have arisen when merging pathnames like in d:\temp\\foo\\,
+% except for double slashes at the beginning of a path or url,
+% as in //networkdrive/ or http://
 %
 %See also: MKDIR,  EXIST, MKPATH,     COPYFILE, CD, LAST_SUBDIR,
 %          DELETE, DIR,   FILEATTRIB, MOVEFILE, RMDIR.
@@ -78,6 +77,10 @@ function string = path2os(string,input)
               slash    =  input(1);
        end
    end
+   
+   if iscell(string)
+       string = cellfun(@(x) path2os(x),string,'UniformOutput',0);
+   else
 
 %% Lock special combis
    prefix = '';
@@ -112,5 +115,7 @@ function string = path2os(string,input)
    end
    
    string = [prefix string];
+   
+   end % cell
    
 %% EOF   
