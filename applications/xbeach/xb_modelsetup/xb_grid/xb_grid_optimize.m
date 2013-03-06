@@ -201,13 +201,17 @@ else
         axis equal;
         shading flat; colorbar;
 
-        [xin yin] = ginput(2);
-        OPT.crop = [min(xin) min(yin) abs(diff(xin)) abs(diff(yin))];
+        [xcorners_r ycorners_r] = ginput(2);
+        
+        xmin = min(xcorners_r);
+        xmax = max(xcorners_r);
+        ymin = min(ycorners_r);
+        ymax = max(ycorners_r);
 
         close(fh);
     end
 
-    if ~islogical(OPT.crop) && isvector(OPT.crop)
+    if ~islogical(OPT.crop) && isvector(OPT.crop) && ~isa(OPT.crop,'char')
         % rotate crop vector if needed
         if abs(alpha) > 5
             xcorners = [OPT.crop(1) OPT.crop(1)+OPT.crop(3)];

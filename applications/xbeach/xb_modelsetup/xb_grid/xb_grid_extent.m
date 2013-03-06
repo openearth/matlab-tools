@@ -85,4 +85,4 @@ ymax = max(y(:));
 
 alldiff = [diff(x(:)); diff(y(:))];
 
-cellsize = min(alldiff(alldiff>0));
+cellsize = min(abs(alldiff(abs(alldiff)>0)));
