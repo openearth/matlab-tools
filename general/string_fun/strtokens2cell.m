@@ -4,18 +4,20 @@ function C = strtokens2cell(STR,DELIM)
 % C = strtokens2cell(STR) rewrites space delimitered keyword 
 % list into cell array
 %
-% C = strtokens2cell(STR,DELIM) rewrites space delimitered keyword 
+% C = strtokens2cell(STR,DELIM) rewrites space delimitered string 
 % list into cell array using first token in DELIM as delimiter
+%
+% Text embraced by douible quotes (") is returned as one (textscan format '%q')
 %
 % example:
 %
-%    C = strtokens2cell('a b')
+%    C = strtokens2cell('a b "something else"')
 %
-% gives C{1}='a';C{2}='b'
+% gives C{1}='a';C{2}='b';C{3}='something else'
 %
 %   C = 
 %  
-%      'a'    'b'
+%      'a'    'b'    'something else'
 %
 % See also: STRTOK, STR2LINE
 
@@ -50,16 +52,12 @@ function C = strtokens2cell(STR,DELIM)
 % $Revision$
 % $HeadURL$
 
-rest_of_STR = STR;
-no_of_tok   = 0;
-if nargin==1
+format = '%q';
+if nargin>0
     DELIM = ' ';
 end
 
-while ~(length(deblank(rest_of_STR))==0)
-   [tok, rest_of_STR]  = strtok(rest_of_STR,DELIM);
-   no_of_tok           = no_of_tok + 1;
-   C{no_of_tok}        = tok;
-end   
+C = textscan(STR,format,'Delimiter',DELIM);
+C = C{1};C = {C{:}};
 
 %% EOF
