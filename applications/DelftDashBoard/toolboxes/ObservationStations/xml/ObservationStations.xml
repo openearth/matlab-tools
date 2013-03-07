@@ -841,6 +841,25 @@
     </dependency>
   </element>
   <element>
+    <tag>makeannotationfile</tag>
+    <style>pushbutton</style>
+    <position>850 45 130 20</position>
+    <text>Make Annotation File</text>
+    <callback>ddb_ObservationStationsToolbox</callback>
+    <option1>saveannotationfile</option1>
+    <tooltipstring>Write stations inside polygon to annotation file</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>polygonlength</variable>
+        <type>integer</type>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
     <tag>makeobservationpoints</tag>
     <style>pushbutton</style>
     <position>850 20 130 20</position>

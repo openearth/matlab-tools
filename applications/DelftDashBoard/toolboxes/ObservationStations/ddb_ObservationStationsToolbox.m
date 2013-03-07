@@ -101,6 +101,8 @@ else
         case{'selectstationlistoption'}
             refreshStationList;
             refreshStationText;
+        case{'saveannotationfile'}
+            saveAnnotationFile;
     end
 end
 
@@ -428,6 +430,7 @@ ipar=handles.Toolbox(tb).Input.activeparameter;
 t0=handles.Toolbox(tb).Input.starttime;
 t1=handles.Toolbox(tb).Input.stoptime;
 
+% Download the data
 data=downloadObservations(iac,istation,ipar,0);
 
 if isempty(data)
@@ -622,7 +625,46 @@ if ~isempty(errorstrings)
     xmlfile='observationstations.showerrors.xml';    
     [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir filesep 'icons' filesep 'deltares.gif']);    
 end
-    
+
+%%
+function saveAnnotationFile
+
+handles=getHandles;
+
+[filename, pathname, filterindex] = uiputfile('*.ann', 'Select Annotation File','');
+if filename==0
+    return
+end
+filename=[pathname filename];
+
+iac=handles.Toolbox(tb).Input.activedatabase;
+
+x=handles.Toolbox(tb).Input.database(iac).xLocLocal;
+y=handles.Toolbox(tb).Input.database(iac).yLocLocal;
+
+inpol=inpolygon(x,y,handles.Toolbox(tb).Input.polygonx,handles.Toolbox(tb).Input.polygony);
+
+switch lower(handles.screenParameters.coordinateSystem.type)
+    case{'geographic'}
+        fmt='%11.6f %11.6f';
+    otherwise
+        fmt='%11.1f %11.1f';
+end
+
+fid=fopen(filename,'wt');
+for ii=1:length(inpol)
+    if inpol(ii)
+        if handles.Toolbox(tb).Input.showstationnames
+            name=handles.Toolbox(tb).Input.database(iac).stationnames{ii};
+        else
+            name=handles.Toolbox(tb).Input.database(iac).stationids{ii};
+        end
+        name=['"' name '"'];
+        fprintf(fid,[fmt ' %s\n'],x(ii),y(ii),name);
+    end
+end
+fclose(fid);
+
 %%
 function editExportOptions
 
