@@ -119,18 +119,6 @@ for i=1:length(flist)
     times(i)=datenum(tstr,'yyyymmddHHMMSS');
 end
 
-% Longitudes
-su=load([opt.current.BC.datafolder filesep opt.current.BC.dataname '.current_u.' datestr(times(1),'yyyymmddHHMMSS') '.mat']);
-sv=load([opt.current.BC.datafolder filesep opt.current.BC.dataname '.current_v.' datestr(times(1),'yyyymmddHHMMSS') '.mat']);
-su.lon=mod(su.lon,360);
-sv.lon=mod(sv.lon,360);
-x=mod(x,360);
-
-ilon1=find(su.lon<minx,1,'last');
-ilon2=find(su.lon>maxx,1,'first');
-ilat1=find(su.lat<miny,1,'last');
-ilat2=find(su.lat>maxy,1,'first');
-
 % Find required times
 it0=find(times<=t0, 1, 'last' );
 it1=find(times>=t1, 1, 'first' );
@@ -148,6 +136,15 @@ nt=0;
         
         su=load([opt.current.BC.datafolder filesep opt.current.BC.dataname '.current_u.' datestr(times(nt),'yyyymmddHHMMSS') '.mat']);
         sv=load([opt.current.BC.datafolder filesep opt.current.BC.dataname '.current_v.' datestr(times(nt),'yyyymmddHHMMSS') '.mat']);
+        
+        su.lon=mod(su.lon,360);
+        sv.lon=mod(sv.lon,360);
+        x=mod(x,360);
+        
+        ilon1=find(su.lon<minx,1,'last');
+        ilon2=find(su.lon>maxx,1,'first');
+        ilat1=find(su.lat<miny,1,'last');
+        ilat2=find(su.lat>maxy,1,'first');
         
         su.lon=su.lon(ilon1:ilon2);
         su.lat=su.lat(ilat1:ilat2);

@@ -141,15 +141,6 @@ switch opt.(par)(ii).BC.source
             times(i)=datenum(tstr,'yyyymmddHHMMSS');
         end
         
-        s=load([opt.(par)(ii).BC.datafolder filesep opt.(par)(ii).BC.dataname '.' par '.' datestr(times(1),'yyyymmddHHMMSS') '.mat']);
-        
-        s.lon=mod(s.lon,360);
-        
-        ilon1=find(s.lon<minx,1,'last');
-        ilon2=find(s.lon>maxx,1,'first');
-        ilat1=find(s.lat<miny,1,'last');
-        ilat2=find(s.lat>maxy,1,'first');
-        
         it0=find(times<=t0, 1, 'last' );
         it1=find(times>=t1, 1, 'first' );
         
@@ -178,6 +169,13 @@ switch opt.(par)(ii).BC.source
             disp(['      Time step ' num2str(nt) ' of ' num2str(it1-it0+1)]);
             
             s=load([opt.(par)(ii).BC.datafolder filesep opt.(par)(ii).BC.dataname '.' par '.' datestr(times(nt),'yyyymmddHHMMSS') '.mat']);
+
+            s.lon=mod(s.lon,360);
+            
+            ilon1=find(s.lon<minx,1,'last');
+            ilon2=find(s.lon>maxx,1,'first');
+            ilat1=find(s.lat<miny,1,'last');
+            ilat2=find(s.lat>maxy,1,'first');
             
             s.lon=s.lon(ilon1:ilon2);
             s.lon=mod(s.lon,360);
@@ -186,6 +184,7 @@ switch opt.(par)(ii).BC.source
             
             t=times(nt);
             data=interpolate3D(x,y,dplayer,s);
+            
             for j=1:length(openBoundaries)
                 ta=squeeze(data(j,1,:))';
                 tb=squeeze(data(j,2,:))';

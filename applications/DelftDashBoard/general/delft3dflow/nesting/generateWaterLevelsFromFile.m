@@ -105,15 +105,6 @@ for i=1:length(flist)
     times(i)=datenum(tstr,'yyyymmddHHMMSS');
 end
 
-s=load([opt.waterLevel.BC.datafolder filesep opt.waterLevel.BC.dataname '.waterlevel.' datestr(times(1),'yyyymmddHHMMSS') '.mat']);
-
-lon360=mod(s.lon,360);
-ilon1=find(lon360<minx,1,'last');
-ilon2=find(lon360>maxx,1,'first');
-ilat1=find(s.lat<miny,1,'last');
-ilat2=find(s.lat>maxy,1,'first');
-lon360=lon360(ilon1:ilon2);
-
 it0=find(times<=t0, 1, 'last' );
 it1=find(times>=t1, 1, 'first' );
 
@@ -127,6 +118,13 @@ for it=it0:it1
     disp(['Reading file ' num2str(nt) ' of ' num2str(it1-it0+1)]);
     
     s=load([opt.waterLevel.BC.datafolder filesep opt.waterLevel.BC.dataname '.waterlevel.' datestr(times(nt),'yyyymmddHHMMSS') '.mat']);
+
+    lon360=mod(s.lon,360);
+    ilon1=find(lon360<minx,1,'last');
+    ilon2=find(lon360>maxx,1,'first');
+    ilat1=find(s.lat<miny,1,'last');
+    ilat2=find(s.lat>maxy,1,'first');
+    lon360=lon360(ilon1:ilon2);
     
     wl00=s.data+opt.waterLevel.BC.constant;
     wl00=wl00(ilat1:ilat2,ilon1:ilon2);
