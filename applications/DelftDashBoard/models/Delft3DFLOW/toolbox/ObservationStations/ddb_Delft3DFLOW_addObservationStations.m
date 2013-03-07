@@ -65,7 +65,6 @@ handles=getHandles;
 posx=[];
 
 iac=handles.Toolbox(tb).Input.activedatabase;
-%stationNames=handles.Toolbox(tb).Input.database(iac).idCodes;
 
 xg=handles.Model(md).Input(ad).gridX;
 yg=handles.Model(md).Input(ad).gridY;
@@ -86,7 +85,8 @@ k=0;
 for i=1:3
     for j=1:length(handles.Toolbox(tb).Input.database(iac).stationids)
         k=k+1;
-        stationNames{k}=handles.Toolbox(tb).Input.database(iac).stationids{j};
+        stationNames{k}=handles.Toolbox(tb).Input.database(iac).stationnames{j};
+        stationIDs{k}=handles.Toolbox(tb).Input.database(iac).stationids{j};
     end
 end
 
@@ -124,33 +124,42 @@ end
 for i=1:nrp
     
     k=istation(i);
-    
-    shortName=stationNames{k};
+    stationname=stationNames{k};
+    stationid=stationIDs{k};
+
     nobs=handles.Model(md).Input(ad).nrObservationPoints;
-    Names{1}='';
+
+    names{1}='';
     for n=1:nobs
-        Names{n}=handles.Model(md).Input(ad).observationPoints(n).name;
+        names{n}=handles.Model(md).Input(ad).observationPoints(n).name;
     end
-    
-    if isempty(strmatch(shortName,Names,'exact'))
+
+    if handles.Toolbox(tb).Input.showstationnames
+        name=justletters(stationname);
+        name=name(1:min(length(name),20));
+    else
+        name=stationid;
+    end
+
+    % Check if station with this name already exists
+    if isempty(strmatch(name,names,'exact'))
+        
         nobs=nobs+1;
         handles.Model(md).Input(ad).observationPoints(nobs).M=mm(i);
         handles.Model(md).Input(ad).observationPoints(nobs).N=nn(i);
         handles.Model(md).Input(ad).observationPoints(nobs).x=posx2(i);
         handles.Model(md).Input(ad).observationPoints(nobs).y=posy2(i);
-        handles.Model(md).Input(ad).observationPoints(nobs).name=shortName;
-        handles.Model(md).Input(ad).observationPointNames{nobs}=shortName;
-        Names{nobs}=shortName;
+        handles.Model(md).Input(ad).observationPoints(nobs).name=name;
+        handles.Model(md).Input(ad).observationPointNames{nobs}=name;
 
         % Add some extra information for CoSMoS toolbox
         % First find station again
-        ist=strmatch(shortName,handles.Toolbox(tb).Input.database(iac).idCodes,'exact');
-        handles.Model(md).Input(ad).observationPoints(nobs).longname=handles.Toolbox(tb).Input.database(iac).stationNames{ist};
+        ist=strmatch(stationid,handles.Toolbox(tb).Input.database(iac).stationids,'exact');
+        handles.Model(md).Input(ad).observationPoints(nobs).longname=handles.Toolbox(tb).Input.database(iac).stationnames{ist};
         handles.Model(md).Input(ad).observationPoints(nobs).type='observationstation';
-        handles.Model(md).Input(ad).observationPoints(nobs).source=handles.Toolbox(tb).Input.database(iac).shortName;
-        handles.Model(md).Input(ad).observationPoints(nobs).id=shortName;
-    
-    
+        handles.Model(md).Input(ad).observationPoints(nobs).source=handles.Toolbox(tb).Input.database(iac).name;
+        handles.Model(md).Input(ad).observationPoints(nobs).id=stationid;
+        
     end
     
     handles.Model(md).Input(ad).nrObservationPoints=nobs;
@@ -162,5 +171,3 @@ if nrp>0
 end
 
 setHandles(handles);
-
-
