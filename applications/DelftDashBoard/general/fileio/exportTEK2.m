@@ -80,7 +80,7 @@ for ii=1:n
     ipar=acpar(ii);
     if size(data.parameters(ipar).parameter.val,1)==1
         data.parameters(ipar).parameter.val=data.parameters(ipar).parameter.val';
-        blockdata(:,n)=data.parameters(ipar).parameter.val;
+        blockdata(:,ipar)=data.parameters(ipar).parameter.val;
     end
 end
 
@@ -97,7 +97,7 @@ end
 
 fprintf(fid,'%s\n',data.stationname);
 n=size(data,2);
-fprintf(fid,'%i %i\n',length(time),2+n);
+fprintf(fid,'%i %i\n',length(time),2+length(data.parameters));
 fclose(fid);
 
 timestr=datestr(time,'yyyymmdd HHMMSS');
