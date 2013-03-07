@@ -34,7 +34,7 @@ for ii=1:length(varargin)
                     units='1';
                 end
             case{'timezone'}
-                switch lower(varargin{ii+1})
+                switch lower(varargin{ii+1}(1))
                     case{'u','g'}
                         % UTC
                         timezone='0';
