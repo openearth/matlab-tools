@@ -110,14 +110,15 @@ lat=double(lat);
 
 [xg,yg]=meshgrid(xl1(1):dx:xl1(2),yl1(1):dy:yl1(2));
 
-s.time=t;
 s.lon=transpose(xl(1):dx:xl(2));
 s.lat=transpose(yl(1):dy:yl(2));
 s.levels=d';
 s.long_name=par;
 
 for it=1:nt
-    
+
+    s.time=t(it);
+
     yr=year(t(it));
     ndays=t(it)-datenum(yr,1,1)+1;
     tstr=[num2str(yr) '_' num2str(ndays,'%0.3i') '_00'];
