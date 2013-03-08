@@ -126,6 +126,8 @@ function D = nc_cf_harvest(ncfiles,varargin)
    OPT.featuretype   = 'timeseries';    %'timeseries' % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#discrete-sampling-geometries
    OPT.platform_id   = 'platform_id';   % CF-1.6, older: 'station_id'  , harvested when OPT.featuretype='timeseries'
    OPT.platform_name = 'platform_name'; % CF-1.6, older: 'station_name', harvested when OPT.featuretype='timeseries'
+   OPT.ID            = 'institution/dataset/';
+   OPT.name          = 'institution_dataset';
    
    OPT = setproperty(OPT,varargin);
    
@@ -315,7 +317,7 @@ function D = nc_cf_harvest(ncfiles,varargin)
 %% Export to caches   
 
    if ~isempty(OPT.catalog.xml)
-      nc_cf_harvest2xml(OPT.catalog.xml,D);
+      nc_cf_harvest2xml(OPT.catalog.xml,D,'ID',OPT.ID,'name',OPT.name);
    end
 
    if ~isempty(OPT.catalog.xls)

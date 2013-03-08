@@ -135,7 +135,7 @@ end
       output = fprintf(fid,'%s\n',['<dataSize units="Mbytes">',num2str(D(j).dataSize./1e6)                ,'</dataSize>']);
       end
       if isfield(D(j),'date') && ~isnan(D(j).date)
-      output = fprintf(fid,'%s\n',['<date type="modified">'   ,datestr(D(j).date,'yyyy-mm-dd:HH:MM'),'</date>']);
+      output = fprintf(fid,'%s\n',['<date type="modified">'   ,datestr(D(j).date,'yyyy-mm-ddTHH:MM:SSZ'),'</date>']);
       end
 
       %% space
