@@ -150,6 +150,11 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin);
 %       frequency intervals calculated as the inverse of the input 
 %       series length.
 %
+% Example:tidal analysis on time series in netCDF file
+% D.eta     = ncread(ncfile,'sea_surface_height')
+% D.time    = nc_cf_time(ncfile,'time')
+% tidestruc = t_tide(D.eta,'interval',diff(D.time)*24,'lat',52,'sort','amp','start time',D.time(1));
+%
 % A description of the theoretical basis of the analysis and some
 % implementation details can be found in:
 %
@@ -836,6 +841,9 @@ if minres>1/(18.6*365.25*24),                       % Choose only resolveable pa
   [const,sat,cshallow]=t_getconsts(centraltime);    % Time series   
   ju=find(const.df>=minres);
 else                                                % Choose them all if > 18.6 years.
+  if isempty(centraltime)
+     error('time series longer than 18.6 years require keyword ''start time''')
+  end
   [const,sat,cshallow]=t_get18consts(centraltime);
   ju=[2:length(const.freq)]';  % Skip Z0
   for ff=1:2,                  % loop twice to make sure of neightbouring pairs

@@ -15,7 +15,7 @@ function ncgentools_generate_catalog(varargin)
 %   Example
 %   ncgentools_generate_catalog
 %
-%   See also
+%   See also: nc_cf_harvest
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -61,13 +61,13 @@ function ncgentools_generate_catalog(varargin)
 % $Keywords: $
 
 %%
-OPT.var = {'x','y','time','lat','lon'};
-% OPT.var = {'x','y','time',lat};
-OPT.var_att  = {'units','standard_name','long_name'};
-OPT.urlPath  = 'D:\products\nc\rijkswaterstaat\vaklodingen\combined';
-OPT.urlPathrep = OPT.urlPath; % option to replace the local path by the intended web url
+OPT.var         = {'x','y','time','lat','lon'};
+OPT.var_att     = {'units','standard_name','long_name'};
+OPT.urlPath     = 'D:\products\nc\rijkswaterstaat\vaklodingen\combined';
+OPT.urlPathrep  = OPT.urlPath; % option to replace the local path by the intended web url
 OPT.catalogname = '';
-OPT.mode = 'clobber';
+OPT.mode        = 'clobber';
+
 OPT = setproperty(OPT,varargin{:});
 
 % if nargin==0;
@@ -108,6 +108,7 @@ for ii = length(urls):-1:1
             D.urlPath{ii} = path2os(D.urlPath{ii}, 'http');
         end
     end
+    
     % loop each variable in each nc file.
     %  - if it has a 'geospatial standardname', determine the range of the variable
     %  - if the variable is in the list of variables to include, download the variable
@@ -258,8 +259,7 @@ for ii = 1:length(fields)
     end
 end
 
-struct2nc(OPT.catalogname,D,M,...
-    'mode', OPT.mode);
+struct2nc(OPT.catalogname,D,M,'mode', OPT.mode);
 
 function [actual_range] = get_actual_range(ncfile,varname,sz)
 

@@ -299,6 +299,7 @@ function [x2,y2,varargout]=convertCoordinates(x1,y1,varargin)
        varargout{1}=u2;
        varargout{2}=v2;
        varargout{3}=OPT;
+       varargout{4}=angle;
    else
        varargout{1}=OPT;
    end

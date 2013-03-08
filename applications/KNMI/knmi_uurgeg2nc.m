@@ -51,6 +51,7 @@ function knmi_uurgeg2nc(varargin)
 
    OPT.refdatenum        = datenum(0000,0,0); % matlab datenumber convention: A serial date number of 1 corresponds to Jan-1-0000. Gives wring date sin ncbrowse due to different calenders. Must use doubles here.
    OPT.refdatenum        = datenum(1970,1,1); % lunix  datenumber convention
+   OPT.timezone          = timezone_code2iso('GMT');
    OPT.fillvalue         = nan; % NaNs do work in netcdf API
 
 %% File loop
@@ -193,8 +194,6 @@ for ifile=1:length(OPT.files)
    % * there needs to be an indirect mapping through the coordinates attribute
    %   http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984605
    
-   OPT.timezone = timezone_code2iso('GMT');
-
       ifld = ifld + 1;
    nc(ifld).Name         = 'time';
    nc(ifld).Nctype       = 'double'; % float not sufficient as datenums are big: double

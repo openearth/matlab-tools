@@ -65,11 +65,13 @@ function textpad(varargin)
             eval(['!c:\progra~1\textPa~1\textpad.exe &']);
       elseif exist('c:\progra~1\textPad 5\textpad.exe')==2
             eval(['!c:\progra~1\textPa~1\textpad.exe &']);
+      elseif exist('C:\Program Files (x86)\TextPad 5\TextPad.exe')==2
+            eval(['!C:\Program Files (x86)\TextPad 5\TextPad.exe &']);
       end
 
 
    else
-      fullmfile = which(OPT.mfile);
+      fullmfile = which(OPT.mfile)
 
           if exist('c:\progra~1\textPad\textpad.exe')==2
             eval(['!c:\progra~1\textPad\textpad.exe -q ' ,fullmfile,' (',num2str(OPT.line),',',num2str(OPT.col),')&']);
@@ -77,6 +79,8 @@ function textpad(varargin)
             eval(['!c:\progra~1\textPa~1\textpad.exe -q ',fullmfile,' (',num2str(OPT.line),',',num2str(OPT.col),')&']);
       elseif exist('c:\progra~1\textPad 5\textpad.exe')==2
             eval(['!c:\progra~1\textPa~1\textpad.exe -q ',fullmfile,' (',num2str(OPT.line),',',num2str(OPT.col),')&']);
+      elseif exist('C:\Program Files (x86)\TextPad 5\TextPad.exe')==2
+            eval(['!C:\Program Files (x86)\TextPad 5\TextPad.exe -q ',fullmfile,' (',num2str(OPT.line),',',num2str(OPT.col),')&']);
       end
      
    end

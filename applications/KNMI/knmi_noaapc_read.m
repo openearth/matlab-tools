@@ -351,12 +351,12 @@ function [varargout] = readnoaapc(varargin);
 %
 %+proj=stere +lat_ts=52 +lat_0=60 +lon_0=-3 +k=1.0 +x_0=0 +y_0=0 +ellps=WGS84 +no_defs
 
-        %% Hans Roozekrans told me that the projection keyword
-        %% was introduced only later when the started to provide UTM
-        %% besides polar stereographic. (That's perhaps why it's the last
-        %% variable in the header). So 'projection' it is NOT valid for all 
-        %% images, for the first images it contains a completely random number. 
-        %% To avoid errors we completely ignore projection always.
+        % Hans Roozekrans told me that the projection keyword
+        % was introduced only later when the started to provide UTM
+        % besides polar stereographic. (That's perhaps why it's the last
+        % variable in the header). So 'projection' it is NOT valid for all 
+        % images, for the first images it contains a completely random number. 
+        % To avoid errors we completely ignore projection always.
         
         % if IMAGE.projection == 1536
         %    IMAGE.projection_type        = 'polar stereographic southern North Sea';
