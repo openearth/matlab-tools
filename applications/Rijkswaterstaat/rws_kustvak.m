@@ -104,9 +104,9 @@ for i = 1:nargin
             varargout{i}{j} = Areas{varargin{i}(j)}; % return area name
         end
     elseif ischar(varargin{i}) % area name
-        areacode = find(strcmp(Areas, varargin{i})); % return area code
+        areacode = find(strcmpi(Areas, varargin{i})); % return area code
         if isempty(areacode)
-            error(sprintf('"%s" is not a valid kustvak name', varargin{i}))
+            error('"%s" is not a valid kustvak name', varargin{i})
         end
         varargout{i} = areacode; % return area code
     end
