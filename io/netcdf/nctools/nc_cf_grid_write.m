@@ -262,10 +262,10 @@ function varargout = nc_cf_grid_write(varargin)
       iii = ii+(1:dline)-1;
       iii = iii(iii <= size(OPT.lat,1));
       disp(['converting coordinates to (lat,lon): ',num2str(min(iii)),'-',num2str(max(iii)),'/',num2str(size(OPT.lat,1))])
-     [OPT.lon(iii,:),OPT.lat(iii,:),log] = convertcoordinates(x(iii,:),y(iii,:),'CS1.code',OPT.epsg,'CS2.code',OPT.wgs84);
+     [OPT.lon(iii,:),OPT.lat(iii,:),log] = convertCoordinates(x(iii,:),y(iii,:),'CS1.code',OPT.epsg,'CS2.code',OPT.wgs84);
       end
       else % 0 or Inf
-     [OPT.lon       ,OPT.lat       ,log] = convertcoordinates(x       ,y       ,'CS1.code',OPT.epsg,'CS2.code',OPT.wgs84);
+     [OPT.lon       ,OPT.lat       ,log] = convertCoordinates(x       ,y       ,'CS1.code',OPT.epsg,'CS2.code',OPT.wgs84);
       end
       
       clear x y
