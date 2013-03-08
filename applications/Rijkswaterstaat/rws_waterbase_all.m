@@ -1,4 +1,4 @@
-function rws_waterbase_all
+%function rws_waterbase_all
 %RWS_WATERBASE_ALL    download waterbase.nl parameters from web, transform to netCDF, make kml,  make catalog.
 %
 %See also: KNMI_ALL,                   , RWS_WATERBASE_*
@@ -16,15 +16,18 @@ function rws_waterbase_all
    OPT.make_catalog   = 1; % otherwise load existing one
    OPT.make_kml       = 1; % processing all kml only takas about 4 hours
    OPT.baseurl        = 'http://live.waterbase.nl';
+   OPT.institution    = 'rijkswaterstaat'; % for construcitng relative path
+   OPT.dataset        = 'waterbase';       % for construcitng relative path
+   OPT.directory_xml  = 'd:\checkouts\OpenEarthTools\configurations\dtvirt5.deltares.nl\'; % for static THREDDS catalogs in folder tomcat6/content/thredds
 
    %rawbase = '/Users/fedorbaart/Downloads/rws/raw/';% @ local, change this for your own computer
     %ncbase = '/Users/fedorbaart/Downloads/rws/nc/'; % @ local, change this for your own computer
    %kmlbase = '/Users/fedorbaart/Downloads/rws/kml/';% @ local, change this... no links to other kml or images any more
 
-   rawbase =                    'd:\checkouts\OpenEarthRawData\rijkswaterstaat\waterbase\cache\'; % @ local
-    ncbase =     'D:\opendap.deltares.nl\thredds\dodsC\opendap\rijkswaterstaat\waterbase\';       % @ local
-   kmlbase =                               'D:\kml.deltares.nl\rijkswaterstaat\waterbase\';
-   urlbase = 'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/waterbase/'; % production server (links)
+   rawbase =              'd:\checkouts\OpenEarthRawData\'; % @ local
+    ncbase =     'D:\opendap.deltares.nl\thredds\dodsC\opendap\'; % @ local
+   urlbase = 'http://opendap.deltares.nl/thredds/dodsC/opendap/'; % @ server
+   kmlbase =                               'D:\kml.deltares.nl\'; % @ local
 
 %% Parameter choice
 
@@ -34,7 +37,7 @@ function rws_waterbase_all
                     364  380  491  492  493  ... %   P P04 NH4 N02 N03
                     541  560 1083    1  377 ];   % DSe  Si DOC zwl  pH (0=all or select number from 'donar_wnsnum' column in rws_waterbase_name2standard_name.xls)
    
-   donar_wnsnum = [559] % Use this if you want only an update of one some specific parameter.
+   donar_wnsnum = [44 559] % Use this if you want only an update of one some specific parameter.
    % DO get 1 always after 54 to make sure catalog and kml of 1 contains 54 as well.
    
    mfilename('fullpath')
@@ -56,16 +59,16 @@ function rws_waterbase_all
       
       index = find(DONAR.donar_wnsnum==ivar);
 
-       OPT.code              = DONAR.donar_wnsnum(index);
-       OPT.donar_wnsnum      = DONAR.donar_wnsnum(index);  % needed for url
-       OPT.donar_wns_oms     = DONAR.donar_wns_oms{index}; % needed for url
-       OPT.donar_parcode     = DONAR.donar_parcode{index}; % needed for disp
-       OPT.name              = DONAR.name{index};          % needed for directory
+      OPT.code              = DONAR.donar_wnsnum(index);
+      OPT.donar_wnsnum      = DONAR.donar_wnsnum(index);  % needed for url
+      OPT.donar_wns_oms     = DONAR.donar_wns_oms{index}; % needed for url
+      OPT.donar_parcode     = DONAR.donar_parcode{index}; % needed for disp
+      OPT.name              = DONAR.name{index};          % needed for directory
 
       subdir                = OPT.name;
-      OPT.directory_nc      = [ ncbase,filesep,subdir,filesep];
-      OPT.directory_kml     = [kmlbase,filesep,];
-      OPT.directory_raw     = [rawbase,filesep,subdir,filesep];
+      OPT.directory_nc      = fullfile( ncbase,OPT.institution,OPT.dataset,subdir,filesep);
+      OPT.directory_kml     = fullfile(kmlbase,OPT.institution,OPT.dataset,filesep);
+      OPT.directory_raw     = fullfile(rawbase,OPT.institution,OPT.dataset,'cache',subdir,filesep);
       
       multiWaitbar(mfilename,n/length(donar_wnsnum),'label',['Processing substance: ',OPT.donar_parcode,' (',num2str(ivar),')'])
 
@@ -110,15 +113,16 @@ function rws_waterbase_all
 %  catalog to contain non-expected files.
 
    if OPT.make_catalog
-       clc
    CATALOG = nc_cf_harvest(OPT.directory_nc,...             % dir where to READ netcdf
                     'featuretype','timeseries',...
                           'debug',Inf,...
-                     'catalog.nc',[OPT.directory_nc,'test.nc'],...  % dir where to SAVE catalog
-                    'catalog.xml',[OPT.directory_nc,'test.xml'],... % dir where to SAVE catalog
-                    'catalog.xls',[OPT.directory_nc,'test.xls'],... % dir where to SAVE catalog
+                     'catalog.nc',[OPT.directory_nc ,'catalog.nc'],...  % dir where to SAVE catalog
+                    'catalog.xml',[OPT.directory_xml,OPT.institution,'_',mkvar(OPT.dataset),'_',subdir,'.xml'],... % dir where to SAVE catalog
+                    'catalog.xls',[OPT.directory_nc ,'catalog.xls'],... % dir where to SAVE catalog
                      'urlPathFcn',@(s) path2os(strrep(s,ncbase,urlbase),'h'),... % dir where to LINK to for netCDF
-                           'disp','multiWaitbar');
+                           'disp','multiWaitbar',...
+                             'ID',[OPT.institution,'/',mkvar(OPT.dataset),'/',subdir],...
+                           'name',[OPT.institution,'_',mkvar(OPT.dataset),'_',subdir]);
    end
 
 %% Make KML overview with links to netCDFs on http://opendap.deltares.nl THREDDS
@@ -161,7 +165,7 @@ function rws_waterbase_all
       OPT2.logoName           = {'overheid4GE.png','oet4GE.png'};
       
       OPT2.varPathFcn         = @(s) path2os(strrep(s,urlbase,ncbase),filesep); % use local netCDF files for preview/statistics when CATALOG refers already to server
-      OPT2.resolveUrl         = cellfun(@(x) ['http://live.waterbase.nl/index.cfm?loc=',upper(x),'&page=start.locaties.databeschikbaarheid&taal=nl&loc=&wbwns=',num2str(OPT.donar_wnsnum),'|',strtrim(strrep(OPT.donar_wns_oms,' ','+')),'&whichform=2'],CATALOG.platform_id,'un',0);
+      OPT2.resolveUrl         = cellfun(@(x) ['http://live.waterbase.nl/waterbase_dbh.cfm?loc=',upper(x),'&page=start.locaties.databeschikbaarheid&taal=nl&loc=&wbwns=',num2str(OPT.donar_wnsnum),'|',strtrim(strrep(OPT.donar_wns_oms,' ','+')),'&whichform=2'],CATALOG.platform_id,'un',0);
       OPT2.resolveName        = 'www.rws.nl (waterbase)';
       OPT2.credit             = ' data: www.rws.nl plot: www.OpenEarth.eu';
       OPT2.preview            = 1;

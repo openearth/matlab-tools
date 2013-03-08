@@ -116,7 +116,7 @@ for ivar=[OPT.donar_wnsnum]
     
     %% File loop of all files in a directory
     mkpath(OPT.directory_nc);
-    [OPT.directory_raw,OPT.mask]
+    [OPT.directory_raw,filesep,OPT.mask]
     OPT.files          = dir([OPT.directory_raw,OPT.mask]);
     
     multiWaitbar(mfilename,0,'label','Creating netCDF from waterbase ASCII.','color',[0.2 0.6 0.])
@@ -192,14 +192,19 @@ for ivar=[OPT.donar_wnsnum]
                     else
                         error(['no conversion defined for data units:',D.data.units])
                     end
-                    
                 elseif strcmpi(D.data.units,'graden Celsius')
                     if strcmpi(    OPT.units,'degree_Celsius')
                         D.data.units           = 'degree_Celsius';
                     else
                         error(['no conversion defined for data units:',D.data.units])
                     end
-                elseif strcmpi(D.data.units,'DIMSLS')  % introduced by rws between june 2010 and mar 2011
+                elseif strcmpi(D.data.units,'oC') % donar_wnsnum=44
+                    if strcmpi(    OPT.units,'degree_Celsius')
+                        D.data.units           = 'degree_Celsius';
+                    else
+                        error(['no conversion defined for data units:',D.data.units])
+                    end
+                elseif strcmpi(D.data.units,'DIMSLS')  % introduced by rws between june 2010 and mar 2011 for donar_wnsnum=559
                     if strcmpi(OPT.units,'psu')
                         D.data.units       = 'psu';
                     elseif strcmpi(OPT.units,'ppt')
