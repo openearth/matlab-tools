@@ -39,6 +39,7 @@ end
 pliid       = get(handles.listbox5,'Value');       % listbox5 contains all pli-file (bct, bca, bcc)
 plientry    = get(handles.listbox5,'String');
 fid1        = fopen([pathout,'/',extname,'.ext'],'wt');
+fout        = 0;
 
 % Write header of ext file
 fprintf(fid1,'%s\n','* QUANTITY    : waterlevelbnd, velocitybnd, dischargebnd, tangentialvelocitybnd, normalvelocitybnd  filetype=9         method=2,3');
@@ -100,8 +101,12 @@ for i=1:length(pliid);
                     type  = 'velocitybnd';
                 case 'N';
                     type  = 'neumannbnd';                % not supported by FM
+                    warndlg('Neumann condition at the boundary is not supported by D-FLOW FM.','Warning');
+                    fout  = 1;
                 case 'Q';
                     type  = 'dischargepergridcellbnd';   % not supported by FM
+                    warndlg('Discharge per grid cell at the boundary is not supported by D-FLOW FM.','Warning');
+                    fout  = 1;
                 case 'T';
                     type  = 'dischargebnd';
                 case 'R';
@@ -119,4 +124,6 @@ end
 fclose all;
 
 % Message
-msgbox('Boundary conditions have correctly been assigned.','Message');
+if fout ~= 1;
+    msgbox('Boundary conditions have correctly been assigned.','Message');
+end

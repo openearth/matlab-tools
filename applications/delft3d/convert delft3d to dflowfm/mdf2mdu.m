@@ -58,7 +58,7 @@ end
 mdufileread = get(handles.edit5,'String');
 mdufileread(mdufileread==' ') = [];
 if isempty(mdufileread);
-    errordlg('The mdf-file name has not been assigned','Error');
+    errordlg('The mdu-file name has not been assigned','Error');
     return;
 end
 if length(mdufileread)>3;
@@ -71,60 +71,36 @@ else
     mdufile = mdufileread;
 end
 
+% Check net file (block analogue to previous block for ext-files)
+netfileread = get(handles.edit6,'String');
+netfileread(netfileread==' ') = [];
+if isempty(netfileread);
+    errordlg('The net-file name has not been assigned','Error');
+    return;
+end
+if length(netfileread)>6;
+    if strcmp(netfileread(end-6:end),'_net.nc');
+        netfile    = netfileread(1:end-7);
+    else
+        netfile    = netfileread;
+    end
+else
+    netfile = netfileread;
+end
+
 % Create full pathnames
 mdfshort    = mdffile;
 mdushort    = mdufile;
 mdffile     = [pathin ,'/',mdffile,'.mdf'];
 mdufile     = [pathout,'/',mdufile,'.mdu'];
 
-% Read some data from the mdf-file
-fid1        = fopen(mdffile,'r');
-I           = 1e8;
-for i=1:I;
-    tline   = fgetl(fid1);
-    if tline<0;
-        break;
-    else
-        if strcmp(tline(1:6),'Itdate');
-            [token, remain]     = strtok(tline,'#');
-            Itdate              = remain(2:end-1);
-            Itdate(Itdate=='-') = [];
-        end
-        if strcmp(tline(1:5),'Tunit');
-            [token, remain]     = strtok(tline,'#');
-            Tunit               = remain(2:end-1);
-        end
-        if strcmp(tline(1:6),'Tstart');
-            [token, remain]     = strtok(tline,'=');
-            Tstart              = str2num(remain(2:end));
-        end
-        if strcmp(tline(1:5),'Tstop');
-            [token, remain]     = strtok(tline,'=');
-            Tstop               = str2num(remain(2:end));
-        end
-        if strcmp(tline(1:2),'Dt');
-            [token, remain]     = strtok(tline,'=');
-            Dt                  = str2num(remain(2:end));
-        end
-        if strcmp(tline(1:5),'Flmap');
-            [token, remain]     = strtok(tline,'=');
-            Flmaplees           = str2num(remain(2:end));
-            Flmap               = Flmaplees(2);
-        end
-        if strcmp(tline(1:5),'Flhis');
-            [token, remain]     = strtok(tline,'=');
-            Flhislees           = str2num(remain(2:end));
-            Flhis               = Flhislees(2);
-        end
-        if strcmp(tline(1:5),'Flrst');
-            [token, remain]     = strtok(tline,'=');
-            Flrst               = str2num(remain(2:end));
-        end
-    end
-end
-DtUser      = Dt;
-DtMax       = Dt;
-fclose(fid1);
+% Read the mdf-file
+mdfcontents = delft3d_io_mdf('read',mdffile);
+mdfkeywds   = mdfcontents.keywords;
+
+% Assign some variables to be written in mdu-file
+itdate      = mdfkeywds.itdate;
+itdate(itdate=='-') = [];
 
 % Write the mdu file
 fid2        = fopen(mdufile,'wt'); 
@@ -143,7 +119,7 @@ fprintf(fid2,'%s\n'  ,'Version              = 1.1.54.24534M');
 fprintf(fid2,'%s\n\n','AutoStart            = 0                   # Autostart simulation after loading MDU or not (0=no, 1=autostart, 2=autostartstop).');
 
 fprintf(fid2,'%s\n'  ,'[geometry]');
-fprintf(fid2,'%s\n'  ,'NetFile              =                     # *_net.nc');
+fprintf(fid2,'%s\n'  ,['NetFile              = ',netfile,'_net.nc','       # *_net.nc']);
 fprintf(fid2,'%s\n'  ,'BathymetryFile       =                     # *.xyb');
 fprintf(fid2,'%s\n'  ,'WaterLevIniFile      =                     # Initial water levels sample file *.xyz');
 fprintf(fid2,'%s\n'  ,'LandBoundaryFile     =                     # Only for plotting');
@@ -173,16 +149,16 @@ fprintf(fid2,'%s\n'  ,'Icgsolver            = 1                   # Solver type 
 fprintf(fid2,'%s\n\n','Hdam                 = 0.                  # Threshold for minimum bottomlevel step at which to apply energy conservation factor i.c. flow contraction');
 
 fprintf(fid2,'%s\n'  ,'[physics]');
-fprintf(fid2,'%s\n'  ,'UnifFrictCoef        = 2.3d-2              # Uniform friction coefficient, 0=no friction');
-fprintf(fid2,'%s\n'  ,'UnifFrictType        = 1                   # 0=Chezy, 1=Manning, 2=White Colebrook, 3=z0 etc');
-fprintf(fid2,'%s\n'  ,'Vicouv               = 0.                  # Uniform horizontal eddy viscosity');
-fprintf(fid2,'%s\n'  ,'Smagorinsky          = 0.                  # Add Smagorinsky horizontal turbulence : vicu = vicu + ( (Smagorinsky*dx)**2)*S, e.g. 0.1');
-fprintf(fid2,'%s\n'  ,'Elder                = 0.                  # Add Elder contribution                : vicu = vicu + Elder*kappa*ustar*H/6),   e.g. 1.0');
-fprintf(fid2,'%s\n'  ,'irov                 = 0                   # 0=free slip, 1 = partial slip using wall_ks');
-fprintf(fid2,'%s\n'  ,'wall_ks              = 0.                  # Nikuradse roughness for side walls, wall_z0=wall_ks/30');
-fprintf(fid2,'%s\n'  ,'Vicoww               = 0.                  # Uniform vertical eddy viscosity');
-fprintf(fid2,'%s\n'  ,'TidalForcing         = 1                   # Tidal forcing (0=no, 1=yes) (only for jsferic == 1)');
-fprintf(fid2,'%s\n\n','Salinity             = 0                   # Include salinity, (0=no, 1=yes)');
+fprintf(fid2,'%s\n'  ,['UnifFrictCoef        = 2.3d-2              # Uniform friction coefficient, 0=no friction']);
+fprintf(fid2,'%s\n'  ,['UnifFrictType        = 1                   # 0=Chezy, 1=Manning, 2=White Colebrook, 3=z0 etc']);
+fprintf(fid2,'%s\n'  ,['Vicouv               = 0.0                 # Uniform horizontal eddy viscosity']);
+fprintf(fid2,'%s\n'  ,['Smagorinsky          = 0.                  # Add Smagorinsky horizontal turbulence : vicu = vicu + ( (Smagorinsky*dx)**2)*S, e.g. 0.1']);
+fprintf(fid2,'%s\n'  ,['Elder                = 0.                  # Add Elder contribution                : vicu = vicu + Elder*kappa*ustar*H/6),   e.g. 1.0']);
+fprintf(fid2,'%s\n'  ,['irov                 = 0                   # 0=free slip, 1 = partial slip using wall_ks']);
+fprintf(fid2,'%s\n'  ,['wall_ks              = 0.                  # Nikuradse roughness for side walls, wall_z0=wall_ks/30']);
+fprintf(fid2,'%s\n'  ,['Vicoww               = 0.0                 # Uniform vertical eddy viscosity']);
+fprintf(fid2,'%s\n'  ,['TidalForcing         = 1                   # Tidal forcing (0=no, 1=yes) (only for jsferic == 1)']);
+fprintf(fid2,'%s\n\n',['Salinity             = 0                   # Include salinity, (0=no, 1=yes)']);
 
 fprintf(fid2,'%s\n'  ,'[wind]');
 fprintf(fid2,'%s\n'  ,'ICdtyp               = 2                   # ( ), Cd = const, 2=S&B 2 breakpoints, 3= S&B 3 breakpoints');
@@ -190,18 +166,18 @@ fprintf(fid2,'%s\n'  ,'Cdbreakpoints        = 6.3d-4 7.23d-3      # ( ),   e.g. 
 fprintf(fid2,'%s\n\n','Windspeedbreakpoints = 0. 100.             # (m/s), e.g. 0.0      100.0');
 
 fprintf(fid2,'%s\n'  , '[time]');
-fprintf(fid2,'%s\n'  ,['RefDate              = ',Itdate                     ,'            # Reference date (yyyymmdd)']);
-fprintf(fid2,'%s\n'  ,['Tunit                = ',Tunit               ,'                   # Time units in MDU (H, M or S)']);
-fprintf(fid2,'%s\n'  ,['DtUser               = ',num2str(DtUser,'%5.7f'),'                # User timestep in seconds (interval for external forcing update & his/map output)']);
-fprintf(fid2,'%s\n'  ,['DtMax                = ',num2str(DtMax ,'%5.7f'),'                # Max timestep in seconds']);
+fprintf(fid2,'%s\n'  ,['RefDate              = ',itdate            ,'            # Reference date (yyyymmdd)']);
+fprintf(fid2,'%s\n'  ,['Tunit                = ',mdfkeywds.tunit   ,'                   # Time units in MDU (H, M or S)']);
+fprintf(fid2,'%s\n'  ,['DtUser               = ',num2str(mdfkeywds.dt,'%5.7f'),'                # User timestep in seconds (interval for external forcing update & his/map output)']);
+fprintf(fid2,'%s\n'  ,['DtMax                = ',num2str(mdfkeywds.dt,'%5.7f'),'                # Max timestep in seconds']);
 fprintf(fid2,'%s\n'  ,['DtInit               = 1.                  # Initial timestep in seconds']);
 fprintf(fid2,'%s\n'  ,['AutoTimestep         = 1                   # Use CFL timestep limit or not (1/0)']);
-fprintf(fid2,'%s\n'  ,['TStart               = ',num2str(Tstart,'%1.7e'),'       # Start time w.r.t. RefDate (in TUnit)']);
-fprintf(fid2,'%s\n\n',['TStop                = ',num2str(Tstop ,'%1.7e'),'       # Stop  time w.r.t. RefDate (in TUnit)']);
+fprintf(fid2,'%s\n'  ,['TStart               = ',num2str(mdfkeywds.tstart,'%1.7e'),'       # Start time w.r.t. RefDate (in TUnit)']);
+fprintf(fid2,'%s\n\n',['TStop                = ',num2str(mdfkeywds.tstop ,'%1.7e'),'       # Stop  time w.r.t. RefDate (in TUnit)']);
 
 fprintf(fid2,'%s\n'  ,['[restart]']);
 fprintf(fid2,'%s\n'  ,['RestartFile          =                     # Restart file, only map, hence: *_map.nc']);
-fprintf(fid2,'%s\n\n',['RestartDateTime      = ',Itdate,'000000','      # Restart time (yyyymmddhhmmss)']);
+fprintf(fid2,'%s\n\n',['RestartDateTime      = ',itdate,'000000','      # Restart time (yyyymmddhhmmss)']);
 
 fprintf(fid2,'%s\n'  ,['[external forcing]']);
 fprintf(fid2,'%s\n\n',['ExtForceFile         = ',extname,'.ext','          # *.ext']);
@@ -209,13 +185,13 @@ fprintf(fid2,'%s\n\n',['ExtForceFile         = ',extname,'.ext','          # *.e
 fprintf(fid2,'%s\n'  ,['[output]']);
 fprintf(fid2,'%s\n'  ,['ObsFile              =                     # *.xyn Coords+name of observation stations.']);
 fprintf(fid2,'%s\n'  ,['CrsFile              =                     # *_crs.pli Polyline(s) definining cross section(s).']);
-fprintf(fid2,'%s\n'  ,['HisFile              = ',mdushort,'_his.nc','       # *_his.nc History file in NetCDF format.']);
-fprintf(fid2,'%s\n'  ,['HisInterval          = ',num2str(Flhis,'%5.7f'),'                # Interval (s) between history outputs']);
+fprintf(fid2,'%s\n'  ,['HisFile              = ',netfile,'_his.nc','       # *_his.nc History file in NetCDF format.']);
+fprintf(fid2,'%s\n'  ,['HisInterval          = ',num2str(mdfkeywds.flhis(2),'%5.7f'),'                # Interval (s) between history outputs']);
 fprintf(fid2,'%s\n'  ,['XLSInterval          = 0.                  # Interval (s) between XLS history']);
 fprintf(fid2,'%s\n'  ,['FlowGeomFile         =                     # *_flowgeom.nc Flow geometry file in NetCDF format.']);
-fprintf(fid2,'%s\n'  ,['MapFile              = ',mdushort,'_map.nc','       # *_map.nc Map file in NetCDF format.']);
-fprintf(fid2,'%s\n'  ,['MapInterval          = ',num2str(Flmap,'%5.7f'),'                # Interval (s) between map file outputs']);
-fprintf(fid2,'%s\n'  ,['RstInterval          = ',num2str(Flrst,'%5.7f'),'                # Interval (s) between map file outputs']);
+fprintf(fid2,'%s\n'  ,['MapFile              = ',netfile,'_map.nc','       # *_map.nc Map file in NetCDF format.']);
+fprintf(fid2,'%s\n'  ,['MapInterval          = ',num2str(mdfkeywds.flmap(2),'%5.7f'),'                # Interval (s) between map file outputs']);
+fprintf(fid2,'%s\n'  ,['RstInterval          = ',num2str(mdfkeywds.flrst,'%5.7f'),'                # Interval (s) between map file outputs']);
 fprintf(fid2,'%s\n'  ,['WaqFileBase          =                     # Basename (without extension) for all Delwaq files to be written.']);
 fprintf(fid2,'%s\n'  ,['WaqInterval          = 0.                  # Interval (in s) between Delwaq file outputs']);
 fprintf(fid2,'%s\n'  ,['StatsInterval        = 0.                  # Interval (in s) between simulation statistics output.']);

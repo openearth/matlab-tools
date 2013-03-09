@@ -22,7 +22,7 @@ function varargout = ddd2dfm(varargin)
 
 % Edit the above text to modify the response to help ddd2dfm
 
-% Last Modified by GUIDE v2.5 20-Dec-2012 14:48:57
+% Last Modified by GUIDE v2.5 08-Mar-2013 19:32:15
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -324,6 +324,7 @@ set(handles.listbox10,'String',' ');
 set(handles.edit3,'String','');
 set(handles.edit4,'String','');
 set(handles.edit5,'String','');
+set(handles.edit6,'String','');
 
 % Select first entry
 set(handles.listbox1 ,'Value',1);
@@ -429,6 +430,29 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
+
+function edit6_Callback(hObject, eventdata, handles)
+% hObject    handle to edit6 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit6 as text
+%        str2double(get(hObject,'String')) returns contents of edit6 as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit6_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit6 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
 % --- Executes on button press in pushbutton3.
 function pushbutton3_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton3 (see GCBO)
@@ -500,6 +524,13 @@ return;
 % end
 
 
+% --- Executes on button press in pushbutton10.
+function pushbutton10_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton10 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+grd2net;
 
 
 function edit5_Callback(hObject, eventdata, handles)

@@ -27,6 +27,7 @@ set(handles.listbox10,'String',' ');
 set(handles.edit3,'String','');
 set(handles.edit4,'String','');
 set(handles.edit5,'String','');
+set(handles.edit6,'String','');
 
 % Select first entry
 set(handles.listbox1 ,'Value',1);
