@@ -32,11 +32,6 @@
     <type>integer</type>
     <dependency>
       <action>enable</action>
-      <tags>
-        <tag>pushdeletecrsdam</tag>
-        <tag>pushaddcrsdam</tag>
-        <tag>pushopencrosssectionsfile</tag>
-      </tags>
       <checkfor>all</checkfor>
       <check>
         <variable>handles.Model(md).Input(ad).nrCrossSections</variable>
@@ -60,11 +55,6 @@
     <tooltipstring>Edit cross section index N1</tooltipstring>
     <dependency>
       <action>enable</action>
-      <tags>
-        <tag>pushdeletecrsdam</tag>
-        <tag>pushaddcrsdam</tag>
-        <tag>pushopencrosssectionsfile</tag>
-      </tags>
       <checkfor>all</checkfor>
       <check>
         <variable>handles.Model(md).Input(ad).nrCrossSections</variable>
@@ -88,11 +78,6 @@
     <tooltipstring>Edit cross section index M2</tooltipstring>
     <dependency>
       <action>enable</action>
-      <tags>
-        <tag>pushdeletecrsdam</tag>
-        <tag>pushaddcrsdam</tag>
-        <tag>pushopencrosssectionsfile</tag>
-      </tags>
       <checkfor>all</checkfor>
       <check>
         <variable>handles.Model(md).Input(ad).nrCrossSections</variable>
@@ -116,11 +101,6 @@
     <tooltipstring>Edit cross section index N2</tooltipstring>
     <dependency>
       <action>enable</action>
-      <tags>
-        <tag>pushdeletecrsdam</tag>
-        <tag>pushaddcrsdam</tag>
-        <tag>pushopencrosssectionsfile</tag>
-      </tags>
       <checkfor>all</checkfor>
       <check>
         <variable>handles.Model(md).Input(ad).nrCrossSections</variable>
@@ -144,11 +124,6 @@
     <type>string</type>
     <dependency>
       <action>enable</action>
-      <tags>
-        <tag>pushdeletecrosssection</tag>
-        <tag>pushaddcrosssection</tag>
-        <tag>pushopencrosssectionsfile</tag>
-      </tags>
       <checkfor>all</checkfor>
       <check>
         <variable>handles.Model(md).Input(ad).nrCrossSections</variable>
@@ -224,7 +199,7 @@
     <showfilename>no</showfilename>
     <extension>*.crs</extension>
     <selectiontext>Select cross sections file</selectiontext>
-    <onchange>ddb_Delft3DFLOW_crosssections</onchange>
+    <onchange>ddb_Delft3DFLOW_crossSections</onchange>
     <option1>savefile</option1>
   </element>
 </root>

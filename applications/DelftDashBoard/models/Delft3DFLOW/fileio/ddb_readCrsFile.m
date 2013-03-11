@@ -67,6 +67,11 @@ m2=[];
 n2=[];
 name=[];
 
+if ~exist(handles.Model(md).Input(id).crsFile,'file')
+    ddb_giveWarning('text',['Crs file ' handles.Model(md).Input(id).crsFile ' does not exist!']);
+    return
+end
+
 [name,m1,n1,m2,n2] = textread(handles.Model(md).Input(id).crsFile,'%21c%f%f%f%f');
 
 for i=1:length(m1)

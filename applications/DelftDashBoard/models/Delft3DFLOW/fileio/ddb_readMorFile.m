@@ -62,6 +62,11 @@ function handles = ddb_readMorFile(handles, id)
 
 %% Reads Delft3D mor file into structure
 
+if ~exist(handles.Model(md).Input(id).morFile,'file')
+    ddb_giveWarning('text',['Mor file ' handles.Model(md).Input(id).morFile ' does not exist!']);
+    return
+end
+
 s=ddb_readDelft3D_keyWordFile(handles.Model(md).Input(id).morFile);
 
 handles=ddb_Delft3DFLOW_initializeMorphology(handles,id);

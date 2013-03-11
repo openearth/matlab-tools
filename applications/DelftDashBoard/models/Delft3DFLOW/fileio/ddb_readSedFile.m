@@ -61,6 +61,12 @@ function handles = ddb_readSedFile(handles, id)
 % $Keywords: $
 
 %%
+
+if ~exist(handles.Model(md).Input(id).sedFile,'file')
+    ddb_giveWarning('text',['Sed file ' handles.Model(md).Input(id).sedFile ' does not exist!']);
+    return
+end
+
 s=ddb_readDelft3D_keyWordFile(handles.Model(md).Input(id).sedFile);
 
 handles.Model(md).Input(id).nrSediments=length(s.sediment);
