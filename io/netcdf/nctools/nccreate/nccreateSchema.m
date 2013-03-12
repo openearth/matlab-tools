@@ -169,6 +169,7 @@ for ii = 1:length(varstruct)
         varstruct(ii).scale_factor,...
         varstruct(ii).add_offset,...
         datatypename);
+        
 end
 varstruct = rmfield(varstruct,{'scale_factor','add_offset'});
 
@@ -219,6 +220,10 @@ end
 
 
 function Attributes = parseAttributes(Attributes,FillValue,scale_factor,add_offset,datatypename)
+assert(~any(strcmp(Attributes(1:2:end),'add_offset')),...
+    'Attributes named ''add_offset'' not allowed, pass add_offset value as property/value pair')
+assert(~any(strcmp(Attributes(1:2:end),'scale_factor')),...
+    'Attributes named ''scale_factor'' not allowed, pass scale_factor value as property/value pair')
 
 if isequal(FillValue,'auto')
     FillValue = netcdf.getConstant(datatypename);
@@ -232,9 +237,12 @@ end
 if ~isempty(FillValue)
     Attributes = [{'_FillValue' FillValue} Attributes];
 end
+
 if isempty(Attributes)
     Attributes = [];
-else
-    Attributes = struct('Name',Attributes(1:2:end),'Value',Attributes(2:2:end));
+    return
 end
+
+% reshape Attributes to Name/Value struct array
+Attributes = struct('Name',Attributes(1:2:end),'Value',Attributes(2:2:end));
 

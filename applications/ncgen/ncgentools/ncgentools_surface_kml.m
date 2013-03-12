@@ -1,29 +1,40 @@
 function OPT = ncgentools_surface_kml(varargin)
 
 %% defaults and input parsing
-OPT                 = KMLcolorbar;
-OPT.path_netcdf     = '';
-OPT.path_kml        = '';
-OPT.fileName        = 'Surface_overlay.kml';
-OPT.colorMap        = @(m) colormap_cpt('bathymetry_vaklodingen',m);
-OPT.colorSteps      = 256;
-OPT.cLim            = [-50 25];
-OPT.var_name        = 'z';
-OPT.log             = 0;
-OPT.dim             = 256;
-OPT.dimExt          = 16;
-OPT.dateStrStyle    = 'yyyy-mm-dd';
-OPT.filledInTime    = true;
-OPT.descriptivename = 'Surface overlay';
-OPT.description     = ['generated: ' datestr(now())];
-OPT.colorbar        = true;
-OPT.highestLevel    = 1;
-OPT.lowestLevel     = 15;
-OPT.z_scale_factor  = 1;
+OPT                  = KMLcolorbar;
+OPT.path_netcdf      = '';
+OPT.path_kml         = '';
+OPT.fileName         = 'Surface_overlay.kml';
+OPT.colorMap         = @(m) colormap_cpt('bathymetry_vaklodingen',m);
+OPT.colorSteps       = 256;
+OPT.cLim             = [-50 25];
+OPT.var_name         = 'z';
+OPT.log              = 0;
+OPT.dim              = 256;
+OPT.dimExt           = 16;
+OPT.dateStrStyle     = 'yyyy-mm-dd';
+OPT.filledInTime     = true;
+OPT.descriptivename  = 'Surface overlay';
+OPT.description      = ['generated: ' datestr(now())];
+OPT.colorbar         = true;
+OPT.highestLevel     = 1; % should be left at one in normal cases
+OPT.lowestLevel      = 15; % determines the size of the most detailled tile.
+                % The higher the number, the smaller the tile, thus the
+                % more tiles are needed to cover the area. typical values
+                % are ~17 for 1m resolution and ~13 for 20m resolution. 
+                % calculate reolution in m of the tileset with 
+                % (earth circumference) 4^7 / OPT.dim / OPT.lowestLevel
+OPT.z_scale_factor   = 1;
 OPT.lighting_effects = true;
-OPT.bgcolor          = [100 155 100];
-OPT.debug = 1;
-OPT.timerange       = [-inf inf];%[now-7 now];
+OPT.lightingLevel    = []; % this sets the scale of the lighting of details.
+                % Defaults to lowestLevel, set higher to decrease
+                % shadows/highlights   
+
+OPT.bgcolor          = [100 155 100]; % this is only used as a placeholder 
+                % to determine what part of the image to make transparent.
+                % Ideally this color is not in the colormap 
+OPT.debug            = 1;
+OPT.timerange        = [-inf inf];% example: [now-7 now];
 OPT.continue_from_last = true;
 
 if nargin==0
@@ -31,6 +42,11 @@ if nargin==0
 end
 
 OPT = setproperty(OPT,varargin);
+
+%% input check
+if isempty(OPT.lightingLevel)
+    OPT.lightingLevel = OPT.lowestLevel;
+end
 
 %% Part 0: index all netcdf files
 netcdf_index = ncgentools_get_data_in_box(OPT.path_netcdf);
@@ -123,7 +139,7 @@ fig = make_figure(...
     OPT.dim,...
     OPT.dimExt,...
     OPT.bgcolor,...
-    OPT.lowestLevel);
+    OPT.lightingLevel);
 
 % determine ranges of figures
 delta = 360 / 2^(OPT.lowestLevel-1) / OPT.dim * OPT.dimExt; % the delta is needed to make sure there are no ugly edge effects
@@ -361,11 +377,11 @@ for addCode = ['0','1','2','3']
 end
 
 function fig = make_figure(cLim,cMap,lighting_effects,dim,dimExt,bgcolor,level)
-level = 20;
+% level = 20;
 fig.hf = figure('visible','off');
 fig.ha = axes('parent',fig.hf,'position',[0 0 1 1]);
 colormap(cMap);
-% scale x to lot/lon range
+% scale x to lat/lon range
 x = linspace(0,360 / (2^level),90);
 z = peaks(90) +cos(peaks(90))+cos(magic(90))/5;
 % scale z to color limits
@@ -587,15 +603,15 @@ end
 
 highestLevel = min([tiles.level]);
 lowestLevel  = max([tiles.level]);
-OPT.minLod0        =     -1;
-OPT.maxLod0        =     -1;
-OPT.minLod         = round(dimension*2);
-OPT.maxLod         = round(3*dimension*2);
+OPT.minLod0  =     -1;
+OPT.maxLod0  =     -1;
+OPT.minLod   = round(dimension*2);
+OPT.maxLod   = round(3*dimension*2);
 name = '';
 
 output = '';
 for ii = 1:length(tiles)
-    B = KML_figure_tiler_code2boundary(tiles(ii).name(1:end-4));
+    B = code2boundary(tiles(ii).name(1:end-4));
     if B.level == highestLevel; minLod = OPT.minLod0; else minLod = OPT.minLod; end
     if B.level ==  lowestLevel; maxLod = OPT.maxLod0; else maxLod = OPT.maxLod; end
     
@@ -658,7 +674,7 @@ output = '';
 [names,~,ind1] = unique({tiles.name});
 [names,ind2] = sort(names);
 for ii = 1:length(names)
-    B = KML_figure_tiler_code2boundary(names{ii}(1:end-4));
+    B = code2boundary(names{ii}(1:end-4));
     if B.level == highestLevel; minLod = OPT.minLod0; else minLod = OPT.minLod; end
     if B.level ==  lowestLevel; maxLod = OPT.maxLod0; else maxLod = OPT.maxLod; end
     
@@ -720,3 +736,40 @@ fclose(fid);
 zip     (kmzname,kmlname);
 delete  (kmlname)
 movefile([kmzname,'.zip'],kmzname);
+
+function bnd =  code2boundary(code)
+%  bnd =  code2boundary(code)
+%
+%See also: KMLfigure_tiler, KML_figure_tiler_SmallestTileThatContainsAllData
+
+bnd.N     =  180;
+bnd.S     = -180;
+bnd.W     = -180;
+bnd.E     =  180;
+bnd.level = length(code);
+
+if ~code(1)=='0'
+    error('code must begin with 0')
+end
+
+for ii = 2:bnd.level
+    switch code(ii)
+        case '0'
+            bnd.S = bnd.S + (bnd.N-bnd.S)/2;
+            bnd.E = bnd.E + (bnd.W-bnd.E)/2;
+        case '1'
+            bnd.S = bnd.S + (bnd.N-bnd.S)/2;
+            bnd.W = bnd.W + (bnd.E-bnd.W)/2;
+        case '2'
+            bnd.N = bnd.N + (bnd.S-bnd.N)/2;
+            bnd.E = bnd.E + (bnd.W-bnd.E)/2;
+        case '3'
+            bnd.N = bnd.N + (bnd.S-bnd.N)/2;
+            bnd.W = bnd.W + (bnd.E-bnd.W)/2;
+        otherwise
+            disp(['warning: ignored wrong element in code, must consist of 0123, but contains:''',code(ii),''''])% probably colorbar
+            bnd.N = [];
+            bnd.W = [];
+            break
+    end
+end
