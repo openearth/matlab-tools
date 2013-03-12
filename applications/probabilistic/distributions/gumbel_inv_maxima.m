@@ -1,4 +1,4 @@
-function X = gumbel_inv(P, mu, sigma)
+function X = gumbel_inv_maxima(P, mu, sigma)
 %GUMBEL_INV  Inverse of the gumbel cumulative distribution function.
 %
 %   This routine retruns the inverse cdf for the gumbel (type 1) extreme
