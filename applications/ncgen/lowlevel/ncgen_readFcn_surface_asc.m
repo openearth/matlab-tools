@@ -105,7 +105,7 @@ minx    = floor(minx/mapsizex)*mapsizex + OPT.schema.grid_offset(1);
 miny    = floor(miny/mapsizey)*mapsizey + OPT.schema.grid_offset(end);
 
 x       =         xllcenter:cellsize:xllcenter + cellsize*(ncols-1);
-y       = flipud((yllcorner:cellsize:yllcorner + cellsize*(nrows-1))');
+y       = flipud((yllcenter:cellsize:yllcenter + cellsize*(nrows-1))');
 y(:,2)  = ceil((1:size(y,1))'./ floor(OPT.read.block_size/ncols));
 y(:,3)  = mod ((0:size(y,1)-1)',floor(OPT.read.block_size/ncols))+1;
 
@@ -116,8 +116,8 @@ WB.steps = length(minx : mapsizex : maxx) * length(miny : mapsizey : maxy);
 for x0      = minx : mapsizex : maxx % loop over tiles in x direction within data range
     for y0  = miny : mapsizey : maxy % loop over tiles in y direction within data range
         % isolate data within current tile
-        ix = find(x     >=x0            ,1,'first'):find(x     <x0+mapsizex,1,'last');
-        iy = find(y(:,1)<y0+mapsizey,1,'first'):find(y(:,1)>=y0            ,1,'last');
+        ix = find(x     >=x0            ,1,'first'):find(x     < x0+mapsizex,1,'last');
+        iy = find(y(:,1)< y0+mapsizey   ,1,'first'):find(y(:,1)>=y0         ,1,'last');
         
         z = nan(length(iy),length(ix));
         for iD = unique(y(iy,2))'
