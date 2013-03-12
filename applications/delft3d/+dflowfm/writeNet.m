@@ -238,9 +238,11 @@ warning([mfilename,'agree with developer on _FillValue'])
           disp('File already exists, will be overwritten!');
           delete(ncfile);
       end
-
-      if ~strcmpi(ncfile(end-6:end),'_net.nc')
-         warning('DfLow-FM grid file should end with "_net.nc"');
+      
+      if length(ncfile)<8
+          warning('DfLow-FM grid file should end with "_net.nc"');
+      elseif ~strcmpi(ncfile(end-6:end),'_net.nc')
+          warning('DfLow-FM grid file should end with "_net.nc"');
       end
 
       ncwriteschema(ncfile, nc);			        
