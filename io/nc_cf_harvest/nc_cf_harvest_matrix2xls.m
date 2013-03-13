@@ -56,6 +56,8 @@ OPT = setproperty(OPT,varargin);
       end
       n = length(ATT.geospatialCoverage_northsouth_start);
 
+% Timeseries
+
       if isfield(ATT,'platform_id')
       D.platform_id                   = ATT.platform_id;   
       end
@@ -68,15 +70,24 @@ OPT = setproperty(OPT,varargin);
       D.number_of_observations        = ATT.number_of_observations;
       end
 
+% When: http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/v1.0.2/InvCatalogSpec.html#timeCoverage
+
       D.timeCoverage_start            = datestr(ATT.timeCoverage_start,'yyyy-mm-ddTHH:MM:SS');
       D.timeCoverage_end              = datestr(ATT.timeCoverage_end  ,'yyyy-mm-ddTHH:MM:SS');
+
+% Where: http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/v1.0.2/InvCatalogSpec.html#geospatialCoverage
 
       D.longitude_start               = ATT.geospatialCoverage_eastwest_start;
       D.longitude_end                 = ATT.geospatialCoverage_eastwest_end;
       D.latitude_start                = ATT.geospatialCoverage_northsouth_start;
       D.latitude_end                  = ATT.geospatialCoverage_northsouth_end;
 
+% URL
+
       D.urlPath                       = ATT.urlPath;
+
+% What: http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/v1.0.2/InvCatalogSpec.html#controlledVocabulary   
+
       D.variable_name                 = ATT.variable_name     ;%char(cellfun(@(x) str2line(x,'s',' ')  ,ATT.variable_name,'UniformOutput',false));
       D.standard_name                 = ATT.standard_name     ;%char(cellfun(@(x) str2line(x,'s',' ')  ,ATT.standard_name,'UniformOutput',false));
       D.units                         = ATT.units             ;%char(cellfun(@(x) str2line(x,'s',' ')  ,ATT.units        ,'UniformOutput',false));

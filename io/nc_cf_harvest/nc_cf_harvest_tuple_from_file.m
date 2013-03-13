@@ -1,7 +1,7 @@
-function varargout = nc_cf_harvest1(varargin)
-%NC_cf_HARVEST1  extract CF + THREDDS meta-data from 1 netCDF/OPeNDAP url
+function varargout = nc_cf_harvest_tuple_from_file(varargin)
+%nc_cf_harvest_tuple_from_file  extract CF + THREDDS meta-data from 1 netCDF/OPeNDAP url
 %
-%  struct = nc_cf_harvest1(ncfile)
+%  struct = nc_cf_harvest_tuple_from_file(ncfile)
 %
 % harvests (extracts) <a href="http://cf-pcmdi.llnl.gov/">CF meta-data</a> + <a href="http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/index.html">THREDDS catalog</a>
 % meta-data from one ncfile (netCDF file/OPeNDAP url)
@@ -12,7 +12,7 @@ function varargout = nc_cf_harvest1(varargin)
 %
 % Use NC_CF_HARVEST to harvest a list of ncfiles (netCDF file/OPeNDAP url).
 %
-% struct = nc_cf_harvest1([],...) returns an empty example data structure
+% struct = nc_cf_harvest_tuple_from_file([],...) returns an empty example data structure
 %
 %See also: OPENDAP_CATALOG, NC_CF_HARVEST, nc_cf_harvest2xml, nc_cf_harvest2nc, nc_cf_harvest2xls
 %          thredds_dump, thredds_info,NC_INFO, nc_dump, NC_ACTUAL_RANGE, 
@@ -59,19 +59,24 @@ function varargout = nc_cf_harvest1(varargin)
 % $HeadURL$
 % $Keywords$
 
+% warning('netcdf-java DataDiscoveryAttConvention not yet used, only CF attributes ued.')
+
    OPT.disp           = ''; %'multiWaitbar';
-   OPT.featuretype    = ''; %'timeseries' % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#discrete-sampling-geometries
-   OPT.catalog_entry  = {'title',...
-                         'institution',...
-                         'source',...
-                         'history',...
-                         'references',...
-                         'email',...
-                         'comment',...
-                         'version',...
-                         'Conventions',...
-                         'terms_for_use',...
-                         'disclaimer'};
+   OPT.featuretype   = 'timeseries';    %'timeseries' % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#discrete-sampling-geometries
+   OPT.platform_id   = 'platform_id';   % CF-1.6, older: 'station_id'  , harvested when OPT.featuretype='timeseries'
+   OPT.platform_name = 'platform_name'; % CF-1.6, older: 'station_name', harvested when OPT.featuretype='timeseries'
+%    OPT.catalog_entry  = {'title',...
+%                          'institution',...
+%                          'source',...
+%                          'history',...
+%                          'references',...
+%                          'email',...
+%                          'comment',...
+%                          'version',...
+%                          'Conventions',...
+%                          'terms_for_use',...
+%                          'disclaimer'};
+   OPT.catalog_entry  = {'Conventions'};
 
    if nargin==0
       varargout = {OPT};
@@ -82,7 +87,7 @@ function varargout = nc_cf_harvest1(varargin)
 %  global and timeseries catalog_entries added later, after setproperty.
    
    OPT = setproperty(OPT,{varargin{2:end}});                      
-   ATT = nc_cf_harvest1_init(OPT);
+   ATT = nc_cf_harvest_tuple_initialize('featuretype',OPT.featuretype,'platform_id',OPT.platform_id,'platform_name',OPT.platform_name);
 
 %% File
 
@@ -99,16 +104,18 @@ function varargout = nc_cf_harvest1(varargin)
    
 %% get relevant global attributes
 %  using above read fileinfo
-    
-   for iatt  = 1:length(OPT.catalog_entry)
-     catalog_entry = OPT.catalog_entry{iatt};
-     fldname = mkvar(catalog_entry);
-       for iglob = 1:length(fileinfo.Attribute)
-        if strcmpi(catalog_entry,fileinfo.Attribute(iglob).Name)
-           ATT.(fldname) = fileinfo.Attribute(iglob).Value;
-        end
-     end
-   end
+
+%warning('replace with THREDDS catalog elements')
+   
+    for iatt  = 1:length(OPT.catalog_entry)
+      catalog_entry = OPT.catalog_entry{iatt};
+      fldname = mkvar(catalog_entry);
+        for iglob = 1:length(fileinfo.Attribute)
+         if strcmpi(catalog_entry,fileinfo.Attribute(iglob).Name)
+            ATT.(fldname) = fileinfo.Attribute(iglob).Value;
+         end
+      end
+    end
    
 %% Cycle datasets
 %  get actual_range attribute instead if present for lat, lon, time
@@ -204,11 +211,11 @@ function varargout = nc_cf_harvest1(varargin)
                   
                   if nc_isatt(ncfile, fileinfo.Dataset(idat).Name,'grid_mapping')
                       grid_mappings = strtokens2cell(nc_attget(ncfile, fileinfo.Dataset(idat).Name,'grid_mapping'));
-                      for ii=1:length(grid_mappings)
-                      if nc_isvar(ncfile,grid_mappings{ii})
-                          ATT.projectionEPSGcode = unique([ATT.projectionEPSGcode double(nc_varget(ncfile,grid_mappings{ii},0,1))]);
-                      end
-                      end
+%                      for ii=1:length(grid_mappings)
+%                      if nc_isvar(ncfile,grid_mappings{ii})
+%                          ATT.projectionEPSGcode = unique([ATT.projectionEPSGcode double(nc_varget(ncfile,grid_mappings{ii},0,1))]);
+%                      end
+%                      end
                   else
                       fprintf(2,'%s\n',['projection_x_coordinate without grid_mapping attribute found: ',ncfile])
                   end
@@ -223,15 +230,15 @@ function varargout = nc_cf_harvest1(varargin)
                   
                   if nc_isatt(ncfile, fileinfo.Dataset(idat).Name,'grid_mapping')
                       grid_mappings = strtokens2cell(nc_attget(ncfile, fileinfo.Dataset(idat).Name,'grid_mapping'));
-                      for ii=1:length(grid_mappings)
-                      if nc_isvar(ncfile,grid_mappings{ii})
-                          projectionEPSGcode = unique([ATT.projectionEPSGcode double(nc_varget(ncfile,grid_mappings{ii},0,1))]);
-                      end
-                      end
+%                      for ii=1:length(grid_mappings)
+%                      if nc_isvar(ncfile,grid_mappings{ii})
+%                          projectionEPSGcode = unique([ATT.projectionEPSGcode double(nc_varget(ncfile,grid_mappings{ii},0,1))]);
+%                      end
+%                      end
                       
-                      if ~all(sort(projectionEPSGcode)==sort(ATT.projectionEPSGcode))
-                      error('projectionEPSGcode x and y different')
-                      end
+%                      if ~all(sort(projectionEPSGcode)==sort(ATT.projectionEPSGcode))
+%                      error('projectionEPSGcode x and y different')
+%                      end
                   else
                       fprintf(2,'%s\n',['projection_y_coordinate without grid_mapping attribute found: ',ncfile])
                   end
@@ -290,72 +297,3 @@ function varargout = nc_cf_harvest1(varargin)
 
 varargout = {ATT};
 
-function geospatialCoverage = geospatialCoverage_initialize()
-
-   geospatialCoverage.start          = nan; % TDS required
-   geospatialCoverage.size           = nan; % TDS required
-   geospatialCoverage.resolution     = nan; % TDS optional
-   geospatialCoverage.end            = nan; % TDS extra
-
-function geospatialCoverage = geospatialCoverage_complete(geospatialCoverage)
-
-   geospatialCoverage.size = geospatialCoverage.end - geospatialCoverage.start;
-
-function timeCoverage = timeCoverage_initialize()
-
-   timeCoverage.start                = nan;
-   timeCoverage.duration             = nan;
-   timeCoverage.resolution           = nan;
-   timeCoverage.end                  = nan;
-
-function timeCoverage = timeCoverage_complete(timeCoverage)
-
-   if isnan(timeCoverage.start)
-   timeCoverage.start    = timeCoverage.end   - timeCoverage.duration;
-   end
-   
-   if isnan(timeCoverage.duration)
-   timeCoverage.duration = timeCoverage.end   - timeCoverage.start;
-   end
-   
-   if isnan(timeCoverage.end)
-   timeCoverage.end      = timeCoverage.start + timeCoverage.duration;
-   end
-
-function ATT = nc_cf_harvest1_init(OPT)
-
-   ATT.urlPath       = '';
-   ATT.dataSize      = nan;
-   ATT.date          = nan;
-
-% What: http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/v1.0.2/InvCatalogSpec.html#controlledVocabulary   
-   
-   ATT.variable_name = '';
-   ATT.standard_name = '';
-   ATT.units         = '';
-   ATT.long_name     = '';
-
-% Where: 
-
-   ATT.geospatialCoverage.northsouth = geospatialCoverage_initialize();
-   ATT.geospatialCoverage.eastwest   = geospatialCoverage_initialize();
-   ATT.geospatialCoverage.updown     = geospatialCoverage_initialize();
-   ATT.geospatialCoverage.x          = geospatialCoverage_initialize();
-   ATT.geospatialCoverage.y          = geospatialCoverage_initialize();
-   ATT.projectionEPSGcode            = []; % NB does not allow use of cell2mat later on
-   
-% When: 
-
-   ATT.timeCoverage                  = timeCoverage_initialize();
-   
-   if strcmpi(OPT.featuretype,'timeseries')
-      OPT.catalog_entry{end+1} = 'platform_id'            ;
-      OPT.catalog_entry{end+1} = 'platform_name'          ;
-      ATT.number_of_observations = nan;
-   end
-
-   for iatt  = 1:length(OPT.catalog_entry)
-     catalog_entry = OPT.catalog_entry{iatt};
-     fldname = mkvar(catalog_entry);
-     ATT.(fldname) = '';
-   end   
