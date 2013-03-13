@@ -13,6 +13,7 @@ function dprintf(debug,varargin)
 %
 %   dprintf( 0,'read such and so succesfully\n') % does nothing
 %   dprintf( 1,'read such and so succesfully\n') % writes to screen
+%   dprintf( 2,'read such and so succesfully\n') % writes to screen in RED
 %   dprintf(>2,'read such and so succesfully\n') % write to file with identiefier
 %
 %See also: FPRINTF, WARNING, DISP

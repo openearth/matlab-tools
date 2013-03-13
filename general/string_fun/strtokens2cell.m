@@ -7,7 +7,7 @@ function C = strtokens2cell(STR,DELIM)
 % C = strtokens2cell(STR,DELIM) rewrites space delimitered string 
 % list into cell array using first token in DELIM as delimiter
 %
-% Text embraced by douible quotes (") is returned as one (textscan format '%q')
+% Text embraced by double quotes (") is returned as one (textscan format '%q')
 %
 % example:
 %

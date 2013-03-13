@@ -79,18 +79,14 @@ function string = path2os(string,input)
    end
    
    if iscell(string)
-       string = cellfun(@(x) path2os(x),string,'UniformOutput',0);
+       string = cellfun(@(x) path2os(x,slash),string,'UniformOutput',0);
    else
 
 %% Lock special combis
    prefix = '';
    if     length(string) > 6  
       if strcmpi(string(1:7),'http://') | strcmpi(string(1:7),'http:\\');prefix = 'http://';string = string(8:end);
-       if nargin==1
-        slash = '/';
-       else
-        if strcmpi(slash,'\');warning('for http:// forward slash is recommened');end
-       end
+        if strcmpi(slash,'\');warning('for http:// backward \ slash is recommended');end
       end
    end
    if length(string) > 1     
