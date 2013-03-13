@@ -87,11 +87,11 @@ thetanaut   = xs_get(xs, 'thetanaut');
 if thetanaut
     thetamin    = xs_get(xs, 'thetamin');
     thetamax    = xs_get(xs, 'thetamax');
-%     dtheta      = xs_get(xs, 'dtheta');
+    dtheta      = xs_get(xs, 'dtheta');
 else
     thetamin    = 90 - xs_get(xs, 'thetamin');
     thetamax    = 90 - xs_get(xs, 'thetamax');    
-%     dtheta      = xs_get(xs, 'dtheta');
+    dtheta      = xs_get(xs, 'dtheta');
 end
 
 xfile       = xs_get(xs, 'xfile');
@@ -146,7 +146,7 @@ title('Bathymetric grid')
 legend('location','NorthEast','Bed level','Offshore boundary','Origin')
 colorbar;
 
-% visualize wave directions and directional bins
+% plot thetamin & thetamax
 ax2 = subplot(1,4,4);
 line2 = line([0 sind(thetamin)],[0 cosd(thetamin)]);
 line3 = line([0 sind(thetamax)],[0 cosd(thetamax)]);
@@ -155,21 +155,35 @@ set(line3,'color','r','linewidth',1.5);
 
 legend('location','NorthWest','Thetamin','Thetamax')
 
-arrow([0.8 1],[0.8 1.5],'Length',35,'TipAngle',4,'BaseAngle',30)
-text(0.85,1.3,'N')
-axis equal
-axis([-1 1 -1 1.5])
-hold on 
+% add arrow pointing North
+arrow([0.8 1],[0.8 1.5],'Length',35,'TipAngle',4,'BaseAngle',30);
+text(0.85,1.3,'N');
+axis equal;
+axis([-1 1 -1 1.5]);
+hold on
 
+% add wave angles
 for i = 1:length(wave_angles)
     xw_start  = sind(wave_angles(i));
     xw_end    = sind(wave_angles(i))*0.2;
     yw_start  = cosd(wave_angles(i));
     yw_end    = cosd(wave_angles(i))*0.2;
     
-    arrow([xw_start yw_start],[xw_end yw_end],'Length',10,'TipAngle',10,'BaseAngle',50)
+    arrow([xw_start yw_start],[xw_end yw_end],'Length',10,'TipAngle',10,'BaseAngle',50);
 end
+
+% add theta bins
+ntheta = round(thetamax-thetamin)/dtheta;
+
+if abs(ntheta) > 1
+    if ntheta > 0
+        thetas = (1:(ntheta-1))*dtheta + thetamin;
+    else
+        thetas = (-1:-1:(ntheta+1))*dtheta + thetamin;
+    end
+    line4 = line([zeros(1,length(thetas)); sind(thetas)],[zeros(1,length(thetas)); cosd(thetas)]);
+    set(line4,'color','g');
+end
+
 axis off
 title(['Directional wave grid (thetanaut = ' num2str(thetanaut) ')'])
-
-% plot thetagrid & wave directions
