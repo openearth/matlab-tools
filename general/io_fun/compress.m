@@ -131,12 +131,22 @@ if ~OPT.quiet
 end
 tic
 
-if OPT.gui
-    path7zip      = fullfile(fileparts(mfilename('fullpath')),'private','7z','7z914','7zG.exe');
+if isdeployed
+    basepath = fullfile('7z','7z914');
 else
-    path7zip      = fullfile(fileparts(mfilename('fullpath')),'private','7z','7z914','7z.exe');
+    basepath = fullfile(fileparts(mfilename('fullpath')),'private','7z','7z914');
+end
+
+if OPT.gui
+    path7zip      = fullfile(basepath,'7zG.exe');
+else
+    path7zip      = fullfile(basepath,'7z.exe');
 end
 % 7za a -t7z files.7z *.txt
+
+if ~exist(path7zip,'file')
+    error('compress:exe not found:7Zip executable not found at %s',path7zip)
+end
 
 fileNameIn    = sprintf('"%s" ',fileNameIn{:});
 
