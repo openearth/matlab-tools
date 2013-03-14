@@ -23,7 +23,7 @@ OPT.lowestLevel      = 15; % determines the size of the most detailled tile.
                 % more tiles are needed to cover the area. typical values
                 % are ~17 for 1m resolution and ~13 for 20m resolution. 
                 % calculate reolution in m of the tileset with 
-                % (earth circumference) 4^7 / OPT.dim / OPT.lowestLevel
+                % (earth circumference) 4e7 / OPT.dim / 2^OPT.lowestLevel
 OPT.z_scale_factor   = 1;
 OPT.lighting_effects = true;
 OPT.lightingLevel    = []; % this sets the scale of the lighting of details.
@@ -71,12 +71,12 @@ if ~exist(OPT.path_kml,'dir')
 end
 
 %% get all unique times
-times = [];
+unique_times = [];
 for ii = 1:length(netcdf_index.urlPath)
-    times = [times; ncread_cf_time(netcdf_index.urlPath{ii},netcdf_index.var_t)];
+    unique_times = [unique_times; ncread_cf_time(netcdf_index.urlPath{ii},netcdf_index.var_t)];
 end
-times = unique(times);
-times(times < OPT.timerange(1) | times > OPT.timerange(2)) = [];
+unique_times = unique(unique_times);
+unique_times(unique_times < OPT.timerange(1) | unique_times > OPT.timerange(2)) = [];
 
 
 %% determine timesteps already completed, and skip those
@@ -89,15 +89,15 @@ if ~isempty({D(2:end).name})
 else
     completed_dates = [];
 end
-times(ismember(times,completed_dates)) = [];
+unique_times(ismember(unique_times,completed_dates)) = [];
 
-if isempty(times)
+if isempty(unique_times)
     return
 end
 
-time_str = datestr(times,OPT.dateStrStyle);
+time_str = datestr(unique_times,OPT.dateStrStyle);
 
-for ii = 1:length(times)
+for ii = 1:length(unique_times)
     dirname = fullfile(OPT.path_kml,time_str(ii,:));
     if ~exist(dirname,'dir')
         mkpath(dirname)
@@ -113,7 +113,7 @@ tile_folders(1) = []; % remove basedir
 for ii = 1:length(tile_folders)
     tile_folders(ii).folderdate = datenum(tile_folders(ii).name,OPT.dateStrStyle);
 end
-tile_folders([tile_folders.folderdate] > min(times)) = [];
+tile_folders([tile_folders.folderdate] > min(unique_times)) = [];
 [~,ind] = sort([tile_folders.folderdate]); %newest last
 tile_folders = tile_folders(ind);
 previous_tiles = struct('name',{},'date',{},'bytes',{},'isdir',{},'datenum',{},'pathname',{},'folderdate',{});
@@ -129,7 +129,7 @@ end
 previous_tiles = previous_tiles(ind);
 
 %% generate list of files to print
-tiles = findAllTiles(netcdf_index,OPT.lowestLevel,[min(times) max(times)]);
+tiles = findAllTiles(netcdf_index,OPT.lowestLevel,[min(unique_times) max(unique_times)]);
 
 %% other preparations
 fig = make_figure(...
@@ -152,19 +152,17 @@ multiWaitbar('Generating tiles','reset','color',[.6 0 .2])
 %% start loop
 for ii = 1:length(tiles)
     multiWaitbar('Generating tiles',(ii-1) / length(tiles),'label',sprintf('Generating tile: %s',tiles(ii).code))
-    try
-        data = ncgentools_get_data_in_box(netcdf_index,...
-            't_range',[min(times) max(times)],...
-            'x_range',x_range(ii,:),...
-            'y_range',y_range(ii,:),...
-            'x_stride',1,...
-            'y_stride',1,...
-            'include_latlon',true,...
-            't_method','all_in_range');
-        data.z = data.z * OPT.z_scale_factor;
-    catch
-        wtf=true
-    end
+
+    data = ncgentools_get_data_in_box(netcdf_index,...
+        't_range',[min(unique_times) max(unique_times)],...
+        'x_range',x_range(ii,:),...
+        'y_range',y_range(ii,:),...
+        'x_stride',1,...
+        'y_stride',1,...
+        'include_latlon',true,...
+        't_method','all_in_range');
+    data.z = data.z * OPT.z_scale_factor;
+
     if all(isnan(data.z(:)))
         returnmessage(OPT.debug,'%s skipped\n',tiles(ii).code)
         continue
@@ -173,7 +171,8 @@ for ii = 1:length(tiles)
         data.lon = data.lon - tiles(ii).W;
         set(fig.ha,'YLim',[0 tiles(ii).N-tiles(ii).S]+delta,'XLim',[0 tiles(ii).E-tiles(ii).W]+delta,'zlim',[min(data.z(:))-1 max(data.z(:))+1])
         
-        % look for a the newest previously made tile with that name
+        % look for a the newest previously made tile with that name. Load
+        % this tile and use this to fill the data gaps where possible.
         % otherwise make a fully transparent background image to start from
         previous_tiles_ind = strcmp({previous_tiles.name},[tiles(ii).code '.png']);
         if any(previous_tiles_ind)
@@ -187,13 +186,9 @@ for ii = 1:length(tiles)
         for iTime = find(~squeeze(all(all(isnan(data.z),1))))'
             set(fig.hp,'ZData',data.z(:,:,iTime),'XData',data.lon,'YData',data.lat)
             % print tile
-            try
-                [im,mask] = print_tile(fig,OPT.dim,OPT.dimExt,...
-                    fullfile(OPT.path_kml,time_str(times==data.t(iTime),:),[tiles(ii).code '.png']),...
-                    OPT.bgcolor,OPT.filledInTime,im,mask,OPT.debug,[tiles(ii).code '/' time_str(times==data.t(iTime),:)]);
-            catch
-                wtf=true;
-            end
+            [im,mask] = print_tile(fig,OPT.dim,OPT.dimExt,...
+                fullfile(OPT.path_kml,time_str(unique_times==data.t(iTime),:),[tiles(ii).code '.png']),...
+                OPT.bgcolor,OPT.filledInTime,im,mask,OPT.debug,[tiles(ii).code '/' time_str(unique_times==data.t(iTime),:)]);
         end
     end
 end
@@ -443,14 +438,17 @@ else
     end
 end
 
-% now move image around to color transparent pixels with the value of the
-% nearest neighbour.
+% now shift image around to color transparent pixels with the maximum value
+% of its neighbours. This is done to make the image look better when it is
+% compressed in google earth (because otherwise the background colour of
+% the transparent pixels is merged with the visible pixels
 im2       = im;
 im2(mask) = 0;
-im2 = bsxfun(@max,bsxfun(@max,im2([1 1:end-1],[1 1:end-1],1:3),im2([2:end end],[1 1:end-1],1:3)),...
+im2 = ...
+    bsxfun(@max,bsxfun(@max,im2([1 1:end-1],[1 1:end-1],1:3),im2([2:end end],[1 1:end-1],1:3)),...
     bsxfun(@max,            im2([2:end end],[2:end end],1:3),im2([1 1:end-1],[2:end end],1:3)));
 im(mask) = im2(mask);
-% Also move alpha channel around to color
+% Also shift alpha channel around to color
 % transparent pixels
 imwrite(im,PNGfileName,'Alpha',ones(size(mask(:,:,1))).*(1-double(all(mask,3))),...
     'Author','$HeadURL$'); % NOT 'Transparency' as non-existent pixels have alpha = 0
