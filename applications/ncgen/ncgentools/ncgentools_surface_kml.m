@@ -161,35 +161,58 @@ for ii = 1:length(tiles)
         'y_stride',1,...
         'include_latlon',true,...
         't_method','all_in_range');
+    
+    if ~isfield(data,'t')
+        returnmessage(OPT.debug,'%s skipped\n',tiles(ii).code)
+        continue
+    end
+    
+    % only keep data for the unique_times that still need to be processed:
+    times_not_processed_ind = ismember(data.t,unique_times);
+    if ~any(times_not_processed_ind)
+        returnmessage(OPT.debug,'%s skipped\n',tiles(ii).code)
+        continue
+    end
+    data.t = data.t(times_not_processed_ind);
+    data.z = data.z(:,:,times_not_processed_ind);
+    
     data.z = data.z * OPT.z_scale_factor;
 
     if all(isnan(data.z(:)))
         returnmessage(OPT.debug,'%s skipped\n',tiles(ii).code)
         continue
+    end
+    
+    data.lat = data.lat - tiles(ii).S;
+    data.lon = data.lon - tiles(ii).W;
+    set(fig.ha,'YLim',[0 tiles(ii).N-tiles(ii).S]+delta,'XLim',[0 tiles(ii).E-tiles(ii).W]+delta,'zlim',[min(data.z(:))-1 max(data.z(:))+1])
+    
+    % look for a the newest previously made tile with that name. Load
+    % this tile and use this to fill the data gaps where possible.
+    % otherwise make a fully transparent background image to start from
+    previous_tiles_ind = strcmp({previous_tiles.name},[tiles(ii).code '.png']);
+    if any(previous_tiles_ind)
+        [im,~,alpha] = imread([previous_tiles(previous_tiles_ind).pathname previous_tiles(previous_tiles_ind).name]);
+        mask = repmat(alpha==0,[1 1 3]);
     else
-        data.lat = data.lat - tiles(ii).S;
-        data.lon = data.lon - tiles(ii).W;
-        set(fig.ha,'YLim',[0 tiles(ii).N-tiles(ii).S]+delta,'XLim',[0 tiles(ii).E-tiles(ii).W]+delta,'zlim',[min(data.z(:))-1 max(data.z(:))+1])
-        
-        % look for a the newest previously made tile with that name. Load
-        % this tile and use this to fill the data gaps where possible.
-        % otherwise make a fully transparent background image to start from
-        previous_tiles_ind = strcmp({previous_tiles.name},[tiles(ii).code '.png']);
-        if any(previous_tiles_ind)
-            [im,~,alpha] = imread([previous_tiles(previous_tiles_ind).pathname previous_tiles(previous_tiles_ind).name]);
-            mask = repmat(alpha==0,[1 1 3]);
-        else
-            im   = zeros(OPT.dim,OPT.dim,3,'uint8');
-            mask = true(OPT.dim,OPT.dim,3);
-        end
-        
-        for iTime = find(~squeeze(all(all(isnan(data.z),1))))'
-            set(fig.hp,'ZData',data.z(:,:,iTime),'XData',data.lon,'YData',data.lat)
-            % print tile
-            [im,mask] = print_tile(fig,OPT.dim,OPT.dimExt,...
-                fullfile(OPT.path_kml,time_str(unique_times==data.t(iTime),:),[tiles(ii).code '.png']),...
-                OPT.bgcolor,OPT.filledInTime,im,mask,OPT.debug,[tiles(ii).code '/' time_str(unique_times==data.t(iTime),:)]);
-        end
+        im   = zeros(OPT.dim,OPT.dim,3,'uint8');
+        mask = true(OPT.dim,OPT.dim,3);
+    end
+    
+    for iTime = find(~squeeze(all(all(isnan(data.z),1))))'
+        set(fig.hp,'ZData',data.z(:,:,iTime),'XData',data.lon,'YData',data.lat)
+        % print tile
+        [im,mask] = print_tile(...
+            fig,...
+            OPT.dim,...
+            OPT.dimExt,...
+            fullfile(OPT.path_kml,time_str(unique_times==data.t(iTime),:),[tiles(ii).code '.png']),...
+            OPT.bgcolor,...
+            OPT.filledInTime,...
+            im,...
+            mask,...
+            OPT.debug,...
+            [tiles(ii).code '/' time_str(unique_times==data.t(iTime),:)]);
     end
 end
 multiWaitbar('Generating tiles',1)
