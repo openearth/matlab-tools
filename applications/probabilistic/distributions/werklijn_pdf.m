@@ -1,14 +1,26 @@
-function P = werklijn_pdf(X, a, b)
+function P = werklijn_pdf(X, A)
 % pdf according to "werklijn"  
 % probability is translated to frequency.
-% X is a linear function of log(frequency)
+% X is a piece-wise linear function of log(frequency)
 
 % input
 %   X:    x-value
-%   a,b:  parameters of the linear relation
+%   A:  parameters of the werklijn
 %
 % output
 %   P:    probability density
 
-% transform probability of non-exceedance frequency of exceedance
-P = werklijn_cdf(X, a, b).*exp(-(X-b)./a).*(1./a);
+% read input parameters
+nL = size(A,1);    % number of connecting points of piece-wise relation
+a = A(:,3);        
+b = A(:,4);        
+XL = [A(:,1); inf];   % limits of piece-wise relation
+
+% derive P-values
+P = NaN(size(X));
+for j=1:nL
+    index = X>=XL(j) & X<XL(j+1);
+    P(index) = werklijn_cdf(X(index), A).*exp(-(X(index)-b(j))./a(j)).*(1./a(j));
+end
+
+% density
