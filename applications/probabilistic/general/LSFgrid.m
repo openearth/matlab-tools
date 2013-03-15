@@ -12,9 +12,11 @@ function [U1,U2,Z] = LSFgrid(varargin)
 %   varargin = series of keyword-value pairs to set properties
 %
 %   output:
-%   result = structure with settings, input and output
+%   U1 matrix with values in the standard normal space of the first variable
+%   U2 matrix with values in the standard normal space of the first variable
+%   Z matrix with vales of the limit state function
 %
-%   See also setproperty exampleStochastVar
+%   The matrices U1, U2 and Z correspond to each other
 
 %% Copyright notice
 %   --------------------------------------------------------------------
