@@ -233,7 +233,7 @@ if isnumeric(value)
         case{'real','double'}
             if length(value)>1
                 % Vector
-                if ~isempty(fmt)
+                if isempty(fmt)
                     fmt='%0.3f';
                 end
                 value=num2str(value,[fmt ',']);                
