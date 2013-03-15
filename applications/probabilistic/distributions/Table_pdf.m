@@ -69,30 +69,20 @@ end
 %% remove zeros
 xt = XP(:,1);
 pt = XP(:,2);
-if Logyn
-   pt=log(pt);    
-end
 
-% constants 
-% a = diff(pt)./diff(xt);
-% if Logyn
-%    b = pt(1:end-1)-a.*xt(1:end-1);
-%    pt2=a.*exp(b+a.*xt(1:end-1));
-%    P1 = interp1(xt(1:end-1), pt2, X);  
-%    P2 = interp1(xt(2:end), pt2, X); 
-% else
-%    P1 = interp1(xt(1:end-1), a, X);
-%    P2 = interp1(xt(2:end), a, X);
-% end
-% P = 0.5*(P1+P2);
-% 
+if Logyn
+    ind0 = pt==0;
+    pt(ind0)=[];
+    xt(ind0)=[];
+    pt=log(pt);
+end
 
 a = diff(pt)./diff(xt);
 a = 0.5*([0; a] + [a; 0]);
 if Logyn
    b = pt-a.*xt;
    pt2=a.*exp(b+a.*xt);
-   P = interp1(xt, pt2, X);  
+   P = interp1(xt, pt2, X);
 else
    P = interp1(xt, a, X);
 end
