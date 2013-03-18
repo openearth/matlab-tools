@@ -1,4 +1,4 @@
-function [z] = LSFpoint(varargin)
+function [z x_var1] = LSFpoint(varargin)
 %
 %   This routine evaluates the 'x2zFunction' at the specified values of the
 %   indicated stochastic variables. The other stochastic variables are set 
@@ -105,3 +105,4 @@ end
 
 % derive z
 z = prob_zfunctioncall(OPT, OPT.stochast, x);
+x_var1 = x(ind(1));
