@@ -125,7 +125,7 @@ if optie == 2;
         yc = yc';
     end
     
-    % Extrapolatie boundaries: boundary conditions given at cell centers
+    % Extrapolate boundaries: boundary conditions given at cell centers
     xc(1  , : ) = 2.*xc(2  , : ) - xc(3  , : );
     yc(1  , : ) = 2.*yc(2  , : ) - yc(3  , : );
     xc( : ,1  ) = 2.*xc( : ,2  ) - xc( : ,3  );
@@ -251,8 +251,9 @@ for i=1:size(list,1);
 end
 
 % Write pli-file into the listbox
-set(handles.listbox4 ,'String', plifile          );    % for bct-files
+set(handles.listbox13,'String', plifile          );    % for bct-files
 set(handles.listbox8 ,'String', plifile          );    % for bca-files
+set(handles.listbox15,'String', plifile          );    % for bct-files
 set(handles.listbox10,'String',[         salfile]);    % for bcc-files
 set(handles.listbox5 ,'String',[plifile; salfile]);    % for ext-file
 

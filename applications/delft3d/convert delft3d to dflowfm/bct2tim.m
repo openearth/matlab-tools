@@ -22,18 +22,18 @@ if exist(pathout,'dir')==0;
 end
 
 % Name bct-file
-bctid                    = get(handles.listbox3,'Value');
-bctentry                 = get(handles.listbox3,'String');
+bctid                    = get(handles.listbox12,'Value');
+bctentry                 = get(handles.listbox12,'String');
 bctshort                 = bctentry(bctid,:);
 bctshort(bctshort==' ')  = [];
 bctshort(end-3:end)      = [];
 ddbct                    = [pathin,'/',bctshort,'.bct'];
 
 % Name pli-file
-pliid       = get(handles.listbox4,'Value');
+pliid       = get(handles.listbox13,'Value');
 aantpli     = length(pliid);
 for i=1:aantpli;
-    plientry                     = get(handles.listbox4,'String');
+    plientry                     = get(handles.listbox13,'String');
     plishortls                   = plientry(pliid(i),:);
     plishortls(plishortls==' ')  = [];
     plishortls(end-3:end)        = [];

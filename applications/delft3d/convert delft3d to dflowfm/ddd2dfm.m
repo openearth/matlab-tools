@@ -22,7 +22,7 @@ function varargout = ddd2dfm(varargin)
 
 % Edit the above text to modify the response to help ddd2dfm
 
-% Last Modified by GUIDE v2.5 08-Mar-2013 19:32:15
+% Last Modified by GUIDE v2.5 11-Mar-2013 21:10:17
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -301,24 +301,30 @@ end
 % Enable the listboxes
 set(handles.listbox1 ,'Enable','on');
 set(handles.listbox2 ,'Enable','on');
-set(handles.listbox3 ,'Enable','on');
-set(handles.listbox4 ,'Enable','on');
 set(handles.listbox5 ,'Enable','on');
 set(handles.listbox7 ,'Enable','on');
 set(handles.listbox8 ,'Enable','on');
 set(handles.listbox9 ,'Enable','on');
 set(handles.listbox10,'Enable','on');
+set(handles.listbox11,'Enable','on');
+set(handles.listbox12,'Enable','on');
+set(handles.listbox13,'Enable','on');
+set(handles.listbox14,'Enable','on');
+set(handles.listbox15,'Enable','on');
 
 % Empty the listboxes
 set(handles.listbox1 ,'String',' ');
 set(handles.listbox2 ,'String',' ');
-set(handles.listbox3 ,'String',' ');
-set(handles.listbox4 ,'String',' ');
 set(handles.listbox5 ,'String',' ');
 set(handles.listbox7 ,'String',' ');
 set(handles.listbox8 ,'String',' ');
 set(handles.listbox9 ,'String',' ');
 set(handles.listbox10,'String',' ');
+set(handles.listbox11,'String',' ');
+set(handles.listbox12,'String',' ');
+set(handles.listbox13,'String',' ');
+set(handles.listbox14,'String',' ');
+set(handles.listbox15,'String',' ');
 
 % Empty the edit boxes
 set(handles.edit3,'String','');
@@ -329,19 +335,26 @@ set(handles.edit6,'String','');
 % Select first entry
 set(handles.listbox1 ,'Value',1);
 set(handles.listbox2 ,'Value',1);
-set(handles.listbox3 ,'Value',1);
-set(handles.listbox4 ,'Value',1);
 set(handles.listbox5 ,'Value',1);
 set(handles.listbox7 ,'Value',1);
 set(handles.listbox8 ,'Value',1);
 set(handles.listbox9 ,'Value',1);
 set(handles.listbox10,'Value',1);
+set(handles.listbox11,'Value',1);
+set(handles.listbox12,'Value',1);
+set(handles.listbox13,'Value',1);
+set(handles.listbox14,'Value',1);
+set(handles.listbox15,'Value',1);
 
 % Enable pushbuttons
-set(handles.pushbutton3 ,'Enable','on');
-set(handles.pushbutton4 ,'Enable','on');
-set(handles.pushbutton7 ,'Enable','on');
-set(handles.pushbutton8 ,'Enable','on');
+set(handles.pushbutton3 ,'Enable','on');  % bnd2pli
+set(handles.pushbutton5 ,'Enable','on');  % pli2ext
+set(handles.pushbutton6 ,'Enable','on');  % mdf2mdu
+set(handles.pushbutton7 ,'Enable','on');  % bca2cmp
+set(handles.pushbutton8 ,'Enable','on');  % bcc2tim
+set(handles.pushbutton10,'Enable','on');  % grd2net
+set(handles.pushbutton11,'Enable','on');  % bct2tim
+set(handles.pushbutton12,'Enable','on');  % bch2cmp
 
 % Fill listboxes
 dir2fil;
@@ -463,8 +476,8 @@ bnd2pli;
 
 
 % --- Executes on button press in pushbutton4.
-function pushbutton4_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton4 (see GCBO)
+function pushbutton11_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton11 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
@@ -531,6 +544,15 @@ function pushbutton10_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 grd2net;
+
+
+% --- Executes on button press in pushbutton12.
+function pushbutton12_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton12 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+bch2cmp;
 
 
 function edit5_Callback(hObject, eventdata, handles)
@@ -637,6 +659,121 @@ function listbox10_Callback(hObject, eventdata, handles)
 % --- Executes during object creation, after setting all properties.
 function listbox10_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to listbox10 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: listbox controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on selection change in listbox11.
+function listbox11_Callback(hObject, eventdata, handles)
+% hObject    handle to listbox11 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns listbox11 contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from listbox11
+
+
+% --- Executes during object creation, after setting all properties.
+function listbox11_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to listbox11 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: listbox controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on selection change in listbox12.
+function listbox12_Callback(hObject, eventdata, handles)
+% hObject    handle to listbox12 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns listbox12 contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from listbox12
+
+
+% --- Executes during object creation, after setting all properties.
+function listbox12_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to listbox12 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: listbox controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on selection change in listbox13.
+function listbox13_Callback(hObject, eventdata, handles)
+% hObject    handle to listbox13 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns listbox13 contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from listbox13
+
+
+% --- Executes during object creation, after setting all properties.
+function listbox13_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to listbox13 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: listbox controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on selection change in listbox14.
+function listbox14_Callback(hObject, eventdata, handles)
+% hObject    handle to listbox14 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns listbox14 contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from listbox14
+
+
+% --- Executes during object creation, after setting all properties.
+function listbox14_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to listbox14 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: listbox controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on selection change in listbox15.
+function listbox15_Callback(hObject, eventdata, handles)
+% hObject    handle to listbox15 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns listbox15 contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from listbox15
+
+
+% --- Executes during object creation, after setting all properties.
+function listbox15_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to listbox15 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 

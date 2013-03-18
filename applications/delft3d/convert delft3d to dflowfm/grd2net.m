@@ -71,56 +71,68 @@ M           = MN(1);
 N           = MN(2);
 fclose(fid);
 
-% Choose option
-optie       = 2;
+% Read the grid
+G           = delft3d_io_grd('read',ddgrid);
+xh          = G.cor.x;
+yh          = G.cor.y;
+xc          = G.cend.x;
+yc          = G.cend.y;
 
-% Read the grid: own style
-if optie == 1;
-    fid         = fopen(ddgrid,'r');
-    etarij      = 0;
-    eta         = zeros(M,N);
-    J           = ceil(M/5);
-    for i=1:startgrid+1;
-        tline   = fgetl(fid);
-    end
-    for k=1:2;
-        for i=1:N;
-            for j=1:J;
-                tline            = fgetl(fid);
-                if strcmp(tline(1:4),'ETA=');
-                    teller       = str2num(tline(6:10));
-                end
-                leeseta          = str2num(tline(13:end));
-                etarij           = [etarij leeseta];
-                if j==J;
-                    etarij(1)    = [];
-                    eta(:,i,k)   = etarij;
-                    etarij       = 0;
-                end
-            end
-        end
-    end
-    xh              = eta(:,:,1);
-    yh              = eta(:,:,2);
-    xh(xh==0)       = NaN;
-    yh(yh==0)       = NaN; 
+% Check coordinate system
+if strcmp(G.CoordinateSystem,'Spherical');
+    spher   = 1;
+else
+    spher   = 0;
 end
 
-% Read the grid: OET-style
-if optie == 2;
-    G           = delft3d_io_grd('read',ddgrid);
-    xh          = G.cor.x;
-    yh          = G.cor.y;
+% Transpose the grid (x and y) if the sizes do not match with read M and N (the latter match with the bnd!)
+if size(xh,1)~=M+1 & size(xh,2)~=N+1 & size(yh,1)~=M+1 & size(yh,2)~=N+1;
+    xh = xh';
+    yh = yh';
+    xc = xc';
+    yc = yc';
+end
+
+% Extrapolate boundaries: boundary conditions given at cell centers
+xc(1  , : ) = 2.*xc(2  , : ) - xc(3  , : );
+yc(1  , : ) = 2.*yc(2  , : ) - yc(3  , : );
+xc( : ,1  ) = 2.*xc( : ,2  ) - xc( : ,3  );
+yc( : ,1  ) = 2.*yc( : ,2  ) - yc( : ,3  );
+xc(M+1, : ) = 2.*xc(M  , : ) - xc(M-1, : );
+yc(M+1, : ) = 2.*yc(M  , : ) - yc(M-1, : );
+xc( : ,N+1) = 2.*xc( : ,N  ) - xc( : ,N-1);
+yc( : ,N+1) = 2.*yc( : ,N  ) - yc( : ,N-1);
+
+% Read the depth data
+depthid                     = get(handles.listbox11,'Value');
+depthentry                  = get(handles.listbox11,'String');
+depthentry(depthentry==' ') = [];
+jabodem                     = ~isempty(depthentry);
+if jabodem == 1;
+    % Read the filename of the depth file
+    depthid                     = get(handles.listbox11,'Value');
+    depthentry                  = get(handles.listbox11,'String');
+    depthshort                  = depthentry(depthid,:);
+    depthshort(depthshort==' ') = [];
+    depthshort(end-3:end)       = [];
     
-    % Transpose the grid (x and y) if the sizes do not match with read M and N (the latter match with the bnd!)
-    if size(xh,1)~=M+1 & size(xh,2)~=N+1 & size(yh,1)~=M+1 & size(yh,2)~=N+1;
-        xh = xh';
-        yh = yh';
-    end
+    % Set file name of the depth file
+    depdata      = [pathin,'/',depthshort,'.dep'];
+    
+    % Use 'wldep'-script
+    depthdat     = wldep('read',depdata,[M+1 N+1],'multiple');
+    zh           = depthdat.Data;
+    zh(zh==-999) = NaN;
+    zh           = -zh;
+    zh(end,:  )  = [];
+    zh(:  ,end)  = [];
+else
+    % Set bottom to dummy value of -5.0 m w.r.t. reference (also default in mdu)
+    zh           = -5.0.*ones(size(xh,1),size(xh,2));
 end
 
-% Write net-file
-dflowfm.writeNet(netfile,xh,yh);
+% Write netCDF-file
+net2cdf;
 
 % Message
 msgbox('The net file has been written.','Message');

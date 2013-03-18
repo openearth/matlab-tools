@@ -66,54 +66,29 @@ end
 fclose all;
 
 % Read the bca-file
-fid1        = fopen(ddbca,'r');
-I           = 1e8;
-J           = 1e2;
-teller      = 1;
-tellerA     = 1;
-tellerB     = 2;
-tline       = fgetl(fid1);
-for i=1:I;
-    if tline < 0;
-        break;
-    end
-    tline   = textscan(tline,'%s%f%f');
-    if isempty(tline{2}) & isempty(tline{3});
-        location             = tline{1};
-        if strcmp(location,loc{teller});
+bcadata     = delft3d_io_bca('read',ddbca);
+
+% Fill the cmp-files
+for teller=1:length(loc);
+    for i=1:length(bcadata.DATA);
+        if strcmp(loc{teller},bcadata.DATA(i).label);
             namecmp          = [pathout,'/',plibasis,'_',num2str(perm(teller,1),'%0.2d'),'_',num2str(perm(teller,2),'%0.4d'),'.cmp'];
             namecmp          = fopen(namecmp,'wt');
-            for j=1:J;   
-                tline        = fgetl(fid1);
-                if tline < 0;
-                    break;
-                end
-                test         = textscan(tline,'%s%f%f');
-                if isempty(test{2}) & isempty(test{3});
-                    break;
-                end
-                information  = tline;
+            fprintf(namecmp,['* COLUMNN=3','\n']);
+            fprintf(namecmp,['* COLUMN1=Period (min) or Astronomical Componentname','\n']);
+            fprintf(namecmp,['* COLUMN2=Amplitude (ISO)','\n']);
+            fprintf(namecmp,['* COLUMN3=Phase (deg)','\n']);
+            for j=1:length(bcadata.DATA(i).names);
+                information  = [cell2mat(bcadata.DATA(i).names(j))     ,'    ', ...
+                                num2str(bcadata.DATA(i).amp(j),'%7.7f'),'    ', ...
+                                num2str(bcadata.DATA(i).phi(j),'%7.7f') ];
                 fprintf(namecmp,[information,'\n']);
             end
-            teller           = teller + 1;
-            if teller > size(perm,1);
-                break;
-            end
             fclose(namecmp);
-        else
-            tline   = fgetl(fid1);
-            if tline < 0;
-                break;
-            end
         end
-    else
-        tline       = fgetl(fid1);
-        if tline < 0;
-            break;
-        end
+        continue;
     end
 end
-fclose all;
 
 % Message
 msgbox('Component files have succesfully been generated.','Message');
