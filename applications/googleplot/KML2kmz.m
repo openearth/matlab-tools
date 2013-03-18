@@ -11,7 +11,8 @@ function varargout = KML2kmz(varargin)
 %
 %    will create 'release.kmz' with inside {release.kml','icon_file.png','figure_file.png','logo_file.png'}
 %
-% The original kml_file is left inact.
+% The original kml_file is left inact. urls are copied into the zip file,
+% unless when they're offline.
 %
 % For more info: http://code.google.com/intl/nl/apis/kml/documentation/kmzarchives.html
 %
@@ -77,12 +78,28 @@ function varargout = KML2kmz(varargin)
 
 %% check
 
-ii = strmatch('.kml',cellfun(@(x)fileext(x),all_files,'UniformOutput',0));
-n = length(ii);
+ind = strmatch('.kml',cellfun(@(x)fileext(x),all_files,'UniformOutput',0));
+n = length(ind);
    if n > 1
-      char(all_files{ii})
+      char(all_files{ind})
       error(['Each *.kmz may contain only one *.kml (with can have arbitrary name), whereas yours has ',num2str(n),' *.kml files.'])
    end
+   
+%% download urls
+
+   ind = cell2mat(cellfun(@(x)isurl(x),all_files,'UniformOutput',0));
+   empty = [];
+   for i=find(ind)
+       tempfile = [tempdir filesep filenameext(all_files{i})];
+       try
+       urlwrite(all_files{i},tempfile);
+       all_files{i} = tempfile;
+       catch
+       empty = [empty i];
+       disp(['skipped offline ',all_files{i}])
+       end
+   end
+   all_files(empty) = [];
 
 %% go
 
