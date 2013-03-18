@@ -22,4 +22,8 @@ y = [y(:); y(1)];
  % Calculate contour integral Int -y*dx  (same as Int x*dy).
  
 lx = length(x);
+if isfloat(x) && isfloat(y) 
 a  = -(x(2:lx)-x(1:lx-1))'*(y(1:lx-1)+y(2:lx))/2;
+else % mtimes can not handle ints: return double
+a  = -sum((x(2:lx)-x(1:lx-1)).*(y(1:lx-1)+y(2:lx)))/2;
+end

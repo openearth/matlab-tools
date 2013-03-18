@@ -104,7 +104,6 @@ function varargout = fft_anal(varargin)
    
    
 %% Arguments in
-%% ------------------------
 
    x          = varargin{1};
    if length(varargin{2})==1
@@ -123,15 +122,13 @@ function varargout = fft_anal(varargin)
    end
    
 %% Error handling
-%% ------------------------
 
    if ~(length(x)==length(t))
       error('length signal and time vector should be equal')
    end
       
 %% FFT
-%% ------------------------
-   
+  
    % Use next highest power of 2 greater than or equal to 
    % length(x) to calculate FFT. 
    if OPT.padwithzeros
@@ -145,7 +142,6 @@ function varargout = fft_anal(varargin)
    FFTX = fft(x,NFFT); 
    
    % Transform back with selected components (Nyquist still fuzzy)
-   % ------------------------
 
       if ~isnan(n)
 
@@ -189,8 +185,7 @@ function varargout = fft_anal(varargin)
    
             [amplitudes1,phases1] = fftx2amplitudes_phases(FFTX1,NFFT,length(x));
 
-            %% Transform back to signal suing only required components
-            %% ------------------------
+            %% Transform back to signal using only required components
             
          else
             
@@ -199,9 +194,8 @@ function varargout = fft_anal(varargin)
          end
    
 %% Scale FFT results
-%% ------------------------
 
-   % Calculate the numberof unique points 
+   % Calculate the number of unique points 
    NumUniquePts = ceil((NFFT+1)/2); 
    
    % FFT is symmetric, throw away second half 
@@ -214,7 +208,6 @@ function varargout = fft_anal(varargin)
    f = (0:NumUniquePts-1)*Fs/NFFT; 
    
 %% Plot for inspection
-%% ------------------------
 
 if OPT.inspection
 
@@ -269,7 +262,6 @@ if OPT.inspection
 end
    
 %% Arguments out
-%% ------------------------
 
    if nargout <2
    S.amplitudes  = amplitudes;
@@ -284,8 +276,6 @@ end
    end
    
 
-%% --------------------------------------------------------------------
-
 function out = odd(in)
 %ODD
 % out = odd(x) is 1 where x is odd.
@@ -293,8 +283,6 @@ function out = odd(in)
 % SEE ALSO: mod, sign
 
 out = mod(in,2)==1;
-
-%% --------------------------------------------------------------------
 
 function [amplitudes,phases] = fftx2amplitudes_phases(FFTX,NFFT,lenght_x)
 
@@ -319,7 +307,7 @@ function [amplitudes,phases] = fftx2amplitudes_phases(FFTX,NFFT,lenght_x)
    %         amplitude by the above amount. 
    %  So can it be concluded that:
    %         Here the signal is padded with zeros so
-   %         it can be divided by the lentgh of the 
+   %         it can be divided by the length of the 
    %         input data.
    
    
@@ -339,6 +327,6 @@ function [amplitudes,phases] = fftx2amplitudes_phases(FFTX,NFFT,lenght_x)
    
    % Nyquist component should also be unique.
    if ~rem(NFFT,2) 
-      % Here NFFT is even; therefore,Nyquist point is included. 
+      % Here NFFT is even; therefore, Nyquist point is included. 
       amplitudes(end) = amplitudes(end)/2; 
    end 

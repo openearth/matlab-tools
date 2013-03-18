@@ -1,5 +1,5 @@
 function varargout = poly_bi_plot(bi,x,y,varargin)
-%bi_plot plot set of 2-node line segments
+%poly_bi_plot plot set of 2-node line segments
 %
 %   poly_bi_plot(bi,x,y,...)
 %
