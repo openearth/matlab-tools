@@ -210,7 +210,10 @@ function D = nc_cf_harvest(ncfiles,varargin)
 
 %% Export to caches   
 
-save D
+   tname = [tempdir,filesep,mfilename];
+   save(tname,'-struct','D'); % in case of failure below keep something
+   disp(['cached results to ',tname])
+   
 
    if ~isempty(OPT.catalog.mat)
       save(OPT.catalog.mat,'-struct','D');
