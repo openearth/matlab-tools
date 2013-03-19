@@ -11,9 +11,9 @@
 
 %% Initialize
 
-   OPT.download       = 1; % get fresh downloads from rws and move exisitng to sub dir old
-   OPT.make_nc        = 1; % makes also temporary mat files, moves exisiting nc to old subdir
-   OPT.make_catalog   = 1; % otherwise load existing one
+   OPT.download       = 0; % get fresh downloads from rws and move exisitng to sub dir old
+   OPT.make_nc        = 0; % makes also temporary mat files, moves exisiting nc to old subdir
+   OPT.make_catalog   = 0; % otherwise load existing one
    OPT.make_kml       = 1; % processing all kml only takas about 4 hours
    OPT.baseurl        = 'http://live.waterbase.nl';
    OPT.institution    = 'rijkswaterstaat'; % for construcitng relative path
@@ -37,7 +37,7 @@
                     364  380  491  492  493  ... %   P P04 NH4 N02 N03
                     541  560 1083    1  377 ];   % DSe  Si DOC zwl  pH (0=all or select number from 'donar_wnsnum' column in rws_waterbase_name2standard_name.xls)
    
-   donar_wnsnum = [44 559] % Use this if you want only an update of one some specific parameter.
+   donar_wnsnum = [559 44] % Use this if you want only an update of one some specific parameter.
    % DO get 1 always after 54 to make sure catalog and kml of 1 contains 54 as well.
    
    mfilename('fullpath')
@@ -115,10 +115,11 @@
    if OPT.make_catalog
    CATALOG = nc_cf_harvest(OPT.directory_nc,...             % dir where to READ netcdf
                     'featuretype','timeseries',...
-                          'debug',Inf,...
+                          'debug',[],...
                      'catalog.nc',[OPT.directory_nc ,'catalog.nc'],...  % dir where to SAVE catalog
                     'catalog.xml',[OPT.directory_xml,OPT.institution,'_',mkvar(OPT.dataset),'_',subdir,'.xml'],... % dir where to SAVE catalog
                     'catalog.xls',[OPT.directory_nc ,'catalog.xls'],... % dir where to SAVE catalog
+                    'catalog.mat',[OPT.directory_nc ,'catalog.mat'],... % dir where to SAVE catalog
                      'urlPathFcn',@(s) path2os(strrep(s,ncbase,urlbase),'h'),... % dir where to LINK to for netCDF
                            'disp','multiWaitbar',...
                              'ID',[OPT.institution,'/',mkvar(OPT.dataset),'/',subdir],...
@@ -151,26 +152,32 @@
 	                             '<tr><td    bgcolor="#FFFFFF">data distributor</td><td bgcolor="#FFFFFF">http://www.OpenEarth.eu</td>',...
 	                             '</tr></tbody></table><hr>'];
       
-      OPT2.name               = OPT.name;
-      
       OPT2.lon                = 1;
       OPT2.lat                = 54;
       OPT2.z                  = 100e4;
-      OPT2.varname            = subdir;
       
-      OPT2.logokmlName        = {'Rijkswaterstaat logo','OpenEarth logo'};
-      OPT2.overlayXY          = {[.5 1],[0 0.00]};
-      OPT2.screenXY           = {[.5 1],[0 0.03]};
+      OPT2.logokmlName        = {}; %{'Rijkswaterstaat logo','OpenEarth logo'};
+      OPT2.overlayXY          = {[.5 1],[0    0.00]};
+      OPT2.screenXY           = {[.5 1],[0.01 0.03]};
       OPT2.imName             = {'http://www.rws.nl/en/images/ENRO_VW_RW~LI.png',[fileparts(oetlogo),filesep,'OpenEarth-logo-blurred-white-background4kml.png'];};
       OPT2.logoName           = {'overheid4GE.png','oet4GE.png'};
       
       OPT2.varPathFcn         = @(s) path2os(strrep(s,urlbase,ncbase),filesep); % use local netCDF files for preview/statistics when CATALOG refers already to server
       OPT2.resolveUrl         = cellfun(@(x) ['http://live.waterbase.nl/waterbase_dbh.cfm?loc=',upper(x),'&page=start.locaties.databeschikbaarheid&taal=nl&loc=&wbwns=',num2str(OPT.donar_wnsnum),'|',strtrim(strrep(OPT.donar_wns_oms,' ','+')),'&whichform=2'],CATALOG.platform_id,'un',0);
       OPT2.resolveName        = 'www.rws.nl (waterbase)';
+
+      OPT2.iconnormalStateScale    = 1;
+      OPT2.iconhighlightStateScale = 1;   
+      OPT2.iconnormalState    = 'http://www.ndbc.noaa.gov//images/maps/markers/tiny_active_marker.png';
+      OPT2.iconhighlightState = 'http://www.ndbc.noaa.gov//images/maps/markers/tiny_active_marker.png';
+
       OPT2.credit             = ' data: www.rws.nl plot: www.OpenEarth.eu';
+      OPT2.varname            = subdir;
+      OPT2.name               = OPT.name;
       OPT2.preview            = 1;
+      OPT2.open               = 0; % too slow
       
-      nc_cf_harvest2kml(CATALOG,OPT2); % inside urlPath is used to read netCDF data for plotting previews
+      nc_cf_harvest_matrix2kml(CATALOG,OPT2); % inside urlPath is used to read netCDF data for plotting previews
       
       close all
       
