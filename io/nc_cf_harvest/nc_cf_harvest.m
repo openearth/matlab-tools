@@ -148,7 +148,7 @@ function D = nc_cf_harvest(ncfiles,varargin)
       ncfiles = opendap_catalog(url);
    end
 
-   if ~isinf(OPT.debug) && ~isempty(OPT.debug) && ~(OPT.debug==0)
+   if ~isempty(OPT.debug) && ~isinf(OPT.debug) && ~(OPT.debug==0)
       ncfiles = {ncfiles{1:min(OPT.debug,length(ncfiles))}};
    end
    n       = length(ncfiles);
