@@ -1,20 +1,22 @@
-function writetekalmap(fname, x, y, z)
+function writetekalmap(fname, x, y, varargin)
 %WRITETEKALMAP One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   writetekalmap(fname, x, y, z)
+%   writetekalmap(fname, x, y, varargin)
 %
 %   Input:
 %   fname =
 %   x     =
 %   y     =
-%   z     =
 %
 %   Example
-%   writetekalmap
-%
+%   [x,y] = meshgrid(1:100,1:50)
+%   zpos = cos(x) + cos(y)
+%   zneg = -zpos
+%   writetekalmap('test.tek',x,y,'xpositive',zpos,'znegative',zneg)
+%   
 %   See also
 
 %% Copyright notice
@@ -62,18 +64,32 @@ function writetekalmap(fname, x, y, z)
 %%
 x(isnan(x))=-999;
 y(isnan(y))=-999;
+
+nin=0;
+for ii=1:length(varargin)
+    if ischar(varargin{ii})
+        nin=nin+1;
+        par{nin}=varargin{ii};
+        z0=varargin{ii+1};
+        z(:,:,nin)=z0;
+    end
+end
+        
 z(isnan(z))=-999;
 
 fid=fopen(fname,'wt');
 
 fprintf(fid,'%s\n','* column 1 : x');
 fprintf(fid,'%s\n','* column 2 : y');
-fprintf(fid,'%s\n','* column 3 : z');
+for ii=1:length(par)
+    fprintf(fid,'%s\n',['* column ' num2str(ii+2) ' : ' par{ii}]);
+end
 fprintf(fid,'%s\n','BL01');
-fprintf(fid,'%i %i %i %i\n',size(x,1)*size(x,2),3,size(x,1),size(x,2));
+fprintf(fid,'%i %i %i %i\n',size(x,1)*size(x,2),2+length(par),size(x,1),size(x,2));
 for j=1:size(x,2)
     for i=1:size(x,1)
-        fprintf(fid,['%12.4e %12.4e %12.4e\n'],x(i,j),y(i,j),z(i,j));
+        zz=z(i,j,:);
+        fprintf(fid,['%14.6e %14.6e ' repmat(' %14.6e',1,length(zz)) '\n'],x(i,j),y(i,j),zz);
     end
 end
 fclose(fid);
