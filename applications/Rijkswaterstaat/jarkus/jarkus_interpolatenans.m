@@ -15,6 +15,12 @@ function transects = jarkus_interpolatenans(transects, varargin)
 %                               (default: cross_shore)
 %                 dim       = dimension to be used for interpolation
 %                               (default: 3)
+%                 method    = interpolation method (default: linear)
+%                 extrap    = boolean indicating whether extrapolation must
+%                               be applied (default: false)
+%                 maxgap    = limit to number of points to interpolate
+%                               (default: Inf). Note: this does not apply
+%                               to points to extrapolate
 %
 %   Output:
 %   transects   = interpolated version of transects struct
@@ -72,7 +78,8 @@ OPT = struct( ...
     'interp', 'cross_shore', ...
     'dim', 3, ...
     'method', 'linear', ...
-    'extrap', false ...
+    'extrap', false,...
+    'maxgap', Inf ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -102,12 +109,40 @@ for i = 1:n
     property = squeeze(transects.(OPT.prop)(coords{:}));
     interpolate = squeeze(transects.(OPT.interp));
     
-    notnan = ~isnan(property);
+    notnan = ~isnan(property(:)); % (:) is to make sure that it results in a column vector
+    
+    if isfinite(OPT.maxgap)
+        % identify the gaps
+        % take the cumulative sum of the inverse mask
+        % the parts in the middle where the cumsum is constant over more
+        % than maxgap must be identified in the final mask
+        csa = cumsum(notnan); % ascending
+        csd = flipud(cumsum(flipud(notnan))); % descending
+        % turn the cumsums to zero at the original points
+        csa(notnan) = 0;
+        csd(notnan) = 0;
+        % count the unique values in the cumsum
+        [n_occurrences, c] = count(csa);
+        % create a mask indicating the groups of nans with more the maxgap
+        % points. The additional requirements of csa and csd to be larger
+        % than zero will prevent the leading and trailing nans to be
+        % masked.
+        mask = ismember(csa, c(n_occurrences>OPT.maxgap)) & csa>0 & csd>0;
+        % update coords with based on the mask
+        coords(OPT.dim) = ~mask;
+    else
+        mask = false(size(notnan));
+    end
     
     if sum(notnan) > 1
+        % apply interp1 along the specified dimension with the given
+        % options
         transects.(OPT.prop)(coords{:}) = interp1(interpolate(notnan), ...
-            property(notnan), interpolate, options{:});
+            property(notnan), interpolate(~mask), options{:});
     elseif OPT.extrap && strcmp(OPT.method, 'nearest') && sum(notnan) == 1
+        % in this case the single available data point in this dimension is
+        % copied along the whole dimension
+        % interp1 cannot deal with only one point
         transects.(OPT.prop)(coords{:}) = deal(property(notnan));
     end
 end

@@ -79,7 +79,8 @@ for idx = 1:length(trh.id)
     id = trh.id(idx);
     tr = jarkus_transects('id', id, 'url', ncfile);
     % interpolate in cross-shore direction
-    tric = jarkus_interpolatenans(tr);
+    tric = jarkus_interpolatenans(tr,...
+        'maxgap', 200);
     % interpolate in time
     trit0 = jarkus_interpolatenans(tric,...
         'interp', 'time',...
