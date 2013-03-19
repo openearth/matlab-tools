@@ -108,7 +108,7 @@ if strcmp(OPT.queuetype,'normal')
 elseif strcmp(OPT.queuetype,'normal-i7')
     fprintf(fid,'qsub -V -N %s -q normal-i7 mpi.sh\n', OPT.name);
 else
-    error(['Unknown queue type [' OPT.mpitype ']. Possible types are: normal & normal-i7']);
+    error(['Unknown queue type [' OPT.queuetype ']. Possible types are: normal & normal-i7']);
 end
 
 fprintf(fid,'exit\n');
@@ -144,7 +144,6 @@ switch upper(OPT.mpitype)
                 error(['Unknown queue type [' OPT.mpitype ']. Possible types are: normal & normal-i7']);
             end
             fprintf(fid,'awk ''{print $1":"1}'' $PE_HOSTFILE > $(pwd)/machinefile\n');
-            %fprintf(fid,'awk ''{print $1":"1}'' $PE_HOSTFILE >> $(pwd)/machinefile\n');
             fprintf(fid,'mpdboot -n $NHOSTS --rsh=/usr/bin/rsh -f $(pwd)/machinefile\n');
             fprintf(fid,'mpirun -np $NSLOTS %s >> %s.log 2>&1\n', OPT.binary, name);
             fprintf(fid,'mpdallexit\n');
