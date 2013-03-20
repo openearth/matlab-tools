@@ -1,5 +1,5 @@
 function T = nc_cf_harvest_tuple_initialize(varargin)
-%NC_CF_HARVEST_TUPLE_INITIALIZE
+%NC_CF_HARVEST_TUPLE_INITIALIZE  pre-allocate meta-data tuple-array
 %
 %   T = nc_cf_harvest_tuple_initialize(<n>)
 %

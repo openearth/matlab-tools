@@ -1,5 +1,5 @@
 function varargout = nc_cf_harvest_matrix2xml(xmlname,D,varargin)
-%nc_cf_harvest_matrix2xml  write nested nc_cf_harvest object to THREDDS catalog.xml
+%nc_cf_harvest_matrix2xml  write nc_cf_harvest object to THREDDS catalog.xml
 %
 % L = opendap_catalog  (opendap_url) % crawl
 % C = nc_cf_harvest    (L)

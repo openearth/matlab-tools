@@ -1,5 +1,5 @@
 function D = nc_cf_harvest_matrix_initialize(varargin)
-%NC_CF_HARVEST_MATRIX_INITIALIZE
+%NC_CF_HARVEST_MATRIX_INITIALIZE  pre-allocate meta-data meta-data struct with matrices
 %
 %See also: nc_cf_harvest
 

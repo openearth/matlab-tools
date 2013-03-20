@@ -1,5 +1,5 @@
 function nc_cf_opendap2catalog2xls(xlsname,ATT,varargin)
-%NC_CF_OPENDAP2CATALOG2xls <{[deprecated]}>
+%nc_cf_harvest_matrix2xls  write nc_cf_harvest object to Excel file
 %
 % deprecated: use nc_cf_harvest2xls
 %

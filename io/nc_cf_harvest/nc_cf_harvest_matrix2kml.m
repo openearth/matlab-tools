@@ -90,12 +90,17 @@ function OPT = nc_cf_harvest_matrix2kml(ATT,varargin)
    OPT.resolveName        = '';
 
 % EXAMPLE:
-%  THREDDS http://opendap.deltares.nl   /thredds/dodsC/opendap/     rijkswaterstaat/waterbase/sea_surface_wave_significant_height/id22-AUKFPFM.nc.html
+%  THREDDS 
+%  OPeNDAP http://opendap.deltares.nl   /thredds/dodsC/opendap/     rijkswaterstaat/waterbase/sea_surface_wave_significant_height/id22-AUKFPFM.nc.html
 %  ftp     http://opendap.deltares.nl   /thredds/fileServer/opendap/rijkswaterstaat/waterbase/sea_surface_wave_significant_height/id22-AUKFPFM.nc
-%  HYRAX * http://opendap.deltares.nl   /opendap/                   rijkswaterstaat/waterbase/sea_surface_wave_significant_height/id22-AUKFPFM.nc.html
+%  main    http://opendap.deltares.nl   /thredds/catalog/opendap   /rijkswaterstaat/waterbase/sea_surface_wave_significant_height/catalog.html?dataset=varopendap/rijkswaterstaat/waterbase/sea_surface_wave_significant_height/id22-AUKFPFM.nc
+%  HYRAX * 
+%  OPeNDAP http://opendap.deltares.nl   /opendap/                   rijkswaterstaat/waterbase/sea_surface_wave_significant_height/id22-AUKFPFM.nc.html
 %  * = has issues with snctools
+
    OPT.THREDDSFcn         = @(s) (s); % assuming the supplied url's are THREDDS (HYRAX has issues anyway)
    OPT.ftpFcn             = @(s) strrep(s,'/thredds/dodsC/opendap/','/thredds/fileServer/opendap/');
+   
 
    if nargin==0
       return
@@ -314,7 +319,7 @@ function OPT = nc_cf_harvest_matrix2kml(ATT,varargin)
      D.number_of_observations(ii),...
      resolvestring,...
      OPT.THREDDSFcn([D.urlPath{ii},'.html']),...
-         OPT.ftpFcn([D.urlPath{ii},'.html'])),...
+         OPT.ftpFcn([D.urlPath{ii}])),...
          paramstring];    
     
     if ~isempty(OPT.text)

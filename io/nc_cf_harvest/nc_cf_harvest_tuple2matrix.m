@@ -1,7 +1,7 @@
 function D = nc_cf_harvest_tuple2matrix(d,varargin)
-%NC_CF_HARVEST_TUPLE2MATRIX
+%NC_CF_HARVEST_TUPLE2MATRIX  convert meta-data tuple-array to struct with matrices
 %
-%See also: nc_cf_harvest
+%See also: nc_cf_harvest, nc_cf_harvest_matrix2tuple
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -72,10 +72,10 @@ OPT = setproperty(OPT,varargin{nextarg:end});
 % What: http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/v1.0.2/InvCatalogSpec.html#controlledVocabulary   
 
         D.Conventions{i}   =      d.Conventions;
-        D.variable_name{i} =      str2line(d.variable_name,'s',' ');% reverse with strtokens2cell
-        D.standard_name{i} =      str2line(d.standard_name,'s',' ');% reverse with strtokens2cell
-        D.units{i}         = ['"',str2line(d.units        ,'s','" "'),'"']; % can contain spaces, so embrace with brackets
-        D.long_name{i}     = ['"',str2line(d.long_name    ,'s','" "'),'"']; % can contain spaces, so embrace with brackets
+        D.variable_name{i} = ['"',str2line(d.variable_name,'s','" "'),'"']; % can contain spaces, ...
+        D.standard_name{i} = ['"',str2line(d.standard_name,'s','" "'),'"']; % or be empty, ...
+        D.units{i}         = ['"',str2line(d.units        ,'s','" "'),'"']; % so embrace with brackets, ...
+        D.long_name{i}     = ['"',str2line(d.long_name    ,'s','" "'),'"']; % and reverse with strtokens2cell
 
 % Where: http://www.unidata.ucar.edu/projects/THREDDS/tech/catalog/v1.0.2/InvCatalogSpec.html#geospatialCoverage
 

@@ -1,11 +1,11 @@
 function T = nc_cf_harvest_matrix2tuple(D,varargin)
-%NC_CF_HARVEST_MATRIX2TUPLE
+%NC_CF_HARVEST_MATRIX2TUPLE  convert meta-data struct with matrices to tuple-array
 %
 %   T = nc_cf_harvest_matrix2tuple(D,<ind>)
 %
 % extracts indices <ind> from matrix D into struct T, by default n entire D
 %
-%See also: nc_cf_harvest
+%See also: nc_cf_harvest, nc_cf_harvest_tuple2matrix
 
 %% Copyright notice
 %   --------------------------------------------------------------------
