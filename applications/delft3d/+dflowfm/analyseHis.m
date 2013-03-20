@@ -165,13 +165,13 @@ end
    M.lat                     = nan;
    Mmeta.(OPT.varname).units = nc_attget(OPT.nc,OPT.hisname,'units'); % in case there is no data
    if isempty(Mmeta.datenum.timezone )
-       fprintf(2,['model has no explicit timezone, check whether it is indeed GMT.'])
+       fprintf(2,['model has no explicit timezone, check whether it is indeed GMT.\n'])
    end
    if ~isempty(OPT.model_timezone)
        Mmeta.datenum.timezone = OPT.model_timezone;
-       fprintf(2,['overruled model timezone ',char(Mmeta.datenum.timezone),' with ',OPT.model_timezone])
+       fprintf(2,['overruled model timezone ',char(Mmeta.datenum.timezone),' with ',OPT.model_timezone,'\n'])
    else
-       fprintf(2,['used model timezone from model results attributes: ',char(Mmeta.datenum.timezone)])
+       fprintf(2,['used model timezone from model results attributes: ',char(Mmeta.datenum.timezone),'\n'])
    end
 
    M.datenum = M.datenum - timezone_code2datenum(char(Mmeta.datenum.timezone)) + timezone_code2datenum(OPT.timezone);
@@ -239,9 +239,9 @@ for id=1:length(OPT.platform_name);
    if ~isempty(OPT.platform_data_url{id})
    
      if isempty(OPT.platform_period{id})
-     [D,Dmeta] = nc_cf_timeSeries(OPT.platform_data_url{id},OPT.varname,'period',            OPT.datelim([1 end])); % returns lon,lat too
+     [D,Dmeta] = nc_cf_timeseries(OPT.platform_data_url{id},OPT.varname,'period',            OPT.datelim([1 end])); % returns lon,lat too
      else
-     [D,Dmeta] = nc_cf_timeSeries(OPT.platform_data_url{id},OPT.varname,'period',OPT.platform_period{id}([1 end])); % returns lon,lat too
+     [D,Dmeta] = nc_cf_timeseries(OPT.platform_data_url{id},OPT.varname,'period',OPT.platform_period{id}([1 end])); % returns lon,lat too
      end
      
      unitsfac = 1;           
@@ -254,7 +254,7 @@ for id=1:length(OPT.platform_name);
      end
      
      if isempty(Dmeta.datenum.timezone )
-         fprintf(2,['data has no explicit timezone, check whether it is indeed GMT.'])
+         fprintf(2,['data has no explicit timezone, check whether it is indeed GMT.\n'])
      end
      D.datenum = D.datenum - timezone_code2datenum(char(Dmeta.datenum.timezone)) + timezone_code2datenum(OPT.timezone);
      
@@ -285,7 +285,7 @@ for id=1:length(OPT.platform_name);
 
         DM.(OPT.varname) = interp1(M.datenum,M.(OPT.varname)(:,im),D.datenum)';  % mind getpref ('SNCTOOLS','PRESERVE_FVD')==0
         if prod(size(DM.(OPT.varname)))==0
-            fprintf(2,['data ',datestr(D.datenum(1)),'-',datestr(D.datenum(1)),' and model ',datestr(D.datenum(1)),'-',datestr(D.datenum(1)),' periods do not overlap.'])
+            fprintf(2,['data ',datestr(D.datenum(1)),'-',datestr(D.datenum(1)),' and model ',datestr(D.datenum(1)),'-',datestr(D.datenum(1)),' periods do not overlap.\n'])
         end
 
         DM.(OPT.varname) = reshape(DM.(OPT.varname),size(D.(OPT.varname)));

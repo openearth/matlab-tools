@@ -1,9 +1,9 @@
-%function knmi_all
+function knmi_all
 %KNMI_ALL    download potwind + etmgeg from web, transform to netCDF, make kml,  make catalog.
 %
-%See also: KNMI_POTWIND_GET_URL,         KNMI_ETMGEG_GET_URL
-%          KNMI_POTWIND2NC,              KNMI_ETMGEG2NC
-%          NC_CF_STATIONTIMESERIES2META, NC_CF_DIRECTORY2CATALOG, NC_CF_STATIONTIMESERIES2KMLOVERVIEW
+%See also: KNMI_POTWIND_GET_URL, KNMI_ETMGEG_GET_URL, KNMI_UURGEG_GET_URL
+%          KNMI_POTWIND2NC,      KNMI_ETMGEG2NC,      KNMI_UURGEG2NC
+%          RWS_WATERBASE_ALL, NC_CF_HARVEST
 
 % This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
 % OpenEarthTools is an online collaboration to share and manage data and
@@ -27,16 +27,17 @@
 %% Initialize
 
    OPT.download             = 0; % get fresh downloads
-   OPT.make_nc              = 1;
+   OPT.make_nc              = 0;
    OPT.make_catalog         = 1; % loading a cached one does not work at the moment
    OPT.make_kml             = 1;
    OPT.make_kml_pmg_preview = 1;
+   OPT.institution    = 'knmi'; % for construcitng relative path
+   OPT.directory_xml  = 'd:\checkouts\OpenEarthTools\configurations\dtvirt5.deltares.nl\'; % for static THREDDS catalogs in folder tomcat6/content/thredds
 
-
-   rawbase = 'F:\checkouts\OpenEarthRawData\';                % @ local
-    ncbase = 'F:\opendap.deltares.nl\thredds\dodsC\opendap\'; % @ local
-   urlbase = 'http://opendap.deltares.nl:8080';               % production server (links)
-   kmlbase = 'D:\kml.deltares.nl\';                           % @ local, no links to other kml or images any more
+   rawbase =              'd:\checkouts\OpenEarthRawData\';       % @ local
+    ncbase =     'D:\opendap.deltares.nl\thredds\dodsC\opendap\'; % @ local
+   urlbase = 'http://opendap.deltares.nl/thredds/dodsC/opendap/'; % @ server
+   kmlbase =                               'D:\kml.deltares.nl\'; % @ local   
 
    subdirs     = {'potwind','etmgeg','uurgeg'}; % take 9 and 14 mins respectively
    varnames    = {'wind_speed','air_temperature_mean','air_temperature_mean'};
@@ -94,14 +95,17 @@ n = n+1;
 %  Idea: make a special *_local_machine catalog?
 
    if OPT.make_catalog
-   CATALOG = nc_cf_opendap2catalog('base',[OPT.directory_nc],... % dir where to READ netcdf
-                  'catalog_dir',[OPT.directory_nc],... % dir where to SAVE catalog
-                         'save',1,...
-                   'urlPathFcn',@(s) path2os(strrep(s,ncbase,['http://opendap.deltares.nl/thredds/dodsC/opendap/']),'h'),... % dir where to LINK to for netCDF
-                      'varname','')
-   else
-   error('NC_CF_OPENDAP2CATALOG does not yield same as NC2STRUCT version of NC_CF_OPENDAP2CATALOG2NC: migraite to NC_HARVEST')
-   CATALOG = nc2struct([OPT.directory_nc,'catalog.nc']);
+   CATALOG = nc_cf_harvest(OPT.directory_nc,...             % dir where to READ netcdf
+                    'featuretype','timeseries',...
+                          'debug',[],...
+                     'catalog.nc',[OPT.directory_nc ,'catalog.nc'],...  % dir where to SAVE catalog
+                    'catalog.xml',[OPT.directory_xml,OPT.institution,'_',subdir,'.xml'],... % dir where to SAVE catalog
+                    'catalog.xls',[OPT.directory_nc ,'catalog.xls'],... % dir where to SAVE catalog
+                    'catalog.mat',[OPT.directory_nc ,'catalog.mat'],... % dir where to SAVE catalog
+                     'urlPathFcn',@(s) path2os(strrep(s,ncbase,urlbase),'h'),... % dir where to LINK to for netCDF
+                           'disp','multiWaitbar',...
+                             'ID',[OPT.institution,'/',subdir],...
+                           'name',[OPT.institution,'_',subdir]);   
    end
       
 %% Make KML overview with links to netCDFs on http://opendap.deltares.nl THREDDS
@@ -111,7 +115,7 @@ n = n+1;
    if OPT.make_kml
 
       OPT2.fileName           = [OPT.directory_kml,filesep,subdir,'.kml'];
-      OPT2.kmlName            = ['KNMI/' subdir];
+      OPT2.kmlName            = ['KNMI time series: ' subdir];
       OPT2.text               = {['<B>',subdir,'</B>']};
 
      %OPT2.iconnormalState    = 'http://maps.google.com/mapfiles/kml/shapes/placemark_square.png';
@@ -127,13 +131,10 @@ n = n+1;
 	                             '<tr><td    bgcolor="#FFFFFF">data provider   </td><td bgcolor="#FFFFFF">',resolveUrls{ii},'</td>',...
 	                             '<tr><td    bgcolor="#FFFFFF">data distributor</td><td bgcolor="#FFFFFF">http://www.OpenEarth.eu</td>',...
 	                             '</tr></tbody></table><hr>'];
-
-      OPT2.name               = subdir;
       
       OPT2.lon                = 1;
       OPT2.lat                = 54;
       OPT2.z                  = 100e4;
-      OPT2.varname            = varnames{ii};
       
       OPT2.logokmlName        = {'Overheids logo','OpenEarth logo'};
       OPT2.overlayXY          = {[.5 1],[0 0.00]};
@@ -141,13 +142,22 @@ n = n+1;
       OPT2.imName             = {'http://www.knmi.nl/images/logo_knmi_venw_engels.png',[fileparts(oetlogo),filesep,'OpenEarth-logo-blurred-white-background4kml.png'];};
       OPT2.logoName           = {'overheid4GE.png','oet4GE.png'};
 
-      OPT2.varPathFcn         = @(s) path2os(strrep(s,['http://opendap.deltares.nl/thredds/dodsC/opendap/'],ncbase),filesep); % use local netCDF files for preview/statistics when CATALOG refers already to server
+      OPT2.varPathFcn         = @(s) path2os(strrep(s,urlbase,ncbase),filesep); % use local netCDF files for preview/statistics when CATALOG refers already to server
       OPT2.resolveUrl         = cellfun(@(x) resolveUrls{ii},cellstr(CATALOG.platform_name),'un',0);
       OPT2.resolveName        = 'www.knmi.nl';
-      OPT2.credit             = ' data: www.knmi.nl plot: www.OpenEarth.eu';
-      OPT2.preview            = OPT.make_kml_pmg_preview;
+      
+      OPT2.iconnormalStateScale    = 1;
+      OPT2.iconhighlightStateScale = 1;   
+      OPT2.iconnormalState    = 'http://www.ndbc.noaa.gov//images/maps/markers/tiny_active_marker.png';
+      OPT2.iconhighlightState = 'http://www.ndbc.noaa.gov//images/maps/markers/tiny_active_marker.png';
 
-      nc_cf_opendap2catalog2kml(CATALOG,OPT2); % inside urlPath is used to read netCDF data
+      OPT2.credit             = ' data: www.knmi.nl plot: www.OpenEarth.eu';
+      OPT2.varname            = varnames{ii};
+      OPT2.name               = subdir;
+      OPT2.preview            = OPT.make_kml_pmg_preview;
+      OPT2.open               = 0; % too slow
+
+      nc_cf_harvest_matrix2kml(CATALOG,OPT2); % inside urlPath is used to read netCDF data for plotting previews
 
    end   
 end

@@ -1,11 +1,8 @@
-%function rws_waterbase_all
+function rws_waterbase_all
 %RWS_WATERBASE_ALL    download waterbase.nl parameters from web, transform to netCDF, make kml,  make catalog.
 %
-%See also: KNMI_ALL,                   , RWS_WATERBASE_*
-%          NC_CF_STATIONTIMESERIES2META, NC_CF_DIRECTORY2CATALOG, NC_CF_STATIONTIMESERIES2KMLOVERVIEW
+%See also: KNMI_ALL, NC_CF_HARVEST, RWS_WATERBASE_*
 
-
-   
 % TO DO: merge kmls for al substances
 % TO DO: move only identical DONAR ID to old
 
@@ -24,7 +21,7 @@
     %ncbase = '/Users/fedorbaart/Downloads/rws/nc/'; % @ local, change this for your own computer
    %kmlbase = '/Users/fedorbaart/Downloads/rws/kml/';% @ local, change this... no links to other kml or images any more
 
-   rawbase =              'd:\checkouts\OpenEarthRawData\'; % @ local
+   rawbase =              'd:\checkouts\OpenEarthRawData\';       % @ local
     ncbase =     'D:\opendap.deltares.nl\thredds\dodsC\opendap\'; % @ local
    urlbase = 'http://opendap.deltares.nl/thredds/dodsC/opendap/'; % @ server
    kmlbase =                               'D:\kml.deltares.nl\'; % @ local

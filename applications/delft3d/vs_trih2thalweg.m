@@ -1,4 +1,4 @@
-function vs_trih2thalweg(vsfile,varargin)
+function varargout = vs_trih2thalweg(vsfile,varargin)
 %vs_trih2thalweg x-sigma plane (cross-section, thalweg) from delft3 history file
 %
 %  vs_trih2thalweg(vsfile,<keyword,value>) converts trih file to netCDF
@@ -51,6 +51,7 @@ function vs_trih2thalweg(vsfile,varargin)
 %  $HeadURL$
 %  $Keywords: $
 
+OPT.ncfile    = '';
 OPT.epsg      = 28992; % epsg projection to do interpolation in and plot distances in
 OPT.ind       = 28:766; % indices (from *.obs) to interpolate from
 OPT.wscale    = 100;   % exageration of vertical velocities in plot
@@ -64,8 +65,13 @@ OPT.txtflood  = 'FLOOD to Wadden Sea';
 OPT.ulegendx  = 500;
 OPT.ulegendz  = -25;
 OPT.pngsubdir = 'teso'; % subdir of dir of vsfile
-OPT.ncfile    = '';
 OPT.shading   = 'hybrid'; % {'interp','stretched','hybrid','flat'};
+OPT.plot      = 0;
+
+if nargin==0
+   varargout = {OPT};
+   return
+end
 
 OPT = setproperty(OPT,varargin);
 
@@ -73,7 +79,7 @@ OPT = setproperty(OPT,varargin);
 
    h = vs_use(vsfile,'quiet');
 
-%% get data
+%% get coordinate data for spatial interpolation
    
    coordinates = permute(vs_let(h,'his-const','COORDINATES'      ,'quiet'),[2 3 1]);
    if any(strfind(lower(coordinates),'cart'))
@@ -87,7 +93,7 @@ OPT = setproperty(OPT,varargin);
    end
    
    if isempty(OPT.ncfile)
-       OPT.ncfile = [filepathstrname(vsfile),'_thalweg.nc'];
+      OPT.ncfile = [filepathstrname(vsfile),'_thalweg.nc'];
    end
 
    if ~exist(OPT.ncfile)
@@ -128,6 +134,7 @@ OPT = setproperty(OPT,varargin);
    T.depth_b     = center2corner1(T.depth,'nearest'); % bounds for shading flat
    T.Layer       = D.Layer;
    T.LayerInterf = D.LayerInterf;
+   
    T.sigma2plot      = T.Layer;
    T.sigma2plot(1)   = 0;
    T.sigma2plot(end) = -1;
@@ -137,6 +144,9 @@ OPT = setproperty(OPT,varargin);
    fprintf(2,'ERROR: VELOCITIES NEED TO BE ROTATED TO PLAN OF TRACK\n')
 
 %% thalweg plot
+
+if OPT.plot
+
    close
    AX = subplot_meshgrid(2,1,.05,[.01 .04],[nan .05],nan);axes(AX(1))
    hold on
@@ -215,22 +225,26 @@ OPT = setproperty(OPT,varargin);
       h3 = plot(T.track,T.waterlevel(:,:,it),'k');
       h4 = arrow2(T.S,T.Z,T.u_y(:,:,it),OPT.wscale*T.u_z(:,:,it),2);
       ht = text(0,1,datestr(T.datenum(it),' yyyy-mmm-dd HH:MM'),'units','normalized','verticalalignment','top');
+      
+      [csal,hsal]=contour(T.S,T.Z,T.salinity(:,:,it),[10:.5:35],'-w','linewidth',1);clabel(csal,hsal)
 
-      print2screensizeoverwrite([fileparts(vsfile),filesep,OPT.pngsubdir,filesep,filename(vsfile),'_',datestr(T.datenum(it),'yyyy-mmm-dd_HHMM')])
+      print2screensizeoverwrite([fileparts(vsfile),filesep,OPT.pngsubdir,filesep,filename(OPT.ncfile),'_',datestr(T.datenum(it),'yyyy-mmm-dd_HHMM')])
 
       if OPT.pause
       pausedisp
       end
       delete(h0,h1,h3,h4.head,h4.shaft,ht)
-      try;delete(h2a);end
-      try;delete(h2b);end
-      try;delete(h2c);end
-      try;delete(h2d);end
-      try;delete(h2e);end
-      try;delete(h2f);end
-      try;delete(h2g);end
-      try;delete(hs );end
-      try;delete(hb );end
-   end
+      try;delete(h2a );end
+      try;delete(h2b );end
+      try;delete(h2c );end
+      try;delete(h2d );end
+      try;delete(h2e );end
+      try;delete(h2f );end
+      try;delete(h2g );end
+      try;delete(hs  );end
+      try;delete(hb  );end
+      try;delete(hsal);end
 
-      
+   end % t
+
+end % plot
