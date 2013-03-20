@@ -118,7 +118,7 @@ fname.Id           = [OPT.ConfigRoot,OPT.xml_Id];
 
    fid     = fopen(fname.Locations,'w');
    output = repmat(char(1),1,1e5);
-   newOutput = [xmlheader('locations',OPT.eol),'<geoDatum>WGS 1984</geoDatum>',OPT.eol];
+   newOutput = [xmlheader('locations',OPT.eol),OPT.eol,'<geoDatum>WGS 1984</geoDatum>',OPT.eol];
    kk = 1;output(kk:kk+length(newOutput)-1) = newOutput;
    kk = kk+length(newOutput);   
        
@@ -179,9 +179,9 @@ fclose(fid);
    
    for j=1:length(lon)
       if intersect(j,doubleId)       
-      newOutput = ['<!--locationId>',OPT.internal_name{j},'</locationId-->',OPT.eol];
+      newOutput = [char(9),'<!--locationId>',OPT.internal_name{j},'</locationId-->',OPT.eol];
       else
-      newOutput = ['<locationId>',OPT.internal_name{j},'</locationId>',OPT.eol];          
+      newOutput = [char(9),'<locationId>',OPT.internal_name{j},'</locationId>',OPT.eol];          
       end
       output(kk:kk+length(newOutput)-1) = newOutput;
       kk = kk+length(newOutput);
@@ -210,9 +210,9 @@ fclose(fid);
    
    for j=1:length(lon)
       if intersect(j,doubleId)          
-      newOutput = ['<!--location external="',OPT.external_name{j},'"',char(9),'internal="',OPT.internal_name{j},'"/-->',OPT.eol];
+      newOutput = [char(9),'<!--location external="',OPT.external_name{j},'"',char(9),'internal="',OPT.internal_name{j},'"/-->',OPT.eol];
       else
-      newOutput = ['<location external="',OPT.external_name{j},'"',char(9),'internal="',OPT.internal_name{j},'"/>',OPT.eol];
+      newOutput = [char(9),'<location external="',OPT.external_name{j},'"',char(9),'internal="',OPT.internal_name{j},'"/>',OPT.eol];
       end
       output(kk:kk+length(newOutput)-1) = newOutput;
       kk = kk+length(newOutput);
@@ -241,9 +241,10 @@ function newOutput = xmlheader(type,eol)
 
    newOutput = [...
       '<?xml version="1.0" encoding="UTF-8"?>',eol,...
+      '<!-- created with OpenEarthTools $HeadURL$ $Id$-->',eol,...
       '<',type,'',eol,...
-      ' xmlns="http://www.wldelft.nl/fews" ',eol,...
-      ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"',eol,...
-      ' xsi:schemaLocation="http://www.wldelft.nl/fews http://fews.wldelft.nl/schemas/version1.0/',type,'.xsd"',eol,...
-      ' version="1.1"',' >'];
+      ' xmlns',char(9),char(9),char(9),'="http://www.wldelft.nl/fews" ',eol,...
+      ' xmlns:xsi',char(9),char(9),'="http://www.w3.org/2001/XMLSchema-instance"',eol,...
+      ' xsi:schemaLocation',char(9),'="http://www.wldelft.nl/fews http://fews.wldelft.nl/schemas/version1.0/',type,'.xsd"',eol,...
+      ' version',char(9),char(9),'="1.1"',' >'];
 
