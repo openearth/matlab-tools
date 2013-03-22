@@ -60,82 +60,26 @@ M           = MN(1);
 N           = MN(2);
 fclose(fid);
 
-% Choose option
-optie       = 2;
-
-% Read the grid: own style
-if optie == 1;
-    fid         = fopen(ddgrid,'r');
-    etarij      = 0;
-    eta         = zeros(M,N);
-    J           = ceil(M/5);
-    for i=1:startgrid+1;
-        tline   = fgetl(fid);
-    end
-    for k=1:2;
-        for i=1:N;
-            for j=1:J;
-                tline            = fgetl(fid);
-                if strcmp(tline(1:4),'ETA=');
-                    teller       = str2num(tline(6:10));
-                end
-                leeseta          = str2num(tline(13:end));
-                etarij           = [etarij leeseta];
-                if j==J;
-                    etarij(1)    = [];
-                    eta(:,i,k)   = etarij;
-                    etarij       = 0;
-                end
-            end
-        end
-    end
-    xh              = eta(:,:,1);
-    yh              = eta(:,:,2);
-    xh(xh==0)       = NaN;
-    yh(yh==0)       = NaN;
-    for m = 2:M;
-        for n = 2:N;
-            xc(m,n) = 0.25.*(xh(m,n)+xh(m-1,n)+xh(m,n-1)+xh(m-1,n-1));
-            yc(m,n) = 0.25.*(yh(m,n)+yh(m-1,n)+yh(m,n-1)+yh(m-1,n-1));
-        end
-    end
-    fclose all;
-    
-    % Extrapolatie boundaries: boundary conditions given at cell centers
-    xc(1  , : ) = 2.*xc(2  , : ) - xc(3  , : );
-    yc(1  , : ) = 2.*yc(2  , : ) - yc(3  , : );
-    xc( : ,1  ) = 2.*xc( : ,2  ) - xc( : ,3  );
-    yc( : ,1  ) = 2.*yc( : ,2  ) - yc( : ,3  );
-    xc(M+1, : ) = 2.*xc(M  , : ) - xc(M-1, : );
-    yc(M+1, : ) = 2.*yc(M  , : ) - yc(M-1, : );
-    xc( : ,N+1) = 2.*xc( : ,N  ) - xc( : ,N-1);
-    yc( : ,N+1) = 2.*yc( : ,N  ) - yc( : ,N-1);
-    
-end
-
 % Read the grid: OET-style
-if optie == 2;
-    G           = delft3d_io_grd('read',ddgrid);
-    xc          = G.cend.x;
-    yc          = G.cend.y;
-    
-    % Transpose the grid (x and y) if the sizes do not match with read M and N (the latter match with the bnd!)
-    if size(xc,1)~=M+1 & size(xc,2)~=N+1 & size(yc,1)~=M+1 & size(yc,2)~=N+1;
-        xc = xc';
-        yc = yc';
-    end
-    
-    % Extrapolate boundaries: boundary conditions given at cell centers
-    xc(1  , : ) = 2.*xc(2  , : ) - xc(3  , : );
-    yc(1  , : ) = 2.*yc(2  , : ) - yc(3  , : );
-    xc( : ,1  ) = 2.*xc( : ,2  ) - xc( : ,3  );
-    yc( : ,1  ) = 2.*yc( : ,2  ) - yc( : ,3  );
-    xc(M+1, : ) = 2.*xc(M  , : ) - xc(M-1, : );
-    yc(M+1, : ) = 2.*yc(M  , : ) - yc(M-1, : );
-    xc( : ,N+1) = 2.*xc( : ,N  ) - xc( : ,N-1);
-    yc( : ,N+1) = 2.*yc( : ,N  ) - yc( : ,N-1);
+G           = delft3d_io_grd('read',ddgrid);
+xc          = G.cend.x;
+yc          = G.cend.y;
 
+% Transpose the grid (x and y) if the sizes do not match with read M and N (the latter match with the bnd!)
+if size(xc,1)~=M+1 & size(xc,2)~=N+1 & size(yc,1)~=M+1 & size(yc,2)~=N+1;
+    xc = xc';
+    yc = yc';
 end
+
+% Extrapolate boundaries: boundary conditions given at cell centers
+xc(1  , : ) = 2.*xc(2  , : ) - xc(3  , : );
+yc(1  , : ) = 2.*yc(2  , : ) - yc(3  , : );
+xc( : ,1  ) = 2.*xc( : ,2  ) - xc( : ,3  );
+yc( : ,1  ) = 2.*yc( : ,2  ) - yc( : ,3  );
+xc(M+1, : ) = 2.*xc(M  , : ) - xc(M-1, : );
+yc(M+1, : ) = 2.*yc(M  , : ) - yc(M-1, : );
+xc( : ,N+1) = 2.*xc( : ,N  ) - xc( : ,N-1);
+yc( : ,N+1) = 2.*yc( : ,N  ) - yc( : ,N-1);
 
 % Read the boundary file
 D           = delft3d_io_bnd('read',ddbound);
@@ -158,22 +102,34 @@ for i=1:size(mbnd,1);
 end
 
 % Reshape the boundary locations into polyline files
-p           = 1;                      % is number of points in the polyline
-q           = 1;                      % is number of polylines
-for i=1:size(xb,1);
-    if i>1;
-        if ((mbnd(i,1)==mbnd(i-1,1) & mbnd(i,1)==mbnd(i-1,2)) | ...
-            (nbnd(i,1)==nbnd(i-1,1) & nbnd(i,1)==nbnd(i-1,2)));
-            p      = p+2;
-        else
-            p      = 1;
-            q      = q+1;
+p            = 1;                     % is number of points in the polyline
+q            = 1;                     % is number of polylines
+if size(xb,1)>1;
+    for i=1:size(xb,1);
+        if i>1;
+            if ((mbnd(i,1)==mbnd(i-1,1) & mbnd(i,1)==mbnd(i-1,2)) | ...
+                (nbnd(i,1)==nbnd(i-1,1) & nbnd(i,1)==nbnd(i-1,2)));
+                p      = p+2;
+            else
+                p      = 1;
+                q      = q+1;
+            end
         end
+        xpol(p  ,q)    = xb(i,1);     % choose point A as polyline point
+        xpol(p+1,q)    = xb(i,2);     % choose point B as polyline point
+        ypol(p  ,q)    = yb(i,1);     % choose point A as polyline point
+        ypol(p+1,q)    = yb(i,2);     % choose point B as polyline point
+        aantplip(q)    = p+1    ;     % number of polylinepoints
     end
-    xpol(p  ,q)    = xb(i,1);         % choose point A as polyline point
-    xpol(p+1,q)    = xb(i,2);         % choose point B as polyline point
-    ypol(p  ,q)    = yb(i,1);         % choose point A as polyline point
-    ypol(p+1,q)    = yb(i,2);         % choose point B as polyline point
+else
+    i            = 1;
+    p            = 1;
+    q            = 1;                 % if one line in bnd, then one polyline
+    xpol(p  ,q)  = xb(i,1);           % choose point A as polyline point
+    xpol(p+1,q)  = xb(i,2);           % choose point B as polyline point
+    ypol(p  ,q)  = yb(i,1);           % choose point A as polyline point
+    ypol(p+1,q)  = yb(i,2);           % choose point B as polyline point
+    aantplip(q)  = p+1    ;           % number of polylinepoints
 end
 
 % Write the pli-files (separate file for each boundary)
@@ -187,8 +143,8 @@ for i=1:q;
     filenamesal        = [pathout,'/',name,'_sal.pli'];
 	xpolsq             = xpol(:,i);
 	ypolsq             = ypol(:,i);
-	xpolsq(xpolsq==0)  = [];
-	ypolsq(ypolsq==0)  = [];
+	xpolsq(aantplip(i)+1:end)    = [];
+	ypolsq(aantplip(i)+1:end)    = [];
 	wripol(:,1)        = xpolsq';
 	wripol(:,2)        = ypolsq';
 	fid                = fopen(filename   ,'wt');

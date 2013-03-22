@@ -126,6 +126,16 @@ if jabodem == 1;
     zh           = -zh;
     zh(end,:  )  = [];
     zh(:  ,end)  = [];
+    
+    % Make file with bathymetry samples
+    samples      = [pathout,'/',depthshort,'.xyz'];
+    xsamp        = reshape(xh,[M.*N 1]);
+    ysamp        = reshape(yh,[M.*N 1]);
+    zsamp        = reshape(zh,[M.*N 1]);
+    xsamp(isnan(xsamp))   = [];
+    ysamp(isnan(ysamp))   = [];
+    zsamp(isnan(zsamp))   = [];
+    dlmwrite(samples,[xsamp,ysamp,zsamp],'delimiter','\t','precision','%7.7f');
 else
     % Set bottom to dummy value of -5.0 m w.r.t. reference (also default in mdu)
     zh           = -5.0.*ones(size(xh,1),size(xh,2));

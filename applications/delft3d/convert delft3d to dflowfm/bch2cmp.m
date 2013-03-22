@@ -89,7 +89,7 @@ end
 fclose all;
 
 % Rearrange the structure
-K                 = 10; 
+K                 = size(BCH.data,2);
 for k=2:K;
     if isempty(BCH.data(k).freq);
         break;
@@ -97,13 +97,13 @@ for k=2:K;
         freq(k-1) = BCH.data(k).freq;
     end
 end
-for i=1:length(BCH.data)/2;
+for i=1:size(BCH.data(1).amp,2)/2;
     meanA(i)      = BCH.data(i).mean;
     ampA(i,:)     = BCH.data(i).amp(:);
     phiA(i,:)     = BCH.data(i).phi(:);
 end
 j                 = 1;
-for i=length(BCH.data)/2+1:length(BCH.data);
+for i=size(BCH.data(1).amp,2)/2+1:size(BCH.data(1).amp,2);
     meanB(j)      = BCH.data(i).mean;
     ampB(j,:)     = BCH.data(i).amp(:);
     phiB(j,:)     = BCH.data(i).phi(:);
