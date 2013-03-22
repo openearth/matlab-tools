@@ -1,4 +1,4 @@
-function matroos_opendap_maps2series2mn2nc(D,ncfile)
+function matroos_opendap_maps2series2mn2nc(D,ncfile,varargin)
 %MATROOS_OPENDAP_MAPS2SERIES2MN2NC save to netCDF file
 %
 %  matroos_opendap_maps2series2mn2nc(D,ncfile)
@@ -61,6 +61,12 @@ function matroos_opendap_maps2series2mn2nc(D,ncfile)
    OPT.epsg           = 28992;
    OPT.debug          = 0;
    OPT.type           = 'single'; %'double'; % the nefis file is by default single precision, se better isn't useful
+   
+   if nargin==0
+      varargout = {OPT};return
+   end
+
+   OPT = setproperty(OPT,varargin);
 
 %% 1a Create file
 
@@ -202,6 +208,7 @@ function matroos_opendap_maps2series2mn2nc(D,ncfile)
                                   'Attributes' , attr,...
                                   'FillValue'  , []); % this doesn't do anything
 
+      if isfield(D,'m')
       ifld     = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'long_name'    , 'Value', 'm index of source model');
       attr(end+1)  = struct('Name', 'units'        , 'Value', '1');
@@ -212,7 +219,9 @@ function matroos_opendap_maps2series2mn2nc(D,ncfile)
                                   'Dimensions' , nbdyp.dims, ...
                                   'Attributes' , attr,...
                                   'FillValue'  , []); % this doesn't do anything
+      end
 
+      if isfield(D,'n')
       ifld     = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'long_name'    , 'Value', 'n index of source model');
       attr(end+1)  = struct('Name', 'units'        , 'Value', '1');
@@ -223,19 +232,24 @@ function matroos_opendap_maps2series2mn2nc(D,ncfile)
                                   'Dimensions' , nbdyp.dims, ...
                                   'Attributes' , attr,...
                                   'FillValue'  , []); % this doesn't do anything
+      end
 
+      if isfield(D,'ind')
       ifld     = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'long_name'    , 'Value', 'sequence index of line segment from source model');
       attr(end+1)  = struct('Name', 'units'        , 'Value', '1');
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(D.ind(:)) max(D.ind(:))]);
       attr(end+1)  = struct('Name', 'source'       , 'Value', [char(D.basePath) ' : '  char(D.source)]);
+      if isfield(D,'mcor') && isfield(D,'ncor')
       attr(end+1)  = struct('Name', 'mcor'         , 'Value', D.mcor);
       attr(end+1)  = struct('Name', 'ncor'         , 'Value', D.ncor);
+      end
       nc.Variables(ifld) = struct('Name'       , 'ind', ...
                                   'Datatype'   , 'int32', ...
                                   'Dimensions' , nbdyp.dims, ...
                                   'Attributes' , attr,...
                                   'FillValue'  , []); % this doesn't do anything
+      end
 
 %% 3 Create variables
 
