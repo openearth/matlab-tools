@@ -125,6 +125,8 @@ assert(issorted(x),'x is not sorted');
 narginchk(3,4);
 assert(~any(isnan(x)),'there are nan''s in x');
 assert(~any(isnan(y)),'there are nan''s in y');
+assert(~any(isinf(x)),'there are inf''s in x');
+assert(~any(isinf(y)),'there are inf''s in y');
 assert(isscalar(tolerance),'tolerance is not a scalar');
 % also allow three inputs
 if nargin==3

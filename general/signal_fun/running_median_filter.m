@@ -67,4 +67,5 @@ assert(~isempty(window),'window is empty');
 assert(isscalar(window),'window is not a scalar');
 assert(~(isnan(window)| isinf(window)),'window must be a real number');
 assert(~any(isnan(data) | isinf(data)),'NaN''s and Inf''s are not accepted by running_median_filter');
+window = min(window,numel(data));
 data = running_median_filter(double(data),uint16(window));
