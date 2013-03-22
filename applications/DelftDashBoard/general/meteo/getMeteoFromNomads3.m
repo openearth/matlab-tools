@@ -93,6 +93,11 @@ try
             tms=nc_varget(urlstr,'time');
             tmin=datenum(1970,1,1)+tms(1)/1440;
             tmax=datenum(1970,1,1)+tms(end)/1440;
+            if tms(end)<0
+                % Sometimes the last (?) time in HIRLAM contains weird
+                % values
+                tmax=tmin+2;
+            end
             lonstr='x';
             latstr='y';
             missvalstr=[];
