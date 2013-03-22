@@ -113,7 +113,8 @@ function varargout = opendap_catalog(varargin)
    OPT.serviceBaseURL        = '';
    OPT.toplevel              = ''; % to solve end catalogs in HYRAX
    OPT.debug                 = 0;  % writes levels to OPT.log
-   OPT.log                   = 0;  % log progress, 0 = quiet, 1 = command line, nr>1 = fid passed to fprintf (default 0)
+   OPT.log                   = 0;  % log progress, 0 = quiet, 1 = command line (2 = red), nr>1 = fid passed to fprintf (default 0)
+   OPT.disp                  = 'multiWaitbar'; % disp progress to command window
    OPT.ignoreCatalogNc       = 1;  % filters a file named catalog.nc from the files, if found 
    OPT.onlyCatalogNc         = 0;  % filter only files named catalog.nc
    
@@ -142,6 +143,8 @@ function varargout = opendap_catalog(varargin)
 
 %% remote vs. local url
 
+% local OS folder without catalog.xml
+
 if length(OPT.url) < 11 | (~isurl(OPT.url) && ~strcmpi(OPT.url(end-2:end),'xml'))
 
    if OPT.maxlevel > 1
@@ -157,13 +160,21 @@ if length(OPT.url) < 11 | (~isurl(OPT.url) && ~strcmpi(OPT.url(end-2:end),'xml')
        OPT.url(end+1) = filesep;
    end
 
-   % make sure we always return the full path
+   % make sure we always return the full, absolute path
    if ~(OPT.maxlevel>1) & ~isempty(nc_file_list) % paths has already been padded when OPT.maxlevel>1
       nc_file_list   = path2os(cellstr(addrowcol(char(nc_file_list),0,-1,fliplr([OPT.url,filesep])))); % left-padd path
       nc_folder_list = OPT.url;
    end
-
-else % catalog resides on web
+   
+   metadata.dataSize  = repmat(nan,[length(nc_file_list) 1]); % as in nc_cf_harvest
+   metadata.date      = repmat(nan,[length(nc_file_list) 1]); % TO DO think about unified internal (SI) units (e.g. bytes)
+   
+   for ifile=1:length(nc_file_list)
+      tmp = dir(nc_file_list{ifile});
+      metadata.dataSize(ifile) = tmp.bytes;
+      metadata.date(ifile)     = tmp.datenum; 
+   end
+else % catalog: either on web or local
 
    %% replace html into xml or warn
 
@@ -176,7 +187,7 @@ else % catalog resides on web
    elseif ~strcmpi(OPT.url(end-3:end),'.xml')
       fprintf(2,'warning: opendap_catalog: url does not have extension ".xml" or ".html"')
    end
-      
+
    %% pre-allocate
 
    nc_file_list     = {}; % we cannot pre-allocate as some datasets may be a container with lots of nc_file_lists inside it
@@ -186,11 +197,11 @@ else % catalog resides on web
 
    if OPT.level > OPT.maxlevel
       if ~(OPT.log==1) % ALWAYS report skipped items
-      dprintf(      1,['Skipped>maxlevel ',num2str(OPT.level,'%0.2d'),' catalog: ',OPT.url,'\n'])
+      dprintf(      1,['Skipped>maxlevel ',num2str(OPT.level,'%0.2d'),' catalog: ',mktex(OPT.url),'\n'])
       end
-      dprintf(OPT.log,['Skipped>maxlevel ',num2str(OPT.level,'%0.2d'),' catalog: ',OPT.url,'\n'])
+      dprintf(OPT.log,['Skipped>maxlevel ',num2str(OPT.level,'%0.2d'),' catalog: ',mktex(OPT.url),'\n'])
    else
-      dprintf(OPT.log,['Processing level ',num2str(OPT.level,'%0.2d'),' catalog: ',OPT.url,'\n'])
+      dprintf(OPT.log,['Processing level ',num2str(OPT.level,'%0.2d'),' catalog: ',mktex(OPT.url),'\n'])
 
    %% load xml
    
@@ -234,14 +245,18 @@ else % catalog resides on web
 
 end
 
-%% filter catalog nc to ditch
+%% filter catalog.nc to ditch
 
     if OPT.ignoreCatalogNc
         isCatalogNc = false(length(nc_file_list),1);
         for ii = 1:length(nc_file_list)
             isCatalogNc(ii) = strcmpi(nc_file_list{ii}(end-9:end),'catalog.nc');
         end
-        nc_file_list(isCatalogNc) = [];
+        if any(isCatalogNc)
+        nc_file_list(isCatalogNc)     = [];
+        metadata.bytes(isCatalogNc)   = [];
+        metadata.datenum(isCatalogNc) = [];
+        end
     end
     
 %% filter catalog nc to keep
@@ -251,15 +266,19 @@ end
         for ii = 1:length(nc_file_list)
             isCatalogNc(ii) = strcmpi(nc_file_list{ii}(end-9:end),'catalog.nc');
         end
-        nc_file_list(~isCatalogNc) = [];
+        nc_file_list(~isCatalogNc)     = [];
+        metadata.bytes(~isCatalogNc)   = [];
+        metadata.datenum(~isCatalogNc) = [];
     end
     
 %% output
 
    if nargout==1
    varargout = {nc_file_list};
-   else
+   elseif nargout==2
    varargout = {nc_file_list,nc_folder_list};
+   elseif nargout==3
+   varargout = {nc_file_list,nc_folder_list,metadata};
    end
   
    %% EOF

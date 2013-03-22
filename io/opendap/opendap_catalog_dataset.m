@@ -108,6 +108,7 @@ function varargout = opendap_catalog_dataset(D,OPT)
 
    urlPath     = {}; % for current level we cannot pre-allocate as some datasets may be a container with lots of urlPaths inside it
    urlPath2add = {}; % for just one dataset in current level
+
 % TO DO get TDS metadata    = {};
 
 %% DATASET
@@ -118,10 +119,20 @@ function varargout = opendap_catalog_dataset(D,OPT)
       
    if isfield(D,'dataset')
    
+   if strcmpi(OPT.disp,'multiWaitbar')
+   multiWaitbar([mfilename,'_catalogref'],0,'label','processing dataset ','color',[0.3 0.6 0.3])
+   end
+   
    %% loop datasets
 
       for i=1:length(D.dataset) % thredds_COLON_dataset
-      
+          
+      if strcmpi(OPT.disp,'multiWaitbar')
+         multiWaitbar([mfilename,'_catalogref'],i/length(D.dataset),'label',['processing dataset ',num2str(i),'/',num2str(length(D.dataset))]);
+      elseif ~isempty(OPT.disp) | OPT.disp==0
+         disp([repmat('    ',[1 OPT.level]),num2str(i),'/',num2str(),' processing level ',num2str(OPT.level),' dataset']);
+      end
+         
       %% get service type for inheritance
      
          if isfield(D.dataset(i),'metadata')
@@ -148,7 +159,7 @@ end
 
       %% 
 
-      if isfield(D.dataset,'ATTRIBUTE')
+      if isfield(D.dataset(i),'ATTRIBUTE')
 
          if OPT.debug
             dprintf(OPT.log,['opendap_catalog: xml.dataset.(...).dataset(',num2str(i),'/',num2str(length(D.dataset)),').\n'])
@@ -215,7 +226,7 @@ end
       end % isfield(dataset,'ATTRIBUTE')
          
       if ~isempty(urlPath2add) % prevent memory fragmentation by empty datasets
-         urlPath = cellstr(strvcat(char(urlPath),char(urlPath2add)));
+         urlPath   = cellstr(strvcat(char(urlPath),char(urlPath2add)));
       end
       
       end % i=1:length(dataset)
@@ -238,14 +249,24 @@ end
    
    if isfield(D,'catalogRef')
    
+   if strcmpi(OPT.disp,'multiWaitbar')
+      multiWaitbar([mfilename,'_dataset'],0,'label','processing catalogRef ','color',[0.3 0.6 0.3])
+   end
+
       OPT2       = OPT;
    
       for i=1:length(D.catalogRef)
 
+         if strcmpi(OPT.disp,'multiWaitbar')
+            multiWaitbar([mfilename,'_dataset'],i/length(D.catalogRef),'label',['processing catalogRef ',num2str(i),'/',num2str(length(D.catalogRef))]);
+         elseif ~isempty(OPT.disp) | OPT.disp==0
+            disp([repmat('    ',[1 OPT.level]),num2str(i),'/',num2str(length(D.catalogRef)),' processing level ',num2str(OPT.level),' catalog'])
+         end         
+
          if OPT.debug
             dprintf(OPT.log,'opendap_catalog: xml.dataset.catalogRef. \n')
-            dprintf(OPT.log,[str2line(fieldnames(D.catalogRef(i))          ,','),'\n'])
-            dprintf(OPT.log,[str2line(fieldnames(D.catalogRef(i).ATTRIBUTE),','),'\n'])
+            dprintf(OPT.log,[str2line(fieldnames(D.catalogRef(i))          ,'s',','),'\n'])
+            dprintf(OPT.log,[str2line(fieldnames(D.catalogRef(i).ATTRIBUTE),'s',','),'\n'])
          end
          
          %  note that serviceBaseURL is different for catalogRef than for a dataset
