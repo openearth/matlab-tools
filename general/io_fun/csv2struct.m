@@ -13,6 +13,8 @@ function varargout = csv2struct(fname,varargin)
 %
 % e.g. D = csv2struct('somefile.csv','delimiter',';','CommentStyle','%')
 %
+% Note: columns are mapped to numeric, columns where char conversion
+% yields NaN are kept as char (incl lines with pure text)
 % Note: removal of double quotes needs to be specified explicitly for
 % column names (1) and column values (2) seperately with keyword 'quotes'
 % with a two-element vector. Note that viz. "korea, republic of" or
@@ -124,9 +126,8 @@ function varargout = csv2struct(fname,varargin)
    
    %% load
    
-      RAW = textscan(fid,fmt,'Delimiter',OPT.delimiter);
+      RAW = textscan(fid,fmt,'Delimiter',OPT.delimiter,'CommentStyle',OPT.CommentStyle);
       fclose(fid);
-      
       for icol=1:length(RAW)
       
          fldname = mkvar(colnames{icol});
@@ -141,7 +142,7 @@ function varargout = csv2struct(fname,varargin)
             end
          else
             DAT.(fldname) = str2double((RAW{icol}));
-            if isnan(DAT.(fldname))
+            if any(isnan(DAT.(fldname)))
                DAT.(fldname) = RAW{icol};
             end
          end
