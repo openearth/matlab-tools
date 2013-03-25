@@ -7,9 +7,9 @@
 # nr; knmi_name;slope;_FillValue ;         units;standard_name       ;cell_methods;name (as to appear as netCDF varibale name)     ;long_name;comment
 # --+----------+-----+-----------+--------------+--------------------+------------+------------------------------------------------+->
   nr;knmi_name ;slope;nodatavalue;         units;       standard_name;cell_methods;                                            name;long_name;comment
-   #;char      ;    1;          1;          char;                char;        char;                                            char;     char;char
-   1;STN       ;  NaN;        NaN;             #;                    ;            ;WMO_number                                      ;WMO-number
-   2;YYYYMMDD  ;  NaN;        NaN;      YYYYMMDD;                    ;            ;YYYYMMDD                                        ;date
+#   ;char      ;    1;          1;          char;                char;        char;                                            char;     char;char
+   1;STN       ;    0;        NaN;             1;                    ;            ;WMO_number                                      ;WMO-number
+   2;YYYYMMDD  ;    0;        NaN;      YYYYMMDD;                    ;            ;YYYYMMDD                                        ;date
    3;DDVEC     ;    1;        NaN;   degree_true;wind_from_direction ;mean   : day;wind_from_direction_mean                        ;daily vector mean wind direction; in degrees (360=North, 180=South, 270=west, 0=calm/variable)
    4;FHVEC     ;  0.1;        NaN;           m/s;wind_speed          ;mean   : day;wind_speed_mean                                 ;daily vector mean windspeed
    5;FG        ;  0.1;        NaN;           m/s;wind_speed          ;mean   : day;wind_speed_vector_mean                          ;daily mean windspeed
@@ -38,9 +38,9 @@
   28;PXH       ;    1;        NaN;          hour;                    ;            ;surface_air_pressure_maximum_hour               ;daily hourly division in which PX was measured
   29;PN        ;  0.1;        NaN;           hPa;surface_air_pressure;minimum: day;surface_air_pressure_minimum                    ;daily minimum hourly sea level pressure
   30;PNH       ;    1;        NaN;          hour;                    ;            ;surface_air_pressure_minimum_hour               ;daily hourly division in which PN was measured
-  31;VVN       ;  NaN;        NaN;         class;visibility_in_air   ;minimum: day;visibility_in_air_minimum                       ;daily minimum visibility; (0=less than 100m, 1=100-200m, 2=200-300m,..., 49=4900-5000m, 50=5-6km, 56=6-7km, 57=7-8km,..., 79=29-30km, 80=30-35km, 81=35-40km,..., 89=more than 70km)
+  31;VVN       ;    0;        NaN;         class;visibility_in_air   ;minimum: day;visibility_in_air_minimum                       ;daily minimum visibility; (0=less than 100m, 1=100-200m, 2=200-300m,..., 49=4900-5000m, 50=5-6km, 56=6-7km, 57=7-8km,..., 79=29-30km, 80=30-35km, 81=35-40km,..., 89=more than 70km)
   32;VVNH      ;    1;        NaN;          hour;                    ;            ;visibility_in_air_minimum_hour                  ;daily hourly division in which VVN was measured
-  33;VVX       ;  NaN;        NaN;         class;visibility_in_air   ;maximum: day;visibility_in_air_maximum                       ;daily maximum visibility; (0=less than 100m, 1=100-200m, 2=200-300m,..., 49=4900-5000m, 50=5-6km, 56=6-7km, 57=7-8km,..., 79=29-30km, 80=30-35km, 81=35-40km,..., 89=more than 70km)
+  33;VVX       ;    0;        NaN;         class;visibility_in_air   ;maximum: day;visibility_in_air_maximum                       ;daily maximum visibility; (0=less than 100m, 1=100-200m, 2=200-300m,..., 49=4900-5000m, 50=5-6km, 56=6-7km, 57=7-8km,..., 79=29-30km, 80=30-35km, 81=35-40km,..., 89=more than 70km)
   34;VVXH      ;    1;        NaN;          hour;                    ;            ;visibility_in_air_maximum_hour                  ;daily hourly division in which VVX was measured
   35;NG        ;    1;        NaN;        octant;                    ;mean   : day;cloud_cover_mean                                ;daily mean daily cloud cover;(9=sky invisible)
   36;UG        ;    1;        NaN;             %;relative_humidity   ;mean   : day;relative_humidity_mean                          ;daily daily mean relative atmospheric humidity

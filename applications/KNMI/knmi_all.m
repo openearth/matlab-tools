@@ -27,10 +27,9 @@ function knmi_all
 %% Initialize
 
    OPT.download             = 0; % get fresh downloads
-   OPT.make_nc              = 0;
+   OPT.make_nc              = 1;
    OPT.make_catalog         = 1; % loading a cached one does not work at the moment
    OPT.make_kml             = 1;
-   OPT.make_kml_pmg_preview = 1;
    OPT.institution    = 'knmi'; % for construcitng relative path
    OPT.directory_xml  = 'd:\checkouts\OpenEarthTools\configurations\dtvirt5.deltares.nl\'; % for static THREDDS catalogs in folder tomcat6/content/thredds
 
@@ -39,6 +38,7 @@ function knmi_all
    urlbase = 'http://opendap.deltares.nl/thredds/dodsC/opendap/'; % @ server
    kmlbase =                               'D:\kml.deltares.nl\'; % @ local   
 
+   preview     = [1 0 0];
    subdirs     = {'potwind','etmgeg','uurgeg'}; % take 9 and 14 mins respectively
    varnames    = {'wind_speed','air_temperature_mean','air_temperature_mean'};
    resolveUrls = {'http://www.knmi.nl/klimatologie/onderzoeksgegevens/potentiele_wind/',...
@@ -113,7 +113,9 @@ n = n+1;
 %  TO DO loop over varnames inside netCDF files (etmgeg)
 
    if OPT.make_kml
-
+      if (~OPT.make_catalog)
+        CATALOG = nc2struct([OPT.directory_nc,'catalog.nc']);
+      end
       OPT2.fileName           = [OPT.directory_kml,filesep,subdir,'.kml'];
       OPT2.kmlName            = ['KNMI time series: ' subdir];
       OPT2.text               = {['<B>',subdir,'</B>']};
@@ -152,10 +154,11 @@ n = n+1;
       OPT2.iconhighlightState = 'http://www.ndbc.noaa.gov//images/maps/markers/tiny_active_marker.png';
 
       OPT2.credit             = ' data: www.knmi.nl plot: www.OpenEarth.eu';
+      OPT2.preview            = preview(ii);
+      if OPT2.preview
       OPT2.varname            = varnames{ii};
       OPT2.name               = subdir;
-      OPT2.preview            = OPT.make_kml_pmg_preview;
-      OPT2.open               = 0; % too slow
+      end
 
       nc_cf_harvest_matrix2kml(CATALOG,OPT2); % inside urlPath is used to read netCDF data for plotting previews
 

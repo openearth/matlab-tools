@@ -91,14 +91,12 @@ function varargout = KNMI_etmgeg_stations(station)
 %   --------------------------------------------------------------------
 
 %% Load data file
-%------------------
 
    OPT.xlsfile = [filepathstr(mfilename('fullpath')),filesep,'KNMI_etmgeg_stations.csv'];
 
-   D           = xls2struct(OPT.xlsfile);
+   D           = csv2struct(OPT.xlsfile,'delimiter',';');
    
 %% Calculate decimal coordinates
-%------------------
   
    for ival=1:length(D.code)
    icirc       = strfind(D.position{ival},'°'); % in xls file
@@ -118,7 +116,6 @@ function varargout = KNMI_etmgeg_stations(station)
    D.lon   = D.latdeg + D.latmin./60;
 
 %% Select station
-%------------------
 
    if nargin==1
    if ischar(station)
@@ -141,7 +138,6 @@ function varargout = KNMI_etmgeg_stations(station)
    end
    
 %% Return
-%------------------
 
    if nargin==0
       varargout = {D};

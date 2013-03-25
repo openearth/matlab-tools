@@ -35,7 +35,7 @@ function knmi_potwind2nc(varargin)
    
    OPT.refdatenum        = datenum(0000,0,0); % matlab datenumber convention: A serial date number of 1 corresponds to Jan-1-0000. Gives wring date sin ncbrowse due to different calenders. Must use doubles here.
    OPT.refdatenum        = datenum(1970,1,1); % linux  datenumber convention
-   OPT.timezone          = timezone_code2iso(D.timezone);
+   OPT.timezone          = timezone_code2iso('GMT'); % potwind is in GMT, uurgeg in UT (?)
    OPT.fillvalue         = nan; % NaNs do work in netcdf API
    
 %% File loop

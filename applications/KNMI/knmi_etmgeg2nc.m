@@ -108,7 +108,8 @@ for ifile=1:length(OPT.files)
    nc_attput(outputfile, nc_global, 'featureType'   , 'timeSeries');  % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#featureType
    
    nc_attput(outputfile, nc_global, 'stationnumber' , unique(D.data.STN));
-   nc_attput(outputfile, nc_global, 'stationname'   , D.stationname);
+   
+   nc_attput(outputfile, nc_global, 'platform_name' , D.platform_name);
 
    nc_attput(outputfile, nc_global, 'terms_for_use' , 'These data can be used freely for research purposes provided that the following source is acknowledged: KNMI.');
    nc_attput(outputfile, nc_global, 'disclaimer'    , 'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.');
@@ -129,8 +130,8 @@ for ifile=1:length(OPT.files)
 %% 2 Create dimensions
 
    nc_add_dimension(outputfile, 'time'        , length(D.datenum))
-   nc_add_dimension(outputfile, 'locations'   , size(D.stationname,1)); %
-   nc_add_dimension(outputfile, 'name_strlen1', size(D.stationname,2)); % for multiple stations get max length
+   nc_add_dimension(outputfile, 'locations'   , size(D.platform_name,1)); %
+   nc_add_dimension(outputfile, 'name_strlen1', size(D.platform_name,2)); % for multiple stations get max length
 
 %% 3 Create variables
    clear nc
@@ -245,7 +246,7 @@ for ifile=1:length(OPT.files)
    nc_varput(outputfile, 'lon'                                             , D.lon);
    nc_varput(outputfile, 'lat'                                             , D.lat);
    nc_varput(outputfile, 'platform_id'                                     , unique(D.data.STN));
-   nc_varput(outputfile, 'platform_name'                                   , D.stationname);
+   nc_varput(outputfile, 'platform_name'                                   , D.platform_name);
    nc_varput(outputfile, 'time'                                            , D.datenum - OPT.refdatenum);
    
    

@@ -1,9 +1,9 @@
-# http://www.knmi.nl/klimatologie/metadata/index.html;;;;;;;
-# http://www.ncdc.noaa.gov/oa/climate/rcsg/cdrom/ismcs/alphanum.html;;;;;;;
-# http://weather.gladstonefamily.net/site;;;;;;;
-# http://www.knmi.nl/klimatologie/metadata/stationslijst.html;;;;;;;
+# http://www.knmi.nl/klimatologie/metadata/index.html
+# http://www.ncdc.noaa.gov/oa/climate/rcsg/cdrom/ismcs/alphanum.html
+# http://weather.gladstonefamily.net/site
+# http://www.knmi.nl/klimatologie/metadata/stationslijst.html
 code;long_name;long_name_alt;position;METAR;operational;comment;
-integer;string;string;string;string;boolean;string;
+#integer;string;string;string;string;boolean;string;
 210;Valkenburg;-;52ø 11' N.B. 04ø 25'O.L.;EHVB;0;-;
 225;IJmuiden;-;52ø 28' N.B. 04ø 35'O.L.;EH02;0;from :http://www.ncdc.noaa.gov/oa/climate/rcsg/cdrom/ismcs/alphanum.html;
 235;De Kooy;Den Helder;52ø 55' N.B. 04ø 47'O.L.;EHKD;1;-;

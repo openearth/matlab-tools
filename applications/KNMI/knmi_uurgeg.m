@@ -141,7 +141,8 @@ function varargout = knmi_uurgeg(varargin)
       
 %% Extract meta-info for use in interpretation
 
-      W               = xls2struct([fileparts(mfilename('fullpath')),filesep,'knmi_uurgeg.',OPT.version,'.csv']);
+      W               = csv2struct([fileparts(mfilename('fullpath')),filesep,'knmi_uurgeg.',OPT.version,'.csv'],'delimiter',';');
+      
       if iscell(W.slope)
       W.slope         = [W.slope{:}]; % all numeric now
       end
@@ -159,25 +160,26 @@ function varargout = knmi_uurgeg(varargin)
       W.file.bytes    = tmp.bytes;
       
 %% Read data
+%   ------------------------------------------------------------------------------------------------------
 %        STN,YYYYMMDD,   HH,   DD,   FH,   FF,   FX,    T,  T10,   TD,   SQ,    Q,   DR,   RH,    P,   VV,    N,    U,   WW,   IX,    M,    R,    S,    O,    Y
 %        210,19510101,    1,  200,     ,   93,     ,   -4,     ,     ,     ,     ,     ,     , 9947,     ,    8,     ,    5,     ,     ,     ,     ,     ,     
+%   ------------------------------------------------------------------------------------------------------
          
          RAW = textscan(fid,'%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n%n','delimiter',',');
-         
          for icol=1:length(W.knmi_name)
-
+             
             fldname          = W.knmi_name{icol};
             if ischar(W.slope(icol))
             W.slope{icol}    = str2num(W.slope(icol));
             end
-            if ~isnan(W.slope(icol)) % char data
-            W.data.(fldname) = [RAW{icol}]*W.slope(icol);
+            
+            if ~(isnan(W.slope(icol)) | W.slope(icol)==0) % char data
+               W.data.(fldname) = [RAW{icol}]*W.slope(icol);
             else
-            W.data.(fldname) = [RAW{icol}];
+               W.data.(fldname) = [RAW{icol}];
             end
             
          end
-         
          W.datenum = time2datenum(W.data.YYYYMMDD) + W.data.HH./24;
          fclose(fid);
          

@@ -139,8 +139,7 @@ function varargout = knmi_etmgeg(varargin)
       end
       
 %% Extract meta-info for use in interpretation
-
-      W               = xls2struct([fileparts(mfilename('fullpath')),filesep,'knmi_etmgeg.',OPT.version,'.csv']);
+      W               = csv2struct([fileparts(mfilename('fullpath')),filesep,'knmi_etmgeg.',OPT.version,'.csv'],'delimiter',';');
       if iscell(W.slope)
       W.slope         = [W.slope{:}]; % all numeric now
       end
@@ -184,10 +183,11 @@ function varargout = knmi_etmgeg(varargin)
             if ischar(W.slope(icol))
             W.slope{icol}    = str2num(W.slope(icol));
             end
-            if ~isnan(W.slope(icol)) % char data
-            W.data.(fldname) = [RAW{icol}]*W.slope(icol);
+
+            if ~(isnan(W.slope(icol)) | W.slope(icol)==0) % char data
+               W.data.(fldname) = [RAW{icol}]*W.slope(icol);
             else
-            W.data.(fldname) = [RAW{icol}];
+               W.data.(fldname) = [RAW{icol}];
             end
             
          end
