@@ -1,4 +1,4 @@
-function OK = pg_settings(varargin)
+function varargout = pg_settings(varargin)
 %PG_SETTINGS  Load toolbox for JDBC connection to a PostgreSQL database
 %
 % PG_SETTINGS() adds correct JDBC to dynamic java path. You need to 
@@ -83,4 +83,8 @@ OPT = setproperty(OPT,varargin);
         OK = 1;
        end
         
+   end
+   
+   if nargout==1
+      varargout = {OK};
    end

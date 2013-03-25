@@ -1,9 +1,9 @@
 function T = pg_table2struct(conn, table, column_names, varargin)
 %PG_TABLE2STRUCT  Load all or some columns of PostgreSQL table into struct
 %
-%   T = PG_PG_TABLE2STRUCT(conn, table, <column_names>,<maxSize>) loads
+%   T = PG_PG_TABLE2STRUCT(conn, table, <column_names>,<limit>) loads
 %   all (default) or optionally only the specified column_names (cellstr) 
-%   into a struct T. Do not use for large tables, use optional maxSize argument 
+%   into a struct T. Do not use for large tables, use optional limit argument 
 %   as criterion when not to load (default 2e6). Set to Inf to always load.
 %
 %   Example:
@@ -50,26 +50,26 @@ function T = pg_table2struct(conn, table, column_names, varargin)
 % $Revision$
 % $HeadURL$
 
-maxSize = 2e6;
+limit = 2e6; % SQL keyword
 
 if nargin  > 2
-    if ~isempty(column_names)
+   if ~isempty(column_names)
    [nams, typs, siz] = pg_getcolumns(conn,table,column_names);
-    else
+   else
    [nams, typs, siz] = pg_getcolumns(conn,table);
-    end
+   end
 else   
    [nams, typs, siz] = pg_getcolumns(conn,table);
 end
 
 if nargin > 3
-   maxSize = varargin{1};
+   limit = varargin{1};
 end
 
-if siz <= maxSize
+if siz <= limit
    R = pg_select_struct(conn,table,struct([]),nams);
    T = pg_fetch2struct(R,nams,typs);
 else
    T = [];
-   disp(['table not loaded, table length exceeds limit: ',num2str(maxSize)])
+   disp(['table not loaded, table length exceeds limit: ',num2str(limit)])
 end

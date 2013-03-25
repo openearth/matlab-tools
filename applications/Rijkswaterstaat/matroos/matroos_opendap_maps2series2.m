@@ -1,5 +1,5 @@
-function [time,value,OPT] = matroos_opendap_maps2series2
-%MATROOS_OPENDAP_MAPS2SERIES2  extract series from OPeNDAP maps using meta-data cache (TEST!!!)
+function [time,value,OPT] = matroos_opendap_maps2series2(varargin)
+%MATROOS_OPENDAP_MAPS2SERIES2  timeseries from OPeNDAP maps at (x,y) using meta-data cache (TEST!!!)
 %
 %   [time,value,ind] = matroos_opendap_maps2series2('datenum',<...>,'source',<...>,'x',<...>,'y',<...>)
 %
@@ -66,10 +66,15 @@ warning('very preliminary test version')
    OPT.Rmax     = 1e3; % max 1 km off by default
    OPT.var      = 'SEP';
    OPT.filename = 'matroos_opendap_maps2series2.tim';
-
    OPT.debug    = 0;
    OPT.test     = 'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/waterbase/sea_surface_height/id1-TEXNZE.nc';
    OPT.test     = 'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/waterbase/sea_surface_height/id1-HOEKVHLD.nc';
+   
+   if nargin==0
+      varargout = {OPT};return
+   end
+
+   OPT = setproperty(OPT,varargin);
    
 %% load cached meta-data from matroos_opendap_maps2series1
 
@@ -103,6 +108,7 @@ end
    end
 
 %% request data slices
+%  loop over relevant files (OPT.t are indices of that subset of files)
 
    time  = [];
    value =  [];

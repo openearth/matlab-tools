@@ -3,7 +3,7 @@ function Hs = swan_hs(f,E,varargin)
 %
 % Hs = SWAN_HS(f,E,<pwtail>)
 % where f are the frequencies    [Hz] and 
-%       E is  the energy density [m^2/{Hz}]
+%       E is  the variance density [m^2/{Hz}]
 %
 % SWAN_HS accounts for the significant effect of the high frequency tail!!
 %

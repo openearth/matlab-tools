@@ -1,7 +1,7 @@
 function varargout = matroos_opendap_maps2series2mn(varargin)
-%MATROOS_OPENDAP_MAPS2SERIES2MN  extract series from OPeNDAP maps using meta-data cache (TEST!!!)
+%MATROOS_OPENDAP_MAPS2SERIES2MN  timeseries from OPeNDAP maps at (m,n) using meta-data cache (TEST!!!)
 %
-%   data = matroos_opendap_maps2series2('datenum',<...>,'source',<...>,'m',<...>,'n',<...>)
+%   data = matroos_opendap_maps2series2mn('datenum',<...>,'source',<...>,'m',<...>,'n',<...>)
 %
 % where data contains the data, time and coordinates requested from the OPeNDAP server.
 % Data is also saved to netCDF en mat file for later reuse.
@@ -84,14 +84,14 @@ warning('TO DO: let m and n be only small arrays with corner points indices, and
    OPT.basePath     = 'http://opendap-matroos.deltares.nl/thredds/dodsC/'; % same server as catalog.xml
    OPT.source       = 'hmcn_kustfijn';
    OPT.datenum      = datenum([2009 2009],[12 12],[1 2]);
-  %OPT.m            = {[4:109],[      4],[4:70]}; % to main land
    OPT.m            = {[4: 66],      [4],[4:70]}; % to interface N'Sea & W'Sea
    OPT.n            = {[  122],[122:545],[ 545]};
    OPT.f            = [-1,1,1];
    OPT.var          = 'SEP';
-   OPT.debug        = 0;
-   OPT.path         = 'F:\checkouts\mcmodels\effect-chain-waddenzee\HYDRODYNAMICA\unstruc_kinda_dd\';
    OPT.nan          = 0;
+   OPT.debug        = 0;
+
+   OPT.path         = 'F:\checkouts\mcmodels\effect-chain-waddenzee\HYDRODYNAMICA\unstruc_kinda_dd\';
   [OPT.user,OPT.passwd] = matroos_user_password();
    OPT.nodatavalue  = 0;
    
@@ -108,7 +108,7 @@ warning('TO DO: let m and n be only small arrays with corner points indices, and
 %% load cached meta-data from matroos_opendap_maps2series1
 
    if ~(exist([OPT.source,'.mat'],'file')==2)
-      matroos_opendap_maps2series1('source',OPT.source,'basePath',OPT.basePath);
+      D = matroos_opendap_maps2series1('source',OPT.source,'basePath',OPT.basePath);
    else
       D = load(OPT.source);
    end
@@ -129,7 +129,7 @@ warning('TO DO: let m and n be only small arrays with corner points indices, and
    R.source   = OPT.source;
    R.basePath = OPT.basePath;
 
-   sz.(OPT.varname) = cellfun(@(x,y) max(length(x),length(y)),OPT.m,OPT.n);
+   sz.(OPT.varname) =  cellfun(@(x,y) max(length(x),length(y)),OPT.m,OPT.n);
    sz.d0   = [0 cumsum(cellfun(@(x,y) max(length(x),length(y)),OPT.m,OPT.n))]+1;sz.d0 = sz.d0(1:end-1);
    sz.d1   = [  cumsum(cellfun(@(x,y) max(length(x),length(y)),OPT.m,OPT.n))];
    R.x     = repmat(nan,[1 sum(sz.(OPT.varname))]);
@@ -170,6 +170,7 @@ warning('TO DO: let m and n be only small arrays with corner points indices, and
    data = [];
    
 %% request 2D data slices along constant m or n indices
+%  loop over relevant files (OPT.t are indices of that subset of files)
 
    tic
    for it=1:length(OPT.t)
@@ -225,7 +226,6 @@ warning('TO DO: let m and n be only small arrays with corner points indices, and
    
    R.pathdistance = distance(R.x,R.y);
    R.history      = ['Timeseries created at ',datestr(now),' by $HeadURL$ $Id$'];
-
 
 %% remove nans by temporal interpolation
 

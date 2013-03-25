@@ -253,9 +253,9 @@ end
             isCatalogNc(ii) = strcmpi(nc_file_list{ii}(end-9:end),'catalog.nc');
         end
         if any(isCatalogNc)
-        nc_file_list(isCatalogNc)     = [];
-        metadata.bytes(isCatalogNc)   = [];
-        metadata.datenum(isCatalogNc) = [];
+        nc_file_list(isCatalogNc)      = [];
+        metadata.dataSize(isCatalogNc) = [];
+        metadata.date(isCatalogNc)     = [];
         end
     end
     

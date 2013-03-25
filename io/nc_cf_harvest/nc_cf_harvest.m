@@ -234,5 +234,3 @@ function D = nc_cf_harvest(ncfiles,varargin)
    %if ~isempty(OPT.catalog.pgn) % to do PostgreSQL geonetwork RDBMS datamodel
    %   nc_cf_harvest_matrix2nc(OPT.catalog.pgn,D);
    %end
-   
-   save

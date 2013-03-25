@@ -56,9 +56,9 @@ function matroos_opendap_maps2series2mn2nc(D,ncfile,varargin)
    OPT.Format         = 'classic'; % '64bit','classic','netcdf4','netcdf4_classic'
    OPT.refdatenum     = datenum(0000,0,0); % matlab datenumber convention: A serial date number of 1 corresponds to Jan-1-0000. Gives wrong dates in ncbrowse due to different calendars. Must use doubles here.
    OPT.refdatenum     = datenum(1970,1,1); % linux  datenumber convention
-   OPT.institution    = '';
+   OPT.institution    = 'Rijkswaterstaat';
    OPT.timezone       = timezone_code2iso('GMT');
-   OPT.epsg           = 28992;
+   OPT.epsg           = 28992; % Dutch RD
    OPT.debug          = 0;
    OPT.type           = 'single'; %'double'; % the nefis file is by default single precision, se better isn't useful
    
@@ -80,7 +80,7 @@ function matroos_opendap_maps2series2mn2nc(D,ncfile,varargin)
       nc.Attributes(end+1) = struct('Name','history'            ,'Value',  [char(D.history) ]);
       nc.Attributes(end+1) = struct('Name','references'         ,'Value',  'http://svn.oss.deltares.nl');
       nc.Attributes(end+1) = struct('Name','email'              ,'Value',  '');
-      nc.Attributes(end+1) = struct('Name','comment'            ,'Value',  'This netCDF file in GETM convenction and can be serialized to (i) NOOS ascii files, (ii) Delft3D *.bct ascii files, (iii) Dflow-FM *.tim ascii files with OpenEarthTools.');
+      nc.Attributes(end+1) = struct('Name','comment'            ,'Value',  'This netCDF file is in GETM convention and can be serialized to (i) NOOS ascii files, (ii) Delft3D *.bct ascii files, (iii) Dflow-FM *.tim ascii files with OpenEarthTools.');
       nc.Attributes(end+1) = struct('Name','version'            ,'Value',  'transformation to netCDF: $HeadURL$ $Id$');
       nc.Attributes(end+1) = struct('Name','Conventions'        ,'Value',  'CF-1.6');
       nc.Attributes(end+1) = struct('Name','terms_for_use'      ,'Value', ['These data can be used freely for research purposes provided that the following source is acknowledged: ',OPT.institution]);
@@ -176,6 +176,16 @@ function matroos_opendap_maps2series2mn2nc(D,ncfile,varargin)
                                   'FillValue'  , []); % this doesn't do anything
 
 
+      if isfield(D,'x') && isfield(D,'y')
+      
+      ifld     = ifld + 1;clear attr dims
+      attr         = nc_cf_grid_mapping(OPT.epsg);      
+      nc.Variables(ifld) = struct('Name'       , 'CRS', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , [], ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
+      
       ifld     = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'projection_x_coordinate');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'x of interpolation-point');
@@ -207,7 +217,8 @@ function matroos_opendap_maps2series2mn2nc(D,ncfile,varargin)
                                   'Dimensions' , nbdyp.dims, ...
                                   'Attributes' , attr,...
                                   'FillValue'  , []); % this doesn't do anything
-
+      end
+      
       if isfield(D,'m')
       ifld     = ifld + 1;clear attr dims
       attr(    1)  = struct('Name', 'long_name'    , 'Value', 'm index of source model');
@@ -236,7 +247,7 @@ function matroos_opendap_maps2series2mn2nc(D,ncfile,varargin)
 
       if isfield(D,'ind')
       ifld     = ifld + 1;clear attr dims
-      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'sequence index of line segment from source model');
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'sequence index of segment from source model');
       attr(end+1)  = struct('Name', 'units'        , 'Value', '1');
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(D.ind(:)) max(D.ind(:))]);
       attr(end+1)  = struct('Name', 'source'       , 'Value', [char(D.basePath) ' : '  char(D.source)]);

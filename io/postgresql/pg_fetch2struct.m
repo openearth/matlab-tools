@@ -8,11 +8,11 @@ function D = pg_fetch2struct(R,nams,typs)
 % column are turned into column vector fields.
 %
 % D = PG_FETCH2STRUCT(R, column_name, data_type) where R is the 
-% cell returned by PG_FETCH or PG_SELECT_STRUCT, 
-% column_name are the names of the columns, and data_type
-% are the column data types to be used for type casting (conversion)
-% into field of struct D. Make sure the order in R and column_name, 
-% data_type match.
+% cell returned by PG_FETCH or PG_SELECT_STRUCT. column_name 
+% and data_type are returned by PG_GETCOLUMNS, column_name  are the 
+% names of the columns, and data_type are the column data types
+% to be used for type casting (conversion) into field of struct D.
+% Make sure the order in R matches that of column_name, data_type.
 %
 % Example: extract an entire PG table into a Matlab struct:
 %
