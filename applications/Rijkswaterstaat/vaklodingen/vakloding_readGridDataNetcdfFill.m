@@ -17,7 +17,7 @@ function d = vakloding_readGridDataNetcdfFill(varargin)
 %    Vaklodingen Rottumeroog of 2008:
 %    D = vakloding_readGridDataNetcdfFill('c:\mydata\vaklodingen\vaklodingenKB134_1110.nc',[2008]);
 %    Vaklodingen Rottumeroog of 2007 and 2008 combined:
-%    D = vakloding_readGridDataNetcdfFill('c:\mydata\vaklodingen\vaklodingenKB134_1110.nc',[2008]);
+%    D = vakloding_readGridDataNetcdfFill('c:\mydata\vaklodingen\vaklodingenKB134_1110.nc',[2007; 2008]);
 %
 %   See also:  VAKLODING_CREATEGRIDSTRUCT, VAKLODING_READGRIDDATANETCDF
 
