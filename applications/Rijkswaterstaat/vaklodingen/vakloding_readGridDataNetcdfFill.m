@@ -89,9 +89,16 @@ y          = nc_varget (fname, 'y');
 dates      = nc_cf_time(fname);
 datematrix = cell2mat(arrayfun(@datevec, dates, 'UniformOutput', false));
 
+m = 0;
 if (~isnan(year))
     for k = 1:length(year)
-        date_indices(k) = find(datematrix(:,1) == year(k));
+        myindex = find(datematrix(:,1) == year(k));
+        if ~isempty(myindex)
+            m = m+1;
+            date_indices(m) = myindex;
+        else
+           disp([num2str(year(k)) ' not found'])
+        end
     end
 else
     date_indices = 1:length(dates);
