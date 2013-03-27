@@ -128,12 +128,16 @@ assert(~any(isnan(y)),'there are nan''s in y');
 assert(~any(isinf(x)),'there are inf''s in x');
 assert(~any(isinf(y)),'there are inf''s in y');
 assert(isscalar(tolerance),'tolerance is not a scalar');
+assert(isscalar(maximum_nr_of_points),'maximum_nr_of_points is not a scalar');
+
 % also allow three inputs
 if nargin==3
     maximum_nr_of_points = length(x);
 end
 assert(isscalar(maximum_nr_of_points));
 assert(maximum_nr_of_points>0);
+assert(~isinf(maximum_nr_of_points),'maximum_nr_of_points is inf');
+assert(~isnan(maximum_nr_of_points),'maximum_nr_of_points is nan');
 %% call mex function
 [indices,max_error,starts,ends,max_err_locs,max_err_vals] = reduce(double(x),double(y),double(tolerance),uint32(maximum_nr_of_points)); %#ok<ASGLU,NASGU>
 
