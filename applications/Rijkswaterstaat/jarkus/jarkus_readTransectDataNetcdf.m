@@ -131,10 +131,16 @@ end
 
 global year
 if isempty(year)
-    time = nc_varget(filename, 'time');
+    %time = nc_varget(filename, 'time');
+    t=nc_cf_time(filename, 'time');
+    date=datestr(t);
 end
 
-time_index = find(round(time/365+1970) == soundingId);
+
+
+time_index = find((str2num(date(:,8:11))) == soundingId);
+
+
 if isempty(time_index)
     error(['year not found: ' time_index]);
 end
@@ -153,13 +159,14 @@ transect.datatheme    = '';
 transect.area         =                      areaname{id_index};
 transect.areacode     = num2str(areacode             (id_index));
 transect.transectID   = num2str(alongshoreCoordinates(id_index), '%05d');
-transect.year         = round(time(time_index)/365+1970); %'1965'
+transect.year=time_index;
+%transect.year         = round(time(time_index)/365+1970); %'1965'
 
 %TODO: store and look up
 % transect.dateTopo = num2str(transect.dateTopo);   % '3008'
 % transect.dateBathy = num2str(transect.dateBathy); % '1708'
-transect.soundingID = num2str(time(time_index));    % '1965'
-
+%transect.soundingID = num2str(time(time_index));    % '1965'
+transect.soundingID = date(time_index,8:11)
 
 global crossShoreCoordinate
 if isempty(crossShoreCoordinate)
