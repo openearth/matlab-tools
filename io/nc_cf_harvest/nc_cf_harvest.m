@@ -117,6 +117,7 @@ function D = nc_cf_harvest(ncfiles,varargin)
 % $Keywords$
 
    OPT.debug         = Inf; % number of ncfiles to process
+   OPT.save2temp     = 20; % interval at which to save temp file
    OPT.disp          = ''; %'multiWaitbar';
    OPT.flat          = 1;  % flat is struct with matrices, else multi-layered struct with tuples
    OPT.urlPathFcn    = @(s)(s); % function to run on urlPath, as e.g. strrep
@@ -174,27 +175,39 @@ function D = nc_cf_harvest(ncfiles,varargin)
    % initialize harvest waitbar
    if strcmpi(OPT.disp,'multiWaitbar')
    multiWaitbar(mfilename,0,'label','Generating catalog.nc','color',[0.3 0.6 0.3])
-   end   
+   end
+   
+   tempname = [tempdir,filesep,mfilename];
+   
+   % code to RESUME from cached tempname
+   % D = load('DART.temp.mat');
+   % for i=461:n
 
-   for i=1:n
+   for i=461:n
 
       if strcmpi(OPT.disp,'multiWaitbar')
       multiWaitbar([mfilename],i/n,'label',['Harvesting ...',filename(ncfiles{i})]);
       else
       disp([num2str(i) ' ' num2str(n) ' ' ncfiles{i}])
       end
+      
+      try
+         d    = nc_cf_harvest_tuple_from_file(ncfiles{i},'featuretype',OPT.featuretype);
+      catch
+         d    = nc_cf_harvest_tuple_initialize;
+         dprintf(OPT.log,[' skipped erronous ',ncfiles{i},'\n'])
+      end      
 
       if ~(OPT.flat)
-         D(i) = nc_cf_harvest_tuple_from_file(ncfiles{i},'featuretype',OPT.featuretype);
+         D(i) = d;
       else % better performance (memory management)
-         %try
-           d    = nc_cf_harvest_tuple_from_file(ncfiles{i},'featuretype',OPT.featuretype);
-         %catch
-         %  d    = nc_cf_harvest_tuple_initialize;
-         %  dprintf(OPT.log,['Skipped erronous ',ncfiles{i},'\n'])
-         %end
          D    = nc_cf_harvest_tuple2matrix(d,D,i);
       end % flat
+      
+      if mod(i,OPT.save2temp)==0
+         save(tempname,'-struct','D');
+         disp([' cached results to ',tempname]) 
+      end
 
    end % i
    
@@ -210,10 +223,8 @@ function D = nc_cf_harvest(ncfiles,varargin)
 
 %% Export to caches   
 
-   tname = [tempdir,filesep,mfilename];
-   save(tname,'-struct','D'); % in case of failure below keep something
-   disp(['cached results to ',tname])
-   
+   save(tempname,'-struct','D'); % in case of failure below keep something
+   disp(['cached results to ',tempname])
 
    if ~isempty(OPT.catalog.mat)
       save(OPT.catalog.mat,'-struct','D');
