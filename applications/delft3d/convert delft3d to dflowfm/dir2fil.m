@@ -168,7 +168,6 @@ end
 if teller6 > 1;
     set(handles.edit4,'String',mdffile(1,:));
 else
-    set(handles.pushbutton5 ,'Enable','off');
     set(handles.pushbutton6 ,'Enable','off');
     warndlg('No .mdf file found.','Warning');
 end

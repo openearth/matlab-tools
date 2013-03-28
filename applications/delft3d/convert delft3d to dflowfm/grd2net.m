@@ -132,9 +132,10 @@ if jabodem == 1;
     xsamp        = reshape(xh,[M.*N 1]);
     ysamp        = reshape(yh,[M.*N 1]);
     zsamp        = reshape(zh,[M.*N 1]);
-    xsamp(isnan(xsamp))   = [];
-    ysamp(isnan(ysamp))   = [];
-    zsamp(isnan(zsamp))   = [];
+    nannetjes    = isnan(xsamp);
+    xsamp(nannetjes==1)   = [];
+    ysamp(nannetjes==1)   = [];
+    zsamp(nannetjes==1)   = [];
     dlmwrite(samples,[xsamp,ysamp,zsamp],'delimiter','\t','precision','%7.7f');
 else
     % Set bottom to dummy value of -5.0 m w.r.t. reference (also default in mdu)
