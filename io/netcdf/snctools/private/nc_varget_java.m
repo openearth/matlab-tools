@@ -92,9 +92,6 @@ else
 
 end                                                                                   
 
-% And finally, remove any singleton dimensions.
-values = squeeze(values);
-
 
 
 % If we were passed an open java file id, don't close it upon exit.

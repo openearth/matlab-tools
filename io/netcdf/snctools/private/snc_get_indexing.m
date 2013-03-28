@@ -39,6 +39,12 @@ start = start(:)';
 count = count(:)';
 stride = stride(:)';
 
+% TO DO
+% allow talking relative to end of array like Matlab syntax (2:end-1)
+% negs = find((start<0) | isinf(start));
+% ...
+%('let negative COUNT count down in this case')
+
 % If the user had set non-positive numbers in "count", then we replace them
 % with what we need to get the rest of the variable.
 negs = find((count<0) | isinf(count));

@@ -18,6 +18,9 @@ switch(mode)
         ncfile = fullfile(testroot,'testdata/varget.nc');
         run_local_tests(ncfile,testroot);
 
+		test_singleton_dimension(ncfile);
+
+
     case 'netcdf4-classic'
         ncfile = fullfile(testroot,'testdata/varget4.nc');
         run_local_tests(ncfile,testroot);
@@ -796,6 +799,7 @@ expData = [7199 6645 237; 6075 5513 112];
 if ~getpref('SNCTOOLS','PRESERVE_FVD',false)
     start = fliplr(start); count = fliplr(count); stride = fliplr(stride);
     expData = expData';
+    expData = reshape(expData, [1 1 1 3 2]);
 end
 
 actData = nc_varget(gribfile,'Potential_vorticity',start,count,stride);
@@ -816,6 +820,7 @@ expData = [7199 4388 6645; 3625 2257 6847];
 if ~getpref('SNCTOOLS','PRESERVE_FVD',false)
     start = fliplr(start); count = fliplr(count);
     expData = expData';
+    expData = reshape(expData,[1 1 1 3 2]);
 end
 
 actData = nc_varget(gribfile,'Potential_vorticity',start,count);
@@ -854,6 +859,7 @@ end
 return
 %--------------------------------------------------------------------------
 function test_read_grib_full_var_double_precision(gribfile)
+
 actData = nc_varget(gribfile,'lon');
 expData = 10*(0:35)';
 if actData ~= expData
@@ -939,6 +945,7 @@ test_bad_fill_value(testroot);
 test_bad_missing_value(testroot);
 test_not_full_path;
 
+
 v = version('-release');
 switch(v)
     case {'14','2006a','2006b','2007a','2007b'}
@@ -999,6 +1006,13 @@ return
 
 %--------------------------------------------------------------------------
 function test_1D_char_opendap_variable ()
+
+if ~getpref('SNCTOOLS','USE_NETCDF_JAVA', false)
+    fprintf('\n\t\t\tOPeNDAP char var tests filtered out if USE_NETCDF_JAVA\n');
+    fprintf('\t\t\tpreference not set.  Check the README.\n');
+    return
+end
+
 % Should be 65 chars long.
 url = 'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/test/matlab-ncread-error-classic-65.nc';
 data = nc_varget(url,'str');
@@ -1011,6 +1025,12 @@ return
 %--------------------------------------------------------------------------
 function test_2D_char_opendap_variable ()
 % 2D strings seem to be treated differently.
+
+if ~getpref('SNCTOOLS','USE_NETCDF_JAVA', false)
+    fprintf('\n\t\t\tOPeNDAP char var tests filtered out if USE_NETCDF_JAVA\n');
+    fprintf('\t\t\tpreference not set.  Check the README.\n');
+    return
+end
 
 pfd = getpref('SNCTOOLS','PRESERVE_FVD');
 
@@ -1057,4 +1077,31 @@ function test_readOpendapVariable ()
 return
 
 
+
+%--------------------------------------------------------------------------
+function test_singleton_dimension(ncfile)
+% Verify the size of data being read from a classic file when the variable
+% has an unlimited dimension with extent of 1.
+
+% Write a single timestep into the variable.
+copyfile(ncfile,'foo.nc');
+pv = getpref('SNCTOOLS','PRESERVE_FVD',false);
+if pv
+	exp_data = reshape(1:24,[6 4]);
+    nc_varput('foo.nc','d',exp_data, [0 0 0], [6 4 1])
+else
+	exp_data = reshape(1:24,[1 4 6]);
+    nc_varput('foo.nc','d',exp_data);
+end
+
+
+act_data = nc_varget('foo.nc','d');
+if ~isequal(act_data,exp_data)
+	error('failed');
+end
+
+act_data = nc_vargetr('foo.nc','d');
+if ~isequal(act_data,exp_data)
+	error('failed');
+end
 

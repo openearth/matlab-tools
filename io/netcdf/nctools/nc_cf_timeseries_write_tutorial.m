@@ -1,14 +1,15 @@
-%% Create netCDF-CF of a timeseries
+%NC_CF_TIMESERIES_WRITE_TUTORIAL tutorial for writing timeseries on disconnected stations to netCDF-CF file (legacy)
 %
-%  example of how to make a netCDF file with CF conventions of a 
+%  For up-to-date Matlab releases, plase see instead: ncwritetutorial_timeseries.m.
+%
+%  Tutorial of how to make a netCDF file with CF conventions of a 
 %  variable that is a timeseries. In this special case 
 %  the main dimension coincides with the time axis.
 %
-%  This case is described in:
-%  * http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984788 (simple)
-%  * https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions (full definition)
+%  This case is described in CF: http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/ch09.html
 %
-%See also: SNCTOOLS,  nc_cf_timeseries,...
+%See also: ncwritetutorial_timeseries, nc_cf_timeseries,
+%          SNCTOOLS, nc_create_empty, nc_add_dimension, nc_addvar, nc_attput, netcdf, 
 %          NC_CF_GRID_WRITE_LAT_LON_ORTHOGONAL_TUTORIAL, 
 %          NC_CF_GRID_WRITE_LAT_LON_CURVILINEAR_TUTORIAL, 
 %          NC_CF_GRID_WRITE_X_Y_ORTHOGONAL_TUTORIAL

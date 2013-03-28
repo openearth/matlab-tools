@@ -1,6 +1,6 @@
 function test_thredds_info()
 
-fprintf('\t\tTesting THREDDS_INFO ...  ' );
+fprintf('\n\t\tTesting THREDDS_INFO ...  ' );
 
 run_motherlode_test;
 fprintf('OK\n');

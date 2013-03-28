@@ -45,3 +45,14 @@ switch(retrieval_method)
     case 'tmw_hdf4_2011a'
         [data,info] = nc_varget_hdf4_2011a(ncfile,varname,varargin{:});
 end
+
+% Check to see if the number of dimensions of the variable exceeds the
+% number of dimensions of the data.  If that has happened, then check if
+% the missing dimensions correspond to leading singleton dimensions.  If
+% that's the case, we can restore them.
+if isfield(info,'Size') && (numel(info.Size) > ndims(data))
+    n = numel(info.Size) - ndims(data);
+    if info.Size(1:n) == ones(1,n)
+        data = reshape(data,[ones(1,n) size(data)]);
+    end
+end

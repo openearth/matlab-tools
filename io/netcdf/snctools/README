@@ -62,10 +62,10 @@ R14:                             2.2.20
 On R2012a, MATLAB has OPeNDAP support, meaning that netcdf-java is
 no longer needed as the backend there.  I would still recommend
 installing it, though. You still need it if you wish to read GRIB
-files.
+files.  
 
-HDF4 SD files are tentatively supported in read-only mode on R2006a
-and more recent.
+HDF4 SD files are tentatively supported in read-only mode on versions
+of MATLAB later than or equal to R2006a.
 
 Please add this directory to your matlab path.  You must also have 
 mexnc on your path in order for snctools to work.
@@ -88,6 +88,13 @@ netcdf-java returnes them as a cellstr of length 1, whereas the mex-file
 The resolution as of r3971 is to return any single-valued cellstr as a 
 char array.  Yes, this is a backwards incompatibility.  
 
+There's also an odd case of reading string data via OPeNDAP and the
+native package.  If you really need to read variables (string
+attributes are read just fine), I would suggest enabling the
+netcdf-java interface for OPeNDAP via the USE_NETCDF_JAVA preference,
+i.e.
+
+    >>> setpref('SNCTOOLS','USE_NETCDF_JAVA',true)
 
 +-----------------------------------------------------------------------
 BASIC INSTALLATION AND USAGE
@@ -130,11 +137,9 @@ USE_NETCDF_JAVA
     In R2012a, opendap support is built into MATLAB, but it does not support 
     all possible opendap configurations, such as servers with SSL.  If you
     have trouble with the MATLAB's native opendap software, you can force
-    SNCTOOLS to use netcdf-java on R2012a with the following
+    SNCTOOLS to use netcdf-java on R2012a or later with the following
 
         >> setpref('SNCTOOLS','USE_NETCDF_JAVA',true);
-
-    This will have no effect on versions of MATLAB earlier than R2012a.
 
 +-----------------------------------------------------------------------
 BUG Reports You Should Know About

@@ -1,3 +1,16 @@
+* January 15 2013 John Evans <john.g.evans.ne@gmail.com> -r4033
+- Fixed a bad warning on NC_GETVARINFO when java IDs being used.
+- Fixed indexing issue for string data retrieved by java backend
+-     (thanks to Brendan DeTracey).
+- Fixed issue with grib files when intra-element ordering is to be preserved.
+- Updated README for OPeNDAP string issue.
+
+* November 27 2012 John Evans <john.g.evans.ne@gmail.com> -r4028
+- SQUEEZE call sites removed.  NC_VARGET will try to restore any leading
+- singleton dimensions that were removed because of the 
+- row-major-col-major order issue.  Forcing integer COUNT argument in 
+- private/snc_get_indexing, suggested by Gerben de Boer.
+
 * October 30 2012 John Evans <john.g.evans.ne@gmail.com> -r4024
 - Fixed indexing bug that crept into java backend.
 

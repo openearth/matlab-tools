@@ -1,0 +1,57 @@
+NetCDF-3 Classic ncwritetutorial_timeseries.nc {
+
+  dimensions:
+    time = 12 ;
+    location = 4 ;
+    string_len = 3 ;
+
+  variables:
+    // Preference 'PRESERVE_FVD':  false,
+    // dimensions consistent with ncBrowse, not with native MATLAB netcdf package.
+    double time(time), shape = [12]
+      :standard_name = "time" 
+      :long_name = "time" 
+      :units = "days since 1970-01-01 00:00:00+08:00" 
+      :axis = "T" 
+    double longitude(location), shape = [4]
+      :standard_name = "longitude" 
+      :long_name = "Longitude of station" 
+      :units = "degrees_east" 
+      :axis = "X" 
+      :_FillValue = NaN 
+      :actual_range = 103.2 103.8 
+    double latitude(location), shape = [4]
+      :standard_name = "latitude" 
+      :long_name = "Latitude of station" 
+      :units = "degrees_north" 
+      :axis = "Y" 
+      :_FillValue = NaN 
+      :actual_range = 1.2 1.5 
+    char station_name(location,string_len), shape = [4 3]
+      :standard_name = "platform_name" 
+      :long_name = "platform name" 
+    double TSS(time,location), shape = [12 4]
+      :standard_name = "mass_concentration_of_suspended_matter_in_sea_water" 
+      :long_name = "TSS" 
+      :units = "kg m-3" 
+      :coordinates = "longitude latitude" 
+      :_FillValue = NaN 
+      :actual_range = 5.86179 39.5669 
+
+  //global Attributes:
+      :title = "SPM data in Singapore" 
+      :institution = "DeltaresNUS" 
+      :source = "" 
+      :history = "$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/io/netcdf/nctools/ncwritetutorial_timeseries.m $ $Id: ncwritetutorial_timeseries.m 8244 2013-03-01 10:40:26Z rooijen $" 
+      :references = "http://svn.oss.deltares.nl" 
+      :email = "" 
+      :featureType = "timeSeries" 
+      :comment = "" 
+      :version = "" 
+      :Conventions = "CF-1.6" // http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/ch09.html
+      :terms_for_use = "These data can be used freely for research purposes provided that the following source is acknowledged: DeltaresNUS" 
+      :disclaimer = "This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE." 
+      :delft3d_description = "" 
+
+
+}

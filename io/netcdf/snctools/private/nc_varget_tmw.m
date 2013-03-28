@@ -126,10 +126,6 @@ end
 
 
 
-% remove any singleton dimensions.
-values = squeeze(values);
-
-
 
 %-----------------------------------------------------------------------
 function var_size = get_varsize(ncid,varid,preserve_fvd)

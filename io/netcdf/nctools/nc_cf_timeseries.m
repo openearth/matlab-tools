@@ -43,7 +43,7 @@ function varargout = nc_cf_timeseries(ncfile,varargin)
 %    fname   = 'knmi/etmgeg/etmgeg_269.nc';
 %    [D2,M2] = nc_cf_timeseries([directory,fname],'wind_speed_mean','plot',1);
 %
-%See also: SNCTOOLS, NC_CF_GRID
+%See also: SNCTOOLS, NC_CF_GRID, ncwritetutorial_timeseries
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -286,7 +286,11 @@ function varargout = nc_cf_timeseries(ncfile,varargin)
    if OPT.plot
     if ~isempty(OPT.varname)
     
-      FIG = figure;
+      if OPT.plot < 0
+        FIG = figure('Visible','off');
+      else
+        FIG = figure;
+      end
       
       count = length(D.datenum);
       

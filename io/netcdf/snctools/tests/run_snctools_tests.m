@@ -348,7 +348,7 @@ return
 function run_http_tests()
 fprintf('\tTesting java/http...\n');
 
-if getpref('SNCTOOLS','TEST_REMOTE',false) && getpref('SNCTOOLS','TEST_HTTP',false)
+if getpref('SNCTOOLS','TEST_REMOTE',false) && getpref('SNCTOOLS','TEST_HTTP',false) && getpref('SNCTOOLS','USE_NETCDF_JAVA',false)
     test_nc_attget('http');
     test_nc_iscoordvar('http');
     test_nc_isvar('http');
@@ -360,7 +360,7 @@ end
 
 
 fprintf('\t\tjava http testing filtered out when either of SNCTOOLS preferences ');
-fprintf('\n\t\t''TEST_REMOTE'' or ''TEST_HTTP'' is false.\n');
+fprintf('\n\t\t''TEST_REMOTE'' or ''TEST_HTTP'' or ''USE_NETCDF_JAVA'' is false.\n');
 
 return
 

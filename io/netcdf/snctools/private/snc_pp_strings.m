@@ -32,5 +32,11 @@ end
 % but mexcdf cannot do this.
 if numel(values) == 1
     values = values{1};
+else
+    values = reshape(values, fliplr(shape));
+    n = jdata.getShape();
+    if n > 1
+        values = permute(values, ndims(values):-1:1);
+    end
 end
 

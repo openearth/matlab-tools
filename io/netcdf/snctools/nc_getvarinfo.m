@@ -35,7 +35,7 @@ function info = nc_getvarinfo(ncfile,varname,field)
 %
 %   See also:  NC_INFO, NC_GETDIMINFO.
 
-if ~ischar(ncfile)
+if isnumeric(ncfile)
     warning('snctools:nc_getvarinfo:deprecatedSyntax', ...
             'Using numeric IDs as arguments to NC_GETVARINFO is a deprecated syntax.');
 end

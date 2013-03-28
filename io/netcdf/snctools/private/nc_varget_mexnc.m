@@ -88,9 +88,6 @@ try
     end
 
 
-    % remove any singleton dimensions.
-    values = squeeze(values);
-
 catch %#ok<CTCH>
     mexnc('close',ncid);
     rethrow(lasterror);

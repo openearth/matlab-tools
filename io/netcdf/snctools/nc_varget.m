@@ -46,7 +46,6 @@ data = double(data);
 data = post_process_fill_value_missing_value(data,info);
 data = post_process_scaling(data,info);
 
-
 %--------------------------------------------------------------------------
 function data = post_process_fill_value_missing_value(data,info)
 % If the _FillValue or missing_value attributes are present, replace those
@@ -119,4 +118,3 @@ for j = 1:numel(info.Attribute)
 end
 
 data = data*scale_factor + add_offset;
-
