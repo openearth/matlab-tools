@@ -117,7 +117,6 @@ function D = nc_cf_harvest(ncfiles,varargin)
 % $Keywords$
 
    OPT.debug         = Inf; % number of ncfiles to process
-   OPT.save2temp     = 20; % interval at which to save temp file
    OPT.disp          = ''; %'multiWaitbar';
    OPT.flat          = 1;  % flat is struct with matrices, else multi-layered struct with tuples
    OPT.urlPathFcn    = @(s)(s); % function to run on urlPath, as e.g. strrep
@@ -126,9 +125,18 @@ function D = nc_cf_harvest(ncfiles,varargin)
    OPT.catalog.nc    = '';
    OPT.catalog.mat   = '';
   %OPT.catalog.pgn   = ''; % TO DO
+   OPT.log           = 2; % log progress, 0 = quiet, 1 = command line (2 = red), nr>1 = fid passed to fprintf (default 0)
+
+   OPT.save2temp     = 50; % interval at which to save temp file
+   OPT.resume.ind    = 1;  % where to resume from cached temp file after crash
+   OPT.resume.file   = ''; % where to resume from cached temp file after crash
+   
    OPT.ID            = 'institution/dataset/';
    OPT.name          = 'institution_dataset';
-   OPT.log           = 2; % log progress, 0 = quiet, 1 = command line (2 = red), nr>1 = fid passed to fprintf (default 0)
+
+   OPT.documentation.summary   = '';
+   OPT.documentation.title     = '';
+   OPT.documentation.url       = '';
    
    OPT.featuretype   = 'timeseries';    %'timeseries' % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#discrete-sampling-geometries
    OPT.platform_id   = 'platform_id';   % CF-1.6, older: 'station_id'  , harvested when OPT.featuretype='timeseries'
@@ -179,11 +187,12 @@ function D = nc_cf_harvest(ncfiles,varargin)
    
    tempname = [tempdir,filesep,mfilename];
    
-   % code to RESUME from cached tempname
-   % D = load('DART.temp.mat');
-   % for i=461:n
+   % resume from cached tempname
+   if ~isempty(OPT.resume.file)
+      D = load(OPT.resume.file);
+   end
 
-   for i=461:n
+   for i=OPT.resume.ind:n
 
       if strcmpi(OPT.disp,'multiWaitbar')
       multiWaitbar([mfilename],i/n,'label',['Harvesting ...',filename(ncfiles{i})]);
@@ -231,7 +240,7 @@ function D = nc_cf_harvest(ncfiles,varargin)
    end
    
    if ~isempty(OPT.catalog.xml)
-      nc_cf_harvest_matrix2xml(OPT.catalog.xml,D,'ID',OPT.ID,'name',OPT.name);
+      nc_cf_harvest_matrix2xml(OPT.catalog.xml,D,'ID',OPT.ID,'name',OPT.name,'documentation',OPT.documentation);
    end
 
    if ~isempty(OPT.catalog.xls)
