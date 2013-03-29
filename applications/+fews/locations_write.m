@@ -110,7 +110,7 @@ fname.Id           = [OPT.ConfigRoot,OPT.xml_Id];
        doubleId = setxor(uniqueId,1:length(OPT.internal_name));
        warning([num2str(length(doubleId)),' double occurences found and commented out:'])
        for j=1:length(doubleId)
-           disp([num2str(j),':  ',OPT.internal_name{j},' (',num2str(doubleId(j)),')'])
+           disp(['inactivated redundant location: ',num2str(j),':  ',OPT.internal_name{j},' (',num2str(doubleId(j)),')'])
        end
    end
 
@@ -173,15 +173,15 @@ fclose(fid);
    %NO% fprintf(fid,table');
    
    output = repmat(char(1),1,1e5);
-   newOutput = [xmlheader('locationSets',OPT.eol),OPT.eol,'<locationSet id="',OPT.locationSet_id,'" name="',OPT.locationSet_name,'">',OPT.eol];
+   newOutput = [xmlheader('locationSets',OPT.eol),OPT.eol,char(9),'<locationSet id="',OPT.locationSet_id,'" name="',OPT.locationSet_name,'">',OPT.eol];
    kk = 1;output(kk:kk+length(newOutput)-1) = newOutput;
    kk = kk+length(newOutput);   
    
    for j=1:length(lon)
       if intersect(j,doubleId)       
-      newOutput = [char(9),'<!--locationId>',OPT.internal_name{j},'</locationId-->',OPT.eol];
+      newOutput = [char(9),char(9),'<!--locationId>',OPT.internal_name{j},'</locationId-->',OPT.eol];
       else
-      newOutput = [char(9),'<locationId>',OPT.internal_name{j},'</locationId>',OPT.eol];          
+      newOutput = [char(9),char(9),'<locationId>',OPT.internal_name{j},'</locationId>',OPT.eol];          
       end
       output(kk:kk+length(newOutput)-1) = newOutput;
       kk = kk+length(newOutput);
@@ -194,7 +194,7 @@ fclose(fid);
    end
    fprintf(fid,'%c',output(1:kk-1));
 
-   fprintf(fid,['</locationSet>',OPT.eol,'</locationSets>']);
+   fprintf(fid,[char(9),'</locationSet>',OPT.eol,'</locationSets>']);
 
    fclose(fid);
    
@@ -204,7 +204,9 @@ fclose(fid);
    fid     = fopen(fname.Id,'w'); % OPT.xml.Id,'Id',OPT.locationSet_id,'.xml']
    
    output = repmat(char(1),1,1e5);
-   newOutput = [xmlheader('idMap',OPT.eol),OPT.eol];
+   newOutput = [xmlheader('idMap',OPT.eol),OPT.eol,...
+      '<!--PARAMETER-->',OPT.eol,...
+      '<!--LOCATION-->',OPT.eol];
    kk = 1;output(kk:kk+length(newOutput)-1) = newOutput;
    kk = kk+length(newOutput);   
    
