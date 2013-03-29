@@ -24,13 +24,19 @@
 % pg_fetch2struct                - parse cell from pg_fetch or pg_select_struct into struct 
 % pg_stationTimeSeries_tutorial  - tutorial for postgresql toolbox with simple scalar time series
 % pg_building_with_nature_zandmotor_tutorial - extract all tables with all columns into one struct
-% pg_ewkt                        - parse PostGIS Extended Well-Known Binary (EWKB) hexadecimal geometry object
 %
 % WRITE,CHANGE:
 % pg_insert_struct               - Inserts a structure into a table
 % pg_update_struct               - Updates a record in a table based on a structure
 % pg_upsert_struct               - Updates existing records or inserts it otherwise
 % pg_cleartable                  - Deletes all contents from a table
+%
+% <a href="http://www.postgis.net/">PostGIS</a> geospatial data (<a href="http://www.opengeospatial.org/standards/sfs">OGC Simple Feature Access</a>):
+% PG_READ_EWKB                   - Read WKB (Well Known Binary) string into WKT struct 
+% PG_READ_EWKT                   - Read WKT (Well Known Text)   string into struct     
+% PG_WRITE_EWKT                  - Write WKT struct to string
+% PG_WRITE_EWKB                  - Write WKT struct to WKB string
+% PG_READ_SHP                    - Read shapefile into WKT struct  
 %
 % Low-level SQL query: for explanation see <a href="http://www.postgresql.org/docs/current/static/sql.html">SQL primer</a> 
 % pg_quote                       - Wrap identifiers (table, column names) in " quotes to enable mixed upper/lower case

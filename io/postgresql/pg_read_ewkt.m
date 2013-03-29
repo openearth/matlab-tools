@@ -1,5 +1,5 @@
 function S = pg_read_ewkt(s)
-%PG_READ_EWKT  Read WKT string into struct
+%PG_READ_EWKT  Read WKT (Well Known Text) string into struct
 %
 %   Read a WKT (Well Known Text) string into struct
 %

@@ -1,5 +1,5 @@
 function [S, prop, s] = pg_read_ewkb(s)
-%PG_READ_EWKB  Read WKB string into WKT struct
+%PG_READ_EWKB  Read WKB (Well Known Binary) string into WKT struct
 %
 %   Read hexadecimal WKB (Well Known Binary) string into WKT (Well Known
 %   Text) struct
@@ -18,6 +18,17 @@ function [S, prop, s] = pg_read_ewkb(s)
 %   Example
 %   S   = pg_read_ewkb(wkb)
 %   WKT = pg_write_ewkt(S)
+%
+% Note: you can also download the <a href="http://www.vividsolutions.com/jts">JTS java toolbox</a>:
+%
+%   javaaddpath('your_location\jts-1.8.jar');        % load the java toolbox from above URL
+%   rdr      = com.vividsolutions.jts.io.WKBReader(); % create reader instance called 'rdr'
+%   geometry = rdr.read(rdr.hexToBytes(hex));         % create geometry object
+%   srid     = geometry.getSRID;                      % unpak geometry for use in matlab coding style
+%   x        = geometry.getCoordinate.x;
+%   y        = geometry.getCoordinate.y;
+%   z        = geometry.getCoordinate.z;
+%              geometry.getNumPoints
 %
 %   See also pg_write_ewkt, pg_read_ewkt, pg_write_ewkb
 

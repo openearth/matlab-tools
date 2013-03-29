@@ -1,5 +1,5 @@
 function s = pg_write_ewkb(S)
-%PG_WRITE_EWKB  Write WKT struct to WKB string
+%PG_WRITE_EWKB  Write WKT struct to WKB (Well Known Binary) string
 %
 %   Read a WKT (Well Known Text) struct to a hexadecimal WKB (Well Known
 %   Binary) string
