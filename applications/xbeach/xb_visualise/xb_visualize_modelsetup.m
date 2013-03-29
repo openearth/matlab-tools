@@ -102,17 +102,23 @@ ygrid       = yfile.data.value;
 zgrid       = zfile.data.value;
 
 bcfile      = xs_get(xs, 'bcfile');
-if strcmp(xs_get(bcfile, 'type'), 'unknown')
-    
-elseif strcmp(xs_get(bcfile, 'type'), 'jonswap')
-    wave_angles = xs_get(bcfile, 'mainang');
-elseif strcmp(xs_get(bcfile, 'type'), 'jonswap_mtx')
-    wave_angles = xs_get(bcfile, 'dir');
+if xs_check(bcfile)
+    if strcmp(xs_get(bcfile, 'type'), 'unknown')
+        wave_angles = xs_get(xs, 'dir0');
+    elseif strcmp(xs_get(bcfile, 'type'), 'jonswap')
+        wave_angles = xs_get(bcfile, 'mainang');
+    elseif strcmp(xs_get(bcfile, 'type'), 'jonswap_mtx')
+        wave_angles = xs_get(bcfile, 'dir');
+    end
+else
+	wave_angles = xs_get(xs, 'dir0');
 end
 
 %% Rotate grid if necessary (alfa, xori or yori ~= 0)
 
-if abs(alfa) > 0 || abs(xori) > 0 || abs(yori) > 0
+if (~isempty(alfa) && abs(alfa) > 0) || ...
+   (~isempty(xori) && abs(xori) > 0) || ...
+   (~isempty(yori) && abs(yori) > 0)
     [xw, yw] = xb_grid_xb2world(xgrid, ygrid, xori, yori, alfa);
 else 
     [xw, yw] = deal(xgrid, ygrid);
@@ -123,12 +129,12 @@ end
 if ~isempty(OPT.figureHandle)
     figHandle = OPT.figureHandle;
     figure(figHandle)
-    maximize(figHandle)
+    %maximize(figHandle)
     ax1 = subplot(1,4,[1 2 3]);
     pcolor(ax1,xw,yw,zgrid);
 elseif isempty(OPT.figureHandle)
     figHandle = figure;
-    maximize(figHandle)
+    %maximize(figHandle)
     ax1 = subplot(1,4,[1 2 3]);
     pcolor(ax1,xw,yw,zgrid);
 end

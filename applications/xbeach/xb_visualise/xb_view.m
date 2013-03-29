@@ -137,7 +137,7 @@ function ui_build(obj)
     pobj = get_pobj(obj);
     info = get_info(obj);
     
-    if length(info.t)<=1
+    if length(info.t)<1
         close(obj);
         error('No data');
     end
