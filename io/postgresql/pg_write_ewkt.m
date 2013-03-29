@@ -1,5 +1,5 @@
 function s = pg_write_ewkt(S)
-%PG_WRITE_EWKT  Write WKT (Well Known Text) struct to string
+%PG_WRITE_EWKT  Write WKT (Well Known Text) struct to WKT string
 %
 %   Write a WKT (Well Known Text) struct to a string
 %

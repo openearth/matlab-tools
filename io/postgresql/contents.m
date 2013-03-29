@@ -33,8 +33,8 @@
 %
 % <a href="http://www.postgis.net/">PostGIS</a> geospatial data (<a href="http://www.opengeospatial.org/standards/sfs">OGC Simple Feature Access</a>):
 % PG_READ_EWKB                   - Read WKB (Well Known Binary) string into WKT struct 
-% PG_READ_EWKT                   - Read WKT (Well Known Text)   string into struct     
-% PG_WRITE_EWKT                  - Write WKT struct to string
+% PG_READ_EWKT                   - Read WKT (Well Known Text)   string into WKT struct     
+% PG_WRITE_EWKT                  - Write WKT struct to WKT string
 % PG_WRITE_EWKB                  - Write WKT struct to WKB string
 % PG_READ_SHP                    - Read shapefile into WKT struct  
 %
