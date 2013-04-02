@@ -55,7 +55,7 @@ end
 if size(XP,2)~=2 
    error('input table has wrong dimensions'); 
 end
-if sum(XP(:,2))>1e-15 
+if sum(XP(:,2))-1>1e-15 
     error('sum of probabilities is not equal to 1'); 
 end
 if any(XP(:,2))<0
