@@ -8,8 +8,12 @@ rank_ = 0;
 % Shape is always zero long
 shape = zeros(6,1);
 [name, shape] = calllib(bmidll, 'get_var_shape', var_name, shape);
-% Matlab inconvenience (vector==matrix....)
-if (rank_ == 1) 
+
+if (rank_ == 0)
+    % Matlab inconvenience (scalar == matrix)
+    shape = [1,1];
+elseif (rank_ == 1) 
+    % Matlab inconvenience (vector==matrix....)
     shape = [shape(rank_),1];
 else
     shape = shape(1:rank_);
@@ -28,4 +32,5 @@ end
 % Dynamicly create the function name, only int, float and double supported
 functionname = sprintf('get_%dd_%s', rank_, type_name);
 [name, values] = calllib(bmidll, functionname, var_name, values);
+values = reshape(values, shape);
 end
