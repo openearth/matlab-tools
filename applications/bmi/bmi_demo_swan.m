@@ -2,8 +2,16 @@
 % Make sure you have setup mex -setup before you run this.
 addpath(pwd)
 
-dll = 'd:\Checkouts\swan\branches\feature\esmf\esmf40.91\vs2010\Debug\swan_dll.dll';
-config_file = 'd:\Checkouts\swan\branches\feature\esmf\esmf40.91\tests\DMrecSWAN\swan.inp';
+if ispc
+    dll = 'd:\Checkouts\swan\branches\feature\esmf\esmf40.91\vs2010\Debug\swan_dll.dll';
+    config_file = 'd:\Checkouts\swan\branches\feature\esmf\esmf40.91\tests\DMrecSWAN\swan.inp';
+elseif ismac
+    % Make sure the up to date gfortran is found before the ancient one
+    % that comes with matlab
+    % This sometimes on
+    dll = '/Users/fedorbaart/Documents/checkouts/swandeltares/libswan.so';
+    config_file = '/Users/fedorbaart/Documents/checkouts/swandeltares/tests/DMrecSWAN/swan.inp';
+end
 
 %% Load the library
 [bmidll] = bmi_new(dll);
