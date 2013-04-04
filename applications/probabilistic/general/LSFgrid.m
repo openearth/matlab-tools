@@ -71,15 +71,15 @@ OPT = struct(...
     'DomainVar1',       [-6 6],... % Domain of the horizontal axis in standard normal space
     'NameVar2',         'Var2',... % Variable on the vertical axis of the grid
     'DomainVar2',       [-6 6],... % Domain of the vertical axis in standard normal space
-    'NrGridpoints',     [2500]... % Number of grid points
+    'NrGridpoints',     [100 100]... % Number of grid points
      );
 
 % overrule default settings by property pairs, given in varargin
 OPT = setproperty(OPT, varargin{:});
 
 % Check if the square root of the number of grid points is 
-if ~(ceil(OPT.NrGridpoints^(1/2))==floor(OPT.NrGridpoints^(1/2)))
-    error('The square root of the number of grid points is not an integer')
+if length(OPT.NrGridpoints(:)) == 1;
+    error('The NrGridpoints is a single value while it should be a vector containing the numer of grid points of each variable')
 end
 
 % Find index selected stochastic variables
@@ -99,8 +99,8 @@ for k=1:length(OPT.stochast)
 end
 
 % generate a grid
-u1range = linspace(OPT.DomainVar1(1),OPT.DomainVar1(2),OPT.NrGridpoints^(1/2));
-u2range = linspace(OPT.DomainVar2(1),OPT.DomainVar2(2),OPT.NrGridpoints^(1/2));
+u1range = linspace(OPT.DomainVar1(1),OPT.DomainVar1(2),OPT.NrGridpoints(1));
+u2range = linspace(OPT.DomainVar2(1),OPT.DomainVar2(2),OPT.NrGridpoints(2));
 [U1,U2] = meshgrid(u1range,u2range);
 
 % dimensions

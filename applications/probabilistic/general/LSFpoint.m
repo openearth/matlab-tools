@@ -63,8 +63,8 @@ OPT = struct(...
     'x2zFunction',      @x2z,...  % Function to transform x to z    
     'x2zVariables',     {{}},... % additional variables to use in x2zFunction
     'method',           'matrix',... % z-function method 'matrix' (default) or 'loop'
-    'NameVar',          [0],... % Names of the variables with a u value different from 0
-    'UvalueVar',        [0 0]... % The u value of the variables with a u value different from 0
+    'NameVar',          {NameVar1 NameVar2 NameVar3},... % Names of the variables with a u value different from 0
+    'UvalueVar',        [0 10 6]... % The u value of the variables with a u value different from 0
      );
      
 % Overrule default settings by property pairs, given in varargin
