@@ -3,7 +3,7 @@ function DAT = rws_zege_read(varargin)
 %
 %      D = rws_zege_read('fname')
 %
-%   reads ASCII data file from www.hmcz.nl that looks like:
+%   reads ASCII wind data file from www.hmcz.nl that looks like:
 %
 %   ----------------------------------------------------------
 %   code
@@ -12,22 +12,22 @@ function DAT = rws_zege_read(varargin)
 %   31-jan-2007 23:50           55          268           65           52           61            
 %   ----------------------------------------------------------
 %
-%   RWS_ZEGE_READ returns a struct D containing the data from the 
+%   HMCZ_WIND_READ returns a struct DAT containing the data from the 
 %   file 'fname' which includes the following fields:
 %
 %   1 chlorosity   10 min. gemiddelde chlorositeit in [mg Cl/l]
-%   2 conductivity 10 min. steekwaarde geleidendheid in [S/m]
-%   3 temperature  10 min. steekwaarde watertemperatuur in [oC]
-%   4 salinity     10 min. gemiddelde praktische saliniteit (psu)
+%   2 conductivity 10 min. steekwaarde geleidendheid in [0.01 S/m]
+%   3 temperature  10 min. steekwaarde watertemperatuur in [0.1 oC]
+%   4 salinity     10 min. gemiddelde praktische saliniteit (resolutie 0.001)
 %   5 density      10 min. gemiddelde soortelijk gewicht van zeewater in [kg/m3]
 %
 %   * Lines with a * are treated as NaNs.
 %
 % example:
 %
-%   D = rws_zege_read('st-sf-ha10-2004-2009.data ')
-%   save             ('st-sf-ha10-2004-2009.mat','-STRUCT','D')
-%   D          = load('st-sf-ha10-2004-2009.mat')
+%   D =rws_zege_read('st-sf-ha10-2004-2009.data ')
+%   save           ('st-sf-ha10-2004-2009.mat','-STRUCT','D')
+%   D        = load('st-sf-ha10-2004-2009.mat')
 %
 % See also: KNMI_POTWIND, RWS_HMCZ_WIND_READ
 
@@ -214,8 +214,13 @@ no_cellstr    = 1;
                %% Interpret one line
                
               [tok{1},record]  = strtok(record);
+              
+               tok{1} = strrep(tok{1},'mrt','mar');
+               tok{1} = strrep(tok{1},'mei','may');
+               tok{1} = strrep(tok{1},'okt','oct');
+             
               [tok{2},record]  = strtok(record);
-               datenum0        = datenum([tok{1} ' ' tok{2}],'dd-mmm-yyyy HH:MM');
+              datenum0        = datenum([tok{1} ' ' tok{2}],'dd-mmm-yyyy HH:MM');
                
                DAT.data(nblock).datenum (nrow) = datenum0;
                
