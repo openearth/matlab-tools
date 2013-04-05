@@ -3,8 +3,8 @@
 addpath(pwd)
 
 if ispc
-    dll = 'd:\Checkouts\swan\branches\feature\esmf\esmf40.91\vs2010\Debug\swan_dll.dll';
-    config_file = 'd:\Checkouts\swan\branches\feature\esmf\esmf40.91\tests\DMrecSWAN\swan.inp';
+    dll = 'd:\checkouts\swanesmf\esmf40.91\vs2010\Debug\swan_dll.dll';
+    config_file = 'd:\checkouts\swanesmf\esmf40.91\tests\DMrecSWAN\swan.inp';
 elseif ismac
     % Make sure the up to date gfortran is found before the ancient one
     % that comes with matlab
@@ -16,12 +16,34 @@ end
 %% Load the library
 [bmidll] = bmi_new(dll);
 bmi_initialize(bmidll, config_file);
-bmi_update(bmidll,3600);
 
 %% Get variables
+wlv1 = bmi_var_get(bmidll, 'WLV1');
+wlv1(1:floor(end/2)) = wlv1(1:floor(end/2))+1;
+bmi_var_set(bmidll, 'WLV1', wlv1);
+
+wlv2 = bmi_var_get(bmidll, 'WLV2');
+wlv2(1:floor(end/3)) = wlv2(1:floor(end/3))+2;
+bmi_var_set(bmidll, 'WLV2', wlv2);
+
+wlv3 = bmi_var_get(bmidll, 'WLV3');
+wlv3(1:floor(end/4)) = wlv3(1:floor(end/4))+3;
+bmi_var_set(bmidll, 'WLV3', wlv3);
+
+
+wlevl = bmi_var_get(bmidll, 'WLEVL');
+wlevl(1:floor(end/2)) = wlevl(1:floor(end/2))+1;
+bmi_var_set(bmidll, 'WLEVL', wlevl);
+
+%% Compute
+bmi_update(bmidll,3600);
+
+%% Inspect
 tic
 ac2 = bmi_var_get(bmidll, 'AC2');
 toc
+%bmi_var_set(bmidll, 'AC2', ac2+0.1);
+
 spcsig = bmi_var_get(bmidll, 'SPCSIG');
 ddir = bmi_var_get(bmidll, 'DDIR');
 pwtail = bmi_var_get(bmidll, 'PWTAIL');

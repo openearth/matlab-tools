@@ -32,5 +32,8 @@ end
 % Dynamicly create the function name, only int, float and double supported
 functionname = sprintf('get_%dd_%s', rank_, type_name);
 [name, values] = calllib(bmidll, functionname, var_name, values);
+if isempty(values)
+    return
+end
 values = reshape(values, shape);
 end
