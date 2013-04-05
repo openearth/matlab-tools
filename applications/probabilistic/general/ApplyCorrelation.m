@@ -70,6 +70,11 @@ if max(max(abs(C)))>1 || min(min(abs(C)))<0
    error('absolute values should be between 0 and 1');
 end
 
+% check if dimensions of C and u correspond
+if size(u,2)~=n
+    error('nr of columns of u and C are not the same');
+end
+
 %% identify subset of random variables that are mutually corelated 
 correlated = true(n,1);
 cmvec = [zeros(n-1,1); 1];
@@ -82,10 +87,10 @@ end
 %% apply correlation matrix on correlated variables only
 
 % derive  for whic PP'=C, through Cholesky-decomposition
-Pm = Cholesky(C(correlated, correlated));
+Pm = chol(C(correlated, correlated));
 
-% apply correlation
+% apply correlation 
 uCorr = u;
-uCorr(:,correlated) = u(:,correlated)*Pm';
+uCorr(:,correlated) = u(:,correlated)*Pm;
 
 
