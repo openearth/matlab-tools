@@ -103,28 +103,42 @@ function varargout = rws_waterbase_get_url(varargin);
                                                            num2str(Substance.Code(indSub),'%0.3d'),' "',...
                                                                    Substance.FullName{indSub},'"'])
 
-%% Location names
-   Station = [];
-   while isempty(Station)
-      Station = rws_waterbase_get_locations(Substance.Code(indSub),Substance.CodeName{indSub});
-      if isempty(Station)
-      fprintf(2,[OPT.baseurl,' failed. Trying again to get list of: Stations']);
-      pause(5)
-      end
-   end
+%% Get pre-defined location names
 
+   if nargin>1
+      if iscell(varargin{2})
+          indLoc  = varargin{2}{1};
+          LOC     = varargin{2}{2};
+      else
+          indLoc = varargin{2};
+          LOC = [];
+          while isempty(LOC)
+             LOC = rws_waterbase_get_locations(Substance.Code(indSub),Substance.CodeName{indSub});
+             if isempty(LOC)
+             fprintf(2,[OPT.baseurl,' failed. Trying again to get list of: Stations']);
+             pause(5)
+             end
+          end      
+      end
+      if   ~isnumeric(indLoc);
+          indLoc = strmatch(indLoc, LOC.ID, OPT.strmatch);
+      end
+      ok     = 1;
 
 %% Select Location names
 
-   if nargin>1
-      indLoc = varargin{2};
-      if   ~isnumeric(indLoc);indLoc = strmatch(indLoc, Station.ID,OPT.strmatch);
-      end
-      ok     = 1;
    else
-      [indLoc, ok] = listdlg('ListString', Station.FullName, ...
+      LOC = [];
+      while isempty(LOC)
+         LOC = rws_waterbase_get_locations(Substance.Code(indSub),Substance.CodeName{indSub});
+         if isempty(LOC)
+         fprintf(2,[OPT.baseurl,' failed. Trying again to get list of: Stations']);
+         pause(5)
+         end
+      end
+      [indLoc, ok] = listdlg('ListString', LOC.FullName, ...
                           'SelectionMode', 'multiple', ...
-                           'InitialValue', [1:length(Station.FullName)], ...
+                           'InitialValue', [1:length(LOC.FullName)], ...
                            'PromptString', 'Select the locations', ....
                                    'Name', 'Selection of locations')
       if (ok == 0);OutputName = [];return;end
@@ -133,7 +147,7 @@ function varargout = rws_waterbase_get_url(varargin);
    if length(indLoc)>1
    disp(['message: rws_waterbase_get_url: Location    ',num2str(length(indLoc),'%0.3d'),'x: #',num2str(indLoc(:)','%0.3d,')])
    else
-   disp(['message: rws_waterbase_get_url: Location  # ',num2str(indLoc,'%0.3d'),': ',Station.ID{indLoc},' "',Station.FullName{indLoc},'"'])
+   disp(['message: rws_waterbase_get_url: Location  # ',num2str(indLoc,'%0.3d'),': ',LOC.ID{indLoc},' "',LOC.FullName{indLoc},'"'])
    end
 
 %% Times
@@ -173,8 +187,8 @@ function varargout = rws_waterbase_get_url(varargin);
       indName  = varargin{4};
       if exist(indName)==7
          FilePath = indName;
-        %FileName = ['id',num2str(Substance.Code(indSub)),'-',Station.ID{indLoc(1)},'-',startdate,'-',enddate,'.txt'];
-         FileName = ['id',num2str(Substance.Code(indSub)),'-',Station.ID{indLoc(1)},'.txt'];
+        %FileName = ['id',num2str(Substance.Code(indSub)),'-',LOC.ID{indLoc(1)},'-',startdate,'-',enddate,'.txt'];
+         FileName = ['id',num2str(Substance.Code(indSub)),'-',LOC.ID{indLoc(1)},'.txt'];
       else
          [FilePath,FileName,EXT,VERSN] = fileparts(indName);
       end
@@ -185,7 +199,7 @@ function varargout = rws_waterbase_get_url(varargin);
 
    disp(['message: rws_waterbase_get_url: file             ',fullfile(FilePath,FileName)]);
    
-%% get data = f(Substance.Code, Station.ID, startdate, enddate
+%% get data = f(Substance.Code, LOC.ID, startdate, enddate
 
    OutputName    = fullfile(FilePath,FileName);
    OutputNameUrl = fullfile(FilePath,[filename(FileName),'.url']);
@@ -202,13 +216,13 @@ function varargout = rws_waterbase_get_url(varargin);
       if OPT.version==1
       urlName = [OPT.baseurl,'/Sites/waterbase/wbGETDATA.xitng?ggt=id' ...
              sprintf('%d', Substance.Code(indSub)) '&site=MIV&lang=nl&a=getData&gaverder=GaVerder&from=' ...
-          startdate '&loc=' Station.ID{indLoc(iLoc)} '&to=' enddate '&fmt=text'];
+          startdate '&loc=' LOC.ID{indLoc(iLoc)} '&to=' enddate '&fmt=text'];
           
       elseif OPT.version==2
 
       urlName = [OPT.baseurl,'/wswaterbase/cgi-bin/wbGETDATA?ggt=id' ...
              sprintf('%d', Substance.Code(indSub)) '&site=MIV&lang=nl&a=getData&gaverder=GaVerder&from=' ...
-          startdate '&loc=' Station.ID{indLoc(iLoc)} '&to=' enddate '&fmt=text'];
+          startdate '&loc=' LOC.ID{indLoc(iLoc)} '&to=' enddate '&fmt=text'];
 
      end
 
@@ -218,7 +232,7 @@ function varargout = rws_waterbase_get_url(varargin);
           [s status] = urlwrite([urlName],OutputName);
 
           if (status == 0)
-            fprintf(2,[OPT.baseurl,': Online source not available. Trying again to get ',Substance.FullName,' at ',Substance.Code]);
+            fprintf(2,[OPT.baseurl,': Online source not available. Trying again to get ',Substance.FullName,' at ',Substance.Code,'\n']);
             pause(5)
           else
             fidurl = fopen(OutputNameUrl, 'w+');
@@ -239,13 +253,13 @@ function varargout = rws_waterbase_get_url(varargin);
 
             urlName = [OPT.baseurl,'/Sites/waterbase/wbGETDATA.xitng?ggt=id' ...
                    sprintf('%d', Substance.Code(indSub)) '&site=MIV&lang=nl&a=getData&gaverder=GaVerder&from=' ...
-                startdate '&loc=' Station.ID{indLoc(iLoc)} '&to=' enddate '&fmt=text'];
+                startdate '&loc=' LOC.ID{indLoc(iLoc)} '&to=' enddate '&fmt=text'];
 
             disp(urlName)
             
             [s status] = urlread([urlName]);
             if (status == 0)
-              warndlg([OPT.baseurl,' may be offline or you are not connected to the internet','Online source not available']);
+              fprintf(2,[OPT.baseurl,' may be offline or you are not connected to the internet','Online source not available','\n']);
               close(h);
               return;
             end
