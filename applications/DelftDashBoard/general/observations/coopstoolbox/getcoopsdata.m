@@ -1,27 +1,85 @@
 function varargout=getcoopsdata(opt,varargin)
+%GETCOOPSDATA wrapper for COOPS SOAP webservices
+%
+% D = getcoopsdata(service,<keyword,value>) where
+% service is one of:
+%
+%    'getactivestations'
+%    'getdatums'
+%    'getobservations'
+%    'getdatainventory'
+%
+% S  = getcoopsdata('getactivestations')
+% G  = getcoopsdata('getdatums'      ,'id',[],'units',[],'epoch',[])
+% D  = getcoopsdata('getobservations','id',[],'parameter',[],'subset',[],'t0',[],'t1',[],'timezone',[],'datum',[],'units',[])
+%
+% Note: max 31 day timeperiod at once is allowed
+%
+% Example:
+%  S = getcoopsdata('getactivestations')
+%  D = getcoopsdata('getobservations','id',D(1).id,'parameter',D(1).parameters(1).name,'t0',now-30,'t1',now)
+%
+%  plot(D.parameters.parameter.time,D.parameters.parameter.val)
+%  ylabel([mktex(D.parameters(1).parameter.name),' [',D.parameters(1).parameter.unit,']'])
+%  datetick('x')
+%  title(['''',D.stationid,''' [',num2str(D.longitude),',',num2str(D.latitude),']'])
+%
+%See also: getndbcdata, http://tidesandcurrents.noaa.gov/
 
-units='0';    % metres
-timezone='0'; % UTC
-subset='verified6minutes';
-epoch='A';
-datum='MSL';
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2013 Deltares
+%       Maarten van ormondt
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+id        = [];
+parameter = '';
+t0        = [];
+t1        = [];
+
+units     = '0'; % metres
+timezone  = '0'; % UTC
+subset    = 'verified6minutes';
+datum     = 'MSL';
+epoch     = 'A';
 
 for ii=1:length(varargin)
     if ischar(varargin{ii})
         switch lower(varargin{ii})
-            case{'id','stationid'}
-                id=varargin{ii+1};
-            case{'parameter'}
-                parameter=varargin{ii+1};
-            case{'subset'}
-                subset=varargin{ii+1};
-            case{'starttime','t0','tstart'}
-                t0=datestr(varargin{ii+1},'yyyymmdd HH:MM');
-            case{'stoptime','t1','tstop'}
-                t1=datestr(varargin{ii+1},'yyyymmdd HH:MM');
-            case{'datum'}
-                datum=varargin{ii+1};
-            case{'epoch'}
+            case{'id','stationid'};id          = varargin{ii+1};
+            case{'parameter'};     parameter   = varargin{ii+1};
+            case{'subset'};        subset      = varargin{ii+1};
+            case{'starttime','t0','tstart'};t0 = datestr(varargin{ii+1},'yyyymmdd HH:MM');
+            case{'stoptime','t1','tstop'};  t1 = datestr(varargin{ii+1},'yyyymmdd HH:MM');
+            case{'datum'};         datum       = varargin{ii+1};
+            case{'epoch'};
                 switch lower(varargin{ii+1})
                     case{'superseded'}
                     otherwise
@@ -48,9 +106,9 @@ end
 
 switch lower(opt)
     case{'getactivestations'}
-        varargout{1}=getActiveStations;
+        varargout{1}=getActiveStations();
     case{'gethistoricstations'}
-        varargout{1}=getHistoricCoopsStations;
+        varargout{1}=getHistoricCoopsStations();
     case{'getdatums'}
         [varargout{1} varargout{2}]=getDatum(id,units,epoch);
     case{'getobservations'}
@@ -68,19 +126,19 @@ s = getActiveStationsV2(ActiveStationsService);
 for ii=1:length(s.stationsV2.stationV2)
     station=s.stationsV2.stationV2(ii).stationV2;
     stations(ii).name=station.ATTRIBUTES.name;
-    stations(ii).id=station.ATTRIBUTES.ID;
-    metadata=station.metadataV2.metadataV2;
-    stations(ii).lon=str2double(metadata.location.location.long.long);
-    stations(ii).lat=str2double(metadata.location.location.lat.lat);
-    stations(ii).state=metadata.location.location.state.state;
-    stations(ii).date_established=metadata.date_established.date_established;
-    stations(ii).shed_id=metadata.shef_id.shef_id;
-    stations(ii).deployment_designation=metadata.deployment_designation.deployment_designation;
+    stations(ii).id=  station.ATTRIBUTES.ID;
+    metadata=         station.metadataV2.metadataV2;
+    stations(ii).lon=          str2double(metadata.location.location.long.long);
+    stations(ii).lat=          str2double(metadata.location.location.lat.lat);
+    stations(ii).state                  = metadata.location.location.state.state;
+    stations(ii).date_established       = metadata.date_established.date_established;
+    stations(ii).shed_id                = metadata.shef_id.shef_id;
+    stations(ii).deployment_designation = metadata.deployment_designation.deployment_designation;
     for ipar=1:length(station.parameter)
-        stations(ii).parameters(ipar).name=station.parameter(ipar).parameter.ATTRIBUTES.name;
-        stations(ii).parameters(ipar).dcp=str2double(station.parameter(ipar).parameter.ATTRIBUTES.DCP);
-        stations(ii).parameters(ipar).sensorid=station.parameter(ipar).parameter.ATTRIBUTES.sensorID;
-        stations(ii).parameters(ipar).status=str2double(station.parameter(ipar).parameter.ATTRIBUTES.status);
+        stations(ii).parameters(ipar).name     =            station.parameter(ipar).parameter.ATTRIBUTES.name;
+        stations(ii).parameters(ipar).dcp      = str2double(station.parameter(ipar).parameter.ATTRIBUTES.DCP);
+        stations(ii).parameters(ipar).sensorid =            station.parameter(ipar).parameter.ATTRIBUTES.sensorID;
+        stations(ii).parameters(ipar).status   = str2double(station.parameter(ipar).parameter.ATTRIBUTES.status);
     end
 end
 
@@ -181,19 +239,19 @@ try
 
     if ~isempty(data)
         
-        d.stationid=stationId;
-        d.stationname=stationName;
-        d.latitude=latitude;
-        d.longitude=longitude;
-        d.state=state;
-        d.datasource=dataSource;
-        d.disclaimer=COOPSDisclaimer;
-        d.begindate=beginDate;
-        d.enddata=endDate;
-        d.timezone=timeZone;
-        d.unit=unit;
+        d.stationid   = stationId;
+        d.stationname = stationName;
+        d.latitude    = latitude;
+        d.longitude   = longitude;
+        d.state       = state;
+        d.datasource  = dataSource;
+        d.disclaimer  = COOPSDisclaimer;
+        d.begindate   = beginDate;
+        d.enddata     = endDate;
+        d.timezone    = timeZone;
+        d.unit        = unit;
         if ~isempty(subsetstr)
-            d.subset=subsetstr;
+        d.subset      = subsetstr;
         end
         
         % Time
@@ -204,16 +262,16 @@ try
         end
         
         for ip=1:length(parametername)
-            d.parameters(ip).parameter.name=parametername{ip};
-            d.parameters(ip).parameter.dbname=parameter;
-            d.parameters(ip).parameter.time=time;
-            d.parameters(ip).parameter.val=zer;
+            d.parameters(ip).parameter.name     = parametername{ip};
+            d.parameters(ip).parameter.dbname   = parameter;
+            d.parameters(ip).parameter.time     = time;
+            d.parameters(ip).parameter.val      = zer;
             for it=1:length(data.item)
-                d.parameters(ip).parameter.val(it)=str2double(data.item(it).(parametercode{ip}));
+            d.parameters(ip).parameter.val(it)  = str2double(data.item(it).(parametercode{ip}));
             end
-            d.parameters(ip).parameter.size=[length(data.item) 0 0 0 0];
-            d.parameters(ip).parameter.quantity='scalar';
-            d.parameters(ip).parameter.unit=unit{ip};
+            d.parameters(ip).parameter.size     = [length(data.item) 0 0 0 0];
+            d.parameters(ip).parameter.quantity = 'scalar';
+            d.parameters(ip).parameter.unit     = unit{ip};
         end
         
     end
@@ -240,10 +298,10 @@ MinMaxWL.minWaterLevel=str2double(MinMaxWL.minWaterLevel);
 function s=getDataInventory(id)
 url=['http://opendap.co-ops.nos.noaa.gov/axis/webservices/datainventory/response.jsp?stationId=' id '&format=xml&Submit=Submit'];
 xml=xml2struct(url,'structuretype','long','includeattributes');
-for ipar=1:length(xml.Body.Body.DataInventory.DataInventory.station.station.parameter)
-    s.parameters(ipar).longname=xml.Body.Body.DataInventory.DataInventory.station.station.parameter(ipar).parameter.ATTRIBUTES.name.value;
+for ipar               =1:length(xml.Body.Body.DataInventory.DataInventory.station.station.parameter)
+    s.parameters(ipar).longname =xml.Body.Body.DataInventory.DataInventory.station.station.parameter(ipar).parameter.ATTRIBUTES.name.value;
     s.parameters(ipar).firsttime=xml.Body.Body.DataInventory.DataInventory.station.station.parameter(ipar).parameter.ATTRIBUTES.first.value;
-    s.parameters(ipar).lasttime=xml.Body.Body.DataInventory.DataInventory.station.station.parameter(ipar).parameter.ATTRIBUTES.last.value;
+    s.parameters(ipar).lasttime =xml.Body.Body.DataInventory.DataInventory.station.station.parameter(ipar).parameter.ATTRIBUTES.last.value;
     switch s.parameters(ipar).longname
         case{'Preliminary 1-Minute Water Level'}
             s.parameters(ipar).name='water_level';

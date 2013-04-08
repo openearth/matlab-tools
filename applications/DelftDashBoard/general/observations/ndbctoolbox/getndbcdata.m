@@ -1,37 +1,110 @@
 function varargout=getndbcdata(opt,varargin)
+%GETNDBCDATA get capabilities, inventory meta-data or data from NOAA NDBC SOS web service
+% 
+% download metadata from internet or local cache, save to local cache
+%   C = getndbcdata('getcapabilities','setglobal',1,'inputfile',[],'outputfile',[])
+%
+% get struct with available stations
+%   S = getndbcdata('getstations') % uses global C if setglobal=1 above
+%   S = getndbcdata('getstations','capabilities',C)
+%   D = getndbcdata('getobservations','id',id,'parameter',parameter,'t0',t0,'t1',t1);
+%
+% Example:
+%  D = getndbcdata('getobservations','id',S(1).id,...
+%                  'parameter','air_temperature',...
+%                  't0',datenum(2013,1,1),'t1',now); % time as datenum
+%  D = getndbcdata('getobservations','id',S(1).id,...
+%                  'parameter','air_temperature',...
+%                  't0','2013-01-01T00:00:00Z','t1',now) % time as ISO string
+%  D = getndbcdata('getobservations','id','0y2w3',...
+%                  'parameter',S(1).observedproperties{1},...
+%                  't0',S(1).t0,'t1',S(1).t1) % time from inventory
+%
+%  plot(D.parameters(2).parameter.time,D.parameters(2).parameter.val)
+%  ylabel([mktex(D.parameters(2).parameter.name),' [',D.parameters(2).parameter.unit,']'])
+%  datetick('x')
+%  title(['''',D.stationid,''' [',num2str(D.longitude),',',num2str(D.latitude),']'])
+%
+%See also: getcoopsdata, ddb_ObservationStations_ndbc, http://sdf.ndbc.noaa.gov/sos
 
-setglobal=0;
-inputfile=[];
-outputfile=[];
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2013 Deltares
+%       Maarten van ormondt
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
 
-for ii=1:length(varargin)
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+% getcapabilities
+ OPT.inputfile    = '';
+ OPT.outputfile   = '';
+ OPT.setglobal    = 0;
+% getstations
+ OPT.capabilities = [];
+% getobservations
+ OPT.id           = [];
+ OPT.parameter    = [];
+ OPT.t0           = [];
+ OPT.t1           = [];
+ OPT.inputfile    = [];
+ OPT.outpoutfile  = [];
+ OPT.setglobal    = [];
+
+if nargin==0
+   varargout = {OPT};
+   return
+end
+
+for ii=1:length(varargin) % replace with setpropery
     if ischar(varargin{ii})
         switch lower(varargin{ii})
-            case{'id','stationid'}
-                id=varargin{ii+1};
-            case{'parameter'}
-                parameter=varargin{ii+1};
-            case{'starttime','t0'}
-                t0=varargin{ii+1};
-            case{'stoptime','t1'}
-                t1=varargin{ii+1};
-            case{'inputfile'}
-                inputfile=varargin{ii+1};
-            case{'outputfile'}
-                outputfile=varargin{ii+1};
-            case{'global'}
-                setglobal=1;
+            case{'global','setglobal'};OPT.setglobal    = varargin{ii+1};
+            case{'inputfile'};         OPT.inputfile    = varargin{ii+1};
+            case{'outputfile'};        OPT.outputfile   = varargin{ii+1};
+
+            case{'capabilities'};      OPT.capabilities = varargin{ii+1};
+
+            case{'id','stationid'};    OPT.id           = varargin{ii+1};
+            case{'parameter'};         OPT.parameter    = varargin{ii+1};
+            case{'starttime','t0'};    OPT.t0           = varargin{ii+1};
+            case{'stoptime','t1'};     OPT.t1           = varargin{ii+1};
         end
     end
 end
 
 switch lower(opt)
     case{'getcapabilities'}
-        varargout{1}=getCapabilities(inputfile,outputfile,setglobal);
+        capabilities = getCapabilities(OPT.inputfile,OPT.outputfile,OPT.setglobal);
+        varargout{1}=capabilities.Capabilities;
     case{'getstations'}
-        varargout{1}=getStations();
+        varargout{1}=getStations(OPT.capabilities);
     case{'getobservations'}
-        varargout{1}=getData(id,parameter,t0,t1);
+        varargout{1}=getData(OPT.id,OPT.parameter,OPT.t0,OPT.t1);
 end
 
 %%
@@ -73,9 +146,13 @@ global NDBCCapabilities
 NDBCCapabilities=capabilities.Capabilities;
 
 %%
-function stations=getStations
+function stations=getStations(varargin)
 
-global NDBCCapabilities
+if isempty(varargin{1})
+   global NDBCCapabilities
+else
+    NDBCCapabilities = varargin{1};
+end
 
 s0=NDBCCapabilities.Contents.Contents.ObservationOfferingList.ObservationOfferingList.ObservationOffering;
 
@@ -87,11 +164,18 @@ for ib=1:length(s0)
         case{'network-all'}
         otherwise
             n=n+1;
-            stations(n).id=id(end-4:end);
-            stations(n).description=s.description.description.value;
+            stations(n).id          = id(end-4:end);
+            stations(n).description = s.description.description.value;
             loc=str2num(s.boundedBy.boundedBy.Envelope.Envelope.upperCorner.upperCorner.value);
-            stations(n).x=loc(2);
-            stations(n).y=loc(1);
+            stations(n).x           = loc(2);
+            stations(n).y           = loc(1);
+            
+            stations(n).t0 = s.time.time.TimePeriod.TimePeriod.beginPosition.beginPosition.value;
+            stations(n).t1 = s.time.time.TimePeriod.TimePeriod.endPosition.endPosition.value;
+            
+            if length(stations(n).t0)<2; stations(n).t0 = [];end
+            if length(stations(n).t1)<2; stations(n).t1 = [];end
+            
             np=length(s.observedProperty);
             for ip=1:np
                 property=s.observedProperty(ip).observedProperty.ATTRIBUTES.href.value;
@@ -107,16 +191,16 @@ function data=getData(id,parameter,t0,t1)
    
 url='http://sdf.ndbc.noaa.gov/sos/server.php';
 
-arg.request='GetObservation';
-arg.service='SOS';
-arg.version='1.0.0';
-arg.responseformat='text/xml;subtype="om/1.0.0"';
-arg.responseformat='text/csv';
-arg.offering=['urn:ioos:station:wmo:' id];
-arg.observedproperty=parameter;
-t0=datestr(t0,'yyyy-mm-ddTHH:MM:SSZ');
-t1=datestr(t1,'yyyy-mm-ddTHH:MM:SSZ');
-arg.eventtime=[t0 '/' t1];
+arg.request          = 'GetObservation';
+arg.service          = 'SOS';
+arg.version          = '1.0.0';
+arg.responseformat   = 'text/xml;subtype="om/1.0.0"';
+arg.responseformat   = 'text/csv';
+arg.offering         = ['urn:ioos:station:wmo:' id];
+arg.observedproperty = parameter;
+if ~ischar(t0);t0    = datestr(t0,'yyyy-mm-ddTHH:MM:SSZ');end
+if ~ischar(t1);t1    = datestr(t1,'yyyy-mm-ddTHH:MM:SSZ');end
+arg.eventtime        = [t0 '/' t1];
 
 urlstr=[url '?'];
 fldnames=fieldnames(arg);
@@ -127,6 +211,8 @@ for ii=1:length(fldnames)
     end
 end
 
+disp(urlstr)
+
 s=urlread(urlstr);
 
 data=[];
@@ -134,15 +220,15 @@ data=[];
 values=textscan(s,'%s','delimiter','\n');
 
 % First read the parameter list
-parstr=values{1}{1};
-parameters=textscan(parstr,'%s','delimiter',',');    
-parameters=parameters{1};
+parstr     = values{1}{1};
+parameters = textscan(parstr,'%s','delimiter',',');    
+parameters = parameters{1};
 for ip=1:length(parameters)
-    par=textscan(parameters{ip},'%s','delimiter','"');
+    par  =textscan(parameters{ip},'%s','delimiter','"');
     parameters{ip}(parameters{ip}=='"')='';
     ii=find(parameters{ip}==' ');
     if ~isempty(ii)
-        unit{ip}=parameters{ip}(ii(1)+2:end-1);
+              unit{ip}=parameters{ip}(ii(1)+2:end-1);
         parameters{ip}=parameters{ip}(1:ii(1)-1);
     else
         unit{ip}='';
@@ -213,16 +299,16 @@ if nt>0
     
     % Now store in a proper data structure
     fldnames=fieldnames(d);
-    data.stationname='';
-    data.stationid=nocolon(stationid);
-    data.longitude=lon;
-    data.latitude=lat;
-    data.timezone='UTC';
-    data.source='NDBC';
+    data.stationname  = '';
+    data.stationid    = nocolon(stationid);
+    data.longitude    = lon;
+    data.latitude     = lat;
+    data.timezone     = 'UTC';
+    data.source       = 'NDBC';
     for ip=1:length(fldnames)
-        data.parameters(ip).parameter.name=fldnames{ip};
-        data.parameters(ip).parameter.time=time;
-        data.parameters(ip).parameter.val=d.(fldnames{ip}).data;
+        data.parameters(ip).parameter.name = fldnames{ip};
+        data.parameters(ip).parameter.time = time;
+        data.parameters(ip).parameter.val  = d.(fldnames{ip}).data;
         if size(d.(fldnames{ip}).data,1)>2
             % spectral data
             data.parameters(ip).parameter.size=[length(time) 0 size(d.(fldnames{ip}).data,1) 0 0];
@@ -231,7 +317,7 @@ if nt>0
             data.parameters(ip).parameter.size=[length(time) 0 0 0 0];
         end
         data.parameters(ip).parameter.quantity='scalar';
-        data.parameters(ip).parameter.unit=d.(fldnames{ip}).unit;
+        data.parameters(ip).parameter.unit    =d.(fldnames{ip}).unit;
     end
     
 end

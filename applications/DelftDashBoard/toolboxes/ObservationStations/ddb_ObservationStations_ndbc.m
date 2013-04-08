@@ -1,4 +1,7 @@
-function varargout=ddb_ObservationStations_ndbc(opt,varargin)
+function varargout=DDB_OBSERVATIONSTATIONS_NDBC(OPT,varargin)
+%DDB_OBSERVATIONSTATIONS_NDBC ddb wrapper for getndbcdata
+%
+%See also: getndbcdata, getcoopsdata
 
 for ii=1:length(varargin)
     if ischar(varargin{ii})
@@ -19,7 +22,7 @@ for ii=1:length(varargin)
     end
 end
 
-switch lower(opt)
+switch lower(OPT)
     case{'readdatabase'}
         % Set capabilities in global structure
         getndbcdata('getcapabilities','inputfile',inputfile,'global');
@@ -31,38 +34,38 @@ end
 %%
 function database=readDatabase
 
-database.name='ndbc';
-database.longname='NDBC';
-database.institution='NDBC';
-database.coordinatesystem.name='WGS 84';
-database.coordinatesystem.type='geographic';
-database.servertype=[];
-database.url=[];
+database.name                  = 'ndbc';
+database.longname              = 'NDBC';
+database.institution           = 'NDBC';
+database.coordinatesystem.name = 'WGS 84';
+database.coordinatesystem.type = 'geographic';
+database.servertype            = [];
+database.url                   = [];
 
 stations=getndbcdata('getstations');
 
 for istat=1:length(stations)
-    database.stationlongnames{istat}=stations(istat).description;
-    database.stationnames{istat}=stations(istat).description;
-    database.stationids{istat}=stations(istat).id;
-    database.x(istat)=stations(istat).x;
-    database.y(istat)=stations(istat).y;
-    database.xlocal(istat)=stations(istat).x;
-    database.ylocal(istat)=stations(istat).y;
+    database.stationlongnames{istat} = stations(istat).description;
+    database.stationnames{istat}     = stations(istat).description;
+    database.stationids{istat}       = stations(istat).id;
+    database.x(istat)                = stations(istat).x;
+    database.y(istat)                = stations(istat).y;
+    database.xlocal(istat)           = stations(istat).x;
+    database.ylocal(istat)           = stations(istat).y;
     for j=1:length(stations(istat).observedproperties)
         database.parameters(istat).name{j}=stations(istat).observedproperties{j};
         database.parameters(istat).status(j)=1;
     end
 end
 
-database.datums={''};
-database.datum='';
+database.datums      = {''};
+database.datum       = '';
 
-database.subset='';
-database.subsets={''};
-database.subsetnames={''};
+database.subset      = '';
+database.subsets     = {''};
+database.subsetnames = {''};
 
-database.timezones={''};
-database.timezone='';
-
-database.download=1;
+database.timezones   = {''};
+database.timezone    = '';
+ 
+database.download    = 1;
