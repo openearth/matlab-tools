@@ -1,9 +1,8 @@
 function out = getHm0_2D(s)
 %% Process data
 
-df      = (1-0.05)/24;
-frintf  = df/24;
-
+% df      = (1-0.05)/24;
+% frintf  = df/24;
 % integrate action density spectrum
 % Etot = squeeze(sum(sum(ac2,1),2));
 % Etot = tot(1:end-1);
@@ -15,18 +14,24 @@ frintf  = df/24;
 % if Etot > exp(-20)
 %     out.hs = 4*sqrt(Etot);
 % end
+
+frintf = 0.3744665;     % Just for now; read from SWAN debug
+MDC = length(s.ac2(:,1,1));
+MSC = length(s.ac2(1,:,1));
+
 for ids = 1:length(s.ac2(1,1,:));                   % loop over space
     Etot_dsig = squeeze(sum(s.ac2(:,:,ids),1))'.*(s.spcsig.^2).*frintf*s.ddir;
     Etot      = sum(Etot_dsig);
-    Etot      = Etot + Etot_dsig(24)*s.pwtail(6)/frintf;
+    Etot      = Etot + Etot_dsig(MSC)*s.pwtail(6)/frintf;
     if Etot > exp(-20)
         out.hs(ids) = 4*sqrt(Etot);
     else
-        out.hs(ids) = 0;
+%         out.hs(ids) = 0;
     end
 end
 
-% based on SUBROUTINE SINTGRL in swancom1.for; Called in SUBROUTINE SWOMPU
+
+% based on SUBROUTINE SINTGRL in swancom1.for; +/-4890; Called in SUBROUTINE SWOMPU
 % !     Calculate total spectral energy
 % !
 %       FRINTF_X_DDIR = FRINTF * DDIR
@@ -43,12 +48,14 @@ end
 % END IF
 % 
 %
-% !             DDIR   is width of directional band
-% !             FRINTF is frequency integration factor df/f
-% !             SIGPOW : contains powers of relative frequencies
-% !                      second dimension indicates power of sigma
-%                        SIGPOW(:,2) = SPCSIG**2
-% !             SPCSIG: Relative frequencies in computational domain in sigma-space
+% !             ETOT    : Total wave energy density
+% !             AC2     : Action density as function
+% !             DDIR    : width of directional band
+% !             FRINTF  : frequency integration factor df/f
+% !             SIGPOW  : contains powers of relative frequencies
+% !                       second dimension indicates power of sigma
+%                         SIGPOW(:,2) = SPCSIG**2
+% !             SPCSIG	: Relative frequencies in computational domain in sigma-space
 
 
 % compute Hs
@@ -59,8 +66,6 @@ for ids = 1:length(s.ac2(1,1,:));                   % loop over space
     eftail = 1/(s.pwtail(1)-1);
     Etot = 0;
     % trapezoidal rule is applied
-    MDC = length(s.ac2(:,1,1));
-    MSC = length(s.ac2(1,:,1));
     for ii = 1:MDC           % loop over directions
         for jj = 2:MSC       % loop over frequencies
             ds = s.spcsig(jj) - s.spcsig(jj-1);

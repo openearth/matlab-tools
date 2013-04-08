@@ -1,3 +1,5 @@
+format long
+
 ini = 0;
 if ini ~= 1
     ini = 1;
@@ -38,19 +40,17 @@ end
 
 out = getHm0_2D(s);
 
-out.Etot = out.Etot(1:end-1);
-out.Etot_2D = reshape(out.Etot,fliplr(size(s.XCGRID)));
-
-Etot = squeeze(sum(sum(s.ac2,1),2));
-Etot = 4*sqrt(Etot(1:end-1));
-Etot2D = reshape(Etot,fliplr(size(s.XCGRID)));
+out.hs = out.hs(1:end-1);
+out.hs_2D = reshape(out.hs,fliplr(size(s.XCGRID)));
 
 
 %% Print
 
 % surf(double(XCGRID), double(YCGRID), double(tot2D)')
-surf(double(s.XCGRID), double(s.YCGRID), double(out.Etot_2D)')
-surf(double(s.XCGRID), double(s.YCGRID), out.Hm0_2D')
+% surf(double(s.XCGRID), double(s.YCGRID), double(out.Etot_2D)')
+surfc(double(s.XCGRID), double(s.YCGRID), flipud(double(out.hs_2D)))
+colorbar
+view(2)
 
 %% cleanup
 bmi_finalize(bmidll);
