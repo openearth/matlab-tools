@@ -67,6 +67,7 @@ for i=1:handles.Model(md).Input(id).nrAstronomicComponentSets
     componentSets{i}=handles.Model(md).Input(id).astronomicComponentSets(i).name;
 end
 
+ii=[];
 k=0;
 for i=1:10000
     tx0=fgets(fid);
@@ -79,14 +80,16 @@ for i=1:10000
         if length(v0)==1
             ii=strmatch(v0{1},componentSets,'exact');
         else
-            for j=1:handles.Model(md).Input(id).astronomicComponentSets(ii).nr
-                components{j}=handles.Model(md).Input(id).astronomicComponentSets(ii).component{j};
-            end
-            jj=strmatch(v0{1},components,'exact');
-            if ~isempty(jj)
-                handles.Model(md).Input(id).astronomicComponentSets(ii).correction(jj)=1;
-                handles.Model(md).Input(id).astronomicComponentSets(ii).amplitudeCorrection(jj)=str2double(v0{2});
-                handles.Model(md).Input(id).astronomicComponentSets(ii).phaseCorrection(jj)=str2double(v0{3});
+            if ~isempty(ii)
+                for j=1:handles.Model(md).Input(id).astronomicComponentSets(ii).nr
+                    components{j}=handles.Model(md).Input(id).astronomicComponentSets(ii).component{j};
+                end
+                jj=strmatch(v0{1},components,'exact');
+                if ~isempty(jj)
+                    handles.Model(md).Input(id).astronomicComponentSets(ii).correction(jj)=1;
+                    handles.Model(md).Input(id).astronomicComponentSets(ii).amplitudeCorrection(jj)=str2double(v0{2});
+                    handles.Model(md).Input(id).astronomicComponentSets(ii).phaseCorrection(jj)=str2double(v0{3});
+                end
             end
         end
     else
