@@ -118,6 +118,9 @@ axes(ax); hold on;
 % read data
 x = xs_get(xb, 'DIMS.globalx_DATA');
 z = xs_get(xb, 'zb');
+if size(x,2) ~= size(z,3) 
+    x = x';
+end
 j = ceil(size(x,1)/2);
 
 z0  = squeeze(z(1,j,:));

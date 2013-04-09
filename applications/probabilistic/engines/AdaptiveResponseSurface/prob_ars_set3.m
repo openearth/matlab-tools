@@ -81,14 +81,14 @@ nva         = sum(ARS.active);
 if length(ARS.z) >= 1+nva+nva*(nva+1)/2
 
     ARS.fit     = polyfitn(u(notinf&notout,:), z(notinf&notout), 2);
-    ARS.hasfit  = true;
+    ARS.hasfit  = check_fit(ARS.fit);
 
 % derive 2nd degree response surface with no cross terms
 elseif length(ARS.z) >= 2*nva+1
 
     pfmat       = [zeros(1,nva); eye(nva); 2*eye(nva)];
     ARS.fit     = polyfitn(u(notinf&notout,:), z(notinf&notout), pfmat);
-    ARS.hasfit  = true;
+    ARS.hasfit  = check_fit(ARS.fit);
     
 else
     
@@ -127,7 +127,7 @@ function valid = check_fit(fit)
            ~any(isnan(fit.ParameterVar)) && ...
            ~any(isinf(fit.ParameterVar)) && ...
            ~any(fit.ParameterVar > maxcoeff) && ...
-           fit.RMSE/max(1,max(abs(fit.Coefficients))) < 5%1
+           fit.RMSE/max(1,max(abs(fit.Coefficients))) < 1
 
             valid = true;
             

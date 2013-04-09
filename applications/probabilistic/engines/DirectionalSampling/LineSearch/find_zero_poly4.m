@@ -67,8 +67,8 @@ OPT = struct(...
     'aggregateFunction', [],                ...
     'betamax',          8.3,                ...    
     'maxorder',         2,                  ...    
-    'maxiter',          5,                  ...                             % Maximum iterations for finding z=0
-    'maxbisiter',       5,                  ...
+    'maxiter',          4,                  ...                             % Maximum iterations for finding z=0
+    'maxbisiter',       4,                  ...
     'epsZ',             1e-2                ...                             % precision in stop criterium
 );
 
@@ -93,7 +93,6 @@ z = z(~isnan(z));
 %% Check for origin (b=0)
 
 if ~any(b == 0)
-    keyboard
     b       = [0 b];
     z0_tot  = feval(OPT.zFunction, un, b(1));
     zn_tot  = [zn_tot; z0_tot];
@@ -132,7 +131,7 @@ end
 
 %% Line search by fitting polynomial
 
-while iter < OPT.maxiter && ~converged 
+while iter <= OPT.maxiter && ~converged 
     
     if length(z) == 1
         zi_tot  = feval(OPT.zFunction, un, OPT.betamax);
@@ -233,7 +232,7 @@ end
 
 if ~converged
 
-    while ~converged && bisiter < OPT.maxbisiter
+    while ~converged && bisiter <= OPT.maxbisiter
         ii  = isort(abs(z));
         
         if bisiter == 0
