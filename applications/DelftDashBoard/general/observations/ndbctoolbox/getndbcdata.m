@@ -83,7 +83,7 @@ end
 for ii=1:length(varargin) % replace with setpropery
     if ischar(varargin{ii})
         switch lower(varargin{ii})
-            case{'global','setglobal'};OPT.setglobal    = varargin{ii+1};
+            case{'global','setglobal'};OPT.setglobal    = 1;
             case{'inputfile'};         OPT.inputfile    = varargin{ii+1};
             case{'outputfile'};        OPT.outputfile   = varargin{ii+1};
 

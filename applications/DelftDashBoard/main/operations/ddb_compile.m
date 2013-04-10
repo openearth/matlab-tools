@@ -121,7 +121,7 @@ for j=1:length(flist)
         xmlfile=[inipath 'models' filesep model filesep 'xml' filesep model '.xml'];
         if exist(xmlfile,'file')
             xml=xml_load(xmlfile);
-            switch lower(xml.enable)
+            switch lower(xml(1).enable)
                 case{'1','y','yes'}
                     % Model is enabled
                     % Add all m files
@@ -148,7 +148,7 @@ for j=1:length(flist)
         xmlfile=[inipath 'toolboxes' filesep toolbox filesep 'xml' filesep toolbox '.xml'];
         if exist(xmlfile,'file')
             xml=xml_load(xmlfile);
-            switch lower(xml.enable)
+            switch lower(xml(1).enable)
                 case{'1','y','yes'}
                     % Toolbox is enabled
                     files=ddb_findAllFiles([inipath 'toolboxes' filesep toolbox],'*.m');
@@ -183,7 +183,7 @@ if ~isempty(additionalToolboxDir)
             xmlfile=[additionalToolboxDir filesep toolbox filesep 'xml' filesep toolbox '.xml'];
             if exist(xmlfile,'file')
                 xml=xml_load(xmlfile);
-                switch lower(xml.enable)
+                switch lower(xml(1).enable)
                     case{'1','y','yes'}
                         % Model is enabled
                         files=ddb_findAllFiles([additionalToolboxDir toolbox],'*.m');
