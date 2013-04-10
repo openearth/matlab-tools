@@ -42,7 +42,7 @@ z              = nc_varget(url, 'altitude', start_altitude, count_altitude);
 %% plot the transect
 
 figure
-plot  (x, z);
+plot  (x, squeeze(z));
 xlim  ([-400 1800]);
 xlabel('crossshore [km]')
 ylabel('z [m]')

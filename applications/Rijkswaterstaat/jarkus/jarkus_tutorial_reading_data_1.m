@@ -106,4 +106,4 @@ z    =    z(~isnan(z));
 %% Plot the data
 % always plot data to check if it's ok:
 
-plot(x,z,'.b')
+plot(x,squeeze(z),'.b')

@@ -93,6 +93,7 @@ end
 % frameh = get(fh,'JavaFrame'); % Get Java Frame
 % frameh.setFigureIcon(javax.swing.ImageIcon(which('DeltaresLogo.gif')));
 
-set(fh,'Units','normalized','Position', UCIT_getPlotPosition(figurePos),'NumberTitle','Off','Color','w');
+%set(fh,'Units','normalized','Position', UCIT_getPlotPosition(figurePos),'NumberTitle','Off','Color','w');
+set(fh,'Units','normalized','NumberTitle','Off','Color','w');
 
 warning on
