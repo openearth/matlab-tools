@@ -127,7 +127,18 @@ end
    datatypes.grid.axes{i}         =  1E5*[-0.239487 2.901701 2.999500 6.787223];
    datatypes.grid.cellsize{i}     =  20;
    datatypes.grid.datatype{i}     =  'Jarkus';
-  
+
+   %% Outer Deltas Zeeland (test)
+
+   i = i + 1;
+   datatypes.grid.names{i}        =  'Outer Deltas Zeeland 20m (test/next release)';
+   datatypes.grid.urls {i}        =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/DienstZeeland/outer_deltas/';
+   datatypes.grid.catalog{i}      =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/DienstZeeland/outer_deltas/catalog.xml';
+   datatypes.grid.ldbs{i}         =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc';
+   datatypes.grid.axes{i}         =  1E5*[-0.239487 2.901701 2.999500 6.787223];
+   datatypes.grid.cellsize{i}     =  20;
+   datatypes.grid.datatype{i}     =  'Zeeland';
+   
    %% Vaklodingen (matlab ncgen, release 2012)
 
    i = i + 1;

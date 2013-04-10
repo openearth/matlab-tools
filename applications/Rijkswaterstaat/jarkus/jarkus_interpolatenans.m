@@ -129,7 +129,7 @@ for i = 1:n
         % masked.
         mask = ismember(csa, c(n_occurrences>OPT.maxgap)) & csa>0 & csd>0;
         % update coords with based on the mask
-        coords(OPT.dim) = ~mask;
+        coords{OPT.dim} = ~mask;
     else
         mask = false(size(notnan));
     end

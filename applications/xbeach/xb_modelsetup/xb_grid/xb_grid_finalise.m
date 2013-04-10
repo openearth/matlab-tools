@@ -107,7 +107,7 @@ if length(varargin) <= 2
     varargin = [varargin xb_getpref('grid_finalise')];
 end
 
-OPT = setproperty(OPT, varargin{:});
+OPT = setproperty(OPT, varargin);
 
 %% finalise grid
 
