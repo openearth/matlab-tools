@@ -9,22 +9,25 @@ function varargout=getcoopsdata(opt,varargin)
 %    'getobservations'
 %    'getdatainventory'
 %
-% S  = getcoopsdata('getactivestations')
-% G  = getcoopsdata('getdatums'      ,'id',[],'units',[],'epoch',[])
-% D  = getcoopsdata('getobservations','id',[],'parameter',[],'subset',[],'t0',[],'t1',[],'timezone',[],'datum',[],'units',[])
+% S = getcoopsdata('getactivestations')
+% G = getcoopsdata('getdatums'      ,'id','1234567')
+% D = getcoopsdata('getobservations','id','1234567','parameter',[],'subset',[],'t0',[],'t1',[],'timezone',[],'datum',[],'units',[])
+%
+% where id is a 7-digit number, t0/t1 are either matlab datenums or 'yyyymmdd HH:MM'
 %
 % Note: max 31 day timeperiod at once is allowed
 %
 % Example:
 %  S = getcoopsdata('getactivestations')
-%  D = getcoopsdata('getobservations','id',D(1).id,'parameter',D(1).parameters(1).name,'t0',now-30,'t1',now)
+%  G = getcoopsdata('getdatums'      ,'id',S(1).id)
+%  D = getcoopsdata('getobservations','id',S(1).id,'parameter',S(1).parameters(1).name,'t0',now-30,'t1',now)
 %
 %  plot(D.parameters.parameter.time,D.parameters.parameter.val)
 %  ylabel([mktex(D.parameters(1).parameter.name),' [',D.parameters(1).parameter.unit,']'])
 %  datetick('x')
 %  title(['''',D.stationid,''' [',num2str(D.longitude),',',num2str(D.latitude),']'])
 %
-%See also: getndbcdata, http://tidesandcurrents.noaa.gov/
+%See also: getndbcdata, createcoopsservices, http://tidesandcurrents.noaa.gov/
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -292,7 +295,7 @@ end
 MinMaxWL.maxWaterLevel=str2double(MinMaxWL.maxWaterLevel);
 MinMaxWL.minWaterLevel=str2double(MinMaxWL.minWaterLevel);
 
-[stationId,stationName,latitude,longitude,state,dataSource,status,epoch,unit,elevation,datums,MinMaxWL]=getDatumsAndMetaData(DatumsService,id,epoch,unit);
+[stationId,stationName,latitude,longitude,state,dataSource,status,epoch,unit,elevation,datums,MinMaxWL]=getDatumsAndMetadata(DatumsService,id,epoch,unit);
 
 %%
 function s=getDataInventory(id)
