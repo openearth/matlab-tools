@@ -71,9 +71,13 @@ for ip=1:np
                     end
                 end
             case{'meteo'}
-                ii=strmatch(model.useMeteo,hm.meteoNames,'exact');
+                switch par
+                    case{'windvel'}
+                        meteo=model.meteowind;
+                end
+                ii=strmatch(meteo,hm.meteoNames,'exact');
                 dt=hm.meteo(ii).timeStep;
-                data = extractMeteoData([hm.meteofolder model.useMeteo filesep],model,dt,par);
+                data = extractMeteoData([hm.meteofolder meteo filesep],model,dt,par);
                 times = data.Time;
             case{'oil-map'}
                 %                data=getSurfaceOil(outdir,model.runid,'Ekofisk (floating)');

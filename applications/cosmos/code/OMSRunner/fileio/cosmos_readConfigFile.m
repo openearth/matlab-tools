@@ -55,6 +55,7 @@ hm.clusterNode=[];
 hm.exedirflow='/u/ormondt/d3d_versions/delftflow_trunk2/bin/';
 hm.meteoVersion='1.03';
 hm.delay=8; % Delay in hours
+hm.runEnv='h4i7';
 
 for i=1:n
     switch lower(txt{i}),
@@ -90,6 +91,8 @@ for i=1:n
             hm.meteoversion=txt{i+1};
         case {'delay'}
             hm.delay=str2double(txt{i+1});
+        case {'runenvironment'}
+            hm.runEnv=txt{i+1};
     end
 end
 

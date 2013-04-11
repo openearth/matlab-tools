@@ -3,10 +3,10 @@ function hm=cosmos_getRestartTimes(hm)
 % Restart times
 for i=1:hm.nrModels
 
-    ii=strmatch(hm.models(i).useMeteo,hm.meteoNames,'exact');
+    ii=strmatch(hm.models(i).meteowind,hm.meteoNames,'exact');
     if ~isempty(ii)
         % We want to start with an analyzed wind field
-        meteodir=[hm.scenarioDir 'meteo' filesep hm.models(i).useMeteo filesep];
+        meteodir=[hm.meteofolder hm.models(i).meteowind filesep];
         tana=readTLastAnalyzed(meteodir);
         tana=rounddown(tana,hm.runInterval/24);
     else

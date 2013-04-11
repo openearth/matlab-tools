@@ -152,6 +152,26 @@ switch lower(model.type)
                 fprintf(fid,'%s\n','mv running.txt finished.txt');
                 fclose(fid);
             case{'h4i7'}
+
+                % Write old config file
+                fini=fopen([tmpdir 'config_flow2d3d.ini'],'w');
+                fprintf(fini,'%s\n','[FileInformation]');
+                fprintf(fini,'%s\n',['   FileCreatedBy    = ' getenv('USERNAME')]);
+                fprintf(fini,'%s\n',['   FileCreationDate = ' datestr(now)]);
+                fprintf(fini,'%s\n','   FileVersion      = 00.01');
+                fprintf(fini,'%s\n','[Component]');
+                fprintf(fini,'%s\n','   Name                = flow2d3d');
+                fprintf(fini,'%s\n',['   MDFfile             = ' model.runid]);
+                fclose(fini);
+
+                % Write xml config file
+                fini=fopen([tmpdir 'config_flow2d3d.xml'],'w');
+                fprintf(fini,'%s\n','<?xml version=''1.0'' encoding=''iso-8859-1''?>');
+                fprintf(fini,'%s\n','<DeltaresHydro start="flow2d3d">');
+                fprintf(fini,'%s\n',['<flow2d3d MDFile = ''' model.runid '.mdf''></flow2d3d>']);
+                fprintf(fini,'%s\n','</DeltaresHydro>');
+                fclose(fini);
+                
                 fid=fopen([tmpdir 'run.sh'],'wt');
                 fprintf(fid,'%s\n','#!/bin/sh');
                 fprintf(fid,'%s\n','');                
@@ -193,7 +213,7 @@ switch lower(model.type)
                 fid=fopen([tmpdir 'run.sh'],'wt');
                 fprintf(fid,'%s\n','#!/bin/sh');
                 fprintf(fid,'%s\n','');
-                fprintf(fid,'%s\n','# Start with: qsub -V -N runname run.sh');
+                fprintf(fid,'%s\n','# Start with: qsub -q normal-i7 -V -N runname run.sh');
                 fprintf(fid,'%s\n','');
                 fprintf(fid,'%s\n','# for SWAN on h3/devux:');
                 fprintf(fid,'%s\n','. /opt/intel/cc/9.0/bin/iccvars.sh');
@@ -216,7 +236,7 @@ switch lower(model.type)
                 fprintf(fid,'%s\n','');
                 fprintf(fid,'%s\n','# === local    executables:');
                 fprintf(fid,'%s\n','#D3D_HOME=/u/mourits/delft3d');
-                fprintf(fid,'%s\n',['exedir=' hm.exedirflow]);   %old handle: fprintf(fid,'%s\n','exedir=/u/ormondt/d3d_versions/delftflow_trunk2/bin');
+                fprintf(fid,'%s\n',['exedir=' hm.exedirflow]);
                 fprintf(fid,'%s\n','exedirwave=/u/ormondt/d3d_versions/delftflow_trunk/bin');
                 fprintf(fid,'%s\n','');
                 fprintf(fid,'%s\n','export D3D_HOME=/opt/delft3d');
@@ -261,6 +281,71 @@ switch lower(model.type)
                 fprintf(fid,'%s\n','');
                 fprintf(fid,'%s\n','mv running.txt finished.txt');
                 fclose(fid);
+
+            case{'h4i7'}
+                
+                switch lower(model.whiteCapping)
+                    case{'komenrogers'}
+                        fname='swan.komenrogers.sh';
+                    otherwise
+                        fname='swan.sh';
+                end
+                [success,message,messageid]=copyfile([hm.exeDir 'linux' filesep fname],[tmpdir 'swan.sh'],'f');
+
+                % Write old config file
+                fini=fopen([tmpdir 'config_flow2d3d.ini'],'w');
+                fprintf(fini,'%s\n','[FileInformation]');
+                fprintf(fini,'%s\n',['   FileCreatedBy    = ' getenv('USERNAME')]);
+                fprintf(fini,'%s\n',['   FileCreationDate = ' datestr(now)]);
+                fprintf(fini,'%s\n','   FileVersion      = 00.01');
+                fprintf(fini,'%s\n','[Component]');
+                fprintf(fini,'%s\n','   Name                = flow2d3d');
+                fprintf(fini,'%s\n',['   MDFfile             = ' model.runid]);
+                fclose(fini);
+                
+                % Write xml config file
+                fini=fopen([tmpdir 'config_flow2d3d.xml'],'w');
+                fprintf(fini,'%s\n','<?xml version=''1.0'' encoding=''iso-8859-1''?>');
+                fprintf(fini,'%s\n','<DeltaresHydro start="flow2d3d">');
+                fprintf(fini,'%s\n',['<flow2d3d MDFile = ''' model.runid '.mdf''></flow2d3d>']);
+                fprintf(fini,'%s\n','</DeltaresHydro>');
+                fclose(fini);
+
+                fid=fopen([tmpdir 'run.sh'],'wt');
+                fprintf(fid,'%s\n','#!/bin/bash');
+                fprintf(fid,'%s\n','');
+                fprintf(fid,'%s\n','date -u ''+%Y%m%d %H%M%S'' >> running.txt');
+                fprintf(fid,'%s\n','');
+                fprintf(fid,'%s\n','argfile=config_flow2d3d.ini');
+                fprintf(fid,'%s\n',['mdwfile=' model.runid '.mdw']);
+                fprintf(fid,'%s\n','');
+                fprintf(fid,'%s\n','    #');
+                fprintf(fid,'%s\n','    # Set the directory containing deltares_hydro.exe and all libraries here');
+                fprintf(fid,'%s\n','    #');
+                fprintf(fid,'%s\n',['export D3D_HOME=' hm.exedirflow]);
+                fprintf(fid,'%s\n','flowexedir=$D3D_HOME/flow2d3d/bin ');
+                fprintf(fid,'%s\n','flowlibdir=$D3D_HOME/flow2d3d/lib ');
+                fprintf(fid,'%s\n','waveexedir=$D3D_HOME/wave/bin');
+                fprintf(fid,'%s\n','wavelibdir=$D3D_HOME/wave/lib');
+                fprintf(fid,'%s\n','swanexedir=$D3D_HOME/swan/bin');
+                fprintf(fid,'%s\n','swanlibdir=$D3D_HOME/swan/lib');
+                fprintf(fid,'%s\n','swanbatdir=$D3D_HOME/swan/scripts'); 
+                fprintf(fid,'%s\n','');
+                fprintf(fid,'%s\n','    # Set some (environment) parameters');
+                fprintf(fid,'%s\n','    # needed on h4:');
+                fprintf(fid,'%s\n','export LD_PRELOAD="$libdir/libgfortran.so.3"');
+                fprintf(fid,'%s\n','');
+                fprintf(fid,'%s\n','    # Run');
+                fprintf(fid,'%s\n','export LD_LIBRARY_PATH=$flowexedir:$flowlibdir:$LD_LIBRARY_PATH'); 
+                fprintf(fid,'%s\n','$flowexedir/deltares_hydro.exe $argfile &');
+                fprintf(fid,'%s\n','');
+                fprintf(fid,'%s\n','export LD_LIBRARY_PATH=$swanbatdir:$waveexedir:$swanexedir:$wavelibdir:$swanlibdir:$LD_LIBRARY_PATH');
+                fprintf(fid,'%s\n','export PATH=$swanbatdir:$PATH');
+                fprintf(fid,'%s\n','$waveexedir/wave.exe $mdwfile 1');
+                fprintf(fid,'%s\n','');
+                fprintf(fid,'%s\n','date -u ''+%Y%m%d %H%M%S'' >> running.txt');
+                fprintf(fid,'%s\n','mv running.txt finished.txt');
+                fclose(fid);                
 
         end
 end

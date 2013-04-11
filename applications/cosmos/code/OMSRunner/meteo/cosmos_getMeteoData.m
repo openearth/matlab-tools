@@ -17,7 +17,7 @@ for i=1:hm.nrMeteoDatasets
     useThisMeteo=0;
     inclh=0;
     for j=1:hm.nrModels
-        if strcmpi(meteoname,hm.models(j).useMeteo)
+        if strcmpi(meteoname,hm.models(j).meteowind)
             useThisMeteo=1;
             % Find start and stop time for meteo data
             t0=min(hm.models(j).tFlowStart,t0);

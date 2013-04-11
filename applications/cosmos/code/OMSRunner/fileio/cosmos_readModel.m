@@ -25,39 +25,39 @@ model.name=xml.name;
 model.continent=xml.continent;
 model.dir=[hm.scenarioDir 'models' filesep xml.continent filesep xml.name filesep];
 
-% Website
-if isfield(xml,'websites')
-    for j=1:length(xml.websites)
-        model.webSite(j).name=xml.websites(j).website.name;
-        model.webSite(j).Location=[];
-        model.webSite(j).elevation=[];
-        model.webSite(j).overlayFile=[];
-        model.webSite(j).positionToDisplay=[];
-        if isfield(xml.websites(j).website,'locationx') && isfield(xml.websites(j).website,'locationy')
-            model.webSite(j).Location(1)=str2double(xml.websites(j).website.locationx);
-            model.webSite(j).Location(2)=str2double(xml.websites(j).website.locationy);
-        elseif isfield(xml.websites(j).website,'longitude') && isfield(xml.websites(j).website,'latitude')
-            model.webSite(j).Location(1)=str2double(xml.websites(j).website.longitude);
-            model.webSite(j).Location(2)=str2double(xml.websites(j).website.latitude);
-        end
-        if isfield(xml.websites(j).website,'elevation')
-            model.webSite(j).elevation=str2double(xml.websites(j).website.elevation);
-        end
-        if isfield(xml.websites(j).website,'overlay')
-            model.webSite(j).overlayFile=xml.websites(j).website.overlay;
-        end
-        if isfield(xml.websites(j).website,'positiontodisplay')
-            model.webSite(j).positionToDisplay=str2double(xml.websites(j).website.positiontodisplay);
-        else
-            model.webSite(j).positionToDisplay=-1;
-        end
-    end
-else
-    model.webSite(1).name=xml.website;
-    model.webSite(1).Location(1)=str2double(xml.locationx);
-    model.webSite(1).Location(2)=str2double(xml.locationy);
-    model.webSite(1).overlayFile=[];
-end
+% % Website
+% if isfield(xml,'websites')
+%     for j=1:length(xml.websites)
+%         model.webSite(j).name=xml.websites(j).website.name;
+%         model.webSite(j).Location=[];
+%         model.webSite(j).elevation=[];
+%         model.webSite(j).overlayFile=[];
+%         model.webSite(j).positionToDisplay=[];
+%         if isfield(xml.websites(j).website,'locationx') && isfield(xml.websites(j).website,'locationy')
+%             model.webSite(j).Location(1)=str2double(xml.websites(j).website.locationx);
+%             model.webSite(j).Location(2)=str2double(xml.websites(j).website.locationy);
+%         elseif isfield(xml.websites(j).website,'longitude') && isfield(xml.websites(j).website,'latitude')
+%             model.webSite(j).Location(1)=str2double(xml.websites(j).website.longitude);
+%             model.webSite(j).Location(2)=str2double(xml.websites(j).website.latitude);
+%         end
+%         if isfield(xml.websites(j).website,'elevation')
+%             model.webSite(j).elevation=str2double(xml.websites(j).website.elevation);
+%         end
+%         if isfield(xml.websites(j).website,'overlay')
+%             model.webSite(j).overlayFile=xml.websites(j).website.overlay;
+%         end
+%         if isfield(xml.websites(j).website,'positiontodisplay')
+%             model.webSite(j).positionToDisplay=str2double(xml.websites(j).website.positiontodisplay);
+%         else
+%             model.webSite(j).positionToDisplay=-1;
+%         end
+%     end
+% else
+%     model.webSite(1).name=xml.website;
+%     model.webSite(1).Location(1)=str2double(xml.locationx);
+%     model.webSite(1).Location(2)=str2double(xml.locationy);
+%     model.webSite(1).overlayFile=[];
+% end
 
 model.archiveDir=[hm.archiveDir xml.continent filesep xml.name filesep 'archive' filesep];
 model.type=xml.type;
@@ -78,11 +78,11 @@ else
     model.timeZone=[];
 end
 
-if isfield(xml,'runenv')
-    model.runEnv=xml.runenv;
-else
+% if isfield(xml,'runenv')
+%     model.runEnv=xml.runenv;
+% else
     model.runEnv=hm.runEnv;
-end
+% end
 if isfield(xml,'numcores')
     model.numCores=xml.numcores;
 else
@@ -498,10 +498,10 @@ else
     model.flowNested=0;
 end
 
-model.oceanModel='';
-if isfield(xml,'oceanmodel')
-    model.oceanModel=xml.oceanmodel;
-end
+% model.oceanModel='';
+% if isfield(xml,'oceanmodel')
+%     model.oceanModel=xml.oceanmodel;
+% end
 model.oceanmodelnesttype='file+astro';
 if isfield(xml,'oceanmodelnesttype')
     model.oceanmodelnesttype=xml.oceanmodelnesttype;
@@ -548,16 +548,16 @@ if isfield(xml,'makeinifile')
 end
 
 %% Meteo
-if isfield(xml,'usemeteo')
-    model.useMeteo=xml.usemeteo;
-else
-    model.useMeteo='none';
-end
-if isfield(xml,'meteobackup1')
-    model.backupMeteo=xml.meteobackup1;
-else
-    model.backupMeteo='none';
-end
+% if isfield(xml,'usemeteo')
+%     model.useMeteo=xml.usemeteo;
+% else
+%     model.useMeteo='none';
+% end
+% if isfield(xml,'meteobackup1')
+%     model.backupMeteo=xml.meteobackup1;
+% else
+%     model.backupMeteo='none';
+% end
 if isfield(xml,'prcorr')
     model.prCorr=str2double(xml.prcorr);
 else

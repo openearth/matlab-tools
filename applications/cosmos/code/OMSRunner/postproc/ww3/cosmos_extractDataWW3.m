@@ -19,9 +19,9 @@ curdir=pwd;
 ExtractGrads(hm,m);
 
 par='windvel';
-ii=strmatch(model.useMeteo,hm.meteoNames,'exact');
+ii=strmatch(model.meteowind,hm.meteoNames,'exact');
 dt=hm.meteo(ii).timeStep;
-data = extractMeteoData([hm.meteofolder model.useMeteo filesep],model,dt,par);
+data = extractMeteoData([hm.meteofolder model.meteowind filesep],model,dt,par);
 times = data.Time;
 s=[];
 s.Parameter=par;

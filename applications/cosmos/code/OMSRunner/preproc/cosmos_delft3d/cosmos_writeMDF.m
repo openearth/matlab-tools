@@ -29,9 +29,18 @@ fprintf(fid,'%s\n','Runtxt= #                              #');
 fprintf(fid,'%s\n',['Filcco= #' model.name '.grd#']);
 fprintf(fid,'%s\n','Fmtcco= #FR#');
 fprintf(fid,'%s\n','Grdang= 0.0000000e+000');
-if ~strcmpi(model.coordinateSystemType,'geographic')
-    [lon,lat]=convertCoordinates(model.webSite(1).Location(1),model.webSite(1).Location(2),'persistent','CS1.name',model.coordinateSystem,'CS1.type',model.coordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
+if ~strcmpi(model.coordinateSystemType,'geographic')    
+    % Determine location of model
+    if isempty(model.webSite(1).location)
+        xloc=0.5*(model.xLim(1)+model.xLim(2));
+        yloc=0.5*(model.yLim(1)+model.yLim(2));
+    else
+        xloc=model.webSite(iw).location(1);
+        yloc=model.webSite(iw).location(2);
+    end    
+    [lon,lat]=convertCoordinates(xloc,yloc,'persistent','CS1.name',model.coordinateSystem,'CS1.type',model.coordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
     fprintf(fid,'%s\n',['Anglat= ' num2str(lat)]);
+    fprintf(fid,'%s\n',['Anglon= ' num2str(lon)]);
 end
 fprintf(fid,'%s\n',['Filgrd= #' model.name '.enc#']);
 fprintf(fid,'%s\n','Fmtgrd= #FR#');
@@ -194,7 +203,7 @@ else
 end
 fprintf(fid,'%s\n','Dryflc= 1.0000000e-001');
 fprintf(fid,'%s\n','Dco   = -9.9900000e+002');
-if ~isempty(model.flowRstFile)
+if ~isempty(model.flowRstFile) || model.makeIniFile
     fprintf(fid,'%s\n','Tlfsmo= 0.0000000e+000');
 else
     fprintf(fid,'%s\n','Tlfsmo= 1.2000000e+002');
@@ -231,10 +240,10 @@ if strcmpi(model.type,'Delft3DFLOWWAVE') && ~model.roller
 end
 fprintf(fid,'%s\n','Prhis = 0.0000000e+000  0.0000000e+000  0.0000000e+000');
 fprintf(fid,'%s\n',['Flmap = ' tout '   ' dtmap '  ' tstop]);
-fprintf(fid,'%s\n',['Flhis = ' tout '  ' dthis '  ' tstop]);
+fprintf(fid,'%s\n',['Flhis = ' tstart '  ' dthis '  ' tstop]);
 fprintf(fid,'%s\n',['Flpp  = ' twav '   ' dtcom '  ' tstop]);
 fprintf(fid,'%s\n',['Flrst = ' dtrst]);
-if ~strcmpi(model.useMeteo,'none')
+if ~isempty(model.meteowind)
     if model.includeAirPressure
         fprintf(fid,'%s\n','Filwp = #meteo.amp#');
     end

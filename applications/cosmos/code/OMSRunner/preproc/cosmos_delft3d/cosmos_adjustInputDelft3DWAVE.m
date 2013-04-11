@@ -20,7 +20,7 @@ for i=1:n
     mm=model.nestedWaveModels(i);
     k=k+1;
     
-    locfile=[hm.models(mm).dir 'nesting' filesep model.name '.loc'];
+    locfile=[hm.models(mm).datafolder 'nesting' filesep model.name '.loc'];
 
     % Find boundary points nested grid
     switch lower(hm.models(mm).type)
@@ -34,7 +34,7 @@ for i=1:n
         case{'xbeach'}
             d=[];
             mdl=hm.models(mm);            
-            ygrdname=[mdl.dir 'input' filesep 'y.grd'];
+            ygrdname=[mdl.datafolder 'input' filesep 'y.grd'];
             ygrd = load(ygrdname, '-ascii');            
             % crop grid
             ygrd = ygrd(:,1);
@@ -44,7 +44,7 @@ for i=1:n
             save(locfile,'d','-ascii');
         otherwise
             if ~exist(locfile,'file')
-                grdname=[hm.models(mm).dir 'input' filesep hm.models(mm).name '_swn.grd'];
+                grdname=[hm.models(mm).datafolder 'input' filesep hm.models(mm).name '_swn.grd'];
                 [x,y,enc]=wlgrid('read',grdname);
                 nstep=10;
                 [xb,yb]=getGridOuterCoordinates(x,y,nstep);

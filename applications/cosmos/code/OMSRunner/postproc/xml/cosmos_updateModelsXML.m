@@ -33,14 +33,35 @@ for iw=1:length(model.webSite)
 
     mdl.continent.value=model.continent;
     mdl.continent.type='char';
-
     
     %% Location
+
+    % First try to determine distance between corner points of model limits    
+    if ~cluster
+        % Get value from xml
+        xlim=model.xLim;
+        ylim=model.yLim;
+    else
+        % Take average of start and end profile
+        for i=1:length(model.profile)
+            xloc(i)=model.profile(i).originX;
+            yloc(i)=model.profile(i).originY;
+        end
+        xlim(1)=min(xloc);
+        xlim(2)=max(xloc);
+        ylim(1)=min(yloc);
+        ylim(2)=max(yloc);
+    end
     
     if ~cluster
         % Get value from xml
-        xloc=model.webSite(iw).Location(1);
-        yloc=model.webSite(iw).Location(2);
+        if isempty(model.webSite(iw).location)
+            xloc=0.5*(xlim(1)+xlim(2));
+            yloc=0.5*(ylim(1)+ylim(2));            
+        else
+            xloc=model.webSite(iw).location(1);
+            yloc=model.webSite(iw).location(2);
+        end
     else
         % Take average of start and end profile
         xloc=0.5*(model.profile(1).originX+model.profile(end).originX);
@@ -60,50 +81,31 @@ for iw=1:length(model.webSite)
     mdl.latitude.value=lat;
     mdl.latitude.type='real';
     
+    %% Elevation
+    if isempty(model.webSite(iw).elevation)
+        if ~strcmpi(model.coordinateSystem,'wgs 84')
+            [xlim,ylim]=convertCoordinates(xlim,ylim,'persistent','CS1.name',model.coordinateSystem,'CS1.type',model.coordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
+        end
+        dstx=111111*(xlim(2)-xlim(1))*cos(mean(ylim)*pi/180);
+        dsty=111111*(ylim(2)-ylim(1));
+        dst=sqrt(dstx^2+dsty^2);
+        
+        % Elevation is distance times 2
+        dst=dst*1.5;
+        dst=min(dst,10000000);
+        mdl.elevation.value=dst;
+        mdl.elevation.type='real';
+    else
+        mdl.elevation.value=min(hm.models(m).webSite(iw).elevation,10000000);
+        mdl.elevation.type='real';
+    end
+    
     %% Overlay
     if ~isempty(model.webSite(iw).overlayFile)
         mdl.overlay.value=model.webSite(iw).overlayFile;
         mdl.overlay.type='char';
     end
     
-    %% Elevation
-
-    % First try to determine distance between corner points of model limits
-    
-    if ~cluster
-        % Get value from xml
-        xlim=model.xLim;
-        ylim=model.yLim;
-    else
-        % Take average of start and end profile
-        for i=1:length(model.profile)
-            xloc(i)=model.profile(i).originX;
-            yloc(i)=model.profile(i).originY;
-        end
-        xlim(1)=min(xloc);
-        xlim(2)=max(xloc);
-        ylim(1)=min(yloc);
-        ylim(2)=max(yloc);
-    end
-    if ~strcmpi(model.coordinateSystem,'wgs 84')
-        [xlim,ylim]=convertCoordinates(xlim,ylim,'persistent','CS1.name',model.coordinateSystem,'CS1.type',model.coordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
-    end
-    dstx=111111*(xlim(2)-xlim(1))*cos(mean(ylim)*pi/180);
-    dsty=111111*(ylim(2)-ylim(1));
-    dst=sqrt(dstx^2+dsty^2);
-    
-    % Elevation is distance times 2
-    dst=dst*2;
-    dst=min(dst,10000000);
-    
-    if isempty(model.webSite(iw).elevation)
-        mdl.elevation.value=dst;
-        mdl.elevation.type='real';
-    else isfield(model.webSite(iw),'elevation')
-        mdl.elevation.value=min(hm.models(m).webSite(iw).elevation,10000000);
-        mdl.elevation.type='real';
-    end
-
     %% Types and size
 
     mdl.type.value=model.type;

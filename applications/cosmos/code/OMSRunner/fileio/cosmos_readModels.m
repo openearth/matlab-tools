@@ -33,13 +33,14 @@ for im=1:length(hm.models)
     fname=[dirname continents{imd} filesep hm.models(im).name filesep hm.models(im).name '.xml'];
     dr=[dirname continents{imd} filesep hm.models(im).name filesep];
     [model,ok]=cosmos_readModel(hm,fname,dr);
-    
+        
     if ok
+        % copy fields in model structure to hm structure
         fld=fieldnames(model);
         for ii=1:length(fld)
             hm.models(im).(fld{ii})=model.(fld{ii});
-            hm.models(im).datafolder=[dirname continents{imd} filesep hm.models(im).name filesep];
         end
+        hm.models(im).datafolder=[dirname continents{imd} filesep hm.models(im).name filesep];
     else
         disp([dr(kk).name ' skipped']);
     end
@@ -58,10 +59,12 @@ for i=1:hm.nrModels
 end
 
 for i=1:hm.nrModels
-
     if hm.models(i).flowNested
         fnest=hm.models(i).flowNestModel;
         mm=findstrinstruct(hm.models,'name',fnest);
+        if isempty(mm)
+            error(['Model ' fnest ' (in which ' hm.models(i).name ' is nested) not in scenario!']);
+        end
         hm.models(i).flowNestModelNr=mm;
         n=length(hm.models(mm).nestedFlowModels);
         hm.models(mm).nestedFlowModels(n+1)=i;
@@ -69,6 +72,9 @@ for i=1:hm.nrModels
     if hm.models(i).waveNested
         fnest=hm.models(i).waveNestModel;
         mm=findstrinstruct(hm.models,'name',fnest);
+        if isempty(mm)
+            error(['Model ' fnest ' (in which ' hm.models(i).name ' is nested) not in scenario!']);
+        end
         hm.models(i).waveNestModelNr=mm;
         n=length(hm.models(mm).nestedWaveModels);
         hm.models(mm).nestedWaveModels(n+1)=i;

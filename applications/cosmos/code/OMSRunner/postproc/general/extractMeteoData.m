@@ -2,14 +2,14 @@ function s2=extractMeteoData(meteodir,model,dt,par)
 
 coordsys=model.coordinateSystem;
 coordsystype=model.coordinateSystemType;
-meteoname=model.useMeteo;
+meteowind=model.meteowind;
+meteopressure=model.meteopressure;
 
 xlim=model.xLim;
 ylim=model.yLim;
 
-ylim(1)=max(ylim(1),-80);
-ylim(2)=min(ylim(2),80);
-
+% ylim(1)=max(ylim(1),-80);
+% ylim(2)=min(ylim(2),80);
 
 if ~strcmpi(coordsystype,'geographic')
     dx=model.dXMeteo;
@@ -34,7 +34,7 @@ ylim(2)=max(ylim(2),ylim(1)+dy);
 
 if ~strcmpi(coordsystype,'geographic')
     [xg,yg]=meshgrid(xlim(1):dx:xlim(2),ylim(1):dy:ylim(2));
-    [xgeo,ygeo]=ConvertCoordinates(xg,yg,'persistent','CS1.name',coordsys,'CS1.type',coordsystype,'CS2.name','WGS 84','CS2.type','geographic');
+    [xgeo,ygeo]=convertCoordinates(xg,yg,'persistent','CS1.name',coordsys,'CS1.type',coordsystype,'CS2.name','WGS 84','CS2.type','geographic');
     xlimg(1)=min(min(xgeo));
     xlimg(2)=max(max(xgeo));
     ylimg(1)=min(min(ygeo));
@@ -48,13 +48,13 @@ for it=1:nt
 
     t=tstart+(it-1)*dt;
     tstr=datestr(t,'yyyymmddHHMMSS');
-    fstru=[meteodir meteoname '.u.' tstr '.mat'];
-    fstrv=[meteodir meteoname '.v.' tstr '.mat'];
-    fstrp=[meteodir meteoname '.p.' tstr '.mat'];
+    fstru=[meteodir meteowind '.u.' tstr '.mat'];
+    fstrv=[meteodir meteowind '.v.' tstr '.mat'];
+%    fstrp=[meteodir meteoname '.p.' tstr '.mat'];
     if exist(fstru,'file')
         su=load(fstru);
         sv=load(fstrv);
-        sp=load(fstrp);
+%        sp=load(fstrp);
     else
         % find first available file
         for n=1:1000
@@ -62,11 +62,11 @@ for it=1:nt
             tstr=datestr(t0,'yyyymmddHHMMSS');
             fstru=[meteodir meteoname '.u.' tstr '.mat'];
             fstrv=[meteodir meteoname '.v.' tstr '.mat'];
-            fstrp=[meteodir meteoname '.p.' tstr '.mat'];
+%            fstrp=[meteodir meteoname '.p.' tstr '.mat'];
             if exist(fstru,'file')
                 su=load(fstru);
                 sv=load(fstrv);
-                sp=load(fstrp);
+%                sp=load(fstrp);
                 break
             end
         end
@@ -74,12 +74,12 @@ for it=1:nt
 
     [u,lon,lat]=getMeteoMatrix(su.u,su.lon,su.lat,xlimg,ylimg);
     [v,lon,lat]=getMeteoMatrix(sv.v,sv.lon,sv.lat,xlimg,ylimg);
-    [p,lon,lat]=getMeteoMatrix(sp.p,sp.lon,sp.lat,xlimg,ylimg);
+%    [p,lon,lat]=getMeteoMatrix(sp.p,sp.lon,sp.lat,xlimg,ylimg);
     
     if ~strcmpi(coordsystype,'geographic')
         u=interp2(lon,lat,u,xgeo,ygeo);
         v=interp2(lon,lat,v,xgeo,ygeo);
-        p=interp2(lon,lat,p,xgeo,ygeo);
+%        p=interp2(lon,lat,p,xgeo,ygeo);
     end
 
     s2.Parameter=par;   

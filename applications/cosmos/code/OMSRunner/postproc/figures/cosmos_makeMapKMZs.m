@@ -94,7 +94,13 @@ try
                 end
 
                 if ~strcmpi(model.coordinateSystemType,'geographic')
-                    [s(id).data.X,s(id).data.Y]=convertCoordinates(s(id).data.X,s(id).data.Y,'persistent','CS1.name',model.coordinateSystem,'CS1.type',model.coordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
+                    if isvector(s(id).data.X)
+                        [xxx,yyy]=meshgrid(s(id).data.X,s(id).data.Y);
+                    else
+                        xxx=s(id).data.X;
+                        yyy=s(id).data.Y;
+                    end
+                    [s(id).data.X,s(id).data.Y]=convertCoordinates(xxx,yyy,'persistent','CS1.name',model.coordinateSystem,'CS1.type',model.coordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
                 end
 
             end
