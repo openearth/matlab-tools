@@ -93,6 +93,6 @@ switch lower(model.runEnv)
         [success,message,messageid]=copyfile([hm.exeDir 'ww3_outp.exe'],tmpdir,'f');
         [success,message,messageid]=copyfile([hm.exeDir 'gx_outf.exe'],tmpdir,'f');
         writeWW3batchWin32([tmpdir 'run.bat'],nestnames,datestr(model.tWaveStart,'yymmddHH'));
-    case{'h4'}
+    case{'h4','h4i7'}
         writeWW3batchH4([tmpdir 'run.sh'],nestnames,datestr(model.tWaveStart,'yymmddHH'),trst1,trststart);
 end

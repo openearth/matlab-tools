@@ -57,6 +57,8 @@ for j=1:n
         
             [xb,yb]=checkNestDepthsWW3(depname,x0,y0,nx,ny,dx,dy,xb,yb);
             
+            xb(xb>180)=xb(xb>180)-360;
+            
             d=[xb yb];
             % Check for points on land
             save(locfile,'d','-ascii');
