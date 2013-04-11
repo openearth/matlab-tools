@@ -118,7 +118,8 @@ function netcdf_settings(varargin)
        elseif ~(OPT.quiet)
            disp(['  netCDF: Java path not added, already there: ',java2add]);
        end
-   
+       
+       try % matlab fails if several instances of matlab are accessing matlabprefs.mat, tgis hapens whne one users has many matlabn instances running
        setpref ( 'SNCTOOLS','USE_JAVA'   , 1); % This requires SNCTOOLS 2.4.8 or better
        % keep snctools default
        setpref ( 'SNCTOOLS','PRESERVE_FVD',0); % 0: backwards compatibility and consistent with ncBrowse
@@ -126,6 +127,9 @@ function netcdf_settings(varargin)
                                                %    (i)  we have some LARGE datasets and need a performance boost
                                                %    (ii) some use the netCDF API directly which does not do this. 
                                                %    May break previous work though ...
+       catch
+           disp('failed to set SNCTOOLS prefs due to matlab concurrence issue')
+       end
                                               
        %% add basic authentication class
        
