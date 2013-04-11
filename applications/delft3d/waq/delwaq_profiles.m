@@ -65,6 +65,7 @@ for i = 1:nt
     else
         depth = [];
         data  = [];
+        time  = tloc(i);
     end
     
     structOut(i).x = xloc(i);
