@@ -1,16 +1,19 @@
 function hm=cosmos_getRestartTimes(hm)
 
-% Restart times
-for i=1:hm.nrModels
+% Find times at which restart files must be stored
 
-    ii=strmatch(hm.models(i).meteowind,hm.meteoNames,'exact');
-    if ~isempty(ii)
-        % We want to start with an analyzed wind field
-        meteodir=[hm.meteofolder hm.models(i).meteowind filesep];
-        tana=readTLastAnalyzed(meteodir);
-        tana=rounddown(tana,hm.runInterval/24);
-    else
-        tana=datenum(2100,1,1);
+for i=1:hm.nrModels
+    
+    tana=datenum(2100,1,1);
+    
+    if ~isempty(hm.models(i).meteowind)
+        ii=strmatch(hm.models(i).meteowind,hm.meteoNames,'exact');
+        if ~isempty(ii)
+            % We want to start with an analyzed wind field
+            meteodir=[hm.meteofolder hm.models(i).meteowind filesep];
+            tana=readTLastAnalyzed(meteodir);
+            tana=rounddown(tana,hm.runInterval/24);
+        end
     end
 
     trst=-1e9;
