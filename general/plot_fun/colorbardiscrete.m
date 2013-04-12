@@ -11,7 +11,10 @@ function [cbd] = colorbardiscrete(colorbartitle,levels,varargin)
 %
 %   Input:
 %       colorbartitle:    title above the colorbar (string)
-%       levels:           levels of discrete colors (vector)
+%       levels:           levels of discrete colors (vector). To include values above
+%						  and below the highest and lowest level add respectively
+% 						  Inf and -Inf to the levels
+%					
 %
 %   Optional input:
 %       unit:       unit string added to the colorbar labels, e.g. 'm/s'
@@ -28,13 +31,20 @@ function [cbd] = colorbardiscrete(colorbartitle,levels,varargin)
 %       yticklabel: cell array of strings with user defined yticklabels
 %       reallevels: vector with real levels (changes the labels to these
 %                   levels)
+%	New optional input:
+%		colorScaled: if true color of the class depends on the level values of the class. If false
+%					 color only depends on the index of the class. Only valid if no reallevels are 
+%					 specified (default is true)
+%       nrofcolornew:colorbardiscrete generates a new colormap that consists of nrofcolornew colors. 
+%					 For correct functioning ( dLevel/(clim(2)-clim(1)) ) >> 1/nrofcolornew. Use NaN
+%					 for automatic calculation of this number (default: NaN). 
 %
 %   Output:
 %   cbd = axes handle to the discrete colorbar
 %
 %% Example 1
 %       figure
-%       mypeaks = peaks(20); mylevels = [-8 -6 -4 -2 0 2 4 6 7];
+%       mypeaks = peaks(20); mylevels = [-Inf,-8 -6 -4 -2 0 2 4 6 7,Inf];
 %       [c,h] = contourf(mypeaks,mylevels);
 %       colorbartitle = 'peaks';
 %       cbd = colorbardiscrete(colorbartitle,mylevels);
@@ -121,6 +131,9 @@ unit = '';
 fixed = false;
 reallevels = [];
 yticklabel = [];
+colorscaled=true; 
+nrofcolornew=NaN;
+
 
 %% optional arguments
 optvals = varargin;
@@ -168,6 +181,12 @@ for i=1:size(optvals,2),
         case 'reallevels'
             reallevels = optvals{2,i};
             OptionUsed(i)=1;
+		case 'colorscaled'
+			colorscaled = optvals{2,i};
+			OptionUsed(i)=1; 
+		case 'nrofcolornew'
+			nrofcolornew = optvals{2,i};
+			OptionUsed(i)=1; 
     end
 end;
 optvals(:,OptionUsed)=[];                                                   % delete used options
@@ -181,32 +200,82 @@ if fixed
     if length(levels)==length(mycolors)
         mydiscretecolors = mycolors;
     else
-        error('Number of levels should be equal to number of colors');
+        error('Number of classes should be equal to number of colors');
     end
 else
-    nrofcolorlevels = length(mycolors);
-    colorlevels = cl(1):(cl(end)-cl(1))/(nrofcolorlevels-1):cl(end);
-    mydiscretecolors = [];
-    for i = 1:length(levels)
-        if levels(i)<colorlevels(1)
-            mydiscretecolors(i,1) = mycolors(1,1);
-            mydiscretecolors(i,2) = mycolors(1,2);
-            mydiscretecolors(i,3) = mycolors(1,3);
-        else
-            if levels(i)>colorlevels(end)
-                mydiscretecolors(i,1) = mycolors(end,1);
-                mydiscretecolors(i,2) = mycolors(end,2);
-                mydiscretecolors(i,3) = mycolors(end,3);
-                
-            else
-                mydiscretecolors(i,1) = interp1(colorlevels,mycolors(:,1),levels(i));
-                mydiscretecolors(i,2) = interp1(colorlevels,mycolors(:,2),levels(i));
-                mydiscretecolors(i,3) = interp1(colorlevels,mycolors(:,3),levels(i));
-            end
-            
-        end
-    end
+	%scale levels such that clim(1)=0 and clim(2)=1
+	nrofcolorlevels=size(mycolors,1); 
+	colorlevels=[0:1/(nrofcolorlevels-1):1]; 
+	levelsCscaled=(levels-cl(1))/(cl(end)-cl(1));
+	
+	if colorscaled
+		%interpolate colorscaling from colormap using the level
+		meanLevel=0.5*levelsCscaled(1:end-1)+0.5*levelsCscaled(2:end); 
+	else
+		%interpolate colorscaling from colormap using class index
+		if length(levels)<=2
+			meanLevel=0.5;
+		else
+			meanLevel=[0:1/(length(levels)-2):1];
+		end
+	end
+	%clip levels outside the colorscaling
+	meanLevel=max(meanLevel,0); 
+	meanLevel=min(meanLevel,1);
+	
+	%interpolate colorscaling
+	mydiscretecolors=interp1(colorlevels,mycolors,meanLevel); 
+	 
+	%%DEPRECIATED
+    %nrofcolorlevels = length(mycolors);
+    %colorlevels = cl(1):(cl(end)-cl(1))/(nrofcolorlevels-1):cl(end);
+    %mydiscretecolors = [];
+    %for i = 1:length(levels)
+    %   if levels(i)<colorlevels(1)
+    %       mydiscretecolors(i,1) = mycolors(1,1);
+    %       mydiscretecolors(i,2) = mycolors(1,2);
+    %       mydiscretecolors(i,3) = mycolors(1,3);
+    %   else
+    %       if levels(i)>colorlevels(end)
+    %           mydiscretecolors(i,1) = mycolors(end,1);
+    %           mydiscretecolors(i,2) = mycolors(end,2);
+    %           mydiscretecolors(i,3) = mycolors(end,3);
+    %           
+    %       else
+    %           mydiscretecolors(i,1) = interp1(colorlevels,mycolors(:,1),levels(i));
+    %           mydiscretecolors(i,2) = interp1(colorlevels,mycolors(:,2),levels(i));
+    %           mydiscretecolors(i,3) = interp1(colorlevels,mycolors(:,3),levels(i));
+    %       end
+    %       
+    %   end
+    %end
 end
+
+%Calculate the number of colors in the new colormap if nrofcolornew==NaN
+if isnan(nrofcolornew)
+	nrofcolornew=round(20/min(diff(levelsCscaled))); 
+	nrofcolornew=max(nrofcolornew,50); 
+end 
+
+%create new colormap
+colorlevelsnew=[0:1/nrofcolornew:1-1/nrofcolornew]; 
+colormapnew=nan(length(colorlevelsnew),3); 
+	
+iclass=colorlevelsnew<min(levelsCscaled(~isinf(levelsCscaled)));
+if sum(iclass)>0
+	colormapnew(iclass,:)=repmat(mycolors(1,:),[sum(iclass) 1]); 
+end
+for i=1:length(levelsCscaled)-1
+	iclass=colorlevelsnew>=levelsCscaled(i);
+	if sum(iclass)>0
+		colormapnew(iclass,:)=repmat(mydiscretecolors(i,:),[sum(iclass) 1]); 
+	end
+end
+iclass=colorlevelsnew>max(levelsCscaled(~isinf(levelsCscaled)));
+if sum(iclass)>0
+	colormapnew(iclass,:)=repmat(mycolors(end,:),[sum(iclass) 1]); 
+end
+colormap(colormapnew); 
 
 
 TextAndLineColor = 'k';
@@ -246,8 +315,11 @@ if ~isempty(reallevels)
     
 end
 
-if (nc == nv)
+
+if (nc == nv-1)
     for i=1:nc
+	
+
         
         %        patch color rectangle
         
@@ -258,8 +330,10 @@ if (nc == nv)
         %        place texts for v-ranges
         
         if isempty(yticklabel)
-            if (i==nc)
-                label= ['>',num2str(levels(nv),fmt),' ',unit];
+            if (i==1 & levels(1)==-Inf)
+                label= ['<',num2str(levels(2),fmt),' ',unit];
+			elseif (i==nc & levels(nc+1)==Inf)
+				label=  ['>',num2str(levels(i),fmt),' ',unit]; 
             else
                 label = [num2str(levels(i),fmt),' - ',num2str(levels(i+1),fmt),' ',unit];
             end
