@@ -2,7 +2,7 @@ function transect=grid2transect(x,y,z,xi,yi,varargin)
 %GRID2TRANSECT	interpolates values of scalarfield onto transect
 %
 %Syntax:
-%	transect=grid2transect(x,y,z,xi,yi,<keyword>,<value>)^%
+%	transect=grid2transect(x,y,z,xi,yi,<keyword>,<value>)
 %
 %Input:
 %	x		= [mxn double] matrix with x-coordinates
@@ -17,9 +17,11 @@ function transect=grid2transect(x,y,z,xi,yi,varargin)
 %			  water level. 
 %
 %Keywords:
-%nstep		[integer] number of points along transects. If specified dstep must be empty
-%dstep		[double] distance in tangential coordinates between points on transects.
-%			If specified nstep must be empty
+%nstep		[integer] number of points along transects. If specified dstep must be empty.
+%dstep		[double/] distance in tangential coordinates between points on transect.
+%			If specified nstep must be empty. If vector it contains the distance between
+%			points on transect.
+%
 %waterlevel	Water level used for calculation wet area. 
 %
 %
@@ -143,10 +145,15 @@ d=distance(x,y);
 
 if isempty(dstep)
 	dstep=d(end)/nstep;
+	di=[0:dstep:d(end)];
+elseif length(dstep)==1
+	di=[0:dstep:d(end)]; 
+else
+	dstep=reshape(dstep,1,[]); 
+	di=[0,cumsum(dstep)]; 
 end
 
 %interpolation points polygon in tangential coordinates
-di=[0:dstep:d(end)]; 
 di=unique([di,d]); 
 
 %interpolation points polygon in cartesian coordinates
