@@ -36,7 +36,7 @@ function delft3d_trim2ini(mdffile,time,fileOut,varargin)
 %
 % BETA VERSION. Writing secondary flow is not supported. The number of constituents that can
 % be processed is limited to 3. 
-%
+
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2012 Arcadis
@@ -189,6 +189,11 @@ if ismember('map-sed-series',{nefis.CelDef(:).Name})
    msed=vs_let_scalar(nefis,'map-sed-series',{timestep},'MSED','quiet'); 
    thk=vs_let_scalar(nefis,'map-sed-series',{timestep},'THLYR','quiet'); 
    dps=vs_let_scalar(nefis,'map-sed-series',{timestep},'DPS','quiet'); 
+   
+else
+
+   OPT.sedmode='none';
+   
 end
 
 %% Write ini file
@@ -202,12 +207,14 @@ delft3d_io_ini('write',[fName,'.ini'],data);
 
 %% Write .sdb files
 
-smsed=size(msed);
-msed=reshape(msed,1,max(mnkmax(2)-2,1),max(mnkmax(1)-2,1),[],smsed(end));
-smsed=size(msed);
+
 
 if strcmpi(OPT.sedmode,'sdb') 
-    
+
+
+    smsed=size(msed);
+    msed=reshape(msed,1,max(mnkmax(2)-2,1),max(mnkmax(1)-2,1),[],smsed(end));
+    smsed=size(msed);
     msed=max(msed,0); 
    
     %Write .sdb files
