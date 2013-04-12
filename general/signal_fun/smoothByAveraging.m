@@ -1,4 +1,4 @@
-function dataOut=smoothByAveraging(dataIn,tOut,varargin)
+function [dataOut stdOut]=smoothByAveraging(dataIn,tOut,varargin)
 %SMOOTHBYAVERAGING Smooths time signal by averaging groups of data.
 %
 %The function divides the time domain in blocks centered around the 
@@ -6,7 +6,7 @@ function dataOut=smoothByAveraging(dataIn,tOut,varargin)
 %averages the data. 
 %
 %Syntax:
-%   dataOut=smoothByAveraging(dataIn,tOut,<keyword>,<value>,...)
+%   [dataOut sigma]=smoothByAveraging(dataIn,tOut,<keyword>,<value>,...)
 %
 %Input:
 % dataIn        = [mxn double] matrix with in column 1 the time (as datenum) and column
@@ -18,11 +18,13 @@ function dataOut=smoothByAveraging(dataIn,tOut,varargin)
 %Output:
 % dataOut       = [mxn double] matrix with in column 1 output time and
 %                 other columns the averaged data. 
+% stdOut         = standard deviation of mean for the set of data that have been averaged for 1 time step. 
 %
 %Optional keywords:
 % min_samples   = [integer] mininum number of samples to be averaged for each output
 %                 time. If the number of available samples is lower then
 %                 this the output will be NaN (default=1). 
+
 %--------------------------------------------------------------------------------------
 %   Copyright (C) 2013 Arcadis
 %       Ivo Pasmans
@@ -79,15 +81,19 @@ end
 
 %Initiate output
 dataOut=nan(length(tOut),size(dataIn,2)); 
+stdOut=nan(length(tOut),size(dataIn,2));
 
 %Calculate boundary between different output times
 if length(tOut)>1
+  %boundaries based on output times specified in tOut
   tBoundary=tOut(1:end-1)+0.5*diff(tOut);     
   tBoundary=[tBoundary;dataIn(end,1)];
   dataOut(:,1)=tOut;
 else
+  %output time is equal to average input times
   tBoundary=dataIn(end,1); 
   dataOut(1,1)=nanmean(dataIn(:,1));
+  stdOut(1,1)=nanstd(dataIn(:,1))./sqrt( sum(~isnan(dataIn(:,1))) ); 
 end
 
 
@@ -108,6 +114,7 @@ for k=1:length(tBoundary)
     
     %Average samples in block
     dataOut(k,2:end)=nanmean(dataIn(iBlock,2:end),1); 
+	stdOut(k,2:end)=nanstd(dataIn(iBlock,2:end),1)./sqrt( sum(~isnan(dataIn(iBlock,2:end)),1) );
     dataIn=local_removeData(dataIn,max(iBlock)+1); 
 end
 
