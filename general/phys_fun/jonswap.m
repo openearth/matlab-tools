@@ -1,22 +1,34 @@
-function y = jonswap(x, gam)
-%JONSWAP  Create unscaled JONSWAP spectrum
+function [y] = jonswap(x, varargin)
+%JONSWAP  Create JONSWAP spectrum. 
 %
-%   Create unscaled JONSWAP spectrum.
+%   Create unscaled or scaled JONSWAP spectrum.
 %
-%   Syntax:
-%   y = jonswap(x, gam)
+% Syntax:
+%   y = jonswap(x,<keyword>,<value>)
+%   y = jonswap(x,gamma)
 %
-%   Input:
-%   x         = nondimensional frequency, divided by the peak frequency
-%   gam       = peak enhancement factor, optional parameter (default: 3.3)
-%   y         = nondimensional relative spectral density, equal to one at
-%               the peak
+% Input:
+%	x		  = [nx1 double] radial frequency. Give as nondimensional frequency divided
+%				by the peak frequency, or specify Tp and give as dimensional frequency in
+%				[Hz]. 
+%   gamma      = peak enhancement factor in Jonswap formula (default: 3.3)
 %
-%   Output:
-%   y         = unscaled energy density
+%Output: 
+%   y         = [nx1 double] spectral density. If x is nondimensional spectral is scaled such
+%				that max(y)=1. If x is dimensional, but Hs is not specified it is scaled such
+%				that the total energy is 1 [W]. If Hs and wp are specified y is scaled such t
+%				total spectral power is pi/8*Hs^2
+%
+%Keywords:
+%   alfa	  = [double] alfa parameter in Jonswap formula (default: 0.0081)
+%   beta	  = [double] beta parameter in Jonswap formula (default: 1.25)
+%   gamma	  = [double] gamma parameter in Jonswap formula (default: 3.3)
+%   g	      = [double] gravitational acceleration (default: 9.81 [m/s2])
+%   wp        = [double] radial peak frequency [Hz]
+%   Hp 		  = [double] significant wave height [m]. 
 %
 %   Example
-%   y = jonswap(x);
+%   y = jonswap(x,'wp',4,'Hs',2.5);
 %   y = jonswap(x, 1.0);
 %
 %   See also disper
@@ -65,8 +77,41 @@ function y = jonswap(x, gam)
 
 %% read settings
 
-if nargin < 2
-    gam = 3.3;
+OPT.alfa=0.0081; %parameter alfa
+OPT.beta=1.25; %parameter beta
+OPT.gamma=3.3; %parameter gamma
+OPT.g=9.81; %[m/s2]
+OPT.wp=1; %non-dimensional
+OPT.Hs=1;%significant wave height
+switch (nargin)
+	case 1
+		[OPT OPTset]=setproperty(OPT,{}); 
+	case 2
+		OPT.gamma = varargin{1};
+		[OPT OPTset]=setproperty(OPT,{}); 
+	otherwise
+	[OPT OPTset]=setproperty(OPT,varargin);
+end
+
+%check input
+if OPT.alfa<=0 | OPT.beta<=0 | OPT.gamma<=0 | OPT.g<=0
+	error('alfa, beta, gamma and g must be greater than 0.'); 
+end
+if OPT.wp<=0
+	error('Peak frequency must be greater than zero.'); 
+end
+if OPT.Hs<=0
+	error('Significant wave height must be greater than zero.'); 
+end
+
+%determine output dimensional or not
+if ~OPTset.wp & ~OPTset.Hs 
+	OPT.wp=1; 
+end
+
+%Calculate peak radial frequency from significant wave height
+if OPTset.Hs & ~OPTset.wp
+	OPT.wp=2*sqrt(OPT.g)/OPT.Hs*( (5*OPT.alfa+OPT.alfa*OPT.gamma)/30 )^(1/4); 
 end
 
 %% create spectrum
@@ -77,12 +122,24 @@ zxa         = find(xa == 0);
 if ~isempty(zxa)
   xa(zxa)   = eps * ones(size(xa(zxa)));
 end;
+xa=xa/OPT.wp; 
 
 sigma       = (xa < 1) * 0.07 + (xa >= 1) * 0.09;
 fac1        = xa .^ (-5);
-fac2        = exp (-1.25*(xa.^(-4)));
-fac3        = (gam .* ones(size(xa))) .^ (exp (-((xa-1).^2) ./ (2*sigma.^2)));
+fac2        = exp (-OPT.beta*(xa.^(-4)));
+fac3        = (OPT.gamma* ones(size(xa))) .^ (exp (-((xa-1).^2) ./ (2*sigma.^2)));
 
-y = fac1 .* fac2 .* fac3;
+y = OPT.alfa*OPT.g^2.*fac1 .* fac2 .* fac3;
 
-y = y / max(y);
+%% create output
+if y(end)/max(y)>.01
+	warning(sprintf('%s\n%s','Upper limit domain is too small to cover full spectrum.',...);
+	'Consider raising upper limit.')); 
+end 
+if ~OPTset.wp & ~OPTset.Hs
+	y = y / max(y);
+elseif OPTset.wp & OPTset.Hs
+	y = y/trapz(x,y)*OPT.Hs^2*pi/8; 
+else
+	y = y;
+end
