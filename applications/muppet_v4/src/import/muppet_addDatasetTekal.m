@@ -100,27 +100,27 @@ switch tp
         end        
 end
 
-% Tekal files can have multiple quantities, so ...
-dataset.selectedquantity='scalar';
-switch tp
-    case{'timeseries'}
-        if npar>1
-            % Set possible quantities
-            dataset.nrquantities=2;
-            dataset.quantities={'scalar','vector2d'};
-            dataset.ucomponent=dataset.parameters(1).parameter.name;
-            dataset.vcomponent=dataset.parameters(2).parameter.name;
-        end
-    case{'map'}
-        dataset.activeparameter=3;
-        if npar>3
-            % Set possible quantities
-            dataset.nrquantities=2;
-            dataset.quantities={'scalar','vector2d'};
-            dataset.ucomponent=dataset.parameters(3).parameter.name;
-            dataset.vcomponent=dataset.parameters(4).parameter.name;
-        end
-end
+% % % Tekal files can have multiple quantities, so ...
+% % dataset.selectedquantity='scalar';
+% % switch tp
+% %     case{'timeseries'}
+% %         if npar>1
+% %             % Set possible quantities
+% %             dataset.nrquantities=2;
+% %             dataset.quantities={'scalar','vector2d'};
+% %             dataset.ucomponent=dataset.parameters(1).parameter.name;
+% %             dataset.vcomponent=dataset.parameters(2).parameter.name;
+% %         end
+% %     case{'map'}
+% %         dataset.activeparameter=3;
+% %         if npar>3
+% %             % Set possible quantities
+% %             dataset.nrquantities=2;
+% %             dataset.quantities={'scalar','vector2d'};
+% %             dataset.ucomponent=dataset.parameters(3).parameter.name;
+% %             dataset.vcomponent=dataset.parameters(4).parameter.name;
+% %         end
+% % end
 
 %%
 function dataset=import(dataset)

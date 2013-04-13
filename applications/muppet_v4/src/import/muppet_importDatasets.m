@@ -4,6 +4,7 @@ ok=0;
 
 for id=1:handles.nrdatasets
     dataset=handles.datasets(id).dataset;
+    name=dataset.name;
     if ~dataset.combineddataset
         try
             % Find import routine
@@ -14,7 +15,11 @@ for id=1:handles.nrdatasets
             if isfield(dataset,'parameters')
                 % Multiple parameters available, copy appropriate data from parameters structure to
                 % dataset structure
-                ii=muppet_findIndex(dataset.parameters,'parameter','name',dataset.parameter);
+                if isempty(dataset.parameter)
+                    ii=1;
+                else
+                    ii=muppet_findIndex(dataset.parameters,'parameter','name',dataset.parameter);
+                end
                 fldnames=fieldnames(dataset.parameters(ii).parameter);
                 for j=1:length(fldnames)
                     switch fldnames{j}
@@ -27,6 +32,7 @@ for id=1:handles.nrdatasets
             end
             % Import
             dataset=feval(dataset.callback,'import',dataset);
+            dataset.name=name;
         catch
             ok=0;
             muppet_giveWarning('text',['Could not load dataset ' dataset.name ' !']);

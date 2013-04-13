@@ -62,37 +62,19 @@ plt.position=plt.position/unit;
 %%
 function plt=editsubplotsize(plt)
 
-plt=setprojectionlimits(plt);
-
-% Re-centre axes
-xmean=0.5*(plt.xmin+plt.xmax);
-ymean=0.5*(plt.ymin+plt.ymax);
-scalex=(plt.xmax-plt.xmin)/plt.position(3);
-scaley=(plt.ymax-plt.ymin)/plt.position(4);
-
-scale=0.5*(scalex+scaley);
-
-plt.xminproj=xmean-0.5*plt.position(3)*scale/plt.fscale;
-plt.xmaxproj=xmean+0.5*plt.position(3)*scale/plt.fscale;
-plt.yminproj=ymean-0.5*plt.position(4)*scale/plt.fscale;
-plt.ymaxproj=ymean+0.5*plt.position(4)*scale/plt.fscale;
+% Assume x axis and ymin remain the same
 
 switch plt.projection
     case{'equirectangular'}
-        plt.xmin=plt.xminproj;
-        plt.xmax=plt.xmaxproj;
-        plt.ymin=plt.yminproj;
-        plt.ymax=plt.ymaxproj;
+        plt.ymax=plt.ymin+(plt.xmax-plt.xmin)*plt.position(4)/plt.position(3);
     case{'mercator'}
-        plt.xmin=plt.xminproj;
-        plt.xmax=plt.xmaxproj;
-        plt.ymin=invmerc(plt.yminproj);
-        plt.ymax=invmerc(plt.ymaxproj);
+        plt.ymax=invmerc((plt.xmax-plt.xmin)/(plt.position(3)/plt.position(4))+merc(plt.ymin));
     case{'albers'}
-        [plt.xmin,plt.ymin]=albers(plt.xminproj,plt.yminproj,plt.labda0,plt.phi0,plt.phi1,plt.phi2,'inverse');
-        [plt.xmax,dummy]=albers(plt.xmaxproj,plt.yminproj,plt.labda0,plt.phi0,plt.phi1,plt.phi2,'inverse');
-        [dummy,plt.ymax]=albers(plt.xminproj,plt.ymaxproj,plt.labda0,plt.phi0,plt.phi1,plt.phi2,'inverse');
+%         [plt.xmin,plt.ymin]=albers(plt.xminproj,plt.yminproj,plt.labda0,plt.phi0,plt.phi1,plt.phi2,'inverse');
+%         [plt.xmax,dummy]=albers(plt.xmaxproj,plt.yminproj,plt.labda0,plt.phi0,plt.phi1,plt.phi2,'inverse');
+%         [dummy,plt.ymax]=albers(plt.xminproj,plt.ymaxproj,plt.labda0,plt.phi0,plt.phi1,plt.phi2,'inverse');
 end
+
 plt=computescale(plt);
 
 %%
@@ -100,112 +82,85 @@ function plt=editxmin(plt)
 % Compute new xmax
 switch plt.projection
     case{'equirectangular'}
-        plt.xmax=plt.xmin+plt.position(3)*plt.scale/plt.fscale;        
+        plt.xmax=plt.xmin+(plt.position(3)/plt.position(4))*(plt.ymax-plt.ymin);
     case{'mercator'}
-        plt.xmax=plt.xmin+plt.position(3)*plt.scale/plt.fscale;
+        plt.xmax=plt.xmin+(plt.position(3)/plt.position(4))*(merc(plt.ymax)-merc(plt.ymin));
     case{'albers'}
-        plt.xmax=plt.xmin+plt.position(3)*plt.scale/plt.fscale;
+%        plt.xmax=plt.xmin+plt.position(3)*plt.scale/plt.fscale;
 end
-plt=computescale(plt);
 
 %%
 function plt=editxmax(plt)
 
-% XMax edited in gui, compute new scale and ymax
-
 switch plt.projection
     case{'equirectangular'}
-        plt.scale=(plt.xmax-plt.xmin)/plt.position(3);
-        plt.ymax=plt.ymin+plt.scale*plt.position(4);
+        plt.ymax=plt.ymin+(plt.position(4)/plt.position(3))*(plt.xmax-plt.xmin);
     case{'mercator'}
-        plt.xmin=plt.xminproj;
-        plt.xmax=plt.xmaxproj;
-        plt.ymin=invmerc(plt.yminproj);
-        plt.ymax=invmerc(plt.ymaxproj);
+        plt.ymax=invmerc((plt.xmax-plt.xmin)/(plt.position(3)/plt.position(4))+merc(plt.ymin));
     case{'albers'}
-        [plt.xmin,plt.ymin]=albers(plt.xminproj,plt.yminproj,plt.labda0,plt.phi0,plt.phi1,plt.phi2,'inverse');
-        [plt.xmax,dummy]=albers(plt.xmaxproj,plt.yminproj,plt.labda0,plt.phi0,plt.phi1,plt.phi2,'inverse');
-        [dummy,plt.ymax]=albers(plt.xminproj,plt.ymaxproj,plt.labda0,plt.phi0,plt.phi1,plt.phi2,'inverse');
+%         [plt.xmin,plt.ymin]=albers(plt.xminproj,plt.yminproj,plt.labda0,plt.phi0,plt.phi1,plt.phi2,'inverse');
+%         [plt.xmax,dummy]=albers(plt.xmaxproj,plt.yminproj,plt.labda0,plt.phi0,plt.phi1,plt.phi2,'inverse');
+%         [dummy,plt.ymax]=albers(plt.xminproj,plt.ymaxproj,plt.labda0,plt.phi0,plt.phi1,plt.phi2,'inverse');
 end
-plt=setprojectionlimits(plt);
-%plt=computescale(plt);
+
+plt=computescale(plt);
 
 %%
 function plt=editymin(plt)
-% ymin has been altered
-plt.ymax=plt.ymin+plt.position(4)*plt.scale/plt.fscale;        
-plt=setprojectionlimits(plt);
+
 switch plt.projection
     case{'equirectangular'}
-        plt.xmin=plt.xminproj;
-        plt.xmax=plt.xmaxproj;
-        plt.ymin=plt.yminproj;
-        plt.ymax=plt.ymaxproj;
+        plt.ymax=plt.ymin+(plt.xmax-plt.xmin)*plt.position(4)/plt.position(3);
     case{'mercator'}
-        plt.xmin=plt.xminproj;
-        plt.xmax=plt.xmaxproj;
-        plt.ymin=invmerc(plt.yminproj);
-        plt.ymax=invmerc(plt.ymaxproj);
+        plt.xmax=plt.xmin+(plt.position(3)/plt.position(4))*(merc(plt.ymax)-merc(plt.ymin));
+        plt.ymax=invmerc((plt.xmax-plt.xmin)/(plt.position(3)/plt.position(4))+merc(plt.ymin));
     case{'albers'}
-        [plt.xmin,plt.ymin]=albers(plt.xminproj,plt.yminproj,plt.labda0,plt.phi0,plt.phi1,plt.phi2,'inverse');
-        [plt.xmax,dummy]=albers(plt.xmaxproj,plt.yminproj,plt.labda0,plt.phi0,plt.phi1,plt.phi2,'inverse');
-        [dummy,plt.ymax]=albers(plt.xminproj,plt.ymaxproj,plt.labda0,plt.phi0,plt.phi1,plt.phi2,'inverse');
+%         [plt.xmin,plt.ymin]=albers(plt.xminproj,plt.yminproj,plt.labda0,plt.phi0,plt.phi1,plt.phi2,'inverse');
+%         [plt.xmax,dummy]=albers(plt.xmaxproj,plt.yminproj,plt.labda0,plt.phi0,plt.phi1,plt.phi2,'inverse');
+%         [dummy,plt.ymax]=albers(plt.xminproj,plt.ymaxproj,plt.labda0,plt.phi0,plt.phi1,plt.phi2,'inverse');
 end
+
 plt=computescale(plt);
 
 %%
 function plt=editymax(plt)
-plt=setprojectionlimits(plt);
+
 switch plt.projection
     case{'equirectangular'}
-        plt.xmin=plt.xminproj;
-        plt.xmax=plt.xmaxproj;
-        plt.ymin=plt.yminproj;
-        plt.ymax=plt.ymaxproj;
+        plt.xmax=plt.xmin+(plt.ymax-plt.ymin)*plt.position(3)/plt.position(4);
     case{'mercator'}
-        plt.xmin=plt.xminproj;
-        plt.xmax=plt.xmaxproj;
-        plt.ymin=invmerc(plt.yminproj);
-        plt.ymax=invmerc(plt.ymaxproj);
+        plt.xmax=plt.xmin+(plt.position(3)/plt.position(4))*(merc(plt.ymax)-merc(plt.ymin));
     case{'albers'}
-        [plt.xmin,plt.ymin]=albers(plt.xminproj,plt.yminproj,plt.labda0,plt.phi0,plt.phi1,plt.phi2,'inverse');
-        [plt.xmax,dummy]=albers(plt.xmaxproj,plt.yminproj,plt.labda0,plt.phi0,plt.phi1,plt.phi2,'inverse');
-        [dummy,plt.ymax]=albers(plt.xminproj,plt.ymaxproj,plt.labda0,plt.phi0,plt.phi1,plt.phi2,'inverse');
+%         [plt.xmin,plt.ymin]=albers(plt.xminproj,plt.yminproj,plt.labda0,plt.phi0,plt.phi1,plt.phi2,'inverse');
+%         [plt.xmax,dummy]=albers(plt.xmaxproj,plt.yminproj,plt.labda0,plt.phi0,plt.phi1,plt.phi2,'inverse');
+%         [dummy,plt.ymax]=albers(plt.xminproj,plt.ymaxproj,plt.labda0,plt.phi0,plt.phi1,plt.phi2,'inverse');
 end
+
 plt=computescale(plt);
 
 %%
 function plt=editscale(plt)
-% Compute new xmax and ymax
+
+% First compute new ymax, then new xmax
+
 switch plt.projection
     case{'equirectangular'}
-        plt.xmax=plt.xmin+plt.position(3)*plt.scale/plt.fscale;        
         plt.ymax=plt.ymin+plt.position(4)*plt.scale/plt.fscale;
     case{'mercator'}
-        plt.xmax=plt.xmin+plt.position(3)*plt.scale/plt.fscale;        
         plt.ymax=invmerc(plt.scale*plt.position(4)/plt.fscale+merc(plt.ymin));
     case{'albers'}
-        plt.xmax=plt.xmin+plt.position(3)*plt.scale/plt.fscale;        
-        plt.ymax=invmerc(plt.scale*plt.position(4)/plt.fscale+merc(plt.ymin));
+%         plt.ymax=invmerc(plt.scale*plt.position(4)/plt.fscale+merc(plt.ymin));
 end
-plt=setprojectionlimits(plt);
+
 switch plt.projection
     case{'equirectangular'}
-        plt.xmin=plt.xminproj;
-        plt.xmax=plt.xmaxproj;
-        plt.ymin=plt.yminproj;
-        plt.ymax=plt.ymaxproj;
+        plt.xmax=plt.xmin+(plt.ymax-plt.ymin)*plt.position(3)/plt.position(4);
     case{'mercator'}
-        plt.xmin=plt.xminproj;
-        plt.xmax=plt.xmaxproj;
-        plt.ymin=invmerc(plt.yminproj);
-        plt.ymax=invmerc(plt.ymaxproj);
+        plt.xmax=plt.xmin+(plt.position(3)/plt.position(4))*(merc(plt.ymax)-merc(plt.ymin));
     case{'albers'}
-        [plt.xmin,plt.ymin]=albers(plt.xminproj,plt.yminproj,plt.labda0,plt.phi0,plt.phi1,plt.phi2,'inverse');
-        [plt.xmax,dummy]=albers(plt.xmaxproj,plt.yminproj,plt.labda0,plt.phi0,plt.phi1,plt.phi2,'inverse');
-        [dummy,plt.ymax]=albers(plt.xminproj,plt.ymaxproj,plt.labda0,plt.phi0,plt.phi1,plt.phi2,'inverse');
+%         plt.xmax=plt.xmin+plt.position(3)*plt.scale/plt.fscale;        
+%         plt.ymax=invmerc(plt.scale*plt.position(4)/plt.fscale+merc(plt.ymin));
 end
-plt=computescale(plt);
 
 %%
 function plt=changezoom(plt)
@@ -323,9 +278,10 @@ function plt=computescale(plt)
 
 switch plt.projection
     case{'equirectangular'}
-        plt.scale=round(plt.fscale*(plt.xmax-plt.xmin)/plt.position(3));
+        plt.scale=round(plt.fscale*(plt.ymax-plt.ymin)/plt.position(4));
     case{'mercator'}
-        plt.scale=round(plt.fscale*(merc(plt.ymax)-merc(plt.ymin))/plt.position(4));
+%        plt.scale=round(plt.fscale*(merc(plt.ymax)-merc(plt.ymin))/plt.position(4));
+        plt.scale=round(plt.fscale*(plt.ymax-plt.ymin)/plt.position(4));
     case{'albers'}
         [xx1,yy1]=albers(plt.xminproj,plt.yminproj,plt.labda0,plt.phi0,plt.phi1,plt.phi2,'inverse');
         [xx2,yy2]=albers(plt.xmaxproj,plt.yminproj,plt.labda0,plt.phi0,plt.phi1,plt.phi2,'inverse');

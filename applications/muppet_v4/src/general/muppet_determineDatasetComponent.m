@@ -14,6 +14,7 @@ switch dataset.quantity
             case('angle (radians)')
                 d.Val=mod(0.5*pi-atan2(d.YComp,d.XComp),2*pi);
                 dataset.quantity='scalar';
+%            case('angledegrees')
             case('angle (degrees)')
                 d.Val=mod(0.5*pi-atan2(d.YComp,d.XComp),2*pi)*180/pi;
                 dataset.quantity='scalar';

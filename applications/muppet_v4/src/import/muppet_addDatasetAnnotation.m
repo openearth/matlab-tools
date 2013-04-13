@@ -9,8 +9,6 @@ switch lower(opt)
         [pathstr,name,ext]=fileparts(dataset.filename);    
         dataset.name=name;
 
-    case{'import'}
-        
         fid=fopen(dataset.filename);
         
         k=0;
@@ -51,5 +49,31 @@ switch lower(opt)
                 
         dataset.type = 'textannotation';
         dataset.tc='c';
-
+        
+    case{'import'}
+        
+        if ~isempty(dataset.annotationtext)
+            % annotationtext read from mup file
+            dataset.alltextselected=0;
+            dataset.selectedtextnumber=strmatch(dataset.annotationtext,dataset.text,'exact');
+        end
+        
+        if dataset.alltextselected==0
+            if ~isempty(dataset.selectedtextnumber)
+                it=dataset.selectedtextnumber;
+                d=dataset;
+                dataset.x=[];
+                dataset.y=[];
+                dataset.rotation=[];
+                dataset.curvature=[];
+                dataset.text=[];
+                dataset.x=d.x(it);
+                dataset.y=d.y(it);
+                dataset.rotation=d.rotation(it);
+                dataset.curvature=d.curvature(it);
+                dataset.text{1}=d.text{it};
+                dataset.annotationtext=d.text{it};
+            end
+        end
+        
 end

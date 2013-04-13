@@ -5,7 +5,7 @@ dr=handles.xmldir;
 % Data types
 flist=dir([dr 'datatypes' filesep '*.xml']);
 for ii=1:length(flist)
-    xml=xml2struct3([dr 'datatypes' filesep flist(ii).name]);
+    xml=xml2struct([dr 'datatypes' filesep flist(ii).name]);
     handles.datatype(ii).datatype=xml;
     handles.datatypenames{ii}=flist(ii).name(1:end-4);
 end
@@ -13,7 +13,7 @@ end
 % Data properties
 flist=dir([dr 'dataproperties' filesep '*.xml']);
 for ii=1:length(flist)
-  xml=xml2struct3([dr 'dataproperties' filesep flist(ii).name]);
+  xml=xml2struct([dr 'dataproperties' filesep flist(ii).name]);
   % Compute width and height
   width=0;
   height=0;
@@ -33,7 +33,7 @@ end
 flist=dir([dr 'plotoptions' filesep '*.xml']);
 n=0;
 for ii=1:length(flist)
-    xml=xml2struct3([dr 'plotoptions' filesep flist(ii).name]);
+    xml=xml2struct([dr 'plotoptions' filesep flist(ii).name]);
     for jj=1:length(xml.plotoption)
         n=n+1;
         handles.plotoption(n).plotoption=xml.plotoption(jj).plotoption;
@@ -41,17 +41,17 @@ for ii=1:length(flist)
 end
 
 % Subplot Options
-xml=xml2struct3([dr 'subplotoptions' filesep 'subplotoptions.xml']);
+xml=xml2struct([dr 'subplotoptions' filesep 'subplotoptions.xml']);
 handles.subplotoption=xml.subplotoption;
 
 % Figure Options
-xml=xml2struct3([dr 'figureoptions' filesep 'figureoptions.xml']);
+xml=xml2struct([dr 'figureoptions' filesep 'figureoptions.xml']);
 handles.figureoption=xml.figureoption;
 
 % Data File Types
 flist=dir([dr 'filetypes' filesep '*.xml']);
 for ii=1:length(flist)
-    xml=xml2struct3([dr 'filetypes' filesep flist(ii).name]);
+    xml=xml2struct([dr 'filetypes' filesep flist(ii).name]);
     handles.filetype(ii).filetype=xml;
     handles.filetypes{ii}=xml.name;
 end
@@ -59,7 +59,7 @@ end
 % Plot Types
 flist=dir([dr 'plottypes' filesep '*.xml']);
 for ii=1:length(flist)
-    xml=xml2struct3([dr 'plottypes' filesep flist(ii).name]);
+    xml=xml2struct([dr 'plottypes' filesep flist(ii).name]);
     handles.plottype(ii).plottype=xml.plottype(1).plottype;
 end
 
@@ -68,7 +68,7 @@ dr=[handles.settingsdir 'frames' filesep];
 flist=dir([dr '*.xml']);
 n=0;
 for ii=1:length(flist)
-    xml=xml2struct3([dr flist(ii).name]);
+    xml=xml2struct([dr flist(ii).name]);
     for j=1:length(xml.frame)
         n=n+1;
         handles.frames.frame(n).frame=xml.frame(j).frame;

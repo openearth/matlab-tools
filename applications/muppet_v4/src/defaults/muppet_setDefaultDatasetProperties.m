@@ -6,6 +6,7 @@ dataset.filename='';
 dataset.filetype='';
 dataset.combineddataset=0;
 dataset.runid=[];
+dataset.active=1;
 
 %% Data
 dataset.x=[];
@@ -64,3 +65,6 @@ dataset.activeparameter=[];
 
 dataset.georeferencefile='';
 
+dataset.selectedtextnumber=1;
+dataset.alltextselected=1;
+dataset.annotationtext='';

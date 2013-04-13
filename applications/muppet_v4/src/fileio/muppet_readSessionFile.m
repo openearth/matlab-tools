@@ -43,6 +43,7 @@ ncd=0;
 if ilayout==0
     
     for ii=1:length(str)
+
         keyword='dataset';
         if length(str{ii})>=length(keyword)
             if strcmpi(str{ii}(1:length(keyword)),keyword)

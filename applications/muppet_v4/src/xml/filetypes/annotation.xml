@@ -11,4 +11,7 @@
   <option>
     <name>filetype</name>
   </option>
+  <option>
+    <name>annotationtext</name>
+  </option>
 </root>

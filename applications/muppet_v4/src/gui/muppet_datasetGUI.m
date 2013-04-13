@@ -338,6 +338,8 @@ if ~strcmpi(dataset.quantity,oldquantity)
     end
 end
 
+%dataset.selectedquantity=dataset.quantity;
+
 % % Block
 % if dataset.nrblocks>0
 %     if dataset.nrblocks~=oldnrblocks

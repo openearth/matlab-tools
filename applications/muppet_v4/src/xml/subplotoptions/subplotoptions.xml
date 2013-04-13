@@ -694,7 +694,7 @@
   </subplotoption>
   <subplotoption>
     <name>legendposition</name>
-    <variable>legend.position</variable>
+    <variable>legend.positionstring</variable>
     <default>NorthEast</default>
     <type>realorstring</type>
     <keyword>LegendPosition</keyword>
@@ -703,6 +703,11 @@
       <operator>eq</operator>
       <value>1</value>
     </check>
+    <check>
+      <variable>legend.positionstring</variable>
+      <operator>ne</operator>
+      <value>custom</value>
+    </check>    
   </subplotoption>
   <subplotoption>
     <name>legendcolor</name>

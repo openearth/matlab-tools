@@ -138,4 +138,5 @@ opt.multiply=1;
 opt.unitarrow=1;
 
 opt.whitevalue=0.9;
-opt.opactiy=1;
+opt.opacity=1;
+opt.verticallevel=1000;

@@ -88,6 +88,8 @@ if ok
     fig.subplots(fig.nrsubplots).subplot.type='unknown';
     fig.subplots(fig.nrsubplots).subplot.limitschanged=0;
     fig.subplots(fig.nrsubplots).subplot.positionchanged=0;
+    fig.subplots(fig.nrsubplots).subplot.annotationsadded=0;
+    fig.subplots(fig.nrsubplots).subplot.annotationschanged=0;
     fig.subplots(fig.nrsubplots).subplot=muppet_setDefaultAxisProperties(fig.subplots(fig.nrsubplots).subplot);
     setappdata(gcf,'figure',fig);
     isub=fig.nrsubplots;

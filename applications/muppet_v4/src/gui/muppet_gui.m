@@ -461,6 +461,7 @@ if ok
     handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.coordinatesystem.type=type;
     switch type
         case{'geographic'}
+            handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.projection='mercator';
         case{'projected'}
             handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.projection='equirectangular';
     end

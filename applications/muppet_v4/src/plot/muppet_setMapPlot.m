@@ -18,6 +18,9 @@ ylim(2)=plt.ymax;
 
 
 if plt.drawbox
+    
+    % X Axis
+    
     if plt.xtick~=-999.0
         xtickstart=plt.xtick*floor(xlim(1)/plt.xtick);
         xtickstop=plt.xtick*ceil(xlim(2)/plt.xtick);
@@ -66,6 +69,8 @@ if plt.drawbox
         tick(gca,'x','none');
     end
 
+    % Y Axis
+    
     if plt.ytick~=-999.0
         ytickstart=plt.ytick*floor(ylim(1)/plt.ytick);
         ytickstop=plt.ytick*ceil(ylim(2)/plt.ytick);
@@ -86,7 +91,7 @@ if plt.drawbox
                 ylabls{i}=sprintf(frmt,val);
             end
             set(gca,'yticklabel',ylabls);
-        elseif plt.ydecimals==-1 && multi~=1
+        elseif plt.ydecimals==-1 % && multi~=1
             frmt=['%0.' num2str(2) 'f'];
             for i=1:size(ytick,2)
                 val=plt.ytickmultiply*ytick(i)/multi+plt.ytickadd;

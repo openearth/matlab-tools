@@ -9,7 +9,16 @@ opt=plt.datasets(k).dataset;
 x=data.x;
 y=data.y;
 
-for ii=1:length(x)
+% if ~isempty(opt.selectedtext)
+%     itxt=strmatch(opt.selectedtext,data.text,'exact');
+%     i1=itxt;
+%     i2=itxt;    
+% else
+    i1=1;
+    i2=length(x);    
+% end
+
+for ii=i1:i2
     
     if ~strcmpi(opt.marker,'none')
         sc=scatter3(x(ii),y(ii),1000,opt.markersize,opt.marker);
@@ -23,7 +32,15 @@ for ii=1:length(x)
     hold on;
     
     if opt.addtext
-        dist=0.001*plt.scale;
+        
+        switch plt.coordinatesystem.type
+            case{'geographic'}
+                plt.fscale=111111;
+            otherwise
+                plt.fscale=1;
+        end
+
+        dist=0.001*plt.scale/plt.fscale;
         switch lower(opt.textposition),
             case{'northeast','east','southeast'}
                 x1=x(ii)+dist;
@@ -47,6 +64,7 @@ for ii=1:length(x)
                 veral='top';
         end
         tx=text(x1,y1,1000,[data.text{ii}]);
+%        tx=text(x1,y1,[data.text{ii}]);
         set(tx,'FontName',opt.font.name);
         set(tx,'FontWeight',opt.font.weight);
         set(tx,'FontAngle',opt.font.angle);

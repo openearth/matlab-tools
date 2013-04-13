@@ -48,7 +48,7 @@ if sum(hnd)>0
             pos(4)=max(pos(4),0.2);
             set(leg,'Position',pos*fig.cm2pix);
         otherwise
-            set(leg,'Location',plt.legend.position);
+            set(leg,'Location',plt.legend.positionstring);
     end
         
     set(leg,'Tag','legend');
