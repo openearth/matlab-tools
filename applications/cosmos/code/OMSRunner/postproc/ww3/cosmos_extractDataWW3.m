@@ -122,7 +122,7 @@ if model.nrStations>0
             s3.Parameter='hs';
             s3.Val=hs(:,istat);
             s3.Time=t;
-            fname=[cycledirtimeseris filesep 'hs.' st '.mat'];
+            fname=[cycledirtimeseries filesep 'hs.' st '.mat'];
             save(fname,'-struct','s3','Parameter','Time','Val');
             
             % Tp
