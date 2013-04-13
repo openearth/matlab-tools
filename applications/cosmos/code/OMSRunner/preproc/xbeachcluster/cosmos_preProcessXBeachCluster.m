@@ -57,7 +57,7 @@ switch model.runEnv
         
         fclose(fid);
         
-    case{'h4'}
+    case{'h4','h4i7'}
 
         % Determine number of jobs that need to be submitted
         njobs=ceil(np/nprfperjob);
