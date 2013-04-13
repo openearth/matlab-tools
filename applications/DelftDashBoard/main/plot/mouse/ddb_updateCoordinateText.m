@@ -75,8 +75,8 @@ if posx<=xlim(1) || posx>=xlim(2) || posy<=ylim(1) || posy>=ylim(2)
     stry='Y : ';
     set(gcf,'Pointer','arrow');
 else
-    strx=['X : ' num2str(posx,'%10.2f')];
-    stry=['Y : ' num2str(posy,'%10.2f')];
+    strx=['X : ' num2str(posx,'%10.3f')];
+    stry=['Y : ' num2str(posy,'%10.3f')];
     setptr(gcf,pnt);
 end
 
