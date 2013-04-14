@@ -98,8 +98,10 @@ for j=1:2
             openBoundaries(nb).N2=n2(j);            
             openBoundaries(nb).name=[dir{j} num2str(nd)];
         end
-    end
-    
+        if m==mmax
+            break
+        end
+    end    
 end
 
 % West and East
@@ -177,6 +179,9 @@ for j=1:2
             openBoundaries(nb).N1=nstart;
             openBoundaries(nb).N2=nend;            
             openBoundaries(nb).name=[dir{j} num2str(nd)];
+        end
+        if n==nmax
+            break
         end
     end
 end
