@@ -108,6 +108,13 @@ end
 handles.iproj=strmatch(lower(handles.CSproj),lower(handles.coordinateSystems.coordSysCart),'exact');
 handles.igeo=strmatch(lower(handles.CSgeo),lower(handles.coordinateSystems.coordSysGeo),'exact');
 
+if isempty(handles.iproj)
+    handles.iproj=1;
+end
+if isempty(handles.igeo)
+    handles.igeo=1;
+end
+
 switch lower(cstype)
     case{'geographic'}
         ics=handles.igeo;
