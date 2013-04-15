@@ -145,10 +145,10 @@ switch upper(OPT.mpitype)
             end
             fprintf(fid,'awk ''{print $1":"1}'' $PE_HOSTFILE > $(pwd)/machinefile\n');
             fprintf(fid,'mpdboot -n $NHOSTS --rsh=/usr/bin/rsh -f $(pwd)/machinefile\n');
-            fprintf(fid,'mpirun -np $NSLOTS %s >> %s.log 2>&1\n', OPT.binary, name);
+            fprintf(fid,'mpirun -np $NSLOTS %s \n', OPT.binary);
             fprintf(fid,'mpdallexit\n');
         else
-            fprintf(fid,'%s >> %s.log 2>&1\n', OPT.binary, name);
+            fprintf(fid,'%s\n', OPT.binary);
         end
     case 'MPICH2'
         fprintf(fid,'#!/bin/sh\n');
@@ -166,9 +166,9 @@ switch upper(OPT.mpitype)
             fprintf(fid,'export PATH=$MPICH2_ROOT/bin:$PATH\n');
             fprintf(fid,'export MPD_CON_EXT="sge_$JOB_ID.$SGE_TASK_ID"\n');
 
-            fprintf(fid,'mpirun -machinefile $TMPDIR/machines -n $NSLOTS %s >> %s.log\n', OPT.binary, name);
+            fprintf(fid,'mpirun -machinefile $TMPDIR/machines -n $NSLOTS %s\n', OPT.binary);
         else
-            fprintf(fid,'%s >> %s.log 2>&1\n', OPT.binary, name);
+            fprintf(fid,'%s\n', OPT.binary);
         end
 otherwise
         error(['Unknown MPI type [' OPT.mpitype ']']);
