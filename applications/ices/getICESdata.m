@@ -5,8 +5,8 @@ function varargout = getICESdata(varargin)
 %
 % Example:
 %  getICESdata('ParameterCode','PSAL','t0',datenum(2009,1,1),'t1',datenum(2010,1,1),...
-%              'lon',[-2  9],...
-%              'lat',[49 57],...
+%              'lon',[-2  9],... % longitude bounding box
+%              'lat',[49 57],... % latitude  bounding box
 %              'p'  ,[0 1e5],'kml','salinity.kml')
 %
 %See also: getndbcdata, getcoopsdata, getICESparameters
@@ -99,6 +99,11 @@ else
    varargout = {D,A};
 end
 
+%% debug
+
 if ~isempty(OPT.kml)
-   KMLscatter(A.Latitude,A.Longitude,A.Value,'fileName',OPT.kml,'CBcolorTitle',[A.name,' [',A.units,']'])
+   dt = 14;
+   KMLscatter(A.Latitude,A.Longitude,A.Value,'fileName',OPT.kml,...
+       'CBcolorTitle',[A.name,' [',A.units,']'],...
+       'timeIn',floor(A.datenum),'timeOut',ceil(A.datenum+eps))
 end

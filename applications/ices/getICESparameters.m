@@ -1,7 +1,10 @@
 function varargout = getICESparameters(code)
 %getICESparameters get ICES parametr meta-data
 %
-%  [code, name, compounds, units] = getICESparameters(code)
+%  [code, name, compounds, units] = getICESparameters(<code>)
+%
+% where code is the ICES ParamterCode to be used in getICESdata.
+% Get complete list when omitting input.
 %
 % Example:
 %    [~,name,~,units]=getICESparameters('PSAL')
@@ -63,6 +66,11 @@ table = ...
   'PHPH','Hydrogen Ion Concentration','H'      ,''        ;
   'ALKY','Alkalinity'                ,''       ,'meq/l'   ;
   'CPHL','Chlorophyll a'             ,''       ,'ug/l'    };
+
+if nargin==0
+   varargout = {{table{:,1}},{table{:,2}},{table{:,3}},{table{:,4}}};
+   return
+end
 
 ind = strmatch(code,{table{:,1}});
 
