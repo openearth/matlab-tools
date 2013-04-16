@@ -19,6 +19,7 @@ function varargout=getcoopsdata(opt,varargin)
 %
 % Example:
 %  S = getcoopsdata('getactivestations')
+%  var2evalstr(S(1)) % see what's available
 %  G = getcoopsdata('getdatums'      ,'id',S(1).id)
 %  D = getcoopsdata('getobservations','id',S(1).id,'parameter',S(1).parameters(1).name,'t0',now-30,'t1',now)
 %
@@ -27,7 +28,7 @@ function varargout=getcoopsdata(opt,varargin)
 %  datetick('x')
 %  title(['''',D.stationid,''' [',num2str(D.longitude),',',num2str(D.latitude),']'])
 %
-%See also: getndbcdata, createcoopsservices, http://tidesandcurrents.noaa.gov/
+%See also: getndbcdata, getICESdata, createcoopsservices, http://tidesandcurrents.noaa.gov/, http://opendap.co-ops.nos.noaa.gov/axis/
 
 %% Copyright notice
 %   --------------------------------------------------------------------

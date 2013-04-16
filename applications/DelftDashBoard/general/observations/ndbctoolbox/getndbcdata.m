@@ -10,6 +10,8 @@ function varargout=getndbcdata(opt,varargin)
 %   D = getndbcdata('getobservations','id',id,'parameter',parameter,'t0',t0,'t1',t1);
 %
 % Example:
+%  S = getndbcdata('getstations')
+%  var2evalstr(S(1)) % see what's available
 %  D = getndbcdata('getobservations','id',S(1).id,...
 %                  'parameter','air_temperature',...
 %                  't0',datenum(2013,1,1),'t1',now); % time as datenum
@@ -25,7 +27,7 @@ function varargout=getndbcdata(opt,varargin)
 %  datetick('x')
 %  title(['''',D.stationid,''' [',num2str(D.longitude),',',num2str(D.latitude),']'])
 %
-%See also: getcoopsdata, ddb_ObservationStations_ndbc, http://sdf.ndbc.noaa.gov/sos
+%See also: getcoopsdata, getICESdata, ddb_ObservationStations_ndbc, http://sdf.ndbc.noaa.gov/sos
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -73,7 +75,7 @@ function varargout=getndbcdata(opt,varargin)
  OPT.t1           = [];
  OPT.inputfile    = [];
  OPT.outpoutfile  = [];
- OPT.setglobal    = [];
+ OPT.setglobal    = 1; % default to make ddb work !
 
 if nargin==0
    varargout = {OPT};
@@ -83,7 +85,7 @@ end
 for ii=1:length(varargin) % replace with setpropery
     if ischar(varargin{ii})
         switch lower(varargin{ii})
-            case{'global','setglobal'};OPT.setglobal    = 1;
+            case{'global','setglobal'};OPT.setglobal    = varargin{ii+1};
             case{'inputfile'};         OPT.inputfile    = varargin{ii+1};
             case{'outputfile'};        OPT.outputfile   = varargin{ii+1};
 
