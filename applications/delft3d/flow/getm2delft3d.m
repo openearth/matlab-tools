@@ -62,6 +62,7 @@ function MDF = getm2delft3d(varargin)
   %OPT.topoc           = '*.nc';
    OPT.bdyinfo         = '*.dat';
    OPT.bdy             = '*.nc';
+   OPT.bdydep          = '*.nc'; % same, but for depth
    OPT.bdy3d           = '*.nc';
    OPT.bdy3d_nudge     = 1; % shift 1st and last bcc to match simulation time
    OPT.riverinfo       = '*.dat';
@@ -87,13 +88,19 @@ function MDF = getm2delft3d(varargin)
    % switch off generating a particiular external files, while mdf stays identical to speed up debugging other external files
    OPT.write.grd      = 1;
    OPT.write.dep      = 1; % requires OPT.write.grd for sigma levels  
+   OPT.write.rst      = 1; % requires OPT.write.dep for sigma levels
    OPT.write.bct      = 1;
    OPT.write.bcc      = 1; % requires OPT.write.bct for sigma levels
-   OPT.write.rst      = 1; % requires OPT.write.dep for sigma levels
+   OPT.write.src      = 1;
 
    OPT = setproperty(OPT,varargin);
    
 %% 
+
+   
+   if isempty(OPT.bdydep)
+      OPT.bdydep = OPT.bdy;
+   end
 
    if ~isempty(OPT.inp)
       getm = fortran_namelist2struct(OPT.inp);
@@ -297,6 +304,7 @@ function MDF = getm2delft3d(varargin)
    delft3d_io_mdf('write',[OPT.d3ddir,filesep,OPT.RUNID,'.mdf'],MDF.keywords); % updated and overwritten after each new addition
    
 %% initial conditions
+%  Note: initialize barotropic in case baroclinic temp/salt is initialized
 
    INI = struct();
 
@@ -309,6 +317,10 @@ function MDF = getm2delft3d(varargin)
    end
    
    % calc_* means it solves the equation (d3d has no diagnostic mode, getm.param.runtype is irrelevant)
+   % 0: read from hotstart file
+   % 1: constant
+   % 2: homogeneous stratification
+   % 3: from 3D field
     
    if getm.temp.temp_method ==3 |  getm.salt.salt_method ==3
       if ~isfield(INI,'waterlevel')
@@ -338,7 +350,7 @@ function MDF = getm2delft3d(varargin)
          tmp.zax  = ncread([OPT.getmdir, filesep,getm.temp.temp_file],'zax'); % POSITIVE DOWN
          tmp.time = ncread([OPT.getmdir, filesep,getm.temp.temp_file],'time');
          tmp.data = ncread([OPT.getmdir, filesep,getm.temp.temp_file],getm.temp.temp_name,[1 1 1 getm.temp.temp_field_no],[Inf Inf Inf 1]); % 1-based indices
-         disp([mfilename,' interpolating 3D initial conditions field, please wait ...'])
+         disp([mfilename,' interpolating 3D initial conditions temp field, please wait ...'])
          INI.temperature = interp_z2sigma(-tmp.zax,tmp.data,(d3d_sigma(MDF.keywords.thick./100)),0,-D.bathymetry');
          INI.temperature(isnan(INI.temperature ))=0; % d3d cannot handle nans
          end
@@ -364,7 +376,7 @@ function MDF = getm2delft3d(varargin)
          tmp.zax  = ncread([OPT.getmdir, filesep,getm.salt.salt_file],'zax'); % POSITIVE DOWN
          tmp.time = ncread([OPT.getmdir, filesep,getm.salt.salt_file],'time');
          tmp.data = ncread([OPT.getmdir, filesep,getm.salt.salt_file],getm.salt.salt_name,[1 1 1 getm.temp.temp_field_no],[Inf Inf Inf 1]); % 1-based indices
-         disp([mfilename,' interpolating 3D initial conditions field, please wait ...'])
+         disp([mfilename,' interpolating 3D initial conditions salt field, please wait ...'])
          INI.salinity = interp_z2sigma(-tmp.zax,tmp.data,(d3d_sigma(MDF.keywords.thick./100)),0,-D.bathymetry');
          INI.salinity(isnan(INI.salinity ))=0; % d3d cannot handle nans
          % *** ERROR NaN found in r1 (restart-file) at (n,m,k,l) = (           1,          47,           1,           1) 
@@ -406,7 +418,7 @@ function MDF = getm2delft3d(varargin)
    C.minutes      = (C.datenum-OPT.reference_time)*24*60;
    C.minutes      = roundoff(C.minutes     ,MDF.keywords.dt,'floor','multiple');  %make sure times are multiple of time step
    C.minutes(end) = C.minutes(end) + MDF.keywords.dt; % make sure to keep full time range
-   C.bathymetry   = ncread(OPT.bdy  ,'bathymetry'); % POSITIVE DOWN, needed for z2sigma
+   C.bathymetry   = ncread(OPT.bdydep,'bathymetry'); % POSITIVE DOWN, needed for z2sigma
    C.kmax         = MDF.keywords.mnkmax(3);
 
 % fill NaN gaps (drying overall model) with linear interpolation in time
@@ -504,7 +516,7 @@ function MDF = getm2delft3d(varargin)
          % multiple grid cells per segment: as bct has two columns, we recommend
          % to merge at least 2 seperate GETM points into one 2-point Delft3D segment
             nbnd.d3d = nbnd.d3d  + nbnd.loc;
-            nbnd.loc = ceil(length(m)./dbnd); % note CEIL, it extends beyond local GEMT section
+            nbnd.loc = ceil(length(m)./dbnd); % note CEIL, it extends beyond local GETM section
             tmp.m    = pad(m,nbnd.loc*dbnd,m(end)); % make array artificially somewhat larger if dseg does not fit integer # times in boundary.
             tmp.n    = pad(n,nbnd.loc*dbnd,n(end));
 
@@ -733,6 +745,9 @@ function MDF = getm2delft3d(varargin)
 
    MDF.keywords.rettis  = repmat(MDF.keywords.rettis,[BND.NTables 1]);
    MDF.keywords.rettib  = repmat(MDF.keywords.rettib,[BND.NTables 1]);
+   if isfield(MDF.keywords,'ilaggr') % No delwaq layer aggregation
+   MDF.keywords.ilaggr  = repmat(MDF.keywords.ilaggr,[OPT.kmax 1]);
+   end
    
    delft3d_io_mdf('write',[OPT.d3ddir,filesep,OPT.RUNID,'.mdf'],MDF.keywords); % updated and overwritten after each new addition
    
@@ -758,6 +773,7 @@ function MDF = getm2delft3d(varargin)
           R(ipnt).m             = str2num(m);
           R(ipnt).n             = str2num(n);
           R(ipnt).k             = 0;
+          R(ipnt).type          = 'n';
 
          %if ~strcmpi(name,name0);
          %   a = iriver + 1;
@@ -790,7 +806,7 @@ function MDF = getm2delft3d(varargin)
       
       MDF.keywords.filsrc = [filename(OPT.riverinfo),'.src'];
       MDF.keywords.fildis = [filename(OPT.river)    ,'.dis'];
-      delft3d_io_src('write',[OPT.d3ddir,filesep,MDF.keywords.filsrc],R);
+      if OPT.write.src;delft3d_io_src('write',[OPT.d3ddir,filesep,MDF.keywords.filsrc],R);end
 
 %% discharge data 
 %  first create file without T/S and last one with T/S

@@ -252,7 +252,7 @@ elseif strcmpi(OPT.filetype,'meteo_on_curvilinear_grid')
     
     fprintf  (fid,'TIME = %f hours since %s %s',OPT.hr,... % write all decimals
         datestr(OPT.refdatenum,'yyyy-mm-dd HH:MM:SS'),...
-        OPT.timezone);
+        OPT.timezone,' #',datestr(time,'yyyy-mm-dd HH:MM:SS'));
     fprinteol(fid,OPT.OS)
     
     %% Data

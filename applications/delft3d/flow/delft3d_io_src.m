@@ -109,6 +109,7 @@ else
       STRUCT.DATA(i).m             = fscanf(fid,'%i'  ,1);
       STRUCT.DATA(i).n             = fscanf(fid,'%i'  ,1);
       STRUCT.DATA(i).k             = fscanf(fid,'%i'  ,1);
+      STRUCT.DATA(i).type          = fscanf(fid,'%i'  ,1); % new
       
      % if STRUCT.DATA(i).m==mmax+1
      %    STRUCT.DATA(i).m= mmax;
@@ -159,11 +160,12 @@ for i=1:length(STRUCT.DATA)
    fprintf(fid,'%1c',' ');
    % fprintf automatically adds one space between all printed variables
    % within one call
-   fprintf(fid,'%1c %i %i %i',...
+   fprintf(fid,'%1c %i %i %i %i',...
            STRUCT.DATA(i).interpolation,...
            STRUCT.DATA(i).m            ,...
            STRUCT.DATA(i).n            ,...
-           STRUCT.DATA(i).k            );
+           STRUCT.DATA(i).k            ,....
+           STRUCT.DATA(i).type         ); % new
    
    if     strcmp(lower(OS(1)),'u')
       fprintf(fid,'\n');
