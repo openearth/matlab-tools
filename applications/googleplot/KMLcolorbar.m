@@ -74,8 +74,8 @@ OPT.CBcolorbarlocation   = {'W'};          %{'N','E','S','W'}; %{'N','NNE','ENE'
 OPT.CBcolorTitle         = '';             % The title of the colorbar as it appears in the bar
 OPT.CBcolorTick          = [];             % Ticks on colorbar. If isempty, nothing is changed, see help colorberlegend
 OPT.CBcolorTickLabel     = '';             % Is isempty, nothing is changed
-OPT.CBtitlergb           = [1 1 1];        % black
-OPT.CBframergb           = [255 253 2]/255;        % white
+OPT.CBtitlergb           = [0 0 0];        % black
+OPT.CBframergb           = [255 253 2]/255;% white
 OPT.CBalpha              = 0.8;            % transparency
 OPT.CBtemplateHor        = 'KML_colorbar_template_horizontal.png';
 OPT.CBtemplateVer        = 'KML_colorbar_template_vertical.png';
@@ -184,7 +184,6 @@ for ii = 1:length(OPT.CBcolorbarlocation)
     if isempty(OPT.CBthickness         ); OPT.CBthickness         = OPT2.CBthickness         ;end
     pngNames{end+1} = KML_colorbar(OPT);
 end
-
 
 OPT.CBfileName          =  fullfile(PATHSTR,NAME);
 

@@ -121,7 +121,7 @@ function varargout = KML_colorbar(OPT)
       OPT.CBcLim = OPT.CBcLim + 1e-4.*[-1 1].*OPT.CBcLim;
    end
    h.c  = colorbarlegend(gca,[0 1],[0 1],OPT.CBcLim,...
-            'ontop',0,...
+            'ontop',1,... % 1 needed for CBcolorTitle
         'reference','gca',...
       'orientation',OPT.CBorientation);
 
@@ -137,7 +137,7 @@ function varargout = KML_colorbar(OPT)
       elseif strcmpi(OPT.CBorientation      ,'horizontal')
          text(0.0,0.5,[' ',OPT.CBcolorTitle],'color',OPT.CBtitlergb,'units','normalized','rotation', 0,'verticalalignment','middle','interpreter',OPT.CBinterpreter);
       end
-   set   (h.c,'FontWeight'   ,'bold'); % we need bold for both halo and normal irregular background
+      set   (h.c,'FontWeight'   ,'bold'); % we need bold for both halo and normal irregular background
    end
 
    set   (h.c,'xcolor'       ,OPT.CBfontrgb)
