@@ -29,6 +29,7 @@ if ini ~= 1
     s.XCGRID  = bmi_var_get(bmidll, 'XCGRID');
     s.YCGRID  = bmi_var_get(bmidll, 'YCGRID');
     
+    s.dp2  = bmi_var_get(bmidll, 'DP2');
     %% (*) (still to) get variables
     % frintf  = bmi_var_get(bmidll, 'FRINTF');
     % fx      = bmi_var_get(bmidll, 'fx');          & dS/dx ??
@@ -43,12 +44,18 @@ out = getHm0_2D(s);
 out.hs = out.hs(1:end-1);
 out.hs_2D = reshape(out.hs,fliplr(size(s.XCGRID)));
 
+s.dp2 = s.dp2(1:end-1);
+s.dp2_2D = reshape(s.dp2,fliplr(size(s.XCGRID)));
 
 %% Print
 
 % surf(double(XCGRID), double(YCGRID), double(tot2D)')
 % surf(double(s.XCGRID), double(s.YCGRID), double(out.Etot_2D)')
-surfc(double(s.XCGRID), double(s.YCGRID), flipud(double(out.hs_2D)))
+% surfc(double(s.XCGRID), double(s.YCGRID), flipud(double(out.hs_2D)))
+% figure
+% surfc(double(s.XCGRID), double(s.YCGRID), double(s.dp2_2D))
+figure
+surfc(double(s.XCGRID), double(s.YCGRID), double(out.hs_2D))
 colorbar
 view(2)
 
