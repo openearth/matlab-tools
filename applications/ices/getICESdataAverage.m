@@ -1,18 +1,18 @@
-function varargout = getICESdata(varargin)
-%GETICESDATA web service for ICES oceanographic data
+function varargout = getICESdataAverage(varargin)
+%getICESdataAverage web service for ICES oceanographic data
 %
-% [D,A] = getICESdata(<keyword,value>)
+% [D,A] = getICESdataAverage(<keyword,value>)
 %
 % where D is a array of structs (tuples) and A a struct 
 % with arrays for easy plotting.
 %
 % Example:
-%  [D,A] = getICESdata('ParameterCode','PSAL','t0',datenum(2009,1,1),'t1',datenum(2010,1,1),...
+%  [D,A] = getICESdataAverage('ParameterCode','PSAL','t0',datenum(2009,1,1),'t1',datenum(2010,1,1),...
 %              'lon',[-2  9],... % longitude bounding box
 %              'lat',[49 57],... % latitude  bounding box
 %              'p'  ,[0 1e5],'kml','salinity.kml')
 %
-%See also: getICESdataAverage, getndbcdata, getcoopsdata, getICESparameters
+%See also: getICESdata, getndbcdata, getcoopsdata, getICESparameters
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -69,13 +69,13 @@ end
 
 OPT = setproperty(OPT,varargin);
 
-D = GetICEData(ICES_Oceanographic_Web_Service,OPT.ParameterCode,...
+D = GetICEDataAverage(ICES_Oceanographic_Web_Service,OPT.ParameterCode,...
                year(OPT.t0),year(OPT.t1),month(OPT.t0),month(OPT.t1),...
                OPT.lon(1),OPT.lon(2),...
                OPT.lat(1),OPT.lat(2),...
                OPT.p  (1),OPT.p  (2));
 
-D = D.ICEData;
+D = D.ICEDataAverage;
 
 [A.code, A.name,~,A.units] = getICESparameters(OPT.ParameterCode);
 
@@ -83,9 +83,10 @@ for i=1:length(D)
 
     D(i).Longitude = str2num(D(i).Longitude );
     D(i).Latitude  = str2num(D(i).Latitude  );
-    D(i).Pressure  = str2num(D(i).Pressure  );
-    D(i).Value     = str2num(D(i).Value     );
-    D(i).datenum   = datenum(D(i).DateTime,'yyyy-mm-ddTHH:MM:SS');
+    D(i).Number    = str2num(D(i).Number    ); % int
+    D(i).Minimum   = str2num(D(i).Minimum   );
+    D(i).Maximum   = str2num(D(i).Maximum   );
+    D(i).Average   = str2num(D(i).Average   );
     D(i).name      = A. name;
     D(i).units     = A.units;
     
@@ -96,17 +97,23 @@ if nargout==1
 else
    A.Longitude = [D.Longitude];
    A.Latitude  = [D.Latitude];
-   A.Pressure  = [D.Pressure];
-   A.Value     = [D.Value];
-   A.datenum   = [D.datenum];
+   A.Number    = [D.Number];
+   A.Minimum   = [D.Minimum];
+   A.Maximum   = [D.Maximum];
+   A.Average   = [D.Average];
    varargout = {D,A};
 end
 
 %% debug
 
 if ~isempty(OPT.kml)
-   dt = 14;
-   KMLscatter(A.Latitude,A.Longitude,A.Value,'fileName',OPT.kml,...
-       'CBcolorTitle',[A.name,' [',A.units,']'],...
-       'timeIn',floor(A.datenum),'timeOut',ceil(A.datenum+eps))
+   KMLscatter(A.Latitude,A.Longitude,A.Minimum,'fileName','min.kml',...
+       'CBcolorTitle',['Min (',A.name,') [',A.units,']'])
+   KMLscatter(A.Latitude,A.Longitude,A.Average,'fileName','avg.kml',...
+       'CBcolorTitle',['Average (',A.name,') [',A.units,']'])
+   KMLscatter(A.Latitude,A.Longitude,A.Maximum,'fileName','max.kml',...
+       'CBcolorTitle',['Max (',A.name,') [',A.units,']'])
+   KMLscatter(A.Latitude,A.Longitude,A.Number,'fileName','num.kml',...
+       'CBcolorTitle',['Number (',A.name,') ']);
+   KMLmerge_files('fileName',OPT.kml,'sourceFiles',{'min.kml','avg.kml','max.kml','num.kml'},'deleteSourceFiles',1)
 end
