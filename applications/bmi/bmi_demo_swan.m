@@ -4,7 +4,7 @@ addpath(pwd)
 
 if ispc
     dll = 'd:\checkouts\swanesmf\esmf40.91\vs2010\Debug\swan_dll.dll';
-    config_file = 'd:\checkouts\swanesmf\esmf40.91\tests\DMrecSWAN\swan.inp';
+    config_file = 'd:\checkouts\swanesmf\esmf40.91\tests\DMrecSWAN02\swan.inp';
 elseif ismac
     % Make sure the up to date gfortran is found before the ancient one
     % that comes with matlab
@@ -18,27 +18,18 @@ end
 bmi_initialize(bmidll, config_file);
 
 %% Get variables
-wlv1 = bmi_var_get(bmidll, 'WLV1');
-wlv1(1:floor(end/2)) = wlv1(1:floor(end/2))+1;
-bmi_var_set(bmidll, 'WLV1', wlv1);
-
-wlv2 = bmi_var_get(bmidll, 'WLV2');
-wlv2(1:floor(end/3)) = wlv2(1:floor(end/3))+2;
-bmi_var_set(bmidll, 'WLV2', wlv2);
-
-wlv3 = bmi_var_get(bmidll, 'WLV3');
-wlv3(1:floor(end/4)) = wlv3(1:floor(end/4))+3;
-bmi_var_set(bmidll, 'WLV3', wlv3);
 
 
-wlevl = bmi_var_get(bmidll, 'WLEVL');
-wlevl(1:floor(end/2)) = wlevl(1:floor(end/2))+1;
-bmi_var_set(bmidll, 'WLEVL', wlevl);
 
+jdp2 = bmi_var_get(bmidll, 'DP2');
+jdp2(1:floor(end/3)) = jdp2(1:floor(end/3))+2;
+bmi_var_set(bmidll, 'DP2', jdp2);
 %% Compute
-bmi_update(bmidll,3600);
+bmi_update(bmidll,10800);
 
 %% Inspect
+
+voq = bmi_var_get(bmidll, 'VOQ');
 tic
 ac2 = bmi_var_get(bmidll, 'AC2');
 toc
