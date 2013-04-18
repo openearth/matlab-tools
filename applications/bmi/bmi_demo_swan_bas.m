@@ -1,4 +1,4 @@
-format long
+format long; close all
 
 ini = 0;
 if ini ~= 1
@@ -20,16 +20,17 @@ if ini ~= 1
     
     %% Get variables
     tic
-    s.ac2     = bmi_var_get(bmidll, 'AC2');
+    voq = bmi_var_get(bmidll, 'VOQ');
     toc
-    s.spcsig  = bmi_var_get(bmidll, 'SPCSIG');
-    s.ddir    = bmi_var_get(bmidll, 'DDIR');
-    s.pwtail  = bmi_var_get(bmidll, 'PWTAIL');
     
     s.XCGRID  = bmi_var_get(bmidll, 'XCGRID');
     s.YCGRID  = bmi_var_get(bmidll, 'YCGRID');
+    s.dp2     = bmi_var_get(bmidll, 'DP2');
     
-    s.dp2  = bmi_var_get(bmidll, 'DP2');
+%     s.ac2     = bmi_var_get(bmidll, 'AC2');
+%     s.spcsig  = bmi_var_get(bmidll, 'SPCSIG');
+%     s.ddir    = bmi_var_get(bmidll, 'DDIR');
+%     s.pwtail  = bmi_var_get(bmidll, 'PWTAIL');
     %% (*) (still to) get variables
     % frintf  = bmi_var_get(bmidll, 'FRINTF');
     % fx      = bmi_var_get(bmidll, 'fx');          & dS/dx ??
@@ -39,25 +40,32 @@ if ini ~= 1
 end
 %% Process data
 
-out = getHm0_2D(s);
-
-out.hs = out.hs(1:end-1);
-out.hs_2D = reshape(out.hs,fliplr(size(s.XCGRID)));
+idsHs = 4;
+s.Hs = voq((676*idsHs+1):(676*(idsHs+1)));
+s.Hs_2D = reshape(s.Hs,fliplr(size(s.XCGRID)));
 
 s.dp2 = s.dp2(1:end-1);
 s.dp2_2D = reshape(s.dp2,fliplr(size(s.XCGRID)));
+
+% out = getHm0_2D(s);
+% out.hs = out.hs(1:end-1);
+% out.hs_2D = reshape(out.hs,fliplr(size(s.XCGRID)));
+
 
 %% Print
 
 % surf(double(XCGRID), double(YCGRID), double(tot2D)')
 % surf(double(s.XCGRID), double(s.YCGRID), double(out.Etot_2D)')
 % surfc(double(s.XCGRID), double(s.YCGRID), flipud(double(out.hs_2D)))
-% figure
-% surfc(double(s.XCGRID), double(s.YCGRID), double(s.dp2_2D))
+
 figure
-surfc(double(s.XCGRID), double(s.YCGRID), double(out.hs_2D))
+surfc(double(s.XCGRID), double(s.YCGRID), double(s.dp2_2D))
 colorbar
-view(2)
+
+figure
+surfc(double(s.XCGRID), double(s.YCGRID), double(s.Hs_2D))
+colorbar
+% view(2)
 
 %% cleanup
 bmi_finalize(bmidll);
