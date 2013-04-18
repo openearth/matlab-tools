@@ -1,19 +1,37 @@
-function zege_golven2nc(varargin)
-%zege_golven2nc soemthing
+function rws_zege_golven2nc(varargin)
+%RWS_ZEGE_GOLVEN2NC  Converts ZEGE .mat files to netcdf.
 %
-%See also: zege_golven
+%   Converst ZEGE .mat files created by rws_zege_read_golven 
+%   into netcdf files for signficant wave height and mean wave period.
+%   The mat file rws_zege_Station_WGS84_Coordinates is also needed as there
+%   is no coordinates in the raw data. Only applies to a limited number of
+%   coastal stations. 
+%   TRICKS: Reading of the coordinates depends on the file name. It is not
+%   well implemented now so you need to adjust the order of the string
+%   match depending on the name positions from line 110- line 150
+%
+%   Syntax:
+%   varargout = rws_zege_golven2nc(varargin)
+%
+%   Input: For <keyword,value> pairs call rws_zege_golven2nc() without arguments.
+%   varargin  = .mat file
+%
+%   Output:
+%   varargout =
+%
+%   Example
+%   rws_zege_golven2nc
+%
+%   See also rws_zege_read_golven rws_zege_Station_WGS84_Coordinates
 
+%% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2013 Deltares
-%       
+%   Copyright (C) 2013 <COMPANY>
+%       cronin
 %
-%       g.j.deboer@deltares.nl
+%       <katherine.cronin@deltares.nl>
 %
-%       Fluid Mechanics Section
-%       Faculty of Civil Engineering and Geosciences
-%       PO Box 5048
-%       2600 GA Delft
-%       The Netherlands
+%       <Deltares, Rotterdamseweg 185, Delft>
 %
 %   This library is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -29,13 +47,22 @@ function zege_golven2nc(varargin)
 %   along with this library.  If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 18 Apr 2013
+% Created with Matlab version: 7.14.0.739 (R2012a)
+
 % $Id$
 % $Date$
-% $Author$
+% $Author$ Cronin
 % $Revision$
 % $HeadURL$
-
-% varargin = mat file created by rws_zege_read_golven.m
+% $Keywords: $ ZEGE, wave buoys, HMCZ, significant wave height
 
 %% Initialize
 
