@@ -1,48 +1,58 @@
 function DAT = rws_zege_read_golven(varargin)
-%RWS_ZEGE_READ   Reads ASCII file from www.hmcz.nl
+%RWS_ZEGE_READ_GOLVEN  Reads ZEGE .dat files and makes a struct
 %
-%  
-% 
+%   Header-less .dat file converted to .mat with correct structure.
+%   A few tricks needed to make raw .dat files ready. 
+%   1. Remove 1st and 3rd header line leaving only the name of the station
+%   2. Add two blank lines at the end - will try to fix this later
+%   See www.hmcz.nl for more details and also further metainformation
 %
-%D = rws_zege_read_golven('fname')
+%   Syntax:
+%   DAT = rws_zege_read_golven(varargin)
 %
-%   reads ASCII wind or wave data file from www.hmcz.nl that looks like:
+%   Input: For <keyword,value> pairs call rws_zege_read_golven() without arguments.
+%   varargin = .dat file from www.hmcz.nl
 %
-%   ----------------------------------------------------------
-%   code
-%   01-jan-2007 00:00          132          224          190          125          179           
-%   ...
-%   31-jan-2007 23:50           55          268           65           52           61            
-%   ----------------------------------------------------------
+%   Output:
+%   DAT      =
 %
-%  
+%   Example
+%   rws_zege_read_golven
+%
+%   See also rws_zege_golven2nc 
+
+%% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2010 Deltares
-%       Gerben J. de Boer
+%   Copyright (C) 2013 <COMPANY>
+%       cronin
 %
-%       g.j.deboer@deltares.nl
+%       <katherine.cronin@deltares.nl>
 %
-%       Fluid Mechanics Section
-%       Faculty of Civil Engineering and Geosciences
-%       PO Box 5048
-%       2600 GA Delft
-%       The Netherlands
+%       <Deltares, Rotterdamseweg, 185, Delft>
 %
-%   This library is free software; you can redistribute it and/or
-%   modify it under the terms of the GNU Lesser General Public
-%   License as published by the Free Software Foundation; either
-%   version 2.1 of the License, or (at your option) any later version.
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
 %
 %   This library is distributed in the hope that it will be useful,
 %   but WITHOUT ANY WARRANTY; without even the implied warranty of
-%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-%   Lesser General Public License for more details.
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
 %
-%   You should have received a copy of the GNU Lesser General Public
-%   License along with this library; if not, write to the Free Software
-%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
-%   USA
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 18 Apr 2013
+% Created with Matlab version: 7.14.0.739 (R2012a)
 
 % $Id$
 % $Date$
