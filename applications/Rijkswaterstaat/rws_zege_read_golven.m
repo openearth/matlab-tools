@@ -53,15 +53,15 @@ function DAT = rws_zege_read_golven(varargin)
 %% file description
 %% adapted from rws_zege_read to read wave downloads
 
-OPT.headerlines = 2;
+OPT.headerlines = 1;
 OPT.nodatavalue = '*';
 OPT.colnames    = {'Date',... %1. 
                    'Time',... %2.
                   'H3'  ,... %3.
-		  'H10',...   %4.
-		  'H50' ,...  %5.
-		  'GGH' ,...  %6.
-		  'HMAX',...  %7.
+                   'H10',...   %4.
+		           'H50' ,...  %5.
+		           'GGH' ,...  %6.
+		           'HMAX',...  %7.
                   'SPGH',...  %8.
                   'TM02',...  %9.
                   'TMAX',...  %10.
