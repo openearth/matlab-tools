@@ -75,6 +75,9 @@ if ~exist(ncfile,'file')
             ncwriteatt(ncfile,'/','geospatial_lon_max', max(lon_bounds(:)));
         end
     end
+    isource = 0;
+else
+    isource = length(ncreadatt(ncfile, 'isource', 'flag_values'));
 end
 
 %% get already available timesteps in nc file
@@ -108,9 +111,11 @@ end
    end
 
 %% Merge Z data with existing data if it exists
+size(data.z)
 if existing_z % then existing nc file already has data
     % read Z data
     z0       = ncread(ncfile,'z',[1 1 iTimestamp],[inf inf 1]);
+    isource0 = ncread(ncfile,'isource',[1 1 iTimestamp],[inf inf 1]);
     zNotnan  = ~isnan(data.z);
     z0Notnan = ~isnan(z0);
     notnan   = zNotnan&z0Notnan;
@@ -127,12 +132,26 @@ if existing_z % then existing nc file already has data
         end
     end
     z0(zNotnan) = data.z(zNotnan);
+    isource0(zNotnan) = isource * data.source(zNotnan);
+    isource = isource0;
     data.z = z0;
+else
+    isource = isource * data.source;
+    isource(isnan(data.z)) = nan;
 end
 
 %% Write z data
 try
     ncwrite(ncfile,'z',data.z,[1 1 iTimestamp]);
+    ncwrite(ncfile,'isource',isource,[1 1 iTimestamp]);
+    flag_values = ncreadatt(ncfile, 'isource', 'flag_values');
+    flag_meanings = ncreadatt(ncfile, 'isource', 'flag_meanings');
+    ncwriteatt(ncfile, 'isource', 'flag_values', [flag_values length(flag_values)])
+    if isempty(flag_values)
+        ncwriteatt(ncfile, 'isource', 'flag_meanings', data.filename)
+    else
+        ncwriteatt(ncfile, 'isource', 'flag_meanings', [flag_meanings ' ' data.filename])
+    end
 catch
     max(data.z(:))
     min(data.z(:))
