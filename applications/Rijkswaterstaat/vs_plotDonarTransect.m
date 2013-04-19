@@ -1,11 +1,10 @@
 function OPT = plotDonarTransect(NFSstruct, varargin)
-%plotDonarTransect  plots modeled vs. measured substances for each of
-%the DONAR transects.
+%plotDonarTransect  plots measured vs. Delft3D modelled substances for each DONAR transect.
 %
 %    plotDonarTransect(NFSstruct, <keyword,value>)
 %
-%  where NFSstruct is the NEFIS structure of a trim file (obtained with
-%  vs_use)
+%  where NFSstruct is the NEFIS structure of a trim file
+%  (obtained with vs_use)
 %  and the following <keyword,value> pairs have been implemented:
 %
 %   * transect       'all'/'Appelzak'/'Walcheren'/'Schouwen'/'Goeree'/
@@ -26,7 +25,7 @@ function OPT = plotDonarTransect(NFSstruct, varargin)
 %   * <a href="https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions">https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions</a> (full definition)
 %   * <a href="http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984788">http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#id2984788</a> (simple)
 %
-%See also: GETWATERBASE2NC, VS_USE
+%See also: rws_waterbase_get_locations, rws_WATERBASE2NC, VS_USE
 
 % $Id$
 % $Date$
@@ -37,8 +36,6 @@ function OPT = plotDonarTransect(NFSstruct, varargin)
 % 2009 oct 1: allow for use of log10(concentrations) instead of concentrations [Yann Friocourt]
 % 2009 oct 7: allow for choice of figure format [Yann Friocourt]
 
-%
-
 if nargin < 3
    error(['At least 3 input arguments required: ' ...
        'plotDonarTransect(NFStrcut, ''substance'', substanceName'])
@@ -47,21 +44,18 @@ end
 OPT.refdatenum = datenum(1970,1,1);
 
 %% Definition transect and station names
-OPT.listTransect = {'appzk', 'walcrn', 'schouwn', 'goere', 'terhde', ...
-    'noordwk', 'egmaze', 'callog', 'terslg', 'rottmpt'};
-OPT.listTransectName = {'Appelzak', 'Walcheren', 'Schouwen', 'Goeree', ...
-    'Ter Heide', 'Noordwijk', 'Egmond aan Zee', 'Callantsoog', ...
-    'Terschelling', 'Rottumerplaat'};
-OPT.stationDist{ 1} = [1, 2, 4, 10, 20, 30, 50, 70];
-OPT.stationDist{ 2} = [2, 4, 10, 20, 30, 50, 70];
-OPT.stationDist{ 3} = [1, 4, 10, 20, 30, 50, 70];
-OPT.stationDist{ 4} = [2, 6, 10, 20, 30, 50, 70];
-OPT.stationDist{ 5} = [1, 2, 4, 10, 20, 30, 50, 70];
-OPT.stationDist{ 6} = [1, 2, 4, 10, 20, 30, 50, 70];
-OPT.stationDist{ 7} = [1, 2, 4, 10, 20, 30, 50, 70];
-OPT.stationDist{ 8} = [1, 2, 4, 10, 20, 30, 50, 70];
-OPT.stationDist{ 9} = [4, 10, 20, 30, 50, 70, 100, 135, 175, 235];
-OPT.stationDist{10} = [3, 5, 10, 15, 20, 30, 50, 70];
+OPT.listTransect     = {'appzk',   'walcrn',   'schouwn', 'goere', 'terhde',   'noordwk',  'egmaze',        'callog',     'terslg',      'rottmpt'};
+OPT.listTransectName = {'Appelzak','Walcheren','Schouwen','Goeree','Ter Heide','Noordwijk','Egmond aan Zee','Callantsoog','Terschelling','Rottumerplaat'};
+OPT.stationDist{ 1} = [1,2, 4,  10,   20, 30, 50, 70];
+OPT.stationDist{ 2} = [  2, 4,  10,   20, 30, 50, 70];
+OPT.stationDist{ 3} = [1,   4,  10,   20, 30, 50, 70];
+OPT.stationDist{ 4} = [  2, 6,  10,   20, 30, 50, 70];
+OPT.stationDist{ 5} = [1,2, 4,  10,   20, 30, 50, 70];
+OPT.stationDist{ 6} = [1,2, 4,  10,   20, 30, 50, 70];
+OPT.stationDist{ 7} = [1,2, 4,  10,   20, 30, 50, 70];
+OPT.stationDist{ 8} = [1,2, 4,  10,   20, 30, 50, 70];
+OPT.stationDist{ 9} = [     4,  10,   20, 30, 50, 70, 100, 135, 175, 235];
+OPT.stationDist{10} = [    3, 5,10,15,20, 30, 50, 70];
 
 %% Directory of Waterbase data
 OPT.ncBaseDir = 'P:\mcdata\opendap\rijkswaterstaat\waterbase\';

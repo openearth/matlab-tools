@@ -13,11 +13,13 @@ function varargout = rws_waterbase_get_url(varargin);
 % where Code or FullName are the unique DONAR numeric or string
 % substance identifier respectively (e.g. 22 and 
 % 'Significante golfhoogte uit energiespectrum van 30-500 mhz in cm in oppervlaktewater').
+% Use RWS_WATERBASE_GET_SUBSTANCES to get all Codes.
 %
 %    rws_waterbase_get_url( Code     ,<ID>)
 %    rws_waterbase_get_url( FullName ,<ID>)
 %
 % where ID is  the unique DONAR string location identifier (e.g. 'AUKFPFM').
+% Use RWS_WATERBASE_GET_LOCATIONS to get all IDs.
 %
 %    rws_waterbase_get_url( Code     ,ID,<datenum>)
 %    rws_waterbase_get_url( FullName ,ID,<datenum>)
@@ -37,7 +39,9 @@ function varargout = rws_waterbase_get_url(varargin);
 %
 %    rws_waterbase_get_url(22,'AUKFPFM',datenum([1961 2008],1,1),pwd)
 %
-% See also: <a href="http://live.waterbase.nl">live.waterbase.nl</a>, rijkswaterstaat
+% See also: <a href="http://live.waterbase.nl">live.waterbase.nl</a>, rijkswaterstaat,
+%           <a href="http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/waterbase/catalog.html">netCDF cache of waterbase</a>
+%           rws_waterbase_get_substances, rws_waterbase_get_locations,  rws_waterbase_read
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Deltares
@@ -80,7 +84,7 @@ function varargout = rws_waterbase_get_url(varargin);
       pause(5)
       end
    end
-  %Substance = rws_waterbase_get_substances_csv('donar_substances.csv');
+  %Substance = rws_waterbase_get_substances_csv('rws_waterbase_substances.csv');
 
 %% Select substance name
 

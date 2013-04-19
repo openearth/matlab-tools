@@ -36,7 +36,7 @@ function Substance = rws_waterbase_get_substances_csv(fname)
 
 %% load substances data file
    if nargin==0
-      fname = 'donar_substances.csv';
+      fname = 'rws_waterbase_substances.csv';
    end
 
    fid = fopen(fname, 'r+');

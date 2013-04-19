@@ -1,5 +1,5 @@
 function rws_waterbase2nc(varargin)
-%RWS_WATERBASE2NC  rewrite zipped txt files from waterbase.nl timeseries to NetCDF files
+%RWS_WATERBASE2NC  rewrite zipped txt files from waterbase.nl timeseries to netCDF-CF files
 %
 %     rws_waterbase2nc(<keyword,value>)
 %
@@ -116,8 +116,8 @@ for ivar=[OPT.donar_wnsnum]
     
     %% File loop of all files in a directory
     mkpath(OPT.directory_nc);
-    [OPT.directory_raw,filesep,OPT.mask]
-    OPT.files          = dir([OPT.directory_raw,OPT.mask]);
+
+    OPT.files          = dir([OPT.directory_raw,filesep,OPT.mask]);
     
     multiWaitbar(mfilename,0,'label','Creating netCDF from waterbase ASCII.','color',[0.2 0.6 0.])
     

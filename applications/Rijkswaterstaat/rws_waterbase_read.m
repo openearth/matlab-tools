@@ -45,7 +45,7 @@ function varargout = rws_waterbase_read(fnames,varargin)
 %    * 7415 RD    (x  ,y  ) [cm] (East, North) 
 %
 %   See web : <a href="http://www.epsg.org/guides/">www.epsg.org</a>, <a href="http://www.waterbase.nl"    >www.waterbase.nl</a>
-%   See also: LOAD, XLSREAD, rijkswaterstaat
+%   See also: rws_waterbase_get_url, LOAD, XLSREAD, rijkswaterstaat
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2006-2010 Delft University of Technology

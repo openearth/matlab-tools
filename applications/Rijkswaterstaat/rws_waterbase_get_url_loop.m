@@ -35,7 +35,7 @@ function varargout = rws_waterbase_get_url_loop(varargin)
 % $HeadURL$
 
 % TO DO: convert to SI units here
-% TO DO: add option to loop entire donar_substances.csv
+% TO DO: add option to loop entire rws_waterbase_substances.csv
 % TO DO: remove time from file name: so we can do version control
 % TO DO: return url as argument used to get data
 

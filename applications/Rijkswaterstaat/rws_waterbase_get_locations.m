@@ -8,13 +8,16 @@ function Station = rws_waterbase_get_locations(Code,CodeName,varargin)
 % e.g. 22 for :
 %
 % * FullName, e.g. "Significante golfhoogte uit energiespectrum van 30-500 mhz in cm in oppervlaktewater"
-% * CodeName, e.g. 22%7CSignificante+golfhoogte+uit+energiespectrum+van+30-500+mhz+in+cm+in+oppervlaktewater"
+% * CodeName, e.g. "22%7CSignificante+golfhoogte+uit+energiespectrum+van+30-500+mhz+in+cm+in+oppervlaktewater"
 % * Code    , e.g. 22
 %
 % Station struct has fields:
 %
 % * FullName, e.g. 'Aukfield platform'
 % * ID      , e.g. 'AUKFPFM'
+%
+% Example:
+%  S = rws_waterbase_get_locations(22,'22%7CSignificante+golfhoogte+uit+energiespectrum+van+30-500+mhz+in+cm+in+oppervlaktewater')
 %
 % See also: <a href="http://live.waterbase.nl">live.waterbase.nl</a>, rijkswaterstaat
 
