@@ -1,5 +1,6 @@
 function []= donar_plot_map(donarMat,variable,thefontsize,thelineS)
-    
+%donar_plot_map
+
     if ischar(donarMat)
         disp(['Loading: ',donarMat]);
         donarMat = importdata(donarMat);

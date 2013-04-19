@@ -1,6 +1,5 @@
-addpath('d:\Dropbox\Deltares\Matlab\donar_dia_toolbox_BETA\utilities\')
-   
-    clc; clear; close all, fclose all;
+function thedon_donar_plot_depth_profiles_CTD
+%thedon_donar_plot_depth_profiles_CTD
 
     files_of_interest = { ...
         'p:\1204561-noordzee\data\svnchkout\donar_dia\raw_and_nc\dia_ctd\CTD_2003_the_compend.mat'; ...

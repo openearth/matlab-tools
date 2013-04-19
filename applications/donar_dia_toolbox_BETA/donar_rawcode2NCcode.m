@@ -1,4 +1,5 @@
 function  donarcode = donar_rawcode2NCcode(donarcode)
+%donar_rawcode2NCcode
 
     for icode = 1:1:length(donarcode)
         theinfo = get_the_code(donarcode{icode});

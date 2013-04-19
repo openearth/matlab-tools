@@ -1,16 +1,10 @@
-%% Read the data from the file and produce a matlab structure.
+function thedon_dia2donarmat
+% thedon_dia2donarmat Read the data from the file and produce a matlab structure.
 %
 % The structure is organized by observed parameter. 
-
-clc; clear;
-    
-    
-    
-    addpath([pwd,filesep,'utilities',filesep]);
   
   % -> The location of the ".dia" files
     thedonarfiles = dirrec('p:\1204561-noordzee\data\svnchkout\donar_dia\','.dia');
-    
 
     
     for ifile = 1:1:length(thedonarfiles)

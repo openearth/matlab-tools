@@ -1,10 +1,8 @@
-%% COMPARE DONAR DIA DATA AND MERIS
-
-    clc, %clear;
-
-    addpath('d:\Dropbox\Deltares\Matlab\donar_dia_toolbox_BETA\utilities\')
+function thedon_donar_compare_with_meris
+%thedon_donar_compare_with_meris compare DONAR dia data and MERIS
+%
+%See also: donar_compare_with_meris
     
-if false
     the_meris_files = dirrec('p:\1204561-mos3\data\RemoteSensing\MERIS2WAQ\MERIS2WAQ_V03\','.map')';
     the_meris_files(~cellfun('isempty',strfind(the_meris_files,'bin'))) = []; % Remove some undesired files
     
@@ -40,7 +38,7 @@ if false
     the_grid_file = 'd:\Dropbox\Deltares\Matlab\donar_dia_toolbox_BETA\utilities\grid_zuno_dd.lga'; 
 
     donar_compare_with_meris(the_donar_files,the_meris_files,the_grid_file,'turbidity')
-end  
+
 %%    
     clear
     close all

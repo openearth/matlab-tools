@@ -1,5 +1,6 @@
 function minX = donar_plot_histograms(donarMat,variable,thefontsize)
-    
+%donar_plot_histograms
+
     if ischar(donarMat)
         disp(['Loading: ',donarMat]);
         donarMat = importdata(donarMat);

@@ -1,7 +1,5 @@
-%% 
-
-clc; close all, fclose all; clear;
-
+function thedon_scatVarXdepth
+%thedon_scatVarXdepth
 
 the_donar_files = { ...        
         'p:\1204561-noordzee\data\svnchkout\donar_dia\raw_and_nc\dia_meetvis\ScanFish_2003_the_compend.mat'; ...

@@ -1,5 +1,6 @@
 function minX = donar_plot_monthlyMaps(donarMat,variable,thefontsize)
-    
+%donar_plot_monthlyMaps
+
     if ischar(donarMat)
         disp(['Loading: ',donarMat]);
         donarMat = importdata(donarMat);

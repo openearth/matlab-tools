@@ -1,5 +1,6 @@
 function donar_plot_campaign_maps(donarMat,variable,thedir,thefontsize,themarkersize)
-    
+%donar_plot_campaign_maps
+
     if ischar(donarMat)
         disp(['Loading: ',donarMat]);
         donarMat = importdata(donarMat);

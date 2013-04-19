@@ -1,8 +1,8 @@
 function  [the_quantiles,the_indices] = donar_plot_boxwhiskers(donarMat,variable,sensorname,thefontsize)
-%DONAR_PLOT_BOXWHISKERS Makes Box-Whiskers plots from "donarmat files"
+%donar_plot_boxwhiskers Makes Box-Whiskers plots from "donarmat files"
 %   with the use of DONAR_DIA2DONARMAT. 
 %
-%   [Qs,Ind] = DONAR_PLOT_BOXWHISKERS(path2donarMatFile,sensorname)
+%   [Qs,Ind] = donar_plot_boxwhiskers(path2donarMatFile,sensorname)
 %   where Qs is a structure containing the quantiles of the information per
 %   sensor name and per month. 
 %  

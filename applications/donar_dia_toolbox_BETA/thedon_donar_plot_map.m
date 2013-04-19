@@ -1,9 +1,5 @@
-%% Box and Whisker diagram for all observations in TIME (MONTHS)  
-    clc; 
-    close all, 
-    fclose all; 
-    clear;
-    addpath([pwd,filesep,'utilities',filesep]);
+function thedon_donar_plot_map
+% thedon_donar_plot_map Box and Whisker diagram for all observations in TIME (MONTHS)  
     
     thedonarfiles = { ...
         'p:\1204561-noordzee\data\svnchkout\donar_dia\raw_and_nc\dia_ctd\mat\CTD_2003_the_compend.mat'; ...

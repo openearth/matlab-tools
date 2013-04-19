@@ -1,4 +1,6 @@
-%% Some extra analysis: LOCATIONS
+function donar_plot_locations
+%donar_plot_locations Some extra analysis on LOCATIONS
+
     % 1. Lets start by checking tha amount of data by year and month
 
     clc; clear; close all;

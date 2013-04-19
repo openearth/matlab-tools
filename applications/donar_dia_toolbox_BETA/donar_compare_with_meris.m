@@ -1,5 +1,5 @@
 function compare_donar_meris(the_donar_files,the_meris_files,the_grid_file,variable)
-    
+%donar_compare_with_meris    compare DONAR dia data and MERIS
 
     thefontsize = 8;
     thegrid = delwaq('open',the_grid_file);

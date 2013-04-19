@@ -1,7 +1,5 @@
-%% Make time plots and histograms.
-   
-    clc; clear; close all, fclose all;
-    addpath('d:\Dropbox\Deltares\Matlab\donar_dia_toolbox_BETA\utilities\')
+function thedon_plot_histograms_map_timeSeries
+%thedon_plot_histograms_map_timeSeries Make time plots and histograms.
     
      files_of_interest = { ...
         'p:\1204561-noordzee\data\svnchkout\donar_dia\raw_and_nc\dia_ctd\mat\CTD_2003_the_compend.mat'; ...

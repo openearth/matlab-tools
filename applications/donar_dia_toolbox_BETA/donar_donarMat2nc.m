@@ -1,5 +1,5 @@
 function [] = donar_donarMat2nc(donarMat,filename)
-%% Generate the NetCDF files from the compends.
+%donar_donarMat2nc Generate the NetCDF files from the compends.
         
         
         fileID = fopen('p:\1204561-noordzee\data\svnchkout\donar_dia\donar_dia_TeX\theTeX_General.tex','w');

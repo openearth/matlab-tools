@@ -1,7 +1,5 @@
-    clc; close all, fclose all; clear;
-    
-    
-    addpath('d:\Dropbox\Deltares\Matlab\donar_dia_toolbox_BETA\utilities\')
+function thedon_donar_plot_monthlyHist
+% thedon_donar_plot_monthlyHist
     
     thedonarfiles = { ...
         'p:\1204561-noordzee\data\svnchkout\donar_dia\raw_and_nc\dia_ctd\mat\CTD_2003_the_compend.mat'; ...

@@ -1,5 +1,6 @@
 function [thecompend] = donar_dia2donarMat(sourcename,cellstr_fields,timezone)
-    
+%donar_dia2donarMat
+
 %    sourcename = 'p:\1204561-noordzee\data\svnchkout\donar_dia\dia_ctd\Copy of ctd_2003_-_2009.dia'
 %   cellstr_fields = {'longitude','latitude','z','datestring','timestring','variable'}
     

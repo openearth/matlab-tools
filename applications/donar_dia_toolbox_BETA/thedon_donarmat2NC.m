@@ -1,16 +1,9 @@
-%% Read the data from the matlab file and produce a NetCDF.
+function thedon_donarmat2NC
+% thedon_donarmat2NC Read the data from the matlab file and produce a NetCDF.
 %
 % The structure is organized by observed parameter. 
 
-
-
-
-
-clc; clear;
-
-
-
-%% GENERATION OF NETCDF FILE:
+% GENERATION OF NETCDF FILE:
 
     % Now it is not necessary, but remember to load the mat file if
     % you are not running the first part of this script or you want to

@@ -1,5 +1,6 @@
 function [result] = donar_read_HDR(file_id)
-    
+%donar_readHDR
+
     rec = fgetl(file_id);
     if rec == -1, result = -1; return; end %Is it the end of the file?
     

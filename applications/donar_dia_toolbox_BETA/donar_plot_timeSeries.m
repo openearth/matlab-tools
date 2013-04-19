@@ -1,5 +1,6 @@
 function minX = donar_plot_timeSeries(donarMat,variable,thefontsize)
-    
+%donar_plot_timeSeries
+
     if ischar(donarMat)
         disp(['Loading: ',donarMat]);
         donarMat = importdata(donarMat);

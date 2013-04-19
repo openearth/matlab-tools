@@ -1,9 +1,5 @@
-%% Box and Whisker diagram for all observations in DEPTH
-    
-    % clear; 
-    clc; close all, fclose all;
-    
-    
+function thedon_donar_plot_depth_boxwhiskers
+% thedon_donar_plot_depth_boxwhiskers Box and Whisker diagram for all observations in DEPTH
     
     files_of_interest = { ...
         'p:\1204561-noordzee\data\svnchkout\donar_dia\raw_and_nc\dia_ctd\CTD_2003_the_compend.mat'; ...

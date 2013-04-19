@@ -1,8 +1,8 @@
 function donar_plot_scatVarXdepth(donarMat,sensorname,variable,thefontsize)
-%DONAR_MULTIYEAR_BOXPLOTS Makes Box-Whiskers plots from "donarmat files"
+%donar_plot_scatVarXdepth Makes Box-Whiskers plots from "donarmat files"
 %   with the use of DONAR_DIA2DONARMAT. 
 %
-%   [Qs,Ind] = DONAR_MULTIYEAR_BOXPLOTS(path2donarMatFile,sensorname)
+%   [Qs,Ind] = donar_plot_scatVarXdepth(path2donarMatFile,sensorname)
 %   where Qs is a structure containing the quantiles of the information per
 %   sensor name and per month. 
 %  
@@ -11,7 +11,7 @@ function donar_plot_scatVarXdepth(donarMat,sensorname,variable,thefontsize)
 %   <Y> y coordenates of the grid to be checked 
 %   <coord> the type of coordenates
 %   See also: INPOLYGON, REDUCE2MASK
-%
+
 %   Copyright: Deltares, the Netherlands
 %        http://www.delftsoftware.com
 %        Date: 14.08.2012

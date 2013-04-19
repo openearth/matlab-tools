@@ -1,6 +1,5 @@
-%% Make time plots and histograms.
-   
-    clc; clear; close all, fclose all; clear;
+function thedon_plot_campaign_map
+% thedon_plot_campaign_map Make time plots and histograms.
 
      thedonarfiles = { ...
         'p:\1204561-noordzee\data\svnchkout\donar_dia\raw_and_nc\dia_ctd\mat\CTD_2003_the_compend.mat'; ...

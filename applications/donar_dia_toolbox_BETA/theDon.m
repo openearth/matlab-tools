@@ -1,7 +1,8 @@
-
-
-addpath([pwd,filesep,'utilities',filesep])
-
+function theDon
+% theDon steering module for donar_* toolbox
+% requires addpath([pwd,filesep,'private',filesep])
+%
+%See also: rijkswaterstaat
 
 
 %% Make time plots and histograms.

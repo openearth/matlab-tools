@@ -1,8 +1,8 @@
 function  [the_quantiles,the_indices] = donar_plot_depth_boxwhiskers(donarMat,sensorname,variable,numboxes,thefontsize)
-%DONAR_PLOT_BOXWHISKERS Makes Box-Whiskers plots from "donarmat files"
+%donar_plot_depth_boxwhiskers Makes Box-Whiskers plots from "donarmat files"
 %   with the use of DONAR_DIA2DONARMAT. 
 %
-%   [Qs,Ind] = DONAR_PLOT_BOXWHISKERS(donarMatFile,sensorname,variable,number_of_boxes,fig_font_size)
+%   [Qs,Ind] = donar_plot_depth_boxwhiskers(donarMatFile,sensorname,variable,number_of_boxes,fig_font_size)
 %   where Qs is a structure containing the quantiles of the information per
 %   sensor name and per month. 
 %  
@@ -14,7 +14,8 @@ function  [the_quantiles,the_indices] = donar_plot_depth_boxwhiskers(donarMat,se
 %                   axis.
 %   number_of_boxes [int]: Number of boxes in the plot.
 %   fig_font_size [f]: Size of the font of the figure.
-%   
+%   See also: DONAR*
+
 %   Copyright: Deltares, the Netherlands
 %        http://www.delftsoftware.com
 %        Date: 14.08.2012
