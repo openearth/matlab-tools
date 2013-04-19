@@ -111,7 +111,6 @@ end
    end
 
 %% Merge Z data with existing data if it exists
-size(data.z)
 if existing_z % then existing nc file already has data
     % read Z data
     z0       = ncread(ncfile,'z',[1 1 iTimestamp],[inf inf 1]);
