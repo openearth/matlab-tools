@@ -23,6 +23,7 @@ if ini ~= 1
     voq = bmi_var_get(bmidll, 'VOQ');
     toc
     
+    voqids    = bmi_var_get(bmidll, 'VOQR');    
     s.XCGRID  = bmi_var_get(bmidll, 'XCGRID');
     s.YCGRID  = bmi_var_get(bmidll, 'YCGRID');
     s.dp2     = bmi_var_get(bmidll, 'DP2');
@@ -40,12 +41,29 @@ if ini ~= 1
 end
 %% Process data
 
-idsHs = 4;
-s.Hs = voq((676*idsHs+1):(676*(idsHs+1)));
-s.Hs_2D = reshape(s.Hs,fliplr(size(s.XCGRID)));
+mip = 676;
+% Check swmod1.for MODULE SWCOMM1 for administration of index. 
+% Set in swanout1.for SUBROUTINE SWOEXA 
+ids.XP = 1;
+ids.YP = 2;
+ids.Hs = 10; % should be 10 (*) 
+ids.depth = 4;
+
+s.XP = voq((mip*(voqids(ids.XP)-1)+1):(mip*(voqids(ids.XP))));
+s.YP = voq((mip*(voqids(ids.YP)-1)+1):(mip*(voqids(ids.YP))));
+s.twoD.XP = reshape(s.XP,fliplr(size(s.XCGRID)));
+s.twoD.YP = reshape(s.YP,fliplr(size(s.XCGRID)));
+
+s.Hs = voq((mip*(voqids(ids.Hs)-1)+1):(mip*(voqids(ids.Hs))));
+s.twoD.Hs = reshape(s.Hs,fliplr(size(s.XCGRID)));
+s.twoD.Hs(s.twoD.Hs==-999)=NaN;
+
+s.depth = voq((mip*(voqids(ids.depth)-1)+1):(mip*(voqids(ids.depth))));
+s.twoD.depth = reshape(s.depth,fliplr(size(s.XCGRID)));
+s.twoD.depth(s.twoD.depth==-999)=NaN;
 
 s.dp2 = s.dp2(1:end-1);
-s.dp2_2D = reshape(s.dp2,fliplr(size(s.XCGRID)));
+s.twoD.dp2 = reshape(s.dp2,fliplr(size(s.XCGRID)));
 
 % out = getHm0_2D(s);
 % out.hs = out.hs(1:end-1);
@@ -54,18 +72,23 @@ s.dp2_2D = reshape(s.dp2,fliplr(size(s.XCGRID)));
 
 %% Print
 
-% surf(double(XCGRID), double(YCGRID), double(tot2D)')
-% surf(double(s.XCGRID), double(s.YCGRID), double(out.Etot_2D)')
+% figure
 % surfc(double(s.XCGRID), double(s.YCGRID), flipud(double(out.hs_2D)))
+% figure
+% surfc(double(s.XCGRID), double(s.YCGRID), double(s.twoD.dp2)); colorbar
 
 figure
-surfc(double(s.XCGRID), double(s.YCGRID), double(s.dp2_2D))
+surfc(double(s.twoD.XP), double(s.twoD.YP), double(s.twoD.Hs))
 colorbar
 
+
 figure
-surfc(double(s.XCGRID), double(s.YCGRID), double(s.Hs_2D))
+% plot3(double(s.XP), double(s.YP), double(s.depth))
+surfc(double(s.twoD.XP), double(s.twoD.YP), double(s.twoD.depth))
+xlabel('x')
+ylabel('y')
 colorbar
-% view(2)
+
 
 %% cleanup
 bmi_finalize(bmidll);
