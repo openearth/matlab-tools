@@ -119,7 +119,7 @@ if strcmpi(Plt.PlotRoutine,'plotcontourmaplines')
 end
 
 if strcmpi(Plt.PlotRoutine,'plotcontourmap') && Plt.ContourLabels
-    [c,h]=contour(x,y,z,,col(2:end-1));
+    [c,h]=contour(x,y,z,col(2:end-1));
     set(h,'LineStyle','none');
 end
 
