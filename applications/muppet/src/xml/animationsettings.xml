@@ -58,7 +58,6 @@
       <variable>makeKMZ</variable>
       <type>integer</type>
       <text>Make KMZ</text>
-      <tooltipstring/> 
     </element>
     <element>
       <tag>selectbits</tag>
