@@ -108,7 +108,7 @@ end
 hold on;
 
 if strcmpi(Plt.PlotRoutine,'plotcontourmaplines')
-    [c,h]=contour(x,y,z,col);
+    [c,h]=contour(x,y,z,col(2:end-1));
     if strcmpi(Plt.LineColor,'auto')==0
         set(h,'LineColor',FindColor(Plt.LineColor));
     else
@@ -119,7 +119,7 @@ if strcmpi(Plt.PlotRoutine,'plotcontourmaplines')
 end
 
 if strcmpi(Plt.PlotRoutine,'plotcontourmap') && Plt.ContourLabels
-    [c,h]=contour(x,y,z,col);
+    [c,h]=contour(x,y,z,,col(2:end-1));
     set(h,'LineStyle','none');
 end
 
