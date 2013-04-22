@@ -86,10 +86,9 @@ switch(lower(Plt.PlotRoutine)),
     case{'plotcontourmap','plotcontourmaplines'}
         ncol=size(col,2)-1;
         clmap=GetColors(handles.ColorMaps,Ax.ColMap,ncol);
-        [c,h,wp]=contourf_mvo(x,y,z,col,clmap);
-        if length(col)>3
-            caxis([col(2) col(end-1)]);
-        end        
+        colormap(clmap);
+        [c,h,wp]=contourf_mvo(x,y,z,col);
+        caxis([col(1) col(end)]);
     case{'plotshadesmap'}
         ncol=128;
         clmap=GetColors(handles.ColorMaps,Ax.ColMap,ncol);
