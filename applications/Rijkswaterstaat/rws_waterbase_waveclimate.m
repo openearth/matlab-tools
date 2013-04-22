@@ -77,14 +77,14 @@ function [seriesTime, seriesTimeHeightData, seriesWaveHeight] = rws_waterbase_wa
 
 %% Init
 
-OPT.strmatch = 'exact';
-OPT.version  = 2; % 1 is before summer 2009, 2 is after mid dec 2009
-OPT.baseurl  = 'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/waterbase/';
-OPT.time = [];     % dummy
-OPT.outputrawdata = 1;      % output raw data to file?
-OPT.orawfilename = '';         % filename for output raw data, leave empty if multiple stations
+OPT.strmatch           = 'exact';
+OPT.version            = 2; % 1 is before summer 2009, 2 is after mid dec 2009
+OPT.baseurl            = 'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/waterbase/';
+OPT.time               = [];     % dummy
+OPT.outputrawdata      = 1;      % output raw data to file?
+OPT.orawfilename       = '';         % filename for output raw data, leave empty if multiple stations
 OPT.classificationpars = [];    % hs0,dhs,nhs,dir0,ddir,ndir
-OPT.oclimfilename = '';         % filename for output climate data, leave empty if multiple stations
+OPT.oclimfilename      = '';         % filename for output climate data, leave empty if multiple stations
 
 OPT = setproperty(OPT,varargin{:});
 
@@ -100,9 +100,9 @@ while isempty(LOC)
 end
 [indLoc, ok] = listdlg('ListString', LOC.FullName, ...
     'SelectionMode', 'multiple', ...
-    'InitialValue', [1:length(LOC.FullName)], ...
-    'PromptString', 'Select the locations', ....
-    'Name', 'Selection of locations');
+    'InitialValue' , [1:length(LOC.FullName)], ...
+    'PromptString' , 'Select the locations', ....
+    'Name'         , 'Selection of locations');
 if (ok == 0); return; end
 
 if length(indLoc)>1
@@ -127,9 +127,9 @@ else
     
     [indDate, ok] = listdlg('ListString', ListYear, ...
         'SelectionMode', 'multiple', ...
-        'InitialValue', [length(ListYear)], ...
-        'PromptString', 'Select the year', ....
-        'Name', 'Selection of year');
+        'InitialValue' , [length(ListYear)], ...
+        'PromptString' , 'Select the year', ....
+        'Name'         , 'Selection of year');
     
     if (ok == 0)
         return;
@@ -145,9 +145,9 @@ h = waitbar(0,'Downloading data...');
 
 for iLoc=1:length(indLoc)
     
-    urlNameWaveHeight = [OPT.baseurl,'sea_surface_wave_significant_height/','id22-',LOC.ID{indLoc(iLoc)},'.nc'];
-    urlNameWaveDirection = [OPT.baseurl,'sea_surface_wave_from_direction/','id23-',LOC.ID{indLoc(iLoc)},'.nc'];
-    urlNameWavePeriod = [OPT.baseurl,'sea_surface_wind_wave_tm02/','id24-',LOC.ID{indLoc(iLoc)},'.nc'];
+    urlNameWaveHeight    = [OPT.baseurl,'sea_surface_wave_significant_height/','id22-',LOC.ID{indLoc(iLoc)},'.nc'];
+    urlNameWaveDirection = [OPT.baseurl,'sea_surface_wave_from_direction/'    ,'id23-',LOC.ID{indLoc(iLoc)},'.nc'];
+    urlNameWavePeriod    = [OPT.baseurl,'sea_surface_wind_wave_tm02/'         ,'id24-',LOC.ID{indLoc(iLoc)},'.nc'];
     
     %% Perform operation on three separate time series, as they are not
     %% necessarily synchronous
@@ -155,26 +155,26 @@ for iLoc=1:length(indLoc)
     seriesTimePeriod = nc_varget(urlNameWavePeriod,'time');
     seriesTimeDirection = nc_varget(urlNameWaveDirection,'time');
     
-    seriesTimeHeightStart = find(datenum('010119700100','ddmmyyyyHHMM')+seriesTimeHeight>=datenum(startdate,'yyyymmddHHMM'),1,'first');
-    seriesTimeHeightEnd = find(datenum('010119700100','ddmmyyyyHHMM')+seriesTimeHeight<=datenum(enddate,'yyyymmddHHMM'),1,'last');
-    seriesTimePeriodStart = find(datenum('010119700100','ddmmyyyyHHMM')+seriesTimePeriod>=datenum(startdate,'yyyymmddHHMM'),1,'first');
-    seriesTimePeriodEnd = find(datenum('010119700100','ddmmyyyyHHMM')+seriesTimePeriod<=datenum(enddate,'yyyymmddHHMM'),1,'last');
-    seriesTimeDirStart = find(datenum('010119700100','ddmmyyyyHHMM')+seriesTimeDirection>=datenum(startdate,'yyyymmddHHMM'),1,'first');
-    seriesTimeDirEnd = find(datenum('010119700100','ddmmyyyyHHMM')+seriesTimeDirection<=datenum(enddate,'yyyymmddHHMM'),1,'last');
+    seriesTimeHeightStart = find(datenum('010119700100','ddmmyyyyHHMM')+seriesTimeHeight   >=datenum(startdate,'yyyymmddHHMM'),1,'first');
+    seriesTimeHeightEnd   = find(datenum('010119700100','ddmmyyyyHHMM')+seriesTimeHeight   <=datenum(enddate  ,'yyyymmddHHMM'),1,'last');
+    seriesTimePeriodStart = find(datenum('010119700100','ddmmyyyyHHMM')+seriesTimePeriod   >=datenum(startdate,'yyyymmddHHMM'),1,'first');
+    seriesTimePeriodEnd   = find(datenum('010119700100','ddmmyyyyHHMM')+seriesTimePeriod   <=datenum(enddate  ,'yyyymmddHHMM'),1,'last');
+    seriesTimeDirStart    = find(datenum('010119700100','ddmmyyyyHHMM')+seriesTimeDirection>=datenum(startdate,'yyyymmddHHMM'),1,'first');
+    seriesTimeDirEnd      = find(datenum('010119700100','ddmmyyyyHHMM')+seriesTimeDirection<=datenum(enddate  ,'yyyymmddHHMM'),1,'last');
     
     if numel(seriesTimeHeightStart)==0 || numel(seriesTimeHeightEnd)==0
         disp(['Time limits outside period of available data.. Data limits are ', datestr(datenum('01011970','ddmmyyyy')+seriesTimeHeight(1)), ' and ',datestr(datenum('01011970','ddmmyyyy')+seriesTimeHeight(end)),'. Aborting.']);
         close(h);
         return;
     end
-    seriesTimeHeightData = datenum('010119700100','ddmmyyyyHHMM')+ seriesTimeHeight(seriesTimeHeightStart:seriesTimeHeightEnd)';
-    seriesTimePeriodData = datenum('010119700100','ddmmyyyyHHMM')+ seriesTimePeriod(seriesTimePeriodStart:seriesTimePeriodEnd)';
-    seriesTimeDirectionData = datenum('010119700100','ddmmyyyyHHMM')+ seriesTimeDirection(seriesTimeDirStart:seriesTimeDirEnd)';
-    seriesWaveHeight = nc_varget(urlNameWaveHeight,'sea_surface_wave_significant_height',[0 seriesTimeHeightStart-1],[1 seriesTimeHeightEnd-seriesTimeHeightStart+1]);
-    seriesWaveDir = nc_varget(urlNameWaveDirection,'sea_surface_wave_from_direction',[0 seriesTimeDirStart-1],[1 seriesTimeDirEnd-seriesTimeDirStart+1]);
-    seriesWavePeriod = nc_varget(urlNameWavePeriod,'sea_surface_wind_wave_tm02',[0 seriesTimePeriodStart-1],[1 seriesTimePeriodEnd-seriesTimePeriodStart+1]); % Tm02
-    resolution = seriesTimeHeightData(3)-seriesTimeHeightData(2);
-    resolution = (ceil(resolution*24*60))/24/60;
+    seriesTimeHeightData    = datenum('010119700100','ddmmyyyyHHMM')+ seriesTimeHeight(seriesTimeHeightStart:seriesTimeHeightEnd)';
+    seriesTimePeriodData    = datenum('010119700100','ddmmyyyyHHMM')+ seriesTimePeriod(seriesTimePeriodStart:seriesTimePeriodEnd)';
+    seriesTimeDirectionData = datenum('010119700100','ddmmyyyyHHMM')+ seriesTimeDirection(seriesTimeDirStart:seriesTimeDirEnd   )';
+    seriesWaveHeight = nc_varget(urlNameWaveHeight   ,'sea_surface_wave_significant_height',[0 seriesTimeHeightStart-1],[1 seriesTimeHeightEnd-seriesTimeHeightStart+1]);
+    seriesWaveDir    = nc_varget(urlNameWaveDirection,'sea_surface_wave_from_direction'    ,[0 seriesTimeDirStart   -1],[1 seriesTimeDirEnd-seriesTimeDirStart      +1]);
+    seriesWavePeriod = nc_varget(urlNameWavePeriod   ,'sea_surface_wind_wave_tm02'         ,[0 seriesTimePeriodStart-1],[1 seriesTimePeriodEnd-seriesTimePeriodStart+1]); % Tm02
+    resolution       = seriesTimeHeightData(3)-seriesTimeHeightData(2);
+    resolution       = (ceil(resolution*24*60))/24/60;
     
     %% Plot raw data
     figure(iLoc*2-1);
@@ -197,15 +197,15 @@ for iLoc=1:length(indLoc)
     seriesTime = (floor(datenum(startdate,'yyyymmddHHMM')):resolution:ceil(datenum(enddate,'yyyymmddHHMM'))-1/24)';
     seriesWaveHeightC = NaN(length(seriesTime),1);
     seriesWavePeriodC = NaN(length(seriesTime),1); 
-    seriesWaveDirC = NaN(length(seriesTime),1); 
+    seriesWaveDirC    = NaN(length(seriesTime),1); 
     
     %% Fill series with data
-    [dummy,iWHa,iWHb] = intersect(round(seriesTime*10000)/10000,round(seriesTimeHeightData(:)*10000)/10000);    % to counter rounding error related to ismember implementation
-    [dummy,iWPa,iWPb] = intersect(round(seriesTime*10000)/10000,round(seriesTimePeriodData(:)*10000)/10000);
+    [dummy,iWHa,iWHb] = intersect(round(seriesTime*10000)/10000,round(seriesTimeHeightData   (:)*10000)/10000);    % to counter rounding error related to ismember implementation
+    [dummy,iWPa,iWPb] = intersect(round(seriesTime*10000)/10000,round(seriesTimePeriodData   (:)*10000)/10000);
     [dummy,iWDa,iWDb] = intersect(round(seriesTime*10000)/10000,round(seriesTimeDirectionData(:)*10000)/10000);
     seriesWaveHeightC(iWHa) = seriesWaveHeight(iWHb);
     seriesWavePeriodC(iWPa) = seriesWavePeriod(iWPb);
-    seriesWaveDirC(iWDa) = seriesWaveDir(iWDb);
+    seriesWaveDirC(iWDa)    = seriesWaveDir   (iWDb);
     clear dummy;
     
     %% Write raw data to file
@@ -231,22 +231,22 @@ for iLoc=1:length(indLoc)
     % wave heights are weighted with power 2.5
     
     
-    hs = seriesWaveHeightC(:);
+    hs  = seriesWaveHeightC(:);
     dir = seriesWaveDirC(:);
-    tp = 1.2859*seriesWavePeriodC(:);      % assuming JONSWAP, gamma=3.3
+    tp  = 1.2859*seriesWavePeriodC(:);      % assuming JONSWAP, gamma=3.3
     
-    hs1 = hs(find(~isnan(hs)&~isnan(dir)&~isnan(tp)));
-    tp1 = tp(find(~isnan(hs)&~isnan(dir)&~isnan(tp)));
+    hs1 =  hs(find(~isnan(hs)&~isnan(dir)&~isnan(tp)));
+    tp1 =  tp(find(~isnan(hs)&~isnan(dir)&~isnan(tp)));
     dir = dir(find(~isnan(hs)&~isnan(dir)&~isnan(tp)));
-    hs = hs1;
-    tp = tp1;
+    hs  = hs1;
+    tp  = tp1;
     
     power=2.5;
     
     if isempty(OPT.classificationpars)
-        hs0 = 0;
-        dhs = 0.5;
-        nhs = 5;
+        hs0  = 0;
+        dhs  = 0.5;
+        nhs  = 5;
         dir0 = 5;
         ddir = 10;
         ndir = 36;
@@ -256,36 +256,36 @@ for iLoc=1:length(indLoc)
             clear all; fclose all;
             return;
         end
-        hs0 = OPT.classificationpars(1);
-        dhs = OPT.classificationpars(2);
-        nhs = OPT.classificationpars(3);
+        hs0  = OPT.classificationpars(1);
+        dhs  = OPT.classificationpars(2);
+        nhs  = OPT.classificationpars(3);
         dir0 = OPT.classificationpars(4);
         ddir = OPT.classificationpars(5);
         ndir = OPT.classificationpars(6);
     end
     
     
-    ind_hs=max(min(ceil((hs-hs0)/dhs),nhs),1);
+    ind_hs =max(min(ceil((hs-hs0)/dhs),nhs),1);
     ind_dir=max(min(ceil((dir-dir0)/ddir),ndir),1);
-    n=zeros(nhs,ndir);
-    s_hs=zeros(nhs,ndir);
-    s_dir=zeros(nhs,ndir);
-    s_tp=zeros(nhs,ndir);
+    n     = zeros(nhs,ndir);
+    s_hs  = zeros(nhs,ndir);
+    s_dir = zeros(nhs,ndir);
+    s_tp  = zeros(nhs,ndir);
     
     for i=1:length(hs);
         ih=ind_hs(i);
         id=ind_dir(i);
-        n(ih,id)=n(ih,id)+1;
-        s_hs(ih,id)=s_hs(ih,id)+hs(i).^power;
-        s_dir(ih,id)=s_dir(ih,id)+dir(i);
-        s_tp(ih,id)=s_tp(ih,id)+tp(i);
+        n    (ih,id) = n(ih,id)+1;
+        s_hs (ih,id) = s_hs (ih,id)+hs(i).^power;
+        s_dir(ih,id) = s_dir(ih,id)+dir(i);
+        s_tp (ih,id) = s_tp (ih,id)+tp(i);
         
     end;
     n(n==0)= NaN;
-    perc=n/length(hs)*100;
-    meanhs=(s_hs./n).^(1/power);
-    meandir=s_dir./n;
-    meantp=s_tp./n;
+    perc    = n/length(hs)*100;
+    meanhs  = (s_hs./n).^(1/power);
+    meandir = s_dir./n;
+    meantp  = s_tp./n;
     
     %% Write output p,Hs,Tp,Dir
     if isempty(OPT.oclimfilename)

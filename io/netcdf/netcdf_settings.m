@@ -63,7 +63,7 @@ function netcdf_settings(varargin)
      
    else
    
-      disp('Run OETSETTINGS before NETCDF_SETTINGS !')
+      disp('  netCDF: Run OETSETTINGS before NETCDF_SETTINGS !')
       
    end
 
@@ -91,7 +91,7 @@ function netcdf_settings(varargin)
    if (vs > datenum(2003,1,1)) 
 
       if     any(strcmpi(version('-release'),{'14','2006a','2006b','2007a','2007b','2008a'}))
-      disp('Writing netcdf files does not work due to vanilla_mexnc issues, you need 2008b and higher to write netcdf files or solve vanilla_mexnc.')
+           fprintf(2,'  netCDF: Writing netcdf files does not work due to vanilla_mexnc issues, you need 2008b and higher to write netcdf files or solve vanilla_mexnc.\n')
       end
       
       if     any(strcmpi(version('-release'),{'2006a','2006b','2007a'}))
@@ -108,11 +108,11 @@ function netcdf_settings(varargin)
        if isempty(cell2mat(indices))
            javaaddpath (java2add)
          if ~(OPT.quiet)
-           disp(' Adding <a href="http://www.unidata.ucar.edu/software/netcdf-java/">netCDF-JAVA</a>, please wait ...')
-           disp(['  netCDF-JAVA library for OPeNDAP support added: ',filename(java2add)]);
-           disp(['  Note: maximal size of java memory is = ',num2str(java.lang.Runtime.getRuntime.maxMemory/2^20),' Mb']); % 2^20 = 1 Mbyte, default 130875392=124Mb
-           disp( '  Loading large matrices gives java heap errors, for expansion see:')
-           disp( '  http://www.mathworks.com/support/solutions/en/data/1-18I2C/')
+           disp( '  netCDF: Adding <a href="http://www.unidata.ucar.edu/software/netcdf-java/">netCDF-JAVA</a>, please wait ...')
+           disp(['  netCDF: netCDF-JAVA library for OPeNDAP support added: ',filename(java2add)]);
+           disp(['  netCDF: Note: maximal size of java memory is = ',num2str(java.lang.Runtime.getRuntime.maxMemory/2^20),' Mb']); % 2^20 = 1 Mbyte, default 130875392=124Mb
+           disp( '          Loading large matrices gives java heap errors, for expansion see:')
+           disp( '          http://www.mathworks.com/support/solutions/en/data/1-18I2C/')
          end
    
        elseif ~(OPT.quiet)
@@ -121,14 +121,16 @@ function netcdf_settings(varargin)
        
        try % matlab fails if several instances of matlab are accessing matlabprefs.mat, tgis hapens whne one users has many matlabn instances running
        setpref ( 'SNCTOOLS','USE_JAVA'   , 1); % This requires SNCTOOLS 2.4.8 or better
+           disp('  netCDF: setpref( ''SNCTOOLS'',''USE_JAVA''   , 1) % force use of java for remote urls to avoid OPeNDAP bug in native package');
        % keep snctools default
        setpref ( 'SNCTOOLS','PRESERVE_FVD',0); % 0: backwards compatibility and consistent with ncBrowse
                                                % 1: We do not want to transpose matrices because:
                                                %    (i)  we have some LARGE datasets and need a performance boost
                                                %    (ii) some use the netCDF API directly which does not do this. 
                                                %    May break previous work though ...
+           disp('  netCDF: setpref( ''SNCTOOLS'',''PRESERVE_FVD'',0) % ncread and nc_varget have different matrix orientation');
        catch
-           disp('failed to set SNCTOOLS prefs due to matlab concurrence issue')
+           fprintf(2,'  netCDF: failed to set SNCTOOLS prefs due to matlab concurrence issue\n')
        end
                                               
        %% add basic authentication class

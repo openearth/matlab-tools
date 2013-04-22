@@ -10,12 +10,13 @@ function oetsettings(varargin)
 % or current database is outdated). Suppressed generation: "oetsettings(...,'searchdb',false);"
 % 
 % For more information on openearthtools refer to the following sources:
-% * wiki:               <a href="http://OpenEarth.nl">OpenEarth.nl</a>, <a href="http://OpenEarth.nl">OpenEarth.eu</a>
-% * 1. Subversion, data <a href="https://svn.oss.deltares.nl/repos/openearthrawdata/trunk/">https://svn.oss.deltares.nl/repos/openearthrawdata/trunk/matlab</a>
-% *    ,,        models <a href="https://svn.oss.deltares.nl/repos/openearthmodels/trunk/">https://svn.oss.deltares.nl/repos/openearthmodels/trunk/matlab</a>
-% *    ,,         tools <a href="https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab">https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab</a>
-% * 2. OPeNDAP/netCDF   <a href="http://opendap.deltares.nl">http://opendap.deltares.nl</a>
-% * 3. Google Earth     <a href="http://kml.deltares.nl">http://kml.deltares.nl</a>, opendap
+% * wiki:                 <a href="http://OpenEarth.nl">OpenEarth.nl</a>, <a href="http://OpenEarth.nl">OpenEarth.eu</a>
+% * 1. Subversion, data   <a href="https://svn.oss.deltares.nl/repos/openearthrawdata/trunk/">https://svn.oss.deltares.nl/repos/openearthrawdata/trunk/matlab</a>
+% *    ,,        models   <a href="https://svn.oss.deltares.nl/repos/openearthmodels/trunk/">https://svn.oss.deltares.nl/repos/openearthmodels/trunk/matlab</a>
+% *    ,,         tools   <a href="https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab">https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab</a>
+% * 2. OPeNDAP/netCDF     <a href="http://opendap.deltares.nl">http://opendap.deltares.nl</a>
+% *    PostgreSQL/PostGIS ...
+% * 3. Google Earth       <a href="http://kml.deltares.nl">http://kml.deltares.nl</a>, opendap
 % * Matlab: + Scroll through the openearthtools directories 
 %           + use help     : help netcdf, help general, help applications
 %           + use lookfor  : lookfor google, lookfor 
@@ -24,7 +25,7 @@ function oetsettings(varargin)
 %
 %See also:    oetsettings: path, restoredefaultpath, addpathfast,
 %          openearthtools: general, applications, io, tutorials
-%              highlights: convertcoordinates, googleplot, opendap
+%              highlights: convertcoordinates, googleplot, opendap, postgresql
 % OET matlab coding style: oetnewfun, setproperty
 
 %% Copyright notice

@@ -155,11 +155,11 @@ end
    Mmeta.datenum.timezone]   = nc_cf_time(OPT.nc,'time'); % USE nc_cf_time_range()
    M.(OPT.varname)           = nc_varget (OPT.nc,OPT.hisname);
    if nc_isvar(OPT.nc,OPT.hisnamename)
-   M.platform_name           = cellstr(nc_varget (OPT.nc,OPT.hisnamename)); % mind getpref ('SNCTOOLS','PRESERVE_FVD')==0
+   M.platform_name           = cellstr(nc_varget (OPT.nc,OPT.hisnamename)'); % mind getpref ('SNCTOOLS','PRESERVE_FVD')==0
    elseif nc_isvar(OPT.nc,'platform_name')
-   M.platform_name           = cellstr(nc_varget (OPT.nc,'platform_name'));
+   M.platform_name           = cellstr(nc_varget (OPT.nc,'platform_name')');
    elseif nc_isvar(OPT.nc,'station_name')
-   M.platform_name           = cellstr(nc_varget (OPT.nc,'station_name'));
+   M.platform_name           = cellstr(nc_varget (OPT.nc,'station_name')');
    end
    M.lon                     = nan;
    M.lat                     = nan;
@@ -194,6 +194,7 @@ if ischar(OPT.platform_data_url)
    dataurls = opendap_catalog(OPT.ncbase);
    %% loop model platform index (im) and find associated data platform index (id)
    for im=1:length(M.platform_name);
+   
      if ismember(upper(M.platform_name{im}),upper(OPT.platform_name)) | isempty(OPT.platform_name)
     
    % TODO replace (i) by more intelligent query based on location instead

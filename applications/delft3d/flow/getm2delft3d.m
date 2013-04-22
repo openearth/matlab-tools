@@ -84,7 +84,11 @@ function MDF = getm2delft3d(varargin)
    OPT.fmt.temp       = ' %.2f'; % 1% precision
    OPT.min_salt       = 0;    % getm has different valid range (incl ice) than delft3d (> 0)
    OPT.min_temp       = 0.01; % getm has different valid range (incl ice) than delft3d (> 0)
-   
+
+   OPT.dt.map         = 120;
+   OPT.dt.his         = 10;   
+   OPT.dt.waq         = 120;   
+
    % switch off generating a particiular external files, while mdf stays identical to speed up debugging other external files
    OPT.write.grd      = 1;
    OPT.write.dep      = 1; % requires OPT.write.grd for sigma levels  
@@ -439,7 +443,7 @@ function MDF = getm2delft3d(varargin)
         if OPT.bdy3d_nudge
            warning([mfilename,' shifted bdy3d time from ',datestr(C.datenum(bccmask(  1))),' to ',datestr(datenum(getm.time.start,'yyyy-mm-dd hh:MM:ss'))]);
            C.datenum(1:bccmask(1)) = datenum(getm.time.start,'yyyy-mm-dd hh:MM:ss');
-           C.minuts (1:bccmask(1)) = MDF.keywords.tstart;
+           C.minutes(1:bccmask(1)) = MDF.keywords.tstart;
         else
            error('start time after  last  3D boundary data');
         end
@@ -881,8 +885,11 @@ function MDF = getm2delft3d(varargin)
 
 %% output
 
-   MDF.keywords.flmap  = [MDF.keywords.tstart 120  MDF.keywords.tstop];
-   MDF.keywords.flhis  = [MDF.keywords.tstart  10  MDF.keywords.tstop];
+   MDF.keywords.flmap  = [MDF.keywords.tstart OPT.dt.map MDF.keywords.tstop];
+   MDF.keywords.flhis  = [MDF.keywords.tstart OPT.dt.his MDF.keywords.tstop];
+   if isfield(MDF.keywords,'flwq')
+   MDF.keywords.flwq   = [MDF.keywords.tstart OPT.dt.waq MDF.keywords.tstop];
+   end
                       
    delft3d_io_mdf('write',[OPT.d3ddir,filesep,OPT.RUNID,'.mdf'],MDF.keywords);
 

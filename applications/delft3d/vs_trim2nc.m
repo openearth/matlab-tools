@@ -223,6 +223,12 @@ function varargout = vs_trim2nc(vsfile,varargin)
       nc.Attributes(end+1) = struct('Name','disclaimer'         ,'Value',  'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.');
 
       nc.Attributes(end+1) = struct('Name','delft3d_description','Value',  str2line(M.description));
+      
+      % ISO metadata "WHEN": http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html
+      % https://geo-ide.noaa.gov/wiki/index.php?title=NetCDF_Attribute_Convention_for_Dataset_Discovery
+      
+      nc.Attributes(end+1) = struct('Name','time_coverage_start','Value',  datestr(T.datenum(  1),'yyyy-mm-ddTHH:MM'));
+      nc.Attributes(end+1) = struct('Name','time_coverage_end'  ,'Value',  datestr(T.datenum(end),'yyyy-mm-ddTHH:MM'));
 
 %% Coordinate system
 %
@@ -321,6 +327,28 @@ function varargout = vs_trim2nc(vsfile,varargin)
       if any(strfind(G.coordinates,'CART')) & ~isempty(OPT.epsg) % CARTESIAN, CARTHESIAN (old bug)
      [G.cen.lon,G.cen.lat] = convertCoordinates(G.cen.x,G.cen.y,'CS1.code',OPT.epsg,'CS2.code',4326);
      [G.cor.lon,G.cor.lat] = convertCoordinates(G.cor.x,G.cor.y,'CS1.code',OPT.epsg,'CS2.code',4326);
+      end
+      
+      % ISO metadata "WHERE": http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html
+      % https://geo-ide.noaa.gov/wiki/index.php?title=NetCDF_Attribute_Convention_for_Dataset_Discovery
+      
+      if isfield(G.cen,'lon') & isfield(G.cen,'lat')
+      nc.Attributes(end+1) = struct('Name','geospatial_lat_min'            ,'Value',  min(G.cen.lat(:)));
+      nc.Attributes(end+1) = struct('Name','geospatial_lat_max'            ,'Value',  max(G.cen.lat(:)));
+      nc.Attributes(end+1) = struct('Name','geospatial_lat_units'          ,'Value',  'dergees_north');
+     %nc.Attributes(end+1) = struct('Name','geospatial_lat_resolution'     ,'Value',  );
+      
+      nc.Attributes(end+1) = struct('Name','geospatial_lon_min'            ,'Value',  min(G.cen.lon(:)));
+      nc.Attributes(end+1) = struct('Name','geospatial_lon_max'            ,'Value',  max(G.cen.lon(:)));
+      nc.Attributes(end+1) = struct('Name','geospatial_lon_units'          ,'Value',  'dergees_east');
+     %nc.Attributes(end+1) = struct('Name','geospatial_lon_resolution'     ,'Value',  );
+      end
+      if isfield(G.cen,'dep')
+      nc.Attributes(end+1) = struct('Name','geospatial_vertical_min'       ,'Value',  min(G.cen.dep(:)));
+      nc.Attributes(end+1) = struct('Name','geospatial_vertical_max'       ,'Value',  max(G.cen.dep(:)));
+      nc.Attributes(end+1) = struct('Name','geospatial_vertical_units'     ,'Value',  'm');
+     %nc.Attributes(end+1) = struct('Name','geospatial_vertical_resolution','Value',  );
+      nc.Attributes(end+1) = struct('Name','geospatial_vertical_positive'  ,'Value',  'down');
       end
       
    %% orthogonal ?
@@ -457,7 +485,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', ['days since ',datestr(OPT.refdatenum,'yyyy-mm-dd'),' 00:00:00 ',OPT.timezone]);
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'T');
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-info-series:ITMAPC map-const:ITDATE map-const:DT map-const:TUNIT');
-      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [datestr(T.datenum(1),31),char(9),datestr(T.datenum(end),31)]);
       nc.Variables(ifld) = struct('Name'      , 'time', ...
                                   'Datatype'  , 'double', ...
                                   'Dimensions', time.dims, ...

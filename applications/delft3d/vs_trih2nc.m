@@ -175,6 +175,12 @@ function varargout = vs_trih2nc(vsfile,varargin)
 
       nc.Attributes(end+1) = struct('Name','delft3d_description','Value',  str2line(M.description));
 
+      % ISO metadata "WHEN": http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html
+      % https://geo-ide.noaa.gov/wiki/index.php?title=NetCDF_Attribute_Convention_for_Dataset_Discovery
+      
+      nc.Attributes(end+1) = struct('Name','time_coverage_start','Value',  datestr(T.datenum(  1),'yyyy-mm-ddTHH:MM'));
+      nc.Attributes(end+1) = struct('Name','time_coverage_end'  ,'Value',  datestr(T.datenum(end),'yyyy-mm-ddTHH:MM'));
+
 %% Coordinate system
 
       G.kmax        =                 vs_let(F,'his-const','KMAX'       ,'quiet');
@@ -288,6 +294,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'time');
       attr(end+1)  = struct('Name', 'units'        , 'Value', ['days since ',datestr(OPT.refdatenum,'yyyy-mm-dd'),' 00:00:00 ',OPT.timezone]);
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'T');
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [datestr(T.datenum(1),31),char(9),datestr(T.datenum(end),31)]);
       nc.Variables(ifld) = struct('Name'      , 'time', ...
                                   'Datatype'  , 'double', ...
                                   'Dimensions', struct('Name', 'time','Length',ncdimlen.time), ...
@@ -771,7 +778,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       try;delete(ncfile);end
       disp(['vs_trih2nc: NCWRITESCHEMA: creating netCDF file: ',ncfile])
       ncwriteschema(ncfile, nc);			        
-      disp(['vs_trih2nc: NCWRITE: filling  netCDF file: ',ncfile])
+      disp(['vs_trih2nc: NCWRITE:       filling  netCDF file: ',ncfile])
 
       if OPT.debug
       fid = fopen([filepathstrname(ncfile),'.cdl'],'w');
@@ -782,22 +789,22 @@ function varargout = vs_trih2nc(vsfile,varargin)
 %% 5 Fill variables
 
    if OPT.trajectory
-      ncwrite(ncfile, 'Trajectory'          , G.trajectory);
+      ncwrite   (ncfile, 'Trajectory'          , G.trajectory);
    else
-      ncwrite(ncfile, 'station_name'        , G.name);
-      ncwrite(ncfile, 'station_angle'       , G.angle);
-      ncwrite(ncfile, 'station_m_index'     , G.m);
-      ncwrite(ncfile, 'station_n_index'     , G.n);
+      ncwrite   (ncfile, 'station_name'        , G.name);
+      ncwrite   (ncfile, 'station_angle'       , G.angle);
+      ncwrite   (ncfile, 'station_m_index'     , G.m);
+      ncwrite   (ncfile, 'station_n_index'     , G.n);
    end
       if any(strfind(G.coordinates,'CARTESIAN')) || ~isempty(OPT.epsg)
-      ncwrite(ncfile, 'x', G.x);
-      ncwrite(ncfile, 'y', G.y);
+      ncwrite   (ncfile, 'x', G.x);
+      ncwrite   (ncfile, 'y', G.y);
       end
       if (~isempty(OPT.epsg)) | (~any(strfind(G.coordinates,'CARTESIAN')))      
-      ncwrite(ncfile, 'longitude'  , G.lon);
-      ncwrite(ncfile, 'latitude'   , G.lat);
+      ncwrite   (ncfile, 'longitude'  , G.lon);
+      ncwrite   (ncfile, 'latitude'   , G.lat);
       end
-      ncwrite(ncfile, 'time'         , T.datenum - OPT.refdatenum);
+      ncwrite   (ncfile, 'time'         , T.datenum - OPT.refdatenum);
       if (~isempty(OPT.epsg)) | (~any(strfind(G.coordinates,'CARTESIAN')))
       ncwrite(ncfile, 'longitude'    ,G.lon);
       ncwrite(ncfile, 'latitude'     ,G.lat);

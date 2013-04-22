@@ -110,6 +110,8 @@ else
    
       if ~isempty(OPT.period)
       mask = find(( t >= OPT.period(1)) & (t <= OPT.period(end)));
+      if t(1  ) > OPT.period(1);fprintf(2,['data starts after start of requested period ',datestr(t(  1)),'>',datestr(OPT.period(  1))]);end
+      if t(end) < OPT.period(2);fprintf(2,['data end   before end   of requested period ',datestr(t(end)),'<',datestr(OPT.period(end))]);end
       else
       mask = 1:length(t);
       OPT.period = [t(1) t(end)];
@@ -257,8 +259,8 @@ else
    nc.Attribute(1) = struct('Name', 'long_name'      ,'Value', 'begin and end of interval of tidal analysis');
    nc.Attribute(2) = struct('Name', 'standard_name'  ,'Value', 'time');
    nc.Attribute(3) = struct('Name', 'units'          ,'Value',['days since ',datestr(OPT.refdatenum,'yyyy-mm-dd HH:MM')]);
-   nc_addvar         (OPT.ncfile,nc);
-   nc_varput         (OPT.ncfile,nc.Name,squeeze(t(mask([1 end]))) - OPT.refdatenum);clear nc % 2D array so shape is relevant
+   nc_addvar         (OPT.ncfile,nc); % getpref('SNCTOOLS','PRESERVE_FVD')
+   nc_varput         (OPT.ncfile,nc.Name,squeeze(t(mask([1 end])))' - OPT.refdatenum);clear nc % 2D array so shape is relevant
 
    nc.Name = 'component_name';
    nc.Datatype     = 'char';

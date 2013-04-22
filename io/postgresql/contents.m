@@ -3,8 +3,8 @@
 % This PostgreSQL toolbox uses:
 % (i) by default the licensed Mathworks database toolbox 
 % (ii) otherwise the JDBC4 driver is used directly without the need 
-% for the licensed Mathworks database toolbox altogether. You can still force
-% usage of JDBC4 directly with keyword 'database_toolbox' in PG_CONNECTDB.
+% for the licensed Mathworks database toolbox altogether. You can enforce usage 
+% of JDBC4 over Mathworks toolbox with keyword 'database_toolbox' in PG_CONNECTDB.
 %
 % START:
 % pg_settings                    - Load toolbox for JDBC connection to a PostgreSQL database
