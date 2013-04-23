@@ -324,8 +324,8 @@ function varargout = vs_trih2nc(vsfile,varargin)
       attr(    1)  = struct('Name', 'standard_name', 'Value', 'platform_name');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', vs_get_elm_def(F,d3d_name,'Description'));
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
-      dims(    1)  = struct('Name', dimname           ,'Length',ncdimlen.(dimname));
-      dims(    2)  = struct('Name', 'station_name_len','Length',ncdimlen.station_name_len);
+      dims(    1)  = struct('Name', 'station_name_len','Length',ncdimlen.station_name_len);
+      dims(    2)  = struct('Name', dimname           ,'Length',ncdimlen.(dimname));
       nc.Variables(ifld) = struct('Name'      , 'station_name', ...
                                   'Datatype'  , 'char', ...
                                   'Dimensions', dims, ...
@@ -791,7 +791,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
    if OPT.trajectory
       ncwrite   (ncfile, 'Trajectory'          , G.trajectory);
    else
-      ncwrite   (ncfile, 'station_name'        , G.name);
+      ncwrite   (ncfile, 'station_name'        , G.name');
       ncwrite   (ncfile, 'station_angle'       , G.angle);
       ncwrite   (ncfile, 'station_m_index'     , G.m);
       ncwrite   (ncfile, 'station_n_index'     , G.n);

@@ -6,6 +6,16 @@ function varargout=delft3d_io_fou(cmd,varargin),
 %       delft3d_io_fou('write',filename,DATA);
 %       delft3d_io_fou('write',filename,DATA,<keyword,value>);
 %
+% Example: change t0 or t1 to let period match n*T
+%
+%    t0 = 36*60; % skip spin-up 
+%    t1 = 44640; % 1 month
+%    T  = 60./t_tide_name2freq({'S2','M2'},'unit','cyc/hr')
+%    n  = floor((t1-t0)./T)
+%    dt = (t1-t0) - n.*T;
+%    t1new = t0 + dt
+%    round(t1new) % times to be inserted into fou file.
+%
 % See also: delft3d, delft3d_fou2hdf, tekal
 
 %   --------------------------------------------------------------------

@@ -21,11 +21,13 @@ function  varargout= t_tide_name2freq(varargin)
 %        
 %  Example:
 %
-%  >> t_tide_name2freq({'S2','M2','MS4','M4'},'unit','cyc/day') = 
+% f = t_tide_name2freq({'S2','M2','MS4','M4'},'unit','cyc/day') = 
 %
 %      2.0000    1.9323    3.9323    3.8645
 %
-%See also: DELFT3D_NAME2T_TIDE, T_TIDE_NAME2DELFT3D, 
+% T = 1./t_tide_name2freq({'S2','M2'},'unit','cyc/hr') = [12.0000   12.4206]
+%
+%See also: DELFT3D_NAME2T_TIDE, T_TIDE_NAME2DELFT3D, t_getconsts
 %          T_TIDE (http://www.eos.ubc.ca/~rich/)
 
 %   --------------------------------------------------------------------

@@ -68,7 +68,6 @@ function varargout = delft3d_fou2hdf(directory,RUNID,varargin);
 % $Keywords:
 
 %% Initialisation
-%----------------------------------
 
    % To save memory with large 3D files
    % - data are stored as single precision
@@ -83,8 +82,6 @@ function varargout = delft3d_fou2hdf(directory,RUNID,varargin);
    % a copy when passing these variables to fou2struct3d.
 
 %% Definitions
-%----------------------------------
-
    
    tekfile    = path2os([directory,filesep,'fourier.',    RUNID]);
    tekmatfile = path2os([directory,filesep,'fourier_tek_',RUNID,'.mat']);
@@ -93,7 +90,6 @@ function varargout = delft3d_fou2hdf(directory,RUNID,varargin);
    mdffile    = path2os([directory,filesep,               RUNID,'.mdf']);
 
 %% Read data
-%----------------------------------
 
 if exist(matfile,'file')==2
    
@@ -172,7 +168,6 @@ else
 end
 
 %% Add meta information
-%----------------------------------
 
    MAT.directory   = directory;
    MAT.RUNID       = RUNID;
@@ -196,12 +191,10 @@ end
    end
 
 %% Save to HDF
-%----------------------------------
 
    status        = hdfvsave(hdffile,MAT,varargin{:});
 
 %% Output
-%----------------------------------
 
    if status >= 0
       disp(['Saved ',hdffile,' succesfully.']);
