@@ -204,7 +204,7 @@ for it=1:nt
             
     end
     
-    fname=[outdir filesep outname '.' lower(par) '.' datestr(s.time(it),'yyyymmddHHMMSS') '.mat'];
+    fname=[outdir filesep outname '.' lower(par) '.' datestr(s.time,'yyyymmddHHMMSS') '.mat'];
     save(fname,'-struct','s');
     
 end
