@@ -153,8 +153,10 @@ switch lower(par)
         for k=1:nd
             for it=1:nt
                 d=squeeze(data(:,:,k,it));
-                d=reshape(d,nx*ny,1);
-                s.data(:,:,k,it)    = tinterp(p,tri,d,xg,yg,'quadratic');
+%                 d=reshape(d,nx*ny,1);
+%                 s.data(:,:,k,it)    = tinterp(p,tri,d,xg,yg,'quadratic');
+                                s.data(:,:,k,it)    = griddata(lon,lat,d,xg,yg);
+
             end
         end
         toc
@@ -177,8 +179,10 @@ switch lower(par)
         for k=1:nd
             for it=1:nt
                 d=squeeze(data(:,:,k,it));
-                d=reshape(d,nx*ny,1);
-                s.data(:,:,k,it)    = tinterp(p,tri,d,xg,yg,'quadratic');
+%                 d=reshape(d,nx*ny,1);
+%                 s.data(:,:,k,it)    = tinterp(p,tri,d,xg,yg,'quadratic');
+                s.data(:,:,k,it)    = griddata(lon,lat,d,xg,yg);
+
             end
         end
         toc
@@ -201,8 +205,9 @@ switch lower(par)
         tic
         for it=1:nt
             d=squeeze(data(:,:,it));
-            d=reshape(d,nx*ny,1);
-            s.data(:,:,it)    = tinterp(p,tri,d,xg,yg,'quadratic');
+%             d=reshape(d,nx*ny,1);
+%             s.data(:,:,it)    = tinterp(p,tri,d,xg,yg,'quadratic');
+            s.data(:,:,it)    = griddata(lon,lat,d,xg,yg);
         end
         toc
         s.data=single(s.data);
@@ -225,8 +230,9 @@ switch lower(par)
         for k=1:nd
             for it=1:nt
                 d=squeeze(data(:,:,k,it));
-                d=reshape(d,nx*ny,1);
-                s.data(:,:,k,it)    = tinterp(p,tri,d,xg,yg,'quadratic');
+%                 d=reshape(d,nx*ny,1);
+%                 s.data(:,:,k,it)    = tinterp(p,tri,d,xg,yg,'quadratic');
+                s.data(:,:,k,it)    = griddata(lon,lat,d,xg,yg);
             end
         end
         toc
@@ -250,8 +256,9 @@ switch lower(par)
         for k=1:nd
             for it=1:nt
                 d=squeeze(data(:,:,k,it));
-                d=reshape(d,nx*ny,1);
-                s.data(:,:,k,it)    = tinterp(p,tri,d,xg,yg,'quadratic');
+%                 d=reshape(d,nx*ny,1);
+%                 s.data(:,:,k,it)    = tinterp(p,tri,d,xg,yg,'quadratic');
+                s.data(:,:,k,it)    = griddata(lon,lat,d,xg,yg);
             end
         end
         toc
