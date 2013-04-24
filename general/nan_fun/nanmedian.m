@@ -68,7 +68,7 @@ for i = 1:length(s)
 end
 
 % Protect against a column of NaNs
-i = find(y==0);
+i = find(s==0);
 y(i) = i + nan;
 
 % permute and reshape back
