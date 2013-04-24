@@ -80,7 +80,7 @@ function struct2xml(filename, s, varargin)
 % s.model(2).model.station(3).station.nr.ATTRIBUTES.name.PREFIX=2;
 % struct2xml('test.xml',s,'includeattributes',0);
 
-structuretype=1;
+structuretype='long';
 nindent=2;
 includeattributes=0;
 includeroot=0;
@@ -176,6 +176,7 @@ for k=1:length(fldnames)
                         attributes=[];
                         prefix='';
                         % Find out if this is an end node
+                        try
                         if ~isstruct(s.(fldname)(j).(fldname))
                             % This is an end node
                             name=fldname;
@@ -190,6 +191,9 @@ for k=1:length(fldnames)
                             ilev=ilev-1;
                             writeclosenode(fid,ilev,nindent,fldname,prefix);
                         end
+                        catch
+                            shite=1
+                            end
                     end                    
                 case{'supershort'}
                     attributes=[];
