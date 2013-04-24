@@ -65,6 +65,17 @@ function urlstr = getMeteoUrl(meteosource,cycledate,cyclehour,varargin)
 %     varargout = OPT;
 %     return;
 % end
+
+forecasthour=0;
+for ii=1:length(varargin)
+    if ischar(varargin{ii})
+        switch lower(varargin{ii})
+            case{'forecasthour'}
+                forecasthour=varargin{ii+1};
+        end
+    end
+end
+
 %% code
 switch lower(meteosource)
     case{'hirlam'}
@@ -117,4 +128,6 @@ switch lower(meteosource)
         urlstr=['http://nomads.ncdc.noaa.gov/dods/NCEP_NARR_DAILY/' dr datestr(cycledate,'yyyymmdd') '/narr-a_221_' datestr(cycledate,'yyyymmdd') '_' num2str(cyclehour,'%0.2i') '00_000'];
     case{'nam_hawaiinest'}
         urlstr=['http://nomads.ncep.noaa.gov:9090/dods/nam/nam' datestr(cycledate,'yyyymmdd') '/nam_hawaiinest_' num2str(cyclehour,'%0.2i') 'z'];
+    case{'gfs_anl4'}
+        urlstr=['http://nomads.ncdc.noaa.gov/thredds/dodsC/gfs-004-anl/' datestr(cycledate,'yyyymm') '/' datestr(cycledate,'yyyymmdd') '/gfsanl_4_' datestr(cycledate,'yyyymmdd') '_' datestr(cycledate,'HHMM') '_' num2str(forecasthour,'%0.3i') '.grb2'];
 end

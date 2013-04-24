@@ -74,9 +74,12 @@ function err = getMeteoFromNomads3(meteosource, meteoname, cycledate, cyclehour,
 err=[];
 ntry=1;
 
-urlstr = getMeteoUrl(meteosource,cycledate,cyclehour);
+forecasthour=(t-cycledate)*24;
+urlstr = getMeteoUrl(meteosource,cycledate,cyclehour,'forecasthour',forecasthour);
+
 switch lower(meteosource)
-    case{'gfs1p0','gfs0p5','ncep_gfs_analysis','ncepncar_reanalysis','ncepncar_reanalysis_2','ncep_gfs_analysis_precip','nam_hawaiinest'}
+    case{'gfs1p0','gfs0p5','ncep_gfs_analysis','ncepncar_reanalysis','ncepncar_reanalysis_2','ncep_gfs_analysis_precip','nam_hawaiinest', ...
+            'gfs_anl4'}
         xlim=mod(xlim,360);
 end
 
@@ -123,14 +126,19 @@ try
     timdim=nc_getdiminfo(urlstr,'time');
     nt=timdim.Length;
     
-    dt=(tmax-tmin)/(nt-1);
-    times=tmin:dt:tmax;
-    if ~isempty(t)
-        it1=find(abs(times-t(1))<0.01,1,'first');
-        it2=find(times<=t(end),1,'last');
+    if nt==1
+        it1=1;
+        it2=1;        
     else
-        it1=0;
-        it2=length(times)-1;
+        dt=(tmax-tmin)/(nt-1);
+        times=tmin:dt:tmax;
+        if ~isempty(t)
+            it1=find(abs(times-t(1))<0.01,1,'first');
+            it2=find(times<=t(end),1,'last');
+        else
+            it1=0;
+            it2=length(times)-1;
+        end
     end
     
     %% Longitude
@@ -151,6 +159,11 @@ try
     
     %% Latitude
     lat=nc_varget(urlstr,latstr);
+%     flipvert=0;
+%     if lat(1)>lat(end)
+%         lat=flipud(lat);
+%         flipvert=1;
+%     end
     if ~isempty(ylim)
         ilat1=find(lat<=ylim(1), 1, 'last' );
         ilat2=find(lat>=ylim(2), 1 );
@@ -164,6 +177,11 @@ try
         ilat1=1;
         ilat2=length(lat);
     end
+%     if flipvert
+%         ilat1a=ilat1;
+%         ilat1=length(lat)-ilat2;
+%         ilat2=length(lat)-ilat1a;
+%     end    
     
     npar = length(parstr);
     
@@ -240,6 +258,9 @@ try
             else
                 s.(pr{j})=squeeze(d.(parstr{j})(k,:,:));
             end
+%             if flipvert
+%                 s.(pr{j})=flipud(s.(pr{j}));
+%             end
             if ~isnan(max(max(s.(pr{j}))))
                 fname=[meteoname '.' pr{j} '.' tstr '.mat'];
                 disp([dirstr filesep fname]);
