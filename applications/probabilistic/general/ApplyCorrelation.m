@@ -84,10 +84,27 @@ for col =1:n
     end
 end
 
+% relevant subset of correlation matrix
+CC=C(correlated, correlated);
+nCC=size(CC,1);
+
+
 %% apply correlation matrix on correlated variables only
 
+% deal with corr values outside diagonal equal to 1 
+% because they can cause the correlation matrix to become non positive
+% definite
+eps=1e-15;
+ID1 = CC-eye(nCC) > 1-eps;
+CC(ID1)=1-eps;
+
 % derive  for whic PP'=C, through Cholesky-decomposition
-Pm = chol(C(correlated, correlated));
+Pm = chol(CC);
+
+% deal with corr values outside diagonal equal to 1  
+eps=1e-15;
+ID2 = Pm-eye(nCC) > 1-2*eps;
+Pm(ID1&ID2)=1;
 
 % apply correlation 
 uCorr = u;
