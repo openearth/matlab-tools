@@ -1,7 +1,8 @@
 function PutInCentre(f)
+
 %PUTINCENTRE Put box in centre
 
-set       (f,'Units','pixels');
+set(f,'Units','pixels');
 
 ScreenSize=get(0,'ScreenSize');
 PosOri=get(f,'Position');
