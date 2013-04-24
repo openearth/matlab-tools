@@ -26,7 +26,9 @@ void get_3d_float(char* var_name, float** x);
 void get_3d_double(char* var_name, double** x);
 
 // Should be int32, how to define int here...?
-void get_2d_int(char* var_name, void** x);
+void get_1d_int(char* var_name, int** x);
+
+void get_2d_int(char* var_name, int** x);
 
 void set_1d_float(char* var_name, float** x);
 
