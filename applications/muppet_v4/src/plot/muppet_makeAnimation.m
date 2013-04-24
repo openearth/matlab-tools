@@ -71,7 +71,7 @@ if exist('tmpavi.png','file')
 end
 clear a
 
-useavifile=1;
+useavifile=0;
 
 if ~isempty(animationsettings.avifilename)
     if useavifile

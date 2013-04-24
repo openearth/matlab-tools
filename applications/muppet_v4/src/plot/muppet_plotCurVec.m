@@ -27,7 +27,14 @@ if exist(['curvecpos.' num2str(j,'%0.3i') '.' num2str(k,'%0.3i') '.dat'],'file')
 end
 
 x1=data.x;
-y1=data.y;
+switch plt.projection
+    case{'mercator'}
+        % In case of geographic coordinates, data.y is are already
+        % converted to mercator. Convert them back.
+        y1=invmerc(data.y);
+    otherwise
+        y1=data.y;
+end
 u=data.u;
 v=data.v;
 
@@ -36,12 +43,16 @@ if ~isempty(handles.animationsettings.timestep)
     timestep=handles.animationsettings.timestep;
 end
 
-plt.coordinatesystem.type='projected';
+%plt.coordinatesystem.type='projected';
 
 [polx,poly,xax,yax,len,pos]=curvec(x1,y1,u,v,'dx',dx,'length',opt.curveclength,'nrvertices',nt,'nhead',4, ...
     'xlim',[xmin xmax],'ylim',[ymin ymax],'position',pos,'lifespan',lifespan,'timestep',timestep, ...
     'headthickness',hdthck,'arrowthickness',arthck,'cs',plt.coordinatesystem.type,'relativespeed',opt.curvecrelativespeed);
-% polz=zeros(size(polx))+100;
+
+switch plt.projection
+    case{'mercator'}
+        poly=merc(poly);
+end
 
 edgecolor=colorlist('getrgb','color',opt.edgecolor);
 
@@ -63,8 +74,10 @@ if strcmpi(opt.plotroutine,'plotcoloredcurvedarrows')
     cl(1,:,1)=r1;    
     cl(1,:,2)=g1;    
     cl(1,:,3)=b1;    
+%    cl=squeeze(cl);
     fl=patch(polx,poly,cl);
-    set(fl,'EdgeColor',edgecolor);    
+%    fl=patch(polx,poly,'r');
+%    set(fl,'EdgeColor',edgecolor);    
 else
     facecolor=colorlist('getrgb','color',opt.facecolor);
     fl=patch(polx,poly,'r');

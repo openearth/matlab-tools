@@ -114,7 +114,7 @@ end
 hold on;
 
 if strcmpi(opt.plotroutine,'plotcontourmaplines')
-    [c,h]=contour(x,y,z,col);
+    [c,h]=contour(x,y,z,col(2:end-1));
     if strcmpi(opt.linecolor,'auto')==0
         set(h,'LineColor',colorlist('getrgb','color',opt.linecolor));
     else
@@ -125,7 +125,7 @@ if strcmpi(opt.plotroutine,'plotcontourmaplines')
 end
 
 if strcmpi(opt.plotroutine,'plotcontourmap') && opt.contourlabels
-    [c,h]=contour(x,y,z,col);
+    [c,h]=contour(x,y,z,col(2:end-1));
     set(h,'LineStyle','none');
 end
 
