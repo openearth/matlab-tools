@@ -211,7 +211,7 @@ end
 filename=[pathname filename];
 handles.Toolbox(tb).Input.cycloneFile=filename;
 setHandles(handles);
-ddb_saveCycloneFile(handles,filename);
+ddb_saveCycloneFile(filename,handles.Toolbox(tb).Input,'version',handles.delftDashBoardVersion);
 
 %%
 function downloadTrackData
@@ -662,7 +662,7 @@ else
         setHandles(handles);
     catch
         close(wb);
-        giveWarning('text','An error occured while generating spiderweb wind file');
+        ddb_giveWarning('text','An error occured while generating spiderweb wind file');
     end
 end
 

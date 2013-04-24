@@ -1,4 +1,4 @@
-function ddb_saveCycloneFile(handles, filename)
+function ddb_saveCycloneFile(filename,storm,varargin)
 %DDB_SAVECYCLONEFILE  One line description goes here.
 %
 %   More detailed description goes here.
@@ -62,7 +62,15 @@ function ddb_saveCycloneFile(handles, filename)
 
 %% DDB - Saves cyclone track to cyc file
 
-inp=handles.Toolbox(tb).Input;
+vstr='';
+for ii=1:length(varargin)
+    if ischar(varargin{ii})
+        switch lower(varargin{ii})
+            case{'version'}
+                vstr=[' - DelftDashBoard v' varargin{ii+1}];
+        end
+    end
+end
 
 fid = fopen(filename,'w');
 
@@ -76,34 +84,34 @@ if size(usr,1)>0
     usrstring=[' - File created by ' usr];
 end
 
-txt=['# Tropical Cyclone Toolbox - DelftDashBoard v' handles.delftDashBoardVersion usrstring ' - ' datestring];
+txt=['# Tropical Cyclone Toolbox' vstr ' - ' datestring];
 fprintf(fid,'%s \n',txt);
 
 txt='';
 fprintf(fid,'%s \n',txt);
 
-txt=['Name              "' inp.name '"'];
+txt=['Name              "' storm.name '"'];
 fprintf(fid,'%s \n',txt);
 
-txt=['Method            ' num2str(inp.method)];
+txt=['Method            ' num2str(storm.method)];
 fprintf(fid,'%s \n',txt);
 
-txt=['InitialEyeSpeed   ' num2str(inp.initSpeed)];
+txt=['InitialEyeSpeed   ' num2str(storm.initSpeed)];
 fprintf(fid,'%s \n',txt);
 
-txt=['InitialEyeDir     ' num2str(inp.initDir)];
+txt=['InitialEyeDir     ' num2str(storm.initDir)];
 fprintf(fid,'%s \n',txt);
 
-txt=['SpiderwebRadius   ' num2str(inp.radius)];
+txt=['SpiderwebRadius   ' num2str(storm.radius)];
 fprintf(fid,'%s \n',txt);
 
-txt=['NrRadialBins      ' num2str(inp.nrRadialBins)];
+txt=['NrRadialBins      ' num2str(storm.nrRadialBins)];
 fprintf(fid,'%s \n',txt);
 
-txt=['NrDirectionalBins ' num2str(inp.nrDirectionalBins)];
+txt=['NrDirectionalBins ' num2str(storm.nrDirectionalBins)];
 fprintf(fid,'%s \n',txt);
 
-if strcmpi(inp.quadrantOption,'uniform')
+if strcmpi(storm.quadrantOption,'uniform')
     txt='InputPerQuadrant  0';
 else
     txt='InputPerQuadrant  1';
@@ -112,20 +120,20 @@ fprintf(fid,'%s \n',txt);
 
 fprintf(fid,'%s\n','');
 
-%     inp.trackVMax(isnan(inp.trackVMax))=-999;
-%     inp.trackRMax(isnan(inp.trackRMax))=-999;
-%     inp.trackPDrop(isnan(inp.trackPDrop))=-999;
-%     inp.trackA(isnan(inp.trackA))=-999;
-%     inp.trackB(isnan(inp.trackB))=-999;
-%     inp.trackR100(isnan(inp.trackR100))=-999;
-%     inp.trackR65(isnan(inp.trackR65))=-999;
-%     inp.trackR50(isnan(inp.trackR50))=-999;
-%     inp.trackR35(isnan(inp.trackR35))=-999;
+%     storm.trackVMax(isnan(storm.trackVMax))=-999;
+%     storm.trackRMax(isnan(storm.trackRMax))=-999;
+%     storm.trackPDrop(isnan(storm.trackPDrop))=-999;
+%     storm.trackA(isnan(storm.trackA))=-999;
+%     storm.trackB(isnan(storm.trackB))=-999;
+%     storm.trackR100(isnan(storm.trackR100))=-999;
+%     storm.trackR65(isnan(storm.trackR65))=-999;
+%     storm.trackR50(isnan(storm.trackR50))=-999;
+%     storm.trackR35(isnan(storm.trackR35))=-999;
 
-if strcmpi(inp.quadrantOption,'uniform')
+if strcmpi(storm.quadrantOption,'uniform')
     
     % Comment
-    switch inp.method
+    switch storm.method
         case 1
             txt1='#             Date   Time      Lat      Lon     Vmax     ParB     ParA';
         case 2
@@ -141,34 +149,34 @@ if strcmpi(inp.quadrantOption,'uniform')
     end
     fprintf(fid,'%s\n',txt1);
     
-    for i=1:inp.nrTrackPoints
-        txt=['TrackData ' datestr(inp.trackT(i),'yyyymmdd HHMMSS')];
-        switch inp.method
+    for i=1:storm.nrTrackPoints
+        txt=['TrackData ' datestr(storm.trackT(i),'yyyymmdd HHMMSS')];
+        switch storm.method
             case 1
                 fmt='%s %8.3f %8.3f %8.1f %8.3f %8.3f\n';
-                fprintf(fid,fmt,txt,inp.trackY(i),inp.trackX(i),inp.trackVMax(i),inp.trackB(i),inp.trackA(i));
+                fprintf(fid,fmt,txt,storm.trackY(i),storm.trackX(i),storm.trackVMax(i),storm.trackB(i),storm.trackA(i));
             case 2
                 fmt='%s %8.3f %8.3f %8.1f %8.1f %8.1f %8.1f %8.1f\n';
-                fprintf(fid,fmt,txt,inp.trackY(i),inp.trackX(i),inp.trackVMax(i),inp.trackR35(i,1),inp.trackR50(i,1),inp.trackR65(i,1),inp.trackR100(i,1));
+                fprintf(fid,fmt,txt,storm.trackY(i),storm.trackX(i),storm.trackVMax(i),storm.trackR35(i,1),storm.trackR50(i,1),storm.trackR65(i,1),storm.trackR100(i,1));
             case 3
                 fmt='%s %8.3f %8.3f %8.1f %8.1f %8.1f\n';
-                fprintf(fid,fmt,txt,inp.trackY(i),inp.trackX(i),inp.trackVMax(i,1),inp.trackRMax(i,1),inp.trackPDrop(i,1));
+                fprintf(fid,fmt,txt,storm.trackY(i),storm.trackX(i),storm.trackVMax(i,1),storm.trackRMax(i,1),storm.trackPDrop(i,1));
             case 4
                 fmt='%s %8.3f %8.3f %8.1f %8.1f\n';
-                fprintf(fid,fmt,txt,inp.trackY(i),inp.trackX(i),inp.trackVMax(i,1),inp.trackPDrop(i,1));
+                fprintf(fid,fmt,txt,storm.trackY(i),storm.trackX(i),storm.trackVMax(i,1),storm.trackPDrop(i,1));
             case 5
                 fmt='%s %8.3f %8.3f %8.1f %8.1f\n';
-                fprintf(fid,fmt,txt,inp.trackY(i),inp.trackX(i),inp.trackVMax(i,1),inp.trackRMax(i,1));
+                fprintf(fid,fmt,txt,storm.trackY(i),storm.trackX(i),storm.trackVMax(i,1),storm.trackRMax(i,1));
             case 6
                 fmt='%s %8.3f %8.3f %8.1f\n';
-                fprintf(fid,fmt,txt,inp.trackY(i),inp.trackX(i),inp.trackVMax(i,1));
+                fprintf(fid,fmt,txt,storm.trackY(i),storm.trackX(i),storm.trackVMax(i,1));
         end
     end
     
 else
     
     % Comment
-    switch inp.method
+    switch storm.method
         case 1
             txt1='#             Date   Time      Lat      Lon Vmax (NE) Vmax (NW) Vmax (SW) Vmax (SW) ParB (NE) ParB (NW) ParB (SW) ParB (SE) ParA (NE) ParA (NW) ParA (SW) ParA (SE)';
         case 2
@@ -184,41 +192,41 @@ else
     end
     fprintf(fid,'%s\n',txt1);
     
-    for i=1:inp.nrTrackPoints
-        txt=['TrackData ' datestr(inp.trackT(i),'yyyymmdd HHMMSS')];
-        switch inp.method
+    for i=1:storm.nrTrackPoints
+        txt=['TrackData ' datestr(storm.trackT(i),'yyyymmdd HHMMSS')];
+        switch storm.method
             case 1
                 fmt='%s %8.3f %8.3f %9.1f %9.1f %9.1f %9.1f %9.3f %9.3f %9.3f %9.3f %9.3f %9.3f %9.3f %9.3f\n';
-                fprintf(fid,fmt,txt,inp.trackY(i),inp.trackX(i), ...
-                    inp.trackVMax(i,1),inp.trackVMax(i,2),inp.trackVMax(i,3),inp.trackVMax(i,4), ...
-                    inp.trackB(i,1),inp.trackB(i,2),inp.trackB(i,3),inp.trackB(i,4),inp.trackA(i,1),inp.trackA(i,2),inp.trackA(i,3),inp.trackA(i,4));
+                fprintf(fid,fmt,txt,storm.trackY(i),storm.trackX(i), ...
+                    storm.trackVMax(i,1),storm.trackVMax(i,2),storm.trackVMax(i,3),storm.trackVMax(i,4), ...
+                    storm.trackB(i,1),storm.trackB(i,2),storm.trackB(i,3),storm.trackB(i,4),storm.trackA(i,1),storm.trackA(i,2),storm.trackA(i,3),storm.trackA(i,4));
             case 2
                 fmt='%s %8.3f %8.3f %9.1f %9.1f %9.1f %9.1f %9.1f %9.1f %9.1f %9.1f %9.1f %9.1f %9.1f %9.1f %9.1f %9.1f %9.1f %9.1f %9.1f %9.1f %9.1f %9.1f\n';
-                fprintf(fid,fmt,txt,inp.trackY(i),inp.trackX(i), ...
-                    inp.trackVMax(i,1),inp.trackVMax(i,2),inp.trackVMax(i,3),inp.trackVMax(i,4), ...
-                    inp.trackR35(i,1),inp.trackR35(i,2),inp.trackR35(i,3),inp.trackR35(i,4), ...
-                    inp.trackR50(i,1),inp.trackR50(i,2),inp.trackR50(i,3),inp.trackR50(i,4), ...
-                    inp.trackR65(i,1),inp.trackR65(i,2),inp.trackR65(i,3),inp.trackR65(i,4), ...
-                    inp.trackR100(i,1),inp.trackR100(i,2),inp.trackR100(i,3),inp.trackR100(i,4));
+                fprintf(fid,fmt,txt,storm.trackY(i),storm.trackX(i), ...
+                    storm.trackVMax(i,1),storm.trackVMax(i,2),storm.trackVMax(i,3),storm.trackVMax(i,4), ...
+                    storm.trackR35(i,1),storm.trackR35(i,2),storm.trackR35(i,3),storm.trackR35(i,4), ...
+                    storm.trackR50(i,1),storm.trackR50(i,2),storm.trackR50(i,3),storm.trackR50(i,4), ...
+                    storm.trackR65(i,1),storm.trackR65(i,2),storm.trackR65(i,3),storm.trackR65(i,4), ...
+                    storm.trackR100(i,1),storm.trackR100(i,2),storm.trackR100(i,3),storm.trackR100(i,4));
             case 3
                 fmt='%s %8.3f %8.3f %9.1f %9.1f %9.1f %9.1f %9.1f %9.1f %9.1f %9.1f %9.1f %9.1f %9.1f %9.1f\n';
-                fprintf(fid,fmt,txt,inp.trackY(i),inp.trackX(i), ...
-                    inp.trackVMax(i,1),inp.trackVMax(i,2),inp.trackVMax(i,3),inp.trackVMax(i,4), ...
-                    inp.trackRMax(i,1),inp.trackRMax(i,2),inp.trackRMax(i,3),inp.trackRMax(i,4), ...
-                    inp.trackPDrop(i,1),inp.trackPDrop(i,2),inp.trackPDrop(i,3),inp.trackPDrop(i,4));
+                fprintf(fid,fmt,txt,storm.trackY(i),storm.trackX(i), ...
+                    storm.trackVMax(i,1),storm.trackVMax(i,2),storm.trackVMax(i,3),storm.trackVMax(i,4), ...
+                    storm.trackRMax(i,1),storm.trackRMax(i,2),storm.trackRMax(i,3),storm.trackRMax(i,4), ...
+                    storm.trackPDrop(i,1),storm.trackPDrop(i,2),storm.trackPDrop(i,3),storm.trackPDrop(i,4));
             case 4
                 fmt='%s %8.3f %8.3f %9.1f %9.1f %9.1f %9.1f %9.1f %9.1f %9.1f %9.1f\n';
-                fprintf(fid,fmt,txt,inp.trackY(i),inp.trackX(i), ...
-                    inp.trackVMax(i,1),inp.trackVMax(i,2),inp.trackVMax(i,3),inp.trackVMax(i,4), ...
-                    inp.trackPDrop(i,1),inp.trackPDrop(i,2),inp.trackPDrop(i,3),inp.trackPDrop(i,4));
+                fprintf(fid,fmt,txt,storm.trackY(i),storm.trackX(i), ...
+                    storm.trackVMax(i,1),storm.trackVMax(i,2),storm.trackVMax(i,3),storm.trackVMax(i,4), ...
+                    storm.trackPDrop(i,1),storm.trackPDrop(i,2),storm.trackPDrop(i,3),storm.trackPDrop(i,4));
             case 5
                 fmt='%s %8.3f %8.3f %9.1f %9.1f %9.1f %9.1f %9.1f %9.1f %9.1f %9.1f\n';
-                fprintf(fid,fmt,txt,inp.trackY(i),inp.trackX(i), ...
-                    inp.trackVMax(i,1),inp.trackVMax(i,2),inp.trackVMax(i,3),inp.trackVMax(i,4), ...
-                    inp.trackRMax(i,1),inp.trackRMax(i,2),inp.trackRMax(i,3),inp.trackRMax(i,4));
+                fprintf(fid,fmt,txt,storm.trackY(i),storm.trackX(i), ...
+                    storm.trackVMax(i,1),storm.trackVMax(i,2),storm.trackVMax(i,3),storm.trackVMax(i,4), ...
+                    storm.trackRMax(i,1),storm.trackRMax(i,2),storm.trackRMax(i,3),storm.trackRMax(i,4));
             case 6
                 fmt='%s %8.3f %8.3f %9.1f %9.1f %9.1f %9.1f\n';
-                fprintf(fid,fmt,txt,inp.trackY(i),inp.trackX(i),inp.trackVMax(i,1),inp.trackVMax(i,2),inp.trackVMax(i,3),inp.trackVMax(i,4));
+                fprintf(fid,fmt,txt,storm.trackY(i),storm.trackX(i),storm.trackVMax(i,1),storm.trackVMax(i,2),storm.trackVMax(i,3),storm.trackVMax(i,4));
         end
     end
     

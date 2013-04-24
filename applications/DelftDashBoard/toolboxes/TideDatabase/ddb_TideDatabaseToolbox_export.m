@@ -116,6 +116,8 @@ try
     
     filename=handles.Toolbox(tb).Input.exportFile;
     
+    filename=filename(1:end-5);
+    
     ii=handles.Toolbox(tb).Input.activeModel;
     name=handles.tideModels.model(ii).name;
     
@@ -161,7 +163,52 @@ try
         end
     end
     
-    ddb_saveAstroMapFile(filename,xg,yg,conList,amp,phi);
+    ddb_saveAstroMapFile([filename '.tek'],xg,yg,conList,amp,phi);
+
+    
+    [lon,lat,ampz,phasez,conList] = readTideModel(tidefile,'type','u','xlim',xx,'ylim',yy,'constituent','all');
+    
+    for i=1:length(conList)
+        if ~strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
+            xx=handles.Toolbox(tb).Input.xLim;
+            yy=handles.Toolbox(tb).Input.yLim;
+            xg=xx(1):10000:xx(2);
+            yg=yy(1):10000:yy(2);
+            [xg,yg]=meshgrid(xg,yg);
+            [xglo,ygla]=ddb_coordConvert(xg,yg,handles.screenParameters.coordinateSystem,cs);
+            [lo,la]=meshgrid(lon,lat);
+            amp{i}=interp2(lo,la,squeeze(ampz(:,:,i)),xglo,ygla);
+            phi{i}=interp2(lo,la,squeeze(phasez(:,:,i)),xglo,ygla);            
+        else
+            [xg,yg]=meshgrid(lon,lat);
+            amp{i}=squeeze(ampz(:,:,i));
+            phi{i}=squeeze(phasez(:,:,i));
+        end
+    end
+    
+    ddb_saveAstroMapFile([filename '.u.tek'],xg,yg,conList,amp,phi);
+
+    [lon,lat,ampz,phasez,conList] = readTideModel(tidefile,'type','v','xlim',xx,'ylim',yy,'constituent','all');
+    
+    for i=1:length(conList)
+        if ~strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
+            xx=handles.Toolbox(tb).Input.xLim;
+            yy=handles.Toolbox(tb).Input.yLim;
+            xg=xx(1):10000:xx(2);
+            yg=yy(1):10000:yy(2);
+            [xg,yg]=meshgrid(xg,yg);
+            [xglo,ygla]=ddb_coordConvert(xg,yg,handles.screenParameters.coordinateSystem,cs);
+            [lo,la]=meshgrid(lon,lat);
+            amp{i}=interp2(lo,la,squeeze(ampz(:,:,i)),xglo,ygla);
+            phi{i}=interp2(lo,la,squeeze(phasez(:,:,i)),xglo,ygla);            
+        else
+            [xg,yg]=meshgrid(lon,lat);
+            amp{i}=squeeze(ampz(:,:,i));
+            phi{i}=squeeze(phasez(:,:,i));
+        end
+    end
+    
+    ddb_saveAstroMapFile([filename '.v.tek'],xg,yg,conList,amp,phi);
     
     close(wb);
     

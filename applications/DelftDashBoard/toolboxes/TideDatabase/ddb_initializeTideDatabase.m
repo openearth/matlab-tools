@@ -73,4 +73,5 @@ handles.Toolbox(ii).Input.activeExportType='tek';
 handles.Toolbox(ii).Input.tideDatabaseBoxHandle=[];
 handles.Toolbox(ii).Input.fourierFile='';
 handles.Toolbox(ii).Input.fourierOutFile='';
+handles.Toolbox(ii).Input.exportFile='';
 

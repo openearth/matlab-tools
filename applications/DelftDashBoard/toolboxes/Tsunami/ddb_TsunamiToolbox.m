@@ -443,7 +443,7 @@ if isempty(handles.Model(md).Input(ad).gridX)
     return
 end
 
-depfiles=[];
+depfiles{1}='dummy';
 
 for id=1:handles.Model(md).nrDomains
     [filename, pathname, filterindex] = uiputfile('*.ini', ['Select initial conditions file for domain ' upper(handles.Model(md).Input(id).runid)],'');
