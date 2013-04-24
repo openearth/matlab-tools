@@ -75,9 +75,17 @@ if handles.Model(md).Input.nrboundaries>0
     end
 end
 
-[filename, pathname, filterindex] = uiputfile('*.sp2', 'Boundary SP2 File Name',handles.Model(md).Input.boundaries(1).spectrum);
+[filename, pathname, filterindex] = uigetfile('*.sp2', 'Select files to merge (select just one file)','');
 
 if pathname~=0
+
+    fname=filename;
+    dr=fileparts(fname);
+
+    ii=strfind(fname,'.');
+    prefix=fname(1:ii-1);
+    
+    [filename, pathname, filterindex] = uiputfile('*.sp2', 'Boundary SP2 File Name',handles.Model(md).Input.boundaries(1).spectrum);
     
     handles = ddb_Delft3DWAVE_plotBoundaries(handles,'delete');
 
@@ -90,11 +98,8 @@ if pathname~=0
     handles.Model(md).Input.boundaries(1).overallspecfile=filename;
     handles.Model(md).Input.boundaries(1).name=filename;
     
-    fname=handles.Toolbox(tb).Input.singleSP2file;
-    dr=fileparts(fname);
     fout=handles.Model(md).Input.boundaries(1).overallspecfile;
-    ii=strfind(fname,'.');
-    prefix=fname(1:ii-1);
+
     swan_io_mergesp2(dr,fout,'prefix',prefix);
         
     setHandles(handles);
