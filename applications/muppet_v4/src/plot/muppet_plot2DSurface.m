@@ -1,4 +1,6 @@
-function muppet_plot2DSurface(handles,ifig,isub,id)
+function h=muppet_plot2DSurface(handles,ifig,isub,id)
+
+h=[];
 
 plt=handles.figures(ifig).figure.subplots(isub).subplot;
 nr=plt.datasets(id).dataset.number;

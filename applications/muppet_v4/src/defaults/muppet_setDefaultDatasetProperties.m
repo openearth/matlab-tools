@@ -68,3 +68,6 @@ dataset.georeferencefile='';
 dataset.selectedtextnumber=1;
 dataset.alltextselected=1;
 dataset.annotationtext='';
+
+dataset.coordinatesystem.name='unspecified';
+dataset.coordinatesystem.type='projected';

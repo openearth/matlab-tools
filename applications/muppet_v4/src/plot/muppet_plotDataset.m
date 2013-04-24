@@ -1,18 +1,14 @@
-function handles=muppet_plotDataset(handles,ifig,isub,id,mode)
-% Plots dataset
+function h=muppet_plotDataset(handles,ifig,isub,id)
 
-% Copy subplot properties to plt structure
+% Plot dataset and returns plot handle (for use in legend)
+
+h=[];
+
 plt=handles.figures(ifig).figure.subplots(isub).subplot;
 
+nr=handles.figures(ifig).figure.subplots(isub).subplot.datasets(id).dataset.number;
 
-if ~isfield(plt.datasets(id).dataset,'number')
-    plt.datasets(id).dataset.number=[];
-end
-
-nr=plt.datasets(id).dataset.number;
-if ~isempty(nr)
-    data=handles.datasets(nr).dataset;
-end
+data=handles.datasets(nr).dataset;
 
 % Copy plot options to opt structure
 opt=plt.datasets(id).dataset;
@@ -23,55 +19,91 @@ else
     opt2=1;
 end
 
-%% Set empty handle (used in legend)
-handles.figures(ifig).figure.subplots(isub).subplot.datasets(id).dataset.handle=[];
+%% If this is a map plot, try to convert coordinates of datasets if necessary
+switch handles.figures(ifig).figure.subplots(isub).subplot.type
+    case{'map2d'} 
+        % Convert data to correct coordinate system
+        if ~strcmpi(plt.coordinatesystem.name,'unspecified') && ~strcmpi(data.coordinatesystem.name,'unspecified')
+            if ~strcmpi(plt.coordinatesystem.name,data.coordinatesystem.name) && ...
+                    ~strcmpi(plt.coordinatesystem.type,data.coordinatesystem.type)
+                switch lower(data.type)
+                    case{'2dvector','2dscalar','polyline','grid'}
+                        if ~isfield(handles,'EPSG')
+                            wb = waitbox('Reading coordinate conversion libraries ...');
+                            curdir=[handles.muppetpath 'settings' filesep 'SuperTrans'];
+                            handles.epsg=load([curdir filesep 'data' filesep 'EPSG.mat']);
+                            close(wb);
+                        end
+                        [data.x,data.y]=convertCoordinates(data.x,data.y,handles.epsg,'CS1.name',data.coordinatesystem.name,'CS1.type',data.coordinatesystem.type, ...
+                            'CS2.name',plt.coordinatesystem.name,'CS2.type',data.coordinatesystem.type);
+                end
+            end
+        end
+                
+        % Set projection (in case of geographic coordinate systems)
+        if strcmpi(handles.figures(ifig).figure.subplots(isub).subplot.coordinatesystem.type,'geographic')
+            switch handles.figures(ifig).figure.subplots(isub).subplot.projection
+                case{'mercator'}
+                    data.y=merc(data.y);
+                case{'albers'}
+                    x=data.x;
+                    y=data.y;
+                    [x,y]=albers(x,y,plt.labda0,plt.phi0,plt.phi1,plt.phi2);
+                    data.x=x;
+                    data.y=y;
+            end
+        end            
+end
+
+% Copy data structure back to handles structure
+handles.datasets(nr).dataset=data;
+% Copy subplot structure back to handles structure
+handles.figures(ifig).figure.subplots(isub).subplot=plt;
 
 %% Plot dataset
 switch lower(plt.datasets(id).dataset.plotroutine)
     case {'plottimeseries','plotxy','plotxyseries','plotline','plotspline'}
-        handles=muppet_plotLine(handles,ifig,isub,id);
+        h=muppet_plotLine(handles,ifig,isub,id);
     case {'plothistogram'}
-        handles=muppet_plotHistogram(handles,ifig,isub,id);
+        h=muppet_plotHistogram(handles,ifig,isub,id);
     case {'plotstackedarea'}
-        handles=PlotStackedArea(handles,ifig,isub,id,mode);
+        h=muppet_plotStackedArea(handles,ifig,isub,id);
     case {'plotcontourmap','plotcontourmaplines','plotpatches','plotcontourlines','plotshadesmap'}
         muppet_plot2DSurface(handles,ifig,isub,id);
     case {'plotgrid'}
-        handles=muppet_plotGrid(handles,ifig,isub,id);
+        h=muppet_plotGrid(handles,ifig,isub,id);
     case {'plotannotation'},
-        handles=muppet_plotAnnotation(handles,ifig,isub,id);
-    case {'plotcrosssections'}
-        handles=PlotCrossSections(handles,ifig,isub,id,mode);
+        h=muppet_plotAnnotation(handles,ifig,isub,id);
+%     case {'plotcrosssections'}
+%         handles=muppet_plotCrossSections(handles,ifig,isub,id);
     case {'plotsamples'}
-        handles=muppet_plotSamples(handles,ifig,isub,id);
+        h=muppet_plotSamples(handles,ifig,isub,id);
     case {'plotvectors','plotcoloredvectors'}
         % Colored vectors don't work under 2007b!
-        handles=muppet_plotVectors(handles,ifig,isub,id);
+        h=muppet_plotVectors(handles,ifig,isub,id);
     case {'plotfeather'}
-        handles=muppet_plotFeather(handles,ifig,isub,id);
+        h=muppet_plotFeather(handles,ifig,isub,id);
     case {'plotcurvedarrows','plotcoloredcurvedarrows'}
         % Original mex file work under 2007b!
-        handles=muppet_plotCurVec(handles,ifig,isub,id);
-    case {'plotvectormagnitude'}
-        handles=PlotVectorMagnitude(handles,ifig,isub,id,mode);
+        h=muppet_plotCurVec(handles,ifig,isub,id);
+%     case {'plotvectormagnitude'}
+%         handles=PlotVectorMagnitude(handles,ifig,isub,id,mode);
     case {'plotpolyline','plotpolygon'}
-        handles=muppet_plotPolygon(handles,ifig,isub,id);
+        h=muppet_plotPolygon(handles,ifig,isub,id);
     case {'plotkub'}
-        handles=PlotKub(handles,ifig,isub,id,mode);
+        h=muppet_plotKub(handles,ifig,isub,id);
     case {'plotlint'}
-        handles=muppet_plotLint(handles,ifig,isub,id);
+        h=muppet_plotLint(handles,ifig,isub,id);
     case {'plotimage','plotgeoimage'}
-        handles=muppet_plotImage(handles,ifig,isub,id);
-    case {'plot3dsurface','plot3dsurfacelines'}
-        handles=Plot3DSurface(handles,ifig,isub,id,mode);
-    case {'plotpolygon3d'}
-        handles=PlotPolygon3D(handles,ifig,isub,id,mode);
+        h=muppet_plotImage(handles,ifig,isub,id);
+%     case {'plot3dsurface','plot3dsurfacelines'}
+%         handles=Plot3DSurface(handles,ifig,isub,id,mode);
+%     case {'plotpolygon3d'}
+%         handles=PlotPolygon3D(handles,ifig,isub,id,mode);
     case {'plotrose'}
-        handles=PlotRose(handles,ifig,isub,id,mode);
+        h=muppet_plotRose(handles,ifig,isub,id);
     case {'plottext'}
-        handles=muppet_plotText(handles,ifig,isub,id,1);
-%    case {'drawpolyline'}
-%        DrawPolyline(Data,Plt,handles.DefaultColors,opt);
+        h=muppet_plotText(handles,ifig,isub,id,1);
     case {'plotinteractivepolyline'}
         muppet_plotInteractivePolyline(handles,ifig,isub,id);
     case {'drawspline'}
@@ -83,7 +115,7 @@ switch lower(plt.datasets(id).dataset.plotroutine)
     case{'textbox','rectangle','ellipse','arrow','doublearrow','line'}
         muppet_addAnnotation(handles.figures(ifig).figure,ifig,isub,id);
     case {'plottidalellipse'}
-        handles=muppet_plotTidalEllipse(handles,ifig,isub,id);
+        h=muppet_plotTidalEllipse(handles,ifig,isub,id);
 end
 
 %% Add color bar for dataset (in addition to colorbar for subplot!)

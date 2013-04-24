@@ -190,13 +190,16 @@ if ~isempty(var) || iok
                     pathname='';
                 else
                     if strcmpi(pathname(end),'\')
+                        % Remove file separator
                         pathname=pathname(1:end-1);
                     end
-                end
-                if strcmpi(currentpath,pathname)
-                    pathname='';
-                else
-                    pathname=[pathname filesep];
+                    % Check if file sits in current path
+                    if strcmpi(currentpath,pathname)
+                        pathname='';
+                    else
+                        % Add separator (again)
+                        pathname=[pathname filesep];
+                    end
                 end
                 varstring=['"' pathname filename ext '"'];
             else

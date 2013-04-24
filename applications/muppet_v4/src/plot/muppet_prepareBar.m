@@ -1,11 +1,14 @@
 function handles=muppet_prepareBar(handles,ifig,isub)
 
+% In case of histogram plots and stacked area plots, data sets must first
+% be merged.
+
 plt=handles.figures(ifig).figure.subplots(isub).subplot;
 
 nodat=plt.nrdatasets;
 
-BarY=[];
-StackedAreaY=[];
+bary=[];
+stackedareay=[];
 
 plt.xtcklab=[];
 
@@ -19,7 +22,7 @@ for k=1:nodat
         case {'plothistogram'}
             nbar=nbar+1;
             plt.datasets(k).dataset.barnr=nbar;
-            BarY(:,nbar)=handles.datasets(ii).dataset.y;
+            bary(:,nbar)=handles.datasets(ii).dataset.y;
             if strcmpi(handles.datasets(ii).dataset.type,'bar')
                 plt.xtcklab=handles.datasets(ii).dataset.xticklabel;
             else
@@ -28,7 +31,7 @@ for k=1:nodat
         case {'plotstackedarea'}
             nstackedarea=nstackedarea+1;
             plt.datasets(k).dataset.areanr=nstackedarea;
-            StackedAreaY(:,nstackedarea)=handles.datasets(ii).dataset.y;
+            stackedareay(:,nstackedarea)=handles.datasets(ii).dataset.y;
     end
 end
 
@@ -41,7 +44,10 @@ for k=1:nodat
     end
 end
 
-handles.bary=BarY;
-handles.stackedareay=StackedAreaY;
+plt.bary=bary;
+plt.stackedareay=stackedareay;
+
+handles.figures(ifig).figure.subplots(isub).subplot.bary=bary;
+handles.figures(ifig).figure.subplots(isub).subplot.stackedareay=stackedareay;
 
 handles.figures(ifig).figure.subplots(isub).subplot=plt;

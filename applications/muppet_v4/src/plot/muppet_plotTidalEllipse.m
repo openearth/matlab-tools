@@ -1,4 +1,6 @@
-function handles=muppet_plotTidalEllipse(handles,i,j,k)
+function h=muppet_plotTidalEllipse(handles,i,j,k)
+
+h=[];
 
 plt=handles.figures(i).figure.subplots(j).subplot;
 nr=plt.datasets(k).dataset.number;

@@ -1,4 +1,4 @@
-function handles=muppet_plotSamples(handles,i,j,k)
+function h=muppet_plotSamples(handles,i,j,k)
 
 fig=handles.figures(i).figure;
 plt=handles.figures(i).figure.subplots(j).subplot;
@@ -80,6 +80,3 @@ if opt.addtext
         set(tx,'Clipping','on');
     end
 end
-
-% Set handle
-handles.figures(i).figure.subplots(j).subplot.datasets(k).dataset.handle=h;

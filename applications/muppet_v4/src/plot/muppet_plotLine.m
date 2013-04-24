@@ -1,4 +1,4 @@
-function handles=muppet_plotLine(handles,i,j,k)
+function h1=muppet_plotLine(handles,i,j,k)
 
 plt=handles.figures(i).figure.subplots(j).subplot;
 nr=plt.datasets(k).dataset.number;
@@ -100,6 +100,3 @@ if ~isempty(opt.timebar)
     yt(2)=plt.ymax;
     plot(xt,yt,'r','Linewidth',3);
 end
-
-% Set handle
-handles.figures(i).figure.subplots(j).subplot.datasets(k).dataset.handle=h1;

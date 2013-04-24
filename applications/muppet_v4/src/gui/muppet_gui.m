@@ -453,19 +453,42 @@ setHandles(handles);
 %%
 function selectCoordinateSystem
 handles=getHandles;
-cs0=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.coordinatesystem.name;
-tp0=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.coordinatesystem.type;
-[cs,type,nr,ok]=ddb_selectCoordinateSystem(handles.coordinateData,handles.EPSG,'default',cs0,'defaulttype',tp0,'type','both');
+plt=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot;
+oldname=plt.coordinatesystem.name;
+oldtype=plt.coordinatesystem.type;
+[newname,newtype,nr,ok]=ddb_selectCoordinateSystem(handles.coordinateData,handles.EPSG,'default',oldname,'defaulttype',oldtype,'type','both');
+
 if ok
-    handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.coordinatesystem.name=cs;
-    handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.coordinatesystem.type=type;
-    switch type
-        case{'geographic'}
-            handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.projection='mercator';
-        case{'projected'}
-            handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.projection='equirectangular';
+
+    % Check if coordinate system changed
+    
+    if ~strcmpi(newname,oldname) || ~strcmpi(newtype,oldtype)
+        
+        plt.coordinatesystem.name=newname;
+        plt.coordinatesystem.type=newtype;
+        
+        if ~strcmpi(oldname,'unspecified')
+            % Adjust axes
+            [plt.xmin,plt.ymin]=convertCoordinates(plt.xmin,plt.ymin,'persistent','CS1.name',oldname, ...
+                'CS1.type',oldtype,'CS2.name',newname,'CS2.type',newtype);
+            [plt.xmax,plt.ymax]=convertCoordinates(plt.xmax,plt.ymax,'persistent','CS1.name',oldname, ...
+                'CS1.type',oldtype,'CS2.name',newname,'CS2.type',newtype);
+            plt=muppet_updateLimits(plt,'updateall');
+        end
+        
+        % Change projection type
+        switch newtype
+            case{'geographic'}
+                handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.projection='mercator';
+            case{'projected'}
+                handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.projection='equirectangular';
+        end
+        
+        handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot=plt;
+        
+        setHandles(handles);
+
     end
-    setHandles(handles);
 end
 
 %%

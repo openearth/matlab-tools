@@ -1,4 +1,4 @@
-function handles=muppet_plotInteractivePolyline(handles,i,j,k)
+function h=muppet_plotInteractivePolyline(handles,i,j,k)
 
 plt=handles.figures(i).figure.subplots(j).subplot;
 nr=plt.datasets(k).dataset.number;
@@ -22,5 +22,3 @@ h=gui_polyline('plot','x',data.x,'y',data.y,'tag','interactivepolyline','marker'
     'arrowthickness',opt.arrowthickness,'headthickness',opt.headthickness,'headlength',opt.headlength, ...
     'nrheads',opt.nrheads,'userdata',usd, ...
     'type',opt.polylinetype,'closed',0);
-
-handles.figures(i).figure.subplots(j).subplot.datasets(k).dataset.handle=h;

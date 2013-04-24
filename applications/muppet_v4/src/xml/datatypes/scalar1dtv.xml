@@ -6,6 +6,7 @@
     <type>timeseries</type>
     <plotroutine>
       <name>plotline</name>
+      <longname>Plot Line</longname>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>
@@ -14,6 +15,44 @@
       </plotoption>
       <plotoption>
         <name>markergroup</name>
+      </plotoption>
+      <plotoption>
+        <name>legendtext</name>
+      </plotoption>
+      <plotoption>
+        <name>timebargroup</name>
+      </plotoption>
+    </plotroutine>
+    <plotroutine>
+      <name>plotstackedarea</name>
+      <longname>Plot Stacked Area</longname>
+      <plotoption>
+        <name>plotroutine</name>
+      </plotoption>
+      <plotoption>
+        <name>polygongroup</name>
+      </plotoption>
+      <plotoption>
+        <name>linegroup</name>
+      </plotoption>
+      <plotoption>
+        <name>legendtext</name>
+      </plotoption>
+      <plotoption>
+        <name>timebargroup</name>
+      </plotoption>
+    </plotroutine>
+    <plotroutine>
+      <name>plothistogram</name>
+      <longname>Plot Histogram</longname>
+      <plotoption>
+        <name>plotroutine</name>
+      </plotoption>
+      <plotoption>
+        <name>polygongroup</name>
+      </plotoption>
+      <plotoption>
+        <name>linegroup</name>
       </plotoption>
       <plotoption>
         <name>legendtext</name>

@@ -1,4 +1,4 @@
-function handles=muppet_plotPolygon(handles,i,j,k)
+function h2=muppet_plotPolygon(handles,i,j,k)
 
 plt=handles.figures(i).figure.subplots(j).subplot;
 nr=plt.datasets(k).dataset.number;
@@ -72,9 +72,9 @@ end
             set(htmp,'LineStyle','none');
         end
         set(htmp,'Visible','off');
-        handles.figures(i).figure.subplots(j).subplot.datasets(k).dataset.handle=htmp;
+        h2=htmp;
     else
-        handles.figures(i).figure.subplots(j).subplot.datasets(k).dataset.handle=h1;
+        h2=h1;
     end
     
 % end

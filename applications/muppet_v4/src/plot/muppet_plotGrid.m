@@ -1,4 +1,4 @@
-function handles=muppet_plotGrid(handles,i,j,k)
+function h=muppet_plotGrid(handles,i,j,k)
 
 plt=handles.figures(i).figure.subplots(j).subplot;
 nr=plt.datasets(k).dataset.number;
@@ -23,8 +23,3 @@ else
     h=thindam(data.x,data.y,XDam,YDam);
     set(h,'LineStyle',opt.linestyle,'LineWidth',opt.linewidth,'Color',colorlist('getrgb','color',opt.linecolor));
 end
-
-hold on;
-
-plt.datasets(k).dataset.handle=h;
-handles.figures(i).figure.subplots(j).subplot=plt;

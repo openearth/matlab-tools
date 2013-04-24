@@ -1,4 +1,4 @@
-function handles=muppet_plotAnnotation(handles,i,j,k)
+function sc=muppet_plotAnnotation(handles,i,j,k)
 
 fig=handles.figures(i).figure;
 plt=handles.figures(i).figure.subplots(j).subplot;
@@ -75,6 +75,3 @@ for ii=i1:i2
         set(tx,'Clipping','on');
     end
 end
-
-% Set handle
-handles.figures(i).figure.subplots(j).subplot.datasets(k).dataset.handle=sc;

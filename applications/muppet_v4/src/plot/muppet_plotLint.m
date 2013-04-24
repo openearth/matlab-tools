@@ -1,5 +1,7 @@
-function handles=muppet_plotLint(handles,i,j,k)
- 
+function h=muppet_plotLint(handles,i,j,k)
+
+h=[];
+
 plt=handles.figures(i).figure.subplots(j).subplot;
 nr=plt.datasets(k).dataset.number;
 data=handles.datasets(nr).dataset;

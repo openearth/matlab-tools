@@ -1,4 +1,4 @@
-function handles=muppet_plotFeather(handles,i,j,k)
+function h1=muppet_plotFeather(handles,i,j,k)
 
 plt=handles.figures(i).figure.subplots(j).subplot;
 nr=plt.datasets(k).dataset.number;
@@ -50,6 +50,3 @@ if opt.timebar
         plot(xt,yt,'r','Linewidth',3);
     end
 end
-
-plt.datasets(k).dataset.handle=h1;
-handles.figures(i).figure.subplots(j).subplot=plt;

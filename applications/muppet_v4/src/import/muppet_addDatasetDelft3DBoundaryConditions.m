@@ -1,4 +1,4 @@
-function varargout=muppet_addDatasetDelft3dBoundaryConditions(varargin)
+function varargout=muppet_addDatasetDelft3DBoundaryConditions(varargin)
 
 for ii=1:length(varargin)
     if ischar(varargin{ii})

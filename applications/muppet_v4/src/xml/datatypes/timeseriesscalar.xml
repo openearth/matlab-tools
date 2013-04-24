@@ -22,5 +22,24 @@
         <name>timebargroup</name>
       </plotoption>
     </plotroutine>
+    <plotroutine>
+      <name>plotstackedarea</name>
+      <plotoption>
+        <name>plotroutine</name>
+      </plotoption>
+      <plotoption>
+        <name>fillcolor</name>
+        <default>lightgreen</default>
+      </plotoption>
+      <plotoption>
+        <name>linegroup</name>
+      </plotoption>
+      <plotoption>
+        <name>legendtext</name>
+      </plotoption>
+      <plotoption>
+        <name>timebargroup</name>
+      </plotoption>
+    </plotroutine>
   </plot>
 </root>

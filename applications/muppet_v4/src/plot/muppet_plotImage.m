@@ -1,4 +1,6 @@
-function handles=muppet_plotImage(handles,i,j,k)
+function h=muppet_plotImage(handles,i,j,k)
+
+h=[];
 
 % Uses surf i.s.o. image function
 

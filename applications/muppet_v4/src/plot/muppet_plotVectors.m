@@ -1,4 +1,4 @@
-function handles=muppet_plotVectors(handles,i,j,k)
+function qv=muppet_plotVectors(handles,i,j,k)
 
 plt=handles.figures(i).figure.subplots(j).subplot;
 nr=plt.datasets(k).dataset.number;
@@ -64,4 +64,3 @@ else
         colormap(clmap);
     end
 end
-

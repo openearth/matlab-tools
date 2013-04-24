@@ -1,4 +1,6 @@
-function handles=muppet_plotText(handles,i,j,k,istring)
+function h=muppet_plotText(handles,i,j,k,istring)
+
+h=[];
 
 fig=handles.figures(i).figure;
 plt=fig.subplots(j).subplot;

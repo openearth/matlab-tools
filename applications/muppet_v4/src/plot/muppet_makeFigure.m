@@ -39,7 +39,7 @@ for j=1:fig.nrsubplots
     switch fig.subplots(j).subplot.type
         case{'annotation'}
             for k=1:fig.subplots(j).subplot.nrdatasets
-                muppet_plotDataset(handles,ifig,j,k,'new');
+                muppet_plotDataset(handles,ifig,j,k);
             end
         otherwise
             muppet_makeSubplot(handles,ifig,j);
