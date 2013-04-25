@@ -2,7 +2,7 @@ function nesthd(varargin)
 
 % nesthd : nesting of hydrodynamic models (Delft3D-Flow and WAQUA/TRIWAQ)
 
-if isempty (getenv('nesthd_pah'))
+if isempty (getenv('nesthd_path'))
    h = warndlg({'Please set the environment variable "nesthd_path"';'See the Release Notes in the documents directory'},'NestHD Warning');
    PutInCentre (h);
    uiwait(h);
