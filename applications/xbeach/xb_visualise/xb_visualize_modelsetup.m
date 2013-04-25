@@ -63,7 +63,8 @@ function figHandle = xb_visualize_modelsetup(varargin)
 OPT = struct( ...
     'figureHandle', [], ...
     'xbeachStructure', [], ...
-    'path', pwd ...
+    'path', pwd, ...
+    'showShadowZone', true ...
 );
 
 OPT = setproperty(OPT, varargin);
@@ -130,27 +131,45 @@ if ~isempty(OPT.figureHandle)
     figHandle = OPT.figureHandle;
     figure(figHandle)
     %maximize(figHandle)
-    ax1 = subplot(1,4,[1 2 3]);
-    pcolor(ax1,xw,yw,zgrid);
 elseif isempty(OPT.figureHandle)
     figHandle = figure;
     %maximize(figHandle)
-    ax1 = subplot(1,4,[1 2 3]);
-    pcolor(ax1,xw,yw,zgrid);
 end
+ax1 = subplot(1,4,[1 2 3]);
+p1 = pcolor(ax1,xw,yw,zgrid);
 colormap gray;
 shading flat;
 axis equal;
+
+% add shadow zone
+if OPT.showShadowZone
+    for i = 1:length(wave_angles)
+        for j = [1 size(yw,1)]
+            xw_start  = xw(j,1);
+            xw_end    = xw(j,end);
+            yw_start  = yw(j,1);
+            yw_end    = yw(j,1) + diff(xw(1,[1 end])) / tand(wave_angles(i));
+
+            p2 = patch([xw_start xw_end xw_end],[yw_start yw_start yw_end],'w','FaceAlpha',3/length(wave_angles),'EdgeColor','none'); % don't know why the 3 should be there...
+        end
+    end
+else
+    p2 = [];
+end
 
 % visualize origin and offshore boundary
 line1 = line(xw([1 end],1),yw([1 end],1));
 set(line1,'color','r','linewidth',3);
 hold on
-scatter(xw(1,1),yw(1,1),75,'go','filled');
+p3 = scatter(xw(1,1),yw(1,1),75,'go','filled');
 hold off
 title('Bathymetric grid')
-legend('location','NorthEast','Bed level','Offshore boundary','Origin')
+legend([p1 line1 p3 p2],'location','NorthEast','Bed level','Offshore boundary','Origin','Shadow zone');
 colorbar;
+
+% reset axis limits
+xlim(minmax(xw(:)'));
+ylim(minmax(yw(:)'));
 
 % plot thetamin & thetamax
 ax2 = subplot(1,4,4);
