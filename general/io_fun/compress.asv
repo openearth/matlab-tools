@@ -98,11 +98,11 @@ function OPT = compress(fileNameOut,fileNameIn,varargin)
 % Created: 24 Dec 2009
 % Created with Matlab version: 7.9.0.529 (R2009b)
 
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
+% $Id: compress.m 8330 2013-03-14 12:29:19Z tda.x $
+% $Date: 2013-03-14 13:29:19 +0100 (Thu, 14 Mar 2013) $
+% $Author: tda.x $
+% $Revision: 8330 $
+% $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/general/io_fun/compress.m $
 % $Keywords: $
 
 %% settings
@@ -133,15 +133,21 @@ tic
 
 if isdeployed
     basepath = '';
-else
-    basepath = fullfile(fileparts(mfilename('fullpath')),'private','7z');
-end
 
-if OPT.gui
-    path7zip      = fullfile(basepath,'7z922','7zG.exe');
 else
-    path7zip      = fullfile(basepath,'7za.exe');
+    basepath = fullfile(fileparts(mfilename('fullpath')),'private','7z','7z922');
+    if OPT.gui
+        path7zip      = fullfile(basepath,'7zG.exe');
+    else
+        path7zip      = fullfile(basepath,'7z.exe');
+    end
 end
+    if OPT.gui
+        path7zip      = fullfile(basepath,'7zG.exe');
+    else
+        path7zip      = fullfile(basepath,'7z.exe');
+    end
+    
 
 % 7za a -t7z files.7z *.txt
 

@@ -11,7 +11,7 @@ classdef xls < handle
 %
 %   Example
 %     % open instance of xls
-%     excelsheet = xls.('mysheet.xls')
+%     excelsheet = xls('mysheet.xls')
 %
 %     % read data from sheet1, range 'A1:B4'
 %     data = excelsheet.read('sheet1','A1:B4')
@@ -83,7 +83,6 @@ classdef xls < handle
     end
     methods
         % methods, including the constructor are defined in this block
-        
         function obj = xls(filename)
             if nargin == 1
                 obj.setFile(filename);
