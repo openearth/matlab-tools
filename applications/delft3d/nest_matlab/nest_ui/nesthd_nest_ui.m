@@ -203,7 +203,7 @@ function Manual_Callback(hObject, eventdata, handles)
 systemroot = getenv('systemroot');
 if exist([systemroot filesep 'hh.exe'],'file')
     nesthd_path = getenv ('nesthd_path');
-    command = [systemroot filesep 'hh.exe ' nesthd_path filesep 'documents\manual\nestHD.chm'];
+    command = [systemroot filesep 'hh.exe ' nesthd_path filesep 'nestHD.chm'];
     system (command);
 end
 
@@ -217,7 +217,7 @@ function release_notes_Callback(hObject, eventdata, handles)
 systemroot = getenv('systemroot');
 if exist([systemroot filesep 'hh.exe'],'file')
     nesthd_path = getenv ('nesthd_path');
-    command = [systemroot filesep 'hh.exe ' nesthd_path filesep 'documents\release_notes\Release Notes.chm'];
+    command = [systemroot filesep 'hh.exe ' nesthd_path filesep 'Release Notes.chm'];
     system (command);
 end
 

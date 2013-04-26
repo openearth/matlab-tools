@@ -17,9 +17,9 @@
          %
          % Specify files here
          %
-
+         oetsetings;
          addpath(genpath('..\general'));
-         addpath(genpath('..\Delft3D-toolbox'));
+         addpath(genpath('..\reawri'));
 
          files{1}      = '..\test\milford\csm_activeonly.grd';
 
