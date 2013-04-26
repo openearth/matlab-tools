@@ -1,12 +1,14 @@
 function U0 = prandle_1982(D,E,z,w,Udepthavg,k)
-%PRANDLE_1982 tidal velocity profile or Prandle 1982
+%PRANDLE_1982 tidal velocity profile of Prandle 1982
 %
-% U0 = prandle_1982(D,E,z,w,Udepthavg,k) results the
+% U0 = prandle_1982(D,E,z,w,Udepthavg,k) returns the
 % normalized tidal velocity profile U0 = U(z)/avg(U) where
-% D is the depth, E is the conbstant eddy viscosity, z is
-% the height where U0 should be sampled, k is a
-% friction parameter, w (omega) is the radial frequency and
-% Udepthavg is the depth averaged current.
+% D [m]             the depth
+% E [m2/s]          the constant eddy viscosity,
+% z [m]             the height where U0 should be sampled
+% k [-]             a friction constant
+% w [rad/s] (omega) the radial frequency and
+% Udepthavg [m/s]   the depth averaged current.
 %
 % Do not forget to multiply the result U0 with Udepthavg to obtain real velocities.
 %

@@ -18,7 +18,7 @@ function varargout=d2dms(xgeo,varargin)
 %                          - minutes 'mn'
 %                          - seconds 'sc'
 %
-%   See also DEG2RAD, RAD2DEG, DEGREES2DMS
+%   See also DEG2RAD, RAD2DEG, DEGREES2DMS, str2deg
 
 %% Copyright notice
 %   --------------------------------------------------------------------

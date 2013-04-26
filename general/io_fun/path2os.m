@@ -80,6 +80,8 @@ function string = path2os(string,input)
    
    if iscell(string)
        string = cellfun(@(x) path2os(x,slash),string,'UniformOutput',0);
+   elseif isempty(string)
+       return
    else
 
 %% Lock special combis
