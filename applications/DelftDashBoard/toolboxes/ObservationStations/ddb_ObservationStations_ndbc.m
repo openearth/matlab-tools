@@ -25,7 +25,7 @@ end
 switch lower(OPT)
     case{'readdatabase'}
         % Set capabilities in global structure
-        getndbcdata('getcapabilities','inputfile',inputfile,'global');
+        getndbcdata('getcapabilities','inputfile',inputfile);
         varargout{1}=readDatabase;
     case{'getobservations'}
         varargout{1}=getndbcdata('getobservations','id',id,'parameter',parameter,'t0',t0,'t1',t1);
