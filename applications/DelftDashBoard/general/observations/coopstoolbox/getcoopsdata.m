@@ -146,6 +146,7 @@ for ii=1:length(s.stationsV2.stationV2)
     end
 end
 
+%%
 function stations=getHistoricCoopsStations
 
 s = getHistoricStations(HistoricStationsService);
@@ -205,7 +206,7 @@ try
             unit{1}=unitstring;
 
         case{'wind','winds'}
-            [stationId,stationName,latitude,longitude,state,dataSource,COOPSDisclaimer,beginDate,endDate,timeZone,unitstring,data]=getWindAndMetadata(WindService,id,t0,t1,unit0,timezone);
+            [stationId,stationName,latitude,longitude,state,dataSource,COOPSDisclaimer,beginDate,endDate,timeZone,unitstring,data]=getWindAndMetadata(WindService,id,t0,t1,unit0,timezone0);
             
             parametername{1}='wind_speed';
             parametername{2}='wind_direction';
@@ -219,20 +220,20 @@ try
             unit{3}=unitstring{1}{3};
 
         case{'barometric pressure','barometric_pressure','air pressure','air_pressure'}
-            [stationId,stationName,latitude,longitude,state,dataSource,COOPSDisclaimer,beginDate,endDate,timeZone,unitstring,data] = getPressureAndMetadata(BarometricPressureService,id,t0,t1,timezone);
+            [stationId,stationName,latitude,longitude,state,dataSource,COOPSDisclaimer,beginDate,endDate,timeZone,unitstring,data] = getPressureAndMetadata(BarometricPressureService,id,t0,t1,timezone0);
 %            data=getBarometricPressure(BarometricPressureService,id,t0,t1,timezone);
             parametername{1}='barometric_pressure';
             parametercode{1}='BP';
             unit{1}=unitstring;
 
         case{'airtemperature','air temp','air temperature'}
-            [stationId,stationName,latitude,longitude,state,dataSource,COOPSDisclaimer,beginDate,endDate,timeZone,unitstring,data]=getAirTemperatureAndMetadata(AirTemperatureService,id,t0,t1,unit0,timezone);
+            [stationId,stationName,latitude,longitude,state,dataSource,COOPSDisclaimer,beginDate,endDate,timeZone,unitstring,data]=getAirTemperatureAndMetadata(AirTemperatureService,id,t0,t1,unit0,timezone0);
             parametername{1}='air_temperature';
             parametercode{1}='AT';
             unit{1}=unitstring;
 
         case{'conductivity'}
-            [stationId,stationName,latitude,longitude,state,dataSource,COOPSDisclaimer,beginDate,endDate,timeZone,unitstring,data]=getConductivityAndMetadata(ConductivityService,id,t0,t1,timezone);
+            [stationId,stationName,latitude,longitude,state,dataSource,COOPSDisclaimer,beginDate,endDate,timeZone,unitstring,data]=getConductivityAndMetadata(ConductivityService,id,t0,t1,timezone0);
             parametername{1}='conductivity';
             parametercode{1}='AT';
             unit{1}=unitstring;
