@@ -1,16 +1,5 @@
 function nesthd(varargin)
-
-% nesthd : nesting of hydrodynamic models (Delft3D-Flow and WAQUA/TRIWAQ)
-
-%
-% Check if nesthd_path is set
-%
-
-if isempty (getenv('nesthd_path'))
-   h = warndlg({'Please set the environment variable "nesthd_path"';'See the Release Notes in the documents directory'},'NestHD Warning');
-   PutInCentre (h);
-   uiwait(h);
-end
+% NESTHD  nesting of hydrodynamic models (Delft3D-Flow and WAQUA/TRIWAQ)
 
 %
 % set additional paths
@@ -22,6 +11,16 @@ addpath(genpath('../nesthd1'));
 addpath(genpath('../nesthd2'));
 addpath(genpath('../general'));
 addpath(genpath('../reawri'));
+
+%
+% Check if nesthd_path is set
+%
+
+if isempty (getenv('nesthd_path'))
+   h = warndlg({'Please set the environment variable "nesthd_path"';'See the Release Notes in the documents directory'},'NestHD Warning');
+   PutInCentre (h);
+   uiwait(h);
+end
 
 %
 % Initialize
