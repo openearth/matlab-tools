@@ -166,21 +166,20 @@ function open_session_Callback(hObject, eventdata, handles)
 
 handles = nesthd_read_ini(handles);
 
-set(handles.bg,'Visible','off');
+if isfield(handles,'active')
+   
+    set(handles.bg,'Visible','off');
 
-if strcmpi(handles.active,'Nesthd1')
-   handles = nesthd_check_nesthd1(handles);
-   set_nesthd2(handles,'off');
-   set_nesthd1(handles,'on' );
-else
-   handles = nesthd_check_nesthd2(handles);
-   set_nesthd1(handles,'off');
-   set_nesthd2(handles,'on' );
-   update_additional(handles);
-end
-
-if handles.rundirect
-    run_now(handles);
+   if strcmpi(handles.active,'Nesthd1')
+      handles = nesthd_check_nesthd1(handles);
+      set_nesthd2(handles,'off');
+      set_nesthd1(handles,'on' );
+   else
+      handles = nesthd_check_nesthd2(handles);
+      set_nesthd1(handles,'off');
+      set_nesthd2(handles,'on' );
+      update_additional(handles);
+   end
 end
 
 guidata(hObject,handles);

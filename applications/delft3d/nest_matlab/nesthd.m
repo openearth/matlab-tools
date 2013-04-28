@@ -5,12 +5,14 @@ function nesthd(varargin)
 % set additional paths
 %
 
-oetsettings ('quiet');
-addpath(genpath('../nest_ui'));
-addpath(genpath('../nesthd1'));
-addpath(genpath('../nesthd2'));
-addpath(genpath('../general'));
-addpath(genpath('../reawri'));
+if ~isdeployed
+   oetsettings ('quiet','searchdb',false);
+   addpath(genpath('../nest_ui'));
+   addpath(genpath('../nesthd1'));
+   addpath(genpath('../nesthd2'));
+   addpath(genpath('../general'));
+   addpath(genpath('../reawri'));
+end
 
 %
 % Check if nesthd_path is set

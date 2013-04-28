@@ -69,9 +69,6 @@ if isfield(handles,'add_inf');
     end
 end
 
-Chapter = 'Direct';
-Info=nesthd_inifile('set',Info,Chapter,'Run',false);
-
 %
 % Get the name of the ini file
 %
