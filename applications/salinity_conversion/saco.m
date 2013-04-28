@@ -16,7 +16,7 @@ end
 % Check if nesthd_path is set
 %
 
-if isempty (getenv('saco_pat'))
+if isempty (getenv('saco_path'))
    h = warndlg({'Please set the environment variable "saco"';'See the installation chapter in the manual'},'SACO Warning');
    PutInCentre (h);
    uiwait(h);
