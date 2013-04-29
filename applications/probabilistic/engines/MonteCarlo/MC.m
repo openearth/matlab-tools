@@ -101,7 +101,7 @@ OPT = struct(...
     'NrSamples',    1e2,        ...     % number of samples
     'IS',           struct(),   ...     % sampling structure
     'P2xFunction',  @P2x,       ...     % function to transform P to x
-    'seed',         rand('seed'),...    % seed for random generator
+    'seed',         NaN,        ...     % seed for random generator
     'confidence',   .95,        ...     % confidence interval for computation of accuracy
     'accuracy',     [],         ...     % required accuracy (negative value indicates relative to Pf)
     'result',       struct(),   ...     % input existing result structure to re-calculate existing samples
@@ -174,10 +174,10 @@ while (~useAccuracy && n==1) || (useAccuracy && ( ...
     else
         if ~isnan(OPT.seed)
             rand('seed', OPT.seed)
-        else
+%         else
             % store current seed in OPT structure, which will be included
             % in the result.settings
-            OPT.seed = rand('seed');
+%             OPT.seed = rand('seed');
         end
 
         % draw random numbers
