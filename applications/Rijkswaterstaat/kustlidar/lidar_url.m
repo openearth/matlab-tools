@@ -1,5 +1,5 @@
-function url = vaklodingen_url
-% VAKLODINGEN_URL returns the links to the vaklodingen netCDF's. 
+function url = lidar_url
+% LIDAR_URL returns the links to the kusthoogte netCDF's. 
 %
 % Returns the links to the vaklodingen netCDF files. If the vaklodingen
 % netCDF are available locally on the Deltares network, this is returned, 
@@ -9,15 +9,11 @@ function url = vaklodingen_url
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2009 <Deltares>
-%       Thijs Damsma
+%   Copyright (C) 2013 <Deltares>
+%       Tommer Vermaas
 %
-%       <Thijs.Damsma@Deltares.nl>	
+%       <Tommer.Vermaas@Deltares.nl>	
 %
-%       Deltares
-%       P.O. Box 177
-%       2600 MH Delft
-%       The Netherlands
 %
 %   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
@@ -50,15 +46,8 @@ function url = vaklodingen_url
 % $HeadURL$
 % $Keywords: $
 
-if exist(fullfile('P:','mcdata','opendap','rijkswaterstaat','vaklodingen'),'dir')
-	names = dir(fullfile('P:','mcdata','opendap','rijkswaterstaat','vaklodingen','vaklodingen*.nc'));
-    for ii = 1:length(names)
-        url{ii} = fullfile('P:','mcdata','opendap','rijkswaterstaat','vaklodingen',names(ii).name);
-    end
-else
-    OPT.ignoreCatalogNc = 0;
-    OPT.disp = '';
-    url = opendap_catalog(...
-        'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml',OPT);
-end
+OPT.ignoreCatalogNc = 0;
+OPT.disp = '';
+url = opendap_catalog(...
+    'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/kusthoogte/catalog.xml',OPT);
 

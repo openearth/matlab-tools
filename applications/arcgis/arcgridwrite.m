@@ -136,9 +136,9 @@ if ischar(fileName)~=1
     error('First input must be a string')
 elseif zz>1
     error('Z must be 2-dimensional');
-elseif mx~=mz
+elseif mx~=nz
     error('X, Y and Z should be same size');
-elseif my~=nz
+elseif my~=mz
     error('X, Y and Z should be same size');
 elseif abs(dx-dy)>maxDiff;
     error('X- and Y- grid spacing should be equal');
@@ -170,7 +170,7 @@ dc=OPT.precision; %default number of decimals to output
 %replace NaNs with NODATA value
 Z(isnan(Z)) = OPT.nodata;
 if OPT.flipud
-    disp('Assumed input Y going up, therefore output Z = flipud(Z)')
+%     disp('Assumed input Y going up, therefore output Z = flipud(Z)')
     Z=flipud(Z);
 else
     disp('Assumed input Y going down (ESRI default), therefore output Z same as input')
@@ -197,46 +197,27 @@ fprintf(fid,[dc,'\n'],yll);
 fprintf(fid,'%s\t','cellsize');
 fprintf(fid,[dc,'\n'],dx);
 fprintf(fid,'%s\t','NODATA_value');
-fprintf(fid,[dc,'\n'],OPT.nodata);
+fprintf(fid,'%d\n',OPT.nodata);
 
-%configure filename and path
-[pname,fname,ext] = fileparts(fileName);
-if isempty(pname)==1;
-    pname=pwd;
-end
-
-if strcmpi(pname(end),filesep)~=1
-    pname=[pname,filesep];
-end
-
-%wait bar
-h = waitbar(0,['Writing file: ',fname,ext...
-    ', Please wait...']);
+fclose(fid);
 
 %write data
-for i=1:mz
-    for j=1:nz
-        
-        if j==nz
-            fprintf(fid,[dc,'\n'],Z(i,j));
-        else
-            fprintf(fid,[dc,'\t'],Z(i,j));
-        end
-    end
-    %update waitbar
-    waitbar(i/mz,h,['Writing file: ',[fname,ext],...
-        sprintf('  %d%% complete...',round(i/mz*100))])
-end
-
-
-close(h)
-fclose(fid);
+dlmwrite(fileName, Z, '-append','delimiter','\t')
 
 %if requested, try to convert to raster using ARCINFO command ASCIIGRID
 if convert==1
     if ispc~=1;
         disp('"Convert" option only works on a pc')
         return
+    end
+    %configure filename and path
+    [pname,fname,ext] = fileparts(fileName);
+    if isempty(pname)==1;
+        pname=pwd;
+    end
+
+    if strcmpi(pname(end),filesep)~=1
+        pname=[pname,filesep];
     end
     dos(['ARC ASCIIGRID ',pname,fname,ext, ' ',...
         pname,fname, ' FLOAT']);
