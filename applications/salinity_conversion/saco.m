@@ -7,7 +7,7 @@ function saco
 %
 
 if ~isdeployed
-   oetsettings ('quiet','searchdb',false);
+   addpath(genpath('..\..\'));
    addpath(genpath('saco_ui'));
    addpath(genpath('general'));
 end
