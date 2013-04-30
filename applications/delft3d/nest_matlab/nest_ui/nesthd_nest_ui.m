@@ -95,7 +95,8 @@ handles.add_files         = [nesthd_dir filesep 'bin'];
 
 axes(hObject);
 fig = imread ([handles.add_files filesep 'nest_1.jpg']);
-handles.bg = imshow(fig);
+%handles.bg = imshow(fig);
+handles.bg = image(fig);
 set(hObject,'DataAspectRatio',[1 1.25 1]);
 
 % Update handles structure
@@ -167,7 +168,7 @@ function open_session_Callback(hObject, eventdata, handles)
 handles = nesthd_read_ini(handles);
 
 if isfield(handles,'active')
-   
+
     set(handles.bg,'Visible','off');
 
    if strcmpi(handles.active,'Nesthd1')
