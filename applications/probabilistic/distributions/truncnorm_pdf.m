@@ -52,8 +52,8 @@ function P = truncnorm_pdf(X, mu, sigma, LowLim, UppLim)
 if LowLim>UppLim
    error('lower limit should be <= upper limit'); 
 end
-if ~isscalar(LowLim) || ~isscalar(UppLim)
-   error('limits of truncated normal should be scalars');
+if ~((isscalar(LowLim) || isequal(size(LowLim),size(mu))) && (isscalar(UppLim) || isequal(size(UppLim),size(mu))))
+   error('limits of truncated normal should be scalars or size of mu and sigma');
 end
 
 %% deal probabilities of non-exceedance for upper and lower limits
@@ -64,7 +64,7 @@ PU = norm_cdf(UppLim, mu, sigma);
 P1 = norm_pdf(X, mu, sigma);  % Normally distributed value(s) with mean "mu" and standard deviation "sigma"  
 
 % transform P, taking upper and lower limit into account
-P = P1/(PU-PL);
+P = P1./(PU-PL);
 P(X<LowLim)=0;
 P(X>UppLim)=0;
 
