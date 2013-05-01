@@ -138,6 +138,10 @@ for ii = 1:length(varstruct)
     varstruct(ii) = nccreateVarstruct(varstruct(ii));
 end
 
+% assert al names are unique
+[cnt,name] = count({varstruct.Name});
+assert(all(cnt==1),'Non unique variable names found:\n%s',sprintf('   %s\n',name{cnt>1}))
+
 for ii = 1:length(varstruct)
     % parse dimensions
     for jj = 1:length(varstruct(ii).Dimensions)

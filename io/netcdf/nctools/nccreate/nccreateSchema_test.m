@@ -61,9 +61,9 @@ for ii = 1:length(Format)
     dimstruct        = nccreateDimstruct('Name','x','Length',10);
     dimstruct(end+1) = nccreateDimstruct('Name','y','Length',10);
     dimstruct(end+1) = nccreateDimstruct('Name','t','Unlimited',true);
-    varstruct        = nccreateVarstruct('Name','x','Dimensions',{'x'},'scale_factor',10,'ChunkSize',10,'Attributes',{'asdasd',1,'asd',2});
-    varstruct(end+1) = nccreateVarstruct('Name','y','Dimensions',{'y'},'Attributes',{'add_offset',1,'asd',2},'ChunkSize',10);
-    varstruct(end+1) = nccreateVarstruct('Name','t','Dimensions',{'t'},'scale_factor',[]);
+    varstruct        = nccreateVarstruct('Name','x','Dimensions',{'x'},'scale_factor',1,'ChunkSize',10,'Attributes',{'asdasd',1,'asd',2});
+    varstruct(end+1) = nccreateVarstruct('Name','y','Dimensions',{'y'},'Attributes',{'asd',2},'ChunkSize',10);
+    varstruct(end+1) = nccreateVarstruct('Name','t','Dimensions',{'t'},'Datatype','single','ChunkSize',1);
     varstruct(end+1) = nccreateVarstruct('Name','z','Dimensions',{'x','y','t'},'DeflateLevel',1,'ChunkSize',[10 10 1]);
     
     schema = nccreateSchema(dimstruct,varstruct,...
@@ -76,6 +76,11 @@ for ii = 1:length(Format)
     
     % write the schema
     ncwriteschema(testfile,schema)
+    
+    % write some data 
+    data = sin(1:10)';
+    ncwrite(testfile,'x',data)
+    assert(isequal(data,ncread(testfile,'x')));
     
     % read schema from created file
     schema2 = ncinfo(testfile);
