@@ -224,7 +224,7 @@ function varargout = particle_tracker(X_locs_grid,Y_locs_grid,X_vel_grid,Y_vel_g
 %     drawnow;
 % end
 %
-% See also: inpolygon, dlfowfm, delft3d
+% See also: inpolygon, dflowfm, delft3d
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2013 Deltares
