@@ -111,6 +111,7 @@ OPT.outpath     = [];       % output path
 OPT.quiet       = false;    % do not surpress output
 OPT.gui         = false;    % do not show 7zip gui
 OPT.type        = '-t7z';
+OPT.password    = '';       % if not empty, use to specify a password to protect the archive
 OPT.args        = '-mx5'; 
 % overrule default settings by property pairs, given in varargin
 OPT = setproperty(OPT, varargin{:});
@@ -122,17 +123,21 @@ if isempty(OPT.outpath)
     OPT.outpath = OPT.fileDir;
 end
 
-if ~iscellstr(fileNameIn)
-    error('fileNameIn must be an cell array of strings')
-end
+assert(iscellstr(fileNameIn),'fileNameIn must be an cell array of strings')
 
 if ~OPT.quiet
     fprintf('packing to %s ...',fileNameOut);
 end
 tic
 
+if isempty(OPT.password)
+    password = '';
+else
+    password = sprintf(' -p"%s" -mhe ',OPT.password);
+end
+
 if isdeployed
-    basepath = '';
+    basepath = ''; %Thus the 7za.exe and 7zG.exe must reside on the location of the deployed product ! Add these exe's to the package.
 else
     basepath = fullfile(fileparts(mfilename('fullpath')),'private','7z');
 end
@@ -151,7 +156,7 @@ end
 
 fileNameIn    = sprintf('"%s" ',fileNameIn{:});
 
-dosstring     = sprintf('"%s" a %s "%s" %s %s',path7zip,OPT.type,fullfile(fileNameOut),fileNameIn,OPT.args);
+dosstring     = sprintf('"%s" a %s "%s" %s %s%s',path7zip,OPT.type,fullfile(fileNameOut),fileNameIn,password,OPT.args);
 
 [OPT.status, OPT.info] = system(dosstring);
 

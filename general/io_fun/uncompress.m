@@ -75,6 +75,7 @@ function OPT = uncompress(fileName, varargin)
 OPT.outpath     = [];       % output path
 OPT.quiet       = false;    % do not surpress output
 OPT.gui         = false;    % do not show 7zip gui
+OPT.password    = '';       % if not empty, use to specify a password to extract the archive
 OPT.args        = '-y';
 % overrule default settings by property pairs, given in varargin
 OPT = setproperty(OPT, varargin{:});
@@ -94,19 +95,25 @@ if ~OPT.quiet
 end
 tic
 
-if isdeployed 
-    basepath = '';  %Thus the 7z.exe and 7zG.exe must reside on the location of the deployed product ! Add these exe's to the package.
+if isempty(OPT.password)
+    password = '';
 else
-    basepath = fullfile(fileparts(mfilename('fullpath')),'private','7z','7z914');
+    password = sprintf(' -p"%s" ',OPT.password);
+end
+
+if isdeployed
+    basepath = ''; %Thus the 7za.exe and 7zG.exe must reside on the location of the deployed product ! Add these exe's to the package.
+else
+    basepath = fullfile(fileparts(mfilename('fullpath')),'private','7z');
 end
 
 if OPT.gui
-    path7zip = fullfile(basepath,'7zG.exe');
+    path7zip      = fullfile(basepath,'7z922','7zG.exe');
 else
-    path7zip = fullfile(basepath,'7z.exe');
+    path7zip      = fullfile(basepath,'7za.exe');
 end
 
-dosstring     = sprintf('"%s" %s e "%s" -o"%s"',path7zip,OPT.args,fullfile(fileName),OPT.outpath);
+dosstring     = sprintf('"%s" %s%s e "%s" -o"%s"',path7zip,password,OPT.args,fullfile(fileName),OPT.outpath);
 
 [OPT.status, OPT.info] = system(dosstring);
 
