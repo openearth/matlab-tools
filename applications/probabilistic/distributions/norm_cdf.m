@@ -56,7 +56,7 @@ function P = norm_cdf(X, mu, sigma)
 
 %%
 if sigma > 0
-    X = (X-mu)/sigma;                % Standard normally distributed value(s)
+    X = (X-mu)./sigma;                % Standard normally distributed value(s)
 elseif sigma == 0
     X = X-mu;
 else
