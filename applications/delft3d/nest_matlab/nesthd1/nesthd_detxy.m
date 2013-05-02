@@ -67,12 +67,11 @@
                   Ybnd (ibnd,iside) = ymid + 0.5 * dy;
                end
             end
-         end
 %
 %....... boundary section
 %        along a horizontal grid line
 %
-         if na == nb && ma ~= mb
+         elseif na == nb && ma ~= mb
 %
 %.......... check lower or upper side active grid
 %
@@ -118,5 +117,10 @@
                   Ybnd   (ibnd,iside) = ymid + 0.5 * dy;
                end
             end
+         else
+            h = errordlg ({'Diagonal water level boundaries not implemented'},'NestHD Error');
+            uiwait(h);
+            exit;
          end
       end
+
