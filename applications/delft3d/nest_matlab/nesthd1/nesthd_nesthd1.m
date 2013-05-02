@@ -32,7 +32,7 @@
 
       fid_obs       = fopen(files{4},'w+');
       fid_adm       = fopen(files{5},'w+');
-
+      sphere        = false;
       %
       % Read overall grid; Make the icom matrix (active, inactive)
       %
@@ -40,6 +40,7 @@
       grid_coarse = wlgrid  ('read',files{1});
       icom_coarse = nesthd_det_icom(grid_coarse.X,grid_coarse.MissingValue);
       [grid_coarse.Xcen,grid_coarse.Ycen] = nesthd_det_cen(grid_coarse.X,grid_coarse.Y,icom_coarse);
+      if strcmpi(grid_coarse.CoordinateSystem,'Spherical');sphere = true;end
 
       %
       % Read detailled grid, read the boundary definition ; Make the icom matrix (active, inactive)
@@ -59,7 +60,7 @@
       % Determine coordinates and relative weights of the required neting stations
       %
 
-      [mcnes,ncnes,weight]  = nesthd_detnst(grid_coarse.X,grid_coarse.Y,icom_coarse,X_bnd,Y_bnd,length(bnd.DATA),1);
+      [mcnes,ncnes,weight]  = nesthd_detnst(grid_coarse.X,grid_coarse.Y,icom_coarse,X_bnd,Y_bnd,sphere,1);
 
       %
       % Write the the observation file and the nest administration file for water level boundaries
@@ -75,7 +76,7 @@
       clear X_bnd Y_bnd positi mcnes ncnes weight
 
       [X_bnd,Y_bnd,positi]  = nesthd_detxy (grid_fine.X,grid_fine.Y,bnd,icom_fine,'UVp');
-      [mcnes,ncnes,weight]  = nesthd_detnst(grid_coarse.X,grid_coarse.Y,icom_coarse,X_bnd,Y_bnd,length(bnd.DATA),2);
+      [mcnes,ncnes,weight]  = nesthd_detnst(grid_coarse.X,grid_coarse.Y,icom_coarse,X_bnd,Y_bnd,sphere,2);
 
       %
       % Determine the orientation of the velocity boundary      %
@@ -97,7 +98,7 @@
       clear X_bnd Y_bnd positi mcnes ncnes weight angles
 
       [X_bnd,Y_bnd,positi]  = nesthd_detxy (grid_fine.X,grid_fine.Y,bnd,icom_fine,'UVt');
-      [mcnes,ncnes,weight]  = nesthd_detnst(grid_coarse.X,grid_coarse.Y,icom_coarse,X_bnd,Y_bnd,length(bnd.DATA),3);
+      [mcnes,ncnes,weight]  = nesthd_detnst(grid_coarse.X,grid_coarse.Y,icom_coarse,X_bnd,Y_bnd,sphere,3);
 
       %
       % Determine the orientation of the velocity boundary      %

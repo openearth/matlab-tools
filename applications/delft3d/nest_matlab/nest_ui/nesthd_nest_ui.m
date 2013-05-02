@@ -95,8 +95,7 @@ handles.add_files         = [nesthd_dir filesep 'bin'];
 
 axes(hObject);
 fig = imread ([handles.add_files filesep 'nest_1.jpg']);
-%handles.bg = imshow(fig);
-handles.bg = image(fig);
+handles.bg = imshow(fig);
 set(hObject,'DataAspectRatio',[1 1.25 1]);
 
 % Update handles structure

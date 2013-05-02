@@ -1,4 +1,4 @@
-      function [mcnes,ncnes,weight] = detnst  (x,y,icom,xbnd,ybnd,nobnd,itime)
+      function [mcnes,ncnes,weight] = detnst  (x,y,icom,xbnd,ybnd,sphere,itime)
 
       %detnst  determines coordinates nest stations and belonging weight factors
       %
@@ -17,6 +17,8 @@
       % error messages     :
       %
       %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+      nobnd = size(xbnd,1);
 
       mcnes (1:nobnd,2,4) = 0 ;
       ncnes (1:nobnd,2,4) = 0 ;
@@ -49,7 +51,7 @@
                           % Determine relative distances (within a
                           % computational cell)
                           %
-                          [rmnst,rnnst] = nesthd_reldif(xbsp,ybsp,xx,yy);
+                          [rmnst,rnnst] = nesthd_reldif(xbsp,ybsp,xx,yy,sphere);
                        end
                     end
                 end
