@@ -257,7 +257,7 @@ xStats.std   = nanstd(x);
 
 if strcmp(statId,'error');
    xStats.mse  = nanmean(x.^2);
-   xStats.rmse = nansqrt(xStats.mse);
+   xStats.rmse = sqrt(xStats.mse);
 end
 %--------------------------------------------------------------------------
 % Percentile
