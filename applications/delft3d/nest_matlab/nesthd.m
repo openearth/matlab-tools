@@ -19,7 +19,7 @@ end
 %
 
 if isempty (getenv('nesthd_path'))
-   h = warndlg({'Please set the environment variable "nesthd_path"';'See the Release Notes in the documents directory'},'NestHD Warning');
+   h = warndlg({'Please set the environment variable "nesthd_path"';'See the Release Notes ("Release Notes.chm")'},'NestHD Warning');
    PutInCentre (h);
    uiwait(h);
 end
