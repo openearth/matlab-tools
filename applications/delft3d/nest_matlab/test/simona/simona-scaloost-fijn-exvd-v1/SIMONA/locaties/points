@@ -1,0 +1,21 @@
+#
+# waterstandsrand
+#
+#   steunpunten open zeeranden
+    P  1=(M=220, N= 85, NAME=' rand Walcheren     ')
+    P  2=(M=220, N= 67, NAME=' rand OS15          ')
+    P  3=(M=219, N= 66, NAME=' rand OS15          ')
+    P  4=(M=180, N= 66, NAME=' rand OS11          ')
+    P  5=(M= 92, N= 66, NAME=' rand tpv OS13      ')
+    P  6=(M= 46, N= 66, NAME=' rand OS13-OS14     ')
+    P  7=(M= 36, N= 76, NAME=' rand OS14          ')
+    P  8=(M= 34, N= 78, NAME=' rand Schouwen      ')
+    P101=(M= 46, N=543, NAME='PW   Philipsdam West')
+    P102=(M=174, N=507, NAME='MRG  Marollegat     ')
+    P103=(M=170, N=449, NAME='YE   Yerseke        ')
+    P104=(M= 66, N=380, NAME='STAV Stavenisse     ')
+    P105=(M=137, N=135, NAME='RPBI Roompot binnen ')
+    P106=(M= 49, N=292, NAME='ZN   Zeelandbrug noo')
+    P107=(M= 82, N=122, NAME='OS4  O-schelde Zeezi')
+    P108=(M=229, N=346, NAME='KATS Zandkreeksl. bu')
+#

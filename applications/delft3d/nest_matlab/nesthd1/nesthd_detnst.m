@@ -34,65 +34,67 @@
 %
 %-----------find surrounding depth points overall model
 %
-             inside = false;
-             for m = 1: size(x,1) - 1
-                for n = 1: size(x,2) - 1
-                    if icom(m+1,n+1) == 1
-                       xx(1) = x(m  ,n  );yy(1) = y(m  ,n  );
-                       xx(2) = x(m+1,n  );yy(2) = y(m+1,n  );
-                       xx(3) = x(m+1,n+1);yy(3) = y(m+1,n+1);
-                       xx(4) = x(m  ,n+1);yy(4) = y(m  ,n+1);
-                       in = inpolygon(xbsp,ybsp,xx,yy);
-                       if in
-                          inside = in;
-                          mnst   = m;
-                          nnst   = n;
-                          %
-                          % Determine relative distances (within a
-                          % computational cell)
-                          %
-                          [rmnst,rnnst] = nesthd_reldif(xbsp,ybsp,xx,yy,sphere);
-                       end
-                    end
+            if ~isnan(xbsp)
+                inside = false;
+                for m = 1: size(x,1) - 1
+                   for n = 1: size(x,2) - 1
+                      if icom(m+1,n+1) == 1
+                         xx(1) = x(m  ,n  );yy(1) = y(m  ,n  );
+                         xx(2) = x(m+1,n  );yy(2) = y(m+1,n  );
+                         xx(3) = x(m+1,n+1);yy(3) = y(m+1,n+1);
+                         xx(4) = x(m  ,n+1);yy(4) = y(m  ,n+1);
+                         in = inpolygon(xbsp,ybsp,xx,yy);
+                         if in
+                            inside = in;
+                            mnst   = m;
+                            nnst   = n;
+                            %
+                            % Determine relative distances (within a
+                            % computational cell)
+                            %
+                            [rmnst,rnnst] = nesthd_reldif(xbsp,ybsp,xx,yy,sphere);
+                         end
+                      end
+                   end
                 end
-            end
 
-            if inside
+                if inside
 
 %
-%-----------from depth points to zeta points
+%--------------from depth points to zeta points
 %
-               rmnst = rmnst + 0.5;
-               rnnst = rnnst + 0.5;
+                   rmnst = rmnst + 0.5;
+                   rnnst = rnnst + 0.5;
 
-               if rmnst > 1.
-                  mnst  = mnst  + 1  ;
-                  rmnst = rmnst - 1.0;
+                   if rmnst > 1.
+                      mnst  = mnst  + 1  ;
+                      rmnst = rmnst - 1.0;
+                   end
+
+                   if rnnst > 1.
+                      nnst  = nnst  + 1  ;
+                      rnnst = rnnst - 1.0;
+                   end
+
+%
+%------------------fill mcnes and ncnes and compute weights
+%
+                   mcnes (ibnd,isize,1) = mnst;
+                   ncnes (ibnd,isize,1) = nnst;
+                   weight(ibnd,isize,1) = (1.- rmnst)*(1. - rnnst);
+
+                   mcnes (ibnd,isize,2) = mcnes (ibnd,isize,1) + 1;
+                   ncnes (ibnd,isize,2) = ncnes (ibnd,isize,1);
+                   weight(ibnd,isize,2) = rmnst*(1. - rnnst);
+
+                   mcnes (ibnd,isize,3) = mcnes (ibnd,isize,1);
+                   ncnes (ibnd,isize,3) = ncnes (ibnd,isize,1) + 1;
+                   weight(ibnd,isize,3) = (1.- rmnst)*rnnst;
+
+                   mcnes (ibnd,isize,4) = mcnes (ibnd,isize,1) + 1;
+                   ncnes (ibnd,isize,4) = ncnes (ibnd,isize,1) + 1;
+                   weight(ibnd,isize,4) = rmnst*rnnst;
                end
-
-               if rnnst > 1.
-                  nnst  = nnst  + 1  ;
-                  rnnst = rnnst - 1.0;
-               end
-
-%
-%--------------fill mcnes and ncnes and compute weights
-%
-               mcnes (ibnd,isize,1) = mnst;
-               ncnes (ibnd,isize,1) = nnst;
-               weight(ibnd,isize,1) = (1.- rmnst)*(1. - rnnst);
-
-               mcnes (ibnd,isize,2) = mcnes (ibnd,isize,1) + 1;
-               ncnes (ibnd,isize,2) = ncnes (ibnd,isize,1);
-               weight(ibnd,isize,2) = rmnst*(1. - rnnst);
-
-               mcnes (ibnd,isize,3) = mcnes (ibnd,isize,1);
-               ncnes (ibnd,isize,3) = ncnes (ibnd,isize,1) + 1;
-               weight(ibnd,isize,3) = (1.- rmnst)*rnnst;
-
-               mcnes (ibnd,isize,4) = mcnes (ibnd,isize,1) + 1;
-               ncnes (ibnd,isize,4) = ncnes (ibnd,isize,1) + 1;
-               weight(ibnd,isize,4) = rmnst*rnnst;
             end
          end
       end
@@ -124,8 +126,10 @@
 %              search nearest active point (not for diagonal vel bnd.)
 %
 
-               [mcnes(ibnd,isize,1),ncnes(ibnd,isize,1)] = nesthd_nearmn (xbnd(ibnd, isize),ybnd(ibnd,isize),x,y,icom);
-               weight(ibnd,isize,1) = 1.0;
+               if ~isnan(xbnd(ibnd,isize))
+                  [mcnes(ibnd,isize,1),ncnes(ibnd,isize,1)] = nesthd_nearmn (xbnd(ibnd, isize),ybnd(ibnd,isize),x,y,icom);
+                  weight(ibnd,isize,1) = 1.0;
+               end
             end
          end
       end
@@ -136,7 +140,7 @@
          for isize = 1: 2
             wtot = 0.;
             for inst = 1: 4
-               if weight(ibnd,isize,inst) < 0.
+               if weight(ibnd,isize,inst) <= 0.
                   weight (ibnd,isize,inst) = 1.0e-6;
                end
                wtot = wtot + weight(ibnd,isize,inst);

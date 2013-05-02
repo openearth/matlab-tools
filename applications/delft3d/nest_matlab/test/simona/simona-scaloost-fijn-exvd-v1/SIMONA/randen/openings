@@ -1,0 +1,7 @@
+# definitie open randen:
+    OPEN  1=LINE(P  1, P  2, 'Open rand nummer   1')
+    OPEN  2=LINE(P  3, P  4, 'Open rand nummer   2')
+    OPEN  3=LINE(P  4, P  5, 'Open rand nummer   3')
+    OPEN  4=LINE(P  5, P  6, 'Open rand nummer   4')
+    OPEN  5=LINE(P  6, P  7, 'Open rand nummer   5')
+    OPEN  6=LINE(P  7, P  8, 'Open rand nummer   6')

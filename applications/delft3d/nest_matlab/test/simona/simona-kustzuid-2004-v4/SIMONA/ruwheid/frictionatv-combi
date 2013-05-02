@@ -1,0 +1,12 @@
+BOX:  MNMN = (    2,   26;   58,   75)  Const_values  = 0.02200 # OS14                
+BOX:  MNMN = (   25,   76;   83,  102)  Const_values  = 0.02200 # RPBTN               
+BOX:  MNMN = (   12,  103;   86,  179)  Const_values  = 0.02400 # OOSTSCHELDE
+BOX:  MNMN = (   12,  180;   91,  298)  Const_values  = 0.02400 # OOSTSCHELDE
+BOX:  MNMN = (   90,   67;  119,   99)  Const_values  = 0.01900 # WESTKPLE
+BOX:  MNMN = (  120,   67;  150,   99)  Const_values  = 0.01900 # CADZD               
+BOX:  MNMN = (   87,  100;  150,  136)  Const_values  = 0.02000 # VLISSGN             
+BOX:  MNMN = (   87,  137;  150,  174)  Const_values  = 0.02600 # TERNZN 
+BOX:  MNMN = (   92,  175;  150,  224)  Const_values  = 0.02700 # HANSWT    
+BOX:  MNMN = (  100,  225;  160,  235)  Const_values  = 0.02700 # BAAL       
+BOX:  MNMN = (  100,  236;  160,  295)  Const_values  = 0.02700 # BATH       
+BOX:  MNMN = (  161,  225;  177,  295)  Const_values  = 0.02700 # LIEF          

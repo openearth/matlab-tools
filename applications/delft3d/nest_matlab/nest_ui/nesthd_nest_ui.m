@@ -289,14 +289,14 @@ function get_hd1_enclosure_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 if ~isempty (handles.filedir); cd(handles.filedir); end
-[fin,pin] = uigetfile({'*enc*'},'Select enclosure file detailled model');
+[fin,pin] = uigetfile({'*.enc;comgrid*'},'Select enclosure file detailled model');
 cd (handles.progdir);
 
 if fin ~= 0
    handles.filedir = pin;
    handles.files_hd1{6} = [pin fin];
 
-   set (handles.name_hd1_enclosure,'String',handles.files_hd1{6},'FontSize',10,'Enable','on','HorizontalAlignment','left');
+   set (handles.name_hd1_enclosure,'String',handles.files_hd1{6},'FontSize',10,'HorizontalAlignment','left');
    set_nesthd1(handles,'on' );
 end
 
@@ -718,12 +718,12 @@ set (handles.name_hd1_adm       ,'Visible',onoff);
 set (handles.run_nesthd1        ,'Visible',onoff);
 set (handles.additional         ,'Visible','off');
 
-set (handles.name_hd1_grd_big  ,'String',handles.files_hd1{1},'FontSize',10,'Enable','on','HorizontalAlignment','left');
-set (handles.name_hd1_grd_small,'String',handles.files_hd1{2},'FontSize',10,'Enable','on','HorizontalAlignment','left');
-set (handles.name_hd1_enclosure,'String',handles.files_hd1{6},'FontSize',10,'Enable','on','HorizontalAlignment','left');
-set (handles.name_hd1_bnd      ,'String',handles.files_hd1{3},'FontSize',10,'Enable','on','HorizontalAlignment','left');
-set (handles.name_hd1_obs      ,'String',handles.files_hd1{4},'FontSize',10,'Enable','on','HorizontalAlignment','left');
-set (handles.name_hd1_adm      ,'String',handles.files_hd1{5},'FontSize',10,'Enable','on','HorizontalAlignment','left');
+set (handles.name_hd1_grd_big  ,'String',handles.files_hd1{1},'FontSize',10,'HorizontalAlignment','left');
+set (handles.name_hd1_grd_small,'String',handles.files_hd1{2},'FontSize',10,'HorizontalAlignment','left');
+set (handles.name_hd1_enclosure,'String',handles.files_hd1{6},'FontSize',10,'HorizontalAlignment','left');
+set (handles.name_hd1_bnd      ,'String',handles.files_hd1{3},'FontSize',10,'HorizontalAlignment','left');
+set (handles.name_hd1_obs      ,'String',handles.files_hd1{4},'FontSize',10,'HorizontalAlignment','left');
+set (handles.name_hd1_adm      ,'String',handles.files_hd1{5},'FontSize',10,'HorizontalAlignment','left');
 
 function set_nesthd2(handles,onoff)
 
@@ -751,11 +751,11 @@ set (handles.name_hd2_bcc       ,'Visible',onoff);
 set (handles.run_nesthd2        ,'Visible',onoff);
 set (handles.additional         ,'Visible',onoff);
 
-set (handles.name_hd2_bnd      ,'String',handles.files_hd2{1},'FontSize',10,'Enable','on','HorizontalAlignment','left');
-set (handles.name_hd2_adm      ,'String',handles.files_hd2{2},'FontSize',10,'Enable','on','HorizontalAlignment','left');
-set (handles.name_hd2_trih     ,'String',handles.files_hd2{3},'FontSize',10,'Enable','on','HorizontalAlignment','left');
-set (handles.name_hd2_bct      ,'String',handles.files_hd2{4},'FontSize',10,'Enable','on','HorizontalAlignment','left');
-set (handles.name_hd2_bcc      ,'String',handles.files_hd2{5},'FontSize',10,'Enable','on','HorizontalAlignment','left');
+set (handles.name_hd2_bnd      ,'String',handles.files_hd2{1},'FontSize',10,'HorizontalAlignment','left');
+set (handles.name_hd2_adm      ,'String',handles.files_hd2{2},'FontSize',10,'HorizontalAlignment','left');
+set (handles.name_hd2_trih     ,'String',handles.files_hd2{3},'FontSize',10,'HorizontalAlignment','left');
+set (handles.name_hd2_bct      ,'String',handles.files_hd2{4},'FontSize',10,'HorizontalAlignment','left');
+set (handles.name_hd2_bcc      ,'String',handles.files_hd2{5},'FontSize',10,'HorizontalAlignment','left');
 
 function add_inf_off(handles)
 

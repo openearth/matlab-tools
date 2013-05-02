@@ -1,0 +1,312 @@
+#   interne randvoorwaarden
+#
+    B  1:
+      SILL_depth     INITial=   4.49
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B  2:
+      SILL_depth     INITial=   5.51
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B  3:
+      SILL_depth     INITial=   6.51
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B  4:
+      SILL_depth     INITial=   6.51
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B  5:
+      SILL_depth     INITial=   7.52
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B  6:
+      SILL_depth     INITial=   8.53
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B  7:
+      SILL_depth     INITial=   9.54
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B  8:
+      SILL_depth     INITial=   9.54
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B  9:
+      SILL_depth     INITial=   9.51
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 10:
+      SILL_depth     INITial=  10.54
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 11:
+      SILL_depth     INITial=  10.56
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 12:
+      SILL_depth     INITial=  10.50
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 13:
+      SILL_depth     INITial=  10.52
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 14:
+      SILL_depth     INITial=  10.55
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 15:
+      SILL_depth     INITial=  10.55
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 16:
+      SILL_depth     INITial=  10.56
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 17:
+      SILL_depth     INITial=   9.55
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 18:
+      SILL_depth     INITial=   9.53
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 19:
+      SILL_depth     INITial=   9.54
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 20:
+      SILL_depth     INITial=   9.54
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 21:
+      SILL_depth     INITial=   9.52
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 22:
+      SILL_depth     INITial=   9.52
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 23:
+      SILL_depth     INITial=   9.54
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 24:
+      SILL_depth     INITial=   9.54
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 25:
+      SILL_depth     INITial=   8.53
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 26:
+      SILL_depth     INITial=   8.54
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 27:
+      SILL_depth     INITial=   7.51
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 28:
+      SILL_depth     INITial=   7.54
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 29:
+      SILL_depth     INITial=   6.54
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 30:
+      SILL_depth     INITial=   5.51
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 31:
+      SILL_depth     INITial=   4.58
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 32:
+      SILL_depth     INITial=   4.30
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 33:
+      SILL_depth     INITial=   4.50
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 34:
+      SILL_depth     INITial=   4.51
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 35:
+      SILL_depth     INITial=   5.51
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 36:
+      SILL_depth     INITial=   6.51
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 37:
+      SILL_depth     INITial=   7.52
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 38:
+      SILL_depth     INITial=   7.52
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 39:
+      SILL_depth     INITial=   7.51
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 40:
+      SILL_depth     INITial=   7.51
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 41:
+      SILL_depth     INITial=   6.47
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 42:
+      SILL_depth     INITial=   6.51
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 43:
+      SILL_depth     INITial=   5.54
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 44:
+      SILL_depth     INITial=   4.53
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 45:
+      SILL_depth     INITial=   4.53
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 46:
+      SILL_depth     INITial=   4.51
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 47:
+      SILL_depth     INITial=   4.50
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 48:
+      SILL_depth     INITial=   4.73
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 49:
+      SILL_depth     INITial=   4.74
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 50:
+      SILL_depth     INITial=   5.72
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 51:
+      SILL_depth     INITial=   6.74
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 52:
+      SILL_depth     INITial=   7.73
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 53:
+      SILL_depth     INITial=   8.72
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 54:
+      SILL_depth     INITial=   8.73
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 55:
+      SILL_depth     INITial=   8.72
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 56:
+      SILL_depth     INITial=   7.71
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 57:
+      SILL_depth     INITial=   6.72
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 58:
+      SILL_depth     INITial=   5.70
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 59:
+      SILL_depth     INITial=   4.74
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 60:
+      SILL_depth     INITial=   4.72
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 61:
+      SILL_depth     INITial=   4.72
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+
+    B 62:
+      SILL_depth     INITial=   4.72
+      GATE_height    INITial=   1.0000
+      BARRIER_Width  INITial=   0.8778
+

@@ -1,0 +1,12 @@
+#   voor cross-secties:
+    C  1=LINE(P201, P202, NAME=' Roompot - buiten   ')
+    C  2=LINE(P203, P204, NAME=' Roompot - binnen   ')
+    C  3=LINE(P205, P206, NAME=' Raai 1 - Roompot   ')
+    C  4=LINE(P207, P208, NAME=' Raai 1 - Schaar    ')
+    C  5=LINE(P209, P210, NAME=' Raai 1 - Hammen    ')
+    C  6=LINE(P211, P212, NAME=' Raai 3A - Hammen   ')
+    C  7=LINE(P213, P214, NAME=' Raai 3B - OS-brug  ')
+    C  8=LINE(P215, P216, NAME=' Raai 6 - Oostersch.')
+    C  9=LINE(P217, P218, NAME=' Raai 6 - plaat     ')
+    C 10=LINE(P219, P220, NAME=' Raai 6 - Witte T.Vl')
+    C 11=LINE(P221, P222, NAME=' Raai 7 - Oostersch.')

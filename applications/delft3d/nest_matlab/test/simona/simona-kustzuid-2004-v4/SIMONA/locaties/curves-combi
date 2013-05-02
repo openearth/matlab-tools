@@ -1,0 +1,7 @@
+#   voor cross-secties:
+    C  1=LINE(P305, P306, NAME='Honte/SchvSpijkerpl ')
+    C  2=LINE(P307, P308, NAME='Vaarwater Hoofdplaat')
+    C  3=LINE(P309, P310, NAME='Everingen           ')
+    C  4=LINE(P311, P312, NAME='Pas van Terneuzen   ')
+    C  5=LINE(P313, P314, NAME='Schaar van Waarde   ')
+    C  6=LINE(P315, P316, NAME='Zuidergat           ')

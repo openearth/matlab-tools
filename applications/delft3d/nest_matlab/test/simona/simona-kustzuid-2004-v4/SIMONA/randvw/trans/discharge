@@ -1,0 +1,20 @@
+ #Debiet Grobbendonk 030201                        
+ Source CO1  P3335,  SERies='regular'
+ FRAME = (  0.0,    28800.0,   28800.0 )
+ VALUEs=   0.30  0.30                                                 
+ #Debiet Itegem      030201                        
+ Source CO1  P3337,  SERies='regular'
+ FRAME = (  0.0,    28800.0,   28800.0 )
+ VALUEs=   0.30  0.30                                        
+ #Debiet Haacht      030201                        
+ Source CO1  P3342,  SERies='regular'
+ FRAME = (  0.0,    28800.0,   28800.0 )
+ VALUEs=  0.30  0.30                                        
+ #Debiet Dendermonde 030201                        
+ Source CO1  P3308, SERies='regular'
+ FRAME = (  0.0,    28800.0,   28800.0 )
+ VALUEs=   0.30  0.30                                        
+ #Debiet Melle       030201                        
+ Source CO1  P3354, SERies='regular'
+ FRAME = (  0.0,    28800.0,   28800.0 )
+ VALUEs=  0.30  0.30                                     

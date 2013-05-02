@@ -1,0 +1,50 @@
+#waqua westerschelde
+#randvoorwaarden waterstandsrand
+# H  OS15 WTh3   1   1   0 0.01      0.0                                          
+      S : P  1, TID=  1.5000 SERies='regular'
+        FRAME=(      0.00  99999.0   99999.0  )
+        VALUES=
+              0.000     0.000     0.000     0.000
+#  
+# H  OS10 WTh3   1   2   0 0.01      0.0                                          
+      S : P  2, TID=  1.5000 SERies='regular'
+        FRAME=(      0.00  99999.0   99999.0  )
+        VALUES=
+              0.000     0.000     0.000     0.000
+#  
+# H  OS10 WTh3   1   3   0 0.01      0.0                                          
+      S : P  3, TID=  1.5000 SERies='regular'
+        FRAME=(      0.00  99999.0   99999.0  )
+        VALUES=
+              0.000     0.000     0.000     0.000
+#  
+# H  OS11 WTO2   1   4   0 0.01      0.0                                          
+      S : P  4, TID=  1.5000 SERies='regular'
+        FRAME=(      0.00  99999.0   99999.0  )
+        VALUES=
+              0.000     0.000     0.000     0.000
+#  
+# H  OS13 WTh3   1   5   0 0.01      0.0                                          
+      S : P  5, TID=  1.5000 SERies='regular'
+        FRAME=(      0.00  99999.0   99999.0  )
+        VALUES=
+              0.000     0.000     0.000     0.000
+#  
+# H  BG2  WTh3   1   6   0 0.01      0.0                                          
+      S : P  6, TID=  1.5000 SERies='regular'
+        FRAME=(      0.00  99999.0   99999.0  )
+        VALUES=
+              0.000     0.000     0.000     0.000
+#  
+# H  OS14 WTh3   1   7   0 0.01      0.0                                          
+      S : P  7, TID=  1.5000 SERies='regular'
+        FRAME=(      0.00  99999.0   99999.0  )
+        VALUES=
+              0.000     0.000     0.000     0.000
+#  
+# H  KVS1 WTh3   1   8   0 0.01      0.0                                          
+      S : P  8, TID=  1.5000 SERies='regular'
+        FRAME=(      0.00  99999.0   99999.0  )
+        VALUES=
+              0.000     0.000     0.000     0.000
+# 
