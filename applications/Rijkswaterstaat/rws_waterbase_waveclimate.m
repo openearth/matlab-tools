@@ -171,7 +171,7 @@ for iLoc=1:length(indLoc)
     seriesTimePeriodData    = datenum('010119700100','ddmmyyyyHHMM')+ seriesTimePeriod(seriesTimePeriodStart:seriesTimePeriodEnd)';
     seriesTimeDirectionData = datenum('010119700100','ddmmyyyyHHMM')+ seriesTimeDirection(seriesTimeDirStart:seriesTimeDirEnd   )';
     seriesWaveHeight = nc_varget(urlNameWaveHeight   ,'sea_surface_wave_significant_height',[0 seriesTimeHeightStart-1],[1 seriesTimeHeightEnd-seriesTimeHeightStart+1]);
-    seriesWaveDir    = nc_varget(urlNameWaveDirection,'sea_surface_wave_from_direction'    ,[0 seriesTimeDirStart   -1],[1 seriesTimeDirEnd-seriesTimeDirStart      +1]);
+    seriesWaveDir    = nc_varget(urlNameWaveDirection,'sea_surface_wave_from_direction'    ,[0 seriesTimeDirStart-1],[1 seriesTimeDirEnd-seriesTimeDirStart+1]);
     seriesWavePeriod = nc_varget(urlNameWavePeriod   ,'sea_surface_wind_wave_tm02'         ,[0 seriesTimePeriodStart-1],[1 seriesTimePeriodEnd-seriesTimePeriodStart+1]); % Tm02
     resolution       = seriesTimeHeightData(3)-seriesTimeHeightData(2);
     resolution       = (ceil(resolution*24*60))/24/60;
@@ -200,8 +200,8 @@ for iLoc=1:length(indLoc)
     seriesWaveDirC    = NaN(length(seriesTime),1); 
     
     %% Fill series with data
-    [dummy,iWHa,iWHb] = intersect(round(seriesTime*10000)/10000,round(seriesTimeHeightData   (:)*10000)/10000);    % to counter rounding error related to ismember implementation
-    [dummy,iWPa,iWPb] = intersect(round(seriesTime*10000)/10000,round(seriesTimePeriodData   (:)*10000)/10000);
+    [dummy,iWHa,iWHb] = intersect(round(seriesTime*10000)/10000,round(seriesTimeHeightData(:)*10000)/10000);    % to counter rounding error related to ismember implementation
+    [dummy,iWPa,iWPb] = intersect(round(seriesTime*10000)/10000,round(seriesTimePeriodData(:)*10000)/10000);
     [dummy,iWDa,iWDb] = intersect(round(seriesTime*10000)/10000,round(seriesTimeDirectionData(:)*10000)/10000);
     seriesWaveHeightC(iWHa) = seriesWaveHeight(iWHb);
     seriesWavePeriodC(iWPa) = seriesWavePeriod(iWPb);
