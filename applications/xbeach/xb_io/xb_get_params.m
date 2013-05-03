@@ -113,7 +113,7 @@ if exist(paramsfname, 'file')
         if parread==0
             % does this line say type parameters?
             line=fgetl(fid);
-            t1=findstr('type',line);
+            t1=findstr('type',strtrim(line));
             t2=findstr(Typename,line);
             if (~isempty(t1) && t1==1 && ~isempty(t2))
                 parread = 1;
