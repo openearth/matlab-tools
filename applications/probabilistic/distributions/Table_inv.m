@@ -69,7 +69,11 @@ end
 %% interpolate
 xt = XP(:,1);
 pt = XP(:,2);
-if Logyn
+if Logyn  % take log values
+   % first remove zeros 
+   ind0 = pt==0;
+   pt(ind0) = [];
+   xt(ind0) = [];
    pt=log(pt);
    P=log(P);
 end
