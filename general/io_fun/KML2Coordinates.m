@@ -56,7 +56,7 @@ function varargout = KML2Coordinates(FileName,varargin)
 % $HeadURL$
 % $Keywords$
 
-OPT.method = 'xml'; % safes for comments etc, but slower
+OPT.method = 'xml'; % safer for comments etc, but slower
 
 OPT = setproperty(OPT,varargin);
 
@@ -78,10 +78,18 @@ switch OPT.method
        if isnumeric(names{jj})
            names{jj} = num2str(names{jj});
        end
-       if size(p(jj).LineString.coordinates,1) == 1
-           coordCell{jj} = reshape(p(jj).LineString.coordinates,3,[])';
+       if isfield(p(jj),'LineString')
+          if size(p(jj).LineString.coordinates,1) == 1
+             coordCell{jj} = reshape(p(jj).LineString.coordinates,3,[])';
+          else
+             coordCell{jj} = p(jj).LineString.coordinates;
+          end
        else
-           coordCell{jj} = p(jj).LineString.coordinates;
+           tmp = p(jj).Polygon.outerBoundaryIs.LinearRing.coordinates;
+           if ~isnumeric(tmp); % some are already converted to numbers, apparently
+              tmp = str2num(tmp);
+           end
+           coordCell{jj} = reshape(tmp,3,[])';
        end
     end
 
