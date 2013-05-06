@@ -73,9 +73,7 @@ classdef LimitState < handle
     methods
         %% Constructor
         function this = LimitState
-            %LIMITSTATE  One line description goes here.
-            %
-            %   More detailed description goes here.
+            %LIMITSTATE  object describing a probabilistic problem
             %
             %   Syntax:
             %   this = LimitState(varargin)
@@ -91,11 +89,13 @@ classdef LimitState < handle
             %
             %   See also LimitState
            
+            % Adding a BetaSphere by default
             this.BetaSphere     = BetaSphere;
         end
         
         %% Setters
-        %Set RandomVariables
+        %Set RandomVariables: the stochastic variables used in the limit
+        %state function
         function set.RandomVariables(this, RandomVariables)
             ProbabilisticChecks.CheckInputClass(RandomVariables,'RandomVariable')
             this.RandomVariables        = RandomVariables;
@@ -103,11 +103,12 @@ classdef LimitState < handle
         
         %% Getters
 
-        %Get number of random variables
+        %Get the number of random variables present
         function numberrandomvariables = get.NumberRandomVariables(this)
             numberrandomvariables   = length(this.RandomVariables);
         end
         
+        % Get how many exact limit state evaluations are present
         function numberexactevaluations = get.NumberExactEvaluations(this)
             numberexactevaluations = sum(this.EvaluationIsExact);
         end
@@ -116,12 +117,19 @@ classdef LimitState < handle
         %Evaluate LSF at given point in U (standard normal) space
         function zvalue = Evaluate(this, un, beta, randomVariables, varargin)
             ProbabilisticChecks.CheckInputClass(randomVariables,'RandomVariable')
+            
+            % location to be evaluated
             uvalues     = un.*beta;
+            
+            % initialise variable
             input       = cell(2,length(randomVariables));
             for i=1:length(randomVariables)
+                % translate location in standard normal space to regular
+                % space
                 xvalue      = randomVariables(i).GetXValue(uvalues(i));
                 
                 if isempty(xvalue)
+                    % stop if no value can be found
                     break
                 end
                 input{1,i}  = randomVariables(i).Name;
@@ -131,13 +139,20 @@ classdef LimitState < handle
             if isempty(xvalue)
                 zvalue          = [];
             else
+                % add found values to vectors
                 this.BetaValues = [this.BetaValues; beta];
                 this.XValues    = [this.XValues; [input{2,:}]];
                 this.UValues    = [this.UValues; uvalues];
+                
+                % calculate & save associated Z value
                 zvalue          = this.EvaluateAtX(input);
                 this.ZValues    = [this.ZValues; zvalue];
                 
+                % flag as exact evaluation (no use of response surface)
                 this.EvaluationIsExact          = logical([this.EvaluationIsExact; true]);
+                
+                % If specified, calculated points are disabled so they
+                % aren't used for calculating Pf (necessary for StartUp methods)
                 if ~isempty(varargin)
                     if (strcmp(varargin{1},'disable') && varargin{2} == true)
                         this.EvaluationIsEnabled        = logical([this.EvaluationIsEnabled; false]);
@@ -152,7 +167,7 @@ classdef LimitState < handle
             end
         end
         
-        %Evaluate LSF at given point in X space
+        %Evaluate LSF at given point in X (regular) space
         function zvalue = EvaluateAtX(this, input)
             zvalue          = feval(this.LimitStateFunction,input{:});
         end
@@ -162,13 +177,20 @@ classdef LimitState < handle
             if ~this.CheckAvailabilityARS
                 error('No ARS (with a good fit) available!')
             else
+                % add values to vector
                 this.BetaValues = [this.BetaValues; beta];
                 uvalues         = un.*beta;
                 this.UValues    = [this.UValues; uvalues];
+                
+                % Approximate using response surface & save
                 zvalue          = this.ResponseSurface.Evaluate(un, beta);
                 this.ZValues    = [this.ZValues; zvalue];
                 
+                % Flag as not exact (=approximated)
                 this.EvaluationIsExact          = logical([this.EvaluationIsExact; false]);
+                
+                % If specified, calculated points are disabled so they
+                % aren't used for calculating Pf (necessary for StartUp methods)
                 if ~isempty(varargin)
                     if (strcmp(varargin{1},'disable') && varargin{2} == true)
                         this.EvaluationIsEnabled        = logical([this.EvaluationIsEnabled; false]);
@@ -192,7 +214,7 @@ classdef LimitState < handle
             end
         end
         
-        %Check if origin is available
+        %Check if origin is available and return Z-value
         function originZ = CheckOrigin(this)
             originZ = [];
             if ~any(this.BetaValues == 0)
@@ -204,7 +226,7 @@ classdef LimitState < handle
             end
         end
         
-        %Update response surface
+        %Update response surface (AdaptiveResponseSurface method)
         function UpdateResponseSurface(this)
             this.ResponseSurface.UpdateFit(this)
         end

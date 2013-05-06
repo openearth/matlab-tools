@@ -77,6 +77,7 @@ classdef DirectionalSampling < ProbabilisticMethod
     
     %% Methods
     methods
+        %% Constructor
         function this = DirectionalSampling(limitState, lineSearcher, confidenceInterval, accuracy, seed)
             %DIRECTIONALSAMPLING  One line description goes here.
             %
@@ -279,7 +280,7 @@ classdef DirectionalSampling < ProbabilisticMethod
         
         %Check convergence of the solution
         function CheckConvergence(this)
-            if this.CheckPRatio && this.CheckCOV && this.NrDirectionsEvaluated > this.MinNrDirections
+            if this.CheckCOV && this.NrDirectionsEvaluated > this.MinNrDirections
                 this.SolutionConverged = true;
             else
                 this.SolutionConverged = false;

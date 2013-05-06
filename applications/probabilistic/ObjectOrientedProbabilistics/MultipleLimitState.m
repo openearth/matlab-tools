@@ -75,14 +75,18 @@ classdef MultipleLimitState < LimitState
             %
             %   See also MultipleLimitState
             
+            % Check classes of input variables
             ProbabilisticChecks.CheckInputClass(limitStates,'LimitState')
             ProbabilisticChecks.CheckInputClass(aggregateFunction,'function_handle')
+            
+            % Put input variables in properties
             this.LimitStates        = limitStates;
             this.AggregateFunction  = aggregateFunction;
         end
         
         %% Setters       
-        %Set AggregateFunction
+        %Set AggregateFunction: function that calculates the final z-value
+        %from multiple LimitStates
         function set.AggregateFunction(this, aggregateFunction)
             ProbabilisticChecks.CheckInputClass(aggregateFunction,'function_handle')
             this.AggregateFunction  = aggregateFunction;
@@ -93,18 +97,30 @@ classdef MultipleLimitState < LimitState
         %% Other methods
         %Evaluate multiple limit states
         function zvalue = Evaluate(this, un, beta, randomVariables, varargin)
+            
+            %Initialize variable
             input   = cell(length(this.LimitStates),2);
+            
             for i=1:length(this.LimitStates)
+                % Evaluate point in all LimitStates                
                 input{i,1}  = this.LimitStates(i).Name;
                 input{i,2}  = Evaluate@LimitState(this.LimitStates(i), un, beta, randomVariables);
             end
+            
+            % Calculate final Z-value
             zvalue          = this.Aggregate([input{:,2}]);
+            
             if ~isempty(zvalue)
+                % save in vectors
                 this.BetaValues = [this.BetaValues; beta];
                 this.UValues    = [this.UValues; un.*beta];
                 this.ZValues    = [this.ZValues; zvalue];
                 
+                % flag as exact
                 this.EvaluationIsExact      = [this.EvaluationIsExact; true];
+                
+                % If specified, calculated points are disabled so they
+                % aren't used for calculating Pf (necessary for StartUp methods)
                 if ~isempty(varargin)
                     if (strcmp(varargin{1},'disable') && varargin{2} == true)
                         this.EvaluationIsEnabled        = logical([this.EvaluationIsEnabled; false]);
@@ -121,12 +137,17 @@ classdef MultipleLimitState < LimitState
         
         %Approximate multiple limit states
         function zvalue = Approximate(this, un, beta, varargin)
+            %initialize variable
             zvalues = NaN(length(this.LimitStates),1);
+            
             for i=1:length(this.LimitStates)
                 if this.LimitStates(i).CheckAvailabilityARS
+                    % use response surface when available
                     zvalues(i,1)    = this.LimitStates(i).Approximate(un, beta);
                 else
+                    % otherwise exact evaluation
                     ztemporary      = this.LimitStates(i).Evaluate(un, beta, this.RandomVariables);
+                    
                     if ~isempty(ztemporary)
                         zvalues(i,1)    = ztemporary;
                     else
@@ -136,13 +157,20 @@ classdef MultipleLimitState < LimitState
             end
             
             if ~any(isnan(zvalues))
+                %Save if there are no NaN's found
                 this.BetaValues = [this.BetaValues; beta];
                 uvalues         = un.*beta;
                 this.UValues    = [this.UValues; uvalues];
+                
+                % calculate final Z-value
                 zvalue          = this.Aggregate(zvalues);
                 this.ZValues    = [this.ZValues; zvalue];
                 
+                % Flag as not exact (approximated)
                 this.EvaluationIsExact          = logical([this.EvaluationIsExact; false]);
+                
+                % If specified, calculated points are disabled so they
+                % aren't used for calculating Pf (necessary for StartUp methods)
                 if ~isempty(varargin)
                     if (strcmp(varargin{1},'disable') && varargin{2} == true)
                         this.EvaluationIsEnabled        = logical([this.EvaluationIsEnabled; false]);
@@ -159,7 +187,7 @@ classdef MultipleLimitState < LimitState
             end
         end
         
-        %aggregate calculated z values
+        % Calculate final Z-value from multiple LimitStates
         function zvalue = Aggregate(this, zvalues)
             zvalue  = feval(this.AggregateFunction, zvalues);
         end
@@ -182,6 +210,7 @@ classdef MultipleLimitState < LimitState
         end
         
         %determine the number of exact limit state function evaluations
+        %over all LimitStates
         function DetermineNumberExactEvaluations(this)
             numberexactevaluations = 0;
             for i=1:length(this.LimitStates)

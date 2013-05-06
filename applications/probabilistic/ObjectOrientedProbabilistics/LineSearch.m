@@ -1,7 +1,10 @@
 classdef LineSearch < handle
-    %LINESEARCH  One line description goes here.
+    %LINESEARCH  Line search algorithm
     %
-    %   More detailed description goes here.
+    %   The algorithm looks for a zero-crossing by performing a 1st or 2nd
+    %   order polynomial fit and (if necessary) bisection. The algorithm
+    %   ends when the point found is close enough to zero, or the maximum
+    %   number of iterations has been reached
     %
     %   See also LineSearch.LineSearch
     
@@ -80,7 +83,7 @@ classdef LineSearch < handle
     methods
         %% Constructor
         function this = LineSearch
-            %LINESEARCH  One line description goes here.
+            %LINESEARCH  Constructor of the LineSearch object
             %
             %   More detailed description goes here.
             %
@@ -102,42 +105,48 @@ classdef LineSearch < handle
         end
         
         %% Setters
-        %BetaFirstPoint setter
+        %BetaFirstPoint setter: is the distance from the origin in the
+        %given direction for the first point in the line search (if no 
+        %other starting point is given)
         function set.BetaFirstPoint(this, BetaFirstPoint)
             ProbabilisticChecks.CheckInputClass(BetaFirstPoint,'double')
                                 
             this.BetaFirstPoint = BetaFirstPoint;
         end
         
-        %MaxIterationsFit setter
+        %MaxIterationsFit setter: max. nr. of iterations during the
+        %polynomial fit loop
         function set.MaxIterationsFit(this, MaxIterationsFit)
             ProbabilisticChecks.CheckInputClass(MaxIterationsFit,'double')
                                 
             this.MaxIterationsFit   = MaxIterationsFit;
         end
         
-        %MaxIterationsBisection setter
+        %MaxIterationsBisection setter: max. nr. of iterations during the
+        %bisection loop
         function set.MaxIterationsBisection(this, MaxIterationsBisection)
             ProbabilisticChecks.CheckInputClass(MaxIterationsBisection,'double')
                                 
             this.MaxIterationsBisection = MaxIterationsBisection;
         end
         
-        %MaxErrorZ setter
+        %MaxErrorZ setter: the relative error margin for a zero-crossing
         function set.MaxErrorZ(this, MaxErrorZ)
             ProbabilisticChecks.CheckInputClass(MaxErrorZ,'double')
                                 
             this.MaxErrorZ  = MaxErrorZ;
         end
         
-        %Set StartBeta
+        %Set StartBeta: beta value of an approximated point, to be used in 
+        %the first polynomial fit iteration (combined with StartZ)
         function set.StartBeta(this, beta)
             ProbabilisticChecks.CheckInputClass(beta,'double')
                                 
             this.StartBeta  = beta;
         end
         
-        %Set StartZ
+        %Set StartZ: z value of an approximated point, to be used in 
+        %the first polynomial fit iteration (combined with StartBeta)
         function set.StartZ(this, startZ)
             ProbabilisticChecks.CheckInputClass(startZ,'double')
                                 
@@ -146,24 +155,35 @@ classdef LineSearch < handle
         
         %% Main line search loop
         function PerformSearch(this, un, limitState, randomVariables, varargin)
+            % Reset all counters, Beta- and Z-values before starting
             this.Reset
             
+            % Check if exact of approximate (ARS) search is in order
             this.SwitchExactApproximate(limitState, varargin{:})
+            
+            % Check if origin is available
             this.OriginZ    = limitState.CheckOrigin;
             
+            % Origin is starting point for search
             this.BetaValues = [this.BetaValues; 0];
             this.ZValues    = [this.ZValues; limitState.ZValues(limitState.BetaValues == 0)];
             
             if isempty(this.StartBeta) || isempty(this.StartZ)
+                % if no second starting point is given, evaluate at
+                % BetaFirstPoint
                 this.EvaluatePoint(limitState, un, this.BetaFirstPoint, randomVariables);
             end
-                
+            
+            % Call polynomial fit routine
             this.FitPolynomial(un, limitState, randomVariables);
             
             if ~this.SearchConverged
+                % if not converged durnig polynomial fit, call bisection
                 this.Bisection(un, limitState, randomVariables);
             end
             
+            % clear starting point (this can't be done in Reset method, 
+            % needs to happen at the end of the loop)
             this.StartBeta  = [];
             this.StartZ     = [];
         end
@@ -182,7 +202,10 @@ classdef LineSearch < handle
         %Call LimitState to either evaluate or approximate a certain point
         function varargout = EvaluatePoint(this, limitState, un, beta, randomVariables)
             if this.ApproximateUsingARS
+                % If response surface should be used, call approximate
                 zvalue              = limitState.Approximate(un, beta, 'disable', this.DisablePoints);
+                
+                % Only add point if result isn't empty
                 if isempty(zvalue)
                     varargout       = zvalue;
                 else
@@ -191,7 +214,10 @@ classdef LineSearch < handle
                     this.ZValues        = [this.ZValues; zvalue];
                 end
             else
+                % else do an exact evaluation
                 zvalue              = limitState.Evaluate(un, beta, randomVariables, 'disable', this.DisablePoints);
+                
+                % Only add point if result isn't empty
                 if isempty(zvalue)
                     varargout       = zvalue;
                 else
@@ -202,49 +228,69 @@ classdef LineSearch < handle
             end
         end
                
-        %Find Z=0 by fitting polynomial
+        %Find Z=0 by fitting 1st or 2nd order polynomial
         function FitPolynomial(this, un, limitState, randomVariables)
+            % Loop until search converges or max. iterations is reached
             while this.IterationsFit <= this.MaxIterationsFit && ~this.SearchConverged
+                % Check what the maximum order is for the available points
                 if length(this.ZValues) == 1
                     order   = 1;
                 else
                     order   = min(this.MaxOrderFit, length(this.ZValues)-1);
                 end
                 
+                % Fit polynomials in decreasing order
                 for o = order:-1:1
                     if length(this.ZValues)>1
+                        % use the values closed to zero for the polyfit
                         ii  = isort(abs(this.ZValues));
                         bs  = this.BetaValues(ii(1:(o+1)));
                         zs  = this.ZValues(ii(1:(o+1)));
                     elseif length(this.ZValues) == 1
+                        % only use StartBeta & StartZ for the first
+                        % iteration (because it's an approximated point)
                         bs      = [this.BetaValues; this.StartBeta];
                         zs      = [this.ZValues; this.StartZ];
                     end
                     
+                    % perform polynomial fit
                     this.Fit    = polyfit(bs, zs ,o);
+                    
+                    % If fit is good, evaluate at location of zero-crossing
                     if this.CheckFit
                         this.Roots  = roots(this.Fit);
                         if this.CheckRoots
                             this.EvaluatePoint(limitState, un, this.Roots, randomVariables);
-%                             this.plot(bs,zs)
                         end
                     end
+                    
+                    % Check if new point is close enough to zero
                     this.CheckConvergence(limitState)
                     if this.SearchConverged
+                        % Stop polyfit if search converged
                         break
                     end
                     this.IterationsFit  = this.IterationsFit + 1;
                 end
                 if this.SearchConverged
+                    % Stop polyfit if search converged
                     break
                 end
             end
         end
         
-        %Find Z=0 by performing Bisection
+        %Find Z=0 by performing Bisection: take the origin and the closest
+        %negative Z value, evaluate point in the middle of that interval,
+        %then choose the side in which the zero-crossing should be and
+        %evaluate the middle of that interval
         function Bisection(this, un, limitState, randomVariables)
+            % loop while search isn't converged and max. iterations not yet
+            % reached
             while this.IterationsBisection <= this.MaxIterationsBisection && ~this.SearchConverged
                 ii  = isort(abs(this.ZValues));
+                
+                % for each iteration, determine index of the lower (il) and
+                % upper (iu) beta boundaries
                 if this.IterationsBisection == 0
                     if any(this.ZValues<0)
                         ii  = isort(this.BetaValues);
@@ -293,26 +339,34 @@ classdef LineSearch < handle
                     end
                 end
                 
+                % lower and upper beta boundaries and z values
                 bs  = [this.BetaValues(il) this.BetaValues(iu)];
                 zs  = [this.ZValues(il) this.ZValues(iu)];
                 
-                if all(bs < 0)                                                        
+                if all(bs < 0)
+                    % stop if interval is all negative betas
                     break
-                elseif any(bs < 0) && any( bs >= 0)                                      
+                elseif any(bs < 0) && any( bs >= 0) 
+                    % if one of the beta-values is negative, replace that
+                    % one with the values in the origin
                     in          = ii(this.BetaValues(ii)==0);
                     bs(bs<0)    = this.BetaValues(in);
                     zs(bs<0)    = this.ZValues(in);
                 end
                 
+                % Evaluate the point in the middle of the interval
                 this.EvaluatePoint(limitState, un, mean(bs), randomVariables);
                 
                 if isnan(this.ZValues(end))
+                    % Incriese the maximum nr. of iterations when a NaN is
+                    % found
                     this.MaxIterationsBisection  = 10;
                 end
                    
                 this.IterationsBisection    = this.IterationsBisection + 1;
                 this.CheckConvergence(limitState)
                 if this.SearchConverged
+                    % Stop bisection when search is converged
                     break
                 end
             end
@@ -320,12 +374,14 @@ classdef LineSearch < handle
         
         %Check convergence of line search
         function CheckConvergence(this, limitState)
-            if (abs(limitState.ZValues(end))/limitState.CheckOrigin) < this.MaxErrorZ && limitState.BetaValues(end) > 0
+            if ...
+                    (abs(limitState.ZValues(end))/limitState.CheckOrigin) < this.MaxErrorZ && ...
+                    limitState.BetaValues(end) > 0
                 this.SearchConverged                    = true;
             end
         end
         
-        %Reset logical indicating convergence
+        %Reset logicals & counters indicating convergence
         function Reset(this)
             this.SearchConverged        = false;
             this.IterationsFit          = 0;
@@ -340,24 +396,27 @@ classdef LineSearch < handle
         %Check the coefficients of the polynomial fit
         function goodFit = CheckFit(this)
             if all(isfinite(this.Fit))
+                % All coefficients need to be finite numbers
                 goodFit = true;                
             else
                 goodFit = false;
             end
         end
         
-        %Check the roots
+        %Check the roots = location of the zero crossing
         function goodRoots = CheckRoots(this)
             if ~isempty(this.Roots)
                 i1  = isreal(this.Roots);
                 i2  = this.Roots > 0;
                 if any(i1)
                     if any(i1&i2)
+                        % Find real & positive root
                         ii          = find(i1&i2);
                         ii          = ii(isort(this.Roots(ii)));
                         this.Roots  = this.Roots(ii(1));
                         goodRoots   = true;
                     elseif all(this.Roots < 0)
+                        % Find largest negative root
                         this.Roots  = max(this.Roots(i1)<0);
                         if ~isempty(this.Roots)
                             goodRoots   = true;

@@ -62,16 +62,22 @@ classdef AdaptiveDirectionalImportanceSampling < DirectionalSampling
     
     %% Methods
     methods
-        function this = AdaptiveDirectionalImportanceSampling(limitState, lineSearcher, confidenceInterval, accuracy, seed, varargin)
-            %ADAPTIVEDIRECTIONALIMPORTANCESAMPLING  One line description goes here.
-            %
-            %   More detailed description goes here.
+        %% Constructor
+        function this = AdaptiveDirectionalImportanceSampling(limitState, lineSearcher, confidenceInterval, accuracy, seed)
+            %ADAPTIVEDIRECTIONALIMPORTANCESAMPLING  constructor for the
+            %ADIS probabilistic method object
             %
             %   Syntax:
-            %   this = AdaptiveDirectionalImportanceSampling(varargin)
+            %   this = AdaptiveDirectionalImportanceSampling(limitState, lineSearcher, confidenceInterval, accuracy, seed, varargin)
             %
             %   Input:
-            %   varargin  =
+            %   limitState          = [LimitState object]
+            %   lineSearcher        = [LineSearch object]
+            %   confidenceInterval  = confidence interval (used for
+            %   convergence) [double]
+            %   accuracy            = accuracy used for convergence [double]
+            %   seed                = fixed seed (for reproducable results)
+            %   [double]
             %
             %   Output:
             %   this       = Object of class "AdaptiveDirectionalImportanceSampling"
@@ -81,14 +87,10 @@ classdef AdaptiveDirectionalImportanceSampling < DirectionalSampling
             %
             %   See also AdaptiveDirectionalImportanceSampling
             
-            ProbabilisticChecks.CheckInputClass(limitState,'LimitState');
-            ProbabilisticChecks.CheckInputClass(lineSearcher,'LineSearch');
-            ProbabilisticChecks.CheckInputClass(confidenceInterval,'double');
-            ProbabilisticChecks.CheckInputClass(accuracy,'double');
-            ProbabilisticChecks.CheckInputClass(seed,'double');
-                        
+            % The input is passed to the DirectionalSampling constructor function (DirectionalSampling is the superclass of AdaptiveDirectionalImportanceSampling)                        
             this    = this@DirectionalSampling(limitState, lineSearcher, confidenceInterval, accuracy, seed);
-
+            
+            % Set default values for certain properties
             this.SetDefaults
         end
         
@@ -96,21 +98,25 @@ classdef AdaptiveDirectionalImportanceSampling < DirectionalSampling
         
         %% Getters
                
-        %Get PfApproximated
+        %Get PfApproximated: total contribution of all approximated points (points from response surface)
         function pfapproximated = get.PfApproximated(this)
             pfapproximated  = sum(this.dPfApproximated);
         end
         
-        %Get dPfApproximated
+        %Get dPfApproximated: contribution of each approximated point (points from response surface)
         function dpfapproximated = get.dPfApproximated(this)
             if sum(~this.LimitState.EvaluationIsExact) > 0
+                % there are approximated points: use Chi-squared
+                % distribution to calculate probability
                 dpfapproximated = (1-chi2_cdf(this.LimitState.BetaValues(this.EvaluationApproachesZero & ~this.LimitState.EvaluationIsExact& this.LimitState.EvaluationIsEnabled & this.LimitState.BetaValues > 0).^2,length(this.LimitState.RandomVariables)))/this.NrDirectionsEvaluated;
             elseif sum(~this.LimitState.EvaluationIsExact) == 0
+                % no approcimated points
                 dpfapproximated = 0;
             end
         end
         
-        %Get PRatio
+        %Get PRatio: ratio between contribution of approximated points to
+        %the total Pf (used in convergence check)
         function pratio = get.PRatio(this)
             if ~isempty(this.Pf) && ~isempty(this.PfApproximated)
                 pratio  = this.PfApproximated/this.Pf;
@@ -119,10 +125,12 @@ classdef AdaptiveDirectionalImportanceSampling < DirectionalSampling
             end
         end
         
-        %% Main Adaptive Directional Importance Sampling Loop
+        %% Main Adaptive Directional Importance Sampling Loop: call this function to run ADIS
         function CalculatePf(this)
+            % Random direction vector is created in advance (DirectionalSampling method)
             this.ConstructUNormalVector
-
+            
+            % Calculate Z-Value at the origin in standard-normal-space (DirectionalSampling method)
             this.ComputeOrigin
             
             %Use start-up method if available
@@ -132,44 +140,72 @@ classdef AdaptiveDirectionalImportanceSampling < DirectionalSampling
             
             %Perform line searches through random directions until solution converges
             while ~this.StopCalculation && ~this.Abort
+                % Continue is the solution hasn't converged yet or there
+                % are still directions that need to be reevaluated
                 while (~this.SolutionConverged || ~isempty(this.ReevaluateIndices)) && ~this.Abort
                     if isempty(this.ReevaluateIndices)
+                        % A new direction is chosen
                         this.NrDirectionsEvaluated  = this.NrDirectionsEvaluated + 1;
                         this.IndexQueue             = this.NrDirectionsEvaluated;
                     else
+                        % A direction needs to be reevaluated
                         this.IndexQueue             = this.ReevaluateIndices(1);
                     end
-%                     this.IndexQueue %temp output
+
+                    % Check whether the maximum nr of directions is reached
                     this.CheckMaxNrDirections
                     
+                    % IndexQueue can be used for parallellization purposes
+                    % in the future
                     for iq = 1:length(this.IndexQueue)
                         
+                        % Perform a line search in the chosen direction 
+                        % (PerformSearch is a method of the LineSearch class)
                         if this.LimitState.CheckAvailabilityARS
+                            % if a good response surface is available, use
+                            % that in the line search
                             this.LineSearcher.PerformSearch(this.UNormalVector(this.IndexQueue(iq),:), this.LimitState, this.LimitState.RandomVariables, 'approximate', true);
                         else
+                            % else, perform exact line search (without use of response surface)
                             this.LineSearcher.PerformSearch(this.UNormalVector(this.IndexQueue(iq),:), this.LimitState, this.LimitState.RandomVariables);
                         end
                         
+                        % Save the index of the chosen direction for each
+                        % point evaluated during the line search (DirectionalSampling method)
                         this.AssignUNormalIndices(this.LineSearcher.NrEvaluations, this.IndexQueue(iq));
                         
                         %Check whether last point needs to be evaluated
-                        %exactly (is in beta sphere)
+                        %exactly (is an ARS point & in beta sphere)
                         if this.CheckExactEvaluationLastPoint
+                            % Disable the approximated evaluation in the
+                            % current direction (replaced by exact points)
                             this.DisableEvaluations(this.UNormalIndexPerEvaluation == this.IndexQueue(iq));
+                            
+                            % start line search at approximated Z=0 ponit
                             this.LineSearcher.StartBeta = this.LimitState.BetaValues(end);
                             this.LineSearcher.StartZ    = this.LimitState.ZValues(end);
+                            
+                            % perform exact line search (LineSearch method)
                             this.LineSearcher.PerformSearch(this.UNormalVector(this.IndexQueue(iq),:), this.LimitState, this.LimitState.RandomVariables);
+                            
+                            % Save the index of the chosen direction for each
+                            % point evaluated during the line search (DirectionalSampling method)
                             this.AssignUNormalIndices(this.LineSearcher.NrEvaluations, this.IndexQueue(iq));
-%                             this.plot; pause(0.1); close;
                         end
                         
+                        % Recalculate the probability of failure
                         this.UpdatePf
                         
+                        % Check if the method has converged to final answer
                         this.CheckConvergence;
                         
+                        % If there are new exact points available: fit the
+                        % response surface again
                         if ~this.LineSearcher.ApproximateUsingARS
                             this.LimitState.UpdateResponseSurface
                             if this.LastIteration
+                                % if ARS is updated, do one more iteration
+                                % (approximate points might have changed)
                                 this.LastIteration      = false;
                             end
                         end
@@ -185,19 +221,30 @@ classdef AdaptiveDirectionalImportanceSampling < DirectionalSampling
                 %Extend beta sphere to include closest approximated point,
                 %if PRatio is too large
                 if ~this.CheckPRatio && this.PfApproximated ~= 0
+                    % Look for smallest beta among approximated points
                     beta    = min(this.LimitState.BetaValues(this.LimitState.EvaluationIsEnabled & ~this.LimitState.EvaluationIsExact & this.EvaluationApproachesZero & this.LimitState.BetaValues > 0));
                     idx     = find(this.LimitState.BetaValues == beta, 1, 'first');
+                    
+                    % Extend beta-sphere to include approximate point
+                    % nearest to the origin
                     this.LimitState.BetaSphere.UpdateBetaSphereMargin(beta, this.LimitState, this.EvaluationApproachesZero);
+                    
+                    % Reevaluate the associated direction & disable old
+                    % points
                     this.ReevaluateIndices  = this.UNormalIndexPerEvaluation(idx);
                     this.DisableEvaluations(this.UNormalIndexPerEvaluation == this.ReevaluateIndices)
                 end
                 
+                % if there are no more directions to reevaluate: flag as
+                % last iteration & reevaluate all approximated points with
+                % Z=0
                 if isempty(this.ReevaluateIndices) && ~this.LastIteration
                     this.ReevaluateIndices  = this.UNormalIndexPerEvaluation(this.LimitState.EvaluationIsEnabled & ~this.LimitState.EvaluationIsExact & this.EvaluationApproachesZero);
                     this.DisableEvaluations(ismember(this.UNormalIndexPerEvaluation, this.ReevaluateIndices));
                     this.LastIteration      = true;
                 end
                 
+                % If all convergence criteria are met, stop calculation
                 if this.SolutionConverged && isempty(this.ReevaluateIndices) && this.CheckPRatio
                     this.StopCalculation    = true;
                 end
@@ -223,14 +270,19 @@ classdef AdaptiveDirectionalImportanceSampling < DirectionalSampling
              
         %Check convergence of the solution
         function CheckConvergence(this)
-            if this.CheckPRatio && this.CheckCOV && this.NrDirectionsEvaluated > this.MinNrDirections && sum(this.EvaluationApproachesZero) >= this.MinNrLimitStatePoints  && (sum(~this.LimitState.EvaluationIsExact & this.EvaluationApproachesZero) >= this.MinNrApproximatedPoints) 
+            if ... 
+                    this.CheckCOV && ...
+                    this.NrDirectionsEvaluated > this.MinNrDirections && ...
+                    sum(this.EvaluationApproachesZero) >= this.MinNrLimitStatePoints  && ...
+                    (sum(~this.LimitState.EvaluationIsExact & this.EvaluationApproachesZero) >= this.MinNrApproximatedPoints) 
                 this.SolutionConverged = true;
             else
                 this.SolutionConverged = false;
             end
         end
         
-        %Check PRatio
+        %Check PRatio: ratio between contribution of approximated points to
+        %the total Pf. 
         function goodRatio = CheckPRatio(this)
             if this.PRatio < this.MaxPRatio 
                 goodRatio   = true;
@@ -243,6 +295,7 @@ classdef AdaptiveDirectionalImportanceSampling < DirectionalSampling
         %exactly
         function evaluateExact = CheckExactEvaluationLastPoint(this)
             if this.LimitState.BetaSphere.IsInBetaSphere(this.LimitState.BetaValues(end), this.LimitState, this.EvaluationApproachesZero) && this.LineSearcher.SearchConverged && ~this.LimitState.EvaluationIsExact(end)
+                % true if last point is approximated and within beta-sphere
                 evaluateExact   = true;
             else
                 evaluateExact   = false;
