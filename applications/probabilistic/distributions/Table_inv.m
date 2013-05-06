@@ -60,13 +60,13 @@ if size(XP,2)~=2
    error('input table has wrong dimensions'); 
 end
 if any(XP(:,2)<0 | XP(:,2)>1)
-   error('probabilities should be between 0 and 1positive'); 
+   error('probabilities should be between 0 and 1'); 
 end
 if length(unique(XP(:,1)))<size(XP,1);
    error('X-values of input table should be unique'); 
 end
 
-%% remove zeros
+%% interpolate
 xt = XP(:,1);
 pt = XP(:,2);
 if Logyn
