@@ -116,7 +116,6 @@ end
 OPT = setproperty(OPT,varargin{nextarg:end});
 
 %% Open file
-%-----------------------------
 
 if isnumeric  (filehandle)
     fid =       filehandle;
@@ -125,7 +124,6 @@ elseif ischar (filehandle)
 end
 
 %% Header
-%-----------------------------
 
 if strcmpi(OPT.filetype,'meteo_on_equidistant_grid')
     error('meteo_on_equidistant_grid not implemented yet, complete the code yourselves?')
@@ -178,9 +176,11 @@ if strcmpi(OPT.filetype,'meteo_on_equidistant_grid')
     % NODATA_value  =   -999.000
     % TIME =   1.00 hours since 2006-10-26 01:00:00 +00:00
     
-    fprintf  (fid,'TIME = %f hours since %s %s',OPT.hr,... % write all decimals
+    fprintf  (fid,'TIME = %f hours since %s %s %s',...
+        OPT.hr,... % write all decimals
         datestr(OPT.refdatenum,'yyyy-mm-dd HH:MM:SS'),...
-        OPT.timezone);
+        OPT.timezone,...
+        [' # ',datestr(time,'yyyy-mm-dd HH:MM:SS')]);    
     fprinteol(fid,OPT.OS)
     
     data(isnan(data))=OPT.nodata_value;
@@ -248,15 +248,15 @@ elseif strcmpi(OPT.filetype,'meteo_on_curvilinear_grid')
     
     %% Time
     %  # Fixed format: <time> <time unit> "since" <date> <time> <time zone>
-    %-----------------------------
     
-    fprintf  (fid,'TIME = %f hours since %s %s',OPT.hr,... % write all decimals
+    fprintf  (fid,'TIME = %f hours since %s %s %s',...
+        OPT.hr,... % write all decimals
         datestr(OPT.refdatenum,'yyyy-mm-dd HH:MM:SS'),...
-        OPT.timezone,' #',datestr(time,'yyyy-mm-dd HH:MM:SS'));
+        OPT.timezone,...
+        [' # ',datestr(time,'yyyy-mm-dd HH:MM:SS')]);
     fprinteol(fid,OPT.OS)
     
     %% Data
-    %-----------------------------
     
     data(isnan(data))=OPT.nodata_value;
     
@@ -281,7 +281,6 @@ else
 end
 
 %% Close files (only when 1st call AND no reuse requested)
-%-----------------------------
 
 if nargout==0 & ischar(filehandle)
     fclose(fid);
