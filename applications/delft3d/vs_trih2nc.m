@@ -95,7 +95,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
     OPT.dump           = 1;
 
     OPT.quiet          = 'quiet';
-    OPT.stride         = 1; % write chunks per layer in case of large 3D matrices
+    OPT.stride         = 0; % write chunks per layer in case of large 3D matrices
     OPT.ind            = 0; % index of stations to include in netCDF file, 0=all
     OPT.crsind         = 0; % index of cross-sections to include in netCDF file, 0=all
     OPT.trajectory     = 0; % consider 'Stations' dimension as spatial trajectory dimension
@@ -1278,13 +1278,13 @@ function varargout = vs_trih2nc(vsfile,varargin)
             if OPT.stride
                 for k=1:G.kmax
                 matrix = vs_let(F,'his-series','GRO',{OPT.ind,k,G.sedind(jj)},OPT.quiet);
-                ncwrite(ncfile,G.namsed(jj,:),permute(matrix,[3 2 4 1]),[k 1 1 1]);
+                ncwrite(ncfile,G.namsed(jj,:),permute(matrix,[3 2 1]),[k 1 1]);
                 R.(G.namsed(jj,:))(1) = min(R.(G.namsed(jj,:))(1),min(matrix(:)));
                 R.(G.namsed(jj,:))(2) = max(R.(G.namsed(jj,:))(2),max(matrix(:)));
                 end
             else
                 matrix = vs_let(F,'his-series','GRO',{OPT.ind,0,G.sedind(jj)},OPT.quiet);
-                ncwrite(ncfile,G.namsed(jj,:),permute(matrix,[3 2 4 1]));
+                ncwrite(ncfile,G.namsed(jj,:),permute(matrix,[3 2 1]));
                 R.(G.namsed(jj,:)) = [min(R.(G.namsed(jj,:))(1),min(matrix(:))) max(R.(G.namsed(jj,:))(2),max(matrix(:)))];
             end   
         end
