@@ -22,7 +22,7 @@ function varargout = nesthd_nest_ui(varargin)
 
 % Edit the above text to modify the response to help nesthd_nest_ui
 
-% Last Modified by GUIDE v2.5 23-Apr-2013 17:17:32
+% Last Modified by GUIDE v2.5 07-May-2013 20:16:06
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -194,8 +194,37 @@ function save_session_Callback(hObject, eventdata, handles)
 handles = nesthd_write_ini(handles);
 guidata(hObject,handles);
 
-function Manual_Callback(hObject, eventdata, handles)
-% hObject    handle to Manual (see GCBO)
+% --------------------------------------------------------------------
+function simona2mdf_Callback(hObject, eventdata, handles)
+% hObject    handle to simona2mdf (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function mdf2simona_Callback(hObject, eventdata, handles)
+% hObject    handle to mdf2simona (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function manual_d3d_Callback(hObject, eventdata, handles)
+% hObject    handle to manual_d3d (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+d3d_home = getenv('D3D_Home');
+file_man = [d3d_home filesep 'manuals' filesep 'Delft3D-Flow_User_Manual.pdf'];
+if exist(file_man,'file')
+   open(file_man);
+else
+   errordlg({'User manual not found';' ';'Either the D3D_Home environment variable is not set, or,';'Manuals are not installed'},'Nesthd Error');
+end
+
+% --------------------------------------------------------------------
+function Manual_wh_Callback(hObject, eventdata, handles)
+% hObject    handle to Manual_wh (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
@@ -848,6 +877,3 @@ function update_additional(handles)
            set (handles.bc_no         ,'Enable','on' ,'Visible','on','Value',1);
         end
     end
-
-
-

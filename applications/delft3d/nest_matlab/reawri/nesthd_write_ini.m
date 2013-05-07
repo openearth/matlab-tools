@@ -6,7 +6,7 @@ function [handles] = write_ini(handles)
 % Open Info structure to write to nesthd_inifile
 %
 
-Info = nesthd_inifile('new');
+Info = inifile('new');
 
 %
 % Fill Info
