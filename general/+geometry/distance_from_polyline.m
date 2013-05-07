@@ -101,7 +101,7 @@ A(nn) = B(nn);
 nn = isnan(B)&~isnan(A);
 B(nn) = A(nn);
 
-% define anonumous functions for algorithm
+% define anonymous functions for algorithm
 % http://www.topcoder.com/tc?d1=tutorials&d2=geometry1&module=Static#line_point_distance
 vcross        = @(A,B,nn) A(nn,1).*B(nn,2) - A(nn,2).*B(nn,1);
 vdot          = @(A,B,nn) A(nn,1).*B(nn,1) + A(nn,2).*B(nn,2);

@@ -1,4 +1,4 @@
-function [x_regular,y_regular,theta] = points_along_polyline_at_interval(x,y,interval)
+function [x_regular,y_regular,theta,t] = points_along_polyline_at_interval(x,y,interval)
 %POINTS_ALONG_POLYLINE_AT_INTERVAL  returns points spaced at a set inverval along a path
 %
 %   More detailed description goes here.
@@ -77,25 +77,29 @@ function [x_regular,y_regular,theta] = points_along_polyline_at_interval(x,y,int
 
 distance_along_polyline = distance(x,y);
 
-xx = (0:interval:distance_along_polyline(end))';
-
-[x_regular,y_regular,theta] = deal(nan(size(xx)));
+xx = (0:interval:distance_along_polyline(end));
+if iscolumn(x)
+   xx = xx';
+end
+t  = nan(size(xx));
 for ii = 1:length(xx);
     nn = find(xx(ii)<=distance_along_polyline,1,'first');
     if nn==1
+        t(ii)         = 1;
         nn = 2;
-        x_regular(ii) = x(1);
-        y_regular(ii) = y(1);
     else
-        c = (xx(ii) - distance_along_polyline(nn-1)) / (distance_along_polyline(nn) - distance_along_polyline(nn-1));
-        x_regular(ii) = c*x(nn) + (1-c)*x(nn-1);
-        y_regular(ii) = c*y(nn) + (1-c)*y(nn-1);
-    end
-    
-    dx = (x(nn) - x(nn-1));
-    dy = (y(nn) - y(nn-1));
-    theta(ii) = atan(dy/dx);
-    if dx<0
-        theta(ii) = theta(ii)-pi();
+        c = (xx(ii) - distance_along_polyline(nn-1)) / ...
+            (distance_along_polyline(nn) - distance_along_polyline(nn-1));
+        t(ii) = nn+c-1; 
     end
 end
+x(end+1) = 2*x(end)-x(end-1);
+y(end+1) = 2*y(end)-y(end-1);
+
+x_regular = x(floor(t)) .* (1-rem(t,1)) + x(floor(t)+1) .* rem(t,1);
+y_regular = y(floor(t)) .* (1-rem(t,1)) + y(floor(t)+1) .* rem(t,1);
+
+dx = (x(floor(t)+1) - x(floor(t)));
+dy = (y(floor(t)+1) - y(floor(t)));
+theta = atan(dy./dx);
+theta(dx<0) = theta(dx<0)-pi();
