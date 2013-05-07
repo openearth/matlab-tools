@@ -130,4 +130,4 @@ end
 % Finally write to the bct file
 %
 
-bct_io('write',filename,Info);
+ddb_bct_io('write',filename,Info);

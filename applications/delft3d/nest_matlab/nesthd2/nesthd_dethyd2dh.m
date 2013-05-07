@@ -10,13 +10,26 @@ nobnd   = length(bnd.DATA);
 notims  = nfs_inf.notims;
 kmax    = nfs_inf.kmax;
 thick   = nfs_inf.thick;
-profile = add_inf.profile;
+
+%
+% Check if velocity or Riemann boundaries are present
+%
+
+vel = false;
+for ibnd = 1: nobnd
+    if strcmpi(bnd.DATA(ibnd).bndtype,'c') || strcmpi(bnd.DATA(ibnd).bndtype,'p') || ...                                                                                                                                                                                                                                                                                                                                                        if strcmpi(lower(bnd.DATA.(ibnd).bndtype),'c') !!
+       strcmpi(bnd.DATA(ibnd).bndtype,'r') || strcmpi(bnd.DATA(ibnd).bndtype,'x')
+       vel = true;
+       profile = add_inf.profile;
+       break;
+    end
+end
 
 %
 % Averaging needed?
 %
 
-if kmax > 1 && (strcmpi(profile,'logarithmic') || strcmpi(profile,'uniform'))
+if kmax > 1 && vel && (strcmpi(profile,'logarithmic') || strcmpi(profile,'uniform'))
 
    for itim = 1: notims
       hulp(itim).value(1:nobnd,1:2,1,2) = 0.;

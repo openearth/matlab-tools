@@ -1,4 +1,4 @@
-# SIMONA input file 
+# SIMONA input file
 # ---------------------------------------------------------------
 # Kustzuid (  1,  1) = Kuststrookfijn (694,  1)
 # ---------------------------------------------------------------
@@ -7,58 +7,59 @@ SET NOECHO
 
 IDENTification
   WAQUA
-  EXPERIMENT='kustzuid_v4'   
-  MODID='kustzuid_v4'     
-  TITLE='kustzuid_v4'                              
+  EXPERIMENT='kustzuid_v4'
+  MODID='kustzuid_v4'
+  TITLE='kustzuid_v4'
   OVERWRITE
 
 #restart
-#  sds_rstart = 'SDS-kzv3101004' 
+#  sds_rstart = 'SDS-kzv3101004'
 #   exp_restart = 'kzv3101004'
 #      nb. exp_restart moet anders zijn dan 1e EXPERIMENT
 
 DEPTH_CONTROL
-  ORIENTATION= 'pos_downwards' 
+  ORIENTATION= 'pos_downwards'
 
 
 MESH
   GRID
     AREA MMAX= 1950 NMAX= 400
-         LATItude= 52.500000 LONGitude= 0.000000               
-         ANGLEgrid= 0.000000 COOR_ID= 'RDV' 
+         LATItude= 52.500000 LONGitude= 0.000000
+         ANGLEgrid= 0.000000 COOR_ID= 'RDV'
     CURVILINEAR
-      RGFFILE='../rooster/rgf'   
+      RGFFILE='../rooster/rgf'
 
   POINTS
-    INCLUDE FILE='../locaties/points-combi'                     
-    INCLUDE FILE='../locaties/points-rivier'                     
-    INCLUDE FILE='../locaties/points-rvw-combi'                    
-    INCLUDE FILE='../kunstwerken/bar-points'                    
+    INCLUDE FILE='../locaties/points-combi'
+    INCLUDE FILE='../locaties/points-rivier'
+    INCLUDE FILE='../locaties/points-rvw-combi'
+    INCLUDE FILE='../kunstwerken/bar-points'
+    INCLUDE FILE='../../../points_nest.dickv'
 #   INCLUDE FILE='../locaties/points-rvw-proses'
 
   CURVES
-    INCLUDE FILE='../locaties/curves-combi'                      
+    INCLUDE FILE='../locaties/curves-combi'
 
   BOUNDARIES
     ENCLOSURES
-      INCLUDE FILE='../randen/comgrid'     
- 
+      INCLUDE FILE='../randen/comgrid'
+
     OPENINGS
-      INCLUDE FILE='../randen/openings-combi'                       
+      INCLUDE FILE='../randen/openings-combi'
     BARRIERS
-      INCLUDE FILE='../kunstwerken/bar-def-combi'                    
+      INCLUDE FILE='../kunstwerken/bar-def-combi'
 
   BATHYMETRY
     GLOBAL
      DPD_GIVEN
       METH_DPS='MEAN_DPD'
-      DEPMULTIPL=1.000000 
-      THRESHOLD=0.200000  
+      DEPMULTIPL=1.000000
+      THRESHOLD=0.200000
       LAYOUT=1
       DEPDEF= 6.00
     LOCAL
-      INCLUDE FILE='../bodem/bathymetry-combi'                             
-      INCLUDE FILE='../bodem/bathymetry-rivier'                                       
+      INCLUDE FILE='../bodem/bathymetry-combi'
+      INCLUDE FILE='../bodem/bathymetry-rivier'
   DRYPOINTS
     DAMPOINTS
       INCLUDE FILE='../schotjes/dampoints-combi'
@@ -67,7 +68,7 @@ MESH
       INCLUDE FILE='../schotjes/closeu-rivier'
     CLOSEV
       INCLUDE FILE='../schotjes/closev-combi'
-      INCLUDE FILE='../schotjes/closev-rivier' 
+      INCLUDE FILE='../schotjes/closev-rivier'
 
 GENERAL
   DIFFUSION
@@ -77,7 +78,7 @@ GENERAL
 BOX:  MNMN = (    2,    2;  210,  399)  Corner_values = 75.00 75.00 200.0 75.00
 BOX:  MNMN = (  211,    2; 1950,  399)  Corner_values = 200.0 200.0 200.0 200.0
 
- 
+
   PHYSical_parameters
     GRAVity =  9.8130
     WATDENsity = 1023.0
@@ -98,7 +99,7 @@ FLOW
     TIMEFRAME
       DATE   =         ' 1 JAN 2004'
       TSTART =              480.0
-      TSTOP  =             3600.0
+      TSTOP  =             7200.0
       TIMEZONE =          'MET' # WINTERTIME
     METHODVARIABLES
       TSTEP         =                0.12500
@@ -110,9 +111,9 @@ FLOW
     SMOOTHING
       TLSMOOTH      =                    600
     DRYING
-      CHECK_WL      = 'YES'                 
+      CHECK_WL      = 'YES'
       DEPCRIT       =                0.10000
-      UPWIND_ZETA   = 'NO'                     
+      UPWIND_ZETA   = 'NO'
 
     FRICTION
       GLOBAL
@@ -124,7 +125,7 @@ FLOW
         LOCAL
       INCLUDE FILE='../ruwheid/frictionatu-combi'
       INCLUDE FILE='../ruwheid/frictionatu-rivier'
-      
+
       VDIREC
         GLOBAL
           CONST_VALUES  =       0.02200
@@ -133,14 +134,14 @@ FLOW
       INCLUDE FILE='../ruwheid/frictionatv-rivier'
 
     VISCOSITY
-      EDDYVISCOSITYCOEFF  =            1.000   
+      EDDYVISCOSITYCOEFF  =            1.000
 
     BARRIERcoefficients
           INCLUDE FILE='../kunstwerken/bar-coef-combi'
 
   FORCINGS
     INITIAL
-      WATLEVEL 
+      WATLEVEL
         GLOBAL
           CONST_VALUES = 1.00
         LoCAL
@@ -150,33 +151,33 @@ BOX:  MNMN = (  211,    2; 1950,  399)  Corner_values = 1.500 7.000 7.000 1.500
 
     BOUNDAries
 
-    INCLUDE FILE='../randen/bound-flow-combi'                        
-    INCLUDE FILE='../randvw/flow/harmonic'              
+    INCLUDE FILE='../randen/bound-flow-combi'
+    INCLUDE FILE='../randvw/flow/harmonic'
 
     DISCHarges
-      INCLUDE FILE='../randvw/flow/discharge'                    
+      INCLUDE FILE='../randvw/flow/discharge'
 
         BARRIERS
-          INCLUDE FILE='../kunstwerken/bar-flow-combi'   
+          INCLUDE FILE='../kunstwerken/bar-flow-combi'
 
   CHECKPOINTS
     LEVELSTATIONS
-#     INCLUDE FILE='../uitvoer/check-wl-combi'    
-#     INCLUDE FILE='../uitvoer/check-wl-rivier'   
-#     INCLUDE FILE='../uitvoer/check-wl-rvw-proses' 
-      INCLUDE FILE='check-points' 
+#     INCLUDE FILE='../uitvoer/check-wl-combi'
+#     INCLUDE FILE='../uitvoer/check-wl-rivier'
+#     INCLUDE FILE='../uitvoer/check-wl-rvw-proses'
+      INCLUDE FILE='check-points'
     CURRENTSTATIONS
-#     INCLUDE FILE='../uitvoer/check-cur-rvw' 
-      INCLUDE FILE='check-points' 
+#     INCLUDE FILE='../uitvoer/check-cur-rvw'
+      INCLUDE FILE='check-points'
 #   USECTions
-#     INCLUDE FILE='../uitvoer/check-sectu-rvw' 
+#     INCLUDE FILE='../uitvoer/check-sectu-rvw'
     VSECTions
-    INCLUDE FILE='../uitvoer/check-sectv-combi'                                  
+    INCLUDE FILE='../uitvoer/check-sectv-combi'
 
 TRANSPORT
   PROBLEM
     CONSTITUENTS
-      CO 1: 
+      CO 1:
         POLUTANT ='SALINITY'
         PUNIT    =' kg/m**3    '
     SALINITY
@@ -187,26 +188,26 @@ TRANSPORT
     INITIAL
       CONSTITUENTS
         INCLUDE FILE='../initieel/salinity-combi'
-        INCLUDE FILE='../initieel/salinity-rivier'                  
+        INCLUDE FILE='../initieel/salinity-rivier'
 
    BOUNDaries
-    INCLUDE FILE='../randen/bound-trans-combi'       
+    INCLUDE FILE='../randen/bound-trans-combi'
 
    DISCHarges
-    INCLUDE FILE='../randvw/trans/discharge'                                  
+    INCLUDE FILE='../randvw/trans/discharge'
 
   CHECKPOINTS
     CONSTITUENT_STATIONS
-#     INCLUDE FILE='../uitvoer/check-sal-combi'                    
-#     INCLUDE FILE='../uitvoer/check-sal-rivier'   
-#     INCLUDE FILE='../uitvoer/check-sal-rvw' 
-      INCLUDE FILE='check-points' 
+#     INCLUDE FILE='../uitvoer/check-sal-combi'
+#     INCLUDE FILE='../uitvoer/check-sal-rivier'
+#     INCLUDE FILE='../uitvoer/check-sal-rvw'
+      INCLUDE FILE='check-points'
 
 DENSITIES
   CEQSTT           =    0.6980
   TEMPWATER        =   10.0000
   RHOREF           =    1.0000
-                               
+
 DISPLAY
   OUTLINES
       INCLUDE FILE='../berekeningen/outlines'
@@ -219,7 +220,7 @@ SDSOUTput
 
   HISTories
     TFHISto =  480.0, TIHISto=     10.0
-  
+
 # t.b.v. randvoorwaarden uitsnede Westerschelde
 # No_Backtransform
 
@@ -234,7 +235,7 @@ PRINToutput
 
 #   print tijden voor velden:
 
-    TFRAMEStat=(  480.0   30.0,   3600.0) 
+    TFRAMEStat=(  480.0   30.0,   3600.0)
 
 # end print
 

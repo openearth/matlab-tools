@@ -8,4 +8,4 @@
 
       sds      = qpfopen (filename);
 
-      conc     = waquaio  (sds,[],['stsubst: ' strtrim(nfs_inf.namcon(l,:))],0,istat);
+      conc     = waquaio  (sds,[],['stsubst:' strtrim(nfs_inf.namcon(l,:))],0,istat);

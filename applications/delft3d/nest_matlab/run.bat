@@ -1,3 +1,5 @@
+nesthd_w64 test\simona\dickv_hd1.ini
+nesthd_w64 test\simona\dickv_hd2.ini
 nesthd_w64 d:\projects\nesthd_matlab\test\shenzen\shenzen_hd1.ini
 nesthd_w64 d:\projects\nesthd_matlab\test\shenzen\shenzen_hd2.ini
 nesthd_w64 d:\projects\nesthd_matlab\test\tidal_flume_triwaq\triwaq_coarse\flume_hd1.ini
