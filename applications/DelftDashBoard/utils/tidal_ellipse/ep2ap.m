@@ -1,14 +1,31 @@
 function [Au, PHIu, Av, PHIv, w, TWOCIR]=ep2ap(SEMA, ECC, INC, PHA, plot_demo)
+%ep2ap - convert ellipse parameters to amplitude & phase 
 %
 % Convert tidal ellipse parameters into amplitude and phase lag parameters.
+% 
+% Usage:
+% [Au, PHIu, Av, PHIv, w, TWOCIR]=ep2ap(SEMA, ECC, INC, PHA, plot_demo)
+%
 % Its inverse is app2ep.m. Please refer to app2ep for the meaning of the 
 % inputs and outputs.
 %
+%See also: t_tide, ap2ep, plot_ell, abcd2rprm, abcd2ellipse, Document: tidal_ellipse.pdf
+
 % Zhigang Xu
 % Oct. 20, 2000
-%
-% Document:  tidal_ellipse.ps
-% 
+%_______________________________________________________________________
+%  Zhigang Xu, Ph.D.                            
+%  (pronounced as Tsi Gahng Hsu)
+%  Research Scientist
+%  Coastal Circulation                   
+%  Bedford Institute of Oceanography     
+%  1 Challenge Dr.
+%  P.O. Box 1006                    Phone  (902) 426-2307 (o)       
+%  Dartmouth, Nova Scotia           Fax    (902) 426-7827            
+%  CANADA B2Y 4A2                   email zhigangx@emerald.bio.dfo.ca    
+%                                         zhigang_xu_98@yahoo.com
+%_______________________________________________________________________
+
 if nargin < 5
      plot_demo=0;  % by default, no plot for the ellipse
 end

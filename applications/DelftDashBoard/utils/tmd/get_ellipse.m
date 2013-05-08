@@ -1,5 +1,4 @@
-% function to extract tidal ellipse grids from
-% a model 
+% get_ellipse  extract tidal ellipse grids from a model 
 %
 % usage:
 % [x,y,umaj,umin,uphase,uincl]=get_ellipse(Model,cons);
@@ -14,13 +13,14 @@
 % cons - tidal constituent given as char* 
 %
 % output:
-% umaj,umin - major and minor ellipse axis (cm/s)
+% umaj,umin     - major and minor ellipse axis (cm/s)
 % uphase, uincl - ellipse phase and inclination degrees GMT
-% x,y - grid coordinates
+% x,y           - grid coordinates
 %
 % sample call:
 % [x,y,umaj,umin,uphase,uincl]=get_ellipse('DATA/Model_Ross_prior','k1');
 %
+%See also: ellipse, TideEl
 
 function [x,y,umaj,umin,uphase,uincl]=get_ellipse(Model,cons);
 [ModName,GridName,Fxy_ll]=rdModFile(Model,2);

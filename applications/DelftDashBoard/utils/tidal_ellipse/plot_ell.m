@@ -1,11 +1,17 @@
 function w=plot_ell(SEMA, ECC, INC, PHA, IND)
+%plot_ell plot tidal ellipses
 %
-% An auxiliary function used in ap2ep and ep2ap for plotting
-% tidal ellipse. The inputs, MA, ECC, INC and PHA are the output of 
+% Usage:
+% w=plot_ell(SEMA, ECC, INC, PHA, index)
+%
+% An auxiliary function used in ap2ep and ep2ap for demonstrating
+% tidal ellipse workings. The inputs, MA, ECC, INC and PHA are the output of 
 % ap2ep and IND is a vector for indices for plotting a particular 
 % ellipse, e.g., if IND=[2 3 1]; the ellipse corresponding to 
-% the indices of (2,3,1) will be plotted.
-%___________________________
+% the indices of (2,3,1) will be plotted. index is index into arrays of
+% other inputs.
+%
+%See also: t_tide, ap2ep, ep2ap, plot_ellipse, plot_tidalellipses
 
  size_SEMA=size(SEMA);
  if nargin == 4;

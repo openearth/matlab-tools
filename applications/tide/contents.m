@@ -32,6 +32,8 @@
 %
 %  ABCD2ELLIPSE          - get tidal ellipse parameters from harmonic amplitudes
 %  ABCD2RPRM             - get phasor amplitudes from tidal ellipse parameters
+%  ep2ap                 - convert from amplitude & phase to ellipse parameters
+%  ap2ap                 - convert ellipse parameters to amplitude & phase 
 %  plot_ellipse          - plot tidal ellipses on a map using major, minor, inc and phase
 %  plot_tidalellipses    - plot tidal ellipses on a map using major, minor, inc and phase
 %

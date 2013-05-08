@@ -1,4 +1,4 @@
-% Calculate tidal ellipse parameters at given locations using a model
+% ellipse Calculate tidal ellipse parameters at given locations using a model
 %
 % USAGE
 % [umajor,uminor,uphase,uincl]=ellipse(Model,lat,lon,constit);
@@ -26,10 +26,10 @@
 % Sample call:
 % [umaj,umin,uph,uinc]=ellipse('DATA/Model_Ross_prior',-73,186,'k1');
 %
-%
+%See also: get_ellipse, TideEl
+
 % Last update: June 21, 2006
-%
-%========================================================================
+
 
 function [umajor,uminor,uphase,uincl]=ellipse(Model,lat,lon,constit);
 [ModName,GridName,Fxy_ll]=rdModFile(Model,2);

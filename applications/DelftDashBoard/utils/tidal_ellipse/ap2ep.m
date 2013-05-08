@@ -1,10 +1,10 @@
 function [SEMA,  ECC, INC, PHA, w, TWOCIR]=ap2ep(Au, PHIu, Av, PHIv, plot_demo)
+%ap2ep - convert from amplitude & phase to ellipse parameters
 %
 % Convert tidal amplitude and phase lag (ap-) parameters into tidal ellipse
 % (ep-) parameters. Please refer to ep2app for its inverse function.
 % 
 % Usage:
-%
 % [SEMA,  ECC, INC, PHA, w]=ap2ep(Au, PHIu, Av, PHIv, plot_demo)
 %
 % where:
@@ -41,11 +41,6 @@ function [SEMA,  ECC, INC, PHA, w, TWOCIR]=ap2ep(Au, PHIu, Av, PHIv, plot_demo)
 %           the first ellipse. You may need to use squeeze function when
 %           w is a more than two dimensional array. See example.m. 
 %
-% Document:   tidal_ellipse.ps
-%   
-% Revisions: May  2002, by Zhigang Xu,  --- adopting Foreman's northern 
-% semi major axis convention.
-% 
 % For a given ellipse, its semi-major axis is undetermined by 180. If we borrow
 % Foreman's terminology to call a semi major axis whose direction lies in a range of 
 % [0, 180) as the northern semi-major axis and otherwise as a southern semi major 
@@ -59,7 +54,23 @@ function [SEMA,  ECC, INC, PHA, w, TWOCIR]=ap2ep(Au, PHIu, Av, PHIv, plot_demo)
 % (obviously, the 1st and 2nd maximum current times are half tidal period apart)
 % depending on where the initial current vector happen to be and its rotating sense.
 %
+%See also: t_tide, ep2ap, plot_ell, abcd2rprm, abcd2ellipse, Document: tidal_ellipse.pdf
+
+% Revisions: May  2002, by Zhigang Xu,  --- adopting Foreman's northern 
+% semi major axis convention.
 % Version 2, May 2002
+%_______________________________________________________________________
+%  Zhigang Xu, Ph.D.                            
+%  (pronounced as Tsi Gahng Hsu)
+%  Research Scientist
+%  Coastal Circulation                   
+%  Bedford Institute of Oceanography     
+%  1 Challenge Dr.
+%  P.O. Box 1006                    Phone  (902) 426-2307 (o)       
+%  Dartmouth, Nova Scotia           Fax    (902) 426-7827            
+%  CANADA B2Y 4A2                   email zhigangx@emerald.bio.dfo.ca    
+%                                         zhigang_xu_98@yahoo.com
+%_______________________________________________________________________
 
 if nargin < 5
      plot_demo=0;  % by default, no plot for the ellipse

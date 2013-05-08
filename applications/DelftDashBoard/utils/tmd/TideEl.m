@@ -1,8 +1,11 @@
-% calculates tidal ellipse parameters for the arrays of
+% TideEl calculates tidal ellipse parameters for the arrays of
 % u and v - COMPLEX amplitudes of EW and NS currents of
 % a given tidal constituent
 % land should be set to 0 or NaN in u,v prior to calling tideEl
 % usage: [umajor,uminor,uincl,uphase]=tideEl(u,v);
+%
+%See also: ellipse, get_ellipse
+
 function [umajor,uminor,uincl,uphase]=tideEl(u,v);
 % change to polar coordinates 
 % in Robin's was - + + -, this is as in Foreman's
