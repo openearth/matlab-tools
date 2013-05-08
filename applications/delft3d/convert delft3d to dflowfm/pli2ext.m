@@ -100,9 +100,7 @@ for i=1:length(pliid);
                 case 'C';
                     type  = 'velocitybnd';
                 case 'N';
-                    type  = 'neumannbnd';                % not supported by FM
-                    warndlg('Neumann condition at the boundary is not supported by D-FLOW FM.','Warning');
-                    fout  = 1;
+                    type  = 'neumannbnd';
                 case 'Q';
                     type  = 'dischargepergridcellbnd';   % not supported by FM
                     warndlg('Discharge per grid cell at the boundary is not supported by D-FLOW FM.','Warning');
