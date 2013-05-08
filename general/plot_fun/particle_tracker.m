@@ -611,19 +611,21 @@ end
 % Add new tracers when locations(and trac_age) are set to NaN
 if sum(isnan(X_locs_trac_new))>0
 	additional_vel_points = min([sum(isnan(X_locs_trac_new)) ceil(growth_factor*max_no_parts)]);
-	add_inds              = find(isnan(X_locs_trac_new)==1,additional_vel_points);
-    new_points = [];
-    while size(new_points,1)~=additional_vel_points
-        tmp_X_new = min(polygon(:,1))+(diff([min(polygon(:,1)) max(polygon(:,1))])*rand(1,1));
-        tmp_Y_new = min(polygon(:,2))+(diff([min(polygon(:,2)) max(polygon(:,2))])*rand(1,1));
-        if inpolygon(tmp_X_new,tmp_Y_new,polygon(:,1),polygon(:,2)) == 1;
-            new_points(size(new_points,1)+1,1:2) = [tmp_X_new tmp_Y_new];
+	if additional_vel_points>0
+        add_inds              = find(isnan(X_locs_trac_new)==1,additional_vel_points);
+        new_points = [];
+        while size(new_points,1)~=additional_vel_points
+            tmp_X_new = min(polygon(:,1))+(diff([min(polygon(:,1)) max(polygon(:,1))])*rand(1,1));
+            tmp_Y_new = min(polygon(:,2))+(diff([min(polygon(:,2)) max(polygon(:,2))])*rand(1,1));
+            if inpolygon(tmp_X_new,tmp_Y_new,polygon(:,1),polygon(:,2)) == 1;
+                new_points(size(new_points,1)+1,1:2) = [tmp_X_new tmp_Y_new];
+            end
         end
-    end
-	X_locs_trac_new(add_inds,1)  = new_points(:,1);
-	Y_locs_trac_new(add_inds,1)  = new_points(:,2);
-    if trac_age_ind~=0
-        trac_age_new(add_inds,1) = ones(additional_vel_points,1);
+        X_locs_trac_new(add_inds,1)  = new_points(:,1);
+        Y_locs_trac_new(add_inds,1)  = new_points(:,2);
+        if trac_age_ind~=0
+            trac_age_new(add_inds,1) = ones(additional_vel_points,1);
+        end
     end
 end
 
