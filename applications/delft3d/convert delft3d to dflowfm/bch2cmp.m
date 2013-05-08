@@ -62,7 +62,7 @@ I                 = 1e8;
 tline             = fgetl(fid);
 freqs             = str2num(tline);
 for i=1:length(freqs);
-    BCH.data(i).freq             = freqs(i);
+    BCH.data(i).freq                = freqs(i);
 end
 tline             = fgetl(fid);
 for i=1:I;
@@ -90,6 +90,8 @@ fclose all;
 
 % Rearrange the structure
 K                 = size(BCH.data,2);
+I1                = j/2;
+I2                = j  ;
 for k=2:K;
     if isempty(BCH.data(k).freq);
         break;
@@ -97,14 +99,14 @@ for k=2:K;
         freq(k-1) = BCH.data(k).freq;
     end
 end
-for i=1:size(BCH.data(1).amp,2)/2;
-    meanA(i)      = BCH.data(i).mean;
+for i=1:I1;
+    meanA(i,1)    = BCH.data(i).mean;
     ampA(i,:)     = BCH.data(i).amp(:);
     phiA(i,:)     = BCH.data(i).phi(:);
 end
 j                 = 1;
-for i=size(BCH.data(1).amp,2)/2+1:size(BCH.data(1).amp,2);
-    meanB(j)      = BCH.data(i).mean;
+for i=I1+1:I2;
+    meanB(j,1)    = BCH.data(i).mean;
     ampB(j,:)     = BCH.data(i).amp(:);
     phiB(j,:)     = BCH.data(i).phi(:);
     j             = j + 1;
