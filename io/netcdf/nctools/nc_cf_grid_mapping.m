@@ -42,7 +42,7 @@ function varargout = nc_cf_grid_mapping(epsg,varargin)
 % WKT
 % * wkt (retrieved via (cached) http://spatialreference.org/ref/)
 %
-%see also: convertcoordinates, nc_cf_grid, snctools
+%see also: convertcoordinates, nc_cf_grid, snctools, nccreateVarstruct_crs
 
 %%  --------------------------------------------------------------------
 %   Copyright (C) 2010 Deltares for Building with Nature

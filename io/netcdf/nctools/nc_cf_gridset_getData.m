@@ -24,7 +24,7 @@ function varargout=nc_cf_gridset_getData(xi,yi,varargin)
 %          classify2unique for plotting date fields
 
 %   --------------------------------------------------------------------
-%   Copyright (C) 2011 Deltares
+%   Copyright (C) 2011 Deltares for Building with Nature
 %       Gerben de Boer
 %
 %       <g.j.deboer@deltares.nl>
@@ -103,6 +103,7 @@ OPT = setproperty(OPT,varargin);
    else
        list = opendap_catalog(OPT.bathy);
    end
+
 %% fill holes with samples of nearest/latest/first time
 
    xmin = min(xi(:));
@@ -116,6 +117,8 @@ OPT = setproperty(OPT,varargin);
           fprintf(1,['Inquiring file ', num2str(ifile,'%0.4d'),' of ', num2str(length(list),'%0.4d'),': ',filenameext(list{ifile})]);
       end
    
+%% find valid spatial tiles
+
       BB.X  = nc_actual_range(list{ifile},OPT.xname);BB.X = BB.X([1 2 2 1 1]);
       if ~(BB.X(2) < xmin | BB.X(1) > xmax)
       BB.Y  = nc_actual_range(list{ifile},OPT.yname);BB.Y = BB.Y([1 1 2 2 1]);
@@ -127,7 +130,8 @@ OPT = setproperty(OPT,varargin);
       if OPT.disp
           %fprintf(1,[': ',filenameext(list{ifile})]);
       end          
-    %% find valid dates
+
+%% find valid dates within tile
        
        L.datenum  = nc_cf_time(list{ifile});
        if any(strfind(OPT.order,'|')) % extract default
@@ -162,7 +166,7 @@ OPT = setproperty(OPT,varargin);
 
           mask             = isnan(zi) & polygon_selection  & bb_selection; % only empty points
 
-          if any(mask(:)) % only continue when there are still points to be done withoin the BB of this file
+          if any(mask(:)) % only continue when there are still points to be done within the BB of this file
 
           %% get source data for one timestep
 
@@ -170,6 +174,7 @@ OPT = setproperty(OPT,varargin);
              X   = nc_varget(list{ifile},OPT.xname);
              Y   = nc_varget(list{ifile},OPT.yname);
              end
+
              dzi = xi.*nan; % set increment to nan
              
 % warning('TO DO: permute Z automatically into [T x Y x X]')
@@ -192,11 +197,19 @@ OPT = setproperty(OPT,varargin);
                  % ' days (#',num2str(sum(~isnan(Z(:))),'%+0.5d'),' data points)'
 
           %% extract remaining destination data
+%          %  use interp2 tabel when source dxata is orthogonal
              %F = TriScatteredInterp(X(:),Y(:),Z(:),OPT.method);
              %dzi(mask) = F(xi(mask),yi(mask));
+%             
+%             if isvector(X) & isvector(Y)
              dzi(mask) = interp2(X,Y,Z,... % Z should be [y by x]
                                   xi(mask),yi(mask),OPT.method); 
-
+%             elseif strcmpi(OPT.method,'nearest')
+%             dzi(mask) = griddata_nearest(X,Y,Z, xi(mask),yi(mask)); 
+%             else
+%             dzi(mask) = griddata        (X,Y,Z, xi(mask),yi(mask),OPT.method); 
+%             end
+             
           %% find and add increment
           
              extra     = ~isnan(dzi) & isnan(zi); % new data and not yet filled

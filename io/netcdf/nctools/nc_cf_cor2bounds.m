@@ -1,4 +1,4 @@
-function B = nc_cf_cor2bounds(C)
+function B = nc_cf_cor2bounds(C,varargin)
 %nc_cf_cor2bounds  rewrite vector or matrix of corners to CF bounds matrix
 %
 %   bounds = nc_cf_cor2bounds(cor)
@@ -8,11 +8,17 @@ function B = nc_cf_cor2bounds(C)
 %         bounds = [m-1 x n-1 x 4] if cor = [m n] for 2D matrices
 %
 %   For documentation of the CF bounds standard see:
-%   http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.5/cf-conventions.html#cell-boundaries
+%   http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#cell-boundaries
 %
 %   Note: cor==nc_cf_cor2bounds(nc_cf_bounds2cor(cor))
 %
-%   See also nc_cf_bounds2cor
+%   Note that native Matlab write functions (ncwrite) require
+%   dimensions to be swapped, hence:
+%
+%   bounds = permute(bounds,[2 1])   for 1D cor matrices
+%   bounds = permute(bounds,[3 1 2]) for 2D cor matrices
+%
+%   See also nc_cf_bounds2cor, ncwritetutorial_grid, d3d_qp
 
 %% Copyright notice
 %   --------------------------------------------------------------------

@@ -338,17 +338,17 @@ function [D,M] = nc_cf_grid(ncfile,varargin)
 % add coordinates and dimension variables
 %pausedisp
 
-if length(lonname) > 1
-    error(['multiple lonname found:',str2line(lonname,'s',',')])
-else
-    lonname = char(lonname);
-end
+if length(lonname) > 1;error(['multiple lonname found:',str2line(lonname,'s',',')])
+else;lonname = char(lonname);end
 
-if length(latname) > 1
-    error('multiple latname found')
-else
-    latname = char(latname);
-end
+if length(latname) > 1;error(['multiple lonname found:',str2line(latname,'s',',')])
+else;latname = char(latname);end
+
+if length(xname) > 1;error(['multiple lonname found:',str2line(xname,'s',',')])
+else;xname = char(xname);end
+
+if length(yname) > 1;error(['multiple lonname found:',str2line(yname,'s',',')])
+else;yname = char(yname);end
 
    M.lon.units     = nc_attget(ncfile,lonname,'units');
    M.lat.units     = nc_attget(ncfile,latname,'units');

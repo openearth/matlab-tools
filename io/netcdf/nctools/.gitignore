@@ -1,4 +1,10 @@
 /nc_cf_directory2catalog.m
+/nc_cf_harvest.m
+/nc_cf_harvest1.m
+/nc_cf_harvest2kml.m
+/nc_cf_harvest2nc.m
+/nc_cf_harvest2xls.m
+/nc_cf_harvest2xml.m
 /nc_cf_standard_names_generate.m
 /nc_cf_stationtimeseries2meta.m
 /nc_oe_standard_names_generate.m

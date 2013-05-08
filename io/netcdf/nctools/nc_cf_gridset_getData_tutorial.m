@@ -7,8 +7,9 @@
 %% Specify what you want
 
    D.filename    = 'Vlie_basin_example.asc';
-   [D.x,D.y]     = meshgrid((100:.1:145).*1e3,...
-                            (521:.1:590).*1e3); % define the grid where you want data, in [m]. This does not have to be a an orthogonal grid.
+   
+  [D.x,D.y]      = meshgrid( 92080:80:219980,... % 20m = 250 Mb each, 80m = 14Mb, 100m = 9Mb each
+                            537500:80:624980);   % define the grid where you want data, in [m]. This does not have to be a an orthogonal grid.
    D.data_url    = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/kustlidar/catalog.html';
 
    %% get tile names where to get data from
@@ -25,7 +26,7 @@
    
    D.t0          = datenum(2004,1,1); % we want data from ABOUT this time, with ...
    D.dtmax       = 8*366;             % ... max 8 years time offset and ...
-   D.order       = '|nearest|';        % ... only older data (not forward)
+   D.order       = '|nearest|';       % ... only older data (not forward)
 
 %% Get data           
 

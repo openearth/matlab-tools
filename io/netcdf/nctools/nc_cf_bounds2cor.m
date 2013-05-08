@@ -1,4 +1,4 @@
- function C = nc_cf_bounds2cor(B)
+ function C = nc_cf_bounds2cor(B,varargin)
 %nc_cf_bounds2cor  rewrite 3D CF bounds matrix to 2D matrix of corners
 %
 %   cor = nc_cf_bounds2cor(bounds)
@@ -8,11 +8,11 @@
 %   It is an error if the cells are not contiguous.
 %
 %   For documentation of the CF bounds standard see:
-%   http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.5/cf-conventions.html#cell-boundaries
+%   http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#cell-boundaries
 %
 %   Note: bounds==nc_cf_bounds2cor(nc_cf_cor2bounds(bounds))
 %
-%   See also nc_cf_cor2bounds
+%   See also nc_cf_cor2bounds, ncwritetutorial_grid, d3d_qp
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -130,8 +130,5 @@ else
         else
             error('bounds cells are NOT contiguous')
         end
-   
-   
-   
 
 end

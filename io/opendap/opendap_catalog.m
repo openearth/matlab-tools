@@ -254,8 +254,10 @@ end
         end
         if any(isCatalogNc)
         nc_file_list(isCatalogNc)      = [];
+        if exist('metadata','var')
         metadata.dataSize(isCatalogNc) = [];
         metadata.date(isCatalogNc)     = [];
+        end
         end
     end
     
@@ -267,8 +269,10 @@ end
             isCatalogNc(ii) = strcmpi(nc_file_list{ii}(end-9:end),'catalog.nc');
         end
         nc_file_list(~isCatalogNc)     = [];
+        if exist('metadata','var')
         metadata.bytes(~isCatalogNc)   = [];
         metadata.datenum(~isCatalogNc) = [];
+        end
     end
     
 %% output

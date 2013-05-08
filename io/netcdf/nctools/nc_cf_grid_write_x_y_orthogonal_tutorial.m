@@ -1,4 +1,4 @@
-%% Create netCDF-CF of orthogonal x-y grid
+%% Create netCDF-CF file of orthogonal x-y grid
 %
 %  example of how to make a netCDF file with CF conventions of a 
 %  variable that is defined on a grid that is orthogonal
@@ -7,7 +7,7 @@
 %  The associated lat-lon coordinate matrices are curvi-linear.
 %
 %  This case is described in:
-%  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#grid-mappings-and-projections
+%  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#grid-mappings-and-projections
 %  as "Horizontal Coordinate Reference Systems, Grid Mappings, and Projections".
 %
 %  An example of an orthogonal x,y grid is for instance
@@ -109,7 +109,7 @@
    nc_create_empty (ncfile)
 
 %% 1.b Add overall meta info
-%      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#description-of-file-contents
+%      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#description-of-file-contents
    
    nc_attput(ncfile, nc_global, 'title'         , OPT.title);
    nc_attput(ncfile, nc_global, 'institution'   , OPT.institution);
@@ -121,14 +121,14 @@
    nc_attput(ncfile, nc_global, 'comment'       , OPT.comment);
    nc_attput(ncfile, nc_global, 'version'       , OPT.version);
 
-   nc_attput(ncfile, nc_global, 'Conventions'   , 'CF-1.5');
-   nc_attput(ncfile, nc_global, 'CF:featureType', 'Grid');  % https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions
+   nc_attput(ncfile, nc_global, 'Conventions'   , 'CF-1.6');
+   nc_attput(ncfile, nc_global, 'featureType'   , 'Grid');  % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#idp5559280
 
    nc_attput(ncfile, nc_global, 'terms_for_use' , OPT.acknowledge);
    nc_attput(ncfile, nc_global, 'disclaimer'    , OPT.disclaimer);
       
 %% 2.a Create matrix span dimensions
-%      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#dimensions   
+%      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#dimensions   
    
    nc_add_dimension(ncfile, 'x', OPT.ncols); % use this as 1st array dimension to get correct plot in ncBrowse (snctools swaps for us)
    nc_add_dimension(ncfile, 'y', OPT.nrows); % use this as 2nd array dimension to get correct plot in ncBrowse (snctools swaps for us)
@@ -176,7 +176,7 @@
    nc(ifld).Attribute    = nc_cf_grid_mapping(OPT.epsg.code);
 
 %% 3.c Create coordinate variables: longitude
-%      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#longitude-coordinate
+%      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#longitude-coordinate
 
    ifld = ifld + 1;
    nc(ifld).Name             = 'lon';
@@ -190,7 +190,7 @@
    nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
 
 %% 3.d Create coordinate variables: latitude
-%      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#latitude-coordinate
+%      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#latitude-coordinate
    
    ifld = ifld + 1;
    nc(ifld).Name             = 'lat';
@@ -205,8 +205,8 @@
 
 %% 3.e Create coordinate variables: coordinate system: WGS84 default
 %      global ellispes: WGS 84, ED 50, INT 1924, ETRS 89 and the upcoming ETRS update etc.
-%      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#grid-mappings-and-projections
-%      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#appendix-grid-mappings
+%      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#grid-mappings-and-projections
+%      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#appendix-grid-mappings
    
    ifld = ifld + 1;
    nc(ifld).Name         = 'wgs84'; % preferred
@@ -230,7 +230,7 @@
    end
 
 %% 4   Create dependent variable
-%      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#variables
+%      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#variables
 %      Parameters with standard names:
 %      http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/
 
@@ -278,8 +278,8 @@
    nc_dump(ncfile);
    fid = fopen(fullfile(fileparts(mfilename('fullpath')),[mfilename,'.cdl']),'w');
    fprintf(fid,'%s\n', '// The netCDF CF conventions for grids are defined here:');
-   fprintf(fid,'%s\n', '// http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.5/ch05s06.html');
-   fprintf(fid,'%s\n', '// This grid file can be loaded into matlab with nc_cf_grid.m');
+   fprintf(fid,'%s\n', '// http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/ch05s06.html');
+   fprintf(fid,'%s\n', '// This grid file can be loaded into matlab with nc_cf_grid.m and d3d_qp');
    fprintf(fid,'%s\n',['// To create this netCDF file with Matlab please see ',mfilename]);
    nc_dump(ncfile,fid);
    fclose(fid);
@@ -304,7 +304,3 @@
    Db.lat   = nc_varget(ncfile,ax2);
    Db.lon   = nc_varget(ncfile,ax1);
    end
-
-%% 7.c Load the data: using a dedicated function developed for grids
-
-   [Dc,Mc] = nc_cf_grid(ncfile,OPT.varname)
