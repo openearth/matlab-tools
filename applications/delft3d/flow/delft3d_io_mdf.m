@@ -254,14 +254,12 @@ elseif length(tmp)>0
       while 1
 
          %% get line
-         %  ------------------------
 
          newline          = fgetl(fid);
          if ~ischar(newline);break, end % -1 when eof
          count.line=count.line+1;
 
          %% Keyword
-         %  ------------------------
 
          keyword  = deblank(newline(1:6));
          
