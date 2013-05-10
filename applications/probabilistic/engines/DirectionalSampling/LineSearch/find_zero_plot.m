@@ -62,7 +62,7 @@ function find_zero_plot(OPT,b0,b,z,bs,zs,bn,zn,p)
 %% plot progress
 
 brange = max(abs([b0 b bn]))+1;
-zrange = max(abs([z zn]))+1;
+zrange = 5; %max(abs([z zn]))+1;
 
 fh = findobj('Tag','LSprogress');
 
@@ -101,15 +101,17 @@ else
 end
 
 % poly fit
-grb = linspace(-brange,brange,100);
-grz = polyval(p, grb);
+if ~isempty(p)
+    grb = linspace(-brange,brange,100);
+    grz = polyval(p, grb);
 
-ph = findobj(ax,'Tag','LSpoly');
-if isempty(ph)
-    ph = plot(ax, grb, grz, '-b','DisplayName','fit');
-    set(ph,'Tag','LSpoly');
-else
-    set(ph,'XData',grb,'YData',grz);
+    ph = findobj(ax,'Tag','LSpoly');
+    if isempty(ph)
+        ph = plot(ax, grb, grz, '-b','DisplayName','fit');
+        set(ph,'Tag','LSpoly');
+    else
+        set(ph,'XData',grb,'YData',grz);
+    end
 end
 
 % zero location

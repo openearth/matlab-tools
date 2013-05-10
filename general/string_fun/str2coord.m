@@ -73,7 +73,8 @@ OPT = setproperty(OPT, varargin{:});
 
 x = []; y = [];
 
-xml = xmlread(['http://maps.google.com/maps/geo?q=' name '&output=xml&oe=utf8']);
+url = ['http://maps.google.com/maps/geo?q=' name '&sensor=false&output=xml&oe=utf8&key=ABQIAAAAWIiGwZ4f3ncw4oQSuvUPrBSFwycF0SlTyEowikYlS8xDoCzQghQyGAIqzHZ5BYsm1feFl-x_mSfC9g'];
+xml = xmlread(url);
 
 if xml.hasChildNodes
     xml = xml.getElementsByTagName('kml');

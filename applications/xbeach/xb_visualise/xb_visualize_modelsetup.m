@@ -136,7 +136,11 @@ elseif isempty(OPT.figureHandle)
     %maximize(figHandle)
 end
 ax1 = subplot(1,4,[1 2 3]);
-p1 = pcolor(ax1,xw,yw,zgrid);
+if ~isvector(zgrid)
+    p1 = pcolor(ax1,xw,yw,zgrid);
+else
+    p1 = plot(ax1,xw,yw);
+end
 colormap gray;
 shading flat;
 axis equal;

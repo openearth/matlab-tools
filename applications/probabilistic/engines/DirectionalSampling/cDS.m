@@ -1,4 +1,4 @@
-classdef cDS
+classdef cDS < handle
     %CDS  One line description goes here.
     %
     %   More detailed description goes here.
@@ -160,9 +160,11 @@ classdef cDS
         end
         
         % simulation
-        function simulate( obj )
+        function obj = simulate( obj )
             
-            init(obj);
+            %init(obj);
+            
+            obj.u = [obj.u obj.randomVariables];
             
 %             while obj.Pratio > obj.minPratio || ~isempty(obj.reevaluate)
 %                 while obj.COV > obj.minCOV || ~isempty(obj.reevaluate)
