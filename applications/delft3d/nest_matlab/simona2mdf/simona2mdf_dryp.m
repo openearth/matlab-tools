@@ -1,0 +1,21 @@
+function mdf = simona2mdf_dryp(S,mdf,name_mdf)
+
+% simona2mdf_area : gets grid related quantities out of the parsed siminp tree
+
+nesthd_dir = getenv('nesthd_path');
+
+siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'MESH' 'DRYPOINTS' 'DAMPOINTS'});
+try
+   drypoints    = siminp_struc.ParsedTree.MESH.DRYPOINTS.DAMPOINTS.COORDINATES.DAMCOOR;
+
+   drypoints = reshape(drypoints,2,[])';
+
+   file = [name_mdf '.dry'];
+
+   delft3d_io_dry('write',file,drypoints(:,1),drypoints(:,2));
+
+   mdf.fildry = file;
+end
+    
+
+

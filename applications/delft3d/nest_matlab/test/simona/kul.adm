@@ -1,12 +1,12 @@
 Nest administration for water level support point (M,N) = ( 220,  85) 
-    87    65 0.0709 
-    88    65 0.2718 
-    87    66 0.1360 
-    88    66 0.5213 
+    87    65 0.0741 
+    88    65 0.2808 
+    87    66 0.1346 
+    88    66 0.5105 
 Nest administration for water level support point (M,N) = ( 220,  67) 
-    87    50 0.1891 
-    88    50 0.3807 
-    87    51 0.1428 
+    87    50 0.1894 
+    88    50 0.3801 
+    87    51 0.1431 
     88    51 0.2874 
 Nest administration for water level support point (M,N) = ( 219,  66) 
     87    49 0.1784 
@@ -39,35 +39,35 @@ Nest administration for water level support point (M,N) = (  46,  66)
     29    47 0.2893 
     30    47 0.4359 
 Nest administration for water level support point (M,N) = (  46,  66) 
-    29    46 0.1097 
-    30    46 0.1672 
-    29    47 0.2866 
-    30    47 0.4366 
+    29    46 0.1096 
+    30    46 0.1651 
+    29    47 0.2893 
+    30    47 0.4359 
 Nest administration for water level support point (M,N) = (  36,  76) 
-    25    54 0.0446 
-    26    54 0.7340 
-    25    55 0.0127 
-    26    55 0.2087 
+    25    54 0.0534 
+    26    54 0.7247 
+    25    55 0.0152 
+    26    55 0.2067 
 Nest administration for water level support point (M,N) = (  36,  76) 
-    25    54 0.0446 
-    26    54 0.7340 
-    25    55 0.0127 
-    26    55 0.2087 
+    25    54 0.0534 
+    26    54 0.7247 
+    25    55 0.0152 
+    26    55 0.2067 
 Nest administration for water level support point (M,N) = (  34,  78) 
     24    55 0.0011 
     25    55 0.0350 
     24    56 0.0302 
     25    56 0.9336 
-Nest administration for velocity(p) support point (M,N) = ( 220,  85) Angle =  -37.117 Positive = in  
-    87    65 0.0148        24002.7         400322 
-    88    65 0.3080        23585.1         399787 
-    87    66 0.0310        24338.4         400096 
-    88    66 0.6463        23910.5         399538 
-Nest administration for velocity(p) support point (M,N) = ( 220,  67) Angle =  -37.117 Positive = in  
-    87    50 0.0847        19596.7         403345 
-    88    50 0.4908        19301.5         403000 
-    87    51 0.0625        19895.3         403108 
-    88    51 0.3621        19596.9         402755 
+Nest administration for velocity(p) support point (M,N) = ( 220,  85) Angle =  -36.500 Positive = out 
+    87    65 0.1356        24002.7         400322 
+    88    65 0.2418        23585.1         399787 
+    87    66 0.2237        24338.4         400096 
+    88    66 0.3989        23910.5         399538 
+Nest administration for velocity(p) support point (M,N) = ( 220,  67) Angle =  -36.500 Positive = out 
+    87    50 0.2934        19596.7         403345 
+    88    50 0.2751        19301.5         403000 
+    87    51 0.2227        19895.3         403108 
+    88    51 0.2088        19596.9         402755 
 Nest administration for velocity(p) support point (M,N) = ( 219,  66) Angle =   52.589 Positive = in  
     87    50 0.6277        19596.7         403345 
     88    50 0.3056        19301.5         403000 
@@ -118,16 +118,16 @@ Nest administration for velocity(p) support point (M,N) = (  34,  78) Angle =   
      0     0 0.2500              0              0 
      0     0 0.2500              0              0 
      0     0 0.2500              0              0 
-Nest administration for velocity(t) support point (M,N) = ( 220,  85) Angle =  -36.425 
-    87    66 0.2128 
-    88    66 0.5894 
-    87    67 0.0525 
-    88    67 0.1453 
-Nest administration for velocity(t) support point (M,N) = ( 220,  67) Angle =  -36.425 
-    87    50 0.0726 
-    88    50 0.1551 
-    87    51 0.2461 
-    88    51 0.5262 
+Nest administration for velocity(t) support point (M,N) = ( 220,  85) Angle =  -36.398 
+    87    66 0.2228 
+    88    66 0.6008 
+    87    67 0.0477 
+    88    67 0.1287 
+Nest administration for velocity(t) support point (M,N) = ( 220,  67) Angle =  -36.398 
+    87    50 0.0735 
+    88    50 0.1545 
+    87    51 0.2488 
+    88    51 0.5232 
 Nest administration for velocity(t) support point (M,N) = ( 219,  66) Angle =   52.443 
     87    49 0.1147 
     88    49 0.1219 

@@ -12,10 +12,10 @@ IDENTification
   TITLE='kustzuid_v4'
   OVERWRITE
 
-#restart
-#  sds_rstart = 'SDS-kzv3101004'
-#   exp_restart = 'kzv3101004'
-#      nb. exp_restart moet anders zijn dan 1e EXPERIMENT
+restart
+  sds_rstart = 'SDS-kzv3101004'
+   exp_restart = 'kzv3101004'
+#     nb. exp_restart moet anders zijn dan 1e EXPERIMENT
 
 DEPTH_CONTROL
   ORIENTATION= 'pos_downwards'
@@ -34,7 +34,7 @@ MESH
     INCLUDE FILE='../locaties/points-rivier'
     INCLUDE FILE='../locaties/points-rvw-combi'
     INCLUDE FILE='../kunstwerken/bar-points'
-    INCLUDE FILE='../../../points_nest.dickv'
+#   INCLUDE FILE='../../../kul.obs'
 #   INCLUDE FILE='../locaties/points-rvw-proses'
 
   CURVES
@@ -62,7 +62,7 @@ MESH
       INCLUDE FILE='../bodem/bathymetry-rivier'
   DRYPOINTS
     DAMPOINTS
-      INCLUDE FILE='../schotjes/dampoints-combi'
+     INCLUDE FILE='../schotjes/dampoints-combi'
     CLOSEU
       INCLUDE FILE='../schotjes/closeu-combi'
       INCLUDE FILE='../schotjes/closeu-rivier'
@@ -84,13 +84,13 @@ BOX:  MNMN = (  211,    2; 1950,  399)  Corner_values = 200.0 200.0 200.0 200.0
     WATDENsity = 1023.0
     AIRDENsity = 1.2050
 
-#  SPACE_VAR_WIND
-#               WCONVERSIONFACTOR= 1.0
-#               WUNIT= ' m/s '
-#             CHARNOCK, BETA= 0.032, HEIGHT= 10.0
-#               SDS_SVWP= '../wind/scenarios/20041010/hirlam/SDS-20041010'
-#               EXP_SVWP= '20041010'
-#               CORRECT_BOUND
+   SPACE_VAR_WIND
+                WCONVERSIONFACTOR= 1.0
+                WUNIT= ' m/s '
+              CHARNOCK, BETA= 0.032, HEIGHT= 10.0
+                SDS_SVWP= '../wind/scenarios/20041010/hirlam/SDS-20041010'
+                EXP_SVWP= '20041010'
+                CORRECT_BOUND
 
 # end general
 
@@ -162,15 +162,15 @@ BOX:  MNMN = (  211,    2; 1950,  399)  Corner_values = 1.500 7.000 7.000 1.500
 
   CHECKPOINTS
     LEVELSTATIONS
-#     INCLUDE FILE='../uitvoer/check-wl-combi'
-#     INCLUDE FILE='../uitvoer/check-wl-rivier'
-#     INCLUDE FILE='../uitvoer/check-wl-rvw-proses'
-      INCLUDE FILE='check-points'
-    CURRENTSTATIONS
+      INCLUDE FILE='../uitvoer/check-wl-combi'
+      INCLUDE FILE='../uitvoer/check-wl-rivier'
+      INCLUDE FILE='../uitvoer/check-wl-rvw-proses'
+#     INCLUDE FILE='check-points'
+#   CURRENTSTATIONS
 #     INCLUDE FILE='../uitvoer/check-cur-rvw'
-      INCLUDE FILE='check-points'
-#   USECTions
-#     INCLUDE FILE='../uitvoer/check-sectu-rvw'
+#     INCLUDE FILE='check-points'
+    USECTions
+      INCLUDE FILE='../uitvoer/check-sectu-rvw'
     VSECTions
     INCLUDE FILE='../uitvoer/check-sectv-combi'
 
@@ -198,10 +198,10 @@ TRANSPORT
 
   CHECKPOINTS
     CONSTITUENT_STATIONS
-#     INCLUDE FILE='../uitvoer/check-sal-combi'
-#     INCLUDE FILE='../uitvoer/check-sal-rivier'
+      INCLUDE FILE='../uitvoer/check-sal-combi'
+      INCLUDE FILE='../uitvoer/check-sal-rivier'
 #     INCLUDE FILE='../uitvoer/check-sal-rvw'
-      INCLUDE FILE='check-points'
+#     INCLUDE FILE='check-points'
 
 DENSITIES
   CEQSTT           =    0.6980

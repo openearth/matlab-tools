@@ -481,6 +481,12 @@ if L > length(File)
 end
 string = File{L};
 len = length(string);
+if len>=4
+if string(1:4) == 'S P0'
+    hier = 1;
+end
+end
+
 while any(string(i) == delimiters)
     i = i + 1;
     if i > len
@@ -616,7 +622,7 @@ Format.Name = strtok(Name);
 fclose(fid);
 
 function [Line,Format] = processkeys(fid)
-    
+
 separators = sprintf(' \\/=(),:;\t');
 
 %
@@ -733,7 +739,7 @@ end
 function siminp = reduce_siminp(subfields,siminp,Field)
 
 hulp    = [];
-no_lev  = length(subfields); 
+no_lev  = length(subfields);
 
 %
 % For all levels
@@ -741,7 +747,7 @@ no_lev  = length(subfields);
 
 for ilev = 1: no_lev
    clear siminp_h
-   siminp_h = siminp; 
+   siminp_h = siminp;
    foundrec_start = 1;
    foundrec_stop  = length(siminp_h);
 
@@ -752,48 +758,48 @@ for ilev = 1: no_lev
           break
       end
    end
-   
+
    %
    % Exception for ketyword General
    %
-   
+
    if ilev == 1 && strcmpi(subfields{ilev},'general')
        ipos            = strcmpi('general',siminp_h);
    else
        ipos            = strncmpi(subfields{ilev},siminp_h,length(Field(ifield).Name));
    end
-   
+
    foundrec_start  = find(ipos>0,1);
-   
+
    if isempty(foundrec_start)
        siminp = [];
        return
    end
-   
+
    found = true;
    irec  = foundrec_start + 1;
-   
+
    while found
        found = false;
        found = parsethisrec(Field(nrfield).Field,siminp_h{irec},found);
-       irec = irec + 1;      
+       irec = irec + 1;
    end
-    
+
    foundrec_stop = irec - 1;
-   
+
    hulp{end+1} = siminp_h{foundrec_start};
-   
+
    clear siminp;
-  
-   for irec = foundrec_start+1:foundrec_stop 
+
+   for irec = foundrec_start+1:foundrec_stop
       siminp{irec-foundrec_start} = siminp_h{irec};
    end
-   
-   
+
+
    if ilev < no_lev
       Field = Field(nrfield).Field;
    end
-   
+
 end
 
 istart = length(hulp);
@@ -805,6 +811,17 @@ clear siminp
 
 siminp = hulp;
 
+%
+% P001 not read properly: Change to P1
+%
+
+for iline = 1: length(siminp)
+   hulp = strfind(siminp{iline},'P0');
+   while ~isempty(hulp)
+      siminp{iline} = [siminp{iline}(1:hulp) siminp{iline}(hulp+2:end)];
+      hulp = strfind(siminp{iline},'P0');
+   end
+end
 
 function found = parsethisrec(Field,rec,found)
 
@@ -825,4 +842,4 @@ else
     end
 end
 
-   
+

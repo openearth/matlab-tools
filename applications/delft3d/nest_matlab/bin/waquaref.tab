@@ -344,7 +344,7 @@ NKEY = 10
 #
 3,1        PHYSICALPARAM       NCHAR = 4                        OPT
 #
- IREP = 1  NAME = GRAVITYACC   NCHAR = 4  JREP = 1   TYPE = 2   DEF = 9.813
+ IREP = 1  NAME = GRAVI        NCHAR = 4  JREP = 1   TYPE = 2   DEF = 9.813
  IREP = 1  NAME = WATDENSITY   NCHAR = 6  JREP = 1   TYPE = 2   DEF =1023.0
  IREP = 1  NAME = AIRDENSITY   NCHAR = 6  JREP = 1   TYPE = 2   DEF = 1.205
  IREP = 1  NAME = DYNVISCOSI   NCHAR = 8  JREP = 1   TYPE = 2   DEF = 0.001

@@ -1,4 +1,4 @@
-              
+
 #  Set harmonische constanten
 #  Analyse mbv hatyan30 (mbv x-fact)
 #  Gebaseerd op usegain simulatie ter lengte van het jaar 2004
@@ -6,23 +6,23 @@
 
    HARMONIC
      GENERAL
-       OMEGA= 
-            'SA      ' , 'SM      ' , 'Q1      ' , 'O1      ' , 'M1C     ' , 'P1      ' , 
-            'S1      ' , 'K1      ' , '3MKS2   ' , '3MS2    ' , 'OQ2     ' , 'MNS2    ' , 
-            '2ML2S2  ' , 'NLK2    ' , 'MU2     ' , 'N2      ' , 'NU2     ' , 'MSK2    ' , 
-            'MPS2    ' , 'M2      ' , 'MSP2    ' , 'MKS2    ' , 'LABDA2  ' , '2MN2    ' , 
-            'T2      ' , 'S2      ' , 'K2      ' , 'MSN2    ' , '2SM2    ' , 'SKM2    ' , 
-            'NO3     ' , '2MK3    ' , '2MP3    ' , 'SO3     ' , 'MK3     ' , 'SK3     ' , 
-            '4MS4    ' , '2MNS4   ' , '3MS4    ' , 'MN4     ' , '2MLS4   ' , '2MSK4   ' , 
-            'M4      ' , '3MN4    ' , 'MS4     ' , 'MK4     ' , '2MSN4   ' , 'S4      ' , 
-            'MNO5    ' , '3MK5    ' , '2MP5    ' , '3MO5    ' , 'MSK5    ' , '3KM5    ' , 
-            '3MNS6   ' , '2NM6    ' , '4MS6    ' , '2MN6    ' , '2MNU6   ' , '3MSK6   ' , 
-            'M6      ' , 'MSN6    ' , 'MKNU6   ' , '2MS6    ' , '2MK6    ' , '3MSN6   ' , 
-            '2SM6    ' , 'MSK6    ' , '2MNO7   ' , 'M7      ' , '2MSO7   ' , '2(MN)8  ' , 
-            '3MN8    ' , 'M8      ' , '2MSN8   ' , '2MNK8   ' , '3MS8    ' , '3MK8    ' , 
-            '2(MS)8  ' , '2MSK8   ' , '3MNK9   ' , '4MK9    ' , '3MSK9   ' , '4MN10   ' , 
-            'M10     ' , '3MSN10  ' , '4MS10   ' , '2(MS)N10' , '3M2S10  ' , '4MSK11  ' , 
-            'M12     ' , '4MSN12  ' , '5MS12   ' , '4M2S12  ' 
+       OMEGA=
+            'SA      ' , 'SM      ' , 'Q1      ' , 'O1      ' , 'M1C     ' , 'P1      ' ,
+            'S1      ' , 'K1      ' , '3MKS2   ' , '3MS2    ' , 'OQ2     ' , 'MNS2    ' ,
+            '2ML2S2  ' , 'NLK2    ' , 'MU2     ' , 'N2      ' , 'NU2     ' , 'MSK2    ' ,
+            'MPS2    ' , 'M2      ' , 'MSP2    ' , 'MKS2    ' , 'LABDA2  ' , '2MN2    ' ,
+            'T2      ' , 'S2      ' , 'K2      ' , 'MSN2    ' , '2SM2    ' , 'SKM2    ' ,
+            'NO3     ' , '2MK3    ' , '2MP3    ' , 'SO3     ' , 'MK3     ' , 'SK3     ' ,
+            '4MS4    ' , '2MNS4   ' , '3MS4    ' , 'MN4     ' , '2MLS4   ' , '2MSK4   ' ,
+            'M4      ' , '3MN4    ' , 'MS4     ' , 'MK4     ' , '2MSN4   ' , 'S4      ' ,
+            'MNO5    ' , '3MK5    ' , '2MP5    ' , '3MO5    ' , 'MSK5    ' , '3KM5    ' ,
+            '3MNS6   ' , '2NM6    ' , '4MS6    ' , '2MN6    ' , '2MNU6   ' , '3MSK6   ' ,
+            'M6      ' , 'MSN6    ' , 'MKNU6   ' , '2MS6    ' , '2MK6    ' , '3MSN6   ' ,
+            '2SM6    ' , 'MSK6    ' , '2MNO7   ' , 'M7      ' , '2MSO7   ' , '2(MN)8  ' ,
+            '3MN8    ' , 'M8      ' , '2MSN8   ' , '2MNK8   ' , '3MS8    ' , '3MK8    ' ,
+            '2(MS)8  ' , '2MSK8   ' , '3MNK9   ' , '4MK9    ' , '3MSK9   ' , '4MN10   ' ,
+            'M10     ' , '3MSN10  ' , '4MS10   ' , '2(MS)N10' , '3M2S10  ' , '4MSK11  ' ,
+            'M12     ' , '4MSN12  ' , '5MS12   ' , '4M2S12  '
 
    CONSTANTS
 

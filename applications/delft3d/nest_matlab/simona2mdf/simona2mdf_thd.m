@@ -1,0 +1,51 @@
+function mdf = simona2mdf_thd(S,mdf,name_mdf)
+
+% simona2mdf_thd : gets thin dams out of the parsed siminp tree
+
+THD.DATA   =  [];
+
+nesthd_dir = getenv('nesthd_path');
+
+%
+% Thin dams in u direction
+%
+
+siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'MESH' 'DRYPOINTS' 'CLOSEU'});
+
+try
+   line = siminp_struc.ParsedTree.MESH.DRYPOINTS.CLOSEU.MNN;
+   for i_line = 1: length(line)
+      THD.DATA(end+1).mn(1)     = line(i_line).MNNLINE(1);
+      THD.DATA(end  ).mn(2)     = line(i_line).MNNLINE(2);
+      THD.DATA(end  ).mn(3)     = line(i_line).MNNLINE(1);
+      THD.DATA(end  ).mn(4)     = line(i_line).MNNLINE(3);
+      THD.DATA(end  ).direction = 'U';
+   end
+end
+
+%
+% Same story v-direction
+%
+
+siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'MESH' 'DRYPOINTS' 'CLOSEV'});
+
+try
+   line = siminp_struc.ParsedTree.MESH.DRYPOINTS.CLOSEV.NMM;
+   for i_line = 1: length(line)
+      THD.DATA(end+1).mn(1)     = line(i_line).NMMLINE(2);
+      THD.DATA(end  ).mn(2)     = line(i_line).NMMLINE(1);
+      THD.DATA(end  ).mn(3)     = line(i_line).NMMLINE(3);
+      THD.DATA(end  ).mn(4)     = line(i_line).NMMLINE(1);
+      THD.DATA(end  ).direction = 'V';
+   end
+end
+
+%
+% Write to the output file
+%
+
+if ~isempty(THD.DATA)
+    file = [name_mdf '.thd'];
+    mdf.filtd = file;
+    delft3d_io_thd('write',file,THD);
+end
