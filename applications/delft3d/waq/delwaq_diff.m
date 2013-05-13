@@ -82,9 +82,6 @@ if isempty(S.Subs)
    return 
 end
 
-S.Segm = Segments;
-S.iSegm{1} = Segments;
-S.iSegm{2} = Segments;
 
 % Matching Segm
 if isempty(S.Segm)
@@ -102,6 +99,9 @@ end
   
 switch S.extId
     case 'map'
+    S.Segm = Segments;
+    S.iSegm{1} = Segments;
+    S.iSegm{2} = Segments;
 
     for it = 1:S.nTime
         disp(['delwaq_diff progress:' num2str(it) '/' num2str(S.nTime)])
