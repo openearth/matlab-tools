@@ -66,18 +66,15 @@ debug = 0;
    percent         = 0.01; % same as in UD units
 
    %% Definitions  
-   % ---------------------
    RAD             = 180./pi;
    cyc             = 1;
    cycle           = 1;
    cycles          = 1;
    
    %% Definitions  
-   % ---------------------
    ppm             = 1e-6;
 
    %% Length units 
-   % ---------------------
    mm              = 1e-3;                    % mms
    mms             = mm;                      % mms
    millimeter      = mm;                      % mms
@@ -111,7 +108,6 @@ debug = 0;
    miles           = mile;                    % miles
    
    %% Volume units 
-   % ---------------------
    l               = 1e-3;                    % liter
    liter           = l;                       % liter
    liters          = l;                       % liter
@@ -119,8 +115,6 @@ debug = 0;
    litres          = l;                       % liter
 
    %% Time units 
-   % ---------------------
-   
    s               = 1;                       % seconds
    sec             = s;                       % seconds
    secs            = s;                       % seconds
@@ -169,8 +163,7 @@ debug = 0;
    week            = 7.*day;                  % weeks
    weeks           = week;                    % weeks
    
-   %% years: http://en.wikipedia.org/wiki/Gregorian_year
-   
+   %% Calendar units: years: http://en.wikipedia.org/wiki/Gregorian_year
    yr              = 365.24218967.*day;       % tropical year http://en.wikipedia.org/wiki/Gregorian_year#Sidereal.2C_tropical.2C_and_anomalistic_years
    yrs             = yr;                      % tropical year
    year            = yr;                      % tropical year
@@ -197,7 +190,6 @@ debug = 0;
    months          = month;                   % months
    
    %% Pressure units 
-   % ---------------------
    Pa              = 1;                       % pascal
    Pascal          = Pa;                      % pascal
    pascal          = Pa;                      % pascal
@@ -206,7 +198,6 @@ debug = 0;
    mbar            = 100;                     % millibar
 
    %% Force units 
-   % ---------------------
    dyn             = 1e-5;                    % dyne
    dyne            = 1e-5;                    % dyne
    dynes           = 1e-5;                    % dyne
@@ -216,7 +207,6 @@ debug = 0;
    Newton          = N;                       % Newton
    
    %% Mass units 
-   % ---------------------
    ug               = 1e-9;                   % ug
    mg               = 1e-6;                   % mg
    mgr              = mg;                     % mg
@@ -236,7 +226,6 @@ debug = 0;
    pound            = 0.45359237;             % pound
    
    %% Angle units 
-   % ---------------------
    rad             = 1;                       % radian
    deg             = 1./RAD;                  % degree
    amin            = deg./60;                 % arcmin
@@ -248,14 +237,19 @@ debug = 0;
    degree_true     = deg;
    
    %% Solid Angle units 
-   % ---------------------
    ster            = 1;                       % steradian
    sdeg            = 1./(RAD.^2);             % square degree
    smin            = 1./((60.*RAD).^2);       % square arcmin
    ssec            = 1./((3600.*RAD).^2);     % square arcsec
-
-% Find conversion factor 
-%---------------------
+   
+   %% Temperature units    
+   K               = 1;                       % Kelvin
+   degree_K        = K;
+   degrees_K       = K;
+   deg_K           = K;
+   Kelvin          = K;
+   
+%% Find conversion factor 
    if debug
       disp(['InUnits  ', InUnits0 ,' beautified to ',InUnits , ' = ',num2str(eval(InUnits) )])
       disp(['OutUnits ', OutUnits0,' beautified to ',OutUnits, ' = ',num2str(eval(OutUnits))])

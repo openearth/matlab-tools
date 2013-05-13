@@ -6,7 +6,7 @@ function [output,status] = urlread_basicauth(urlChar,method,params);
 %   detected and used in the call to the server, UNLIKE URLREAD which does
 %   not offer any support for that, see:
 %   http://www.mathworks.com/support/solutions/en/data/1-4EO8VK/index.html?solution=1-4EO8VK
-
+%
 %
 %   S = urlread_basicauth('URL','method',PARAMS) passes information to the server as
 %   part of the request.  The 'method' can be 'get', or 'post' and PARAMS is a 

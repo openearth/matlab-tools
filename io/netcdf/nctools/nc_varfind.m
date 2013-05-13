@@ -29,7 +29,7 @@ function varargout = nc_varfind(ncfile,varargin)
 %       varname = nc_varfind([directory,'knmi\NOAA\mom\1990_mom\5\N19900508T132200_SST.nc'],...
 %                 'attributename', 'standard_name', 'attributevalue', 'time')
 %
-% See also: nc_cf_time, nc_cf_grid
+% See also: nc_cf_time, nc_cf_grid, nc_varname2index
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology
@@ -140,7 +140,7 @@ if length(varname)==1
 end
 
 
-if nargout==1
+if nargout<2
     varargout= {varname};
 elseif nargout==2
     varargout= {varname,varindex};

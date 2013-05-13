@@ -7,8 +7,8 @@ function handle=plot_ellipse(major,minor,inc,phase,pos,options,type)
 %   Inputs:
 %      MAJOR     Semi-major axis
 %      MINOR     Semi-minor axis
-%      INC       Inclination
-%      PHASE     Phase
+%      INC       Inclination [degrees]
+%      PHASE     Phase [degrees]
 %      POS       Center of ellipse [ <x y> <x y z> {<0 0>} ]
 %      OPTIONS   Plot line options [ 'b' ]
 %      TYPE      Way phase is shown [ {1} 2 3 ]
@@ -24,7 +24,7 @@ function handle=plot_ellipse(major,minor,inc,phase,pos,options,type)
 %      figure
 %      plot_ellipse(2,1,45,20,[1 -1],'r'), axis equal
 %
-%See also: plot_tidalellipses
+%See also: plot_tidalellipses, ap2ep, ep2ap, t_tide, rad2deg
 
 %   MMA 2-2003, martinho@fis.ua.pt
 %   Department of physics

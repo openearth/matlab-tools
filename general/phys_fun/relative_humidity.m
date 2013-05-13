@@ -1,14 +1,16 @@
 function RH = relative_humidity(method,T2,Td)
-%RELATIVE_HUMIDITY
+%RELATIVE_HUMIDITY  rel. huimidity in % as as f(air temp., dew point temp.)
 %
 %   RH = relative_humidity(method,T2,Td) 
 %
-% calculates the relative humidity RH as a function of
-% the air temperature T (at 2 m) and the dew point temperature Td,
-% using the chosen coefficient sets + formulations.
-% Use method='wmo_water' the coefficients for
+% calculates the relative humidity RH [%] as a function of
+% the air temperature T [Celsius] (at 2 m) and the
+% dew point temperature Td [Celsius], using the chosen
+% coefficient sets + chosen formulations.
+% Use method = 'wmo_water' for the coefficients for
 % water substrate, or method='wmo_ice' for ice subtrate or ...
-% T and Td can be in degrees Celsius or Kelvin, RH is in percent.
+% T and Td can either be in degrees Celsius or in Kelvin
+% (any T > 100 is transformed to Celsius), RH is in percent (%).
 %
 % Example: reproduce Fig 1 from (Lawrence, 2005, BAMS).
 %

@@ -18,7 +18,7 @@ function strout = mkhtml(strin);
 % ')'    becomes %29
 % '''    becomes %27
 %
-% See also: ISLETTER, MKVAR, MKTEX
+% See also: ISLETTER, MKVAR, MKTEX, urlencode, urldecode
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 Delft University of Technology
