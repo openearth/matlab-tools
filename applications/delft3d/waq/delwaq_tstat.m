@@ -144,6 +144,7 @@ for it = 2:Ntimes
 
     if ~isempty(itime1{it-1})
         [~, data1] = delwaq('read',struct1,isub1,iseg,itime1{it-1});    
+        dataseg = [];
         for irow = 1:size(data1,1);
             ldata = data1(irow,:,:);
             ldata = ldata(:)';
