@@ -994,7 +994,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
         attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
         attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
         attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN)); % this initializes at NaN rather than 9.9692e36
-        attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.dps = [Inf -Inf];
+        attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.morphological_depth = [Inf -Inf];
         nc.Variables(ifld) = struct('Name'      , 'morphological_depth', ...
                                   'Datatype'  , OPT.type, ...
                                   'Dimensions', s_t.dims, ...
@@ -1369,7 +1369,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
         disp('Writing bed level timeseries...')
         matrix = vs_let(F,'his-sed-series','ZDPS',{OPT.ind},OPT.quiet);
         ncwrite(ncfile,'morphological_depth',permute(matrix,[2 1]));
-        R.dps = [min(R.dps(1),min(matrix(:))) max(R.dps(2),max(matrix(:)))];
+        R.morphological_depth = [min(R.morphological_depth(1),min(matrix(:))) max(R.morphological_depth(2),max(matrix(:)))];
 
         disp('Writing available mass of sediment...')
         matrix = vs_let(F,'his-sed-series','ZBDSED',{OPT.ind,0},OPT.quiet);
