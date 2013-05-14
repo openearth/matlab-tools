@@ -77,39 +77,88 @@ fid=fopen(fname,'w');
 
 if exist([getenv('D3D_HOME') '\' getenv('ARCH') '\flow\bin\d_hydro.exe'],'file')
 
+    % Check whether Delft3D FLOW version has been set
+    handles=getHandles;
+    if handles.Model(md).VersionSelect == 0
+        clearInstructions;
+        ddb_zoomOff;
+        h=handles;
+        xmldir=handles.Model(md).xmlDir;
+        xmlfile='Delft3DFLOW.flowversion.xml';
+        [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir filesep 'icons' filesep 'deltares.gif']);
+
+        if ok
+            handles=h;
+            handles.Model(md).VersionSelect=1;
+            setHandles(handles);
+        else
+            ddb_giveWarning('','Could not generate batch file, because no flow version was selected')
+            return
+        end
+    end
+    handles=getHandles;
+    
     % New open-source version
     fprintf(fid,'%s\n','@ echo off');
-    fprintf(fid,'%s\n','set argfile=config_flow2d3d.xml');
+    if strcmp(handles.Model(md).Version,'5.00.xx')
+        fprintf(fid,'%s\n','set argfile=config_flow2d3d.xml');
+    else
+        fprintf(fid,'%s\n','set argfile=config_d_hydro.xml');
+    end
     fprintf(fid,'%s\n',['set exedir=' getenv('D3D_HOME') '\' getenv('ARCH') '\flow\bin\']);
     fprintf(fid,'%s\n','set PATH=%exedir%;%PATH%');
-    
+
     if ~isempty(mdwfile)
         fprintf(fid,'%s\n','start %exedir%\d_hydro.exe %argfile%');
         fprintf(fid,'%s\n',[getenv('D3D_HOME') '\' getenv('ARCH') '\wave\bin\wave.exe ' mdwfile ' 1']);
     else
         fprintf(fid,'%s\n','%exedir%\d_hydro.exe %argfile%');
     end
-
     
-    % Write xml config file
-    fini=fopen('config_flow2d3d.xml','w');
-    fprintf(fini,'%s\n','<?xml version=''1.0'' encoding=''iso-8859-1''?>');
-    fprintf(fini,'%s\n','<DeltaresHydro start="flow2d3d">');
-    fprintf(fini,'%s\n',['<flow2d3d MDFile = ''' runid '.mdf''></flow2d3d>']);
-    fprintf(fini,'%s\n','</DeltaresHydro>');
-    fclose(fini);
+    if strcmp(handles.Model(md).Version,'5.00.xx')
+        % Xml only necessary for debugging in version 5.00.xx
 
-    % Write old config file
-    fini=fopen('config_flow2d3d.ini','w');
-    fprintf(fini,'%s\n','[FileInformation]');
-    fprintf(fini,'%s\n',['   FileCreatedBy    = ' getenv('USERNAME')]);
-    fprintf(fini,'%s\n',['   FileCreationDate = ' datestr(now)]);
-    fprintf(fini,'%s\n','   FileVersion      = 00.01');
-    fprintf(fini,'%s\n','[Component]');
-    fprintf(fini,'%s\n','   Name                = flow2d3d');
-    fprintf(fini,'%s\n',['   MDFfile             = ' runid]);
-    fclose(fini);
-    
+        % Write xml config file
+        fini=fopen('config_flow2d3d.xml','w');
+        fprintf(fini,'%s\n','<?xml version="1.0" encoding="iso-8859-1"?>');
+        fprintf(fini,'%s\n','<DeltaresHydro start="flow2d3d">');
+        fprintf(fini,'%s\n',['<flow2d3d MDFile = ''' runid '.mdf''></flow2d3d>']);
+        fprintf(fini,'%s\n','</DeltaresHydro>');
+        fclose(fini);
+        
+        % Write old config file
+        fini=fopen('config_flow2d3d.ini','w');
+        fprintf(fini,'%s\n','[FileInformation]');
+        fprintf(fini,'%s\n',['   FileCreatedBy    = ' getenv('USERNAME')]);
+        fprintf(fini,'%s\n',['   FileCreationDate = ' datestr(now)]);
+        fprintf(fini,'%s\n','   FileVersion      = 00.01');
+        fprintf(fini,'%s\n','[Component]');
+        fprintf(fini,'%s\n','   Name                = flow2d3d');
+        fprintf(fini,'%s\n',['   MDFfile             = ' runid]);
+        fclose(fini); 
+    else
+        fini=fopen('config_d_hydro.xml','w');
+        fprintf(fini,'%s\n','<?xml version=''1.0'' encoding=''iso-8859-1''?>');
+        fprintf(fini,'%s\n','<deltaresHydro xmlns="http://schemas.deltares.nl/deltaresHydro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.deltares.nl/deltaresHydro http://content.oss.deltares.nl/schemas/d_hydro-1.00.xsd">');
+        fprintf(fini,'%s\n','<documentation>');
+        fprintf(fini,'%s\n','File created by    : DelftDashboard');
+        fprintf(fini,'%s\n',['File creation date : ' datestr(now)]);
+        fprintf(fini,'%s\n','File version       : 1.00');
+        fprintf(fini,'%s\n','</documentation>');
+        fprintf(fini,'%s\n','<control>');
+        fprintf(fini,'%s\n','<sequence>');
+        fprintf(fini,'%s\n','<start>myNameFlow</start>');
+        fprintf(fini,'%s\n','</sequence>');
+        fprintf(fini,'%s\n','</control>');
+        fprintf(fini,'%s\n','<flow2D3D name="myNameFlow">');
+        fprintf(fini,'%s\n','<library>flow2d3d</library>');
+        fprintf(fini,'%s\n',['<mdfFile>' runid '.mdf</mdfFile>']);
+        fprintf(fini,'%s\n','</flow2D3D>');
+        fprintf(fini,'%s\n','</deltaresHydro>');
+        fclose(fini);
+    end
+
+ 
 elseif exist([getenv('D3D_HOME') '\' getenv('ARCH') '\flow\bin\deltares_hydro.exe'],'file')
     
     % New open-source version
@@ -182,4 +231,3 @@ else
 end
 
 fclose(fid);
-

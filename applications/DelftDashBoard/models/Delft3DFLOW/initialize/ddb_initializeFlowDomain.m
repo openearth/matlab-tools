@@ -63,6 +63,9 @@ function handles = ddb_initializeFlowDomain(handles, opt, id, runid)
 % $Keywords: $
 
 %%
+handles.Model(md).Version = '5.00.xx';
+handles.Model(md).VersionList = {'5.00.xx','6.00.xx'}; 
+handles.Model(md).VersionSelect = 0;
 handles.Model(md).Input(id).runid=runid;
 
 switch lower(opt)
