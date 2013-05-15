@@ -15,10 +15,16 @@ nesthd_dir = getenv('nesthd_path');
 % get information out of struc
 %
 
-%siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'FORCINGS'});
-%if ~isempty (siminp_struc.ParsedTree.FLOW.FORCINGS.FOURIER)
-%    fourier      = siminp_struc.ParsedTree.FLOW.FORCINGS.HARMONIC;
-
+siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'FORCINGS'});
+if ~isempty (siminp_struc.ParsedTree.FLOW.FORCINGS.FOURIER)
+    fourier      = siminp_struc.ParsedTree.FLOW.FORCINGS.FOURIER;
+    
+    %
+    % set frequencies (also convert from simona to D3D unit)
+    %
+    
+    bch.frequencies = fourier.GENERAL.OMEGA*1e-4*3600*180/pi;
+    
     %
     % cycle over all open boundaries
     %
@@ -26,20 +32,31 @@ nesthd_dir = getenv('nesthd_path');
     for ibnd = 1: length(bnd.DATA)
 
         %
-        % Type of boundary out of the bndstruc, for astronomical data continue
+        % Cycle over harmonic boundarieseand get harmonic data out of the siminp
         %
 
         if strcmpi(bnd.DATA(ibnd).datatype,'H');
 
             ibnd_bch = ibnd_bch + 1;
+            
+            for iside = 1: 2
+                pntnr = bnd.pntnr(ibnd,iside);
+                
+                %
+                % Find correct point
+                %
+                
+                for ipnt = 1: length(fourier.SERIES.S)
+                    if fourier.SERIES.S(ipnt).P == pntnr
+                        %
+                        % Fill the bct structure
+                        %
+                        bch.a0         (iside,ibnd_bch)   = fourier.SERIES.S(ipnt).AZERO;
+                        bch.amplitudes (iside,ibnd_bch,:) = fourier.SERIES.S(ipnt).AMPL;
+                        bch.phases     (iside,ibnd_bch,:) = fourier.SERIES.S(ipnt).PHASE*180/pi;
+                    end
+                end
+             end
         end
     end
-
-
-%
-% Warning
-%
-
-if ibnd_bch > 0
-   simona2mdf_warning('Conversion of HARMONIC boundary forcing not implemented yet');
 end

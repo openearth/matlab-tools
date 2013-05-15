@@ -9,8 +9,8 @@ parameter           'time' unit '[min]'
 parameter           'Water elevation (Z)  End A' unit '[m]'
 parameter           'Water elevation (Z)  End B' unit '[m]'
 records-in-table     2
-           0.00   0.00000e+00   0.00000e+00 
-       99999.00   0.00000e+00   0.00000e+00 
+           0.00  0.00000e+000  0.00000e+000 
+       99999.00  0.00000e+000  0.00000e+000 
 table-name          'Boundary Section : 2'
 contents            'uniform'
 location            'Open rand nummer   2'
@@ -22,8 +22,8 @@ parameter           'time' unit '[min]'
 parameter           'Water elevation (Z)  End A' unit '[m]'
 parameter           'Water elevation (Z)  End B' unit '[m]'
 records-in-table     2
-           0.00   0.00000e+00   0.00000e+00 
-       99999.00   0.00000e+00   0.00000e+00 
+           0.00  0.00000e+000  0.00000e+000 
+       99999.00  0.00000e+000  0.00000e+000 
 table-name          'Boundary Section : 3'
 contents            'uniform'
 location            'Open rand nummer   3'
@@ -35,8 +35,8 @@ parameter           'time' unit '[min]'
 parameter           'Water elevation (Z)  End A' unit '[m]'
 parameter           'Water elevation (Z)  End B' unit '[m]'
 records-in-table     2
-           0.00   0.00000e+00   0.00000e+00 
-       99999.00   0.00000e+00   0.00000e+00 
+           0.00  0.00000e+000  0.00000e+000 
+       99999.00  0.00000e+000  0.00000e+000 
 table-name          'Boundary Section : 4'
 contents            'uniform'
 location            'Open rand nummer   4'
@@ -48,8 +48,8 @@ parameter           'time' unit '[min]'
 parameter           'Water elevation (Z)  End A' unit '[m]'
 parameter           'Water elevation (Z)  End B' unit '[m]'
 records-in-table     2
-           0.00   0.00000e+00   0.00000e+00 
-       99999.00   0.00000e+00   0.00000e+00 
+           0.00  0.00000e+000  0.00000e+000 
+       99999.00  0.00000e+000  0.00000e+000 
 table-name          'Boundary Section : 5'
 contents            'uniform'
 location            'Open rand nummer   5'
@@ -61,8 +61,8 @@ parameter           'time' unit '[min]'
 parameter           'Water elevation (Z)  End A' unit '[m]'
 parameter           'Water elevation (Z)  End B' unit '[m]'
 records-in-table     2
-           0.00   0.00000e+00   0.00000e+00 
-       99999.00   0.00000e+00   0.00000e+00 
+           0.00  0.00000e+000  0.00000e+000 
+       99999.00  0.00000e+000  0.00000e+000 
 table-name          'Boundary Section : 6'
 contents            'uniform'
 location            'Open rand nummer   6'
@@ -74,5 +74,5 @@ parameter           'time' unit '[min]'
 parameter           'Water elevation (Z)  End A' unit '[m]'
 parameter           'Water elevation (Z)  End B' unit '[m]'
 records-in-table     2
-           0.00   0.00000e+00   0.00000e+00 
-       99999.00   0.00000e+00   0.00000e+00 
+           0.00  0.00000e+000  0.00000e+000 
+       99999.00  0.00000e+000  0.00000e+000 

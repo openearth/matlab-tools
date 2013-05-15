@@ -4,7 +4,8 @@ function simona2mdf (filwaq,filmdf)
 
 oetsettings('quiet','searchdb',false);
 
-filwaq = '..\test\simona\simona-scaloost-fijn-exvd-v1\SIMONA\berekeningen\siminp';
+filwaq = '..\test\simona\simona-scaloost-fijn-exvd-v1\SIMONA\berekeningen\siminp.fou';
+%filwaq = '..\test\simona\simona-scaloost-fijn-exvd-v1\SIMONA\berekeningen\siminp';
 %filwaq = '..\test\simona\simona-kustzuid-2004-v4\SIMONA\berekeningen\siminp-kzv4';
 %filwaq = '..\test\simona\A80\siminp.dcsmv6';
 filmdf = 'test.mdf';
@@ -47,18 +48,24 @@ bnd = simona2mdf_bnddef(S);
 if ~isempty(bnd)
     mdf.filbnd = [name_mdf '.bnd'];
     delft3d_io_bnd('write',mdf.filbnd,bnd);
-   
+
     bch = simona2mdf_bch(S,bnd);
     if ~isempty(bch)
         mdf.filbch = [name_mdf '.bch'];
-        delft3d_io_bch('write',mdf.filbca,bca);
+        delft3d_io_bch('write',mdf.filbch,bch);
     end
-        
+
     bct = simona2mdf_bct(S,bnd,mdf);
     if ~isempty(bct)
         mdf.filbct = [name_mdf '.bct'];
         ddb_bct_io('write',mdf.filbct,bct);
-    end  
+    end
+        
+    bcq = simona2mdf_bcq(S,bnd);
+    if ~isempty(bcq)
+       mdf.filbcq = [name_mdf '.bcq'];
+       ddb_io_bct('write',mdf.filbcq,bcq);
+    end
     
     bca = simona2mdf_bca(S,bnd);
     if ~isempty(bca)

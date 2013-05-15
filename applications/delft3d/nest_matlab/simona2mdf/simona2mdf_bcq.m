@@ -1,0 +1,24 @@
+function bcq = simona2mdf_bcq(S,bnd)
+
+% simona2mdf_bcq : gets qh forcing out of the siminp
+
+bcq      = [];
+ibnd_bcq = 0;
+
+%
+% Not implemented yet
+%
+
+for ibnd = 1: length(bnd.DATA)
+    if strcmpi(bnd.DATA(ibnd).datatype,'q')
+        ibnd_bcq = ibnd_bcq + 1;
+    end
+end
+
+%
+% Displays warning message
+%
+
+if ibnd_bcq > 0
+    simona2mdf_warning('Conversion of QH boundaries not implemented yet');
+end

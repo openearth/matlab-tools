@@ -30,7 +30,7 @@ first        = true;
 %
 
 for iopen = 1: length(bnddef.B)
-    
+
     %
     % Get the opening number of the boundary
     %
@@ -50,7 +50,7 @@ for iopen = 1: length(bnddef.B)
     bnd.DATA(iopen).name = opendef.OPEN(iopennr).LINE.NAME;
     ipoint(1)= opendef.OPEN(iopennr).LINE.P(1);
     ipoint(2)= opendef.OPEN(iopennr).LINE.P(2);
-     
+
     %
     % find mn cordinates of boundary support points
     %
@@ -68,11 +68,11 @@ for iopen = 1: length(bnddef.B)
     bnd.DATA(iopen).mn(2) = bnd.n(iopen,1);
     bnd.DATA(iopen).mn(3) = bnd.m(iopen,2);
     bnd.DATA(iopen).mn(4) = bnd.n(iopen,2);
-     
+
     %
     % Determine type of boundary
     %
-    
+
     if strcmpi (deblank(bnddef.B(iopen).BTYPE),'wl')
         bnd.DATA(iopen).bndtype = 'Z';
     elseif strcmpi (deblank(bnddef.B(iopen).BTYPE),'vel')
@@ -98,17 +98,20 @@ for iopen = 1: length(bnddef.B)
     elseif strcmpi (deblank(bnddef.B(iopen).BTYPE),'Disch')
         bnd.DATA(iopen).bndtype = 'Q';
     elseif strcmpi (deblank(bnddef.B(iopen).BTYPE),'Disch-ad')
-        bnd.DATA(iopen).bndtype = 'T';        
+        bnd.DATA(iopen).bndtype = 'T';
+    elseif strcmpi (deblank(bnddef.B(iopen).BTYPE),'QH')
+        bnd.DATA(iopen).bndtype = 'Z';
+        bnd.DATA(iopen).datatype= 'Q';
     end
     bnd.DATA(iopen).alfa = bnddef.B(iopen).REFL;
 
     %
     % Fill type of forcing
     %
-      
-    if strcmpi(deblank(bnddef.B(iopen).BDEF),'series')
+
+    if strcmpi(deblank(bnddef.B(iopen).BDEF),'series') && ~strcmpi(bnd.DATA(iopen).datatype,'Q')
         bnd.DATA(iopen).datatype = 'T';
-    else
+    elseif ~strcmpi(bnd.DATA(iopen).datatype,'Q')
         %
         % Fourier (bch) or Harmonic (bca)
         % start by assuming harmonic
@@ -126,7 +129,7 @@ for iopen = 1: length(bnddef.B)
                 end
             end
         end
-          
+
         if tide
             bnd.DATA(iopen).datatype = 'A';
             bnd.DATA(iopen).labelA   = ['P' num2str(bnd.pntnr(iopen,1),'%4.4i')];
@@ -135,5 +138,5 @@ for iopen = 1: length(bnddef.B)
             bnd.DATA(iopen).datatype = 'H';
         end
     end
-end      
-    
+end
+
