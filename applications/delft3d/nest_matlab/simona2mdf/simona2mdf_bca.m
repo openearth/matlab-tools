@@ -3,9 +3,10 @@ function bca = simona2bnd_bca(S,bnd)
 % simona2mdf_bca : gets astronomical data out of the siminp
 
 bca      = [];
-ibnd_bca = 1
+ibnd_bca = 0;
+
 %
-% Parse Boundary data
+% Astronomical forcing data
 %
 
 nesthd_dir = getenv('nesthd_path');
@@ -14,118 +15,45 @@ nesthd_dir = getenv('nesthd_path');
 % get information out of struc
 %
 
-harmonic     = siminp_struc.ParsedTree.FLOW.FORCINGS.HARMONIC;
-siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'PROBLEM'});
-
-%
-% cycle over all open boundaries
-%
-
-for ibnd = 1: length(bnd.DATA)
+siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'FORCINGS'});
+if ~isempty (siminp_struc.ParsedTree.FLOW.FORCINGS.HARMONIC)
+    harmonic     = siminp_struc.ParsedTree.FLOW.FORCINGS.HARMONIC;
+    const        = harmonic.GENERAL.OMEGA;
 
     %
-    % Get the opening number of the boundary
+    % cycle over all open boundaries
     %
 
-    OpenNr  = bnddef.B(iopen).OPEN;
+    for ibnd = 1: length(bnd.DATA)
 
-    %
-    % Find the correct opening
-    %
-
-    for iline = 1: length(opendef.OPEN)
-        if opendef.OPEN(iline).SEQNR == OpenNr
-            iopennr = iline;
-        end
-    end
-
-    bnd.DATA(iopen).name = opendef.OPEN(iopennr).LINE.NAME;
-    ipoint(1)= opendef.OPEN(iopennr).LINE.P(1);
-    ipoint(2)= opendef.OPEN(iopennr).LINE.P(2);
-
-    %
-    % find mn cordinates of boundary support points
-    %
-
-    for iside = 1: 2
-        for ipnt = 1: length(points.P)
-            if points.P(ipnt).SEQNR  == ipoint(iside)
-                 bnd.m(iopen,iside)     = points.P(ipnt).M;
-                 bnd.n(iopen,iside)     = points.P(ipnt).N;
-                 bnd.pntnr(iopen,iside) = ipoint(iside);
-            end
-        end
-    end
-    bnd.DATA(iopen).mn(1) = bnd.m(iopen,1);
-    bnd.DATA(iopen).mn(2) = bnd.n(iopen,1);
-    bnd.DATA(iopen).mn(3) = bnd.m(iopen,2);
-    bnd.DATA(iopen).mn(4) = bnd.n(iopen,2);
-
-    %
-    % Determine type of boundary
-    %
-
-    if strcmpi (deblank(bnddef.B(iopen).BTYPE),'wl')
-        bnd.DATA(iopen).bndtype = 'Z';
-    elseif strcmpi (deblank(bnddef.B(iopen).BTYPE),'vel')
-        bnd.DATA(iopen).bndtype = 'C';
-        if first
-            prf = 'Uniform';
-            first = false;
-            %
-            % Determine type of profile
-            %
-            if ~isempty(vel_prof)
-                if vel_prof.BOUXDIM
-                    prf = '3D Profile';
-                end
-                if vel_prof.LOG_BOUNDARIES
-                    prf = 'Logarithmic';
-                end
-            end
-        end
-        bnd.DATA(iopen).vert_profile = prf;
-    elseif strcmpi (deblank(bnddef.B(iopen).BTYPE),'Riemann')
-        bnd.DATA(iopen).bndtype = 'R';
-    elseif strcmpi (deblank(bnddef.B(iopen).BTYPE),'Disch')
-        bnd.DATA(iopen).bndtype = 'Q';
-    elseif strcmpi (deblank(bnddef.B(iopen).BTYPE),'Disch-ad')
-        bnd.DATA(iopen).bndtype = 'T';
-    end
-    bnd.DATA(iopen).alfa = bnddef.B(iopen).REFL;
-
-    %
-    % Fill type of forcing
-    %
-
-    if strcmpi(deblank(bnddef.B(iopen).BDEF),'series')
-        bnd.DATA(iopen).datatype = 'T';
-    else
         %
-        % Fourier (bch) or Harmonic (bca)
-        % start by assuming harmonic
+        % Type of boundary out of the bndstruc, for astronomical data continue
         %
-        tide         = false;
-        if ~isempty(harmonic)
-            hpoints = harmonic.CONSTANTS.S;
-            for ipnt = 1: length(hpoints)
-                %
-                % Harmonc forcing for side 1
-                %
-                if hpoints(ipnt).P == bnd.pntnr(iopen,1)
-                    tide = true;
-                    break
+
+        if strcmpi(bnd.DATA(ibnd).datatype,'A');
+   
+            ibnd_bca = ibnd_bca + 1;
+
+            for iside = 1: 2
+                pntnr = bnd.pntnr(ibnd,iside);
+                for ipnt = 1: length(harmonic.CONSTANTS.S)
+                    if harmonic.CONSTANTS.S(ipnt).P == pntnr
+                        bca.DATA(ibnd_bca,iside).names{1} = 'A0';
+                        for icons = 1: length(const)
+                            bca.DATA(ibnd_bca,iside).names{icons+1} = const{icons}(2:end-1);
+                        end
+                        ampfas = harmonic.CONSTANTS.S(ipnt);
+                        bca.DATA(ibnd_bca,iside).amp(1) = ampfas.AZERO;
+                        bca.DATA(ibnd_bca,iside).phi(1) = -999.999;
+                        bca.DATA(ibnd_bca,iside).amp(2:length(ampfas.AMPL)+1)  = ampfas.AMPL;
+                        bca.DATA(ibnd_bca,iside).phi(2:length(ampfas.PHASE)+1) = ampfas.PHASE*360/(2*pi);
+                        bca.DATA(ibnd_bca,iside).label = ['P' num2str(pntnr,'%4.4i')];
+                        break
+                    end
                 end
             end
-        end
-
-        if tide
-            bnd.DATA(iopen).datatype = 'A';
-            bnd.DATA(iopen).labelA   = ['P' num2str(bnd.pntnr(iopen,1),'%4.4i')];
-            bnd.DATA(iopen).labelB   = ['P' num2str(bnd.pntnr(iopen,2),'%4.4i')];
-        else
-            bnd.DATA(iopen).datatype = 'H';
         end
     end
 end
+
 

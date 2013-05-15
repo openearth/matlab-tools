@@ -4,8 +4,14 @@ function nesthd_check
 %
 %See also: nest_matlab
 
+% Windows batch file
+
+system('run.bat');
+
+% Matlab command prompt
+
 nesthd ('test\simona\dickv_hd1.ini');
-nesthd ('test\simona\dickv_hd2.ini');   
+nesthd ('test\simona\dickv_hd2.ini');
 
 nesthd ('d:\projects\nesthd_matlab\test\shenzen\shenzen_hd1.ini');
 nesthd ('d:\projects\nesthd_matlab\test\shenzen\shenzen_hd2.ini');

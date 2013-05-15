@@ -1,0 +1,17 @@
+#   Gebaseerd op gecalibreerde rvw (DCSM98) in gmt
+    'Q1    ','O1    ','P1    ','K1    ',
+    'N2    ','M2    ','S2    ','K2    ',
+    'SA    ','2Q1   ',
+    'SIGMA1','RO1   ','CHI1  ',
+    'PI1   ','FI1   ','THETA1',
+    '2N2   ','MU2   ','NU2   ',
+    'LABDA2','L2    ','T2    ',
+
+#    'NU2   ','L2    ','SA    '
+
+#   TIMESHIFT 60
+
+TIHARM   360
+
+CONSTANTS
+

@@ -1,0 +1,47 @@
+# barriers
+# B1 tot en met B11 is de Roompot
+      B  1: P 67, TYPE='v-bar', DIAG=  0
+      B  2: P 68, TYPE='v-bar', DIAG=  0
+      B  3: P 69, TYPE='v-bar', DIAG=  0
+      B  4: P 70, TYPE='v-bar', DIAG=  0
+      B  5: P 71, TYPE='v-bar', DIAG=  0
+      B  6: P 72, TYPE='v-bar', DIAG=  0
+      B  7: P 73, TYPE='v-bar', DIAG=  0
+      B  8: P 74, TYPE='v-bar', DIAG=  0
+      B  9: P 75, TYPE='v-bar', DIAG=  0
+      B 10: P 76, TYPE='v-bar', DIAG=  0
+      B 11: P 77, TYPE='v-bar', DIAG=  0
+# B12 tot en met B17 is de Schaar
+      B 12: P 78, TYPE='v-bar', DIAG=  0
+      B 13: P 79, TYPE='v-bar', DIAG=  0
+      B 14: P 80, TYPE='v-bar', DIAG=  0
+      B 15: P 81, TYPE='v-bar', DIAG=  0
+      B 16: P 82, TYPE='v-bar', DIAG=  0
+      B 17: P 83, TYPE='v-bar', DIAG=  0
+# B18 tot en met B22 is de Hammen
+      B 18: P 84, TYPE='v-bar', DIAG=  0
+      B 19: P 85, TYPE='v-bar', DIAG=  0
+      B 20: P 86, TYPE='v-bar', DIAG=  0
+      B 21: P 87, TYPE='v-bar', DIAG=  0
+      B 22: P 88, TYPE='v-bar', DIAG=  0
+# B23 tot en met B28 is Haringvliet
+      B 23: P 89, TYPE='v-bar', DIAG=  0
+      B 24: P 90, TYPE='v-bar', DIAG=  0
+      B 25: P 91, TYPE='v-bar', DIAG=  0
+      B 26: P 92, TYPE='v-bar', DIAG=  0
+      B 27: P 93, TYPE='v-bar', DIAG=  0
+      B 28: P 94, TYPE='v-bar', DIAG=  0
+# B29 tot en met B34 is IJsselmeer+Lauwersmeer
+      B 29: P 95, TYPE='v-bar', DIAG=  0
+      B 30: P 96, TYPE='v-bar', DIAG=  0
+      B 31: P 97, TYPE='v-bar', DIAG=  0
+      B 32: P 98, TYPE='v-bar', DIAG=  0
+      B 33: P 99, TYPE='v-bar', DIAG=  0
+      B 34: P100, TYPE='v-bar', DIAG=  0
+# Eems barrier
+      B 35: P101, TYPE='v-bar', DIAG=  0
+      B 36: P102, TYPE='v-bar', DIAG=  0
+# Maeslantkering - fz
+      B 37: C016
+# Hartelkering - fz
+      B 38: C017

@@ -1,0 +1,22 @@
+#   voor cross-secties:
+#   C  1=LINE(P470, P471, NAME='Kornwerderzand      ')
+#   C  2=LINE(P472, P473, NAME='Den Oever           ')
+#
+#   C  3=LINE(P474, P475, NAME='Den Helder-Texel    ')
+#   C  4=LINE(P476, P477, NAME='Texel-Vlieland      ')
+#   C  5=LINE(P478, P479, NAME='Vlieland-Terschellin')
+#   C  6=LINE(P480, P481, NAME='Terschelling-Ameland')
+#   C  7=LINE(P482, P483, NAME='Noord-Holland-Zee   ')
+#   C  8=LINE(P484, P485, NAME='Texel-Zee           ')
+#   C  9=LINE(P486, P487, NAME='Vlieland-Zee        ')
+#   C 10=LINE(P488, P489, NAME='Terschelling-Zee    ')
+#   C 11=LINE(P490, P491, NAME='Ameland-Zee         ')
+#   C 12=LINE(P492, P493, NAME='Zee                 ')
+#   voor cross-secties:
+    C 13=LINE(P5003, P5004, NAME='Debiet Waal         ')
+    C 14=LINE(P 173, P 178, NAME='Debiet Hvl-sluizen  ')
+#   C 15=LINE(P5005, P5006, NAME='Debiet Wweg(Maass)  ')
+# Maeslant kering - fz
+    C016=LINE(P0103, P0104, NAME='Maeslantkering      ')
+# Maeslant kering - fz
+    C017=LINE(P0105, P0106, NAME='Hartelkering        ')

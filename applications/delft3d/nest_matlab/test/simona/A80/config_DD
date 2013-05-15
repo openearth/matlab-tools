@@ -1,0 +1,15 @@
+DOMAINS
+  DOM 1 GLOBAL
+     NAME = 'dcsm'
+     EXECUTABLE = 'waqpro.exe.bf500'
+     RUNID = 'dcsm'
+  DOM 2 GLOBAL
+     NAME = 'zuno'
+     EXECUTABLE = 'waqpro.exe.bf500'
+     RUNID = 'zuno'
+
+OPTIONS
+   VERBOSE = 9
+   MATCH_accuracy =   5  # m =   5. m
+
+

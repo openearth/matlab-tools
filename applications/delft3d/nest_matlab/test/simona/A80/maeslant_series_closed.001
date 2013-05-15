@@ -1,0 +1,10 @@
+# open en closure of Maeslantkering
+TS 1
+gate
+series = 'irregular'
+time_and_values = (  0 00:00 )     5.00
+time_and_values = (318 22:40 )     5.00
+time_and_values = (319 00:00 )   -11.62
+time_and_values = (319 16:00 )   -11.62
+time_and_values = (319 16:40 )     5.00
+time_and_values = (373 00:00 )     5.00

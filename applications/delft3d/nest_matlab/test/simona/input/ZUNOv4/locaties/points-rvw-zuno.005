@@ -1,0 +1,25 @@
+P  36= (M= 195, N=   1, NAME='CSM (173,112)      ')
+P  37= (M= 833, N=   1, NAME='CSM (173,112)      ')
+P  38= (M=1449, N= 225, NAME='CSM (173,112)      ')
+P  39= (M=1449, N= 326, NAME='CSM (173,112)      ')
+#   voor rivieren, spuidebieten, enz
+P 290= (M= 414, N= 489, NAME='Eems               ')
+P 291= (M= 661, N= 381, NAME='Kornwerderzand     ')
+P 292= (M= 737, N= 381, NAME='Den Oever          ')
+P 293= (M= 848, N= 312, NAME='IJmuiden           ')
+P 295= (M=1200, N= 389, NAME='Schelde-Schelle    ')
+ #   voor open randen - rivier:
+P 325= (M= 934, N= 584, NAME='Hagestijn          ')
+P 326= (M= 935, N= 584, NAME='                   ')
+P 327= (M= 955, N= 637, NAME='Tiel               ')
+P 329= (M= 957, N= 637, NAME='                   ')
+P 330= (M= 983, N= 637, NAME='Lith               ')
+P 332=( M= 985, N= 637, NAME='                   ')
+
+# Checkpoints Barrier sturing Haringvliet
+P5001= (M= 981, N= 306, NAME='Triggerpoint binnen')
+P5002= (M= 981, N= 302, NAME='Triggerpoint buiten')
+# Checkpoints Debiet Waal
+P5003= (M= 954, N= 630, NAME='Debiet Waal 1      ')
+P5004= (M= 958, N= 630, NAME='Debiet Waal 2      ')
+

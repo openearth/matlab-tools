@@ -1,0 +1,174 @@
+----------------------------------------------------------------------
+      R I J K S W A T E R S T A A T 
+
+      waqpre.pl - Perl script to run WAQUA's pre-processor WAQPRE
+----------------------------------------------------------------------
+
+SIMONADIR                   : C:/simona/simona2012
+
+Input files:
+============
+WAQPRE input file           : siminp-kzv4
+
+Output files:
+=============
+Message print file          : waqpre-m.kzv4
+SDS file                    : SDS-kzv4
+
+Using executable            : C:/simona/simona2012/bin/win32/waqpre.exe
+  
+SIMONA subsystem waqpre
+   Version simona2012, Revision unknown, (export)
+1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    =============================================================
+    %                                                           %
+    %                                                           %
+    %                                                           %
+    %                                                           %
+    %                                                           %
+    %       $$$$$$  $$$  $     $  $$$$$$  $     $  $$$$$$       %
+    %       $        $   $$   $$  $    $  $$    $  $    $       %
+    %       $        $   $ $ $ $  $    $  $ $   $  $    $       %
+    %       $$$$$$   $   $  $  $  $    $  $  $  $  $$$$$$       %
+    %            $   $   $     $  $    $  $   $ $  $    $       %
+    %            $   $   $     $  $    $  $    $$  $    $       %
+    %       $$$$$$  $$$  $     $  $$$$$$  $     $  $    $       %
+    %                                                           %
+    %                                                           %
+    %                                                           %
+    %                                                           %
+    %       Developed by "Rijkswaterstaat"                      %
+    =============================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    =============================================================
+    %                                                           %
+    % Note:  when this program ends succesfully                 %
+    %        the following string will be printed               %
+    %        at the end of this message file:                   %
+    %                                                           %
+    %   ******  SIMONA --- program ended successfully  ******   %
+    %                                                           %
+    =============================================================
+
+
+
+
+
+   Sub-system = WAQPRE
+   Version    = 10.128-pI
+   User-ID    = kaaij
+   RunDate    = 03-05-2013
+   RunTime    = 12:31:32
+
+   Size of IBUFFR (bufsize) =     10000000   (=           10  Megawords)
+ 
+ # SIMONA input file
+ # ---------------------------------------------------------------
+ # Kustzuid (  1,  1) = Kuststrookfijn (694,  1)
+ # ---------------------------------------------------------------
+  
+ SET NOECHO
+
+
+ ******************************************************************************
+
+ *** INFORMATIVE MESSAGE number    38 , in module WAQPRE:wap000:wapg03:wap031
+
+ Building of IROGEO-table ended successfully.
+
+ ******************************************************************************
+
+
+ waprfl, Reading single precision rgf-input
+
+
+ ******************************************************************************
+
+ *** WARNING number  2631 , in module WAQPRE:wap000:wapf02:wap068:wap033:wap039
+
+ This point (m,n)=(2,3) does not have effect as a part of a waterlevel opening 
+ since it does not feed into the computational grid.
+
+ ******************************************************************************
+
+
+
+
+ ******************************************************************************
+
+ *** WARNING number  2631 , in module WAQPRE:wap000:wapf02:wap068:wap033:wap039
+
+ This point (m,n)=(207,3) does not have effect as a part of a waterlevel 
+ opening since it does not feed into the computational grid.
+
+ ******************************************************************************
+
+
+
+
+ ******************************************************************************
+
+ *** INFORMATIVE MESSAGE number    38 , in module WAQPRE:wap000:wapf02:wap068
+
+ Building of IROBOU-table ended successfully.
+
+ ******************************************************************************
+
+
+
+
+ Normal end of program
+
+
+
+    =============================================================
+    %                                                           %
+    %   ******  SIMONA --- program ended successfully  ******   %
+    %                                                           %
+    =============================================================

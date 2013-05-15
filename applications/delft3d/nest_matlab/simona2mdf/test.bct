@@ -1,0 +1,78 @@
+table-name          'Boundary Section : 1'
+contents            'uniform'
+location            'Open rand nummer   1'
+time-function       'non-equidistant'
+reference-time       19700101
+time-unit           'minutes'
+interpolation       'linear'
+parameter           'time' unit '[min]'
+parameter           'Water elevation (Z)  End A' unit '[m]'
+parameter           'Water elevation (Z)  End B' unit '[m]'
+records-in-table     2
+           0.00   0.00000e+00   0.00000e+00 
+       99999.00   0.00000e+00   0.00000e+00 
+table-name          'Boundary Section : 2'
+contents            'uniform'
+location            'Open rand nummer   2'
+time-function       'non-equidistant'
+reference-time       19700101
+time-unit           'minutes'
+interpolation       'linear'
+parameter           'time' unit '[min]'
+parameter           'Water elevation (Z)  End A' unit '[m]'
+parameter           'Water elevation (Z)  End B' unit '[m]'
+records-in-table     2
+           0.00   0.00000e+00   0.00000e+00 
+       99999.00   0.00000e+00   0.00000e+00 
+table-name          'Boundary Section : 3'
+contents            'uniform'
+location            'Open rand nummer   3'
+time-function       'non-equidistant'
+reference-time       19700101
+time-unit           'minutes'
+interpolation       'linear'
+parameter           'time' unit '[min]'
+parameter           'Water elevation (Z)  End A' unit '[m]'
+parameter           'Water elevation (Z)  End B' unit '[m]'
+records-in-table     2
+           0.00   0.00000e+00   0.00000e+00 
+       99999.00   0.00000e+00   0.00000e+00 
+table-name          'Boundary Section : 4'
+contents            'uniform'
+location            'Open rand nummer   4'
+time-function       'non-equidistant'
+reference-time       19700101
+time-unit           'minutes'
+interpolation       'linear'
+parameter           'time' unit '[min]'
+parameter           'Water elevation (Z)  End A' unit '[m]'
+parameter           'Water elevation (Z)  End B' unit '[m]'
+records-in-table     2
+           0.00   0.00000e+00   0.00000e+00 
+       99999.00   0.00000e+00   0.00000e+00 
+table-name          'Boundary Section : 5'
+contents            'uniform'
+location            'Open rand nummer   5'
+time-function       'non-equidistant'
+reference-time       19700101
+time-unit           'minutes'
+interpolation       'linear'
+parameter           'time' unit '[min]'
+parameter           'Water elevation (Z)  End A' unit '[m]'
+parameter           'Water elevation (Z)  End B' unit '[m]'
+records-in-table     2
+           0.00   0.00000e+00   0.00000e+00 
+       99999.00   0.00000e+00   0.00000e+00 
+table-name          'Boundary Section : 6'
+contents            'uniform'
+location            'Open rand nummer   6'
+time-function       'non-equidistant'
+reference-time       19700101
+time-unit           'minutes'
+interpolation       'linear'
+parameter           'time' unit '[min]'
+parameter           'Water elevation (Z)  End A' unit '[m]'
+parameter           'Water elevation (Z)  End B' unit '[m]'
+records-in-table     2
+           0.00   0.00000e+00   0.00000e+00 
+       99999.00   0.00000e+00   0.00000e+00 

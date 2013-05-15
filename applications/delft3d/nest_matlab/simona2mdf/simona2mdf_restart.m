@@ -26,5 +26,5 @@ end
 %
 
 if warning
-   uiwait(warndlg(warntext,'SIMINP2MDF Warning'));
+   simona2mdf_warning(warntext);
 end

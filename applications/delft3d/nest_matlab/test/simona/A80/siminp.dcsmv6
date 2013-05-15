@@ -1,0 +1,232 @@
+
+###############################################################################
+#              DUTCH CONTINENTAL SHELF MODEL                                  #
+#          (1,1)CSM-(WAQUA) 62.20.00 NB  13.00.00 WL                          #
+#          CALCULATION IN SPHERICAL CO-ORDINATES :                            #
+#          X-GRID../../DCSMv6/40 DEG. , Y-GRID 1/60 DEG.                      #
+###############################################################################
+
+IDENTification
+
+  WAQUA
+  EXPERIMENT='DCSMv6'
+  MODID     ='DCSMv6'
+  TITLE     ='DCSMv6'
+
+#RESTART
+         #EXP_restart= ' '  SDS_restart=' '
+
+###############################################################################
+
+MESH
+
+  GRID
+    AREA
+         MMAX= 1121, NMAX= 1261,
+         Coor_Id = 'WGS84'
+    GENERALIZED_SPHERICAL
+         RGFfile = '../input/DCSMv6/rooster/csm_activeonly.grd'
+
+  POINTS
+     INCLUDE FILE= '../input/DCSMv6/locaties/mn_DCSMv6_02k'
+     INCLUDE FILE= '../input/DCSMv6/locaties/points-rvw3.ext'
+
+###############################################################################
+
+  BOUNdaries
+
+  ENCLosures
+     INCLUDE FILE= '../input/DCSMv6/randen/enclosure-aanp'
+
+  OPENings
+     INCLUDE FILE= '../input/DCSMv6/randen/openings.ext'
+
+  BATHYMETRY
+    GLOBAL
+         DPD_GIVEN
+      METH_DPS='MEAN_DPD'
+      DEPMULTiplier=  1.00, THREShold=  .10, LAYOUT=1
+      DEPDEF= 0.00
+
+    LOCAL
+     INCLUDE FILE= '../input/DCSMv6/bodem/bodem_test43c_work198.box'
+     # deep area along boundary
+     INCLUDE FILE= '../input/DCSMv6/bodem/northernboundary_b'
+     INCLUDE FILE= '../input/DCSMv6/bodem/westernboundary'
+     INCLUDE FILE= '../input/DCSMv6/bodem/westernboundary2'
+
+  DRYPoints
+     INCLUDE FILE= '../input/DCSMv6/schotjes/dampoints_a89'
+   CLOSEU
+      INCLUDE FILE= '../input/DCSMv6/schotjes/closeu_a133'
+   CLOSEV
+         INCLUDE FILE= '../input/DCSMv6/schotjes/closev_a89'
+###############################################################################
+
+GENERAL
+
+  PHYSical_parameters
+    GRAVity =  9.8130
+    WATDENsity = 1023.0
+    AIRDENsity = 1.2265
+
+###############################################################################
+
+SPACE_VAR_WIND
+            WCONVERSIONFACTOR= 1.0
+            WUNIT= 'm/s '
+            CHARNOCK, BETA= 0.025, HEIGHT= 10.0
+            SDS_SVWP= 'SDS-wind'
+            EXP_SVWP= 'wind'
+            CORRECT_BOUND
+
+  SVWP_LS_MASK
+     GLOBAL MMAX_WND = 136 NMAX_WND = 226
+     LOCAL
+        INCLUDE FILE= 'landseamask3.box'
+
+###############################################################################
+
+   TIDAL_FORCES
+     SCHRAMA
+     DOODSON_START = 55.565
+     DOODSON_STOP = 375.575
+     EPS  = 0.0
+
+FLOW
+  PROBlem
+    TIMEFRame
+      DATE='25 DEC 2006', TSTART=0,TSTOP=535680, TIMEZONE='GMT'
+
+    METHODvariables
+      TSTEP=1.000
+      ITERCOn= 32
+      ITERMOm= 16
+      ITERACCurvel= 5.0E-05
+      ITERACCurwl= 5.0E-05
+
+      CHECKCONT='WL'
+
+     SMOOTHing
+       TLSMOOTH= 1440.0
+
+      DRYING
+      CHECK_WL='YES'
+      DEPCrit= .100
+
+    FRICTion
+      GLObal
+        TICVal= 1.00, FORMula='manning'
+
+    UDIRec
+      GLOBAL
+        CONST_VALUE = 0.028
+      LOCAL
+     INCLUDE FILE= '../input/DCSMv6/ruwheid/rgh_test43c_work198_lim.box'
+    VDIRec
+      GLOBAL
+        CONST_VALUE = 0.028
+      LOCAL
+     INCLUDE FILE= '../input/DCSMv6/ruwheid/rgh_test43c_work198_lim.box'
+
+#    VISCOsity :
+#         EDDYviscositycoeff=  10.00
+    HOR_VISCOsity
+       GLOBAL CONST_values=  10.00
+       LOCAL
+        # northern boundary
+        BOX MNMN=( 114,    1,1121,   6) CONST_Value =  50000
+        BOX MNMN=( 114,    7,1121,  32) CONST_Value =  10000
+        BOX MNMN=( 114,   33,1121,  38) CONST_Value =   1000
+        BOX MNMN=( 114,   39,1121,  44) CONST_Value =    100
+        # southern boundary
+        BOX MNMN=( 890, 1256,1121,1261) CONST_Value =  50000
+        BOX MNMN=( 890, 1230,1121,1255) CONST_Value =  10000
+        BOX MNMN=( 890, 1224,1121,1229) CONST_Value =   1000
+        BOX MNMN=( 890, 1218,1121,1223) CONST_Value =    100
+        # western boundary
+        BOX MNMN=(1114,    1,1121,1261) CONST_Value =  10000
+        BOX MNMN=(1107,    9,1113,1253) CONST_Value =   1000
+        BOX MNMN=(1101,   16,1106,1246) CONST_Value =    100
+        # western boundary east of ireland
+        BOX MNMN=(1020,  241,1126, 660) CONST_Value =    100
+        BOX MNMN=(1025,  246,1113, 655) CONST_Value =   1000
+        BOX MNMN=(1050,  251,1113, 650) CONST_Value =  10000
+        BOX MNMN=(1114,  251,1121, 650) CONST_Value =  50000
+
+###############################################################################
+
+  FORCings
+
+    INITial
+         WATLEVel GLOBAL CONST_values= 0.000
+    BOUNDAries
+     INCLUDE FILE= '../input/DCSMv6/randen/bound-flow.ext'
+
+    HARMONIC
+      GEneral
+        INCLUDE FILE= '../input/DCSMv6/randvw/flow/harmonic_new14.alt'
+        INCLUDE FILE= '../input/DCSMv6/randvw/flow/componenten_new14.ext'
+
+###############################################################################
+
+  CHECKPoints
+
+    LEVELSTATIONS
+    INCLUDE FILE= '../input/DCSMv6/uitvoer/check-DCSMv6_02k'
+
+
+
+###############################################################################
+
+SDSOUTput
+# tijden tbv resultaten naar SDS-file:
+  MAPS
+    TFMAPS=457920, TIMAPS=30 ,TLMAPS=460800
+  HISTories
+     TFHISto= 0, TIHISto= 10   , TLHISto= 535680
+#   RESTart
+#     TFRESTART=17280, TIRESTART=43200,TLRESTART=535680
+
+# HARMONIC_TIDE
+#
+#   GENERAL
+#
+#OMEGA=
+##'A0',
+# 'SA', 'SM', 'Q1', 'O1', 'M1C', 'P1',
+# 'S1', 'K1', '3MKS2', '3MS2', 'OQ2', 'MNS2',
+# '2ML2S2', 'NLK2', 'MU2', 'N2', 'NU2', 'MSK2',
+# 'MPS2', 'M2', 'MSP2', 'MKS2', 'LABDA2', '2MN2',
+# 'T2', 'S2', 'K2', 'MSN2', '2SM2', 'SKM2',
+# 'NO3', '2MK3', '2MP3', 'SO3', 'MK3', 'SK3',
+# '4MS4', '2MNS4', '3MS4', 'MN4', '2MLS4', '2MSK4',
+# 'M4', '3MN4', 'MS4', 'MK4', '2MSN4', 'S4',
+# 'MNO5', '3MK5', '2MP5', '3MO5', 'MSK5', '3KM5',
+# '3MNS6', '2NM6', '4MS6', '2MN6', '2MNU6', '3MSK6',
+# 'M6', 'MSN6', 'MKNU6', '2MS6', '2MK6', '3MSN6',
+# '2SM6', 'MSK6', '2MNO7', 'M7', '2MSO7', '2(MN)8',
+# '3MN8', 'M8', '2MSN8', '2MNK8', '3MS8', '3MK8',
+# '2(MS)8', '2MSK8', '3MNK9', '4MK9', '3MSK9', '4MN10',
+# 'M10', '3MSN10', '4MS10', '2(MS)N10', '3M2S10', '4MSK11',
+# 'M12', '4MSN12', '5MS12', '4M2S12', 'MM', 'MF'
+#
+#     DATA= 'watlevel'
+#     TFRAMEHARMON= 10080.0,535680.0
+
+
+###############################################################################
+
+PRINToutput
+
+  CONTROL
+
+#   print tijden voor velden:
+
+    TFRAMEStat=(0, 1440.00, 535680)
+
+
+  IGNORE TRANSPORT
+
+
+###############################################################################

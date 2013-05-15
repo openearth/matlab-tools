@@ -1,0 +1,31 @@
+#!/bin/sh
+. /opt/sge/InitSGE
+
+# usage: qsub -pe distrib 12 DCSM_A79
+
+export SIMONADIR=/opt/simona/simona2012
+export PATH="$SIMONADIR/bin:$PATH"
+
+#waqwnd.pl -inpfmt GRIB -runid wind -exp wind -KNMI "/p/z4632-dcsmzuno/meteo/2007/HIRLAM_SURFACE_200*.grib" \
+# -date_fc 20080101 -time 0000 -date_ref 20061225 -stress -1 -timzon GMT -convert2stress N -gridflag 2 -overwrite yes \
+# -windidfile WindIdFile.txt -coordsystem USER -back N
+
+# run waqpre, stop if some error occurs in waqpre:
+export npart_csm=16
+export npart_zuno=8
+
+waqpre.pl -input siminp.dcsmv6 -runid dcsm -bufsize 200 -back n \
+ -isddh y -decomp Area-DCSMnew -npart $npart_csm -buf_prt 200 -partit strip
+
+waqpre.pl -input siminp.zunov4 -runid zuno -bufsize 200 -back n \
+ -isddh y -decomp Area-ZUNO-a42-04 -npart $npart_zuno -buf_prt 200 -partit strip
+
+waqpro.pl -buf_prt 500 -runid ddhor -config config_DD -back no
+
+mkdir MATFILES
+cd MATFILES
+cp /p/1204257-dcsmzuno/modellen/sds2mat/sds2mat_04.inp .
+ln -s ../SDS-dcsm .
+ln -s ../SDS-zuno .
+/opt/simona/specials/simona_svwp_gen_spherical/bin/sds2mat.pl -runid dcsm -sdsid dcsm -input sds2mat_04.inp -bufsize 300 -back no
+/opt/simona/specials/simona_svwp_gen_spherical/bin/sds2mat.pl -runid zuno -sdsid zuno -input sds2mat_04.inp -bufsize 300 -back no

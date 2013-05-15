@@ -75,7 +75,7 @@ if ~isempty(global_vars.CONST_VALUES)
 end
 
 if ~isempty(global_vars.VARIABLE_VAL)
-    warndlg('GLOBAL\VARIABLE_VAL (depth) not yet implemented','SIMINP2MDF Warning');
+    simona2mdf_warning('GLOBAL\VARIABLE_VAL (depth) not yet implemented');
 end
 
 if isfield(siminp_struc.ParsedTree.MESH.BATHYMETRY,'LOCAL')
@@ -85,5 +85,5 @@ if isfield(siminp_struc.ParsedTree.MESH.BATHYMETRY,'LOCAL')
 end
 
 mdf        = rmfield(mdf,'depuni');
-mdf.fildep = [name_mdf '.dep.'];
+mdf.fildep = [name_mdf '.dep'];
 wldep('write',mdf.fildep,depth,'quit');

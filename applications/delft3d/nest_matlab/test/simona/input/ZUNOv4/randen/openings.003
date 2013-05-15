@@ -1,0 +1,8 @@
+# dummy noordrand
+    OPEN 1=LINE(P 36, P 37, 'Open rand nummer   1')
+# dummy zuidrand
+    OPEN 2=LINE(P 38, P 39, 'Open rand nummer   2')
+ #  rivierranden:
+    OPEN 3= LINE(P325, P326, 'Open rand nummer 143')
+    OPEN 4= LINE(P327, P329, 'Open rand nummer 144')
+    OPEN 5= LINE(P330, P332, 'Open rand nummer 145')
