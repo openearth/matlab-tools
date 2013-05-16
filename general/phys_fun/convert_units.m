@@ -249,6 +249,15 @@ debug = 0;
    deg_K           = K;
    Kelvin          = K;
    
+   %% Power units
+   W               = 1;
+   Watt            = W;
+   kW              = 1000*W;
+   kilowatt        = 1000*W;
+   
+   MW              = 1e6*W;
+   megawatt        = 1e6*W;
+   
 %% Find conversion factor 
    if debug
       disp(['InUnits  ', InUnits0 ,' beautified to ',InUnits , ' = ',num2str(eval(InUnits) )])
