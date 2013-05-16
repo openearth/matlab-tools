@@ -1,9 +1,9 @@
-function knmi_all
+%function knmi_all
 %KNMI_ALL    download potwind + etmgeg from web, transform to netCDF, make kml,  make catalog.
 %
 %See also: KNMI_POTWIND_GET_URL, KNMI_ETMGEG_GET_URL, KNMI_UURGEG_GET_URL
 %          KNMI_POTWIND2NC,      KNMI_ETMGEG2NC,      KNMI_UURGEG2NC
-%          RWS_WATERBASE_ALL, NC_CF_HARVEST
+%          RWS_WATERBASE_ALL, NC_CF_HARVEST, http://data.knmi.nl
 
 % This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
 % OpenEarthTools is an online collaboration to share and manage data and
@@ -45,6 +45,9 @@ function knmi_all
                   'http://www.knmi.nl/klimatologie/daggegevens/download.html',...
                   'http://www.knmi.nl/klimatologie/uurgegevens/'};
    
+   resolveTitles    = {'KNMI potwind','KNMI etmgeg','KNMI uurgeg'};
+   resolveSummaries = {'Potential wind (potwind)','Daily mean quantities (etmgeg)','Hourly quantities (uurgeg)'};
+
    multiWaitbar(mfilename,0,'label','Looping substances.','color',[0.3 0.8 0.3])
 
 %% Parameter loop
@@ -95,6 +98,11 @@ n = n+1;
 %  Idea: make a special *_local_machine catalog?
 
    if OPT.make_catalog
+
+   OPT.documentation.url       = resolveUrls{ii};
+   OPT.documentation.title     = resolveTitles{ii};
+   OPT.documentation.summary   = resolveSummaries{ii};
+
    CATALOG = nc_cf_harvest(OPT.directory_nc,...             % dir where to READ netcdf
                     'featuretype','timeseries',...
                           'debug',[],...
@@ -105,7 +113,8 @@ n = n+1;
                      'urlPathFcn',@(s) path2os(strrep(s,ncbase,urlbase),'h'),... % dir where to LINK to for netCDF
                            'disp','multiWaitbar',...
                              'ID',[OPT.institution,'/',subdir],...
-                           'name',[OPT.institution,'_',subdir]);   
+                           'name',[OPT.institution,'_',subdir],...
+                  'documentation',OPT.documentation);
    end
       
 %% Make KML overview with links to netCDFs on http://opendap.deltares.nl THREDDS

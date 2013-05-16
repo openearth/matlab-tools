@@ -187,7 +187,7 @@ function varargout = knmi_uurgeg(varargin)
    
 %% Append meta-info
 
-   [W.code,W.platform_name,W.lon,W.lat] = KNMI_etmgeg_stations(unique(W.data.STN));
+   [W.code,W.platform_name,W.lon,W.lat,W.url] = KNMI_etmgeg_stations(unique(W.data.STN));
 
    W.read.with     = '$Id$'; % SVN keyword, will insert name of this function
    W.read.at       = datestr(now);

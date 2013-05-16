@@ -109,8 +109,9 @@ for ifile=1:length(OPT.files)
    nc_attput(outputfile, nc_global, 'Conventions'   , 'CF-1.6');
    nc_attput(outputfile, nc_global, 'featureType'   , 'timeSeries');  % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#featureType
    
-   nc_attput(outputfile, nc_global, 'stationnumber' , unique(D.data.STN));
-   nc_attput(outputfile, nc_global, 'stationname'   , D.platform_name);
+   nc_attput(outputfile, nc_global, 'platform_id'   , unique(D.data.STN));
+   nc_attput(outputfile, nc_global, 'platform_name' , D.platform_name);
+   nc_attput(outputfile, nc_global, 'platform_url'  , D.url);
 
    nc_attput(outputfile, nc_global, 'terms_for_use' , 'These data can be used freely for research purposes provided that the following source is acknowledged: KNMI.');
    nc_attput(outputfile, nc_global, 'disclaimer'    , 'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.');

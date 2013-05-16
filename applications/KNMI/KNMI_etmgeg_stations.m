@@ -99,42 +99,44 @@ function varargout = KNMI_etmgeg_stations(station)
 %% Calculate decimal coordinates
   
    for ival=1:length(D.code)
+
    icirc       = strfind(D.position{ival},'°'); % in xls file
    if isempty(icirc)
    icirc       = strfind(D.position{ival},'ø'); % in csv file
    end
    iprime      = strfind(D.position{ival},'''');
-   
    D.londeg(ival)= str2num(D.position{ival}(icirc(1)-2:icirc (1)-1));
    D.lonmin(ival)= str2num(D.position{ival}(icirc(1)+1:iprime(1)-1));
    D.latdeg(ival)= str2num(D.position{ival}(icirc(2)-2:icirc (2)-1));
    D.latmin(ival)= str2num(D.position{ival}(icirc(2)+1:iprime(2)-1));
-   
    end
    
-   D.lat   = D.londeg + D.lonmin./60;  
-   D.lon   = D.latdeg + D.latmin./60;
+   D.lat           = D.londeg + D.lonmin./60;  
+   D.lon           = D.latdeg + D.latmin./60;
+   D.long_name     = cellfun(@(x) strtrim(x),D.long_name    ,'UniformOutput',0);
+   D.long_name_alt = cellfun(@(x) strtrim(x),D.long_name_alt,'UniformOutput',0);
+   D.METAR         = cellfun(@(x) strtrim(x),D.METAR        ,'UniformOutput',0);
+   
 
 %% Select station
 
-   if nargin==1
-   if ischar(station)
-   i   = find(strcmpi(D.long_name,station));
-      if isempty(i)
-      i   = find(strcmpi(D.long_name_alt,station));
-      end
-      if isempty(i)
-         disp('no station found')
-         varargout = {[],[],[],[]};
-         return
-      end
-   else
-   i   = find(D.code==station);
-   end
-   S.code      = D.code(i);
-   S.long_name = D.long_name{i};
-   S.lon       = D.lon(i);
-   S.lat       = D.lat(i);
+   if nargin>0
+       if ischar(station)
+       i   = find(strcmpi(D.long_name,station));
+          if isempty(i)
+          i   = find(strcmpi(D.long_name_alt,station));
+          end
+          if isempty(i)
+             disp('no station found')
+             varargout = {[],[],[],[]};
+             return
+          end
+       else
+       i   = find(D.code==station);
+       end
+       S = structsubs(D,i);
+       S.long_name = char(S.long_name);
+       S.url       = char(S.url);
    end
    
 %% Return
@@ -142,11 +144,13 @@ function varargout = KNMI_etmgeg_stations(station)
    if nargin==0
       varargout = {D};
    elseif nargin==1
-   if     nargout==1
-      varargout = {S};
-   elseif nargout==4
-      varargout = {S.code,S.long_name,S.lon,S.lat};
-   end
+       if     nargout==1
+          varargout = {S};
+       elseif nargout==4
+          varargout = {S.code,S.long_name,S.lon,S.lat};
+       elseif nargout==5
+          varargout = {S.code,S.long_name,S.lon,S.lat,S.url};
+       end
    end
 
 %% EOF
