@@ -31,13 +31,13 @@ S = all_in_one(S);
 % parse the siminp information
 %
 
-%mdf = simona2mdf_area     (S,mdf,name_mdf);
-%mdf = simona2mdf_bathy    (S,mdf,name_mdf);
-%mdf = simona2mdf_dryp     (S,mdf,name_mdf);
-%mdf = simona2mdf_thd      (S,mdf,name_mdf);
-%mdf = simona2mdf_times    (S,mdf,name_mdf);
-%mdf = simona2mdf_processes(S,mdf,name_mdf);
-%mdf = simona2mdf_restart  (S,mdf,name_mdf);
+mdf = simona2mdf_area     (S,mdf,name_mdf);
+mdf = simona2mdf_bathy    (S,mdf,name_mdf);
+mdf = simona2mdf_dryp     (S,mdf,name_mdf);
+mdf = simona2mdf_thd      (S,mdf,name_mdf);
+mdf = simona2mdf_times    (S,mdf,name_mdf);
+mdf = simona2mdf_processes(S,mdf,name_mdf);
+mdf = simona2mdf_restart  (S,mdf,name_mdf);
 
 %
 % Boundary definition, slightly different approach to allow for use by
@@ -60,19 +60,25 @@ if ~isempty(bnd)
         mdf.filbct = [name_mdf '.bct'];
         ddb_bct_io('write',mdf.filbct,bct);
     end
-        
+
     bcq = simona2mdf_bcq(S,bnd);
     if ~isempty(bcq)
        mdf.filbcq = [name_mdf '.bcq'];
        ddb_io_bct('write',mdf.filbcq,bcq);
     end
-    
+
     bca = simona2mdf_bca(S,bnd);
     if ~isempty(bca)
         mdf.filbca = [name_mdf '.bca'];
         delft3d_io_bca('write',mdf.filbca,bca);
     end
 end
+
+%
+% Initial conditions (back to original structure)
+%
+
+mdf = simona2mdf_initial  (S,mdf,name_mdf);
 
 %
 % write the mdf file
