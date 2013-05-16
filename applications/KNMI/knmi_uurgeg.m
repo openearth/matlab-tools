@@ -23,7 +23,7 @@ function varargout = knmi_uurgeg(varargin)
 %
 % NOTE THAT THE VALUES FROM THE FILE HAVE BEEN MULTIPLIED WITH A FACTOR TO GET SI-UNITS.
 %
-% See also: KNMI_POTWIND, KNMI_uurgeg2NC, KNMI_uurgeg_GET_URL, KNMI_etmgeg_STATIONS
+% See also: KNMI_POTWIND, KNMI_uurgeg2NC, KNMI_uurgeg_GET_URL, KNMI_WMO_STATIONS
 
 % based on knmi_etmgeg.m
 %   --------------------------------------------------------------------
@@ -187,7 +187,7 @@ function varargout = knmi_uurgeg(varargin)
    
 %% Append meta-info
 
-   [W.code,W.platform_name,W.lon,W.lat,W.url] = KNMI_etmgeg_stations(unique(W.data.STN));
+   [W.code,W.platform_name,W.lon,W.lat,W.url] = KNMI_WMO_stations(unique(W.data.STN));
 
    W.read.with     = '$Id$'; % SVN keyword, will insert name of this function
    W.read.at       = datestr(now);

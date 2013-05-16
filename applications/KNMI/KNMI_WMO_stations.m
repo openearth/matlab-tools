@@ -1,8 +1,8 @@
-function varargout = KNMI_etmgeg_stations(station)
-%KNMI_ETMGEG_STATIONS   returns meta-info of WMO KNMI station number
+function varargout = KNMI_WMO_stations(station)
+%KNMI_WMO_STATIONS   returns meta-info of WMO KNMI station number
 %
-%    S = KNMI_etmgeg_stations(<station>) % returns data struct for all or one station
-%    [code,long_name,lon,lat] = KNMI_etmgeg_stations(station) 
+%    S = KNMI_WMO_stations(<station>) % returns data struct for all or one station
+%    [code,long_name,lon,lat] = KNMI_WMO_stations(station) 
 %
 % where station can be code or long_name:
 %
@@ -46,10 +46,10 @@ function varargout = KNMI_etmgeg_stations(station)
 %
 % Example:
 %
-%                         S = KNMI_etmgeg_stations('schiphol')
-%                         S = KNMI_etmgeg_stations('amsterdam')
-%  [code,long_name,lon,lat] = KNMI_etmgeg_stations(240)
-%                         S = KNMI_etmgeg_stations
+%                         S = KNMI_WMO_stations('schiphol')
+%                         S = KNMI_WMO_stations('amsterdam')
+%  [code,long_name,lon,lat] = KNMI_WMO_stations(240)
+%                         S = KNMI_WMO_stations
 %
 %See web:<a href="http://www.knmi.nl/klimatologie/metadata/stationslijst.html">http://www.knmi.nl/klimatologie/metadata/stationslijst.html</a>
 %        <a href="http://www.knmi.nl/klimatologie/metadata/index.html">http://www.knmi.nl/klimatologie/metadata/index.html</a>
@@ -92,7 +92,7 @@ function varargout = KNMI_etmgeg_stations(station)
 
 %% Load data file
 
-   OPT.xlsfile = [filepathstr(mfilename('fullpath')),filesep,'KNMI_etmgeg_stations.csv'];
+   OPT.xlsfile = [filepathstr(mfilename('fullpath')),filesep,'KNMI_WMO_stations.csv'];
 
    D           = csv2struct(OPT.xlsfile,'delimiter',';');
    
