@@ -10,7 +10,7 @@ for ibox = 1: length(box)
     if ~isempty(box(ibox).CONST_VALUES)
         data(m1:m2,n1:n2) = box(ibox).CONST_VALUES;
     end
-
+    
     if ~isempty(box(ibox).VARIABLE_VAL)
         for m = m1:m2
             for n = n1:n2
@@ -19,7 +19,23 @@ for ibox = 1: length(box)
         end
     end
     
-    if ~isempty(box(ibox).CONST_VALUES)
-        data(m1:m2,n1:n2) = box(ibox).CONST_VALUES;
+    if ~isempty(box(ibox).CORNER_VALUE)
+        m1  = box(ibox).MNMN(1);
+        n1  = box(ibox).MNMN(2);
+        m2  = box(ibox).MNMN(3);
+        n2  = box(ibox).MNMN(4);
+                  
+        [XX,YY] = meshgrid( 1:m2-m1+1 , 1:n2-n1+1 );
+        [X ,Y ] = meshgrid([1;m2-m1+1],[1;n2-n1+1]);
+    
+        Z(1,1) = box(ibox).CORNER_VALUE(1);
+        Z(1,2) = box(ibox).CORNER_VALUE(2);
+        Z(2,1) = box(ibox).CORNER_VALUE(4);
+        Z(2,2) = box(ibox).CORNER_VALUE(3);
+                
+        data_n = interp2(X,Y,Z,XX,YY);
+        
+        data(m1:m2,n1:n2) = data_n';
     end
+    
 end

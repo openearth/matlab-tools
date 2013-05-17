@@ -70,13 +70,7 @@ end
 
 depth(1:mdf.mnkmax(1),1:mdf.mnkmax(2)) = 0.;
 
-if ~isempty(global_vars.CONST_VALUES)
-    depth(1:mdf.mnkmax(1),1:mdf.mnkmax(2)) = global_vars.CONST_VALUES;
-end
-
-if ~isempty(global_vars.VARIABLE_VAL)
-    simona2mdf_warning('GLOBAL\VARIABLE_VAL (depth) not yet implemented');
-end
+depth = simona2mdf_getglobaldata(global_vars,depth);
 
 if isfield(siminp_struc.ParsedTree.MESH.BATHYMETRY,'LOCAL')
    if isfield(siminp_struc.ParsedTree.MESH.BATHYMETRY.LOCAL,'BOX')

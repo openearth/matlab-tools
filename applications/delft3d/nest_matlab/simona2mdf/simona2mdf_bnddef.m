@@ -15,10 +15,13 @@ nesthd_dir = getenv('nesthd_path');
 %
 
 siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'MESH' 'POINTS'});
+if isempty(siminp_struc.ParsedTree.MESH.POINTS);return;end
 points       = siminp_struc.ParsedTree.MESH.POINTS;
 siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'MESH' 'BOUNDARIES' 'OPENINGS'});
+if isempty(siminp_struc.ParsedTree.MESH.BOUNDARIES.OPENINGS);return;end
 opendef      = siminp_struc.ParsedTree.MESH.BOUNDARIES.OPENINGS;
 siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'FORCINGS'});
+if isempty (siminp_struc.ParsedTree.FLOW.FORCINGS.BOUNDARIES); return; end
 bnddef       = siminp_struc.ParsedTree.FLOW.FORCINGS.BOUNDARIES;
 harmonic     = siminp_struc.ParsedTree.FLOW.FORCINGS.HARMONIC;
 siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'PROBLEM'});
@@ -100,8 +103,7 @@ for iopen = 1: length(bnddef.B)
     elseif strcmpi (deblank(bnddef.B(iopen).BTYPE),'Disch-ad')
         bnd.DATA(iopen).bndtype = 'T';
     elseif strcmpi (deblank(bnddef.B(iopen).BTYPE),'QH')
-        bnd.DATA(iopen).bndtype = 'Z';
-        bnd.DATA(iopen).datatype= 'Q';
+        bnd.DATA(iopen).bndtype = 'X';
     end
     bnd.DATA(iopen).alfa = bnddef.B(iopen).REFL;
 
@@ -109,9 +111,9 @@ for iopen = 1: length(bnddef.B)
     % Fill type of forcing
     %
 
-    if strcmpi(deblank(bnddef.B(iopen).BDEF),'series') && ~strcmpi(bnd.DATA(iopen).datatype,'Q')
+    if strcmpi(deblank(bnddef.B(iopen).BDEF),'series') 
         bnd.DATA(iopen).datatype = 'T';
-    elseif ~strcmpi(bnd.DATA(iopen).datatype,'Q')
+    else
         %
         % Fourier (bch) or Harmonic (bca)
         % start by assuming harmonic
@@ -137,6 +139,10 @@ for iopen = 1: length(bnddef.B)
         else
             bnd.DATA(iopen).datatype = 'H';
         end
+    end
+    if strcmpi(bnd.DATA(iopen).bndtype,'X')
+        bnd.DATA(iopen).bndtype  = 'Z';
+        bnd.DATA(iopen).datatype = 'Q';
     end
 end
 

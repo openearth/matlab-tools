@@ -1,15 +1,32 @@
 ident  = #Delft3D-FLOW  .03.02 3.42.00.17790# 
 runtxt = #                              # 
+<<<<<<< .mine
+filcco = #../rooster/rgf# 
+anglat = 52.5 
+=======
 filcco = #../rooster/rgf# 
 anglat = 52 
+>>>>>>> .r8638
 grdang = 0 
+<<<<<<< .mine
+filgrd = #test.enc# 
+mnkmax = 1950   400     1 
+=======
 filgrd = #test.enc# 
 mnkmax = 250  579    1 
+>>>>>>> .r8638
 thick  = 100 
+<<<<<<< .mine
+fildep = #test.dep# 
+fildry = ## 
+filtd  = ## 
+itdate = #1970-01-01# 
+=======
 fildep = #test.dep# 
 fildry = #test.dry# 
 filtd  = #test.thd# 
 itdate = #1994-07-23# 
+>>>>>>> .r8638
 tunit  = #M# 
 tstart = 840 
 tstop  = 850 
@@ -25,12 +42,13 @@ v0     = 0
 s0     = 31 
 t0     = 15 
 restid = ## 
+filic  = #test.ini# 
 filbnd = #test.bnd# 
-filbch = #test.bch# 
+filbch = ## 
 filbct = ## 
 filbcq = ## 
 filbcc = ## 
-filana = ## 
+filana = #test.bca# 
 filcor = ## 
 rettis = 100 
 rettib = 100 
@@ -101,4 +119,8 @@ flrst  = 1440
 barocp = #Y# 
 cstbnd = #Y# 
 denfrm = #UNESCO# 
+<<<<<<< .mine
+commnt = #Written by delft3d_io_mdf.m of G.J. de Boer on 17-May-2013 16:29:54# 
+=======
 commnt = #Written by delft3d_io_mdf.m of G.J. de Boer on 16-May-2013 18:01:27# 
+>>>>>>> .r8638
