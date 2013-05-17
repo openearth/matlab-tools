@@ -1,9 +1,0 @@
-# CURVEs
-#   for U-cross-sections:
-C  1=LINE(P 21, P 22, NAME='Monding'     
-C  2=LINE(P 23, P 24, NAME='Voor Toev.' 
-C  3=LINE(P 25, P 26, NAME='Na Toev.'  
-C  4=LINE(P 27, P 28, NAME='Rivier'   
-C  5=LINE(P 29, P 30, NAME='Brienenoord '  
-C  6=LINE(P 31, P 32, NAME='Vlaardingen'  
-C  7=LINE(P 33, P 34, NAME='Maassluis'   

@@ -1,3 +1,0 @@
-GRIB file
-rotated lat/lon
-april 1998

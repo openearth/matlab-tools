@@ -1,6 +1,0 @@
-#  rand bak model                      
-#   zeerand :             
-    OPEN   1= LINE(P101, P102, 'Open rand nummer   1')
-#   rivierrand :             
-    OPEN   2= LINE(P103, P104, 'Open rand nummer   2')
-# 
