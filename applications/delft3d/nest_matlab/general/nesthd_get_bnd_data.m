@@ -38,7 +38,9 @@ for ibnd = 1: length(bnd.DATA)
         hulp.DATA(ibnd_T)     = bnd.DATA(ibnd);
         hulp.m    (ibnd_T,:)  = bnd.m     (ibnd,:);
         hulp.n    (ibnd_T,:)  = bnd.n     (ibnd,:);
-        hulp.pntnr(ibnd_T,:)  = bnd.pntnr (ibnd,:);      
+        if strcmpi(filetype,'siminp')
+            hulp.pntnr(ibnd_T,:)  = bnd.pntnr (ibnd,:);
+        end
     end
 end
 
