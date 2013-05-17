@@ -151,7 +151,10 @@ FLOW
   FORCings
     INITial
       WATLEVel      GLOBAL  CONST_values = 1.500
-#                   LOCAL   INCLUDE FILE = '../initieel/wlevel'
+      UVELOCITY     GLOBAL  CONST_values = 2.000
+      VVELOCITY     GLOBAL  CONST_values = 2.000
+                    LOCAL   INCLUDE file = '../bodem/bathymetry'
+                            INCLUDE FILE = '../initieel/wlevel'
     BOUNDAries      INCLUDE FILE = '../randen/bound-flow.fou'
     TIMESERIes      INCLUDE FILE = '../randvw/flow/fourier'
     BARRiers        INCLUDE FILE = '../kunstwerken/bar-flow'
