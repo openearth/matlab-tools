@@ -31,13 +31,16 @@ end
 %
 
 hulp   = [];
-ibnd_T = 0;
+ibnd_T =  0;
 for ibnd = 1: length(bnd.DATA)
-    if strcmpi(bnd.DATA.(ibnd).datatype,'T')
+    if strcmpi(bnd.DATA(ibnd).datatype,'T')
         ibnd_T       = ibnd_T + 1;
-        hulp(ibnd_T) = bnd.DATA(ibnd);
+        hulp.DATA(ibnd_T)     = bnd.DATA(ibnd);
+        hulp.m    (ibnd_T,:)  = bnd.m     (ibnd,:);
+        hulp.n    (ibnd_T,:)  = bnd.n     (ibnd,:);
+        hulp.pntnr(ibnd_T,:)  = bnd.pntnr (ibnd,:);      
     end
 end
 
 clear bnd
-bnd.DATA = hulp;
+bnd = hulp;

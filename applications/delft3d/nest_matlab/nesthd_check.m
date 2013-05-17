@@ -6,21 +6,23 @@ function nesthd_check
 
 % Windows batch file
 
-system('run.bat');
+% system('run.bat');
 
 % Matlab command prompt
 
-nesthd ('test\simona\dickv_hd1.ini');
-nesthd ('test\simona\dickv_hd2.ini');
+%nesthd ('test\simona\dickv_hd1.ini');
+%nesthd ('test\simona\dickv_hd2.ini');
 
-nesthd ('d:\projects\nesthd_matlab\test\shenzen\shenzen_hd1.ini');
-nesthd ('d:\projects\nesthd_matlab\test\shenzen\shenzen_hd2.ini');
+%nesthd ('d:\projects\nesthd_matlab\test\shenzen\shenzen_hd1.ini');
+%nesthd ('d:\projects\nesthd_matlab\test\shenzen\shenzen_hd2.ini');
 
-nesthd ('d:\projects\nesthd_matlab\test\tidal_flume_triwaq\triwaq_coarse\flume_hd1.ini');
-nesthd ('d:\projects\nesthd_matlab\test\tidal_flume_triwaq\triwaq_coarse\flume_hd2.ini');
+nesthd        ('test\simona\tidal_flume_triwaq\triwaq_coarse\flume_hd1.ini');
+nesthd        ('test\simona\tidal_flume_triwaq\triwaq_coarse\flume_hd2.ini');
+nesthd_compare('test\simona\tidal_flume_triwaq\triwaq_coarse\flume_hd2.ini');
 
-nesthd ('d:\projects\nesthd_matlab\test\milford\milford_hd1.ini');
-nesthd ('d:\projects\nesthd_matlab\test\milford\milford_hd2.ini');
+%nesthd ('d:\projects\nesthd_matlab\test\milford\milford_hd1.ini');
+%nesthd ('d:\projects\nesthd_matlab\test\milford\milford_hd2.ini');
 
-nesthd ('d:\projects\nesthd_matlab\test\zeedelta\zeedelta_hd1.ini');
-nesthd ('d:\projects\nesthd_matlab\test\zeedelta\zeedelta_hd2.ini');
+%nesthd ('d:\projects\nesthd_matlab\test\zeedelta\zeedelta_hd1.ini');
+%nesthd ('d:\projects\nesthd_matlab\test\zeedelta\zeedelta_hd2.ini');
+
