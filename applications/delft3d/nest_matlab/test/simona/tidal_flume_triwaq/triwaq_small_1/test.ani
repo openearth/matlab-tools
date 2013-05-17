@@ -1,0 +1,17 @@
+# Animation Settings - File created by kaaij - 2013-03-14 17:54:31 
+ 
+FileName       anim.avi 
+FirstStep      216 
+LastStep       241 
+Increment      1 
+FrameRate      1 
+NBits          8 
+KeepFigures    no 
+ 
+# Do not change the following codec settings! 
+ 
+fccHandler     1668707181 
+KeyFrames      0 
+Quality        0 
+BytesPerSec    300 
+Parameters     75   0   0   0 

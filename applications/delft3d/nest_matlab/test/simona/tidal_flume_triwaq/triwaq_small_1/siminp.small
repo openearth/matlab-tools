@@ -1,0 +1,184 @@
+###############################################################################
+#   bak bellen model
+###############################################################################
+
+#SET NOECHO
+IDENTification
+  TRIWAQ
+  EXPERIMENT='' OVERWRITE
+  MODID=     'Test Nesting'
+  TITLE=     'Test Nesting'
+# end identification
+
+MESH
+  GRID
+    AREA(MMAX=  29, NMAX=  10, KMAX = 10
+         ANGLEgrid=  0.00, LATItude= 00.00
+
+    CURVilinear RGFFILE='small.grd'
+
+  POINTS
+    INCLUDE FILE='points_small'
+
+
+#CURVEs
+#  INCLUDE FILE='curves'
+
+  BOUNdaries
+
+  ENCLosures
+    INCLUDE FILE='small.enc'
+
+ OPENings
+   INCLUDE FILE='openings_small'
+
+  BATHYMetry
+        GLOBAL          DPS_GIVEN
+                        METH_DPUV     = 'MIN_DPS'
+                        DEPMULTIPLIER= 1.00
+                        THRESHOLD    = 0.20
+                        LAYOUT       = 1
+        Local
+             INCLUDE FILE='small.dep.box'
+# end mesh
+
+GENERAL
+
+  DIFFusion
+    GLOBAL: CONST_values=   0.50, # CDCON=  14.000
+
+  PHYSical_parameters
+    GRAVity =  9.8100
+    WATDENsity = 1000.0
+    AIRDENsity = 1.0000
+    DYNVISCosity=0.001
+FLOW
+
+  PROBlem
+    TIMEFRame
+      DATE='01 JUN 2010', TSTART=      0.0, TSTOP= 14400., TIMEZONE = 'MET'
+
+    METHODVARS          TSTEP        = 0.50                       # NB
+                        ITERCON      =  8                         # NB
+                        ITERMOM      = 50                         # nieuw 2=fout par (seq goed)
+                        CHECKCONT    = 'WL'                       # nieuw
+                        ITERACCURWL  = 1.0e-06
+                        ITERACCURVEL = 1.0e-06
+                        THETA        = 0.5                        # NB
+
+    SMOOTHing
+      TLSMOOTH=      0.
+
+#   droogvallen:
+    DRYING              CHECK_WL     ='YES'
+                        DEPCRIT      = 0.15                       # NB
+                        UPWIND_ZETA  ='NO'                        # default
+
+    FRICTion
+      GLObal
+        TICVal=    0.50, FORMula='Chezy'
+
+      UDIRec
+        GLObal
+          CONST_values= 60.000
+      VDIRec
+        GLObal
+          CONST_values= 60.000
+
+    VISCOsity : EDDYviscositycoeff=   1.00
+    VELOCITY_PROFILE
+      BOUXDIM
+    VERT_Chezy
+        Velocity
+
+  FORCings
+    BOUNDAries
+
+    INCLUDE FILE='bound-small'
+
+     TIMESERIES
+     INCLUDE FILE='timeser_hyd_small'
+
+
+# end forcings
+
+  CHECKPoints
+
+     LEVELStations
+        INCLUDE FILE='checkpoints_small'
+
+     CURRENtstations
+        INCLUDE FILE='checkpoints_small'
+
+#   USECTions
+#   C  1, C  2, C  3, C  4, C  5, C  6, C  7
+#    INCLUDE FILE='crossu'
+
+#   VSECTions
+#   INCLUDE FILE='crossv.zeedr-v8'
+
+#   end checkpoints
+
+# end flow
+
+
+  DENSITIES
+
+  CEQStt= .69800, TEMPwa= 15.000, RHORef=1.0000
+
+
+TRANSPORT
+
+  PROBlem
+
+    CONSTITuents
+      CO 1: POLUTant=' SALINITY           ', PUNIT=' kg/m**3    '
+      SALinity: CO 1
+    methodvariables    theta        = 0.60
+   turbulence_trans   energy  dissipation
+
+# end problem transport
+
+
+  FORCings
+    INITIAL
+    CONSTITuents
+      CO 1
+        GLOBAL
+           CONST_values= 16.000000
+    BOUNDaries
+       INCLUDE FILE='bound-trans-new'
+       TIMEseries
+        INCLUDE FILE='timeser_trans_small'
+# end forcings transport
+
+  CHECKPoint
+    CONSTITuent_stations
+        INCLUDE FILE='checkpoints_small'
+
+# end transport
+
+SDSOUTput
+
+  MAPS
+    TFMAPs =      0.0, TIMAPs =   60.0, TLMAPs =  14400.0
+
+ turbulence
+  restart                tfres =  28800  tires = 1440  tlres = 43200
+
+  HISTories
+    TFHISto =     0.0, TIHISto=      5.0
+
+# end sdsoutput
+
+PRINToutput
+
+  CONTROL
+
+#   print tijden voor velden:
+
+    TFRAMEStat=(0.0,1440.0, 43200.0)
+
+# end print
+
+# einde invoer

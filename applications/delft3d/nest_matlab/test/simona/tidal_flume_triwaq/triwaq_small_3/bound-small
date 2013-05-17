@@ -1,0 +1,10 @@
+#   open rand beschrijving :
+      B : OPEN   1, BTYPE='Riemann ', BDEF='Series', REFL=  0.0
+      B : OPEN   2, BTYPE='Riemann ', BDEF='Series', REFL=  0.0
+      B : OPEN   3, BTYPE='Riemann ', BDEF='Series', REFL=  0.0
+      B : OPEN   4, BTYPE='Riemann ', BDEF='Series', REFL=  0.0
+      B : OPEN   5, BTYPE='wl      ', BDEF='Series', REFL=  0.0
+      B : OPEN   6, BTYPE='wl      ', BDEF='Series', REFL=  0.0
+      B : OPEN   7, BTYPE='wl      ', BDEF='Series', REFL=  0.0
+      B : OPEN   8, BTYPE='wl      ', BDEF='Series', REFL=  0.0
+

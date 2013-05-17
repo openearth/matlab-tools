@@ -1,0 +1,11 @@
+#  rand bak model
+#   rivierrand :
+    OPEN   5= LINE(P111, P112, 'Open rand nummer   5')
+    OPEN   6= LINE(P113, P114, 'Open rand nummer   6')
+    OPEN   7= LINE(P115, P116, 'Open rand nummer   7')
+    OPEN   8= LINE(P117, P118, 'Open rand nummer   8')
+#   zeeranden
+    OPEN   1= LINE(P101, P102, 'Open rand nummer   1')
+    OPEN   2= LINE(P103, P104, 'Open rand nummer   2')
+    OPEN   3= LINE(P105, P106, 'Open rand nummer   3')
+    OPEN   4= LINE(P107, P108, 'Open rand nummer   4')

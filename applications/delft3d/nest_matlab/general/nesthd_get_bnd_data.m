@@ -16,5 +16,28 @@ switch filetype;
    case 'Delft3D'
       bnd = delft3d_io_bnd('read',filename);
    case 'siminp'
-      bnd = siminp_io_bnd(filename);
+      [P,N,E] = fileparts(filename);
+      filename = [N E];
+
+      exclude = {true;true};
+      S = readsiminp(P,filename,exclude);
+      S = all_in_one(S);
+
+      bnd = simona2mdf_bnddef(S);
 end
+
+%
+% Reduce the bnd structure  to timeseries only
+%
+
+hulp   = [];
+ibnd_T = 0;
+for ibnd = 1: length(bnd.DATA)
+    if strcmpi(bnd.DATA.(ibnd).datatype,'T')
+        ibnd_T       = ibnd_T + 1;
+        hulp(ibnd_T) = bnd.DATA(ibnd);
+    end
+end
+
+clear bnd
+bnd.DATA = hulp;

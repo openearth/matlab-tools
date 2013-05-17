@@ -1,0 +1,3 @@
+#   open rand beschrijving :
+      B : OPEN   2, BTYPE='disch-ad', BDEF='Series  ', REFL=  0.0 SAME
+      B : OPEN   1, BTYPE='wl      ', BDEF='Fourier ', REFL=  0.0     

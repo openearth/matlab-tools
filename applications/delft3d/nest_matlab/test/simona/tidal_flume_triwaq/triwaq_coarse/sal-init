@@ -1,0 +1,22 @@
+#  Zout boxen                                   
+#
+          BOX MNMN=(1,1;422,138), Layer = 1                                      
+              CORNer_values=  16.0, 16.0, 16.0, 16.0
+          BOX MNMN=(1,1;422,138), Layer = 2                                      
+              CORNer_values=  16.0, 16.0, 16.0, 16.0
+          BOX MNMN=(1,1;422,138), Layer = 3                                      
+              CORNer_values=  16.0, 16.0, 16.0, 16.0
+          BOX MNMN=(1,1;422,138), Layer = 4                                      
+              CORNer_values=  16.0, 16.0, 16.0, 16.0
+          BOX MNMN=(1,1;422,138), Layer = 5                                      
+              CORNer_values=  16.0, 16.0, 16.0, 16.0
+          BOX MNMN=(1,1;422,138), Layer = 6                                      
+              CORNer_values=  16.0, 16.0, 16.0, 16.0
+          BOX MNMN=(1,1;422,138), Layer = 7                                      
+              CORNer_values=  16.0, 16.0, 16.0, 16.0
+          BOX MNMN=(1,1;422,138), Layer = 8                                      
+              CORNer_values=  16.0, 16.0, 16.0, 16.0
+          BOX MNMN=(1,1;422,138), Layer = 9                                      
+              CORNer_values=  16.0, 16.0, 16.0, 16.0
+          BOX MNMN=(1,1;422,138), Layer =10                                      
+              CORNer_values=  16.0, 16.0, 16.0, 16.0

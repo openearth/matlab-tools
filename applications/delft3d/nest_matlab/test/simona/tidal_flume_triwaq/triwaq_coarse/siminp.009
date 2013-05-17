@@ -1,0 +1,202 @@
+###############################################################################
+#   bak bellen model
+###############################################################################
+
+#SET NOECHO
+IDENTification
+  TRIWAQ
+  EXPERIMENT='' OVERWRITE
+  MODID=     'Test Getijgoot'
+  TITLE=     'Test Getijgoot'
+# end identification
+
+MESH
+  GRID
+    AREA(MMAX= 422, NMAX= 138, KMAX = 10
+         ANGLEgrid=  0.00, LATItude= 00.00
+
+    CURVilinear RGFFILE='nw_03_refined.grd'
+
+  POINTS
+    INCLUDE FILE='points'
+    INCLUDE FILE='points-bronnen'
+
+ CURVEs
+   INCLUDE FILE='curves'
+
+  BOUNdaries
+
+  ENCLosures
+    INCLUDE FILE='nw_03_refined.enc'
+
+ OPENings
+   INCLUDE FILE='openings'
+
+  BATHYMetry
+        GLOBAL          DPS_GIVEN
+                        METH_DPUV     = 'MIN_DPS'
+                        DEPMULTIPLIER= 1.00
+                        THRESHOLD    = 0.20
+                        LAYOUT       = 1
+        LOCAL
+           INCLUDE FILE='nw15_refined.dep.box'
+   DRYPOINTS
+        CLOSEV          include file = 'closev-v2'
+
+# end mesh
+
+GENERAL
+
+  DIFFusion
+    GLOBAL: CONST_values=   0.50, # CDCON=  14.000
+
+  PHYSical_parameters
+    GRAVity =  9.8100
+    WATDENsity = 1000.0
+    AIRDENsity = 1.0000
+    DYNVISCosity=0.001
+FLOW
+
+  PROBlem
+    TIMEFRame
+      DATE='01 JUN 2010', TSTART=      0.0, TSTOP= 14400., TIMEZONE = 'MET'
+
+    METHODVARS          TSTEP        = 0.50                       # NB
+                        ITERCON      =  8                         # NB
+                        ITERMOM      = 50                         # nieuw 2=fout par (seq goed)
+                        CHECKCONT    = 'WL'                       # nieuw
+                        ITERACCURWL  = 1.0e-06
+                        ITERACCURVEL = 1.0e-06
+                        THETA        = 0.5                        # NB
+
+    SMOOTHing
+      TLSMOOTH=      0.
+
+#   droogvallen:
+    DRYING              CHECK_WL     ='YES'
+                        DEPCRIT      = 0.15                       # NB
+                        UPWIND_ZETA  ='NO'                        # default
+
+    FRICTion
+      GLObal
+        TICVal=    0.50, FORMula='Chezy'
+
+      UDIRec
+        GLObal
+          CONST_values= 60.000
+      VDIRec
+        GLObal
+          CONST_values= 60.000
+
+    VISCOsity : EDDYviscositycoeff=   1.00
+    VELOCITY_PROFILE
+      LOG_BOUNDARIES
+    VERT_Chezy
+        Velocity
+
+  FORCings
+    BOUNDAries
+
+    INCLUDE FILE='bound-flow1'
+
+    TIMESERIES
+    INCLUDE FILE='timser-riv'
+
+    HARMONIC
+      GEneral
+        OMEGA=
+              'S2'
+    CONSTANTS
+      S : P 101, TID= .00000000E+00, AZEro= .0000000E+00
+        AMPL=  0.800000
+        PHASE= 0.008727
+      S : P102, TID= .00000000E+00, AZEro= .0000000E+00
+        AMPL=  0.800000
+        PHASE= 0.008727
+
+  DISCHARGES
+     include 'disch-flow'
+
+# end forcings
+
+  CHECKPoints
+
+    LEVELStations
+    INCLUDE FILE='checkpoints'
+
+
+    CURRENtstations
+    INCLUDE FILE='checkpoints'
+
+    USECTions
+    C  1, C  2, C  3, C  4, C  5, C  6, C  7
+    INCLUDE FILE='crossu'
+
+
+#   end checkpoints
+
+# end flow
+
+
+  DENSITIES
+
+  CEQStt= .69800, TEMPwa= 15.000, RHORef=1.0000
+
+
+TRANSPORT
+
+  PROBlem
+
+    CONSTITuents
+      CO 1: POLUTant=' SALINITY           ', PUNIT=' kg/m**3    '
+      SALinity: CO 1
+    methodvariables    theta        = 0.60
+   turbulence_trans   energy  dissipation
+
+# end problem transport
+
+
+  FORCings
+    INITIAL
+    CONSTITuents
+      CO 1
+        GLOBAL
+           CONST_values= 16.000000
+    BOUNDaries
+       INCLUDE FILE='bound-trans-new'
+      TIMEseries
+       INCLUDE FILE='timeser-trans'
+    DISCHARGES
+    include 'disch-trans'
+# end forcings transport
+
+  CHECKPoint
+    CONSTITuent_stations
+    INCLUDE FILE='checkpoints'
+
+# end transport
+
+SDSOUTput
+
+  MAPS
+    TFMAPs =      0.0, TIMAPs =   60.0, TLMAPs =  43200.0
+
+ turbulence
+  restart                tfres =  28800  tires = 1440  tlres = 43200
+
+  HISTories
+    TFHISto =     0.0, TIHISto=      5.0
+
+# end sdsoutput
+
+PRINToutput
+
+  CONTROL
+
+#   print tijden voor velden:
+
+    TFRAMEStat=(0.0,1440.0, 43200.0)
+
+# end print
+
+# einde invoer
