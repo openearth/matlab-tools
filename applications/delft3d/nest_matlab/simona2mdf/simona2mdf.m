@@ -4,9 +4,9 @@ function simona2mdf (filwaq,filmdf)
 
 oetsettings('quiet','searchdb',false);
 
-filwaq = '..\test\simona\simona-scaloost-fijn-exvd-v1\SIMONA\berekeningen\siminp.fou';
+%filwaq = '..\test\simona\simona-scaloost-fijn-exvd-v1\SIMONA\berekeningen\siminp.fou';
 %filwaq = '..\test\simona\simona-scaloost-fijn-exvd-v1\SIMONA\berekeningen\siminp';
-%filwaq = '..\test\simona\simona-kustzuid-2004-v4\SIMONA\berekeningen\siminp-kzv4';
+filwaq = '..\test\simona\simona-kustzuid-2004-v4\SIMONA\berekeningen\siminp-kzv4';
 %filwaq = '..\test\simona\A80\siminp.dcsmv6';
 filmdf = 'test.mdf';
 
@@ -33,11 +33,11 @@ S = all_in_one(S);
 
 mdf = simona2mdf_area     (S,mdf,name_mdf);
 mdf = simona2mdf_bathy    (S,mdf,name_mdf);
-mdf = simona2mdf_dryp     (S,mdf,name_mdf);
-mdf = simona2mdf_thd      (S,mdf,name_mdf);
-mdf = simona2mdf_times    (S,mdf,name_mdf);
-mdf = simona2mdf_processes(S,mdf,name_mdf);
-mdf = simona2mdf_restart  (S,mdf,name_mdf);
+%mdf = simona2mdf_dryp     (S,mdf,name_mdf);
+%mdf = simona2mdf_thd      (S,mdf,name_mdf);
+%mdf = simona2mdf_times    (S,mdf,name_mdf);
+%mdf = simona2mdf_processes(S,mdf,name_mdf);
+%mdf = simona2mdf_restart  (S,mdf,name_mdf);
 
 %
 % Boundary definition, slightly different approach to allow for use by
@@ -60,28 +60,29 @@ if ~isempty(bnd)
         mdf.filbct = [name_mdf '.bct'];
         ddb_bct_io('write',mdf.filbct,bct);
     end
-
+        
     bcq = simona2mdf_bcq(S,bnd);
     if ~isempty(bcq)
        mdf.filbcq = [name_mdf '.bcq'];
        ddb_io_bct('write',mdf.filbcq,bcq);
     end
-
+    
     bca = simona2mdf_bca(S,bnd);
     if ~isempty(bca)
-        mdf.filbca = [name_mdf '.bca'];
-        delft3d_io_bca('write',mdf.filbca,bca);
+        mdf.filana = [name_mdf '.bca'];
+        delft3d_io_bca('write',mdf.filana,bca);
     end
 end
 
 %
-% Initial conditions (back to original structure)
+% Initial conditions (back to original structure
 %
 
-mdf = simona2mdf_initial  (S,mdf,name_mdf);
+mdf = simona2mdf_initial(S,mdf,name_mdf);
 
 %
 % write the mdf file
 %
+
 
 delft3d_io_mdf('write',filmdf,mdf);
