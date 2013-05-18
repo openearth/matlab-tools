@@ -4,25 +4,34 @@ function nesthd_check
 %
 %See also: nest_matlab
 
-% Windows batch file
+testdir = 'd:\projects\nesthd_matlab\test';
 
-% system('run.bat');
+tests      = {[testdir filesep 'milford\milford']                       ; ...
+              [testdir filesep 'tidal_flume_triwaq\triwaq_coarse\flume']; ...
+              [testdir filesep 'zeedelta\zeedelta']                     ; ...
+              [testdir filesep 'shenzen\shenzen']                       }; 
 
-% Matlab command prompt
+% Windows batch file (firt create)
 
-%nesthd ('test\simona\dickv_hd1.ini');
-%nesthd ('test\simona\dickv_hd2.ini');
+fid = fopen ('run.bat','w+');
+for itest = 1: length(tests)
+    fprintf(fid,'nesthd_w64  %s_hd1.ini \n',tests{itest});
+    fprintf(fid,'nesthd_w64  %s_hd2.ini \n',tests{itest});
+end
+fclose(fid);
 
-%nesthd ('d:\projects\nesthd_matlab\test\shenzen\shenzen_hd1.ini');
-%nesthd ('d:\projects\nesthd_matlab\test\shenzen\shenzen_hd2.ini');
+% than run and compare with previous results
 
-nesthd        ('test\simona\tidal_flume_triwaq\triwaq_coarse\flume_hd1.ini');
-nesthd        ('test\simona\tidal_flume_triwaq\triwaq_coarse\flume_hd2.ini');
-nesthd_compare('test\simona\tidal_flume_triwaq\triwaq_coarse\flume_hd2.ini');
+system('run.bat');
+for itest = 1: length(tests)
+    nesthd_compare([tests{itest} '_hd2.ini']);
+end
 
-%nesthd ('d:\projects\nesthd_matlab\test\milford\milford_hd1.ini');
-%nesthd ('d:\projects\nesthd_matlab\test\milford\milford_hd2.ini');
 
-%nesthd ('d:\projects\nesthd_matlab\test\zeedelta\zeedelta_hd1.ini');
-%nesthd ('d:\projects\nesthd_matlab\test\zeedelta\zeedelta_hd2.ini');
+% Check if running from matlab command prompt works
 
+for itest = 1: length (tests)
+    nesthd        ([tests{itest} '_hd1.ini']);
+    nesthd        ([tests{itest} '_hd2.ini']);
+    nesthd_compare([tests{itest} '_hd2.ini']);
+end
