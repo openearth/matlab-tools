@@ -8,7 +8,7 @@ function nesthd(varargin)
 %
 % Unlike the Delft3D fortran nesth programs, nest_matlab has
 % support for Neumann boundaries, Riemann boundaries, and
-% tangential velocity components (parallel to open boundary), 
+% tangential velocity components (parallel to open boundary),
 %
 %See also: delft3d
 
@@ -52,11 +52,6 @@ function nesthd(varargin)
 
 if ~isdeployed & any(which('setproperty'))
    addpath(genpath('..\..\..\..\matlab'));
-   addpath(genpath('nest_ui'));
-   addpath(genpath('nesthd1'));
-   addpath(genpath('nesthd2'));
-   addpath(genpath('general'));
-   addpath(genpath('reawri'));
 end
 
 %% Check if nesthd_path is set
