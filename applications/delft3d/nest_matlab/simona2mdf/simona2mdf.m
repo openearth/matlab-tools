@@ -51,13 +51,13 @@ S = all_in_one(S);
 %
 
 mdf = simona2mdf_area     (S,mdf,name_mdf);
-mdf = simona2mdf_bathy    (S,mdf,name_mdf);
-mdf = simona2mdf_dryp     (S,mdf,name_mdf);
-mdf = simona2mdf_thd      (S,mdf,name_mdf);
-mdf = simona2mdf_times    (S,mdf,name_mdf);
-mdf = simona2mdf_processes(S,mdf,name_mdf);
-mdf = simona2mdf_physical (S,mdf,name_mdf);
-mdf = simona2mdf_numerical(S,mdf,name_mdf);
+%mdf = simona2mdf_bathy    (S,mdf,name_mdf);
+%mdf = simona2mdf_dryp     (S,mdf,name_mdf);
+%mdf = simona2mdf_thd      (S,mdf,name_mdf);
+%mdf = simona2mdf_times    (S,mdf,name_mdf);
+%mdf = simona2mdf_processes(S,mdf,name_mdf);
+%mdf = simona2mdf_physical (S,mdf,name_mdf);
+%mdf = simona2mdf_numerical(S,mdf,name_mdf);
 
 %
 % Boundaries, slightly different approach to allow for use by
