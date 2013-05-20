@@ -14,8 +14,8 @@ try
 
    delft3d_io_dry('write',file,drypoints(:,1),drypoints(:,2));
 
-   mdf.fildry = file;
+   mdf.fildry = simona2mdf_rmpath(file);
 end
-    
+
 
 

@@ -48,3 +48,4 @@ end
 file_enc   = [name_mdf '.enc'];
 mdf.filgrd = file_enc;
 enclosure ('write',file_enc,MN);
+mdf.filgrd = simona2mdf_rmpath(mdf.filgrd);

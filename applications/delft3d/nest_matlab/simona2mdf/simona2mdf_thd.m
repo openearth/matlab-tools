@@ -46,6 +46,6 @@ end
 
 if ~isempty(THD.DATA)
     file = [name_mdf '.thd'];
-    mdf.filtd = file;
     delft3d_io_thd('write',file,THD);
+    mdf.filtd = simona2mdf_rmpath(file);
 end

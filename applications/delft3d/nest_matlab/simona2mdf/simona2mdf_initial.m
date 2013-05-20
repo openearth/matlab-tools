@@ -1,8 +1,6 @@
 function mdf=simona2mdf_initial(S,mdf,name_mdf)
 
-% simona2mdf_initial : gets the initial conditions out of the siminp file
-
-inifile = false;
+% simona2mdf_initial : gets the initial conditions out of the siminp file (always write to inital condition file)
 
 mmax = mdf.mnkmax(1);
 nmax = mdf.mnkmax(2);
@@ -42,7 +40,6 @@ v0   (1:mmax,1:nmax) = 0.;
 if ~isempty(initial.WATLEVEL)
     zeta0 = simona2mdf_getglobaldata(initial.WATLEVEL.GLOBAL,zeta0);
     if isfield (initial.WATLEVEL.LOCAL,'BOX')
-       inifile = true;
        zeta0   = simona2mdf_getboxdata(initial.WATLEVEL.LOCAL.BOX,zeta0);
     end
 end
@@ -53,7 +50,6 @@ end
 if ~isempty(initial.UVELOCITY)
     u0    = simona2mdf_getglobaldata(initial.UVELOCITY.GLOBAL,u0);
     if isfield (initial.UVELOCITY.LOCAL,'BOX')
-       inifile = true;
        u0      = simona2mdf_getboxdata(initial.UVELOCITY.LOCAL.BOX,u0);
     end
 end
@@ -63,9 +59,8 @@ end
 %
 
 if ~isempty(initial.VVELOCITY)
-    v0    = simona2mdf_getglobaldata(initial.VVELOCITY.GLOBAL,v0)
+    v0    = simona2mdf_getglobaldata(initial.VVELOCITY.GLOBAL,v0);
     if isfield (initial.VVELOCITY.LOCAL,'BOX')
-       inifile = true;
        v0      = simona2mdf_getboxdata(initial.VVELOCITY.LOCAL.BOX,u0);
     end
 end
@@ -74,14 +69,9 @@ end
 % Finally write
 %
 
-if ~inifile
-    mdf.zeta0 = zeta0(1,1);
-    mdf.u0    = u0   (1,1);
-    mdf.v0    = v0   (1,1);
-else
-    ini(1).Data = zeta0;
-    ini(2).Data = u0;
-    ini(3).Data = v0;
-    mdf.filic  = [name_mdf '.ini'];
-    wldep('write',mdf.filic ,ini);
-end
+ini(1).Data = zeta0;
+ini(2).Data = u0;
+ini(3).Data = v0;
+mdf.filic  = [name_mdf '.ini'];
+wldep('write',mdf.filic ,ini);
+mdf.filic  = simona2mdf_rmpath(mdf.filic);
