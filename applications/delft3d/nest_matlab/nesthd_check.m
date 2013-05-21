@@ -22,11 +22,10 @@ fclose(fid);
 
 % than run and compare with previous results
 
-system('run.bat');
+dummy = system('run.bat');
 for itest = 1: length(tests)
     nesthd_compare([tests{itest} '_hd2.ini']);
 end
-
 
 % Check if running from matlab command prompt works
 
