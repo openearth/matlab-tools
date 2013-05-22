@@ -14,5 +14,6 @@ for i=1:noset
 end
 
 if datasetnr==0
-    warn='Dataset not found!'
-end
+   % warn='Dataset not found!'
+    disp(['Dataset not found : ' string]);
+  end
