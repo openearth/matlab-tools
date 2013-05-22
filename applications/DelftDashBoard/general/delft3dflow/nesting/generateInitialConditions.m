@@ -1,4 +1,4 @@
-function generateInitialConditions(flow, opt, par, ii, dplayer, fname)
+function varargout = generateInitialConditions(flow, opt, par, ii, dplayer, fname)
 %GENERATEINITIALCONDITIONS  One line description goes here.
 %
 %   More detailed description goes here.
@@ -68,6 +68,7 @@ function generateInitialConditions(flow, opt, par, ii, dplayer, fname)
 mmax=size(flow.gridXZ,1)+1;
 nmax=size(flow.gridYZ,2)+1;
 data=zeros(mmax,nmax,flow.KMax);
+
 
 if isfield(opt,par)
     
@@ -235,7 +236,15 @@ if isfield(opt,par)
                     vvelv=m1*velv1+m2*velv2;
                     
                     v = uvelv.*cos(alphav) + vvelv.*sin(alphav);
-                    
+%%%%%%%%%%%%%%%%%%%%% Added by j.lencart@gmail.com %%%%%%%%%%%%%%%%%%%%%%%%
+                case {'waterlevel'}
+                    s1=load([opt.(par)(ii).IC.datafolder filesep opt.(par)(ii).IC.dataname '.' par '.' datestr(times(it1),'yyyymmddHHMMSS') '.mat']);
+                    s2=load([opt.(par)(ii).IC.datafolder filesep opt.(par)(ii).IC.dataname '.' par '.' datestr(times(it2),'yyyymmddHHMMSS') '.mat']);
+                    s1.lon=mod(s1.lon,360);
+                    s2.lon=mod(s2.lon,360);
+                    s1=interpolate3D(xz,yz,dplayer,s1, 'wl');
+                    s2=interpolate3D(xz,yz,dplayer,s2, 'wl');
+                    data=m1*s1+m2*s2;
                 otherwise
                     % Load data
                     s1=load([opt.(par)(ii).IC.datafolder filesep opt.(par)(ii).IC.dataname '.' par '.' datestr(times(it1),'yyyymmddHHMMSS') '.mat']);
@@ -287,6 +296,9 @@ switch lower(par)
             dd=internaldiffusion(dd,'nst',5);
             ddb_wldep('append',fname,dd,'negate','n','bndopt','n');
         end
+    case{'waterlevel'}
+            dd=internaldiffusion(data,'nst',5);
+            ddb_wldep('append',fname,dd,'negate','n','bndopt','n');
     otherwise
         for k=k1:dk:k2
             dd=squeeze(data(:,:,k));
@@ -294,4 +306,4 @@ switch lower(par)
             ddb_wldep('append',fname,dd,'negate','n','bndopt','n');
         end
 end
-
+varargout{1} = dd;

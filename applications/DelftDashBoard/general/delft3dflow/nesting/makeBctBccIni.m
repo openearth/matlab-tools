@@ -1,4 +1,4 @@
-function openBoundaries = makeBctBccIni(option, varargin)
+function varargout = makeBctBccIni(option, varargin)
 %MAKEBCTBCCINI  One line description goes here.
 %
 %   More detailed description goes here.
@@ -165,3 +165,7 @@ end
 if exist([workdir 'TMPOCEAN_temperature.mat'],'file')
     delete([workdir 'TMPOCEAN_temperature.mat']);
 end
+%% Output
+varargout{1} = openBoundaries;
+varargout{2} = flow;
+varargout{3} = opt;

@@ -88,12 +88,29 @@ else
     dplayer=getLayerDepths(dp,flow.thick);
 end
 
-%% Water Level
-disp('   Water levels ...');
-% Constant
-h=zeros(mmax,nmax)+opt.waterLevel.IC.constant;
-ddb_wldep('write',fname,h,'negate','n','bndopt','n');
 
+%% Water Level
+%%%%%%%%%%%%%%%%%% Changed by j.lencart@gmail.com %%%%%%%
+disp('   Water levels ...');
+switch opt.waterLevel.IC.source
+    case 4
+% Constant
+        h=zeros(mmax,nmax)+opt.waterLevel.IC.constant;
+        ddb_wldep('write',fname,h,'negate','n','bndopt','n');
+    case 2
+% From file
+        h=generateInitialConditions(flow,opt,'waterLevel',1,dplayer,fname);
+end
+
+% Add water level to dplayer for sigma coordinates
+if ~strcmpi(flow.vertCoord,'z')
+    D = size(dplayer);
+    if ndims(dplayer) > 2
+        % 3D
+    h = repmat(h, [1, 1, D(end)]);
+    end
+    dplayer = dplayer + h;
+end
 %% Velocities
 disp('   Velocities ...');
 generateInitialConditions(flow,opt,'current',1,dplayer,fname);

@@ -69,13 +69,27 @@ function s = interpolate3D(x, y, dplayer, d, varargin)
 tp='data';
 
 if ~isempty(varargin)
-    if strcmpi(varargin{1},'u') || strcmpi(varargin{1},'v')
+    if strcmpi(varargin{1},'u') || strcmpi(varargin{1},'v') ||...
+               strcmpi(varargin{1},'wl')
         tp=varargin{1};
     end
 end
 
-nlevels=length(d.levels);
-levels=d.levels';
+%%%%% Changed by j.lencart@gmail.com %%%%%%%%%%%%%%%%%%%
+% Accept 4D levels from parent domain.
+%nlevels=length(d.levels);
+%levels=d.levels';
+D = size(d.data);
+if ndims(d.levels) == 3
+    nlevels = size(d.levels,3);
+    levels = d.levels;
+else
+    nlevels = length(d.levels);
+    levels = d.levels';
+% Replicate the levels for all of the grid points for code consistency.
+    levels = reshape(levels, [1, 1, length(levels)]);
+    levels = repmat(levels, [D(1), D(2), 1]);
+end
 
 if ndims(dplayer)==3
     kmax=size(dplayer,3);
@@ -88,14 +102,30 @@ end
 
 xd=d.lon;
 yd=d.lat;
-[xd,yd]=meshgrid(xd,yd);
+% Only meshgrid (for interp2) if parent model lon and lat are vectors
+if isvector(xd)
+    [xd,yd]=meshgrid(xd,yd);
+    int2 = true;
+else
+    int2 = false;
+end
 
 x(isnan(x))=1e9;
 y(isnan(y))=1e9;
+if strcmpi(tp,'wl')
+    sd = size(dplayer);
+    vals = nan(sd(1), sd(2));
+    lev_int = nan(sd(1), sd(2));
+else
+    vals = nan(size(dplayer));
+    lev_int = nan(size(dplayer));
+end
 
 if kmax>1
     % 3D
     for k=1:nlevels
+% Only do a single level if interpolating water levels
+        if k > 1 && strcmpi(tp,'wl'); break; end
         vald=squeeze(d.data(:,:,k));
         switch lower(tp(1))
             case{'u','v'}
@@ -104,7 +134,14 @@ if kmax>1
             otherwise
                 vald=internaldiffusion(vald,'nst',10);
         end
-        vals(:,:,k)=interp2(xd,yd,vald,x,y);
+% Use interp2 if parent model lon and lat are vectors else use griddata
+        if int2
+            vals(:,:,k)=interp2(xd,yd,vald,x,y);
+            lev_int(:,:,k) = interp2(xd, yd, squeeze(levels(:,:,k)), x, y);
+        else
+            vals(:,:,k)=griddata(xd,yd,vald,x,y);
+            lev_int(:,:,k) = griddata(xd, yd, squeeze(levels(:,:,k)), x, y);
+        end
         vals(isnan(vals))=-9999;
     end
 else
@@ -123,8 +160,10 @@ else
     vals=interp2(xd,yd,vals,x,y);
 end
 
-if kmax>1
-    % 3D
+
+if kmax>1 && ~strcmpi(tp,'wl')
+% 3D
+    s = zeros(size(dplayer));
     for i=1:size(vals,1)
         for j=1:size(vals,2)
             val=squeeze(vals(i,j,:));
@@ -132,7 +171,7 @@ if kmax>1
             if ~isempty(ii)
                 i1=min(ii);
                 i2=max(ii);
-                depths=levels(i1:i2);
+                depths=squeeze(lev_int(i, j, i1:i2));
                 temps=val(i1:i2);
                 
                 if size(depths,2)>1
@@ -145,14 +184,19 @@ if kmax>1
                         ddep=depths(end)-depths(end-1);
                         ddep=1;
                         depths=[-100000;depths;depths(end)+ddep;100000];
-                        temps =[temps(1);temps;0;0];
+% This won't work
+%                        temps =[temps(1);temps;0;0];
+% This seems to work since the same indexes are repeated for depths and
+% quantity
+                        temps =[0;temps;temps(end);0];
                     otherwise
                         depths=[-100000;depths;100000];
                         temps =[temps(1);temps;temps(end)];
                 end
                 s(i,j,:)=interp1(depths,temps,squeeze(dplayer(i,j,:)));
-            else
-                s(i,j,1:kmax)=0;
+
+%            else
+%                s(i,j,1:kmax)=0;
             end
         end
     end
@@ -160,7 +204,6 @@ else
     % 2D, compute depth averaged values
     s=vals;
 end
-
 %% Depth-averaging
 function davg=dptavg(d,levels)
 kmax=length(levels);

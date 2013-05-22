@@ -1,4 +1,4 @@
-function [times u v] = generateVelocitiesFromFile(flow, openBoundaries, opt)
+function [times u v] = generateVelocitiesFromFile(flow, openBoundaries, opt, varargin)
 %GENERATEVELOCITIESFROMFILE  One line description goes here.
 %
 %   More detailed description goes here.
@@ -64,11 +64,16 @@ function [times u v] = generateVelocitiesFromFile(flow, openBoundaries, opt)
 % $Keywords: $
 
 %%
+
+% Check if waterlevels are passed in varargin
+if length(varargin) > 0; wl = varargin{1}; end
+
 t0=flow.startTime;
 t1=flow.stopTime;
 dt=opt.bctTimeStep;
 
 nr=length(openBoundaries);
+
 
 for i=1:nr
     dp(i,1)=-openBoundaries(i).depth(1);
@@ -80,7 +85,7 @@ if strcmpi(flow.vertCoord,'z')
 else
     dplayer=getLayerDepths(dp,flow.thick);
 end
-
+D = size(dplayer);
 % First interpolate data onto boundaries
 for i=1:nr
     
@@ -127,9 +132,13 @@ times=times(it0:it1);
 nt=0;
 
     for it=it0:it1
-        
+
         nt=nt+1;
-        
+% Add current water level if sigma coordinates
+        if ~strcmpi(flow.vertCoord,'z')
+            wl_in = repmat(squeeze(wl(:,:,it)), [1, 1, D(3)]);
+            dplayer = dplayer + wl_in;
+        end        
         % Loop through all files
         
         disp(['Reading files ' num2str(nt) ' of ' num2str(it1-it0+1)]);
@@ -140,21 +149,46 @@ nt=0;
         su.lon=mod(su.lon,360);
         sv.lon=mod(sv.lon,360);
         x=mod(x,360);
-        
-        ilon1=find(su.lon<minx,1,'last');
-        ilon2=find(su.lon>maxx,1,'first');
-        ilat1=find(su.lat<miny,1,'last');
-        ilat2=find(su.lat>maxy,1,'first');
-        
-        su.lon=su.lon(ilon1:ilon2);
-        su.lat=su.lat(ilat1:ilat2);
-        su.data=su.data(ilat1:ilat2,ilon1:ilon2,:);
-        sv.lon=sv.lon(ilon1:ilon2);
-        sv.lat=sv.lat(ilat1:ilat2);
-        sv.data=sv.data(ilat1:ilat2,ilon1:ilon2,:);
-        su.lon=mod(su.lon,360);
-        sv.lon=mod(sv.lon,360);
-        
+
+%%%%%%%%%%%%  j.lencart@ua.pt        14/05/2013      %%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This won't work for parent grids not aligned with NS-EW (2D lon/lat).
+%         ilon1=find(su.lon<minx,1,'last');
+%         ilon2=find(su.lon>maxx,1,'first');
+%         ilat1=find(su.lat<miny,1,'last');
+%         ilat2=find(su.lat>maxy,1,'first');
+%         su.lon=su.lon(ilon1:ilon2);
+%         su.lat=su.lat(ilat1:ilat2);
+%         su.data=su.data(ilat1:ilat2,ilon1:ilon2,:);
+%         sv.lon=sv.lon(ilon1:ilon2);
+%         sv.lat=sv.lat(ilat1:ilat2);
+%         sv.data=sv.data(ilat1:ilat2,ilon1:ilon2,:);
+% We can use inpolygon to get the elements of the parent domain inside a
+% polygon. Here I choose to blank all of the region inside the model domain so 
+% that only outside cells will be used to calculate the boundary conditions.
+% This can be used for faster interpolations if the parent domain is too
+% large.
+% However, I think it is best to use the full domain so that the gradient
+% accross the boundary is taken into account.
+    if 0
+        xv = [minx maxx maxx minx minx] ; yv = [miny miny maxy maxy miny];
+        [IN ON] = inpolygon(lon360, s.lat, xv, yv);
+        mask = ~logical(IN+ON);
+        su.lon = su.lon(mask);
+        su.lat = su.lat(mask);
+        su.data = su.data(mask);
+% If 4D levels slice levels as the rest of the inputs
+        if ndims(s.levels) == 3
+            su.levels = su.levels(mask);
+        end
+        sv.lon = sv.lon(mask);
+        sv.lat = sv.lat(mask);
+        sv.data = sv.data(mask);
+% If 4D levels slice levels as the rest of the inputs
+        if ndims(s.levels) == 3
+            sv.levels = sv.levels(mask);
+        end
+    end
+%%%%%%%%%%%%  j.lencart@ua.pt        14/05/2013      %%%%%%%%%%%%%%%%%%%%%%%%%%%
         uu=interpolate3D(x,y,dplayer,su,'u');
         vv=interpolate3D(x,y,dplayer,sv,'v');
         

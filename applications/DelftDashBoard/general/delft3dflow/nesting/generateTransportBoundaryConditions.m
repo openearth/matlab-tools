@@ -64,10 +64,21 @@ function openBoundaries = generateTransportBoundaryConditions(flow, openBoundari
 % $HeadURL$
 % $Keywords: $
 
+% Error handling
+error_id{1} = 'generateTransportBoundaryCondition:MissingWaterLevel';
+error_msg{1} = ...
+           ['Tried to build sigma boundary without considering zeta.\n\n' ...
+            'Generate boundary water levels by first calling:\n' ...
+            '[OB,flow,opt]=makeBctBccIni(''bct'',''nestxml'',''nest.xml'')'...
+            '\n\n' 'and then calling:\n' ...
+            'makeBctBccIni(''bcc'',''nestxml'',''nest.xml'',...\n' ...
+            '''openboundaries'', OB,''flow'', flow)'];
 %%
 t0=flow.startTime;
 t1=flow.stopTime;
 dt=opt.bccTimeStep;
+
+D = size(dplayer);
 
 switch opt.(par)(ii).BC.source
     case 4
@@ -105,13 +116,14 @@ switch opt.(par)(ii).BC.source
             if strcmpi(flow.vertCoord,'z')
                 ta=fliplr(ta);
                 tb=fliplr(tb);
-            end
+             end
             openBoundaries(j).(par)(ii).timeSeriesA=ta;
             openBoundaries(j).(par)(ii).timeSeriesB=tb;
         end
         
     case{2}
         % File
+         
         for i=1:length(openBoundaries)
             x(i,1)=0.5*(openBoundaries(i).x(1) + openBoundaries(i).x(2));
             y(i,1)=0.5*(openBoundaries(i).y(1) + openBoundaries(i).y(2));
@@ -152,6 +164,7 @@ switch opt.(par)(ii).BC.source
         end
         times=times(it0:it1);
         
+        
         for j=1:length(openBoundaries)
             openBoundaries(j).(par)(ii).nrTimeSeries=0;
             openBoundaries(j).(par)(ii).timeSeriesT=[];
@@ -160,30 +173,72 @@ switch opt.(par)(ii).BC.source
             openBoundaries(j).(par)(ii).timeSeriesB=[];
         end
         
+% If sigma coordinates, read water level from openboundaries input var
+        n_child = length([t0:dt/1440:t1]);
+        wl = zeros(n_child, length(openBoundaries), 2);
+        for j=1:length(openBoundaries)
+            if ~strcmpi(flow.vertCoord,'z')
+% Test if the water level field was added to open boundaries
+                if ~isfield(openBoundaries(1), 'timeSeriesWLA')
+                    error(error_id{1}, error_msg{1});
+                end
+               wl(:,j,1) = openBoundaries(j).timeSeriesWLA;
+               wl(:,j,2) = openBoundaries(j).timeSeriesWLB;
+            end
+        end
+        
         nt=0;
         
         for it=it0:it1
+% Reshape and repeat water level to match dplayer.
+            wl_in = squeeze(wl(it, :,:));
+            wl_in = reshape(wl_in, [length(openBoundaries), 2, 1]);
+            wl_in = repmat(wl_in, [1, 1, D(3)]);
             
             nt=nt+1;
             
             disp(['      Time step ' num2str(nt) ' of ' num2str(it1-it0+1)]);
             
-            s=load([opt.(par)(ii).BC.datafolder filesep opt.(par)(ii).BC.dataname '.' par '.' datestr(times(nt),'yyyymmddHHMMSS') '.mat']);
-
-            s.lon=mod(s.lon,360);
-            
-            ilon1=find(s.lon<minx,1,'last');
-            ilon2=find(s.lon>maxx,1,'first');
-            ilat1=find(s.lat<miny,1,'last');
-            ilat2=find(s.lat>maxy,1,'first');
-            
-            s.lon=s.lon(ilon1:ilon2);
-            s.lon=mod(s.lon,360);
-            s.lat=s.lat(ilat1:ilat2);
-            s.data=s.data(ilat1:ilat2,ilon1:ilon2,:);
-            
+            s=load([opt.(par)(ii).BC.datafolder filesep...
+                    opt.(par)(ii).BC.dataname '.' par...
+                    '.' datestr(times(nt),'yyyymmddHHMMSS') '.mat']);
+            s.lon=mod(s.lon,360);    
+%%%%%%%%%%%%  j.lencart@ua.pt        14/05/2013      %%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This won't work for parent grids not aligned with NS-EW (2D lon/lat).
+%             ilon1=find(s.lon<minx,1,'last');
+%             ilon2=find(s.lon>maxx,1,'first');
+%             ilat1=find(s.lat<miny,1,'last');
+%             ilat2=find(s.lat>maxy,1,'first');
+%             s.lon=s.lon(ilon1:ilon2);
+%             s.lon=mod(s.lon,360);
+%             s.lat=s.lat(ilat1:ilat2);
+%             s.data=s.data(ilat1:ilat2,ilon1:ilon2,:);
+% We can use inpolygon to get the elements of the parent domain inside a
+% polygon. Here I choose to blank all of the region inside the model domain so 
+% that only outside cells will be used to calculate the boundary conditions.
+% This can be used for faster interpolations if the parent domain is too
+% large.
+% However, I think it is best to use the full domain so that the gradient
+% accross the boundary is taken into account.
+            if 0
+                xv = [minx maxx maxx minx minx];
+                yv = [miny miny maxy maxy miny];
+                [IN ON] = inpolygon(lon360, s.lat, xv, yv);
+                mask = ~logical(IN+ON);
+                s.lon = s.lon(mask);
+                s.lat = s.lat(mask);
+                s.data = s.data(mask);
+% If 4D levels slice levels as the rest of the inputs
+                if ndims(s.levels) == 3
+                    s.levels = su.levels(mask);
+                end
+            end
+%%%%%%%%%%%%  j.lencart@ua.pt        14/05/2013     %%%%%%%%%%%%%%%%%%%%%%%%%%%
+                    
             t=times(nt);
-            data=interpolate3D(x,y,dplayer,s);
+% Added water level to dplayer to take into account in the vertical
+% interpolation.
+            data=interpolate3D(x,y,dplayer + wl_in,s);
             
             for j=1:length(openBoundaries)
                 ta=squeeze(data(j,1,:))';

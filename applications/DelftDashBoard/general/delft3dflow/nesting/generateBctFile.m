@@ -202,7 +202,7 @@ if genVelConst
 end
 if genVel4D
     disp('   Velocities from file ...');
-    [tvel4d,vel4d,tanvel4d]=generateVelocitiesFromFile(flow,openBoundaries,opt);
+    [tvel4d,vel4d,tanvel4d]=generateVelocitiesFromFile(flow,openBoundaries,opt, wl3d);
 end
 % if genVelTS
 %     disp('   Velocities from timeseries ...');
@@ -264,9 +264,12 @@ for n=1:nr
             case{'r','x'}
                 
                 % Riemann or Riemann + parallel velocities
-                
+               
+ % Include water level time series for sigma height calculation in bcc
+                openBoundaries(n).timeSeriesWLA=squeeze(wl(n,1,:));
+                openBoundaries(n).timeSeriesWLB=squeeze(wl(n,2,:));
                 % Normal component
-                
+                               
                 for k=1:flow.KMax
                     switch lower(openBoundaries(n).side)
                         case{'left','bottom'}
