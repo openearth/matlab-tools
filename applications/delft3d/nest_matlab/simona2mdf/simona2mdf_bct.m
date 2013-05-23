@@ -32,6 +32,7 @@ if ~isempty (siminp_struc.ParsedTree.FLOW.FORCINGS.TIMESERIES)
         if strcmpi(bnd.DATA(ibnd).datatype,'T');
 
             ibnd_bct = ibnd_bct + 1;
+            clear times values
             if strcmpi(bnd.DATA(ibnd).bndtype,'C') && ~strcmpi(bnd.DATA(ibnd).profile,'3D Profile')
                 kmax = mdf.mnkmax(3);
             else

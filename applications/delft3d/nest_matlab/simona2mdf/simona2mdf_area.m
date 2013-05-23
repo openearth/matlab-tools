@@ -12,7 +12,7 @@ siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'MESH
 %
 if isfield(siminp_struc.ParsedTree.MESH.GRID,'CURVILINEAR')
     if isfield(siminp_struc.ParsedTree.MESH.GRID.CURVILINEAR,'RGFFILE')
-        mdf.filcco    = siminp_struc.ParsedTree.MESH.GRID.CURVILINEAR.RGFFILE;
+        mdf.filcco        = siminp_struc.ParsedTree.MESH.GRID.CURVILINEAR.RGFFILE;
         mdf.anglat    = siminp_struc.ParsedTree.MESH.GRID.AREA.LATITUDE;
     else
        % CSM
@@ -20,8 +20,16 @@ if isfield(siminp_struc.ParsedTree.MESH.GRID,'CURVILINEAR')
     end
 end
 
-mdf.grdang    = siminp_struc.ParsedTree.MESH.GRID.AREA.ANGLEGRID;
+%
+% copy grid file to Delft3D-directory
+%
 
+copyfile([mdf.pathsimona filesep mdf.filcco],[mdf.pathd3d filesep simona2mdf_rmpath(mdf.filcco)]);
+mdf        = rmfield(mdf,'pathsimona');
+mdf        = rmfield(mdf,'pathd3d');
+mdf.filcco = simona2mdf_rmpath(mdf.filcco);
+
+mdf.grdang    = siminp_struc.ParsedTree.MESH.GRID.AREA.ANGLEGRID;
 mdf.mnkmax(1) = siminp_struc.ParsedTree.MESH.GRID.AREA.MMAX;
 mdf.mnkmax(2) = siminp_struc.ParsedTree.MESH.GRID.AREA.NMAX;
 mdf.mnkmax(3) = siminp_struc.ParsedTree.MESH.GRID.AREA.KMAX;

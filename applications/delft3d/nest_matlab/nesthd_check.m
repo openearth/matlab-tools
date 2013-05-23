@@ -4,12 +4,12 @@ function nesthd_check
 %
 %See also: nest_matlab
 
-testdir = 'd:\projects\nesthd_matlab\test';
+testdir = 'd:\open_earth_test\matlab\applications\delft3d\nest_matlab';
 
-tests      = {[testdir filesep 'milford\milford']                       ; ...
-              [testdir filesep 'tidal_flume_triwaq\triwaq_coarse\flume']; ...
-              [testdir filesep 'zeedelta\zeedelta']                     ; ...
-              [testdir filesep 'shenzen\shenzen']                       }; 
+tests      = {[testdir filesep 'simona\tidal_flume_triwaq\triwaq_coarse\flume'] ;
+              [testdir filesep 'delft3d\milford\milford']                       ; ...
+              [testdir filesep 'delft3d\shenzen\shenzen']                     } ; ...
+%              [testdir filesep 'delft3d\zeedelta\zeedelta']                   }; 
 
 % Windows batch file (firt create)
 
@@ -22,7 +22,8 @@ fclose(fid);
 
 % than run and compare with previous results
 
-dummy = system('run.bat');
+system('run.bat');
+
 for itest = 1: length(tests)
     nesthd_compare([tests{itest} '_hd2.ini']);
 end

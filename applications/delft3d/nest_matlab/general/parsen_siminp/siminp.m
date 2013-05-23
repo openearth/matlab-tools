@@ -779,7 +779,7 @@ for ilev = 1: no_lev
    found = true;
    irec  = foundrec_start + 1;
 
-   while found
+   while found && irec <= length(siminp_h)
        found = false;
        found = parsethisrec(Field(nrfield).Field,siminp_h{irec},found);
        irec = irec + 1;
@@ -829,15 +829,21 @@ if found
     return
 else
     for ifield = 1: length(Field)
-        if strncmpi (Field(ifield).Name,rec,length(Field(ifield).Name)) || ...
-           ismember(rec(1),'-.0123456789')                              || ...
-           strcmp (rec(1),'''')
+        if abs(Field(ifield).Nchar) > 0
+%        if strncmpi (Field(ifield).Name,rec,length(Field(ifield).Name)) || ...
+            if strncmpi (Field(ifield).Name,rec,abs(Field(ifield).Nchar))
+                found = true;
+                break
+            end
+        elseif ismember(rec(1),'-.0123456789') || strcmp (rec(1),'''')
             found = true;
             break
-        else
+        end
+               
+        if ~found
             if isfield(Field,'Field')
                 found = parsethisrec(Field(ifield).Field,rec,found);
-             end
+            end
         end
     end
 end

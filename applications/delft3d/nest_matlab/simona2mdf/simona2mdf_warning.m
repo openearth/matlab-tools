@@ -14,9 +14,9 @@ if ~ishandle(h_warn)
     uiresume;
 end
 
-uiwait(h_warn,20);
+uiwait(h_warn,10);
 
 if ishandle(h_warn);
-    set(h_warn,'Visible','off');
-    delete(h_warn);
+    close  (h_warn);
+    waitfor(h_warn);
 end

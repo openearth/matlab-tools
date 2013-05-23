@@ -1,0 +1,51 @@
+function mdf = simona2mdf_obs(S,mdf,name_mdf)
+
+% simona2mdf_obs : gets observation stations out of the parsed siminp tree
+
+nesthd_dir = getenv('nesthd_path');
+
+siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'MESH' 'POINTS'});
+points       = siminp_struc.ParsedTree.MESH.POINTS;
+siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'CHECKPOINTS'});
+chkpoints    = siminp_struc.ParsedTree.FLOW.CHECKPOINTS;
+
+%
+% Get station numbers
+%
+
+index = [];
+stat{1} = 'LEVELSTATIONS';
+stat{2} = 'CURRENTSTATIONS'; 
+
+for ivar = 1: length(stat)
+    if ~isempty(chkpoints.(stat{ivar}))
+        for istat = 1: length(chkpoints.(stat{ivar}).P)
+            for ipnt = 1: length(points.P)
+                if points.P(ipnt).SEQNR == chkpoints.(stat{ivar}).P(istat)
+                    index(end + 1) = ipnt;
+                    break
+                end
+            end
+        end
+    end
+end
+
+%
+% Fill station struct
+% 
+
+index = unique(index);
+
+for istat = 1: length(index)
+    sta.m(istat)     = points.P(index(istat)).M;
+    sta.n(istat)     = points.P(index(istat)).N;
+    sta.namst{istat} = points.P(index(istat)).NAME;
+end
+
+%
+% Write
+%
+
+mdf.filsta = [name_mdf '.obs'];
+delft3d_io_obs('write',mdf.filsta,sta);
+mdf.filsta = simona2mdf_rmpath(mdf.filsta);
