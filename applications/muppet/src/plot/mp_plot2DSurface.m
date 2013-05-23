@@ -32,6 +32,7 @@ end
 
 c1=col(1);
 c2=col(end);
+dc=col(2)-col(1);
 
 switch(lower(Plt.PlotRoutine)),
     case{'plotpatches'}
@@ -59,6 +60,9 @@ switch(lower(Plt.PlotRoutine)),
         x=xp;
         y=yp;
         z=zp;
+        x=Data.x;
+        y=Data.y;
+        z=Data.zz;
     case{'plotshadesmap','plotcontourlines'}
         x=Data.x;
         y=Data.y;
@@ -74,28 +78,62 @@ switch(lower(Plt.PlotRoutine)),
         z(isnan(x))=NaN;
         x(isnan(x))=xmean;
         y(isnan(y))=ymean;
+
+
+
 end
 
+zc=z;
+cax=[col(1) col(end)];
+contours=col(1:end);
 
-switch(lower(Plt.PlotRoutine)),
+        
+switch(lower(Plt.PlotRoutine))
     case{'plotpatches'}
         clmap=GetColors(handles.ColorMaps,Ax.ColMap,64);
         colormap(clmap);
-        h=patch(x,y,z);shading flat;
-        caxis([col(1) col(end)]);
+        h=pcolor(x,y,zc);shading flat;
+        caxis(cax);
     case{'plotcontourmap','plotcontourmaplines'}
+
+        
+        if strcmpi(Ax.ContourType,'limits')
+            zc=z;
+            cax=[col(1) col(end-1)];
+            contours=col(1:end-1);
+        else
+            isn=isnan(z);
+            zc=z;
+            zc=max(zc,col(1));
+            zc=min(zc,col(end));
+            zc=interp1(col,1:length(col),zc);
+            zc(isn)=NaN;
+            cax=[1 length(col)-1];
+            contours=1:length(col)-1;
+        end
+        
+        
+        
         ncol=size(col,2)-1;
-        clmap=GetColors(handles.ColorMaps,Ax.ColMap,ncol);
+%        clmap=GetColors(handles.ColorMaps,Ax.ColMap,ncol);
+        clmap=GetColors(handles.ColorMaps,Ax.ColMap,64);
+%        [c,h,wp]=contourf_mvo(x,y,zc,[contours(1)-dc:dc:contours(end)]);
+%        [c,h,wp]=contourf_mvo(x,y,zc,[contours(1):dc:contours(end-1)]);
+        [c,h,wp]=contourf_mvo(x,y,zc,contours);
+%        colormap('jet');
         colormap(clmap);
-        [c,h,wp]=contourf_mvo(x,y,z,col);
-        caxis([col(1) col(end)]);
+%        caxis([col(1)-dc col(end)+dc]);
+%        caxis([col(1)-dc col(end)]);
+%        caxis([col(1) col(end-1)]);
+        caxis(cax);
+%        [c,h,wp]=contourf(x,y,zc,contours);
     case{'plotshadesmap'}
         ncol=128;
         clmap=GetColors(handles.ColorMaps,Ax.ColMap,ncol);
         colormap(clmap);
-        h=surf(x,y,z);
+        h=surf(x,y,zc);
         shading interp;
-        caxis([col(1) col(end)]);
+        caxis(cax);
     case{'plotcontourlines'}
         [c,h]=contour(x,y,z,col);
         if strcmpi(Plt.LineColor,'auto')==0
@@ -128,11 +166,3 @@ if Plt.ContourLabels==1
     set(hh,'FontSize',Plt.FontSize);
     set(hh,'Color',FindColor(Plt.FontColor));
 end
-
-clear x;
-clear y;
-clear zz1;
-clear z;
-clear c
-clear h
-clear xmean ymean xp yp xx yy zz

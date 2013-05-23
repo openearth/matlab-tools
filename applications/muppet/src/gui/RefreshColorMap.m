@@ -5,16 +5,18 @@ j=handles.ActiveSubplot;
 
 if j>0
 
-    clmap=GetColors(handles.ColorMaps,handles.Figure(i).Axis(j).ColMap,64);
+%    clmap=GetColors(handles.ColorMaps,handles.Figure(i).Axis(j).ColMap,64);
 
     if strcmp(lower(handles.Figure(i).Axis(j).ContourType),'limits')
         col=[handles.Figure(i).Axis(j).CMin:handles.Figure(i).Axis(j).CStep:handles.Figure(i).Axis(j).CMax];
     else
-        col=handles.Figure(i).Axis(j).Contours;
+%        col=handles.Figure(i).Axis(j).Contours;
+        col=1:length(handles.Figure(i).Axis(j).Contours);
     end
 
     ncol=size(col,2)-1;
-    clmap=GetColors(handles.ColorMaps,handles.Figure(i).Axis(j).ColMap,ncol);
+%    clmap=GetColors(handles.ColorMaps,handles.Figure(i).Axis(j).ColMap,ncol);
+    clmap=GetColors(handles.ColorMaps,handles.Figure(i).Axis(j).ColMap,64);
 
 else
 
