@@ -13,7 +13,8 @@ filmdf ={'d:\open_earth_test\matlab\applications\delft3d\nest_matlab\simona\simo
          'd:\open_earth_test\matlab\applications\delft3d\nest_matlab\simona\A80\mdf_csm\dcsmv6.mdf'                                     ;
          'd:\open_earth_test\matlab\applications\delft3d\nest_matlab\simona\A80\mdf_zuno\zunov4.mdf'}                                   ;
 
-for itest = 1: length(filwaq)
+%for itest = 1: length(filwaq)
+    for itest = 3:3
     
     [path_mdf,name_mdf,~] = fileparts(filmdf{itest});
     if ~isdir(path_mdf);mkdir(path_mdf);end
