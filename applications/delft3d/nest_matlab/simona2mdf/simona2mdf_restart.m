@@ -23,7 +23,7 @@ try
       warning = true;
    end
 catch
-    warning = true;
+    warning = false;
 end
 %
 % Writes the warning

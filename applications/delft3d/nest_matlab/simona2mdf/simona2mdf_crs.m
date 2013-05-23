@@ -24,12 +24,7 @@ stat{2} = 'VSECTIONS';
 for ivar = 1: length(stat)
     if ~isempty(chkpoints.(stat{ivar}))
         for istat = 1: length(chkpoints.(stat{ivar}).C)
-            for icrs = 1: length(curves.C)
-                if curves.C(icrs).SEQNR == chkpoints.(stat{ivar}).C(istat)
-                    index(end + 1) = icrs;
-                    break
-                end
-            end
+            index(end + 1) = simona2mdf_getpntnr(curves.C,chkpoints.(stat{ivar}).C(istat));
         end
     end
 end
@@ -46,21 +41,17 @@ if ~isempty(index)
     for icrs = 1: length(index)
         crs = curves.C(index(icrs)).LINE;
         for iside = 1: 2
-            for ipnt = 1: length(points.P)
-               if crs.P(iside) == points.P(ipnt).SEQNR
-                   cross.m(icrs,iside)   =  points.P(ipnt).M;
-                   cross.n(icrs,iside)   =  points.P(ipnt).N;
-                   break
-               end
-            end
+            pntnr = simona2mdf_getpntnr(points.P,crs.P(iside));
+            cross.m(icrs,iside)   =  points.P(pntnr).M;
+            cross.n(icrs,iside)   =  points.P(pntnr).N;
         end
-        cross.namst(icrs,:) = crs.NAME; 
+        cross.namst(icrs,:) = crs.NAME;
     end
-    
+
     %
     % Write
     %
-    
+
     mdf.filcrs = [name_mdf '.crs'];
     delft3d_io_crs('write',mdf.filcrs,cross);
     mdf.filcrs = simona2mdf_rmpath(mdf.filcrs);

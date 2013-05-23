@@ -15,24 +15,19 @@ chkpoints    = siminp_struc.ParsedTree.FLOW.CHECKPOINTS;
 
 index = [];
 stat{1} = 'LEVELSTATIONS';
-stat{2} = 'CURRENTSTATIONS'; 
+stat{2} = 'CURRENTSTATIONS';
 
 for ivar = 1: length(stat)
     if ~isempty(chkpoints.(stat{ivar}))
         for istat = 1: length(chkpoints.(stat{ivar}).P)
-            for ipnt = 1: length(points.P)
-                if points.P(ipnt).SEQNR == chkpoints.(stat{ivar}).P(istat)
-                    index(end + 1) = ipnt;
-                    break
-                end
-            end
+            index(end + 1) = simona2mdf_getpntnr(points.P,chkpoints.(stat{ivar}).P(istat));
         end
     end
 end
 
 %
 % Fill station struct
-% 
+%
 
 index = unique(index);
 

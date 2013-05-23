@@ -59,13 +59,10 @@ for iopen = 1: length(bnddef.B)
     %
 
     for iside = 1: 2
-        for ipnt = 1: length(points.P)
-            if points.P(ipnt).SEQNR  == ipoint(iside)
-                 bnd.m(iopen,iside)     = points.P(ipnt).M;
-                 bnd.n(iopen,iside)     = points.P(ipnt).N;
-                 bnd.pntnr(iopen,iside) = ipoint(iside);
-            end
-        end
+        pntnr = simona2mdf_getpntnr(points.P,ipoint(iside));
+        bnd.m(iopen,iside)     = points.P(pntnr).M;
+        bnd.n(iopen,iside)     = points.P(pntnr).N;
+        bnd.pntnr(iopen,iside) = ipoint(iside);
     end
     bnd.DATA(iopen).mn(1) = bnd.m(iopen,1);
     bnd.DATA(iopen).mn(2) = bnd.n(iopen,1);
@@ -111,7 +108,7 @@ for iopen = 1: length(bnddef.B)
     % Fill type of forcing
     %
 
-    if strcmpi(deblank(bnddef.B(iopen).BDEF),'series') 
+    if strcmpi(deblank(bnddef.B(iopen).BDEF),'series')
         bnd.DATA(iopen).datatype = 'T';
     else
         %
