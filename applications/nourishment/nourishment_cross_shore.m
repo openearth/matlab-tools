@@ -1,7 +1,7 @@
 function varargout = nourishment_cross_shore(x, z, volume, varargin)
 %NOURISHMENT_CROSS_SHORE  Create cross-shore nourishment profile.
 %
-%   Function to modify a cross-shore profile by adding adding a predefined
+%   Function to modify a cross-shore profile by adding a predefined
 %   nourishment volume width a maximum height and closure slope. The x-grid
 %   of the initial profile is maintained.
 %
@@ -76,7 +76,8 @@ end
 OPT = setproperty(OPT, varargin);
 
 %% code
-pos_landward = corr(x,z)>0;
+cov_xz = cov(x,z);
+pos_landward = cov_xz(1,2)>0;
 fnx = abs(diff(x([1 end]))) * [-1 0 1];
 
 xcr = findCrossings(x, z, x([1 end]), [1;1]*OPT.upper_boundary);

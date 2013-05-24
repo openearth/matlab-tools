@@ -72,13 +72,12 @@ end
 OPT = setproperty(OPT, varargin);
 
 %% code
-fname = 'd:\heijer\Work\Deltares\Projects\KPP\TvdK\nourishment\iniProf.bot';
 fid = fopen(fname);
-txt = cell(OPT.Nr_commentlines);
+txt = cell(1, OPT.Nr_commentlines);
 for i = 1:OPT.Nr_commentlines
     txt{i} = fgetl(fid);
 end
-data = fscanf(fid,'%f',[2 inf]);
+data = fscanf(fid,'%f',[2 inf])';
 fclose(fid);
 
 x = data(:,1);
