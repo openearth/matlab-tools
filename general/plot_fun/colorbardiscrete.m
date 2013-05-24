@@ -1,22 +1,19 @@
 function [cbd] = colorbardiscrete(colorbartitle,levels,varargin)
 %COLORBARDISCRETE(colorbartitle,levels) draws a colorbar with discrete
 % colors right of the current axes. The number of colors is the same as the
-% number of levels. Useful with contourf. BETA RELEASE
+% number of levels. Useful with contourf. 
+%WARNING: colorbardiscrete modifies the colormap. Combining several plots
+%or applying this function multiple times can lead to unexpected results. 
 %
-%COLORBARDISCRETE(colorbartitle, levels, 'peer',AX) creates
-% a discrete colorbar associated with axes AX instead of the current axes.
 %
-%   Syntax:
-%   [cbd] = colorbardiscrete(colorbartitle,levels);
 %
 %   Input:
 %       colorbartitle:    title above the colorbar (string)
 %       levels:           levels of discrete colors (vector). To include values above
 %						  and below the highest and lowest level add respectively
-% 						  Inf and -Inf to the levels
+% 						  Inf and -Inf to the levels.
 %					
-%
-%   Optional input:
+%   Optional keywords
 %       unit:       unit string added to the colorbar labels, e.g. 'm/s'
 %       fmt:        format string for labels (see SPRINTF for details)
 %       dx:         width of the color patches (default is 0.03)
@@ -31,10 +28,9 @@ function [cbd] = colorbardiscrete(colorbartitle,levels,varargin)
 %       yticklabel: cell array of strings with user defined yticklabels
 %       reallevels: vector with real levels (changes the labels to these
 %                   levels)
-%	New optional input:
-%		colorScaled: if true color of the class depends on the level values of the class. If false
-%					 color only depends on the index of the class. Only valid if no reallevels are 
-%					 specified (default is true)
+%	New optional keywords
+%		reclass: 	 if true the color of the class does not depend on the value of the class, but
+%					 on its index. (e.g. first class gets first color from colormap).  
 %       nrofcolornew:colorbardiscrete generates a new colormap that consists of nrofcolornew colors. 
 %					 For correct functioning ( dLevel/(clim(2)-clim(1)) ) >> 1/nrofcolornew. Use NaN
 %					 for automatic calculation of this number (default: NaN). 
@@ -64,15 +60,25 @@ function [cbd] = colorbardiscrete(colorbartitle,levels,varargin)
 %       figure;
 %       mylevels = [-10 -5 0 .6 .8 1.0 1.25 1.5 1.75 2.0 2.5 3.0 3.5 10.0];
 %       [X,Y,Z] = peaks;
-%       mybed = reclass(Z,mylevels);
-%       pcolor(X,Y,mybed);
+%       Z = reclass(Z,mylevels);
+%       pcolor(X,Y,Z);
 %       shading flat;
 %       mymap = colormap(jet(length(mylevels)-1));
-%       clim([1:length(mylevels)]);
+%       clim([1,length(mylevels)]);
 %       axis equal; axis tight;
 %       hold on;
 %       colorbardiscrete('test',[1:length(mylevels)-1],'fixed',true,'reallevels',mylevels);
-
+%
+%% Example 4
+%       mylevels = [-10 -5 0 .6 .8 1.0 1.25 1.5 1.75 2.0 2.5 3.0 3.5 10.0];
+%       [X,Y,Z] = peaks;
+%       pcolor(X,Y,Z);
+%       shading flat;
+%       mymap = colormap(jet(length(mylevels)-1));
+%       clim([-10,10]);
+%       axis equal; axis tight;
+%       hold on;
+%       colorbardiscrete('test',mylevels,'reclass',true);
 %
 %   See also contourf, reclass
 
@@ -118,98 +124,57 @@ function [cbd] = colorbardiscrete(colorbartitle,levels,varargin)
 % $HeadURL$
 % $Keywords: $
 
-%%
+%% input arguments
+levels=reshape(levels,1,[]); 
+OPT.fmt = '%6.1f';
+OPT.dx = 0.03;
+OPT.dy = 0.03;
+OPT.hor = 0;
+OPT.ver = 0;
+OPT.fontsize = 7;
+OPT.peer = gca;
+OPT.unit = '';
+OPT.fixed = false;
+OPT.reallevels = [];
+OPT.yticklabel = [];
+OPT.reclass=true; 
+OPT.nrofcolornew=NaN;
+OPT.color='k';
+[OPT OPTused]=setproperty(OPT,varargin); 
 
-fmt = '%6.1f';
-dx = 0.03;
-dy = 0.03;
-hor = 0;
-ver = 0;
-fontsize = 7;
-peeraxes = gca;
-unit = '';
-fixed = false;
-reallevels = [];
-yticklabel = [];
-colorscaled=true; 
-nrofcolornew=NaN;
-
-
-%% optional arguments
-optvals = varargin;
-if 2*round(length(optvals)/2)~=length(optvals),
-    error('Invalid option-value pair');
-else
-    optvals=reshape(optvals,[2 length(optvals)/2]);
-end;
-OptionUsed=false(1,size(optvals,2));
-for i=1:size(optvals,2),
-    if ~ischar(optvals{1,i}),
-        error('Invalid option'),
-    end;
-    switch lower(optvals{1,i}),
-        case 'dx',
-            dx = optvals{2,i};
-            OptionUsed(i)=1;
-        case 'dy',
-            dy = optvals{2,i};
-            OptionUsed(i)=1;
-        case 'hor',
-            hor = optvals{2,i};
-            OptionUsed(i)=1;
-        case 'ver',
-            ver = optvals{2,i};
-            OptionUsed(i)=1;
-        case 'fontsize',
-            fontsize = optvals{2,i};
-            OptionUsed(i)=1;
-        case 'fmt',
-            fmt = optvals{2,i};
-            OptionUsed(i)=1;
-        case 'peer',
-            peeraxes = optvals{2,i};
-            OptionUsed(i)=1;
-        case 'unit',
-            unit = optvals{2,i};
-            OptionUsed(i)=1;
-        case 'fixed'
-            fixed = optvals{2,i};
-            OptionUsed(i)=1;
-        case 'yticklabel'
-            yticklabel = optvals{2,i};
-            OptionUsed(i)=1;
-        case 'reallevels'
-            reallevels = optvals{2,i};
-            OptionUsed(i)=1;
-		case 'colorscaled'
-			colorscaled = optvals{2,i};
-			OptionUsed(i)=1; 
-		case 'nrofcolornew'
-			nrofcolornew = optvals{2,i};
-			OptionUsed(i)=1; 
-    end
-end;
-optvals(:,OptionUsed)=[];                                                   % delete used options
-% optvals = optvals(:);
-
-axes(peeraxes);
-
+%% read settings from peeraxes
+axes(OPT.peer);
 cl = clim;
 mycolors = colormap;
-if fixed
-    if length(levels)==length(mycolors)
-        mydiscretecolors = mycolors;
+
+%% determine colors to be used
+
+%derive colors for the classes from colormap
+if OPT.fixed
+	%use only the colors in the colormap
+    if length(levels)==size(mycolors,1)
+		mycolors=[mycolors;mycolors(end,:)]; 
+        mydiscretecolors = mycolors(1:end-1,:); 
+		if ~isinf(levels(end))
+			levels=[levels,Inf]; 
+		end
+		%scale levels
+		levelsCscaled=(levels-cl(1))/(cl(end)-cl(1));
     else
-        error('Number of classes should be equal to number of colors');
+        error('Number of classes should be equal to number of colors if fixed is used.');
     end
-else
+else	
 	%scale levels such that clim(1)=0 and clim(2)=1
 	nrofcolorlevels=size(mycolors,1); 
-	colorlevels=[0:1/(nrofcolorlevels-1):1]; 
-	levelsCscaled=(levels-cl(1))/(cl(end)-cl(1));
+	if size(mycolors,1)<2
+		error('Colormap must contain at least 2 colors.'); 
+	else
+		colorlevels=[0:1/(nrofcolorlevels-1):1]; 
+		levelsCscaled=(levels-cl(1))/(cl(end)-cl(1));
+	end
 	
-	if colorscaled
-		%interpolate colorscaling from colormap using the level
+	if ~OPT.reclass
+		%use mean class limits to determine color class
 		meanLevel=0.5*levelsCscaled(1:end-1)+0.5*levelsCscaled(2:end); 
 	else
 		%interpolate colorscaling from colormap using class index
@@ -219,48 +184,30 @@ else
 			meanLevel=[0:1/(length(levels)-2):1];
 		end
 	end
+	
 	%clip levels outside the colorscaling
-	meanLevel=max(meanLevel,0); 
-	meanLevel=min(meanLevel,1);
+	if max(meanLevel)>1 | min(meanLevel)<0
+		warning(sprintf('Colors have been clipped. Check if clim settings are ok.')); 
+		meanLevel=max(meanLevel,0); 
+		meanLevel=min(meanLevel,1);
+	end	
 	
 	%interpolate colorscaling
-	mydiscretecolors=interp1(colorlevels,mycolors,meanLevel); 
+	mydiscretecolors=interp1(colorlevels,mycolors,meanLevel);
 	 
-	%%DEPRECIATED
-    %nrofcolorlevels = length(mycolors);
-    %colorlevels = cl(1):(cl(end)-cl(1))/(nrofcolorlevels-1):cl(end);
-    %mydiscretecolors = [];
-    %for i = 1:length(levels)
-    %   if levels(i)<colorlevels(1)
-    %       mydiscretecolors(i,1) = mycolors(1,1);
-    %       mydiscretecolors(i,2) = mycolors(1,2);
-    %       mydiscretecolors(i,3) = mycolors(1,3);
-    %   else
-    %       if levels(i)>colorlevels(end)
-    %           mydiscretecolors(i,1) = mycolors(end,1);
-    %           mydiscretecolors(i,2) = mycolors(end,2);
-    %           mydiscretecolors(i,3) = mycolors(end,3);
-    %           
-    %       else
-    %           mydiscretecolors(i,1) = interp1(colorlevels,mycolors(:,1),levels(i));
-    %           mydiscretecolors(i,2) = interp1(colorlevels,mycolors(:,2),levels(i));
-    %           mydiscretecolors(i,3) = interp1(colorlevels,mycolors(:,3),levels(i));
-    %       end
-    %       
-    %   end
-    %end
 end
+mydiscretecolors=min(max(mydiscretecolors,0),1); 
 
 %Calculate the number of colors in the new colormap if nrofcolornew==NaN
-if isnan(nrofcolornew)
-	nrofcolornew=round(20/min(diff(levelsCscaled))); 
-	nrofcolornew=max(nrofcolornew,50); 
+if isnan(OPT.nrofcolornew)
+	OPT.nrofcolornew=round(20/min(diff(levelsCscaled))); 
 end 
 
-%create new colormap
-colorlevelsnew=[0:1/nrofcolornew:1-1/nrofcolornew]; 
+%% create new colormap
+colorlevelsnew=[0:1/OPT.nrofcolornew:1-1/OPT.nrofcolornew]; 
 colormapnew=nan(length(colorlevelsnew),3); 
-	
+
+%set color for all values below minimum levels
 iclass=colorlevelsnew<min(levelsCscaled(~isinf(levelsCscaled)));
 if sum(iclass)>0
 	colormapnew(iclass,:)=repmat(mycolors(1,:),[sum(iclass) 1]); 
@@ -271,82 +218,73 @@ for i=1:length(levelsCscaled)-1
 		colormapnew(iclass,:)=repmat(mydiscretecolors(i,:),[sum(iclass) 1]); 
 	end
 end
+%set color for all values above maximum level
 iclass=colorlevelsnew>max(levelsCscaled(~isinf(levelsCscaled)));
 if sum(iclass)>0
 	colormapnew(iclass,:)=repmat(mycolors(end,:),[sum(iclass) 1]); 
 end
-colormap(colormapnew); 
+colormap(colormapnew);
 
-
-TextAndLineColor = 'k';
 nv = length(levels);
 nc = size(mydiscretecolors,1);
 
-% save position of countour plot frame
+%% save position of countour plot frame
 
 %  determine position of coordinate system of for legend
-
 pos = get(gca,'position');
+outerpos=get(gca,'outerposition');
 unt = get(gca,'units');
-factor = ( nc*dy + (nc-1)* 0.25 * dy) / pos(4);
+factor = ( nc*OPT.dy + (nc-1)* 0.25 * OPT.dy) / pos(4);
 
 % make sure that legend does not become larger than contour plot
-
 if factor>1
-    dy = dy/factor ;
+    OPT.dy = OPT.dy/factor ;
     factor = 1  ;
 end
 
 %  set legend hor to the right of the contour plot
-
-posnew = [pos(3)+pos(1)+hor,pos(2)+ver,(pos(3)),factor*pos(4)];
-
+posnew = [pos(3)+pos(1)+OPT.hor,pos(2)+OPT.ver,pos(3),factor*pos(4)];
 %
-cbd = axes('units',unt,'Position', posnew,'visible','off');hold on; axis equal;
-%
-x  = 0;
-y  = 0;
-%
+hold on; 
+cbd = axes('units',unt,'Position', posnew,'visible','off'); axis equal; hold on 
 
-if ~isempty(reallevels)
-    for i = 1:length(reallevels)-1
-        yticklabel{i} = [num2str(reallevels(i)) '-' num2str(reallevels(i+1))];
+
+%manually set labels
+if ~isempty(OPT.reallevels)
+    for i = 1:length(OPT.reallevels)-1
+       OPT.yticklabel{i} = [num2str(OPT.reallevels(i)) '-' num2str(OPT.reallevels(i+1))];
     end
     
 end
 
-
+x  = 0; y  = 0;
 if (nc == nv-1)
+	%number of colors in colorscaling is correct
     for i=1:nc
-	
-
+        %patch color rectangle
+        xp = [x, x+OPT.dx, x+OPT.dx, x, x];
+        yp = [y, y,    y+OPT.dy, y+OPT.dy, y];
+        patch(xp,yp,1e13*ones(size(xp)),mydiscretecolors(i,:),'EdgeColor',OPT.color);
         
-        %        patch color rectangle
-        
-        xp = [x, x+dx, x+dx, x, x];
-        yp = [y, y,    y+dy, y+dy, y];
-        patch(xp,yp,1e13*ones(size(xp)),mydiscretecolors(i,:),'EdgeColor',TextAndLineColor);
-        
-        %        place texts for v-ranges
-        
-        if isempty(yticklabel)
+        %place texts for v-ranges
+        if isempty(OPT.yticklabel)
             if (i==1 & levels(1)==-Inf)
-                label= ['<',num2str(levels(2),fmt),' ',unit];
+                label= ['<',num2str(levels(2),OPT.fmt),' ',OPT.unit];
 			elseif (i==nc & levels(nc+1)==Inf)
-				label=  ['>',num2str(levels(i),fmt),' ',unit]; 
+				label=  ['>',num2str(levels(i),OPT.fmt),' ',OPT.unit]; 
             else
-                label = [num2str(levels(i),fmt),' - ',num2str(levels(i+1),fmt),' ',unit];
+                label = [num2str(levels(i),OPT.fmt),' - ',num2str(levels(i+1),OPT.fmt),' ',OPT.unit];
             end
         else
-            label = yticklabel{i};
+            label = OPT.yticklabel{i};
         end
         %
-        text (x+1.5*dx,y,100,label, ...
-            'color',TextAndLineColor,...
+        text (x+1.5*OPT.dx,y,100,label, ...
+            'color',OPT.color,...
             'HorizontalAlignment','left', ...
-            'VerticalAlignment','bottom','FontSize',fontsize,'erasemode','background','visible','on');
+            'VerticalAlignment','bottom','FontSize',OPT.fontsize,'erasemode','background','visible','on');
         
-        y = y + 1.25*dy;
+        y = y + 1.25*OPT.dy;
     end
 else
     error('Mismatch length values-colors');
@@ -355,10 +293,10 @@ end
 x_lim = get(gca,'xlim');
 lenx = diff(x_lim);
 set(cbd,'xlim',[-0.01 lenx],'visible','off');
-text(0,y+1*dy,100,colorbartitle,'FontSize',fontsize,'erasemode','background','visible','on');
+text(0,y+1*OPT.dy,100,colorbartitle,'FontSize',OPT.fontsize,'erasemode','background','visible','on');
 %
 % reset handle of figure to contour plot
 %
-axes(peeraxes);
+axes(OPT.peer);
 
 return
