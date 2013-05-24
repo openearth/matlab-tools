@@ -52,7 +52,7 @@ S = all_in_one(S);
 %
 % parse the siminp information
 %
-mdf = simona2mdf_bnd      (S,mdf,name_mdf);
+
 mdf = simona2mdf_area     (S,mdf,name_mdf);
 mdf = simona2mdf_bathy    (S,mdf,name_mdf);
 mdf = simona2mdf_dryp     (S,mdf,name_mdf);

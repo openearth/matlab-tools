@@ -11,11 +11,11 @@ siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'GENE
 
 if ~isempty(siminp_struc.ParsedTree.GENERAL.WIND)
     wind = siminp_struc.ParsedTree.GENERAL.WIND;
-    
+
     %
     % Wind Stress coefficient
     %
-    
+
     if wind.VARIABLE_CD
         mdf.wstres(1) = wind.CDA;
         mdf.wstres(2) = wind.WIND_CDA;
@@ -31,11 +31,11 @@ if ~isempty(siminp_struc.ParsedTree.GENERAL.WIND)
         mdf.wstres(5) = wind.WSTRESSFACT;
         mdf.wstres(6) = 100.;
     end
-    
+
     %
     % Get the wind series
     %
-    
+
     if ~isempty(wind.SERIES)
         if strcmpi(wind.SERIES,'regular')
             times  = wind.FRAME(1):wind.FRAME(2):wind.FRAME(3);
@@ -44,17 +44,17 @@ if ~isempty(siminp_struc.ParsedTree.GENERAL.WIND)
             wnd.speed     = values(:,1)*wind.WCONVERSIONF;
             wnd.direction = values(:,2);
             mdf.filwnd    = [name_mdf '.wnd'];
-            delft3d_io_wnd('write',mdf.filwnd,wnd);
+            simona2mdf_io_wnd('write',mdf.filwnd,wnd);
             mdf.filwnd    = simona2mdf_rmpath(mdf.filwnd);
          else
             simona2mdf_warning('TIME_AND_VALUE (wind series) not implemented yet');
         end
     end
-    
+
     %
     % CHARNOCK
     %
-    
+
     if ~isempty(wind.CHARNOCK)
          simona2mdf_warning({'CHARNOCK wind stress formulation not implemented in Delft3D-Flow'; ...
                              'Asuming Smith and Banke formulation'});

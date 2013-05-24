@@ -35,6 +35,7 @@ function S=siminp(S,file_waquaref,selection,varargin)
 %
 % Parse commands
 %
+
 LP = [1 1];
 F = read_simona_format_table(file_waquaref);
 Field = F.Field;
@@ -218,6 +219,11 @@ if isfield(Field,'Field')
                   % sequence number
                   %
                   [Keyword,LP] = getnextkeyword(S.File,LP);
+
+                  %
+                  % Remove zero's at the beginning of the squence number
+                  %
+                  while strcmp(Keyword(1),'0');Keyword = Keyword(2:end);end
                   seqnr = sscanf(Keyword,'%i',1);
                   dprintf(debug,'[%i]\n',seqnr);
                else
@@ -837,7 +843,6 @@ if found
 else
     for ifield = 1: length(Field)
         if abs(Field(ifield).Nchar) > 0
-%        if strncmpi (Field(ifield).Name,rec,length(Field(ifield).Name)) || ...
             if strncmpi (Field(ifield).Name,rec,abs(Field(ifield).Nchar))
                 found = true;
                 break
