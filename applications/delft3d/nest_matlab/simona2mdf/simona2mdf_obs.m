@@ -20,7 +20,13 @@ stat{2} = 'CURRENTSTATIONS';
 for ivar = 1: length(stat)
     if ~isempty(chkpoints.(stat{ivar}))
         for istat = 1: length(chkpoints.(stat{ivar}).P)
-            index(end + 1) = simona2mdf_getpntnr(points.P,chkpoints.(stat{ivar}).P(istat));
+            pntnr = simona2mdf_getpntnr(points.P,chkpoints.(stat{ivar}).P(istat));
+            if ~isempty(pntnr)
+               index(end + 1) = pntnr;
+            else
+                simona2mdf_warning({['Outpunt ruquested for P' num2str(chkpoints.(stat{ivar}).P(istat),'%4.4i')]; ...
+                                    ' however, not defined as point. SKIPPED!'});
+            end
         end
     end
 end
