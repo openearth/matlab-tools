@@ -429,7 +429,11 @@ function iostat=Local_write(fname,DAT,time_option,varargin),
                ncol = 3; % minutes, speed, direction
                
                %% preallocate
-               rawdata = nan.*zeros(length(DAT.datenum),ncol);
+               if isfield(DAT,'datenum')
+                   rawdata = nan.*zeros(length(DAT.datenum),ncol);
+               elseif isfield(DAT,'minutes')
+                   rawdata = nan.*zeros(length(DAT.minutes),ncol);
+               end
                
                %% Insert data
                %  this gives always the correct column order

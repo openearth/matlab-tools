@@ -481,11 +481,6 @@ if L > length(File)
 end
 string = File{L};
 len = length(string);
-if len>=4
-if string(1:4) == 'S P0'
-    hier = 1;
-end
-end
 
 while any(string(i) == delimiters)
     i = i + 1;
@@ -812,13 +807,25 @@ clear siminp
 siminp = hulp;
 
 %
+% Remove spaces between P and pointnumber
+%
+
+for iline = 1: length(siminp)
+    hulp = strfind(siminp{iline},'P ');
+    while hulp == 1
+        siminp{iline} = ['P'  siminp{iline}(hulp+2:end)];
+        hulp = strfind(siminp{iline},'P ');
+    end
+end
+
+%
 % P001 not read properly: Change to P1
 %
 
 for iline = 1: length(siminp)
    hulp = strfind(siminp{iline},'P0');
    while ~isempty(hulp)
-      siminp{iline} = [siminp{iline}(1:hulp) siminp{iline}(hulp+2:end)];
+      siminp{iline} = ['P' siminp{iline}(hulp+2:end)];
       hulp = strfind(siminp{iline},'P0');
    end
 end
@@ -839,7 +846,7 @@ else
             found = true;
             break
         end
-               
+
         if ~found
             if isfield(Field,'Field')
                 found = parsethisrec(Field(ifield).Field,rec,found);

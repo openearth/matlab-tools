@@ -34,8 +34,7 @@ end
 
 siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'GENERAL'});
 if ~isempty(siminp_struc.ParsedTree.GENERAL.WIND)
-   warning = true;
-   warntext{end+1} = 'Conversion of WIND (uniform) not implemented yet';
+   mdf.sub1(3) = 'w';
 end
 
 if ~isempty(siminp_struc.ParsedTree.GENERAL.SPACE_VAR_WIND)
