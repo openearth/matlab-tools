@@ -1,4 +1,4 @@
-function varargout = writeBOT(data, fname, varargin)
+function varargout = writeBOT(x, z, fname, varargin)
 %WRITEBOT  write bottom file.
 %
 %   More detailed description goes here.
@@ -77,9 +77,9 @@ end
 OPT = setproperty(OPT, varargin);
 %% code
 fid = fopen(fname, 'w');
-fprintf(fid,'%i %s\n', size(data,2)-1, 'kolommen');
+fprintf(fid,'%i %s\n', 1, 'kolommen');
 fprintf(fid,'%i %i %i %s\n', OPT.x, OPT.z, OPT.orient, 'x z orient');
 fprintf(fid,'%s\n', OPT.comment);
 fprintf(fid,'%s\n', OPT.columnheaders);
-fprintf(fid,'%f %f\n', data');
+fprintf(fid,'%f %f\n', [x(:) z(:)]');
 fclose(fid);
