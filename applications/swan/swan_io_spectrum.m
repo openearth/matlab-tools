@@ -87,6 +87,7 @@ function varargout = swan_io_spectrum(varargin)
 % 2008 Oct 17: made 2D output [nloc x  nfreq x ndir]
 %              give 2D output array name of quantity
 % 2009 Apr 23: added to check for existance of file
+% 2013 Jan 16: Compatibility with 1D spectral outputs of SWAN Ver. 4.8** or previous (see line 536)
 
 %TO DO:
 
@@ -204,10 +205,10 @@ if iostat==1 %  0 when uigetfile was cancelled
                DAT.timecode = 0;
             end
             %1 : ISO-notation 19870530.153000
-            %2 : (as in HP compiler) ’30?May?87 15:30:00’
+            %2 : (as in HP compiler) â€™30?May?87 15:30:00â€™
             %3 : (as in Lahey compiler) 05/30/87.15:30:00
             %4 : 15:30:00
-            %5 : 87/05/30 15:30:00’
+            %5 : 87/05/30 15:30:00â€™
             %6 : as in WAM 8705301530
             
             if     DAT.timecode==1, DAT.timefmt = 'yyyymmdd.HHMMSS';
@@ -273,7 +274,7 @@ if iostat==1 %  0 when uigetfile was cancelled
                %% OLD: slow, but comments are allowed between numbers with this approach
                   for iloc=1:DAT.number_of_locations
                      rec         = fgetl_no_comment_line(fid,'$');
-                     numbers     = sscanf(rec,'%e',2);
+                     numbers     = sscanf(rec,'%f',2);
                      DAT.(x)(iloc) = numbers(1);
                      DAT.(y)(iloc) = numbers(2);
                      if OPT.debug(2)
@@ -531,8 +532,52 @@ if iostat==1 %  0 when uigetfile was cancelled
                            error(['order of data in file does not match location order for line with ',rec])
                         end
    
-                        rawdata  = fscanf(fid,'%e', DAT.number_of_quantities*...
-                                                    DAT.number_of_frequencies);
+%                         rawdata  = fscanf(fid,'%e', DAT.number_of_quantities*...
+%                                                     DAT.number_of_frequencies);
+%% START OF modification by sfl, stylianos.flampouris@gmail.com, 16 Jan 2013
+% The original script was importing the 1D-spectra with the fscanf as
+% applied at the lines 534-535. Some times the values of EnDens are
+% extremely small, e.g.  0.1991E-244. In order, the length of the output 
+% string, to be kept constant, the "E" is neglected, so for the example the
+% exported value is 0.1991-244. When this value is imported with fscanf, 
+% matlab interpets them as two values 0.1991 and -244 which apparantly is a 
+% mistake.
+%
+% In order to overcome the problem, the length of fscanf(fid,'%e',inf) is 
+% examined, when the length of the data is longer than the number of 
+% frequencies times the number of quantites the data are imported as
+% strings and are splitted into substrings according to the position of the
+% white spaces. The code of the split of the strings is not generic.
+ 
+                        pos_pnt = ftell(fid);   %fscanf is used twice so it's necessary to know the possition of the pointer before the use of fscanf for first time
+                        rawdata = fscanf(fid,'%e',inf);
+                        if length(rawdata)==DAT.number_of_quantities*DAT.number_of_frequencies; % 1st time use of fscanf, now the pointer is at the end of the file
+                           % bussiness as usual: proceed
+                        else % when the previously described problem occurs
+                            fseek(fid, pos_pnt, 'bof'); % move of the pointer to the original position
+                            rawdata1 = fscanf(fid,'%100c', DAT.number_of_quantities*...
+                                                    DAT.number_of_frequencies); % the 100 is just a big number of characters for each line, fscanf stops at each line when there are not more values.
+                            rawdata=[];
+                            stp=length(rawdata1)/DAT.number_of_frequencies;
+                            spc_pos = strfind(rawdata1(1:stp),' '); % find the position of the white spaces
+                            
+                            for ir=1:stp:length(rawdata1)
+                            
+                                if isempty(strfind(rawdata1(ir:ir+spc_pos(2)-1),'E'))
+                                    % Building the number x.xxxxE-zzz and converting it into double  
+                                    dum_str = [rawdata1(ir:ir+strfind(rawdata1(ir:ir+spc_pos(2)-1),'-')-2),...
+                                        'E',...
+                                    rawdata1(ir+strfind(rawdata1(ir:ir+spc_pos(2)-1),'-')-1:ir+spc_pos(2)-1)];
+                                    rawdata =[rawdata;str2double(dum_str) ];      
+                                else
+                                    rawdata =[rawdata;str2double(rawdata1(ir:ir+spc_pos(2)-1)) ];
+                                end
+                                rawdata =[rawdata;str2double(rawdata1(ir+spc_pos(2):ir+spc_pos(end)-1)) ]; %DIR
+                                rawdata =[rawdata;str2double(rawdata1(ir+spc_pos(end):ir+stp-1)) ]; %DirSPReaD
+                            end 
+                        end
+%% END OF modification, 16 Jan 2013
+%%
                         if isinf(rawdata)
                             fclose(fid);
                             error([DAT.filename,' contains Inf data for location ',num2str(iloc)])
@@ -710,9 +755,12 @@ if iostat==1 %  0 when uigetfile was cancelled
                      
                      data  = fscanf(fid,'%e',DAT.number_of_frequencies.*...
                                              DAT.number_of_directions);
-                     data  = reshape(data  ,[DAT.number_of_directions DAT.number_of_frequencies]).*factor;
+%                     DAT.number_of_frequencies
+%                     DAT.number_of_directions 
+%                    length(data)
+                   data  = reshape(data  ,[DAT.number_of_directions DAT.number_of_frequencies]).*factor;
               
-                     DAT.(quantity_name)(iloc,:,:)   = data'; % note transpose
+                   DAT.(quantity_name)(iloc,:,:)   = data'; % note transpose
                      
                   elseif strcmp(strtok(upper(rec)),'ZERO')
                         
