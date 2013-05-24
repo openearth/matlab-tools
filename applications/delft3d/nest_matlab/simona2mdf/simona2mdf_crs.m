@@ -24,7 +24,13 @@ stat{2} = 'VSECTIONS';
 for ivar = 1: length(stat)
     if ~isempty(chkpoints.(stat{ivar}))
         for istat = 1: length(chkpoints.(stat{ivar}).C)
-            index(end + 1) = simona2mdf_getpntnr(curves.C,chkpoints.(stat{ivar}).C(istat));
+            pntnr = simona2mdf_getpntnr(curves.C,chkpoints.(stat{ivar}).C(istat));
+            if ~isempty(pntnr)
+                index(end + 1) = simona2mdf_getpntnr(curves.C,chkpoints.(stat{ivar}).C(istat));
+            else
+                simona2mdf_warning({['Outpunt ruquested for C' num2str(chkpoints.(stat{ivar}).C(istat),'%4.4i')]; ...
+                                    ' However, not defined as CURVE. SKIPPED!'});
+            end
         end
     end
 end
@@ -42,8 +48,16 @@ if ~isempty(index)
         crs = curves.C(index(icrs)).LINE;
         for iside = 1: 2
             pntnr = simona2mdf_getpntnr(points.P,crs.P(iside));
-            cross.m(icrs,iside)   =  points.P(pntnr).M;
-            cross.n(icrs,iside)   =  points.P(pntnr).N;
+            if ~isempty(pntnr)
+                cross.m(icrs,iside)   =  points.P(pntnr).M;
+                cross.n(icrs,iside)   =  points.P(pntnr).N;
+            else
+                simona2mdf_warning({['Outpunt ruquested for P' num2str(chkpoints.(stat{ivar}).P(istat),'%4.4i')]; ...
+                                    ' However, not defined as POINT. NaN written to crs file!'});
+                cross.m(icrs,iside)   =  NaN;
+                cross.n(icrs,iside)   =  NaN;
+            end
+                
         end
         cross.namst(icrs,:) = crs.NAME;
     end

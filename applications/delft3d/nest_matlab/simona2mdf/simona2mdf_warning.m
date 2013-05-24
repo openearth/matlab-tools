@@ -16,7 +16,9 @@ end
 
 uiwait(h_warn,10);
 
+hier = 1;
+
 if ishandle(h_warn);
-    close  (h_warn);
-    waitfor(h_warn);
+    close (h_warn);
+    pause(2);
 end
