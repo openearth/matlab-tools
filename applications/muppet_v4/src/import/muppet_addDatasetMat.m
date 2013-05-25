@@ -122,7 +122,11 @@ if isfield(parameter,dataset.xname)
                 d.X=parameter.(dataset.xname)(m);
             end
         otherwise
-            d.X=parameter.(dataset.xname)(m,n);
+            if size(parameter.(dataset.xname),1)==1 || size(parameter.(dataset.xname),2)==1
+                d.X=parameter.(dataset.xname);
+            else
+                d.X=parameter.(dataset.xname)(m,n);
+            end
     end
 end
 if isfield(parameter,dataset.yname)
@@ -134,7 +138,11 @@ if isfield(parameter,dataset.yname)
                 d.Y=parameter.(dataset.yname)(m);
             end
         otherwise
-            d.Y=parameter.(dataset.yname)(m,n);
+            if size(parameter.(dataset.yname),1)==1 || size(parameter.(dataset.yname),2)==1
+                d.Y=parameter.(dataset.yname);
+            else
+                d.Y=parameter.(dataset.yname)(m,n);
+            end
     end
 end
 if isfield(parameter,dataset.zname)
@@ -143,7 +151,8 @@ end
 
 % Get values (and store in same structure format as qpread)
 d.Val=extractmatrix(parameter,dataset.valname,dataset.size,timestep,istation,m,n,k);
-d.Time=extractmatrix(parameter,dataset.timename,dataset.size,timestep,istation,m,n,k);
+d.Time=parameter.(dataset.timename)(timestep);
+%d.Time=extractmatrix(parameter,dataset.timename,dataset.size,timestep,istation,m,n,k);
 d.XComp=extractmatrix(parameter,dataset.uname,dataset.size,timestep,istation,m,n,k);
 d.YComp=extractmatrix(parameter,dataset.vname,dataset.size,timestep,istation,m,n,k);
 d.ZComp=extractmatrix(parameter,dataset.wname,dataset.size,timestep,istation,m,n,k);

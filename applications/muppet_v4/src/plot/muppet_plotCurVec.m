@@ -45,7 +45,7 @@ if ~isempty(handles.animationsettings.timestep)
     timestep=handles.animationsettings.timestep;
 end
 
-%plt.coordinatesystem.type='projected';
+plt.coordinatesystem.type='projected';
 
 [polx,poly,xax,yax,len,pos]=curvec(x1,y1,u,v,'dx',dx,'length',opt.curveclength,'nrvertices',nt,'nhead',4, ...
     'xlim',[xmin xmax],'ylim',[ymin ymax],'position',pos,'lifespan',lifespan,'timestep',timestep, ...

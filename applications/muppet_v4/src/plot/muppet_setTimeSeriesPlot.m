@@ -58,7 +58,7 @@ if plt.adddate
     scl=(plt.ymax-plt.ymin)/plt.position(4);
     ytxt=plt.ymin-0.6*scl;
     for i=1:sz
-        if xticks(i)==round(xticks(i)) && xticks(i)<=xmax;
+        if xticks(i)==round(xticks(i)) && xticks(i)<=xmax && xticks(i)>=xmin;
             datetxt(i)=text(xticks(i),ytxt,datestr(xticks(i),26));
             set(datetxt(i),'FontSize',8*fontred,'HorizontalAlignment','center');
         end

@@ -8,7 +8,12 @@ plt=handles.figures(ifig).figure.subplots(isub).subplot;
 
 nr=handles.figures(ifig).figure.subplots(isub).subplot.datasets(id).dataset.number;
 
-data=handles.datasets(nr).dataset;
+if ~isempty(nr)
+    data=handles.datasets(nr).dataset;
+else
+    % Must be an annotation
+    data=[];
+end
 
 % Copy plot options to opt structure
 opt=plt.datasets(id).dataset;
@@ -56,7 +61,9 @@ switch handles.figures(ifig).figure.subplots(isub).subplot.type
 end
 
 % Copy data structure back to handles structure
-handles.datasets(nr).dataset=data;
+if ~isempty(nr)
+    handles.datasets(nr).dataset=data;
+end
 % Copy subplot structure back to handles structure
 handles.figures(ifig).figure.subplots(isub).subplot=plt;
 
@@ -129,7 +136,12 @@ opt.colorbarhandle=clrbar;
 %% Add datestring
 if opt.adddatestring
     dstx=0.5*(plt.xmax-plt.xmin)/plt.position(3);
-    dsty=0.5*(plt.ymax-plt.ymin)/plt.position(4);
+    if strcmpi(plt.coordinatesystem.type,'geographic')
+        fac=cos(plt.ymax*pi/180);
+    else
+        fac=1;
+    end
+    dsty=0.5*fac*(plt.ymax-plt.ymin)/plt.position(4);
     switch lower(opt.adddate.position),
         case {'lower-left'},
             xpos=plt.xmin+dstx;
@@ -147,6 +159,14 @@ if opt.adddatestring
             xpos=plt.xmax-dstx;
             ypos=plt.ymax-dsty;
             horal='right';
+    end
+    if strcmpi(plt.coordinatesystem.type,'geographic')
+        switch plt.projection
+            case{'mercator'}
+                ypos=merc(ypos);
+            case{'albers'}
+                [xpos,ypos]=albers(xpos,ypos,plt.labda0,plt.phi0,plt.phi1,plt.phi2);
+        end
     end
     datestring=[opt.adddate.prefix datestr(data.time,opt.adddate.format) opt.adddate.suffix];
     tx=text(xpos,ypos,datestring);

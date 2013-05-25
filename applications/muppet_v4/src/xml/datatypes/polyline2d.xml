@@ -19,6 +19,9 @@
       <plotoption>
         <name>polygongroup</name>
       </plotoption>
+      <plotoption>
+        <name>legendtext</name>
+      </plotoption>
     </plotroutine>
   </plot>
   <plot>

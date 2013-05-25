@@ -19,6 +19,9 @@
       <plotoption>
         <name>polygongroup</name>
       </plotoption>
+      <plotoption>
+        <name>legendtext</name>
+      </plotoption>
     </plotroutine>
   </plot>
   <plot>
@@ -66,6 +69,9 @@
       <plotoption>
         <name>fillcolor</name>
         <default>lightgreen</default>
+      </plotoption>
+      <plotoption>
+        <name>legendtext</name>
       </plotoption>
     </plotroutine>
   </plot>

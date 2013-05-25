@@ -88,11 +88,17 @@
       <default>normal</default>
     <keyword>FontAngle</keyword>
     </element>
-      <element>
+    <element>
       <name>fontweight</name>
       <variable>font.weight</variable>
       <keyword>FontWeight</keyword>
       <default>normal</default>
+    </element>
+    <element>
+      <name>fontcolor</name>
+      <variable>font.color</variable>
+      <keyword>FontColor</keyword>
+      <default>Black</default>
     </element>
   </plotoption>
 </root>

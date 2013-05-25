@@ -31,8 +31,12 @@ else
     fprintf(fid,'%s \n','');
     
     for ii=1:length(handles.plottype(ip).plottype.option)
-        
+        handles.plottype(ip).plottype.option(ii).option.name
         iplt=muppet_findIndex(handles.subplotoption,'subplotoption','name',handles.plottype(ip).plottype.option(ii).option.name);
+        switch lower(handles.plottype(ip).plottype.option(ii).option.name)
+            case{'scalebarfontcolor'}
+                shite=1
+        end
         
         if ~isempty(iplt)
             option=handles.subplotoption(iplt).subplotoption;

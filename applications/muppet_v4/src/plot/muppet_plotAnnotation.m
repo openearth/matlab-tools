@@ -41,7 +41,7 @@ for ii=i1:i2
         end
 
         dist=0.001*plt.scale/plt.fscale;
-        switch lower(opt.textposition),
+        switch lower(opt.textposition)
             case{'northeast','east','southeast'}
                 x1=x(ii)+dist;
                 horal='left';
@@ -52,7 +52,7 @@ for ii=i1:i2
                 x1=x(ii)-dist;
                 horal='right';
         end
-        switch lower(opt.textposition),
+        switch lower(opt.textposition)
             case{'northeast','north','northwest'}
                 y1=y(ii)+dist;
                 veral='bottom';

@@ -72,8 +72,15 @@ pos(4)=100*ht/plt.scale;
 set(scalebar,'Units',fig.units);
 set(scalebar,'Position',pos*fig.cm2pix);
 
+set(scalebar,'XColor',[1 1 1]);
+set(scalebar,'YColor',[1 1 1]);
+
 tit=title(plt.scalebar.text);
-set(tit,'FontSize',6);
+set(tit,'FontName',plt.scalebar.font.name);
+set(tit,'FontSize',plt.scalebar.font.size*fig.fontreduction);
+set(tit,'FontWeight',plt.scalebar.font.weight);
+set(tit,'FontAngle',plt.scalebar.font.angle);
+set(tit,'Color',colorlist('getrgb','color',plt.scalebar.font.color));
 set(tit,'HitTest','off');
 
 box on;

@@ -27,7 +27,7 @@ else
 end
 notick=size(contours,2)-1;
 if plt.shadesbar==0
-    nocol=size(contours,2)-1;
+    nocol=size(contours,2)+1;
 else
     nocol=64;
 end
@@ -47,26 +47,50 @@ if plt.colorbar.type==1
     end
     
     if plt.colorbar.position(4)>plt.colorbar.position(3)
- 
-        for i=1:nocol
-            col=clmap(i,:);
+
+        % First two triangles
+        % Bottom
+        col=clmap(1,:);
+        x(1)=0;x(2)=1;x(3)=0.5;
+        y(1)=0;
+        y(2)=0;
+        y(3)=-0.1;
+        fl=fill(x,y,'b');hold on;
+        set(fl,'FaceColor',col,'LineStyle','-');
+        set(fl,'Clipping','off');
+        % Top
+        col=clmap(end,:);
+        x(1)=0;x(2)=1;x(3)=0.5;
+        y(1)=1;
+        y(2)=1;
+        y(3)=1.1;
+        fl=fill(x,y,'b');hold on;
+        set(fl,'FaceColor',col,'LineStyle','-');
+        set(fl,'Clipping','off');
+        
+        ipos=0;
+        for icol=2:nocol-1
+            ipos=ipos+1;
+            col=clmap(icol,:);
             x(1)=0;x(2)=1;x(3)=1;x(4)=0;x(5)=0;
-            y(1)=(i-1)/nocol;
+            y(1)=(ipos-1)/(nocol-2);
             y(2)=y(1);
-            y(3)=i/nocol;
+            y(3)=ipos/(nocol-2);
             y(4)=y(3);
             y(5)=y(1);
             fl=fill(x,y,'b');hold on;
             set(fl,'FaceColor',col,'LineStyle','none');
         end
  
-        set(clrbar,'xlim',[0 1],'ylim',[0 1]);
+        set(clrbar,'xlim',[0.0 1.0],'ylim',[0 1]);
         set(clrbar,'units',units);
         set(clrbar,'position',plt.colorbar.position*cm2pix);
         set(clrbar,'XTick',[]);
         set(clrbar,'YTick',0:(1/(notick)):1,'FontSize',8*fontred);
         set(clrbar,'YAxisLocation','right');
-
+        set(clrbar,'Color','none');
+        set(clrbar,'clipping','off');
+        
         for i=1:size(contours,2)
             ylabls{i}='';
         end
@@ -103,11 +127,47 @@ if plt.colorbar.type==1
         set(ylab,'Color',colorlist('getrgb','color',plt.colorbar.font.color));
         
     else
- 
-        for i=1:nocol;
-            col=clmap(i,:);
-            x(1)=(i-1)/nocol;
-            x(2)=i/nocol;
+
+        % First two triangles
+        % Left
+        col=clmap(1,:);
+        x(1)=0;x(2)=0;x(3)=-0.1;
+        y(1)=0;
+        y(2)=1;
+        y(3)=0.5;
+        fl=fill(x,y,'b');hold on;
+        set(fl,'FaceColor',col,'LineStyle','-');
+        set(fl,'Clipping','off');
+        % Right
+        col=clmap(end,:);
+        x(1)=1;x(2)=1;x(3)=1.1;
+        y(1)=0;
+        y(2)=1;
+        y(3)=0.5;
+        fl=fill(x,y,'b');hold on;
+        set(fl,'FaceColor',col,'LineStyle','-');
+        set(fl,'Clipping','off');
+        
+        ipos=0;
+        for icol=2:nocol-1
+            ipos=ipos+1;
+            col=clmap(icol,:);
+            x(1)=0;x(2)=1;x(3)=1;x(4)=0;x(5)=0;
+            y(1)=(ipos-1)/(nocol-2);
+            y(2)=y(1);
+            y(3)=ipos/(nocol-2);
+            y(4)=y(3);
+            y(5)=y(1);
+            fl=fill(x,y,'b');hold on;
+            set(fl,'FaceColor',col,'LineStyle','none');
+        end
+        
+        ipos=0;
+        for icol=2:nocol-1;
+            ipos=ipos+1;
+            col=clmap(icol,:);
+            x(1)=(ipos-1)/(nocol-2);
+            x(2)=ipos/(nocol-2);
             x(3)=x(2);
             x(4)=x(1);
             x(5)=x(1);
@@ -159,12 +219,12 @@ if plt.colorbar.type==1
 else
     
     if strcmpi(plt.contourtype,'limits')
-        contours=plt.cmin:(plt.CStep*plt.colorbar.labelincrement):plt.cmax;
+        contours=plt.cmin:(plt.cstep*plt.colorbar.labelincrement):plt.cmax;
     else
         contours=plt.contours;
     end
     
-    nocol=size(contours,2)-1;
+    nocol=size(contours,2)+1;
 
     clmap=muppet_getColors(handles.colormaps,plt.colormap,nocol);
  
@@ -185,7 +245,6 @@ else
             k=k+1;
             col=clmap(k,:);
             x(1)=border+(i-1)*(xdist+blsize);
-%            x(2)=x(1)+blsize*2;
             x(2)=x(1)+blsize;
             x(3)=x(2);
             x(4)=x(1);
@@ -196,19 +255,17 @@ else
             y(4)=y(3);
             y(5)=y(1);
             fl=fill(x,y,'b');hold on;
-            set(fl,'FaceColor',col);
+            set(fl,'FaceColor',col,'Clipping','off');
  
             if k==1
                 str1='< ';
-                val=plt.cmin+plt.cstep;
-                val=contours(k+1);
+                val=contours(k);
             else
                 str1='> ';
-                val=plt.cmin+(k-1)*plt.cstep;
-                val=contours(k);
+                val=contours(k-1);
             end
  
-            if plt.colorbardecimals>=0
+            if plt.colorbar.decimals>=0
                 frmt=['%0.' num2str(plt.colorbar.decimals) 'f'];
                 str2=num2str(val,frmt);
             else

@@ -18,7 +18,7 @@ switch lower(opt.fieldthinningtype)
         v=data.v(1:opt.fieldthinningfactor1:end,1:opt.fieldthinningfactor2:end);
 end
 
-z=zeros(size(x));
+z=zeros(size(u));
 z=z+500;
 w=zeros(size(u));
 
