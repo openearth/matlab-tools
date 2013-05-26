@@ -16,8 +16,9 @@ for irec = 1: length(S.File)
       if istart > 1
           hulp{end+1} = contents(1:istart - 1);
       end
-      istart   = strfind(lower(contents),'file') + 5;
-      filename = contents(istart:end-1);
+      contents = contents(istart:end);
+      istart   = strfind(lower(contents),'''');
+      filename = contents(istart(1)+1:end-1);
       hulp2    = readsiminp(S.FileDir,filename);
       hulp(end+1:end + length(hulp2.File)) = hulp2.File;
    end
