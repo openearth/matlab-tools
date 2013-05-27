@@ -27,7 +27,8 @@ function varargout=delft3d_io_mdf(cmd,varargin),
 % case='auto', in which case multiple instances of the same keyword with 
 % different cases can end up in the MDF file.
 %
-% Comment lines are read but cannot not be written to mdf file.
+% Comment lines are read but cannot not be written to mdf file. The
+% delft3d_io_mdf version is added as keyword, except when keyword 'stamp'=0
 %
 % To control the order of keywors in the mdf file, or to write onyl a subset,
 % use keyword selection, e.g.: delft3d_io_mdf('write',filename,'selection',{'runtxt','mnkmax'});
@@ -345,15 +346,19 @@ end
 
 function iostat=Local_write(OS,filename,STRUC,varargin),
 
-   STRUC.commnt  = ['Written by delft3d_io_mdf.m of G.J. de Boer on ',datestr(now)];
    iostat        = 1;
 
 %% Input
 
    OPT.case      = 'lower';
    OPT.selection = {};
+   OPT.stamp     = 1;
    
    OPT = setproperty(OPT,varargin);
+   
+   if OPT.stamp
+   STRUC.commnt  = ['Written $HeadURL$ $Id$ on ',datestr(now)];
+   end
 
    fid          = fopen(filename,'w');
    if     strcmpi(lower(OS(1)),'u')
