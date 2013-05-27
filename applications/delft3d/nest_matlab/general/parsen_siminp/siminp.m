@@ -383,6 +383,11 @@ else
                   end
                   switch Field(i).Type
                      case 1 % integer
+                         %
+                         % Remove 0's in front of intger (sscanf cant
+                         % handle this
+                         %
+                        while strcmp(Keyword(1),'0') && numel(Keyword) > 1 ;Keyword = Keyword(2:end);end
                         val = sscanf(Keyword,'%i',1);
                         if isempty(val)
                            if Field(i).JRep==0
@@ -533,6 +538,7 @@ if i > len
    i = 1;
 end
 Keyword = string(start:finish);
+
 LP = [L i];
 
 %------------------------------------------------------------------------------
@@ -811,30 +817,6 @@ end
 clear siminp
 
 siminp = hulp;
-
-%
-% Remove spaces between P and pointnumber
-%
-
-for iline = 1: length(siminp)
-    hulp = strfind(siminp{iline},'P ');
-    while hulp == 1
-        siminp{iline} = ['P'  siminp{iline}(hulp+2:end)];
-        hulp = strfind(siminp{iline},'P ');
-    end
-end
-
-%
-% P001 not read properly: Change to P1
-%
-
-for iline = 1: length(siminp)
-   hulp = strfind(siminp{iline},'P0');
-   while ~isempty(hulp)
-      siminp{iline} = ['P' siminp{iline}(hulp+2:end)];
-      hulp = strfind(siminp{iline},'P0');
-   end
-end
 
 function found = parsethisrec(Field,rec,found)
 

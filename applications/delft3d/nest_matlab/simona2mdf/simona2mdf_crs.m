@@ -51,15 +51,15 @@ if ~isempty(index)
             if ~isempty(pntnr)
                 cross.m(icrs,iside)   =  points.P(pntnr).M;
                 cross.n(icrs,iside)   =  points.P(pntnr).N;
+                cross.namst(icrs,(1:length(crs.NAME)))   = crs.NAME;
             else
                 simona2mdf_warning({['Outpunt ruquested for P' num2str(chkpoints.(stat{ivar}).P(istat),'%4.4i')]; ...
                                     ' However, not defined as POINT. NaN written to crs file!'});
                 cross.m(icrs,iside)   =  NaN;
                 cross.n(icrs,iside)   =  NaN;
+                cross.namst(icrs,(1:length(crs.NAME)))   = crs.NAME;
             end
-                
         end
-        cross.namst(icrs,:) = crs.NAME;
     end
 
     %

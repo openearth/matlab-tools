@@ -8,7 +8,7 @@ function mdf=simona2mdf_viscosity(S,mdf,name_mdf)
 %
 
 nesthd_dir   = getenv('nesthd_path');
-siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'TURBULENCE_MODEL'});
+siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'TURBULENCE_MODEL'});
 turbulence   = siminp_struc.ParsedTree.TURBULENCE_MODEL;
 siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'PROBLEM'});
 problem      = siminp_struc.ParsedTree.FLOW.PROBLEM;
