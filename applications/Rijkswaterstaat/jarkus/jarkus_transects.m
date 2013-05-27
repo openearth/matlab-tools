@@ -58,10 +58,10 @@ function [transects, dimensions] = jarkus_transects(varargin)
 %   Copyright (C) 2009 Delft University of Technology
 %       Bas Hoonhout
 %
-%       bas@hoonhout.com
+%       bas.hoonhout@deltares.nl
 %
-%       Stevinweg 1
-%       2628CN Delft
+%       Rotterdamseweg 185
+%       2629HG Delft
 %
 %   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public

@@ -18,10 +18,12 @@ function jarkus_id2xls(id)
    flds = fieldnames(T);
    
    for i=1:length(flds)
-       if nc_isatt(jarkus_url,flds{i},'units');
-           units.(flds{i}) = nc_attget(jarkus_url,flds{i},'units');
-       else
-           units.(flds{i}) = '';
+       if nc_isvar(jarkus_url,flds{i});
+           if nc_isatt(jarkus_url,flds{i},'units');
+               units.(flds{i}) = nc_attget(jarkus_url,flds{i},'units');
+           else
+               units.(flds{i}) = '';
+           end
        end
    end
 
