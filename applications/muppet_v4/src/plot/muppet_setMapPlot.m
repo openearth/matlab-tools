@@ -11,11 +11,11 @@ multi=1;
 
 plt=muppet_updateLimits(plt,'setprojectionlimits');
 set(gca,'xlim',[plt.xminproj plt.xmaxproj],'ylim',[plt.yminproj plt.ymaxproj]);
+
 xlim(1)=plt.xmin;
 xlim(2)=plt.xmax;
 ylim(1)=plt.ymin;
 ylim(2)=plt.ymax;
-
 
 if plt.drawbox
     
@@ -91,13 +91,13 @@ if plt.drawbox
                 ylabls{i}=sprintf(frmt,val);
             end
             set(gca,'yticklabel',ylabls);
-        elseif plt.ydecimals==-1 % && multi~=1
-            frmt=['%0.' num2str(2) 'f'];
-            for i=1:size(ytick,2)
-                val=plt.ytickmultiply*ytick(i)/multi+plt.ytickadd;
-                ylabls{i}=sprintf(frmt,val);
-            end
-            set(gca,'yticklabel',ylabls);
+%         elseif plt.ydecimals==-1 % && multi~=1
+%             frmt=['%0.' num2str(2) 'f'];
+%             for i=1:size(ytick,2)
+%                 val=plt.ytickmultiply*ytick(i)/multi+plt.ytickadd;
+%                 ylabls{i}=sprintf(frmt,val);
+%             end
+%             set(gca,'yticklabel',ylabls);
         elseif plt.ydecimals==-999
             for i=1:size(ytick,2)
                 ylabls{i}='';
@@ -149,4 +149,4 @@ set(gca,'Units',units);
 set(gca,'Position',plt.position*cm2pix);
 set(gca,'Layer','top');
 
-zoom v6 on;
+%zoom v6 on;

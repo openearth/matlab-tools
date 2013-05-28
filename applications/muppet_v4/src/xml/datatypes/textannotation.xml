@@ -3,7 +3,7 @@
   <name>textannotation</name>
   <longname>Annotation</longname>
   <plot>
-    <type>map2d</type>
+    <type>map</type>
     <plotroutine>
       <name>plotannotation</name>
       <plotoption>

@@ -3,7 +3,7 @@
   <name>scalar2dxy</name>
   <longname>Scalar 2D</longname>
   <plot>
-    <type>map2d</type>
+    <type>map</type>
     <plotroutine>
       <name>plotcontourmap</name>
       <longname>Contour Map</longname>
@@ -90,6 +90,29 @@
     <type>xy</type>
     <plotroutine>
       <name>plotpatches</name>
+      <plotoption>
+        <name>plotroutine</name>
+      </plotoption>
+      <plotoption>
+        <name>linegroup</name>
+      </plotoption>
+    </plotroutine>
+  </plot>
+  <plot>
+    <type>3d</type>
+    <plotroutine>
+      <name>plot3dsurface</name>
+      <longname>3d Surface</longname>
+      <plotoption>
+        <name>plotroutine</name>
+      </plotoption>
+      <plotoption>
+        <name>adddategroup</name>
+      </plotoption>
+    </plotroutine>
+    <plotroutine>
+      <name>plot3dgrid</name>
+      <longname>Grid</longname>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>

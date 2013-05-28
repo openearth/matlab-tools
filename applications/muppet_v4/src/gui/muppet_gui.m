@@ -64,6 +64,10 @@ else
             editXYLim(varargin{2});
         case{'selectcoordinatesystem'}
             selectCoordinateSystem;
+        case{'selectmap'}
+            selectmap;
+        case{'select3d'}
+            select3D;
         case{'editlegend'}
             editLegend;
         case{'editvectorlegend'}
@@ -144,7 +148,7 @@ if pathname~=0
         for ifig=1:handles.nrfigures
             for isub=1:handles.figures(ifig).figure.nrsubplots
                 switch lower(handles.figures(ifig).figure.subplots(isub).subplot.type)
-                    case{'map2d'}
+                    case{'map'}
                         handles.figures(ifig).figure.subplots(isub).subplot=muppet_updateLimits(handles.figures(ifig).figure.subplots(isub).subplot,'computescale');
                 end
             end
@@ -496,10 +500,36 @@ function editXYLim(opt)
 handles=getHandles;
 plt=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot;
 switch lower(handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type)
-    case{'map2d'}
+    case{'map'}
         plt=muppet_updateLimits(plt,opt);
         handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot=plt;
 end
+setHandles(handles);
+
+%%
+function selectmap
+handles=getHandles;
+plt=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot;
+for id=1:plt.nrdatasets
+    switch lower(plt.datasets(id).dataset.plotroutine)
+        case {'plot3dsurface'}
+            plt.datasets(id).dataset.plotroutine='plotcontourmap';
+    end
+end
+handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot=plt;
+setHandles(handles);
+
+%%
+function select3D
+handles=getHandles;
+plt=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot;
+for id=1:plt.nrdatasets
+    switch lower(plt.datasets(id).dataset.plotroutine)
+        case {'plotcontourmap','plotcontourmaplines','plotpatches','plotcontourlines','plotshadesmap'}
+            plt.datasets(id).dataset.plotroutine='plot3dsurface';
+    end
+end
+handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot=plt;
 setHandles(handles);
 
 %%

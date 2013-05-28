@@ -4,7 +4,7 @@
   <longname>2D Polyline (interactive)</longname>
   <plotoptionplottype>2d</plotoptionplottype>
   <plot>
-    <type>map2d</type>
+    <type>map</type>
     <plotroutine>
       <name>plotinteractivepolyline</name>
       <plotoption>

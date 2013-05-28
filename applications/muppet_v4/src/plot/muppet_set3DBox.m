@@ -23,8 +23,8 @@ fl(3)=fill([x1 x2 x2 x1],[y1 y1 y4 y4],fig.backgroundcolor,'EdgeColor','none');h
 fl(4)=fill([x3 x4 x4 x3],[y1 y1 y4 y4],fig.backgroundcolor,'EdgeColor','none');hold on;
 set(fl,'HitTest','off');
 
-plt=plot([x2 x3 x3 x2 x2],[y2 y2 y3 y3 y2],'k','LineWidth',0.6);
-set(plt,'HitTest','off');
+p=plot([x2 x3 x3 x2 x2],[y2 y2 y3 y3 y2],'k','LineWidth',0.6);
+set(p,'HitTest','off');
 
 set(ax1,'xlim',[0 fig.width]);
 set(ax1,'ylim',[0 fig.height]);
@@ -38,8 +38,8 @@ set(ax1,'position',[0.0 0.0 paperwidth paperheight],'Color','none');box off;
 
 txtx=plt.position(1)+0.5*plt.position(3);
 txty=plt.position(2)+plt.position(4)+0.4;
-txt=text(txtx,txty,plt.Title,'FontSize',plt.titlefont.size*fig.fontreduction,'FontName',plt.titlefont.name, ...
-    'Color',plt.titlefont.color,'FontWeight',plt.titlefont.weight,'FontAngle',plt.titlefont.angle);
+txt=text(txtx,txty,plt.title.text,'FontSize',plt.title.font.size*fig.fontreduction,'FontName',plt.title.font.name, ...
+    'Color',plt.title.font.color,'FontWeight',plt.title.font.weight,'FontAngle',plt.title.font.angle);
 set(txt,'HorizontalAlignment','center');
 set(txt,'VerticalAlignment','bottom');
 set(ax1,'HitTest','off');

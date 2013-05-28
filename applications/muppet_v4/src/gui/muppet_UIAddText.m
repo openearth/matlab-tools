@@ -121,7 +121,7 @@ for j=1:handles.figures(ifig).figure.nrsubplots
     end
 end
 
-oktypes={'map2d'};
+oktypes={'map'};
 ii=strmatch(lower(typ),oktypes,'exact');
 
 if isempty(ii)

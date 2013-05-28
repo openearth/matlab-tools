@@ -3,7 +3,7 @@
   <name>geoimage</name>
   <longname>Geo-referenced image</longname>
   <plot>
-    <type>map2d</type>
+    <type>map</type>
     <plotroutine>
       <name>plotimage</name>
       <plotoption>

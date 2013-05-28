@@ -3,7 +3,7 @@
   <name>track</name>
   <longname>Track</longname>
   <plot>
-    <type>map2d</type>
+    <type>map</type>
     <plotroutine>
       <name>plotpolyline</name>
       <plotoption>

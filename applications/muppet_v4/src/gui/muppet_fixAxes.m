@@ -41,7 +41,7 @@ for isub=1:fig.nrsubplots
             % Check for change in limits
             if fig.subplots(isub).subplot.limitschanged
                 switch fig.subplots(isub).subplot.type
-                    case{'2d','map2d','xy'}
+                    case{'2d','map','xy'}
                         handles.figures(ifig).figure.subplots(isub).subplot.xmin=fig.subplots(isub).subplot.xmin;
                         handles.figures(ifig).figure.subplots(isub).subplot.xmax=fig.subplots(isub).subplot.xmax;
                         handles.figures(ifig).figure.subplots(isub).subplot.ymin=fig.subplots(isub).subplot.ymin;

@@ -8,7 +8,8 @@ units=handles.figures(ifig).figure.units;
 if plt.perspective
     set(gca,'Projection','perspective');
 end
- 
+
+plt.dataaspectratio=[1 1 0.02];
 daspect([1/plt.dataaspectratio(1) 1/plt.dataaspectratio(2) 1/plt.dataaspectratio(3)]);
 
 view(gca,[plt.cameraangle(1),plt.cameraangle(2)]);
@@ -35,22 +36,22 @@ if plt.drawbox==0
         xtick=xtickstart:plt.xtick:xtickstop;
         set(gca,'xtick',xtick,'FontSize',10*fontred);
 
-        if plt.decimalsx>=0
-            frmt=['%0.' num2str(plt.decimalsx) 'f'];
+        if plt.xdecimals>=0
+            frmt=['%0.' num2str(plt.xdecimals) 'f'];
             for i=1:size(xtick,2)
                 xlabls{i}=sprintf(frmt,xtick(i));
             end
             set(gca,'xticklabel',xlabls);
         end
 
-        if plt.decimalsx==-999
+        if plt.xdecimals==-999
             for i=1:size(xtick,2)
                 xlabls{i}='';
             end
             set(gca,'xticklabel',xlabls);
         end
         
-        if plt.XGrid
+        if plt.xgrid
             set(gca,'Xgrid','on');
         else
             set(gca,'Xgrid','off');
@@ -66,15 +67,15 @@ if plt.drawbox==0
         ytick=ytickstart:plt.ytick:ytickstop;
         set(gca,'ytick',ytick,'FontSize',10*fontred);
 
-        if plt.decimalsy>=0
-            frmt=['%0.' num2str(plt.decimalsy) 'f'];
+        if plt.ydecimals>=0
+            frmt=['%0.' num2str(plt.ydecimals) 'f'];
             for i=1:size(ytick,2)
                 ylabls{i}=sprintf(frmt,ytick(i));
             end
             set(gca,'yticklabel',ylabls);
         end
 
-        if plt.decimalsy==-999
+        if plt.ydecimals==-999
             for i=1:size(ytick,2)
                 ylabls{i}='';
             end
@@ -98,15 +99,15 @@ if plt.drawbox==0
         ztick=ztickstart:plt.ztick:ztickstop;
         set(gca,'ztick',ztick,'FontSize',10*fontred);
 
-        if plt.decimalsz>=0
-            frmt=['%0.' num2str(plt.decimalsz) 'f'];
+        if plt.zdecimals>=0
+            frmt=['%0.' num2str(plt.zdecimals) 'f'];
             for i=1:size(ztick,2)
                 zlabls{i}=sprintf(frmt,ztick(i));
             end
             set(gca,'zticklabel',zlabls);
         end
 
-        if plt.decimalsz==-999
+        if plt.zdecimals==-999
             for i=1:size(ztick,2)
                 zlabls{i}='';
             end

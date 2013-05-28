@@ -284,7 +284,7 @@ switch(tg)
         fig.annotationschanged=1;        
     case{'axis'}
         switch fig.subplots(isub).subplot.type
-            case{'map2d'}
+            case{'map'}
                 fig.subplots(isub).subplot.position=pos;
                 fig.subplots(isub).subplot=muppet_updateLimits(fig.subplots(isub).subplot,'editsubplotsize');
                 set(gca,'xlim',[fig.subplots(isub).subplot.xminproj fig.subplots(isub).subplot.xmaxproj], ...

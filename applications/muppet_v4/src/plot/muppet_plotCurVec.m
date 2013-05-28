@@ -45,7 +45,7 @@ if ~isempty(handles.animationsettings.timestep)
     timestep=handles.animationsettings.timestep;
 end
 
-plt.coordinatesystem.type='projected';
+%plt.coordinatesystem.type='projected';
 
 [polx,poly,xax,yax,len,pos]=curvec(x1,y1,u,v,'dx',dx,'length',opt.curveclength,'nrvertices',nt,'nhead',4, ...
     'xlim',[xmin xmax],'ylim',[ymin ymax],'position',pos,'lifespan',lifespan,'timestep',timestep, ...
@@ -59,7 +59,8 @@ end
 edgecolor=colorlist('getrgb','color',opt.edgecolor);
 
 if strcmpi(opt.plotroutine,'plotcoloredcurvedarrows')
-    % get rgb values
+    
+    % Get rgb values
     speed=len/opt.curveclength;
     speed=min(speed,opt.cmax);
     speed=max(speed,opt.cmin);
@@ -76,18 +77,37 @@ if strcmpi(opt.plotroutine,'plotcoloredcurvedarrows')
     cl(1,:,1)=r1;    
     cl(1,:,2)=g1;    
     cl(1,:,3)=b1;    
-%    cl=squeeze(cl);
     fl=patch(polx,poly,cl);
-%    fl=patch(polx,poly,'r');
-%    set(fl,'EdgeColor',edgecolor);    
+    set(fl,'EdgeColor',edgecolor);    
+
 else
+    
     facecolor=colorlist('getrgb','color',opt.facecolor);
     fl=patch(polx,poly,'r');
     set(fl,'FaceColor',facecolor);
     set(fl,'EdgeColor',edgecolor);
+    
+end
+
+if strcmpi(handles.figures(i).figure.renderer,'opengl')
+
+    % Make tail of arrows transparent
+    nverticesperarrow=size(polx,1);
+    narrows=size(polx,2);
+    facevertexalphadata=zeros(nverticesperarrow,narrows)+64;
+    for ii=1:nt-3
+        a=ceil((ii-1)*64/nt);
+        facevertexalphadata(ii,:)=a;
+        facevertexalphadata(nverticesperarrow-ii,:)=a;
+    end
+    facevertexalphadata(nverticesperarrow,:)=1;
+    facevertexalphadata=reshape(facevertexalphadata,[narrows*nverticesperarrow 1]);
+    set(fl,'FaceVertexAlphaData',facevertexalphadata);
+    set(fl,'AlphaDataMapping','direct');
+    set(fl,'FaceAlpha','interp');
+
 end
 
 if ~isempty(timestep)
     save(['curvecpos.' num2str(j,'%0.3i') '.' num2str(k,'%0.3i') '.dat'],'pos','-ascii');
 end
-

@@ -1,5 +1,5 @@
 function handles=muppet_adjustAxes(handles)
-% Adjust axis limits based on new data
+% Adjust axis limits based on new dataset added to plot
 
 plt=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot;
 data=handles.datasets(handles.activedataset).dataset;
@@ -25,7 +25,7 @@ end
 
 %% Axis limits
 switch plt.type
-    case{'timeseries','timestack','map2d','3d','xy'}
+    case{'timeseries','timestack','map','3d','xy'}
         
         % Original subplot limits
         switch plt.type
@@ -174,7 +174,7 @@ switch plt.type
                 plt.ymax=ymax1;
                 plt.ytick=dy;
                 
-            case{'map2d','3d'}
+            case{'map','3d'}
                 
                 if newplot
                     if isfield(data,'coordinatesystem')
@@ -208,6 +208,16 @@ switch plt.type
                   plt.zmax=zmax1;
                   plt.ztick=dz;
                 end
+
+                cameratargetx=0.5*(plt.xmin+plt.xmax);
+                cameratargety=0.5*(plt.ymin+plt.ymax);
+                cameratargetz=0.5*(zmax+zmin);
+                plt.cameratarget=[cameratargetx cameratargety cameratargetz];
+                plt.cameraangle=[315 45];
+                plt.cameraviewangle=8.0;
+                plt.dataaspectratio=[1.0 1.0 max(0.001,round(0.02*(plt.xmax-plt.xmin)/max(plt.zmax-plt.zmin,1e-9)))];
+                plt.lightstrength=0.5;
+                plt.perspective=1;
                 
         end
         
@@ -215,7 +225,7 @@ end
 
 %% Color limits
 switch plt.type
-    case {'timestack','map2d','3d','xy'}        
+    case {'timestack','map','3d','xy'}        
         if ~isempty(data.z)
             zmin=min(min(data.z));
             zmax=max(max(data.z));            
@@ -232,7 +242,7 @@ end
 
 %% Vector legend
 switch plt.type
-    case {'timestack','map2d','3d','xy'}
+    case {'timestack','map','3d','xy'}
         % Vector Legend
         if plt.vectorlegend.position(1)==0
             x0=plt.position(1)+1.0;

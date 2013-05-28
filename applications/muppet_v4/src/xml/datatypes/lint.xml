@@ -3,7 +3,7 @@
   <name>lint</name>
   <longname>Lint Transports</longname>
   <plot>
-    <type>map2d</type>
+    <type>map</type>
     <plotroutine>
       <name>plotlint</name>
       <plotoption>

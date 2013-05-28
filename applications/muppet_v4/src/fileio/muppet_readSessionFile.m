@@ -301,7 +301,7 @@ for ifig=1:handles.nrfigures
                     plt.xgrid=0;
                 end
                 handles.figures(ifig).figure.subplots(isub).subplot=plt;
-            case{'map2d'}
+            case{'map'}
                 plt=handles.figures(ifig).figure.subplots(isub).subplot;
                 if ~isempty(plt.scale)
                     plt.axesequal=1;

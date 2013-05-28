@@ -63,12 +63,26 @@ if isfield(info,'check')
             % Character
             switch operator
                 case{'eq'}
-                    if ~strcmpi(checkvariable,checkvalue)
-                        iok=0;
+                    switch checkvalue
+                        case{'isempty'}
+                            if ~isempty(checkvariable)
+                                iok=0;
+                            end
+                        otherwise
+                            if ~strcmpi(checkvariable,checkvalue)
+                                iok=0;
+                            end
                     end
                 case{'ne'}
-                    if strcmpi(checkvariable,checkvalue)
-                        iok=0;
+                    switch checkvalue
+                        case{'isempty'}
+                            if isempty(checkvariable)
+                                iok=0;
+                            end
+                        otherwise
+                            if strcmpi(checkvariable,checkvalue)
+                                iok=0;
+                            end
                     end
             end
         else
@@ -76,12 +90,26 @@ if isfield(info,'check')
             checkvalue=str2double(checkvalue);
             switch operator
                 case{'eq'}
-                    if checkvariable~=checkvalue
-                        iok=0;
+                    switch checkvalue
+                        case{'isempty'}
+                            if ~isempty(checkvariable)
+                                iok=0;
+                            end
+                        otherwise
+                            if checkvariable~=checkvalue
+                                iok=0;
+                            end
                     end
                 case{'ne'}
-                    if checkvariable==checkvalue
-                        iok=0;
+                    switch checkvalue
+                        case{'isempty'}
+                            if isempty(checkvariable)
+                                iok=0;
+                            end
+                        otherwise
+                            if checkvariable==checkvalue
+                                iok=0;
+                            end
                     end
                 case{'gt'}
                     if checkvariable<=checkvalue

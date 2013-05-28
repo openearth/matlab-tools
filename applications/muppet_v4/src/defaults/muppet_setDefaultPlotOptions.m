@@ -120,6 +120,7 @@ opt.colorbar.changed=0;
 opt.plottimebar=0;
 opt.timebar.time=[];
 
+% Time bar
 opt.timemarker=0;
 opt.markertime=datenum(2000,1,1);
 opt.timebar=0;
@@ -137,6 +138,13 @@ opt.arrowcolor='red';
 opt.multiply=1;
 opt.unitarrow=1;
 
+% Image
 opt.whitevalue=0.9;
 opt.opacity=1;
 opt.verticallevel=1000;
+
+% 3D
+opt.plot3dgrid=0;
+opt.onecolor=0;
+opt.specularstrength=0;
+opt.lightstrength=0;

@@ -98,7 +98,7 @@ else
         % Constant
         if length(m)>1
             if length(n)>1
-                shp='map2d';
+                shp='map';
                 plane='xy';
                 ndim=2;
             elseif length(k)>1

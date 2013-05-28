@@ -8,7 +8,7 @@ ifig=fig.number;
 
 n=0;
 for j=1:fig.nrsubplots
-    if strcmpi(fig.subplots(j).subplot.type,'map2d')
+    if strcmpi(fig.subplots(j).subplot.type,'map')
         n=n+1;
         h(n)=findobj(gcf,'Tag','axis','UserData',[ifig,j]);
     end

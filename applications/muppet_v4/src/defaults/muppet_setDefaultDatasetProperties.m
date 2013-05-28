@@ -35,7 +35,8 @@ dataset.time=[];
 dataset.station=[];
 dataset.domain=[];
 dataset.subfield=[];
-dataset.plotcoordinate='pathdistance';
+%dataset.plotcoordinate='pathdistance';
+dataset.plotcoordinate='';
 dataset.xcoordinate=[];
 dataset.ycoordinate=[];
 dataset.quantity='scalar';
@@ -64,6 +65,8 @@ dataset.selectcoordinates=0;
 dataset.activeparameter=[];
 
 dataset.georeferencefile='';
+dataset.imagefile='';
+dataset.interpolatedemonimage=0;
 
 dataset.selectedtextnumber=1;
 dataset.alltextselected=1;

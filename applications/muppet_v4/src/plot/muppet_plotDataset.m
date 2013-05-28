@@ -26,7 +26,7 @@ end
 
 %% If this is a map plot, try to convert coordinates of datasets if necessary
 switch handles.figures(ifig).figure.subplots(isub).subplot.type
-    case{'map2d'} 
+    case{'map'} 
         % Convert data to correct coordinate system
         if ~strcmpi(plt.coordinatesystem.name,'unspecified') && ~strcmpi(data.coordinatesystem.name,'unspecified')
             if ~strcmpi(plt.coordinatesystem.name,data.coordinatesystem.name) && ...
@@ -77,6 +77,8 @@ switch lower(plt.datasets(id).dataset.plotroutine)
         h=muppet_plotStackedArea(handles,ifig,isub,id);
     case {'plotcontourmap','plotcontourmaplines','plotpatches','plotcontourlines','plotshadesmap'}
         muppet_plot2DSurface(handles,ifig,isub,id);
+    case {'plot3dsurface','plot3dsurfacelines'}
+        muppet_plot3DSurface(handles,ifig,isub,id);
     case {'plotgrid'}
         h=muppet_plotGrid(handles,ifig,isub,id);
     case {'plotannotation'},

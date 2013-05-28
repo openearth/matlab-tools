@@ -250,7 +250,7 @@ for j=1:handles.figures(ifig).figure.nrsubplots
     end
 end
 
-oktypes={'2d','map2d','3d','timeseries','xy','timestack'};
+oktypes={'2d','map','3d','timeseries','xy','timestack'};
 ii=strmatch(lower(typ),oktypes,'exact');
 
 if isempty(ii)
@@ -300,7 +300,7 @@ ymin=yl(1);
 ymax=yl(2);
 
 switch plt.type
-    case{'map2d'}
+    case{'map'}
         plt.xminproj=xmin;
         plt.xmaxproj=xmax;
         plt.yminproj=ymin;

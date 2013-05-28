@@ -20,7 +20,7 @@ switch lower(plt.type)
             muppet_setRightAxis(handles,ifig,isub);
             set(rightaxis,'NextPlot','add');
         end
-    case {'map2d'}
+    case {'map'}
         muppet_setMapPlot(handles,ifig,isub);
     case {'image'}
         muppet_setImagePlot(handles,ifig,isub);

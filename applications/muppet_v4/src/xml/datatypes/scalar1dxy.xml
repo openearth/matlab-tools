@@ -3,7 +3,7 @@
   <name>scalar1dxy</name>
   <longname>Samples</longname>
   <plot>
-    <type>map2d</type>
+    <type>map</type>
     <plotroutine>
       <name>plotsamples</name>
       <plotoption>

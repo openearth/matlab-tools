@@ -3,7 +3,7 @@
   <name>tidalellipse</name>
   <longname>Tidal Ellipse</longname>
   <plot>
-    <type>map2d</type>
+    <type>map</type>
     <plotroutine>
       <name>plottidalellipse</name>
       <plotoption>
