@@ -123,14 +123,25 @@ end
    if iostat==1
    
       if (~(size(ST.index,1)==0) && strcmp(trih.SubType,'Delft3D-trih'))
+      
+        [mnstat,OK]   = vs_let(trih,'his-series',{1},'MNSTAT');
+        if OK % new files
+         mnstat       = permute(mnstat,[2 3 1]); % (x,y) positions of observation stations
+         xystat       = permute(vs_let(trih,'his-series',{1},'XYSTAT'),[2 3 1]); % (x,y) positions of observation stations
+         ST.m         = mnstat(1,:)';
+         ST.n         = mnstat(2,:)';
+         ST.x         = xystat(1,:)';
+         ST.y         = xystat(2,:)';
+         else % old files
          ST.m         = squeeze(vs_let(trih,OPT.GrpName,'MNSTAT',{1,ST.index},'quiet'));
          ST.n         = squeeze(vs_let(trih,OPT.GrpName,'MNSTAT',{2,ST.index},'quiet'));
-      
          ST.x         = squeeze(vs_let(trih,OPT.GrpName,'XYSTAT',{1,ST.index},'quiet'));
          ST.y         = squeeze(vs_let(trih,OPT.GrpName,'XYSTAT',{2,ST.index},'quiet'));
+         end
+         
          
         %ST.grdang    = squeeze(vs_let(trih,OPT.GrpName,'GRDANG',{1,ST.index}));
-         ST.angle     = squeeze(vs_let(trih,OPT.GrpName,'ALFAS' ,{  ST.index},'quiet'));
+         ST.angle     = squeeze(vs_let(trih,OPT.GrpName,'ALFAS' ,{  ST.index},'quiet'))';
          ST.angle_explanation =  vs_get_elm_def(trih,'ALFAS','Description','quiet');
          ST.kmax        =  squeeze(vs_let(trih,OPT.GrpName,'KMAX','quiet'));
          ST.coordinates =  vs_let(trih,'his-const','COORDINATES'      ,'quiet');
