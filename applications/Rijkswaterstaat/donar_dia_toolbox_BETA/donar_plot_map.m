@@ -1,6 +1,8 @@
-function []= donar_plot_map(donarMat,variable,thefontsize,thelineS)
-%donar_plot_map
-
+function minX = donar_plot_map(donarMat,variable,thefontsize)
+% donar_plot_map function
+% usage: minX = donar_plot_map(donarMat,variable,thefontsize)
+% see help donar*
+%
     if ischar(donarMat)
         disp(['Loading: ',donarMat]);
         donarMat = importdata(donarMat);
@@ -13,25 +15,53 @@ function []= donar_plot_map(donarMat,variable,thefontsize,thelineS)
         disp('Variable not found in file.')
         return;
     end
-    
-    if nargin < 4,         thelineS = colormap;    end
+                
     donarMat.(variable).data(:,4) = donarMat.(variable).data(:,4) + donarMat.(variable).referenceDate;
+
+    minX = min(donarMat.(variable).data(:,4));
+    maxX = max(donarMat.(variable).data(:,4));
+       
     
-    %%%%%%%%%%%%%%%%%%%%
-    % Observations map %
-    %%%%%%%%%%%%%%%%%%%%
-    plot_map('lonlat','color',[0.5,0.5,0.5]);
-    set(gcf,'position',[745   569   375   379])
-    set(gcf,'PaperPositionMode','auto')
-    hold on
     
-    plot_xyColor(donarMat.(variable).data(:,1),donarMat.(variable).data(:,2),donarMat.(variable).data(:,5),20,thelineS);
-    h2 = colorbar('south','fontsize',thefontsize);
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Observations per year map %
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    numCruises = max(donarMat.(variable).data(:,6));
+    [unique_month,~,month_index] = unique(month(donarMat.(variable).data(:,4)));
+    nummonths = length(unique_month);
+    f = figure;
+    thelineS = colormap;
+    for imonth = 1:1:nummonths
+
+        % Lets focus on that data alone
+        table_month = donarMat.(variable).data(month_index==imonth,:);
+
+        subplot(3,4,unique_month(imonth));
+        plot_map('lonlat','color',[0.5,0.5,0.5]);   
+        hold on;
+
+        [unique_campaign,~,campaign_index] = unique(table_month(:,6));
+        plot_xyColor(table_month(:,1),table_month(:,2),table_month(:,5),8);
+        %upper(donarMat.(variable).deltares_name(1)),lower(strrep(donarMat.
+        %(variable).deltares_name(2:end),'_',' ')),' '
+        
+        if imonth == 1 
+            title([num2str(year(maxX)),': ',monthstr(unique_month(imonth),'mmm')],'FontWeight','bold','FontSize',thefontsize);
+        else
+            title(monthstr(unique_month(imonth),'mmm'),'FontWeight','bold','FontSize',thefontsize);
+        end
+        h2 = colorbar('south','fontsize',thefontsize);
+
+        initpos = get(h2,'Position');
+        set(gca,'FontSize',thefontsize);
+        set(h2, ...
+                   'Position',[initpos(1)+0.05, ...
+                               initpos(2) - 0.01, ...
+                               initpos(3)*0.7, ...
+                               initpos(4)*0.2], 'fontsize',8);
+
+        
+    end
+
     
-    initpos = get(h2,'Position');
-    set(gca,'FontSize',thefontsize);
-    set(h2, 'Position',[initpos(1)+0.05, ...
-                           initpos(2) - 0.01, ...
-                           initpos(3)*0.7, ...
-                           initpos(4)*0.2], 'fontsize',8);
 end

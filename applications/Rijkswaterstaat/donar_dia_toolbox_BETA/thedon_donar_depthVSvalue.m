@@ -3,6 +3,7 @@ function thedon_donar_depthVSvalue
 % Makes plots of presence of measurements in time. The X axis is day
 % number while the Y axis is the year. A dot in the graph means that for
 % that day and year there is an observation available. 
+    clc; clear; close all, fclose all;
 
     files_of_interest = { ...
         'p:\1204561-noordzee\data\svnchkout\donar_dia\raw_and_nc\dia_ctd\CTD_2003_the_compend.mat'; ...

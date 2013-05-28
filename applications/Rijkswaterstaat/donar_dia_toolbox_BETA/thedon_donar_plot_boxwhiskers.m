@@ -1,6 +1,10 @@
-function thedon_donar_plot_boxwhiskers
+%% Box and Whisker diagram for all observations in TIME (MONTHS) (no function)
 % thedon_donar_plot_boxwhiskers Box and Whisker diagram for all observations in TIME (MONTHS)
 
+if true
+    
+    clc; close all, fclose all; clear;
+    addpath([pwd,filesep,'utilities',filesep]);
     thedonarfiles = { ...
         'p:\1204561-noordzee\data\svnchkout\donar_dia\raw_and_nc\dia_ctd\mat\CTD_2003_the_compend.mat'; ...
         'p:\1204561-noordzee\data\svnchkout\donar_dia\raw_and_nc\dia_ctd\mat\CTD_2004_the_compend.mat'; ...
@@ -89,3 +93,5 @@ close all
     ylabel(['Upoly0 [-]'])
     fileName = ['boxplot_ScanFish_turbidity'];
     print('-dpng',fileName);
+    
+end
