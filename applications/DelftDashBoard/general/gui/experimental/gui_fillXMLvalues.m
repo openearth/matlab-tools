@@ -29,7 +29,11 @@ for ii=1:length(fldnames)
             if ischar(pos)
                 pos=str2num(pos);
             end
-            pos=[pos repmat(20,1,4-length(pos))];
+            if length(pos)==3
+                pos=[pos 20];
+            elseif length(pos)==2
+                pos=[pos 2000 20];
+            end
             xml.position=pos;
         case{'nrlines','nrrows','max','fontsize'}
             if ischar(xml.(fldname))

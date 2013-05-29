@@ -259,7 +259,7 @@ switch lower(el.style)
                 if iscell(val)
                     pos(2)=pos(2)+pos(4)-ext(4);
                 end
-                pos(3)=max(pos(3),ext(3));
+                pos(3)=min(pos(3),ext(3));
                 pos(4)=15;
                 set(el.handle,'Position',pos);
             end
