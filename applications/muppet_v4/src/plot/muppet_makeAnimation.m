@@ -2,24 +2,12 @@ function muppet_makeAnimation(handles,ifig)
 
 animationsettings=handles.animationsettings;
 
-
-% animationsettings.framerate=20;
-% animationsettings.starttime=datenum(2010,7,22);
-% animationsettings.stoptime=datenum(2010,7,28,0,0,0);
-% animationsettings.timestep=3600;
-% animationsettings.avifilename='test.avi';
-
 % Make temporary Data structure
 datasets=handles.datasets;
 
 %CombinedDatasetProperties=handles.CombinedDatasetProperties;
 
-% AviOps.fccHandler=animationsettings.fccHandler;
-% AviOps.KeyFrames=animationsettings.KeyFrames;
-% AviOps.Quality=animationsettings.Quality;
-% AviOps.BytesPerSec=animationsettings.BytesPerSec;
-% AviOps.Parameters=animationsettings.Parameters;
-AviOps=animationsettings.avioptions;
+aviops=animationsettings.avioptions;
 
 % if animationsettings.makeKMZ
 %     handles.figures(ifig).figure.PaperSize(1)=handles.figures(ifig).figure.Axis(1).Position(3);
@@ -75,16 +63,15 @@ useavifile=0;
 
 if ~isempty(animationsettings.avifilename)
     if useavifile
-        AviHandle = VideoWriter(animationsettings.avifilename);
-        AviHandle.FrameRate=animationsettings.framerate;
-        AviHandle.Quality=50;
-        open(AviHandle);
-%        AviHandle = avifile(animationsettings.avifilename,'compression','Cinepak');
+        avihandle=VideoWriter(animationsettings.avifilename);
+        avihandle.FrameRate=animationsettings.framerate;
+        avihandle.Quality=50;
+        open(avihandle);
     else
         if ~strcmpi(animationsettings.avifilename(end-2:end),'gif')
-            AviHandle = writeavi('initialize');
-            AviHandle = writeavi('open', AviHandle,animationsettings.avifilename);
-            AviHandle = writeavi('addvideo', AviHandle, animationsettings.framerate, sz(1),sz(2), 24, AviOps);
+            avihandle = writeavi('initialize');
+            avihandle = writeavi('open', avihandle,animationsettings.avifilename);
+            avihandle = writeavi('addvideo', avihandle, animationsettings.framerate, sz(1),sz(2), 24, aviops);
         end
     end
 end
@@ -101,7 +88,7 @@ try
     % Determine timestep and number of frames
     timestep=animationsettings.timestep/86400;
     
-    nrframes=round((animationsettings.stoptime-animationsettings.starttime)/timestep);
+    nrframes=max(round((animationsettings.stoptime-animationsettings.starttime)/timestep),1);
     
     for iblock=1:nrframes
        
@@ -201,12 +188,12 @@ try
             a = imread(figname,'png');
             if useavifile
                 F = im2frame(a);
-                writeVideo(AviHandle,F);
-%                AviHandle = addframe(AviHandle,F);
+                writeVideo(avihandle,F);
+%                avihandle = addframe(avihandle,F);
             else
                 if ~strcmpi(animationsettings.avifilename(end-2:end),'gif')
                     aaa=uint8(a(1:sz(1),1:sz(2),:));
-                    AviHandle = writeavi('addframe', AviHandle, aaa, iblock);
+                    avihandle = writeavi('addframe', avihandle, aaa, iblock);
                     clear aaa
                 else
                     nf = nf+1;
@@ -247,11 +234,11 @@ try
     % Close avi file
     if ~isempty(animationsettings.avifilename)
         if useavifile
-%            AviHandle = close(AviHandle);
-            close(AviHandle);
+%            avihandle = close(avihandle);
+            close(avihandle);
         else
             if ~strcmpi(animationsettings.avifilename(end-2:end),'gif')
-                AviHandle=writeavi('close', AviHandle);
+                avihandle=writeavi('close', avihandle);
             else
                 % Try to make animated gif (not very succesful so far)
                 %    imwrite(im,map,'test.gif','DelayTime',1/animationsettings.FrameRate,'LoopCount',inf) %g443800
@@ -301,7 +288,7 @@ try
     
 catch
     try
-        AviHandle=writeavi('close', AviHandle);
+        avihandle=writeavi('close', avihandle);
     end
     close(wb);
     muppet_giveWarning('text','Something went wrong while generating avi file');

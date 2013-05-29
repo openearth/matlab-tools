@@ -14,13 +14,13 @@ if isempty(varargin)
             tmax=-1e9;
             dt=1;
             for id=1:handles.nrdatasets
-                if isfield(handles.datasets(id).dataset,'time')
-                    if ~isempty(handles.datasets(id).dataset.time)
-                        tmin=min(tmin,handles.datasets(id).dataset.time(1));
-                        tmax=max(tmax,handles.datasets(id).dataset.time(end));
+                if isfield(handles.datasets(id).dataset,'times')
+                    if ~isempty(handles.datasets(id).dataset.times)
+                        tmin=min(tmin,handles.datasets(id).dataset.times(1));
+                        tmax=max(tmax,handles.datasets(id).dataset.times(end));
                         dt1=0;
-                        if length(handles.datasets(id).dataset.time)>1
-                            dt1=86400*(handles.datasets(id).dataset.time(2)-handles.datasets(id).dataset.time(1));
+                        if length(handles.datasets(id).dataset.times)>1
+                            dt1=86400*(handles.datasets(id).dataset.times(2)-handles.datasets(id).dataset.times(1));
                         end
                         dt=max(dt1,dt);
                     end
@@ -37,7 +37,7 @@ if isempty(varargin)
             end
         end
         
-        [handles.animationsettings,ok]=gui_newWindow(handles.animationsettings,'xmldir',handles.xmldir,'xmlfile','animationsettings.xml');
+        [handles.animationsettings,ok]=gui_newWindow(handles.animationsettings,'xmldir',handles.xmlguidir,'xmlfile','animationsettings.xml');
         
         setHandles(handles);
         

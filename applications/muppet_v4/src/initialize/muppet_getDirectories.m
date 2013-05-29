@@ -56,6 +56,7 @@ if isdeployed
     exedir = char(regexpi(result, 'Path=(.*?);', 'tokens', 'once'));
     handles.muppetdir=[fileparts(exedir) filesep];
     handles.xmldir=[ctfroot filesep 'xml' filesep];
+    handles.xmlguidir=[ctfroot filesep 'xml' filesep 'gui' filesep];
 else
     % Muppet.ini file must sit in the same directory as muppet.m (or muppet4.m)
     mppath=fileparts(which('muppet4'));
@@ -72,6 +73,7 @@ else
         handles.muppetdir=[fileparts(mppath) filesep];
     end
     handles.xmldir=[mppath filesep 'xml' filesep];
+    handles.xmlguidir=[mppath filesep 'xml' filesep 'gui' filesep];
 end
 
 handles.settingsdir=[handles.muppetdir 'settings' filesep];

@@ -3,7 +3,7 @@ function muppet_gui(varargin)
 if isempty(varargin)
     newSession('firsttime');
     handles=getHandles;
-    gui_newWindow(handles,'xmldir',handles.xmldir,'xmlfile','muppetgui.xml','modal',0, ...
+    gui_newWindow(handles,'xmldir',handles.xmlguidir,'xmlfile','muppetgui.xml','modal',0, ...
         'getfcn',@getHandles,'setfcn',@setHandles,'tag','muppetgui','Color',[0.941176 0.941176 0.941176]);
     muppet_refreshColorMap(handles);
     muppet_updateGUI;
@@ -536,7 +536,7 @@ setHandles(handles);
 function editLegend
 handles=getHandles;
 s=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.legend;
-[s,ok]=gui_newWindow(s, 'xmldir', handles.xmldir, 'xmlfile', 'legend.xml');
+[s,ok]=gui_newWindow(s, 'xmldir', handles.xmlguidir, 'xmlfile', 'legend.xml');
 if ok
     handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.legend=s;
     setHandles(handles);
@@ -545,8 +545,8 @@ end
 %%
 function editVectorLegend
 handles=getHandles;
-s=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.vectorlegend;
-[s,ok]=gui_newWindow(s, 'xmldir', handles.xmldir, 'xmlfile', 'vectorlegend.xml');
+s=handles.figures(handles.activefigure).figure.subplguiots(handles.activesubplot).subplot.vectorlegend;
+[s,ok]=gui_newWindow(s, 'xmldir', handles.xmlguidir, 'xmlfile', 'vectorlegend.xml');
 if ok
     handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.vectorlegend=s;
     setHandles(handles);
@@ -571,7 +571,7 @@ setHandles(handles);
 function editColorBar
 handles=getHandles;
 s=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.colorbar;
-[s,ok]=gui_newWindow(s, 'xmldir', handles.xmldir, 'xmlfile', 'colorbar.xml');
+[s,ok]=gui_newWindow(s, 'xmldir', handles.xmlguidir, 'xmlfile', 'colorbar.xml');
 if ok
     handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.colorbar=s;
     setHandles(handles);
@@ -609,7 +609,7 @@ setHandles(handles);
 function editNorthArrow
 handles=getHandles;
 s=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.northarrow;
-[s,ok]=gui_newWindow(s, 'xmldir', handles.xmldir, 'xmlfile', 'northarrow.xml');
+[s,ok]=gui_newWindow(s, 'xmldir', handles.xmlguidir, 'xmlfile', 'northarrow.xml');
 if ok
     handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.northarrow=s;
     setHandles(handles);
@@ -636,7 +636,7 @@ setHandles(handles);
 function editScaleBar
 handles=getHandles;
 s=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.scalebar;
-[s,ok]=gui_newWindow(s, 'xmldir', handles.xmldir, 'xmlfile', 'scalebar.xml');
+[s,ok]=gui_newWindow(s, 'xmldir', handles.xmlguidir, 'xmlfile', 'scalebar.xml');
 if ok
     handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.scalebar=s;
     setHandles(handles);
@@ -759,4 +759,10 @@ muppet_animationSettings;
 %%
 function makeAnimation
 handles=getHandles;
+aviops=handles.animationsettings.avioptions;
+if isempty(aviops)
+    aviops=writeavi('getoptions',24);
+    handles.animationsettings.avioptions=aviops;
+    setHandles(handles);
+end
 muppet_makeAnimation(handles,handles.activefigure);

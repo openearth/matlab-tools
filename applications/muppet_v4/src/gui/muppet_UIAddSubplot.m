@@ -80,7 +80,8 @@ pos=round(100*pos)/100;
 
 s.name=['Subplot ' num2str(fig.nrsubplots+1)];
 s.position=pos;
-[s,ok]=gui_newWindow(s,'xmldir','d:\checkouts\OpenEarthTools\trunk\matlab\applications\muppet_v4\src\xml\','xmlfile','newsubplot.xml');
+hh=getHandles;
+[s,ok]=gui_newWindow(s,'xmldir',hh.xmlguidir,'xmlfile','newsubplot.xml');
 if ok
     fig.nrsubplots=fig.nrsubplots+1;
     fig.subplots(fig.nrsubplots).subplot.name=s.name;

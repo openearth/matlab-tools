@@ -62,7 +62,7 @@ function handles = muppet_datasetURL_GUI(handles, varargin)
 
 %%
 s = struct();
-[s, ok] = gui_newWindow(s, 'xmldir', handles.xmldir, 'xmlfile', 'newurldataset.xml');
+[s, ok] = gui_newWindow(s, 'xmldir', handles.xmlguidir, 'xmlfile', 'newurldataset.xml');
 
 iscatalog = ~isempty(regexpi(s.url, 'catalog.nc$', 'once'));
 

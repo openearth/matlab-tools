@@ -201,8 +201,6 @@ xml=gui_fillXMLvalues(xml);
 
 [dataset,ok]=gui_newWindow(dataset,'element',xml.element,'tag','datasetgui','width',width,'height',height, ...
     'createcallback',@selectParameter,'title',handles.filetype(ift).filetype.longname,'modal',0);
-% gui_newWindow(dataset,'element',xml.element,'tag','uifigure','width',width,'height',height, ...
-%     'createcallback',@selectParameter,'title',dataset.filetypelongname,'modal',0);
 
 %%
 function selectParameter(varargin)
