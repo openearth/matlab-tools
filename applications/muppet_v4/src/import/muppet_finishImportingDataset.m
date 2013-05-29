@@ -13,12 +13,11 @@ d=muppet_squeezeDataset(d);
 % Copy data to dataset structure
 dataset=muppet_copyToDataStructure(dataset,d);
 
-%% Determine cell centres/corners
-dataset.xz=dataset.x;
-dataset.yz=dataset.y;
-dataset.zz=dataset.z;
-
+% Determine type
 dataset.type=[dataset.quantity num2str(dataset.ndim) 'd' dataset.plane];
+
+% Determine cell centres/corners
+dataset=muppet_computeCentresAndCorners(dataset);
 
 %% Set time-varying or constant
 dataset=muppet_setDatasetVaryingOrConstant(dataset,timestep);

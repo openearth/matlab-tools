@@ -9,16 +9,44 @@ plotcoordinate=[];
 
 switch dataset.plane
     case{'xv','xz','tx'}
-%if (shpmat(3)==1 && shpmat(4)>1) || (shpmat(3)>1 && shpmat(4)==1) 
         switch(lower(dataset.plotcoordinate))
             case{'xcoordinate'}
-                x=squeeze(d.X);
+                if size(d.X,1)>1 && size(d.X,2)>1
+                    % Matrix
+                    x=squeeze(nanmean(d.X,2));
+                else
+                    % Vector
+                    x=squeeze(d.X);
+                end
             case{'ycoordinate'}
-                x=squeeze(d.Y);
+                if size(d.X,1)>1 && size(d.X,2)>1
+                    % Matrix
+                    x=squeeze(nanmean(d.Y,2));
+                else
+                    x=squeeze(d.Y);
+                end
             case{'pathdistance'}
-                x=pathdistance(squeeze(d.X),squeeze(d.Y));
+                if size(d.X,1)>1 && size(d.X,2)>1
+                    % Matrix
+                    xp=squeeze(nanmean(d.X,2));
+                    yp=squeeze(nanmean(d.Y,2));
+                else
+                    % Vector
+                    xp=squeeze(d.X);
+                    yp=squeeze(d.Y);
+                end
+                x=pathdistance(xp,yp,dataset.coordinatesystem.type);
             case{'revpathdistance'}
-                x=pathdistance(squeeze(d.X),squeeze(d.Y));
+                if size(d.X,1)>1 && size(d.X,2)>1
+                    % Matrix
+                    xp=squeeze(nanmean(d.X,2));
+                    yp=squeeze(nanmean(d.Y,2));
+                else
+                    % Vector
+                    xp=squeeze(d.X);
+                    yp=squeeze(d.Y);
+                end
+                x=pathdistance(xp,yp,dataset.coordinatesystem.type);
                 x=x(end:-1:1);
         end
         plotcoordinate=x;
@@ -85,8 +113,12 @@ switch dataset.plane
     
     case{'xz'}
         % cross-section 2d
-        dataset.x=plotcoordinate;
+        dataset.x0=plotcoordinate;
         dataset.y=d.Z;
+        dataset.x=zeros(size(dataset.y));
+        for ii=1:size(dataset.y,2)
+            dataset.x(:,ii)=plotcoordinate;
+        end
         switch dataset.quantity
             case{'scalar'}
                 dataset.z=d.Val;

@@ -10,18 +10,7 @@ opt=plt.datasets(id).dataset;
 data.x=data.x(1:opt.fieldthinningfactor1:end,1:opt.fieldthinningfactor1:end);
 data.y=data.y(1:opt.fieldthinningfactor1:end,1:opt.fieldthinningfactor1:end);
 data.z=data.z(1:opt.fieldthinningfactor1:end,1:opt.fieldthinningfactor1:end);
-data.zz=data.z(1:opt.fieldthinningfactor1:end,1:opt.fieldthinningfactor1:end);
-%data.zz=data.zz(1:opt.fieldthinningfactor1:end,1:opt.fieldthinningfactor1:end);
-
-if plt.axesequal==0
-    vertscale=(plt.ymax-plt.ymin)/plt.position(4);
-    horiscale=(plt.xmax-plt.xmin)/plt.position(3);
-    multi=horiscale/vertscale;
-else
-    multi=1.0;
-end
-multi=1.0;
-data.y=multi*data.y;
+data.zz=data.zz(1:opt.fieldthinningfactor1:end,1:opt.fieldthinningfactor1:end);
 
 switch(lower(opt.plotroutine)),
     case{'plotpatches','plotshadesmap','plotcontourmap','plotcontourmaplines'}
@@ -44,37 +33,14 @@ dc=col(2)-col(1);
 
 switch(lower(opt.plotroutine)),
     case{'plotpatches'}
-%         zz1=max(data.zz,c1);
-%         zz1=min(zz1,c2);
-%         zz1(isnan(data.zz))=NaN;
-%         xx=data.x(1:end-1,1:end-1);
-%         yy=data.y(1:end-1,1:end-1);
-%         zz=zz1(2:end,2:end);
-%         n=(size(xx,1)-1)*(size(xx,2)-1);
-%         x=xx';
-%         y=yy';
-%         z=zz';
-%         xp(1,:)=reshape(x(1:end-1,1:end-1),1,n);
-%         xp(2,:)=reshape(x(2:end,1:end-1),1,n);
-%         xp(3,:)=reshape(x(2:end,2:end),1,n);
-%         xp(4,:)=reshape(x(1:end-1,2:end),1,n);
-%         yp(1,:)=reshape(y(1:end-1,1:end-1),1,n);
-%         yp(2,:)=reshape(y(2:end,1:end-1),1,n);
-%         yp(3,:)=reshape(y(2:end,2:end),1,n);
-%         yp(4,:)=reshape(y(1:end-1,2:end),1,n);
-%         zp=reshape(z(1:end-1,1:end-1),1,n);
-%         xp(1,isnan(zp))=NaN;
-%         yp(1,isnan(zp))=NaN;
-%         x=xp;
-%         y=yp;
-%         z=zp;
         x=data.x;
         y=data.y;
-        z=data.z;
-    case{'plotshadesmap','plotcontourlines'}
-        x=data.x;
-        y=data.y;
-        z=data.z;
+        z=data.zz;
+        clmap=muppet_getColors(handles.colormaps,plt.colormap,64);
+        colormap(clmap);
+        h=pcolor(x,y,z);
+        shading flat;
+        caxis([col(1) col(end)]);
     case{'plotcontourmap','plotcontourmaplines'}
         z=max(data.z,c1-dc);
         z=min(z,c2+dc);
@@ -83,19 +49,9 @@ switch(lower(opt.plotroutine)),
         y=data.y;
         xmean=mean(x(isfinite(x)));
         ymean=mean(y(isfinite(y)));
-        z(isnan(x))=NaN;
         x(isnan(x))=xmean;
         y(isnan(y))=ymean;
-end
-
-switch(lower(opt.plotroutine)),
-    case{'plotpatches'}
-        clmap=muppet_getColors(handles.colormaps,plt.colormap,64);
-        colormap(clmap);
-        h=pcolor(x,y,z);
-        shading flat;
-        caxis([col(1) col(end)]);
-    case{'plotcontourmap','plotcontourmaplines'}
+        z(isnan(x))=NaN;
         if strcmpi(opt.contourtype,'limits')
             zc=z;
             cax=[col(1)-dc col(end)];
@@ -115,6 +71,9 @@ switch(lower(opt.plotroutine)),
         caxis(cax);
         colormap(clmap);
     case{'plotshadesmap'}
+        x=data.x;
+        y=data.y;
+        z=data.z;
         ncol=128;
         clmap=muppet_getColors(handles.colormaps,plt.colormap,ncol);
         colormap(clmap);
@@ -122,6 +81,9 @@ switch(lower(opt.plotroutine)),
         shading interp;
         caxis([col(1) col(end)]);
     case{'plotcontourlines'}
+        x=data.x;
+        y=data.y;
+        z=data.z;
         [c,h]=contour(x,y,z,col);
         if strcmpi(opt.linecolor,'auto')==0
             set(h,'LineColor',colorlist('getrgb','color',opt.linecolor));
