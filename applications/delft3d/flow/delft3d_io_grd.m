@@ -26,7 +26,7 @@ function varargout = delft3d_io_grd(varargin)
 %       delft3d_io_grd('write',filename,cor.x,cor.y)
 %       delft3d_io_grd('write',filename,STRUC)
 %
-% where struct has fields cor.x,cor.y.
+% where struct has fields cor.x,cor.y  (also writes required grid enclosure)
 %
 % See also: delft3d_io_ann, delft3d_io_bca, delft3d_io_bch, delft3d_io_bnd, 
 %           delft3d_io_crs, delft3d_io_dep, delft3d_io_dry, delft3d_io_eva, 
@@ -205,12 +205,12 @@ end
       OPT = setproperty(OPT,varargin{3:end});
       end
    
-   disp('!!!!! write function under construction')
-   
-   [fileexist,action]=filecheck(fname);
-   if strcmpi(action,'o')
-      mkpath(filepathstr(fname))
-   end
+      disp('!!!!! write function under construction')
+
+     [fileexist,action]=filecheck(fname);
+      if strcmpi(action,'o')
+         mkpath(filepathstr(fname))
+      end
    
       if nargin==3
       G         = varargin{3};
@@ -231,6 +231,8 @@ end
       
       if action=='o'
       OK   = wlgrid(cmd,fname,G.cor.x,G.cor.y);
+      MN   = enclosure('extract',G.cor.x,G.cor.y);
+      enclosure('write',strrep(fname,'grd','enc'),MN);
       else
       OK = 0;
       end
