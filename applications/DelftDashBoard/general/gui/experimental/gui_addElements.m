@@ -818,7 +818,7 @@ end
 %%
 function selectLineStyle_Callback(hObject,eventdata,element,i)
 
-values={'-','--','-.',':',''};
+values={'-','--','-.',':','none'};
 
 el=element(i).element;
     
