@@ -746,7 +746,7 @@ setHandles(handles);
 %%
 function exportFigure
 handles=getHandles;
-muppet_exportFigure(handles,handles.activefigure,'export');
+muppet_exportFigure(handles,handles.activefigure,'guiexport');
 
 %%
 function plotFigure

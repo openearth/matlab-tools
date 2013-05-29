@@ -4,6 +4,7 @@
     <name>fontgroup</name>
     <element>
       <style>selectfont</style>
+      <variable>font</variable>
       <horizontalalignment>1</horizontalalignment>
       <verticalalignment>1</verticalalignment>
       <text>Font</text>
@@ -14,6 +15,18 @@
       <variable>font.name</variable>
       <keyword>FontName</keyword>
       <default>Helvetica</default>
+      <check>
+        <operator>ne</operator>
+      </check>
+    </element>
+    <element>
+      <name>fontcolor</name>
+      <variable>font.color</variable>
+      <keyword>FontColor</keyword>
+      <default>Black</default>
+      <check>
+        <operator>ne</operator>
+      </check>
     </element>
     <element>
       <name>fontsize</name>
@@ -21,11 +34,17 @@
       <keyword>FontSize</keyword>
       <type>real</type>
       <default>8</default>
+      <check>
+        <operator>ne</operator>
+      </check>
     </element>
       <element>
       <name>fontangle</name>
       <variable>font.angle</variable>
       <default>normal</default>
+      <check>
+        <operator>ne</operator>
+      </check>
     <keyword>FontAngle</keyword>
     </element>
       <element>
@@ -33,18 +52,27 @@
       <variable>font.weight</variable>
       <keyword>FontWeight</keyword>
       <default>normal</default>
+      <check>
+        <operator>ne</operator>
+      </check>
     </element>
     <element>
       <name>fonthorizontalalignment</name>
       <variable>font.horizontalalignment</variable>
       <keyword>FontHorizontalAlignment</keyword>
       <default>left</default>
+      <check>
+        <operator>ne</operator>
+      </check>
     </element>
     <element>
       <name>fontverticalalignment</name>
       <variable>font.verticalalignment</variable>
       <keyword>FontVerticalAlignment</keyword>
       <default>top</default>
+      <check>
+        <operator>ne</operator>
+      </check>
     </element>
   </plotoption>
 </root>

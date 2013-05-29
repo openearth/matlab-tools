@@ -1,6 +1,8 @@
 function opt=muppet_setDefaultPlotOptions(varargin)
 
 opt=[];
+opt.number=[];
+
 if ~isempty(varargin)
     opt=varargin{1};
 end
@@ -117,14 +119,16 @@ opt.colorbar.font.weight='normal';
 opt.colorbar.font.color='black';
 opt.colorbar.changed=0;
 
-opt.plottimebar=0;
-opt.timebar.time=[];
-
 % Time bar
-opt.timemarker=0;
-opt.markertime=datenum(2000,1,1);
-opt.timebar=0;
-opt.bartime=datenum(2000,1,1);
+opt.timebar.type='none';
+opt.timebar.time=datenum(2000,1,1);
+opt.timebar.linecolor='Red';
+opt.timebar.linestyle='-';
+opt.timebar.linewidth=3;
+opt.timebar.marker='o';
+opt.timebar.markeredgecolor='black';
+opt.timebar.markerfacecolor='black';
+opt.timebar.markersize=10;
 
 opt.usecustomcontours=0;
 opt.custumcontours=[0 1 2];

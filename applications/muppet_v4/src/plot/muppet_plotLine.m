@@ -93,10 +93,22 @@ else
         'MarkerFaceColor',colorlist('getrgb','color',opt.markerfacecolor),'MarkerEdgeColor',colorlist('getrgb','color',opt.markeredgecolor));
 end
 
-if ~isempty(opt.timebar)
-    xt(1)=opt.bartime-xback;
-    xt(2)=opt.bartime-xback;
-    yt(1)=plt.ymin;
-    yt(2)=plt.ymax;
-    plot(xt,yt,'r','Linewidth',3);
+switch opt.timebar.type
+    case{'line'}
+        xt(1)=opt.timebar.time-xback;
+        xt(2)=opt.timebar.time-xback;
+        yt(1)=plt.ymin;
+        yt(2)=plt.ymax;
+        p=plot(xt,yt);
+        set(p,'Linewidth',opt.timebar.linewidth);
+        set(p,'LineStyle',opt.timebar.linestyle);
+        set(p,'Color',colorlist('getrgb','color',opt.timebar.linecolor));
+    case{'marker'}
+        xt=opt.timebar.time-xback;
+        yt=interp1(x,y,xt);
+        p=plot(xt,yt,'o');
+        set(p,'Marker',opt.timebar.marker);
+        set(p,'MarkerSize',opt.timebar.markersize);
+        set(p,'MarkerFaceColor',colorlist('getrgb','color',opt.timebar.markerfacecolor));
+        set(p,'MarkerEdgeColor',colorlist('getrgb','color',opt.timebar.markeredgecolor));
 end

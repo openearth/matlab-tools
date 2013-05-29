@@ -57,7 +57,16 @@ dataset.callback=callback;
 
 % Get info from file (load parameter dimensions)
 dataset.filename=filename;
-dataset=feval(callback,'read',dataset);
+
+wb = waitbox('Reading file ...');
+try
+    dataset=feval(callback,'read',dataset);
+    close(wb);
+catch
+    close(wb);
+    muppet_giveWarning('text','An error occured while reading data file!');
+    return
+end
 
 % Check if parameters are present, otherwise make parameters structure
 if ~isfield(dataset,'parameters')
@@ -190,7 +199,7 @@ xml.element=element;
 
 xml=gui_fillXMLvalues(xml);
 
-[dataset,ok]=gui_newWindow(dataset,'element',xml.element,'tag','uifigure','width',width,'height',height, ...
+[dataset,ok]=gui_newWindow(dataset,'element',xml.element,'tag','datasetgui','width',width,'height',height, ...
     'createcallback',@selectParameter,'title',handles.filetype(ift).filetype.longname,'modal',0);
 % gui_newWindow(dataset,'element',xml.element,'tag','uifigure','width',width,'height',height, ...
 %     'createcallback',@selectParameter,'title',dataset.filetypelongname,'modal',0);
@@ -206,6 +215,7 @@ oldsize=dataset.size;
 oldquantity=dataset.quantity;
 oldnrblocks=dataset.nrblocks;
 
+
 % Copy entire parameter structure (of selected parameter) to dataset
 % structure (but skip name subfield)
 fldnames=fieldnames(dataset.parameters(ipar).parameter);
@@ -216,6 +226,7 @@ for ii=1:length(fldnames)
             dataset.(fldnames{ii})=dataset.parameters(ipar).parameter.(fldnames{ii});
     end
 end
+
 dataset.parameter=dataset.parameters(ipar).parameter.name;
 
 % Time step
@@ -230,12 +241,14 @@ if dataset.size(1)>0
         if dataset.size(3)==0 && dataset.size(4)==0
             % Time series
             dataset.timestep=[];
+            dataset.timestepsfromlist=1;
             dataset.previoustimestep=1;
             dataset.timesteptext='1';
             dataset.selectalltimes=1;
         else
             % Map
             dataset.timestep=1;
+            dataset.timestepsfromlist=1;
             dataset.previoustimestep=1;
             dataset.timesteptext='1';
             dataset.selectalltimes=0;
@@ -243,6 +256,7 @@ if dataset.size(1)>0
         if dataset.size(1)>0
             if ~isempty(dataset.times)
                 timelist=datestr(dataset.times,0);
+                dataset.timelist=[];
                 for it=1:length(dataset.times)
                     dataset.timelist{it}=timelist(it,:);
                 end
@@ -252,6 +266,7 @@ if dataset.size(1)>0
 else
     dataset.time=[];
     dataset.timestep=[];
+    dataset.timestepsfromlist=1;
     dataset.timelist={''};
     dataset.timetext='';
     dataset.selectalltimes=0;
@@ -418,7 +433,25 @@ switch opt
         end
     case{'showtimes'}
         if isempty(dataset.times)
-            times=feval(dataset.callback,'gettimes');
+            wb = waitbox('Reading times ...');
+            try
+                times=feval(dataset.callback,'gettimes');                
+                % Copy times
+                if ~isempty(times)
+                    for ipar=1:length(dataset.parameters)
+                        if isempty(dataset.parameters(ipar).parameter.times)
+                            if dataset.size(1)==dataset.parameters(ipar).parameter.size(1)
+                                dataset.parameters(ipar).parameter.times=times;
+                            end
+                        end
+                    end
+                end
+                close(wb);
+            catch
+                close(wb);
+                times=[];
+                muppet_giveWarning('text','An error occured while reading times!');
+            end
             dataset.times=times;
             for it=1:length(times)
                 dataset.timelist{it}=datestr(times(it),0);
@@ -587,7 +620,15 @@ if isempty(dataset.time) && ~isempty(dataset.times)
 end
 
 % Import data
-dataset=feval(dataset.callback,'import',dataset);
+
+wb = waitbox('Reading data ...');
+try
+    dataset=feval(dataset.callback,'import',dataset);
+    close(wb);
+catch
+    close(wb);
+    muppet_giveWarning('text','An error occured while reading data!');
+end
 
 nrd=handles.nrdatasets+1;
 handles.nrdatasets=nrd;

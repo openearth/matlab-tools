@@ -4,7 +4,7 @@
     <name>adddategroup</name>
     <element>
       <style>panel</style>
-      <variable>adddatestring</variable>
+      <text>Date String</text>
       <position>0 0 350 100</position>
     </element>
     <element>

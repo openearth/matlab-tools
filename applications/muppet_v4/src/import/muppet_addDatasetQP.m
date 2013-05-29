@@ -92,6 +92,7 @@ switch lower(deblank(tp))
 end
 
 ii=0;
+timesread=0;
 
 % Get info for each parameter
 for j=i1:i2
@@ -121,17 +122,40 @@ for j=i1:i2
     % Bug in qpread?
     par.size=par.size.*dataproperties(ii).DimFlag;
 
+%     if timesread % times have already been read for one parameter
+%         if dataproperties(ii).DimFlag(1)>0 && timesread==0
+%             par.times=tms;
+%         end
+%     end
+    
     % Times
-    if dataproperties(ii).DimFlag(1)>0 && par.size(1)<1000
-        % Only read times when there are less than 1,000
+    if dataproperties(ii).DimFlag(1)>0 && par.size(1)<100 && timesread==0
+        % Only read times when there are less than 100
         par.times=qpread(fid,dataproperties(ii),'times');
+%        tms=par.times;
+%        timesread=1;
     end
-
+    
     % Stations
     if dataproperties(ii).DimFlag(2)>0
         par.stations=qpread(fid,dataproperties(ii),'stations');
     end
 
+    % NetCDF time series (should be fixed in qpread)
+    if strcmpi(fid.qp_filetype,'netcdf')
+        if ~isempty(dataproperties(ii).Dimension)
+            if strcmpi(dataproperties(ii).Dimension{3},'locations')
+                stations=nc_varget(dataset.filename,'platform_name');
+                stations=stations';
+                for istat=1:size(stations,1)
+                    par.stations{istat}=deblank(stations(istat,:));
+                end
+                par.size(2)=par.size(3);
+                par.size(3)=0;
+            end
+        end
+    end
+        
     par.coordinatesystem=cs;
     
     if sum(dataproperties(ii).DimFlag)>0
@@ -167,9 +191,9 @@ end
 %%
 function times=getTimes
 % Times
-dataset=gui_getUserData;
+dataset=gui_getUserData('tag','datasetgui');
 dataset.times=[];
-fid=qpfopen([dataset.pathname dataset.filename]);
+fid=qpfopen([dataset.filename]);
 dataproperties=qpread(fid);
 % Find first parameter with times
 for ii=1:length(dataproperties)
