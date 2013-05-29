@@ -72,8 +72,8 @@ pos(4)=100*ht/plt.scale;
 set(scalebar,'Units',fig.units);
 set(scalebar,'Position',pos*fig.cm2pix);
 
-set(scalebar,'XColor',[1 1 1]);
-set(scalebar,'YColor',[1 1 1]);
+% set(scalebar,'XColor',[1 1 1]);
+% set(scalebar,'YColor',[1 1 1]);
 
 tit=title(plt.scalebar.text);
 set(tit,'FontName',plt.scalebar.font.name);
