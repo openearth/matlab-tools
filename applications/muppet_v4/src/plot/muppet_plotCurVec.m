@@ -89,7 +89,7 @@ else
     
 end
 
-if strcmpi(handles.figures(i).figure.renderer,'opengl')
+if strcmpi(handles.figures(i).figure.renderer,'opengl') && opt.fadecurvyarrows
 
     % Make tail of arrows transparent
     nverticesperarrow=size(polx,1);

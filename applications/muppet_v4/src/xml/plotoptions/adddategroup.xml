@@ -5,7 +5,7 @@
     <element>
       <style>panel</style>
       <text>Date String</text>
-      <position>0 0 350 100</position>
+      <position>0 0 350 110</position>
     </element>
     <element>
       <style>checkbox</style>

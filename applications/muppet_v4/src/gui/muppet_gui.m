@@ -139,7 +139,17 @@ handles=getHandles;
 if pathname~=0
     handles.sessionfile=filename;
     cd(pathname);
-    [handles,ok]=muppet_newSession(handles,[pathname filename]);
+
+    wb = waitbox('Reading session file ...');
+    try
+        [handles,ok]=muppet_newSession(handles,[pathname filename]);
+        close(wb);
+    catch
+        close(wb);
+        muppet_giveWarning('text','An error occured while reading session file!');
+        return
+    end
+        
     if ok
         handles=muppet_updateDatasetNames(handles);
         handles=muppet_updateSubplotNames(handles);

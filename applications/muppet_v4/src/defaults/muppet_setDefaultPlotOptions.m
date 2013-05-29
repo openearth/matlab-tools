@@ -97,6 +97,7 @@ opt.curveclength=600;
 opt.curvecspacing=5000;
 opt.curveclifespan=50;
 opt.curvecrelativespeed=1;
+opt.fadecurvyarrows=1;
 
 opt.cmin=0;
 opt.cstep=0.1;
