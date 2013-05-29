@@ -379,27 +379,27 @@
   </element>
   <element>
     <style>text</style>
-    <position>25 460 260 15</position>
+    <position>25 460 273 15</position>
     <variable>datasettext1</variable>
   </element>
   <element>
     <style>text</style>
-    <position>25 445 260 15</position>
+    <position>25 445 273 15</position>
     <variable>datasettext2</variable>
   </element>
   <element>
     <style>text</style>
-    <position>25 430 260 15</position>
+    <position>25 430 273 15</position>
     <variable>datasettext3</variable>
   </element>
   <element>
     <style>text</style>
-    <position>25 415 260 15</position>
+    <position>25 415 273 15</position>
     <variable>datasettext4</variable>
   </element>
   <element>
     <style>text</style>
-    <position>25 400 260 15</position>
+    <position>25 400 273 15</position>
     <variable>datasettext5</variable>
   </element>
   <element>

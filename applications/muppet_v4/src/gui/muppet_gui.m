@@ -152,6 +152,7 @@ if pathname~=0
         
     if ok
         handles=muppet_updateDatasetNames(handles);
+        handles=muppet_updateFigureNames(handles);
         handles=muppet_updateSubplotNames(handles);
         handles=muppet_updateDatasetInSubplotNames(handles);
         % Compute scale of 2d map plots
