@@ -17,7 +17,6 @@ if ilayout
 else
     
     ip=muppet_findIndex(handles.plottype,'plottype','name',plt.type);
-    
     % First fix time axes
     switch plt.type
         case{'timeseries','timestack'}
@@ -31,18 +30,11 @@ else
     fprintf(fid,'%s \n','');
     
     for ii=1:length(handles.plottype(ip).plottype.option)
-        handles.plottype(ip).plottype.option(ii).option.name
-        iplt=muppet_findIndex(handles.subplotoption,'subplotoption','name',handles.plottype(ip).plottype.option(ii).option.name);
-        switch lower(handles.plottype(ip).plottype.option(ii).option.name)
-            case{'scalebarfontcolor'}
-                shite=1
-        end
-        
+        iplt=muppet_findIndex(handles.subplotoption,'subplotoption','name',handles.plottype(ip).plottype.option(ii).option.name);       
         if ~isempty(iplt)
             option=handles.subplotoption(iplt).subplotoption;
             muppet_writeOption(option,plt,fid,6,21);
-        end
-        
+        end        
     end
     
     fprintf(fid,'%s \n','');

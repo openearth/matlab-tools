@@ -124,24 +124,34 @@ try
                          datasets(id).dataset.time=datasets(id).dataset.times(itime);
                          datasets(id).dataset=feval(datasets(id).dataset.callback,'import',datasets(id).dataset);
                      else
-%                         % Averaging between surrounding times
-%                         iTime1=find(datasets(id).dataset.availabletimes-1e-4<t,1,'last');
-%                         Data1=UpdateDatasets(Data,0,iTime1,id);
-%                         iTime2=find(datasets(id).dataset.availabletimes+1e-4>=t,1,'first');
-%                         Data2=UpdateDatasets(Data,0,iTime2,id);
-%                         t1=datasets(id).dataset.availabletimes(iTime1);
-%                         t2=datasets(id).dataset.availabletimes(iTime2);
-%                         dt=t2-t1;
-%                         tFrac2=(t-t1)/dt;
-%                         tFrac1=1-tFrac2;
-%                         switch lower(datasets(id).dataset.Type)
-%                             case{'2dvector'}
-%                                 datasets(id).dataset.u  = tFrac1*Data1(id).u  + tFrac2*Data2(id).u;
-%                                 datasets(id).dataset.v  = tFrac1*Data1(id).v  + tFrac2*Data2(id).v;
-%                             case{'2dscalar'}
-%                                 datasets(id).dataset.z  = tFrac1*Data1(id).z  + tFrac2*Data2(id).z;
-%                                 datasets(id).dataset.zz = tFrac1*Data1(id).zz + tFrac2*Data2(id).zz;
-%                         end
+                        % Averaging between surrounding times
+                        itime1=find(datasets(id).dataset.availabletimes-1e-4<t,1,'last');
+                        itime2=find(datasets(id).dataset.availabletimes+1e-4>=t,1,'first');
+                        t1=datasets(id).dataset.availabletimes(itime1);
+                        t2=datasets(id).dataset.availabletimes(itime2);
+
+                        data1=datasets(id).dataset;
+                        data1.time=t1;
+                        data1.timestep=itime1;
+                        data1=feval(data1.callback,'import',data1);
+
+                        data2=datasets(id).dataset;
+                        data2.time=t2;
+                        data2.timestep=itime2;
+                        data2=feval(data2.callback,'import',data2);
+                        
+                        dt=t2-t1;
+                        tfrac2=(t-t1)/dt;
+                        tfrac1=1-tfrac2;
+                        datasets(id).dataset.time = t;
+                        switch lower(datasets(id).dataset.type)
+                            case{'vector2d2dxy'}
+                                datasets(id).dataset.u  = tfrac1*data1.u  + tfrac2*data2.u;
+                                datasets(id).dataset.v  = tfrac1*data1.v  + tfrac2*data2.v;
+                            case{'scalar2d2dxy'}
+                                datasets(id).dataset.z  = tFrac1*data1.z  + tfrac2*data2.z;
+                                datasets(id).dataset.zz = tFrac1*data1.zz + tfrac2*data2.zz;
+                        end
                      end
                 end
             end
