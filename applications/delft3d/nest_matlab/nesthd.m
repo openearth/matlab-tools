@@ -50,7 +50,7 @@ function nesthd(varargin)
 %% set additional paths
 %  is already taken care of by oetsettings: then setproperty is on path (most important OET function)
 
-if ~isdeployed & any(which('setproperty'))
+if ~isdeployed && any(which('setproperty'))
    addpath(genpath('..\..\..\..\matlab'));
 end
 
