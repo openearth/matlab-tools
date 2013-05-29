@@ -545,7 +545,7 @@ end
 %%
 function editVectorLegend
 handles=getHandles;
-s=handles.figures(handles.activefigure).figure.subplguiots(handles.activesubplot).subplot.vectorlegend;
+s=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.vectorlegend;
 [s,ok]=gui_newWindow(s, 'xmldir', handles.xmlguidir, 'xmlfile', 'vectorlegend.xml');
 if ok
     handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.vectorlegend=s;
