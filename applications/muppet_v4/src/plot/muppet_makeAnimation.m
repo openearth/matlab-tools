@@ -2,24 +2,31 @@ function muppet_makeAnimation(handles,ifig)
 
 animationsettings=handles.animationsettings;
 
-% Make temporary Data structure
+% Make temporary datasets structure
 datasets=handles.datasets;
-
-%CombinedDatasetProperties=handles.CombinedDatasetProperties;
 
 aviops=animationsettings.avioptions;
 
-% if animationsettings.makeKMZ
-%     handles.figures(ifig).figure.PaperSize(1)=handles.figures(ifig).figure.Axis(1).Position(3);
-%     handles.figures(ifig).figure.PaperSize(2)=handles.figures(ifig).figure.Axis(1).Position(4);
-%     handles.figures(ifig).figure.BackgroundColor='none';
-%     handles.figures(ifig).figure.Axis(1).BackgroundColor='none';
-%     handles.figures(ifig).figure.Axis(1).Position(1)=0;
-%     handles.figures(ifig).figure.Axis(1).Position(2)=0;
-%     handles.figures(ifig).figure.Axis(1).DrawBox=0;
-%     handles.figures(ifig).figure.Axis(1).ColorBarPosition=[-100 -100 0.5000 8];
-% end
-% 
+if animationsettings.makekmz
+    handles.figures(ifig).figure.width=handles.figures(ifig).figure.subplots(1).subplot.position(3);
+    handles.figures(ifig).figure.height=handles.figures(ifig).figure.subplots(1).subplot.position(4);
+    handles.figures(ifig).figure.backgroundcolor='none';
+    handles.figures(ifig).figure.frame='none';
+    handles.figures(ifig).figure.subplots(1).subplot.backgroundcolor='none';
+    handles.figures(ifig).figure.subplots(1).subplot.position(1)=0;
+    handles.figures(ifig).figure.subplots(1).subplot.position(2)=0;
+    handles.figures(ifig).figure.subplots(1).subplot.drawbox=0;
+    handles.figures(ifig).figure.subplots(1).subplot.colorbar.position=[-100 -100 0.5000 8];
+
+    % Projection
+    cstype=handles.figures(ifig).figure.subplots(1).subplot.coordinatesystem.type;
+    if strcmpi(cstype,'geographic')
+        % Assume WGS 84
+        handles.figures(ifig).figure.subplots(1).subplot.projection='equirectangular';
+    end
+
+end
+
 flist=dir('curvecpos*');
 if ~isempty(flist)
     delete('curvecpos*');
@@ -37,8 +44,10 @@ end
 % Determine frame size
 fig=figure('visible','off');
 set(fig,'PaperUnits',handles.figures(ifig).figure.units);
-set(fig,'PaperSize', [21 29.7]);
-set(fig,'PaperPosition',[1.3 1.2 handles.figures(ifig).figure.width handles.figures(ifig).figure.height]);
+
+set(fig,'PaperSize', [handles.figures(ifig).figure.width handles.figures(ifig).figure.height]);
+set(fig,'PaperPosition',[0 0 handles.figures(ifig).figure.width handles.figures(ifig).figure.height]);
+
 set(fig,'Renderer',handles.figures(ifig).figure.renderer);
 set(fig, 'InvertHardcopy', 'off');
 
@@ -88,7 +97,7 @@ try
     % Determine timestep and number of frames
     timestep=animationsettings.timestep/86400;
     
-    nrframes=max(round((animationsettings.stoptime-animationsettings.starttime)/timestep),1);
+    nrframes=max(round((animationsettings.stoptime-animationsettings.starttime)/timestep)+1,1);
     
     for iblock=1:nrframes
        
@@ -149,14 +158,7 @@ try
             if datasets(id).dataset.combineddataset
                 % Check to see if this a time-varying dataset
                 if datasets(id).dataset.tc=='t'
-                    % Find combined dataset number
-                    for j=1:handles.nrcombineddatasets
-                        if strcmpi(datasets(id).dataset.name,handles.combineddatasetproperties(j).name)
-                            ic=j;
-                            break;
-                        end
-                    end
-                    datasets=mp_combineDataset(datasets,combineddatasetproperties,id,ic);
+                    datasets=muppet_combineDataset(datasets,id);
                 end
             end
         end
@@ -252,6 +254,9 @@ try
     
     %% KMZ file
     if animationsettings.makekmz
+        
+        plt=handles.figures(ifig).figure.subplots(1).subplot;
+        
         % File names
         for iblock=1:nrframes
             str=num2str(iblock+10000);
@@ -260,27 +265,35 @@ try
         end
         dt=timestep;
         % Make colorbar
-        if handles.figures(ifig).figure.Axis(1).PlotColorBar;
-            makeColorBar(handles,'colorbar.png',[handles.Figure.Axis(1).CMin handles.Figure.Axis(1).CStep handles.Figure.Axis(1).CMax],handles.Figure(1).Axis(1).Plot(1).ColorMap,handles.Figure(1).Axis(1).ColorBarLabel);
+        colorbarfile='';
+        if plt.plotcolorbar;
+            colorbarfile='colorbar.png';
+            if plt.colorbar.decimals>=0
+                dec=plt.colorbar.decimals;
+            else
+                dec=0;
+            end
+            cosmos_makeColorBar(colorbarfile,'contours',plt.cmin:plt.cstep:plt.cmax,'colormap',plt.colormap,'label',plt.colorbar.label,'decimals',dec);
         end
         % Bounding box
-        csname=handles.figures(ifig).figure.Axis(1).coordinateSystem.name;
-        cstype=handles.figures(ifig).figure.Axis(1).coordinateSystem.type;
+        csname=plt.coordinatesystem.name;
+        cstype=plt.coordinatesystem.type;
         if strcmpi(csname,'unknown')
         else
-            if ~isfield(handles,'EPSG')
-                curdir=[handles.MuppetPath 'settings' filesep 'SuperTrans'];
-                handles.EPSG=load([curdir filesep 'data' filesep 'EPSG.mat']);
+            if ~isfield(handles,'epsg')
+%                handles.epsg=load([handles.settingsdir 'SuperTrans' filesep 'data' filesep 'EPSG.mat']);
+                handles.epsg=load('EPSG.mat');
             end
-            [xl1,yl1]=convertCoordinates(handles.figures(ifig).figure.Axis(1).XMin,handles.figures(ifig).figure.Axis(1).YMin,handles.EPSG,'CS1.name',csname,'CS1.type',cstype,'CS2.name','WGS 84','CS2.type','geo');
-            [xl2,yl2]=convertCoordinates(handles.figures(ifig).figure.Axis(1).XMax,handles.figures(ifig).figure.Axis(1).YMax,handles.EPSG,'CS1.name',csname,'CS1.type',cstype,'CS2.name','WGS 84','CS2.type','geo');
+            plt=muppet_updateLimits(plt,'setprojectionlimits');
+            [xl1,yl1]=convertCoordinates(plt.xminproj,plt.yminproj,handles.epsg,'CS1.name',csname,'CS1.type',cstype,'CS2.name','WGS 84','CS2.type','geo');
+            [xl2,yl2]=convertCoordinates(plt.xmaxproj,plt.ymaxproj,handles.epsg,'CS1.name',csname,'CS1.type',cstype,'CS2.name','WGS 84','CS2.type','geo');
         end
         fname=[handles.animationsettings.avifilename(1:end-4) '.kml'];
-        makeKMZ(fname,xl1,xl2,yl1,yl2,fignames,tms,dt,'colorbar.png');
+        makeKMZ(fname,xl1,xl2,yl1,yl2,fignames,tms,dt,colorbarfile);
         delete('colorbar.png');
         % Delete existing figures
-        if handles.animationsettings.keepFigures==0
-            for ii=1:nf
+        if handles.animationsettings.keepfigures==0
+            for ii=1:nrframes
                 delete(fignames{ii});
             end
         end
@@ -290,7 +303,9 @@ catch
     try
         avihandle=writeavi('close', avihandle);
     end
-    close(wb);
+    if ishandle(wb)
+        close(wb);
+    end
     muppet_giveWarning('text','Something went wrong while generating avi file');
 end
 %%
@@ -299,7 +314,7 @@ function makeKMZ(fname,xl1,xl2,yl1,yl2,fignames,tms,dt,colorbarfile)
 fid=fopen(fname,'wt');
 fprintf(fid,'%s\n','<kml xmlns="http://www.opengis.net/kml/2.2">');
 fprintf(fid,'%s\n','<Document>');
-if handles.figures(ifig).figure.Axis(1).PlotColorBar;
+if ~isempty(colorbarfile)
     fprintf(fid,'%s\n','  <ScreenOverlay id="colorbar">');
     fprintf(fid,'%s\n','    <Icon>');
     fprintf(fid,'%s\n','      <href>colorbar.png</href>');
@@ -320,7 +335,7 @@ for iblock=1:length(tms)
     fprintf(fid,'%s\n', '      </TimeSpan>');
     
     fprintf(fid,'%s\n', '      <Icon>');
-    fprintf(fid,'%s\n',['        <href>' handles.kmz.figname '</href>']);
+    fprintf(fid,'%s\n',['        <href>' fignames{iblock} '</href>']);
     fprintf(fid,'%s\n', '      </Icon>');
     fprintf(fid,'%s\n', '      <LatLonBox>');
     fprintf(fid,'%s\n',['        <north>' num2str(yl2) '</north>']);
@@ -340,7 +355,7 @@ zipfilename=[fname(1:end-4) '.zip'];
 nf=length(fignames);
 fignames{nf+1}=fname;
 if ~isempty(colorbarfile)
-    fignames{nf+2}='colorbar.png';
+    fignames{nf+2}=colorbarfile;
 end
 zip(zipfilename,fignames);
 

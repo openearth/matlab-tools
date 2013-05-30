@@ -24,7 +24,7 @@ end
 
 paperwidth=fig.width*fig.cm2pix;
 paperheight=fig.height*fig.cm2pix;
-BackgroundColor=colorlist('getrgb','color',fig.backgroundcolor);
+backgroundcolor=colorlist('getrgb','color',fig.backgroundcolor);
 
 if strcmp(mode,'export') || strcmp(mode,'guiexport')
     % Exporting figure
@@ -41,16 +41,16 @@ if strcmp(mode,'export') || strcmp(mode,'guiexport')
     set(figh,'Tag','figure','UserData',ifig);
     for k=1:fig.nrsubplots
         if strcmpi(fig.subplots(k).subplot.type,'3d') && fig.subplots(k).subplot.drawbox
-            BackgroundColor=colorlist('getrgb','color',fig.subplots(k).subplot.backgroundcolor);
+            backgroundcolor=colorlist('getrgb','color',fig.subplots(k).subplot.backgroundcolor);
         end
     end
 else
     % Previewing figure
     hf=findobj('Tag','figure','UserData',ifig);
     if ~isempty(hf)
-        OldPosition=get(figure(ifig),'Position');
+        oldposition=get(figure(ifig),'Position');
     else
-        OldPosition=[0 0 0 0];
+        oldposition=[0 0 0 0];
     end
     figh=figure;
     set(figh,'Tag','figure','UserData',ifig);
@@ -102,11 +102,6 @@ else
     set(red,'ClickedCallback',{@muppet_UIRedraw});
     set(red,'Tag','UIPushToolRedraw');
     set(red,'cdata',c.refresh_doc16);
-
-%     xpor = uipushtool(tbh,'Separator','off','HandleVisibility','on','ToolTipString','Export Figure');
-%     set(xpor,'ClickedCallback',{@muppet_UIExport});
-%     set(xpor,'Tag','UIPushToolExport');
-%     set(xpor,'cdata',c.save_green16);
 
     addsubplot = uipushtool(tbh,'Separator','on','HandleVisibility','on','ToolTipString','Add Subplot');
     set(addsubplot,'ClickedCallback',{@muppet_UIAddSubplot});
@@ -167,9 +162,9 @@ else
     set(h,'cdata',c.tool_text);
 
     a=get(0,'ScreenSize');
-    NewPosition=[round(a(3)/2)-0.5*paperwidth round(a(4)/2)-0.5*paperheight-10 paperwidth paperheight];
-    if abs(OldPosition(3)-NewPosition(3))>2 || abs(OldPosition(4)-NewPosition(4))>2 
-        set(figh,'Position',NewPosition);
+    newposition=[round(a(3)/2)-0.5*paperwidth round(a(4)/2)-0.5*paperheight-10 paperwidth paperheight];
+    if abs(oldposition(3)-newposition(3))>2 || abs(oldposition(4)-newposition(4))>2 
+        set(figh,'Position',newposition);
     end
     
     set(figh,'Renderer',fig.renderer);
@@ -183,7 +178,7 @@ else
 
 end
 
-set(figh,'Color',BackgroundColor);
+set(figh,'Color',backgroundcolor);
 set(figh, 'InvertHardcopy', 'off');
 set(figh,'Tag','figure','UserData',ifig);
 fig.handle=figh;

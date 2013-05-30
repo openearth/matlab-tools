@@ -38,47 +38,54 @@ fclose(fid);
 %% Determine location of datasets, figures etc.
 
 nd=0;
-ncd=0;
+% ncd=0;
 
 if ilayout==0
     
     for ii=1:length(str)
-
-        keyword='dataset';
-        if length(str{ii})>=length(keyword)
-            if strcmpi(str{ii}(1:length(keyword)),keyword)
+        
+        b=strread(deblank2(str{ii}),'%s');
+        if ~isempty(b)
+            firststring=b{1};
+            
+            keyword='dataset';
+            %        if length(str{ii})>=length(keyword)
+            if strcmpi(firststring,keyword)
                 nd=nd+1;
                 data(nd).i1=ii;
             end
-        end
-        keyword='enddataset';
-        if length(str{ii})>=length(keyword)
-            if strcmpi(str{ii}(1:length(keyword)),keyword)
+            %        end
+            keyword='enddataset';
+            %        if length(str{ii})>=length(keyword)
+            if strcmpi(firststring,keyword)
                 data(nd).i2=ii;
             end
-        end
-        keyword='combineddataset';
-        if length(str{ii})>=length(keyword)
-            if strcmpi(str{ii}(1:length(keyword)),keyword)
-                ncd=ncd+1;
-                combineddata(ncd).i1=ii;
-            end
-        end
-        keyword='endcombineddataset';
-        if length(str{ii})>=length(keyword)
-            if strcmpi(str{ii}(1:length(keyword)),keyword)
-                combineddata(ncd).i2=ii;
-            end
-        end
-        if length(str{ii})>=6
-            if strcmpi(str{ii}(1:6),'figure')
+            %        end
+            %         keyword='combineddataset';
+            %         if length(str{ii})>=length(keyword)
+            %             if strcmpi(str{ii}(1:length(keyword)),keyword)
+            %                 ncd=ncd+1;
+            %                 combineddata(ncd).i1=ii;
+            %             end
+            %         end
+            %         keyword='endcombineddataset';
+            %         if length(str{ii})>=length(keyword)
+            %             if strcmpi(str{ii}(1:length(keyword)),keyword)
+            %                 combineddata(ncd).i2=ii;
+            %             end
+            %         end
+            if strcmpi(firststring,'figure')
+                %        if length(str{ii})>=6
+                %            if strcmpi(str{ii}(1:6),'figure')
                 break
+                %            end
             end
         end
+        
     end
 
     handles.nrdatasets=nd;
-    handles.nrcombineddatasets=ncd;
+%     handles.nrcombineddatasets=ncd;
 
 end
 

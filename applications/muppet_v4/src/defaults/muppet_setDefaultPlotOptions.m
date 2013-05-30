@@ -27,6 +27,8 @@ opt.font.size=8;
 opt.font.weight='normal';
 opt.font.angle='normal';
 opt.font.color='Black';
+opt.font.horizontalalignment='left';
+opt.font.verticalalignment='baseline';
 opt.textposition='NorthEast';
 
 opt.contourlabels=0;

@@ -36,6 +36,8 @@ else
             deleteDataset;
         case{'adddatasettosubplot'}
             addDatasetToSubplot;
+        case{'combinedatasets'}
+            combineDatasets;
         case{'selectsubplot'}
             selectSubplot;
         case{'addsubplot'}
@@ -308,6 +310,14 @@ end
 function addDatasetToSubplot
 handles=getHandles;
 handles=muppet_addDatasetToSubplot(handles);
+setHandles(handles);
+
+%%
+function combineDatasets
+muppet_editCombinedDatasets;
+handles=getHandles;
+handles.nrdatasets=length(handles.datasets);
+handles=muppet_updateDatasetNames(handles);
 setHandles(handles);
 
 %%

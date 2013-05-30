@@ -111,8 +111,10 @@ switch lower(plt.datasets(id).dataset.plotroutine)
 %         handles=PlotPolygon3D(handles,ifig,isub,id,mode);
     case {'plotrose'}
         h=muppet_plotRose(handles,ifig,isub,id);
-    case {'plottext'}
-        h=muppet_plotText(handles,ifig,isub,id,1);
+%     case {'plottext'}
+%         h=muppet_plotText(handles,ifig,isub,id,1);
+    case {'plotinteractivetext'}
+        h=muppet_plotFreeText(handles,ifig,isub,id);
     case {'plotinteractivepolyline'}
         muppet_plotInteractivePolyline(handles,ifig,isub,id);
     case {'drawspline'}

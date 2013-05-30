@@ -124,58 +124,118 @@ for isub=1:fig.nrsubplots
                         nd2=nd0+ii;
                         
                         dataset=[];
+
                         dataset=muppet_setDefaultDatasetProperties(dataset);
                         
-                        % Determine name of new dataset
-                        imax=0;
-                        ipol=strmatch('polyline',handles.datasetnames);
-                        for n=1:length(ipol)
-                            nm=handles.datasetnames{ipol(n)};
-                            if length(nm)>8
-                                nm=deblank(nm(9:end));
-                                v=str2double(nm);
-                                if ~isnan(v)
-                                    imax=max(imax,v);
-                                end
-                            end
-                        end
-                        nm=['polyline ' num2str(imax+1)];
-                        
-                        % Find handle of new dataset
-                        hh=findobj(gcf,'tag','interactivepolyline');
-                        for ih=1:length(hh)
-                            options=getappdata(hh(ih),'options');
-                            if ~isempty(options)
-                                if ~isempty(options.userdata)
-                                    if options.userdata(2)==isub && options.userdata(3)==nd2
-                                        h=hh(ih);
-                                        break
+                        switch fig.subplots(isub).subplot.datasets(nd2).dataset.type
+
+                            case{'interactivepolyline'}
+                                
+                                % Determine name of new dataset
+                                imax=0;
+                                ipol=strmatch('polyline',handles.datasetnames);
+                                for n=1:length(ipol)
+                                    nm=handles.datasetnames{ipol(n)};
+                                    if length(nm)>8
+                                        nm=deblank(nm(9:end));
+                                        v=str2double(nm);
+                                        if ~isnan(v)
+                                            imax=max(imax,v);
+                                        end
                                     end
                                 end
-                            end
+                                nm=['polyline ' num2str(imax+1)];
+                                
+                                % Find handle of new dataset
+                                hh=findobj(gcf,'tag','interactivepolyline');
+                                for ih=1:length(hh)
+                                    options=getappdata(hh(ih),'options');
+                                    if ~isempty(options)
+                                        if ~isempty(options.userdata)
+                                            if options.userdata(2)==isub && options.userdata(3)==nd2
+                                                h=hh(ih);
+                                                break
+                                            end
+                                        end
+                                    end
+                                end
+                                
+                                % Add new dataset
+                                dataset.name=nm;
+                                dataset.type='interactivepolyline';
+                                dataset.filetype='interactivepolyline';
+                                dataset.filename='Interactive Polyline';
+                                dataset.x=getappdata(h,'x');
+                                dataset.y=getappdata(h,'y');
+                                nrd=handles.nrdatasets+1;
+                                handles.nrdatasets=nrd;
+                                handles.datasetnames{nrd}=dataset.name;
+                                handles.activedataset=nrd;
+                                handles.datasets(nrd).dataset=dataset;
+                                
+                                % And now add datasets to subplot
+                                fig.subplots(isub).subplot.datasets(nd2).dataset.name=nm;
+                                handles.figures(ifig).figure.subplots(isub).subplot.datasets(nd2).dataset=fig.subplots(isub).subplot.datasets(nd2).dataset;
+                                handles.figures(ifig).figure.subplots(isub).subplot.datasets(nd2).dataset.name=nm;
+                                handles.figures(ifig).figure.subplots(isub).subplot.datasets(nd2).dataset.plotroutine='plotinteractivepolyline';
+                                handles.figures(ifig).figure.subplots(isub).subplot.datasets(nd2).dataset.type='interactivepolyline';
+                                handles.figures(ifig).figure.subplots(isub).subplot.datasets(nd2).dataset.polylinetype=options.type;
+                                
+                            case{'interactivetext'}
+
+                                % Determine name of new dataset
+                                imax=0;
+                                ipol=strmatch('interactivetext',handles.datasetnames);
+                                for n=1:length(ipol)
+                                    nm=handles.datasetnames{ipol(n)};
+                                    if length(nm)>8
+                                        nm=deblank(nm(16:end));
+                                        v=str2double(nm);
+                                        if ~isnan(v)
+                                            imax=max(imax,v);
+                                        end
+                                    end
+                                end
+                                nm=['interactivetext ' num2str(imax+1)];
+                                
+                                % Find handle of new dataset
+                                hh=findobj(gcf,'tag','interactivetext');
+                                for ih=1:length(hh)
+                                    options=getappdata(hh(ih),'options');
+                                    if ~isempty(options)
+                                        if ~isempty(options.userdata)
+                                            if options.userdata(2)==isub && options.userdata(3)==nd2
+                                                h=hh(ih);
+                                                break
+                                            end
+                                        end
+                                    end
+                                end
+                                
+                                % Add new dataset
+                                dataset.name=nm;
+                                dataset.type='interactivetext';
+                                dataset.filetype='interactivetext';
+                                dataset.filename='Interactive Text';
+                                dataset.x=getappdata(h,'x');
+                                dataset.y=getappdata(h,'y');
+                                dataset.text=getappdata(h,'text');
+                                dataset.rotation=getappdata(h,'rotation');
+                                dataset.curvature=getappdata(h,'curvature');
+                                nrd=handles.nrdatasets+1;
+                                handles.nrdatasets=nrd;
+                                handles.datasetnames{nrd}=dataset.name;
+                                handles.activedataset=nrd;
+                                handles.datasets(nrd).dataset=dataset;
+                                
+                                % And now add datasets to subplot
+                                fig.subplots(isub).subplot.datasets(nd2).dataset.name=nm;
+                                handles.figures(ifig).figure.subplots(isub).subplot.datasets(nd2).dataset=fig.subplots(isub).subplot.datasets(nd2).dataset;
+                                handles.figures(ifig).figure.subplots(isub).subplot.datasets(nd2).dataset.name=nm;
+                                handles.figures(ifig).figure.subplots(isub).subplot.datasets(nd2).dataset.plotroutine='plotinteractivetext';
+                                handles.figures(ifig).figure.subplots(isub).subplot.datasets(nd2).dataset.type='interactivetext';
+                                
                         end
-                        
-                        % Add new dataset
-                        dataset.name=nm;
-                        dataset.type='interactivepolyline';
-                        dataset.filetype='interactivepolyline';
-                        dataset.filename='N/A';
-                        dataset.x=getappdata(h,'x');
-                        dataset.y=getappdata(h,'y');
-                        nrd=handles.nrdatasets+1;
-                        handles.nrdatasets=nrd;
-                        handles.datasetnames{nrd}=dataset.name;
-                        handles.activedataset=nrd;
-                        handles.datasets(nrd).dataset=dataset;
-                        
-                        % And now add datasets to subplot
-                        fig.subplots(isub).subplot.datasets(nd2).dataset.name=nm;
-                        handles.figures(ifig).figure.subplots(isub).subplot.datasets(nd2).dataset=fig.subplots(isub).subplot.datasets(nd2).dataset;
-                        handles.figures(ifig).figure.subplots(isub).subplot.datasets(nd2).dataset.name=nm;
-                        handles.figures(ifig).figure.subplots(isub).subplot.datasets(nd2).dataset.plotroutine='plotinteractivepolyline';
-                        handles.figures(ifig).figure.subplots(isub).subplot.datasets(nd2).dataset.type='interactivepolyline';
-                        handles.figures(ifig).figure.subplots(isub).subplot.datasets(nd2).dataset.polylinetype=options.type;
-                        
                     end
                 end
                 
@@ -187,6 +247,8 @@ for isub=1:fig.nrsubplots
             end
             
             if fig.subplots(isub).subplot.annotationschanged
+
+                % First polylines                
                 hh=findobj(gcf,'Tag','interactivepolyline');
                 for id=1:length(hh)
                     h=hh(id);
@@ -203,6 +265,27 @@ for isub=1:fig.nrsubplots
                         end
                     end
                 end
+                
+                % Now text
+                hh=findobj(gcf,'Tag','interactivetext');
+                for id=1:length(hh)
+                    h=hh(id);
+                    options=getappdata(h,'options');
+                    if ~isempty(options)
+                        if ~isempty(options.userdata)
+                            if options.userdata(2)==isub
+                                id1=options.userdata(3);
+                                nm=fig.subplots(isub).subplot.datasets(id1).dataset.name;
+                                id2=strmatch(nm,handles.datasetnames,'exact');
+                                handles.datasets(id2).dataset.x=getappdata(h,'x');
+                                handles.datasets(id2).dataset.y=getappdata(h,'y');
+                                handles.datasets(id2).dataset.text=getappdata(h,'text');
+                                handles.datasets(id2).dataset.rotation=getappdata(h,'rotation');
+                                handles.datasets(id2).dataset.curvature=getappdata(h,'curvature');
+                            end
+                        end
+                    end
+                end                
                 fig.subplots(isub).subplot.annotationschanged=0;
             end
     end

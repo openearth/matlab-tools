@@ -742,7 +742,7 @@
     <tag>axespanel</tag>
     <style>panel</style>
     <position>20 220 880 175</position>
-    <text>Axis Properties</text>
+    <text>Axis Limits</text>
   </element>
   <element>
     <tag>yeartext</tag>

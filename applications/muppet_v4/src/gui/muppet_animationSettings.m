@@ -119,15 +119,15 @@ if pathname~=0
     fprintf(fid,'%s \n',txt);
     txt=[''];
     fprintf(fid,'%s \n',txt);
-    txt=['fccHandler     ' num2str(h.avioptions.fcchandler)];
+    txt=['fccHandler     ' num2str(h.avioptions.fccHandler)];
     fprintf(fid,'%s \n',txt);
-    txt=['KeyFrames      ' num2str(h.avioptions.keyframes)];
+    txt=['KeyFrames      ' num2str(h.avioptions.KeyFrames)];
     fprintf(fid,'%s \n',txt);
-    txt=['Quality        ' num2str(h.avioptions.quality)];
+    txt=['Quality        ' num2str(h.avioptions.Quality)];
     fprintf(fid,'%s \n',txt);
-    txt=['BytesPerSec    ' num2str(h.avioptions.bytespersec)];
+    txt=['BytesPerSec    ' num2str(h.avioptions.BytesPerSec)];
     fprintf(fid,'%s \n',txt);
-    txt=['Parameters     ' num2str(h.avioptions.parameters)];
+    txt=['Parameters     ' num2str(h.avioptions.Parameters)];
     fprintf(fid,'%s \n',txt);
     
     fclose(fid);

@@ -74,3 +74,16 @@ dataset.annotationtext='';
 
 dataset.coordinatesystem.name='unspecified';
 dataset.coordinatesystem.type='projected';
+
+% Free text
+dataset.text='';
+dataset.rotation=0;
+dataset.curvature=0;
+
+% Combined dataset
+dataset.multiplya=1.0;
+dataset.multiplyb=1.0;
+dataset.uniformvalue=1.0;
+dataset.dataseta='';
+dataset.datasetb='';
+dataset.operatio='Add';

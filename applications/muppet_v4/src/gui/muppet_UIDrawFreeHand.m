@@ -68,6 +68,7 @@ opt=muppet_setDefaultPlotOptions;
 opt.markersize=4;
 opt.fillclosedpolygons=1;
 opt.fillcolor='red';
+opt.type='interactivepolyline';
 
 fig.subplots(isub).subplot.datasets(nrd).dataset=opt;
 

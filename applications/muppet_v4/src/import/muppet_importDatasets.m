@@ -3,6 +3,9 @@ function [handles,ok]=muppet_importDatasets(handles)
 ok=0;
 
 for id=1:handles.nrdatasets
+    if strcmpi(handles.datasets(id).dataset.filetype,'combineddataset')
+        handles.datasets(id).dataset.combineddataset=1;
+    end
     dataset=handles.datasets(id).dataset;
     name=dataset.name;
     if ~dataset.combineddataset
@@ -43,6 +46,11 @@ for id=1:handles.nrdatasets
 end
 
 % Combine
+for id=1:handles.nrdatasets
+    if handles.datasets(id).dataset.combineddataset
+        handles.datasets=muppet_combineDataset(handles.datasets,id);
+    end
+end
 
 % Find numbers and types of dataset in subplot
 for ifig=1:handles.nrfigures
