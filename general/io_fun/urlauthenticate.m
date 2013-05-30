@@ -4,7 +4,7 @@ function url2 = urlauthenticate(url,user,passwd)
 % urlauthenticate(url,user,passwd)
 %
 % Example: urlauthenticate(http:/www.whathever.nl,user,passwd)
-% returns % http://user:password@www.whathever.nl
+% returns % http://USER:PASSWORD@www.whathever.nl
 %
 %See also: urlread_basicauth, urlread_basicauth2
 

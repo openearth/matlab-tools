@@ -292,9 +292,15 @@ while length(varargin)>0,
   k=k+1;
 end;
  
+%% checks
 [inn,inm]=size(xin);
 if ~(inn==1 | inm==1), error('Input time series is not a vector'); end;
 
+if any(strmatch(errcalc(2:end),'boot')) && exist('dt0','var')
+   % non-equidistant time series do not allow for fft
+   error(['When ''dt'' is a non-equidistant vector, error estimate with ''',errcalc,''' not possible, only ''lin''.'])
+end
+%%
 xin=xin(:); % makes xin a column vector
 nobs=length(xin);
 

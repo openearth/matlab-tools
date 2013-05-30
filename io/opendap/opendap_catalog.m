@@ -39,15 +39,8 @@ function varargout = opendap_catalog(varargin)
 %
 %  [~,nc_folder_list] = opendap_catalog(...) also returns unique folders
 %
-% Tested succesfully with maxlevel=Inf for:
-%
-% * THREDDS: http://opendap.deltares.nl/thredds/catalog/opendap/catalog.xml
-% * HYRAX:   http://opendap.deltares.nl/opendap/catalog.xml (need to specify toplevel url)
-%
-% * THREDDS: http://coast-enviro.er.usgs.gov/thredds/catalog.xml (externals do not work yet)
-%
-% * HYRAX:   http://data.nodc.noaa.gov/opendap/catalog.xml (with maxlevel=4, some forbidden catalogs are handled with try, catch)
-% * local directory
+% Tested succesfully with maxlevel=Inf for: http://opendap.deltares.nl/thredds/catalog/opendap/catalog.xml
+% opendap_catalog is slow due to terribly bad performance of xml_read:DOMnode2struct
 %
 % Example:
 %
@@ -56,7 +49,7 @@ function varargout = opendap_catalog(varargin)
 %   
 %See web:  http://www.unidata.ucar.edu/Projects/THREDDS/tech/catalog/v1.0.2/Primer.html
 %See also: OPENDAP_CATALOG_DATASET, NC_CF_OPENDAP2CATALOG, XML_READ, XMLREAD, FINDALLFILES, SNCTOOLS
-%          THREDDS_DUMP, THREDDS_INFO
+%          THREDDS_DUMP, THREDDS_INFO, python module "openearthtools.io.opendap.opendap_catalog"
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -212,7 +205,11 @@ else % catalog: either on web or local
       end
    
    try
-      
+
+      if OPT.debug
+        dprintf(OPT.log,[OPT.url,'xml.\n'])      
+      end
+       
       D   = xml_read(OPT.url,pref);
       
       if OPT.debug

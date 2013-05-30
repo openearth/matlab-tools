@@ -11,7 +11,7 @@ function varargout = csv2struct(fname,varargin)
 %
 % For other keywords + defaults call without arguments: csv2struct()
 %
-% e.g. D = csv2struct('somefile.csv','delimiter',';','CommentStyle','%')
+% e.g. D = csv2struct('somefile.csv','delimiter',';','commentstyle','%')
 %
 % Note: columns are mapped to numeric, columns where char conversion
 % yields NaN are kept as char (incl lines with pure text)
@@ -68,8 +68,9 @@ function varargout = csv2struct(fname,varargin)
    OPT.units        = 0;
    OPT.delimiter    = ',';
    OPT.error        = 0;
-   OPT.CommentStyle = '#';
+   OPT.commentstyle = '#'; % switched to lower case 2013-05
    OPT.quotes       = [0 0];
+   OPT.headerlines  = 0;
    
    if nargin==0
       varargout = {OPT};
@@ -100,7 +101,10 @@ function varargout = csv2struct(fname,varargin)
       META.datenum  = tmp.datenum; % not for old matlab versions
 
       fid      = fopen(fname);
-      rec      = fgetl_no_comment_line(fid,OPT.CommentStyle);
+      for i=1:OPT.headerlines
+      rec      = fgetl(fid);
+      end
+      rec      = fgetl_no_comment_line(fid,OPT.commentstyle);
       col      = textscan(rec,'%s','Delimiter',OPT.delimiter);
       if OPT.quotes(1)
       colnames = cellfun(@(x) x([2:end-1]),col{1},'UniformOutput',0);
@@ -117,8 +121,8 @@ function varargout = csv2struct(fname,varargin)
       end
    
       if OPT.units
-      rec      = fgetl_no_comment_line(fid,OPT.CommentStyle);
-      units    = textscan(rec,fmt,'Delimiter',OPT.delimiter,'CommentStyle',OPT.CommentStyle);
+      rec      = fgetl_no_comment_line(fid,OPT.commentstyle);
+      units    = textscan(rec,fmt,'Delimiter',OPT.delimiter,'commentstyle',OPT.commentstyle);
       UNITS    = cellfun(@(x) x([2:end-1]),units{1},'UniformOutput',0);
       else
       UNITS    = [];
@@ -126,7 +130,7 @@ function varargout = csv2struct(fname,varargin)
    
    %% load
    
-      RAW = textscan(fid,fmt,'Delimiter',OPT.delimiter,'CommentStyle',OPT.CommentStyle);
+      RAW = textscan(fid,fmt,'Delimiter',OPT.delimiter,'commentstyle',OPT.commentstyle);
       fclose(fid);
       for icol=1:length(RAW)
       

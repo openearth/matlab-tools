@@ -19,7 +19,7 @@ function dprintf(debug,varargin)
 %See also: FPRINTF, WARNING, DISP
 
    if debug > 0
-       fprintf(debug,varargin{:});
+       fprintf(debug,'%s\n',varargin{:});
    end   
 
   % if debug
