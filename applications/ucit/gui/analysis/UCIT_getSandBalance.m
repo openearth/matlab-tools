@@ -129,6 +129,7 @@ for n = 1:size(OPT.min_coverage,2)
                         fprintf(fid,'%s\n',[' Year      Volume     Coverage     Area     Vol/Area']);
                         fprintf(fid,'%5.0f %12.0f %9.2f   %9.0f %9.2f \n',[VolumeOverview]');
                         fclose(fid);
+                        clear VolumeOverview
                     end
                     %% Make volume plot
                     if postProcessing && whattodo(1)
@@ -147,10 +148,10 @@ for n = 1:size(OPT.min_coverage,2)
                     errordlg(['Selected minimal coverage for ' OPT.polyname{i}(1:end-4) ' too high!']);
                     disp('No data written; coverage criteria too high!')
                 end
-                
             end
         end
     end
+  %  clear OPT results volumes
 end
 
 warning(warningstate)
