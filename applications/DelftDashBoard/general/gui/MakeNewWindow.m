@@ -93,6 +93,7 @@ set(fig,'Units','pixels');
 set(fig,'Position',[0 0 sz(1) sz(2)]);
 set(fig,'Name',Name,'NumberTitle','off');
 set(fig,'Tag',Name);
+set(fig,'Resize','off');
 PutInCentre(fig);
 
 set(fig,'Visible','on');
