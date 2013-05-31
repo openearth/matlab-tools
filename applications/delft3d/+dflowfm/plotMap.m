@@ -123,12 +123,12 @@ function varargout = plotMap(varargin)
       
       nextarg = 3;
       if ~odd(nargin)
-        if isnumeric(varargin{2}) & isscalar(varargin{2}) & ischar(varargin{1}) % only output file, not input file
+        if isnumeric(varargin{2}) && isscalar(varargin{2}) && ischar(varargin{1}) % only output file, not input file
           it      = varargin{2};
           D       = dflowfm.readMap(ncfile,it);
-        elseif isnumeric(varargin{2}) & isscalar(varargin{2}) & ~ischar(varargin{1})
+        elseif isnumeric(varargin{2}) && isscalar(varargin{2}) && ~ischar(varargin{1})
           error('when timestep/data is supplied the first argument should be ''ncfile''.')
-        elseif isnumeric(varargin{2}) & ~isscalar(varargin{2})
+        elseif isnumeric(varargin{2}) && ~isscalar(varargin{2})
           it      = varargin{2};
           OPT.parameter     = 'auto';
           D.cen.(OPT.parameter) = varargin{2};
@@ -155,7 +155,7 @@ function varargout = plotMap(varargin)
       end
    end
    
-   if isnumeric(OPT.axis) & ~isempty(OPT.axis) % axis vector 2 polygon
+   if isnumeric(OPT.axis) && ~isempty(OPT.axis) % axis vector 2 polygon
    tmp        = OPT.axis;
    OPT.axis.x = tmp([1 2 2 1]);
    OPT.axis.y = tmp([3 3 4 4]);clear tmp
@@ -163,7 +163,7 @@ function varargout = plotMap(varargin)
 
 %% plot centres (= flow cells = circumcenters)
 
-if ~(isfield(G,'peri') & isfield(G,'cen'))
+if ~(isfield(G,'peri') && isfield(G,'cen'))
 
    error('unable to plot map: read BOTH the grid and map from *_map.nc (*_net.nc does not contain node connectivity!)')
 
@@ -176,7 +176,7 @@ else
    end
 
    % the PATCH method is slow and is superseded in favour of TRISURFCORCEN after PATCH2TRI 
-   if ~(isfield(G,'tri') & isfield(G,'map3'))
+   if ~(isfield(G,'tri') && isfield(G,'map3'))
    
       peri.mask1 = find(cen.mask(G.cen.LinkType(cen.mask)==1));
       peri.mask  = find(cen.mask(G.cen.LinkType(cen.mask)~=1)); % i.e. 0=closed or 2=between 2D elements

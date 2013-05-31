@@ -60,6 +60,7 @@ function varargout = readNet(varargin)
    OPT.peri      = 1; % ,,
    OPT.link      = 1; % ,,
    OPT.face      = 0; % ,,
+   OPT.quiet     = 0; % ,,
    
    if nargin==0
       varargout = {OPT};
@@ -142,7 +143,7 @@ function varargout = readNet(varargin)
    
       if nc_isvar(ncfile, 'NetNode_x')
       % new pointers for chopping up into triangles to be used in plotMap
-     [G.tri,G.map3,G.ntyp] = patch2tri(G.cor.x,G.cor.y,G.link);
+     [G.tri,G.map3,G.ntyp] = patch2tri(G.cor.x,G.cor.y,G.link,'quiet',OPT.quiet);
       end
 
    end 
