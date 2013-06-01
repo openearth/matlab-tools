@@ -9,11 +9,11 @@ if global_data.LAYOUT > 1
     simona2mdf_warning('LAYOUT > 1 not yet implemented');
 end
 
-if ~isempty(global_data.CONST_VALUES)
+if simona2mdf_fieldandvalue(global_data,'CONST_VALUES')
     data(1:mmax,1:nmax) = global_data.CONST_VALUES;
 end
 
-if ~isempty(global_data.VARIABLE_VAL)
+if simona2mdf_fieldandvalue(global_data,'VARIABLE_VAL')
     for m = mmax
         for n = 1:nmax
             data(m,n) = global_data.VARIABLE_VAL((m-m1)*(n2-n1+1) + n - n1 + 1);

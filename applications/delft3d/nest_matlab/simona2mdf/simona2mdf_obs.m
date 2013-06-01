@@ -2,12 +2,23 @@ function mdf = simona2mdf_obs(S,mdf,name_mdf)
 
 % simona2mdf_obs : gets observation stations out of the parsed siminp tree
 
+points    = [];
+chkpoints = [];
 nesthd_dir = getenv('nesthd_path');
 
 siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'MESH' 'POINTS'});
-points       = siminp_struc.ParsedTree.MESH.POINTS;
+if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.MESH.POINTS')
+    points       = siminp_struc.ParsedTree.MESH.POINTS;
+end
+
 siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'CHECKPOINTS'});
-chkpoints    = siminp_struc.ParsedTree.FLOW.CHECKPOINTS;
+if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.FLOW.CHECKPOINTS')
+    chkpoints    = siminp_struc.ParsedTree.FLOW.CHECKPOINTS;
+end
+
+if isempty(points) || isempty(chkpoints)
+    return
+end
 
 %
 % Get station numbers
@@ -18,7 +29,7 @@ stat{1} = 'LEVELSTATIONS';
 stat{2} = 'CURRENTSTATIONS';
 
 for ivar = 1: length(stat)
-    if ~isempty(chkpoints.(stat{ivar}))
+    if simona2mdf_fieldandvalue(chkpoints.(stat{ivar}),'')
         for istat = 1: length(chkpoints.(stat{ivar}).P)
             pntnr = simona2mdf_getpntnr(points.P,chkpoints.(stat{ivar}).P(istat));
             if ~isempty(pntnr)

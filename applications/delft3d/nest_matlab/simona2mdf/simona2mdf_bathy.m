@@ -1,3 +1,8 @@
+
+
+
+
+
 function mdf = simona2mdf_bathy(S,mdf,name_mdf)
 
 % siminp2mdf_bathy : Gets bathymetry data out of the parsed siminp file
@@ -12,7 +17,7 @@ siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'DEPT
 
 sign = 1.0;
 
-if isfield(siminp_struc.ParsedTree,'DEPTH_CONTROL.ORIENTATION')
+if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.DEPTH_CONTROL.ORIENTATION')
     upward = strfind(siminp_struc.ParsedTree.DEPTH_CONTROL.ORIENTATION,'upwards');
     if ~isempty(upward)
         sign = -1.0;
@@ -23,21 +28,21 @@ end
 % Get bethymetry related information
 %
 
-siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'MESH' 'BATHYMETRY'});
-global_vars = siminp_struc.ParsedTree.MESH.BATHYMETRY.GLOBAL;
-
-%
-% get bathymetry values
-%
-
 depth(1:mdf.mnkmax(1),1:mdf.mnkmax(2)) = 0.;
+siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'MESH' 'BATHYMETRY'});
 
-depth = simona2mdf_getglobaldata(global_vars,depth);
+if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.MESH.BATHYMETRY.GLOBAL')
+    global_vars = siminp_struc.ParsedTree.MESH.BATHYMETRY.GLOBAL;
 
-if isfield(siminp_struc.ParsedTree.MESH.BATHYMETRY,'LOCAL')
-   if isfield(siminp_struc.ParsedTree.MESH.BATHYMETRY.LOCAL,'BOX')
-      depth = simona2mdf_getboxdata(siminp_struc.ParsedTree.MESH.BATHYMETRY.LOCAL.BOX,depth);
-   end
+    %
+    % get bathymetry values
+    %
+
+    depth = simona2mdf_getglobaldata(global_vars,depth);
+end
+
+if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.MESH.BATHYMETRY.LOCAL.BOX')
+    depth = simona2mdf_getboxdata(siminp_struc.ParsedTree.MESH.BATHYMETRY.LOCAL.BOX,depth);
 end
 
 mdf        = rmfield(mdf,'depuni');

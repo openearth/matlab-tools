@@ -13,7 +13,7 @@ nesthd_dir = getenv('nesthd_path');
 %
 
 siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'TRANSPORT'});
-if ~isempty(siminp_struc.ParsedTree.TRANSPORT)
+if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.TRANSPORT')
    warning = true;
    warntext{end+1} = 'Conversion of TRANSPORT not implemented yet';
 end
@@ -23,7 +23,7 @@ end
 %
 
 siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'HEATMODEL'});
-if ~isempty(siminp_struc.ParsedTree.HEATMODEL)
+if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.HEATMODEL')
    warning = true;
    warntext{end+1} = 'Conversion of SALINITY not implemented yet';
 end
@@ -33,11 +33,11 @@ end
 %
 
 siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'GENERAL'});
-if ~isempty(siminp_struc.ParsedTree.GENERAL.WIND)
+if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.GENERAL.WIND')
    mdf.sub1(3) = 'w';
 end
 
-if ~isempty(siminp_struc.ParsedTree.GENERAL.SPACE_VAR_WIND)
+if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.GENERAL.SPACE_VAR_WIND')
    warning = true;
    warntext{end+1} = 'Conversion of WIND (space varying) not implemented yet';
 end

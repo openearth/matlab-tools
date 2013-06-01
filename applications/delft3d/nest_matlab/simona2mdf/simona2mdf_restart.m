@@ -19,7 +19,7 @@ nesthd_dir = getenv('nesthd_path');
 
 try
    siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'RESTART'});
-   if ~isempty(siminp_struc.ParsedTree.RESTART)
+   if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.RESTART')
       warning = true;
    end
 catch

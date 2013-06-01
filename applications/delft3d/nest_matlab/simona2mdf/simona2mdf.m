@@ -75,4 +75,4 @@ mdf = simona2mdf_output   (S,mdf);
 % write the mdf file
 %
 
-delft3d_io_mdf('write',filmdf,mdf);
+delft3d_io_mdf('write',filmdf,mdf,'stamp',false);

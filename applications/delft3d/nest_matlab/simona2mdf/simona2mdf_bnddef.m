@@ -14,24 +14,42 @@ nesthd_dir = getenv('nesthd_path');
 % get information out of struc
 %
 
+points   = [];
+opendef  = [];
+bnddef   = [];
+harmonic = [];
+vel_prof = [];
+
 siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'MESH' 'POINTS'});
-if isempty(siminp_struc.ParsedTree.MESH.POINTS);return;end
-points       = siminp_struc.ParsedTree.MESH.POINTS;
+if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.MESH.POINTS')
+    points   = siminp_struc.ParsedTree.MESH.POINTS;
+end
+
 siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'MESH' 'BOUNDARIES' 'OPENINGS'});
-if isempty(siminp_struc.ParsedTree.MESH.BOUNDARIES.OPENINGS);return;end
-opendef      = siminp_struc.ParsedTree.MESH.BOUNDARIES.OPENINGS;
+if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.MESH.BOUNDARIES.OPENINGS')
+    opendef  = siminp_struc.ParsedTree.MESH.BOUNDARIES.OPENINGS;
+end
+
 siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'FORCINGS'});
-if isempty (siminp_struc.ParsedTree.FLOW.FORCINGS.BOUNDARIES); return; end
-bnddef       = siminp_struc.ParsedTree.FLOW.FORCINGS.BOUNDARIES;
-harmonic     = siminp_struc.ParsedTree.FLOW.FORCINGS.HARMONIC;
+if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.FLOW.FORCINGS.BOUNDARIES')
+    bnddef   = siminp_struc.ParsedTree.FLOW.FORCINGS.BOUNDARIES;
+    harmonic = siminp_struc.ParsedTree.FLOW.FORCINGS.HARMONIC;
+end
+
 siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'PROBLEM'});
-vel_prof     = siminp_struc.ParsedTree.FLOW.PROBLEM.VELOCITY_PROFILE;
-first        = true;
+if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.FLOW.PROBLEM.VELOCITY_PROFILE')
+   vel_prof     = siminp_struc.ParsedTree.FLOW.PROBLEM.VELOCITY_PROFILE;
+end
+
+if isempty(points) || isempty(opendef) || isempty(bnddef)
+    return
+end
 
 %
 % cycle over all open boundaries
 %
 
+first     = true;
 for iopen = 1: length(bnddef.B)
 
     %

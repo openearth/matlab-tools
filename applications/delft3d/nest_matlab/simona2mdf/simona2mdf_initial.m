@@ -2,8 +2,11 @@ function mdf=simona2mdf_initial(S,mdf,name_mdf)
 
 % simona2mdf_initial : gets the initial conditions out of the siminp file (always write to inital condition file)
 
-mmax = mdf.mnkmax(1);
-nmax = mdf.mnkmax(2);
+mmax                 = mdf.mnkmax(1);
+nmax                 = mdf.mnkmax(2);
+zeta0(1:mmax,1:nmax) = 0.;
+u0   (1:mmax,1:nmax) = 0.;
+v0   (1:mmax,1:nmax) = 0.;
 
 %
 % get information out of struc
@@ -11,8 +14,11 @@ nmax = mdf.mnkmax(2);
 
 nesthd_dir = getenv('nesthd_path');
 siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'FORCINGS'});
-if isempty (siminp_struc.ParsedTree.FLOW.FORCINGS.INITIAL); return; end
-initial      = siminp_struc.ParsedTree.FLOW.FORCINGS.INITIAL;
+if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.FLOW.FORCINGS.INITIAL')
+    initial      = siminp_struc.ParsedTree.FLOW.FORCINGS.INITIAL;
+else
+    return
+end
 
 %
 % first some warnings
@@ -29,40 +35,37 @@ end
 % Read initial conditions and write
 %
 
-zeta0(1:mmax,1:nmax) = 0.;
-u0   (1:mmax,1:nmax) = 0.;
-v0   (1:mmax,1:nmax) = 0.;
-
 %
 % Waterlevel
 %
 
-if ~isempty(initial.WATLEVEL)
+if simona2mdf_fieldandvalue(initial,'WATLEVEL.GLOBAL')
     zeta0 = simona2mdf_getglobaldata(initial.WATLEVEL.GLOBAL,zeta0);
-    if isfield (initial.WATLEVEL.LOCAL,'BOX')
-       zeta0   = simona2mdf_getboxdata(initial.WATLEVEL.LOCAL.BOX,zeta0);
-    end
+end
+if simona2mdf_fieldandvalue(initial,'WATLEVEL.LOCAL.BOX')
+    zeta0  = simona2mdf_getboxdata(initial.WATLEVEL.LOCAL.BOX,zeta0);
 end
 
 %
 % UVELOCITY
 %
-if ~isempty(initial.UVELOCITY)
+
+if simona2mdf_fieldandvalue(initial,'UVELOCITY.GLOBAL')
     u0    = simona2mdf_getglobaldata(initial.UVELOCITY.GLOBAL,u0);
-    if isfield (initial.UVELOCITY.LOCAL,'BOX')
-       u0      = simona2mdf_getboxdata(initial.UVELOCITY.LOCAL.BOX,u0);
-    end
+end
+if simona2mdf_fieldandvalue(initial,'UVELOCITY.LOCAL.BOX')
+    u0     = simona2mdf_getboxdata(initial.UVELOCITY.LOCAL.BOX,u0);
 end
 
 %
 % VVELOCITY
 %
 
-if ~isempty(initial.VVELOCITY)
+if simona2mdf_fieldandvalue(initial,'VVELOCITY.GLOBAL')
     v0    = simona2mdf_getglobaldata(initial.VVELOCITY.GLOBAL,v0);
-    if isfield (initial.VVELOCITY.LOCAL,'BOX')
-       v0      = simona2mdf_getboxdata(initial.VVELOCITY.LOCAL.BOX,u0);
-    end
+end
+if simona2mdf_fieldandvalue(initial,'VVELOCITY.LOCAL.BOX')
+    v0      = simona2mdf_getboxdata(initial.VVELOCITY.LOCAL.BOX,v0);
 end
 
 %

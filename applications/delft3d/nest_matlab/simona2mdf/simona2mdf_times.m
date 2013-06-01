@@ -15,6 +15,6 @@ mdf.tstop  = times.TSTOP;
 
 mdf.dt     = siminp_struc.ParsedTree.FLOW.PROBLEM.METHODVARIABLES.TSTEP;
 
-try
+if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.FLOW.PROBLEM.SMOOTHING.TLSMOOTH')
    mdf.tlfsmo = siminp_struc.ParsedTree.FLOW.PROBLEM.SMOOTHING.TLSMOOTH;
 end

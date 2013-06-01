@@ -12,7 +12,7 @@ nesthd_dir = getenv('nesthd_path');
 
 siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'MESH' 'DRYPOINTS' 'CLOSEU'});
 
-try
+if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.MESH.DRYPOINTS.CLOSEU.MNN');
    line = siminp_struc.ParsedTree.MESH.DRYPOINTS.CLOSEU.MNN;
    for i_line = 1: length(line)
       THD.DATA(end+1).mn(1)     = line(i_line).MNNLINE(1);
@@ -29,7 +29,7 @@ end
 
 siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'MESH' 'DRYPOINTS' 'CLOSEV'});
 
-try
+if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.MESH.DRYPOINTS.CLOSEV.NMM');
    line = siminp_struc.ParsedTree.MESH.DRYPOINTS.CLOSEV.NMM;
    for i_line = 1: length(line)
       THD.DATA(end+1).mn(1)     = line(i_line).NMMLINE(2);
