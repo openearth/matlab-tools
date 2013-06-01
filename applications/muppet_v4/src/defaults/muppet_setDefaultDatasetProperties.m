@@ -7,6 +7,7 @@ dataset.filetype='';
 dataset.combineddataset=0;
 dataset.runid=[];
 dataset.active=1;
+dataset.type='';
 
 %% Data
 dataset.x=[];
@@ -44,6 +45,7 @@ dataset.selectedquantity='scalar';
 dataset.component=[];
 dataset.tc='c';
 dataset.nrquantities=1;
+dataset.unstructuredgrid=0;
 
 dataset.nrdomains=0;
 dataset.domains={''};

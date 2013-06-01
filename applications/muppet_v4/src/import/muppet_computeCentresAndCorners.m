@@ -2,6 +2,7 @@ function dataset=muppet_computeCentresAndCorners(dataset)
 
 % Determine cell centres/corners
 switch dataset.type
+
     case{'scalar2dxy','scalar2dxz'}
 
         dataset.xz=dataset.x;
@@ -65,4 +66,7 @@ switch dataset.type
             % patch plots will (by definition) be shifted by half a grid cell
         end
         
+    case{'scalar2duxy'}
+        % Read net
+        dataset.G = dflowfm.readNet(dataset.filename,'quiet',1);
 end

@@ -129,8 +129,8 @@ for j=i1:i2
 %     end
     
     % Times
-    if dataproperties(ii).DimFlag(1)>0 && par.size(1)<100 && timesread==0
-        % Only read times when there are less than 100
+    if dataproperties(ii).DimFlag(1)>0 && par.size(1)<1000 && timesread==0
+        % Only read times when there are less than 1000
         par.times=qpread(fid,dataproperties(ii),'times');
 %        tms=par.times;
 %        timesread=1;
@@ -153,9 +153,34 @@ for j=i1:i2
                 par.size(2)=par.size(3);
                 par.size(3)=0;
             end
+            if strcmpi(dataproperties(ii).Dimension{3},'station')
+                stations=nc_varget(dataset.filename,'station_name');
+%                stations=stations';
+                for istat=1:size(stations,1)
+                    par.stations{istat}=deblank(stations(istat,:));
+                end
+                par.size(2)=par.size(3);
+                par.size(3)=0;
+            end
         end
     end
-        
+    
+    % Unstructured grid
+    if strcmpi(fid.qp_filetype,'netcdf')
+        if ~isempty(dataproperties(ii).Dimension)
+            if strcmpi(dataproperties(ii).Dimension{3},'nFlowElem')
+                % unstructured grid
+                par.dataproperties(ii).Loc='z';
+                par.unstructuredgrid=1;
+            end
+            if strcmpi(dataproperties(ii).Dimension{3},'nNetNode')
+                % unstructured grid
+                par.dataproperties(ii).Loc='d';
+                par.unstructuredgrid=1;
+            end
+        end
+    end
+            
     par.coordinatesystem=cs;
     
     if sum(dataproperties(ii).DimFlag)>0

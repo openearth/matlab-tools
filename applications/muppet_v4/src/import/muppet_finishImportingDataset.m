@@ -14,7 +14,17 @@ d=muppet_squeezeDataset(d);
 dataset=muppet_copyToDataStructure(dataset,d);
 
 % Determine type
-dataset.type=[dataset.quantity num2str(dataset.ndim) 'd' dataset.plane];
+if isempty(dataset.type)
+    
+    if dataset.unstructuredgrid
+        strucstr='u';        
+    else
+        strucstr='';
+    end
+    
+    dataset.type=[dataset.quantity num2str(dataset.ndim) 'd' strucstr dataset.plane];
+
+end
 
 % Determine cell centres/corners
 dataset=muppet_computeCentresAndCorners(dataset);

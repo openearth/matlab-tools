@@ -144,9 +144,11 @@ try
                             case{'vector2d2dxy'}
                                 datasets(id).dataset.u  = tfrac1*data1.u  + tfrac2*data2.u;
                                 datasets(id).dataset.v  = tfrac1*data1.v  + tfrac2*data2.v;
-                            case{'scalar2d2dxy'}
-                                datasets(id).dataset.z  = tFrac1*data1.z  + tfrac2*data2.z;
-                                datasets(id).dataset.zz = tFrac1*data1.zz + tfrac2*data2.zz;
+                            case{'scalar2dxy'}
+                                datasets(id).dataset.z  = tfrac1*data1.z  + tfrac2*data2.z;
+                                datasets(id).dataset.zz = tfrac1*data1.zz + tfrac2*data2.zz;
+                            case{'scalar2duxy'}
+                                datasets(id).dataset.z  = tfrac1*data1.z  + tfrac2*data2.z;
                         end
                      end
                 end

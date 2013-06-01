@@ -14,6 +14,10 @@ for ii=1:length(varargin)
                 addDataset;
             case{'selectparameter'}
                 selectParameter;
+            case{'selectucomponent'}
+                selectParameter('u');
+            case{'selectvcomponent'}
+%                selectParameter('v');
             case{'selectcomponent'}
                 refreshDatasetName;
             case{'selectxcoordinate'}
@@ -72,7 +76,6 @@ end
 if ~isfield(dataset,'parameters')
     dataset.parameters(1).parameter=dataset;
     dataset.parameters(1).parameter.active=1;
-%    dataset.parameters(1).parameter.name='';
     dataset.parameters(1).parameter.size=[0 0 0 0 0];
     dataset.parameters(1).parameter=muppet_setDefaultParameterProperties(dataset.parameters(1).parameter);
 end
@@ -115,7 +118,7 @@ dataset.selectallstations=0;
 dataset.stationsfromlist=1;
 
 dataset.plotcoordinate='pathdistance';
-dataset.component='vector';
+dataset.component=[];
 dataset.stations={''};
 
 % Build GUI
@@ -207,12 +210,18 @@ function selectParameter(varargin)
 
 dataset=gui_getUserData;
 
-ipar=dataset.activeparameter;
+%if isempty(varargin{1})
+    ipar=dataset.activeparameter;
+% else
+%     switch varargin{1}
+%         case{'u'}
+%             ipar=strcmpi(dataset.ucomponent,dataset.parameternames);
+%     end
+% end
 
 oldsize=dataset.size;
 oldquantity=dataset.quantity;
 oldnrblocks=dataset.nrblocks;
-
 
 % Copy entire parameter structure (of selected parameter) to dataset
 % structure (but skip name subfield)
@@ -225,7 +234,15 @@ for ii=1:length(fldnames)
     end
 end
 
-dataset.parameter=dataset.parameters(ipar).parameter.name;
+% if isempty(varargin{1})
+     dataset.parameter=dataset.parameters(ipar).parameter.name;
+% else
+%     switch varargin{1}
+%         case{'u'}
+%             dataset.parameter=[];
+%     end
+% end
+
 
 % Time step
 if dataset.size(1)>0

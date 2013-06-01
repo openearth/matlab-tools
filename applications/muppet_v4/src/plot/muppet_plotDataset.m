@@ -26,13 +26,14 @@ end
 
 %% If this is a map plot, try to convert coordinates of datasets if necessary
 switch handles.figures(ifig).figure.subplots(isub).subplot.type
+
     case{'map'} 
         % Convert data to correct coordinate system
         if ~strcmpi(plt.coordinatesystem.name,'unspecified') && ~strcmpi(data.coordinatesystem.name,'unspecified')
             if ~strcmpi(plt.coordinatesystem.name,data.coordinatesystem.name) && ...
                     ~strcmpi(plt.coordinatesystem.type,data.coordinatesystem.type)
                 switch lower(data.type)
-                    case{'2dvector','2dscalar','polyline','grid'}
+                    case{'vector2d2dxy','scalar2dxy','location1dxy','location2dxy'}
                         if ~isfield(handles,'EPSG')
                             wb = waitbox('Reading coordinate conversion libraries ...');
                             curdir=[handles.muppetpath 'settings' filesep 'SuperTrans'];
@@ -41,6 +42,9 @@ switch handles.figures(ifig).figure.subplots(isub).subplot.type
                         end
                         [data.x,data.y]=convertCoordinates(data.x,data.y,handles.epsg,'CS1.name',data.coordinatesystem.name,'CS1.type',data.coordinatesystem.type, ...
                             'CS2.name',plt.coordinatesystem.name,'CS2.type',data.coordinatesystem.type);
+                    case{'scalar2duxy','vector2d2duxy'}
+                        % Unstructured data
+                        % TODO convert unstructured data
                 end
             end
         end
@@ -77,6 +81,8 @@ switch lower(plt.datasets(id).dataset.plotroutine)
         h=muppet_plotStackedArea(handles,ifig,isub,id);
     case {'plotcontourmap','plotcontourmaplines','plotpatches','plotcontourlines','plotshadesmap'}
         muppet_plot2DSurface(handles,ifig,isub,id);
+    case {'plotunstructuredpatches'}
+        muppet_plotUnstructuredPatches(handles,ifig,isub,id);
     case {'plot3dsurface','plot3dsurfacelines'}
         muppet_plot3DSurface(handles,ifig,isub,id);
     case {'plotgrid'}
