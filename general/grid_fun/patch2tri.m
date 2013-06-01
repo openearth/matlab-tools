@@ -66,7 +66,8 @@ function varargout = patch2tri(corx,cory,map,varargin)
 %% input
 
    OPT.debug = 0;
-
+   OPT.quiet = 0;
+   
    if nargin==0
       varargout = {OPT};
       return
@@ -146,7 +147,7 @@ function varargout = patch2tri(corx,cory,map,varargin)
 
    ind = find(nface==5);
    if ~(n== sum(ntyp.*[0 0 1 2 0 0]));error('error after tri + quad');end
-   [tri,n,map3] = nface2tri(map,corx,cory,tri,5,n,ind,OPT.debug,'pentagon',map3);
+   [tri,n,map3] = nface2tri(map,corx,cory,tri,5,n,ind,OPT.debug,'pentagon',map3,OPT.quiet);
 
    %plot(tri(:,1));hold on;plot(map3,'r');xlim([0 ntri]);pausedisp;clf
 
@@ -154,7 +155,7 @@ function varargout = patch2tri(corx,cory,map,varargin)
 
    ind = find(nface==6);
    if ~(n== sum(ntyp.*[0 0 1 2 3 0]));error('error after tri + quad + pent');end
-   [tri,n,map3] = nface2tri(map,corx,cory,tri,6,n,ind,OPT.debug,'hexagon',map3);
+   [tri,n,map3] = nface2tri(map,corx,cory,tri,6,n,ind,OPT.debug,'hexagon',map3,OPT.quiet);
 
    %plot(tri(:,1));hold on;plot(map3,'r');xlim([0 ntri]);pausedisp;clf
 
@@ -164,7 +165,7 @@ function varargout = patch2tri(corx,cory,map,varargin)
    
 %% genericish subsidiary for quad-, pent- and hexagons
 
-function [tri,n,map3] = nface2tri(Map,X,Y,tri,type,n,ind,debug,txt,map3)
+function [tri,n,map3] = nface2tri(Map,X,Y,tri,type,n,ind,debug,txt,map3,quiet)
 
    order = type-2;
 
@@ -176,19 +177,23 @@ function [tri,n,map3] = nface2tri(Map,X,Y,tri,type,n,ind,debug,txt,map3)
        trilocal = delaunay(x,y); % sometimes fails, and does not always yield 3 triangles
        
        if size(trilocal,1) > order
-          warning([txt,' is not divided onto ',num2str(order),' triangles but ',num2str(size(trilocal,1)),': triangle(s) ingnored'])
+          if ~quiet
+              warning([txt,' is not divided onto ',num2str(order),' triangles but ',num2str(size(trilocal,1)),': triangle(s) ingnored']);
+          end
           trilocal = trilocal(1:order,:);
           if debug
              plot(x,y,'c-o','linewidth',10)
              pausedisp
           end
        elseif size(trilocal,1) < order
-          warning([txt,' is not divided onto ',num2str(order),' triangles but ',num2str(size(trilocal,1)),': triangle(s) duplicated'])
+          if ~quiet
+              warning([txt,' is not divided onto ',num2str(order),' triangles but ',num2str(size(trilocal,1)),': triangle(s) duplicated']);
+          end
           
-          trilocal = repmat(trilocal,[order 1])
+          trilocal = repmat(trilocal,[order 1]);
           
           if debug
-             plot(x,y,'c-o','linewidth',10)
+             plot(x,y,'c-o','linewidth',10);
              pausedisp
           end
        end
@@ -200,3 +205,4 @@ function [tri,n,map3] = nface2tri(Map,X,Y,tri,type,n,ind,debug,txt,map3)
    end       
    
    varargout = {tri,map3,n};
+   
