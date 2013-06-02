@@ -87,6 +87,8 @@ switch lower(plt.datasets(id).dataset.plotroutine)
         muppet_plot3DSurface(handles,ifig,isub,id);
     case {'plotgrid'}
         h=muppet_plotGrid(handles,ifig,isub,id);
+    case {'plotgrid3d'}
+        h=muppet_plotGrid3D(handles,ifig,isub,id);
     case {'plotannotation'},
         h=muppet_plotAnnotation(handles,ifig,isub,id);
 %     case {'plotcrosssections'}

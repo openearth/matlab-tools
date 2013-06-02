@@ -26,5 +26,7 @@ xml.element=element;
 
 xml=gui_fillXMLvalues(xml);
 
+handles=getHandles;
+
 [fig,ok]=gui_newWindow(fig,'element',xml.element,'tag','uifigure','width',width,'height',height, ...
-    'title','Frame Text','modal',0);
+    'title','Frame Text','modal',0,'iconfile',[handles.settingsdir 'icons' filesep 'deltares.gif']);

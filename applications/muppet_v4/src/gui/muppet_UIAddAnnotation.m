@@ -53,7 +53,7 @@ if strcmp(typ,'textbox')
 end
 switch(typ),
     case{'arrow','doublearrow'}
-        fig.subplots(isub).subplot.datasets(j).dataset.linewidth=2;
+        fig.subplots(isub).subplot.datasets(j).dataset.linewidth=1;
     otherwise
         fig.subplots(isub).subplot.datasets(j).dataset.linewidth=0.5;
 end

@@ -51,7 +51,7 @@ xml.element=element;
 xml=gui_fillXMLvalues(xml);
 
 [s,ok]=gui_newWindow(s,'element',xml.element,'tag','uifigure','width',width,'height',height, ...
-    'title','Dataset from URL','modal',0);
+    'title','Dataset from URL','modal',0,'iconfile',[handles.settingsdir 'icons' filesep 'deltares.gif']);
 
 if ok
     muppet_datasetGUI('makewindow','filename',s.url,'filetype',s.urlfiletype);

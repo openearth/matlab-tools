@@ -2,6 +2,8 @@ function muppet_initializegui
 
 % Initialization of GUI settings
 
+global figureiconfile
+
 handles=getHandles;
 
 % Output options
@@ -28,5 +30,16 @@ handles.datasettext4='';
 handles.datasettext5='';
 
 handles.lastfiletype='delft3d';
+
+handles.newlayout.numberhorizontal=3;
+handles.newlayout.sizehorizontal=4;
+handles.newlayout.spacinghorizontal=1.2;
+handles.newlayout.originhorizontal=3.5;
+handles.newlayout.numbervertical=4;
+handles.newlayout.sizevertical=4.5;
+handles.newlayout.spacingvertical=1.2;
+handles.newlayout.originvertical=5;
+
+figureiconfile=[handles.settingsdir 'icons' filesep 'deltares.gif'];
 
 setHandles(handles);

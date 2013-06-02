@@ -9,16 +9,36 @@ if plt.perspective
     set(gca,'Projection','perspective');
 end
 
-plt.dataaspectratio=[1 1 0.02];
-daspect([1/plt.dataaspectratio(1) 1/plt.dataaspectratio(2) 1/plt.dataaspectratio(3)]);
+daspect(plt.dataaspectratio);
 
-view(gca,[plt.cameraangle(1),plt.cameraangle(2)]);
-set(gca,'CameraTarget',plt.cameratarget);
+set(gca,'CameraPositionMode','manual');
+set(gca,'CameraTargetMode','manual');
+set(gca,'CameraViewAngleMode','manual');
+
+% Camera
+switch plt.viewmode3d
+    case 1
+        tar=plt.cameratarget;
+        pos=plt.cameraposition;
+    case 2
+        ang=[plt.cameraangle plt.cameradistance];
+        tar=plt.cameratarget;
+        pos=cameraview('viewangle',ang,'target',tar,'dataaspectratio',plt.dataaspectratio);
+    case 3
+        ang=[plt.cameraangle plt.cameradistance];
+        pos=plt.cameraposition;
+        tar=cameraview('viewangle',ang,'position',pos,'dataaspectratio',plt.dataaspectratio);
+end
+set(gca,'CameraTarget',tar);
+set(gca,'CameraPosition',pos);
 set(gca,'CameraViewAngle',plt.cameraviewangle);
 
-h=light;
-set(h,'style','local');
-lightangle(h,plt.lightazimuth,plt.lightelevation);
+% Lights
+if plt.light
+    h=light;
+    set(h,'style','infinite');
+    lightangle(h,plt.lightangle(1),plt.lightangle(2));
+end
 
 set(gca,'Units',units);
 set(gca,'Position',plt.position*cm2pix);

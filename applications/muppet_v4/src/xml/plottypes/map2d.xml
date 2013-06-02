@@ -9,6 +9,9 @@
     <name>type</name>
   </option>
   <option>
+    <name>drawbox</name>
+  </option>
+  <option>
     <name>xlim</name>
   </option>
   <option>

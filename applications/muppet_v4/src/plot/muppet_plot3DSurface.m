@@ -52,7 +52,7 @@ if opt.onecolor==1
 end
 
 
-set(dpplot,'ambientstrength',plt.lightstrength);
+set(dpplot,'ambientstrength',opt.ambientstrength);
 set(dpplot,'specularstrength',opt.specularstrength);
 set(dpplot,'SpecularColorReflectance',1);
 set(dpplot,'SpecularExponent',100);

@@ -24,7 +24,7 @@ if isempty(varargin)
     h.operations={'Add','Subtract','Multiply','Divide','Max','Min','isnan(A<B)','isnan(A>B)'};
     h.operationstrings={'A + B','A - B','A * B','A / B','max(A,B)','min(A,B)','isnan(A<B)','isnan(A>B)'};
 
-    [h,ok]=gui_newWindow(h, 'xmldir', handles.xmlguidir, 'xmlfile', 'combinedatasets.xml','modal',0);
+    [h,ok]=gui_newWindow(h, 'xmldir', handles.xmlguidir, 'xmlfile', 'combinedatasets.xml','modal',0,'iconfile',[handles.settingsdir 'icons' filesep 'deltares.gif']);
     if ok
         handles.datasets=h.datasets;
         setHandles(handles);

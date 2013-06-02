@@ -8,5 +8,8 @@
     <option>
       <name>position</name>
     </option>
+    <option>
+      <name>drawbox</name>
+    </option>
   </plottype>
 </root>

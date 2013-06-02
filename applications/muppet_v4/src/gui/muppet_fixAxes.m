@@ -48,6 +48,17 @@ for isub=1:fig.nrsubplots
                         handles.figures(ifig).figure.subplots(isub).subplot.ymax=fig.subplots(isub).subplot.ymax;
                         handles.figures(ifig).figure.subplots(isub).subplot.scale=fig.subplots(isub).subplot.scale;
                     case{'3d'}
+                        hax=findobj('Tag','axis','UserData',[ifig,isub]);
+                        handles.figures(ifig).figure.subplots(isub).subplot.cameratarget=get(hax,'CameraTarget');
+                        handles.figures(ifig).figure.subplots(isub).subplot.cameraposition=get(hax,'CameraPosition');
+                        handles.figures(ifig).figure.subplots(isub).subplot.cameraviewangle=get(hax,'CameraViewAngle');
+                        dasp=handles.figures(ifig).figure.subplots(isub).subplot.dataaspectratio;
+                        pos=handles.figures(ifig).figure.subplots(isub).subplot.cameraposition;
+                        tar=handles.figures(ifig).figure.subplots(isub).subplot.cameratarget;
+                        ang=cameraview('target',tar,'position',pos,'dataaspectratio',dasp);
+                        handles.figures(ifig).figure.subplots(isub).subplot.cameraangle=ang(1:2);
+                        handles.figures(ifig).figure.subplots(isub).subplot.cameradistance=ang(3);
+                        
                     case{'timeseries','timestack'}
                         t0=datevec(fig.subplots(isub).subplot.xmin);
                         t1=datevec(fig.subplots(isub).subplot.xmax);

@@ -203,7 +203,8 @@ xml.element=element;
 xml=gui_fillXMLvalues(xml);
 
 [dataset,ok]=gui_newWindow(dataset,'element',xml.element,'tag','datasetgui','width',width,'height',height, ...
-    'createcallback',@selectParameter,'title',handles.filetype(ift).filetype.longname,'modal',0);
+    'createcallback',@selectParameter,'title',handles.filetype(ift).filetype.longname,'modal',0, ...
+    'iconfile',[handles.settingsdir 'icons' filesep 'deltares.gif']);
 
 %%
 function selectParameter(varargin)

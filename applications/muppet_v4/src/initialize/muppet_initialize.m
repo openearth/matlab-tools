@@ -1,7 +1,5 @@
 function handles=muppet_initialize(handles)
 
-handles.currentpath=pwd;
-handles=muppet_getDirectories(handles);
 handles=muppet_getCoordinateSystems(handles);
 handles=muppet_initializeAnimationSettings(handles);
 handles.dateformats=muppet_readDateFormats([handles.settingsdir 'defaults' filesep 'dateformats.def']);

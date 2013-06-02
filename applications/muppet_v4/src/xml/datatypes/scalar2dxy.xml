@@ -111,7 +111,7 @@
       </plotoption>
     </plotroutine>
     <plotroutine>
-      <name>plot3dgrid</name>
+      <name>plotgrid3d</name>
       <longname>Grid</longname>
       <plotoption>
         <name>plotroutine</name>

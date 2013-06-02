@@ -132,13 +132,32 @@ if ~strcmp(handles.figures(ifig).figure.subplots(j).subplot.type,'3d')
     end
     set(h,'xlim',[p1(1) p1(1)+offset(1)]);
     set(h,'ylim',[p1(2) p1(2)+offset(2)]);
+
 else
+    
+    % 3D
+    
     if (leftmouse && zoomin==1) || (rightmouse && zoomin==0)
-        fac=1.5;
-    else
         fac=2/3;
+    else
+        fac=1.5;
     end
-    camzoom(h,fac);
+    
+    dasp=handles.figures(ifig).figure.subplots(j).subplot.dataaspectratio;
+    
+    tar=get(h,'cameratarget');
+    pos=get(h,'cameraposition');
+    
+    % Compute new angle (including distance)
+    ang=cameraview('target',tar,'position',pos,'dataaspectratio',dasp);
+    % Multiply distance by zoom factor
+    ang(3)=ang(3)*fac;    
+    % Compute new camera position
+    pos=cameraview('viewangle',ang,'target',tar,'dataaspectratio',dasp);
+    
+    set(gca,'CameraPosition',pos);
+    set(gca,'CameraTarget',tar);
+
 end
 
 updateLimits;
@@ -146,7 +165,13 @@ updateLimits;
 %%
 function startRotateView(imagefig, varargins,h) 
 
-[az0,el0]=view(h);
+target0=get(h,'CameraTarget');
+pos=get(h,'CameraPosition');
+dasp=get(h,'DataAspectRatio');
+ang=cameraview('target',target0,'position',pos,'dataaspectratio',dasp);
+%[az0,el0]=view(h);
+az0=ang(1);
+el0=ang(2);
 target0=get(h,'CameraTarget');
 pos0=get(gcf,'CurrentPoint');
 set(gcf, 'windowbuttonmotionfcn', {@rotateView,h,az0,el0,target0,pos0});
@@ -156,11 +181,23 @@ set(gcf, 'windowbuttonupfcn', {@stopRotateView});
 function rotateView(imagefig, varargins,h,az0,el0,target0,pos0) 
 
 pos1=get(gcf,'CurrentPoint');
+pos=get(h,'CameraPosition');
+dasp=get(h,'DataAspectRatio');
 dpos=pos1-pos0;
+
 az1=az0-dpos(1)/2.5;
-el1=el0-dpos(2)/2.5;
-view(h,[az1,el1]);
+el1=min(el0-dpos(2)/2.5,90);
+
+% New view angle
+dx=(pos(1)-target0(1))/dasp(1);
+dy=(pos(2)-target0(2))/dasp(2);
+dz=(pos(3)-target0(3))/dasp(3);
+dst=sqrt(dx^2 + dy^2 + dz^2);
+ang=[az1 el1 dst];
+pos=cameraview('target',target0,'viewangle',ang,'dataaspectratio',dasp);
+
 set(h,'CameraTarget',target0);
+set(h,'CameraPosition',pos);
 
 %%
 function stopRotateView(imagefig, varargins) 
@@ -199,6 +236,7 @@ set(h,'XLim',xl,'YLim',yl);
 function startPan3D(imagefig, varargins,h) 
 
 target0=get(h,'CameraTarget');
+position0=get(h,'CameraPosition');
 [az,el]=view(h);
 pos0=get(gcf,'CurrentPoint');
 xl=get(h,'XLim');
@@ -206,19 +244,25 @@ yl=get(h,'YLim');
 dx=xl(2)-xl(1);
 dy=yl(2)-yl(1);
 d=sqrt(dx^2+dy^2);
-set(gcf, 'windowbuttonmotionfcn', {@pan3D,h,pos0,target0,d,az});
+set(gcf, 'windowbuttonmotionfcn', {@pan3D,h,pos0,target0,position0,d,az,el});
 set(gcf, 'windowbuttonupfcn', {@stopPan});
 setptr(gcf,'closedhand');
 
 %%
-function pan3D(imagefig, varargins,h,pos0,target0,d,az) 
+function pan3D(imagefig, varargins,h,pos0,target0,position0,d,az,el) 
 
 pos1=get(gcf,'CurrentPoint');
 dpos=pos1-pos0;
-target1(1)=target0(1)+0.001*d*dpos(2)*sin(pi*az/180)-0.001*d*dpos(1)*cos(pi*az/180);
-target1(2)=target0(2)-0.001*d*dpos(2)*cos(pi*az/180)-0.001*d*dpos(1)*sin(pi*az/180);
+dx=0.001*d*dpos(2)*sin(pi*az/180)-0.001*d*dpos(1)*cos(pi*az/180);
+dy=-0.001*d*dpos(2)*cos(pi*az/180)-0.001*d*dpos(1)*sin(pi*az/180);
+target1(1)=target0(1)+dx;
+target1(2)=target0(2)+dy;
 target1(3)=target0(3);
+position1(1)=position0(1)+dx;
+position1(2)=position0(2)+dy;
+position1(3)=position0(3);
 set(h,'CameraTarget',target1);
+set(h,'CameraPosition',position1);
 
 %%
 function stopPan(imagefig, varargins) 
@@ -233,54 +277,59 @@ updateLimits;
 function moveMouse(imagefig, varargins)
 
 handles=getHandles;
+
 ifig=get(gcf,'UserData');
 
-posgcf = get(gcf, 'CurrentPoint')/handles.figures(ifig).figure.cm2pix;
-
-typ='none';
-
-for j=1:handles.figures(ifig).figure.nrsubplots
-    h0=findobj(gcf,'Tag','axis','UserData',[ifig,j]);
-    if ~isempty(h0)
-        pos=get(h0,'Position')/handles.figures(ifig).figure.cm2pix;
-        if posgcf(1)>pos(1) && posgcf(1)<pos(1)+pos(3) && posgcf(2)>pos(2) && posgcf(2)<pos(2)+pos(4)
-            typ=handles.figures(ifig).figure.subplots(j).subplot.type;
-            h=h0;
+if ~isempty(ifig)
+    
+    posgcf = get(gcf, 'CurrentPoint')/handles.figures(ifig).figure.cm2pix;
+    
+    typ='none';
+    
+    for j=1:handles.figures(ifig).figure.nrsubplots
+        h0=findobj(gcf,'Tag','axis','UserData',[ifig,j]);
+        if ~isempty(h0)
+            pos=get(h0,'Position')/handles.figures(ifig).figure.cm2pix;
+            if posgcf(1)>pos(1) && posgcf(1)<pos(1)+pos(3) && posgcf(2)>pos(2) && posgcf(2)<pos(2)+pos(4)
+                typ=handles.figures(ifig).figure.subplots(j).subplot.type;
+                h=h0;
+            end
         end
     end
-end
-
-oktypes={'2d','map','3d','timeseries','xy','timestack'};
-ii=strmatch(lower(typ),oktypes,'exact');
-
-if isempty(ii)
-    set(gcf,'Pointer','arrow');
-    set(gcf,'WindowButtonDownFcn',[]);
-    return
-else
-    switch(handles.figures(ifig).figure.zoom),
-        case{'zoomin'}
-            set(gcf,'WindowButtonDownFcn',{@zoomInOut,h,1});
-            setptr(gcf,'glassplus');
-        case{'zoomout'}
-            set(gcf,'WindowButtonDownFcn',{@zoomInOut,h,0});
-            setptr(gcf,'glassminus');
-        case{'pan'}
-            if strcmp(typ,'3d')
-                setptr(gcf,'hand');
-                set(gcf,'WindowButtonDownFcn',{@startPan3D,h});
-            else
-                setptr(gcf,'hand');
-                set(gcf,'WindowButtonDownFcn',{@startPan2D,h});
-            end
-        case{'rotate3d'}
-            if strcmp(typ,'3d')
-                setptr(gcf,'rotate');
-                set(gcf,'WindowButtonDownFcn',{@startRotateView,h});
-            end
-        otherwise
-            set(gcf,'WindowButtonDownFcn',[]);
-            setptr(gcf,'arrow');
+    
+    oktypes={'2d','map','3d','timeseries','xy','timestack'};
+    ii=strmatch(lower(typ),oktypes,'exact');
+    
+    if isempty(ii)
+        set(gcf,'Pointer','arrow');
+        set(gcf,'WindowButtonDownFcn',[]);
+        return
+    else
+        switch(handles.figures(ifig).figure.zoom),
+            case{'zoomin'}
+                set(gcf,'WindowButtonDownFcn',{@zoomInOut,h,1});
+                setptr(gcf,'glassplus');
+            case{'zoomout'}
+                set(gcf,'WindowButtonDownFcn',{@zoomInOut,h,0});
+                setptr(gcf,'glassminus');
+            case{'pan'}
+                if strcmp(typ,'3d')
+                    setptr(gcf,'hand');
+                    set(gcf,'WindowButtonDownFcn',{@startPan3D,h});
+                else
+                    setptr(gcf,'hand');
+                    set(gcf,'WindowButtonDownFcn',{@startPan2D,h});
+                end
+            case{'rotate3d'}
+                if strcmp(typ,'3d')
+                    setptr(gcf,'rotate');
+                    set(gcf,'WindowButtonDownFcn',{@startRotateView,h});
+                end
+            otherwise
+                set(gcf,'WindowButtonDownFcn',[]);
+                setptr(gcf,'arrow');
+        end
+        setappdata(gcf,'activezoomhandle',h);
     end
 end
 
@@ -288,10 +337,18 @@ end
 function updateLimits
 
 fig=getappdata(gcf,'figure');
-usd=get(gca,'UserData');
-xl=get(gca,'XLim');
-yl=get(gca,'YLim');
+
+h=getappdata(gcf,'activezoomhandle');
+usd=get(h,'UserData');
+xl=get(h,'XLim');
+yl=get(h,'YLim');
+
+try
 isub=usd(2);
+catch
+    get(gca)
+end
+
 plt=fig.subplots(isub).subplot;
 
 xmin=xl(1);

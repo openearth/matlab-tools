@@ -180,13 +180,13 @@ switch plt.type
                     if isfield(data,'coordinatesystem')
                         plt.coordinatesystem=data.coordinatesystem;
                     else
-                        plt.coordinatesystem.name='unspecified';                        
+                        plt.coordinatesystem.name='unspecified';
                         plt.coordinatesystem.type='projected';
                     end
                     switch plt.coordinatesystem.type
                         case{'geographic'}
                             plt.projection='mercator';
-%                            plt.projection='albers';
+                            %                            plt.projection='albers';
                             plt.labda0=0.5*(xmin+xmax);
                             plt.labda0=xmin-10;
                             plt.phi0=0.5*(ymin+ymax);
@@ -209,14 +209,29 @@ switch plt.type
                   plt.ztick=dz;
                 end
 
+                % 3D
+
+%                plt.dataaspectratio=[1.0 1.0 1/max(0.001,round(0.2*(plt.xmax-plt.xmin)/max(plt.zmax-plt.zmin,1e-9)))];
+                plt.dataaspectratio=[1.0 1.0 1/(0.2*(plt.xmax-plt.xmin)/(plt.zmax-plt.zmin))];
+                
+%                 if strcmpi(plt.coordinatesystem.type,'geographic')
+%                     plt.dataaspectratio(3)=plt.dataaspectratio(3)*111111;
+%                 end
+
+                plt.viewmode3d=2;
+                plt.cameraangle=[315 30];
+                plt.cameradistance=3*(plt.xmax-plt.xmin);
                 cameratargetx=0.5*(plt.xmin+plt.xmax);
                 cameratargety=0.5*(plt.ymin+plt.ymax);
                 cameratargetz=0.5*(zmax+zmin);
                 plt.cameratarget=[cameratargetx cameratargety cameratargetz];
-                plt.cameraangle=[315 45];
+                plt.cameraposition=cameraview('viewangle',[plt.cameraangle plt.cameradistance],'target',plt.cameratarget,'dataaspectratio',plt.dataaspectratio);
                 plt.cameraviewangle=8.0;
-                plt.dataaspectratio=[1.0 1.0 max(0.001,round(0.02*(plt.xmax-plt.xmin)/max(plt.zmax-plt.zmin,1e-9)))];
+                
+                plt.light=1;
+                plt.lightangle=[0 70];
                 plt.lightstrength=0.5;
+
                 plt.perspective=1;
                 
         end

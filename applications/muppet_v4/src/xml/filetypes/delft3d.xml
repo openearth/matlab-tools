@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <root>
   <name>delft3d</name>
-  <longname>Delft3D Output Files</longname>
+  <longname>Delft3D Output File</longname>
   <title>Delft3D Output File</title>
   <filterspec>trim-*.dat;trih-*.dat;com-*.dat;wavm-*.dat;hwgxy*.dat;*.dat</filterspec>
   <callback>muppet_addDatasetQP</callback>

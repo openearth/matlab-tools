@@ -59,6 +59,8 @@ opt.zmax=1.0;
 opt.ztick=-999.0;
 opt.zgrid=0;
 opt.zdecimals=-1;
+opt.ztickmultiply=1.0;
+opt.ztickadd=0.0;
 
 % Color settings
 opt.colormap='jet';
@@ -199,13 +201,17 @@ opt.colorbar.font.color='black';
 opt.colorbar.changed=0;
 
 % 3D options
+opt.viewmode3d=1;
 opt.cameratarget=[0 0 0];
+opt.cameraposition=[0 0 0];
 opt.cameraangle=[0 0];
+opt.cameradistance=200000;
 opt.cameraviewangle=10;
-opt.dataaspectratio=[100 100 1];
-opt.lightstrength=0.4;
-opt.lightazimuth=0;
-opt.lightelevation=55;
+opt.dataaspectratio=[1 1 1];
+opt.light=1;
+%opt.lightstrength=0.4;
+opt.lightangle=[0 70];
+%opt.lightelevation=55;
 opt.perspective=1;
 
 % Coordinate system

@@ -13,6 +13,9 @@ for i=1:nr
  
     tx0=fgets(fid);
     tx0=fgets(fid);
+    % name string
+    f=strread(tx0,'%s','delimiter','=');
+    colormaps(i).name=f{2};
     tx0=fgets(fid);
  
     for j=1:100

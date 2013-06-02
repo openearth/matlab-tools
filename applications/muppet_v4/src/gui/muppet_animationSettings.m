@@ -37,7 +37,8 @@ if isempty(varargin)
             end
         end
         
-        [handles.animationsettings,ok]=gui_newWindow(handles.animationsettings,'xmldir',handles.xmlguidir,'xmlfile','animationsettings.xml');
+        [handles.animationsettings,ok]=gui_newWindow(handles.animationsettings,'xmldir',handles.xmlguidir, ...
+           'xmlfile','animationsettings.xml','iconfile',[handles.settingsdir 'icons' filesep 'deltares.gif']);
         
         setHandles(handles);
         

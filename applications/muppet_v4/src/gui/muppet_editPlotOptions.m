@@ -186,7 +186,8 @@ xml.element=element;
 
 xml=gui_fillXMLvalues(xml);
 
-[dataset,ok]=gui_newWindow(dataset,'element',xml.element,'tag','uifigure','width',width,'height',height,'title',[handles.datatype(idtype).datatype.longname]);
+[dataset,ok]=gui_newWindow(dataset,'element',xml.element,'tag','uifigure','width',width,'height',height, ...
+             'title',[handles.datatype(idtype).datatype.longname],'iconfile',[handles.settingsdir 'icons' filesep 'deltares.gif']);
 
 if ok
     plt.datasets(handles.activedatasetinsubplot).dataset=dataset;

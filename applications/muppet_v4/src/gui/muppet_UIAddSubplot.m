@@ -81,7 +81,8 @@ pos=round(100*pos)/100;
 s.name=['Subplot ' num2str(fig.nrsubplots+1)];
 s.position=pos;
 hh=getHandles;
-[s,ok]=gui_newWindow(s,'xmldir',hh.xmlguidir,'xmlfile','newsubplot.xml');
+[s,ok]=gui_newWindow(s,'xmldir',hh.xmlguidir,'xmlfile','newsubplot.xml', ...
+                     'iconfile',[hh.settingsdir 'icons' filesep 'deltares.gif']);
 if ok
     fig.nrsubplots=fig.nrsubplots+1;
     fig.subplots(fig.nrsubplots).subplot.name=s.name;

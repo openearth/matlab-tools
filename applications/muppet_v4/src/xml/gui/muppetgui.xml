@@ -60,9 +60,9 @@
   <menuitem>
     <label>Colors</label>
     <menuitem>
-      <label>Edit Colors</label>
+      <label>Show Colors</label>
       <callback>muppet_gui</callback>
-      <option>editcolors</option>
+      <option>showcolors</option>
     </menuitem>
     <menuitem>
       <label>Edit Color Maps</label>
@@ -1924,7 +1924,7 @@
       <checkfor>all</checkfor>
       <check>
         <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type</variable>
-        <value>map3d</value>
+        <value>3d</value>
         <operator>eq</operator>
       </check>
     </dependency>

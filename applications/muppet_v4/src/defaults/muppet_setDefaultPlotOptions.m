@@ -28,7 +28,7 @@ opt.font.weight='normal';
 opt.font.angle='normal';
 opt.font.color='Black';
 opt.font.horizontalalignment='left';
-opt.font.verticalalignment='baseline';
+opt.font.verticalalignment='top';
 opt.textposition='NorthEast';
 
 opt.contourlabels=0;
@@ -79,7 +79,6 @@ opt.addwindroselegend=1;
 opt.coloredwindrose=1;
 opt.maxradius=16;
 opt.radiusstep=4;
-
 
 opt.unitvector=1;
 opt.vectorlegendlength=1;
@@ -153,5 +152,7 @@ opt.verticallevel=1000;
 % 3D
 opt.plot3dgrid=0;
 opt.onecolor=0;
-opt.specularstrength=0;
-opt.lightstrength=0;
+opt.specularstrength=0.5;
+opt.ambientstrength=0.2;
+
+% Annotation

@@ -4,9 +4,11 @@ if isempty(varargin)
     newSession('firsttime');
     handles=getHandles;
     gui_newWindow(handles,'xmldir',handles.xmlguidir,'xmlfile','muppetgui.xml','modal',0, ...
-        'getfcn',@getHandles,'setfcn',@setHandles,'tag','muppetgui','Color',[0.941176 0.941176 0.941176]);
+        'getfcn',@getHandles,'setfcn',@setHandles,'tag','muppetgui','Color',[0.941176 0.941176 0.941176], ...
+        'iconfile',[handles.settingsdir 'icons' filesep 'deltares.gif']);
     muppet_refreshColorMap(handles);
     muppet_updateGUI;
+    delete(handles.splashscreen);
 else
     opt=lower(varargin{1});
     switch opt
@@ -20,12 +22,24 @@ else
             saveSessionAs;
         case{'adddatasetfromurl'}
             addDatasetfromURL;
+        case{'exit'}
+            close(gcf);
         case{'importlayout'}
             importLayout;
         case{'savelayout'}            
             exportLayout;
-        case{'exit'}
-            close(gcf);
+        case{'generatelayout'}            
+            generateLayout;
+        case{'showcolors'}            
+            showColors;
+        case{'editcolormaps'}            
+            editColorMaps;
+        case{'deltaresonline'}
+             web('http://www.deltares.nl/en');
+        case{'muppethelp'}
+             web('https://publicwiki.deltares.nl/display/OET/Muppet');
+        case{'aboutmuppet'}
+            aboutMuppet;
         case{'reloadxml'}
             reloadXmlFiles;
         case{'selectdataset'}
@@ -64,6 +78,8 @@ else
             toggleAxesEqual;
         case{'editxylim'}
             editXYLim(varargin{2});
+        case{'push3doptions'}
+            options3D;
         case{'selectcoordinatesystem'}
             selectCoordinateSystem;
         case{'selectmap'}
@@ -238,6 +254,119 @@ if pathname~=0
 else
     return
 end
+
+%%
+function generateLayout
+
+handles=getHandles;
+
+s=handles.newlayout;
+
+[s,ok]=gui_newWindow(s, 'xmldir', handles.xmlguidir, 'xmlfile', 'generatelayout.xml','iconfile',[handles.settingsdir 'icons' filesep 'deltares.gif']);
+
+if ok
+    
+    ifig=handles.activefigure;
+    
+    handles.newlayout=s;
+    
+    button='Yes';
+    
+    if handles.figures(ifig).figure.nrsubplots>0
+        button = questdlg('Delete existing subplots?','','Cancel','No','Yes','Yes');
+    end
+    
+    if ~strcmp(button,'Cancel')
+        
+        if strcmp(button,'Yes')
+            handles.figures(ifig).figure.nrsubplots=0;
+            handles.figures(ifig).figure.subplots=[];
+            handles.activesubplot=1;
+            handles.activedatasetinsubplot=1;
+        end
+        
+        nplots0=handles.figures(ifig).figure.nrsubplots;
+
+        % Check for annotations
+        if handles.figures(ifig).figure.nrsubplots>0
+            if strcmpi(handles.figures(ifig).figure.subplots(nplots0).subplot.type,'annotation')
+                nplots0=handles.figures(ifig).figure.nrsubplots-1;
+                nrnew=s.numbervertical*s.numberhorizontal;
+                nran=nplots0+nrnew+1;
+                handles.figures(ifig).figure.subplots(nran).subplot=handles.figures(ifig).figure.subplots(nplots0+1).subplot;
+            end            
+        end
+        
+        n=0;
+        for jj=1:s.numbervertical
+            for ii=1:s.numberhorizontal
+                n=n+1;
+                plt=muppet_setDefaultAxisProperties;
+                plt.name=['Subplot ' num2str(n+nplots0)];
+                plt.position(1)=s.originhorizontal+(ii-1)*(s.sizehorizontal+s.spacinghorizontal);
+                plt.position(2)=s.originvertical+(s.numbervertical-jj)*(s.sizevertical+s.spacinghorizontal);
+                plt.position(3)=s.sizehorizontal;
+                plt.position(4)=s.sizevertical;
+                handles.figures(ifig).figure.subplots(n+nplots0).subplot=plt;
+            end
+        end
+        
+        handles.figures(ifig).figure.nrsubplots=length(handles.figures(ifig).figure.subplots);        
+        
+        handles=muppet_updateSubplotNames(handles);
+        handles=muppet_updateDatasetInSubplotNames(handles);
+        muppet_refreshColorMap(handles);
+        
+        setHandles(handles);
+
+        muppet_updateGUI;
+        
+    end
+    
+end
+
+%%
+function showColors
+muppet_showColors;
+
+%%
+function editColorMaps
+
+handles=getHandles;
+
+plt=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot;
+
+clmap=plt.colormap;
+
+icl=strmatch(clmap,handles.colormapnames,'exact');
+
+% Open color map GUI
+clm.Name=clmap;
+clm.Space='RGB';
+clm.Index=handles.colormaps(icl).val(:,1);
+clm.Colors=handles.colormaps(icl).val(:,2:4)/255;
+clm.AlternatingColors=0;
+CMStructOut=md_colormap(clm);
+
+plt.colormap=CMStructOut.Name;
+
+% Read new color maps
+handles.colormaps=muppet_importColorMaps([handles.settingsdir 'colormaps' filesep]);
+
+% Color map names
+for ii=1:length(handles.colormaps)
+    handles.colormapnames{ii}=handles.colormaps(ii).name;
+end
+
+muppet_refreshColorMap(handles);
+
+setHandles(handles);
+
+
+%%
+function aboutMuppet
+handles=getHandles;
+muppet_aboutMuppet(handles);
 
 %%
 function reloadXmlFiles
@@ -528,6 +657,16 @@ end
 setHandles(handles);
 
 %%
+function options3D
+handles=getHandles;
+plt=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot;
+[plt,ok]=gui_newWindow(plt, 'xmldir', handles.xmlguidir, 'xmlfile', 'options3d.xml','iconfile',[handles.settingsdir 'icons' filesep 'deltares.gif']);
+if ok
+    handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot=plt;
+    setHandles(handles);
+end
+
+%%
 function selectmap
 handles=getHandles;
 plt=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot;
@@ -557,7 +696,7 @@ setHandles(handles);
 function editLegend
 handles=getHandles;
 s=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.legend;
-[s,ok]=gui_newWindow(s, 'xmldir', handles.xmlguidir, 'xmlfile', 'legend.xml');
+[s,ok]=gui_newWindow(s, 'xmldir', handles.xmlguidir, 'xmlfile', 'legend.xml','iconfile',[handles.settingsdir 'icons' filesep 'deltares.gif']);
 if ok
     handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.legend=s;
     setHandles(handles);
@@ -567,7 +706,7 @@ end
 function editVectorLegend
 handles=getHandles;
 s=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.vectorlegend;
-[s,ok]=gui_newWindow(s, 'xmldir', handles.xmlguidir, 'xmlfile', 'vectorlegend.xml');
+[s,ok]=gui_newWindow(s, 'xmldir', handles.xmlguidir, 'xmlfile', 'vectorlegend.xml','iconfile',[handles.settingsdir 'icons' filesep 'deltares.gif']);
 if ok
     handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.vectorlegend=s;
     setHandles(handles);
@@ -592,7 +731,7 @@ setHandles(handles);
 function editColorBar
 handles=getHandles;
 s=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.colorbar;
-[s,ok]=gui_newWindow(s, 'xmldir', handles.xmlguidir, 'xmlfile', 'colorbar.xml');
+[s,ok]=gui_newWindow(s, 'xmldir', handles.xmlguidir, 'xmlfile', 'colorbar.xml','iconfile',[handles.settingsdir 'icons' filesep 'deltares.gif']);
 if ok
     handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.colorbar=s;
     setHandles(handles);
@@ -630,7 +769,7 @@ setHandles(handles);
 function editNorthArrow
 handles=getHandles;
 s=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.northarrow;
-[s,ok]=gui_newWindow(s, 'xmldir', handles.xmlguidir, 'xmlfile', 'northarrow.xml');
+[s,ok]=gui_newWindow(s, 'xmldir', handles.xmlguidir, 'xmlfile', 'northarrow.xml','iconfile',[handles.settingsdir 'icons' filesep 'deltares.gif']);
 if ok
     handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.northarrow=s;
     setHandles(handles);
@@ -657,7 +796,7 @@ setHandles(handles);
 function editScaleBar
 handles=getHandles;
 s=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.scalebar;
-[s,ok]=gui_newWindow(s, 'xmldir', handles.xmlguidir, 'xmlfile', 'scalebar.xml');
+[s,ok]=gui_newWindow(s, 'xmldir', handles.xmlguidir, 'xmlfile', 'scalebar.xml','iconfile',[handles.settingsdir 'icons' filesep 'deltares.gif']);
 if ok
     handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.scalebar=s;
     setHandles(handles);

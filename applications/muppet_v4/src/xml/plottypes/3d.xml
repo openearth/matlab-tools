@@ -9,13 +9,13 @@
     <name>type</name>
   </option>
   <option>
+    <name>drawbox</name>
+  </option>
+  <option>
     <name>xlim</name>
   </option>
   <option>
     <name>ylim</name>
-  </option>
-  <option>
-    <name>scale</name>
   </option>
   <option>
     <name>xtick</name>
@@ -46,6 +46,48 @@
   </option>
   <option>
     <name>ygrid</name>
+  </option>
+  <option>
+    <name>zlim</name>
+  </option>
+  <option>
+    <name>zgrid</name>
+  </option>
+  <option>
+    <name>ztick</name>
+  </option>
+  <option>
+    <name>ztickmultiply</name>
+  </option>
+  <option>
+    <name>ztickadd</name>
+  </option>
+  <option>
+    <name>viewmode3d</name>
+  </option>
+  <option>
+    <name>cameratarget</name>
+  </option>
+  <option>
+    <name>cameraposition</name>
+  </option>
+  <option>
+    <name>cameraangle</name>
+  </option>
+  <option>
+    <name>cameradistance</name>
+  </option>
+  <option>
+    <name>cameraviewangle</name>
+  </option>
+  <option>
+    <name>dataaspectratio</name>
+  </option>
+  <option>
+    <name>light</name>
+  </option>
+  <option>
+    <name>lightangle</name>
   </option>
   <option>
     <name>fontname</name>

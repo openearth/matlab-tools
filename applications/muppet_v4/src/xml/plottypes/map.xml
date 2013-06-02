@@ -6,6 +6,9 @@
     <name>position</name>
   </option>
   <option>
+    <name>drawbox</name>
+  </option>
+  <option>
     <name>type</name>
   </option>
   <option>

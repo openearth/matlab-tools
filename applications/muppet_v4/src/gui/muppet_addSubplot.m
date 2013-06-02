@@ -14,7 +14,7 @@ if ~addsubplotannotations
 
     s.name=['Subplot ' num2str(i0+1)];
     s.position=position;
-    [s,ok]=gui_newWindow(s, 'xmldir', handles.xmlguidir, 'xmlfile', 'newsubplot.xml');
+    [s,ok]=gui_newWindow(s, 'xmldir', handles.xmlguidir, 'xmlfile', 'newsubplot.xml','iconfile',[handles.settingsdir 'icons' filesep 'deltares.gif']);
     if ok
         name=s.name;
         position=s.position;
