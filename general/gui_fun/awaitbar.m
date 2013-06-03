@@ -68,6 +68,15 @@ if nargin>=2
         if nargin>=3
             figTitle = varargin{1};
         end
+        iconfile=[];
+        for ii=1:length(varargin)
+            if ischar(varargin{ii})
+                switch lower(varargin{ii})
+                    case{'iconfile'}
+                        iconfile=varargin{ii+1};
+                end
+            end
+        end
     elseif isnumeric(whichbar)
         type=1; %we are updating, given a handle
         f=whichbar;
@@ -155,6 +164,14 @@ switch type
             'Visible','on',...
             'name',figTitle,...
             'UserData',[t0 0]);
+        
+        if ~isempty(iconfile)
+            fh = get(f,'JavaFrame'); % Get Java Frame
+            if exist('iconFile','var')
+                fh.setFigureIcon(javax.swing.ImageIcon(iconfile));
+            end
+        end
+        
         set(f,'WindowStyle','modal');
         h = uicontrol('Style', 'pushbutton', 'String', 'Abort',...
             'BackgroundColor',[0.80 0.80 0.80],'FontName','Helvetica','FontWeight','bold',...
