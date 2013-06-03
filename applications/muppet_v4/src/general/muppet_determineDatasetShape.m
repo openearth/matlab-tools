@@ -110,11 +110,7 @@ else
                         case{'location'}
                             %                         shp='crosssection1d';
                             plane='xy';
-                            ndim=1;
-                        otherwise
-                            %                         shp='crosssection1d';
-                            plane='xv';
-                            ndim=1;
+                            ndim=2;
                     end
                 end
             else
