@@ -13,7 +13,6 @@ Figure "4x3_portrait_wl1"
    FrameText6 ""                                                                     "Helvetica"     "normal"   "normal"   10  "black" 
    FrameText7 ""                                                                     "Helvetica"     "normal"   "normal"   10  "black" 
    FrameText8 ""                                                                     "Helvetica"     "normal"   "normal"   10  "black" 
-   FrameText9 "WL|Delft Hydraulics"                                                  "Helvetica"     "normal"   "normal"   13  "black" 
  
    Subplot   "Subplot 1a" 
  
