@@ -1,10 +1,12 @@
 <?xml version="1.0"?>
 <root>
   <plotoption>
-    <name>positiongroup</name>
-    <keyword>Position</keyword>
-    <variable>position</variable>
-    <type>real</type>
+    <element>
+      <name>positiongroup</name>
+      <keyword>Position</keyword>
+      <variable>position</variable>
+      <type>real</type>
+    </element>
     <element>
       <style>panel</style>
       <text>Position</text>

@@ -1,10 +1,12 @@
 <?xml version="1.0"?>
 <root>
   <plotoption>
-    <name>climwithcolorbargroup</name>
-    <variable>cmin cstep cmax</variable>
-    <keyword>Contours</keyword>
-    <type>real</type>
+    <element>
+      <name>climwithcolorbargroup</name>
+      <variable>cmin cstep cmax</variable>
+      <keyword>Contours</keyword>
+      <type>real</type>
+    </element>
     <element>
       <style>panel</style>
       <variable>adddatestring</variable>
@@ -148,7 +150,6 @@
       <variable>customcontours</variable>
       <type>real</type>
       <keyword>CustomContours</keyword>
-      <type>real</type>
       <check>
         <variable>usecustomcontours</variable>
         <value>1</value>
