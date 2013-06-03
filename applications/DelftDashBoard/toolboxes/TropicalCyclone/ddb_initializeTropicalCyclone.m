@@ -168,8 +168,8 @@ handles.Toolbox(ii).Input.tcBasinsDir = [fileparts(fileparts(handles.settingsDir
 handles.Toolbox(ii).Input.tcBasinsFiles = dir([handles.Toolbox(ii).Input.tcBasinsDir filesep '*.xy']);
 
 handles.Toolbox(ii).Input.importFormat='JTWCCurrentTrack';
-handles.Toolbox(ii).Input.importFormats={'JTWCCurrentTrack','NHCCurrentTrack','JTWCBestTrack','UnisysBestTrack'};
-handles.Toolbox(ii).Input.importFormatNames={'JTWC Current Track...','NHC Current Track...','JTWC Best Track','Unisys Best Track'};
+handles.Toolbox(ii).Input.importFormats={'JTWCCurrentTrack','NHCCurrentTrack','JTWCBestTrack','UnisysBestTrack','jmv30'};
+handles.Toolbox(ii).Input.importFormatNames={'JTWC Current Track...','NHC Current Track...','JTWC Best Track','Unisys Best Track','JMV 3.0'};
 
 handles.Toolbox(ii).Input.downloadLocation='JTWCCurrentTracks';
 handles.Toolbox(ii).Input.downloadLocations={'JTWCCurrentTracks','NHCCurrentTracks','UnisysBestTracks','JTWCBestTracks','JTWCCurrentCyclones'};

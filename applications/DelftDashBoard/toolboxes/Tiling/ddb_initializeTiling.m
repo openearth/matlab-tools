@@ -87,9 +87,9 @@ handles.Toolbox(ii).Input.bathymetry.rawDataType='arcinfogrid';
 handles.Toolbox(ii).Input.bathymetry.rawDataTypeExtension='*.asc';
 handles.Toolbox(ii).Input.bathymetry.rawDataTypeSelectionText='Select Data File (ArcInfo ASCII grid file)';
 
-handles.Toolbox(ii).Input.bathymetry.rawDataTypesText={'ArcInfo ASCII grid','Arc Binary Grid'};
-handles.Toolbox(ii).Input.bathymetry.rawDataTypes={'arcinfogrid','arcbinarygrid'};
-handles.Toolbox(ii).Input.bathymetry.rawDataTypeExtensions={'*.asc','*.adf'};
+handles.Toolbox(ii).Input.bathymetry.rawDataTypesText={'ArcInfo ASCII grid','Arc Binary Grid','Mat File','netCDF File'};
+handles.Toolbox(ii).Input.bathymetry.rawDataTypes={'arcinfogrid','arcbinarygrid','matfile','netcdf'};
+handles.Toolbox(ii).Input.bathymetry.rawDataTypeExtensions={'*.asc','*.adf','*.mat','*.nc'};
 
 handles.Toolbox(ii).Input.bathymetry.EPSGcode                     = 4326;
 handles.Toolbox(ii).Input.bathymetry.EPSGname                     = 'WGS 84';

@@ -129,12 +129,17 @@ for iq=1:nq
                 
                 if inp.trackR35(j,iq)<0 || inp.trackR50(j,iq)<0
                     % Not enough input.
-                    if inp.trackRMax(j,iq)>=0
-                        % RMax available. Switch to method 3.
-                        fprintf(fid,'  %s  %6.2f  %6.2f      %i  %6.1f  %6.1f %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %6.1f\n',dstr,inp.trackY(j),inp.trackX(j),3,inp.trackVMax(j,iq),inp.trackRMax(j,iq),e,e,e,e,e,e,inp.trackPDrop(j,iq));
+                    if inp.trackPDrop(j,iq)<0
+                        % switch to method 6
+                        fprintf(fid,'  %s  %6.2f  %6.2f      %i  %6.1f  %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e\n',dstr,inp.trackY(j),inp.trackX(j),6,inp.trackVMax(j,iq),e,e,e,e,e,e,e,e);
                     else
-                        % Switch to method 4.
-                        fprintf(fid,'  %s  %6.2f  %6.2f      %i  %6.1f  %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %6.1f\n',dstr,inp.trackY(j),inp.trackX(j),4,inp.trackVMax(j,iq),e,e,e,e,e,e,e,inp.trackPDrop(j,iq));
+                        if inp.trackRMax(j,iq)>=0
+                            % RMax available. Switch to method 3.
+                            fprintf(fid,'  %s  %6.2f  %6.2f      %i  %6.1f  %6.1f %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %6.1f\n',dstr,inp.trackY(j),inp.trackX(j),3,inp.trackVMax(j,iq),inp.trackRMax(j,iq),e,e,e,e,e,e,inp.trackPDrop(j,iq));
+                        else
+                            % Switch to method 4.
+                            fprintf(fid,'  %s  %6.2f  %6.2f      %i  %6.1f  %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %6.1f\n',dstr,inp.trackY(j),inp.trackX(j),4,inp.trackVMax(j,iq),e,e,e,e,e,e,e,inp.trackPDrop(j,iq));
+                        end
                     end
                 else
                     fmt='  %s  %6.2f  %6.2f      %i  %6.1f ';

@@ -106,6 +106,19 @@ switch lower(handles.Toolbox(tb).Input.bathymetry.rawDataType)
         y0=m.Y(end);
         ncols=m.nColumns;
         nrows=m.nRows;
+    case{'matfile'}
+        s=load(handles.Toolbox(tb).Input.bathymetry.dataFile);
+        x0=s.x(1);
+        y0=s.y(1);
+        ncols=length(s.x);
+        nrows=length(s.y);
+    case{'netcdf'}
+        x=nc_varget(handles.Toolbox(tb).Input.bathymetry.dataFile,'x');
+        y=nc_varget(handles.Toolbox(tb).Input.bathymetry.dataFile,'y');
+        x0=x(1);
+        y0=y(1);
+        nrows=length(y);
+        ncols=length(x);
 end
 
 % Determine default values for this dataset

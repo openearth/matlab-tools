@@ -83,6 +83,27 @@ switch lower(rawdatatype)
         dx0=m.X(2)-m.X(1);
         ncols=m.nColumns;
         nrows=m.nRows;
+    case{'matfile'}
+        wb = waitbox('Reading data file ...');
+        s=load(fname1);
+        z=s.z;
+        x00=s.x(1);
+        y00=s.y(1);
+        nrows=length(s.y);
+        dx0=s.x(2)-s.x(1);
+        ncols=length(s.x);
+        close(wb);
+    case{'netcdf'}
+        wb = waitbox('Reading data file ...');
+        x=nc_varget(fname1,'x');
+        y=nc_varget(fname1,'y');
+        z=nc_varget(fname1,'z');
+        x00=x(1);
+        y00=y(1);
+        nrows=length(y);
+        dx0=x(2)-x(1);
+        ncols=length(x);
+        close(wb);
 end
 
 pbyp=0;
