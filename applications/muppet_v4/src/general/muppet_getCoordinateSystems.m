@@ -1,7 +1,10 @@
 function handles=muppet_getCoordinateSystems(handles)
 
 %%
-handles.EPSG=load('EPSG.mat');
+
+fname=[handles.settingsdir 'data' filesep 'epsg' filesep 'epsg.mat'];
+
+handles.EPSG=load(fname);
 
 nproj=0;
 ngeo=0;

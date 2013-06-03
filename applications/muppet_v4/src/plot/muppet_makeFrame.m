@@ -106,7 +106,8 @@ set(ax,'Tag','frametextaxis');
 
 for j=1:length(frame.logo)
     logoplot=axes;
-    jpeg=jpg(frame.logo(j).logo.file,1.0,1);
+    fname=[handles.settingsdir 'logos' filesep frame.logo(j).logo.file];
+    jpeg=jpg(fname,1.0,1);
     if strcmpi(fig.orientation,'landscape')
         pos(1)=frame.logo(j).logo.position(2);
         pos(2)=fig.height-(frame.logo(j).logo.position(1)+frame.logo(j).logo.position(3));

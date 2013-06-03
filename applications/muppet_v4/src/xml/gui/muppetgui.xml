@@ -73,14 +73,22 @@
   <menuitem>
     <label>Options</label>
     <menuitem>
-      <label>Save Free Text</label>
+      <label>Save Interactive Text</label>
       <callback>muppet_gui</callback>
-      <option>savefreetext</option>
+      <option>saveinteractivetext</option>
+      <enable>0</enable>
+    </menuitem>
+    <menuitem>
+      <label>Save Interactive Polylines</label>
+      <callback>muppet_gui</callback>
+      <option>saveinteractivepolylines</option>
+      <enable>0</enable>
     </menuitem>
     <menuitem>
       <label>Coordinate Conversion</label>
       <callback>muppet_gui</callback>
       <option>coordinateconversion</option>
+      <enable>0</enable>
     </menuitem>
   </menuitem>
   <menuitem>
@@ -103,6 +111,7 @@
   </menuitem>
   <menuitem>
     <label>Debug</label>
+    <type>debug</type>
     <menuitem>
       <label>Reload XML</label>
       <callback>muppet_gui</callback>

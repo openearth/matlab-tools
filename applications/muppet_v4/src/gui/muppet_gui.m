@@ -6,6 +6,7 @@ if isempty(varargin)
     gui_newWindow(handles,'xmldir',handles.xmlguidir,'xmlfile','muppetgui.xml','modal',0, ...
         'getfcn',@getHandles,'setfcn',@setHandles,'tag','muppetgui','Color',[0.941176 0.941176 0.941176], ...
         'iconfile',[handles.settingsdir 'icons' filesep 'deltares.gif']);
+    set(gcf,'CloseRequestFcn','set(0,''ShowHiddenHandles'',''on'');delete(get(0,''Children''))');
     muppet_refreshColorMap(handles);
     muppet_updateGUI;
     delete(handles.splashscreen);
@@ -234,7 +235,7 @@ if pathname~=0
     handles.activefigure=1;
     handles.activesubplot=1;
     handles.activedatasetinsubplot=1;
-    [handles,ok]=muppet_readSessionFile(handles,filename,1);    
+    [handles,ok]=muppet_readSessionFile(handles,[pathname filename],1);    
     handles=muppet_updateSubplotNames(handles);
     handles=muppet_updateDatasetInSubplotNames(handles);
     setHandles(handles);

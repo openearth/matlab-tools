@@ -6,7 +6,11 @@ if handles.nrdatasets>0
     [pathname,filename,ext]=fileparts(handles.datasets(handles.activedataset).dataset.filename);
     currentpath=pwd;
     if ~strcmpi(currentpath,pathname)
-        filename=[pathname filename ext];
+        if isempty(pathname)
+            filename=[filename ext];
+        else
+            filename=[pathname filesep filename ext];
+        end
     else
         filename=[filename ext];
     end
