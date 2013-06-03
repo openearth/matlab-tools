@@ -49,8 +49,7 @@ function DelftDashBoard
 
 %%
 
-% curdir = pwd;
-% cd(fileparts(which('ddsettings.m')));
+global figureiconfile
 
 % get revision number
 warning('off','all')
@@ -81,6 +80,8 @@ if ~ok
 end
 
 warning('off','MATLAB:HandleGraphics:ObsoletedProperty:JavaFrame');
+        
+figureiconfile=[handles.settingsDir 'icons' filesep 'deltares.gif'];
 
 % Open Splash Screen
 frame=splash([handles.settingsDir 'icons' filesep 'DelftDashBoard.jpg'],50);

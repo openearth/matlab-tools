@@ -1,4 +1,4 @@
-function fout = waitbox(name)
+function fout = waitbox(name,varargin)
 %WAITBOX  One line description goes here.
 %
 %   More detailed description goes here.
@@ -62,9 +62,7 @@ function fout = waitbox(name)
 %%
 %WAITBOX Display wait box.
 
-handles=getHandles;
-
-type=2;
+global figureiconfile
 
 vertMargin = 0;
 
@@ -146,11 +144,9 @@ end
 
 set(f,'HandleVisibility','callback','visible','on');
 
-if ~isempty(handles)
-    if isfield(handles,'settingsDir')
+if ~isempty(figureiconfile)
         fh = get(f,'JavaFrame'); % Get Java Frame
-        fh.setFigureIcon(javax.swing.ImageIcon([handles.settingsDir filesep 'icons' filesep 'deltares.gif']));
-    end
+        fh.setFigureIcon(javax.swing.ImageIcon(figureiconfile));
 end
 
 set(0, 'Units', oldRootUnits);

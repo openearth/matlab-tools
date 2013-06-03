@@ -1,5 +1,7 @@
 function font=gui_selectFont(varargin)
 
+iconfile=[];
+
 for ii=1:length(varargin)
     if ischar(varargin{ii})
         switch lower(varargin{ii})
@@ -13,6 +15,8 @@ for ii=1:length(varargin)
                 clr=colorlist('getrgb','color',font.color);
                 set(h,'ForegroundColor',clr);
                 return
+            case{'iconfile'}
+                iconfile=varargin{ii+1};
         end
     end
 end
@@ -171,7 +175,7 @@ xml.element(n).element.position='230 20 50 20';
 xml=gui_fillXMLvalues(xml);
 
 [font,ok]=gui_newWindow(font,'element',xml.element,'height',500,'width',300,'title','Select Font','modal',1, ...
-    'createcallback',@gui_selectFont,'createinput','selectfont');
+    'createcallback',@gui_selectFont,'createinput','selectfont','iconfile',iconfile);
 
 if ~ok
     font=font0;

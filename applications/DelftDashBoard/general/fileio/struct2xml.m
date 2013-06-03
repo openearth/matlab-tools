@@ -172,29 +172,38 @@ for k=1:length(fldnames)
                         end
                     end
                 case{'short'}
-                    for j=1:length(s.(fldname))
+                    if ~isstruct(s.(fldname))
                         attributes=[];
                         prefix='';
-                        % Find out if this is an end node
-                        try
-                        if ~isstruct(s.(fldname)(j).(fldname))
-                            % This is an end node
-                            name=fldname;
-                            value=s.(fldname)(j).(fldname);
-                            % Write end node
-                            writeendnode(fid,ilev,nindent,name,prefix,value,attributes,includeattributes);
-                        else
-                            % Not an end node
-                            writeopennode(fid,ilev,nindent,fldname,prefix,attributes,includeattributes);
-                            ilev=ilev+1;
-                            splitstruct(fid,s.(fldname)(j).(fldname),ilev,nindent,includeattributes,structuretype);
-                            ilev=ilev-1;
-                            writeclosenode(fid,ilev,nindent,fldname,prefix);
-                        end
-                        catch
-                            shite=1
+                        name=fldname;
+                        value=s.(fldname);
+                        % Write end node
+                        writeendnode(fid,ilev,nindent,name,prefix,value,attributes,includeattributes);
+                    else
+                        for j=1:length(s.(fldname))
+                            attributes=[];
+                            prefix='';
+                            % Find out if this is an end node
+                            try
+                                if ~isstruct(s.(fldname)(j).(fldname))
+                                    % This is an end node
+                                    name=fldname;
+                                    value=s.(fldname)(j).(fldname);
+                                    % Write end node
+                                    writeendnode(fid,ilev,nindent,name,prefix,value,attributes,includeattributes);
+                                else
+                                    % Not an end node
+                                    writeopennode(fid,ilev,nindent,fldname,prefix,attributes,includeattributes);
+                                    ilev=ilev+1;
+                                    splitstruct(fid,s.(fldname)(j).(fldname),ilev,nindent,includeattributes,structuretype);
+                                    ilev=ilev-1;
+                                    writeclosenode(fid,ilev,nindent,fldname,prefix);
+                                end
+                            catch
+                                shite=1
                             end
-                    end                    
+                        end
+                    end
                 case{'supershort'}
                     attributes=[];
                     prefix='';

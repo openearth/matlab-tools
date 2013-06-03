@@ -63,7 +63,7 @@ function ddb_initialize(varargin)
 switch lower(varargin{1}),
     
     case{'startup'}
-
+        
         ddb_setProxySettings('initialize');
 
         disp('Finding coordinate systems ...');
