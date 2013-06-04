@@ -111,6 +111,9 @@ else
                             %                         shp='crosssection1d';
                             plane='xy';
                             ndim=2;
+                        case{'vector2d'}
+                            plane='xy';
+                            ndim=2;
                     end
                 end
             else

@@ -11,19 +11,10 @@
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>thinning</name>
-      </plotoption>
+        <name>linegroup</name>
+      </plotoption> 
       <plotoption>
-        <name>linedata</name>
-      </plotoption>
-      <plotoption>
-        <name>linecolor</name>
-      </plotoption>
-      <plotoption>
-        <name>linestyle</name>
-      </plotoption>
-      <plotoption>
-        <name>linewidth</name>
+        <name>vectortimeseriesthinninggroup</name>
       </plotoption>
       <plotoption>
         <name>legendtext</name>
@@ -36,19 +27,7 @@
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>thinning</name>
-      </plotoption>
-      <plotoption>
-        <name>linedata</name>
-      </plotoption>
-      <plotoption>
-        <name>linecolor</name>
-      </plotoption>
-      <plotoption>
-        <name>linestyle</name>
-      </plotoption>
-      <plotoption>
-        <name>linewidth</name>
+        <name>vectortimeseriesthinninggroup</name>
       </plotoption>
       <plotoption>
         <name>legendtext</name>

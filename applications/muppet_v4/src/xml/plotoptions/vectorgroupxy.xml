@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <root>
   <plotoption>
-    <name>vectorgroup2d</name>
+    <name>vectorgroupxy</name>
     <element>
       <style>panel</style>
       <text>Vector Legend</text>

@@ -22,7 +22,6 @@ else
     xback=0;
 end
     
-% h1=feather(data.x,data.u,data.v);
 scalex=(xmax-xmin)/plt.position(3);
 scaley=(plt.ymax-plt.ymin)/plt.position(4);
 rat=scalex/scaley;
@@ -41,12 +40,14 @@ set(h1,'color',colorlist('getrgb','color',opt.linecolor));
 set(h1,'Linestyle',opt.linestyle);
 set(h1,'Linewidth',opt.linewidth);
 
-if opt.timebar
-    if ~isempty(opt.timebar.time)
+switch opt.timebar.type
+    case{'line'}
         xt(1)=opt.timebar.time-xback;
         xt(2)=opt.timebar.time-xback;
         yt(1)=plt.ymin;
         yt(2)=plt.ymax;
-        plot(xt,yt,'r','Linewidth',3);
-    end
+        p=plot(xt,yt);
+        set(p,'Linewidth',opt.timebar.linewidth);
+        set(p,'LineStyle',opt.timebar.linestyle);
+        set(p,'Color',colorlist('getrgb','color',opt.timebar.linecolor));
 end

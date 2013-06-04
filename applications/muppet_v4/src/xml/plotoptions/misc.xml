@@ -51,30 +51,6 @@
     </element>
   </plotoption>
   <plotoption>
-    <name>thinning</name>
-    <keyword>ThinningFactor</keyword>
-    <type>int</type>
-    <default>1</default>
-    <check>
-      <operator>ne</operator>
-    </check>
-    <element>
-      <style>popupmenu</style>
-      <type>int</type>
-      <text>Thinning</text>
-      <listtext>1</listtext>
-      <listtext>2</listtext>
-      <listtext>3</listtext>
-      <listtext>4</listtext>
-      <listtext>5</listtext>
-      <listtext>6</listtext>
-      <listtext>7</listtext>
-      <listtext>8</listtext>
-      <listtext>9</listtext>
-      <listtext>10</listtext>
-    </element>
-  </plotoption>
-  <plotoption>
     <name>polylinetype</name>
     <keyword>PolylineType</keyword>
     <type>string</type>

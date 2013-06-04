@@ -30,17 +30,11 @@ switch dataset.type
             if isfield(dataset.fid,'SubType')
                 switch dataset.fid.SubType
                     case{'Delft3D-trim'}
-%                        if strcmpi(dataset.type,'scalar2dxy')
-                            grd=qpread(dataset.fid,'morphologic grid','griddata',dataset.m,dataset.n);
-%                        else
-%                            grd=qpread(dataset.fid,'hydrodynamic grid','griddata',dataset.m,dataset.n);
-%                        end
+                        grd=qpread(dataset.fid,'morphologic grid','griddata',dataset.m,dataset.n);
                         xg=grd.X;
                         yg=grd.Y;                        
                 end
             end
-            xg=[];
-            yg=[];
 
             if ~isempty(xg)
                 dataset.x=xg;

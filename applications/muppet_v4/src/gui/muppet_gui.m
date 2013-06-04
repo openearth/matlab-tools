@@ -720,9 +720,9 @@ plt=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot)
 if isempty(plt.colorbar.position)
     % No colorbar yet
     x0=plt.position(1)+plt.position(3)-2.0;
-    y0=plt.position(2)+1.0;
+    y0=plt.position(2)+1.5;
     x1=0.5;
-    y1=plt.position(4)-2.0;
+    y1=plt.position(4)-3.0;
     plt.colorbar.position=[x0 y0 x1 y1];
     handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot=plt;
 end
