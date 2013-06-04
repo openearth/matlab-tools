@@ -223,7 +223,11 @@ switch plt.type
                 plt.cameradistance=3*(plt.xmax-plt.xmin);
                 cameratargetx=0.5*(plt.xmin+plt.xmax);
                 cameratargety=0.5*(plt.ymin+plt.ymax);
-                cameratargetz=0.5*(zmax+zmin);
+                if ~isempty(zmax) && ~isempty(zmin)
+                    cameratargetz=0.5*(zmax+zmin);
+                else
+                    cameratargetz=0.0;
+                end
                 plt.cameratarget=[cameratargetx cameratargety cameratargetz];
                 plt.cameraposition=cameraview('viewangle',[plt.cameraangle plt.cameradistance],'target',plt.cameratarget,'dataaspectratio',plt.dataaspectratio);
                 plt.cameraviewangle=8.0;
