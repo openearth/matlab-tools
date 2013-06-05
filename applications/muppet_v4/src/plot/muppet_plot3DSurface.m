@@ -15,15 +15,7 @@ colormap(clmap);
 x=data.x;
 y=data.y;
 z=data.z;
-% z(x<plt.xmin)=NaN;
-% z(x>plt.xmax)=NaN;
-% z(y<plt.ymin)=NaN;
-% z(y>plt.ymax)=NaN;
-% z(z<plt.zmin)=NaN;
-% z(z>plt.zmax)=NaN;
 
-% z=z*plt.dataaspectratio(3);
-% z=z*10000;
 dpplot=surf(x,y,z);
 
 if isfield(data,'rgb')
@@ -37,18 +29,22 @@ set(dpplot,'FaceColor',opt.shading);
 
 if opt.plotgrid
     set(dpplot,'EdgeColor',colorlist('getrgb','color',opt.linecolor));
-    set(dpplot,'LineWidth',0.2);
+    set(dpplot,'LineWidth',opt.linewidth);
+    set(dpplot,'LineStyle',opt.linestyle);
 else
     set(dpplot,'EdgeColor','none');
 end
 
 caxis([col(1) col(end)]);
 
-set(dpplot,'FaceLighting',opt.facelighting);
- 
 if opt.onecolor==1
     set(dpplot,'FaceColor',colorlist('getrgb','color',opt.color));
 end
+
+set(dpplot,'FaceLighting',opt.facelighting);
+set(dpplot,'BackFaceLighting',opt.backfacelighting);
+set(dpplot,'EdgeLighting',opt.edgelighting);
+ 
 
 set(dpplot,'ambientstrength',opt.ambientstrength);
 set(dpplot,'specularstrength',opt.specularstrength);

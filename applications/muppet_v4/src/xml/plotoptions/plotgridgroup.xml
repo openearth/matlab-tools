@@ -50,7 +50,7 @@
     </element>
     <element>
       <keyword>LineWidth</keyword>
-      <default>0.5</default>
+      <default>0.2</default>
       <check>
         <operator>ne</operator>
       </check>
