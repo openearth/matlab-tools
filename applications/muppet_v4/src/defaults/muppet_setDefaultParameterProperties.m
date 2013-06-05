@@ -32,3 +32,4 @@ opt.vamplitudename='amplitude_v';
 opt.uphasename='phase_u';
 opt.vphasename='phase_v';
 
+opt.location='';
