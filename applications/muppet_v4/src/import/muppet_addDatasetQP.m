@@ -114,26 +114,29 @@ for j=i1:i2
     par.parameterzequal=1;
     par.adjustname=1;
     
-%    par.parametername=dataproperties(ii).Name;
     par.name=dataproperties(ii).Name;
     
     par.size=qpread(fid,1,dataproperties(ii),'size');
     
     % Bug in qpread?
     par.size=par.size.*dataproperties(ii).DimFlag;
-
-%     if timesread % times have already been read for one parameter
-%         if dataproperties(ii).DimFlag(1)>0 && timesread==0
-%             par.times=tms;
-%         end
-%     end
     
     % Times
-    if dataproperties(ii).DimFlag(1)>0 && par.size(1)<1000 && timesread==0
-        % Only read times when there are less than 1000
-        par.times=qpread(fid,dataproperties(ii),'times');
-%        tms=par.times;
-%        timesread=1;
+    if dataproperties(ii).DimFlag(1)>0
+            % Try to copy times from previous parameter
+            for ip=1:ii-1
+                if dataproperties(ii).DimFlag(1)==dataproperties(ip).DimFlag(1)
+                    % Same number of times
+                    if ~isempty(dataset.parameters(ip).parameter.times)
+                        par.times=dataset.parameters(ip).parameter.times;
+                    end
+                end
+            end
+            % 
+            if isempty(par.times)
+                % Still empty, see if it's worth reading it now
+                par.times=qpread(fid,dataproperties(ii),'times');
+            end                        
     end
     
     % Stations
@@ -155,7 +158,6 @@ for j=i1:i2
             end
             if strcmpi(dataproperties(ii).Dimension{3},'station')
                 stations=nc_varget(dataset.filename,'station_name');
-%                stations=stations';
                 for istat=1:size(stations,1)
                     par.stations{istat}=deblank(stations(istat,:));
                 end

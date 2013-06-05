@@ -31,6 +31,14 @@ end
 %% Station
 if ~isempty(dataset.station)
     istation=strmatch(dataset.station,dataset.stations,'exact');
+    if length(istation)>1
+        if ~isempty(dataset.stationnumber)
+            istation=dataset.stationnumber;
+        else
+            istation=istation(1);
+            disp('Warning! Multiple stations with this name found! First station picked!');
+        end
+    end
 else
     istation=1:dataset.size(2);
 end

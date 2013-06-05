@@ -40,6 +40,9 @@
     <name>station</name>
   </option>
   <option>
+    <name>stationnumber</name>
+  </option>
+  <option>
     <name>m</name>
   </option>
   <option>

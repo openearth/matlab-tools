@@ -597,6 +597,16 @@ end
 % Remove parameters structure
 dataset=rmfield(dataset,'timelist');
 
+% Check if selected station occurs multiple times in list
+if ~isempty(dataset.station)
+    istation=strmatch(dataset.station,dataset.stations,'exact');
+    if length(istation)==1
+        % Just one station found, set station number to be empty because we
+        % don't want it in the mup file
+        dataset.stationnumber=[];
+    end
+end
+
 % Check dimensions
 dims=[0 0 0 0];
 if dataset.size(3)>0

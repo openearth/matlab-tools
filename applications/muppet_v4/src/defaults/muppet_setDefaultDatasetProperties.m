@@ -34,6 +34,7 @@ dataset.timestep=[];
 dataset.block=[];
 dataset.time=[];
 dataset.station=[];
+dataset.stationnumber=[];
 dataset.domain=[];
 dataset.subfield=[];
 %dataset.plotcoordinate='pathdistance';
