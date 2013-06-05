@@ -211,13 +211,8 @@ switch plt.type
 
                 % 3D
 
-%                plt.dataaspectratio=[1.0 1.0 1/max(0.001,round(0.2*(plt.xmax-plt.xmin)/max(plt.zmax-plt.zmin,1e-9)))];
                 plt.dataaspectratio=[1.0 1.0 1/(0.2*(plt.xmax-plt.xmin)/(plt.zmax-plt.zmin))];
                 
-%                 if strcmpi(plt.coordinatesystem.type,'geographic')
-%                     plt.dataaspectratio(3)=plt.dataaspectratio(3)*111111;
-%                 end
-
                 plt.viewmode3d=2;
                 plt.cameraangle=[315 30];
                 plt.cameradistance=3*(plt.xmax-plt.xmin);

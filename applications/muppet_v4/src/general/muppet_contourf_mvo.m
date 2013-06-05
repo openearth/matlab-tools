@@ -1,6 +1,6 @@
-function [c0,h,wp]=contourf_mvo(x0,y0,z0,col)
+function [c0,h,wp]=muppet_contourf_mvo(x0,y0,z0,col)
 
-[c0,h]=contourf(x0,y0,z0,col);hold on;
+[c0,h]=contourfcorr(x0,y0,z0,col);hold on;
 
 set(h,'EdgeColor','none');
 
