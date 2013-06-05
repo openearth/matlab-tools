@@ -13,7 +13,7 @@ if isempty(varargin)
     % Splash screen
     handles.splashscreen = SplashScreen( 'Splashscreen',[handles.settingsdir 'icons' filesep 'muppets.jpg']);
     handles.splashscreen.addText( 10, 30, 'Muppet', 'FontSize', 30, 'Color', [0 0 0.6] ); 
-    handles.splashscreen.addText( 10, 50, ['v ' handles.muppetversion], 'FontSize', 20, 'Color',[1 1 1]);
+    handles.splashscreen.addText( 10, 55, ['v ' handles.muppetversion], 'FontSize', 20, 'Color',[1 1 1]);
 end
 
 handles=muppet_initialize(handles);
