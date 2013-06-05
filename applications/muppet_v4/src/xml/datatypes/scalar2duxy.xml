@@ -11,6 +11,9 @@
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
+        <name>plotgridgroup</name>
+      </plotoption>
+      <plotoption>
         <name>adddategroup</name>
       </plotoption>
     </plotroutine>

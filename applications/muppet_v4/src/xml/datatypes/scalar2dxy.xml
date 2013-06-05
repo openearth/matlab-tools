@@ -107,6 +107,15 @@
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
+        <name>surface3dgroup</name>
+      </plotoption>
+      <plotoption>
+        <name>plotgridgroup</name>
+      </plotoption>
+      <plotoption>
+        <name>opacitygroup</name>
+      </plotoption>
+      <plotoption>
         <name>adddategroup</name>
       </plotoption>
     </plotroutine>

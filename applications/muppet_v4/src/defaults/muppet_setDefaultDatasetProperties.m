@@ -89,3 +89,7 @@ dataset.uniformvalue=1.0;
 dataset.dataseta='';
 dataset.datasetb='';
 dataset.operatio='Add';
+
+% Unstructured grids
+dataset.G=[];
+

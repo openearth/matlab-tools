@@ -16,10 +16,12 @@ end
 h = trisurfcorcen(data.G.tri,data.G.cor.x,data.G.cor.y,data.z(data.G.map3));
 set(h,'edgeColor','none'); % we do not want to see the triangle edges as they do not exist on D-Flow FM network
 
-%h  = dflowfm.plotMap(data.G,data.z);
+hold on;
+
+if opt.plotgrid
+    dflowfm.plotNet(data.G,'cen',[],'cor',[]); 
+end
 
 clmap=muppet_getColors(handles.colormaps,plt.colormap,64);
 colormap(clmap);
 caxis([col(1) col(end)]);
-
-hold on;

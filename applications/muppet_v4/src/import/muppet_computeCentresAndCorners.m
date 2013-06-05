@@ -62,5 +62,7 @@ switch dataset.type
         
     case{'scalar2duxy'}
         % Read net
-        dataset.G = dflowfm.readNet(dataset.filename,'quiet',1);
+        if isempty(dataset.G)
+            dataset.G = dflowfm.readNet(dataset.filename,'quiet',1);
+        end
 end

@@ -152,7 +152,19 @@ opt.verticallevel=1000;
 % 3D
 opt.plot3dgrid=0;
 opt.onecolor=0;
+opt.color='lightgreen';
+opt.facelighting='gouraud';
+opt.edgelighting='none';
+opt.backfacelighting='reverselit';
+opt.ambientstrength=0.5;
+opt.diffusestrength=0.5;
 opt.specularstrength=0.5;
-opt.ambientstrength=0.2;
+opt.specularexponent=100;
+opt.specularcolorreflectance=1;
+opt.edgeopacity=1;
+opt.faceopacity=1;
+
+% Grid
+opt.plotgrid=0;
 
 % Annotation

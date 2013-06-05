@@ -35,7 +35,7 @@ end
 
 set(dpplot,'FaceColor',opt.shading);
 
-if opt.plot3dgrid
+if opt.plotgrid
     set(dpplot,'EdgeColor',colorlist('getrgb','color',opt.linecolor));
     set(dpplot,'LineWidth',0.2);
 else
@@ -44,22 +44,19 @@ end
 
 caxis([col(1) col(end)]);
 
-set(dpplot,'FaceLighting','phong');
+set(dpplot,'FaceLighting',opt.facelighting);
  
 if opt.onecolor==1
-    x=opt.color;
-    set(dpplot,'FaceColor',opt.color);
+    set(dpplot,'FaceColor',colorlist('getrgb','color',opt.color));
 end
-
 
 set(dpplot,'ambientstrength',opt.ambientstrength);
 set(dpplot,'specularstrength',opt.specularstrength);
-set(dpplot,'SpecularColorReflectance',1);
-set(dpplot,'SpecularExponent',100);
+set(dpplot,'diffusestrength',opt.diffusestrength);
+set(dpplot,'SpecularColorReflectance',opt.specularcolorreflectance);
+set(dpplot,'SpecularExponent',opt.specularexponent);
 
-if opt.transparency<1
-    set(dpplot,'EdgeAlpha',opt.transparency);
-    set(dpplot,'FaceAlpha',opt.transparency);
-end
+set(dpplot,'EdgeAlpha',opt.edgeopacity);
+set(dpplot,'FaceAlpha',opt.faceopacity);
 
 hold on;
