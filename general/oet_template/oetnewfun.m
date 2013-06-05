@@ -103,7 +103,7 @@ if ischar(OPT.output)
     OPT.output = {OPT.output};
 end
 
-MaxNrChars = max(cellfun(@length, [OPT.input OPT.output]));
+MaxNrChars = max(cellfun(@length, [OPT.input(:); OPT.output(:)]));
 
 if ~isscalar(OPT.input)
     % create list of input arguments
