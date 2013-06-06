@@ -13,9 +13,9 @@ function [x_regular,y_regular,theta,t] = points_along_polyline_at_interval(x,y,i
 %   theta     = angle of path through point in radians
 %
 %   Example:
-%       x = [3.9977 3.9055 4.2281 5.1959 5.9793 6.3479 6.6244 0.6106 0.9332 2.2696 3.2604];
-%       y = [2.2953 5.1901 5.5994 5.6579 5.3070 5.0146 7.0322 9.0205 8.4942 8.2310 9.0789];    
-%       [x_regular,y_regular,theta] = geometry.points_along_polyline_at_interval(x,y,1)
+%       x = [3.9977 3.9055 4.2281 nan 5.9793 nan 6.6244 0.6106 0.9332 2.2696 3.2604]';
+%       y = [2.2953 5.1901 5.5994 5.6579 5.3070 5.0146 7.0322 9.0205 8.4942 8.2310 9.0789]';    
+%       [x_regular,y_regular,theta,t] = geometry.points_along_polyline_at_interval(x,y,1);
 %       plot(x,y,'r-x','lineWidth',3)
 %       hold on
 %       plot(x_regular,y_regular,'b-o','lineWidth',2)
@@ -75,6 +75,51 @@ function [x_regular,y_regular,theta,t] = points_along_polyline_at_interval(x,y,i
 % this result is evenly spaced. eg:
 % distance(x_regular,y_regular) is not constant
 
+%% deal with nan separated lines segment
+if ~(any(isnan(x)) || any(isnan(y)))
+    % simple, no nan's
+    [x_regular,y_regular,theta,t] = main_fun(x,y,interval);
+else
+    if iscolumn(x)
+        dim = 2;
+    elseif isrow(x)
+        dim = 1;
+    end
+    
+    cnt = cumsum(ones(size(x)));
+    cnt(isnan(x)) = nan;
+    cnt(isnan(y)) = nan;
+    [cnt,x,y] = nansplit(cnt,x,y);
+    [x_regular,y_regular,theta,t] = deal(cell(size(x)));
+    for ii = 1:length(x)
+        [x_regular{ii},y_regular{ii},theta{ii},t{ii}] = main_fun(x{ii},y{ii},interval);
+        t{ii} = t{ii}+cnt{ii}(1)-1;
+    end
+
+    x_regular = nanjoin(x_regular,dim);
+    y_regular = nanjoin(y_regular,dim);
+    theta     = nanjoin(theta,dim);
+    t         = nanjoin(t,dim);
+end
+
+
+function [x_regular,y_regular,theta,t] = main_fun(x,y,interval)
+if numel(x) == 0
+    x_regular = [];
+    y_regular = [];
+    theta     = [];
+    t         = [];
+    return
+end
+
+if numel(x) == 1
+    x_regular = x;
+    y_regular = y;
+    theta     = nan;
+    t         = 1;
+    return
+end
+
 distance_along_polyline = distance(x,y);
 
 xx = (0:interval:distance_along_polyline(end));
@@ -86,7 +131,6 @@ for ii = 1:length(xx);
     nn = find(xx(ii)<=distance_along_polyline,1,'first');
     if nn==1
         t(ii)         = 1;
-        nn = 2;
     else
         c = (xx(ii) - distance_along_polyline(nn-1)) / ...
             (distance_along_polyline(nn) - distance_along_polyline(nn-1));
