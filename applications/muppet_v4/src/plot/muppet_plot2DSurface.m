@@ -48,7 +48,7 @@ switch(lower(opt.plotroutine)),
         x=data.x;
         y=data.y;
         xmean=mean(x(isfinite(x)));
-        ymean=mean(y(isfinite(y)));        
+        ymean=mean(y(isfinite(y)));
         x(isnan(x))=xmean;
         y(isnan(y))=ymean;
         z(isnan(x))=NaN;
@@ -66,7 +66,7 @@ switch(lower(opt.plotroutine)),
             cax=[1 length(col)-1];
             contours=1:length(col)-1;
         end
-        [c,h,wp]=muppet_contourf_mvo(x,y,z,contours);
+        [c,h,wp]=contourf_mvo(x,y,zc,contours);
         clmap=muppet_getColors(handles.colormaps,plt.colormap,64);
         caxis(cax);
         colormap(clmap);
