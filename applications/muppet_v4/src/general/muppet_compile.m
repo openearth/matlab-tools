@@ -44,15 +44,11 @@
 
 delete('bin\*');
 
-% statspath='Y:\app\MATLAB2009b\toolbox\stats';
-statspath='n:\Applications\Matlab\MATLAB2012a_64\toolbox\stats';
-rmpath(statspath);
-statspath='n:\Applications\Matlab\MATLAB2012a_64\toolbox\stats\classreg';
-rmpath(statspath);
-statspath='n:\Applications\Matlab\MATLAB2012a_64\toolbox\stats\stats';
-rmpath(statspath);
-statspath='n:\Applications\Matlab\MATLAB2012a_64\toolbox\stats\statsdemos';
-rmpath(statspath);
+% Remove paths to statistics toolbox
+statspath='c:\Program Files\MATLAB2012a_64\toolbox\stats\';
+rmpath([statspath 'classreg']);
+rmpath([statspath 'stats']);
+rmpath([statspath 'statsdemos']);
 
 muppetpath=fileparts(which('muppet4'));
 exedir=[fileparts(muppetpath) filesep 'bin'];
@@ -79,6 +75,3 @@ mcc('-m','-d',exedir,'muppet4.m','-B','complist','-a','xml');
 
 delete('complist');
 
-% delete('qptmp\*.m');
-% rmpath('qptmp');
-% rmdir('qptmp','s');
