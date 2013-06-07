@@ -73,6 +73,7 @@ for it=1:length(flist)
     fnames{nf}=[dr filesep flist{it}];
 end
 
+delete([dr filesep fname '.kmz']);
 zip([dr filesep fname '.zip'],fnames);
 movefile([dr filesep fname '.zip'],[dr filesep fname '.kmz']);
 
