@@ -57,19 +57,40 @@ if isempty(isub)
    return 
 end
 
-nsub = length(isub);
-nseg = length(SegmentNr);
-data = nan(nsub,nseg,struct1.NTimes);
 
-% Read data
-for iseg = 1:nseg
-    kseg = SegmentNr(iseg);
-    [time data1] = delwaq('read',struct1,isub,kseg,0);
-    data(:,iseg,:) = data1;    
+
+if struct1.NTimes>300
+   disp('delwaq_map2his progress:')
+
+    % Read data
+    for it = 1:struct1.NTimes
+        disp([it struct1.NTimes])
+        [time, data] = delwaq('read',struct1,isub,SegmentNr,it);
+        if it ==1
+            structOut = delwaq('write',File2Save,Header,SubstanceNames,SegmentNames,refTime,time,data);
+        else
+            structOut = delwaq('write',structOut,time,data);
+        end
+
+    end
+
+else
+    nsub = length(isub);
+    nseg = length(SegmentNr);
+    data = nan(nsub,nseg,struct1.NTimes);
+    
+    
+    % Read data
+    for iseg = 1:nseg
+        disp([iseg nseg])
+        kseg = SegmentNr(iseg);
+        [time, data1] = delwaq('read',struct1,isub,kseg,0);
+        data(:,iseg,:) = data1;
+    end
+    
+    % Writing a File
+    structOut = delwaq('write',File2Save,Header,SubstanceNames,SegmentNames,refTime,time,data);
 end
-
-% Writing a File
-structOut = delwaq('write',File2Save,Header,SubstanceNames,SegmentNames,refTime,time,data);
 
 
 %--------------------------------------------------------------------------
