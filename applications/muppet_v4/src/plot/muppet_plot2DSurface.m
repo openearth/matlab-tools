@@ -66,7 +66,7 @@ switch(lower(opt.plotroutine)),
             cax=[1 length(col)-1];
             contours=1:length(col)-1;
         end
-        [c,h,wp]=contourf_mvo(x,y,zc,contours);
+        [c,h,wp]=muppet_contourf_mvo(x,y,zc,contours);
         clmap=muppet_getColors(handles.colormaps,plt.colormap,64);
         caxis(cax);
         colormap(clmap);

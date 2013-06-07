@@ -125,12 +125,14 @@ for j=i1:i2
     if dataproperties(ii).DimFlag(1)>0
             % Try to copy times from previous parameter
             for ip=1:ii-1
-                if dataproperties(ii).DimFlag(1)==dataproperties(ip).DimFlag(1)
-                    % Same number of times
-                    if ~isempty(dataset.parameters(ip).parameter.times)
-                        par.times=dataset.parameters(ip).parameter.times;
+%                if dataproperties(ii).DimFlag(1)==dataproperties(ip).DimFlag(1)
+                    if par.size(1)==dataset.parameters(ip).parameter.size(1)
+                        % Same number of times
+                        if ~isempty(dataset.parameters(ip).parameter.times)
+                            par.times=dataset.parameters(ip).parameter.times;
+                        end
                     end
-                end
+%                end
             end
             % 
             if isempty(par.times)
