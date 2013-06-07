@@ -66,6 +66,11 @@ seconds  = (xgeo - x.dg).* 3600;
 x.mn  = floor(seconds./60.);
 x.sc  = seconds - (x.mn.* 60);
 
+if abs(x.sc-60)<1e-6
+    x.sc=0;
+    x.mn=x.mn+1;
+end
+
 if nargin==2
     
     ygeo = varargin{1};
