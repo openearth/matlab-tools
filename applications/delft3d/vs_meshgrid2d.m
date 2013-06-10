@@ -1,4 +1,6 @@
 function varargout=vs_meshgrid2d(varargin),
+%VS_MESHGRID2D   deprecated, use VS_MESHGRID2DCORCEN instead
+
 %VS_MESHGRID2D   Read time-independent grid info from trim/com file
 %
 %         G = vs_meshgrid2d(NFSstruct,timestep)

@@ -1,4 +1,6 @@
 function varargout=vs_meshgrid2d0(varargin),
+%VS_MESHGRID2D0   deprecated, use VS_MESHGRID2DCORCEN instead
+
 %VS_MESHGRID2D0   Read all time-independent grid info from trim/com file
 %
 % vs_meshgrid2d0(NEFISstruct) reads all the relevant griddata
