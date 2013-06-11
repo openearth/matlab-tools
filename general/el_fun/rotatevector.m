@@ -29,11 +29,11 @@ function [U1, V1] = rotatevector(u0,v0,a);
 %  ____        ____
 %  Unew =  M * uold;
 % 
-%
+%  _  _       _                         _     _  _
 % | U2 |  =  | cos(angle)   - sin(angle) |   | u1 |;
 % |    |     |                           | * |    |
-% | V2 |  =  | sin(angle)   + cos(angle) |   | v1 |; 
-%
+% |_V2_|  =  |_sin(angle)   + cos(angle)_|   |_v1_|; 
+% 
 % See also: cart2pol, pol2cart, rotatevectord
 
 %13-9-2004
