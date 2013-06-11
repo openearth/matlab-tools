@@ -1,4 +1,4 @@
-function GetICEDataResult = GetICEData(obj,ParameterCode,FromYear,ToYear,FromMonth,ToMonth,FromLongitude,ToLongitude,FromLatitude,ToLatitude,FromPressure,ToPressure)
+function varargout = GetICEData(obj,ParameterCode,FromYear,ToYear,FromMonth,ToMonth,FromLongitude,ToLongitude,FromLatitude,ToLatitude,FromPressure,ToPressure)
 %GetICEData Get ICES Bottle and low resolution CTD data
 %
 %   D = GetICEData(obj,ParameterCode,FromYear,ToYear,FromMonth,ToMonth,...
@@ -37,6 +37,8 @@ function GetICEDataResult = GetICEData(obj,ParameterCode,FromYear,ToYear,FromMon
 %       GetICEDataResult = (ArrayOfICEData)
 %
 %See also: GetICEDataAverage
+
+OPT.debug = 1;
 
 % Build up the argument lists.
 values = { ...
@@ -79,13 +81,50 @@ types = { ...
    '{http://www.w3.org/2001/XMLSchema}double', ...
    };
 
-% Create the message, make the call, and convert the response into a variable.
-soapMessage = createSoapMessage( ...
-    'http://ocean.ices.dk/webservices/', ...
-    'GetICEData', ...
-    values,names,types,'document');
-response = callSoapService( ...
-    obj.endpoint, ...
-    'http://ocean.ices.dk/webservices/GetICEData', ...
-    soapMessage);
-GetICEDataResult = parseSoapResponse(response);
+%%  make the call, ...
+
+   if OPT.debug
+      tic
+      disp('busy: soapMessage')
+   end
+   
+   soapMessage = createSoapMessage( ...
+       'http://ocean.ices.dk/webservices/', ...
+       'GetICEData', ...
+       values,names,types,'document');
+
+%% ...make the call,...
+
+   if OPT.debug
+      %xmlwrite('soapMessage.xml',soapMessage);       
+      toc
+      disp('busy: callSoapService')
+   end
+   
+   soapResponse = callSoapService( ...
+       obj.endpoint, ...
+       'http://ocean.ices.dk/webservices/GetICEData', ...
+       soapMessage);
+
+%%  ...and convert the response into a variable.
+
+   if OPT.debug
+      %savestr(['soapResponse.xml'],char(soapResponse))
+      toc
+      disp('busy: parseSoapResponse')
+   end
+   
+   GetICEDataResult = parseSoapResponse(soapResponse);
+
+   if OPT.debug
+      toc       
+      disp('done: parseSoapResponse')
+   end
+
+   if     nargout==1
+      varargout = {GetICEDataResult};
+   elseif nargout==2
+      varargout = {GetICEDataResult,soapResponse};
+   else
+      varargout = {GetICEDataResult,soapResponse,soapMessage};
+   end

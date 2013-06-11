@@ -92,6 +92,10 @@ OPT.colorbar           = 0;
    [OPT, Set, Default] = setproperty(OPT, varargin{:});
    
 %% limited error check
+    if ~iscell(lon); lon = {lon};end
+    if ~iscell(lat); lat = {lat};end
+    if ~iscell(z  ); z   = {z  };end
+    if ~iscell(c  ); c   = {c  };end
 
     if ~isequal(size(lat),size(lon),size(c),size(z))
         error('lat and lon must be same size')

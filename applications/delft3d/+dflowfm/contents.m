@@ -24,6 +24,8 @@
 %  dflowfm.plotMapkml         - Plot an unstructured map as Google Earth kml file (beta).
 %  dflowfm.add_CF_coordinates - appends CF coordinates to ncfile
 %
+%  dflowfm.readHis            - Reads history time series data
+%
 % PRE-PROCESSING: Convert delft3d-flow model to  Delft3D-FM
 %  dflowfm.mdf2mdu              - convert Delft3D-flow model input to D-Flow FM model input
 %  dflowfm.opendap2obs          - get list of observation points from netCDF (OPeNDAP) time series collection

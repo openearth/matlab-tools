@@ -6,7 +6,7 @@ function varargout = vs_trim2nc_statistics(vsfile,varargin)
 % saves average of salinity for period t0-t1, period t2-t2 and entire
 % time period in trim file (0) to netCDF file.
 %
-%Example:
+% Example:
 %   vs_trim2nc_statistics('d:\Delft3D\project\trim-ub40.dat',...
 %                         'times',{[2:25],[26:51],[52:75]},...
 %                         'var'  ,{'waterlevel','velocity','salinity','temperature'})
@@ -45,9 +45,9 @@ function varargout = vs_trim2nc_statistics(vsfile,varargin)
 %  $HeadURL$
 %  $Keywords: $
 
-   OPT.suffix = '_statistics';
+   OPT.suffix = '_mean';
    OPT.times  = {[1 2]};
-   OPT.var    = {'waterlevel','velocity','salinity','temperature'};
+   OPT.var    = {'waterlevel','velocity','salinity','temperature','grid_x','grid_y'};
    
    if nargin==0
       varargout = {OPT};
@@ -62,7 +62,7 @@ function varargout = vs_trim2nc_statistics(vsfile,varargin)
       ncfile   = fullfile(fileparts(vsfile),[filename(vsfile) '_statistics.nc']);
    end   
    
-   OPT = setproperty(OPT,varargin)
+   OPT = setproperty(OPT,varargin);
 
 %% define time period
 
@@ -79,7 +79,8 @@ function varargout = vs_trim2nc_statistics(vsfile,varargin)
    G.cen.mask = vs_let_scalar(F,'map-const','KCS'   ,'quiet'); G.cen.mask(G.cen.mask~=1) = NaN; % -1/0/1/2 Non-active/Non-active/Active/Boundary water level point (fixed)
    
    for its = 1:length(OPT.times)
-      % per parameter reuse tmparray1/2 and stat1/2 for memory efficiency
+   
+   %% per parameter reuse tmparray1/2 and stat1/2 for memory efficiency
        
       disp([mfilename,' processing  time windows # ',num2str(its)]);
        
@@ -89,7 +90,8 @@ function varargout = vs_trim2nc_statistics(vsfile,varargin)
       ncwrite   (ncfile,'time'       ,T.datenum(OPT.time( 1     )) -datenum(1970,1,1), [its  ]);
       ncwrite   (ncfile,'time_bounds',T.datenum(OPT.time([1 end]))'-datenum(1970,1,1), [its,1]);
    
-      %%
+   %% zwl
+      
       first = 1;
       for it= OPT.time;
          tmparray1 = apply_mask(vs_let_scalar(F,'map-series',{it},'S1', {0 0},'quiet'),G.cen.mask);
@@ -106,7 +108,8 @@ function varargout = vs_trim2nc_statistics(vsfile,varargin)
       ncwriteatt(ncfile,'waterlevel', 'actual_range',[min(stat1(:)) max(stat1(:)) ]); % 1-based
       ncwriteatt(ncfile,'waterlevel', 'cell_methods','time: mean');
       
-      %%
+   %% sal
+      
       first = 1;
       for it= OPT.time;
          tmparray1 = apply_mask(vs_let_scalar(F,'map-series',{it},'R1', {0 0 0 I.salinity.index},'quiet'),G.cen.mask);
@@ -123,7 +126,8 @@ function varargout = vs_trim2nc_statistics(vsfile,varargin)
       ncwriteatt(ncfile,'salinity', 'actual_range',[min(stat1(:)) max(stat1(:)) ]); % 1-based
       ncwriteatt(ncfile,'salinity', 'cell_methods','time: mean');
    
-      %%
+   %% tem
+      
       first = 1;
       for it= OPT.time;
          tmparray1 = apply_mask(vs_let_scalar(F,'map-series',{it},'R1', {0 0 0 I.temperature.index},'quiet'),G.cen.mask);
@@ -143,7 +147,8 @@ function varargout = vs_trim2nc_statistics(vsfile,varargin)
       ncwriteatt(ncfile,'temperature', 'actual_range',[min(stat1(:)) max(stat1(:)) ]); % 1-based
       ncwriteatt(ncfile,'temperature', 'cell_methods','time: mean');
    
-      %%
+   %% u,v
+      
       first = 1;
       for it= OPT.time;
    
