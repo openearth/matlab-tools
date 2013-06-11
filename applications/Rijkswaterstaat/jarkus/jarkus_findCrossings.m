@@ -87,8 +87,18 @@ end;
 %% combine x-grids and derive corresponding z-values
 x_new = [x1; x2];                                           % combine x-grids
 x_new = unique(sort(x_new));                                % make unique and sort accending
-z1_new = roundoff(interp1(x1, z1, x_new),8);                % get corresponding z1-values
-z2_new = roundoff(interp1(x2, z2, x_new),8);                % get corresponding z2-values
+if ~isequal(x1, x_new)
+    z1_new = interp1(x1, z1, x_new);                % get corresponding z1-values
+else
+    z1_new = z1;
+end
+z1_new = roundoff(z1_new,8);
+if ~isequal(x2, x_new)
+    z2_new = interp1(x2, z2, x_new);                % get corresponding z1-values
+else
+    z2_new = z2;
+end
+z2_new = roundoff(z2_new,8);
 
 %% add crossings and filter based on diff(x)
 x2add = addXvaluesExactCrossings(x_new, z1_new, z2_new);    % get exact x-values of crossings
