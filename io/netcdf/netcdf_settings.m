@@ -121,14 +121,18 @@ function netcdf_settings(varargin)
        
        try % matlab fails if several instances of matlab are accessing matlabprefs.mat, tgis hapens whne one users has many matlabn instances running
        setpref ( 'SNCTOOLS','USE_JAVA'   , 1); % This requires SNCTOOLS 2.4.8 or better
+       if ~(OPT.quiet)
            disp('  netCDF: setpref( ''SNCTOOLS'',''USE_JAVA''   , 1) % force use of java for remote urls to avoid OPeNDAP bug in native package');
+       end
        % keep snctools default
        setpref ( 'SNCTOOLS','PRESERVE_FVD',0); % 0: backwards compatibility and consistent with ncBrowse
                                                % 1: We do not want to transpose matrices because:
                                                %    (i)  we have some LARGE datasets and need a performance boost
                                                %    (ii) some use the netCDF API directly which does not do this. 
                                                %    May break previous work though ...
+       if ~(OPT.quiet)
            disp('  netCDF: setpref( ''SNCTOOLS'',''PRESERVE_FVD'',0) % ncread and nc_varget have different matrix orientation');
+       end
        catch
            fprintf(2,'  netCDF: failed to set SNCTOOLS prefs due to matlab concurrence issue\n')
        end
