@@ -3,13 +3,13 @@ function varargout = KMLsurf_tiled(lat,lon,z,varargin)
 %
 % Experimental function to tile patches of a KMLsurf plot. 
 %
+%  https://developers.google.com/kml/documentation/kmlreference#lod
+%  https://developers.google.com/kml/documentation/regions
+%  https://developers.google.com/kml/documentation/regions#regionbasednl
+%
 %  KMLsurf_tiled(lat,lon,z)
 %
-%See also: googlePlot, surf
-
-% [lat,lon] = meshgrid(54:1/255:55,4:1/127:5);
-% z = abs(peaks(256))*500;
-% z(z<100) = nan;
+%See also: KMLsurf
 
 %% process <keyword,value>
    % get colorbar options first
@@ -28,7 +28,7 @@ function varargout = KMLsurf_tiled(lat,lon,z,varargin)
    OPT.polyFill           = 1;
    OPT.zScaleFun          = @(z) (z+20)*5;
    OPT.colorbar           = 1;
-   OPT.minpow             = 4;
+   OPT.LodPixels          = 32;
 
    if nargin==0
       varargout = {OPT};
@@ -80,15 +80,17 @@ function varargout = KMLsurf_tiled(lat,lon,z,varargin)
 %% start KML
 
    OPT.fid=fopen(OPT.fileName,'w');
-   
+    
    OPT_header = struct(...
        'name',OPT.kmlName,...
        'open',0);
    output = KML_header(OPT_header);
 
    if OPT.colorbar
-      clrbarstring = KMLcolorbar(OPT);
+     [clrbarstring,pngNames] = KMLcolorbar(OPT);
       output = [output clrbarstring];
+   else
+      pngNames = {};
    end
 
 %% STYLE
@@ -116,10 +118,13 @@ function varargout = KMLsurf_tiled(lat,lon,z,varargin)
    fprintf(OPT.fid,output);
    output = repmat(char(1),1,1e6);
    kk = 1;
+   pows = 2.^(10:-1:1) % 1024, 512, 256, 128, 64, 32, 16,8, 4, 2, 1
 
-   for xx = 2.^(10:-1:1) % 1024, 512, 256, 128, 64, 32, 16,8, 4, 2, 1
-   if xx > OPT.minpow
-   %%%% disp(['debug: ',num2str(xx)])
+   for draworder = 1:length(pows)
+   
+      xx = pows(draworder);
+      disp(['debug: xx=',num2str(xx),' draworder=',num2str(draworder)])
+   
       mm = [1:xx:size(lat,1)-1 size(lat,1)]; % always use last element of dimension
       nn = [1:xx:size(lat,2)-1 size(lat,2)]; % always use last element of dimension
       for ii=1:length(mm)-1
@@ -129,9 +134,6 @@ function varargout = KMLsurf_tiled(lat,lon,z,varargin)
             lon2 = lon(mm(ii):mm(ii+1),nn(jj):nn(jj+1));
             z2   =   z(mm(ii):mm(ii+1),nn(jj):nn(jj+1));
             
-%             whos lat2 lon2 z2
-            
-            %%%% whos; pausedisp
             if ~all(isnan(z2))
                 [a b] = size(z2);
                  cv   = [1,a,b*a,(b-1)*a+1,1]'; % MAGIC simple surbounding box for case of full grid (no nans)
@@ -155,31 +157,37 @@ function varargout = KMLsurf_tiled(lat,lon,z,varargin)
                 level = round((sum(z3(cv))/numel(cv))-OPT.cLim(1)/(OPT.cLim(2)-OPT.cLim(1))*(OPT.colorSteps-1))+1;
                 level = min(max(level,1),OPT.colorSteps);
                 
-                coordinates  = sprintf(...
-                    '%3.8f,%3.8f,%3.3f ',...coords);
-                    coords);
+                coordinates  = sprintf('%3.8f,%3.8f,%3.3f ',coords);
                 
-                if xx == OPT.minpow
-                    maxLod = -1;
+                if draworder == length(pows)
+                    maxLod = -1; % keep data when zoomed in (streetview level)
+                    minLod = OPT.LodPixels/2;
+                elseif draworder==1
+                    maxLod = OPT.LodPixels;  % exact half to prevent LoD overlaps  
+                    minLod = -1; % keep data when zoomed out (whole earth in view)
                 else
-                    maxLod = 75;
+                    maxLod = OPT.LodPixels;
+                    minLod = OPT.LodPixels/2; % exact half to prevent LoD overlaps              
                 end
 
                 %mean(z3(cv))
                 newOutput = sprintf([...
                     '<Placemark><name>Region LineString</name>\n'...
+                    '<drawOrder>%d</drawOrder>'...
                     '<styleUrl>#%s</styleUrl>\n'...
                     '<Polygon><altitudeMode>absolute</altitudeMode><outerBoundaryIs><LinearRing><coordinates>%s</coordinates></LinearRing></outerBoundaryIs></Polygon>\n'... % coordinates
                     '<Region>\n'...
-                    '<LatLonAltBox><north>%3.8f</north><south>%3.8f</south><east>%3.8f</east><west>%3.8f</west><minAltitude>-1000</minAltitude><maxAltitude>1000</maxAltitude></LatLonAltBox>\n'... % N,S,E,W
-                    '<Lod><minLodPixels>22</minLodPixels>\n'...
-                    '<maxLodPixels>%d</maxLodPixels></Lod>\n'... % maxLod
+                    ' <LatLonAltBox><north>%3.8f</north><south>%3.8f</south><east>%3.8f</east><west>%3.8f</west><minAltitude>-1000</minAltitude><maxAltitude>1000</maxAltitude></LatLonAltBox>\n'... % N,S,E,W
+                    ' <Lod><minLodPixels>%d</minLodPixels>\n'... % maxLod/2=minLod to prevent LoD overlap
+                    '      <maxLodPixels>%d</maxLodPixels>\n'... % maxLod
+                    ' </Lod>\n'... 
                     '</Region>\n'...
                     '</Placemark>\n'],...
+                    draworder,...
                     sprintf('style%d',level),... % color
                     coordinates,...
                     max(lat3(cv)),min(lat3(cv)),max(lon3(cv)),min(lon3(cv)),...
-                    maxLod);
+                    minLod,maxLod);
                 %<minFadeExtent>32</minFadeExtent><maxFadeExtent>64</maxFadeExtent>
                 output(kk:kk+length(newOutput)-1) = newOutput;
                 kk = kk+length(newOutput);
@@ -192,12 +200,27 @@ function varargout = KMLsurf_tiled(lat,lon,z,varargin)
             end % isnan
          end % jj
       end % ii
-   end % minpow
    end % xx
    fprintf(OPT.fid,output(1:kk-1));
-   output = KML_footer;
-   fprintf(OPT.fid,output);
 
 %% close KML
 
+   output = KML_footer;
+   fprintf(OPT.fid,output);
    fclose(OPT.fid);
+   
+%% compress to kmz and include image fileds
+
+   if strcmpi  ( OPT.fileName(end-2:end),'kmz')
+      movefile( OPT.fileName,[OPT.fileName(1:end-3) 'kml'])
+      if OPT.colorbar
+          files = [{[OPT.fileName(1:end-3) 'kml']},pngNames];
+      else
+          files =  {[OPT.fileName(1:end-3) 'kml']};
+      end
+      zip     ( OPT.fileName,files);
+      for ii = 1:length(files)
+          delete  (files{ii})
+      end
+      movefile([OPT.fileName '.zip'],OPT.fileName)
+   end
