@@ -1,4 +1,4 @@
-function [curvatures radii relativeAngle distances] = jarkus_curvature(transects, varargin)
+function [curvatures radii relativeAngle distances x y cross_shore] = jarkus_curvature(transects, varargin)
 %JARKUS_CURVATURE  Derives the coastal curvature from JARKUS data
 %
 %   Calculates the coastal curvature based on JARKUS data struct resulting
@@ -140,6 +140,7 @@ end
 
 x = NaN(size(transects.id));
 y = NaN(size(transects.id));
+cross_shore = NaN(size(transects.id));
 a = NaN(size(transects.id));
 
 if length(transects.time) > 1
@@ -181,6 +182,8 @@ for i = 1:length(transects.id)
             % translate cross-shore coordinate to global y-coordinate
             y(i) = interp1(transects.cross_shore(notnan), ...
                 transects.y(i,notnan), crossing);
+            
+            cross_shore(i) = crossing;
             
             % calculate direction angle of transect with respect to north
             a(i) = xy2degN(transects.x(i,end), transects.y(i,end), ...
