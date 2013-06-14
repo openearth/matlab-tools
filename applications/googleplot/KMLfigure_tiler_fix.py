@@ -1,4 +1,4 @@
-# Modify kml files produced by OpenEarthTools function KMLfigure_tiler.m
+# Modify kml file GroundOverlay + LinearRing produced by OpenEarthTools KMLfigure_tiler.m
 #
 # Solve deal rendering issues around MSL (Mean Sea Level)
 # at high zoom levels. At high zoom levels (aka LoD: Levels of Detail)
@@ -9,12 +9,17 @@
 # assumes the image to be below sea level, and it becomes
 # invisible, i.e. it is rendered underneath the regular aereal imagery.. 
 # Around MSL, it is not possible to view (fly) from underneath
-# the water as has been introduced with Google Earth's ocean option.]
-# This problem has been solved hetre by overlaying the images twice 
+# the water as has been introduced with Google Earth's ocean option.
+# the propblem is known to Google Earth staff via their product forum
+# and awaits prioritization:
+# http://productforums.google.com/forum/#!searchin/earth/GroundOverlay/earth/x7d5abMkibo/NlgUJpCc5nYJ
+#
+# This problem has been solved here by overlaying the images twice 
 # above certain zoom levels (actually drawOrder level): we create two 
-# '<GroundOverlay> elements of the same image. This does not make
-# the kml collection larger, as is introeduces onyl extra links
-# to existing imagfes. 
+# '<GroundOverlay> elements of the same image. This does not 
+# make the kml png collection larger, as is introduces onyl extra links
+# to existing images. For or <Placemark><Polygon><LinearRing> is does
+# require doubling of coordinate data.
 # (i)  the default 'ClampToGround' is maintained where 
 #      Google Earth uses the highest available DEM data, 
 # (ii) assigning the image to an alsolute altitude level
@@ -24,11 +29,12 @@
 # is visible, sometimes both.
 #
 # A noteworthy side effect of this Python is that is
-# replac es linux -styule end-of-lien characters with
-# windows-style end-of-lien characters.
+# replaces linux-style end-of-line characters with
+# windows-style end-of-line characters so file comparison
+# when no kml was modified fails on windows.
 # http:stackoverflow.com/questions/10020325/make-python-stop-emitting-a-carriage-return-when-writing-newlines-to-sys-stdout
 
-#  Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+# Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
 # $Id: KMLscatter.m 7803 2012-12-07 11:19:30Z boer_g $
 # $Date: 2012-12-07 12:19:30 +0100 (vr, 07 dec 2012) $
 # $Author: boer_g $
@@ -41,7 +47,7 @@
 # after any (outside) modification to the script [2nd+ time]
 # >> reload(KMLfigure_tiler_fix)
 
-def kmlfile_change(file):
+def kmlfile_change_GroundOverlay(file):
 # change one kml file
 
    import fileinput, string, sys
@@ -69,8 +75,15 @@ def kmlfile_change(file):
        sys.stdout.write(line)                   # writes Windows-style CR+LF EOL
        if i0 >=0:
           collect = True
+          block2copy = []
        if collect:
-          tmp =  line
+          tmp = line
+          ii0 = string.find(tmp, r'<GroundOverlay>')
+          if ii0 >=0:
+             tmp = tmp[ii0:]
+          ii1 = string.find(tmp, r'</GroundOverlay>')
+          if ii1 >=0:
+             tmp = tmp[ii1:]
           block2copy.append(tmp)
           i2 = string.find(line, r'<drawOrder>')
           if i2 >=0:
@@ -84,6 +97,64 @@ def kmlfile_change(file):
                  sys.stdout.write(line2)
           block2copy = []
              
+def kmlfile_change_LinearRing(file):
+# change one kml file
+
+   import fileinput, string, sys
+
+# KML CODE EXAMPLE TO BE MODIFIED
+#
+#   <Polygon>
+#   <altitudeMode>clampToGround</altitudeMode>
+#   <outerBoundaryIs>
+#   <LinearRing>
+#   <coordinates>
+#   -74.14250117,40.79285773,0.000
+#   -74.14226673,40.79316057,0.000
+#   -74.14245023,40.79324237,0.000
+#   -74.14268333,40.79294241,0.000
+#   -74.14250117,40.79285773,0.000
+#   </coordinates>
+#   </LinearRing>
+#   </outerBoundaryIs>
+#   </Polygon>
+
+   absoluteAltitude = 1  # absolute altitude rendering is added to the relative one
+
+   collect    = False
+   block2copy = []
+   LinearRing = False
+   for line in fileinput.input(file,inplace=1): # includes any LF EOL, linux-style in KMLfigure_tiler case.
+       i0         = 0
+       i1         = 0
+       i0 = string.find(line, r'<Placemark>')
+       i1 = string.find(line, r'</Placemark>')
+       sys.stdout.write(line)                   # writes Windows-style CR+LF EOL
+       if i0 >=0:
+          collect = True
+          block2copy = []
+       if collect:
+          tmp = line
+          ii0 = string.find(tmp, r'<Placemark>')
+          LinearRing = LinearRing or string.find(line, r'<LinearRing>') >= 0
+          if ii0 >=0:
+             tmp = tmp[ii0:]
+          ii1 = string.find(tmp, r'</Placemark>')
+          if ii1 >=0:
+             tmp = tmp[ii1:]
+          i2 = string.find(tmp, r'<altitudeMode>clampToGround</altitudeMode>')
+          if i2 >=0:
+             block2copy.append(r'<altitudeMode>absolute</altitudeMode>')
+             block2copy.append(r'<altitude>' + str(absoluteAltitude) + r'</altitude>')
+          else:
+             block2copy.append(tmp)
+       if collect and i1 >=0:
+          collect = False
+          if LinearRing:
+             for line2 in block2copy:
+                 sys.stdout.write(line2)
+          block2copy = []
+
 def kmlfolder_change(path,exts='.kml'):
 # change kml files in one folder (not recursive)
 
@@ -96,7 +167,8 @@ def kmlfolder_change(path,exts='.kml'):
            if os.path.isfile(file):
                if exts is None or exts.count(os.path.splitext(file)[1]) is not 0:
                
-                  kmlfile_change(file)
+                  kmlfile_change_GroundOverlay(file)
+                  kmlfile_change_LinearRing(file)
 
 def kmlroot_change(path,pattern='*.kml'):
 # change kml files in one folder root (fully recursive)
@@ -117,4 +189,5 @@ def kmlroot_change(path,pattern='*.kml'):
    
            print float(j)/len(results)*100 , '%', file
                
-           kmlfile_change(file)
+           kmlfile_change_GroundOverlay(file)
+           kmlfile_change_LinearRing(file)
