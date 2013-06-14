@@ -24,7 +24,8 @@
 %
 % Time-domain filters:
 %
-%  godin                 - GODIN tide filter for time series
+%  godin                 - GODIN low-pass tide filter for time series
+%  godin_filter          - GODIN low-pass tide filter for time series
 %  thompson1983          - Tidal-killer filter 120i913 by <a href="http://dx.doi.org/10.1175/1520-0485(1983)013%3C1077:LPFTSI%3E2.0.CO;2">Thompson, 1983, JPO.</a>
 %  thompsonbrazil        - Tidal-killer filter based on theory <a href="http://dx.doi.org/10.1175/1520-0485(1983)013%3C1077:LPFTSI%3E2.0.CO;2">Thompson, 1983, JPO.</a>
 %

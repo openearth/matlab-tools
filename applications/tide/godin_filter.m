@@ -1,5 +1,5 @@
 function data = godin_filter(data,varargin)
-%GODIN FILTER  Applies low-pass Godin filter to a timeseries.
+%GODIN_FILTER  GODIN low-pass tide filter for time series
 %
 %   This function applies a three step low-pass filter according to Godin
 %   (1972) to a timeseries in order to remove tidal and higher frequency
@@ -24,13 +24,12 @@ function data = godin_filter(data,varargin)
 %   Example
 %   timeser_filt = godin_filter(timeser,'plot2',1)
 %
-%   Function is based on a script made by Bas van Maren (Deltares) and
-%   Gerben Ruessink (Utrecht University).
-%
-%   See also Thompson (1983) - Low-Pass Filters to Suppress Inertial and
-%   Tidal Frequencies.
+%   See also: godin, thompson_1983
+
 
 %% Copyright notice
+%   Function is based on a script made by Bas van Maren (Deltares) and
+%   Gerben Ruessink (Utrecht University).
 %   --------------------------------------------------------------------
 %   Copyright (C) 2013 DELTARES
 %       rooijen

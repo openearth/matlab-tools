@@ -26,7 +26,7 @@ function varargout = thompson1983(varargin)
 % 120i923 was designed to filter the specific constituents
 % O1, K1, Q1, P1, M2, S2, N2 and the inertial frequency 16.7 deg-hr.
 %
-% See also: FILTER, T_TIDE, GODIN, fft_filter
+% See also: FILTER, T_TIDE, GODIN, fft_filter, godin_filter
 
 % This function is part of the OpenEarthTools initiative.
 

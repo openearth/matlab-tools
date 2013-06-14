@@ -1,11 +1,11 @@
 function varargout = godin_filter(time,data)
-%GODIN   GODIN tide filter for time series
+%GODIN   GODIN low-pass tide filter for time series
 %
 % godin(time,data)
 %
 % where time is in days
 %
-%See also: THOMPSON1983, T_TIDE, fft_filter
+%See also: THOMPSON1983, T_TIDE, fft_filter, godin_filter
 
 % equidistant time function
 
