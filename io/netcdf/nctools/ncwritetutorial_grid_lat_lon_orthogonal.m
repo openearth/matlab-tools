@@ -1,5 +1,7 @@
-function ncwritetutorial_grid
-%ncwritetutorial_grid tutorial for writing grids to netCDF-CF file
+close all
+clear all
+%function ncwritetutorial_grid_lat_lon_orthogonal
+%ncwritetutorial_grid_lat_lon_orthogonal tutorial for writing grids to netCDF-CF file
 %
 % For too legacy matlab releases, see instead nc_cf_grid_write_lat_lon_curvilinear_tutorial
 %
@@ -42,7 +44,7 @@ function ncwritetutorial_grid
 %  $HeadURL$
 %  $Keywords: $
 
-ncfile           = 'ncwritetutorial_grid.nc';
+ncfile           = 'ncwritetutorial_grid_lat_lon_orthogonal.nc';
 
 %% Define meta-info: global
 
@@ -55,14 +57,21 @@ ncfile           = 'ncwritetutorial_grid.nc';
 %  checkersboard to test plot with one nan-hole
    lon1                       = [1 3 5 7];
    lat1                       = [49.5:1:54.5];
-  [lon2,lat2]                 = ndgrid(lon1,lat1);
-   ang                        = [-30 -15 0 15 30 45;-30 -15 0 15 30 45;-30 -15 0 15 30 45;-30 -15 0 15 30 45];
-   DAT.cor.lat                = lat2 + sind(ang).*lon2./2;
-   DAT.cor.lon                = lon2 + cosd(ang).*lon2./2;
+   DAT.cor.lat                = lat1;
+   DAT.cor.lon                = lon1;
    
-   DAT.lat                    = corner2center(DAT.cor.lat);
-   DAT.lon                    = corner2center(DAT.cor.lon); clear lon1 lon2 lat1 lat2
-   DAT.time                   = now; % []; %now;
+   DAT.lat                    = corner2center(lat1);
+   DAT.lon                    = corner2center(lon1); clear lon1 lon2 lat1 lat2
+   DAT.time                   = now;
+   
+   OPT.wgs84.code             = 4326; % % epsg code of global grid: http://www.epsg-registry.org/
+   OPT.wgs84.name             = 'WGS 84';
+   OPT.wgs84.semi_major_axis  = 6378137.0;
+   OPT.wgs84.semi_minor_axis  = 6356752.314247833;
+   OPT.wgs84.inv_flattening   = 298.2572236;   
+   
+%% Define variable (define some data) checkerboard  with 1 NaN-hole
+
    DAT.val                    = [  1 102   3 104   5;...
                                  106   7 108   9 110;...
                                   11 112 nan 114  15]; % use ncols as 1st array dimension to get correct plot in ncBrowse (snctools swaps for us)
@@ -96,8 +105,8 @@ ncfile           = 'ncwritetutorial_grid.nc';
 
 %% 2 Create dimensions: name and length
 
-   nc.Dimensions(1) = struct('Name','col'   ,'Length', size(DAT.lon,1)); % CF wants x last, which means 1st in Matlab
-   nc.Dimensions(2) = struct('Name','row'   ,'Length', size(DAT.lon,2)); % ~ y
+   nc.Dimensions(1) = struct('Name','lon'   ,'Length',length(DAT.lon )); % CF wants x last, which means 1st in Matlab
+   nc.Dimensions(2) = struct('Name','lat'   ,'Length',length(DAT.lat )); % ~ y
    nc.Dimensions(3) = struct('Name','time'  ,'Length',length(DAT.time)); % CF wants time 1ts, which means last in Matlab
    nc.Dimensions(4) = struct('Name','bounds','Length',4               ); % CF wants bounds last, which means 1st in Matlab
       
@@ -123,14 +132,14 @@ ncfile           = 'ncwritetutorial_grid.nc';
    attr(end+1)  = struct('Name', 'units'        , 'Value', 'degrees_east');
    attr(end+1)  = struct('Name', 'axis'         , 'Value', 'X');
    attr(end+1)  = struct('Name', '_FillValue'   , 'Value', nan);
-   attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'longitude latitude'); % incl itself
+   attr(end+1)  = struct('Name', 'grid_mapping' , 'Value', 'wgs84');
    attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(DAT.lon(:)) max(DAT.lon(:))]);
    if OPT.bounds
-   attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'longitude_bounds');
+   attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'lon_bnds');
    end
-   nc.Variables(ifld) = struct('Name'       , 'longitude', ...
+   nc.Variables(ifld) = struct('Name'       , 'lon', ...
                                'Datatype'   , 'double', ...
-                               'Dimensions' , nc.Dimensions(1:2), ...
+                               'Dimensions' , nc.Dimensions(1), ...
                                'Attributes' , attr,...
                                'FillValue'  , []);
    
@@ -140,16 +149,41 @@ ncfile           = 'ncwritetutorial_grid.nc';
    attr(end+1)  = struct('Name', 'units'        , 'Value', 'degrees_north');
    attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Y');
    attr(end+1)  = struct('Name', '_FillValue'   , 'Value', nan);
-   attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'longitude latitude'); % incl itself
+   attr(end+1)  = struct('Name', 'grid_mapping'  , 'Value', 'wgs84');
    attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(DAT.lat(:)) max(DAT.lat(:))]);
    if OPT.bounds
-   attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'latitude_bounds');
+   attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'lat_bnds');
    end
-   nc.Variables(ifld) = struct('Name'       , 'latitude', ...
+   nc.Variables(ifld) = struct('Name'       , 'lat', ...
                                'Datatype'   , 'double', ...
-                               'Dimensions' , nc.Dimensions(1:2), ...
+                               'Dimensions' , nc.Dimensions(2), ...
                                'Attributes' , attr,...
-                               'FillValue'  , []);    
+                               'FillValue'  , []);
+
+%% 3.c Create coordinate variables: coordinate system: WGS84 default
+%      global ellispes: WGS 84, ED 50, INT 1924, ETRS 89 and the upcoming ETRS update etc.
+%      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#grid-mappings-and-projections
+%      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#appendix-grid-mappings
+   
+   ifld     = ifld + 1;clear attr
+   attr     = nc_cf_grid_mapping(OPT.wgs84.code); % is same as 
+   attr     = struct('Name' ,{'name','epsg','grid_mapping_name',...
+                            'semi_major_axis','semi_minor_axis','inverse_flattening', ...
+                            'comment'}, ...
+                     'Value',{OPT.wgs84.name,OPT.wgs84.code,'latitude_longitude',...
+                             OPT.wgs84.semi_major_axis,OPT.wgs84.semi_minor_axis,OPT.wgs84.inv_flattening,  ...
+                            'value is equal to EPSG code'});
+   % add ADAGUC projection parameters optionally
+   attr(end+1) = struct('Name', 'proj4_params'   ,'Value', '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs');
+   attr(end+1) = struct('Name', 'projection_name','Value', 'Latitude Longitude');
+   attr(end+1) = struct('Name', 'EPSG_code'      ,'Value', ['EPSG:',num2str(OPT.wgs84.code)]);
+   nc.Variables(ifld) = struct('Name'       , 'wgs84', ...
+                               'Datatype'   , 'int32', ...
+                               'Dimensions' , {[]}, ...
+                               'Attributes' , attr,...
+                               'FillValue'  , []);
+
+%% 3.d Bounds
 
    if OPT.bounds
    ifld     = ifld + 1;clear attr
@@ -159,9 +193,9 @@ ncfile           = 'ncwritetutorial_grid.nc';
    attr(end+1)  = struct('Name', 'axis'         , 'Value', 'X');
    attr(end+1)  = struct('Name', '_FillValue'   , 'Value', nan);
    attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(DAT.lon(:)) max(DAT.lon(:))]);
-   nc.Variables(ifld) = struct('Name'       , 'longitude_bounds', ...
+   nc.Variables(ifld) = struct('Name'       , 'lon_bnds', ...
                                'Datatype'   , 'double', ...
-                               'Dimensions' , nc.Dimensions([4 1:2]), ... % CF wants bounds last, i.e 1st in Matlab
+                               'Dimensions' , nc.Dimensions([4 1]), ... % CF wants bounds last, i.e 1st in Matlab
                                'Attributes' , attr,...
                                'FillValue'  , []);
    
@@ -172,9 +206,9 @@ ncfile           = 'ncwritetutorial_grid.nc';
    attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Y');
    attr(end+1)  = struct('Name', '_FillValue'   , 'Value', nan);
    attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(DAT.lat(:)) max(DAT.lat(:))]);
-   nc.Variables(ifld) = struct('Name'       , 'latitude_bounds', ...
+   nc.Variables(ifld) = struct('Name'       , 'lat_bnds', ...
                                'Datatype'   , 'double', ...
-                               'Dimensions' , nc.Dimensions([4 1:2]), ... % CF wants bounds last, i.e 1st in Matlab
+                               'Dimensions' , nc.Dimensions([4 2]), ... % CF wants bounds last, i.e 1st in Matlab
                                'Attributes' , attr,...
                                'FillValue'  , []);
    end % bounds
@@ -182,12 +216,13 @@ ncfile           = 'ncwritetutorial_grid.nc';
 %% 3c Create (primary) variables: data
                               
    ifld     = ifld + 1;clear attr;
-   attr(    1)  = struct('Name', 'standard_name', 'Value', OPT.standard_name);
-   attr(end+1)  = struct('Name', 'long_name'    , 'Value', OPT.long_name);
-   attr(end+1)  = struct('Name', 'units'        , 'Value', OPT.units);
-   attr(end+1)  = struct('Name', '_FillValue'   , 'Value', nan);
-   attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'longitude latitude');
-   attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(DAT.val(:)) max(DAT.val(:))]);
+   attr(    1)  = struct('Name', 'standard_name' , 'Value', OPT.standard_name);
+   attr(end+1)  = struct('Name', 'long_name'     , 'Value', OPT.long_name);
+   attr(end+1)  = struct('Name', 'units'         , 'Value', OPT.units);
+   attr(end+1)  = struct('Name', '_FillValue'    , 'Value', nan);
+   attr(end+1)  = struct('Name', 'actual_range'  , 'Value', [min(DAT.val(:)) max(DAT.val(:))]);
+   attr(end+1)  = struct('Name', 'grid_mapping'  , 'Value', 'wgs84');   
+   attr(end+1)  = struct('Name', 'coordinates'   , 'Value', 'lat lon');   
    nc.Variables(ifld) = struct('Name'       , OPT.varname, ...
                                'Datatype'   , 'double', ...
                                'Dimensions' ,nc.Dimensions(1:3), ... % CF wants time 1st, i.e last in Matlab
@@ -204,12 +239,12 @@ ncfile           = 'ncwritetutorial_grid.nc';
 %% 5 Fill variables
 
    ncwrite   (ncfile,'time'            , DAT.time - OPT.refdatenum);
-   ncwrite   (ncfile,'longitude'       , DAT.lon);
-   ncwrite   (ncfile,'latitude'        , DAT.lat);
+   ncwrite   (ncfile,'lon'             , DAT.lon);
+   ncwrite   (ncfile,'lat'             , DAT.lat);
    ncwrite   (ncfile,OPT.varname       , DAT.val);
    if OPT.bounds
-   ncwrite   (ncfile,'longitude_bounds', permute(nc_cf_cor2bounds(DAT.cor.lon),[3 1 2]));
-   ncwrite   (ncfile,'latitude_bounds' , permute(nc_cf_cor2bounds(DAT.cor.lat),[3 1 2]));
+   ncwrite   (ncfile,'lon_bnds', permute(nc_cf_cor2bounds(DAT.cor.lon),[2 1]));
+   ncwrite   (ncfile,'lat_bnds', permute(nc_cf_cor2bounds(DAT.cor.lat),[1 2]));
    end
       
 %% test and check

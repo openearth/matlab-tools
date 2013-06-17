@@ -34,7 +34,7 @@
 
    OPT.lon                    = 4.908893108;
    OPT.lat                    = 52.37952805;
-   OPT.station_name           = 'Hoek van Holland';
+   OPT.platform_name          = 'Hoek van Holland';
    OPT.wgs84.code             = 4326;
 
 %% Define variable (define some data)
@@ -69,7 +69,7 @@
    nc_attput(ncfile, nc_global, 'version'       , OPT.version);
 
    nc_attput(ncfile, nc_global, 'Conventions'   , 'CF-1.4');
-   nc_attput(ncfile, nc_global, 'CF:featureType', 'Grid');  % https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions
+   nc_attput(ncfile, nc_global, 'CF:featureType', 'timeSeries');  % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#discrete-sampling-geometries
 
    nc_attput(ncfile, nc_global, 'terms_for_use' , OPT.acknowledge);
    nc_attput(ncfile, nc_global, 'disclaimer'    , OPT.disclaimer);
@@ -78,11 +78,11 @@
 %      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#dimensions   
    
    nc_add_dimension(ncfile, 'time'    , length(OPT.datenum));
-   nc_add_dimension(ncfile, 'string'  , length(OPT.station_name)); % you could set this to UNLIMITED, be we suggest to keep UNLIMITED for time
+   nc_add_dimension(ncfile, 'string'  , length(OPT.platform_name)); % you could set this to UNLIMITED, be we suggest to keep UNLIMITED for time
    
    % If you would like to include more locations of the same data, 
    % you can optionally use 'location' as a 2nd dimension.                                         
-   % Here we use it for one station too, to be able to link cordinates. 
+   % Here we use it for one platform too, to be able to link cordinates. 
 
    nc_add_dimension(ncfile, 'location', 1); 
 
@@ -154,15 +154,15 @@
    nc(ifld).Attribute    = nc_cf_grid_mapping(OPT.wgs84.code);
    var2evalstr(nc(ifld).Attribute)
 
-%% 3.e Station number/name/code: proposed on:
-%      https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions
+%% 3.e platform number/name/code: proposed on:
+%      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#idp8405568
 
         ifld = ifld + 1;
-        nc(ifld).Name         = 'station_id';
+        nc(ifld).Name         = 'platform_id';
         nc(ifld).Nctype       = 'char';
         nc(ifld).Dimension    = {'location','string'};
-        nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'station identification code');
-        nc(ifld).Attribute(2) = struct('Name', 'standard_name'  ,'Value', 'station_id'); % standard name
+        nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'platform identification code');
+        nc(ifld).Attribute(2) = struct('Name', 'standard_name'  ,'Value', 'platform_id'); % standard name
 
 %% 4   Create dependent variable
 %      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#variables
@@ -190,11 +190,11 @@
 %% 5.b Fill all variables
 
    nc_varput(ncfile, 'time'         , OPT.datenum - OPT.refdatenum);
-   nc_varput(ncfile, 'lon'          , OPT.lon         );
-   nc_varput(ncfile, 'lat'          , OPT.lat         );
-   nc_varput(ncfile, 'wgs84'        , OPT.wgs84.code  );
-   nc_varput(ncfile, 'station_id'   , OPT.station_name);
-   nc_varput(ncfile, OPT.varname    , OPT.val         );
+   nc_varput(ncfile, 'lon'          , OPT.lon          );
+   nc_varput(ncfile, 'lat'          , OPT.lat          );
+   nc_varput(ncfile, 'wgs84'        , OPT.wgs84.code   );
+   nc_varput(ncfile, 'platform_id'  , OPT.platform_name);
+   nc_varput(ncfile, OPT.varname    , OPT.val          );
       
 %% 6   Check file summary
    
