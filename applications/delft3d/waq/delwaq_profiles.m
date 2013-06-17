@@ -16,9 +16,14 @@
 %--------------------------------------------------------------------------
 function structOut = delwaq_profiles(mapFile,lgaFile,SubstanceNames,xloc,yloc,tloc,dt)
 
+% Number of times
+nt = length(tloc);
+
 % Read times in map file
 S.datenum = delwaq_datenum(mapFile);
-[itloc S.itime]  = time_near(tloc,S.datenum,dt,'middle');
+[itloc, itfile]  = time_near(tloc,S.datenum,dt,'middle');
+S.itime = nan(nt,1);
+S.itime(itloc) = itfile;
 
 % Find the segments corresponding to xloc and yloc
 S.iseg   =  delwaq_xy2segnr(lgaFile,xloc,yloc);
@@ -28,7 +33,7 @@ S.struct = delwaq('open',mapFile);
 S.grid   = delwaq('open',lgaFile);
 
 % Matching SubsName
-[S.Subs ksub] = match_names(S.struct.SubsName,SubstanceNames);
+[S.Subs, ksub] = match_names(S.struct.SubsName,SubstanceNames);
 
 % Read LocalDepth if any
 if any(strcmpi(S.struct.SubsName, 'LocalDepth'))
@@ -38,8 +43,6 @@ else
    rdepth =0;
 end
 
-% Number of times
-nt = length(tloc);
 
 for i = 1:nt
     
@@ -52,14 +55,14 @@ for i = 1:nt
         
         if rdepth
            isub = [ksub idepth];
-           [time data] = delwaq('read',S.struct,isub,iseg,itime);
+           [time, data] = delwaq('read',S.struct,isub,iseg,itime);
            depth = data(end,:)';
            data = data(1:end-1,:)';
        else
            isub = ksub;
-           [time data] = delwaq('read',S.struct,isub,iseg,itime);
+           [time, data] = delwaq('read',S.struct,isub,iseg,itime);
            data = data';
-           depth = [];
+           depth = nan(size(data));
         end
         
     else
@@ -79,7 +82,7 @@ end
 %--------------------------------------------------------------------------
 % Match names
 %--------------------------------------------------------------------------
-function [names iname1 iname2] = match_names(name1,name2)
+function [names, iname1, iname2] = match_names(name1,name2)
 
 iname1 = [];
 iname2 = [];
