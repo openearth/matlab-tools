@@ -1,28 +1,19 @@
-function varargout=delft3d_io_thd(cmd,varargin)
-%DELFT3D_IO_THD   read/write thin dams, calculate world coordinates
+function varargout=delft3d_io_cdw(cmd,varargin)
+%delft3d_io_cdw   read/write current deflection walls (delft3d special)
 %
-%  THD = delft3d_io_thd('read' ,filename);
+%  CDW = delft3d_io_cdw('read' ,filename);
 %
-%        delft3d_io_thd('write',filename,THD);
+% where CDW is a struct with fields 'm','n'
 %
-% where THD is a struct with fields 'm','n'
-%
-%  THD = delft3d_io_thd('read' ,filename,G);
+%  CDW = delft3d_io_cdw('read' ,filename,G);
 %
 % also returns the x and y coordinates, where G = delft3d_io_grd('read',...)
 %
 % To plot thin dams use the example below:
 %
-%   plot(THD.x,THD.y)
+%   plot(CDW.x,CDW.y)
 %
-% See also: delft3d_io_ann, delft3d_io_bca, delft3d_io_bch, delft3d_io_bnd,
-%           delft3d_io_crs, delft3d_io_dep, delft3d_io_dry, delft3d_io_eva,
-%           delft3d_io_fou, delft3d_io_grd, delft3d_io_ini, delft3d_io_mdf,
-%           delft3d_io_obs, delft3d_io_restart,             delft3d_io_src,
-%           delft3d_io_tem, delft3d_io_thd, delft3d_io_wnd, d3d_attrib
-
-% Nov 2007: put smallest index first in m and n fields.
-
+% See also: DELFT3D_IO_THD
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2004 Delft University of Technology
@@ -76,16 +67,6 @@ switch lower(cmd),
         if STRUCT.iostat<0,
             error(['Error opening file: ',varargin{1}])
         end;
-    case 'write',
-        iostat=Local_write(varargin{:});
-        if nargout==1
-            varargout = {iostat};
-        elseif nargout >1
-            error('too much output paramters: 0 or 1')
-        end
-        if iostat<0,
-            error(['Error opening file: ',varargin{1}])
-        end;
 end;
 
 % ------------------------------------
@@ -93,6 +74,16 @@ end;
 function S=Local_read(varargin),
 
 S.filename = varargin{1};
+
+%     mmax = Inf;
+%     nmax = Inf;
+%  if nargin==3
+%     mmax = varargin{2};
+%     nmax = varargin{3};
+%  elseif nargin==4
+%     mmax = varargin{3};
+%     nmax = varargin{4};
+%  end
 
 fid          = fopen(S.filename,'r');
 if fid==-1
@@ -104,24 +95,14 @@ else
     while ~feof(fid)
         
         i = i + 1;
-
-%   25      13    25      13 V
         
-        S.DATA(i).mn        = fscanf(fid,'%i',4);
+%V 26     13   29    13  0.113        -7.60000  999.99
+        
         S.DATA(i).direction = fscanf(fid,'%s',1);
-        
-        %  if S.DATA(i).mn(1)==mmax+1
-        %     S.DATA(i).mn(1)= mmax;
-        %  end
-        %  if S.DATA(i).mn(2)==nmax+1
-        %     S.DATA(i).mn(2)= nmax;
-        %  end
-        %  if S.DATA(i).mn(3)==mmax+1
-        %     S.DATA(i).mn(3)= mmax;
-        %  end
-        %  if S.DATA(i).mn(4)==nmax+1
-        %     S.DATA(i).mn(4)= nmax;
-        %  end
+        S.DATA(i).mn        = fscanf(fid,'%i',4);
+        S.DATA(i).loss      = fscanf(fid,'%f',1);
+        S.DATA(i).ztop      = fscanf(fid,'%f',1);
+        S.DATA(i).zbot      = fscanf(fid,'%f',1);
         
         % turn the endpoint-description along gridlines into vectors
         % and make sure smallest index is first
@@ -162,37 +143,3 @@ else
         S.Y = cell2mat(S.y);
     end
 end
-
-% ------------------------------------
-
-function iostat=Local_write(filename,STRUCT),
-
-iostat       = 1;
-fid          = fopen(filename,'w');
-OS           = 'windows';
-
-for i=1:length(STRUCT.DATA)
-    
-    % fprintfstringpad(fid,20,STRUCT.DATA(i).name,' ');
-    
-    fprintf(fid,'%1c',' ');
-    % fprintf automatically adds one space between all printed variables
-    % within one call
-    fprintf(fid,'%5i %5i %5i %5i %1c',...
-        STRUCT.DATA(i).mn(1)   ,...
-        STRUCT.DATA(i).mn(2)   ,...
-        STRUCT.DATA(i).mn(3)   ,...
-        STRUCT.DATA(i).mn(4)   ,...
-        STRUCT.DATA(i).direction    );
-    
-    if     strcmp(lower(OS(1)),'u')
-        fprintf(fid,'\n');
-    elseif strcmp(lower(OS(1)),'w')
-        fprintf(fid,'\r\n');
-    end
-    
-end;
-fclose(fid);
-iostat=1;
-
-% ------------------------------------
