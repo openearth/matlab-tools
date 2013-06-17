@@ -277,7 +277,7 @@ function iostat=Local_write(fname,DIS,varargin),
    %% ----------------------
 
    RAW = dispack(DIS,OPT);
-   bct_io('write',fname,RAW);
+   ddb_bct_io('write',fname,RAW);
    iostat = 1;
    
 end % function iostat=Local_write(fname,DAT,varargin),

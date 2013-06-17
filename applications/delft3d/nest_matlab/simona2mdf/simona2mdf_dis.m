@@ -13,7 +13,7 @@ if ~isempty(src)
     delft3d_io_src('write',mdf.filsrc,src);
     mdf.filsrc = simona2mdf_rmpath(mdf.filsrc);
 
-    disstruc   = simona2mdf_disstruc(S,src,mdf)
+    disstruc   = simona2mdf_disstruc(S,src,mdf);
     mdf.fildis = [name_mdf '.dis'];
     delft3d_io_dis('write',mdf.fildis,disstruc);
     mdf.fildis = simona2mdf_rmpath(mdf.fildis);

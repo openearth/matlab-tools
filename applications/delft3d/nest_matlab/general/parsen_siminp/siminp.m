@@ -462,7 +462,11 @@ else
                   ii = ii + 1;
                end
                if nrepeat ~= 1
-                  S.ParsedTree.(Field(i).Name) = buffer(1:ibuf-1);
+                  if Field(i).IRep == 0
+                     S.ParsedTree.(Field(i).Name)(end+1,:) = buffer(1:ibuf-1);
+                  else
+                     S.ParsedTree.(Field(i).Name) = buffer(1:ibuf-1);
+                  end
                end
             case 4 % key
                S.ParsedTree.(Field(i).Name) = true;

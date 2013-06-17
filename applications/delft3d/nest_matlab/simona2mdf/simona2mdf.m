@@ -69,11 +69,9 @@ S = all_in_one(S);
 %
 
 simona2mdf_message(Gen_inf                                  ,logo,15);
+
 simona2mdf_message('Parsing AREA information'               ,logo,1 );
 mdf = simona2mdf_area     (S,mdf,name_mdf);
-
-simona2mdf_message('Parsing DISCHARGE POINTS information'   ,logo,1 );
-mdf = simona2mdf_dis      (S,mdf,name_mdf);
 
 simona2mdf_message('Parsing BATHYMETRY information'         ,logo,1 );
 mdf = simona2mdf_bathy    (S,mdf,name_mdf);
@@ -98,6 +96,9 @@ mdf = simona2mdf_numerical(S,mdf,name_mdf);
 
 simona2mdf_message('Parsing BOUNDARY information'           ,logo,1 );
 mdf = simona2mdf_bnd      (S,mdf,name_mdf);
+
+simona2mdf_message('Parsing DISCHARGE POINTS information'   ,logo,1 );
+mdf = simona2mdf_dis      (S,mdf,name_mdf);
 
 simona2mdf_message('Parsing WIND information'               ,logo,1 );
 mdf = simona2mdf_wind     (S,mdf,name_mdf);

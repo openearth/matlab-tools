@@ -9,14 +9,14 @@ function mdf = simona2mdf_wind (S,mdf,name_mdf)
 nesthd_dir   = getenv('nesthd_path');
 siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'GENERAL'});
 
-if ~isempty(siminp_struc.ParsedTree.GENERAL.WIND)
+if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.GENERAL.WIND')
     wind = siminp_struc.ParsedTree.GENERAL.WIND;
 
     %
     % Wind Stress coefficient
     %
 
-    if wind.VARIABLE_CD
+    if simona2mdf_fieldandvalue(wind,'VARIABLE_CD')
         mdf.wstres(1) = wind.CDA;
         mdf.wstres(2) = wind.WIND_CDA;
         mdf.wstres(3) = wind.CDB;
@@ -36,7 +36,7 @@ if ~isempty(siminp_struc.ParsedTree.GENERAL.WIND)
     % Get the wind series
     %
 
-    if ~isempty(wind.SERIES)
+    if simona2mdf_fieldandvalue(wind,'SERIES')
         if strcmpi(wind.SERIES,'regular')
             times  = wind.FRAME(1):wind.FRAME(2):wind.FRAME(3);
             values = reshape(wind.VALUES,2,[])';
@@ -55,7 +55,7 @@ if ~isempty(siminp_struc.ParsedTree.GENERAL.WIND)
     % CHARNOCK
     %
 
-    if ~isempty(wind.CHARNOCK)
+    if simona2mdf_fieldandvalue(wind,'CHARNOCK')
          simona2mdf_warning({'CHARNOCK wind stress formulation not implemented in Delft3D-Flow'; ...
                              'Asuming Smith and Banke formulation'});
     end
