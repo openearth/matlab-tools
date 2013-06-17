@@ -12,8 +12,8 @@ nesthd_dir = getenv('nesthd_path');
 % Check for salinity
 %
 
-siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'TRANSPORT'});
-if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.TRANSPORT')
+siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'TRANSPORT' 'PROBLEM'});
+if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.TRANSPORT.PROBLEM')
    warning = true;
    warntext{end+1} = 'Conversion of TRANSPORT not implemented yet';
 end
