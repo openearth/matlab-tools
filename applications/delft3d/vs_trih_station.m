@@ -79,17 +79,17 @@ function varargout = vs_trih_station(trih,varargin)
    
 %% Get names from indices or vv.
 
-if strcmp(trih.SubType,'Delft3D-trih')
-    OPT.GrpName    = 'his-const';
-    OPT.ElmName    = 'NAMST';
-    ST.Description = 'Delft3d-FLOW monitoring point (*.obs) time serie.';
-elseif strcmp(trih.SubType,'Delft3D-waq-history')
-    OPT.GrpName    = 'DELWAQ_PARAMS';
-    OPT.ElmName    = 'LOCATION_NAMES';
-    ST.Description = 'Delft3d-WAQ monitoring point (*.obs) time serie.';
-else
-    error(['File type not suported:',trih.SubType])
-end
+   if strcmp(trih.SubType,'Delft3D-trih')
+       OPT.GrpName    = 'his-const';
+       OPT.ElmName    = 'NAMST';
+       ST.Description = 'Delft3d-FLOW monitoring point (*.obs) time serie.';
+   elseif strcmp(trih.SubType,'Delft3D-waq-history')
+       OPT.GrpName    = 'DELWAQ_PARAMS';
+       OPT.ElmName    = 'LOCATION_NAMES';
+       ST.Description = 'Delft3d-WAQ monitoring point (*.obs) time serie.';
+   else
+       error(['File type not suported:',trih.SubType])
+   end
     
    if iscell(station_id)
       station_id = char(station_id);

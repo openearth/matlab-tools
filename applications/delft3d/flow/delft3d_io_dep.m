@@ -97,12 +97,9 @@ function G = delft3d_io_dep(varargin)
 % $Revision$
 % $HeadURL$
 
-% 2009 aug 17 accounted for apperant swap by wldep
-
-delft3d_io_dep_version = 'beta';
+% 2009 aug 17 accounted for apparent swap by wldep
 
 %% Input
-%  ----------------------
 
 if nargin ==1
     error(['At least 2 input arguments required: d3d_io_...(''read''/''write'',filename)']);
@@ -114,6 +111,14 @@ fname = varargin{2};
 %% Read and calculate
 
 if strcmpi(cmd,'read')
+    
+%% Keywords
+
+    OPT.dummy        = 0;
+    OPT.nodatavalue  = -999;
+    OPT.missingvalue = NaN;
+    OPT.location     = '';
+    OPT.dpsopt       = '';    
     
     %% File info
     
@@ -131,14 +136,6 @@ if strcmpi(cmd,'read')
         SIZE        = varargin{3};
         G           = dir(fname);
     end
-    
-    %% Keywords
-    
-    OPT.dummy        = 0;
-    OPT.nodatavalue  = -999;
-    OPT.missingvalue = NaN;
-    OPT.location     = '';
-    OPT.dpsopt       = '';
     
     OPT = setproperty(OPT,varargin{4:end});
     
@@ -219,16 +216,17 @@ if strcmpi(cmd,'read')
         G.cor.dep = D3Dmatrix(1:end-1,1:end-1);
         if  strcmpi(G.dpsopt,'min')
             G.cen.dep = min(min(G.cor.dep(1:end-1,1:end-1),...
-                G.cor.dep(1:end-1,2:end  )),...
-                min(G.cor.dep(2:end  ,1:end-1),...
-                G.cor.dep(2:end  ,2:end  )));
+                                G.cor.dep(1:end-1,2:end  )),...
+                            min(G.cor.dep(2:end  ,1:end-1),...
+                                G.cor.dep(2:end  ,2:end  )));
         elseif  strcmpi(G.dpsopt,'mean')
             G.cen.dep = corner2center(G.cor.dep);
         elseif  strcmpi(G.dpsopt,'max')
             G.cen.dep = max(max(G.cor.dep(1:end-1,1:end-1),...
-                G.cor.dep(1:end-1,2:end  )),...
-                max(G.cor.dep(2:end  ,1:end-1),...
-                G.cor.dep(2:end  ,2:end  )));
+                                G.cor.dep(1:end-1,2:end  )),...
+                            max(G.cor.dep(2:end  ,1:end-1),...
+                                G.cor.dep(2:end  ,2:end  )));
+          warning('flow kernel does not write max to center depths, but mean.')
         end
     elseif strcmpi(G.location,'cen')
         if  strcmpi(G.dpsopt,'dp') | isempty(G.dpsopt)
@@ -318,7 +316,7 @@ else strcmpi(cmd,'write');
            ['dummy rows                      = ',positiondummyvalue],...
            ['dummy columns                   = ',positiondummyvalue],...
            ['size (incl. dummy rows/columns) = ',num2str(size(D3Dmatrix,1)),' ',num2str(size(D3Dmatrix,2))],...
-           ['File written by                 = delft3d_io_dep.m ',delft3d_io_dep_version, '; called from ', OPT.mfilename],...
+           ['File written by                 = $Id$ $HeadURL$ called from ', OPT.mfilename],...
            ['date time                       = ',datestr(now,31)],...
            ['matlab version                  = ',version],...
            ['platform                        = ',platform]};

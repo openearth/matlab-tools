@@ -1,5 +1,5 @@
 function varargout=delft3d_io_thd(cmd,varargin)
-%DELFT3D_IO_THD   read/write thin dams <<beta version!>>
+%DELFT3D_IO_THD   read/write thin dams, calculate world coordinates
 %
 %  THD = delft3d_io_thd('read' ,filename);
 %
@@ -89,8 +89,6 @@ switch lower(cmd),
 end;
 
 % ------------------------------------
-% ------------------------------------
-% ------------------------------------
 
 function S=Local_read(varargin),
 
@@ -138,8 +136,8 @@ else
         % and make sure smallest index is first
         
         [S.DATA(i).m,...
-            S.DATA(i).n]=meshgrid(min(S.DATA(i).mn([1,3])):max(S.DATA(i).mn([1,3])),...
-            min(S.DATA(i).mn([2,4])):max(S.DATA(i).mn([2,4])));
+         S.DATA(i).n]=meshgrid(min(S.DATA(i).mn([1,3])):max(S.DATA(i).mn([1,3])),...
+                               min(S.DATA(i).mn([2,4])):max(S.DATA(i).mn([2,4])));
         
         fgetl(fid); % read rest of line
         
@@ -179,10 +177,6 @@ else
     end
 end
 
-
-
-% ------------------------------------
-% ------------------------------------
 % ------------------------------------
 
 function iostat=Local_write(filename,STRUCT),
@@ -216,6 +210,3 @@ fclose(fid);
 iostat=1;
 
 % ------------------------------------
-% ------------------------------------
-% ------------------------------------
-
