@@ -97,7 +97,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
     OPT.quiet          = 'quiet';
     OPT.stride         = 0; % write chunks per layer in case of large 3D matrices
     OPT.ind            = 0; % index of stations to include in netCDF file, 0=all
-    OPT.crsind         = 0; % index of cross-sections to include in netCDF file, 0=all
+    OPT.crs.ind        = 0; % index of cross-sections to include in netCDF file, 0=all
     OPT.trajectory     = 0; % consider 'Stations' dimension as spatial trajectory dimension
     OPT.name           = ''; % addition to nc-filename
       % TO DO: allow to transform sub-period too.
@@ -196,10 +196,10 @@ function varargout = vs_trih2nc(vsfile,varargin)
     G.kmax        =         squeeze(vs_let(F,'his-const','KMAX'  ,            'quiet'));
     G.name        =         permute(vs_let(F,'his-const','NAMST' ,{  OPT.ind},'quiet'),[2 3 1]);
 
-    if ~isempty(vs_get_elm_def(F,'NAMTRA')) && ~isempty(OPT.crsind)
-        G.crsm    =         squeeze(vs_let(F,'his-const','MNTRA' ,{[1,3],OPT.crsind},'quiet'));
-        G.crsn    =         squeeze(vs_let(F,'his-const','MNTRA' ,{[2,4],OPT.crsind},'quiet'));
-        G.crsname =         permute(vs_let(F,'his-const','NAMTRA',{      OPT.crsind},'quiet'),[2 3 1]);
+    if ~isempty(vs_get_elm_def(F,'NAMTRA')) && ~isempty(OPT.crs.ind)
+        G.crs.m    =         squeeze(vs_let(F,'his-const','MNTRA' ,{[1,3],OPT.crs.ind},'quiet'));
+        G.crs.n    =         squeeze(vs_let(F,'his-const','MNTRA' ,{[2,4],OPT.crs.ind},'quiet'));
+        G.crs.name =         permute(vs_let(F,'his-const','NAMTRA',{      OPT.crs.ind},'quiet'),[2 3 1]);
     end
 
     % real and transform world coordinates
@@ -210,19 +210,19 @@ function varargout = vs_trih2nc(vsfile,varargin)
         G.y           = squeeze(vs_let(F,'his-const','XYSTAT',{2,OPT.ind}      ,'quiet'));
         coordinates   = 'x y';
 
-        if ~isempty(vs_get_elm_def(F,'NAMTRA')) && ~isempty(OPT.crsind)
-            G.crsx        = squeeze(vs_let(F,'his-const','XYTRA',{[1,3],OPT.crsind},'quiet'));
-            G.crsy        = squeeze(vs_let(F,'his-const','XYTRA',{[2,4],OPT.crsind},'quiet'));
+        if ~isempty(vs_get_elm_def(F,'NAMTRA')) && ~isempty(OPT.crs.ind)
+            G.crs.x        = squeeze(vs_let(F,'his-const','XYTRA',{[1,3],OPT.crs.ind},'quiet'));
+            G.crs.y        = squeeze(vs_let(F,'his-const','XYTRA',{[2,4],OPT.crs.ind},'quiet'));
+            crs.coordinates   = 'crsx crsy';
         end
 
         if ~(isempty(OPT.epsg)||isnan(OPT.epsg))
             [G.lon,G.lat]       = convertCoordinates(G.x,   G.y,   'CS1.code',OPT.epsg,'CS2.code',4326);
-            if ~isempty(vs_get_elm_def(F,'NAMTRA')) && ~isempty(OPT.crsind)
-                [G.crslon,G.crslat] = convertCoordinates(G.crsx,G.crsy,'CS1.code',OPT.epsg,'CS2.code',4326);
+            if ~isempty(vs_get_elm_def(F,'NAMTRA')) && ~isempty(OPT.crs.ind)
+                [G.crs.lon,G.crs.lat] = convertCoordinates(G.crs.x,G.crs.y,'CS1.code',OPT.epsg,'CS2.code',4326);
             end
         else
-            fprintf(2,'> No EPSG code specified for CARTESIAN grid, your grid is not CF compliant:\n')
-            fprintf(2,'> (latitude,longitude) cannot be calculated from (x,y)!\n')
+            fprintf(2,'> No EPSG code specified for CARTESIAN grid: grid not CF compliant: (lat,lon) can''t be calculated from (x,y)!\n')
         end
 
     else
@@ -230,15 +230,16 @@ function varargout = vs_trih2nc(vsfile,varargin)
       G.lat         = squeeze(vs_let(F,'his-const','XYSTAT',{2,OPT.ind},'quiet'));
       coordinates   = 'latitude longitude';
 
-      if ~isempty(vs_get_elm_def(F,'NAMTRA')) && ~isempty(OPT.crsind)
-        G.crslon    = squeeze(vs_let(F,'his-const','XYTRA',{[1,3],OPT.crsind},'quiet'));
-        G.crslat    = squeeze(vs_let(F,'his-const','XYTRA',{[2,4],OPT.crsind},'quiet'));
+      if ~isempty(vs_get_elm_def(F,'NAMTRA')) && ~isempty(OPT.crs.ind)
+        G.crs.lon    = squeeze(vs_let(F,'his-const','XYTRA',{[1,3],OPT.crs.ind},'quiet'));
+        G.crs.lat    = squeeze(vs_let(F,'his-const','XYTRA',{[2,4],OPT.crs.ind},'quiet'));
       end
 
       if ~(isempty(OPT.epsg)||isnan(OPT.epsg))
         [G.x     ,G.y     ] = convertCoordinates(G.lon,   G.lat,   'CS1.code',4326,'CS2.code',OPT.epsg);
-        if ~isempty(vs_get_elm_def(F,'NAMTRA')) && ~isempty(OPT.crsind)
-            [G.crsx  ,G.crsy  ] = convertCoordinates(G.crslon,G.crslat,'CS1.code',4326,'CS2.code',OPT.epsg);      
+        if ~isempty(vs_get_elm_def(F,'NAMTRA')) && ~isempty(OPT.crs.ind)
+            [G.crs.x  ,G.crs.y  ] = convertCoordinates(G.crs.lon,G.crs.lat,'CS1.code',4326,'CS2.code',OPT.epsg);      
+        coordinates   = 'crslatitude crslongitude';
         end
       end
 
@@ -263,54 +264,61 @@ function varargout = vs_trih2nc(vsfile,varargin)
     %% sediment fractions
     if ~isempty(strmatch('sediment',fieldnames(I)))
         G.lsed   = vs_let(F,'his-const','LSED','quiet');
-        G.namsed = strtrim(squeeze(vs_let(F,'his-const','NAMSED','quiet')));
+        G.namsed = cellstr(permute(vs_let(F,'his-const','NAMSED','quiet'),[2 3 1]));
+        % remove spaces
         for jj=1:G.lsed
-            G.sedind(jj) = I.(lower(strtrim(squeeze(G.namsed(jj,:))))).index;
+            if any(G.namsed{jj}==' ')
+                fprintf(2,['> replaced spaces from sediment name "',G.namsed{jj},'" with "_"\n'])
+                G.namsed{jj} = mkvar(G.namsed{jj});
+            end
+            G.sedind(jj) = I.(lower(G.namsed{jj})).index;
         end
     else G.lsed = 0;
-        G.namsed = '';
+        G.namsed = {};
     end
    
 %% 2 Create dimensions
 
-    ncdimlen.time        = length(T.datenum);
-    ncdimlen.Layer       = G.kmax  ;
-    ncdimlen.LayerInterf = G.kmax+1;
-    ncdimlen.Fraction    = G.lsed  ;
+      ncdimlen.time        = length(T.datenum);
+      ncdimlen.Layer       = G.kmax  ;
+      ncdimlen.LayerInterf = G.kmax+1;
+      ncdimlen.Fraction    = G.lsed  ;
+      ncdimlen.bounds2     = 2       ; % for corner (grid_*) indices
 
-    nc.Dimensions(    1) = struct('Name','time'            ,'Length',ncdimlen.time       );
-    nc.Dimensions(end+1) = struct('Name','Layer'           ,'Length',ncdimlen.Layer      );
-    nc.Dimensions(end+1) = struct('Name','LayerInterf'     ,'Length',ncdimlen.LayerInterf);
-    nc.Dimensions(end+1) = struct('Name','Fraction'        ,'Length',ncdimlen.Fraction   );
+      nc.Dimensions(    1) = struct('Name','time'            ,'Length',ncdimlen.time       );
+      nc.Dimensions(end+1) = struct('Name','Layer'           ,'Length',ncdimlen.Layer      );
+      nc.Dimensions(end+1) = struct('Name','LayerInterf'     ,'Length',ncdimlen.LayerInterf);
+      nc.Dimensions(end+1) = struct('Name','Fraction'        ,'Length',ncdimlen.Fraction   );
+      nc.Dimensions(end+1) = struct('Name','bounds2'         ,'Length',ncdimlen.bounds2    );
 
-    if OPT.trajectory
-        nc.Attributes(end+1) = struct('Name','featureType'        ,'Value',  'trajectoryProfile');
-        dimname = 'Trajectory';
-        if isfield(G,'x')
-            G.trajectory = distance(G.x,G.y);
-        else
-            G.trajectory = nan.*G.lon;
-            fprintf(2,'> trajectory has no distance: spherical coordinates need epsg code to calculate Euclidian distance.\n')
-        end
-    else
-        nc.Attributes(end+1) = struct('Name','featureType'        ,'Value',  'timeSeries');
-        dimname = 'Station';
-        ncdimlen.station_name_len = size(G.name,2);
-        nc.Dimensions(end+1) = struct('Name','station_name_len'   ,'Length',ncdimlen.station_name_len);
-    end
+      if OPT.trajectory
+          nc.Attributes(end+1) = struct('Name','featureType'        ,'Value',  'trajectoryProfile');
+          dimname = 'Trajectory';
+          if isfield(G,'x')
+              G.trajectory = distance(G.x,G.y);
+          else
+              G.trajectory = nan.*G.lon;
+              fprintf(2,'> trajectory has no distance: spherical coordinates need epsg code to calculate Euclidian distance.\n')
+          end
+      else
+          nc.Attributes(end+1) = struct('Name','featureType'        ,'Value',  'timeSeries');
+          dimname = 'Station';
+          ncdimlen.platform_name_len = size(G.name,2);
+          nc.Dimensions(end+1) = struct('Name','platform_name_len'   ,'Length',ncdimlen.platform_name_len);
+      end
 
-    ncdimlen.(dimname) = size(G.name,1);
-    nc.Dimensions(end+1) = struct('Name',dimname               ,'Length',ncdimlen.(dimname));
+      ncdimlen.(dimname) = size(G.name,1);
+      nc.Dimensions(end+1) = struct('Name',dimname               ,'Length',ncdimlen.(dimname));
 
-    if ~isempty(vs_get_elm_def(F,'NAMTRA')) && ~isempty(OPT.crsind)
-        dimname2 = 'Crosssection';
-        ncdimlen.x_section_name_len = size(G.crsname,2);
-        nc.Dimensions(end+1) = struct('Name','x_section_name_len' ,'Length',ncdimlen.x_section_name_len);
+      if ~isempty(vs_get_elm_def(F,'NAMTRA')) && ~isempty(OPT.crs.ind)
+          dimname2 = 'Crosssection';
+          ncdimlen.x_section_name_len = size(G.crs.name,2);
+          nc.Dimensions(end+1) = struct('Name','x_section_name_len' ,'Length',ncdimlen.x_section_name_len);
 
-        ncdimlen.(dimname2) = size(G.crsname,1);
-        nc.Dimensions(end+1) = struct('Name',dimname2             ,'Length',ncdimlen.(dimname2));
-        nc.Dimensions(end+1) = struct('Name','start_end'          ,'Length',2);
-    end
+          ncdimlen.(dimname2) = size(G.crs.name,1);
+          nc.Dimensions(end+1) = struct('Name',dimname2             ,'Length',ncdimlen.(dimname2));
+          nc.Dimensions(end+1) = struct('Name','start_end'          ,'Length',2);
+      end
 
       
 %% 2 Create dimension combinations
@@ -335,7 +343,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
     s_t_f.dims(2) = struct('Name', dimname         ,'Length',ncdimlen.(dimname));
     s_t_f.dims(3) = struct('Name', 'time'          ,'Length',ncdimlen.time);
 
-    if ~isempty(vs_get_elm_def(F,'NAMTRA')) && ~isempty(OPT.crsind)
+    if ~isempty(vs_get_elm_def(F,'NAMTRA')) && ~isempty(OPT.crs.ind)
         % 2D	
         x_t.dims(1) = struct('Name', dimname2          ,'Length',ncdimlen.(dimname2));
         x_t.dims(2) = struct('Name', 'time'            ,'Length',ncdimlen.time);
@@ -385,9 +393,9 @@ function varargout = vs_trih2nc(vsfile,varargin)
         attr(    1)  = struct('Name', 'standard_name', 'Value', 'platform_name');
         attr(end+1)  = struct('Name', 'long_name'    , 'Value', vs_get_elm_def(F,d3d_name,'Description'));
         attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
-        dims(    1)  = struct('Name', 'station_name_len','Length',ncdimlen.station_name_len);
+        dims(    1)  = struct('Name', 'platform_name_len','Length',ncdimlen.platform_name_len);
         dims(    2)  = struct('Name', dimname           ,'Length',ncdimlen.(dimname));
-        nc.Variables(ifld) = struct('Name'      , 'station_name', ...
+        nc.Variables(ifld) = struct('Name'      , 'platform_name', ...
                               'Datatype'  , 'char', ...
                               'Dimensions', dims, ...
                               'Attributes' , attr,...
@@ -395,11 +403,11 @@ function varargout = vs_trih2nc(vsfile,varargin)
 
         ifld     = ifld + 1;clear attr;
         attr(    1)  = struct('Name', 'long_name'    , 'Value', 'Delft3D-FLOW m index of station');
-        attr(end+1)  = struct('Name', 'units'        , 'Value', '');
+        attr(end+1)  = struct('Name', 'units'        , 'Value', '1');
         attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'MNSTAT');
         attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
         attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.m(:)) max(G.m(:))]);
-        nc.Variables(ifld) = struct('Name'      , 'station_m_index', ...
+        nc.Variables(ifld) = struct('Name'      , 'platform_m_index', ...
                               'Datatype'  , OPT.type, ...
                               'Dimensions', struct('Name', dimname,'Length',ncdimlen.(dimname)), ...
                               'Attributes' , attr,...
@@ -407,11 +415,11 @@ function varargout = vs_trih2nc(vsfile,varargin)
 
         ifld     = ifld + 1;clear attr;
         attr(    1)  = struct('Name', 'long_name'    , 'Value', 'Delft3D-FLOW n index of station');
-        attr(end+1)  = struct('Name', 'units'        , 'Value', '');
+        attr(end+1)  = struct('Name', 'units'        , 'Value', '1');
         attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'MNSTAT');
         attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
         attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.n(:)) max(G.n(:))]);
-        nc.Variables(ifld) = struct('Name'      , 'station_n_index', ...
+        nc.Variables(ifld) = struct('Name'      , 'platform_n_index', ...
                               'Datatype'  , OPT.type, ...
                               'Dimensions', struct('Name', dimname,'Length',ncdimlen.(dimname)), ...
                               'Attributes' , attr,...
@@ -420,13 +428,13 @@ function varargout = vs_trih2nc(vsfile,varargin)
         ifld     = ifld + 1;clear attr;d3d_name = 'ALFAS';
         attr(    1)  = struct('Name', 'long_name'    , 'Value', vs_get_elm_def(F,d3d_name,'Description'));
         attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
-        nc.Variables(ifld) = struct('Name'      , 'station_angle', ...
+        nc.Variables(ifld) = struct('Name'      , 'platform_angle', ...
                               'Datatype'  , OPT.type, ...
                               'Dimensions', struct('Name', dimname,'Length',ncdimlen.(dimname)), ...
                               'Attributes' , attr,...
                               'FillValue'  , []);
 
-        if ~isempty(vs_get_elm_def(F,'NAMTRA')) && ~isempty(OPT.crsind)
+        if ~isempty(vs_get_elm_def(F,'NAMTRA')) && ~isempty(OPT.crs.ind)
             ifld     = ifld + 1;clear attr dims;d3d_name = 'NAMTRA';
             attr(    1)  = struct('Name', 'standard_name', 'Value', 'x_section_name');
             attr(end+1)  = struct('Name', 'long_name'    , 'Value', vs_get_elm_def(F,d3d_name,'Description'));
@@ -440,11 +448,11 @@ function varargout = vs_trih2nc(vsfile,varargin)
                                       'FillValue'  , []);
 
             ifld     = ifld + 1;clear attr dims;
-            attr(    1)  = struct('Name', 'long_name'    , 'Value', 'Delft3D-FLOW m indeces of cross-section');
-            attr(end+1)  = struct('Name', 'units'        , 'Value', '');
+            attr(    1)  = struct('Name', 'long_name'    , 'Value', 'Delft3D-FLOW m indices of cross-section');
+            attr(end+1)  = struct('Name', 'units'        , 'Value', '1');
             attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'MNTRA');
             attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
-            attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.crsm(:)) max(G.crsm(:))]);
+            attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.crs.m(:)) max(G.crs.m(:))]);
             dims(    2)  = struct('Name', dimname2,'Length',ncdimlen.(dimname2));
             dims(    1)  = struct('Name', 'start_end','Length',2);
             nc.Variables(ifld) = struct('Name'      , 'x_section_m_indeces', ...
@@ -454,11 +462,11 @@ function varargout = vs_trih2nc(vsfile,varargin)
                                       'FillValue'  , []);
 
             ifld     = ifld + 1;clear attr dims;
-            attr(    1)  = struct('Name', 'long_name'    , 'Value', 'Delft3D-FLOW n indeces of cross-section');
-            attr(end+1)  = struct('Name', 'units'        , 'Value', '');
+            attr(    1)  = struct('Name', 'long_name'    , 'Value', 'Delft3D-FLOW n indices of cross-section');
+            attr(end+1)  = struct('Name', 'units'        , 'Value', '1');
             attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'MNTRA');
             attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
-            attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.crsn(:)) max(G.crsn(:))]);
+            attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.crs.n(:)) max(G.crs.n(:))]);
             dims(    2)  = struct('Name', dimname2,'Length',ncdimlen.(dimname2));
             dims(    1)  = struct('Name', 'start_end','Length',2);
             nc.Variables(ifld) = struct('Name'      , 'x_section_n_indeces', ...
@@ -531,7 +539,9 @@ function varargout = vs_trih2nc(vsfile,varargin)
                                   'FillValue'  , []);
     end
 
-    if ~isempty(vs_get_elm_def(F,'NAMTRA')) && ~isempty(OPT.crsind)
+    if ~isempty(vs_get_elm_def(F,'NAMTRA')) && ~isempty(OPT.crs.ind)
+
+            attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'crsx_bounds');
         if any(strfind(G.coordinates,'CARTESIAN')) || ~isempty(OPT.epsg)
             ifld     = ifld + 1;clear attr dims
             attr(    1)  = struct('Name', 'standard_name', 'Value', 'projection_x_coordinate');
@@ -540,9 +550,10 @@ function varargout = vs_trih2nc(vsfile,varargin)
             attr(end+1)  = struct('Name', 'axis'         , 'Value', 'X');
             attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'XYTRA');
             attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
-            attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.crsx(:)) max(G.crsx(:))]);
-            dims(    2)  = struct('Name', dimname2,'Length',ncdimlen.(dimname2));
-            dims(    1)  = struct('Name', 'start_end','Length',2);
+            attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.crs.x(:)) max(G.crs.x(:))]);
+           %attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'crsx_bounds');
+            dims(    1)  = struct('Name', dimname2,'Length',ncdimlen.(dimname2));
+           %dims(    1)  = struct('Name', 'start_end','Length',2);
             nc.Variables(ifld) = struct('Name'      , 'crsx', ...
                                       'Datatype'  , OPT.type, ...
                                       'Dimensions', dims, ...
@@ -557,8 +568,9 @@ function varargout = vs_trih2nc(vsfile,varargin)
             attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'XYTRA');
             attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
             attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.y(:)) max(G.y(:))]);
-            dims(    2)  = struct('Name', dimname2,'Length',ncdimlen.(dimname2));
-            dims(    1)  = struct('Name', 'start_end','Length',2);
+           %attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'crsy_bounds');
+            dims(    1)  = struct('Name', dimname2,'Length',ncdimlen.(dimname2));
+           %dims(    1)  = struct('Name', 'start_end','Length',2);
             nc.Variables(ifld) = struct('Name'      , 'crsy', ...
                                       'Datatype'  , OPT.type, ...
                                       'Dimensions', dims, ...
@@ -574,7 +586,8 @@ function varargout = vs_trih2nc(vsfile,varargin)
             attr(end+1)  = struct('Name', 'axis'         , 'Value', 'X');
             attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'XYTRA');
             attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
-            attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.crslon(:)) max(G.crslon(:))]);
+            attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.crs.lon(:)) max(G.crs.lon(:))]);
+           %attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'crslongitude_bounds');
             dims(    2)  = struct('Name', dimname2,'Length',ncdimlen.(dimname2));
             dims(    1)  = struct('Name', 'start_end','Length',2);
             nc.Variables(ifld) = struct('Name'      , 'crslongitude', ...
@@ -590,7 +603,8 @@ function varargout = vs_trih2nc(vsfile,varargin)
             attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Y');
             attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'XYTRA');
             attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
-            attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.crslat(:)) max(G.crslat(:))]);
+            attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.crs.lat(:)) max(G.crs.lat(:))]);
+           %attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'crslatitude_bounds');
             dims(    2)  = struct('Name', dimname2,'Length',ncdimlen.(dimname2));
             dims(    1)  = struct('Name', 'start_end','Length',2);
             nc.Variables(ifld) = struct('Name'      , 'crslatitude', ...
@@ -696,6 +710,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
                               'Attributes' , attr,...
                               'FillValue'  , []);
 
+    if ~isempty(vs_get_elm_def(F,'ZKFS')) % old NEFIS fles
     ifld     = ifld + 1;clear attr; d3d_name = 'ZKFS';
     attr(    1)  = struct('Name', 'standard_name', 'Value', '');
     attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'active');
@@ -711,7 +726,8 @@ function varargout = vs_trih2nc(vsfile,varargin)
                               'Dimensions', s_t.dims, ...
                               'Attributes' , attr,...
                               'FillValue'  , []);
-
+    end
+    
     ifld     = ifld + 1;clear attr;d3d_name = 'ZCURU';
     if (~any(strfind(G.coordinates,'CART'))) % CARTESIAN, CARTHESIAN (old bug)
         attr(    1)  = struct('Name', 'standard_name', 'Value', 'eastward_sea_water_velocity'); % surface_geostrophic_sea_water_x_velocity_assuming_sea_level_for_geoid
@@ -765,12 +781,12 @@ function varargout = vs_trih2nc(vsfile,varargin)
                               'Attributes' , attr,...
                               'FillValue'  , []);
                               
-    if ~isempty(vs_get_elm_def(F,'NAMTRA')) && ~isempty(OPT.crsind)
+    if ~isempty(vs_get_elm_def(F,'NAMTRA')) && ~isempty(OPT.crs.ind)
         ifld     = ifld + 1;clear attr;d3d_name = 'CTR';
-        attr(    1)  = struct('Name', 'standard_name', 'Value', '');
+        attr(    1)  = struct('Name', 'standard_name', 'Value', 'water_flux_into_sea_water');
         attr(end+1)  = struct('Name', 'long_name'    , 'Value', vs_get_elm_def(F,d3d_name,'Description'));
         attr(end+1)  = struct('Name', 'units'        , 'Value', 'm3/s');
-        attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+        attr(end+1)  = struct('Name', 'coordinates'  , 'Value', crs.coordinates);
         attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
         attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
         attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.Q = [Inf -Inf];
@@ -781,10 +797,10 @@ function varargout = vs_trih2nc(vsfile,varargin)
                                   'FillValue'  , []);
 
         ifld     = ifld + 1;clear attr;d3d_name = 'FLTR';
-        attr(    1)  = struct('Name', 'standard_name', 'Value', '');
+        attr(    1)  = struct('Name', 'standard_name', 'Value', 'water_flux_into_sea_water');
         attr(end+1)  = struct('Name', 'long_name'    , 'Value', vs_get_elm_def(F,d3d_name,'Description'));
         attr(end+1)  = struct('Name', 'units'        , 'Value', 'm3');
-        attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+        attr(end+1)  = struct('Name', 'coordinates'  , 'Value', crs.coordinates);
         attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
         attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
         attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.CQ = [Inf -Inf];
@@ -891,16 +907,16 @@ function varargout = vs_trih2nc(vsfile,varargin)
     if ~isempty(strmatch('sediment',fieldnames(I)))
         for jj=1:G.lsed
             ifld     = ifld + 1;clear attr;
-            attr(    1)  = struct('Name', 'standard_name', 'Value', '');
-            attr(end+1)  = struct('Name', 'long_name'    , 'Value',  ['Concentration of ' G.namsed(jj,:) ' per layer in station']);
+            attr(    1)  = struct('Name', 'standard_name', 'Value', 'concentration_of_suspended_matter_in_sea_water'); % mass_concentration_of_suspended_matter_in_sea_water
+            attr(end+1)  = struct('Name', 'long_name'    , 'Value',  ['Concentration of ' G.namsed{jj} ' per layer in station']);
             attr(end+1)  = struct('Name', 'units'        , 'Value', 'kg/m3');
             attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
             attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
             attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
-            attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.(G.namsed(jj,:)) = [Inf -Inf];
-            nc.Variables(ifld) = struct('Name'      , G.namsed(jj,:), ...
-                                      'Datatype'  , OPT.type, ...
-                                      'Dimensions', s_t_k.dims, ...
+            attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.(G.namsed{jj}) = [Inf -Inf];
+            nc.Variables(ifld) = struct('Name'     , G.namsed{jj}, ... % remove space
+                                      'Datatype'   , OPT.type, ...
+                                      'Dimensions' , s_t_k.dims, ...
                                       'Attributes' , attr,...
                                       'FillValue'  , []);
         end
@@ -941,7 +957,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
       
     d3d_name = 'ZVICWW';
     ifld     = ifld + 1;clear attr
-    attr(    1)  = struct('Name', 'standard_name', 'Value', '');
+    attr(    1)  = struct('Name', 'standard_name', 'Value', 'ocean_vertical_momentum_diffusivity');
     attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'Vertical eddy viscosity-3D');
     attr(end+1)  = struct('Name', 'units'        , 'Value', 'm^2/s');
     attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayerInterf);
@@ -956,7 +972,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
 
     d3d_name = 'ZDICWW';
     ifld     = ifld + 1;clear attr
-    attr(    1)  = struct('Name', 'standard_name', 'Value', '');
+    attr(    1)  = struct('Name', 'standard_name', 'Value', 'ocean_vertical_tracer_diffusivity');
     attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'Vertical eddy diffusivity-3D');
     attr(end+1)  = struct('Name', 'units'        , 'Value', 'm^2/s');
     attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayerInterf);
@@ -971,7 +987,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
 
     d3d_name = 'ZRICH';
     ifld     = ifld + 1;clear attr
-    attr(    1)  = struct('Name', 'standard_name', 'Value', '');
+    attr(    1)  = struct('Name', 'standard_name', 'Value', 'richardson_number_in_sea_water');
     attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'Richardson number');
     attr(end+1)  = struct('Name', 'units'        , 'Value', '-');
     attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
@@ -1016,13 +1032,13 @@ function varargout = vs_trih2nc(vsfile,varargin)
                                   'Attributes' , attr,...
                                   'FillValue'  , []);
     
-        if ~isempty(vs_get_elm_def(F,'NAMTRA')) && ~isempty(OPT.crsind)
+        if ~isempty(vs_get_elm_def(F,'NAMTRA')) && ~isempty(OPT.crs.ind)
             d3d_name = 'SBTR';
             ifld     = ifld + 1;clear attr
             attr(    1)  = struct('Name', 'standard_name', 'Value', '');
             attr(end+1)  = struct('Name', 'long_name'    , 'Value', vs_get_elm_def(F,d3d_name,'Description'));
             attr(end+1)  = struct('Name', 'units'        , 'Value', 'm3/s');
-            attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+            attr(end+1)  = struct('Name', 'coordinates'  , 'Value', crs.coordinates);
             attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
             attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN)); % this initializes at NaN rather than 9.9692e36
             attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.bed_load_transport = [Inf -Inf];
@@ -1037,7 +1053,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
             attr(    1)  = struct('Name', 'standard_name', 'Value', '');
             attr(end+1)  = struct('Name', 'long_name'    , 'Value', vs_get_elm_def(F,d3d_name,'Description'));
             attr(end+1)  = struct('Name', 'units'        , 'Value', 'm3');
-            attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+            attr(end+1)  = struct('Name', 'coordinates'  , 'Value', crs.coordinates);
             attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
             attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN)); % this initializes at NaN rather than 9.9692e36
             attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.cumulative_bed_load_transport = [Inf -Inf];
@@ -1052,7 +1068,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
             attr(    1)  = struct('Name', 'standard_name', 'Value', '');
             attr(end+1)  = struct('Name', 'long_name'    , 'Value', vs_get_elm_def(F,d3d_name,'Description'));
             attr(end+1)  = struct('Name', 'units'        , 'Value', 'm3/s');
-            attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+            attr(end+1)  = struct('Name', 'coordinates'  , 'Value', crs.coordinates);
             attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
             attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN)); % this initializes at NaN rather than 9.9692e36
             attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.suspended_load_transport = [Inf -Inf];
@@ -1067,7 +1083,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
             attr(    1)  = struct('Name', 'standard_name', 'Value', '');
             attr(end+1)  = struct('Name', 'long_name'    , 'Value', vs_get_elm_def(F,d3d_name,'Description'));
             attr(end+1)  = struct('Name', 'units'        , 'Value', 'm3');
-            attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
+            attr(end+1)  = struct('Name', 'coordinates'  , 'Value', crs.coordinates);
             attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
             attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN)); % this initializes at NaN rather than 9.9692e36
             attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.cumulative_suspended_load_transport = [Inf -Inf];
@@ -1100,45 +1116,45 @@ function varargout = vs_trih2nc(vsfile,varargin)
 %% 5 Fill variables
     
     if OPT.trajectory
-        disp('Writing trajectory coordinates...')
+        disp([mfilename,': Writing trajectory coordinates...'])
         ncwrite(ncfile, 'Trajectory'          , G.trajectory);
     else
-        disp('Writing stations info...')
-        ncwrite(ncfile, 'station_name'        , G.name');
-        ncwrite(ncfile, 'station_angle'       , G.angle);
-        ncwrite(ncfile, 'station_m_index'     , G.m);
-        ncwrite(ncfile, 'station_n_index'     , G.n);
+        disp([mfilename,': Writing stations info...'])
+        ncwrite(ncfile, 'platform_name'        , G.name');
+        ncwrite(ncfile, 'platform_angle'       , G.angle);
+        ncwrite(ncfile, 'platform_m_index'     , G.m);
+        ncwrite(ncfile, 'platform_n_index'     , G.n);
     end
 
-    if ~isempty(vs_get_elm_def(F,'NAMTRA')) && ~isempty(OPT.crsind)
-        disp('Writing cross-sections info...')
-        ncwrite(ncfile, 'x_section_name'        , G.crsname');
-        ncwrite(ncfile, 'x_section_m_indeces'     , G.crsm);
-        ncwrite(ncfile, 'x_section_n_indeces'     , G.crsn);
+    if ~isempty(vs_get_elm_def(F,'NAMTRA')) && ~isempty(OPT.crs.ind)
+        disp([mfilename,': writing cross-sections info...'])
+        ncwrite(ncfile, 'x_section_name'        , G.crs.name');
+        ncwrite(ncfile, 'x_section_m_indeces'   , G.crs.m);
+        ncwrite(ncfile, 'x_section_n_indeces'   , G.crs.n);
     end
 
     if  any(strfind(G.coordinates,'CARTESIAN')) || ~isempty(OPT.epsg)
         ncwrite(ncfile, 'x', G.x);
         ncwrite(ncfile, 'y', G.y);
-        if ~isempty(vs_get_elm_def(F,'NAMTRA')) && ~isempty(OPT.crsind)
-            ncwrite(ncfile, 'crsx', G.crsx);
-            ncwrite(ncfile, 'crsy', G.crsy);
+        if ~isempty(vs_get_elm_def(F,'NAMTRA')) && ~isempty(OPT.crs.ind)
+            ncwrite(ncfile, 'crsx', mean(G.crs.x,1));
+            ncwrite(ncfile, 'crsy', mean(G.crs.y,1));
         end
     end
     
     if ~any(strfind(G.coordinates,'CARTESIAN')) || ~isempty(OPT.epsg)
         ncwrite(ncfile, 'longitude'  , G.lon);
         ncwrite(ncfile, 'latitude'   , G.lat);
-        if ~isempty(vs_get_elm_def(F,'NAMTRA')) && ~isempty(OPT.crsind)
-            ncwrite(ncfile, 'crslongitude'  , G.crslon);
-            ncwrite(ncfile, 'crslatitude'   , G.crslat);
+        if ~isempty(vs_get_elm_def(F,'NAMTRA')) && ~isempty(OPT.crs.ind)
+            ncwrite(ncfile, 'crslongitude'  , G.crs.lon);
+            ncwrite(ncfile, 'crslatitude'   , G.crs.lat);
         end
     end
       
-    disp('Writing time...')
+    disp([mfilename,': writing time...'])
     ncwrite(ncfile, 'time'         , T.datenum - OPT.refdatenum);   
 
-    disp('Writing layers...')
+    disp([mfilename,': writing layers...'])
     if strmatch('SIGMA-MODEL', G.layer_model)
         matrix = vs_let(F,'his-const','THICK','quiet');
         [sigma,sigmaInterf] = d3d_sigma(matrix); % [0 .. 1]
@@ -1156,34 +1172,36 @@ function varargout = vs_trih2nc(vsfile,varargin)
         ncwriteatt(ncfile,'LayerInterf'   ,'actual_range',[min(G.ZK(:)) max(G.ZK(:))]);
     end
 
-    disp('Writing bathymetry...')
+    disp([mfilename,': writing bathymetry...'])
     matrix = vs_let(F,'his-const','DPS',{OPT.ind},OPT.quiet);
     ncwrite   (ncfile,'depth',matrix); 
     ncwriteatt(ncfile,'depth','actual_range',[min(matrix(:)) max(matrix(:))]);
 
-    disp('Writing water levels...')
+    disp([mfilename,': writing water levels...'])
     matrix = vs_let(F,'his-series','ZWL',{OPT.ind},OPT.quiet);
     ncwrite(ncfile,'waterlevel',permute(matrix,[2 1]));
     nc_attput(ncfile,'waterlevel','actual_range',[min(matrix(:)) max(matrix(:))]);
 
-    disp('Writing active/inactive wl points...')
+    if ~isempty(vs_get_elm_def(F,'ZKFS')) % old NEFIS fles
+    disp([mfilename,': writing active/inactive wl points...'])
     matrix = vs_let(F,'his-series','ZKFS',{OPT.ind},OPT.quiet);
     ncwrite(ncfile,'mask',permute(matrix,[2 1]));
     nc_attput(ncfile,'mask','actual_range',[min(matrix(:)) max(matrix(:))]);
-
-    if ~isempty(vs_get_elm_def(F,'NAMTRA')) && ~isempty(OPT.crsind)
-        disp('Writing discharge cross-sections...')
-        matrix = vs_let(F,'his-series','CTR',{OPT.crsind},OPT.quiet);
+    end
+    
+    if ~isempty(vs_get_elm_def(F,'NAMTRA')) && ~isempty(OPT.crs.ind)
+        disp([mfilename,': writing discharge cross-sections...'])
+        matrix = vs_let(F,'his-series','CTR',{OPT.crs.ind},OPT.quiet);
         ncwrite(ncfile,'Q',permute(matrix,[2 1]));
         nc_attput(ncfile,'Q','actual_range',[min(matrix(:)) max(matrix(:))]);
 
-        matrix = vs_let(F,'his-series','FLTR',{OPT.crsind},OPT.quiet);
+        matrix = vs_let(F,'his-series','FLTR',{OPT.crs.ind},OPT.quiet);
         ncwrite(ncfile,'CQ',permute(matrix,[2 1]));
         R.CQ = [min(R.CQ(1),min(matrix(:))) max(R.CQ(2),max(matrix(:)))];
         nc_attput(ncfile,'CQ','actual_range',[min(matrix(:)) max(matrix(:))]);
     end
     
-    disp('Writing flow velocities...')
+    disp([mfilename,': writing flow velocities...'])
     if OPT.stride    
         for k=1:G.kmax
 
@@ -1216,7 +1234,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
         R.u_z = [min(matrix(:)) max(matrix(:))];
     end
       
-    disp('Writing bed shear stresses...')
+    disp([mfilename,': writing bed shear stresses...'])
     matrix = vs_let(F,'his-series','ZTAUKS',{OPT.ind},OPT.quiet);
     ncwrite   (ncfile,'tau_x',permute(matrix,[2 1]));
     ncwriteatt(ncfile,'tau_x','actual_range',[min(matrix(:)) max(matrix(:))]);
@@ -1226,7 +1244,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
     ncwrite   (ncfile,'tau_y',permute(matrix,[2 1]));
     R.tau_y = [min(matrix(:)) max(matrix(:))];
 
-    disp('Writing density...')
+    disp([mfilename,': writing density...'])
     if OPT.stride
         for k=1:G.kmax
             matrix = vs_let(F,'his-series','ZRHO',{OPT.ind,k},OPT.quiet);
@@ -1241,7 +1259,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
     end   
 
     if isfield(I,'salinity')  
-        disp('Writing salinity...')
+        disp([mfilename,': writing salinity...'])
         if OPT.stride
             for k=1:G.kmax
                 matrix = vs_let(F,'his-series','GRO',{OPT.ind,k,I.salinity.index},OPT.quiet);
@@ -1257,7 +1275,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
     end
 
     if isfield(I,'temperature')
-        disp('Writing temperature...')
+        disp([mfilename,': writing temperature...'])
         if OPT.stride
             for k=1:G.kmax
                 matrix = vs_let(F,'his-series','GRO',{OPT.ind,k,I.temperature.index},OPT.quiet);
@@ -1273,25 +1291,25 @@ function varargout = vs_trih2nc(vsfile,varargin)
     end
   
     if ~isempty(strmatch('sediment',fieldnames(I)))
-        disp('Writing sediment concentrations...')
+        disp([mfilename,': writing sediment concentrations...'])
         for jj=1:G.lsed
             if OPT.stride
                 for k=1:G.kmax
                 matrix = vs_let(F,'his-series','GRO',{OPT.ind,k,G.sedind(jj)},OPT.quiet);
-                ncwrite(ncfile,G.namsed(jj,:),permute(matrix,[3 2 1]),[k 1 1]);
-                R.(G.namsed(jj,:))(1) = min(R.(G.namsed(jj,:))(1),min(matrix(:)));
-                R.(G.namsed(jj,:))(2) = max(R.(G.namsed(jj,:))(2),max(matrix(:)));
+                ncwrite(ncfile,G.namsed{jj},permute(matrix,[3 2 1]),[k 1 1]);
+                R.(G.namsed{jj})(1) = min(R.(G.namsed{jj})(1),min(matrix(:)));
+                R.(G.namsed{jj})(2) = max(R.(G.namsed{jj})(2),max(matrix(:)));
                 end
             else
                 matrix = vs_let(F,'his-series','GRO',{OPT.ind,0,G.sedind(jj)},OPT.quiet);
-                ncwrite(ncfile,G.namsed(jj,:),permute(matrix,[3 2 1]));
-                R.(G.namsed(jj,:)) = [min(R.(G.namsed(jj,:))(1),min(matrix(:))) max(R.(G.namsed(jj,:))(2),max(matrix(:)))];
+                ncwrite(ncfile,G.namsed{jj},permute(matrix,[3 2 1]));
+                R.(G.namsed{jj}) = [min(R.(G.namsed{jj})(1),min(matrix(:))) max(R.(G.namsed{jj})(2),max(matrix(:)))];
             end   
         end
     end
 
     if isfield(I,'turbulent_energy')  
-        disp('Writing turbulent energy...')
+        disp([mfilename,': writing turbulent energy...'])
         if OPT.stride
             for k=1:G.kmax+1
                 matrix = vs_let(F,'his-series','ZTUR',{OPT.ind,k,I.turbulent_energy.index},OPT.quiet);
@@ -1307,7 +1325,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
     end
 
     if isfield(I,'energy_dissipation')  
-        disp('Writing energy dissipation...')
+        disp([mfilename,': writing energy dissipation...'])
         if OPT.stride
             for k=1:G.kmax+1
                 matrix = vs_let(F,'his-series','ZTUR',{OPT.ind,k,I.energy_dissipation.index},OPT.quiet);
@@ -1322,7 +1340,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
         end   
     end
     
-    disp('Writing viscosity...')
+    disp([mfilename,': writing viscosity...'])
     if OPT.stride    
         for k=1:G.kmax+1
             matrix = vs_let(F,'his-series','ZVICWW',{OPT.ind,k},OPT.quiet);
@@ -1336,7 +1354,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
         R.viscosity_z = [min(R.viscosity_z(1),min(matrix(:))) max(R.viscosity_z(2),max(matrix(:)))];
     end 
     
-    disp('Writing diffusivity...')
+    disp([mfilename,': writing diffusivity...'])
     if OPT.stride    
         for k=1:G.kmax+1
             matrix = vs_let(F,'his-series','ZDICWW',{OPT.ind,k},OPT.quiet);
@@ -1350,7 +1368,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
         R.diffusivity_z = [min(R.diffusivity_z(1),min(matrix(:))) max(R.diffusivity_z(2),max(matrix(:)))];
     end
     
-    disp('Writing Richardson number...')
+    disp([mfilename,': writing Richardson number...'])
     if OPT.stride    
         for k=1:G.kmax+1
             matrix = vs_let(F,'his-series','ZRICH',{OPT.ind,k},OPT.quiet);
@@ -1366,31 +1384,31 @@ function varargout = vs_trih2nc(vsfile,varargin)
       
     if ~isempty(strmatch('sediment',fieldnames(I)))
 
-        disp('Writing bed level timeseries...')
+        disp([mfilename,': writing bed level timeseries...'])
         matrix = vs_let(F,'his-sed-series','ZDPS',{OPT.ind},OPT.quiet);
         ncwrite(ncfile,'morphological_depth',permute(matrix,[2 1]));
         R.morphological_depth = [min(R.morphological_depth(1),min(matrix(:))) max(R.morphological_depth(2),max(matrix(:)))];
 
-        disp('Writing available mass of sediment...')
+        disp([mfilename,': writing available mass of sediment...'])
         matrix = vs_let(F,'his-sed-series','ZBDSED',{OPT.ind,0},OPT.quiet);
         ncwrite(ncfile,'available_mass_of_sediment',permute(matrix,[3 2 1]));
         R.available_mass_of_sediment = [min(R.available_mass_of_sediment(1),min(matrix(:))) max(R.available_mass_of_sediment(2),max(matrix(:)))];
 
-        if ~isempty(vs_get_elm_def(F,'NAMTRA')) && ~isempty(OPT.crsind)
-            disp('Writing sediment transports...')
-            matrix = vs_let(F,'his-sed-series','SBTR',{OPT.crsind,0},OPT.quiet);
+        if ~isempty(vs_get_elm_def(F,'NAMTRA')) && ~isempty(OPT.crs.ind)
+            disp([mfilename,': writing sediment transports...'])
+            matrix = vs_let(F,'his-sed-series','SBTR',{OPT.crs.ind,0},OPT.quiet);
             ncwrite(ncfile,'bed_load_transport',permute(matrix,[3 2 1]));
             R.bed_load_transport = [min(R.bed_load_transport(1),min(matrix(:))) max(R.bed_load_transport(2),max(matrix(:)))];
 
-            matrix = vs_let(F,'his-sed-series','SBTRC',{OPT.crsind,0},OPT.quiet);
+            matrix = vs_let(F,'his-sed-series','SBTRC',{OPT.crs.ind,0},OPT.quiet);
             ncwrite(ncfile,'cumulative_bed_load_transport',permute(matrix,[3 2 1]));
             R.cumulative_bed_load_transport = [min(R.cumulative_bed_load_transport(1),min(matrix(:))) max(R.cumulative_bed_load_transport(2),max(matrix(:)))];
 
-            matrix = vs_let(F,'his-sed-series','SSTR',{OPT.crsind,0},OPT.quiet);
+            matrix = vs_let(F,'his-sed-series','SSTR',{OPT.crs.ind,0},OPT.quiet);
             ncwrite(ncfile,'suspended_load_transport',permute(matrix,[3 2 1]));
             R.suspended_load_transport = [min(R.suspended_load_transport(1),min(matrix(:))) max(R.suspended_load_transport(2),max(matrix(:)))];
 
-            matrix = vs_let(F,'his-sed-series','SSTRC',{OPT.crsind,0},OPT.quiet);
+            matrix = vs_let(F,'his-sed-series','SSTRC',{OPT.crs.ind,0},OPT.quiet);
             ncwrite(ncfile,'cumulative_suspended_load_transport',permute(matrix,[3 2 1]));
             R.cumulative_suspended_load_transport = [min(R.cumulative_suspended_load_transport(1),min(matrix(:))) max(R.cumulative_suspended_load_transport(2),max(matrix(:)))];
         end

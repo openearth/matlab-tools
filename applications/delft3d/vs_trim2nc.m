@@ -1364,7 +1364,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       if any(strcmp('viscosity_z',OPT.var))
       if ~isequal(vs_get_elm_size(F,'VICWW'),0)
       ifld     = ifld + 1;clear attr dims
-      attr(    1)  = struct('Name', 'standard_name', 'Value', '');
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'ocean_vertical_momentum_diffusivity');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'Vertical eddy viscosity-3D');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm^2/s');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayerInterf);
@@ -1387,7 +1387,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       if any(strcmp('diffusivity_z',OPT.var))
       if ~isequal(vs_get_elm_size(F,'VICWW'),0)
       ifld     = ifld + 1;clear attr dims
-      attr(    1)  = struct('Name', 'standard_name', 'Value', '');
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'ocean_vertical_tracer_diffusivity');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'Vertical eddy diffusivity-3D');
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm^2/s');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayerInterf);
@@ -1410,7 +1410,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       if any(strcmp('Ri',OPT.var))
       if ~isequal(vs_get_elm_size(F,'VICWW'),0)
       ifld     = ifld + 1;clear attr dims
-      attr(    1)  = struct('Name', 'standard_name', 'Value', '');
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'richardson_number_in_sea_water');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'Richardson number');
       attr(end+1)  = struct('Name', 'units'        , 'Value', '-');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayerInterf);
