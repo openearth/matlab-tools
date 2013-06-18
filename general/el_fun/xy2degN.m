@@ -1,10 +1,8 @@
-function degN = xy2degN(x0, y0, x1, y1)
+function [degN normVector] = xy2degN(x0, y0, x1, y1)
 %XY2DEGN  find angle in degrees, positive clockwise and 0 north
 %
-%   More detailed description goes here.
-%
 %   Syntax:
-%   degN = xy2degN(x0, y0, x1, y1)
+%   [degN normVector] = xy2degN(x0, y0, x1, y1)
 %
 %   Input:
 %   x0   = x-coordinate of starting point of vector(s)
@@ -14,9 +12,10 @@ function degN = xy2degN(x0, y0, x1, y1)
 %
 %   Output:
 %   degN = angle in degrees, positive clockwise and 0 north
+%   normVector = Euler norm of vectors
 %
 %   Example
-%   xy2degN
+%   [degN normVector]=xy2degN(0,0,2,1); 
 %
 %   See also 
 
@@ -63,9 +62,33 @@ function degN = xy2degN(x0, y0, x1, y1)
 % $HeadURL$
 % $Keywords: $
 
-%%
+%% PREPROCESSING
+
+%Converting scalar to matrix
+if prod(size(x0))==1
+	x0=x0*ones(size(x1)); 
+end
+if prod(size(y0))==1
+	y0=y0*ones(size(y1)); 
+end
+if prod(size(x1))==1
+	x1=x1*ones(size(x0)); 
+end
+if prod(size(y1))==1
+	y1=y1*ones(size(y0)); 
+end
+
+%Test if matrices are of the same dimension
+if sum( size(x0)~=size(x1) )>0 | sum( size(y0)~=size(y1) )>0 | sum( size(x0)~=size(y0) )>0
+			error('x0,y0,x1,y1 must either be matrices of the same size or scalars.'); 
+end
+
+%% 	CALCULATION
+
 dx = x1 - x0; % derive horizontal distance
 dy = y1 - y0; % derive vertical distance
+
+normVector=hypot(dx,dy); %L2-norm vectors
 
 quadr2or3 = dy < 0; % second and third quadrant
 quadr4 = dx < 0 & dy >= 0; % fourth quadrant
