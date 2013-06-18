@@ -1,13 +1,13 @@
-%% Create netCDF-CF file of orthogonal lat-lon grid
+%% Create netCDF-CF file of orthogonal lat-lon grid (snctools)
 %
-%  example of how to make a netCDF file with CF conventions of a 
-%  variable that is defined on a grid that is orthogonal
-%  in a lat-lon coordinate system. In this special case 
-%  the dimensions coincide with the coordinate axes.
+%  Deprecated: for native Matlab and faster performance code see ncwritetutorial_grid_lat_lon_orthogonal
 %
-%  This case is described in:
-%  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#id2984551
-%  as "Independent Latitude, Longitude Axes".
+%  example of how to make a netCDF file with CF conventions of a variable 
+%  that is defined on a grid that is orthogonal in a lat-lon coordinate
+%  system. In this special case the dimensions coincide with the coordinate axes.
+%
+%  This case is described as "Independent Latitude, Longitude, Vertical, and Time Axes"
+%  in http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#idp5553648
 %
 %    ^ latitude (degrees_north)
 %    |
@@ -16,164 +16,130 @@
 %    |
 %    |     +--------+
 %    |     |05 10 15|  +
-%    |     |        |  |
 %    |     |04 09 14|  |
-%    |     |        |  |
 %    |     |03 08 xx|  | nrows
-%    |     |        |  |
 %    |     |02 07 12|  | 
-%    |     |        |  |
 %    |     |01 06 11|  +
 %    |     +--------+
 %    |
 %    +--------------------------> longitude
 %                            (degrees_east)
 %
-%See also: SNCTOOLS, NC_CF_GRID, NC_CF_GRID_WRITE,
-%          NC_CF_GRID_WRITE_LAT_LON_CURVILINEAR_TUTORIAL, 
-%          NC_CF_GRID_WRITE_X_Y_ORTHOGONAL_TUTORIAL,
-%          NC_CF_GRID_WRITE_X_Y_CURVILINEAR_TUTORIAL,
-%          nc_cf_timeseries
-%          http://opendap.deltares.nl/thredds/catalog/opendap/test/catalog.html
+%See also: ncwritetutorial_grid_x_y_orthogonal
 
 % This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a> under the <a href="http://www.gnu.org/licenses/gpl.html">GPL</a> license.
+%  $Id$
+%  $HeadURL$
+
+   ncfile         = ['d:\opendap.deltares.nl\thredds\dodsC\opendap\test\nc_cf_grid_write\nc_cf_grid_write_lat_lon_orthogonal_tutorial.nc'];
 
 %% Define meta-info: global
 
-   OPT.title                  = '';
-   OPT.institution            = '';
-   OPT.source                 = '';
-   OPT.history                = ['tranformation to netCDF: $HeadURL$'];
-   OPT.references             = '';
-   OPT.email                  = '';
-   OPT.comment                = '';
-   OPT.version                = '';
-   OPT.acknowledge            =['These data can be used freely for research purposes provided that the following source is acknowledged: ',OPT.institution];
-   OPT.disclaimer             = 'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.';
+   OPT.refdatenum = datenum(1970,1,1);
+   OPT.timezone   = '+08:00';
+   OPT.bounds     = 1; % add corner coordinates
+
+   M.institution  = 'Deltares';
+
+%% Define dimensions/coordinates: lat,lon matrices
+%  checkersboard to test plot with one nan-hole
+   D.cor.lat                = [49.5:1:54.5];            % pixel corners
+   D.cor.lon                = [1 3 5 7];
+   D.lat                    = corner2center(D.cor.lat); % pixel centers
+   D.lon                    = corner2center(D.cor.lon);
+   D.time                   = now;
    
-%% Define dimensions/coordinates: lat,lon sticks
-
-   OPT.lat_type               = 'single'; % 'single', 'double' for high-resolution data (eps 1m)
-   OPT.lon_type               = 'single'; % 'single', 'double' for high-resolution data (eps 1m)
-
-   OPT.cor.lon                = [1 3 5 7];      % pixel corners
-   OPT.cor.lat                = [49.5:1:54.5];
-   OPT.lon                    = [2 4 6];        % pixel centers
-   OPT.lat                    = [50 51 52 53 54];
-   OPT.ncols                  = length(OPT.lon);
-   OPT.nrows                  = length(OPT.lat);
-
-   OPT.wgs84.code             = 4326; % % epsg code of global grid: http://www.epsg-registry.org/
-   OPT.wgs84.name             = 'WGS 84';
-   OPT.wgs84.semi_major_axis  = 6378137.0;
-   OPT.wgs84.semi_minor_axis  = 6356752.314247833;
-   OPT.wgs84.inv_flattening   = 298.2572236;
-
+   M.wgs84.code             = 4326; % % epsg code of global grid: http://www.epsg-registry.org/
+   M.wgs84.name             = 'WGS 84';
+   M.wgs84.semi_major_axis  = 6378137.0;
+   M.wgs84.semi_minor_axis  = 6356752.314247833;
+   M.wgs84.inv_flattening   = 298.2572236;   
+   
 %% Define variable (define some data) checkerboard  with 1 NaN-hole
 
-   OPT.val                    = [  1 102   3 104   5;...
-                                 106   7 108   9 110;...
-                                  11 112 nan 114  15]; % use ncols as 1st array dimension to get correct plot in ncBrowse (snctools swaps for us)
-                                  
-   OPT.varname                = 'depth';       % free to choose: will appear in netCDF tree
-   OPT.units                  = 'm';           % from UDunits package: http://www.unidata.ucar.edu/software/udunits/
-   OPT.long_name              = 'bottom depth';% free to choose: will appear in plots
-   OPT.standard_name          = 'sea_floor_depth_below_geoid'; % or 'altitude'
-   OPT.val_type               = 'single';      % 'single' or 'double'
-   OPT.fillvalue              = nan;
-   OPT.time                   = now; % []; %now;
-   OPT.timezone               = '+00:00';
+   D.val                    = [  1 102   3 104   5;...
+                               106   7 108   9 110;...
+                                11 112 nan 114  15]; % use ncols as 1st array dimension to get correct plot in ncBrowse (snctools swaps for us)
+%% required vatriable meta-data    
+
+   M.standard_name          = 'sea_floor_depth_below_geoid'; % or 'altitude'
+   M.long_name              = 'bottom depth';% free to choose: will appear in plots
+   M.units                  = 'm';           % from UDunits package: http://www.unidata.ucar.edu/software/udunits/
+   M.varname                = 'depth';       % free to choose: will appear in netCDF tree
    
 %% 1.a Create netCDF file
-
-   ncfile = fullfile(fileparts(mfilename('fullpath')),[mfilename,'.nc']);
 
    nc_create_empty (ncfile)
 
 %% 1.b Add overall meta info
 %      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#description-of-file-contents
    
-   nc_attput(ncfile, nc_global, 'title'         , OPT.title);
-   nc_attput(ncfile, nc_global, 'institution'   , OPT.institution);
-   nc_attput(ncfile, nc_global, 'source'        , OPT.source);
-   nc_attput(ncfile, nc_global, 'history'       , OPT.history);
-   nc_attput(ncfile, nc_global, 'references'    , OPT.references);
-   nc_attput(ncfile, nc_global, 'email'         , OPT.email);
+   nc_attput(ncfile, nc_global, 'title'         , '');
+   nc_attput(ncfile, nc_global, 'institution'   , M.institution);
+   nc_attput(ncfile, nc_global, 'source'        , '');
+   nc_attput(ncfile, nc_global, 'history'       , '$HeadURL$ $Id$');
+   nc_attput(ncfile, nc_global, 'references'    , 'http://svn.oss.deltares.nl');
+   nc_attput(ncfile, nc_global, 'email'         , '');
+   nc_attput(ncfile, nc_global, 'featureType'   , 'grid');
 
-   nc_attput(ncfile, nc_global, 'comment'       , OPT.comment);
-   nc_attput(ncfile, nc_global, 'version'       , OPT.version);
+   nc_attput(ncfile, nc_global, 'comment'       , '');
+   nc_attput(ncfile, nc_global, 'version'       , '');
 
-   nc_attput(ncfile, nc_global, 'Conventions'   , 'CF-1.5');
-   nc_attput(ncfile, nc_global, 'CF:featureType', 'Grid');  % https://cf-pcmdi.llnl.gov/trac/wiki/PointObservationConventions
+   nc_attput(ncfile, nc_global, 'Conventions'   , 'CF-1.6');
 
-   nc_attput(ncfile, nc_global, 'terms_for_use' , OPT.acknowledge);
-   nc_attput(ncfile, nc_global, 'disclaimer'    , OPT.disclaimer);
+   nc_attput(ncfile, nc_global, 'terms_for_use' ,['These data can be used freely for research purposes provided that the following source is acknowledged: ',M.institution]);
+   nc_attput(ncfile, nc_global, 'disclaimer'    , 'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.');
+   
+   nc_attput(ncfile, nc_global, 'time_coverage_start',datestr(min(D.time(:)),'yyyy-mm-ddTHH:MM'));
+   nc_attput(ncfile, nc_global, 'time_coverage_end'  ,datestr(max(D.time(:)),'yyyy-mm-ddTHH:MM'));
       
 %% 2   Create matrix span dimensions
 %      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#dimensions   
    
-   nc_add_dimension(ncfile, 'lon', OPT.ncols); % !!! use this as 1st array dimension to get correct plot in ncBrowse (snctools swaps for us)
-   nc_add_dimension(ncfile, 'lat', OPT.nrows); % !!! use this as 2nd array dimension to get correct plot in ncBrowse (snctools swaps for us)
-   nc_add_dimension(ncfile, 'vertices', 2); % For each coordinate tick we need two endpoints
+   nc_add_dimension(ncfile, 'lon'     , length(D.lon)); % CF wants x last, which means 1st in Matlab
+   nc_add_dimension(ncfile, 'lat'     , length(D.lat)); % ~ y
+   nc_add_dimension(ncfile, 'time'    , 1            ); % CF wants bounds last, which means 1st in Matlab
+   nc_add_dimension(ncfile, 'bounds'  , 2            ); % CF wants time 1ts, which means last in Matlab
 
-   % You might insert a vector 'col' that runs [OPT.ncols:-1:1] to have
-   % the arcGIS ASCII file approach of having upper-left corner of 
-   % the data matrix at index (1,1) rather than the default of having the 
-   % lower-left corner of the data matrix  at index (1,1).
-
-   if ~isempty(OPT.time)
-   nc_add_dimension(ncfile, 'time', 1); % if you would like to include more instances of the same grid, 
-                                        % you can optionally use 'time' as a 3rd dimension. see 
-                                        % nc_cf_timeseries_write_tutorial for info on time.          
-   end
-
-%% 3.a Create coordinate vector: longitude
-%      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#longitude-coordinate
+%% 3a Create (primary) variables: time
 
    clear nc;ifld = 1;
+   nc(ifld).Name             = 'time';   % dimension 'time' filled with variable 'time'
+   nc(ifld).Nctype           = 'double'; % time should always be in doubles
+   nc(ifld).Dimension        = {'time'};
+   nc(ifld).Attribute(    1) = struct('Name', 'standard_name', 'Value', 'time');
+   nc(ifld).Attribute(end+1) = struct('Name', 'long_name'    , 'Value', 'time');
+   nc(ifld).Attribute(end+1) = struct('Name', 'units'        , 'Value', ['days since ',datestr(OPT.refdatenum,'yyyy-mm-dd'),' 00:00:00 ',OPT.timezone]);
+   nc(ifld).Attribute(end+1) = struct('Name', 'axis'         , 'Value', 'T');
+
+%% 3b Create (primary) variables: space
+%      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#longitude-coordinate
+
+   ifld = ifld + 1;   
    nc(ifld).Name             = 'lon'; % dimension 'lon' is here filled with variable 'lon'
-   nc(ifld).Nctype           = nc_type(OPT.lon_type);
+   nc(ifld).Nctype           = nc_type('double');
    nc(ifld).Dimension        = {'lon'}; % !!!
-   nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'longitude');
-   nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'degrees_east');
-   nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'longitude');
-   nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.lon(:)) max(OPT.lon(:))]); % TO DO add half grid cell offset
-   nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
-   nc(ifld).Attribute(end+1) = struct('Name', 'bounds'         ,'Value', 'lonbounds');
+   nc(ifld).Attribute(    1) = struct('Name', 'standard_name', 'Value', 'longitude');
+   nc(ifld).Attribute(end+1) = struct('Name', 'long_name'    , 'Value', 'Longitude');
+   nc(ifld).Attribute(end+1) = struct('Name', 'units'        , 'Value', 'degrees_east');
+   nc(ifld).Attribute(end+1) = struct('Name', 'axis'         , 'Value', 'X');
+   nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping' , 'Value', 'wgs84');
+   nc(ifld).Attribute(end+1) = struct('Name', 'actual_range' , 'Value', [min(D.lon(:)) max(D.lon(:))]); % TO DO add half grid cell offset
+   nc(ifld).Attribute(end+1) = struct('Name', 'bounds'       , 'Value', 'lon_bnds');% cell boundaries for drawing 'pixels.
 
-   ifld = ifld + 1;
-   nc(ifld).Name             = 'lonbounds'; % dimension 'lon' is here filled with variable 'lon'
-   nc(ifld).Nctype           = nc_type(OPT.lon_type);
-   nc(ifld).Dimension        = {'lon','vertices'}; % !!!
-   nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'longitude vertices');
-   nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'degrees_east');
-   nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'longitude');
-   nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.cor.lon(:)) max(OPT.cor.lon(:))]); % TO DO add half grid cell offset
-   nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
-
-%% 3.b Create coordinate vector: latitude
 %      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#latitude-coordinate
    
    ifld = ifld + 1;
    nc(ifld).Name             = 'lat'; % dimension 'lat' is here filled with variable 'lat'
-   nc(ifld).Nctype           = nc_type(OPT.lat_type);
+   nc(ifld).Nctype           = nc_type('double');
    nc(ifld).Dimension        = {'lat'}; % !!!
-   nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'latitude');
-   nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'degrees_north');
-   nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'latitude');
-   nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.lat(:)) max(OPT.lat(:))]); % TO DO add half grid cell offset
-   nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
-   nc(ifld).Attribute(end+1) = struct('Name', 'bounds'         ,'Value', 'latbounds');
-
-   ifld = ifld + 1;
-   nc(ifld).Name             = 'latbounds'; % dimension 'lat' is here filled with variable 'lat'
-   nc(ifld).Nctype           = nc_type(OPT.lat_type);
-   nc(ifld).Dimension        = {'lat','vertices'}; % !!!
-   nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'latitude vertices');
-   nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'degrees_north');
-   nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'latitude');
-   nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.cor.lat(:)) max(OPT.cor.lat(:))]); % TO DO add half grid cell offset
-   nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
+   nc(ifld).Attribute(    1) = struct('Name', 'standard_name', 'Value', 'latitude');
+   nc(ifld).Attribute(end+1) = struct('Name', 'long_name'    , 'Value', 'Latitude');
+   nc(ifld).Attribute(end+1) = struct('Name', 'units'        , 'Value', 'degrees_north');
+   nc(ifld).Attribute(end+1) = struct('Name', 'axis'         , 'Value', 'Y');
+   nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping' , 'Value', 'wgs84');
+   nc(ifld).Attribute(end+1) = struct('Name', 'actual_range' , 'Value', [min(D.lat(:)) max(D.lat(:))]); % TO DO add half grid cell offset
+   nc(ifld).Attribute(end+1) = struct('Name', 'bounds'       , 'Value', 'lat_bnds');% cell boundaries for drawing 'pixels.
 
 %% 3.c Create coordinate variables: coordinate system: WGS84 default
 %      global ellispes: WGS 84, ED 50, INT 1924, ETRS 89 and the upcoming ETRS update etc.
@@ -184,33 +150,38 @@
    nc(ifld).Name         = 'wgs84'; % preferred
    nc(ifld).Nctype       = nc_int;
    nc(ifld).Dimension    = {};
-   nc(ifld).Attribute    = nc_cf_grid_mapping(OPT.wgs84.code); % is same as 
-   nc(ifld).Attribute    = struct('Name', ...
-                           {'name','epsg','grid_mapping_name',...
+   nc(ifld).Attribute    = nc_cf_grid_mapping(M.wgs84.code); % is same as 
+   nc(ifld).Attribute    = struct('Name' ,{'name','epsg','grid_mapping_name',...
                             'semi_major_axis','semi_minor_axis','inverse_flattening', ...
                             'comment'}, ...
-                            'Value', ...
-                            {OPT.wgs84.name,OPT.wgs84.code,'latitude_longitude',...
-                             OPT.wgs84.semi_major_axis,OPT.wgs84.inv_flattening,  ...
+                     'Value',{M.wgs84.name,M.wgs84.code,'latitude_longitude',...
+                              M.wgs84.semi_major_axis,M.wgs84.semi_minor_axis,M.wgs84.inv_flattening,  ...
                             'value is equal to EPSG code'});
    % add ADAGUC projection parameters optionally
    nc(ifld).Attribute(end+1) = struct('Name', 'proj4_params'   ,'Value', '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs');
    nc(ifld).Attribute(end+1) = struct('Name', 'projection_name','Value', 'Latitude Longitude');
-   nc(ifld).Attribute(end+1) = struct('Name', 'EPSG_code'      ,'Value', ['EPSG:',num2str(OPT.wgs84.code)]);
+   nc(ifld).Attribute(end+1) = struct('Name', 'EPSG_code'      ,'Value', ['EPSG:',num2str(M.wgs84.code)]);
 
-%% 3z   Optionally create time dimension
+%% 3.d Bounds (optional)
 
-   if ~isempty(OPT.time)
-   OPT.refdatenum            = datenum(1970,1,1); 
-   OPT.timezone              = '+00:00';
+   if OPT.bounds
    ifld = ifld + 1;
-   nc(ifld).Name             = 'time';   % dimension 'time' is here filled with variable 'time'
-   nc(ifld).Nctype           = 'double'; % time should always be in doubles
-   nc(ifld).Dimension        = {'time'};
-   nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', 'time');
-   nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', ['days since ',datestr(OPT.refdatenum,'yyyy-mm-dd'),' 00:00:00 ',OPT.timezone]);
-   nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', 'time');
-   nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.time(:)) max(OPT.time(:))]-OPT.refdatenum);
+   nc(ifld).Name             = 'lon_bnds'; % dimension 'lon' is here filled with variable 'lon'
+   nc(ifld).Nctype           = nc_type('double');
+   nc(ifld).Dimension        = {'lon','bounds'};
+   nc(ifld).Attribute(    1) = struct('Name', 'standard_name', 'Value', 'longitude');
+   nc(ifld).Attribute(end+1) = struct('Name', 'long_name'    , 'Value', 'Longitude bounds');
+   nc(ifld).Attribute(end+1) = struct('Name', 'units'        , 'Value', 'degrees_east');
+   nc(ifld).Attribute(end+1) = struct('Name', 'actual_range' , 'Value', [min(D.cor.lon(:)) max(D.cor.lon(:))]); % TO DO add half grid cell offset
+
+   ifld = ifld + 1;
+   nc(ifld).Name             = 'lat_bnds'; % dimension 'lat' is here filled with variable 'lat'
+   nc(ifld).Nctype           = nc_type('double');
+   nc(ifld).Dimension        = {'lat','bounds'};
+   nc(ifld).Attribute(    1) = struct('Name', 'standard_name'  ,'Value', 'latitude');
+   nc(ifld).Attribute(end+1) = struct('Name', 'long_name'      ,'Value', 'Latitude bounds');
+   nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'degrees_north');
+   nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(D.cor.lat(:)) max(D.cor.lat(:))]); % TO DO add half grid cell offset
    end
 
 %% 4   Create dependent variable
@@ -219,22 +190,14 @@
 %      http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/current/
 
    ifld = ifld + 1;
-   nc(ifld).Name             = OPT.varname;
-   nc(ifld).Nctype           = nc_type(OPT.val_type);
-   if ~isempty(OPT.time)
-   nc(ifld).Dimension        = {'time','lon','lat'};
-   else
-   nc(ifld).Dimension        = {'lon','lat'};
-   end
-   nc(ifld).Attribute(    1) = struct('Name', 'long_name'      ,'Value', OPT.long_name    );
-   nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', OPT.units        );
-   nc(ifld).Attribute(end+1) = struct('Name', '_FillValue'     ,'Value', OPT.fillvalue    );
-   nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(OPT.val(:)) max(OPT.val(:))]);
-   nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'lat lon'); % not required as the coordinates are vectors
+   nc(ifld).Name             = M.varname;
+   nc(ifld).Nctype           = nc_type('double');
+   nc(ifld).Dimension        = {'time','lat','lon'}; % mind Matlab reverses dimensions compared to regular tools
+   nc(ifld).Attribute(    1) = struct('Name', 'standard_name'  ,'Value', M.standard_name);
+   nc(ifld).Attribute(end+1) = struct('Name', 'long_name'      ,'Value', M.long_name    );
+   nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', M.units        );
+   nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(D.val(:)) max(D.val(:))]);
    nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
-   if ~isempty(OPT.standard_name)
-   nc(ifld).Attribute(end+1) = struct('Name', 'standard_name'  ,'Value', OPT.standard_name);
-   end
       
 %% 5.a Create all variables with attributes
    
@@ -244,25 +207,23 @@
       
 %% 5.b Fill all variables
 
-   nc_varput(ncfile, 'lonbounds'    , nc_cf_cor2bounds(OPT.cor.lon)');
-   nc_varput(ncfile, 'latbounds'    , nc_cf_cor2bounds(OPT.cor.lat)');
-   nc_varput(ncfile, 'lon'          , OPT.lon       );
-   nc_varput(ncfile, 'lat'          , OPT.lat       );
-   nc_varput(ncfile, 'wgs84'        , OPT.wgs84.code);
-   if ~isempty(OPT.time)
-   nc_varput(ncfile, 'time'         , OPT.time - OPT.refdatenum);
-   nc_varput(ncfile, OPT.varname    , permute(OPT.val,[3 1 2]));
-   else
-   nc_varput(ncfile, OPT.varname    , OPT.val       );
+   nc_varput(ncfile, 'lon'          , D.lon       );
+   nc_varput(ncfile, 'lat'          , D.lat       );
+   nc_varput(ncfile, 'wgs84'        , M.wgs84.code);
+   nc_varput(ncfile, 'time'         , D.time - OPT.refdatenum);
+   nc_varput(ncfile, M.varname      , permute(D.val,[3 2 1])); % mind Matlab reverses dimensions compared to regular tools
+   if OPT.bounds
+   nc_varput(ncfile, 'lon_bnds'    , nc_cf_cor2bounds(D.cor.lon)');
+   nc_varput(ncfile, 'lat_bnds'    , nc_cf_cor2bounds(D.cor.lat)');
    end
       
 %% 6   Check file summary
    
    nc_dump(ncfile);
-   fid = fopen(fullfile(fileparts(mfilename('fullpath')),[mfilename,'.cdl']),'w');
-   fprintf(fid,'%s\n', '// The netCDF CF conventions for grids are defined here:');
-   fprintf(fid,'%s\n', '// http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/ch05s06.html');
-   fprintf(fid,'%s\n', '// This grid file can be loaded into matlab with nc_cf_grid.m and d3d_qp');
+   fid = fopen(strrep(ncfile,'.nc','.cdl'),'w');
+   fprintf(fid,'%s\n', '// The netCDF-CF conventions for grids are defined here:');
+   fprintf(fid,'%s\n', '// http://cf-pcmdi.llnl.gov/documents/cf-conventions/');
+   fprintf(fid,'%s\n', '// This grid file can be loaded into matlab with QuickPlot (d3d_qp.m) and ADAGUC.knmi.nl.');
    fprintf(fid,'%s\n',['// To create this netCDF file with Matlab please see ',mfilename]);
    nc_dump(ncfile,fid);
    fclose(fid);
