@@ -194,9 +194,9 @@ else
 	
 	%interpolate colorscaling
 	mydiscretecolors=interp1(colorlevels,mycolors,meanLevel);
+	mydiscretecolors=max(min(mydiscretecolors,1),0); 
 	 
 end
-mydiscretecolors=min(max(mydiscretecolors,0),1); 
 
 %Calculate the number of colors in the new colormap if nrofcolornew==NaN
 if isnan(OPT.nrofcolornew)
@@ -207,19 +207,20 @@ end
 colorlevelsnew=[0:1/OPT.nrofcolornew:1-1/OPT.nrofcolornew]; 
 colormapnew=nan(length(colorlevelsnew),3); 
 
-%set color for all values below minimum levels
-iclass=colorlevelsnew<min(levelsCscaled(~isinf(levelsCscaled)));
-if sum(iclass)>0
-	colormapnew(iclass,:)=repmat(mycolors(1,:),[sum(iclass) 1]); 
-end
+
 for i=1:length(levelsCscaled)-1
 	iclass=colorlevelsnew>=levelsCscaled(i);
 	if sum(iclass)>0
 		colormapnew(iclass,:)=repmat(mydiscretecolors(i,:),[sum(iclass) 1]); 
 	end
 end
+%set color for all values below minimum levels
+iclass=colorlevelsnew<=min(levelsCscaled(~isinf(levelsCscaled)));
+if sum(iclass)>0
+	colormapnew(iclass,:)=repmat(mycolors(1,:),[sum(iclass) 1]); 
+end
 %set color for all values above maximum level
-iclass=colorlevelsnew>max(levelsCscaled(~isinf(levelsCscaled)));
+iclass=colorlevelsnew+1/OPT.nrofcolornew>=max(levelsCscaled(~isinf(levelsCscaled)));
 if sum(iclass)>0
 	colormapnew(iclass,:)=repmat(mycolors(end,:),[sum(iclass) 1]); 
 end
