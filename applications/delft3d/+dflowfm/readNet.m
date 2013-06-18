@@ -55,8 +55,8 @@ function varargout = readNet(varargin)
 %% input
 
    OPT.peri2cell = 0; % overall faster when using plotNet with axis, so default 0
-   OPT.cen       = 1; % whether to load cen data 
-   OPT.cor       = 1; % ,,
+   OPT.cen       = 0; % whether to load cen data 
+   OPT.cor       = 0; % ,,
    OPT.peri      = 1; % ,,
    OPT.link      = 1; % ,,
    OPT.face      = 0; % ,,
