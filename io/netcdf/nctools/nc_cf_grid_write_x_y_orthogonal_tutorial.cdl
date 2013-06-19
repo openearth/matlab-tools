@@ -1,6 +1,6 @@
-// The netCDF CF conventions for grids are defined here:
-// http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/ch05s06.html
-// This grid file can be loaded into matlab with nc_cf_grid.m and d3d_qp.m
+// The netCDF-CF conventions for grids are defined here:
+// http://cf-pcmdi.llnl.gov/documents/cf-conventions/
+// This grid file can be loaded into matlab with QuickPlot (d3d_qp.m) and ADAGUC.knmi.nl.
 // To create this netCDF file with Matlab please see nc_cf_grid_write_x_y_orthogonal_tutorial
 NetCDF-3 Classic nc_cf_grid_write_x_y_orthogonal_tutorial.nc {
 
@@ -8,22 +8,48 @@ NetCDF-3 Classic nc_cf_grid_write_x_y_orthogonal_tutorial.nc {
     x = 3 ;
     y = 5 ;
     time = 1 ;
+    bounds = 4 ;
 
   variables:
     // Preference 'PRESERVE_FVD':  false,
     // dimensions consistent with ncBrowse, not with native MATLAB netcdf package.
-    single x(x), shape = [3]
-      :long_name = "x Rijksdriehoek" 
-      :units = "m" 
+    double time(time), shape = [1]
+      :standard_name = "time" 
+      :long_name = "time" 
+      :units = "days since 1970-01-01 00:00:00 +08:00" 
+      :axis = "T" 
+    double x(x), shape = [3]
       :standard_name = "projection_x_coordinate" 
-      :actual_range = 400000 600000 
-      :grid_mapping = "epsg" 
-    single y(y), shape = [5]
-      :long_name = "y Rijksdriehoek" 
+      :long_name = "Easting" 
       :units = "m" 
-      :standard_name = "projection_y_coordinate" 
-      :actual_range = 5.5e+06 5.9e+06 
+      :axis = "X" 
       :grid_mapping = "epsg" 
+      :actual_range = 425000 725000 
+      :bounds = "lon_bnds" 
+    double y(y), shape = [5]
+      :standard_name = "projection_y_coordinate" 
+      :long_name = "Northing" 
+      :units = "m" 
+      :axis = "Y" 
+      :grid_mapping = "epsg" 
+      :actual_range = 5.555e+06 5.995e+06 
+      :bounds = "lat_bnds" 
+    double lon(y,x), shape = [5 3]
+      :standard_name = "longitude" 
+      :long_name = "Longitude" 
+      :units = "degrees_east" 
+      :axis = "X" 
+      :grid_mapping = "wgs84" 
+      :actual_range = 1.85329 6.43709 
+      :bounds = "lon_bnds" 
+    double lat(y,x), shape = [5 3]
+      :standard_name = "latitude" 
+      :long_name = "Latitude" 
+      :units = "degrees_north" 
+      :axis = "Y" 
+      :grid_mapping = "wgs84" 
+      :actual_range = 50.0998 54.0922 
+      :bounds = "lat_bnds" 
     int32 epsg([]), shape = [1]
       :name = "WGS 84 / UTM zone 31N" 
       :epsg = 32631 
@@ -42,20 +68,6 @@ NetCDF-3 Classic nc_cf_grid_write_x_y_orthogonal_tutorial.nc {
       :projection_name = "WGS 84 / UTM zone 31N" 
       :wkt = "" 
       :comment = "value is equal to EPSG code" 
-    single lon(x,y), shape = [3 5]
-      :long_name = "longitude" 
-      :units = "degrees_east" 
-      :standard_name = "longitude" 
-      :actual_range = 1.50155 4.49845 
-      :coordinates = "lat lon" 
-      :grid_mapping = "wgs84" 
-    single lat(x,y), shape = [3 5]
-      :long_name = "latitude" 
-      :units = "degrees_north" 
-      :standard_name = "latitude" 
-      :actual_range = 49.6443 53.2493 
-      :coordinates = "lat lon" 
-      :grid_mapping = "wgs84" 
     int32 wgs84([]), shape = [1]
       :name = "WGS 84" 
       :epsg = 4326 
@@ -63,38 +75,54 @@ NetCDF-3 Classic nc_cf_grid_write_x_y_orthogonal_tutorial.nc {
       :semi_major_axis = 6.37814e+06 
       :semi_minor_axis = 6.35675e+06 
       :inverse_flattening = 298.257 
-      :proj4_params = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs " 
+      :proj4_params = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs" 
       :EPSG_code = "EPSG:4326" 
       :projection_name = "Latitude Longitude" 
       :wkt = "" 
       :comment = "value is equal to EPSG code" 
-    double time(time), shape = [1]
-      :long_name = "time" 
-      :units = "days since 1970-01-01 00:00:00 +00:00" 
-      :standard_name = "time" 
-      :actual_range = 15833.7 15833.7 
-    single depth(time,x,y), shape = [1 3 5]
+    double x_bnds(x,bounds), shape = [3 4]
+      :standard_name = "projection_x_coordinate" 
+      :long_name = "Easting bounds" 
+      :units = "degrees_east" 
+      :actual_range = 0.679339 7.635 
+    double y_bnds(y,bounds), shape = [5 4]
+      :standard_name = "projection_y_coordinate" 
+      :long_name = "Northing bounds" 
+      :units = "degrees_north" 
+      :actual_range = 49.5781 54.5975 
+    double lon_bnds(y,x,bounds), shape = [5 3 4]
+      :standard_name = "longitude" 
+      :long_name = "Longitude bounds" 
+      :units = "degrees_east" 
+      :actual_range = 0.679339 7.635 
+    double lat_bnds(y,x,bounds), shape = [5 3 4]
+      :standard_name = "latitude" 
+      :long_name = "Latitude bounds" 
+      :units = "degrees_north" 
+      :actual_range = 49.5781 54.5975 
+    double depth(time,y,x), shape = [1 5 3]
+      :standard_name = "sea_floor_depth_below_geoid" 
       :long_name = "bottom depth" 
       :units = "m" 
-      :_FillValue = NaN f
       :actual_range = 1 114 
-      :coordinates = "lat lon" 
       :grid_mapping = "epsg" 
-      :standard_name = "sea_floor_depth_below_geoid" 
+      :coordinates = "lat lon" 
 
   //global Attributes:
-      :title = "" 
-      :institution = "" 
+      :title = "nc_cf_grid_write_x_y_orthogonal_tutorial" 
+      :institution = "Deltares" 
       :source = "" 
-      :history = "tranformation to netCDF: $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/io/netcdf/nctools/nc_cf_grid_write_x_y_orthogonal_tutorial.m $" 
-      :references = "" 
+      :history = "$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/io/netcdf/nctools/nc_cf_grid_write_lat_lon_orthogonal_tutorial.m $ $Id: nc_cf_grid_write_lat_lon_orthogonal_tutorial.m 8825 2013-06-18 14:19:32Z boer_g $" 
+      :references = "http://svn.oss.deltares.nl" 
       :email = "" 
+      :featureType = "grid" 
       :comment = "" 
       :version = "" 
-      :Conventions = "CF-1.5" 
-      :CF:featureType = "Grid" 
-      :terms_for_use = "These data can be used freely for research purposes provided that the following source is acknowledged: " 
+      :Conventions = "CF-1.6" 
+      :terms_for_use = "These data can be used freely for research purposes provided that the following source is acknowledged: Deltares" 
       :disclaimer = "This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE." 
+      :time_coverage_start = "2013-06-19T00:43" 
+      :time_coverage_end = "2013-06-19T00:43" 
 
 
 }

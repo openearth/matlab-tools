@@ -1,12 +1,12 @@
 // The netCDF-CF conventions for grids are defined here:
 // http://cf-pcmdi.llnl.gov/documents/cf-conventions/
 // This grid file can be loaded into matlab with QuickPlot (d3d_qp.m) and ADAGUC.knmi.nl.
-// To create this netCDF file with Matlab please see ncwritetutorial_grid_lat_lon_curvilinear
-NetCDF-3 Classic ncwritetutorial_grid_lat_lon_curvilinear.nc {
+// To create this netCDF file with Matlab please see ncwritetutorial_grid_x_y_orthogonal
+NetCDF-3 Classic ncwritetutorial_grid_x_y_orthogonal.nc {
 
   dimensions:
-    col = 3 ;
-    row = 5 ;
+    x = 3 ;
+    y = 5 ;
     time = 1 ;
     bounds = 4 ;
 
@@ -18,16 +18,34 @@ NetCDF-3 Classic ncwritetutorial_grid_lat_lon_curvilinear.nc {
       :long_name = "time" 
       :units = "days since 1970-01-01 00:00:00+08:00" 
       :axis = "T" 
-    double lon(row,col), shape = [5 3]
+    double x(x), shape = [3]
+      :standard_name = "projection_x_coordinate" 
+      :long_name = "Easting" 
+      :units = "m" 
+      :axis = "X" 
+      :_FillValue = NaN 
+      :grid_mapping = "epsg" 
+      :actual_range = 425000 725000 
+      :bounds = "lon_bnds" 
+    double y(y), shape = [5]
+      :standard_name = "projection_y_coordinate" 
+      :long_name = "Northing" 
+      :units = "m" 
+      :axis = "Y" 
+      :_FillValue = NaN 
+      :grid_mapping = "epsg" 
+      :actual_range = 5.555e+06 5.995e+06 
+      :bounds = "lat_bnds" 
+    double lon(y,x), shape = [5 3]
       :standard_name = "longitude" 
       :long_name = "Longitude" 
       :units = "degrees_east" 
       :axis = "X" 
       :_FillValue = NaN 
       :grid_mapping = "wgs84" 
-      :actual_range = 1.85328 6.4371 
+      :actual_range = 1.85329 6.43709 
       :bounds = "lon_bnds" 
-    double lat(row,col), shape = [5 3]
+    double lat(y,x), shape = [5 3]
       :standard_name = "latitude" 
       :long_name = "Latitude" 
       :units = "degrees_north" 
@@ -36,6 +54,24 @@ NetCDF-3 Classic ncwritetutorial_grid_lat_lon_curvilinear.nc {
       :grid_mapping = "wgs84" 
       :actual_range = 50.0998 54.0922 
       :bounds = "lat_bnds" 
+    int32 epsg([]), shape = [1]
+      :name = "WGS 84 / UTM zone 31N" 
+      :epsg = 32631 
+      :epsg_name = "Transverse Mercator" 
+      :grid_mapping_name = "transverse_mercator" 
+      :semi_major_axis = 6.37814e+06 
+      :semi_minor_axis = 6.35675e+06 
+      :inverse_flattening = 298.257 
+      :latitude_of_projection_origin = 0 
+      :longitude_of_projection_origin = 3 
+      :false_easting = 500000 
+      :false_northing = 0 
+      :scale_factor_at_projection_origin = 0.9996 
+      :proj4_params = "+proj=utm +zone=31 +ellps=WGS84 +datum=WGS84 +units=m +no_defs " 
+      :EPSG_code = "EPSG:32631" 
+      :projection_name = "WGS 84 / UTM zone 31N" 
+      :wkt = "" 
+      :comment = "value is equal to EPSG code" 
     int32 wgs84([]), shape = [1]
       :name = "WGS 84" 
       :epsg = 4326 
@@ -48,29 +84,41 @@ NetCDF-3 Classic ncwritetutorial_grid_lat_lon_curvilinear.nc {
       :projection_name = "Latitude Longitude" 
       :wkt = "" 
       :comment = "value is equal to EPSG code" 
-    double lon_bnds(row,col,bounds), shape = [5 3 4]
+    double x_bnds(x,bounds), shape = [3 4]
+      :standard_name = "projection_x_coordinate" 
+      :long_name = "Easting bounds" 
+      :units = "m" 
+      :_FillValue = NaN 
+      :actual_range = 350000 800000 
+    double y_bnds(y,bounds), shape = [5 4]
+      :standard_name = "projection_y_coordinate" 
+      :long_name = "Northing bounds" 
+      :units = "m" 
+      :_FillValue = NaN 
+      :actual_range = 5.5e+06 6.05e+06 
+    double lon_bnds(y,x,bounds), shape = [5 3 4]
       :standard_name = "longitude" 
       :long_name = "Longitude bounds" 
       :units = "degrees_east" 
       :_FillValue = NaN 
-      :actual_range = 0.6793 7.635 
-    double lat_bnds(row,col,bounds), shape = [5 3 4]
+      :actual_range = 0.679339 7.635 
+    double lat_bnds(y,x,bounds), shape = [5 3 4]
       :standard_name = "latitude" 
       :long_name = "Latitude bounds" 
       :units = "degrees_north" 
       :_FillValue = NaN 
       :actual_range = 49.5781 54.5975 
-    double depth(time,row,col), shape = [1 5 3]
+    double depth(time,y,x), shape = [1 5 3]
       :standard_name = "sea_floor_depth_below_geoid" 
       :long_name = "bottom depth" 
       :units = "m" 
       :_FillValue = NaN 
       :actual_range = 1 114 
-      :grid_mapping = "wgs84" 
+      :grid_mapping = "epsg" 
       :coordinates = "lat lon" 
 
   //global Attributes:
-      :title = "ncwritetutorial_grid_lat_lon_curvilinear" 
+      :title = "ncwritetutorial_grid_x_y_orthogonal" 
       :institution = "Deltares" 
       :source = "" 
       :history = "$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/io/netcdf/nctools/ncwritetutorial_grid_lat_lon_orthogonal.m $ $Id: ncwritetutorial_grid_lat_lon_orthogonal.m 8821 2013-06-17 15:19:10Z boer_g $" 
@@ -82,8 +130,8 @@ NetCDF-3 Classic ncwritetutorial_grid_lat_lon_curvilinear.nc {
       :Conventions = "CF-1.6" 
       :terms_for_use = "These data can be used freely for research purposes provided that the following source is acknowledged: Deltares" 
       :disclaimer = "This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE." 
-      :time_coverage_start = "2013-06-19T00:36" 
-      :time_coverage_end = "2013-06-19T00:36" 
+      :time_coverage_start = "2013-06-19T00:46" 
+      :time_coverage_end = "2013-06-19T00:46" 
 
 
 }

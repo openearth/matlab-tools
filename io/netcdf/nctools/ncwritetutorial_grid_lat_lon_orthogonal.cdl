@@ -1,10 +1,14 @@
+// The netCDF-CF conventions for grids are defined here:
+// http://cf-pcmdi.llnl.gov/documents/cf-conventions/
+// This grid file can be loaded into matlab with QuickPlot (d3d_qp.m) and ADAGUC.knmi.nl.
+// To create this netCDF file with Matlab please see ncwritetutorial_grid_lat_lon_orthogonal
 NetCDF-3 Classic ncwritetutorial_grid_lat_lon_orthogonal.nc {
 
   dimensions:
     lon = 3 ;
     lat = 5 ;
     time = 1 ;
-    bounds = 4 ;
+    bounds = 2 ;
 
   variables:
     // Preference 'PRESERVE_FVD':  false,
@@ -43,20 +47,18 @@ NetCDF-3 Classic ncwritetutorial_grid_lat_lon_orthogonal.nc {
       :proj4_params = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs" 
       :projection_name = "Latitude Longitude" 
       :EPSG_code = "EPSG:4326" 
-    double lon_bnds(lon,bounds), shape = [3 4]
+    double lon_bnds(lon,bounds), shape = [3 2]
       :standard_name = "longitude" 
-      :long_name = "Longitude" 
+      :long_name = "Longitude bounds" 
       :units = "degrees_east" 
-      :axis = "X" 
       :_FillValue = NaN 
-      :actual_range = 2 6 
-    double lat_bnds(lat,bounds), shape = [5 4]
+      :actual_range = 1 7 
+    double lat_bnds(lat,bounds), shape = [5 2]
       :standard_name = "latitude" 
-      :long_name = "Latitude" 
+      :long_name = "Latitude bounds" 
       :units = "degrees_north" 
-      :axis = "Y" 
       :_FillValue = NaN 
-      :actual_range = 50 54 
+      :actual_range = 49.5 54.5 
     double depth(time,lat,lon), shape = [1 5 3]
       :standard_name = "sea_floor_depth_below_geoid" 
       :long_name = "bottom depth" 
@@ -64,13 +66,12 @@ NetCDF-3 Classic ncwritetutorial_grid_lat_lon_orthogonal.nc {
       :_FillValue = NaN 
       :actual_range = 1 114 
       :grid_mapping = "wgs84" 
-      :coordinates = "lat lon" 
 
   //global Attributes:
-      :title = "" 
+      :title = "ncwritetutorial_grid_lat_lon_orthogonal" 
       :institution = "Deltares" 
       :source = "" 
-      :history = "$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/io/netcdf/nctools/ncwritetutorial_grid_lat_lon_orthogonal.m $ $Id: ncwritetutorial_grid_lat_lon_orthogonal.m 8596 2013-05-08 16:08:39Z boer_g $" 
+      :history = "$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/io/netcdf/nctools/ncwritetutorial_grid_lat_lon_orthogonal.m $ $Id: ncwritetutorial_grid_lat_lon_orthogonal.m 8825 2013-06-18 14:19:32Z boer_g $" 
       :references = "http://svn.oss.deltares.nl" 
       :email = "" 
       :featureType = "grid" 
@@ -79,6 +80,8 @@ NetCDF-3 Classic ncwritetutorial_grid_lat_lon_orthogonal.nc {
       :Conventions = "CF-1.6" 
       :terms_for_use = "These data can be used freely for research purposes provided that the following source is acknowledged: Deltares" 
       :disclaimer = "This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE." 
+      :time_coverage_start = "2013-06-18T21:54" 
+      :time_coverage_end = "2013-06-18T21:54" 
 
 
 }

@@ -143,6 +143,17 @@ OPT.timezone     = '+08:00';
                                'Dimensions', dims, ...
                                'Attributes' , attr,...
                                'FillValue'  , []);     
+                           
+   ifld     = ifld + 1;clear attr;
+   attr(    1)  = struct('Name', 'standard_name', 'Value', 'platform_id');
+   attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'platform id');
+   dims(    1)  = struct('Name', 'string_len','Length',ncdimlen.string_len);
+   dims(    2)  = struct('Name', 'location'  ,'Length',ncdimlen.location);
+   nc.Variables(ifld) = struct('Name'      , 'station_id', ...
+                               'Datatype'  , 'char', ...
+                               'Dimensions', dims, ...
+                               'Attributes' , attr,...
+                               'FillValue'  , []);     
                               
 %% 3c Create (primary) variables: data
                               
@@ -174,8 +185,9 @@ OPT.timezone     = '+08:00';
    ncwrite   (ncfile,'longitude'   , D.lon);
    ncwrite   (ncfile,'latitude'    , D.lat);
    ncwrite   (ncfile,'station_name', char(D.location_names)');
+   ncwrite   (ncfile,'station_id'  , char(D.location_names)');
    ncwrite   (ncfile,'TSS'         , D.TSS);
       
 %% test and check
 
-   nc_dump(ncfile,[],[mfilename('fullpath'),'.cdl'])
+   nc_dump(ncfile,[],strrep(ncfile,'.nc','.cdl'))

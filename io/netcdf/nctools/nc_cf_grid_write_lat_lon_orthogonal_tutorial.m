@@ -1,3 +1,4 @@
+error('nc_cf_grid_write_lat_lon_orthogonal_tutorial.nc fill value')
 %% Create netCDF-CF file of orthogonal lat-lon grid (snctools)
 %
 %  Deprecated: for native Matlab and faster performance code see ncwritetutorial_grid_lat_lon_orthogonal
@@ -31,7 +32,7 @@
 %  $Id$
 %  $HeadURL$
 
-   ncfile         = ['d:\opendap.deltares.nl\thredds\dodsC\opendap\test\nc_cf_grid_write\nc_cf_grid_write_lat_lon_orthogonal_tutorial.nc'];
+   ncfile         = [mfilename,'.nc'];
 
 %% Define meta-info: global
 
@@ -72,9 +73,10 @@
    nc_create_empty (ncfile)
 
 %% 1.b Add overall meta info
-%      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#description-of-file-contents
+%    http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#description-of-file-contents
+%    http://www.unidata.ucar.edu/software/netcdf-java/formats/DataDiscoveryAttConvention.html
    
-   nc_attput(ncfile, nc_global, 'title'         , '');
+   nc_attput(ncfile, nc_global, 'title'         , mfilename);
    nc_attput(ncfile, nc_global, 'institution'   , M.institution);
    nc_attput(ncfile, nc_global, 'source'        , '');
    nc_attput(ncfile, nc_global, 'history'       , '$HeadURL$ $Id$');
@@ -93,8 +95,8 @@
    nc_attput(ncfile, nc_global, 'time_coverage_start',datestr(min(D.time(:)),'yyyy-mm-ddTHH:MM'));
    nc_attput(ncfile, nc_global, 'time_coverage_end'  ,datestr(max(D.time(:)),'yyyy-mm-ddTHH:MM'));
       
-%% 2   Create matrix span dimensions
-%      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#dimensions   
+%% 2  Create matrix span dimensions
+%     http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#dimensions   
    
    nc_add_dimension(ncfile, 'lon'     , length(D.lon)); % CF wants x last, which means 1st in Matlab
    nc_add_dimension(ncfile, 'lat'     , length(D.lat)); % ~ y
@@ -102,6 +104,7 @@
    nc_add_dimension(ncfile, 'bounds'  , 2            ); % CF wants time 1ts, which means last in Matlab
 
 %% 3a Create (primary) variables: time
+%     http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#time-coordinate
 
    clear nc;ifld = 1;
    nc(ifld).Name             = 'time';   % dimension 'time' filled with variable 'time'
@@ -124,7 +127,7 @@
    nc(ifld).Attribute(end+1) = struct('Name', 'units'        , 'Value', 'degrees_east');
    nc(ifld).Attribute(end+1) = struct('Name', 'axis'         , 'Value', 'X');
    nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping' , 'Value', 'wgs84');
-   nc(ifld).Attribute(end+1) = struct('Name', 'actual_range' , 'Value', [min(D.lon(:)) max(D.lon(:))]); % TO DO add half grid cell offset
+   nc(ifld).Attribute(end+1) = struct('Name', 'actual_range' , 'Value', [min(D.lon(:)) max(D.lon(:))]);
    nc(ifld).Attribute(end+1) = struct('Name', 'bounds'       , 'Value', 'lon_bnds');% cell boundaries for drawing 'pixels.
 
 %      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#latitude-coordinate
@@ -138,7 +141,7 @@
    nc(ifld).Attribute(end+1) = struct('Name', 'units'        , 'Value', 'degrees_north');
    nc(ifld).Attribute(end+1) = struct('Name', 'axis'         , 'Value', 'Y');
    nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping' , 'Value', 'wgs84');
-   nc(ifld).Attribute(end+1) = struct('Name', 'actual_range' , 'Value', [min(D.lat(:)) max(D.lat(:))]); % TO DO add half grid cell offset
+   nc(ifld).Attribute(end+1) = struct('Name', 'actual_range' , 'Value', [min(D.lat(:)) max(D.lat(:))]);
    nc(ifld).Attribute(end+1) = struct('Name', 'bounds'       , 'Value', 'lat_bnds');% cell boundaries for drawing 'pixels.
 
 %% 3.c Create coordinate variables: coordinate system: WGS84 default
@@ -157,12 +160,13 @@
                      'Value',{M.wgs84.name,M.wgs84.code,'latitude_longitude',...
                               M.wgs84.semi_major_axis,M.wgs84.semi_minor_axis,M.wgs84.inv_flattening,  ...
                             'value is equal to EPSG code'});
-   % add ADAGUC projection parameters optionally
+%      http://adaguc.knmi.nl/contents/documents/ADAGUC_Standard.html
    nc(ifld).Attribute(end+1) = struct('Name', 'proj4_params'   ,'Value', '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs');
    nc(ifld).Attribute(end+1) = struct('Name', 'projection_name','Value', 'Latitude Longitude');
    nc(ifld).Attribute(end+1) = struct('Name', 'EPSG_code'      ,'Value', ['EPSG:',num2str(M.wgs84.code)]);
 
 %% 3.d Bounds (optional)
+%      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#cell-boundaries
 
    if OPT.bounds
    ifld = ifld + 1;
@@ -217,7 +221,7 @@
    nc_varput(ncfile, 'lat_bnds'    , nc_cf_cor2bounds(D.cor.lat)');
    end
       
-%% 6   Check file summary
+%% 6 test and check
    
    nc_dump(ncfile);
    fid = fopen(strrep(ncfile,'.nc','.cdl'),'w');
@@ -228,23 +232,20 @@
    nc_dump(ncfile,fid);
    fclose(fid);
    
-%% 7.a Load the data: using the variable names from nc_dump
+%% 7 Load the data: using the variable names from nc_dump
 
-   Da.dep   = nc_varget(ncfile,'depth');
-   Da.lat   = nc_varget(ncfile,'lon');
-   Da.lon   = nc_varget(ncfile,'lat');
-
-%% 7.b Load the data: using standard_names and coordinate attribute
-
-   depname  = nc_varfind(ncfile,'attributename', 'standard_name', 'attributevalue', 'sea_floor_depth_below_geoid');
-   Db.z     = nc_varget(ncfile,depname);
-
-   coords   = nc_attget(ncfile,depname,'coordinates');
-  [ax1,coords] = strtok(coords); ax2 = strtok(coords);
-   if strcmpi(nc_attget(ncfile,ax1,'standard_name'),'latitude')
-   Db.lat   = nc_varget(ncfile,ax1);
-   Db.lon   = nc_varget(ncfile,ax2);
-   else
-   Db.lat   = nc_varget(ncfile,ax2);
-   Db.lon   = nc_varget(ncfile,ax1);
+   Da.dep   = permute(nc_varget(ncfile,'depth'),[2 3 1]);
+   Da.lon   = nc_varget(ncfile,'lon');
+   Da.lat   = nc_varget(ncfile,'lat');
+   if OPT.bounds
+   Da.lonc  = nc_cf_bounds2cor(nc_varget(ncfile,'lon_bnds'));
+   Da.latc  = nc_cf_bounds2cor(nc_varget(ncfile,'lat_bnds'));
+   pcolorcorcen(Da.lonc,Da.latc,Da.dep,'k')
+   title(mktex({[mfilename,' showing same data twice:'],...
+                'checkerboard: bounded pixel corners, stripes connecting centers: connected points'}))
    end
+   hold on
+   pcolorcorcen(Da.lon ,Da.lat ,Da.dep,[.5 .5 .5])
+   axislat;tickmap('ll')
+   
+   print2screensize(mfilename);close
