@@ -6,8 +6,7 @@ Gen_inf    = {'This tool converts a SIMONA siminp file into a Delft3D-Flow mdf f
               'with belonging attribute files'                                                                     ;
               ' '                                                                                                  ;
               'Not everything is supported:'                                                                       ;
-              '- Transport (salinity, temperature and tracers) is not supported yet'                               ;
-              '- Discharge points are not supported yet (coming soon)'                                             ;
+              '- Transport (salinity, temperature and tracers) is not supported yet'                               ;                                                          ;
               '- Restarting is not supported yet'                                                                  ;
               '- Space varying wind is not supported yet'                                                          ;
               ' '                                                                                                  ;
@@ -128,7 +127,7 @@ mdf = simona2mdf_output   (S,mdf);
 % write the mdf file
 %
 
-delft3d_io_mdf('write',filmdf,mdf);
+delft3d_io_mdf('write',filmdf,mdf,'stamp',false);
 
 simona2mdf_message();
 
