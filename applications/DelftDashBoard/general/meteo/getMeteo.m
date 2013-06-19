@@ -75,6 +75,7 @@ function getMeteo(meteoname, meteoloc, t0, t1, xlim, ylim, outdir, cycleInterval
 usertcyc=0;
 outputMeteoName=meteoname;
 tLastAnalyzed=now;
+includesFirstTime=1;
 
 for i=1:length(varargin)
     if ischar(varargin{i})
@@ -89,6 +90,9 @@ for i=1:length(varargin)
             case{'tlastanalyzed'}
                 % Time of last analyzed data
                 tLastAnalyzed=varargin{i+1};
+            case{'includesfirsttime'}
+                % Cycle includes t0
+                includesFirstTime=varargin{i+1};
         end
         %     elseif iscell(varargin{i})
         %         for j=1:length(varargin{i})
@@ -106,11 +110,17 @@ end
 
 if cycleInterval>1000
     % All data in one nc file
-    tt=[t0 t1];
+    tt=[t0 t1];            
     getMeteoFromNomads3(meteoname,outputMeteoName,0,0,tt,xlim,ylim,outdir,pars,pr);
 else
+
+    if includesFirstTime
+        firstCycle=t0;
+    else
+        firstCycle=t0-dcyc;
+    end
     
-    for t=t0:dcyc:t1
+    for t=firstCycle:dcyc:t1
         
         tnext=t+dt;
         
@@ -127,7 +137,11 @@ else
             % loop after this
             tt=[t t1];
         else
-            tt=[t t+dcyc-dt];
+            if includesFirstTime
+                tt=[t t+dcyc-dt];
+            else
+                tt=[t t+dcyc];
+            end
         end
         
         tt(2)=min(tt(2),t1);

@@ -141,6 +141,10 @@ try
         end
     end
     
+    if isempty(it1)
+        it1=1;
+    end
+    
     %% Longitude
     lon=nc_varget(urlstr,lonstr);
     if ~isempty(xlim)
