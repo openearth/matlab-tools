@@ -1,10 +1,14 @@
 function varargout=delft3d_io_dry(cmd,varargin),
 %DELFT3D_IO_DRY   Read/write dry cell file <<beta version!>>
 %
-%  D        = delft3d_io_dry('read' ,filename);
+%  D        = delft3d_io_dry('read',filename);
 % [G,<D>]   = delft3d_io_dry('read',filename,G); where G comes from delft3d_io_grd
 %
-%    returns a struct D with fields 
+%  adds to struct G the fields 
+%    G.cen.dry  with 0/1   for wet/dry points
+%    G.cen.mask with 1/nan for wet/dry points, for multiplicative use on
+%    center arrays as in G.cen.* or returned by vs_let_scalar
+%  returns a struct D with fields 
 %    * m0, n0, m1, n1:  start end end indices of dry grid line (as in *.dry file)
 %                       E.g. 4 5 4 10
 %    * mdry, ndry    :  cell with all indices per dry grid lines (filled between 0 and 1)
@@ -16,12 +20,16 @@ function varargout=delft3d_io_dry(cmd,varargin),
 %  <iostat> = delft3d_io_dry('write',filename,mdry,ndry      ,<OS>);
 %  <iostat> = delft3d_io_dry('write',filename,m   ,n         ,<OS>);
 %
-% where OS is a string with values
-%    'u<nix>'
-%    'l<inux>'
-%    'd<os>'
-%    'w<indows>'
-% which determines the end of line character of ASCII files.
+% where OS is 'u<nix>','l<inux>','d<os>' or 'w<indows>' which determines 
+% the end of line character of ASCII files.
+%
+% Example of automatic read:
+%    mdf   = delft3d_io_mdf('read',['ub40.mdf']);
+%    G     = delft3d_io_grd('read',[mdf.keywords.filcco]);
+%    G     = delft3d_io_dep('read',[mdf.keywords.fildep],G,'dpsopt',mdf.keywords.dpsopt);
+%    G     = delft3d_io_dry('read',[mdf.keywords.fildry],G);
+%    G.cen.dep = G.cen.dep.*G.cen.mask;
+%    pcolorcorcen(G.cor.x,G.cor.y,G.cen.dep)
 %
 % See also: delft3d_io_ann, delft3d_io_bca, delft3d_io_bch, delft3d_io_bnd, 
 %           delft3d_io_crs, delft3d_io_dep, delft3d_io_dry, delft3d_io_eva, 
@@ -96,20 +104,14 @@ case 'write',
 end;
 
 % ------------------------------------
-% ------------------------------------
-% ------------------------------------
 
 function varargout = Local_read(varargin),
-
-      fname = varargin{1};
-
+             
+    if exist(fname,'file') & ~exist(fname,'dir')
+        
       tmp         = dir(fname);
-      if length(tmp)==0
-         error(['Dry points file ''',fname,''' does not exist.'])
-      end
+    
       D.filename        = fname;
-
-%   try
 
       MNDRY = load(D.filename);
       D.m0  = min(MNDRY(:,1),MNDRY(:,3));
@@ -118,15 +120,15 @@ function varargout = Local_read(varargin),
       D.n1  = max(MNDRY(:,2),MNDRY(:,4));
       
       for idry=1:length(D.n1)
-         %% mline
+         % mline
          if     D.m0(idry)  == D.m1(idry)
                 D.ndry{idry} = D.n0(idry):D.n1(idry);
                 D.mdry{idry} = D.m0(idry) + zeros(size(D.ndry{idry})); 
-         %% nline
+         % nline
          elseif D.n0(idry)  == D.n1(idry)
                 D.mdry{idry} = D.m0(idry):D.m1(idry);
                 D.ndry{idry} = D.n0(idry) + zeros(size(D.mdry{idry}));
-         %% line at 45 deg
+         % line at 45 deg
          else
                 D.mdry{idry} = D.m0(idry):D.m1(idry); 
                 D.ndry{idry} = D.n0(idry):D.n1(idry);
@@ -141,9 +143,19 @@ function varargout = Local_read(varargin),
       end
 
       D.iostat  = 1;
-%   catch
-%      D.iostat  = -1;
-%   end
+      
+    else
+      %disp(['Dry points file ''',fname,''' does not exist.']);
+      D.m  = [];
+      D.n  = [];
+      D.m  = [];
+      D.n  = [];       
+      tmp.name  = [];
+      tmp.date  = [];
+      tmp.bytes = [];
+      D.iostat = 0;
+      
+    end
 
 D.readme = 'Note: the m and n indices refer to center points in the full Delft3D matrix including the first and last dummy rows and columns for the water level points.';
 
@@ -159,10 +171,14 @@ if nargin==2
 
    for ip = 1:length(D.m)
    
-      %% remove one index, becauas ethe cen arry does not contain 
+      %% remove one index, because the cen array does not contain dummy row
       G.cen.dry(D.n(ip)-1,D.m(ip)-1) = 1;
    
    end
+   
+   G.cen.mask = G.cen.dry;
+   G.cen.mask(G.cen.mask==1)=NaN;
+   G.cen.mask(G.cen.mask==0)=1;
     
    if nargout==2
    varargout = {G,D.iostat};   
@@ -178,19 +194,15 @@ end
 
 
 % ------------------------------------
-% ------------------------------------
-% ------------------------------------
 
 function iostat=Local_write(fname,varargin),
 
 %% Initialize
-%% ------------------------
 
    iostat       = 1;
    fid          = fopen(fname,'w');
 
 %% OS
-%% ------------------------
 
    if nargin==4
       OS = varargin{3};
@@ -201,7 +213,6 @@ function iostat=Local_write(fname,varargin),
    end
 
 %% Read m,n data, in one of three formats
-%% ------------------------
 
    if nargin==5 | nargin==6
       D.m0 = varargin{1};
@@ -231,7 +242,6 @@ function iostat=Local_write(fname,varargin),
    MNDRY = zeros([nobs 4]);
 
 %% Write
-%% ------------------------
 
    for iobs=1:nobs
    
@@ -246,7 +256,6 @@ function iostat=Local_write(fname,varargin),
    end
 
 %% Close
-%% ------------------------
 
    fclose(fid);
    iostat=1;

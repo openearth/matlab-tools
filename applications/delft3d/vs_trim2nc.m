@@ -871,7 +871,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       
       if any(strcmp('area',OPT.var))
       ifld     = ifld + 1;clear attr dims
-      attr(    1)  = struct('Name', 'standard_name', 'Value', '');
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'cell_area');
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'area of grid cells');
       if any(strfind(G.coordinates,'SPHE'))
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'degrees2');
