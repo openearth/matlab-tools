@@ -32,8 +32,8 @@ function varargout=delft3d_io_dis(cmd,varargin),
 % where volume is the cumulative discharge since the start of teh time
 % series, taking into account the block or linear interpolation.
 %
-% The *.bct and *.dis file are similar and can both be read by 
-% tekal. However, the distribution of information over the 
+% The *.bct and *.dis file are similar and can both be read by
+% tekal. However, the distribution of information over the
 % blocks differs:
 %
 %  *.bct file: one block has ONE quantity  , TWO support points
@@ -43,11 +43,11 @@ function varargout=delft3d_io_dis(cmd,varargin),
 % such that when read into a struct, bct and dis files behave similar,
 % with one substance amd one location per timeserie.
 %
-% See also: delft3d_io_ann, delft3d_io_bca, delft3d_io_bch, delft3d_io_bnd, 
-%           delft3d_io_crs, delft3d_io_dep, delft3d_io_dry, delft3d_io_eva, 
-%           delft3d_io_fou, delft3d_io_grd, delft3d_io_ini, delft3d_io_mdf, 
-%           delft3d_io_obs, delft3d_io_restart,             delft3d_io_src, 
-%           delft3d_io_tem, delft3d_io_thd, delft3d_io_wnd, 
+% See also: delft3d_io_ann, delft3d_io_bca, delft3d_io_bch, delft3d_io_bnd,
+%           delft3d_io_crs, delft3d_io_dep, delft3d_io_dry, delft3d_io_eva,
+%           delft3d_io_fou, delft3d_io_grd, delft3d_io_ini, delft3d_io_mdf,
+%           delft3d_io_obs, delft3d_io_restart,             delft3d_io_src,
+%           delft3d_io_tem, delft3d_io_thd, delft3d_io_wnd,
 %           delft3d_io_wnd, delft3d_io_tem, delft3d_io_mdf, d3d_attrib
 
 %   --------------------------------------------------------------------
@@ -101,35 +101,35 @@ case 'read'
   if     nargout <2
 
      varargout  = {DAT};
-     
+
      if iostat<1
         error('Error reading.')
      end
-  
+
   elseif nargout  == 2
-  
+
      varargout  = {DAT,iostat};
-  
+
   elseif nargout >2
-  
+
      error('too much output parameters: 1 or 2')
-  
+
   end
 
 case 'write'
 
   iostat = Local_write(varargin{1:end});
-  
+
   if nargout ==1
-  
+
      varargout = {iostat};
-  
+
   elseif nargout >1
-  
+
      error('too much output parameters: 0 or 1')
-  
+
   end
-  
+
 end;
 
 % ------------------------------------
@@ -146,7 +146,7 @@ H.units          = {};
 
    %% Keywords
    %% -----------------
-   
+
    if nargin>2
       if isstruct(varargin{2})
          H = mergestructs(H,varargin{2});
@@ -162,66 +162,66 @@ H.units          = {};
              end
              iargin=iargin+1;
          end
-      end  
+      end
    end
 
    %% Locate
    %% ------------------------
-   
+
    tmp = dir(fname);
-   
+
    if length(tmp)==0
-      
+
       D.iostat = -1;
       disp (['??? Error using ==> delft3d_io_dis'])
       disp (['Error finding meteo file: ',fname])
-      
+
    elseif length(tmp)>0
-   
+
       D0.filedate  = tmp.date;
       D0.filebytes = tmp.bytes;
-   
+
       %% Read
       %% ------------------------
-         
+
       %try
-      
+
          RAW = bct_io('read',fname);
          D   = disunpack(RAW);
-         
+
          D.ReferenceTime = D.data(1).ReferenceTime; % datestr(D.refdatenum,'yyyymmdd');
          D.refdatenum    = time2datenum(D.ReferenceTime);
          D.refdatestr    = datestr(D.refdatenum,1);
          D.ReferenceTime = num2str(D.ReferenceTime);
-         
+
          %% check ReferenceDate with mdf file ??
-         
+
          D.filename  = D0.filename ;
          D.filedate  = D0.filedate ;
          D.filebytes = D0.filebytes;
 
-         
+
          % if isempty(D.refdatenum)
          % D.data.minutes       = minutes;
          % else
          % D.data.datenum       = D.refdatenum + minutes./(60*24);
          % D.data.datenum_units = 'days';
          % end
-         % 
+         %
          % for ipar=1:length(H.parameternames)
          %    parametername               = char(H.parameternames{ipar});
          %    D.data.(parametername)      = rawdata(:,ipar+1);
          %    parameternameunits          = [parametername,'_units'];
          %    D.data.(parameternameunits) = H.units{ipar};
          % end
-   
+
          %% Finished succesfully
          %% --------------------------------------
-   
+
          D.iostat    = 1;
          D.read_by   = 'delft3d_io_bct.m';
          D.read_at   = datestr(now);
-         
+
       %catch
       %
       %   D.iostat = -3;
@@ -229,13 +229,13 @@ H.units          = {};
       %   disp (['Error reading meteo file: ',fname])
       %
       %end % catch
-   
+
    end %elseif length(tmp)>0
 
 if nargout==1
-   varargout = {D};   
+   varargout = {D};
 else
-   varargout = {D,D.iostat};   
+   varargout = {D,D.iostat};
 end
 
 end % function varargout=Local_read(fname,varargin)
@@ -271,18 +271,18 @@ function iostat=Local_write(fname,DIS,varargin),
        end
      end;
      iargin=iargin+1;
-   end; 
-   
+   end;
+
    %% Do
    %% ----------------------
 
    RAW = dispack(DIS,OPT);
    ddb_bct_io('write',fname,RAW);
    iostat = 1;
-   
+
 end % function iostat=Local_write(fname,DAT,varargin),
 
 end % function varargout=delft3d_io_bct(cmd,varargin),
-   
+
 %% EOF
 
