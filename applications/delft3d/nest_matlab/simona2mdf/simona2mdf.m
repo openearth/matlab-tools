@@ -29,7 +29,8 @@ if isempty (getenv('nesthd_path'))
    PutInCentre (h);
    uiwait(h);
 end
-logo = imread([getenv('nesthd_path') filesep 'bin' filesep 'simona_logo.jpg']);
+
+%% Get filenames (either specify here or get from the argument list); Split into name and path
 
 if isempty(varargin)
     %filwaq = '..\test\simona\simona-scaloost-fijn-exvd-v1\SIMONA\berekeningen\siminp.fou';
@@ -46,28 +47,26 @@ end
 [path_mdf,name_mdf,~            ] = fileparts([filmdf]);
 name_mdf = [path_mdf filesep name_mdf];
 
-%
-% Start with creating empty template (add the simonapath to it to allow for
-% copying of the grid file)
-%
+%% Display the general information
+
+logo = imread([getenv('nesthd_path') filesep 'bin' filesep 'simona_logo.jpg']);
+simona2mdf_message(Gen_inf                                  ,logo,15);
+
+%% Start with creating empty template (add the simonapath to it to allow for
+%  copying of the grid file)
 
 DATA = delft3d_io_mdf('new','template_gui.mdf');
 mdf  = DATA.keywords;
 mdf.pathsimona = path_waq;
 mdf.pathd3d    = path_mdf;
 
-%
-% Read the entire siminp and parse everything into 1 structure
-%
+%% Read the entire siminp and parse everything into 1 structure
 
 S = readsiminp(path_waq,[name_waq extension_waq]);
 S = all_in_one(S);
 
-%
-% parse the siminp information
-%
 
-simona2mdf_message(Gen_inf                                  ,logo,15);
+%% parse the siminp information
 
 simona2mdf_message('Parsing AREA information'               ,logo,1 );
 mdf = simona2mdf_area     (S,mdf,name_mdf);
@@ -123,9 +122,7 @@ mdf = simona2mdf_crs      (S,mdf,name_mdf);
 simona2mdf_message('Parsing OUTPUT information'             ,logo,1 );
 mdf = simona2mdf_output   (S,mdf);
 
-%
-% write the mdf file
-%
+%% Finally,  write the mdf file and close everything
 
 delft3d_io_mdf('write',filmdf,mdf,'stamp',false);
 

@@ -200,6 +200,38 @@ function simona2mdf_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+%
+% First get the name of the simona input file
+%
+
+if ~isempty (handles.filedir); cd(handles.filedir); end
+[fin,pin] = uigetfile({'siminp*'},'Select WAQUA/TRIWAQ input file');
+cd (handles.progdir);
+
+if fin ~= 0
+   handles.filedir = pin;
+   file_simona     = [pin fin];
+   
+   %
+   % Get the name of the output mdf file
+   %
+   
+   cd(handles.filedir);
+   [fin,pin] = uiputfile({'*.mdf'},'Give name of mdf file');
+   cd (handles.progdir);
+   if fin ~= 0
+       handles.filedir = pin;
+       file_mdf = [pin fin];
+       
+       %
+       % Convert
+       %
+       
+       simona2mdf(file_simona,file_mdf);
+   end
+end
+
+guidata(hObject, handles);
 
 % --------------------------------------------------------------------
 function mdf2simona_Callback(hObject, eventdata, handles)
