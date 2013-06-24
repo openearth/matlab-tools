@@ -5,8 +5,8 @@ function varargout=delft3d_io_mdf(cmd,varargin),
 %  [DATA,iostat] = delft3d_io_mdf('read' ,<filename>,<keyword,value>);
 %
 %         iostat = delft3d_io_mdf('write',filename,DATA.keywords);
-% 
-% where iostat= 1 when writing was succesful, 
+%
+% where iostat= 1 when writing was succesful,
 % and iostat=-1/-2/-3 when error finding/opening/reading file.
 %
 %  [DATA,iostat] = delft3d_io_mdf('new',<template_*.mdf>)
@@ -17,14 +17,14 @@ function varargout=delft3d_io_mdf(cmd,varargin),
 %
 % Note that the keywords in the mdf file are not case sensitive,
 % whereas the field names in matlab are case sensitive. When reading file
-% all keyword are therefore set to LOWER CASE by default. This can be 
+% all keyword are therefore set to LOWER CASE by default. This can be
 % changed by adding a <keyword,value> pair (for reading and writing):
 % * 'case' = 'upper'/'auto'/'lower' (default).
 %
 % Note that when a keyword appears multiple times in the *.mdf file,
-% Delft3D uses (by experience, not in the manual) the first 
-% instance of the keyword. One should be aware of this when using 
-% case='auto', in which case multiple instances of the same keyword with 
+% Delft3D uses (by experience, not in the manual) the first
+% instance of the keyword. One should be aware of this when using
+% case='auto', in which case multiple instances of the same keyword with
 % different cases can end up in the MDF file.
 %
 % Comment lines are read but cannot not be written to mdf file. The
@@ -34,7 +34,7 @@ function varargout=delft3d_io_mdf(cmd,varargin),
 % use keyword selection, e.g.: delft3d_io_mdf('write',filename,'selection',{'runtxt','mnkmax'});
 %
 % Storage flags for map data (trim only)
-%     SMhydr(1:6)  - water level, U, V, magnitude, direction, w/omega velocities 
+%     SMhydr(1:6)  - water level, U, V, magnitude, direction, w/omega velocities
 %     SMproc(1:2)  - salinity, temperature
 %     SMproc(3:7)  - constituent1, .., constituent5
 %     SMproc(8)    - intensity spiral motion
@@ -86,7 +86,7 @@ function varargout=delft3d_io_mdf(cmd,varargin),
 %   You should have received a copy of the GNU Lesser General Public
 %   License along with this library; if not, write to the Free Software
 %   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
-%   USA or 
+%   USA or
 %   http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
@@ -104,7 +104,7 @@ if (nargin ==1) & strcmpi(cmd,'read')
         {'*.mdf', 'Delft3D-FLOW input file (*.mdf)'; ...
          '*.*'  , 'All Files               (*.*)'}, ...
          'Delft3D-FLOW');
-      
+
       if ~ischar(fname) % uigetfile cancelled
          fname = [];
          iostat         = 0;
@@ -115,7 +115,7 @@ if (nargin ==1) & strcmpi(cmd,'read')
       nextarg = 1;
   elseif (nargin ==1) & strcmpi(cmd,'write')
       error('for write 2 input parameters required: delft3d_io_mdf(''write'',filename,DATA)')
-  elseif nargin>1      
+  elseif nargin>1
       fname   = varargin{1};
       nextarg = 2;
 end
@@ -130,68 +130,79 @@ switch lower(cmd)
 case 'read'
 
   if     nargout ==1
-  
+
      [DAT       ] = Local_read(fname,varargin{nextarg:end});
      varargout  = {DAT};
-  
+
   elseif nargout  == 2
-  
+
      [DAT,iostat] = Local_read(fname,varargin{nextarg:end});
      varargout  = {DAT,iostat};
-  
+
   elseif nargout >2
-  
+
      error('too much output parameters: 1 or 2')
-  
+
   end
 
 case 'write'
 
   OS           = 'windows'; % or 'unix'
   iostat=Local_write(OS,fname,varargin{nextarg:end});
-  
+
   if nargout ==1
-  
+
      varargout = {iostat};
-  
+
   elseif nargout >1
-  
+
      error('too much output parameters: 0 or 1')
-  
+
   end
   if iostat<0,
      error(['Error opening file: ',varargin{1}])
   end;
-  
+
 case 'new'
 
-  basepath = fileparts(mfilename('fullpath'));
+  %
+  % TK: mfilename does NOT work when making an executable:
+  %     optional: If entire filename of the template is given use that one!
+  %
+
+  path_m = fileparts(mfilename('fullpath'));
+
   if nargin==2
-     fname    = [basepath,filesep,varargin{1}]
+     [path_file,~,~] = fileparts(varargin{1});
+     if ~isempty(path_file)
+         fname = varargin{1};
+     else
+         fname    = [path_m,filesep,varargin{1}];
+     end
   else
-     fname    = [basepath,filesep,'template_gui.mdf'];
+     fname    = [path_m,filesep,'template_gui.mdf'];
   end
-  
+
   if     nargout ==1
-  
+
      [DAT       ] = Local_read(fname);
      varargout  = {DAT};
-  
+
   elseif nargout  == 2
-  
+
      [DAT,iostat] = Local_read(fname);
      varargout  = {DAT,iostat};
-  
+
   elseif nargout >2
-  
+
      error('too much output parameters: 1 or 2')
-  
+
   end
-  
-otherwise 
-        
+
+otherwise
+
    error(['option not implemented:',cmd])
-   
+
 end;
 
 % ------------------------------------
@@ -224,11 +235,11 @@ if length(tmp)==0 & exist(fname,'file')==2
 end
 
 if length(tmp)==0
-   
+
    STRUCT.iostat = -1;
    disp (['??? Error using ==> delft3d_io_mdf'])
    disp (['Error finding file: ',fname])
-   
+
 elseif length(tmp)>0
 
    STRUCT.filedate  = tmp.date;
@@ -239,7 +250,7 @@ elseif length(tmp)>0
    %% Open
 
    if fid < 0
-      
+
       STRUCT.iostat = -2;
       disp (['??? Error using ==> delft3d_io_mdf'])
       disp (['Error opening file: ',fname])
@@ -263,7 +274,7 @@ elseif length(tmp)>0
          %% Keyword
 
          keyword  = deblank(newline(1:6));
-         
+
          if     strcmpi(STRUCT.case,'lower')
             keyword  = lower(keyword);
          elseif strcmpi(STRUCT.case,'upper')
@@ -271,7 +282,7 @@ elseif length(tmp)>0
          elseif ~strcmpi(STRUCT.case,'auto')
             error('case should be lower/upper/auto')
          end
-         
+
          value    = newline(7:end);
 
          if ~isempty(keyword)
@@ -281,7 +292,7 @@ elseif length(tmp)>0
             equalsignposition = findstr(value,'=');
             value             = strtrim(value(equalsignposition+1:end));
          end
-         
+
          %% Look for strings
 
          if ~strcmpi(keyword,'commnt')
@@ -292,7 +303,7 @@ elseif length(tmp)>0
             value =str2num(value); % vectorized !!
          end
          end
-         
+
          %% Assign value
          if isempty(keyword)
          elseif strcmpi(keyword,'commnt')
@@ -305,28 +316,28 @@ elseif length(tmp)>0
                STRUCT.keywords.(keyword_last) = [STRUCT.keywords.(keyword_last) value];
             end
          end
-         
+
       end % while
-      
+
       %% Extract sensible data
 
       STRUCT.data.datenum = time2datenum(STRUCT.keywords.itdate) + ...
                                         [STRUCT.keywords.tstart:...
                                          STRUCT.keywords.dt:...
                                          STRUCT.keywords.tstop]./60./24;
-      
+
       %% Finished succesfully
 
       STRUCT.linecount = count.line;
       fclose(fid);
       STRUCT.iostat    = 1;
-      
+
    %-% catch
-   %-% 
+   %-%
    %-%    STRUCT.iostat = -3;
    %-%    disp (['??? Error using ==> delft3d_io_mdf'])
    %-%    disp (['Error reading file: ',fname])
-   %-% 
+   %-%
    %-% end % catch
 
 end % if fid < 0
@@ -334,9 +345,9 @@ end % if fid < 0
 end %elseif length(tmp)>0
 
 if nargout==1
-   varargout = {STRUCT};   
+   varargout = {STRUCT};
 else
-   varargout = {STRUCT,STRUCT.iostat};   
+   varargout = {STRUCT,STRUCT.iostat};
 end
 
 % ------------------------------------
@@ -353,9 +364,9 @@ function iostat=Local_write(OS,filename,STRUC,varargin),
    OPT.case      = 'lower';
    OPT.selection = {};
    OPT.stamp     = 1;
-   
+
    OPT = setproperty(OPT,varargin);
-   
+
    if OPT.stamp
    STRUC.commnt  = ['Written $HeadURL$ $Id$ on ',datestr(now)];
    end
@@ -366,35 +377,35 @@ function iostat=Local_write(OS,filename,STRUC,varargin),
    elseif strcmpi(lower(OS(1)),'w')
       EOL = '\r\n';
    end
-   
+
    if ~isempty(OPT.selection)
       fldnames = OPT.selection;
    else
       if    strcmpi(OPT.case,'lower')
          fldnames = lower(fieldnames(STRUC));
-      elseif strcmpi(OPT.case,'upper') 
+      elseif strcmpi(OPT.case,'upper')
          fldnames = upper(fieldnames(STRUC));
-      elseif strcmpi(OPT.case,'auto') 
+      elseif strcmpi(OPT.case,'auto')
          fldnames =      (fieldnames(STRUC));
       else
          error('case should be lower/upper/auto')
       end
    end
-   
+
    for i=1:length(fldnames)
-   
+
       keyword  = char(fldnames{i});
       keyword6 = pad(keyword,6,' ');
-      
+
       if ~isfield(STRUC,keyword)
          error(['"',keyword,'" is not a valid mdf keyword, please mind that keywords are case-sesitive'])
       else
          value    = STRUC.(keyword);
       end
-   
+
       %% HANDLE SPECIAL CASES (A LOT)
       %  that makes tdatom or GUI fail to read these items
-      
+
       if iscell(value)
          value0 = value;
          value  = [];
@@ -433,12 +444,12 @@ function iostat=Local_write(OS,filename,STRUC,varargin),
             value = num2str(value);
          end
       end
-      
-   
+
+
       if strcmpi(keyword6,'MNtd  ')
         value = ['[ ] [ ] [ ] [ ] ',value];
       end
-      
+
       if strcmpi(keyword6,'MNbar ')
         value = ['[ ] [ ] # #'];
       end
@@ -458,7 +469,7 @@ function iostat=Local_write(OS,filename,STRUC,varargin),
       if strcmpi(keyword6,'MNcrs ')
         value = ['[ ] [ ] [ ] [ ]'];
       end
-      
+
       if strcmpi(keyword6,'Prmap ')
         value = ['[.] '];
       end
@@ -466,31 +477,31 @@ function iostat=Local_write(OS,filename,STRUC,varargin),
       if strcmpi(keyword6,'Prhis ')
         value = ['[.] [.] [.] '];
       end
-      
+
       if strcmpi(keyword6,'Tpar  ')
         value = ['[.] [.]'];
       end
 
       if strcmpi(keyword6,'XYpar ')
         value = ['[.] [.]'];
-      end      
+      end
 
       if strcmpi(keyword6,'Eps   ')
         value = ['[.]'];
-      end         
-      
+      end
+
       if strcmpi(keyword6,'Z0v   ')
         value = ['[.]'];
-      end 
-      
+      end
+
       if strcmpi(keyword6,'Cmu   ')
         value = ['[.]'];
-      end 
-      
+      end
+
       if strcmpi(keyword6,'Cpran ')
         value = ['[.]'];
-      end       
-      
+      end
+
       %% Write key word and value
 
       for i=1:size(value,1)
@@ -500,11 +511,11 @@ function iostat=Local_write(OS,filename,STRUC,varargin),
             fprintf (fid,'%s  %s \n','       ',value(i,:)); % where value needs multiple lines but keyword not
          end
       end
-   
+
    end
-   
+
    iostat = fclose  (fid);
-   
+
    if iostat==0
       disp(['File ',filename,' successfully written']);
    else
@@ -514,7 +525,7 @@ function iostat=Local_write(OS,filename,STRUC,varargin),
 % ------------------------------------
 % --STRSELECT-------------------------
 % ------------------------------------
-   
+
 function varargout = strselect(s,varargin)
 %STRSELECT Remove leading and trailing blanks.
 %   strselect(S) selects
@@ -552,7 +563,7 @@ else
   if isempty(indices_start)
      if ~warningsoff
         disp('No start of substring found')
-     end     
+     end
      findstatus = -3;
   elseif isempty(indices_end)
      if ~warningsoff
