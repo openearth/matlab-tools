@@ -80,7 +80,7 @@ xb      = xb_get_transect(xb);
 
 x       = xs_get(xb, 'DIMS.globalx_DATA');
 nx      = xs_get(xb, 'DIMS.nx');
-if size(x,2) ~= nx
+if size(x,2) ~= (nx+1)
     x = x';
 end
 x       = squeeze(x(1,:));
