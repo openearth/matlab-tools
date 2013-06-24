@@ -55,7 +55,7 @@ simona2mdf_message(Gen_inf                                  ,logo,15);
 %% Start with creating empty template (add the simonapath to it to allow for
 %  copying of the grid file)
 
-DATA = delft3d_io_mdf('new','template_gui.mdf');
+DATA = delft3d_io_mdf('new',[getenv('nesthd_path') filesep 'bin' filesep 'template_gui.mdf']);
 mdf  = DATA.keywords;
 mdf.pathsimona = path_waq;
 mdf.pathd3d    = path_mdf;
