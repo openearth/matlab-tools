@@ -16,6 +16,14 @@ function [T,E0] = initread(initfile)
    fields = fieldnames(T0);
 
    T = inivalue(initfile,nan,struct('commentchar','!'));
+   % deal with _ to , in upon writing
+   % T.EOF.U     = T.EOF_U;
+   % T.EOF.V     = T.EOF_V;
+   % T.EOF.Sigma = T.EOF_Sigma;
+   % 
+   % T = rmfield(T,'EOF_U');
+   % T = rmfield(T,'EOF_V');
+   % T = rmfield(T,'EOF_Sigma');
 
 %% process numeric fields
 

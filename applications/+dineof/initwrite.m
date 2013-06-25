@@ -1,9 +1,9 @@
 function initwrite(T,initfile)
 %initwrite  saves file with DINEOF setings
 %
-%    T = dineof.initwrite(T, initfile) 
+%    dineof.initwrite(T, initfile) 
 %
-% saves struct T with dineof settings to initfile.
+% saves struct T with dineof settings to DINEOF initfile.
 %
 %See also: DINEOF
 
@@ -15,7 +15,7 @@ OPT.comments = 0;
    
    fields = fieldnames(T0);
    
-   T = mergestructs(T0,T); % add non-exisitng fields
+   T = mergestructs(T0,T); % add non-existing fields
 
 %% save
 
@@ -39,6 +39,12 @@ OPT.comments = 0;
      
      if     (strcmp(fld,'clouds')           & isempty(T.(fld))), continue
      elseif (strcmp(fld,'number_cv_points') & isempty(T.(fld))), continue
+     elseif strcmp(fld,'EOF_U')
+       fprintf(fid,['%s = ',fmt,'\n'],pad('EOF.U',11),T.(fld));
+     elseif strcmp(fld,'EOF_V')
+       fprintf(fid,['%s = ',fmt,'\n'],pad('EOF.V',11),T.(fld));
+     elseif strcmp(fld,'EOF_Sigma')
+       fprintf(fid,['%s = ',fmt,'\n'],pad('EOF.Sigma',11),T.(fld));
      else
      
        if OPT.comments

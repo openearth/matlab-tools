@@ -27,7 +27,7 @@ if swap
    end
 else
    for k=1:n
-     Xm(:,:,k) = unpackinsert(X(:,k),mask);
+     Xm(:,:,k) = unpackinsert(X(:,k),mask')';
    end
 end
 

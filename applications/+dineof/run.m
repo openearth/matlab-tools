@@ -85,6 +85,7 @@ function varargout = run(data, time, mask, varargin)
    OPT.debug   = 0;
    OPT.plot    = 1;
    OPT.export  = 1;
+   OPT.version = 3; % set > 3 for rev 81 of self-compiled source
 
 % other keywords
 
@@ -93,6 +94,7 @@ function varargout = run(data, time, mask, varargin)
    OPT.timename        = 'time';
    OPT.lonname         = 'lon';
    OPT.latname         = 'lat';
+
    OPT.ncfile          = ['dummy.nc'];
    OPT.resfile         = ['dummy_filled.nc'];
    OPT.eoffile         = ['dummy_eof.nc'];
@@ -120,6 +122,28 @@ function varargout = run(data, time, mask, varargin)
    OPT.mask     = ['[''./',OPT.ncfile ,'#',OPT.maskname,''']'];
    OPT.time     = [ '''./',OPT.ncfile ,'#',OPT.timename,'''']; % no brackets !!
    OPT.results  = ['[''./',OPT.resfile,'#',OPT.dataname,''']'];
+   
+   if OPT.version > 3 % DINEOF now writes mode to netCDF
+   OPT.EOF_U    = ['[''./DINEOF_diagnostics.nc#U'']'];
+   OPT.EOF_V    =  ['''./DINEOF_diagnostics.nc#V'''];
+   OPT.EOF_Sigma=  ['''./DINEOF_diagnostics.nc#sigma'''];
+   end
+   
+% NetCDF-3 Classic dummy_eof.nc {
+% 
+%   dimensions:
+%     dim001 = 11 ; // time
+%     dim002 = 5 ;  // p
+%     dim003 = 13 ; // space1
+%     dim004 = 1 ;  // space2
+% 
+%   variables:
+%     // Preference 'PRESERVE_FVD':  false,
+%     // dimensions consistent with ncBrowse, not with native MATLAB netcdf package.
+%     double V(dim002,dim001), shape = [5 11]
+%       :missing_value = 9999 
+%     double U(dim002,dim004,dim003), shape = [5 1 13]
+%       :missing_value = 9999 
    
    if sum(mask) < OPT.ncv
        error(['Krylov subspace ncv (',num2str(OPT.ncv),') needs to be les than or equal to # active spatial cells (',num2str(sum(mask)),').'])
@@ -263,8 +287,9 @@ function varargout = run(data, time, mask, varargin)
 
    copyfile(OPT.ncfile,OPT.resfile)
    ddir = filepathstr(mfilename('fullpath')); 
+
    if ~exist([ddir, filesep,'dineof.exe'])
-   fprintf(2,'%s\n',['Tu use dineof first download dineof.exe from '])
+   fprintf(2,'%s\n',['To use dineof first download dineof.exe from '])
    fprintf(2,'%s\n',['http://modb.oce.ulg.ac.be/mediawiki/index.php/DINEOF'])
    fprintf(2,'%s\n',['into'])
    fprintf(2,'%s\n',ddir)
@@ -283,7 +308,17 @@ function varargout = run(data, time, mask, varargin)
    
    %% run
    disp('Running DINEOF, please wait ...')
+   if OPT.version==3
    cmd  = [ddir filesep 'dineof.exe ' OPT.initfile ' > ' OPT.logfile];
+   else
+   % mingw compiled version
+   tmp = getlocalsettings;
+   if ~exist([ddir filesep 'dineof.local.exe'],'file')
+    copyfile(['c:\MinGW\msys\1.0\home\' tmp.NAME '\dineof\dineof.exe'],...
+            [ddir filesep 'dineof.local.exe'])
+   end
+   cmd  = [ddir filesep 'dineof.local.exe ' OPT.initfile ' > ' OPT.logfile];
+   end
 
    status = system(cmd);
    
@@ -317,7 +352,7 @@ else
 
  if nargout==0
 
-  %% rename outpout
+  %% rename output
 
    movefile('meandata.val'    ,[filepathstrname(OPT.resfile),'_meandata.asc'  ]);
    movefile('neofretained.val',[filepathstrname(OPT.resfile),'_neofretained.asc']);
@@ -348,13 +383,23 @@ else
     data  = OPT.transformFunInv(data );
     dataf = OPT.transformFunInv(dataf);
 
+        S.mean   =                      load(['meandata.val'    ]);
+        S.P      =                      load(['neofretained.val']);
+    if  OPT.version==3
+        S.lftvec =        dineof.unpack(load(['outputEof.lftvec']),mask);
+        S.rghvec =                      load(['outputEof.rghvec']);
+       [S.varEx, S.varLab] =    dineof.varEx(['outputEof.varEx' ]);
+        S.vlsng  =                      load(['outputEof.vlsng' ]);
 
-    S.mean   =                      load(    'meandata.val'   );
-    S.P      =                      load('neofretained.val'   );
-    S.lftvec =        dineof.unpack(load(   'outputEof.lftvec'),mask);
-    S.rghvec =                      load(   'outputEof.rghvec');
-   [S.varEx, S.varLab] =    dineof.varEx(   'outputEof.varEx' );
-    S.vlsng  =                      load(   'outputEof.vlsng' );
+    else
+        S.lftvec = ncread   (['DINEOF_diagnostics.nc'],'U');
+        nodata   = ncreadatt(['DINEOF_diagnostics.nc'],'U','missing_value');S.lftvec (S.lftvec==nodata)=NaN;
+        S.rghvec = ncread   (['DINEOF_diagnostics.nc'],'V');
+        nodata   = ncreadatt(['DINEOF_diagnostics.nc'],'V','missing_value');S.rghvec (S.rghvec==nodata)=NaN;
+        S.varEx  = ncread(['DINEOF_diagnostics.nc'],'varEx');
+        S.varLab = addrowcol(cellstr([num2str([1:length(S.varEx)]','Mode %d = '),num2str(S.varEx(:))]),0,1,' %');
+        S.vlsng  = ncread(['DINEOF_diagnostics.nc'],'vlsng');
+    end
        
 
   %% save results to netcdf
@@ -445,12 +490,16 @@ else
   if OPT.cleanup
      delete('meandata.val'    );
      delete('neofretained.val');
+     if  OPT.version==3
      delete('outputEof.lftvec');
      delete('outputEof.rghvec');
      delete('outputEof.varEx' );
      delete('outputEof.vlsng' );
      delete('valc.dat'        );
      delete('valosclast.dat'  );
+     else
+%     delete('DINEOF_diagnostics.nc');
+     end
       
      delete(OPT.initfile);
      delete(OPT.logfile );

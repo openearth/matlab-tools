@@ -60,6 +60,9 @@ function [T0,E0] = init(cmd,initfile)
    T0.Output           = ['''./'''];
    T0.clouds           = [];
    T0.results          = '';
+   T0.EOF_U            = ['']; % v 4
+   T0.EOF_V            = '';   % v 4
+   T0.EOF_Sigma        = '';   % v 4
    T0.seed             = 243435;
    T0.number_cv_points = [];
    T0.cloud_size       = 1;
@@ -99,6 +102,10 @@ function [T0,E0] = init(cmd,initfile)
    E0.clouds           = {'Name of file+variable of cloud variable. Remove or comment-out this keyword',...
                           'if the cross-validation points are to be chosen internally.'};
    E0.results          = {'Name of file+variable of the filled data.'};
+   E0.EOF_U            = ['eof.nc#U'];   % v 4
+   E0.EOF_V            =  'eof.nc#V';    % v 4
+   E0.EOF_Sigma        =  'eof.nc#Sigma';% v 4
+
    E0.seed             = {'Parameter for seed to initialize the random number generator.'};
    E0.number_cv_points = {'Parameter for number of cross-validation points.'};
    E0.cloud_size       = {'Parameter for cloud surface size in pixels.'};
