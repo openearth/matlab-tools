@@ -85,6 +85,9 @@ if ~isempty(animationsettings.avifilename)
     end
 end
 
+% animationsettings.flightpath=1;
+% animationsettings.flightpathxml='flightpath.xml';
+
 wb = awaitbar(0,'Generating AVI...');
 
 try
@@ -96,6 +99,21 @@ try
     
     % Determine timestep and number of frames
     timestep=animationsettings.timestep/86400;
+    
+    % Flight path
+    if animationsettings.flightpath
+        if isempty(animationsettings.flightpathxml)
+            muppet_giveWarning('text','Flight path selected, but no flight path xml file specified!');
+            animationsettings.flightpath=0;
+        else
+            flightpath=xml2struct(animationsettings.flightpathxml);
+            times=animationsettings.starttime:timestep:animationsettings.stoptime;
+            for j=1:handles.figures(ifig).figure.nrsubplots
+                dataaspectratio=handles.figures(ifig).figure.subplots(j).subplot.dataaspectratio;
+                [cameraposition(j).position,cameratarget(j).target]=flightpathspline(flightpath,times,dataaspectratio);
+            end
+        end
+    end
     
     nrframes=max(round((animationsettings.stoptime-animationsettings.starttime)/timestep)+1,1);
     
@@ -122,34 +140,51 @@ try
                      else
                         % Averaging between surrounding times
                         itime1=find(datasets(id).dataset.availabletimes-1e-4<t,1,'last');
+                        if isempty(itime1)
+                            % t bigger than any of the available times
+                            itime1=length(datasets(id).dataset.availabletimes);
+                        end
                         itime2=find(datasets(id).dataset.availabletimes+1e-4>=t,1,'first');
+                        if isempty(itime2)
+                            % t smaller than any of the available times
+                            itime2=length(datasets(id).dataset.availabletimes);
+                        end
+                        
                         t1=datasets(id).dataset.availabletimes(itime1);
                         t2=datasets(id).dataset.availabletimes(itime2);
 
-                        data1=datasets(id).dataset;
-                        data1.time=t1;
-                        data1.timestep=itime1;
-                        data1=feval(data1.callback,'import',data1);
-
-                        data2=datasets(id).dataset;
-                        data2.time=t2;
-                        data2.timestep=itime2;
-                        data2=feval(data2.callback,'import',data2);
-                        
-                        dt=t2-t1;
-                        tfrac2=(t-t1)/dt;
-                        tfrac1=1-tfrac2;
-                        datasets(id).dataset.time = t;
-                        switch lower(datasets(id).dataset.type)
-                            case{'vector2d2dxy'}
-                                datasets(id).dataset.u  = tfrac1*data1.u  + tfrac2*data2.u;
-                                datasets(id).dataset.v  = tfrac1*data1.v  + tfrac2*data2.v;
-                            case{'scalar2dxy'}
-                                datasets(id).dataset.z  = tfrac1*data1.z  + tfrac2*data2.z;
-                                datasets(id).dataset.zz = tfrac1*data1.zz + tfrac2*data2.zz;
-                            case{'scalar2duxy'}
-                                datasets(id).dataset.z  = tfrac1*data1.z  + tfrac2*data2.z;
+                        if itime1==itime2
+                            datasets(id).dataset.timestep=itime1;
+                            datasets(id).dataset.time=datasets(id).dataset.times(itime1);
+                            datasets(id).dataset=feval(datasets(id).dataset.callback,'import',datasets(id).dataset);
+                        else
+                            
+                            data1=datasets(id).dataset;
+                            data1.time=t1;
+                            data1.timestep=itime1;
+                            data1=feval(data1.callback,'import',data1);
+                            
+                            data2=datasets(id).dataset;
+                            data2.time=t2;
+                            data2.timestep=itime2;
+                            data2=feval(data2.callback,'import',data2);
+                            
+                            dt=t2-t1;
+                            tfrac2=(t-t1)/dt;
+                            tfrac1=1-tfrac2;
+                            datasets(id).dataset.time = t;
+                            switch lower(datasets(id).dataset.type)
+                                case{'vector2d2dxy'}
+                                    datasets(id).dataset.u  = tfrac1*data1.u  + tfrac2*data2.u;
+                                    datasets(id).dataset.v  = tfrac1*data1.v  + tfrac2*data2.v;
+                                case{'scalar2dxy'}
+                                    datasets(id).dataset.z  = tfrac1*data1.z  + tfrac2*data2.z;
+                                    datasets(id).dataset.zz = tfrac1*data1.zz + tfrac2*data2.zz;
+                                case{'scalar2duxy'}
+                                    datasets(id).dataset.z  = tfrac1*data1.z  + tfrac2*data2.z;
+                            end
                         end
+                        
                      end
                 end
             end
@@ -172,6 +207,15 @@ try
             end
         end
         handles.datasets=datasets;
+        
+        %% Camera
+        if animationsettings.flightpath
+            for j=1:handles.figures(ifig).figure.nrsubplots
+                handles.figures(ifig).figure.subplots(j).subplot.viewmode3d=1;
+                handles.figures(ifig).figure.subplots(j).subplot.cameraposition=cameraposition(j).position(iblock,:);
+                handles.figures(ifig).figure.subplots(j).subplot.cameratarget=cameratarget(j).target(iblock,:);
+            end
+        end
         
         %% Make the figure
         

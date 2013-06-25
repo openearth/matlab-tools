@@ -8,7 +8,7 @@
     <element>
       <tag>framerate</tag>
       <style>edit</style>
-      <position>144 400 41 21</position>
+      <position>144 410 41 21</position>
       <variable>framerate</variable>
       <type>integer</type>
       <text>Frame Rate (fps)</text>
@@ -17,7 +17,7 @@
     <element>
       <tag>starttime</tag>
       <style>edit</style>
-      <position>77 370 108 21</position>
+      <position>77 380 108 21</position>
       <variable>starttime</variable>
       <type>datetime</type>
       <text>Start Time</text>
@@ -26,7 +26,7 @@
     <element>
       <tag>stoptime</tag>
       <style>edit</style>
-      <position>77 340 108 21</position>
+      <position>77 350 108 21</position>
       <variable>stoptime</variable>
       <type>datetime</type>
       <text>Stop Time</text>
@@ -35,7 +35,7 @@
     <element>
       <tag>timestep</tag>
       <style>edit</style>
-      <position>100 310 85 21</position>
+      <position>100 320 85 21</position>
       <variable>timestep</variable>
       <type>real</type>
       <text>Time Step (s)</text>
@@ -44,7 +44,7 @@
     <element>
       <tag>editfilename</tag>
       <style>edit</style>
-      <position>66 270 119 21</position>
+      <position>66 280 119 21</position>
       <variable>avifilename</variable>
       <type>string</type>
       <text>File Name</text>
@@ -53,10 +53,55 @@
     <element>
       <tag>makekmz</tag>
       <style>checkbox</style>
-      <position>12 240</position>
+      <position>12 250</position>
       <variable>makekmz</variable>
       <type>integer</type>
       <text>Make KMZ</text>
+    </element>
+    <element>
+      <tag>keepfigures</tag>
+      <style>checkbox</style>
+      <position>108 250</position>
+      <variable>keepfigures</variable>
+      <type>integer</type>
+      <text>Keep Figures</text>
+      <tooltipstring>Keep figure files</tooltipstring> 
+    </element>
+    <element>
+      <tag>editprefix</tag>
+      <style>edit</style>
+      <position>66 220 119 21</position>
+      <variable>prefix</variable>
+      <type>string</type>
+      <text>Prefix</text>
+      <tooltipstring>Edit prefix of figure files</tooltipstring> 
+    </element>
+    <element>
+      <style>checkbox</style>
+      <position>12 190</position>
+      <variable>flightpath</variable>
+      <type>integer</type>
+      <text>Flight Path</text>
+      <tooltipstring>Keep figure files</tooltipstring> 
+    </element>
+    <element>
+      <style>pushselectfile</style>
+      <position>90 190 70 20</position>
+      <tooltipstring>Select flight path xml file</tooltipstring>
+      <text>File</text>
+      <variable>flightpathxml</variable>
+      <showfilename>no</showfilename>
+      <extension>*.xml</extension>
+      <selectiontext>Select flight path xml file</selectiontext>
+      <dependency>
+        <action>enable</action>
+        <checkfor>all</checkfor>
+        <check>
+          <variable>flightpath</variable>
+          <value>1</value>
+          <operator>eq</operator>
+        </check>
+      </dependency>
     </element>
     <element>
       <tag>selectbits</tag>
@@ -75,15 +120,6 @@
           <value>24</value>
         </values>
       </list>
-    </element>
-    <element>
-      <tag>editprefix</tag>
-      <style>edit</style>
-      <position>66 210 119 21</position>
-      <variable>prefix</variable>
-      <type>string</type>
-      <text>Prefix</text>
-      <tooltipstring>Edit prefix of figure files</tooltipstring> 
     </element>
     <element>
       <tag>codecoptions</tag>
@@ -111,15 +147,6 @@
       <tooltipstring>Save animation settings</tooltipstring> 
       <callback>muppet_animationSettings</callback>
       <option1>savesettings</option1>
-    </element>
-    <element>
-      <tag>keepfigures</tag>
-      <style>checkbox</style>
-      <position>108 240</position>
-      <variable>keepfigures</variable>
-      <type>integer</type>
-      <text>Keep Figures</text>
-      <tooltipstring>Keep figure files</tooltipstring> 
     </element>
     <element>
       <tag>pushcancel</tag>

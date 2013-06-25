@@ -9,5 +9,7 @@ handles.animationsettings.prefix='anim';
 handles.animationsettings.starttime=[];
 handles.animationsettings.stoptime=[];
 handles.animationsettings.timestep=3600;
+handles.animationsettings.flightpath=0;
+handles.animationsettings.flightxml='';
 
 handles.animationsettings.avioptions=[];

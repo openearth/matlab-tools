@@ -7,11 +7,11 @@ wb = waitbox('Preparing figure...');
 try
     handles=muppet_makeFigure(handles,handles.activefigure,'preview');
     setHandles(handles);
-    fig=handles.figures(handles.activefigure).figure;
-    fig.number=handles.activefigure;
-    fig.changed=0;
-    fig.annotationschanged=0;
-    setappdata(fig.handle,'figure',fig);
+%     fig=handles.figures(handles.activefigure).figure;
+%     fig.number=handles.activefigure;
+%     fig.changed=0;
+%     fig.annotationschanged=0;
+%     setappdata(fig.handle,'figure',fig);
     set(gcf,'Visible','on');
 catch
     h=findobj('Tag','waitbox');

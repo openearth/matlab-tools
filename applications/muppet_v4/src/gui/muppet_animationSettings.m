@@ -114,6 +114,15 @@ if pathname~=0
         txt=['MakeKMZ        no'];
         fprintf(fid,'%s \n',txt);
     end        
+    if h.flightpath
+        txt=['FlightPath     yes'];
+        fprintf(fid,'%s \n',txt);
+        txt=['FlightPathXML  ' h.flightpathxml];
+        fprintf(fid,'%s \n',txt);
+    else
+        txt=['FlightPath     no'];
+        fprintf(fid,'%s \n',txt);
+    end        
     txt=[''];
     fprintf(fid,'%s \n',txt);
     txt=['# Do not change the following codec settings!'];

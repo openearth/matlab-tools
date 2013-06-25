@@ -54,6 +54,7 @@ else
     end
     figh=figure;
     set(figh,'Tag','figure','UserData',ifig);
+        
     clf;
 
     try
@@ -183,5 +184,12 @@ set(figh, 'InvertHardcopy', 'off');
 set(figh,'Tag','figure','UserData',ifig);
 fig.handle=figh;
 set(figh,'Visible','off');
+
+% Set app data for figure
+figappdata=fig;
+figappdata.number=ifig;
+figappdata.changed=0;
+figappdata.annotationschanged=0;
+setappdata(figh,'figure',figappdata);
 
 handles.figures(ifig).figure=fig;

@@ -20,56 +20,66 @@ txt=ReadTextFile(fname);
 
 for i=1:length(txt)
     
-    switch lower(txt{i}),
+    switch lower(txt{i})
 
-        case {'filename'},
+        case {'filename'}
             h.avifilename=txt{i+1};
 
-        case {'keepfigures'},
+        case {'keepfigures'}
             if strcmpi(txt{i+1}(1),'y')
                 h.keepfigures=1;
             else
                 h.keepfigures=0;
             end
             
-        case {'makekmz'},
+        case {'makekmz'}
             if strcmpi(txt{i+1}(1),'y')
                 h.makekmz=1;
             else
                 h.makekmz=0;
             end
+
+        case {'flightpath'}
+            if strcmpi(txt{i+1}(1),'y')
+                h.flightpath=1;
+            else
+                h.flightpath=0;
+            end
+
+        case {'flightpathxml'}
+            h.flightpathxml=txt{i+1};
             
-        case {'figureprefix'},
+        case {'figureprefix'}
             h.prefix=txt{i+1};
             
-        case {'starttime'},
+        case {'starttime'}
             h.starttime=datenum([txt{i+1} ' ' txt{i+2}],'yyyymmdd HHMMSS');
 
-        case {'stoptime'},
+        case {'stoptime'}
             h.stoptime=datenum([txt{i+1} ' ' txt{i+2}],'yyyymmdd HHMMSS');
 
-        case {'nbits'},
+        case {'nbits'}
             h.selectbits=str2num(txt{i+1});
             
-        case {'timestep'},
+        case {'timestep'}
             h.timestep=str2num(txt{i+1});
 
-        case {'framerate'},
+        case {'framerate'}
             h.framerate=str2num(txt{i+1});
             
-        case {'fcchandler'},
+        case {'fcchandler'}
             h.avioptions.fccHandler=str2num(txt{i+1});
             
-        case {'keyframes'},
+        case {'keyframes'}
             h.avioptions.KeyFrames=str2num(txt{i+1});
             
-        case {'quality'},
+        case {'quality'}
             h.avioptions.Quality=str2num(txt{i+1});
             
-        case {'bytespersec'},
+        case {'bytespersec'}
             h.avioptions.BytesPerSec=str2num(txt{i+1});
             
-        case {'parameter'},
+        case {'parameter'}
             ii=0;
             for k=i+1:length(txt)
                 ii=ii+1;
