@@ -1,5 +1,5 @@
 function im = oetlogourl
-%OETLOGO0URL  returns image filename of logo
+%oetlogourl  returns image filename of logo
 %
 %See also: oetsettings, oetroot
 
