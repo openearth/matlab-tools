@@ -71,24 +71,13 @@ else
 end
 
 %% identify nan parts
-nans = isnan(varargin{1});
-cnt  = cumsum(ones(size(varargin{1})));
-
-ii = find(~nans,1,'first');
-n = 0;
-jj = 0;
-i_start = [];
-i_end   = [];
-while ~isempty(ii)
-    jj = find(nans & (cnt>ii),1,'first')-1;
-    if isempty(jj)
-        jj = cnt(end);
-    end
-    n = n+1;
-    i_start(n) = ii;
-    i_end(n)   = jj;
-    ii = find(~nans & (cnt>jj+1),1,'first');
+if iscolumn(varargin{1})
+    nans = [true; isnan(varargin{1}); true]';
+else
+    nans = [true isnan(varargin{1}) true];
 end
+i_start = find(diff(nans) == -1);
+i_end   = find(diff(nans) == 1)-1;
 
 %% assign output
 varargout{1} = arrayfun(@(ii,jj) varargin{1}(ii:jj),i_start,i_end,'UniformOutput',false);

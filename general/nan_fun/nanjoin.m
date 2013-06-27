@@ -79,7 +79,7 @@ n = sum(cellfun(@(x) size(x,dim2),x)) + numel(x) - 1;
 
 if dim == 1
     x_combined = nan(m,n);
-elseif dim==2
+elseif dim == 2
     x_combined = nan(n,m);
 end
 

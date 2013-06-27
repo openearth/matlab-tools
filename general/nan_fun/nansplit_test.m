@@ -60,14 +60,12 @@ output = nansplit(input);
 testresult(end+1) = isequal(output,expected);
 
 input    = nan;
-expected = {};
 output = nansplit(input);
-testresult(end+1) = isequal(output,expected);
+testresult(end+1) = isempty(output);
 
 input    = [nan nan nan];
-expected = {};
 output = nansplit(input);
-testresult(end+1) = isequal(output,expected);
+testresult(end+1) = isempty(output);
 
 input    = [nan nan nan 1];
 expected = {1};
