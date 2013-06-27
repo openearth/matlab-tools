@@ -76,7 +76,9 @@ end
 
 % Create a urlConnection.
 [urlConnection,errorid,errormsg] = urlreadwrite(mfilename,urlChar);
-urlConnection.setReadTimeout(100); % timeout in 100 ms
+% increased waiting time for timeout from 100ms to 2000ms because
+% connections can sometimes be a bit slow through firewalls
+urlConnection.setReadTimeout(2000); % timeout in 2000 ms 
 if isempty(urlConnection)
     if catchErrors, return
     else error(errorid,errormsg);
