@@ -111,7 +111,7 @@ fprintf(fid,'%s \n','			<outerBoundaryIs>');
 fprintf(fid,'%s \n','				<LinearRing>');
 fprintf(fid,'%s \n','					<coordinates>');
 for ii=1:size(data,1)
-    fprintf(fid,'%s \n',[num2str(data(ii,1),'%15.6f') ',' num2str(data(ii,2),'%15.6f') ', 0']);
+    fprintf(fid,'%s \n',[num2str(data(ii,1),'%15.6f') ',' num2str(data(ii,2),'%15.6f') ',0']);
 end
 fprintf(fid,'%s \n','</coordinates>');
 fprintf(fid,'%s \n','				</LinearRing>');
