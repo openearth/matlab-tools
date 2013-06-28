@@ -1,4 +1,4 @@
-%% Create netCDF-CF file of orthogonal lat-lon grid (snctools)
+%% Create netCDF-CF file of curvilinear lat-lon grid (snctools)
 %
 %  Deprecated: for native Matlab and faster performance code see ncwritetutorial_grid_lat_lon_orthogonal
 %
@@ -69,17 +69,21 @@
 
 %% Define dimensions/coordinates: lat,lon matrices
 %  checkersboard to test plot with one nan-hole
-   D.cor.lon                = [0.9226    0.8794    0.8336    0.7852    0.7338    0.6793
-                               3.0000    3.0000    3.0000    3.0000    3.0000    3.0000
-                               5.0774    5.1206    5.1664    5.2148    5.2662    5.3207
-                               7.1504    7.2366    7.3278    7.4242    7.5265    7.6350];
-   D.cor.lat                = [49.6339   50.6226   51.6110   52.5993   53.5874   54.5752
-                               49.6525   50.6419   51.6310   52.6200   53.6088   54.5975
-                               49.6339   50.6226   51.6110   52.5993   53.5874   54.5752
-                               49.5781   50.5648   51.5512   52.5373   53.5231   54.5086];
+%  Make sure curvi-linear grid is same as orthogonal grid, for proper regression testing.
+  % D.cor.lon                = [0.9226    0.8794    0.8336    0.7852    0.7338    0.6793
+  %                             3.0000    3.0000    3.0000    3.0000    3.0000    3.0000
+  %                             5.0774    5.1206    5.1664    5.2148    5.2662    5.3207
+  %                             7.1504    7.2366    7.3278    7.4242    7.5265    7.6350];
+  % D.cor.lat                = [49.6339   50.6226   51.6110   52.5993   53.5874   54.5752
+  %                             49.6525   50.6419   51.6310   52.6200   53.6088   54.5975
+  %                             49.6339   50.6226   51.6110   52.5993   53.5874   54.5752
+  %                             49.5781   50.5648   51.5512   52.5373   53.5231   54.5086];
+   D.cor.lat                = [49.5:1:54.5];            % pixel corners
+   D.cor.lon                = [1 3 5 7];
+  [D.cor.lon,D.cor.lat]     = ndgrid(D.cor.lon,D.cor.lat);
    D.lon                    = corner2center(D.cor.lon); % pixel centers
    D.lat                    = corner2center(D.cor.lat);
-   D.time                   = now;
+   D.time                   = datenum(2000,1,1);
    
    M.wgs84.code             = 4326;  % epsg code of global grid: http://www.epsg-registry.org/
    M.wgs84.proj4_params     = '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs';
@@ -125,6 +129,7 @@
       
 %% 2  Create matrix span dimensions
 %     http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#dimensions   
+%     ADAGUC has dimension names(NUMCELLS,NUMROWS) hard-coded
    
    nc_add_dimension(ncfile, 'col'     ,size (D.lon,1)); % CF wants x last, which means 1st in Matlab
    nc_add_dimension(ncfile, 'row'     ,size (D.lon,2)); % ~ y
@@ -224,6 +229,7 @@
    nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
    nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'lat lon');
    % coordinates is ESSENTIAL CF attribute to connect 2D (lat,lon) matrices to data
+   nc(ifld).Attribute(end+1) = struct('Name', '_FillValue'     ,'Value', realmax('single')); % SNCTOOLS replaces NaN with _FillValue under the hood
       
 %% 5.a Create all variables with attributes
    

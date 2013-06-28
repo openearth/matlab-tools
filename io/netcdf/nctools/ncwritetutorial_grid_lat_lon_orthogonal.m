@@ -1,11 +1,10 @@
-function ncwritetutorial_grid_lat_lon_orthogonal
-%% Create netCDF-CF file of orthogonal lat-lon grid (native)
+%% Create netCDF-CF file of orthogonal lat-lon grid (native mathworks code)
 %
 %  example of how to make a netCDF file with CF conventions of a variable 
 %  that is defined on a grid that is orthogonal in a lat-lon coordinate
 %  system. In this special case the dimensions coincide with the coordinate axes.
 %
-%  This case is described as Independent Latitude, Longitude, Vertical, and Time Axes
+%  This case is described as "Independent Latitude, Longitude, Vertical, and Time Axes"
 %  in http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#idp5553648
 %
 %    ^ latitude (degrees_north)
@@ -46,13 +45,14 @@ function ncwritetutorial_grid_lat_lon_orthogonal
    D.cor.lon                = [1 3 5 7];
    D.lat                    = corner2center(D.cor.lat); % pixel centers
    D.lon                    = corner2center(D.cor.lon);
-   D.time                   = now;
+   D.time                   = datenum(2000,1,1);
    
    M.wgs84.code             = 4326; % % epsg code of global grid: http://www.epsg-registry.org/
    M.wgs84.name             = 'WGS 84';
    M.wgs84.semi_major_axis  = 6378137.0;
    M.wgs84.semi_minor_axis  = 6356752.314247833;
    M.wgs84.inv_flattening   = 298.2572236;   
+   M.wgs84.proj4_params     = '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs';
    
 %% Define variable (define some data) checkerboard  with 1 NaN-hole
 
@@ -237,6 +237,7 @@ function ncwritetutorial_grid_lat_lon_orthogonal
    ncwrite   (ncfile,'lon_bnds'  , permute(nc_cf_cor2bounds(D.cor.lon),[1 2]));
    ncwrite   (ncfile,'lat_bnds'  , permute(nc_cf_cor2bounds(D.cor.lat),[1 2]));
    end
+   ncwrite   (ncfile,'wgs84'    , M.wgs84.code);
       
 %% 6 test and check
 

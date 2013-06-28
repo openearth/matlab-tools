@@ -1,24 +1,23 @@
 // The netCDF-CF conventions for grids are defined here:
 // http://cf-pcmdi.llnl.gov/documents/cf-conventions/
 // This grid file can be loaded into matlab with QuickPlot (d3d_qp.m) and ADAGUC.knmi.nl.
-// To create this netCDF file with Matlab please see ncwritetutorial_grid_lat_lon_curvilinear
-NetCDF-3 Classic ncwritetutorial_grid_lat_lon_curvilinear.nc {
+// To create this netCDF file with Matlab please see ncwritetutorial_grid_lat_lon_swath
+NetCDF-3 Classic ncwritetutorial_grid_lat_lon_swath.nc {
 
   dimensions:
-    col = 3 ;
-    row = 5 ;
-    time = 1 ;
+    NUMCELLS = 3 ;
+    NUMROWS = 5 ;
     bounds = 4 ;
 
   variables:
     // Preference 'PRESERVE_FVD':  false,
     // dimensions consistent with ncBrowse, not with native MATLAB netcdf package.
-    double time(time), shape = [1]
+    double time(NUMROWS,NUMCELLS), shape = [5 3]
       :standard_name = "time" 
       :long_name = "time" 
       :units = "days since 1970-01-01 00:00:00+08:00" 
       :axis = "T" 
-    double lon(row,col), shape = [5 3]
+    double lon(NUMROWS,NUMCELLS), shape = [5 3]
       :standard_name = "longitude" 
       :long_name = "Longitude" 
       :units = "degrees_east" 
@@ -27,7 +26,7 @@ NetCDF-3 Classic ncwritetutorial_grid_lat_lon_curvilinear.nc {
       :grid_mapping = "wgs84" 
       :actual_range = 2 6 
       :bounds = "lon_bnds" 
-    double lat(row,col), shape = [5 3]
+    double lat(NUMROWS,NUMCELLS), shape = [5 3]
       :standard_name = "latitude" 
       :long_name = "Latitude" 
       :units = "degrees_north" 
@@ -47,19 +46,19 @@ NetCDF-3 Classic ncwritetutorial_grid_lat_lon_curvilinear.nc {
       :proj4_params = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs" 
       :projection_name = "Latitude Longitude" 
       :EPSG_code = "EPSG:4326" 
-    double lon_bnds(row,col,bounds), shape = [5 3 4]
+    double lon_bnds(NUMROWS,NUMCELLS,bounds), shape = [5 3 4]
       :standard_name = "longitude" 
       :long_name = "Longitude bounds" 
       :units = "degrees_east" 
       :_FillValue = NaN 
       :actual_range = 1 7 
-    double lat_bnds(row,col,bounds), shape = [5 3 4]
+    double lat_bnds(NUMROWS,NUMCELLS,bounds), shape = [5 3 4]
       :standard_name = "latitude" 
       :long_name = "Latitude bounds" 
       :units = "degrees_north" 
       :_FillValue = NaN 
       :actual_range = 49.5 54.5 
-    double depth(time,row,col), shape = [1 5 3]
+    double depth(NUMROWS,NUMCELLS), shape = [5 3]
       :standard_name = "sea_floor_depth_below_geoid" 
       :long_name = "bottom depth" 
       :units = "m" 
@@ -69,7 +68,7 @@ NetCDF-3 Classic ncwritetutorial_grid_lat_lon_curvilinear.nc {
       :coordinates = "lat lon" 
 
   //global Attributes:
-      :title = "ncwritetutorial_grid_lat_lon_curvilinear" 
+      :title = "ncwritetutorial_grid_lat_lon_swath" 
       :institution = "Deltares" 
       :source = "" 
       :history = "$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/io/netcdf/nctools/ncwritetutorial_grid_lat_lon_curvilinear.m $ $Id: ncwritetutorial_grid_lat_lon_curvilinear.m 8831 2013-06-19 08:05:18Z boer_g $" 

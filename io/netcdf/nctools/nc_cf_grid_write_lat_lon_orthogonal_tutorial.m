@@ -1,4 +1,3 @@
-error('nc_cf_grid_write_lat_lon_orthogonal_tutorial.nc fill value')
 %% Create netCDF-CF file of orthogonal lat-lon grid (snctools)
 %
 %  Deprecated: for native Matlab and faster performance code see ncwritetutorial_grid_lat_lon_orthogonal
@@ -48,7 +47,7 @@ error('nc_cf_grid_write_lat_lon_orthogonal_tutorial.nc fill value')
    D.cor.lon                = [1 3 5 7];
    D.lat                    = corner2center(D.cor.lat); % pixel centers
    D.lon                    = corner2center(D.cor.lon);
-   D.time                   = now;
+   D.time                   = datenum(2000,1,1);
    
    M.wgs84.code             = 4326; % % epsg code of global grid: http://www.epsg-registry.org/
    M.wgs84.name             = 'WGS 84';
@@ -202,8 +201,9 @@ error('nc_cf_grid_write_lat_lon_orthogonal_tutorial.nc fill value')
    nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', M.units        );
    nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(D.val(:)) max(D.val(:))]);
    nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
-      
-%% 5.a Create all variables with attributes
+   nc(ifld).Attribute(end+1) = struct('Name', '_FillValue'     ,'Value', realmax('single')); % SNCTOOLS replaces NaN with _FillValue under the hood
+
+   %% 5.a Create all variables with attributes
    
    for ifld=1:length(nc)
       nc_addvar(ncfile, nc(ifld));   

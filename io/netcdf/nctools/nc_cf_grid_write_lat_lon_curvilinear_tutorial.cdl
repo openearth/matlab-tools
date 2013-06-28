@@ -24,7 +24,7 @@ NetCDF-3 Classic nc_cf_grid_write_lat_lon_curvilinear_tutorial.nc {
       :units = "degrees_east" 
       :axis = "X" 
       :grid_mapping = "wgs84" 
-      :actual_range = 1.85328 6.4371 
+      :actual_range = 2 6 
       :bounds = "lon_bnds" 
     double lat(row,col), shape = [5 3]
       :standard_name = "latitude" 
@@ -32,7 +32,7 @@ NetCDF-3 Classic nc_cf_grid_write_lat_lon_curvilinear_tutorial.nc {
       :units = "degrees_north" 
       :axis = "Y" 
       :grid_mapping = "wgs84" 
-      :actual_range = 50.0998 54.0922 
+      :actual_range = 50 54 
       :bounds = "lat_bnds" 
     int32 wgs84([]), shape = [1]
       :name = "WGS 84" 
@@ -50,12 +50,12 @@ NetCDF-3 Classic nc_cf_grid_write_lat_lon_curvilinear_tutorial.nc {
       :standard_name = "longitude" 
       :long_name = "Longitude bounds" 
       :units = "degrees_east" 
-      :actual_range = 0.6793 7.635 
+      :actual_range = 1 7 
     double lat_bnds(row,col,bounds), shape = [5 3 4]
       :standard_name = "latitude" 
       :long_name = "Latitude bounds" 
       :units = "degrees_north" 
-      :actual_range = 49.5781 54.5975 
+      :actual_range = 49.5 54.5 
     double depth(time,row,col), shape = [1 5 3]
       :standard_name = "sea_floor_depth_below_geoid" 
       :long_name = "bottom depth" 
@@ -63,12 +63,13 @@ NetCDF-3 Classic nc_cf_grid_write_lat_lon_curvilinear_tutorial.nc {
       :actual_range = 1 114 
       :grid_mapping = "wgs84" 
       :coordinates = "lat lon" 
+      :_FillValue = 3.40282e+38 
 
   //global Attributes:
       :title = "nc_cf_grid_write_lat_lon_curvilinear_tutorial" 
       :institution = "Deltares" 
       :source = "" 
-      :history = "$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/io/netcdf/nctools/nc_cf_grid_write_lat_lon_orthogonal_tutorial.m $ $Id: nc_cf_grid_write_lat_lon_orthogonal_tutorial.m 8825 2013-06-18 14:19:32Z boer_g $" 
+      :history = "$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/io/netcdf/nctools/nc_cf_grid_write_lat_lon_curvilinear_tutorial.m $ $Id: nc_cf_grid_write_lat_lon_curvilinear_tutorial.m 8831 2013-06-19 08:05:18Z boer_g $" 
       :references = "http://svn.oss.deltares.nl" 
       :email = "" 
       :featureType = "grid" 
@@ -77,8 +78,8 @@ NetCDF-3 Classic nc_cf_grid_write_lat_lon_curvilinear_tutorial.nc {
       :Conventions = "CF-1.6" 
       :terms_for_use = "These data can be used freely for research purposes provided that the following source is acknowledged: Deltares" 
       :disclaimer = "This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE." 
-      :time_coverage_start = "2013-06-18T23:17" 
-      :time_coverage_end = "2013-06-18T23:17" 
+      :time_coverage_start = "2000-01-01T00:00" 
+      :time_coverage_end = "2000-01-01T00:00" 
 
 
 }

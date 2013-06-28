@@ -1,4 +1,4 @@
-%% Create netCDF-CF file of orthogonal lat-lon grid (snctools)
+%% Create netCDF-CF file of curvilinear x-y grid (snctools)
 %
 %  Deprecated: for native Matlab and faster performance code see ncwritetutorial_grid_lat_lon_orthogonal
 %
@@ -75,7 +75,7 @@
    D.cor.lon = D.cor.lon + [-.5 1   2 4;0  .3  .6 .9; 0 0 0 0; 0 0 0 0; -0.9 -.6 -.3 0;-4 -2 -1 .5]';
    D.lon                    = corner2center(D.cor.lon); % pixel centers
    D.lat                    = corner2center(D.cor.lat);
-   D.time                   = now;
+   D.time                   = datenum(2000,1,1);
    
    M.wgs84.code             = 4326;  % epsg code of global grid: http://www.epsg-registry.org/
    M.wgs84.proj4_params     = '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs';
@@ -276,6 +276,7 @@
    nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
    nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'lat lon');
    % coordinates is ESSENTIAL CF attribute to connect 2D (lat,lon) matrices to data
+   nc(ifld).Attribute(end+1) = struct('Name', '_FillValue'     ,'Value', realmax('single')); % SNCTOOLS replaces NaN with _FillValue under the hood
       
 %% 5.a Create all variables with attributes
    

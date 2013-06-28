@@ -1,4 +1,4 @@
-%% Create netCDF-CF file of orthogonal x-y grid (snctools)
+%% Create netCDF-CF file of curvilinear lat-lon grid (native mathworks code)
 %
 %  example of how to make a netCDF file with CF conventions of a variable 
 %  that is defined on a grid that is curvilinear in a lat-lon coordinate
@@ -67,19 +67,27 @@
 
 %% Define dimensions/coordinates: lat,lon matrices
 %  checkersboard to test plot with one nan-hole
-   D.cor.lon                = [0.9226    0.8794    0.8336    0.7852    0.7338    0.6793
-                               3.0000    3.0000    3.0000    3.0000    3.0000    3.0000
-                               5.0774    5.1206    5.1664    5.2148    5.2662    5.3207
-                               7.1504    7.2366    7.3278    7.4242    7.5265    7.6350];
-   D.cor.lat                = [49.6339   50.6226   51.6110   52.5993   53.5874   54.5752
-                               49.6525   50.6419   51.6310   52.6200   53.6088   54.5975
-                               49.6339   50.6226   51.6110   52.5993   53.5874   54.5752
-                               49.5781   50.5648   51.5512   52.5373   53.5231   54.5086];
+%  Make sure curvi-linear grid is same as orthogonal grid, for proper regression testing.
+  % D.cor.lon                = [0.9226    0.8794    0.8336    0.7852    0.7338    0.6793
+  %                             3.0000    3.0000    3.0000    3.0000    3.0000    3.0000
+  %                             5.0774    5.1206    5.1664    5.2148    5.2662    5.3207
+  %                             7.1504    7.2366    7.3278    7.4242    7.5265    7.6350];
+  % D.cor.lat                = [49.6339   50.6226   51.6110   52.5993   53.5874   54.5752
+  %                             49.6525   50.6419   51.6310   52.6200   53.6088   54.5975
+  %                             49.6339   50.6226   51.6110   52.5993   53.5874   54.5752
+  %                             49.5781   50.5648   51.5512   52.5373   53.5231   54.5086];
+   D.cor.lat                = [49.5:1:54.5];            % pixel corners
+   D.cor.lon                = [1 3 5 7];
+  [D.cor.lon,D.cor.lat]     = ndgrid(D.cor.lon,D.cor.lat);
    D.lon                    = corner2center(D.cor.lon); % pixel centers
    D.lat                    = corner2center(D.cor.lat);
-   D.time                   = now;
+   D.time                   = datenum(2000,1,1);
    
    M.wgs84.code             = 4326;  % epsg code of global grid: http://www.epsg-registry.org/
+   M.wgs84.name             = 'WGS 84';
+   M.wgs84.semi_major_axis  = 6378137.0;
+   M.wgs84.semi_minor_axis  = 6356752.314247833;
+   M.wgs84.inv_flattening   = 298.2572236;   
    M.wgs84.proj4_params     = '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs';
    
 %% Define variable (define some data) checkerboard  with 1 NaN-hole
@@ -121,6 +129,7 @@
 
 %% 2  Create matrix span dimensions
 %     http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#dimensions   
+%     ADAGUC has dimension names(NUMCELLS,NUMROWS) hard-coded
 
    nc.Dimensions(1) = struct('Name','col'   ,'Length',size (D.lon,1)); % CF wants x last, which means 1st in Matlab
    nc.Dimensions(2) = struct('Name','row'   ,'Length',size (D.lon,2)); % ~ y
@@ -187,8 +196,17 @@
 %      http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#appendix-grid-mappings
    
    ifld     = ifld + 1;clear attr
-   attr     = nc_cf_grid_mapping(M.wgs84.code);
-   attr(end+1) = struct('Name', 'proj4_params'   ,'Value', M.wgs84.proj4_params); % http://adaguc.knmi.nl/
+   attr     = nc_cf_grid_mapping(M.wgs84.code); % is same as 
+   attr     = struct('Name' ,{'name','epsg','grid_mapping_name',...
+                            'semi_major_axis','semi_minor_axis','inverse_flattening', ...
+                            'comment'}, ...
+                     'Value',{M.wgs84.name,M.wgs84.code,'latitude_longitude',...
+                              M.wgs84.semi_major_axis,M.wgs84.semi_minor_axis,M.wgs84.inv_flattening,  ...
+                            'value is equal to EPSG code'});
+%      http://adaguc.knmi.nl/contents/documents/ADAGUC_Standard.html
+   attr(end+1) = struct('Name', 'proj4_params'   ,'Value', '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs');
+   attr(end+1) = struct('Name', 'projection_name','Value', 'Latitude Longitude');
+   attr(end+1) = struct('Name', 'EPSG_code'      ,'Value', ['EPSG:',num2str(M.wgs84.code)]);
    nc.Variables(ifld) = struct('Name'       , 'wgs84', ...
                                'Datatype'   , 'int32', ...
                                'Dimensions' , {[]}, ...

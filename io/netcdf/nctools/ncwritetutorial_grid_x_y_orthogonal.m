@@ -1,4 +1,4 @@
-%% Create netCDF-CF file of orthogonal x-y grid (snctools)
+%% Create netCDF-CF file of orthogonal x-y grid (native mathworks code)
 %
 %  example of how to make a netCDF file with CF conventions of a variable 
 %  that is defined on a grid that is orthogonal in a local (x,y) coordinate
@@ -9,7 +9,6 @@
 %
 %  This case is described as Independent Latitude, Longitude, Vertical, and Time Axes
 %  in http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#idp5553648
-%
 %
 %    ^ latitude (degrees_north)           ^ y(m)
 %    |         x                          |
@@ -57,7 +56,7 @@
    D.y                      = corner2center(D.cor.y);
 
   [cor.x,cor.y]             = ndgrid(D.cor.x,D.cor.y);
-   D.time                   = now;
+   D.time                   = datenum(2000,1,1);
    
    M.wgs84.code             = 4326;  % epsg code of global grid: http://www.epsg-registry.org/
    M.wgs84.proj4_params     = '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs';

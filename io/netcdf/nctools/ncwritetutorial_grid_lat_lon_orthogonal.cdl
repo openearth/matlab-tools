@@ -71,7 +71,7 @@ NetCDF-3 Classic ncwritetutorial_grid_lat_lon_orthogonal.nc {
       :title = "ncwritetutorial_grid_lat_lon_orthogonal" 
       :institution = "Deltares" 
       :source = "" 
-      :history = "$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/io/netcdf/nctools/ncwritetutorial_grid_lat_lon_orthogonal.m $ $Id: ncwritetutorial_grid_lat_lon_orthogonal.m 8825 2013-06-18 14:19:32Z boer_g $" 
+      :history = "$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/io/netcdf/nctools/ncwritetutorial_grid_lat_lon_orthogonal.m $ $Id: ncwritetutorial_grid_lat_lon_orthogonal.m 8831 2013-06-19 08:05:18Z boer_g $" 
       :references = "http://svn.oss.deltares.nl" 
       :email = "" 
       :featureType = "grid" 
@@ -80,8 +80,8 @@ NetCDF-3 Classic ncwritetutorial_grid_lat_lon_orthogonal.nc {
       :Conventions = "CF-1.6" 
       :terms_for_use = "These data can be used freely for research purposes provided that the following source is acknowledged: Deltares" 
       :disclaimer = "This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE." 
-      :time_coverage_start = "2013-06-18T21:54" 
-      :time_coverage_end = "2013-06-18T21:54" 
+      :time_coverage_start = "2000-01-01T00:00" 
+      :time_coverage_end = "2000-01-01T00:00" 
 
 
 }
