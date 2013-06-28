@@ -58,7 +58,7 @@ function varargout = polyinspect(X,Y,varargin)
       nextarg = 1;
    end
 
-   OPT = SetProperty(OPT,varargin{nextarg:end});
+   OPT = setproperty(OPT,varargin{nextarg:end});
    
 %% Split
 

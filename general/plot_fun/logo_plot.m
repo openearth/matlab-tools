@@ -1,16 +1,17 @@
-function varargout = logoplot(imname,ax)
-%LOGOPLOT plots image into self-scaling bounding box
+function varargout = logo_plot(imname,ax)
+%LOGO_PLOT plots image into self-scaling bounding box
 %
 % logoplot(imname,ax) plots an image inside bounding box ax.
 %
 % ax is the 4-element axis bounding box [x0 x1 y0 y1],
 % just like axis command, where one element can can be 
-% NaN for self-scaling. Note: set axis equal so aspect
-% ratio of image is correct.
+% NaN for self-scaling. Note: LOGO_PLOT sets axis equal  
+% so aspect ratio of image is correct.
 %
 % Example:
-%  pcolor(peaks);clim([-3 3]);hold on;
-%  logo_plot(oetlogo,[35 45 30 nan]);
+%  pcolor(peaks);clim([-3 3]);
+%  hold on;
+%  logo_plot(oetlogo,[45 55 43 nan]);
 %
 %See also: imread
 
@@ -45,7 +46,9 @@ end
 LG.x    = linspace(ax(1),ax(2),size(LG.data,1));
 LG.y    = linspace(ax(4),ax(3),size(LG.data,2));
 axis equal
-h = imshow(LG.data,'XData',LG.x,'YData',LG.y);set(gca,'YDir','normal');
+h = image(LG.data,'XData',LG.x,'YData',LG.y);set(gca,'YDir','normal');
+set(gca,'Visible','on'); % undo
+set(h,'clipping','off')
 
 if nargout==1
     varargout = {h};
