@@ -11,10 +11,13 @@ function strfrep(filename,origtext,newtext,varargin)
 %   origtext  = a string or 1D cell array of strings with strings that need to be replaced
 %   newtext   = variable of the same type and size as origtext with the new string or strings
 %
+% To replace beyond end-of-lines, fprint code as \n does not work, use 
+% [char(13),char(10)] for windows, char(10) for linux, char(13) for mac
+%
 %   Example
 %   strfrep(which('TODO'),'Display a TODO message','Display a TODO message');
 %
-%   See also strrep fread fopen
+%   See also strrep fread fopen fprinteol
 
 %% Copyright notice
 %   --------------------------------------------------------------------
