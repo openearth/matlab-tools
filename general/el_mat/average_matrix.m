@@ -67,15 +67,69 @@ assert(all(sizReducedData == round(sizReducedData)))
 
 reducedData = nan(sizReducedData);
 
-for ii = 1:numel(reducedData);
-    [n{1:numel(siz)}] = ind2sub(sizReducedData,ii);
-    indices = cellfun(@(n,fact) (n-1)*fact + 1 : n*fact,n,num2cell(factor),'UniformOutput',false);
-    
-    selection = data(indices{:});
-    notNan = ~isnan(selection);
-    if any(notNan(:))
-        reducedData(ii) = sum(selection(notNan)) / sum(notNan(:));
-    else
-        reducedData(ii) = nan;
-    end
+indFunStart = @(n,fact) (n-1)*fact + 1;
+indFunEnd   = @(n,fact) n*fact;
+indFun = @(n,fact) indFunStart(n,fact):indFunEnd(n,fact);
+switch length(siz)
+   case 2
+        %% optimize for 2d array
+        k = [1 cumprod(sizReducedData(1:end-1))];
+        
+        for ii = 1:numel(reducedData);
+            ndx =ii;
+            for nn = 2:-1:1,
+                vi = rem(ndx-1, k(nn)) + 1;
+                n(nn) = (ndx - vi)/k(nn) + 1;
+                ndx = vi;
+            end
+
+            selection = data(...
+                indFunStart(n(1),factor(1)):indFunEnd(n(1),factor(1)),...
+                indFunStart(n(2),factor(2)):indFunEnd(n(2),factor(2)));
+            
+            notNan = ~isnan(selection);
+            if any(notNan(:))
+                reducedData(ii) = sum(selection(notNan)) / sum(notNan(:));
+            else
+                reducedData(ii) = nan;
+            end
+        end
+    case 3
+        %% optimize for 3d array
+        k = [1 cumprod(sizReducedData(1:end-1))];
+        
+        for ii = 1:numel(reducedData);
+            ndx =ii;
+            for nn = 3:-1:1,
+                vi = rem(ndx-1, k(nn)) + 1;
+                n(nn) = (ndx - vi)/k(nn) + 1;
+                ndx = vi;
+            end
+
+            selection = data(...
+                indFunStart(n(1),factor(1)):indFunEnd(n(1),factor(1)),...
+                indFunStart(n(2),factor(2)):indFunEnd(n(2),factor(2)),...
+                indFunStart(n(3),factor(3)):indFunEnd(n(3),factor(3)));
+            
+            notNan = ~isnan(selection);
+            if any(notNan(:))
+                reducedData(ii) = sum(selection(notNan)) / sum(notNan(:));
+            else
+                reducedData(ii) = nan;
+            end
+        end
+    otherwise
+        %% for n dimensional arrays (slow)
+        for ii = 1:numel(reducedData);
+            [n{1:numel(siz)}] = ind2sub(sizReducedData,ii);
+            indices = cellfun(indFun,n,num2cell(factor),'UniformOutput',false);
+            
+            selection = data(indices{:});
+            notNan = ~isnan(selection);
+            if any(notNan(:))
+                reducedData(ii) = sum(selection(notNan)) / sum(notNan(:));
+            else
+                reducedData(ii) = nan;
+            end
+        end
 end

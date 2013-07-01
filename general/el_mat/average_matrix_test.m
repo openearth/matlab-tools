@@ -8,3 +8,7 @@ reducedData = average_matrix(data,[1 2 4]);
 data = x+y+z;
 
 reducedData = average_matrix(data,[16 20 4]);
+
+
+x = (1:1:100)';
+reducedData = average_matrix(x,[10,1]);
