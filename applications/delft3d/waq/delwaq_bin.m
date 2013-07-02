@@ -1,11 +1,11 @@
-function inbin = delwaq_bin(File,bin,SubstanceNames,Segments,IntervalTime,Type)
+function inbin = delwaq_bin(File,bin,SubstanceNames,IntervalTime,Segments,Type)
 %DELWAQ_STAT Read Delwaq files values and write a statistics file.
 %
-%   STRUCTOUT = DELWAQ_STAT(FILE,FILE2SAVE,SUBSTANCENAMES,INTERVALTIME,TYPE)
+%   STRUCTOUT = DELWAQ_STAT(FILE,BIN,SUBSTANCENAMES,INTERVALTIME,TYPE)
 %   writes the data to a Delwaq HIS/MAP file.
 %
-%   STRUCTOUT = DELWAQ_STAT(FILE1,FILE2SAVE)
-%   Reads FILE1 computes statistics and write results in FILE2SAVE map file.
+%   STRUCTOUT = DELWAQ_STAT(FILE1,BIN)
+%   Reads FILE1 computes statistics and write results in BIN map file.
 %
 %   STRUCTOUT = DELWAQ_STAT(...,INTERVALTIME,...) specifies the time
 %   intervals that will be used to compute the statistics. If INTERVALTIME
@@ -33,7 +33,7 @@ if nargin<6
     Type = 'none';
 end
 
-[~, name, ext] = fileparts(File);
+[~, ~, ext] = fileparts(File);
 
 if strcmpi(ext,'.map')
    extId = 'map';
@@ -46,21 +46,13 @@ end
 % Opening Files
 struct1 = delwaq('open',File);
 
-if strcmp(Type,'none')
-   fileFlag = 'STAT';
-   headerFlag = 'Statistics: ';
-elseif strcmp(Type,'log')
-   fileFlag = 'STATLOG';
-   headerFlag = 'Statistics: (log)';
-elseif strcmp(Type,'log10')
-   fileFlag = 'STATLOG10';
-   headerFlag = 'Statistics: (log10)';
-elseif strcmp(Type,'exp')
-   fileFlag = 'STATEXP';
-   headerFlag = 'Statistics: (exp)';
-elseif strcmp(Type,'exp10')
-   fileFlag = 'STATEXP10';
-   headerFlag = 'Statistics: (exp10)';
+
+if nargin<3
+    SubstanceNames = struct1.SubsName;
+elseif (nargin>=3 && isnumeric(SubstanceNames))
+    if SubstanceNames==0
+       SubstanceNames = struct1.SubsName;
+    end
 end
 
 
@@ -122,25 +114,21 @@ if isempty(Times)
    disp('There is any match in the times');
    return 
 end
-Ntimes = length(Times);
+% Ntimes = length(Times);
+% [~, systemview] = memory;
+% maxarray = systemview.VirtualAddressSpace.Available/100;
+% tt = min(floor(maxarray/struct1.NumSegm),struct1.NTimes);
+% 1:tt:struct1.NTimes
+% 
+inbin = zeros(1,length(bin));
 
-
-for it = 2:Ntimes
-   nbin = hist(nan,bin);
-   fprintf('delwaq_bin progress:%1.0f/%1.0f(period) \n', it-1, Ntimes-1)
-
-   if ~isempty(itime1{it-1})
-      for jt = 1:length(itime1{it-1})
-%          fprintf('delwaq_bin progress:%1.0f/%1.0f(period) %1.0f/%1.0f(records) \n', it-1, Ntimes-1,jt,length(itime1{it-1}))
-
-          [~, data] = delwaq('read',struct1,isub1,iseg,itime1{it-1}(jt));    
-           data(data==-999) = nan;
-           data = data(:);
-           [lbin bin] = getbin(data,bin,Type);
-           nbin = nansum([nbin; lbin],1);
-       end
-   end
-    inbin(it-1,:) = nbin;
+for it = 1:struct1.NTimes
+   fprintf('delwaq_bin progress:%1.0f/%1.0f(times) \n', it, struct1.NTimes)
+   [~, data] = delwaq('read',struct1,isub1,iseg,it);    
+   data(data==-999) = nan;
+   data = data(:);
+   lbin = getbin(data,bin,Type);
+   inbin = nansum([inbin; lbin],1);
 end%it
 
     
@@ -206,10 +194,10 @@ switch Type
         x(x<=0) = nan;
         x = log10(x);
     case 'clog'        
-        x(x<=0) = nan;
+        x(x<0) = nan;
         x = log(x+1);
     case 'clog10'        
-        x(x<=0) = nan;
+        x(x<0) = nan;
         x = log10(x+1);
     case 'exp'        
         x = exp(x);
@@ -217,4 +205,4 @@ switch Type
         x = 10.^x;
 end
 
-[nbin bin] = hist(x,bin);
+nbin = histc(x,bin)';
