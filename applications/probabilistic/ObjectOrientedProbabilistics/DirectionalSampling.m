@@ -97,6 +97,11 @@ classdef DirectionalSampling < ProbabilisticMethod
             %
             %   See also DirectionalSampling
             
+            % If a random seed (NaN) is specified, choose a random number
+            if isnan(seed)
+                seed = rand(1);
+            end
+            
             ProbabilisticChecks.CheckInputClass(limitState,'LimitState');
             ProbabilisticChecks.CheckInputClass(lineSearcher,'LineSearch');
             ProbabilisticChecks.CheckInputClass(confidenceInterval,'double');
