@@ -104,7 +104,7 @@ classdef AdaptiveResponseSurface < handle
         end
         
         %Update ARS fit
-        function UpdateFit(this, limitState,weighted)
+        function UpdateFit(this, limitState)
            
             this.DetermineModelTerms(limitState);
             
