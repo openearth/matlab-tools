@@ -78,6 +78,7 @@ hold on;
 
 % net transport
 tr=transport(1);
+tr(tr==0)=1e-9;
 if str2num(version('-release'))<14
     h1=quiver(mean([startPoint(1,1) endPoint(1,1)]),mean([startPoint(1,2) endPoint(1,2)]),vecScaling*cos(0.5*pi+alfaline).*tr/abs(tr)*log(abs(tr)+1),...
         vecScaling*sin(0.5*pi+alfaline).*tr/abs(tr)*log(abs(tr)+1),0,'k');
@@ -101,6 +102,7 @@ set(h1(2),'linewidth',1.5);
 if length(transport)>1
 
     tr=transport(2);
+    tr(tr==0)=1e-9;
     if str2num(version('-release'))<14
         h1Plus=quiver(mean([startPoint(1,1) endPoint(1,1) endPoint(1,1)]),mean([startPoint(1,2) endPoint(1,2) endPoint(1,2)]),vecScaling*cos(0.5*pi+alfaline).*tr/abs(tr)*log(abs(tr)+1),...
             vecScaling*sin(0.5*pi+alfaline).*tr/abs(tr)*log(abs(tr)+1),0,'b');

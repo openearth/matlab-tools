@@ -70,55 +70,61 @@ yv=[pntn(2) pntnn(2)];
 % [xc,yc]=int_lngrd(xv,yv,x,y);
 [xc,yc,dum,dum] = grid_orth_getDataOnLine(x,y,repmat(1,size(x)),xv,yv);
 
-if xc(1)<xc(2) && xc(2)>xc(3)
-    xctemp = xc; yctemp = yc;
-    xc(1)= xctemp(end); xc(end)= xctemp(1);
-    yc(1)= yctemp(end); yc(end)= yctemp(1);
-elseif xc(1)>xc(2) && xc(2)<xc(3)
-    xctemp = xc; yctemp = yc;
-    xc(1)= xctemp(end); xc(end)= xctemp(1);
-    yc(1)= yctemp(end); yc(end)= yctemp(1);
+if numel(xc)>=3
+    if xc(1)<xc(2) && xc(2)>xc(3)
+        xctemp = xc; yctemp = yc;
+        xc(1)= xctemp(end); xc(end)= xctemp(1);
+        yc(1)= yctemp(end); yc(end)= yctemp(1);
+    elseif xc(1)>xc(2) && xc(2)<xc(3)
+        xctemp = xc; yctemp = yc;
+        xc(1)= xctemp(end); xc(end)= xctemp(1);
+        yc(1)= yctemp(end); yc(end)= yctemp(1);
+    end
+
+    xc = [xv(1) ; xc ; xv(2)];
+    yc = [yv(1) ; yc ; yv(2)];
+
+    % figure;
+    % hold on;
+    % drawgrid(x,y,'color','k');
+    % plot(xc,yc,'or');
+
+    % determine distances between points
+    dist=sqrt((xc(2:end)-xc(1:end-1)).^2+(yc(2:end)-yc(1:end-1)).^2);
+
+    % determine points in between points
+    xc2=0.5*(xc(1:end-1)+xc(2:end));
+    yc2=0.5*(yc(1:end-1)+yc(2:end));
+
+    % find mn-coordinates of these points
+    [m,n] = xy2mn_special(x,y,xc2,yc2);
+
+    % find transport components in these points
+    ind=sub2ind(size(xt),m,n);
+
+    % find nan's in indices and remove corresponding distances
+    dist(isnan(ind))=[];
+    ind=ind(~isnan(ind));
+
+    % find transport component perpendicular to transect
+    trData=[xt(ind)' yt(ind)'];
+
+    phi=mod(atan2(diff(yv),diff(xv)),2*pi);
+    rot = [cos(phi) -sin(phi); sin(phi) cos(phi)];
+    trans=trData*rot;
+
+    % calculate cumulative transports per section
+    cumTrans=dist.*trans(:,2);
+
+    % calculate total transport through transect
+    tr=sum(cumTrans(~isnan(cumTrans)));
+    trPlus=sum(cumTrans(~isnan(cumTrans)&cumTrans>0));
+    trMin=sum(cumTrans(~isnan(cumTrans)&cumTrans<0));
+else
+    tr=1e-9;
+    trPlus=1e-9;
+    trMin=1e-9;
 end
-
-xc = [xv(1) ; xc ; xv(2)];
-yc = [yv(1) ; yc ; yv(2)];
-
-% figure;
-% hold on;
-% drawgrid(x,y,'color','k');
-% plot(xc,yc,'or');
-
-% determine distances between points
-dist=sqrt((xc(2:end)-xc(1:end-1)).^2+(yc(2:end)-yc(1:end-1)).^2);
-
-% determine points in between points
-xc2=0.5*(xc(1:end-1)+xc(2:end));
-yc2=0.5*(yc(1:end-1)+yc(2:end));
-
-% find mn-coordinates of these points
-[m,n] = xy2mn_special(x,y,xc2,yc2);
-
-% find transport components in these points
-ind=sub2ind(size(xt),m,n);
-
-% find nan's in indices and remove corresponding distances
-dist(isnan(ind))=[];
-ind=ind(~isnan(ind));
-
-% find transport component perpendicular to transect
-trData=[xt(ind)' yt(ind)'];
-
-phi=mod(atan2(diff(yv),diff(xv)),2*pi);
-rot = [cos(phi) -sin(phi); sin(phi) cos(phi)];
-trans=trData*rot;
-
-% calculate cumulative transports per section
-cumTrans=dist.*trans(:,2);
-
-% calculate total transport through transect
-tr=sum(cumTrans(~isnan(cumTrans)));
-trPlus=sum(cumTrans(~isnan(cumTrans)&cumTrans>0));
-trMin=sum(cumTrans(~isnan(cumTrans)&cumTrans<0));
 
 
 %% function xy2mn_special
