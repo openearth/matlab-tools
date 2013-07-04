@@ -13,6 +13,8 @@ function xb_write_input(filename, xb, varargin)
 %   xb        = XBeach structure array
 %   varargin  = write_paths:  flag to determine whether definition files
 %                             should be written or just referred
+%               xbdir:  option to parse xbeach code directory (to read
+%                       parameter info)
 %
 %   Output:
 %   none
@@ -68,7 +70,9 @@ function xb_write_input(filename, xb, varargin)
 if ~xs_check(xb); error('Invalid XBeach structure'); end;
 
 OPT = struct( ...
-    'write_files', true ...
+    'write_files', true, ...
+    'xbdir','', ...
+    'maxduration_waves',3600 ...
 );
 
 OPT = setproperty(OPT, varargin{:});
@@ -90,7 +94,7 @@ if OPT.write_files
             switch xb.data(i).name
                 case {'bcfile' 'ezsfile'}
                     % write waves
-                    xb.data(i).value = xb_write_waves(sub, 'path', fdir);
+                    xb.data(i).value = xb_write_waves(sub, 'path', fdir,'maxduration',OPT.maxduration_waves);
                 case {'zs0file'}
                     % write tide
                     xb.data(i).value = xb_write_tide(sub, 'path', fdir);
@@ -133,7 +137,7 @@ end
 
 %% write params.txt file
 
-xb_write_params(filename, xb)
+xb_write_params(filename, xb, 'xbdir',OPT.xbdir);
 
 end
 
