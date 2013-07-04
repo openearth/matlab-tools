@@ -72,7 +72,7 @@ if ~xs_check(xb); error('Invalid XBeach structure'); end;
 OPT = struct(...
     'header', {{'XBeach parameter settings input file' '' ['date:     ' datestr(now)] ['function: ' mfilename]}}, ...
     'xbdir', '', ...
-    'skip_headers', false 	);
+    'skip_headers', false);
 
 if nargin > 2
     OPT = setproperty(OPT, varargin{:});
@@ -87,7 +87,7 @@ end
 %% write parameter file
 matfile = fullfile(fileparts(which('xb_get_params')), 'params.mat');
 
-[params params_array] = xb_get_params;
+[params params_array] = xb_get_params(OPT.xbdir);
 
 if OPT.skip_headers
     warning('OET:xbeach:headers', 'No XBeach parameter category definition found, skipping headers');
