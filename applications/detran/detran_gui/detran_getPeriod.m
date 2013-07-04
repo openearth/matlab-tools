@@ -36,6 +36,7 @@ function period=detran_getPeriod
 % your own tools.
 
 [but,fig]=gcbo;
+if isempty(fig); fig=gcf; end
 
 timeWindow=get(findobj(fig,'tag','detran_timeWindow'),'Value');
 
