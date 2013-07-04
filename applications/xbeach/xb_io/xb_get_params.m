@@ -112,14 +112,14 @@ if exist(paramsfname, 'file')
     while ~feof(fid)
         if parread==0
             % does this line say type parameters?
-            line=fgetl(fid);
+            line=strtrim(fgetl(fid));
             t1=findstr('type',strtrim(line));
             t2=findstr(Typename,line);
             if (~isempty(t1) && t1==1 && ~isempty(t2))
                 parread = 1;
             end
         elseif parread==1
-            line=fgetl(fid);
+            line=strtrim(fgetl(fid));
             t0 = findstr('!',line);  if length(t0)>1; t0=t0(1); end;  % we need this later to determine if this is likely continuation of comment
             line=strtrim(line);
             % is this the end of type parameters?
