@@ -196,5 +196,5 @@ end
 if nargout == 0
     set(fig,'userdata',data);
 else
-    varargout = {data.transectData(:,1),data.transectData(:,2),data.transectData(:,3)};
+    varargout = {data.transectData(:,1),data.transectData(:,2),data.transectData(:,3),data,edit};
 end

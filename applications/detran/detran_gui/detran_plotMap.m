@@ -53,6 +53,7 @@ end
 if get(findobj(fig,'tag','detran_plotMapBox'),'Value')==1
     edit=data.edit;
     strucNames=fieldnames(edit);
+    %strucNames={'xcor'    'ycor'    'alfa'    'yatu'    'yatv'    'yatuPlus'    'yatuMin'    'yatvPlus'    'yatvMin'};
     for ii=1:length(strucNames)
         eval([strucNames{ii} '=edit.' strucNames{ii} ';']);
     end
