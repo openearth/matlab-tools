@@ -25,11 +25,11 @@ function varargout=inivalue(fileName,varargin)
 %    inivalue('sample.ini')             ->  ans.XYZ.abc=123
 %                                           ans.ZZZ.abc=890
 %
-% if sectionName or the keyName is not found, it returns []
-% if the keyName is empty, the entire section is returned as struct.
-% if the sectionName is empty, the entire file is returned as struct.
-% if the sectionName is NaN, the entire file is returned as struct.
-%    and no sectionName is assumed to be present at all in the file
+% * if sectionName or the keyName is not found, it returns []
+% * if the keyName is empty, the entire section is returned as struct.
+% * if the sectionName is empty, the entire file is returned as struct.
+% * if the sectionName is NaN, the entire file is returned as struct.
+%      and no sectionName is assumed to be present at all in the file
 %
 % Note that a *.url file is has the *.ini file format.
 % Optionally a struct with field 'commentchar' can be passed to skip comment lines.

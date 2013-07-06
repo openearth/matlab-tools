@@ -9,15 +9,9 @@ function str = fprinteol(varargin)
 %
 % where fid is a file indentifier as returned by FOPEN,
 % where OperationSystem is a string with value
-% * 'u<nix>'
-%   'l<inux>' (default)
-%       (char(10)=\n) 
-% * 'd<os>'
-%   'w<indows>'
-%   'p<c>'
-%       (char([13 10])=\r\n) 
-% * 'm<ac>'
-%       (char(10)=\r) 
+% * 'u<nix>' & 'l<inux>'             char(    10) =  \n (hex: 0A) (default)
+% * 'd<os>' & 'w<indows>' & 'p<c>'   char([13 10])=\r\n (hex: 0D, 0A)
+% * 'm<ac>'                          char(    13) =\r   (hex: 0D) 
 %
 %See also: FOPEN, FPRINTF, FCLOSE
 
@@ -64,24 +58,24 @@ if nargout==1
       OS = varargin{1};
    end
     fid = [];
-       if strcmpi(OS(1),'u');str = sprintf('\n');
-   elseif strcmpi(OS(1),'l');str = sprintf('\n');
+       if strcmpi(OS(1),'u');str = sprintf(  '\n');
+   elseif strcmpi(OS(1),'l');str = sprintf(  '\n');
    elseif strcmpi(OS(1),'w');str = sprintf('\r\n');
    elseif strcmpi(OS(1),'d');str = sprintf('\r\n');
    elseif strcmpi(OS(1),'p');str = sprintf('\r\n');
-   elseif strcmpi(OS(1),'m');str = sprintf('\r');
+   elseif strcmpi(OS(1),'m');str = sprintf('\r'  );
    end 
 else
     fid = varargin{1};
    if nargin==2
       OS = varargin{2};
    end
-       if strcmpi(OS(1),'u');fprintf(fid,'\n');
-   elseif strcmpi(OS(1),'l');fprintf(fid,'\n');
+       if strcmpi(OS(1),'u');fprintf(fid,  '\n');
+   elseif strcmpi(OS(1),'l');fprintf(fid,  '\n');
    elseif strcmpi(OS(1),'w');fprintf(fid,'\r\n');
    elseif strcmpi(OS(1),'d');fprintf(fid,'\r\n');
    elseif strcmpi(OS(1),'p');fprintf(fid,'\r\n');
-   elseif strcmpi(OS(1),'m');fprintf(fid,'\r');
+   elseif strcmpi(OS(1),'m');fprintf(fid,'\r'  );
    end 
 end
 

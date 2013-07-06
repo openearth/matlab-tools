@@ -3,6 +3,7 @@ function varargout = KML2Coordinates(FileName,varargin)
 % 
 %   [LAT,lon,z,<names>] = KML2COORDINATES(FileName,<keyword,value>) returns
 %   NaN-separated arrays (NOTE LAT 1sT), with a NaN between each placemark.
+%   The Folder structure of the is lost, one overall polygon is returned.
 %
 %   out = KML2COORDINATES(FileName) returns a cell of arrays MX3. 
 %   The arrays are double arrays, each composed of xyz coordinates of the points 
@@ -56,42 +57,23 @@ function varargout = KML2Coordinates(FileName,varargin)
 % $HeadURL$
 % $Keywords$
 
-OPT.method = 'xml'; % safer for comments etc, but slower
+OPT.method = 'xml'; % safer for comments etc, but somewhat slower. Can handle nested kml.s
 
 OPT = setproperty(OPT,varargin);
 
 if strcmp(FileName(end-3:end),'.kmz')
-    unzip(FileName);
-    kmlname = [FileName(1:end-4) '.kml'];
+   unzip(FileName);
+   kmlname = [FileName(1:end-4) '.kml'];
 elseif strcmp(FileName(end-3:end),'.kml')
-	kmlname = FileName;
+   kmlname = FileName;
 else
-	kmlname = [FileName '.kml'];
+   kmlname = [FileName '.kml'];
 end
 
 switch OPT.method
  case 'xml'
     xml = xml_read(kmlname);
-    p = xml.Document.Placemark;
-    for jj=1:length(p)
-       names{jj} = p(jj).name;
-       if isnumeric(names{jj})
-           names{jj} = num2str(names{jj});
-       end
-       if isfield(p(jj),'LineString')
-          if size(p(jj).LineString.coordinates,1) == 1
-             coordCell{jj} = reshape(p(jj).LineString.coordinates,3,[])';
-          else
-             coordCell{jj} = p(jj).LineString.coordinates;
-          end
-       else
-           tmp = p(jj).Polygon.outerBoundaryIs.LinearRing.coordinates;
-           if ~isnumeric(tmp); % some are already converted to numbers, apparently
-              tmp = str2num(tmp);
-           end
-           coordCell{jj} = reshape(tmp,3,[])';
-       end
-    end
+   [names,coordCell]=kml_placemark_folder_read(xml.Document,1);
 
  case 'fgetl' % has issues for manually edited kml: <coordinates> in same line as </coordinates>
 	fid = fopen(kmlname);
@@ -126,7 +108,7 @@ switch OPT.method
                     if strcmp(t,'</coordinates>')
                        ind = strfind(coordline,'</coordinates>');
                        kk = kk+1;
-                       coord{kk,:} = str2num(coordline(1:ind-1));                       
+                       coord{kk,:} = str2num(coordline(1:ind-1));
                     end
                 end
                 coordCell{jj} = cell2mat(coord);
@@ -152,3 +134,59 @@ elseif nargout>1
     varargout = {lat,lon,z,names}; 
     end
 end 
+
+%%
+function [names,coordCell]= kml_placemark_folder_read(p,varargin)
+
+if nargin==1
+   nest = 1;
+else
+   nest = varargin{1};
+end
+
+%% load files at this level and then ...
+if isfield(p,'Placemark')
+   [names,coordCell]=kml_placemark_read(p.Placemark);
+else
+   names     = [];
+   coordCell = {};  
+end
+   disp(['nest ',num2str(nest),'    # ',num2str(length(names))])
+
+%% ... recursively loop all folder
+if isfield(p,'Folder')
+   for i=1:length(p.Folder)
+     [Dnames,DcoordCell]= kml_placemark_folder_read(p.Folder(i),nest+1);
+      names     = [names     Dnames    ];
+      coordCell = [coordCell DcoordCell];
+      disp(['nest ',num2str(nest),' ',num2str(i,'%0.2d'),' # ',num2str(length(Dnames))])
+   end
+end
+
+%% kml_placemark_read
+function[names,coordCell]= kml_placemark_read(p)
+
+   names     = [];
+   coordCell = {};
+
+    for jj=1:length(p)
+       names{jj} = p(jj).name;
+       if isnumeric(names{jj})
+           names{jj} = num2str(names{jj});
+       end
+       if isfield(p(jj),'LineString')
+          if size(p(jj).LineString.coordinates,1) == 1
+             coordCell{jj} = reshape(p(jj).LineString.coordinates,3,[])';
+          else
+             coordCell{jj} = p(jj).LineString.coordinates;
+          end
+       else
+           tmp = p(jj).Polygon.outerBoundaryIs.LinearRing.coordinates;
+           if ~isnumeric(tmp); % some are already converted to numbers, apparently
+              tmp = str2num(tmp);
+           end
+           coordCell{jj} = reshape(tmp,3,[])';
+       end
+    end
+    
+    %disp(['# ',num2str((length(names)))])
