@@ -1,5 +1,5 @@
 function varargout=delft3d_io_mdf(cmd,varargin),
-%DELFT3D_IO_MDF   read/write Delft3D ASCII Master Definition File (*.mdf) <<beta version!>>
+%DELFT3D_IO_MDF   x read/write Delft3D ASCII Master Definition File (*.mdf) <<beta version!>>
 %
 %   DATA         = delft3d_io_mdf('read' ,<filename>,<keyword,value>);
 %  [DATA,iostat] = delft3d_io_mdf('read' ,<filename>,<keyword,value>);
@@ -291,6 +291,8 @@ elseif length(tmp)>0
             % remove = sign and leading/trailing blanks
             equalsignposition = findstr(value,'=');
             value             = strtrim(value(equalsignposition+1:end));
+		else
+		    value=strtrim(value); 	
          end
 
          %% Look for strings
@@ -306,6 +308,7 @@ elseif length(tmp)>0
 
          %% Assign value
          if isempty(keyword)
+			STRUCT.keywords.(keyword_last)=[STRUCT.keywords.(keyword_last),value]; 
          elseif strcmpi(keyword,'commnt')
                             count.comment  = count.comment + 1;
             STRUCT.comments{count.comment} = value;
