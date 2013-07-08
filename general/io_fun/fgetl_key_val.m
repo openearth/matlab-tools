@@ -69,6 +69,13 @@ function varargout = fgetl_key_val(fid_or_rec,varargin);
    rec                = fid_or_rec;
    end
    
+   
+   if isempty(rec) | rec==-1
+      keyword=[]; 
+      value=[]; 
+      rec=[]; 
+   else
+      
    index_equal_sign   = strfind(rec,'=');
 
    index_comment_sign = strfind(rec,commentchar,varargin{nextarg:end});
@@ -83,6 +90,7 @@ function varargout = fgetl_key_val(fid_or_rec,varargin);
    %[keyword,rec] = strtok(rec)
    %[issign ,rec] = strtok(rec)
    %[value  ,rec] = strtok(rec)
+   end
     
     if nargout==2
        varargout = {keyword,value};
