@@ -20,12 +20,14 @@ function structOut = delwaq_profiles(mapFile,lgaFile,SubstanceNames,xloc,yloc,tl
 nt = length(tloc);
 
 % Read times in map file
+disp('Getting time: delwaq_datenum')
 S.datenum = delwaq_datenum(mapFile);
 [itloc, itfile]  = time_near(tloc,S.datenum,dt,'middle');
 S.itime = nan(nt,1);
 S.itime(itloc) = itfile;
 
 % Find the segments corresponding to xloc and yloc
+disp('Getting segment: delwaq_xy2segnr')
 S.iseg   =  delwaq_xy2segnr(lgaFile,xloc,yloc);
 
 %Open map files and lga file
