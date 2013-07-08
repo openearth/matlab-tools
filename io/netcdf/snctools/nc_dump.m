@@ -11,6 +11,10 @@ function nc_dump(file_name, varargin)
 %   with fid = fopen(...) instead of to screen (default fid=1: screen).
 %   NC_DUMP(NCFILE,LOCATION,<'fname'>) prints output to new file 'fname'.
 %
+%   NC_DUMP(NCFILE,LOCATION,fid,<keyword,value>) passes keyword-value
+%   pairs, LOCATION and fid must be supplied, use [] for defaults.
+%   NC_DUMP(NCFILE,LOCATION,fid,'h',false) writes data too (not human readable)
+%
 %   If netcdf-java is on the java classpath, NC_DUMP can also display 
 %   metadata for GRIB2 files as if they were netCDF files.
 %
@@ -36,22 +40,56 @@ function nc_dump(file_name, varargin)
 %       nc_dump(url);
 %
 %   See also nc_info.
-
 location = ''; 
-fid = 1;
+fid      = 1;
+
+% ncdump.exe options
+%ncdump [-c|-h] [-v ...] [[-b|-f] [c|f]] [-l len] [-n name] [-p n[,n]] file
+%  [-c]             Coordinate variable data and header information
+%  [-h]             Header information only, no data
+%  [-v var1[,...]]  Data for variable(s) <var1>,... only
+%  [-b [c|f]]       Brief annotations for C or Fortran indices in data
+%  [-f [c|f]]       Full annotations for C or Fortran indices in data
+%  [-l len]         Line length maximum in data section (default 80)
+%  [-n name]        Name for netCDF (default derived from file name)
+%  [-p n[,n]]       Display floating-point values with less precision
+%  file             File name of input netCDF file
+
+OPT.h      = true; % -h
+OPT.hwidth = 2;  % max no values per line
+
 switch(nargin)
+    case 0
+        help nc_dump
+        pausedisp
+    case 1
     case 2
         if ischar(varargin{1})
             location = varargin{1};
         else
             fid = varargin{1};
         end
+        varargin{1}   = [];
         
     case 3
         location = varargin{1};
-        fid = varargin{2};
-
+        fid      = varargin{2};
+        varargin(1:2) = [];
+        
+    otherwise
+       if ~isempty(varargin{1})
+          location = varargin{1};
+       end
+       if ~isempty(varargin{2})
+          fid = varargin{2};
+       end
+       varargin(1:2) = [];
 end
+
+keys = varargin(1:2:end);
+vals = varargin(2:2:end);
+
+ind = find(strcmp(keys,'h'));if any(ind);OPT.h = vals{ind};end;
 
 if ischar(fid)
     close_fid = 1;    
@@ -65,6 +103,10 @@ info = nc_info(file_name);
 fprintf (fid,'%s %s {\n',info.Format,info.Filename);
 
 dump_group(info,location,fid);
+
+if ~(OPT.h)
+   dump_group_data(info,location,fid,file_name,OPT);
+end
 
 fprintf(fid,'}\n');
 
@@ -115,6 +157,12 @@ fprintf(fid,'\n');
 
 return
 
+%--------------------------------------------------------------------------
+function dump_group_data(group,restricted_variable,fid,file_name,OPT)
+
+not_found = dump_variables_data(group.Dataset,restricted_variable,fid,file_name,OPT);
+
+return
 
 %--------------------------------------------------------------------------
 function dump_datatype_metadata(info,fid)
@@ -251,6 +299,49 @@ end
 
 fprintf (fid,'\n' );
 
+%--------------------------------------------------------------------------
+function not_found = dump_variables_data(Dataset,restricted_variable,fid,file_name,OPT)
+
+% Is it here?
+not_found = true;
+
+for j = 1:numel(Dataset)
+    if ~isempty(restricted_variable)
+        if strcmp(restricted_variable,Dataset(j).Name)
+            not_found = false;
+        end
+    end
+end
+if not_found && ~isempty(restricted_variable)
+    return
+end
+pfvd = nc_getpref('PRESERVE_FVD');
+for j = 1:numel(Dataset)
+    if ~isempty(restricted_variable)
+        if ~strcmp(restricted_variable,Dataset(j).Name)
+            continue
+        end
+    end
+    fprintf(fid,'%s=\n', Dataset(j).Name);
+    array = nc_varget(file_name,Dataset(j).Name);
+    n  = length(array(:));
+    sz = size(array);
+    dn = min(sz(end),OPT.hwidth);
+    for i=1:dn:n-1
+       fprintf(fid,' %g,', array(i:i+dn-1));
+       fprintf(fid,'\n');
+    end
+    if length(array(:))>1
+    fprintf(fid,' %g,',  array(i:i+dn-2));
+    end
+    fprintf(fid,' %g ;', array(end));
+    fprintf(fid,'\n');
+    
+% TO DO replace fillvalue with  "_"
+% TO DO replace nan with "1.#QNAN"
+    
+end
+fprintf (fid,'\n' );
 
 %--------------------------------------------------------------------------
 function dump_single_variable ( var_metadata , fid )
@@ -309,7 +400,6 @@ for k = 1:num_atts
 end
 
 return
-
 
 %--------------------------------------------------------------------------
 function dump_single_attribute ( attribute, varname , fid )
