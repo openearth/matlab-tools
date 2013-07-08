@@ -6,8 +6,11 @@ function varargout = delft3d_io_meteo(cmd,varargin)
 % D = DELFT3D_IO_METEO('read',fname,<keyword,value>)  
 %
 % Where the following keyword,value have been implemented
-% * latlon   : call grid variables (lat,lon) instead of (x,y)
-%              in case of spherical grid (default 0)
+% * latlon    : call grid variables (lat,lon) instead of (x,y)
+%               in case of spherical grid (default 0)
+% * timestep  : [1xn double] timestep(s) to be read. Default is timestep 1. 
+% * timeperiod: [1x2 datenum] data will be read when time falls between these limits. 
+%               Overrules timestep. 
 %
 % See also: DELFT3D_IO_BND, DELFT3D_IO_BCA, DELFT3D_IO_BCH,  
 %           DELFT3D_IO_CRS, DELFT3D_IO_DEP, DELFT3D_IO_DRY,, DELFT3D_IO_EVA 
@@ -17,12 +20,6 @@ function varargout = delft3d_io_meteo(cmd,varargin)
 %           KNMIHYDRA, HMCZ_WIND_READ
 % DELFT3D_IO_METEO_WRITE
 
-% TO DO
-% * timestep : the time step to load from the file
-%              - 0          is first timestep
-%              - integer(s) is specific timestep number(s)
-%              - Inf        is all timesteps
-%              - []         is next timestep (not yet implemented)
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Delft University of Technology
@@ -68,43 +65,43 @@ end
 
 switch lower(cmd)
 
-case 'read'
+    case 'read'
 
-  [DAT,iostat] = Local_read(varargin{1:end});
+        [DAT,iostat] = Local_read(varargin{1:end});
 
-  if     nargout <2
+        if     nargout <2
 
-     varargout  = {DAT};
-     
-     if iostat<1
-        error('Error reading.')
-     end
-  
-  elseif nargout  == 2
-  
-     varargout  = {DAT,iostat};
-  
-  elseif nargout >2
-  
-     error('too much output parameters: 1 or 2')
-  
-  end
+            varargout  = {DAT};
 
-case 'write'
+            if iostat<1
+                error('Error reading.')
+            end
 
-  iostat = Local_write(varargin{1:end});
-  
-  if nargout ==1
-  
-     varargout = {iostat};
-  
-  elseif nargout >1
-  
-     error('too much output parameters: 0 or 1')
-  
-  end
-  
-end;
+        elseif nargout  == 2
+
+            varargout  = {DAT,iostat};
+
+        elseif nargout >2
+
+            error('too much output parameters: 1 or 2')
+
+        end
+
+    case 'write'
+
+        iostat = Local_write(varargin{1:end});
+
+        if nargout ==1
+
+            varargout = {iostat};
+
+        elseif nargout >1
+
+            error('too much output parameters: 0 or 1')
+
+        end
+
+end
 
 
 %%------------------------------------
@@ -113,7 +110,6 @@ end;
 
 function varargout=Local_read(fname,varargin),
 
-   warning([mfilename,' in progress: currently reads only 1st block !!!'])
 
    D.filename       = fname;
    D.read.iostat    = -1;
@@ -121,8 +117,9 @@ function varargout=Local_read(fname,varargin),
    %% Keywords
    %-------------------
    
-   OPT.timestep         = 0;
+   OPT.timestep         = 1;
    OPT.latlon           = 0;
+   OPT.timeperiod	    = []; 
    OPT.numeric_keywords = {'NODATA_value',...
                                  'n_cols',...
                                  'n_rows',...
@@ -158,19 +155,25 @@ function varargout=Local_read(fname,varargin),
    
       %% Read
       %--------------------------
-         
-         fid           = fopen(fname,'r');
+	  
+	     fid           = fopen(fname,'r');
          [keyword,value,rec] = fgetl_key_val(fid,'#');
 
          %% Read header
          %------------------------------
 
-         while ~strcmpi(keyword,'TIME')
+         while ~feof(fid) & ~strcmpi(keyword,'TIME')
             
             D.data.keywords.(keyword)   = value;
             [keyword,value,rec] = fgetl_key_val(fid,'#');
+			
+			if feof(fid)
+				display('No data in file'); 
+				break; 
+			end
          
          end
+
          
          %% Process header
          %------------------------------
@@ -265,74 +268,91 @@ function varargout=Local_read(fname,varargin),
             error(['Unknown meteo filetype: ''',D.data.keywords.filetype,''''])
 
          end
-         end
-         
-         %% Read data
-         %  * JUST THE FIRST ONE FOR NOW
-         %  + all 
-         %  + one specified time/inded
-         %  + scroll file to find number of times first?
-         %  + or simply read next field ?
-         %  ----------------------------
-         %  better method is to rewind one line and than make a subfunction that reads one block incl. time
-         %------------------------------
-            
+         end         	
+		
+		
          if ~strcmpi(keyword,'time') & ~isempty(OPT.timestep)
             disp('No data in file')
          else
-         
-            timestep = 1;
-         
-            while 1
-         
-               if isempty(OPT.timestep) | timestep > 1
-                  [keyword,value,rec] = fgetl_key_val(fid,'#');
-                  if isempty(keyword)
-                     break
-                  end
-               end
-               
-               % Load block
+         	
+			display('Reading file. Please wait.'); 
+			
+			%initiate
+			timestep=1; cOut=1; 
+		    D.data.time=[]; 
+			D.data.datenum=[]; 
+			D.data.cen.(D.data.keywords.quantity1)=[]; 
+            while ~feof(fid)
+			
+			if isempty(OPT.timeperiod) & timestep>max(OPT.timestep)
+				break; 
+		    end
+			if ~isempty(OPT.timeperiod) & udunits2datenum(value)>max(OPT.timeperiod)
+				break; 
+		    end
+			
+			if length(OPT.timeperiod)~=2
+				doRead=sum(timestep==OPT.timestep)>0 | isinf(OPT.timestep) ; 
+			else
+				doRead=udunits2datenum(value)>=OPT.timeperiod(1) & udunits2datenum(value)<=OPT.timeperiod(2);
+			end
+			
+			if doRead
+				display(sprintf('Reading field for time %s.',datestr(udunits2datenum(value),'dd-mm-yyyy HH:MM') )); 
+				
+				% Load block
                rawblock = fscanf(fid,'%f',[D.data.keywords.n_cols D.data.keywords.n_rows]);
-
-               % The upper left numer of the ASCII file belongs to index
+			   
+			   % The upper left numer of the ASCII file belongs to index
                % (1,1), so swap in y-direction
                rawblock = fliplr(rawblock);
-
-               % NaNs
+			   
+			    % NaNs
                rawblock(rawblock==D.data.keywords.NODATA_value) = NaN;
-               
-               if isinf(OPT.timestep)
-                  D.data.time{timestep}                                = [value,' ',rec]; % note that spaces in between are lost, so put one bakc for proper workings of strtok
-                %[D.data.datenum(timestep) ,...
-                % D.data.timezone{timestep}]                           = cfstring2datenum(D.data.time{timestep});
-                  D.data.datenum(timestep)                             = udunits2datenum(D.data.time{timestep});
-                  D.data.cen.(D.data.keywords.quantity1)(:,:,timestep) = rawblock;
-               elseif OPT.timestep==0 | OPT.timestep==timestep
-                  D.data.time                                          = [value,' ',rec];
-                %[D.data.datenum ,...
-                % D.data.timezone]                                     = cfstring2datenum(D.data.time);
-                  D.data.datenum(timestep)                             = udunits2datenum(D.data.time);
-                  D.data.cen.(D.data.keywords.quantity1)(:,:)          = rawblock;
-                  break
-               end
-               timestep = timestep + 1;
+			   
+			   D.data.time{cOut}=[value,' ',rec]; 
+			   D.data.datenum(cOut)=udunits2datenum(value);
+			   D.data.cen.(D.data.keywords.quantity1)(:,:,cOut) = rawblock;
+			   
+			   %search for next block
+			   cOut=cOut+1; 
+			   keyword=[]; 
+			   while ~feof(fid) & ~strcmpi(keyword,'time')
+					[keyword,value,rec] = fgetl_key_val(fid,'#');
+			   end
+			   timestep=timestep+1; 
+			   
+			   
+			else
+			
+				% Load block
+               rawblock = fscanf(fid,'*%f',[D.data.keywords.n_cols D.data.keywords.n_rows]);
+			 
+			    keyword=[]; 
+			    while ~feof(fid) & ~strcmpi(keyword,'time')
+					[keyword,value,rec] = fgetl_key_val(fid,'#');
+			   end
+			   timestep=timestep+1; 
+			
+			end
+			
             end
             
-            D.data.datenum = D.data.datenum(timestep);
-            D.data.time    = char(D.data.time(timestep));
-            D.data.datestr = datestr(D.data.datenum,0);
 
          end
          
          %% Finished succesfully
          %----------------------------------------
    
+	    if length(D.data.time)==1
+			D.data.time=D.data.time{1}; 
+		end
          fclose(fid);
 
          D.read.with     = '$Id$'; % SVN keyword, will insert name of this function
          D.read.at       = datestr(now);
          D.read.iostat   = 1;
+	
          
       %catch
       %
@@ -344,10 +364,11 @@ function varargout=Local_read(fname,varargin),
    
    end %elseif length(tmp)>0
    
+   
 if nargout==1
    varargout = {D};   
 else
-   varargout = {D,D.read.iostat};   
+   varargout = {D,D(:).read.iostat};   
 end
 
 end % function varargout=Local_read(fname,varargin),
@@ -411,18 +432,54 @@ function iostat=Local_write(fname,DAT,varargin),
    
    if writefile
 
-     %% Open
-     %--------------------------
-
-      %try
-         
-            delft3d_io_meteo_curv_write()
-
-      %end % fid
+     local_meteo_curv_write(fname,DAT); 
       
    end % writefile
    
 end % function iostat=Local_write(fname,DAT,varargin),
+
+function local_meteo_curv_write(fname,DAT)
+
+%open stream
+fid=fopen(fname,'w+'); 
+
+[dummy fname_grid fext_grid]=fileparts(DAT.keywords.grid_file); 
+fname_grid=[fname_grid,fext_grid]; 
+
+%write header
+fprintf(fid,'%s\n','### START OF HEADER'); 
+fprintf(fid,'FileVersion      = %s\n',DAT.keywords.FileVersion); 
+fprintf(fid,'filetype         = %s\n',DAT.keywords.filetype); 
+fprintf(fid,'NODATA_value     = %.6f\n',DAT.keywords.NODATA_value); 
+fprintf(fid,'grid_file        = %s\n',fname_grid); 
+fprintf(fid,'first_data_value = %s\n',DAT.keywords.first_data_value); 
+fprintf(fid,'data_row         = %s\n',DAT.keywords.data_row); 
+fprintf(fid,'n_quantity       = %d\n',DAT.keywords.n_quantity); 
+fprintf(fid,'quantity1        = %d\n',DAT.keywords.n_quantity); 
+fprintf(fid,'unit1            = %s\n',DAT.keywords.unit1); 
+fprintf(fid,'%s\n','### END OF HEADER'); 
+
+%write different time steps
+for k=1:length(DAT.datenum)
+    display( sprintf('Writing field for time %s.',datestr(DAT.datenum(k),'dd-mm-yyyy HH:MM')) ); 
+	fprintf(fid,'TIME = %.6f %s\n',(DAT.datenum(k)-datenum('1970-01-01'))*24,'hours since 1970-01-01 00:00:00 +00:00'); 
+	rawblock=squeeze(DAT.cen.(DAT.keywords.quantity1)(:,:,k)); 
+	rawblock=fliplr(rawblock);
+	rawblock(isnan(rawblock))=DAT.keywords.NODATA_value; 
+	for l=1:size(rawblock,1)
+       fprintf(fid,'%f ',rawblock(:,l));
+	   fprintf(fid,'\n'); 
+	end
+	if k~=length(DAT.datenum); 
+		fprintf(fid,'\n'); 
+	end
+end %end for k
+
+
+%close stream
+fclose(fid); 
+
+end %end local_meteo_curv_write
 
 end % function varargout=delft3d_io_meteo_curv(cmd,varargin),
    
