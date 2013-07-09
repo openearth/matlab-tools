@@ -56,7 +56,7 @@ fid      = 1;
 %  file             File name of input netCDF file
 
 OPT.h      = true; % -h
-OPT.hwidth = 2;  % max no values per line
+OPT.hwidth = Inf;  % max no values per line
 
 switch(nargin)
     case 0
@@ -316,26 +316,32 @@ if not_found && ~isempty(restricted_variable)
     return
 end
 pfvd = nc_getpref('PRESERVE_FVD');
+fprintf(fid,'data:\n');
 for j = 1:numel(Dataset)
     if ~isempty(restricted_variable)
         if ~strcmp(restricted_variable,Dataset(j).Name)
             continue
         end
     end
-    fprintf(fid,'%s=\n', Dataset(j).Name);
-    array = nc_varget(file_name,Dataset(j).Name);
-    n  = length(array(:));
-    sz = size(array);
-    dn = min(sz(end),OPT.hwidth);
-    for i=1:dn:n-1
-       fprintf(fid,' %g,', array(i:i+dn-1));
-       fprintf(fid,'\n');
-    end
-    if length(array(:))>1
-    fprintf(fid,' %g,',  array(i:i+dn-2));
-    end
-    fprintf(fid,' %g ;', array(end));
     fprintf(fid,'\n');
+    array = nc_vargetr(file_name,Dataset(j).Name);
+    sz = size(array);
+    
+    if prod(sz)==1
+        fprintf(fid,'%s = %g;\n', Dataset(j).Name,array);
+    else
+        fprintf(fid,'%s =\n', Dataset(j).Name);
+        array = permute(array,length(sz):-1:1);
+        n  = length(array(:));
+        dn = min(sz(end),OPT.hwidth);
+        for i=[1:dn:n-dn-1] % skip last as is needs special eol treatment
+           fprintf(fid,' %g,', array(i:i+dn-1));
+           fprintf(fid,'\n');
+        end
+        fprintf(fid,' %g,',  array(end-dn+1:end-1));
+        fprintf(fid,' %g ;', array(end));
+        fprintf(fid,'\n');
+    end
     
 % TO DO replace fillvalue with  "_"
 % TO DO replace nan with "1.#QNAN"
