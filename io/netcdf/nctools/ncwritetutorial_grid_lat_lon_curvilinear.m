@@ -49,7 +49,7 @@
 %                        (degrees_east) 
 %
 %
-%See also: ncwritetutorial_grid_lat_lon_orthogonal
+%See also: ncwritetutorial_grid_lat_lon_orthogonal, python module "openearthtools.io.netcdf.netCDF4_tutorial_grid_lat_lon_curvilinear"
 
 % This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a> under the <a href="http://www.gnu.org/licenses/gpl.html">GPL</a> license.
 %  $Id$
@@ -163,7 +163,7 @@
    attr(end+1)  = struct('Name', 'grid_mapping' , 'Value', 'wgs84');
    attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(D.lon(:)) max(D.lon(:))]);
    if OPT.bounds
-   attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'lon_bnds'); % cell boundaries for drawing 'pixels.
+   attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'lon_bnds'); % ADAGUC hard-coded name for cell boundaries for drawing 'pixels.
    end
    nc.Variables(ifld) = struct('Name'       , 'lon', ... % name in ADAGUC code
                                'Datatype'   , 'double', ...
@@ -182,7 +182,7 @@
    attr(end+1)  = struct('Name', 'grid_mapping' , 'Value', 'wgs84');
    attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(D.lat(:)) max(D.lat(:))]);
    if OPT.bounds
-   attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'lat_bnds');% cell boundaries for drawing 'pixels.
+   attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'lat_bnds'); % ADAGUC hard-coded name for cell boundaries for drawing 'pixels.
    end
    nc.Variables(ifld) = struct('Name'       , 'lat', ... % name in ADAGUC code
                                'Datatype'   , 'double', ...
