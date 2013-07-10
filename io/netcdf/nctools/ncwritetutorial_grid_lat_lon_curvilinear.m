@@ -160,7 +160,7 @@
    attr(end+1)  = struct('Name', 'units'        , 'Value', 'degrees_east');
    attr(end+1)  = struct('Name', 'axis'         , 'Value', 'X');
    attr(end+1)  = struct('Name', '_FillValue'   , 'Value', nan);
-   attr(end+1)  = struct('Name', 'grid_mapping' , 'Value', 'wgs84');
+   attr(end+1)  = struct('Name', 'grid_mapping' , 'Value', 'projection');
    attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(D.lon(:)) max(D.lon(:))]);
    if OPT.bounds
    attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'lon_bnds'); % ADAGUC hard-coded name for cell boundaries for drawing 'pixels.
@@ -179,7 +179,7 @@
    attr(end+1)  = struct('Name', 'units'        , 'Value', 'degrees_north');
    attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Y');
    attr(end+1)  = struct('Name', '_FillValue'   , 'Value', nan);
-   attr(end+1)  = struct('Name', 'grid_mapping' , 'Value', 'wgs84');
+   attr(end+1)  = struct('Name', 'grid_mapping' , 'Value', 'projection');
    attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(D.lat(:)) max(D.lat(:))]);
    if OPT.bounds
    attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'lat_bnds'); % ADAGUC hard-coded name for cell boundaries for drawing 'pixels.
@@ -207,7 +207,7 @@
    attr(end+1) = struct('Name', 'proj4_params'   ,'Value', '+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs');
    attr(end+1) = struct('Name', 'projection_name','Value', 'Latitude Longitude');
    attr(end+1) = struct('Name', 'EPSG_code'      ,'Value', ['EPSG:',num2str(M.wgs84.code)]);
-   nc.Variables(ifld) = struct('Name'       , 'wgs84', ...
+   nc.Variables(ifld) = struct('Name'       , 'projection',... % ADAGUC NAME
                                'Datatype'   , 'int32', ...
                                'Dimensions' , {[]}, ...
                                'Attributes' , attr,...
@@ -248,9 +248,10 @@
    attr(    1)  = struct('Name', 'standard_name' , 'Value', M.standard_name);
    attr(end+1)  = struct('Name', 'long_name'     , 'Value', M.long_name);
    attr(end+1)  = struct('Name', 'units'         , 'Value', M.units);
+   attr(end+1)  = struct('Name', 'positive'      , 'Value', 'up');
    attr(end+1)  = struct('Name', '_FillValue'    , 'Value', nan);
    attr(end+1)  = struct('Name', 'actual_range'  , 'Value', [min(D.val(:)) max(D.val(:))]);
-   attr(end+1)  = struct('Name', 'grid_mapping'  , 'Value', 'wgs84');
+   attr(end+1)  = struct('Name', 'grid_mapping'  , 'Value', 'projection');
    attr(end+1)  = struct('Name', 'coordinates'   , 'Value', 'lat lon');
    % coordinates is ESSENTIAL CF attribute to connect 2D (lat,lon) matrices to data   
    nc.Variables(ifld) = struct('Name'       , M.varname, ...
@@ -276,17 +277,17 @@
    ncwrite   (ncfile,'lon_bnds' , permute(nc_cf_cor2bounds(D.cor.lon'),[3 2 1])); % CF polygon orientation requires transpose
    ncwrite   (ncfile,'lat_bnds' , permute(nc_cf_cor2bounds(D.cor.lat'),[3 2 1])); % CF polygon orientation requires transpose
    end
-   ncwrite   (ncfile,'wgs84'    , M.wgs84.code);
+   ncwrite   (ncfile,'projection', M.wgs84.code);
       
 %% 6 test and check
 
-   nc_dump(ncfile);
+   nc_dump(ncfile,[],[],'h',false);
    fid = fopen(strrep(ncfile,'.nc','.cdl'),'w');
    fprintf(fid,'%s\n', '// The netCDF-CF conventions for grids are defined here:');
    fprintf(fid,'%s\n', '// http://cf-pcmdi.llnl.gov/documents/cf-conventions/');
    fprintf(fid,'%s\n', '// This grid file can be loaded into matlab with QuickPlot (d3d_qp.m) and ADAGUC.knmi.nl.');
    fprintf(fid,'%s\n',['// To create this netCDF file with Matlab please see ',mfilename]);
-   nc_dump(ncfile,fid);
+   nc_dump(ncfile,[],fid,'h',false);
    fclose(fid);
    
 %% 7 Load the data: using the variable names from nc_dump
@@ -305,4 +306,4 @@
    pcolorcorcen(Da.lon ,Da.lat ,Da.dep,[.5 .5 .5])
    axislat;tickmap('ll')
    
-   print2screensize(mfilename);close
+   print2screensizeoverwrite(mfilename);close

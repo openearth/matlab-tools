@@ -164,7 +164,7 @@
    nc(ifld).Attribute(end+1) = struct('Name', 'long_name'    , 'Value', 'Longitude');
    nc(ifld).Attribute(end+1) = struct('Name', 'units'        , 'Value', 'degrees_east');
    nc(ifld).Attribute(end+1) = struct('Name', 'axis'         , 'Value', 'X');
-   nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping' , 'Value', 'wgs84');
+   nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping' , 'Value', 'projection');
    nc(ifld).Attribute(end+1) = struct('Name', 'actual_range' , 'Value', [min(D.lon(:)) max(D.lon(:))]); % TO DO add half grid cell offset
    nc(ifld).Attribute(end+1) = struct('Name', 'bounds'       , 'Value', 'lon_bnds');% cell boundaries for drawing 'pixels.
 
@@ -178,7 +178,7 @@
    nc(ifld).Attribute(end+1) = struct('Name', 'long_name'    , 'Value', 'Latitude');
    nc(ifld).Attribute(end+1) = struct('Name', 'units'        , 'Value', 'degrees_north');
    nc(ifld).Attribute(end+1) = struct('Name', 'axis'         , 'Value', 'Y');
-   nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping' , 'Value', 'wgs84');
+   nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping' , 'Value', 'projection');
    nc(ifld).Attribute(end+1) = struct('Name', 'actual_range' , 'Value', [min(D.lat(:)) max(D.lat(:))]); % TO DO add half grid cell offset
    nc(ifld).Attribute(end+1) = struct('Name', 'bounds'       , 'Value', 'lat_bnds');% cell boundaries for drawing 'pixels.
 
@@ -195,7 +195,7 @@
    nc(ifld).Attribute(end+1) = struct('Name', 'proj4_params'   ,'Value', M.epsg.proj4_params);% http://adaguc.knmi.nl/
    
    ifld = ifld + 1;
-   nc(ifld).Name         = 'wgs84'; % preferred
+   nc(ifld).Name         = 'projection'; % ADAGUC NAME
    nc(ifld).Nctype       = nc_int;
    nc(ifld).Dimension    = {};
    nc(ifld).Attribute    = nc_cf_grid_mapping(M.wgs84.code);
@@ -256,7 +256,7 @@
    nc(ifld).Attribute(end+1) = struct('Name', 'long_name'      ,'Value', M.long_name    );
    nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', M.units        );
    nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(D.val(:)) max(D.val(:))]);
-   nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'epsg'); % 'epsg wgs84'
+   nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'projection epsg'); % 'epsg wgs84'
    nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'lat lon');
    % coordinates is ESSENTIAL CF attribute to connect 2D (lat,lon) matrices to data
    nc(ifld).Attribute(end+1) = struct('Name', '_FillValue'     ,'Value', realmax('single')); % SNCTOOLS replaces NaN with _FillValue under the hood
@@ -269,21 +269,20 @@
       
 %% 5.b Fill all variables
 
-   nc_varput(ncfile, 'x'        , D.x         );
-   nc_varput(ncfile, 'y'        , D.y         );
-   nc_varput(ncfile, 'lon'      , D.lon'      );
-   nc_varput(ncfile, 'lat'      , D.lat'      );
-   nc_varput(ncfile, 'wgs84'    , M.wgs84.code);
-   nc_varput(ncfile, 'time'     , D.time - OPT.refdatenum);
-   nc_varput(ncfile, M.varname  , permute(D.val,[3 2 1])); % mind Matlab reverses dimensions compared to regular tools
+   nc_varput(ncfile, 'x'         , D.x         );
+   nc_varput(ncfile, 'y'         , D.y         );
+   nc_varput(ncfile, 'lon'       , D.lon'      );
+   nc_varput(ncfile, 'lat'       , D.lat'      );
+   nc_varput(ncfile, 'projection', M.wgs84.code);
+   nc_varput(ncfile, 'time'      , D.time - OPT.refdatenum);
+   nc_varput(ncfile, M.varname   , permute(D.val,[3 2 1])); % mind Matlab reverses dimensions compared to regular tools
    if OPT.bounds
-   nc_varput(ncfile, 'x_bnds'   , nc_cf_cor2bounds(D.cor.x  )');
-   nc_varput(ncfile, 'y_bnds'   , nc_cf_cor2bounds(D.cor.y  )');
-   nc_varput(ncfile, 'lon_bnds' , permute(nc_cf_cor2bounds(D.cor.lon'),[1 2 3]));
-   nc_varput(ncfile, 'lat_bnds' , permute(nc_cf_cor2bounds(D.cor.lat'),[1 2 3]));
+   nc_varput(ncfile, 'x_bnds'    , nc_cf_cor2bounds(D.cor.x  )');
+   nc_varput(ncfile, 'y_bnds'    , nc_cf_cor2bounds(D.cor.y  )');
+   nc_varput(ncfile, 'lon_bnds'  , permute(nc_cf_cor2bounds(D.cor.lon'),[1 2 3]));
+   nc_varput(ncfile, 'lat_bnds'  , permute(nc_cf_cor2bounds(D.cor.lat'),[1 2 3]));
    end
-   nc_varput(ncfile,'wgs84'     , M.wgs84.code);
-   nc_varput(ncfile,'epsg'      , M.epsg.code);   
+   nc_varput(ncfile,'epsg'       , M.epsg.code);   
       
 %% 6 test and check
    
@@ -293,7 +292,7 @@
    fprintf(fid,'%s\n', '// http://cf-pcmdi.llnl.gov/documents/cf-conventions/');
    fprintf(fid,'%s\n', '// This grid file can be loaded into matlab with QuickPlot (d3d_qp.m) and ADAGUC.knmi.nl.');
    fprintf(fid,'%s\n',['// To create this netCDF file with Matlab please see ',mfilename]);
-   nc_dump(ncfile,fid);
+   nc_dump(ncfile,[],fid,'h',false);
    fclose(fid);
    
 %% 7 Load the data: using the variable names from nc_dump
@@ -312,4 +311,4 @@
    pcolorcorcen(Da.lon ,Da.lat ,Da.dep,[.5 .5 .5])
    axislat;tickmap('ll')
    
-   print2screensize(mfilename);close
+   print2screensizeoverwrite(mfilename);close
