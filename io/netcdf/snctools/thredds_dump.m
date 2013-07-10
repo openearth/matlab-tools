@@ -4,7 +4,7 @@ function info = thredds_dump(url)
 %   catalog URL.  The URL must be for the catalog XML file.
 %
 % Example:
-%   url = 'http://tashtego.marine.rutgers.edu:8080/thredds/roms/latte/catalog.xml';
+%   url = 'http://thredds.ucar.edu/thredds/catalog/subsetService/testdata/catalog.xml';
 %   thredds_dump(url);
 
 info = thredds_info(url);
@@ -39,7 +39,15 @@ function dump_dataset(info,level)
 
 
 fprintf('%sDataset:  %s\n', local_indent(level), info.name);
-fprintf('%sService:  %s\n', local_indent(level+1), info.service.opendap);
+
+services = fieldnames(info.service);
+n = numel(services);
+
+fprintf('%sService:  \n', local_indent(level+1));
+for j = 1:n
+    fprintf('%s%s:  %s\n', local_indent(level+2), services{j}, ...
+        info.service.(services{j}));
+end
 
 if ~isempty(info.time_coverage.start)
     fprintf('%sTime Coverage:  %s -- %s\n', local_indent(level+1), ...

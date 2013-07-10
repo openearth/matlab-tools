@@ -4,7 +4,7 @@ function info = thredds_info(url)
 %   catalog URL.  The URL must be for the catalog XML file.
 %
 % Example:
-%   url = 'http://tashtego.marine.rutgers.edu:8080/thredds/roms/latte/catalog.xml';
+%   url = 'http://thredds.ucar.edu/thredds/catalog/subsetService/testdata/catalog.xml';
 %   info = thredds_info(url);
 
 
@@ -21,7 +21,7 @@ function info = catalog_info(catalog)
 
 z = catalog.getDatasets();
 num_elements = z.size();
-if num_elements == 0
+if isa(catalog, 'thredds.catalog.InvDatasetImpl')
     
     info = get_dataset_info(catalog);
     
@@ -46,10 +46,11 @@ end
 
 info = struct('name',[],'service',[],'time_coverage',[]);
 
-opendap_url = construct_opendap_url(dataset);
+% opendap_url = construct_opendap_url(dataset);
 
 info.name = char(dataset.getFullName());
-info.service.opendap = opendap_url;
+% info.service.opendap = opendap_url;
+info.service = get_service_urls(dataset);
 
 time_coverage = dataset.getTimeCoverage();
 if isempty(time_coverage)
@@ -69,7 +70,25 @@ else
     end
 end
     
-    
+ 
+%--------------------------------------------------------------------------
+function info = get_service_urls(dataset)
+access = dataset.getAccess();
+n = access.size();
+
+key = cell(n,1);
+value = cell(n,1);
+
+for j = 0:n-1
+    atype = access.get(j);
+    service = atype.getService();
+    key{j+1} = char(service.getServiceType());
+    url = atype.getStandardUri();
+    value{j+1} = char(url.toString());
+end
+
+info = cell2struct(value,key, 1);
+
 %--------------------------------------------------------------------------
 function url = construct_opendap_url(dataset)
 access = dataset.getAccess();

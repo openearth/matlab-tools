@@ -661,15 +661,16 @@ end
 
 % use data of today as the server has a clean up policy
 today = datestr(floor(now),'yyyymmdd');
-url = ['http://motherlode.ucar.edu:8080/thredds/dodsC/satellite/CTP/SUPER-NATIONAL_1km/current/SUPER-NATIONAL_1km_CTP_',today,'_0000.gini'];
+url = ['http://thredds.ucar.edu/thredds/dodsC/satellite/CTP/SUPER-NATIONAL_1km/current/SUPER-NATIONAL_1km_CTP_',today,'_0000.gini'];
 fprintf('\n\t\t\tTesting remote DODS access %s...  ', url );
 
 info = nc_info(url);
 
-% R14 differs in the way it returns attributes.  Just get rid of the
-% attributes in this case.
+% R14 (2.2.0) differs in the way it returns attributes.  Just get rid of 
+% the attributes in this case.
+% R2013a differs as well (4.3).
 switch(v)
-    case '14'
+    case {'14', '2013a'}
         fprintf('\n\t\t\t\tNo attribute testing on R14.\n');
         for j = 1:numel(info.Dataset)
             info.Dataset(j).Attribute = [];

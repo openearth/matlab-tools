@@ -65,7 +65,7 @@ for j = 1:numel(new_data)
         elseif (numel(v.Size) == 2) 
             % netCDF variable is 2D
             field_length(j) = size(new_data(j).Data,1);
-        elseif (numel(v.Size) > 2) && (numel(v.Size) == (ndims(new_data(j).Data) + 1))
+        elseif (numel(v.Size) > 2) && (numel(v.Size) == (ndims(new_data(j).Data) + 1)) && v.Size(end) ~= 1
             % netCDF variable is more than 2D, but we're given just one record.
             field_length(j) = 1;
         else

@@ -160,7 +160,7 @@ preserve_fvd = nc_getpref('PRESERVE_FVD');
 
 rec_idx = strcmp(record_variable,{input_buffer.Name});
 
-if numel(input_buffer(rec_idx)) == 1 
+if numel(input_buffer(rec_idx).Data) == 1 
     for j = 1:numel(input_buffer)
 
         % Skip the record variable, it's irrelevant at this stage.
@@ -179,6 +179,7 @@ if numel(input_buffer(rec_idx)) == 1
             if preserve_fvd
                 rsz = [infile_vsize(1:end-1) numel(input_buffer(rec_idx))]; 
             else
+                %rsz = [numel(input_buffer(rec_idx)) infile_vsize(2:end) ];
                 rsz = [numel(input_buffer(rec_idx)) infile_vsize(2:end) ]; 
             end
             input_buffer(j).Data = reshape( input_buffer(j).Data, rsz );

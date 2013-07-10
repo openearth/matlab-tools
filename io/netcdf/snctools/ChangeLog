@@ -1,3 +1,11 @@
+* April 18 2013 John Evans <john.g.evans.ne@gmail.com> -r4038
+- Updated motherlode thredds URL used in testing.
+- Fixed THREDDS_INFO, relaxed it for service interrogation.
+- Updated THREDDS_DUMP example.
+
+* April 4 2013 John Evans <john.g.evans.ne@gmail.com> -r4034
+- Fixed issue with NC_ADDNEWRECS with trailing singleton dimension.
+
 * January 15 2013 John Evans <john.g.evans.ne@gmail.com> -r4033
 - Fixed a bad warning on NC_GETVARINFO when java IDs being used.
 - Fixed indexing issue for string data retrieved by java backend

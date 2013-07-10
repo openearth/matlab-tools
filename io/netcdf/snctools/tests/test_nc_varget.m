@@ -1069,7 +1069,7 @@ return
 function test_readOpendapVariable ()
     % use data of today as the server has a clean up policy
     today = datestr(floor(now),'yyyymmdd');
-    url = ['http://motherlode.ucar.edu:8080/thredds/dodsC/satellite/CTP/SUPER-NATIONAL_1km/current/SUPER-NATIONAL_1km_CTP_',today,'_0000.gini'];
+    url = ['http://thredds.ucar.edu/thredds/dodsC/satellite/CTP/SUPER-NATIONAL_1km/current/SUPER-NATIONAL_1km_CTP_',today,'_0000.gini'];
     
     % I have no control over what this value is, so we'll just assume it
     % is correct.
