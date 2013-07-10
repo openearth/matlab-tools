@@ -52,9 +52,8 @@ function odvdisp(D)
    
    for ivar=1:length(D.local_name)
    
-   disp([num2str(ivar,'%0.2d'),...
-           ' standard_name:    ',' ',D.local_name{ivar}])
-   disp(['   standard_name:    ',' ',D.standard_name{ivar}])
+   disp([num2str(ivar,'%0.2d'),' ',D.local_name{ivar}])
+  %disp(['   standard_name:    ',' ',D.standard_name{ivar}])
    disp(['   sdn_standard_name:',' ',D.sdn_standard_name{ivar}])
    disp(['   sdn_units:        ',' ',D.sdn_units{ivar}])
    disp(['   sdn_long_name:    ',' ',D.sdn_long_name{ivar}])
