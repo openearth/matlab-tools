@@ -77,16 +77,18 @@ function varargout=delft3d_io_dry(cmd,varargin),
 % $HeadURL$
 
 if nargin ==1
-   error(['AT least 2 input arguments required: d3d_io_...(''read''/''write'',filename)'])
+   error(['At least 2 input arguments required: d3d_io_...(''read''/''write'',filename)'])
 end
 
 switch lower(cmd),
 case 'read',
-  [D,iostat] = Local_read(varargin{:});
+  [G,D,iostat] = Local_read(varargin{:});
   if nargout ==1
      varargout = {D};
-  elseif nargout >1
-     error('too much output parameters: 0 or 1')
+  elseif nargout ==2
+     varargout = {G,D};
+  elseif nargout >2
+     error('too much output parameters: 0 or 1 or 2')
   end
   if iostat<0,
      error(['Error opening file: ',varargin{1}])
@@ -106,6 +108,8 @@ end;
 % ------------------------------------
 
 function varargout = Local_read(varargin),
+
+fname = varargin{1};
              
     if exist(fname,'file') & ~exist(fname,'dir')
         
@@ -260,7 +264,5 @@ function iostat=Local_write(fname,varargin),
    fclose(fid);
    iostat=1;
 
-% ------------------------------------
-% ------------------------------------
 % ------------------------------------
 

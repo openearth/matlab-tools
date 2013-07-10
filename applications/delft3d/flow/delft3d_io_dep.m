@@ -139,39 +139,40 @@ if strcmpi(cmd,'read')
     
     OPT = setproperty(OPT,varargin{4:end});
     
+    OPT.location     = pad(OPT.location,' ',3);
     G.location       = OPT.location;
     G.dpsopt         = OPT.dpsopt  ;
     
     %% Apply check and fills for inout matrix locations
     
-    if strcmpi(OPT.location,'cor')
+    if strcmpi(OPT.location(1:3),'cor')
         if isempty(OPT.dpsopt)
             warning('keyword dpsopt required to determine depth at centers from corners: made cen.dep = []')
         end
-    elseif strcmpi(G.location,'cen')
+    elseif strcmpi(G.location(1:3),'cen')
         if isempty(G.dpsopt)
             G.dpsopt = 'dp';
         end
-    elseif isempty(G.location)
+    elseif isempty(strtrim(G.location))
        if isempty(G.dpsopt)
           error('either location or dpsopt should be suplied')
        end
     end
     
     if strcmpi(G.dpsopt,'dp')
-        if isempty(G.location)
+        if isempty(strtrim(G.location))
             G.location = 'cen';
-        elseif ~strcmpi(G.location,'cen')
+        elseif ~strcmpi(G.location(1:3),'cen')
             error('When dpsopt = dp, location should be cen');
         end
     elseif isempty(G.dpsopt)
-       if isempty(G.location)
+       if isempty(strtrim(G.location))
           error('either location or dpsopt should be suplied')
        end
     else
-        if isempty(G.location)
+        if isempty(strtrim(G.location))
             G.location = 'cor';
-        elseif ~strcmpi(G.location,'cor')
+        elseif ~strcmpi(G.location(1:3),'cor')
              error('When dpsopt <> dp, location should be cor');
         end
     end
@@ -188,10 +189,10 @@ if strcmpi(cmd,'read')
     if ~OPT.dummy
         D3Dmatrix                = wldep ('read',fname,[SIZE(1),SIZE(2)])';
     else
-        if     strcmpi(G.location,'cor')
+        if     strcmpi(G.location(1:3),'cor')
             matrix                   = wldep ('read',fname,[SIZE(1)-1,SIZE(2)-1])';
             D3Dmatrix                = addrowcol(matrix,[1   ],[1   ],OPT.missingvalue);
-        elseif strcmpi(G.location,'cen')
+        elseif strcmpi(G.location(1:3),'cen')
             matrix                   = wldep ('read',fname,[SIZE(1)-2,SIZE(2)-2])';
             D3Dmatrix                = addrowcol(matrix,[-1 1],[-1 1],OPT.missingvalue);
         end
@@ -212,7 +213,7 @@ if strcmpi(cmd,'read')
     %  we don't know where these data points are corners or centers.
     %  so it has to be specified
     
-    if strcmpi(G.location,'cor')
+    if strcmpi(G.location(1:3),'cor')
         G.cor.dep = D3Dmatrix(1:end-1,1:end-1);
         if  strcmpi(G.dpsopt,'min')
             G.cen.dep = min(min(G.cor.dep(1:end-1,1:end-1),...
@@ -228,7 +229,7 @@ if strcmpi(cmd,'read')
                                 G.cor.dep(2:end  ,2:end  )));
           warning('flow kernel does not write max to center depths, but mean.')
         end
-    elseif strcmpi(G.location,'cen')
+    elseif strcmpi(G.location(1:3),'cen')
         if  strcmpi(G.dpsopt,'dp') | isempty(G.dpsopt)
             G.cen.dep = D3Dmatrix(2:end-1,2:end-1);
             G.cor.dep = center2corner(G.cen.dep,'nearest');
@@ -241,8 +242,6 @@ if strcmpi(cmd,'read')
     end
     
 else strcmpi(cmd,'write');
-    
-    warning('Under construction.')
     
     %% Keywords
     
@@ -264,7 +263,7 @@ else strcmpi(cmd,'write');
         error('keyword ''location'' missing')
     end
     
-    if strcmp(OPT.location,'cen')
+    if strcmp(OPT.location(1:3),'cen')
         
         if isstruct(varargin{3})
             G         = varargin{3};
@@ -277,7 +276,7 @@ else strcmpi(cmd,'write');
         position           = 'center';
         positiondummyvalue = 'first and last';
         
-    elseif strcmp(OPT.location,'cor')
+    elseif strcmp(OPT.location(1:3),'cor')
         
         if isstruct(varargin{3})
             G         = varargin{3};

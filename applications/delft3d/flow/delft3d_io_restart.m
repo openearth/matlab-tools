@@ -103,7 +103,7 @@ function varargout=DELFT3D_IO_RESTART(cmd,varargin),
 % $HeadURL$
 
 if nargin<3
-   error('Syntax: delft3d_io_restart(''read/write'' ,filename,...')
+   error('Syntax: delft3d_io_restart(''read/write'' ,filename ,mdffile,...')
 end
 
 %% Switch read/write

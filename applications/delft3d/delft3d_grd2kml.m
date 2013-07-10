@@ -26,7 +26,7 @@ function OPT = delft3d_grd2kml(grdfile,varargin)
 %
 % Example 2:
 %   delft3d_grd2kml('g04.grd','epsg',28992,'dep','g04.dep','dpsopt','mean',...
-%                    'zScaleFun',@(z) z*100,'cLim',[-50 0])
+%                    'zScaleFun',@(z) (z+10)*100,'cLim',[-50 25])
 %
 %See also: googlePlot, delft3d, delft3d_mdf2kml
 
@@ -100,19 +100,17 @@ function OPT = delft3d_grd2kml(grdfile,varargin)
            close(TMP);
        end
    end
-   
+   stride      = 1;  
    OPT2.fileName = [filename(grdfile),'_3D.kml'];
-   
-   KMLsurf  (G.cor.lat(1:3:end,1:3:end),...
-             G.cor.lon(1:3:end,1:3:end),...
-            -G.cor.dep(1:3:end,1:3:end),OPT2);
+   KMLsurf  (G.cor.lat(1:stride:end,1:stride:end),...
+             G.cor.lon(1:stride:end,1:stride:end),...
+            -G.cor.dep(1:stride:end,1:stride:end),OPT2);
+         
    OPT2.fileName  = [filename(grdfile),'_2D.kml'];
    OPT2.zScaleFun =  @(z)'clampToGround';
-   
-   %KMLpcolor(G.cor.lat,G.cor.lon,-G.cen.dep,OPT2);
+   KMLpcolor(G.cor.lat,G.cor.lon,-G.cen.dep,OPT2);
 
    OPT2.fileName  = [filename(grdfile),'_mesh.kml'];
-
-   %KMLmesh  (G.cor.lat,G.cor.lon,'clampToGround','fileName',OPT2.fileName);
+   KMLmesh  (G.cor.lat,G.cor.lon,'fileName',OPT2.fileName);
 
 %%EOF
