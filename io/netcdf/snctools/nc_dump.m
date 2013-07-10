@@ -240,13 +240,13 @@ else
     num_dims = 0;
 end
 
-fprintf(fid,'\n  dimensions:\n');
+fprintf(fid,'dimensions:\n');
 for j = 1:num_dims
     if info.Dimension(j).Unlimited
-        fprintf(fid,'    %s = UNLIMITED ; (%i currently)\n', ...
+        fprintf(fid,'	%s = UNLIMITED ; (%i currently)\n', ...
                  deblank(info.Dimension(j).Name), info.Dimension(j).Length );
     else
-        fprintf(fid, '    %s = %i ;\n', info.Dimension(j).Name,info.Dimension(j).Length );
+        fprintf(fid, '	%s = %i ;\n', info.Dimension(j).Name,info.Dimension(j).Length );
     end
 end
 fprintf(fid,'\n');
@@ -274,14 +274,14 @@ end
 
 pfvd = nc_getpref('PRESERVE_FVD');
 
-fprintf (fid,'  variables:\n' );
+fprintf (fid,'variables:\n' );
 
 if pfvd == 0;
-   fprintf (fid,'    // Preference ''PRESERVE_FVD'':  false,\n' );
-   fprintf (fid,'    // dimensions consistent with ncBrowse, not with native MATLAB netcdf package.\n' );
+   fprintf (fid,'	// Preference ''PRESERVE_FVD'':  false,\n' );
+   fprintf (fid,'	// dimensions consistent with ncBrowse, not with native MATLAB netcdf package.\n' );
 else
-   fprintf (fid,'    // Preference ''PRESERVE_FVD'':  true,\n' );
-   fprintf (fid,'    // dimensions consistent with native MATLAB netcdf package, not with ncBrowse.\n' );
+   fprintf (fid,'	// Preference ''PRESERVE_FVD'':  true,\n' );
+   fprintf (fid,'	// dimensions consistent with native MATLAB netcdf package, not with ncBrowse.\n' );
 end
 
 
@@ -334,12 +334,12 @@ for j = 1:numel(Dataset)
         array = permute(array,length(sz):-1:1);
         n  = length(array(:));
         dn = min(sz(end),OPT.hwidth);
-        for i=[1:dn:n-dn-1] % skip last as is needs special eol treatment
+        for i=[1:dn:n-dn-1] % always skip last line as is needs special eol treatment
            fprintf(fid,' %g,', array(i:i+dn-1));
            fprintf(fid,'\n');
         end
-        fprintf(fid,' %g,',  array(end-dn+1:end-1));
-        fprintf(fid,' %g ;', array(end));
+        fprintf(fid,' %g,',  array(i+dn:n-1));
+        fprintf(fid,' %g ;', array(n));
         fprintf(fid,'\n');
     end
     
@@ -355,7 +355,7 @@ function dump_single_variable ( var_metadata , fid )
 if isempty(var_metadata.Datatype)
     var_metadata.Datatype = 'ENHANCED MODEL DATATYPE';
 end
-fprintf(fid,'    %s ', var_metadata.Datatype);
+fprintf(fid,'	%s ', var_metadata.Datatype);
 
 fprintf(fid,'%s', var_metadata.Name );
 
@@ -412,7 +412,7 @@ function dump_single_attribute ( attribute, varname , fid )
 
 if isnumeric(varname)
    fid = varname;
-   clear varname
+   varname = ''
 end
 
 switch ( attribute.Datatype )
@@ -481,11 +481,11 @@ switch ( attribute.Datatype )
 end
 
 if ~exist('varname','var')
-    fprintf(fid, '      :%s = %s%s\n', ...
-         attribute.Name, att_val, att_type);
+    fprintf(fid, '		%s:%s = %s%s;\n', ...
+         varname,attribute.Name, att_val, att_type);
 else
-    fprintf(fid, '      :%s = %s%s\n', ...
-         attribute.Name, att_val, att_type);
+    fprintf(fid, '		%s:%s = %s%s;\n', ...
+         varname,attribute.Name, att_val, att_type);
 end
 
 return
@@ -548,14 +548,14 @@ end
 
 if num_atts > 0
     if is_global
-        fprintf (fid, '  //global Attributes:\n' );
+        fprintf (fid, '//global attributes:\n' );
     else 
-        fprintf(fid,'  //group Attributes:\n');
+        fprintf(fid,'//group attributes:\n');
     end
 end
 
 for k = 1:num_atts
-   dump_single_attribute(group.Attribute(k),fid);
+   dump_single_attribute(group.Attribute(k),'',fid);
 end
 
 
