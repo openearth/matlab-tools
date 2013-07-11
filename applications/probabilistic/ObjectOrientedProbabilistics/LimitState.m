@@ -58,10 +58,10 @@ classdef LimitState < handle
         XValues
         UValues
         ZValues
+        ZValueOrigin
         EvaluationIsExact
         EvaluationIsEnabled
         ResponseSurface
-%         StartUpMethods
     end
     
     properties (Dependent)
@@ -145,7 +145,7 @@ classdef LimitState < handle
                 this.UValues    = [this.UValues; uvalues];
                 
                 % calculate & save associated Z value
-                zvalue          = this.EvaluateAtX(input);
+                zvalue          = this.EvaluateAtX(input, uvalues);
                 this.ZValues    = [this.ZValues; zvalue];
                 
                 % flag as exact evaluation (no use of response surface)
@@ -167,9 +167,20 @@ classdef LimitState < handle
             end
         end
         
-        %Evaluate LSF at given point in X (regular) space
-        function zvalue = EvaluateAtX(this, input)
-            zvalue          = feval(this.LimitStateFunction,input{:});
+        %Evaluate LSF at given point in X (regular) space, zvalue is
+        %normalized with the zvalue in the origin
+        function zvalue = EvaluateAtX(this, input, uvalues)
+            zvalue  = feval(this.LimitStateFunction,input{:});
+
+            %Normalize with origin, or save zvalue of origin
+            if ~isempty(this.ZValueOrigin)
+                zvalue  = zvalue/this.ZValueOrigin;
+            elseif isempty(this.ZValueOrigin) && all(uvalues == 0)
+                this.ZValueOrigin   = zvalue;
+                zvalue              = 1;
+            else
+                error('The Z-Value in the origin is not available for normalizing, please calculate it first!')                
+            end
         end
         
         %Approximate LSF at given point using the ResponseSurface
