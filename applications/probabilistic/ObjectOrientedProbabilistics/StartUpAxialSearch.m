@@ -1,12 +1,14 @@
-classdef StartUpMethod < handle
-    %STARTUPMETHOD  is a method to quickly generate an initial response
-    %surface
+classdef StartUpAxialSearch < StartUpMethod
+    %STARTUPAXIALSEARCH  is a specific StartUpMethod that generates
+    %a quick first estimate of the response surface
     %
     %   The StartUpMethod object is a property of the LimitState. When the
-    %   ProbabilisticMethod starts calculating the Pf, first a LineSearch
-    %   is performed along all dimentional axis (both positive and negative
-    %   directions). The points from that LineSearch are used to construct
-    %   an initial ResponseSurface (if possible).
+    %   ProbabilisticMethod starts calculating the Pf, first the
+    %   StartUpMethod is called.
+    %   In this specific method, a line search is performed along all 
+    %   dimentional axis (both positive and negative directions). The 
+    %   points from that LineSearch are used to construct an initial 
+    %   ResponseSurface (if possible).
     %
     %   See also StartUpMethod.StartUpMethod
     
@@ -60,8 +62,8 @@ classdef StartUpMethod < handle
     
     %% Methods
     methods
-        function this = StartUpMethod(lineSearcher)
-            %STARTUPMETHOD  One line description goes here.
+        function this = StartUpAxialSearch(lineSearcher)
+            %STARTUPAXIALSEARCH  One line description goes here.
             %
             %   More detailed description goes here.
             %
@@ -79,13 +81,8 @@ classdef StartUpMethod < handle
             %
             %   See also StartUpMethod
             
-            if nargin == 0
-                this.LineSearcher   = LineSearch;
-            elseif nargin == 1
-                ProbabilisticChecks.CheckInputClass(lineSearcher,'LineSearch');
-                
-                this.LineSearcher       = lineSearcher;
-            end
+            % Call to constructor method in StartUpMethod
+            this    = this@StartUpMethod(lineSearcher);
         end
         
         %% Setters
@@ -94,10 +91,25 @@ classdef StartUpMethod < handle
         
         %% Other Methods
         
-    end
-    
-    %% Abstract methods
-    methods (Abstract)
-        StartUp(this, limitState,randomVariables)
+        function StartUp(this, limitState, randomVariables)
+            this.ConstructUNormalVector(limitState)
+            
+            this.LineSearcher.DisablePoints = true; 
+            for i = 1:size(this.UNormalVector,1)
+                this.LineSearcher.PerformSearch(this.UNormalVector(i,:), limitState, randomVariables)
+            end
+
+            limitState.UpdateResponseSurface
+        end
+        
+        % Construct the unit vector with search directions
+        function ConstructUNormalVector(this, limitState)
+            un  = zeros(2*limitState.NumberRandomVariables, limitState.NumberRandomVariables);
+            for i = 1:size(un,1)
+                % positive and negative unit vector for each variable
+                un(i,ceil(i/2)) = (-1)^i;
+            end
+            this.UNormalVector  = un;
+        end
     end
 end

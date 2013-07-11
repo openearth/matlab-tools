@@ -163,78 +163,53 @@ classdef DirectionalSampling < ProbabilisticMethod
             evaluationApproachesZero = ((abs(this.LimitState.ZValues)/this.LineSearcher.OriginZ) < this.LineSearcher.MaxErrorZ) & this.LimitState.BetaValues > 0;
         end
         
-        %% Main Directional Sampling Loop
+        %% Main Directional Sampling Loop: call this function to run DirectionalSampling (or ADIS)
         function CalculatePf(this)
             
-            this.ConstructUNormalVector
-
-            this.ComputeOrigin
+            this.PrepareCalculation
             
             %Perform line searches through random directions until solution converges
             while ~this.StopCalculation && ~this.Abort
+                % Continue if the solution hasn't converged yet or there
+                % are still directions that need to be reevaluated
                 while (~this.SolutionConverged || ~isempty(this.ReevaluateIndices)) && ~this.Abort
                     if isempty(this.ReevaluateIndices)
+                        % A new direction is chosen
                         this.NrDirectionsEvaluated  = this.NrDirectionsEvaluated + 1;
                         this.IndexQueue             = this.NrDirectionsEvaluated;
                     else
+                        % A direction needs to be reevaluated (not used in 
+                        % DirectionalSampling)
                         this.IndexQueue             = this.ReevaluateIndices(1);
                     end
-%                     this.IndexQueue %temp output
+                    
+                    % Check whether the maximum nr of directions is reached
                     this.CheckMaxNrDirections
                     
+                    % IndexQueue can be used for parallellization purposes
+                    % in the future
                     for iq = 1:length(this.IndexQueue)
                         
-                        if this.LimitState.CheckAvailabilityARS
-                            this.LineSearcher.PerformSearch(this.UNormalVector(this.IndexQueue(iq),:), this.LimitState, this.LimitState.RandomVariables, 'approximate', true);
-                        else
-                            this.LineSearcher.PerformSearch(this.UNormalVector(this.IndexQueue(iq),:), this.LimitState, this.LimitState.RandomVariables);
-                        end
+                        % Perform a line search in the chosen direction 
+                        this.SearchDirection(iq)
                         
-                        this.AssignUNormalIndices(this.LineSearcher.NrEvaluations, this.IndexQueue(iq));
-                        
-                        if this.CheckExactEvaluationLastPoint
-                            this.DisableEvaluations(this.UNormalIndexPerEvaluation == this.IndexQueue(iq));
-                            this.LineSearcher.StartBeta = this.LimitState.BetaValues(end);
-                            this.LineSearcher.StartZ    = this.LimitState.ZValues(end);
-                            this.LineSearcher.PerformSearch(this.UNormalVector(this.IndexQueue(iq),:), this.LimitState, this.LimitState.RandomVariables);
-                            this.AssignUNormalIndices(this.LineSearcher.NrEvaluations, this.IndexQueue(iq));
-%                             this.plot
-                        end
-                        
+                        % Recalculate the probability of failure
                         this.UpdatePf
                         
+                        % Check if the method has converged to final answer
                         this.CheckConvergence;
-                        if this.LineSearcher.SearchConverged && ~this.LineSearcher.ApproximateUsingARS
-                            this.LimitState.UpdateResponseSurface
-                            if this.LastIteration
-                                this.LastIteration      = false;
-                            end
-                        end
                         
+                        %Remove the first element of the reevaluate vector
+                        %(which was just reevaluated, not relevant for 
+                        %DirectionalSampling)
                         if ~isempty(this.ReevaluateIndices)
                             this.ReevaluateIndices(1)   = [];
                         end
                     end
                 end
                 
-                if ~this.CheckPRatio && this.PfApproximated ~= 0
-                    beta    = min(this.LimitState.BetaValues(this.LimitState.EvaluationIsEnabled & ~this.LimitState.EvaluationIsExact & this.EvaluationApproachesZero & this.LimitState.BetaValues > 0));
-                    idx     = find(this.LimitState.BetaValues == beta, 1, 'first');
-                    this.LimitState.BetaSphere.UpdateBetaSphereMargin(beta, this.LimitState, this.EvaluationApproachesZero);
-                    this.ReevaluateIndices  = this.UNormalIndexPerEvaluation(idx);
-                    this.DisableEvaluations(this.UNormalIndexPerEvaluation == this.ReevaluateIndices)
-                end
-                
-                if isempty(this.ReevaluateIndices) && ~this.LastIteration
-                    this.ReevaluateIndices  = this.UNormalIndexPerEvaluation(this.LimitState.EvaluationIsEnabled & ~this.LimitState.EvaluationIsExact & this.EvaluationApproachesZero);
-                    this.DisableEvaluations(ismember(this.UNormalIndexPerEvaluation, this.ReevaluateIndices));
-                    this.LastIteration      = true;
-                end
-                
-                if this.SolutionConverged && isempty(this.ReevaluateIndices) && this.CheckPRatio
-                    this.StopCalculation    = true;
-                    this.LimitState.DetermineNumberExactEvaluations
-                end
+                %Check whether calculation can be stopped
+                this.CheckStopCalculation
             end
         end
         
@@ -250,6 +225,26 @@ classdef DirectionalSampling < ProbabilisticMethod
             this.NrDirectionsEvaluated      = 0;
             this.LastIteration              = false;
             this.Abort                      = false;
+        end
+        
+        %Prepare calculation of Pf
+        function PrepareCalculation(this)
+            % Random direction vector is created in advance (DirectionalSampling method)
+            this.ConstructUNormalVector
+            
+            % Calculate Z-Value at the origin in standard-normal-space (DirectionalSampling method)
+            this.ComputeOrigin
+        end
+        
+        %Search in the chosen direction
+        function SearchDirection(this, index)
+            % Perform a line search in the chosen direction
+            % (PerformSearch is a method of the LineSearch class)
+            this.LineSearcher.PerformSearch(this.UNormalVector(this.IndexQueue(index),:), this.LimitState, this.LimitState.RandomVariables);
+            
+            % Save the index of the chosen direction for each
+            % point evaluated during the line search (DirectionalSampling method)
+            this.AssignUNormalIndices(this.LineSearcher.NrEvaluations, this.IndexQueue(index));
         end
         
         %Construct normal vector with random directions
@@ -274,12 +269,8 @@ classdef DirectionalSampling < ProbabilisticMethod
         function goodCOV = CheckCOV(this)
             if this.COV < this.MaxCOV
                 goodCOV = true;
-%                 if this.CheckPRatio
-%                     this.SolutionConverged = true;
-%                 end
             else 
                 goodCOV = false;
-%                 this.SolutionConverged = false;
             end 
         end
         
@@ -289,6 +280,14 @@ classdef DirectionalSampling < ProbabilisticMethod
                 this.SolutionConverged = true;
             else
                 this.SolutionConverged = false;
+            end
+        end
+        
+        %Check if calculation can be stopped
+        function CheckStopCalculation(this)
+            % If all convergence criteria are met, stop calculation
+            if this.SolutionConverged
+                this.StopCalculation    = true;
             end
         end
         
@@ -306,6 +305,12 @@ classdef DirectionalSampling < ProbabilisticMethod
             this.UNormalIndexPerEvaluation = [this.UNormalIndexPerEvaluation; ones(nrEvaluations,1)*index];
         end
         
+        %Check if previously approximated point needs to be evaluated
+        %exactly (always false for DirectionalSampling without ARS)
+        function evaluateExact = CheckExactEvaluationLastPoint(this)
+            evaluateExact   = false;
+        end
+        
         %Disable evaluations so that they aren't used to calculate Pf
         function DisableEvaluations(this, indices)
             this.LimitState.EvaluationIsEnabled(indices) = false;
@@ -313,7 +318,7 @@ classdef DirectionalSampling < ProbabilisticMethod
         
         %Calculate the failure probabilities
         function UpdatePf(this)
-            this.Pf = this.PfExact + this.PfApproximated;
+                this.Pf = this.PfExact;
         end
         
         %Plot directional sampling results
