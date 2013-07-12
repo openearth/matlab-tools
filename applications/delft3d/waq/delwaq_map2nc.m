@@ -4,6 +4,11 @@ function varargout = delwaq_map2nc(varargin)
 %   DELWAQ_MAP2NC(<keyword,value>);
 %
 % saves one layer from one variable in a delwaq map file to netCDF file.
+% This file is written using L2BIN2NC, and hence can be used as DINEOF input.
+%
+% The delwaq map files can optionally be passed as cellstr list
+% to concatenate % data from diferent files (PROVIDED THEY
+% ARE DEFINED ON THE SAME GRID).
 %
 % Example: extract bed shear stresses (only present in last layer)
 %
@@ -16,12 +21,12 @@ function varargout = delwaq_map2nc(varargin)
 %   OPT.standard_name = 'magnitude_of_surface_downward_stress'; % see http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/20/cf-standard-name-table.html: 
 %   OPT.long_name     = '|bed shear stress|';
 %   OPT.units         = 'N/m2'; % Pa
-%   OPT.k             = Inf; % use integer or Inf for last layer index: kmax
+%   OPT.k             = Inf; % integer, use Inf for last layer index: kmax
 %   OPT.epsg          = 28992;
 %
 %   delwaq_map2nc(OPT)
 %
-%See also: delwaq, L2BIN2NC, WAQ, VS_TRIM2NC
+%See also: delwaq, L2BIN2NC, WAQ, VS_TRIM2NC, DINEOF
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -57,13 +62,16 @@ function varargout = delwaq_map2nc(varargin)
 % $HeadURL$
 % $Keywords: $
 
-   OPT.grdfile       = 'MyWaqSimulation.lga';
-   OPT.mapfile       = 'MyWaqSimulation.map';
-   OPT.ncfile        = 'MyWaqSimulation_Tau_kmax.nc';
-   OPT.SubsName      = 'Tau';
-   OPT.standard_name = 'magnitude_of_surface_downward_stress'; % seehttp://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/20/cf-standard-name-table.html: 
-   OPT.long_name     = '|bed shear stress|';
-   OPT.units         = 'N/m2'; % Pa
+   OPT.grdfile       = 'MyWaqSimulation.cco';
+   OPT.mapfile       ={'MyWaqSimulation_2003.map',...
+                       'MyWaqSimulation_2004.map',...
+                       'MyWaqSimulation_2005.map'};% 'TIM','dcTIM','Chlfa','dcChlfa','CDOM','dcCDOM','Kd490','dcKd490','nPixels'
+   OPT.ncfile        = 'MyWaqSimulation_2003_2005.nc';
+   OPT.SubsName      = 'Chlfa';
+   OPT.standard_name = 'mass_concentration_of_chlorophyll_a_in_sea_water'; % see http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/20/cf-standard-name-table.html
+   OPT.long_name     = 'Chlorophyll a';
+   OPT.units         = 'ug/l'; % Pa
+ 
    OPT.k             = Inf; % Inf is replaced with last layer index
    OPT.epsg          = 28992;
 
@@ -74,17 +82,38 @@ function varargout = delwaq_map2nc(varargin)
       return
    end
 
-%% read meta-data
+%% read static meta-data
 
    G = delwaq('open',OPT.grdfile); % needs both lga and cco
-   D = delwaq('open',OPT.mapfile); % needs both lga and cco
-   T = delwaq_time(D);
-   
   [G.cor.lon,G.cor.lat] = convertCoordinates(G.X(1:end-1,1:end-1),G.Y(1:end-1,1:end-1),'CS1.code',OPT.epsg,'CS2.code',4326);
-   G.cen.lon  = corner2center(G.cor.lon);
-   G.cen.lat  = corner2center(G.cor.lat);
-   G.cen.mask = ~isnan(G.cen.lon);
+
+%% insert dry points into center mask (ESSENTIAL)
+  
+   G.cen.mask = G.Index(2:end-1,2:end-1,1); % ~isnan(G.cen.lon) is not OK, because it still contains dry points
+   G.cen.mask(G.cen.mask> 0)=  1;
+   G.cen.mask(G.cen.mask==0)=NaN;   
+   G.cen.lon  = corner2center(G.cor.lon).*G.cen.mask; % this is essential as WAQ aggregation can put ...
+   G.cen.lat  = corner2center(G.cor.lat).*G.cen.mask; % ... non-connected corners next to each other in the matrix
+
+   h = pcolorcorcen(G.cor.lon,G.cor.lat,G.cen.mask,[.5 .5 .5]);
+   pausedisp
+   title('Active grid points mask as written to netCDF for DINEOF mask. Check dry points.')
+
+%% read map-file dependent meta-data
+
+   if ischar(OPT.mapfile)
+      OPT.mapfile = cellstr(OPT.mapfile);
+   end
    
+   for im=1:length(OPT.mapfile)
+      D(im) = delwaq('open',OPT.mapfile{im}); % needs both lga and cco
+      if im==1
+         T(im)     = delwaq_time(D(im));
+      else
+         T.datenum = [T.datenum,delwaq_time(D(im),'datenum',1)];
+      end
+   end
+
 %% create netCDF file (no data yet, only meta-data)
 
    L2bin2nc(OPT.ncfile,...
@@ -111,14 +140,19 @@ function varargout = delwaq_map2nc(varargin)
       OPT.k=G.MNK(3);
    end
    
-   for it=1:D.NTimes
+   IT = 0;
+   for im=1:length(OPT.mapfile)
+    disp(['source file: ',num2str(im),' ',D(1).FileName])
+    for it=1:D(im).NTimes
+       IT = IT+1;
 
-       disp([num2str(it,'%0.4d'),'/',num2str(D.NTimes,'%0.4d'),'=',num2str(100*it/D.NTimes,'%05.1f'),'%'])
+       disp([num2str(it,'%0.4d'),'/',num2str(D(im).NTimes,'%0.4d'),'=',num2str(100*it/D(im).NTimes,'%05.1f'),'%'])
        
-      [t,vector] = delwaq('read',D,OPT.SubsName,0,it);
+      [t,vector] = delwaq('read',D(im),OPT.SubsName,0,it);
       
-       matrix = waq2flow3d(vector,G.Index,'center');
+       matrix = waq2flow3d(vector,G.Index,'center').*G.cen.mask;
        
-       ncwrite(OPT.ncfile,OPT.SubsName,permute(matrix(:,:,OPT.k),[2 1 3]),[1 1 it]); % 1-based indices       
+       ncwrite(OPT.ncfile,OPT.SubsName,permute(matrix(:,:,OPT.k),[2 1 3]),[1 1 IT]); % 1-based indices       
         
+    end
    end

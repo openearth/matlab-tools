@@ -3,11 +3,10 @@ function varargout = delwaq_time(Struct,varargin)
 %
 % D = DELWAQ_TIME(Struct)
 %
-% where D has a field 'datenum' and Struct comes from
+% where D has a field 'datenum' and Struct comes 
+% from Struct = delwaq('open',...)
 %
-% Struct = delwaq('open',...)
-%
-% DELWAQ_TIME(Struct,datenum,1) returns only a datenum vector and no
+% DELWAQ_TIME(Struct,'datenum',1) returns only a datenum vector and no
 % struct with field 'datenum'.
 %
 % NOTE: DELWAQ *.map file do not require an equidistant timevector.
@@ -27,21 +26,18 @@ function varargout = delwaq_time(Struct,varargin)
 %       2600 MH Delft
 %       The Netherlands
 %
-%   This library is free software; you can redistribute it and/or
-%   modify it under the terms of the GNU Lesser General Public
-%   License as published by the Free Software Foundation; either
-%   version 2.1 of the License, or (at your option) any later version.
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
 %
 %   This library is distributed in the hope that it will be useful,
 %   but WITHOUT ANY WARRANTY; without even the implied warranty of
-%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-%   Lesser General Public License for more details.
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
 %
-%   You should have received a copy of the GNU Lesser General Public
-%   License along with this library; if not, write to the Free Software
-%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
-%   USA or
-%   http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
 % $Id$
@@ -64,9 +60,9 @@ function varargout = delwaq_time(Struct,varargin)
          return
       end
       
-   %% Cycle keywords in input argument list to overwrite default values.
-   %% Align code lines as much as possible to allow for block editing in textpad.
-   %% Only start <keyword,value> pairs after the REQUIRED arguments. 
+   % Cycle keywords in input argument list to overwrite default values.
+   % Align code lines as much as possible to allow for block editing in textpad.
+   % Only start <keyword,value> pairs after the REQUIRED arguments. 
       
       iargin = 1;
       
