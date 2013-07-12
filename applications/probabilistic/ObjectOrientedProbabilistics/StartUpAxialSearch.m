@@ -56,13 +56,11 @@ classdef StartUpAxialSearch < StartUpMethod
     
     %% Properties
     properties
-        UNormalVector
-        LineSearcher
     end
     
     %% Methods
     methods
-        function this = StartUpAxialSearch(lineSearcher)
+        function this = StartUpAxialSearch(varargin)
             %STARTUPAXIALSEARCH  One line description goes here.
             %
             %   More detailed description goes here.
@@ -82,7 +80,7 @@ classdef StartUpAxialSearch < StartUpMethod
             %   See also StartUpMethod
             
             % Call to constructor method in StartUpMethod
-            this    = this@StartUpMethod(lineSearcher);
+            this    = this@StartUpMethod(varargin);
         end
         
         %% Setters
@@ -100,6 +98,7 @@ classdef StartUpAxialSearch < StartUpMethod
             end
 
             limitState.UpdateResponseSurface
+            this.DetermineStartupEvaluations(limitState)
         end
         
         % Construct the unit vector with search directions

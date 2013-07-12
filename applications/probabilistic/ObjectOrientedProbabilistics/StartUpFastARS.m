@@ -59,7 +59,6 @@ classdef StartUpFastARS < StartUpMethod
         UStart
         dU
         dUMatrix
-        UNormal
         Betas
         IndexPerIteration
         UDesignPoint
@@ -70,7 +69,7 @@ classdef StartUpFastARS < StartUpMethod
     
     %% Methods
     methods
-        function this = StartUpFastARS(lineSearcher)
+        function this = StartUpFastARS(varargin)
             %STARTUPFASTARS  One line description goes here.
             %
             %   More detailed description goes here.
@@ -90,7 +89,7 @@ classdef StartUpFastARS < StartUpMethod
             %   See also StartUpMethod
             
             % Call to constructor method in StartUpMethod
-            this    = this@StartUpMethod(lineSearcher);
+            this    = this@StartUpMethod(varargin);
             this.SetDefaults
         end
         
@@ -126,7 +125,7 @@ classdef StartUpFastARS < StartUpMethod
                 % Evaluate selected points using the LimitState
                 selectedU   = find(this.IndexPerIteration == this.Iteration);
                 for i = 1:length(selectedU)
-                    limitState.Evaluate(this.UNormal(selectedU(i)), this.Betas(selectedU(i)), randomVariables, 'disable', true);
+                    limitState.Evaluate(this.UNormalVector(selectedU(i)), this.Betas(selectedU(i)), randomVariables, 'disable', true);
                 end
                 
                 % Update Response Surfae using the new evaluations
@@ -142,7 +141,10 @@ classdef StartUpFastARS < StartUpMethod
                 
                 % Use DesignPoint & Evaluated point to do linear
                 % interpolation to Z=0 -> New CurrentU
-                this.UTarget        = ;
+                oldUTarget          = this.UNormalVector(end,:)*this.Betas(end);
+                oldZTarget          = limitState.ZValues(end-1);
+                zDesignPoint        = limitState.ZValues(end);
+                this.UTarget        = oldUTarget + (this.UDesignPoint-oldUTarget)*(oldZTarget/(oldZTarget-zDesignPoint));
                 
                 % Check if the loop can stop
 %                 this.CheckConvergence
@@ -158,7 +160,7 @@ classdef StartUpFastARS < StartUpMethod
             newU                        = repmat(this.UTarget, size(this.dUMatrix,1),1) + this.dUMatrix; 
             this.IndexPerIteration      = [this.IndexPerIteration; ones(size(this.dUMatrix,1),1)*this.Iteration];
             this.Betas                  = [this.Betas; sqrt(sum(newU.^2,2))];
-            this.UNormal                = [this.UNormal; newU./repmat(this.Betas(this.IndexPerIteration == this.Iteration),1,limitState.NumberRandomVariables)];
+            this.UNormalVector          = [this.UNormalVector; newU./repmat(this.Betas(this.IndexPerIteration == this.Iteration),1,limitState.NumberRandomVariables)];
 %             newU            = repmat(this.UDesignPoint, size(this.dUMatrix,1),1) + this.dUMatrix; 
 %             this.UMatrix    = [this.UMatrix; newU];
         end
@@ -166,7 +168,7 @@ classdef StartUpFastARS < StartUpMethod
         % Construct dU matrix 
         function ConstructdUMatrix(this, limitState)
             this.CalculatedU
-            this.dUMatrix = [eye(limitState.NumberRandomVariables)*-this.dU; eye(limitState.NumberRandomVariables)*this.dU];
+            this.dUMatrix = [eye(limitState.NumberRandomVariables)*-this.dU; eye(limitState.NumberRandomVariables)*this.dU; zeros(1,limitState.NumberRandomVariables)];
         end
         
         % Calculate the step size in U-space (standard normal space)
@@ -184,7 +186,6 @@ classdef StartUpFastARS < StartUpMethod
             this.UStart             = [];
             this.dU                 = [];
             this.dUMatrix           = [];
-            this.UNormal            = [];
             this.Betas              = [];
             this.IndexPerIteration  = [];
             this.UDesignPoint       = [];

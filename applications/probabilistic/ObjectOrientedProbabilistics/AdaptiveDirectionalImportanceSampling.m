@@ -152,6 +152,7 @@ classdef AdaptiveDirectionalImportanceSampling < DirectionalSampling
             %Use start-up method if available
             if ~isempty(this.StartUpMethods)
                 this.StartUpMethods.StartUp(this.LimitState, this.LimitState.RandomVariables)
+                this.UNormalIndexPerEvaluation = NaN(size(this.LimitState.BetaValues));
             end
         end
         

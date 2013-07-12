@@ -56,11 +56,12 @@ classdef StartUpMethod < handle
     properties
         UNormalVector
         LineSearcher
+        NumberExactStartUpEvaluations
     end
     
     %% Methods
     methods
-        function this = StartUpMethod(lineSearcher)
+        function this = StartUpMethod(varargin)
             %STARTUPMETHOD  One line description goes here.
             %
             %   More detailed description goes here.
@@ -79,12 +80,12 @@ classdef StartUpMethod < handle
             %
             %   See also StartUpMethod
             
-            if nargin == 0
+            if nargin == 0 || isempty(varargin{:})
                 this.LineSearcher   = LineSearch;
             elseif nargin == 1
-                ProbabilisticChecks.CheckInputClass(lineSearcher,'LineSearch');
+                ProbabilisticChecks.CheckInputClass(varargin,'LineSearch');
                 
-                this.LineSearcher       = lineSearcher;
+                this.LineSearcher       = varargin;
             end
         end
         
@@ -93,7 +94,9 @@ classdef StartUpMethod < handle
         %% Getters
         
         %% Other Methods
-        
+        function DetermineStartupEvaluations(this, limitState)
+            this.NumberExactStartUpEvaluations = limitState.NumberExactEvaluations;
+        end
     end
     
     %% Abstract methods
