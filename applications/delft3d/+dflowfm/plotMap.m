@@ -22,6 +22,7 @@ function varargout = plotMap(varargin)
 %    * axis: only grid inside axis is plotted, use [] for while grid.
 %            for axis to be be a polygon, supply a struct axis.x, axis.y.
 %    * parameter: field in D.cen to plot (default 1st field 'zwl')
+%    * idmn: plot grid with the specified domain number only (if available)
 %   For user-defined paramter: simply add them to D before calling plotMapkml.
 %   Cells with plot() properties, e.g. {'EdgeColor','k'}
 %    * patch
@@ -109,6 +110,7 @@ function varargout = plotMap(varargin)
    OPT.parameter = [];
    OPT.quiver    = 1;
    OPT.layout    = 0;
+   OPT.idmn      = -1;
 
    if nargin==0
       varargout = {OPT};
@@ -170,9 +172,16 @@ if ~(isfield(G,'peri') && isfield(G,'cen'))
 else
 
    if isempty(OPT.axis)
-      cen.mask = 1:G.cen.n; % TO DO: check whether all surrounding corners are outside, instead of centers
+%       cen.mask = 1:G.cen.n; % TO DO: check whether all surrounding corners are outside, instead of centers
+      cen.mask = true(1,G.cen.n);
    else
       cen.mask = inpolygon(G.cen.x,G.cen.y,OPT.axis.x,OPT.axis.y);
+   end
+   
+   if ( OPT.idmn>-1 && isfield(G.cen,'idmn') )
+       if ( length(G.cen.idmn)==G.cen.n )
+          cen.mask = (cen.mask & G.cen.idmn==OPT.idmn);
+       end
    end
 
    % the PATCH method is slow and is superseded in favour of TRISURFCORCEN after PATCH2TRI 
@@ -181,11 +190,14 @@ else
       peri.mask1 = find(cen.mask(G.cen.LinkType(cen.mask)==1));
       peri.mask  = find(cen.mask(G.cen.LinkType(cen.mask)~=1)); % i.e. 0=closed or 2=between 2D elements
       
+      peri.mask1 = cen.mask(peri.mask1);
+      peri.mask  = cen.mask(peri.mask);
+      
       if ~iscell(G.peri.x) % can also be done in readNet
         [x,y] = dflowfm.peri2cell(G.peri.x(:,peri.mask),G.peri.y(:,peri.mask));
       else
-         x = G.peri.x;
-         y = G.peri.y;
+         x = G.peri.x(:,peri.mask);
+         y = G.peri.y(:,peri.mask);
       end
       
    end
@@ -194,8 +206,9 @@ else
 
    % the PATCH method is slow and is superseded in favour of TRISURFCORCEN after PATCH2TRI 
    if (isfield(G,'tri') & isfield(G,'map3'))
+      tri.mask = cen.mask(G.map3);
    
-      h = trisurfcorcen(G.tri,G.cor.x,G.cor.y,D.cen.(OPT.parameter)(G.map3));
+      h = trisurfcorcen(G.tri(tri.mask,:),G.cor.x,G.cor.y,D.cen.(OPT.parameter)(G.map3(tri.mask)));
       set(h,'edgeColor','none'); % we do not want to see the triangle edges as they do not exist on D-Flow FM network
       % If you want to see edges, overlay the them with plotNet.
       %shading flat; % automaticcally done by trisurfcorcen, as it is the only correct option for center values

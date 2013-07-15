@@ -102,6 +102,11 @@ function varargout = readNet(varargin)
    G.cen.n             = size(G.cen.x,2);
    end
    
+% parallel: read cell domain number
+   if nc_isvar(ncfile, 'FlowElemDomain')
+       G.cen.idmn      = nc_varget(ncfile, 'FlowElemDomain')';
+   end
+   
 %% < read network: contours too: output file >
 
    if nc_isvar(ncfile, 'FlowElemContour_x');
@@ -155,10 +160,14 @@ function varargout = readNet(varargin)
    G.face.x              = nc_varget(ncfile, 'FlowLink_xu')';
    G.face.y              = nc_varget(ncfile, 'FlowLink_yu')';
   %G.face.z              = nc_varget(ncfile, 'FlowLink_zu')';
+  
+     if nc_isvar(ncfile, 'FlowLinkDomain') & OPT.face
+         G.face.idmn     = nc_varget(ncfile, 'FlowLinkDomain')';
+     end
 
    end 
    
-end
+   end
 
 %% out
 

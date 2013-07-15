@@ -12,6 +12,7 @@ function varargout = plotNet(varargin)
 %   The following optional <keyword,value> pairs have been implemented:
 %    * axis: only grid inside axis is plotted, use [] for while grid.
 %            for axis to be be a polygon, supply a struct axis.x, axis.y.
+%    * idmn: plot grid with the specified domain number only (if available)
 %   Cells with plot() properties, e.g. {'r*'}, if [] corners are not plotted.
 %    * cor
 %    * cen
@@ -63,7 +64,9 @@ function varargout = plotNet(varargin)
    % arguments to plot(x,y,OPT.keyword{:})
    OPT.cen  = {'b.'};
    OPT.cor  = {'y.','markersize',20};
-   OPT.peri = {'k-'};
+    OPT.peri = {'k-'};
+%    OPT.peri = {};
+   OPT.idmn = -1;   % domain to plot
    
    if nargin==0
       varargout = {OPT};
@@ -89,13 +92,20 @@ function varargout = plotNet(varargin)
    if isfield(G,'cor') & ~isempty(OPT.cor)
    
      if isempty(OPT.axis)
-        cor.mask = 1:G.cor.n;
+%         cor.mask = 1:G.cor.n;
+        cor.mask = true(1,G.cor.n);
      else
         cor.mask = inpolygon(G.cor.x,G.cor.y,OPT.axis.x,OPT.axis.y);
      end
      
-     h.cor  = plot(G.cor.x(cor.mask),G.cor.y(cor.mask),OPT.cor{:});
-     hold on
+
+     if ( isfield(G.peri, 'x') & isfield(G.peri, 'y') )
+%        plot nodes with cell mask later (to be preferred, as we don't have node domain numbers)
+     else
+%        plot nodes with node mask         
+         h.cor  = plot(G.cor.x(cor.mask),G.cor.y(cor.mask),OPT.cor{:});
+         hold on
+     end
 
    end
 
@@ -104,13 +114,23 @@ function varargout = plotNet(varargin)
    if isfield(G,'cen') & ~isempty(OPT.cen)
    
      if isempty(OPT.axis)
-        cen.mask = 1:G.cen.n;
+%         cen.mask = 1:G.cen.n;
+        cen.mask = true(1,G.cen.n);
      else
         cen.mask = inpolygon(G.cen.x,G.cen.y,OPT.axis.x,OPT.axis.y);
      end
      
-     h.cen = plot(G.cen.x(cen.mask),G.cen.y(cen.mask),OPT.cen{:});
-     hold on
+     if ( OPT.idmn>-1 && isfield(G.cen,'idmn') )
+         if ( length(G.cen.idmn)==G.cen.n )
+            cen.mask = (cen.mask & G.cen.idmn==OPT.idmn);
+         end
+     end
+
+       h.cor = plot(reshape(G.peri.x(:,cen.mask),1,[]), reshape(G.peri.y(:,cen.mask),1,[]), OPT.cor{:});
+       hold on
+%      h.cen = plot(G.peri.x(:,cen.mask),G.peri.y(:,cen.mask),OPT.cen{:});
+       h.cen = plot(G.cen.x(:,cen.mask),G.cen.y(:,cen.mask),OPT.cen{:});
+       hold on
    
    end
 
@@ -122,9 +142,14 @@ function varargout = plotNet(varargin)
 %  After plotting this is faster than patches (only one figure child handle).
 
    if isfield(G,'peri') & ~isempty(OPT.peri)
-
-     peri.mask1 = find(cen.mask(G.cen.LinkType(cen.mask)==1));
-     peri.mask  = find(cen.mask(G.cen.LinkType(cen.mask)~=1)); % i.e. 0=closed or 2=between 2D elements
+% SPvdP: the following can not work
+%     peri.mask1 = find(cen.mask(G.cen.LinkType(cen.mask)==1));
+%     peri.mask  = find(cen.mask(G.cen.LinkType(cen.mask)~=1)); % i.e. 0=closed or 2=between 2D elements
+     
+     peri.mask1 = cen.mask;
+     peri.mask  = cen.mask;
+     
+     clear dummy;
      
      if ~iscell(G.peri.x) % can also be done in readNet
        [x,y] = dflowfm.peri2cell(G.peri.x(:,peri.mask),G.peri.y(:,peri.mask));

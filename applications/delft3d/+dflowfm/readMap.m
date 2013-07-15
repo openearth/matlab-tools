@@ -95,12 +95,24 @@ function varargout = readMap(ncfile,varargin)
    D.cen.sal  = nc_varget(ncfile, 'sal',[it-1 0],[1 cen.mask]); % Salinity
    end
    
-   if OPT.vel & nc_isvar (ncfile, 'ucx');
-   D.cen.u    = nc_varget(ncfile, 'ucx',[it-1 0],[1 cen.mask]); % x velocity at cell center
-   end
-
-   if OPT.vel & nc_isvar (ncfile, 'ucy');
-   D.cen.v    = nc_varget(ncfile, 'ucy',[it-1 0],[1 cen.mask]); % y velocity at cell center
+   info=nc_getvarinfo(ncfile,'ucx');
+   NDIM=length(info.Size);
+   if OPT.vel & nc_isvar (ncfile, 'ucx')
+      if ( NDIM==2 )
+%        2D          
+         D.cen.u    = nc_varget(ncfile, 'ucx',[it-1 0],[1 cen.mask]); % x velocity at cell center
+         if nc_isvar (ncfile, 'ucy');
+            D.cen.v    = nc_varget(ncfile, 'ucy',[it-1 0],[1 cen.mask]); % y velocity at cell center
+         end
+      else
+         if ( NDIM==3 )
+%           3D: first layer only for now
+            D.cen.u    = nc_varget(ncfile, 'ucy',[it-1 0 0],[1 cen.mask 1]); % x velocity at cell center
+            if nc_isvar (ncfile, 'ucy');
+               D.cen.v    = nc_varget(ncfile, 'ucy',[it-1 0 0],[1 cen.mask 1]); % y velocity at cell center
+            end
+         end
+      end
    end
 
 %% < read face data >
