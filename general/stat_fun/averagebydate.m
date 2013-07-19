@@ -3,7 +3,7 @@ function [dataOut periodOut] = averageByDate(timeIn,data,period)
 %average.   
 %
 %   Syntax:
-%   [periodOut dataOut] = averageByData(timeIn,data,period)
+%   [dataOut periodOut] = averageByData(timeIn,data,period)
 %
 %   Input:
 %   timeIn     = [mx1 datenum] column with observation times in Matlab
@@ -21,7 +21,7 @@ function [dataOut periodOut] = averageByDate(timeIn,data,period)
 %
 %   Example
 %   averageByDate(t,data,[0 0 0 1 0 0]) converts data into hourly averaged
-%   data. averageByDate(t,data,[1 1 0 0 0 0]) calculates for each year and
+%   data. averageByDate(t,data,[1 1 0 0 0 0]) calculates average for each year and
 %   each month in those years. 
 %
 %   See also mean, nanmean, smoothByAveraging
