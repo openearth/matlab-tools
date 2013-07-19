@@ -89,7 +89,7 @@ if strcmpi(OPT.spectrum,'jonswap')
     %Calculate ratio Tx/Tp for Jonswap spectrum
     T_ratio(1)=1;
     T_ratio(2)=m0/m1; 
-    T_ratio(3)=sqrt(m0/m2); 
+    T_ratio(3)=sqrt(m0/m2)
     
     %Convert input to Tp
     iInput=find(strcmpi(T_list,type_in),1); 
