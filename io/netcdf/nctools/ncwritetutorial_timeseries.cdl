@@ -1,60 +1,59 @@
 NetCDF-3 Classic ncwritetutorial_timeseries.nc {
+dimensions:
+	time = 12 ;
+	location = 4 ;
+	string_len = 3 ;
 
-  dimensions:
-    time = 12 ;
-    location = 4 ;
-    string_len = 3 ;
+variables:
+	// Preference 'PRESERVE_FVD':  false,
+	// dimensions consistent with ncBrowse, not with native MATLAB netcdf package.
+	double time(time), shape = [12]
+		time:standard_name = "time" ;
+		time:long_name = "time" ;
+		time:units = "days since 1970-01-01 00:00:00+00:00" ;
+		time:axis = "T" ;
+	double lon(location), shape = [4]
+		lon:standard_name = "longitude" ;
+		lon:long_name = "Longitude of platform" ;
+		lon:units = "degrees_east" ;
+		lon:axis = "X" ;
+		lon:_FillValue = 9.96921e+36 ;
+		lon:actual_range = 103.2 103.8 ;
+	double lat(location), shape = [4]
+		lat:standard_name = "latitude" ;
+		lat:long_name = "Latitude of platform" ;
+		lat:units = "degrees_north" ;
+		lat:axis = "Y" ;
+		lat:_FillValue = 9.96921e+36 ;
+		lat:actual_range = 1.2 1.5 ;
+	char platform_name(location,string_len), shape = [4 3]
+		platform_name:standard_name = "platform_name" ;
+		platform_name:long_name = "platform name" ;
+	char platform_id(location,string_len), shape = [4 3]
+		platform_id:standard_name = "platform_id" ;
+		platform_id:long_name = "platform id" ;
+		platform_id:cf_role = "timeseries_id" ;
+	double TSS(time,location), shape = [12 4]
+		TSS:standard_name = "mass_concentration_of_suspended_matter_in_sea_water" ;
+		TSS:long_name = "TSS" ;
+		TSS:units = "kg m-3" ;
+		TSS:coordinates = "lat lon platform_name" ;
+		TSS:_FillValue = 9.96921e+36 ;
+		TSS:actual_range = 5.53401 39.3983 ;
 
-  variables:
-    // Preference 'PRESERVE_FVD':  false,
-    // dimensions consistent with ncBrowse, not with native MATLAB netcdf package.
-    double time(time), shape = [12]
-      :standard_name = "time" 
-      :long_name = "time" 
-      :units = "days since 1970-01-01 00:00:00+08:00" 
-      :axis = "T" 
-    double longitude(location), shape = [4]
-      :standard_name = "longitude" 
-      :long_name = "Longitude of station" 
-      :units = "degrees_east" 
-      :axis = "X" 
-      :_FillValue = NaN 
-      :actual_range = 103.2 103.8 
-    double latitude(location), shape = [4]
-      :standard_name = "latitude" 
-      :long_name = "Latitude of station" 
-      :units = "degrees_north" 
-      :axis = "Y" 
-      :_FillValue = NaN 
-      :actual_range = 1.2 1.5 
-    char station_name(location,string_len), shape = [4 3]
-      :standard_name = "platform_name" 
-      :long_name = "platform name" 
-    char station_id(location,string_len), shape = [4 3]
-      :standard_name = "platform_id" 
-      :long_name = "platform id" 
-    double TSS(time,location), shape = [12 4]
-      :standard_name = "mass_concentration_of_suspended_matter_in_sea_water" 
-      :long_name = "TSS" 
-      :units = "kg m-3" 
-      :coordinates = "longitude latitude" 
-      :_FillValue = NaN 
-      :actual_range = 6.22349 38.7734 
-
-  //global Attributes:
-      :title = "SPM data in Singapore" 
-      :institution = "DeltaresNUS" 
-      :source = "" 
-      :history = "$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/io/netcdf/nctools/ncwritetutorial_timeseries.m $ $Id: ncwritetutorial_timeseries.m 8596 2013-05-08 16:08:39Z boer_g $" 
-      :references = "http://svn.oss.deltares.nl" 
-      :email = "" 
-      :featureType = "timeSeries" 
-      :comment = "" 
-      :version = "" 
-      :Conventions = "CF-1.6" 
-      :terms_for_use = "These data can be used freely for research purposes provided that the following source is acknowledged: DeltaresNUS" 
-      :disclaimer = "This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE." 
-      :delft3d_description = "" 
+//global attributes:
+		:title = "" ;
+		:institution = "DeltaresNUS" ;
+		:source = "" ;
+		:history = "$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/io/netcdf/nctools/ncwritetutorial_timeseries.m $ $Id: ncwritetutorial_timeseries.m 8917 2013-07-12 12:11:03Z boer_g $" ;
+		:references = "" ;
+		:email = "" ;
+		:featureType = "timeSeries" ;
+		:comment = "" ;
+		:version = "" ;
+		:Conventions = "CF-1.6" ;
+		:terms_for_use = "These data can be used freely for research purposes provided that the following source is acknowledged: DeltaresNUS" ;
+		:disclaimer = "This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE." ;
 
 
 }

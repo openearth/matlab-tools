@@ -80,11 +80,6 @@ function varargout = ncwritetutorial_timeseries(ncfile,varargin);
    OPT.refdatenum     = datenum(1970,1,1); % linux  datenumber convention
    OPT.fillvalue      = typecast(uint8([0    0    0    0    0    0  158   71]),'DOUBLE'); % ncetcdf default that is also recognized by ncBrowse % DINEOF does not accept NaNs; % realmax('single'); %
    OPT.timezone       = timezone_code2iso('GMT');
-
-   if nargin==0
-      varargout = {OPT};
-      return
-   end
    
    if verLessThan('matlab','7.12.0.635')
       error('At least Matlab release R2011a is required for writing netCDF files due tue NCWRITESCHEMA.')
@@ -179,6 +174,17 @@ function varargout = ncwritetutorial_timeseries(ncfile,varargin);
    ifld     = ifld + 1;clear attr;
    attr(    1)  = struct('Name', 'standard_name', 'Value', 'platform_id');
    attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'platform id');
+   attr(end+1)  = struct('Name', 'cf_role'      , 'Value', 'timeseries_id');
+   % Where feasible a variable with the attribute cf_role should be included.
+   % The only acceptable values of cf_role for Discrete Geometry CF data sets
+   % are timeseries_id, profile_id, and trajectory_id.The variable carrying
+   % the cf_role attribute may have any data type. When a variable is assigned
+   % this attribute, it must provide a unique identifier for each feature instance.
+   % CF files that contain timeSeries, profile or trajectory featureTypes,
+   % should include only a single occurrence of a cf_role attribute;
+   % CF files that contain timeSeriesProfile or trajectoryProfile may
+   % contain two occurrences, corresponding to the two levels of structure
+   % in these feature types: cf_role	timeseries_id
    dims(    1)  = struct('Name', 'string_len','Length',ncdimlen.string_len);
    dims(    2)  = struct('Name', 'location'  ,'Length',ncdimlen.location);
    nc.Variables(ifld) = struct('Name'      , 'platform_id', ...
@@ -193,7 +199,7 @@ function varargout = ncwritetutorial_timeseries(ncfile,varargin);
    attr(    1)  = struct('Name', 'standard_name', 'Value', OPT.standard_name);
    attr(end+1)  = struct('Name', 'long_name'    , 'Value', OPT.long_name);
    attr(end+1)  = struct('Name', 'units'        , 'Value', OPT.units);
-   attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'lat lon');
+   attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'lat lon platform_name'); % platform_name needed to sdhow up in QuickPlot
    attr(end+1)  = struct('Name', '_FillValue'   , 'Value', OPT.fillvalue);
    attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(OPT.var(:)) max(OPT.var(:))]);
       

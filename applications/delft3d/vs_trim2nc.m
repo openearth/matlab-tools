@@ -47,6 +47,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
 %
 %See also: vs_trih2nc for trih-*.dat delft3d-flow history file,
 %          netcdf, snctools, NCWRITESCHEMA, NCWRITE, VS_USE, DELFT3D2NC
+%          delft3d_grid_image
 
 % TO DO keep consistency up-to-date with delft3d_to_netcdf.exe of Bert Jagers
 % TO DO add bedload en avg sediment
