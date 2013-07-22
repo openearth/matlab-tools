@@ -117,6 +117,10 @@ dosstring     = sprintf('"%s" %s%s e "%s" -o"%s"',path7zip,password,OPT.args,ful
 
 [OPT.status, OPT.info] = system(dosstring);
 
+% get extracted files from string
+tokens = regexp(OPT.info,'\nExtracting *([^\n])+','tokens');
+OPT.extractedFiles = [tokens{:}]';
+
 if ~OPT.quiet
     fprintf(1,' took %2.1f sec to %s\n', toc, OPT.outpath);
 end

@@ -89,8 +89,7 @@ AB  = sqrt(AB2);
 BD  = (BC2+AB2-AC2)/(2*AB);
 AD  = AB-BD;
 CD  = sqrt(AC2-AD.^2);
-
-D   = kron(B-A,(AD/AB)) + repmat(A,size(C,1),1);
+D   = repmat(B-A,size(C,1),1) .* repmat(AD/AB,1,dimensions) + repmat(A,size(C,1),1);
 E   = D;
 E(AD<0,:) = repmat(A,sum(AD<0),1);
 E(BD<0,:) = repmat(B,sum(BD<0),1);

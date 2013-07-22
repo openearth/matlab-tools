@@ -94,7 +94,7 @@ for addCode = ['0','1','2','3']
         printTile(OPT,code,D,D2,R,B)
     end
 end
-multiWaitbar('fig2png_print_tile',1);
+% multiWaitbar('fig2png_print_tile',1);
 
 
 function printTile(OPT,code,D,D2,R,B)
