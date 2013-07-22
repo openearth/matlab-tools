@@ -443,14 +443,14 @@ if isempty(handles.Model(md).Input(ad).gridX)
     return
 end
 
-depfiles{1}='dummy';
-
 for id=1:handles.Model(md).nrDomains
     [filename, pathname, filterindex] = uiputfile('*.ini', ['Select initial conditions file for domain ' upper(handles.Model(md).Input(id).runid)],'');
     filenames{id}=filename;
     if handles.Toolbox(tb).Input.adjustBathymetry
         [filename, pathname, filterindex] = uiputfile('*.dep', ['Select new depth file for domain ' upper(handles.Model(md).Input(id).runid)],'');
         depfiles{id}=filename;
+    else
+        depfiles{id}='';
     end
 end
         
