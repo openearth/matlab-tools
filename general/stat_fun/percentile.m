@@ -64,7 +64,10 @@ function val = percentile(x, pct)
 % $HeadURL$
 % $Keywords: $
 
-%%
+%% input check
+assert(~any(isnan(x(:))),'Percentile function cannot handle NANs, filter them first')
+
+%% run functions
 % sort x
 x   = sort(x);
 
