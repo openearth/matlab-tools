@@ -173,7 +173,7 @@ case 'new'
   path_m = fileparts(mfilename('fullpath'));
 
   if nargin==2
-     [path_file,~,~] = fileparts(varargin{1});
+     [path_file,dummy,dummy] = fileparts(varargin{1});
      if ~isempty(path_file)
          fname = varargin{1};
      else
