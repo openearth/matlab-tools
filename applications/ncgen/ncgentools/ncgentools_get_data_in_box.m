@@ -8,7 +8,8 @@ function [data, netcdf_index, OPT] = ncgentools_get_data_in_box(netcdf_index, va
 %
 %   Input:
 %   netcdf_index  = netcdf netcdf_index structure, or a path
-%   varargin =
+%   varargin =  't_method', 'last_in_range' (default)
+%                           alternatively: 'all_in_range', 'linear_interpolated', 'merged_in_range'
 %
 %   Example
 %   ncgentools_get_data_in_box
