@@ -118,5 +118,5 @@ handles.screenParameters.yLim=yl;
 
 setHandles(handles);
 
-
+%PutInCentre(gcf);
 
