@@ -1,10 +1,10 @@
-function [fig,ok]=muppet_selectFrameText(fig)
+function [fig,ok]=muppet_selectFrameText(fig,frame)
 
 width=400;
-height=length(fig.frametext)*30+80;
+height=length(frame.text)*30+80;
 
 nelm=0;
-for ielm=1:length(fig.frametext)
+for ielm=1:length(frame.text)
     nelm=nelm+1;
     element(nelm).element.style='edit';
     element(nelm).element.position=[60 height-nelm*30-10 300 20];

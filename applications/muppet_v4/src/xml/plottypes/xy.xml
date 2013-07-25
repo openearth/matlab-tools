@@ -159,6 +159,12 @@
     <name>clim</name>
   </option>
   <option>
+    <name>usecustomcontours</name>
+  </option>
+  <option>
+    <name>customcontours</name>
+  </option>
+  <option>
     <name>legend</name>
   </option>
   <option>

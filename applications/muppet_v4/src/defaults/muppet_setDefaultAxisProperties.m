@@ -67,9 +67,8 @@ opt.colormap='jet';
 opt.cmin=0.0;
 opt.cstep=0.1;
 opt.cmax=1.0;
-opt.contours=0;
-opt.contourtype='limits';
-opt.customcolorlimits=0;
+opt.customcontours=0:1:2;
+opt.usecustomcontours=0;
 
 % Time axis
 opt.datetickformat='HH:MM:SS';

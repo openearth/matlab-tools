@@ -201,6 +201,12 @@
     <name>clim</name>
   </option>
   <option>
+    <name>usecustomcontours</name>
+  </option>
+  <option>
+    <name>customcontours</name>
+  </option>
+  <option>
     <name>scalebar</name>
   </option>
   <option>

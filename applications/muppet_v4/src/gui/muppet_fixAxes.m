@@ -41,12 +41,14 @@ for isub=1:fig.nrsubplots
             % Check for change in limits
             if fig.subplots(isub).subplot.limitschanged
                 switch fig.subplots(isub).subplot.type
+                    
                     case{'2d','map','xy'}
                         handles.figures(ifig).figure.subplots(isub).subplot.xmin=fig.subplots(isub).subplot.xmin;
                         handles.figures(ifig).figure.subplots(isub).subplot.xmax=fig.subplots(isub).subplot.xmax;
                         handles.figures(ifig).figure.subplots(isub).subplot.ymin=fig.subplots(isub).subplot.ymin;
                         handles.figures(ifig).figure.subplots(isub).subplot.ymax=fig.subplots(isub).subplot.ymax;
                         handles.figures(ifig).figure.subplots(isub).subplot.scale=fig.subplots(isub).subplot.scale;
+
                     case{'3d'}
                         hax=findobj('Tag','axis','UserData',[ifig,isub]);
                         handles.figures(ifig).figure.subplots(isub).subplot.cameratarget=get(hax,'CameraTarget');
@@ -110,17 +112,16 @@ for isub=1:fig.nrsubplots
                 handles.figures(ifig).figure.subplots(isub).subplot.scalebar.text=fig.subplots(isub).subplot.scalebar.text;
                 fig.subplots(isub).subplot.scalebar.changed=0;
             end
-            
-            
+                        
             % And now the dataset (check for changes in colorbar)
-            %     for id=1:fig.subplots(isub).subplot.nrdatasets
-            %         if fig.subplots(isub).subplot.datasets(id).dataset.plotcolorbar
-            %             if fig.subplots(isub).subplot.datasets(id).dataset.colorbar.changed
-            %                 handles.figures(ifig).figure.subplots(isub).subplot.datasets(id).dataset.colorbar.position=fig.subplots(isub).subplot.datasets(id).dataset.colorbar.position;
-            %                 fig.subplots(isub).subplot.datasets(id).dataset.colorbar.changed=0;
-            %             end
-            %         end
-            %     end
+            for id=1:fig.subplots(isub).subplot.nrdatasets
+                if fig.subplots(isub).subplot.datasets(id).dataset.plotcolorbar
+                    if fig.subplots(isub).subplot.datasets(id).dataset.colorbar.changed
+                        handles.figures(ifig).figure.subplots(isub).subplot.datasets(id).dataset.colorbar.position=fig.subplots(isub).subplot.datasets(id).dataset.colorbar.position;
+                        fig.subplots(isub).subplot.datasets(id).dataset.colorbar.changed=0;
+                    end
+                end
+            end
             
             if fig.subplots(isub).subplot.annotationsadded
                 

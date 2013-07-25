@@ -1,8 +1,11 @@
 function muppet_gui(varargin)
 
+global figureiconfile
+
 if isempty(varargin)
     newSession('firsttime');
     handles=getHandles;
+    figureiconfile=[handles.settingsdir 'icons' filesep 'deltares.gif'];
     gui_newWindow(handles,'xmldir',handles.xmlguidir,'xmlfile','muppetgui.xml','modal',0, ...
         'getfcn',@getHandles,'setfcn',@setHandles,'tag','muppetgui','Color',[0.941176 0.941176 0.941176], ...
         'iconfile',[handles.settingsdir 'icons' filesep 'deltares.gif']);
@@ -79,12 +82,16 @@ else
             toggleAxesEqual;
         case{'editxylim'}
             editXYLim(varargin{2});
+        case{'pushrightaxis'}
+            editRightAxis;
+        case{'pushadvancedaxisoptions'}
+            editAdvancedAxisOptions;
         case{'push3doptions'}
             options3D;
         case{'selectcoordinatesystem'}
             selectCoordinateSystem;
         case{'selectmap'}
-            selectmap;
+            selectMap;
         case{'select3d'}
             select3D;
         case{'editlegend'}
@@ -107,6 +114,10 @@ else
             editScaleBar;
         case{'editclim'}
             editCLim;
+        case{'editcustomcontours'}
+            muppet_editCustomContours;
+        case{'selectframe'}
+            selectFrame;
         case{'editframetext'}
             editFrameText;
         case{'selectformat'}
@@ -607,43 +618,47 @@ setHandles(handles);
 
 %%
 function selectCoordinateSystem
+
 handles=getHandles;
+
 plt=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot;
-oldname=plt.coordinatesystem.name;
-oldtype=plt.coordinatesystem.type;
-[newname,newtype,nr,ok]=ddb_selectCoordinateSystem(handles.coordinateData,handles.EPSG,'default',oldname,'defaulttype',oldtype,'type','both');
 
-if ok
+if ~isfield(plt,'oldcoordinatesystem')
+    plt.oldcoordinatesystem.name='unspecified';
+    plt.oldcoordinatesystem.type='projected';
+end
 
-    % Check if coordinate system changed
+oldname=plt.oldcoordinatesystem.name;
+oldtype=plt.oldcoordinatesystem.type;
+newname=plt.coordinatesystem.name;
+newtype=plt.coordinatesystem.type;
+
+% Check if coordinate system changed
+if ~strcmpi(newname,oldname) || ~strcmpi(newtype,oldtype)
     
-    if ~strcmpi(newname,oldname) || ~strcmpi(newtype,oldtype)
-        
-        plt.coordinatesystem.name=newname;
-        plt.coordinatesystem.type=newtype;
-        
-        if ~strcmpi(oldname,'unspecified')
-            % Adjust axes
-            [plt.xmin,plt.ymin]=convertCoordinates(plt.xmin,plt.ymin,'persistent','CS1.name',oldname, ...
-                'CS1.type',oldtype,'CS2.name',newname,'CS2.type',newtype);
-            [plt.xmax,plt.ymax]=convertCoordinates(plt.xmax,plt.ymax,'persistent','CS1.name',oldname, ...
-                'CS1.type',oldtype,'CS2.name',newname,'CS2.type',newtype);
-            plt=muppet_updateLimits(plt,'updateall');
-        end
-        
-        % Change projection type
-        switch newtype
-            case{'geographic'}
-                handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.projection='mercator';
-            case{'projected'}
-                handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.projection='equirectangular';
-        end
-        
-        handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot=plt;
-        
-        setHandles(handles);
-
+    % Change projection type
+    switch newtype
+        case{'geographic'}
+            plt.projection='mercator';
+        case{'projected'}
+            plt.projection='equirectangular';
     end
+    
+    if ~strcmpi(oldname,'unspecified')
+        % Adjust axes
+        [plt.xmin,plt.ymin]=convertCoordinates(plt.xmin,plt.ymin,'persistent','CS1.name',oldname, ...
+            'CS1.type',oldtype,'CS2.name',newname,'CS2.type',newtype);
+        [plt.xmax,plt.ymax]=convertCoordinates(plt.xmax,plt.ymax,'persistent','CS1.name',oldname, ...
+            'CS1.type',oldtype,'CS2.name',newname,'CS2.type',newtype);
+        plt=muppet_updateLimits(plt,'updateall');
+    end
+        
+    plt.oldcoordinatesystem=plt.coordinatesystem;
+    
+    handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot=plt;
+    
+    setHandles(handles);
+    
 end
 
 %%
@@ -658,6 +673,26 @@ end
 setHandles(handles);
 
 %%
+function editRightAxis
+handles=getHandles;
+s=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot;
+[s,ok]=gui_newWindow(s, 'xmldir', handles.xmlguidir, 'xmlfile', 'rightaxis.xml','iconfile',[handles.settingsdir 'icons' filesep 'deltares.gif']);
+if ok
+    handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot=s;
+    setHandles(handles);
+end
+
+%%
+function editAdvancedAxisOptions
+handles=getHandles;
+s=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot;
+[s,ok]=gui_newWindow(s, 'xmldir', handles.xmlguidir, 'xmlfile', 'advancedaxisoptions.xml','iconfile',[handles.settingsdir 'icons' filesep 'deltares.gif']);
+if ok
+    handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot=s;
+    setHandles(handles);
+end
+
+%%
 function options3D
 handles=getHandles;
 plt=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot;
@@ -668,7 +703,7 @@ if ok
 end
 
 %%
-function selectmap
+function selectMap
 handles=getHandles;
 plt=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot;
 for id=1:plt.nrdatasets
@@ -813,23 +848,35 @@ cmax=plt.cmax;
 cstep=plt.cstep;
 
 if cmax<=cmin || cstep>cdif || cstep<0.01*cdif
-%     set(handles.EditCMin,'BackgroundColor',[1 0 0]);
-%     set(handles.EditCMax,'BackgroundColor',[1 0 0]);
-%     set(handles.EditCStep,'BackgroundColor',[1 0 0]);
 else
-%     set(handles.EditCMin,'BackgroundColor',[1 1 1]);
-%     set(handles.EditCMax,'BackgroundColor',[1 1 1]);
-%     set(handles.EditCStep,'BackgroundColor',[1 1 1]);
     muppet_refreshColorMap(handles);
 end
 
 setHandles(handles);
 
 %%
+function selectFrame
+handles=getHandles;
+fig=handles.figures(handles.activefigure).figure;
+k=strmatch(lower(fig.frame),lower(handles.frames.names),'exact');
+frame=handles.frames.frame(k).frame;
+if isfield(frame,'text')
+    for itxt=1:length(frame.text)
+        if isfield(frame.text(itxt).text,'defaulttext')
+            fig.frametext(itxt).frametext.text=frame.text(itxt).text.defaulttext;
+        end
+    end
+end
+handles.figures(handles.activefigure).figure=fig;
+setHandles(handles);
+
+%%
 function editFrameText
 handles=getHandles;
 fig=handles.figures(handles.activefigure).figure;
-[fig,ok]=muppet_selectFrameText(fig);
+k=strmatch(lower(fig.frame),lower(handles.frames.names),'exact');
+frame=handles.frames.frame(k).frame;
+[fig,ok]=muppet_selectFrameText(fig,frame);
 if ok
     handles.figures(handles.activefigure).figure=fig;
     setHandles(handles);

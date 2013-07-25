@@ -155,7 +155,11 @@ function selectFrameText(src,eventdata)
 double_click = strcmp(get(gcf,'SelectionType'),'open');
 if double_click
     fig=getappdata(gcf,'figure');
-    [fig,ok]=muppet_selectFrameText(fig);
+    % Find matching frame
+    handles=getHandles;
+    k=strmatch(lower(fig.frame),lower(handles.frames.names),'exact');
+    frame=handles.frames.frame(k).frame;
+    [fig,ok]=muppet_selectFrameText(fig,frame);
     if ok
         fig.changed=1;
         setappdata(gcf,'figure',fig);
@@ -163,8 +167,12 @@ if double_click
         nft=length(fig.frametext);
         for ift=1:nft
             h=findobj(gcf,'tag','frametext','UserData',[nr,ift]);
-            if ~isempty(h)
+            if ~isempty(h) && ~isempty(fig.frametext(ift).frametext.text)
                 set(h,'String',fig.frametext(ift).frametext.text);
+                set(h,'Color',[0 0 0]);
+            else
+                set(h,'String',['Frametext ' num2str(ift)]);
+                set(h,'Color',[0.8 0.8 0.8]);
             end
         end
     end

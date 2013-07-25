@@ -1,26 +1,6 @@
-function handles=muppet_prepareFigure(handles,ifig,mode)
+function figh=muppet_prepareFigure(handles,ifig,mode)
 
 fig=handles.figures(ifig).figure;
-
-if strcmp(mode,'preview')
-    fig.units='pixels';
-    a=get(0,'ScreenSize');
-    asprat=fig.width/fig.height;
-    if asprat<a(3)/a(4)
-        y1=0.88*a(4);
-        fig.cm2pix=y1/fig.height;
-    else
-        x1=0.88*a(3);
-        fig.cm2pix=x1/fig.width;
-    end
-    ScreenPixelsPerInch=get(0,'ScreenPixelsPerInch');
-    cm2pix=fig.cm2pix;
-    fig.fontreduction=2.5*cm2pix/ScreenPixelsPerInch;
-else
-    fig.units='centimeters';
-    fig.cm2pix=1;
-    fig.fontreduction=1;
-end
 
 paperwidth=fig.width*fig.cm2pix;
 paperheight=fig.height*fig.cm2pix;
@@ -62,7 +42,6 @@ else
         fh.setFigureIcon(javax.swing.ImageIcon([handles.settingsdir 'icons' filesep 'deltares.gif']));
     end
 
-    fig.zoom='none';
     set(figh,'menubar','none');
     tbh=uitoolbar(gcf);
 
@@ -182,14 +161,4 @@ end
 set(figh,'Color',backgroundcolor);
 set(figh, 'InvertHardcopy', 'off');
 set(figh,'Tag','figure','UserData',ifig);
-fig.handle=figh;
 set(figh,'Visible','off');
-
-% Set app data for figure
-figappdata=fig;
-figappdata.number=ifig;
-figappdata.changed=0;
-figappdata.annotationschanged=0;
-setappdata(figh,'figure',figappdata);
-
-handles.figures(ifig).figure=fig;

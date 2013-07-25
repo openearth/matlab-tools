@@ -2,7 +2,7 @@ function muppet_refreshColorMap(handles)
 
 plt=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot;
 
-if plt.customcolorlimits
+if plt.usecustomcontours
     col=plt.contours;
 else
     col=plt.cmin:plt.cstep:plt.cmax;

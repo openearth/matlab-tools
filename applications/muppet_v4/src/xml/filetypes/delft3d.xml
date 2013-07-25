@@ -44,4 +44,10 @@
   <option>
     <name>k</name>
   </option>
+  <option>
+    <name>coordinatesystemname</name>
+  </option>
+  <option>
+    <name>coordinatesystemtype</name>
+  </option>
 </root>

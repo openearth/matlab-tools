@@ -117,6 +117,11 @@ if plt.rightaxis
     set(gca,'Color','none');
 end
 
+if ~plt.drawbox
+    axis off;
+    box off;
+end
+
 set(gca,'FontName',plt.font.name);
 set(gca,'FontSize',plt.font.size*fontred);
 set(gca,'FontAngle',plt.font.angle);

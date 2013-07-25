@@ -68,7 +68,7 @@
       <listtext>lit</listtext>
       <listtext>reverselit</listtext>
       <type>string</type>
-      <text>Face Lighting</text>
+      <text>Back Face Lighting</text>
       <position>110 130 80 20</position>
       <default>reverselit</default>
     </element>

@@ -103,6 +103,8 @@ opt.fadecurvyarrows=1;
 opt.cmin=0;
 opt.cstep=0.1;
 opt.cmax=1;
+opt.usecustomcontours=0;
+opt.customcontours=[0 1 2];
 
 opt.plotcolorbar=0;
 opt.colormap='jet';
@@ -131,9 +133,6 @@ opt.timebar.marker='o';
 opt.timebar.markeredgecolor='black';
 opt.timebar.markerfacecolor='black';
 opt.timebar.markersize=10;
-
-opt.usecustomcontours=0;
-opt.custumcontours=[0 1 2];
 
 opt.thinning=1;
 

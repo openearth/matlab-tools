@@ -1,4 +1,4 @@
-function handles=muppet_plotHistogram(handles,i,j,k)
+function h=muppet_plotHistogram(handles,i,j,k)
 
 fig=handles.figures(i).figure;
 plt=handles.figures(i).figure.subplots(j).subplot;
@@ -19,14 +19,15 @@ end
 
 ii=opt.barnr;
 hh=sort(findobj(gca,'Tag','bar'));
-set(hh(ii),'FaceColor',colorlist('getrgb','color',opt.fillcolor),'EdgeColor',colorlist('getrgb','color',opt.edgecolor));
+set(hh(ii),'FaceColor',colorlist('getrgb','color',opt.fillcolor),'EdgeColor',colorlist('getrgb','color',opt.linecolor));
+set(hh(ii),'LineStyle',opt.linestyle);
+set(hh(ii),'LineWidth',opt.linewidth);
 
 % Invisible patch object for legend
 x00=[0 1 1];y00=[0 0 1];
-htmp=patch(x00,y00,'k');
-set(htmp,'FaceColor',colorlist('getrgb','color',opt.fillcolor));
-set(htmp,'EdgeColor',colorlist('getrgb','color',opt.edgecolor));
-set(htmp,'Visible','off');
-
-% Set handle
-handles.figures(i).figure.subplots(j).subplot.datasets(k).dataset.handle=htmp;
+h=patch(x00,y00,'k');
+set(h,'FaceColor',colorlist('getrgb','color',opt.fillcolor));
+set(h,'EdgeColor',colorlist('getrgb','color',opt.linecolor));
+set(h,'LineStyle',opt.linestyle);
+set(h,'LineWidth',opt.linewidth);
+set(h,'Visible','off');

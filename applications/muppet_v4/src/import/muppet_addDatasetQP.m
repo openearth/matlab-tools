@@ -45,7 +45,7 @@ function dataset=read(dataset,parameter)
 
 % Should move to xml file
 
-switch dataset.filename(end-2:end)
+switch lower(dataset.filename(end-2:end))
     case{'map','ada'}
         % Delwaq
         if isempty(dataset.lgafile)
@@ -82,13 +82,11 @@ if isfield(fid,'SubType')
             tp=vs_get(fid,'map-const','COORDINATES','quiet');
     end
 end
+cs=[];
 switch lower(deblank(tp))
     case{'spherical'}
         cs.name='WGS 84';
         cs.type='geographic';
-    otherwise
-        cs.name='unspecified';
-        cs.type='projected';        
 end
 
 ii=0;
@@ -115,8 +113,10 @@ for j=i1:i2
     par.adjustname=1;
     
     par.name=dataproperties(ii).Name;
+
+    if sum(dataproperties(ii).DimFlag)>0
     
-    par.size=qpread(fid,1,dataproperties(ii),'size');
+        par.size=qpread(fid,1,dataproperties(ii),'size');
     
     % Bug in qpread?
     par.size=par.size.*dataproperties(ii).DimFlag;
@@ -184,10 +184,11 @@ for j=i1:i2
             end
         end
     end
-            
-    par.coordinatesystem=cs;
     
-    if sum(dataproperties(ii).DimFlag)>0
+    if ~isempty(cs)            
+        par.coordinatesystem=cs;
+    end
+    
 
         par.nval=dataproperties(ii).NVal;
 

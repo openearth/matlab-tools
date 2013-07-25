@@ -87,7 +87,10 @@ for ii=1:length(flist)
         end
         if isfield(handles.frames.frame(n).frame,'text')
             for k=1:length(handles.frames.frame(n).frame.text)
-                handles.frames.frame(n).frame.text(k).text.position=str2num(handles.frames.frame(n).frame.text(k).text.position);                
+                handles.frames.frame(n).frame.text(k).text.position=str2num(handles.frames.frame(n).frame.text(k).text.position);
+                if isfield(handles.frames.frame(n).frame.text(k).text,'defaulttext')
+                    handles.frames.frame(n).frame.text(k).text.defaulttext=handles.frames.frame(n).frame.text(k).text.defaulttext;
+                end
                 if ~isfield(handles.frames.frame(n).frame.text(k).text,'fontname')
                     handles.frames.frame(n).frame.text(k).text.fontname='Helvetica';
                 end

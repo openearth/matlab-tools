@@ -1,8 +1,6 @@
 function muppet_zoomInOutPan(src,eventdata,zoommode)
 
-handles=getHandles;
-
-ifig=get(gcf,'UserData');
+fig=getappdata(gcf,'figure');
 
 zoom off;
 pan off;
@@ -26,52 +24,51 @@ set(h(4),'State','off');
 
 switch zoommode
     case 1
-        if strcmp(handles.figures(ifig).figure.zoom,'zoomin')
-            handles.figures(ifig).figure.zoom='none';
+        if strcmp(fig.zoom,'zoomin')
+            fig.zoom='none';
         else
             set(h(1),'State','on');
-            handles.figures(ifig).figure.zoom='zoomin';
+            fig.zoom='zoomin';
             set(gcf, 'windowbuttonmotionfcn', {@moveMouse});
         end
     case 2
-        if strcmp(handles.figures(ifig).figure.zoom,'zoomout')
-            handles.figures(ifig).figure.zoom='none';
+        if strcmp(fig.zoom,'zoomout')
+            fig.zoom='none';
         else
             set(h(2),'State','on');
-            handles.figures(ifig).figure.zoom='zoomout';
+            fig.zoom='zoomout';
             set(gcf, 'windowbuttonmotionfcn', {@moveMouse});
         end
     case 3
-        if strcmp(handles.figures(ifig).figure.zoom,'pan')
-            handles.figures(ifig).figure.zoom='none';
+        if strcmp(fig.zoom,'pan')
+            fig.zoom='none';
         else
             set(h(3),'State','on');
-            handles.figures(ifig).figure.zoom='pan';
+            fig.zoom='pan';
             set(gcf, 'windowbuttonmotionfcn', {@moveMouse});
         end
     case 4
-        if strcmp(handles.figures(ifig).figure.zoom,'rotate3d')
-            handles.figures(ifig).figure.zoom='none';
+        if strcmp(fig.zoom,'rotate3d')
+            fig.zoom='none';
         else
             set(h(4),'State','on');
-            handles.figures(ifig).figure.zoom='rotate3d';
+            fig.zoom='rotate3d';
             set(gcf, 'windowbuttonmotionfcn', {@moveMouse});
         end
 end        
  
-setHandles(handles);
+setappdata(gcf,'figure',fig);
 
 %%
 function zoomInOut(imagefig, varargins,h,zoomin) 
 
-handles=getHandles;
-ifig=get(gcf,'UserData');
+fig=getappdata(gcf,'figure');
 
 usd=get(h,'UserData');
 j=usd(2);
 
 if strcmp(get(gca,'Tag'),'axis') && ~isempty(usd)
-    if handles.figures(ifig).figure.subplots(j).subplot.axesequal
+    if fig.subplots(j).subplot.axesequal
         axesequal=1;
     else
         axesequal=0;
@@ -86,7 +83,7 @@ asprat=pos(4)/pos(3);
 leftmouse=strcmp(get(gcf,'SelectionType'),'normal');
 rightmouse=strcmp(get(gcf,'SelectionType'),'alt');
 
-if ~strcmp(handles.figures(ifig).figure.subplots(j).subplot.type,'3d')
+if ~strcmp(fig.subplots(j).subplot.type,'3d')
     if (leftmouse && zoomin==1) || (rightmouse && zoomin==0)
         point1 = get(h,'CurrentPoint');
         rect = rbbox;
@@ -143,7 +140,7 @@ else
         fac=1.5;
     end
     
-    dasp=handles.figures(ifig).figure.subplots(j).subplot.dataaspectratio;
+    dasp=fig.subplots(j).subplot.dataaspectratio;
     
     tar=get(h,'cameratarget');
     pos=get(h,'cameraposition');
@@ -276,22 +273,22 @@ updateLimits;
 %%
 function moveMouse(imagefig, varargins)
 
-handles=getHandles;
+fig=getappdata(gcf,'figure');
 
 ifig=get(gcf,'UserData');
 
 if ~isempty(ifig)
     
-    posgcf = get(gcf, 'CurrentPoint')/handles.figures(ifig).figure.cm2pix;
+    posgcf = get(gcf, 'CurrentPoint')/fig.cm2pix;
     
     typ='none';
     
-    for j=1:handles.figures(ifig).figure.nrsubplots
+    for j=1:fig.nrsubplots
         h0=findobj(gcf,'Tag','axis','UserData',[ifig,j]);
         if ~isempty(h0)
-            pos=get(h0,'Position')/handles.figures(ifig).figure.cm2pix;
+            pos=get(h0,'Position')/fig.cm2pix;
             if posgcf(1)>pos(1) && posgcf(1)<pos(1)+pos(3) && posgcf(2)>pos(2) && posgcf(2)<pos(2)+pos(4)
-                typ=handles.figures(ifig).figure.subplots(j).subplot.type;
+                typ=fig.subplots(j).subplot.type;
                 h=h0;
             end
         end
@@ -305,7 +302,7 @@ if ~isempty(ifig)
         set(gcf,'WindowButtonDownFcn',[]);
         return
     else
-        switch(handles.figures(ifig).figure.zoom),
+        switch(fig.zoom),
             case{'zoomin'}
                 set(gcf,'WindowButtonDownFcn',{@zoomInOut,h,1});
                 setptr(gcf,'glassplus');

@@ -34,14 +34,8 @@ switch handles.figures(ifig).figure.subplots(isub).subplot.type
                     ~strcmpi(plt.coordinatesystem.type,data.coordinatesystem.type)
                 switch lower(data.type)
                     case{'vector2d2dxy','scalar2dxy','location1dxy','location2dxy'}
-                        if ~isfield(handles,'EPSG')
-                            wb = waitbox('Reading coordinate conversion libraries ...');
-                            curdir=[handles.muppetpath 'settings' filesep 'SuperTrans'];
-                            handles.epsg=load([curdir filesep 'data' filesep 'EPSG.mat']);
-                            close(wb);
-                        end
-                        [data.x,data.y]=convertCoordinates(data.x,data.y,handles.epsg,'CS1.name',data.coordinatesystem.name,'CS1.type',data.coordinatesystem.type, ...
-                            'CS2.name',plt.coordinatesystem.name,'CS2.type',data.coordinatesystem.type);
+                        [data.x,data.y]=convertCoordinates(data.x,data.y,handles.EPSG,'CS1.name',data.coordinatesystem.name,'CS1.type',data.coordinatesystem.type, ...
+                            'CS2.name',plt.coordinatesystem.name,'CS2.type',plt.coordinatesystem.type);
                     case{'scalar2duxy','vector2d2duxy'}
                         % Unstructured data
                         % TODO convert unstructured data
@@ -62,6 +56,22 @@ switch handles.figures(ifig).figure.subplots(isub).subplot.type
                     data.y=y;
             end
         end            
+end
+
+% Normprob scaling
+switch lower(plt.xscale)
+    case{'normprob'}
+        data.x=norminv(0.01*data.x,0,1);
+end
+switch lower(plt.yscale)
+    case{'normprob'}
+        data.y=norminv(0.01*data.y,0,1);
+end
+
+% Right axis
+if plt.datasets(id).dataset.rightaxis && plt.rightaxis
+    a=(data.y-plt.yminright)/(plt.ymaxright-plt.yminright);
+    data.y=plt.ymin+a*(plt.ymax-plt.ymin);
 end
 
 % Copy data structure back to handles structure

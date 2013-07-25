@@ -17,6 +17,9 @@
         <name>markergroup</name>
       </plotoption>
       <plotoption>
+        <name>rightaxis</name>
+      </plotoption>
+      <plotoption>
         <name>legendtext</name>
       </plotoption>
       <plotoption>
@@ -36,6 +39,9 @@
         <name>linegroup</name>
       </plotoption>
       <plotoption>
+        <name>rightaxis</name>
+      </plotoption>
+      <plotoption>
         <name>legendtext</name>
       </plotoption>
       <plotoption>
@@ -53,6 +59,9 @@
       </plotoption>
       <plotoption>
         <name>linegroup</name>
+      </plotoption>
+      <plotoption>
+        <name>rightaxis</name>
       </plotoption>
       <plotoption>
         <name>legendtext</name>

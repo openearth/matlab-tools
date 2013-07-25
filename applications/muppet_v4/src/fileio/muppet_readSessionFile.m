@@ -175,10 +175,10 @@ end
 %% Set sizes in handles structure
 handles.nrfigures=nf;
 
-%% And now read the data in the file
+%% And now read the actual data in the file
 
+% First the datasets
 if ilayout==0
-    % Datasets
     for id=1:handles.nrdatasets
         [keywords,values]=readkeywordvaluepairs(str,data(id).i1,data(id).i2-1);
         % Set defaults
@@ -186,22 +186,14 @@ if ilayout==0
         % Name
         ii=strmatch('dataset',lower(keywords),'exact');
         handles.datasets(id).dataset.name=values{ii};
-        % File type
-        ii=strmatch('filetype',lower(keywords),'exact');
-        filetypename=values{ii};
-        % Find info for this file type
-        j=muppet_findIndex(handles.filetype,'filetype','name',filetypename);
-        filetype=handles.filetype(j).filetype;
-        % Now fill all the options
-        for ii=1:length(filetype.option)
-            j=muppet_findIndex(handles.dataproperty,'dataproperty','name',filetype.option(ii).option.name);
-            dataproperty=handles.dataproperty(j).dataproperty;
-            handles.datasets(id).dataset=muppet_readOption(handles,handles.datasets(id).dataset,dataproperty,keywords,values);
+        %
+        for j=1:length(keywords)
+            handles.datasets(id).dataset=readoption(handles.datasets(id).dataset,handles.dataproperty,keywords{j},values{j});
         end
     end
 end
 
-% Figures
+% Then the figures
 for ifig=1:handles.nrfigures
 
     % Set figure defaults
@@ -215,15 +207,31 @@ for ifig=1:handles.nrfigures
     for j=1:length(keywords)
         figr=readoption(figr,handles.figureoption,keywords{j},values{j});
     end
-
-    % Set frame text (if not already set)
+    
     if isfield(figr,'frame')
-        ifr=strmatch(lower(figr.frame),lower(handles.frames.names),'exact');
-        if ~isempty(ifr)
-            if isfield(handles.frames.frame(ifr).frame,'text')
-                for itxt=1:length(handles.frames.frame(ifr).frame.text)
-                    if isempty(figr.frametext(itxt).frametext.text)
-                        figr.frametext(itxt).frametext.text='';
+        if strcmpi(figr.frame,'none')
+            figr.frame=[];
+        end
+    end
+
+    if ~isempty(figr.frame)
+        figr.useframe=1;
+    end
+    
+    % Set frame text (if not already set)
+    if figr.useframe
+        if isfield(figr,'frame')
+            ifr=strmatch(lower(figr.frame),lower(handles.frames.names),'exact');
+            if ~isempty(ifr)
+                if isfield(handles.frames.frame(ifr).frame,'text')
+                    for itxt=1:length(handles.frames.frame(ifr).frame.text)
+                        if isempty(figr.frametext(itxt).frametext.text)
+                            if isfield(handles.frames.frame(ifr).frame.text(itxt).text,'defaulttext')
+                                figr.frametext(itxt).frametext.text=handles.frames.frame(ifr).frame.text(itxt).text.defaulttext;
+                            else
+                                figr.frametext(itxt).frametext.text='';
+                            end
+                        end
                     end
                 end
             end
@@ -278,6 +286,7 @@ end
 
 % Now fix some axes stuff and deal with backward compatibility issues
 for ifig=1:handles.nrfigures
+
     switch lower(handles.figures(ifig).figure.orientation(1))
         case{'p'}
             handles.figures(ifig).figure.orientation='portrait';
@@ -395,11 +404,7 @@ if ~isempty(ii)
     if isfield(info,'variable')
         varname0=info.variable;
     else
-%        try
         varname0=info.name;
-%        catch
-%            shite=1
-%        end
     end
     
     % Keyword found

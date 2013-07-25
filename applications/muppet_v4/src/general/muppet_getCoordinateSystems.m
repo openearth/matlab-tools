@@ -1,5 +1,8 @@
 function handles=muppet_getCoordinateSystems(handles)
 
+global EPSG
+global COORDINATESYSTEMS
+
 %%
 
 fname=[handles.settingsdir 'data' filesep 'epsg' filesep 'epsg.mat'];
@@ -27,3 +30,5 @@ for i=1:length(handles.EPSG.coordinate_reference_system.coord_ref_sys_kind)
     end
 end
 
+EPSG=handles.EPSG;
+COORDINATESYSTEMS=handles.coordinateData;

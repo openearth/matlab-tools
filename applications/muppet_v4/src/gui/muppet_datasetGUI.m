@@ -223,6 +223,7 @@ dataset=gui_getUserData;
 oldsize=dataset.size;
 oldquantity=dataset.quantity;
 oldnrblocks=dataset.nrblocks;
+oldcoordinatesystem=dataset.coordinatesystem;
 
 % Copy entire parameter structure (of selected parameter) to dataset
 % structure (but skip name subfield)

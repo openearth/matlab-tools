@@ -16,6 +16,11 @@
       <variable>marker</variable>
       <text>Type</text>
       <position>70 40 100 20</position>
+      <check>
+        <variable>marker</variable>
+        <operator>ne</operator>
+        <value>none</value>
+      </check>
     </element>
     <element>
       <name>markersize</name>

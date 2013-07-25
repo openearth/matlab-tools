@@ -10,9 +10,9 @@ try
     elseif strcmp(mode,'print')
         wb = waitbox('Printing figure...');
     end
-    %
+    
     muppet_makeFigure(handles,ifig,mode);
-    %
+
     switch lower(mode)
         case{'print'}
             ii=printdlg('-setup',gcf);

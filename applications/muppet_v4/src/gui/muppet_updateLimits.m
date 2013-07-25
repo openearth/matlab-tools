@@ -112,7 +112,7 @@ switch plt.projection
     case{'equirectangular'}
         plt.ymax=plt.ymin+(plt.xmax-plt.xmin)*plt.position(4)/plt.position(3);
     case{'mercator'}
-        plt.xmax=plt.xmin+(plt.position(3)/plt.position(4))*(merc(plt.ymax)-merc(plt.ymin));
+%        plt.xmax=plt.xmin+(plt.position(3)/plt.position(4))*(merc(plt.ymax)-merc(plt.ymin));
         plt.ymax=invmerc((plt.xmax-plt.xmin)/(plt.position(3)/plt.position(4))+merc(plt.ymin));
     case{'albers'}
 %         [plt.xmin,plt.ymin]=albers(plt.xminproj,plt.yminproj,plt.labda0,plt.phi0,plt.phi1,plt.phi2,'inverse');

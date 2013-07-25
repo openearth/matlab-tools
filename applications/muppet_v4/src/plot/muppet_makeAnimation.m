@@ -85,9 +85,6 @@ if ~isempty(animationsettings.avifilename)
     end
 end
 
-% animationsettings.flightpath=1;
-% animationsettings.flightpathxml='flightpath.xml';
-
 wb = awaitbar(0,'Generating AVI...');
 
 try

@@ -506,10 +506,36 @@
     </check>
   </subplotoption>
   <subplotoption>
+    <name>usecustomcontours</name>
+    <variable>usecustomcontours</variable>
+    <type>boolean</type>
+    <keyword>UseCustomContours</keyword>
+    <default>0</default>
+    <check>
+      <operator>ne</operator>
+    </check>
+  </subplotoption>
+  <subplotoption>
     <name>clim</name>
     <variable>cmin cstep cmax</variable>
     <type>real</type>
     <keyword>Contours</keyword>
+    <check>
+      <variable>usecustomcontours</variable>
+      <operator>eq</operator>
+      <value>0</value>
+    </check>
+  </subplotoption>
+  <subplotoption>
+    <name>customcontours</name>
+    <variable>customcontours</variable>
+    <type>real</type>
+    <keyword>CustomContours</keyword>
+    <check>
+      <variable>usecustomcontours</variable>
+      <operator>eq</operator>
+      <value>1</value>
+    </check>
   </subplotoption>
   <subplotoption>
     <name>scalebar</name>
@@ -660,6 +686,11 @@
     <variable>coordinatesystem.type</variable>
     <keyword>CoordinateSystemType</keyword>
     <default>projected</default>
+    <check>
+      <variable>coordinatesystem.name</variable>
+      <operator>ne</operator>
+      <value>unspecified</value>
+    </check>
   </subplotoption>
   <subplotoption>
     <name>vectorlegend</name>
@@ -824,7 +855,6 @@
       <operator>ne</operator>
     </check>
   </subplotoption>
-
   <subplotoption>
     <name>legendfontname</name>
     <variable>legend.font.name</variable>

@@ -7,8 +7,6 @@ units=handles.figures(ifig).figure.units;
 
 view(2);
 
-multi=1;
-
 plt=muppet_updateLimits(plt,'setprojectionlimits');
 set(gca,'xlim',[plt.xminproj plt.xmaxproj],'ylim',[plt.yminproj plt.ymaxproj]);
 
@@ -81,31 +79,27 @@ if plt.drawbox
                 ytickproj=merc(ytick);
             otherwise
         end
-        ytick=multi*ytick;
         set(gca,'ytick',ytickproj,'FontSize',10*fontred);
 
         if plt.ydecimals>=0
+            % Fixed decimals
             frmt=['%0.' num2str(plt.ydecimals) 'f'];
             for i=1:size(ytick,2)
-                val=plt.ytickmultiply*ytick(i)/multi+plt.ytickadd;
+                val=plt.ytickmultiply*ytick(i)+plt.ytickadd;
                 ylabls{i}=sprintf(frmt,val);
             end
             set(gca,'yticklabel',ylabls);
-%         elseif plt.ydecimals==-1 % && multi~=1
-%             frmt=['%0.' num2str(2) 'f'];
-%             for i=1:size(ytick,2)
-%                 val=plt.ytickmultiply*ytick(i)/multi+plt.ytickadd;
-%                 ylabls{i}=sprintf(frmt,val);
-%             end
-%             set(gca,'yticklabel',ylabls);
         elseif plt.ydecimals==-999
+            % No labels
             for i=1:size(ytick,2)
                 ylabls{i}='';
             end
             set(gca,'yticklabel',ylabls);
-        elseif plt.ydecimals==-1 && (plt.ytickmultiply~=1 || plt.ytickadd~=0)
+        elseif plt.ydecimals==-1 && (plt.ytickmultiply~=1 || plt.ytickadd~=0 || ...
+                ~strcmpi(plt.projection,'equirectangular'))
+            % Automatic
             for i=1:size(ytick,2)
-                val=plt.ytickmultiply*ytick(i)/multi+plt.ytickadd;
+                val=plt.ytickmultiply*ytick(i)+plt.ytickadd;
                 ylabls{i}=sprintf('%0.5g',val);
             end
             set(gca,'yticklabel',ylabls);
@@ -148,5 +142,3 @@ set(gca,'YColor',colorlist('getrgb','color',plt.font.color));
 set(gca,'Units',units);
 set(gca,'Position',plt.position*cm2pix);
 set(gca,'Layer','top');
-
-%zoom v6 on;

@@ -1758,7 +1758,6 @@
     </dependency>
   </element>
   <element>
-    <tag>toggleuserightaxis</tag>
     <style>checkbox</style>
     <position>580 330 70 20</position>
     <text>Right Axis</text>
@@ -1803,6 +1802,15 @@
         <operator>eq</operator>
       </check>
     </dependency>
+    <dependency>
+      <action>enable</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.rightaxis</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>toggledrawbox</tag>
@@ -1824,8 +1832,9 @@
   </element>
   <element>
     <tag>pushselectcoordinatesystem</tag>
-    <style>pushbutton</style>
-    <position>580 280 110 20</position>
+    <style>selectcoordinatesystem</style>
+    <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.coordinatesystem</variable>
+    <position>580 260 100 20</position>
     <text>Coordinate System</text>
     <tooltipstring>Push to select coordinate system</tooltipstring>
     <callback>muppet_gui</callback>
@@ -1841,68 +1850,15 @@
     </dependency>
   </element>
   <element>
-    <tag>textcoordinatesystemname</tag>
-    <style>text</style>
-    <position>700 283</position>
-    <prefix>Name : </prefix> 
-    <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.coordinatesystem.name</variable>
-    <dependency>
-      <action>visible</action>
-      <checkfor>all</checkfor>
-      <check>
-        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type</variable>
-        <value>map</value>
-        <operator>eq</operator>
-      </check>
-    </dependency>
-  </element>
-  <element>
-    <tag>radiocoordinatesystemprojected</tag>
-    <style>radiobutton</style>
-    <position>700 263</position>
-    <text>Projected</text>
-    <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.coordinatesystem.type</variable>
-    <value>projected</value>
-    <enable>0</enable>
-    <dependency>
-      <action>visible</action>
-      <checkfor>all</checkfor>
-      <check>
-        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type</variable>
-        <value>map</value>
-        <operator>eq</operator>
-      </check>
-    </dependency>
-  </element>
-  <element>
-    <tag>radiocoordinatesystemgeographic</tag>
-    <style>radiobutton</style>
-    <position>770 263</position>
-    <text>Geographic</text>
-    <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.coordinatesystem.type</variable>
-    <value>geographic</value>
-    <enable>0</enable>
-    <dependency>
-      <action>visible</action>
-      <checkfor>all</checkfor>
-      <check>
-        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type</variable>
-        <value>map</value>
-        <operator>eq</operator>
-      </check>
-    </dependency>
-  </element>
-  <element>
-    <tag>pushadvanced</tag>
     <style>pushbutton</style>
     <position>700 350 80 20</position>
     <text>Advanced ...</text>
     <tooltipstring>Push to edit advanced axis options</tooltipstring>
     <callback>muppet_gui</callback>
-    <option1>pushadvancedoptions</option1>
+    <option1>pushadvancedaxisoptions</option1>
     <dependency>
       <action>enable</action>
-      <checkfor>all</checkfor>
+      <checkfor>any</checkfor>
       <check>
         <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type</variable>
         <value>map</value>
@@ -1916,6 +1872,16 @@
       <check>
         <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type</variable>
         <value>timeseries</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type</variable>
+        <value>3d</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type</variable>
+        <value>timestack</value>
         <operator>eq</operator>
       </check>
     </dependency>
@@ -2276,7 +2242,7 @@
         <operator>gt</operator>
       </check>
       <check>
-        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.customcolorlimits</variable>
+        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.usecustomcontours</variable>
         <value>1</value>
         <operator>ne</operator>
       </check>
@@ -2302,7 +2268,7 @@
         <operator>gt</operator>
       </check>
       <check>
-        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.customcolorlimits</variable>
+        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.usecustomcontours</variable>
         <value>1</value>
         <operator>ne</operator>
       </check>
@@ -2328,20 +2294,20 @@
         <operator>gt</operator>
       </check>
       <check>
-        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.customcolorlimits</variable>
+        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.usecustomcontours</variable>
         <value>1</value>
         <operator>ne</operator>
       </check>
     </dependency>
   </element>
   <element>
-    <tag>togglecustomcolorlimits</tag>
+    <tag>togglecustomcontours</tag>
     <style>checkbox</style>
     <position>200 75</position>
     <text>Custom</text>
-    <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.customcolorlimits</variable>
+    <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.usecustomcontours</variable>
     <type>integer</type>
-    <tooltipstring>Use custom colorlimits</tooltipstring>
+    <tooltipstring>Use custom contours</tooltipstring>
     <dependency>
       <action>enable</action>
       <checkfor>all</checkfor>
@@ -2353,13 +2319,13 @@
     </dependency>
   </element>
   <element>
-    <tag>editcustomcolorlimits</tag>
+    <tag>editcustomcontours</tag>
     <style>pushbutton</style>
     <position>260 75 35 20</position>
     <text>Edit</text>
-    <tooltipstring>Push to edit custom color limits settings</tooltipstring>
+    <tooltipstring>Push to edit custom contour settings</tooltipstring>
     <callback>muppet_gui</callback>
-    <option1>editcustomcolorlimits</option1>
+    <option1>editcustomcontours</option1>
     <dependency>
       <action>enable</action>
       <checkfor>all</checkfor>
@@ -2369,7 +2335,7 @@
         <operator>gt</operator>
       </check>
       <check>
-        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.customcolorlimits</variable>
+        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.usecustomcontours</variable>
         <value>1</value>
         <operator>eq</operator>
       </check>
@@ -2378,7 +2344,7 @@
   <element>
     <tag>figurepanel</tag>
     <style>panel</style>
-    <position>350 20 250 200</position>
+    <position>350 90 250 130</position>
     <text>Figure</text>
   </element>
   <element>
@@ -2425,57 +2391,56 @@
     <tooltipstring>Edit figure height</tooltipstring>
   </element>
   <element>
-    <tag>radioportrait</tag>
-    <style>radiobutton</style>
-    <position>400 120</position>
-    <text>Portrait</text>
-    <variable>handles.figures(handles.activefigure).figure.orientation</variable>
-    <value>portrait</value>
-    <type>string</type>
-    <tooltipstring>Set to portrait</tooltipstring>
-    <callback>muppet_gui</callback>
-    <option1>selectportrait</option1>
-  </element>
-  <element>
-    <tag>radiolandscape</tag>
-    <style>radiobutton</style>
-    <position>460 120</position>
-    <text>Landscape</text>
-    <variable>handles.figures(handles.activefigure).figure.orientation</variable>
-    <value>landscape</value>
-    <type>string</type>
-    <tooltipstring>Set to landscape</tooltipstring>
-    <callback>muppet_gui</callback>
-    <option1>selectlandscape</option1>
-  </element>
-  <element>
     <tag>selectfigurecolor</tag>
     <style>selectcolor</style>
-    <position>400 90 100 20</position>
+    <position>400 120 100 20</position>
     <text>Color</text>
     <textposition>left</textposition>
     <variable>handles.figures(handles.activefigure).figure.backgroundcolor</variable>
     <tooltipstring>Select figure background color</tooltipstring>
   </element>
   <element>
+    <tag>framepanel</tag>
+    <style>panel</style>
+    <position>350 20 250 70</position>
+    <text>Frame</text>
+  </element>
+  <element>
+    <style>checkbox</style>
+    <position>360 50</position>
+    <text>Frame</text>
+    <variable>handles.figures(handles.activefigure).figure.useframe</variable>
+    <tooltipstring>Include frame</tooltipstring>
+  </element>
+  <element>
     <tag>selectframe</tag>
     <style>popupmenu</style>
-    <position>400 60 100 20</position>
+    <position>415 50 90 20</position>
     <variable>handles.figures(handles.activefigure).figure.frame</variable>
     <type>string</type>
     <tooltipstring>Select figure frame</tooltipstring>
-    <text>Frame</text>
     <listtext>
       <variable>handles.frames.longnames</variable>
     </listtext>
     <listvalue>
       <variable>handles.frames.names</variable>
     </listvalue>
+    <callback>muppet_gui</callback>
+    <option1>selectframe</option1>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.figures(handles.activefigure).figure.useframe</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>editframetext</tag>
     <style>pushbutton</style>
-    <position>510 60 70 20</position>
+    <position>510 50 80 20</position>
     <text>Frame Text</text>
     <tooltipstring>Push to edit frame text</tooltipstring>
     <callback>muppet_gui</callback>
@@ -2484,9 +2449,51 @@
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.figures(handles.activefigure).figure.frame</variable>
-        <value>none</value>
-        <operator>ne</operator>
+        <variable>handles.figures(handles.activefigure).figure.useframe</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <tag>radioportrait</tag>
+    <style>radiobutton</style>
+    <position>360 25</position>
+    <text>Portrait</text>
+    <variable>handles.figures(handles.activefigure).figure.orientation</variable>
+    <value>portrait</value>
+    <type>string</type>
+    <tooltipstring>Set to portrait</tooltipstring>
+    <callback>muppet_gui</callback>
+    <option1>selectportrait</option1>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.figures(handles.activefigure).figure.useframe</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <tag>radiolandscape</tag>
+    <style>radiobutton</style>
+    <position>420 25</position>
+    <text>Landscape</text>
+    <variable>handles.figures(handles.activefigure).figure.orientation</variable>
+    <value>landscape</value>
+    <type>string</type>
+    <tooltipstring>Set to landscape</tooltipstring>
+    <callback>muppet_gui</callback>
+    <option1>selectlandscape</option1>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.figures(handles.activefigure).figure.useframe</variable>
+        <value>1</value>
+        <operator>eq</operator>
       </check>
     </dependency>
   </element>

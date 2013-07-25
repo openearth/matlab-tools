@@ -146,11 +146,6 @@ if plt.drawbox==0
 
 else
     
-    set(gca,'XLim',[plt.xmin plt.xmax]);
-    set(gca,'YLim',[plt.ymin plt.ymax]);
-    set(gca,'ZLim',[plt.zmin plt.zmax]);
-
-    
     tick(gca,'x','none');
     tick(gca,'y','none');
     tick(gca,'z','none');

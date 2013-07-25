@@ -9,9 +9,6 @@ for k=1:handles.figures(ifig).figure.subplots(j).subplot.nrdatasets
     handles.figures(ifig).figure.subplots(j).subplot.datasets(k).dataset.number=nr;
 end
 
-%% Compute opengl offset
-plt=handles.figures(ifig).figure.subplots(j).subplot;
-
 %% In case of bars or stacked areas, data from dataset must be merged 
 handles=muppet_prepareBar(handles,ifig,j);
 

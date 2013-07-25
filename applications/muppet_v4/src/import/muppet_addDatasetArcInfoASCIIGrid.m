@@ -105,8 +105,8 @@ else
     end
 end
 
-parameter.val=max(parameter.val,-5);
-parameter.val=min(parameter.val,5);
+% parameter.val=max(parameter.val,-5);
+% parameter.val=min(parameter.val,5);
 
 [timestep,istation,m,n,k]=muppet_findDataIndices(dataset);
 

@@ -10,41 +10,30 @@ fprintf(fid,'%s \n',txt);
 
 k=muppet_findIndex(handles.figureoption,'figureoption','name','papersize');
 muppet_writeOption(handles.figureoption(k).figureoption,fig,fid,3,11);
-k=muppet_findIndex(handles.figureoption,'figureoption','name','frame');
-muppet_writeOption(handles.figureoption(k).figureoption,fig,fid,3,11);
-k=muppet_findIndex(handles.figureoption,'figureoption','name','orientation');
-muppet_writeOption(handles.figureoption(k).figureoption,fig,fid,3,11);
 k=muppet_findIndex(handles.figureoption,'figureoption','name','backgroundcolor');
 muppet_writeOption(handles.figureoption(k).figureoption,fig,fid,3,11);
 
-% Frame texts
-if ~ilayout
-    for ii=1:50
-        k=muppet_findIndex(handles.figureoption,'figureoption','name',['frametext' num2str(ii)]);
-        muppet_writeOption(handles.figureoption(k).figureoption,fig,fid,3,11);
+if fig.useframe
+    k=muppet_findIndex(handles.figureoption,'figureoption','name','frame');
+    muppet_writeOption(handles.figureoption(k).figureoption,fig,fid,3,11);
+    k=muppet_findIndex(handles.figureoption,'figureoption','name','orientation');
+    muppet_writeOption(handles.figureoption(k).figureoption,fig,fid,3,11);
+    % Frame texts
+    if ~ilayout
+        kfr=strmatch(lower(fig.frame),lower(handles.frames.names),'exact');
+        for ii=1:length(handles.frames.frame(kfr).frame.text)
+            k=muppet_findIndex(handles.figureoption,'figureoption','name',['frametext' num2str(ii)]);
+            muppet_writeOption(handles.figureoption(k).figureoption,fig,fid,3,11);
+        end
     end
 end
 
 txt='';
 fprintf(fid,'%s \n',txt);
 
-%%
-
-% if fig.nrannotations>0
-%     nrsub=fig.nrsubplots-1;
-% else
-     nrsub=fig.nrsubplots;
-% end
-
-for isub=1:nrsub
+for isub=1:fig.nrsubplots
     muppet_saveSessionFileSubplots(handles,fid,ifig,isub,ilayout);
 end
-
-% if ilayout==0
-%     if fig.nrannotations>0
-%         muppet_saveSessionAnnotations(handles,fid,ifig);
-%     end
-% end
 
 if ilayout==0
     str=fig.outputfile;

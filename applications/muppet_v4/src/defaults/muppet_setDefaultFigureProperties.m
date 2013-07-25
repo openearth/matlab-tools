@@ -15,6 +15,8 @@ opt.units='centimeters';
 opt.nrannotations=0;
 
 opt.frametext=[];
-% for ii=1:50
-%     opt.frametext(ii).frametext.text=' ';
-% end
+opt.useframe=0;
+
+for ii=1:12
+    opt.frametext(ii).frametext.text='';
+end

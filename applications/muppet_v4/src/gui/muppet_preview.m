@@ -2,16 +2,9 @@ function muppet_preview
 
 handles=getHandles;
 
-%if handles.mode==1
 wb = waitbox('Preparing figure...');
 try
-    handles=muppet_makeFigure(handles,handles.activefigure,'preview');
-    setHandles(handles);
-%     fig=handles.figures(handles.activefigure).figure;
-%     fig.number=handles.activefigure;
-%     fig.changed=0;
-%     fig.annotationschanged=0;
-%     setappdata(fig.handle,'figure',fig);
+    muppet_makeFigure(handles,handles.activefigure,'preview');
     set(gcf,'Visible','on');
 catch
     h=findobj('Tag','waitbox');

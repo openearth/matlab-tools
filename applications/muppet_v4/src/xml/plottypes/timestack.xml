@@ -111,7 +111,52 @@
     <name>legendfontcolor</name>
   </option>
   <option>
-    <name>adddate</name>
+    <name>colormap</name>
+  </option>
+  <option>
+    <name>colorbar</name>
+  </option>
+  <option>
+    <name>colorbarposition</name>
+  </option>
+  <option>
+    <name>colorbarlabel</name>
+  </option>
+  <option>
+    <name>colorbarttickincrement</name>
+  </option>
+  <option>
+    <name>colorbarunit</name>
+  </option>
+  <option>
+    <name>colorbartype</name>
+  </option>
+  <option>
+    <name>colorbarfontname</name>
+  </option>
+  <option>
+    <name>colorbarfontsize</name>
+  </option>
+  <option>
+    <name>colorbarfontweight</name>
+  </option>
+  <option>
+    <name>colorbarfontangle</name>
+  </option>
+  <option>
+    <name>colorbarfontcolor</name>
+  </option>
+  <option>
+    <name>colorbardecimals</name>
+  </option>
+  <option>
+    <name>clim</name>
+  </option>
+  <option>
+    <name>usecustomcontours</name>
+  </option>
+  <option>
+    <name>customcontours</name>
   </option>
   </plottype>
 </root>

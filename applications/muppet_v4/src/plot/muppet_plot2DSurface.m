@@ -14,16 +14,18 @@ data.zz=data.zz(1:opt.fieldthinningfactor1:end,1:opt.fieldthinningfactor1:end);
 
 switch(lower(opt.plotroutine)),
     case{'plotpatches','plotshadesmap','plotcontourmap','plotcontourmaplines'}
-        if strcmpi(plt.contourtype,'limits')
+        % Contours from axis properties
+        if ~plt.usecustomcontours
             col=plt.cmin:plt.cstep:plt.cmax;
         else
-            col=plt.contours;
+            col=plt.customcontours;
         end
     case{'plotcontourlines'}
-        if strcmpi(opt.contourtype,'limits')
+        % Contours from plot properties
+        if ~opt.usecustomcontours
             col=opt.cmin:opt.cstep:opt.cmax;
         else
-            col=opt.contours;
+            col=opt.customcontours;
         end
 end
 
@@ -31,16 +33,30 @@ c1=col(1);
 c2=col(end);
 dc=col(2)-col(1);
 
-switch(lower(opt.plotroutine)),
+switch(lower(opt.plotroutine))
     case{'plotpatches'}
         x=data.x;
         y=data.y;
         z=data.zz;
+        
+        if ~plt.usecustomcontours
+            zc=z;
+            cax=[col(1) col(end)];
+        else
+            isn=isnan(z);
+            zc=z;
+            zc=max(zc,col(1));
+            zc=min(zc,col(end));
+            zc=interp1(col,1:length(col),zc);
+            zc(isn)=NaN;
+            cax=[1 length(col)-1];
+        end
+        
         clmap=muppet_getColors(handles.colormaps,plt.colormap,64);
         colormap(clmap);
-        h=pcolor(x,y,z);
+        h=pcolor(x,y,zc);
         shading flat;
-        caxis([col(1) col(end)]);
+        caxis(cax);
     case{'plotcontourmap','plotcontourmaplines'}
         z=max(data.z,c1-dc);
         z=min(z,c2+dc);
@@ -52,7 +68,7 @@ switch(lower(opt.plotroutine)),
         x(isnan(x))=xmean;
         y(isnan(y))=ymean;
         z(isnan(x))=NaN;
-        if strcmpi(opt.contourtype,'limits')
+        if ~plt.usecustomcontours
             zc=z;
             cax=[col(1)-dc col(end)];
             contours=col(1)-dc:dc:col(end)+dc;
@@ -75,11 +91,25 @@ switch(lower(opt.plotroutine)),
         y=data.y;
         z=data.z;
         ncol=128;
+
+        if ~plt.usecustomcontours
+            zc=z;
+            cax=[col(1) col(end)];
+        else
+            isn=isnan(z);
+            zc=z;
+            zc=max(zc,col(1));
+            zc=min(zc,col(end));
+            zc=interp1(col,1:length(col),zc);
+            zc(isn)=NaN;
+            cax=[1 length(col)-1];
+        end
+        
         clmap=muppet_getColors(handles.colormaps,plt.colormap,ncol);
         colormap(clmap);
-        h=pcolor(x,y,z);
+        h=pcolor(x,y,zc);
         shading interp;
-        caxis([col(1) col(end)]);
+        caxis(cax);
     case{'plotcontourlines'}
         x=data.x;
         y=data.y;

@@ -1,10 +1,16 @@
 <?xml version="1.0"?>
 <root>
   <plotoption>
+    <name>climgroup</name>
     <element>
       <name>climgroup</name>
       <variable>cmin cstep cmax</variable>
       <keyword>Contours</keyword>
+      <check>
+        <variable>usecustomcontours</variable>
+        <value>0</value>
+        <operator>eq</operator>
+      </check>
       <type>real</type>
     </element>
     <element>
@@ -97,6 +103,16 @@
           <operator>eq</operator>
         </check>
       </dependency>
+    </element>
+    <element>
+      <variable>usecustomcontours</variable>
+      <type>boolean</type>
+      <keyword>UseCustomContours</keyword>
+      <check>
+        <variable>usecustomcontours</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
     </element>
     <element>
       <variable>customcontours</variable>

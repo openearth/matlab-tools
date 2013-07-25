@@ -20,10 +20,10 @@ fontred=fig.fontreduction;
 units=fig.units;
 cm2pix=fig.cm2pix;
 
-if strcmpi(plt.contourtype,'limits')
+if ~plt.usecustomcontours
     contours=plt.cmin:plt.cstep:plt.cmax;
 else
-    contours=plt.contours;
+    contours=plt.customcontours;
 end
 notick=size(contours,2)-1;
 if plt.shadesbar==0
@@ -217,12 +217,6 @@ if plt.colorbar.type==1
     end
  
 else
-    
-    if strcmpi(plt.contourtype,'limits')
-        contours=plt.cmin:(plt.cstep*plt.colorbar.labelincrement):plt.cmax;
-    else
-        contours=plt.contours;
-    end
     
     nocol=size(contours,2)+1;
 

@@ -7,8 +7,12 @@ nr=plt.datasets(id).dataset.number;
 data=handles.datasets(nr).dataset;
 opt=plt.datasets(id).dataset;
 
-col=plt.cmin:plt.cstep:plt.cmax;
- 
+if ~plt.usecustomcontours
+    col=plt.cmin:plt.cstep:plt.cmax;
+else
+    col=plt.customcontours;
+end
+
 clmap=muppet_getColors(handles.colormaps,plt.colormap,64);
 colormap(clmap);
 
@@ -45,7 +49,6 @@ set(dpplot,'FaceLighting',opt.facelighting);
 set(dpplot,'BackFaceLighting',opt.backfacelighting);
 set(dpplot,'EdgeLighting',opt.edgelighting);
  
-
 set(dpplot,'ambientstrength',opt.ambientstrength);
 set(dpplot,'specularstrength',opt.specularstrength);
 set(dpplot,'diffusestrength',opt.diffusestrength);
