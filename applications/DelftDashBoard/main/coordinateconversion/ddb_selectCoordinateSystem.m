@@ -126,8 +126,9 @@ handles.Window=MakeNewWindow('Select Coordinate System',[400 480]);
 
 handles.SelectCS = uicontrol(gcf,'Style','listbox','String','','Position', [ 30 70 340 390],'BackgroundColor',[1 1 1]);
 
-handles.radioGeo  = uicontrol(gcf,'Style','radiobutton','String','Geographic','Position', [ 30 30 80 20]);
-handles.radioProj = uicontrol(gcf,'Style','radiobutton','String','Projected', 'Position', [110 30 80 20]);
+bgc=get(gcf,'Color');
+handles.radioGeo  = uicontrol(gcf,'Style','radiobutton','String','Geographic','Position', [ 30 30 80 20],'BackgroundColor',bgc);
+handles.radioProj = uicontrol(gcf,'Style','radiobutton','String','Projected', 'Position', [110 30 80 20],'BackgroundColor',bgc);
 
 if strcmpi(cstype,'geographic')
     set(handles.radioGeo,'Value',1);
@@ -178,6 +179,7 @@ else
 end
 close(gcf);
 
+%%
 function PushOK_CallBack(hObject,eventdata)
 handles=guidata(gcf);
 str=get(handles.SelectCS,'String');
@@ -192,9 +194,11 @@ handles.ok=1;
 guidata(gcf,handles);
 uiresume;
 
+%%
 function PushCancel_CallBack(hObject,eventdata)
 uiresume;
 
+%%
 function pushFind_CallBack(hObject,eventdata)
 handles=guidata(gcf);
 strs=get(handles.SelectCS,'String');
@@ -205,6 +209,7 @@ if ~isempty(ifound)
     set(handles.SelectCS,'Value',ifound);
 end
 
+%%
 function radioGeo_CallBack(hObject,eventdata)
 handles=guidata(gcf);
 set(handles.radioProj,'Value',0);
@@ -212,6 +217,7 @@ set(handles.radioGeo,'Value',1);
 set(handles.SelectCS,'String',handles.coordinateSystems.coordSysGeo);
 set(handles.SelectCS,'Value',handles.igeo);
 
+%%
 function radioProj_CallBack(hObject,eventdata)
 handles=guidata(gcf);
 set(handles.radioProj,'Value',1);
@@ -219,6 +225,7 @@ set(handles.radioGeo,'Value',0);
 set(handles.SelectCS,'String',handles.coordinateSystems.coordSysCart);
 set(handles.SelectCS,'Value',handles.iproj);
 
+%%
 function SelectCS_CallBack(hObject,eventdata)
 handles=guidata(gcf);
 if get(handles.radioProj,'Value')
