@@ -68,7 +68,7 @@ k=0;
 n=1;
 for i=1:1000
     tx0=fgets(fid);
-    if and(ischar(tx0), size(tx0>0))
+    if and(ischar(tx0), length(tx0)>1)
         v0=strread(tx0,'%s','delimiter','=');
         % nn=length(v0);
         % concatenate strings containing =
