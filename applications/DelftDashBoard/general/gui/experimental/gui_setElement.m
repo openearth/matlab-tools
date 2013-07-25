@@ -289,6 +289,19 @@ switch lower(el.style)
             set(el.texthandle,'Position',pos);
         end
 
+    case{'selectcoordinatesystem'}
+        val=gui_getValue(el,el.variable);
+        str=[val.name];
+        set(el.texthandle,'String',str);
+        switch lower(val.type)
+            case{'projected'}
+                set(el.prjhandle,'Value',1);
+                set(el.geohandle,'Value',0);
+            case{'geographic'}
+                set(el.prjhandle,'Value',0);
+                set(el.geohandle,'Value',1);
+        end
+        
     case{'table'}
         % Determine number of rows in table
         for j=1:length(el.column)

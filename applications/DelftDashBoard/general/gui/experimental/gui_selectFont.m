@@ -1,6 +1,12 @@
 function font=gui_selectFont(varargin)
 
+global figureiconfile
+
 iconfile=[];
+
+if ~isempty(figureiconfile)
+    iconfile=figureiconfile;
+end
 
 for ii=1:length(varargin)
     if ischar(varargin{ii})
@@ -74,6 +80,7 @@ n=n+1;
 xml.element(n).element.style='text';
 xml.element(n).element.position='30 165 240 110';
 xml.element(n).element.text='The quick brown fox jumped over the lazy dog 1234567890';
+xml.element(n).element.verticalalignment='top';
 xml.element(n).element.tag='sampletext';
 
 % Size

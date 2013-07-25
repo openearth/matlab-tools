@@ -332,9 +332,9 @@ for i=1:length(element)
                 else
                     str=' ';
                 end
-                
+
                 element(i).element.handle=uicontrol(figh,'Style','text','String',str,'Position',pos,'BackgroundColor',bgc,'HorizontalAlignment','left');
-                    
+                                    
                 ext=get(element(i).element.handle,'Extent');
                 ext(3)=ext(3)+2;
                 
@@ -343,7 +343,9 @@ for i=1:length(element)
                     ps1=pos(1)-ext(3);
                 end
                 
-                set(element(i).element.handle,'Position',[ps1 pos(2) ext(3) 15]);
+                if pos(4)<21
+                     set(element(i).element.handle,'Position',[ps1 pos(2) ext(3) 15]);
+                end
                 
             case{'pushselectfile','pushsavefile'}
                 
@@ -357,6 +359,41 @@ for i=1:length(element)
                     element(i).element.texthandle=uicontrol(figh,'Style','text','String',str,'Position',pos,'BackgroundColor',bgc);
                     setTextPosition(element(i).element.texthandle,pos,'right');
                 end
+
+            case{'selectcoordinatesystem'}
+
+                elpos=pos;
+                elpos(2)=elpos(2)+20;
+                elpos(3)=max(elpos(3),100);
+                elpos(4)=20;
+                element(i).element.handle=uicontrol(figh,'Style','pushbutton','String','Coordinate System','Position',elpos);
+
+                elpos=pos;
+                elpos(3)=70;
+                elpos(4)=20;
+                element(i).element.prjhandle=uicontrol(figh,'Style','radiobutton','String','Projected','Position',elpos,'Enable','off','BackgroundColor',bgc);
+
+                elpos=pos;
+                elpos(1)=elpos(1)+80;
+                elpos(3)=80;
+                elpos(4)=20;
+                element(i).element.geohandle=uicontrol(figh,'Style','radiobutton','String','Geographic','Position',elpos,'Enable','off','BackgroundColor',bgc);
+                
+                % Set text
+                elpos=pos;
+                elpos(2)=elpos(2)+20;
+                elpos(3)=max(elpos(3),100);
+                elpos(4)=20;
+                txtpos=elpos;
+                txtpos(1)=txtpos(1)+txtpos(3)+10;
+                txtpos(2)=txtpos(2)+3;
+                txtpos(3)=200;
+                txtpos(4)=15;
+                str='CS text';
+                element(i).element.texthandle=uicontrol(figh,'Parent',parenthandle,'Style','text','String',str, ...
+                    'Position',txtpos,'BackgroundColor',bgc,'HorizontalAlignment','left');
+                
+                
                 
             case{'tabpanel'}
                 
@@ -584,6 +621,9 @@ for i=1:length(element)
 
             case{'pushsavefile'}
                 set(element(i).element.handle,'Callback',{@pushSaveFile_Callback,getFcn,setFcn,element,i});
+
+            case{'selectcoordinatesystem'}
+                set(element(i).element.handle,'Callback',{@pushSelectCoordinateSystem_Callback,element,i});
 
         end
         
@@ -1079,6 +1119,17 @@ else
 end
 gui_setValue(el,el.variable,fontnew);
 finishCallback(element,i);
+
+%%
+function pushSelectCoordinateSystem_Callback(hObject,eventdata,element,i)
+
+el=element(i).element;
+csori=gui_getValue(el,el.variable);
+[cs,ok]=gui_selectCoordinateSystem('default',csori.name,'defaulttype',csori.type,'type','both');
+if ok
+    gui_setValue(el,el.variable,cs);
+    finishCallback(element,i);
+end
 
 %%
 function finishCallback(element,i)
