@@ -64,6 +64,12 @@ function fig = MakeNewWindow(Name, sz, varargin)
 %%
 modal=0;
 
+global figureiconfile
+
+if ~isempty(figureiconfile)
+    iconFile=figureiconfile;
+end
+
 if ~isempty(varargin)
     ii=strmatch('modal',varargin,'exact');
     if ~isempty(ii)
@@ -75,6 +81,7 @@ if ~isempty(varargin)
         end
     end
 end
+
 
 fig=figure;
 set(fig,'Visible','off');
@@ -93,7 +100,7 @@ set(fig,'Units','pixels');
 set(fig,'Position',[0 0 sz(1) sz(2)]);
 set(fig,'Name',Name,'NumberTitle','off');
 set(fig,'Tag',Name);
-set(fig,'Resize','off');
+%set(fig,'Resize','off');
 PutInCentre(fig);
 
 set(fig,'Visible','on');
