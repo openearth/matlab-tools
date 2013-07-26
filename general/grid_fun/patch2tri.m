@@ -203,6 +203,3 @@ function [tri,n,map3] = nface2tri(Map,X,Y,tri,type,n,ind,debug,txt,map3,quiet)
        n                   = n + order;
        
    end       
-   
-   varargout = {tri,map3,n};
-   

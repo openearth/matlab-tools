@@ -1,4 +1,9 @@
-%GRIDDATA_ERROR to be reported to Mathworks
+%GRIDDATA_ERROR example to show that anisotrope scaling affects results
+%
+%  E.g. for t-z interpolkation, when dt is small (for instance times in datenum for profiles)
+%  interpolation will favor time-nearness over z-nearness, and hence will corrupt
+%  profiles. GRIDDATA does not use matrix topology as interp 2 does,
+%  but destoys matrix topology and reconnects them using Delaunay triangulation.
 %
 %See also: griddata
 
@@ -19,8 +24,8 @@ Xq1 = X1(1,:)
 
 Yq = [-2.4 -2.4 -2.4 -2.4];
 
-Vq0 = griddata(X0,Y,V,Xq0,Yq)
-Vq1 = griddata(X1,Y,V,Xq1,Yq)
+Vq0 = griddata(X0,Y,V,Xq0,Yq,'linear')
+Vq1 = griddata(X1,Y,V,Xq1,Yq,'linear')
 
 subplot(2,1,1)
 h = pcolor(X0,Y,V);
@@ -37,3 +42,8 @@ set(h,'EdgeColor','k')
 hold on
 scatter(Xq1,Yq,300,Vq1,'filled')
 title('wrong due to smaller X coordinates')
+
+%%
+
+F = TriScatteredInterp([X0(:) Y(:)], V(:));F([Xq0(:) Yq(:)])
+F = TriScatteredInterp([X1(:) Y(:)], V(:));F([Xq1(:) Yq(:)])
