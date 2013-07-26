@@ -110,16 +110,21 @@ end
 
 [timestep,istation,m,n,k]=muppet_findDataIndices(dataset);
 
+% Coordinates
+
+% Time
 if isfield(parameter,dataset.timename)
     d.Time=parameter.(dataset.timename)(timestep);
 end
+
+% X
 if isfield(parameter,dataset.xname)
     switch dataset.quantity
         case{'location'}
             if dataset.size(1)>0
-                d.X=parameter.(dataset.xname)(timestep,m);
+                d.X=parameter.(dataset.xname)(timestep,istation);
             else
-                d.X=parameter.(dataset.xname)(m);
+                d.X=parameter.(dataset.xname)(istation);
             end
         otherwise
             if size(parameter.(dataset.xname),1)==1 || size(parameter.(dataset.xname),2)==1
@@ -129,13 +134,15 @@ if isfield(parameter,dataset.xname)
             end
     end
 end
+
+% Y
 if isfield(parameter,dataset.yname)
     switch dataset.quantity
         case{'location'}
             if dataset.size(1)>0
-                d.Y=parameter.(dataset.yname)(timestep,m);
+                d.Y=parameter.(dataset.yname)(timestep,istation);
             else
-                d.Y=parameter.(dataset.yname)(m);
+                d.Y=parameter.(dataset.yname)(istation);
             end
         otherwise
             if size(parameter.(dataset.yname),1)==1 || size(parameter.(dataset.yname),2)==1
@@ -145,21 +152,22 @@ if isfield(parameter,dataset.yname)
             end
     end
 end
+
+% Z
 if isfield(parameter,dataset.zname)
     d.Z=parameter.(dataset.zname)(m,n);
 end
 
 % Get values (and store in same structure format as qpread)
-d.Val=extractmatrix(parameter,dataset.valname,dataset.size,timestep,istation,m,n,k);
-d.Time=parameter.(dataset.timename)(timestep);
-%d.Time=extractmatrix(parameter,dataset.timename,dataset.size,timestep,istation,m,n,k);
-d.XComp=extractmatrix(parameter,dataset.uname,dataset.size,timestep,istation,m,n,k);
-d.YComp=extractmatrix(parameter,dataset.vname,dataset.size,timestep,istation,m,n,k);
-d.ZComp=extractmatrix(parameter,dataset.wname,dataset.size,timestep,istation,m,n,k);
-d.UAmplitude=extractmatrix(parameter,dataset.uamplitudename,dataset.size,timestep,istation,m,n,k);
-d.VAmplitude=extractmatrix(parameter,dataset.vamplitudename,dataset.size,timestep,istation,m,n,k);
-d.UPhase=extractmatrix(parameter,dataset.uphasename,dataset.size,timestep,istation,m,n,k);
-d.VPhase=extractmatrix(parameter,dataset.vphasename,dataset.size,timestep,istation,m,n,k);
+d.Val=muppet_extractmatrix(parameter,dataset.valname,dataset.size,timestep,istation,m,n,k);
+%d.Time=muppet_extractmatrix(parameter,dataset.timename,dataset.size,timestep,istation,m,n,k);
+d.XComp=muppet_extractmatrix(parameter,dataset.uname,dataset.size,timestep,istation,m,n,k);
+d.YComp=muppet_extractmatrix(parameter,dataset.vname,dataset.size,timestep,istation,m,n,k);
+d.ZComp=muppet_extractmatrix(parameter,dataset.wname,dataset.size,timestep,istation,m,n,k);
+d.UAmplitude=muppet_extractmatrix(parameter,dataset.uamplitudename,dataset.size,timestep,istation,m,n,k);
+d.VAmplitude=muppet_extractmatrix(parameter,dataset.vamplitudename,dataset.size,timestep,istation,m,n,k);
+d.UPhase=muppet_extractmatrix(parameter,dataset.uphasename,dataset.size,timestep,istation,m,n,k);
+d.VPhase=muppet_extractmatrix(parameter,dataset.vphasename,dataset.size,timestep,istation,m,n,k);
 
 if strcmpi(dataset.quantity,'vector')
     dataset.quantity='vector2d';
@@ -167,40 +175,3 @@ end
 
 % From here on, everything should be the same for each type of datafile
 dataset=muppet_finishImportingDataset(dataset,d,timestep,istation,m,n,k);
-
-%%
-function val=extractmatrix(parameter,fld,sz,timestep,istation,m,n,k)
-
-nind=0;
-val=[];
-if isfield(parameter,fld)
-    if ~isempty(parameter.(fld))
-        if sz(1)>0
-            nind=nind+1;
-            str{nind}='timestep';
-        end
-        if sz(2)>0
-            nind=nind+1;
-            str{nind}='istation';
-        end
-        if sz(3)>0
-            nind=nind+1;
-            str{nind}='m';
-        end
-        if sz(4)>0
-            nind=nind+1;
-            str{nind}='n';
-        end
-        if sz(5)>0
-            nind=nind+1;
-            str{nind}='k';
-        end
-        sind='';
-        for ii=1:nind
-            sind=[sind str{ii} ','];
-        end
-        sind=sind(1:end-1);
-        evalstr=['val=squeeze(parameter.(fld)(' sind '));'];
-        eval(evalstr);
-    end
-end

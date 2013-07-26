@@ -201,6 +201,7 @@ try
         for j=1:handles.figures(ifig).figure.nrsubplots
             for k=1:handles.figures(ifig).figure.subplots(j).subplot.nrdatasets
                 handles.figures(ifig).figure.subplots(j).subplot.datasets(k).dataset.timebar.time=t;
+                handles.figures(ifig).figure.subplots(j).subplot.datasets(k).dataset.timemarker.time=t;
             end
         end
         handles.datasets=datasets;

@@ -63,15 +63,29 @@ if sz(2)>0
             plane='tx';
             ndim=2;
         else
-%            shp='timeseries';
-            plane='tv';
-            ndim=1;
+            switch quantity
+                case{'location'}
+                    %            shp='track';
+                    plane='xy';
+                    ndim=1;
+                otherwise
+                    %            shp='timeseries';
+                    plane='tv';
+                    ndim=1;
+            end
         end
     else
-        % Profile
-%        shp='profile';
-        plane='vz';
-        ndim=1;
+        switch quantity
+            case{'location'}
+                %            shp='location';
+                plane='xy';
+                ndim=1;
+            otherwise
+                %        shp='profile';
+                plane='vz';
+                ndim=1;
+        end
+        
     end
 else
     % Data from matrix

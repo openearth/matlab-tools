@@ -134,6 +134,15 @@ opt.timebar.markeredgecolor='black';
 opt.timebar.markerfacecolor='black';
 opt.timebar.markersize=10;
 
+% Time marker
+opt.timemarker.enable=0;
+opt.timemarker.time=datenum(2000,1,1);
+opt.timemarker.marker='o';
+opt.timemarker.edgecolor='black';
+opt.timemarker.facecolor='black';
+opt.timemarker.size=10;
+opt.timemarker.trackoption='uptomarker';
+
 opt.thinning=1;
 
 % Lint

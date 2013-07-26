@@ -22,7 +22,15 @@ if isempty(dataset.type)
         strucstr='';
     end
     
-    dataset.type=[dataset.quantity num2str(dataset.ndim) 'd' strucstr dataset.plane];
+    trackstr='';
+    if strcmpi(dataset.quantity,'location')
+        if ~isempty(dataset.times)
+            % This is a track
+            trackstr='track';            
+        end
+    end
+    
+    dataset.type=[dataset.quantity trackstr num2str(dataset.ndim) 'd' strucstr dataset.plane];
 
 end
 
