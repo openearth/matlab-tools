@@ -73,7 +73,9 @@ function varargout = meshgrid_time_z(time,thick,bottom,waterlevel,varargin)
 %   use pcolorcorcen(G.cen.x ,G.cen.x ,...); for scaling interp look (no cells visible, 
 %                                            with half a cell blank around spatio-temporal domain)
 %
-%   See also: D3D_SIGMA, MESHGRID
+% NOTE that griddata suffers from issues when interpolating from this grid.
+%
+%   See also: D3D_SIGMA, MESHGRID, griddata_error
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -110,16 +112,14 @@ function varargout = meshgrid_time_z(time,thick,bottom,waterlevel,varargin)
 % $HeadURL$
 % $Keywords: $
 
-%% TO DO: make also fit for z-planes using arguments (time,ZK,bottom,waterlevel,varargin)
-%% TO DO: use DEAL
+% TO DO: make also fit for z-planes using arguments (time,ZK,bottom,waterlevel,varargin)
+% TO DO: use DEAL
 
 %% Get sigma cooordinates
-%% ------------
 
    [sigma_centres,sigma_interfaces,sigma_centres_bounded] = d3d_sigma(thick);
 
 %% Initialize 2D arrays
-%% ------------
 
    [cen.z        ,cen.x        ] = meshgrid(sigma_centres        (:),time);
    [int.z        ,int.x        ] = meshgrid(sigma_interfaces     (:),time);
@@ -127,8 +127,7 @@ function varargout = meshgrid_time_z(time,thick,bottom,waterlevel,varargin)
    
 
 %% Initialize also 2D arrays that are staggered in time (x axis)
-%% We extrapolate the time array half a timesteps prior to and after the array.
-%% ------------
+%  We extrapolate the time array half a timesteps prior to and after the array.
 
    time2  = center2corner1(time);
    [int.z2       ,int.x2        ] = meshgrid(sigma_interfaces     (:),time2);
@@ -137,7 +136,6 @@ function varargout = meshgrid_time_z(time,thick,bottom,waterlevel,varargin)
    % first dimension = lenght vertical coordinates (z)
    
 %% Make 2D arrays
-%% ------------
 
    time       = time(:);
    if length(waterlevel)==1
@@ -158,8 +156,8 @@ function varargout = meshgrid_time_z(time,thick,bottom,waterlevel,varargin)
    end   
    
 %% Initialize also 2D arrays that are staggered in time (x axis)
-%% We extrapolate the bottom and waterlevel half a timesteps prior to and after the array.
-%% ------------
+%  We extrapolate the bottom and waterlevel half a timesteps prior to and after the array.
+
    bottom2      = center2corner1(bottom    );
    waterlevel2  = center2corner1(waterlevel);
    for j=1:length(time2(:))
@@ -167,7 +165,6 @@ function varargout = meshgrid_time_z(time,thick,bottom,waterlevel,varargin)
    end   
 
 %% Output
-%% ------------
 
    if nargout==1
       DAT.cen         = cen;

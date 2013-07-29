@@ -244,10 +244,17 @@ debug = 0;
    
    %% Temperature units    
    K               = 1;                       % Kelvin
-   degree_K        = K;
-   degrees_K       = K;
-   deg_K           = K;
    Kelvin          = K;
+   degreeK         = K;
+   degreek         = K;
+   degK            = K;
+   degk            = K;
+   degree_K        = K;
+   degree_k        = K;
+   deg_K           = K;
+   deg_k           = K;
+   degrees_K       = K;
+   degrees_k       = K;
    
    %% Power units
    W               = 1;

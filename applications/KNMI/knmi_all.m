@@ -1,4 +1,4 @@
-%function knmi_all
+function knmi_all
 %KNMI_ALL    download potwind + etmgeg from web, transform to netCDF, make kml,  make catalog.
 %
 %See also: KNMI_POTWIND_GET_URL, KNMI_ETMGEG_GET_URL, KNMI_UURGEG_GET_URL
@@ -61,7 +61,7 @@ n = n+1;
    disp(['Processing ',num2str(ii),' / ',num2str(length(subdirs)),': '   ,subdirs{ii}])
       
    OPT.directory_nc      = [ ncbase,'\knmi\',filesep,subdir,filesep];
-   OPT.directory_kml     = [kmlbase,'\knmi\',filesep,subdir,filesep];
+   OPT.directory_kml     = [kmlbase,'\knmi\',filesep,];
    OPT.directory_raw     = [rawbase,'\knmi\',filesep,subdir,filesep,'raw',filesep];
 
    multiWaitbar(mfilename,n/length(subdirs),'label',['Processing substance: ',num2str(ii)])
@@ -164,9 +164,11 @@ n = n+1;
 
       OPT2.credit             = ' data: www.knmi.nl plot: www.OpenEarth.eu';
       OPT2.preview            = preview(ii);
+      OPT2.name               = subdir;
       if OPT2.preview
       OPT2.varname            = varnames{ii};
-      OPT2.name               = subdir;
+      else
+      OPT2.varname            = '';
       end
 
       nc_cf_harvest_matrix2kml(CATALOG,OPT2); % inside urlPath is used to read netCDF data for plotting previews

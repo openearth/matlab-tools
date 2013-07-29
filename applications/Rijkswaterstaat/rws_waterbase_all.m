@@ -8,7 +8,7 @@ function rws_waterbase_all
 
 %% Initialize
 
-   OPT.download       = 0; % get fresh downloads from rws and move exisitng to sub dir old
+   OPT.download       = 1; % get fresh downloads from rws and move exisitng to sub dir old
    OPT.make_nc        = 1; % makes also temporary mat files, moves exisiting nc to old subdir
    OPT.make_catalog   = 1; % otherwise load existing one
    OPT.make_kml       = 1; % processing all kml only takas about 4 hours
@@ -26,15 +26,16 @@ function rws_waterbase_all
    urlbase = 'http://opendap.deltares.nl/thredds/dodsC/opendap/'; % @ server
    kmlbase =                               'D:\kml.deltares.nl\'; % @ local
 
-%% Parameter choice
-
-   donar_wnsnum = [ 559   44  282  410  209  ... % sal   T Chl SPM pO2
-                     29   54   22   23   24  ... %   Q eta  Hs dir  Tm 
-                    332  346  347  360  363  ... % KjN   N   N  O2 PO4
-                    364  380  491  492  493  ... %   P P04 NH4 N02 N03
-                    541  560 1083    1  377 ];   % DSe  Si DOC zwl  pH (0=all or select number from 'donar_wnsnum' column in rws_waterbase_name2standard_name.xls)
+%% Parameter choice: select DONAR code or
+%  0=all or select number from 'donar_wnsnum' column in rws_waterbase_name2standard_name.xls
+   donar_wnsnum = [ 559   44  282  410  209  ... %    sal   T Chl SPM pO2
+                     29   54   22   23   24  ... %      Q eta  Hs dir  Tm 
+                    332  346  347  360  363  ... %    KjN   N   N  O2 PO4
+                    364  380  491  492  493  ... %      P P04 NH4 N02 N03
+                    541  560 1083    1  377  ... %    DSe  Si DOC zwl  pH
+                   1238  713 1082  401       ];  % NO3NO2  E POC TOC
    
-   donar_wnsnum = [559 44] % Use this if you want only an update of one some specific parameter.
+   donar_wnsnum = [1238 713 1082 401] % Use this if you want only an update of one some specific parameter.
    % DO get 1 always after 54 to make sure catalog and kml of 1 contains 54 as well.
    
    mfilename('fullpath')
@@ -139,9 +140,9 @@ function rws_waterbase_all
      %OPT2.description        = {['data: Rijkswaterstaat (http://www.rws.nl) via (',OPT.baseurl,'), presentation: http://www.OpenEarth.eu']};
       OPT2.description        = ['<hr> This is a proof-of-concept demo of how time series of the MWTL monitoring '...
                                  'data from Rijkswaterstaat could be presented in Google Earth for easy navigation in time space. '...
+                                 'For documentation on this demo and all sources material please refer to the <a href="https://publicwiki.deltares.nl/display/OET/Dataset+documentation+MWTL">OpenEarth wiki</a>.'...
                                  'The data in this proof-of-concept demo is a cache that is updated a few times per year. For up-to-date'...
                                  'data and meta-data please visit the original source provided by Rijkswaterstaat: <a href="http://live.waterbase.nl">waterbase</a>.'....
-                                 'For real-time (unvalidated) data please visit <a href="http://www.rijkswaterstaat.nl/water/scheepvaartberichten_waterdata/monitoring_meetsystemen/lmw/mfps/">MFPS</a> or <a href="http://matroos.deltares.nl">Matroos</a> (model forecasts).'...
                                  '<hr><table bgcolor="#333333" cellpadding="3" cellspacing="1"><tbody><tr><td colspan="2" bgcolor="#666666"><div style="color:#FFFFFF;">Credits:</div></td></tr>',...
 	                             '<tr><td    bgcolor="#FFFFFF">data source     </td><td bgcolor="#FFFFFF">Rijkswaterstaat</td></tr>',...
 	                             '<tr><td    bgcolor="#FFFFFF">data source url </td><td bgcolor="#FFFFFF">http://www.rws.nl</td></tr>',...

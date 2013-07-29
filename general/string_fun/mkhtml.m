@@ -8,8 +8,9 @@ function strout = mkhtml(strin);
 % Special HTML symbols are encoded as hex value with ISO 8859-1 Latin alphabet No. 1
 % http://www.ascii.cl/htmlcodes.htm:ISO 8859-1 Latin alphabet No. 1
 %
-% '%'    becomes %25
 % ' '    becomes %20 (space)
+% '%'    becomes %25
+% '&'    becomes %38
 % '|'    becomes %7C
 % '/'    becomes %2F
 % '<'    becomes %3C
@@ -50,7 +51,7 @@ function strout = mkhtml(strin);
 %   -------------------------------------------------------------------- 
 
    
-   OPT.symbols  = {'%',' ','|','/','<',',','(',')','''','>'};  % NOTE do '%' first, as all are replaced by %hex
+   OPT.symbols  = {' ','%','&','|','/','<',',','(',')','''','>'};  % NOTE do '%' first, as all are replaced by %hex
 
    disp(['mkhtml: processed only following characters: ',char(OPT.symbols)']);
    

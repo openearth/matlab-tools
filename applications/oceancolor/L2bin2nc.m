@@ -59,7 +59,7 @@ function varargout = L2bin2nc(ncfile,varargin);
 %          ncwrite(ncfile,'TSM',D.TSM',[1 1 j]); % 1-based indices
 %         end
 %
-%See also: NCWRITE, OCEANCOLOR, NETCDF, DINEOF, MERIS2NC, NCGEN, VS_TRIM2NC
+%See also: NCWRITE, OCEANCOLOR, NETCDF, DINEOF, MERIS2NC, NCGEN, VS_TRIM2NC, DELWAQ_MAP2NC
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -128,7 +128,7 @@ function varargout = L2bin2nc(ncfile,varargin);
    OPT.fillvalue      = typecast(uint8([0    0    0    0    0    0  158   71]),'DOUBLE'); % ncetcdf default that is also recognized by ncBrowse % DINEOF does not accept NaNs; % realmax('single'); %
    OPT.debug          = 0;
    OPT.timezone       = timezone_code2iso('GMT');
-   OPT.type           = 'double'; %'single'; % for svaing disk space, but midn accuracy !
+   OPT.type           = 'double'; %'single'; % for saving disk space, but mind accuracy !
 
    if nargin==0
       varargout = {OPT};
@@ -141,10 +141,8 @@ function varargout = L2bin2nc(ncfile,varargin);
 
    OPT      = setproperty(OPT,varargin);
 
-%% CF attributes
-
-   %% Add overall meta info
-   %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#description-of-file-contents
+%% CF attributes: add overall meta info
+%  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#description-of-file-contents
    
    nc = struct('Name','/','Format',OPT.Format);
    nc.Attributes(    1) = struct('Name','title'              ,'Value',  OPT.title);

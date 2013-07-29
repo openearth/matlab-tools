@@ -5,7 +5,8 @@
 %  profiles. GRIDDATA does not use matrix topology as interp 2 does,
 %  but destoys matrix topology and reconnects them using Delaunay triangulation.
 %
-%See also: griddata
+%See also: griddata, http://www.mathworks.nl/support/solutions/en/data/1-CHR2J8/index.html
+%          http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.22.2848
 
 X0 = [ -2   -1    0    1
        -2   -1    0    1]
