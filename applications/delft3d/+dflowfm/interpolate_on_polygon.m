@@ -25,7 +25,7 @@ B.y1 = pol.y(1:end-1);
 B.x2 = pol.x(2:end);
 B.y2 = pol.y(2:end);
 
-C = intersect_lines(A,B);
+C = dflowfm.intersect_lines(A,B);
 
 % compute arc length
 darc0 = sqrt((B.x2-B.x1).^2 + (B.y2-B.y1).^2);
