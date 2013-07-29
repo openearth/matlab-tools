@@ -68,7 +68,7 @@ function varargout = plotMap(varargin)
 %     grid on
 %     title(['Maximum velocity for in period ',datestr(T.datenum(1)),' - ',datestr(T.datenum(end))])
 %
-%   See also dflowfm, delft3d, readFlowGeom2tri
+%   See also dflowfm, delft3d, readFlowGeom2tri, http://oss.deltares.nl/web/delft3d/general/-/message_boards/view_message/220151
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 Deltares
@@ -205,6 +205,8 @@ else
 %% plot
 
    % the PATCH method is slow and is superseded in favour of TRISURFCORCEN after PATCH2TRI 
+   % http://oss.deltares.nl/web/delft3d/general/-/message_boards/view_message/220151
+   
    if (isfield(G,'tri') & isfield(G,'map3'))
       tri.mask = cen.mask(G.map3);
    

@@ -550,6 +550,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'X');
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cen.x(:)) max(G.cen.x(:))]);
       if ~isempty(OPT.epsg)
       attr(end+1)  = struct('Name', 'grid_mapping' , 'Value', 'CRS');
@@ -570,6 +571,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Y');
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36;
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cen.y(:)) max(G.cen.y(:))]);
       if ~isempty(OPT.epsg)
       attr(end+1)  = struct('Name', 'grid_mapping' , 'Value', 'CRS');
@@ -605,6 +607,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'X');
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cor.x(:)) max(G.cor.x(:))]);
       attr(end+1)  = struct('Name', 'grid_mapping' , 'Value', 'CRS');
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:XCOR TEMPOUT:CODB map-const:COORDINATES');
@@ -620,6 +623,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'grid cell corners, y-coordinate');
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Y');
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cor.y(:)) max(G.cor.y(:))]);
       attr(end+1)  = struct('Name', 'grid_mapping' , 'Value', 'CRS');
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:YCOR TEMPOUT:CODB map-const:COORDINATES');
@@ -642,6 +646,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'degrees_east');
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'X');
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cen.lon(:)) max(G.cen.lon(:))]);
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:XZ map-const:KCS TEMPOUT:XWAT map-const:CODW map-const:COORDINATES');
       if any(strcmp('grid_longitude',OPT.var)) & any(strcmp('grid_latitude',OPT.var))   
@@ -661,6 +666,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'degrees_north');
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Y');
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cen.lat(:)) max(G.cen.lat(:))]);
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:YZ map-const:KCS map-const:YWAT map-const:CODW map-const:COORDINATES');
       if any(strcmp('grid_longitude',OPT.var)) & any(strcmp('grid_latitude',OPT.var))   
@@ -694,6 +700,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'degrees_east');
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'X');
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cor.lon(:)) max(G.cor.lon(:))]);
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:XCOR map-const:CODB map-const:COORDINATES');
       nc.Variables(ifld) = struct('Name'       , 'grid_longitude', ...
@@ -708,6 +715,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'degrees_north');
       attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Y');
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cor.lat(:)) max(G.cor.lat(:))]);
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:YCOR map-const:CODB map-const:COORDINATES');
       nc.Variables(ifld) = struct('Name'       , 'grid_latitude', ...
@@ -822,6 +830,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
       attr(end+1)  = struct('Name', 'positive'     , 'Value', 'down');
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:DP map-const:DP0 map-const:DPS map-const:DRYFLP');
       attr(end+1)  = struct('Name', 'comment'      , 'Value', '');
@@ -845,6 +854,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'positive'     , 'Value', 'down');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:DPS0 map-const:KCS');
       attr(end+1)  = struct('Name', 'comment'      , 'Value', '');
@@ -861,6 +871,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', '1');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:KCS');
       nc.Variables(ifld) = struct('Name'       , 'zactive', ...
@@ -881,6 +892,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       end
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:GSQS map-const:KCS');
       attr(end+1)  = struct('Name', 'comment'      , 'Value', G.cen.areatext);
@@ -902,6 +914,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'positive'     , 'Value', 'up');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.waterlevel = [Inf -Inf];
       attr(end+1)  = struct('Name', 'cell_methods' , 'Value', 'time: point             '); % add spaces to allow for overwriting with longest method one: standard_deviation
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:S1 map-const:KCS');
@@ -930,6 +943,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm/s');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayer);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.velocity_x = [Inf -Inf];
       attr(end+1)  = struct('Name', 'cell_methods' , 'Value', 'time: point             '); % add spaces to allow for overwriting with longest method one: standard_deviation
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:U1 map-series:V1 map-const:ALFAS map-const:KCU map-const:KCV map-const:KFU map-const:KFV map-const:KCS');
@@ -950,6 +964,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm/s');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayer);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.velocity_y = [Inf -Inf];
       attr(end+1)  = struct('Name', 'cell_methods' , 'Value', 'time: point             '); % add spaces to allow for overwriting with longest method one: standard_deviation
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:U1 map-series:V1 map-const:ALFAS map-const:KCU map-const:KCV map-const:KFU map-const:KFV map-const:KCS');
@@ -974,6 +989,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'positive'     , 'Value', 'up');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayerInterf);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.velocity_omega = [Inf -Inf];
       attr(end+1)  = struct('Name', 'cell_methods' , 'Value', 'time: point             '); % add spaces to allow for overwriting with longest method one: standard_deviation
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:W map-const:KCS');
@@ -998,6 +1014,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'positive'     , 'Value', 'up');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayer);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.velocity_z = [Inf -Inf];
       attr(end+1)  = struct('Name', 'cell_methods' , 'Value', 'time: point             '); % add spaces to allow for overwriting with longest method one: standard_deviation
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:WPHY map-const:KCS');
@@ -1025,6 +1042,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'N/m2');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.tau_x = [Inf -Inf];
       attr(end+1)  = struct('Name', 'cell_methods' , 'Value', 'time: point             '); % add spaces to allow for overwriting with longest method one: standard_deviation
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:TAUKSI map-const:TAUETA map-const:ALFAS map-const:KCS');
@@ -1044,6 +1062,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'N/m2');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.tau_y = [Inf -Inf];
       attr(end+1)  = struct('Name', 'cell_methods' , 'Value', 'time: point             '); % add spaces to allow for overwriting with longest method one: standard_deviation
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:TAUKSI map-const:TAUETA map-const:ALFAS map-const:KCS');
@@ -1069,6 +1088,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'kg/m3');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayer);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.density = [Inf -Inf];
       attr(end+1)  = struct('Name', 'cell_methods' , 'Value', 'time: point             '); % add spaces to allow for overwriting with longest method one: standard_deviation
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:RHO map-const:KCS');
@@ -1092,6 +1112,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'J/m3');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.pea = [Inf -Inf];
       attr(end+1)  = struct('Name', 'cell_methods' , 'Value', 'time: point             '); % add spaces to allow for overwriting with longest method one: standard_deviation
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:RHO map-series:S1 map-const:KCS');
@@ -1109,6 +1130,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'J/m3/s');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.dpeadt = [Inf -Inf];
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:RHO map-series:S1 map-const:KCS');
       attr(end+1)  = struct('Name', 'cell_methods' , 'Value', 'time: point             '); % add spaces to allow for overwriting with longest method one: standard_deviation
@@ -1127,6 +1149,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'J/m3/s');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.Ax = [Inf -Inf];
       attr(end+1)  = struct('Name', 'cell_methods' , 'Value', 'time: point             '); % add spaces to allow for overwriting with longest method one: standard_deviation
       attr(end+1)  = struct('Name', 'references'   , 'Value', 'de Boer et al, Ocean Modelling 2008. http://dx.doi.org/10.1016/j.ocemod.2007.12.003');
@@ -1141,6 +1164,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'J/m3/s');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.Ay = [Inf -Inf];
       attr(end+1)  = struct('Name', 'cell_methods' , 'Value', 'time: point             '); % add spaces to allow for overwriting with longest method one: standard_deviation
       attr(end+1)  = struct('Name', 'references'   , 'Value', 'de Boer et al, Ocean Modelling 2008. http://dx.doi.org/10.1016/j.ocemod.2007.12.003');
@@ -1155,6 +1179,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'J/m3/s');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.Sx = [Inf -Inf];
       attr(end+1)  = struct('Name', 'cell_methods' , 'Value', 'time: point             '); % add spaces to allow for overwriting with longest method one: standard_deviation
       attr(end+1)  = struct('Name', 'references'   , 'Value', 'de Boer et al, Ocean Modelling 2008. http://dx.doi.org/10.1016/j.ocemod.2007.12.003');
@@ -1169,6 +1194,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'J/m3/s');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.Sy = [Inf -Inf];
       attr(end+1)  = struct('Name', 'cell_methods' , 'Value', 'time: point             '); % add spaces to allow for overwriting with longest method one: standard_deviation
       attr(end+1)  = struct('Name', 'references'   , 'Value', 'de Boer et al, Ocean Modelling 2008. http://dx.doi.org/10.1016/j.ocemod.2007.12.003');
@@ -1183,6 +1209,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'J/m3/s');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.Cx = [Inf -Inf];
       attr(end+1)  = struct('Name', 'cell_methods' , 'Value', 'time: point             '); % add spaces to allow for overwriting with longest method one: standard_deviation
       attr(end+1)  = struct('Name', 'references'   , 'Value', 'de Boer et al, Ocean Modelling 2008. http://dx.doi.org/10.1016/j.ocemod.2007.12.003');
@@ -1197,6 +1224,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'J/m3/s');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.Cy = [Inf -Inf];
       attr(end+1)  = struct('Name', 'cell_methods' , 'Value', 'time: point             '); % add spaces to allow for overwriting with longest method one: standard_deviation
       attr(end+1)  = struct('Name', 'references'   , 'Value', 'de Boer et al, Ocean Modelling 2008. http://dx.doi.org/10.1016/j.ocemod.2007.12.003');
@@ -1211,6 +1239,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'J/m3/s');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.Nx = [Inf -Inf];
       attr(end+1)  = struct('Name', 'cell_methods' , 'Value', 'time: point             '); % add spaces to allow for overwriting with longest method one: standard_deviation
       attr(end+1)  = struct('Name', 'references'   , 'Value', 'de Boer et al, Ocean Modelling 2008. http://dx.doi.org/10.1016/j.ocemod.2007.12.003');
@@ -1225,6 +1254,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'J/m3/s');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.Ny = [Inf -Inf];
       attr(end+1)  = struct('Name', 'cell_methods' , 'Value', 'time: point             '); % add spaces to allow for overwriting with longest method one: standard_deviation
       attr(end+1)  = struct('Name', 'references'   , 'Value', 'de Boer et al, Ocean Modelling 2008. http://dx.doi.org/10.1016/j.ocemod.2007.12.003');
@@ -1239,6 +1269,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'J/m3/s');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.Wz = [Inf -Inf];
       attr(end+1)  = struct('Name', 'cell_methods' , 'Value', 'time: point             '); % add spaces to allow for overwriting with longest method one: standard_deviation
       attr(end+1)  = struct('Name', 'references'   , 'Value', 'de Boer et al, Ocean Modelling 2008. http://dx.doi.org/10.1016/j.ocemod.2007.12.003');
@@ -1253,6 +1284,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'J/m3/s');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinates);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.Mz = [Inf -Inf];
       attr(end+1)  = struct('Name', 'cell_methods' , 'Value', 'time: point             '); % add spaces to allow for overwriting with longest method one: standard_deviation
       attr(end+1)  = struct('Name', 'references'   , 'Value', 'de Boer et al, Ocean Modelling 2008. http://dx.doi.org/10.1016/j.ocemod.2007.12.003');
@@ -1278,6 +1310,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'ppt');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayer);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.salinity = [Inf -Inf];
       attr(end+1)  = struct('Name', 'cell_methods' , 'Value', 'time: point             '); % add spaces to allow for overwriting with longest method one: standard_deviation
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:R1 map-const:KCS map-const:NAMCON map-const:LSTCI');
@@ -1301,6 +1334,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'degree_Celsius');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayer);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.temperature = [Inf -Inf];
       attr(end+1)  = struct('Name', 'cell_methods' , 'Value', 'time: point             '); % add spaces to allow for overwriting with longest method one: standard_deviation
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:R1 map-const:KCS map-const:NAMCON map-const:LSTCI');
@@ -1324,6 +1358,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm2/s2');  % not in NEFIS file 
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayerInterf);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.tke = [Inf -Inf];
       attr(end+1)  = struct('Name', 'cell_methods' , 'Value', 'time: point             '); % add spaces to allow for overwriting with longest method one: standard_deviation
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:RTUR1 map-const:KCS map-const:NAMCON map-const:LSTCI map-const:LTUR');
@@ -1347,6 +1382,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm2/s3'); % 'W m-2'); % not in NEFIS file
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayerInterf);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.eps = [Inf -Inf];
       attr(end+1)  = struct('Name', 'cell_methods' , 'Value', 'time: point             '); % add spaces to allow for overwriting with longest method one: standard_deviation
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:RTUR1 map-const:KCS map-const:NAMCON map-const:LSTCI map-const:LTUR');
@@ -1370,6 +1406,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm^2/s');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayerInterf);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.viscosity_z = [Inf -Inf];
       attr(end+1)  = struct('Name', 'cell_methods' , 'Value', 'time: point             '); % add spaces to allow for overwriting with longest method one: standard_deviation
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:VICWW map-const:KCS');
@@ -1393,6 +1430,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'm^2/s');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayerInterf);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.diffusivity_z = [Inf -Inf];
       attr(end+1)  = struct('Name', 'cell_methods' , 'Value', 'time: point             '); % add spaces to allow for overwriting with longest method one: standard_deviation
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:DICWW map-const:KCS');
@@ -1416,6 +1454,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', '-');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayerInterf);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.Ri = [Inf -Inf];
       attr(end+1)  = struct('Name', 'cell_methods' , 'Value', 'time: point             '); % add spaces to allow for overwriting with longest method one: standard_deviation
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:RICH map-const:KCS');
@@ -1464,6 +1503,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'units'        , 'Value', 'mg/l');
       attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayer);
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.suspsedconc = [Inf -Inf];
       attr(end+1)  = struct('Name', 'cell_methods' , 'Value', 'time: point             '); % add spaces to allow for overwriting with longest method one: standard_deviation
       attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:R1 map-const:KCS map-const:NAMCON map-const:NAMSED map-const:LSTCI map-const:LSED');
