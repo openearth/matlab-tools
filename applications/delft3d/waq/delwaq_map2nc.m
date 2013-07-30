@@ -23,6 +23,8 @@ function varargout = delwaq_map2nc(varargin)
 %   OPT.units         = 'N/m2'; % Pa
 %   OPT.k             = Inf; % integer, use Inf for last layer index: kmax
 %   OPT.epsg          = 28992;
+%   OPT.Fcn           = log10(x); % optionally log-transform data
+%   OPT.Attributes    = {'log10',1};
 %
 %   delwaq_map2nc(OPT)
 %
@@ -71,7 +73,9 @@ function varargout = delwaq_map2nc(varargin)
    OPT.standard_name = 'mass_concentration_of_chlorophyll_a_in_sea_water'; % see http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/20/cf-standard-name-table.html
    OPT.long_name     = 'Chlorophyll a';
    OPT.units         = 'ug/l'; % Pa
- 
+   OPT.Fcn           = @(x) x; % @(x) log10(x)
+   OPT.Attributes    = {'comment',''}; % {'log10',1}
+   
    OPT.k             = Inf; % Inf is replaced with last layer index
    OPT.epsg          = 28992;
 
@@ -127,7 +131,8 @@ function varargout = delwaq_map2nc(varargin)
             'Name',OPT.SubsName,...
    'standard_name',OPT.standard_name,...
        'long_name',OPT.long_name,...
-           'units',OPT.units);
+           'units',OPT.units,...
+      'Attributes',OPT.Attributes);
 
    fid = fopen(strrep(OPT.ncfile,'.nc','.cdl'),'w');
    nc_dump(OPT.ncfile,fid);
@@ -150,7 +155,9 @@ function varargout = delwaq_map2nc(varargin)
        
       [t,vector] = delwaq('read',D(im),OPT.SubsName,0,it);
       
-       matrix = waq2flow3d(vector,G.Index,'center').*G.cen.mask;
+       matrix = waq2flow3d(vector,G.Index,'center');
+       
+       matrix = OPT.Fcn(matrix);
        
        ncwrite(OPT.ncfile,OPT.SubsName,permute(matrix(:,:,OPT.k),[2 1 3]),[1 1 IT]); % 1-based indices       
         
