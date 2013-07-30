@@ -226,6 +226,10 @@ for ivar=[OPT.donar_wnsnum]
                     D.data.units           = 'cm';
                     D.data.(OPT.name) = D.data.(OPT.name).*convert_units(D.data.units,OPT.units);
                     D.data.units      = OPT.units;
+                elseif strcmpi(D.data.units,'/m')
+                    D.data.units           = '1/m';
+                    D.data.(OPT.name) = D.data.(OPT.name).*convert_units(D.data.units,OPT.units);
+                    D.data.units      = OPT.units;
                 else
                     D.data.(OPT.name) = D.data.(OPT.name).*convert_units(D.data.units,OPT.units);
                     D.data.units      = OPT.units;

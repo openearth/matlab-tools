@@ -8,7 +8,7 @@ function rws_waterbase_all
 
 %% Initialize
 
-   OPT.download       = 1; % get fresh downloads from rws and move exisitng to sub dir old
+   OPT.download       = 0; % get fresh downloads from rws and move exisitng to sub dir old
    OPT.make_nc        = 1; % makes also temporary mat files, moves exisiting nc to old subdir
    OPT.make_catalog   = 1; % otherwise load existing one
    OPT.make_kml       = 1; % processing all kml only takas about 4 hours
@@ -28,15 +28,15 @@ function rws_waterbase_all
 
 %% Parameter choice: select DONAR code or
 %  0=all or select number from 'donar_wnsnum' column in rws_waterbase_name2standard_name.xls
+%  DO get 1 always after 54 to make sure catalog and kml of 1 contains 54 as well.
+
    donar_wnsnum = [ 559   44  282  410  209  ... %    sal   T Chl SPM pO2
                      29   54   22   23   24  ... %      Q eta  Hs dir  Tm 
                     332  346  347  360  363  ... %    KjN   N   N  O2 PO4
                     364  380  491  492  493  ... %      P P04 NH4 N02 N03
                     541  560 1083    1  377  ... %    DSe  Si DOC zwl  pH
                    1238  713 1082  401       ];  % NO3NO2  E POC TOC
-   
-   donar_wnsnum = [1238 713 1082 401] % Use this if you want only an update of one some specific parameter.
-   % DO get 1 always after 54 to make sure catalog and kml of 1 contains 54 as well.
+  %donar_wnsnum = [559] %1082 Use this if you want only an update of one some specific parameter.
    
    mfilename('fullpath')
    DONAR = xls2struct([fileparts(mfilename('fullpath')) filesep 'rws_waterbase_name2standard_name.xls']);
