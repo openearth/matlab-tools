@@ -174,9 +174,14 @@ classdef LineSearch < handle
                 this.EvaluatePoint(limitState, un, this.BetaFirstPoint, randomVariables);
             end
             
-            % Call polynomial fit routine
-            this.FitPolynomial(un, limitState, randomVariables);
+            % check if the StartBeta is enough for convergence
+            this.CheckConvergence(limitState)
             
+            if ~this.SearchConverged
+                % if not converged just from StartBeta, call polynomial fit routine
+                this.FitPolynomial(un, limitState, randomVariables);
+            end
+                
             if ~this.SearchConverged
                 % if not converged durnig polynomial fit, call bisection
                 this.Bisection(un, limitState, randomVariables);

@@ -223,8 +223,9 @@ classdef AdaptiveDirectionalImportanceSampling < DirectionalSampling
             %if PRatio is too large
             if ~this.CheckPRatio && this.PfApproximated ~= 0
                 % Look for smallest beta among approximated points
-                beta    = min(this.LimitState.BetaValues(this.LimitState.EvaluationIsEnabled & ~this.LimitState.EvaluationIsExact & this.EvaluationApproachesZero & this.LimitState.BetaValues > 0));
-                idx     = find(this.LimitState.BetaValues == beta, 1, 'first');
+                idcs        = find(this.LimitState.EvaluationIsEnabled & ~this.LimitState.EvaluationIsExact & this.EvaluationApproachesZero & this.LimitState.BetaValues > 0);
+                [beta, idx] = min(this.LimitState.BetaValues(idcs));
+                idx         = idcs(idx);
                 
                 % Extend beta-sphere to include approximate point
                 % nearest to the origin
