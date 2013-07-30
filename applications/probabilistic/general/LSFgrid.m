@@ -83,8 +83,12 @@ if length(OPT.NrGridpoints(:)) == 1;
 end
 
 % Find index selected stochastic variables
-[index] = ismember({OPT.stochast.Name}, {OPT.NameVar1,OPT.NameVar2});
-ind = find(index);
+[index] = ismember({OPT.stochast.Name}, {OPT.NameVar1});
+ind(1) = find(index);
+
+% Find index selected stochastic variables
+[index] = ismember({OPT.stochast.Name}, {OPT.NameVar2});
+ind(2) = find(index);
 
 % Calculate value with the highest probability density of each stochastic
 % variable other than the selected stochastic variables

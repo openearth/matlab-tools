@@ -63,8 +63,8 @@ OPT = struct(...
     'x2zFunction',      @x2z,...  % Function to transform x to z    
     'x2zVariables',     {{}},... % additional variables to use in x2zFunction
     'method',           'matrix',... % z-function method 'matrix' (default) or 'loop'
-    'NameVar',          {NameVar1 NameVar2 NameVar3},... % Names of the variables with a u value different from 0
-    'UvalueVar',        [0 10 6]... % The u value of the variables with a u value different from 0
+    'NameVar',          {'NameVar1'},... % Names of the variables with a u value different from 0
+    'UvalueVar',        [0]... % The u value of the variables with a u value different from 0
      );
      
 % Overrule default settings by property pairs, given in varargin
@@ -78,10 +78,14 @@ if sum(ismember({OPT.stochast.Name},OPT.NameVar))==0
     error('THe indicated variables in the vector NameVar are not present in the stochast');
 end
 
-% Find index selected stochastic variables
-[index] = ismember({OPT.stochast.Name},OPT.NameVar);
-ind = find(index);
+for k=1:length(OPT.NameVar);
+        
+    % Find index selected stochastic variables
+    [index] = ismember({OPT.stochast.Name},OPT.NameVar(k));
+    ind(k) = find(index);
 
+end
+    
 % Calculate value with the highest probability density of each stochastic
 % variable other than the selected stochastic variables
 % Transform the other stochastic variables to deterministic variables 
