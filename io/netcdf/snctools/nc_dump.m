@@ -327,19 +327,25 @@ for j = 1:numel(Dataset)
     array = nc_vargetr(file_name,Dataset(j).Name);
     sz = size(array);
     
-    if prod(sz)==1
-        fprintf(fid,'%s = %g;\n', Dataset(j).Name,array);
+    if ischar(array)
+        fmt = '"%s"';
     else
-        fprintf(fid,'%s =\n', Dataset(j).Name);
+        fmt = '%g';
+    end
+    
+    if prod(sz)==1
+        fprintf(fid,['%s = ',fmt,';\n'], Dataset(j).Name,array);
+    else
+        fprintf(fid,['%s =\n'], Dataset(j).Name);
         array = permute(array,length(sz):-1:1);
         n  = length(array(:));
         dn = min(sz(end),OPT.hwidth);
-        for i=[1:dn:n-dn-1] % always skip last line as is needs special eol treatment
-           fprintf(fid,' %g,', array(i:i+dn-1));
+        for i=[1:dn:n-dn-1] % always skip last line as it needs special eol treatment
+           fprintf(fid,[' ',fmt,','], array(i:i+dn-1));
            fprintf(fid,'\n');
         end
-        fprintf(fid,' %g,',  array(i+dn:n-1));
-        fprintf(fid,' %g ;', array(n));
+        fprintf(fid,[' ',fmt,','],  array(i+dn:n-1));
+        fprintf(fid,[' ',fmt,' ;'], array(n));
         fprintf(fid,'\n');
     end
     
