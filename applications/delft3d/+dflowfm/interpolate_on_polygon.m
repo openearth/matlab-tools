@@ -36,6 +36,11 @@ for idmnp1=1:length(Gin)    % idmn + 1
                         (G.cen.idmn(G.cen.Link(2,idxAtoL))==idmn));
     end
 
+
+%     len = length(idxAtoL);
+% %   make sure index array is a row vector
+%     idxAtoL = reshape(idxAtoL,1,len);
+    
     A.x1 = G.cen.x(G.cen.Link(1,idxAtoL));
     A.y1 = G.cen.y(G.cen.Link(1,idxAtoL));
     A.x2 = G.cen.x(G.cen.Link(2,idxAtoL));
@@ -63,7 +68,12 @@ for idmnp1=1:length(Gin)    % idmn + 1
     varnams= fieldnames(D.cen);
     for i=1:length(varnams)
         var=varnams{i};
-        eval(sprintf('polout.cen.%s  = interpolate(D.cen.%s);', var, var));
+%       assume row indices correspond to layers
+        NDIM=length(size(D.cen.(var)));
+        for k=1:size(D.cen.(var),2) % could be slow
+            dum = D.cen.(var);
+            polout.cen.(var)(:,k) = interpolate(D.cen.(var)(:,k));
+        end
     end
 
     % interpolate bottom levels from G
@@ -71,6 +81,20 @@ for idmnp1=1:length(Gin)    % idmn + 1
     if ( isfield(G.cen,'idmn') )
         polout.cen.idmn = interpolate(G.cen.idmn);
     end
+    
+    % 3D data: add X and Z coordinates (sigma layers only)
+    numlay=size(D.cen.u,2);
+    if ( numlay>1 )
+    %   compute water depth
+        h=polout.cen.zwl(:)-polout.cen.z(:);
+        h=reshape(h,length(h),1);
+    %   layers are assumed to be uniformly distributed along the water column
+        polout.z=repmat((1:numlay)-0.5, length(h),1)/numlay .* repmat(h,1,numlay) + repmat(polout.cen.z(:),1,numlay);
+        polout.arc=repmat(polout.arc(:),1,numlay);
+        polout.x=repmat(polout.x(:),1,numlay);
+        polout.y=repmat(polout.y(:),1,numlay);
+    end
+    
 
     if ( iscell(Gin) )
         fprintf(' done.\n');
@@ -85,7 +109,17 @@ if ( iscell(Gin) )
 end
 
     function y = interpolate(x)
-        y = (1-C.alpha(idxarctoA)).*reshape(x(G.cen.Link(1,idxAtoL(C.idxA(idxarctoA)))),size(idxarctoA)) + C.alpha(idxarctoA) .* reshape(x(G.cen.Link(2,idxAtoL(C.idxA(idxarctoA)))),size(idxarctoA));
+        
+        y = (1-C.alpha(idxarctoA)).*    ...
+                reshape(    ...
+                    x(G.cen.Link(1,idxAtoL(C.idxA(idxarctoA)))),    ...
+                    size(idxarctoA) ...
+                ) +   ...
+            C.alpha(idxarctoA) .*   ...
+                reshape(    ...
+                    x(G.cen.Link(2,idxAtoL(C.idxA(idxarctoA)))),    ...
+                    size(idxarctoA) ...
+                );
     end
 
 end

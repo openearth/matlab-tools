@@ -165,7 +165,7 @@ function varargout = readNet(varargin)
          G.face.idmn     = nc_varget(ncfile, 'FlowLinkDomain')';
      end
 
-   end 
+   end
    
    end
 

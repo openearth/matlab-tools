@@ -31,6 +31,7 @@ function data = nc_varget(ncfile,varname,varargin)
 % 
 %   See also:  nc_vargetr, nc_varput, nc_attget, nc_attput, nc_dump.
 
+global fill_value_fix
 
 [data,info] = nc_vargetr(ncfile,varname,varargin{:});
 
@@ -41,6 +42,15 @@ switch(info.Datatype)
     otherwise
         return;
 end
+
+
+%% SPvdP: fix for fill values
+    nc_id=netcdf.open(ncfile);
+    if ( ismember('NC_FILL_FLOAT',netcdf.getConstantNames()) )
+        fill_value_fix=netcdf.getConstant('NC_FILL_FLOAT');
+    end
+    netcdf.close(nc_id);
+%%
 
 data = double(data);
 data = post_process_fill_value_missing_value(data,info);
@@ -53,10 +63,19 @@ function data = post_process_fill_value_missing_value(data,info)
 %
 % If both are present, then the _FillValue trumps.
 
+global fill_value_fix
+
 % Locate any fill value or missing value attributes.
-fill_value = struct([]);
 missing_value = struct([]);
 
+if ( exist('fill_value_fix','var') )
+    fill_value.Name  = '_FillValue';
+    fill_value.Nctype   = [];
+    fill_value.Datatype = info.Datatype;
+    fill_value.Value = fill_value_fix;
+else
+    fill_value = struct([]);
+end
 
 for j = 1:numel(info.Attribute)
     switch(info.Attribute(j).Name)

@@ -3,6 +3,7 @@ function varargout = readMap(ncfile,varargin)
 %
 %     D = dflowfm.readMap(ncfile,<it>) 
 %     D = dflowfm.readMap(G     ,<it>) 
+%     D = dflowfm.readMap(G     [,it [,opt=val [, opt=val ...]] ]) 
 %
 %   reads flow circumcenter(cen) data from an D-Flow FM NetCDF file. 
 %   By default is the LAST timestep is read (it=last).
@@ -82,6 +83,14 @@ function varargout = readMap(ncfile,varargin)
    D.datenum = nc_cf_time(ncfile, 'time');
    D.datenum = D.datenum(it);
    D.datestr = datestr(D.datenum,31);
+   
+%% 3D: number of layers
+   L3D = false;
+   if nc_isdim(ncfile, 'laydim')
+       dum = nc_getdiminfo(ncfile,'laydim');
+       laydim = dum.Length;
+       D.laydim = laydim;
+   end
 
 %% read cen data
 
@@ -91,13 +100,21 @@ function varargout = readMap(ncfile,varargin)
    D.cen.zwl  = nc_varget(ncfile, 's1' ,[it-1 0],[1 cen.mask]); % Waterlevel
    end
    
-   if OPT.sal & nc_isvar (ncfile, 'sal');
-   D.cen.sal  = nc_varget(ncfile, 'sal',[it-1 0],[1 cen.mask]); % Salinity
+   if OPT.sal & nc_isvar (ncfile, 'sa1');
+       info=nc_getvarinfo(ncfile,'ucx');
+       NDIM=length(info.Size);
+       if ( NDIM==2 )
+           D.cen.sal  = nc_varget(ncfile, 'sa1',[it-1 0],[1 cen.mask]); % Salinity
+       else
+           if ( NDIM==3 )
+              D.cen.sal  = nc_varget(ncfile, 'sa1',[it-1 0 0],[1 cen.mask laydim]); % Salinity
+           end
+       end
    end
    
-   info=nc_getvarinfo(ncfile,'ucx');
-   NDIM=length(info.Size);
    if OPT.vel & nc_isvar (ncfile, 'ucx')
+      info=nc_getvarinfo(ncfile,'ucx');
+      NDIM=length(info.Size);
       if ( NDIM==2 )
 %        2D          
          D.cen.u    = nc_varget(ncfile, 'ucx',[it-1 0],[1 cen.mask]); % x velocity at cell center
@@ -106,10 +123,9 @@ function varargout = readMap(ncfile,varargin)
          end
       else
          if ( NDIM==3 )
-%           3D: first layer only for now
-            D.cen.u    = nc_varget(ncfile, 'ucy',[it-1 0 0],[1 cen.mask 1]); % x velocity at cell center
+            D.cen.u    = nc_varget(ncfile, 'ucy',[it-1 0 0],[1 cen.mask laydim]); % x velocity at cell center
             if nc_isvar (ncfile, 'ucy');
-               D.cen.v    = nc_varget(ncfile, 'ucy',[it-1 0 0],[1 cen.mask 1]); % y velocity at cell center
+               D.cen.v    = nc_varget(ncfile, 'ucy',[it-1 0 0],[1 cen.mask laydim]); % y velocity at cell center
             end
          end
       end
@@ -122,5 +138,7 @@ function varargout = readMap(ncfile,varargin)
 %   if OPT.vel & nc_isvar (ncfile, 'unorm');
 %   D.face.un  = nc_varget(ncfile, 'unorm',[it-1 0],[1 face.mask]);
 %   end
+
+
 
 varargout = {D};
