@@ -65,7 +65,7 @@ function [datatypes] = UCIT_getDatatypes;
 
    i = i + 1;
    datatypes.transect.names  {i}  =  'Jarkus Data (test/next release)';
-   datatypes.transect.urls   {i}  =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/jarkus/profiles/transect.nc';
+   datatypes.transect.urls   {i}  =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/jarkus/profiles/transect_r2013.nc';
    datatypes.transect.areas  {i}  =  ''; % set by UCIT_loadRelevantInfo2Popup(1,2)
    datatypes.transect.catalog{i}  =  'http://dtvirt5.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/jarkus/profiles/catalog.xml';
    datatypes.transect.ldbs{i}     =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc';
