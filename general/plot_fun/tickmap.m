@@ -189,11 +189,11 @@ for ix=1:3
          
    %% Fill all those tick that are not in the stride vector with spaces
 
-      remove          = ~isnan(ticks.(AX));
+      removeT          = ~isnan(ticks.(AX));
       keep            = 1:OPT.stride:length(ticks.(AX));
-      remove(keep)    = false;
+      removeT(keep)    = false;
    
-      ticklabels.(AX)(remove,:) = ' ';
+      ticklabels.(AX)(removeT,:) = ' ';
       
    %% Add units to last tick that is not removed ( and mind whether last tick
    %  is removed !!)
