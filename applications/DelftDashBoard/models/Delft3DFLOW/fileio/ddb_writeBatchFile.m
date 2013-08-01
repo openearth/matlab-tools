@@ -239,7 +239,7 @@ elseif exist([getenv('D3D_HOME') '\' getenv('ARCH') '\flow\bin\deltares_hydro.ex
         end
     end
     
-    fclose(fid);
+%     fclose(fid);
     
     %% Now for the linux counterpart
 elseif isunix
@@ -265,6 +265,7 @@ elseif isunix
             
         end
     end
+%     fclose(fid);
 end
 
 fclose(fid);
