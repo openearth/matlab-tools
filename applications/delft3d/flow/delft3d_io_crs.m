@@ -1,10 +1,19 @@
 function varargout=delft3d_io_crs(cmd,varargin),
 %DELFT3D_IO_CRS   read/write cross sections (*.crs) <<beta version!>>
 %
-%  DATA=delft3d_io_crs('read' ,filename);
+%  DAT = delft3d_io_crs('read' ,filename);
 %
-%       delft3d_io_crs('write',filename,DATA);
-%       delft3d_io_crs('write',filename,DATA,<keyword,value>);
+%        delft3d_io_crs('write',filename,DAT);
+%
+% where DAT is a struct with fields 'm','n'
+%
+%  DAT = delft3d_io_crs('read' ,filename,G);
+%
+% also returns the x and y coordinates, where G = delft3d_io_grd('read',...)
+%
+% To plot one;all cross sections use the example below:
+%
+%   plot(DAT.x{1},DAT.y{1});plot(DAT.X,DAT.Y)
 %
 % See also: delft3d_io_ann, delft3d_io_bca, delft3d_io_bch, delft3d_io_bnd, 
 %           delft3d_io_crs, delft3d_io_dep, delft3d_io_dry, delft3d_io_eva, 
@@ -24,21 +33,18 @@ function varargout=delft3d_io_crs(cmd,varargin),
 %       2600 GA Delft
 %       The Netherlands
 %
-%   This library is free software; you can redistribute it and/or
-%   modify it under the terms of the GNU Lesser General Public
-%   License as published by the Free Software Foundation; either
-%   version 2.1 of the License, or (at your option) any later version.
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
 %
 %   This library is distributed in the hope that it will be useful,
 %   but WITHOUT ANY WARRANTY; without even the implied warranty of
-%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-%   Lesser General Public License for more details.
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
 %
-%   You should have received a copy of the GNU Lesser General Public
-%   License along with this library; if not, write to the Free Software
-%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
-%   USA or 
-%   http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
 % $Id$
@@ -47,107 +53,121 @@ function varargout=delft3d_io_crs(cmd,varargin),
 % $Revision$
 % $HeadURL$
 
-if nargin ==1
-   error(['AT least 2 input arguments required: d3d_io_...(''read''/''write'',filename)'])
+if nargin ==0
+   error(['AT least 1 input arguments required: d3d_io_...(''read''/''write'',filename)'])
+elseif nargin ==1
+    varargin = {cmd,varargin{:}};
+    cmd = 'read';
 end
 
 switch lower(cmd),
-case 'read',
-  STRUCT=Local_read(varargin{:});
-  if nargout ==1
-     varargout = {STRUCT};
-  elseif nargout >1
-     error('too much output paramters: 0 or 1')
-  end
-  if STRUCT.iostat<0,
-     error(['Error opening file: ',varargin{1}])
-  end;
-case 'write',
-  iostat=Local_write(varargin{:});
-  if nargout ==1
-     varargout = {iostat};
-  elseif nargout >1
-     error('too much output paramters: 0 or 1')
-  end
-  if iostat<0,
-     error(['Error opening file: ',varargin{1}])
-  end;
+    case 'read',
+        S=Local_read(varargin{:});
+        if nargout==1
+            varargout = {S};
+        elseif nargout >1
+            error('too much output paramters: 0 or 1')
+        end
+        if S.iostat<0,
+            error(['Error opening file: ',varargin{1}])
+        end;
+    case 'write',
+        iostat=Local_write(varargin{:});
+        if nargout==1
+            varargout = {iostat};
+        elseif nargout >1
+            error('too much output paramters: 0 or 1')
+        end
+        if iostat<0,
+            error(['Error opening file: ',varargin{1}])
+        end;
 end;
 
 % ------------------------------------
-% --READ------------------------------
-% ------------------------------------
 
-function STRUCT=Local_read(varargin),
+function S=Local_read(varargin),
 
-STRUCT.filename = varargin{1};
+S.filename = varargin{1};
 
-fid          = fopen(STRUCT.filename,'r');
+fid          = fopen(S.filename,'r');
 if fid==-1
-   STRUCT.iostat   = fid;
+    S.iostat   = fid;
 else
-   STRUCT.iostat   = -1;
-   i            = 0;
-   
-   while ~feof(fid)
+    S.iostat   = -1;
+    i            = 0;
 
-      i = i + 1;
-
-   %try
-
-    %  [STRUCT.namst,...
-    %   STRUCT.mn1  ,...
-    %   STRUCT.mn2  ,...
-    %   STRUCT.mn3  ,...
-    %   STRUCT.mn4  ]=textread(STRUCT.filename,'%20c%d%d%d%d');
-       
-       STRUCT.DATA(i).name         = fscanf(fid,'%20c',1); 
-       STRUCT.DATA(i).mn           = fscanf(fid,'%i'  ,4);
-
-       STRUCT.NTables = length(STRUCT.DATA);
-   
-      % turn the endpoint-description along gridlines into vectors
-
-      [STRUCT.DATA(i).m,...
-       STRUCT.DATA(i).n]=meshgrid(STRUCT.DATA(i).mn(1):STRUCT.DATA(i).mn(3),...
-                                  STRUCT.DATA(i).mn(2):STRUCT.DATA(i).mn(4));
-   
+    while ~feof(fid)
+        i = i + 1;
+    %  [S.namst,...
+    %   S.mn1  ,...
+    %   S.mn2  ,...
+    %   S.mn3  ,...
+    %   S.mn4  ]=textread(S.filename,'%20c%d%d%d%d');
+       S.DATA(i).name         = fscanf(fid,'%20c',1); 
+       S.DATA(i).mn           = fscanf(fid,'%i'  ,4);
+       S.NTables = length(S.DATA);
+      [S.DATA(i).m,... % turn the endpoint-description along gridlines into vectors
+       S.DATA(i).n]=meshgrid(S.DATA(i).mn(1):S.DATA(i).mn(3),...
+                                  S.DATA(i).mn(2):S.DATA(i).mn(4));
       fgetl(fid); % read rest of line
-
-   end
+    end
    
-   STRUCT.iostat  = 1;
-   STRUCT.NTables  = i;
+    S.iostat   = 1;
+    S.NTables  = i;
+    for i=1:S.NTables
+        S.m(:,i) = [S.DATA(i).mn(1) S.DATA(i).mn(3)];
+        S.n(:,i) = [S.DATA(i).mn(2) S.DATA(i).mn(4)];
+    end
+    % make same data structure as delft3d_io_thd
+    for i=1:S.NTables
+        if S.m(1,i)==S.m(2,i);
+            S.DATA(i).direction='u';
+        elseif S.n(1,i)==S.n(2,i);
+            S.DATA(i).direction='v';
+        else '?'
+        end
+    end
 
-   for i=1:STRUCT.NTables
-      STRUCT.m(i,:) = [STRUCT.DATA(i).mn(1) STRUCT.DATA(i).mn(3)];
-      STRUCT.n(i,:) = [STRUCT.DATA(i).mn(2) STRUCT.DATA(i).mn(4)];
-   end
-
+    %% get world coordinates
+    if nargin >1
+        G   = varargin{2};
+        for i=1:S.NTables
+            m0 = min(S.m(:,i));m1 = max(S.m(:,i));
+            n0 = min(S.n(:,i));n1 = max(S.n(:,i));
+            if     strcmpi(S.DATA(i).direction,'u')
+                if ~(m0==m1);error('m0 is not m1');end
+                S.x{i}   = [G.cor.x(n0-1:n1,m1     ); NaN]';
+                S.y{i}   = [G.cor.y(n0-1:n1,m1     ); NaN]';
+            elseif strcmpi(S.DATA(i).direction,'v')
+                if ~(n0==n1);error('n0 is not n1');end
+                S.x{i}   = [G.cor.x(n0     ,m0-1:m1)  NaN];
+                S.y{i}   = [G.cor.y(n0     ,m0-1:m1)  NaN];
+            end
+        end
+        S.X = cell2mat(S.x);
+        S.Y = cell2mat(S.y);
+    end   
+   
 end   
-   %catch
-   %   STRUCT.iostat  = -1;
-   %end
+
 
 if nargout==1
-   varargout = {STRUCT};   
+   varargout = {S};   
 else
-   varargout = {STRUCT,STRUCT.iostat};   
+   varargout = {S,S.iostat};   
 end
 
 % ------------------------------------
-% --WRITE-----------------------------
-% ------------------------------------
 
-function iostat=Local_write(filename,STRUCT),
+function iostat=Local_write(filename,S),
 
 iostat       = 1;
 fid          = fopen(filename,'w');
 OS           = 'windows'; % or 'unix'
 
-for i=1:size(STRUCT.m,1)
+for i=1:size(S.m,1)
 
-   fprintf(fid,'%-20s %.3d %.3d %.3d %.3d',STRUCT.namst(i,:),STRUCT.m(i,1),STRUCT.n(i,1),STRUCT.m(i,2),STRUCT.n(i,2));
+   fprintf(fid,'%-20s %.3d %.3d %.3d %.3d',S.namst(i,:),S.m(i,1),S.n(i,1),S.m(i,2),S.n(i,2));
    if     strcmp(lower(OS(1)),'u')
       fprintf(fid,'\n');
    elseif strcmp(lower(OS(1)),'w')
@@ -160,7 +180,5 @@ end
 fclose(fid);
 iostat=1;
 
-% ------------------------------------
-% ------------------------------------
 % ------------------------------------
 

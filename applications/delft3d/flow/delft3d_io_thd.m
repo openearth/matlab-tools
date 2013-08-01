@@ -1,19 +1,19 @@
 function varargout=delft3d_io_thd(cmd,varargin)
 %DELFT3D_IO_THD   read/write thin dams, calculate world coordinates
 %
-%  THD = delft3d_io_thd('read' ,filename);
+%  DAT = delft3d_io_thd('read' ,filename);
 %
-%        delft3d_io_thd('write',filename,THD);
+%        delft3d_io_thd('write',filename,DAT);
 %
-% where THD is a struct with fields 'm','n'
+% where DAT is a struct with fields 'm','n'
 %
-%  THD = delft3d_io_thd('read' ,filename,G);
+%  DAT = delft3d_io_thd('read' ,filename,G);
 %
 % also returns the x and y coordinates, where G = delft3d_io_grd('read',...)
 %
-% To plot thin dams use the example below:
+% To plot one/all thin dams use the example below:
 %
-%   plot(THD.x,THD.y)
+%   plot(DAT.x{1},DAT.y{1});plot(DAT.X,DAT.Y)
 %
 % See also: delft3d_io_ann, delft3d_io_bca, delft3d_io_bch, delft3d_io_bnd,
 %           delft3d_io_crs, delft3d_io_dep, delft3d_io_dry, delft3d_io_eva,
@@ -36,20 +36,18 @@ function varargout=delft3d_io_thd(cmd,varargin)
 %       2600 GA Delft
 %       The Netherlands
 %
-%   This library is free software; you can redistribute it and/or
-%   modify it under the terms of the GNU Lesser General Public
-%   License as published by the Free Software Foundation; either
-%   version 2.1 of the License, or (at your option) any later version.
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
 %
 %   This library is distributed in the hope that it will be useful,
 %   but WITHOUT ANY WARRANTY; without even the implied warranty of
-%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-%   Lesser General Public License for more details.
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
 %
-%   You should have received a copy of the GNU Lesser General Public
-%   License along with this library; if not, write to the Free Software
-%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
-%   USA
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
 % $Id$
@@ -67,13 +65,13 @@ end
 
 switch lower(cmd),
     case 'read',
-        STRUCT=Local_read(varargin{:});
+        S=Local_read(varargin{:});
         if nargout==1
-            varargout = {STRUCT};
+            varargout = {S};
         elseif nargout >1
             error('too much output paramters: 0 or 1')
         end
-        if STRUCT.iostat<0,
+        if S.iostat<0,
             error(['Error opening file: ',varargin{1}])
         end;
     case 'write',
@@ -100,9 +98,8 @@ if fid==-1
 else
     S.iostat   = -1;
     i            = 0;
-    
+
     while ~feof(fid)
-        
         i = i + 1;
 
 %   25      13    25      13 V
@@ -136,26 +133,24 @@ else
     
     S.iostat   = 1;
     S.NTables  = i;
-    
     for i=1:S.NTables
         S.m(:,i) = [S.DATA(i).mn(1) S.DATA(i).mn(3)];
         S.n(:,i) = [S.DATA(i).mn(2) S.DATA(i).mn(4)];
     end
-    
+    %% get world coordinates
     if nargin >1
         G   = varargin{2};
-        
         for i=1:S.NTables
-            m0 = S.m(1,i);m1 = S.m(2,i);
-            n0 = S.n(1,i);n1 = S.n(2,i);
+            m0 = min(S.m(:,i));m1 = max(S.m(:,i));
+            n0 = min(S.n(:,i));n1 = max(S.n(:,i));
             if     strcmpi(S.DATA(i).direction,'u')
                 if ~(m0==m1);error('m0 is not m1');end
-                S.x{i}   = [G.cor.x(n0:n1-1  ,m1  ) NaN];
-                S.y{i}   = [G.cor.y(n0:n1-1  ,m1  ) NaN];
+                S.x{i}   = [G.cor.x(n0-1:n1,m1     ); NaN]';
+                S.y{i}   = [G.cor.y(n0-1:n1,m1     ); NaN]';
             elseif strcmpi(S.DATA(i).direction,'v')
                 if ~(n0==n1);error('n0 is not n1');end
-                S.x{i}   = [G.cor.x(n0  ,m0-1:m1  ) NaN];
-                S.y{i}   = [G.cor.y(n0  ,m0-1:m1  ) NaN];
+                S.x{i}   = [G.cor.x(n0     ,m0-1:m1)  NaN];
+                S.y{i}   = [G.cor.y(n0     ,m0-1:m1)  NaN];
             end
         end
         S.X = cell2mat(S.x);
@@ -165,25 +160,25 @@ end
 
 % ------------------------------------
 
-function iostat=Local_write(filename,STRUCT),
+function iostat=Local_write(filename,S),
 
 iostat       = 1;
 fid          = fopen(filename,'w');
 OS           = 'windows';
 
-for i=1:length(STRUCT.DATA)
+for i=1:length(S.DATA)
     
-    % fprintfstringpad(fid,20,STRUCT.DATA(i).name,' ');
+    % fprintfstringpad(fid,20,S.DATA(i).name,' ');
     
     fprintf(fid,'%1c',' ');
     % fprintf automatically adds one space between all printed variables
     % within one call
     fprintf(fid,'%5i %5i %5i %5i %1c',...
-        STRUCT.DATA(i).mn(1)   ,...
-        STRUCT.DATA(i).mn(2)   ,...
-        STRUCT.DATA(i).mn(3)   ,...
-        STRUCT.DATA(i).mn(4)   ,...
-        STRUCT.DATA(i).direction    );
+        S.DATA(i).mn(1)   ,...
+        S.DATA(i).mn(2)   ,...
+        S.DATA(i).mn(3)   ,...
+        S.DATA(i).mn(4)   ,...
+        S.DATA(i).direction    );
     
     if     strcmp(lower(OS(1)),'u')
         fprintf(fid,'\n');
