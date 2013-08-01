@@ -132,7 +132,7 @@ classdef StartUpFastARS < StartUpMethod
                 limitState.ResponseSurface.UpdateFit
                 
                 % Search DesignPoint
-                
+                % TODO: implement a method to find the DesignPoint (FORM??)
                 
                 % Evaluate DesignPoint
                 betaDesignPoint     = sqrt(sum(this.UDesignPoint.^2,2));

@@ -172,10 +172,10 @@ classdef LineSearch < handle
                 % if no second starting point is given, evaluate at
                 % BetaFirstPoint
                 this.EvaluatePoint(limitState, un, this.BetaFirstPoint, randomVariables);
+                
+                % check if the StartBeta is enough for convergence
+                this.CheckConvergence(limitState)
             end
-            
-            % check if the StartBeta is enough for convergence
-            this.CheckConvergence(limitState)
             
             if ~this.SearchConverged
                 % if not converged just from StartBeta, call polynomial fit routine
