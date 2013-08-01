@@ -150,7 +150,7 @@ for it=it0:it1
 %%%%%%%%%%%%  j.lencart@ua.pt        14/05/2013      %%%%%%%%%%%%%%%%%%%%%%%%%%%
     wl00=internaldiffusion(wl00);   
 %    wl00=interp2(lon360,s.lat(ilat1:ilat2),wl00,x,y);
-    wl00=griddata(xp, yp , wl00, x , y);
+    wl00=griddata(xp, yp , double(wl00), x , y);
     wl0(:,:,nt)=wl00;
 end
 t=t0:dt/1440:t1;
