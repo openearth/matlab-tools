@@ -116,7 +116,7 @@ try
     
     filename=handles.Toolbox(tb).Input.exportFile;
     
-    filename=filename(1:end-5);
+    filename=filename(1:end-4);
     
     ii=handles.Toolbox(tb).Input.activeModel;
     name=handles.tideModels.model(ii).name;
@@ -126,7 +126,9 @@ try
     else
         tidefile=[handles.tideModels.model(ii).URL filesep name '.nc'];
     end
-    
+
+    % H
+
     xx=handles.Toolbox(tb).Input.xLim;
     yy=handles.Toolbox(tb).Input.yLim;
 
@@ -165,6 +167,24 @@ try
     
     ddb_saveAstroMapFile([filename '.tek'],xg,yg,conList,amp,phi);
 
+    % U
+
+    xx=handles.Toolbox(tb).Input.xLim;
+    yy=handles.Toolbox(tb).Input.yLim;
+
+    if ~strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
+        xg=xx(1):(xx(2)-xx(1))/10:xx(2);
+        yg=yy(1):(yy(2)-yy(1))/10:yy(2);
+        [xg,yg]=meshgrid(xg,yg);
+        cs.name='WGS 84';
+        cs.type='geographic';
+        [xg,yg]=ddb_coordConvert(xg,yg,handles.screenParameters.coordinateSystem,cs);
+        xx(1)=min(min(xg))-1;
+        yy(1)=min(min(yg))-1;
+        xx(2)=max(max(xg))+1;
+        yy(2)=max(max(yg))+1;
+    end
+    
     
     [lon,lat,ampz,phasez,conList] = readTideModel(tidefile,'type','u','xlim',xx,'ylim',yy,'constituent','all');
     
@@ -188,6 +208,24 @@ try
     
     ddb_saveAstroMapFile([filename '.u.tek'],xg,yg,conList,amp,phi);
 
+    % V
+
+    xx=handles.Toolbox(tb).Input.xLim;
+    yy=handles.Toolbox(tb).Input.yLim;
+
+    if ~strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
+        xg=xx(1):(xx(2)-xx(1))/10:xx(2);
+        yg=yy(1):(yy(2)-yy(1))/10:yy(2);
+        [xg,yg]=meshgrid(xg,yg);
+        cs.name='WGS 84';
+        cs.type='geographic';
+        [xg,yg]=ddb_coordConvert(xg,yg,handles.screenParameters.coordinateSystem,cs);
+        xx(1)=min(min(xg))-1;
+        yy(1)=min(min(yg))-1;
+        xx(2)=max(max(xg))+1;
+        yy(2)=max(max(yg))+1;
+    end
+    
     [lon,lat,ampz,phasez,conList] = readTideModel(tidefile,'type','v','xlim',xx,'ylim',yy,'constituent','all');
     
     for i=1:length(conList)
