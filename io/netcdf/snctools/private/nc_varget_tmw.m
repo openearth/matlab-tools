@@ -108,6 +108,8 @@ end
 
 values = netcdf.getVar(ncargs{:});
 
+% SPvdP: remove NetCDF constant fill values
+values = remove_fillval(values, xtype);
 
 % If it's a 1D vector, make it a column vector.  Otherwise permute the
 % data to make up for the row-major-order-vs-column-major-order issue.
@@ -211,3 +213,24 @@ switch(e.identifier)
     otherwise
         rethrow(e);
 end
+
+%--------------------------------------------------------------------------
+function values = remove_fillval(values, xtype)
+% remove NetCDF constant fill values from data
+
+%   get NetCDF constant fill value
+    switch xtype
+        case netcdf.getConstant('NC_DOUBLE')
+            fillval = netcdf.getConstant('NC_FILL_DOUBLE');
+        case netcdf.getConstant('NC_FLOAT')
+            fillval = netcdf.getConstant('NC_FILL_FLOAT');
+        case netcdf.getConstant('NC_INT')
+            fillval = netcdf.getConstant('NC_FILL_INT');
+        case netcdf.getConstant('NC_INT64')
+            fillval = netcdf.getConstant('NC_FILL_INT64');
+        otherwise
+            return
+    end
+    
+%   remove fill values
+    values(values==fillval) = NaN;

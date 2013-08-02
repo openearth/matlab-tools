@@ -66,11 +66,13 @@ for idmnp1=1:length(Gin)    % idmn + 1
 
     % perform interpolation from D
     varnams= fieldnames(D.cen);
+    
     for i=1:length(varnams)
         var=varnams{i};
 %       assume row indices correspond to layers
         NDIM=length(size(D.cen.(var)));
-        for k=1:size(D.cen.(var),2) % could be slow
+        polout.cen.(var) = [];
+        for k=1:size(D.cen.(var),2) % could be slow, possible future work: try to prevent loop
             dum = D.cen.(var);
             polout.cen.(var)(:,k) = interpolate(D.cen.(var)(:,k));
         end
