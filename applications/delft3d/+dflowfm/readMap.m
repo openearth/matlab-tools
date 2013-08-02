@@ -97,9 +97,8 @@ function varargout = readMap(ncfile,varargin)
    cen.mask = G.cen.n; % not an index array yet as nc_varget can only handle one range
 
    if OPT.zwl & nc_isvar (ncfile, 's1');
-   D.cen.zwl  = nc_varget(ncfile, 's1' ,[it-1 0],[1 cen.mask]); % Waterlevel
-   end
-   
+      D.cen.zwl  = nc_varget(ncfile, 's1' ,[it-1 0],[1 cen.mask]); % Waterlevel
+   end  
    if OPT.sal & nc_isvar (ncfile, 'sa1');
        info=nc_getvarinfo(ncfile,'ucx');
        NDIM=length(info.Size);
@@ -127,6 +126,9 @@ function varargout = readMap(ncfile,varargin)
             if nc_isvar (ncfile, 'ucy');
                D.cen.v    = nc_varget(ncfile, 'ucy',[it-1 0 0],[1 cen.mask laydim]); % y velocity at cell center
             end
+            if nc_isvar (ncfile, 'ucz');
+               D.cen.w    = nc_varget(ncfile, 'ucz',[it-1 0 0],[1 cen.mask laydim]); % y velocity at cell center
+            end            
          end
       end
    end
