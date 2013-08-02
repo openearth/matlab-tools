@@ -63,6 +63,8 @@ for idmnp1=1:length(Gin)    % idmn + 1
     polout.arc = arc(idxarctoA);
     polout.x   = C.x(idxarctoA);
     polout.y   = C.y(idxarctoA);
+    ang = atan2(diff(C.y),diff(C.x));
+    polout.ang = [ang,ang(end)];            %entend dimension of ang 
 
     % perform interpolation from D
     varnams= fieldnames(D.cen);
@@ -93,10 +95,16 @@ for idmnp1=1:length(Gin)    % idmn + 1
     %   layers are assumed to be uniformly distributed along the water column
         polout.z=repmat((1:numlay)-0.5, length(h),1)/numlay .* repmat(h,1,numlay) + repmat(polout.cen.z(:),1,numlay);
         polout.arc=repmat(polout.arc(:),1,numlay);
+        polout.ang=repmat(polout.ang(:),1,numlay);
         polout.x=repmat(polout.x(:),1,numlay);
         polout.y=repmat(polout.y(:),1,numlay);
     end
     
+    %if 'u' and %'v' are available, compute velocity along and normal to polygon
+    if (sum(ismember({'u','v'},varnams))==2)  
+        polout.cen.us = polout.cen.u.*cos(polout.ang)-polout.cen.v.*sin(polout.ang);
+        polout.cen.un = polout.cen.u.*sin(polout.ang)+polout.cen.v.*cos(polout.ang);
+    end
 
     if ( iscell(Gin) )
         fprintf(' done.\n');
