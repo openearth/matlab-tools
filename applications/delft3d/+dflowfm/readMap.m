@@ -122,7 +122,7 @@ function varargout = readMap(ncfile,varargin)
          end
       else
          if ( NDIM==3 )
-            D.cen.u    = nc_varget(ncfile, 'ucy',[it-1 0 0],[1 cen.mask laydim]); % x velocity at cell center
+            D.cen.u    = nc_varget(ncfile, 'ucx',[it-1 0 0],[1 cen.mask laydim]); % x velocity at cell center
             if nc_isvar (ncfile, 'ucy');
                D.cen.v    = nc_varget(ncfile, 'ucy',[it-1 0 0],[1 cen.mask laydim]); % y velocity at cell center
             end
