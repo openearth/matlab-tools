@@ -58,17 +58,21 @@ for idmnp1=1:length(Gin)    % idmn + 1
     arc0 = cumsum(darc0);
     arc = arc0(C.idxB) - (1-C.beta).*darc0(C.idxB);
     
-    [dum,idxarctoA] = sort(arc);
-    idxarctoA = reshape(idxarctoA,size(C.x));
+    
+    %unique intersections only
+    [dum,idx1,idx2] = unique(arc);
+    
+    % sort intersections on increasing arc length
+    [dum,idx2] = sort(arc(idx1));
+    idxarctoA = idx1(idx2);
 
     polout.arc = arc(idxarctoA);
     polout.x   = C.x(idxarctoA);
     polout.y   = C.y(idxarctoA);
-    [arctemp,idx1,idx2] = unique(polout.arc);
-    angtemp = atan2(diff(polout.y(idx1)),diff(polout.x(idx1)));
+    
+    angtemp = atan2(diff(polout.y),diff(polout.x));
     angtemp = [angtemp,angtemp(end)];     %entend dimension of ang 
-    idx2 = reshape(idx2,size(C.x));
-    polout.ang = angtemp(idx2);          
+    polout.ang = angtemp;
 
     % perform interpolation from D
     varnams= fieldnames(D.cen);
@@ -105,9 +109,13 @@ for idmnp1=1:length(Gin)    % idmn + 1
     end
     
     %if 'u' and %'v' are available, compute velocity along and normal to polygon
-    if (sum(ismember({'u','v'},varnams))==2)  
-        polout.cen.us = polout.cen.u.*cos(polout.ang)+polout.cen.v.*sin(polout.ang);
-        polout.cen.un =-polout.cen.u.*sin(polout.ang)+polout.cen.v.*cos(polout.ang);
+    polout.ang = reshape(polout.ang,size(polout.cen.u));
+    if ( sum(ismember({'u','v'},varnams))==2 && isfield(polout,'ang') )
+        polout.cen.us = polout.cen.u .* cos(polout.ang) +   ...
+                             polout.cen.v .* sin(polout.ang);
+                            
+        polout.cen.un = -polout.cen.u .* sin(polout.ang) +   ...
+                              polout.cen.v .* cos(polout.ang);
     end
 
     if ( iscell(Gin) )
