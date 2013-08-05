@@ -128,7 +128,7 @@ elseif type==1&&PopupNR==2
     % make overview plot
     fh = findobj('tag','mapWindow');
     if isempty(fh)
-        ucit_plottransectoverview
+        UCIT_plotTransectOverview
     end
     
 elseif type==1&&PopupNR==3
