@@ -146,6 +146,7 @@ classdef LimitState < handle
                 
                 % calculate & save associated Z value
                 zvalue          = this.EvaluateAtX(input, uvalues);
+                % here we actually add to the vector of the limit state 
                 this.ZValues    = [this.ZValues; zvalue];
                 
                 % flag as exact evaluation (no use of response surface)
@@ -218,6 +219,7 @@ classdef LimitState < handle
         
         %Check if a response surface is available and has a good fit
         function arsAvailable = CheckAvailabilityARS(this)
+            
             if isempty(this.ResponseSurface) || (~isempty(this.ResponseSurface) && ~this.ResponseSurface.GoodFit)
                 arsAvailable    = false;
             elseif ~isempty(this.ResponseSurface) && this.ResponseSurface.GoodFit
@@ -229,7 +231,7 @@ classdef LimitState < handle
         function originZ = CheckOrigin(this)
             originZ = [];
             if ~any(this.BetaValues == 0)
-                error('Origin not available in LimitState');
+                error('Origin not available in LimitState')
             elseif any(this.BetaValues  == 0) && this.ZValues(this.BetaValues == 0) <= 0
                 error('Failure at origin of limit state is not supported by this line search algorithm');
             elseif any(this.BetaValues  == 0) && this.ZValues(this.BetaValues == 0) > 0

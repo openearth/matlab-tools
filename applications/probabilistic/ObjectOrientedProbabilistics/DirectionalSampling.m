@@ -75,6 +75,7 @@ classdef DirectionalSampling < ProbabilisticMethod
     end
 
     
+    
     %% Methods
     methods
         %% Constructor
@@ -98,16 +99,19 @@ classdef DirectionalSampling < ProbabilisticMethod
             %   See also DirectionalSampling
             
             % If a random seed (NaN) is specified, choose a random number
-            if isnan(seed)
+            if isnan(seed)  %commentDana
                 seed = rand(1);
             end
+            
             
             ProbabilisticChecks.CheckInputClass(limitState,'LimitState');
             ProbabilisticChecks.CheckInputClass(lineSearcher,'LineSearch');
             ProbabilisticChecks.CheckInputClass(confidenceInterval,'double');
             ProbabilisticChecks.CheckInputClass(accuracy,'double');
             ProbabilisticChecks.CheckInputClass(seed,'double');
-            
+            % here it puts the input into the properties of the object
+            % this method inherits from the probabilistic methods so that's
+            % why we can define them in the most outer class
             this.LimitState         = limitState;
             this.LineSearcher       = lineSearcher;
             this.ConfidenceInterval = confidenceInterval;
@@ -219,7 +223,7 @@ classdef DirectionalSampling < ProbabilisticMethod
         function SetDefaults(this)
             this.MaxCOV                     = 0.1;
             this.MinNrDirections            = 0;
-            this.MaxNrDirections            = 1000;
+            this.MaxNrDirections            = 100; % addedDana initial 1000
             this.SolutionConverged          = false;
             this.StopCalculation            = false;
             this.NrDirectionsEvaluated      = 0;
@@ -253,11 +257,58 @@ classdef DirectionalSampling < ProbabilisticMethod
             u                   = norm_inv(randomP,0,1);
             uLength             = sqrt(sum(u.^2,2));
             this.UNormalVector  = u./repmat(uLength,1,this.LimitState.NumberRandomVariables);
+            
+%             
+%             f1=figure(1)
+%             hist(u(:,1))
+%             title('Histogram for the variable u1')
+%             saveas (gca,'ADIS_hist_u1_100iter.png')
+%             
+%             f2=figure(2)
+%             hist(u(:,2))
+%             title('Histogram for the variable u2')
+%             saveas (gca,'ADIS_hist_u2_100iter.png')
+%             
+%             f3=figure(3)
+%             plot(u(:,1),u(:,2), 'b*')
+%             vector_position = [ 53         379        1067         569];
+%             axis([-4 4 -4 4])
+%             set(f3,'position',vector_position)
+%             title('Plot of the vector u=[u1,u2]')
+%             saveas (gca,'ADIS_plot_u1_u2_100iter.png')
+%             
+%             f4=figure(4)
+%             plot(this.UNormalVector(:,1),this.UNormalVector(:,2), 'b*')
+%             vector_position = [ 53         379        1067         569];
+%             hold on;
+%             for j=1:size(this.UNormalVector,1)
+%                 if mod(j,2)==0
+%                     text(this.UNormalVector(j,1),this.UNormalVector(j,2),[' \leftarrow',num2str(j)],...
+%                         'VerticalAlignment','middle',...
+%                         'HorizontalAlignment','left',...
+%                         'FontSize',8,'Color','r')
+%                 else
+%                     text(this.UNormalVector(j,1),this.UNormalVector(j,2),[num2str(j),' \rightarrow'],...
+%                         'VerticalAlignment','middle',...
+%                         'HorizontalAlignment','right',...
+%                         'FontSize',8,'Color','r')
+%                 end
+%                 
+%             end
+%             
+%             set(f4,'position',vector_position)
+%             title('Plot of the vector normalized vector u./ sqrt(sum(u.^2,2)')
+%             saveas (gca,'ADIS_plot_u1_u2_normalized_100iter.png')           
+       
         end
         
         %Compute origin
         function ComputeOrigin(this)
             this.LimitState.Evaluate(zeros(1,this.LimitState.NumberRandomVariables),0,this.LimitState.RandomVariables);
+            % it checks if the failure line is going straight throuh the
+            % origin because the search actually begins in the origin and
+            % if the points are very close to each other than we have
+            % errors
             if this.LimitState.ZValues(1) > this.LineSearcher.MaxErrorZ
                 this.AssignUNormalIndices(1,0);
             else

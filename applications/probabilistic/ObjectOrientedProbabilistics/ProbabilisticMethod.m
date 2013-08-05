@@ -104,6 +104,7 @@ classdef ProbabilisticMethod < handle
             ProbabilisticChecks.CheckInputClass(seed,'double')
             
             this.Seed   = seed;
+            
         end
         
         %% Getters
@@ -111,6 +112,13 @@ classdef ProbabilisticMethod < handle
         
         %% Other methods
         function randomsamples = GenerateRandomSamples(this, NumberSamples, NumberRandomVariables)
+%     rng('default') puts the settings of the random number generator used by
+%     RANDto their default values so that they produce the
+%     same random numbers as if you restarted MATLAB.
+%     rng(this.Seed) restores the settings of the random number generator used by
+%     back to the values captured previously by this.Seed
+%     this way, when the code is run twice, the same results are obtained
+
             if ~isempty(this.Seed)
                 rng('default');
                 rng(this.Seed);

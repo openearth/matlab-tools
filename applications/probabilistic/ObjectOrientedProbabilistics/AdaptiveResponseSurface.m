@@ -51,6 +51,7 @@ classdef AdaptiveResponseSurface < handle
     properties
         Name
         CheckQualityARS
+        WeightedARS
     end
     properties (SetAccess = private)
         Fit
@@ -90,7 +91,11 @@ classdef AdaptiveResponseSurface < handle
             ProbabilisticChecks.CheckInputClass(name,'char')
             this.Name   = name;
         end
-        
+    
+        function set.WeightedARS(this, weighted)
+            ProbabilisticChecks.CheckInputClass(weighted,'logical')
+            this.WeightedARS   = weighted;
+        end
         %% Getters
         
         %% Other methods
@@ -103,10 +108,41 @@ classdef AdaptiveResponseSurface < handle
         
         %Update ARS fit
         function UpdateFit(this, limitState)
-            this.DetermineModelTerms(limitState);
+            
+           
+            
+           this.DetermineModelTerms(limitState);
+            
+            
+            absoluteZValues = abs(limitState.ZValues(limitState.EvaluationIsExact));
+            [Y,I] = sort(absoluteZValues,'ascend');
+            
+            nrVariables = limitState.NumberRandomVariables;
+            %NrUsedEvaluations = 2*nrVariables + size(absoluteZValues,1)/2;
+            NrUsedEvaluations =  max(6,round(size(absoluteZValues,1)/2));
+            
+            
+            if size(limitState.ZValues(limitState.EvaluationIsExact),1)>NrUsedEvaluations
+                UsedZValues = Y(1:NrUsedEvaluations);
+                UsedSortedIndex = I(1:NrUsedEvaluations);
+            
+                InputUvalues = limitState.UValues(limitState.EvaluationIsExact,:);
+                UsedUValues = InputUvalues(UsedSortedIndex,:);
+            end
+            
             if ~isempty(this.ModelTerms)
+                
+                if ~this.WeightedARS
                 this.Fit    = polyfitn(limitState.UValues(limitState.EvaluationIsExact,:), limitState.ZValues(limitState.EvaluationIsExact), this.ModelTerms);
-            end 
+                else 
+                    if size(limitState.ZValues(limitState.EvaluationIsExact),1)>NrUsedEvaluations
+                         this.Fit    = polyfitn(UsedUValues, UsedZValues, this.ModelTerms);   
+                    end
+                end 
+            end
+                
+ 
+                
             this.CheckFit
         end
         
@@ -129,6 +165,26 @@ classdef AdaptiveResponseSurface < handle
                 this.GoodFit    = false;
             end
         end
+        
+                %Check fit quality ORIGINAL FUNCT
+%         function CheckFit(this)
+%             if ~isempty(this.Fit) && ~isempty(fieldnames(this.Fit))
+%                 if ~any(isnan(this.Fit.Coefficients)) && ...
+%                         ~any(isinf(this.Fit.Coefficients)) && ...
+%                         ~any(this.Fit.Coefficients > this.MaxCoefficient) && ...
+%                         ~any(isnan(this.Fit.ParameterVar)) && ...
+%                         ~any(isinf(this.Fit.ParameterVar)) && ...
+%                         ~any(this.Fit.ParameterVar > this.MaxCoefficient) && ...
+%                         this.Fit.RMSE/max(1,max(abs(this.Fit.Coefficients))) < this.MaxRootMeanSquareError || ...
+%                         ~this.CheckQualityARS
+%                     this.GoodFit    = true;
+%                 else
+%                     this.GoodFit    = false;
+%                 end
+%             else
+%                 this.GoodFit    = false;
+%             end
+%         end
         
         %Determine modelterms in polynomial fit depending on number of
         %variables
