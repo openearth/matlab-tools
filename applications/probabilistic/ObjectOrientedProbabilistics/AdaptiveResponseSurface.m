@@ -113,7 +113,7 @@ classdef AdaptiveResponseSurface < handle
             absoluteZValues = abs(limitState.ZValues(limitState.EvaluationIsExact));
             [Y,I] = sort(absoluteZValues,'ascend');
             
-            nrUsedEvaluations =  max(6,round(size(absoluteZValues,1)/2));
+            nrUsedEvaluations =  max(1 + limitState.NumberRandomVariables + limitState.NumberRandomVariables*(limitState.NumberRandomVariables + 1)/2,round(size(absoluteZValues,1)/2));
             
             if ~isempty(this.ModelTerms)
                 if ~this.WeightedARS
@@ -156,11 +156,10 @@ classdef AdaptiveResponseSurface < handle
         %Determine modelterms in polynomial fit depending on number of
         %variables
         function DetermineModelTerms(this, limitState)
-            nrVariables = limitState.NumberRandomVariables; 
-            if  sum(limitState.EvaluationIsExact) >= 1 + nrVariables + nrVariables*(nrVariables + 1)/2
+            if  sum(limitState.EvaluationIsExact) >= 1 + limitState.NumberRandomVariables + limitState.NumberRandomVariables*(limitState.NumberRandomVariables + 1)/2
                 this.ModelTerms = 2;
-            elseif sum(limitState.EvaluationIsExact) >= 2*nrVariables + 1
-                this.ModelTerms = [zeros(1,nrVariables); eye(nrVariables); 2*eye(nrVariables)];
+            elseif sum(limitState.EvaluationIsExact) >= 2*limitState.NumberRandomVariables + 1
+                this.ModelTerms = [zeros(1,limitState.NumberRandomVariables); eye(limitState.NumberRandomVariables); 2*eye(limitState.NumberRandomVariables)];
             else
                 this.ModelTerms = []; 
             end
