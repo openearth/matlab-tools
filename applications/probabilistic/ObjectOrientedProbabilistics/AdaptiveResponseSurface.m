@@ -108,41 +108,28 @@ classdef AdaptiveResponseSurface < handle
         
         %Update ARS fit
         function UpdateFit(this, limitState)
-            
-           
-            
-           this.DetermineModelTerms(limitState);
-            
-            
+            this.DetermineModelTerms(limitState);
+                        
             absoluteZValues = abs(limitState.ZValues(limitState.EvaluationIsExact));
             [Y,I] = sort(absoluteZValues,'ascend');
             
-            nrVariables = limitState.NumberRandomVariables;
-            %NrUsedEvaluations = 2*nrVariables + size(absoluteZValues,1)/2;
-            NrUsedEvaluations =  max(6,round(size(absoluteZValues,1)/2));
-            
-            
-            if size(limitState.ZValues(limitState.EvaluationIsExact),1)>NrUsedEvaluations
-                UsedZValues = Y(1:NrUsedEvaluations);
-                UsedSortedIndex = I(1:NrUsedEvaluations);
-            
-                InputUvalues = limitState.UValues(limitState.EvaluationIsExact,:);
-                UsedUValues = InputUvalues(UsedSortedIndex,:);
-            end
+            nrUsedEvaluations =  max(6,round(size(absoluteZValues,1)/2));
             
             if ~isempty(this.ModelTerms)
-                
                 if ~this.WeightedARS
-                this.Fit    = polyfitn(limitState.UValues(limitState.EvaluationIsExact,:), limitState.ZValues(limitState.EvaluationIsExact), this.ModelTerms);
-                else 
-                    if size(limitState.ZValues(limitState.EvaluationIsExact),1)>NrUsedEvaluations
-                         this.Fit    = polyfitn(UsedUValues, UsedZValues, this.ModelTerms);   
+                    this.Fit    = polyfitn(limitState.UValues(limitState.EvaluationIsExact,:), limitState.ZValues(limitState.EvaluationIsExact), this.ModelTerms);
+                else
+                    if size(limitState.ZValues(limitState.EvaluationIsExact),1)>nrUsedEvaluations
+                        usedZValues = Y(1:nrUsedEvaluations);
+                        usedSortedIndex = I(1:nrUsedEvaluations);
+                        
+                        inputUvalues = limitState.UValues(limitState.EvaluationIsExact,:);
+                        usedUValues = inputUvalues(usedSortedIndex,:);
+                        this.Fit    = polyfitn(usedUValues, usedZValues, this.ModelTerms);
                     end
-                end 
+                end
             end
-                
- 
-                
+            
             this.CheckFit
         end
         
@@ -165,26 +152,6 @@ classdef AdaptiveResponseSurface < handle
                 this.GoodFit    = false;
             end
         end
-        
-                %Check fit quality ORIGINAL FUNCT
-%         function CheckFit(this)
-%             if ~isempty(this.Fit) && ~isempty(fieldnames(this.Fit))
-%                 if ~any(isnan(this.Fit.Coefficients)) && ...
-%                         ~any(isinf(this.Fit.Coefficients)) && ...
-%                         ~any(this.Fit.Coefficients > this.MaxCoefficient) && ...
-%                         ~any(isnan(this.Fit.ParameterVar)) && ...
-%                         ~any(isinf(this.Fit.ParameterVar)) && ...
-%                         ~any(this.Fit.ParameterVar > this.MaxCoefficient) && ...
-%                         this.Fit.RMSE/max(1,max(abs(this.Fit.Coefficients))) < this.MaxRootMeanSquareError || ...
-%                         ~this.CheckQualityARS
-%                     this.GoodFit    = true;
-%                 else
-%                     this.GoodFit    = false;
-%                 end
-%             else
-%                 this.GoodFit    = false;
-%             end
-%         end
         
         %Determine modelterms in polynomial fit depending on number of
         %variables
@@ -236,11 +203,8 @@ classdef AdaptiveResponseSurface < handle
             end
             
             cm = colormap('gray');
-%             cm = colormap('cool');
-%             cm1 = colormap('spring');
             
             colorbar('peer',axARS);
-%             colormap(axARS,[cm; cm1]);
             colormap(axARS,[flipud(cm) ; cm]);
             shading(axARS,'flat');
             clim(axARS,[-1 1]);
