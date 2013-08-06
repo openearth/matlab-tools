@@ -132,7 +132,7 @@ classdef AdaptiveDirectionalImportanceSampling < DirectionalSampling
             this.MaxPRatio                  = 0.4;
             this.MinNrDirections            = 50;
             this.MaxNrDirections            = 1000;
-            this.MinNrLimitStatePoints      = 10;
+            this.MinNrLimitStatePoints      = 0;
             this.MinNrApproximatedPoints    = 0;
             this.SolutionConverged          = false;
             this.StopCalculation            = false;
