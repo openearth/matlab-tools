@@ -150,7 +150,7 @@ classdef StartUpFastARS < StartUpMethod
 %                 this.CheckConvergence
             end
                 
-            
+            this.DetermineStartUpEvaluations
         end
         
         % Construct U matrix

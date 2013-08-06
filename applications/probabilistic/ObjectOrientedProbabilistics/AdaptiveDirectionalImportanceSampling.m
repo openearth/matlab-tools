@@ -132,7 +132,7 @@ classdef AdaptiveDirectionalImportanceSampling < DirectionalSampling
             this.MaxPRatio                  = 0.4;
             this.MinNrDirections            = 50;
             this.MaxNrDirections            = 1000;
-            this.MinNrLimitStatePoints      = 0;
+            this.MinNrLimitStatePoints      = 10;
             this.MinNrApproximatedPoints    = 0;
             this.SolutionConverged          = false;
             this.StopCalculation            = false;
@@ -209,7 +209,7 @@ classdef AdaptiveDirectionalImportanceSampling < DirectionalSampling
             if ... 
                     this.CheckCOV && ...
                     this.NrDirectionsEvaluated > this.MinNrDirections && ...
-                    sum(this.EvaluationApproachesZero) >= this.MinNrLimitStatePoints  && ...
+                    sum(this.LimitState.EvaluationIsEnabled(this.EvaluationApproachesZero)) >= this.MinNrLimitStatePoints  && ...
                     (sum(~this.LimitState.EvaluationIsExact & this.EvaluationApproachesZero) >= this.MinNrApproximatedPoints) 
                 this.SolutionConverged = true;
             else

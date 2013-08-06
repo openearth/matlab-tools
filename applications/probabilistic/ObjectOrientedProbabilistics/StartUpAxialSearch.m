@@ -98,7 +98,7 @@ classdef StartUpAxialSearch < StartUpMethod
             end
 
             limitState.UpdateResponseSurface
-            this.DetermineStartupEvaluations(limitState)
+            this.DetermineStartUpEvaluations(limitState)
         end
         
         % Construct the unit vector with search directions

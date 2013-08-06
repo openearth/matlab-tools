@@ -94,13 +94,13 @@ classdef StartUpMethod < handle
         %% Getters
         
         %% Other Methods
-        function DetermineStartupEvaluations(this, limitState)
+        function DetermineStartUpEvaluations(this, limitState)
             this.NumberExactStartUpEvaluations = limitState.NumberExactEvaluations;
         end
     end
     
     %% Abstract methods
     methods (Abstract)
-        StartUp(this, limitState,randomVariables)
+        StartUp(this, limitState, randomVariables)
     end
 end
