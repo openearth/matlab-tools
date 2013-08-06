@@ -10,6 +10,15 @@ rmpath(statspath);
 statspath='n:\Applications\Matlab\MATLAB2012a_64\toolbox\stats\statsdemos';
 rmpath(statspath);
 
+statspath='c:\Program Files\MATLAB2012a_64\toolbox\stats';
+rmpath(statspath);
+statspath='c:\Program Files\MATLAB2012a_64\toolbox\stats\classreg';
+rmpath(statspath);
+statspath='c:\Program Files\MATLAB2012a_64\toolbox\stats\stats';
+rmpath(statspath);
+statspath='c:\Program Files\MATLAB2012a_64\toolbox\stats\statsdemos';
+rmpath(statspath);
+
 fid=fopen('complist','wt');
 
 fprintf(fid,'%s\n','-a');
