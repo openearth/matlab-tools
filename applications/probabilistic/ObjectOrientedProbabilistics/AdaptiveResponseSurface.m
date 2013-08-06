@@ -171,6 +171,7 @@ classdef AdaptiveResponseSurface < handle
             this.MaxCoefficient         = 1e5;
             this.MaxRootMeanSquareError = 1;
             this.CheckQualityARS        = true;
+            WeightedARS                 = false;
         end
         
         %plot response surface
