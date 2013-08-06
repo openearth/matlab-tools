@@ -174,16 +174,8 @@ classdef AdaptiveResponseSurface < handle
             this.WeightedARS            = false;
         end
         
-        %plot response surface
-        function plot(this, axARS)
-            if nargin < 2 || isempty(axARS)
-                if isempty(findobj('Type','axes','Tag','axARS'))
-                    axARS           = axes('Tag','axARS');
-                else
-                    axARS           = findobj('Type','axes','Tag','axARS');
-                end
-            end
-
+        % Calculate ARS values on regular grid for plotting
+        function [xGrid, yGrid, zGrid] = MakePlotGridARS(this)
             lim             = linspace(-10,10,1000);
             [xGrid, yGrid]   = meshgrid(lim,lim);
             grid            = [xGrid(:) yGrid(:)];
@@ -192,22 +184,37 @@ classdef AdaptiveResponseSurface < handle
             else
                 zGrid   = NaN(size(xGrid));
             end
-            
-            phars = findobj(axARS,'Tag','ARS');
-            
-            if isempty(phars)
-                phars = pcolor(axARS,xGrid,yGrid,zGrid);
-                set(phars,'Tag','ARS','DisplayName','ARS');
-            else
-                set(phars,'CData',zGrid);
+        end
+        
+        %plot response surface
+        function plot(this, axARS)
+            if size(this.Fit.ModelTerms,2) == 2
+                if nargin < 2 || isempty(axARS)
+                    if isempty(findobj('Type','axes','Tag','axARS'))
+                        axARS           = axes('Tag','axARS');
+                    else
+                        axARS           = findobj('Type','axes','Tag','axARS');
+                    end
+                end
+                
+                [xGrid, yGrid, zGrid] = this.MakePlotGridARS;
+                
+                phars = findobj(axARS,'Tag','ARS');
+                
+                if isempty(phars)
+                    phars = pcolor(axARS,xGrid,yGrid,zGrid);
+                    set(phars,'Tag','ARS','DisplayName','ARS');
+                else
+                    set(phars,'CData',zGrid);
+                end
+                
+                cm = colormap('gray');
+                
+                colorbar('peer',axARS);
+                colormap(axARS,[flipud(cm) ; cm]);
+                shading(axARS,'flat');
+                clim(axARS,[-1 1]);
             end
-            
-            cm = colormap('gray');
-            
-            colorbar('peer',axARS);
-            colormap(axARS,[flipud(cm) ; cm]);
-            shading(axARS,'flat');
-            clim(axARS,[-1 1]);
         end
     end
 end

@@ -244,6 +244,15 @@ classdef LimitState < handle
             this.ResponseSurface.UpdateFit(this)
         end
         
+        %Add ARS to plot if available
+        function AddARSToPlot(this, axisHandle)
+            if ~isempty(this.ResponseSurface)
+                axARS           = findobj('Type','axes','Tag','axARS');
+                this.ResponseSurface.plot(axARS);
+                set(axARS,'Position',get(axisHandle,'Position'));
+            end
+        end
+        
         %Plot limit state (and response surface if applicable)
         function plot(this, figureHandle, evaluationApproachesZero)
             if isempty(figureHandle)
@@ -319,11 +328,8 @@ classdef LimitState < handle
             set(uitHandle,'Data',data);
             set(axisHandle,'XLim',[-6 6],'YLim',[-6 6]);
             
-            if ~isempty(this.ResponseSurface)
-                axARS           = findobj('Type','axes','Tag','axARS');
-                this.ResponseSurface.plot(axARS);
-                set(axARS,'Position',get(axisHandle,'Position'));
-            end            
+            this.AddARSToPlot(axisHandle)
+            
             drawnow;
         end
     end

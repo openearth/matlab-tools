@@ -188,8 +188,8 @@ classdef MultipleLimitState < LimitState
         end
         
         % Calculate final Z-value from multiple LimitStates
-        function zvalue = Aggregate(this, zvalues)
-            zvalue  = feval(this.AggregateFunction, zvalues);
+        function zvalue = Aggregate(this, zvalues, varargin)
+            zvalue  = feval(this.AggregateFunction, zvalues, varargin(:));
         end
         
         %Update all response surfaces
@@ -217,6 +217,46 @@ classdef MultipleLimitState < LimitState
                 numberexactevaluations = numberexactevaluations + sum(this.LimitStates(i).EvaluationIsExact);
             end
             this.NumberExactEvaluations = numberexactevaluations;
+        end
+        
+        %Add the ARS's of all LimitState to plot if available and only if
+        %there are exactly 2 RandomVariables
+        function AddARSToPlot(this, axisHandle)
+            if length(this.RandomVariables) == 2
+                for i=1:length(this.LimitStates)
+                    if ~isempty(this.LimitStates(i).ResponseSurface)
+                        [xGrid, yGrid, zGrid]   = this.LimitStates(i).ResponseSurface.MakePlotGridARS;
+                        
+                        if i==1
+                            zGridTotal          = NaN([size(zGrid) length(this.LimitStates)]);
+                            zGridAggregated     = NaN(size(zGrid));
+                        end
+                        
+                        zGridTotal(:,:,i)       = zGrid;
+                    end
+                end
+                
+                zGridAggregated = this.Aggregate(zGridTotal,'Dimension',3);
+                
+                axARS   = findobj('Type','axes','Tag','axARS');
+                phars   = findobj(axARS,'Tag','ARS');
+                
+                if isempty(phars)
+                    phars   = pcolor(axARS,xGrid,yGrid,zGridAggregated);
+                    set(phars,'Tag','ARS','DisplayName','ARS');
+                else
+                    set(phars,'CData',zGridAggregated);
+                end
+                
+                cm      = colormap('gray');
+                
+                colorbar('peer',axARS);
+                colormap(axARS,[flipud(cm) ; cm]);
+                shading(axARS,'flat');
+                clim(axARS,[-1 1]);
+                
+                set(axARS,'Position',get(axisHandle,'Position'));
+            end
         end
     end
 end
