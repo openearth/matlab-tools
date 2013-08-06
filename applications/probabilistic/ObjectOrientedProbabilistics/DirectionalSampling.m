@@ -100,7 +100,7 @@ classdef DirectionalSampling < ProbabilisticMethod
             
             % If a random seed (NaN) is specified, choose a random number
             if isempty(seed) || isnan(seed)
-                seed = rand(1);
+                seed = round(100*rand(1));
             end
             
             
