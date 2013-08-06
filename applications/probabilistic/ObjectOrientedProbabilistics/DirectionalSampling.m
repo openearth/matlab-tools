@@ -99,7 +99,7 @@ classdef DirectionalSampling < ProbabilisticMethod
             %   See also DirectionalSampling
             
             % If a random seed (NaN) is specified, choose a random number
-            if isnan(seed)  %commentDana
+            if isnan(seed) || isempty(seed) %commentDana
                 seed = rand(1);
             end
             
