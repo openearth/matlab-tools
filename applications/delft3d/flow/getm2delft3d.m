@@ -1,21 +1,32 @@
-function MDF = getm2delft3d(varargin)
+function MDF = getm2delft3d(OPT0,getm0)
 %getm2delft3d convert GETM grid, depth and boundary conditions input to Delft3D input
 %
-%  getm2delft3d(<keyword,value>) where required keywords are:
+%  getm2delft3d(OPT,getm,<keyword,value>) where OPT0 and getm0 contain values to overwrite defaults.
+%
+% getm is a struct representation of the GETM Fiortran namelist inout file,
+% which can be parsed with FORTRAN_NAMELIST2STRUCT(). getm0 should
+% only contain those fields that need to be overwritten in the *;inp file specified,
+% for instance setting that diffet per monthly or annual run such as:
+% getm.time.start, getm.time.stop, 
+% getm.param.hotstart, getm.m2d.elev_file, getm.temp.temp_file, getm.salt.salt_file
 %
 % GETM:
-% * topo           - name of GETM netCDF topo file
-% * bdyinfo        - name of GETM ascii boundary definitions
-% * bdy            - name of GETM netCDF boundary condition values
+%  getm.domain.bathymetry  = '*.nc';  % name of GETM netCDF topo file
+%  getm.domain.bdyinfofile = '*.dat'; % name of GETM ascii boundary definitions
+%  getm.m2d.bdyfile_2d     = '*.nc';  % name of GETM netCDF 2D boundary condition values
+%  getm.m3d.bdyfile_3d     = '*.nc';  % name of GETM netCDF 3D boundary condition values
+%  getm.rivers.river_info  = '*.dat';
+%  getm.rivers.river_data  = '*.nc';
 %
-% Delft3D:
+% OPT:
+% * inp            - name of GETM Fortran namelist input file
 % * mdf            - empty settings file for Delft3D input
 % * reference_time - reference time for Delft3D input
 % * points_per_bnd - stride for converting GETM bdy values to Delft3D bnd segments:
 %                    is at least 2 because Delft3D has boundary segments that
 %                    connect 2 endpoints, whereas GETM has seperate boundary points
 %
-%See also: delft3d
+%See also: delft3d, fortran_namelist2struct
 
 %%  --------------------------------------------------------------------
 %   Copyright (C) 2012 Deltares
@@ -58,23 +69,22 @@ function MDF = getm2delft3d(varargin)
 %  $Keywords: $
 
    OPT.inp             = '*.inp'; % fortran namelist, not yet xml
-   OPT.topo            = '*.nc';
-  %OPT.topoc           = '*.nc';
-   OPT.bdyinfo         = '*.dat';
-   OPT.bdy             = '*.nc';
-   OPT.bdydep          = '*.nc'; % same, but for depth
-   OPT.bdy3d           = '*.nc';
-   OPT.bdy3d_nudge     = 1; % shift 1st and last bcc to match simulation time
-   OPT.riverinfo       = '*.dat';
-   OPT.river           = '*.nc';
 
+  %getm.domain.bathymetry  = '';
+  %getm.domain.bdyinfofile = '*.dat';
+  %getm.m2d.bdyfile_2d     = '*.nc';
+  %getm.m3d.bdyfile_3d     = '*.nc';
+  %getm.rivers.river_info  = '*.dat';
+  %getm.rivers.river_data  = '*.nc';
+
+   OPT.RUNID          = mfilename;
+   OPT.bdy3d_nudge    = 1; % shift 1st and last bcc to match simulation time
    OPT.reference_time = datenum(2003,1,1); % overwrites on in mdf, used for *.bct and *.dis
    OPT.mdf            = '*.mdf';
    OPT.points_per_bnd = 2;
    OPT.ntmax          = []; % for debugging save only so many boundary time points: [] means adapt to sim time, Inf is everything
    OPT.d3ddir         = '';
    OPT.getmdir        = '';
-   OPT.RUNID          = mfilename;
    OPT.nan.dis        = 0; % value to use for filling of NaNs
    OPT.nan.bct        = 0; % value to use for filling of NaNs, use [] for linear interpolation in time (mind leading and trlaing nans)
    OPT.kmax           = [];
@@ -88,25 +98,27 @@ function MDF = getm2delft3d(varargin)
    OPT.dt.map         = 120;
    OPT.dt.his         = 10;   
    OPT.dt.waq         = 120;   
+   OPT.dt.bct         = 10; % correct floating precision errors from GETM
+   OPT.dt.bcc         = 10; % correct floating precision errors from GETM
+   OPT.dt.dis         = 10; % correct floating precision errors from GETM
 
    % switch off generating a particiular external files, while mdf stays identical to speed up debugging other external files
    OPT.write.grd      = 1;
    OPT.write.dep      = 1; % requires OPT.write.grd for sigma levels  
    OPT.write.rst      = 1; % requires OPT.write.dep for sigma levels
    OPT.write.bct      = 1;
-   OPT.write.bcc      = 1; % requires OPT.write.bct for sigma levels
+   OPT.write.bcc      = 1; % requires OPT.write.bct for sigma levels and OPT.write.dep
    OPT.write.src      = 1;
 
-   OPT = setproperty(OPT,varargin);
+   OPT = setproperty(OPT,OPT0);
    
-%% 
+%% load input
 
-   
-   if isempty(OPT.bdydep)
-      OPT.bdydep = OPT.bdy;
-   end
+   getm0.rivers.use_river_salt   = 1; % delft3d cannot neglect it
+   getm0.rivers.use_river_temp   = 1; % delft3d cannot neglect it
 
    if ~isempty(OPT.inp)
+
       getm = fortran_namelist2struct(OPT.inp);
       if ~isempty(OPT.kmax)
       getm.domain.kdum = OPT.kmax;
@@ -139,12 +151,14 @@ function MDF = getm2delft3d(varargin)
       getm.temp.temp_const         = 15;
       getm.salt.salt_method        = 1;
       getm.salt.salt_const         = 31;
-      getm.rivers.use_river_salt   = 1; % delft3d cannot neglect it
-      getm.rivers.use_river_temp   = 1; % delft3d cannot neglect it
    end
+   
+   getm = mergestructs('overwrite','recursive',getm,getm0);
+   
+
+%% translate input
 
    MDF  = delft3d_io_mdf('new');
-   MDF.keywords.dt     = OPT.dt;
    MDF.keywords.runtxt = getm.param.title;
    MDF.keywords.tstart = (datenum(getm.time.start,'yyyy-mm-dd hh:MM:ss') - OPT.reference_time)*24*60;
    MDF.keywords.tstop  = (datenum(getm.time.stop ,'yyyy-mm-dd hh:MM:ss') - OPT.reference_time)*24*60;
@@ -152,7 +166,7 @@ function MDF = getm2delft3d(varargin)
                           %123456789012345678901234567890
    MDF.keywords.runtxt = ['GETM converted to Delft3D from',...
                           filenameext(OPT.inp      ),';',...
-                          filenameext(OPT.topo     ),';',...
+                          filenameext(getm.domain.bathymetry),';',...
                           getm.param.title,';',...
                           '$Revision$ ',...
                           '$HeadURL$'];
@@ -194,18 +208,22 @@ function MDF = getm2delft3d(varargin)
 
    delft3d_io_mdf('write',[OPT.d3ddir,filesep,OPT.RUNID,'.mdf'],MDF.keywords); % updated and overwritten after each new addition
    
+   if isempty(OPT.dt.dis);OPT.dt.dis = MDF.keywords.dt;end
+   if isempty(OPT.dt.bct);OPT.dt.bct = MDF.keywords.dt;end
+   if isempty(OPT.dt.bcc);OPT.dt.bcc = MDF.keywords.dt;end
+   
 %% grid and depth and dry
 %  chop fully dry part from grid vertices (4 surrounding dry points)
 %  to exclude it from computational domain
    if OPT.write.grd
-  [D,M] = nc2struct(OPT.topo,'exclude',{'latc','lonc','convc','z0'});
+  [D,M] = nc2struct(getm.domain.bathymetry,'exclude',{'latc','lonc','convc','z0'});
    D.bathymetry(D.bathymetry==M.bathymetry.missing_value)=NaN; % missing_value in netCDF has incorrect datatype, so we have to apply it ourselves.
   
   [D.cor.x,D.cor.y]=meshgrid(D.xx(2:end-1),D.yx(2:end-1));
    D.cor.mask = corner2centernan(isnan(D.bathymetry));
 
-   D.cor.lat = corner2center(nc_varget(OPT.topo,'latc'));
-   D.cor.lon = corner2center(nc_varget(OPT.topo,'lonc'));
+   D.cor.lat = corner2center(nc_varget(getm.domain.bathymetry,'latc'));
+   D.cor.lon = corner2center(nc_varget(getm.domain.bathymetry,'lonc'));
 
    D.cor.x  (D.cor.mask==1)=nan; % mask is 0|.25|.5|.75|1
    D.cor.y  (D.cor.mask==1)=nan;
@@ -216,26 +234,26 @@ function MDF = getm2delft3d(varargin)
    end % OPT.write.grd 
    
    if getm.domain.f_plane & ~(getm.meteo.metforcing)
-   MDF.keywords.filcco  = [filename(OPT.topo),'_cartesian.grd'];
-   filcc2               = [filename(OPT.topo),'_spherical.grd'];
+   MDF.keywords.filcco  = [filename(getm.domain.bathymetry),'_cartesian.grd'];
+   filcc2               = [filename(getm.domain.bathymetry),'_spherical.grd'];
    if OPT.write.grd;wlgrid('write','FileName',[OPT.d3ddir,filesep,MDF.keywords.filcco],'X',D.cor.x'  ,'Y',D.cor.y'  ,'CoordinateSystem','Cartesian');end
    if OPT.write.grd;wlgrid('write','FileName',[OPT.d3ddir,filesep,             filcc2],'X',D.cor.lon','Y',D.cor.lat','CoordinateSystem','Spherical');end
    else
    if getm.domain.f_plane
    warning([mfilename,' delft3d cannot handle f_plane and spatially varying meteo simultaneously: using spatially varying Coriolis parameter with spherical coordinates'])
    end
-   MDF.keywords.filcco  = [filename(OPT.topo),'_spherical.grd'];
-   filcc2               = [filename(OPT.topo),'_cartesian.grd'];
+   MDF.keywords.filcco  = [filename(getm.domain.bathymetry),'_spherical.grd'];
+   filcc2               = [filename(getm.domain.bathymetry),'_cartesian.grd'];
    if OPT.write.grd;wlgrid('write','FileName',[OPT.d3ddir,filesep,MDF.keywords.filcco],'X',D.cor.lon','Y',D.cor.lat','CoordinateSystem','Spherical');end
    if OPT.write.grd;wlgrid('write','FileName',[OPT.d3ddir,filesep,             filcc2],'X',D.cor.x'  ,'Y',D.cor.y'  ,'CoordinateSystem','Cartesian');end
    end
   %wlgrid('write','FileName',[OPT.d3ddir,filesep,MDF.keywords.filcco],'X',D.xx(2:end-1),'Y',D.yx(2:end-1)); % this would keep land cells defined and thus yield too many dry points
    
-   MDF.keywords.filgrd  = [filename(OPT.topo),'.enc'           ];
-   MDF.keywords.fildep  = [filename(OPT.topo),'_at_centers.dep'];
-   MDF.keywords.fildry  = [filename(OPT.topo),'.dry'           ];
+   MDF.keywords.filgrd  = [filename(getm.domain.bathymetry),'.enc'           ];
+   MDF.keywords.fildep  = [filename(getm.domain.bathymetry),'_at_centers.dep'];
+   MDF.keywords.fildry  = [filename(getm.domain.bathymetry),'.dry'           ];
    MDF.keywords.dpsopt  = 'DP';
-   MDF.keywords.mnkmax  = [fliplr(nc_getvarinfo(OPT.topo,'bathymetry','Size')) getm.domain.kdum];
+   MDF.keywords.mnkmax  = [fliplr(nc_getvarinfo(getm.domain.bathymetry,'bathymetry','Size')) getm.domain.kdum];
 
    if OPT.write.grd
    D.enclosure = enclosure('extract',D.cor.x',D.cor.y');
@@ -276,7 +294,7 @@ function MDF = getm2delft3d(varargin)
       MDF.keywords.ccofu  =  getm.domain.z0_const;
       MDF.keywords.ccofv  =  getm.domain.z0_const;
    elseif getm.domain.z0_method==1
-      D.z0 = ncread(OPT.topo,'z0');
+      D.z0 = ncread(getm.domain.bathymetry,'z0');
       MDF.keywords.filrgh  = ['z0_at_centers.dep'];
       wldep    ('write',[OPT.d3ddir,filesep,MDF.keywords.filrgh],'',D.z0); % already includes 2 dummy rows/cols
       fprintf(2,'space varying roughness not yet tested')
@@ -396,7 +414,7 @@ function MDF = getm2delft3d(varargin)
    INI.vfiltered   = repmat(0,MDF.keywords.mnkmax(1:2));
    
    if ~isempty(fieldnames(INI)) % use rst, ini becomes way too big
-      MDF.keywords.restid = [filename(OPT.topo)]; % t11.20040118.120000
+      MDF.keywords.restid = [filename(getm.domain.bathymetry)]; % t11.20040118.120000
    if OPT.write.rst
       delft3d_io_restart('write',[OPT.d3ddir,filesep,'tri-rst.',MDF.keywords.restid],INI,'linux');
    end %OPT.write.rst    
@@ -408,21 +426,20 @@ function MDF = getm2delft3d(varargin)
 %  boundary positions not truly generic yet, should be via az matrix to remove 
 %  internal corners at connections of vertical e/w and horizontal n/s boundaries
    
-   B.time         = ncread(OPT.bdy  ,'time');
-   B.datenum      = udunits2datenum(B.time,ncreadatt(OPT.bdy  ,'time','units'));
+   B.time         = ncread(getm.m2d.bdyfile_2d ,'time');
+   B.datenum      = udunits2datenum(B.time,ncreadatt(getm.m2d.bdyfile_2d ,'time','units'));
    B.minutes      = (B.datenum-OPT.reference_time)*24*60;
-   B.minutes      = roundoff(B.minutes     ,MDF.keywords.dt,'floor','multiple');  %make sure times are multiple of time step
+   B.minutes      = roundoff(B.minutes,OPT.dt.bct,'floor','multiple');  %make sure times are multiple of time step
    B.minutes(end) = B.minutes(end) + MDF.keywords.dt; % make sure to keep full time range
 
    warning([mfilename,' 3D z/sigma interpolation not validated: check up/down and relation to getm.domain.maxdepth'])
 
-   C.zax          = ncread(OPT.bdy3d,'zax'); % POSITIVE DOWN
-   C.time         = ncread(OPT.bdy3d,'time');
-   C.datenum      = udunits2datenum(C.time,ncreadatt(OPT.bdy3d,'time','units'));
+   C.zax          = ncread(getm.m3d.bdyfile_3d,'zax'); % POSITIVE DOWN
+   C.time         = ncread(getm.m3d.bdyfile_3d,'time');
+   C.datenum      = udunits2datenum(C.time,ncreadatt(getm.m3d.bdyfile_3d,'time','units'));
    C.minutes      = (C.datenum-OPT.reference_time)*24*60;
-   C.minutes      = roundoff(C.minutes     ,MDF.keywords.dt,'floor','multiple');  %make sure times are multiple of time step
+   C.minutes      = roundoff(C.minutes,OPT.dt.bcc,'floor','multiple');  %make sure times are multiple of time step
    C.minutes(end) = C.minutes(end) + MDF.keywords.dt; % make sure to keep full time range
-   C.bathymetry   = ncread(OPT.bdydep,'bathymetry'); % POSITIVE DOWN, needed for z2sigma
    C.kmax         = MDF.keywords.mnkmax(3);
 
 % fill NaN gaps (drying overall model) with linear interpolation in time
@@ -465,13 +482,13 @@ function MDF = getm2delft3d(varargin)
    
    for dbnd = max(OPT.points_per_bnd,2); % we recommend 2 for best preventing unnecesarry duplication in bct columns
 
-      fid       = fopen(OPT.bdyinfo,'r');
+      fid       = fopen(getm.domain.bdyinfofile,'r');
       sidenames = {'west', 'north', 'east', 'south'};
-      bndtype   = {'N','','Z','',''}; % ZERO_GRADIENT,SOMMERFELD,CLAMPED,FLATHER_ELEV
-      nbnd.getm = 0; % total number of getm bnd points   for entire model
-      nbnd.d3d  = 0; % total number of d3d  bnd segments for entire model
-      nbnd.loc  = 0; % local number of d3d  bnd segments for entire model for current  side
-      nbnd.cum  = 0; % local number of d3d  bnd segments for entire model for previous sides
+      bndtype   = {'N','','Z','Z',''}; % ZERO_GRADIENT,SOMMERFELD,CLAMPED,FLATHER_ELEV
+      nbnd.getm = 0; % total number of getm bnd points                for entire model
+      nbnd.d3d  = 0; % total number of d3d  bnd segments              for entire model
+      nbnd.loc  = 0; % local number of d3d  bnd segments              for entire model for current  side
+      nbnd.cum  = 0; % local number of individual getm boundary cells for entire model for previous sides
       for iside = 1:4 % compass directions
          rec = fgetl_no_comment_line(fid,'#!');
          n4  = str2num(strtok(rec));
@@ -484,7 +501,7 @@ function MDF = getm2delft3d(varargin)
             if odd(iside)
       
             % vertical boundaries: East + West
-                mn = [vals(1) vals(2) vals(1) vals(3)];
+                mn = [vals(1) vals(2) vals(1) vals(3)];mn0 = mn;
       
                 nbnd.dcum = length(mn(2):mn(4)); % number of point in this section, incl. corners that are irelevant for Delft3D
                 
@@ -497,7 +514,7 @@ function MDF = getm2delft3d(varargin)
             else
       
             % horizontal boundaries: North + South
-                mn = [vals(2) vals(1) vals(3) vals(1)];
+                mn = [vals(2) vals(1) vals(3) vals(1)];mn0 = mn;
 
                 nbnd.dcum = length(mn(1):mn(3)); % number of point in this section
       
@@ -508,6 +525,15 @@ function MDF = getm2delft3d(varargin)
                 n  = repmat(mn(2),size(m));
 
             end % odd
+            
+            if OPT.write.dep
+            % extract depth at boundary locations for interpolation 3D boundaries
+            if mn0(1)==mn0(3);
+            C.bathymetry(nbnd.cum + [1:nbnd.dcum]) = D.bathymetry(mn0(2):mn0(4),mn0(1)       );
+            else
+            C.bathymetry(nbnd.cum + [1:nbnd.dcum]) = D.bathymetry(mn0(2)       ,mn0(1):mn0(3));                
+            end
+            end
       
          % all grid cells per segment for quick overview
          % and ASCII comparison of GETM bdyinfo file with Delft3D bnd file
@@ -525,14 +551,13 @@ function MDF = getm2delft3d(varargin)
             tmp.n    = pad(n,nbnd.loc*dbnd,n(end));
 
             for ibnd1 = 1:nbnd.loc
-                
-                
+            
             ind0    =     (ibnd1-1)*dbnd+1;          % 1-based indices into (m,n) indices from local GETM section
             ind1    = min((ibnd1  )*dbnd,nbnd.dcum); % 1-based indices into (m,n) indices from local GETM section
             ibndcum = nbnd.d3d + ibnd1;
             ipnt0   = nbnd.cum + ind0;  % 1-based indices into (m,n) indices of overall GETM bdy file
             ipnt1   = nbnd.cum + ind1;  % 1-based indices into (m,n) indices of overall GETM bdy file
-
+            
             disp([mfilename, ': processing bc* side:',num2str(iside),'/4  sctn: ',num2str(i4),'/',num2str(n4),'  pnt: ',sprintf('%4d',ibnd1), '/', sprintf('%-4d',nbnd.loc),'  getm-bdy-idx: ',sprintf('%4d',ipnt0),'..',sprintf('%-4d',ipnt1)])
 
             Bnd.DATA(ibndcum).name               = [sidenames{iside},'_',num2str(i4),'_',num2str(ibnd1)];
@@ -559,10 +584,10 @@ function MDF = getm2delft3d(varargin)
          
             if OPT.write.bct
             if ipnt0==ipnt1
-            B.elev(:,2) = ncread(OPT.bdy,'elev',[ipnt0,bctmask(1)],[1,length(bctmask)],[1,1])';
+            B.elev(:,2) = ncread(getm.m2d.bdyfile_2d,'elev',[ipnt0,bctmask(1)],[1,length(bctmask)],[1,1])';
             B.elev(:,1) = B.elev(:,2);
             else
-            B.elev = ncread(OPT.bdy,'elev',[ipnt0,bctmask(1)],[2,length(bctmask)],[(ipnt1-ipnt0),1])';
+            B.elev = ncread(getm.m2d.bdyfile_2d,'elev',[ipnt0,bctmask(1)],[2,length(bctmask)],[(ipnt1-ipnt0),1])';
             end
             for itmp=1:2
                mask = isnan(B.elev(:,itmp));
@@ -658,10 +683,10 @@ function MDF = getm2delft3d(varargin)
          % fill bcc object with salt
          
             if ipnt0==ipnt1
-            C.raw(:,2,:) = permute(ncread(OPT.bdy3d,'salt',[1,ipnt0,bccmask(1)],[Inf,1,length(bccmask)],[1,1,1]),[3 2 1]);
+            C.raw(:,2,:) = permute(ncread(getm.m3d.bdyfile_3d,'salt',[1,ipnt0,bccmask(1)],[Inf,1,length(bccmask)],[1,1,1]),[3 2 1]);
             C.raw(:,1,:) = C.raw(:,2,:);
             else
-            C.raw  = permute(ncread(OPT.bdy3d,'salt',[1,ipnt0,bccmask(1)],[Inf,2,length(bccmask)],[1,(ipnt1-ipnt0),1]),[3 2 1]);
+            C.raw  = permute(ncread(getm.m3d.bdyfile_3d,'salt',[1,ipnt0,bccmask(1)],[Inf,2,length(bccmask)],[1,(ipnt1-ipnt0),1]),[3 2 1]);
             end
             
             if any(C.raw(:)) < 0;error('salt < 0'); end
@@ -692,10 +717,10 @@ function MDF = getm2delft3d(varargin)
          % fill bcc object with temp
 
             if ipnt0==ipnt1
-            C.raw(:,2,:) = permute(ncread(OPT.bdy3d,'temp',[1,ipnt0,bccmask(1)],[Inf,1,length(bccmask)],[1,1,1]),[3 2 1]);
+            C.raw(:,2,:) = permute(ncread(getm.m3d.bdyfile_3d,'temp',[1,ipnt0,bccmask(1)],[Inf,1,length(bccmask)],[1,1,1]),[3 2 1]);
             C.raw(:,1,:) = C.raw(:,2,:);                
             else
-            C.raw  = permute(ncread(OPT.bdy3d,'temp',[1,ipnt0,bccmask(1)],[Inf,2,length(bccmask)],[1,(ipnt1-ipnt0),1]),[3 2 1]);
+            C.raw  = permute(ncread(getm.m3d.bdyfile_3d,'temp',[1,ipnt0,bccmask(1)],[Inf,2,length(bccmask)],[1,(ipnt1-ipnt0),1]),[3 2 1]);
             end
             if any(C.raw(:)) < 0;warning('temp < 0');end
             C.data(:,1,:) = interp_z2sigma(-C.zax,C.raw(:,1,:),(d3d_sigma(MDF.keywords.thick./100)),C.elev(:,1),-C.bathymetry([ipnt0]));
@@ -731,17 +756,25 @@ function MDF = getm2delft3d(varargin)
          end % i4=1:n4
       end % iside
       
+      struct2nc([OPT.d3ddir,filesep,filename(getm.m2d.bdyfile_2d),'_bathymetry.nc'],C); % for debugging
+      
       fclose(fid);
       
-      MDF.keywords.filbnd  = [filename(OPT.bdyinfo), '_',num2str(dbnd),'.bnd'];
-      MDF.keywords.filbct  = [filename(OPT.bdyinfo), '_',num2str(dbnd),'.bct'];
-      MDF.keywords.filbcc  = [filename(OPT.bdyinfo), '_',num2str(dbnd),'.bcc'];
-      MDF.keywords.commnt  = [filename(OPT.bdyinfo),                 '_0.bnd'];
+      MDF.keywords.filbnd  = [filename(getm.domain.bdyinfofile), '_',num2str(dbnd),'.bnd'];
+      MDF.keywords.filbct  = [filename(getm.domain.bdyinfofile), '_',num2str(dbnd),'.bct'];
+      MDF.keywords.filbcc  = [filename(getm.domain.bdyinfofile), '_',num2str(dbnd),'.bcc'];
+      MDF.keywords.commnt  = [filename(getm.domain.bdyinfofile),                 '_0.bnd'];
  
       delft3d_io_bnd('write',[OPT.d3ddir,filesep,MDF.keywords.commnt],Bnd0);
       delft3d_io_bnd('write',[OPT.d3ddir,filesep,MDF.keywords.filbnd],Bnd);
-      if OPT.write.bct;bct_io('write',[OPT.d3ddir,filesep,MDF.keywords.filbct],Bct);end %OPT.write.bct
-      if OPT.write.bcc;bct_io('write',[OPT.d3ddir,filesep,MDF.keywords.filbcc],Bcc);end %OPT.write.bcc
+      if OPT.write.bct;
+          save([OPT.d3ddir,filesep,MDF.keywords.filbct,'.mat'],'Dis'); % for debugging or modified re-serialisation
+          bct_io('write',[OPT.d3ddir,filesep,MDF.keywords.filbct],Bct);
+      end %OPT.write.bct
+      if OPT.write.bcc;
+         save([OPT.d3ddir,filesep,MDF.keywords.filbcc,'.mat'],'Dis'); % for debugging or modified re-serialisation
+         bct_io('write',[OPT.d3ddir,filesep,MDF.keywords.filbcc],Bcc);
+      end %OPT.write.bcc
       
       clear Bct Bcc Bnd
 
@@ -757,7 +790,7 @@ function MDF = getm2delft3d(varargin)
    
 %% discharge locations
 
-      fid      = fopen(OPT.riverinfo,'r');
+      fid      = fopen(getm.rivers.river_info,'r');
       rec      = fgetl(fid);
       nriver = str2num(strtok(rec));
 
@@ -808,32 +841,38 @@ function MDF = getm2delft3d(varargin)
          end
       end
       
-      MDF.keywords.filsrc = [filename(OPT.riverinfo),'.src'];
-      MDF.keywords.fildis = [filename(OPT.river)    ,'.dis'];
+      MDF.keywords.filsrc = [filename(getm.rivers.river_info),'.src'];
+      MDF.keywords.fildis = [filename(getm.rivers.river_data),'.dis'];
       if OPT.write.src;delft3d_io_src('write',[OPT.d3ddir,filesep,MDF.keywords.filsrc],R);end
 
 %% discharge data 
 %  first create file without T/S and last one with T/S
-
+   firstQ = 0;
    for iq=1:2
 
    if iq==1
       getm0               = getm;
       getm.m3d.calc_temp  = 0;
       getm.m3d.calc_salt  = 0;
-      MDF.keywords.fildis = [filename(OPT.river)    ,'_Q_only.dis'];
+      MDF.keywords.fildis = [filename(getm.rivers.river_data),'_Q_only.dis'];
    else
-      MDF.keywords.fildis = [filename(OPT.river)    ,'.dis'];
+      MDF.keywords.fildis = [filename(getm.rivers.river_data),'.dis'];
    end
 
-   Q.time      = ncread   (OPT.river,'time');
-   Q.timeunits = ncreadatt(OPT.river,'time','units');
+   Q.time      = ncread   (getm.rivers.river_data,'time');
+   Q.timeunits = ncreadatt(getm.rivers.river_data,'time','units');
    Q.datenum   = udunits2datenum(Q.time,Q.timeunits);
    Q.minutes   = (Q.datenum - OPT.reference_time)*24*60;
+   Q.minutes   = roundoff(Q.minutes,OPT.dt.dis,'floor','multiple');  % make sure times are multiple of time step
+
+   mask = Q.minutes >= 0;
+   if any(mask)
+      warning(['data skipped before reference data ',datestr(OPT.reference_time),' : ',datestr(Q.datenum(1))])
+   end
 
    for ipnt=1:length(R)
 
-      Q.Q             = ncread(OPT.river,R(ipnt).getm_name)./R(ipnt).npeer; % distribute evenly over peers
+      Q.Q             = ncread(getm.rivers.river_data,R(ipnt).getm_name)./R(ipnt).npeer; % distribute evenly over peers
       Q.Q(isnan(Q.Q)) = OPT.nan.dis;
 
       Dis.Table(ipnt).Name             = ['Discharge:',num2str(ipnt),' ',R(ipnt).name,' (',num2str(R(ipnt).ipeer),'/',num2str(R(ipnt).npeer),')'];
@@ -852,8 +891,12 @@ function MDF = getm2delft3d(varargin)
          Q.salt = Q.Q.*0;
          else
          Q.salt = Q.Q.*0;
-         warning([mfilename,' river salinity from file not implemented yet'])
+         if firstQ
+            firstQ = 0;
+            warning([mfilename,' river salinity from file not implemented yet'])
          end
+         end
+         Q.salt = Q.salt(mask);
       else
          Q.salt = [];
       end
@@ -866,20 +909,23 @@ function MDF = getm2delft3d(varargin)
          Q.temp = Q.Q.*0;
          warning([mfilename,' river temperature from file not implemented yet'])
          end
+         Q.temp = Q.temp(mask);
       else
          Q.temp = [];
       end
       
-      Dis.Table(ipnt).Data          = [Q.minutes, Q.Q, Q.salt, Q.temp];
-      Dis.Table(ipnt).Format        = '%d %g';
+      Dis.Table(ipnt).Data          = [Q.minutes(mask), Q.Q(mask), Q.salt, Q.temp];
+      Dis.Table(ipnt).Format        = '%d %0.5g';
    
-   end
+   end % R
    
+   save([OPT.d3ddir,filesep,MDF.keywords.fildis,'.mat'],'Dis'); % for debugging or modified re-serialisation
    bct_io('write',[OPT.d3ddir,filesep,MDF.keywords.fildis],Dis);
    
-   if iq==1;getm = getm0; end % restore getm after 1st call
-   
-   end
+   if iq==1;getm = getm0;
+   end % restore getm after 1st call
+
+   end % iq
    
    delft3d_io_mdf('write',[OPT.d3ddir,filesep,OPT.RUNID,'.mdf'],MDF.keywords); % updated and overwritten after each new addition
 
