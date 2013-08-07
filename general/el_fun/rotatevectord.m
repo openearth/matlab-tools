@@ -1,38 +1,47 @@
 function [U1, V1] = rotatevectord(u0,v0,a);
-%ROTATEVECTOR   Rotatation in degrees of vectors to other coordinate system.
+%ROTATEVECTOR   Rotatation in degrees of a vector
 %
-%  [U2 V2] = rotatevectord (u1,v1,angle_in_degrees)
+%  [U1 V1] = rotatevectord (u0,v0,angle) % angle in degrees
 %
-%  Maps vector (u0,v0) given in one cartesian grid 1
-%  onto vector (U1,V1) in cartesian grid 2,which is 
-%  rotated over angle a with respect to the cartesian
-%  grid 1 (angle positive anti-clockwise).
-%  u0,v0 should have the same size. 'a' can either
-%  be a scalar or have the same size as (u0,v0). Likewise
-%  (u0,v0) can be a scaler and a can be an array.
+%  Rotates vector (u0,v0) to vector (u1,v1) over angle 
+%  (angle defined positive anti-clockwise) in a constant
+%  cartesian system. u0,v0 should have the same size. angle can 
+%  either be a scalar or have the same size as (u0,v0). Likewise
+%  (u0,v0) can be a scalar and angle can be an array.
 %
-%         Y0
+%  This function can also be used to reproject the same vector (u0,v0)
+%  defined on one cartesian grid0 to another cartesian grid1 which is rotated
+%  with respect to grid1. In this case the vector itself does not change
+%  in global coordinates but the grid definition rotates. Here use -angle.
+%
+%         V0
 %         ^
-%         |      X1
-%  Y1     |     /   
+%         |      U1
+%  V1     |     /   
 %     \   |   / \ a = angle (positive anti-clockwise)
 %       \ | /    |
-% --------+------------------> X0
+% --------+-------->---------> U0
 %        /|\
 %      /  |  \
 %    /    |    \
 %
-%  N.B. angle given in radians
-%       for degrees: angle*pi/180
+%  N.B. angle given in degrees, for radians: angle*180/pi or rotatevectord
 %
-%  Method:
-%  ____        ____
-%  Unew =  M * uold;
-% 
+%         ____        ____
+%  Method:Unew =  M * uold;
 %
 % | U2 |  =  | cos(angle)   - sin(angle) |   | u1 |;
 % |    |     |                           | * |    |
 % | V2 |  =  | sin(angle)   + cos(angle) |   | v1 |; 
+%
+% example: rotate a wind-vane over 90 degrees from E to N (data changes)
+%
+%   [u1,v1]=rotatevectord(1,0,90)  %  = [0, 1]
+%
+% example: describe the a stagnant wind vane pointing E in a 90 degrees
+% rotated coordinate system (data does not change, onlt it's description)
+%
+%   [u1,v1]=rotatevectord(1,0,-90) %  = [0,-1]
 %
 % See also: cart2pol, pol2cart, rotatevector
 
