@@ -115,7 +115,7 @@ fprintf(fid2,'%s\n\n',['# Deltares, Matlab-generated mdu-file for D-Flow FM']);
 
 fprintf(fid2,'%s\n'  ,'[model]');
 fprintf(fid2,'%s\n'  ,'Program              = D-Flow FM');
-fprintf(fid2,'%s\n'  ,'Version              = 1.1.54.24534M');
+fprintf(fid2,'%s\n'  ,'Version              = 1.1.72.000000');
 fprintf(fid2,'%s\n\n','AutoStart            = 0                   # Autostart simulation after loading MDU or not (0=no, 1=autostart, 2=autostartstop).');
 
 fprintf(fid2,'%s\n'  ,'[geometry]');
@@ -136,7 +136,10 @@ fprintf(fid2,'%s\n'  ,'                                           # 3 : Bottom l
 fprintf(fid2,'%s\n'  ,'                                           # 4 : Bottom levels at velocity points  (=flow links), using min  network levels xk, yk, zk  bl = lowest connected link');
 fprintf(fid2,'%s\n'  ,'                                           # 5 : Bottom levels at velocity points  (=flow links), using max  network levels xk, yk, zk  bl = lowest connected link');
 fprintf(fid2,'%s\n'  ,'PartitionFile        =                     # *_part.pol, polyline(s) x,y');
-fprintf(fid2,'%s\n'  ,'AngLat               = 0.                  # Angle of latitude (deg), 0=no Coriolis');
+if isfield(mdfkeywds,'anglat') == 0; 
+    mdfkeywds.anglat = 0;
+end
+fprintf(fid2,'%s\n'  ,['AngLat               = ',num2str(mdfkeywds.anglat,'%2.2f')                ,'                # Angle of latitude (deg), 0=no Coriolis']);
 fprintf(fid2,'%s\n\n','Conveyance2D         = 3                   # -1:R=HU,0:R=H, 1:R=A/P, 2:K=analytic-1D conv, 3:K=analytic-2D conv');
 
 fprintf(fid2,'%s\n'  ,'[numerics]');
@@ -146,24 +149,34 @@ fprintf(fid2,'%s\n'  ,'AdvecType            = 3                   # Adv type, 0=
 fprintf(fid2,'%s\n'  ,'Limtypmom            = 4                   # Limiter type for cell center advection velocity, 0=no, 1=minmod,2=vanLeer,3=Kooren,4=Monotone Central');
 fprintf(fid2,'%s\n'  ,'Limtypsa             = 4                   # Limiter type for salinity transport,           0=no, 1=minmod,2=vanLeer,3=Kooren,4=Monotone Central');
 fprintf(fid2,'%s\n'  ,'Icgsolver            = 1                   # Solver type , 1 = sobekGS_OMP, 2 = sobekGS_OMPthreadsafe, 3 = sobekGS, 4 = sobekGS + Saadilud');
-fprintf(fid2,'%s\n\n','Hdam                 = 0.                  # Threshold for minimum bottomlevel step at which to apply energy conservation factor i.c. flow contraction');
+fprintf(fid2,'%s\n'  ,'Hdam                 = 0.                  # Threshold for minimum bottomlevel step at which to apply energy conservation factor i.c. flow contraction');
+fprintf(fid2,'%s\n\n','Maxdegree            = 6                   # Maximum degree in Gauss elimination');
+
+if strcmp(mdfkeywds.roumet,'C'); roumet = 0; end;
+if strcmp(mdfkeywds.roumet,'M'); roumet = 1; end;
+if isfield(mdfkeywds,'ccofu') == 0; 
+    mdfkeywds.ccofu = 0;
+    mdfkeywds.ccofv = 0;
+else
+    rouval = (mdfkeywds.ccofu + mdfkeywds.ccofv)/2;
+end
 
 fprintf(fid2,'%s\n'  ,'[physics]');
-fprintf(fid2,'%s\n'  ,['UnifFrictCoef        = 2.3d-2              # Uniform friction coefficient, 0=no friction']);
-fprintf(fid2,'%s\n'  ,['UnifFrictType        = 1                   # 0=Chezy, 1=Manning, 2=White Colebrook, 3=z0 etc']);
-fprintf(fid2,'%s\n'  ,['Vicouv               = 0.0                 # Uniform horizontal eddy viscosity']);
+fprintf(fid2,'%s\n'  ,['UnifFrictCoef        = ',num2str(rouval,'%5.7f')                         ,'            # Uniform friction coefficient, 0=no friction']);
+fprintf(fid2,'%s\n'  ,['UnifFrictType        = ',num2str(roumet,'%1.0f')                         ,'            # 0=Chezy, 1=Manning, 2=White Colebrook, 3=z0 etc']);
+fprintf(fid2,'%s\n'  ,['Vicouv               = ',num2str(mdfkeywds.vicouv,'%5.7f')               ,'                 # Uniform horizontal eddy viscosity']);
 fprintf(fid2,'%s\n'  ,['Smagorinsky          = 0.                  # Add Smagorinsky horizontal turbulence : vicu = vicu + ( (Smagorinsky*dx)**2)*S, e.g. 0.1']);
 fprintf(fid2,'%s\n'  ,['Elder                = 0.                  # Add Elder contribution                : vicu = vicu + Elder*kappa*ustar*H/6),   e.g. 1.0']);
-fprintf(fid2,'%s\n'  ,['irov                 = 0                   # 0=free slip, 1 = partial slip using wall_ks']);
+fprintf(fid2,'%s\n'  ,['irov                 = ',num2str(mdfkeywds.irov,'%1.0f')                 ,'    # 0=free slip, 1 = partial slip using wall_ks']);
 fprintf(fid2,'%s\n'  ,['wall_ks              = 0.                  # Nikuradse roughness for side walls, wall_z0=wall_ks/30']);
 fprintf(fid2,'%s\n'  ,['Vicoww               = 0.0                 # Uniform vertical eddy viscosity']);
 fprintf(fid2,'%s\n'  ,['TidalForcing         = 1                   # Tidal forcing (0=no, 1=yes) (only for jsferic == 1)']);
 fprintf(fid2,'%s\n\n',['Salinity             = 0                   # Include salinity, (0=no, 1=yes)']);
 
 fprintf(fid2,'%s\n'  ,'[wind]');
-fprintf(fid2,'%s\n'  ,'ICdtyp               = 2                   # ( ), Cd = const, 2=S&B 2 breakpoints, 3= S&B 3 breakpoints');
-fprintf(fid2,'%s\n'  ,'Cdbreakpoints        = 6.3d-4 7.23d-3      # ( ),   e.g. 0.00063  0.00723');
-fprintf(fid2,'%s\n\n','Windspeedbreakpoints = 0. 100.             # (m/s), e.g. 0.0      100.0');
+fprintf(fid2,'%s\n'  ,['ICdtyp               = ',num2str(length(mdfkeywds.wstres)/2,'%1.0f')     ,'     # ( ), Cd = const, 2=S&B 2 breakpoints, 3= S&B 3 breakpoints']);
+fprintf(fid2,'%s\n'  ,['Cdbreakpoints        = ',num2str(mdfkeywds.wstres(1:2:end),'%1.7f\t')    ,'     # ( ),   e.g. 0.00063  0.00723']);
+fprintf(fid2,'%s\n\n',['Windspeedbreakpoints = ',num2str(mdfkeywds.wstres(2:2:end),'%1.7f\t')    ,'     # (m/s), e.g. 0.0      100.0']);
 
 fprintf(fid2,'%s\n'  , '[time]');
 fprintf(fid2,'%s\n'  ,['RefDate              = ',itdate            ,'            # Reference date (yyyymmdd)']);
@@ -191,7 +204,7 @@ fprintf(fid2,'%s\n'  ,['XLSInterval          = 0.                  # Interval (s
 fprintf(fid2,'%s\n'  ,['FlowGeomFile         =                     # *_flowgeom.nc Flow geometry file in NetCDF format.']);
 fprintf(fid2,'%s\n'  ,['MapFile              = ',netfile,'_map.nc','       # *_map.nc Map file in NetCDF format.']);
 fprintf(fid2,'%s\n'  ,['MapInterval          = ',num2str(mdfkeywds.flmap(2),'%5.7f'),'                # Interval (s) between map file outputs']);
-fprintf(fid2,'%s\n'  ,['RstInterval          = ',num2str(mdfkeywds.flrst,'%5.7f'),'                # Interval (s) between map file outputs']);
+fprintf(fid2,'%s\n'  ,['RstInterval          = 0.                  # Interval (s) between map file outputs']);
 fprintf(fid2,'%s\n'  ,['WaqFileBase          =                     # Basename (without extension) for all Delwaq files to be written.']);
 fprintf(fid2,'%s\n'  ,['WaqInterval          = 0.                  # Interval (in s) between Delwaq file outputs']);
 fprintf(fid2,'%s\n'  ,['StatsInterval        = 0.                  # Interval (in s) between simulation statistics output.']);
