@@ -9,24 +9,27 @@ function [OPT Set Default] = setproperty(OPT, inputCell, varargin)
 % [OPT Set Default] = setproperty(OPT, inputCell, varargin)
 %
 % input:
-% OPT       = structure in which fieldnames are the keywords and the values 
-%             are the defaults 
+% OPT       = structure in which fieldnames are the keywords and  
+%             the values are the defaults 
 % inputCell = must be a cell array containing single struct, or a set of
-%             'PropertyName', PropertyValue,... pairs. It is best practice 
-%             to pass the varargin of the calling function as the 2nd argument.  
-%             Property names must be strings. If they contain a dot (.) this is
-%             interpreted a field separator. This can be used to assign 
-%             properties on a subfield level.
+%             'PropertyName', PropertyValue,... pairs. It is best practice to
+%             pass the varargin of the calling function as the 2nd argument.  
+%             Property names must be strings, if they contain a dot (.) this is
+%             interpreted a struct field separator, and the property name
+%             is used to assign as a subfield property.
+%             If inputCell is single struct, it will overwrite substructfields 
+%             in OPT. For recursive overwriting of subsubfields and beyond, use 
+%             mergestructs with the recursive flag.
 % varargin  = series of 'PropertyName', PropertyValue,... pairs to set 
 %             methods for setproperty itself.
 %           
 % output:
-% OPT     = structure, similar to the input argument OPT, with possibly
-%           changed values in the fields
-% Set     = structure, similar to OPT, values are true where OPT has been 
-%           set (and possibly changed)
-% Default = structure, similar to OPT, values are true where the values of
-%           OPT are equal to the original OPT
+% OPT     = structure, similar to the input argument OPT, 
+%           with possibly changed values in the fields
+% Set     = structure, similar to OPT, values are true 
+%           where OPT has been set (and possibly changed)
+% Default = structure, similar to OPT, values are true where 
+%           the values ofOPT are equal to the original OPT
 %
 % Example calls:
 % 
@@ -88,6 +91,8 @@ function [OPT Set Default] = setproperty(OPT, inputCell, varargin)
 %                              'propertyName2', 2);
 %            varcell = reshape([fieldnames(OPT2)'; struct2cell(OPT2)'], 1, 2*length(fieldnames(OPT2)));
 %            OPT     = setproperty(OPT, varcell{:});
+% See also: VARARGIN, STRUCT, MERGESTRUCTS
+
 %
 % Change log:
 %    2011-09-30: full code rewrite to include:
@@ -95,7 +100,6 @@ function [OPT Set Default] = setproperty(OPT, inputCell, varargin)
 %                 - user defined handling of extra fields 
 %                 - class change warning/error message
 %
-% See also: VARARGIN, STRUCT, MERGESTRUCTS
 
 %% Copyright notice
 %   --------------------------------------------------------------------
