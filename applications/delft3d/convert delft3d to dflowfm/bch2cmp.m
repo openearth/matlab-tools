@@ -128,7 +128,7 @@ for i=1:aantpli;
         fidB         = fopen(namecmpB,'wt');
         for k=1:length(freq);
             if freq(k)~=0;
-                period(k)  = 60*2*pi/freq(k);
+                period(k)  = 60*360/freq(k);
             else
                 period(k)  = 0.0;
             end
