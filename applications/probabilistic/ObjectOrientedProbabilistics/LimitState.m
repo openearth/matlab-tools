@@ -244,6 +244,15 @@ classdef LimitState < handle
             this.ResponseSurface.UpdateFit(this)
         end
         
+        %Get minimum nr of evaluations needed for full fit from
+        %ResponseSurface
+        function nrEvals = GetNrEvaluationsFullFit(this)
+            nrEvals = [];
+            if ~isempty(this.ResponseSurface)
+                nrEvals = this.ResponseSurface.MinNrEvaluationsFullFit;
+            end
+        end
+        
         %Add ARS to plot if available
         function AddARSToPlot(this, axisHandle)
             if ~isempty(this.ResponseSurface)

@@ -219,6 +219,15 @@ classdef MultipleLimitState < LimitState
             this.NumberExactEvaluations = numberexactevaluations;
         end
         
+        %Get minimum nr of evaluations needed for full fit from
+        %ResponseSurface (doesn't matter which one, so take first)
+        function nrEvals = GetNrEvaluationsFullFit(this)
+            nrEvals = [];
+            if ~isempty(this.LimitStates(1).ResponseSurface)
+                nrEvals = this.LimitStates(1).ResponseSurface.MinNrEvaluationsFullFit;
+            end
+        end
+        
         %Add the ARS's of all LimitState to plot if available and only if
         %there are exactly 2 RandomVariables
         function AddARSToPlot(this, axisHandle)
@@ -229,7 +238,6 @@ classdef MultipleLimitState < LimitState
                         
                         if i==1
                             zGridTotal          = NaN([size(zGrid) length(this.LimitStates)]);
-                            zGridAggregated     = NaN(size(zGrid));
                         end
                         
                         zGridTotal(:,:,i)       = zGrid;

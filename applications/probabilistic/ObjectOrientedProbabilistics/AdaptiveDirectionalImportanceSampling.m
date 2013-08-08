@@ -50,8 +50,9 @@ classdef AdaptiveDirectionalImportanceSampling < DirectionalSampling
     %% Properties
     properties
         MaxPRatio
-        MinNrApproximatedPoints
         MinNrLimitStatePoints
+        MinNrApproximatedPoints
+        ApproximatedCriteriumFactor
     end
     
     properties (Dependent = true)
@@ -128,17 +129,18 @@ classdef AdaptiveDirectionalImportanceSampling < DirectionalSampling
            
         %Set default values
         function SetDefaults(this)
-            this.MaxCOV                     = 0.1;
-            this.MaxPRatio                  = 0.4;
-            this.MinNrDirections            = 50;
-            this.MaxNrDirections            = 1000;
-            this.MinNrLimitStatePoints      = 0;
-            this.MinNrApproximatedPoints    = 0;
-            this.SolutionConverged          = false;
-            this.StopCalculation            = false;
-            this.NrDirectionsEvaluated      = 0;
-            this.LastIteration              = false;
-            this.Abort                      = false;
+            this.MaxCOV                         = 0.1;
+            this.MaxPRatio                      = 0.4;
+            this.MinNrDirections                = 50;
+            this.MaxNrDirections                = 1000;
+            this.MinNrLimitStatePoints          = 0;
+            this.MinNrApproximatedPoints        = 50;
+            this.ApproximatedCriteriumFactor    = 50;
+            this.SolutionConverged              = false;
+            this.StopCalculation                = false;
+            this.NrDirectionsEvaluated          = 0;
+            this.LastIteration                  = false;
+            this.Abort                          = false;
         end
         
         %Prepare calculation of Pf
@@ -210,10 +212,11 @@ classdef AdaptiveDirectionalImportanceSampling < DirectionalSampling
                     this.CheckCOV && ...
                     this.NrDirectionsEvaluated > this.MinNrDirections && ...
                     sum(this.LimitState.EvaluationIsEnabled(this.EvaluationApproachesZero)) >= this.MinNrLimitStatePoints  && ...
-                    (sum(~this.LimitState.EvaluationIsExact & this.EvaluationApproachesZero) >= this.MinNrApproximatedPoints) 
+                    (sum(~this.LimitState.EvaluationIsExact & this.LimitState.EvaluationIsEnabled & this.EvaluationApproachesZero) >= this.MinNrApproximatedPoints) 
                 this.SolutionConverged = true;
             else
                 this.SolutionConverged = false;
+                this.CheckApproximatedPointsCriterium
             end
         end
         
@@ -249,6 +252,19 @@ classdef AdaptiveDirectionalImportanceSampling < DirectionalSampling
             % If all convergence criteria are met, stop calculation
             if this.SolutionConverged && isempty(this.ReevaluateIndices) && this.CheckPRatio
                 this.StopCalculation    = true;
+            end
+        end
+        
+        %If there are far more points than necessary to determine an ARS
+        %but there still isn't a good fit, set MinNrApproximatedPoints to 0
+        %(safety valve against huge nr of exact calculations when a good
+        %ARS fit isn't possible)
+        function CheckApproximatedPointsCriterium(this)
+            if sum(this.LimitState.EvaluationIsExact) >= this.ApproximatedCriteriumFactor*this.LimitState.GetNrEvaluationsFullFit && ~this.LimitState.CheckAvailabilityARS
+                if this.MinNrApproximatedPoints ~= 0
+                	this.MinNrApproximatedPoints    = 0;
+                	warning('Still no ARS: MinNrApproximatedPoints is set to 0 to avoid long calculation times');
+          	end
             end
         end
         
