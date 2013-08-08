@@ -1,12 +1,12 @@
 function MDF = getm2delft3d(OPT0,getm0)
 %getm2delft3d convert GETM grid, depth and boundary conditions input to Delft3D input
 %
-%  getm2delft3d(OPT,getm,<keyword,value>) where OPT0 and getm0 contain values to overwrite defaults.
+%  getm2delft3d(OPT,getm,<keyword,value>) where OPT and getm contain values to overwrite defaults.
 %
-% getm is a struct representation of the GETM Fiortran namelist inout file,
-% which can be parsed with FORTRAN_NAMELIST2STRUCT(). getm0 should
-% only contain those fields that need to be overwritten in the *;inp file specified,
-% for instance setting that diffet per monthly or annual run such as:
+% getm is a struct representation of the GETM Fortran namelist input file,
+% which can be parsed with FORTRAN_NAMELIST2STRUCT(). getm should
+% only contain those fields that need to be overwritten in the *.inp file specified,
+% for instance setting that differ per monthly or annual run such as:
 % getm.time.start, getm.time.stop, 
 % getm.param.hotstart, getm.m2d.elev_file, getm.temp.temp_file, getm.salt.salt_file
 %

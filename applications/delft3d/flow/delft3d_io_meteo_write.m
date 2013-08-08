@@ -82,7 +82,6 @@ function fid = delft3d_io_meteo_write(filehandle,time,data,varargin)
 % TO DO check for isempty(fileparts('meteo_on_curvilinear_grid'))
 
 %% Options
-%-----------------------------
 
 OPT.header           = '';
 
@@ -100,7 +99,7 @@ OPT.timezone         = '+00:00';
 OPT.OS               = 'unix';
 OPT.newgrid          = 0;
 OPT.CoordinateSystem = [];
-OPT.fmt              = '%7g';
+OPT.fmt              = '%.6g'; % sufficient for pressure, for rest %.3g' is sufficient
 
 nextarg = 1;
 
