@@ -81,7 +81,7 @@ function varargout = KML_header(varargin)
    if nargin==0; varargout = {OPT}; return; end
 
    if isstruct(varargin{1})
-      OPT = mergestructs(OPT,varargin{1}); % varargin struct can have field that are not in OPT
+      OPT = mergestructs('overwrite',OPT,varargin{1}); % varargin struct can have field that are not in OPT
    else
       OPT = setproperty(OPT,varargin{:}); % varargin struct can NOT have any field that is not in OPT
    end
