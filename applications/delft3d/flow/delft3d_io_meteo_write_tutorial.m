@@ -134,8 +134,10 @@ function varargout = delft3d_io_meteo_write_example(varargin)
        if OPT.write_amx
        if isempty(OPT.preduplicate)
           t0 = T(ifile).datenum(T(ifile).start);
+          comment = '';
        else
           t0 = OPT.preduplicate;
+          comment = ['duplicate of next TIME'];
        end
        fid(ivar) = delft3d_io_meteo_write([OPT.workdir,filesep,amfilename],t0,data,D.lon,D.lat,...
            'CoordinateSystem','Spherical',...
@@ -144,6 +146,7 @@ function varargout = delft3d_io_meteo_write_example(varargin)
                        'unit',OPT.amunits{ivar},...
                    'writegrd',ivar==1,... % only needed once
                         'fmt',OPT.amfmt{ivar},...
+                    'comment',comment,...
                      'header',['source: ',OPT.ncfiles{1}]);
        end %OPT.write_amx
        ADD.keywords.(OPT.amkeyword{ivar}) = amfilename;        
@@ -154,6 +157,8 @@ function varargout = delft3d_io_meteo_write_example(varargin)
    % do not add 1st timestep again
    if isempty(OPT.preduplicate)
       T(1).start          = min(T(1).start + 1,T(1).stop);
+   else
+      comment = '';
    end
 
    MDF.keywords.mnkmax = [size(data)+1 1];
@@ -217,7 +222,7 @@ function varargout = delft3d_io_meteo_write_example(varargin)
               delft3d_io_meteo_write(fid(ivar),D.time,data,'fmt',OPT.amfmt{ivar});
               
               if ifile==files2proces && it==T(ifile).stop && ~isempty(OPT.postduplicate)
-                 delft3d_io_meteo_write(fid(ivar),OPT.postduplicate,data);
+                 delft3d_io_meteo_write(fid(ivar),OPT.postduplicate,data,'fmt',OPT.amfmt{ivar},'comment',['duplicate of previous TIME']);
               end
               
             end

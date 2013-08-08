@@ -100,6 +100,7 @@ OPT.OS               = 'unix';
 OPT.newgrid          = 0;
 OPT.CoordinateSystem = [];
 OPT.fmt              = '%.6g'; % sufficient for pressure, for rest %.3g' is sufficient
+OPT.comment          = '';
 
 nextarg = 1;
 
@@ -252,7 +253,7 @@ elseif strcmpi(OPT.filetype,'meteo_on_curvilinear_grid')
         OPT.hr,... % write all decimals
         datestr(OPT.refdatenum,'yyyy-mm-dd HH:MM:SS'),...
         OPT.timezone,...
-        [' # ',datestr(time,'yyyy-mm-dd HH:MM:SS')]);
+        [' # ',datestr(time,'yyyy-mm-dd HH:MM:SS'),' ',OPT.comment]);
     fprinteol(fid,OPT.OS)
     
     %% Data
