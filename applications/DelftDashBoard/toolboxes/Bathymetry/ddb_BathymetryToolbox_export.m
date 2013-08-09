@@ -199,6 +199,7 @@ end
 
 %%
 function drawPolygon
+
 handles=getHandles;
 ddb_zoomOff;
 h=findobj(gcf,'Tag','bathymetrypolygon');
