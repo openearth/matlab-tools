@@ -1,5 +1,5 @@
 function varargout = opendap2obs(varargin)
-%OPENDAP2OBS   get list of observation points from netCDF time series collection
+%OPENDAP2OBS   get list of observation points from netCDF (OPeNDAP) time series collection
 %
 %    dflowfm.opendap2obs(<keyword,value>)
 %

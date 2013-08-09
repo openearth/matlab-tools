@@ -16,10 +16,12 @@ function Station = rws_waterbase_get_locations(Code,CodeName,varargin)
 % * FullName, e.g. 'Aukfield platform'
 % * ID      , e.g. 'AUKFPFM'
 %
+% Meta-data (e.g. coordinates) for a station can be retrived with rws_waterbase_location.
+%
 % Example:
 %  S = rws_waterbase_get_locations(22,'22%7CSignificante+golfhoogte+uit+energiespectrum+van+30-500+mhz+in+cm+in+oppervlaktewater')
 %
-% See also: <a href="http://live.waterbase.nl">live.waterbase.nl</a>, rijkswaterstaat
+% See also: <a href="http://live.waterbase.nl">live.waterbase.nl</a>, rijkswaterstaat, rws_waterbase_location
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Deltares

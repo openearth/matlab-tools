@@ -1,5 +1,5 @@
 function indices = vs_trih_station_index(ncfile,varargin)
-%indexHis   Read index of history station (obs point)
+%indexHis   Read/show index of history station (obs point)
 %
 %   index = dflowfm.indexHis(ncfile,station_name)
 %

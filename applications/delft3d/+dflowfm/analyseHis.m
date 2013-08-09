@@ -1,5 +1,5 @@
 function varargout = analyseHis(varargin)
-%dflowfm.analyseHis   analyse waterlevel time series against OPeNDAP data in time and frequency domain
+%analyseHis   analyse waterlevel time series against OPeNDAP data in time and frequency domain
 %
 %    dflowfm.analyseHis(<ncfile>,<keyword,value>)
 %

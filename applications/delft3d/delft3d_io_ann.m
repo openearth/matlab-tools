@@ -2,35 +2,32 @@ function varargout = delft3d_io_ann(cmd,varargin)
 %DELFT3D_IO_ANN   Read annotation files in a nan-separated list struct (*.ann)  (BETA VERSION)
 %
 %    DELFT3D_IO_ANN reads all lines from an *.ann annotation file
-%    into a nan separated list struct (vector map).
+%    into a nan separated list struct (vector map). Annotation files (and
+%    landboudnaries) are in TEKAL format.
 %
-%    ANN = DELFT3D_IO_ANN('read',filename) returns the x and y
+%    D = DELFT3D_IO_ANN('read',filename) returns the x and y
 %    (or lat and lon) vertices in the struct fields
-%    DAT.x and DAT.y respectively. The texts are returned
-%    in DAT.txt
+%    D.x and D.y respectively. The texts are returned
+%    in D.txt
 %
-%    [x,y,<annotation>] = DELFT3D_IO_ANN('read',filename);
+%    [x,y,<txt>] = DELFT3D_IO_ANN('read',filename);
 %
-%    ANN = DELFT3D_IO_ANN('read',filename,scale) 
+%    D = DELFT3D_IO_ANN('read',filename,scale) 
 %    multiplies x and y with scale
 %
-%    ANN= DELFT3D_IO_ANN('read',filename,xscale,yscale) 
-%    multiplies x and y with xscale and yscale
-%    respectively.
+%    D = DELFT3D_IO_ANN('read',filename,xscale,yscale) 
+%    multiplies x and y with xscale and yscale respectively.
 %
-%    iostat = DELFT3D_IO_ANN('write',filename,ANN.DATA) 
+%    iostat = DELFT3D_IO_ANN('write',filename,D.DATA) 
+%    iostat = DELFT3D_IO_ANN('write',filename,x,y,txt) 
 %
-% See also: delft3d_io_ann, delft3d_io_bca, delft3d_io_bch, delft3d_io_bnd, 
-%           delft3d_io_crs, delft3d_io_dep, delft3d_io_dry, delft3d_io_eva, 
-%           delft3d_io_fou, delft3d_io_grd, delft3d_io_ini, delft3d_io_mdf, 
-%           delft3d_io_obs, delft3d_io_restart,             delft3d_io_src, 
-%           delft3d_io_tem, delft3d_io_thd, delft3d_io_wnd, 
-%           LANDBOUNDARY
+% See also: TEKAL, LANDBOUNDARY, DELFT3D_IO_XYN
 
 % 2005 Jan 01
 % 2008 Jul 21: made read a sub-function
 % 2008 Jul 22: added write option
 % 2009 feb 13: made also [x,y,text] output
+% 2013 aug   : made also [x,y,text] input
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2004-2008 Delft University of Technology
@@ -44,21 +41,18 @@ function varargout = delft3d_io_ann(cmd,varargin)
 %       2600 GA Delft
 %       The Netherlands
 %
-%   This library is free software; you can redistribute it and/or
-%   modify it under the terms of the GNU Lesser General Public
-%   License as published by the Free Software Foundation; either
-%   version 2.1 of the License, or (at your option) any later version.
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
 %
 %   This library is distributed in the hope that it will be useful,
 %   but WITHOUT ANY WARRANTY; without even the implied warranty of
-%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-%   Lesser General Public License for more details.
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
 %
-%   You should have received a copy of the GNU Lesser General Public
-%   License along with this library; if not, write to the Free Software
-%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
-%   USA or 
-%   http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
 % $Id$
@@ -101,10 +95,8 @@ case 'write',
 end;
 
 % ------------------------------------
-% ------------------------------------
-% ------------------------------------
 
-function [DAT,iostat]=Local_read(varargin)
+function [S,iostat]=Local_read(varargin)
 
    fname = varargin{1};
    
@@ -112,9 +104,9 @@ function [DAT,iostat]=Local_read(varargin)
    if length(tmp)==0
       error(['Annotation file ''',fname,''' does not exist.'])
    end
-   DAT.name  = tmp.name ;
-   DAT.date  = tmp.date ;
-   DAT.bytes = tmp.bytes;   
+   S.name  = tmp.name ;
+   S.date  = tmp.date ;
+   S.bytes = tmp.bytes;   
    
    if nargin>2
        xscale = varargin{2};
@@ -131,36 +123,39 @@ function [DAT,iostat]=Local_read(varargin)
    
    if strcmp(RAWDATA.Check,'OK')
       for i=1:length(RAWDATA.Field)
-         SUBSET           = tekal('read',RAWDATA,i);
-         DAT.DATA(i).x    = SUBSET{1}(:,1).*xscale;
-         DAT.DATA(i).y    = SUBSET{1}(:,2).*yscale;
-         DAT.DATA(i).txt  = SUBSET{2};
+         SUBSET         = tekal('read',RAWDATA,i);
+         S.DATA(i).x    = SUBSET{1}(:,1).*xscale;
+         S.DATA(i).y    = SUBSET{1}(:,2).*yscale;
+         S.DATA(i).txt  = SUBSET{2};
       end
-      DAT.iostat   = 1;
+      S.iostat   = 1;
    else
-      DAT.DATA.x   = [];
-      DAT.DATA.y   = [];
-      DAT.DATA.txt = [];
-      DAT.iostat   = 0;
+      S.DATA.x   = [];
+      S.DATA.y   = [];
+      S.DATA.txt = [];
+      S.iostat   = 0;
    end
    
-   iostat = DAT.iostat;
+   iostat = S.iostat;
    
-% ------------------------------------
-% ------------------------------------
 % ------------------------------------
 
 function iostat=Local_write(varargin)   
 
 filename     = varargin{1};
-STRUCT       = varargin{2};
+if isnumeric(varargin{2})
+   S.x   = varargin{2};
+   S.y   = varargin{3};
+   S.txt = varargin{4};
+else
+   S     = varargin{2};
+end
 
 iostat       = 1;
 fid          = fopen(filename,'w');
 OS           = 'windows';
 
 %% Header
-%% -------------------------
 
 fprintf  (fid,'%s',['* File created on ',datestr(now),' with matlab function delft3d_io_ann.m']);
 fprinteol(fid,OS);
@@ -168,18 +163,17 @@ fprinteol(fid,OS);
 fprintf  (fid,'%s',['BLOCK01']);
 fprinteol(fid,OS);
 
-fprintf  (fid,'%d ',length(STRUCT.x));
+fprintf  (fid,'%d ',length(S.x));
 fprintf  (fid,'%d ',3             );
 fprinteol(fid,OS);
 
 %% Table 
-%% -------------------------
 
-for istat=1:length(STRUCT.x)
+for istat=1:length(S.x)
 
-   fprintf  (fid,'%f ',STRUCT.x  (istat));
-   fprintf  (fid,'%f ',STRUCT.y  (istat));
-   fprintf  (fid,'%s ',STRUCT.txt{istat});
+   fprintf  (fid,'%f ',S.x  (istat));
+   fprintf  (fid,'%f ',S.y  (istat));
+   fprintf  (fid,'%s ',S.txt{istat});
    fprinteol(fid,OS);
    
 end   

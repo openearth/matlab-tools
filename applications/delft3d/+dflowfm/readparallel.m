@@ -1,6 +1,8 @@
 function [G,D,ndomains] = readparallel(varargin)
-%readNetparallel         read network and flow data from parallel D-Flow FM MAP files into NET and MAP structures G and D respectively
-%    [G,D,ndomains] = dflowfm.readNetparallel(ncfile, ...)
+%readparallel parallel version of readNet/readMap
+%
+%  [G,D,ndomains] = dflowfm.readNetparallel(ncfile, ...)
+%  read network and flow data from parallel D-Flow FM MAP files into NET and MAP structures G and D respectively
 %
 %  ncfile:               filename of a subdomain, e.g.
 %                          ncfile = 'FM_output_test_0004/test_0004_map.nc'
@@ -9,6 +11,8 @@ function [G,D,ndomains] = readparallel(varargin)
 %  G:                    structure with grid data
 %  D:                    structure with map  data
 %  ndomains:             number of subdomains read (based on file existence)
+%
+%See also: plotparallel, dflowfm.readMap, dflowfm.plotMap
 
     if nargin<1
         return

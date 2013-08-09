@@ -18,7 +18,7 @@ function varargout = delft3d_io_xyn(cmd,varargin)
 %    assumes the (x,y) data to be defined in epsg_code, and 
 %    calculates (lon,lat) (epsg=4326).
 %
-% See also: dflowfm.opendap2obs, delft3d_io_obs, XY2MN, delft3d, d3d_attrib
+% See also: dflowfm.opendap2obs, delft3d_io_obs, XY2MN, delft3d_io_ann, d3d_attrib
 
 %%  --------------------------------------------------------------------
 %   Copyright (C) 2012 Deltares

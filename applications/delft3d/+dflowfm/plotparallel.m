@@ -1,5 +1,7 @@
 function plotparallel(G,D,varargin)
-% parallel version of plotMAP
+%plotparallel parallel version of plotMap
+%
+%See also: dflowfm.plotMap
 
 if ( iscell(G) )
     ndomains = length(G)

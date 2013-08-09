@@ -12,29 +12,33 @@
 % info please see the <a href="http://publicwiki.deltares.nl/display/nghs/Projects-Flexible+Mesh">NGHS wiki</a>.
 %
 % POST-PROCESSING:  Read/plot grid (no time)
-%  dflowfm.readNet            - Reads network data of unstructured net.
+%  dflowfm.readNet            - Reads network data of a D-Flow FM unstructured net.
 %  dflowfm.writeNet           - Write network nodes of unstructured net from curvilinear mesh
-%  dflowfm.plotNet            - Plot an unstructured grid (net).
-%  dflowfm.plotNetkml         - Plot a net for Google Earth (kml), connecting segments for performance
+%  dflowfm.plotNet            - Plot a D-Flow FM grid (net).
+%  dflowfm.plotNetkml         - Plot a D-Flow FM unstructured net in Google Earth
 %  dflowfm.peri2cell          - turn perimeter matrix into cell
 %
 % POST-PROCESSING:  Read/plot map (per timestep)
-%  dflowfm.readMap            - Reads solution data on an unstructured net.
-%  dflowfm.plotMap            - Plot an unstructured map.
-%  dflowfm.plotMapkml         - Plot an unstructured map as Google Earth kml file (beta).
+%  dflowfm.readMap            - Reads solution data on a D-Flow FM net.
+%  dflowfm.plotMap            - Plot a D-Flow FM map.
+%  dflowfm.plotMapkml         - Plot a D-Flow FM map as Google Earth kml file (beta).
 %  dflowfm.add_CF_coordinates - appends CF coordinates to ncfile
-%
-%  dflowfm.readHis            - Reads history time series data
+%  dflowfm.readHis            - Read timeseries data from a D-Flow FM history file.
+%  plotparallel               - parallel version of plotMAP
+%  readparallel               - parallel version of readNet/readMap
 %
 % PRE-PROCESSING: Convert delft3d-flow model to  Delft3D-FM
 %  dflowfm.mdf2mdu              - convert Delft3D-flow model input to D-Flow FM model input
 %  dflowfm.opendap2obs          - get list of observation points from netCDF (OPeNDAP) time series collection
-%  dflowfm.analyseHis           - validate waterlevels against netCDF-OPeNDAP data for time series and with t_tide
-%  dflowfm.indexHis             - show overview of locations incl. coordinates
+%  dflowfm.analyseHis           - analyse waterlevel time series against OPeNDAP data in time and frequency domain
+%  dflowfm.indexHis             - Read/show index of history station (obs point)
 %  dflowfm.fillDep              - fill depth values from OPeNDAP data source (single grid or gridset of tiles)
+%  delft3d_io_xyn               - read/write observation point files
 %
 % VARIOUS TOOLS:
-%  dflowfm.mike2dflowfm         - convert a MIKE mesh (*.mesh file) to a D-Flow FM grid (*_net.nc)
-%  dflowfm.obs_file_in_polygon  - construct an obervation file (*_obs.xyn) from all locations within a polygon
+%  dflowfm.mike2dflowfm         - convert Mike mesh to D-Flow FM mesh
+%  dflowfm.obs_file_in_polygon  - create observation file from flownodes in predefined polygon/region
+%  intersect_lines              - intersect line segments A and B, where A and B may be vectors, and
 %
 % See also: delft3d
+

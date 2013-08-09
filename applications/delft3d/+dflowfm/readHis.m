@@ -1,5 +1,5 @@
 function hisdata = readHis(varargin)
-%unstruc.readHis    Read timeseries data from an Unstruc history file.
+%readHis    Read timeseries data from a D-Flow FM history file.
 %   hisdata = unstruc.readHis(filename) reads all station names, locations
 %       and waterlevel data into a struct.
 %   hisdata = unstruc.readHis(filename, stationname) reads only one

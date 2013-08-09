@@ -1,5 +1,5 @@
 function varargout = obs_file_in_polygon(varargin);
-%obs_file_in_polygon
+%obs_file_in_polygon - construct an obervation file (*_obs.xyn) from all locations within a polygon
 %
 % Creates a D-Flow FM observation file, based on all flownodes within 
 % (and on) a predefined polygon/region.

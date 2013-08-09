@@ -1,6 +1,5 @@
 function varargout = mike2dflowfm(varargin);
-
-%mike2dflowfm
+%mike2dflowfm -  convert Mike mesh to D-Flow FM mesh
 %
 % Creates a D-Flow FM mesh (*_net.nc file) from a MIKE mesh (*.mesh file)
 %
