@@ -93,6 +93,8 @@ try
     
     switch lower(meteosource)
         case{'hirlam'}
+            usenetcdfjava=getpref('SNCTOOLS','USE_NETCDF_JAVA');
+            setpref ( 'SNCTOOLS','USE_NETCDF_JAVA'   , 1); % This requires SNCTOOLS 2.4.8 or better
             tms=nc_varget(urlstr,'time');
             tmin=datenum(1970,1,1)+tms(1)/1440;
             tmax=datenum(1970,1,1)+tms(end)/1440;
@@ -288,6 +290,11 @@ catch
     
 end
 
+switch lower(meteosource)
+    case{'hirlam'}
+        setpref ( 'SNCTOOLS','USE_NETCDF_JAVA'   , usenetcdfjava);
+end
+    
 %%
 function tmin=GetDatenum(tmin)
 tmin=strread(tmin,'%s','delimiter','"','whitespace','');
