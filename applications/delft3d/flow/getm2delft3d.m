@@ -84,7 +84,6 @@ function MDF = getm2delft3d(OPT0,getm0)
    OPT.points_per_bnd = 2;
    OPT.ntmax          = []; % for debugging save only so many boundary time points: [] means adapt to sim time, Inf is everything
    OPT.d3ddir         = '';
-   OPT.getmdir        = '';
    OPT.nan.dis        = 0; % value to use for filling of NaNs
    OPT.nan.bct        = 0; % value to use for filling of NaNs, use [] for linear interpolation in time (mind leading and trlaing nans)
    OPT.kmax           = [];
@@ -353,10 +352,10 @@ function MDF = getm2delft3d(OPT0,getm0)
       warning([mfilename,' ini/hotstart not yet implemented, zeros inserted for (u,v)'])
    end
    
-   if getm.m3d.calc_salt;
+   if getm.m3d.calc_temp;
       MDF.keywords.sub1(2) = 'T';
-      if     getm.temp.temp_method==0
-         warning([mfilename,' GETM hotstart not yet implemented'])
+      if getm.temp.temp_method==0
+         warning([mfilename,' GETM ASCII hotstart not yet implemented 4 temp'])
       elseif getm.temp.temp_method==1
          if isfield(INI,'waterlevel')
          INI.temperature = repmat(getm.temp.temp_const,MDF.keywords.mnkmax);
@@ -364,25 +363,32 @@ function MDF = getm2delft3d(OPT0,getm0)
          MDF.keywords.t0 = repmat(getm.temp.temp_const,size(MDF.keywords.thick));
          end
       elseif getm.temp.temp_method==2
-         warning([mfilename,' GETM homogenous stratification not yet implemented'])
-      else
-         if OPT.write.rst
-         INI.temperature = repmat(0,MDF.keywords.mnkmax);
-         warning([mfilename,' 3D z/sigma interpolation not validated: check up/down and relation to getm.domain.maxdepth'])
-         tmp.zax  = ncread([OPT.getmdir, filesep,getm.temp.temp_file],'zax'); % POSITIVE DOWN
-         tmp.time = ncread([OPT.getmdir, filesep,getm.temp.temp_file],'time');
-         tmp.data = ncread([OPT.getmdir, filesep,getm.temp.temp_file],getm.temp.temp_name,[1 1 1 getm.temp.temp_field_no],[Inf Inf Inf 1]); % 1-based indices
-         disp([mfilename,' interpolating 3D initial conditions temp field, please wait ...'])
-         INI.temperature = interp_z2sigma(-tmp.zax,tmp.data,(d3d_sigma(MDF.keywords.thick./100)),0,-D.bathymetry');
-         INI.temperature(isnan(INI.temperature ))=0; % d3d cannot handle nans
+         warning([mfilename,' GETM homogenous stratification not yet implemented 4 temp'])
+      elseif getm.temp.temp_method==3
+         if getm.temp.temp_format==1
+            error([mfilename,' GETM ASCII 3D field not yet implemented 4 temp'])
+         else
+            if OPT.write.rst
+            INI.temperature = repmat(0,MDF.keywords.mnkmax);
+            warning([mfilename,' 3D z/sigma interpolation not validated: check up/down and relation to getm.domain.maxdepth'])
+            tmp.zax  = ncread([getm.temp.temp_file],'zax'); % POSITIVE DOWN
+            tmp.time = ncread([getm.temp.temp_file],'time');
+            tmp.data = ncread([getm.temp.temp_file],getm.temp.temp_name,[1 1 1 getm.temp.temp_field_no],[Inf Inf Inf 1]); % 1-based indices
+            disp([mfilename,' interpolating 3D initial conditions temp field, please wait ...'])
+            INI.temperature = interp_z2sigma(-tmp.zax,tmp.data,(d3d_sigma(MDF.keywords.thick./100)),0,-D.bathymetry');
+            INI.temperature(isnan(INI.temperature ))=0; % d3d cannot handle nans
+            end
          end
       end
    end
 
-   if getm.m3d.calc_temp;
+   if getm.m3d.calc_salt;
       MDF.keywords.sub1(1) = 'S';
-      if     getm.salt.salt_method==0
-         warning([mfilename,' GETM hotstart not yet implemented'])
+      if getm.salt.salt_method==0
+         %if getm.salt.salt_format==0
+         %else
+         warning([mfilename,' GETM hotstart not yet implemented 4 salt'])
+         %end
       elseif getm.salt.salt_method==1
          if isfield(INI,'waterlevel')
          INI.salinity    = repmat(getm.salt.salt_const,MDF.keywords.mnkmax);
@@ -390,20 +396,23 @@ function MDF = getm2delft3d(OPT0,getm0)
          MDF.keywords.s0 = repmat(getm.salt.salt_const,size(MDF.keywords.thick));
          end
       elseif getm.salt.salt_method==2
-         warning([mfilename,' GETM homogenous stratification not yet implemented'])
-      else
-         if OPT.write.rst
-         INI.salinity = repmat(0,MDF.keywords.mnkmax);
-         warning([mfilename,' 3D z/sigma interpolation not validated: check up/down and relation to getm.domain.maxdepth'])
-         tmp.zax  = ncread([OPT.getmdir, filesep,getm.salt.salt_file],'zax'); % POSITIVE DOWN
-         tmp.time = ncread([OPT.getmdir, filesep,getm.salt.salt_file],'time');
-         tmp.data = ncread([OPT.getmdir, filesep,getm.salt.salt_file],getm.salt.salt_name,[1 1 1 getm.temp.temp_field_no],[Inf Inf Inf 1]); % 1-based indices
-         disp([mfilename,' interpolating 3D initial conditions salt field, please wait ...'])
-         INI.salinity = interp_z2sigma(-tmp.zax,tmp.data,(d3d_sigma(MDF.keywords.thick./100)),0,-D.bathymetry');
-         INI.salinity(isnan(INI.salinity ))=0; % d3d cannot handle nans
-         % *** ERROR NaN found in r1 (restart-file) at (n,m,k,l) = (           1,          47,           1,           1) 
+         warning([mfilename,' GETM homogenous stratification not yet implemented 4 salt'])
+      else getm.salt.salt_method==3
+         if getm.salt.salt_format==1
+            error([mfilename,' GETM ASCII 3D field not yet implemented 4 salt'])
+         else
+            if OPT.write.rst
+            INI.salinity = repmat(0,MDF.keywords.mnkmax);
+            warning([mfilename,' 3D z/sigma interpolation not validated: check up/down and relation to getm.domain.maxdepth'])
+            tmp.zax  = ncread([getm.salt.salt_file],'zax'); % POSITIVE DOWN
+            tmp.time = ncread([getm.salt.salt_file],'time');
+            tmp.data = ncread([getm.salt.salt_file],getm.salt.salt_name,[1 1 1 getm.salt.salt_field_no],[Inf Inf Inf 1]); % 1-based indices
+            disp([mfilename,' interpolating 3D initial conditions salt field, please wait ...'])
+            INI.salinity = interp_z2sigma(-tmp.zax,tmp.data,(d3d_sigma(MDF.keywords.thick./100)),0,-D.bathymetry');
+            INI.salinity(isnan(INI.salinity ))=0; % d3d cannot handle nans
+            % *** ERROR NaN found in r1 (restart-file) at (n,m,k,l) = (           1,          47,           1,           1) 
+            end
          end
-
       end
    end
    clear tmp
@@ -429,7 +438,7 @@ function MDF = getm2delft3d(OPT0,getm0)
    B.time         = ncread(getm.m2d.bdyfile_2d ,'time');
    B.datenum      = udunits2datenum(B.time,ncreadatt(getm.m2d.bdyfile_2d ,'time','units'));
    B.minutes      = (B.datenum-OPT.reference_time)*24*60;
-   B.minutes      = roundoff(B.minutes,OPT.dt.bct,'floor','multiple');  %make sure times are multiple of time step
+   B.minutes      = roundoff(B.minutes,OPT.dt.bct,'round','multiple');  %make sure times are multiple of time step
    B.minutes(end) = B.minutes(end) + MDF.keywords.dt; % make sure to keep full time range
 
    warning([mfilename,' 3D z/sigma interpolation not validated: check up/down and relation to getm.domain.maxdepth'])
@@ -438,7 +447,7 @@ function MDF = getm2delft3d(OPT0,getm0)
    C.time         = ncread(getm.m3d.bdyfile_3d,'time');
    C.datenum      = udunits2datenum(C.time,ncreadatt(getm.m3d.bdyfile_3d,'time','units'));
    C.minutes      = (C.datenum-OPT.reference_time)*24*60;
-   C.minutes      = roundoff(C.minutes,OPT.dt.bcc,'floor','multiple');  %make sure times are multiple of time step
+   C.minutes      = roundoff(C.minutes,OPT.dt.bcc,'round','multiple');  %make sure times are multiple of time step
    C.minutes(end) = C.minutes(end) + MDF.keywords.dt; % make sure to keep full time range
    C.kmax         = MDF.keywords.mnkmax(3);
 
@@ -768,11 +777,11 @@ function MDF = getm2delft3d(OPT0,getm0)
       delft3d_io_bnd('write',[OPT.d3ddir,filesep,MDF.keywords.commnt],Bnd0);
       delft3d_io_bnd('write',[OPT.d3ddir,filesep,MDF.keywords.filbnd],Bnd);
       if OPT.write.bct;
-          save([OPT.d3ddir,filesep,MDF.keywords.filbct,'.mat'],'Dis'); % for debugging or modified re-serialisation
+          save([OPT.d3ddir,filesep,MDF.keywords.filbct,'.mat'],'Bct'); % for debugging or modified re-serialisation
           bct_io('write',[OPT.d3ddir,filesep,MDF.keywords.filbct],Bct);
       end %OPT.write.bct
       if OPT.write.bcc;
-         save([OPT.d3ddir,filesep,MDF.keywords.filbcc,'.mat'],'Dis'); % for debugging or modified re-serialisation
+         save([OPT.d3ddir,filesep,MDF.keywords.filbcc,'.mat'],'Bcc'); % for debugging or modified re-serialisation
          bct_io('write',[OPT.d3ddir,filesep,MDF.keywords.filbcc],Bcc);
       end %OPT.write.bcc
       
@@ -863,7 +872,7 @@ function MDF = getm2delft3d(OPT0,getm0)
    Q.timeunits = ncreadatt(getm.rivers.river_data,'time','units');
    Q.datenum   = udunits2datenum(Q.time,Q.timeunits);
    Q.minutes   = (Q.datenum - OPT.reference_time)*24*60;
-   Q.minutes   = roundoff(Q.minutes,OPT.dt.dis,'floor','multiple');  % make sure times are multiple of time step
+   Q.minutes   = roundoff(Q.minutes,OPT.dt.dis,'round','multiple');  % make sure times are multiple of time step
 
    mask = Q.minutes >= 0;
    if any(mask)

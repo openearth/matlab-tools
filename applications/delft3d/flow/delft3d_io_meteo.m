@@ -389,7 +389,7 @@ function iostat=Local_write(fname,DAT,varargin),
 
       if nargin>2
          if isstruct(varargin{2})
-            H = mergestructs(H,varargin{2});
+            H = mergestructs('overwrite',H,varargin{2});
          else
             iargin = 2;
             %% remaining number of arguments is always even now
