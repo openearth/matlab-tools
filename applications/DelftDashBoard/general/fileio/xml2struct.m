@@ -1,25 +1,16 @@
 function s=xml2struct(varargin)
-%FASTXML2STRUCT  One line description goes here.
+%FASTXML2STRUCT  load xml file into struct
 %
-%   More detailed description goes here.
-%
-%   Syntax:
-%   s = xml2struct(fname)
-%
-%   Input:
-%   fname =
-%
-%   Output:
-%   s     =
-%
-%   Example
-%   xml2struct
+%   s = xml2struct(fname) loads xml file or url fnamer into struct X.
+%   Options can be supplied as s = xml2struct(fname,<keyword,value>)
 %
 % Option short (short, as used by Muppet, CoSMoS, DDB etc.)            % No attributes possible
+%   s = xml2struct(fname,'structuretype','short')
 %
 %       model(2).model.station(3).station=2;
 %
 % Option long (Long, but includes all options)
+%   s = xml2struct(fname,'structuretype','long')
 %
 %       model(2).model.station(3).station.ATTRIBUTES.file.value='asd.sdasf';
 %       model(2).model.station(3).station.ATTRIBUTES.file.PREFIX='ows:';
@@ -33,10 +24,11 @@ function s=xml2struct(varargin)
 %       model(2).model.station(3).station.nr.ATTRIBUTES.name.PREFIX=2;
 %
 % Option 3 supershort
-%       model(2).station(3).nr=2;                                      % No attributes possible
-
+%   s = xml2struct(fname,'structuretype','supershort')
 %
-%   See also
+%       model(2).station(3).nr=2;                                      % No attributes possible
+%
+%   See also: xmlread, xml_load, xml_read
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -83,10 +75,10 @@ function s=xml2struct(varargin)
 %%
 % Writes xml data to Matlab structure
 
-filename=varargin{1};
-includeattributes=1;
-structuretype='short';
-includeroot=0;
+filename          = varargin{1};
+includeattributes = 1;
+structuretype     = 'short';
+includeroot       = 0;
 
 for ii=1:length(varargin)
     if ischar(varargin{ii})
@@ -125,13 +117,13 @@ iclose=strfind(str,'>');
 n=length(iopen);
 
 % Allocate arrays
-nodeNames=cell(1,n);
-nodeAttributes=cell(1,n);
-nodeData=cell(1,n);
-nodeOptions=zeros(1,n);
-nodeLocations=zeros(n,2);
-nodeParents=zeros(1,n);
-endNodes=zeros(1,n);
+nodeNames      =  cell(1,n);
+nodeAttributes =  cell(1,n);
+nodeData       =  cell(1,n);
+nodeOptions    = zeros(1,n);
+nodeLocations  = zeros(n,2);
+nodeParents    = zeros(1,n);
+endNodes       = zeros(1,n);
 
 if includeroot
     s.COMMENTS=[];
@@ -165,23 +157,23 @@ for ii=1:length(iopen)
         attributes=[];
         isp=find(name==' ');
         if ~isempty(isp)
-            attstr=name(isp(1)+1:end);
-            name=name(1:isp(1)-1);
+            attstr = name(isp(1)+1:end);
+            name   = name(1:isp(1)-1);
             % Name string includes attributes
             a=textscan(attstr,'%q','delimiter');
             for j=1:length(a{1})
                 ieq=find(a{1}{j}=='=');
-                attributes(j).Name=a{1}{j}(1:ieq-1);
-                attributes(j).Value=a{1}{j}(ieq+2:end);
+                attributes(j).Name  = a{1}{j}(1:ieq-1);
+                attributes(j).Value = a{1}{j}(ieq+2:end);
             end
         end
         % Set some values for this node        
         n=n+1;
-        nodeOptions(n)=opt;
-        nodeLocations(n,1)=ii1;
-        nodeLocations(n,2)=ii2;
-        nodeNames{n}=name;
-        nodeAttributes{n}=attributes;
+        nodeOptions(n)     = opt;
+        nodeLocations(n,1) = ii1;
+        nodeLocations(n,2) = ii2;
+        nodeNames{n}       = name;
+        nodeAttributes{n}  = attributes;
     else
         if includeroot
             s.COMMENTS{length(s.COMMENTS)+1}=str(iopen(ii)+1:iclose(ii)-1);
@@ -242,9 +234,9 @@ end
 nodeParents(nodeOptions==3)=0;
 
 % Set data for first node
-node(1).Name=nodeNames{1};
+node(1).Name    =nodeNames{1};
 node(1).Attributes=nodeAttributes{1};
-node(1).Data=[];
+node(1).Data    =[];
 node(1).Children=[];
 
 % And now find children, grandchildren etc. for first node
@@ -395,6 +387,7 @@ for ii=1:length(node.Children)
         
         if ~isempty(s0)
             [name,prefix]=nocolon(child.Name);
+            name = mkvar(name); % get rid of special characters that are not a valid matlab fieldname
             k=1;
             if isfield(s,name)
                 % Field already exists
