@@ -93,6 +93,10 @@ else
             exportSoundings;
         case{'exportcontours'}
             exportContours;
+        case{'drawpolygon'}
+            drawPolygon;
+        case{'exportalldatainpolygon'}
+            exportAllDataInPolygon;
     end
 end
 
@@ -167,17 +171,144 @@ end
 %%
 function exportShoreline
 handles=getHandles;
-ddb_exportChartShoreline(handles);
+
+iac=handles.Toolbox(tb).Input.activeDatabase;
+ii=handles.Toolbox(tb).Input.activeChart;
+fname=handles.Toolbox(tb).Input.charts(iac).box(ii).Name;
+
+[filename, pathname, filterindex] = uiputfile('*.ldb', 'Select land boundary file',[fname '_shoreline.ldb']);
+if pathname~=0
+    curdir=[lower(cd) '\'];
+    if ~strcmpi(curdir,pathname)
+        filename=[pathname filename];
+    end
+    
+    wb=waitbox('Exporting Ldb File ...');
+        
+    newsys=handles.screenParameters.coordinateSystem;
+    
+    s=handles.Toolbox(tb).Input.layers;
+
+    ddb_exportChartShoreline(s,filename,newsys);
+    
+    close(wb);
+
+end
+
 
 %%
 function exportSoundings
 handles=getHandles;
-ddb_exportChartSoundings(handles);
+
+iac=handles.Toolbox(tb).Input.activeDatabase;
+ii=handles.Toolbox(tb).Input.activeChart;
+fname=handles.Toolbox(tb).Input.charts(iac).box(ii).Name;
+
+[filename, pathname, filterindex] = uiputfile('*.xyz', 'Select XYZ File',[fname '_soundings.xyz']);
+
+if pathname~=0
+    
+    curdir=[lower(cd) '\'];
+    if ~strcmpi(curdir,pathname)
+        filename=[pathname filename];
+    end
+    
+    wb=waitbox('Exporting XYZ file ...');
+        
+    newsys=handles.screenParameters.coordinateSystem;
+    
+    s=handles.Toolbox(tb).Input.layers;
+    
+    ddb_exportChartSoundings(s,filename,newsys);
+    
+    close(wb);
+    
+end
 
 %%
 function exportContours
 handles=getHandles;
-ddb_exportChartContours(handles);
+
+iac=handles.Toolbox(tb).Input.activeDatabase;
+ii=handles.Toolbox(tb).Input.activeChart;
+fname=handles.Toolbox(tb).Input.charts(iac).box(ii).Name;
+
+[filename, pathname, filterindex] = uiputfile('*.xyz', 'Select XYZ File',[fname '_contours.xyz']);
+if pathname~=0
+    curdir=[lower(cd) '\'];
+    if ~strcmpi(curdir,pathname)
+        filename=[pathname filename];
+    end
+    
+    wb=waitbox('Exporting XYZ File ...');
+        
+    newsys=handles.screenParameters.coordinateSystem;
+    
+    s=handles.Toolbox(tb).Input.layers;
+
+    ddb_exportChartContours(s,filename,newsys);
+
+    close(wb);
+    
+end
+
+%%
+function exportAllDataInPolygon
+
+handles=getHandles;
+iac=handles.Toolbox(tb).Input.activeDatabase;
+
+for ic=1:length(handles.Toolbox(tb).Input.charts(iac).box)
+    
+    x1=handles.Toolbox(tb).Input.charts(iac).xl(ic,1);
+    x2=handles.Toolbox(tb).Input.charts(iac).xl(ic,2);
+    y1=handles.Toolbox(tb).Input.charts(iac).yl(ic,1);
+    y2=handles.Toolbox(tb).Input.charts(iac).yl(ic,2);
+    
+    if inpolygon(x1,y1,handles.Toolbox(tb).Input.polygonX,handles.Toolbox(tb).Input.polygonY) || ...
+            inpolygon(x1,y2,handles.Toolbox(tb).Input.polygonX,handles.Toolbox(tb).Input.polygonY) || ...
+            inpolygon(x2,y2,handles.Toolbox(tb).Input.polygonX,handles.Toolbox(tb).Input.polygonY) || ...
+            inpolygon(x2,y1,handles.Toolbox(tb).Input.polygonX,handles.Toolbox(tb).Input.polygonY)
+        
+        name=handles.Toolbox(tb).Input.charts(iac).box(ic).Name;
+        dr=[handles.toolBoxDir 'NavigationCharts' filesep handles.Toolbox(tb).Input.charts(iac).name filesep];
+        fname=[dr name filesep name '.mat'];
+        
+        if ~exist(fname,'file')
+            % File does not yet exist in cache, try to download it
+            if ~exist(dr,'dir')
+                mkdir(dr);
+            end
+            if ~exist([dr name],'dir')
+                mkdir([dr name]);
+            end
+            try
+                ddb_urlwrite([handles.Toolbox(tb).Input.charts(iac).url '/' name '/' name '.mat'],fname);
+            catch
+                break
+            end
+        end
+        
+        s=load(fname);
+        if isfield(s,'s')
+            s=s.s;
+        end
+        
+        
+        newsys=handles.screenParameters.coordinateSystem;
+        
+        filename=[handles.Toolbox(tb).Input.charts(iac).box(ic).Name '_contours.xyz'];
+        ddb_exportChartContours(s.Layers,filename,newsys);
+        filename=[handles.Toolbox(tb).Input.charts(iac).box(ic).Name '_soundings.xyz'];
+        ddb_exportChartSoundings(s.Layers,filename,newsys);
+        filename=[handles.Toolbox(tb).Input.charts(iac).box(ic).Name '_shoreline.ldb'];
+        ddb_exportChartShoreline(s.Layers,filename,newsys);
+    end
+    
+end
+
+close(wb);
+
 
 %%
 function handles=ChangeNavigationChartsDatabase(handles)
@@ -336,9 +467,9 @@ for i=1:length(fn)
     end
 end
 
-close(wb);
-
 ddb_plotChartLayers(handles);
+
+close(wb);
 
 %%
 function i=findBox(handles,x,y)
@@ -410,3 +541,41 @@ kar=findobj(gca,'Tag','BBoxENC','UserData',i);
 set(kar,'Color','Red');
 set(kar,'LineWidth',2);
 
+
+%%
+function drawPolygon
+
+handles=getHandles;
+ddb_zoomOff;
+h=findobj(gcf,'Tag','navigationchartspolygon');
+if ~isempty(h)
+    delete(h);
+end
+
+handles.Toolbox(tb).Input.polygonX=[];
+handles.Toolbox(tb).Input.polygonY=[];
+handles.Toolbox(tb).Input.polyLength=0;
+
+handles.Toolbox(tb).Input.polygonhandle=gui_polyline('draw','tag','navigationchartspolygon','marker','o', ...
+    'createcallback',@createPolygon,'changecallback',@changePolygon, ...
+    'closed',1);
+
+setHandles(handles);
+
+%%
+function createPolygon(h,x,y)
+handles=getHandles;
+handles.Toolbox(tb).Input.polygonhandle=h;
+handles.Toolbox(tb).Input.polygonX=x;
+handles.Toolbox(tb).Input.polygonY=y;
+handles.Toolbox(tb).Input.polyLength=length(x);
+setHandles(handles);
+gui_updateActiveTab;
+
+%%
+function changePolygon(h,x,y,varargin)
+handles=getHandles;
+handles.Toolbox(tb).Input.polygonX=x;
+handles.Toolbox(tb).Input.polygonY=y;
+handles.Toolbox(tb).Input.polyLength=length(x);
+setHandles(handles);

@@ -106,3 +106,8 @@ elseif isempty(handles.Toolbox(ii).Input.databases)
     set(handles.GUIHandles.Menu.Toolbox.NavigationCharts,'Enable','off');
 end
 
+% Polygon
+handles.Toolbox(ii).Input.polygonX=[];
+handles.Toolbox(ii).Input.polygonY=[];
+handles.Toolbox(ii).Input.polygonLength=0;
+handles.Toolbox(ii).Input.polygonhandle=[];

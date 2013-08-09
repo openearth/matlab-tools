@@ -60,6 +60,8 @@ function ddb_plotChartLayers(handles)
 % $Keywords: $
 
 %%
+figure(handles.GUIHandles.mainWindow);
+
 s=handles.Toolbox(tb).Input.layers;
 p=handles.Toolbox(tb).Input.plotLayer;
 
@@ -93,20 +95,22 @@ for i=1:nf
                                 x(isnan(y))=NaN;
                                 y(isnan(x))=NaN;
                                 [x,y]=ddb_coordConvert(x,y,orisys,newsys);
-                                ptch=patch(x,y,'y');hold on;
+                                ptch=patch(x,y,'y');hold on;%drawnow;
                                 set(ptch,'Tag','NavigationChartLayer','UserData',fn{i});
                             end
                             if isfield(s.(fn{i})(j),'Inner')
-                                np=length(s.(fn{i})(j).Inner);
-                                for k=1:np
-                                    x=s.(fn{i})(j).Inner(k).Coordinates(:,1);
-                                    y=s.(fn{i})(j).Inner(k).Coordinates(:,2);
+                                if ~isempty(s.(fn{i})(j).Inner)
+                                    np=length(s.(fn{i})(j).Inner);
+                                    for k=1:np
+                                        x=s.(fn{i})(j).Inner(k).Coordinates(:,1);
+                                        y=s.(fn{i})(j).Inner(k).Coordinates(:,2);
+                                    end
+                                    x(isnan(y))=NaN;
+                                    y(isnan(x))=NaN;
+                                    [x,y]=ddb_coordConvert(x,y,orisys,newsys);
+                                    ptch=patch(x,y,'y');hold on;
+                                    set(ptch,'Tag','NavigationChartLayer','UserData',fn{i});
                                 end
-                                x(isnan(y))=NaN;
-                                y(isnan(x))=NaN;
-                                [x,y]=ddb_coordConvert(x,y,orisys,newsys);
-                                ptch=patch(x,y,'y');hold on;
-                                set(ptch,'Tag','NavigationChartLayer','UserData',fn{i});
                             end
                             if iplot
                                 set(ptch,'Visible','on');
@@ -170,5 +174,4 @@ for i=1:nf
         end
     end
 end
-
 

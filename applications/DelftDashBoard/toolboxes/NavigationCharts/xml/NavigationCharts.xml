@@ -91,4 +91,30 @@
     <option1>togglesoundings</option1>
     <tooltipstring>Show depth soundings</tooltipstring>
   </element>
+  <element>
+    <tag>drawpolygon</tag>
+    <style>pushbutton</style>
+    <position>650 130 80 20</position>
+    <text>Draw Polygon</text>
+    <callback>ddb_NavigationChartsToolbox</callback>
+    <option1>drawpolygon</option1>
+  </element>
+  <element>
+    <tag>exportalldatainpolygon</tag>
+    <style>pushbutton</style>
+    <position>650 105 80 20</position>
+    <text>Export All</text>
+    <callback>ddb_NavigationChartsToolbox</callback>
+    <option1>exportalldatainpolygon</option1>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>polyLength</variable>
+        <type>integer</type>
+        <value>0</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+  </element>
 </root>
