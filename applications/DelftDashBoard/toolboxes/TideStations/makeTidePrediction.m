@@ -66,11 +66,14 @@ function wl = makeTidePrediction(tim, components, amplitudes, phases, latitude, 
 
 %%
 timeZone=0;
+maincomponents=0;
 for i=1:length(varargin)
     if ischar(varargin{i})
         switch lower(varargin{i})
             case{'timezone'}
                 timeZone=varargin{i+1};
+            case{'maincomponents'}
+                maincomponents=varargin{i+1};
         end
     end
 end
@@ -88,26 +91,28 @@ for i=1:length(amplitudes)
     if isempty(ju)
 %        disp(['Could not find ' name ' - Component skipped.']);
     else
-        %         switch lower(cmp)
-        %             case{'m2','s2','k2','n2','k1','o1','p1','q1','mf','mm','m4','ms4','mn4'}
-%         switch lower(cmp)
-%             case{'sa','ssa'}
-%             otherwise
-                k=k+1;
-                names(k,:)=name;
-                freq(k,1)=const.freq(ju);
-                tidecon(k,1)=amplitudes(i);
-                tidecon(k,2)=0;
-                % convert time zone
-                if timeZone~=0
-                    phases(i)=phases(i)+360*timeZone*const.freq(ju);
-                    phases(i)=mod(phases(i),360);
-                end
-                tidecon(k,3)=phases(i);
-                tidecon(k,4)=0;
-%         end
+        if maincomponents
+            % Only use main components
+            switch lower(cmp)
+                case{'m2','s2','k2','n2','k1','o1','p1','q1','mf','mm','m4','ms4','mn4'}
+                    % Continue
+                otherwise
+                    break
+            end
+        end
+        k=k+1;
+        names(k,:)=name;
+        freq(k,1)=const.freq(ju);
+        tidecon(k,1)=amplitudes(i);
+        tidecon(k,2)=0;
+        % convert time zone
+        if timeZone~=0
+            phases(i)=phases(i)+360*timeZone*const.freq(ju);
+            phases(i)=mod(phases(i),360);
+        end
+        tidecon(k,3)=phases(i);
+        tidecon(k,4)=0;            
     end
-    %     end
 end
 wl=t_predic(tim,names,freq,tidecon,latitude);
 %wl=t_predic(tim,names,freq,tidecon);

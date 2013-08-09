@@ -156,4 +156,7 @@ handles.Toolbox(ii).Input.phases=0;
 handles.Toolbox(ii).Input.timeZone=0;
 handles.Toolbox(ii).Input.verticalOffset=0;
 
+handles.Toolbox(ii).Input.usestationid=0;
+handles.Toolbox(ii).Input.usemaincomponents=0;
+
 handles.Toolbox(ii).Input.tidestationshandle=[];

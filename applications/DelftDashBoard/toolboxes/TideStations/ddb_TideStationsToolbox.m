@@ -149,13 +149,16 @@ ii=handles.Toolbox(tb).Input.activeTideStation;
 
 latitude=handles.Toolbox(tb).Input.database(iac).y(ii);
 wl=makeTidePrediction(tim,handles.Toolbox(tb).Input.components,handles.Toolbox(tb).Input.amplitudes,handles.Toolbox(tb).Input.phases,latitude, ...
-    'timezone',handles.Toolbox(tb).Input.timeZone);
+    'timezone',handles.Toolbox(tb).Input.timeZone,'maincomponents',handles.Toolbox(tb).Input.usemaincomponents);
 wl=wl+handles.Toolbox(tb).Input.verticalOffset;
 
 stationName=handles.Toolbox(tb).Input.database(iac).stationList{ii};
-shortName=handles.Toolbox(tb).Input.database(iac).stationShortNames{ii};
-fname=[shortName '.tek'];
-exportTEK(wl',tim',fname,stationName);
+if handles.Toolbox(tb).Input.usestationid
+    fname=handles.Toolbox(tb).Input.database(iac).idCodes{ii};
+else
+    fname=handles.Toolbox(tb).Input.database(iac).stationShortNames{ii};
+end
+exportTEK(wl',tim',[fname '.tek'],stationName);
 
 % Make bar file
 % components={'M2','S2','N2','K2','K1','O1','P1','Q1'};

@@ -6,7 +6,7 @@
   <element>
     <tag>tidestationspanel</tag>
     <style>panel</style>
-    <position>40 10 900 160</position>
+    <position>40 10 980 160</position>
     <text>Tide Stations</text>
   </element>
   <element>
@@ -32,6 +32,14 @@
     <tooltipstring>Make observation points in model</tooltipstring>
   </element>
   <element>
+    <tag>usestationid</tag>
+    <style>checkbox</style>
+    <position>460 130 130 20</position>
+    <text>Use Station ID</text>
+    <variable>usestationid</variable>
+    <tooltipstring>Check to use station ID as observation point name and as name for output files (when left unchecked, the observation point name will be based on station name)</tooltipstring>
+  </element>
+  <element>
     <tag>viewtidesignal</tag>
     <style>pushbutton</style>
     <position>320 105 130 20</position>
@@ -48,6 +56,14 @@
     <callback>ddb_TideStationsToolbox</callback>
     <option1>exporttidesignal</option1>
     <tooltipstring>Export tide signal for active tide station</tooltipstring>
+  </element>
+  <element>
+    <tag>usemaincomponents</tag>
+    <style>checkbox</style>
+    <position>460 80 130 20</position>
+    <text>Main Components</text>
+    <variable>usemaincomponents</variable>
+    <tooltipstring>Check to only use the 13 main components (M2,S2,K2,N2,K1,O1,P1,Q1,MF,MM,M4,MS4,MN4) from this station</tooltipstring>
   </element>
   <element>
     <tag>exportalltidesignals</tag>
@@ -74,7 +90,7 @@
   <element>
     <tag>editstarttime</tag>
     <style>edit</style>
-    <position>550 130 110 20</position>
+    <position>650 130 110 20</position>
     <variable>startTime</variable>
     <type>datetime</type>
     <text>Start Time</text>
@@ -84,7 +100,7 @@
   <element>
     <tag>editstoptime</tag>
     <style>edit</style>
-    <position>550 105 110 20</position>
+    <position>650 105 110 20</position>
     <variable>stopTime</variable>
     <type>datetime</type>
     <text>Stop Time</text>
@@ -94,7 +110,7 @@
   <element>
     <tag>edittimestep</tag>
     <style>edit</style>
-    <position>550 80 110 20</position>
+    <position>650 80 110 20</position>
     <variable>timeStep</variable>
     <type>real</type>
     <text>Time Step (min)</text>
@@ -104,7 +120,7 @@
   <element>
     <tag>edittimezone</tag>
     <style>edit</style>
-    <position>550 55 110 20</position>
+    <position>650 55 110 20</position>
     <variable>timeZone</variable>
     <type>real</type>
     <text>Time Zone (h)</text>
@@ -114,7 +130,7 @@
   <element>
     <tag>editverticaloffset</tag>
     <style>edit</style>
-    <position>550 30 110 20</position>
+    <position>650 30 110 20</position>
     <variable>verticalOffset</variable>
     <type>real</type>
     <text>Vertical Offset (m)</text>
@@ -124,7 +140,7 @@
   <element>
     <tag>tidetable</tag>
     <style>table</style>
-    <position>660 20</position>
+    <position>760 20</position>
     <nrrows>6</nrrows>
     <includenumbers>no</includenumbers>
     <includebuttons>no</includebuttons>
