@@ -17,6 +17,8 @@ function s = pg_write_ewkt(S)
 %   S   = pg_read_ewkt(WKT)
 %
 %   See also pg_read_ewkt, pg_read_ewkb, pg_write_ewkb
+%            java: http://www.vividsolutions.com/jts/JTSHome.htm
+%            c++: http://trac.osgeo.org/geos/
 
 %% Copyright notice
 %   --------------------------------------------------------------------

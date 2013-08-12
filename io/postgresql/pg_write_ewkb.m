@@ -18,6 +18,8 @@ function s = pg_write_ewkb(S)
 %   S   = pg_read_ewkb(WKB)
 %
 %   See also pg_read_ewkb, pg_write_ewkt, pg_read_ewkt
+%            java: http://www.vividsolutions.com/jts/JTSHome.htm
+%            c++: http://trac.osgeo.org/geos/
 
 %% Copyright notice
 %   --------------------------------------------------------------------

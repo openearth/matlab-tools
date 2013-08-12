@@ -31,6 +31,8 @@ function [S, prop, s] = pg_read_ewkb(s)
 %              geometry.getNumPoints
 %
 %   See also pg_write_ewkt, pg_read_ewkt, pg_write_ewkb
+%            java: http://www.vividsolutions.com/jts/JTSHome.htm
+%            c++: http://trac.osgeo.org/geos/
 
 %% Copyright notice
 %   --------------------------------------------------------------------
