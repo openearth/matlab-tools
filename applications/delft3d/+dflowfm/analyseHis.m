@@ -97,10 +97,9 @@ function varargout = analyseHis(varargin)
    OPT.units            = [];
    OPT.timezone         = '+00:00'; % common time zone for data and model comparison in plots
    OPT.model_timezone   = []; % time zone of model is not present in model output (model is not time zone aware)
+   OPT.standard_name    = 'sea_surface_height';
 
    OPT.pause            = 0;
-   OPT.standard_name    = 'sea_surface_height';
-   OPT.tex_name         = '\eta';
    OPT.plot.planview    = 1;
    OPT.plot.scatter     = 1;
    OPT.plot.planview    = 1;
@@ -118,20 +117,49 @@ case 'sea_surface_height'
    OPT.ylim             = [-2 2.5];
    OPT.varname          = 'sea_surface_height'; % name of data in data and in internal struct
    OPT.hisname          = 'waterlevel';         % name of data in model output
-   OPT.hisnamename      = 'station_name';	      % name of platformnames in model output
+   OPT.hisnamename      = 'platform_name';      % name of platformnames in model output
    OPT.hislatname       = nan;
    OPT.hislonname       = nan;
+   OPT.tex_name         = '\eta';
+   OPT.standard_name    = 'sea_surface_height';
    OPT.tex_name         = '\eta';
 
 case 'water_volume_transport_into_sea_water_from_rivers'
    OPT.platform_data_url = 'http://opendap.deltares.nl/thredds/dodsC/opendap\rijkswaterstaat/waterbase/water_volume_transport_into_sea_water_from_rivers';
    OPT.ylim             = [-2 2].*1e5;
-   OPT.varname          = 'Q'; % name of data in data and in internal struct
+   OPT.varname          = 'Q'; % name of data in data and in data and in internal struct
    OPT.hisname          = 'cross_section_discharge';                           % name of data in model output
    OPT.hisnamename      = 'cross_section_name';	                             % name of platformnames in model output
    OPT.hislatname       = nan;
    OPT.hislonname       = nan;
    OPT.tex_name         = 'Q';
+   OPT.standard_name    = 'Q';
+   OPT.tex_name         = 'discharge';
+   
+case 'sea_water_salinity'
+   OPT.platform_data_url = 'http://opendap.deltares.nl/thredds/dodsC/opendap\rijkswaterstaat/waterbase/sea_water_salinity';
+   OPT.ylim             = [0 35];
+   OPT.varname          = 'sea_water_salinity'; % name of data in data and in data and in internal struct
+   OPT.hisname          = 'salinity';                           % name of data in model output
+   OPT.hisnamename      = 'platform_name';	                             % name of platformnames in model output
+   OPT.hislatname       = nan;
+   OPT.hislonname       = nan;
+   OPT.tex_name         = 'S';
+   OPT.standard_name    = 'sea_water_salinity';
+   OPT.tex_name         = 'salinity';
+   
+case 'sea_water_temperature'
+   OPT.platform_data_url = 'http://opendap.deltares.nl/thredds/dodsC/opendap\rijkswaterstaat/waterbase/sea_water_temperature';
+   OPT.ylim             = [-5 35];
+   OPT.varname          = 'sea_water_temperature'; % name of data in data and in data and in internal struct
+   OPT.hisname          = 'temperature';                           % name of data in model output
+   OPT.hisnamename      = 'platform_name';	                             % name of platformnames in model output
+   OPT.hislatname       = nan;
+   OPT.hislonname       = nan;
+   OPT.tex_name         = 'T';
+   OPT.standard_name    = 'sea_water_temperature';
+   OPT.tex_name         = 'temperature';   
+   
 end
 
    % for nc_t_tide_compare
@@ -192,7 +220,7 @@ end
 if ischar(OPT.platform_data_url)
 
    OPT.ncbase = OPT.platform_data_url;
-   OPT.platform_data_url = {};
+   OPT.platform_data_url = cell([1 length(OPT.platform_name)]); % initialize same size as # stations
     
    dataurls = opendap_catalog(OPT.ncbase);
    
@@ -206,7 +234,7 @@ if ischar(OPT.platform_data_url)
 
      [bool,ind] = strfindb(upper(dataurls),upper(strtok(M.platform_name{im})));
      if all(bool==0)
-        error(['No matching data found in ',OPT.platform_data_url]);
+        error(['No matching data found in ',char(OPT.platform_data_url)]);
      end
      id = strmatch(upper(M.platform_name{im}),upper(OPT.platform_name));
      OPT.platform_data_url{id} = dataurls{bool};
@@ -224,7 +252,7 @@ if isempty(OPT.platform_period)
   OPT.platform_period = cell([1 length(OPT.platform_name)]);
 else
   if (length(OPT.platform_period)~=length(OPT.platform_name))
-     error('-')
+     error('''platform_period'' should either be [] or be a cell with same size as ''platform_name''')
   end
 end
 
@@ -243,7 +271,7 @@ for id=1:length(OPT.platform_name);
       disp(char({M.platform_name{im}}))
       warning(['Used 1st one from multiple matches found for data platform:',upper(OPT.platform_name{id})])
       im = im(1);
-`   end
+   end
   
 %%  Load associated observational data
 
@@ -326,10 +354,16 @@ for id=1:length(OPT.platform_name);
         maxe =      max(DM.(OPT.varname)(mask) - D.(OPT.varname)(mask));
         mine =      min(DM.(OPT.varname)(mask) - D.(OPT.varname)(mask));
         rmse =      rms(DM.(OPT.varname)(mask) - D.(OPT.varname)(mask));
-        R    = corrcoef(DM.(OPT.varname)(mask)  ,D.(OPT.varname)(mask));R = R(2,1); % same as (2,1)
+        R    = corrcoef(DM.(OPT.varname)(mask)  ,D.(OPT.varname)(mask));
+        if length(R) > 1 % for really coarse Niskin data
+           R = R(2,1); % same as (2,1)
+        else
+           R = NaN; % same as (2,1)
+        end
         
         fmte = '%+1.3f'; %
         txte = {[' R    = ',num2str(R   ,fmte)],...
+                [' #    = ',num2str(sum(mask),'%d')],...
                 [' \epsilon_{rms}  = ',num2str(rmse,fmte)],...
                 [' \epsilon_{min}  = ',num2str(mine,fmte)],...
                 [' \epsilon_{max}  = ',num2str(maxe,fmte)]};
