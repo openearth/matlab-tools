@@ -146,10 +146,11 @@ end
 
 %% load files at this level and then ...
 if isfield(p,'Placemark')
-   [names,coordCell]=kml_placemark_read(p.Placemark);
+   [names,coordCell,metadata]=kml_placemark_read(p.Placemark);
 else
    names     = [];
-   coordCell = {};  
+   coordCell = {};
+   metadata  = [];
 end
    disp(['nest ',num2str(nest),'    # ',num2str(length(names))])
 
@@ -159,15 +160,17 @@ if isfield(p,'Folder')
      [Dnames,DcoordCell]= kml_placemark_folder_read(p.Folder(i),nest+1);
       names     = [names     Dnames    ];
       coordCell = [coordCell DcoordCell];
+      metadata  = [metadata  Dmetadata ];
       disp(['nest ',num2str(nest),' ',num2str(i,'%0.2d'),' # ',num2str(length(Dnames))])
    end
 end
 
 %% kml_placemark_read
-function[names,coordCell]= kml_placemark_read(p)
+function[names,coordCell,metadata]= kml_placemark_read(p)
 
    names     = [];
    coordCell = {};
+   metadata  = {};
 
     for jj=1:length(p)
        names{jj} = p(jj).name;

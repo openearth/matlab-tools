@@ -9,8 +9,10 @@ function varargout = xy2mn(x,y,xv,yv,varargin)
 % 2nd dimension of x and y. If multiple points are 
 % equally near, one (m,n) combi is arbitrarily chosen.
 %
-% keyword 'Rmax' is the maximal distance taken into consideration.
-% Default Inf, when empty, it is the max(sqrt) of all cells.
+% * keyword 'Rmax' is the maximal distance taken into consideration.
+%   Default Inf, when empty, it is the max(sqrt) of all cells.
+% * keyword 'shift' adds (or removes) a value to match for e.g. coordinates
+%  of staggered numerical model: scalar or 2-elements [dm dn], default [0 0]
 %
 % Alternatives:
 %  struct      = xy2mn(...) with fields m, n, mn and eps (match accuracy)
@@ -44,15 +46,9 @@ function varargout = xy2mn(x,y,xv,yv,varargin)
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2006 Delft University of Technology
-%       Gerben J. de Boer
-%
-%       g.j.deboer@tudelft.nl	
-%
-%       Fluid Mechanics Section
-%       Faculty of Civil Engineering and Geosciences
-%       PO Box 5048
-%       2600 GA Delft
-%       The Netherlands
+%       Gerben J. de Boer / g.j.deboer@tudelft.nl	
+%       Faculty of Civil Engineering and Geosciences / Fluid Mechanics Section / 
+%       PO Box 5048 / 2600 GA Delft / The Netherlands
 %
 %   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
@@ -79,7 +75,8 @@ function varargout = xy2mn(x,y,xv,yv,varargin)
 % $HeadURL$
 % $Keywords: $
 
-OPT.Rmax  = Inf; % make this optionally same size as X and Y.
+OPT.Rmax  = Inf;   % make this optionally same size as X and Y.
+OPT.shift = [0 0]; % shift points to match indices in staggered grids with leading dummy rows/columns, if scalar, same for x and y
 
 OPT  = setproperty(OPT,varargin{:});
 
@@ -153,6 +150,13 @@ end
    end
 
 %end
+
+if length(OPT.shift)==1
+    OPT.shift(2) = OPT.shift(1);
+end
+
+m = m + OPT.shift(1);
+n = n + OPT.shift(2);
 
 %% Output
 

@@ -32,7 +32,6 @@ function print2a4(fname,varargin)
 % where print2a4('tst','v','t') matches a screen best
 % where print2a4('tst','h','t') matches landscape figure on portrait printer best
 %       print2a4('tst','v','w') matches upright A4 best (report)
-%       ptint2a4('tst','v','w','o') overwrites the image created with the previous line
 %
 %See also: PRINT, PRINT2SCREENSIZE, PRINT2A4OVERWRITE
 

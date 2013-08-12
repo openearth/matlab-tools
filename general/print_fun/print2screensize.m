@@ -64,13 +64,13 @@ function print2screensize(fname,varargin)
 %   --------------------------------------------------------------------
 
 
-   %% where overwrite_append can be 
-   %% 'o' = overwrite
-   %% 'c' = cancel
-   %% 'p' = prompt (default, after which o/a/c can be chosen)
-   %% 'a' = append (no recommended as HDF is VERY inefficient 
-   %%               due to disk space fragmentation when appending data.)
-   %% -------------------------
+   % where overwrite_append can be 
+   % 'o' = overwrite
+   % 'c' = cancel
+   % 'p' = prompt (default, after which o/a/c can be chosen)
+   % 'a' = append (no recommended as HDF is VERY inefficient 
+   %               due to disk space fragmentation when appending data.)
+   % -------------------------
 
    overwrite_append  = 'p'; % prompt
    resolution        = 120;
