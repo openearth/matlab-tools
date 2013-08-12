@@ -154,6 +154,7 @@ fprintf(fid2,'%s\n\n','Maxdegree            = 6                   # Maximum degr
 
 if strcmp(mdfkeywds.roumet,'C'); roumet = 0; end;
 if strcmp(mdfkeywds.roumet,'M'); roumet = 1; end;
+if strcmp(mdfkeywds.roumet,'W'); roumet = 2; end;
 if isfield(mdfkeywds,'ccofu') == 0; 
     mdfkeywds.ccofu = 0;
     mdfkeywds.ccofv = 0;
