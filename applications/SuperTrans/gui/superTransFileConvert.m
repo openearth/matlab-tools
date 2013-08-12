@@ -121,7 +121,7 @@ if pathname~=0
     switch filterindex,
         case 1
             % Polyline
-            [x,y]=landboundary_da('read',[pathname filename]);
+            [x,y]=landboundary('read',[pathname filename]);
         case 2
             % Samples file
             vals=load([pathname filename]);
@@ -131,7 +131,7 @@ if pathname~=0
         case 3
             % D3D Grid
             %        [x,y]=ReadD3DGrid(pathname,filename);
-            [x,y,enc]=wlgrid_da('read',[pathname filename]);
+            [x,y,enc]=wlgrid('read',[pathname filename]);
         case 4
             % TEKAL Map
             [x,y,varargout]=ReadTekalMap(pathname,filename);
@@ -163,7 +163,7 @@ if pathname~=0
             % Polyline
             [filename pathname]=uiputfile('*.ldb');
             if pathname~=0
-                landboundary_da('write',[pathname filename],x2,y2);
+                landboundary('write',[pathname filename],x2,y2);
             end
         case 2
             % Samples file
@@ -183,7 +183,7 @@ if pathname~=0
                 otherwise
                     tp='Cartesian';
             end
-            wlgrid_da('write',[pathname filename],x2,y2,enc,tp);
+            wlgrid('write',[pathname filename],x2,y2,enc,tp);
         case 4
             % TEKAL Map
             [x,y,varargout]=WriteTekalMap(pathname,filename);
