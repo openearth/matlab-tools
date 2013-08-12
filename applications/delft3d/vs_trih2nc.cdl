@@ -152,6 +152,16 @@ variables:
 		waterlevel:delft3d_name = "ZWL" ;
 		waterlevel:_FillValue = -1.#IND00f ;
 		waterlevel:actual_range = -0.460175931453705, 5.84168863296509 ;
+	single mask(time,Station), shape = [3803 150]
+		mask:standard_name = "" ;
+		mask:long_name = "active" ;
+		mask:units = "1" ;
+		mask:coordinates = "latitude longitude platform_name" ;
+		mask:delft3d_name = "ZKFS" ;
+		mask:_FillValue = NaN f;
+		mask:actual_range = 0 1 ;
+		mask:flag_values = 0 1 ;
+		mask:flag_meanings = "inactive active " ;
 	float u_x(time, Station, Layer) ;
 		u_x:standard_name = "sea_water_x_velocity" ;
 		u_x:long_name = "velocity, x-component" ;
@@ -227,6 +237,14 @@ variables:
 		salinity:delft3d_name = "GRO" ;
 		salinity:_FillValue = -1.#IND00f ;
 		salinity:actual_range = 7.75254106521606, 11.8001956939697 ;
+	single temperature(time,Station,Layer), shape = [3803 150 10]
+		temperature:standard_name = "sea_water_temperature" ;
+		temperature:long_name = "Temperature in station" ;
+		temperature:units = "degree_Celsius" ;
+		temperature:coordinates = "latitude longitude platform_name" ;
+		temperature:delft3d_name = "GRO" ;
+		temperature:_FillValue = NaN f;
+		temperature:actual_range = -0.00931975 11.8603 ;
 	float sediment_coh(time, Station, Layer) ;
 		sediment_coh:standard_name = "concentration_of_suspended_matter_in_sea_water" ;
 		sediment_coh:long_name = "Concentration of sediment_coh per layer in station" ;
@@ -328,7 +346,7 @@ variables:
 		:title = "" ;
 		:institution = "" ;
 		:source = "Delft3D trih file" ;
-		:history = "" ;
+		:history = "Original filename: trih-RUNID.dat, Deltares, FLOW2D3D Version X, DATE, file version: X, file date: DATA, transformation to netCDF: HeadURL Id" ;
 		:references = "http://svn.oss.deltares.nl" ;
 		:email = "" ;
 		:comment = "" ;

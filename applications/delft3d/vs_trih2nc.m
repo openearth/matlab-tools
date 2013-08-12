@@ -226,9 +226,10 @@ function varargout = vs_trih2nc(vsfile,varargin)
         end
 
     else
-      G.lon         = squeeze(vs_let(F,'his-const','XYSTAT',{1,OPT.ind},'quiet'));
-      G.lat         = squeeze(vs_let(F,'his-const','XYSTAT',{2,OPT.ind},'quiet'));
-      coordinates   = 'latitude longitude platform_name';
+      G.lon           = squeeze(vs_let(F,'his-const','XYSTAT',{1,OPT.ind},'quiet'));
+      G.lat           = squeeze(vs_let(F,'his-const','XYSTAT',{2,OPT.ind},'quiet'));
+      coordinates     = 'latitude longitude platform_name';
+      crs.coordinates = 'crs_latitude crs_longitude crs_name';
 
       if ~isempty(vs_get_elm_def(F,'NAMTRA')) && ~isempty(OPT.crs.ind)
         G.crs.lon    = squeeze(vs_let(F,'his-const','XYTRA',{[1,3],OPT.crs.ind},'quiet'));
@@ -239,7 +240,6 @@ function varargout = vs_trih2nc(vsfile,varargin)
         [G.x     ,G.y     ] = convertCoordinates(G.lon,   G.lat,   'CS1.code',4326,'CS2.code',OPT.epsg);
         if ~isempty(vs_get_elm_def(F,'NAMTRA')) && ~isempty(OPT.crs.ind)
             [G.crs.x  ,G.crs.y  ] = convertCoordinates(G.crs.lon,G.crs.lat,'CS1.code',4326,'CS2.code',OPT.epsg);      
-        coordinates   = 'crslatitude crslongitude crs_name';
         end
       end
 
@@ -753,6 +753,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
     attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
     attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
     attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.u_x = [Inf -Inf];
+    attr(end+1)  = struct('Name', 'comment'      , 'Value', 'TO DO: check whether is has been rotated from local (m,n) grid to global (x,y) or (lon,lat) grid');
     nc.Variables(ifld) = struct('Name'      , 'u_x', ...
                               'Datatype'  , OPT.type, ...
                               'Dimensions', s_t_k.dims, ...
@@ -772,6 +773,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
     attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', d3d_name);
     attr(end+1)  = struct('Name', '_FillValue'   , 'Value', single(NaN));
     attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.u_y = [Inf -Inf];
+    attr(end+1)  = struct('Name', 'comment'      , 'Value', 'TO DO: check whether is has been rotated from local (m,n) grid to global (x,y) or (lon,lat) grid');
     nc.Variables(ifld) = struct('Name'      , 'u_y', ...
                               'Datatype'  , OPT.type, ...
                               'Dimensions', s_t_k.dims, ...

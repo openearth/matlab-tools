@@ -1,5 +1,5 @@
 function vs_trim2netcdf2kml
-%VS_TRIM2NETCDF2KML   exmaple script how visualize delft3d results in google earth
+%vs_trim2nc2kml   exmaple script how visualize delft3d results in google earth
 %
 % This is an example script, rework it untill it fits your needs.
 %

@@ -1,5 +1,5 @@
 function varargout = vs_trim_to_kml_tiled_png(varargin)
-%TRIM_TO_KML_TILED_PNG  generates a tiled png from data in a Delft3D trim file.
+%vs_trim_to_kml_tiled_png  generates a tiled png from data in a Delft3D trim file.
 %
 %See also: delft3d_3d_visualisation_example, vs_trim2nc
 
