@@ -104,6 +104,7 @@ function varargout = analyseHis(varargin)
    OPT.plot.planview    = 1;
    OPT.plot.scatter     = 1;
    OPT.plot.planview    = 1;
+   OPT.platform_match   = 'exact'; % in order not to find identical names with prefixes and post fixes
    
    OPT.axis    = [4.4000    6.4000   52.7000   53.6000];
    OPT.vc      = 'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland.nc';
@@ -185,6 +186,8 @@ end
    nc_t_tide_models = {};
 
 %%  Find associated observational data
+%   check "mapping of data to model"
+%   while "mapping of model to data" is checked in actual loop below (unique mapping)
 
 if ischar(OPT.platform_data_url)
 
@@ -192,6 +195,7 @@ if ischar(OPT.platform_data_url)
    OPT.platform_data_url = {};
     
    dataurls = opendap_catalog(OPT.ncbase);
+   
    %% loop model platform index (im) and find associated data platform index (id)
    for im=1:length(M.platform_name);
    
@@ -233,7 +237,13 @@ for id=1:length(OPT.platform_name);
    disp(['>> ---------- ',datestr(OPT.platform_period{id}(1)),' - ',datestr(OPT.platform_period{id}(2))])
    end
     
-   im = strmatch(upper(OPT.platform_name{id}),upper(M.platform_name));
+   im = strmatch(upper(OPT.platform_name{id}),upper(M.platform_name),OPT.platform_match);
+   
+   if length(im) > 1
+      disp(char({M.platform_name{im}}))
+      warning(['Used 1st one from multiple matches found for data platform:',upper(OPT.platform_name{id})])
+      im = im(1);
+`   end
   
 %%  Load associated observational data
 
