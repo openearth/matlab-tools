@@ -171,6 +171,9 @@
     <name>legendposition</name>
   </option>
   <option>
+    <name>legendcustomposition</name>
+  </option>
+  <option>
     <name>legendbox</name>
   </option>
   <option>

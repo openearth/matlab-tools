@@ -8,7 +8,7 @@
     <tag>selectposition</tag>
     <style>popupmenu</style>
     <position>20 370 140 20</position>
-    <variable>positionstring</variable>
+    <variable>position</variable>
     <type>string</type>
     <text>Position</text>
     <textposition>above-left</textposition>
@@ -27,7 +27,7 @@
     <tag>editpositionx</tag>
     <style>edit</style>
     <position>100 330 60 20</position>
-    <variable>position(1)</variable>
+    <variable>customposition(1)</variable>
     <type>real</type>
     <text>Position X (cm)</text>
     <textposition>left</textposition>
@@ -35,7 +35,7 @@
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>positionstring</variable>
+        <variable>position</variable>
         <value>Custom</value>
         <operator>eq</operator>
       </check>
@@ -45,7 +45,7 @@
     <tag>editpositionx</tag>
     <style>edit</style>
     <position>100 300 60 20</position>
-    <variable>position(2)</variable>
+    <variable>customposition(2)</variable>
     <type>real</type>
     <text>Position Y (cm)</text>
     <textposition>left</textposition>
@@ -53,7 +53,7 @@
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>positionstring</variable>
+        <variable>position</variable>
         <value>Custom</value>
         <operator>eq</operator>
       </check>
@@ -63,7 +63,7 @@
     <tag>editwidth</tag>
     <style>edit</style>
     <position>100 270 60 20</position>
-    <variable>position(3)</variable>
+    <variable>customposition(3)</variable>
     <type>real</type>
     <text>Width (cm)</text>
     <textposition>left</textposition>
@@ -71,7 +71,7 @@
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>positionstring</variable>
+        <variable>position</variable>
         <value>Custom</value>
         <operator>eq</operator>
       </check>
@@ -81,7 +81,7 @@
     <tag>editheight</tag>
     <style>edit</style>
     <position>100 240 60 20</position>
-    <variable>position(4)</variable>
+    <variable>customposition(4)</variable>
     <type>real</type>
     <text>Height (cm)</text>
     <textposition>left</textposition>
@@ -89,7 +89,7 @@
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>positionstring</variable>
+        <variable>position</variable>
         <value>Custom</value>
         <operator>eq</operator>
       </check>

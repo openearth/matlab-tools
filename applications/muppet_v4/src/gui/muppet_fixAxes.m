@@ -91,6 +91,7 @@ for isub=1:fig.nrsubplots
             % Legend
             if fig.subplots(isub).subplot.legend.changed
                 handles.figures(ifig).figure.subplots(isub).subplot.legend.position=fig.subplots(isub).subplot.legend.position;
+                handles.figures(ifig).figure.subplots(isub).subplot.legend.customposition=fig.subplots(isub).subplot.legend.customposition;
                 fig.subplots(isub).subplot.legend.changed=0;
             end
             

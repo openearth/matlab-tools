@@ -92,9 +92,15 @@ else
     if length(timestep)>1
         % Time-varying
         if length(m)>1
+            if sz(4)==0
+                %            shp='track';
+                plane='xy';
+                ndim=1;
+            else
 %            shp='timestack';
-            plane='tx';
-            ndim=2;
+                plane='tx';
+                ndim=2;
+            end
         elseif length(n)>1
 %            shp='timestack';
             plane='tx';
@@ -103,6 +109,17 @@ else
 %            shp='timestack';
             plane='tz';
             ndim=1;
+        elseif sz(3)==0 && sz(4)==0
+            switch quantity
+                case{'location'}
+                    %            shp='location';
+                    plane='xy';
+                    ndim=1;
+                otherwise
+                    %        shp='profile';
+                    plane='tv';
+                    ndim=1;
+            end
         else
 %            shp='timeseries';
             plane='tv';

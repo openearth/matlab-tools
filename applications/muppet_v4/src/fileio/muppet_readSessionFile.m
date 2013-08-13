@@ -207,30 +207,26 @@ for ifig=1:handles.nrfigures
     for j=1:length(keywords)
         figr=readoption(figr,handles.figureoption,keywords{j},values{j});
     end
-    
-    if isfield(figr,'frame')
-        if strcmpi(figr.frame,'none')
-            figr.frame=[];
-        end
-    end
 
     if ~isempty(figr.frame)
+        % Frame given in mup file
         figr.useframe=1;
+    else
+        % No frame given in mup file
+        figr.frame=handles.frames.names{1};
     end
-    
+        
     % Set frame text (if not already set)
     if figr.useframe
-        if isfield(figr,'frame')
-            ifr=strmatch(lower(figr.frame),lower(handles.frames.names),'exact');
-            if ~isempty(ifr)
-                if isfield(handles.frames.frame(ifr).frame,'text')
-                    for itxt=1:length(handles.frames.frame(ifr).frame.text)
-                        if isempty(figr.frametext(itxt).frametext.text)
-                            if isfield(handles.frames.frame(ifr).frame.text(itxt).text,'defaulttext')
-                                figr.frametext(itxt).frametext.text=handles.frames.frame(ifr).frame.text(itxt).text.defaulttext;
-                            else
-                                figr.frametext(itxt).frametext.text='';
-                            end
+        ifr=strmatch(lower(figr.frame),lower(handles.frames.names),'exact');
+        if ~isempty(ifr)
+            if isfield(handles.frames.frame(ifr).frame,'text')
+                for itxt=1:length(handles.frames.frame(ifr).frame.text)
+                    if isempty(figr.frametext(itxt).frametext.text)
+                        if isfield(handles.frames.frame(ifr).frame.text(itxt).text,'defaulttext')
+                            figr.frametext(itxt).frametext.text=handles.frames.frame(ifr).frame.text(itxt).text.defaulttext;
+                        else
+                            figr.frametext(itxt).frametext.text='';
                         end
                     end
                 end

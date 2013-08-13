@@ -47,7 +47,13 @@ else
         % Find plot type
         iplt=muppet_findIndex(handles.datatype(idt).datatype.plot,'plot','type',plt.type);
         % Find plot routine
-        ipr=muppet_findIndex(handles.datatype(idt).datatype.plot(iplt).plot.plotroutine,'plotroutine','name',plt.datasets(id).dataset.plotroutine);
+
+        switch lower(plt.datasets(id).dataset.plotroutine)
+            case{'plotgeoimage'}
+                plt.datasets(id).dataset.plotroutine='plotimage';
+        end        
+        
+        ipr=muppet_findIndex(handles.datatype(idt).datatype.plot(iplt).plot.plotroutine,'plotroutine','name',plt.datasets(id).dataset.plotroutine);        
         
         plotoption=handles.datatype(idt).datatype.plot(iplt).plot.plotroutine(ipr).plotroutine.plotoption;
         
@@ -57,11 +63,14 @@ else
         for ii=1:length(plotoption)
             ipltopt=muppet_findIndex(handles.plotoption,'plotoption','name',plotoption(ii).plotoption.name);
             muppet_writeOption(handles.plotoption(ipltopt).plotoption,plt.datasets(id).dataset,fid,9,21);
-            
+            try
             if isfield(handles.plotoption(ipltopt).plotoption,'element')
                 for jj=1:length(handles.plotoption(ipltopt).plotoption.element)
                     muppet_writeOption(handles.plotoption(ipltopt).plotoption.element(jj).element,plt.datasets(id).dataset,fid,9,21);
                 end
+            end
+            catch
+                shite=12
             end
         end
         

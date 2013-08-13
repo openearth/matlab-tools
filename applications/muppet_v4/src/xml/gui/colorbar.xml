@@ -88,7 +88,7 @@
     <tag>edittickincrement</tag>
     <style>popupmenu</style>
     <position>100 150 60 20</position>
-    <variable>labelincrement</variable>
+    <variable>tickincrement</variable>
     <type>integer</type>
     <text>Tick Increment</text>
     <textposition>left</textposition>

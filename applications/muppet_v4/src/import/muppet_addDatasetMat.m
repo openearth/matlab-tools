@@ -122,9 +122,27 @@ if isfield(parameter,dataset.xname)
     switch dataset.quantity
         case{'location'}
             if dataset.size(1)>0
-                d.X=parameter.(dataset.xname)(timestep,istation);
+                % Multiple timesteps, track
+                if dataset.size(2)>0
+                    % Multiple stations
+                    d.X=parameter.(dataset.xname)(timestep,istation);
+                else
+%                else
+                    if size(parameter.(dataset.xname),1)==1 || size(parameter.(dataset.xname),2)==1
+                        d.X=parameter.(dataset.xname)(timestep);
+                    else
+                        d.X=parameter.(dataset.xname)(timestep,:);
+                    end
+                end
             else
-                d.X=parameter.(dataset.xname)(istation);
+                % One timestep, so just separate locations
+                if dataset.size(2)>0
+                    % Multiple stations
+                    d.X=parameter.(dataset.xname)(istation);
+                elseif dataset.size(3)>0
+                    % Multiple M
+                    d.X=parameter.(dataset.xname)(m);
+                end
             end
         otherwise
             if size(parameter.(dataset.xname),1)==1 || size(parameter.(dataset.xname),2)==1
@@ -140,9 +158,27 @@ if isfield(parameter,dataset.yname)
     switch dataset.quantity
         case{'location'}
             if dataset.size(1)>0
-                d.Y=parameter.(dataset.yname)(timestep,istation);
+                % Multiple timesteps, track
+                if dataset.size(2)>0
+                    % Multiple stations
+                    d.Y=parameter.(dataset.yname)(timestep,istation);
+                else
+%                else
+                    if size(parameter.(dataset.yname),1)==1 || size(parameter.(dataset.yname),2)==1
+                        d.Y=parameter.(dataset.yname)(timestep);
+                    else
+                        d.Y=parameter.(dataset.yname)(timestep,:);
+                    end
+                end
             else
-                d.Y=parameter.(dataset.yname)(istation);
+                % One timestep, so just separate locations
+                if dataset.size(2)>0
+                    % Multiple stations
+                    d.Y=parameter.(dataset.yname)(istation);
+                elseif dataset.size(3)>0
+                    % Multiple M
+                    d.Y=parameter.(dataset.yname)(m);
+                end
             end
         otherwise
             if size(parameter.(dataset.yname),1)==1 || size(parameter.(dataset.yname),2)==1

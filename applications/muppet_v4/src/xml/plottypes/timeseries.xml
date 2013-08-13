@@ -36,6 +36,21 @@
     <name>ygrid</name>
   </option>
   <option>
+    <name>fontname</name>
+  </option>
+  <option>
+    <name>fontsize</name>
+  </option>
+  <option>
+    <name>fontweight</name>
+  </option>
+  <option>
+    <name>fontangle</name>
+  </option>
+  <option>
+    <name>fontcolor</name>
+  </option>
+  <option>
     <name>titletext</name>
   </option>
   <option>
@@ -85,6 +100,9 @@
   </option>
   <option>
     <name>legendposition</name>
+  </option>
+  <option>
+    <name>legendcustomposition</name>
   </option>
   <option>
     <name>legendbox</name>

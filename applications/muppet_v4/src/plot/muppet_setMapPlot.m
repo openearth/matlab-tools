@@ -126,6 +126,10 @@ if plt.drawbox
         tick(gca,'y','none');
     end
     box on;
+
+
+
+
 else
     axis off;
     box off;
@@ -142,3 +146,8 @@ set(gca,'YColor',colorlist('getrgb','color',plt.font.color));
 set(gca,'Units',units);
 set(gca,'Position',plt.position*cm2pix);
 set(gca,'Layer','top');
+
+
+if ~strcmpi(plt.font.color,'black')
+    muppet_dummyplot(gca);
+end

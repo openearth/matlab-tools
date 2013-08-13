@@ -383,11 +383,15 @@
     <name>colorbartickincrement</name>
     <variable>colorbar.tickincrement</variable>
     <keyword>ColorBarTickIncrement</keyword>
+    <type>int</type>
     <default>1</default>
     <check>
       <variable>plotcolorbar</variable>
       <operator>eq</operator>
       <value>1</value>
+    </check>
+    <check>
+      <operator>ne</operator>
     </check>
   </subplotoption>
   <subplotoption>
@@ -797,18 +801,30 @@
   </subplotoption>
   <subplotoption>
     <name>legendposition</name>
-    <variable>legend.positionstring</variable>
+    <variable>legend.position</variable>
     <default>NorthEast</default>
-    <type>realorstring</type>
+    <type>string</type>
     <keyword>LegendPosition</keyword>
     <check>
       <variable>plotlegend</variable>
       <operator>eq</operator>
       <value>1</value>
     </check>
+  </subplotoption>
+  <subplotoption>
+    <name>legendcustomposition</name>
+    <variable>legend.customposition</variable>
+    <default>0 0 1 1</default>
+    <type>real</type>
+    <keyword>LegendCustomPosition</keyword>
     <check>
-      <variable>legend.positionstring</variable>
-      <operator>ne</operator>
+      <variable>plotlegend</variable>
+      <operator>eq</operator>
+      <value>1</value>
+    </check>
+    <check>
+      <variable>legend.position</variable>
+      <operator>eq</operator>
       <value>custom</value>
     </check>    
   </subplotoption>

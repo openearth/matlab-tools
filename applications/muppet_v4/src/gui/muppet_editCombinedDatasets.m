@@ -21,8 +21,8 @@ if isempty(varargin)
     h=updateDatasetsB(h);
     h=updateResultantDatasetName(h);
     
-    h.operations={'Add','Subtract','Multiply','Divide','Max','Min','isnan(A<B)','isnan(A>B)'};
-    h.operationstrings={'A + B','A - B','A * B','A / B','max(A,B)','min(A,B)','isnan(A<B)','isnan(A>B)'};
+    h.operations={'Add','Subtract','Multiply','Divide','Max','Min','isnan(A<B)','isnan(A>B)','isnan(isnan(B))'};
+    h.operationstrings={'A + B','A - B','A * B','A / B','max(A,B)','min(A,B)','isnan(A<B)','isnan(A>B)','isnan(isnan(B))'};
 
     [h,ok]=gui_newWindow(h, 'xmldir', handles.xmlguidir, 'xmlfile', 'combinedatasets.xml','modal',0,'iconfile',[handles.settingsdir 'icons' filesep 'deltares.gif']);
     if ok

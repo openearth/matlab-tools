@@ -97,11 +97,11 @@ if plt.colorbar.type==1
 
         if plt.colorbar.decimals>=0
             frmt=['%0.' num2str(plt.colorbar.decimals) 'f'];
-            for i=1:plt.colorbar.labelincrement:size(contours,2)
+            for i=1:plt.colorbar.tickincrement:size(contours,2)
                 ylabls{i}=[sprintf(frmt,contours(i)) ' ' plt.colorbar.unit];
             end
         else
-            for i=1:plt.colorbar.labelincrement:size(contours,2)
+            for i=1:plt.colorbar.tickincrement:size(contours,2)
                 ylabls{i}=[num2str(contours(i)) ' ' plt.colorbar.unit];
             end
         end
@@ -188,11 +188,11 @@ if plt.colorbar.type==1
         
         if plt.colorbar.decimals>=0
             frmt=['%0.' num2str(plt.colorbar.decimals) 'f'];
-            for i=1:plt.colorbar.labelincrement:size(contours,2)
+            for i=1:plt.colorbar.tickincrement:size(contours,2)
                 xlabls{i}=sprintf(frmt,contours(i));
             end
         else
-            for i=1:plt.colorbar.labelincrement:size(contours,2)
+            for i=1:plt.colorbar.tickincrement:size(contours,2)
                 xlabls{i}=num2str(contours(i));
             end
         end

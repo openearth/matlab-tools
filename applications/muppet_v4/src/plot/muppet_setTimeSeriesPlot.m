@@ -47,7 +47,7 @@ if xtick>0.0
         st=ht;
         xticks=datenum(yt,mt,dt,ht,mit,st);
     end
-    xlabls=datestr(xticks,plt.datetickformat);
+    xlabls=datestr(xticks+xback,plt.datetickformat);
     set(gca,'xtick',xticks,'xticklabel',xlabls,'FontSize',8*fontred);
 else
     tick(gca,'x','none');
@@ -132,3 +132,7 @@ set(gca,'Units',units);
 set(gca,'Position',plt.position*cm2pix);
 
 box on;
+
+if ~strcmpi(plt.font.color,'black')
+    muppet_dummyplot(gca);
+end

@@ -2,6 +2,9 @@ function muppet_selectDataset
 
 handles=getHandles;
 if handles.nrdatasets>0
+    if isempty(handles.activedataset)
+        handles.activedataset=1;
+    end
     idtype=muppet_findIndex(handles.datatype,'datatype','name',handles.datasets(handles.activedataset).dataset.type);
     [pathname,filename,ext]=fileparts(handles.datasets(handles.activedataset).dataset.filename);
     currentpath=pwd;

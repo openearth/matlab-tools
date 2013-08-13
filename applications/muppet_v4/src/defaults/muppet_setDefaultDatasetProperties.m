@@ -8,6 +8,7 @@ dataset.combineddataset=0;
 dataset.runid=[];
 dataset.active=1;
 dataset.type='';
+dataset.lgafile='';
 
 %% Data
 dataset.x=[];

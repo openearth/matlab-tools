@@ -25,8 +25,10 @@ if isempty(dataset.type)
     trackstr='';
     if strcmpi(dataset.quantity,'location')
         if ~isempty(dataset.times)
-            % This is a track
-            trackstr='track';            
+            if isempty(dataset.time)
+                % This is a track
+                trackstr='track';            
+            end
         end
     end
     

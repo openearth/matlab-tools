@@ -132,7 +132,7 @@
     <name>colorbarlabel</name>
   </option>
   <option>
-    <name>colorbarttickincrement</name>
+    <name>colorbartickincrement</name>
   </option>
   <option>
     <name>colorbarunit</name>
@@ -196,6 +196,9 @@
   </option>
   <option>
     <name>legendposition</name>
+  </option>
+  <option>
+    <name>legendcustomposition</name>
   </option>
   <option>
     <name>legendbox</name>

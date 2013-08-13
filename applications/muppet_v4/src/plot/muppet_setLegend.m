@@ -41,14 +41,14 @@ if sum(hnd)>0
     set(leg,'FontAngle',plt.legend.font.angle);
     set(leg,'TextColor',colorlist('getrgb','color',plt.legend.font.color));
 
-    switch lower(plt.legend.positionstring)
+    switch lower(plt.legend.position)
         case{'custom'}
-            pos=plt.legend.position;
+            pos=plt.legend.customposition;
             pos(3)=max(pos(3),0.2);
             pos(4)=max(pos(4),0.2);
             set(leg,'Position',pos*fig.cm2pix);
         otherwise
-            set(leg,'Location',plt.legend.positionstring);
+            set(leg,'Location',plt.legend.position);
     end
         
     set(leg,'Tag','legend');

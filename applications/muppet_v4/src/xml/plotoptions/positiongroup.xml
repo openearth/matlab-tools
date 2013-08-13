@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <root>
   <plotoption>
+    <name>positiongroup</name>
     <element>
       <name>positiongroup</name>
       <keyword>Position</keyword>

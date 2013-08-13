@@ -76,6 +76,11 @@ switch lower(datasets(nra).dataset.type)
                     datasets(nr).dataset.zz=a1*data1zz;
                     datasets(nr).dataset.z(data1z>data2z)=NaN;
                     datasets(nr).dataset.zz(data1zz>data2zz)=NaN;
+                case{'isnan(isnan(b))'}
+                    datasets(nr).dataset.z=a1*data1z;
+                    datasets(nr).dataset.zz=a1*data1zz;
+                    datasets(nr).dataset.z(isnan(data2z))=NaN;
+                    datasets(nr).dataset.zz(isnan(data2zz))=NaN;
             end
 
         else
@@ -107,6 +112,8 @@ switch lower(datasets(nra).dataset.type)
                     datasets(nr).dataset.z(datasets(nr).dataset.z<unifval)=NaN;
                     datasets(nr).dataset.zz(datasets(nr).dataset.zz<unifval)=NaN;
                 case{'isnan(a>b)'}
+                    datasets(nr).dataset.z=a1*datasets(nra).dataset.z;
+                    datasets(nr).dataset.zz=a1*datasets(nra).dataset.zz;
                     datasets(nr).dataset.z(a1*datasets(nra).dataset.z>unifval)=NaN;
                     datasets(nr).dataset.zz(a1*datasets(nra).dataset.zz>unifval)=NaN;
             end
@@ -228,6 +235,7 @@ datasets(nr).dataset.filename='Combined Dataset';
 datasets(nr).dataset.filetype='combineddataset';
 datasets(nr).dataset.combineddataset=1;
 datasets(nr).dataset.time=datasets(nra).dataset.time;
+datasets(nr).dataset.coordinatesystem=datasets(nra).dataset.coordinatesystem;
 
 if m==0
     if datasets(nra).dataset.tc=='t'

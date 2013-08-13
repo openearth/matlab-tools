@@ -294,7 +294,8 @@ switch(tg)
         fig.subplots(isub).subplot.position=pos;
         fig.subplots(isub).subplot.positionchanged=1;
     case{'legend'}
-        fig.subplots(isub).subplot.legend.position=pos;
+        fig.subplots(isub).subplot.legend.position='Custom';
+        fig.subplots(isub).subplot.legend.customposition=pos;
         fig.subplots(isub).subplot.legend.changed=1;
     case{'colorbar'}
         if length(usd)==2

@@ -60,4 +60,3 @@ if ~(strcmpi(plt.type,'3d') && plt.drawbox)
 end
 
 set(leftaxis,'NextPlot','add');
-
