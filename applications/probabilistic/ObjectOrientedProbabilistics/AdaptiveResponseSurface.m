@@ -51,7 +51,10 @@ classdef AdaptiveResponseSurface < handle
     properties
         Name
         CheckQualityARS
+        DefaultFit
         WeightedARS
+        FitFunction
+        WeightFunction
     end
     properties (SetAccess = private)
         Fit
@@ -59,6 +62,7 @@ classdef AdaptiveResponseSurface < handle
         MaxCoefficient
         MaxRootMeanSquareError
         ModelTerms
+        Weights
         MinNrEvaluationsInitialFit
         MinNrEvaluationsFullFit
     end
@@ -94,9 +98,24 @@ classdef AdaptiveResponseSurface < handle
             this.Name   = name;
         end
     
+        function set.DefaultFit(this, defaultFit)
+            ProbabilisticChecks.CheckInputClass(defaultFit,'logical')
+            this.DefaultFit     = defaultFit;
+        end
+        
         function set.WeightedARS(this, weighted)
             ProbabilisticChecks.CheckInputClass(weighted,'logical')
             this.WeightedARS   = weighted;
+        end
+        
+        function set.FitFunction(this, fitFunction)
+            ProbabilisticChecks.CheckInputClass(fitFunction,'function_handle')
+            this.FitFunction    = fitFunction;
+        end
+        
+        function set.WeightFunction(this, weightFunction)
+            ProbabilisticChecks.CheckInputClass(weightFunction,'function_handle')
+            this.WeightFunction    = weightFunction;
         end
         %% Getters
         
@@ -115,19 +134,29 @@ classdef AdaptiveResponseSurface < handle
             this.DetermineModelTerms(limitState);
                         
             if ~isempty(this.ModelTerms)
-                if ~this.WeightedARS
-                    this.Fit    = polyfitn(limitState.UValues(limitState.EvaluationIsExact,:), limitState.ZValues(limitState.EvaluationIsExact), this.ModelTerms);
+                if this.DefaultFit
+                    % default unweighted polynomial fitting
+                    this.Fit    = feval(this.FitFunction,limitState.UValues(limitState.EvaluationIsExact,:), limitState.ZValues(limitState.EvaluationIsExact), this.ModelTerms);
                 else
-                    nrUsedEvaluations =  max(1 + limitState.NumberRandomVariables + limitState.NumberRandomVariables*(limitState.NumberRandomVariables + 1)/2,round(size(absoluteZValues,1)/2));
-                    if size(limitState.ZValues(limitState.EvaluationIsExact),1)>nrUsedEvaluations
-                        absoluteZValues = abs(limitState.ZValues(limitState.EvaluationIsExact));
-                        [sortedAbsoluteZValues, indices] = sort(absoluteZValues,'ascend');
-                        usedZValues = sortedAbsoluteZValues(1:nrUsedEvaluations);
-                        usedSortedIndex = indices(1:nrUsedEvaluations);
-                        
-                        inputUvalues = limitState.UValues(limitState.EvaluationIsExact,:);
-                        usedUValues = inputUvalues(usedSortedIndex,:);
-                        this.Fit    = polyfitn(usedUValues, usedZValues, this.ModelTerms);
+                    if this.WeightedARS
+                        % calculate weights, then do a weighted polynomial
+                        % fit
+                        this.Weights    = feval(this.WeightFunction, limitState.ZValues(limitState.EvaluationIsExact));
+                        this.Fit        = feval(this.FitFunction, limitState.UValues(limitState.EvaluationIsExact,:), limitState.ZValues(limitState.EvaluationIsExact), this.Weights, this.ModelTerms);
+                    else
+                        % only use the first 2n+1 exact values for the
+                        % polynomial fit
+                        nrUsedEvaluations =  max(1 + limitState.NumberRandomVariables + limitState.NumberRandomVariables*(limitState.NumberRandomVariables + 1)/2,round(sum(limitState.EvaluationIsExact)/2));
+                        if size(limitState.ZValues(limitState.EvaluationIsExact),1)>nrUsedEvaluations
+                            absoluteZValues = abs(limitState.ZValues(limitState.EvaluationIsExact));
+                            [sortedAbsoluteZValues, indices] = sort(absoluteZValues,'ascend');
+                            usedZValues = sortedAbsoluteZValues(1:nrUsedEvaluations);
+                            usedSortedIndex = indices(1:nrUsedEvaluations);
+                            
+                            inputUvalues = limitState.UValues(limitState.EvaluationIsExact,:);
+                            usedUValues = inputUvalues(usedSortedIndex,:);
+                            this.Fit    = feval(this.FitFunction, usedUValues, usedZValues, this.ModelTerms);
+                        end
                     end
                 end
             end
@@ -184,7 +213,10 @@ classdef AdaptiveResponseSurface < handle
             this.MaxCoefficient         = 1e5;
             this.MaxRootMeanSquareError = 1;
             this.CheckQualityARS        = true;
+            this.DefaultFit             = true;
             this.WeightedARS            = false;
+            this.FitFunction            = @polyfitn;
+            this.WeightFunction         = @get_weights;
         end
         
         % Calculate ARS values on regular grid for plotting
