@@ -1,4 +1,4 @@
-function polymodel = wpolyfitn_test2(indepvar,depvar,weights,modelterms)
+function [polymodel] = wpolyfitn_GOOD(indepvar,depvar,weights,modelterms)
 % polyfitn fits a general polynomial regression model in n dimensions
 % usage: polymodel = polyfitn(indepvar,depvar,modelterms)
 %
@@ -92,15 +92,7 @@ function polymodel = wpolyfitn_test2(indepvar,depvar,weights,modelterms)
 %        you wish to manipulate the result symbolically using
 %        my own sympoly tools, this structure can be converted
 %        to a sympoly using the function polyn2sympoly.
-%
-% Find my sympoly toolbox here:
-% http://www.mathworks.com/matlabcentral/fileexchange/loadFile.do?objectId=9577&objectType=FILE
-%
-% See also: polyvaln, polyfit, polyval, polyn2sympoly, sympoly
-%
-% Author: John D'Errico
-% Release: 2.0
-% Release date: 2/19/06
+
 
 if nargin<1
   help wpolyfitn
@@ -128,29 +120,10 @@ if n~=m
 end
 
 
-
-
-W = weights; % addedDana
-W=sqrt(full(W(:)));
+Win = weights; % addedDana
+W=sqrt(Win(:));
 W=W(:);
 
-% Automatically scale the independent variables to unit variance
-stdind = sqrt(diag(cov(indepvar))); 
-
-% for i=1:p
-% indepvar_weighted(:,i) = W.*indepvar(:,i);
-% end
-
-%stdind = sqrt(diag(cov(indepvar_weighted)));
-
-if any(stdind==0)
-  warning 'Constant terms in the model must be entered using modelterms'
-  stdind(stdind==0) = 1;
-end
-% scaled variables
-indepvar_s = indepvar*diag(1./stdind);
-
-%indepvar_s = indepvar_weighted*diag(1./stdind); % addedDana
 
 % do we need to parse a supplied model?
 varlist = {};
@@ -177,11 +150,9 @@ end
 
 % build the design matrix
 M = ones(n,nt);
-scalefact = ones(1,nt);
 for i = 1:nt
   for j = 1:p
     M(:,i) = M(:,i).*indepvar(:,j).^modelterms(i,j);
-    scalefact(i) = scalefact(i)/(stdind(j)^modelterms(i,j));
   end
 end
 
@@ -190,35 +161,23 @@ end
 % maximum stability.
 
 
-%Mweight=M;
 for j=1:nt
 Mweight(:,j)= W.*M(:,j);
 end
 
- w.*V(:,j);
-%[Q,R,E] = qr(M,0);
 [Q,R,E] = qr(Mweight,0);
 
 polymodel.ModelTerms = modelterms;
+polymodel.Coefficients(E) = R\(Q'*(depvar.*W));
 
-%polymodel.Coefficients(E) = R\(Q'*depvar);
-polymodel.Coefficients(E) = R\(Q'*(W(:).*depvar)); %addedDana
-
-% yhat = M*polymodel.Coefficients(:);
 yhat = M*polymodel.Coefficients(:);
-
-% recover the scaling
-%polymodel.Coefficients=polymodel.Coefficients.*scalefact;
-polymodel.Coefficients=polymodel.Coefficients
 
 % variance of the regression parameters
 s = norm(depvar - yhat);
 if n > nt
   Rinv = R\eye(nt);
   Var(E) = s^2*sum(Rinv.^2,2)/(n-nt);
-  %polymodel.ParameterVar = Var.*(scalefact.^2);
   polymodel.ParameterVar = Var.^2;
-  
   polymodel.ParameterStd = sqrt(polymodel.ParameterVar);
 else
   % we cannot form variance or standard error estimates
