@@ -10,7 +10,7 @@ function varargout = readMap(ncfile,varargin)
 %
 %   For plotting also use G = dflowfm.readNet(ncfile)
 %
-% See also: dflowfm, delft3d
+% See also: dflowfm, delft3d 
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 Deltares
