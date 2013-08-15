@@ -1,12 +1,14 @@
 % DELFT3D - tools related to <a href="http://www.delft3d.nl">Delft3d</a>
 %
-% For most functionality, you need the Delft3D Matlab toolbox first:
+% Delft3D-FLOW and its associated Mastlab toolboxes are  open source since 
+% jan 1st 2011, see http://oss.deltares.nl for details. For most OpenEarth 
+% Delft3D functionality, you need the official Delft3D Matlab toolbox 
+% first. It is part of the official Delft3D release: addpath('C:\Delft3D\w32\matlab\')
+% Note functions in the private subfolder only work when you copy
+% them one level up. The development version is of this loaded by default as 
+% external source into OpenEarthTools, so you already have it:
 %
-%    addpath('C:\Delft3D\w32\matlab\')
-%
-% Note functions in C:\Delft3D\w32\matlab\private\ only work when you copy them one level up.
-%
-% Delft3D-FLOW is open source since jan 1st 2011, see http://oss.deltares.nl for details.
+%  delft3d_matlab - Official Delft3D-MATLAB toolbox included as read-only (!) external.
 %
 % Files
 %   d3d_sigma           - Calculates the relative vertical sigma positions in %
@@ -23,7 +25,7 @@
 %   vs_time                    - Read time information from NEFIS file
 %
 % NEFIS map file format related (trim*,dat)
-%   vs_trim2nc                 - Convert part of a Delft3D trim file to netCDF (BETA)
+% ! vs_trim2nc                 - Convert part of a Delft3D trim file to netCDF (BETA)
 %                                Note that the Rijkswaterstaat 'getData' tool to convert their 
 %                                SIMONA SDS files to netCDF can also handle NEFIS files.
 %   vs_area                    - read INCORRECT cell areas from com-file.
@@ -39,7 +41,7 @@
 %   vs_trim_station            - Read timeseries from one location from map file
 %
 % NEFIS history file format related (trih*,dat)
-%   vs_trih2nc                 - Convert part of a Delft3D trih file to netCDF (BETA)
+% ! vs_trih2nc                 - Convert part of a Delft3D trih file to netCDF (BETA)
 %                                We recommend use netCDF, and avoid using the slow trih file.
 %   adcp_plot                  - plot result as ASCP data
 %   vs_trih_crosssection       - Read NEFIS cross-section data for one transect.
@@ -70,5 +72,5 @@
 %   dflowfm   - tools related to D-Flow FM (Flexible Mesh); Flow for unstructured grid
 %   delft3d_kelvin_wave - generating frictional kelvin wave boundaries for idealized rectangular models
 %
-%See also: SWAN, googlePlot, convertcoordinates, flow, waq
+%See also: SWAN, googlePlot, convertcoordinates, flow, waq, python module "openearthtools.io.delft3d"
 
