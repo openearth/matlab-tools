@@ -94,9 +94,9 @@ function MDF = getm2delft3d(OPT0,getm0)
    OPT.min_salt       = 0;    % getm has different valid range (incl ice) than delft3d (> 0)
    OPT.min_temp       = 0.01; % getm has different valid range (incl ice) than delft3d (> 0)
 
-   OPT.dt.map         = 120;
+   OPT.dt.map         = 60;
    OPT.dt.his         = 10;   
-   OPT.dt.waq         = 120;   
+   OPT.dt.waq         = 60;   
    OPT.dt.bct         = 10; % correct floating precision errors from GETM
    OPT.dt.bcc         = 10; % correct floating precision errors from GETM
    OPT.dt.dis         = 10; % correct floating precision errors from GETM
@@ -397,7 +397,7 @@ function MDF = getm2delft3d(OPT0,getm0)
          end
       elseif getm.salt.salt_method==2
          warning([mfilename,' GETM homogenous stratification not yet implemented 4 salt'])
-      else getm.salt.salt_method==3
+      elseif getm.salt.salt_method==3
          if getm.salt.salt_format==1
             error([mfilename,' GETM ASCII 3D field not yet implemented 4 salt'])
          else
@@ -942,13 +942,14 @@ function MDF = getm2delft3d(OPT0,getm0)
 
    MDF.keywords.flmap  = [MDF.keywords.tstart OPT.dt.map MDF.keywords.tstop];
    MDF.keywords.flhis  = [MDF.keywords.tstart OPT.dt.his MDF.keywords.tstop];
+   MDF.keywords.flpp   = [MDF.keywords.tstart OPT.dt.com MDF.keywords.tstop];
    if isfield(MDF.keywords,'flwq')
    MDF.keywords.flwq   = [MDF.keywords.tstart OPT.dt.waq MDF.keywords.tstop];
    end
                       
    delft3d_io_mdf('write',[OPT.d3ddir,filesep,OPT.RUNID,'.mdf'],MDF.keywords);
 
-%% save config file for ready-start linux simulation
+%% save config file for ready-start linux simulation: flow kernel V5
 
    fid = fopen([OPT.d3ddir,filesep,'config_flow2d3d.ini'],'w');
    fprintf(fid,'%s \n', '[FileInformation]');
@@ -960,3 +961,43 @@ function MDF = getm2delft3d(OPT0,getm0)
    fprintf(fid,'%s \n', '   Name    = flow2d3d');
    fprintf(fid,'%s \n',['   MDFfile = ',OPT.RUNID]);
    fclose(fid);
+
+%% save config file for ready-start linux simulation: flow kernel V6
+% https://svn.oss.deltares.nl/repos/delft3d/trunk/examples/01_standard/config_d_hydro.xml
+% <?xml version="1.0" encoding="iso-8859-1"?>
+% <deltaresHydro xmlns="http://schemas.deltares.nl/deltaresHydro"
+% xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+% xsi:schemaLocation="http://schemas.deltares.nl/deltaresHydro
+% http://content.oss.deltares.nl/schemas/d_hydro-1.00.xsd">
+% <control>
+% <sequence>
+% <start>myNameFlow</start>
+% </sequence>
+% </control>
+% <flow2D3D name="myNameFlow">
+% <library>flow2d3d</library>
+% <mdfFile>f34.mdf</mdfFile>
+% </flow2D3D>
+% </deltaresHydro>
+
+   fid = fopen([OPT.d3ddir,filesep,'config_flow2d3d.xml'],'w');
+   fprintf(fid,'%s \n',['   MDFfile = ',OPT.RUNID]);
+   
+   fprintf(fid,'%s \n', '<?xml version="1.0" encoding="iso-8859-1"?>');
+   fprintf(fid,'%s \n', '<deltaresHydro xmlns="http://schemas.deltares.nl/deltaresHydro"');
+   fprintf(fid,'%s \n', ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"');
+   fprintf(fid,'%s \n', ' xsi:schemaLocation="http://schemas.deltares.nl/deltaresHydro');
+   fprintf(fid,'%s \n', ' http://content.oss.deltares.nl/schemas/d_hydro-1.00.xsd">');
+   fprintf(fid,'%s \n', ' <control>');
+   fprintf(fid,'%s \n', '  <sequence>');
+   fprintf(fid,'%s \n', '   <start>myNameFlow</start>');
+   fprintf(fid,'%s \n', '  </sequence>');
+   fprintf(fid,'%s \n', ' </control>');
+   fprintf(fid,'%s \n', ' <flow2D3D name="myNameFlow">');
+   fprintf(fid,'%s \n', '  <library>flow2d3d</library>');
+   fprintf(fid,'%s \n',['  <mdfFile>',OPT.RUNID,'.mdf</mdfFile>']);
+   fprintf(fid,'%s \n', ' </flow2D3D>');
+   fprintf(fid,'%s \n', '</deltaresHydro>');
+
+   fclose(fid);
+

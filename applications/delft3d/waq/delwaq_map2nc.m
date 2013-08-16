@@ -23,12 +23,12 @@ function varargout = delwaq_map2nc(varargin)
 %   OPT.units         = 'N/m2'; % Pa
 %   OPT.k             = Inf; % integer, use Inf for last layer index: kmax
 %   OPT.epsg          = 28992;
-%   OPT.Fcn           = log10(x); % optionally log-transform data
+%   OPT.Fcn           = log10positive(x); % optionally log10-transform data
 %   OPT.Attributes    = {'log10',1};
 %
 %   delwaq_map2nc(OPT)
 %
-%See also: delwaq, L2BIN2NC, WAQ, VS_TRIM2NC, DINEOF
+%See also: delwaq, L2BIN2NC, WAQ, VS_TRIM2NC, DINEOF, nc_dimension_subset
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -101,7 +101,7 @@ function varargout = delwaq_map2nc(varargin)
 
    h = pcolorcorcen(G.cor.lon,G.cor.lat,G.cen.mask,[.5 .5 .5]);
    pausedisp
-   title('Active grid points mask as written to netCDF for DINEOF mask. Check dry points.')
+   title('Active grid points mask as written to netCDF-CF for DINEOF mask. Check dry points.')
 
 %% read map-file dependent meta-data
 

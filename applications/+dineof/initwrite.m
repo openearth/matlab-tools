@@ -15,7 +15,7 @@ OPT.comments = 0;
    
    fields = fieldnames(T0);
    
-   T = mergestructs(T0,T); % add non-existing fields
+   T = mergestructs('overwrite',T0,T); % add non-existing fields
 
 %% save
 
