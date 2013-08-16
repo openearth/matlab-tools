@@ -4,7 +4,7 @@ function [xcells,ycells] = poly_split(x,y)
 %   [segments.x, segments.y] = poly_split(x,y)
 %    segments.x              = poly_split(x)
 %
-%See also: POLY_JOIN
+%See also: POLY_JOIN, poly_fun, polyfun
 
 %% Copyright notice
 %   --------------------------------------------------------------------

@@ -6,7 +6,7 @@ function [x,y] = poly_split(xcells,ycells)
 %
 % x and y and with a NaN-separator.
 %
-%See also: POLY_SPLIT
+%See also: POLY_SPLIT, poly_fun, polyfun
 
 %% Copyright notice
 %   --------------------------------------------------------------------
