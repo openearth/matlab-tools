@@ -196,8 +196,8 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
          
          axis equal
          grid on
-         xlabel([ 'data amplitude [',Da.amplitude.units,']'],'Interpreter','none')
-         ylabel(['model amplitude [',Da.amplitude.units,']'],'Interpreter','none')
+         xlabel([ 'data amplitude [',mktex(Da.amplitude.units),']'],'Interpreter','none')
+         ylabel(['model amplitude [',mktex(Da.amplitude.units),']'],'Interpreter','none')
          xlim(xlims)
          ylim(ylims)
          plot(xlims       ,ylims + 0.01,'-','color',[.5 .5 .5])

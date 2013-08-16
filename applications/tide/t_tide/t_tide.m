@@ -90,7 +90,7 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin);
 %   Resolution criterions for least-squares fit.        
 %       'rayleigh'       scalar - Rayleigh criteria, default = 1.
 %                        Matrix of strings or cellstr - names of constituents to use
-%                         (useful for testing). Note: case -sensitive, use UPPER case.
+%                         (useful for testing). Note: case-sensitive, use UPPER case.
 %  
 %   Calculation of confidence limits (Boostrap not possible with non-equidistant time)
 %       'error'          'wboot'  - Boostrapped confidence intervals 
@@ -150,10 +150,17 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin);
 %       frequency intervals calculated as the inverse of the input 
 %       series length.
 %
-% Example:tidal analysis on time series in netCDF file
-% D.eta     = ncread(ncfile,'sea_surface_height')
-% D.time    = nc_cf_time(ncfile,'time')
-% tidestruc = t_tide(D.eta,'interval',diff(D.time)*24,'lat',52,'sort','amp','start time',D.time(1));
+% Example: irregular interval from DART buoy off the coast of Seattle from NOAA OPeNDAP server
+%      url   = 'http://dods.ndbc.noaa.gov/thredds/dodsC/data/dart/46419/46419t2012.nc'
+%      D.h   = ncread(url,'height',[1 1 1],[1 1 1e4]) % total water column height, so huge A0
+%      D.day = double(ncread(url,'time',1,1e4))/3600/24; % sec since 1970
+%      D.t   = datenum(1970,1,D.day); % irregular: 15, 30, 60,... 900 sec
+%      D.lat = ncread(url,'latitude');
+%     [S,D.hfit] = t_tide(D.h(:),'lat',D.lat,'sort','amp','interval',diff(D.t)*24,'start',D.t(1),'err','lin')
+%      plot(D.t,D.h(:)-+S.z0,'DisplayName','observation');
+%      hold on;plot(D.t,D.hfit,'r','DisplayName','t\_tide');
+%      legend show; grid on
+%      datetick('x')
 %
 % A description of the theoretical basis of the analysis and some
 % implementation details can be found in:

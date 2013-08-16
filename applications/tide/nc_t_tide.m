@@ -111,7 +111,7 @@ else
       if ~isempty(OPT.period)
       mask = find(( t >= OPT.period(1)) & (t <= OPT.period(end)));
       if t(1  ) > OPT.period(1);fprintf(2,['data starts after start of requested period ',datestr(t(  1)),'>',datestr(OPT.period(  1))]);end
-      if t(end) < OPT.period(2);fprintf(2,['data end   before end   of requested period ',datestr(t(end)),'<',datestr(OPT.period(end))]);end
+      if t(end) < OPT.period(2);fprintf(2,['data stops before end of requested period ',datestr(t(end)),'<',datestr(OPT.period(end))]);end
       else
       mask = 1:length(t);
       OPT.period = [t(1) t(end)];
