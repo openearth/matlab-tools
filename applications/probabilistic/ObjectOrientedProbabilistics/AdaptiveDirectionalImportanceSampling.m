@@ -264,7 +264,7 @@ classdef AdaptiveDirectionalImportanceSampling < DirectionalSampling
                 if this.MinNrApproximatedPoints ~= 0
                 	this.MinNrApproximatedPoints    = 0;
                 	warning('Still no ARS: MinNrApproximatedPoints is set to 0 to avoid long calculation times');
-          	end
+                end
             end
         end
         

@@ -55,6 +55,7 @@ classdef AdaptiveResponseSurface < handle
         WeightedARS
         FitFunction
         WeightFunction
+        NoCrossTerms
     end
     properties (SetAccess = private)
         Fit
@@ -95,7 +96,7 @@ classdef AdaptiveResponseSurface < handle
         %% Setters
         function set.Name(this, name)
             ProbabilisticChecks.CheckInputClass(name,'char')
-            this.Name   = name;
+            this.Name           = name;
         end
     
         function set.DefaultFit(this, defaultFit)
@@ -105,7 +106,7 @@ classdef AdaptiveResponseSurface < handle
         
         function set.WeightedARS(this, weighted)
             ProbabilisticChecks.CheckInputClass(weighted,'logical')
-            this.WeightedARS   = weighted;
+            this.WeightedARS    = weighted;
         end
         
         function set.FitFunction(this, fitFunction)
@@ -115,8 +116,14 @@ classdef AdaptiveResponseSurface < handle
         
         function set.WeightFunction(this, weightFunction)
             ProbabilisticChecks.CheckInputClass(weightFunction,'function_handle')
-            this.WeightFunction    = weightFunction;
+            this.WeightFunction = weightFunction;
         end
+        
+        function set.NoCrossTerms(this, noCrossTerms)
+            ProbabilisticChecks.CheckInputClass(noCrossTerms,'logical')
+            this.NoCrossTerms   = noCrossTerms;
+        end
+        
         %% Getters
         
         %% Other methods
@@ -187,9 +194,9 @@ classdef AdaptiveResponseSurface < handle
         %Determine modelterms in polynomial fit depending on number of
         %variables
         function DetermineModelTerms(this, limitState)
-            if  sum(limitState.EvaluationIsExact) >= this.MinNrEvaluationsFullFit
+            if  sum(limitState.EvaluationIsExact) >= this.MinNrEvaluationsFullFit && ~this.NoCrossTerms
                 this.ModelTerms = 2;
-            elseif sum(limitState.EvaluationIsExact) >= this.MinNrEvaluationsInitialFit
+            elseif sum(limitState.EvaluationIsExact) >= this.MinNrEvaluationsInitialFit 
                 this.ModelTerms = [zeros(1,limitState.NumberRandomVariables); eye(limitState.NumberRandomVariables); 2*eye(limitState.NumberRandomVariables)];
             else
                 this.ModelTerms = []; 
@@ -217,6 +224,7 @@ classdef AdaptiveResponseSurface < handle
             this.WeightedARS            = false;
             this.FitFunction            = @polyfitn;
             this.WeightFunction         = @get_weights;
+            this.NoCrossTerms           = false;
         end
         
         % Calculate ARS values on regular grid for plotting
