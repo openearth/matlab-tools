@@ -1,4 +1,4 @@
-function varargout = netcdfKickstarter(varargin)
+function varargout = nc_kickstart(varargin)
 %NETCDFKICKSTARTER  One line description goes here.
 %
 %   More detailed description goes here.
@@ -95,13 +95,46 @@ if isempty(OPT.template)
     
 end
 
-query_string = sprintf('template=%s', urlencode(OPT.template));
+query_string = sprintf('t=%s', urlencode(OPT.template));
+
+%% define variables
+
+fprintf('\n');
+
+var = nan;
+
+n = 1;
+while ~isempty(var)
+    var = input(sprintf('Name of variable #%d (press enter to skip):\n',n),'s');
+    
+    if isempty(var)
+        break;
+    end
+    
+    fprintf('\n');
+    fprintf('----------------------------------------\n');
+    fprintf('%s\n',upper(var));
+    fprintf('----------------------------------------\n');
+    fprintf('\n');
+    
+    m = json.load(urlread(fullfile(OPT.host,'templates',[OPT.template '?category=var'])));
+    
+    for j = 1:length(m)
+        v = input(sprintf('%s:\n',m(j).description),'s');
+        
+        query_string = sprintf('%s&m[%s.%s]=%s',query_string,m(j).category,m(j).key,urlencode(v));
+        
+        fprintf('\n');
+    end
+    
+    n = n + 1;
+end
 
 %% load categories
 
-categories = json.load(urlread(fullfile(OPT.host,'categories')));
+categories = setdiff(json.load(urlread(fullfile(OPT.host,'categories'))),{'var'});
 
-%% show markers
+%% show other markers
 
 pref_group = 'netcdfKickstarter';
 
@@ -135,7 +168,7 @@ for i = 1:length(categories)
             v = input(sprintf('%s:\n',m(j).description),'s');
         end
         
-        query_string = sprintf('%s&markers[%s.%s]=%s',query_string,m(j).category,m(j).key,urlencode(v));
+        query_string = sprintf('%s&m[%s.%s]=%s',query_string,m(j).category,m(j).key,urlencode(v));
         
         fprintf('\n');
     end
