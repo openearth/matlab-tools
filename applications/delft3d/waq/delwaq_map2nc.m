@@ -95,12 +95,13 @@ function varargout = delwaq_map2nc(varargin)
   
    G.cen.mask = G.Index(2:end-1,2:end-1,1); % ~isnan(G.cen.lon) is not OK, because it still contains dry points
    G.cen.mask(G.cen.mask> 0)=  1;
-   G.cen.mask(G.cen.mask==0)=NaN;   
-   G.cen.lon  = corner2center(G.cor.lon).*G.cen.mask; % this is essential as WAQ aggregation can put ...
-   G.cen.lat  = corner2center(G.cor.lat).*G.cen.mask; % ... non-connected corners next to each other in the matrix
+  %G.cen.mask(G.cen.mask==0)=NaN; % [0/1] for netCDF
+   nanmask = G.cen.mask;
+   nanmask(nanmask==0)=NaN;       % [nan/1] for multiplication
+   G.cen.lon  = corner2center(G.cor.lon).*nanmask; % this is essential as WAQ aggregation can put ...
+   G.cen.lat  = corner2center(G.cor.lat).*nanmask; % ... non-connected corners next to each other in the matrix
 
    h = pcolorcorcen(G.cor.lon,G.cor.lat,G.cen.mask,[.5 .5 .5]);
-   pausedisp
    title('Active grid points mask as written to netCDF-CF for DINEOF mask. Check dry points.')
 
 %% read map-file dependent meta-data
