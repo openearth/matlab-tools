@@ -136,8 +136,6 @@ classdef AdaptiveResponseSurface < handle
         
         %Update ARS fit
         function UpdateFit(this, limitState)
-            this.CalculateMinNrEvaluationsFullFit(limitState)
-            this.CalculateMinNrEvaluationsInitialFit(limitState)
             this.DetermineModelTerms(limitState);
                         
             if ~isempty(this.ModelTerms)
@@ -204,13 +202,25 @@ classdef AdaptiveResponseSurface < handle
         end
         
         %n(n+1)/2+n+1 evaluations needed for full fit
-        function CalculateMinNrEvaluationsFullFit(this, limitState)
-            this.MinNrEvaluationsFullFit    = 1 + limitState.NumberRandomVariables + limitState.NumberRandomVariables*(limitState.NumberRandomVariables + 1)/2;
+        function CalculateMinNrEvaluationsFullFit(this, limitState, varargin)
+            if isempty(varargin)
+                numberRandomVariables   = limitState.NumberRandomVariables;
+            else
+                numberRandomVariables   = varargin{:};
+            end
+            
+            this.MinNrEvaluationsFullFit    = 1 + numberRandomVariables + numberRandomVariables*(numberRandomVariables + 1)/2;
         end
         
         %2n+1 evaluations needed for initial fit (without cross-terms)
-        function CalculateMinNrEvaluationsInitialFit(this, limitState)
-            this.MinNrEvaluationsInitialFit = 2*limitState.NumberRandomVariables + 1;
+        function CalculateMinNrEvaluationsInitialFit(this, limitState, varargin)
+            if isempty(varargin)
+                numberRandomVariables   = limitState.NumberRandomVariables;
+            else
+                numberRandomVariables   = varargin{:};
+            end
+            
+            this.MinNrEvaluationsInitialFit = 2*numberRandomVariables + 1;
         end
         
 

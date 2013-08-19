@@ -195,6 +195,14 @@ classdef MultipleLimitState < LimitState
         %Update all response surfaces
         function UpdateResponseSurface(this)
             for i=1:length(this.LimitStates)
+                if isempty(this.LimitStates(i).ResponseSurface.MinNrEvaluationsFullFit)
+                    this.LimitStates(i).ResponseSurface.CalculateMinNrEvaluationsFullFit(this, this.NumberRandomVariables)
+                end
+                
+                if isempty(this.LimitStates(i).ResponseSurface.MinNrEvaluationsInitialFit)
+                    this.LimitStates(i).ResponseSurface.CalculateMinNrEvaluationsInitialFit(this, this.NumberRandomVariables)
+                end
+                
                 this.LimitStates(i).UpdateResponseSurface;
             end
         end
