@@ -133,7 +133,7 @@ print -dpng polyfitn_unweighted_function_23
 
 %% PLOT WEIGHTED FUNCTION
 
-[polymodel_weighted] = wpolyfitn_GOOD([u1,u2],z,w,2);
+[polymodel_weighted] = wpolyfitn([u1,u2],z,w,2);
 
 f_weighted = polyvaln(polymodel_weighted,[u1,u2]);
 
