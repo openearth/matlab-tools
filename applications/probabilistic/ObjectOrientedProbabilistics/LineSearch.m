@@ -264,7 +264,7 @@ classdef LineSearch < handle
                     % If fit is good, evaluate at location of zero-crossing
                     if this.CheckFit
                         this.Roots  = roots(this.Fit);
-                        if this.CheckRoots
+                        if this.CheckRoots(limitState, un)
                             this.EvaluatePoint(limitState, un, this.Roots, randomVariables);
                         end
                     end
@@ -409,12 +409,14 @@ classdef LineSearch < handle
         end
         
         %Check the roots = location of the zero crossing
-        function goodRoots = CheckRoots(this)
+        function goodRoots = CheckRoots(this, limitState, un)
             if ~isempty(this.Roots)
                 i1  = isreal(this.Roots);
                 i2  = this.Roots > 0;
+                i3  = ~ismember(this.Roots*un, limitState.UValues(limitState.EvaluationIsEnabled,:),'rows');
+                
                 if any(i1)
-                    if any(i1&i2)
+                    if any(i1&i2&i3)
                         % Find real & positive root
                         ii          = find(i1&i2);
                         ii          = ii(isort(this.Roots(ii)));
@@ -422,12 +424,16 @@ classdef LineSearch < handle
                         goodRoots   = true;
                     elseif all(this.Roots < 0)
                         % Find largest negative root
-                        this.Roots  = max(this.Roots(i1)<0);
+                        this.Roots  = max(this.Roots(i1&i3));
                         if ~isempty(this.Roots)
                             goodRoots   = true;
                         else
                             goodRoots   = false;
                         end
+                    elseif all(~i3)
+                        goodRoots   = false;
+                    else
+                        keyboard;
                     end
                 else
                     goodRoots   = false;
