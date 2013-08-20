@@ -66,7 +66,6 @@ classdef AdaptiveResponseSurface < handle
         Weights
         MinNrEvaluationsInitialFit
         MinNrEvaluationsFullFit
-        NumberRandomVariables
     end
     
     %% Methods
@@ -137,59 +136,54 @@ classdef AdaptiveResponseSurface < handle
         
         %Update ARS fit
         function UpdateFit(this, limitState)
+            % Calculate minimum nr of Evals for initial & full fit
+            if isempty(this.MinNrEvaluationsInitialFit)
+                this.CalculateMinNrEvaluationsInitialFit(limitState)
+            end
             
-
+            if isempty(this.MinNrEvaluationsFullFit)
+                this.CalculateMinNrEvaluationsFullFit(limitState)
+            end
+            
+            this.DetermineModelTerms(limitState);
+                        
+            if ~isempty(this.ModelTerms)
                 if this.DefaultFit
-                    this.DetermineModelTerms(limitState);
-                    if ~isempty(this.ModelTerms)
                     % default unweighted polynomial fitting
                     this.Fit    = feval(this.FitFunction,limitState.UValues(limitState.EvaluationIsExact,:), limitState.ZValues(limitState.EvaluationIsExact), this.ModelTerms);
-                    end
                 else
                     if this.WeightedARS
                         % calculate weights, then do a weighted polynomial
                         % fit
-                        this.DetermineModelTerms(limitState);
-                        if ~isempty(this.ModelTerms)
                         this.Weights    = feval(this.WeightFunction, limitState.ZValues(limitState.EvaluationIsExact));
                         this.Fit        = feval(this.FitFunction, limitState.UValues(limitState.EvaluationIsExact,:), limitState.ZValues(limitState.EvaluationIsExact), this.Weights, this.ModelTerms);
-                        end
-                   else
+                    else
                         % only use the first 2n+1 exact values for the
                         % polynomial fit
-                         %nrUsedEvaluations =  max(this.MinNrEvaluationsInitialFit,round(sum(limitState.EvaluationIsExact)/2));
-                                                   
-                            inputZvalues = limitState.ZValues(limitState.EvaluationIsExact);
-                            inputUvalues = limitState.UValues(limitState.EvaluationIsExact,:);
+                        
+                        inputZvalues = limitState.ZValues(limitState.EvaluationIsExact);
+                        inputUvalues = limitState.UValues(limitState.EvaluationIsExact,:);
+                        
+                        [uniqueZvalues, m, n] = unique(inputZvalues);
+                        uniqueUvalues = inputUvalues(m,:);
+                        
+                        absoluteZValues = abs(uniqueZvalues);
+                        [sortedAbsoluteZValues, indices] = sort(absoluteZValues,'ascend');
+                        
+                        nrUsedEvaluations =  max(this.MinNrEvaluationsInitialFit,round(size(sortedAbsoluteZValues,1)/2));
+                        
+                        if size(sortedAbsoluteZValues,1)>=nrUsedEvaluations
+                            usedZValues = sortedAbsoluteZValues(1:nrUsedEvaluations);
+                            usedSortedIndex = indices(1:nrUsedEvaluations);
+                            usedUValues = uniqueUvalues(usedSortedIndex,:);
                             
-                            [uniqueZvalues, m, n] = unique(inputZvalues);
-                            uniqueUvalues = inputUvalues(m,:);
-                            
-                            absoluteZValues = abs(uniqueZvalues);
-                            [sortedAbsoluteZValues, indices] = sort(absoluteZValues,'ascend');
-                            
-                            nrUsedEvaluations =  max(this.MinNrEvaluationsInitialFit,round(size(sortedAbsoluteZValues,1)/2));
-                            
-                            if size(sortedAbsoluteZValues,1)>=nrUsedEvaluations
-                                
-                                    usedZValues = sortedAbsoluteZValues(1:nrUsedEvaluations);
-                                    usedSortedIndex = indices(1:nrUsedEvaluations);                           
-                                    usedUValues = uniqueUvalues(usedSortedIndex,:);
-                            
-                                    if nrUsedEvaluations>=this.MinNrEvaluationsFullFit
-                                        this.ModelTerms = 2;
-                                    elseif nrUsedEvaluations>=this.MinNrEvaluationsInitialFit
-                                        this.ModelTerms = [zeros(1,this.NumberRandomVariables); eye(this.NumberRandomVariables); 2*eye(this.NumberRandomVariables)];
-                                    else
-                                        this.ModelTerms = []; 
-                                    end
-                                    if ~isempty(this.ModelTerms)  
-                                         this.Fit    = feval(this.FitFunction, usedUValues, usedZValues, this.ModelTerms);
-                                    end
-                            end
+                            this.DetermineModelTerms(limitState, nrUsedEvaluations)
+                            this.Fit    = feval(this.FitFunction, usedUValues, usedZValues, this.ModelTerms);
+                        end
                     end
                 end
- 
+            end
+            
             this.CheckFit
         end
         
@@ -215,37 +209,30 @@ classdef AdaptiveResponseSurface < handle
         
         %Determine modelterms in polynomial fit depending on number of
         %variables
-        function DetermineModelTerms(this, limitState)
-            if  sum(limitState.EvaluationIsExact) >= this.MinNrEvaluationsFullFit && ~this.NoCrossTerms
+        function DetermineModelTerms(this, limitState, varargin)
+            if isempty(varargin)
+                nrAvailableEvaluations  = sum(limitState.EvaluationIsExact);
+            else
+                nrAvailableEvaluations  = varargin{:};
+            end
+                        
+            if  nrAvailableEvaluations >= this.MinNrEvaluationsFullFit && ~this.NoCrossTerms
                 this.ModelTerms = 2;
-            elseif sum(limitState.EvaluationIsExact) >= this.MinNrEvaluationsInitialFit 
-                this.ModelTerms = [zeros(1,this.NumberRandomVariables); eye(this.NumberRandomVariables); 2*eye(this.NumberRandomVariables)];
+            elseif nrAvailableEvaluations >= this.MinNrEvaluationsInitialFit 
+                this.ModelTerms = [zeros(1,limitState.NumberRandomVariables); eye(limitState.NumberRandomVariables); 2*eye(limitState.NumberRandomVariables)];
             else
                 this.ModelTerms = []; 
             end
         end
         
         %n(n+1)/2+n+1 evaluations needed for full fit
-        function CalculateMinNrEvaluationsFullFit(this, limitState, varargin)
-            if isempty(varargin)
-                this.NumberRandomVariables   = limitState.NumberRandomVariables;
-            else
-                this.NumberRandomVariables   = varargin{:};
-            end
-            
-            this.MinNrEvaluationsFullFit    = 1 + this.NumberRandomVariables + this.NumberRandomVariables*(this.NumberRandomVariables + 1)/2;
-            
+        function CalculateMinNrEvaluationsFullFit(this, limitState)
+            this.MinNrEvaluationsFullFit    = 1 + limitState.NumberRandomVariables + limitState.NumberRandomVariables*(limitState.NumberRandomVariables + 1)/2;
         end
         
         %2n+1 evaluations needed for initial fit (without cross-terms)
-        function CalculateMinNrEvaluationsInitialFit(this, limitState, varargin)
-            if isempty(varargin)
-                this.NumberRandomVariables   = limitState.NumberRandomVariables;
-            else
-                this.NumberRandomVariables   = varargin{:};
-            end
-            
-            this.MinNrEvaluationsInitialFit = 2*this.NumberRandomVariables + 1;
+        function CalculateMinNrEvaluationsInitialFit(this, limitState)
+            this.MinNrEvaluationsInitialFit = 2*limitState.NumberRandomVariables + 1;
         end
         
 

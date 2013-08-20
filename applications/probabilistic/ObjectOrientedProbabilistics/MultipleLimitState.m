@@ -56,7 +56,7 @@ classdef MultipleLimitState < LimitState
     %% Methods
     methods
         %% Constructor
-        function this = MultipleLimitState(limitStates, aggregateFunction)
+        function this = MultipleLimitState(randomVariables, limitStates, aggregateFunction)
             %MULTIPLELIMITSTATE  One line description goes here.
             %
             %   More detailed description goes here.
@@ -76,12 +76,18 @@ classdef MultipleLimitState < LimitState
             %   See also MultipleLimitState
             
             % Check classes of input variables
+            ProbabilisticChecks.CheckInputClass(randomVariables,'RandomVariable')
             ProbabilisticChecks.CheckInputClass(limitStates,'LimitState')
             ProbabilisticChecks.CheckInputClass(aggregateFunction,'function_handle')
             
             % Put input variables in properties
-            this.LimitStates        = limitStates;
-            this.AggregateFunction  = aggregateFunction;
+            this.RandomVariables        = randomVariables;
+            this.LimitStates            = limitStates;
+            this.AggregateFunction      = aggregateFunction;
+            
+            for iLS = 1:length(this.LimitStates)
+                this.LimitStates(iLS).RandomVariables   = this.RandomVariables;
+            end
         end
         
         %% Setters       
@@ -195,14 +201,6 @@ classdef MultipleLimitState < LimitState
         %Update all response surfaces
         function UpdateResponseSurface(this)
             for i=1:length(this.LimitStates)
-                if isempty(this.LimitStates(i).ResponseSurface.MinNrEvaluationsFullFit)
-                    this.LimitStates(i).ResponseSurface.CalculateMinNrEvaluationsFullFit(this, this.NumberRandomVariables)
-                end
-                
-                if isempty(this.LimitStates(i).ResponseSurface.MinNrEvaluationsInitialFit)
-                    this.LimitStates(i).ResponseSurface.CalculateMinNrEvaluationsInitialFit(this, this.NumberRandomVariables)
-                end
-                
                 this.LimitStates(i).UpdateResponseSurface;
             end
         end

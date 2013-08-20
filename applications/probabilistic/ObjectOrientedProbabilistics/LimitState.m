@@ -241,14 +241,6 @@ classdef LimitState < handle
         
         %Update response surface (AdaptiveResponseSurface method)
         function UpdateResponseSurface(this)
-            if isempty(this.ResponseSurface.MinNrEvaluationsFullFit)
-                this.ResponseSurface.CalculateMinNrEvaluationsFullFit(this)
-            end
-            
-            if isempty(this.ResponseSurface.MinNrEvaluationsInitialFit)
-                this.ResponseSurface.CalculateMinNrEvaluationsInitialFit(this)
-            end
-            
             this.ResponseSurface.UpdateFit(this)
         end
         
