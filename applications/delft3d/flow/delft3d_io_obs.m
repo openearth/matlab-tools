@@ -61,13 +61,13 @@ end
 
 switch lower(cmd),
 case 'read',
- [STRUCT,iostat]=Local_read(varargin{:});
+ [S,iostat]=Local_read(varargin{:});
   if nargout==1
-     varargout = {STRUCT};
+     varargout = {S};
   elseif nargout ==2
-     varargout = {STRUCT.x,STRUCT.y};
+     varargout = {S.x,S.y};
   elseif nargout ==3
-     varargout = {STRUCT.x,STRUCT.y,STRUCT.name};
+     varargout = {S.x,S.y,S.name};
   elseif nargout ==4
     error('too much output parameters: [1..3]')
   end
@@ -88,8 +88,6 @@ case 'write',
   end;
 end;
 
-% ------------------------------------
-% ------------------------------------
 % ------------------------------------
 
 function [S,iostat] = Local_read(varargin)
@@ -125,10 +123,6 @@ else
    varargout = {S,iostat};   
 end
 
-
-
-% ------------------------------------
-% ------------------------------------
 % ------------------------------------
 
 function iostat=Local_write(varargin)

@@ -10,6 +10,10 @@ function MDF = getm2delft3d(OPT0,getm0)
 % getm.time.start, getm.time.stop, 
 % getm.param.hotstart, getm.m2d.elev_file, getm.temp.temp_file, getm.salt.salt_file
 %
+% The Delft3D RUNID is used to name the time-dependent files (bct, bcc, dis, ini)
+% rather than the getm file names, to make sure that different temporal subsets
+% get different names.
+%
 % GETM:
 %  getm.domain.bathymetry  = '*.nc';  % name of GETM netCDF topo file
 %  getm.domain.bdyinfofile = '*.dat'; % name of GETM ascii boundary definitions
@@ -93,9 +97,11 @@ function MDF = getm2delft3d(OPT0,getm0)
    OPT.fmt.temp       = ' %.2f'; % 1% precision
    OPT.min_salt       = 0;    % getm has different valid range (incl ice) than delft3d (> 0)
    OPT.min_temp       = 0.01; % getm has different valid range (incl ice) than delft3d (> 0)
+   OPT.restid         = '';
 
    OPT.dt.map         = 60;
    OPT.dt.his         = 10;   
+   OPT.dt.com         = 0;   
    OPT.dt.waq         = 60;   
    OPT.dt.bct         = 10; % correct floating precision errors from GETM
    OPT.dt.bcc         = 10; % correct floating precision errors from GETM
@@ -107,7 +113,7 @@ function MDF = getm2delft3d(OPT0,getm0)
    OPT.write.rst      = 1; % requires OPT.write.dep for sigma levels
    OPT.write.bct      = 1;
    OPT.write.bcc      = 1; % requires OPT.write.bct for sigma levels and OPT.write.dep
-   OPT.write.src      = 1;
+   OPT.write.dis      = 1;
 
    OPT = setproperty(OPT,OPT0);
    
@@ -153,7 +159,6 @@ function MDF = getm2delft3d(OPT0,getm0)
    end
    
    getm = mergestructs('overwrite','recursive',getm,getm0);
-   
 
 %% translate input
 
@@ -422,11 +427,19 @@ function MDF = getm2delft3d(OPT0,getm0)
    INI.ufiltered   = repmat(0,MDF.keywords.mnkmax(1:2));
    INI.vfiltered   = repmat(0,MDF.keywords.mnkmax(1:2));
    
+   if ~isempty(OPT.restid)
+      MDF.keywords.restid = OPT.restid;
+   else
+      MDF.keywords.restid = OPT.RUNID;
+   end
    if ~isempty(fieldnames(INI)) % use rst, ini becomes way too big
-      MDF.keywords.restid = [filename(getm.domain.bathymetry)]; % t11.20040118.120000
-   if OPT.write.rst
-      delft3d_io_restart('write',[OPT.d3ddir,filesep,'tri-rst.',MDF.keywords.restid],INI,'linux');
-   end %OPT.write.rst    
+     if OPT.write.rst
+       if exist(                  [OPT.d3ddir,filesep,'tri-rst.',MDF.keywords.restid],'file')
+       delete  (                  [OPT.d3ddir,filesep,'tri-rst.',MDF.keywords.restid])
+       warning(['Overwritten: ',  [OPT.d3ddir,filesep,'tri-rst.',MDF.keywords.restid]])
+       delft3d_io_restart('write',[OPT.d3ddir,filesep,'tri-rst.',MDF.keywords.restid],INI,'linux');
+       end
+     end %OPT.write.rst    
    end
    
    delft3d_io_mdf('write',[OPT.d3ddir,filesep,OPT.RUNID,'.mdf'],MDF.keywords); % updated and overwritten after each new addition
@@ -769,9 +782,9 @@ function MDF = getm2delft3d(OPT0,getm0)
       
       fclose(fid);
       
-      MDF.keywords.filbnd  = [filename(getm.domain.bdyinfofile), '_',num2str(dbnd),'.bnd'];
-      MDF.keywords.filbct  = [filename(getm.domain.bdyinfofile), '_',num2str(dbnd),'.bct'];
-      MDF.keywords.filbcc  = [filename(getm.domain.bdyinfofile), '_',num2str(dbnd),'.bcc'];
+      MDF.keywords.filbnd  = [OPT.RUNID,'_',num2str(dbnd),'.bnd']; %[filename(getm.domain.bdyinfofile),'_',num2str(dbnd),'.bnd'];
+      MDF.keywords.filbct  = [OPT.RUNID,'_',num2str(dbnd),'.bct']; %[filename(getm.domain.bdyinfofile),'_',num2str(dbnd),'.bct'];
+      MDF.keywords.filbcc  = [OPT.RUNID,'_',num2str(dbnd),'.bcc']; %[filename(getm.domain.bdyinfofile),'_',num2str(dbnd),'.bcc'];
       MDF.keywords.commnt  = [filename(getm.domain.bdyinfofile),                 '_0.bnd'];
  
       delft3d_io_bnd('write',[OPT.d3ddir,filesep,MDF.keywords.commnt],Bnd0);
@@ -852,7 +865,7 @@ function MDF = getm2delft3d(OPT0,getm0)
       
       MDF.keywords.filsrc = [filename(getm.rivers.river_info),'.src'];
       MDF.keywords.fildis = [filename(getm.rivers.river_data),'.dis'];
-      if OPT.write.src;delft3d_io_src('write',[OPT.d3ddir,filesep,MDF.keywords.filsrc],R);end
+      delft3d_io_src('write',[OPT.d3ddir,filesep,MDF.keywords.filsrc],R);
 
 %% discharge data 
 %  first create file without T/S and last one with T/S
@@ -863,11 +876,12 @@ function MDF = getm2delft3d(OPT0,getm0)
       getm0               = getm;
       getm.m3d.calc_temp  = 0;
       getm.m3d.calc_salt  = 0;
-      MDF.keywords.fildis = [filename(getm.rivers.river_data),'_Q_only.dis'];
+      MDF.keywords.fildis = [OPT.RUNID,'_Q_only.dis']; %[filename(getm.rivers.river_data),'_Q_only.dis'];
    else
-      MDF.keywords.fildis = [filename(getm.rivers.river_data),'.dis'];
+      MDF.keywords.fildis = [OPT.RUNID,'.dis']; %[filename(getm.rivers.river_data),'.dis'];
    end
-
+   
+   if OPT.write.dis
    Q.time      = ncread   (getm.rivers.river_data,'time');
    Q.timeunits = ncreadatt(getm.rivers.river_data,'time','units');
    Q.datenum   = udunits2datenum(Q.time,Q.timeunits);
@@ -933,17 +947,25 @@ function MDF = getm2delft3d(OPT0,getm0)
    
    if iq==1;getm = getm0;
    end % restore getm after 1st call
-
+   
+   end % if OPT.write.dis
+   
    end % iq
    
    delft3d_io_mdf('write',[OPT.d3ddir,filesep,OPT.RUNID,'.mdf'],MDF.keywords); % updated and overwritten after each new addition
 
 %% output
+%  flow
 
    MDF.keywords.flmap  = [MDF.keywords.tstart OPT.dt.map MDF.keywords.tstop];
    MDF.keywords.flhis  = [MDF.keywords.tstart OPT.dt.his MDF.keywords.tstop];
    MDF.keywords.flpp   = [MDF.keywords.tstart OPT.dt.com MDF.keywords.tstop];
-   if isfield(MDF.keywords,'flwq')
+
+%  waq
+save
+   if OPT.dt.waq > 0
+   MDF.keywords.ilaggr = ones([1 OPT.kmax]); % flwq automatically
+   MDF.keywords.waqagg = 'active only';
    MDF.keywords.flwq   = [MDF.keywords.tstart OPT.dt.waq MDF.keywords.tstop];
    end
                       
@@ -981,8 +1003,6 @@ function MDF = getm2delft3d(OPT0,getm0)
 % </deltaresHydro>
 
    fid = fopen([OPT.d3ddir,filesep,'config_flow2d3d.xml'],'w');
-   fprintf(fid,'%s \n',['   MDFfile = ',OPT.RUNID]);
-   
    fprintf(fid,'%s \n', '<?xml version="1.0" encoding="iso-8859-1"?>');
    fprintf(fid,'%s \n', '<deltaresHydro xmlns="http://schemas.deltares.nl/deltaresHydro"');
    fprintf(fid,'%s \n', ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"');

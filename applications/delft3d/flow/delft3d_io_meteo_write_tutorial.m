@@ -53,6 +53,7 @@ function varargout = delft3d_io_meteo_write_example(varargin)
    OPT.preduplicate   = []; % duplicate first timestep from 1st  file at this earlier date to cover larger period
    OPT.postduplicate  = []; % duplicate last  timestep from last file at this later   date to cover larger period
    OPT.write_amx      = 1;  % external data files can be switched off during debugging
+   OPT.suffix         = ''; % to distuinguish temporal subsets
 
 %% map parameters from netcf file to delft3d parameters:
 %  For functional conversions, make sure all required variables
@@ -127,7 +128,7 @@ function varargout = delft3d_io_meteo_write_example(varargin)
           data = eval(OPT.amfac{ivar});
        end
 
-       amfilename = [mkvar(filename(OPT.ncfiles{ifile})),OPT.amext{ivar}]; % D3D cannot handle internal "." , it is reserved for extension
+       amfilename = [mkvar(filename(OPT.ncfiles{ifile})),OPT.suffix,OPT.amext{ivar}]; % D3D cannot handle internal "." , it is reserved for extension
        grdfile    = [      filename(OPT.ncfiles{ifile}),'.grd'];
        encfile    = [      filename(OPT.ncfiles{ifile}),'.enc'];
 
