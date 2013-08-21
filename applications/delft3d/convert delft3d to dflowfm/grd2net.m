@@ -55,7 +55,7 @@ fid         = fopen(ddgrid,'r');
 for i=1:10;
     tline   = fgetl(fid);
     if length(tline) >= 4;
-        if strcmp(tline(1:4),' ETA');
+        if strcmp(tline(1:4),' ETA') | strcmp(tline(1:4),' eta');
             startgrid   = i-2;  
             break;
         end
