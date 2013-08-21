@@ -433,7 +433,7 @@ classdef LineSearch < handle
                     elseif all(~i3)
                         goodRoots   = false;
                     else
-                        keyboard;
+                        goodRoots   = false;
                     end
                 else
                     goodRoots   = false;
