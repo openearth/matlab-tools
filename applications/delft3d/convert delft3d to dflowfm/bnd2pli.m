@@ -44,7 +44,7 @@ fid         = fopen(ddgrid,'r');
 for i=1:10;
     tline   = fgetl(fid);
     if length(tline) >= 4;
-        if strcmp(tline(1:4),' ETA') | strcmp(tline(1:4),' eta');
+        if strcmp(tline(1:4),' ETA');
             startgrid   = i-2;  
             break;
         end
@@ -60,52 +60,15 @@ M           = MN(1);
 N           = MN(2);
 fclose(fid);
 
-% Standard option
-optie       = 2;
-
-% Read the grid: own style
-if optie == 1;
-    fid         = fopen(ddgrid,'r');
-    etarij      = 0;
-    eta         = zeros(M,N);
-    J           = ceil(M/5);
-    for i=1:startgrid+1;
-        tline   = fgetl(fid);
-    end
-    for k=1:2;
-        for i=1:N;
-            for j=1:J;
-                tline            = fgetl(fid);
-                if strcmp(tline(1:4),'ETA=') | strcmp(tline(1:4),'eta=');
-                    teller       = str2num(tline(6:10));
-                end
-                leeseta          = str2num(tline(13:end));
-                etarij           = [etarij leeseta];
-                if j==J;
-                    etarij(1)    = [];
-                    eta(:,i,k)   = etarij;
-                    etarij       = 0;
-                end
-            end
-        end
-    end
-    xh          = eta(:,:,1);
-    yh          = eta(:,:,2);
-    xh(xh==0)   = NaN;
-    yh(yh==0)   = NaN; 
-end
-
 % Read the grid: OET-style
-if optie == 2;
-    G           = delft3d_io_grd('read',ddgrid);
-    xc          = G.cend.x;
-    yc          = G.cend.y;
-    
-    % Transpose the grid (x and y) if the sizes do not match with read M and N (the latter match with the bnd!)
-    if size(xc,1)~=M+1 & size(xc,2)~=N+1 & size(yc,1)~=M+1 & size(yc,2)~=N+1;
-        xc      = xc';
-        yc      = yc';
-    end
+G           = delft3d_io_grd('read',ddgrid);
+xc          = G.cend.x;
+yc          = G.cend.y;
+
+% Transpose the grid (x and y) if the sizes do not match with read M and N (the latter match with the bnd!)
+if size(xc,1)~=M+1 & size(xc,2)~=N+1 & size(yc,1)~=M+1 & size(yc,2)~=N+1;
+    xc = xc';
+    yc = yc';
 end
 
 % Extrapolate boundaries: boundary conditions given at cell centers
