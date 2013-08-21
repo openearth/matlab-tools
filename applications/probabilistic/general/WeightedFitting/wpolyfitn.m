@@ -1,4 +1,4 @@
-function [polymodel] = wpolyfitn_GOOD(indepvar,depvar,weights,modelterms)
+function [polymodel] = wpolyfitn(indepvar,depvar,weights,modelterms)
 % polyfitn fits a general polynomial regression model in n dimensions
 % usage: polymodel = polyfitn(indepvar,depvar,modelterms)
 %
