@@ -138,3 +138,8 @@ handles.Toolbox(ii).Input.initialConditions.parameter='Water Level';
 handles.Toolbox(ii).Input.initialConditions.activeDataSource=1;
 handles.Toolbox(ii).Input.initialConditions.dataSourceList={'Constant'};
 handles.Toolbox(ii).Input.initialConditions.dataSource='Constant';
+
+%% Roughness
+handles.Toolbox(ii).Input.roughness.landelevation=0;
+handles.Toolbox(ii).Input.roughness.landroughness=0.08;
+handles.Toolbox(ii).Input.roughness.searoughness=0.024;

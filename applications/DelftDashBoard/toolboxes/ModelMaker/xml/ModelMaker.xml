@@ -60,5 +60,12 @@
       <enable>0</enable>
       <element>ModelMaker.boundaryconditions.xml</element>
     </tab>
+    <tab>
+      <tag>roughness.delft3dflow</tag>
+      <formodel>delft3dflow</formodel>
+      <tabstring>Roughness</tabstring>
+      <callback>ddb_ModelMakerToolbox_roughness_Delft3DFLOW</callback>
+      <element>ModelMaker.roughness.delft3dflow.xml</element>
+    </tab>
   </element>
 </root>
