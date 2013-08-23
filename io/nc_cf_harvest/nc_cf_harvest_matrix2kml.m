@@ -84,6 +84,7 @@ function OPT = nc_cf_harvest_matrix2kml(ATT,varargin)
    
    OPT.varname            = []; % statistics
    OPT.preview            = 0;  % add 2 previews of - and hence requires - varname
+   OPT.plotPeriod         = []; % specify the period to plot (if empty, entire timeseries will be plotted)
    OPT.credit             = 'Plot created with: www.OpenEarth.eu';
    OPT.varPathFcn         = @(s)(s); % function to run on urlPath, when using it, not when linking it: for reading local netCDF files, when CATALOG links to server already
    OPT.resolveUrl         = @(x) x;
@@ -243,7 +244,11 @@ function OPT = nc_cf_harvest_matrix2kml(ATT,varargin)
     
        ncfile = OPT.varPathFcn(D.urlPath{ii});
        
-           [DATA,META] = nc_cf_timeseries(ncfile,OPT.varname,'plot',-OPT.preview*2);
+       if isempty(OPT.plotPeriod)
+                  [DATA,META] = nc_cf_timeseries(ncfile,OPT.varname,'plot',-OPT.preview*2);
+       else
+                  [DATA,META] = nc_cf_timeseries(ncfile,OPT.varname,'plot',-OPT.preview*2,'period',OPT.plotPeriod);
+       end
        units.(OPT.varname) = META.(OPT.varname).units;
        
        if OPT.preview
