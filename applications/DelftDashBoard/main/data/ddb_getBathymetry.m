@@ -440,6 +440,8 @@ switch lower(tp)
                 % Convert to metres
                 switch lower(vertunits)
                     case{'m'}
+                    case{'cm'}
+                        z=z*0.01;
                     case{'ft'}
                         z=z*0.3048;
                 end
