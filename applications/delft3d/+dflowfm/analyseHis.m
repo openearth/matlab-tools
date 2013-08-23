@@ -51,14 +51,9 @@ function varargout = analyseHis(varargin)
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 Deltares
-%       Gerben de Boer
+%       Gerben de Boer / <g.j.deboer@deltares.nl>
 %
-%       <g.j.deboer@deltares.nl>
-%
-%       Deltares
-%       P.O. Box 177
-%       2600 MH Delft
-%       The Netherlands
+%       Deltares / P.O. Box 177 / 2600 MH Delft / The Netherlands
 %
 %   This library is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -99,66 +94,68 @@ function varargout = analyseHis(varargin)
    OPT.model_timezone   = []; % time zone of model is not present in model output (model is not time zone aware)
    OPT.standard_name    = 'sea_surface_height';
 
-   OPT.pause            = 0;
-   OPT.plot.planview    = 1;
-   OPT.plot.scatter     = 1;
-   OPT.plot.planview    = 1;
-   OPT.platform_match   = 'exact'; % in order not to find identical names with prefixes and post fixes
+   OPT.pause             = 0;
+   OPT.plot.planview     = 1;
+   OPT.plot.scatter      = 1;
+   OPT.plot.planview     = 1;
+   OPT.platform_match    = 'exact'; % in order not to find identical names with prefixes and post fixes
+   OPT.axis              = [4.4000    6.4000   52.7000   53.6000];
+   OPT.vc                = 'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland.nc';
+   OPT.vc                = 'http://opendap.deltares.nl/thredds/dodsC/opendap/noaa/gshhs/gshhs_i.nc';
    
-   OPT.axis    = [4.4000    6.4000   52.7000   53.6000];
-   OPT.vc      = 'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland.nc';
-   OPT.vc      = 'http://opendap.deltares.nl/thredds/dodsC/opendap/noaa/gshhs/gshhs_i.nc';
    
-   OPT = setproperty(OPT,varargin);
+   OPT.platform_data_url = 'http://opendap.deltares.nl/thredds/dodsC/opendap\rijkswaterstaat/waterbase/sea_surface_height';
+   OPT.ylim              = [-10 10];
+   OPT.varname           = ''; % name of data in data and in internal struct
+   OPT.hisname           = '';         % name of data in model output
+   OPT.hisnamename       = 'platform_name';      % name of platformnames in model output
+   OPT.hislatname        = nan;
+   OPT.hislonname        = nan;
+   OPT.standard_name     = '';
+   OPT.tex_name          = '';
+   OPT.code_name         = '';
+   OPT.linestyle         = '-'; % 4 data
+   
+   OPT = setproperty(OPT,varargin); % 1/2
    
 switch OPT.standard_name
 case 'sea_surface_height'
    OPT.platform_data_url = 'http://opendap.deltares.nl/thredds/dodsC/opendap\rijkswaterstaat/waterbase/sea_surface_height';
-   OPT.ylim             = [-2 2.5];
-   OPT.varname          = 'sea_surface_height'; % name of data in data and in internal struct
-   OPT.hisname          = 'waterlevel';         % name of data in model output
-   OPT.hisnamename      = 'platform_name';      % name of platformnames in model output
-   OPT.hislatname       = nan;
-   OPT.hislonname       = nan;
-   OPT.tex_name         = '\eta';
-   OPT.standard_name    = 'sea_surface_height';
-   OPT.tex_name         = '\eta';
+   OPT.ylim              = [-2 2.5];
+   OPT.varname           = 'sea_surface_height'; % name of data in data and in internal struct
+   OPT.hisname           = 'waterlevel';         % name of data in model output
+   OPT.standard_name     = 'sea_surface_height';
+   OPT.tex_name          = '\eta';
+   OPT.code_name         = 'z';
 
 case 'water_volume_transport_into_sea_water_from_rivers'
    OPT.platform_data_url = 'http://opendap.deltares.nl/thredds/dodsC/opendap\rijkswaterstaat/waterbase/water_volume_transport_into_sea_water_from_rivers';
-   OPT.ylim             = [-2 2].*1e5;
-   OPT.varname          = 'Q'; % name of data in data and in data and in internal struct
-   OPT.hisname          = 'cross_section_discharge';                           % name of data in model output
-   OPT.hisnamename      = 'cross_section_name';	                             % name of platformnames in model output
-   OPT.hislatname       = nan;
-   OPT.hislonname       = nan;
-   OPT.tex_name         = 'Q';
-   OPT.standard_name    = 'Q';
-   OPT.tex_name         = 'discharge';
+   OPT.ylim              = [-2 2].*1e5;
+   OPT.varname           = 'Q';                       % name of data in data and in data and in internal struct
+   OPT.standard_name     = 'Q';
+   OPT.tex_name          = 'discharge';
+   OPT.code_name         = 'Q';
+   
+   OPT.hisname           = 'cross_section_discharge'; % name of data in model output
+   OPT.hisnamename       = 'cross_section_name';	     % name of platformnames in model output
    
 case 'sea_water_salinity'
    OPT.platform_data_url = 'http://opendap.deltares.nl/thredds/dodsC/opendap\rijkswaterstaat/waterbase/sea_water_salinity';
-   OPT.ylim             = [0 35];
-   OPT.varname          = 'sea_water_salinity'; % name of data in data and in data and in internal struct
-   OPT.hisname          = 'salinity';                           % name of data in model output
-   OPT.hisnamename      = 'platform_name';	                             % name of platformnames in model output
-   OPT.hislatname       = nan;
-   OPT.hislonname       = nan;
-   OPT.tex_name         = 'S';
-   OPT.standard_name    = 'sea_water_salinity';
-   OPT.tex_name         = 'salinity';
+   OPT.ylim              = [-5 35]; % -5 for difference plot
+   OPT.varname           = 'sea_water_salinity'; % name of data in data and in data and in internal struct
+   OPT.hisname           = 'salinity';           % name of data in model output
+   OPT.standard_name     = 'sea_water_salinity';
+   OPT.tex_name          = 'salinity';
+   OPT.code_name         = 'S';
    
 case 'sea_water_temperature'
    OPT.platform_data_url = 'http://opendap.deltares.nl/thredds/dodsC/opendap\rijkswaterstaat/waterbase/sea_water_temperature';
-   OPT.ylim             = [-5 35];
-   OPT.varname          = 'sea_water_temperature'; % name of data in data and in data and in internal struct
-   OPT.hisname          = 'temperature';                           % name of data in model output
-   OPT.hisnamename      = 'platform_name';	                             % name of platformnames in model output
-   OPT.hislatname       = nan;
-   OPT.hislonname       = nan;
-   OPT.tex_name         = 'T';
-   OPT.standard_name    = 'sea_water_temperature';
-   OPT.tex_name         = 'temperature';   
+   OPT.ylim              = [-5 35]; % -5 for difference plot
+   OPT.varname           = 'sea_water_temperature'; % name of data in data and in data and in internal struct
+   OPT.hisname           = 'temperature';           % name of data in model output
+   OPT.standard_name     = 'sea_water_temperature';
+   OPT.tex_name          = 'temperature';
+   OPT.code_name         = 'T';
    
 end
 
@@ -169,7 +166,7 @@ end
       return
    end
    
-   OPT = setproperty(OPT,varargin{:});
+   OPT = setproperty(OPT,varargin{:}); % 2/2: overwrite again with user settings
    
 %% add full path to be able to save in its subfolders
 
@@ -264,8 +261,12 @@ for id=1:length(OPT.platform_name);
    disp(['>> ---------- ',OPT.platform_data_url{id}])
    disp(['>> ---------- ',datestr(OPT.platform_period{id}(1)),' - ',datestr(OPT.platform_period{id}(2))])
    end
-    
-   im = strmatch(upper(OPT.platform_name{id}),upper(M.platform_name),OPT.platform_match);
+   
+   if ~strcmp(isempty(OPT.platform_match),'exact')
+      im = strmatch(upper(OPT.platform_name{id}),upper(M.platform_name));
+   else
+      im = strmatch(upper(OPT.platform_name{id}),upper(M.platform_name),OPT.platform_match);
+   end
    
    if length(im) > 1
       disp(char({M.platform_name{im}}))
@@ -303,7 +304,7 @@ for id=1:length(OPT.platform_name);
      M.platform_id   = D.platform_id;
     %M.platform_name = D.platform_name;
    
-     OPT.ext = [datestr(OPT.datelim(1),OPT.datefmt),'_',datestr(OPT.datelim(end),OPT.datefmt)];
+     OPT.ext = [OPT.code_name,'_',datestr(OPT.datelim(1),OPT.datefmt),'_',datestr(OPT.datelim(end),OPT.datefmt)];
      if length(OPT.ext)==1
         OPT.ext = '';
      end
@@ -313,8 +314,8 @@ for id=1:length(OPT.platform_name);
    
 %%  process comparisons (difference and scatter) only if observational data is present
     
-     D.title = {OPT.label,[char(D.platform_name(:)'),' (',...
-                           char(D.platform_id(:)'),') [',...
+     D.title = {OPT.label,[mktex(char(D.platform_name(:)')),' (',...
+                           mktex(char(D.platform_id(:)')),') [',...
                            num2str(D.lon),'\circ E, ',...
                            num2str(D.lat),'\circ N]']};
 
@@ -333,13 +334,13 @@ for id=1:length(OPT.platform_name);
 
         figure(FIG(1));subplot_meshgrid(1,1,.05,.05);clf
         
-        plot    (D.datenum,DM.(OPT.varname) - D.(OPT.varname).*unitsfac,'g','DisplayName','model - data')
+        plot    (D.datenum,DM.(OPT.varname) - D.(OPT.varname).*unitsfac,'g','LineStyle',OPT.linestyle,'DisplayName','model - data')
         legend  ('Location','NorthEast')
         title   (D.title)
         grid on
         ylim    (OPT.ylim)
         xlabel  ({'',['timezone: ',OPT.timezone]})
-        ylabel  ([OPT.tex_name,' [',Dmeta.(OPT.varname).units,']']);
+        ylabel  ([OPT.tex_name,' [',mktex(Dmeta.(OPT.varname).units),']']);
         timeaxis(OPT.datelim,'fmt',OPT.datestr,'tick',-1,'type','text'); %datetick('x')
         text    (1,0,OPT.txt,'rotation',90,'units','normalized','verticalalignment','top','fontsize',6)
         
@@ -375,9 +376,9 @@ for id=1:length(OPT.platform_name);
         grid on
         axis equal
         ylim  (OPT.ylim)
-        ylabel(['\color{blue}',OPT.tex_name,' [',Dmeta.(OPT.varname).units,'] (model)'])
+        ylabel(['\color{blue}',OPT.tex_name,' [',mktex(Dmeta.(OPT.varname).units),'] (model)'])
         xlim  (OPT.ylim)
-        xlabel(['\color{red}',OPT.tex_name,' [',Dmeta.(OPT.varname).units,'] (data)'])
+        xlabel(['\color{red}',OPT.tex_name,' [',mktex(Dmeta.(OPT.varname).units),'] (data)'])
         plot  (xlim,ylim,'k--','linewidth',1)
         for deta = [.25 .5]
         plot  (xlim+deta,ylim-deta,'k:')
@@ -395,7 +396,7 @@ for id=1:length(OPT.platform_name);
      plot    (M.datenum,M.(OPT.varname)(:,im),'b','DisplayName','model')
      hold on
      if ~isempty(OPT.platform_data_url{id})    
-     plot    (D.datenum,D.(OPT.varname).*unitsfac,'r','DisplayName','data')
+     plot    (D.datenum,D.(OPT.varname).*unitsfac,'r','LineStyle',OPT.linestyle,'DisplayName','data')
      title   (D.title)
      else
      title   ({OPT.label,char(M.platform_name(:,im))});
@@ -404,7 +405,7 @@ for id=1:length(OPT.platform_name);
      grid on
      ylim    (OPT.ylim)
      xlabel  ({'',['timezone: ',OPT.timezone]})
-     ylabel  (['\eta [',Dmeta.(OPT.varname).units,']']);
+     ylabel  ([OPT.tex_name,'[',mktex(Dmeta.(OPT.varname).units),']']);
      timeaxis(OPT.datelim,'fmt',OPT.datestr,'tick',-1,'type','text'); %datetick('x')
      text    (1,0,OPT.txt,'rotation',90,'units','normalized','verticalalignment','top','fontsize',6)
      
