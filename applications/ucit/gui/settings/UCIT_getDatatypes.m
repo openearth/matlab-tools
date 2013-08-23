@@ -13,7 +13,8 @@ function [datatypes] = UCIT_getDatatypes;
 %   
 %
 %   Example: [datatypes] = UCIT_getDatatypes
-%   
+%
+%   See here how to get a local data cache: http://publicwiki.deltares.nl/display/OET/OPeNDAP+caching+on+a+local+machine
 %
 %   See also: UCIT_getMetaData, UCIT_plotLandboundary 
 
@@ -165,9 +166,9 @@ end
 if 0 % set this to 1 to activate the local cache, and download it with OPENDAP_GET_CACHE
    i = i + 1;
    datatypes.grid.names{i}        =  'Vaklodingen 20m (local)';
-   datatypes.grid.urls {i}        =  'F:\opendap\thredds\rijkswaterstaat\vaklodingen_remapped\';
-   datatypes.grid.catalog{i}      =  'F:\opendap\thredds\rijkswaterstaat\vaklodingen_remapped\';
-   datatypes.grid.ldbs{i}         =  'f:\opendap\thredds\deltares\landboundaries\holland_fillable.nc';
+   datatypes.grid.urls {i}        =  'd:\opendap.deltares.nl\thredds\dodsC\opendap\rijkswaterstaat\kustlidar\';
+   datatypes.grid.catalog{i}      =  'd:\opendap.deltares.nl\thredds\dodsC\opendap\rijkswaterstaat\kustlidar\';
+   datatypes.grid.ldbs{i}         =  'd:\opendap.deltares.nl\thredds\dodsC\opendap\deltares\landboundaries\';
    datatypes.grid.axes{i}         =  1E5*[ 0.9797    1.2919    5.3083    5.6847];
    datatypes.grid.cellsize{i}     =  20;
    datatypes.grid.datatype{i}     =  'vaklodingen'; % for rws_*

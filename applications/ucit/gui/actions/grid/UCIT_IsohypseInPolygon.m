@@ -82,7 +82,7 @@ if isempty(OPT.polygon)
     elseif jjj==3
         % load and plot a polygon
         [OPT.polyname, OPT.polydir] = uigetfile({'*.ldb','Delft3D landboundary file (*.ldb)'},'Pick a landboundary file');
-        [x,y]=landboundary_da('read',fullfile(OPT.polydir,OPT.polyname));
+        [x,y]=landboundary('read',fullfile(OPT.polydir,OPT.polyname));
         x = x';
         y = y';
     end
@@ -91,7 +91,7 @@ if isempty(OPT.polygon)
     if jjj==2
         [OPT.polyname, OPT.polydir] = uiputfile({'*.ldb','Delft3D landboundary file (*.ldb)'},'Specifiy a landboundary file',...
             ['polygon_',datestr(now)]);
-        landboundary_da('write',fullfile(OPT.polydir,OPT.polyname),x,y);
+        landboundary('write',fullfile(OPT.polydir,OPT.polyname),x,y);
     end
     
     % save temporary polygon
@@ -99,7 +99,7 @@ if isempty(OPT.polygon)
         OPT.polyname  =  ['polygon_' datestr(now,30),'.ldb'];
         OPT.polydir = [getenv('TEMP') filesep 'polygons'];
         mkdir([getenv('TEMP') filesep 'polygons']);
-        landboundary_da('write',fullfile(OPT.polydir,OPT.polyname),x,y);
+        landboundary('write',fullfile(OPT.polydir,OPT.polyname),x,y);
     end
     
     if jjj == 4

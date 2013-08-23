@@ -9,7 +9,8 @@ function varargout = ucit_netcdf(varargin)
 %
 % For working faster with local copies (caches) of netCDF files,
 % please configure new sets in \ucit\gui\settings\UCIT_getDatatypes.m
-% and download the local cache with OPENDAP_GET_CACHE
+% and download the local cache with OPENDAP_GET_CACHE or via:
+% http://publicwiki.deltares.nl/display/OET/OPeNDAP+caching+on+a+local+machine
 %
 %See also: snctools, ddb, opendap_get_cache
 
