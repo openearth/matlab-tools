@@ -174,11 +174,16 @@ classdef LimitState < handle
             zvalue  = feval(this.LimitStateFunction,input{:});
 
             %Normalize with origin, or save zvalue of origin
-            if ~isempty(this.ZValueOrigin)
+            %Normalize with origin, or save zvalue of origin
+            if ~isempty(this.ZValueOrigin) && ~isnan(this.ZValueOrigin)
                 zvalue  = zvalue/this.ZValueOrigin;
             elseif isempty(this.ZValueOrigin) && all(uvalues == 0)
                 this.ZValueOrigin   = zvalue;
                 zvalue              = 1;
+            elseif isnan(this.ZValueOrigin) && all(uvalues == 0)
+                % ZValueOrigin is set later (it's the aggregated value for
+                % all limit states)
+                zvalue  = zvalue;
             else
                 error('The Z-Value in the origin is not available for normalizing, please calculate it first!')                
             end

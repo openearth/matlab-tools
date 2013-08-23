@@ -104,6 +104,17 @@ classdef MultipleLimitState < LimitState
         %Evaluate multiple limit states
         function zvalue = Evaluate(this, un, beta, randomVariables, varargin)
             
+            if beta == 0
+                % temporarily disable normalizing for first iteration (will
+                % later be filled with aggregated ZValueOrigin)
+                for iLS = 1:length(this.LimitStates)
+                    if isempty(this.LimitStates(iLS).ZValueOrigin)
+                        this.LimitStates(iLS).ZValueOrigin = NaN;
+                    end
+                end
+            end
+            
+            
             %Initialize variable
             input   = cell(length(this.LimitStates),2);
             
@@ -117,6 +128,20 @@ classdef MultipleLimitState < LimitState
             zvalue          = this.Aggregate([input{:,2}]);
             
             if ~isempty(zvalue)
+                if isempty(this.ZValueOrigin) && beta == 0
+                    % save ZValue of the origin
+                    this.ZValueOrigin   = zvalue;
+                    
+                    % distribute to all limit states & normalize
+                    for iLS = 1:length(this.LimitStates)
+                        this.LimitStates(iLS).ZValueOrigin  = zvalue;
+                        this.LimitStates(iLS).ZValues       = this.LimitStates(iLS).ZValues/zvalue;
+                    end
+                    
+                    % normalize
+                    zvalue              = 1;
+                end
+                
                 % save in vectors
                 this.BetaValues = [this.BetaValues; beta];
                 this.UValues    = [this.UValues; un.*beta];
