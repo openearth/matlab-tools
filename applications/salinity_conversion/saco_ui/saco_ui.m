@@ -60,8 +60,8 @@ handles.wrkdir         =   pwd;
 %
 % Get default value (skip during file conversion)
 %
-Info              = nesthd_inifile('open',[handles.saco_dir filesep 'saco.ini']);
-handles.def_value = nesthd_inifile('get' ,Info,'File','def_value');
+Info              = inifile('open',[handles.saco_dir filesep 'saco.ini']);
+handles.def_value = inifile('get' ,Info,'File','def_value');
 
 PutInCentre(handles.Saco);
 newico     (handles.Saco,[handles.saco_dir  'fig' filesep 'salt-icon.png']);
