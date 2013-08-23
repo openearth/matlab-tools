@@ -1,4 +1,4 @@
-function [z x_var1] = LSFpoint(varargin)
+function [z x_var1] = u2z(varargin)
 %
 %   This routine evaluates the 'x2zFunction' at the specified u-values of the
 %   indicated stochastic variables in standard normal space. 
