@@ -26,7 +26,7 @@ function [x2,y2,varargout]=convertCoordinates(x1,y1,varargin)
 % [x2,y2,u2,v2,<logs>] = convertCoordinatesNew(x1,y1,u1,v1,'keyword','value')
 %
 % Optionally the data structure with EPSG codes can be pre-loaded
-% in the active memory, CONVERTCOORDINATES can be told to keep it 
+% in the active memory, CONVERTCOORDINATES can be told to keep it
 % as persistent dataset.
 %   To remove it from memory, see PERSISTENT, or issue clear all
 % Both methods greatly speeds up the routine if many calls are made,
@@ -58,7 +58,7 @@ function [x2,y2,varargout]=convertCoordinates(x1,y1,varargin)
 % When multiple coordinate systems fit the criteria, an error message is
 % returned that lists these options. This can be an alternative method to
 % search the EPSG database in addition to <a href="http://www.epsg-registry.org">www.epsg-registry.org</a>.
-% E.g. to find your local UTM31 datum & zone: 
+% E.g. to find your local UTM31 datum & zone:
 % [~,~]=convertCoordinates(0,0,'CS1.name','31','CS2.code',[])
 %
 % Projection types supported     : projected and geographic 2D
@@ -141,73 +141,75 @@ function [x2,y2,varargout]=convertCoordinates(x1,y1,varargin)
 
 %% version check
 
-   if datenum(version('-date'))<datenum(2007,1,1)
-      warning('the matlab version your using might be to old for this function');
-   end
+if datenum(version('-date'))<datenum(2007,1,1)
+    warning('the matlab version your using might be to old for this function');
+end
 
 %% check if EPSG codes are given
 % Check if vector correction is required
 
-   if isnumeric(varargin{1})
-       % Vectors u and v are input
-       vectorCorrection=1;
-       u1=varargin{1};
-       v1=varargin{2};
-       for i=1:length(varargin)-2
-           v{i}=varargin{i+2};
-       end
-       varargin=v;
-   else
-       vectorCorrection=0;
-   end
-       
-   if odd(length(varargin))
-       if strcmpi(varargin{1},'persistent')
-           persistent EPSG
-           if isempty(EPSG)
-               EPSG = load('EPSG');
-           end
-       elseif isstruct(varargin{1})
-           EPSG = varargin{1};
-       end
-       varargin(1) = [];
-   else
-       EPSG = load('EPSG');
-   end
+if isnumeric(varargin{1})
+    % Vectors u and v are input
+    vectorCorrection=1;
+    u1=varargin{1};
+    v1=varargin{2};
+    for i=1:length(varargin)-2
+        v{i}=varargin{i+2};
+    end
+    varargin=v;
+else
+    vectorCorrection=0;
+end
+
+if odd(length(varargin))
+    if strcmpi(varargin{1},'persistent')
+        persistent EPSG
+        if isempty(EPSG)
+            EPSG=load('EPSG');
+            EPSG=addUserDefinedData(EPSG);
+        end
+    elseif isstruct(varargin{1})
+        EPSG = varargin{1};
+    end
+    varargin(1) = [];
+else
+    EPSG=load('EPSG');    
+    EPSG=addUserDefinedData(EPSG);
+end
 
 %% convert input to doubles
 
-    if ~strcmp(class(x1),'double')||~strcmp(class(y1),'double')
+if ~strcmp(class(x1),'double')||~strcmp(class(y1),'double')
     %     disp('warning: x1 and y1 are converted to double''s')
-        x1 = double(x1);
-        y1 = double(y1);
-    end
+    x1 = double(x1);
+    y1 = double(y1);
+end
 
 %% get and set keyword value parameters
 
-   OPT = [];
-   OPT = FindCSOptions(OPT,EPSG,varargin{:});
+OPT = [];
+OPT = FindCSOptions(OPT,EPSG,varargin{:});
 
 %% Transform input coordinates to geographic 2D radians
 
-   switch OPT.CS1.type
-       case 'projected' % convert projection to geographic radians
-           x1 = convertUnits(x1,OPT.CS1.UoM.name,'metre',EPSG);
-           y1 = convertUnits(y1,OPT.CS1.UoM.name,'metre',EPSG);
-           [lat1,lon1] = ConvertCoordinatesProjectionConvert(x1,y1,OPT.CS1,OPT.proj_conv1,'xy2geo',EPSG);
-           if vectorCorrection
-               x1v = convertUnits(x1,OPT.CS1.UoM.name,'metre',EPSG)+10; % End of vector is 10 m in positive x direction
-               y1v = convertUnits(y1,OPT.CS1.UoM.name,'metre',EPSG);
-               [lat1v,lon1v] = ConvertCoordinatesProjectionConvert(x1v,y1v,OPT.CS1,OPT.proj_conv1,'xy2geo',EPSG);
-           end
-       case 'geographic 2D' % do nothing, except for a unit conversion
-           lon1 = convertUnits(x1,OPT.CS1.UoM.name,'radian',EPSG);
-           lat1 = convertUnits(y1,OPT.CS1.UoM.name,'radian',EPSG);
-           if vectorCorrection
-               lon1v = convertUnits(x1,OPT.CS1.UoM.name,'radian',EPSG)+2e-6; % End of vector is 2e-6 radians to the East
-               lat1v = convertUnits(y1,OPT.CS1.UoM.name,'radian',EPSG);
-           end
-   end
+switch OPT.CS1.type
+    case 'projected' % convert projection to geographic radians
+        x1 = convertUnits(x1,OPT.CS1.UoM.name,'metre',EPSG);
+        y1 = convertUnits(y1,OPT.CS1.UoM.name,'metre',EPSG);
+        [lat1,lon1] = ConvertCoordinatesProjectionConvert(x1,y1,OPT.CS1,OPT.proj_conv1,'xy2geo',EPSG);
+        if vectorCorrection
+            x1v = convertUnits(x1,OPT.CS1.UoM.name,'metre',EPSG)+10; % End of vector is 10 m in positive x direction
+            y1v = convertUnits(y1,OPT.CS1.UoM.name,'metre',EPSG);
+            [lat1v,lon1v] = ConvertCoordinatesProjectionConvert(x1v,y1v,OPT.CS1,OPT.proj_conv1,'xy2geo',EPSG);
+        end
+    case 'geographic 2D' % do nothing, except for a unit conversion
+        lon1 = convertUnits(x1,OPT.CS1.UoM.name,'radian',EPSG);
+        lat1 = convertUnits(y1,OPT.CS1.UoM.name,'radian',EPSG);
+        if vectorCorrection
+            lon1v = convertUnits(x1,OPT.CS1.UoM.name,'radian',EPSG)+2e-6; % End of vector is 2e-6 radians to the East
+            lat1v = convertUnits(y1,OPT.CS1.UoM.name,'radian',EPSG);
+        end
+end
 
 %% find datum transformation options
 % check if geogcrs_code1 and geogcrs_code2 are different
@@ -218,92 +220,110 @@ function [x2,y2,varargout]=convertCoordinates(x1,y1,varargin)
 % * if multiple options found, use the newest unless user has defined something else
 % * if no direct transformation exists, convert via WGS 84
 
-   OPT = ConvertCoordinatesFindDatumTransOpt(OPT,EPSG);
-   
+OPT = ConvertCoordinatesFindDatumTransOpt(OPT,EPSG);
+
 %% do datum transformation
 %  OPT is also return argument to accomodate logging use of alternative transformations
 
-   if ischar(OPT.datum_trans)
-       if strcmpi(OPT.datum_trans,'no transformation available')
-           error('No transformation methods available ...');
-       elseif strcmpi(OPT.datum_trans,'no transformation required');
-           % no transformation required
-           lat2 = lat1;
-           lon2 = lon1;
-           if vectorCorrection
-               lat2v = lat1v;
-               lon2v = lon1v;
-           end
-       elseif strcmpi(OPT.datum_trans,'no direct transformation available');
-           [lat2,lon2,OPT] = ConvertCoordinatesDatumTransform(lat1,lon1,OPT,'datum_trans_to_WGS84'  ,EPSG);
-           [lat2,lon2,OPT] = ConvertCoordinatesDatumTransform(lat2,lon2,OPT,'datum_trans_from_WGS84',EPSG);
-           if vectorCorrection
-               [lat2v,lon2v,OPT] = ConvertCoordinatesDatumTransform(lat1v,lon1v,OPT,'datum_trans_to_WGS84'  ,EPSG);
-               [lat2v,lon2v,OPT] = ConvertCoordinatesDatumTransform(lat2v,lon2v,OPT,'datum_trans_from_WGS84',EPSG);
-           end
-       end
-   else
-       [lat2,lon2,OPT] = ConvertCoordinatesDatumTransform(lat1,lon1,OPT,'datum_trans'          ,EPSG);
-       if vectorCorrection
-           [lat2v,lon2v,OPT] = ConvertCoordinatesDatumTransform(lat1v,lon1v,OPT,'datum_trans'          ,EPSG);
-       end
-   end
+if ischar(OPT.datum_trans)
+    if strcmpi(OPT.datum_trans,'no transformation available')
+        error('No transformation methods available ...');
+    elseif strcmpi(OPT.datum_trans,'no transformation required');
+        % no transformation required
+        lat2 = lat1;
+        lon2 = lon1;
+        if vectorCorrection
+            lat2v = lat1v;
+            lon2v = lon1v;
+        end
+    elseif strcmpi(OPT.datum_trans,'no direct transformation available');
+        [lat2,lon2,OPT] = ConvertCoordinatesDatumTransform(lat1,lon1,OPT,'datum_trans_to_WGS84'  ,EPSG);
+        [lat2,lon2,OPT] = ConvertCoordinatesDatumTransform(lat2,lon2,OPT,'datum_trans_from_WGS84',EPSG);
+        if vectorCorrection
+            [lat2v,lon2v,OPT] = ConvertCoordinatesDatumTransform(lat1v,lon1v,OPT,'datum_trans_to_WGS84'  ,EPSG);
+            [lat2v,lon2v,OPT] = ConvertCoordinatesDatumTransform(lat2v,lon2v,OPT,'datum_trans_from_WGS84',EPSG);
+        end
+    end
+else
+    [lat2,lon2,OPT] = ConvertCoordinatesDatumTransform(lat1,lon1,OPT,'datum_trans'          ,EPSG);
+    if vectorCorrection
+        [lat2v,lon2v,OPT] = ConvertCoordinatesDatumTransform(lat1v,lon1v,OPT,'datum_trans'          ,EPSG);
+    end
+end
 
 %% Transform geographic 2D radians to output coordinates
 
-   switch OPT.CS2.type
-       case 'projected' % convert projection to geographic radians
-           [y2,x2] = ConvertCoordinatesProjectionConvert(lon2,lat2,OPT.CS2,OPT.proj_conv2,'geo2xy',EPSG);
-           x2 = convertUnits(x2,'metre',OPT.CS2.UoM.name,EPSG);
-           y2 = convertUnits(y2,'metre',OPT.CS2.UoM.name,EPSG);
-           if vectorCorrection
-               [y2v,x2v] = ConvertCoordinatesProjectionConvert(lon2v,lat2v,OPT.CS2,OPT.proj_conv2,'geo2xy',EPSG);
-               x2v = convertUnits(x2v,'metre',OPT.CS2.UoM.name,EPSG);
-               y2v = convertUnits(y2v,'metre',OPT.CS2.UoM.name,EPSG);
-           end
-       case 'geographic 2D'
-           x2 = convertUnits(lon2,'radian',OPT.CS2.UoM.name,EPSG);
-           y2 = convertUnits(lat2,'radian',OPT.CS2.UoM.name,EPSG);
-           if vectorCorrection
-               x2v = convertUnits(lon2v,'radian',OPT.CS2.UoM.name,EPSG);
-               y2v = convertUnits(lat2v,'radian',OPT.CS2.UoM.name,EPSG);
-           end
-   end
+switch OPT.CS2.type
+    case 'projected' % convert projection to geographic radians
+        [y2,x2] = ConvertCoordinatesProjectionConvert(lon2,lat2,OPT.CS2,OPT.proj_conv2,'geo2xy',EPSG);
+        x2 = convertUnits(x2,'metre',OPT.CS2.UoM.name,EPSG);
+        y2 = convertUnits(y2,'metre',OPT.CS2.UoM.name,EPSG);
+        if vectorCorrection
+            [y2v,x2v] = ConvertCoordinatesProjectionConvert(lon2v,lat2v,OPT.CS2,OPT.proj_conv2,'geo2xy',EPSG);
+            x2v = convertUnits(x2v,'metre',OPT.CS2.UoM.name,EPSG);
+            y2v = convertUnits(y2v,'metre',OPT.CS2.UoM.name,EPSG);
+        end
+    case 'geographic 2D'
+        x2 = convertUnits(lon2,'radian',OPT.CS2.UoM.name,EPSG);
+        y2 = convertUnits(lat2,'radian',OPT.CS2.UoM.name,EPSG);
+        if vectorCorrection
+            x2v = convertUnits(lon2v,'radian',OPT.CS2.UoM.name,EPSG);
+            y2v = convertUnits(lat2v,'radian',OPT.CS2.UoM.name,EPSG);
+        end
+end
 
 %% force NaN to correct artefacts by e.g.
 %  [lon,lat]=convertCoordinates(nan,nan,'CS1.code',28992,'CS2.code',4326)
 
-   mask = isnan(x1) | isnan(y1);
-   x2(mask) = NaN;
-   y2(mask) = NaN;
+mask = isnan(x1) | isnan(y1);
+x2(mask) = NaN;
+y2(mask) = NaN;
 
 %% Vector correction
 
-   if vectorCorrection
-       % Compute components of difference vector of CS1 and CS2 
-       dx=x2v-x2;
-       dy=y2v-y2;
-       switch OPT.CS2.type
-           case 'geographic 2D'
-               % Correct for the fact that 1 degree longitude is shorter than
-               % one degree latitude
-               dx=dx.*cos(pi.*y2/180);
-           otherwise
-       end
-       % Angle is difference between x direction in CS1 and CS2
-       angle=atan2(dy,dx);
-       % Rotate vector field
-       u2=u1.*cos(angle)-v1.*sin(angle);
-       v2=u1.*sin(angle)+v1.*cos(angle);
-       % Set output arguments
-       varargout{1}=u2;
-       varargout{2}=v2;
-       varargout{3}=OPT;
-       varargout{4}=angle;
-   else
-       varargout{1}=OPT;
-   end
-   
-   end
+if vectorCorrection
+    % Compute components of difference vector of CS1 and CS2
+    dx=x2v-x2;
+    dy=y2v-y2;
+    switch OPT.CS2.type
+        case 'geographic 2D'
+            % Correct for the fact that 1 degree longitude is shorter than
+            % one degree latitude
+            dx=dx.*cos(pi.*y2/180);
+        otherwise
+    end
+    % Angle is difference between x direction in CS1 and CS2
+    angle=atan2(dy,dx);
+    % Rotate vector field
+    u2=u1.*cos(angle)-v1.*sin(angle);
+    v2=u1.*sin(angle)+v1.*cos(angle);
+    % Set output arguments
+    varargout{1}=u2;
+    varargout{2}=v2;
+    varargout{3}=OPT;
+    varargout{4}=angle;
+else
+    varargout{1}=OPT;
+end
 
-%% EOF
+function EPSG=addUserDefinedData(EPSG)
+if exist('EPSG_ud.mat','file')
+    sud=load('EPSG_ud.mat');
+    fnames1=fieldnames(EPSG);
+    for i=1:length(fnames1)
+        fnames2=fieldnames(EPSG.(fnames1{i}));
+        for j=1:length(fnames2)
+            if ~isempty(sud.(fnames1{i}).(fnames2{j}))
+                nori=length(EPSG.(fnames1{i}).(fnames2{j}));
+                nnew=length(sud.(fnames1{i}).(fnames2{j}));
+                for k=1:nnew
+                    if iscell(EPSG.(fnames1{i}).(fnames2{j}))
+                        EPSG.(fnames1{i}).(fnames2{j}){nori+k}=sud.(fnames1{i}).(fnames2{j}){k};
+                    else
+                        EPSG.(fnames1{i}).(fnames2{j})(nori+k)=sud.(fnames1{i}).(fnames2{j})(k);
+                    end
+                end
+            end
+        end
+    end
+end
