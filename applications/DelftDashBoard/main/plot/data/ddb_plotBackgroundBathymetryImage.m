@@ -93,6 +93,9 @@ else
     
     if handles.screenParameters.automaticColorLimits
         zmin=abs(min(min(zz)));
+        if zmin<0.01
+            zmin=max(max(zz));
+        end
         mxz=zmin;
         mnz=-zmin;
     else
