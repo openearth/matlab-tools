@@ -165,16 +165,14 @@ if odd(length(varargin))
     if strcmpi(varargin{1},'persistent')
         persistent EPSG
         if isempty(EPSG)
-            EPSG=load('EPSG');
-            EPSG=addUserDefinedData(EPSG);
+            EPSG=readEPSGData;
         end
     elseif isstruct(varargin{1})
         EPSG = varargin{1};
     end
     varargin(1) = [];
 else
-    EPSG=load('EPSG');    
-    EPSG=addUserDefinedData(EPSG);
+    EPSG=readEPSGData;
 end
 
 %% convert input to doubles
@@ -304,26 +302,4 @@ if vectorCorrection
     varargout{4}=angle;
 else
     varargout{1}=OPT;
-end
-
-function EPSG=addUserDefinedData(EPSG)
-if exist('EPSG_ud.mat','file')
-    sud=load('EPSG_ud.mat');
-    fnames1=fieldnames(EPSG);
-    for i=1:length(fnames1)
-        fnames2=fieldnames(EPSG.(fnames1{i}));
-        for j=1:length(fnames2)
-            if ~isempty(sud.(fnames1{i}).(fnames2{j}))
-                nori=length(EPSG.(fnames1{i}).(fnames2{j}));
-                nnew=length(sud.(fnames1{i}).(fnames2{j}));
-                for k=1:nnew
-                    if iscell(EPSG.(fnames1{i}).(fnames2{j}))
-                        EPSG.(fnames1{i}).(fnames2{j}){nori+k}=sud.(fnames1{i}).(fnames2{j}){k};
-                    else
-                        EPSG.(fnames1{i}).(fnames2{j})(nori+k)=sud.(fnames1{i}).(fnames2{j})(k);
-                    end
-                end
-            end
-        end
-    end
 end
