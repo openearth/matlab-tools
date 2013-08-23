@@ -151,6 +151,8 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin);
 %       series length.
 %
 % Example: irregular interval from DART buoy off the coast of Seattle from NOAA OPeNDAP server
+%      Since R2012a Matlab works with OPeNDAP urls, otherwise download netCDF file locally.
+%
 %      url   = 'http://dods.ndbc.noaa.gov/thredds/dodsC/data/dart/46419/46419t2012.nc'
 %      D.h   = ncread(url,'height',[1 1 1],[1 1 1e4]) % total water column height, so huge A0
 %      D.day = double(ncread(url,'time',1,1e4))/3600/24; % sec since 1970
