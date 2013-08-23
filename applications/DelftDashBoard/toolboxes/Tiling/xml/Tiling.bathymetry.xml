@@ -147,8 +147,10 @@
     <type>string</type>
     <tooltipstring>Select units of vertical data</tooltipstring>
     <listtext>metres</listtext>
+    <listtext>centimetres</listtext>
     <listtext>feet</listtext>
     <listvalue>m</listvalue>
+    <listvalue>cm</listvalue>
     <listvalue>ft</listvalue>
   </element>
   <element>
