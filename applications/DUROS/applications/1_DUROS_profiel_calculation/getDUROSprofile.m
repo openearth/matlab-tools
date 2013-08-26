@@ -31,7 +31,6 @@ function [result zparabmin] = getDUROSprofile(xInitial, zInitial, x0, Hsig_t, Tp
 
 getdefaults(...
     'w', [DuneErosionSettings('get', 'FallVelocity') {225e-6}], 1,...
-    'SeawardBoundaryofInterest', xInitial(end), 0,...
     'ChannelCalc', false, 0);
 
 if iscell(w)
@@ -64,7 +63,8 @@ if isempty(xInitial);
     x2 = x0 + (0:Ngrid-1)'*XgridSize;
 
 else
-
+    getdefaults('SeawardBoundaryofInterest', xInitial(end), 0);
+    
     % make sure that x-values are unique and ascending
     x2 = sort(unique(xInitial));
     id = (x2>=x0 & x2<=xmax); % identifiers parabolic part erosion profile
@@ -98,7 +98,7 @@ x2 = sort(unique(x2));
 zparabmin = min(z2);
 
 if ~isempty(zInitial)
-    [xparabcr yparabcr xInitial,zInitial,x2,z2] = findCrossings(xInitial,zInitial,x2,z2,'keeporiginalgrid');
+    [xparabcr, yparabcr, xInitial,zInitial,x2,z2] = findCrossings(xInitial,zInitial,x2,z2,'keeporiginalgrid');
     %
     %% Create face
     %
@@ -159,8 +159,8 @@ if ~isempty(zInitial)
     
     %% Construct full profile
     [x2, z2] = deal([xfaceintersect; x2; xtoeintersect],[zfaceintersect; z2; ztoeintersect]);
-    [x2 uniid] = unique(x2,'rows');
-    [x2 sortid] = sort(x2);
+    [x2, uniid] = unique(x2,'rows');
+    [x2, sortid] = sort(x2);
     z2=z2(uniid);
     z2=z2(sortid);
     
