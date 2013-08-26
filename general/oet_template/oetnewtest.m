@@ -102,7 +102,7 @@ if nargin > 1 && any(strcmp(fieldnames(OPT), varargin{1}))
     i0 = 1;
 elseif nargin > 0
     if strcmp(varargin{1},'currentfile')
-        [dum FunctionName] = fileparts(editorCurrentFile);
+        [dum, FunctionName] = fileparts(editorCurrentFile);
     else
         FunctionName = varargin{1};
     end
@@ -165,6 +165,14 @@ if ~isempty(which(cat(2,FunctionName,'.m')))
         otherwise
             return;
     end
+else
+    baseFunction = strrep(FunctionName,'_test','');
+    OPT.H1Line              = ['Defines tests for: ' baseFunction];
+    OPT.Description         = 'More detailed description of the test goes here.';
+    OPT.SeeAlso             = baseFunction;
+    OPT.Category            = 'MTestCategory.WorkInProgress';
+    
+    OPT.Code                = '';
 end
 
 %% read contents of template file
@@ -175,7 +183,7 @@ fclose(fid);
 %% replace keywords in template string
 
 % First the helpblock part
-[fpath fname] = fileparts(fullfile(cd, FunctionName));
+[fpath, fname] = fileparts(fullfile(cd, FunctionName));
 str = strrep(str, '$filename', fname);
 str = strrep(str, '$FILENAME', upper(fname));
 str = strrep(str, '$h1line', OPT.H1Line);

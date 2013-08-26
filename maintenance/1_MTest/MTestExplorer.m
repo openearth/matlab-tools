@@ -313,7 +313,7 @@ classdef MTestExplorer < handle
             this.JSearchField.setToolTipText([...
                 '<html>',...
                 'Enter&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= Search tests in the current session','<br>',...
-                'Ctrl + Enter = Search and add tests to the current session','<br>',...
+                'Shift + Enter = Search and add tests to the current session','<br>',...
                 '&nbsp;&nbsp;&nbsp;&nbsp;<small>(Use <b>"*"</b> as a wildcard and <b>","</b> to seperate search terms)</small>'...
                 ]);
 
@@ -400,7 +400,7 @@ classdef MTestExplorer < handle
             splitmain.add(this.JidePane,0);
 
             %% Add splitpanel to gui
-            [this.JSplitPanelMain this.HSplitPanel] = javacomponent(splitmain,getpixelposition(this.HMainFigure).*[0 0 1 1],this.HMainFigure);
+            [this.JSplitPanelMain, this.HSplitPanel] = javacomponent(splitmain,getpixelposition(this.HMainFigure).*[0 0 1 1],this.HMainFigure);
             set(this.HSplitPanel,'Units','normalized','Position',[0 0 1 1]);
             drawnow;
             this.JSplitPanel.setDividerLocation(0.5);
@@ -582,7 +582,7 @@ classdef MTestExplorer < handle
 
             %% Make root for treeview
             rootNode = MTestMutableTreeNode('RootNode');
-
+                        
             oldNodes = this.JTreeAllNodes;
             this.JTreeAllNodes = {};
             this.JTreeTestNodes = {};
@@ -696,7 +696,8 @@ classdef MTestExplorer < handle
                 end
 
                 %% Add node to tree structure
-                this.JTreeModel.insertNodeInto(newNode,baseNode,position);
+                baseNode.insert(newNode,position);
+                % this.JTreeModel.insertNodeInto(newNode,baseNode,position);
                 this.JTreeTestNodes(end+1) = newNode;
             end
 
@@ -882,7 +883,7 @@ classdef MTestExplorer < handle
             if isempty(searchString)
                 return;
             end
-            searchAndAdd = strcmp(get(eventData,'ControlDown'),'on');
+            searchAndAdd = strcmp(get(eventData,'ShiftDown'),'on');
 
             if searchAndAdd
                 set(this.JProgressBar,'Value',0);
