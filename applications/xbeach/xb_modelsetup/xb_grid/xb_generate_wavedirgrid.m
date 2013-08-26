@@ -109,8 +109,8 @@ if ismember(xs_get(xb, 'bcfile.type'), {'jonswap' 'jonswap_mtx'})
         p = cosd((phi-phi0t(i))/2).^m;
 
         % find range over which directional distribution is larger than OPT.varthr
-        indmin = min(find(p>=max(OPT.varthr)));
-        indmax = max(find(p>=max(OPT.varthr)));
+        indmin = find(p>=max(OPT.varthr), 1, 'first');
+        indmax = find(p>=max(OPT.varthr), 1, 'last' );
 
         theta_min = min(theta_min,phi(indmin));
         theta_max = max(theta_max,phi(indmax));
@@ -151,9 +151,6 @@ if ismember(xs_get(xb, 'bcfile.type'), {'jonswap' 'jonswap_mtx'})
     dtheta = ceil(0.5*dthetasum/(0.5*OPT.nbins)/5)*5;
     theta_min = phim-dtheta*0.5*OPT.nbins;
     theta_max = phim+dtheta*0.5*OPT.nbins;
-
-    % choose bin width based on directional spreading
-    thetagr = [theta_min:dtheta:theta_max];
 
     % get what we need as output
     xb = xs_set(xb,'thetamin',theta_min,'thetamax',theta_max','dtheta',dtheta,'thetanaut',1);

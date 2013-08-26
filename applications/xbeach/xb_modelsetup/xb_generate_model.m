@@ -25,6 +25,11 @@ function xb = xb_generate_model(varargin)
 %                           whould be written to disk (default: false)
 %               path:       destination directory of model setup, if
 %                           written to disk
+%               createwavegrid: bool used to determine whether this
+%                           function calls the xb_generate_wavegrid
+%                           function. In case of long crested waves one can
+%                           think of turning off automatic generation of
+%                           the wave grid.
 %
 %   Output:
 %   xb        = XBeach structure array
@@ -86,6 +91,7 @@ OPT = struct( ...
     'tide', {{}}, ...
     'wavegrid', {{}}, ...
     'settings', {{}}, ...
+    'createwavegrid',true,...
     'write', false, ...
     'path', '' ...
 );
@@ -129,7 +135,10 @@ bathy = xb_generate_bathy(OPT.bathy{:});
 
 %% create wavedir grid
 
-wavegrid = xb_generate_wavedirgrid(waves, OPT.wavegrid{:});
+wavegrid = xs_empty();
+if (OPT.createwavegrid)
+    wavegrid = xb_generate_wavedirgrid(waves, OPT.wavegrid{:});
+end
 
 %% create model
 
