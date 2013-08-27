@@ -1,4 +1,4 @@
-function varargout = nc_kickstart(varargin)
+function nc_kickstarter(varargin)
 %NETCDFKICKSTARTER  One line description goes here.
 %
 %   More detailed description goes here.
@@ -61,27 +61,59 @@ function varargout = nc_kickstart(varargin)
 %% read settings
 
 OPT = struct( ...
-    'host','http://127.0.0.1:65433', ...
-    'template','');
+    'host','http://dtvirt61.deltares.nl/netcdfkickstarter/', ...
+    'template','', ...
+    'format','netcdf', ...
+    'filename','kickstarter');
     
 OPT = setproperty(OPT, varargin);
 
+pref_group = 'netcdfKickstarter';
+
+% determine file extension
+switch lower(OPT.format)
+    case 'cdl'
+        ext = '.cdl';
+    case 'netcdf'
+        ext = '.nc';
+    case 'python'
+        ext = '.py';
+    case 'matlab'
+        ext = '.m';
+    case 'ncml'
+        ext = '.xml';
+    otherwise
+        error('Unsupported file format [%s]', OPT.format);
+end
+
+query_string = '';
+
 %% choose a template
+
+pref_key = 'templateid';
 
 if isempty(OPT.template)
     
-    templates = json.load(urlread(OPT.host));
+    url = fullfile(OPT.host,'json','templates');
+    data = urlread(url);
+    templates = json.load(data);
 
     for i = 1:length(templates)
         fprintf('[%2d] %s\n',i,templates{i});
     end
 
     fprintf('\n');
+    
+    if ispref(pref_group,pref_key)
+        v = getpref(pref_group,pref_key);
+    else
+        v = 1;
+    end
 
-    template_id = input('Choose template [1]:','s');
-
+    template_id = input(sprintf('Choose template [%d]: ',v) ,'s');
+    
     if isempty(template_id)
-        template_id = 1;
+        template_id = v;
     elseif regexp(template_id,'^\d+$')
         template_id = str2num(template_id);
         if template_id <= 0 || template_id > length(templates)
@@ -93,9 +125,9 @@ if isempty(OPT.template)
 
     OPT.template = templates{template_id};
     
+    setpref(pref_group,pref_key,template_id);
+    
 end
-
-query_string = sprintf('t=%s', urlencode(OPT.template));
 
 %% define variables
 
@@ -117,12 +149,18 @@ while ~isempty(var)
     fprintf('----------------------------------------\n');
     fprintf('\n');
     
-    m = json.load(urlread(fullfile(OPT.host,'templates',[OPT.template '?category=var'])));
+    m = json.load(urlread(fullfile(OPT.host,'json','templates',[OPT.template '?category=var'])));
+    [m.value] = deal('');
     
     for j = 1:length(m)
-        v = input(sprintf('%s:\n',m(j).description),'s');
+        if m(j).fcn
+            m(j).value = nc_kickstarter_customfcn(OPT.host, var, m(j), m);
+            fprintf('%s:\n%s\n',m(j).description,m(j).value);
+        else
+            m(j).value = input(sprintf('%s:\n',m(j).description),'s');
+        end
         
-        query_string = sprintf('%s&m[%s.%s]=%s',query_string,m(j).category,m(j).key,urlencode(v));
+        query_string = sprintf('%s&m[%s.%s]=%s',query_string,m(j).category,m(j).key,urlencode(m(j).value));
         
         fprintf('\n');
     end
@@ -130,13 +168,15 @@ while ~isempty(var)
     n = n + 1;
 end
 
+%% load data
+
+
+
 %% load categories
 
-categories = setdiff(json.load(urlread(fullfile(OPT.host,'categories'))),{'var'});
+categories = setdiff(json.load(urlread(fullfile(OPT.host,'json','categories'))),{'var','dat'});
 
 %% show other markers
-
-pref_group = 'netcdfKickstarter';
 
 for i = 1:length(categories)
     
@@ -145,7 +185,9 @@ for i = 1:length(categories)
     fprintf('----------------------------------------\n');
     fprintf('\n');
     
-    m = json.load(urlread(fullfile(OPT.host,'templates',[OPT.template '?category=' categories{i}])));
+    url = fullfile(OPT.host,'json','templates',[OPT.template '?category=' categories{i}]);
+    data = urlread(url);
+    m = json.load(data);
     
     for j = 1:length(m)        
         if m(j).save
@@ -163,7 +205,7 @@ for i = 1:length(categories)
                 v = v_new;
             end
             
-            setpref('netcdfKickstarter',pref_key,v);
+            setpref(pref_group,pref_key,v);
         else
             v = input(sprintf('%s:\n',m(j).description),'s');
         end
@@ -178,14 +220,14 @@ end
 %% download netcdf
 
 [fname, fpath] = uiputfile( ...
-    {'*.nc';'*.*'}, ...
-    'Save netCDF file', ...
-    regexprep(OPT.template,'\.cdl$','.nc'));
+    {['*' ext];'*.*'}, ...
+    'Save file', ...
+    regexprep(OPT.template,'\.cdl$',ext));
 
 if fname > 0
     fprintf('Downloading file... ');
     
-    urlwrite(fullfile(OPT.host,['netcdf?' query_string]),fullfile(fpath,fname));
+    urlwrite(fullfile(OPT.host,OPT.format,[OPT.template '?filename=' OPT.filename query_string]),fullfile(fpath,fname));
     
     fprintf('done\n');
     fprintf('Saved file to %s\n', fullfile(fpath,fname));
