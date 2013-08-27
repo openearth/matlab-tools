@@ -1,4 +1,4 @@
-function m = nc_kickstarter_data(host, template, vars)
+function [m, dims, vars] = nc_kickstarter_data(host, template, epsg, var)
 %NC_KICKSTARTER_DATA  One line description goes here.
 %
 %   More detailed description goes here.
@@ -66,14 +66,31 @@ m1 = json.load(data);
 [m1.value] = deal(nan);
 
 dims = struct();
+vars = struct();
 
 for i = 1:length(m1)
-    dims.(m1(i).key) = input(sprintf('Provide data for dimension "%s": ',m1(i).key));
-    m1(i).value = num2str(length(dims.(m1(i).key)));
+    q = sprintf('Provide data for dimension "%s": ',m1(i).key);
+    dims.(m1(i).key) = evalin('base',input(q,'s'));
+    
+    q = sprintf('Should dimension "%s" be unlimited in length? [n]: ',m1(i).key);
+    if ismember(lower(input(q,'s')),{'y','yes'})
+        m1(i).value = 'UNLIMITED';
+    else
+        m1(i).value = num2str(length(dims.(m1(i).key)));
+    end
+    
+    dims.(m1(i).key) = dims.(m1(i).key)(:); % flatten
 end
 
-for i = 1:length(vars)
-    vars{i} = input(sprintf('Provide data for variable "%s": ',vars{i}));
+if isfield(dims,'x') && isfield(dims,'y')
+    [X,Y] = meshgrid(dims.x,dims.y);
+    [dims.lon, dims.lat]=convertCoordinates(X,Y,'CS1.code',epsg,'CS2.code',4326);
+end
+
+for i = 1:length(var)
+    key = regexprep(var{i},'\W+','_'); % FIXME
+    q = sprintf('Provide data for variable "%s": ',var{i});
+    vars.(key) = evalin('base',input(q,'s'));
 end
 
 %% compute bounds
@@ -101,19 +118,28 @@ for i = 1:length(m2)
             if isfield(dims,'y')
                 m2(i).value = max(dims.y);
             end
-        case 'lat_valid_min'
-        case 'lat_valid_max'
-        case 'lon_valid_min'
-        case 'lon_valid_max'
+        case {'lat_min' 'lat_valid_min'}
+            if isfield(dims,'lat')
+                m2(i).value = min(dims.lat(:));
+            end
+        case {'lat_max' 'lat_valid_max'}
+            if isfield(dims,'lat')
+                m2(i).value = max(dims.lat(:));
+            end
+        case {'lon_min' 'lon_valid_min'}
+            if isfield(dims,'lon')
+                m2(i).value = min(dims.lon(:));
+            end
+        case {'lon_max' 'lon_valid_max'}
+            if isfield(dims,'lon')
+                m2(i).value = max(dims.lon(:));
+            end
         case 'time_min'
         case 'time_max'
         case 'time_resolution'
-        case 'lat_min'
-        case 'lat_max'
         case 'lat_resolution'
-        case 'lon_max'
-        case 'lon_min'
         case 'lon_resolution'
+            
     end
     if isnan(m2(i).value)
         m2(i).value = m2(i).default;

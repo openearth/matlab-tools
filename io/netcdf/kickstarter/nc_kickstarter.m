@@ -1,4 +1,4 @@
-function nc_kickstarter(varargin)
+function fname = nc_kickstarter(varargin)
 %NETCDFKICKSTARTER  One line description goes here.
 %
 %   More detailed description goes here.
@@ -63,7 +63,7 @@ function nc_kickstarter(varargin)
 OPT = struct( ...
     'host','http://dtvirt61.deltares.nl/netcdfkickstarter/', ...
     'template','', ...
-    'epsg','', ...
+    'epsg',0, ...
     'format','netcdf', ...
     'filename','kickstarter', ...
     'data',false);
@@ -92,90 +92,28 @@ query_string = '';
 
 %% coordinate system
 
-pref_key = 'epsgid';
-
-if isempty(OPT.epsg)
+if isempty(OPT.epsg) || OPT.epsg <= 0
 
     warning('off','json:fieldNameConflict');
     url = fullfile(OPT.host,'json','coordinatesystems');
-    data = urlread(url);
-    crs = json.load(data);
-
-    for i = 1:length(crs)
-        c = crs{i};
-        fprintf('[%2d] %s\n',i,c.x_name);
-    end
-
-    fprintf('\n');
-    
-    if ispref(pref_group,pref_key)
-        v = getpref(pref_group,pref_key);
-    else
-        v = 1;
-    end
-
-    epsg_id = input(sprintf('Choose coordinate system [%d]: ',v) ,'s');
-    
-    if isempty(epsg_id)
-        epsg_id = v;
-    elseif regexp(epsg_id,'^\d+$')
-        epsg_id = str2num(epsg_id);
-        if epsg_id <= 0 || epsg_id > length(epsg_id)
-            error('Invalid coordinate system number [%d]',epsg_id);
-        end
-    else
-        error('Invalid coordinate system sepcification [%s]',epsg_id);
-    end
-
-    c = crs{epsg_id};
-    OPT.epsg = c.epsg_code;
-    
-    setpref(pref_group,pref_key,epsg_id);
-    
-    fprintf('\n');
+    crs = nc_kickstarter_optionlist(url, ...
+        'format','{x_name}', ...
+        'pref_key','epsg', ...
+        'prompt','Choose coordinate system number');
+    OPT.epsg = str2double(regexprep(crs.epsg_code,'\D+',''));
 
 end
 
-%% choose a template
+query_string = sprintf('%s&epsg=%s',query_string,urlencode(sprintf('EPSG:%d',OPT.epsg)));
 
-pref_key = 'templateid';
+%% choose a template
 
 if isempty(OPT.template)
     
     url = fullfile(OPT.host,'json','templates');
-    data = urlread(url);
-    templates = json.load(data);
-
-    for i = 1:length(templates)
-        fprintf('[%2d] %s\n',i,templates{i});
-    end
-
-    fprintf('\n');
-    
-    if ispref(pref_group,pref_key)
-        v = getpref(pref_group,pref_key);
-    else
-        v = 1;
-    end
-
-    template_id = input(sprintf('Choose template [%d]: ',v) ,'s');
-    
-    if isempty(template_id)
-        template_id = v;
-    elseif regexp(template_id,'^\d+$')
-        template_id = str2num(template_id);
-        if template_id <= 0 || template_id > length(templates)
-            error('Invalid template number [%d]',template_id);
-        end
-    else
-        error('Invalid template sepcification [%s]',template_id);
-    end
-
-    OPT.template = templates{template_id};
-    
-    setpref(pref_group,pref_key,template_id);
-    
-    fprintf('\n');
+	OPT.template = nc_kickstarter_optionlist(url, ...
+        'pref_key','template', ...
+        'prompt','Choose template number');
     
 end
 
@@ -186,7 +124,7 @@ vars = {};
 
 n = 1;
 while ~isempty(var)
-    var = input(sprintf('Name of variable #%d (press enter to skip):\n',n),'s');
+    var = input(sprintf('Name of variable #%d (press ENTER to skip):\n',n),'s');
     
     if isempty(var)
         break;
@@ -225,7 +163,7 @@ end
 
 if OPT.data
     
-    m = nc_kickstarter_data(OPT.host, OPT.template, vars);
+    [m, dims, vars] = nc_kickstarter_data(OPT.host, OPT.template, OPT.epsg, vars);
 
     for i = 1:length(m)
         query_string = sprintf('%s&m[%s.%s]=%s',query_string,m(i).category,m(i).key,urlencode(m(i).value));
@@ -288,19 +226,35 @@ end
     regexprep(OPT.template,'\.cdl$',ext));
 
 if fname > 0
-    url = fullfile(OPT.host,OPT.format,[OPT.template '?filename=' OPT.filename query_string]);
+    tmpl_query = [OPT.template '?filename=' OPT.filename query_string];
+    url = fullfile(OPT.host,OPT.format,tmpl_query);
     
-    fprintf('%s\n\n', url);
     fprintf('Downloading file... ');
     
-    urlwrite(url,fullfile(fpath,fname));
+    ncfile = fullfile(fpath,fname);
+    urlwrite(url,ncfile);
     
     fprintf('done\n');
-    fprintf('Saved file to %s\n', fullfile(fpath,fname));
+    fprintf('Saved file to %s\n', ncfile);
     fprintf('\n');
-    fprintf('To add data to the newly created netCDF file, use the following commands:\n');
-    fprintf('>> ncfile = ''%s''\n', fullfile(fpath,fname));
-    fprintf('>> nc_varput(ncfile,''x'',x);\n');
-    fprintf('>> nc_varput(ncfile,''y'',y);\n');
-    fprintf('>> nc_varput(ncfile,''z'',z);\n');
+    
+    fprintf('Related files:\n');
+    fprintf('    * <a href="%s">CDL template</a>\n', fullfile(OPT.host,'cdl',tmpl_query));
+    fprintf('    * <a href="%s">netCDF file</a>\n', fullfile(OPT.host,'netcdf',tmpl_query));
+    fprintf('    * <a href="%s">Python script</a>\n', fullfile(OPT.host,'python',tmpl_query));
+    fprintf('    * <a href="%s">Matlab script</a>\n', fullfile(OPT.host,'matlab',tmpl_query));
+    fprintf('    * <a href="%s">ncML file</a>\n', fullfile(OPT.host,'ncml',tmpl_query));
+    fprintf('\n');
+    
+    if OPT.data && strcmpi(OPT.format,'netcdf') && ismember(lower(input('Add data? [y]: ','s')),{'','y','yes'})
+        nc_kickstarter_adddata(ncfile, dims, vars);
+    else
+        fprintf('To add data to the newly created netCDF file, use the following commands:\n');
+        fprintf('>> ncfile = ''%s''\n', fullfile(fpath,fname));
+        fprintf('>> nc_varput(ncfile,''x'',x);\n');
+        fprintf('>> nc_varput(ncfile,''y'',y);\n');
+        fprintf('>> nc_varput(ncfile,''z'',z);\n');
+    end
 end
+
+fname = fullfile(fpath,fname);

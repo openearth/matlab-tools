@@ -73,38 +73,28 @@ switch m.category
             case 'long_name'
                 v = var;
             case 'standard_name'
-                names = json.load(urlread(fullfile(host,'json',['standardnames?search=' var])));
-                if isempty(names)
-                    names = json.load(urlread(fullfile(host,'json','standardnames')));
-                end
+                url = fullfile(host,'json',['standardnames?search=' var]);
                 
-                for i = 1:length(names)
-                    fprintf('[%2d] %s [%s]\n',i,names(i).standard_name, names(i).units);
-                end
-                
-                fprintf('\n');
-                
-                while true
-                    name_id = input(sprintf('Choose standard name: ') ,'s');
+                name = nc_kickstarter_optionlist(url, ...
+                    'format','{standard_name} [{units}]', ...
+                    'default',[], ...
+                    'prompt','Choose standard name (press ENTER to see all options)');
 
-                    if ~isempty(name_id)
-                        if regexp(name_id,'^\d+$')
-                            name_id = str2num(name_id);
-                            if name_id > 0 && name_id <= length(names)
-                                break;
-                            end
-                        end
-                    end
+                if isempty(name)
+                    url = fullfile(host,'json','standardnames');
+                    
+                    name = nc_kickstarter_optionlist(url, ...
+                        'format','{standard_name} [{units}]', ...
+                        'prompt','Choose standard name');
                 end
                 
-                v = names(name_id).standard_name;
-
-                fprintf('\n');
+                v = name.standard_name;
+                
             case 'units'
                 m_stdname = get_m(m_all,'var','standard_name');
-                names = json.load(urlread(fullfile(host,'json',['standardnames?search=' m_stdname.value])));
+                names = json.load(urlread(fullfile(host,'json',['standardnames?name=' m_stdname.value])));
                 
-                v = names(1).units;
+                v = names{1}.units;
         end
 end
 
