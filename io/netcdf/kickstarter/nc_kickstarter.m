@@ -63,8 +63,10 @@ function nc_kickstarter(varargin)
 OPT = struct( ...
     'host','http://dtvirt61.deltares.nl/netcdfkickstarter/', ...
     'template','', ...
+    'epsg','', ...
     'format','netcdf', ...
-    'filename','kickstarter');
+    'filename','kickstarter', ...
+    'data',false);
     
 OPT = setproperty(OPT, varargin);
 
@@ -87,6 +89,52 @@ switch lower(OPT.format)
 end
 
 query_string = '';
+
+%% coordinate system
+
+pref_key = 'epsgid';
+
+if isempty(OPT.epsg)
+
+    warning('off','json:fieldNameConflict');
+    url = fullfile(OPT.host,'json','coordinatesystems');
+    data = urlread(url);
+    crs = json.load(data);
+
+    for i = 1:length(crs)
+        c = crs{i};
+        fprintf('[%2d] %s\n',i,c.x_name);
+    end
+
+    fprintf('\n');
+    
+    if ispref(pref_group,pref_key)
+        v = getpref(pref_group,pref_key);
+    else
+        v = 1;
+    end
+
+    epsg_id = input(sprintf('Choose coordinate system [%d]: ',v) ,'s');
+    
+    if isempty(epsg_id)
+        epsg_id = v;
+    elseif regexp(epsg_id,'^\d+$')
+        epsg_id = str2num(epsg_id);
+        if epsg_id <= 0 || epsg_id > length(epsg_id)
+            error('Invalid coordinate system number [%d]',epsg_id);
+        end
+    else
+        error('Invalid coordinate system sepcification [%s]',epsg_id);
+    end
+
+    c = crs{epsg_id};
+    OPT.epsg = c.epsg_code;
+    
+    setpref(pref_group,pref_key,epsg_id);
+    
+    fprintf('\n');
+
+end
 
 %% choose a template
 
@@ -127,13 +175,14 @@ if isempty(OPT.template)
     
     setpref(pref_group,pref_key,template_id);
     
+    fprintf('\n');
+    
 end
 
 %% define variables
 
-fprintf('\n');
-
 var = nan;
+vars = {};
 
 n = 1;
 while ~isempty(var)
@@ -149,7 +198,9 @@ while ~isempty(var)
     fprintf('----------------------------------------\n');
     fprintf('\n');
     
-    m = json.load(urlread(fullfile(OPT.host,'json','templates',[OPT.template '?category=var'])));
+    url = fullfile(OPT.host,'json','templates',[OPT.template '?category=var']);
+    data = urlread(url);
+    m = json.load(data);
     [m.value] = deal('');
     
     for j = 1:length(m)
@@ -166,15 +217,27 @@ while ~isempty(var)
     end
     
     n = n + 1;
+    
+    vars = [vars {var}];
 end
 
 %% load data
 
+if OPT.data
+    
+    m = nc_kickstarter_data(OPT.host, OPT.template, vars);
 
+    for i = 1:length(m)
+        query_string = sprintf('%s&m[%s.%s]=%s',query_string,m(i).category,m(i).key,urlencode(m(i).value));
+    end
 
-%% load categories
+    fprintf('\n');
 
-categories = setdiff(json.load(urlread(fullfile(OPT.host,'json','categories'))),{'var','dat'});
+    categories = setdiff(json.load(urlread(fullfile(OPT.host,'json','categories'))),{'var','dat','dim'});
+    
+else
+    categories = setdiff(json.load(urlread(fullfile(OPT.host,'json','categories'))),{'var'});
+end
 
 %% show other markers
 
@@ -225,9 +288,12 @@ end
     regexprep(OPT.template,'\.cdl$',ext));
 
 if fname > 0
+    url = fullfile(OPT.host,OPT.format,[OPT.template '?filename=' OPT.filename query_string]);
+    
+    fprintf('%s\n\n', url);
     fprintf('Downloading file... ');
     
-    urlwrite(fullfile(OPT.host,OPT.format,[OPT.template '?filename=' OPT.filename query_string]),fullfile(fpath,fname));
+    urlwrite(url,fullfile(fpath,fname));
     
     fprintf('done\n');
     fprintf('Saved file to %s\n', fullfile(fpath,fname));
