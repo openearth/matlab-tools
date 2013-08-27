@@ -79,6 +79,7 @@ function netcdf_settings(varargin)
       addpathfast([ncroot,filesep,'snctools'    ]);
       addpathfast([ncroot,filesep,'nctools'     ]);
       addpathfast([ncroot,filesep,'mexnc'       ]); % snctools needs some mexnc stuff
+      addpathfast([ncroot,filesep,'kickstarter' ]);
       
 %% Use recent java API for OPeNDAP functionality
 %  (NB RESTOREDEFAULTPATH does not restore such a java path)
