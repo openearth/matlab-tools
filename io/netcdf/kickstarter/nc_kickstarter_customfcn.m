@@ -1,24 +1,26 @@
 function v = nc_kickstarter_customfcn(host, var, m, m_all)
-%NC_KICKSTARTER_CUSTOMFCN  One line description goes here.
+%NC_KICKSTARTER_CUSTOMFCN  Runs custom functions for specific netCDF attributes
 %
-%   More detailed description goes here.
+%   The netCDF kickstarter webservice supports netCDF attributes that are
+%   filled by functions rather than user input. These attributes are
+%   handled in this function based on the combination of category and key.
 %
 %   Syntax:
 %   v = nc_kickstarter_customfcn(host, var, m, m_all)
 %
-%   Input: For <keyword,value> pairs call nc_kickstarter_customfcn() without arguments.
-%   host  =
-%   var   =
-%   m     =
-%   m_all =
+%   Input: 
+%   host      = Host of netCDF kickstarter webservice
+%   var       = Name of netCDF variable being processed
+%   m         = JSON structure result for netCDF attribute being processed
+%   m_all     = JSON structure array result for all netCDF attributes
 %
 %   Output:
-%   v     =
+%   v         = Value for attribute being processed
 %
 %   Example
-%   nc_kickstarter_customfcn
+%   v = nc_kickstarter_customfcn(host,'depth',struct('category',...,'key',...),struct(...))
 %
-%   See also
+%   See also nc_kickstarter
 
 %% Copyright notice
 %   --------------------------------------------------------------------

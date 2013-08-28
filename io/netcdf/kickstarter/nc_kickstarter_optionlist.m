@@ -1,21 +1,47 @@
 function choice = nc_kickstarter_optionlist(url, varargin)
-%NC_KICKSTARTER_OPTIONLIST  One line description goes here.
+%NC_KICKSTARTER_OPTIONLIST  Shows a command line option list
 %
-%   More detailed description goes here.
+%   Shows a command line option list based on a JSON source. It supports
+%   formatting of options and saving of the last preference.
 %
 %   Syntax:
-%   varargout = nc_kickstarter_optionlist(varargin)
+%   choice = nc_kickstarter_optionlist(url, varargin)
 %
-%   Input: For <keyword,value> pairs call nc_kickstarter_optionlist() without arguments.
-%   varargin  =
+%   Input: 
+%   varargin  = format:     For structured JSON sources (with fields), this
+%                           option determines how each option is displayed.
+%                           It is a format string where structure fields
+%                           appear in between accolades (default:
+%                           '{name}'). For plain lists, the options are
+%                           displayed as is.
+%               pref_group: Preference group to store the last chosen
+%                           option in for future use (default:
+%                           netcdfKickstarter)
+%               pref_key:   Preference key to store the last chosen option
+%                           in for future use. No key means no saving.
+%                           (default: empty)
+%               default:    Default value if no option is given (default:
+%                           1)
+%               prompt:     Prompt after showing the list of options
+%                           (default: 'Choose option')
 %
 %   Output:
-%   varargout =
+%   choice    = The full item selected. In case of a plain list, this is
+%               the selected item from the list. In case of a structured
+%               list, this is the selected structure.
 %
-%   Example
-%   nc_kickstarter_optionlist
+%   Examples:
+%   % show option list from JSON source
+%   choice = nc_kickstarter_optionlist(url)
+%   % show option list and save last chosen item to be default upon the
+%   % next use
+%   choice = nc_kickstarter_optionlist(url,'pref_group','group','pref_key','option')
+%   % show option list with different prompt
+%   choice = nc_kickstarter_optionlist(url,'prompt','Please select a template')
+%   % show option list with different formatting
+%   choice = nc_kickstarter_optionlist(url,'format','{standard_name} [{units}]')
 %
-%   See also
+%   See also nc_kickstarter
 
 %% Copyright notice
 %   --------------------------------------------------------------------

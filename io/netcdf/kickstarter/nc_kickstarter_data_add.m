@@ -1,21 +1,26 @@
-function nc_kickstarter_adddata(ncfile, dims, vars)
-%NC_KICKSTARTER_ADDDATA  One line description goes here.
+function nc_kickstarter_data_add(ncfile, dims, vars)
+%NC_KICKSTARTER_ADDDATA  Adds data previously read to design netCDF file into a netCDF file
 %
-%   More detailed description goes here.
+%   Adds data previously read by the nc_kickstarter_data_read function into
+%   the netCDF file that is generated with the help of that read function.
+%   It also determines whether dimension bounds variables are available and
+%   fill them.
 %
 %   Syntax:
-%   varargout = nc_kickstarter_adddata(varargin)
+%   nc_kickstarter_adddata(ncfile, dims, vars)
 %
-%   Input: For <keyword,value> pairs call nc_kickstarter_adddata() without arguments.
-%   varargin  =
+%   Input:
+%   ncfile    = Path to netCDF file where data should be added
+%   dims      = Structure with dimension data (e.g. struct('x',x,'y',y))
+%   vars      = Structure with variable data (e.g. struct('depth',d))
 %
 %   Output:
-%   varargout =
+%   none
 %
 %   Example
-%   nc_kickstarter_adddata
+%   nc_kickstarter_adddata(ncfile, dims, vars)
 %
-%   See also
+%   See also nc_kickstarter_data_read, nc_kickstarter
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -61,18 +66,22 @@ function nc_kickstarter_adddata(ncfile, dims, vars)
 %% add dims and vars
 
 if exist(ncfile, 'file')
+    
+    % add dims
     f = fieldnames(dims);
     for i = 1:length(f)
         if nc_isvar(ncfile,f{i})
             nc_varput(ncfile,f{i},dims.(f{i}));
         end
         
+        % add bounds
         bnd = [f{i} '_bounds'];
         if nc_isvar(ncfile,bnd) && numel(dims.(f{i})) > 1
             nc_varput(ncfile,bnd,nc_cf_cor2bounds(dims.(f{i})));
         end
     end
     
+    % add vars
     f = fieldnames(vars);
     for i = 1:length(f)
         if nc_isvar(ncfile,f{i})

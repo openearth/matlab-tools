@@ -1,21 +1,39 @@
-function [m, dims, vars] = nc_kickstarter_data(host, template, epsg, var)
-%NC_KICKSTARTER_DATA  One line description goes here.
+function [m, dims, vars] = nc_kickstarter_data_read(host, template, epsg, var)
+%NC_KICKSTARTER_DATA  Extract coverage and bounds data from netCDF template and data
 %
-%   More detailed description goes here.
+%   Extracts coverage and bounds data to be used as netCDF attributes from
+%   a JSON webservice describing a CDL template and given data. The data is
+%   requested by user input and exracted from the base workspace. If
+%   possible, coordinates are converted to lat/lon for the use by the
+%   nc_kickstarter_data_add function.
+%
+%   This function relies on the netCDFKickstarter webservice.
 %
 %   Syntax:
-%   varargout = nc_kickstarter_data(varargin)
+%   [m, dims, vars] = nc_kickstarter_data(host, template, epsg, var)
 %
-%   Input: For <keyword,value> pairs call nc_kickstarter_data() without arguments.
-%   varargin  =
+%   Input: 
+%   host      = Host of JSON webservice
+%   template  = CDL template to use
+%   epsg      = EPSG code for the original coordinate system
+%   var       = Cell array containing variable names to be analyzed
+%   
 %
 %   Output:
-%   varargout =
+%   m         = JSON result obtained from netCDFKickstarter webservice with
+%               netCDF attributes related to the data and an added field
+%               "value" containing the value for that attribute
+%   dims      = Structure with dimensions of netCDF data (fields) and
+%               corresponding data given by user. To be used by the
+%               nc_kickstarter_data_add function.
+%   vars      = Structure with variables in netCDF file (fields) and
+%               corresponding data given by user. To be used by the
+%               nc_kickstarter_data_add function.
 %
 %   Example
-%   nc_kickstarter_data
+%   [m, dims, vars] = nc_kickstarter_data_read(host, 'grid.cdl', 28992, {'depth'})
 %
-%   See also
+%   See also nc_kickstarter, nc_kickstarter_data_add
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -60,6 +78,7 @@ function [m, dims, vars] = nc_kickstarter_data(host, template, epsg, var)
 
 %% user input
 
+% retrieve netcdf dimensions
 url = fullfile(host,'json','templates',[template '?category=dim']);
 data = urlread(url);
 m1 = json.load(data);
@@ -68,10 +87,14 @@ m1 = json.load(data);
 dims = struct();
 vars = struct();
 
+% loop over dimensions
 for i = 1:length(m1)
+    
+    % user input for dimension data
     q = sprintf('Provide data for dimension "%s": ',m1(i).key);
     dims.(m1(i).key) = evalin('base',input(q,'s'));
     
+    % user input for dimension to be unlimited
     q = sprintf('Should dimension "%s" be unlimited in length? [n]: ',m1(i).key);
     if ismember(lower(input(q,'s')),{'y','yes'})
         m1(i).value = 'UNLIMITED';
@@ -79,14 +102,18 @@ for i = 1:length(m1)
         m1(i).value = num2str(length(dims.(m1(i).key)));
     end
     
+    % add user input to dims structure
     dims.(m1(i).key) = dims.(m1(i).key)(:); % flatten
 end
 
+% convert original coordinate system to lat/lon and add additional
+% dimensions
 if isfield(dims,'x') && isfield(dims,'y')
     [X,Y] = meshgrid(dims.x,dims.y);
     [dims.lon, dims.lat]=convertCoordinates(X,Y,'CS1.code',epsg,'CS2.code',4326);
 end
 
+% loop over variables and ask for user input
 for i = 1:length(var)
     key = regexprep(var{i},'\W+','_'); % FIXME
     q = sprintf('Provide data for variable "%s": ',var{i});
@@ -95,6 +122,7 @@ end
 
 %% compute bounds
 
+% retrieve data attributes
 url = fullfile(host,'json','templates',[template '?category=dat']);
 data = urlread(url);
 m2 = json.load(data);
