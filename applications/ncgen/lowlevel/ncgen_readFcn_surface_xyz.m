@@ -108,6 +108,9 @@ while ~feof(fid)
                     % set the name for the nc file
                     data.time             = fns.date_from_filename;
                     data.source_file_hash = fns.hash;
+                    data.filename         = fns.name;
+                    data.source           = double(~isnan(data.z));
+                    
                     writeFcn(OPT,data);
                 end
             end
