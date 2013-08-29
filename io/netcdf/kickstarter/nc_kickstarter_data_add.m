@@ -77,7 +77,8 @@ if exist(ncfile, 'file')
         % add bounds
         bnd = [f{i} '_bounds'];
         if nc_isvar(ncfile,bnd) && numel(dims.(f{i})) > 1
-            nc_varput(ncfile,bnd,nc_cf_cor2bounds(dims.(f{i})));
+            dims.(bnd) = nc_cf_cor2bounds(dims.(f{i}));
+            nc_varput(ncfile,bnd,dims.(bnd));
         end
     end
     
