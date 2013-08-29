@@ -1,11 +1,11 @@
-function paramsnew = get_param(fhandle,params,P,xP,param_idx)
+function paramsnew = get_distparam(fhandle,params,P,xP,param_idx)
 %GET_PARAM  Finds unknown input parameter for statistical distribution
 %
 %   Finds unknown input parameter for statistical distribution based on 
 %   a known probabilty of non-exceedance and its known associated x-value.
 %
 %   Syntax:
-%   paramsnew = get_param(fhandle,params,P,xP,param_idx)
+%   paramsnew = get_distparam(fhandle,params,P,xP,param_idx)
 %
 %   Input: 
 %   fhandle   -- inverse cumulative distribution function handle
@@ -29,7 +29,7 @@ function paramsnew = get_param(fhandle,params,P,xP,param_idx)
 %   xP = 3.4;
 %   param_idx = 1;
 %
-%   paramsnew = get_param(fhandle,params,P,xP,param_idx);
+%   paramsnew = get_distparam(fhandle,params,P,xP,param_idx);
 %
 %   mu = paramsnew{param_idx}
 %
@@ -44,7 +44,7 @@ function paramsnew = get_param(fhandle,params,P,xP,param_idx)
 %   xP = 3.4;
 %   param_idx = 2;
 %
-%   paramsnew = get_param(fhandle,params,P,xP,param_idx);
+%   paramsnew = get_distparam(fhandle,params,P,xP,param_idx);
 %
 %   sigma = paramsnew{param_idx}
 %
