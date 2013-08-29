@@ -129,7 +129,7 @@ query_string = '';
 if isempty(OPT.epsg) || OPT.epsg <= 0
 
     warning('off','json:fieldNameConflict');
-    url = [OPT.host '/json/coordinatesystems'];
+    url = [OPT.host 'json/coordinatesystems'];
     crs = nc_kickstarter_optionlist(url, ...
         'format','{x_name}', ...
         'pref_key','epsg', ...
@@ -147,7 +147,7 @@ query_string = sprintf('%s&epsg=%s',query_string,urlencode(sprintf('EPSG:%d',OPT
 
 if isempty(OPT.template)
     
-    url = [OPT.host '/json/templates'];
+    url = [OPT.host 'json/templates'];
 	OPT.template = nc_kickstarter_optionlist(url, ...
         'pref_key','template', ...
         'prompt','Choose template number');
@@ -178,7 +178,7 @@ while ~isempty(var)
     fprintf('\n');
     
     % retrieve all properties to be specified for a variable
-    url = [OPT.host '/json/templates' [OPT.template '?category=var']];
+    url = [OPT.host 'json/templates/' [OPT.template '?category=var']];
     data = urlread(url);
     m = json.load(data);
     [m.value] = deal('');
