@@ -128,8 +128,14 @@ fprintf(fid2,'%s\n'  ,'ThindykeFile         =                     # *._tdk.pli, 
 fprintf(fid2,'%s\n'  ,'ProflocFile          =                     # *_proflocation.xyz)    x,y,z, z = profile refnumber');
 fprintf(fid2,'%s\n'  ,'ProfdefFile          =                     # *_profdefinition.def) definition for all profile nrs');
 fprintf(fid2,'%s\n'  ,'ManholeFile          =                     # *...');
-fprintf(fid2,'%s\n'  ,'WaterLevIni          = 0                   # Initial water level');
-fprintf(fid2,'%s\n'  ,'BotLevUni            = -5.                 # Uniform bottom level, (only if Botlevtype>=3, used at missing z values in netfile');
+if isfield(mdfkeywds,'zeta0' ) == 0; 
+    mdfkeywds.zeta0  =  0.0;
+end
+if isfield(mdfkeywds,'depuni') == 0; 
+    mdfkeywds.depuni = -5.0;
+end
+fprintf(fid2,'%s\n'  ,['WaterLevIni          = ',num2str(mdfkeywds.zeta0,'%5.7f')                 ,'                   # Initial water level']);
+fprintf(fid2,'%s\n'  ,['BotLevUni            = ',num2str(mdfkeywds.depuni,'%5.7f')                ,'                 # Uniform bottom level, (only if Botlevtype>=3, used at missing z values in netfile']);
 fprintf(fid2,'%s\n'  ,'BotLevType           = 3                   # 1 : Bottom levels at waterlevel cells (=flow nodes), like tiles xz, yz, bl , bob = max(bl left, bl right)');
 fprintf(fid2,'%s\n'  ,'                                           # 2 : Bottom levels at velocity points  (=flow links),            xu, yu, blu, bob = blu,    bl = lowest connected link');
 fprintf(fid2,'%s\n'  ,'                                           # 3 : Bottom levels at velocity points  (=flow links), using mean network levels xk, yk, zk  bl = lowest connected link');
