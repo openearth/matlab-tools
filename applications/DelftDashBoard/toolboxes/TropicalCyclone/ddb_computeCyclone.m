@@ -191,7 +191,17 @@ for iq=1:nq
     
     fclose(fid);
     
-    system(['"' handles.Toolbox(tb).dataDir 'wes.exe" ' name iqstr '.inp']);
+    if (exist(fullfile(handles.Toolbox(tb).dataDir,'wes.exe'),'file'))
+        system(['"' handles.Toolbox(tb).dataDir 'wes.exe" ' name iqstr '.inp']);
+    else
+        fname = which('wes.exe');
+        if (exist(fname,'file'))
+            system([fname ' ' name iqstr '.inp']);
+        else
+            GiveWarning('text','ERROR: The wes.exe program could not be found; cyclone winds cannot be created.');
+            return;
+        end
+    end
     
     if inp.deleteTemporaryFiles
         delete(['trackfile' iqstr '.trk']);
