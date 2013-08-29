@@ -75,7 +75,7 @@ switch m.category
             case 'long_name'
                 v = var;
             case 'standard_name'
-                url = fullfile(host,'json',['standardnames?search=' var]);
+                url = [host '/json/' ['standardnames?search=' var]];
                 
                 name = nc_kickstarter_optionlist(url, ...
                     'format','{standard_name} [{units}]', ...
@@ -83,7 +83,7 @@ switch m.category
                     'prompt','Choose standard name (press ENTER to see all options)');
 
                 if isempty(name)
-                    url = fullfile(host,'json','standardnames');
+                    url = [host '/json/standardnames'];
                     
                     name = nc_kickstarter_optionlist(url, ...
                         'format','{standard_name} [{units}]', ...
@@ -94,7 +94,7 @@ switch m.category
                 
             case 'units'
                 m_stdname = get_m(m_all,'var','standard_name');
-                names = json.load(urlread(fullfile(host,'json',['standardnames?name=' m_stdname.value])));
+                names = json.load(urlread([host '/json/' ['standardnames?name=' m_stdname.value]]));
                 
                 v = names{1}.units;
         end

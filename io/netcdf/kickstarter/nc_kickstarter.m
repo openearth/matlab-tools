@@ -129,7 +129,7 @@ query_string = '';
 if isempty(OPT.epsg) || OPT.epsg <= 0
 
     warning('off','json:fieldNameConflict');
-    url = fullfile(OPT.host,'json','coordinatesystems');
+    url = [OPT.host '/json/coordinatesystems'];
     crs = nc_kickstarter_optionlist(url, ...
         'format','{x_name}', ...
         'pref_key','epsg', ...
@@ -147,7 +147,7 @@ query_string = sprintf('%s&epsg=%s',query_string,urlencode(sprintf('EPSG:%d',OPT
 
 if isempty(OPT.template)
     
-    url = fullfile(OPT.host,'json','templates');
+    url = [OPT.host '/json/templates'];
 	OPT.template = nc_kickstarter_optionlist(url, ...
         'pref_key','template', ...
         'prompt','Choose template number');
@@ -178,7 +178,7 @@ while ~isempty(var)
     fprintf('\n');
     
     % retrieve all properties to be specified for a variable
-    url = fullfile(OPT.host,'json','templates',[OPT.template '?category=var']);
+    url = [OPT.host '/json/templates' [OPT.template '?category=var']];
     data = urlread(url);
     m = json.load(data);
     [m.value] = deal('');
@@ -225,10 +225,10 @@ if OPT.data
 
     % load other categories of properties, not related to variables,
     % dimensions or data (already processed)
-    categories = setdiff(json.load(urlread(fullfile(OPT.host,'json','categories'))),{'var','dat','dim'});
+    categories = setdiff(json.load(urlread([OPT.host '/json/categories'])),{'var','dat','dim'});
 else
     % load categories not related to variables (already processed)
-    categories = setdiff(json.load(urlread(fullfile(OPT.host,'json','categories'))),{'var'});
+    categories = setdiff(json.load(urlread([OPT.host '/json/categories'])),{'var'});
 end
 
 %% show other markers
@@ -243,7 +243,7 @@ for i = 1:length(categories)
     fprintf('\n');
     
     % retrieve all properties to be specified in the current category
-    url = fullfile(OPT.host,'json','templates',[OPT.template '?category=' categories{i}]);
+    url = [OPT.host '/json/templates' [OPT.template '?category=' categories{i}]];
     data = urlread(url);
     m = json.load(data);
     
@@ -297,7 +297,7 @@ if fname > 0
     
     % built full query for netCDF kickstarter webservice
     tmpl_query = [OPT.template '?filename=' OPT.filename query_string];
-    url = fullfile(OPT.host,OPT.format,tmpl_query);
+    url = [OPT.host '/' OPT.format '/' tmpl_query];
     
     % download result file
     fprintf('Downloading file... ');
@@ -311,11 +311,11 @@ if fname > 0
     
     % show links to related files (other formats)
     fprintf('Related files:\n');
-    fprintf('    * <a href="%s">CDL template</a>\n', fullfile(OPT.host,'cdl',tmpl_query));
-    fprintf('    * <a href="%s">netCDF file</a>\n', fullfile(OPT.host,'netcdf',tmpl_query));
-    fprintf('    * <a href="%s">Python script</a>\n', fullfile(OPT.host,'python',tmpl_query));
-    fprintf('    * <a href="%s">Matlab script</a>\n', fullfile(OPT.host,'matlab',tmpl_query));
-    fprintf('    * <a href="%s">ncML file</a>\n', fullfile(OPT.host,'ncml',tmpl_query));
+    fprintf('    * <a href="%s">CDL template</a>\n', [OPT.host '/cdl/' tmpl_query]);
+    fprintf('    * <a href="%s">netCDF file</a>\n', [OPT.host '/netcdf/' tmpl_query]);
+    fprintf('    * <a href="%s">Python script</a>\n', [OPT.host '/python/' tmpl_query]);
+    fprintf('    * <a href="%s">Matlab script</a>\n', [OPT.host '/matlab/' tmpl_query]);
+    fprintf('    * <a href="%s">ncML file</a>\n', [OPT.host '/ncml/' tmpl_query]);
     fprintf('\n');
     
     % if data mode is enabled and a netcdf format is chosen, ask if data

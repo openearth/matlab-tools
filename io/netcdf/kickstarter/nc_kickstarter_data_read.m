@@ -79,7 +79,7 @@ function [m, dims, vars] = nc_kickstarter_data_read(host, template, epsg, var)
 %% user input
 
 % retrieve netcdf dimensions
-url = fullfile(host,'json','templates',[template '?category=dim']);
+url = [host '/json/templates/' [template '?category=dim']];
 data = urlread(url);
 m1 = json.load(data);
 [m1.value] = deal(nan);
@@ -123,7 +123,7 @@ end
 %% compute bounds
 
 % retrieve data attributes
-url = fullfile(host,'json','templates',[template '?category=dat']);
+url = [host '/json/templates/' [template '?category=dat']];
 data = urlread(url);
 m2 = json.load(data);
 [m2.value] = deal(nan);
