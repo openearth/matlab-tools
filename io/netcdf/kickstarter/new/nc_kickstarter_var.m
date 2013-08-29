@@ -59,3 +59,7 @@ function varargout = nc_kickstarter_var(varargin)
 % $Keywords: $
 
 %% add variable data, including standard_names etc.
+
+% support reusing, addition and removal of existing vars
+
+% support overwriting and appending data
