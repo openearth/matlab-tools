@@ -243,7 +243,7 @@ for i = 1:length(categories)
     fprintf('\n');
     
     % retrieve all properties to be specified in the current category
-    url = [OPT.host '/json/templates' [OPT.template '?category=' categories{i}]];
+    url = [OPT.host '/json/templates/' [OPT.template '?category=' categories{i}]];
     data = urlread(url);
     m = json.load(data);
     
