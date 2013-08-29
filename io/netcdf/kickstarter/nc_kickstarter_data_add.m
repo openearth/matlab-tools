@@ -88,6 +88,19 @@ if exist(ncfile, 'file')
             nc_varput(ncfile,f{i},vars.(f{i}));
         end
     end
+    
+    % check for missing vars
+    info = nc_info(ncfile);
+    idx = ~ismember({info.Dataset.Name},[fieldnames(dims);fieldnames(vars)]) & ...
+                   ~cellfun(@isempty,{info.Dataset.Dimension});
+    if any(idx)
+        fprintf('\nMissing variables detected!\nSome variables slipped through the automated guidance of creating this netCDF file.\nPlease add the contents yourself using the following commands:\n');
+        missing_vars = {info.Dataset(idx).Name};
+        for i = 1:length(missing_vars)
+            fprintf('    >> nc_varput(ncfile, ''%s'', %s);\n',missing_vars{i},missing_vars{i});
+        end
+    end
+
 else
     error('File does not exist [%s]',ncfile);
 end

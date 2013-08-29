@@ -191,11 +191,11 @@ while ~isempty(var)
             
             % run automated custom function for property and display result
             m(j).value = nc_kickstarter_customfcn(OPT.host, var, m(j), m);
-            fprintf('%s:\n%s\n',m(j).description,m(j).value);
+            fprintf('[%s] %s:\n%s\n',upper(m(j).key),m(j).description,m(j).value);
             
         else
             % ask for user input
-            m(j).value = input(sprintf('%s:\n',m(j).description),'s');
+            m(j).value = input(sprintf('[%s] %s:\n',upper(m(j).key),m(j).description),'s');
         end
         
         % append to query string
@@ -263,7 +263,7 @@ for i = 1:length(categories)
             end
             
             % ask for user input
-            v_new = input(sprintf('%s [%s]:\n',m(j).description,v),'s');
+            v_new = input(sprintf('[%s] %s [%s]:\n',upper(m(j).key),m(j).description,v),'s');
             
             % use last stored value in case no input is given
             if ~isempty(v_new)
@@ -274,7 +274,7 @@ for i = 1:length(categories)
             setpref(pref_group,pref_key,v);
         else
             % ask for user input
-            v = input(sprintf('%s:\n',m(j).description),'s');
+            v = input(sprintf('[%s] %s:\n',upper(m(j).key),m(j).description),'s');
         end
         
         % append to query string
