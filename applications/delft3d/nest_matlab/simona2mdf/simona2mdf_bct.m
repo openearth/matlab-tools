@@ -15,8 +15,8 @@ nesthd_dir = getenv('nesthd_path');
 % get information out of struc
 %
 
-siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'FORCINGS'});
-if ~isempty (siminp_struc.ParsedTree.FLOW.FORCINGS.TIMESERIES)
+siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'FORCINGS' 'TIMESERIES'});
+if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.FLOW.FORCINGS.TIMESERIES')
     series       = siminp_struc.ParsedTree.FLOW.FORCINGS.TIMESERIES;
 
     %

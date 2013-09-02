@@ -30,9 +30,13 @@ if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.MESH.BOUNDARIES.OPENINGS')
     opendef  = siminp_struc.ParsedTree.MESH.BOUNDARIES.OPENINGS;
 end
 
-siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'FORCINGS'});
+siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'FORCINGS' 'BOUNDARIES'});
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.FLOW.FORCINGS.BOUNDARIES')
     bnddef   = siminp_struc.ParsedTree.FLOW.FORCINGS.BOUNDARIES;
+end
+
+siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'FORCINGS' 'HARMONIC'});
+if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.FLOW.FORCINGS.HARMONIC')
     harmonic = siminp_struc.ParsedTree.FLOW.FORCINGS.HARMONIC;
 end
 

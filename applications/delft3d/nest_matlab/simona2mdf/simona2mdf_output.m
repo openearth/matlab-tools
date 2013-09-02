@@ -20,7 +20,9 @@ if ~isempty(output.MAPS)
 end
 % Histories
 if ~isempty(output.HISTORIES)
+    mdf.flhis(1) = mdf.tstart;
     mdf.flhis(2) = output.HISTORIES.TIHISTORIES;
+    mdf.flhis(3) = mdf.tstop;
 end
 % Restart
 if ~isempty(output.RESTART)

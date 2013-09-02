@@ -51,7 +51,11 @@ index = unique(index);
 for istat = 1: length(index)
     sta.m(istat)     = points.P(index(istat)).M;
     sta.n(istat)     = points.P(index(istat)).N;
-    sta.namst{istat} = points.P(index(istat)).NAME;
+    if ~isempty (points.P(index(istat)).NAME)
+        sta.namst{istat} = points.P(index(istat)).NAME;
+    else
+        sta.namst{istat} = ' ';
+    end
 end
 
 %

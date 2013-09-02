@@ -13,7 +13,7 @@ v0   (1:mmax,1:nmax) = 0.;
 %
 
 nesthd_dir = getenv('nesthd_path');
-siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'FORCINGS'});
+siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'FORCINGS' 'INITIAL'});
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.FLOW.FORCINGS.INITIAL')
     initial      = siminp_struc.ParsedTree.FLOW.FORCINGS.INITIAL;
 else
