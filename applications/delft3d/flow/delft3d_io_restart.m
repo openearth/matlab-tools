@@ -498,7 +498,7 @@ function iostat=Local_write(fname,DAT,varargin),
   %% Open
 
       switch lower(OS);
-      case {'pc','pcwin','dos','windows','l','linux','ieee-le'},
+      case {'pc','pcwin','pcwin64','dos','windows','l','linux','ieee-le'},
         fid=fopen(fname,'w','l');
       case {'hp','sg','sgi','sgi64','unix','b','sol','sol2','ieee-be'},
         fid=fopen(fname,'w','b');
