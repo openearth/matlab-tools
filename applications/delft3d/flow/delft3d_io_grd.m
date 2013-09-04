@@ -116,6 +116,12 @@ end
          G.(field2copy) = TMP.(field2copy);
          end
       end
+	  
+	  %Use ENCLOSURE to find enclosure instead of wlgrid
+	  [fpath frunid fext]=fileparts(fname); 
+	  if exist(fullfile(fpath,[frunid,'.enc']),'file'); 
+		G.Enclosure=enclosure('read',fullfile(fpath,[frunid,'.enc'])); 
+	  end
       
       TMP.X(TMP.X==TMP.MissingValue) = G.nodatavalue;
       TMP.Y(TMP.Y==TMP.MissingValue) = G.nodatavalue;
@@ -163,7 +169,13 @@ end
       G.cend.x       = center2corner(G.cor.x);
       G.cend.y       = center2corner(G.cor.y);
       
-      [G.cor.encx,G.cor.ency] = enclosure('coordinates',G.cor.x,G.cor.y);
+      %[G.cor.encx,G.cor.ency] = enclosure('coordinates',G.cor.x,G.cor.y
+	  
+	  %Use ENCLOSURE to find enclosure instead of wlgrid
+	  [fpath frunid fext]=fileparts(fname); 
+	  if exist(fullfile(fpath,[frunid,'.enc']),'file'); 
+		G.Enclosure=enclosure('read',fullfile(fpath,[frunid,'.enc'])); 
+	  end
 
       G.cend.comment = {'center points WITH dummy rows/columns (1:nmax  ) x (1:mmax  )',...
                         'values filled with mirroring',...
