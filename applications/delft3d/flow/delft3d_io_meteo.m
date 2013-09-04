@@ -3,14 +3,21 @@ function varargout = delft3d_io_meteo(cmd,varargin)
 %
 % D = DELFT3D_IO_METEO('read',fname) reads Delftd3D flow meteo file into struct D.
 %
-% D = DELFT3D_IO_METEO('read',fname,<keyword,value>)  
+% D = DELFT3D_IO_METEO('read',fname,<keyword,value>) 
 %
-% Where the following keyword,value have been implemented
+% D = DELFT3D_IO_METEO('write',fname,D.data,<keyword,value>)
+%
+% Where the following keyword,value have been implemented for the read mode
 % * latlon    : call grid variables (lat,lon) instead of (x,y)
 %               in case of spherical grid (default 0)
 % * timestep  : [1xn double] timestep(s) to be read. Default is timestep 1. 
 % * timeperiod: [1x2 datenum] data will be read when time falls between these limits. 
 %               Overrules timestep. 
+% Where the following keyword,value have been implemented for the write mode
+% * reftime  : reference time (as datenum) used for the record TIME (default: the same as in 
+%              D.data.time). 
+% * timezone : timezone in which the times are given (default: time zone in D.data.time)
+% * fmt	     : precision used to write data  (default: '%.2f'). See also fprintf.
 %
 % See also: DELFT3D_IO_BND, DELFT3D_IO_BCA, DELFT3D_IO_BCH,  
 %           DELFT3D_IO_CRS, DELFT3D_IO_DEP, DELFT3D_IO_DRY,, DELFT3D_IO_EVA 
@@ -380,6 +387,10 @@ end % function varargout=Local_read(fname,varargin),
 function iostat=Local_write(fname,DAT,varargin),
 
    iostat       = 0;
+   OPT.reftime  = []; 
+   OPT.timezone = [];
+   OPT.fmt='%.2f';
+   OPT=setproperty(OPT,varargin); 
 
 
    %% Keywords
@@ -431,20 +442,52 @@ function iostat=Local_write(fname,DAT,varargin),
    end % length(tmp)==0
    
    if writefile
-
-     local_meteo_curv_write(fname,DAT); 
+   
+     switch length(DAT.datenum)
+       case 0
+        error('Input does not contain data.'); 
+       case 1
+        DAT.time={DAT.time}; 
+     end
+   
+     %find reference time and timezone
+     if isempty(OPT.reftime) 
+     	entry=regexp(DAT.time{1},'since\s*(\d+)-(\d+)-(\d+)\s*(\d+):(\d+):(\d+)','tokens');
+     	if length(entry)~=1 | length(entry{1})~=6
+     	   error('Cannot read reference time from block 1.'); 
+     	end
+     	entry=entry{1}; 
+     	entry=str2double(entry); 
+     	OPT.reftime=datenum([entry]); 
+     end
+     
+     if isempty(OPT.timezone)
+     	entry=regexp(DAT.time{1},'(\d+):(\d+)','tokens'); 
+     	if length(entry)~=2 | length(entry{2})~=2
+     	   error('Cannot read time zone from block 1.'); 
+     	end
+     	entry=entry{2}; entry=str2double(entry); 
+     	OPT.timezone=entry(1)+entry(2)/60; 
+     end
+     
+     %write data
+     local_meteo_curv_write(fname,DAT,OPT.reftime,OPT.timezone); 
       
    end % writefile
    
 end % function iostat=Local_write(fname,DAT,varargin),
 
-function local_meteo_curv_write(fname,DAT)
+function local_meteo_curv_write(fname,DAT,reftime,timezone)
 
 %open stream
 fid=fopen(fname,'w+'); 
 
 [dummy fname_grid fext_grid]=fileparts(DAT.keywords.grid_file); 
 fname_grid=[fname_grid,fext_grid]; 
+
+if length(DAT.datenum)==1
+	DAT.time={DAT.time}; 
+end
 
 %write header
 fprintf(fid,'%s\n','### START OF HEADER'); 
@@ -455,23 +498,26 @@ fprintf(fid,'grid_file        = %s\n',fname_grid);
 fprintf(fid,'first_data_value = %s\n',DAT.keywords.first_data_value); 
 fprintf(fid,'data_row         = %s\n',DAT.keywords.data_row); 
 fprintf(fid,'n_quantity       = %d\n',DAT.keywords.n_quantity); 
-fprintf(fid,'quantity1        = %d\n',DAT.keywords.n_quantity); 
+fprintf(fid,'quantity1        = %s\n',DAT.keywords.quantity1); 
 fprintf(fid,'unit1            = %s\n',DAT.keywords.unit1); 
 fprintf(fid,'%s\n','### END OF HEADER'); 
 
 %write different time steps
 for k=1:length(DAT.datenum)
     display( sprintf('Writing field for time %s.',datestr(DAT.datenum(k),'dd-mm-yyyy HH:MM')) ); 
-	fprintf(fid,'TIME = %.6f %s\n',(DAT.datenum(k)-datenum('1970-01-01'))*24,'hours since 1970-01-01 00:00:00 +00:00'); 
+     
+        relativeTime=(DAT.datenum(k)-reftime)*24;
+        if sign(timezone)>=0
+          fprintf(fid,'TIME = %.6f hours since %s +%s\n',relativeTime,datestr(reftime,'yyyy-mm-dd HH:MM:SS'),datestr(mod(timezone/24,1),'HH:MM'));
+        else
+          fprintf(fid,'TIME = %.6f hours since %s -%s\n',relativeTime,datestr(reftime,'yyyy-mm-dd HH:MM:SS'),datestr(mod(-timezone/24,1),'HH:MM'));
+        end
 	rawblock=squeeze(DAT.cen.(DAT.keywords.quantity1)(:,:,k)); 
 	rawblock=fliplr(rawblock);
 	rawblock(isnan(rawblock))=DAT.keywords.NODATA_value; 
-	for l=1:size(rawblock,1)
-       fprintf(fid,'%f ',rawblock(:,l));
+	for l=1:size(rawblock,2)
+           fprintf(fid,[OPT.fmt,' '],rawblock(:,l));
 	   fprintf(fid,'\n'); 
-	end
-	if k~=length(DAT.datenum); 
-		fprintf(fid,'\n'); 
 	end
 end %end for k
 
