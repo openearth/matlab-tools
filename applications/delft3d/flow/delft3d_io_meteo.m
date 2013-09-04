@@ -471,13 +471,13 @@ function iostat=Local_write(fname,DAT,varargin),
      end
      
      %write data
-     local_meteo_curv_write(fname,DAT,OPT.reftime,OPT.timezone); 
+     local_meteo_curv_write(fname,DAT,OPT.reftime,OPT.timezone,OPT.fmt); 
       
    end % writefile
    
 end % function iostat=Local_write(fname,DAT,varargin),
 
-function local_meteo_curv_write(fname,DAT,reftime,timezone)
+function local_meteo_curv_write(fname,DAT,reftime,timezone,fmt)
 
 %open stream
 fid=fopen(fname,'w+'); 
@@ -516,7 +516,7 @@ for k=1:length(DAT.datenum)
 	rawblock=fliplr(rawblock);
 	rawblock(isnan(rawblock))=DAT.keywords.NODATA_value; 
 	for l=1:size(rawblock,2)
-           fprintf(fid,[OPT.fmt,' '],rawblock(:,l));
+           fprintf(fid,[fmt,' '],rawblock(:,l));
 	   fprintf(fid,'\n'); 
 	end
 end %end for k
