@@ -3,7 +3,7 @@ function nfsOut = delft3d_createTrim(trimIn,trimOut,time,varargin)
 %data in the input time file where it is possible to use different times as
 %different groupNames. 
 %
-%   This file copies the data in trimIn at time time to a new NEFIS file.
+%   This file copies the data in trimIn at time timeOut to a new NEFIS file.
 %   This new NEFIS file contains only data a one moment, namely the time
 %   given in time. By passing keywords in the form <groupName>,<timeGroup>
 %   it is possible to copy data in trimIn from other moments than time to
@@ -11,23 +11,23 @@ function nfsOut = delft3d_createTrim(trimIn,trimOut,time,varargin)
 %   files (see example). 
 %
 %   Syntax:
-%   delft3d_createTrim(trimIn,trimOut,time,<groupName>,<timeGroup>)
+%   delft3d_createTrim(trimIn,trimOut,timeOut,<groupName>,<timeGroup>)
 %
 %   Input:
-%   trimIn  = [string] filepath to input trim file
-%   trimOut = [string] filepath to the new trim file to be created. 
-%             If no path it present it is assumed trimOut is located in the
-%             same directory as trimIn. If trimOut is empty the file will
-%             be called <trimIn>-ini
-%   time    = [datenum] Time of the data in the output file
-%   <groupName> = [string] groupname to be copied. Groupnames are the same 
-%                 as groupnames for vs_let. Alternatively one can also
-%                 input {groupName,elementName1,elementName2,...}. In this
-%                 case only the elements with the name
-%                 elementName1,elementName2, etc. will be copied
-%   <groupTime> = [datenum] the time in trimIn for which the data in the
-%                 group <groupName> has to be copied to trimOut. If
-%                 <groupTime> is empty the last time step will be used.
+%   trimIn  	=	[string] filepath to input trim file
+%   trimOut 	=	[string] filepath to the new trim file to be created. 
+%             		If no path it present it is assumed trimOut is located in the
+%             		same directory as trimIn. If trimOut is empty the file will
+%             		be called <trimIn>-ini
+%   timeOut    	=	[datenum] Time of the entry in the output file
+%   <groupName> = 	[string] groupname to be copied. Groupnames are the same 
+%                 	as groupnames for vs_let. Alternatively one can also
+%                 	input {groupName,elementName1,elementName2,...}. In this
+%                 	case only the elements with the name
+%                 	elementName1,elementName2, etc. will be copied
+%   <groupTime> = 	[datenum] the time in trimIn for which the data in the
+%                 	group <groupName> has to be copied to trimOut. If
+%                 	<groupTime> is empty the last time step will be used.
 %
 %
 %   Example
@@ -37,10 +37,10 @@ function nfsOut = delft3d_createTrim(trimIn,trimOut,time,varargin)
 %   containing the hydrodynamic data of the first time step of trim-mysim
 %   and bottom composition of the last time step of trim-mysim.
 %   trim-mysim-ini can be used to restart the simulation at 2010-01-01
-%   delft3d_createIni('c:\mysim\trim-mysim.def',[],datenum('2010-01-01'),..
+%   delft3d_createTrim('c:\mysim\trim-mysim.def',[],datenum('2010-01-01'),..
 %   'map-sed-series',datenum('2010-01-31')); 
 %
-%   See also vs_copy, vs_ini
+%   See also vs_copy, vs_ini, vs_put
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -49,7 +49,7 @@ function nfsOut = delft3d_createTrim(trimIn,trimOut,time,varargin)
 %
 %       ivo.pasmans@arcadis.nl	
 %
-%       Zwolle
+%       Arcadis, Zwolle, The Netherlands
 %
 %   This library is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -142,8 +142,7 @@ if ~isempty(varargin)
         if isempty(varargin{k})
             varargin{k}=t(end);
         end %end if
-    end %end for k
-        
+    end %end for k        
     
     %Check length varargin
     if mod(length(varargin),2)~=0
