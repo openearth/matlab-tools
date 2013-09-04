@@ -67,7 +67,7 @@ end
 
 rest              = isounits;
 [units,rest]      = strtok(rest);
-[~,rest]          = strtok(rest);
+[dummy,rest]      = strtok(rest);
 [refdatenum,zone] = iso2datenum(rest);
 
 time              = (datenumber - refdatenum).*convert_units('day',units);
