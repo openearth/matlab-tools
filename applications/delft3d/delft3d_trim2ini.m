@@ -208,11 +208,9 @@ delft3d_io_ini('write',[fName,'.ini'],data);
 %% Write .sdb files
 
 
-
 if strcmpi(OPT.sedmode,'sdb') 
 
-
-    smsed=size(msed);
+    smsed=size(msed)
     msed=reshape(msed,1,max(mnkmax(2)-2,1),max(mnkmax(1)-2,1),[],smsed(end));
     smsed=size(msed);
     msed=max(msed,0); 
@@ -226,16 +224,33 @@ if strcmpi(OPT.sedmode,'sdb')
     
 elseif strcmpi(OPT.sedmode,'thk') || strcmpi(OPT.sedmode,'frc')
    
-    thk=max(thk,0);
-    msed=max(msed,0); 
+    smsed=size(msed);
+	msed=reshape(msed,1,max(mnkmax(2)-2,1),max(mnkmax(1)-2,1),[],smsed(end));
+	smsed=size(msed);
+    thk=reshape(thk,1,max(mnkmax(2)-2,1),max(mnkmax(1)-2,1),[]);
+    thk=max(thk,0); 
+	
    
     %Write .thk and .frc files
     for k=1:smsed(end-1)
+		%write .thk
         delft3d_io_dep('write',sprintf('%s_L%d.thk',fName,k),squeeze(thk(1,:,:,k)),'location','cen');
-        msedtot=sum(msed(1,:,:,k,:),5); 
-        for l=1:smsed(end)
-            delft3d_io_dep('write',sprintf('%s_L%dF%d.frc',fName,k,l),squeeze(msed(1,:,:,k,l))./squeeze(msedtot),'location','cen'); 
-        end %end for l        
+        
+		%write .frc
+		msedtot=sum(msed(1,:,:,k,:),5);
+		frctot=ones(max(mnkmax(2)-2,1),max(mnkmax(1)-2,1));
+		if smsed(end)>1
+			for l=1:smsed(end)-1
+				frc=round(squeeze(msed(1,:,:,k,l))./squeeze(msedtot)*1e3)*1e-3;
+				frc=min(frc,frctot); 
+				delft3d_io_dep('write',sprintf('%s_L%dF%d.frc',fName,k,l),frc,'location','cen'); 
+				frctot=frctot-frc; 
+			end %end for l
+		else
+			l=0;
+		end %end if     
+		delft3d_io_dep('write',sprintf('%s_L%dF%d.frc',fName,k,l+1),frctot,'location','cen'); 	
+		
     end %end for k
     
 elseif strcmpi(OPT.sedmode,'none')
