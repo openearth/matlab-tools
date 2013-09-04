@@ -93,7 +93,7 @@ getfilename(fname)
 D  = xs_empty();
 
 % save header
-D.header = contents(1:ihdr(1)-2);
+D = HEADER_read(contents(1:ihdr(1)-2), D);
 D = xs_meta(D, [mfilename '_'], 'D-Geo Stability', getfilename());
 
 substr = false(size(ihdr));
@@ -193,9 +193,9 @@ varargout = {D};
 % end
 
 function Tp = header2type(str)
-str = regexprep(str, '[\[\]]', '');
+str = regexprep(str, '[\[\]\.]', '');
 str = regexprep(str, '\(.*\)', '');
-Tp = strtrim(regexprep(str, '[- ]', '_'));
+Tp = strtrim(regexprep(strtrim(str), '[- ]', '_'));
 
 function Tp = funname2type()
 S = dbstack();
@@ -211,6 +211,41 @@ varargout = {fname};
 function fun = getfunname(varargin)
 S = dbstack();
 fun = S(2).name;
+
+function D = nameisvalue(str, varargin)
+OPT = struct(...
+    'skiplines', 0,...
+    'namecol', 1,...
+    'valcol', 2,...
+    'delimiter', '=',...
+    'format', '%g',...
+    'regexprep', {{}});
+
+OPT = setproperty(OPT, varargin);
+
+D = xs_empty();
+D = xs_meta(D, getfunname(), funname2type(), getfilename());
+
+cellstr = regexp(strtrim(str), '\n', 'split');
+cellstr = cellstr(1+OPT.skiplines:end);
+cellstr = regexp(cellstr, OPT.delimiter, 'split');
+
+for i = 1:length(cellstr)
+    if ~isempty(OPT.format)
+        val = sscanf(cellstr{i}{OPT.valcol}, OPT.format);
+    else
+        val = strtrim(cellstr{i}{OPT.valcol});
+    end
+    D = xs_set(D, header2type(cellstr{i}{OPT.namecol}), val);
+end
+
+function D = HEADER_read(str, D)
+cellstr = regexp(str, '=+', 'split');
+Ds = nameisvalue(cellstr{2},...
+    'delimiter', ' : ',...
+    'format', '');
+D = xs_set(D, funname2type(), Ds);
+D.header = cellstr{1};
 
 function D = VERSION_read(str)
 cellstr = regexp(strtrim(str), '\n+', 'split');
@@ -490,3 +525,135 @@ D = str;
 
 function D = SPENCER_SLIP_INTERVAL_read(str)
 D = sscanf(str, '%g');
+
+function D = LINE_LOADS_read(str)
+D = str;
+
+function D = UNIFORM_LOADS_read(str)
+D = str;
+
+function D = TREE_ON_SLOPE_read(str)
+D = xs_empty();
+D = xs_meta(D, getfunname(), funname2type(), getfilename());
+
+cellstr = regexp(strtrim(str), '\n', 'split');
+
+data = splitcellstr(cellstr, '=');
+val = cellfun(@str2double, data(:,1));
+name = cellfun(@header2type, data(:,2), 'UniformOutput', false);
+for i = 1:length(val)
+    D = xs_set(D, name{i}, val(i));
+end
+
+function D = EARTH_QUAKE_read(str)
+D = xs_empty();
+D = xs_meta(D, getfunname(), funname2type(), getfilename());
+
+cellstr = regexp(strtrim(str), '\n', 'split');
+
+data = splitcellstr(cellstr, '=');
+val = cellfun(@str2double, data(:,1));
+name = cellfun(@header2type, data(:,2), 'UniformOutput', false);
+for i = 1:length(val)
+    D = xs_set(D, name{i}, val(i));
+end
+
+function D = SIGMA_TAU_CURVES_read(str)
+D = str;
+
+function D = BOND_STRESS_DIAGRAMS_read(str)
+D = str;
+
+function D = MINIMAL_REQUIRED_CIRCLE_DEPTH_read(str)
+D = sscanf(str, '%g');
+
+function D = SLIP_CIRCLE_SELECTION_read(str)
+D = xs_empty();
+D = xs_meta(D, getfunname(), funname2type(), getfilename());
+
+cellstr = regexp(strtrim(str), '\n', 'split');
+
+data = splitcellstr(cellstr, '=');
+val = cellfun(@str2double, data(:,2));
+name = cellfun(@header2type, data(:,1), 'UniformOutput', false);
+for i = 1:length(val)
+    D = xs_set(D, name{i}, val(i));
+end
+
+function D = START_VALUE_SAFETY_FACTOR_read(str)
+D = sscanf(str, '%g');
+
+function D = REFERENCE_LEVEL_CU_FACTOR_read(str)
+D = sscanf(str, '%g');
+
+function D = LIFT_SLIP_DATA_read(str)
+D = xs_empty();
+D = xs_meta(D, getfunname(), funname2type(), getfilename());
+
+cellstr = regexp(strtrim(str), '\n', 'split');
+for i = 1:length(cellstr)-1
+    tmp = regexp(cellstr{i}, '(?<=\d)\s+(?=[\D- ]+$)', 'split');
+    values = sscanf(tmp{1}, '%g');
+    Tp = header2type(tmp{end});
+    D = xs_set(D, Tp, values);
+end
+
+tmp = regexpi(cellstr{end}, '[a-z ]+', 'match');
+Tp = header2type(tmp{end});
+D = xs_set(D, Tp, sscanf(cellstr{end}, '%g'));
+
+function D = EXTERNAL_WATER_LEVELS_read(str)
+D = str;
+TODO('ask Raymond')
+% D = xs_empty();
+% D = xs_meta(D, getfunname(), funname2type(), getfilename());
+% 
+% cellstr = regexp(strtrim(str), '\n', 'split');
+% data = splitcellstr(cellstr, '=');
+% Tp = header2type(regexprep(data{1,end}, '^\s+no', '', 'ignorecase'));
+% D = xs_set(D, Tp, logical(str2double(data{1,1})));
+% val = cellfun(@str2double, data(2:3,1));
+% name = cellfun(@header2type, data(2:3,2), 'UniformOutput', false);
+% for i = 1:length(val)
+%     D = xs_set(D, name{i}, val(i));
+% end
+
+function D = MODEL_FACTOR_read(str)
+D = nameisvalue(str, 'valcol', 1, 'namecol', 2);
+
+function D = CALCULATION_OPTIONS_read(str)
+D = nameisvalue(str);
+
+function D = PROBABILISTIC_DEFAULTS_read(str)
+D = nameisvalue(str);
+
+function D = NEWZONE_PLOT_DATA_read(str)
+D = str;
+TODO('ask Raymond')
+
+function D = HORIZONTAL_BALANCE_read(str)
+D = nameisvalue(str);
+
+function D = REQUESTED_CIRCLE_SLICES_read(str)
+D = nameisvalue(str, 'valcol', 1, 'namecol', 2);
+
+function D = REQUESTED_LIFT_SLICES_read(str)
+D = nameisvalue(str, 'valcol', 1, 'namecol', 2);
+
+function D = REQUESTED_SPENCER_SLICES_read(str)
+D = nameisvalue(str, 'valcol', 1, 'namecol', 2);
+
+function D = SOIL_RESISTANCE_read(str)
+D = nameisvalue(str);
+
+function D = GENETIC_ALGORITHM_OPTIONS_BISHOP_read(str)
+D = nameisvalue(str);
+
+function D = GENETIC_ALGORITHM_OPTIONS_LIFTVAN_read(str)
+D = nameisvalue(str);
+
+function D = GENETIC_ALGORITHM_OPTIONS_SPENCER_read(str)
+D = nameisvalue(str);
+
+function D = NAIL_TYPE_DEFAULTS_read(str)
+D = nameisvalue(str);

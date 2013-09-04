@@ -52,6 +52,13 @@
 
 MTestCategory.WorkInProgress;
 
-fname = 'c:\Users\heijer\Documents\Deltares Systems\D-GeoStability\Examples\Tutorial-1a.sti';
-F = readSTI(fname);
-xs_show(F)
+D = dir2('c:\Users\heijer\Documents\Deltares Systems\D-GeoStability\Examples\',...
+    'file_incl', '8\.sti$',...
+    'no_dirs', true);
+
+for i = 1:length(D)
+    
+    fname = fullfile(D(i).pathname, D(i).name);
+    F = readSTI(fname);
+    xs_show(F)
+end
