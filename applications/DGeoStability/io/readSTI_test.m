@@ -1,4 +1,4 @@
-function readSTI_test()
+% function readSTI_test()
 % READSTI_TEST  One line description goes here
 %
 % More detailed description of the test goes here.
@@ -54,4 +54,4 @@ MTestCategory.WorkInProgress;
 
 fname = 'c:\Users\heijer\Documents\Deltares Systems\D-GeoStability\Examples\Tutorial-1a.sti';
 F = readSTI(fname);
-F
+xs_show(F)

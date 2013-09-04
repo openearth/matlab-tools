@@ -80,7 +80,7 @@ fclose(fid);
 %% read sections
 
 % read all section headers
-pattern = '(?<=\[)[A-Z ]*?(?=\])';
+pattern = '(?<=\[)[A-Za-z0-9\-\(\) ]{5,100}(?=\])';
 ihdr = regexp(contents, pattern, 'start');
 shdr = regexp(contents, pattern, 'match');
 nshdr = regexprep(shdr, '\s', '_');
@@ -88,11 +88,13 @@ nshdr = regexprep(shdr, '\s', '_');
 [ihdr,   ix] = sort(ihdr);
 shdr = shdr(ix);
 
+getfilename(fname)
+
 D  = xs_empty();
 
 % save header
 D.header = contents(1:ihdr(1)-2);
-D = xs_meta(D, [mfilename '_'], 'D-Geo Stability', abspath(fname));
+D = xs_meta(D, [mfilename '_'], 'D-Geo Stability', getfilename());
 
 substr = false(size(ihdr));
 i = 0;
@@ -124,17 +126,19 @@ while i<length(ihdr)
 
     str = contents(j1:j2);
     
-    funcname = [nshdr{i} '_read'];
+    funcname = [upper(header2type(nshdr{i})) '_read'];
 
 
     if ~exist(funcname)
-        fprintf('"%s" skipped\n', shdr{i})
-        continue
+        Ds = str;
+%         fprintf('"%s" skipped\n', shdr{i})
+%         continue
+    else
+        
+        func = str2func(['@' funcname]);
+        Ds = feval(func, str);
     end
-    
-    func = str2func(['@' funcname]);
-    Ds = feval(func, str);
-    D  = xs_set(D,nshdr{i},Ds);
+    D  = xs_set(D, header2type(nshdr{i}),Ds);
     
 %     if substr(i)
 %         Ds = xs_meta(Ds, [mfilename '_'], nshdr{i}, fname);
@@ -188,13 +192,31 @@ varargout = {D};
 %     fprintf('%s%s\n', blanks(level(i)*5), splittext{i})
 % end
 
-function D = VERSION_read(str)
-S = dbstack();
+function Tp = header2type(str)
+str = regexprep(str, '[\[\]]', '');
+str = regexprep(str, '\(.*\)', '');
+Tp = strtrim(regexprep(str, '[- ]', '_'));
 
+function Tp = funname2type()
+S = dbstack();
+Tp = regexprep(S(2).name, '_+read$', '');
+
+function varargout = getfilename(varargin)
+persistent fname
+if nargin == 1
+    fname = abspath(varargin{1});
+end
+varargout = {fname};
+
+function fun = getfunname(varargin)
+S = dbstack();
+fun = S(2).name;
+
+function D = VERSION_read(str)
 cellstr = regexp(strtrim(str), '\n+', 'split');
 
 D = xs_empty();
-D = xs_meta(D, S(1).name, 'VERSION', '');
+D = xs_meta(D, getfunname(), 'VERSION', getfilename());
 
 data = splitcellstr(cellstr, '=');
 data(:,2) = num2cell(cellfun(@str2double, data(:,2)));
@@ -211,7 +233,7 @@ nameidx = cellfun(@isempty, strfind(cellstr, '='));
 soiltype = strtrim(sprintf('%s ', cellstr{nameidx}));
 
 D = xs_empty();
-D = xs_meta(D, S(1).name, soiltype, '');
+D = xs_meta(D, S(1).name, soiltype, getfilename());
 
 data = splitcellstr(cellstr(~nameidx), '=');
 data(:,2) = num2cell(cellfun(@str2double, data(:,2)));
@@ -224,7 +246,7 @@ function D = SOIL_COLLECTION_read(str)
 S = dbstack();
 
 D = xs_empty();
-D = xs_meta(D, S(1).name, 'SOIL COLLECTION', '');
+D = xs_meta(D, S(1).name, 'SOIL COLLECTION', getfilename());
 
 soilstrs = regexp(strtrim(str), '\[[A-Z ]+\]', 'split');
 for i = 2:2:length(soilstrs)
@@ -244,7 +266,7 @@ function D = CURVES_read(str)
 S = dbstack();
 
 D = xs_empty();
-D = xs_meta(D, S(1).name, 'CURVES', '');
+D = xs_meta(D, S(1).name, 'CURVES', getfilename());
 curvestrs = regexp(strtrim(str), '\d+\s+-\s+Curve number\s+', 'split');
 for i = 2:length(curvestrs)
     Ds = CURVE__read(curvestrs{i}, i-1);
@@ -257,7 +279,7 @@ S = dbstack();
 cellstr = regexp(strtrim(str), '\s+-.*pointnumbers\s+', 'split');
 
 D = xs_empty();
-D = xs_meta(D, S(1).name, sprintf('CURVE_%i', icurve), '');
+D = xs_meta(D, S(1).name, sprintf('CURVE_%i', icurve), getfilename());
 
 D.data(1).name = sprintf('pointnumbers');
 D.data(1).value = sscanf(cellstr{2}, '%f')';
@@ -273,7 +295,7 @@ geomstrs = geomstrs(cellfun(@length, geomstrs) > 5);
 keys = keys(1:2:end);
 
 for i = 1:length(keys)
-    funcname = [keys{i}(2:end-1) '_read'];
+    funcname = [upper(header2type(keys{i})) '_read'];
 
 
     if ~exist(funcname)
@@ -290,3 +312,181 @@ for i = 1:length(keys)
     D  = xs_set(D, Tp, Ds);
                 
 end
+
+function D = BOUNDARIES_read(str)
+[boundarystrs, boundarynmbrs] = regexp(str, '\d+(?=\s+-\s+Boundary number)', 'split', 'match');
+formatstr = sprintf('%%%ii', length(boundarynmbrs(end)));
+boundarynmbrs = str2double(boundarynmbrs);
+S = dbstack();
+
+D = xs_empty();
+D = xs_meta(D, S(1).name, 'BOUNDARIES', getfilename());
+
+for i = 1:length(boundarynmbrs)
+    tmp = regexp(boundarystrs{i+1}, '(?<=curvenumbers\s+).*', 'match');
+    curvenumbers = str2double(regexp(tmp{1}, ' ', 'split'));
+    
+    D = xs_set(D, sprintf(['BOUNDARY_' formatstr], boundarynmbrs(i)), curvenumbers);
+end
+
+function D = USE_PROBABILISTIC_DEFAULTS_BOUNDARIES_read(str)
+tmp = regexp(str, '(?<=Number of boundaries\s+-\s+).*', 'match');
+D = boolean(str2double(strsplit(tmp{1}, ' ')));
+
+function D = STDV_BOUNDARIES_read(str)
+tmp = regexp(str, '(?<=Number of boundaries\s+-\s+).*', 'match');
+D = str2double(strsplit(tmp{1}, ' '));
+
+function D = DISTRIBUTION_BOUNDARIES_read(str)
+tmp = regexp(str, '(?<=Number of boundaries\s+-\s+).*', 'match');
+D = str2double(strsplit(tmp{1}, ' '));
+
+function D = PIEZO_LINES_read(str)
+[linestrs, linenmbrs] = regexp(str, '\d+(?=\s+-\s+PlLine number)', 'split', 'match');
+formatstr = sprintf('%%%ii', length(linenmbrs(end)));
+linenmbrs = str2double(linenmbrs);
+
+D = xs_empty();
+D = xs_meta(D, getfunname(), funname2type(), getfilename());
+
+for i = 1:length(linenmbrs)
+    tmp = regexp(linestrs{i+1}, '(?<=curvenumbers\s+).*', 'match');
+    curvenumbers = str2double(strsplit(tmp{1}, ' '));
+    
+    D = xs_set(D, sprintf(['PlLine_' formatstr], linenmbrs(i)), curvenumbers);
+end
+
+function D = PHREATIC_LINE_read(str)
+D = sscanf(str, '%i');
+
+function D = WORLD_CO_ORDINATES_read(str)
+D = xs_empty();
+D = xs_meta(D, getfunname(), 'WORLD_CO_ORDINATES', getfilename());
+
+x = str2double(regexp(str, '[\d\.]+(?=\s+-\s+X\s+world)', 'match'));
+y = str2double(regexp(str, '[\d\.]+(?=\s+-\s+Y\s+world)', 'match'));
+
+D = xs_set(D, 'X_world', x);
+D = xs_set(D, 'Y_world', y);
+
+function D = LAYERS_read(str)
+D = xs_empty();
+D = xs_meta(D, getfunname(), 'LAYERS', getfilename());
+
+[linestrs, linenmbrs] = regexp(str, '\d+(?=\s+-\s+Layer number, next line is material of layer)', 'split', 'match');
+formatstr = sprintf('%%%ii', length(linenmbrs(end)));
+linenmbrs = str2double(linenmbrs);
+
+for ilayer = 1:length(linenmbrs)
+    str = linestrs{ilayer+1};
+    
+    tmp = regexp(str, '(?<=material of layer\s+).*?(?=\s+\d)', 'match');
+    material = header2type(strtrim(tmp{1}));
+    
+    Tp = sprintf(['LAYER_' formatstr '_' material], linenmbrs(ilayer));
+    
+    Ds = xs_empty();
+    Ds = xs_meta(Ds, getfunname(), Tp, getfilename());
+    
+    [s,m] = regexp(str, '\d+', 'split', 'match');
+    for i = 1:length(m)
+        Ds = xs_set(Ds, header2type(strtrim(s{i+1}(4:end))), str2double(m{i}));
+    end
+    
+    D = xs_set(D, Tp, Ds);
+end
+
+function D = LAYERLOADS_read(str)
+%TODO('implement support LAYERLOADS')
+D = str;
+
+function D = RUN_IDENTIFICATION_TITLES(str)
+D = regexp(strtrim(str), '\n', 'split');
+
+function D = MODEL_read(str)
+
+D = xs_empty();
+D = xs_meta(D, getfunname(), funname2type(), getfilename());
+
+cellstr = regexp(strtrim(str), '\n', 'split');
+data = splitcellstr(cellstr, ':');
+
+Bl = cellfun(@(s) strtrim(s) == '1', data(:,1));
+txt = cellfun(@strtrim, regexprep(data(:,2), '\s+off\s*$', ''),...
+    'UniformOutput', false);
+for i = 1:length(Bl)
+    D = xs_set(D, header2type(txt{i}), Bl(i));
+end
+
+function D = MSEEPNET_read(str)
+D = xs_empty();
+D = xs_meta(D, getfunname(), funname2type(), getfilename());
+cellstr = regexp(strtrim(str), '\n', 'split');
+nameidx = cellfun(@isempty, regexp(cellstr, '\d'));
+data = splitcellstr(cellstr(~nameidx), ':');
+
+Bl = cellfun(@(s) strtrim(s) == '1', data(:,1));
+txt = cellfun(@strtrim, regexprep(data(:,2), '^\s+do not\s+', '', 'ignorecase'),...
+    'UniformOutput', false);
+for i = 1:length(Bl)
+    D = xs_set(D, header2type(txt{i}), Bl(i));
+end
+
+function D = UNIT_WEIGHT_WATER_read(str)
+D = sscanf(str, '%g');
+
+function D = DEGREE_OF_CONSOLIDATION_read(str)
+D = xs_empty();
+D = xs_meta(D, getfunname(), funname2type(), getfilename());
+
+cellstr = regexp(strtrim(str), '\n', 'split');
+
+i = 2;
+while i<length(cellstr)
+    tmp = sscanf(cellstr{i}, '%g');
+    D = xs_set(D, sprintf('layer_%i', tmp(1)), tmp(2:end)');
+    i = i + 1;
+end
+
+tmp = regexp(cellstr{end}, '(?<=\d)\s+(?=\w)', 'split');
+Tp = regexprep(tmp{end}, '\s+not\s+', ' ');
+D = xs_set(D, header2type(Tp), strtrim(tmp{1}) == '1');
+
+function D = DEGREE_TEMPORARY_LOADS_read(str)
+D = xs_empty();
+D = xs_meta(D, getfunname(), funname2type(), getfilename());
+
+cellstr = regexp(strtrim(str), '\n', 'split');
+
+D = xs_set(D, funname2type(), sscanf(cellstr{1}, '%g')');
+
+tmp = regexp(cellstr{end}, '(?<=\d)\s+(?=\w)', 'split');
+Tp = regexprep(tmp{end}, '\s+not\s+', ' ');
+D = xs_set(D, header2type(Tp), strtrim(tmp{1}) == '1');
+
+function D = DEGREE_FREE_WATER_read(str)
+D = sscanf(str, '%g')';
+
+function D = DEGREE_EARTH_QUAKE_read(str)
+D = sscanf(str, '%g')';
+
+function D = CIRCLES_read(str)
+D = xs_empty();
+D = xs_meta(D, getfunname(), funname2type(), getfilename());
+
+cellstr = regexp(strtrim(str), '\n', 'split');
+for i = 1:length(cellstr)
+    tmp = regexp(cellstr{i}, '(?<=\d)\s+(?=[\D- ]+$)', 'split');
+    values = sscanf(tmp{1}, '%g');
+    Tp = header2type(regexprep(tmp{end}, '\s?(no|used)\s?', ''));
+    D = xs_set(D, Tp, values);
+end
+
+function D = SPENCER_SLIP_DATA_read(str)
+D = str;
+
+function D = SPENCER_SLIP_DATA_2_read(str)
+D = str;
+
+function D = SPENCER_SLIP_INTERVAL_read(str)
+D = sscanf(str, '%g');
