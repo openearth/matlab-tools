@@ -263,7 +263,7 @@ warning([mfilename,'agree with developer on _FillValue'])
       ncwrite(ncfile,'NetLink',NetLink');
       ncwrite(ncfile,'NetLinkType',repmat(int32(2),[1 size(NetLink,1)]));
 
-      disp([ncfile ' saved'])
+      disp(['D-Flow FM grid file saved as ' ncfile])
       
 % dimensions:
 % 	nNetNode = 42984 ;                                                // cor.n
