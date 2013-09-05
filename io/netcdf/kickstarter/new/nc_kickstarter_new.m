@@ -124,10 +124,10 @@ end
 q = 'Change personal info in current netCDF file?';
 options = struct('y', true, ...
                  'n', false, ...
-                 'show',@() show_attributes(OPT.filename, OPT.host, OPT.template, 'personal'));
+                 'show', {{@show_attributes, OPT.filename, OPT.host, OPT.template, 'personal'}});
 
 if IS_NEW || ask_question(q,options,'y')
-    nc_kickstarter_personal();
+    nc_kickstarter_personal('template', OPT.template);
 end
 
 %% add user info
@@ -172,8 +172,8 @@ function r = ask_question(q, options, default)
             f = fieldnames(options);
             r = options.(f{strcmpi(i, f)});
         end
-        if isa(r, 'function_handle')
-            feval(r);
+        if iscell(r) && isa(r{1}, 'function_handle')
+            feval(r{:});
         else
             break;
         end

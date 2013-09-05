@@ -59,3 +59,64 @@ function varargout = nc_kickstarter_personal(varargin)
 % $Keywords: $
 
 %% add personal data, possibly from cache file
+
+%% read settings
+
+OPT = struct( ...
+    'host','http://dtvirt61.deltares.nl/netcdfkickstarter', ...
+    'template','',...
+    );
+
+OPT = setproperty(OPT, varargin);
+
+pref_group = 'netcdfKickstarter';
+
+% retrieve all properties to be specified in the current category
+url = [OPT.host '/json/templates/' OPT.template];
+data = urlread(url);
+m = json.load(data);
+
+% filter: "person" must appear in description
+filter = ~cellfun(@isempty, regexpi({m.key}, '(creator|contributor|publisher)'));
+
+m = m(filter);
+
+% initialize query string
+query_string = '';
+
+
+% loop over properties
+for j = 1:length(m)
+    
+    % check if property value should be stored for later use
+    if m(j).save
+        
+        % determine last used property value
+        pref_key = sprintf('%s_%s',m(j).category,m(j).key);
+        
+        if ispref(pref_group,pref_key)
+            v = getpref(pref_group,pref_key);
+        else
+            v = '';
+        end
+        
+        % ask for user input
+        v_new = input(sprintf('[%s] %s [%s]:\n',upper(m(j).key),m(j).description,v),'s');
+        
+        % use last stored value in case no input is given
+        if ~isempty(v_new)
+            v = v_new;
+        end
+        
+        % store property value for later use
+        setpref(pref_group,pref_key,v);
+    else
+        % ask for user input
+        v = input(sprintf('[%s] %s:\n',upper(m(j).key),m(j).description),'s');
+    end
+    
+    % append to query string
+    query_string = sprintf('%s&m[%s.%s]=%s',query_string,m(j).category,m(j).key,urlencode(v));
+    
+    fprintf('\n');
+end
