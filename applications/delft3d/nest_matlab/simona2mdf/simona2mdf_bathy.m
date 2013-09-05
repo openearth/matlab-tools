@@ -1,8 +1,3 @@
-
-
-
-
-
 function mdf = simona2mdf_bathy(S,mdf,name_mdf)
 
 % siminp2mdf_bathy : Gets bathymetry data out of the parsed siminp file
@@ -47,5 +42,5 @@ end
 
 mdf        = rmfield(mdf,'depuni');
 mdf.fildep = [name_mdf '.dep'];
-wldep('write',mdf.fildep,depth,'quit');
+wldep('write',mdf.fildep,sign*depth,'quit');
 mdf.fildep = simona2mdf_rmpath(mdf.fildep);

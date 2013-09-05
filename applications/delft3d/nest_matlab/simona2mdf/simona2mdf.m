@@ -6,7 +6,7 @@ Gen_inf    = {'This tool converts a SIMONA siminp file into a Delft3D-Flow mdf f
               'with belonging attribute files'                                                                     ;
               ' '                                                                                                  ;
               'Not everything is supported:'                                                                       ;
-              '- Transport (salinity, temperature and tracers) is not supported yet'                               ;                                                          ;
+              '- Transport other than Salinity (temp. and tracers) not supported yet'                              ;                                                          ;
               '- Restarting is not supported yet'                                                                  ;
               '- Space varying wind is not supported yet'                                                          ;
               ' '                                                                                                  ;
@@ -50,7 +50,7 @@ name_mdf = [path_mdf filesep name_mdf];
 %% Display the general information
 
 logo = imread([getenv('nesthd_path') filesep 'bin' filesep 'simona_logo.jpg']);
-simona2mdf_message(Gen_inf                                  ,logo,15);
+simona2mdf_message(Gen_inf                                  ,logo,5);
 
 %% Start with creating empty template (add the simonapath to it to allow for
 %  copying of the grid file)

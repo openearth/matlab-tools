@@ -34,16 +34,18 @@ end
 % Fill viscosity values/arrays and write (in case of space varying values)
 %
 
+mmax = mdf.mnkmax(1);
+nmax = mdf.mnkmax(2);
+    
 if ~simona2mdf_fieldandvalue(problem,'VISCOSITY') && ~simona2mdf_fieldandvalue(problem,'HOR_VISCOSITY')
-    mdf.vicouv = 10.0; % Insane default value
+    vico(1:mmax,1:nmax) = 10.0; % Insane default value
 elseif simona2mdf_fieldandvalue(problem,'VISCOSITY.EDDYVISCOSIT')
-    mdf.vicouv = problem.VISCOSITY.EDDYVISCOSIT;
+    vico(1:mmax,1:nmax) = problem.VISCOSITY.EDDYVISCOSIT;
 else
     %
     % Space varying
     %
-    mmax = mdf.mnkmax(1);
-    nmax = mdf.mnkmax(2);
+   
     vico(1:mmax,1:nmax) = 0.0;
     
     if simona2mdf_fieldandvalue(problem,'HOR_VISCOSITY.GLOBAL')
@@ -52,13 +54,33 @@ else
     if simona2mdf_fieldandvalue(problem,'HOR_VISCOSITY.LOCAL.BOX')
         vico = simona2mdf_getboxdata(problem.HOR_VISCOSITY.LOCAL.BOX,vico);
     end
-    %
-    % write file, fil dispersion with dummy values
-    %
-    dummy (1:mmax,1:nmax) = -999.999;
-    edy(1).Data = vico;
-    edy(2).Data = dummy;
-    mdf.filedy = [name_mdf '.edy'];
-    wldep ('write',mdf.filedy,edy);
-    mdf.filedy = simona2mdf_rmpath(mdf.filedy);
 end
+
+%
+% Get diffusivity ( if salinity is active)
+%
+
+dico(1:mmax,1:nmax) = -999.999;
+if strcmpi(mdf.sub1(1:1),'s')
+    siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'GENERAL' 'DIFFUSION'});
+    if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.GENERAL.DIFFUSION')
+        diff = siminp_struc.ParsedTree.GENERAL.DIFFUSION;
+        if simona2mdf_fieldandvalue(diff,'GLOBAL')
+            dico = simona2mdf_getglobaldata (diff.GLOBAL,dico);
+        end
+        if simona2mdf_fieldandvalue(diff,'LOCAL.BOX')
+            dico = simona2mdf_getboxdata(diff.LOCAL.BOX,dico);
+        end
+    end
+end
+    
+%
+% write file
+%
+
+edy(1).Data = vico;
+edy(2).Data = dico;
+mdf.filedy = [name_mdf '.edy'];
+wldep ('write',mdf.filedy,edy);
+mdf.filedy = simona2mdf_rmpath(mdf.filedy);
+

@@ -14,8 +14,12 @@ nesthd_dir = getenv('nesthd_path');
 
 siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'TRANSPORT' 'PROBLEM'});
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.TRANSPORT.PROBLEM')
-   warning = true;
-   warntext{end+1} = 'Conversion of TRANSPORT not implemented yet';
+    if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.TRANSPORT.PROBLEM.SALINITY')
+        mdf.sub1(1:1) = 'S';
+    else
+        warning = true;
+        warntext{end+1} = 'Conversion of TRANSPORT (other than Salinity) not implemented yet';
+    end
 end
 
 %
@@ -25,7 +29,7 @@ end
 siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'HEATMODEL'});
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.HEATMODEL')
    warning = true;
-   warntext{end+1} = 'Conversion of SALINITY not implemented yet';
+   warntext{end+1} = 'Conversion of Temperature not implemented yet';
 end
 
 %

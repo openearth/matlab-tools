@@ -24,10 +24,10 @@ end
 %
 
 if simona2mdf_fieldandvalue(friction,'GLOBAL.FORMULA')
-     if strcmpi(friction.GLOBAL.FORMULA,'Manning')        ;mdf.roumet='M';end;
-    if strcmpi(friction.GLOBAL.FORMULA,'Chezy')          ;mdf.roumet='C';end;
-    if strcmpi(friction.GLOBAL.FORMULA,'White-Colebrook');mdf.roumet='W';end;
-    if strcmpi(friction.GLOBAL.FORMULA,'Z0-based')       ;mdf.roumet='W';end;
+    if strncmpi(friction.GLOBAL.FORMULA,'Manning' ,3)       ;mdf.roumet='M';end;
+    if strncmpi(friction.GLOBAL.FORMULA,'Chezy'   ,3)       ;mdf.roumet='C';end;
+    if strncmpi(friction.GLOBAL.FORMULA,'White'   ,3)       ;mdf.roumet='W';end;
+    if strncmpi(friction.GLOBAL.FORMULA,'Z0-based',3)       ;mdf.roumet='Z';end;
 end
 
 %
@@ -61,3 +61,10 @@ rgh(2).Data = friction_v;
 mdf.filrgh  = [name_mdf '.rgh'];
 wldep('write',mdf.filrgh,rgh);
 mdf.filrgh  = simona2mdf_rmpath(mdf.filrgh);
+
+%
+% Remove constant value fields from mdf structure
+%
+
+mdf = rmfield(mdf,'ccofu');
+mdf = rmfield(mdf,'ccofv');

@@ -7,6 +7,7 @@ nmax                 = mdf.mnkmax(2);
 zeta0(1:mmax,1:nmax) = 0.;
 u0   (1:mmax,1:nmax) = 0.;
 v0   (1:mmax,1:nmax) = 0.;
+s0                   = [];
 
 %
 % get information out of struc
@@ -69,12 +70,57 @@ if simona2mdf_fieldandvalue(initial,'VVELOCITY.LOCAL.BOX')
 end
 
 %
+% Salinity
+%
+
+siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'TRANSPORT'});
+
+
+if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.TRANSPORT')
+    if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.TRANSPORT.PROBLEM.SALINITY')
+        s0(1:mmax,1:nmax) = 0.;
+       
+        constnr = siminp_struc.ParsedTree.TRANSPORT.PROBLEM.SALINITY.CO;
+        initial = siminp_struc.ParsedTree.TRANSPORT.FORCINGS.INITIAL.CONSTITUENT.CO;
+        
+        for icons = 1: length(initial)
+            if initial(icons).SEQNR == constnr
+                sal_ini = initial(icons);
+            end
+        end
+        
+        if simona2mdf_fieldandvalue(sal_ini,'GLOBAL')
+            s0    = simona2mdf_getglobaldata(sal_ini.GLOBAL,s0);
+        end
+       
+        if simona2mdf_fieldandvalue(sal_ini,'LOCAL.BOX')
+            s0    = simona2mdf_getboxdata(sal_ini.LOCAL.BOX,s0);
+        end
+    end
+end
+          
+%
 % Finally write
 %
 
 ini(1).Data = zeta0;
 ini(2).Data = u0;
 ini(3).Data = v0;
+if ~isempty(s0)
+    ini(4).Data = s0;
+end
+
 mdf.filic  = [name_mdf '.ini'];
 wldep('write',mdf.filic ,ini);
 mdf.filic  = simona2mdf_rmpath(mdf.filic);
+
+
+%
+% Remove non necessary (constat values) fields
+%
+
+mdf = rmfield(mdf,'zeta0');
+mdf = rmfield(mdf,'u0');
+mdf = rmfield(mdf,'v0');
+mdf = rmfield(mdf,'s0');
+mdf = rmfield(mdf,'t0');

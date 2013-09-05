@@ -13,13 +13,21 @@ if ~isempty(bnd)
     mdf.filbnd = [name_mdf '.bnd'];
     delft3d_io_bnd('write',mdf.filbnd,bnd);
     mdf.filbnd = simona2mdf_rmpath(mdf.filbnd);
-
+    
+    %
+    % Harmonic boundary conditions
+    %
+    
     bch = simona2mdf_bch(S,bnd);
     if ~isempty(bch)
         mdf.filbch = [name_mdf '.bch'];
         delft3d_io_bch('write',mdf.filbch,bch);
         mdf.filbch = simona2mdf_rmpath(mdf.filbch);
     end
+    
+    %
+    % Time series boundary conditions
+    %
 
     bct = simona2mdf_bct(S,bnd,mdf);
     if ~isempty(bct)
@@ -27,20 +35,46 @@ if ~isempty(bnd)
         ddb_bct_io('write',mdf.filbct,bct);
         mdf.filbct = simona2mdf_rmpath(mdf.filbct);
     end
+    
+    %
+    % Q-h relation (not implemented yet)
+    %
 
     bcq = simona2mdf_bcq(S,bnd);
     if ~isempty(bcq)
         mdf.filbcq = [name_mdf '.bcq'];
-        ddb_io_bct('write',mdf.filbcq,bcq);
+        ddb_bct_io('write',mdf.filbcq,bcq);
         mdf.filbcq = simona2mdf_rmpath(mdf.filbcq);
     end
 
+    %
+    % Astronomical Boundary conditions
+    %
+    
     bca = simona2mdf_bca(S,bnd);
     if ~isempty(bca)
         mdf.filana = [name_mdf '.bca'];
         delft3d_io_bca('write',mdf.filana,bca);
         mdf.filana = simona2mdf_rmpath(mdf.filana);
     end
+    
+    %
+    % Transport boundary conditions (Salinity only for now)
+    %
+    
+    bcc = simona2mdf_bcc(S,bnd,mdf);
+    if ~isempty(bcc)
+        mdf.filbcc = [name_mdf '.bcc'];
+        ddb_bct_io('write',mdf.filbcc,bcc);
+        mdf.filbcc = simona2mdf_rmpath(mdf.filbcc);
+    end
+    
+    %
+    % Thatcher Harleman times
+    %
+    
+    mdf = simona2mdf_th(S,bnd,mdf);
+    
 end
 
 
