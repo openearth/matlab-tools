@@ -137,22 +137,22 @@ if fid == -1
   error(['Could not find mesh file ' mesh_file_in]);
 end
 
-% Scan for number of nodes
-nnodes = fscanf(fid,'%d',1);
-% Get remainder of line, projection name
-tline  = fgetl(fid);
-% Scan for projection string
-proj   = tline(1:end);
-while (proj(1) == ' ')           % Remove preceding spaces
-  proj = proj(2:end);
-end
+header1     = fgetl(fid);
+header_nums = sscanf(header1,'%f');
+
+% Extract the number of nodes (last number if many)
+nnodes = header_nums(end,1);
+
+% Get projection name
+proj  = header1(1,(strfind(header1,num2str(nnodes))+size(num2str(nnodes),2)+1):end); % I assume 1 space between nnodes & projection name here...
+
 % Read all node data
 Nodes    = fscanf(fid,'%f %f %f %f %f\n',[5,nnodes]);
 Nodes    = Nodes';
 
 % Read element header line
-tline    = fgetl(fid);
-tmp      = sscanf(tline,'%d',3);
+header2  = fgetl(fid);
+tmp      = sscanf(header2,'%d',3);
 nelmts   = tmp(1);                 % number of elements
 npelmt   = tmp(2);                 % Nodes per element
 elmttype = tmp(3);                 % Element type (21 for triangles, 25 for mixed)
@@ -163,7 +163,7 @@ if (npelmt == 3)
 elseif (npelmt == 4)
   Elmts  = fscanf(fid,'%f %f %f %f %f',[5,nelmts]);
 else
-  error('This mesh format is not supported, or there is an error in the mesh file.')
+  error('This mesh format is not supported, or there is an error in the mesh file or this script, contact the developer')
 end
 Elmts  = Elmts';
 
@@ -226,8 +226,6 @@ grd.cor.flag_values = [0 1 2];
 grd.cor.flag_meanings = {'closed_link_between_2D_nodes';'link_between_1D_nodes';'link_between_2D_nodes';};
 
 dflowfm.writeNet(fm_file_out,grd.cor.x,grd.cor.y,grd.cor.Link,grd.cor.z);
-
-disp(['D-Flow FM grid file saved as ' fm_file_out]);
 
 if nargout>0
     varargout{1}=grd;
