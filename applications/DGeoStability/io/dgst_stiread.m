@@ -176,7 +176,7 @@ D = xs_set(D, 'SOIL_COLLECTION', Ds);
 
 function D = GEOMETRY_DATA_read(str, key, D)
 Ds = xs_empty();
-Ds = xs_meta(Ds, getfunname(), funname2type(), getfilename());
+Ds = xs_meta(Ds, getfunname(), key, getfilename());
 D = xs_set(D, key, Ds);
 
 function D = ACCURACY_read(str, key, D)

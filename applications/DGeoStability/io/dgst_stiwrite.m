@@ -74,17 +74,7 @@ OPT = setproperty(OPT, varargin);
 txt = sprintf('%s', D.header);
 
 for i = 1:length(D.data)
-    txt = sprintf('%s[%s]', txt, type2header(D.data(i).name));
-    funcname = [D.data(i).name '_write'];
-    if exist(funcname)
-        func = str2func(funcname);
-        stxt = feval(func, D.data(i));
-    elseif ischar(D.data(i).value)
-        stxt = D.data(i).value;
-    else
-        stxt = '';
-    end
-    txt = sprintf('%s\n%s[END OF %s]\n', txt, stxt, type2header(D.data(i).name));
+    txt = sprintf('%s%s', txt, writeblock(D.data(i)));
 end
 
 %% write file
@@ -107,12 +97,29 @@ OPT = struct(...
     'regexprep', {{}});
 
 OPT = setproperty(OPT, varargin);
-data = repmat({''}, 2, length(Ds.value.data));
-data(OPT.namecol,:) = {Ds.value.data.name};
-data(OPT.valcol,:) = {Ds.value.data.value};
-data(OPT.namecol,:) = regexprep(data(OPT.namecol,:), OPT.regexprep{:});
+data = repmat({''}, 2, length(Ds.data));
+data(OPT.namecol,:) = {Ds.data.name};
+data(OPT.valcol,:) = {Ds.data.value};
+if ~isempty(OPT.regexprep)
+    data(OPT.namecol,:) = regexprep(data(OPT.namecol,:), OPT.regexprep{:});
+end
 data(OPT.namecol,:) = regexprep(data(OPT.namecol,:), '_', ' ');
 txt = sprintf(['%s=' OPT.format '\n'], data{:});
+
+function txt = writeblock(Ds, varargin)
+
+txt = sprintf('[%s]', type2header(Ds.name));
+funcname = [Ds.name '_write'];
+if exist(funcname)
+    func = str2func(funcname);
+    stxt = feval(func, Ds.value);
+elseif ischar(Ds.value)
+    stxt = Ds.value;
+else
+    stxt = '';
+end
+txt = sprintf('%s\n%s[END OF %s]\n', txt, stxt, type2header(Ds.name));
+
 
 %%%% header specific functions
 function txt = VERSION_write(Ds)
@@ -120,4 +127,22 @@ txt = nameisvalue(Ds,...
     'regexprep', {'D_Geo', 'D-Geo'});
 
 function txt = SOIL_COLLECTION_write(Ds)
-txt = sprintf('%5i = number of items\n', length(Ds.value.data));
+n = length(Ds.data);
+txt = sprintf('%5i = number of items\n', n);
+for i = 1:n
+    Dss = Ds.data(i);
+    Dss.name = regexprep(Dss.name, '[_\d]', '');
+    txt = sprintf('%s%s', txt, writeblock(Dss));
+end
+
+function txt = SOIL_write(Ds)
+txt = sprintf('%s\n%s', regexprep(Ds.type, '_', ' '), nameisvalue(Ds));
+
+function txt = GEOMETRY_DATA_write(Ds)
+%txt = sprintf('[%s]\n', type2header(Ds.type));
+txt = '';
+for i = 1:length(Ds.data)
+    Dss = Ds.data(i);
+    txt = sprintf('%s%s', txt, writeblock(Dss));
+end
+%txt = sprintf('%s\n[END OF %s]', txt, type2header(Ds.type));
