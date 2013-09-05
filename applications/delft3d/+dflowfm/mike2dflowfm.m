@@ -145,6 +145,7 @@ nnodes = header_nums(end,1);
 
 % Get projection name
 proj  = header1(1,(strfind(header1,num2str(nnodes))+size(num2str(nnodes),2)+1):end); % I assume 1 space between nnodes & projection name here...
+										     % Note that projection is not stored in the dflowfm.readNet structure (yet), so not stored/exported here
 
 % Read all node data
 Nodes    = fscanf(fid,'%f %f %f %f %f\n',[5,nnodes]);
