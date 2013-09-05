@@ -216,7 +216,7 @@ fprintf(fid2,'%s\n'  ,['Elder                               = 0.                
 fprintf(fid2,'%s\n'  ,['irov                                = ',num2str(mdfkeywds.irov,'%1.0f')                 ,'                   # 0=free slip, 1 = partial slip using wall_ks']);
 fprintf(fid2,'%s\n'  ,['wall_ks                             = 0.                  # Nikuradse roughness for side walls, wall_z0=wall_ks/30']);
 fprintf(fid2,'%s\n'  ,['TidalForcing                        = 1                   # Tidal forcing (0=no, 1=yes) (only for jsferic == 1)']);
-fprintf(fid2,'%s\n'  ,['Salinity                            = ',num2str(jasal,'%1.0d')                          ,'                   # Include salinity, (0=no, 1=yes)']);
+fprintf(fid2,'%s\n'  ,['Salinity                            = ',num2str(jasal,'%1.1d')                          ,'                   # Include salinity, (0=no, 1=yes)']);
 fprintf(fid2,'%s\n'  ,['InitialSalinity                     = ',num2str(mdfkeywds.salw,'%5.7f')                 ,'              # Initial salinity concentration (ppt)']);
 fprintf(fid2,'%s\n\n',['Rhomean                             = ',num2str(mdfkeywds.rhow,'%5.7f')                 ,'              # Average water density (kg/m3)']);
 
