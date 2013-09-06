@@ -10,15 +10,23 @@ MDW.WaveFileInformation.FileVersion.value = '02.00';
 MDW.General.ProjectName.value  = wave.projectname;
 MDW.General.ProjectNr.value    = wave.projectnr;
 try
-    MDW.General.Description1.value = wave.description{1};
-    MDW.General.Description2.value = wave.description{2};
-    MDW.General.Description3.value = wave.description{3};
+    if (~isempty(wave.description{1}))
+        MDW.General.Description1.value = wave.description{1};
+    end
+    if (~isempty(wave.description{2}))
+        MDW.General.Description2.value = wave.description{2};
+    end
+    if (~isempty(wave.description{3}))
+        MDW.General.Description3.value = wave.description{3};
+    end
 end
+MDW.General.FlowFile.value = wave.mdffile;
 MDW.General.OnlyInputVerify.value = wave.onlyinputverify;
 MDW.General.SimMode.value  = wave.simmode;
 switch lower(wave.simmode)
     case{'non-stationary'}
         MDW.General.TimeStep.value      = wave.timestep;
+        MDW.General.TimeStep.type = 'real';
 end
 
 MDW.General.DirConvention.value = wave.dirconvention;
