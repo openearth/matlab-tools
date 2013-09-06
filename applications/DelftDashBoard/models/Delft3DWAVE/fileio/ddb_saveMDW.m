@@ -190,6 +190,8 @@ for i=1:ndomains
     MDW.Domain(i).Grid.value           = wave.domains(i).grid;
     if ~isempty(wave.domains(i).bedlevelgrid)
         MDW.Domain(i).BedLevelGrid.value   = wave.domains(i).bedlevelgrid;
+    end
+    if ~isempty(wave.domains(i).bedlevel)
         MDW.Domain(i).BedLevel.value       = wave.domains(i).bedlevel;
     end
     MDW.Domain(i).DirSpace.value       = wave.domains(i).dirspace;
