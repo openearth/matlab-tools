@@ -53,12 +53,12 @@
 MTestCategory.WorkInProgress;
 
 D = dir2('c:\Users\heijer\Documents\Deltares Systems\D-GeoStability\Examples\',...
-    'file_incl', '8\.sti$',...
+    'file_incl', '1a\.sti$',...
     'no_dirs', true);
 
 for i = 1:length(D)
     
     fname = fullfile(D(i).pathname, D(i).name);
-    F = readSTI(fname);
-    xs_show(F)
+    F = dgst_stiread(fname);
+    dgst_stiwrite([fname(1:end-4) 'rep.sti'], F)
 end
