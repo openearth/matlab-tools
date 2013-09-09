@@ -1,24 +1,68 @@
 function [data, netcdf_index, OPT] = ncgentools_get_data_in_box(netcdf_index, varargin)
-%NCGENTOOLS_GET_DATA_IN_BOX  One line description goes here.
+%NCGENTOOLS_GET_DATA_IN_BOX  Selection of z data in elevation type of netcdf datasets. 
 %
-%   More detailed description goes here.
+%   Function retrieves z data from the netcdf files of the type elevation data.
+%   These datasets contain geospatial data and is stored in tiles.
+%   The z data is stored in the 3D dimension.
 %
 %   Syntax:
 %   ncgentools_get_data_in_box(netcdf_index, varargin)
 %
 %   Input:
-%   netcdf_index  = netcdf netcdf_index structure, or a path
-%   varargin =  't_method', 'last_in_range' (default)
-%                           alternatively: 'all_in_range', 'linear_interpolated', 'merged_in_range'
+%       netcdf_index = netcdf netcdf_index structure, or a path
+%       $varargin    =
+%
+%   where the following <keyword,value> pairs have been implemented (values indicated are the current default settings):
+%       'x_range'       , []                = selection range for x [min max]
+%       'y_range'       , []                = dito for y
+%       'lat_range'     , []                = dito for latitude
+%       'lon_range'     , []                = dito for longitude
+%       't_range'       , []                = dito for time (in matlab datenum)
+%       't_method'      , 'last_in_range'   = method of collecting/selecting
+%                                             the z values in time:
+%                         'last_in_range'       -> the last dataset (per file) is put in a 2D z matrix
+%                         'all_in_range'        -> all data is retrieved in a 3D z matrix
+%                         'merged_in_range'     -> all data is merged to a 2D z matrix where newer values overwrites the older values
+%                         'statFcn'             -> the z data is the outcome of the statistical function (see 'statFcn')
+%                         'linear_interpolated' -> not inplemented (yet)
+%       'x_stride'      , 1                 = stride for x
+%       'y_stride'      , 1                 = stride for y 
+%       'lat_stride'    , 1                 = stride for lat
+%       'lon_stride'    , 1                 = stride for lon
+%       'include_xy'    , false             = flag for including the x and y values in the output
+%       'include_latlon', false             = flag for including the lat and lon values in the output
+%       'statFcn'       , []                = function handle of 1D statistical calculation on z like:
+%                                               @(z) max(z) 
+%                                               @(z) min(z) 
+%                                               @(z) nanmean(z) 
+%                                               @(z) nanmedian(z) 
+%                                               @(z) sum(~isnan(z)) %calculates the count   
+%                                       Functions like mean and median FAILS because of the presents of nan's 
+%   Output:
+%       data            = structure with the fields:
+%           'z'   ,  z values in meshgrid format
+%                    2D matrix for t_method 'last_in_range' 'merged_in_range' 'statFcn' 
+%                    3D matrix (x,y,t)for 'all_in_range'
+%           'x'   ,  x values in meshgrid format (optional)         
+%           'y'   ,  y values in meshgrid format (optional)
+%           'lat' ,  latitude values in meshgrid format (optional)
+%           'lon' ,  longitude values in meshgrid format (optional)
+%           't'   ,  time array (optional, when t_method 'all_in range' or 'statFcn' is used)
+%       netcdf_index    = structure with the contens of the netcdf_index
+%       OPT             = structure with used OPT fields.
+%
+%   Remarks:
+%       For the geospatial selection only one pair of coordinates system must be given, like x y OR lat lon
+%       When a statFcn is given, the t_method is automatically set to 'statFcn'
 %
 %   Example
 %   ncgentools_get_data_in_box
 %
 %     netcdf_index = ncgentools_get_data_in_box('D:\products\nc\rijkswaterstaat\vaklodingen\combined');
 %     [data, netcdf_index, OPT] = ncgentools_get_data_in_box(netcdf_index,...
-%         'x_range',[-inf inf],...
-%         'y_range',[-inf inf],...
-%         't_range',[-inf inf],...
+%         'x_range' ,[-inf inf],...
+%         'y_range' ,[-inf inf],...
+%         't_range' ,[-inf inf],...
 %         'x_stride',20,...
 %         'y_stride',20);
 %   surf(data.x,data.y,data.z)
@@ -29,13 +73,15 @@ function [data, netcdf_index, OPT] = ncgentools_get_data_in_box(netcdf_index, va
 %      
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2012 Van Oord
+%   Copyright (C) 2013 Van Oord
 %       Thijs Damsma
+%       Ronald van der Hout
 %
 %          tda@vanoord.com
+%          ronald.vanderhout@vanoord.com
 %   
-%       Watermanweg 64
-%       3067 GG
+%       Schaardijk 211
+%       3063 NH
 %       Rotterdam
 %       Netherlands
 %
@@ -81,8 +127,9 @@ OPT.x_stride   = 1;
 OPT.y_stride   = 1;
 OPT.lat_stride = 1;
 OPT.lon_stride = 1;
-OPT.include_xy = [];
-OPT.include_latlon = [];
+OPT.include_xy = false;
+OPT.include_latlon = false;
+OPT.statFcn    = [];
 
 OPT = setproperty(OPT,varargin{:});
 
@@ -107,6 +154,10 @@ if nargin>1;
     assert(...
         xor(mode_xy,mode_latlon) && ... % one or the other, not both   
         numel(OPT.t_range) == 2,'x, y, lat, lon and t range must all be specified as two element vectors. Furthermore, you should specify either x and y, or lat and lon');
+    assert(~strcmp(OPT.t_method, 'statFcn')||...
+        strcmp(OPT.t_method, 'statFcn') && isa(OPT.statFcn,'function_handle'), 'No statistical function handle is passed, see help on function') 
+    assert(...
+        ismember(OPT.t_method,{'last_in_range' 'all_in_range' 'merged_in_range' 'statFcn'}), 'No valid t_method is given, see help on function')
 end
 
 % check if netcdf index is a path or a 
@@ -143,6 +194,9 @@ if nargin == 1
     return
 end
 
+if isa(OPT.statFcn,'function_handle')
+    OPT.t_method = 'statFcn';
+end
 
 % replace -inf / +inf ranges in x and y with smallest/largest actual range
 
@@ -207,10 +261,11 @@ y = min(coverage_y) + .5 * netcdf_index.resolution_y : netcdf_index.resolution_y
 y(y<range_y(1)) = [];
 
 
-% last before
-% linear interpolated
-% merged in range 
-if strcmp(OPT.t_method,'all_in_range')
+%% Preparations
+    % last before
+    % linear interpolated
+    % merged in range 
+if any(strcmp(OPT.t_method,{'all_in_range' 'statFcn'}))
     t_nc_all = {};
     files_to_search_in_time_range = [];
     for ii = files_to_search
@@ -220,8 +275,8 @@ if strcmp(OPT.t_method,'all_in_range')
         if isempty(t_nc) 
             % do nothing
         else
-            files_to_search_in_time_range = [files_to_search_in_time_range ii];
-            t_nc_all{end+1} = t_nc;
+            files_to_search_in_time_range = [files_to_search_in_time_range ii]; %#ok<AGROW>
+            t_nc_all{end+1} = t_nc;                                             %#ok<AGROW>
         end
     end
     t_nc_all = unique(vertcat(t_nc_all{:}));
@@ -238,6 +293,7 @@ if OPT.include_latlon
     data.lon = nan(length(y),length(x));
 end            
 
+%% Read the data
 for ii = files_to_search
     ncfile   = netcdf_index.urlPath{ii};
    
@@ -257,7 +313,7 @@ for ii = files_to_search
                 t_start = [];
             end
             t_count = 1;
-        case 'all_in_range'
+        case {'all_in_range' 'statFcn' 'merged_in_range'}
             t_found = find(t_nc>=OPT.t_range(1) & t_nc<=OPT.t_range(2));
             if ~isempty(t_found)
                 t_start = min(t_found);
@@ -267,8 +323,8 @@ for ii = files_to_search
             t_count = max(t_found) + 1 - min(t_found);
         case 'linear_interpolated'
             assert(t_sorted)
-        case 'merged_in_range'
-            assert(t_sorted)
+%         case 'merged_in_range'
+%             assert(t_sorted)
     end
     if isempty(t_start); continue; end
     
@@ -339,13 +395,25 @@ for ii = files_to_search
         if flip_x; z_tmp = flipdim(z_tmp,2); end
         if flip_y; z_tmp = flipdim(z_tmp,1); end
         
-        if strcmp(OPT.t_method,'all_in_range') && t_count > 1
+        if any(strcmp(OPT.t_method,{'all_in_range' 'statFcn'})) && t_count >= 1  %prev:  >1
             [~,z_ind] = ismember(t_nc,t_nc_all);
             z_ind(z_ind == 0) = [];
             data.z(mz_i(1):mz_i(2),nz_i(1):nz_i(2),z_ind) = z_tmp;
-        else
-            data.z(mz_i(1):mz_i(2),nz_i(1):nz_i(2)) = z_tmp;
+            
+        elseif strcmp(OPT.t_method,'merged_in_range')
+            %Only overwrite non Nan values = last known filled value (=last time)
+            z_merged    = data.z(mz_i(1):mz_i(2),nz_i(1):nz_i(2));
+            for nt = 1:size(z_tmp,3)
+                tempdat  = z_tmp(:,:,nt);
+                isfilled = ~isnan(tempdat);
+                z_merged(isfilled) = tempdat(isfilled);
+            end
+            data.z(mz_i(1):mz_i(2),nz_i(1):nz_i(2)) = z_merged;
+            
+        else % Last in range
+            data.z(mz_i(1):mz_i(2),nz_i(1):nz_i(2)) = z_tmp;            
         end
+        
     if OPT.include_latlon
         start(netcdf_index.dim_t) = [];
         count(netcdf_index.dim_t) = [];
@@ -377,6 +445,29 @@ for ii = files_to_search
             data.lat(mz_i(1):mz_i(2),nz_i(1):nz_i(2)) = lat_tmp;
     end
 end
+
+%% Post process z
+if strcmp(OPT.t_method,'statFcn') 
+    [nx, ny, ~ ]= size(data.z);
+    z_stat = nan(nx,ny);
+    %Proces stat function on the gridcells
+%     tic
+%     for n = 1:nx
+%         for  m = 1:ny
+%             z_stat(n,m) = OPT.statFcn(data.z(n,m,:));
+%         end
+%     end 
+%     toc
+    
+    %Convert to column vectors 
+    for m = 1:ny
+        tmp = squeeze(data.z(:,m,:))';
+        z_stat(:,m) = OPT.statFcn(tmp);
+    end       
+    
+    data.z = z_stat;
+end
+
 
 if OPT.include_xy
     [data.x,data.y] = meshgrid(x,y);
@@ -424,19 +515,31 @@ att_names  = vertcat(att_names {:});
 att_values = cellfun(@(s) {s.Value},{info.Attributes},'UniformOutput',false);
 att_values = vertcat(att_values{:});
 
-netcdf_index.projectionCoverage_x           = att_values(strcmp(att_names,'projectionCoverage_x'));
-netcdf_index.projectionCoverage_x           = vertcat(netcdf_index.projectionCoverage_x{:});
+% % THIS SECTION GOES SOMEHOW WRONG, THE INDEX SEEMS OK BUT THE RESULT IS NOT CORRECTLY RETURNED
+% % See also:  find(strcmp(att_names,'projectionCoverage_x'))
+% % and        find(strcmp(att_names(1,:),'projectionCoverage_x'))
 
-netcdf_index.projectionCoverage_y           = att_values(strcmp(att_names,'projectionCoverage_y'));
-netcdf_index.projectionCoverage_y           = vertcat(netcdf_index.projectionCoverage_y{:});
+% netcdf_index.projectionCoverage_x           = att_values(strcmp(att_names,'projectionCoverage_x'));
+% netcdf_index.projectionCoverage_x           = vertcat(netcdf_index.projectionCoverage_x{:});
+% 
+% netcdf_index.projectionCoverage_y           = att_values(strcmp(att_names,'projectionCoverage_y'));
+% netcdf_index.projectionCoverage_y           = vertcat(netcdf_index.projectionCoverage_y{:});
+% 
+% netcdf_index.timeCoverage                   = att_values(strcmp(att_names,'timeCoverage'));
+% 
+% netcdf_index.geospatialCoverage_eastwest    = att_values(strcmp(att_names,'geospatialCoverage_eastwest'));
+% netcdf_index.geospatialCoverage_eastwest    = vertcat(netcdf_index.geospatialCoverage_eastwest{:});
+% 
+% netcdf_index.geospatialCoverage_northsouth  = att_values(strcmp(att_names,'geospatialCoverage_northsouth'));
+% netcdf_index.geospatialCoverage_northsouth  = vertcat(netcdf_index.geospatialCoverage_northsouth{:});
 
-netcdf_index.timeCoverage                   = att_values(strcmp(att_names,'timeCoverage'));
-
-netcdf_index.geospatialCoverage_eastwest    = att_values(strcmp(att_names,'geospatialCoverage_eastwest'));
-netcdf_index.geospatialCoverage_eastwest    = vertcat(netcdf_index.geospatialCoverage_eastwest{:});
-
-netcdf_index.geospatialCoverage_northsouth  = att_values(strcmp(att_names,'geospatialCoverage_northsouth'));
-netcdf_index.geospatialCoverage_northsouth  = vertcat(netcdf_index.geospatialCoverage_northsouth{:});
+for n = 1:size(att_names,1)
+    netcdf_index.projectionCoverage_x(n,:)          = att_values{n,strcmp(att_names(n,:),'projectionCoverage_x')};
+    netcdf_index.projectionCoverage_y(n,:)          = att_values{n,strcmp(att_names(n,:),'projectionCoverage_y')};
+    netcdf_index.timeCoverage(n,:)                  = att_values(n,strcmp(att_names(n,:),'timeCoverage'));
+    netcdf_index.geospatialCoverage_eastwest(n,:)   = att_values{n,strcmp(att_names(n,:),'geospatialCoverage_eastwest')};
+    netcdf_index.geospatialCoverage_northsouth(n,:) = att_values{n,strcmp(att_names(n,:),'geospatialCoverage_northsouth')};  
+end
 
 crs_ind         = strcmp('crs',{info(1).Variables.Name});
 if sum(crs_ind==1)
