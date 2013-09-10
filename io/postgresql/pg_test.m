@@ -44,7 +44,7 @@ OPT.db               = 'postgres';
 OPT.schema           = 'public';
 OPT.user             = '';
 OPT.pass             = '';
-OPT.table            = 'AaB34';
+OPT.table            = 'TestAf';
 OPT.database_toolbox = 1;
 
 OPT = setproperty(OPT,varargin);
@@ -85,7 +85,8 @@ pg_dump(conn)
    if    add_table
       sql   = loadstr('pg_test_template.sql');
       for i=1:length(sql)
-          sqlstr = strrep(sql{i},'?',OPT.table)
+          sqlstr = strrep(sql{i},'?TABLE',OPT.table);
+          sqlstr = strrep(sqlstr,'?USER' ,OPT.user );
           pg_exec(conn,sqlstr);
       end
       OK = 1;

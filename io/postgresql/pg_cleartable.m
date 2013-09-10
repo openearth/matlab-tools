@@ -68,5 +68,6 @@ pg_exec(conn, sprintf('DELETE FROM %s', pg_quote(table)));
 
 %% reset sequence
 pk = char(pg_getpk(conn, table));
-pg_exec(conn, sprintf('SELECT setval(''"%s_%s_seq"'', 1, FALSE)', table, pk));
+sql = sprintf('SELECT setval(''"%s_%s_seq"'', 1, FALSE)', table, pk);
+pg_exec(conn, sql);
 
