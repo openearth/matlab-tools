@@ -76,10 +76,12 @@ txt = sprintf('%s', D.header);
 for i = 1:length(D.data)
     txt = sprintf('%s%s', txt, writeblock(D.data(i)));
     if any(strcmp(D.data(i).name, {'VERSION', 'SOIL_COLLECTION', 'GEOMETRY_DATA'}))
-        txt = sprintf('%s\n', txt);
+        txt = sprintf('%s\r\n', txt);
     end
 end
-txt = sprintf('%s[END OF INPUT FILE]\n', txt);
+txt = sprintf('%s[END OF INPUT FILE]\r\n', txt);
+
+% txt = regexprep(txt, '\r\r', '\r');
 
 %% write file
 fid = fopen(fname, 'w');
@@ -111,9 +113,9 @@ if ~isempty(OPT.regexprep)
 end
 data(OPT.namecol,:) = regexprep(data(OPT.namecol,:), '_', ' ');
 if ischar(OPT.format)
-    format = ['%s' OPT.delimiter OPT.format '\n'];
+    format = ['%s' OPT.delimiter OPT.format '\r\n'];
 elseif iscell(OPT.format)
-    format = sprintf(['%%s' OPT.delimiter '%s\n'], OPT.format{:});
+    format = sprintf(['%%s' OPT.delimiter '%s\r\n'], OPT.format{:});
 elseif isstruct(OPT.format)
     if isfield(OPT.format, 'default_')
         defformat = OPT.format.default_;
@@ -136,7 +138,7 @@ elseif isstruct(OPT.format)
             end
         end
     end
-    format = sprintf(['%%s' OPT.delimiter '%s\n'], formatcell{:});
+    format = sprintf(['%%s' OPT.delimiter '%s\r\n'], formatcell{:});
 end
 txt = sprintf(format, data{:});
 
@@ -149,23 +151,41 @@ if exist(funcname)
     stxt = feval(func, Ds.value);
 elseif ischar(Ds.value)
 %     stxt = sprintf('%s\n', strtrim(Ds.value));
-    stxt = regexprep(Ds.value, '(^[ \t]+\n|\n[ \t]+$)', '');
-else
-    stxt = Ds.value;
+    cellstr = regexp(Ds.value, '\r\n', 'split');
+    idx = ~cellfun(@(s) isempty(strtrim(s)), cellstr);
+    stxt = sprintf('%s\r\n', cellstr{idx});
+    if ~strcmp(Ds.name , {'LAYERLOADS', 'RUN_IDENTIFICATION_TITLES'})
+        %stxt = regexprep(stxt, '\r\n$', '');
+    elseif strcmp(Ds.name , 'LAYERLOADS')
+        stxt = sprintf('%s\r\n', stxt);
+    end
 end
 noendkeys = {'RUN_IDENTIFICATION_TITLES', 'MSEEPNET', 'UNIT_WEIGHT_WATER',...
     'DEGREE_OF_CONSOLIDATION', 'degree_Temporary_loads', 'degree_earth_quake',...
     'CIRCLES', 'SPENCER_SLIP_DATA', 'SPENCER_SLIP_DATA_2', 'SPENCER_SLIP_INTERVAL',...
-    'LINE_LOADS', 'UNIFORM_LOADS', 'EARTH_QUAKE', 'MINIMAL_REQUIRED_CIRCLE_DEPTH',...
+    'LINE_LOADS', 'UNIFORM_LOADS_', 'EARTH_QUAKE', 'MINIMAL_REQUIRED_CIRCLE_DEPTH',...
     'START_VALUE_SAFETY_FACTOR', 'REFERENCE_LEVEL_CU', 'LIFT_SLIP_DATA',...
     'EXTERNAL_WATER_LEVELS', 'MODEL_FACTOR', 'NEWZONE_PLOT_DATA',...
     'REQUESTED_CIRCLE_SLICES', 'REQUESTED_LIFT_SLICES', 'REQUESTED_SPENCER_SLICES'};
-if ~any(strcmp(Ds.name, noendkeys))
+if strcmp(Ds.name, 'Slip_Circle_Selection')
+    endstr = sprintf('[End of %s]', type2header(Ds.name));
+elseif ~any(strcmp(Ds.name, noendkeys))
     endstr = sprintf('[END OF %s]', type2header(Ds.name));
 else
     endstr = '';
 end
-txt = sprintf('%s\n%s%s\n', txt, stxt, endstr);
+newlinekeys0 = {'GEOMETRY_DATA'};
+newlinekeys2 = {'ACCURACY', 'POINTS', 'CURVES', 'BOUNDARIES',...
+    'USE_PROBABILISTIC_DEFAULTS_BOUNDARIES', 'STDV_BOUNDARIES', 'DISTRIBUTION_BOUNDARIES',...
+    'PIEZO_LINES', 'PHREATIC_LINE', 'WORLD_CO_ORDINATES', 'LAYERS', 'LAYERLOADS'};
+if any(strcmp(Ds.name, newlinekeys0))
+    endstr = sprintf('%s', endstr);
+elseif any(strcmp(Ds.name, newlinekeys2))
+    endstr = sprintf('%s\r\n\r\n', endstr);
+else
+    endstr = sprintf('%s\r\n', endstr);
+end
+txt = sprintf('%s\r\n%s%s', txt, stxt, endstr);
 
 
 %%%% header specific functions
@@ -175,7 +195,7 @@ txt = nameisvalue(Ds,...
 
 function txt = SOIL_COLLECTION_write(Ds)
 n = length(Ds.data);
-txt = sprintf('%5i = number of items\n', n);
+txt = sprintf('%5i = number of items\r\n', n);
 for i = 1:n
     Dss = Ds.data(i);
     Dss.name = regexprep(Dss.name, '[_\d]', '');
@@ -183,7 +203,7 @@ for i = 1:n
 end
 
 function txt = SOIL_write(Ds)
-txt = sprintf('%s\n%s', regexprep(Ds.type, '_', ' '), nameisvalue(Ds,...
+txt = sprintf('%s\r\n%s', regexprep(Ds.type, '_', ' '), nameisvalue(Ds,...
     'format', struct('default_', '%g',...
     'SoilColor', '%i',...
     'SoilPc', '%.2E',...
@@ -209,7 +229,7 @@ txt = sprintf('%s\n%s', regexprep(Ds.type, '_', ' '), nameisvalue(Ds,...
 % the following keywords appear twice in the SOIL definition
 repkeys = {'SoilDistCu', 'SoilDistCuTop', 'SoilDistCuGradient'};
 for i = 1:length(repkeys)
-    txt = sprintf('%s%s=%g\n', txt, repkeys{i},  xs_get(Ds, repkeys{i}));
+    txt = sprintf('%s%s=%g\r\n', txt, repkeys{i},  xs_get(Ds, repkeys{i}));
 end
 
 function txt = GEOMETRY_DATA_write(Ds)
@@ -218,3 +238,11 @@ for i = 1:length(Ds.data)
     Dss = Ds.data(i);
     txt = sprintf('%s%s', txt, writeblock(Dss));
 end
+
+function txt = ACCURACY_write(Ds)
+txt = sprintf('%14.4f\r\n', Ds);
+
+function txt = POINTS_write(Ds)
+txth = sprintf('%7i  - Number of geometry points -\r\n', size(Ds,1));
+txtd = sprintf('%8i%15.3f%15.3f%15.3f\r\n', Ds');
+txt = sprintf('%s', txth, txtd);

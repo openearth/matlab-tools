@@ -84,6 +84,7 @@ fclose(fid);
 
 D = xs_empty();
 D.header = datastr{1};
+D.type = 'input';
 D.file = getfilename(fname);
 
 % endid = ~cellfun(@isempty, regexpi(keys, '[end of '));
@@ -109,7 +110,7 @@ varargout = {D};
 function Tp = header2type(str)
 str = regexprep(str, '[\[\]\.]', '');
 str = regexprep(str, '\(.*\)', '');
-Tp = strtrim(regexprep(strtrim(str), '[- ]', '_'));
+Tp = strtrim(regexprep(str, '[- ]', '_'));
 
 function Tp = funname2type()
 S = dbstack();
@@ -181,12 +182,15 @@ D = xs_set(D, key, Ds);
 
 function D = ACCURACY_read(str, key, D)
 Ds = xs_get(D, 'GEOMETRY_DATA');
-Ds = xs_set(Ds, key, str);
+Ds = xs_set(Ds, key, str2double(str));
 D = xs_set(D, 'GEOMETRY_DATA', Ds);
 
 function D = POINTS_read(str, key, D)
+tmp = regexp(str, '\r\n', 'split');
+data = cell2mat(cellfun(@(s) sscanf(s, '%f'), tmp(3:end-1),...
+    'uniformoutput', false))';
 Ds = xs_get(D, 'GEOMETRY_DATA');
-Ds = xs_set(Ds, key, str);
+Ds = xs_set(Ds, key, data);
 D = xs_set(D, 'GEOMETRY_DATA', Ds);
 
 function D = CURVES_read(str, key, D)
