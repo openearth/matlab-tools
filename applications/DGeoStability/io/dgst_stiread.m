@@ -154,6 +154,21 @@ for i = 1:length(cellstr)
     D = xs_set(D, header2type(cellstr{i}{OPT.namecol}), val);
 end
 
+function D = list_read(str, varargin)
+OPT = struct(...
+    'feature', '');
+OPT = setproperty(OPT, varargin);
+
+D = xs_empty();
+D = xs_meta(D, getfunname(), funname2type(), getfilename());
+[datastr, hstr] = regexp(str, '\d+\s+-\s+(Curve|Boundary) number\r\n', 'split', 'match');
+format = ['%0' num2str(ceil(log10(length(hstr)))) 'i'];
+for i = 2:length(datastr)
+    tmp = regexprep(datastr{i}, '^.*?numbers', '');
+    D = xs_set(D, sprintf(['%s_' format], OPT.feature, sscanf(hstr{i-1}, '%i')), sscanf(tmp, '%i'));
+end
+
+
 function D = fallback_read(str, key, D)
 D = xs_set(D, header2type(key), str);
 
@@ -195,12 +210,16 @@ D = xs_set(D, 'GEOMETRY_DATA', Ds);
 
 function D = CURVES_read(str, key, D)
 Ds = xs_get(D, 'GEOMETRY_DATA');
-Ds = xs_set(Ds, key, str);
+Dss = list_read(str,...
+    'feature', 'CURVE');
+Ds = xs_set(Ds, key, Dss);
 D = xs_set(D, 'GEOMETRY_DATA', Ds);
 
 function D = BOUNDARIES_read(str, key, D)
 Ds = xs_get(D, 'GEOMETRY_DATA');
-Ds = xs_set(Ds, key, str);
+Dss = list_read(str,...
+    'feature', 'BOUNDARY');
+Ds = xs_set(Ds, key, Dss);
 D = xs_set(D, 'GEOMETRY_DATA', Ds);
 
 function D = USE_PROBABILISTIC_DEFAULTS_BOUNDARIES_read(str, key, D)

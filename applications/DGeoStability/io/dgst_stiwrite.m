@@ -187,6 +187,27 @@ else
 end
 txt = sprintf('%s\r\n%s%s', txt, stxt, endstr);
 
+function txt = list_write(Ds, varargin)
+OPT = struct(...
+    'feature', '');
+OPT = setproperty(OPT, varargin);
+if strcmpi('curve', OPT.feature)
+    feature_plur = [OPT.feature 's'];
+elseif strcmpi('boundary', OPT.feature)
+    feature_plur = [OPT.feature(1:end-1) 'ies'];
+end
+txt = sprintf('%4i - Number of %s -\r\n', length(Ds.data), lower(feature_plur));
+for i = 1:length(Ds.data)
+    ifeature = str2double(regexprep(Ds.data(i).name, '^\D+_', ''));
+    txt = sprintf('%s%6i - %s number\r\n', txt, ifeature, OPT.feature);
+    if strcmpi('curve', OPT.feature)
+        txt = sprintf('%s%8i - number of points on %s,  next line(s) are pointnumbers\r\n', txt, length(Ds.data(i).value), lower(OPT.feature));
+    elseif strcmpi('boundary', OPT.feature)
+        txt = sprintf('%s%8i - number of curves on %s,  next line(s) are curvenumbers\r\n', txt, length(Ds.data(i).value), lower(OPT.feature));
+    end
+    stxt = sprintf('%6i', Ds.data(i).value);
+    txt = sprintf('%s    %s\r\n', txt, stxt);
+end
 
 %%%% header specific functions
 function txt = VERSION_write(Ds)
@@ -246,3 +267,11 @@ function txt = POINTS_write(Ds)
 txth = sprintf('%7i  - Number of geometry points -\r\n', size(Ds,1));
 txtd = sprintf('%8i%15.3f%15.3f%15.3f\r\n', Ds');
 txt = sprintf('%s', txth, txtd);
+
+function txt = CURVES_write(Ds)
+txt = list_write(Ds,...
+    'feature', 'Curve');
+
+function txt = BOUNDARIES_write(Ds)
+txt = list_write(Ds,...
+    'feature', 'Boundary');
