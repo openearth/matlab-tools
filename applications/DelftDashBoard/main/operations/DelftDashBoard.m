@@ -84,7 +84,7 @@ warning('off','MATLAB:HandleGraphics:ObsoletedProperty:JavaFrame');
 figureiconfile=[handles.settingsDir 'icons' filesep 'deltares.gif'];
 
 % Open Splash Screen
-frame=splash([handles.settingsDir 'icons' filesep 'DelftDashBoard.jpg'],50);
+frame=splash([handles.settingsDir 'icons' filesep 'DelftDashBoard.jpg'],2);
 
 try
     
