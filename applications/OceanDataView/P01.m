@@ -1,38 +1,42 @@
-function varargout = P011(varargin);
-%P011   read/search BODC P011 parameter vocabulary
+function varargout = P01(varargin);
+%P01   read/search BODC P01 parameter vocabulary
 %
-%    L = P011()
-%    L = P011('read',1)
+%    L = P01()
+%    L = P01('read',1)
 %
 % returns struct with field per database entry.
 %
-% If only P011.xml exists locally, reading is slow. Therefore
-% P011 will save a cache as *.mat (+ dead-end *.nc and *.xls), 
+% If only P01.xml exists locally, reading is slow. Therefore
+% P01 will save a cache as *.mat (+ dead-end *.nc and *.xls), 
 % which makes reading any 2nd time much faster.
 %
-%    <indices> = P011(<L>,'find','pattern')
+%    <indices> = P01(<L>,'find','pattern')
 %
 % displays table AND returns indices into fields of L after
 % searching the description (long_name, entryTerm).
 %
-%    [description,<indices>] = P011(<L>,'resolve','standard_name')
+%    [description,<indices>] = P01(<L>,'resolve','standard_name')
 %
 % returns description (long_name, entryTerm) of standard_name (entryKey).
 % description isempty when nothing was found.
 %
-% The P011 parameter vocabulary needs to be downloaded (xml) first from
+% The P01 parameter vocabulary needs to be downloaded (xml) first from
 % http://www.bodc.ac.uk/products/web_services/
-% into the directory >> fileparts(which('p011')), use the P011.url.
+% into the directory >> fileparts(which('p011')), use the P01.url.
 %
-% After one call, the P011 + P061 vocabs are saved as persistent
-% variables to boost performance, use munlock P011 to free ~ 10 MB memory.
+% After one call, the P01 + P061 vocabs are saved as persistent
+% variables to boost performance, use munlock P01 to free ~ 10 MB memory.
 %
 % Examples:
 %
-%    L         = P011(  'read'       ,1         )
-%    indices   = P011(L,'find'       ,'salinity');
-%    long_name = P011(L,'resolve'    ,'ODSDM021')
-%    long_name = P011(L,'resolve'    ,'ODSDM0')
+%    L         = P01(  'read'       ,1         )
+%    indices   = P01(L,'find'       ,'salinity');
+%    long_name = P01(L,'resolve'    ,'ODSDM021')
+%    long_name = P01(L,'resolve'    ,'ODSDM0')
+%
+% http://vocab.ndg.nerc.ac.uk/collection/
+% http://vocab.nerc.ac.uk/collection/
+% http://seadatanet.maris2.nl/v_cdi_v2/print_xml.aspx?n_code=5900
 %
 %See also: SDN_PARAMETER_MAPPING_RESOLVE, SDN_PARAMETER_MAPPING_PARSE, NC_CF_STANDARD_NAME_TABLE
 
@@ -72,11 +76,11 @@ function varargout = P011(varargin);
 
 %% input
 
-persistent P011 % cache this as it takes too long to load many times
+persistent P01  % cache this as it takes too long to load many times
 persistent P061
 
 L                 = [];
-OPT.listReference = 'P011';
+OPT.listReference = 'P01';
 OPT.disp          = 1;
 OPT.list_method   = '';%'getList'        
 
@@ -92,7 +96,6 @@ if nargin > 0
 end
 
 OPT = setproperty(OPT,varargin{:});
-
 
 if strcmpi(OPT.list_method,'getList')
  % Pxxx_getList.url
@@ -116,13 +119,13 @@ if ~isempty(OPT.read) | isempty(L)
    
    if exist(matfile,'file')==2
    
-      if strcmpi(OPT.listReference,'P011')
+      if strcmpi(OPT.listReference,'P01')
       
-          if isempty(P011)
-          disp(['Loading cached ',OPT.listReference '.mat for persistent use (30MB) to interpret SDN/ODV codes (>> clear P011 to free memory) ...'])
-          P011 = load(matfile); %P011 = nc2struct(ncfile);
+          if isempty(P01)
+          disp(['Loading cached ',OPT.listReference '.mat for persistent use (30MB) to interpret SDN/ODV codes (>> clear P01 to free memory) ...'])
+          P01 = load(matfile); %P01 = nc2struct(ncfile);
           end
-          L = P011; % variable P011 required for memory caching
+          L = P01; % variable P01 required for memory caching
           
       elseif strcmpi(OPT.listReference,'P061') 
       
@@ -130,7 +133,7 @@ if ~isempty(OPT.read) | isempty(L)
           P061 = load(matfile); %P061 = nc2struct(ncfile);
           disp(['Loading cached ',OPT.listReference '.mat for persistent use (.4 Mb) to interpret SDN/ODV codes (>> clear P061 to free memory) ...'])
           end
-          L = P061; % variable P011 required for memory caching
+          L = P061; % variable P01 required for memory caching
       
       else
 
@@ -145,15 +148,20 @@ if ~isempty(OPT.read) | isempty(L)
      % disp([OPT.listReference ': downloading looong xml file, please wait about 10 minutes (any next times only 9 sec)'])
      % urlwrite('')
       
-%% parse xml file, to allow indentical behavior for nc_cf_standard_name_table and P011
+%% parse xml file, to allow indentical behavior for nc_cf_standard_name_table and P01
 
-      disp([OPT.listReference ': parsing looong xml file, please wait about 10 minutes (any next times only 9 sec) ...'])
-   
       tic
-      L2  = xml_read([OPT.listReference '.xml'],PREF);
+      tmpfile = [fileparts(mfilename('fullpath')) filesep OPT.listReference '.xml.mat'];
+      if exist(tmpfile)
+         L2  = load(tmpfile);
+         disp([mfilename,': loaded parsed xml from ',tmpfile])
+      else
+         disp([OPT.listReference ': parsing looong xml file, please wait about 10 minutes (any next times only 9 sec) ...'])
+         L2  = xml_read([OPT.listReference '.xml'],PREF);
+         save(tmpfile,'-struct','L2');
+         disp([mfilename,': cached parsed xml to   ',tmpfile])
+      end
       toc
-      
-     %save([fileparts(mfilename('fullpath')) OPT.listReference '.xml.mat'],'-struct','L2');
 
 %% get rid of nested fields (turn all xml attributes into elements)
       
@@ -163,8 +171,8 @@ if ~isempty(OPT.read) | isempty(L)
 
       % <ns1:getListResponse xmlns:ns1="urn:vocab/types">
       % <ns1:codeTableRecord>
-      % <ns1:listKey>http://vocab.ndg.nerc.ac.uk/list/P011/185</ns1:listKey>
-      % <ns1:entryKey>http://vocab.ndg.nerc.ac.uk/term/P011/185/PAGEPAMS</ns1:entryKey>
+      % <ns1:listKey>http://vocab.ndg.nerc.ac.uk/list/P01/185</ns1:listKey>
+      % <ns1:entryKey>http://vocab.ndg.nerc.ac.uk/term/P01/185/PAGEPAMS</ns1:entryKey>
       % <ns1:entryTerm>14C Age of peat by accelerator mass spectrometry</ns1:entryTerm>
       % <ns1:entryTermAbbr>AMSPeatAge</ns1:entryTermAbbr>
       % <ns1:entryTermDef>Unavailable</ns1:entryTermDef>
@@ -188,8 +196,8 @@ if ~isempty(OPT.read) | isempty(L)
       % xmlns:skos="http://www.w3.org/2004/02/skos/core#" 
       % xmlns:dc="http://purl.org/dc/elements/1.1/"> 
       %
-      % <skos:Concept rdf:about='http://vocab.ndg.nerc.ac.uk/term/P011/251/SAGEMSFM'>
-      % <skos:externalID>SDN:P011:251:SAGEMSFM</skos:externalID>
+      % <skos:Concept rdf:about='http://vocab.ndg.nerc.ac.uk/term/P01/251/SAGEMSFM'>
+      % <skos:externalID>SDN:P01:251:SAGEMSFM</skos:externalID>
       % <skos:prefLabel>14C age of Foraminiferida (ITIS: 44030: WoRMS 22528) [Subcomponent: tests] in sediment by picking and accelerator mass spectrometry</skos:prefLabel>
       % <skos:altLabel>AMSSedAge</skos:altLabel>
       % <skos:definition>Unavailable</skos:definition>
@@ -198,36 +206,34 @@ if ~isempty(OPT.read) | isempty(L)
       %
       % </skos:Concept>
       % </rdf:RDF> 
-      
-         for i=1:length(L2.Concept)
-          L2.Concept(i).about       = L2.Concept(i).ATTRIBUTE.about;
 
-          try
-          % <skos:narrowMatch rdf:resource="http://vocab.ndg.nerc.ac.uk/term/P091/36/NIUW" /> 
-          % became (was wrong aparently)
-          % <skos:minorMatch rdf:resource="http://vocab.ndg.nerc.ac.uk/term/P091/37/NHUW" /> 
-          L2.Concept(i).narrowMatch = ATTRIBUTE_resource2char(L2.Concept(i).narrowMatch);
-          end
-          if strcmpi(OPT.listReference,'P011')
-          L2.Concept(i).exactMatch  = ATTRIBUTE_resource2char(L2.Concept(i).exactMatch);
-          L2.Concept(i).broadMatch  = ATTRIBUTE_resource2char(L2.Concept(i).broadMatch);
+         for i=1:length(L2.Collection.member)
+          L2i = L2.Collection.member(i).Concept;
+          L2.Concept(i).about       = L2i.ATTRIBUTE.about;
+          L2.Concept(i).(OPT.standard_name) = L2i.identifier;
+          L2.Concept(i).(OPT.long_name)     = L2i.prefLabel.CONTENT;
+          L2.Concept(i).definition          = L2i.definition.CONTENT;          
+          
+          if strcmpi(OPT.listReference,'P01')
+          L2.Concept(i).related     = ATTRIBUTE_resource2char(L2i.related);          
+          L2.Concept(i).broader     = ATTRIBUTE_resource2char(L2i.broader);
           elseif strcmpi(OPT.listReference,'P061')
-          L2.Concept(i).minorMatch  = ATTRIBUTE_resource2char(L2.Concept(i).minorMatch);
           end
           
          end
-         L2.Concept=rmfield(L2.Concept,'ATTRIBUTE');
-
+         L2            = rmfield(L2           ,'ATTRIBUTE');
+         L2.Collection = rmfield(L2.Collection,'ATTRIBUTE');
+         
       end
       
 %% make struct of fields into field of structs
 
       L = array_of_structs2struct_of_arrays(L2.Concept);
 
-      ind = strfind(L.(OPT.standard_name){1},':') % whole xml file start with SDN:listReference:same_version_numer
+      ind = strfind(L.(OPT.standard_name){1},':'); % whole xml file start with SDN:listReference:same_version_numer
 
       L.listReference  = OPT.listReference;
-      L.listVersion    = L.(OPT.standard_name){1}(ind(end-1)+1:ind(end)-1)
+      L.listVersion    = L.(OPT.standard_name){1}(ind(end-1)+1:ind(end)-1);
       L.entryReference = char(L.(OPT.standard_name));
       L.entryReference = cellstr(L.entryReference(:,ind(end)+1:end)); % needed for quick search
 
@@ -243,8 +249,8 @@ if ~isempty(OPT.read) | isempty(L)
       save      (matfile,'-struct','L'); %  1.6 Mb, loads in   2.8 sec
    
    end
-
-   if nargout==1
+   
+   if nargout<2
       varargout = {L};
    end
 
@@ -273,6 +279,7 @@ if ~isempty(OPT.find)
    n2 = size(char(L.(OPT.long_name){ii}),2);
 
    disp([OPT.listReference ' entries matching: "',searchpattern,'"'])
+   disp([OPT.listReference ' entries matching: "',searchpattern,'"'])
    disp([                            '-----+-'           repmat('-',[1 n1])   '-+-'               repmat('-',[1 n2])   ])
    disp([pad(num2str([1:n]'),' ',-4) repmat(' | ',[n 1]) standard_names       repmat(' | ',[n 1]) char(L.(OPT.long_name){ii})])
    disp([                            '-----+-'           repmat('-',[1 n1])   '-+-'               repmat('-',[1 n2])   ])
@@ -281,8 +288,9 @@ if ~isempty(OPT.find)
    end
 
    % output
-   
-   if nargout==1
+   if nargout<1
+      varargout = [];
+   else
       varargout = {ii};
    end
 
@@ -298,7 +306,7 @@ if ~isempty(OPT.resolve)
    
   %ii = regexpi(L.(OPT.standard_name),searchpattern); % per cell item, empty or start index of searchpattern
   %ii = find(~cellfun(@isempty,ii));                  % indices of non-empty searchpattern matches
-   ii = strmatch(searchpattern,L.entryReference); % faster than 2 lines above
+   ii = strmatch(searchpattern,L.entryReference);     % faster than 2 lines above
    
    long_name = char({L.(OPT.long_name){ii}}); % can be more than one
 
