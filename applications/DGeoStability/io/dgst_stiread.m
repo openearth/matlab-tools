@@ -77,7 +77,7 @@ fid = fopen(fname,'r');
 contents = fread(fid,'*char')';
 fclose(fid);
 
-[datastr, keys] = regexpi(strtrim(contents), '\[[a-z0-9\- ]{4,100}\]',...
+[datastr, keys] = regexpi(strtrim(contents), '\[[a-z0-9\-\(\) ]{4,100}\]',...
     'split', 'match');
 
 % datastr = datastr(~cellfun(@(s) isempty(strtrim(s)), datastr));
@@ -175,6 +175,11 @@ end
 
 function D = fallback_read(str, key, D)
 D = xs_set(D, header2type(key), str);
+
+function Ds = requested_read(str)
+Ds = nameisvalue(str,...
+    'namecol', 2,...
+    'valcol', 1);
 
 %%%% header specific functions
 function D = VERSION_read(str, key, D)
@@ -282,19 +287,57 @@ function D = MSEEPNET_read(str, key, D)
 D = xs_set(D, key, str);
 
 function D = UNIT_WEIGHT_WATER_read(str, key, D)
-D = xs_set(D, key, str);
+D = xs_set(D, key, sscanf(str, '%g'));
 
 function D = DEGREE_OF_CONSOLIDATION_read(str, key, D)
-D = xs_set(D, key, str);
+Ds = xs_empty();
+Ds = xs_meta(Ds, getfunname(), funname2type(), getfilename());
 
-function D = degree_Temporary_loads_read(str, key, D)
-D = xs_set(D, key, str);
+cellstr = regexp(strtrim(str), '\r\n', 'split');
 
-function D = degree_earth_quake_read(str, key, D)
-D = xs_set(D, key, str);
+i = 2;
+while i<length(cellstr)
+    tmp = sscanf(cellstr{i}, '%g');
+    Ds = xs_set(Ds, sprintf('layer_%i', tmp(1)), tmp(2:end)');
+    i = i + 1;
+end
+
+val = logical(sscanf(cellstr{end}, '%i'));
+tmp = strtrim(regexprep(cellstr{end}, '[^\D]', ''));
+Tp = regexprep(tmp, '\s+not\s+', ' ');
+Ds = xs_set(Ds, header2type(Tp), val);
+D = xs_set(D, key, Ds);
+
+function D = DEGREE_TEMPORARY_LOADS_read(str, key, D)
+Ds = xs_empty();
+Ds = xs_meta(Ds, getfunname(), funname2type(), getfilename());
+cellstr = regexp(strtrim(str), '\r\n', 'split');
+Ds = xs_set(Ds, 'data', sscanf(cellstr{1}, '%g'));
+
+val = logical(sscanf(cellstr{end}, '%i'));
+tmp = strtrim(regexprep(cellstr{end}, '[^\D]', ''));
+Tp = regexprep(tmp, '\s+not\s+', ' ');
+Ds = xs_set(Ds, header2type(Tp), val);
+D = xs_set(D, key, Ds);
+
+function D = DEGREE_FREE_WATER_read(str, key, D)
+D = xs_set(D, key, sscanf(str, '%g'));
+
+function D = DEGREE_EARTH_QUAKE_read(str, key, D)
+D = xs_set(D, key, sscanf(str, '%g'));
 
 function D = CIRCLES_read(str, key, D)
-D = xs_set(D, key, str);
+Ds = xs_empty();
+Ds = xs_meta(Ds, getfunname(), funname2type(), getfilename());
+
+cellstr = regexp(strtrim(str), '\r\n', 'split');
+for i = 1:length(cellstr)
+    tmp = regexp(cellstr{i}, '(?<=\d)\s+(?=[\D- ]+$)', 'split');
+    values = sscanf(tmp{1}, '%g');
+    Tp = header2type(regexprep(tmp{end}, '\s?(no|used)\s?', ''));
+    Ds = xs_set(Ds, Tp, values);
+end
+D = xs_set(D, key, Ds);
 
 function D = SPENCER_SLIP_DATA_read(str, key, D)
 D = xs_set(D, key, str);
@@ -315,7 +358,11 @@ function D = TREE_ON_SLOPE_read(str, key, D)
 D = xs_set(D, key, str);
 
 function D = EARTH_QUAKE_read(str, key, D)
-D = xs_set(D, key, str);
+val = nameisvalue(str,...
+    'namecol', 2,...
+    'valcol', 1,...
+    'delimiter', ' = ');
+D = xs_set(D, key, val);
 
 function D = SIGMA_TAU_CURVES_read(str, key, D)
 D = xs_set(D, key, str);
@@ -324,10 +371,13 @@ function D = BOND_STRESS_DIAGRAMS_read(str, key, D)
 D = xs_set(D, key, str);
 
 function D = MINIMAL_REQUIRED_CIRCLE_DEPTH_read(str, key, D)
-D = xs_set(D, key, str);
+units = regexprep(str, '^.*\[|\].*$', '');
+val = sscanf(str, '%g');
+D = xs_set(D, '-units', key, {val units});
 
-function D = Slip_Circle_Selection_read(str, key, D)
-D = xs_set(D, key, str);
+function D = SLIP_CIRCLE_SELECTION_read(str, key, D)
+Ds = nameisvalue(str);
+D = xs_set(D, key, Ds);
 
 function D = START_VALUE_SAFETY_FACTOR_read(str, key, D)
 D = xs_set(D, key, str);
@@ -336,46 +386,84 @@ function D = REFERENCE_LEVEL_CU_read(str, key, D)
 D = xs_set(D, key, str);
 
 function D = LIFT_SLIP_DATA_read(str, key, D)
-D = xs_set(D, key, str);
+Ds = xs_empty();
+Ds = xs_meta(Ds, getfunname(), funname2type(), getfilename());
+
+cellstr = regexp(strtrim(str), '\r\n', 'split');
+for i = 1:length(cellstr)-1
+    tmp = regexp(cellstr{i}, '(?<=\d)\s+(?=[\D- ]+$)', 'split');
+    values = sscanf(tmp{1}, '%g');
+    Tp = header2type(regexprep(tmp{end}, '\s?(no|used)\s?', ''));
+    Ds = xs_set(Ds, Tp, values);
+end
+Tp = header2type(regexprep(cellstr{end}, '^[\d\s]+(?=\D)|[\(\)]', ''));
+Ds = xs_set(Ds, Tp, sscanf(cellstr{end}, '%i'));
+D = xs_set(D, key, Ds);
 
 function D = EXTERNAL_WATER_LEVELS_read(str, key, D)
-D = xs_set(D, key, str);
+cellstr = regexp(str, '\r\n', 'split');
+Ds = nameisvalue(sprintf('%s\r\n', cellstr{2:4}),...
+    'namecol', 2,...
+    'valcol', 1,...
+    'delimiter', '= ',...
+    'regexprep', {'^\s+|No\s|\sused|\s+$', ''});
+Ds = xs_set(Ds, 'norm', eval(regexprep(cellstr{5}, '^.*=', '')));
+wdcellstr = regexp(str, 'Water data \(\d+\)|Piezo lines', 'split');
+format = sprintf('%%0%ii', ceil(log10(length(wdcellstr))));
+for i = 2:length(wdcellstr)-1
+    Dss = nameisvalue(wdcellstr{i},...
+        'namecol', 2,...
+        'valcol', 1,...
+        'delimiter', '= ',...
+        'regexprep', {'\s+$', ''});
+    Ds = xs_set(Ds, sprintf(['Water_data_' format], i-1), Dss);
+end
+tmp = regexp(str, '^[\d ]+(?= = Pl-top and pl-bottom)','match', 'lineanchors');
+val = cell2mat(cellfun(@(s) sscanf(s, '%g'), tmp, 'uniformoutput', false))';
+Ds = xs_set(Ds, 'Piezo_lines', val);
+
+D = xs_set(D, key, Ds);
 
 function D = MODEL_FACTOR_read(str, key, D)
 D = xs_set(D, key, str);
 
 function D = CALCULATION_OPTIONS_read(str, key, D)
-D = xs_set(D, key, str);
+Ds = nameisvalue(str);
+D = xs_set(D, key, Ds);
 
 function D = PROBABILISTIC_DEFAULTS_read(str, key, D)
-D = xs_set(D, key, str);
+Ds = nameisvalue(str);
+D = xs_set(D, key, Ds);
 
 function D = NEWZONE_PLOT_DATA_read(str, key, D)
+% Ds = nameisvalue(str,...
+%     'namecol', 2,...
+%     'valcol', 1);
 D = xs_set(D, key, str);
 
 function D = HORIZONTAL_BALANCE_read(str, key, D)
-D = xs_set(D, key, str);
+D = xs_set(D, key, nameisvalue(str));
 
 function D = REQUESTED_CIRCLE_SLICES_read(str, key, D)
-D = xs_set(D, key, str);
+D = xs_set(D, key, requested_read(str));
 
 function D = REQUESTED_LIFT_SLICES_read(str, key, D)
-D = xs_set(D, key, str);
+D = xs_set(D, key, requested_read(str));
 
 function D = REQUESTED_SPENCER_SLICES_read(str, key, D)
-D = xs_set(D, key, str);
+D = xs_set(D, key, requested_read(str));
 
 function D = SOIL_RESISTANCE_read(str, key, D)
-D = xs_set(D, key, str);
+D = xs_set(D, key, nameisvalue(str));
 
 function D = GENETIC_ALGORITHM_OPTIONS_BISHOP_read(str, key, D)
-D = xs_set(D, key, str);
+D = xs_set(D, key, nameisvalue(str));
 
 function D = GENETIC_ALGORITHM_OPTIONS_LIFTVAN_read(str, key, D)
-D = xs_set(D, key, str);
+D = xs_set(D, key, nameisvalue(str));
 
 function D = GENETIC_ALGORITHM_OPTIONS_SPENCER_read(str, key, D)
-D = xs_set(D, key, str);
+D = xs_set(D, key, nameisvalue(str));
 
 function D = NAIL_TYPE_DEFAULTS_read(str, key, D)
-D = xs_set(D, key, str);
+D = xs_set(D, key, nameisvalue(str));

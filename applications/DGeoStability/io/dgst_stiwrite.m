@@ -94,6 +94,7 @@ function hd = type2header(str)
 hd = regexprep(str, '_', ' ');
 hd = regexprep(hd, '(?<= CO) (?=ORDINATES$)', '-');
 hd = regexprep(hd, '(?<=^SIGMA) (?=TAU CURVES$)', '-');
+hd = regexprep(hd, 'degree Free water', 'degree Free water(Cu)');
 
 function txt = nameisvalue(Ds, varargin)
 OPT = struct(...
@@ -102,6 +103,7 @@ OPT = struct(...
     'valcol', 2,...
     'delimiter', '=',...
     'format', '%g',...
+    'trailingnewline', false,...
     'regexprep', {{}});
 
 OPT = setproperty(OPT, varargin);
@@ -115,7 +117,7 @@ data(OPT.namecol,:) = regexprep(data(OPT.namecol,:), '_', ' ');
 if ischar(OPT.format)
     fmt = {'%s', '%s'};
     fmt{OPT.valcol} = OPT.format;
-    format = sprintf(['%s' OPT.delimiter '%s\r\n'], fmt{:});
+    format = repmat(sprintf(['%s' OPT.delimiter '%s\r\n'], fmt{:}), 1, length(Ds.data));
 elseif iscell(OPT.format)
     fmt = repmat({'%s'}, 3, length(Ds.data));
     fmt(2,:) = {OPT.delimiter};
@@ -152,12 +154,15 @@ elseif isstruct(OPT.format)
     return
     %format = sprintf(['%%s' OPT.delimiter '%s\r\n'], formatcell{:});
 end
+if ~OPT.trailingnewline
+    format = format(1:end-2);
+end
 txt = sprintf(format, data{:});
 
 function txt = writeblock(Ds, varargin)
 
 txt = sprintf('[%s]', type2header(Ds.name));
-funcname = [Ds.name '_write'];
+funcname = [upper(Ds.name) '_write'];
 if exist(funcname)
     func = str2func(funcname);
     stxt = feval(func, Ds.value);
@@ -173,7 +178,7 @@ elseif ischar(Ds.value)
     end
 end
 noendkeys = {'RUN_IDENTIFICATION_TITLES', 'MSEEPNET', 'UNIT_WEIGHT_WATER',...
-    'DEGREE_OF_CONSOLIDATION', 'degree_Temporary_loads', 'degree_earth_quake',...
+    'DEGREE_OF_CONSOLIDATION', 'degree_Temporary_loads', 'degree_Free_water', 'degree_earth_quake',...
     'CIRCLES', 'SPENCER_SLIP_DATA', 'SPENCER_SLIP_DATA_2', 'SPENCER_SLIP_INTERVAL',...
     'LINE_LOADS', 'UNIFORM_LOADS_', 'EARTH_QUAKE', 'MINIMAL_REQUIRED_CIRCLE_DEPTH',...
     'START_VALUE_SAFETY_FACTOR', 'REFERENCE_LEVEL_CU', 'LIFT_SLIP_DATA',...
@@ -230,11 +235,23 @@ txth = sprintf('%4i - Number of boundaries -\r\n', length(Ds));
 txtv = sprintf([OPT.format '\r\n'], Ds);
 txt = sprintf('%s%s', txth, txtv);
 
+function txt = requested_write(Ds)
+txt = nameisvalue(Ds,...
+    'namecol', 2,...
+    'valcol', 1,...
+    'format', '%3i',...
+    'delimiter', '     =');
+
+function txt = genetic_write(Ds)
+txt = nameisvalue(Ds,...
+    'trailingnewline', true,...
+    'format', struct('default_', '%.3f', 'regexp_', {{'Count$', '%i'}}));
 
 %%%% header specific functions
 function txt = VERSION_write(Ds)
 txt = nameisvalue(Ds,...
     'regexprep', {'D_Geo', 'D-Geo'});
+txt = sprintf('%s\r\n', txt);
 
 function txt = SOIL_COLLECTION_write(Ds)
 n = length(Ds.data);
@@ -272,8 +289,9 @@ txt = sprintf('%s\r\n%s', regexprep(Ds.type, '_', ' '), nameisvalue(Ds,...
 % the following keywords appear twice in the SOIL definition
 repkeys = {'SoilDistCu', 'SoilDistCuTop', 'SoilDistCuGradient'};
 for i = 1:length(repkeys)
-    txt = sprintf('%s%s=%g\r\n', txt, repkeys{i},  xs_get(Ds, repkeys{i}));
+    txt = sprintf('%s\r\n%s=%g', txt, repkeys{i},  xs_get(Ds, repkeys{i}));
 end
+txt = sprintf('%s\r\n', txt);
 
 function txt = GEOMETRY_DATA_write(Ds)
 txt = '';
@@ -311,5 +329,162 @@ txt = nameisvalue(Ds,...
     'namecol', 2,...
     'valcol', 1,...
     'delimiter', ' : ',...
-    'format', repmat({'%3i'}, size(Ds.data)),...
+    'format', '%3i',...
     'regexprep', regexprep(:));
+txt = sprintf('%s\r\n', txt);
+
+function txt = UNIT_WEIGHT_WATER_write(Ds)
+txt = sprintf('%9.2f : Unit weight water', Ds);
+
+function txt = DEGREE_OF_CONSOLIDATION_write(Ds)
+layeridx = ~cellfun(@isempty, regexp({Ds.data.name}, 'layer'));
+nlayers = sum(layeridx);
+txt = sprintf('%4i Number of layers ', nlayers);
+for i = find(layeridx)
+    stxt = sprintf('%4i', xs_get(Ds, Ds.data(i).name));
+    txt = sprintf('%s\r\n%6i     %s', txt, sscanf(regexprep(Ds.data(i).name, '[\D_]+', ''), '%i'), stxt);
+end
+for i = find(~layeridx)
+    expl = type2header(Ds.data(i).name);
+    if ~Ds.data(i).value
+        expl = regexprep(expl, '(?<=water) (?=included)', ' not ');
+    end
+    stxt = sprintf('%3i    %s', Ds.data(i).value, expl);
+    txt = sprintf('%s\r\n%s', txt, stxt);
+end
+
+function txt = DEGREE_TEMPORARY_LOADS_write(Ds)
+stxt = sprintf('%4g', Ds.data(1).value);
+txt = sprintf('%s%s ', blanks(10), stxt);
+for i = 2:length(Ds.data)
+    expl = type2header(Ds.data(i).name);
+    if ~Ds.data(i).value
+        expl = regexprep(expl, '(?<=water) (?=included)', ' not ');
+    end
+    stxt = sprintf('%3i    %s', Ds.data(i).value, expl);
+    txt = sprintf('%s\r\n%s', txt, stxt);
+end
+
+function txt = DEGREE_FREE_WATER_write(Ds)
+stxt = sprintf('%4g', Ds);
+txt = sprintf('%s%s ', blanks(10), stxt);
+
+function txt = DEGREE_EARTH_QUAKE_write(Ds)
+stxt = sprintf('%4g', Ds);
+txt = sprintf('%s%s ', blanks(10), stxt);
+
+function txt = CIRCLES_write(Ds)
+for i = 1:length(Ds.data)
+    key = type2header(Ds.data(i).name);
+    key = regexprep(key, '(?<=^[XY]) (?=dir)', '-');
+    if Ds.data(i).value(end) == 0
+        key = sprintf('no %s used ', key);
+    end
+    stxt = sprintf('%13.3f%17.3f%8i    %s', Ds.data(i).value, key);
+    if i == 1
+        txt = stxt;
+    else
+        txt = sprintf('%s\r\n%s', txt, stxt);
+    end
+end
+
+function txt = EARTH_QUAKE_write(Ds)
+txt = nameisvalue(Ds,...
+    'namecol', 2,...
+    'valcol', 1,...
+    'delimiter', ' = ',...
+    'format', '%10.3f');
+
+function txt = MINIMAL_REQUIRED_CIRCLE_DEPTH_write(Ds)
+txt = sprintf('%10.2f     [m]', Ds);
+
+function txt = SLIP_CIRCLE_SELECTION_write(Ds)
+txt = nameisvalue(Ds,...
+    'trailingnewline', true,...
+    'format', struct('regexp_', {{'Used$', '%i', '^XEntry', '%.2f'}}));
+
+function txt = LIFT_SLIP_DATA_write(Ds)
+for i = 1:length(Ds.data)-1
+    key = type2header(Ds.data(i).name);
+    key = regexprep(key, '(?<=^[XY]) (?=dir)', '-');
+    if Ds.data(i).value(end) == 0
+        key = sprintf('no %s used ', key);
+    end
+    stxt = sprintf('%13.3f%17.3f%8i    %s', Ds.data(i).value, key);
+    if i == 1
+        txt = stxt;
+    else
+        txt = sprintf('%s\r\n%s', txt, stxt);
+    end
+end
+key = regexprep(type2header(Ds.data(end).name), ' (?=\d+)', ' (');
+key = [key ')'];
+txt = sprintf('%s\r\n%13i%s%s', txt, Ds.data(end).value, blanks(29), key);
+
+function txt = EXTERNAL_WATER_LEVELS_write(Ds)
+tmp = Ds;
+tmp.data(4:end) = [];
+if ~tmp.data(1).value
+    tmp.data(1).name = sprintf('No %s used', type2header(tmp.data(1).name));
+end
+txt = nameisvalue(tmp,...
+    'namecol', 2,...
+    'valcol', 1,...
+    'delimiter', '      = ',...
+    'format', {'%6g' '%6.2f' '%6.2f'});
+txt = sprintf('%s\r\n%5i     norm = 1/%i\r\n', txt, 1, 1/Ds.data(4).value);
+idx = ~cellfun(@isempty, regexp({Ds.data.name}, 'Water_data_\d+', 'once'));
+txt = sprintf('%s%5i = number of items', txt, sum(idx));
+% for i = find(idx)
+%     Dss = Ds;
+%     Dss.data(
+%     stxt = sprintf('Water data (%i)', regexprep(
+% end
+
+function txt = CALCULATION_OPTIONS_write(Ds)
+txt = nameisvalue(Ds,...
+    'trailingnewline', true);
+
+function txt = PROBABILISTIC_DEFAULTS_write(Ds)
+txt = nameisvalue(Ds,...
+    'trailingnewline', true,...
+    'format', struct('default_', '%.2f', 'regexp_', {{'Distribution$', '%.0f'}}));
+
+% function txt = NEWZONE_PLOT_DATA_write(Ds)
+% txt = nameisvalue(Ds,...
+%     'trailingnewline', true,...
+%     'namecol', 2,...
+%     'valcol', 1,...
+%     'format', struct('default_', '%.2f', 'regexp_', {{}}));
+
+function txt = HORIZONTAL_BALANCE_write(Ds)
+txt = nameisvalue(Ds,...
+    'trailingnewline', true,...
+    'format', struct('default_', '%.2f', 'regexp_', {{'X(Left|Right)$', '%.3f', 'Interval$', '%.0f'}}));
+
+function txt = REQUESTED_CIRCLE_SLICES_write(Ds)
+txt = requested_write(Ds);
+
+function txt = REQUESTED_LIFT_SLICES_write(Ds)
+txt = requested_write(Ds);
+
+function txt = REQUESTED_SPENCER_SLICES_write(Ds)
+txt = requested_write(Ds);
+
+function txt = SOIL_RESISTANCE_write(Ds)
+txt = nameisvalue(Ds,...
+    'trailingnewline', true);
+
+function txt = GENETIC_ALGORITHM_OPTIONS_BISHOP_write(Ds)
+txt = genetic_write(Ds);
+
+function txt = GENETIC_ALGORITHM_OPTIONS_LIFTVAN_write(Ds)
+txt = genetic_write(Ds);
+
+function txt = GENETIC_ALGORITHM_OPTIONS_SPENCER_write(Ds)
+txt = genetic_write(Ds);
+
+function txt = NAIL_TYPE_DEFAULTS_write(Ds)
+txt = nameisvalue(Ds,...
+    'trailingnewline', true,...
+    'format', struct('default_', '%.2f', 'regexp_', {{'BendingStiffness', '%.2E', 'Use', '%i'}}));
