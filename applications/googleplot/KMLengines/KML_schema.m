@@ -1,5 +1,5 @@
 function varargout = KML_schema(data,varargin)
-%KML_STYLE low-level routine for creating KML string of line style
+%KML_schema low-level routine for creating KML string of line style
 %
 %   kmlstring = KML_style(<keyword,value>)
 %

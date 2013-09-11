@@ -1,4 +1,4 @@
-%VAKLODINGEN2PNG   make kml files with vaklodingen as georeferenced pngs
+%jarkusgrids2png   make kml files with vaklodingen as georeferenced pngs
 %
 %See also: jarkusgrids2png, vaklodingen2kml, vaklodingen_overview
 
