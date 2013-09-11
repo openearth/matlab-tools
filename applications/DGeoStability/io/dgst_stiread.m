@@ -141,7 +141,7 @@ OPT = setproperty(OPT, varargin);
 D = xs_empty();
 D = xs_meta(D, getfunname(), funname2type(), getfilename());
 
-cellstr = regexp(strtrim(str), '\n', 'split');
+cellstr = regexp(strtrim(str), '\r\n', 'split');
 cellstr = cellstr(1+OPT.skiplines:end);
 cellstr = regexp(cellstr, OPT.delimiter, 'split');
 
@@ -151,7 +151,11 @@ for i = 1:length(cellstr)
     else
         val = strtrim(cellstr{i}{OPT.valcol});
     end
-    D = xs_set(D, header2type(cellstr{i}{OPT.namecol}), val);
+    key = cellstr{i}{OPT.namecol};
+    for j = 1:2:length(OPT.regexprep)
+        key = regexprep(key, OPT.regexprep{j:j+1});
+    end
+    D = xs_set(D, header2type(key), val);
 end
 
 function D = list_read(str, varargin)
@@ -224,7 +228,8 @@ D = xs_set(D, 'GEOMETRY_DATA', Ds);
 
 function D = USE_PROBABILISTIC_DEFAULTS_BOUNDARIES_read(str, key, D)
 Ds = xs_get(D, 'GEOMETRY_DATA');
-Ds = xs_set(Ds, key, str);
+val = sscanf(regexprep(str, '^.*?boundaries.*?\r\n', ''), '%i');
+Ds = xs_set(Ds, key, logical(val));
 D = xs_set(D, 'GEOMETRY_DATA', Ds);
 
 function D = STDV_BOUNDARIES_read(str, key, D)
@@ -266,7 +271,12 @@ function D = RUN_IDENTIFICATION_TITLES_read(str, key, D)
 D = xs_set(D, key, str);
 
 function D = MODEL_read(str, key, D)
-D = xs_set(D, key, str);
+Ds = nameisvalue(str,...
+    'namecol', 2,...
+    'valcol', 1,...
+    'delimiter', ' : ',...
+    'regexprep', {'\s+off$', ''});
+D = xs_set(D, key, Ds);
 
 function D = MSEEPNET_read(str, key, D)
 D = xs_set(D, key, str);

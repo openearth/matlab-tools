@@ -108,14 +108,23 @@ OPT = setproperty(OPT, varargin);
 data = repmat({''}, 2, length(Ds.data));
 data(OPT.namecol,:) = {Ds.data.name};
 data(OPT.valcol,:) = {Ds.data.value};
-if ~isempty(OPT.regexprep)
-    data(OPT.namecol,:) = regexprep(data(OPT.namecol,:), OPT.regexprep{:});
+for i = 1:2:length(OPT.regexprep)
+    data(OPT.namecol,:) = regexprep(data(OPT.namecol,:), OPT.regexprep{i:i+1});
 end
 data(OPT.namecol,:) = regexprep(data(OPT.namecol,:), '_', ' ');
 if ischar(OPT.format)
-    format = ['%s' OPT.delimiter OPT.format '\r\n'];
+    fmt = {'%s', '%s'};
+    fmt{OPT.valcol} = OPT.format;
+    format = sprintf(['%s' OPT.delimiter '%s\r\n'], fmt{:});
 elseif iscell(OPT.format)
-    format = sprintf(['%%s' OPT.delimiter '%s\r\n'], OPT.format{:});
+    fmt = repmat({'%s'}, 3, length(Ds.data));
+    fmt(2,:) = {OPT.delimiter};
+    if OPT.valcol == 2
+        fmt(3,:) = OPT.format;
+    else
+        fmt(OPT.valcol,:) = OPT.format;
+    end
+    format = sprintf(['%s%s%s\r\n'], fmt{:});
 elseif isstruct(OPT.format)
     if isfield(OPT.format, 'default_')
         defformat = OPT.format.default_;
@@ -138,7 +147,10 @@ elseif isstruct(OPT.format)
             end
         end
     end
-    format = sprintf(['%%s' OPT.delimiter '%s\r\n'], formatcell{:});
+    OPT.format = formatcell;
+    txt = nameisvalue(Ds, OPT);
+    return
+    %format = sprintf(['%%s' OPT.delimiter '%s\r\n'], formatcell{:});
 end
 txt = sprintf(format, data{:});
 
@@ -201,13 +213,23 @@ for i = 1:length(Ds.data)
     ifeature = str2double(regexprep(Ds.data(i).name, '^\D+_', ''));
     txt = sprintf('%s%6i - %s number\r\n', txt, ifeature, OPT.feature);
     if strcmpi('curve', OPT.feature)
-        txt = sprintf('%s%8i - number of points on %s,  next line(s) are pointnumbers\r\n', txt, length(Ds.data(i).value), lower(OPT.feature));
+        txt = sprintf('%s%8i - number of points on %s, next line(s) are pointnumbers\r\n', txt, length(Ds.data(i).value), lower(OPT.feature));
     elseif strcmpi('boundary', OPT.feature)
-        txt = sprintf('%s%8i - number of curves on %s,  next line(s) are curvenumbers\r\n', txt, length(Ds.data(i).value), lower(OPT.feature));
+        txt = sprintf('%s%8i - number of curves on %s, next line(s) are curvenumbers\r\n', txt, length(Ds.data(i).value), lower(OPT.feature));
     end
     stxt = sprintf('%6i', Ds.data(i).value);
     txt = sprintf('%s    %s\r\n', txt, stxt);
 end
+
+function txt = probabilistic_boundary_list_write(Ds, varargin)
+
+OPT = struct(...
+    'format', '%g');
+OPT = setproperty(OPT, varargin);
+txth = sprintf('%4i - Number of boundaries -\r\n', length(Ds));
+txtv = sprintf([OPT.format '\r\n'], Ds);
+txt = sprintf('%s%s', txth, txtv);
+
 
 %%%% header specific functions
 function txt = VERSION_write(Ds)
@@ -275,3 +297,19 @@ txt = list_write(Ds,...
 function txt = BOUNDARIES_write(Ds)
 txt = list_write(Ds,...
     'feature', 'Boundary');
+
+function txt = USE_PROBABILISTIC_DEFAULTS_BOUNDARIES_write(Ds)
+txt = probabilistic_boundary_list_write(Ds,...
+    'format', '%3i');
+
+function txt = MODEL_write(Ds)
+regexprep = {Ds.data(~[Ds.data.value]).name};
+regexprep = [regexprep(:)'; cellfun(@(s) [s ' off'], regexprep(:)', 'uniformoutput', false)];
+idx = ~strcmpi(regexprep(1,:), 'local_measurements');
+regexprep = regexprep(:,idx);
+txt = nameisvalue(Ds,...
+    'namecol', 2,...
+    'valcol', 1,...
+    'delimiter', ' : ',...
+    'format', repmat({'%3i'}, size(Ds.data)),...
+    'regexprep', regexprep(:));
