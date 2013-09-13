@@ -142,7 +142,13 @@ else
 end
 
 clim(OPT.cLim);
-colormap(OPT.colorMap(OPT.colorSteps));
+if isa(OPT.colorMap,'function_handle')
+    %Use the function handle
+    colormap(OPT.colorMap(OPT.colorSteps));
+else
+    %Use the colormap (passed as array)
+    colormap(OPT.colorMap)
+end
 
 %% pre-allocate
 
