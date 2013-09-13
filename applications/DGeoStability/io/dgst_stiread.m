@@ -91,9 +91,14 @@ D.file = getfilename(fname);
 
 for i = 1:length(keys)
     if regexpi(keys{i}, '[end of')
-        continue
+        if isempty(strtrim(datastr{i+1}))
+            continue
+        else
+            Tp = header2type(keys{i+1});
+        end
+    else
+        Tp = header2type(keys{i});
     end
-    Tp = header2type(keys{i});
     funcname = sprintf('%s_read', upper(Tp));
     if exist(funcname)
         func = str2func(funcname);
@@ -146,10 +151,16 @@ cellstr = cellstr(1+OPT.skiplines:end);
 cellstr = regexp(cellstr, OPT.delimiter, 'split');
 
 for i = 1:length(cellstr)
-    if ~isempty(OPT.format)
-        val = sscanf(cellstr{i}{OPT.valcol}, OPT.format);
+%     if ~isempty(OPT.format)
+%         val = sscanf(cellstr{i}{OPT.valcol}, OPT.format);
+%     else
+%         val = strtrim(cellstr{i}{OPT.valcol});
+%     end
+    valstr = strtrim(cellstr{i}{OPT.valcol});
+    if isempty(regexpi(valstr, '[^e\.+-\d ]', 'once'))
+        val = sscanf(cellstr{i}{OPT.valcol}, '%g');
     else
-        val = strtrim(cellstr{i}{OPT.valcol});
+        val = valstr;
     end
     key = cellstr{i}{OPT.namecol};
     for j = 1:2:length(OPT.regexprep)
@@ -193,8 +204,8 @@ D = xs_set(D, key, Ds);
 
 function D = SOIL_read(str, key, D)
 Dss = nameisvalue(str, 'skiplines', 1);
-tmp = regexp(str, '(?<=^\s*)\D+(?=\n)', 'match'); % first line of text block
-Dss.type = header2type(tmp{1}); % soil type
+tmp = regexp(str, '(?<=^\s*).*?(?=\r\n)', 'match'); % first line of text block
+Dss.type = header2type(strtrim(tmp{1})); % soil type
 Ds = xs_get(D, 'SOIL_COLLECTION');
 Ds = xs_set(Ds, sprintf('%s_%02i', key, length(Ds.data)+1), Dss);
 D = xs_set(D, 'SOIL_COLLECTION', Ds);
@@ -351,8 +362,18 @@ D = xs_set(D, key, str);
 function D = LINE_LOADS_read(str, key, D)
 D = xs_set(D, key, str);
 
-function D = UNIFORM_LOADS_read(str, key, D)
-D = xs_set(D, key, str);
+function D = UNIFORM_LOADS__read(str, key, D)
+Ds = xs_empty();
+n = sscanf(str, '%i');
+[m,s] = regexp(str, '\r\n[^=]*?\r\n', 'match', 'split');
+for i = 1:n
+    Dss = nameisvalue(s{i+1},...
+        'namecol', 2, 'valcol', 1,...
+        'delimiter', ' = ',...
+        'regexprep', {'\s+$', ''});
+    Ds = xs_set(Ds, header2type(m{i}), Dss);
+end
+D = xs_set(D, funname2type(), Ds);
 
 function D = TREE_ON_SLOPE_read(str, key, D)
 D = xs_set(D, key, str);
@@ -365,7 +386,34 @@ val = nameisvalue(str,...
 D = xs_set(D, key, val);
 
 function D = SIGMA_TAU_CURVES_read(str, key, D)
-D = xs_set(D, key, str);
+D = xs_set(D, key, xs_empty());
+
+function D = STRESS_CURVE_read(str, key, D)
+tmp = regexp(str, '(?<=^\s*).*?(?=\r\n)', 'match'); % first line of text block
+Dss = xs_empty();
+Dss.type = strtrim(tmp{1});%header2type(strtrim(tmp{1})); % soil type
+Ds = xs_get(D, 'SIGMA_TAU_CURVES');
+Ds = xs_set(Ds, sprintf('%s_%02i', key, length(Ds.data)+1), Dss);
+D = xs_set(D, 'SIGMA_TAU_CURVES', Ds);
+%D = xs_set(D, key, str);
+
+function D = POINT_read(str, key, D)
+Ds = xs_get(D, 'SIGMA_TAU_CURVES');
+typename = sprintf('SIGMA_TAU_CURVES.%s', Ds.data(end).name);
+Dss = xs_get(D, typename);
+Dsss = nameisvalue(str);
+Dss = xs_set(Dss, sprintf('%s_%02i', key, length(Dss.data)+1), Dsss);
+D = xs_set(D, typename, Dss);
+
+function D = END_OF_STRESS_CURVE_read(str, key, D)
+Ds = xs_get(D, 'SIGMA_TAU_CURVES');
+typename = sprintf('SIGMA_TAU_CURVES.%s', Ds.data(end).name);
+Dss = xs_get(D, typename);
+Dsss = nameisvalue(str);
+for i = 1:length(Dsss.data)
+    Dss = xs_set(Dss, Dsss.data(i).name, Dsss.data(i).value);
+end
+D = xs_set(D, typename, Dss);
 
 function D = BOND_STRESS_DIAGRAMS_read(str, key, D)
 D = xs_set(D, key, str);

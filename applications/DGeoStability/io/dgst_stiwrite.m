@@ -180,9 +180,9 @@ end
 noendkeys = {'RUN_IDENTIFICATION_TITLES', 'MSEEPNET', 'UNIT_WEIGHT_WATER',...
     'DEGREE_OF_CONSOLIDATION', 'degree_Temporary_loads', 'degree_Free_water', 'degree_earth_quake',...
     'CIRCLES', 'SPENCER_SLIP_DATA', 'SPENCER_SLIP_DATA_2', 'SPENCER_SLIP_INTERVAL',...
-    'LINE_LOADS', 'UNIFORM_LOADS_', 'EARTH_QUAKE', 'MINIMAL_REQUIRED_CIRCLE_DEPTH',...
+    'LINE_LOADS', 'UNIFORM_LOADS', 'EARTH_QUAKE', 'MINIMAL_REQUIRED_CIRCLE_DEPTH',...
     'START_VALUE_SAFETY_FACTOR', 'REFERENCE_LEVEL_CU', 'LIFT_SLIP_DATA',...
-    'EXTERNAL_WATER_LEVELS', 'MODEL_FACTOR', 'NEWZONE_PLOT_DATA',...
+    'MULTIPLE_LIFT_TANGENTS', 'EXTERNAL_WATER_LEVELS', 'MODEL_FACTOR', 'NEWZONE_PLOT_DATA',...
     'REQUESTED_CIRCLE_SLICES', 'REQUESTED_LIFT_SLICES', 'REQUESTED_SPENCER_SLICES'};
 if strcmp(Ds.name, 'Slip_Circle_Selection')
     endstr = sprintf('[End of %s]', type2header(Ds.name));
@@ -222,8 +222,8 @@ for i = 1:length(Ds.data)
     elseif strcmpi('boundary', OPT.feature)
         txt = sprintf('%s%8i - number of curves on %s, next line(s) are curvenumbers\r\n', txt, length(Ds.data(i).value), lower(OPT.feature));
     end
-    stxt = sprintf('%6i', Ds.data(i).value);
-    txt = sprintf('%s    %s\r\n', txt, stxt);
+    stxt = sprintf(['%10i' repmat('%6i', 1, min(10, length(Ds.data(i).value))-1) '\r\n'], Ds.data(i).value);
+    txt = sprintf('%s%s', txt, stxt);
 end
 
 function txt = probabilistic_boundary_list_write(Ds, varargin)
@@ -277,6 +277,7 @@ txt = sprintf('%s\r\n%s', regexprep(Ds.type, '_', ' '), nameisvalue(Ds,...
     'SoilRheologicalCoefficient', '%.2f',...
     'SoilCorrelationCPhi', '%.2f',...
     'SoilRRatio', '%.7f',...
+    'SoilStressTableName', '%s',...
     'regexp_', {{...
     '^SoilStd.*', '%.2f',...
     '^SoilCu.*', '%.2f',...
@@ -388,12 +389,55 @@ for i = 1:length(Ds.data)
     end
 end
 
+function txt = UNIFORM_LOADS_write(Ds)
+n = length(Ds.data);
+txt = sprintf('%3i     = number of items', n);
+for i = 1:n
+    typename = Ds.data(i).name;
+    stxt = nameisvalue(xs_get(Ds, typename),...
+        'namecol', 2,...
+        'valcol', 1,...
+        'delimiter', ' = ',...
+        'format', struct('default_', '%7.2f', 'regexp_', {{'^xstart', '%7.2f %10.2f', '^temporary', '%7g'}}));
+    txt = sprintf('%s\r\n%s\r\n%s', txt, typename, stxt);
+end
+
 function txt = EARTH_QUAKE_write(Ds)
 txt = nameisvalue(Ds,...
     'namecol', 2,...
     'valcol', 1,...
     'delimiter', ' = ',...
     'format', '%10.3f');
+
+function txt = SIGMA_TAU_CURVES_write(Ds)
+n = length(Ds.data);
+txt = sprintf('%5i = number of items\r\n', n);
+for i = 1:n
+    Dss = Ds.data(i);
+    Dss.name = regexprep(Dss.name, '(?<=CURVE)[_\d]+', '');
+    txt = sprintf('%s%s', txt, writeblock(Dss));
+end
+
+function txt = STRESS_CURVE_write(Ds)
+pointidx = ~cellfun(@isempty, regexp({Ds.data.name}, '^POINT', 'once'));
+n = length(pointidx);
+txt = sprintf('%s\r\n%i', Ds.type, sum(pointidx));
+for i = 1:n
+    if pointidx(i)
+        Dss = xs_get(Ds, Ds.data(i).name);
+        stxt = nameisvalue(Dss,...
+            'trailingnewline', true,...
+            'format', '%.2f');
+        txt = sprintf('%s\r\n[POINT]\r\n%s[END OF POINT]', txt, stxt);
+    else
+        Dss = Ds;
+        idx = false(size(pointidx));
+        idx(i) = true;
+        Dss.data(~idx) = [];
+        txt = sprintf('%s\r\n%s', txt, nameisvalue(Dss));
+    end
+end
+txt = sprintf('%s\r\n', txt);
 
 function txt = MINIMAL_REQUIRED_CIRCLE_DEPTH_write(Ds)
 txt = sprintf('%10.2f     [m]', Ds);
@@ -435,11 +479,18 @@ txt = nameisvalue(tmp,...
 txt = sprintf('%s\r\n%5i     norm = 1/%i\r\n', txt, 1, 1/Ds.data(4).value);
 idx = ~cellfun(@isempty, regexp({Ds.data.name}, 'Water_data_\d+', 'once'));
 txt = sprintf('%s%5i = number of items', txt, sum(idx));
-% for i = find(idx)
-%     Dss = Ds;
-%     Dss.data(
-%     stxt = sprintf('Water data (%i)', regexprep(
-% end
+for i = 1:sum(idx)
+    Dss = xs_get(Ds, sprintf('Water_data_%i', i));
+    stxt = sprintf('Water data (%i)\r\n%s', i, nameisvalue(Dss, 'namecol', 2, 'valcol', 1, 'delimiter', ' = ', 'format', struct('default_', '%6g', 'Level', '%6.2f')));
+    txt = sprintf('%s\r\n%s', txt, stxt);
+end
+Dss = xs_get(Ds, 'Piezo_lines');
+n = size(Dss,1);
+txt = sprintf('%s\r\n Piezo lines\r\n%4i - Number of layers', txt, n);
+for i = 1:n
+    stxt = sprintf('%8g%10g = Pl-top and pl-bottom', Dss(i,:));
+    txt = sprintf('%s\r\n%s', txt, stxt);
+end
 
 function txt = CALCULATION_OPTIONS_write(Ds)
 txt = nameisvalue(Ds,...
