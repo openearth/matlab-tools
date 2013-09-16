@@ -92,7 +92,7 @@ simona2mdf_message('Parsing THINDAM information'            ,logo,1 );
 mdf = simona2mdf_thd      (S,mdf,name_mdf);
 
 simona2mdf_message('Genereting Thin Dam information for unstruc',logo,1 );
-simona2mdu_thd    (mdf,mdu,name_mdu);
+simona2mdu_thd    (mdf,name_mdu);
 
 
 simona2mdf_message('Parsing TIMES information'              ,logo,1 );
