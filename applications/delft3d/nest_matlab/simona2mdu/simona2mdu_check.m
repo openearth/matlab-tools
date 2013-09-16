@@ -8,7 +8,7 @@ filmdu ={'d:\open_earth_test\matlab\applications\delft3d\nest_matlab\simona\simo
 for itest = 1 : length(filwaq)
 
     [path_mdu,name_mdu,~] = fileparts(filmdu{itest});
-    if ~isdir(path_mdu);mkdir(path_mdf);end
+    if ~isdir(path_mdu);mkdir(path_mdu);end
 
     %
     % Convert

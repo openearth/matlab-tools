@@ -26,8 +26,8 @@ end
 
 if ~isempty(mdf.filcco)
    copyfile([mdf.pathsimona filesep mdf.filcco],[mdf.pathd3d filesep simona2mdf_rmpath(mdf.filcco)]);
-   mdf        = rmfield(mdf,'pathsimona');
-   mdf        = rmfield(mdf,'pathd3d');
+%  mdf        = rmfield(mdf,'pathsimona');
+%  mdf        = rmfield(mdf,'pathd3d');
    mdf.filcco = simona2mdf_rmpath(mdf.filcco);
 end
 
@@ -38,8 +38,8 @@ if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.MESH.GRID.AREA')
    mdf.mnkmax(3) = siminp_struc.ParsedTree.MESH.GRID.AREA.KMAX;
 
    %
-   % For now: assume uniform layer thicknesses  
-   %  
+   % For now: assume uniform layer thicknesses
+   %
 
    mdf.thick(1:mdf.mnkmax(3)) = 100./mdf.mnkmax(3);
 end

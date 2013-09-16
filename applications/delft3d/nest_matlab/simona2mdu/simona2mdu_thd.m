@@ -1,4 +1,4 @@
-function simona2mdu_thd(mdf)
+function simona2mdu_thd(mdf,mdu,name_mdu)
 
 % siminp2mdu_thd : Writes drypoints and thin dams to unstruc input files
 

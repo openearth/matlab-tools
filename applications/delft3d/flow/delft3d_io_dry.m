@@ -82,10 +82,11 @@ end
 
 switch lower(cmd),
 case 'read',
-  [G,D,iostat] = Local_read(varargin{:});
   if nargout ==1
+     [D,iostat] = Local_read(varargin{:});
      varargout = {D};
   elseif nargout ==2
+     [G,D,iostat] = Local_read(varargin{:});
      varargout = {G,D};
   elseif nargout >2
      error('too much output parameters: 0 or 1 or 2')
