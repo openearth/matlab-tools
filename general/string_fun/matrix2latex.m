@@ -64,12 +64,14 @@ function varargout = matrix2latex(x, varargin)
 
 %%
 OPT = struct(...
+    'environment', 'tabular', ...
     'title', 'table',...
     'standalone', false,...
     'filename', 'table.tex',...
     'where', '!tbp',...
     'rowlabel', '',...
     'rowjustification', 'l',...
+    'rowlabeljustification', 'l', ...
     'collabel', '',...
     'caption', '',...
     'justification', 'center', ...
@@ -139,19 +141,18 @@ if ~isempty(OPT.collabel)
     OPT.hlines(end+1) = 1;
 end
 
-rowlabeljustification = '';
 for icol = 1:size(xcell,2)
     iicol = icol;
     if ~isempty(OPT.rowlabel); iicol = iicol-1; end;
     
     if any(OPT.vlines==iicol)
-        rowlabeljustification = [rowlabeljustification '|'];
+        rowlabeljustification = [rowlabeljustification];
     end
     
     rowlabeljustification = [rowlabeljustification OPT.rowjustification];
 end
 
-texcell{end+1} = sprintf('%s', ' \begin{tabular}{', rowlabeljustification, '}\hline\hline');
+texcell{end+1} = sprintf('%s', ' \begin{' OPT.environment '}{', rowlabeljustification, '}\hline\hline');
 
 for irow = 1:size(xcell,1)
     iirow = irow;
@@ -168,7 +169,7 @@ end
 % table closure
 texcell{end+1} = sprintf('%s', '\hline');
 
-texcell{end+1} = sprintf('%s', '\end{tabular}');
+texcell{end+1} = sprintf('%s', '\end{' OPT.environment '}');
 
 %texcell{end+1} = sprintf('%s', '\end{', OPT.justification, '}');
 
