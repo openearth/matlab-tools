@@ -146,10 +146,10 @@ for icol = 1:size(xcell,2)
     if ~isempty(OPT.rowlabel); iicol = iicol-1; end;
     
     if any(OPT.vlines==iicol)
-        rowlabeljustification = [rowlabeljustification];
+        rowlabeljustification = [OPT.rowlabeljustification];
     end
     
-    rowlabeljustification = [rowlabeljustification OPT.rowjustification];
+    rowlabeljustification = [OPT.rowlabeljustification OPT.rowjustification];
 end
 
 texcell{end+1} = sprintf('%s', ' \begin{' OPT.environment '}{', rowlabeljustification, '}\hline\hline');
