@@ -10,8 +10,28 @@
     <text>Tide Stations</text>
   </element>
   <element>
+    <tag>selecttidedatabase</tag>
+    <position>50 115 70 20</position>
+    <style>popupmenu</style>
+    <type>integer</type>
+    <variable>activeDatabase</variable>
+    <onchange>ddb_TideStationsToolbox</onchange>
+    <option1>selecttidedatabase</option1>
+    <tooltipstring>Select a tide station database</tooltipstring>
+    <text>Database</text>
+    <textposition>above-left</textposition>
+    <listtext>
+      <variable>databases</variable>
+    </listtext>
+  </element>
+  <element>
+    <style>text</style>
+    <position>50 55 90</position>
+    <text>Show station :</text>
+  </element>
+  <element>
     <tag>selecttidestation</tag>
-    <position>50 20 250 130</position>
+    <position>130 30 180 120</position>
     <style>listbox</style>
     <type>integer</type>
     <variable>activeTideStation</variable>
@@ -19,8 +39,36 @@
     <option1>selecttidestation</option1>
     <tooltipstring>Select tide station</tooltipstring>
     <listtext>
-      <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activeDatabase).stationList</variable>
+      <variable>stationlist</variable>
     </listtext>
+  </element>
+  <element>
+    <position>130 13 400 15</position>
+    <style>text</style>
+    <type>string</type>
+    <variable>textstation</variable>
+  </element>
+  <element>
+    <style>radiobutton</style>
+    <position>50 35 90</position>
+    <variable>showstationnames</variable>
+    <value>1</value>
+    <text>Name</text>
+    <type>integer</type>
+    <onchange>ddb_TideStationsToolbox</onchange>
+    <option1>selectstationlistoption</option1>
+    <tooltipstring>Show stations in list by name</tooltipstring>
+  </element>
+  <element>
+    <style>radiobutton</style>
+    <position>50 15 90</position>
+    <variable>showstationnames</variable>
+    <value>0</value>
+    <text>ID</text>
+    <type>integer</type>
+    <onchange>ddb_TideStationsToolbox</onchange>
+    <option1>selectstationlistoption</option1>
+    <tooltipstring>Show stations in list by ID</tooltipstring>
   </element>
   <element>
     <tag>makeobservationpoints</tag>
@@ -30,14 +78,6 @@
     <callback>ddb_TideStationsToolbox</callback>
     <option1>makeobservationpoints</option1>
     <tooltipstring>Make observation points in model</tooltipstring>
-  </element>
-  <element>
-    <tag>usestationid</tag>
-    <style>checkbox</style>
-    <position>460 130 130 20</position>
-    <text>Use Station ID</text>
-    <variable>usestationid</variable>
-    <tooltipstring>Check to use station ID as observation point name and as name for output files (when left unchecked, the observation point name will be based on station name)</tooltipstring>
   </element>
   <element>
     <tag>viewtidesignal</tag>
@@ -58,14 +98,6 @@
     <tooltipstring>Export tide signal for active tide station</tooltipstring>
   </element>
   <element>
-    <tag>usemaincomponents</tag>
-    <style>checkbox</style>
-    <position>460 80 130 20</position>
-    <text>Main Components</text>
-    <variable>usemaincomponents</variable>
-    <tooltipstring>Check to only use the 13 main components (M2,S2,K2,N2,K1,O1,P1,Q1,MF,MM,M4,MS4,MN4) from this station</tooltipstring>
-  </element>
-  <element>
     <tag>exportalltidesignals</tag>
     <style>pushbutton</style>
     <position>320 55 130 20</position>
@@ -75,17 +107,12 @@
     <tooltipstring>Export tide signal for all stations within model grid</tooltipstring>
   </element>
   <element>
-    <tag>selecttidedatabase</tag>
+    <tag>usemaincomponents</tag>
+    <style>checkbox</style>
     <position>320 30 130 20</position>
-    <style>popupmenu</style>
-    <type>integer</type>
-    <variable>activeDatabase</variable>
-    <onchange>ddb_TideStationsToolbox</onchange>
-    <option1>selecttidedatabase</option1>
-    <tooltipstring>Select a tide station database</tooltipstring>
-    <listtext>
-      <variable>databases</variable>
-    </listtext>
+    <text>Main Components</text>
+    <variable>usemaincomponents</variable>
+    <tooltipstring>Check to only use the 13 main components (M2,S2,K2,N2,K1,O1,P1,Q1,MF,MM,M4,MS4,MN4) from this station</tooltipstring>
   </element>
   <element>
     <tag>editstarttime</tag>

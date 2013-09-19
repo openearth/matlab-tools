@@ -138,7 +138,11 @@ for i=1:length(lst)
     for j=1:size(str,1)
         handles.Toolbox(ii).Input.database(i).idCodes{j}=deblank(str(j,:));
     end
-    
+
+    handles.Toolbox(ii).Input.database(i).timezone=zeros(size(handles.Toolbox(ii).Input.database(i).x));
+    try
+        handles.Toolbox(ii).Input.database(i).timezone=nc_varget(fname,'timezone');
+    end
     
 end
 
@@ -160,3 +164,7 @@ handles.Toolbox(ii).Input.usestationid=0;
 handles.Toolbox(ii).Input.usemaincomponents=0;
 
 handles.Toolbox(ii).Input.tidestationshandle=[];
+
+handles.Toolbox(ii).Input.showstationnames=1;
+handles.Toolbox(ii).Input.stationlist={''};
+handles.Toolbox(ii).Input.textstation='';

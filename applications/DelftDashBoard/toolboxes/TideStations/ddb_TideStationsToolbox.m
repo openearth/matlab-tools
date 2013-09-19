@@ -69,6 +69,8 @@ if isempty(varargin)
     ddb_plotTideStations('activate');
     if isempty(h)
         % First time to plot tide stations
+        refreshStationList;
+        refreshStationText;
         plotTideStations;
         refreshComponentSet;
     end
@@ -88,6 +90,9 @@ else
             exportTideSignal;
         case{'exportalltidesignals'}
             exportAllTideSignals;
+        case{'selectstationlistoption'}
+            refreshStationList;
+            refreshStationText;
     end
 end
 
@@ -103,6 +108,15 @@ switch lower(handles.Model(md).name)
             handles=getHandles;
             handles.Model(md).Input(ad).obsFile=filename;
             ddb_saveObsFile(handles,ad);
+            setHandles(handles);
+        end
+    case{'dflowfm'}
+        [filename, pathname, filterindex] = uiputfile('*.obs', 'Observation File Name',[handles.Model(md).Input(ad).attName '.xyn']);
+        if pathname~=0
+            ddb_DFlowFM_addTideStations;
+            handles=getHandles;
+            handles.Model(md).Input(ad).obsfile=filename;
+            ddb_DFlowFM_saveObsFile(handles,ad);
             setHandles(handles);
         end
     otherwise
@@ -147,16 +161,18 @@ tim=t0:dt:t1;
 iac=handles.Toolbox(tb).Input.activeDatabase;
 ii=handles.Toolbox(tb).Input.activeTideStation;
 
+timezonestation=handles.Toolbox(tb).Input.database(iac).timezone(ii);
+
 latitude=handles.Toolbox(tb).Input.database(iac).y(ii);
 wl=makeTidePrediction(tim,handles.Toolbox(tb).Input.components,handles.Toolbox(tb).Input.amplitudes,handles.Toolbox(tb).Input.phases,latitude, ...
-    'timezone',handles.Toolbox(tb).Input.timeZone,'maincomponents',handles.Toolbox(tb).Input.usemaincomponents);
+    'timezone',handles.Toolbox(tb).Input.timeZone,'maincomponents',handles.Toolbox(tb).Input.usemaincomponents,'timezonestation',timezonestation);
 wl=wl+handles.Toolbox(tb).Input.verticalOffset;
 
 stationName=handles.Toolbox(tb).Input.database(iac).stationList{ii};
-if handles.Toolbox(tb).Input.usestationid
-    fname=handles.Toolbox(tb).Input.database(iac).idCodes{ii};
-else
+if handles.Toolbox(tb).Input.showstationnames
     fname=handles.Toolbox(tb).Input.database(iac).stationShortNames{ii};
+else
+    fname=handles.Toolbox(tb).Input.database(iac).idCodes{ii};
 end
 exportTEK(wl',tim',[fname '.tek'],stationName);
 
@@ -171,6 +187,14 @@ exportTEK(wl',tim',[fname '.tek'],stationName);
 % end
 % fclose(fid);
 
+s.station.name=fname;
+s.station.x=handles.Toolbox(tb).Input.database(iac).xLocLocal(ii);
+s.station.y=handles.Toolbox(tb).Input.database(iac).yLocLocal(ii);
+s.station.component=handles.Toolbox(tb).Input.components;
+s.station.amplitude=handles.Toolbox(tb).Input.amplitudes;
+s.station.phase=handles.Toolbox(tb).Input.phases;
+save([fname '.mat'],'-struct','s');
+
 %%
 function selectTideStationFromMap(h,nr)
 handles=getHandles;
@@ -183,17 +207,21 @@ function selectTideStation
 handles=getHandles;
 gui_pointcloud(handles.Toolbox(tb).Input.tidestationshandle,'change','activepoint',handles.Toolbox(tb).Input.activeTideStation);
 refreshComponentSet;
+refreshStationText;
 
 %%
 function selectTideDatabase
 handles=getHandles;
 handles.Toolbox(tb).Input.activeTideStation=1;
+%handles.Toolbox(tb).Input.stationlist=handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activeDatabase).stationList;
 % First delete existing stations
 try
     delete(handles.Toolbox(tb).Input.tidestationshandle);
 end
 handles.Toolbox(tb).Input.tidestationshandle=[];
 setHandles(handles);
+
+refreshStationList;
 plotTideStations;
 selectTideStation;
 
@@ -269,4 +297,30 @@ end
 
 setHandles(handles);
 
+gui_updateActiveTab;
+
+%%
+function refreshStationList
+handles=getHandles;
+if handles.Toolbox(tb).Input.showstationnames
+    handles.Toolbox(tb).Input.stationlist=handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activeDatabase).stationList;
+else
+    handles.Toolbox(tb).Input.stationlist=handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activeDatabase).idCodes;
+end
+setHandles(handles);
+
+%%
+function refreshStationText
+
+handles=getHandles;
+
+iac=handles.Toolbox(tb).Input.activeDatabase;
+istat=handles.Toolbox(tb).Input.activeTideStation;
+
+if handles.Toolbox(tb).Input.showstationnames
+    handles.Toolbox(tb).Input.textstation=['Station ID : ' handles.Toolbox(tb).Input.database(iac).idCodes{istat}];
+else
+    handles.Toolbox(tb).Input.textstation=['Station Name : ' handles.Toolbox(tb).Input.database(iac).stationList{istat}];
+end
+setHandles(handles);
 gui_updateActiveTab;
