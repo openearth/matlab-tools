@@ -1,4 +1,4 @@
-function [stationId,stationName,latitude,longitude,state,dataSource,COOPSDisclaimer,beginDate,endDate,timeZone,data] = getWindAndMetadata(obj,stationId,beginDate,endDate,unit,timeZone)
+function [stationId,stationName,latitude,longitude,state,dataSource,COOPSDisclaimer,beginDate,endDate,timeZone,unit,data] = getWindAndMetadata(obj,stationId,beginDate,endDate,unit,timeZone)
 %getWindAndMetadata(obj,stationId,beginDate,endDate,unit,timeZone)
 %
 %     Input:
@@ -53,4 +53,4 @@ response = callSoapService( ...
     obj.endpoint, ...
     '', ...
     soapMessage);
-[stationId,stationName,latitude,longitude,state,dataSource,COOPSDisclaimer,beginDate,endDate,timeZone,data] = parseSoapResponse(response);
+[stationId,stationName,latitude,longitude,state,dataSource,COOPSDisclaimer,beginDate,endDate,timeZone,unit,data] = parseSoapResponse(response);
