@@ -223,6 +223,7 @@ if nrobs>0
     else
         handles.Model(md).Input(ad).observationPointNames={''};
         handles.Model(md).Input(ad).activeObservationPoint=1;
+        handles.Model(md).Input(ad).observationPoints(1).name='';
         handles.Model(md).Input(ad).observationPoints(1).M=[];
         handles.Model(md).Input(ad).observationPoints(1).N=[];
     end
@@ -230,7 +231,7 @@ if nrobs>0
         iac=nrobs-1;
     end
     handles.Model(md).Input(ad).nrObservationPoints=nrobs-1;
-    handles.Model(md).Input(ad).activeObservationPoint=iac;
+    handles.Model(md).Input(ad).activeObservationPoint=max(iac,1);
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','observationpoints');
     setHandles(handles);
     refreshObservationPoints;

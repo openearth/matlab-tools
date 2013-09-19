@@ -70,6 +70,11 @@ names=handles.Toolbox(tb).Input.database(iac).stationShortNames;
 xg=handles.Model(md).Input(ad).gridX;
 yg=handles.Model(md).Input(ad).gridY;
 
+if isempty(xg)
+    ddb_giveWarning('text','Please first load or generate a grid!');
+    return
+end
+
 xmin=min(min(xg));
 xmax=max(max(xg));
 ymin=min(min(yg));
@@ -148,15 +153,33 @@ for i=1:nrp
     end
     
     latitude=handles.Toolbox(tb).Input.database(iac).y(k);
-    
-    wl=makeTidePrediction(tim,components,amplitudes,phases,latitude,'timezone',handles.Toolbox(tb).Input.timeZone);
+
+    timezonestation=handles.Toolbox(tb).Input.database(iac).timezone(k);
+
+    wl=makeTidePrediction(tim,components,amplitudes,phases,latitude,'timezone',handles.Toolbox(tb).Input.timeZone,...
+        'maincomponents',handles.Toolbox(tb).Input.usemaincomponents,'timezonestation',timezonestation);
     wl=wl+handles.Toolbox(tb).Input.verticalOffset;
     
-    shortName=handles.Toolbox(tb).Input.database(iac).stationShortNames{k};
-    fname=[shortName '.tek'];
-    exportTEK(wl',tim',fname,stationName);
+    if handles.Toolbox(tb).Input.showstationnames
+        fname=[handles.Toolbox(tb).Input.database(iac).stationShortNames{k}];
+    else
+        fname=[handles.Toolbox(tb).Input.database(iac).idCodes{k}];
+    end
+    exportTEK(wl',tim',[fname '.tek'],stationName);
+
+    s.station(i).name=fname;
+    s.station(i).longname=handles.Toolbox(tb).Input.database(iac).stationList{k};
+    s.station(i).x=handles.Toolbox(tb).Input.database(iac).xLocLocal(k);
+    s.station(i).y=handles.Toolbox(tb).Input.database(iac).yLocLocal(k);
+    s.station(i).component=components;
+    s.station(i).amplitude=amplitudes;
+    s.station(i).phase=phases;
+    
+    
     
 end
+
+save(['allstations_' handles.Toolbox(tb).Input.database(iac).shortName '.mat'],'-struct','s');
 
 try
     close(wb);

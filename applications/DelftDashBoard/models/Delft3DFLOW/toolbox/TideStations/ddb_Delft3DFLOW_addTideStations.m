@@ -113,25 +113,30 @@ end
 for i=1:nrp
     
     k=istation(i);
-    
-    shortName=handles.Toolbox(tb).Input.database(iac).stationShortNames{k};
+        
+    if handles.Toolbox(tb).Input.showstationnames
+        name=handles.Toolbox(tb).Input.database(iac).stationShortNames{k};
+    else
+        name=handles.Toolbox(tb).Input.database(iac).idCodes{k};
+    end
+        
     nobs=handles.Model(md).Input(ad).nrObservationPoints;
     Names{1}='';
     for n=1:nobs
         Names{n}=handles.Model(md).Input(ad).observationPoints(n).name;
     end
     
-    if isempty(strmatch(shortName,Names,'exact'))
+    if isempty(strmatch(name,Names,'exact'))
         nobs=nobs+1;
         handles.Model(md).Input(ad).observationPoints(nobs).M=mm(i);
         handles.Model(md).Input(ad).observationPoints(nobs).N=nn(i);
         handles.Model(md).Input(ad).observationPoints(nobs).x=posx2(i);
         handles.Model(md).Input(ad).observationPoints(nobs).y=posy2(i);
-        lname=length(shortName);
-        shortName=shortName(1:min(lname,20));
-        handles.Model(md).Input(ad).observationPoints(nobs).name=shortName;
-        handles.Model(md).Input(ad).observationPointNames{nobs}=shortName;
-        Names{nobs}=shortName;
+        lname=length(name);
+        shortName=name(1:min(lname,20));
+        handles.Model(md).Input(ad).observationPoints(nobs).name=name;
+        handles.Model(md).Input(ad).observationPointNames{nobs}=name;
+        Names{nobs}=name;
         
         % Add some extra information for CoSMoS toolbox
         handles.Model(md).Input(ad).observationPoints(nobs).longname=handles.Toolbox(tb).Input.database(iac).stationList{k};
