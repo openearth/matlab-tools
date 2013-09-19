@@ -1,4 +1,4 @@
-function [x y z ok] = ddb_getBathymetry(bathymetry, xl, yl, varargin)
+function [x,y,z,ok,varargout] = ddb_getBathymetry(bathymetry, xl, yl, varargin)
 %DDB_GETBATHYMETRY  One line description goes here.
 %
 %   More detailed description goes here.
@@ -183,6 +183,7 @@ switch lower(tp)
         x=[];
         y=[];
         z=[];
+        q=[];
         
         % New tile type
         ok=1;
@@ -297,6 +298,7 @@ switch lower(tp)
             if ~justgettiles
                 % Allocate z
                 z=nan(nnny*ny,nnnx*nx);
+                q=nan(nnny*ny,nnnx*nx);
             end
             
             iTilesX=iTileNrs(ix1:ix2);
@@ -351,6 +353,7 @@ switch lower(tp)
                                        
                     zzz=zeros(ny,nx);
                     zzz(zzz==0)=NaN;
+                    qqq=[];
                     
                     % First check whether file exists at at all
                     
@@ -385,6 +388,10 @@ switch lower(tp)
                             if exist(ncfile,'file')
                                 zzz=nc_varget(ncfile, 'depth');
                                 zzz=double(zzz);
+                                try
+                                    qqq=nc_varget(ncfile, 'quality');
+                                    qqq=double(qqq);
+                                end
                                 fv=nc_attget(ncfile,'depth','fill_value');
                                 ok=1;
                             end
@@ -397,6 +404,9 @@ switch lower(tp)
                             zzz(zzz==fv)=NaN;
                         end
                         z((j-iy1)*ny+1:(j-iy1+1)*ny,iStartX(i):iStartX(i)+nx-1)=zzz;
+                        if ~isempty(qqq)
+                            q((j-iy1)*ny+1:(j-iy1+1)*ny,iStartX(i):iStartX(i)+nx-1)=qqq;
+                        end
                     end
                     
                 end
@@ -436,6 +446,8 @@ switch lower(tp)
                 x=x(iy1:iy2,ix1:ix2);
                 y=y(iy1:iy2,ix1:ix2);
                 z=z(iy1:iy2,ix1:ix2);
+
+                q=q(iy1:iy2,ix1:ix2);
                 
                 % Convert to metres
                 switch lower(vertunits)
@@ -449,6 +461,21 @@ switch lower(tp)
             end
             
         end
+        
+        % Deal with quality
+        inan=find(~isnan(q), 1);
+        if isempty(inan)
+            % No quality available
+            q=[];
+        else
+%            z=q;
+%            z(q<=2)=NaN;
+        end
+        
+        if ~isempty(q)
+            varargout{1}=q;
+        end
+           
         
     case{'tiles'}
         
@@ -627,6 +654,7 @@ switch lower(tp)
             [x,y]=meshgrid(xx,yy);
             
             z(z<-15000)=NaN;
+            
             
         end
         
