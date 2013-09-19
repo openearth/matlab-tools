@@ -108,6 +108,14 @@ end
 it0=find(times<=t0, 1, 'last' );
 it1=find(times>=t1, 1, 'first' );
 
+if isempty(it0)
+    it0=1;
+end
+
+if isempty(it1)
+    it1=length(times);
+end
+
 times=times(it0:it1);
 
 nt=0;
@@ -119,26 +127,26 @@ for it=it0:it1
     
     s=load([opt.waterLevel.BC.datafolder filesep opt.waterLevel.BC.dataname '.waterLevel.' datestr(times(nt),'yyyymmddHHMMSS') '.mat']);
     lon360=mod(s.lon,360);
-%%%%%%%%%%%%  j.lencart@ua.pt        14/05/2013      %%%%%%%%%%%%%%%%%%%%%%%%%%%
-% This won't work for parent grids not aligned with NS-EW (2D lon/lat).
-%    ilon1=find(lon360<minx,1,'last');
-%    ilon2=find(lon360>maxx,1,'first');
-%    ilat1=find(s.lat<miny,1,'last');
-%    ilat2=find(s.lat>maxy,1,'first');
-%    lon360=lon360(ilon1:ilon2);
-% We can use inpolygon to get the elements of the parent domain inside a
-% polygon. Here I choose to blank all of the region inside the model domain so 
-% that only outside cells will be used to calculate the boundary conditions.
-% This can be used for faster interpolations if the parent domain is too
-% large.
-% However, I think it is best to use the full domain so that the gradient
-% accross the boundary is taken into account.
+    %%%%%%%%%%%%  j.lencart@ua.pt        14/05/2013      %%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % This won't work for parent grids not aligned with NS-EW (2D lon/lat).
+    %    ilon1=find(lon360<minx,1,'last');
+    %    ilon2=find(lon360>maxx,1,'first');
+    %    ilat1=find(s.lat<miny,1,'last');
+    %    ilat2=find(s.lat>maxy,1,'first');
+    %    lon360=lon360(ilon1:ilon2);
+    % We can use inpolygon to get the elements of the parent domain inside a
+    % polygon. Here I choose to blank all of the region inside the model domain so
+    % that only outside cells will be used to calculate the boundary conditions.
+    % This can be used for faster interpolations if the parent domain is too
+    % large.
+    % However, I think it is best to use the full domain so that the gradient
+    % accross the boundary is taken into account.
     if 0
         xv = [minx maxx maxx minx minx] ; yv = [miny miny maxy maxy miny];
         [IN ON] = inpolygon(lon360, s.lat, xv, yv);
         mask = ~logical([IN+ON]);
         wl00=s.data+opt.waterLevel.BC.constant;
-%    wl00=wl00(ilat1:ilat2,ilon1:ilon2);
+        %    wl00=wl00(ilat1:ilat2,ilon1:ilon2);
         wl00=wl00(mask);
         xp = lon360(mask);
         yp = s.lat(mask);
@@ -147,9 +155,9 @@ for it=it0:it1
         xp = lon360;
         yp = s.lat;
     end
-%%%%%%%%%%%%  j.lencart@ua.pt        14/05/2013      %%%%%%%%%%%%%%%%%%%%%%%%%%%
-    wl00=internaldiffusion(wl00);   
-%    wl00=interp2(lon360,s.lat(ilat1:ilat2),wl00,x,y);
+    %%%%%%%%%%%%  j.lencart@ua.pt        14/05/2013      %%%%%%%%%%%%%%%%%%%%%%%%%%%
+    wl00=internaldiffusion(wl00);
+    %    wl00=interp2(lon360,s.lat(ilat1:ilat2),wl00,x,y);
     wl00=griddata(xp, yp , double(wl00), x , y);
     wl0(:,:,nt)=wl00;
 end

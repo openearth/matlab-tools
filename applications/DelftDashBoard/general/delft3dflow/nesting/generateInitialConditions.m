@@ -91,6 +91,10 @@ if isfield(opt,par)
             depths=[10000 depths -10000];
             depths=depths*-1;
             vals =[vals(1) vals vals(end)];
+            
+            depths=-fliplr(depths);
+            vals=fliplr(vals);
+            
             data=interp1(depths,vals,dplayer);
             u=data;
             v=data;

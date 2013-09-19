@@ -250,7 +250,13 @@ for k=1:length(s.wl.m)
                 m=[repmat(' ',1,5-length(num2str(m))) num2str(m)];
                 n=[repmat(' ',1,5-length(num2str(n))) num2str(n)];
                 st=['(M,N)=(' m ',' n ')'];
-                istation(nrused)=strmatch(st,stations);
+                istat=strmatch(st,stations);
+                if isempty(istat)
+                    istation(nrused)=istation(nrused-1);
+                    % error(['Station ' st 'not found in history file']);
+                else
+                    istation(nrused)=istat;
+                end
             end
         end
     end
@@ -268,7 +274,13 @@ for k=1:length(s.vel.m)
                 m=[repmat(' ',1,5-length(num2str(m))) num2str(m)];
                 n=[repmat(' ',1,5-length(num2str(n))) num2str(n)];
                 st=['(M,N)=(' m ',' n ')'];
-                istation(nrused)=strmatch(st,stations);
+                istat=strmatch(st,stations);
+                if isempty(istat)
+                    istation(nrused)=istation(nrused-1);
+                    % error(['Station ' st 'not found in history file']);
+                else
+                    istation(nrused)=istat;
+                end
             end
         end
     end
@@ -558,6 +570,8 @@ for i=1:length(openBoundaries)
                 
                 for it=1:length(nest.t)
                     
+                    % Loop through time
+                    
                     z0=squeeze(z(it,:,1));
                     u0=squeeze(u(it,:,1));
                     v0=squeeze(v(it,:,1));
@@ -568,8 +582,10 @@ for i=1:length(openBoundaries)
                     u0=u0(imin:imax);
                     v0=v0(imin:imax);
                     if z0(end)>z0(1)
-                        imin=find(z0>z0(1), 1 );
-                        imax=find(z0<z0(end), 1, 'last' );
+                        imin=find(z0>z0(1),   1, 'first')-1;
+                        imax=find(z0<z0(end), 1, 'last' )+1;
+%                         imin=find(z0>z0(1), 1 );
+%                         imax=find(z0<z0(end), 1, 'last' );
                     else
                         imin=find(z0<=z0(1), 1 );
                         imax=find(z0>=z0(end), 1, 'last' );
@@ -598,8 +614,10 @@ for i=1:length(openBoundaries)
                     u0=u0(imin:imax);
                     v0=v0(imin:imax);
                     if z0(end)>z0(1)
-                        imin=find(z0>z0(1), 1 );
-                        imax=find(z0<z0(end), 1, 'last' );
+                        imin=find(z0>z0(1),   1, 'first')-1;
+                        imax=find(z0<z0(end), 1, 'last' )+1;
+%                         imin=find(z0>z0(1), 1 );
+%                         imax=find(z0<z0(end), 1, 'last' );
                     else
                         imin=find(z0<=z0(1), 1 );
                         imax=find(z0>=z0(end), 1, 'last' );
