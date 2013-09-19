@@ -152,7 +152,7 @@ for icol = 1:size(xcell,2)
     rowlabeljustification = [OPT.rowlabeljustification OPT.rowjustification];
 end
 
-texcell{end+1} = sprintf('%s', ' \begin{' OPT.environment '}{', rowlabeljustification, '}\hline\hline');
+texcell{end+1} = sprintf(['%s', ' \begin{' OPT.environment '}{', rowlabeljustification, '}\hline\hline']);
 
 for irow = 1:size(xcell,1)
     iirow = irow;
@@ -169,7 +169,7 @@ end
 % table closure
 texcell{end+1} = sprintf('%s', '\hline');
 
-texcell{end+1} = sprintf('%s', '\end{' OPT.environment '}');
+texcell{end+1} = sprintf(['%s', '\end{' OPT.environment '}']);
 
 %texcell{end+1} = sprintf('%s', '\end{', OPT.justification, '}');
 
