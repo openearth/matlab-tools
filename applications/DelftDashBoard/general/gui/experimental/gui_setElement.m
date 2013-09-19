@@ -236,7 +236,10 @@ switch lower(el.style)
         if isfield(el,'variable')
 
             if ~isempty(el.variable)
-            
+
+                pos=el.position;
+                set(el.handle,'Position',[pos(1) pos(2) 1000 15]);
+
                 val=gui_getValue(el,el.variable);
 
                 tp=lower(el.type);
@@ -254,7 +257,6 @@ switch lower(el.style)
                 end
                 set(el.handle,'String',str);
                 
-                pos=el.position;
                 ext=get(el.handle,'Extent');
                 if iscell(val)
                     pos(2)=pos(2)+pos(4)-ext(4);
