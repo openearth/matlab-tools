@@ -227,9 +227,9 @@ function varargout = matroos_get_series(varargin);
    if nargout==1
       varargout       = {D};
    elseif nargout==2
-      varargout       = {D.datenum, D.values };
+      varargout       = {D.datenum, D.(OPT.unit) };
    elseif nargout==3
-      varargout       = {D.datenum, D.values ,D.meta};
+      varargout       = {D.datenum, D.(OPT.unit) ,D};
    end
 
 %% EOF
