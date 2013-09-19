@@ -79,15 +79,9 @@ switch opt
             handles=ddb_initializeDFlowFMdomain(handles,'all',id,runid);
             filename=[runid '.mdu'];
             handles=ddb_readMDU(handles,filename,id);
-%            handles=ddb_readAttributeFiles(handles,id);
+            handles=ddb_DFlowFM_readAttributeFiles(handles,id);
             setHandles(handles);
-            ddb_plotDFlowFM('plot','active',0,'visible',1,'domain',0);
+            ddb_plotDFlowFM('plot','active',1,'visible',1,'domain',0);
         end
-        end
-end
-
-elements=handles.Model(md).GUI.elements;
-if ~isempty(elements)
-    % setUIElements(elements);
 end
 

@@ -73,8 +73,8 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
         
         handles.Model(md).Input(id).bndFile=[attName '.bnd'];
         
-        x=handles.Model(md).Input(id).gridX;
-        y=handles.Model(md).Input(id).gridY;
+        x=handles.Model(md).Input(id).gridx;
+        y=handles.Model(md).Input(id).gridy;
         z=handles.Model(md).Input(id).depth;
         
         mmax=size(x,1);

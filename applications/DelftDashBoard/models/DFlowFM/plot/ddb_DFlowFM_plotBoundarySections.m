@@ -1,4 +1,4 @@
-function handles = ddb_DFlowFM_plotBoundarySections(handles, opt, varargin)
+function handles = ddb_DFlowFM_plotBoundaries(handles, opt, varargin)
 %DDB_DFlowFM_plotBoundarySections  One line description goes here.
 %
 %   More detailed description goes here.

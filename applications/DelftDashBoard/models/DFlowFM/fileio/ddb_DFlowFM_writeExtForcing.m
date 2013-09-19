@@ -1,4 +1,4 @@
-function writeExtForcing(fname,bndPolygons)
+function ddb_DFlowFM_writeExtForcing(fname,boundaries)
 
 fid=fopen(fname,'wt');
 
@@ -36,12 +36,14 @@ fprintf(fid,'%s\n','* FACTOR  =   : Conversion factor for this provider');
 fprintf(fid,'%s\n','*');
 fprintf(fid,'%s\n','**************************************************************************************************************');
 fprintf(fid,'%s\n','');
-for ip=1:length(bndPolygons)
-    fprintf(fid,'%s\n',['QUANTITY=' bndPolygons(ip).type]);
-    fprintf(fid,'%s\n',['FILENAME=' bndPolygons(ip).fileName]);
+
+for ip=1:length(boundaries)
+    fprintf(fid,'%s\n',['QUANTITY=' boundaries(ip).type]);
+    fprintf(fid,'%s\n',['FILENAME=' boundaries(ip).filename]);
     fprintf(fid,'%s\n','FILETYPE=9');
     fprintf(fid,'%s\n','METHOD=2');
     fprintf(fid,'%s\n','OPERAND=O');
     fprintf(fid,'%s\n','');
 end
+
 fclose(fid);

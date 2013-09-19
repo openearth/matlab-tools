@@ -10,47 +10,47 @@ s.model.Program.type='string';
 s.model.Version.value='1.1.33.21433';
 s.model.Version.type='string';
 
-s.model.AutoStart.value=inp.autoStart;
+s.model.AutoStart.value=inp.autostart;
 s.model.AutoStart.type='integer';
 s.model.AutoStart.comment='# Autostart simulation after loading MDU or not (0=no, 1=autostart, 2=autostartstop).';
 
 %% Geometry
-s.geometry.NetFile.value         = inp.netFile;
+s.geometry.NetFile.value         = inp.netfile;
 s.geometry.NetFile.type          = 'string';
 
-s.geometry.BathymetryFile.value     = inp.bathymetryFile;
+s.geometry.BathymetryFile.value     = inp.bathymetryfile;
 s.geometry.BathymetryFile.comment   = '# *.xyb';
 
-s.geometry.WaterLevIniFile.value    = inp.waterLevIniFile;                 
+s.geometry.WaterLevIniFile.value    = inp.waterlevinifile;                 
 s.geometry.WaterLevIniFile.comment  = '# Initial water levels sample file *.xyz';
 
-s.geometry.LandBoundaryFile.value   = inp.landBoundaryFile;                     
+s.geometry.LandBoundaryFile.value   = inp.landboundaryfile;                     
 s.geometry.LandBoundaryFile.comment = '# Only for plotting';
 
-s.geometry.ThinDamFile.value        = inp.thinDamFile;                     
+s.geometry.ThinDamFile.value        = inp.thindamfile;                     
 s.geometry.ThinDamFile.comment      = '# *_thd.pli, Polyline(s) for tracing thin dams.';
 
-s.geometry.ThindykeFile.value       =  inp.thinDykeFile;                    
+s.geometry.ThindykeFile.value       =  inp.thindykefile;                    
 s.geometry.ThindykeFile.comment     =  '# *._tdk.pli, Polyline(s) x,y,z, z = thin dyke top levels';
 
-s.geometry.ProflocFile.value        = inp.profLocFile;                     
+s.geometry.ProflocFile.value        = inp.proflocfile;                     
 s.geometry.ProflocFile.comment      = '# *_proflocation.xyz)    x,y,z, z = profile refnumber';
 
-s.geometry.ProfdefFile.value        = inp.profDefFile;                    
+s.geometry.ProfdefFile.value        = inp.profdeffile;                    
 s.geometry.ProfdefFile.comment      = '# *_profdefinition.def) definition for all profile nrs';
 
-s.geometry.ManholeFile.value        = inp.manHoleFile;
+s.geometry.ManholeFile.value        = inp.manholefile;
 s.geometry.ManholeFile.comment      = '# *...';                     
 
-s.geometry.WaterLevIni.value        = inp.waterLevIni;
+s.geometry.WaterLevIni.value        = inp.waterlevini;
 s.geometry.WaterLevIni.type         = 'real';
 s.geometry.WaterLevIni.comment      = '# Initial water level';               
 
-s.geometry.BotLevUni.value          = inp.botLevUni;
+s.geometry.BotLevUni.value          = inp.botlevuni;
 s.geometry.BotLevUni.type           = 'real';
 s.geometry.BotLevUni.comment        = '# Uniform bottom level, (only if Botlevtype>=3, used at missing z values in netfile';              
 
-s.geometry.BotLevType.value         = inp.botLevType;
+s.geometry.BotLevType.value         = inp.botlevtype;
 s.geometry.BotLevType.type          = 'integer';
 s.geometry.BotLevType.comment{1}    = '# 1 : Bottom levels at waterlevel cells (=flow nodes), like tiles xz, yz, bl , bob = max(bl left, bl right)';                   
 s.geometry.BotLevType.comment{2}    = '# 2 : Bottom levels at velocity points  (=flow links),            xu, yu, blu, bob = blu,    bl = lowest connected link';  
@@ -58,47 +58,47 @@ s.geometry.BotLevType.comment{3}    = '# 3 : Bottom levels at velocity points  (
 s.geometry.BotLevType.comment{4}    = '# 4 : Bottom levels at velocity points  (=flow links), using min  network levels xk, yk, zk  bl = lowest connected link';  
 s.geometry.BotLevType.comment{5}    = '# 5 : Bottom levels at velocity points  (=flow links), using max  network levels xk, yk, zk  bl = lowest connected link';  
 
-s.geometry.AngLat.value        = inp.angLat;
+s.geometry.AngLat.value        = inp.anglat;
 s.geometry.AngLat.type         = 'real';
 s.geometry.AngLat.comment      = '# Angle of latitude (deg), 0=no Coriolis';               
 
-s.geometry.Conveyance2D.value        = inp.conveyance2D;
+s.geometry.Conveyance2D.value        = inp.conveyance2d;
 s.geometry.Conveyance2D.type         = 'integer';
 s.geometry.Conveyance2D.comment      = '# -1:R=HU,0:R=H, 1:R=A/P, 2:K=analytic-1D conv, 3:K=analytic-2D conv';               
 
 %% Numerics
 
-s.numerics.CFLMax.value        = inp.CFLMax;
+s.numerics.CFLMax.value        = inp.cflmax;
 s.numerics.CFLMax.type         = 'real';
 s.numerics.CFLMax.comment      = '# Max. Courant nr.';               
 
-s.numerics.CFLWaveFrac.value   = inp.CFLWaveFrac;
+s.numerics.CFLWaveFrac.value   = inp.cflwavefrac;
 s.numerics.CFLWaveFrac.type    = 'real';
 s.numerics.CFLWaveFrac.comment = '# Wave velocity fraction, total courant vel = u + cflw*wavevelocity';               
 
-s.numerics.AdvecType.value     = inp.advecType;
+s.numerics.AdvecType.value     = inp.advectype;
 s.numerics.AdvecType.type      = 'integer';
 s.numerics.AdvecType.comment   = '# Adv type, 0=no, 1= Wenneker, qu-udzt, 2=1, q(uio-u), 3=Perot q(uio-u), 4=Perot q(ui-u), 5=Perot q(ui-u) without itself';               
 
-s.numerics.Limtypsa.value      = inp.limTypSa;
+s.numerics.Limtypsa.value      = inp.limtypsa;
 s.numerics.Limtypsa.type       = 'integer';
 s.numerics.Limtypsa.comment    = '# Limiter type for salinity transport,           0=no, 1=minmod,2=vanLeer,3=Kooren,4=Monotone Central';               
 
-s.numerics.Hdam.value          = inp.hDam;
+s.numerics.Hdam.value          = inp.hdam;
 s.numerics.Hdam.type           = 'real';
 s.numerics.Hdam.comment        = '# Threshold for minimum bottomlevel step at which to apply energy conservation factor i.c. flow contraction';               
 
 %% Physics
 
-s.physics.UnifFrictCoef.value        = inp.unifFrictCoef;
+s.physics.UnifFrictCoef.value        = inp.uniffrictcoef;
 s.physics.UnifFrictCoef.type         = 'real';
 s.physics.UnifFrictCoef.comment      = '# Uniform friction coefficient, 0=no friction';               
 
-s.physics.UnifFrictType.value        = inp.unifFrictType;
+s.physics.UnifFrictType.value        = inp.uniffricttype;
 s.physics.UnifFrictType.type         = 'integer';
 s.physics.UnifFrictType.comment      = '0=Chezy, 1=Manning, 2=White Colebrook, 3=z0 etc';               
 
-s.physics.Vicouv.value               = inp.vicoUV;
+s.physics.Vicouv.value               = inp.vicouv;
 s.physics.Vicouv.type                = 'real';
 s.physics.Vicouv.comment             = '# Uniform horizontal eddy viscosity';               
 
@@ -114,15 +114,15 @@ s.physics.irov.value                 = inp.irov;
 s.physics.irov.type                  = 'real';
 s.physics.irov.comment               = '# 0=free slip, 1 = partial slip using wall_ks';               
 
-s.physics.wall_ks.value              = inp.wallKs;
+s.physics.wall_ks.value              = inp.wall_ks;
 s.physics.wall_ks.type               = 'real';
 s.physics.wall_ks.comment            = '# Nikuradse roughness for side walls, wall_z0=wall_ks/30';               
 
-s.physics.Vicoww.value               = inp.vicoWW;
+s.physics.Vicoww.value               = inp.vicoww;
 s.physics.Vicoww.type                = 'real';
 s.physics.Vicoww.comment             = '# Uniform vertical eddy viscosity';               
 
-s.physics.TidalForcing.value         = inp.tidalForcing;
+s.physics.TidalForcing.value         = inp.tidalforcing;
 s.physics.TidalForcing.type          = 'integer';
 s.physics.TidalForcing.comment       = '# Tidal forcing (0=no, 1=yes) (only for jsferic == 1)';               
 
@@ -132,86 +132,86 @@ s.physics.Salinity.comment           = '# Include salinity, (0=no, 1=yes)';
 
 %% Time
 
-rfd=str2double(datestr(inp.refDate,'yyyymmdd'));
+rfd=str2double(datestr(inp.refdate,'yyyymmdd'));
 s.time.RefDate.value             = rfd;
 s.time.RefDate.type              = 'integer';
 s.time.RefDate.comment           = '# Reference date (yyyymmdd)';               
 
-s.time.Tunit.value             = inp.tUnit;
+s.time.Tunit.value             = inp.tunit;
 s.time.Tunit.type              = 'string';
 s.time.Tunit.comment           = '# Time units in MDU (H, M or S)';               
 
-s.time.DtUser.value             = inp.dtUser;
+s.time.DtUser.value             = inp.dtuser;
 s.time.DtUser.type              = 'real';
 s.time.DtUser.comment           = '# User timestep in seconds (interval for external forcing update)';               
 
-s.time.DtMax.value             = inp.dtMax;
+s.time.DtMax.value             = inp.dtmax;
 s.time.DtMax.type              = 'real';
 s.time.DtMax.comment           = '# Max timestep in seconds';               
 
-s.time.DtInit.value             = inp.dtInit;
+s.time.DtInit.value             = inp.dtinit;
 s.time.DtInit.type              = 'real';
 s.time.DtInit.comment           = '# Initial timestep in seconds';               
 
-s.time.AutoTimestep.value             = inp.autoTimeStep;
-s.time.AutoTimestep.type              = 'integer';
-s.time.AutoTimestep.comment           = '# Use CFL timestep limit or not (1/0)';               
+s.time.AutoTimestep.value       = inp.autotimestep;
+s.time.AutoTimestep.type        = 'integer';
+s.time.AutoTimestep.comment     = '# Use CFL timestep limit or not (1/0)';               
 
-s.time.TStart.value             = (inp.tStart-inp.refDate)*86400;
+s.time.TStart.value             = (inp.tstart-inp.refdate)*86400;
 s.time.TStart.type              = 'real';
 s.time.TStart.comment           = '# Start time w.r.t. RefDate (in TUnit)';               
 
-s.time.TStop.value             = (inp.tStop-inp.refDate)*86400;
-s.time.TStop.type              = 'real';
-s.time.TStop.comment           = '# Stop  time w.r.t. RefDate (in TUnit)';               
+s.time.TStop.value              = (inp.tstop-inp.refdate)*86400;
+s.time.TStop.type               = 'real';
+s.time.TStop.comment            = '# Stop  time w.r.t. RefDate (in TUnit)';               
 
 %% External forcing
 
 s.external_forcing.fieldLongName='external forcing';
-s.external_forcing.ExtForceFile.value             = inp.extForceFile;
+s.external_forcing.ExtForceFile.value             = inp.extforcefile;
 s.external_forcing.ExtForceFile.comment           = '# *.ext';               
 
 %% Output
 
-s.output.ObsFile.value        = inp.obsFile;
+s.output.ObsFile.value        = inp.obsfile;
 s.output.ObsFile.comment      = '# *.xyn Coords+name of observation stations';                     
 
-s.output.CrsFile.value        = inp.crsFile;
+s.output.CrsFile.value        = inp.crsfile;
 s.output.CrsFile.comment      = '# *_crs.pli Polyline(s) definining cross section(s)';                     
 
-s.output.HisFile.value        = inp.hisFile;
+s.output.HisFile.value        = inp.hisfile;
 s.output.HisFile.comment      = '# *_his.nc History file in NetCDF format';                     
 
-s.output.HisInterval.value    = inp.hisInterval;
+s.output.HisInterval.value    = inp.hisinterval;
 s.output.HisInterval.type     = 'real';
 s.output.HisInterval.comment  = '# Interval (in s) between history outputs';                     
 
-s.output.XLSInterval.value    = inp.xlsInterval;
+s.output.XLSInterval.value    = inp.xlsinterval;
 s.output.XLSInterval.type     = 'real';
 s.output.XLSInterval.comment  = '# Interval (in s) between XLS history';                     
 
-s.output.FlowGeomFile.value        = inp.flowGeomFile;
+s.output.FlowGeomFile.value        = inp.flowgeomfile;
 s.output.FlowGeomFile.comment      = '# *_flowgeom.nc Flow geometry file in NetCDF format';                     
 
-s.output.MapFile.value        = inp.mapFile;
+s.output.MapFile.value        = inp.mapfile;
 s.output.MapFile.comment      = '# *_map.nc Map file in NetCDF format';                     
 
-s.output.MapInterval.value    = inp.mapInterval;
+s.output.MapInterval.value    = inp.mapinterval;
 s.output.MapInterval.type     = 'real';
 s.output.MapInterval.comment  = '# Interval (in s) between map file outputs';                     
 
-s.output.RstInterval.value    = inp.rstInterval;
+s.output.RstInterval.value    = inp.rstinterval;
 s.output.RstInterval.type     = 'real';
 s.output.RstInterval.comment  = '# Interval (in s) between map file outputs';                     
 
-s.output.WaqFileBase.value        = inp.waqFileBase;
+s.output.WaqFileBase.value        = inp.waqfilebase;
 s.output.WaqFileBase.comment      = '# Basename (without extension) for all Delwaq files to be written';                     
 
-s.output.WaqInterval.value    = inp.waqInterval;
+s.output.WaqInterval.value    = inp.waqinterval;
 s.output.WaqInterval.type     = 'real';
 s.output.WaqInterval.comment  = '# Interval (in s) between Delwaq file outputs';                     
 
-s.output.SnapshotDir.value        = inp.snapshotDir;
+s.output.SnapshotDir.value        = inp.snapshotdir;
 s.output.SnapshotDir.comment      = '# Directory where snapshots/screendumps are saved.';                     
 
 %% And now save the file ...

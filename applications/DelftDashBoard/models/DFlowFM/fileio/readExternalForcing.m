@@ -1,21 +1,5 @@
-function ddb_saveDFlowFM(opt)
-%DDB_SAVEDELFT3DFLOW  One line description goes here.
-%
-%   More detailed description goes here.
-%
-%   Syntax:
-%   ddb_saveDFlowFM(opt)
-%
-%   Input:
-%   opt =
-%
-%
-%
-%
-%   Example
-%   ddb_saveDFlowFM
-%
-%   See also
+function s = readExternalForcing(fname)
+%ddb_DFlowFM_readExternalForcing  One line description goes here.
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -59,29 +43,37 @@ function ddb_saveDFlowFM(opt)
 % $HeadURL$
 % $Keywords: $
 
-%%
-handles=getHandles;
+%% Reads Delft3D keyword file into structure
 
-switch lower(opt)
-    case{'save'}
-        inp=handles.Model(md).Input(ad);
-        if ~isfield(handles.Model(md).Input(ad),'mduFile')
-            handles.Model(md).Input(ad).mduFile=[handles.Model(md).Input(ad).runid '.mdu'];
-        end
-        ddb_saveMDU(handles.Model(md).Input(ad).mduFile,inp);
-    case{'saveas'}
-        [filename, pathname, filterindex] = uiputfile('*.mdu', 'Select MDU File','');
-        if pathname~=0
-            curdir=[lower(cd) '\'];
-            if ~strcmpi(curdir,pathname)
-                filename=[pathname filename];
+s=[];
+n=0;
+fid=fopen(fname,'r');
+while 1
+    str=fgetl(fid);
+    if str==-1
+        break
+    end
+    str=deblank2(str);
+    if ~isempty(str)
+        if strcmpi(str(1),'*')
+            % Comment line
+        else
+            switch lower(str(1:6))
+                case{'quanti'}
+                    n=n+1;
+                    s(n).quantity=str(10:end);
+                case{'filety'}
+                    s(n).filetype=str(10:end);
+                case{'filena'}
+                    s(n).filename=str(10:end);
+                case{'method'}
+                    s(n).method=str(8:end);
+                case{'operan'}
+                    s(n).operand=str(9:end);
             end
-            ii=findstr(filename,'.mdu');
-            handles.Model(md).Input(ad).runid=filename(1:ii-1);
-            handles.Model(md).Input(ad).mduFile=filename;
-            ddb_saveMDU(filename,handles.Model(md).Input(ad));
         end
+        
+    end
 end
-
-setHandles(handles);
+fclose(fid);
 

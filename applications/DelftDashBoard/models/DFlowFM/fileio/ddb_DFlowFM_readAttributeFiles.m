@@ -1,25 +1,14 @@
-function ddb_saveDFlowFM(opt)
-%DDB_SAVEDELFT3DFLOW  One line description goes here.
+function handles = ddb_DFlowFM_readAttributeFiles(handles, id)
+%ddb_DFlowFM_readAttributeFiles  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   ddb_saveDFlowFM(opt)
-%
-%   Input:
-%   opt =
-%
-%
-%
-%
-%   Example
-%   ddb_saveDFlowFM
-%
-%   See also
+%   handles = ddb_DFlowFM_readAttributeFiles(handles, id)
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2011 Deltares
+%   Copyright (C) 2013 Deltares
 %       Maarten van Ormondt
 %
 %       Maarten.vanOrmondt@deltares.nl
@@ -60,28 +49,20 @@ function ddb_saveDFlowFM(opt)
 % $Keywords: $
 
 %%
-handles=getHandles;
+fname=handles.Model(md).Input(id).netfile;
 
-switch lower(opt)
-    case{'save'}
-        inp=handles.Model(md).Input(ad);
-        if ~isfield(handles.Model(md).Input(ad),'mduFile')
-            handles.Model(md).Input(ad).mduFile=[handles.Model(md).Input(ad).runid '.mdu'];
-        end
-        ddb_saveMDU(handles.Model(md).Input(ad).mduFile,inp);
-    case{'saveas'}
-        [filename, pathname, filterindex] = uiputfile('*.mdu', 'Select MDU File','');
-        if pathname~=0
-            curdir=[lower(cd) '\'];
-            if ~strcmpi(curdir,pathname)
-                filename=[pathname filename];
-            end
-            ii=findstr(filename,'.mdu');
-            handles.Model(md).Input(ad).runid=filename(1:ii-1);
-            handles.Model(md).Input(ad).mduFile=filename;
-            ddb_saveMDU(filename,handles.Model(md).Input(ad));
-        end
-end
+handles.Model(md).Input(id).netstruc=[];
+handles.Model(md).Input(id).netstruc.nodeX=nc_varget(fname,'NetNode_x');
+handles.Model(md).Input(id).netstruc.nodeY=nc_varget(fname,'NetNode_y');
+handles.Model(md).Input(id).netstruc.nodeZ=nc_varget(fname,'NetNode_z');
+handles.Model(md).Input(id).netstruc.linkNodes=nc_varget(fname,'NetLink');
+handles.Model(md).Input(id).netstruc.linkType=nc_varget(fname,'NetLinkType');
+handles.Model(md).Input(id).netstruc.elemNodes=nc_varget(fname,'NetElemNode');
+handles.Model(md).Input(id).netstruc.bndLink=nc_varget(fname,'BndLink');
 
-setHandles(handles);
+handles=ddb_DFlowFM_readExternalForcing(handles);
+
+handles=ddb_DFlowFM_readObsFile(handles,1);
+
+%handles.Model(md).Input(id).netstruc = dflowfm.readNet(handles.Model(md).Input(id).netfile,'peri2cell',1);
 

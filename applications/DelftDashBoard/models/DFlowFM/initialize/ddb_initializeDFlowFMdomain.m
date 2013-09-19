@@ -4,75 +4,93 @@ handles.Model(md).Input(id).grid=[];
 
 handles.Model(md).Input(id).runid=runid;
 handles.Model(md).Input(id).attName=runid;
+handles.Model(md).Input(id).plothandles=[];
 
 %% Model
-handles.Model(md).Input(id).autoStart=0;
+handles.Model(md).Input(id).autostart=0;
 
 handles.Model(md).Input(id).description={''};
 
 %% Geometry
-handles.Model(md).Input(id).netFile             = '';
-handles.Model(md).Input(id).bathymetryFile      = '';
-handles.Model(md).Input(id).waterLevIniFile     = '';                 
-handles.Model(md).Input(id).landBoundaryFile    = '';                     
-handles.Model(md).Input(id).thinDamFile         = '';                     
-handles.Model(md).Input(id).thinDykeFile        = '';                    
-handles.Model(md).Input(id).profLocFile         = '';                     
-handles.Model(md).Input(id).profDefFile         = '';                    
-handles.Model(md).Input(id).manHoleFile         = '';
-handles.Model(md).Input(id).waterLevIni         = 0;
-handles.Model(md).Input(id).botLevUni           = -5;
-handles.Model(md).Input(id).botLevType          = 3;
-handles.Model(md).Input(id).angLat              = 0;
-handles.Model(md).Input(id).conveyance2D        = 3;
+handles.Model(md).Input(id).netfile             = '';
+handles.Model(md).Input(id).bathymetryfile      = '';
+handles.Model(md).Input(id).waterlevinifile     = '';                 
+handles.Model(md).Input(id).landboundaryfile    = '';                     
+handles.Model(md).Input(id).thindamfile         = '';                     
+handles.Model(md).Input(id).thindykefile        = '';                    
+handles.Model(md).Input(id).proflocfile         = '';                     
+handles.Model(md).Input(id).profdeffile         = '';                    
+handles.Model(md).Input(id).manholefile         = '';
+handles.Model(md).Input(id).waterlevini         = 0;
+handles.Model(md).Input(id).botlevuni           = -5;
+handles.Model(md).Input(id).botlevtype          = 3;
+handles.Model(md).Input(id).anglat              = 0;
+handles.Model(md).Input(id).conveyance2d        = 3;
 
 %% Numerics
 
-handles.Model(md).Input(id).CFLMax              = 0.7;
-handles.Model(md).Input(id).CFLWaveFrac         = 0.1;
-handles.Model(md).Input(id).advecType           = 3;
-handles.Model(md).Input(id).limTypSa            = 0;
-handles.Model(md).Input(id).hDam                = 0;
+handles.Model(md).Input(id).cflmax              = 0.7;
+handles.Model(md).Input(id).cflwavefrac         = 0.1;
+handles.Model(md).Input(id).advectype           = 3;
+handles.Model(md).Input(id).limtypsa            = 0;
+handles.Model(md).Input(id).hdam                = 0;
 
 %% Physics
 
-handles.Model(md).Input(id).unifFrictCoef       = 0.023;
-handles.Model(md).Input(id).unifFrictType       = 1;
-handles.Model(md).Input(id).vicoUV              = 0;
+handles.Model(md).Input(id).uniffrictcoef       = 0.023;
+handles.Model(md).Input(id).uniffricttype       = 1;
+handles.Model(md).Input(id).vicouv              = 1;
 handles.Model(md).Input(id).smagorinsky         = 0;
 handles.Model(md).Input(id).elder               = 0;
 handles.Model(md).Input(id).irov                = 0;
-handles.Model(md).Input(id).wallKs              = 0;
-handles.Model(md).Input(id).vicoWW              = 0;
-handles.Model(md).Input(id).tidalForcing        = 1;
+handles.Model(md).Input(id).wall_ks             = 0.01;
+handles.Model(md).Input(id).vicoww              = 0;
+handles.Model(md).Input(id).tidalforcing        = 0;
 handles.Model(md).Input(id).salinity            = 0;
 
 %% Time
 
-handles.Model(md).Input(id).refDate        = floor(now);
-handles.Model(md).Input(id).tUnit          = 's';
-handles.Model(md).Input(id).dtUser         = 60.0;
-handles.Model(md).Input(id).dtMax          = 60.0;
-handles.Model(md).Input(id).dtInit         = 1.0;
-handles.Model(md).Input(id).autoTimeStep   = 0;
-handles.Model(md).Input(id).tStart         = floor(now);
-handles.Model(md).Input(id).tStop          = floor(now)+10;
+handles.Model(md).Input(id).refdate        = floor(now);
+handles.Model(md).Input(id).tunit          = 's';
+handles.Model(md).Input(id).dtuser         = 60.0;
+handles.Model(md).Input(id).dtmax          = 60.0;
+handles.Model(md).Input(id).dtinit         = 1.0;
+handles.Model(md).Input(id).autotimestep   = 1;
+handles.Model(md).Input(id).tstart         = floor(now);
+handles.Model(md).Input(id).tstop          = floor(now)+10;
 
 %% External forcing
-handles.Model(md).Input(id).extForceFile        = '';
+handles.Model(md).Input(id).extforcefile        = '';
 
-handles.Model(md).Input(id).boundarySections = [];
+handles.Model(md).Input(id).boundaries = [];
+handles.Model(md).Input(id).boundaries(1).name = '';
+handles.Model(md).Input(id).nrboundaries = 0;
+handles.Model(md).Input(id).boundarynames = {''};
+handles.Model(md).Input(id).activeboundary=1;
 
 %% Output
-handles.Model(md).Input(id).obsFile      = '';
-handles.Model(md).Input(id).crsFile      = '';
-handles.Model(md).Input(id).hisFile      = '';
-handles.Model(md).Input(id).hisInterval  = 600.0;
-handles.Model(md).Input(id).xlsInterval  = 0;
-handles.Model(md).Input(id).flowGeomFile = '';
-handles.Model(md).Input(id).mapFile      = '';
-handles.Model(md).Input(id).mapInterval  = 3600;
-handles.Model(md).Input(id).rstInterval  = 0;
-handles.Model(md).Input(id).waqFileBase  = '';
-handles.Model(md).Input(id).waqInterval  = 0;
-handles.Model(md).Input(id).snapshotDir  = '';
+handles.Model(md).Input(id).obsfile      = '';
+handles.Model(md).Input(id).crsfile      = '';
+handles.Model(md).Input(id).hisfile      = '';
+handles.Model(md).Input(id).hisinterval  = 600.0;
+handles.Model(md).Input(id).xlsinterval  = 0;
+handles.Model(md).Input(id).flowgeomfile = '';
+handles.Model(md).Input(id).mapfile      = '';
+handles.Model(md).Input(id).mapinterval  = 3600;
+handles.Model(md).Input(id).rstinterval  = 0;
+handles.Model(md).Input(id).waqfilebase  = '';
+handles.Model(md).Input(id).waqinterval  = 0;
+handles.Model(md).Input(id).snapshotdir  = '';
+
+
+handles.Model(md).Input(id).nrobservationpoints=0;
+handles.Model(md).Input(id).observationpoints(1).name='';
+handles.Model(md).Input(id).observationpoints(1).x=NaN;
+handles.Model(md).Input(id).observationpoints(1).y=NaN;
+handles.Model(md).Input(id).observationpointshandle='';
+handles.Model(md).Input(id).activeobservationpoint=1;
+handles.Model(md).Input(id).observationpointnames={''};
+handles.Model(md).Input(id).selectobservationpoint=0;
+handles.Model(md).Input(id).changeobservationpoint=0;
+handles.Model(md).Input(id).deleteobservationpoint=0;
+handles.Model(md).Input(id).addobservationpoint=0;

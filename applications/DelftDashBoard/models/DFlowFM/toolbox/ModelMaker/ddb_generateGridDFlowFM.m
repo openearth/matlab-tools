@@ -84,9 +84,10 @@ set(gcf,'Pointer','arrow');
 %     coord='Cartesian';
 % end
 % 
-netStruc=curv2net(x,y,z);
-handles.Model(md).Input(id).netFile=[handles.Model(md).Input(id).runid '_net.nc'];
-handles.Model(md).Input(id).netStruc=netStruc;
-netStruc2nc(handles.Model(md).Input(id).netFile,netStruc);
+netstruc=curv2net(x,y,z);
+handles.Model(md).Input(id).netfile=[handles.Model(md).Input(id).runid '_net.nc'];
+handles.Model(md).Input(id).netstruc=netstruc;
+netStruc2nc(handles.Model(md).Input(id).netfile,netstruc);
 
 handles=ddb_DFlowFM_plotGrid(handles,'plot','domain',id);
+

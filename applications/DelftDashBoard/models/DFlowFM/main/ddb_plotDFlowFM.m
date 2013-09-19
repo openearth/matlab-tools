@@ -97,14 +97,15 @@ if id~=ad || (idomain==0 && ~act)
 else
     col=[0.35 0.35 0.35];
 end
-handles=ddb_DFlowFM_plotGrid(handles,option,'domain',id,'color',col,'visible',vis);
+
+handles=ddb_DFlowFM_plotGrid(handles,option,'domain',id,'color',col,'visible',vis,'active',act);
 
 if idomain==0 && ~act
     vis=0;
 end
 
-if ~isempty(handles.Model(imd).Input.boundarySections)
-    handles=ddb_DFlowFM_plotBoundarySections(handles,option,'visible',vis,'active',act);
-end
+handles=ddb_DFlowFM_plotBoundaries(handles,option,'visible',vis,'active',act);
+
+handles=ddb_DFlowFM_plotObservationPoints(handles,option,'visible',vis,'active',act);
 
 setHandles(handles);

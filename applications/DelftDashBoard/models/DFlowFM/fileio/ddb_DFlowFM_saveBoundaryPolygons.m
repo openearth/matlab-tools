@@ -1,19 +1,21 @@
-function ddb_saveDFlowFM(opt)
-%DDB_SAVEDELFT3DFLOW  One line description goes here.
+function ddb_DFlowFM_saveBoundaryPolygons(dr,boundaries)
+%DDB_GENERATEBOUNDARYSECTIONSDFLOWFM  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   ddb_saveDFlowFM(opt)
+%   handles = ddb_generateBoundarySectionsDFlowFM(handles)
 %
 %   Input:
-%   opt =
+%   handles  =
+%   id       =
+%   varargin =
 %
-%
-%
+%   Output:
+%   handles  =
 %
 %   Example
-%   ddb_saveDFlowFM
+%   ddb_generateBoundaryLocationsDelft3DFLOW
 %
 %   See also
 
@@ -59,29 +61,12 @@ function ddb_saveDFlowFM(opt)
 % $HeadURL$
 % $Keywords: $
 
-%%
-handles=getHandles;
-
-switch lower(opt)
-    case{'save'}
-        inp=handles.Model(md).Input(ad);
-        if ~isfield(handles.Model(md).Input(ad),'mduFile')
-            handles.Model(md).Input(ad).mduFile=[handles.Model(md).Input(ad).runid '.mdu'];
-        end
-        ddb_saveMDU(handles.Model(md).Input(ad).mduFile,inp);
-    case{'saveas'}
-        [filename, pathname, filterindex] = uiputfile('*.mdu', 'Select MDU File','');
-        if pathname~=0
-            curdir=[lower(cd) '\'];
-            if ~strcmpi(curdir,pathname)
-                filename=[pathname filename];
-            end
-            ii=findstr(filename,'.mdu');
-            handles.Model(md).Input(ad).runid=filename(1:ii-1);
-            handles.Model(md).Input(ad).mduFile=filename;
-            ddb_saveMDU(filename,handles.Model(md).Input(ad));
-        end
+for ipol=1:length(boundaries)
+    fid=fopen([dr filesep boundaries(ipol).filename],'wt');
+    fprintf(fid,'%s\n',boundaries(ipol).name);
+    fprintf(fid,'%i %i\n',length(boundaries(ipol).x),2);
+    for ip=1:length(boundaries(ipol).x)
+        fprintf(fid,'%14.6e %14.7e %s\n',boundaries(ipol).x(ip),boundaries(ipol).y(ip),[' ''' boundaries(ipol).componentsfile{ip} '''']);
+    end
+    fclose(fid);
 end
-
-setHandles(handles);
-

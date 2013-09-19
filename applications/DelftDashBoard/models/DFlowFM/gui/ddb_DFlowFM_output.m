@@ -1,19 +1,19 @@
-function ddb_saveDFlowFM(opt)
-%DDB_SAVEDELFT3DFLOW  One line description goes here.
+function ddb_DFlowFM_output(varargin)
+%DDB_DFlowFM_DESCRIPTION  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   ddb_saveDFlowFM(opt)
+%   ddb_DFlowFM_description(varargin)
 %
 %   Input:
-%   opt =
+%   varargin =
 %
 %
 %
 %
 %   Example
-%   ddb_saveDFlowFM
+%   ddb_DFlowFM_description
 %
 %   See also
 
@@ -60,28 +60,5 @@ function ddb_saveDFlowFM(opt)
 % $Keywords: $
 
 %%
-handles=getHandles;
-
-switch lower(opt)
-    case{'save'}
-        inp=handles.Model(md).Input(ad);
-        if ~isfield(handles.Model(md).Input(ad),'mduFile')
-            handles.Model(md).Input(ad).mduFile=[handles.Model(md).Input(ad).runid '.mdu'];
-        end
-        ddb_saveMDU(handles.Model(md).Input(ad).mduFile,inp);
-    case{'saveas'}
-        [filename, pathname, filterindex] = uiputfile('*.mdu', 'Select MDU File','');
-        if pathname~=0
-            curdir=[lower(cd) '\'];
-            if ~strcmpi(curdir,pathname)
-                filename=[pathname filename];
-            end
-            ii=findstr(filename,'.mdu');
-            handles.Model(md).Input(ad).runid=filename(1:ii-1);
-            handles.Model(md).Input(ad).mduFile=filename;
-            ddb_saveMDU(filename,handles.Model(md).Input(ad));
-        end
-end
-
-setHandles(handles);
+ddb_refreshScreen('Output');
 

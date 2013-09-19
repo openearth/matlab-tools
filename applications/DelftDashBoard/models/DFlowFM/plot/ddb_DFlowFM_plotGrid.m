@@ -67,6 +67,7 @@ imd=strmatch('DFlowFM',{handles.Model(:).name},'exact');
 col=[0.35 0.35 0.35];
 vis=1;
 id=ad;
+iactive=0;
 
 for i=1:length(varargin)
     if ischar(varargin{i})
@@ -77,6 +78,8 @@ for i=1:length(varargin)
                 vis=varargin{i+1};
             case{'domain'}
                 id=varargin{i+1};
+            case{'active'}
+                iactive=varargin{i+1};
         end
     end
 end
@@ -86,42 +89,54 @@ switch lower(opt)
     case{'plot'}
         
         % First delete old grid
-        if isfield(handles.Model(imd).Input(id).grid,'plotHandles')
-            if ~isempty(handles.Model(imd).Input(id).grid.plotHandles)
+        if isfield(handles.Model(imd).Input(id).grid,'handle')
+            if ~isempty(handles.Model(imd).Input(id).grid.handle)
                 try
-                    delete(handles.Model(imd).Input(id).grid.plotHandles);
+                    delete(handles.Model(imd).Input(id).grid.handle);
                 end
             end
         end
         
-%        handles.Model(imd).Input(id).grid.plotHandles=ddb_plotCurvilinearGrid(x,y,'color',col);
-        handles.Model(imd).Input(id).grid.plotHandles=pltnet(handles.Model(imd).Input(id).netStruc);
+        h=pltnet(handles.Model(imd).Input(id).netstruc);
+%         p=dflowfm.plotNet(handles.Model(imd).Input(id).netstruc,'cor',[],'cen',[]);
+%         handles.Model(imd).Input(id).grid.handle=p.per;
+        handles.Model(imd).Input(id).grid.handle=h;
+        set(h,'Tag','dflowfmnet');
+
         if vis
-            set(handles.Model(imd).Input(id).grid.plotHandles,'Color',col,'Visible','on');
+            set(h,'Color',col,'Visible','on');
         else
-            set(handles.Model(imd).Input(id).grid.plotHandles,'Color',col,'Visible','off');
+            set(h,'Color',col,'Visible','off');
         end
-        
+                
     case{'delete'}
         
         % Delete old grid
-        if isfield(handles.Model(imd).Input(id).grid,'plotHandles')
-            if ~isempty(handles.Model(imd).Input(id).grid.plotHandles)
+        if isfield(handles.Model(imd).Input(id).grid,'handle')
+            if ~isempty(handles.Model(imd).Input(id).grid.handle)
                 try
-                    delete(handles.Model(imd).Input(id).grid.plotHandles);
+                    delete(handles.Model(imd).Input(id).grid.handle);
                 end
+            end
+        end
+        
+        if id==0
+            h=findobj(gcf,'Tag','dflowfmnet');
+            if ~isempty(h)
+                delete(h);
             end
         end
         
     case{'update'}
-        if isfield(handles.Model(imd).Input(id).grid,'plotHandles')
-            if ~isempty(handles.Model(imd).Input(id).grid.plotHandles)
+        if isfield(handles.Model(imd).Input(id).grid,'handle')
+            if ~isempty(handles.Model(imd).Input(id).grid.handle)
                 try
-                    set(handles.Model(imd).Input(id).grid.plotHandles,'Color',col);
+                    set(handles.Model(imd).Input(id).grid.handle,'HitTest','off');
+                    set(handles.Model(imd).Input(id).grid.handle,'Color',col);
                     if vis
-                        set(handles.Model(imd).Input(id).grid.plotHandles,'Color',col,'Visible','on');
+                        set(handles.Model(imd).Input(id).grid.handle,'Color',col,'Visible','on');
                     else
-                        set(handles.Model(imd).Input(id).grid.plotHandles,'Color',col,'Visible','off');
+                        set(handles.Model(imd).Input(id).grid.handle,'Color',col,'Visible','off');
                     end
                 end
             end

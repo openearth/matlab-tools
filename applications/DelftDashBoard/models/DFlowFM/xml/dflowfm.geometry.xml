@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<root>
+  <element>
+    <position>45 10 900 140</position>
+    <style>tabpanel</style>
+    <tag>domainpanel</tag>
+    <tab>
+      <tabstring>Net</tabstring>
+      <element>dflowfm.geometry.net.xml</element>
+    </tab>
+    <tab>
+      <tabstring>Structures</tabstring>
+      <element>dflowfm.geometry.structures.xml</element>
+    </tab>
+    <tab>
+      <tabstring>Initial Conditions</tabstring>
+      <element>dflowfm.geometry.initialconditions.xml</element>
+    </tab>
+    <tab>
+      <tabstring>Miscellaneous</tabstring>
+      <element>dflowfm.geometry.misc.xml</element>
+    </tab>
+  </element>
+</root>

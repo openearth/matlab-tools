@@ -1,25 +1,10 @@
-function ddb_saveDFlowFM(opt)
-%DDB_SAVEDELFT3DFLOW  One line description goes here.
-%
-%   More detailed description goes here.
-%
-%   Syntax:
-%   ddb_saveDFlowFM(opt)
-%
-%   Input:
-%   opt =
-%
-%
-%
-%
-%   Example
-%   ddb_saveDFlowFM
-%
-%   See also
+function ddb_DFlowFM_writeComponentsFile(boundaries,ii,jj)
+
+%ddb_DFlowFM_writeComponentsFile  One line description goes here.
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2011 Deltares
+%   Copyright (C) 2013 Deltares
 %       Maarten van Ormondt
 %
 %       Maarten.vanOrmondt@deltares.nl
@@ -59,29 +44,23 @@ function ddb_saveDFlowFM(opt)
 % $HeadURL$
 % $Keywords: $
 
-%%
-handles=getHandles;
+fname=boundaries(ii).nodes(jj).componentsfile;
 
-switch lower(opt)
-    case{'save'}
-        inp=handles.Model(md).Input(ad);
-        if ~isfield(handles.Model(md).Input(ad),'mduFile')
-            handles.Model(md).Input(ad).mduFile=[handles.Model(md).Input(ad).runid '.mdu'];
-        end
-        ddb_saveMDU(handles.Model(md).Input(ad).mduFile,inp);
-    case{'saveas'}
-        [filename, pathname, filterindex] = uiputfile('*.mdu', 'Select MDU File','');
-        if pathname~=0
-            curdir=[lower(cd) '\'];
-            if ~strcmpi(curdir,pathname)
-                filename=[pathname filename];
-            end
-            ii=findstr(filename,'.mdu');
-            handles.Model(md).Input(ad).runid=filename(1:ii-1);
-            handles.Model(md).Input(ad).mduFile=filename;
-            ddb_saveMDU(filename,handles.Model(md).Input(ad));
-        end
+fid=fopen(fname,'wt');
+
+fprintf(fid,'%s\n',['* Delft3D-FLOW boundary segment name: ' boundaries(ii).name]);
+fprintf(fid,'%s\n',['* ' boundaries(ii).nodes(jj).componentsfile]);
+fprintf(fid,'%s\n','* COLUMNN=3');
+fprintf(fid,'%s\n','* COLUMN1=Period (min) or Astronomical Componentname');
+fprintf(fid,'%s\n','* COLUMN2=Amplitude (m)');
+fprintf(fid,'%s\n','* COLUMN3=Phase (deg)');
+
+for ip=1:length(boundaries(ii).nodes(jj).components)
+    cmp=boundaries(ii).nodes(jj).components(ip).component;
+    cmp=[repmat(' ',1,12-length(cmp)) cmp]; 
+    amp=boundaries(ii).nodes(jj).components(ip).amplitude;
+    phi=boundaries(ii).nodes(jj).components(ip).phase;
+    fprintf(fid,'%s %11.4f %11.1f\n',cmp,amp,phi);
 end
 
-setHandles(handles);
-
+fclose(fid);

@@ -1,19 +1,20 @@
-function ddb_saveDFlowFM(opt)
-%DDB_SAVEDELFT3DFLOW  One line description goes here.
+function ddb_DFlowFM_saveObsFile(handles, id)
+%DDB_SAVEOBSFILE  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   ddb_saveDFlowFM(opt)
+%   ddb_saveObsFile(handles, id)
 %
 %   Input:
-%   opt =
+%   handles =
+%   id      =
 %
 %
 %
 %
 %   Example
-%   ddb_saveDFlowFM
+%   ddb_saveObsFile
 %
 %   See also
 
@@ -60,28 +61,12 @@ function ddb_saveDFlowFM(opt)
 % $Keywords: $
 
 %%
-handles=getHandles;
-
-switch lower(opt)
-    case{'save'}
-        inp=handles.Model(md).Input(ad);
-        if ~isfield(handles.Model(md).Input(ad),'mduFile')
-            handles.Model(md).Input(ad).mduFile=[handles.Model(md).Input(ad).runid '.mdu'];
-        end
-        ddb_saveMDU(handles.Model(md).Input(ad).mduFile,inp);
-    case{'saveas'}
-        [filename, pathname, filterindex] = uiputfile('*.mdu', 'Select MDU File','');
-        if pathname~=0
-            curdir=[lower(cd) '\'];
-            if ~strcmpi(curdir,pathname)
-                filename=[pathname filename];
-            end
-            ii=findstr(filename,'.mdu');
-            handles.Model(md).Input(ad).runid=filename(1:ii-1);
-            handles.Model(md).Input(ad).mduFile=filename;
-            ddb_saveMDU(filename,handles.Model(md).Input(ad));
-        end
+fid=fopen(handles.Model(md).Input(id).obsfile,'w');
+for ip=1:handles.Model(md).Input(id).nrobservationpoints
+    x=handles.Model(md).Input(id).observationpoints(ip).x;
+    y=handles.Model(md).Input(id).observationpoints(ip).y;
+    name=handles.Model(md).Input(id).observationpoints(ip).name;
+    fprintf(fid,'%14.6f %14.6f %s\n',x,y,['''' name '''']);
 end
-
-setHandles(handles);
+fclose(fid);
 

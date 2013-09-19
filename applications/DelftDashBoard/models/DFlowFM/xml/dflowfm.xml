@@ -3,7 +3,7 @@
   <model>DFlowFM</model>
   <longname>D-FLOW FM</longname>
   <multipledomains>no</multipledomains>
-  <enable>0</enable>
+  <enable>1</enable>
   <menu>
     <menuopenfile>
       <menuitem>
@@ -46,20 +46,35 @@
     <tag>DFlowFM</tag>
     <position>10 10 900 700</position>
     <tab>
-      <tag>toolbox</tag>
       <tabstring>Toolbox</tabstring>
     </tab>
     <tab>
-      <tag>description</tag>
-      <tabstring>Description</tabstring>
-      <callback>ddb_DFlowFM_description</callback>
-      <element>DFlowFM.description.xml</element>
+      <tabstring>Geometry</tabstring>
+      <element>DFlowFM.geometry.xml</element>
     </tab>
     <tab>
-      <tag>timeframe</tag>
       <tabstring>Time Frame</tabstring>
       <callback>ddb_DFlowFM_timeFrame</callback>
       <element>DFlowFM.timeframe.xml</element>
+    </tab>
+    <tab>
+      <tabstring>Numerics</tabstring>
+      <callback>ddb_DFlowFM_numerics</callback>
+      <element>DFlowFM.numerics.xml</element>
+    </tab>
+    <tab>
+      <tabstring>Physics</tabstring>
+      <callback>ddb_DFlowFM_physics</callback>
+      <element>DFlowFM.physics.xml</element>
+    </tab>
+    <tab>
+      <tabstring>External Forcing</tabstring>
+      <element>DFlowFM.externalforcing.xml</element>
+    </tab>
+    <tab>
+      <tabstring>Output</tabstring>
+      <callback>ddb_DFlowFM_output</callback>
+      <element>DFlowFM.output.xml</element>
     </tab>
   </element>
 </root>

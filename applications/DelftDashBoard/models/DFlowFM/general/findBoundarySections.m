@@ -1,4 +1,4 @@
-function bndPolygons=findBoundarySections(netStruc,maxdist,minlev)
+function boundaries=findBoundarySections(netStruc,maxdist,minlev)
 
 bndLink=netStruc.bndLink;
 linkNodes=netStruc.linkNodes;
@@ -8,8 +8,6 @@ nodeDepth=netStruc.nodeZ;
 
 % Finds boundary points
 
-bndLinkLeft=zeros(size(bndLink))+1;
-
 % Start with first boundary link
 node2=linkNodes(bndLink(1),2);
 
@@ -18,29 +16,34 @@ bndNodes(2)=node2;
 nn=2;
 
 iAcBnd=1;
-bndLinkLeft(1)=0;
+% bndLinkLeft(1)=0;
 
+ph=plot(0,0,'y');
+set(ph,'LineWidth',2);
 while 1
     % Find links connected to node2
-    [ii,jj]=find(linkNodes==node2);
+    [ilinks,dummy]=find(linkNodes==node2);
     % And now find the next link that is also a boundary link and that contains
     % node2
     ibr=0;
-    for k=1:length(ii)
-        ibnd=find(bndLink==ii(k));
-        for n=1:length(ibnd)
+    %
+    for k=1:length(ilinks)
+        
+        ilnk=ilinks(k);
+        
+        % Find boundary links that match this link
+        ibnd=find(bndLink==ilnk);
+        if ~isempty(ibnd)
             % Check if this is not the present link
-            if ibnd(n)~=iAcBnd
+            if ibnd~=iAcBnd
                 nn=nn+1;
                 % Next boundary section found
-                ilnk=bndLink(ibnd(n));
                 if node2==linkNodes(ilnk,1)
                     node2=linkNodes(ilnk,2);
                 else
                     node2=linkNodes(ilnk,1);
                 end
-                iAcBnd=ibnd(n);
-                bndLinkLeft(iAcBnd)=0;
+                iAcBnd=ibnd;
                 ibr=1;
                 bndNodes(nn)=node2;
             end
@@ -49,7 +52,7 @@ while 1
             break
         end
     end
-    if sum(bndLinkLeft)==0
+    if node2==linkNodes(bndLink(1),2)
         break
     end
 end
@@ -116,16 +119,20 @@ for ipol=1:npol
     end
 end
 
-% Put everything in structure bndPolygons
+% Put everything in structure boundaries
 for ipol=1:length(polln)
-    bndPolygons(ipol).fileName=['bnd' num2str(ipol,'%0.3i') '.pli'];
-    bndPolygons(ipol).name=['bnd' num2str(ipol,'%0.3i')];
-    bndPolygons(ipol).type='waterlevelbnd';
     for ip=1:length(polln(ipol).ip)
-        bndPolygons(ipol).x(ip)=xx(polln(ipol).ip(ip));
-        bndPolygons(ipol).y(ip)=yy(polln(ipol).ip(ip));
-        bndPolygons(ipol).nodes(ip).componentsFile=[bndPolygons(ipol).name '_' num2str(ip,'%0.4i') '.cmp'];
-        bndPolygons(ipol).componentsFile{ip}=[bndPolygons(ipol).name '_' num2str(ip,'%0.4i') '.cmp'];
+        boundaries(ipol).x(ip)=xx(polln(ipol).ip(ip));
+        boundaries(ipol).y(ip)=yy(polln(ipol).ip(ip));
     end
+%     boundaries(ipol).filename=['bnd' num2str(ipol,'%0.3i') '.pli'];
+%     boundaries(ipol).name=['bnd' num2str(ipol,'%0.3i')];
+%     boundaries(ipol).type='waterlevelbnd';
+%     for ip=1:length(polln(ipol).ip)
+%         boundaries(ipol).x(ip)=xx(polln(ipol).ip(ip));
+%         boundaries(ipol).y(ip)=yy(polln(ipol).ip(ip));
+%         boundaries(ipol).nodes(ip).componentsfile=[boundaries(ipol).name '_' num2str(ip,'%0.4i') '.cmp'];
+%         boundaries(ipol).componentsFile{ip}=[boundaries(ipol).name '_' num2str(ip,'%0.4i') '.cmp'];
+%     end
 end
 

@@ -1,25 +1,9 @@
-function ddb_saveDFlowFM(opt)
-%DDB_SAVEDELFT3DFLOW  One line description goes here.
-%
-%   More detailed description goes here.
-%
-%   Syntax:
-%   ddb_saveDFlowFM(opt)
-%
-%   Input:
-%   opt =
-%
-%
-%
-%
-%   Example
-%   ddb_saveDFlowFM
-%
-%   See also
+function boundaries = ddb_DFlowFM_initializeBoundary(boundaries,x,y,ib)
+%ddb_DFlowFM_initializeBoundary  One line description goes here.
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2011 Deltares
+%   Copyright (C) 2013 Deltares
 %       Maarten van Ormondt
 %
 %       Maarten.vanOrmondt@deltares.nl
@@ -60,28 +44,14 @@ function ddb_saveDFlowFM(opt)
 % $Keywords: $
 
 %%
-handles=getHandles;
-
-switch lower(opt)
-    case{'save'}
-        inp=handles.Model(md).Input(ad);
-        if ~isfield(handles.Model(md).Input(ad),'mduFile')
-            handles.Model(md).Input(ad).mduFile=[handles.Model(md).Input(ad).runid '.mdu'];
-        end
-        ddb_saveMDU(handles.Model(md).Input(ad).mduFile,inp);
-    case{'saveas'}
-        [filename, pathname, filterindex] = uiputfile('*.mdu', 'Select MDU File','');
-        if pathname~=0
-            curdir=[lower(cd) '\'];
-            if ~strcmpi(curdir,pathname)
-                filename=[pathname filename];
-            end
-            ii=findstr(filename,'.mdu');
-            handles.Model(md).Input(ad).runid=filename(1:ii-1);
-            handles.Model(md).Input(ad).mduFile=filename;
-            ddb_saveMDU(filename,handles.Model(md).Input(ad));
-        end
+boundaries(ib).filename=['bnd' num2str(ib,'%0.3i') '.pli'];
+boundaries(ib).name=['bnd' num2str(ib,'%0.3i')];
+boundaries(ib).type='waterlevelbnd';
+boundaries(ib).handle=NaN;
+for ip=1:length(x)
+    boundaries(ib).x(ip)=x(ip);
+    boundaries(ib).y(ip)=y(ip);
+    boundaries(ib).nodes(ip).componentsfile=[boundaries(ib).name '_' num2str(ip,'%0.4i') '.cmp'];
+    boundaries(ib).componentsfile{ip}=[boundaries(ib).name '_' num2str(ip,'%0.4i') '.cmp'];
+    boundaries(ib).activenode=1;
 end
-
-setHandles(handles);
-
