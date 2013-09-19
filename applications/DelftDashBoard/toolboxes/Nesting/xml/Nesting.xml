@@ -6,37 +6,31 @@
   <element>
     <position>40 10 1000 140</position>
     <style>tabpanel</style>
-    <tag>nestpanel</tag>
     <tab>
-      <tag>nesthd1</tag>
       <tabstring>Nesting - 1</tabstring>
       <callback>ddb_NestingToolbox_nestHD1</callback>
       <formodel>delft3dflow</formodel>
-      <element>Nesting.nesthd1.xml</element>
+      <element>Nesting.delft3dflow.nesthd1.xml</element>
     </tab>
     <tab>
-      <tag>nesthd2</tag>
       <tabstring>Nesting - 2</tabstring>
       <callback>ddb_NestingToolbox_nestHD2</callback>
       <formodel>delft3dflow</formodel>
-      <element>Nesting.nesthd2.xml</element>
+      <element>Nesting.delft3dflow.nesthd2.xml</element>
     </tab>
     <tab>
-      <tag>nestingwave1</tag>
       <tabstring>Nesting - 1</tabstring>
       <callback>ddb_NestingToolbox_Delft3DWAVE_nest1</callback>
       <formodel>delft3dwave</formodel>
       <element>Nesting.delft3dwave.nest1.xml</element>
     </tab>
     <tab>
-      <tag>nestingwave2</tag>
       <tabstring>Nesting - 2</tabstring>
       <callback>ddb_NestingToolbox_Delft3DWAVE_nest2</callback>
       <formodel>delft3dwave</formodel>
       <element>Nesting.delft3dwave.nest2.xml</element>
     </tab>
     <tab>
-      <tag>nestingdflowfm</tag>
       <tabstring>Nesting</tabstring>
       <callback>ddb_dummyTabCallback</callback>
       <formodel>dflowfm</formodel>

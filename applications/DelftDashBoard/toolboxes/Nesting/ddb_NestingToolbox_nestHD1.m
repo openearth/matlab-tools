@@ -72,6 +72,8 @@ else
     switch opt
         case{'nesthd1'}
             nestHD1;
+        case{'selectcs'}
+            selectCS;
     end
 end
 
@@ -80,63 +82,123 @@ function nestHD1
 
 handles=getHandles;
 
-if isempty(handles.Toolbox(tb).Input.grdFile)
-    ddb_giveWarning('text','Please first load grid file of nested model!');
-    return
+switch handles.Toolbox(tb).Input.detailmodeltype
+
+    case{'delft3dflow'}
+        
+        if isempty(handles.Toolbox(tb).Input.grdFile)
+            ddb_giveWarning('text','Please first load grid file of nested model!');
+            return
+        end
+        
+        if isempty(handles.Toolbox(tb).Input.encFile)
+            ddb_giveWarning('text','Please first load enclosure file of nested model!');
+            return
+        end
+        
+        if isempty(handles.Toolbox(tb).Input.bndFile)
+            ddb_giveWarning('text','Please first load boundary file of nested model!');
+            return
+        end
+        
+        if isempty(handles.Model(md).Input(ad).gridX)
+            ddb_giveWarning('text','Please first load or create model grid!');
+            return
+        end
+        
+        fid=fopen('nesthd1.inp','wt');
+        fprintf(fid,'%s\n',handles.Model(md).Input(ad).grdFile);
+        fprintf(fid,'%s\n',handles.Model(md).Input(ad).encFile);
+        fprintf(fid,'%s\n',handles.Toolbox(tb).Input.grdFile);
+        fprintf(fid,'%s\n',handles.Toolbox(tb).Input.encFile);
+        fprintf(fid,'%s\n',handles.Toolbox(tb).Input.bndFile);
+        fprintf(fid,'%s\n',handles.Toolbox(tb).Input.admFile);
+        fprintf(fid,'%s\n','ddtemp.obs');
+        fclose(fid);
+        
+        system(['"' handles.Toolbox(tb).dataDir 'nesthd1" < nesthd1.inp']);
+        
+        [name,m,n] = textread('ddtemp.obs','%21c%f%f');
+        
+        k=handles.Model(md).Input(ad).nrObservationPoints;
+        for i=1:length(m)
+            % Check if observation point already exists
+            nm=deblank(name(i,:));
+            ii=strmatch(nm,handles.Model(md).Input(ad).observationPointNames,'exact');
+            if isempty(ii)
+                % Observation point does not yet exist
+                k=k+1;
+                handles.Model(md).Input(ad).observationPoints(k).name=nm;
+                handles.Model(md).Input(ad).observationPoints(k).M=m(i);
+                handles.Model(md).Input(ad).observationPoints(k).N=n(i);
+                handles.Model(md).Input(ad).observationPoints(k).x=handles.Model(md).Input(ad).gridXZ(m(i),n(i));
+                handles.Model(md).Input(ad).observationPoints(k).y=handles.Model(md).Input(ad).gridYZ(m(i),n(i));
+                handles.Model(md).Input(ad).observationPointNames{k}=handles.Model(md).Input(ad).observationPoints(k).name;
+            end
+        end
+        delete('nesthd1.inp');
+        try
+            delete('ddtemp.obs');
+        end
+        handles.Model(md).Input(ad).nrObservationPoints=length(handles.Model(md).Input(ad).observationPoints);
+        
+        handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','observationpoints','domain',ad,'visible',1,'active',0);
+        
+        setHandles(handles);
+        
+    case{'dflowfm'}
+
+        if isempty(handles.Toolbox(tb).Input.extfile)
+            ddb_giveWarning('text','Please first load external forcing file of nested model!');
+            return
+        end
+        
+        cs.name=handles.Toolbox(tb).Input.detailmodelcsname;
+        cs.type=handles.Toolbox(tb).Input.detailmodelcstype;
+
+        newpoints=ddb_nesthd1_dflowfm_in_delft3dflow('admfile',handles.Toolbox(tb).Input.admFile,'extfile',handles.Toolbox(tb).Input.extfile, ...
+            'grdfile',handles.Model(md).Input(ad).grdFile,'encfile',handles.Model(md).Input(ad).encFile, ...
+            'csoverall',handles.screenParameters.coordinateSystem,'csdetail',cs);        
+        
+        if ~isempty(newpoints)            
+            k=handles.Model(md).Input(ad).nrObservationPoints;
+            for ip=1:length(newpoints)
+                % Check if observation point already exists
+                nm=deblank(newpoints(ip).name);
+                ii=strmatch(nm,handles.Model(md).Input(ad).observationPointNames,'exact');
+                if isempty(ii)
+                    % Observation point does not yet exist
+                    k=k+1;
+                    handles.Model(md).Input(ad).observationPoints(k).name=nm;
+                    handles.Model(md).Input(ad).observationPoints(k).M=newpoints(ip).m;
+                    handles.Model(md).Input(ad).observationPoints(k).N=newpoints(ip).n;
+                    handles.Model(md).Input(ad).observationPoints(k).x=handles.Model(md).Input(ad).gridXZ(newpoints(ip).m,newpoints(ip).n);
+                    handles.Model(md).Input(ad).observationPoints(k).y=handles.Model(md).Input(ad).gridYZ(newpoints(ip).m,newpoints(ip).n);
+                    handles.Model(md).Input(ad).observationPointNames{k}=handles.Model(md).Input(ad).observationPoints(k).name;
+                end
+            end
+            handles.Model(md).Input(ad).activeObservationPoint=1;
+            handles.Model(md).Input(ad).nrObservationPoints=k;
+            handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','observationpoints','domain',ad,'visible',1,'active',0);        
+            setHandles(handles);
+        end
+        
 end
 
-if isempty(handles.Toolbox(tb).Input.encFile)
-    ddb_giveWarning('text','Please first load enclosure file of nested model!');
-    return
+%%
+function selectCS
+
+handles=getHandles;
+
+% Open GUI to select data set
+
+[cs,type,nr,ok]=ddb_selectCoordinateSystem(handles.coordinateData,handles.EPSG,'default','WGS 84','type','both','defaulttype','geographic');
+
+if ok
+    handles.Toolbox(tb).Input.detailmodelcsname=cs;
+    handles.Toolbox(tb).Input.detailmodelcstype=type;    
+    setHandles(handles);
 end
 
-if isempty(handles.Toolbox(tb).Input.bndFile)
-    ddb_giveWarning('text','Please first load boundary file of nested model!');
-    return
-end
-
-if isempty(handles.Model(md).Input(ad).gridX)
-    ddb_giveWarning('text','Please first load or create model grid!');
-    return    
-end
-
-fid=fopen('nesthd1.inp','wt');
-fprintf(fid,'%s\n',handles.Model(md).Input(ad).grdFile);
-fprintf(fid,'%s\n',handles.Model(md).Input(ad).encFile);
-fprintf(fid,'%s\n',handles.Toolbox(tb).Input.grdFile);
-fprintf(fid,'%s\n',handles.Toolbox(tb).Input.encFile);
-fprintf(fid,'%s\n',handles.Toolbox(tb).Input.bndFile);
-fprintf(fid,'%s\n',handles.Toolbox(tb).Input.admFile);
-fprintf(fid,'%s\n','ddtemp.obs');
-fclose(fid);
-
-system(['"' handles.Toolbox(tb).dataDir 'nesthd1" < nesthd1.inp']);
-
-[name,m,n] = textread('ddtemp.obs','%21c%f%f');
-
-k=handles.Model(md).Input(ad).nrObservationPoints;
-for i=1:length(m)
-    % Check if observation point already exists
-    nm=deblank(name(i,:));
-    ii=strmatch(nm,handles.Model(md).Input(ad).observationPointNames,'exact');
-    if isempty(ii)
-        % Observation point does not yet exist
-        k=k+1;
-        handles.Model(md).Input(ad).observationPoints(k).name=nm;
-        handles.Model(md).Input(ad).observationPoints(k).M=m(i);
-        handles.Model(md).Input(ad).observationPoints(k).N=n(i);
-        handles.Model(md).Input(ad).observationPoints(k).x=handles.Model(md).Input(ad).gridXZ(m(i),n(i));
-        handles.Model(md).Input(ad).observationPoints(k).y=handles.Model(md).Input(ad).gridYZ(m(i),n(i));
-        handles.Model(md).Input(ad).observationPointNames{k}=handles.Model(md).Input(ad).observationPoints(k).name;
-    end
-end
-delete('nesthd1.inp');
-try
-    delete('ddtemp.obs');
-end
-handles.Model(md).Input(ad).nrObservationPoints=length(handles.Model(md).Input(ad).observationPoints);
-
-handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','observationpoints','domain',ad,'visible',1,'active',0);
-
-setHandles(handles);
+gui_updateActiveTab;
 

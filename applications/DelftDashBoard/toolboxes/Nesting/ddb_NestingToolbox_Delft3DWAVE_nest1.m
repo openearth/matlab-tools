@@ -113,7 +113,8 @@ end
 handles.Model(md).Input.locationsets=ddb_initializeDelft3DWAVELocationSet(handles.Model(md).Input.locationsets,nlocsets);
 
 np=0;
-for ibnd=1:1:nbnd
+ithin=20;
+for ibnd=1:ithin:nbnd
     m=bnd(ibnd).m1;
     n=bnd(ibnd).n1;
     % Check that depth at this point is greater than 0

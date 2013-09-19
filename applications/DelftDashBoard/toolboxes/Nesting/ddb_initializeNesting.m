@@ -74,11 +74,17 @@ if nargin>1
     end
 end
 
+% Nest 1
+handles.Toolbox(ii).Input.detailmodeltype   = 'delft3dflow';
+handles.Toolbox(ii).Input.detailmodelcsname = 'unspecified';
+handles.Toolbox(ii).Input.detailmodelcstype = 'unspecified';
 handles.Toolbox(ii).Input.grdFile       = '';
 handles.Toolbox(ii).Input.encFile       = '';
 handles.Toolbox(ii).Input.bndFile       = '';
 handles.Toolbox(ii).Input.depFile       = '';
+handles.Toolbox(ii).Input.extfile       = '';
 
+% Nest 2
 handles.Toolbox(ii).Input.admFile       = 'nesting.adm';
 handles.Toolbox(ii).Input.trihFile      = '';
 handles.Toolbox(ii).Input.zCor          = 0;
