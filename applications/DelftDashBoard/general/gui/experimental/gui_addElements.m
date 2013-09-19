@@ -429,7 +429,9 @@ for i=1:length(element)
                     element(i).element.tab(j).tab.style='tab';
                     element(i).element.tab(j).tab.element=gui_addElements(figh,element(i).element.tab(j).tab.element,'getFcn',getFcn,'setFcn',setFcn, ...
                     'Parent',tabhandles(j));
+                if isfield(element(i).element.tab(j).tab,'tag')
                     set(tabhandles(j),'Tag',element(i).element.tab(j).tab.tag);
+                end
                     element(i).element.tab(j).tab.handle=tabhandles(j);
                 end
                 
