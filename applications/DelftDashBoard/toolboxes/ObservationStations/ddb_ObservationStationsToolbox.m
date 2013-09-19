@@ -156,6 +156,15 @@ switch lower(handles.Model(md).name)
                 setHandles(handles);
             end
         end
+    case{'dflowfm'}
+            [filename, pathname, filterindex] = uiputfile('*.xyn', 'Observation File Name',[handles.Model(md).Input(ad).attName '.xyn']);
+            if pathname~=0
+                ddb_DFlowFM_addObservationStations;
+                handles=getHandles;
+                handles.Model(md).Input(ad).obsfile=filename;
+                ddb_DFlowFM_saveObsFile(handles,ad);
+                setHandles(handles);
+            end
     otherwise
         ddb_giveWarning('text',['Sorry, generation of observation points from stations is not supported for ' handles.Model(md).longName ' ...']);
 end

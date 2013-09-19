@@ -71,6 +71,7 @@ switch lower(option)
         h=findobj(gca,'Tag','observationstations');
         if ~isempty(h)
             set(h,'Visible','on');
+            uistack(h(1),'top');
         end
         h=findobj(gca,'Tag','observationspolygon');
         if ~isempty(h)
