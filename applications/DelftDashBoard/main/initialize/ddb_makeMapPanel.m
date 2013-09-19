@@ -134,7 +134,8 @@ handles.mapHandles.backgroundImage=image(xx,yy,cdata);hold on;
 set(handles.mapHandles.backgroundImage,'Tag','backgroundimage','HitTest','off');
 
 % Shoreline
-handles.mapHandles.shoreline=plot3(0,0,500,'k');hold on;
+%handles.mapHandles.shoreline=plot3(0,0,500,'k');hold on;
+handles.mapHandles.shoreline=plot(0,0,'k');hold on;
 set(handles.mapHandles.shoreline,'HitTest','off','Tag','shoreline');
 
 % Cities
