@@ -81,6 +81,10 @@ options.activemarkerfacecolor='r';
 options.activemarkersize=6;
 options.activepoint=[];
 options.text=[];
+options.font='Helvetica';
+options.fontcolor='k';
+options.fontweight='normal';
+options.fontsize=10;
 options.selectcallback=[];
 options.selectinput=[];
 options.doubleclickcallback=[];
@@ -124,6 +128,16 @@ for i=1:length(varargin)
                 options.activemarkersize=varargin{i+1};
             case{'text'}
                 options.text=varargin{i+1};
+            case{'font'}
+                options.font=varargin{i+1};
+            case{'fontcolor'}
+                options.fontcolor=varargin{i+1};
+            case{'fontsize'}
+                options.fontsize=varargin{i+1};
+            case{'fontweight'}
+                options.fontweight=varargin{i+1};
+            case{'font'}
+                options.font=varargin{i+1};
             case{'selectcallback'}
                 options.selectcallback=varargin{i+1};
             case{'selectinput'}
@@ -213,6 +227,30 @@ switch lower(opt)
                             for ii=1:length(tx)
                                 set(tx(ii),'XData',x(ii),'YData',y(ii));
                             end
+                        case{'text'}
+                            txt=varargin{i+1};
+                            tx=getappdata(hg,'texthandles');
+                            h=getappdata(hg,'cloudhandle');                            
+                            for ii=1:length(tx)
+                                if isempty(txt)
+                                    set(tx(ii),'String','');
+                                else
+                                    set(tx(ii),'String',txt{ii});
+                                end
+                            end
+                        case{'textvisible'}
+                            tx=getappdata(hg,'texthandles');
+                            set(tx,'Visible',varargin{i+1});
+                        case{'selectcallback'}
+                            h=getappdata(hg,'cloudhandle');
+                            options=getappdata(hg,'options');
+                            options.selectcallback=varargin{i+1};
+                            setappdata(hg,'options',options);
+                        case{'selectinput'}
+                            h=getappdata(hg,'cloudhandle');                            
+                            options=getappdata(hg,'options');
+                            options.selectinput=varargin{i+1};
+                            setappdata(hg,'options',options);
                     end
                 end
             end
@@ -225,7 +263,7 @@ if nargout==1
 elseif nargout==2
     varargout{1}=x;
     varargout{2}=y;
-else
+else    
     varargout{1}=h;
 end
 
@@ -280,10 +318,14 @@ if ~isempty(x)
     if ~isempty(options.text)
         for i=1:length(x)
             tx(i)=text(x(i),y(i),options.text{i});
-            set(tx(i),'Tag',optionstag,'HitTest','off','Clipping','on');
+            set(tx(i),'Tag',options.tag,'HitTest','off','Clipping','on');
+            set(tx(i),'FontName',options.font);
+            set(tx(i),'FontSize',options.fontsize);
+            set(tx(i),'FontWeight',options.fontweight);
             setappdata(tx(i),'number',i);
             set(tx(i),'Tag',options.tag);
             set(tx(i),'Parent',hg);
+            set(tx(i),'HitTest','off');
         end
     end   
     setappdata(hg,'texthandles',tx);
