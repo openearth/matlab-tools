@@ -194,7 +194,7 @@
     <text>Reference Time</text>
     <textposition>left</textposition>
     <type>date</type>
-    <variable>handles.Model(md).Input(ad).refDate</variable>
+    <variable>handles.Model(md).Input(ad).refdate</variable>
   </element>
   <element>
     <tag>editstarttime</tag>
@@ -203,7 +203,7 @@
     <tooltipstring>Edit start time</tooltipstring>
     <text>Start Time</text>
     <textposition>left</textposition>
-    <variable>handles.Model(md).Input(ad).tStart</variable>
+    <variable>handles.Model(md).Input(ad).tstart</variable>
     <type>datetime</type>
     <onchange>ddb_updateOutputTimes</onchange>
   </element>
@@ -214,7 +214,7 @@
     <tooltipstring>Edit stop time</tooltipstring>
     <text>Stop Time</text>
     <textposition>left</textposition>
-    <variable>handles.Model(md).Input(ad).tStop</variable>
+    <variable>handles.Model(md).Input(ad).tstop</variable>
     <type>datetime</type>
     <onchange>ddb_updateOutputTimes</onchange>
   </element>

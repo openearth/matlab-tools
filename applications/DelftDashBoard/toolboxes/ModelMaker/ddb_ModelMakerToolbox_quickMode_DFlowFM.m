@@ -1,4 +1,4 @@
-function ddb_ModelMakerToolbox_quickMode(varargin)
+function ddb_ModelMakerToolbox_quickMode_DFlowFM(varargin)
 %DDB_MODELMAKERTOOLBOX_QUICKMODE  One line description goes here.
 %
 %   More detailed description goes here.
@@ -301,20 +301,31 @@ function generateBathymetry
 
 %%
 function generateOpenBoundaries
+
 handles=getHandles;
+
 maxdist=handles.Toolbox(tb).Input.sectionLengthMetres;
 minlev=handles.Toolbox(tb).Input.zMax;
-netStruc=handles.Model(md).Input(ad).netStruc;
-boundarySections=findBoundarySections(netStruc,maxdist,minlev);
-handles.Model(md).Input(ad).boundarySections=boundarySections;
-handles=ddb_DFlowFM_plotBoundarySections(handles,'plot');
+
+boundaries=[];
+
+boundarysections=findBoundarySections(handles.Model(md).Input(ad).netstruc,maxdist,minlev);
+
+for ib=1:length(boundarysections)
+    boundaries = ddb_DFlowFM_initializeBoundary(boundaries,boundarysections(ib).x,boundarysections(ib).y,ib);
+end
+
+handles.Model(md).Input(ad).boundaries=boundaries;
+handles.Model(md).Input(ad).nrboundaries=length(boundaries);
+
+handles=ddb_DFlowFM_plotBoundaries(handles,'plot','active',1);
 
 %% Save file
-saveBndPolygons('.\',handles.Model(md).Input(ad).boundarySections);
+ddb_DFlowFM_saveBoundaryPolygons('.\',handles.Model(md).Input(ad).boundaries);
 
 %% External forcing file
-handles.Model(md).Input(ad).extForceFile='forcing.ext';
-writeExtForcing(handles.Model(md).Input(ad).extForceFile,handles.Model(md).Input(ad).boundarySections);
+handles.Model(md).Input(ad).extforcefile='forcing.ext';
+ddb_DFlowFM_writeExtForcing(handles.Model(md).Input(ad).extforcefile,handles.Model(md).Input(ad).boundaries);
 
 setHandles(handles);
 
@@ -333,26 +344,32 @@ end
 % Make one vector with all boundary points
 xb=[];
 yb=[];
-boundarySections=handles.Model(md).Input(ad).boundarySections;
+boundaries=handles.Model(md).Input(ad).boundaries;
 
-for ipol=1:length(boundarySections)
-    xb=[xb boundarySections(ipol).x];
-    yb=[yb boundarySections(ipol).y];
+for ipol=1:length(boundaries)
+    xb=[xb boundaries(ipol).x];
+    yb=[yb boundaries(ipol).y];
 end
+
+cs.name='WGS 84';
+cs.type='Geographic';
+
+[xb,yb]=ddb_coordConvert(xb,yb,handles.screenParameters.coordinateSystem,cs);
+
 [ampz,phasez,conList] = readTideModel(tidefile,'type','h','x',xb,'y',yb,'constituent','all');
 ip=0;
-for ipol=1:length(boundarySections)
-    for jj=1:length(boundarySections(ipol).x)
+for ipol=1:length(boundaries)
+    for jj=1:length(boundaries(ipol).x)
         ip=ip+1;
         for ic=1:size(ampz,1)
-            boundarySections(ipol).nodes(jj).components(ic).component=conList{ic};
-            boundarySections(ipol).nodes(jj).components(ic).amplitude=ampz(ic,ip);
-            boundarySections(ipol).nodes(jj).components(ic).phase=phasez(ic,ip);
+            boundaries(ipol).nodes(jj).components(ic).component=conList{ic};
+            boundaries(ipol).nodes(jj).components(ic).amplitude=ampz(ic,ip);
+            boundaries(ipol).nodes(jj).components(ic).phase=phasez(ic,ip);
         end
-        writeComponentsFile(boundarySections(ipol).nodes(jj).componentsFile,boundarySections,ipol,jj);
+        ddb_DFlowFM_writeComponentsFile(boundaries,ipol,jj);
     end
 end
-handles.Model(md).Input(ad).boundarySections=boundarySections;
+handles.Model(md).Input(ad).boundaries=boundaries;
 
 setHandles(handles);
 
