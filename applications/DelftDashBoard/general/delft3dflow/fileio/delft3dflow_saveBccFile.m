@@ -80,7 +80,7 @@ for n=1:length(openBoundaries);
     if flow.sediments.include
         for i=1:flow.nrSediments
             k=k+1;
-            Info=SetInfo(Info,flow.itDate,openBoundaries(n),openBoundaries(n).sediment(i),flow.sediment(i).name,'[kg/m3]',k,n,kmax);
+            Info=SetInfo(Info,flow.itDate,openBoundaries(n),openBoundaries(n).sediment(i),flow.sediments.sedimentNames{i},'[kg/m3]',k,n,kmax);
         end
     end
     if flow.tracers
