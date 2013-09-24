@@ -62,8 +62,6 @@ function ddb_DFlowFM_timeFrame(varargin)
 %%
 ddb_zoomOff;
 
-% setUIElements('dflowfm.timeframe');
-
 if isempty(varargin)
     ddb_refreshScreen;
 end

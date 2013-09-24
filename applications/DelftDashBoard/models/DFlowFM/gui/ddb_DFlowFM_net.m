@@ -47,7 +47,6 @@ function ddb_DFlowFM_net(varargin)
 if isempty(varargin)
     ddb_zoomOff;
     ddb_refreshScreen;
-    % setUIElements('delft3dflow.domain.domainpanel.grid');
 else
     opt=varargin{1};
     switch lower(opt)
