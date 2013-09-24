@@ -317,7 +317,7 @@ if ~isempty(x)
     tx=[];
     if ~isempty(options.text)
         for i=1:length(x)
-            tx(i)=text(x(i),y(i),options.text{i});
+            tx(i)=text(x(i),y(i),[' ' options.text{i}]);
             set(tx(i),'Tag',options.tag,'HitTest','off','Clipping','on');
             set(tx(i),'FontName',options.font);
             set(tx(i),'FontSize',options.fontsize);
@@ -325,7 +325,6 @@ if ~isempty(x)
             setappdata(tx(i),'number',i);
             set(tx(i),'Tag',options.tag);
             set(tx(i),'Parent',hg);
-            set(tx(i),'HitTest','off');
         end
     end   
     setappdata(hg,'texthandles',tx);
