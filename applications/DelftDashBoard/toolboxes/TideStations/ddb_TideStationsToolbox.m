@@ -88,11 +88,15 @@ else
             viewTideSignal;
         case{'exporttidesignal'}
             exportTideSignal;
-        case{'exportalltidesignals'}
-            exportAllTideSignals;
+        case{'exportcomponentset'}
+            exportComponentSet;
         case{'selectstationlistoption'}
             refreshStationList;
             refreshStationText;
+        case{'drawpolygon'}
+            drawPolygon;
+        case{'deletepolygon'}
+            deletePolygon;
     end
 end
 
@@ -111,7 +115,7 @@ switch lower(handles.Model(md).name)
             setHandles(handles);
         end
     case{'dflowfm'}
-        [filename, pathname, filterindex] = uiputfile('*.obs', 'Observation File Name',[handles.Model(md).Input(ad).attName '.xyn']);
+        [filename, pathname, filterindex] = uiputfile('*.xyn', 'Observation File Name',[handles.Model(md).Input(ad).attName '.xyn']);
         if pathname~=0
             ddb_DFlowFM_addTideStations;
             handles=getHandles;
@@ -124,13 +128,147 @@ switch lower(handles.Model(md).name)
 end
 
 %%
-function exportAllTideSignals
+function exportTideSignal
+
 handles=getHandles;
-switch lower(handles.Model(md).name)
-    case{'delft3dflow'}
-        ddb_Delft3DFLOW_exportTideSignals;
-    otherwise
-        ddb_giveWarning('text',['Exporting tide data within grid not supported for ' handles.Model(md).longName]);
+
+iac=handles.Toolbox(tb).Input.activeDatabase;
+
+if ~isempty(handles.Toolbox(tb).Input.polygonx)
+    
+    xpol=handles.Toolbox(tb).Input.polygonx;
+    ypol=handles.Toolbox(tb).Input.polygony;
+    
+    x=handles.Toolbox(tb).Input.database(iac).xLocLocal;
+    y=handles.Toolbox(tb).Input.database(iac).yLocLocal;
+    
+    istation=find(inpolygon(x,y,xpol,ypol)==1);
+    
+else
+    istation=handles.Toolbox(tb).Input.activeTideStation;
+end
+
+wb = awaitbar(0,'Exporting time series ...');
+
+for ii=1:length(istation)
+
+    istat=istation(ii);
+
+    stationName=handles.Toolbox(tb).Input.database(iac).stationList{istat};
+    
+    str=['Station ' stationName ' - ' num2str(ii) ' of ' num2str(length(istation)) ' ...'];
+    [hh,abort2]=awaitbar(ii/(length(istation)),wb,str);
+
+    if abort2 % Abort the process by clicking abort button
+        break;
+    end;
+    if isempty(hh); % Break the process when closing the figure
+        break;
+    end;
+    
+    t0=handles.Toolbox(tb).Input.startTime;
+    t1=handles.Toolbox(tb).Input.stopTime;
+    dt=handles.Toolbox(tb).Input.timeStep/1440;
+    tim=t0:dt:t1;
+    iac=handles.Toolbox(tb).Input.activeDatabase;
+    
+    timezonestation=handles.Toolbox(tb).Input.database(iac).timezone(istat);
+    
+    latitude=handles.Toolbox(tb).Input.database(iac).y(istat);
+    wl=makeTidePrediction(tim,handles.Toolbox(tb).Input.components,handles.Toolbox(tb).Input.amplitudes,handles.Toolbox(tb).Input.phases,latitude, ...
+        'timezone',handles.Toolbox(tb).Input.timeZone,'maincomponents',handles.Toolbox(tb).Input.usemaincomponents,'timezonestation',timezonestation);
+    wl=wl+handles.Toolbox(tb).Input.verticalOffset;
+    
+    stationName=handles.Toolbox(tb).Input.database(iac).stationList{istat};
+    if handles.Toolbox(tb).Input.showstationnames
+        fname=handles.Toolbox(tb).Input.database(iac).stationShortNames{istat};
+    else
+        fname=handles.Toolbox(tb).Input.database(iac).idCodes{istat};
+    end
+    
+    switch handles.Toolbox(tb).Input.tidesignalformat
+        case{'tek'}
+            exportTEK(wl',tim',[fname '.tek'],stationName);
+        case{'mat'}
+            s=[];
+            s.parameters(1).parameter.name=fname;
+            s.parameters(1).parameter.time=tim';
+            s.parameters(1).parameter.val=wl';            
+            s.parameters(1).parameter.quantity='scalar';            
+            s.parameters(1).parameter.size=[length(tim) 0 0 0 0];
+            save([fname '.mat'],'-struct','s');
+    end    
+    
+end
+
+try
+    close(wb);
+end
+
+%%
+function exportComponentSet
+
+handles=getHandles;
+
+iac=handles.Toolbox(tb).Input.activeDatabase;
+
+if ~isempty(handles.Toolbox(tb).Input.polygonx)
+    
+    xpol=handles.Toolbox(tb).Input.polygonx;
+    ypol=handles.Toolbox(tb).Input.polygony;
+    
+    x=handles.Toolbox(tb).Input.database(iac).xLocLocal;
+    y=handles.Toolbox(tb).Input.database(iac).yLocLocal;
+    
+    istation=find(inpolygon(x,y,xpol,ypol)==1);
+    
+else
+    istation=handles.Toolbox(tb).Input.activeTideStation;
+end
+
+wb = awaitbar(0,'Exporting tidal components ...');
+
+for ii=1:length(istation)
+    
+    istat=istation(ii);
+    
+    stationName=handles.Toolbox(tb).Input.database(iac).stationList{istat};
+    
+    str=['Station ' stationName ' - ' num2str(ii) ' of ' num2str(length(istation)) ' ...'];
+    [hh,abort2]=awaitbar(ii/(length(istation)),wb,str);
+    
+    if abort2 % Abort the process by clicking abort button
+        break;
+    end;
+    if isempty(hh); % Break the process when closing the figure
+        break;
+    end;
+    
+    if handles.Toolbox(tb).Input.showstationnames
+        fname=handles.Toolbox(tb).Input.database(iac).stationShortNames{istat};
+    else
+        fname=handles.Toolbox(tb).Input.database(iac).idCodes{istat};
+    end
+    
+    s.station.name=fname;
+    s.station.id=handles.Toolbox(tb).Input.database(iac).idCodes{istat};
+    s.station.longname=handles.Toolbox(tb).Input.database(iac).stationList{istat};
+    s.station.x=handles.Toolbox(tb).Input.database(iac).xLocLocal(istat);
+    s.station.y=handles.Toolbox(tb).Input.database(iac).yLocLocal(istat);
+    s.station.component=handles.Toolbox(tb).Input.components;
+    s.station.amplitude=handles.Toolbox(tb).Input.amplitudes;
+    s.station.phase=handles.Toolbox(tb).Input.phases;
+    
+    switch handles.Toolbox(tb).Input.tidalcomponentsformat
+        case{'tek'}
+        case{'mat'}
+            save([fname '_tidalcomponents.mat'],'-struct','s');
+    end    
+    
+end
+
+try
+    close(wb);
 end
 
 %%
@@ -150,50 +288,6 @@ wl=wl+handles.Toolbox(tb).Input.verticalOffset;
 
 stationName=handles.Toolbox(tb).Input.database(iac).stationList{ii};
 ddb_plotTimeSeries(tim,wl,stationName);
-
-%%
-function exportTideSignal
-handles=getHandles;
-t0=handles.Toolbox(tb).Input.startTime;
-t1=handles.Toolbox(tb).Input.stopTime;
-dt=handles.Toolbox(tb).Input.timeStep/1440;
-tim=t0:dt:t1;
-iac=handles.Toolbox(tb).Input.activeDatabase;
-ii=handles.Toolbox(tb).Input.activeTideStation;
-
-timezonestation=handles.Toolbox(tb).Input.database(iac).timezone(ii);
-
-latitude=handles.Toolbox(tb).Input.database(iac).y(ii);
-wl=makeTidePrediction(tim,handles.Toolbox(tb).Input.components,handles.Toolbox(tb).Input.amplitudes,handles.Toolbox(tb).Input.phases,latitude, ...
-    'timezone',handles.Toolbox(tb).Input.timeZone,'maincomponents',handles.Toolbox(tb).Input.usemaincomponents,'timezonestation',timezonestation);
-wl=wl+handles.Toolbox(tb).Input.verticalOffset;
-
-stationName=handles.Toolbox(tb).Input.database(iac).stationList{ii};
-if handles.Toolbox(tb).Input.showstationnames
-    fname=handles.Toolbox(tb).Input.database(iac).stationShortNames{ii};
-else
-    fname=handles.Toolbox(tb).Input.database(iac).idCodes{ii};
-end
-exportTEK(wl',tim',[fname '.tek'],stationName);
-
-% Make bar file
-% components={'M2','S2','N2','K2','K1','O1','P1','Q1'};
-% fid=fopen([shortName '_components.bar'],'wt');
-% for ii=1:length(components)
-%     icmp=strmatch(components{ii},handles.Toolbox(tb).Input.components,'exact');
-%     amp=handles.Toolbox(tb).Input.amplitudes(icmp);
-%     phi=handles.Toolbox(tb).Input.phases(icmp);
-%     fprintf(fid,'%s %f %f\n',components{ii},amp,phi);
-% end
-% fclose(fid);
-
-s.station.name=fname;
-s.station.x=handles.Toolbox(tb).Input.database(iac).xLocLocal(ii);
-s.station.y=handles.Toolbox(tb).Input.database(iac).yLocLocal(ii);
-s.station.component=handles.Toolbox(tb).Input.components;
-s.station.amplitude=handles.Toolbox(tb).Input.amplitudes;
-s.station.phase=handles.Toolbox(tb).Input.phases;
-save([fname '.mat'],'-struct','s');
 
 %%
 function selectTideStationFromMap(h,nr)
@@ -324,3 +418,56 @@ else
 end
 setHandles(handles);
 gui_updateActiveTab;
+
+%%
+function drawPolygon
+
+handles=getHandles;
+
+ddb_zoomOff;
+
+h=findobj(gcf,'Tag','tidestationspolygon');
+if ~isempty(h)
+    delete(h);
+end
+
+handles.Toolbox(tb).Input.polygonx=[];
+handles.Toolbox(tb).Input.polygony=[];
+handles.Toolbox(tb).Input.polygonlength=0;
+
+handles.Toolbox(tb).Input.polygonhandle=gui_polyline('draw','tag','tidestationspolygon','marker','o', ...
+    'createcallback',@createPolygon,'changecallback',@changePolygon, ...
+    'closed',1);
+
+setHandles(handles);
+
+%%
+function createPolygon(h,x,y)
+handles=getHandles;
+handles.Toolbox(tb).Input.polygonhandle=h;
+handles.Toolbox(tb).Input.polygonx=x;
+handles.Toolbox(tb).Input.polygony=y;
+handles.Toolbox(tb).Input.polygonlength=length(x);
+setHandles(handles);
+gui_updateActiveTab;
+
+%%
+function deletePolygon
+handles=getHandles;
+handles.Toolbox(tb).Input.polygonx=[];
+handles.Toolbox(tb).Input.polygony=[];
+handles.Toolbox(tb).Input.polygonlength=0;
+h=findobj(gcf,'Tag','tidestationspolygon');
+if ~isempty(h)
+    delete(h);
+end
+setHandles(handles);
+
+%%
+function changePolygon(h,x,y,varargin)
+handles=getHandles;
+handles.Toolbox(tb).Input.polygonx=x;
+handles.Toolbox(tb).Input.polygony=y;
+handles.Toolbox(tb).Input.polygonlength=length(x);
+setHandles(handles);
+

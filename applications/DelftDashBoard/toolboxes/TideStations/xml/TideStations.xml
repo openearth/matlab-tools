@@ -71,7 +71,6 @@
     <tooltipstring>Show stations in list by ID</tooltipstring>
   </element>
   <element>
-    <tag>makeobservationpoints</tag>
     <style>pushbutton</style>
     <position>320 130 130 20</position>
     <text>Make Observation Points</text>
@@ -80,7 +79,6 @@
     <tooltipstring>Make observation points in model</tooltipstring>
   </element>
   <element>
-    <tag>viewtidesignal</tag>
     <style>pushbutton</style>
     <position>320 105 130 20</position>
     <text>View Tide Signal</text>
@@ -89,22 +87,60 @@
     <tooltipstring>View tide signal for active tide station</tooltipstring>
   </element>
   <element>
-    <tag>exporttidesignal</tag>
     <style>pushbutton</style>
     <position>320 80 130 20</position>
     <text>Export Tide Signal</text>
     <callback>ddb_TideStationsToolbox</callback>
     <option1>exporttidesignal</option1>
-    <tooltipstring>Export tide signal for active tide station</tooltipstring>
+    <tooltipstring>Export tide signal  (for active tide station or for all stations inside polygon)</tooltipstring>
   </element>
   <element>
-    <tag>exportalltidesignals</tag>
+    <style>popupmenu</style>
+    <position>500 80 60 20</position>
+    <text>Format</text>
+    <tooltipstring>Select file format for exporting tide signal</tooltipstring>
+    <variable>tidesignalformat</variable>
+    <type>string</type>
+    <listtext>*.tek</listtext>
+    <listtext>*.mat</listtext>
+    <listvalue>tek</listvalue>
+    <listvalue>mat</listvalue>
+  </element>
+  <element>
     <style>pushbutton</style>
     <position>320 55 130 20</position>
-    <text>Export All Tide Signals</text>
+    <text>Export Components</text>
     <callback>ddb_TideStationsToolbox</callback>
-    <option1>exportalltidesignals</option1>
-    <tooltipstring>Export tide signal for all stations within model grid</tooltipstring>
+    <option1>exportcomponentset</option1>
+    <tooltipstring>Export components to file file (for active tide station or for all stations inside polygon)</tooltipstring>
+  </element>
+  <element>
+    <style>popupmenu</style>
+    <position>500 55 60 20</position>
+    <text>Format</text>
+    <tooltipstring>Select file format for exporting tidal components</tooltipstring>
+    <variable>tidalcomponentsformat</variable>
+    <type>string</type>
+    <listtext>*.tek</listtext>
+    <listtext>*.mat</listtext>
+    <listvalue>tek</listvalue>
+    <listvalue>mat</listvalue>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>460 130 100 20</position>
+    <text>Draw Polygon</text>
+    <callback>ddb_TideStationsToolbox</callback>
+    <option1>drawpolygon</option1>
+    <tooltipstring>Draw polygon (for exporting from all stations inside polygon)</tooltipstring>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>460 105 100 20</position>
+    <text>Delete Polygon</text>
+    <callback>ddb_TideStationsToolbox</callback>
+    <option1>deletepolygon</option1>
+    <tooltipstring>Delete polygon</tooltipstring>
   </element>
   <element>
     <tag>usemaincomponents</tag>

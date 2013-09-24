@@ -168,3 +168,12 @@ handles.Toolbox(ii).Input.tidestationshandle=[];
 handles.Toolbox(ii).Input.showstationnames=1;
 handles.Toolbox(ii).Input.stationlist={''};
 handles.Toolbox(ii).Input.textstation='';
+
+handles.Toolbox(ii).Input.polygonlength=0;
+handles.Toolbox(ii).Input.polygonx=[];
+handles.Toolbox(ii).Input.polygony=[];
+handles.Toolbox(ii).Input.polygonhandle=[];
+
+handles.Toolbox(ii).Input.tidesignalformat='tek';
+handles.Toolbox(ii).Input.tidalcomponentsformat='mat';
+

@@ -65,13 +65,23 @@ switch lower(option)
     case{'delete'}
         h=findobj(gca,'Tag','tidestations');
         delete(h);
+        h=findobj(gca,'Tag','tidestationspolygon');
+        delete(h);
     case{'activate'}
         h=findobj(gca,'Tag','tidestations');
         if ~isempty(h)
             set(h,'Visible','on');
         end
+        h=findobj(gca,'Tag','tidestationspolygon');
+        if ~isempty(h)
+            set(h,'Visible','on');
+        end
     case{'deactivate'}
         h=findobj(gca,'Tag','tidestations');
+        if ~isempty(h)
+            set(h,'Visible','off');
+        end
+        h=findobj(gca,'Tag','tidestationspolygon');
         if ~isempty(h)
             set(h,'Visible','off');
         end
