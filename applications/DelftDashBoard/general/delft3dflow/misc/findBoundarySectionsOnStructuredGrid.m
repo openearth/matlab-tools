@@ -180,6 +180,9 @@ for j=1:2
             openBoundaries(nb).N2=nend;            
             openBoundaries(nb).name=[dir{j} num2str(nd)];
         end
+        if nend==0
+            n=n+1;
+        end
         if n==nmax
             break
         end
