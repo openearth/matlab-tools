@@ -31,3 +31,7 @@ while ~feof(fid_inp)
         fprintf(fid_out,'%s \n',line);
     end
 end
+
+fclose(fid_inp);
+fclose(fid_out);
+
