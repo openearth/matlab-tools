@@ -127,13 +127,7 @@ handles.Toolbox(tb).Input.lengthY=dy;
 
 setHandles(handles);
 
-% setUIElement('modelmakerpanel.quickmode.editx0');
-% setUIElement('modelmakerpanel.quickmode.edity0');
-% setUIElement('modelmakerpanel.quickmode.editmmax');
-% setUIElement('modelmakerpanel.quickmode.editnmax');
-% setUIElement('modelmakerpanel.quickmode.editdx');
-% setUIElement('modelmakerpanel.quickmode.editdy');
-% setUIElement('modelmakerpanel.quickmode.editrotation');
+gui_updateActiveTab;
 
 %%
 function deleteGridOutline
