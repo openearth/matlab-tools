@@ -1,14 +1,17 @@
-function [out] = simona2mdu_csvread(filename)
+function [out] = simona2mdu_csvread(filename,varargin)
 %
 % simona2mdu_csvread: reads coma seperated value file, also strings are returned
 % 
+
+opt.skiplines = '';
+opt = setproperty(opt,varargin); 
 
 irow = 0;
 fid = fopen(filename);
 
 while ~feof(fid)
     line = strtrim(fgetl(fid));
-    if ~isempty(line) && ~strcmp(line(1),'#') && ~strcmp(line(1),'*')
+    if ~isempty(line) && ~ismember(line(1),opt.skiplines)
         irow = irow + 1;
         index = strfind(line,',');
         index = [0 index length(line) + 1];
