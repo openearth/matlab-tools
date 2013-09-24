@@ -77,7 +77,7 @@ parameter={'u','v','p'};
 vsn='1.03';
 
 dx=5000;
-dy=5000;
+dy=[];
 
 for i=1:length(varargin)
     if ischar(varargin{i})
