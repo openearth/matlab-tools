@@ -100,7 +100,8 @@ end
 [x,y]=ddb_coordConvert(x,y,ldbCoord,coord);
 
 %% Plot shoreline
-z=zeros(size(x))+500;
+%z=zeros(size(x))+500;
 h=findobj(handles.GUIHandles.mainWindow,'Tag','shoreline','type','line');
-set(h,'XData',x,'YData',y,'ZData',z);
+%set(h,'XData',x,'YData',y,'ZData',z);
+set(h,'XData',x,'YData',y);
 
