@@ -63,12 +63,14 @@ function ddb_saveDFlowFM(opt)
 handles=getHandles;
 
 switch lower(opt)
+    
     case{'save'}
         inp=handles.Model(md).Input(ad);
         if ~isfield(handles.Model(md).Input(ad),'mduFile')
             handles.Model(md).Input(ad).mduFile=[handles.Model(md).Input(ad).runid '.mdu'];
         end
         ddb_saveMDU(handles.Model(md).Input(ad).mduFile,inp);
+
     case{'saveas'}
         [filename, pathname, filterindex] = uiputfile('*.mdu', 'Select MDU File','');
         if pathname~=0
@@ -81,7 +83,47 @@ switch lower(opt)
             handles.Model(md).Input(ad).mduFile=filename;
             ddb_saveMDU(filename,handles.Model(md).Input(ad));
         end
+        
+    case{'saveall'}
+    
+        if ddb_check_write_extfile(handles)
+            if isempty(handles.Model(md).Input.extforcefile)
+                [filename, pathname, filterindex] = uiputfile('*.ext', 'Save external focing file','');
+                if ~isempty(pathname)
+                    curdir=[lower(cd) '\'];
+                    if ~strcmpi(curdir,pathname)
+                        filename=[pathname filename];
+                    end
+                    handles.Model(md).Input.extforcefile=filename;
+                else
+                    return
+                end
+            end
+            ddb_DFlowFM_writeExtForcing(handles);
+        end
+        
+        if handles.Model(md).Input.nrobservationpoints>0
+            if isempty(handles.Model(md).Input.obsfile)
+                [filename, pathname, filterindex] = uiputfile('*.xyn', 'Save observation points file','');
+                if ~isempty(pathname)
+                    curdir=[lower(cd) '\'];
+                    if ~strcmpi(curdir,pathname)
+                        filename=[pathname filename];
+                    end
+                    handles.Model(md).Input.obsfile=filename;
+                else
+                    return
+                end
+            end
+            ddb_DFlowFM_saveObsFile(handles,ad);
+        end
+        
+        inp=handles.Model(md).Input(ad);
+        if ~isfield(handles.Model(md).Input(ad),'mduFile')
+            handles.Model(md).Input(ad).mduFile=[handles.Model(md).Input(ad).runid '.mdu'];
+        end
+        ddb_saveMDU(handles.Model(md).Input(ad).mduFile,inp);
+        
 end
 
 setHandles(handles);
-

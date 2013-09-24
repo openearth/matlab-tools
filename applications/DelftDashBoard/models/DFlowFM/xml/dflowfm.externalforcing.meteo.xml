@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<root>
+  <element>
+    <style>pushselectfile</style>
+    <position>20 110 130 20</position>
+    <tooltipstring>Select spiderweb file</tooltipstring>
+    <text>Spiderweb file</text>
+    <variable>handles.Model(md).Input(ad).spiderwebfile</variable>
+    <extension>*.spw</extension>
+    <selectiontext>Select spiderweb file</selectiontext>
+    <callback>ddb_DFlowFM_meteo</callback>
+    <option1>selectspiderwebfile</option1>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>740 35 150 20</position>
+    <tooltipstring>Open external forcing file</tooltipstring>
+    <text>Open External Forcing</text>
+    <callback>ddb_DFlowFM_boundaries</callback>
+    <option1>openexternalforcing</option1>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>740 10 150 20</position>
+    <tooltipstring>Save external forcing file</tooltipstring>
+    <text>Save External Forcing</text>
+    <callback>ddb_DFlowFM_boundaries</callback>
+    <option1>saveexternalforcing</option1>
+  </element>
+</root>

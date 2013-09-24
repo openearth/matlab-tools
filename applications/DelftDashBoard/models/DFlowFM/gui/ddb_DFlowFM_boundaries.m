@@ -64,8 +64,7 @@ nr=nr+1;
 
 handles.Model(md).Input.nrboundaries=nr;
 
-handles.Model(md).Input.boundaries=ddb_DFlowFM_initializeBoundary(handles.Model(md).Input.boundaries,x,y,nr);
-handles.Model(md).Input.boundaries(nr).name=['bnd' num2str(nr,'%0.3i')];
+handles.Model(md).Input.boundaries=ddb_DFlowFM_initializeBoundary(handles.Model(md).Input.boundaries,x,y,['bnd_' num2str(nr,'%0.3i')],nr);
 
 handles=updateNames(handles);
 
@@ -265,7 +264,7 @@ handles=getHandles;
 [filename, pathname, filterindex] = uiputfile('*.ext', 'External Forcing File',handles.Model(md).Input.extforcefile);
 if pathname~=0
     handles.Model(md).Input.extforcefile=filename;
-    ddb_DFlowFM_writeExtForcing(filename,handles.Model(md).Input.boundaries);
+    ddb_DFlowFM_writeExtForcing(handles);
     setHandles(handles);
 end
 

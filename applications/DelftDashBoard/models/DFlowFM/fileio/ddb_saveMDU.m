@@ -96,7 +96,7 @@ s.physics.UnifFrictCoef.comment      = '# Uniform friction coefficient, 0=no fri
 
 s.physics.UnifFrictType.value        = inp.uniffricttype;
 s.physics.UnifFrictType.type         = 'integer';
-s.physics.UnifFrictType.comment      = '0=Chezy, 1=Manning, 2=White Colebrook, 3=z0 etc';               
+s.physics.UnifFrictType.comment      = '# 0=Chezy, 1=Manning, 2=White Colebrook, 3=z0 etc';               
 
 s.physics.Vicouv.value               = inp.vicouv;
 s.physics.Vicouv.type                = 'real';
@@ -130,6 +130,33 @@ s.physics.Salinity.value             = inp.salinity;
 s.physics.Salinity.type              = 'integer';
 s.physics.Salinity.comment           = '# Include salinity, (0=no, 1=yes)';               
 
+%% Wind
+s.wind.ICdtyp.value                  = inp.icdtyp;
+s.wind.ICdtyp.type                   = 'integer';
+s.wind.ICdtyp.comment                = '# ( ), Cd = const, 2=S&B 2 breakpoints, 3= S&B 3 breakpoints';               
+
+switch inp.icdtyp
+    case 1
+        s.wind.Cdbreakpoints.value           = inp.cdbreakpoints(1);
+    case 2
+        s.wind.Cdbreakpoints.value           = inp.cdbreakpoints(1:2);
+    case 3
+        s.wind.Cdbreakpoints.value           = inp.cdbreakpoints(1:3);
+end
+s.wind.Cdbreakpoints.type            = 'real';
+s.wind.Cdbreakpoints.comment         = '# ( ),   e.g. 0.00063  0.00723';               
+
+switch inp.icdtyp
+    case 1
+        s.wind.Windspeedbreakpoints.value           = inp.windspeedbreakpoints(1);
+    case 2
+        s.wind.Windspeedbreakpoints.value           = inp.windspeedbreakpoints(1:2);
+    case 3
+        s.wind.Windspeedbreakpoints.value           = inp.windspeedbreakpoints(1:3);
+end
+s.wind.Windspeedbreakpoints.type     = 'real';
+s.wind.Windspeedbreakpoints.comment  = '# (m/s), e.g. 0.0      100.0';               
+
 %% Time
 
 rfd=str2double(datestr(inp.refdate,'yyyymmdd'));
@@ -157,11 +184,23 @@ s.time.AutoTimestep.value       = inp.autotimestep;
 s.time.AutoTimestep.type        = 'integer';
 s.time.AutoTimestep.comment     = '# Use CFL timestep limit or not (1/0)';               
 
-s.time.TStart.value             = (inp.tstart-inp.refdate)*86400;
+switch lower(inp.tunit)
+    case{'h'}
+        tstart=(inp.tstart-inp.refdate)*24;
+        tstop =(inp.tstop-inp.refdate)*24;
+    case{'m'}
+        tstart=(inp.tstart-inp.refdate)*1440;
+        tstop =(inp.tstop-inp.refdate)*1440;
+    case{'s'}
+        tstart=(inp.tstart-inp.refdate)*86400;
+        tstop =(inp.tstop-inp.refdate)*86400;
+end
+
+s.time.TStart.value             = tstart;
 s.time.TStart.type              = 'real';
 s.time.TStart.comment           = '# Start time w.r.t. RefDate (in TUnit)';               
 
-s.time.TStop.value              = (inp.tstop-inp.refdate)*86400;
+s.time.TStop.value              = tstop;
 s.time.TStop.type               = 'real';
 s.time.TStop.comment            = '# Stop  time w.r.t. RefDate (in TUnit)';               
 

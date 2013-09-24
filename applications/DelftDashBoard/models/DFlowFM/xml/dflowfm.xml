@@ -32,12 +32,6 @@
         <callback>ddb_saveDFlowFM</callback>
         <option>saveall</option>
       </menuitem>
-      <menuitem>
-        <string>Save All As ...</string>
-        <tag>saveallas</tag>
-        <callback>ddb_saveDFlowFM</callback>
-        <option>saveallas</option>
-      </menuitem>
     </menusavefile>
     <menuview></menuview>
   </menu>

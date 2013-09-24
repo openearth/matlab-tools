@@ -56,5 +56,18 @@ end
 
 % Time
 handles.Model(md).Input(id).refdate=datenum(num2str(handles.Model(md).Input(id).refdate),'yyyymmdd');
-handles.Model(md).Input(id).tstart=handles.Model(md).Input(id).tstart/86400+handles.Model(md).Input(id).refdate;
-handles.Model(md).Input(id).tstop =handles.Model(md).Input(id).tstop/86400+handles.Model(md).Input(id).refdate;
+
+switch lower(handles.Model(md).Input(id).tunit)
+    case{'h'}
+        tstart=handles.Model(md).Input(id).tstart/24+handles.Model(md).Input(id).refdate;
+        tstop =handles.Model(md).Input(id).tstop/24+handles.Model(md).Input(id).refdate;
+    case{'m'}
+        tstart=handles.Model(md).Input(id).tstart/1440+handles.Model(md).Input(id).refdate;
+        tstop =handles.Model(md).Input(id).tstop/1440+handles.Model(md).Input(id).refdate;
+    case{'s'}
+        tstart=handles.Model(md).Input(id).tstart/86400+handles.Model(md).Input(id).refdate;
+        tstop =handles.Model(md).Input(id).tstop/86400+handles.Model(md).Input(id).refdate;
+end
+
+handles.Model(md).Input(id).tstart=tstart;
+handles.Model(md).Input(id).tstop =tstop;

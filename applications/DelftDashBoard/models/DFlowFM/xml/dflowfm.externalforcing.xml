@@ -8,5 +8,10 @@
       <callback>ddb_DFlowFM_boundaries</callback>
       <element>dflowfm.externalforcing.boundaries.xml</element>
     </tab>
+    <tab>
+      <tabstring>Meteo</tabstring>
+      <callback>ddb_DFlowFM_meteo</callback>
+      <element>dflowfm.externalforcing.meteo.xml</element>
+    </tab>
   </element>
 </root>

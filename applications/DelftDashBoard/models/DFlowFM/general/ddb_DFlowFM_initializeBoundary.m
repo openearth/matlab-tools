@@ -1,4 +1,4 @@
-function boundaries = ddb_DFlowFM_initializeBoundary(boundaries,x,y,ib)
+function boundaries = ddb_DFlowFM_initializeBoundary(boundaries,x,y,name,ib)
 %ddb_DFlowFM_initializeBoundary  One line description goes here.
 
 %% Copyright notice
@@ -44,8 +44,8 @@ function boundaries = ddb_DFlowFM_initializeBoundary(boundaries,x,y,ib)
 % $Keywords: $
 
 %%
-boundaries(ib).filename=['bnd' num2str(ib,'%0.3i') '.pli'];
-boundaries(ib).name=['bnd' num2str(ib,'%0.3i')];
+boundaries(ib).filename=[name '.pli'];
+boundaries(ib).name=name;
 boundaries(ib).type='waterlevelbnd';
 boundaries(ib).handle=NaN;
 for ip=1:length(x)

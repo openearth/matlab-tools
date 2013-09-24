@@ -60,9 +60,13 @@ handles.Model(md).Input(id).netstruc.linkType=nc_varget(fname,'NetLinkType');
 handles.Model(md).Input(id).netstruc.elemNodes=nc_varget(fname,'NetElemNode');
 handles.Model(md).Input(id).netstruc.bndLink=nc_varget(fname,'BndLink');
 
-handles=ddb_DFlowFM_readExternalForcing(handles);
+if ~isempty(handles.Model(md).Input.extforcefile)
+    handles=ddb_DFlowFM_readExternalForcing(handles);
+end
 
-handles=ddb_DFlowFM_readObsFile(handles,1);
+if ~isempty(handles.Model(md).Input.obsfile)
+    handles=ddb_DFlowFM_readObsFile(handles,1);
+end
 
 %handles.Model(md).Input(id).netstruc = dflowfm.readNet(handles.Model(md).Input(id).netfile,'peri2cell',1);
 

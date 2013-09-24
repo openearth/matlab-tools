@@ -61,12 +61,15 @@ function ddb_DFlowFM_saveObsFile(handles, id)
 % $Keywords: $
 
 %%
-fid=fopen(handles.Model(md).Input(id).obsfile,'w');
-for ip=1:handles.Model(md).Input(id).nrobservationpoints
-    x=handles.Model(md).Input(id).observationpoints(ip).x;
-    y=handles.Model(md).Input(id).observationpoints(ip).y;
-    name=handles.Model(md).Input(id).observationpoints(ip).name;
-    fprintf(fid,'%14.6f %14.6f %s\n',x,y,['''' name '''']);
+
+if handles.Model(md).Input(id).nrobservationpoints>0
+    fid=fopen(handles.Model(md).Input(id).obsfile,'w');
+    for ip=1:handles.Model(md).Input(id).nrobservationpoints
+        x=handles.Model(md).Input(id).observationpoints(ip).x;
+        y=handles.Model(md).Input(id).observationpoints(ip).y;
+        name=handles.Model(md).Input(id).observationpoints(ip).name;
+        fprintf(fid,'%14.6f %14.6f %s\n',x,y,['''' name '''']);
+    end
+    fclose(fid);
 end
-fclose(fid);
 

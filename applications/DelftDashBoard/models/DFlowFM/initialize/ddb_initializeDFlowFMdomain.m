@@ -36,7 +36,6 @@ handles.Model(md).Input(id).limtypsa            = 0;
 handles.Model(md).Input(id).hdam                = 0;
 
 %% Physics
-
 handles.Model(md).Input(id).uniffrictcoef       = 0.023;
 handles.Model(md).Input(id).uniffricttype       = 1;
 handles.Model(md).Input(id).vicouv              = 1;
@@ -48,8 +47,12 @@ handles.Model(md).Input(id).vicoww              = 0;
 handles.Model(md).Input(id).tidalforcing        = 0;
 handles.Model(md).Input(id).salinity            = 0;
 
-%% Time
+%% Wind
+handles.Model(md).Input(id).icdtyp=3;
+handles.Model(md).Input(id).cdbreakpoints=[0.00100  0.00300 0.0015];
+handles.Model(md).Input(id).windspeedbreakpoints=[0.0 25.0 50.0];
 
+%% Time
 handles.Model(md).Input(id).refdate        = floor(now);
 handles.Model(md).Input(id).tunit          = 's';
 handles.Model(md).Input(id).dtuser         = 60.0;
@@ -67,6 +70,8 @@ handles.Model(md).Input(id).boundaries(1).name = '';
 handles.Model(md).Input(id).nrboundaries = 0;
 handles.Model(md).Input(id).boundarynames = {''};
 handles.Model(md).Input(id).activeboundary=1;
+
+handles.Model(md).Input(id).spiderwebfile = '';
 
 %% Output
 handles.Model(md).Input(id).obsfile      = '';

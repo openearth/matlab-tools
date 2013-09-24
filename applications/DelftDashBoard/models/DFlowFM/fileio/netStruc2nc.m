@@ -16,7 +16,7 @@ nNetLinkDimId        = netcdf.defDim(NCid,          'nNetLink',           nlinks
 nNetLinkPtsDimId     = netcdf.defDim(NCid,          'nNetLinkPts',        2);
 nBndLinkDimId        = netcdf.defDim(NCid,          'nBndLink',           nbndlinks);
 nNetElemDimId        = netcdf.defDim(NCid,          'nNetElem',           nelems);
-nNetElemMaxNodeDimId = netcdf.defDim(NCid,          'nNetElemMaxNode',    4);
+nNetElemMaxNodeDimId = netcdf.defDim(NCid,          'nNetElemMaxNode',    size(netStruc.elemNodes,2));
 
 % Variables
 varid = netcdf.defVar(NCid,'wgs84','int',[]);

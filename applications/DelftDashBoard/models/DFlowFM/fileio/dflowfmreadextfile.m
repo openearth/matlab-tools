@@ -81,15 +81,23 @@ fclose(fid);
 
 % Clear boundary info
 sout.boundaries=[];
+sout.meteo=[];
 
 nb=0;
+nm=0;
 
 for ii=1:length(s)
     switch lower(s(ii).quantity)
         case{'waterlevelbnd'}
             nb=nb+1;
             sout.boundaries(nb).name=s(ii).filename(1:end-4);
-            sout.boundaries(nb).filename=s(ii).filename;
+            sout.boundaries(nb).filetype=s(ii).filetype;
             sout.boundaries(nb).type=s(ii).quantity;
+        case{'spiderweb'}
+            nm=nm+1;
+            sout.meteo(nb).name=s(ii).filename(1:end-4);
+            sout.meteo(nb).filename=s(ii).filename;
+            sout.meteo(nb).filetype=s(ii).filetype;
+            sout.meteo(nb).type=s(ii).quantity;
     end
 end

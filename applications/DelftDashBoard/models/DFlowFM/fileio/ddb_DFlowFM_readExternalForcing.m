@@ -80,12 +80,12 @@ end
 fclose(fid);
 
 % Clear boundary info
-handles.Model(md).Input.boundaries=[];
+boundaries=[];
+boundaries(1).name='';
+handles.Model(md).Input.activeboundary=1;
 handles.Model(md).Input.nrboundaries=0;
 handles.Model(md).Input.boundarynames={''};
 nb=0;
-
-boundaries=[];
 
 for ii=1:length(s)
     switch lower(s(ii).quantity)
@@ -94,13 +94,14 @@ for ii=1:length(s)
             plifile=s(ii).filename;
             name=plifile(1:end-4);
             [x,y]=landboundary('read',plifile);
-            boundaries = ddb_DFlowFM_initializeBoundary(boundaries,x,y,nb);
+            boundaries = ddb_DFlowFM_initializeBoundary(boundaries,x,y,name,nb);
             boundaries(nb).type=s(ii).quantity;
-            boundaries(nb).name=name;
             handles.Model(md).Input.boundarynames{nb}=name;            
+        case{'spiderweb'}
+            handles.Model(md).Input.spiderwebfile=s(ii).filename;
+            handles.Model(md).Input.wind=1;
     end
 end
 
 handles.Model(md).Input.nrboundaries=nb;
 handles.Model(md).Input.boundaries=boundaries;
-
