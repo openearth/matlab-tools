@@ -311,8 +311,11 @@ boundaries=[];
 
 boundarysections=findBoundarySections(handles.Model(md).Input(ad).netstruc,maxdist,minlev);
 
+handles.Model(md).Input(ad).boundarynames={''};
+
 for ib=1:length(boundarysections)
-    boundaries = ddb_DFlowFM_initializeBoundary(boundaries,boundarysections(ib).x,boundarysections(ib).y,ib);
+    boundaries = ddb_DFlowFM_initializeBoundary(boundaries,boundarysections(ib).x,boundarysections(ib).y,['bnd' num2str(ib,'%0.3i')],ib);
+    handles.Model(md).Input(ad).boundarynames{ib}=['bnd' num2str(ib,'%0.3i')];
 end
 
 handles.Model(md).Input(ad).boundaries=boundaries;
@@ -325,53 +328,63 @@ ddb_DFlowFM_saveBoundaryPolygons('.\',handles.Model(md).Input(ad).boundaries);
 
 %% External forcing file
 handles.Model(md).Input(ad).extforcefile='forcing.ext';
-ddb_DFlowFM_writeExtForcing(handles.Model(md).Input(ad).extforcefile,handles.Model(md).Input(ad).boundaries);
+ddb_DFlowFM_writeExtForcing(handles);
 
 setHandles(handles);
 
 %%
 function generateBoundaryConditions
-handles=getHandles;
-ii=handles.Toolbox(tb).Input.activeTideModelBC;
-name=handles.tideModels.model(ii).name;
-if strcmpi(handles.tideModels.model(ii).URL(1:4),'http')
-    tidefile=[handles.tideModels.model(ii).URL '/' name '.nc'];
-else
-    tidefile=[handles.tideModels.model(ii).URL filesep name '.nc'];
-end
 
-%% Find constituents
-% Make one vector with all boundary points
-xb=[];
-yb=[];
-boundaries=handles.Model(md).Input(ad).boundaries;
+wb = waitbox('Generating Boundary Conditions ...');
 
-for ipol=1:length(boundaries)
-    xb=[xb boundaries(ipol).x];
-    yb=[yb boundaries(ipol).y];
-end
-
-cs.name='WGS 84';
-cs.type='Geographic';
-
-[xb,yb]=ddb_coordConvert(xb,yb,handles.screenParameters.coordinateSystem,cs);
-
-[ampz,phasez,conList] = readTideModel(tidefile,'type','h','x',xb,'y',yb,'constituent','all');
-ip=0;
-for ipol=1:length(boundaries)
-    for jj=1:length(boundaries(ipol).x)
-        ip=ip+1;
-        for ic=1:size(ampz,1)
-            boundaries(ipol).nodes(jj).components(ic).component=conList{ic};
-            boundaries(ipol).nodes(jj).components(ic).amplitude=ampz(ic,ip);
-            boundaries(ipol).nodes(jj).components(ic).phase=phasez(ic,ip);
-        end
-        ddb_DFlowFM_writeComponentsFile(boundaries,ipol,jj);
+try
+    
+    handles=getHandles;
+    ii=handles.Toolbox(tb).Input.activeTideModelBC;
+    name=handles.tideModels.model(ii).name;
+    if strcmpi(handles.tideModels.model(ii).URL(1:4),'http')
+        tidefile=[handles.tideModels.model(ii).URL '/' name '.nc'];
+    else
+        tidefile=[handles.tideModels.model(ii).URL filesep name '.nc'];
     end
+    
+    %% Find constituents
+    % Make one vector with all boundary points
+    xb=[];
+    yb=[];
+    boundaries=handles.Model(md).Input(ad).boundaries;
+    
+    for ipol=1:length(boundaries)
+        xb=[xb boundaries(ipol).x];
+        yb=[yb boundaries(ipol).y];
+    end
+    
+    cs.name='WGS 84';
+    cs.type='Geographic';
+    
+    [xb,yb]=ddb_coordConvert(xb,yb,handles.screenParameters.coordinateSystem,cs);
+    
+    [ampz,phasez,conList] = readTideModel(tidefile,'type','h','x',xb,'y',yb,'constituent','all');
+    ip=0;
+    for ipol=1:length(boundaries)
+        for jj=1:length(boundaries(ipol).x)
+            boundaries(ipol).nodes(jj).components=[];
+            ip=ip+1;
+            for ic=1:size(ampz,1)
+                boundaries(ipol).nodes(jj).components(ic).component=conList{ic};
+                boundaries(ipol).nodes(jj).components(ic).amplitude=ampz(ic,ip);
+                boundaries(ipol).nodes(jj).components(ic).phase=phasez(ic,ip);
+            end
+            ddb_DFlowFM_writeComponentsFile(boundaries,ipol,jj);
+        end
+    end
+    handles.Model(md).Input(ad).boundaries=boundaries;
+    
+    setHandles(handles);
+    
 end
-handles.Model(md).Input(ad).boundaries=boundaries;
 
-setHandles(handles);
+close(wb);
 
 %%
 function generateInitialConditions
