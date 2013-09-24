@@ -1,4 +1,4 @@
-function s = ddb_readDelft3D_keyWordFile(fname)
+function s = ddb_readDelft3D_keyWordFile(fname,varargin)
 %DDB_READDELFT3D_KEYWORDFILE  One line description goes here.
 %
 %   More detailed description goes here.
@@ -61,6 +61,16 @@ function s = ddb_readDelft3D_keyWordFile(fname)
 
 %% Reads Delft3D keyword file into structure
 
+lowercase=1;
+for ii=1:length(varargin)
+    if ischar(varargin{ii})
+        switch lower(varargin{ii})
+            case{'lowercase'}
+                lowercase=varargin{ii+1};
+        end
+    end
+end
+
 s=[];
 fid=fopen(fname,'r');
 while 1
@@ -75,7 +85,11 @@ while 1
         else
             if str(1)=='[' && str(end)==']';
                 % New field
-                fld=lower(str(2:end-1));
+                if lowercase
+                    fld=lower(str(2:end-1));
+                else
+                    fld=str(2:end-1);
+                end
                 fld=fld(fld~=' ');
                 if isfield(s,fld)
                     % Field already exist
@@ -87,7 +101,9 @@ while 1
                 isf=find(str=='=');
                 keyword=str(1:isf-1);
                 keyword=strrep(keyword,' ','');
-                keyword=lower(keyword);
+                if lowercase
+                    keyword=lower(keyword);
+                end
                 v=str(isf+1:end);
                 v=deblank2(v);
                 if isempty(v)
@@ -114,17 +130,23 @@ while 1
                         end
                         %                    val=val{1};
                     end
+                    ispace=find(val==' ', 1);
                     if ~isnan(str2double(val))
                         % It's a number
                         val=str2double(val);
+                    elseif ~isempty(ispace)
+                        % It's multiple numbers or multiple words
+                        if ~isnan(str2num(val))
+                            val=str2num(val);
+                        end
                     else
                         % It's a string
                         % Check if it's a boolean
                         switch lower(val)
                             case{'true'}
-                                val=1;
+                                val=true;
                             case{'false'}
-                                val=0;
+                                val=false;
                         end
                     end
                 end

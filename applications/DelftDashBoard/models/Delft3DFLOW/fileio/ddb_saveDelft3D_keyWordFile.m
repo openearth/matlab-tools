@@ -102,36 +102,60 @@ for i=1:length(fldnames)
                         end
                         
                         % Value
-                        if isfield(s.(fldname)(j).(keyw),'type')
-                            tp=s.(fldname)(j).(keyw).type;
+                        if isfield(s.(fldname)(j).(keyw),'value')
+                            % First determine type
+                            if isfield(s.(fldname)(j).(keyw),'type')
+                                tp=s.(fldname)(j).(keyw).type;
+                            else
+                                tp='string';
+                            end
+                            if ~isempty(s.(fldname)(j).(keyw).value)
+                                switch lower(tp)
+                                    case{'real'}
+                                        valstr=num2str(s.(fldname)(j).(keyw).value,'%14.7e');
+                                    case{'integer'}
+                                        valstr=num2str(s.(fldname)(j).(keyw).value);
+                                    case{'string'}
+                                        valstr=s.(fldname)(j).(keyw).value;
+                                        % Only put # around string in case of keyword
+                                        % has unit OR comment
+                                        %                            if ~isempty(findstr(valstr,' ')) && (isfield(s.(fldname)(j).(keyw),'unit') || isfield(s.(fldname)(j).(keyw),'comment'))
+                                        if (isfield(s.(fldname)(j).(keyw),'unit') || isfield(s.(fldname)(j).(keyw),'comment'))
+                                            valstr=['#' valstr '#'];
+                                        end
+                                    case{'boolean'}
+                                        if s.(fldname)(j).(keyw).value
+                                            valstr='true';
+                                        else
+                                            valstr='false';
+                                        end
+                                end
+                                valstr=[valstr repmat(' ',1,17-length(valstr))];
+                            end
                         else
-                            tp='string';
-                        end
-                        
-                        if ~isempty(s.(fldname)(j).(keyw).value)
-                            switch lower(tp)
-                                case{'real'}
-                                    valstr=num2str(s.(fldname)(j).(keyw).value,'%14.7e');
-                                case{'integer'}
-                                    valstr=num2str(s.(fldname)(j).(keyw).value);
-                                case{'string'}
-                                    valstr=s.(fldname)(j).(keyw).value;
-                                    % Only put # around string in case of keyword
-                                    % has unit OR comment
-                                    %                            if ~isempty(findstr(valstr,' ')) && (isfield(s.(fldname)(j).(keyw),'unit') || isfield(s.(fldname)(j).(keyw),'comment'))
-                                    if (isfield(s.(fldname)(j).(keyw),'unit') || isfield(s.(fldname)(j).(keyw),'comment'))
-                                        valstr=['#' valstr '#'];
-                                    end
-                                case{'boolean'}
-                                    if s.(fldname)(j).(keyw).value
+                            % 'Simple' structure type without value and
+                            % type fields
+                            if ~isempty(s.(fldname)(j).(keyw))
+                                if islogical(s.(fldname)(j).(keyw))
+                                    if s.(fldname)(j).(keyw)
                                         valstr='true';
                                     else
                                         valstr='false';
                                     end
+                                elseif isnumeric(s.(fldname)(j).(keyw))
+                                    if round(s.(fldname)(j).(keyw))==s.(fldname)(j).(keyw)
+                                        valstr=num2str(s.(fldname)(j).(keyw));
+                                    else
+                                        valstr=num2str(s.(fldname)(j).(keyw),'%14.7e');
+                                    end
+                                else
+                                    valstr=s.(fldname)(j).(keyw);
+                                end
                             end
                             valstr=[valstr repmat(' ',1,17-length(valstr))];
                         end
                         
+                        % Unit                        
                         if isfield(s.(fldname)(j).(keyw),'unit')
                             unit=['[' s.(fldname)(j).(keyw).unit ']'];
                         else
@@ -139,7 +163,7 @@ for i=1:length(fldnames)
                         end
                         unit=[unit repmat(' ',1,12-length(unit))];
                         
-                        
+                        % Comment
                         if isfield(s.(fldname)(j).(keyw),'comment')
                             if iscell(s.(fldname)(j).(keyw).comment)
                                 comment=s.(fldname)(j).(keyw).comment{1};
