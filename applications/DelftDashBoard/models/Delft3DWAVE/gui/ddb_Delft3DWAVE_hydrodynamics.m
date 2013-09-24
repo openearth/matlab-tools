@@ -54,36 +54,40 @@ elseif strcmp(handles.Model(md).Input.coupling,'ddbonline')
 
 else
    
-   if isempty(handles.Model(md).Input.mdffile) || strcmp(handles.Model(md).Input.mdffile,handles.Model(1).Input(1).mdfFile) 
-      try 
-          [filename, pathname, filterindex] = uigetfile('*.mdf', 'Select MDF File');
-          if pathname~=0
-             curdir=[lower(cd) '\'];
-             if ~strcmpi(curdir,pathname)
+    if isempty(handles.Model(md).Input.mdffile) || strcmp(handles.Model(md).Input.mdffile,handles.Model(1).Input(1).mdfFile)
+        [filename, pathname, filterindex] = uigetfile('*.mdf', 'Select MDF File');
+        if pathname~=0
+            curdir=[lower(cd) '\'];
+            if ~strcmpi(curdir,pathname)
                 filename=[pathname filename];
-             end
-             %ii=findstr(filename,'.mdf');
-             handles.Model(md).Input.mdffile=filename;%filename(1:ii-1);
-          end
-      catch
-      end
-   end
-   
-   MDF=ddb_readMDFText(handles.Model(md).Input.mdffile);
-   handles.Model(md).Input.referencedate=datenum(MDF.itdate,'yyyy-mm-dd');
-   handles.Model(md).Input.mapwriteinterval=MDF.flmap(2);
-   handles.Model(md).Input.comwriteinterval=MDF.flpp(2);
-   handles.Model(md).Input.writecom=1;
-   handles.Model(md).Input.coupledwithflow=1;
-   
-   if strcmp(handles.Model(md).Input.coupling,'otheronline')
-      if ~strcmp(MDF.waveol,'Y')
-         ddb_giveWarning('text','Please make sure to tick the option ''Online Delft3D WAVE'' in Delft3D-FLOW model!');
-      end
-      if MDF.flpp(2)==0 || MDF.flpp(1)==MDF.flpp(3)
-         ddb_giveWarning('text','Please make sure to set the communication file times in Delft3D-FLOW model!');
-      end
-   end
+            end
+            %ii=findstr(filename,'.mdf');
+            handles.Model(md).Input.mdffile=filename;%filename(1:ii-1);
+        else
+            return
+        end
+    end
+
+    if ~exist(handles.Model(md).Input.mdffile,'file')
+        ddb_giveWarning('text',[handles.Model(md).Input.mdffile 'does not exist!']);
+        return
+    end
+    
+    MDF=ddb_readMDFText(handles.Model(md).Input.mdffile);
+    handles.Model(md).Input.referencedate=datenum(MDF.itdate,'yyyy-mm-dd');
+    handles.Model(md).Input.mapwriteinterval=MDF.flmap(2);
+    handles.Model(md).Input.comwriteinterval=MDF.flpp(2);
+    handles.Model(md).Input.writecom=1;
+    handles.Model(md).Input.coupledwithflow=1;
+    
+    if strcmp(handles.Model(md).Input.coupling,'otheronline')
+        if ~strcmp(MDF.waveol,'Y')
+            ddb_giveWarning('text','Please make sure to tick the option ''Online Delft3D WAVE'' in Delft3D-FLOW model!');
+        end
+        if MDF.flpp(2)==0 || MDF.flpp(1)==MDF.flpp(3)
+            ddb_giveWarning('text','Please make sure to set the communication file times in Delft3D-FLOW model!');
+        end
+    end
     
 end
 
