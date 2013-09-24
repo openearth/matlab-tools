@@ -100,6 +100,18 @@ for ii=1:length(s)
         case{'spiderweb'}
             handles.Model(md).Input.spiderwebfile=s(ii).filename;
             handles.Model(md).Input.wind=1;
+        case{'windx'}
+            handles.Model(md).Input.windufile=s(ii).filename;
+            handles.Model(md).Input.wind=1;
+        case{'windy'}
+            handles.Model(md).Input.windvfile=s(ii).filename;
+            handles.Model(md).Input.wind=1;
+        case{'atmosphericpressure'}
+            handles.Model(md).Input.airpressurefile=s(ii).filename;
+            handles.Model(md).Input.airpressure=1;
+        case{'rain'}
+            handles.Model(md).Input.rainfile=s(ii).filename;
+            handles.Model(md).Input.rain=1;
     end
 end
 

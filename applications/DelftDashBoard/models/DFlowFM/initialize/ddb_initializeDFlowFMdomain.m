@@ -65,13 +65,19 @@ handles.Model(md).Input(id).tstop          = floor(now)+10;
 %% External forcing
 handles.Model(md).Input(id).extforcefile        = '';
 
+% Boundaries
 handles.Model(md).Input(id).boundaries = [];
 handles.Model(md).Input(id).boundaries(1).name = '';
 handles.Model(md).Input(id).nrboundaries = 0;
 handles.Model(md).Input(id).boundarynames = {''};
 handles.Model(md).Input(id).activeboundary=1;
 
+% Meteo
+handles.Model(md).Input(id).windufile = '';
+handles.Model(md).Input(id).windvfile = '';
+handles.Model(md).Input(id).airpressurefile = '';
 handles.Model(md).Input(id).spiderwebfile = '';
+handles.Model(md).Input(id).rainfile = '';
 
 %% Output
 handles.Model(md).Input(id).obsfile      = '';
