@@ -67,6 +67,7 @@ function varargout = dgst_run(varargin)
 OPT = struct(...
     'binary', 'c:\Program Files (x86)\Deltares\DGeoStability\DGeoStability.exe',...
     'path', pwd,...
+    'run', true,...
     'verbose', false);
 
 if nargin == 0
@@ -104,6 +105,12 @@ end
 
 % construct the command-line call
 cmd = {sprintf('"%s" /b "%s"', OPT.binary, OPT.path)};
+
+if ~OPT.run
+    % provide contents of a .bat file as output
+    varargout = {sprintf('%s', cmd{:})};
+    return
+end
 
 if OPT.verbose
     % add the -echo argument if the verbose option is true

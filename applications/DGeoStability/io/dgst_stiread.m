@@ -293,6 +293,7 @@ Ds = nameisvalue(str,...
     'delimiter', ' : ',...
     'regexprep', {'\s+off$', ''});
 Ds.data(1).name = 'Model';
+Ds.data(2).name = 'default_shear_strength';
 D = xs_set(D, key, Ds);
 
 function D = MSEEPNET_read(str, key, D)
