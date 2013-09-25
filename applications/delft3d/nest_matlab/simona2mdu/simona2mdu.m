@@ -66,6 +66,8 @@ mdf  = DATA.keywords;
 mdf.pathsimona = path_waq;
 mdf.pathd3d    = path_mdf;
 
+mdu = unstruc_io_mdu('new',[getenv('nesthd_path') filesep 'bin' filesep 'dflowfm-properties.csv']);
+
 %% Read the entire siminp and parse everything into 1 structure
 
 S = readsiminp(path_waq,[name_waq extension_waq]);
@@ -84,6 +86,16 @@ mdf = simona2mdf_bathy    (S,mdf,name_mdf);
 
 simona2mdf_message('Generating the Net file'                ,logo,1 );
 simona2mdu_grd2net([path_mdf filesep mdf.filcco],[path_mdf filesep mdf.fildep],name_mdu);
+mdu.geometry.NetFile = [name_mdu '_net.nc'];
+mdu.geometry.NetFile = simona2mdf_rmpath(mdu.geometry.NetFile);
+
+simona2mdf_message('Parsing OBSERVATION STATION information',logo,1 );
+mdf = simona2mdf_obs      (S  ,mdf,name_mdf);
+mdu = simona2mdu_obs      (mdf,mdu,name_mdu);
+
+simona2mdf_message('Parsing CROSS-SECTION information'      ,logo,1 );
+mdf = simona2mdf_crs      (S,mdf,name_mdf);
+mdu = simona2mdu_crs      (mdf,mdu,name_mdu);
 
 simona2mdf_message('Parsing DRYPOINT information'           ,logo,1 );
 mdf = simona2mdf_dryp     (S,mdf,name_mdf);
@@ -92,8 +104,7 @@ simona2mdf_message('Parsing THINDAM information'            ,logo,1 );
 mdf = simona2mdf_thd      (S,mdf,name_mdf);
 
 simona2mdf_message('Genereting Thin Dam information for unstruc',logo,1 );
-simona2mdu_thd    (mdf,name_mdu);
-
+mdu = simona2mdu_thd    (mdf,mdu,name_mdu);
 
 simona2mdf_message('Parsing TIMES information'              ,logo,1 );
 mdf = simona2mdf_times    (S,mdf,name_mdf);
@@ -137,9 +148,9 @@ mdf = simona2mdf_crs      (S,mdf,name_mdf);
 simona2mdf_message('Parsing OUTPUT information'             ,logo,1 );
 mdf = simona2mdf_output   (S,mdf);
 
-%% Finally,  write the mdf file and close everything
+%% Finally,  write the mdu file and close everything
 
-delft3d_io_mdf('write',filmdf,mdf,'stamp',false);
+unstruc_io_mdu('write',[name_mdu '.mdu'],mdu);
 
 simona2mdf_message();
 

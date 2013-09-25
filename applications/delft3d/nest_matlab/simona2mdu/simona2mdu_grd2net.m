@@ -3,9 +3,8 @@ function simona2mdu_grd2net(filgrd,fildep,filmdu)
 % simona2mdu_grd2net : Converts d3d-flow grid file to dfm net file
 %                      (Based upon grd2net from Wim van Balen, however UI dependencies removed)
 
-[path,name,~] = fileparts(filmdu);
-netfile       = [filmdu '_net'];
-samfile       = [path filesep name '.xyz'];
+netfile       = [filmdu '_net.nc'];
+samfile       = [filmdu '.xyz'];
 
 
 % Read the grid
@@ -32,14 +31,17 @@ zh(:  ,end)  = [];
 
 % Make file with bathymetry samples
 
-xsamp        = reshape(xh,[M.*N 1]);
-ysamp        = reshape(yh,[M.*N 1]);
-zsamp        = reshape(zh,[M.*N 1]);
-nannetjes    = isnan(xsamp);
-xsamp(nannetjes==1)   = [];
-ysamp(nannetjes==1)   = [];
-zsamp(nannetjes==1)   = [];
-dlmwrite(samfile,[xsamp,ysamp,zsamp],'delimiter','\t','precision','%7.7f');
+xsamp          = reshape(xh,[M.*N 1]);
+ysamp          = reshape(yh,[M.*N 1]);
+zsamp          = reshape(zh,[M.*N 1]);
+exist          = ~isnan(xsamp);
+
+LINE.DATA{:,1} = xsamp(exist);
+LINE.DATA{:,2} = ysamp(exist);
+LINE.DATA{:,3} = zsamp(exist);
+
+unstruc_io_xydata('write',samfile,LINE)
 
 % Write netCDF-file
+
 net2cdf;

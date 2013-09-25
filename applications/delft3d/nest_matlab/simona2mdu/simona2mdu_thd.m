@@ -1,4 +1,4 @@
-function simona2mdu_thd(mdf,name_mdu)
+function mdu = simona2mdu_thd(mdf,mdu, name_mdu)
 
 % siminp2mdu_thd : Writes drypoints and thin dams to unstruc input files
 
@@ -35,37 +35,37 @@ for idry = 1: length(m)
 
         iline = iline + 1;
         LINE(iline).Blckname  = 'Line';
-        LINE(iline).Data{1,1) = xcoor(m(idry) - 1,n(idry) - 1);
-        LINE(iline).Data{1,2) = ycoor(m(idry) - 1,n(idry) - 1);
-        LINE(iline).Data{2,1) = xcoor(m(idry) - 1,n(idry)    );
-        LINE(iline).Data{2,2) = ycoor(m(idry) - 1,n(idry)    );
+        LINE(iline).DATA{1,1} = xcoor(m(idry) - 1,n(idry) - 1);
+        LINE(iline).DATA{1,2} = ycoor(m(idry) - 1,n(idry) - 1);
+        LINE(iline).DATA{2,1} = xcoor(m(idry) - 1,n(idry)    );
+        LINE(iline).DATA{2,2} = ycoor(m(idry) - 1,n(idry)    );
 
         iline = iline + 1;
         LINE(iline).Blckname  = 'Line';
-        LINE(iline).Data{1,1) = xcoor(m(idry) - 1,n(idry)    );
-        LINE(iline).Data{1,2) = ycoor(m(idry) - 1,n(idry)    );
-        LINE(iline).Data{2,1) = xcoor(m(idry)    ,n(idry)    );
-        LINE(iline).Data{2,2) = ycoor(m(idry)    ,n(idry)    );
+        LINE(iline).DATA{1,1} = xcoor(m(idry) - 1,n(idry)    );
+        LINE(iline).DATA{1,2} = ycoor(m(idry) - 1,n(idry)    );
+        LINE(iline).DATA{2,1} = xcoor(m(idry)    ,n(idry)    );
+        LINE(iline).DATA{2,2} = ycoor(m(idry)    ,n(idry)    );
 
         iline = iline + 1;
         LINE(iline).Blckname  = 'Line';
-        LINE(iline).Data{1,1) = xcoor(m(idry)    ,n(idry)    );
-        LINE(iline).Data{1,2) = ycoor(m(idry)    ,n(idry)    );
-        LINE(iline).Data{2,1) = xcoor(m(idry)    ,n(idry) - 1);
-        LINE(iline).Data{2,2) = ycoor(m(idry)    ,n(idry) - 1);
+        LINE(iline).DATA{1,1} = xcoor(m(idry)    ,n(idry)    );
+        LINE(iline).DATA{1,2} = ycoor(m(idry)    ,n(idry)    );
+        LINE(iline).DATA{2,1} = xcoor(m(idry)    ,n(idry) - 1);
+        LINE(iline).DATA{2,2} = ycoor(m(idry)    ,n(idry) - 1);
 
         iline = iline + 1;
         LINE(iline).Blckname  = 'Line';
-        LINE(iline).Data{1,1) = xcoor(m(idry)    ,n(idry) - 1);
-        LINE(iline).Data{1,2) = ycoor(m(idry)    ,n(idry) - 1);
-        LINE(iline).Data{2,1) = xcoor(m(idry) - 1,n(idry) - 1);
-        LINE(iline).Data{2,2) = ycoor(m(idry) - 1,n(idry) - 1);
+        LINE(iline).DATA{1,1} = xcoor(m(idry)    ,n(idry) - 1);
+        LINE(iline).DATA{1,2} = ycoor(m(idry)    ,n(idry) - 1);
+        LINE(iline).DATA{2,1} = xcoor(m(idry) - 1,n(idry) - 1);
+        LINE(iline).DATA{2,2} = ycoor(m(idry) - 1,n(idry) - 1);
     end
 end
 
 % Fill the line struct for thin dams
 
-dams = MNthd.Data;
+dams = MNthd.DATA;
 
 for ipnt = 1 : length(dams)
     m(1) = dams(ipnt).mn(1);
@@ -79,10 +79,10 @@ for ipnt = 1 : length(dams)
             if ~isnan(xcoor(m(1),idam - 1)) && ~isnan(xcoor(m(1),idam))
                 iline = iline + 1;
                 LINE(iline).Blckname  = 'Line';
-                LINE(iline).Data{1,1) = xcoor(m(1)       ,idam - 1);
-                LINE(iline).Data{1,2) = ycoor(m(1)       ,idam - 1);
-                LINE(iline).Data{2,1) = xcoor(m(1)       ,idam    );
-                LINE(iline).Data{2,2) = ycoor(m(1)       ,idam    );
+                LINE(iline).DATA{1,1} = xcoor(m(1)       ,idam - 1);
+                LINE(iline).DATA{1,2} = ycoor(m(1)       ,idam - 1);
+                LINE(iline).DATA{2,1} = xcoor(m(1)       ,idam    );
+                LINE(iline).DATA{2,2} = ycoor(m(1)       ,idam    );
             end
         end
     else
@@ -91,15 +91,17 @@ for ipnt = 1 : length(dams)
             if ~isnan(xcoor(idam - 1,n(1))) && ~isnan(xcoor(idam,n(1)))
                 iline = iline + 1;
                 LINE(iline).Blckname  = 'Line';
-                LINE(iline).Data{1,1) = xcoor(idam - 1   ,n(1)    );
-                LINE(iline).Data{1,2) = ycoor(idam - 1   ,n(1)    );
-                LINE(iline).Data{2,1) = xcoor(idam       ,n(1)    );
-                LINE(iline).Data{2,2) = ycoor(idam       ,n(1)    );
+                LINE(iline).DATA{1,1} = xcoor(idam - 1   ,n(1)    );
+                LINE(iline).DATA{1,2} = ycoor(idam - 1   ,n(1)    );
+                LINE(iline).DATA{2,1} = xcoor(idam       ,n(1)    );
+                LINE(iline).DATA{2,2} = ycoor(idam       ,n(1)    );
             end
         end
     end
 end
 
-% finally write to the unstruc thd file
+% finally write to the unstruc thd file and fill in the name of the thd filw in the mdu_struct
 
-unstruc_io_xydata(fname,LINE);
+mdu.geometry.ThinDamFile = [name_mdu '_thd.pli']; 
+unstruc_io_xydata('write',mdu.geometry.ThinDamFile,LINE);
+mdu.geometry.ThinDamFile = simona2mdf_rmpath(mdu.geometry.ThinDamFile);
