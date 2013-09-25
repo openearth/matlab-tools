@@ -2,7 +2,7 @@ function varargout=unstruc_io_mdu(cmd,varargin)
 
 %UNSTRUC_IO_MDU  x read/write UNSTRUC ASCII Master Definition File (*.mdu) <<beta version!>>
 %
-%  [DATA]        = unstruc_io_mdu('read' ,<filename>,mdu_structure);
+%  [DATA]        = unstruc_io_mdu('read' ,<filename>);
 %
 %                  unstruc_io_mdu('write',<filename>,mdu_structure);
 %
@@ -39,8 +39,13 @@ case 'read'
             parnam = simona2mdu_replacechar(parnam,' ','_');
 
             % Fill mdu structure
-
-            mdu.(grpnam).(parnam) = tmp.Data{igroup,2}{ipar,2};
+            
+            if ~isempty(str2num(tmp.Data{igroup,2}{ipar,2})) 
+                var = str2num(tmp.Data{igroup,2}{ipar,2});
+            else
+                var = tmp.Data{igroup,2}{ipar,2};
+            end
+            mdu.(grpnam).(parnam) = var;
        end
    end
 
@@ -58,7 +63,11 @@ case 'write'
        pars = fieldnames(mdu.(names{igroup}));
        for ipar = 1: length(pars);
            tmp2{ipar,1} = simona2mdu_replacechar(pars{ipar},'_',' ');
-           tmp2{ipar,2} = mdu.(names{igroup}).(pars{ipar});
+           if ~isempty(num2str(mdu.(names{igroup}).(pars{ipar})))
+               tmp2{ipar,2} = num2str(mdu.(names{igroup}).(pars{ipar}));
+           else
+               tmp2{ipar,2} = mdu.(names{igroup}).(pars{ipar});
+           end
        end
        tmp.Data{igroup,2} = tmp2;
        clear tmp2
@@ -99,7 +108,7 @@ case 'new'
         for igrp = 1: length(grpnam)
             if strcmp(tmp{irow,1},grpnam{igrp})
                 if ischar(tmp{irow,6})
-                    if strcmpi(tmp{irow,6},'true' ) tmp{irow,6} = 1;end
+                    if strcmpi(tmp{irow,6},'true')  tmp{irow,6} = 1;end
                     if strcmpi(tmp{irow,6},'false') tmp{irow,6} = 0;end
                 end
                 mdu.(grpnam{igrp}).(tmp{irow,2}) = tmp{irow,6};
