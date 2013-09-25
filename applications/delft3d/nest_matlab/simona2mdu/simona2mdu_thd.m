@@ -6,49 +6,64 @@ filgrd = [mdf.pathd3d filesep mdf.filcco];
 fildry = [mdf.pathd3d filesep mdf.fildry];
 filthd = [mdf.pathd3d filesep mdf.filtd ];
 
-% Open and read the files D3D Files
+LINE   = [];
+
+% Open and read the D3D Files
 
 grid = delft3d_io_grd('read',filgrd);
 xcoor = grid.cor.x';
 ycoor = grid.cor.y';
 
 MNdry = delft3d_io_dry('read',fildry);
-
 MNthd = delft3d_io_thd('read',filthd);
 
-% open and write unstruc file
+% first dry points
 
-fid = fopen ([name_mdu '_xytd'],'w+');
+m     = MNdry.m;
+n     = MNdry.n;
 
-% first dry points 
+%
+% Fill the LINE struct for dry points
+%
 
-m = MNdry.m;
-n = MNdry.n;
+iline = 0;
 
 for idry = 1: length(m)
     if ~isnan(xcoor(m(idry)  ,n(idry)  )) && ~isnan(xcoor(m(idry)-1,n(idry)  )) && ...
-       ~isnan(xcoor(m(idry)  ,n(idry)-1)) && ~isnan(xcoor(m(idry)-1,n(idry)-1))     
+       ~isnan(xcoor(m(idry)  ,n(idry)-1)) && ~isnan(xcoor(m(idry)-1,n(idry)-1))
 
-        fprintf(fid,'LINE \n');
-        fprintf(fid,' 2 2 \n');
-        fprintf(fid,'%12.6f %12.6f \n',xcoor(m(idry) - 1,n(idry) - 1),ycoor(m(idry) - 1,n(idry) - 1));
-        fprintf(fid,'%12.6f %12.6f \n',xcoor(m(idry) - 1,n(idry)    ),ycoor(m(idry) - 1,n(idry)    ));
-        fprintf(fid,'LINE \n');
-        fprintf(fid,' 2 2 \n');
-        fprintf(fid,'%12.6f %12.6f \n',xcoor(m(idry) - 1,n(idry)    ),ycoor(m(idry) - 1,n(idry)    ));
-        fprintf(fid,'%12.6f %12.6f \n',xcoor(m(idry)    ,n(idry)    ),ycoor(m(idry)    ,n(idry)    ));
-        fprintf(fid,'LINE \n');
-        fprintf(fid,' 2 2 \n');
-        fprintf(fid,'%12.6f %12.6f \n',xcoor(m(idry)    ,n(idry)    ),ycoor(m(idry)    ,n(idry)    ));
-        fprintf(fid,'%12.6f %12.6f \n',xcoor(m(idry)    ,n(idry) - 1),ycoor(m(idry)    ,n(idry) - 1));
-        fprintf(fid,'LINE \n');
-        fprintf(fid,' 2 2 \n');
-        fprintf(fid,'%12.6f %12.6f \n',xcoor(m(idry)    ,n(idry) - 1),ycoor(m(idry)    ,n(idry) - 1));
-        fprintf(fid,'%12.6f %12.6f \n',xcoor(m(idry) - 1,n(idry) - 1),ycoor(m(idry) - 1,n(idry) - 1));
+
+        iline = iline + 1;
+        LINE(iline).Blckname  = 'Line';
+        LINE(iline).Data{1,1) = xcoor(m(idry) - 1,n(idry) - 1);
+        LINE(iline).Data{1,2) = ycoor(m(idry) - 1,n(idry) - 1);
+        LINE(iline).Data{2,1) = xcoor(m(idry) - 1,n(idry)    );
+        LINE(iline).Data{2,2) = ycoor(m(idry) - 1,n(idry)    );
+
+        iline = iline + 1;
+        LINE(iline).Blckname  = 'Line';
+        LINE(iline).Data{1,1) = xcoor(m(idry) - 1,n(idry)    );
+        LINE(iline).Data{1,2) = ycoor(m(idry) - 1,n(idry)    );
+        LINE(iline).Data{2,1) = xcoor(m(idry)    ,n(idry)    );
+        LINE(iline).Data{2,2) = ycoor(m(idry)    ,n(idry)    );
+
+        iline = iline + 1;
+        LINE(iline).Blckname  = 'Line';
+        LINE(iline).Data{1,1) = xcoor(m(idry)    ,n(idry)    );
+        LINE(iline).Data{1,2) = ycoor(m(idry)    ,n(idry)    );
+        LINE(iline).Data{2,1) = xcoor(m(idry)    ,n(idry) - 1);
+        LINE(iline).Data{2,2) = ycoor(m(idry)    ,n(idry) - 1);
+
+        iline = iline + 1;
+        LINE(iline).Blckname  = 'Line';
+        LINE(iline).Data{1,1) = xcoor(m(idry)    ,n(idry) - 1);
+        LINE(iline).Data{1,2) = ycoor(m(idry)    ,n(idry) - 1);
+        LINE(iline).Data{2,1) = xcoor(m(idry) - 1,n(idry) - 1);
+        LINE(iline).Data{2,2) = ycoor(m(idry) - 1,n(idry) - 1);
     end
 end
 
-% then thin dams
+% Fill the line struct for thin dams
 
 dams = MNthd.Data;
 
@@ -61,29 +76,30 @@ for ipnt = 1 : length(dams)
     if strcmpi(type,'u')
         n = sort (n);
         for idam = n(1):n(2)
-            if ~isnan(xcoor(m(1),idam - 1)) && ~isnan(xcoor(m(1),idam)) 
-                fprintf(fid,'LINE \n');
-                fprintf(fid,' 2 2 \n');
-                fprintf(fid,'%12.6f %12.6f \n',xcoor(m(1),idam - 1),ycoor(m(1),idam - 1));
-                fprintf(fid,'%12.6f %12.6f \n',xcoor(m(1),idam    ),ycoor(m(1),idam    ));
+            if ~isnan(xcoor(m(1),idam - 1)) && ~isnan(xcoor(m(1),idam))
+                iline = iline + 1;
+                LINE(iline).Blckname  = 'Line';
+                LINE(iline).Data{1,1) = xcoor(m(1)       ,idam - 1);
+                LINE(iline).Data{1,2) = ycoor(m(1)       ,idam - 1);
+                LINE(iline).Data{2,1) = xcoor(m(1)       ,idam    );
+                LINE(iline).Data{2,2) = ycoor(m(1)       ,idam    );
             end
         end
     else
         m = sort(m);
         for idam = m(1):m(2)
-            if ~isnan(xcoor(idam - 1,n(1))) && ~isnan(xcoor(idam,n(1))) 
-                fprintf(fid,'LINE \n');
-                fprintf(fid,' 2 2 \n');
-                fprintf(fid,'%12.6f %12.6f \n',xcoor(idam - 1,n(1)),ycoor(idam - 1,n(1)));
-                fprintf(fid,'%12.6f %12.6f \n',xcoor(idam    ,n(1)),ycoor(idam    ,n(1)));
+            if ~isnan(xcoor(idam - 1,n(1))) && ~isnan(xcoor(idam,n(1)))
+                iline = iline + 1;
+                LINE(iline).Blckname  = 'Line';
+                LINE(iline).Data{1,1) = xcoor(idam - 1   ,n(1)    );
+                LINE(iline).Data{1,2) = ycoor(idam - 1   ,n(1)    );
+                LINE(iline).Data{2,1) = xcoor(idam       ,n(1)    );
+                LINE(iline).Data{2,2) = ycoor(idam       ,n(1)    );
             end
         end
     end
 end
 
-fclose(fid);
+% finally write to the unstruc thd file
 
-
-
-
-
+unstruc_io_xydata(fname,LINE);
