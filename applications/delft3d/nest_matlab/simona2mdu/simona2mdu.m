@@ -33,10 +33,7 @@ end
 %% Get filenames (either specify here or get from the argument list); Split into name and path
 
 if isempty(varargin)
-    %filwaq = '..\test\simona\simona-scaloost-fijn-exvd-v1\SIMONA\berekeningen\siminp.fou';
     filwaq = '..\test\simona\simona-scaloost-fijn-exvd-v1\SIMONA\berekeningen\siminp';
-    %filwaq = '..\test\simona\simona-kustzuid-2004-v4\SIMONA\berekeningen\siminp-kzv4';
-    %filwaq =  '..\test\simona\A80\siminp.dcsmv6';
     filmdu = 'test.mdu';
 else
     filwaq = varargin{1};
@@ -58,95 +55,38 @@ name_mdf = [path_mdf filesep 'tmp'];
 logo = imread([getenv('nesthd_path') filesep 'bin' filesep 'simona_logo.jpg']);
 simona2mdf_message(Gen_inf                                  ,logo,5);
 
-%% Start with creating empty template (add the simonapath to it to allow for
-%  copying of the grid file)
+%% Convert the Simona siminp file to a temporary mdf file
 
-DATA = delft3d_io_mdf('new',[getenv('nesthd_path') filesep 'bin' filesep 'template_gui.mdf']);
-mdf  = DATA.keywords;
-mdf.pathsimona = path_waq;
-mdf.pathd3d    = path_mdf;
+%simona2mdf (filwaq,[name_mdf '.mdf']);
+
+%% Start with creating empty mdu template
 
 mdu = unstruc_io_mdu('new',[getenv('nesthd_path') filesep 'bin' filesep 'dflowfm-properties.csv']);
 
-%% Read the entire siminp and parse everything into 1 structure
+%% Read the temporary mdf file, add the path of the d3d files to allow for reading later
 
-S = readsiminp(path_waq,[name_waq extension_waq]);
-S = all_in_one(S);
+tmp            = delft3d_io_mdf('read',[name_mdf '.mdf']);
+mdf            = tmp.keywords;
+mdf.pathd3d    = path_mdf;
 
 
-%% parse the siminp information
-
-simona2mdf_message('Parsing AREA information'               ,logo,1 );
-mdf = simona2mdf_area     (S,mdf,name_mdf);
-
-simona2mdf_message('Parsing BATHYMETRY information'         ,logo,1 );
-mdf = simona2mdf_bathy    (S,mdf,name_mdf);
-
-% Generate the net file from the area information
+%% Generate the net file from the area information
 
 simona2mdf_message('Generating the Net file'                ,logo,1 );
 simona2mdu_grd2net([path_mdf filesep mdf.filcco],[path_mdf filesep mdf.fildep],name_mdu);
 mdu.geometry.NetFile = [name_mdu '_net.nc'];
 mdu.geometry.NetFile = simona2mdf_rmpath(mdu.geometry.NetFile);
 
-simona2mdf_message('Parsing OBSERVATION STATION information',logo,1 );
-mdf = simona2mdf_obs      (S  ,mdf,name_mdf);
-mdu = simona2mdu_obs      (mdf,mdu,name_mdu);
+%% Generate unstruc additional files
 
-simona2mdf_message('Parsing CROSS-SECTION information'      ,logo,1 );
-mdf = simona2mdf_crs      (S,mdf,name_mdf);
-mdu = simona2mdu_crs      (mdf,mdu,name_mdu);
-
-simona2mdf_message('Parsing DRYPOINT information'           ,logo,1 );
-mdf = simona2mdf_dryp     (S,mdf,name_mdf);
-
-simona2mdf_message('Parsing THINDAM information'            ,logo,1 );
-mdf = simona2mdf_thd      (S,mdf,name_mdf);
-
-simona2mdf_message('Genereting Thin Dam information for unstruc',logo,1 );
+simona2mdf_message('Genereting UNSTRUC Thin Dam      information',logo,1 );
 mdu = simona2mdu_thd    (mdf,mdu,name_mdu);
 
-simona2mdf_message('Parsing TIMES information'              ,logo,1 );
-mdf = simona2mdf_times    (S,mdf,name_mdf);
+simona2mdf_message('Generating UNSTRUC STATION       information',logo,1 );
+mdu = simona2mdu_obs      (mdf,mdu,name_mdu);
 
-simona2mdf_message('Parsing PROCES information'             ,logo,1 );
-mdf = simona2mdf_processes(S,mdf,name_mdf);
-
-simona2mdf_message('Parsing PHYSICAL information'           ,logo,1 );
-mdf = simona2mdf_physical (S,mdf,name_mdf);
-
-simona2mdf_message('Parsing NUMERICAL information'          ,logo,1 );
-mdf = simona2mdf_numerical(S,mdf,name_mdf);
-
-simona2mdf_message('Parsing BOUNDARY information'           ,logo,1 );
-mdf = simona2mdf_bnd      (S,mdf,name_mdf);
-
-simona2mdf_message('Parsing DISCHARGE POINTS information'   ,logo,1 );
-mdf = simona2mdf_dis      (S,mdf,name_mdf);
-
-simona2mdf_message('Parsing WIND information'               ,logo,1 );
-mdf = simona2mdf_wind     (S,mdf,name_mdf);
-
-simona2mdf_message('Parsing INITIAL CONDITION information'  ,logo,1 );
-mdf = simona2mdf_initial  (S,mdf,name_mdf);
-
-simona2mdf_message('Parsing RESTART information'            ,logo,1 );
-mdf = simona2mdf_restart  (S,mdf,name_mdf);
-
-simona2mdf_message('Parsing FRICTION information'           ,logo,1 );
-mdf = simona2mdf_friction (S,mdf,name_mdf);
-
-simona2mdf_message('Parsing VISCOSITY information'          ,logo,1 );
-mdf = simona2mdf_viscosity(S,mdf,name_mdf);
-
-simona2mdf_message('Parsing OBSERVATION STATION information',logo,1 );
-mdf = simona2mdf_obs      (S,mdf,name_mdf);
-
-simona2mdf_message('Parsing CROSS-SECTION information'      ,logo,1 );
-mdf = simona2mdf_crs      (S,mdf,name_mdf);
-
-simona2mdf_message('Parsing OUTPUT information'             ,logo,1 );
-mdf = simona2mdf_output   (S,mdf);
+simona2mdf_message('Generating UNSTRUC CROSS-SECTION information',logo,1 );
+mdu = simona2mdu_crs      (mdf,mdu,name_mdu);
 
 %% Finally,  write the mdu file and close everything
 

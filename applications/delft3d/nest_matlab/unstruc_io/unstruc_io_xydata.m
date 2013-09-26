@@ -69,7 +69,7 @@ case 'write'
           fprintf(fid,'%s       \n',block_name      );
           fprintf(fid,'%5i  %5i \n',nrows     ,ncols);
 
-          for icol = 1: ncols
+          for icol = 1: nrows
               fprintf(fid,'%14.6e  %14.6e  \n',LINE(iline).DATA{icol,1},LINE(iline).DATA{icol,2});
           end
       end
