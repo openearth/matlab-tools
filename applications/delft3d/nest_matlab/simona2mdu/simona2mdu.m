@@ -8,7 +8,7 @@ function simon2mdu (varargin)
 Gen_inf    = {'This tool converts a SIMONA siminp file into an Unstruc mdu file'                                   ;
               'with belonging attribute files'                                                                     ;
               ' '                                                                                                  ;
-              'Credits go to Wim van Baalen for his conversion mdf to mdu'                                         ;
+              'Credits go to Wim van Baalen for his conversion of boundary conditions'                             ;
               ' '                                                                                                  ;
               'This tool does a basic first conversion but please check carefully'                                 ;
               '(USE AT OWN RISK)'                                                                                  ;
@@ -52,8 +52,8 @@ name_mdf = [path_mdf filesep 'tmp'];
 
 %% Display the general information
 
-logo = imread([getenv('nesthd_path') filesep 'bin' filesep 'simona_logo.jpg']);
-simona2mdf_message(Gen_inf                                  ,logo,5);
+logo = imread([getenv('nesthd_path') filesep 'bin' filesep 'dflowfm.jpg']);
+simona2mdf_message(Gen_inf                                  ,logo,5,'Name','SIMONA2MDU Message');
 
 %% Convert the Simona siminp file to a temporary mdf file
 
@@ -69,7 +69,6 @@ tmp            = delft3d_io_mdf('read',[name_mdf '.mdf']);
 mdf            = tmp.keywords;
 mdf.pathd3d    = path_mdf;
 
-
 %% Generate the net file from the area information
 
 simona2mdf_message('Generating the Net file'                ,logo,1 );
@@ -79,13 +78,13 @@ mdu.geometry.NetFile = simona2mdf_rmpath(mdu.geometry.NetFile);
 
 %% Generate unstruc additional files
 
-simona2mdf_message('Genereting UNSTRUC Thin Dam      information',logo,1 );
+simona2mdf_message('Genereting UNSTRUC Thin Dam      information',logo,1 ,'Name','SIMONA2MDU Message');
 mdu = simona2mdu_thd    (mdf,mdu,name_mdu);
 
-simona2mdf_message('Generating UNSTRUC STATION       information',logo,1 );
+simona2mdf_message('Generating UNSTRUC STATION       information',logo,1 ,'Name','SIMONA2MDU Message');
 mdu = simona2mdu_obs      (mdf,mdu,name_mdu);
 
-simona2mdf_message('Generating UNSTRUC CROSS-SECTION information',logo,1 );
+simona2mdf_message('Generating UNSTRUC CROSS-SECTION information',logo,1 ,'Name','SIMONA2MDU Message');
 mdu = simona2mdu_crs      (mdf,mdu,name_mdu);
 
 %% Finally,  write the mdu file and close everything

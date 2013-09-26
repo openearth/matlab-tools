@@ -10,7 +10,7 @@ LINE   = [];
 
 % Open and read the D3D Files
 
-grid = delft3d_io_grd('read',filgrd,'Enclosure',false);
+grid = delft3d_io_grd('read',filgrd);
 xcoor = grid.cor.x';
 ycoor = grid.cor.y';
 

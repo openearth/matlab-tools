@@ -7,7 +7,7 @@ netfile       = [filmdu '_net.nc'];
 samfile       = [filmdu '.xyz'];
 
 % Read the grid
-G           = delft3d_io_grd('read',filgrd,'Enclosure',false);
+G           = delft3d_io_grd('read',filgrd);
 xh          = G.cor.x;
 yh          = G.cor.y;
 M           = size(xh,1);
