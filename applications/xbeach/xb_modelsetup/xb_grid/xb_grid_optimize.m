@@ -196,6 +196,8 @@ else
     if ischar(OPT.crop) && strcmpi(OPT.crop, 'select')
         xb_verbose(1,'Enable user to crop grid visually');
         
+        display('Please select opposing cornerpoints of your grid by clicking.')
+        
         fh = figure;
         pcolor(x_r, y_r, z_w);
         axis equal;
