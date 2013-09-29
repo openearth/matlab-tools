@@ -33,11 +33,16 @@ zh(:  ,end)  = [];
 xsamp          = reshape(xh,[M.*N 1]);
 ysamp          = reshape(yh,[M.*N 1]);
 zsamp          = reshape(zh,[M.*N 1]);
-exist          = ~isnan(xsamp);
 
-LINE.DATA{:,1} = xsamp(exist);
-LINE.DATA{:,2} = ysamp(exist);
-LINE.DATA{:,3} = zsamp(exist);
+irow = 0;
+for isamp = 1: length(xsamp)
+    if ~isnan(xsamp(isamp))
+        irow = irow + 1;
+        LINE.DATA{irow,1} = xsamp(isamp);
+        LINE.DATA{irow,2} = ysamp(isamp);
+        LINE.DATA{irow,3} = zsamp(isamp);
+    end
+end
 
 unstruc_io_xydata('write',samfile,LINE)
 

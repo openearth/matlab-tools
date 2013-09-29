@@ -33,10 +33,7 @@ end
 %% Get filenames (either specify here or get from the argument list); Split into name and path
 
 if isempty(varargin)
-    %filwaq = '..\test\simona\simona-scaloost-fijn-exvd-v1\SIMONA\berekeningen\siminp.fou';
     filwaq = '..\test\simona\simona-scaloost-fijn-exvd-v1\SIMONA\berekeningen\siminp';
-    %filwaq = '..\test\simona\simona-kustzuid-2004-v4\SIMONA\berekeningen\siminp-kzv4';
-    %filwaq =  '..\test\simona\A80\siminp.dcsmv6';
     filmdf = 'test.mdf';
 else
     filwaq = varargin{1};
@@ -50,7 +47,7 @@ name_mdf = [path_mdf filesep name_mdf];
 %% Display the general information
 
 logo = imread([getenv('nesthd_path') filesep 'bin' filesep 'simona_logo.jpg']);
-simona2mdf_message(Gen_inf                                  ,logo,5);
+simona2mdf_message(Gen_inf                                  ,'Logo',logo,'n_sec',5);
 
 %% Start with creating empty template (add the simonapath to it to allow for
 %  copying of the grid file)
@@ -68,63 +65,63 @@ S = all_in_one(S);
 
 %% parse the siminp information
 
-simona2mdf_message('Parsing AREA information'               ,logo,1 );
+simona2mdf_message('Parsing AREA information'               ,'Logo',logo);
 mdf = simona2mdf_area     (S,mdf,name_mdf);
 
-simona2mdf_message('Parsing BATHYMETRY information'         ,logo,1 );
+simona2mdf_message('Parsing BATHYMETRY information'         ,'Logo',logo);
 mdf = simona2mdf_bathy    (S,mdf,name_mdf);
 
-simona2mdf_message('Parsing DRYPOINT information'           ,logo,1 );
+simona2mdf_message('Parsing DRYPOINT information'           ,'Logo',logo);
 mdf = simona2mdf_dryp     (S,mdf,name_mdf);
 
-simona2mdf_message('Parsing THINDAM information'            ,logo,1 );
+simona2mdf_message('Parsing THINDAM information'            ,'Logo',logo);
 mdf = simona2mdf_thd      (S,mdf,name_mdf);
 
-simona2mdf_message('Parsing TIMES information'              ,logo,1 );
+simona2mdf_message('Parsing TIMES information'              ,'Logo',logo);
 mdf = simona2mdf_times    (S,mdf,name_mdf);
 
-simona2mdf_message('Parsing PROCES information'             ,logo,1 );
+simona2mdf_message('Parsing PROCES information'             ,'Logo',logo);
 mdf = simona2mdf_processes(S,mdf,name_mdf);
 
-simona2mdf_message('Parsing PHYSICAL information'           ,logo,1 );
+simona2mdf_message('Parsing PHYSICAL information'           ,'Logo',logo);
 mdf = simona2mdf_physical (S,mdf,name_mdf);
 
-simona2mdf_message('Parsing NUMERICAL information'          ,logo,1 );
+simona2mdf_message('Parsing NUMERICAL information'          ,'Logo',logo);
 mdf = simona2mdf_numerical(S,mdf,name_mdf);
 
-simona2mdf_message('Parsing BOUNDARY information'           ,logo,1 );
+simona2mdf_message('Parsing BOUNDARY information'           ,'Logo',logo);
 mdf = simona2mdf_bnd      (S,mdf,name_mdf);
 
-simona2mdf_message('Parsing DISCHARGE POINTS information'   ,logo,1 );
+simona2mdf_message('Parsing DISCHARGE POINTS information'   ,'Logo',logo);
 mdf = simona2mdf_dis      (S,mdf,name_mdf);
 
-simona2mdf_message('Parsing WIND information'               ,logo,1 );
+simona2mdf_message('Parsing WIND information'               ,'Logo',logo);
 mdf = simona2mdf_wind     (S,mdf,name_mdf);
 
-simona2mdf_message('Parsing INITIAL CONDITION information'  ,logo,1 );
+simona2mdf_message('Parsing INITIAL CONDITION information'  ,'Logo',logo);
 mdf = simona2mdf_initial  (S,mdf,name_mdf);
 
-simona2mdf_message('Parsing RESTART information'            ,logo,1 );
+simona2mdf_message('Parsing RESTART information'            ,'Logo',logo);
 mdf = simona2mdf_restart  (S,mdf,name_mdf);
 
-simona2mdf_message('Parsing FRICTION information'           ,logo,1 );
+simona2mdf_message('Parsing FRICTION information'           ,'Logo',logo);
 mdf = simona2mdf_friction (S,mdf,name_mdf);
 
-simona2mdf_message('Parsing VISCOSITY information'          ,logo,1 );
+simona2mdf_message('Parsing VISCOSITY information'          ,'Logo',logo);
 mdf = simona2mdf_viscosity(S,mdf,name_mdf);
 
-simona2mdf_message('Parsing OBSERVATION STATION information',logo,1 );
+simona2mdf_message('Parsing OBSERVATION STATION information','Logo',logo);
 mdf = simona2mdf_obs      (S,mdf,name_mdf);
 
-simona2mdf_message('Parsing CROSS-SECTION information'      ,logo,1 );
+simona2mdf_message('Parsing CROSS-SECTION information'      ,'Logo',logo);
 mdf = simona2mdf_crs      (S,mdf,name_mdf);
 
-simona2mdf_message('Parsing OUTPUT information'             ,logo,1 );
+simona2mdf_message('Parsing OUTPUT information'             ,'Logo',logo);
 mdf = simona2mdf_output   (S,mdf);
 
 %% Finally,  write the mdf file and close everything
 
 delft3d_io_mdf('write',filmdf,mdf,'stamp',false);
 
-simona2mdf_message();
+simona2mdf_message('','Close',true);
 

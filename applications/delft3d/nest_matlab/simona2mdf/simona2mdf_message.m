@@ -1,29 +1,22 @@
-function simona2mdf_message(varargin)
+function simona2mdf_message(string,varargin)
 
 % message: writes general information to screen
 
-close = false;
-if nargin == 0
-    string = '';
-    n_sec  =  1;
-    h_warn = msgbox(string,'SIMINP2MDF Message','replace');
-    close  = true;
+OPT.Close  = false;
+OPT.Window = 'SIMINP2MDF Message';
+OPT.n_sec  = 1;
+OPT.Logo   = '';
+OPT        = setproperty(OPT,varargin);
+
+if ~isempty(OPT.Logo)
+    h_warn   = msgbox(string,OPT.Window,'Custom',OPT.Logo,[],'replace');
 else
-    OPT.Name = 'SIMINP2MDF Message';
-    if nargin > 4
-        OPT      = setproperty(OPT,varargin{4:end});
-    end
-    string   = varargin{1};
-    logo     = varargin{2};
-    n_sec    = varargin{3};
-    h_warn   = msgbox(string,OPT.Name,'Custom',logo,[],'replace');
+     h_warn   = msgbox(string,OPT.Window,'replace');
 end
 
 delete(findobj(h_warn,'string','OK'));
-uiwait(h_warn,n_sec);
+uiwait(h_warn,OPT.n_sec);
 
-if close
+if OPT.Close
     delete(h_warn);
 end
-
-

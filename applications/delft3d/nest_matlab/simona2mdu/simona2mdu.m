@@ -53,7 +53,7 @@ name_mdf = [path_mdf filesep 'tmp'];
 %% Display the general information
 
 logo = imread([getenv('nesthd_path') filesep 'bin' filesep 'dflowfm.jpg']);
-simona2mdf_message(Gen_inf                                  ,logo,5,'Name','SIMONA2MDU Message');
+simona2mdf_message(Gen_inf,'Logo',logo,'n_sec',5,'Window','SIMONA2MDU Message','Close',true);
 
 %% Convert the Simona siminp file to a temporary mdf file
 
@@ -71,25 +71,30 @@ mdf.pathd3d    = path_mdf;
 
 %% Generate the net file from the area information
 
-simona2mdf_message('Generating the Net file'                ,logo,1 );
+simona2mdf_message('Generating the Net file'                ,'Logo',logo,'Window','SIMONA2MDU Message');
 simona2mdu_grd2net([path_mdf filesep mdf.filcco],[path_mdf filesep mdf.fildep],name_mdu);
 mdu.geometry.NetFile = [name_mdu '_net.nc'];
 mdu.geometry.NetFile = simona2mdf_rmpath(mdu.geometry.NetFile);
 
 %% Generate unstruc additional files
 
-simona2mdf_message('Genereting UNSTRUC Thin Dam      information',logo,1 ,'Name','SIMONA2MDU Message');
+simona2mdf_message('Genereting UNSTRUC Thin Dam      information','Logo',logo,'Window','SIMONA2MDU Message');
 mdu = simona2mdu_thd    (mdf,mdu,name_mdu);
 
-simona2mdf_message('Generating UNSTRUC STATION       information',logo,1 ,'Name','SIMONA2MDU Message');
+simona2mdf_message('Generating UNSTRUC STATION       information','Logo',logo,'Window','SIMONA2MDU Message');
 mdu = simona2mdu_obs      (mdf,mdu,name_mdu);
 
-simona2mdf_message('Generating UNSTRUC CROSS-SECTION information',logo,1 ,'Name','SIMONA2MDU Message');
+simona2mdf_message('Generating UNSTRUC CROSS-SECTION information','Logo',logo,'Window','SIMONA2MDU Message');
 mdu = simona2mdu_crs      (mdf,mdu,name_mdu);
+
+simona2mdf_message('Generating UNSTUC Boundaty definition       ','Logo',logo,'Window','SIMONA2MDU Message');
+simona2mdu_bnd2pli([path_mdf filesep mdf.filcco],[path_mdf filesep mdf.filbnd],name_mdu);
+simona2mdu_bnd2pli([path_mdf filesep mdf.filcco],[path_mdf filesep mdf.filbnd],name_mdu,'Salinity',true);
+
 
 %% Finally,  write the mdu file and close everything
 
 unstruc_io_mdu('write',[name_mdu '.mdu'],mdu);
 
-simona2mdf_message();
+simona2mdf_message('','Window','SIMONA2MDU Message','Close',true);
 
