@@ -78,8 +78,11 @@ mdu.geometry.NetFile = simona2mdf_rmpath(mdu.geometry.NetFile);
 
 %% Generate unstruc additional files
 
-simona2mdf_message('Genereting UNSTRUC Thin Dam      information','Logo',logo,'Window','SIMONA2MDU Message');
+simona2mdf_message('Generating UNSTRUC Thin Dam      information','Logo',logo,'Window','SIMONA2MDU Message');
 mdu = simona2mdu_thd    (mdf,mdu,name_mdu);
+
+simona2mdf_message('Generating UNSTRUC PROCES        information','Logo',logo,'Window','SIMONA2MDU Message');
+mdu = simona2mdu_proces (mdf,mdu,name_mdu);
 
 simona2mdf_message('Generating UNSTRUC STATION       information','Logo',logo,'Window','SIMONA2MDU Message');
 mdu = simona2mdu_obs      (mdf,mdu,name_mdu);
@@ -89,8 +92,9 @@ mdu = simona2mdu_crs      (mdf,mdu,name_mdu);
 
 simona2mdf_message('Generating UNSTUC Boundaty definition       ','Logo',logo,'Window','SIMONA2MDU Message');
 simona2mdu_bnd2pli([path_mdf filesep mdf.filcco],[path_mdf filesep mdf.filbnd],name_mdu);
-simona2mdu_bnd2pli([path_mdf filesep mdf.filcco],[path_mdf filesep mdf.filbnd],name_mdu,'Salinity',true);
-
+if mdu.physics.Salinity    ; % Salinity, write _sal pli files
+    simona2mdu_bnd2pli([path_mdf filesep mdf.filcco],[path_mdf filesep mdf.filbnd],name_mdu,'Salinity',true);
+end
 
 %% Finally,  write the mdu file and close everything
 
