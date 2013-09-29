@@ -57,7 +57,7 @@ simona2mdf_message(Gen_inf,'Logo',logo,'n_sec',5,'Window','SIMONA2MDU Message','
 
 %% Convert the Simona siminp file to a temporary mdf file
 
-%simona2mdf (filwaq,[name_mdf '.mdf']);
+simona2mdf (filwaq,[name_mdf '.mdf']);
 
 %% Start with creating empty mdu template
 

@@ -23,7 +23,12 @@ end
 % Get bethymetry related information
 %
 
-depth(1:mdf.mnkmax(1),1:mdf.mnkmax(2)) = 0.;
+if isfield(mdf,'mnkmax')
+    depth(1:mdf.mnkmax(1),1:mdf.mnkmax(2)) = 0.;
+else
+    depth = [];
+end
+
 siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'MESH' 'BATHYMETRY'});
 
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.MESH.BATHYMETRY.GLOBAL')
@@ -40,7 +45,7 @@ if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.MESH.BATHYMETRY.LOCAL.BOX')
     depth = simona2mdf_getboxdata(siminp_struc.ParsedTree.MESH.BATHYMETRY.LOCAL.BOX,depth);
 end
 
-mdf        = rmfield(mdf,'depuni');
+if isfield(mdf,'depuni') mdf        = rmfield(mdf,'depuni');end
 mdf.fildep = [name_mdf '.dep'];
 wldep('write',mdf.fildep,sign*depth,'quit');
 mdf.fildep = simona2mdf_rmpath(mdf.fildep);
