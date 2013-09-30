@@ -1,26 +1,9 @@
-function handles = ddb_saveBcaFile(handles, id)
-%DDB_SAVEBCAFILE  One line description goes here.
-%
-%   More detailed description goes here.
-%
-%   Syntax:
-%   handles = ddb_saveBcaFile(handles, id)
-%
-%   Input:
-%   handles =
-%   id      =
-%
-%   Output:
-%   handles =
-%
-%   Example
-%   ddb_saveBcaFile
-%
-%   See also
+function ddb_DFlowFM_wind(varargin)
+%DDB_DFlowFM_wind One line description goes here.
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2011 Deltares
+%   Copyright (C) 2013 Deltares
 %       Maarten van Ormondt
 %
 %       Maarten.vanOrmondt@deltares.nl
@@ -53,30 +36,21 @@ function handles = ddb_saveBcaFile(handles, id)
 % Created: 29 Nov 2011
 % Created with Matlab version: 7.11.0.584 (R2010b)
 
-% $Id: $
-% $Date: $
-% $Author: $
-% $Revision: $
-% $HeadURL: $
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 % $Keywords: $
 
 %%
-fid=fopen(handles.Model(md).Input(id).bcaFile,'w');
-
-nr=handles.Model(md).Input(id).nrAstronomicComponentSets;
-
-for i=1:nr
-    fprintf(fid,'%s\n',handles.Model(md).Input(id).astronomicComponentSets(i).name);
-    for j=1:handles.Model(md).Input(id).astronomicComponentSets(i).nr
-        cmp=handles.Model(md).Input(id).astronomicComponentSets(i).component{j};
-        amp=handles.Model(md).Input(id).astronomicComponentSets(i).amplitude(j);
-        pha=handles.Model(md).Input(id).astronomicComponentSets(i).phase(j);
-%         if isnan(pha) % then A0
-%             fprintf(fid,'%s %15.7e\n',[cmp repmat(' ',1,8-length(cmp))],amp);
-%         else
-            fprintf(fid,'%s %15.7e %15.7e\n',[cmp repmat(' ',1,8-length(cmp))],amp,pha);
-%         end
+if isempty(varargin)
+    ddb_zoomOff;
+    ddb_refreshScreen;
+else
+    opt=varargin{1};
+    switch lower(opt)
+        case{'selectnetfile'}
+            selectNetFile;
     end
 end
-fclose(fid);
-

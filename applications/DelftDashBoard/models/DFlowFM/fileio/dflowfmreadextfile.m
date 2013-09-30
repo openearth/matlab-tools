@@ -92,6 +92,7 @@ for ii=1:length(s)
             nb=nb+1;
             sout.boundaries(nb).name=s(ii).filename(1:end-4);
             sout.boundaries(nb).filetype=s(ii).filetype;
+            sout.boundaries(nb).filename=s(ii).filename;
             sout.boundaries(nb).type=s(ii).quantity;
         case{'spiderweb'}
             nm=nm+1;

@@ -11,6 +11,12 @@ else
     switch lower(opt)
         case{'selectboundary'}
             ddb_DFlowFM_plotBoundaries(handles,'update');
+        case{'changeboundary'}
+            h=varargin{2};
+            x=varargin{3};
+            y=varargin{4};
+            nr=varargin{5};
+            changeBoundary(h,x,y,nr);
         case{'editname'}
             editName;
         case{'add'}
@@ -162,8 +168,8 @@ end
 handles.Model(md).Input.nrboundaries=nr;
 handles.Model(md).Input.activeboundary=nr;
 
-handles.Model(md).Input.boundaries=ddb_DFlowFM_initializeBoundary(handles.Model(md).Input.boundaries,x,y,nr);
-handles.Model(md).Input.boundaries(nr).name=filename(1:end-4);
+name=filename(1:end-4);
+handles.Model(md).Input.boundaries=ddb_DFlowFM_initializeBoundary(handles.Model(md).Input.boundaries,x,y,name,nr);
 
 handles=updateNames(handles);
 

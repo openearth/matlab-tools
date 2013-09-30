@@ -62,6 +62,11 @@
       <element>DFlowFM.physics.xml</element>
     </tab>
     <tab>
+      <tabstring>Wind</tabstring>
+      <callback>ddb_DFlowFM_wind</callback>
+      <element>DFlowFM.wind.xml</element>
+    </tab>
+    <tab>
       <tabstring>External Forcing</tabstring>
       <element>DFlowFM.externalforcing.xml</element>
     </tab>
