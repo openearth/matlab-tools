@@ -94,27 +94,33 @@ for i=1:length(amplitudes)
     if isempty(ju)
 %        disp(['Could not find ' name ' - Component skipped.']);
     else
+        icont=1;
         if maincomponents
             % Only use main components
             switch lower(cmp)
                 case{'m2','s2','k2','n2','k1','o1','p1','q1','mf','mm','m4','ms4','mn4'}
+%                case{'m2','s2','k2','n2','k1','o1','p1','q1'}
                     % Continue
+                    icont=1;
                 otherwise
-                    break
+                    % Skip this component
+                    icont=0;
             end
         end
-        k=k+1;
-        names(k,:)=name;
-        freq(k,1)=const.freq(ju);
-        tidecon(k,1)=amplitudes(i);
-        tidecon(k,2)=0;
-        % convert time zone
-        if timeZone~=0
-            phases(i)=phases(i)+360*(timeZone+timeZoneStation)*const.freq(ju);
-            phases(i)=mod(phases(i),360);
+        if icont
+            k=k+1;
+            names(k,:)=name;
+            freq(k,1)=const.freq(ju);
+            tidecon(k,1)=amplitudes(i);
+            tidecon(k,2)=0;
+            % convert time zone
+            if timeZone~=0
+                phases(i)=phases(i)+360*(timeZone+timeZoneStation)*const.freq(ju);
+                phases(i)=mod(phases(i),360);
+            end
+            tidecon(k,3)=phases(i);
+            tidecon(k,4)=0;
         end
-        tidecon(k,3)=phases(i);
-        tidecon(k,4)=0;            
     end
 end
 wl=t_predic(tim,names,freq,tidecon,latitude);
