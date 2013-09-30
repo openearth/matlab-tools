@@ -1,6 +1,6 @@
 function varargout=nesthd2(varargin)
 % NESTHD2
-% 
+%
 % e.g. nesthd2('runid','tst','inputdir','d:\temp\','admfile','d:\temp\nesting.adm','hisfile','d:\run01\trih-ovr.dat','opt','hydro')
 %
 
@@ -35,7 +35,7 @@ if length(varargin)==1
     if isfield(xml,'stoptime')
         t1=datestr(xml.stoptime,'yyyymmdd HHMMSS');
     end
-else    
+else
     for i=1:length(varargin)
         if ischar(varargin{i})
             switch lower(varargin{i})
@@ -82,6 +82,8 @@ else
                     t1=varargin{i+1};
                 case{'coordinatesystem'}
                     cs=varargin{i+1};
+                case{'input'}
+                    Flow=varargin{i+1};
             end
         end
     end
@@ -100,44 +102,81 @@ if ~isempty(runid)
     end
 end
 
-s=readNestAdmin(admfile);
+% Read nesting administration file
+disp('Reading nesting administration file ...');
+nestadmin=readNestAdmin(admfile);
 
+% Read data for each boundary point that was found in readNestAdmin.m
 disp('Reading data overall model ...');
-nest=getNestSeries(hisfile,t0,t1,s,stride,opt);
+[times,stations,overalldata]=getNestSeries(nestadmin,'hisfile',hisfile,'tstart',t0,'tstop',t1,'stride',stride,'overallmodeltype','delft3dflow',opt);
 
-switch lower(opt)
-    case{'hydro','both'}
-        disp('Generating hydrodynamic boundary conditions ...');
-        openBoundaries=nesthd2_hydro(openBoundaries,vertGrid,s,nest,zcor,cs);
-        if isave
-            disp('Saving bct file');
-            fname=[inputdir Flow.bctFile];
-            delft3dflow_saveBctFile(Flow,openBoundaries,fname);
-        end
+% % Now interpolate data over vertical of boundary support points ()
+% disp('Interpolating data onto nested model ...');
+% nesteddata=interpolateNestData(times,overalldata,'nestedmodeltype','delft3dflow',opt);
+nesteddata=overalldata;
+
+for ip=1:length(nestadmin)
+    nesteddatanames{ip}=nestadmin(ip).name;
 end
 
-switch lower(opt)
-    case{'transport','both'}
-        disp('Generating transport boundary conditions ...');
-        openBoundaries=nesthd2_transport(openBoundaries,vertGrid,s,nest);
-        if isave
-            disp('Saving bcc file');
-            fname=[inputdir Flow.bccFile];
-            delft3dflow_saveBccFile(Flow,openBoundaries,fname);
-        end
+nbnd=length(openBoundaries);
+for ib=1:nbnd
+    for ip=1:length(openBoundaries(ib).x)
+        % Find point in nested data
+        bndname=[openBoundaries(ib).name '_' num2str(ip,'%0.4i')];
+        ii=strmatch(bndname,nesteddatanames,'exact');
+        openBoundaries(ib).nodes(ip).timeseriesfile=[bndname '.tim'];
+        openBoundaries(ib).nodes(ip).time=times;
+        openBoundaries(ib).nodes(ip).value=nesteddata(ii).waterlevel;
+        % Save file
+        d=zeros(length(times),2);
+        d(:,1)=(openBoundaries(ib).nodes(ip).time-Flow.refdate)*1440;
+        d(:,2)=openBoundaries(ib).nodes(ip).value;
+        save(openBoundaries(ib).nodes(ip).timeseriesfile,'d','-ascii');
+    end
 end
+
+% Copy nesteddata structure to boundary data structure
+
+
+
+
+% Save boundary condition files
+
+
+% switch lower(opt)
+%     case{'hydro','both'}
+%         disp('Generating hydrodynamic boundary conditions ...');
+%         openBoundaries=nesthd2_hydro(openBoundaries,vertGrid,s,nest,zcor,cs);
+%         if isave
+%             disp('Saving bct file');
+%             fname=[inputdir Flow.bctFile];
+%             delft3dflow_saveBctFile(Flow,openBoundaries,fname);
+%         end
+% end
+% 
+% switch lower(opt)
+%     case{'transport','both'}
+%         disp('Generating transport boundary conditions ...');
+%         openBoundaries=nesthd2_transport(openBoundaries,vertGrid,s,nest);
+%         if isave
+%             disp('Saving bcc file');
+%             fname=[inputdir Flow.bccFile];
+%             delft3dflow_saveBccFile(Flow,openBoundaries,fname);
+%         end
+% end
 
 if nargout>0
     varargout{1}=openBoundaries;
 end
 
 %%
-function s=readNestAdmin(fname)
+function nest=readNestAdmin(fname)
 
-strwl='Nest administration for water level support point (M,N) = ';
-strvel='Nest administration for velocity    support point (M,N) =';
+strwl ='Nest administration for water level support point';
+strvel='Nest administration for velocity    support point';
+
 lwl=length(strwl);
-lvel=length(strvel);
 
 fid=fopen(fname,'r');
 k=0;
@@ -155,61 +194,109 @@ for i=1:k
     f=fgetl(fid);
 end
 
-nwl=0;
-nvel=0;
+supportpoints={''};
+np=0;
+
 while 1
+    
     f=fgetl(fid);
+    
     if ~ischar(f), break, end
+    
     iwl=strfind(f,strwl);
+    if isempty(iwl)
+        iwl=0;
+    end
     ivel=strfind(f,strvel);
-    if iwl
-        nwl=nwl+1;
-        str=f(lwl+1:end);
-        ii=strread(str,'%f','delimiter','(,)');
-        s.wl.m(nwl)=ii(2);
-        s.wl.n(nwl)=ii(3);
+    if isempty(ivel)
+        ivel=0;
+    end
+    
+    if iwl || ivel
+        
+        str=deblank2(f(lwl+1:end));
+        str=strread(str,'%s','delimiter',' ');
+        
+        name=deblank2(str{1});
+        
+        % Check if this boundary point has already been found
+        ii=strmatch(name,supportpoints,'exact');
+        if isempty(ii)
+            % New boundary point
+            np=np+1;
+            supportpoints{np}=name;
+            ip=np;
+        else
+            ip=ii;
+        end
+        
+        nest(ip).name=deblank2(str{1});
+        
+        if iwl
+            % Support points for water level boundary
+            fld='wl';
+        else
+            fld='vel';
+%             anglestr=strread(str{end},'%s','delimiter','=');
+%             nest(ip).angle=str2double(anglestr{2});
+        end
+        
         % Read m,n indices of surrounding support points
-        for i=1:4
+        for ii=1:4
             f=fgetl(fid);
             v=strread(f,'%f');
-            s.wl.mm(nwl,i)=v(1);
-            s.wl.nn(nwl,i)=v(2);
-            s.wl.w(nwl,i)=v(3);
+            m=v(1);
+            n=v(2);
+            nest(ip).(fld)(ii).m=m;
+            nest(ip).(fld)(ii).n=n;
+            nest(ip).(fld)(ii).w=v(3);
+            m=[repmat(' ',1,5-length(num2str(m))) num2str(m)];
+            n=[repmat(' ',1,5-length(num2str(n))) num2str(n)];
+            nest(ip).(fld)(ii).name=['(M,N)=(' m ',' n ')'];            
         end
+        
     end
-    if ivel
-        nvel=nvel+1;
-        str=f(lvel+1:end);
-        ii=strread(str,'%f','delimiter','(,)Angle =');
-        s.vel.m(nvel)=ii(2);
-        s.vel.n(nvel)=ii(3);
-        s.vel.angle(nvel)=ii(10);
-        % Read m,n indices of surrounding support points
-        for i=1:4
-            f=fgetl(fid);
-            v=strread(f,'%f');
-            s.vel.mm(nvel,i)=v(1);
-            s.vel.nn(nvel,i)=v(2);
-            s.vel.w(nvel,i)=v(3);
-        end
-    end
+    
 end
 fclose(fid);
 
 
 %%
-function nest=getNestSeries(hisfile,t0,t1,s,stride,varargin)
+function [times,stationnames,nestdata]=getNestSeries(nestadmin,varargin)
 
-if nargin>2
-    opt=varargin{1};
-else
-    opt='hydro';
+% Defaults
+stride=1;
+opt='hydro';
+t0=[];
+t1=[];
+
+for ii=1:length(varargin)
+    if ischar(varargin{ii})
+        switch lower(varargin{ii})
+            case{'overallmodeltype'}
+                overallmodeltype=varargin{ii+1};
+            case{'overallmodelfile','hisfile'}
+                hisfile=varargin{ii+1};
+            case{'stride'}
+                stride=varargin{ii+1};
+            case{'tstart'}
+                t0=varargin{ii+1};
+            case{'tstop'}
+                t1=varargin{ii+1};
+            case{'hydro'}
+                opt='hydro';
+            case{'transport'}
+                opt='transport';
+            case{'both'}
+                opt='both';
+        end
+    end
 end
 
-fid=qpfopen(hisfile);
-stations = qpread(fid,1,'water level','stations');
-times = qpread(fid,1,'water level','times');
+% Read stations, times, kmax from overall model
+[allstations,times,kmax,fid]=readOverallModelData(hisfile,overallmodeltype);
 
+% Determine indices of start and stop time
 if ~isempty(t0)
     it1=find(times<=t0-1/86400,1,'last');
     it2=find(times>=t1+1/86400,1,'first');
@@ -223,269 +310,158 @@ else
     it1=1;
     it2=length(times);
 end
-
 times = times(it1:stride:it2);
-
 times=datenum(round(datevec(times)));
-nt=length(times);
-
-vs_use(hisfile,'quiet');
-kmax=vs_get('his-const','KMAX','quiet');
-
 isteps=it1:stride:it2;
 
-% First check which stations need to be downloaded
-
-nrused=0;
-mused=[];
-nused=[];
-for k=1:length(s.wl.m)
-    for i=1:4
-        m=s.wl.mm(k,i);
-        n=s.wl.nn(k,i);
-        if m>0
-            ii=find(mused==m&nused==n, 1);
-            if isempty(ii)
-                nrused=nrused+1;
-                mused(nrused)=m;
-                nused(nrused)=n;
-                m=[repmat(' ',1,5-length(num2str(m))) num2str(m)];
-                n=[repmat(' ',1,5-length(num2str(n))) num2str(n)];
-                st=['(M,N)=(' m ',' n ')'];
-                istat=strmatch(st,stations);
-                if isempty(istat)
-                    istation(nrused)=istation(nrused-1);
-                    % error(['Station ' st 'not found in history file']);
-                else
-                    istation(nrused)=istat;
-                end
-            end
-        end
-    end
-end
-for k=1:length(s.vel.m)
-    for i=1:4
-        m=s.vel.mm(k,i);
-        n=s.vel.nn(k,i);
-        if m>0
-            ii=find(mused==m&nused==n, 1);
-            if isempty(ii)
-                nrused=nrused+1;
-                mused(nrused)=m;
-                nused(nrused)=n;
-                m=[repmat(' ',1,5-length(num2str(m))) num2str(m)];
-                n=[repmat(' ',1,5-length(num2str(n))) num2str(n)];
-                st=['(M,N)=(' m ',' n ')'];
-                istat=strmatch(st,stations);
-                if isempty(istat)
-                    istation(nrused)=istation(nrused-1);
-                    % error(['Station ' st 'not found in history file']);
-                else
-                    istation(nrused)=istat;
-                end
-            end
-        end
-    end
-end
-
-u=[];
-v=[];
-z=[];
-wl=[];
-
-% bed levels
-
-%dps00=qpread(fid,1,'bed level at station','data',1,istation);
-dps00=qpread(fid,1,'bed level','data',1,istation);
-for k=1:length(s.wl.m)
-    for i=1:4
-        m=s.wl.mm(k,i);
-        n=s.wl.nn(k,i);
-        if m>0
-            ii= mused==m&nused==n;
-            dps0(i)=squeeze(dps00.Val(ii));
+% Check which stations need to be loaded (stored in vector istation)
+stationnames=[];
+istation=[];
+for k=1:length(nestadmin)
+    for it=1:2
+        if it==1
+            fld='wl';
         else
-            %                dps0(i)=zeros(nt,1);
-            dps0(i)=0;
+            fld='vel';
+        end
+        if ~isempty(nestadmin(k).(fld))
+            for ip=1:4
+                name=nestadmin(k).(fld)(ip).name;
+                if isempty(strmatch(name,stationnames,'exact'))
+                    istat=strmatch(name,allstations,'exact');
+                    if isempty(istat)
+                        error(['Station ' name ' not found on history file!']);
+                    end
+                    istation(end+1)=istat;
+                    stationnames{end+1}=name;
+                end
+            end
         end
     end
-    dps(k)=dps0*squeeze(s.wl.w(k,:)');
 end
 
-clear dps00 dps0
-
-%% Hydrodynamics    
+%% Hydrodynamics
 
 switch lower(opt)
     case{'hydro','both'}
         
-    % water levels
-
-    wl00=qpread(fid,1,'water level','data',isteps,istation);
-    dpt=qpread(fid,1,'water depth','data',isteps,istation);
-    wl00.Val(dpt.Val<0.01)=0.0;
-
-    for k=1:length(s.wl.m)
-        for i=1:4
-            m=s.wl.mm(k,i);
-            n=s.wl.nn(k,i);
-            if m>0
-                ii= mused==m&nused==n;
-                wl0(:,i)=squeeze(wl00.Val(:,ii));
-            else
-                wl0(:,i)=zeros(nt,1);
-            end
-        end
-        wl{k}=wl0*squeeze(s.wl.w(k,:)');
-    end
-
-    clear wl00 wl0
-    
-    % velocities
-
-    if kmax==1
-        vel00=qpread(fid,1,'depth averaged velocity','griddata',isteps,istation);
-        vel00.Z=zeros(size(vel00.XComp));
-    else
-        vel00=qpread(fid,1,'horizontal velocity','griddata',isteps,istation);
-    end
-    
-    err=0;
-    for k=1:length(istation)
-        if isnan(nanmax(nanmax(squeeze(vel00.XComp(:,k,:)),1)))
-            disp(['Only NaNs found for support point (' num2str(mused(k)) ',' num2str(nused(k)) ')']);
-            err=1;
-        end
-    end
-    if err
-        error('Boundary generation stopped');
-    end
-
-    u0=zeros(nt,kmax,4);
-    v0=zeros(nt,kmax,4);
-    z0=zeros(nt,kmax,4);
-
-    
-    for k=1:length(s.vel.m)
-        u{k}=zeros(nt,kmax,length(s.vel.m));
-        v{k}=u{k};
-        z{k}=u{k};
-        w=squeeze(s.vel.w(k,:)');
-        for i=1:4
-            m=s.vel.mm(k,i);
-            n=s.vel.nn(k,i);
-            if m>0
-                ii=find(mused==m&nused==n);
-                u0(:,:,i)=squeeze(vel00.XComp(:,ii,:));
-                v0(:,:,i)=squeeze(vel00.YComp(:,ii,:));
-                z0(:,:,i)=squeeze(vel00.Z(:,ii,:));
-            else
-                u0(:,:,i)=zeros(nt,kmax,1);
-                v0(:,:,i)=zeros(nt,kmax,1);
-                z0(:,:,i)=zeros(nt,kmax,1);
-            end
-            u0(:,:,i)=u0(:,:,i)*w(i);
-            v0(:,:,i)=v0(:,:,i)*w(i);
-            z0(:,:,i)=z0(:,:,i)*w(i);
-        end
-        u{k}=sum(u0,3);
-        v{k}=sum(v0,3);
-        z{k}=sum(z0,3);
-    end
-    clear u0 v0 z0 w vel00
-end
-
-%% Constituents
-
-namc=vs_get('his-const','NAMCON');
-icn=0;
-for ic=1:size(namc,1)
-    switch lower(deblank(namc(ic,:)))
-        case{'turbulent energy','energy dissipation'}
-        otherwise
-            icn=icn+1;
-            nest.namcon{icn}=deblank(namc(ic,:));
-    end
-end
-
-switch lower(opt)
-    case{'transport','both'}
+%         % Read bed levels
+%         [z,dps]=readData(fid,'bedlevel',1,istation,overallmodeltype,kmax,layertype,zbot,ztop);
+%         for k=1:length(nestadmin)
+%             bedlevel(k)=computeMean(nestadmin(k),'wl',z,dps,stationnames,kmax);
+%         end
         
-        for ic=1:length(nest.namcon)
-            
-            par=nest.namcon{ic};
-            
-            % Salinity
-            %    if Flow.salinity.include
+layertype='sigma';
+zbot=0;
+ztop=0;
 
-
-            if ic==1
-                sal00=qpread(fid,1,par,'griddata',isteps,istation);
-            else
-                sal00=qpread(fid,1,par,'data',isteps,istation);
-            end
-            
-            sal0=zeros(nt,kmax,4);
-            sal0(sal0==0)=NaN;
-            
-            % Loop past every support point
-            for k=1:length(s.wl.m)
-                
-                sal{k}=zeros(nt,kmax);
-                sal{k}(sal{k}==0)=NaN;
-                if ic==1
-                    z{k}=sal{k};
-                end
-                
-                % Loop past surrounding points
-                for i=1:4
-                    m=s.wl.mm(k,i);
-                    n=s.wl.nn(k,i);
-                    if m>0
-                        ii= find(mused==m&nused==n,1);
-                        sal0(:,:,i)=squeeze(sal00.Val(:,ii,:));
-                        if ic==1
-                            z0(:,:,i)=squeeze(sal00.Z(:,ii,:));
-                        end
-                    else
-                        sal0(:,:,i)=zeros(nt,kmax,1);
-                        if ic==1
-                            z0(:,:,i)=zeros(nt,kmax,1);
-                        end
-                    end
-                end
-                
-                % Apply weighting factors
-                w=zeros(size(sal0));
-                w0=squeeze(s.wl.w(k,:)');
-                for i=1:4
-                    w(:,:,i)=w0(i);
-                end
-                w(isnan(sal0))=NaN;
-                wmult=1./nansum(w,3);
-                for i=1:4
-                    w(:,:,i)=w(:,:,i).*wmult;
-                end
-                sal{k}=nansum(w.*sal0,3);
-                if ic==1
-                    z{k}=nansum(w.*z0,3);
-                end
-                
-            end
-            
-            nest.constituent(ic).data=sal;
-
-            clear sal0 sal00 z0 salw zw w w0 wsum wmult sal
-            
+% Read water levels
+        [z,wl]=readData(fid,'waterlevel',isteps,istation,overallmodeltype,kmax);
+        for k=1:length(nestadmin)
+            nestdata(k).waterlevel=computeMean(nestadmin(k),'wl',stationnames,1,wl);
         end
+        
+        % Read velocities
+        [z,u,v]=readData(fid,'velocity',isteps,istation,overallmodeltype,kmax);
+        for k=1:length(nestadmin)
+            nestdata(k).z  = computeMean(nestadmin(k),'vel',stationnames,kmax,z);
+            nestdata(k).u  = computeMean(nestadmin(k),'vel',stationnames,kmax,u);
+            nestdata(k).v  = computeMean(nestadmin(k),'vel',stationnames,kmax,v);
+        end
+        
 end
 
-nest.t=times;
-nest.dps=dps;
-nest.wl=wl;
-nest.u=u;
-nest.v=v;
-nest.z=z;
+% %% Constituents
+% 
+% namc=vs_get('his-const','NAMCON');
+% icn=0;
+% for ic=1:size(namc,1)
+%     switch lower(deblank(namc(ic,:)))
+%         case{'turbulent energy','energy dissipation'}
+%         otherwise
+%             icn=icn+1;
+%             nest.namcon{icn}=deblank(namc(ic,:));
+%     end
+% end
+% 
+% switch lower(opt)
+%     case{'transport','both'}
+%         
+%         for ic=1:length(nest.namcon)
+%             
+%             par=nest.namcon{ic};
+%             
+%             % Salinity
+%             %    if Flow.salinity.include
+%             
+%             
+%             if ic==1
+%                 sal00=qpread(fid,1,par,'griddata',isteps,istation);
+%             else
+%                 sal00=qpread(fid,1,par,'data',isteps,istation);
+%             end
+%             
+%             sal0=zeros(nt,kmax,4);
+%             sal0(sal0==0)=NaN;
+%             
+%             % Loop past every support point
+%             for k=1:length(s.wl.name)
+%                 
+%                 sal{k}=zeros(nt,kmax);
+%                 sal{k}(sal{k}==0)=NaN;
+%                 if ic==1
+%                     z{k}=sal{k};
+%                 end
+%                 
+%                 % Loop past surrounding points
+%                 for i=1:4
+%                     m=s.wl.mm(k,i);
+%                     n=s.wl.nn(k,i);
+%                     if m>0
+%                         ii= find(mused==m&nused==n,1);
+%                         sal0(:,:,i)=squeeze(sal00.Val(:,ii,:));
+%                         if ic==1
+%                             z0(:,:,i)=squeeze(sal00.Z(:,ii,:));
+%                         end
+%                     else
+%                         sal0(:,:,i)=zeros(nt,kmax,1);
+%                         if ic==1
+%                             z0(:,:,i)=zeros(nt,kmax,1);
+%                         end
+%                     end
+%                 end
+%                 
+%                 % Apply weighting factors
+%                 w=zeros(size(sal0));
+%                 w0=squeeze(s.wl.w(k,:)');
+%                 for i=1:4
+%                     w(:,:,i)=w0(i);
+%                 end
+%                 w(isnan(sal0))=NaN;
+%                 wmult=1./nansum(w,3);
+%                 for i=1:4
+%                     w(:,:,i)=w(:,:,i).*wmult;
+%                 end
+%                 sal{k}=nansum(w.*sal0,3);
+%                 if ic==1
+%                     z{k}=nansum(w.*z0,3);
+%                 end
+%                 
+%             end
+%             
+%             nest.constituent(ic).data=sal;
+%             
+%             clear sal0 sal00 z0 salw zw w w0 wsum wmult sal
+%             
+%         end
+% end
+% 
+% nest.t=times;
+% nest.dps=dps;
+% nest.wl=wl;
+% nest.u=u;
+% nest.v=v;
+% nest.z=z;
 
 
 %%
@@ -499,6 +475,7 @@ for i=1:length(openBoundaries)
     
     switch lower(bnd.type)
         case{'z','r','x'}
+            
             % Water levels
             % A
             m=bnd.M1;
@@ -515,7 +492,7 @@ for i=1:length(openBoundaries)
             dps(2)=nest.dps(j);
             
             wl=wl+zcor;
-
+            
     end
     
     switch lower(bnd.type)
@@ -540,7 +517,7 @@ for i=1:length(openBoundaries)
             
             u(isnan(u))=0;
             v(isnan(v))=0;
-
+            
             for it=1:length(nest.t)
                 tua=squeeze(u(it,:,1))';
                 tub=squeeze(u(it,:,2))';
@@ -560,7 +537,7 @@ for i=1:length(openBoundaries)
             dp(2)=-openBoundaries(i).depth(2);
             
             if vertGrid.KMax>1
-
+                
                 % Now interpolate over water column
                 
                 if strcmpi(vertGrid.layerType,'z')
@@ -586,8 +563,8 @@ for i=1:length(openBoundaries)
                     if z0(end)>z0(1)
                         imin=find(z0>z0(1),   1, 'first')-1;
                         imax=find(z0<z0(end), 1, 'last' )+1;
-%                         imin=find(z0>z0(1), 1 );
-%                         imax=find(z0<z0(end), 1, 'last' );
+                        %                         imin=find(z0>z0(1), 1 );
+                        %                         imax=find(z0<z0(end), 1, 'last' );
                     else
                         imin=find(z0<=z0(1), 1 );
                         imax=find(z0>=z0(end), 1, 'last' );
@@ -618,8 +595,8 @@ for i=1:length(openBoundaries)
                     if z0(end)>z0(1)
                         imin=find(z0>z0(1),   1, 'first')-1;
                         imax=find(z0<z0(end), 1, 'last' )+1;
-%                         imin=find(z0>z0(1), 1 );
-%                         imax=find(z0<z0(end), 1, 'last' );
+                        %                         imin=find(z0>z0(1), 1 );
+                        %                         imax=find(z0<z0(end), 1, 'last' );
                     else
                         imin=find(z0<=z0(1), 1 );
                         imax=find(z0>=z0(end), 1, 'last' );
@@ -650,7 +627,7 @@ for i=1:length(openBoundaries)
     openBoundaries(i).timeSeriesB=[];
     openBoundaries(i).timeSeriesAV=[];
     openBoundaries(i).timeSeriesBV=[];
-
+    
     switch lower(bnd.type)
         case{'z'}
             openBoundaries(i).timeSeriesT=nest.t;
@@ -718,7 +695,7 @@ for i=1:length(openBoundaries)
                 openBoundaries(i).profile='3d-profile';
         end
     end
-
+    
 end
 
 %% And now do the Neumann boundaries (this only works correctly in case of ONE water
@@ -757,7 +734,7 @@ if nbndneu>0 && nbndwl==1
     for i=1:nbndneu
         openBoundaries(ibndneu(i)).timeSeriesT=openBoundaries(ibndwl(1)).timeSeriesT;
         openBoundaries(ibndneu(i)).timeSeriesA=wlgrad;
-        openBoundaries(ibndneu(i)).timeSeriesB=wlgrad;        
+        openBoundaries(ibndneu(i)).timeSeriesB=wlgrad;
     end
 end
 
@@ -767,16 +744,16 @@ function openBoundaries=nesthd2_transport(openBoundaries,vertGrid,s,nest)
 for i=1:length(openBoundaries)
     
     disp(['   Boundary ' openBoundaries(i).name ' - ' num2str(i) ' of ' num2str(length(openBoundaries))]);
-
+    
     namcon=nest.namcon;
-
+    
     nsed=0;
     ntrac=0;
     
     bnd=openBoundaries(i);
     
     for j=1:length(namcon)
-        nm=lower(namcon{j});       
+        nm=lower(namcon{j});
         nm=nm(1:min(8,length(nm)));
         switch nm
             case{'salinity'}
@@ -810,7 +787,7 @@ for i=1:length(openBoundaries)
                 openBoundaries(i).tracer(ntrac).timeSeriesB=bnd.data.timeSeriesB;
                 openBoundaries(i).tracer(ntrac).profile=bnd.data.profile;
         end
-            
+        
     end
     
 end
@@ -857,7 +834,7 @@ for it=1:length(nest.t)
         % A
         z0=squeeze(z(it,:,1));
         val0=squeeze(val(it,:,1));
-
+        
         imin=find(~isnan(z0)&~isnan(val0), 1 );
         imax=find(~isnan(z0)&~isnan(val0), 1, 'last' );
         z0=z0(imin:imax);
@@ -869,7 +846,7 @@ for it=1:length(nest.t)
             z0=z0(1:imax-1);
             val0=val0(1:imax-1);
         end
-
+        
         if isempty(imin)
             error(['Boundary ' bnd.name ' - end A contains only NaNs']);
         end
@@ -945,7 +922,7 @@ for it=1:length(nest.t)
             z0=[12000 z0 -12000];
         end
         val0=[val0(1) val0 val0(end)];
-
+        
         val1(it,:,1)=interp1(z0,val0,squeeze(-dplayer(1,:)));
         
         % B
@@ -980,4 +957,90 @@ if vertGrid.KMax>1
     bnd.data.profile='3d-profile';
 else
     bnd.data.profile='uniform';
+end
+
+%%
+function varargout=readData(fid,par,isteps,istation,overallmodel,kmax)
+
+switch lower(overallmodel)
+    case{'delft3dflow'}
+        
+        % Determine KMAX
+        
+        switch par
+
+            case{'bedlevel'}
+                % Read water levels
+                v=qpread(fid,1,'bed level','data',isteps,istation);
+                varargout{1}=0;
+                varargout{2}=squeeze(v.Val);
+
+            case{'waterlevel'}
+                % Read water levels
+                v=qpread(fid,1,'water level','data',isteps,istation);
+                dpt=qpread(fid,1,'water depth','data',isteps,istation);
+                v.Val(dpt.Val<0.01)=0.0;
+                varargout{1}=0;
+                varargout{2}=squeeze(v.Val);
+                
+            case{'velocity'}
+                % Read velocities
+                if kmax==1
+                    v=qpread(fid,1,'depth averaged velocity','griddata',isteps,istation);
+                    v.Z=zeros(size(v.XComp));
+                else
+                    v=qpread(fid,1,'horizontal velocity','griddata',isteps,istation);
+                end
+                varargout{1}=squeeze(v.Z);
+                varargout{2}=squeeze(v.XComp);
+                varargout{3}=squeeze(v.YComp);
+                varargout{4}=squeeze(v.XComp);
+                varargout{5}=squeeze(v.YComp);
+                
+        end
+        
+end
+
+%%
+function vout=computeMean(nst,fld,stationnames,kmax,v)
+
+w4=[0 0 0 0];
+v4=zeros(size(v,1),4);
+
+for ip=1:4
+    istat=strmatch(nst.(fld)(ip).name,stationnames,'exact');
+    if ~isempty(istat)
+        if kmax==1
+            v4(:,ip)=squeeze(v(:,istat));
+            w4(ip)=nst.(fld)(ip).w;
+        else
+            v4(:,ip,:)=squeeze(v(:,istat,:));
+            w4(ip)=nst.(fld)(ip).w;
+        end
+    else
+        error(['Error! Station ' nst.(fld)(ip).name ' not found on history file!']);
+    end
+end
+
+if kmax==1
+    vout=v4*w4';
+else
+    for k=1:kmax
+        vout(:,k)=v4(:,:,kmax)*w4';
+    end
+end
+            
+clear u0 v0 z0 w vel00
+
+%%
+function [allstations,times,kmax,fid]=readOverallModelData(hisfile,overallmodeltype)
+% Reads stations, times, kmax from overall model
+
+switch lower(overallmodeltype)
+    case{'delft3dflow'}
+        fid=qpfopen(hisfile);
+        allstations = qpread(fid,1,'water level','stations');
+        times       = qpread(fid,1,'water level','times');
+        vs_use(hisfile,'quiet');
+        kmax=vs_get('his-const','KMAX','quiet');
 end
