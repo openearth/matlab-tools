@@ -31,10 +31,16 @@
       <element>Nesting.delft3dwave.nest2.xml</element>
     </tab>
     <tab>
-      <tabstring>Nesting</tabstring>
-      <callback>ddb_dummyTabCallback</callback>
+      <tabstring>Nesting - 1</tabstring>
+      <callback>ddb_NestingToolbox_DFlowFM_nest1</callback>
       <formodel>dflowfm</formodel>
-      <element>Nesting.dflowfm.xml</element>
+      <element>Nesting.dflowfm.nesthd1.xml</element>
+    </tab>
+    <tab>
+      <tabstring>Nesting - 2</tabstring>
+      <callback>ddb_NestingToolbox_DFlowFM_nest2</callback>
+      <formodel>dflowfm</formodel>
+      <element>Nesting.dflowfm.nesthd2.xml</element>
     </tab>
   </element>
 </root>
