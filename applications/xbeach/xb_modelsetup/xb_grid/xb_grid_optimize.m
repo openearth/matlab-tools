@@ -252,6 +252,12 @@ else
     
     % rotate dummy grid to world coordinates to allow for use of interp2
     [x_d_w y_d_w] = xb_grid_rotate(x_d, y_d, -alpha, 'origin', [xori yori]);
+    
+    if max(max(diff(x_d_w,1,2))) == 0 && max(max(diff(y_d_w,1,1))) == 0
+        x_d_w   = x_d_w';
+        y_d_w   = y_d_w';
+    end
+    
     try
         z_d = interp2(x_w', y_w', z_w', x_d_w, y_d_w);
         % use other interpolation method if necessary
@@ -329,6 +335,11 @@ else
 
     % rotate xbeach grid to world coordinates
     [x_xb_w y_xb_w] = xb_grid_rotate(x_xb, y_xb, -alpha, 'origin', [xori yori]);
+    
+    if max(max(diff(x_xb_w,1,2))) == 0 && max(max(diff(x_xb_w,1,1))) == 0
+        x_xb_w  = x_xb_w';
+        y_xb_w  = y_xb_w';
+    end
     
     xb_verbose(1,'Rotate combined grid to world coordinates');
 
@@ -453,6 +464,12 @@ if OPT.world_coordinates
     alpha = 0;
     xori = 0;
     yori = 0;
+end
+
+if max(max(diff(xgrid,1,2))) == 0 && max(max(diff(ygrid,1,1))) == 0
+    xgrid   = xgrid';
+    ygrid   = ygrid';
+    zgrid   = zgrid';
 end
 
 %% output
