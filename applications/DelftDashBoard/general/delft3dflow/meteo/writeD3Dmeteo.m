@@ -84,6 +84,7 @@ nrows=length(s.y);
 % s.(par)(isnan(s.(par)))=-999;
 
 fid=fopen(fname,'wt');
+fprintf(fid,'%s\n','### START OF HEADER');
 fprintf(fid,'%s\n','### All text on a line behind the first # is parsed as commentary');
 fprintf(fid,'%s\n','### Additional commments');
 fprintf(fid,'%s\n',['FileVersion      =    ' vsn '                                               # Version of meteo input file, to check if the newest file format is used']);
