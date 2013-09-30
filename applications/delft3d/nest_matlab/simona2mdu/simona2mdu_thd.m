@@ -63,6 +63,7 @@ for idry = 1: length(m)
     end
 end
 
+clear m n
 % Fill the line struct for thin dams
 
 dams = MNthd.DATA;

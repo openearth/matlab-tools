@@ -57,7 +57,7 @@ simona2mdf_message(Gen_inf,'Logo',logo,'n_sec',5,'Window','SIMONA2MDU Message','
 
 %% Convert the Simona siminp file to a temporary mdf file
 
-simona2mdf (filwaq,[name_mdf '.mdf']);
+%simona2mdf (filwaq,[name_mdf '.mdf']);
 
 %% Start with creating empty mdu template
 
@@ -76,7 +76,9 @@ simona2mdu_grd2net([path_mdf filesep mdf.filcco],[path_mdf filesep mdf.fildep],n
 mdu.geometry.NetFile = [name_mdu '_net.nc'];
 mdu.geometry.NetFile = simona2mdf_rmpath(mdu.geometry.NetFile);
 
-%% Generate unstruc additional files
+%% Generate unstruc additional files and fill the mdu structure
+simona2mdf_message('Generating UNSTRUC Area          information','Logo',logo,'Window','SIMONA2MDU Message');
+mdu = simona2mdu_area   (mdf,mdu,name_mdu);
 
 simona2mdf_message('Generating UNSTRUC Thin Dam      information','Logo',logo,'Window','SIMONA2MDU Message');
 mdu = simona2mdu_thd    (mdf,mdu,name_mdu);
@@ -84,13 +86,16 @@ mdu = simona2mdu_thd    (mdf,mdu,name_mdu);
 simona2mdf_message('Generating UNSTRUC PROCES        information','Logo',logo,'Window','SIMONA2MDU Message');
 mdu = simona2mdu_proces (mdf,mdu,name_mdu);
 
+simona2mdf_message('Generating UNSTRUC TIMES         information','Logo',logo,'Window','SIMONA2MDU Message');
+mdu = simona2mdu_times    (mdf,mdu,name_mdu);
+
 simona2mdf_message('Generating UNSTRUC STATION       information','Logo',logo,'Window','SIMONA2MDU Message');
 mdu = simona2mdu_obs      (mdf,mdu,name_mdu);
 
 simona2mdf_message('Generating UNSTRUC CROSS-SECTION information','Logo',logo,'Window','SIMONA2MDU Message');
 mdu = simona2mdu_crs      (mdf,mdu,name_mdu);
 
-simona2mdf_message('Generating UNSTUC Boundaty definition       ','Logo',logo,'Window','SIMONA2MDU Message');
+simona2mdf_message('Generating UNSTRUC Boundary definition       ','Logo',logo,'Window','SIMONA2MDU Message');
 simona2mdu_bnd2pli([path_mdf filesep mdf.filcco],[path_mdf filesep mdf.filbnd],name_mdu);
 if mdu.physics.Salinity    ; % Salinity, write _sal pli files
     simona2mdu_bnd2pli([path_mdf filesep mdf.filcco],[path_mdf filesep mdf.filbnd],name_mdu,'Salinity',true);
@@ -100,5 +105,5 @@ end
 
 unstruc_io_mdu('write',[name_mdu '.mdu'],mdu);
 
-simona2mdf_message('','Window','SIMONA2MDU Message','Close',true);
+simona2mdf_message('','Window','SIMONA2MDU Message','Close',true,'n_sec',0.01);
 
