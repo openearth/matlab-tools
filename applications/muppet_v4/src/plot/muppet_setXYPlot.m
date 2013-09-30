@@ -9,7 +9,7 @@ switch plt.xscale
 
     case{'linear'}
         
-        if isempty(plt.xticklabels)
+        if isempty(plt.xtcklab)
         
             set(gca,'Xlim',[plt.xmin plt.xmax]);
             if plt.xtick>-900.0
@@ -42,17 +42,23 @@ switch plt.xscale
             end
         
         else
-            
+
+            % Labels are given. Histogram.
+
             set(gca,'Xlim',[plt.xmin-0.5 plt.xmax+0.5]);
             if plt.xtick>-900.0
-                
-                xticks=plt.xmin:plt.xmax;
-                set(gca,'xtick',xticks);
 
-                for i=1:(plt.xmax-plt.xmin+1);
-                    xlab{i}=plt.xticklabels{i+plt.xmin-1};
-                end
-                xticklabel_rotate([],315,xlab);
+                xticks=1:length(plt.xtcklab);
+                set(gca,'xtick',xticks);
+                xticklabel_rotate([],315,plt.xtcklab);
+                
+%                 xticks=plt.xmin:plt.xmax;
+%                 set(gca,'xtick',xticks);
+% 
+%                 for i=1:(plt.xmax-plt.xmin+1);
+%                     xlab{i}=plt.xtcklab{i+plt.xmin-1};
+%                 end
+%                 xticklabel_rotate([],315,xlab);
             else
                 tick(gca,'x','none');
             end

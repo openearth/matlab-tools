@@ -23,7 +23,7 @@ for k=1:nodat
             nbar=nbar+1;
             plt.datasets(k).dataset.barnr=nbar;
             bary(:,nbar)=handles.datasets(ii).dataset.y;
-            if strcmpi(handles.datasets(ii).dataset.type,'bar')
+            if strcmpi(handles.datasets(ii).dataset.type,'histogram')
                 plt.xtcklab=handles.datasets(ii).dataset.xticklabel;
             else
                 plt.xtcklab=[];

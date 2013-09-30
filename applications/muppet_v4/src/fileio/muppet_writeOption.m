@@ -31,15 +31,9 @@ if isfield(info,'check')
     else
         checkfor='all';
     end
-    switch checkfor
-        case{'all'}
-            iok=1;
-        case{'none'}
-            iok=0;
-        case{'any'}
-    end
     % Run checks
     for icheck=1:length(info.check)
+        iok=1;
         if isfield(info.check(icheck).check,'variable')
             % Take variable
             checkvariable=info.check(icheck).check.variable;
@@ -133,8 +127,35 @@ if isfield(info,'check')
                     end
             end
         end
+        
+        iokall(icheck)=iok;
+        
     end
+    
+    switch checkfor
+        case{'all'}
+            if sum(iokall)==length(iokall)
+                iok=1;
+            else
+                iok=0;
+            end
+        case{'none'}
+            if sum(iokall)==0
+                iok=1;
+            else
+                iok=0;
+            end
+            iok=0;
+        case{'any'}
+            if sum(iokall)>0
+                iok=1;
+            else
+                iok=0;
+            end
+    end    
+    
 end
+
 
 if ~iok
     return

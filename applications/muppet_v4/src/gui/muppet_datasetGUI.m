@@ -36,6 +36,8 @@ for ii=1:length(varargin)
                 refreshDatasetName;
             case{'selectquantity','selectucomponent','selectvcomponent'}
                 refreshDatasetName;                
+            case{'selecttidestation'}
+                selectTideStation(varargin{ii+1});
         end
     end
 end
@@ -415,6 +417,15 @@ switch opt
             dataset.stationnumber=dataset.previousstationnumber;
             dataset.station=dataset.stations{dataset.stationnumber};
         end
+end
+
+% Tidal components
+if isfield(dataset.parameters(dataset.activeparameter).parameter,'data')
+    if isempty(dataset.stationnumber)
+        dataset.tidalcomponentlist=dataset.parameters(dataset.activeparameter).parameter.data.station(dataset.previousstationnumber).component;
+    else
+        dataset.tidalcomponentlist=dataset.parameters(dataset.activeparameter).parameter.data.station(dataset.stationnumber).component;
+    end
 end
 
 gui_setUserData(dataset);

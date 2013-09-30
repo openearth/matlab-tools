@@ -24,7 +24,9 @@ if ~isempty(varargin)
     mupfile=varargin{1};
     curdir=pwd;
     pth=fileparts(mupfile);
-    cd(pth);
+    if ~isempty(pth)
+        cd(pth);
+    end
     [handles,ok]=muppet_newSession(handles,mupfile);
     muppet_exportFigure(handles,1,'export');
     cd(curdir);

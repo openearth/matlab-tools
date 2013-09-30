@@ -95,3 +95,9 @@ dataset.operation='Add';
 % Unstructured grids
 dataset.G=[];
 
+% Tide stations
+dataset.tidalcomponent='M2';
+dataset.tidalcomponentlist={''};
+dataset.tidalcomponentset='all';
+dataset.tidalparameter='amplitude';
+

@@ -125,7 +125,8 @@ end
 %%
 function dataset=import(dataset)
 
-fid=tekal('open',dataset.filename);
+%fid=tekal('open',dataset.filename);
+fid=dataset.fid;
 
 [timestep,istation,m,n,k]=muppet_findDataIndices(dataset);
 

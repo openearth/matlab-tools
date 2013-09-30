@@ -74,7 +74,7 @@ switch dataset.plane
         % map (top view)
         dataset.x=d.X;
         dataset.y=d.Y;
-        if isfield(d,'Units')
+        if isfield(d,'XUnits')
             switch d.XUnits
                 case{'deg'}
                     dataset.coordinatesystem.name='WGS 84';

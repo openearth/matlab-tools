@@ -7,10 +7,10 @@ nr=plt.datasets(id).dataset.number;
 data=handles.datasets(nr).dataset;
 opt=plt.datasets(id).dataset;
 
-if strcmpi(plt.contourtype,'limits')
+if ~plt.usecustomcontours
     col=plt.cmin:plt.cstep:plt.cmax;
 else
-    col=plt.contours;
+    col=plt.customcontours;
 end
 
 h = trisurfcorcen(data.G.tri,data.G.cor.x,data.G.cor.y,data.z(data.G.map3));
@@ -20,6 +20,7 @@ hold on;
 
 if opt.plotgrid
     dflowfm.plotNet(data.G,'cen',[],'cor',[]); 
+%    dflowfm.plotNet(data.G); 
 end
 
 clmap=muppet_getColors(handles.colormaps,plt.colormap,64);

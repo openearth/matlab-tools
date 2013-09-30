@@ -148,42 +148,61 @@ for j=i1:i2
 
     % NetCDF time series (should be fixed in qpread)
     if strcmpi(fid.qp_filetype,'netcdf')
-        if ~isempty(dataproperties(ii).Dimension)
-            if strcmpi(dataproperties(ii).Dimension{3},'locations')
-                stations=nc_varget(dataset.filename,'platform_name');
-                stations=stations';
-                for istat=1:size(stations,1)
-                    par.stations{istat}=deblank(stations(istat,:));
+        if isfield(dataproperties(ii),'Dimension')
+            if ~isempty(dataproperties(ii).Dimension)
+                if strcmpi(dataproperties(ii).Dimension{3},'locations')
+                    stations=nc_varget(dataset.filename,'platform_name');
+                    stations=stations';
+                    for istat=1:size(stations,1)
+                        par.stations{istat}=deblank(stations(istat,:));
+                    end
+                    par.size(2)=par.size(3);
+                    par.size(3)=0;
                 end
-                par.size(2)=par.size(3);
-                par.size(3)=0;
-            end
-            if strcmpi(dataproperties(ii).Dimension{3},'station')
-                stations=nc_varget(dataset.filename,'station_name');
-                for istat=1:size(stations,1)
-                    par.stations{istat}=deblank(stations(istat,:));
+                if strcmpi(dataproperties(ii).Dimension{3},'station')
+                    stations=nc_varget(dataset.filename,'station_name');
+                    for istat=1:size(stations,1)
+                        par.stations{istat}=deblank(stations(istat,:));
+                    end
+                    par.size(2)=par.size(3);
+                    par.size(3)=0;
                 end
-                par.size(2)=par.size(3);
-                par.size(3)=0;
             end
         end
     end
     
+%     % Unstructured grid
+%     if strcmpi(fid.qp_filetype,'netcdf')
+%         if ~isempty(dataproperties(ii).Dimension)
+%             if strcmpi(dataproperties(ii).Dimension{3},'nFlowElem')
+%                 % unstructured grid
+%                 par.dataproperties(ii).Loc='z';
+%                 par.unstructuredgrid=1;
+%             end
+%             if strcmpi(dataproperties(ii).Dimension{3},'nNetNode')
+%                 % unstructured grid
+%                 par.dataproperties(ii).Loc='d';
+%                 par.unstructuredgrid=1;
+%             end
+%         end
+%     end
+
     % Unstructured grid
     if strcmpi(fid.qp_filetype,'netcdf')
-        if ~isempty(dataproperties(ii).Dimension)
-            if strcmpi(dataproperties(ii).Dimension{3},'nFlowElem')
+        if ~isempty(dataproperties(ii).DimName)
+            if strcmpi(dataproperties(ii).DimName{3},'nFlowElem')
                 % unstructured grid
                 par.dataproperties(ii).Loc='z';
                 par.unstructuredgrid=1;
             end
-            if strcmpi(dataproperties(ii).Dimension{3},'nNetNode')
+            if strcmpi(dataproperties(ii).DimName{3},'nNetNode')
                 % unstructured grid
                 par.dataproperties(ii).Loc='d';
                 par.unstructuredgrid=1;
             end
         end
     end
+    
     
     if ~isempty(cs)            
         par.coordinatesystem=cs;
