@@ -72,6 +72,7 @@ classdef LineSearch < handle
         StartZ
         OriginZ
         DisablePoints
+        EnableBisaction
     end
     
     properties (Access = private)
@@ -182,7 +183,7 @@ classdef LineSearch < handle
                 this.FitPolynomial(un, limitState, randomVariables);
             end
                 
-            if ~this.SearchConverged
+            if ~this.SearchConverged && this.EnableBisaction
                 % if not converged durnig polynomial fit, call bisection
                 this.Bisection(un, limitState, randomVariables);
             end
@@ -396,6 +397,7 @@ classdef LineSearch < handle
             this.ApproximateUsingARS    = false;
             this.MaxIterationsBisection = 4;
             this.NrEvaluations          = 0;
+            this.EnableBisaction        = false;
         end
         
         %Check the coefficients of the polynomial fit
