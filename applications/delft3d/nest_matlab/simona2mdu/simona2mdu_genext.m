@@ -1,4 +1,4 @@
-function varargout = simona2mdu_genext(mdu,filmdu,varargin)
+function varargout = simona2mdu_genext(filmdu,varargin)
 
 % Simona2mdu_genext: writes the externul forcing file for unstruc
 
@@ -10,11 +10,14 @@ else
    OPT.Filcomments = '';
 end
 
+OPT.mdu     = [];
 OPT.Filbnd  = '';
+OPT.Filini  = '';
 OPT.Filrgh  = '';
 OPT.Filedy  = '';
 OPT.Filwnd  = '';
 OPT                   = setproperty(OPT,varargin);
+mdu         = OPT.mdu;
 
 [path_mdu,name_mdu,~] = fileparts(filmdu);
 
@@ -70,6 +73,12 @@ if ~isempty(OPT.Filbnd) || ~isempty(OPT.Filrgh) || ~isempty(OPT.Filedy) || ~isem
         end
     end
 
+    %% Write initial conditions for salinity
+
+    if ~isempty(OPT.Filini)
+
+    end
+
     %% write space varying roughness
     if ~isempty(OPT.Filrgh)
 
@@ -95,11 +104,12 @@ if ~isempty(OPT.Filbnd) || ~isempty(OPT.Filrgh) || ~isempty(OPT.Filedy) || ~isem
 
     %% Clean up mdu structure (if passed on) and set name of the external forcing file in the mdu structure
 
-    if isstruct(mdu)
+    if ~isempty(mdu)
         if isfield(mdu,'Filbnd') mdu = rmfield(mdu,'Filbnd');end
         if isfield(mdu,'Filrgh') mdu = rmfield(mdu,'Filrgh');end
         if isfield(mdu,'Filedy') mdu = rmfield(mdu,'Filedy');end
         if isfield(mdu,'Filwnd') mdu = rmfield(mdu,'Filwnd');end
+        if isfield(mdu,'Filini') mdu = rmfield(mdu,'Filini');end
         mdu.external_forcing.ExtForceFile = [name_mdu '.ext'];
         varargout{1} = mdu;
     end

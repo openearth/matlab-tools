@@ -89,12 +89,6 @@ mdu = simona2mdu_proces (mdf,mdu,name_mdu);
 simona2mdf_message('Generating UNSTRUC TIMES         information','Logo',logo,'Window','SIMONA2MDU Message');
 mdu = simona2mdu_times    (mdf,mdu,name_mdu);
 
-simona2mdf_message('Generating UNSTRUC STATION       information','Logo',logo,'Window','SIMONA2MDU Message');
-mdu = simona2mdu_obs      (mdf,mdu,name_mdu);
-
-simona2mdf_message('Generating UNSTRUC CROSS-SECTION information','Logo',logo,'Window','SIMONA2MDU Message');
-mdu = simona2mdu_crs      (mdf,mdu,name_mdu);
-
 simona2mdf_message('Generating UNSTRUC Boundary definition       ','Logo',logo,'Window','SIMONA2MDU Message');
 mdu.Filbnd = simona2mdu_bnd2pli([path_mdf filesep mdf.filcco],[path_mdf filesep mdf.filbnd],name_mdu);
 
@@ -103,13 +97,21 @@ if mdu.physics.Salinity    ; % Salinity, write _sal pli files
     mdu.Filbnd = [mdu.Filbnd tmp];
 end
 
-simona2mdf_message('Generating External forcing file             ','Logo',logo,'Window','SIMONA2MDU Message');
-mdu = simona2mdu_genext(mdu,name_mdu,'Filbnd',mdu.Filbnd);
 
+
+
+simona2mdf_message('Generating External forcing file            ','Logo',logo,'Window','SIMONA2MDU Message');
+mdu = simona2mdu_genext(name_mdu,'mdu',mdu,'Filbnd',mdu.Filbnd);
+
+simona2mdf_message('Generating UNSTRUC STATION       information','Logo',logo,'Window','SIMONA2MDU Message');
+mdu = simona2mdu_obs      (mdf,mdu,name_mdu);
+
+simona2mdf_message('Generating UNSTRUC CROSS-SECTION information','Logo',logo,'Window','SIMONA2MDU Message');
+mdu = simona2mdu_crs      (mdf,mdu,name_mdu);
 
 %% Finally,  write the mdu file and close everything
 
 unstruc_io_mdu('write',[name_mdu '.mdu'],mdu);
 
-simona2mdf_message('','Window','SIMONA2MDU Message','Close',true,'n_sec',0.01);
+simona2mdf_message('','Window','SIMONA2MDU Message','Close',true,'n_sec',0);
 
