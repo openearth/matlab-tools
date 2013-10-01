@@ -54,6 +54,8 @@ while ~feof(fid)
             csv{irow,icol} = line(index_comma(icol) + 1:index_comma(icol + 1) - 1);
             if ~isempty(str2num((csv{irow,icol})))
                 csv{irow,icol} = str2num(csv{irow,icol});
+            else
+                csv{irow,icol} = simona2mdu_replacechar(csv{irow,icol},'"',' ');
             end
         end
     end

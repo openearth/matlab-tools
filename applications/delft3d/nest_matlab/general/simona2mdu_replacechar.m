@@ -9,8 +9,11 @@ if iscell(string)
     %
     for icel = 1: length(string)
         index = strfind(string{icel},char_org);
-        for ichar = 1: length(index)
-            string{icel}(index(ichar):index(ichar)) = char_replace;
+        if ~isempty(index)
+            for ichar = 1: length(index)
+                string{icel}(index(ichar):index(ichar)) = char_replace;
+            end
+            string{icel} = strtrim(string{icel});
         end
     end
 else
@@ -18,8 +21,11 @@ else
     % Single string
     %
     index = strfind(string,char_org);
-    for ichar = 1: length(index)
-        string(index(ichar):index(ichar)) = char_replace;
+    if ~isempty(index)
+        for ichar = 1: length(index)
+            string(index(ichar):index(ichar)) = char_replace;
+        end
+        string = strtrim(string);
     end
 end
 

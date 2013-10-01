@@ -63,7 +63,7 @@ for ibnd = 1 : no_bnd
     % Fill LINE struct for sida A
     LINE(iline).DATA{irow,1} = xb(ibnd,1);
     LINE(iline).DATA{irow,2} = yb(ibnd,1);
-    string = sprintf('%20s %1s %1s ',D.DATA(ibnd).name,D.DATA(ibnd).bndtype,D.DATA(ibnd).datatype);
+    string = sprintf(' %1s %1s ',D.DATA(ibnd).bndtype,D.DATA(ibnd).datatype);
     if astronomical && ~OPT.Salinity string = [string D.DATA(ibnd).labelA];end
     LINE(iline).DATA{irow,3} = string;
 
@@ -71,7 +71,7 @@ for ibnd = 1 : no_bnd
     irow = irow + 1;
     LINE(iline).DATA{irow,1} = xb(ibnd,2);
     LINE(iline).DATA{irow,2} = yb(ibnd,2);
-    string = sprintf('%20s %1s %1s ',D.DATA(ibnd).name,D.DATA(ibnd).bndtype,D.DATA(ibnd).datatype);
+    string = sprintf(' %1s %1s ',D.DATA(ibnd).bndtype,D.DATA(ibnd).datatype);
     if astronomical && ~OPT.Salinity string = [string D.DATA(ibnd).labelB];end
     LINE(iline).DATA{irow,3} = string;
 
@@ -89,7 +89,6 @@ for ipol = 1: length(LINE)
     if ~OPT.Salinity
        LINE(ipol).Blckname=[name_pli '_' num2str(ipol,'%3.3i') '.pli'];
        unstruc_io_xydata ('write',[filpli '_' num2str(ipol,'%3.3i') '.pli'],LINE(ipol));
-       if nargout > 0 varargout{ipol} = LINE(ipol).Blckname; end
     else
        LINE(ipol).Blckname=[name_pli '_' num2str(ipol,'%3.3i') '_sal.pli'];
        unstruc_io_xydata ('write',[filpli '_' num2str(ipol,'%3.3i') '_sal.pli'],LINE(ipol));
@@ -99,7 +98,7 @@ for ipol = 1: length(LINE)
     % Fil varargout for later wriing of the file names to the external forcing file
     %
 
-    if nargout > 0 varargout{ipol} = LINE(ipol).Blckname; end
+    if nargout > 0 filext{ipol} = LINE(ipol).Blckname; end
 end
 
 % now, write all polylines (only for hydrodynamic bc)
@@ -107,4 +106,7 @@ end
 if ~OPT.Salinity
    unstruc_io_xydata ('write',[filpli '_all.pli'],LINE);
 end
+
+varargout = {filext};
+
 
