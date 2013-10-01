@@ -1,6 +1,6 @@
 function simona2mdu_check
 
-% check : performs a number of test conversions to check if ewverything went okay
+% check : performs a number of test conversions to check if everything went okay
 
 filwaq ={'d:\open_earth_test\matlab\applications\delft3d\nest_matlab\simona\simona-kustzuid-2004-v4\SIMONA\berekeningen\siminp-kzv4'};
 filmdu ={'d:\open_earth_test\matlab\applications\delft3d\nest_matlab\simona\simona-kustzuid-2004-v4\mdu\kzv4.mdu'};
@@ -16,6 +16,7 @@ for itest = 1 : length(filwaq)
 
     simona2mdu(filwaq{itest},filmdu{itest});
 
+    
     %
     % Generate the list of files to compare
     %

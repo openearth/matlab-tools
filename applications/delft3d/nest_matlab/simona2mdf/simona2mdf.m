@@ -121,8 +121,8 @@ mdf = simona2mdf_output   (S,mdf);
 
 %% Finally,  write the mdf file and close everything
 
-rmfield(mdf,'pathd3d'   );
-rmfield(mdf,'pathsimona');
+mdf = rmfield(mdf,'pathd3d'   );
+mdf = rmfield(mdf,'pathsimona');
 delft3d_io_mdf('write',filmdf,mdf,'stamp',false);
 
 simona2mdf_message('','Close',true);
