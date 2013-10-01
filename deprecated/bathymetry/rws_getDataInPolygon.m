@@ -129,7 +129,7 @@ if isempty(OPT.polygon)
     elseif jjj==3
        % load and plot a polygon
        [fileName, filePath] = uigetfile({'*.ldb','Delt3D landboundary file (*.ldb)'},'Pick a landboundary file');
-       [x,y]=landboundary_da('read',fullfile(filePath,fileName));
+       [x,y]=landboundary('read',fullfile(filePath,fileName));
        x = x';
        y = y';
     end
@@ -138,7 +138,7 @@ if isempty(OPT.polygon)
     if jjj==2
        [fileName, filePath] = uiputfile({'*.ldb','Delt3D landboundary file (*.ldb)'},'Specifiy a landboundary file',...
        ['polygon_',datestr(now)]);
-       landboundary_da('write',fullfile(filePath,fileName),x,y);
+       landboundary('write',fullfile(filePath,fileName),x,y);
     end
 
     % combine x and y in the variable polygon and close it

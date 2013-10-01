@@ -86,7 +86,7 @@ if isempty(OPT.polygon)
                                          '*.shp','Shape file (*.shp)';...
                                          '*.*'  ,'All Files (*.*)'},'Pick a file',[polygondir filesep '*.ldb']);
        if filterindex==1
-         [x,y]=landboundary_da('read',fullfile(filePath,fileName));
+         [x,y]=landboundary('read',fullfile(filePath,fileName));
        elseif filterindex==2
           x = nc_varget(fullfile(filePath,fileName),'x');
           y = nc_varget(fullfile(filePath,fileName),'y');
@@ -126,7 +126,7 @@ if isempty(OPT.polygon)
                                          
        if filterindex==1
        
-          landboundary_da('write',fullfile(filePath,fileName),x,y);
+          landboundary('write',fullfile(filePath,fileName),x,y);
           
        elseif filterindex==2
        

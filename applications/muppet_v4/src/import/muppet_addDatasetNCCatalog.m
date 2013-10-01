@@ -104,7 +104,7 @@ else
     [urls, x_ranges, y_ranges] = grid_orth_getMapInfoFromDataset(url);
 end
 
-pg = landboundary_da('read', dataset.polygonfile);
+pg = landboundary('read', dataset.polygonfile);
 
 [X, Y, Z, Ztime, OPT] = grid_orth_getDataInPolygon(...
     'polygon', pg,...
