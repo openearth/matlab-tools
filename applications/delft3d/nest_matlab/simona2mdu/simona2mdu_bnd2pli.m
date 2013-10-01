@@ -1,10 +1,10 @@
-function simona2mdu_bnd2pli(filgrd,filbnd,filpli,varargin)
+function varargout = simona2mdu_bnd2pli(filgrd,filbnd,filpli,varargin)
 
 % Simona2mdu_bnd2pli: genarates pli file for unstruc out of a D3D bnd file
 
 % initialisation
 OPT.Salinity          = false;
-OPT                   = setproperty(OPT,varargin); 
+OPT                   = setproperty(OPT,varargin);
 [path_pli,name_pli,~] = fileparts(filpli);
 
 % Read the grid: OET-style
@@ -12,7 +12,7 @@ G           = delft3d_io_grd('read',filgrd);
 xc          = G.cend.x';
 yc          = G.cend.y';
 mmax        = size(xc,1);
-nmax        = size(xc,2);  
+nmax        = size(xc,2);
 
 % Read the boundary file
 D           = delft3d_io_bnd('read',filbnd);
@@ -37,11 +37,11 @@ dir_old = 'n';
 if mbnd(1,1) == mbnd(1,2) dir_old = 'm'; end
 
 for ibnd = 1 : no_bnd
-    
+
     %
     % Change in orientation or jump of more than 1 cell ==> new polyline
     %
-    
+
     if mbnd(ibnd,1) == mbnd(ibnd,2)
         dir = 'm';
         diff = abs(mbnd(min(ibnd + 1,no_bnd),1) - mbnd(ibnd,2));
@@ -49,24 +49,24 @@ for ibnd = 1 : no_bnd
         dir = 'n';
         diff = abs(nbnd(min(ibnd + 1,no_bnd),1) - nbnd(ibnd,2));
     end
-    
+
     if ~strcmp(dir,dir_old) || diff > 1
         dir_old = dir;
         iline   = iline + 1;
         irow    = 1;
     end
-    
+
     % Astronomical boundary conditions?
     astronomical = false;
     if strcmpi(D.DATA(ibnd).datatype,'a') astronomical = true;end
-    
+
     % Fill LINE struct for sida A
     LINE(iline).DATA{irow,1} = xb(ibnd,1);
     LINE(iline).DATA{irow,2} = yb(ibnd,1);
     string = sprintf('%20s %1s %1s ',D.DATA(ibnd).name,D.DATA(ibnd).bndtype,D.DATA(ibnd).datatype);
     if astronomical && ~OPT.Salinity string = [string D.DATA(ibnd).labelA];end
     LINE(iline).DATA{irow,3} = string;
-    
+
     % Fill LINE struct for side B
     irow = irow + 1;
     LINE(iline).DATA{irow,1} = xb(ibnd,2);
@@ -74,25 +74,32 @@ for ibnd = 1 : no_bnd
     string = sprintf('%20s %1s %1s ',D.DATA(ibnd).name,D.DATA(ibnd).bndtype,D.DATA(ibnd).datatype);
     if astronomical && ~OPT.Salinity string = [string D.DATA(ibnd).labelB];end
     LINE(iline).DATA{irow,3} = string;
-        
+
     irow = irow + 1;
 end
 
 % Write the pli-files for the separate polygons
 
 for ipol = 1: length(LINE)
-    
+
     %
     % Blockname = name of the file
     %
-    
+
     if ~OPT.Salinity
        LINE(ipol).Blckname=[name_pli '_' num2str(ipol,'%3.3i') '.pli'];
        unstruc_io_xydata ('write',[filpli '_' num2str(ipol,'%3.3i') '.pli'],LINE(ipol));
+       if nargout > 0 varargout{ipol} = LINE(ipol).Blckname; end
     else
        LINE(ipol).Blckname=[name_pli '_' num2str(ipol,'%3.3i') '_sal.pli'];
        unstruc_io_xydata ('write',[filpli '_' num2str(ipol,'%3.3i') '_sal.pli'],LINE(ipol));
     end
+
+    %
+    % Fil varargout for later wriing of the file names to the external forcing file
+    %
+
+    if nargout > 0 varargout{ipol} = LINE(ipol).Blckname; end
 end
 
 % now, write all polylines (only for hydrodynamic bc)
