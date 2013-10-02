@@ -397,7 +397,6 @@ classdef LineSearch < handle
             this.ApproximateUsingARS    = false;
             this.MaxIterationsBisection = 4;
             this.NrEvaluations          = 0;
-            this.EnableBisection        = false;
         end
         
         %Check the coefficients of the polynomial fit
@@ -481,6 +480,7 @@ classdef LineSearch < handle
             this.NrEvaluations              = 0;
             this.OriginZ                    = [];
             this.DisablePoints              = false;
+            this.EnableBisection            = false;
         end
     end
 end
