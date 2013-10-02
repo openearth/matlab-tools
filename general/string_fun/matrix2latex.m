@@ -141,7 +141,8 @@ if ~isempty(OPT.collabel)
     OPT.hlines(end+1) = 1;
 end
 
-for icol = 1:size(xcell,2)
+rowlabeljustification = OPT.rowlabeljustification;
+for icol = 1:(size(xcell,2)-1)
     iicol = icol;
     if ~isempty(OPT.rowlabel); iicol = iicol-1; end;
     
@@ -149,7 +150,7 @@ for icol = 1:size(xcell,2)
         rowlabeljustification = [OPT.rowlabeljustification];
     end
     
-    rowlabeljustification = [OPT.rowlabeljustification OPT.rowjustification];
+    rowlabeljustification = [rowlabeljustification OPT.rowjustification];
 end
 
 texcell{end+1} = sprintf('%s', [' \begin{' OPT.environment '}{', rowlabeljustification, '}\hline\hline']);
