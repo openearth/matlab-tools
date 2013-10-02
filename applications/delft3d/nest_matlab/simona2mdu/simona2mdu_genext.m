@@ -14,7 +14,8 @@ OPT.mdu     = [];
 OPT.Filbnd  = '';
 OPT.Filini  = '';
 OPT.Filrgh  = '';
-OPT.Filedy  = '';
+OPT.Filvico = '';
+OPT.Fildico = '';
 OPT.Filwnd  = '';
 OPT                   = setproperty(OPT,varargin);
 mdu         = OPT.mdu;
@@ -22,7 +23,7 @@ mdu         = OPT.mdu;
 [path_mdu,name_mdu,~] = fileparts(filmdu);
 
 %% If external forcing is present
-if ~isempty(OPT.Filbnd) || ~isempty(OPT.Filrgh) || ~isempty(OPT.Filedy) || ~isempty(OPT.Filwnd)
+if ~isempty(OPT.Filbnd) || ~isempty(OPT.Filrgh) || ~isempty(OPT.Filvico) || ~isempty(OPT.Fildico) || ~isempty(OPT.Filwnd)
     % Write the header (comment lines)
     if ~isempty(OPT.Filcomments)
         unstruc_io_extfile('write',[filmdu '.ext'],'Filcomments',OPT.Filcomments);
@@ -61,7 +62,7 @@ if ~isempty(OPT.Filbnd)
             end
         end
         unstruc_io_extfile('write',[filmdu '.ext'],'Quantity',type,'Filename',file,'Filetype',9, ...
-                                                     'Method'  ,3   ,'Operand' ,'O' ); 
+                                                     'Method'  ,3   ,'Operand' ,'O' );
     end
 end
 
@@ -69,17 +70,25 @@ end
 
 if ~isempty(OPT.Filini)
     unstruc_io_extfile('write',[filmdu '.ext'],'Quantity','initialsalinity','Filename',mdu.Filini,'Filetype',7, ...
-                                                'Method'  ,4                ,'Operand' ,'O' ); 
+                                                'Method'  ,4                ,'Operand' ,'O' );
 end
 
 %% write space varying roughness
 if ~isempty(OPT.Filrgh)
     unstruc_io_extfile('write',[filmdu '.ext'],'Quantity','frictioncoefficient','Filename',mdu.Filrgh,'Filetype',7, ...
-                                                'Method'  ,4                   ,'Operand' ,'O' ); 
+                                                'Method'  ,4                   ,'Operand' ,'O' );
 end
 
 %% write space varying viscosity
-if ~isempty(OPT.Filedy)
+if ~isempty(OPT.Filvico)
+    unstruc_io_extfile('write',[filmdu '.ext'],'Quantity','horizontaleddyviscositycoefficient','Filename',mdu.Filvico,'Filetype',7, ...
+                                               'Method'  ,4                                   ,'Operand' ,'O' );
+end
+
+%% write space varying diffusivity
+if ~isempty(OPT.Fildico)
+    unstruc_io_extfile('write',[filmdu '.ext'],'Quantity','horizontaleddydiffusivitycoefficient','Filename',mdu.Filvico,'Filetype',7, ...
+                                               'Method'  ,4                                     ,'Operand' ,'O' );
 end
 
 %% write wind
@@ -89,13 +98,12 @@ end
 %% Clean up mdu structure (if passed on) and set name of the external forcing file in the mdu structure
 
 if ~isempty(mdu)
-    if isfield(mdu,'Filbnd') mdu = rmfield(mdu,'Filbnd');end
-    if isfield(mdu,'Filrgh') mdu = rmfield(mdu,'Filrgh');end
-    if isfield(mdu,'Filedy') mdu = rmfield(mdu,'Filedy');end
-    if isfield(mdu,'Filwnd') mdu = rmfield(mdu,'Filwnd');end
-    if isfield(mdu,'Filini') mdu = rmfield(mdu,'Filini');end
+    if isfield(mdu,'Filbnd' ) mdu = rmfield(mdu,'Filbnd');end
+    if isfield(mdu,'Filini' ) mdu = rmfield(mdu,'Filini');end
+    if isfield(mdu,'Filrgh' ) mdu = rmfield(mdu,'Filrgh');end
+    if isfield(mdu,'Filvico') mdu = rmfield(mdu,'Filedy');end
+    if isfield(mdu,'Fildico') mdu = rmfield(mdu,'Filedy');end
+    if isfield(mdu,'Filwnd' ) mdu = rmfield(mdu,'Filwnd');end
     mdu.external_forcing.ExtForceFile = [name_mdu '.ext'];
     varargout{1} = mdu;
 end
-
-

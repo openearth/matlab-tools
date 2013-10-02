@@ -4,6 +4,9 @@ function simon2mdu (varargin)
 %            first the siminp file is converted into a D3D input file (mdf-file)
 %            secondly the mdf file is converted into an mdu file and belonging attribute files
 %            finally the mdf file is removed
+%
+%temporary
+setenv('nesthd_path','d:\open_earth\matlab\applications\delft3d\nest_matlab\');
 
 Gen_inf    = {'This tool converts a SIMONA siminp file into an Unstruc mdu file'                                   ;
               'with belonging attribute files'                                                                     ;
@@ -102,8 +105,12 @@ mdu = simona2mdu_initial  (mdf,mdu,name_mdu);
 simona2mdf_message('Generating UNSTRUC Friction          information','Logo',logo,'Window','SIMONA2MDU Message');
 mdu = simona2mdu_friction (mdf,mdu,name_mdu);
 
+simona2mdf_message('Generating UNSTRUC Viscosity/diff.   information','Logo',logo,'Window','SIMONA2MDU Message');
+mdu = simona2mdu_viscosity(mdf,mdu,name_mdu);
+
 simona2mdf_message('Generating External forcing file                ','Logo',logo,'Window','SIMONA2MDU Message');
-mdu = simona2mdu_genext   (name_mdu,'mdu',mdu,'Filbnd',mdu.Filbnd,'Filini',mdu.Filini,'Filrgh',mdu.Filrgh);
+mdu = simona2mdu_genext   (name_mdu,'mdu',mdu,'Filbnd' ,mdu.Filbnd ,'Filini' ,mdu.Filini ,'Filrgh',mdu.Filrgh  ,  ...
+                                              'Filvico',mdu.Filvico,'Fildico',mdu.Fildico                      );
 
 simona2mdf_message('Generating UNSTRUC STATION           information','Logo',logo,'Window','SIMONA2MDU Message');
 mdu = simona2mdu_obs      (mdf,mdu,name_mdu);

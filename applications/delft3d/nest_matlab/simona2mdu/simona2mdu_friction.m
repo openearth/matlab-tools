@@ -1,4 +1,4 @@
-function mdu = simona2mdu_inital(mdf,mdu, name_mdu)
+function mdu = simona2mdu_friction(mdf,mdu, name_mdu)
 
 % siminp2mdu_friction: Writes friction information to unstruc input files
 
@@ -26,8 +26,8 @@ if ~isempty(filrgh)
     ycoor_u(1:mmax,1:nmax)   = NaN;
     xcoor_v(1:mmax,1:nmax)   = NaN;
     ycoor_v(1:mmax,1:nmax)   = NaN;
-    
-    % Determine coordinates velocity points 
+
+    % Determine coordinates velocity points
     % (delft3d_io_grid does not give the right indixes)
     for m = 2 : mmax - 1
         for n = 2: nmax - 1
@@ -37,7 +37,7 @@ if ~isempty(filrgh)
             ycoor_v(m,n) = 0.5*(ycoor(m-1,n  ) + ycoor(m  ,n  ));
         end
     end
-    
+
     % read the roughness values
     rgh        = wldep('read',filrgh,[mmax nmax],'multiple');
 
