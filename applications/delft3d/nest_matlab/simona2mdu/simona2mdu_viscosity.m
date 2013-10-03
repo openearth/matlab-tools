@@ -31,7 +31,7 @@ if ~isempty(filedy)
     for m = 1: mmax - 1
         for n = 1: nmax - 1
             if ~isnan(xcoor(m,n))
-                for i_edy = no_edy
+                for i_edy = 1: no_edy
                     itel = itel + 1;
                     LINE(i_edy).DATA{itel,1} = xcoor(m,n);
                     LINE(i_edy).DATA{itel,2} = ycoor(m,n);

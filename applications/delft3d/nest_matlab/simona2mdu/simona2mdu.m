@@ -5,8 +5,6 @@ function simon2mdu (varargin)
 %            secondly the mdf file is converted into an mdu file and belonging attribute files
 %            finally the mdf file is removed
 %
-%temporary
-setenv('nesthd_path','d:\open_earth\matlab\applications\delft3d\nest_matlab\');
 
 Gen_inf    = {'This tool converts a SIMONA siminp file into an Unstruc mdu file'                                   ;
               'with belonging attribute files'                                                                     ;
