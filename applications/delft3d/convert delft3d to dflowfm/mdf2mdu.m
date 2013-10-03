@@ -218,7 +218,7 @@ end
 jasal              = 0; % temp!
 
 fprintf(fid2,'%s\n'  ,'[physics]');
-fprintf(fid2,'%s\n'  ,['UnifFrictCoef                       = ',num2str(rouval,'%5.7f')                         ,'                         # Uniform friction coefficient, 0=no friction']);
+fprintf(fid2,'%s\n'  ,['UnifFrictCoef                       = ',num2str(rouval,'%5.7f')                         ,'                          # Uniform friction coefficient, 0=no friction']);
 fprintf(fid2,'%s\n'  ,['UnifFrictType                       = ',num2str(roumet,'%1.0f')                         ,'                                  # 0=Chezy, 1=Manning, 2=White Colebrook, 3=z0 etc']);
 fprintf(fid2,'%s\n'  ,['Umodlin                             =                                    # linear friction umod, ifrctyp 4,5,6']);
 fprintf(fid2,'%s\n'  ,['Vicouv                              = ',num2str(mdfkeywds.vicouv,'%5.7f')               ,'                          # Uniform horizontal eddy viscosity (m2/s)']);
@@ -254,7 +254,10 @@ if isfield(mdfkeywds,'rhoa') == 0;
     mdfkeywds.rhoa = 0;
 end
 if isfield(mdfkeywds,'pavbnd') == 0; 
-    mdfkeywds.pavbnd = 0;
+    mdfkeywds.pavbnd = 101325.0;
+end
+if isfield(mdfkeywds,'gapres') == 0; 
+    mdfkeywds.gapres = 101325.0;
 end
 
 fprintf(fid2,'%s\n'  ,'[wind]');
@@ -262,7 +265,8 @@ fprintf(fid2,'%s\n'  ,['ICdtyp                              = ',num2str(length(m
 fprintf(fid2,'%s\n'  ,['Cdbreakpoints                       = ',num2str(mdfkeywds.wstres(1:2:end),'%1.7f\t')    ,'                # ( ),   e.g. 0.00063  0.00723']);
 fprintf(fid2,'%s\n'  ,['Windspeedbreakpoints                = ',num2str(mdfkeywds.wstres(2:2:end),'%1.7f\t')    ,'              # (m/s), e.g. 0.0      100.0']);
 fprintf(fid2,'%s\n'  ,['Rhoair                              = ',num2str(mdfkeywds.rhoa,'%5.7f')                 ,'                          # Air density (kg/m3)']);
-fprintf(fid2,'%s\n\n',['#Averageairpressureonopenboundaries  = ',num2str(mdfkeywds.pavbnd,'%5.7f')               ,'                          # Average air Pressure on open boundaries, (N/m2), only applied if value > 0']);
+fprintf(fid2,'%s\n'  ,['PavBnd                              = ',num2str(mdfkeywds.pavbnd,'%5.7f')               ,'                     # Average air Pressure on open boundaries, (N/m2), only applied if value > 0']);
+fprintf(fid2,'%s\n\n',['Gapres                              = ',num2str(mdfkeywds.gapres,'%5.7f')               ,'                     # Global Atmospheric Pressure, (N/m2)']);
 
 % fprintf(fid2,'%s\n'  ,'[waves]');
 % fprintf(fid2,'%s\n'  ,['Wavemodelnr                         =                                    # Wave model nr, 0=no, 1=fetch/depth limited hurdlestive, 2=youngverhagen, 3 = SWAN']);
