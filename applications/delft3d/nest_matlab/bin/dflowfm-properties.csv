@@ -62,7 +62,7 @@ numerics,Thindykescheme,numerics,Thin dyke scheme:None|Compact stencil|Whole til
 numerics,Thindykecontraction,numerics,Thindyke contraction,Double,1,0,,FALSE,"flow width = flow width*thindykecontraction , "
 numerics,Izbndpos,numerics,Position of z boundary:D3Dflow|On net boundary|On specified polyline,0|1|2,0,0,2,FALSE,"Position of z boundary, 0=D3Dflow, 1=on net boundary, 2 = on specified polyline"
 numerics,Jaembed1D,numerics,Use embedded 1d channels?,0|1,FALSE,0,1,FALSE,"1 : use embedded 1d channels, first run: Operations: Embed 1D channels )"
-numerics,Slopedrop2D,numerics,Treshold for drop losses,Double,0.3,0,,FALSE,Apply droplosses only if local bottom slope > Slopedrop2D 
+numerics,Slopedrop2D,numerics,Treshold for drop losses,Double,0.3,0,,FALSE,Apply droplosses only if local bottom slope > Slopedrop2D
 numerics,Chkadvd,numerics,Depth level for advection checks,Double,0.1,0,,FALSE,"Check advection terms if depth < chkadvdp, => less setbacks "
 numerics,Teta0,numerics,Theta of time integration (0.5 - 1.0),Double,0.55,0.5,1,FALSE,"Theta of time integration, 0.5 < Teta < 1d0"
 numerics,Jbasqbnddownwindhs,numerics,Downwind cell H on Q-boundaries?,0|1,FALSE,0,1,FALSE,"0 : original hu on qbnd, 1 = downwind hs on qbnd )"
@@ -110,11 +110,11 @@ time,AutoTimestep,timeframe,Limit time step by Courant Nr?:No limit (0)|Use limi
 restart,RestartFile,initial,,FileName,,,,TRUE,"Restart file, only map, hence: *_map.nc)"
 restart,RestartDateTime,initial,Restart Time,DateTime,,,,FALSE,"Restart time (YYYYMMDDHHMMSS, )"
 external forcing,ExtForceFile,,,FileName,,,,TRUE,*.ext )
-equatorial,Ampfreeleft,,Ampfreeleft,Double,0,0,,FALSE,
-equatorial,Ampfreeright,,Ampfreeright,Double,0,0,,FALSE,
-equatorial,Ampforcedzerofr,,Ampforcedzerofr,Double,0.2,0,,FALSE,
-equatorial,Nmode,,Nmode,Integer,0,0,,FALSE,
-equatorial,Nfreq,,Nfreq,Integer,1,0,,FALSE,
+*equatorial,Ampfreeleft,,Ampfreeleft,Double,0,0,,FALSE,
+*equatorial,Ampfreeright,,Ampfreeright,Double,0,0,,FALSE,
+*equatorial,Ampforcedzerofr,,Ampforcedzerofr,Double,0.2,0,,FALSE,
+*equatorial,Nmode,,Nmode,Integer,0,0,,FALSE,
+*equatorial,Nfreq,,Nfreq,Integer,1,0,,FALSE,
 output,ObsFile,,,FileName,,,,TRUE,
 output,CrsFile,,,FileName,,,,TRUE,
 output,HisInterval,output,,Interval,10,0,,FALSE,

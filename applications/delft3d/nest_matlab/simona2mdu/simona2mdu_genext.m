@@ -98,12 +98,12 @@ end
 %% Clean up mdu structure (if passed on) and set name of the external forcing file in the mdu structure
 
 if ~isempty(mdu)
-    if isfield(mdu,'Filbnd' ) mdu = rmfield(mdu,'Filbnd');end
-    if isfield(mdu,'Filini' ) mdu = rmfield(mdu,'Filini');end
-    if isfield(mdu,'Filrgh' ) mdu = rmfield(mdu,'Filrgh');end
-    if isfield(mdu,'Filvico') mdu = rmfield(mdu,'Filedy');end
-    if isfield(mdu,'Fildico') mdu = rmfield(mdu,'Filedy');end
-    if isfield(mdu,'Filwnd' ) mdu = rmfield(mdu,'Filwnd');end
+    if isfield(mdu,'Filbnd' ) mdu = rmfield(mdu,'Filbnd') ;end
+    if isfield(mdu,'Filini' ) mdu = rmfield(mdu,'Filini') ;end
+    if isfield(mdu,'Filrgh' ) mdu = rmfield(mdu,'Filrgh') ;end
+    if isfield(mdu,'Filvico') mdu = rmfield(mdu,'Filvico');end
+    if isfield(mdu,'Fildico') mdu = rmfield(mdu,'Fildico');end
+    if isfield(mdu,'Filwnd' ) mdu = rmfield(mdu,'Filwnd') ;end
     mdu.external_forcing.ExtForceFile = [name_mdu '.ext'];
     varargout{1} = mdu;
 end

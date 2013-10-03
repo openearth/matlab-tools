@@ -15,7 +15,7 @@ if strcmpi(mdf.roumet,'z') mdu.physics.UnifFrictType = 3;end
 
 %% Reads roughness values from file
 if ~isempty(filrgh)
-    mdu.physics.UniFrictCoef = -999.999;
+    mdu.physics.UnifFrictCoef = -999.999;
     mdu.Filrgh               = [nameshort '_rgh.xyz'];
     grid                     = delft3d_io_grd('read',filgrd);
     mmax                     = grid.mmax;

@@ -85,11 +85,14 @@ mdu = simona2mdu_area   (mdf,mdu,name_mdu);
 simona2mdf_message('Generating UNSTRUC Thin Dam          information','Logo',logo,'Window','SIMONA2MDU Message');
 mdu = simona2mdu_thd    (mdf,mdu,name_mdu);
 
-simona2mdf_message('Generating UNSTRUC PROCES            information','Logo',logo,'Window','SIMONA2MDU Message');
-mdu = simona2mdu_proces (mdf,mdu,name_mdu);
-
 simona2mdf_message('Generating UNSTRUC TIMES             information','Logo',logo,'Window','SIMONA2MDU Message');
 mdu = simona2mdu_times    (mdf,mdu,name_mdu);
+
+simona2mdf_message('Generating UNSTRUC PHYSICAL          information','Logo',logo,'Window','SIMONA2MDU Message');
+mdu = simona2mdu_physical (mdf,mdu,name_mdu);
+
+simona2mdf_message('Generating UNSTRUC NUMERICAL         information','Logo',logo,'Window','SIMONA2MDU Message');
+mdu = simona2mdu_numerical(mdf,mdu,name_mdu);
 
 simona2mdf_message('Generating UNSTRUC Boundary definition           ','Logo',logo,'Window','SIMONA2MDU Message');
 mdu.Filbnd = simona2mdu_bnd2pli([path_mdf filesep mdf.filcco],[path_mdf filesep mdf.filbnd],name_mdu);
@@ -111,7 +114,6 @@ mdu = simona2mdu_viscosity(mdf,mdu,name_mdu);
 simona2mdf_message('Generating External forcing file                ','Logo',logo,'Window','SIMONA2MDU Message');
 mdu = simona2mdu_genext   (name_mdu,'mdu',mdu,'Filbnd' ,mdu.Filbnd ,'Filini' ,mdu.Filini ,'Filrgh',mdu.Filrgh  ,  ...
                                               'Filvico',mdu.Filvico,'Fildico',mdu.Fildico                      );
-
 simona2mdf_message('Generating UNSTRUC STATION           information','Logo',logo,'Window','SIMONA2MDU Message');
 mdu = simona2mdu_obs      (mdf,mdu,name_mdu);
 
