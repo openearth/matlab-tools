@@ -87,6 +87,11 @@ for iv=1:length(I1.Variables)
 end
 
 %% save new - shrunken - file 
+if exist(nc1)
+   disp([nc1,' already exists, proceed to delete?'])
+   pausedisp
+   delete(nc1)
+end
 ncwriteschema(nc1, I1);
 %nc_dump(nc1)
 

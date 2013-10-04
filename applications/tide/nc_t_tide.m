@@ -110,8 +110,8 @@ else
    
       if ~isempty(OPT.period)
       mask = find(( t >= OPT.period(1)) & (t <= OPT.period(end)));
-      if t(1  ) > OPT.period(1);fprintf(2,['data starts after start of requested period ',datestr(t(  1)),'>',datestr(OPT.period(  1))]);end
-      if t(end) < OPT.period(2);fprintf(2,['data stops before end of requested period ',datestr(t(end)),'<',datestr(OPT.period(end))]);end
+      if t(1  ) > OPT.period(1);fprintf(2,['data starts after start of requested period ',datestr(t(  1)),'>',datestr(OPT.period(  1)),'\n']);end
+      if t(end) < OPT.period(2);fprintf(2,['data stops before end of requested period '  ,datestr(t(end)),'<',datestr(OPT.period(end)),'\n']);end
       else
       mask = 1:length(t);
       OPT.period = [t(1) t(end)];
@@ -125,7 +125,7 @@ else
 %             varargout = {[]};
 %             return
 %          end
-         t_tide_err = 'lin';
+         t_tide_err = 'wboot'; % 'lin'; % prevent use of licensed Signal_Toolbox
       else
          dt = dt(1); % in hours
          t_tide_err = 'cboot';

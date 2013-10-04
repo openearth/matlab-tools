@@ -70,6 +70,7 @@ function varargout = delwaq_map2nc(varargin)
                        'MyWaqSimulation_2005.map'};% 'TIM','dcTIM','Chlfa','dcChlfa','CDOM','dcCDOM','Kd490','dcKd490','nPixels'
    OPT.ncfile        = 'MyWaqSimulation_2003_2005.nc';
    OPT.SubsName      = 'Chlfa';
+   OPT.varname       = ''; % name of variable in netCDF, e.g with pre/postfixes due to OPT.Fcn operation
    OPT.standard_name = 'mass_concentration_of_chlorophyll_a_in_sea_water'; % see http://cf-pcmdi.llnl.gov/documents/cf-standard-names/standard-name-table/20/cf-standard-name-table.html
    OPT.long_name     = 'Chlorophyll a';
    OPT.units         = 'ug/l'; % Pa
@@ -121,6 +122,10 @@ function varargout = delwaq_map2nc(varargin)
 
 %% create netCDF file (no data yet, only meta-data)
 
+   if isempty(OPT.varname)
+      OPT.varname = OPT.SubsName;
+   end
+
    L2bin2nc(OPT.ncfile,...
              'lon',G.cen.lon,...
              'lat',G.cen.lat,...
@@ -129,7 +134,7 @@ function varargout = delwaq_map2nc(varargin)
        'latbounds',G.cor.lat,...
             'time',T.datenum,...
             'epsg',4326,...
-            'Name',OPT.SubsName,...
+            'Name',OPT.varname,...
    'standard_name',OPT.standard_name,...
        'long_name',OPT.long_name,...
            'units',OPT.units,...
@@ -148,7 +153,7 @@ function varargout = delwaq_map2nc(varargin)
    
    IT = 0;
    for im=1:length(OPT.mapfile)
-    disp(['source file: ',num2str(im),' ',D(1).FileName])
+    disp(['source file: ',num2str(im),' ',D(im).FileName])
     for it=1:D(im).NTimes
        IT = IT+1;
 
@@ -160,7 +165,9 @@ function varargout = delwaq_map2nc(varargin)
        
        matrix = OPT.Fcn(matrix);
        
-       ncwrite(OPT.ncfile,OPT.SubsName,permute(matrix(:,:,OPT.k),[2 1 3]),[1 1 IT]); % 1-based indices       
+     %pcolorcorcen(G.cor.lon,G.cor.lat,permute(matrix(:,:,OPT.k),[1 2 3]))
+       
+       ncwrite(OPT.ncfile,OPT.varname,permute(matrix(:,:,OPT.k),[2 1 3]),[1 1 IT]); % 1-based indices       
         
     end
    end

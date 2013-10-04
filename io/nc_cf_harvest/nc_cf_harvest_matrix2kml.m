@@ -240,7 +240,7 @@ function OPT = nc_cf_harvest_matrix2kml(ATT,varargin)
        
     if ~isempty(OPT.varname)
 
-    %% get statistics and make images
+    %% get statistics and make images for one variable
     
        ncfile = OPT.varPathFcn(D.urlPath{ii});
        

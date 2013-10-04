@@ -30,6 +30,7 @@ function Factor=convert_units(InUnits0,OutUnits0,varargin);
 %
 % See web: <a href="http://www.unidata.ucar.edu/software/udunit">http://www.unidata.ucar.edu/software/udunit</a>
 % See also: qp_unitconversion, unitconv, convertUnits, unitsratio (mapping toolbox)
+%           eckart_1958
 
 %-----------------------------------------------------------------------
 % Tested : Matlab 6.5
@@ -64,6 +65,9 @@ debug = 0;
 %% start unit conversion
 
    percent         = 0.01; % same as in UD units
+   ppm             = 1e-6;
+   ppt             = 1e-3;
+   psu             = 1e-3;
 
    %% Definitions  
    RAD             = 180./pi;

@@ -42,7 +42,7 @@ function fileinfo = nc_info ( ncfile )
 %   R2008b.
 %       info = nc_info('example.nc');
 %
-%   See also nc_dump.
+%   See also: nc_dump, ncinfo, nc_getall, nc_dump, nc2struct
 
 
 

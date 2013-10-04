@@ -1,5 +1,5 @@
 function s=xml2struct(varargin)
-%FASTXML2STRUCT  load xml file into struct
+%XML2STRUCT  load xml file into struct
 %
 %   s = xml2struct(fname) loads xml file or url fnamer into struct X.
 %   Options can be supplied as s = xml2struct(fname,<keyword,value>)
@@ -28,7 +28,7 @@ function s=xml2struct(varargin)
 %
 %       model(2).station(3).nr=2;                                      % No attributes possible
 %
-%   See also: xmlread, xml_load, xml_read
+%   See also: xmlread, xml_load, xml_read, var2evalstr
 
 %% Copyright notice
 %   --------------------------------------------------------------------

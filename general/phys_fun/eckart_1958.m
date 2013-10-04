@@ -22,7 +22,7 @@ function density = eckart_1958(varargin)
 % Ocean Models: Eckart’s Formula Revisited. J. Atmos. Oceanic 
 % Technol., 14, 735-740.
 %
-%See also: waterdensity0, waterdensityp
+%See also: waterdensity0, waterdensityp, saco_ui
 
 density     = NaN;
 temperature = NaN;

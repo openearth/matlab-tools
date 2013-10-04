@@ -24,7 +24,7 @@ function data = nc_getall ( ncfile ,varargin)
 %   - loads additional meta-data as Size, Dimension names, 
 %     Datatype and Unlimited
 % 
-%See also: NC_INFO
+%See also: NC_INFO, nc2struct
 
    warning ( 'SNCTOOLS:nc_getall:dangerous', ...
              'NC_GETALL discards information on dimensions and hence poses a risk when interpreting data, use only for testing.');

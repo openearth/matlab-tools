@@ -1,18 +1,25 @@
 function nc_cf_line(ncfile,lon,lat,varargin)
-%NC_CF_LINE write (nan-seperated) line (segments) to netCDF file
+%NC_CF_LINE write  (NaN-seperated) (poly-)line (segments) to netCDF file
 %
 %  nc_cf_line(ncfile,lon,lat,names,<keyword,value>)
 %
-% This is basically a non-time dependent trajectory.
+% This is basically a single non-time dependent trajectory.
+% http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#idp8388800
 %
-%See also: landboundary, shape
+% use keywords 'x','y' and 'projection' to add projected coordinates.
+%
+%See also: landboundary, shape, netCDF
 
 OPT.title       = '';
+OPT.time        = [];
 OPT.institution = 'Deltares';
-OPT.epsg        = [];
 OPT.version     = [];
 OPT.names       = [];
 OPT.dump        = 0;
+
+OPT.x           = [];
+OPT.y           = [];
+OPT.epsg        = [];
 
 OPT = setproperty(OPT,varargin);
 
@@ -44,18 +51,33 @@ OPT = setproperty(OPT,varargin);
    
 %% 2 Create dimensions
    
+   if ~isempty(OPT.time)
+   nc_add_dimension(outputfile, 'time'       , length(time));
+   end
    if ~isempty(OPT.names)
    nc_add_dimension(outputfile, 'segments'   , size(OPT.names,1));
    nc_add_dimension(outputfile, 'name_strlen', size(OPT.names,2)); % 
    end
-   nc_add_dimension(outputfile, 'points'     , length(lon))  ; % incl nan-separators
+   nc_add_dimension(outputfile, 'points'          , length(lon))  ; % incl nan-separators
+   %nc_add_dimension(outputfile, 'n'          , 1)  ; % incl nan-separators   
    
 %% 3 Create variables
    
    clear nc
    ifld = 0;
    
-   % Segment name
+%% Time
+   
+   if ~isempty(OPT.time)   
+   ifld = ifld + 1;
+   nc(ifld).Name         = 'time';
+   nc(ifld).Nctype       = 'double';
+   nc(ifld).Dimension    = {'time'};
+   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'time');
+   nc_addvar(outputfile, nc(ifld));
+   end
+   
+%% Segment name
    
    if ~isempty(OPT.names)   
    ifld = ifld + 1;
@@ -67,18 +89,27 @@ OPT = setproperty(OPT,varargin);
   %nc(ifld).Attribute(2) = struct('Name', 'standard_name'  ,'Value', 'station_id'); % standard name
    nc_addvar(outputfile, nc(ifld));
    end
-  
    
 %% WGS84
    
-     ifld = ifld + 1;
+   ifld = ifld + 1;
    nc(ifld).Name         = 'wgs84';
    nc(ifld).Nctype       = 'int';
    nc(ifld).Dimension    = {}; % no dimension, dummy variable
    nc(ifld).Attribute    = nc_cf_grid_mapping(4326);
    nc_addvar(outputfile, nc(ifld));
    
-
+%  % Line:
+%  % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#latitude-coordinate
+%    
+%  ifld = ifld + 1;
+%  nc(ifld).Name         = 'line';
+%  nc(ifld).Nctype       = 'float'; % no double needed
+%  nc(ifld).Dimension    = {'points'};
+%  nc(ifld).Attribute(1) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
+%  nc(ifld).Attribute(2) = struct('Name', 'coordinates'    ,'Value', 'lon lat'); % use lat itself as "z-variable" to link lat and lon
+%  nc_addvar(outputfile, nc(ifld));   
+   
    % Longitude:
    % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#longitude-coordinate
    
@@ -91,7 +122,7 @@ OPT = setproperty(OPT,varargin);
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'longitude');
    nc(ifld).Attribute(4) = struct('Name', 'comment'        ,'Value', 'segments are separated by NaN');
    nc(ifld).Attribute(5) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
-   nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'lon lat'); % use lon itself as "z-variable" to link lat and lon
+   nc(ifld).Attribute(6) = struct('Name', 'coordinates'    ,'Value', 'lon lat'); % use lon itself as "z-variable" to link lat and lon
    nc_addvar(outputfile, nc(ifld));
    
    % Latitude:
@@ -106,11 +137,11 @@ OPT = setproperty(OPT,varargin);
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'latitude');
    nc(ifld).Attribute(4) = struct('Name', 'comment'        ,'Value', 'segments are separated by NaN');
    nc(ifld).Attribute(5) = struct('Name', 'grid_mapping'   ,'Value', 'wgs84');
-   nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'lon lat'); % use lat itself as "z-variable" to link lat and lon
+   nc(ifld).Attribute(6) = struct('Name', 'coordinates'    ,'Value', 'lon lat'); % use lat itself as "z-variable" to link lat and lon
    nc_addvar(outputfile, nc(ifld));
    
    
-%% Coordinate system
+%% Projected coordinate system
 %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#appendix-grid-mappings
    
    if ~isempty(OPT.epsg)
@@ -132,6 +163,7 @@ OPT = setproperty(OPT,varargin);
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'projection_x_coordinate');
    nc(ifld).Attribute(4) = struct('Name', 'comment'        ,'Value', 'segments are separated by NaN');
    nc(ifld).Attribute(5) = struct('Name', 'grid_mapping'   ,'Value', 'projection');
+   nc(ifld).Attribute(6) = struct('Name', 'coordinates'    ,'Value', 'x y'); % use x itself as "z-variable" to link x and y
    nc_addvar(outputfile, nc(ifld));
    
    % y:
@@ -145,6 +177,7 @@ OPT = setproperty(OPT,varargin);
    nc(ifld).Attribute(3) = struct('Name', 'standard_name'  ,'Value', 'projection_y_coordinate');
    nc(ifld).Attribute(4) = struct('Name', 'comment'        ,'Value', 'segments are separated by NaN');
    nc(ifld).Attribute(5) = struct('Name', 'grid_mapping'   ,'Value', 'projection');
+   nc(ifld).Attribute(6) = struct('Name', 'coordinates'    ,'Value', 'x y'); % use x itself as "z-variable" to link x and y   
    nc_addvar(outputfile, nc(ifld));
    end
 
@@ -163,14 +196,15 @@ OPT = setproperty(OPT,varargin);
    if ~isempty(OPT.names)
    nc_varput(outputfile, 'description'          , OPT.names);
    end
-   nc_varput(outputfile, 'lon'                  , lon);
-   nc_varput(outputfile, 'lat'                  , lat);
+%  nc_varput(outputfile, 'line'                 , zeros(size(lon')));
+   nc_varput(outputfile, 'lon'                  , lon');   
+   nc_varput(outputfile, 'lat'                  , lat');
    nc_varput(outputfile, 'wgs84'                , 4326);
 
    if ~isempty(OPT.epsg)
-   nc_varput(outputfile, 'x'                    , x);
-   nc_varput(outputfile, 'y'                    , y);
-   nc_varput(outputfile, 'projection'           , 28992);
+   nc_varput(outputfile, 'x'                    , OPT.x);
+   nc_varput(outputfile, 'y'                    , OPT.y);
+   nc_varput(outputfile, 'projection'           , OPT.epsg);
    end
    
 %% 6 Check

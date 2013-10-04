@@ -39,7 +39,8 @@ function nc_dump(file_name, varargin)
 %       url = sprintf('%s%s/SUPER-NATIONAL_1km_CTP_%s_0000.gini',server,dir,today);
 %       nc_dump(url);
 %
-%   See also nc_info.
+%   See also nc_info, ncinfo, nc_getall, nc_dump, nc2struct
+
 location = ''; 
 fid      = 1;
 
@@ -61,7 +62,7 @@ OPT.hwidth = Inf;  % max no values per line
 switch(nargin)
     case 0
         help nc_dump
-        pausedisp
+        return
     case 1
     case 2
         if ischar(varargin{1})

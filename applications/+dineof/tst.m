@@ -23,7 +23,7 @@ OPT.plot = 1;
  
     for it=1:nt
       noise  = 0.*rand(size(z));
-      cloudiness = 0.0;
+      cloudiness = 0.4;
       clouds = double(rand(size(z)) > cloudiness);
       clouds(clouds==0)=nan;
       D(:,it) =       z.*cos(1.0.*pi.*it./nt).*x + ...

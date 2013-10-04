@@ -14,14 +14,9 @@ function days = timezone_code2iso(isostring)
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2011 Deltares
-%       Gerben de Boer
+%       Gerben de Boer / gerben.deboer@deltares.nl	
 %
-%       gerben.deboer@deltares.nl	
-%
-%       Deltares
-%       P.O. Box 177
-%       2600 MH Delft
-%       The Netherlands
+%       Deltares / P.O. Box 177 / 2600 MH Delft / The Netherlands
 %
 %   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public

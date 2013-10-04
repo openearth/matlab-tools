@@ -206,6 +206,7 @@ function varargout = delft3d_io_meteo_write_example(varargin)
           
           for ivar=1:length(OPT.varnames)
             if ~any(strcmp(OPT.varnames{ivar},allvarnames))
+                % implement 1st here to have warning only once
                 warning([OPT.ncfiles{ifile},':',OPT.varnames{ivar},' not found.'])
             else
               data = ncread(OPT.ncfiles{ifile},OPT.varnames{ivar},[1 1 it],[Inf Inf 1]);
