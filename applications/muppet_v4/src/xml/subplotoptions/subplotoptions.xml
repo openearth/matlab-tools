@@ -17,6 +17,15 @@
     <keyword>PlotType</keyword>
   </subplotoption>
   <subplotoption>
+    <name>backgroundcolor</name>
+    <variable>backgroundcolor</variable>
+    <default>White</default>
+    <keyword>BackgroundColor</keyword>
+    <check>
+      <operator>ne</operator>
+    </check>
+  </subplotoption>
+  <subplotoption>
     <name>xlim</name>
     <type>real</type>
     <variable>xmin xmax</variable>

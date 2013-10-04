@@ -17,12 +17,31 @@
       <position>10 10 50 20</position>
     </element>
     <element>
+      <keyword>AddTextShade</keyword>
+      <default>0</default>
+      <style>checkbox</style>
+      <type>boolean</type>
+      <variable>addtextshade</variable>
+      <text>Shade</text>
+      <position>80 10 50 20</position>
+      <dependency>
+        <action>enable</action>
+        <checkfor>all</checkfor>
+        <check>
+          <variable>addtext</variable>
+          <value>1</value>
+          <operator>eq</operator>
+        </check>
+      </dependency>
+    </element>
+    <element>
       <name>textposition</name>
+      <variable>textposition</variable>
       <keyword>TextPosition</keyword>
       <type>string</type>
       <default>northeast</default>
       <style>popupmenu</style>
-      <position>150 10 90 20</position>
+      <position>190 10 90 20</position>
       <text>Position</text>
       <listtext>North West</listtext>
       <listtext>North</listtext>
@@ -57,7 +76,7 @@
       <horizontalalignment>1</horizontalalignment>
       <verticalalignment>1</verticalalignment>
       <text>Font</text>
-      <position>260 10 50 20</position>
+      <position>290 10 50 20</position>
       <variable>font</variable>
       <dependency>
         <action>enable</action>

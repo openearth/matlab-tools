@@ -41,6 +41,7 @@ for ii=i1:i2
         end
 
         dist=0.001*plt.scale/plt.fscale;
+        dstshade=dist*0.15*opt.font.size/8;
         switch lower(opt.textposition)
             case{'northeast','east','southeast'}
                 x1=x(ii)+dist;
@@ -63,8 +64,13 @@ for ii=i1:i2
                 y1=y(ii)-dist;
                 veral='top';
         end
-        tx=text(x1,y1,1000,[data.text{ii}]);
-%        tx=text(x1,y1,[data.text{ii}]);
+        
+        if opt.addtextshade
+            txshade=text(x1+dstshade,y1-dstshade,[data.text{ii}]);
+        end
+        
+        tx=text(x1,y1,[data.text{ii}]);
+                
         set(tx,'FontName',opt.font.name);
         set(tx,'FontWeight',opt.font.weight);
         set(tx,'FontAngle',opt.font.angle);
@@ -73,5 +79,17 @@ for ii=i1:i2
         set(tx,'HorizontalAlignment',horal,'VerticalAlignment',veral);
         set(tx,'Rotation',data.rotation(ii));
         set(tx,'Clipping','on');
+        
+        if opt.addtextshade
+            set(txshade,'FontName',opt.font.name);
+            set(txshade,'FontWeight',opt.font.weight);
+            set(txshade,'FontAngle',opt.font.angle);
+            set(txshade,'Fontsize',opt.font.size*fig.fontreduction);
+            set(txshade,'color',colorlist('getrgb','color','black'));
+            set(txshade,'HorizontalAlignment',horal,'VerticalAlignment',veral);
+            set(txshade,'Rotation',data.rotation(ii));
+            set(txshade,'Clipping','on');
+        end
+    
     end
 end

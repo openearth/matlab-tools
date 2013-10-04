@@ -20,6 +20,7 @@ opt.markersize=10;
 opt.legendtext='';
 
 opt.addtext=0;
+opt.addtextshade=0;
 opt.textposition='right';
 
 opt.font.name='Helvetica';

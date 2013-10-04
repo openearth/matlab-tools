@@ -12,6 +12,9 @@
     <name>type</name>
   </option>
   <option>
+    <name>backgroundcolor</name>
+  </option>
+  <option>
     <name>xlim</name>
   </option>
   <option>
