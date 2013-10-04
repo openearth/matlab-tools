@@ -63,4 +63,4 @@ function Lambda = logn_moments2lambda(Mu, Sigma)
 
 %%
 Zeta = logn_moments2zeta(Mu, Sigma);
-Lambda = log(Mu) - Zeta^2/2;
+Lambda = log(Mu) - Zeta.^2/2;

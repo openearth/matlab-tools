@@ -62,4 +62,4 @@ function Zeta = logn_moments2zeta(Mu, Sigma)
 % $Keywords: $
 
 %%
-Zeta = sqrt(log(1+(Sigma/Mu)^2));
+Zeta = sqrt(log(1+(Sigma./Mu).^2));
