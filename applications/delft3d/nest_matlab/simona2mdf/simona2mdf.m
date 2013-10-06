@@ -22,6 +22,11 @@ if ~isdeployed && any(which('setproperty'))
    addpath(genpath('..\..\..\..\..\matlab'));
 end
 
+%% Display general information
+
+OPT.DispGen = true;
+OPT = setproperty(OPT,varargin{3:end});
+
 %% Check if nesthd_path is set
 
 if isempty (getenv('nesthd_path'))
@@ -47,7 +52,9 @@ name_mdf = [path_mdf filesep name_mdf];
 %% Display the general information
 
 logo = imread([getenv('nesthd_path') filesep 'bin' filesep 'simona_logo.jpg']);
-simona2mdf_message(Gen_inf                                  ,'Logo',logo,'n_sec',5);
+if OPT.DispGen
+    simona2mdf_message(Gen_inf                                  ,'Logo',logo,'n_sec',5);
+end
 
 %% Start with creating empty template (add the simonapath to it to allow for
 %  copying of the grid file)
