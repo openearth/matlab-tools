@@ -17,7 +17,7 @@ Gen_inf    = {'This tool converts a SIMONA siminp file into an Unstruc mdu file'
               'Firstly, the SIMINP file is converted to a temporary Delft3D-Flow mdf file'                         ;
               'Secondly, the mdf file is converted into an unstruc mdu file  '                                     ;
               'Finally, the  temporary mdf file is removed'                                                        ;
-              'If you want to keep the mdf file, use SIMONA2MDF and MDF2MDU seperately'                            ;
+              'If you want to keep the mdf file, use SIMONA2MDF and D3D2MDU seperately'                            ;
               ' '                                                                                                  ;
               'If you encounter problems, please do not hesitate to contact me'                                    ;                                                                                   ;
               'Theo.vanderkaaij@deltares.nl'                                                                      };

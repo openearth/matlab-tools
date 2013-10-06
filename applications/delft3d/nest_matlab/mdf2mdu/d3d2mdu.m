@@ -9,7 +9,7 @@ Gen_inf    = {'This tool converts a Delft3D-Flow mdf file into an Unstruc mdu fi
               'Credits go to Wim van Baalen for his conversion of boundary conditions'                             ;
               ' '                                                                                                  ;
               'This tool does a basic first conversion'                                                            ;
-              'Noe everything is converted so please check carefully'                                              ;
+              'Not everything is converted so please check carefully'                                              ;
               '(USE AT OWN RISK)'                                                                                  ;
               ' '                                                                                                  ;
               'If you encounter problems, please do not hesitate to contact me'                                    ;                                                                                   ;
