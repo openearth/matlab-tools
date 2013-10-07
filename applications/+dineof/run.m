@@ -13,7 +13,9 @@ function varargout = run(data, time, mask, varargin)
 % EOF modes, the singular values and the exlained variance 
 % can be returned. All temporary DINEOF files are deleted afterwards 
 % and saved into 1 netCDF file, unless keyword 'cleanup' is set to 0.
-% Note that the upcoming DINEOF release will save the EOFs to netCDF itself.
+% Note that the upcoming DINEOF release will save the EOFs to netCDF 
+% itself. Use keyword 'sgn' to consistently swap the signs of the most 
+% important spatial & temporal modes to be consistent with your hypotheses.
 %
 % Example 2D matrices:
 %
@@ -81,6 +83,7 @@ function varargout = run(data, time, mask, varargin)
    OPT         = dineof.init();
    fldnames    = fieldnames(OPT);
    
+   OPT.sgn     = 1;
    OPT.cleanup = 1;
    OPT.debug   = 0;
    OPT.plot    = 1;
@@ -400,7 +403,12 @@ else
         S.varLab = addrowcol(cellstr([num2str([1:length(S.varEx)]','Mode %d = '),num2str(S.varEx(:))]),0,1,' %');
         S.vlsng  = ncread(['DINEOF_diagnostics.nc'],'vlsng');
     end
-       
+    
+    %% consistently swap user-requested signs
+    for p=1:min(length(OPT.sgn),S.P)
+        S.lftvec(:,:,p) = S.lftvec(:,:,p).*OPT.sgn(p);
+        S.rghvec(:  ,p) = S.rghvec(:  ,p).*OPT.sgn(p);
+    end
 
   %% save results to netcdf
 
