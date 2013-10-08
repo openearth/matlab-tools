@@ -142,7 +142,7 @@ if ~isempty(OPT.collabel)
 end
 
 rowlabeljustification = OPT.rowlabeljustification;
-for icol = 1:(size(xcell,2)-1)
+for icol = 1:size(xcell,2)
     iicol = icol;
     if ~isempty(OPT.rowlabel); iicol = iicol-1; end;
     
