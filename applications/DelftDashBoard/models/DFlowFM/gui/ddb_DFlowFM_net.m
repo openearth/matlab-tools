@@ -58,4 +58,18 @@ end
 %%
 function selectNetFile
 handles=getHandles;
+
+fname=handles.Model(md).Input(ad).netfile;
+
+handles.Model(md).Input(ad).netstruc=[];
+handles.Model(md).Input(ad).netstruc.nodeX=nc_varget(fname,'NetNode_x');
+handles.Model(md).Input(ad).netstruc.nodeY=nc_varget(fname,'NetNode_y');
+handles.Model(md).Input(ad).netstruc.nodeZ=nc_varget(fname,'NetNode_z');
+handles.Model(md).Input(ad).netstruc.linkNodes=nc_varget(fname,'NetLink');
+handles.Model(md).Input(ad).netstruc.linkType=nc_varget(fname,'NetLinkType');
+handles.Model(md).Input(ad).netstruc.elemNodes=nc_varget(fname,'NetElemNode');
+handles.Model(md).Input(ad).netstruc.bndLink=nc_varget(fname,'BndLink');
+
+handles=ddb_DFlowFM_plotGrid(handles,'plot','domain',ad,'color',[0.35 0.35 0.35],'visible',1,'active',1);
+
 setHandles(handles);
