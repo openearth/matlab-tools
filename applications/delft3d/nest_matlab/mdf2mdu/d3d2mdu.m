@@ -113,10 +113,11 @@ mdu = mdf2mdu_obs      (mdf,mdu,name_mdu);
 simona2mdf_message('Generating UNSTRUC CROSS-SECTION     information','Logo',logo,'Window','MDF2MDU Message');
 mdu = mdf2mdu_crs      (mdf,mdu,name_mdu);
 
+simona2mdf_message('Generating UNSTRUC OUTPUT            information','Logo',logo,'Window','MDF2MDU Message');
+mdu = mdf2mdu_output   (mdf,mdu,name_mdu);
+
+
 %% Finally,  write the mdu file and close everything
 
 simona2mdf_message('Writing Unstruc *.mdu file','Logo',logo,'Window','MDF2MDU Message','Close',true,'n_sec',1);
 unstruc_io_mdu('write',[name_mdu '.mdu'],mdu);
-
-
-

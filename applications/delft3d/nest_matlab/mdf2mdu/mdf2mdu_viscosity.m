@@ -53,4 +53,11 @@ else
     mdu.physics.Dicouv = mdf.dicouv;
 end
 
+%
+% Fill additonal paameters releated to viscosity
+%
+mdu.physics.Smagorinsky = 0.0;
+mdu.physics.Elder       = 0;
+mdu.physics.irov        = 0;
+mdu.physics.wall_ks      = -999.999; % not used so make clear in the input
 

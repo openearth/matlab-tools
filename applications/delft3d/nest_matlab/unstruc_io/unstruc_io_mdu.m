@@ -39,8 +39,8 @@ case 'read'
             parnam = simona2mdu_replacechar(parnam,' ','_');
 
             % Fill mdu structure
-            
-            if ~isempty(str2num(tmp.Data{igroup,2}{ipar,2})) 
+
+            if ~isempty(str2num(tmp.Data{igroup,2}{ipar,2}))
                 var = str2num(tmp.Data{igroup,2}{ipar,2});
             else
                 var = tmp.Data{igroup,2}{ipar,2};
@@ -63,6 +63,7 @@ case 'write'
        pars = fieldnames(mdu.(names{igroup}));
        for ipar = 1: length(pars);
            tmp2{ipar,1} = simona2mdu_replacechar(pars{ipar},'_',' ');
+           if  strcmpi(tmp2{ipar,1},'wall ks') tmp2{ipar,1} = simona2mdu_replacechar(tmp2{ipar,1},' ','_'); end
            if ~isempty(num2str(mdu.(names{igroup}).(pars{ipar})))
                tmp2{ipar,2} = num2str(mdu.(names{igroup}).(pars{ipar}));
            else
