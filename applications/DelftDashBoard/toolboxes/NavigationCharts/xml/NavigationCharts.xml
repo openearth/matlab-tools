@@ -110,7 +110,7 @@
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>polyLength</variable>
+        <variable>polygonLength</variable>
         <type>integer</type>
         <value>0</value>
         <operator>gt</operator>

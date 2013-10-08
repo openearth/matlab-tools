@@ -76,16 +76,18 @@ for i=1:ncnt
     pnts=[pnts;xyz];
 end
 
-x=pnts(:,1);
-y=pnts(:,2);
-z=pnts(:,3);
-
-[x,y]=ddb_coordConvert(x,y,orisys,newsys);
-
-fid=fopen(filename,'wt');
-for i=1:size(pnts,1)
-    fprintf(fid,'%16.8e %16.8e %16.8e\n',x(i),y(i),z(i));
+if ~isempty(pnts)
+    
+    x=pnts(:,1);
+    y=pnts(:,2);
+    z=pnts(:,3);
+    
+    [x,y]=ddb_coordConvert(x,y,orisys,newsys);
+    
+    fid=fopen(filename,'wt');
+    for i=1:size(pnts,1)
+        fprintf(fid,'%16.8e %16.8e %16.8e\n',x(i),y(i),z(i));
+    end
+    fclose(fid);
+    
 end
-fclose(fid);
-
-

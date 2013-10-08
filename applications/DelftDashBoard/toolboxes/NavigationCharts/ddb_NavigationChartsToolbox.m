@@ -258,56 +258,79 @@ function exportAllDataInPolygon
 handles=getHandles;
 iac=handles.Toolbox(tb).Input.activeDatabase;
 
-for ic=1:length(handles.Toolbox(tb).Input.charts(iac).box)
-    
+wb = awaitbar(0,'Downloading chart data ...');
+[hh,abort2]=awaitbar(0.001,wb,'Downloading chart data ...');
+
+% First determine which charts need to be exported
+ncharts=0;
+for ic=1:length(handles.Toolbox(tb).Input.charts(iac).box)    
     x1=handles.Toolbox(tb).Input.charts(iac).xl(ic,1);
     x2=handles.Toolbox(tb).Input.charts(iac).xl(ic,2);
     y1=handles.Toolbox(tb).Input.charts(iac).yl(ic,1);
-    y2=handles.Toolbox(tb).Input.charts(iac).yl(ic,2);
-    
+    y2=handles.Toolbox(tb).Input.charts(iac).yl(ic,2);    
     if inpolygon(x1,y1,handles.Toolbox(tb).Input.polygonX,handles.Toolbox(tb).Input.polygonY) || ...
             inpolygon(x1,y2,handles.Toolbox(tb).Input.polygonX,handles.Toolbox(tb).Input.polygonY) || ...
             inpolygon(x2,y2,handles.Toolbox(tb).Input.polygonX,handles.Toolbox(tb).Input.polygonY) || ...
-            inpolygon(x2,y1,handles.Toolbox(tb).Input.polygonX,handles.Toolbox(tb).Input.polygonY)
-        
-        name=handles.Toolbox(tb).Input.charts(iac).box(ic).Name;
-        dr=[handles.toolBoxDir 'NavigationCharts' filesep handles.Toolbox(tb).Input.charts(iac).name filesep];
-        fname=[dr name filesep name '.mat'];
-        
-        if ~exist(fname,'file')
-            % File does not yet exist in cache, try to download it
-            if ~exist(dr,'dir')
-                mkdir(dr);
-            end
-            if ~exist([dr name],'dir')
-                mkdir([dr name]);
-            end
-            try
-                ddb_urlwrite([handles.Toolbox(tb).Input.charts(iac).url '/' name '/' name '.mat'],fname);
-            catch
-                break
-            end
-        end
-        
-        s=load(fname);
-        if isfield(s,'s')
-            s=s.s;
-        end
-        
-        
-        newsys=handles.screenParameters.coordinateSystem;
-        
-        filename=[handles.Toolbox(tb).Input.charts(iac).box(ic).Name '_contours.xyz'];
-        ddb_exportChartContours(s.Layers,filename,newsys);
-        filename=[handles.Toolbox(tb).Input.charts(iac).box(ic).Name '_soundings.xyz'];
-        ddb_exportChartSoundings(s.Layers,filename,newsys);
-        filename=[handles.Toolbox(tb).Input.charts(iac).box(ic).Name '_shoreline.ldb'];
-        ddb_exportChartShoreline(s.Layers,filename,newsys);
+            inpolygon(x2,y1,handles.Toolbox(tb).Input.polygonX,handles.Toolbox(tb).Input.polygonY)        
+        ncharts=ncharts+1;
+        ichart(ncharts)=ic;
     end
+end
+
+% And download the data
+for ich=1:ncharts
+
+    ic=ichart(ich);
+    
+    str=['Exporting ' handles.Toolbox(tb).Input.charts(iac).box(ic).Name ' - ' num2str(ich) ' of ' num2str(ncharts)];
+    [hh,abort2]=awaitbar(ich/ncharts,wb,str);
+    
+    if abort2 % Abort the process by clicking abort button
+        break;
+    end;
+    if isempty(hh); % Break the process when closing the figure
+        break;
+    end;
+            
+    name=handles.Toolbox(tb).Input.charts(iac).box(ic).Name;
+    dr=[handles.toolBoxDir 'NavigationCharts' filesep handles.Toolbox(tb).Input.charts(iac).name filesep];
+    fname=[dr name filesep name '.mat'];
+    
+    if ~exist(fname,'file')
+        % File does not yet exist in cache, try to download it
+        if ~exist(dr,'dir')
+            mkdir(dr);
+        end
+        if ~exist([dr name],'dir')
+            mkdir([dr name]);
+        end
+        try
+            ddb_urlwrite([handles.Toolbox(tb).Input.charts(iac).url '/' name '/' name '.mat'],fname);
+        catch
+            break
+        end
+    end
+    
+    s=load(fname);
+    if isfield(s,'s')
+        s=s.s;
+    end
+    
+    newsys=handles.screenParameters.coordinateSystem;
+    
+    filename=[handles.Toolbox(tb).Input.charts(iac).box(ic).Name '_contours.xyz'];
+    ddb_exportChartContours(s.Layers,filename,newsys);
+    filename=[handles.Toolbox(tb).Input.charts(iac).box(ic).Name '_soundings.xyz'];
+    ddb_exportChartSoundings(s.Layers,filename,newsys);
+    filename=[handles.Toolbox(tb).Input.charts(iac).box(ic).Name '_shoreline.ldb'];
+    ddb_exportChartShoreline(s.Layers,filename,newsys);
     
 end
 
-close(wb);
+% close waitbar
+if ~isempty(hh)
+    close(wb);
+end
 
 
 %%

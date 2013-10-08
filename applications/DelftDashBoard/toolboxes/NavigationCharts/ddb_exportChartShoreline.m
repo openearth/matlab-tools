@@ -148,18 +148,20 @@ for i=1:nf
         end
     end
 end
-
-fid=fopen(filename,'wt');
-for j=1:npol
-    xpol{j}(isnan(xpol{j}))=-999.0;
-    ypol{j}(isnan(ypol{j}))=-999.0;
-    np=length(xpol{j});
-    fprintf(fid,'%s\n',['BL' num2str(j,'%0.5i')]);
-    fprintf(fid,'%s\n',[num2str(np) ' ' num2str(2)]);
-    for k=1:np
-        fprintf(fid,'%16.8e %16.8e\n',xpol{j}(k),ypol{j}(k));
+tic
+if npol>0
+    fid=fopen(filename,'wt');
+    for j=1:npol
+        xpol{j}(isnan(xpol{j}))=-999.0;
+        ypol{j}(isnan(ypol{j}))=-999.0;
+        np=length(xpol{j});
+        fprintf(fid,'%s\n',['BL' num2str(j,'%0.5i')]);
+        fprintf(fid,'%s\n',[num2str(np) ' ' num2str(2)]);
+        for k=1:np
+            fprintf(fid,'%16.8e %16.8e\n',xpol{j}(k),ypol{j}(k));
+        end
     end
+    fclose(fid);
 end
-fclose(fid);
 
-
+toc
