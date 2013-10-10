@@ -109,9 +109,13 @@ function varargout = vs_trim2nc(vsfile,varargin)
                          'tke','eps','tau',...
                          'salinity','temperature','density',...
                          'sediment',...
-                         'viscosity_z','diffusivity_z','Ri'};
+                         'viscosity_z','diffusivity_z','Ri','sedtrans'};
    OPT.var_derived    = {'pea','dpeadt','dpeads'};
-   OPT.var_nefis      = {'XZ','YZ','XWAT','YWAT','XCOR','YCOR','DP','DP0','DPS','DPSO','KCS','S1','U1','V1','WPHY','TAUKSI','TAUETA','RTUR1','R1','RHO'};
+   OPT.var_nefis      = {'XZ','YZ','XWAT','YWAT','XCOR','YCOR','DP','DP0',...
+                         'DPS','DPSO','KCS','S1','U1','V1','WPHY','TAUKSI',...
+                         'TAUETA','RTUR1','R1','RHO',...
+                         'WS','RSEDEQ','SBCU','SBCV','SBWU','SBWV','SSWU',... % variables from map-sed-series
+                         'SSWV','SBUU','SBVV','SSUU','SSVV','RCA','DPS','BODSED','DPSED'};
    OPT.var            = {OPT.var_cf{:},OPT.var_primary{:}};
    OPT.var_all        = {OPT.var_cf{:},OPT.var_primary{:},OPT.var_derived{:}};
 
@@ -174,7 +178,13 @@ function varargout = vs_trim2nc(vsfile,varargin)
    if any(strcmp('VICWW', OPT.var));OPT.viscosity_z    = 1;end
    if any(strcmp('DICWW', OPT.var));OPT.diffusivity_z  = 1;end
    if any(strcmp('RICH',  OPT.var));OPT.Ri             = 1;end
-
+   
+   if any(strcmp('SBCU',    OPT.var)) | any(strcmp('SBCV',OPT.var)) | ...
+       any(strcmp('SBWU',    OPT.var)) | any(strcmp('SBWV',OPT.var)) | ...
+       any(strcmp('SBUU',    OPT.var)) | any(strcmp('SBVV',OPT.var)) | ...
+       any(strcmp('SSUU',    OPT.var)) | any(strcmp('SSVV',OPT.var))           
+                                    OPT.sedtrans       = 1;end
+                                
 %% 0 Read raw data
 
       F = vs_use(vsfile,'quiet');
@@ -1077,7 +1087,8 @@ function varargout = vs_trim2nc(vsfile,varargin)
          fprintf(2,'> Variable not in trim file, skipped: tau\n')
       end
       end
-      
+
+     
 %% 3 Create variables: scalars
 
       if any(strcmp('density',OPT.var))
@@ -1519,6 +1530,84 @@ function varargout = vs_trim2nc(vsfile,varargin)
       fprintf(2,'> Variable not in trim file, skipped: sediment\n')
    end % isfield
 
+         % map-sed-series
+
+         % Bed-load transport
+      if any(strcmp('sedtrans',OPT.var))
+      if ~isequal(vs_get_elm_size(F,'SBUU'),0) || ~isequal(vs_get_elm_size(F,'SBVV'),0)
+      ifld     = ifld + 1;clear attr dims
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'bedload_sediment_transport_x_component'); % no standard name exist
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'bedload_sediment_transport, x-component');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'm^3/s/m');
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayer);
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.bedload_sediment_transport_x = [Inf -Inf];
+      attr(end+1)  = struct('Name', 'cell_methods' , 'Value', 'time: point             '); % add spaces to allow for overwriting with longest method one: standard_deviation
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-sed-series:SBUU map-sed-series:SBVV map-const:ALFAS map-const:KCU map-const:KCV map-const:KFU map-const:KFV map-const:KCS');
+      nc.Variables(ifld) = struct('Name'       , 'bedload_sediment_transport_x', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nmkst.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
+      
+      ifld     = ifld + 1;clear attr dims
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'bedload_sediment_transport_y_component'); % no standard name exist
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'bedload_sediment_transport, y-component');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'm^3/s/m');
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayer);
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.bedload_sediment_transport_y = [Inf -Inf];
+      attr(end+1)  = struct('Name', 'cell_methods' , 'Value', 'time: point             '); % add spaces to allow for overwriting with longest method one: standard_deviation
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-sed-series:SBUU map-sed-series:SBVV map-const:ALFAS map-const:KCU map-const:KCV map-const:KFU map-const:KFV map-const:KCS');
+      nc.Variables(ifld) = struct('Name'       , 'bedload_sediment_transport_y', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nmkst.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
+      
+      % suspended load sediment transport
+      ifld     = ifld + 1;clear attr dims
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'suspendedload_sediment_transport_x_component'); % no standard name exist
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'suspendedload_sediment_transport, x-component');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'm^3/s/m');
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayer);
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.suspended_load_sediment_transport_x = [Inf -Inf];
+      attr(end+1)  = struct('Name', 'cell_methods' , 'Value', 'time: point             '); % add spaces to allow for overwriting with longest method one: standard_deviation
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-sed-series:SSUU map-sed-series:SSVV map-const:ALFAS map-const:KCU map-const:KCV map-const:KFU map-const:KFV map-const:KCS');
+      nc.Variables(ifld) = struct('Name'       , 'suspended_load_sediment_transport_x', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nmkst.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
+      
+      ifld     = ifld + 1;clear attr dims
+      attr(    1)  = struct('Name', 'standard_name', 'Value', 'suspendedload_sediment_transport_y_component'); % no standard name exist
+      attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'suspendedload_sediment_transport, y-component');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', 'm^3/s/m');
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayer);
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.suspended_load_sediment_transport_y = [Inf -Inf];
+      attr(end+1)  = struct('Name', 'cell_methods' , 'Value', 'time: point             '); % add spaces to allow for overwriting with longest method one: standard_deviation
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-sed-series:SSUU map-sed-series:SSVV map-const:ALFAS map-const:KCU map-const:KCV map-const:KFU map-const:KFV map-const:KCS');
+      nc.Variables(ifld) = struct('Name'       , 'suspended_load_sediment_transport_y', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nmkst.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
+      else
+         ind=strcmp(OPT.var,'sedtrans');
+         OPT.var(ind) = [];      
+         fprintf(2,'> Variable not in trim file, skipped: sedtrans\n')
+      end
+      end
+      
+      
+   
 % TO DO: 
 %-------------------------------------------------------------------------------
 % [Delft3D-trim:Group:map-infsed-serie]
@@ -1681,6 +1770,30 @@ if ~(OPT.empty)
          R.velocity_x   = [min(R.velocity_x(1),min(D.u(:))) max(R.velocity_x (2),max(D.u(:)))];  
          R.velocity_y   = [min(R.velocity_y(1),min(D.v(:))) max(R.velocity_y (2),max(D.v(:)))];  
          end
+         
+         % sediment transport
+         if any(strcmp('sedtrans',OPT.var))
+        [D.u,D.v] = vs_let_vector_cen(F, 'map-sed-series',{it},{'SBUU','SBVV'}, {0,0,0},'quiet');
+         D.u      = apply_mask(permute(D.u,[2 3 4 1]),G.cen.mask); % y x z
+         D.v      = apply_mask(permute(D.v,[2 3 4 1]),G.cen.mask); % y x z
+         D.u      = permute(D.u,[1 2 4 3 5]);
+         D.v      = permute(D.v,[1 2 4 3 5]);
+         ncwrite   (ncfile,'bedload_sediment_transport_x',D.u,[2,2,1,1,i]); % 1-based, size(D.u)         =   [y x k]
+         ncwrite   (ncfile,'bedload_sediment_transport_y',D.v,[2,2,1,1,i]); % 1-based, shape(velocity_*) = [t k x y]
+         R.bedload_sediment_transport_x   = [min(R.bedload_sediment_transport_x(1),min(D.u(:))) max(R.bedload_sediment_transport_x (2),max(D.u(:)))];  
+         R.bedload_sediment_transport_y   = [min(R.bedload_sediment_transport_y(1),min(D.v(:))) max(R.bedload_sediment_transport_y (2),max(D.v(:)))];  
+         
+        [D.u,D.v] = vs_let_vector_cen(F, 'map-sed-series',{it},{'SSUU','SSVV'}, {0,0,0},'quiet');
+         D.u      = apply_mask(permute(D.u,[2 3 4 1]),G.cen.mask); % y x z
+         D.v      = apply_mask(permute(D.v,[2 3 4 1]),G.cen.mask); % y x z
+         D.u      = permute(D.u,[1 2 4 3 5]);
+         D.v      = permute(D.v,[1 2 4 3 5]);
+         ncwrite   (ncfile,'suspended_load_sediment_transport_x',D.u,[2,2,1,1,i]); % 1-based, size(D.u)         =   [y x k]
+         ncwrite   (ncfile,'suspended_load_sediment_transport_y',D.v,[2,2,1,1,i]); % 1-based, shape(velocity_*) = [t k x y]
+         R.suspended_load_sediment_transport_x   = [min(R.suspended_load_sediment_transport_x(1),min(D.u(:))) max(R.suspended_load_sediment_transport_x (2),max(D.u(:)))];  
+         R.suspended_load_sediment_transport_y   = [min(R.suspended_load_sediment_transport_y(1),min(D.v(:))) max(R.suspended_load_sediment_transport_y (2),max(D.v(:)))];  
+         end         
+         
          
          if any(strcmp('velocity_omega',OPT.var))
          matrix      = apply_mask(vs_let_scalar(F, 'map-series',{it},'W'     , {0,0,0},'quiet'),G.cen.mask);
