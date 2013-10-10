@@ -65,13 +65,13 @@ mdf            = tmp.keywords;
 mdf.pathd3d    = path_mdf;
 
 %% Generate the net file from the area information
-
 simona2mdf_message('Generating the Net file'                ,'Logo',logo,'Window','MDF2MDU Message');
 mdf2mdu_grd2net([path_mdf filesep mdf.filcco],[path_mdf filesep mdf.fildep],name_mdu);
 mdu.geometry.NetFile = [name_mdu '_net.nc'];
 mdu.geometry.NetFile = simona2mdf_rmpath(mdu.geometry.NetFile);
 
 %% Generate unstruc additional files and fill the mdu structure
+
 simona2mdf_message('Generating UNSTRUC Area              information','Logo',logo,'Window','MDF2MDU Message');
 mdu = mdf2mdu_area   (mdf,mdu,name_mdu);
 

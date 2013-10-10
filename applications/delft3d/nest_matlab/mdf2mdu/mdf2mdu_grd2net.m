@@ -30,22 +30,16 @@ zh(:  ,end)  = [];
 
 % Make file with bathymetry samples
 
-xsamp          = reshape(xh,[M.*N 1]);
-ysamp          = reshape(yh,[M.*N 1]);
-zsamp          = reshape(zh,[M.*N 1]);
+tmp(:,1) = reshape(xh,[M.*N 1]);
+tmp(:,2) = reshape(yh,[M.*N 1]);
+tmp(:,3) = reshape(zh,[M.*N 1]);
 
-irow = 0;
-for isamp = 1: length(xsamp)
-    if ~isnan(xsamp(isamp))
-        irow = irow + 1;
-        LINE.DATA{irow,1} = xsamp(isamp);
-        LINE.DATA{irow,2} = ysamp(isamp);
-        LINE.DATA{irow,3} = zsamp(isamp);
-    end
-end
+nonan          = ~isnan(tmp(:,1));
 
+LINE.DATA = num2cell(tmp(nonan,:));
+
+% write to unstruc xyz file
 unstruc_io_xydata('write',samfile,LINE)
 
 % Write netCDF-file
-
 net2cdf;

@@ -18,32 +18,26 @@ if ~isempty(filic)
     ic    = wldep('read',filic,[mmax nmax],'multiple');
 
     % initial conditions for water level
-    itel = 0.;
-    for m = 1: mmax
-        for n = 1: nmax
-            if ~isnan(xcoor(m,n))
-                itel = itel + 1;
-                LINE.DATA{itel,1} = xcoor(m,n);
-                LINE.DATA{itel,2} = ycoor(m,n);
-                LINE.DATA{itel,3} = ic(1).Data(m,n);
-            end
-        end
-    end
 
+    tmp(:,1) = reshape(xcoor'     ,mmax*nmax,1);
+    tmp(:,2) = reshape(ycoor'     ,mmax*nmax,1);
+    tmp(:,3) = reshape(ic(1).Data',mmax*nmax,1);
+
+    nonan = ~isnan(tmp(:,1));
+
+    LINE.DATA = num2cell(tmp(nonan,:));
+
+    %% Write inial water level data to unstruc xyz file
     unstruc_io_xydata('write',[name_mdu '_ini_wlev.xyz'],LINE);
     mdu.geometry.WaterLevIniFile = [nameshort '_ini_wlev.xyz'];
 
     % Salinity (if active, assume 2Dh)
     if mdu.physics.Salinity
-        itel = 0.;
-        for m = 1: mmax
-            for n = 1: nmax
-                if ~isnan(xcoor(m,n))
-                    itel = itel + 1;
-                    LINE.DATA{itel,3} = ic(4).Data(m,n);
-                end
-            end
-        end
+
+        tmp(:,3) = reshape(ic(4).Data,mmax*nmax,1);
+        LINE.DATA = num2cell(tmp(nonan,:));
+
+        %% Write inial salinity data to unstruc xyz file
         unstruc_io_xydata('write',[name_mdu '_ini_sal.xyz'],LINE);
         mdu.Filini = [nameshort 'ini_sal.xyz'];
     end

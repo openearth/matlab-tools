@@ -22,43 +22,37 @@ if ~isempty(filrgh)
     nmax                     = grid.nmax;
     xcoor                    = grid.cor.x';
     ycoor                    = grid.cor.y';
-    xcoor_u(1:mmax,1:nmax)   = NaN;
-    ycoor_u(1:mmax,1:nmax)   = NaN;
-    xcoor_v(1:mmax,1:nmax)   = NaN;
-    ycoor_v(1:mmax,1:nmax)   = NaN;
-
+    xcoor(end+1,:)           = NaN;
+    ycoor(end+1,:)           = NaN; 
+    xcoor(:,end+1)           = NaN;
+    ycoor(:,end+1)           = NaN;   
+    
     % Determine coordinates velocity points
     % (delft3d_io_grid does not give the right indixes)
-    for m = 2 : mmax - 1
-        for n = 2: nmax - 1
-            xcoor_u(m,n) = 0.5*(xcoor(m  ,n  ) + xcoor(m  ,n-1));
-            ycoor_u(m,n) = 0.5*(ycoor(m  ,n  ) + ycoor(m  ,n-1));
-            xcoor_v(m,n) = 0.5*(xcoor(m-1,n  ) + xcoor(m  ,n  ));
-            ycoor_v(m,n) = 0.5*(ycoor(m-1,n  ) + ycoor(m  ,n  ));
-        end
-    end
+    xcoor_u(1:mmax-1,2:nmax-1) = 0.5*(xcoor(1:end-1 ,2:end-1) + xcoor(1:end-1  ,1:end-2));
+    ycoor_u(1:mmax-1,2:nmax-1) = 0.5*(ycoor(1:end-1 ,2:end-1) + ycoor(1:end-1  ,1:end-2));
+    xcoor_v(2:mmax-1,1:nmax-1) = 0.5*(xcoor(2:end-1 ,1:end-1) + xcoor(1:end-2  ,1:end-1));
+    ycoor_v(2:mmax-1,1:nmax-1) = 0.5*(ycoor(2:end-1 ,1:end-1) + ycoor(1:end-2  ,1:end-1));
+    xcoor_u(mmax,1:nmax) = NaN;
+    ycoor_u(mmax,1:nmax) = NaN;
+    xcoor_v(1:mmax,nmax) = NaN;
+    ycoor_v(1:mmax,nmax) = NaN;
 
     % read the roughness values
     rgh        = wldep('read',filrgh,[mmax nmax],'multiple');
 
     % Fill LINE struct with roughness values
-    itel = 0.;
-    for m = 1: mmax - 1
-        for n = 1: nmax - 1
-            if ~isnan(xcoor_u(m,n))
-                itel = itel + 1;
-                LINE.DATA{itel,1} = xcoor_u(m,n);
-                LINE.DATA{itel,2} = ycoor_u(m,n);
-                LINE.DATA{itel,3} = rgh(1).Data(m,n);
-            end
-            if ~isnan(xcoor_v(m,n))
-                itel = itel + 1;
-                LINE.DATA{itel,1} = xcoor_v(m,n);
-                LINE.DATA{itel,2} = ycoor_v(m,n);
-                LINE.DATA{itel,3} = rgh(2).Data(m,n);
-            end
-        end
-    end
+    tmp(:,1) = reshape(xcoor_u',mmax*nmax,1);
+    tmp(:,2) = reshape(ycoor_u',mmax*nmax,1);
+    tmp(:,3) = reshape(rgh(1).Data',mmax*nmax,1);
+
+    tmp(end+1:end+mmax*nmax,1) = reshape(xcoor_v',mmax*nmax,1);
+    tmp(end+1:end+mmax*nmax,2) = reshape(ycoor_v',mmax*nmax,1);
+    tmp(end+1:end+mmax*nmax,3) = reshape(rgh(2).Data',mmax*nmax,1);
+
+    nonan = ~isnan(tmp(:,1));
+
+    LINE.DATA = num2cell(tmp(nonan,:));
 
     unstruc_io_xydata('write',[name_mdu '_rgh.xyz'],LINE);
 else
@@ -66,5 +60,3 @@ else
     % Constant values from mdf file
     mdu.physics.UnifFrictCoef = 0.5*(mdf.ccofu + mdf.ccofv);
 end
-
-

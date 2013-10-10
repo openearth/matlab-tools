@@ -13,7 +13,6 @@ if ~isempty(filedy)
     mdu.physics.Vicouv       = -999.999;
     mdu.physics.Dicouv       = -999.999;
     mdu.Filvico              = [nameshort '_vico.xyz'];
-    mdu.Fildico              = [nameshort '_dico.xyz'];
     grid                     = delft3d_io_grd('read',filgrd);
     mmax                     = grid.mmax;
     nmax                     = grid.nmax;
@@ -26,19 +25,21 @@ if ~isempty(filedy)
     % Fill LINE struct with viscosity and diffusivity values
     itel   = 0.;
     no_edy = 1 ;
-    if mdu.physics.Salinity no_edy = 2; end
+    if mdu.physics.Salinity
+        no_edy       = 2
+        mdu.Fildico  = [nameshort '_dico.xyz'];
+    end
 
-    for m = 1: mmax - 1
-        for n = 1: nmax - 1
-            if ~isnan(xcoor(m,n))
-                for i_edy = 1: no_edy
-                    itel = itel + 1;
-                    LINE(i_edy).DATA{itel,1} = xcoor(m,n);
-                    LINE(i_edy).DATA{itel,2} = ycoor(m,n);
-                    LINE(i_edy).DATA{itel,3} = edy(i_edy).Data(m,n);
-                end
-            end
-        end
+    for i_edy = 1: no_edy
+        tmp(i_edy,:,1) = reshape(xcoor',mmax*nmax,1);
+        tmp(i_edy,:,2) = reshape(ycoor',mmax*nmax,1);
+        tmp(i_edy,:,3} = reshape(edy(i_edy).Data',mmax*nmax,1);
+    end
+
+    nonan = ~isnan(tmp(1,:,1);
+
+    for i_edy = 1: no_edy
+        LINE(i_edy).DATA = num2cell(tmp(i_edy,nonan,i_field));
     end
 
     % write viscosity to file
@@ -60,4 +61,3 @@ mdu.physics.Smagorinsky = 0.0;
 mdu.physics.Elder       = 0;
 mdu.physics.irov        = 0;
 mdu.physics.wall_ks      = -999.999; % not used so make clear in the input
-

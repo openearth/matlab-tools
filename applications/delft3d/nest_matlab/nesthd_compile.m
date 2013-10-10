@@ -9,6 +9,10 @@ addpath(genpath('nesthd1'));
 addpath(genpath('nesthd2'));
 addpath(genpath('general'));
 addpath(genpath('reawri'));
+addpath(genpath('simona2mdf'));
+addpath(genpath('simona2mdu'));
+addpath(genpath('mdf2mdu'));
+addpath(genpath('unstruc_io'));
 
 mcc -e -v nesthd
 
