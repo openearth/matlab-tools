@@ -192,6 +192,9 @@ else
     xb_verbose(1,'Determine grid resolution and extent');
     xb_verbose(2,{'cellsize' 'xmin' 'xmax' 'ymin' 'ymax'},{cellsize xmin xmax ymin ymax});
 
+    xcorners_r = [];
+    ycorners_r = [];
+    
     % crop grid
     if ischar(OPT.crop) && strcmpi(OPT.crop, 'select')
         xb_verbose(1,'Enable user to crop grid visually');
@@ -209,6 +212,8 @@ else
         xmax = max(xcorners_r);
         ymin = min(ycorners_r);
         ymax = max(ycorners_r);
+        
+        OPT.crop = [xmin ymin xmax-xmin ymax-ymin];
 
         close(fh);
     end
@@ -216,11 +221,14 @@ else
     if ~islogical(OPT.crop) && isvector(OPT.crop) && ~isa(OPT.crop,'char')
         % rotate crop vector if needed
         if abs(alpha) > 5
-            xcorners = [OPT.crop(1) OPT.crop(1)+OPT.crop(3)];
-            ycorners = [OPT.crop(2) OPT.crop(2)+OPT.crop(4)];
             
-            xcorners_r = xori+cosd(alpha)*(xcorners-xori)+sind(alpha)*(ycorners-yori);
-            ycorners_r = yori-sind(alpha)*(xcorners-xori)+cosd(alpha)*(ycorners-yori);
+            if isempty(xcorners_r) || isempty(ycorners_r)
+                xcorners = [OPT.crop(1) OPT.crop(1)+OPT.crop(3)];
+                ycorners = [OPT.crop(2) OPT.crop(2)+OPT.crop(4)];
+                
+                xcorners_r = xori+cosd(alpha)*(xcorners-xori)+sind(alpha)*(ycorners-yori);
+                ycorners_r = yori-sind(alpha)*(xcorners-xori)+cosd(alpha)*(ycorners-yori);
+            end
              
             xmin = min(xcorners_r);
             xmax = max(xcorners_r);
