@@ -111,19 +111,35 @@ for i=1:nrlines
         lon(i)=lon(i)*-1;
     end
     vmax(i)=str2double(line(i).str{9});
-    p(i)=str2double(line(i).str{10})*100;
-    vr(i)=str2double(line(i).str{12});
-    r1(i)=str2double(line(i).str{14});
-    r2(i)=str2double(line(i).str{15});
-    r3(i)=str2double(line(i).str{16});
-    r4(i)=str2double(line(i).str{17});
-    if length(line(i).str)>=20
-        rmax(i)=str2double(line(i).str{20});
-    else
-        rmax(i)=-999;
-    end
-    if length(line(i).str)>=28
-        name=line(i).str{28};
+    p(i)=-999;
+    cat{i}=-999;
+    vr(i)=-999;
+    r1(i)=-999;
+    r2(i)=-999;
+    r3(i)=-999;
+    r4(i)=-999;
+    rmax(i)=-999;
+    if length(line(i).str)==10
+        p(i)=str2double(line(i).str{10})*100;
+    elseif length(line(i).str)==11
+        p(i)=str2double(line(i).str{10})*100;
+        cat{i}=line(i).str{11};
+    elseif length(line(i).str)>11
+        p(i)=str2double(line(i).str{10})*100;
+        cat{i}=line(i).str{11};
+        vr(i)=str2double(line(i).str{12});
+        r1(i)=str2double(line(i).str{14});
+        r2(i)=str2double(line(i).str{15});
+        r3(i)=str2double(line(i).str{16});
+        r4(i)=str2double(line(i).str{17});
+        if length(line(i).str)>=20
+            rmax(i)=str2double(line(i).str{20});
+        else
+            rmax(i)=-999;
+        end
+        if length(line(i).str)>=28
+            name=line(i).str{28};
+        end
     end
 end
 
@@ -149,6 +165,7 @@ for i=1:nrlines
     tc.lat(k)=lat(i);
     tc.vmax(k,1:4)=vmax(i);
     tc.p(k,1:4)=p(i);
+    tc.cat{k}=cat{i};
     if vr(i)>0
         rstr=['r' num2str(vr(i))];
         tc.(rstr)(k,1)=r1(i);
