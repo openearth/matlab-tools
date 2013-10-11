@@ -5,17 +5,22 @@ function varargout = run(data, time, mask, varargin)
 %
 % where dataf is the filled + smoothed data. The dimensions 
 % should be time(t), data(x,<y>,t), mask(x,<y>). Any missing 
-% y dimension is permuted before calling dineof.exe.
+% y dimension is permuted before calling dineof.exe. time
+% should be in Matlab datenum epoch.
 %
 %    [dataf,D] = dineof.run(data, time, mask, <keyword,value>)
 %
 % where optionally struct D with the mean, the spatial & temporal
-% EOF modes, the singular values and the exlained variance 
-% can be returned. All temporary DINEOF files are deleted afterwards 
-% and saved into 1 netCDF file, unless keyword 'cleanup' is set to 0.
-% Note that the upcoming DINEOF release will save the EOFs to netCDF 
-% itself. Use keyword 'sgn' to consistently swap the signs of the most 
+% EOF modes, the singular values and the exlained variance can be 
+% returned. All temporary DINEOF files are deleted afterwards and 
+% saved into 1 netCDF file, unless keyword 'cleanup' is set to 0. Note
+% that the upcoming DINEOF release will save the EOFs to netCDF itself. 
+%
+% Note: Use keyword 'sgn' to consistently swap the signs of the most 
 % important spatial & temporal modes to be consistent with your hypotheses.
+%
+% Note: you can appand wgs84-coordinates with keywords 'lon' & 'lat' and
+% data units with 'units'.
 %
 % Example 2D matrices:
 %
@@ -38,7 +43,7 @@ function varargout = run(data, time, mask, varargin)
 %   
 %   [dataf,eofs] = dineof.run(data, time, mask, 'nev',5,'plot',1);
 %
-%See also: dineof, harmanal
+%See also: dineof, harmanal, netcdf
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2011-2012 Deltares 4 Rijkswaterstaat: Resmon project
@@ -89,6 +94,17 @@ function varargout = run(data, time, mask, varargin)
    OPT.plot    = 1;
    OPT.export  = 1;
    OPT.version = 3; % set > 3 for rev 81 of self-compiled source
+   
+% user-configurable variable names for EOF netCDF file, default same as suggestions in DINEOF 4.0
+
+   OPT.varname.P      = 'P'     ;
+   OPT.varname.mean   = 'mean'  ;
+   OPT.varname.lftvec = 'U'; %'lftvec';
+   OPT.varname.rghvec = 'V'; %'rghvec';
+   OPT.varname.vlsng  = 'vlsng' ;
+   OPT.varname.mean   = 'mean' ;
+   OPT.varname.varEx  = 'varEx' ;   
+   OPT.varname.valc   = 'valc' ;   
 
 % other keywords
 
@@ -426,12 +442,12 @@ else
    varid.time   = netcdf.defVar(NCid,OPT.timename,'float' ,dimid.time); 
    varid.mask   = netcdf.defVar(NCid,OPT.maskname,'short' ,dimid.space); 
 
-   varid.P      = netcdf.defVar(NCid,'P'     ,'float' ,[]); 
-   varid.mean   = netcdf.defVar(NCid,'mean'  ,'float' ,[]); 
-   varid.lftvec = netcdf.defVar(NCid,'lftvec','float' ,[dimid.P dimid.space]); 
-   varid.rghvec = netcdf.defVar(NCid,'rghvec','float' ,[dimid.P dimid.time]); 
-   varid.vlsng  = netcdf.defVar(NCid,'vlsng' ,'float' , dimid.P); 
-   varid.varEx  = netcdf.defVar(NCid,'varEx' ,'float' , dimid.P); 
+   varid.P      = netcdf.defVar(NCid,OPT.varname.P     ,'float' ,[]); 
+   varid.mean   = netcdf.defVar(NCid,OPT.varname.mean  ,'float' ,[]); 
+   varid.lftvec = netcdf.defVar(NCid,OPT.varname.lftvec,'float' ,[dimid.space dimid.P]); % P first (P last in native Matlab) is what DINEOF 4.0 does
+   varid.rghvec = netcdf.defVar(NCid,OPT.varname.rghvec,'float' ,[dimid.time  dimid.P]); % P first (P last in native Matlab) is what DINEOF 4.0 does
+   varid.vlsng  = netcdf.defVar(NCid,OPT.varname.vlsng ,'float' , dimid.P); 
+   varid.varEx  = netcdf.defVar(NCid,OPT.varname.varEx ,'float' , dimid.P); 
    
    netcdf.putAtt(NCid,varid.P     ,'long_name'    ,'optimal number of EOF modes');
    netcdf.putAtt(NCid,varid.mean  ,'long_name'    ,'spatio-temporal mean');
@@ -461,13 +477,16 @@ else
    varid.lon = netcdf.defVar(NCid,OPT.lonname,'double' ,dimid.space); 
    varid.lat = netcdf.defVar(NCid,OPT.latname,'double' ,dimid.space); 
 
-   netcdf.putAtt(NCid,varid.lat,'long_name'    ,'longitude');
-   netcdf.putAtt(NCid,varid.lon,'standard_name','longitude');
-   netcdf.putAtt(NCid,varid.lon,'units'        ,'degrees_east');
+   netcdf.putAtt(NCid,varid.lon   ,'long_name'    ,'longitude');
+   netcdf.putAtt(NCid,varid.lon   ,'standard_name','longitude');
+   netcdf.putAtt(NCid,varid.lon   ,'units'        ,'degrees_east');
 
-   netcdf.putAtt(NCid,varid.lat,'long_name'    ,'latitude');
-   netcdf.putAtt(NCid,varid.lat,'standard_name','latitude');
-   netcdf.putAtt(NCid,varid.lat,'units'        ,'degrees_north');
+   netcdf.putAtt(NCid,varid.lat   ,'long_name'    ,'latitude');
+   netcdf.putAtt(NCid,varid.lat   ,'standard_name','latitude');
+   netcdf.putAtt(NCid,varid.lat   ,'units'        ,'degrees_north');
+   
+   netcdf.putAtt(NCid,varid.lftvec,'coordinates'  ,'lat lon');
+   netcdf.putAtt(NCid,varid.mask  ,'coordinates'  ,'lat lon');   
    end   
 
    netcdf.endDef(NCid,20e3,4,0,4); 
@@ -477,8 +496,8 @@ else
 
    netcdf.putVar(NCid,varid.P     ,S.P);
    netcdf.putVar(NCid,varid.mean  ,S.mean);
-   netcdf.putVar(NCid,varid.lftvec,S.lftvec);
-   netcdf.putVar(NCid,varid.rghvec,S.rghvec);
+   netcdf.putVar(NCid,varid.lftvec,permute(S.lftvec,[2 1 3])); % mind (x,y) > (y,x) error and dummy space dimension
+   netcdf.putVar(NCid,varid.rghvec,permute(S.rghvec,[2 1]));   % mind (x,y) > (y,x) error
    netcdf.putVar(NCid,varid.vlsng ,S.vlsng);
    netcdf.putVar(NCid,varid.varEx ,S.varEx);
 
@@ -489,9 +508,7 @@ else
 
    netcdf.close(NCid)
    
-   if OPT.debug
-      nc_dump(OPT.ncfile)
-   end
+   nc_dump(OPT.ncfile,'',[filepathstrname(OPT.ncfile),'.cdl'])
 
   %% delete output
 
