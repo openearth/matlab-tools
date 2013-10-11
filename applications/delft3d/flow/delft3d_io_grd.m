@@ -9,6 +9,11 @@ function varargout = delft3d_io_grd(varargin)
 %   G.cor  represents corner points without dummy row/col:           1:nmax-1 x 1:mmax-1
 %   G.cen  represents center points without dummy row/col:           2:nmax-1 x 2:mmax-1
 %   G.cend represents center points with extrapolated dummy row/col: 1:nmax   x 1:mmax
+%      
+%   TK:
+%   g.u_full represents u-velocity point however indixes (m,n) match with
+%            exact location
+%   G.v_full as u-velocity points but this time v-velocity points
 %
 %   for xy2mn: use the G.cend output
 %
@@ -162,7 +167,27 @@ end
 	  G.v.x_units  = '';
       G.v.y_units  = '';
       G.v.comment    = 'eta-velocity faces without dummy rows/columns (1:nmax-1) x (2:mmax-1)';
+      
+      % TK, with dummy rows so indices match with location:
+      mmax = G.mmax;
+      nmax = G.nmax;
+      G.u_full.x(1:nmax,1:mmax)     = G.nodatavalue;
+      G.u_full.y(1:nmax,1:mmax)     = G.nodatavalue;
+      G.v_full.x(1:nmax,1:mmax)     = G.nodatavalue;
+      G.v_full.y(1:nmax,1:mmax)     = G.nodatavalue;
+      G.u_full.x(2:nmax-1,1:mmax-1) = 0.5*(G.cor.x(2:nmax-1,1:mmax-1) + G.cor.x(1:nmax-2,1:mmax-1));
+      G.u_full.y(2:nmax-1,1:mmax-1) = 0.5*(G.cor.y(2:nmax-1,1:mmax-1) + G.cor.y(1:nmax-2,1:mmax-1));
+      G.v_full.x(1:nmax-1,2:mmax-1) = 0.5*(G.cor.x(1:nmax-1,2:mmax-1) + G.cor.x(1:nmax-1,1:mmax-2));
+      G.v_full.y(1:nmax-1,2:mmax-1) = 0.5*(G.cor.y(1:nmax-1,2:mmax-1) + G.cor.y(1:nmax-1,1:mmax-2));
 
+      G.u_full.x_units  = '';
+      G.u_full.y_units  = '';
+      G.u_full.comment    = 'ksi-velocity faces with dummy rows/columns (nmax,mmax)';
+      
+      G.v_full.x_units  = '';
+      G.v_full.y_units  = '';
+      G.v_full.comment    = 'eta-velocity faces with dummy rows/columns (nmax,mmax)';
+      
      %G.cend.x       = addrowcol(corner2centernan(G.cor.x),[-1 1],[-1 1],nan);
      %G.cend.y       = addrowcol(corner2centernan(G.cor.y),[-1 1],[-1 1],nan);
       
