@@ -298,9 +298,7 @@ function varargout = run(data, time, mask, varargin)
    
    netcdf.close(NCid)
    
-   if OPT.debug
-      nc_dump(OPT.ncfile)
-   end
+   nc_dump(OPT.ncfile,'',[filepathstrname(OPT.ncfile),'.cdl']);
 
 %% call dineof
 
@@ -341,9 +339,7 @@ function varargout = run(data, time, mask, varargin)
 
    status = system(cmd);
    
-   if OPT.debug
-      nc_dump(OPT.resfile)
-   end
+   nc_dump(OPT.ncfile,'',[filepathstrname(OPT.resfile),'.cdl']);
 
 if status < 0
 
@@ -496,8 +492,9 @@ else
 
    netcdf.putVar(NCid,varid.P     ,S.P);
    netcdf.putVar(NCid,varid.mean  ,S.mean);
-   netcdf.putVar(NCid,varid.lftvec,permute(S.lftvec,[2 1 3])); % mind (x,y) > (y,x) error and dummy space dimension
-   netcdf.putVar(NCid,varid.rghvec,permute(S.rghvec,[2 1]));   % mind (x,y) > (y,x) error
+
+   netcdf.putVar(NCid,varid.lftvec,permute(S.lftvec,[1 2 3])); % mind dummy space dimension
+   netcdf.putVar(NCid,varid.rghvec,permute(S.rghvec,[1 2]));   % 
    netcdf.putVar(NCid,varid.vlsng ,S.vlsng);
    netcdf.putVar(NCid,varid.varEx ,S.varEx);
 
@@ -508,7 +505,26 @@ else
 
    netcdf.close(NCid)
    
-   nc_dump(OPT.ncfile,'',[filepathstrname(OPT.ncfile),'.cdl'])
+   nc_dump(OPT.ncfile,'',[filepathstrname(OPT.eoffile),'.cdl'])
+   
+      
+%% test netcdf.putVar
+   if OPT.debug
+   figure
+   subplot(2,1,1)
+   tmp = nc2struct(OPT.eoffile)
+   plot(tmp.V','-o')
+   hold on
+   plot(S.rghvec,'.')
+   xlabel('time');xlabel('V')
+
+   subplot(2,1,2)
+   plot(permute(tmp.U,[3 1 2]),'-o')
+   hold on
+   plot(permute(S.lftvec,[1 3 2]),'.')
+   xlabel('points');xlabel('U')   
+   
+   end
 
   %% delete output
 
