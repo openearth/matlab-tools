@@ -82,7 +82,7 @@ function varargout=curvec(x,y,u,v,varargin)
 % close(fig)
 % aviobj = close(aviobj);
 %
-%See also: KMLcurvedArrows, mxcurvec, quiver, arrow2, arrow
+%See also: KMLcurvedArrows, mxcurvec, quiver, arrow2, arrow, particle_tracker
  
 % --------------------------------------------------------------------
 % Copyright (C) 2011 Deltares
