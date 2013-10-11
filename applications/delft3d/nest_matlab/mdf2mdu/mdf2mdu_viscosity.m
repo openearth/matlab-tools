@@ -43,7 +43,7 @@ if ~isempty(filedy)
     nonan = ~isnan(tmp(1,:,1));
 
     for i_edy = 1: no_edy
-        LINE(i_edy).DATA = num2cell(tmp(i_edy,nonan,i_field));
+        LINE(i_edy).DATA = num2cell(squeeze(tmp(i_edy,nonan,:)));
     end
 
     % write viscosity to file
