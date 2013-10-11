@@ -59,7 +59,7 @@ function OPT = nc_cf_harvest_matrix2kml(ATT,varargin)
 
 %% set options
 
-   OPT.fileName           = [];
+   OPT.fileName           = [mfilename,'.kml']; % default shold not be empty for fopen
    OPT.description        = '';
    OPT.kmlName            = 'tst.kml';
    OPT.openInGE           = false;
@@ -101,13 +101,14 @@ function OPT = nc_cf_harvest_matrix2kml(ATT,varargin)
 
    OPT.THREDDSFcn         = @(s) (s); % assuming the supplied url's are THREDDS (HYRAX has issues anyway)
    OPT.ftpFcn             = @(s) strrep(s,'/thredds/dodsC/opendap/','/thredds/fileServer/opendap/');
-   
 
    if nargin==0
       return
    end
    
    OPT = setproperty(OPT,varargin{:});
+   
+   fid     = fopen(OPT.fileName,'w'); % do this immediately, so any crashed before doing any work
    
 %% get meta data
 
@@ -378,7 +379,6 @@ function OPT = nc_cf_harvest_matrix2kml(ATT,varargin)
 
 %% open and fill KML
 
-   fid     = fopen(OPT.fileName,'w');
    fprintf(fid,'%c',output); % handle any % in output, cannot handle \n any more
    fprintf(fid,'\n%s\n','</Folder>'); % handle any % in output, cannot handle \n any more
    output  = [];

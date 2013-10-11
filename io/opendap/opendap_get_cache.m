@@ -18,13 +18,15 @@ function varargout = opendap_get_cache(varargin)
 %   E:\opendap\rijkswaterstaat\grainsize\
 %
 %See also: OPENDAP_CATALOG, SNCTOOLS
+%          https://publicwiki.deltares.nl/display/OET/OPeNDAP+caching+on+a+local+machine
 
 %% specify
 
-   OPT.server   = 'http://opendap.deltares.nl/thredds/';
-   OPT.local    = '';
-   OPT.dataset  = '';
-   OPT.pause    = 1; % default verify only directory, set to 2 to verify every file
+   OPT.server_root = 'http://opendap.deltares.nl/thredds/';
+   OPT.local_root  = 'D:/opendap.deltares.nl/thredds/';
+   OPT.dataset     = '';
+  %OPT.dap2ftpFcn  = @(x) strrep(x,'dodsC','fileServer')
+   OPT.pause       = 1; % default verify only directory, set to 2 to verify every file
    
    if nargin==0
       varargout = {OPT};
@@ -33,14 +35,14 @@ function varargout = opendap_get_cache(varargin)
    
    OPT = setproperty(OPT,varargin);
    
-   base_url = path2os([OPT.server           ,'/fileServer/opendap/',OPT.dataset],'h');
-   base_loc = path2os([OPT.local,                                   OPT.dataset]);
+   base_url = path2os([OPT.server_root,'/fileServer/opendap/',OPT.dataset],'h');
+   base_loc = path2os([OPT.local_root,                        OPT.dataset]);
    
    mkpath(base_loc)
 
 %% find ncfiles
 
-   list = opendap_catalog(path2os([OPT.server,'/catalog/opendap/',OPT.dataset,'/catalog.html']));
+   list = opendap_catalog(path2os([OPT.server_root,'/catalog/opendap/',OPT.dataset,'/catalog.xml']));
    
    if ~isempty(list)
       list = cellstr(filenameext(char(list)));

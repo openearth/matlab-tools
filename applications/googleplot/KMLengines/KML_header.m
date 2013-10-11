@@ -15,8 +15,8 @@ function varargout = KML_header(varargin)
 %   * cameralat    specify camera viewpoint
 %   * cameraz      specify camera viewpoint
 %
-%   * timeIn       specify start of timespan of timeslider (datenum or yyyy-mm-ddTHH:MM:SS)
-%   * timeOut      specify stop of  timespan of timeslider (datenum or yyyy-mm-ddTHH:MM:SS)
+%   * timeIn       specify start of timespan of timeslider (datenum or 'yyyy-mm-ddTHH:MM:SS')
+%   * timeOut      specify stop of  timespan of timeslider (datenum or 'yyyy-mm-ddTHH:MM:SS')
 %   * dateStrStyle how to write time string into kml: dtermines accuracy (default 29)
 %
 % See also: KML_footer, KML_line, KML_poly, KML_style, KML_stylePoly,

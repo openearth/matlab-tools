@@ -9,7 +9,8 @@ function nc_dump(file_name, varargin)
 %
 %   NC_DUMP(NCFILE,<LOCATION>,fid) prints output to file opened 
 %   with fid = fopen(...) instead of to screen (default fid=1: screen).
-%   NC_DUMP(NCFILE,LOCATION,<'fname'>) prints output to new file 'fname'.
+%   NC_DUMP(NCFILE,LOCATION,<'fname'>) prints output to new file 'fname'
+%   with NC_DUMP(NCFILE,'',<'fname'>) for entire contents.
 %
 %   NC_DUMP(NCFILE,LOCATION,fid,<keyword,value>) passes keyword-value
 %   pairs, LOCATION and fid must be supplied, use [] for defaults.

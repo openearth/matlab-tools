@@ -50,15 +50,16 @@ OPT.database_toolbox = 1;
 OPT = setproperty(OPT,varargin);
 
 %% connect
-if ~(pg_settings('check',1)==1)
-   pg_settings
-end
-if isempty(OPT.user)
-[OPT.user,OPT.pass] = pg_credentials();
-end
-conn=pg_connectdb(OPT.db,'user',OPT.user,'pass',OPT.pass,'database_toolbox',OPT.database_toolbox);
 
-pg_dump(conn)
+   if ~(pg_settings('check',1)==1)
+      pg_settings
+   end
+   if isempty(OPT.user)
+   [OPT.user,OPT.pass] = pg_credentials();
+   end
+   conn=pg_connectdb(OPT.db,'user',OPT.user,'pass',OPT.pass,'database_toolbox',OPT.database_toolbox);
+   
+   pg_dump(conn)
 
 %% show existing contents
 
@@ -95,6 +96,7 @@ pg_dump(conn)
    end % add_table
    
 %% remove and re-add data
+
    pg_cleartable   (conn,OPT.table) % reset values and serial
    
    pg_insert_struct(conn,OPT.table,struct('Value','3.1416'       ,'ObservationTime', '1648-10-24 00:01:00+1')); % 1

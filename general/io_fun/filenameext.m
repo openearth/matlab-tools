@@ -14,16 +14,25 @@ function OUT = filenameext(fullfilename)
 % $Keywords$
 
 if iscellstr(fullfilename)
+    wascell = 1;
     fullfilename = char(fullfilename);
+else
+    wascell = 0;
 end
+
+OUT = cell(1,size(fullfilename,1)); % pre-allocate
 
 for iname=1:size(fullfilename,1)
 
-   [PATHSTR{iname},NAME{iname},EXT{iname}] = fileparts(fullfilename(iname,:));
+   [PATHSTR,NAME,EXT] = fileparts(fullfilename(iname,:));
+   
+   OUT{iname} = [strtrim(NAME),strtrim(EXT)];
 
-end   
+end
 
-OUT = [char(NAME),char(EXT)];
+if ~wascell
+    OUT = char(OUT);
+end
 
 % Feb 2008, vectorized.
 
