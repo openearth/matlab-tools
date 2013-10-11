@@ -18,6 +18,10 @@ if ~isempty(filedy)
     nmax                     = grid.nmax;
     xcoor                    = grid.cor.x';
     ycoor                    = grid.cor.y';
+    xcoor(mmax,1:nmax)       = NaN;
+    ycoor(mmax,1:nmax)       = NaN;
+    xcoor(1:mmax,nmax)       = NaN;
+    ycoor(1:mmax,nmax)       = NaN;
 
     % read the roughness values
     edy        = wldep('read',filedy,[mmax nmax],'multiple');
@@ -26,17 +30,17 @@ if ~isempty(filedy)
     itel   = 0.;
     no_edy = 1 ;
     if mdu.physics.Salinity
-        no_edy       = 2
+        no_edy       = 2;
         mdu.Fildico  = [nameshort '_dico.xyz'];
     end
 
     for i_edy = 1: no_edy
         tmp(i_edy,:,1) = reshape(xcoor',mmax*nmax,1);
         tmp(i_edy,:,2) = reshape(ycoor',mmax*nmax,1);
-        tmp(i_edy,:,3} = reshape(edy(i_edy).Data',mmax*nmax,1);
+        tmp(i_edy,:,3) = reshape(edy(i_edy).Data',mmax*nmax,1);
     end
 
-    nonan = ~isnan(tmp(1,:,1);
+    nonan = ~isnan(tmp(1,:,1));
 
     for i_edy = 1: no_edy
         LINE(i_edy).DATA = num2cell(tmp(i_edy,nonan,i_field));
