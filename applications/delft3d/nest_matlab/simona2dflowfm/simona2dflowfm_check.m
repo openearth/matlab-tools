@@ -17,7 +17,7 @@ for itest = 1 : length(filwaq)
     % Convert
     %
 
-    simona2mdu(filwaq{itest},filmdu{itest});
+    simona2dflowfm(filwaq{itest},filmdu{itest});
 
 
     %

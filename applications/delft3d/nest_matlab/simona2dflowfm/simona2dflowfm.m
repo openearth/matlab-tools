@@ -6,7 +6,7 @@ function simona2dflowfm (varargin)
 %                finally the mdf file is removed
 %
 
-Gen_inf    = {'This tool converts a SIMONA siminp file into a Dflow FM mdu file'                                   ;
+Gen_inf    = {'This tool converts a SIMONA siminp file into a D-Flow FM mdu file'                                  ;
               'with belonging attribute files'                                                                     ;
               ' '                                                                                                  ;
               'Credits go to Wim van Baalen for his conversion of boundary conditions'                             ;
@@ -14,9 +14,9 @@ Gen_inf    = {'This tool converts a SIMONA siminp file into a Dflow FM mdu file'
               'This tool does a basic first conversion but please check carefully'                                 ;
               '(USE AT OWN RISK)'                                                                                  ;
               ' '                                                                                                  ;
-              'First   , the SIMINP file is converted to a temporary Delft3D-Flow mdf file'                        ;
+              'First, the SIMINP file is converted to a temporary Delft3D-Flow mdf file'                           ;
               'Secondly, the mdf file is converted into an D-Flow FM mdu file  '                                   ;
-              'Finally , the  temporary mdf file is removed'                                                       ;
+              'Finally, the  temporary mdf file is removed'                                                        ;
               'If you want to keep the mdf file, use SIMONA2MDF and D3D2DFLOWFM seperately'                        ;
               ' '                                                                                                  ;
               'If you encounter problems, do not hesitate to contact me'                                           ;                                                                                   ;
@@ -58,7 +58,7 @@ name_mdf = [path_mdf filesep 'tmp.mdf'];
 %% Display the general information
 
 logo = imread([getenv('nesthd_path') filesep 'bin' filesep 'dflowfm.jpg']);
-simona2mdf_message(Gen_inf,'Logo',logo,'n_sec',10,'Window','SIMONA2MDU Message','Close',true);
+simona2mdf_message(Gen_inf,'Logo',logo,'n_sec',10,'Window','SIMONA2DFLOWFM Message','Close',true);
 
 %% Convert the Simona siminp file to a temporary mdf file
 
