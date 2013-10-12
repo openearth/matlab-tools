@@ -1,6 +1,6 @@
-function mdu = mdf2mdu_friction(mdf,mdu, name_mdu)
+function mdu = d3d2dflowfm_friction(mdf,mdu, name_mdu)
 
-% mdf2mdu_friction: Writes friction information to unstruc input files
+% d3d2dflwfm_friction: Writes friction information to D-Flow FM input files
 
 filgrd = [mdf.pathd3d filesep mdf.filcco];
 filrgh = [mdf.pathd3d filesep mdf.filrgh];
@@ -23,8 +23,8 @@ if ~isempty(filrgh)
     xcoor_u                  = grid.u_full.x';
     ycoor_u                  = grid.u_full.y';
     xcoor_v                  = grid.v_full.x';
-    ycoor_v                  = grid.v_full.y'; 
-   
+    ycoor_v                  = grid.v_full.y';
+
     % read the roughness values
     rgh        = wldep('read',filrgh,[mmax nmax],'multiple');
 
@@ -43,7 +43,7 @@ if ~isempty(filrgh)
 
     LINE.DATA = num2cell(tmp(nonan,:));
 
-    unstruc_io_xydata('write',[name_mdu '_rgh.xyz'],LINE);
+    dflowfm_io_xydata('write',[name_mdu '_rgh.xyz'],LINE);
 else
 
     % Constant values from mdf file

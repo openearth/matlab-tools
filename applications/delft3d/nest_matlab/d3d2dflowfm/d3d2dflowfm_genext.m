@@ -1,6 +1,6 @@
-function varargout = mdf2mdu_genext(filmdu,varargin)
+function varargout = d3d2dflowfm_genext(filmdu,varargin)
 
-% mdf2mdu_genext: writes the externul forcing file for unstruc
+% d3d2dflowfm_genext: writes the external forcing file for D-Flow FM
 
 %% initialisation
 nesthd_path = getenv('nesthd_path');
@@ -26,7 +26,7 @@ mdu         = OPT.mdu;
 if ~isempty(OPT.Filbnd) || ~isempty(OPT.Filrgh) || ~isempty(OPT.Filvico) || ~isempty(OPT.Fildico) || ~isempty(OPT.Filwnd)
     % Write the header (comment lines)
     if ~isempty(OPT.Filcomments)
-        unstruc_io_extfile('write',[filmdu '.ext'],'Filcomments',OPT.Filcomments);
+        dflowfm_io_extfile('write',[filmdu '.ext'],'Filcomments',OPT.Filcomments);
     end
 end
 
@@ -61,7 +61,7 @@ if ~isempty(OPT.Filbnd)
                     type  = 'riemannbnd';
             end
         end
-        unstruc_io_extfile('write',[filmdu '.ext'],'Quantity',type,'Filename',file,'Filetype',9, ...
+        dflowfm_io_extfile('write',[filmdu '.ext'],'Quantity',type,'Filename',file,'Filetype',9, ...
                                                      'Method'  ,3   ,'Operand' ,'O' );
     end
 end
@@ -69,25 +69,25 @@ end
 %% Write initial conditions for salinity
 
 if ~isempty(OPT.Filini)
-    unstruc_io_extfile('write',[filmdu '.ext'],'Quantity','initialsalinity','Filename',mdu.Filini,'Filetype',7, ...
+    dflowfm_io_extfile('write',[filmdu '.ext'],'Quantity','initialsalinity','Filename',mdu.Filini,'Filetype',7, ...
                                                 'Method'  ,4                ,'Operand' ,'O' );
 end
 
 %% write space varying roughness
 if ~isempty(OPT.Filrgh)
-    unstruc_io_extfile('write',[filmdu '.ext'],'Quantity','frictioncoefficient','Filename',mdu.Filrgh,'Filetype',7, ...
+    dflowfm_io_extfile('write',[filmdu '.ext'],'Quantity','frictioncoefficient','Filename',mdu.Filrgh,'Filetype',7, ...
                                                 'Method'  ,4                   ,'Operand' ,'O' );
 end
 
 %% write space varying viscosity
 if ~isempty(OPT.Filvico)
-    unstruc_io_extfile('write',[filmdu '.ext'],'Quantity','horizontaleddyviscositycoefficient','Filename',mdu.Filvico,'Filetype',7, ...
+    dflowfm_io_extfile('write',[filmdu '.ext'],'Quantity','horizontaleddyviscositycoefficient','Filename',mdu.Filvico,'Filetype',7, ...
                                                'Method'  ,4                                   ,'Operand' ,'O' );
 end
 
 %% write space varying diffusivity
 if ~isempty(OPT.Fildico)
-    unstruc_io_extfile('write',[filmdu '.ext'],'Quantity','horizontaleddydiffusivitycoefficient','Filename',mdu.Filvico,'Filetype',7, ...
+    dflowfm_io_extfile('write',[filmdu '.ext'],'Quantity','horizontaleddydiffusivitycoefficient','Filename',mdu.Fildico,'Filetype',7, ...
                                                'Method'  ,4                                     ,'Operand' ,'O' );
 end
 

@@ -1,6 +1,6 @@
-function mdu = mdf2mdu_times(mdf,mdu,~)
+function mdu = d3d2dflowfm_times(mdf,mdu,~)
 
-% mdf2mdu_area: Writes TIMES information to the unstruc structure
+% d3d2dflowfm_times : Writes TIMES information to the mdu structure
 
 mdu.time.RefDate = [mdf.itdate(1:4) mdf.itdate(6:7) mdf.itdate(9:10)];
 mdu.time.Tunit   = 'S';

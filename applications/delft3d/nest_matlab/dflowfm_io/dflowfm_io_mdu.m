@@ -1,6 +1,6 @@
-function varargout=unstruc_io_mdu(cmd,varargin)
+function varargout=dflowfm_io_mdu(cmd,varargin)
 
-%UNSTRUC_IO_MDU  x read/write UNSTRUC ASCII Master Definition File (*.mdu) <<beta version!>>
+%DFLOWFM_IO_MDU  x read/write D-Dlow FM ASCII Master Definition File (*.mdu) <<beta version!>>
 %
 %  [DATA]        = unstruc_io_mdu('read' ,<filename>);
 %

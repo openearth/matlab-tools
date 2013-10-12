@@ -1,6 +1,6 @@
-function mdu = mdf2mdu_inital(mdf,mdu, name_mdu)
+function mdu = d3d2dflowfm_inital(mdf,mdu, name_mdu)
 
-% mdf2mdu_initial : Writes dinitial conditions for waterlevel and salinity to unstruc input files
+% d3d2dflowfm_initial : Writes dinitial conditions for waterlevel and salinity to D-Flow FM input files
 
 filgrd = [mdf.pathd3d filesep mdf.filcco];
 filic  = [mdf.pathd3d filesep mdf.filic ];
@@ -28,7 +28,7 @@ if ~isempty(filic)
     LINE.DATA = num2cell(tmp(nonan,:));
 
     %% Write inial water level data to unstruc xyz file
-    unstruc_io_xydata('write',[name_mdu '_ini_wlev.xyz'],LINE);
+    dflowfm_io_xydata('write',[name_mdu '_ini_wlev.xyz'],LINE);
     mdu.geometry.WaterLevIniFile = [nameshort '_ini_wlev.xyz'];
 
     % Salinity (if active, assume 2Dh)
@@ -38,7 +38,7 @@ if ~isempty(filic)
         LINE.DATA = num2cell(tmp(nonan,:));
 
         %% Write inial salinity data to unstruc xyz file
-        unstruc_io_xydata('write',[name_mdu '_ini_sal.xyz'],LINE);
+        dflowfm_io_xydata('write',[name_mdu '_ini_sal.xyz'],LINE);
         mdu.Filini = [nameshort 'ini_sal.xyz'];
     end
 else

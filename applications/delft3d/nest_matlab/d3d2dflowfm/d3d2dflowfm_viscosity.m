@@ -1,6 +1,6 @@
-function mdu = mdf2mdu_viscosity(mdf,mdu,name_mdu)
+function mdu = d3d2dflowfm_viscosity(mdf,mdu,name_mdu)
 
-% mdf2mdu_friction: Writes friction information to unstruc input files
+% d3d2dflowfm_viscosity : Writes viscosity/diffusvity information to D-Flow FM input files
 
 filgrd = [mdf.pathd3d filesep mdf.filcco];
 filedy = [mdf.pathd3d filesep mdf.filedy];
@@ -8,7 +8,7 @@ filedy = [mdf.pathd3d filesep mdf.filedy];
 mdu.Filvico     = '';
 mdu.Fildico     = '';
 
-%% Reads viscosity and diffusivity values from file
+%% If space varying:
 if ~isempty(filedy)
     mdu.physics.Vicouv       = -999.999;
     mdu.physics.Dicouv       = -999.999;
@@ -23,7 +23,7 @@ if ~isempty(filedy)
     xcoor(1:mmax,nmax)       = NaN;
     ycoor(1:mmax,nmax)       = NaN;
 
-    % read the roughness values
+    % read the viscosity/diffusivity values
     edy        = wldep('read',filedy,[mmax nmax],'multiple');
 
     % Fill LINE struct with viscosity and diffusivity values
@@ -47,10 +47,10 @@ if ~isempty(filedy)
     end
 
     % write viscosity to file
-    unstruc_io_xydata('write',[name_mdu '_vico.xyz'],LINE(1));
+    dflowfm_io_xydata('write',[name_mdu '_vico.xyz'],LINE(1));
 
     % write diffusivity to file
-    if mdu.physics.Salinity unstruc_io_xydata('write',[name_mdu '_dico.xyz'],LINE(2));end
+    if mdu.physics.Salinity dflowfm_io_xydata('write',[name_mdu '_dico.xyz'],LINE(2));end
 else
 
     % Constant values from mdf file

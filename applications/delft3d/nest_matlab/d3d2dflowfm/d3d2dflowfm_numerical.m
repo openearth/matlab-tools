@@ -1,6 +1,6 @@
-function mdu = mdf2mdu_numerical(mdf,mdu,~)
+function mdu = d3d2dflowfm_numerical(mdf,mdu,~)
 
-% mdf2mdu_numerical : Set numerical defaults to the mdu struct
+% d3d2dflowfm_numerical : Set numerical defaults to the mdu struct
 
 mdu.geometry.Conveyance2D = 0;
 mdu.numerics.CFLMax       = 0.7;

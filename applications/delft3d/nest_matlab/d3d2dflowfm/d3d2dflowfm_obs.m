@@ -1,6 +1,6 @@
-function mdu = mdf2mdu_obs(mdf,mdu, name_mdu)
+function mdu = d3d2dflowfm_obs(mdf,mdu, name_mdu)
 
-% mdf2mdu_obs : Writes station informations to unstruc input files
+% d3d2dflowfm_obs : Writes station informations to D-Flow FM input files
 
 filgrd = [mdf.pathd3d filesep mdf.filcco];
 
@@ -29,8 +29,7 @@ if ~isempty(mdf.filsta)
 
     % finally write to the unstruc thd file and fill in the name of the thd filw in the mdu_struct
 
-
     mdu.output.ObsFile = [name_mdu '.xyn'];
-    unstruc_io_xydata('write',mdu.output.ObsFile,LINE);
+    dflowfm_io_xydata('write',mdu.output.ObsFile,LINE);
     mdu.output.ObsFile = simona2mdf_rmpath(mdu.output.ObsFile);
 end

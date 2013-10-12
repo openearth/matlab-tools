@@ -1,12 +1,12 @@
-function simon2mdu (varargin)
+function simona2dflowfm (varargin)
 
-%simona2mdf: converts simona siminp file into a Unstruc input file
-%            first the siminp file is converted into a D3D input file (mdf-file)
-%            secondly the mdf file is converted into an mdu file and belonging attribute files
-%            finally the mdf file is removed
+%simona2dflowfm: converts simona siminp file into a Unstruc input file
+%                first the siminp file is converted into a D3D input file (mdf-file)
+%                secondly the mdf file is converted into an mdu file and belonging attribute files
+%                finally the mdf file is removed
 %
 
-Gen_inf    = {'This tool converts a SIMONA siminp file into an Unstruc mdu file'                                   ;
+Gen_inf    = {'This tool converts a SIMONA siminp file into a Dflow FM mdu file'                                   ;
               'with belonging attribute files'                                                                     ;
               ' '                                                                                                  ;
               'Credits go to Wim van Baalen for his conversion of boundary conditions'                             ;
@@ -14,12 +14,12 @@ Gen_inf    = {'This tool converts a SIMONA siminp file into an Unstruc mdu file'
               'This tool does a basic first conversion but please check carefully'                                 ;
               '(USE AT OWN RISK)'                                                                                  ;
               ' '                                                                                                  ;
-              'Firstly, the SIMINP file is converted to a temporary Delft3D-Flow mdf file'                         ;
-              'Secondly, the mdf file is converted into an unstruc mdu file  '                                     ;
-              'Finally, the  temporary mdf file is removed'                                                        ;
-              'If you want to keep the mdf file, use SIMONA2MDF and D3D2MDU seperately'                            ;
+              'First   , the SIMINP file is converted to a temporary Delft3D-Flow mdf file'                        ;
+              'Secondly, the mdf file is converted into an D-Flow FM mdu file  '                                   ;
+              'Finally , the  temporary mdf file is removed'                                                       ;
+              'If you want to keep the mdf file, use SIMONA2MDF and D3D2DFLOWFM seperately'                        ;
               ' '                                                                                                  ;
-              'If you encounter problems, please do not hesitate to contact me'                                    ;                                                                                   ;
+              'If you encounter problems, do not hesitate to contact me'                                           ;                                                                                   ;
               'Theo.vanderkaaij@deltares.nl'                                                                      };
 
 %% set path if necessary
@@ -62,8 +62,12 @@ simona2mdf_message(Gen_inf,'Logo',logo,'n_sec',10,'Window','SIMONA2MDU Message',
 
 %% Convert the Simona siminp file to a temporary mdf file
 
-%simona2mdf (filwaq,name_mdf,'DispGen',false);
+simona2mdf (filwaq,name_mdf,'DispGen',false);
 
 %% Convert the Delft3D-Flow mdf file to an unstruc mdu file
 
-d3d2mdu (name_mdf,name_mdu,'DispGen',false);
+d3d2dflowfm (name_mdf,name_mdu,'DispGen',false);
+
+%% Finally, delte the temporary directory
+
+rmdir(path_mdf,'s');

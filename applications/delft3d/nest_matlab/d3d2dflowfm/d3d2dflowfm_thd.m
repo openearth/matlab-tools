@@ -1,6 +1,6 @@
-function mdu = mdf2mdu_thd(mdf,mdu, name_mdu)
+function mdu = d3d2dflowfm_thd(mdf,mdu, name_mdu)
 
-% mdf2mdu_thd : Writes drypoints and thin dams to unstruc input files
+% d3d2dflowfm_thd : Writes drypoints and thin dams to D-Flow FM input file
 
 filgrd = [mdf.pathd3d filesep mdf.filcco];
 fildry = [mdf.pathd3d filesep mdf.fildry];
@@ -104,5 +104,5 @@ end
 % finally write to the unstruc thd file and fill in the name of the thd filw in the mdu_struct
 
 mdu.geometry.ThinDamFile = [name_mdu '_thd.pli'];
-unstruc_io_xydata('write',mdu.geometry.ThinDamFile,LINE);
+dflowfm_io_xydata('write',mdu.geometry.ThinDamFile,LINE);
 mdu.geometry.ThinDamFile = simona2mdf_rmpath(mdu.geometry.ThinDamFile);

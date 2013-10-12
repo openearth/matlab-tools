@@ -1,6 +1,6 @@
-function mdu = mdf2mdu_crs(mdf,mdu, name_mdu)
+function mdu = d3d2dflowfm_crs(mdf,mdu, name_mdu)
 
-% mdf2mdu_crs : Writes cross section information to unstruc file
+% d3d2dflowfm_crs : Writes cross section information to D-Flow FM file
 
 filgrd = [mdf.pathd3d filesep mdf.filcco];
 
@@ -60,6 +60,6 @@ if ~isempty(mdf.filcrs)
 
 
     mdu.output.CrsFile = [name_mdu '_crs.pli'];
-    unstruc_io_xydata('write',mdu.output.CrsFile,LINE);
+    dflowfm_io_xydata('write',mdu.output.CrsFile,LINE);
     mdu.output.CrsFile = simona2mdf_rmpath(mdu.output.CrsFile);
 end

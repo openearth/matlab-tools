@@ -1,7 +1,7 @@
-function mdf2mdu_grd2net(filgrd,fildep,filmdu)
+function d3d2dflowfm_grd2net(filgrd,fildep,filmdu)
 
-% mdf2mdu_grd2net : Converts d3d-flow grid file to dfm net file
-%                      (Based upon grd2net from Wim van Balen, however UI dependencies removed)
+% d3d2dflowfm_grd2net : Converts d3d-flow grid file to D-Flow FM net file
+%                       (Based upon grd2net from Wim van Balen, however UI dependencies removed)
 
 netfile       = [filmdu '_net.nc'];
 samfile       = [filmdu '.xyz'];
@@ -39,7 +39,7 @@ nonan          = ~isnan(tmp(:,1));
 LINE.DATA = num2cell(tmp(nonan,:));
 
 % write to unstruc xyz file
-unstruc_io_xydata('write',samfile,LINE)
+dflowfm_io_xydata('write',samfile,LINE)
 
 % Write netCDF-file
 net2cdf;

@@ -1,6 +1,6 @@
-function varargout=unstruc_io_xydata(cmd,varargin)
+function varargout=dflowfm_io_xydata(cmd,varargin)
 
-%UNSTRUC_IO_xydata  read/write UNSTRUC xy file or xy data file where data cab be a number (depth, viscosity etc) or
+%DFLOWFM_IO_xydata  read/write D-Flow FM xy file or xy data file where data cab be a number (depth, viscosity etc) or
 %                   a string (a station name)
 %
 %  [LINE]        = unstruc_io_mdu('read' ,<filename>);
@@ -31,21 +31,21 @@ case 'write'
    LINE = varargin{2};
 
    for iline = 1: length(LINE)
-    
+
        nrows      = size(LINE(iline).DATA,1);
        ncols      = size(LINE(iline).DATA,2);
-       
+
        if isfield(LINE(iline),'Blckname')
-           
-          %Blockname specified, write blockname, nrows, ncols 
+
+          %Blockname specified, write blockname, nrows, ncols
           block_name = LINE(iline).Blckname;
-          
+
           fprintf(fid,'%s       \n',block_name      );
           fprintf(fid,'%5i  %5i \n',nrows     ,ncols);
        end
-       
+
        if size(LINE(iline).DATA,2) == 3
-          
+
            % xyz or xy string data
            if ischar(LINE(iline).DATA{1,3})
 
@@ -61,14 +61,14 @@ case 'write'
                end
            end
        else
-           
+
            % only x and y values
            for icol = 1: nrows
               fprintf(fid,'%14.6e  %14.6e  \n',LINE(iline).DATA{icol,1},LINE(iline).DATA{icol,2});
            end
        end
    end
-   
+
    fclose(fid);
 
 end

@@ -1,6 +1,6 @@
-function varargout = mdf2mdu_bnd2pli(filgrd,filbnd,filpli,varargin)
+function varargout = d3d2dflowfm_bnd2pli(filgrd,filbnd,filpli,varargin)
 
-% mdf2mdu_bnd2pli: genarates pli file for unstruc out of a D3D bnd file
+% d3d2dflowfm_bnd2pli: genarates pli file for D-Flow FM out of a D3D bnd file
 
 % initialisation
 OPT.Salinity          = false;
@@ -88,10 +88,10 @@ for ipol = 1: length(LINE)
 
     if ~OPT.Salinity
        LINE(ipol).Blckname=[name_pli '_' num2str(ipol,'%3.3i') '.pli'];
-       unstruc_io_xydata ('write',[filpli '_' num2str(ipol,'%3.3i') '.pli'],LINE(ipol));
+       dflowfm_io_xydata ('write',[filpli '_' num2str(ipol,'%3.3i') '.pli'],LINE(ipol));
     else
        LINE(ipol).Blckname=[name_pli '_' num2str(ipol,'%3.3i') '_sal.pli'];
-       unstruc_io_xydata ('write',[filpli '_' num2str(ipol,'%3.3i') '_sal.pli'],LINE(ipol));
+       dflowfm_io_xydata ('write',[filpli '_' num2str(ipol,'%3.3i') '_sal.pli'],LINE(ipol));
     end
 
     %
@@ -104,7 +104,7 @@ end
 % now, write all polylines (only for hydrodynamic bc)
 
 if ~OPT.Salinity
-   unstruc_io_xydata ('write',[filpli '_all.pli'],LINE);
+   dflowfm_io_xydata ('write',[filpli '_all.pli'],LINE);
 end
 
 varargout = {filext};

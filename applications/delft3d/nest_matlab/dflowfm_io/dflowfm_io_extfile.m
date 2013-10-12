@@ -1,6 +1,6 @@
-function varargout=unstruc_io_extfile(cmd,fname,varargin)
+function varargout=dflowfm_io_extfile(cmd,fname,varargin)
 
-%  UNSTRUC_IO_extfile: write UNSTRUC extrnal forcing file
+%  DFLOWFM_IO_extfile: write D-Flow FM extrnal forcing file
 %% Switch read/write/new
 
 switch lower(cmd)
