@@ -70,4 +70,5 @@ d3d2dflowfm (name_mdf,name_mdu,'DispGen',false);
 
 %% Finally, delte the temporary directory
 
+fclose all;
 rmdir(path_mdf,'s');
