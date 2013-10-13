@@ -1,30 +1,87 @@
 function varargout=dflowfm_io_xydata(cmd,varargin)
 
-%DFLOWFM_IO_xydata  read/write D-Flow FM xy file or xy data file where data cab be a number (depth, viscosity etc) or
+%DFLOWFM_IO_xydata  read/write D-Flow FM xy file or xy data file where data can be a number (depth, viscosity etc) or
 %                   a string (a station name)
 %
-%  [LINE]        = unstruc_io_mdu('read' ,<filename>);
+%  [LINE]        = dflowfm_io_xydata('read' ,<filename>);
 %
-%                  unstruc_io_mdu('write',<filename>,LINE);
+%                  dflowfm_io_xydata('write',<filename>,LINE);
 %
 %   LINE(1).DATA{:,3}  contains x-coordinate, y-coordinate and z-value or string (stationname for instance)
 %   LINE(:).Blckname   contains blockname (for instance the name of the crosssection or simply LINE in case of a thindam)
 %
-% See also: unstruc_io_mdu
+% See also: dflowfm_io_mdu
 
 fname   = varargin{1};
 
 
-%% Switch read/write/new
+%% Switch read/write
 
 switch lower(cmd)
 
 case 'read'
 
    %
-   %  to implement yet
+   %  first try if it as an "almost normal" tekal data file
    %
-
+   fid = fopen(fname,'r');
+   try
+       iblck = 0;
+       while ~feof(fid)
+           iblck = iblck + 1;
+           tline = fgetl(fid);
+           LINE(iblck).Blckname = strtrim(tline);
+           tline = fgetl(fid);
+           nrowcol = sscanf(tline,'%i %i');
+           nrows   = nrowcol(1);
+           ncols   = nrowcol(2);
+           for i_row = 1: nrows
+               tline = fgetl(fid);
+               index = dflowfm_decomposestr(tline);
+               if ncols == 2
+                   LINE(iblck).DATA{i_row,1} = str2num(tline(index(1):index(2) - 1));
+                   LINE(iblck).DATA{i_row,2} = str2num(tline(index(2):end         ));
+               else
+                   LINE(iblck).DATA{i_row,1} = str2num(tline(index(1):index(2) - 1));
+                   LINE(iblck).DATA{i_row,2} = str2num(tline(index(2):index(3) - 1));
+                   if ~isempty(str2num(tline(index(3):end)))
+                       LINE(iblck).DATA{i_row,3} = str2num(tline(index(3):end));
+                   else
+                        LINE(iblck).DATA{i_row,3} = tline(index(3):end);
+                   end
+               end
+           end
+       end
+   catch
+       %
+       % Probably xy, xyz or xystring data
+       %
+       fseek (fid,0,'bof');
+       LINE  = rmfield(LINE,'Blckname');
+       
+       i_row = 0;
+       while~feof(fid)
+           i_row = i_row + 1;
+           tline = fgetl(fid);
+           index = dflowfm_decomposestr(tline);
+           LINE.DATA{i_row,1} = str2num(tline(index(1):index(2)-1));
+           if length(index) == 2
+               LINE.DATA{i_row,2} = str2num(tline(index(2):end));
+           else
+               LINE.DATA{i_row,2} = str2num(tline(index(2):index(3) - 1));
+               if ~isempty(str2num(tline(index(3):end)))
+                   LINE(iblck).DATA{i_row,3} = str2num(tline(index(3):end));
+               else
+                    LINE(iblck).DATA{i_row,3} = tline(index(3):end);
+               end
+           end
+       end
+    end
+   
+   fclose(fid);
+   
+   varargout{1} = LINE;
+  
 case 'write'
 
    fid  =  fopen(fname,'w+');
