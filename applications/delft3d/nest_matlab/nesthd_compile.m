@@ -10,9 +10,9 @@ addpath(genpath('nesthd2'));
 addpath(genpath('general'));
 addpath(genpath('reawri'));
 addpath(genpath('simona2mdf'));
-addpath(genpath('simona2mdu'));
-addpath(genpath('mdf2mdu'));
-addpath(genpath('unstruc_io'));
+addpath(genpath('simona2dflowfm'));
+addpath(genpath('d3d2dflowfm'));
+addpath(genpath('dflowfm_io'));
 
 mcc -e -v nesthd
 
