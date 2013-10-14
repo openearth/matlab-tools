@@ -3,25 +3,21 @@ function mdu = d3d2dflowfm_viscosity(mdf,mdu,name_mdu)
 % d3d2dflowfm_viscosity : Writes viscosity/diffusvity information to D-Flow FM input files
 
 filgrd = [mdf.pathd3d filesep mdf.filcco];
-filedy = [mdf.pathd3d filesep mdf.filedy];
 [~,nameshort,~] = fileparts(name_mdu);
 mdu.Filvico     = '';
 mdu.Fildico     = '';
 
 %% If space varying:
-if ~isempty(filedy)
+if simona2mdf_fieldandvalue(mdf,'filedy')
+    filedy                   = [mdf.pathd3d filesep mdf.filedy];
     mdu.physics.Vicouv       = -999.999;
     mdu.physics.Dicouv       = -999.999;
     mdu.Filvico              = [nameshort '_vico.xyz'];
     grid                     = delft3d_io_grd('read',filgrd);
     mmax                     = grid.mmax;
     nmax                     = grid.nmax;
-    xcoor                    = grid.cor.x';
-    ycoor                    = grid.cor.y';
-    xcoor(mmax,1:nmax)       = NaN;
-    ycoor(mmax,1:nmax)       = NaN;
-    xcoor(1:mmax,nmax)       = NaN;
-    ycoor(1:mmax,nmax)       = NaN;
+    xcoor                    = grid.cend.x';
+    ycoor                    = grid.cend.y';
 
     % read the viscosity/diffusivity values
     edy        = wldep('read',filedy,[mmax nmax],'multiple');

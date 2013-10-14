@@ -8,31 +8,31 @@ samfile       = [filmdu '.xyz'];
 
 % Read the grid
 G           = delft3d_io_grd('read',filgrd);
-xh          = G.cor.x;
-yh          = G.cor.y;
-M           = size(xh,1);
-N           = size(xh,2);
+xh          = G.cor.x';
+yh          = G.cor.y';
+mmax        = G.mmax;
+nmax        = G.nmax;
+xh(mmax,:)  = NaN;
+yh(mmax,:)  = NaN;
+xh(:,nmax)  = NaN;
+yh(:,nmax)  = NaN;
 
-% Check coordinate system
+% Check coordinate system (for grd2net)
+spher = 0;
+if strcmp(G.CoordinateSystem,'Spherical') spher = 1;end
 
-if strcmp(G.CoordinateSystem,'Spherical');
-    spher   = 1;
-else
-    spher   = 0;
-end
-
-depthdat     = wldep('read',fildep,[M+1 N+1],'multiple');
-zh           = depthdat.Data;
+% Read the depth data
+depthdat     = wldep('read',fildep,[mmax nmax]);
+zh           = depthdat;
 zh(zh==-999) = NaN;
 zh           = -zh;
-zh(end,:  )  = [];
-zh(:  ,end)  = [];
+zh(mmax,:)   = NaN;
+zh(:,nmax)   = NaN;
 
 % Make file with bathymetry samples
-
-tmp(:,1) = reshape(xh,[M.*N 1]);
-tmp(:,2) = reshape(yh,[M.*N 1]);
-tmp(:,3) = reshape(zh,[M.*N 1]);
+tmp(:,1) = reshape(xh,mmax*nmax,1);
+tmp(:,2) = reshape(yh,mmax*nmax,1);
+tmp(:,3) = reshape(zh,mmax*nmax,1);
 
 nonan          = ~isnan(tmp(:,1));
 
