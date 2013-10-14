@@ -22,7 +22,7 @@ function varargout = nesthd_nest_ui(varargin)
 
 % Edit the above text to modify the response to help nesthd_nest_ui
 
-% Last Modified by GUIDE v2.5 07-May-2013 20:16:06
+% Last Modified by GUIDE v2.5 14-Oct-2013 21:39:49
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -211,22 +211,22 @@ cd (handles.progdir);
 if fin ~= 0
    handles.filedir = pin;
    file_simona     = [pin fin];
-   
+
    %
    % Get the name of the output mdf file
    %
-   
+
    cd(handles.filedir);
    [fin,pin] = uiputfile({'*.mdf'},'Give name of mdf file');
    cd (handles.progdir);
    if fin ~= 0
        handles.filedir = pin;
        file_mdf = [pin fin];
-       
+
        %
        % Convert
        %
-       
+
        simona2mdf(file_simona,file_mdf);
    end
 end
@@ -234,11 +234,80 @@ end
 guidata(hObject, handles);
 
 % --------------------------------------------------------------------
-function mdf2simona_Callback(hObject, eventdata, handles)
-% hObject    handle to mdf2simona (see GCBO)
+function Simona2dflowfm_Callback(hObject, eventdata, handles)
+% hObject    handle to Simona2dflowfm (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+%
+% First get the name of the simona input file
+%
 
+if ~isempty (handles.filedir); cd(handles.filedir); end
+[fin,pin] = uigetfile({'siminp*'},'Select WAQUA/TRIWAQ input file');
+cd (handles.progdir);
+
+if fin ~= 0
+   handles.filedir = pin;
+   file_simona     = [pin fin];
+
+   %
+   % Get the name of the output mdu file
+   %
+
+   cd(handles.filedir);
+   [fin,pin] = uiputfile({'*.mdu'},'Give name of dflowfm input file');
+   cd (handles.progdir);
+   if fin ~= 0
+       handles.filedir = pin;
+       file_mdu = [pin fin];
+
+       %
+       % Convert
+       %
+
+       simona2dflowfm(file_simona,file_mdu);
+   end
+end
+
+guidata(hObject, handles);
+
+% --------------------------------------------------------------------
+function d3d2dflowfm_Callback(hObject, eventdata, handles)
+% hObject    handle to d3d2dflowfm (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+%
+% First get the name of the d3d    input file
+%
+
+if ~isempty (handles.filedir); cd(handles.filedir); end
+[fin,pin] = uigetfile({'*.mdf'},'Select d3d input file');
+cd (handles.progdir);
+
+if fin ~= 0
+   handles.filedir = pin;
+   file_mdf        = [pin fin];
+
+   %
+   % Get the name of the output mdu file
+   %
+
+   cd(handles.filedir);
+   [fin,pin] = uiputfile({'*.mdu'},'Give name of dflowfm input file');
+   cd (handles.progdir);
+   if fin ~= 0
+       handles.filedir = pin;
+       file_mdu = [pin fin];
+
+       %
+       % Convert
+       %
+
+       d3d2dflowfm(file_mdf,file_mdu);
+   end
+end
+
+guidata(hObject, handles);
 
 % --------------------------------------------------------------------
 function manual_d3d_Callback(hObject, eventdata, handles)
@@ -909,3 +978,5 @@ function update_additional(handles)
            set (handles.bc_no         ,'Enable','on' ,'Visible','on','Value',1);
         end
     end
+
+

@@ -19,8 +19,8 @@ tests      = {[testdir filesep 'simona\tidal_flume_triwaq\triwaq_coarse\flume'] 
 
 fid = fopen ('run.bat','w+');
 for itest = 1: length(tests)
-    fprintf(fid,'nesthd_w64  %s_hd1.ini \n',tests{itest});
-    fprintf(fid,'nesthd_w64  %s_hd2.ini \n',tests{itest});
+    fprintf(fid,'nesthd  %s_hd1.ini \n',tests{itest});
+    fprintf(fid,'nesthd  %s_hd2.ini \n',tests{itest});
 end
 fclose(fid);
 
