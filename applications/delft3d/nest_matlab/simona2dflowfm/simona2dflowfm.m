@@ -58,7 +58,8 @@ name_mdf = [path_mdf filesep 'tmp.mdf'];
 %% Display the general information
 
 logo = imread([getenv('nesthd_path') filesep 'bin' filesep 'dflowfm.jpg']);
-simona2mdf_message(Gen_inf,'Logo',logo,'n_sec',10,'Window','SIMONA2DFLOWFM Message','Close',true);
+logo2= [getenv('nesthd_path') filesep 'bin' filesep 'deltares.gif'];
+simona2mdf_message(Gen_inf,'Logo',logo,'Logo2',logo2,'n_sec',10,'Window','SIMONA2DFLOWFM Message','Close',true);
 
 %% Convert the Simona siminp file to a temporary mdf file
 

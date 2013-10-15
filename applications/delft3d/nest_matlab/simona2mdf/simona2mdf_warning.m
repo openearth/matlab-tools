@@ -4,9 +4,11 @@ function simona2mdf_warning(warningtext)
 
 nesthd_path = getenv('nesthd_path');
 logo        = imread([nesthd_path filesep 'bin' filesep 'simona_logo.jpg']);
+logo2       =        [nesthd_path filesep 'bin' filesep 'deltares.gif'];
 
 h_warn      = msgbox(warningtext,'SIMINP2MDF Warning','custom',logo);
 delete(findobj(h_warn,'string','OK'));
+simona2mdf_legalornot(h_warn,logo2);
 
 if ~ishandle(h_warn)
     uiresume;
@@ -16,5 +18,5 @@ uiwait(h_warn,10);
 
 if ishandle(h_warn);
     close (h_warn);
-    pause(1); % force immediate disappearing of message window 
+    pause(1); % force immediate disappearing of message window
 end

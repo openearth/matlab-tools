@@ -55,6 +55,7 @@ function nesthd_nest_ui_OpeningFcn(hObject, eventdata, handles, varargin)
 handles = nesthd_ini_ui(handles);
 
 PutInCentre(handles.nest_ui);
+simona2mdf_legalornot(handles.nest_ui,[getenv('nesthd_path') filesep 'bin' filesep 'deltares.gif']);
 
 set (handles.bg,'Visible','On');
 
