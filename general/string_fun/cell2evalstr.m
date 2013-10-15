@@ -98,14 +98,20 @@ for j = 1 : length(varargin)
         basevarname = [basevarname num2str(j)]; %#ok<AGROW>
     end
     if iscell(variable)
-        [m n] = size(variable);
+        [m,n] = size(variable);
         
         %% create string
+        strcontents = cell(size(variable));
         evalstr = [evalstr basevarname ' = {']; % start
         for row = 1:m
             for column = 1:n
                 % fill in each element
-                evalstr = [evalstr var2evalstr(variable{row,column}, 'basevarname', '', 'delimiter', '', 'precision', prec) ' '];
+                if isstruct(variable{row,column})
+                    strcontents{row,column} = var2evalstr(variable{row,column}, 'basevarname', ' ', 'delimiter', ';', 'precision', prec);
+                else
+                    strcontents{row,column} = var2evalstr(variable{row,column}, 'basevarname', '', 'delimiter', '', 'precision', prec);
+                end
+                evalstr = [evalstr '%s '];
                 if column == n && row ~= m
                     % add intdelimiter at end of each row, except for the last row
                     evalstr(end:end+length(intdelimiter)-1) = intdelimiter;
@@ -123,5 +129,5 @@ for j = 1 : length(varargin)
             evalstr = [evalstr, ' ']; %#ok<AGROW>
         end
     end
-    evalstr = sprintf(evalstr);
+    evalstr = sprintf(evalstr,strcontents{:});
 end
