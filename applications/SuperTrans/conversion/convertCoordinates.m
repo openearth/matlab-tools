@@ -72,7 +72,7 @@ function [x2,y2,varargout]=convertCoordinates(x1,y1,varargin)
 %    [x,y,logs]=convertCoordinates(5,52,'CS1.name','WGS 84','CS1.type','geo','CS2.name','WGS 84 / UTM zone 31N','CS2.type','xy')
 %    [x,y,logs]=convertCoordinates(5,52,'CS1.code',4326                     ,'CS2.name','WGS 84 / UTM zone 31N')
 %
-%    ESPG = load('EPSG')
+%    EPSG = load('EPSG')
 %
 %    [x,y,logs]=convertCoordinates(52,5,EPSG,'CS1.name','WGS 84','CS1.type','geo','CS2.code',32631)
 %    [x,y,logs]=convertCoordinates(52,5,EPSG,'CS1.code',4326                     ,'CS2.code',32631)
