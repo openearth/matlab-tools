@@ -174,7 +174,6 @@ classdef LimitState < handle
             zvalue  = feval(this.LimitStateFunction,input{:});
 
             %Normalize with origin, or save zvalue of origin
-            %Normalize with origin, or save zvalue of origin
             if ~isempty(this.ZValueOrigin) && ~isnan(this.ZValueOrigin)
                 zvalue  = zvalue/this.ZValueOrigin;
             elseif isempty(this.ZValueOrigin) && all(uvalues == 0)
