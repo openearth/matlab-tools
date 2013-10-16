@@ -1,5 +1,5 @@
 fclose all; 
-clc       ;
+%clc       ;
 
 % Read paths
 pathin      = get(handles.edit1,'String');
@@ -193,6 +193,7 @@ if strcmp(mdfkeywds.roumet,'W'); roumet = 2; end;
 if isfield(mdfkeywds,'ccofu') == 0; 
     mdfkeywds.ccofu = 0;
     mdfkeywds.ccofv = 0;
+    rouval = 0;
 else
     rouval = (mdfkeywds.ccofu + mdfkeywds.ccofv)/2;
 end
