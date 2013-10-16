@@ -110,7 +110,7 @@ while ~feof(fid) && lcount < 100
     % test for single jonswap
     try
         [key value] = strtok(fline, '=');
-        if ~isempty(value) && ismember(key, {'Hm0' 'fp' 'dir' 'gamma' 's' 'fnyq'})
+        if ~isempty(value) && ismember(strtrim(key), {'Hm0' 'fp' 'mainang' 'gammajsp' 's' 'fnyq'})
             counts = increase_count(types, counts, 'jonswap');
         end
     end
