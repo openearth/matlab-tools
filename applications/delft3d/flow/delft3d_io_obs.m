@@ -67,7 +67,7 @@ case 'read',
   elseif nargout ==2
      varargout = {S.x,S.y};
   elseif nargout ==3
-     varargout = {S.x,S.y,S.name};
+     varargout = {S.x,S.y,S.namst};
   elseif nargout ==4
     error('too much output parameters: [1..3]')
   end
