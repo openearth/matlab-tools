@@ -96,7 +96,7 @@ handles.add_files         = [nesthd_dir filesep 'bin'];
 
 axes(hObject);
 fig = imread ([handles.add_files filesep 'nest_1.jpg']);
-handles.bg = imshow(fig);
+handles.bg = image(fig);
 set(hObject,'DataAspectRatio',[1 1.25 1]);
 
 % Update handles structure
@@ -133,6 +133,7 @@ function Nesthd1_menu_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 set(handles.bg,'Visible','off');
+set(get(handles.bg,'parent'),'Visible','off');
 
 handles.files_hd1         = {'' '' '' '' '' ''};
 
@@ -153,6 +154,7 @@ handles.bcc_onoff          = 'off';
 handles.run_nesthd2_onoff  = 'off';
 
 set(handles.bg,'Visible','off');
+set(get(handles.bg,'parent'),'Visible','off');
 set_nesthd1(handles,'off');
 set_nesthd2(handles,'on');
 add_inf_off (handles);
@@ -169,7 +171,8 @@ handles = nesthd_read_ini(handles);
 
 if isfield(handles,'active')
 
-    set(handles.bg,'Visible','off');
+   set(handles.bg,'Visible','off');
+   set(get(handles.bg,'parent'),'Visible','off');
 
    if strcmpi(handles.active,'Nesthd1')
       handles = nesthd_check_nesthd1(handles);
@@ -319,7 +322,7 @@ function manual_d3d_Callback(hObject, eventdata, handles)
 d3d_home = getenv('D3D_Home');
 file_man = [d3d_home filesep 'manuals' filesep 'Delft3D-Flow_User_Manual.pdf'];
 if exist(file_man,'file')
-   open(file_man);
+   open(['"' file_man '"']);
 else
    errordlg({'User manual not found';' ';'Either the D3D_Home environment variable is not set, or,';'Manuals are not installed'},'Nesthd Error');
 end
