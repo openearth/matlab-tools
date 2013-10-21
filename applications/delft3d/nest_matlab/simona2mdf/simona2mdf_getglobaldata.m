@@ -6,7 +6,7 @@ mmax = size(data,1);
 nmax = size(data,2);
 
 if global_data.LAYOUT > 1
-    simona2mdf_warning('LAYOUT > 1 not yet implemented');
+    simona2mdf_message('LAYOUT > 1 not yet implemented','Window','SIMONA2MDF Warning','Close',true,'n_sec',10);
 end
 
 if simona2mdf_fieldandvalue(global_data,'CONST_VALUES')

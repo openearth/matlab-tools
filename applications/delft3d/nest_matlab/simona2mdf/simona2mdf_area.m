@@ -17,7 +17,7 @@ elseif simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.MESH.GRID.GENERALIZED_S
        % CSM
     mdf.filcco    = siminp_struc.ParsedTree.MESH.GRID.GENERALIZED_SPHERICAL.RGFFILE;
 else
-    simona2mdf_warning('Recti-linear coordinates not implemented');
+        simona2mdf_message('Recti-linear coordinates not implemented','Window','SIMONA2MDF Warning','Close',true,'n_sec',10);
 end
 
 %

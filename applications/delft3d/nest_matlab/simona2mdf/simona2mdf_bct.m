@@ -71,7 +71,7 @@ if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.FLOW.FORCINGS.TIMESERIES')
             % Check if times are correct
             %
             if ~isequal(times(1,:),times(2,:))
-                simona2mdf_warning('Times for timeseries SIDE A and SIDE B must be identical');
+                simona2mdf_message('Times for timeseries SIDE A and SIDE B must be identical','Window','SIMONA2MDF Warning','Close',true,'n_sec',10);
             end
             %
             % Fill the bct (INFO) structure

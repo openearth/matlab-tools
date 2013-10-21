@@ -35,8 +35,8 @@ for ivar = 1: length(stat)
             if ~isempty(pntnr)
                index(end + 1) = pntnr;
             else
-                simona2mdf_warning({['Outpunt ruquested for P' num2str(chkpoints.(stat{ivar}).P(istat),'%4.4i')]; ...
-                                    ' however, not defined as point. SKIPPED!'});
+                simona2mdf_warning({['Output requested for P' num2str(chkpoints.(stat{ivar}).P(istat),'%4.4i')]; ...
+                                    ' however, not defined as point. SKIPPED!'},'Window','SIMONA2MDF Warning','Close',true,'n_sec',10);
             end
         end
     end

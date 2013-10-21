@@ -56,8 +56,8 @@ if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.GENERAL.WIND')
     %
 
     if simona2mdf_fieldandvalue(wind,'CHARNOCK')
-         simona2mdf_warning({'CHARNOCK wind stress formulation not implemented in Delft3D-Flow'; ...
-                             'Asuming Smith and Banke formulation'});
+         simona2mdf_message({'CHARNOCK wind stress formulation not implemented in Delft3D-Flow'; ...
+                             'Assuming Smith and Banke formulation'},'Window','SIMONA2MDF Warning','Close',true,'n_sec',10);
     end
 end
 

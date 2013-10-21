@@ -17,9 +17,9 @@ nesthd_dir = getenv('nesthd_path');
 
 siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'TRANSPORT'});
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.TRANSPORT.PROBLEM.SALINITY')
-   
+
     constnr = siminp_struc.ParsedTree.TRANSPORT.PROBLEM.SALINITY.CO;
-    
+
     series       = siminp_struc.ParsedTree.TRANSPORT.FORCINGS.BOUNDARIES.TIMESERIES.TS;
 
     %
@@ -33,13 +33,13 @@ if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.TRANSPORT.PROBLEM.SALINITY'
         %
 
         ibnd_bcc = ibnd_bcc + 1;
-        
+
         for iside = 1: 2
-            
+
             %
             % Get seriesnr
             %
-        
+
             for ipnt = 1: length(series)
                  if series(ipnt).P == bnd.pntnr(ibnd,iside) && series(ipnt).CO == constnr
                       pntnr = ipnt;
@@ -58,15 +58,15 @@ if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.TRANSPORT.PROBLEM.SALINITY'
                  values(iside,2,1) = series(pntnr).CINIT;
             end
         end
-        
+
         %
         % Check if times are correct
-        %             
-        
+        %
+
         if ~isequal(times(1,:),times(2,:))
-             simona2mdf_warning('Times for timeseries SIDE A and SIDE B must be identical');
+             simona2mdf_message('Times for timeseries SIDE A and SIDE B must be identical','Window','SIMONA2MDF Warning','Close',true,'n_sec',10);
         end
-        
+
         %
         % Fill the bcc (INFO) structure
         %
@@ -74,7 +74,7 @@ if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.TRANSPORT.PROBLEM.SALINITY'
         quant   ='Salinity             ';
         unit    ='[ppt]';
         profile = 'uniform';
-       
+
         bcc.NTables=ibnd_bcc;
         bcc.Table(ibnd_bcc).Name=['Boundary Section : ' num2str(ibnd)];
         bcc.Table(ibnd_bcc).Contents=profile;
@@ -90,7 +90,7 @@ if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.TRANSPORT.PROBLEM.SALINITY'
         bcc.Table(ibnd_bcc).Parameter(2).Unit=unit;
         bcc.Table(ibnd_bcc).Parameter(3).Name=[quant 'End B'];
         bcc.Table(ibnd_bcc).Parameter(3).Unit=unit;
-     
+
         %
         % Fill bnd structure with time series
         %

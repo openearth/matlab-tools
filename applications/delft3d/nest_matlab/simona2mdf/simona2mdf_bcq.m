@@ -20,5 +20,5 @@ end
 %
 
 if ibnd_bcq > 0
-    simona2mdf_warning('Conversion of QH boundaries not implemented yet');
+    simona2mdf_message('Conversion of QH boundaries not implemented yet','Window','SIMONA2MDF Warning','Close',true,'n_sec',10);
 end

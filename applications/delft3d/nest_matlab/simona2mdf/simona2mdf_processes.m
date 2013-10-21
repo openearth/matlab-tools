@@ -51,5 +51,5 @@ end
 warntext{end+1} = '';
 
 if warning
-   simona2mdf_warning(warntext);
+   simona2mdf_message(warntext,'Window','SIMONA2MDF Warning','Close',true,'n_sec',10);
 end
