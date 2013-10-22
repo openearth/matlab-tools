@@ -81,6 +81,8 @@ for i=1:length(varargin)
     end
 end
 
+vis=vis*handles.Model(imd).menuview.grid;
+
 switch lower(opt)
     
     case{'plot'}

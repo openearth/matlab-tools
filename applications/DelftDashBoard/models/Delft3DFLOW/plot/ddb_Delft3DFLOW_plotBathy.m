@@ -84,6 +84,8 @@ for i=1:length(varargin)
     end
 end
 
+vis=vis*handles.Model(imd).menuview.bathymetry;
+
 switch lower(option)
     
     case{'plot'}

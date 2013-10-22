@@ -71,7 +71,8 @@ searchintervals=[];
 verticaloffsets=[];
 internaldiff=0;
 internaldiffusionrange=[-20000 20000];
-    
+structuredgrid=1;
+
 for i=1:length(varargin)
     if ischar(varargin{i})
         switch lower(varargin{i})
@@ -95,6 +96,8 @@ for i=1:length(varargin)
                 internaldiff=varargin{i+1};
             case{'internaldiffusionrange'}
                 internaldiffusionrange=varargin{i+1};
+            case{'structuredgrid'}
+                structuredgrid=varargin{i+1};
         end
     end
 end
@@ -118,8 +121,14 @@ z(z==0)=NaN;
 % x(isnan(x))=0;
 % y(isnan(y))=0;
 
-% Find minimum grid resolution (in metres!) for this dataset
-[dmin,dmax]=findMinMaxGridSize(x,y,'cstype',coord.type);
+if structuredgrid
+    % Find minimum grid resolution (in metres!) for this dataset
+    [dmin,dmax]=findMinMaxGridSize(x,y,'cstype',coord.type);
+else
+    % TODO
+    dmin=100;
+    dmax=100;
+end
 
 for id=1:length(datasets)   
     % Loop through selected datasets    
@@ -174,16 +183,17 @@ for id=1:length(datasets)
         
 end
 
-
-if internaldiff
-    % Apply internal diffusion (for missing depth points)
-    isn=isnan(z);              % Missing indices in depth matrix
-    mask=zeros(size(z))+1;
-    mask(isnan(xg))=0;         % Missing indices in grid matrix    
-    z=internaldiffusion(z,'mask',mask);
-    isn2=logical(isn.*mask);   % Matrix of values that were filled by internal diffusion
-    z(isn2)=max(z(isn2),internaldiffusionrange(1));    
-    z(isn2)=min(z(isn2),internaldiffusionrange(2));    
+if structuredgrid
+    if internaldiff
+        % Apply internal diffusion (for missing depth points)
+        isn=isnan(z);              % Missing indices in depth matrix
+        mask=zeros(size(z))+1;
+        mask(isnan(xg))=0;         % Missing indices in grid matrix
+        z=internaldiffusion(z,'mask',mask);
+        isn2=logical(isn.*mask);   % Matrix of values that were filled by internal diffusion
+        z(isn2)=max(z(isn2),internaldiffusionrange(1));
+        z(isn2)=min(z(isn2),internaldiffusionrange(2));
+    end
 end
 
 % Interpolated data in MSL, now convert to model datum

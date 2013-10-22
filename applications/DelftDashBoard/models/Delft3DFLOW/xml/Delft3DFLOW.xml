@@ -51,7 +51,18 @@
         <option>saveallas</option>
       </menuitem>
     </menusavefile>
-    <menuview></menuview>
+    <menuview>
+      <attribute>
+        <string>Grid</string>
+        <callback>ddb_menuViewDelft3DFLOW</callback>
+        <option>grid</option>
+      </attribute>
+      <attribute>
+        <string>Bathymetry</string>
+        <callback>ddb_menuViewDelft3DFLOW</callback>
+        <option>bathymetry</option>
+      </attribute>
+    </menuview>
   </menu>
   <element>
     <style>tabpanel</style>
