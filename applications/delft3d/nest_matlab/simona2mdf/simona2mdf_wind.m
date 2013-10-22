@@ -47,7 +47,7 @@ if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.GENERAL.WIND')
             simona2mdf_io_wnd('write',mdf.filwnd,wnd);
             mdf.filwnd    = simona2mdf_rmpath(mdf.filwnd);
          else
-            simona2mdf_warning('TIME_AND_VALUE (wind series) not implemented yet');
+            simona2mdf_warning('TIME_AND_VALUE (wind series) not implemented yet','Window','SIMONA2MDF Warning','Close',true,'n_sec',10);
         end
     end
 

@@ -320,9 +320,14 @@ function manual_d3d_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 d3d_home = getenv('D3D_Home');
-file_man = [d3d_home filesep 'manuals' filesep 'Delft3D-Flow_User_Manual.pdf'];
+if strcmp(d3d_home(end),filesep)
+    file_man = [d3d_home 'manuals' filesep 'Delft3D-Flow_User_Manual.pdf'];
+else
+    file_man = [d3d_home filesep 'manuals' filesep 'Delft3D-Flow_User_Manual.pdf'];
+end
+    
 if exist(file_man,'file')
-   open(['"' file_man '"']);
+   open(file_man);
 else
    errordlg({'User manual not found';' ';'Either the D3D_Home environment variable is not set, or,';'Manuals are not installed'},'Nesthd Error');
 end

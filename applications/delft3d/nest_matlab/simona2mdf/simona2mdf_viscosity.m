@@ -36,7 +36,7 @@ end
 
 mmax = mdf.mnkmax(1);
 nmax = mdf.mnkmax(2);
-    
+
 if ~simona2mdf_fieldandvalue(problem,'VISCOSITY') && ~simona2mdf_fieldandvalue(problem,'HOR_VISCOSITY')
     vico(1:mmax,1:nmax) = 10.0; % Insane default value
 elseif simona2mdf_fieldandvalue(problem,'VISCOSITY.EDDYVISCOSIT')
@@ -45,9 +45,9 @@ else
     %
     % Space varying
     %
-   
+
     vico(1:mmax,1:nmax) = 0.0;
-    
+
     if simona2mdf_fieldandvalue(problem,'HOR_VISCOSITY.GLOBAL')
         vico = simona2mdf_getglobaldata (problem.HOR_VISCOSITY.GLOBAL,vico);
     end
@@ -73,13 +73,13 @@ if strcmpi(mdf.sub1(1:1),'s')
         end
     end
 end
-    
+
 %
 % write file
 %
 
-edy(1).Data = vico;
-edy(2).Data = dico;
+edy(1).Data = vico(1:mmax,1:nmax);
+edy(2).Data = dico(1:mmax;1:nmax);
 mdf.filedy = [name_mdf '.edy'];
 wldep ('write',mdf.filedy,edy);
 mdf.filedy = simona2mdf_rmpath(mdf.filedy);

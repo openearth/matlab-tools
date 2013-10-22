@@ -56,8 +56,8 @@ end
 % Finally write
 %
 
-rgh(1).Data = friction_u;
-rgh(2).Data = friction_v;
+rgh(1).Data = friction_u(1:mmax,1:nmax);
+rgh(2).Data = friction_v(1:mmax,1:nmax);
 mdf.filrgh  = [name_mdf '.rgh'];
 wldep('write',mdf.filrgh,rgh);
 mdf.filrgh  = simona2mdf_rmpath(mdf.filrgh);
