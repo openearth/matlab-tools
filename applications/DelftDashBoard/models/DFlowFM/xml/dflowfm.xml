@@ -43,6 +43,10 @@
       <tabstring>Toolbox</tabstring>
     </tab>
     <tab>
+      <tabstring>Model</tabstring>
+      <element>DFlowFM.model.xml</element>
+    </tab>
+    <tab>
       <tabstring>Geometry</tabstring>
       <element>DFlowFM.geometry.xml</element>
     </tab>

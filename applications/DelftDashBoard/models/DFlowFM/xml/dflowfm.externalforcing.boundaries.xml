@@ -107,6 +107,147 @@
     </dependency>
   </element>
   <element>
+    <style>popupmenu</style>
+    <text>Type</text>
+    <position>340 110 80 20</position>
+    <tooltipstring>Select boundary type</tooltipstring>
+    <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).type</variable>
+    <type>string</type>
+    <listtext>Water Level</listtext>
+    <listtext>Discharge</listtext>
+    <listvalue>waterlevelbnd</listvalue>
+    <listvalue>dischargebnd</listvalue>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrboundaries</variable>
+        <value>0</value>
+        <operator>ne</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>listbox</style>
+    <position>440 10 50 110</position>
+    <tooltipstring>Edit boundary node data</tooltipstring>
+    <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).activenode</variable>
+    <type>int</type>
+    <text>Nodes</text>
+    <textposition>above</textposition>
+    <listtext>
+      <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).nodenames</variable>
+    </listtext>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrboundaries</variable>
+        <value>0</value>
+        <operator>ne</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>checkbox</style>
+    <position>500 100 120 20</position>
+    <tooltipstring>Use time series data</tooltipstring>
+    <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).nodes(handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).activenode).tim</variable>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrboundaries</variable>
+        <value>0</value>
+        <operator>ne</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>520 100 120 20</position>
+    <tooltipstring>Edit boundary node time series data</tooltipstring>
+    <callback>ddb_DFlowFM_boundaries</callback>
+    <option1>editboundarydatatimeseries</option1>
+    <text>Edit Time Series</text>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrboundaries</variable>
+        <value>0</value>
+        <operator>ne</operator>
+      </check>
+      <check>
+        <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).nodes(handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).activenode).tim</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>checkbox</style>
+    <position>500 75 120 20</position>
+    <tooltipstring>Use time series data</tooltipstring>
+    <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).nodes(handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).activenode).cmp</variable>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrboundaries</variable>
+        <value>0</value>
+        <operator>ne</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>520 75 120 20</position>
+    <tooltipstring>Edit boundary node component data</tooltipstring>
+    <callback>ddb_DFlowFM_boundaries</callback>
+    <option1>editboundarydatacomponents</option1>
+    <text>Edit Components</text>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrboundaries</variable>
+        <value>0</value>
+        <operator>ne</operator>
+      </check>
+      <check>
+        <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).nodes(handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).activenode).cmp</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>popupmenu</style>
+    <position>650 75 80 20</position>
+    <tooltipstring>Select component type for this node</tooltipstring>
+    <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).nodes(handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).activenode).cmptype</variable>
+    <type>string</type>
+    <listtext>Astronomic</listtext>
+    <listtext>Harmonic</listtext>
+    <listvalue>astro</listvalue>
+    <listvalue>harmo</listvalue>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.Model(md).Input.nrboundaries</variable>
+        <value>0</value>
+        <operator>ne</operator>
+      </check>
+      <check>
+        <variable>handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).nodes(handles.Model(md).Input.boundaries(handles.Model(md).Input.activeboundary).activenode).cmp</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
     <style>pushbutton</style>
     <position>740 35 150 20</position>
     <tooltipstring>Open external forcing file</tooltipstring>

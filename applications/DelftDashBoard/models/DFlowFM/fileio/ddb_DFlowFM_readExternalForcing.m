@@ -94,7 +94,15 @@ for ii=1:length(s)
             plifile=s(ii).filename;
             name=plifile(1:end-4);
             [x,y]=landboundary('read',plifile);
-            boundaries = ddb_DFlowFM_initializeBoundary(boundaries,x,y,name,nb);
+            boundaries = ddb_DFlowFM_initializeBoundary(boundaries,x,y,name,nb,handles.Model(md).Input.tstart,handles.Model(md).Input.tstop);
+            boundaries(nb).type=s(ii).quantity;
+            handles.Model(md).Input.boundarynames{nb}=name;            
+        case{'dischargebnd'}
+            nb=nb+1;
+            plifile=s(ii).filename;
+            name=plifile(1:end-4);
+            [x,y]=landboundary('read',plifile);
+            boundaries = ddb_DFlowFM_initializeBoundary(boundaries,x,y,name,nb,handles.Model(md).Input.tstart,handles.Model(md).Input.tstop);
             boundaries(nb).type=s(ii).quantity;
             handles.Model(md).Input.boundarynames{nb}=name;            
         case{'spiderweb'}
@@ -112,6 +120,41 @@ for ii=1:length(s)
         case{'rain'}
             handles.Model(md).Input.rainfile=s(ii).filename;
             handles.Model(md).Input.rain=1;
+    end
+end
+
+% Now read time series / component files
+for ib=1:length(boundaries)
+    for inode=1:length(boundaries(ib).x)
+        % Component file
+        fname=[boundaries(ib).name '_' num2str(inode,'%0.4i') '.cmp'];
+        if exist(fname,'file')
+            components=dflowfm.readCmpFile(fname);
+            boundaries(ib).nodes(inode).cmp=1;
+            if ischar(components(1).component)
+                % Astronomic
+                boundaries(ib).nodes(inode).astronomiccomponents=components;
+                boundaries(ib).nodes(inode).cmptype='astro';
+            else
+                % Harmonic
+                boundaries(ib).nodes(inode).harmoniccomponents=components;
+                boundaries(ib).nodes(inode).cmptype='harmo';
+            end
+        else
+            % Components have already been initialized in ddb_DFlowFM_initializeBoundary
+            boundaries(ib).nodes(inode).cmp=0;
+        end
+        % Time series file file
+        fname=[boundaries(ib).name '_' num2str(inode,'%0.4i') '.tim'];
+        if exist(fname,'file')
+            s=load(fname);
+            boundaries(ib).nodes(inode).timeseries.time=handles.Model(md).Input.refdate+s(:,1)/1440;            
+            boundaries(ib).nodes(inode).timeseries.value=s(:,2);            
+            boundaries(ib).nodes(inode).tim=1;
+        else
+            % Time series have already been initialized in ddb_DFlowFM_initializeBoundary
+            boundaries(ib).nodes(inode).tim=0;
+        end
     end
 end
 

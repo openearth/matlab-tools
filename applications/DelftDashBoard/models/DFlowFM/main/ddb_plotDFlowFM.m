@@ -108,4 +108,6 @@ handles=ddb_DFlowFM_plotBoundaries(handles,option,'visible',vis,'active',act);
 
 handles=ddb_DFlowFM_plotObservationPoints(handles,option,'visible',vis,'active',act);
 
+handles=ddb_DFlowFM_plotCrossSections(handles,option,'visible',vis,'active',act);
+
 setHandles(handles);

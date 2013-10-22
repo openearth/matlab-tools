@@ -99,9 +99,33 @@ switch lower(opt)
                     return
                 end
             end
-            ddb_DFlowFM_writeExtForcing(handles);
+            ddb_DFlowFM_saveExtFile(handles);
+
+            % And now for the boundaries
+            
+            for iac=1:handles.Model(md).Input.nrboundaries
+                
+                % Save pli file
+                x=handles.Model(md).Input.boundaries(iac).x;
+                y=handles.Model(md).Input.boundaries(iac).y;
+                landboundary('write',handles.Model(md).Input.boundaries(iac).filename,x,y);
+                
+                % Save component files
+                for jj=1:length(x)
+                    if handles.Model(md).Input.boundaries(iac).nodes(jj).cmp
+                        ddb_DFlowFM_saveCmpFile(handles.Model(md).Input.boundaries,iac,jj);
+                    end
+                    if handles.Model(md).Input.boundaries(iac).nodes(jj).tim
+                        ddb_DFlowFM_saveTimFile(handles.Model(md).Input.boundaries,iac,jj,handles.Model(md).Input.refdate);
+                    end
+                end
+            end
+
+            
+            
         end
         
+        % obs
         if handles.Model(md).Input.nrobservationpoints>0
             if isempty(handles.Model(md).Input.obsfile)
                 [filename, pathname, filterindex] = uiputfile('*.xyn', 'Save observation points file','');
@@ -116,6 +140,23 @@ switch lower(opt)
                 end
             end
             ddb_DFlowFM_saveObsFile(handles,ad);
+        end
+
+        % Crs
+        if handles.Model(md).Input.nrcrosssections>0
+            if isempty(handles.Model(md).Input.crsfile)
+                [filename, pathname, filterindex] = uiputfile('*.xyn', 'Save cross sections file','');
+                if ~isempty(pathname)
+                    curdir=[lower(cd) '\'];
+                    if ~strcmpi(curdir,pathname)
+                        filename=[pathname filename];
+                    end
+                    handles.Model(md).Input.crsfile=filename;
+                else
+                    return
+                end
+            end
+            ddb_DFlowFM_saveCrsFile(handles.Model(md).Input.crsfile,handles.Model(md).Input.crosssections);
         end
         
         inp=handles.Model(md).Input(ad);

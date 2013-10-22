@@ -1,4 +1,4 @@
-function boundaries=findBoundarySections(netStruc,maxdist,minlev)
+function boundaries=findBoundarySections(netStruc,maxdist,minlev,cstype)
 
 bndLink=netStruc.bndLink;
 linkNodes=netStruc.linkNodes;
@@ -94,8 +94,8 @@ end
 for ipol=1:npol
     ifirst=iPol1(ipol);
     ilast=iPol2(ipol);
-    pathdist=pathdistance(xx,yy,'geographic');
-    pathang=pathangle(xx,yy,'geographic');
+    pathdist=pathdistance(xx,yy,cstype);
+    pathang=pathangle(xx,yy,cstype);
     i1=ifirst;
     np=1;
     polln(ipol).ip(np)=ifirst;
@@ -105,12 +105,12 @@ for ipol=1:npol
             np=np+1;
             i1=j;
             polln(ipol).ip(np)=j;
-        elseif abs(pathang(j)-pathang(i1))>pi/20
+        elseif abs(pathang(j)-pathang(max(1,j-1)))>pi/20
             % Next angle exceeds 10 degrees
             np=np+1;
             i1=j;
             polln(ipol).ip(np)=j;
-        elseif pathdist(j+1)-pathdist(i1)>maxdist
+        elseif pathdist(j)-pathdist(i1)>maxdist
             % Max distance reached at next point 
             np=np+1;
             i1=j;

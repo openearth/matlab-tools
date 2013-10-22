@@ -1,4 +1,4 @@
-function ddb_DFlowFM_misc(varargin)
+function ddb_DFlowFM_numerics(varargin)
 %DDB_DFlowFM_misc  One line description goes here.
 
 %% Copyright notice

@@ -1,5 +1,5 @@
-function ddb_DFlowFM_observationPoints(varargin)
-%ddb_DFlowFM_observationPoints  One line description goes here.
+function ddb_DFlowFM_crossSections(varargin)
+%ddb_DFlowFM_crossSections  One line description goes here.
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -44,184 +44,171 @@ function ddb_DFlowFM_observationPoints(varargin)
 % $Keywords: $
 
 %%
-handles=getHandles;
 
 ddb_zoomOff;
 
 if isempty(varargin)
+    handles=getHandles;
     ddb_refreshScreen;
-    handles.Model(md).Input(ad).addobservationpoint=0;
-    handles.Model(md).Input(ad).selectobservationpoint=0;
-    handles.Model(md).Input(ad).changeobservationpoint=0;
-    handles.Model(md).Input(ad).deleteobservationpoint=0;
-    handles=ddb_DFlowFM_plotObservationPoints(handles,'update','active',1);
+    handles=ddb_DFlowFM_plotCrossSections(handles,'update','active',1);
     setHandles(handles);    
 else
     
     opt=varargin{1};
 
-    % Default cloud behavior
-    h=handles.Model(md).Input(ad).observationpointshandle;
     clearInstructions;
     
     switch(lower(opt))
-        
+
         case{'add'}
-            % Click Add in GUI
-            handles.Model(md).Input(ad).deleteobservationpoint=0;
-            handles.Model(md).Input(ad).changeobservationpoint=0;
-            if handles.Model(md).Input(ad).addobservationpoint
-                gui_clickpoint('xy','callback',@addObservationPoint,'multiple',1);
-                setInstructions({'','','Click point on map for new observation point(s)'});
-            else
-                set(gcf, 'windowbuttondownfcn',[]);
-            end
-            setHandles(handles);
+            drawCrossSection;
+
+        case{'selectfromlist'}
+            selectFromList;
             
         case{'deletefromlist'}
-            % Click Delete From List in GUI
-            handles.Model(md).Input(ad).addobservationpoint=0;
-            handles.Model(md).Input(ad).changeobservationpoint=0;
-            handles.Model(md).Input(ad).deleteobservationpoint=0;
-            set(gcf, 'windowbuttondownfcn',[]);
-            % Delete observation point selected from list
-            handles=deleteObservationPoint(handles);
-            setHandles(handles);
+            deleteCrossSection;
 
-        case{'deletefrommap'}
-            % Click Delete From Map in GUI
-            handles.Model(md).Input(ad).addobservationpoint=0;
-            handles.Model(md).Input(ad).changeobservationpoint=0;
-            set(gcf, 'windowbuttondownfcn',[]);
-            if handles.Model(md).Input(ad).deleteobservationpoint
-                setInstructions({'','','Select observation point to delete from map'});
-            end
-            setHandles(handles);
-            
-        case{'change'}
-            % Click Change in GUI
-            handles.Model(md).Input(ad).addobservationpoint=0;
-            handles.Model(md).Input(ad).deleteobservationpoint=0;
-            set(gcf, 'windowbuttondownfcn',[]);
-            if handles.Model(md).Input(ad).changeobservationpoint
-                setInstructions({'','','Select observation point on map to change'});
-            end
-            setHandles(handles);
-            
         case{'edit'}
-            % Edit something in GUI
-            handles.Model(md).Input(ad).addobservationpoint=0;
-            handles.Model(md).Input(ad).changeobservationpoint=0;
-            handles.Model(md).Input(ad).deleteobservationpoint=0;
-            set(gcf, 'windowbuttondownfcn',[]);
-            n=handles.Model(md).Input(ad).activeobservationpoint;
-            name=handles.Model(md).Input(ad).observationpoints(n).name;
-            handles.Model(md).Input(ad).observationpointnames{n}=name;
-            h=handles.Model(md).Input(ad).observationpointshandle;
-            gui_pointcloud(h,'change','text',handles.Model(md).Input(ad).observationpointnames);
-            setHandles(handles);
-            
-        case{'selectfromlist'}
-            handles.Model(md).Input(ad).addobservationpoint=0;
-            handles.Model(md).Input(ad).changeobservationpoint=0;
-            handles.Model(md).Input(ad).deleteobservationpoint=0;
-            set(gcf, 'windowbuttondownfcn',[]);
-            % Delete selected observation point next time delete is clicked
-            handles.Model(md).Input(ad).deleteobservationpoint=0;
-            h=handles.Model(md).Input(ad).observationpointshandle;
-            gui_pointcloud(h,'change','activepoint',handles.Model(md).Input(ad).activeobservationpoint);
-            setHandles(handles);
-            clearInstructions;
+            editCrossSection;
 
-        case{'selectfrommap'}
-            iac=varargin{3};
-            handles.Model(md).Input(ad).activeobservationpoint=iac;
-            if handles.Model(md).Input(ad).deleteobservationpoint
-                % Delete selected point
-                handles=deleteObservationPoint(handles);
-            elseif handles.Model(md).Input(ad).changeobservationpoint
-                % Change selected point
-                gui_clickpoint('xy','callback',@addObservationPoint,'multiple',0);
-                setInstructions({'','','Click new point on map for this observation point'});
-            end
-            setHandles(handles);
+        case{'changecrosssection'}
+            h=varargin{2};
+            x=varargin{3};
+            y=varargin{4};
+            changeCrossSection(h,x,y);
             
         case{'openfile'}
-            handles.Model(md).Input(ad).addobservationpoint=0;
-            set(gcf, 'windowbuttondownfcn',[]);
-            handles.Model(md).Input(ad).changeobservationpoint=0;
-            handles.Model(md).Input(ad).deleteobservationpoint=0;
-            handles=ddb_DFlowFM_readObsFile(handles,ad);
-            handles=ddb_DFlowFM_plotObservationPoints(handles,'plot','active',1);
+            handles=getHandles;
+            handles.Model(md).Input.crosssections=ddb_DFlowFM_readCrsFile(handles.Model(md).Input.crsfile);
+            handles.Model(md).Input.nrcrosssections=length(handles.Model(md).Input.crosssections);
+            handles=updateNames(handles);
+            handles=ddb_DFlowFM_plotCrossSections(handles,'plot','active',1);
             setHandles(handles);
             
         case{'savefile'}
-            handles.Model(md).Input(ad).addobservationpoint=0;
-            set(gcf, 'windowbuttondownfcn',[]);
-            handles.Model(md).Input(ad).changeobservationpoint=0;
-            handles.Model(md).Input(ad).deleteobservationpoint=0;
-            ddb_DFlowFM_saveObsFile(handles,ad);
-            
+            handles=getHandles;
+            ddb_DFlowFM_saveCrsFile(handles.Model(md).Input.crsfile,handles.Model(md).Input.crosssections);
+
     end
 end
 
-refreshObservationPoints;
+refreshCrossSections;
 
 %%
-function addObservationPoint(x,y)
+function drawCrossSection
 
-x1=x(1);
-y1=y(1);
+handles=getHandles;
+% Click Add in GUI
+handles.Model(md).Input(ad).deletecrosssection=0;
+ddb_zoomOff;
+setInstructions({'','','Draw cross section'});
+gui_polyline('draw','tag','dflowfmcrosssection','Marker','o','createcallback',@addCrossSection,'changecallback',@changeCrossSection,'closed',0, ...
+    'color','g','markeredgecolor','r','markerfacecolor','r');
+setHandles(handles);
+
+%%
+function addCrossSection(h,x,y)
+
+clearInstructions;
 
 handles=getHandles;
 
-if handles.Model(md).Input(ad).changeobservationpoint
-    iac=handles.Model(md).Input(ad).activeobservationpoint;
-    set(gcf, 'windowbuttondownfcn',[]);
-else
-    % Add mode
-    handles.Model(md).Input(ad).nrobservationpoints=handles.Model(md).Input(ad).nrobservationpoints+1;
-    iac=handles.Model(md).Input(ad).nrobservationpoints;
-    handles.Model(md).Input(ad).observationpoints(iac).name=['obspoint ' num2str(iac)];
-    handles.Model(md).Input(ad).observationpointnames{iac}=handles.Model(md).Input(ad).observationpoints(iac).name;
-end
+% Add mode
+handles.Model(md).Input(ad).nrcrosssections=handles.Model(md).Input(ad).nrcrosssections+1;
+iac=handles.Model(md).Input(ad).nrcrosssections;
+handles.Model(md).Input(ad).crosssections(iac).name=['crosssection ' num2str(iac)];
+handles.Model(md).Input(ad).crosssectionnames{iac}=handles.Model(md).Input(ad).crosssections(iac).name;
 
-handles.Model(md).Input(ad).observationpoints(iac).x=x1;
-handles.Model(md).Input(ad).observationpoints(iac).y=y1;
-handles.Model(md).Input(ad).activeobservationpoint=iac;
+handles.Model(md).Input(ad).crosssections(iac).x=x;
+handles.Model(md).Input(ad).crosssections(iac).y=y;
+handles.Model(md).Input(ad).crosssections(iac).handle=h;
+handles.Model(md).Input(ad).activecrosssection=iac;
 
-handles=ddb_DFlowFM_plotObservationPoints(handles,'plot','active',1);
+handles=ddb_DFlowFM_plotCrossSections(handles,'plot','active',1);
+
 setHandles(handles);
 
-refreshObservationPoints;
+refreshCrossSections;
 
 %%
-function handles=deleteObservationPoint(handles)
+function changeCrossSection(h,x,y)
 
-nrobs=handles.Model(md).Input(ad).nrobservationpoints;
+% Cross section changed on map
+
+handles=getHandles;
+
+for ii=1:handles.Model(md).Input(ad).nrcrosssections
+    if handles.Model(md).Input(ad).crosssections(ii).handle==h
+        iac=ii;
+        break;
+    end
+end
+
+handles.Model(md).Input(ad).crosssections(iac).x=x;
+handles.Model(md).Input(ad).crosssections(iac).y=y;
+handles.Model(md).Input(ad).activecrosssection=iac;
+
+handles=ddb_DFlowFM_plotCrossSections(handles,'plot','active',1);
+
+setHandles(handles);
+
+refreshCrossSections;
+
+%%
+function deleteCrossSection
+
+clearInstructions;
+
+handles=getHandles;
+
+nrobs=handles.Model(md).Input(ad).nrcrosssections;
 
 if nrobs>0
-    iac=handles.Model(md).Input(ad).activeobservationpoint;
-    handles=ddb_DFlowFM_plotObservationPoints(handles,'delete','observationpoints');
+    iac=handles.Model(md).Input(ad).activecrosssection;
+    handles=ddb_DFlowFM_plotCrossSections(handles,'delete','crosssections');
     if nrobs>1
-        handles.Model(md).Input(ad).observationpoints=removeFromStruc(handles.Model(md).Input(ad).observationpoints,iac);
-        handles.Model(md).Input(ad).observationpointnames=removeFromCellArray(handles.Model(md).Input(ad).observationpointnames,iac);
+        handles.Model(md).Input(ad).crosssections=removeFromStruc(handles.Model(md).Input(ad).crosssections,iac);
+        handles.Model(md).Input(ad).crosssectionnames=removeFromCellArray(handles.Model(md).Input(ad).crosssectionnames,iac);
     else
-        handles.Model(md).Input(ad).observationpointnames={''};
-        handles.Model(md).Input(ad).activeobservationpoint=1;
-        handles.Model(md).Input(ad).observationpoints(1).x=NaN;
-        handles.Model(md).Input(ad).observationpoints(1).y=NaN;
+        handles.Model(md).Input(ad).crosssectionnames={''};
+        handles.Model(md).Input(ad).activecrosssection=1;
+        handles.Model(md).Input(ad).crosssections(1).name='';
+        handles.Model(md).Input(ad).crosssections(1).x=0;
+        handles.Model(md).Input(ad).crosssections(1).y=0;
     end
     if iac==nrobs
-        iac=nrobs-1;
+        iac=max(nrobs-1,1);
     end
-    handles.Model(md).Input(ad).nrobservationpoints=nrobs-1;
-    handles.Model(md).Input(ad).activeobservationpoint=iac;
-    handles=ddb_DFlowFM_plotObservationPoints(handles,'plot','active',1);
+    handles.Model(md).Input(ad).nrcrosssections=nrobs-1;
+    handles.Model(md).Input(ad).activecrosssection=iac;
+    handles=ddb_DFlowFM_plotCrossSections(handles,'plot','active',1);
     setHandles(handles);
-    refreshObservationPoints;
+    refreshCrossSections;
 end
 
 %%
-function refreshObservationPoints
+function editCrossSection
+clearInstructions;
+handles=getHandles;
+handles=updateNames(handles);
+handles=ddb_DFlowFM_plotCrossSections(handles,'plot','active',1);
+setHandles(handles);
+
+%%
+function selectFromList
+clearInstructions;
+handles=getHandles;
+handles=ddb_DFlowFM_plotCrossSections(handles,'plot','active',1);
+setHandles(handles);
+
+%%
+function handles=updateNames(handles)
+handles.Model(md).Input.crosssectionnames=[];
+for ib=1:handles.Model(md).Input.nrcrosssections
+    handles.Model(md).Input.crosssectionnames{ib}=handles.Model(md).Input.crosssections(ib).name;
+end
+
+%%
+function refreshCrossSections
 gui_updateActiveTab;

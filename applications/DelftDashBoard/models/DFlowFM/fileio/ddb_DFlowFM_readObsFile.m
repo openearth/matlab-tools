@@ -44,12 +44,12 @@ function handles = ddb_DFlowFM_readObsFile(handles, id)
 % $Keywords: $
 
 %%
-[x,y,name] = textread(handles.Model(md).Input(id).obsfile,'%f%f%s');
+[x,y,name] = textread(handles.Model(md).Input(id).obsfile,'%f%f%s','delimiter','''"');
 
 handles.Model(md).Input(id).observationpoints=[];
 
 for ip=1:length(x)
-    handles.Model(md).Input(id).observationpoints(ip).name=name{ip}(2:end-1);
+    handles.Model(md).Input(id).observationpoints(ip).name=name{ip};
     handles.Model(md).Input(id).observationpoints(ip).x=x(ip);
     handles.Model(md).Input(id).observationpoints(ip).y=y(ip);
     handles.Model(md).Input(id).observationpointnames{ip}=handles.Model(md).Input(id).observationpoints(ip).name;

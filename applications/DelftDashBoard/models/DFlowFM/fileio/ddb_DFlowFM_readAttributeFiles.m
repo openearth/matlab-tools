@@ -51,14 +51,23 @@ function handles = ddb_DFlowFM_readAttributeFiles(handles, id)
 %%
 fname=handles.Model(md).Input(id).netfile;
 
-handles.Model(md).Input(id).netstruc=[];
-handles.Model(md).Input(id).netstruc.nodeX=nc_varget(fname,'NetNode_x');
-handles.Model(md).Input(id).netstruc.nodeY=nc_varget(fname,'NetNode_y');
-handles.Model(md).Input(id).netstruc.nodeZ=nc_varget(fname,'NetNode_z');
-handles.Model(md).Input(id).netstruc.linkNodes=nc_varget(fname,'NetLink');
-handles.Model(md).Input(id).netstruc.linkType=nc_varget(fname,'NetLinkType');
-handles.Model(md).Input(id).netstruc.elemNodes=nc_varget(fname,'NetElemNode');
-handles.Model(md).Input(id).netstruc.bndLink=nc_varget(fname,'BndLink');
+if exist(fname,'file')
+    handles.Model(md).Input(id).netstruc=[];
+    handles.Model(md).Input(id).netstruc.nodeX=nc_varget(fname,'NetNode_x');
+    handles.Model(md).Input(id).netstruc.nodeY=nc_varget(fname,'NetNode_y');
+    handles.Model(md).Input(id).netstruc.nodeZ=nc_varget(fname,'NetNode_z');
+    handles.Model(md).Input(id).netstruc.linkNodes=nc_varget(fname,'NetLink');
+    handles.Model(md).Input(id).netstruc.linkType=nc_varget(fname,'NetLinkType');
+    try
+        handles.Model(md).Input(id).netstruc.elemNodes=nc_varget(fname,'NetElemNode');
+    end
+    try
+        handles.Model(md).Input(id).netstruc.bndLink=nc_varget(fname,'BndLink');
+    end
+else
+    ddb_giveWarning('text','No net file found in mdu file!');
+    return
+end
 
 if ~isempty(handles.Model(md).Input.extforcefile)
     handles=ddb_DFlowFM_readExternalForcing(handles);
@@ -68,5 +77,13 @@ if ~isempty(handles.Model(md).Input.obsfile)
     handles=ddb_DFlowFM_readObsFile(handles,1);
 end
 
+if ~isempty(handles.Model(md).Input.crsfile)
+    handles.Model(md).Input(id).crosssections=ddb_DFlowFM_readCrsFile(handles.Model(md).Input.crsfile);
+    handles.Model(md).Input.nrcrosssections=length(handles.Model(md).Input.crosssections);
+    handles.Model(md).Input.crosssectionnames=[];
+    for ic=1:handles.Model(md).Input.nrcrosssections
+        handles.Model(md).Input.crosssectionnames{ic}=handles.Model(md).Input.crosssections(ic).name;
+    end
+end
 %handles.Model(md).Input(id).netstruc = dflowfm.readNet(handles.Model(md).Input(id).netfile,'peri2cell',1);
 

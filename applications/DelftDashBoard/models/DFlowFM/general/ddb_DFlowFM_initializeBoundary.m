@@ -1,4 +1,4 @@
-function boundaries = ddb_DFlowFM_initializeBoundary(boundaries,x,y,name,ib)
+function boundaries = ddb_DFlowFM_initializeBoundary(boundaries,x,y,name,ib,t0,t1)
 %ddb_DFlowFM_initializeBoundary  One line description goes here.
 
 %% Copyright notice
@@ -48,13 +48,38 @@ boundaries(ib).filename=[name '.pli'];
 boundaries(ib).name=name;
 boundaries(ib).type='waterlevelbnd';
 boundaries(ib).handle=NaN;
+
 for ip=1:length(x)
+
     boundaries(ib).x(ip)=x(ip);
     boundaries(ib).y(ip)=y(ip);
-    boundaries(ib).nodes(ip).components(1).component='M2';
-    boundaries(ib).nodes(ip).components(1).amplitude=0.0;
-    boundaries(ib).nodes(ip).components(1).phase=0.0;
-    boundaries(ib).nodes(ip).componentsfile=[boundaries(ib).name '_' num2str(ip,'%0.4i') '.cmp'];
-    boundaries(ib).componentsfile{ip}=[boundaries(ib).name '_' num2str(ip,'%0.4i') '.cmp'];
+    
+    % Astro
+    boundaries(ib).nodes(ip).astronomiccomponents(1).component='M2';
+    boundaries(ib).nodes(ip).astronomiccomponents(1).amplitude=0.0;
+    boundaries(ib).nodes(ip).astronomiccomponents(1).phase=0.0;
+    
+    % Harmo
+    boundaries(ib).nodes(ip).harmoniccomponents(1).component=725;
+    boundaries(ib).nodes(ip).harmoniccomponents(1).amplitude=0.0;
+    boundaries(ib).nodes(ip).harmoniccomponents(1).phase=0.0;
+    
+    % Time series
+    boundaries(ib).nodes(ip).timeseries.time=[t0 t1];
+    boundaries(ib).nodes(ip).timeseries.value=[0 0];
+
+    boundaries(ib).nodes(ip).cmp=1;
+    boundaries(ib).nodes(ip).tim=0;
+    boundaries(ib).nodes(ip).cmptype='astro';
+    
+    boundaries(ib).nodes(ip).cmpfile=[boundaries(ib).name '_' num2str(ip,'%0.4i') '.cmp'];
+    boundaries(ib).cmpfile{ip}=[boundaries(ib).name '_' num2str(ip,'%0.4i') '.cmp'];
+
+    boundaries(ib).nodes(ip).timfile=[boundaries(ib).name '_' num2str(ip,'%0.4i') '.tim'];
+    boundaries(ib).timfile{ip}=[boundaries(ib).name '_' num2str(ip,'%0.4i') '.tim'];
+    
     boundaries(ib).activenode=1;
+    
+    boundaries(ib).nodenames{ip}=num2str(ip);
+
 end

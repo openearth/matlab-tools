@@ -70,7 +70,8 @@ nr=nr+1;
 
 handles.Model(md).Input.nrboundaries=nr;
 
-handles.Model(md).Input.boundaries=ddb_DFlowFM_initializeBoundary(handles.Model(md).Input.boundaries,x,y,['bnd_' num2str(nr,'%0.3i')],nr);
+handles.Model(md).Input.boundaries=ddb_DFlowFM_initializeBoundary(handles.Model(md).Input.boundaries,x,y,['bnd_' num2str(nr,'%0.3i')],nr, ...
+    handles.Model(md).Input.tstart,handles.Model(md).Input.tstop);
 
 handles=updateNames(handles);
 
@@ -108,6 +109,12 @@ if handles.Model(md).Input.nrboundaries>0
 
     if handles.Model(md).Input.nrboundaries==0
         handles.Model(md).Input.boundaries(1).name='';
+        handles.Model(md).Input.boundaries(1).type='waterlevelbnd';
+        handles.Model(md).Input.boundaries(1).activenode=1;
+        handles.Model(md).Input.boundaries(1).nodenames={''};
+        handles.Model(md).Input.boundaries(1).nodes(1).tim=0;
+        handles.Model(md).Input.boundaries(1).nodes(1).cmp=0;
+        handles.Model(md).Input.boundaries(1).nodes(1).cmptype='astro';
     end
     
     % Rename boundaries
@@ -169,7 +176,8 @@ handles.Model(md).Input.nrboundaries=nr;
 handles.Model(md).Input.activeboundary=nr;
 
 name=filename(1:end-4);
-handles.Model(md).Input.boundaries=ddb_DFlowFM_initializeBoundary(handles.Model(md).Input.boundaries,x,y,name,nr);
+handles.Model(md).Input.boundaries=ddb_DFlowFM_initializeBoundary(handles.Model(md).Input.boundaries,x,y,name,nr, ...
+    handles.Model(md).Input.tstart,handles.Model(md).Input.tstop);
 
 handles=updateNames(handles);
 
@@ -200,6 +208,7 @@ handles=getHandles;
 iac=handles.Model(md).Input.activeboundary;
 
 [filename, pathname, filterindex] = uiputfile('*.pli', 'Save polyline file',handles.Model(md).Input.boundaries(iac).filename);
+
 if pathname~=0
 
     % Save pli file
@@ -212,7 +221,12 @@ if pathname~=0
 
     % Save component files
     for jj=1:length(x)
-        ddb_DFlowFM_writeComponentsFile(handles.Model(md).Input.boundaries,iac,jj);
+        if handles.Model(md).Input.boundaries(iac).nodes(jj).cmp
+            ddb_DFlowFM_saveCmpFile(handles.Model(md).Input.boundaries,iac,jj);
+        end
+        if handles.Model(md).Input.boundaries(iac).nodes(jj).tim
+            ddb_DFlowFM_saveTimFile(handles.Model(md).Input.boundaries,iac,jj,handles.Model(md).Input.refdate);
+        end        
     end
 
 else
@@ -237,7 +251,12 @@ for iac=1:handles.Model(md).Input.nrboundaries
 
     % Save component files
     for jj=1:length(x)
-        ddb_DFlowFM_writeComponentsFile(handles.Model(md).Input.boundaries,iac,jj);
+        if handles.Model(md).Input.boundaries(iac).nodes(jj).cmp
+            ddb_DFlowFM_saveCmpFile(handles.Model(md).Input.boundaries,iac,jj);
+        end
+        if handles.Model(md).Input.boundaries(iac).nodes(jj).tim
+            ddb_DFlowFM_saveTimFile(handles.Model(md).Input.boundaries,iac,jj,handles.Model(md).Input.refdate);
+        end
     end
 end
 
@@ -254,7 +273,7 @@ handles=getHandles;
 [filename, pathname, filterindex] = uigetfile('*.ext', 'External Forcing File',handles.Model(md).Input.extforcefile);
 if ~isempty(pathname)
     handles = ddb_DFlowFM_plotBoundaries(handles,'delete');
-    handles.Model(md).Input.extforcefile=filename;
+    handles.Model(md).Input.extfile=filename;
     handles=ddb_DFlowFM_readExternalForcing(handles);
     handles = ddb_DFlowFM_plotBoundaries(handles,'plot','active',1);
     setHandles(handles);
@@ -269,8 +288,8 @@ handles=getHandles;
 
 [filename, pathname, filterindex] = uiputfile('*.ext', 'External Forcing File',handles.Model(md).Input.extforcefile);
 if pathname~=0
-    handles.Model(md).Input.extforcefile=filename;
-    ddb_DFlowFM_writeExtForcing(handles);
+    handles.Model(md).Input.extfile=filename;
+    ddb_DFlowFM_saveExtFile(handles);
     setHandles(handles);
 end
 
@@ -282,7 +301,7 @@ for ib=1:handles.Model(md).Input.nrboundaries
     name=handles.Model(md).Input.boundaries(ib).name;
     handles.Model(md).Input.boundarynames{ib}=name;
     for ip=1:length(handles.Model(md).Input.boundaries(ib).x)
-        handles.Model(md).Input.boundaries(ib).nodes(ip).componentsfile=[name '_' num2str(ip,'%0.4i') '.cmp'];
+        handles.Model(md).Input.boundaries(ib).nodes(ip).cmpfile=[name '_' num2str(ip,'%0.4i') '.cmp'];
     end
 end
 

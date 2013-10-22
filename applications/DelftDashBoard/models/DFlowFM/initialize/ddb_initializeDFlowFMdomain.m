@@ -13,6 +13,7 @@ handles.Model(md).Input(id).description={''};
 
 %% Geometry
 handles.Model(md).Input(id).netfile             = '';
+handles.Model(md).Input(id).netstruc            = [];
 handles.Model(md).Input(id).bathymetryfile      = '';
 handles.Model(md).Input(id).waterlevinifile     = '';                 
 handles.Model(md).Input(id).landboundaryfile    = '';                     
@@ -28,7 +29,6 @@ handles.Model(md).Input(id).anglat              = 0;
 handles.Model(md).Input(id).conveyance2d        = 3;
 
 %% Numerics
-
 handles.Model(md).Input(id).cflmax              = 0.7;
 handles.Model(md).Input(id).cflwavefrac         = 0.1;
 handles.Model(md).Input(id).advectype           = 3;
@@ -68,6 +68,12 @@ handles.Model(md).Input(id).extforcefile        = '';
 % Boundaries
 handles.Model(md).Input(id).boundaries = [];
 handles.Model(md).Input(id).boundaries(1).name = '';
+handles.Model(md).Input(id).boundaries(1).type = 'waterlevelbnd';
+handles.Model(md).Input(id).boundaries(1).nodenames = {''};
+handles.Model(md).Input(id).boundaries(1).activenode = 1;
+handles.Model(md).Input(id).boundaries(1).nodes(1).tim = 0;
+handles.Model(md).Input(id).boundaries(1).nodes(1).cmp = 1;
+handles.Model(md).Input(id).boundaries(1).nodes(1).cmptype = 'astro';
 handles.Model(md).Input(id).nrboundaries = 0;
 handles.Model(md).Input(id).boundarynames = {''};
 handles.Model(md).Input(id).activeboundary=1;
@@ -93,7 +99,7 @@ handles.Model(md).Input(id).waqfilebase  = '';
 handles.Model(md).Input(id).waqinterval  = 0;
 handles.Model(md).Input(id).snapshotdir  = '';
 
-
+%% Observation points
 handles.Model(md).Input(id).nrobservationpoints=0;
 handles.Model(md).Input(id).observationpoints(1).name='';
 handles.Model(md).Input(id).observationpoints(1).x=NaN;
@@ -105,3 +111,12 @@ handles.Model(md).Input(id).selectobservationpoint=0;
 handles.Model(md).Input(id).changeobservationpoint=0;
 handles.Model(md).Input(id).deleteobservationpoint=0;
 handles.Model(md).Input(id).addobservationpoint=0;
+
+%% Cross sections
+handles.Model(md).Input(id).nrcrosssections=0;
+handles.Model(md).Input(id).crosssections(1).name='';
+handles.Model(md).Input(id).crosssections(1).x=0;
+handles.Model(md).Input(id).crosssections(1).y=0;
+handles.Model(md).Input(id).crosssectionshandle='';
+handles.Model(md).Input(id).activecrosssection=1;
+handles.Model(md).Input(id).crosssectionnames={''};

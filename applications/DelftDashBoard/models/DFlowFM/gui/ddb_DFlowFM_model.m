@@ -1,27 +1,9 @@
-function ddb_DFlowFM_saveBoundaryPolygons(dr,boundaries)
-%DDB_GENERATEBOUNDARYSECTIONSDFLOWFM  One line description goes here.
-%
-%   More detailed description goes here.
-%
-%   Syntax:
-%   handles = ddb_generateBoundarySectionsDFlowFM(handles)
-%
-%   Input:
-%   handles  =
-%   id       =
-%   varargin =
-%
-%   Output:
-%   handles  =
-%
-%   Example
-%   ddb_generateBoundaryLocationsDelft3DFLOW
-%
-%   See also
+function ddb_DFlowFM_model(varargin)
+%DDB_DFlowFM_misc  One line description goes here.
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2011 Deltares
+%   Copyright (C) 2013 Deltares
 %       Maarten van Ormondt
 %
 %       Maarten.vanOrmondt@deltares.nl
@@ -54,19 +36,20 @@ function ddb_DFlowFM_saveBoundaryPolygons(dr,boundaries)
 % Created: 29 Nov 2011
 % Created with Matlab version: 7.11.0.584 (R2010b)
 
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
+% $Id: ddb_DFlowFM_numerics.m 9233 2013-09-19 09:19:19Z ormondt $
+% $Date: 2013-09-19 11:19:19 +0200 (Thu, 19 Sep 2013) $
+% $Author: ormondt $
+% $Revision: 9233 $
+% $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/DelftDashBoard/models/DFlowFM/gui/ddb_DFlowFM_numerics.m $
 % $Keywords: $
 
-for ipol=1:length(boundaries)
-    fid=fopen([dr filesep boundaries(ipol).filename],'wt');
-    fprintf(fid,'%s\n',boundaries(ipol).name);
-    fprintf(fid,'%i %i\n',length(boundaries(ipol).x),2);
-    for ip=1:length(boundaries(ipol).x)
-        fprintf(fid,'%14.6e %14.7e %s\n',boundaries(ipol).x(ip),boundaries(ipol).y(ip),[' ''' boundaries(ipol).cmpfile{ip} '''']);
+%%
+if isempty(varargin)
+    ddb_zoomOff;
+    ddb_refreshScreen;
+else
+    opt=varargin{1};
+    switch lower(opt)
+        case{'selectnetfile'}
     end
-    fclose(fid);
 end
