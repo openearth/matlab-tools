@@ -123,7 +123,7 @@ switch lower(plt.datasets(id).dataset.plotroutine)
 %         handles=PlotVectorMagnitude(handles,ifig,isub,id,mode);
     case {'plotpolyline','plotpolygon'}
         h=muppet_plotPolygon(handles,ifig,isub,id);
-    case {'plotkub'}
+    case {'plotkubint'}
         h=muppet_plotKub(handles,ifig,isub,id);
     case {'plotlint'}
         h=muppet_plotLint(handles,ifig,isub,id);

@@ -11,7 +11,7 @@
       <tooltipstring>Select polygon file</tooltipstring>
       <position>40 0 90 20</position>
       <showfilename>yes</showfilename>
-      <extension>*.ldb</extension>
+      <extension>*.ldb;*.pol</extension>
       <selectiontext>Select polygon file</selectiontext>
     </element>
   </dataproperty>

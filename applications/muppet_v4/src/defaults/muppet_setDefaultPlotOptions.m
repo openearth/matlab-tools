@@ -147,11 +147,15 @@ opt.timemarker.trackoption='uptomarker';
 opt.thinning=1;
 
 % Lint
-opt.decimals=0;
+opt.decimals=2;
 opt.lintscale=1;
 opt.arrowcolor='red';
 opt.multiply=1;
 opt.unitarrow=1;
+
+% Kubint
+opt.kubfill=1;
+opt.areatext='values';
 
 % Image
 opt.whitevalue=0.9;
