@@ -116,7 +116,19 @@ try
     if igetwl
         
         [ampz,phasez,conList] = readTideModel(tidefile,'type','h','x',xx,'y',yy,'constituent','all');
-        
+
+        % Add A0 as first component
+        a0=0.0;
+        conList0=conList;
+        conList{1}='A0';
+        for ic=1:length(conList0)
+            conList{ic+1}=conList0{ic};
+        end
+        ampz(2:end+1,:)=ampz;
+        phasez(2:end+1,:)=phasez;
+        ampz(1,:)=a0;
+        phasez(1,:)=0;
+                
         if handles.Model(md).Input(id).timeZone~=0
             % Try to make time zone changes
             cnst=t_getconsts;
@@ -159,10 +171,45 @@ try
     
     if igetvel
         
+        icor=1;
+        dpcorfac=1;
+        
         % Riemann or current boundaries present
-        
-        [ampu,phaseu,ampv,phasev,depth,conList] = readTideModel(tidefile,'type','q','x',xx,'y',yy,'constituent','all','includedepth');
-        
+        if icor
+            [ampu,phaseu,ampv,phasev,depth,conList] = readTideModel(tidefile,'type','q','x',xx,'y',yy,'constituent','all','includedepth');
+        else
+            [ampu,phaseu,ampv,phasev,depth,conList] = readTideModel(tidefile,'type','vel','x',xx,'y',yy,'constituent','all','includedepth');
+        end
+
+        % Add A0 as first component
+        ua0=0.0;
+        va0=0.0;
+        conList0=conList;
+
+        % First the rest
+        for ic=1:length(conList0)
+            conList{ic+1}=conList0{ic};
+        end
+        ampu(2:end+1,:)=ampu;
+        ampv(2:end+1,:)=ampv;
+        phaseu(2:end+1,:)=phaseu;
+        phasev(2:end+1,:)=phasev;
+
+        % A0
+        conList{1}='A0';
+        if ua0>0
+            phaseu(1,:)=0;
+        else
+            phaseu(1,:)=180;
+        end
+        if va0>0
+            phasev(1,:)=0;
+        else
+            phasev(1,:)=180;
+        end
+        ampu(1,:)=abs(ua0);
+        ampv(1,:)=abs(va0);
+       
         if handles.Model(md).Input(id).timeZone~=0
             % Try to make time zone changes
             cnst=t_getconsts;
@@ -270,7 +317,7 @@ try
             
             % Side A
             k=k+1;
-            if igetvel
+            if igetvel && icor
                 dpcorfac=-1/handles.Model(md).Input(id).openBoundaries(n).depth(1);
             end
             handles.Model(md).Input(id).astronomicComponentSets(k).name=handles.Model(md).Input(id).openBoundaries(n).compA;
@@ -297,11 +344,34 @@ try
                         phi1=pi*phi1/180;
                         phi2=pi*phi2/180;
                         
-                        switch lower(handles.Model(md).Input(id).openBoundaries(n).side)
-                            case{'left','bottom'}
-                                [a3,phi3]=combinesin(a1,phi1,a2,phi2);
-                            case{'top','right'}
-                                [a3,phi3]=combinesin(a1,phi1,-a2,phi2);
+                        if ~strcmpi(handles.Model(md).Input(id).astronomicComponentSets(k).component{i},'a0')
+                            switch lower(handles.Model(md).Input(id).openBoundaries(n).side)
+                                case{'left','bottom'}
+                                    [a3,phi3]=combinesin(a1,phi1,a2,phi2);
+                                case{'top','right'}
+                                    [a3,phi3]=combinesin(a1,phi1,-a2,phi2);
+                            end
+                        else
+                            switch lower(handles.Model(md).Input(id).openBoundaries(n).side)
+                                case{'left','bottom'}
+                                    if phi1>0.5*pi && phi1<1.5*pi
+                                        % A0 velocity is in grid direction
+                                        a3=-a1+a2;
+                                    else
+                                        % A0 velocity is against grid direction
+                                        a3=a1+a2;
+                                    end
+                                    phi3=0;
+                                case{'top','right'}
+                                    if phi1>0.5*pi && phi1<1.5*pi
+                                        % A0 velocity is in grid direction
+                                        a3=-a1-a2;
+                                    else
+                                        % A0 velocity is against grid direction
+                                        a3=a1-a2;
+                                    end
+                                    phi3=0;
+                            end
                         end
                         
                         phi3=180*phi3/pi;
@@ -318,7 +388,7 @@ try
             
             % Side B
             k=k+1;
-            if igetvel
+            if igetvel && icor
                 dpcorfac=-1/handles.Model(md).Input(id).openBoundaries(n).depth(2);
             end
             handles.Model(md).Input(id).astronomicComponentSets(k).name=handles.Model(md).Input(id).openBoundaries(n).compB;
@@ -343,13 +413,36 @@ try
                         phi1=pi*phi1/180;
                         phi2=pi*phi2/180;
                         
-                        switch lower(handles.Model(md).Input(id).openBoundaries(n).side)
-                            case{'left','bottom'}
-                                [a3,phi3]=combinesin(a1,phi1,a2,phi2);
-                            case{'top','right'}
-                                [a3,phi3]=combinesin(a1,phi1,-a2,phi2);
+                        if ~strcmpi(handles.Model(md).Input(id).astronomicComponentSets(k).component{i},'a0')
+                            switch lower(handles.Model(md).Input(id).openBoundaries(n).side)
+                                case{'left','bottom'}
+                                    [a3,phi3]=combinesin(a1,phi1,a2,phi2);
+                                case{'top','right'}
+                                    [a3,phi3]=combinesin(a1,phi1,-a2,phi2);
+                            end
+                        else
+                            switch lower(handles.Model(md).Input(id).openBoundaries(n).side)
+                                case{'left','bottom'}
+                                    if phi1>0.5*pi && phi1<1.5*pi
+                                        % A0 velocity is in grid direction
+                                        a3=-a1+a2;
+                                    else
+                                        % A0 velocity is against grid direction
+                                        a3=a1+a2;
+                                    end
+                                    phi3=0;
+                                case{'top','right'}
+                                    if phi1>0.5*pi && phi1<1.5*pi
+                                        % A0 velocity is in grid direction
+                                        a3=-a1-a2;
+                                    else
+                                        % A0 velocity is against grid direction
+                                        a3=a1-a2;
+                                    end
+                                    phi3=0;
+                            end
                         end
-                        
+                                                
                         phi3=180*phi3/pi;
                         phi3=mod(phi3,360);
                         
@@ -367,8 +460,6 @@ try
     
     attName=filename(1:end-4);
     handles.Model(md).Input(id).bcaFile=[attName '.bca'];
-    
-%     handles.Model(md).Input(id)=model;
     
     ddb_saveBcaFile(handles,id);
     ddb_saveBndFile(handles.Model(md).Input(id).openBoundaries,handles.Model(md).Input(id).bndFile);
