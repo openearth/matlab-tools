@@ -3,7 +3,7 @@ function muppet(varargin)
 % Muppet v3.22
 % Compile with: mcc -m -B sgl muppet.m
 
-handles.MuppetVersion='3.25';
+handles.MuppetVersion='3.26';
 
 % Turn off annoying warning messages
 warning('off','all');
