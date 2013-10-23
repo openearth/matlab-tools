@@ -15,7 +15,7 @@ switch lower(textpos)
     case{'above-right'}
         txtpos=[pos(1)+pos(3)-ext(3) pos(2)+pos(4)+1 ext(3) hgt];
         horal='right';
-    case{'above-center'}
+    case{'above-center','above'}
         txtpos=[pos(1)+0.5*pos(3)-0.5*ext(3) pos(2)+pos(4)+1 ext(3) hgt];
         horal='center';
 end

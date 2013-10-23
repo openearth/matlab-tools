@@ -303,12 +303,13 @@ minlev=handles.Toolbox(tb).Input.zMax;
 
 boundaries=[];
 
-boundarysections=findBoundarySections(handles.Model(md).Input(ad).netstruc,maxdist,minlev);
+boundarysections=findBoundarySections(handles.Model(md).Input(ad).netstruc,maxdist,minlev,handles.screenParameters.coordinateSystem.type);
 
 handles.Model(md).Input(ad).boundarynames={''};
 
 for ib=1:length(boundarysections)
-    boundaries = ddb_DFlowFM_initializeBoundary(boundaries,boundarysections(ib).x,boundarysections(ib).y,['bnd' num2str(ib,'%0.3i')],ib);
+    boundaries = ddb_DFlowFM_initializeBoundary(boundaries,boundarysections(ib).x,boundarysections(ib).y,['bnd' num2str(ib,'%0.3i')],ib, ...
+        handles.Model(md).Input(ad).tstart,handles.Model(md).Input(ad).tstop);
     handles.Model(md).Input(ad).boundarynames{ib}=['bnd' num2str(ib,'%0.3i')];
 end
 
@@ -322,7 +323,7 @@ ddb_DFlowFM_saveBoundaryPolygons('.\',handles.Model(md).Input(ad).boundaries);
 
 %% External forcing file
 handles.Model(md).Input(ad).extforcefile='forcing.ext';
-ddb_DFlowFM_writeExtForcing(handles);
+ddb_DFlowFM_saveExtFile(handles);
 
 setHandles(handles);
 

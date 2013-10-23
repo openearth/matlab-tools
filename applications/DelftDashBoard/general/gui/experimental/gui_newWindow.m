@@ -79,6 +79,8 @@ else
     sz(2)=hgt;
 end
 
+sz=sz*1.2;
+
 if ~isempty(iconfile)
     if modal
         figh=MakeNewWindow(ttl,sz,'modal','iconfile',iconfile);

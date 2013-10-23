@@ -76,6 +76,11 @@ if sz(3)<1040 || sz(4)<600
     set(gcf,'Position',sz);
 end
 
+ihres=0;
+if screensize(3)>1900
+    ihres=1;
+end
+
 % First change size of model tab panels
 for i=1:length(handles.Model)
     tabpanel('resize','tag',handles.Model(i).name,'resize','position',[9 6 sz(3)-10 sz(4)-30]);
@@ -84,7 +89,13 @@ end
 % Now change size of map panel
 hp=get(handles.GUIHandles.mapPanel,'Parent');
 posp=get(hp,'Position');
-pos=[5 170 posp(3)-10 posp(4)-193];
+
+if ihres
+    pos=[5 204 posp(3)-10 posp(4)-232];
+else
+    pos=[5 170 posp(3)-10 posp(4)-193];
+end
+
 set(handles.GUIHandles.mapPanel,'Position',pos);
 
 % Now change size of map axis panel
@@ -117,6 +128,4 @@ handles.screenParameters.xLim=xl;
 handles.screenParameters.yLim=yl;
 
 setHandles(handles);
-
-%PutInCentre(gcf);
 

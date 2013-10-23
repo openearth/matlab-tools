@@ -319,6 +319,8 @@ switch lower(el.style)
             end
         end
         
+        nrrows=max(nrrows,1);
+        
         % Determine string list in case of popup menu
         ipopup=0;
         for j=1:length(el.column)

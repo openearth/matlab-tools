@@ -8,36 +8,32 @@
     <style>tabpanel</style>
     <tag>modelmakerpanel</tag>
     <tab>
-      <tag>quickmode</tag>
       <formodel>delft3dflow</formodel>
       <tabstring>Quick Mode</tabstring>
       <callback>ddb_ModelMakerToolbox_quickMode</callback>
-      <element>ModelMaker.quickmode.xml</element>
+      <element>ModelMaker.quickmode.delft3dflow.xml</element>
     </tab>
     <tab>
-      <tag>quickmode.dflowfm</tag>
       <formodel>dflowfm</formodel>
       <tabstring>Quick Mode</tabstring>
       <callback>ddb_ModelMakerToolbox_quickMode_DFlowFM</callback>
       <element>ModelMaker.quickmode.dflowfm.xml</element>
     </tab>
     <tab>
-      <tag>quickmode.delft3dwave</tag>
       <formodel>delft3dwave</formodel>
       <tabstring>Quick Mode</tabstring>
       <callback>ddb_ModelMakerToolbox_quickMode_Delft3DWAVE</callback>
       <element>ModelMaker.quickmode.delft3dwave.xml</element>
     </tab>
     <tab>
-      <tag>bathymetry.delft3dflow</tag>
       <formodel>delft3dflow</formodel>
+      <formodel>dflowfm</formodel>
       <tabstring>Bathymetry</tabstring>
       <callback>ddb_ModelMakerToolbox_bathymetry</callback>
       <enable>1</enable>
       <element>ModelMaker.bathymetry.xml</element>
     </tab>
     <tab>
-      <tag>bathymetry.delft3dwave</tag>
       <formodel>delft3dwave</formodel>
       <tabstring>Bathymetry</tabstring>
       <callback>ddb_ModelMakerToolbox_bathymetry</callback>
@@ -45,7 +41,6 @@
       <element>ModelMaker.bathymetry.xml</element>
     </tab>
     <tab>
-      <tag>initialconditions</tag>
       <formodel>delft3dflow</formodel>
       <tabstring>Initial Conditions</tabstring>
       <callback>ddb_ModelMakerToolbox_initialConditions</callback>
@@ -53,7 +48,6 @@
       <element>ModelMaker.initialconditions.xml</element>
     </tab>
     <tab>
-      <tag>boundaryconditions</tag>
       <formodel>delft3dflow</formodel>
       <tabstring>Boundary Conditions</tabstring>
       <callback>ddb_ModelMakerToolbox</callback>
@@ -61,7 +55,6 @@
       <element>ModelMaker.boundaryconditions.xml</element>
     </tab>
     <tab>
-      <tag>roughness.delft3dflow</tag>
       <formodel>delft3dflow</formodel>
       <tabstring>Roughness</tabstring>
       <callback>ddb_ModelMakerToolbox_roughness_Delft3DFLOW</callback>

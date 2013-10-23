@@ -13,6 +13,12 @@ end
 
 fldnames=fieldnames(xml);
 
+screensize=get(0,'ScreenSize');
+ihres=0;
+if screensize(3)>1900
+    ihres=1;
+end
+
 % First some conversions ...
 for ii=1:length(fldnames)
     fldname=fldnames{ii};    
@@ -33,6 +39,9 @@ for ii=1:length(fldnames)
                 pos=[pos 20];
             elseif length(pos)==2
                 pos=[pos 2000 20];
+            end
+            if ihres
+                pos=pos*1.2;
             end
             xml.position=pos;
         case{'nrlines','nrrows','max','fontsize'}

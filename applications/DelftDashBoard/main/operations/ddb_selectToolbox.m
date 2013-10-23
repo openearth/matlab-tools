@@ -69,12 +69,30 @@ if length(toolboxelements)==1
         toolboxelements0.element.tab=[];
         ntabs=0;
         for itab=1:length(toolboxelements(1).element.tab)
-            if isempty(toolboxelements(1).element.tab(itab).tab.formodel) || ...
-                    strcmpi(toolboxelements(1).element.tab(itab).tab.formodel,handles.Model(md).name)
+            iadd=0;
+            if isempty(toolboxelements(1).element.tab(itab).tab.formodel)
+                % Tab added to all models
+                iadd=1;
+            else
+                if isstruct(toolboxelements(1).element.tab(itab).tab.formodel)
+                    % Multiple models get this tab
+                    for im=1:length(toolboxelements(1).element.tab(itab).tab.formodel)
+                        if strcmpi(toolboxelements(1).element.tab(itab).tab.formodel(im).formodel,handles.Model(md).name)
+                            iadd=1;
+                        end
+                    end
+                else
+                    % Only one model gets this tab
+                    if strcmpi(toolboxelements(1).element.tab(itab).tab.formodel,handles.Model(md).name)
+                        iadd=1;
+                    end
+                end
+            end
+            if iadd
                 % Tab specific to active model                
                 ntabs=ntabs+1;
                 toolboxelements0(1).element.tab(ntabs).tab=toolboxelements(1).element.tab(itab).tab;
-            end
+            end           
         end
         toolboxelements=toolboxelements0;
     end

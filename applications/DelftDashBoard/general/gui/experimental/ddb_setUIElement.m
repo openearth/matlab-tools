@@ -53,6 +53,8 @@ switch lower(elements(i).style)
             set(el.handle,'String',str);
             
             pos=el.position;
+            pos=pos*1.2;
+            
             ext=get(el.handle,'Extent');
             pos(3)=ext(3);
             pos(4)=15;

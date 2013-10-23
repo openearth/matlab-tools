@@ -26,7 +26,7 @@ for i=1:length(element)
         element(i).element.handle=[];
         element(i).element.texthandle=[];
         pos=element(i).element.position;
-                       
+                               
         switch lower(element(i).element.style)
             
             %% Standard element
@@ -332,7 +332,7 @@ for i=1:length(element)
                 else
                     str=' ';
                 end
-
+                
                 element(i).element.handle=uicontrol(figh,'Style','text','String',str,'Position',pos,'BackgroundColor',bgc,'HorizontalAlignment','left');
                                     
                 ext=get(element(i).element.handle,'Extent');
@@ -343,7 +343,7 @@ for i=1:length(element)
                     ps1=pos(1)-ext(3);
                 end
                 
-                if pos(4)<21
+                if element(i).element.position(4)<26
                      set(element(i).element.handle,'Position',[ps1 pos(2) ext(3) 15]);
                 end
                 

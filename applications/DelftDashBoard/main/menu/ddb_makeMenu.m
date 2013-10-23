@@ -170,6 +170,8 @@ handles=ddb_addMenuItem(handles,'View','Cities',               'Callback',{@ddb_
 % handles=ddb_addMenuItem(handles,'View','Model',                'longname','Model specific items','Separator','on');
 handles=ddb_addMenuItem(handles,'View','Settings',             'Callback',{@ddb_menuView},'Separator','on');
 
+handles=ddb_addModelViewMenu(handles);
+
 %% Coordinate System
 uimenu('Label','Coordinate System','Tag','menuCoordinateSystem');
 handles=ddb_addMenuItem(handles,'CoordinateSystem','WGS 84',               'Callback',{@ddb_menuCoordinateSystem},'Checked','on','HandleName','Geographic');

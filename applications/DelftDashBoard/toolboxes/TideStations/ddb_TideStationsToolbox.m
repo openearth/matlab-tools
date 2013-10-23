@@ -261,6 +261,12 @@ for ii=1:length(istation)
     
     switch handles.Toolbox(tb).Input.tidalcomponentsformat
         case{'tek'}
+            fid=fopen([fname '_tidalcomponents.txt'],'wt');
+            for ic=1:length(s.station.component)
+                cmpstr=[s.station.component{ic} repmat(' ',1,8-length(s.station.component{ic}))];
+                fprintf(fid,'%s %8.4f %8.1f\n',cmpstr,s.station.amplitude(ic),s.station.phase(ic));
+            end
+            fclose(fid);
         case{'mat'}
             save([fname '_tidalcomponents.mat'],'-struct','s');
     end    

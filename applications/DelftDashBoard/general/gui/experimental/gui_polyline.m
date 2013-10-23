@@ -373,7 +373,9 @@ if ~isempty(x)
         end
     end
     
-    uistack(hg,'top');
+    try
+        uistack(hg,'top');
+    end
     
 end
 
