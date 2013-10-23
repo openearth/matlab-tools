@@ -39,6 +39,9 @@ switch handles.figures(ifig).figure.subplots(isub).subplot.type
                             [data.x,data.y]=convertCoordinates(data.x,data.y,handles.EPSG,'CS1.name',data.coordinatesystem.name,'CS1.type',data.coordinatesystem.type, ...
                                 'CS2.name',plt.coordinatesystem.name,'CS2.type',plt.coordinatesystem.type);
                         case{'scalar2duxy','vector2d2duxy'}
+                            [data.G.cor.x,data.G.cor.y]=convertCoordinates(data.G.cor.x,data.G.cor.y,handles.EPSG,'CS1.name',data.coordinatesystem.name,'CS1.type',data.coordinatesystem.type, ...
+                                'CS2.name',plt.coordinatesystem.name,'CS2.type',plt.coordinatesystem.type);
+                            shite=1
                             % Unstructured data
                             % TODO convert unstructured data
                     end
