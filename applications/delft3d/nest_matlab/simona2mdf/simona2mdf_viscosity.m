@@ -79,7 +79,7 @@ end
 %
 
 edy(1).Data = vico(1:mmax,1:nmax);
-edy(2).Data = dico(1:mmax;1:nmax);
+edy(2).Data = dico(1:mmax,1:nmax);
 mdf.filedy = [name_mdf '.edy'];
 wldep ('write',mdf.filedy,edy);
 mdf.filedy = simona2mdf_rmpath(mdf.filedy);

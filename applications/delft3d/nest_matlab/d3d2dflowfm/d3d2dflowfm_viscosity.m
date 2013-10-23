@@ -25,7 +25,6 @@ if simona2mdf_fieldandvalue(mdf,'filedy')
     edy        = wldep('read',filedy,[mmax nmax],'multiple');
 
     % Fill LINE struct with viscosity and diffusivity values
-    itel   = 0.;
     no_edy = 1 ;
     if mdu.physics.Salinity
         no_edy       = 2;
@@ -39,7 +38,7 @@ if simona2mdf_fieldandvalue(mdf,'filedy')
 
         tmp(i_edy,mmax*nmax+1:2*mmax*nmax,1) = reshape(xcoor_v',mmax*nmax,1);
         tmp(i_edy,mmax*nmax+1:2*mmax*nmax,2) = reshape(ycoor_v',mmax*nmax,1);
-        tmp(i_edy,mmax*nmax+1:2*mmax*nmax,2) = reshape(edy(i_edy).Data',mmax*nmax,1);
+        tmp(i_edy,mmax*nmax+1:2*mmax*nmax,3) = reshape(edy(i_edy).Data',mmax*nmax,1);
     end
 
     nonan = ~isnan(tmp(1,:,1));
