@@ -4,7 +4,6 @@ Figure "4x1_portrait_wl1"
  
    Orientation p 
    PaperSize   17.5 31 
-   Frame       none 
  
    Subplot   "Subplot 1" 
  
