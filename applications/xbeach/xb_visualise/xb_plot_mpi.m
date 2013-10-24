@@ -70,7 +70,6 @@ if ~xs_check(xb); error('Invalid XBeach structure'); end;
 if (~isfield(xb,'file') || isempty(xb.file))
     error('No file location specified');
 end
-[filepath filename ext] = fileparts(xb.file);
 
 OPT = struct( ...
     'handles',               [], ...
@@ -86,7 +85,7 @@ OPT = setproperty(OPT, varargin{:});
 
 %% read dims
 
-domains = xb_read_mpi_dims(filepath);
+domains = xb_read_mpi_dims(xb.file);
 x = xs_get(xb, 'DIMS.globalx_DATA');
 y = xs_get(xb, 'DIMS.globaly_DATA');
 
@@ -96,6 +95,13 @@ old_hold = ishold(ax);
 hold(ax,'on');
 
 %% Plot bathy
+if isempty(OPT.zb)
+    zb = xs_get(xb,'zb');
+    if ~isempty(zb) && ndims(zb) == 3
+        OPT.zb = squeeze(zb(1,:,:));
+    end
+end
+
 if (~isempty(OPT.zb))
     pcolor(double(x),double(y),OPT.zb(:,:));
     shading(ax,'flat');
