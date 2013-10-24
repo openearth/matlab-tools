@@ -117,7 +117,7 @@ fprintf(fid2,'%s\n\n',['# Deltares, Matlab-generated mdu-file for D-Flow FM']);
 
 fprintf(fid2,'%s\n'  ,'[model]');
 fprintf(fid2,'%s\n'  ,['Program                             = D-Flow FM']);
-fprintf(fid2,'%s\n'  ,['Version                             = 1.1.76']);
+fprintf(fid2,'%s\n'  ,['Version                             = 1.1.81']);
 fprintf(fid2,'%s\n\n',['AutoStart                           = 0                                  # Autostart simulation after loading MDU or not (0=no, 1=autostart, 2=autostartstop).']);
 
 fprintf(fid2,'%s\n'  ,'[geometry]');
@@ -157,7 +157,7 @@ fprintf(fid2,'%s\n'  ,['                                                        
 if isfield(mdfkeywds,'anglat') == 0; 
     mdfkeywds.anglat = 0;
 end
-fprintf(fid2,'%s\n'  ,['AngLat                              = ',num2str(mdfkeywds.anglat,'%2.2f')                ,'                               # Angle of latitude (deg), 0=no Coriolis']);
+fprintf(fid2,'%s\n'  ,['AngLat                              = ',num2str(mdfkeywds.anglat,'%2.2f')                ,'                              # Angle of latitude (deg), 0=no Coriolis']);
 fprintf(fid2,'%s\n'  ,['Conveyance2D                        = 3                                  # -1:R=HU,0:R=H, 1:R=A/P, 2:K=analytic-1D conv, 3:K=analytic-2D conv']);
 fprintf(fid2,'%s\n'  ,['Sillheightmin                       =                                    # Weir treatment only if both sills larger than this value (m) ']);
 fprintf(fid2,'%s\n'  ,['Kmx                                 =                                    # Max nr of vertical layers']);
