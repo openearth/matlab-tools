@@ -286,11 +286,11 @@ function editTime_Callback(hObject,eventdata)
 
 i=getappdata(hObject,'row');
 j=getappdata(hObject,'column');
-%callback=getappdata(hObject,'callback');
+callback=getappdata(hObject,'callback');
 
 tb=get(hObject,'Parent');
 usd=get(tb,'UserData');
-callback=usd.callback;
+%callback=usd.callback;
 
 ip=usd.firstRow-1;
 usd.data{i+ip,j}=D3DTimeString(get(hObject,'String'));
@@ -307,11 +307,11 @@ function editReal_Callback(hObject,eventdata)
 
 i=getappdata(hObject,'row');
 j=getappdata(hObject,'column');
-%callback=getappdata(hObject,'callback');
+callback=getappdata(hObject,'callback');
 
 tb=get(hObject,'Parent');
 usd=get(tb,'UserData');
-callback=usd.callback;
+%callback=usd.callback;
 ip=usd.firstRow-1;
 usd.data{i+ip,j}=str2double(get(hObject,'String'));
 usd.activeRow=i;
@@ -327,11 +327,11 @@ function editString_Callback(hObject,eventdata)
 
 i=getappdata(hObject,'row');
 j=getappdata(hObject,'column');
-%callback=getappdata(hObject,'callback');
+callback=getappdata(hObject,'callback');
 
 tb=get(hObject,'Parent');
 usd=get(tb,'UserData');
-callback=usd.callback;
+%callback=usd.callback;
 ip=usd.firstRow-1;
 usd.data{i+ip,j}=get(hObject,'String');
 set(tb,'UserData',usd);
@@ -345,7 +345,7 @@ function popupMenu_Callback(hObject,eventdata)
 
 i=getappdata(hObject,'row');
 j=getappdata(hObject,'column');
-%callback=getappdata(hObject,'callback');
+callback=getappdata(hObject,'callback');
 
 tb=get(hObject,'Parent');
 usd=get(tb,'UserData');
@@ -354,7 +354,7 @@ ii=get(hObject,'Value');
 txt=get(hObject,'String');
 usd.activeRow=i;
 usd.activeColumn=j;
-callback=usd.callback;
+%callback=usd.callback;
 
 if isnumeric(usd.data{i+ip,j})
     usd.data{i+ip,j}=ii;
@@ -372,7 +372,7 @@ function checkBox_Callback(hObject,eventdata)
 
 i=getappdata(hObject,'row');
 j=getappdata(hObject,'column');
-%callback=getappdata(hObject,'callback');
+callback=getappdata(hObject,'callback');
 
 tb=get(hObject,'Parent');
 usd=get(tb,'UserData');
@@ -381,7 +381,7 @@ ii=get(hObject,'Value');
 usd.data{i+ip,j}=ii; 
 usd.activeRow=i;
 usd.activeColumn=j;
-callback=usd.callback;
+%callback=usd.callback;
 
 set(tb,'UserData',usd);
 
@@ -406,7 +406,8 @@ end
 function pushCopyRow_Callback(hObject,eventdata)
 tb=get(hObject,'Parent');
 usd=get(tb,'UserData');
-callback=usd.callback;
+%callback=usd.callback;
+callback=getappdata(hObject,'callback');
 data=usd.data;
 nrcolumns=usd.nrColumns;
 iac=usd.activeRow;
@@ -433,7 +434,8 @@ end
 function pushDeleteRow_Callback(hObject,eventdata)
 tb=get(hObject,'Parent');
 usd=get(tb,'UserData');
-callback=usd.callback;
+%callback=usd.callback;
+callback=getappdata(hObject,'callback');
 data=usd.data;
 nrcolumns=usd.nrColumns;
 iac=usd.activeRow;

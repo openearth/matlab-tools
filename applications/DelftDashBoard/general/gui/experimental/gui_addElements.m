@@ -598,16 +598,10 @@ for i=1:length(element)
             case{'table'}
                 % Get handles from table
                 usd=get(element(i).element.handle,'UserData');
-                usd.callback={@table_Callback,getFcn,setFcn,element,i};
-                set(element(i).element.handle,'UserData',usd);
                 tbh=usd.handles;
                 for j=1:length(element(i).element.column)
                     for k=1:element(i).element.nrrows
-                        if ~isempty(element(i).element.column(j).column.callback)
-                            callback=element(i).element.column(j).column.callback;
-                        else
-                            callback={@table_Callback,getFcn,setFcn,element,i,element(i).element.callback,element(i).element.option1,element(i).element.option2};
-                        end
+                        callback={@table_Callback,getFcn,setFcn,element,i,j};
                         setappdata(tbh(k,j),'callback',callback);
                     end
                 end
@@ -1036,7 +1030,7 @@ if pathname~=0
 end
 
 %%
-function table_Callback(getFcn,setFcn,element,i)
+function table_Callback(getFcn,setFcn,element,i,icol)
 
 el=element(i).element;
 
@@ -1070,7 +1064,7 @@ for j=1:length(el.column)
 
 end
 
-finishCallback(element,i);
+finishCallback(element,i,'column',icol);
 
 %%
 function pushbutton_Callback(hObject,eventdata,element,i)
@@ -1134,12 +1128,32 @@ if ok
 end
 
 %%
-function finishCallback(element,i)
-% All element are updated and the callback is executed
+function finishCallback(element,i,varargin)
 
-if ~isempty(element(i).element.callback)
-    % Execute callback
-    feval(element(i).element.callback,element(i).element.option1,element(i).element.option2);
+icol=[];
+for ii=1:length(varargin)
+    if ischar(varargin{ii})
+        switch lower(varargin{ii})
+            case{'column'}
+                icol=varargin{ii+1};
+        end
+    end
+end
+
+if ~isempty(icol)
+    % Table element
+    if ~isempty(element(i).element.column(icol).column.callback)
+        % Column callback overrules table callback
+        feval(element(i).element.column(icol).column.callback,element(i).element.column(icol).column.option1,element(i).element.column(icol).column.option2);
+    elseif ~isempty(element(i).element.callback)
+        feval(element(i).element.callback,element(i).element.option1,element(i).element.option2);
+    end
+else    
+    % All element are updated and the callback is executed
+    if ~isempty(element(i).element.callback)
+        % Execute callback
+        feval(element(i).element.callback,element(i).element.option1,element(i).element.option2);
+    end
 end
 
 gui_setElements(element);

@@ -195,6 +195,8 @@ end
 default.style=[];
 default.width=50;
 default.callback=[];
+default.option1=[];
+default.option2=[];
 default.text=[];
 default.popuptext=[];
 default.enable=1;
