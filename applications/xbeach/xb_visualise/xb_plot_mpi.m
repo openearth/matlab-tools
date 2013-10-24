@@ -105,6 +105,7 @@ end
 if (~isempty(OPT.zb))
     pcolor(double(x),double(y),OPT.zb(:,:));
     shading(ax,'flat');
+    axis equal;
 end
 
 %% Plot
