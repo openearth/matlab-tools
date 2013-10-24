@@ -46,7 +46,7 @@ fprintf(fid1,'%s\n',['* QUANTITY    : waterlevelbnd, velocitybnd, dischargebnd, 
 fprintf(fid1,'%s\n',['*             : outflowbnd, neumannbnd, qhbnd                                                       filetype=9         method=2,3']);
 fprintf(fid1,'%s\n',['*             : salinitybnd                                                                         filetype=9         method=2,3']);
 fprintf(fid1,'%s\n',['*             : lowergatelevel, damlevel, pump                                                      filetype=9         method=2,3']);
-fprintf(fid1,'%s\n',['              : frictioncoefficient, horizontaleddyviscositycoefficient, advectiontype, ibotlevtype filetype=4,10      method=4']);
+fprintf(fid1,'%s\n',['*             : frictioncoefficient, horizontaleddyviscositycoefficient, advectiontype, ibotlevtype filetype=4,10      method=4']);
 fprintf(fid1,'%s\n',['*             : initialwaterlevel                                                                   filetype=4,10      method=4']);
 fprintf(fid1,'%s\n',['*             : initialsalinity, initialsalinitytop: use initialsalinity for depth-uniform, or']);
 fprintf(fid1,'%s\n',['*             : as bed level value in combination with initialsalinitytop                           filetype=4,10      method=4']);
