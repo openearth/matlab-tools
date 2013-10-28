@@ -75,7 +75,7 @@ if ~isempty(supertransdata)
         end
     end
 end
-handles.EPSG=load([handles.superTransDir 'EPSG.mat']);
+handles.EPSG=readEPSGData;
 
 nproj=0;
 ngeo=0;
