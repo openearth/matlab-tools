@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <root>
   <element>
-    <tag>pushselectgrid</tag>
     <style>pushselectfile</style>
     <position>10 110 130 20</position>
     <tooltipstring>Select grid file</tooltipstring>
@@ -9,11 +8,10 @@
     <variable>handles.Model(md).Input(ad).grdFile</variable>
     <extension>*.grd</extension>
     <selectiontext>Select grid File</selectiontext>
-    <onchange>ddb_Delft3DFLOW_grid</onchange>
+    <callback>ddb_Delft3DFLOW_grid</callback>
     <option1>selectgrid</option1>
   </element>
   <element>
-    <tag>pushselectenclosure</tag>
     <style>pushselectfile</style>
     <position>10 85 130 20</position>
     <tooltipstring>Select enclosure file</tooltipstring>
@@ -21,11 +19,10 @@
     <variable>handles.Model(md).Input(ad).encFile</variable>
     <extension>*.enc</extension>
     <selectiontext>Select enclosure File</selectiontext>
-    <onchange>ddb_Delft3DFLOW_grid</onchange>
+    <callback>ddb_Delft3DFLOW_grid</callback>
     <option1>selectenclosure</option1>
   </element>
   <element>
-    <tag>textgridm</tag>
     <style>text</style>
     <position>10 30</position>
     <prefix>Grid points in M direction : </prefix>
@@ -33,7 +30,6 @@
     <variable>handles.Model(md).Input(ad).MMax</variable>
   </element>
   <element>
-    <tag>textgridn</tag>
     <style>text</style>
     <position>10 10</position>
     <prefix>Grid points in N direction : </prefix>
@@ -41,7 +37,6 @@
     <variable>handles.Model(md).Input(ad).NMax</variable>
   </element>
   <element>
-    <tag>editlatitude</tag>
     <style>edit</style>
     <position>500 35 50 20</position>
     <variable>handles.Model(md).Input(ad).latitude</variable>
@@ -59,7 +54,6 @@
     </dependency>
   </element>
   <element>
-    <tag>editorientation</tag>
     <style>edit</style>
     <position>500 10 50 20</position>
     <variable>handles.Model(md).Input(ad).orientation</variable>
@@ -67,17 +61,15 @@
     <text>Orientation (deg)</text>
   </element>
   <element>
-    <tag>editkmax</tag>
     <style>edit</style>
     <position>500 60 50 20</position>
     <variable>handles.Model(md).Input(ad).KMax</variable>
     <type>integer</type>
     <text>Number of layers</text>
-    <onchange>ddb_Delft3DFLOW_grid</onchange>
+    <callback>ddb_Delft3DFLOW_grid</callback>
     <option1>editkmax</option1>
   </element>
   <element>
-    <tag>pushgeneratelayers</tag>
     <style>pushbutton</style>
     <position>560 60 100 20</position>
     <text>Generate Layers</text>
@@ -95,7 +87,6 @@
     </dependency>
   </element>
   <element>
-    <tag>pushsavelayers</tag>
     <style>pushbutton</style>
     <position>560 35 100 20</position>
     <text>Save Layers</text>
@@ -103,7 +94,6 @@
     <option1>savelayers</option1>
   </element>
   <element>
-    <tag>pushloadlayers</tag>
     <style>pushbutton</style>
     <position>560 10 100 20</position>
     <text>Load Layers</text>
@@ -111,12 +101,11 @@
     <option1>loadlayers</option1>
   </element>
   <element>
-    <tag>layertable</tag>
     <style>table</style>
     <position>690 25</position>
     <nrrows>5</nrrows>
     <includenumbers>yes</includenumbers>
-    <onchange>ddb_Delft3DFLOW_grid</onchange>
+    <callback>ddb_Delft3DFLOW_grid</callback>
     <option1>changelayers</option1>
     <column>
       <style>editreal</style>
@@ -125,7 +114,6 @@
     </column>
   </element>
   <element>
-    <tag>sumlayers</tag>
     <style>text</style>
     <position>690 5</position>
     <prefix>Sum : </prefix>
@@ -134,7 +122,6 @@
     <variable>handles.Model(md).Input(ad).sumLayers</variable>
   </element>
   <element>
-    <tag>radiosigma</tag>
     <style>radiobutton</style>
     <position>800 85</position>
     <text>Sigma Layers</text>
@@ -152,7 +139,6 @@
     </dependency>
   </element>
   <element>
-    <tag>radioz</tag>
     <style>radiobutton</style>
     <position>800 65</position>
     <text>Z Layers</text>
@@ -172,7 +158,6 @@
     </dependency>
   </element>
   <element>
-    <tag>editztop</tag>
     <style>edit</style>
     <position>840 35 50 20</position>
     <variable>handles.Model(md).Input(ad).zTop</variable>
@@ -196,7 +181,6 @@
     </dependency>
   </element>
   <element>
-    <tag>editzbot</tag>
     <style>edit</style>
     <position>840 10 50 20</position>
     <variable>handles.Model(md).Input(ad).zBot</variable>
