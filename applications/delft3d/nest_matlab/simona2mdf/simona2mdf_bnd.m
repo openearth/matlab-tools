@@ -21,7 +21,7 @@ if ~isempty(bnd)
     % Harmonic boundary conditions
     %
 
-    bch = simona2mdf_bch(S,bnd);
+    bch = simona2mdf_bch(S,bnd, 'nesthd_path', OPT.nesthd_path);
     if ~isempty(bch)
         mdf.filbch = [name_mdf '.bch'];
         delft3d_io_bch('write',mdf.filbch,bch);
@@ -32,7 +32,7 @@ if ~isempty(bnd)
     % Time series boundary conditions
     %
 
-    bct = simona2mdf_bct(S,bnd,mdf);
+    bct = simona2mdf_bct(S,bnd,mdf, 'nesthd_path', OPT.nesthd_path);
     if ~isempty(bct)
         mdf.filbct = [name_mdf '.bct'];
         ddb_bct_io('write',mdf.filbct,bct);
@@ -43,7 +43,7 @@ if ~isempty(bnd)
     % Q-h relation (not implemented yet)
     %
 
-    bcq = simona2mdf_bcq(S,bnd);
+    bcq = simona2mdf_bcq(S,bnd, 'nesthd_path', OPT.nesthd_path);
     if ~isempty(bcq)
         mdf.filbcq = [name_mdf '.bcq'];
         ddb_bct_io('write',mdf.filbcq,bcq);
@@ -54,7 +54,7 @@ if ~isempty(bnd)
     % Astronomical Boundary conditions
     %
 
-    bca = simona2mdf_bca(S,bnd);
+    bca = simona2mdf_bca(S,bnd, 'nesthd_path', OPT.nesthd_path);
     if ~isempty(bca)
         mdf.filana = [name_mdf '.bca'];
         delft3d_io_bca('write',mdf.filana,bca);
@@ -65,7 +65,7 @@ if ~isempty(bnd)
     % Transport boundary conditions (Salinity only for now)
     %
 
-    bcc = simona2mdf_bcc(S,bnd,mdf);
+    bcc = simona2mdf_bcc(S,bnd,mdf, 'nesthd_path', OPT.nesthd_path);
     if ~isempty(bcc)
         mdf.filbcc = [name_mdf '.bcc'];
         ddb_bct_io('write',mdf.filbcc,bcc);

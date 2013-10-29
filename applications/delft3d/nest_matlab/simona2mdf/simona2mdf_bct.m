@@ -1,4 +1,4 @@
-function bct = simona2bnd_bct(S,bnd,mdf)
+function bct = simona2bnd_bct(S,bnd,mdf, varargin
 
 % simona2mdf_bca : gets time-series boundary forcing out the mdf file
 
@@ -9,13 +9,14 @@ ibnd_bct = 0;
 % Time series forcing data
 %
 
-nesthd_dir = getenv('nesthd_path');
+OPT.nesthd_path = getenv('nesthd_path');
+OPT = setproperty(OPT,varargin{1:end});
 
 %
 % get information out of struc
 %
 
-siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'FORCINGS' 'TIMESERIES'});
+siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'FORCINGS' 'TIMESERIES'});
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.FLOW.FORCINGS.TIMESERIES')
     series       = siminp_struc.ParsedTree.FLOW.FORCINGS.TIMESERIES;
 

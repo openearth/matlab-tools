@@ -1,9 +1,12 @@
-function bcq = simona2mdf_bcq(S,bnd)
+function bcq = simona2mdf_bcq(S,bnd, varargin)
 
 % simona2mdf_bcq : gets qh forcing out of the siminp
 
 bcq      = [];
 ibnd_bcq = 0;
+
+OPT.nesthd_path = getenv('nesthd_path');
+OPT = setproperty(OPT,varargin{1:end});
 
 %
 % Not implemented yet

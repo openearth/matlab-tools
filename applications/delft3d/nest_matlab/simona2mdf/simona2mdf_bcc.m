@@ -1,4 +1,4 @@
-function bcc = simona2bnd_bcc(S,bnd,mdf)
+function bcc = simona2bnd_bcc(S,bnd,mdf, varargin)
 
 % simona2mdf_bcc : gets time-series transport forcing (for now only salinity)
 
@@ -9,13 +9,14 @@ ibnd_bcc = 0;
 % Time series forcing data (salinity only)
 %
 
-nesthd_dir = getenv('nesthd_path');
+OPT.nesthd_path = getenv('nesthd_path');
+OPT = setproperty(OPT,varargin{1:end});
 
 %
 % get information out of struc
 %
 
-siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'TRANSPORT'});
+siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'TRANSPORT'});
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.TRANSPORT.PROBLEM.SALINITY')
 
     constnr = siminp_struc.ParsedTree.TRANSPORT.PROBLEM.SALINITY.CO;

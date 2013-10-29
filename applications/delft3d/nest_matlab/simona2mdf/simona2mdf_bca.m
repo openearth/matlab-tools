@@ -1,4 +1,4 @@
-function bca = simona2bnd_bca(S,bnd)
+function bca = simona2bnd_bca(S,bnd, varargin)
 
 % simona2mdf_bca : gets astronomical data out of the siminp
 
@@ -9,13 +9,14 @@ ibnd_bca = 0;
 % Astronomical forcing data
 %
 
-nesthd_dir = getenv('nesthd_path');
+OPT.nesthd_path = getenv('nesthd_path');
+OPT = setproperty(OPT,varargin{1:end});
 
 %
 % get information out of struc
 %
 
-siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'FORCINGS' 'HARMONIC'});
+siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'FORCINGS' 'HARMONIC'});
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.FLOW.FORCINGS.HARMONIC')
     harmonic     = siminp_struc.ParsedTree.FLOW.FORCINGS.HARMONIC;
     const        = harmonic.GENERAL.OMEGA;
