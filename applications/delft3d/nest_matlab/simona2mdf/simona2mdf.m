@@ -75,29 +75,29 @@ S = all_in_one(S);
 
 %% parse the siminp information
 
-% simona2mdf_message('Parsing AREA information'               ,'Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
-% mdf = simona2mdf_area     (S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);
-% 
-% simona2mdf_message('Parsing BATHYMETRY information'         ,'Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
-% mdf = simona2mdf_bathy    (S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);
-% 
-% simona2mdf_message('Parsing DRYPOINT information'           ,'Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
-% mdf = simona2mdf_dryp     (S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);
-% 
-% simona2mdf_message('Parsing THINDAM information'            ,'Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
-% mdf = simona2mdf_thd      (S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);
-% 
-% simona2mdf_message('Parsing TIMES information'              ,'Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
-% mdf = simona2mdf_times    (S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);
-% 
-% simona2mdf_message('Parsing PROCES information'             ,'Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
-% mdf = simona2mdf_processes(S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);
-% 
-% simona2mdf_message('Parsing PHYSICAL information'           ,'Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
-% mdf = simona2mdf_physical (S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);
-% 
-% simona2mdf_message('Parsing NUMERICAL information'          ,'Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
-% mdf = simona2mdf_numerical(S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);
+simona2mdf_message('Parsing AREA information'               ,'Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
+mdf = simona2mdf_area     (S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);
+
+simona2mdf_message('Parsing BATHYMETRY information'         ,'Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
+mdf = simona2mdf_bathy    (S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);
+
+simona2mdf_message('Parsing DRYPOINT information'           ,'Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
+mdf = simona2mdf_dryp     (S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);
+
+simona2mdf_message('Parsing THINDAM information'            ,'Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
+mdf = simona2mdf_thd      (S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);
+
+simona2mdf_message('Parsing TIMES information'              ,'Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
+mdf = simona2mdf_times    (S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);
+
+simona2mdf_message('Parsing PROCES information'             ,'Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
+mdf = simona2mdf_processes(S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);
+
+simona2mdf_message('Parsing PHYSICAL information'           ,'Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
+mdf = simona2mdf_physical (S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);
+
+simona2mdf_message('Parsing NUMERICAL information'          ,'Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
+mdf = simona2mdf_numerical(S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);
 
 simona2mdf_message('Parsing BOUNDARY information'           ,'Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
 mdf = simona2mdf_bnd      (S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);
