@@ -1,4 +1,4 @@
-function bnd=simona2bnd_bnddef(S)
+function bnd=simona2bnd_bnddef(S, varargin)
 
 % simona2mdf_bnddef : gets boundary definition out of the siminp file
 
@@ -8,7 +8,8 @@ bnd = [];
 % Parse Boundary data
 %
 
-nesthd_dir = getenv('nesthd_path');
+OPT.nesthd_path = getenv('nesthd_path');
+OPT = setproperty(OPT,varargin{1:end});
 
 %
 % get information out of struc
@@ -20,27 +21,27 @@ bnddef   = [];
 harmonic = [];
 vel_prof = [];
 
-siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'MESH' 'POINTS'});
+siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'MESH' 'POINTS'});
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.MESH.POINTS')
     points   = siminp_struc.ParsedTree.MESH.POINTS;
 end
 
-siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'MESH' 'BOUNDARIES' 'OPENINGS'});
+siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'MESH' 'BOUNDARIES' 'OPENINGS'});
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.MESH.BOUNDARIES.OPENINGS')
     opendef  = siminp_struc.ParsedTree.MESH.BOUNDARIES.OPENINGS;
 end
 
-siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'FORCINGS' 'BOUNDARIES'});
+siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'FORCINGS' 'BOUNDARIES'});
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.FLOW.FORCINGS.BOUNDARIES')
     bnddef   = siminp_struc.ParsedTree.FLOW.FORCINGS.BOUNDARIES;
 end
 
-siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'FORCINGS' 'HARMONIC'});
+siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'FORCINGS' 'HARMONIC'});
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.FLOW.FORCINGS.HARMONIC')
     harmonic = siminp_struc.ParsedTree.FLOW.FORCINGS.HARMONIC;
 end
 
-siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'PROBLEM'});
+siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'PROBLEM'});
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.FLOW.PROBLEM.VELOCITY_PROFILE')
    vel_prof     = siminp_struc.ParsedTree.FLOW.PROBLEM.VELOCITY_PROFILE;
 end

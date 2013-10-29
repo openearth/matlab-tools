@@ -7,7 +7,7 @@ function mdf = simona2mdf_bnd(S,mdf,name_mdf,varargin);
 OPT.nesthd_path = getenv('nesthd_path');
 OPT = setproperty(OPT,varargin{1:end});
 
-bnd = simona2mdf_bnddef(S);
+bnd = simona2mdf_bnddef(S, 'nesthd_path', OPT.nesthd_path);
 
 % If open boundaries exist, write boundary definition and retrieve
 % harmonic data, time series data and astronomical data respectively
@@ -76,7 +76,7 @@ if ~isempty(bnd)
     % Thatcher Harleman times
     %
 
-    mdf = simona2mdf_th(S,bnd,mdf);
+    mdf = simona2mdf_th(S,bnd,mdf, 'nesthd_path', OPT.nesthd_path);
 
 end
 

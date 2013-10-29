@@ -1,8 +1,10 @@
-function mdf = simona2mdf_th (S,bnd,mdf)
+function mdf = simona2mdf_th (S,bnd,mdf, varargin)
 
 % simona2mdf_th : Get thatcher Harleman time lags and set in the mdf struct
 
-nesthd_dir = getenv('nesthd_path');
+OPT.nesthd_path = getenv('nesthd_path');
+OPT = setproperty(OPT,varargin{1:end});
+
 mdf.rettis(1:length(bnd.DATA)) = 0.0;
 mdf.rettib(1:length(bnd.DATA)) = 0.0;
 
@@ -10,7 +12,7 @@ mdf.rettib(1:length(bnd.DATA)) = 0.0;
 % get information out of struc
 %
 
-siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'TRANSPORT'});
+siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'TRANSPORT'});
 
 
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.TRANSPORT.PROBLEM.SALINITY')
