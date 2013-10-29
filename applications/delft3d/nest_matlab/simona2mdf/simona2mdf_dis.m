@@ -7,7 +7,7 @@ function mdf = simona2mdf_dis(S,mdf,name_mdf, varargin);
 OPT.nesthd_path = getenv('nesthd_path');
 OPT = setproperty(OPT,varargin{1:end});
 
-src = simona2mdf_src(S);
+src = simona2mdf_src(S, 'nesthd_path', OPT.nesthd_path);
 
 % If discharge points exist, write definition and retrieve time series
 

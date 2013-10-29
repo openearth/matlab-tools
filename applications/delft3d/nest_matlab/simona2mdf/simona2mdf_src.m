@@ -1,4 +1,4 @@
-function src=simona2mdf_src(S)
+function src=simona2mdf_src(S, varargin)
 
 % simona2mdf_src : gets efinition of discahrge points out of siminp file
 
@@ -8,7 +8,8 @@ src = [];
 % Parse Boundary data
 %
 
-nesthd_dir = getenv('nesthd_path');
+OPT.nesthd_path = getenv('nesthd_path');
+OPT = setproperty(OPT,varargin{1:end});
 
 %
 % get information out of struc
@@ -17,12 +18,12 @@ nesthd_dir = getenv('nesthd_path');
 points  = [];
 sources = [];
 
-siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'MESH' 'POINTS'});
+siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'MESH' 'POINTS'});
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.MESH.POINTS')
     points    = siminp_struc.ParsedTree.MESH.POINTS;
 end
 
-siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'FORCINGS' 'DISCHARGE'});
+siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'FORCINGS' 'DISCHARGE'});
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.FLOW.FORCINGS.DISCHARGES.SOURCE')
     sources   = siminp_struc.ParsedTree.FLOW.FORCINGS.DISCHARGES.SOURCE;
 end

@@ -1,4 +1,4 @@
-function bct = simona2bnd_bct(S,bnd,mdf, varargin
+function bct = simona2bnd_bct(S,bnd,mdf, varargin)
 
 % simona2mdf_bca : gets time-series boundary forcing out the mdf file
 
