@@ -1,8 +1,11 @@
-function mdf = simona2mdf_dis(S,mdf,name_mdf)
+function mdf = simona2mdf_dis(S,mdf,name_mdf, varargin);
 
 % simona2mdf_dis : gets all discharge point related information out of the parsed siminp (S)
 
 % Start with the definition of discharge points
+
+OPT.nesthd_path = getenv('nesthd_path');
+OPT = setproperty(OPT,varargin{1:end});
 
 src = simona2mdf_src(S);
 

@@ -1,4 +1,4 @@
-function mdf=simona2mdf_initial(S,mdf,name_mdf)
+function mdf=simona2mdf_initial(S,mdf,name_mdf, varargin)
 
 % simona2mdf_initial : gets the initial conditions out of the siminp file (always write to inital condition file)
 
@@ -13,8 +13,10 @@ s0                   = [];
 % get information out of struc
 %
 
-nesthd_dir = getenv('nesthd_path');
-siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'FORCINGS' 'INITIAL'});
+OPT.nesthd_path = getenv('nesthd_path');
+OPT = setproperty(OPT,varargin{1:end});
+
+siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'FORCINGS' 'INITIAL'});
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.FLOW.FORCINGS.INITIAL')
     initial      = siminp_struc.ParsedTree.FLOW.FORCINGS.INITIAL;
 else
@@ -73,32 +75,32 @@ end
 % Salinity
 %
 
-siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'TRANSPORT'});
+siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'TRANSPORT'});
 
 
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.TRANSPORT')
     if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.TRANSPORT.PROBLEM.SALINITY')
         s0(1:mmax,1:nmax) = 0.;
-       
+
         constnr = siminp_struc.ParsedTree.TRANSPORT.PROBLEM.SALINITY.CO;
         initial = siminp_struc.ParsedTree.TRANSPORT.FORCINGS.INITIAL.CONSTITUENT.CO;
-        
+
         for icons = 1: length(initial)
             if initial(icons).SEQNR == constnr
                 sal_ini = initial(icons);
             end
         end
-        
+
         if simona2mdf_fieldandvalue(sal_ini,'GLOBAL')
             s0    = simona2mdf_getglobaldata(sal_ini.GLOBAL,s0);
         end
-       
+
         if simona2mdf_fieldandvalue(sal_ini,'LOCAL.BOX')
             s0    = simona2mdf_getboxdata(sal_ini.LOCAL.BOX,s0);
         end
     end
 end
-          
+
 %
 % Finally write
 %

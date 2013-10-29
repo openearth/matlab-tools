@@ -1,16 +1,17 @@
-function mdf = simona2mdf_thd(S,mdf,name_mdf)
+function mdf = simona2mdf_thd(S,mdf,name_mdf,varargin)
 
 % simona2mdf_thd : gets thin dams out of the parsed siminp tree
 
 THD.DATA   =  [];
 
-nesthd_dir = getenv('nesthd_path');
+OPT.nesthd_path = getenv('nesthd_path');
+OPT = setproperty(OPT,varargin{1:end});
 
 %
 % Thin dams in u direction
 %
 
-siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'MESH' 'DRYPOINTS' 'CLOSEU'});
+siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'MESH' 'DRYPOINTS' 'CLOSEU'});
 
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.MESH.DRYPOINTS.CLOSEU.MNN');
    line = siminp_struc.ParsedTree.MESH.DRYPOINTS.CLOSEU.MNN;
@@ -27,7 +28,7 @@ end
 % Same story v-direction
 %
 
-siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'MESH' 'DRYPOINTS' 'CLOSEV'});
+siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'MESH' 'DRYPOINTS' 'CLOSEV'});
 
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.MESH.DRYPOINTS.CLOSEV.NMM');
    line = siminp_struc.ParsedTree.MESH.DRYPOINTS.CLOSEV.NMM;

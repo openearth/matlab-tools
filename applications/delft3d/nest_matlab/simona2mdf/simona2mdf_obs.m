@@ -1,17 +1,19 @@
-function mdf = simona2mdf_obs(S,mdf,name_mdf)
+function mdf = simona2mdf_obs(S,mdf,name_mdf, varargin);
 
 % simona2mdf_obs : gets observation stations out of the parsed siminp tree
 
 points    = [];
 chkpoints = [];
-nesthd_dir = getenv('nesthd_path');
 
-siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'MESH' 'POINTS'});
+OPT.nesthd_path = getenv('nesthd_path');
+OPT = setproperty(OPT,varargin{1:end});
+
+siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'MESH' 'POINTS'});
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.MESH.POINTS')
     points       = siminp_struc.ParsedTree.MESH.POINTS;
 end
 
-siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'CHECKPOINTS'});
+siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'CHECKPOINTS'});
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.FLOW.CHECKPOINTS')
     chkpoints    = siminp_struc.ParsedTree.FLOW.CHECKPOINTS;
 end

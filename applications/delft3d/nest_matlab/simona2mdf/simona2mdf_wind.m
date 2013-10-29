@@ -1,4 +1,4 @@
-function mdf = simona2mdf_wind (S,mdf,name_mdf)
+function mdf = simona2mdf_wind (S,mdf,name_mdf, varargin);
 
 % simona2mdf_wind : gets (uniform) wind information out of the parsed siminp tree
 
@@ -6,8 +6,10 @@ function mdf = simona2mdf_wind (S,mdf,name_mdf)
 % Check for wind
 %
 
-nesthd_dir   = getenv('nesthd_path');
-siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'GENERAL'});
+OPT.nesthd_path = getenv('nesthd_path');
+OPT = setproperty(OPT,varargin{1:end});
+
+siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'GENERAL'});
 
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.GENERAL.WIND')
     wind = siminp_struc.ParsedTree.GENERAL.WIND;

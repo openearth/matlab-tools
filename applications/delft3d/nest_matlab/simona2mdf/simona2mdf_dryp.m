@@ -1,13 +1,14 @@
-function mdf = simona2mdf_dryp(S,mdf,name_mdf)
+function mdf = simona2mdf_dryp(S,mdf,name_mdf, varargin);
 
 % simona2mdf_dryp : gets dry points out of the parsed siminp tree
 
-nesthd_dir = getenv('nesthd_path');
+OPT.nesthd_path = getenv('nesthd_path');
+OPT = setproperty(OPT,varargin{1:end});
 
-siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'MESH' 'DRYPOINTS' 'DAMPOINTS'});
+siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'MESH' 'DRYPOINTS' 'DAMPOINTS'});
 
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.MESH.DRYPOINTS.DAMPOINTS.COORDINATES.DAMCOOR')
-    
+
    drypoints  = siminp_struc.ParsedTree.MESH.DRYPOINTS.DAMPOINTS.COORDINATES.DAMCOOR;
    drypoints  = reshape(drypoints,2,[])';
    file       = [name_mdf '.dry'];

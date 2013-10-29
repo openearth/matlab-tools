@@ -24,12 +24,13 @@ end
 
 %% Display general information
 
-OPT.DispGen = true;
+OPT.DispGen     = true;
+OPT.nesthd_path = getenv('nesthd_path');
 OPT = setproperty(OPT,varargin{3:end});
 
 %% Check if nesthd_path is set
 
-if isempty (getenv('nesthd_path'))
+if isempty (OPT.nesthd_path)
    h = warndlg({'Please set the environment variable "nesthd_path"';'See the Release Notes ("Release Notes.chm")'},'NestHD Warning');
    PutInCentre (h);
    uiwait(h);
@@ -51,8 +52,8 @@ name_mdf = [path_mdf filesep name_mdf];
 
 %% Display the general information
 
-logo  = imread([getenv('nesthd_path') filesep 'bin' filesep 'simona_logo.jpg']);
-logo2 = [getenv('nesthd_path') filesep 'bin' filesep 'deltares.gif'];
+logo  = imread([OPT.nesthd_path filesep 'bin' filesep 'simona_logo.jpg']);
+logo2 = [OPT.nesthd_path filesep 'bin' filesep 'deltares.gif'];
 
 if OPT.DispGen
     simona2mdf_message(Gen_inf                                  ,'Logo',logo,'Logo2',logo2,'n_sec',5);
@@ -61,7 +62,7 @@ end
 %% Start with creating empty template (add the simonapath to it to allow for
 %  copying of the grid file)
 
-DATA = delft3d_io_mdf('new',[getenv('nesthd_path') filesep 'bin' filesep 'template_gui.mdf']);
+DATA = delft3d_io_mdf('new',[OPT.nesthd_path filesep 'bin' filesep 'template_gui.mdf']);
 mdf  = DATA.keywords;
 mdf.pathsimona = path_waq;
 mdf.pathd3d    = path_mdf;
@@ -74,59 +75,59 @@ S = all_in_one(S);
 
 %% parse the siminp information
 
-simona2mdf_message('Parsing AREA information'               ,'Logo',logo,'Logo2',logo2);
-mdf = simona2mdf_area     (S,mdf,name_mdf);
+% simona2mdf_message('Parsing AREA information'               ,'Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
+% mdf = simona2mdf_area     (S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);
+% 
+% simona2mdf_message('Parsing BATHYMETRY information'         ,'Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
+% mdf = simona2mdf_bathy    (S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);
+% 
+% simona2mdf_message('Parsing DRYPOINT information'           ,'Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
+% mdf = simona2mdf_dryp     (S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);
+% 
+% simona2mdf_message('Parsing THINDAM information'            ,'Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
+% mdf = simona2mdf_thd      (S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);
+% 
+% simona2mdf_message('Parsing TIMES information'              ,'Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
+% mdf = simona2mdf_times    (S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);
+% 
+simona2mdf_message('Parsing PROCES information'             ,'Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
+mdf = simona2mdf_processes(S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);
 
-simona2mdf_message('Parsing BATHYMETRY information'         ,'Logo',logo,'Logo2',logo2);
-mdf = simona2mdf_bathy    (S,mdf,name_mdf);
+simona2mdf_message('Parsing PHYSICAL information'           ,'Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
+mdf = simona2mdf_physical (S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);
 
-simona2mdf_message('Parsing DRYPOINT information'           ,'Logo',logo,'Logo2',logo2);
-mdf = simona2mdf_dryp     (S,mdf,name_mdf);
+simona2mdf_message('Parsing NUMERICAL information'          ,'Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
+mdf = simona2mdf_numerical(S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);
 
-simona2mdf_message('Parsing THINDAM information'            ,'Logo',logo,'Logo2',logo2);
-mdf = simona2mdf_thd      (S,mdf,name_mdf);
+simona2mdf_message('Parsing BOUNDARY information'           ,'Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
+mdf = simona2mdf_bnd      (S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);
 
-simona2mdf_message('Parsing TIMES information'              ,'Logo',logo,'Logo2',logo2);
-mdf = simona2mdf_times    (S,mdf,name_mdf);
+simona2mdf_message('Parsing DISCHARGE POINTS information'   ,'Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
+mdf = simona2mdf_dis      (S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);
 
-simona2mdf_message('Parsing PROCES information'             ,'Logo',logo,'Logo2',logo2);
-mdf = simona2mdf_processes(S,mdf,name_mdf);
+simona2mdf_message('Parsing WIND information'               ,'Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
+mdf = simona2mdf_wind     (S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);
 
-simona2mdf_message('Parsing PHYSICAL information'           ,'Logo',logo,'Logo2',logo2);
-mdf = simona2mdf_physical (S,mdf,name_mdf);
+simona2mdf_message('Parsing INITIAL CONDITION information'  ,'Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
+mdf = simona2mdf_initial  (S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);
 
-simona2mdf_message('Parsing NUMERICAL information'          ,'Logo',logo,'Logo2',logo2);
-mdf = simona2mdf_numerical(S,mdf,name_mdf);
+simona2mdf_message('Parsing RESTART information'            ,'Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
+mdf = simona2mdf_restart  (S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);
 
-simona2mdf_message('Parsing BOUNDARY information'           ,'Logo',logo,'Logo2',logo2);
-mdf = simona2mdf_bnd      (S,mdf,name_mdf);
+simona2mdf_message('Parsing FRICTION information'           ,'Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
+mdf = simona2mdf_friction (S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);
 
-simona2mdf_message('Parsing DISCHARGE POINTS information'   ,'Logo',logo,'Logo2',logo2);
-mdf = simona2mdf_dis      (S,mdf,name_mdf);
+simona2mdf_message('Parsing VISCOSITY information'          ,'Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
+mdf = simona2mdf_viscosity(S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);
 
-simona2mdf_message('Parsing WIND information'               ,'Logo',logo,'Logo2',logo2);
-mdf = simona2mdf_wind     (S,mdf,name_mdf);
+simona2mdf_message('Parsing OBSERVATION STATION information','Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
+mdf = simona2mdf_obs      (S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);
 
-simona2mdf_message('Parsing INITIAL CONDITION information'  ,'Logo',logo,'Logo2',logo2);
-mdf = simona2mdf_initial  (S,mdf,name_mdf);
+simona2mdf_message('Parsing CROSS-SECTION information'      ,'Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
+mdf = simona2mdf_crs      (S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);
 
-simona2mdf_message('Parsing RESTART information'            ,'Logo',logo,'Logo2',logo2);
-mdf = simona2mdf_restart  (S,mdf,name_mdf);
-
-simona2mdf_message('Parsing FRICTION information'           ,'Logo',logo,'Logo2',logo2);
-mdf = simona2mdf_friction (S,mdf,name_mdf);
-
-simona2mdf_message('Parsing VISCOSITY information'          ,'Logo',logo,'Logo2',logo2);
-mdf = simona2mdf_viscosity(S,mdf,name_mdf);
-
-simona2mdf_message('Parsing OBSERVATION STATION information','Logo',logo,'Logo2',logo2);
-mdf = simona2mdf_obs      (S,mdf,name_mdf);
-
-simona2mdf_message('Parsing CROSS-SECTION information'      ,'Logo',logo,'Logo2',logo2);
-mdf = simona2mdf_crs      (S,mdf,name_mdf);
-
-simona2mdf_message('Parsing OUTPUT information'             ,'Logo',logo,'Logo2',logo2);
-mdf = simona2mdf_output   (S,mdf);
+simona2mdf_message('Parsing OUTPUT information'             ,'Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
+mdf = simona2mdf_output   (S,mdf, 'nesthd_path', OPT.nesthd_path);
 
 %% Finally,  write the mdf file and close everything
 

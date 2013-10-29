@@ -1,9 +1,11 @@
-function mdf = simona2mdf_numerical(S,mdf,name_mdf)
+function mdf = simona2mdf_numerical(S,mdf,name_mdf, varargin)
 
 % siminp2mdf_bathy : Gets numerical parameters out of the parsed siminp file
 
-nesthd_dir   = getenv('nesthd_path');
-siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'MESH' 'BATHYMETRY'});
+OPT.nesthd_path = getenv('nesthd_path');
+OPT = setproperty(OPT,varargin{1:end});
+
+siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'MESH' 'BATHYMETRY'});
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.MESH.BATHYMETRY.GLOBAL')
     global_vars  = siminp_struc.ParsedTree.MESH.BATHYMETRY.GLOBAL;
 else
@@ -53,7 +55,7 @@ end
 % drying flooding criterion
 %
 
-siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'PROBLEM'});
+siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'PROBLEM'});
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.FLOW.PROBLEM.DRYING')
     drying = siminp_struc.ParsedTree.FLOW.PROBLEM.DRYING;
 else

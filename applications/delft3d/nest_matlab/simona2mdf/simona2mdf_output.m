@@ -1,11 +1,12 @@
-function mdf = simona2mdf_output(S,mdf)
+function mdf = simona2mdf_output(S,mdf, varargin)
 
 % simona2mdf_output : gets output tmes from the siminp tree
 
-nesthd_dir = getenv('nesthd_path');
+OPT.nesthd_path = getenv('nesthd_path');
+OPT = setproperty(OPT,varargin{1:end});
 
 
-siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'SDSOUTPUT'});
+siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'SDSOUTPUT'});
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.SDSOUTPUT')
     output       = siminp_struc.ParsedTree.SDSOUTPUT;
 else

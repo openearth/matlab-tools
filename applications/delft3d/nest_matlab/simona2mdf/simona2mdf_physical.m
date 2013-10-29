@@ -1,4 +1,4 @@
-function mdf=simona2mdf_physical(S,mdf,~)
+function mdf=simona2mdf_physical(S,mdf,~, varargin);
 
 % simona2mdf_initial : gets the physical parmaters out of the siminp file
 
@@ -6,9 +6,11 @@ function mdf=simona2mdf_physical(S,mdf,~)
 % get information out of struc
 %
 
-nesthd_dir = getenv('nesthd_path');
-siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'GENERAL'});
-if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.GENERAL.PHYSICALPARAM') 
+OPT.nesthd_path = getenv('nesthd_path');
+OPT = setproperty(OPT,varargin{1:end});
+
+siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'GENERAL'});
+if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.GENERAL.PHYSICALPARAM')
     params   = siminp_struc.ParsedTree.GENERAL.PHYSICALPARAM;
 else
     params   = [];
@@ -31,7 +33,7 @@ end
 % Water temperature (only if saliity is a transport quantity)
 %
 
-siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'DENSITIES'});
+siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'DENSITIES'});
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.DENSITIES')
     density = siminp_struc.ParsedTree.DENSITIES;
 else
@@ -44,7 +46,7 @@ if ~isempty(density)
     mdf.rhow  = density.RHOREF*1000.;
 end
 
-siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'DENSITY'});
+siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'DENSITY'});
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.DENSITY')
     simona2.mdf_warning({'DENSITY not supported yet';'(DENSITIES is supported)'});
 end

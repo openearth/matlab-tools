@@ -1,10 +1,11 @@
 function simona2mdf_message(string,varargin)
 
 % message: writes general information to screen
-nesthd_path = getenv('nesthd_path');
-if ~isempty(nesthd_path);
-    OPT.Logo        = imread([nesthd_path filesep 'bin' filesep 'simona_logo.jpg']);
-    OPT.Logo2       =        [nesthd_path filesep 'bin' filesep 'deltares.gif'];
+OPT.nesthd_path = getenv('nesthd_path');
+OPT = setproperty(OPT,varargin{end-1:end});
+if ~isempty(OPT.nesthd_path);
+    OPT.Logo        = imread([OPT.nesthd_path filesep 'bin' filesep 'simona_logo.jpg']);
+    OPT.Logo2       =        [OPT.nesthd_path filesep 'bin' filesep 'deltares.gif'];
 else
     OPT.Logo   = '';
     OPT.Logo2  = '';

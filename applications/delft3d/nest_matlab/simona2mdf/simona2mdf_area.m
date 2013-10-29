@@ -1,11 +1,12 @@
-function mdf = simona2mdf_area(S,mdf,name_mdf)
+function mdf = simona2mdf_area(S,mdf,name_mdf, varargin)
 
 % simona2mdf_area : gets grid related quantities out of the parsed siminp tree
 
-nesthd_dir = getenv('nesthd_path');
+OPT.nesthd_path = getenv('nesthd_path');
+OPT = setproperty(OPT,varargin{1:end});
 
 
-siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'MESH' 'GRID'});
+siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'MESH' 'GRID'});
 
 %
 % Get grid related information
@@ -48,7 +49,7 @@ end
 % The enclosure
 %
 
-siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'MESH' 'BOUNDARIES' 'ENCLOSURES'});
+siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'MESH' 'BOUNDARIES' 'ENCLOSURES'});
 
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.MESH.BOUNDARIES.ENCLOSURES.E')
     enc = siminp_struc.ParsedTree.MESH.BOUNDARIES.ENCLOSURES.E;

@@ -1,4 +1,4 @@
-function mdf=simona2mdf_friction(S,mdf,name_mdf)
+function mdf=simona2mdf_friction(S,mdf,name_mdf, varargin)
 
 % simona2mdf_friction : gets the initial conditions out of the siminp file
 
@@ -11,8 +11,10 @@ friction_v(1:mmax,1:nmax) = 0.;
 % get information out of struc
 %
 
-nesthd_dir   = getenv('nesthd_path');
-siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'PROBLEM' 'FRICTION'});
+OPT.nesthd_path = getenv('nesthd_path');
+OPT = setproperty(OPT,varargin{1:end});
+
+siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'PROBLEM' 'FRICTION'});
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.FLOW.PROBLEM.FRICTION')
     friction     = siminp_struc.ParsedTree.FLOW.PROBLEM.FRICTION;
 else

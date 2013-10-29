@@ -1,4 +1,4 @@
-function mdf=simona2mdf_viscosity(S,mdf,name_mdf)
+function mdf=simona2mdf_viscosity(S,mdf,name_mdf, varargin)
 
 % simona2mdf_viscosity : gets the iviscosity information (horizontal) out of the siminp file
 
@@ -9,13 +9,15 @@ function mdf=simona2mdf_viscosity(S,mdf,name_mdf)
 turbulence  = [];
 problem     = [];
 
-nesthd_dir   = getenv('nesthd_path');
-siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'TURBULENCE_MODEL'});
+OPT.nesthd_path = getenv('nesthd_path');
+OPT = setproperty(OPT,varargin{1:end});
+
+siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'TURBULENCE_MODEL'});
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.TURBULENCE_MODEL')
     turbulence   = siminp_struc.ParsedTree.TURBULENCE_MODEL;
 end
 
-siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'PROBLEM'});
+siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'FLOW' 'PROBLEM'});
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.FLOW.PROBLEM')
     problem      = siminp_struc.ParsedTree.FLOW.PROBLEM;
 end
@@ -62,7 +64,7 @@ end
 
 dico(1:mmax,1:nmax) = -999.999;
 if strcmpi(mdf.sub1(1:1),'s')
-    siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'GENERAL' 'DIFFUSION'});
+    siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'GENERAL' 'DIFFUSION'});
     if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.GENERAL.DIFFUSION')
         diff = siminp_struc.ParsedTree.GENERAL.DIFFUSION;
         if simona2mdf_fieldandvalue(diff,'GLOBAL')
