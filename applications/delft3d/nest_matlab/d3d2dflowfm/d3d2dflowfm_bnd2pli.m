@@ -67,14 +67,16 @@ for ibnd = 1 : no_bnd
     if astronomical && ~OPT.Salinity string = [string D.DATA(ibnd).labelA];end
     LINE(iline).DATA{irow,3} = string;
 
-    % Fill LINE struct for side B
-    irow = irow + 1;
-    LINE(iline).DATA{irow,1} = xb(ibnd,2);
-    LINE(iline).DATA{irow,2} = yb(ibnd,2);
-    string = sprintf(' %1s %1s ',D.DATA(ibnd).bndtype,D.DATA(ibnd).datatype);
-    if astronomical && ~OPT.Salinity string = [string D.DATA(ibnd).labelB];end
-    LINE(iline).DATA{irow,3} = string;
+    % Fill LINE struct for side B (avoid double points by checking if it is not first point of next boundary segment)
 
+    if ~(xb(ibnd,2) == xb(min(ibnd + 1,no_bnd),1) && yb(ibnd,2) == yb(min(ibnd +1,no_bnd),1))
+       irow = irow + 1;
+       LINE(iline).DATA{irow,1} = xb(ibnd,2);
+       LINE(iline).DATA{irow,2} = yb(ibnd,2);
+       string = sprintf(' %1s %1s ',D.DATA(ibnd).bndtype,D.DATA(ibnd).datatype);
+       if astronomical && ~OPT.Salinity string = [string D.DATA(ibnd).labelB];end
+       LINE(iline).DATA{irow,3} = string;
+    end
     irow = irow + 1;
 end
 

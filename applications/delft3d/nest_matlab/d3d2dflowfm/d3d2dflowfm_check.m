@@ -5,7 +5,7 @@ function d3d2dlowfm_check
 filmdf ={'d:\open_earth_test\matlab\applications\delft3d\nest_matlab\simona\A80\mdf_csm\dcsmv6.mdf'};
 filmdu ={'d:\open_earth_test\matlab\applications\delft3d\nest_matlab\simona\A80\mdu\dcsmv6.mdu'};
 
-for itest = 1 : length(filmdf)
+for itest = 1 : length(filmdf) 
 
     [path_mdu,name_mdu,~] = fileparts(filmdu{itest});
     if ~isdir(path_mdu);mkdir(path_mdu);end
