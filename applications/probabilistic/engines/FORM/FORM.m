@@ -58,6 +58,7 @@ varargin = prob_checkinput(varargin{:});
 % defaults
 OPT = struct(...
     'stochast', struct(),...  % stochast structure
+    'meta', struct(),...      % metadata structure
     'CorrMatrix',[], ...      % matrix with correlation coefficients (for Gaussian correlation)
     'x2zFunction', @x2z,...   % Function to transform x to z    
     'x2zVariables', {{}},...  % additional variables to use in x2zFunction
@@ -169,6 +170,9 @@ Iter = 0;                   % number of iterations so far
 alphas = NaN(OPT.maxiter,Nstoch);
 dzdu = zeros(OPT.maxiter,Nstoch);
 
+
+setpref('FORM', 'info', struct())
+
 %% start FORM iteration procedure
 while NextIter
     % derive a new series of u-values for the next iteration
@@ -193,7 +197,9 @@ while NextIter
         nonfinitevars = varnames(any(~isfinite(x(Calc,:))));
         error('FORM:xBecameNonFinite', 'x-values became Inf or NaN for variable(s):%s\n\tReconsider stochastic variable and z-function to solve the problem.', sprintf(' "%s"', nonfinitevars{:}))
     end
-    
+
+    setpref('FORM', 'Calc', Calc)
+
     % derive z based on x
     z(Calc,1) = prob_zfunctioncall(OPT, stochast, x(Calc,:));
     
@@ -333,6 +339,7 @@ result = struct(...
         'P', P,...
         'x', x,...
         'z', z,...
+        'info', getpref('FORM', 'info'),...
         'designpoint', [] ...
     ));
 

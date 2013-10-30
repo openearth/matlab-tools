@@ -94,7 +94,8 @@ varargin = prob_checkinput(varargin{:});
 % defaults
 OPT = struct(...
     'stochast',     struct(),   ...     % stochast structure
-    'CorrMatrix',[],            ...     % matrix with correlation coefficients (for Gaussian correlation)
+    'meta',         struct(),   ...     % metadata structure
+    'CorrMatrix',   [],         ...     % matrix with correlation coefficients (for Gaussian correlation)
     'x2zFunction',  @x2z,       ...     % Function to transform x to z
     'x2zVariables', {{}},       ...     % additional variables to use in x2zFunction
     'method',       'matrix',   ...     % z-function method 'matrix' (default) or 'loop'
@@ -116,6 +117,8 @@ OPT = struct(...
 );
 
 OPT = setproperty(OPT, varargin{:});
+
+setpref('FORM', 'info', struct())
 
 % convert old to new IS input format
 OPT = prob_is_convert(OPT);
@@ -195,6 +198,8 @@ while (~useAccuracy && n==1) || (useAccuracy && ( ...
        
     end
 
+    setpref('FORM', 'Calc', idx)
+
     % determine failures
     z(idx,:)    = prob_zfunctioncall(OPT, stochast, x(idx,:));
     idFail(idx,:) = z(idx,:) < 0;
@@ -233,6 +238,7 @@ result = struct(...
                         'u',        norm_inv(P, 0, 1),      ...
                         'P',        P,                      ...
                         'x',        x,                      ...
-                        'z',        z                       ...
+                        'z',        z,                      ...
+                        'info',     getpref('FORM', 'info') ...
                     )                                       ...
 );
