@@ -1,19 +1,13 @@
-function reducedData = average_matrix(data,factor)
-%average_matrix  One line description goes here.
-%
-%   More detailed description goes here.
-%
-%   Syntax:
-%   varargout = Untitled(varargin)
-%
-%   Input:
-%   varargin  =
-%
-%   Output:
-%   varargout =
+function reducedData = average_matrix(data,factor,varargin)
+%average_matrix  Average values of a matrix per n cells, define by dimension
 %
 %   Example
-%   Untitled
+%         data = peaks(100);
+%         reducedData = average_matrix(data,[2 10]);
+%         subplot(1,2,1)
+%         pcolor(data)
+%         subplot(1,2,2)
+%         pcolor(reducedData)
 %
 %   See also
 
@@ -58,8 +52,12 @@ function reducedData = average_matrix(data,factor)
 % $Keywords: $
 
 %%
+OPT.nanThreshold = prod(factor); % sets cell value to NaN if the count of NaN s in cell is equal to por grater than specified number;
+OPT = setproperty(OPT,varargin);
 
 siz = size(data);
+assert(OPT.nanThreshold<=prod(factor))
+assert(OPT.nanThreshold>=1)
 assert(isequal(size(siz),size(factor)))
 
 sizReducedData = siz./factor;
@@ -87,11 +85,11 @@ switch length(siz)
                 indFunStart(n(1),factor(1)):indFunEnd(n(1),factor(1)),...
                 indFunStart(n(2),factor(2)):indFunEnd(n(2),factor(2)));
             
-            notNan = ~isnan(selection);
-            if any(notNan(:))
-                reducedData(ii) = sum(selection(notNan)) / sum(notNan(:));
-            else
+            isNaN = isnan(selection);
+            if sum(isNaN(:)) >= OPT.nanThreshold
                 reducedData(ii) = nan;
+            else
+                reducedData(ii) = sum(selection(~isNaN)) / sum(~isNaN(:));
             end
         end
     case 3
