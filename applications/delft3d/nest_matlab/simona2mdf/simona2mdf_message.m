@@ -2,7 +2,11 @@ function simona2mdf_message(string,varargin)
 
 % message: writes general information to screen
 OPT.nesthd_path = getenv('nesthd_path');
+OPT.Close       = false;
+OPT.Window      = 'SIMINP2MDF Message';
+OPT.n_sec       = 1;
 OPT = setproperty(OPT,varargin{end-1:end});
+
 if ~isempty(OPT.nesthd_path);
     OPT.Logo        = imread([OPT.nesthd_path filesep 'bin' filesep 'simona_logo.jpg']);
     OPT.Logo2       =        [OPT.nesthd_path filesep 'bin' filesep 'deltares.gif'];
@@ -11,9 +15,6 @@ else
     OPT.Logo2  = '';
 end
 
-OPT.Close  = false;
-OPT.Window = 'SIMINP2MDF Message';
-OPT.n_sec  = 1;
 OPT        = setproperty(OPT,varargin);
 
 if ~isempty(OPT.Logo)
