@@ -71,7 +71,7 @@ OPT.version         = '1.3.0';
 OPT.request         = 'GetMap';
 OPT.layers          = '';            % from getCapabilities
 OPT.bbox            = [];            % check for bounds from getCapabilities
-OPT.format          = '';            % default; from getCapabilities
+OPT.format          = 'image/png';   % default; from getCapabilities
 OPT.crs             = 'EPSG%3A4326'; % OR CRS:84
 OPT.width           = 800;           % default, check for max from getCapabilities
 OPT.height          = 600;           % default, check for max from getCapabilities
@@ -97,10 +97,12 @@ OPT = setproperty(OPT,varargin);
 %% get_capabilities
 
    url0  = [OPT.server,'service=WMS&version=1.3.0&service=WMS&request=GetCapabilities'];
-   cache = [OPT.cachedir,filesep,mkvar(OPT.server),'.xml'];
+   ind = strfind(OPT.server,'//'); % remove http:// or https://
+   cachename = [OPT.cachedir,filesep,mkvar(OPT.server(ind+2:end))];
+   cache = [cachename,'.xml'];
    if ~exist(cache)
       urlwrite(url0,cache);
-      urlfile_write([OPT.cachedir,filesep,mkvar(OPT.server),'.url'],url0,now);   
+      urlfile_write([cachename,'.url'],url0,now);   
    else
       disp(['used WMS cache:',cache]); % load last access time too
    end
@@ -165,16 +167,17 @@ OPT = setproperty(OPT,varargin);
    end
 
 % server + layer crs
+% DO NOT USE urlencode, as it will double-encode the % from an already encoded url
 
-   crs0 = cellfun(@(x)urlencode(x),ensure_cell(xml.Capability.Layer.(crsname)),'UniformOutput',0);
+   crs0 = cellfun(@(x)strrep(x,':','%3A'),ensure_cell(xml.Capability.Layer.(crsname)),'UniformOutput',0);
    if isfield(Layer,crsname)
-   crs1 = cellfun(@(x)urlencode(x),ensure_cell(               Layer.(crsname)),'UniformOutput',0);
+   crs1 = cellfun(@(x)strrep(x,':','%3A'),ensure_cell(               Layer.(crsname)),'UniformOutput',0);
    else
    crs1 = {};
    end
    lim.crs = {crs0{:},crs1{:}};
    
-   OPT.crs = matchset('crs',OPT.crs,lim.crs,OPT.server);
+   OPT.crs = matchset('crs',strrep(OPT.crs,':','%3A'),lim.crs,OPT.server);
 
 % check valid width, height
 
@@ -193,10 +196,10 @@ OPT = setproperty(OPT,varargin);
 
    if OPT.flip   
    OPT.x = linspace(OPT.bbox(1),OPT.bbox(3),OPT.width);
-   OPT.y = linspace(OPT.bbox(4),OPT.bbox(2),OPT.height); % images are often upside down
+   OPT.y = linspace(OPT.bbox(4),OPT.bbox(2),OPT.height); % images are generally upside down: pixel(1,1) is upper left corner
    else
    OPT.x = linspace(OPT.bbox(2),OPT.bbox(4),OPT.width);
-   OPT.y = linspace(OPT.bbox(3),OPT.bbox(1),OPT.height); % images are often upside down
+   OPT.y = linspace(OPT.bbox(3),OPT.bbox(1),OPT.height); % images are generally upside down: pixel(1,1) is upper left corner
    end
 
 % check valid time
@@ -231,6 +234,7 @@ function c = ensure_cell(c)
    if ischar(c);c = cellstr(c);end
 
 function [val,i] = matchset(txt,val,set,title)
+%MATCHSET validate choice against set, make (menu) choice from valid set
 
    if ischar(set)
        set = cellstr(set);
@@ -239,7 +243,7 @@ function [val,i] = matchset(txt,val,set,title)
    if isnumeric(val)
       i = min(val,length(set));
       val  = set{i};
-      disp(['picked ',txt,'(',num2str(i),')="',val,'"'])
+      disp(['wms:selected:  ',txt,'(',num2str(i),')="',val,'"'])
    elseif isempty(val)
        if length(set)  < 2
            i = 1;
@@ -254,8 +258,10 @@ function [val,i] = matchset(txt,val,set,title)
    else
       i = strmatch(val,set,'exact');
       if isempty(i)
-          error(['not found ',txt,'="',val,'"'])
+          disp(['wms:not valid: ',txt,'="',val,'"'])
+          % throw menu to show options that are available
+          [val,i] = matchset(txt,'',set,title);
       else       
-          disp(['checked ',txt,'="',val,'"'])
+          disp(['wms:validated: ',txt,'="',val,'"'])
       end    
    end
