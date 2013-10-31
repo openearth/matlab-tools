@@ -76,6 +76,7 @@ OPT.crs             = 'EPSG%3A4326'; % OR CRS:84
 OPT.width           = 800;           % default, check for max from getCapabilities
 OPT.height          = 600;           % default, check for max from getCapabilities
 OPT.styles          = '';            % from getCapabilities
+OPT.transparent     = 'true';        % needs format image/png, note char format, as num2str(true)=1 and not 'true'
 OPT.time            = '';            % from getCapabilities
 OPT.swap            = 1;             % has to do with SRS vs. CRS
 OPT.flip            = 1;             % has to do with SRS vs. CRS
@@ -141,10 +142,17 @@ OPT = setproperty(OPT,varargin);
 % check valid bbox:
 
    if isempty(OPT.bbox)
+       if isfield(Layer,'EX_GeographicBoundingBox')
        OPT.bbox(2) = Layer.EX_GeographicBoundingBox.southBoundLatitude; % y0
        OPT.bbox(1) = Layer.EX_GeographicBoundingBox.westBoundLongitude; % x0
        OPT.bbox(4) = Layer.EX_GeographicBoundingBox.northBoundLatitude; % y1
        OPT.bbox(3) = Layer.EX_GeographicBoundingBox.eastBoundLongitude; % x1
+       elseif isfield(Layer,'LatLonBoundingBox')
+       OPT.bbox(2) = Layer.LatLonBoundingBox.ATTRIBUTE.miny; % y0
+       OPT.bbox(1) = Layer.LatLonBoundingBox.ATTRIBUTE.minx; % x0
+       OPT.bbox(4) = Layer.LatLonBoundingBox.ATTRIBUTE.maxy; % y1
+       OPT.bbox(3) = Layer.LatLonBoundingBox.ATTRIBUTE.maxx; % x1
+       end
        if OPT.swap
           OPT.bbox = OPT.bbox([2 1 4 3]);
        end
@@ -181,8 +189,8 @@ OPT = setproperty(OPT,varargin);
 
 % check valid width, height
 
-   OPT.width  = min(OPT.width ,xml.Service.MaxWidth);
-   OPT.height = min(OPT.height,xml.Service.MaxHeight);
+   if isfield(xml.Service,'MaxWidth'); OPT.width  = min(OPT.width ,xml.Service.MaxWidth );end
+   if isfield(xml.Service,'MaxHeight');OPT.height = min(OPT.height,xml.Service.MaxHeight);end
 
 % server + layer styles
 
@@ -191,6 +199,31 @@ OPT = setproperty(OPT,varargin);
    if isfield(               Layer,'Style');styles1 = {               Layer.Style.Name};end
    lim.styles = {styles0{:},styles1{:}};   
    OPT.styles = matchset('styles',OPT.styles,lim.styles,OPT.server);
+   
+% dimensions: time (optional)
+
+   if isfield(Layer,'Dimension')
+      for idim=1:length(Layer.Dimension)
+      if     strcmpi(Layer.Dimension(idim).ATTRIBUTE.name,'elevation')
+      lim.elevation = Layer.Dimension(idim).CONTENT;
+      elseif strcmpi(Layer.Dimension(idim).ATTRIBUTE.name,'time')
+      
+      lim.time = Layer.Dimension(idim).CONTENT;
+      
+      % OPT.time = matchset(OPT.time)
+
+      %% case list
+      % <Dimension name="time" units="ISO8601" multipleValues="true" current="true" default="2012-01-01T00:00:00.000Z">
+      % 1926-01-01T00:00:00.000Z,1948-01-01T00:00:00.000Z,1971-01-01T00:00:00.000Z,1981-01-01T00:00:00.000Z,1986-01-01T00:00:00.000Z,1987-01-01T00:00:00.000Z,1990-01-01T00:00:00.000Z,1991-01-01T00:00:00.000Z,1994-01-01T00:00:00.000Z,1997-01-01T00:00:00.000Z,1999-01-01T00:00:00.000Z,2001-01-01T00:00:00.000Z,2006-01-01T00:00:00.000Z,2009-01-01T00:00:00.000Z,2012-01-01T00:00:00.000Z
+      % </Dimension>
+      %% case extent
+      % <Dimension name="time" units="ISO8601"/>
+      % <Extent name="time" default="2013-10-31T17:40:00Z" multipleValues="1" nearestValue="0">2012-12-07T00:00:00Z/2013-10-31T17:40:00Z/PT5M</Extent>
+
+      end
+      end
+   
+   end
 
 % make center pixels
 
@@ -206,16 +239,17 @@ OPT = setproperty(OPT,varargin);
 
 %% construct url: standard keywords
 
-   url = [OPT.server,...
-   '&version=',OPT.version,...
-   '&request=',OPT.request,...
-   '&bbox=',   nums2str(OPT.bbox,','),...
-   '&layers=', OPT.layers,...
-   '&format=', OPT.format,...
-   '&crs=',    OPT.crs,...
-   '&width=',  num2str(OPT.width),...
-   '&height=', num2str(OPT.height),...
-   '&styles=', OPT.styles];
+   url = [OPT.server,'&service=wms',...
+   '&version='    ,         OPT.version,...
+   '&request='    ,         OPT.request,...
+   '&bbox='       ,nums2str(OPT.bbox,','),...
+   '&layers='     ,         OPT.layers,...
+   '&format='     ,         OPT.format,...
+   '&',crsname,'=',         OPT.crs,... % some require crs, KNMI: srs
+   '&width='      , num2str(OPT.width),...
+   '&height='     , num2str(OPT.height),...
+   '&transparent=',         OPT.transparent,...
+   '&styles='     , OPT.styles];
 
 %% construct url: standard options or non-standard extensions
 
@@ -227,7 +261,7 @@ OPT = setproperty(OPT,varargin);
    url = [url, '&time=',datestr(OPT.time,'YYYY-MM-DDTHH:MM:SS')];
    end
    
-    varargout = {url,OPT,lim};
+   varargout = {url,OPT,lim};
    
 function c = ensure_cell(c)
 
@@ -245,16 +279,16 @@ function [val,i] = matchset(txt,val,set,title)
       val  = set{i};
       disp(['wms:selected:  ',txt,'(',num2str(i),')="',val,'"'])
    elseif isempty(val)
-       if length(set)  < 2
-           i = 1;
+       if     isempty(set)  ;i = [];val = [];
+       elseif length(set)==1;i =  1;val = set{1};
        else
       [i, ok] = listdlg('ListString', set, .....
                      'SelectionMode', 'single', ...
                       'PromptString',['Select a ',txt,':'], ....
                               'Name',title,...
                           'ListSize', [500, 300]);
-       end
        val = set{i};
+       end
    else
       i = strmatch(val,set,'exact');
       if isempty(i)
