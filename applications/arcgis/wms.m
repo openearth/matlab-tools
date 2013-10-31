@@ -97,17 +97,28 @@ OPT = setproperty(OPT,varargin);
 
 %% get_capabilities
 
-   url0  = [OPT.server,'service=WMS&version=1.3.0&service=WMS&request=GetCapabilities'];
-   ind = strfind(OPT.server,'//'); % remove http:// or https://
-   cachename = [OPT.cachedir,filesep,mkvar(OPT.server(ind+2:end))];
-   cache = [cachename,'.xml'];
-   if ~exist(cache)
-      urlwrite(url0,cache);
-      urlfile_write([cachename,'.url'],url0,now);   
+   ind0 = strfind(OPT.server,'//'); % remove http:// or https://
+   ind1 = strfind(OPT.server,'?'); % cleanup
+   url0  = [OPT.server(1:ind1),'service=WMS&version=1.3.0&request=GetCapabilities']; % http://wms.agiv.be/ogc/wms/omkl? crashes on twice occurcne of service=wms
+   OPT.cachename = [OPT.cachedir,filesep,mkvar(OPT.server(ind0+2:ind1-1))]; % remove ?
+   xmlname = [OPT.cachename,'.xml']
+   if ~exist(xmlname)
+      urlwrite(url0,xmlname);
+      urlfile_write([OPT.cachename,'.url'],url0,now);   
    else
-      disp(['used WMS cache:',cache]); % load last access time too
+      disp(['used WMS cache:',xmlname]); % load last access time too
    end
-   xml   = xml_read(cache);
+   xml   = xml_read(xmlname,struct('Str2Num',0)); % prevent parsing of 1.1.1 or 1.3.0 to numbers
+
+%% check available WMS version
+
+   if strcmpi(xml.ATTRIBUTE.version,'1.3.0')
+      OPT.version = '1.3.0';
+   elseif strcmpi(xml.ATTRIBUTE.version,'1.1.1')
+      OPT.version = '1.1.1';
+   else
+       error('WMS not 1.1.1 or 1.3.0')
+   end
 
 %% check valid layers and get layer index into getcapabilities
 
@@ -139,27 +150,6 @@ OPT = setproperty(OPT,varargin);
       end
    end
 
-% check valid bbox:
-
-   if isempty(OPT.bbox)
-       if isfield(Layer,'EX_GeographicBoundingBox')
-       OPT.bbox(2) = Layer.EX_GeographicBoundingBox.southBoundLatitude; % y0
-       OPT.bbox(1) = Layer.EX_GeographicBoundingBox.westBoundLongitude; % x0
-       OPT.bbox(4) = Layer.EX_GeographicBoundingBox.northBoundLatitude; % y1
-       OPT.bbox(3) = Layer.EX_GeographicBoundingBox.eastBoundLongitude; % x1
-       elseif isfield(Layer,'LatLonBoundingBox')
-       OPT.bbox(2) = Layer.LatLonBoundingBox.ATTRIBUTE.miny; % y0
-       OPT.bbox(1) = Layer.LatLonBoundingBox.ATTRIBUTE.minx; % x0
-       OPT.bbox(4) = Layer.LatLonBoundingBox.ATTRIBUTE.maxy; % y1
-       OPT.bbox(3) = Layer.LatLonBoundingBox.ATTRIBUTE.maxx; % x1
-       end
-       if OPT.swap
-          OPT.bbox = OPT.bbox([2 1 4 3]);
-       end
-   else
-       
-   end
-
 % check valid format
 
    lim.format = xml.Capability.Request.GetMap.Format;
@@ -167,15 +157,14 @@ OPT = setproperty(OPT,varargin);
    i = strfind(OPT.format,'/');OPT.ext = ['.',OPT.format(i+1:end)];
 
 % check valid crs: handle symbol ":" inside
+% server + layer crs
+% DO NOT USE urlencode, as it will double-encode the % from an already encoded url
 
    if     isfield(xml.Capability.Layer,'CRS')
       crsname = 'CRS';
    elseif isfield(xml.Capability.Layer,'SRS')
       crsname = 'SRS';
    end
-
-% server + layer crs
-% DO NOT USE urlencode, as it will double-encode the % from an already encoded url
 
    crs0 = cellfun(@(x)strrep(x,':','%3A'),ensure_cell(xml.Capability.Layer.(crsname)),'UniformOutput',0);
    if isfield(Layer,crsname)
@@ -186,11 +175,44 @@ OPT = setproperty(OPT,varargin);
    lim.crs = {crs0{:},crs1{:}};
    
    OPT.crs = matchset('crs',strrep(OPT.crs,':','%3A'),lim.crs,OPT.server);
+   
+% check valid bbox:
+
+   if isempty(OPT.bbox)
+       
+       if isfield(Layer,'EX_GeographicBoundingBox')
+       OPT.bbox(2) = str2num(Layer.EX_GeographicBoundingBox.southBoundLatitude); % y0
+       OPT.bbox(1) = str2num(Layer.EX_GeographicBoundingBox.westBoundLongitude); % x0
+       OPT.bbox(4) = str2num(Layer.EX_GeographicBoundingBox.northBoundLatitude); % y1
+       OPT.bbox(3) = str2num(Layer.EX_GeographicBoundingBox.eastBoundLongitude); % x1
+       elseif isfield(Layer,'LatLonBoundingBox')
+       OPT.bbox(2) = str2num(Layer.LatLonBoundingBox.ATTRIBUTE.miny); % y0
+       OPT.bbox(1) = str2num(Layer.LatLonBoundingBox.ATTRIBUTE.minx); % x0
+       OPT.bbox(4) = str2num(Layer.LatLonBoundingBox.ATTRIBUTE.maxy); % y1
+       OPT.bbox(3) = str2num(Layer.LatLonBoundingBox.ATTRIBUTE.maxx); % x1
+       elseif isfield(Layer,'BoundingBox')
+
+       for ibox=1:length(Layer.BoundingBox) % 1.1.1
+       if strcmp(Layer.BoundingBox(ibox).ATTRIBUTE.(crsname),'EPSG:4326')
+       OPT.bbox(1) = str2num(Layer.BoundingBox(ibox).ATTRIBUTE.minx); % x0
+       OPT.bbox(2) = str2num(Layer.BoundingBox(ibox).ATTRIBUTE.miny); % y0
+       OPT.bbox(3) = str2num(Layer.BoundingBox(ibox).ATTRIBUTE.maxx); % x1
+       OPT.bbox(4) = str2num(Layer.BoundingBox(ibox).ATTRIBUTE.maxy); % y1
+       end % if        
+       end % for
+       end
+
+       if OPT.swap
+          OPT.bbox = OPT.bbox([2 1 4 3]);
+       end
+   else
+       
+   end
 
 % check valid width, height
 
-   if isfield(xml.Service,'MaxWidth'); OPT.width  = min(OPT.width ,xml.Service.MaxWidth );end
-   if isfield(xml.Service,'MaxHeight');OPT.height = min(OPT.height,xml.Service.MaxHeight);end
+   if isfield(xml.Service,'MaxWidth'); OPT.width  = min(OPT.width ,str2num(xml.Service.MaxWidth ));end
+   if isfield(xml.Service,'MaxHeight');OPT.height = min(OPT.height,str2num(xml.Service.MaxHeight));end
 
 % server + layer styles
 
