@@ -122,7 +122,6 @@ function netcdf_settings(varargin)
        
        try % matlab fails if several instances of matlab are accessing matlabprefs.mat, tgis hapens whne one users has many matlabn instances running
        setpref ( 'SNCTOOLS','USE_JAVA'   , 1);          % This requires SNCTOOLS 2.4.8 or better
-       setpref ( 'SNCTOOLS','USE_NETCDF_JAVA'   , 1);   % !!Quick fix, some confusion between USE_JAVA and USE_NETCDF_JAVA, snc_read_backend checks for the latter!!-should be fixed properly later
        if ~(OPT.quiet)
            disp('  netCDF: setpref( ''SNCTOOLS'',''USE_JAVA''   , 1) % force use of java for remote urls to avoid OPeNDAP bug in native package');
        end
