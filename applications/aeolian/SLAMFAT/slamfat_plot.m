@@ -67,6 +67,7 @@ function slamfat_plot(result, varargin)
 
 OPT = struct( ...
     'slice', 100, ...
+    'maxfactor', 0.5, ...
     'window', inf, ...
     'movie', '');
 
@@ -79,8 +80,8 @@ sx = 2;
 
 %% plot results
 
-ax_t = [1:result.output.nt] * result.input.dt;
-ax_x = [1:result.output.nx] * result.input.dx;
+ax_t = [1:result.dimensions.time] * result.input.dt;
+ax_x = [1:result.dimensions.space] * result.input.dx;
 
 subplots = [];
 vlines   = [];
@@ -88,21 +89,28 @@ vlines   = [];
 figure;
 
 subplots(1) = subplot(sy,sx,1); hold on;
-p1 = plot(ax_x, result.output.transport(1,:),'-b');
-p3 = plot(ax_x, result.output.capacity(1,:),'-r');
+p1 = plot(ax_x, squeeze(result.output.transport(1,:,:)));
+p3 = plot(ax_x, squeeze(result.output.capacity(1,:,:)),':r');
+pz = plot(ax_x, result.output.profile(1,:),'-k','LineWidth',2);
 
 xlim([0 max(ax_x)]);
-ylim([0 max(result.output.transport(:))]);
+ylim([0 OPT.maxfactor * max(result.output.transport(:))]);
 xlabel('distance [m]');
 ylabel({'concentration in transport' '[kg/m^3]'});
 
 subplots(2) = subplot(sy,sx,3); hold on;
-p2 = plot(ax_x, result.output.supply(1,:),'-b');
+p2 = plot(ax_x, squeeze(result.output.supply(1,:,:)));
 
 xlim([0 max(ax_x)]);
-ylim([0 max(result.output.supply(:))]);
+ylim([0 OPT.maxfactor * max(result.output.supply(:))]);
 xlabel('distance [m]');
 ylabel({'concentration at bed' '[kg/m^2]'});
+
+grain_size = result.input.bedcomposition.grain_size;
+if length(grain_size) > 1
+    legend(cellfun(@(x) sprintf('%d',round(x*1e6)), ...
+        num2cell(result.input.bedcomposition.grain_size),'UniformOutput',false));
+end
 
 subplots(3) = subplot(sy,sx,5); hold on;
 p4a = bar(ax_x, zeros(size(ax_x)), 1, 'g');
@@ -114,46 +122,50 @@ xlabel('distance [m]');
 ylabel({'erosion / accretion' '[kg/m^2]'});
 
 subplots(4) = subplot(sy,sx,2);
-plot(ax_t, result.input.wind(:,1));
+plot(ax_t, result.input.wind(:,1,1));
 
 xlim([0 max(ax_t)]);
 ylim([0 max(result.input.wind(:))]);
 vlines(1) = vline(0);
-hline(result.input.threshold);
+hline(result.input.threshold(1,1,:));
 ylabel('wind speed [m/s]');
 
 subplots(5) = subplot(sy,sx,4);
-plot(ax_t, result.output.transport(:,end));
+plot(ax_t, squeeze(result.output.transport(:,end,:)));
 
 xlim([0 max(ax_t)]);
-ylim([0 max(result.output.transport(:,end))]);
+ylim([0 max(max(result.output.transport(:,end,:)))]);
 vlines(2) = vline(0);
 ylabel({'concentration [kg/m^3]' sprintf('at x = %d m', max(ax_x))});
 
 subplots(6) = subplot(sy,sx,6);
-plot(ax_t, result.input.wind(:,1) .* result.output.transport(:,end));
+plot(ax_t, squeeze(result.input.wind(:,1,:) .* result.output.transport(:,end,:)));
 
 xlim([0 max(ax_t)]);
-ylim([0 max(result.input.wind(:,1) .* result.output.transport(:,end))]);
+ylim([0 max(max(result.input.wind(:,1,:) .* result.output.transport(:,end,:)))]);
 vlines(3) = vline(0);
 xlabel('time [s]');
 ylabel({'throughput [kg/s]' sprintf('at x = %d m', max(ax_x))});
 
 i = 1;
-for t = 1:OPT.slice:result.output.nt
+for t = 1:OPT.slice:result.dimensions.time
     
-    set(p1,'YData',result.output.transport(t,:));
-    set(p2,'YData',result.output.supply(t,:));
-    set(p3,'YData',result.output.capacity(t,:));
-    
-    if t > 1
-        % compute change in supply over current time slice
-        dsupply = sum(diff(result.output.supply(t-OPT.slice:t,:),[],1),1);
-        dsupply1 = dsupply; dsupply1(dsupply< 0) = nan;
-        dsupply2 = dsupply; dsupply2(dsupply>=0) = nan;
+    for i = 1:length(p1)
+        set(p1(i),'YData',result.output.transport(t,:,i));
+        set(p2(i),'YData',result.output.supply(t,:,i));
+        set(p3(i),'YData',result.output.capacity(t,:,i));
         
-        set(p4a,'YData',dsupply1);
-        set(p4b,'YData',dsupply2);
+        set(pz,'YData',result.output.profile(t,:));
+
+        if t > 1
+            % compute change in supply over current time slice
+            dsupply = sum(sum(diff(result.output.supply(t-OPT.slice:t,:,:),[],1),1),2);
+            dsupply1 = dsupply; dsupply1(dsupply< 0) = nan;
+            dsupply2 = dsupply; dsupply2(dsupply>=0) = nan;
+
+            set(p4a,'YData',dsupply1);
+            set(p4b,'YData',dsupply2);
+        end
     end
     
     title(subplots(1), sprintf('t = %d s', round((t-1)*result.input.dt)));
