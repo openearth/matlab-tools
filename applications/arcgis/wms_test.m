@@ -1,105 +1,73 @@
 SET.plot = 1; % 0 for catalogue only, 1 to download wms (SLOW)
 
+%   CRS image/jpg 1.3.0 4326=OK http://geoint.lmic.state.mn.us/cgi-bin/wmsll?&service=wms&version=1.3.0&request=GetMap&bbox=43.37,-97.39,49.41,-89.33&layers=fsa2010&format=image/jpeg&CRS=EPSG%3A4326&width=800&height=600&transparent=true&styles=default
+%   SRS image/png 1.1.1 4326=OK http://gdsc.nlr.nl/wms/lufo2005?&service=wms&version=1.1.1&request=GetMap&bbox=2.8146,50.2269,8.1661,54.067&layers=lufo2005-1m&format=image/png&SRS=EPSG%3A4326&width=800&height=600&transparent=true&styles=default
+%   CRS image/png 1.3.0 4326=OK http://wms.agiv.be/ogc/wms/omkl?&service=wms&version=1.3.0&request=GetMap&bbox=50.64,2.52,51.51,5.94&layers=Ortho&format=image/png&CRS=EPSG%3A4326&width=800&height=600&transparent=true&styles=default
+%   CRS image/png 1.3.0 4326=OK http://www.gebco.net/data_and_products/gebco_web_services/web_map_service/mapserv?&service=wms&version=1.3.0&request=GetMap&bbox=-90,-180,90,180&layers=GEBCO_08_Grid&format=image/png&CRS=EPSG%3A4326&width=800&height=600&transparent=true&styles=
+%   SRS image/png 1.1.1 4326=OK http://geoservices.knmi.nl/cgi-bin/RADNL_OPER_R___25PCPRR_L3.cgi?&service=wms&version=1.1.1&request=GetMap&bbox=0,48.8953,10.8564,55.9736&layers=RADNL_OPER_R___25PCPRR_L3_COLOR&format=image/png&SRS=EPSG%3A4326&width=800&height=600&transparent=true&styles=default&colorscalerange=-50,50
+%   CRS image/png 1.3.0 4326=OK http://geodata.nationaalgeoregister.nl/ahn25m/wms?&service=wms&version=1.3.0&request=GetMap&bbox=50.672,3.198,53.611,7.276&layers=ahn25m&format=image/png&CRS=EPSG%3A4326&width=800&height=600&transparent=true&styles=ahn25_cm
+%   CRS image/png 1.3.0 4326=OK http://geoport.whoi.edu/thredds/wms/bathy/etopo2_v2c.nc?&service=wms&version=1.3.0&request=GetMap&bbox=-89.9833,-179.9833,89.9833,179.9833&layers=topo&format=image/png&CRS=EPSG%3A4326&width=800&height=600&transparent=true&styles=boxfill/ferret&colorscalerange=-4000,4000
+%   CRS image/png 1.3.0 4326=NO http://data.ncof.co.uk/thredds/wms/METOFFICE-NWS-AF-BIO-DAILY?&service=wms&version=1.3.0&request=GetMap&bbox=-19.8888,40.0667,12.9997,65&layers=CHL&format=image/png&CRS=EPSG%3A4326&width=800&height=600&transparent=true&styles=boxfill/ferret&colorscalerange=0,1
+
+clc
+
 %% USA Minnesota state aerial imagery
 %  test: basic
 
 server = 'http://geoint.lmic.state.mn.us/cgi-bin/wmsll?';
-[url,OPT,lims] = wms('server',server,...
-    'layers','fsa2010',...
-    'swap'  ,1,'flip',0);
-  url
-  if SET.plot
-  urlwrite(url,[OPT.cachename,OPT.ext]);
-  [A,map,alpha] = imread([OPT.cachename,OPT.ext]);
-  image(OPT.x,OPT.y,A)
-  colormap(map)
-  tickmap('ll');grid on;
-  set(gca,'ydir','normal')
-  print2screensizeoverwrite([OPT.cachename,'_rendered'])
-  end
+[url,OPT,lims] = wms('server',server,'layers','fsa2010','styles','default');
+disp(['version: ',num2str(OPT.version),' crs: ',num2str(OPT.crs), ' ',url])
+if SET.plot;wms_image_plot(url,OPT);end
   
 %% Netherlands aerial imagery
 %  test: BoundingBox is a layer property per coordinate system (incl. one 4326 system), and not global 4326 property 
 %  test: version=1.1.1 only
 
-% OK:
-% http://gdsc.nlr.nl/wms/lufo2005?&service=wms&version=1.1.1&request=GetMap&bbox=2.8146,50.2269,8.1661,54.067&layers=lufo2005-1m&format=image/png&SRS=EPSG%3A4326&width=800&height=600&transparent=true&styles=default
-
 server = 'http://gdsc.nlr.nl/wms/lufo2005?';
-[url,OPT,lims] = wms('server',server,...
-    'layers','Ortho',...
-    'swap'  ,0,'flip',0);
-  url
-  if SET.plot
-  urlwrite(url,[OPT.cachename,OPT.ext]);
-  [A,map,alpha] = imread([OPT.cachename,OPT.ext]);
-  image(OPT.x,OPT.y,A)
-  colormap(map)
-  tickmap('ll');grid on;
-  set(gca,'ydir','normal')
-  print2screensizeoverwrite([OPT.cachename,'_rendered'])
-  end
+[url,OPT,lims] = wms('server',server,'layers','Ortho','styles','default');
+disp(['version: ',num2str(OPT.version),' crs: ',num2str(OPT.crs), ' ',url])
+if SET.plot;wms_image_plot(url,OPT);end
 
 %% Belgium aerial imagery
 %  test: crashed on http://wms.agiv.be/ogc/wms/omkl?service=WMS&version=1.3.0&request=GetCapabilities&service=WMS
 
 server = 'http://wms.agiv.be/ogc/wms/omkl?';
-[url,OPT,lims] = wms('server',server,...
-    'layers','Ortho',...
-    'swap'  ,1,'flip',0);
-  url
-  if SET.plot
-  urlwrite(url,[OPT.cachename,OPT.ext]);
-  [A,map,alpha] = imread([OPT.cachename,OPT.ext]);
-  image(OPT.x,OPT.y,A)
-  colormap(map)
-  tickmap('ll');grid on;
-  set(gca,'ydir','normal')
-  print2screensizeoverwrite([OPT.cachename,'_rendered'])
-  end
+[url,OPT,lims] = wms('server',server,'layers','Ortho');
+disp(['version: ',num2str(OPT.version),' crs: ',num2str(OPT.crs), ' ',url])
+if SET.plot;wms_image_plot(url,OPT);end
   
 %% GEBCO
 %  test: no style
 
 server = 'http://www.gebco.net/data_and_products/gebco_web_services/web_map_service/mapserv?';
-[url,OPT,lims] = wms('server',server,...
-    'layers','',...
-    'swap'  ,1,'flip',0);
-  url
-  if SET.plot  
-  urlwrite(url,[OPT.cachename,OPT.ext]);
-  [A,map,alpha] = imread([OPT.cachename,OPT.ext]);
-  image(OPT.x,OPT.y,A)
-  colormap(map)
-  tickmap('ll');grid on;
-  set(gca,'ydir','normal')
-  print2screensizeoverwrite([OPT.cachename,'_rendered'])
-  end
+[url,OPT,lims] = wms('server',server);
+disp(['version: ',num2str(OPT.version),' crs: ',num2str(OPT.crs), ' ',url])
+if SET.plot;wms_image_plot(url,OPT);end
   
-%% THREDDS MyOcean
-%  test: need to use color range and 
-%  test: 2 dimenions: elevation + time
-
-server = 'http://data.ncof.co.uk/thredds/wms/METOFFICE-NWS-AF-BIO-DAILY?';
+%% KNMI adaguc buienradar
+%  test: requires &service= (other servers don't)
+%  test: &srs= in url instead of &crs= 
+%  test: one dimension: time as extent
+  
+server = 'http://geoservices.knmi.nl/cgi-bin/RADNL_OPER_R___25PCPRR_L3.cgi?';
 [url,OPT,lims] = wms('server',server,...
-    'layers','CHL',...
-    'colorscalerange',[0,1],...  % explicit values required for nice colors
-    'swap'  ,0,'flip',1);
-  url
-  if SET.plot
-  urlwrite(url,[OPT.cachename,OPT.ext]);
-  [A,map,alpha] = imread([OPT.cachename,OPT.ext]);
-  image(OPT.x,OPT.y,A)
-  colormap(map)
-  tickmap('ll');grid on;
-  set(gca,'ydir','normal')
-  %TODO if ~isempty(OPT.colorscalerange);clim([OPT.colorscalerange]);end
-  %TODO colorbarwithvtext(OPT.layers)
-  print2screensizeoverwrite([OPT.cachename,'_rendered'])
-  end
+    'crs'   ,'EPSG%3A4326',...
+    'format','image/png',...
+    'layers',2,... % 1st layer
+    'styles',9,... % 9th style
+    'colorscalerange',[-50,50]);% explicit values required for nice colors
+disp(['version: ',num2str(OPT.version),' crs: ',num2str(OPT.crs), ' ',url])
+if SET.plot;wms_image_plot(url,OPT);end
+  
+%% NL PDOK bathymetry
+%  test: layer.layer (no 3rd layer level)
+
+server = 'http://geodata.nationaalgeoregister.nl/ahn25m/wms?';
+[url,OPT,lims] = wms('server',server,'layers','ahn25m');
+disp(['version: ',num2str(OPT.version),' crs: ',num2str(OPT.crs), ' ',url])
+if SET.plot;wms_image_plot(url,OPT);end
   
 %% THREDDS bathymetry
-%  test: something goes wrong with |lat| > 45
 %  test: one dimension: time
 
 server = 'http://geoport.whoi.edu/thredds/wms/bathy/etopo2_v2c.nc?';
@@ -108,45 +76,31 @@ server = 'http://geoport.whoi.edu/thredds/wms/bathy/etopo2_v2c.nc?';
     'format','image/png',...
     'layers',1,... % 1st layer
     'styles',9,... % 9th style
-    'colorscalerange',[-4000,4000],... % explicit values required for nice colors
-    'swap'  ,0,'flip',1);
-  url
-  if SET.plot
-  urlwrite(url,[OPT.cachename,OPT.ext]);
-  [A,map,alpha] = imread([OPT.cachename,OPT.ext]);
-  image(OPT.x,OPT.y,A)
-  colormap(map)
-  tickmap('ll');grid on;
-  set(gca,'ydir','normal')
-  %TODO if ~isempty(OPT.colorscalerange);clim([OPT.colorscalerange]);end
-  %TODO colorbarwithvtext(OPT.layers)  
-  print2screensizeoverwrite([OPT.cachename,'_rendered'])
-  end
+    'colorscalerange',[-4000,4000]); % explicit values required for nice colors
+disp(['version: ',num2str(OPT.version),' crs: ',num2str(OPT.crs), ' ',url])
+if SET.plot;wms_image_plot(url,OPT);end
   
-%% KNMI adaguc buienradar
-%  test: requires &service= 
-%  test: &srs= in url instead of &crs= 
-%  test: one dimension: time as extent
-  
-server = 'http://geoservices.knmi.nl/cgi-bin/RADNL_OPER_R___25PCPRR_L3.cgi?';
+%% THREDDS MyOcean (bit slow)
+%  test: need to use color range
+%  test: 2 dimenions: elevation + time
+%  test: interactive: many styles
+%  test: lat,lon swap in bbox for version=1.3.0 and crs=epsg:4326: use crs=crs:84
+
+warning('test: x-y swap for 1.3.0 and 4326')
+
+server = 'http://data.ncof.co.uk/thredds/wms/METOFFICE-NWS-AF-BIO-DAILY?';
 [url,OPT,lims] = wms('server',server,...
-    'bbox',[],...
-    'crs','EPSG%3A4326',...
-    'format','image/png',...
-    'layers',2,... % 1st layer
-    'styles',9,... % 9th style
-    'colorscalerange',[-50,50],... % explicit values required for nice colors
-    'swap'  ,0,'flip',1);
-  url
-  if SET.plot
-  urlwrite(url,[OPT.cachename,OPT.ext]);
-  [A,map,alpha] = imread([OPT.cachename,OPT.ext]);
-  image(OPT.x,OPT.y,A)
-  colormap(map)
-  tickmap('ll');grid on;
-  set(gca,'ydir','normal')
-  %TODO if ~isempty(OPT.colorscalerange);clim([OPT.colorscalerange]);end
-  %TODO colorbarwithvtext(OPT.layers)  
-  print2screensizeoverwrite([OPT.cachename,'_rendered'])
-  end
+    'layers','CHL',...
+    'colorscalerange',[0,1],...  % explicit values required for nice colors
+    'styles','boxfill/ferret',...
+     'crs','crs:84');
+disp(['version: ',num2str(OPT.version),' crs: ',num2str(OPT.crs), ' ',url])
+if SET.plot;wms_image_plot(url,OPT);end
   
+%% THREDDS vaklodingen
+%  test: lat,lon swap in bbox for version=1.3.0 and crs=epsg:4326: use crs=crs:84
+
+server = 'http://opendap.deltares.nl/thredds/wms/opendap/rijkswaterstaat/vaklodingen/vaklodingenKB121_2120.nc?';
+[url,OPT,lims] = wms('server',server,'crs','crs:84');
+disp(['version: ',num2str(OPT.version),' crs: ',num2str(OPT.crs), ' ',url])
+if SET.plot;wms_image_plot(url,OPT);end

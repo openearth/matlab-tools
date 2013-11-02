@@ -14,7 +14,7 @@ function varargout = wms(varargin)
 % layers= 1 / n / ''  get 1st / nth layer from server / show drop-down menu
 % format= 1 / n / ''  get 1st / nth layer from server / show drop-down menu
 % style = 1 / n / ''  get 1st / nth style from server / show drop-down menu
-% bbox  = []          get overall bbox from server
+% axis  = []          get overall axis from server [minlon minlat maxlon maxlat] (not always ame as bbox)
 %
 % Example:
 %
@@ -27,8 +27,12 @@ function varargout = wms(varargin)
 %   tickmap('ll');grid on;
 %   set(gca,'ydir','normal')
 %
-%See also: arcgis, netcdf, opendap, postgresql
+% Note: some WMS servers swap [lat,lon] in the bbox @ version 1.3.0 & crs=epsg:4326
+%
+%See also: WMS_IMAGE_PLOT, arcgis, netcdf, opendap, postgresql
 %          http://publicwiki.deltares.nl/display/OET/WMS+primer
+%          https://pypi.python.org/pypi/OWSLib
+%          http://nbviewer.ipython.org/urls/raw.github.com/Unidata/tds-python-workshop/master/wms_sample.ipynb
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -70,20 +74,18 @@ OPT.service         = 'WMS';
 OPT.version         = '1.3.0';
 OPT.request         = 'GetMap';
 OPT.layers          = '';            % from getCapabilities
-OPT.bbox            = [];            % check for bounds from getCapabilities
+OPT.axis            = [];            % check for bounds from getCapabilities
+OPT.bbox            = '';            % check order for lat-lon vs. lon-lat
 OPT.format          = 'image/png';   % default; from getCapabilities
-OPT.crs             = 'EPSG%3A4326'; % OR CRS:84
+OPT.crs             = 'EPSG%3A4326'; % http://viswaug.wordpress.com/2009/03/15/reversed-co-ordinate-axis-order-for-epsg4326-vs-crs84-when-requesting-wms-130-images/
 OPT.width           = 800;           % default, check for max from getCapabilities
 OPT.height          = 600;           % default, check for max from getCapabilities
 OPT.styles          = '';            % from getCapabilities
 OPT.transparent     = 'true';        % needs format image/png, note char format, as num2str(true)=1 and not 'true'
 OPT.time            = '';            % from getCapabilities
-OPT.swap            = 1;             % has to do with SRS vs. CRS
-OPT.flip            = 1;             % has to do with SRS vs. CRS
-OPT.cachedir        = 'd:\opendap.deltares.nl\wms\'; % store cache of xml (and later png)
 
-warning('Work In Progress')
-warning('Deal with CRS:84 vs EPSG:4326: swapping of lot-lat, lat-lon for now captured in keywors swap and flip')
+OPT.disp            = 0;             % write screen logs
+OPT.cachedir        = [tempdir,'matlab.wms',filesep]; % store cache of xml (and later png)
 
 % non-standard
 OPT.colorscalerange = [];
@@ -100,13 +102,14 @@ OPT = setproperty(OPT,varargin);
    ind0 = strfind(OPT.server,'//'); % remove http:// or https://
    ind1 = strfind(OPT.server,'?'); % cleanup
    url0  = [OPT.server(1:ind1),'service=WMS&version=1.3.0&request=GetCapabilities']; % http://wms.agiv.be/ogc/wms/omkl? crashes on twice occurcne of service=wms
+   if ~exist(OPT.cachedir);mkdir(OPT.cachedir);end
    OPT.cachename = [OPT.cachedir,filesep,mkvar(OPT.server(ind0+2:ind1-1))]; % remove ?
-   xmlname = [OPT.cachename,'.xml']
+   xmlname = [OPT.cachename,'.xml'];
    if ~exist(xmlname)
       urlwrite(url0,xmlname);
       urlfile_write([OPT.cachename,'.url'],url0,now);   
    else
-      disp(['used WMS cache:',xmlname]); % load last access time too
+      if OPT.disp;disp(['used WMS cache:',xmlname]);end % load last access time too
    end
    xml   = xml_read(xmlname,struct('Str2Num',0)); % prevent parsing of 1.1.1 or 1.3.0 to numbers
 
@@ -132,28 +135,30 @@ OPT = setproperty(OPT,varargin);
          lim.layers{end+1} = xml.Capability.Layer.Layer(i).Name;
       end
    end
-   
-   [OPT.layers] = matchset('layers',OPT.layers,lim.layers,OPT.server);
+
+   [OPT.layers] = matchset('layers',OPT.layers,lim.layers,OPT);
    for ilayer=1:length(xml.Capability.Layer.Layer)
       if isfield(xml.Capability.Layer.Layer(i),'Layer')       
          for jlayer=1:length(xml.Capability.Layer.Layer(ilayer).Layer)
-            if strcmp(OPT.layers,xml.Capability.Layer.Layer(ilayer).Layer(jlayer).Name)
+            if strcmpi(OPT.layers,xml.Capability.Layer.Layer(ilayer).Layer(jlayer).Name)
                Layer = xml.Capability.Layer.Layer(ilayer).Layer(jlayer);
                Layer.index = [ilayer,jlayer];
                continue
             end
          end
       else
-         Layer = xml.Capability.Layer.Layer(ilayer);
-         Layer.index = [ilayer];
-         continue
+         if strcmpi(OPT.layers,xml.Capability.Layer.Layer(ilayer).Name)
+            Layer = xml.Capability.Layer.Layer(ilayer);
+            Layer.index = [ilayer];
+            continue
+         end
       end
    end
 
 % check valid format
 
    lim.format = xml.Capability.Request.GetMap.Format;
-   OPT.format = matchset('format',OPT.format,lim.format,OPT.server);
+   OPT.format = matchset('format',OPT.format,lim.format,OPT);
    i = strfind(OPT.format,'/');OPT.ext = ['.',OPT.format(i+1:end)];
 
 % check valid crs: handle symbol ":" inside
@@ -161,53 +166,73 @@ OPT = setproperty(OPT,varargin);
 % DO NOT USE urlencode, as it will double-encode the % from an already encoded url
 
    if     isfield(xml.Capability.Layer,'CRS')
-      crsname = 'CRS';
+      OPT.crsname = 'CRS';
    elseif isfield(xml.Capability.Layer,'SRS')
-      crsname = 'SRS';
+      OPT.crsname = 'SRS';
    end
 
-   crs0 = cellfun(@(x)strrep(x,':','%3A'),ensure_cell(xml.Capability.Layer.(crsname)),'UniformOutput',0);
-   if isfield(Layer,crsname)
-   crs1 = cellfun(@(x)strrep(x,':','%3A'),ensure_cell(               Layer.(crsname)),'UniformOutput',0);
+   crs0 = cellfun(@(x)strrep(x,':','%3A'),ensure_cell(xml.Capability.Layer.(OPT.crsname)),'UniformOutput',0);
+   if isfield(Layer,OPT.crsname)
+   crs1 = cellfun(@(x)strrep(x,':','%3A'),ensure_cell(               Layer.(OPT.crsname)),'UniformOutput',0);
    else
    crs1 = {};
    end
    lim.crs = {crs0{:},crs1{:}};
    
-   OPT.crs = matchset('crs',strrep(OPT.crs,':','%3A'),lim.crs,OPT.server);
+   OPT.crs = matchset('crs',strrep(OPT.crs,':','%3A'),lim.crs,OPT);
    
-% check valid bbox:
+% check valid axis (not yet bbox):
 
    if isempty(OPT.bbox)
-       
-       if isfield(Layer,'EX_GeographicBoundingBox')
-       OPT.bbox(2) = str2num(Layer.EX_GeographicBoundingBox.southBoundLatitude); % y0
-       OPT.bbox(1) = str2num(Layer.EX_GeographicBoundingBox.westBoundLongitude); % x0
-       OPT.bbox(4) = str2num(Layer.EX_GeographicBoundingBox.northBoundLatitude); % y1
-       OPT.bbox(3) = str2num(Layer.EX_GeographicBoundingBox.eastBoundLongitude); % x1
-       elseif isfield(Layer,'LatLonBoundingBox')
-       OPT.bbox(2) = str2num(Layer.LatLonBoundingBox.ATTRIBUTE.miny); % y0
-       OPT.bbox(1) = str2num(Layer.LatLonBoundingBox.ATTRIBUTE.minx); % x0
-       OPT.bbox(4) = str2num(Layer.LatLonBoundingBox.ATTRIBUTE.maxy); % y1
-       OPT.bbox(3) = str2num(Layer.LatLonBoundingBox.ATTRIBUTE.maxx); % x1
+       if isfield(Layer,'EX_GeographicBoundingBox') & strcmpi(OPT.version,'1.3.0') % 1.3.0
+          disp([OPT.version,' ', OPT.crs,' ','EX_GeographicBoundingBox']);
+           OPT.axis(1) = str2num(Layer.EX_GeographicBoundingBox.westBoundLongitude);
+           OPT.axis(2) = str2num(Layer.EX_GeographicBoundingBox.southBoundLatitude);
+           OPT.axis(3) = str2num(Layer.EX_GeographicBoundingBox.eastBoundLongitude);
+           OPT.axis(4) = str2num(Layer.EX_GeographicBoundingBox.northBoundLatitude);
+       elseif isfield(Layer,'LatLonBoundingBox') & strcmpi(OPT.version,'1.1.1') % 1.1.1
+          disp([OPT.version,' ', OPT.crs,' ','LatLonBoundingBox']);
+           OPT.axis(1) = str2num(Layer.LatLonBoundingBox.ATTRIBUTE.minx);
+           OPT.axis(2) = str2num(Layer.LatLonBoundingBox.ATTRIBUTE.miny);
+           OPT.axis(3) = str2num(Layer.LatLonBoundingBox.ATTRIBUTE.maxx);
+           OPT.axis(4) = str2num(Layer.LatLonBoundingBox.ATTRIBUTE.maxy);
        elseif isfield(Layer,'BoundingBox')
-
-       for ibox=1:length(Layer.BoundingBox) % 1.1.1
-       if strcmp(Layer.BoundingBox(ibox).ATTRIBUTE.(crsname),'EPSG:4326')
-       OPT.bbox(1) = str2num(Layer.BoundingBox(ibox).ATTRIBUTE.minx); % x0
-       OPT.bbox(2) = str2num(Layer.BoundingBox(ibox).ATTRIBUTE.miny); % y0
-       OPT.bbox(3) = str2num(Layer.BoundingBox(ibox).ATTRIBUTE.maxx); % x1
-       OPT.bbox(4) = str2num(Layer.BoundingBox(ibox).ATTRIBUTE.maxy); % y1
-       end % if        
-       end % for
+         for ibox=1:length(Layer.BoundingBox)
+           if strcmpi(Layer.BoundingBox(ibox).ATTRIBUTE.(OPT.crsname),'EPSG:4326')
+               OPT.axis(1) = str2num(Layer.BoundingBox(ibox).ATTRIBUTE.minx); % x0
+               OPT.axis(2) = str2num(Layer.BoundingBox(ibox).ATTRIBUTE.miny); % y0
+               OPT.axis(3) = str2num(Layer.BoundingBox(ibox).ATTRIBUTE.maxx); % x1
+               OPT.axis(4) = str2num(Layer.BoundingBox(ibox).ATTRIBUTE.maxy); % y1
+           elseif strcmpi(Layer.BoundingBox(ibox).ATTRIBUTE.(OPT.crsname),'CRS:84')
+               OPT.axis(1) = str2num(Layer.BoundingBox(ibox).ATTRIBUTE.minx); % x0
+               OPT.axis(2) = str2num(Layer.BoundingBox(ibox).ATTRIBUTE.miny); % y0
+               OPT.axis(3) = str2num(Layer.BoundingBox(ibox).ATTRIBUTE.maxx); % x1
+               OPT.axis(4) = str2num(Layer.BoundingBox(ibox).ATTRIBUTE.maxy); % y1
+           end % if        
+         end % for
        end
-
-       if OPT.swap
-          OPT.bbox = OPT.bbox([2 1 4 3]);
-       end
-   else
-       
    end
+
+% check valid bbox (handle lon-lat vs. lat-lon:
+% 'http://viswaug.wordpress.com/2009/03/15/reversed-co-ordinate-axis-order-for-epsg4326-vs-crs84-when-requesting-wms-130-images/');end
+% Spec for 1.3.0:
+% SRS=CRS:84&BBOX=min_lon,min_lat,max_lon,max_lat
+% or
+% SRS=EPSG:4326&=min_lat,min_lon,max_lat,max_lon <<<<<<<<<<<<<<<<
+% Spec for 1.1.1:
+% SRS=EPSG:4326&BBOX=min_lon,min_lat,max_lon,max_lat 
+
+% THREDDS DOES NOT OBEY THIS FOR 4326 !!!
+
+   if     strcmpi(OPT.version,'1.3.0') & strcmpi(strrep(OPT.crs,':','%3A'),'EPSG%3A4326')
+       % [min_lat,min_lon,max_lat,max_lon]  % reversed
+       OPT.bbox  = nums2str(OPT.axis([2,1,4,3]),',');
+       warning('crs=CRS:84 to be used instead of crs=EPSG:4326 to prevent mixing-up lat-lon in THREDDS')
+   else
+       % [min_lon,min_lat,max_lon,max_lat]
+       % [minx   ,miny   ,maxx   ,maxy   ]
+       OPT.bbox  = nums2str(OPT.axis,',');       
+   end   
 
 % check valid width, height
 
@@ -220,7 +245,7 @@ OPT = setproperty(OPT,varargin);
    if isfield(xml.Capability.Layer,'Style');styles0 = {xml.Capability.Layer.Style.Name};end
    if isfield(               Layer,'Style');styles1 = {               Layer.Style.Name};end
    lim.styles = {styles0{:},styles1{:}};   
-   OPT.styles = matchset('styles',OPT.styles,lim.styles,OPT.server);
+   OPT.styles = matchset('styles',OPT.styles,lim.styles,OPT);
    
 % dimensions: time (optional)
 
@@ -249,13 +274,8 @@ OPT = setproperty(OPT,varargin);
 
 % make center pixels
 
-   if OPT.flip   
-   OPT.x = linspace(OPT.bbox(1),OPT.bbox(3),OPT.width);
-   OPT.y = linspace(OPT.bbox(4),OPT.bbox(2),OPT.height); % images are generally upside down: pixel(1,1) is upper left corner
-   else
-   OPT.x = linspace(OPT.bbox(2),OPT.bbox(4),OPT.width);
-   OPT.y = linspace(OPT.bbox(3),OPT.bbox(1),OPT.height); % images are generally upside down: pixel(1,1) is upper left corner
-   end
+  OPT.x = linspace(OPT.axis(1),OPT.axis(3),OPT.width);
+  OPT.y = linspace(OPT.axis(4),OPT.axis(2),OPT.height); % images are generally upside down: pixel(1,1) is upper left corner
 
 % check valid time
 
@@ -264,10 +284,10 @@ OPT = setproperty(OPT,varargin);
    url = [OPT.server,'&service=wms',...
    '&version='    ,         OPT.version,...
    '&request='    ,         OPT.request,...
-   '&bbox='       ,nums2str(OPT.bbox,','),...
+   '&bbox='       ,         OPT.bbox,...
    '&layers='     ,         OPT.layers,...
    '&format='     ,         OPT.format,...
-   '&',crsname,'=',         OPT.crs,... % some require crs, KNMI: srs
+   '&',OPT.crsname,'=',         OPT.crs,... % some require crs, KNMI: srs
    '&width='      , num2str(OPT.width),...
    '&height='     , num2str(OPT.height),...
    '&transparent=',         OPT.transparent,...
@@ -289,7 +309,7 @@ function c = ensure_cell(c)
 
    if ischar(c);c = cellstr(c);end
 
-function [val,i] = matchset(txt,val,set,title)
+function [val,i] = matchset(txt,val,set,OPT)
 %MATCHSET validate choice against set, make (menu) choice from valid set
 
    if ischar(set)
@@ -299,25 +319,28 @@ function [val,i] = matchset(txt,val,set,title)
    if isnumeric(val)
       i = min(val,length(set));
       val  = set{i};
-      disp(['wms:selected:  ',txt,'(',num2str(i),')="',val,'"'])
+      if OPT.disp;disp(['wms:selected:  ',txt,'(',num2str(i),')="',val,'"']);end
    elseif isempty(val)
+       
+       
        if     isempty(set)  ;i = [];val = [];
        elseif length(set)==1;i =  1;val = set{1};
        else
       [i, ok] = listdlg('ListString', set, .....
                      'SelectionMode', 'single', ...
                       'PromptString',['Select a ',txt,':'], ....
-                              'Name',title,...
+                              'Name',OPT.server,...
                           'ListSize', [500, 300]);
        val = set{i};
        end
    else
-      i = strmatch(val,set,'exact');
+      i = strmatch(lower(val),lower(set),'exact');
       if isempty(i)
-          disp(['wms:not valid: ',txt,'="',val,'"'])
+          warning(['wms:not valid: ',txt,'="',val,'"'])
           % throw menu to show options that are available
-          [val,i] = matchset(txt,'',set,title);
+          [val,i] = matchset(txt,'',set,OPT);
       else       
-          disp(['wms:validated: ',txt,'="',val,'"'])
+          if OPT.disp;disp(['wms:validated: ',txt,'="',val,'"']);end
       end    
    end
+     
