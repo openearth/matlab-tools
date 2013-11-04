@@ -50,6 +50,11 @@
         <callback>ddb_saveDelft3DFLOW</callback>
         <option>saveallas</option>
       </menuitem>
+      <menuitem>
+        <string>Delft3D-FLOW version ...</string>
+        <callback>ddb_saveDelft3DFLOW</callback>
+        <option>selectversion</option>
+      </menuitem>
     </menusavefile>
     <menuview>
       <attribute>

@@ -86,6 +86,9 @@ switch lower(varargin{1}),
         disp('Finding models ...');
         ddb_findModels;
         
+        disp('Reading settings ...');
+        ddb_readConfigXML;
+        
         disp('Initializing screen parameters ...');
         ddb_initializeScreenParameters;
         

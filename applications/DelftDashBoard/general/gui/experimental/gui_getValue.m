@@ -3,43 +3,51 @@ function val=gui_getValue(el,v)
 
 val=[];
 
-getFcn=getappdata(el.handle,'getFcn');
-
-
-if length(v)>=11
-    if strcmpi(v(1:11),'mainhandles')
-        getFcn=@getHandles;
+if isfield(el,'handle')
+    
+    % Using GUI and getFcn approach
+    
+    getFcn=getappdata(el.handle,'getFcn');
+    
+    if length(v)>=11
+        if strcmpi(v(1:11),'mainhandles')
+            getFcn=@getHandles;
+        end
     end
-end
-
-s=feval(getFcn);
-
-% Variable name
-if ~isfield(el,'variableprefix')
-    el.variableprefix=[];
-end
-
-if ~isempty(el.variableprefix)
-    varstring=['s.' el.variableprefix '.' v];
+    
+    s=feval(getFcn);
+    
+    % Variable name
+    if ~isfield(el,'variableprefix')
+        el.variableprefix=[];
+    end
+    
+    if ~isempty(el.variableprefix)
+        varstring=['s.' el.variableprefix '.' v];
+    else
+        varstring=['s.' v];
+    end
+    
+    % assignin(ws, 'var', val);
+    
+    % Dashboard adaptation
+    % If variable name starts with 'handles'
+    if length(v)>=7
+        if strcmpi(v(1:7),'handles')
+            varstring=v;
+            varstring=strrep(varstring,'handles','s');
+        end
+    end
+    if length(v)>=11
+        if strcmpi(v(1:11),'mainhandles')
+            varstring=v;
+            varstring=strrep(varstring,'mainhandles','s');
+        end
+    end
+    
 else
-    varstring=['s.' v];
-end
-
-% assignin(ws, 'var', val);
-
-% Dashboard adaptation
-% If variable name starts with 'handles' 
-if length(v)>=7
-    if strcmpi(v(1:7),'handles')
-        varstring=v;
-        varstring=strrep(varstring,'handles','s');
-    end
-end
-if length(v)>=11
-    if strcmpi(v(1:11),'mainhandles')
-        varstring=v;
-        varstring=strrep(varstring,'mainhandles','s');
-    end
+    % el contains all the data (used in Muppet writing of session files)
+    varstring=['el.' v];
 end
 
 try

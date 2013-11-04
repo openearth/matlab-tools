@@ -64,6 +64,9 @@ function [handles ok] = ddb_getDirectories(handles)
 
 ok=1;
 
+% Read ini xml file
+
+
 handles.workingDirectory=pwd;
 
 if isdeployed
@@ -74,6 +77,7 @@ if isdeployed
     exeDir = char(regexpi(result, 'Path=(.*?);', 'tokens', 'once'));
     datadir=[fileparts(exeDir) filesep 'data' filesep];
     additionalToolboxDir=[];
+%     maindir=[fileparts(exeDir) filesep];
     
 else
     
@@ -138,6 +142,7 @@ handles.shorelineDir=[datadir 'shorelines' filesep];
 handles.satelliteDir=[datadir 'imagery' filesep];
 handles.superTransDir=[datadir 'supertrans' filesep];
 handles.proxyDir=[datadir 'proxysettings' filesep];
+handles.xmlConfigDir=datadir;
 
 %  Tropical Cyclone bulletin download directory (used by check_tc_files.pl):
 handles.tropicalCycloneDir = [datadir 'tropicalcyclone' filesep];

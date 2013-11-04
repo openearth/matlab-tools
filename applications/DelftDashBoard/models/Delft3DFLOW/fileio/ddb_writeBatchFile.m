@@ -59,10 +59,14 @@ function ddb_writeBatchFile(runid,varargin)
 % $HeadURL: $
 % $Keywords: $
 
+handles=getHandles;
+
 %%
 if ispc,
+
     mdwfile=[];
     fname='batch_flow.bat';
+    
     for ii=1:length(varargin)
         if ischar(varargin{ii})
             switch lower(varargin{ii})
@@ -73,50 +77,28 @@ if ispc,
         end
     end
     
-    fid=fopen(fname,'w');
-    
-    if exist([getenv('D3D_HOME') '\' getenv('ARCH') '\flow\bin\d_hydro.exe'],'file')
+    switch handles.Model(md).version
         
-        % Check whether Delft3D FLOW version has been set
-        handles=getHandles;
-        if handles.Model(md).VersionSelect == 0
-            clearInstructions;
-            ddb_zoomOff;
-            h=handles;
-            xmldir=handles.Model(md).xmlDir;
-            xmlfile='Delft3DFLOW.flowversion.xml';
-            [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir filesep 'icons' filesep 'deltares.gif']);
-            
-            if ok
-                handles=h;
-                handles.Model(md).VersionSelect=1;
-                setHandles(handles);
-            else
-                ddb_giveWarning('','Could not generate batch file, because no flow version was selected')
-                return
-            end
-        end
-        handles=getHandles;
-        
-        % New open-source version
-        fprintf(fid,'%s\n','@ echo off');
-        if strcmp(handles.Model(md).Version,'5.00.xx')
+        case{'5.00.xx'}
+
+            % Batch file
+            fid=fopen(fname,'w');            
+            fprintf(fid,'%s\n','@ echo off');            
             fprintf(fid,'%s\n','set argfile=config_flow2d3d.xml');
-        else
-            fprintf(fid,'%s\n','set argfile=config_d_hydro.xml');
-        end
-        fprintf(fid,'%s\n',['set exedir=' getenv('D3D_HOME') '\' getenv('ARCH') '\flow\bin\']);
-        fprintf(fid,'%s\n','set PATH=%exedir%;%PATH%');
-        
-        if ~isempty(mdwfile)
-            fprintf(fid,'%s\n','start %exedir%\d_hydro.exe %argfile%');
-            fprintf(fid,'%s\n',[getenv('D3D_HOME') '\' getenv('ARCH') '\wave\bin\wave.exe ' mdwfile ' 1']);
-        else
-            fprintf(fid,'%s\n','%exedir%\d_hydro.exe %argfile%');
-        end
-        
-        if strcmp(handles.Model(md).Version,'5.00.xx')
-            % Xml only necessary for debugging in version 5.00.xx
+            fprintf(fid,'%s\n',['set flowexedir="' handles.Model(md).exedir '"']);
+            if ~isempty(mdwfile)
+                iwav=strmatch('Delft3DWAVE',{handles.Model.name},'exact');
+                fprintf(fid,'%s\n',['set waveexedir="' handles.Model(iwav).exedir '"']);
+            end
+            fprintf(fid,'%s\n','set PATH=%exedir%;%PATH%');
+            if ~isempty(mdwfile)
+                fprintf(fid,'%s\n','start %flowexedir%\deltares_hydro.exe %argfile%');
+                fprintf(fid,'%s\n',['%waveexedir%\wave.exe ' mdwfile ' 1']);
+            else
+                fprintf(fid,'%s\n','%exedir%\deltares_hydro.exe %argfile%');
+            end            
+            fprintf(fid,'%s\n','%exedir%\deltares_hydro.exe %argfile%');
+            fclose(fid);
             
             % Write xml config file
             fini=fopen('config_flow2d3d.xml','w');
@@ -126,17 +108,27 @@ if ispc,
             fprintf(fini,'%s\n','</DeltaresHydro>');
             fclose(fini);
             
-            % Write old config file
-            fini=fopen('config_flow2d3d.ini','w');
-            fprintf(fini,'%s\n','[FileInformation]');
-            fprintf(fini,'%s\n',['   FileCreatedBy    = ' getenv('USERNAME')]);
-            fprintf(fini,'%s\n',['   FileCreationDate = ' datestr(now)]);
-            fprintf(fini,'%s\n','   FileVersion      = 00.01');
-            fprintf(fini,'%s\n','[Component]');
-            fprintf(fini,'%s\n','   Name                = flow2d3d');
-            fprintf(fini,'%s\n',['   MDFfile             = ' runid]);
-            fclose(fini);
-        else
+        case{'6.00.xx'}
+            
+            % Batch file
+            fid=fopen(fname,'w');            
+            fprintf(fid,'%s\n','@ echo off');            
+            fprintf(fid,'%s\n','set argfile=config_d_hydro.xml');            
+            fprintf(fid,'%s\n',['set flowexedir="' handles.Model(md).exedir '"']);
+            if ~isempty(mdwfile)
+                iwav=strmatch('Delft3DWAVE',{handles.Model.name},'exact');
+                fprintf(fid,'%s\n',['set waveexedir="' handles.Model(iwav).exedir '"']);
+            end
+            fprintf(fid,'%s\n','set PATH=%exedir%;%PATH%');
+            if ~isempty(mdwfile)
+                fprintf(fid,'%s\n','start %flowexedir%\d_hydro.exe %argfile%');
+                fprintf(fid,'%s\n',['%waveexedir%\wave.exe ' mdwfile ' 1']);
+            else
+                fprintf(fid,'%s\n','%flowexedir%\d_hydro.exe %argfile%');
+            end
+            fclose(fid);
+
+            % Write xml config file
             fini=fopen('config_d_hydro.xml','w');
             fprintf(fini,'%s\n','<?xml version=''1.0'' encoding=''iso-8859-1''?>');
             fprintf(fini,'%s\n','<deltaresHydro xmlns="http://schemas.deltares.nl/deltaresHydro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.deltares.nl/deltaresHydro http://content.oss.deltares.nl/schemas/d_hydro-1.00.xsd">');
@@ -156,88 +148,178 @@ if ispc,
             fprintf(fini,'%s\n','</flow2D3D>');
             fprintf(fini,'%s\n','</deltaresHydro>');
             fclose(fini);
-        end
-        
-        
-    elseif exist([getenv('D3D_HOME') '\' getenv('ARCH') '\flow\bin\deltares_hydro.exe'],'file')
-        
-        % New open-source version
-        fprintf(fid,'%s\n','@ echo off');
-        fprintf(fid,'%s\n','set argfile=config_flow2d3d.ini');
-        fprintf(fid,'%s\n',['set exedir=' getenv('D3D_HOME') '\' getenv('ARCH') '\flow\bin\']);
-        fprintf(fid,'%s\n','set PATH=%exedir%;%PATH%');
-        
-        if exist([getenv('D3D_HOME') '\' getenv('ARCH') '\flow\bin\deltares_hydro.exe'],'file')
             
-            % New open-source version
-            fprintf(fid,'%s\n','@ echo off');
-            fprintf(fid,'%s\n','set argfile=config_flow2d3d.ini');
-            fprintf(fid,'%s\n',['set exedir=' getenv('D3D_HOME') '\' getenv('ARCH') '\flow\bin\']);
-            fprintf(fid,'%s\n','set PATH=%exedir%;%PATH%');
-            
-            if ~isempty(mdwfile)
-                fprintf(fid,'%s\n','start %exedir%\deltares_hydro.exe %argfile%');
-                fprintf(fid,'%s\n',[getenv('D3D_HOME') '\' getenv('ARCH') '\wave\bin\wave.exe ' mdwfile ' 1']);
-            else
-                fprintf(fid,'%s\n','%exedir%\deltares_hydro.exe %argfile%');
-            end
-            
-            % Write config file
-            fini=fopen('config_flow2d3d.ini','w');
-            fprintf(fini,'%s\n','[FileInformation]');
-            fprintf(fini,'%s\n',['   FileCreatedBy    = ' getenv('USERNAME')]);
-            fprintf(fini,'%s\n',['   FileCreationDate = ' datestr(now)]);
-            fprintf(fini,'%s\n','   FileVersion      = 00.01');
-            fprintf(fini,'%s\n','[Component]');
-            fprintf(fini,'%s\n','   Name                = flow2d3d');
-            fprintf(fini,'%s\n',['   MDFfile             = ' runid]);
-            fclose(fini);
-            
-        else
-            if exist([getenv('D3D_HOME') '\' getenv('ARCH') '\flow\bin\trisim.exe'],'file')
-                fprintf(fid,'%s\n',['echo ' runid ' > runid ']);
-                fprintf(fid,'%s\n','%D3D_HOME%\%ARCH%\flow\bin\tdatom.exe');
-                fprintf(fid,'%s\n','%D3D_HOME%\%ARCH%\flow\bin\trisim.exe');
-            elseif exist([getenv('D3D_HOME') '\' getenv('ARCH') '\flow\bin\delftflow.exe'],'file')
-                fprintf(fid,'%s\n',['set runid=' runid]);
-                fprintf(fid,'%s\n',['set exedir=' getenv('D3D_HOME') '\' getenv('ARCH') '\flow\bin\']);
-                fprintf(fid,'%s\n','set argfile=delft3d-flow_args.txt');
-                fprintf(fid,'%s\n','echo -r %runid% >%argfile%');
-                fprintf(fid,'%s\n','%exedir%\delftflow.exe %argfile% dummy delft3d');
-                if ~isempty(mdwfile)
-                    fprintf(fid,'%s\n','start %exedir%\delftflow.exe %argfile% dummy delft3d');
-                    fprintf(fid,'%s\n',[getenv('D3D_HOME') '\' getenv('ARCH') '\wave\bin\wave.exe ' mdwfile ' 1']);
-                else
-                    fprintf(fid,'%s\n','%exedir%\delftflow.exe %argfile% dummy delft3d');
-                end
-            else
-                
-                % Assume new open source version sits in c:\delft3d\w32\flow\bin\
-                fprintf(fid,'%s\n','@ echo off');
-                fprintf(fid,'%s\n','set argfile=config_flow2d3d.ini');
-                fprintf(fid,'%s\n',['set exedir=c:\delft3d\w32\flow\bin\']);
-                fprintf(fid,'%s\n','set PATH=%exedir%;%PATH%');
-                if ~isempty(mdwfile)
-                    fprintf(fid,'%s\n','start %exedir%\deltares_hydro.exe %argfile%');
-                    fprintf(fid,'%s\n',['c:\delft3d\w32\flow\bin\wave\bin\wave.exe ' mdwfile ' 1']);
-                else
-                    fprintf(fid,'%s\n','%exedir%\deltares_hydro.exe %argfile%');
-                end
-                
-                % Write config file
-                fini=fopen('config_flow2d3d.ini','w');
-                fprintf(fini,'%s\n','[FileInformation]');
-                fprintf(fini,'%s\n',['   FileCreatedBy    = ' getenv('USERNAME')]);
-                fprintf(fini,'%s\n',['   FileCreationDate = ' datestr(now)]);
-                fprintf(fini,'%s\n','   FileVersion      = 00.01');
-                fprintf(fini,'%s\n','[Component]');
-                fprintf(fini,'%s\n','   Name                = flow2d3d');
-                fprintf(fini,'%s\n',['   MDFfile             = ' runid]);
-                fclose(fini);
-                
-            end
-        end
+        otherwise
+            % older version
     end
+
+%     fclose(fid);
+%     
+%     if exist([getenv('D3D_HOME') '\' getenv('ARCH') '\flow2d3d\bin\d_hydro.exe'],'file')
+%         
+% %         % Check whether Delft3D FLOW version has been set
+% %         handles=getHandles;
+% %         if handles.Model(md).VersionSelect == 0
+% %             clearInstructions;
+% %             ddb_zoomOff;
+% %             h=handles;
+% %             xmldir=handles.Model(md).xmlDir;
+% %             xmlfile='Delft3DFLOW.flowversion.xml';
+% %             [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir filesep 'icons' filesep 'deltares.gif']);
+% %             
+% %             if ok
+% %                 handles=h;
+% %                 handles.Model(md).VersionSelect=1;
+% %                 setHandles(handles);
+% %             else
+% %                 ddb_giveWarning('','Could not generate batch file, because no flow version was selected')
+% %                 return
+% %             end
+% %         end
+% 
+%         handles=getHandles;
+%         
+%         % New open-source version
+%         fprintf(fid,'%s\n','@ echo off');
+%         if strcmp(handles.Model(md).version,'5.00.xx')
+%             fprintf(fid,'%s\n','set argfile=config_flow2d3d.xml');
+%             fprintf(fid,'%s\n',['set exedir="' getenv('D3D_HOME') '\' getenv('ARCH') '\flow\bin\"']);
+%         else
+%             fprintf(fid,'%s\n','set argfile=config_d_hydro.xml');
+%             fprintf(fid,'%s\n',['set exedir="' getenv('D3D_HOME') '\' getenv('ARCH') '\flow2d3d\bin\"']);
+%         end
+%         fprintf(fid,'%s\n','set PATH=%exedir%;%PATH%');
+%         
+%         if ~isempty(mdwfile)
+%             fprintf(fid,'%s\n','start %exedir%\d_hydro.exe %argfile%');
+%             fprintf(fid,'%s\n',['"' getenv('D3D_HOME') '\' getenv('ARCH') '\wave\bin\wave.exe" ' mdwfile ' 1']);
+%         else
+%             fprintf(fid,'%s\n','%exedir%\d_hydro.exe %argfile%');
+%         end
+%         
+%         if strcmp(handles.Model(md).version,'5.00.xx')
+%             % Xml only necessary for debugging in version 5.00.xx
+%             
+%             % Write xml config file
+%             fini=fopen('config_flow2d3d.xml','w');
+%             fprintf(fini,'%s\n','<?xml version="1.0" encoding="iso-8859-1"?>');
+%             fprintf(fini,'%s\n','<DeltaresHydro start="flow2d3d">');
+%             fprintf(fini,'%s\n',['<flow2d3d MDFile = ''' runid '.mdf''></flow2d3d>']);
+%             fprintf(fini,'%s\n','</DeltaresHydro>');
+%             fclose(fini);
+%             
+%             % Write old config file
+%             fini=fopen('config_flow2d3d.ini','w');
+%             fprintf(fini,'%s\n','[FileInformation]');
+%             fprintf(fini,'%s\n',['   FileCreatedBy    = ' getenv('USERNAME')]);
+%             fprintf(fini,'%s\n',['   FileCreationDate = ' datestr(now)]);
+%             fprintf(fini,'%s\n','   FileVersion      = 00.01');
+%             fprintf(fini,'%s\n','[Component]');
+%             fprintf(fini,'%s\n','   Name                = flow2d3d');
+%             fprintf(fini,'%s\n',['   MDFfile             = ' runid]);
+%             fclose(fini);
+%         else
+%             fini=fopen('config_d_hydro.xml','w');
+%             fprintf(fini,'%s\n','<?xml version=''1.0'' encoding=''iso-8859-1''?>');
+%             fprintf(fini,'%s\n','<deltaresHydro xmlns="http://schemas.deltares.nl/deltaresHydro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.deltares.nl/deltaresHydro http://content.oss.deltares.nl/schemas/d_hydro-1.00.xsd">');
+%             fprintf(fini,'%s\n','<documentation>');
+%             fprintf(fini,'%s\n','File created by    : DelftDashboard');
+%             fprintf(fini,'%s\n',['File creation date : ' datestr(now)]);
+%             fprintf(fini,'%s\n','File version       : 1.00');
+%             fprintf(fini,'%s\n','</documentation>');
+%             fprintf(fini,'%s\n','<control>');
+%             fprintf(fini,'%s\n','<sequence>');
+%             fprintf(fini,'%s\n','<start>myNameFlow</start>');
+%             fprintf(fini,'%s\n','</sequence>');
+%             fprintf(fini,'%s\n','</control>');
+%             fprintf(fini,'%s\n','<flow2D3D name="myNameFlow">');
+%             fprintf(fini,'%s\n','<library>flow2d3d</library>');
+%             fprintf(fini,'%s\n',['<mdfFile>' runid '.mdf</mdfFile>']);
+%             fprintf(fini,'%s\n','</flow2D3D>');
+%             fprintf(fini,'%s\n','</deltaresHydro>');
+%             fclose(fini);
+%         end
+%         
+%         
+%     elseif exist([getenv('D3D_HOME') '\' getenv('ARCH') '\flow\bin\deltares_hydro.exe'],'file')
+%         
+%         % New open-source version
+%         fprintf(fid,'%s\n','@ echo off');
+%         fprintf(fid,'%s\n','set argfile=config_flow2d3d.ini');
+%         fprintf(fid,'%s\n',['set exedir=' getenv('D3D_HOME') '\' getenv('ARCH') '\flow\bin\']);
+%         fprintf(fid,'%s\n','set PATH=%exedir%;%PATH%');
+%         
+%         if exist([getenv('D3D_HOME') '\' getenv('ARCH') '\flow\bin\deltares_hydro.exe'],'file')
+%             
+%             % New open-source version
+%             fprintf(fid,'%s\n','@ echo off');
+%             fprintf(fid,'%s\n','set argfile=config_flow2d3d.ini');
+%             fprintf(fid,'%s\n',['set exedir=' getenv('D3D_HOME') '\' getenv('ARCH') '\flow\bin\']);
+%             fprintf(fid,'%s\n','set PATH=%exedir%;%PATH%');
+%             
+%             if ~isempty(mdwfile)
+%                 fprintf(fid,'%s\n','start %exedir%\deltares_hydro.exe %argfile%');
+%                 fprintf(fid,'%s\n',[getenv('D3D_HOME') '\' getenv('ARCH') '\wave\bin\wave.exe ' mdwfile ' 1']);
+%             else
+%                 fprintf(fid,'%s\n','%exedir%\deltares_hydro.exe %argfile%');
+%             end
+%             
+%             % Write config file
+%             fini=fopen('config_flow2d3d.ini','w');
+%             fprintf(fini,'%s\n','[FileInformation]');
+%             fprintf(fini,'%s\n',['   FileCreatedBy    = ' getenv('USERNAME')]);
+%             fprintf(fini,'%s\n',['   FileCreationDate = ' datestr(now)]);
+%             fprintf(fini,'%s\n','   FileVersion      = 00.01');
+%             fprintf(fini,'%s\n','[Component]');
+%             fprintf(fini,'%s\n','   Name                = flow2d3d');
+%             fprintf(fini,'%s\n',['   MDFfile             = ' runid]);
+%             fclose(fini);
+%             
+%         else
+%             if exist([getenv('D3D_HOME') '\' getenv('ARCH') '\flow\bin\trisim.exe'],'file')
+%                 fprintf(fid,'%s\n',['echo ' runid ' > runid ']);
+%                 fprintf(fid,'%s\n','%D3D_HOME%\%ARCH%\flow\bin\tdatom.exe');
+%                 fprintf(fid,'%s\n','%D3D_HOME%\%ARCH%\flow\bin\trisim.exe');
+%             elseif exist([getenv('D3D_HOME') '\' getenv('ARCH') '\flow\bin\delftflow.exe'],'file')
+%                 fprintf(fid,'%s\n',['set runid=' runid]);
+%                 fprintf(fid,'%s\n',['set exedir=' getenv('D3D_HOME') '\' getenv('ARCH') '\flow\bin\']);
+%                 fprintf(fid,'%s\n','set argfile=delft3d-flow_args.txt');
+%                 fprintf(fid,'%s\n','echo -r %runid% >%argfile%');
+%                 fprintf(fid,'%s\n','%exedir%\delftflow.exe %argfile% dummy delft3d');
+%                 if ~isempty(mdwfile)
+%                     fprintf(fid,'%s\n','start %exedir%\delftflow.exe %argfile% dummy delft3d');
+%                     fprintf(fid,'%s\n',[getenv('D3D_HOME') '\' getenv('ARCH') '\wave\bin\wave.exe ' mdwfile ' 1']);
+%                 else
+%                     fprintf(fid,'%s\n','%exedir%\delftflow.exe %argfile% dummy delft3d');
+%                 end
+%             else
+%                 
+%                 % Assume new open source version sits in c:\delft3d\w32\flow\bin\
+%                 fprintf(fid,'%s\n','@ echo off');
+%                 fprintf(fid,'%s\n','set argfile=config_flow2d3d.ini');
+%                 fprintf(fid,'%s\n',['set exedir=c:\delft3d\w32\flow\bin\']);
+%                 fprintf(fid,'%s\n','set PATH=%exedir%;%PATH%');
+%                 if ~isempty(mdwfile)
+%                     fprintf(fid,'%s\n','start %exedir%\deltares_hydro.exe %argfile%');
+%                     fprintf(fid,'%s\n',['c:\delft3d\w32\flow\bin\wave\bin\wave.exe ' mdwfile ' 1']);
+%                 else
+%                     fprintf(fid,'%s\n','%exedir%\deltares_hydro.exe %argfile%');
+%                 end
+%                 
+%                 % Write config file
+%                 fini=fopen('config_flow2d3d.ini','w');
+%                 fprintf(fini,'%s\n','[FileInformation]');
+%                 fprintf(fini,'%s\n',['   FileCreatedBy    = ' getenv('USERNAME')]);
+%                 fprintf(fini,'%s\n',['   FileCreationDate = ' datestr(now)]);
+%                 fprintf(fini,'%s\n','   FileVersion      = 00.01');
+%                 fprintf(fini,'%s\n','[Component]');
+%                 fprintf(fini,'%s\n','   Name                = flow2d3d');
+%                 fprintf(fini,'%s\n',['   MDFfile             = ' runid]);
+%                 fclose(fini);
+%                 
+%             end
+%         end
+%     end
     %     fclose(fid);
     
     %% Now for the linux counterpart
@@ -264,7 +346,5 @@ elseif isunix
             
         end
     end
-    %     fclose(fid);
+    fclose(fid);
 end
-
-fclose(fid);
