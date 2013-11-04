@@ -63,7 +63,10 @@ for imdl=1:length(handles.Model)
                 handles.Model(imdl).exedir=[getenv('D3D_HOME') '\' getenv('ARCH') '\flow2d3d\bin\'];
             elseif exist([getenv('D3D_HOME') '\' getenv('ARCH') '\flow\bin\deltares_hydro.exe'],'file')
                 handles.Model(imdl).version='5.00.xx';
-                handles.Model(imdl).exedir=[getenv('D3D_HOME') '\' getenv('ARCH') '\flow\bin\'];
+                handles.Model(imdl).exedir=[getenv('D3D_HOME') '\' getenv('ARCH') '\flow\bin\'];       
+            else
+                handles.Model(imdl).version='';
+                handles.Model(imdl).exedir='';
             end
 
         case{'delft3dwave'}
@@ -86,7 +89,6 @@ if exist(filename,'file')
         handles.Model(imdl).version=xml.model(ii).model.version;
         handles.Model(imdl).exedir=xml.model(ii).model.exedir;
     end   
-    
 else
     % Save xml file
     for ii=1:length(handles.Model)

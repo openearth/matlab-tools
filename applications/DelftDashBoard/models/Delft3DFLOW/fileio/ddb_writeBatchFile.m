@@ -97,7 +97,6 @@ if ispc,
             else
                 fprintf(fid,'%s\n','%exedir%\deltares_hydro.exe %argfile%');
             end            
-            fprintf(fid,'%s\n','%exedir%\deltares_hydro.exe %argfile%');
             fclose(fid);
             
             % Write xml config file

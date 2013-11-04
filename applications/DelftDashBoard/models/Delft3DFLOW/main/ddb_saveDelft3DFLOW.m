@@ -108,9 +108,23 @@ switch lower(opt)
         h.version=handles.Model(md).version;
         h.exedir=handles.Model(md).exedir;
         [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir filesep 'icons' filesep 'deltares.gif']);
-        if ok
+        if ok            
             handles.Model(md).version=h.version;
-            handles.Model(md).exedir=h.exedir;
+            handles.Model(md).exedir=h.exedir;            
+            % Things have changed, so save xml file
+            xmldir=handles.xmlConfigDir;
+            xmlfile='delftdashboard.xml';
+            filename=[xmldir xmlfile];
+            xml=xml2struct(filename);
+            for ii=1:length(xml.model)
+                if strcmpi(xml.model(ii).model.name,'delft3dflow')
+                    xml.model(ii).model.name='Delft3DFLOW';
+                    xml.model(ii).model.version=h.version;
+                    xml.model(ii).model.exedir=h.exedir;
+                    struct2xml(filename,xml,'structuretype','short');
+                    break
+                end
+            end
         end
 end
 
