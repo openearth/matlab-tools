@@ -118,9 +118,12 @@ if (x1(1)==x1(end) & y1(1)==y1(end))
     y1(end) = [];
 end
 if (x2(1)==x2(end) & y2(1)==y2(end))
-    x1(end) = [];
-    y1(end) = [];
+    x2(end) = [];
+    y2(end) = [];
 end
+
+NA = length(x1); 
+NB = length(x2); 
 
 % make both polygons clockwise oriented
 if (~poly_isclockwise(x1,y1));
@@ -144,13 +147,19 @@ NB = length(x2);
 xt = [x1;x2];
 yt = [y1;y2];
 
+x2m = mean(x2);
+y2m = mean(y2);
+  
 kidx = convhull(xt,yt); %determine points inside convex hull for starting point 
 %kidx2 = kidx;
 if (overlaptrue)
    kidx2 = setdiff([1:NA],kidx(kidx<=NA));    %for union determine points inside convex hull
-   kidx3 = min(kidx2);
+   % Of the points inside the convex hull 
+   % determine the closest point to average x2m,y2m point
+   [val,kidx4] = min(sqrt((x2m-x1(kidx2)).^2+(y2m-y1(kidx2)).^2));
+   kidx3 = kidx2(kidx4)-1 % min(kidx2);
 else
-   kidx3 = min(kidx)-1;  
+   kidx3 = min(kidx)-1;
 end
 % plot(x1,y1,'g-',x1(1),y1(1),'ro')
 % hold on;
@@ -288,10 +297,14 @@ m = 0;
 Px(n) = A.x1(j);
 Py(n) = A.y1(j);
 line = 1;
-while (j<NA)
+jfirst = 0;
+while (j~=jfirst)
     %disp([j,k])
     n = n+1;
     if line == 1
+        if (jfirst == 0) 
+            jfirst = j;
+        end
         j = mod(j,NA)+1;
         if (A.out(j) == 0)
             Px(n) = A.x1(j);
