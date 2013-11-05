@@ -1,4 +1,4 @@
-function slamfat_plot(result, varargin)
+function fig = slamfat_plot(result, varargin)
 %SLAMFAT_PLOT  Plot routine for SLAMFAT result structure
 %
 %   Animates the result from the SLAMFAT result structure. Time-varying
@@ -66,127 +66,180 @@ function slamfat_plot(result, varargin)
 %% read settings
 
 OPT = struct( ...
+    'start', 1, ...
+    'length', inf, ...
     'slice', 100, ...
     'maxfactor', 0.5, ...
     'window', inf, ...
-    'movie', '');
+    'figure', []);
 
 OPT = setproperty(OPT, varargin);
 
-make_movie = ~isempty(OPT.movie) && OPT.movie;
+sy = 10;
+sx = 1;
 
-sy = 3;
-sx = 2;
+percentiles = result.input.bedcomposition.percentiles;
+
+ip = 1;
+th = result.input.bedcomposition.layer_thickness;
+
+nt = result.dimensions.time;
+nx = result.dimensions.space;
+nf = result.dimensions.fractions;
+nl = result.dimensions.layers + 2;
 
 %% plot results
 
-ax_t = [1:result.dimensions.time] * result.input.dt;
-ax_x = [1:result.dimensions.space] * result.input.dx;
+if ~isempty(OPT.figure) && ishandle(OPT.figure)
+    fig = OPT.figure;
+    user_data = get(fig,'UserData');
+    [OPT,ax,s,p,vl] = user_data{:};
+    
+    OPT = setproperty(OPT, varargin);
+else
+    ax   = struct();
+    ax.t = [1:result.dimensions.time]  * result.input.dt;
+    ax.x = [1:result.dimensions.space] * result.input.dx;
 
-subplots = [];
-vlines   = [];
+    s  = struct();
+    hl = [];
+    vl = [];
 
-figure;
+    p = struct();
 
-subplots(1) = subplot(sy,sx,1); hold on;
-p1 = plot(ax_x, squeeze(result.output.transport(1,:,:)));
-p3 = plot(ax_x, squeeze(result.output.capacity(1,:,:)),':r');
-pz = plot(ax_x, result.output.profile(1,:),'-k','LineWidth',2);
+    fig = figure;
+    
+    colormap(cm_redwhite);
+    
+    pos    = get(gcf,'Position');
+    pos(4) = pos(4) * 2;
+    set(gcf,'Position',pos);
 
-xlim([0 max(ax_x)]);
-ylim([0 OPT.maxfactor * max(result.output.transport(:))]);
-xlabel('distance [m]');
-ylabel({'concentration in transport' '[kg/m^3]'});
+    s.profile = subplot(sy,sx,1:5); hold on;
 
-subplots(2) = subplot(sy,sx,3); hold on;
-p2 = plot(ax_x, squeeze(result.output.supply(1,:,:)));
+    f1          = squeeze(result.output.profile(1,:));
+    f2          = squeeze(result.output.grain_size_perc(:,:,ip,:)) * 1e6;
+    p.d50       = pcolor(repmat(ax.x,nl,1),repmat(f1,nl,1) - repmat([0:nl-1]'*th,1,nx),squeeze(f2(1,:,:))');
+    p.profile   = plot(ax.x,f1,'-k','LineWidth',2);
+    p.capacity  = plot(ax.x,zeros(length(ax.x),nf),':k');
+    p.transport = plot(ax.x,zeros(length(ax.x),nf),'-k');
+    
+    set(gca,'XTick',[]);
+    ylabel({'surface height [m]' 'transport concentration [kg/m^3]'});
 
-xlim([0 max(ax_x)]);
-ylim([0 OPT.maxfactor * max(result.output.supply(:))]);
-xlabel('distance [m]');
-ylabel({'concentration at bed' '[kg/m^2]'});
+    xlim(minmax(ax.x));
+    if OPT.length > 1
+        ylim(max(.01,max(abs(f1(:)))) * [-1 1]);
+        clim([min(f2(:)) max(f2(:))] + [-.01 .01]);
+    end
+    cb = colorbar;
+    ylabel(cb,'Median grain size [\mum]');;
+    box on;
+    
+    s.slimited = subplot(sy,sx,6); hold on;
+    p.slimited = pcolor(repmat(ax.x,2,1),repmat([0;1],1,nx),zeros(2,length(ax.x)));
 
-grain_size = result.input.bedcomposition.grain_size;
-if length(grain_size) > 1
-    legend(cellfun(@(x) sprintf('%d',round(x*1e6)), ...
-        num2cell(result.input.bedcomposition.grain_size),'UniformOutput',false));
+    set(gca,'YTick',[]);
+    xlabel('distance [m]');
+    
+    xlim(minmax(ax.x));
+    ylim([0 1]);
+    clim([0 nf]);
+    cb = colorbar;
+    set(cb,'YTick',[]);
+    ylabel(cb,{'Supply' 'limitations'});
+    box on;
+
+    cmap = cm_redwhite(nf+1);
+    
+    s.wind = subplot(sy,sx,7:8); hold on;
+
+    f1 = squeeze(result.input.wind(:,1));
+    plot(ax.t,f1,'-k');
+    hl = hline(squeeze(result.input.threshold(1,1,:)),'-r');
+    vl = [vl vline(0,'-b')];
+
+    set(gca,'XTick',[]);
+    ylabel('wind speed [m/s]');
+    
+    xlim(minmax(ax.t));
+    ylim([0 max(abs(f1(:))) + 1e-3]);
+    clim([0 nf]);
+    cb = colorbar;
+    set(cb,'YTick',1:nf,'YTickLabel',fliplr(result.input.bedcomposition.grain_size * 1e6));
+    for i = 1:length(hl)
+        set(hl(i),'Color',cmap(nf-i+2,:));
+    end
+    ylabel(cb,'Grain size fraction [\mum]');
+    box on;
+    
+    s.transport = subplot(sy,sx,9:10); hold on;
+
+    f1 = squeeze(result.output.transport(:,end,:));
+    f2 = squeeze(result.output.capacity(:,end,:));
+    
+    plot(ax.t,f2,'-k');
+    pl = plot(ax.t,f1,'-k');
+    vl = [vl vline(0,'-b')];
+
+    xlabel('time [s]');
+    ylabel({'transport concentration' 'and capacity [kg/m^3]'});
+    
+    xlim(minmax(ax.t));
+    ylim([0 max(abs(f1(:))) + 1e-6]);
+    clim([0 nf]);
+    cb = colorbar;
+    set(cb,'YTick',1:nf,'YTickLabel',result.input.bedcomposition.grain_size * 1e6);
+    for i = 1:length(pl)
+        set(pl(i),'Color',cmap(i+1,:));
+    end
+    ylabel(cb,'Grain size fraction [\mum]');
+    box on;
+    
+    set(fig,'UserData',{OPT,ax,s,p,vl});
 end
 
-subplots(3) = subplot(sy,sx,5); hold on;
-p4a = bar(ax_x, zeros(size(ax_x)), 1, 'g');
-p4b = bar(ax_x, zeros(size(ax_x)), 1, 'r');
-
-xlim([0 max(ax_x)]);
-ylim([-1e-3 1e-3]); %max(max(diff(result.output.supply,[],1))) * [-1 1]);
-xlabel('distance [m]');
-ylabel({'erosion / accretion' '[kg/m^2]'});
-
-subplots(4) = subplot(sy,sx,2);
-plot(ax_t, result.input.wind(:,1,1));
-
-xlim([0 max(ax_t)]);
-ylim([0 max(result.input.wind(:))]);
-vlines(1) = vline(0);
-hline(result.input.threshold(1,1,:));
-ylabel('wind speed [m/s]');
-
-subplots(5) = subplot(sy,sx,4);
-plot(ax_t, squeeze(result.output.transport(:,end,:)));
-
-xlim([0 max(ax_t)]);
-ylim([0 max(max(result.output.transport(:,end,:)))]);
-vlines(2) = vline(0);
-ylabel({'concentration [kg/m^3]' sprintf('at x = %d m', max(ax_x))});
-
-subplots(6) = subplot(sy,sx,6);
-plot(ax_t, squeeze(result.input.wind(:,1,:) .* result.output.transport(:,end,:)));
-
-xlim([0 max(ax_t)]);
-ylim([0 max(max(result.input.wind(:,1,:) .* result.output.transport(:,end,:)))]);
-vlines(3) = vline(0);
-xlabel('time [s]');
-ylabel({'throughput [kg/s]' sprintf('at x = %d m', max(ax_x))});
-
-i = 1;
-for t = 1:OPT.slice:result.dimensions.time
+for t = OPT.start:OPT.slice:min(OPT.start+OPT.length,result.dimensions.time)
     
-    for i = 1:length(p1)
-        set(p1(i),'YData',result.output.transport(t,:,i));
-        set(p2(i),'YData',result.output.supply(t,:,i));
-        set(p3(i),'YData',result.output.capacity(t,:,i));
-        
-        set(pz,'YData',result.output.profile(t,:));
-
-        if t > 1
-            % compute change in supply over current time slice
-            dsupply = sum(sum(diff(result.output.supply(t-OPT.slice:t,:,:),[],1),1),2);
-            dsupply1 = dsupply; dsupply1(dsupply< 0) = nan;
-            dsupply2 = dsupply; dsupply2(dsupply>=0) = nan;
-
-            set(p4a,'YData',dsupply1);
-            set(p4b,'YData',dsupply2);
-        end
+    f1  = squeeze(result.output.profile(t,:));
+    f2  = squeeze(result.output.grain_size_perc(t,:,ip,:))' * 1e6;
+    f4  = squeeze(sum(result.output.supply_limited(t,:,:),3));
+    
+    set(p.profile, 'YData', f1);
+    set(p.d50,     'YData', repmat(f1,nl,1) - repmat([0:nl-1]'*th,1,nx), ...
+                   'CData', f2);
+    set(p.slimited,'CData', repmat(f4(:)',2,1));
+                 
+    for i = 1:nf
+        f3 = squeeze(result.output.transport(t,:,i));
+        f5 = squeeze(result.output.capacity(t,:,i));
+        set(p.transport(i), 'YData', f3);
+        set(p.capacity(i),  'YData', f5);
     end
     
-    title(subplots(1), sprintf('t = %d s', round((t-1)*result.input.dt)));
+    title(s.profile, sprintf('t = %d s (%d%%)', round((t-1)*result.input.dt), round(t/result.dimensions.time*100)));
     
-    set(vlines, 'XData', ax_t(t) * [1 1]);
+    set(vl, 'XData', ax.t(t) * [1 1]);
     
     if isfinite(OPT.window)
-        set(subplots([4 5 6]), 'XLim', ax_t(t) + [-.5 .5] * OPT.window);
+        set([s.wind s.transport], 'XLim', ax.t(t) + [-.5 .5] * OPT.window);
     end
     
-    if make_movie
-        M(i) = getframe(gcf);
+    if OPT.length > 1
+        pause(.1);
+    else
+        drawnow;
     end
-    
-    i = i + 1;
-    
-    pause(.1);
      
 end
 
-if make_movie
-    make_movie_gif(M,5,OPT.movie,1)
-    clear M
+end
+
+function cmap = cm_redwhite(n)
+    if nargin == 0
+        n = 100;
+    end
+    nn   = round(1.1*n);
+    cmap = flipud(1 - linspace(1,0,nn)' * [0 1 1]);
+    cmap = cmap([1 end-n+2:end],:);
 end
