@@ -1,5 +1,5 @@
 function varargout = KMLsurf(lat,lon,z,varargin)
-% KMLSURF Just like surf
+% KMLSURF Just like surf, writes closed OGC KML LinearRing Polygons
 %
 %   KMLsurf(lat,lon,z,<keyword,value>)
 %   KMLsurf(lat,lon,z,c,<keyword,value>)
@@ -17,6 +17,8 @@ function varargout = KMLsurf(lat,lon,z,varargin)
 % Earth, use KMLfigure_tiler instead, that uses the native Google Earth
 % technology to speed up visualisation of enormous grids. KMLfigure_tiler
 % does not support z data though, so behaves as KMLpcolor (a wrapper for KMLsurf).
+% KMLmesh order of magnitude faster then KMLsurf, KMLmesh is recommended to
+% test KMLsurf calls during debugging (KML has no colors).
 %
 % For the <keyword,value> pairs and their defaults call
 %

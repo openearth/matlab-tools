@@ -1,5 +1,5 @@
 function varargout = KMLsurf_tiled(lat,lon,z,varargin)
-%KMLSURF_TILED  BETA!!!!
+%KMLSURF_TILED  Just like surf, writes TILED closed OGC KML LinearRing Polygons !! BETA !!
 %
 % Experimental function to tile patches of a KMLsurf plot. 
 %
@@ -9,7 +9,7 @@ function varargout = KMLsurf_tiled(lat,lon,z,varargin)
 %
 %  KMLsurf_tiled(lat,lon,z)
 %
-%See also: KMLsurf
+%See also: KMLsurf, KMLfigure_tiler
 
 %% process <keyword,value>
    % get colorbar options first

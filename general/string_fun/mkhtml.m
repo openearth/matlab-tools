@@ -17,7 +17,7 @@ function strout = mkhtml(strin);
 % ','    becomes %2C
 % '('    becomes %28
 % ')'    becomes %29
-% '''    becomes %27
+% ':'    becomes %%3A
 %
 % See also: ISLETTER, MKVAR, MKTEX, urlencode, urldecode
 

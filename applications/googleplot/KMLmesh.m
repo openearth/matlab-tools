@@ -1,5 +1,5 @@
 function varargout = KMLmesh(lat,lon,varargin)
-% KMLMESH Just like mesh
+% KMLMESH Just like mesh, writes open OGC KML LineString
 %
 %    KMLmesh(lat,lon,<z>,<keyword,value>)
 % 
@@ -8,6 +8,9 @@ function varargout = KMLmesh(lat,lon,varargin)
 % KMLline objects loads an order of mangitude FASTER in Google Earth. 
 % Consequently, KMLline does not color the mesh as a function of as MESH 
 % does. Use KMLpcolor or KMLsurf instead for meshes colorized by z value.
+% KMLmesh order of magnitude faster then KMLsurf, KMLmesh is recommended to
+% test KMLsurf calls during debugging (KML has no colors).
+%
 %
 % For the <keyword,value> pairs and their defaults call
 %
@@ -129,7 +132,9 @@ function varargout = KMLmesh(lat,lon,varargin)
 %% openInGoogle?
 
    if OPT.openInGE
-       system(OPT.fileName);
+       system([OPT.fileName ' &']);
    end
+
+   varargout = {};
    
 %% EOF

@@ -30,6 +30,7 @@ function varargout = wms(varargin)
 % Note: some WMS servers swap [lat,lon] in the bbox @ version 1.3.0 & crs=epsg:4326
 %
 %See also: WMS_IMAGE_PLOT, arcgis, netcdf, opendap, postgresql
+%          KMLimage (wrap WMS in KML)
 %          http://publicwiki.deltares.nl/display/OET/WMS+primer
 %          https://pypi.python.org/pypi/OWSLib
 %          http://nbviewer.ipython.org/urls/raw.github.com/Unidata/tds-python-workshop/master/wms_sample.ipynb
@@ -214,11 +215,13 @@ OPT = setproperty(OPT,varargin);
    end
 
 % check valid bbox (handle lon-lat vs. lat-lon:
-% 'http://viswaug.wordpress.com/2009/03/15/reversed-co-ordinate-axis-order-for-epsg4326-vs-crs84-when-requesting-wms-130-images/');end
+% http://viswaug.wordpress.com/2009/03/15/reversed-co-ordinate-axis-order-for-epsg4326-vs-crs84-when-requesting-wms-130-images/
+% http://www.resc.rdg.ac.uk/trac/ncWMS/wiki/FrequentlyAskedQuestions#MyWMSclientuseslatitude-longitudeaxisorder
+%
 % Spec for 1.3.0:
 % SRS=CRS:84&BBOX=min_lon,min_lat,max_lon,max_lat
 % or
-% SRS=EPSG:4326&=min_lat,min_lon,max_lat,max_lon <<<<<<<<<<<<<<<<
+% SRS=EPSG:4326&=min_lat,min_lon,max_lat,max_lon <<<<<<<<<<<<<<<< THREDDS ncWMS DOES NOT DO THIS
 % Spec for 1.1.1:
 % SRS=EPSG:4326&BBOX=min_lon,min_lat,max_lon,max_lat 
 

@@ -1,5 +1,5 @@
 function varargout = KMLpcolor(lat,lon,c,varargin)
-% KMLPCOLOR Just like pcolor
+% KMLPCOLOR Just like pcolor, writes closed OGC KML LinearRing Polygons
 %
 %    KMLpcolor(lat,lon,c,<keyword,value>)
 % 
@@ -12,6 +12,9 @@ function varargout = KMLpcolor(lat,lon,c,varargin)
 % Note: for large grids, KMLpcolor objects migth be slow in Google 
 % Earth, use KMLfigure_tiler instead, that use the native Google Earth
 % technology to speed up visualisation of enormous grids.
+%
+% KMLmesh order of magnitude faster then KMLsurf, KMLmesh is recommended to
+% test KMLsurf calls during debugging (KML has no colors).
 %
 % For the <keyword,value> pairs and their defaults call
 %

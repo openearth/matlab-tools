@@ -63,7 +63,7 @@ function varargout = KMLfigure_tiler(h,lat,lon,z,varargin)
 %                'mergeExistingTiles',true);    % 1 ! irrelevant when printTiles==0
 %
 %
-% See also: GOOGLEPLOT, PCOLOR
+% See also: GOOGLEPLOT, PCOLOR, KMLimage
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature

@@ -32,10 +32,10 @@
 %  KMLcontourf                    - Just like contourf (BETA!!!)
 %  KMLcontourf3                   - Wrapper for KMLtricontourf, to make it 3D
 %  KMLfigure_tiler                - makes a tiled png figure for google earth
-%  KMLmesh                        - Just like mesh
-%  KMLpcolor                      - Just like pcolor
-%  KMLsurf                        - Just like surf
-%  KMLsurf_tiled                  - BETA!!!!
+%  KMLmesh                        - Just like mesh, writes open OGC KML LineStrings
+%  KMLpcolor                      - Just like pcolor, writes closed OGC KML LinearRing Polygons
+%  KMLsurf                        - Just like surf, writes closed OGC KML LinearRing Polygons
+%  KMLsurf_tiled                  - Just like surf, writes TILED closed OGC KML LinearRing Polygons !! BETA !!
 %  KMLtricontour                  - Just like contour
 %  KMLtricontour3                 - Just like contour3
 %  KMLtricontourf                 - Just like tricontourc
@@ -50,6 +50,7 @@
 %
 % File and image overlay mangling:
 %  KMLcolorbar                    - make KML colorbar
+%  KMLimage                       - just like image, writes OGC KML GroundOverlay of image, url, wms
 %  KMLlogo                        - make a white logo *.png with transparent background of an image
 %  KMLtest                        - batch for all unit tests of googleplot
 %  KML2kmz                        - zip kml (and subsidiary files) files into kmz
@@ -61,4 +62,6 @@
 %  KMLcurvedArrows_tutorial       - tutorial for KMLcurvedArrows
 %  kml_included_in_tutorial       - tutorial for including KML in web pages via Google Earth plugin
 %
-%See also: KMLengines, convertcoordinates (to obtain [lat,lon] in WGS 84 (EPSG:4326))
+% NB: calling sequence: KML*(lat,LON,...); [LON,lat] = convertCoordinates(X,y,...)
+%
+%See also: KMLengines, convertCoordinates, wms (to obtain [lat,lon] in WGS 84 (EPSG:4326))

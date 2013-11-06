@@ -1,5 +1,5 @@
 function oetconfig()
-%EDITUSERCONFIG  Open OET user specifuc config file
+%OETCONFIG  Open OET user specifuc config file
 %
 %   This function opens the OpenEarthTools user condig file for editing.
 %   The config file is used whenever the user creates a function or class

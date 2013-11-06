@@ -13,7 +13,7 @@ function varargout = getlocalsettings
 %   Example
 %   getlocalsettings
 %
-%   See also
+%   See also: oetnewfun, userpath
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Delft University of Technology
