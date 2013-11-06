@@ -5,7 +5,7 @@ dt = .05;
 wind = slamfat_wind('f_mean',3,'f_sigma',2.5,'dt',dt);
 
 source = zeros(L,1);
-source(1:20) = inf; %1.5e-7 * dt * dx;
+source(1:20) = 1.5e-7 * dt * dx;
 
 %%
 
