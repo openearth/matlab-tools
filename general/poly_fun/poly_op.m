@@ -203,8 +203,10 @@ end
 P.x = [P.x;P.x(1)];
 P.y = [P.y;P.y(1)];
   
-if OPT.disp
+if OPT.disp == 1;
    plot([x1;x1(1)],[y1;y1(1)],[x2;x2(1)],[y2;y2(1)],P.x,P.y,'r.-')
+elseif OPT.disp == 2;    
+   plot([x1],[y1],[x2],[y2],P.x,P.y,'r.-')
 end
 
 if nargout==2
