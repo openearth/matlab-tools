@@ -159,17 +159,39 @@ B.idxA = 0*x2;
 
 C = dflowfm.intersect_lines(A,B);
 
+
+
 in2 = inpolygon(x2,y2,x1,y1);
 in1 = inpolygon(x1,y1,x2,y2);
 
 P.x = [];
 P.y = [];
-line = 0;
-for k = 1:C.n
+pointsused1 = 0;
+pointsused2 = 0;
+
+if NA >= NB; 
+[val,idx] = sort(C.idxA);
+else
+[val,idx] = sort(C.idxB);
+end    
+
+varnams= fieldnames(C);
+    for j=1:length(varnams)
+        var=varnams{j};
+        if length(C.(var)) == length(idx);
+           C.(var) = C.(var)(idx);
+        end 
+    end
+
+for k = 1:C.n;
     P.x = [P.x; C.x(k)];
     P.y = [P.y; C.y(k)];
-    %plot(P.x,P.y,'r.')
-    if in1(C.idxA(k)) == overlaptrue
+%     hold off;
+%     plot(x1,y1,'b.-',x2,y2,'g.-');
+%     hold on;
+%     plot(P.x,P.y,'r-')
+%     plot(P.x,P.y,'ro')
+    if (in1(C.idxA(k)) == overlaptrue & pointsused1 < NA);
        x1t = circshift(x1,-C.idxA(k)+1);
        y1t = circshift(y1,-C.idxA(k)+1);
        in1t= circshift(in1,-C.idxA(k)+1);
@@ -177,13 +199,14 @@ for k = 1:C.n
        if length(idx1>0)
           x1t = x1t(1:idx1(1)-1);
           y1t = y1t(1:idx1(1)-1);
-       else
-          x1t = []; 
-          y1t = []; 
+%        else
+%           x1t = []; 
+%           y1t = []; 
        end
+       pointsused1 = pointsused1 + length(x1t);
        P.x = [P.x; x1t];    
        P.y = [P.y; y1t];    
-    elseif in2(C.idxB(k)) == overlaptrue
+    elseif (in2(C.idxB(k)) == overlaptrue & pointsused2 < NB);
        x2t = circshift(x2,-C.idxB(k)+1);
        y2t = circshift(y2,-C.idxB(k)+1);
        in2t= circshift(in2,-C.idxB(k)+1);
@@ -191,17 +214,18 @@ for k = 1:C.n
        if length(idx2>0)
           x2t = x2t(1:idx2(1)-1);
           y2t = y2t(1:idx2(1)-1);
-       else
-          x1t = []; 
-          y1t = []; 
+%        else
+%           x2t = []; 
+%           y2t = []; 
        end
+       pointsused2 = pointsused2 + length(x2t);
        P.x = [P.x; x2t];    
        P.y = [P.y; y2t];    
     end
 end
 
-P.x = [P.x;P.x(1)];
-P.y = [P.y;P.y(1)];
+%P.x = [P.x;P.x(1)];
+%P.y = [P.y;P.y(1)];
   
 if OPT.disp == 1;
    plot([x1;x1(1)],[y1;y1(1)],[x2;x2(1)],[y2;y2(1)],P.x,P.y,'r.-')
