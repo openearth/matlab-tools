@@ -135,7 +135,6 @@ if (~poly_isclockwise(x2,y2));
     y2 = y2(NB:-1:1);
 end
 
-
 x1=x1(:);
 x2=x2(:);
 y1=y1(:);
@@ -143,34 +142,6 @@ y2=y2(:);
 
 NA = length(x1);
 NB = length(x2);
-
-xt = [x1;x2];
-yt = [y1;y2];
-
-x2m = mean(x2);
-y2m = mean(y2);
-  
-kidx = convhull(xt,yt); %determine points inside convex hull for starting point 
-%kidx2 = kidx;
-if (overlaptrue)
-   kidx2 = setdiff([1:NA],kidx(kidx<=NA));    %for union determine points inside convex hull
-   % Of the points inside the convex hull 
-   % determine the closest point to average x2m,y2m point
-   [val,kidx4] = min(sqrt((x2m-x1(kidx2)).^2+(y2m-y1(kidx2)).^2));
-   kidx3 = kidx2(kidx4)-1 % min(kidx2);
-else
-   kidx3 = min(kidx)-1;
-end
-% plot(x1,y1,'g-',x1(1),y1(1),'ro')
-% hold on;
-% xlim([-2 2]);
-% ylim([-2 2]);
-
-x1 = circshift(x1,-kidx3);
-y1 = circshift(y1,-kidx3);
-%plot(x1(1),y1(1),'bo')
-%%
-
 
 
 A.x1 = x1;
@@ -186,166 +157,58 @@ B.out = 0*x2;
 A.idxB = 0*x1;
 B.idxA = 0*x2;
 
-m = 0;
+C = dflowfm.intersect_lines(A,B);
 
-for j = 1:NA;
-    
-    D.x1 = A.x1(j);
-    D.x2 = A.x2(j);
-    D.y1 = A.y1(j);
-    D.y2 = A.y2(j);
-    
-    %P.x1(m) = D.x1;
-    %P.y1(m) = D.y1;
-    
-    k = 0;
-    out = 0;
-    while ((out == 0) && (k<NB));
-        k = k+1;
-        E.x1 = B.x1(k);
-        E.x2 = B.x2(k);
-        E.y1 = B.y1(k);
-        E.y2 = B.y2(k);
-        det  = (D.x2-D.x1).*(E.y2-E.y1) - (D.y2-D.y1).*(E.x2-E.x1);
-        if (det == 0)
-            X1 = [D.x1, D.x2, E.x1, E.x2, D.x1];
-            Y1 = [D.y1, D.y2, E.y1, E.y2, D.y1];
-            area1 = polyarea(X1,Y1);
-            X2 = [D.x1, D.x2, E.x2, E.x1, D.x1];
-            Y2 = [D.y1, D.y2, E.y2, E.y1, D.y1];
-            area2 = polyarea(X2,Y2);
-            area = max(abs(area1),abs(area2));
-            if (area > 0.00000000001)
-                out = 0;
-            else
-                out = 2;
-            end
-        else
-            det  = (D.x2-D.x1).*(E.y2-E.y1) - (D.y2-D.y1).*(E.x2-E.x1);
-            alpha = ( (E.x1-D.x1).*(E.y2-E.y1) - (E.y1-D.y1).*(E.x2-E.x1) ) ./ det;
-            beta  = ( (E.x1-D.x1).*(D.y2-D.y1) - (E.y1-D.y1).*(D.x2-D.x1) ) ./ det;
-            ind = find(alpha>=0 & alpha<=1 & beta>=0 & beta<=1);
-            if (length(ind) > 0)
-                out = 1;
-                m = m+1;
-                Pint.x1(m) = D.x1+alpha*(D.x2-D.x1);
-                Pint.y1(m) = D.y1+alpha*(D.y2-D.y1);
-            else
-                out = 0;
-            end
-        end
-        if (out>0)
-            %disp(['setting A',num2str(j)])
-            A.out(j) = out;
-            A.idxB(j) = k;
-            %disp(['setting B',num2str(k)])
-            B.out(k) = out;
-            B.idxA(k) = j;
-        end
-    end
-end
-%plot(x1,y1,'b--.')
-%hold on;
-%plot(x2,y2,'r--.')
-%plot([E.x1 E.x2],[E.y1 E.y2],'r-');
-%plot([D.x1 D.x2],[D.y1 D.y2],'b-')
-%plot(P.x1,P.y1,'o')
-% 
-% 
-% figure(1)
-% hold on;
-% for j = 1:NA;
-%     if A.out(j) == 1
-%         plot([A.x1(j) A.x2(j)],[A.y1(j) A.y2(j)],'r-');
-%     elseif A.out(j) == 2
-%         plot([A.x1(j) A.x2(j)],[A.y1(j) A.y2(j)],'g-');
-%     else
-%         plot([A.x1(j) A.x2(j)],[A.y1(j) A.y2(j)],'b-');
-%     end
-% end
-% for k = 1:NB;
-%     if B.out(k) == 1
-%         plot([B.x1(k) B.x2(k)],[B.y1(k) B.y2(k)],'r-');
-%     elseif B.out(k) == 2
-%         plot([B.x1(k) B.x2(k)],[B.y1(k) B.y2(k)],'g-');
-%     else
-%         plot([B.x1(k) B.x2(k)],[B.y1(k) B.y2(k)],'b-');
-%     end
-% end
-% 
-% plot(Pint.x1,Pint.y1,'ro')
-% %hold off;
-% xlim([-2 2])
-% ylim([-2 2])
+in2 = inpolygon(x2,y2,x1,y1);
+in1 = inpolygon(x1,y1,x2,y2);
 
-%% Now we have the intersections and overlapping line segments
-
-%find starting point
-
-idxA = find(A.out>0);
-idxB = find(B.out>0);
-%idxA = unique([1;idxA;NA])
-%idxB = unique([1;idxB;NB])
-
-Asegval = 0;
-Bsegval = 0;
-
-j = 1;
-n = 1;
-k = 0;
-m = 0;
-Px(n) = A.x1(j);
-Py(n) = A.y1(j);
-line = 1;
-jfirst = 0;
-while (j~=jfirst)
-    %disp([j,k])
-    n = n+1;
-    if line == 1
-        if (jfirst == 0) 
-            jfirst = j;
-        end
-        j = mod(j,NA)+1;
-        if (A.out(j) == 0)
-            Px(n) = A.x1(j);
-            Py(n) = A.y1(j);
-        elseif (A.out(j) == 1)
-            k = A.idxB(j);
-            m = m+1;
-            Px(n) = Pint.x1(m);
-            Py(n) = Pint.y1(m);
-            n = n+1;
-            Px(n) = B.x1(k);
-            Py(n) = B.y1(k);
-            line = 0;
-        end
-    elseif line == 0;
-        k = mod(k,NB)+1;
-        if (B.out(k) == 0)
-            Px(n) = B.x1(k);
-            Py(n) = B.y1(k);
-        elseif (B.out(k) == 1)
-            j = B.idxA(k);
-            m = m+1;
-            Px(n) = Pint.x1(m);
-            Py(n) = Pint.y1(m);
-            n = n+1;
-            Px(n) = A.x1(j);
-            Py(n) = A.y1(j);
-            line = 1;
-        end
+P.x = [];
+P.y = [];
+line = 0;
+for k = 1:C.n
+    P.x = [P.x; C.x(k)];
+    P.y = [P.y; C.y(k)];
+    %plot(P.x,P.y,'r.')
+    if in1(C.idxA(k)) == overlaptrue
+       x1t = circshift(x1,-C.idxA(k)+1);
+       y1t = circshift(y1,-C.idxA(k)+1);
+       in1t= circshift(in1,-C.idxA(k)+1);
+       idx1 = find(in1t== ~overlaptrue);
+       if length(idx1>0)
+          x1t = x1t(1:idx1(1)-1);
+          y1t = y1t(1:idx1(1)-1);
+       else
+          x1t = []; 
+          y1t = []; 
+       end
+       P.x = [P.x; x1t];    
+       P.y = [P.y; y1t];    
+    elseif in2(C.idxB(k)) == overlaptrue
+       x2t = circshift(x2,-C.idxB(k)+1);
+       y2t = circshift(y2,-C.idxB(k)+1);
+       in2t= circshift(in2,-C.idxB(k)+1);
+       idx2 = find(in2t== ~overlaptrue);
+       if length(idx2>0)
+          x2t = x2t(1:idx2(1)-1);
+          y2t = y2t(1:idx2(1)-1);
+       else
+          x1t = []; 
+          y1t = []; 
+       end
+       P.x = [P.x; x2t];    
+       P.y = [P.y; y2t];    
     end
 end
 
-Px = [Px,Px(1)];
-Py = [Py,Py(1)];
+P.x = [P.x;P.x(1)];
+P.y = [P.y;P.y(1)];
   
 if OPT.disp
-   plot([x1;x1(1)],[y1;y1(1)],x1(1),y1(1),'o',[x2;x2(1)],[y2;y2(1)],Px,Py)
+   plot([x1;x1(1)],[y1;y1(1)],[x2;x2(1)],[y2;y2(1)],P.x,P.y,'r.-')
 end
 
 if nargout==2
-   varargout = {Px,Py};
+   varargout = {P.x,P.y};
 end
    
    
