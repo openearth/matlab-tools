@@ -164,6 +164,7 @@ fname = varargin{1};
 
 D.readme = 'Note: the m and n indices refer to center points in the full Delft3D matrix including the first and last dummy rows and columns for the water level points.';
 
+% optionally apply to grid
 if nargin==2
    
    G = varargin{2};
@@ -172,18 +173,18 @@ if nargin==2
    G.files.dry.date  = tmp.date ;
    G.files.dry.bytes = tmp.bytes;   
    
-   G.cen.dry = zeros(size(G.cen.x));
+   G.cen.dry = false(size(G.cen.x));
 
    for ip = 1:length(D.m)
    
       %% remove one index, because the cen array does not contain dummy row
-      G.cen.dry(D.n(ip)-1,D.m(ip)-1) = 1;
+      G.cen.dry(D.n(ip)-1,D.m(ip)-1) = true;
    
    end
    
-   G.cen.mask = G.cen.dry;
-   G.cen.mask(G.cen.mask==1)=NaN;
-   G.cen.mask(G.cen.mask==0)=1;
+   G.cen.mask = zeros(size(G.cen.x));
+   G.cen.mask( G.cen.dry)=NaN;
+   G.cen.mask(~G.cen.dry)=1;
     
    if nargout==2
    varargout = {G,D.iostat};   
@@ -264,6 +265,3 @@ function iostat=Local_write(fname,varargin),
 
    fclose(fid);
    iostat=1;
-
-% ------------------------------------
-

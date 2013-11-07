@@ -1,19 +1,24 @@
 function varargout=delft3d_io_obs(cmd,varargin),
 %DELFT3D_IO_OBS   read/write observations points file (*.obs) <<beta version!>>
 %
-%    OBS        = delft3d_io_obs('read' ,'filename.obs');
-%   [x,y,namst] = delft3d_io_obs('read' ,'filename.obs');
+%  D          = delft3d_io_obs('read' ,filename);
+% [x,y,namst] = delft3d_io_obs('read' ,filename);
 %
-%    reads all lines from an *.obs observation point file into
-%    a struct with fields m, n and name. 
+% reads all lines from an *.obs observation point file into
+% a struct D with fields m, n and name. Optionally
 %
-%        delft3d_io_obs('write','filename.obs',OBS);
+%  D = delft3d_io_obs('read' ,filename,G);
+%  D = delft3d_io_obs('read' ,filename,'gridfilename.grd');
+%
+% To write river locations
+%
+%        delft3d_io_obs('write','filename.obs',D);
 %        delft3d_io_obs('write','filename.obs',m,n,namst);
 %
-% where OBS is a struct with fields 'm','n','namst'
+% where D is a struct with fields 'm','n','namst'
 % where namst is read as a 2C char array, but can also be a cellstr.
 %
-%  OBS = delft3d_io_obs('read' ,filename,G);
+%  D = delft3d_io_obs('read' ,filename,G);
 %  [x,y,namst] = delft3d_io_obs('read' ,filename,G);
 %
 % also returns the x and y coordinates, where G = delft3d_io_grd('read',...)
@@ -96,23 +101,28 @@ S.filename = varargin{1};
 
    try
 
-      [S.namst,...
-       S.m    ,...
-       S.n    ]=textread(S.filename,'%20c%d%d');
+     [S.namst,...
+      S.m    ,...
+      S.n    ]=textread(S.filename,'%20c%d%d');
       
-      S.NTables = length(S.m);
-      S.m=S.m';
-      S.n=S.n';
+     S.NTables = length(S.m);
+     S.m=S.m';
+     S.n=S.n';
       
-      if nargin >1
-         G = varargin{2};
-         for i=1:length(S.m)
-            S.x(i) = G.cen.x(S.n(i)-1,S.m(i)-1);
-            S.y(i) = G.cen.y(S.n(i)-1,S.m(i)-1);
-         end
-      end
+    %% optionally get world coordinates
+     if nargin >1
+        if ischar(varargin{2})
+           G   = delft3d_io_grd('read',varargin{2});
+        else
+           G   = varargin{2};
+        end
+        for i=1:length(S.m)
+           S.x(i) = G.cen.x(S.n(i)-1,S.m(i)-1);
+           S.y(i) = G.cen.y(S.n(i)-1,S.m(i)-1);
+        end
+     end
    
-      iostat  = 1;
+     iostat  = 1;
    catch
       iostat  = -1;
    end
@@ -127,11 +137,16 @@ end
 
 function iostat=Local_write(varargin)
 
-   filename     = varargin{1};
-   iostat       = 1;
-   fid          = fopen(filename,'w');
-   OS           = 'windows'; % or 'unix'
+filename     = varargin{1};
+iostat       = 1;
+OPT.OS       = 'windows'; % or 'unix'
+OPT.format   = 'obs';
+
+OPT = setproperty(OPT,varargin);
    
+if strcmpi(OPT.format,'obs')
+
+   fid          = fopen(filename,'w');
    if     nargin ==2
       D       = varargin{2};
    elseif nargin >2
@@ -163,5 +178,11 @@ function iostat=Local_write(varargin)
    end
 
    iostat = fclose(fid);
+   
+elseif strcmpi(OPT.format,'ann')
+
+% TODO
+   
+end   
 
 %% EOF

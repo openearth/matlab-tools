@@ -1,28 +1,41 @@
 function varargout=delft3d_io_thd(cmd,varargin)
 %DELFT3D_IO_THD   read/write thin dams, calculate world coordinates
 %
-%  DAT = delft3d_io_thd('read' ,filename);
+%  D = delft3d_io_thd('read' ,filename);
 %
-%        delft3d_io_thd('write',filename,DAT);
+% where D is a struct with fields 'm','n'. Optionally
 %
-% where DAT is a struct with fields 'm','n'
+%  D = delft3d_io_thd('read' ,filename,G);
+%  D = delft3d_io_thd('read' ,filename,'gridfilename.grd');
 %
-%  DAT = delft3d_io_thd('read' ,filename,G);
+% also returns the x and y coordinates from the *.grd file, passing
+% the grid file name or after reading it first with
 %
-% also returns the x and y coordinates, where G = delft3d_io_grd('read',...)
+%   G = delft3d_io_grd('read',...)
 %
-% To plot one/all thin dams use the example below:
+% To write the thd to file:
+% 
+%  delft3d_io_thd('write',filename,D);
+%  delft3d_io_thd('write',filename,D,<'format',format>);
+%
+% where format can be 'ldb', 'kml' or (default) 'thd'. Note that
+% for *.ldb you need to read the *.thd 1st using the grid:
+%
+% D = delft3d_io_thd('read' ,'dam.thd','*.grd','format','ldb')
+%     delft3d_io_thd('write','dam.ldb',D,'format','ldb');
+%
+% To plot one/all thin dams at once use the example below:
 %
 %   plot(DAT.x{1},DAT.y{1});plot(DAT.X,DAT.Y)
 %
-% See also: delft3d_io_ann, delft3d_io_bca, delft3d_io_bch, delft3d_io_bnd,
-%           delft3d_io_crs, delft3d_io_dep, delft3d_io_dry, delft3d_io_eva,
-%           delft3d_io_fou, delft3d_io_grd, delft3d_io_ini, delft3d_io_mdf,
-%           delft3d_io_obs, delft3d_io_restart,             delft3d_io_src,
-%           delft3d_io_tem, delft3d_io_thd, delft3d_io_wnd, d3d_attrib
+% To plot the thin dams in Google Earth, convert first to WGS84
+% coordinates if the grid was not spherical already.
+%
+% [DAT.lon{1},DAT.lat{1}] = convertCoordinates(DAT.x{1},DAT.y{1},...)
+%
+% See also: delft3d, delft3d_io_grd
 
 % Nov 2007: put smallest index first in m and n fields.
-
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2004 Delft University of Technology
@@ -137,9 +150,13 @@ else
         S.m(:,i) = [S.DATA(i).mn(1) S.DATA(i).mn(3)];
         S.n(:,i) = [S.DATA(i).mn(2) S.DATA(i).mn(4)];
     end
-    %% get world coordinates
+    %% optionally get world coordinates
     if nargin >1
-        G   = varargin{2};
+        if ischar(varargin{2})
+           G   = delft3d_io_grd('read',varargin{2});
+        else
+           G   = varargin{2};
+        end
         for i=1:S.NTables
             m0 = min(S.m(:,i));m1 = max(S.m(:,i));
             n0 = min(S.n(:,i));n1 = max(S.n(:,i));
@@ -160,34 +177,57 @@ end
 
 % ------------------------------------
 
-function iostat=Local_write(filename,S),
+function iostat=Local_write(filename,S,varargin),
 
 iostat       = 1;
-fid          = fopen(filename,'w');
-OS           = 'windows';
+OPT.OS       = 'windows';
+OPT.format   = 'thd';
 
-for i=1:length(S.DATA)
+OPT = setproperty(OPT,varargin);
+
+if strcmpi(OPT.format,'thd')
+
+   fid          = fopen(filename,'w');
+   for i=1:length(S.DATA)
+       
+       % fprintfstringpad(fid,20,S.DATA(i).name,' ');
+       
+       fprintf(fid,'%1c',' ');
+       % fprintf automatically adds one space between all printed variables
+       % within one call
+       fprintf(fid,'%5i %5i %5i %5i %1c',...
+           S.DATA(i).mn(1)   ,...
+           S.DATA(i).mn(2)   ,...
+           S.DATA(i).mn(3)   ,...
+           S.DATA(i).mn(4)   ,...
+           S.DATA(i).direction    );
+       
+       if     strcmp(lower(OS(1)),'u')
+           fprintf(fid,'\n');
+       elseif strcmp(lower(OS(1)),'w')
+           fprintf(fid,'\r\n');
+       end
+       
+   end;
+   fclose(fid);
+   iostat=1;
+   
+elseif strcmpi(OPT.format,'ldb')
     
-    % fprintfstringpad(fid,20,S.DATA(i).name,' ');
-    
-    fprintf(fid,'%1c',' ');
-    % fprintf automatically adds one space between all printed variables
-    % within one call
-    fprintf(fid,'%5i %5i %5i %5i %1c',...
-        S.DATA(i).mn(1)   ,...
-        S.DATA(i).mn(2)   ,...
-        S.DATA(i).mn(3)   ,...
-        S.DATA(i).mn(4)   ,...
-        S.DATA(i).direction    );
-    
-    if     strcmp(lower(OS(1)),'u')
-        fprintf(fid,'\n');
-    elseif strcmp(lower(OS(1)),'w')
-        fprintf(fid,'\r\n');
+    INFO = [];
+    for i=1:length(S.x)
+       INFO.Field(i).Name = ['THD_',num2str(i),'_',S.DATA(i).direction,...
+           '_m=',num2str(S.DATA(i).m(1)),...
+           '-'  ,num2str(S.DATA(i).m(end)),...
+           '_n=',num2str(S.DATA(i).n(1)),...
+           '-'  ,num2str(S.DATA(i).n(end))];
+       INFO.Field(i).ColLabels{1} = 'x';
+       INFO.Field(i).ColLabels{1} = 'y';
+       INFO.Field(i).Data = [S.x{i}(1:end-1)',S.y{i}(1:end-1)'];
     end
+
+    NEWINFO = tekal('write',filename',INFO    );
     
-end;
-fclose(fid);
-iostat=1;
+end
 
 % ------------------------------------
