@@ -45,4 +45,4 @@ colorbarwithvtext('bathymetry [m]')
 %% test writing
 delft3d_io_thd('write','thd.tek',G.thd,'format','ldb')
 [T.thd.x,T.thd.y] = landboundary('read','thd.tek');
-plot(T.thd.x,T.y,'--','linewidth',3,'color',[1 1 0]);
+plot(T.thd.x,T.thd.y,'--','linewidth',3,'color',[1 1 0]);

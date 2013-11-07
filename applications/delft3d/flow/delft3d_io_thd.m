@@ -21,7 +21,7 @@ function varargout=delft3d_io_thd(cmd,varargin)
 % where format can be 'ldb', 'kml' or (default) 'thd'. Note that
 % for *.ldb you need to read the *.thd 1st using the grid:
 %
-% D = delft3d_io_thd('read' ,'dam.thd','*.grd','format','ldb')
+% D = delft3d_io_thd('read' ,'dam.thd','gridfilename.grd')
 %     delft3d_io_thd('write','dam.ldb',D,'format','ldb');
 %
 % To plot one/all thin dams at once use the example below:
