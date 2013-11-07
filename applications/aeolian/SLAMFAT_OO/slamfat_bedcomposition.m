@@ -112,39 +112,42 @@ classdef slamfat_bedcomposition < handle
         function initialize(this)
             if ~this.isinitialized
                 
-                this.addpath;
+                if this.enabled
+                    
+                    this.addpath;
 
-                fprintf('LOADED: %s\n\n', bedcomposition.version);
+                    fprintf('LOADED: %s\n\n', bedcomposition.version);
 
-                this.bedcomposition_module = bedcomposition;
+                    this.bedcomposition_module = bedcomposition;
 
-                this.bedcomposition_module.number_of_columns            = this.number_of_gridcells;
-                this.bedcomposition_module.number_of_fractions          = this.number_of_fractions;
-                this.bedcomposition_module.bed_layering_type            = 2;
-                this.bedcomposition_module.base_layer_updating_type     = 1;
-                this.bedcomposition_module.number_of_lagrangian_layers  = 0;
-                this.bedcomposition_module.number_of_eulerian_layers    = this.number_of_layers;
-                this.bedcomposition_module.diffusion_model_type         = 0;
-                this.bedcomposition_module.number_of_diffusion_values   = 5;
-                this.bedcomposition_module.flufflayer_model_type        = 0;
+                    this.bedcomposition_module.number_of_columns            = this.number_of_gridcells;
+                    this.bedcomposition_module.number_of_fractions          = this.number_of_fractions;
+                    this.bedcomposition_module.bed_layering_type            = 2;
+                    this.bedcomposition_module.base_layer_updating_type     = 1;
+                    this.bedcomposition_module.number_of_lagrangian_layers  = 0;
+                    this.bedcomposition_module.number_of_eulerian_layers    = this.number_of_layers;
+                    this.bedcomposition_module.diffusion_model_type         = 0;
+                    this.bedcomposition_module.number_of_diffusion_values   = 5;
+                    this.bedcomposition_module.flufflayer_model_type        = 0;
 
-                this.bedcomposition_module.initialize
+                    this.bedcomposition_module.initialize
 
-                this.bedcomposition_module.thickness_of_transport_layer   = this.layer_thickness * ones(this.number_of_gridcells,1);
-                this.bedcomposition_module.thickness_of_lagrangian_layers = this.layer_thickness;
-                this.bedcomposition_module.thickness_of_eulerian_layers   = this.layer_thickness;
+                    this.bedcomposition_module.thickness_of_transport_layer   = this.layer_thickness * ones(this.number_of_gridcells,1);
+                    this.bedcomposition_module.thickness_of_lagrangian_layers = this.layer_thickness;
+                    this.bedcomposition_module.thickness_of_eulerian_layers   = this.layer_thickness;
 
-                this.bedcomposition_module.fractions(           ...
-                    this.sediment_type, ...
-                    this.grain_size,    ...
-                    this.logsigma,      ...
-                    this.bed_density);
-                
-                this.isinitialized = true;
-
-                % initial deposit
-                mass = this.initial_deposit * this.initial_mass_unit;
-                this.deposit(mass);
+                    this.bedcomposition_module.fractions(           ...
+                        this.sediment_type, ...
+                        this.grain_size,    ...
+                        this.logsigma,      ...
+                        this.bed_density);
+                    
+                    this.isinitialized = true;
+                    
+                    % initial deposit
+                    mass = this.initial_deposit * this.initial_mass_unit;
+                    this.deposit(mass);
+                end
 
                 % source
                 if isempty(this.source)
@@ -175,27 +178,32 @@ classdef slamfat_bedcomposition < handle
             nx = this.number_of_gridcells;
             nf = this.number_of_fractions;
             nl = this.number_of_actual_layers;
+                
+            if this.isinitialized
 
-            % repeat grain sizes
-            gs = repmat(this.grain_size(:)', nx*nl, 1);
+                % repeat grain sizes
+                gs = repmat(this.grain_size(:)', nx*nl, 1);
 
-            % normalize mass fractions
-            m  = reshape(this.layer_mass, nx*nl, nf);
-            m  = cumsum(m,2)./repmat(sum(m,2),1,nf);
-            
-            idx = false(size(m));
-            for i = 2:nf
-                idx(squeeze(m(:,i)) > perc & ~any(idx,2), i-1:i) = true;
+                % normalize mass fractions
+                m  = reshape(this.layer_mass, nx*nl, nf);
+                m  = cumsum(m,2)./repmat(sum(m,2),1,nf);
+
+                idx = false(size(m));
+                for i = 2:nf
+                    idx(squeeze(m(:,i)) > perc & ~any(idx,2), i-1:i) = true;
+                end
+
+                n  = sum(idx(:))/2;
+                m  = reshape(m(idx),n,2);
+                f  = (perc - m(:,1)) ./ diff(m,1,2);
+                gs = reshape(log(gs(idx)),n,2);
+
+                p             = nan(nx*nl,1);
+                p(any(idx,2)) = exp(gs(:,1) + f .* diff(gs,1,2));
+                p             = reshape(p,nx,nl);
+            else
+                p             = zeros(nx,nl);
             end
-
-            n  = sum(idx(:))/2;
-            m  = reshape(m(idx),n,2);
-            f  = (perc - m(:,1)) ./ diff(m,1,2);
-            gs = reshape(log(gs(idx)),n,2);
-
-            p             = nan(nx*nl,1);
-            p(any(idx,2)) = exp(gs(:,1) + f .* diff(gs,1,2));
-            p             = reshape(p,nx,nl);
         end
         
         function val = get.d50(this)

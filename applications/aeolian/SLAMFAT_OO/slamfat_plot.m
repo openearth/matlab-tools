@@ -86,9 +86,17 @@ classdef slamfat_plot < handle
             e = 0;
             switch(event.Key)
                 case 'leftarrow'
-                    this.move(-100);
+                    if ismember('shift',event.Modifier)
+                        this.move(-1);
+                    else
+                        this.move(-100);
+                    end
                 case 'rightarrow'
-                    this.move(100);
+                    if ismember('shift',event.Modifier)
+                        this.move(1);
+                    else
+                        this.move(100);
+                    end
                 case 'space'
                     this.toggle_animate;
             end
@@ -171,7 +179,7 @@ classdef slamfat_plot < handle
                 ylabel(this.subplots.profile, {'surface height [m]' 'transport concentration [kg/m^3]'});
 
                 xlim(this.subplots.profile, minmax(this.axes.x));
-                ylim(this.subplots.profile, max(.01,max(abs(f1(:)))) * [-1 1]);
+                ylim(this.subplots.profile, [-.01 .01]); %max(.01,max(abs(f1(:)))) * [-.01 .01]);
                 clim(this.subplots.profile, [min(f2(:)) max(f2(:))] + [0 1000]);
 
                 box on;
@@ -252,6 +260,8 @@ classdef slamfat_plot < handle
                 
                 this.isinitialized = true;
             end
+            
+            this.reinitialize;
         end
         
         function this = reinitialize(this)
@@ -281,7 +291,7 @@ classdef slamfat_plot < handle
             end
             
             ot = this.timestep;
-            it = this.obj.timestep;
+            it = this.timestep;
             nx = this.obj.number_of_gridcells;
             nf = this.obj.bedcomposition.number_of_fractions;
             nl = this.obj.bedcomposition.number_of_actual_layers;
@@ -341,10 +351,9 @@ classdef slamfat_plot < handle
         end
         
         function animate(this)
-            if this.timestep < this.obj.size_of_output && this.animating
+            while this.timestep < this.obj.size_of_output && this.animating
                 this.update;
                 this.timestep = this.timestep + 1;
-                this.animate;
             end
         end
         

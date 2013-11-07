@@ -62,8 +62,8 @@ classdef slamfat < handle
         supply                  = []
         supply_limited          = []
         
-        source_maximalization   = 'none'
-        threshold_maximalization= 'none'
+        max_source              = 'none'
+        max_threshold           = []
         
         data                    = struct()
         timestep                = 0
@@ -105,14 +105,19 @@ classdef slamfat < handle
             if isempty(this.figure)
                 this.figure = slamfat_plot;
             end
+            
+            if isempty(this.max_threshold)
+                this.max_threshold = slamfat_threshold;
+            end
         end
         
         function initialize(this)
             if ~this.isinitialized
 
                 this.bedcomposition.number_of_gridcells = this.number_of_gridcells;
+                this.bedcomposition.dt                  = this.wind.dt;
                 this.bedcomposition.initialize;
-
+                
                 this.transport              = this.empty_matrix;
                 this.transport_transportltd = this.empty_matrix;
                 this.transport_supplyltd    = this.empty_matrix;
@@ -140,7 +145,8 @@ classdef slamfat < handle
                     'visualization',    0);
                 
                 this.initial_profile = this.profile;
-                
+                this.max_threshold.initialize(this.profile);
+
                 this.isinitialized = true;
             end
             
@@ -236,18 +242,12 @@ classdef slamfat < handle
         
         function threshold = get_maximum_threshold(this)
             threshold = repmat(this.bedcomposition.threshold_velocity, this.number_of_gridcells, 1);
-            switch this.threshold_maximalization
-                case 'tide'
-                    n = 20;
-                    nf = this.bedcomposition.number_of_fractions;
-                    ff = repmat(linspace(2,1,n)',[1 nf]);
-                    threshold(1:n,:) = ff .* threshold(1:n,:);
-            end
+            threshold = this.max_threshold.maximize_threshold(threshold, this.wind.dt, this.profile, this.wind.time_series(this.it-1));
         end
         
         function source = get_maximum_source(this)
             source = this.bedcomposition.source;
-            switch this.source_maximalization
+            switch this.max_source
                 case 'initial_profile'
                     nf = this.bedcomposition.number_of_fractions;
                     source = min(source, max(0,repmat((this.initial_profile - this.profile)',1,nf) .* this.bedcomposition.initial_mass_unit));
@@ -337,6 +337,7 @@ classdef slamfat < handle
             % clean up
             this.wind           = [];
             this.bedcomposition = [];
+            this.max_threshold  = [];
             this.figure         = [];
         end
         
