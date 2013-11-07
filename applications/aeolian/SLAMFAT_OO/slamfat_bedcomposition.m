@@ -110,7 +110,8 @@ classdef slamfat_bedcomposition < handle
         end
         
         function initialize(this)
-            if ~this.isinitialized || true
+            if ~this.isinitialized
+                
                 this.addpath;
 
                 fprintf('LOADED: %s\n\n', bedcomposition.version);
@@ -132,12 +133,15 @@ classdef slamfat_bedcomposition < handle
                 this.bedcomposition_module.thickness_of_transport_layer   = this.layer_thickness * ones(this.number_of_gridcells,1);
                 this.bedcomposition_module.thickness_of_lagrangian_layers = this.layer_thickness;
                 this.bedcomposition_module.thickness_of_eulerian_layers   = this.layer_thickness;
+                disp(this.bedcomposition_module)
 
                 this.bedcomposition_module.fractions(           ...
                     this.sediment_type, ...
                     this.grain_size,    ...
                     this.logsigma,      ...
                     this.bed_density);
+                
+                this.isinitialized = true;
 
                 % initial deposit
                 mass = this.initial_deposit * this.initial_mass_unit;
@@ -151,8 +155,6 @@ classdef slamfat_bedcomposition < handle
                 elseif isvector(this.source) && this.number_of_fractions > 1
                     this.source = this.source(:) * this.distribution(:)';
                 end
-                
-                this.isinitialized = true;
             end
         end
         
@@ -180,7 +182,7 @@ classdef slamfat_bedcomposition < handle
 
             % normalize mass fractions
             m  = reshape(this.layer_mass, nx*nl, nf);
-            m = cumsum(m,2)./repmat(sum(m,2),1,nf);
+            m  = cumsum(m,2)./repmat(sum(m,2),1,nf);
             
             idx = false(size(m));
             for i = 2:nf
@@ -195,10 +197,6 @@ classdef slamfat_bedcomposition < handle
             p             = nan(nx*nl,1);
             p(any(idx,2)) = exp(gs(:,1) + f .* diff(gs,1,2));
             p             = reshape(p,nx,nl);
-        end
-        
-        function val = get.isinitialized(this)
-            val = ~isempty(this.bedcomposition_module);
         end
         
         function val = get.d50(this)
@@ -219,6 +217,14 @@ classdef slamfat_bedcomposition < handle
                 mass = reshape(mass, [size(mass,1) size(mass,3)]);
             else
                 error('bedcomposition module is not initialized');
+            end
+        end
+        
+        function thickness = get.layer_thickness(this)
+            if this.isinitialized
+                thickness = this.bedcomposition_module.layer_thickness';
+            else
+                thickness = this.layer_thickness;
             end
         end
         

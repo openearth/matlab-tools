@@ -74,7 +74,10 @@ classdef slamfat < handle
         bedcomposition          = slamfat_bedcomposition
         visualization           = @slamfat_plot
         
+        figure                  = []
         animate                 = false;
+        progress                = true;
+        progressbar             = []
     end
     
     properties(Access = private)
@@ -82,9 +85,9 @@ classdef slamfat < handle
         io                      = 1
         transport_transportltd  = []
         transport_supplyltd     = []
-        fig                     = []
         initial_profile         = []
         isinitialized           = false
+        performance             = struct()
     end
     
     %% Methods
@@ -118,30 +121,48 @@ classdef slamfat < handle
                     'supply_limited',   false(n,nx,nf), ...
                     'd50',              zeros(n,nx,nl));
                 
+                this.performance = struct(  ...
+                    'initialization',   0,  ...
+                    'transport',        0,  ...
+                    'bedcomposition',   0,  ...
+                    'grainsize',        0,  ...
+                    'visualization',    0);
+                
                 this.initial_profile = this.profile;
                 
                 this.isinitialized = true;
             end
-        end
-        
-        function run(this)
-            this.initialize;
             
             if this.animate
                 this.plot;
+            elseif this.progress
+                if isempty(this.progressbar)
+                    this.progressbar = waitbar(0,'SLAMFAT model running...');
+                end
             end
+        end
+        
+        function run(this)
+            tic;
             
+            this.initialize;
             this.output;
+            
+            this.performance.initialization = toc;
             
             while this.it < this.wind.number_of_timesteps
                 this.next;
                 this.output;
             end
+            
+            this.finalize;
         end
         
         function next(this)
             
             if this.isinitialized
+                
+                tic;
                 
                 threshold = this.get_maximum_threshold;
                 
@@ -164,6 +185,8 @@ classdef slamfat < handle
                 this.transport(~idx) = this.transport_transportltd(~idx);
                 this.transport( idx) = this.transport_supplyltd   ( idx);
                 
+                this.performance.transport = this.performance.transport + toc; tic;
+                
                 source = this.get_maximum_source;
 
                 if this.bedcomposition.enabled
@@ -181,10 +204,22 @@ classdef slamfat < handle
                     this.supply(~idx) = this.supply(~idx) + source(~idx) / this.dx - ...
                                         (this.capacity(~idx) - this.transport(~idx)) / (this.relaxation / this.wind.dt);
                 end
+                
+                this.performance.bedcomposition = this.performance.bedcomposition + toc;
 
                 this.it = this.it + 1;
             else
                 error('SLAMFAT model is not initialized');
+            end
+        end
+        
+        function finalize(this)
+            if this.progress
+                close(this.progressbar);
+            end
+            
+            if ~isempty(this.figure)
+                this.figure.reinitialize;
             end
         end
         
@@ -217,13 +252,21 @@ classdef slamfat < handle
                 this.data.supply        (this.io,:,:) = this.supply;
                 this.data.capacity      (this.io,:,:) = this.capacity;
                 this.data.supply_limited(this.io,:,:) = this.supply_limited;
+                
+                tic;
+                
                 this.data.d50           (this.io,:,:) = this.bedcomposition.d50;
                 
+                this.performance.grainsize = this.performance.grainsize + toc; tic;
+                
                 if this.animate
-                    this.fig.reinitialize;
-                else
-                    fprintf('%2.1f%%\n',this.it/this.wind.number_of_timesteps*100);
+                    this.figure.timestep = this.io;
+                    this.figure.update;
+                elseif this.progress
+                    waitbar(this.io/this.size_of_output, this.progressbar);
                 end
+                
+                this.performance.visualization = this.performance.visualization + toc;
                 
                 this.io = this.io + 1;
             end
@@ -267,16 +310,32 @@ classdef slamfat < handle
             mtx = zeros(nx,nf);
         end
         
-        function plot(this)
-            if isempty(this.fig)
-                this.fig = this.visualization(this);
+        function fig = plot(this)
+            if isempty(this.figure)
+                this.figure = this.visualization(this,'timestep',this.output_timestep);
             else
                 try
-                    this.fig.update;
+                    this.figure.timestep = this.output_timestep;
+                    this.figure.update;
                 catch
-                    this.fig = this.visualization(this);
+                    this.figure = this.visualization(this,'timestep',this.output_timestep);
                 end
             end
+            
+            fig = this.figure;
+        end
+        
+        function show_performance(this)
+            tm  = cell2mat(struct2cell(this.performance));
+            tmp = tm(2:end)./sum(tm(2:end))*100;
+            
+            fprintf('%20s : %10.4f s\n', 'initialization', this.performance.initialization);
+            fprintf('%20s : %10.4f s [%5.1f%%]\n', ...
+                'transport',        this.performance.transport,         tmp(1), ...
+                'bed composition',  this.performance.bedcomposition,    tmp(2), ...
+                'grain size',       this.performance.grainsize,         tmp(3), ...
+                'visualization',    this.performance.visualization,     tmp(4), ...
+                'total', sum(tm), this.timestep/this.wind.number_of_timesteps*100);
         end
     end
 end

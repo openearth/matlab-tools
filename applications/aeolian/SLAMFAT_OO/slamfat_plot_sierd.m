@@ -95,10 +95,11 @@ classdef slamfat_plot_sierd < handle
             this.lines.wind = plot(1:100, zeros(1,100));
             
             xlim([1 100]);
+            
+            this.update;
         end
         
         function reinitialize(this)
-            this.update;
         end
         
         function update(this)

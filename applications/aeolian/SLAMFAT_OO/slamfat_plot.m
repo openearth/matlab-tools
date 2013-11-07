@@ -56,6 +56,8 @@ classdef slamfat_plot < handle
         vlines      = []
         colorbars   = []
         
+        timestep    = 1
+        
         sy          = 10
         sx          = 1
         window      = inf
@@ -96,6 +98,7 @@ classdef slamfat_plot < handle
             %   See also slamfat_plot
             
             this.obj = obj;
+            this.timestep = max(1,obj.output_timestep);
             
             this.initialize;
         end
@@ -127,7 +130,7 @@ classdef slamfat_plot < handle
             f1 = squeeze(this.obj.data.profile(1,:));
             f2 = squeeze(this.obj.data.d50(:,:,:)) * 1e6;
             
-            this.lines.d50          = pcolor(repmat(this.axes.x,nl,1),repmat(f1,nl,1) - repmat([0:nl-1]'*th,1,nx),squeeze(f2(1,:,:))');
+            this.lines.d50          = pcolor(repmat(this.axes.x,nl,1),repmat(f1,nl,1) - repmat([0:nl-1]',1,nx).*th',squeeze(f2(1,:,:))');
             this.lines.profile      = plot(this.axes.x,f1,'-k','LineWidth',2);
             this.lines.capacity     = plot(this.axes.x,zeros(nx,nf),':k');
             this.lines.transport    = plot(this.axes.x,zeros(nx,nf),'-k');
@@ -214,9 +217,11 @@ classdef slamfat_plot < handle
             for i = 1:length(this.lines.transport_t)
                 set(this.lines.transport_t(i),'Color',cmap(i+1,:));
             end
+            
+            this.update;
         end
         
-        function reinitialize(this)
+        function this = reinitialize(this)
             nf = this.obj.bedcomposition.number_of_fractions;
 
             f1 = squeeze(this.obj.data.transport(:,end,:));
@@ -232,13 +237,16 @@ classdef slamfat_plot < handle
             
             f1 = squeeze(this.obj.data.transport(:,end,:));
             ylim(this.subplots.transport, [0 max(abs(f1(:))) + 1e-3]);
-            
-            this.update;
         end
         
-        function update(this)
+        function this = update(this)
+            
+            if this.obj.output_timestep < this.obj.size_of_output
+                this.reinitialize;
+            end
+            
+            ot = this.timestep;
             it = this.obj.timestep;
-            ot = this.obj.output_timestep - 1;
             nx = this.obj.number_of_gridcells;
             nf = this.obj.bedcomposition.number_of_fractions;
             nl = this.obj.bedcomposition.number_of_actual_layers;
@@ -249,7 +257,7 @@ classdef slamfat_plot < handle
             f3  = squeeze(sum(this.obj.data.supply_limited(ot,:,:),3));
 
             set(this.lines.profile, 'YData', f1);
-            set(this.lines.d50,     'YData', repmat(f1,nl,1) - repmat([0:nl-1]'*th,1,nx), ...
+            set(this.lines.d50,     'YData', repmat(f1,nl,1) - repmat([0:nl-1]',1,nx).*th', ...
                                     'CData', f2);
             set(this.lines.supply_limited, 'CData', repmat(f3(:)',2,1));
 
@@ -269,6 +277,26 @@ classdef slamfat_plot < handle
             end
 
             drawnow;
+        end
+        
+        function this = move(this, n)
+            if nargin < 2
+                n = 1;
+            end
+            this.timestep = max(1,min(this.obj.size_of_output,this.timestep + n));
+            this.update;
+        end
+        
+        function this = reset(this)
+            this.timestep = 1;
+            this.update;
+        end
+        
+        function animate(this)
+            while this.timestep < this.obj.size_of_output
+                this.update;
+                this.timestep = this.timestep + 1;
+            end
         end
     end
 end
