@@ -6,16 +6,24 @@ function varargout = wms_image_plot(url,OPT)
 %
 %See also: wms, imread, urlwrite
 
-  urlwrite(url,[OPT.cachename,OPT.ext]);
-  [A,map,alpha] = imread([OPT.cachename,OPT.ext]);
-  image(OPT.x,OPT.y,A)
-  colormap(map)
-  tickmap('ll');grid on;
-  set(gca,'ydir','normal')
-  %TODO if ~isempty(OPT.colorscalerange);clim([OPT.colorscalerange]);end
-  %TODO colorbarwithvtext(OPT.layers)
-  print2screensizeoverwrite([OPT.cachename,'_rendered'])
+%% download cache of image  
+   urlwrite(url,[OPT.cachename,OPT.ext]);
   
-  if nargout > 0
+%% make kml wrapper for cached image
+   KMLimage(OPT.axis([2 4]),OPT.axis([1 3]),url,'fileName',[OPT.cachename,'.kml'])
+  
+%% TODO make world file  
+  
+%% plot georeferenced in matlab for testing
+   [A,map,alpha] = imread([OPT.cachename,OPT.ext]);
+   image(OPT.x,OPT.y,A)
+   colormap(map)
+   tickmap('ll');grid on;
+   set(gca,'ydir','normal')
+   %TODO if ~isempty(OPT.colorscalerange);clim([OPT.colorscalerange]);end
+   %TODO colorbarwithvtext(OPT.layers)
+   print2screensizeoverwrite([OPT.cachename,'_rendered'])
+  
+   if nargout > 0
       varargout = {A,map,alpha};
-  end
+   end

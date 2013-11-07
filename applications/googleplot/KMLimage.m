@@ -1,4 +1,4 @@
-function varargout = KMLimage(lat,lon,im,varargin)
+function varargout = KMLimage(lat,lon,im0,varargin)
 %KMLimage just like image, writes OGC KML GroundOverlay of image, url, wms
 %
 %  KMLimage(lat,lon,im,<keyword,value>)
@@ -83,7 +83,7 @@ function varargout = KMLimage(lat,lon,im,varargin)
    end
    lon(lon > 0) = lon(lon > 0) - 1e-12;% handle issue with [-180 180]
    lon(lon < 0) = lon(lon < 0) + 1e-12;
-   lon = mod(lon+180, 360)-180 
+   lon = mod(lon+180, 360)-180;
 
 %% get filename, gui for filename, if not set yet
 
@@ -105,22 +105,22 @@ function varargout = KMLimage(lat,lon,im,varargin)
    output = KML_header(OPT); % handles time etc.
    lineage = '';
    if strcmpi  ( OPT.fileName(end-2:end),'kmz') % include im in kkmz and make ref local
-      lineage = ['<!-- source: ',im,'-->'];       
+      lineage = ['<!-- source: ',im0,'-->'];       
       if isurl(im)
-         im.url       = im;
+         im.url       = im0;
          im.kmllink   = 'temporary_image_name';
          im.cachename = [tempdir,filesep,im.kmllink];
          urlwrite(im.url,im.cachename);
       else
-         im.cachename = im;
+         im.cachename = im0;
          im.kmllink   = filenameext(im.cachename);
       end
    else
-      if isurl(im)
-         im.url       = im;
+      if isurl(im0)
+         im.url       = im0;
          im.kmllink   = strrep(im.url,'&','&amp;'); % Google Earth requires this for OGC WMS urls
       else
-         im.kmllink   = im;
+         im.kmllink   = im0;
       end
       im.cachename = '';
    end
