@@ -23,11 +23,11 @@ else
     have_java = false;
 end
     
-retrieval_methods.java         = 'java';
-retrieval_methods.tmw_hdf4     = 'tmw_hdf4';
+retrieval_methods.java           = 'java';
+retrieval_methods.tmw_hdf4       = 'tmw_hdf4';
 retrieval_methods.tmw_hdf4_2011a = 'tmw_hdf4_2011a';
-retrieval_methods.mexnc        = 'mexnc';
-retrieval_methods.tmw          = 'tmw';
+retrieval_methods.mexnc          = 'mexnc';
+retrieval_methods.tmw            = 'tmw';
 
 fmts = snc_format();
 
@@ -93,7 +93,7 @@ if strcmp(fmt,fmts.URL)
                 fmt = fmts.netcdf_java;
             elseif getpref('SNCTOOLS','USE_NETCDF_JAVA',false)
                 % Force the use of netcdf-java if the user
-                % really want it.
+                % really wants it.
                 retrieval_method = retrieval_methods.java; 
                 fmt = fmts.netcdf_java;
             else

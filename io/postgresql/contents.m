@@ -43,6 +43,7 @@
 % pg_query                       - Builts a SQL query string from structures
 % pg_exec                        - Executes a SQL query
 % pg_fetch                       - Executes a SQL query and fetches the result
+% pg_fetch_struct                - Executes a SQL query and fetches the result as struct
 % pg_error                       - Checks a SQL query result for errors
 % pg_value2sql                   - Makes a cell array of arbitrary values suitable for the use in an SQL query
 % pg_datenum                     - conversion between Matlab datenumbers and PG datetime

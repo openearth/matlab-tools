@@ -21,7 +21,7 @@ function D = pg_fetch2struct(R,nams,typs)
 %  R = pg_select_struct(conn,'my_table_name',struct([]));
 %  D = pg_fetch2struct(R,nams,typs)
 %
-%See also: PG_FETCH, PG_SELECT_STRUCT, PG_GETCOLUMNS
+%See also: PG_FETCH, PG_SELECT_STRUCT, PG_GETCOLUMNS, , pg_fetch_struct
 
 %% Copyright notice
 %   --------------------------------------------------------------------

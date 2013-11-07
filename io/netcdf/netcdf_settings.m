@@ -120,10 +120,11 @@ function netcdf_settings(varargin)
            disp(['  netCDF: Java path not added, already there: ',java2add]);
        end
        
-       try % matlab fails if several instances of matlab are accessing matlabprefs.mat, tgis hapens whne one users has many matlabn instances running
-       setpref ( 'SNCTOOLS','USE_JAVA'   , 1);          % This requires SNCTOOLS 2.4.8 or better
+       try % matlab fails if several instances of matlab are accessing matlabprefs.mat, tgis hapens whne one users has many matlab instances running
+       setpref ( 'SNCTOOLS','USE_JAVA'       , 1); % Allow java, This requires SNCTOOLS 2.4.8 or better
+      %setpref ( 'SNCTOOLS','USE_NETCDF_JAVA', 1); % Force java: do in case of troubles with native netcdf.x toolbox (url via proxy is an issue)
        if ~(OPT.quiet)
-           disp('  netCDF: setpref( ''SNCTOOLS'',''USE_JAVA''   , 1) % force use of java for remote urls to avoid OPeNDAP bug in native package');
+           disp('  netCDF: setpref( ''SNCTOOLS'',''USE_JAVA''   , 1) % use of java for remote urls to avoid OPeNDAP bug in native package');
        end
        % keep snctools default
        setpref ( 'SNCTOOLS','PRESERVE_FVD',0); % 0: backwards compatibility and consistent with ncBrowse
