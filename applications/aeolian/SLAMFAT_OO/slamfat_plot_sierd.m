@@ -86,7 +86,7 @@ classdef slamfat_plot_sierd < handle
         
             this.obj = obj;
             
-            this.initialize;
+            setproperty(this, varargin);
         end
         
         function initialize(this)

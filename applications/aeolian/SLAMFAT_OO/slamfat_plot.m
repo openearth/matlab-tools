@@ -48,21 +48,27 @@ classdef slamfat_plot < handle
     
     %% Properties
     properties
-        figure      = []
-        subplots    = struct()
-        axes        = struct()
-        lines       = struct()
-        hlines      = []
-        vlines      = []
-        colorbars   = []
+        figure          = []
+        subplots        = struct()
+        axes            = struct()
+        lines           = struct()
+        hlines          = []
+        vlines          = []
+        colorbars       = []
         
-        timestep    = 1
+        hide_profile    = true
+        timestep        = 1
         
-        sy          = 10
-        sx          = 1
-        window      = inf
+        sy              = 10
+        sx              = 1
+        window          = inf
         
-        obj         = []
+        obj             = []
+    end
+    
+    properties(Access = private)
+        isinitialized           = false
+        animating               = false
     end
     
     %% Methods
@@ -75,10 +81,22 @@ classdef slamfat_plot < handle
             cmap = flipud(1 - linspace(1,0,nn)' * [0 1 1]);
             cmap = cmap([1 end-n+2:end],:);
         end
+
+        function e = handleKeyPress(this, ~, event)
+            e = 0;
+            switch(event.Key)
+                case 'leftarrow'
+                    this.move(-100);
+                case 'rightarrow'
+                    this.move(100);
+                case 'space'
+                    this.toggle_animate;
+            end
+        end
     end
     
     methods
-        function this = slamfat_plot(obj, varargin)
+        function this = slamfat_plot(varargin)
             %SLAMFAT_PLOT  One line description goes here.
             %
             %   More detailed description goes here.
@@ -97,128 +115,143 @@ classdef slamfat_plot < handle
             %
             %   See also slamfat_plot
             
-            this.obj = obj;
-            this.timestep = max(1,obj.output_timestep);
+            setproperty(this, varargin);
             
-            this.initialize;
+            if ~isempty(this.obj)
+                this.update;
+            end
         end
         
         function initialize(this)
-            nx = this.obj.number_of_gridcells;
-            nf = this.obj.bedcomposition.number_of_fractions;
-            nl = this.obj.bedcomposition.number_of_actual_layers;
-            th = this.obj.bedcomposition.layer_thickness;
-            
-            this.axes = struct();
-            this.axes.t_out = this.obj.output_time;
-            this.axes.t_in  = this.obj.wind.time;
-            this.axes.x     = [1:this.obj.number_of_gridcells] * this.obj.dx;
+            if ~this.isinitialized || ~ishandle(this.figure)
+                
+                this.figure          = [];
+                this.subplots        = struct();
+                this.axes            = struct();
+                this.lines           = struct();
+                this.hlines          = [];
+                this.vlines          = [];
+                this.colorbars       = [];
+        
+                this.timestep = max(1,this.obj.output_timestep);
+                
+                nx = this.obj.number_of_gridcells;
+                nf = this.obj.bedcomposition.number_of_fractions;
+                nl = this.obj.bedcomposition.number_of_actual_layers;
+                th = this.obj.bedcomposition.layer_thickness;
 
-            this.figure = figure;
-    
-            % set colormap
-            colormap(this.colormap);
-    
-            % set figure dimensiond
-            pos    = get(this.figure,'Position');
-            pos(4) = pos(4) * 2;
-            set(gcf,'Position',pos);
+                this.axes = struct();
+                this.axes.t_out = this.obj.output_time;
+                this.axes.t_in  = this.obj.wind.time;
+                this.axes.x     = [1:this.obj.number_of_gridcells] * this.obj.dx;
 
-            % plot profile
-            this.subplots.profile = subplot(this.sy,this.sx,1:5); hold on;
+                this.figure = figure;
+                set(this.figure,'keypressfcn',@(obj,event) this.handleKeyPress(this,obj,event));
 
-            f1 = squeeze(this.obj.data.profile(1,:));
-            f2 = squeeze(this.obj.data.d50(:,:,:)) * 1e6;
-            
-            this.lines.d50          = pcolor(repmat(this.axes.x,nl,1),repmat(f1,nl,1) - repmat([0:nl-1]',1,nx).*th',squeeze(f2(1,:,:))');
-            this.lines.profile      = plot(this.axes.x,f1,'-k','LineWidth',2);
-            this.lines.capacity     = plot(this.axes.x,zeros(nx,nf),':k');
-            this.lines.transport    = plot(this.axes.x,zeros(nx,nf),'-k');
+                % set colormap
+                colormap(this.colormap);
 
-            set(this.subplots.profile,'XTick',[]);
-            ylabel(this.subplots.profile, {'surface height [m]' 'transport concentration [kg/m^3]'});
+                % set figure dimensiond
+                pos    = get(this.figure,'Position');
+                pos(4) = pos(4) * 2;
+                set(gcf,'Position',pos);
 
-            xlim(this.subplots.profile, minmax(this.axes.x));
-            ylim(this.subplots.profile, max(.01,max(abs(f1(:)))) * [-1 1]);
-            clim(this.subplots.profile, [min(f2(:)) max(f2(:))] + [0 1000]);
-            
-            box on;
-            
-            this.colorbars.profile = colorbar;
-            ylabel(this.colorbars.profile,'Median grain size [\mum]');
+                % plot profile
+                this.subplots.profile = subplot(this.sy,this.sx,1:5); hold on;
 
-            % plot supply limitation indicator
-            this.subplots.supply_limited = subplot(this.sy,this.sx,6); hold on;
-            this.lines.supply_limited    = pcolor(repmat(this.axes.x,2,1),repmat([0;1],1,nx),zeros(2,length(this.axes.x)));
+                f1 = squeeze(this.obj.data.profile(1,:));
+                f2 = squeeze(this.obj.data.d50(:,:,:)) * 1e6;
 
-            set(this.subplots.supply_limited,'YTick',[]);
-            xlabel(this.subplots.supply_limited, 'distance [m]');
+                this.lines.d50          = pcolor(repmat(this.axes.x,nl,1),repmat(f1,nl,1) - repmat([0:nl-1]',1,nx).*th',squeeze(f2(1,:,:))');
+                this.lines.profile      = plot(this.axes.x,f1,'-k','LineWidth',2);
+                this.lines.capacity     = plot(this.axes.x,zeros(nx,nf),':k');
+                this.lines.transport    = plot(this.axes.x,zeros(nx,nf),'-k');
 
-            xlim(this.subplots.supply_limited, minmax(this.axes.x));
-            ylim(this.subplots.supply_limited, [0 1]);
-            clim(this.subplots.supply_limited, [0 nf]);
-            
-            box on;
-            
-            this.colorbars.supply_limited = colorbar;
-            set(this.colorbars.supply_limited,'YTick',[]);
-            ylabel(this.colorbars.supply_limited,{'Supply' 'limitations'});
+                set(this.subplots.profile,'XTick',[]);
+                ylabel(this.subplots.profile, {'surface height [m]' 'transport concentration [kg/m^3]'});
 
-            cmap = this.colormap(nf+1);
+                xlim(this.subplots.profile, minmax(this.axes.x));
+                ylim(this.subplots.profile, max(.01,max(abs(f1(:)))) * [-1 1]);
+                clim(this.subplots.profile, [min(f2(:)) max(f2(:))] + [0 1000]);
 
-            % plot wind time series
-            this.subplots.wind = subplot(this.sy,this.sx,7:8); hold on;
+                box on;
 
-            f1 = squeeze(this.obj.wind.time_series);
-            this.lines.wind = plot(this.axes.t_in,f1,'-k');
-            this.hlines.wind = hline(squeeze(this.obj.bedcomposition.threshold_velocity),'-r');
-            this.vlines = [this.vlines vline(0,'-b')];
+                this.colorbars.profile = colorbar;
+                ylabel(this.colorbars.profile,'Median grain size [\mum]');
 
-            set(this.subplots.wind,'XTick',[]);
-            ylabel(this.subplots.wind,'wind speed [m/s]');
+                % plot supply limitation indicator
+                this.subplots.supply_limited = subplot(this.sy,this.sx,6); hold on;
+                this.lines.supply_limited    = pcolor(repmat(this.axes.x,2,1),repmat([0;1],1,nx),zeros(2,length(this.axes.x)));
 
-            xlim(this.subplots.wind, minmax(this.axes.t_out));
-            ylim(this.subplots.wind, [0 max(abs(f1(:))) + 1e-3]);
-            clim(this.subplots.wind, [0 nf]);
-            
-            box on;
-            
-            this.colorbars.wind = colorbar;
-            set(this.colorbars.wind,'YTick',1:nf,'YTickLabel',fliplr(this.obj.bedcomposition.grain_size * 1e6));
-            ylabel(this.colorbars.wind,'Grain size fraction [\mum]');
-            
-            for i = 1:length(this.hlines.wind)
-                set(this.hlines.wind(i),'Color',cmap(nf-i+2,:));
+                set(this.subplots.supply_limited,'YTick',[]);
+                xlabel(this.subplots.supply_limited, 'distance [m]');
+
+                xlim(this.subplots.supply_limited, minmax(this.axes.x));
+                ylim(this.subplots.supply_limited, [0 1]);
+                clim(this.subplots.supply_limited, [0 nf]);
+
+                box on;
+
+                this.colorbars.supply_limited = colorbar;
+                set(this.colorbars.supply_limited,'YTick',[]);
+                ylabel(this.colorbars.supply_limited,{'Supply' 'limitations'});
+
+                cmap = this.colormap(nf+1);
+
+                % plot wind time series
+                this.subplots.wind = subplot(this.sy,this.sx,7:8); hold on;
+
+                f1 = squeeze(this.obj.wind.time_series);
+                this.lines.wind = plot(this.axes.t_in,f1,'-k');
+                this.hlines.wind = hline(squeeze(this.obj.bedcomposition.threshold_velocity),'-r');
+                this.vlines = [this.vlines vline(0,'-b')];
+
+                set(this.subplots.wind,'XTick',[]);
+                ylabel(this.subplots.wind,'wind speed [m/s]');
+
+                xlim(this.subplots.wind, minmax(this.axes.t_out));
+                ylim(this.subplots.wind, [0 max(abs(f1(:))) + 1e-3]);
+                clim(this.subplots.wind, [0 nf]);
+
+                box on;
+
+                this.colorbars.wind = colorbar;
+                set(this.colorbars.wind,'YTick',1:nf,'YTickLabel',fliplr(this.obj.bedcomposition.grain_size * 1e6));
+                ylabel(this.colorbars.wind,'Grain size fraction [\mum]');
+
+                for i = 1:length(this.hlines.wind)
+                    set(this.hlines.wind(i),'Color',cmap(nf-i+2,:));
+                end
+
+                % plot transport time series
+                this.subplots.transport = subplot(this.sy,this.sx,9:10); hold on;
+
+                f1 = squeeze(this.obj.data.transport(:,end,:));
+                f2 = squeeze(this.obj.data.capacity(:,end,:));
+
+                this.lines.capacity_t = plot(this.axes.t_out,f2,'-k');
+                this.lines.transport_t = plot(this.axes.t_out,f1,'-k');
+                this.vlines = [this.vlines vline(0,'-b')];
+
+                xlabel(this.subplots.transport, 'time [s]');
+                ylabel(this.subplots.transport, {'transport concentration' 'and capacity [kg/m^3]'});
+
+                xlim(this.subplots.transport, minmax(this.axes.t_out));
+                ylim(this.subplots.transport, [0 max(abs(f1(:))) + 1e-3]);
+                clim(this.subplots.transport, [0 nf]);
+
+                box on;
+
+                this.colorbars.transport = colorbar;
+                set(this.colorbars.transport,'YTick',1:nf,'YTickLabel',this.obj.bedcomposition.grain_size * 1e6);
+                ylabel(this.colorbars.transport,'Grain size fraction [\mum]');
+
+                for i = 1:length(this.lines.transport_t)
+                    set(this.lines.transport_t(i),'Color',cmap(i+1,:));
+                end
+                
+                this.isinitialized = true;
             end
-            
-            % plot transport time series
-            this.subplots.transport = subplot(this.sy,this.sx,9:10); hold on;
-
-            f1 = squeeze(this.obj.data.transport(:,end,:));
-            f2 = squeeze(this.obj.data.capacity(:,end,:));
-
-            this.lines.capacity_t = plot(this.axes.t_out,f2,'-k');
-            this.lines.transport_t = plot(this.axes.t_out,f1,'-k');
-            this.vlines = [this.vlines vline(0,'-b')];
-
-            xlabel(this.subplots.transport, 'time [s]');
-            ylabel(this.subplots.transport, {'transport concentration' 'and capacity [kg/m^3]'});
-
-            xlim(this.subplots.transport, minmax(this.axes.t_out));
-            ylim(this.subplots.transport, [0 max(abs(f1(:))) + 1e-3]);
-            clim(this.subplots.transport, [0 nf]);
-            
-            box on;
-            
-            this.colorbars.transport = colorbar;
-            set(this.colorbars.transport,'YTick',1:nf,'YTickLabel',this.obj.bedcomposition.grain_size * 1e6);
-            ylabel(this.colorbars.transport,'Grain size fraction [\mum]');
-            
-            for i = 1:length(this.lines.transport_t)
-                set(this.lines.transport_t(i),'Color',cmap(i+1,:));
-            end
-            
-            this.update;
         end
         
         function this = reinitialize(this)
@@ -241,7 +274,9 @@ classdef slamfat_plot < handle
         
         function this = update(this)
             
-            if this.obj.output_timestep < this.obj.size_of_output
+            if ~this.isinitialized || ~ishandle(this.figure)
+                this.initialize;
+            elseif this.obj.output_timestep < this.obj.size_of_output
                 this.reinitialize;
             end
             
@@ -256,6 +291,10 @@ classdef slamfat_plot < handle
             f2  = squeeze(this.obj.data.d50(ot,:,:))' * 1e6;
             f3  = squeeze(sum(this.obj.data.supply_limited(ot,:,:),3));
 
+            if this.hide_profile
+                f1 = f1 - this.obj.initial_profile;
+            end
+            
             set(this.lines.profile, 'YData', f1);
             set(this.lines.d50,     'YData', repmat(f1,nl,1) - repmat([0:nl-1]',1,nx).*th', ...
                                     'CData', f2);
@@ -292,10 +331,26 @@ classdef slamfat_plot < handle
             this.update;
         end
         
+        function toggle_animate(this)
+            if this.animating
+                this.animating = false;
+            else
+                this.animating = true;
+                this.animate;
+            end
+        end
+        
         function animate(this)
-            while this.timestep < this.obj.size_of_output
+            if this.timestep < this.obj.size_of_output && this.animating
                 this.update;
                 this.timestep = this.timestep + 1;
+                this.animate;
+            end
+        end
+        
+        function delete(this)
+            if ishandle(this.figure)
+                close(this.figure);
             end
         end
     end

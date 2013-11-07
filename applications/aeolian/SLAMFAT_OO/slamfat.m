@@ -70,11 +70,11 @@ classdef slamfat < handle
         output_timestep         = 0
         
         profile                 = zeros(1,100)
-        wind                    = slamfat_wind
-        bedcomposition          = slamfat_bedcomposition
-        visualization           = @slamfat_plot
-        
+        initial_profile         = []
+        wind                    = []
+        bedcomposition          = []
         figure                  = []
+        
         animate                 = false;
         progress                = true;
         progressbar             = []
@@ -85,7 +85,6 @@ classdef slamfat < handle
         io                      = 1
         transport_transportltd  = []
         transport_supplyltd     = []
-        initial_profile         = []
         isinitialized           = false
         performance             = struct()
     end
@@ -94,6 +93,18 @@ classdef slamfat < handle
     methods
         function this = slamfat(varargin)
             setproperty(this, varargin);
+            
+            if isempty(this.wind)
+                this.wind = slamfat_wind;
+            end
+
+            if isempty(this.bedcomposition) || ~ishandle(this.bedcomposition)
+                this.bedcomposition = slamfat_bedcomposition;
+            end
+
+            if isempty(this.figure)
+                this.figure = slamfat_plot;
+            end
         end
         
         function initialize(this)
@@ -311,18 +322,22 @@ classdef slamfat < handle
         end
         
         function fig = plot(this)
-            if isempty(this.figure)
-                this.figure = this.visualization(this,'timestep',this.output_timestep);
-            else
-                try
-                    this.figure.timestep = this.output_timestep;
-                    this.figure.update;
-                catch
-                    this.figure = this.visualization(this,'timestep',this.output_timestep);
+            if ~isempty(this.figure)
+                if isempty(this.figure.obj)
+                    this.figure.obj = this;
                 end
+                this.figure.timestep = this.output_timestep;
+                this.figure.update;
             end
             
             fig = this.figure;
+        end
+        
+        function delete(this)
+            % clean up
+            this.wind           = [];
+            this.bedcomposition = [];
+            this.figure         = [];
         end
         
         function show_performance(this)

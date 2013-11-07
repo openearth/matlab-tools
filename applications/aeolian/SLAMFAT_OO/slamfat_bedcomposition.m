@@ -133,7 +133,6 @@ classdef slamfat_bedcomposition < handle
                 this.bedcomposition_module.thickness_of_transport_layer   = this.layer_thickness * ones(this.number_of_gridcells,1);
                 this.bedcomposition_module.thickness_of_lagrangian_layers = this.layer_thickness;
                 this.bedcomposition_module.thickness_of_eulerian_layers   = this.layer_thickness;
-                disp(this.bedcomposition_module)
 
                 this.bedcomposition_module.fractions(           ...
                     this.sediment_type, ...
