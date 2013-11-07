@@ -16,8 +16,8 @@ function pol2thd(fileIn,fileOut,grd,varargin)
 %	dstep		[double] Polygon is matched to grid by dividing it in sections
 %				of length dstep. Normally dstep should be 4x (or more) smaller 
 %				than minimal cell size
-%See also
-% pol2crs, pol2dry, pol2obs, pol2bnd
+%
+%See also: pol2crs, pol2dry, pol2obs, pol2bnd, delft3d_io_thd
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2013 Arcadis

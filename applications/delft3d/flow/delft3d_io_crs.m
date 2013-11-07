@@ -14,12 +14,7 @@ function varargout=delft3d_io_crs(cmd,varargin),
 % To plot one;all cross sections use the example below:
 %
 %   plot(DAT.x{1},DAT.y{1});plot(DAT.X,DAT.Y)
-%
-% See also: delft3d_io_ann, delft3d_io_bca, delft3d_io_bch, delft3d_io_bnd, 
-%           delft3d_io_crs, delft3d_io_dep, delft3d_io_dry, delft3d_io_eva, 
-%           delft3d_io_fou, delft3d_io_grd, delft3d_io_ini, delft3d_io_mdf, 
-%           delft3d_io_obs, delft3d_io_restart,             delft3d_io_src, 
-%           delft3d_io_tem, delft3d_io_thd, delft3d_io_wnd, d3d_attrib
+%delft3d_io_dep, pol2dry
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2005 Delft University of Technology

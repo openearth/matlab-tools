@@ -23,7 +23,7 @@ function varargout=delft3d_io_obs(cmd,varargin),
 %
 % also returns the x and y coordinates, where G = delft3d_io_grd('read',...)
 %
-% See also: dflowfm.opendap2obs, delft3d_io_xyn, XY2MN, delft3d, d3d_attrib
+% See also: dflowfm.opendap2obs, delft3d, d3d_attrib, delft3d_io_xyn, XY2MN, pol2obs
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2005-8 Delft University of Technology

@@ -18,8 +18,7 @@ function pol2bnd(fileIn,fileOut,grd,varargin)
 %				of length dstep. Normally dstep should be 4x (or more) smaller 
 %				than minimal cell size
 %
-%See als
-% pol2crs, pol2dry, pol2obs, pol2thd
+%See also: pol2crs, pol2dry, pol2obs, pol2thd, delft3d_io_bnd
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2013 Arcadis

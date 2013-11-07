@@ -16,8 +16,7 @@ function pol2dry(fileIn,fileOut,grd,varargin)
 %   From polygons to dry points:
 %	pol2dry('c:\mysim\mysim.ldb','c:\mysim\mysim.dry',grd);
 %
-%See also
-% pol2crs, pol2obs, pol2thd, pol2bnd
+%See also: pol2crs, pol2obs, pol2thd, pol2bnd, delft3d_io_dry
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2013 Arcadis

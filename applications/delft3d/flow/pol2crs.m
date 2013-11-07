@@ -18,8 +18,7 @@ function crs=pol2crs(fileIn,fileOut,grd,varargin)
 %				of length dstep. Normally dstep should be 4x (or more) smaller 
 %				than minimal cell size
 %
-%See also
-% pol2dry, pol2obs, pol2thd, pol2bnd
+%See also: pol2dry, pol2obs, pol2thd, pol2bnd, delft3d_io_crs
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2013 Arcadis

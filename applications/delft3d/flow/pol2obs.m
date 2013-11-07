@@ -3,8 +3,8 @@ function pol2obs(fileIn,fileOut,grd,varargin)
 %
 %Syntax:
 %	pol2obs(fileIn,fileOut,grd,<keyword>,<value>,...)
-%See also
-% pol2crs, pol2dry, pol2obs, pol2thd, pol2bnd
+%
+%See also: pol2crs, pol2dry, pol2thd, pol2bnd, delft3d_io_obs
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2013 Arcadis

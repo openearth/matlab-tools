@@ -31,11 +31,7 @@ function varargout=delft3d_io_dry(cmd,varargin),
 %    G.cen.dep = G.cen.dep.*G.cen.mask;
 %    pcolorcorcen(G.cor.x,G.cor.y,G.cen.dep)
 %
-% See also: delft3d_io_ann, delft3d_io_bca, delft3d_io_bch, delft3d_io_bnd, 
-%           delft3d_io_crs, delft3d_io_dep, delft3d_io_dry, delft3d_io_eva, 
-%           delft3d_io_fou, delft3d_io_grd, delft3d_io_ini, delft3d_io_mdf, 
-%           delft3d_io_obs, delft3d_io_restart,             delft3d_io_src, 
-%           delft3d_io_tem, delft3d_io_thd, delft3d_io_wnd, d3d_attrib
+% See also: delft3d, d3d_attrib, delft3d_io_grd, delft3d_io_dep, pol2dry
 
 % Nov 2007: put smallest index first in m and n fields.
 % Nov 2007: added in and output of G

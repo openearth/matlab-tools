@@ -33,7 +33,7 @@ function varargout=delft3d_io_thd(cmd,varargin)
 %
 % [DAT.lon{1},DAT.lat{1}] = convertCoordinates(DAT.x{1},DAT.y{1},...)
 %
-% See also: delft3d, delft3d_io_grd
+% See also: delft3d, d3d_attrib, delft3d_io_grd, pol2thd
 
 % Nov 2007: put smallest index first in m and n fields.
 
