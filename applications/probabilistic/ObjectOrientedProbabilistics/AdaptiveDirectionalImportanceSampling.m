@@ -53,6 +53,8 @@ classdef AdaptiveDirectionalImportanceSampling < DirectionalSampling
         MinNrLimitStatePoints
         MinNrApproximatedPoints
         ApproximatedCriteriumFactor
+        NrExactEvaluationsBisection
+        NrConvergedBisections
     end
     
     properties (Dependent = true)
@@ -141,6 +143,8 @@ classdef AdaptiveDirectionalImportanceSampling < DirectionalSampling
             this.NrDirectionsEvaluated          = 0;
             this.LastIteration                  = false;
             this.Abort                          = false;
+            this.NrExactEvaluationsBisection    = 0;
+            this.NrConvergedBisections          = 0;
         end
         
         %Prepare calculation of Pf
@@ -169,6 +173,10 @@ classdef AdaptiveDirectionalImportanceSampling < DirectionalSampling
             else
                 % else, perform exact line search (without use of response surface)
                 this.LineSearcher.PerformSearch(this.UNormalVector(this.IndexQueue(index),:), this.LimitState, this.LimitState.RandomVariables);
+                this.NrExactEvaluationsBisection    = this.NrExactEvaluationsBisection + this.LineSearcher.IterationsBisection;
+                if this.LineSearcher.IterationsBisection > 0
+                    this.NrConvergedBisections          = this.NrConvergedBisections + this.LineSearcher.SearchConverged;
+                end
             end
             
             % Save the index of the chosen direction for each
@@ -188,6 +196,10 @@ classdef AdaptiveDirectionalImportanceSampling < DirectionalSampling
                 
                 % perform exact line search (LineSearch method)
                 this.LineSearcher.PerformSearch(this.UNormalVector(this.IndexQueue(index),:), this.LimitState, this.LimitState.RandomVariables);
+                this.NrExactEvaluationsBisection    = this.NrExactEvaluationsBisection + this.LineSearcher.IterationsBisection;
+                if this.LineSearcher.IterationsBisection > 0
+                    this.NrConvergedBisections          = this.NrConvergedBisections + this.LineSearcher.SearchConverged;
+                end
                 
                 % Save the index of the chosen direction for each
                 % point evaluated during the line search (DirectionalSampling method)

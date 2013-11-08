@@ -1,28 +1,28 @@
-function z = XBeachLimitStateFunction(varargin)
-%XBeachLimitStateFunction  One line description goes here.
+function z = prob_quadratic_RS_concave_x2z_test(varargin)
+%PROB_QUADRATIC_RS_CONCAVE_X2Z_TEST  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   z = XBeachLimitStateFunction(varargin)
+%   varargout = prob_quadratic_RS_concave_x2z_test(varargin)
 %
-%   Input: For <keyword,value> pairs call XBeachLimitStateFunction() without arguments.
+%   Input:
 %   varargin  =
 %
 %   Output:
-%   z =
+%   varargout =
 %
 %   Example
-%   Untitled
+%   prob_quadratic_RS_concave_x2z_test
 %
-%   See also
+%   See also 
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2013 Deltares
-%       Joost den Bieman
+%   Copyright (C) 2011 Deltares
+%       Bas Hoonhout
 %
-%       joost.denbieman@deltares.nl
+%       bas.hoonhout@deltares.nl	
 %
 %       P.O. Box 177
 %       2600 MH Delft
@@ -43,14 +43,14 @@ function z = XBeachLimitStateFunction(varargin)
 %   --------------------------------------------------------------------
 
 % This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
-% OpenEarthTools is an online collaboration to share and manage data and
+% OpenEarthTools is an online collaboration to share and manage data and 
 % programming tools in an open source, version controlled environment.
-% Sign up to recieve regular updates of this function, and to contribute
+% Sign up to recieve regular updates of this function, and to contribute 
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 16 Oct 2013
-% Created with Matlab version: 8.1.0.604 (R2013a)
+% Created: 31 Aug 2011
+% Created with Matlab version: 7.9.0.529 (R2009b)
 
 % $Id$
 % $Date$
@@ -59,34 +59,14 @@ function z = XBeachLimitStateFunction(varargin)
 % $HeadURL$
 % $Keywords: $
 
-%% Settings
+%% settings
+
 OPT = struct(...
-    'h', [],...
-    'Hm0', [], ...
-    'Tp', [],...
-    'D50', 225e-6,...
-    'tstop', 5*3600, ...
-    'ModelSetupDir', [],...
-    'ModelRunDir', [],...
-    'sshUser', [], ...
-    'sshPassword', []);
+    'U1', [],...
+    'U2', []);
 
 OPT = setproperty(OPT, varargin{:});
 
-%% Check whether run already exists
+%% limit state function
 
-FolderName          = ['h' num2str(OPT.h) '_Hm0' num2str(OPT.Hm0)];
-ModelOutputDir      = fullfile(OPT.ModelRunDir, FolderName);
-
-if ~isdir(ModelOutputDir)
-    %% Setup & run model
-    XBeachProbabilisticRun(varargin);
-end
-
-%% Dummy Limit State Function
-
-MaxWetPoint = 1380; 
-wetz        = nc_varget(fullfile(ModelOutputDir,'xboutput.nc'), 'wetz');
-xGrid       = load(fullfile(ModelOutputDir,'x.grd'));
-WetPoint    = xGrid(find(squeeze(wetz(end,:,:)) == 1,1,'last'));
-z           = MaxWetPoint - WetPoint;
+z = -0.5*(OPT.U1-OPT.U2).^2-(OPT.U1+OPT.U2)/sqrt(2)+3;
