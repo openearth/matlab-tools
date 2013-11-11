@@ -16,10 +16,10 @@ if simona2mdf_fieldandvalue(mdf,'filedy')
 
     % Derive and write values to file
     if ~mdu.physics.Salinity
-        unstruc_io_viscosity('write',filgrd,filedy,[name_mdu '_vico.xyz']);
+        dflowfm_io_viscosity('write',filgrd,filedy,[name_mdu '_vico.xyz']);
     else
         mdu.Fildico  = [nameshort '_dico.xyz'];
-        unstruc_io_viscosity('write',filgrd,filedy,[name_mdu '_vico.xyz'],[name_mdu '_dico.xyz']);
+        dflowfm_io_viscosity('write',filgrd,filedy,[name_mdu '_vico.xyz'],[name_mdu '_dico.xyz']);
     end
 else
 
