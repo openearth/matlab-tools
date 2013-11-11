@@ -24,6 +24,14 @@ function varargout = wms_image_plot(url,OPT)
    set(gca,'ydir','normal')
    %TODO if ~isempty(OPT.colorscalerange);clim([OPT.colorscalerange]);end
    %TODO colorbarwithvtext(OPT.layers)
+   t = '';
+   if ~isempty(OPT.time)
+       t = ['time:',OPT.time];
+   end
+   if ~isempty(OPT.elevation)
+       t = [t,' elevation:',OPT.elevation];
+   end
+   title(t)
    print2screensizeoverwrite([OPT.cachename,'_rendered'])
   
    if nargout > 0
