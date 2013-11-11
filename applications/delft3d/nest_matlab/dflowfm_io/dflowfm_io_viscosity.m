@@ -39,9 +39,9 @@ case 'write'
 
    % Fill LINE struct with viscosity and diffusivity values
    for i_edy = 1: no_edy
-       tmp(i_edy,:,1) = reshape(xcoor_u',mmax*nmax,1);
-       tmp(i_edy,:,2) = reshape(ycoor_u',mmax*nmax,1);
-       tmp(i_edy,:,3) = reshape(edy(i_edy).Data',mmax*nmax,1);
+       tmp(i_edy,1:mmax*nmax,1)             = reshape(xcoor_u',mmax*nmax,1);
+       tmp(i_edy,1:mmax*nmax,2)             = reshape(ycoor_u',mmax*nmax,1);
+       tmp(i_edy,1:mmax*nmax,3)             = reshape(edy(i_edy).Data',mmax*nmax,1);
 
        tmp(i_edy,mmax*nmax+1:2*mmax*nmax,1) = reshape(xcoor_v',mmax*nmax,1);
        tmp(i_edy,mmax*nmax+1:2*mmax*nmax,2) = reshape(ycoor_v',mmax*nmax,1);
