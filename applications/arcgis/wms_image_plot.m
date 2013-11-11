@@ -8,6 +8,8 @@ function varargout = wms_image_plot(url,OPT)
 
 %% download cache of image  
    urlwrite(url,[OPT.cachename,OPT.ext]);
+   
+   disp(['Cached WMS image to:',OPT.cachename,OPT.ext])
   
 %% make kml wrapper for cached image
    KMLimage(OPT.axis([2 4]),OPT.axis([1 3]),url,'fileName',[OPT.cachename,'.kml'])

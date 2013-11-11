@@ -2,19 +2,40 @@ function varargout = wms(varargin)
 %WMS construct and validate OGC WMS request from Web Mapping Service server
 %
 %  [url,OPT,lims] = wms_validate(<keyword,value>)
+%  [url,OPT,lims] = wms_validate(OPT)
 %
-% constructs wms url from user-keywords and getcapabilities 
-% meta-data. Validates the user-paramaters and fills empty 
-% keywords in with first valid value from getcapabilities
-% or throws pop-up neu with available options.
-% Retruns list with available options. Returns valid url and
-% valid parameters. OPT contains the vectors x and y to be used
-% for georeferencing the WMS image with the requested bounding box.
+% where
+% url  - is valid wms getmap request constructed from user-keywords 
+%        and (cached) getcapabilities request.
+% lims - are the available options per keyword.
+% OPT  - contains as input the user-keywords and as output valid
+%        values for the keywords, as first valid value from getcapabilities
+%        or interactive selection from UI pop-up with available options, or
+%        simply returns validated values unaltered.
+% OPT  - also contains the vectors x and y to be used
+%        for georeferencing the WMS image with the requested bounding box.
 %
-% layers= 1 / n / ''  get 1st / nth layer from server / show drop-down menu
-% format= 1 / n / ''  get 1st / nth layer from server / show drop-down menu
-% style = 1 / n / ''  get 1st / nth style from server / show drop-down menu
-% axis  = []          get overall axis from server [minlon minlat maxlon maxlat] (not always ame as bbox)
+% Keywords layers, format and style can be 
+% 1  - get 1st value from list, to prevent all user interaction
+% n  - or other integer, get nth value from list
+% '' - show drop-down menu with all options
+% 
+% Keyword axis can be [] to get overall axis from server 
+% [minlon minlat maxlon maxlat]. Note that numeric array
+% OPT.axis can have lat/lon swapped with respect to character 
+% OPT.bbox due to change betwen WMS 1.1.1 and 1.3.0
+% Note: some WMS servers erroneously still swap [lat,lon] 
+% in the bbox @ version 1.3.0 & crs=epsg:4326, notably Unidata THREDDS ncWMS.
+%
+% Keyword/dimensions 'time' and 'elevation' can be a 
+% character - checked for validity against the possible range
+%             as indicated in the getcababilities xml (e.g. '0.1' or '2004-12-05'
+% 'default' - gets the default from the getcababilities, if any
+% empty     - a case a selection menu is thrown.
+% numeric   - values are turned to char, and then checked for possible range
+%             as indicated in the getcababilities xml. Note that the ascii
+%             representation is compared, which is often off due to format
+%             precision digits.
 %
 % Example:
 %
@@ -27,9 +48,7 @@ function varargout = wms(varargin)
 %   tickmap('ll');grid on;
 %   set(gca,'ydir','normal')
 %
-% Note: some WMS servers swap [lat,lon] in the bbox @ version 1.3.0 & crs=epsg:4326
-%
-%See also: WMS_IMAGE_PLOT, arcgis, netcdf, opendap, postgresql
+%See also: WMS_IMAGE_PLOT, arcgis, netcdf, opendap, postgresql, xml_read
 %          KMLimage (wrap WMS in KML)
 %          http://publicwiki.deltares.nl/display/OET/WMS+primer
 %          https://pypi.python.org/pypi/OWSLib
@@ -84,19 +103,21 @@ OPT.height          = 600;           % default, check for max from getCapabiliti
 OPT.styles          = '';            % from getCapabilities
 OPT.transparent     = 'true';        % needs format image/png, note char format, as num2str(true)=1 and not 'true'
 OPT.time            = '';            % from getCapabilities
+OPT.elevation       = '';            % from getCapabilities
 
 OPT.disp            = 0;             % write screen logs
 OPT.cachedir        = [tempdir,'matlab.wms',filesep]; % store cache of xml (and later png)
 
-% non-standard
-OPT.colorscalerange = [];
+%% non-standard
 
-if nargin==0
-    varargout = {[OPT]};
-    return
-end
-
-OPT = setproperty(OPT,varargin);
+   OPT.colorscalerange = [];
+   
+   if nargin==0
+       varargout = {[OPT]};
+       return
+   end
+   
+   OPT = setproperty(OPT,varargin);
 
 %% get_capabilities
 
@@ -137,7 +158,7 @@ OPT = setproperty(OPT,varargin);
       end
    end
 
-   [OPT.layers] = matchset('layers',OPT.layers,lim.layers,OPT);
+   [OPT.layers] = wms_keyword_match('a layer',OPT.layers,lim.layers,OPT);
    for ilayer=1:length(xml.Capability.Layer.Layer)
       if isfield(xml.Capability.Layer.Layer(i),'Layer')       
          for jlayer=1:length(xml.Capability.Layer.Layer(ilayer).Layer)
@@ -156,15 +177,15 @@ OPT = setproperty(OPT,varargin);
       end
    end
 
-% check valid format
+%% check valid format
 
    lim.format = xml.Capability.Request.GetMap.Format;
-   OPT.format = matchset('format',OPT.format,lim.format,OPT);
+   OPT.format = wms_keyword_match('a format',OPT.format,lim.format,OPT);
    i = strfind(OPT.format,'/');OPT.ext = ['.',OPT.format(i+1:end)];
 
-% check valid crs: handle symbol ":" inside
-% server + layer crs
-% DO NOT USE urlencode, as it will double-encode the % from an already encoded url
+%% check valid crs: handle symbol ":" inside
+%  server + layer crs
+%  DO NOT USE urlencode, as it will double-encode the % from an already encoded url
 
    if     isfield(xml.Capability.Layer,'CRS')
       OPT.crsname = 'CRS';
@@ -180,24 +201,25 @@ OPT = setproperty(OPT,varargin);
    end
    lim.crs = {crs0{:},crs1{:}};
    
-   OPT.crs = matchset('crs',strrep(OPT.crs,':','%3A'),lim.crs,OPT);
+   OPT.crs = wms_keyword_match('a crs',strrep(OPT.crs,':','%3A'),lim.crs,OPT);
    
-% check valid axis (not yet bbox):
+%% check valid axis (not yet bbox):
 
    if isempty(OPT.bbox)
        if isfield(Layer,'EX_GeographicBoundingBox') & strcmpi(OPT.version,'1.3.0') % 1.3.0
-          disp([OPT.version,' ', OPT.crs,' ','EX_GeographicBoundingBox']);
+          %disp([OPT.version,' ', OPT.crs,' ','EX_GeographicBoundingBox']);
            OPT.axis(1) = str2num(Layer.EX_GeographicBoundingBox.westBoundLongitude);
            OPT.axis(2) = str2num(Layer.EX_GeographicBoundingBox.southBoundLatitude);
            OPT.axis(3) = str2num(Layer.EX_GeographicBoundingBox.eastBoundLongitude);
            OPT.axis(4) = str2num(Layer.EX_GeographicBoundingBox.northBoundLatitude);
        elseif isfield(Layer,'LatLonBoundingBox') & strcmpi(OPT.version,'1.1.1') % 1.1.1
-          disp([OPT.version,' ', OPT.crs,' ','LatLonBoundingBox']);
+          %disp([OPT.version,' ', OPT.crs,' ','LatLonBoundingBox']);
            OPT.axis(1) = str2num(Layer.LatLonBoundingBox.ATTRIBUTE.minx);
            OPT.axis(2) = str2num(Layer.LatLonBoundingBox.ATTRIBUTE.miny);
            OPT.axis(3) = str2num(Layer.LatLonBoundingBox.ATTRIBUTE.maxx);
            OPT.axis(4) = str2num(Layer.LatLonBoundingBox.ATTRIBUTE.maxy);
        elseif isfield(Layer,'BoundingBox')
+          %disp([OPT.version,' ', OPT.crs,' ','BoundingBox']);
          for ibox=1:length(Layer.BoundingBox)
            if strcmpi(Layer.BoundingBox(ibox).ATTRIBUTE.(OPT.crsname),'EPSG:4326')
                OPT.axis(1) = str2num(Layer.BoundingBox(ibox).ATTRIBUTE.minx); % x0
@@ -214,7 +236,7 @@ OPT = setproperty(OPT,varargin);
        end
    end
 
-% check valid bbox (handle lon-lat vs. lat-lon:
+%% check valid bbox (handle lon-lat vs. lat-lon:
 % http://viswaug.wordpress.com/2009/03/15/reversed-co-ordinate-axis-order-for-epsg4326-vs-crs84-when-requesting-wms-130-images/
 % http://www.resc.rdg.ac.uk/trac/ncWMS/wiki/FrequentlyAskedQuestions#MyWMSclientuseslatitude-longitudeaxisorder
 %
@@ -230,57 +252,119 @@ OPT = setproperty(OPT,varargin);
    if     strcmpi(OPT.version,'1.3.0') & strcmpi(strrep(OPT.crs,':','%3A'),'EPSG%3A4326')
        % [min_lat,min_lon,max_lat,max_lon]  % reversed
        OPT.bbox  = nums2str(OPT.axis([2,1,4,3]),',');
-       warning('crs=CRS:84 to be used instead of crs=EPSG:4326 to prevent mixing-up lat-lon in THREDDS')
+       dprintf(2,'crs=CRS:84 to be used instead of crs=EPSG:4326 to prevent mixing-up lat-lon in THREDDS')
    else
        % [min_lon,min_lat,max_lon,max_lat]
        % [minx   ,miny   ,maxx   ,maxy   ]
        OPT.bbox  = nums2str(OPT.axis,',');       
    end   
 
-% check valid width, height
+%% check valid width, height
 
    if isfield(xml.Service,'MaxWidth'); OPT.width  = min(OPT.width ,str2num(xml.Service.MaxWidth ));end
    if isfield(xml.Service,'MaxHeight');OPT.height = min(OPT.height,str2num(xml.Service.MaxHeight));end
 
-% server + layer styles
+%% server + layer styles
 
    styles0 = {};styles1 = {};
    if isfield(xml.Capability.Layer,'Style');styles0 = {xml.Capability.Layer.Style.Name};end
    if isfield(               Layer,'Style');styles1 = {               Layer.Style.Name};end
    lim.styles = {styles0{:},styles1{:}};   
-   OPT.styles = matchset('styles',OPT.styles,lim.styles,OPT);
+   OPT.styles = wms_keyword_match('a style',OPT.styles,lim.styles,OPT);
    
-% dimensions: time (optional)
+%% optional dimensions: time + elevation + dedicated
+%   current = 'true';
+%   default = '2013-11-02T12:00:00.000Z';
+%   multipleValues = 'true';
 
    if isfield(Layer,'Dimension')
-      for idim=1:length(Layer.Dimension)
-      if     strcmpi(Layer.Dimension(idim).ATTRIBUTE.name,'elevation')
-      lim.elevation = Layer.Dimension(idim).CONTENT;
-      elseif strcmpi(Layer.Dimension(idim).ATTRIBUTE.name,'time')
-      
-      lim.time = Layer.Dimension(idim).CONTENT;
-      
-      % OPT.time = matchset(OPT.time)
+     for idim=1:length(Layer.Dimension)
+       if     strcmpi(Layer.Dimension(idim).ATTRIBUTE.name,'elevation')
+          
+         lim.elevation = wms_dim_series(Layer.Dimension(idim).CONTENT);
+         
+         if isfield(Layer.Dimension(idim).ATTRIBUTE,'default')
+          default = Layer.Dimension(idim).ATTRIBUTE.default;
+         else
+          default = '';
+         end
+         
+         if strcmpi(OPT.elevation,'default') & ~isempty(default)
+            OPT.elevation = default;
+         else
+             if isnumeric(OPT.elevation)
+                 OPT.elevation = num2str(OPT.elevation);
+                 % perhaps better swap: turn lim.elevation into numeric and then compare               
+             end
+            [OPT.elevation] = wms_keyword_match(['an elevation (default: ',default,')'],OPT.elevation,lim.elevation,OPT);         
+         end
+         ind = strfind([OPT.elevation],'/');
+         if any(ind)
+             [z0,z1,dz] = wms_dim_range(OPT.elevation);
+             set = num2str([str2num(z0):str2num(dz):str2num(tz)]');
+             [i, ok] = listdlg('ListString', set, .....
+                            'SelectionMode', 'single', ...
+                             'PromptString',['Select an elevation (default: ',default,'):'], ....
+                                     'Name',OPT.server,...
+                                 'ListSize', [500, 300]);    
+             OPT.elevation = set(i,:);            
+         end
+         
+       elseif strcmpi(Layer.Dimension(idim).ATTRIBUTE.name,'time')
+          
+         lim.time = wms_dim_series(Layer.Dimension(idim).CONTENT);
+         if isempty(lim.time{1})
+             if isfield(Layer,'Extent')
+                 lim.time = wms_dim_series(Layer.Extent.CONTENT);
+                 if isfield(Layer.Extent.ATTRIBUTE,'default')
+                    Layer.Dimension(idim).ATTRIBUTE.default = Layer.Extent.ATTRIBUTE.default;
+                 end
+             end
+         end
+         
+         if isfield(Layer.Dimension(idim).ATTRIBUTE,'default')
+          default = Layer.Dimension(idim).ATTRIBUTE.default;
+         else
+          default = '';
+         end
+         
+         if strcmpi(OPT.time,'default') & ~isempty(default)
+            OPT.time = default;
+         else
+             if isnumeric(OPT.time)
+                OPT.time = datestr(OPT.time,'yyyy-mm-ddTHH:MM:SS.FFFZ');
+                % perhaps better swap: turn lim.time into numeric and then compare    
+             end
+            [OPT.time] = wms_keyword_match(['a time (default: ',default,')'],OPT.time,lim.time,OPT);
+         end
+         ind = strfind([OPT.time],'/');
+         if any(ind)
+             [t0,t1,dt] = wms_dim_range(OPT.time);
+             [Y,MO,D,H,MI,S,zone] = iso2datenum(dt);
+             dt =  datenum(Y,MO,D,H,MI,S);
+             [t1,zone0] = iso2datenum(t1);
+             [t0,zone1] = iso2datenum(t0);
 
-      %% case list
-      % <Dimension name="time" units="ISO8601" multipleValues="true" current="true" default="2012-01-01T00:00:00.000Z">
-      % 1926-01-01T00:00:00.000Z,1948-01-01T00:00:00.000Z,1971-01-01T00:00:00.000Z,1981-01-01T00:00:00.000Z,1986-01-01T00:00:00.000Z,1987-01-01T00:00:00.000Z,1990-01-01T00:00:00.000Z,1991-01-01T00:00:00.000Z,1994-01-01T00:00:00.000Z,1997-01-01T00:00:00.000Z,1999-01-01T00:00:00.000Z,2001-01-01T00:00:00.000Z,2006-01-01T00:00:00.000Z,2009-01-01T00:00:00.000Z,2012-01-01T00:00:00.000Z
-      % </Dimension>
-      %% case extent
-      % <Dimension name="time" units="ISO8601"/>
-      % <Extent name="time" default="2013-10-31T17:40:00Z" multipleValues="1" nearestValue="0">2012-12-07T00:00:00Z/2013-10-31T17:40:00Z/PT5M</Extent>
+             set = datestr(t0:dt:t1,['yyyy-mm-ddTHH:MM:SS',zone0]);
+             [i, ok] = listdlg('ListString', set, .....
+                            'SelectionMode', 'single', ...
+                             'PromptString',['Select a time(default: ',default,'):'], ....
+                                     'Name',OPT.server,...
+                                 'ListSize', [500, 300]);    
+             OPT.time = set(i,:);            
+         end
 
-      end
-      end
+       else
+         dprintf([2,'dedicated server-defined dimensions not yet implemented:',Layer.Dimension(idim).ATTRIBUTE.name])
+       end % WMS name
+     end % idim
    
    end
 
-% make center pixels
+%% make center pixels
 
   OPT.x = linspace(OPT.axis(1),OPT.axis(3),OPT.width);
   OPT.y = linspace(OPT.axis(4),OPT.axis(2),OPT.height); % images are generally upside down: pixel(1,1) is upper left corner
-
-% check valid time
 
 %% construct url: standard keywords
 
@@ -303,8 +387,20 @@ OPT = setproperty(OPT,varargin);
    end
 
    if ~isempty(OPT.time)
-   url = [url, '&time=',datestr(OPT.time,'YYYY-MM-DDTHH:MM:SS')];
+      if ischar(OPT.time)
+         url = [url, '&time=',OPT.time];
+      else
+         url = [url, '&time=',datestr(OPT.time,'YYYY-MM-DDTHH:MM:SS')];
+      end
    end
+
+   if ~isempty(OPT.elevation)
+      if ischar(OPT.elevation)
+         url = [url, '&elevation=',OPT.elevation];
+      else
+         url = [url, '&elevation=',num2str(elevation)];
+      end
+   end   
    
    varargout = {url,OPT,lim};
    
@@ -312,8 +408,8 @@ function c = ensure_cell(c)
 
    if ischar(c);c = cellstr(c);end
 
-function [val,i] = matchset(txt,val,set,OPT)
-%MATCHSET validate choice against set, make (menu) choice from valid set
+function [val,i] = wms_keyword_match(txt,val,set,OPT)
+%WMS_KEYWORD_MATCH  validate choice against cellstr set, make choice from UI
 
    if ischar(set)
        set = cellstr(set);
@@ -331,7 +427,7 @@ function [val,i] = matchset(txt,val,set,OPT)
        else
       [i, ok] = listdlg('ListString', set, .....
                      'SelectionMode', 'single', ...
-                      'PromptString',['Select a ',txt,':'], ....
+                      'PromptString',['Select ',txt,':'], ....
                               'Name',OPT.server,...
                           'ListSize', [500, 300]);
        val = set{i};
@@ -339,11 +435,10 @@ function [val,i] = matchset(txt,val,set,OPT)
    else
       i = strmatch(lower(val),lower(set),'exact');
       if isempty(i)
-          warning(['wms:not valid: ',txt,'="',val,'"'])
+          dprintf(2,['wms:not valid: ',txt,'="',val,'", choose from valid options:'])
           % throw menu to show options that are available
-          [val,i] = matchset(txt,'',set,OPT);
+          [val,i] = wms_keyword_match(txt,'',set,OPT);
       else       
           if OPT.disp;disp(['wms:validated: ',txt,'="',val,'"']);end
       end    
    end
-     
