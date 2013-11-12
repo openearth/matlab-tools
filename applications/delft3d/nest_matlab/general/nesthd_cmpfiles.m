@@ -5,7 +5,7 @@ if ~isempty(varargin)
     opt = setproperty(opt,varargin);
 end
 
-if ~isempty(opt,Filename)
+if ~isempty(opt.Filename)
     fid = fopen(opt.Filename,'a');
 end
 
