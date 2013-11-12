@@ -38,29 +38,27 @@ if mbnd(1,1) == mbnd(1,2) dir_old = 'm'; end
 
 for ibnd = 1 : no_bnd
 
-    %
     % Change in orientation or jump of more than 1 cell ==> new polyline
-    %
-
-    if mbnd(ibnd,1) == mbnd(ibnd,2)
-        dir = 'm';
-        diff = abs(mbnd(min(ibnd + 1,no_bnd),1) - mbnd(ibnd,2));
-    else
-        dir = 'n';
-        diff = abs(nbnd(min(ibnd + 1,no_bnd),1) - nbnd(ibnd,2));
-    end
-
-    if ~strcmp(dir,dir_old) || diff > 1
-        dir_old = dir;
-        iline   = iline + 1;
-        irow    = 1;
+    if ibnd > 1;
+        if mbnd(ibnd,1) == mbnd(ibnd,2)
+            dir       = 'm';
+            diff      = abs(mbnd(ibnd,1) - mbnd(ibnd-1,2));
+        else
+            dir       = 'n';
+            diff      = abs(nbnd(ibnd,1) - nbnd(ibnd-1,2));
+        end
+        if ~strcmp(dir,dir_old) || diff > 1
+            dir_old   = dir;
+            iline     = iline + 1;
+            irow      = 1;
+        end
     end
 
     % Astronomical boundary conditions?
     astronomical = false;
     if strcmpi(D.DATA(ibnd).datatype,'a') astronomical = true;end
 
-    % Fill LINE struct for sida A
+    % Fill LINE struct for side A
     LINE(iline).DATA{irow,1} = xb(ibnd,1);
     LINE(iline).DATA{irow,2} = yb(ibnd,1);
     string = sprintf(' %1s %1s ',D.DATA(ibnd).bndtype,D.DATA(ibnd).datatype);
@@ -89,10 +87,10 @@ for ipol = 1: length(LINE)
     %
 
     if ~OPT.Salinity
-       LINE(ipol).Blckname=[name_pli '_' num2str(ipol,'%3.3i') '.pli'];
+       LINE(ipol).Blckname=[name_pli '_' num2str(ipol,'%3.3i')];
        dflowfm_io_xydata ('write',[filpli '_' num2str(ipol,'%3.3i') '.pli'],LINE(ipol));
     else
-       LINE(ipol).Blckname=[name_pli '_' num2str(ipol,'%3.3i') '_sal.pli'];
+       LINE(ipol).Blckname=[name_pli '_' num2str(ipol,'%3.3i') '_sal'];
        dflowfm_io_xydata ('write',[filpli '_' num2str(ipol,'%3.3i') '_sal.pli'],LINE(ipol));
     end
 
@@ -100,7 +98,9 @@ for ipol = 1: length(LINE)
     % Fil varargout for later wriing of the file names to the external forcing file
     %
 
-    if nargout > 0 filext{ipol} = LINE(ipol).Blckname; end
+    if nargout > 0;
+        filext{ipol} = LINE(ipol).Blckname;
+    end
 end
 
 % now, write all polylines (only for hydrodynamic bc)
