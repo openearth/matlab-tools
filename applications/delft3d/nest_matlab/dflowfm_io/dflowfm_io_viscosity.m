@@ -1,4 +1,4 @@
-function varargout=dflowfm_io_viscosity(cmd,filgrd,filedy,filvico,varargin)
+function varargout=dflowfm_io_viscosity(cmd,varargin)
 
 % FLOWFM_IO_viscosity  read/write D-Flow FM viscosity (and diffusivity) file
 %
@@ -16,8 +16,12 @@ case 'read'
 
 case 'write'
 
+   filgrd = varargin{1};
+   filedy = varargin{2};
+   filvico= varargin{3};
+
    no_edy = 1;
-   if ~isempty(varargin)
+   if length(varargin) == 4
        fildico = varargin{1};
        no_edy  = 2;
    end
