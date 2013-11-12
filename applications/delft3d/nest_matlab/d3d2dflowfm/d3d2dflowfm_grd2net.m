@@ -21,7 +21,7 @@ if strcmp(G.CoordinateSystem,'Spherical');
 end
 
 % Read the depth data
-if exist(fildep,'file');
+if exist(fildep,'file') & ~strcmp(fildep(end),'\');
     depthdat      = wldep('read',fildep,[mmax nmax]);
     zh            = depthdat;
     zh(zh==-999)  = NaN;
