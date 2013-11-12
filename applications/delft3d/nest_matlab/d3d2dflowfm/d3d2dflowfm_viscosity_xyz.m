@@ -12,7 +12,7 @@
 
    no_edy = 1;
    if length(varargin) == 4
-       fildico = varargin{1};
+       fildico = varargin{4};
        no_edy  = 2;
    end
 

@@ -37,5 +37,5 @@ for itest = 1 : length(filmdf)
     % Finally: compare
     %
 
-    nesthd_cmpfiles(files);
+    nesthd_cmpfiles(files,'Filename',['compare_' datestr(now,'yyyymmdd') '.txt']);
 end
