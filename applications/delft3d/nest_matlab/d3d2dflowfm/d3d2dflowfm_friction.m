@@ -18,7 +18,7 @@ if ~isempty(filrgh)
     mdu.physics.UnifFrictCoef = -999.999;
     mdu.Filrgh               = [nameshort '_rgh.xyz'];
 
-    dflowfm_io_roughness('write',filgrd,filrgh,[name_mdu '_rgh.xyz']);
+    d3d2dflowdm_friction_xyz(filgrd,filrgh,[name_mdu '_rgh.xyz']);
 else
 
     % Constant values from mdf file
