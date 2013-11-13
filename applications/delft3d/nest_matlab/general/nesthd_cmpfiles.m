@@ -39,7 +39,7 @@ for itest = 1:length(files)
         end
 
         if ~isempty(opt.Filename)
-            fprintf(fid,'%s',string);
+            fprintf(fid,'%s \n',string);
         else
             disp(string);
         end
