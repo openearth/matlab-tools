@@ -332,7 +332,11 @@ classdef DirectionalSampling < ProbabilisticMethod
         %Plot directional sampling results
         function plot(this)
             figureHandle = figure('Tag','ProbabilisticMethodResults');
-            this.LimitState.plot(figureHandle, this.EvaluationApproachesZero)
+           if  isa(this,'DirectionalSampling')
+            this.LimitState.plot(figureHandle, this.EvaluationApproachesZero,class(this),this.Pf, this.NrDirectionsEvaluated, this.UNormalIndexPerEvaluation )
+           elseif isa(this,'AdaptiveDirectionalImportanceSampling')
+               this.LimitState.plot(figureHandle, this.EvaluationApproachesZero,class(this),this.Pf, this.NrDirectionsEvaluated, this.UNormalIndexPerEvaluation,this.PfApproximated  )
+           end            
         end
     end
 end

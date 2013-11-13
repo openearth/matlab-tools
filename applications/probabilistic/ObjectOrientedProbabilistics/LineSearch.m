@@ -262,10 +262,13 @@ classdef LineSearch < handle
                     % perform polynomial fit
                     this.Fit    = polyfit(bs, zs ,o);
                     
+
+                    
                     % If fit is good, evaluate at location of zero-crossing
                     if this.CheckFit
                         this.Roots  = roots(this.Fit);
                         if this.CheckRoots(limitState, un)
+
                             this.EvaluatePoint(limitState, un, this.Roots, randomVariables);
                         end
                     end
@@ -446,7 +449,7 @@ classdef LineSearch < handle
         
         %Plot routine
         function plot(this, bs, zs)
-            figure(1);
+            %figure(1);
             plot(this.BetaValues(1:(end-1),:),this.ZValues(1:(end-1),:),'kx');
             grid on;
             hold on;
@@ -457,8 +460,10 @@ classdef LineSearch < handle
             zFit    = polyval(this.Fit,betaFit);
             plot(betaFit, zFit, '-b');
             set(gca,'XLim',[this.plotBetaLowerBound this.plotBetaUpperBound])
-            hold off
-            pause
+            xlabel('Beta Values')
+            ylabel('Z values')
+            hold on; % here it was hold off
+            %pause
         end
     end
     
@@ -475,7 +480,7 @@ classdef LineSearch < handle
             this.IterationsFit              = 0;
             this.IterationsBisection        = 0;
             this.ApproximateUsingARS        = false;
-            this.plotBetaLowerBound         = -5;
+            this.plotBetaLowerBound         = -7;
             this.plotBetaUpperBound         = 10;
             this.NrEvaluations              = 0;
             this.OriginZ                    = [];
