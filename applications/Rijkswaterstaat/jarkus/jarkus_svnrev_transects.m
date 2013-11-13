@@ -53,11 +53,11 @@ function varargout = jarkus_svnrev_transects(varargin)
 % Created: 13 Nov 2013
 % Created with Matlab version: 8.1.0.604 (R2013a)
 
-% $Id: $
-% $Date: $
-% $Author: $
-% $Revision: $
-% $HeadURL: $
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 % $Keywords: $
 
 %%
