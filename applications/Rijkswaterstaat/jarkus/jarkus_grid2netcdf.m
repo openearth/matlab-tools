@@ -1,4 +1,4 @@
-function jarkus_grid2netcdf(filename, grid)
+function jarkus_grid2netcdf(filename, grid, varargin)
 %JARKUS_GRID2NETCDF  converts Jarkus grid struct to netCDF-CF file
 %
 %    jarkus_grid2netcdf(filename, grid)
@@ -6,6 +6,11 @@ function jarkus_grid2netcdf(filename, grid)
 % See web : <a href="http://www.watermarkt.nl/kustenzeebodem/">www.watermarkt.nl/kustenzeebodem/</a>
 % See also: JARKUS_TRANSECT2GRID  , JARKUS_NETCDF2GRID, JARKUS_UPDATEGRID, 
 %           JARKUS_TRANSECT2NETCDF, JARKUS_GRID2NETCDF 
+
+OPT = struct(...
+    'rawsvninfo', '');
+
+OPT = setproperty(OPT, varargin);
 
 STRINGSIZE = 100;
 %% Create file    
@@ -22,8 +27,8 @@ STRINGSIZE = 100;
     nc_attput( filename, nc_global, 'keywords', 'Bathymetry, JARKUS, Dutch coast');
 	nc_attput( filename, nc_global, 'keywords_vocabulary', 'http://www.eionet.europa.eu/gemet');
 	nc_attput( filename, nc_global, 'standard_name_vocabulary', 'http://cf-pcmdi.llnl.gov/documents/cf-standard-names/');
-    nc_attput( filename, nc_global, 'history', sprintf('Data received from Rijkswaterstaat\nNetCDF created on %s by %s on computer %s\\%s with script %s',...
-    datestr(now,31), getenv('USERNAME'), getenv('USERDOMAIN'), getenv('COMPUTERNAME'), '$Id$'));
+    nc_attput( filename, nc_global, 'history', sprintf('Data received from Rijkswaterstaat\nNetCDF created on %s by %s on computer %s\\%s with script %s%s',...
+    datestr(now,31), getenv('USERNAME'), getenv('USERDOMAIN'), getenv('COMPUTERNAME'), '$Id$', OPT.rawsvninfo));
     nc_attput( filename, nc_global, 'institution', 'Rijkswaterstaat');
     nc_attput( filename, nc_global, 'source'     , 'on shore and off shore measurements');
     nc_attput( filename, nc_global, 'references' , sprintf(['Original source: http://www.watermarkt.nl/kustenzeebodem/\n' ...
@@ -219,15 +224,15 @@ STRINGSIZE = 100;
     s.Name      = 'max_altitude_measurement';
     s.Nctype    = nc_double;
     s.Dimension = {'time', 'alongshore'};
-    s.Attribute = struct('Name' ,{'long_name'       , '_FillValue'},...
-                         'Value',{'Maximum altitude',        -9999});
+    s.Attribute = struct('Name' ,{'long_name'       , 'actual_range', '_FillValue'},...
+                         'Value',{'Maximum altitude', [NaN NaN],             -9999});
     nc_addvar(filename, s);
 
     s.Name      = 'min_altitude_measurement';
     s.Nctype    = nc_double;
     s.Dimension = {'time', 'alongshore'};
-    s.Attribute = struct('Name' ,{'long_name'       , '_FillValue'},...
-                         'Value',{'Minimum altitude',        -9999});
+    s.Attribute = struct('Name' ,{'long_name'       , 'actual_range', '_FillValue'},...
+                         'Value',{'Minimum altitude', [NaN NaN],              -9999});
     nc_addvar(filename, s);
 
     s.Name      = 'rsp_x';
@@ -341,8 +346,8 @@ STRINGSIZE = 100;
     s.Name      = 'altitude';
     s.Nctype    = nc_double;
     s.Dimension = {'time', 'alongshore', 'cross_shore'};
-    s.Attribute = struct('Name', {'standard_name'   , 'units', 'comment'                   , 'coordinates', 'grid_mapping', '_FillValue'}, ...
-                        'Value', {'surface_altitude', 'm'    , 'altitude above geoid (NAP)', 'lat lon'    , 'epsg'        , -9999       });
+    s.Attribute = struct('Name', {'standard_name'   , 'units', 'actual_range', 'comment'                   , 'coordinates', 'grid_mapping', '_FillValue'}, ...
+                        'Value', {'surface_altitude', 'm'    , [NaN NaN],      'altitude above geoid (NAP)', 'lat lon'    , 'epsg'        , -9999       });
     nc_addvar(filename, s);
 
 %% Print header    

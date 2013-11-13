@@ -129,7 +129,7 @@ for i = 1 : length(yearArray)
          minCrossBlock(j)     = min(ia);
          maxCrossBlock(j)     = max(ia);
          minAltitBlock(j)     = min(transect.altitude(ib));
-         minAltitBlock(j)     = max(transect.altitude(ib));
+         maxAltitBlock(j)     = max(transect.altitude(ib));
            originBlock(j, ia) = transect.origin(ib);
          timeTopoBlock(j)     = transect.timeTopo;
         timeBathyBlock(j)     = transect.timeBathy;
@@ -141,13 +141,26 @@ for i = 1 : length(yearArray)
     %nc_varput(filename, 'has_data',      int8(~isnan(maxCrossBlock)) , [i-1, 0], [1, length(maxCrossBlock)])
     nc_varput(filename, 'nsources',                         nsources , [i-1, 0], [1, length(nsources)])
     nc_varput(filename, 'min_altitude_measurement', minAltitBlock , [i-1, 0], [1, length(minAltitBlock)])
-    nc_varput(filename, 'max_altitude_measurement', maxAltitBlock , [i-1, 0], [1, length(minAltitBlock)])
+    nc_varput(filename, 'max_altitude_measurement', maxAltitBlock , [i-1, 0], [1, length(maxAltitBlock)])
     nc_varput(filename, 'time'      , year          , [i-1      ], [1                        ]);
     nc_varput(filename, 'time_topo' , timeTopoBlock , [i-1, 0   ], [1, length(timeTopoBlock) ]);
     nc_varput(filename, 'time_bathy', timeBathyBlock, [i-1, 0   ], [1, length(timeBathyBlock)]);
     nc_varput(filename, 'altitude'  , altitudeBlock , [i-1, 0, 0], [1,   size(altitudeBlock) ]); % (/i-1, 0, 0/) -> in fortran
     nc_varput(filename, 'origin'    , originBlock   , [i-1, 0, 0], [1,   size(originBlock)   ]); % (/i-1, 0, 0/) -> in fortran
     
+    % update actual ranges of altitude variables
+    minaltrange = nc_attget(filename, 'min_altitude_measurement', 'actual_range');
+    minaltrange = [nanmin([minaltrange  nanmin(minAltitBlock)])...
+        nanmax([minaltrange  nanmax(minAltitBlock)])];
+    nc_attput(filename, 'min_altitude_measurement', 'actual_range', minaltrange);
+    
+    maxaltrange = nc_attget(filename, 'max_altitude_measurement', 'actual_range');
+    maxaltrange = [nanmin([maxaltrange  nanmin(maxAltitBlock)])...
+        nanmax([maxaltrange  nanmax(maxAltitBlock)])];
+    nc_attput(filename, 'max_altitude_measurement', 'actual_range', maxaltrange);
+    
+    altrange = minmax([minaltrange maxaltrange]);
+    nc_attput(filename, 'altitude', 'actual_range', altrange);
 end
 
 end % jarkus_transect2netcdf
