@@ -148,9 +148,7 @@ tree            = [];
 RootName        = [];
 
 %% Check Matlab Version
-v = ver('MATLAB');
-version = str2double(regexp(v.Version, '\d.\d','match','once'));
-if (version<7.1)
+if verLessThan('matlab', '7.1')
   error('Your MATLAB version is too old. You need version 7.1 or newer.');
 end
 
