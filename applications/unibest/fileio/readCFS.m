@@ -1,4 +1,4 @@
-function readCFS(filename)
+function output = readCFS(filename)
 %read CFS : Reads a unibest transport parameter file
 %
 %   Syntax:
