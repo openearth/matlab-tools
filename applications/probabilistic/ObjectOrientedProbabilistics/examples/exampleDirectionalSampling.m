@@ -49,6 +49,14 @@ MyDirectionalSamplingObject     = DirectionalSampling(...
     MyLimitState, MyLineSearcher, MyAccuracy, MyConfidence, ChosenSeed); %Calling the DirectionalSampling constructor method
 
 
+% In the DirectionalSampling object, the MaxNrDirections, MinNrDirections
+% and MaxCOV are set to some default values. If we want to modify these
+% settings, then we need to set up the new values as follows:
+
+MyDirectionalSamplingObject.MaxNrDirections = 900; % default is equal to 1000
+MyDirectionalSamplingObject.MinNrDirections = 0; % default is equal to 0
+MyDirectionalSamplingObject.MaxCOV = 0.09;  % default is equal to 0.1
+
 % The DirectionalSampling object is now created, however no calculation has
 % been done yet. This can be done by calling the CalculatPf method (this
 % name is the same regardless of which probabilistic method you use)
@@ -63,6 +71,9 @@ MyDirectionalSamplingObject.CalculatePf;
 MyDirectionalSamplingObject.Pf
 
 % We can also plot the result
+% At the moment, the table is not completed. We still need to update the
+% functions such that all the values are present.
+
 MyDirectionalSamplingObject.plot
 
 % Or look at how many evaluations were needed to obtain the result
