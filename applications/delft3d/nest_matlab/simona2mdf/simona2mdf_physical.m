@@ -48,7 +48,7 @@ end
 
 siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'DENSITY'});
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.DENSITY')
-    simona2.mdf_warning({'DENSITY not supported yet';'(DENSITIES is supported)'});
+    simona2mdf_message({'DENSITY not supported yet';'(DENSITIES is supported)'},'Window','SIMONA2MDF Warning','Close',true,'n_sec',10);
 end
 
 %
