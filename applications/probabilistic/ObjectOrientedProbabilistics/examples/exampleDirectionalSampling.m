@@ -9,7 +9,7 @@ NrOfRandomVariables = 2;
 MyVariables(NrOfRandomVariables,1) = RandomVariable; %Calling the RandomVariable constructor method
 
 % Each variable needs a distribution and parameters (and optionally a
-% name). The parameters needed depend on the distribution your select.
+% name). The parameters needed depend on the distribution you select.
 % Examples of distributions are: @norm_inv, @logn_inv, @gumbel_inv, etc.
 % (this are function handels relating to functions in OET)
 
@@ -23,7 +23,7 @@ end
 
 % The limit state as a whole is definied within the LimitState object, it
 % contains the LimitStateFunction as a function handle (so you have to
-% define it as a seperate function, follow the templateLimitStateFunction
+% define it as a separate function, follow the templateLimitStateFunction
 % for that).
 MyLimitState                    = LimitState; %Calling the LimitState constructor method
 MyLimitState.Name               = 'Z';
