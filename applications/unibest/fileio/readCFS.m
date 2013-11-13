@@ -1,4 +1,4 @@
-function readCFS(filename, transp_formula, varargin)
+function readCFS(filename)
 %read CFS : Reads a unibest transport parameter file
 %
 %   Syntax:
