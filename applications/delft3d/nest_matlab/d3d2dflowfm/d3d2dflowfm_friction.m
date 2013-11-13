@@ -12,12 +12,13 @@ if strcmpi(mdf.roumet,'w') mdu.physics.UnifFrictType = 2;end
 if strcmpi(mdf.roumet,'z') mdu.physics.UnifFrictType = 3;end
 
 %% Reads roughness values from file
-filgrd = [mdf.pathd3d filesep mdf.filcco];
-filrgh = [mdf.pathd3d filesep mdf.filrgh];
-if ~isempty(filrgh)
+
+if simona2mdf_fieldandvalue(mdf,'filrgh')
     mdu.physics.UnifFrictCoef = -999.999;
     mdu.Filrgh               = [nameshort '_rgh.xyz'];
-
+    
+    filgrd = [mdf.pathd3d filesep mdf.filcco];
+    filrgh = [mdf.pathd3d filesep mdf.filrgh];
     d3d2dflowfm_friction_xyz(filgrd,filrgh,[name_mdu '_rgh.xyz']);
 else
 

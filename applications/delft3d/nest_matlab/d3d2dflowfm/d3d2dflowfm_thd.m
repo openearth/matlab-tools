@@ -3,9 +3,9 @@ function mdu = d3d2dflowfm_thd(mdf,mdu, name_mdu)
 % d3d2dflowfm_thd : Writes drypoints and thin dams to D-Flow FM input file
 
 filgrd = [mdf.pathd3d filesep mdf.filcco];
-fildry = [mdf.pathd3d filesep mdf.fildry];
-filthd = [mdf.pathd3d filesep mdf.filtd ];
 
+m      = [];
+n      = [];
 LINE   = [];
 
 % Open and read the D3D Files
@@ -14,13 +14,12 @@ grid = delft3d_io_grd('read',filgrd);
 xcoor = grid.cor.x';
 ycoor = grid.cor.y';
 
-MNdry = delft3d_io_dry('read',fildry);
-MNthd = delft3d_io_thd('read',filthd);
-
-% first dry points
-
-m     = MNdry.m;
-n     = MNdry.n;
+if simona2mdf_fieldandvalue(mdf,'fildry')
+    fildry = [mdf.pathd3d filesep mdf.fildry];
+    MNdry = delft3d_io_dry('read',fildry);
+    m     = MNdry.m;
+    n     = MNdry.n;
+end
 
 %
 % Fill the LINE struct for dry points
@@ -64,9 +63,15 @@ for idry = 1: length(m)
 end
 
 clear m n
+
 % Fill the line struct for thin dams
 
-dams = MNthd.DATA;
+dams = [];
+if simona2mdf_fieldandvalue(mdf,'filtd');
+    filthd = [mdf.pathd3d filesep mdf.filtd];
+    MNthd  = delft3d_io_thd('read',filthd);
+   dams    = MNthd.DATA;
+end
 
 for ipnt = 1 : length(dams)
     m(1) = dams(ipnt).mn(1);
@@ -103,6 +108,8 @@ end
 
 % finally write to the unstruc thd file and fill in the name of the thd filw in the mdu_struct
 
-mdu.geometry.ThinDamFile = [name_mdu '_thd.pli'];
-dflowfm_io_xydata('write',mdu.geometry.ThinDamFile,LINE);
-mdu.geometry.ThinDamFile = simona2mdf_rmpath(mdu.geometry.ThinDamFile);
+if ~isempty(LINE)
+    mdu.geometry.ThinDamFile = [name_mdu '_thd.pli'];
+    dflowfm_io_xydata('write',mdu.geometry.ThinDamFile,LINE);
+    mdu.geometry.ThinDamFile = simona2mdf_rmpath(mdu.geometry.ThinDamFile);
+end

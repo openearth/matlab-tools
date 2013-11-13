@@ -3,6 +3,10 @@ function varargout=d3d2dflowfm_friction_xyz(varargin)
 % d3d2dflowfm_friction_xyz generate and write D-Flow FM roughness file
 %                          from space varying d3d-flow roughness file
 %
+%         Input arguments  1) Name of the d3d grid file (*.grd)
+%                          2) Name of the d3d friction file (*.rgh)
+%                          3) Name of the dflowfm roughness file(*.xyz)
+%
 % See also: dflowfm_io_mdu dflowfm_io_xydata
 
    filgrd         = varargin{1};

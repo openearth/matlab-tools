@@ -3,6 +3,12 @@
 % d3d2dflowfm_viscosity_xyz generate and write write D-Flow FM viscosity (and diffusivity) file
 %                           from d3d files
 %
+%
+%                          Iput arguments 1) Delft3D-Flow grid file (*.grd)
+%                                         2) Delft3D-Flow viscosity/fiffusivity file (*.edy)
+%                                         3) Name of the Dflowfm viscosity file (*.xyz)
+%                              (Optional) 4) Name of the Dflowfm diffusivity file (*.xyz)
+%
 % See also: dflowfm_io_mdu dflowfm_io_xydata
 %
 

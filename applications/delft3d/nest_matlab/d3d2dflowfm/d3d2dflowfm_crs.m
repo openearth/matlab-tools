@@ -4,7 +4,7 @@ function mdu = d3d2dflowfm_crs(mdf,mdu, name_mdu)
 
 filgrd = [mdf.pathd3d filesep mdf.filcco];
 
-if ~isempty(mdf.filcrs)
+if simona2mdf_fieldandvalue(mdf,'filcrs')
 
     filcrs = [mdf.pathd3d filesep mdf.filcrs];
 

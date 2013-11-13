@@ -2,20 +2,16 @@ function mdu = d3d2dflowfm_obs(mdf,mdu, name_mdu)
 
 % d3d2dflowfm_obs : Writes station informations to D-Flow FM input files
 
-filgrd = [mdf.pathd3d filesep mdf.filcco];
-
-if ~isempty(mdf.filsta)
-    filsta = [mdf.pathd3d filesep mdf.filsta];
+if simona2mdf_fieldandvalue(mdf,'filsta')
 
     LINE   = [];
 
     % Open and read the D3D Files
-
-    grid = delft3d_io_grd('read',filgrd);
+    grid  = delft3d_io_grd('read',[mdf.pathd3d filesep mdf.filcco]);
     xcoor = grid.cend.x';
     ycoor = grid.cend.y';
 
-    sta   = delft3d_io_obs('read',filsta);
+    sta   = delft3d_io_obs('read',[mdf.pathd3d filesep mdf.filsta]);
 
     %
     % Fill LINE struct for writing to unstruc file
