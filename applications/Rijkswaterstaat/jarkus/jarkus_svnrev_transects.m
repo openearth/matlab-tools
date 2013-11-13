@@ -77,7 +77,11 @@ OPT = setproperty(OPT, varargin);
 rawurl = SVNgetURL(OPT.mainpath);
 [svnErr svnversionMsg] = system(['svnversion "' OPT.mainpath '"']);
 
-txt = sprintf('\nRaw data\nHEADurl: %s (rev %s)\nFiles:', rawurl, strtrim(svnversionMsg));
+[svnErr svninfoMsg] = system(['svn info "' OPT.mainpath '"']);
+timematch = regexp(svninfoMsg, '(?<=Last Changed Date: ).*?(?= (\(|+))', 'match');
+timestr = datestr(datenum(timematch{1}, 'yyyy-mm-dd HH:MM:SS'), 'ddd mmm dd hh:MM:SS yyyy');
+
+txt = sprintf('%s: Raw data received from Rijkswaterstaat\nHEADurl: %s (rev %s)\nFiles:', timestr, rawurl, strtrim(svnversionMsg));
 
 for i = 1:length(OPT.filenames)
     [svnErr svnversionMsg] = system(['svnversion "' fullfile(OPT.mainpath, OPT.filenames{i}) '"']);
