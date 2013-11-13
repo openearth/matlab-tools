@@ -27,5 +27,10 @@ MyLineSearcher  = LineSearch;
 MyDirectionalSamplingObject     = DirectionalSampling(...
     MyLimitState, MyLineSearcher, MyAccuracy, MyConfidence, ChosenSeed);
 
-%% 6. Calculate the probability of failure
+%% 6. Make additional settings (if necessary)
+MyDirectionalSamplingObject.MaxNrDirections = MyMaxNrDirections; % default is equal to 1000
+MyDirectionalSamplingObject.MinNrDirections = MyMinNrDirections; % default is equal to 0
+MyDirectionalSamplingObject.MaxCOV = MyMaxCOV;  % default is equal to 0.1
+
+%% 7. Calculate the probability of failure
 MyDirectionalSamplingObject.CalculatePf;
