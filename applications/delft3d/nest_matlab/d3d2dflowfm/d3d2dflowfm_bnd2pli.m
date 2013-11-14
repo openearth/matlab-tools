@@ -34,9 +34,11 @@ iline        = 1;                     % is number of polylines
 
 % Set initial boundary orientation
 dir_old = 'n';
-if mbnd(1,1) == mbnd(1,2) dir_old = 'm'; end
+if mbnd(1,1) == mbnd(1,2); 
+    dir_old = 'm'; 
+end
 
-for ibnd = 1 : no_bnd
+for ibnd = 1 : no_bnd;
 
     % Change in orientation or jump of more than 1 cell ==> new polyline
     if ibnd > 1;
@@ -56,13 +58,31 @@ for ibnd = 1 : no_bnd
 
     % Astronomical boundary conditions?
     astronomical = false;
-    if strcmpi(D.DATA(ibnd).datatype,'a') astronomical = true;end
+    timeseries   = false;
+    harmonic     = false;
+    if strcmpi(D.DATA(ibnd).datatype,'a'); 
+        astronomical  = true;
+    end
+    if strcmpi(D.DATA(ibnd).datatype,'t'); 
+        timeseries    = true;
+    end
+    if strcmpi(D.DATA(ibnd).datatype,'h'); 
+        harmonic      = true;
+    end
 
     % Fill LINE struct for side A
     LINE(iline).DATA{irow,1} = xb(ibnd,1);
     LINE(iline).DATA{irow,2} = yb(ibnd,1);
     string = sprintf(' %1s %1s ',D.DATA(ibnd).bndtype,D.DATA(ibnd).datatype);
-    if astronomical && ~OPT.Salinity string = [string D.DATA(ibnd).labelA];end
+    if astronomical && ~OPT.Salinity; 
+        string = [string D.DATA(ibnd).labelA];
+    end
+    if timeseries   && ~OPT.Salinity; 
+        string = [string D.DATA(ibnd).name 'A'];
+    end
+    if harmonic     && ~OPT.Salinity; 
+        string = [string 'boundA'];
+    end
     LINE(iline).DATA{irow,3} = string;
 
     % Fill LINE struct for side B (avoid double points by checking if it is not first point of next boundary segment)
@@ -72,7 +92,15 @@ for ibnd = 1 : no_bnd
        LINE(iline).DATA{irow,1} = xb(ibnd,2);
        LINE(iline).DATA{irow,2} = yb(ibnd,2);
        string = sprintf(' %1s %1s ',D.DATA(ibnd).bndtype,D.DATA(ibnd).datatype);
-       if astronomical && ~OPT.Salinity string = [string D.DATA(ibnd).labelB];end
+       if astronomical && ~OPT.Salinity; 
+           string = [string D.DATA(ibnd).labelB];
+       end
+       if timeseries   && ~OPT.Salinity; 
+           string = [string D.DATA(ibnd).name 'B'];
+       end
+       if harmonic     && ~OPT.Salinity;
+           string = [string 'boundB'];
+       end
        LINE(iline).DATA{irow,3} = string;
     end
     irow = irow + 1;
