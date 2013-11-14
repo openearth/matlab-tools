@@ -10,8 +10,7 @@ end
 
 testdir = 'd:\open_earth_test\matlab\applications\delft3d\nest_matlab';
 
-tests      = {[testdir filesep 'simona\tidal_flume_triwaq\triwaq_coarse\flume'] ;
-              [testdir filesep 'delft3d\milford\milford']                       ; ...
+tests      = {[testdir filesep 'delft3d\milford\milford']                       ; ...
               [testdir filesep 'delft3d\shenzen\shenzen']                       ; ...
               [testdir filesep 'delft3d\zeedelta\zeedelta']                    };
 
@@ -39,5 +38,3 @@ for itest = 1: length (tests)
     nesthd        ([tests{itest} '_hd2.ini']);
     nesthd_compare([tests{itest} '_hd2.ini']);
 end
-
-
