@@ -99,7 +99,8 @@ classdef xls < handle
                 error('only input filename')
             end
             if ~exist(filename,'file')
-                error('file could not be found')
+                create(obj,filename)
+%                 error('file could not be found')
             end
             fns = dir2(filename);
             filename = [fns.pathname fns.name];
@@ -140,6 +141,42 @@ classdef xls < handle
                 % only open workbook if there is not one open already;
                 obj.workbook = obj.excel.workbooks.Open(obj.filename);
             end
+        end
+        
+        function create(obj,filename)
+            % Create new workbook.  
+            if isempty(obj.excel)
+                obj.excel = actxserver('excel.application');
+                obj.excel.DisplayAlerts = 0;
+            end
+            
+            obj.workbook = obj.excel.workbooks.Add;
+            [~,~,ext]=fileparts(filename);
+            switch ext
+                case '.xls' %xlExcel8 or xlWorkbookNormal
+                   xlFormat = -4143;
+                case '.xlsb' %xlExcel12
+                   xlFormat = 50;
+                case '.xlsx' %xlOpenXMLWorkbook
+                   xlFormat = 51;
+                case '.xlsm' %xlOpenXMLWorkbookMacroEnabled 
+                   xlFormat = 52;
+                otherwise
+                   xlFormat = -4143;
+            end
+            obj.workbook.SaveAs(filename, xlFormat);
+            obj.data_written = false;
+            close(obj)
+        end
+        
+        function newsheet = addsheet(obj,sheet)
+            % Add new worksheet.
+            newsheet  = obj.workbook.WorkSheets.Add;
+            % If Sheet is a string, rename new sheet to this string.
+            if isnumeric(sheet)
+                sheet = ['Sheet' num2str(sheet)];
+            end
+            set(newsheet,'Name',sheet);
         end
         
         function worksheets = getWorksheets(obj)
@@ -208,6 +245,10 @@ classdef xls < handle
                 %This means the file is probably open in another process.
                 warning('XLS:LockedFile', 'The file %s is not writable.  It may be locked by another process.',obj.filename);
                 return
+            end
+            worksheets = getWorksheets(obj);
+            if ~ismember(sheet,worksheets)
+                addsheet(obj,sheet);
             end
             TargetSheet = get(obj.excel.sheets,'item',sheet);
             %Activate silently fails if the sheet is hidden
