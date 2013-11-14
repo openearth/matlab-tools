@@ -1,22 +1,32 @@
 function simona2mdf_message(string,varargin)
 
 % message: writes general information to screen
+%
+%% set the defaults
 OPT.nesthd_path = getenv('nesthd_path');
-OPT.Close       = false;
 OPT.Window      = 'SIMINP2MDF Message';
+OPT.Logo        = '';
+OPT.Logo2       = '';
 OPT.n_sec       = 1;
-OPT = setproperty(OPT,varargin{end-1:end});
+OPT.Close       = false;
 
-if ~isempty(OPT.nesthd_path);
-    OPT.Logo        = imread([OPT.nesthd_path filesep 'bin' filesep 'simona_logo.jpg']);
-    OPT.Logo2       =        [OPT.nesthd_path filesep 'bin' filesep 'deltares.gif'];
-else
-    OPT.Logo   = '';
-    OPT.Logo2  = '';
+%% Override the defaults
+OPT = setproperty(OPT,varargin);
+
+%% No logo's specified but nesthd path set, set logo's depending on window name
+if ~isempty(OPT.nesthd_path) && isempty(OPT.Logo)
+    if ~isempty(strfind(lower(OPT.Window),'siminp'))
+        OPT.Logo        = imread([OPT.nesthd_path filesep 'bin' filesep 'simona_logo.jpg']);
+    elseif ~isempty(strfind(lower(OPT.Window),'dflowfm'))
+        OPT.Logo        = imread([OPT.nesthd_path filesep 'bin' filesep 'dflowfm.jpg']    );
+    end
 end
 
-OPT        = setproperty(OPT,varargin);
+if ~isempty(OPT.nesthd_path) && isempty(OPT.Logo2)
+    OPT.Logo2       =        [OPT.nesthd_path filesep 'bin' filesep 'deltares.gif'];
+end
 
+%% Display the message/warning box
 if ~isempty(OPT.Logo)
     h_warn   = msgbox(string,OPT.Window,'Custom',OPT.Logo,[],'replace');
 else
@@ -30,6 +40,7 @@ end
 delete(findobj(h_warn,'string','OK'));
 uiwait(h_warn,OPT.n_sec);
 
+%% Close message box if requested
 if OPT.Close
     close (h_warn);
     pause (1);

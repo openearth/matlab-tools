@@ -1,7 +1,6 @@
 function d3d2dflowfm (varargin)
 
 %d3d2dflowfm : converts mdf file into an Unstruc input file ("*.mdu")
-%
 
 Gen_inf    = {'This tool converts a Delft3D-Flow mdf file into an D-Dlow FM mdu file'                              ;
               'with belonging attribute files'                                                                     ;
@@ -50,48 +49,42 @@ end
 name_mdu = [path_mdu filesep name_mdu];
 
 %% Display the general information
-
-logo = imread([getenv('nesthd_path') filesep 'bin' filesep 'dflowfm.jpg']);
-logo2= [getenv('nesthd_path') filesep 'bin' filesep 'deltares.gif'];
 if OPT.DispGen
-   simona2mdf_message(Gen_inf,'Logo',logo,'Logo2',logo2,'n_sec',5,'Window','MDF2MDU Message','Close',true);
+   simona2mdf_message(Gen_inf,'n_sec',5,'Window','D3D2DFLOWFM Message','Close',true);
 end
 
 %% Start with creating empty mdu template
-
 mdu = dflowfm_io_mdu('new',[getenv('nesthd_path') filesep 'bin' filesep 'dflowfm-properties.csv']);
 
 %% Read the temporary mdf file, add the path of the d3d files to allow for reading later
-
 tmp            = delft3d_io_mdf('read',filmdf);
 mdf            = tmp.keywords;
 [path_mdf,~,~] = fileparts(filmdf);
 mdf.pathd3d    = path_mdf;
 
 %% Generate the net file from the area information
-simona2mdf_message('Generating the Net file'                ,'Logo',logo,'Logo2',logo2,'Window','D3D2DFLOWFM Message');
+simona2mdf_message('Generating the Net file'                           ,'Window','D3D2DFLOWFM Message');
 d3d2dflowfm_grd2net([path_mdf filesep mdf.filcco],[path_mdf filesep mdf.fildep],name_mdu);
 mdu.geometry.NetFile = [name_mdu '_net.nc'];
 mdu.geometry.NetFile = simona2mdf_rmpath(mdu.geometry.NetFile);
 
 %% Generate unstruc additional files and fill the mdu structure
-
-simona2mdf_message('Generating D-Flow FM Area              information','Logo',logo,'Logo2',logo2,'Window','D3D2DFLOWFM Message');
+simona2mdf_message('Generating D-Flow FM Area              information','Window','D3D2DFLOWFM Message');
 mdu = d3d2dflowfm_area     (mdf,mdu,name_mdu);
 
-simona2mdf_message('Generating D-Flow FM Thin Dam          information','Logo',logo,'Logo2',logo2,'Window','D3D2DFLOWFM Message');
+simona2mdf_message('Generating D-Flow FM Thin Dam          information','Window','D3D2DFLOWFM Message');
 mdu = d3d2dflowfm_thd      (mdf,mdu,name_mdu);
 
-simona2mdf_message('Generating D-Flow FM TIMES             information','Logo',logo,'Logo2',logo2,'Window','D3D2DFLOWFM Message');
+simona2mdf_message('Generating D-Flow FM TIMES             information','Window','D3D2DFLOWFM Message');
 mdu = d3d2dflowfm_times    (mdf,mdu,name_mdu);
 
-simona2mdf_message('Generating D-Flow FM PHYSICAL          information','Logo',logo,'Logo2',logo2,'Window','D3D2DFLOWFM Message');
+simona2mdf_message('Generating D-Flow FM PHYSICAL          information','Window','D3D2DFLOWFM Message');
 mdu = d3d2dflowfm_physical (mdf,mdu,name_mdu);
 
-simona2mdf_message('Generating D-Flow FM NUMERICAL         information','Logo',logo,'Logo2',logo2,'Window','D3D2DFLOWFM Message');
+simona2mdf_message('Generating D-Flow FM NUMERICAL         information','Window','D3D2DFLOWFM Message');
 mdu = d3d2dflowfm_numerical(mdf,mdu,name_mdu);
 
-simona2mdf_message('Generating D-Flow FM Boundary definition          ','Logo',logo,'Logo2',logo2,'Window','D3D2DFLOWFM Message');
+simona2mdf_message('Generating D-Flow FM Boundary definition          ','Window','D3D2DFLOWFM Message');
 mdu.Filbnd = d3d2dflowfm_bnd2pli([path_mdf filesep mdf.filcco],[path_mdf filesep mdf.filbnd],name_mdu);
 
 if mdu.physics.Salinity    ; % Salinity, write _sal pli files
@@ -99,29 +92,27 @@ if mdu.physics.Salinity    ; % Salinity, write _sal pli files
     mdu.Filbnd = [mdu.Filbnd tmp];
 end
 
-simona2mdf_message('Generating D-Flow FM Initial Condition information','Logo',logo,'Logo2',logo2,'Window','D3D2DFLOWFM Message');
+simona2mdf_message('Generating D-Flow FM Initial Condition information','Window','D3D2DFLOWFM Message');
 mdu = d3d2dflowfm_initial  (mdf,mdu,name_mdu);
 
-simona2mdf_message('Generating D-Flow FM Friction          information','Logo',logo,'Logo2',logo2,'Window','D3D2DFLOWFM Message');
+simona2mdf_message('Generating D-Flow FM Friction          information','Window','D3D2DFLOWFM Message');
 mdu = d3d2dflowfm_friction (mdf,mdu,name_mdu);
 
-simona2mdf_message('Generating D-Flow FM Viscosity/diff.   information','Logo',logo,'Logo2',logo2,'Window','D3D2DFLOWFM Message');
+simona2mdf_message('Generating D-Flow FM Viscosity/diff.   information','Window','D3D2DFLOWFM Message');
 mdu = d3d2dflowfm_viscosity(mdf,mdu,name_mdu);
 
-simona2mdf_message('Generating External forcing file                  ','Logo',logo,'Logo2',logo2,'Window','D3D2DFLOWFM Message');
+simona2mdf_message('Generating External forcing file                  ','Window','D3D2DFLOWFM Message');
 mdu = d3d2dflowfm_genext   (name_mdu,'mdu',mdu,'Filbnd' ,mdu.Filbnd ,'Filini' ,mdu.Filini ,'Filrgh',mdu.Filrgh  ,  ...
                                                'Filvico',mdu.Filvico,'Fildico',mdu.Fildico                      );
-simona2mdf_message('Generating D-Flow FM STATION           information','Logo',logo,'Logo2',logo2,'Window','D3D2DFLOWFM Message');
+simona2mdf_message('Generating D-Flow FM STATION           information','Window','D3D2DFLOWFM Message');
 mdu = d3d2dflowfm_obs      (mdf,mdu,name_mdu);
 
-simona2mdf_message('Generating D-Flow FM CROSS-SECTION     information','Logo',logo,'Logo2',logo2,'Window','D3D2DFLOWFM Message');
+simona2mdf_message('Generating D-Flow FM CROSS-SECTION     information','Window','D3D2DFLOWFM Message');
 mdu = d3d2dflowfm_crs      (mdf,mdu,name_mdu);
 
-simona2mdf_message('Generating D-Flow FM OUTPUT            information','Logo',logo,'Logo2',logo2,'Window','D3D2DFLOWFM Message');
+simona2mdf_message('Generating D-Flow FM OUTPUT            information','Window','D3D2DFLOWFM Message');
 mdu = d3d2dflowfm_output   (mdf,mdu,name_mdu);
 
-
 %% Finally,  write the mdu file and close everything
-
-simona2mdf_message('Writing    D-Flow FM *.mdu file                   ','Logo',logo,'Logo2',logo2,'Window','D3D2DFLOWFM Message','Close',true,'n_sec',1);
+simona2mdf_message('Writing    D-Flow FM *.mdu file                   ','Window','D3D2DFLOWFM Message','Close',true,'n_sec',1);
 dflowfm_io_mdu('write',[name_mdu '.mdu'],mdu);
