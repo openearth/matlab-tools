@@ -8,8 +8,7 @@ function output = readCFE(filename)
 %    filename             string with filename
 %  
 %   Output:
-%     data structure for cfe file containing variables, their values and
-%     units
+%     data structure for cfe file containing variables and their values
 %
 %   Example:
 %     readCFE('test.cfe')
@@ -68,11 +67,6 @@ start_inds = [1 (find(diff(inds)~=1)+1) size(inds,2)];
 for ii=1:(size(start_inds,2)-2)
     names{ii,1} = line1(inds(start_inds(ii)):(inds(start_inds(ii+1)-1)));
     eval(['output.' names{ii,1} ' = values(1,ii);']);
-    if ii~=4
-        eval(['output.' names{ii,1} '_unit = ''[-]'';']);
-    else
-        eval(['output.' names{ii,1} '_unit = ''[m]'';']);
-    end
 end
 
 fclose(fid);
