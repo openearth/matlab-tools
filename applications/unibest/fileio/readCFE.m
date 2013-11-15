@@ -57,7 +57,7 @@ function output = readCFE(filename)
 %-------------------------------------------
 fid = fopen(filename,'rt');
 
-line1 = fgetl(fid);
+line1 = [fgetl(fid) '    dummy']; % dummy is added to make sure the last variable is named correctly (due to end-1 stuff) 
 
 values = str2num(fgetl(fid));
 
@@ -65,7 +65,7 @@ inds = find((double(line1)~=32)==1);
 
 start_inds = [1 (find(diff(inds)~=1)+1) size(inds,2)];
 
-for ii=1:(size(start_inds,2)-1)
+for ii=1:(size(start_inds,2)-2)
     names{ii,1} = line1(inds(start_inds(ii)):(inds(start_inds(ii+1)-1)));
     eval(['output.' names{ii,1} ' = values(1,ii);']);
     if ii~=4
