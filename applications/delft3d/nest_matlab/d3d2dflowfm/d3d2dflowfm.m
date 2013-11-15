@@ -46,7 +46,7 @@ else
 end
 
 [path_mdu,name_mdu,~            ] = fileparts([filmdu]);
-name_mdu = [path_mdu filesep name_mdu];
+name_mdu                          = [path_mdu filesep name_mdu];
 
 %% Display the general information
 if OPT.DispGen
@@ -55,6 +55,7 @@ end
 
 %% Start with creating empty mdu template
 mdu = dflowfm_io_mdu('new',[getenv('nesthd_path') filesep 'bin' filesep 'dflowfm-properties.csv']);
+mdu.pathmdu = path_mdu;
 
 %% Read the temporary mdf file, add the path of the d3d files to allow for reading later
 tmp            = delft3d_io_mdf('read',filmdf);
@@ -104,6 +105,9 @@ mdu = d3d2dflowfm_viscosity(mdf,mdu,name_mdu);
 simona2mdf_message('Generating External forcing file                  ','Window','D3D2DFLOWFM Message');
 mdu = d3d2dflowfm_genext   (name_mdu,'mdu',mdu,'Filbnd' ,mdu.Filbnd ,'Filini' ,mdu.Filini ,'Filrgh',mdu.Filrgh  ,  ...
                                                'Filvico',mdu.Filvico,'Fildico',mdu.Fildico                      );
+simona2mdf_message('Generating D-Flow FM ASTRO boundary conditions    ','Window','D3D2DFLOWFM Message');
+mdu = d3d2dflowfm_bca2cmp  (mdf,mdu,name_mdu);                                           
+                                           
 simona2mdf_message('Generating D-Flow FM STATION           information','Window','D3D2DFLOWFM Message');
 mdu = d3d2dflowfm_obs      (mdf,mdu,name_mdu);
 
@@ -114,5 +118,8 @@ simona2mdf_message('Generating D-Flow FM OUTPUT            information','Window'
 mdu = d3d2dflowfm_output   (mdf,mdu,name_mdu);
 
 %% Finally,  write the mdu file and close everything
+mdu = rmfield(mdu,pathmdu);
 simona2mdf_message('Writing    D-Flow FM *.mdu file                   ','Window','D3D2DFLOWFM Message','Close',true,'n_sec',1);
 dflowfm_io_mdu('write',[name_mdu '.mdu'],mdu);
+
+
