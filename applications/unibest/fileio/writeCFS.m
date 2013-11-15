@@ -6,11 +6,19 @@ function writeCFS(filename, transp_formula, varargin)
 % 
 %   Input:
 %     filename              string with filename for output CFS file
-%     transp_formula        string with transport_formula (respectively : 'BIJ', 'RIJ', 'R93', 'R04', 'SRY', 'CER', 'KAM', 'GRA')
-%     + an additional number of input parameters (varies per transport formula):
+%                           can be only a filename or incl. its path
+%     transp_formula        string with transport_formula, choose from:
+%                           ('BIJ', 'RIJ', 'R93', 'R04', 'SRY', 'CER', 'KAM', 'GRA')
+%     varargin              The parameters associated with each formula OR
+%                           a data-structure obtained from readCFS
+%
+%   Output:
+%     .cfs file             Will be saved as filename (Input argument)
+%
+%   Look further below for some examples
 %     
 %     Parameters for Bijker (1967, 1971) formula:
-%     Default naming is 'BIJ'
+%     Default Unibest naming is 'BIJ'
 %
 %       D50                  D50, Median (50%) grain diameter (µm)
 %       D90                  D90, 90% grain diameter (µm)
@@ -26,11 +34,12 @@ function writeCFS(filename, transp_formula, varargin)
 %     
 %
 %     Parameters for Van Rijn (1992) formula:
-%     Default naming is 'RIJ'
+%     Default Unibest naming is 'RIJ'
 %
 %       D50                  D50, Median (50%) grain diameter (µm)
 %       D90                  D90, 90% grain diameter (µm)
 %       RhoS                 Sediment density (kg/m3)
+%       RhoW                 Seawater density (kg/m3)
 %       Rc                   Current related bottom roughness (m)
 %       Rw                   Wave related bottom roughness (m)
 %       Wval                 Sediment fall velocity (m/s)
@@ -41,7 +50,7 @@ function writeCFS(filename, transp_formula, varargin)
 %
 %
 %     Parameters for Van Rijn (1993) formula:
-%     Default naming is 'R93'
+%     Default Unibest naming is 'R93'
 %
 %       D50                  D50, Median (50%) grain diameter (µm)
 %       D90                  D90, 90% grain diameter (µm)
@@ -60,7 +69,7 @@ function writeCFS(filename, transp_formula, varargin)
 %
 %
 %     Parameters for Van Rijn (2004) formula:
-%     Default naming is 'R04'
+%     Default Unibest naming is 'R04'
 %
 %       D10                  D10, 10% grain diameter (µm)
 %       D50                  D50, Median (50%) grain diameter (µm)
@@ -78,7 +87,7 @@ function writeCFS(filename, transp_formula, varargin)
 %     
 %
 %     Parameters for Soulsby/Van Rijn formula:
-%     Default naming is 'SRY'
+%     Default Unibest naming is 'SRY'
 %
 %       D50                  D50, Median (50%) grain diameter (µm)
 %       D90                  D90, 90% grain diameter (µm)
@@ -91,7 +100,7 @@ function writeCFS(filename, transp_formula, varargin)
 %
 %
 %     Parameters for CERC formula:
-%     Default naming is 'CER'
+%     Default Unibest naming is 'CER'
 %
 %       ACERc                Coefficient A (-)
 %       Gamc                 Wave breaking coefficient gamma (-)
@@ -99,7 +108,7 @@ function writeCFS(filename, transp_formula, varargin)
 %
 %
 %     Parameters for Kamphuis formula:
-%     Default naming is 'KAM'
+%     Default Unibest naming is 'KAM'
 %
 %       D50                  D50, Median (50%) grain diameter (µm)
 %       RhoS                 Sediment density (kg/m3)
@@ -109,7 +118,7 @@ function writeCFS(filename, transp_formula, varargin)
 %
 %
 %     Parameters for van der Meer & Pilarczyk formula:
-%     Default naming is 'GRA' (as linked to gravel)
+%     Default Unibest naming is 'GRA' (as linked to gravel)
 %
 %       DN50                 Dn50 nominal diameter (m)
 %       D90Ks                Roughness lenght (m)
@@ -117,37 +126,25 @@ function writeCFS(filename, transp_formula, varargin)
 %       RhoW                 Seawater density (kg/m3)
 %       ShKrit               Shields number (-)
 %       GrFac                Multiplication factor (-)
-%  
-%   Output:
-%     .cfs file
 %
 %   Examples (for each formula):
-%     writeCFS('test.cfs','BIJ',D50,D90,RhoS,RhoW,Por,Rc,Wval,Crit_d,B_d1,Crit_s,B_d2);
-%     writeCFS('test.cfs','RIJ',D50,D90,RhoS,Rc,Rw,Wval,Visc,Alfrij,Arij,Por);
-%     writeCFS('test.cfs','R93',D50,D90,DSS,RhoS,RhoW,Por,Rc,Rw,T,Sal,CurSTF,CurBTF,WaveSTF,WaveBTF);
-%     writeCFS('test.cfs','R04',D10,D50,D90,DSS,RhoS,RhoW,Por,T,Sal,CurSTF,CurBTF,WaveSTF,WaveBTF);
+%
+%     writeCFS('test.cfs','BIJ',D50,D90,RhoS,RhoW,Por,Rc,WVal,Crit_d,B_d1,Crit_s,B_d2);
+%     writeCFS('test.cfs','RIJ',D50,D90,RhoS,RhoW,Rc,Rw,Wval,Visc,Alfrij,Arij,Por);
+%     writeCFS('test.cfs','R93',D50,D90,DSS,RhoS,RhoW,Por,Rc,Rw,T,Sal.,CurSTF,CurBTF,WaveSTF,WaveBTF);
+%     writeCFS('test.cfs','R04',D10,D50,D90,DSS,RhoS,RhoW,Por,T,Sal.,CurSTF,CurBTF,WaveSTF,WaveBTF);
 %     writeCFS('test.cfs','SRY',D50,D90,RhoS,RhoW,Por,Rc,Visc,CalF);
-%     writeCFS('test.cfs','CER',ACERc,Gamc,RhoS);
+%     writeCFS('test.cfs','CER',ACErc,Gamc,RhoS);
 %     writeCFS('test.cfs','KAM',D50,RhoS,RhoW,Por,Gamc);
-%     writeCFS('test.cfs','GRA',Dn50,D90Ks,RhoGr,RhoW,ShKrit,GrFac);
+%     writeCFS('test.cfs','GRA',DN50,D90Ks,RhoGr,RhoW,ShKrit,GrFac);
 %
-%   Example (along with the usage of readCFS)
-%     CFS_data = readCFS('vanRijn.cfs');
+%   Example (when using readCFS):
+%
+%     CFS_data = readCFS('vanRijn.cfs'); % Type is 'RIJ' in this example
 %     CFS_data.D50 = CFS_data.D50 + 10; CFS_data.D50 = CFS_data.D90 + 15;
-%     writeCFS('vanRijn_courser_sediment.cfs',...
-%              CFS_data.TRANSPORT_FORMULA,...
-%              CFS_data.D50,...
-%              CFS_data.D90,...
-%              CFS_data.RhoS,...
-%              CFS_data.Rc,...
-%              CFS_data.Rw,...
-%              CFS_data.Wval,...
-%              CFS_data.Visc,...
-%              CFS_data.Alfrij,...
-%              CFS_data.Arij,...
-%              CFS_data.Por);
+%     writeCFS('vanRijn_courser_sediment.cfs',CFS_data.TRANSPORT_FORMULA,CFS_data)
 %
-%   See also 
+%   See also readCFS
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -185,47 +182,119 @@ function writeCFS(filename, transp_formula, varargin)
 %-----------Write data to file--------------
 %-------------------------------------------
 
-%Bijker (1967, 1971)
+if nargin == 3 % received input is structure from readCFS
+    data_struct = varargin{1,1};
+    if ~strcmp(data_struct.TRANSPORT_FORMULA,transp_formula)
+        error('Specified formula and structure do not match, you can use the field TRANSPORT_FORMULA in the structure to always get it right...');
+    end
+    fieldnames_data_struct = fieldnames(data_struct);
+    if strcmp(fieldnames_data_struct{1,1},'TRANSPORT_FORMULA')
+        for ii=2:size(fieldnames_data_struct,1)
+            varargin{ii-1} = eval(['data_struct.' fieldnames_data_struct{ii,1}]);
+        end
+    else
+        error('It appears that the script readCFS was changed incorrect, please contact the original developer');
+    end
+end
+
+%Bijker (1967, 1971) ('BIJ')
 if ~isempty(strfind(lower(transp_formula),'bij'))
-    if nargin==10;
+    if length(varargin)==11;
         fid = fopen(filename,'wt');
         fprintf(fid,'\''BIJ''\n',transp_formula);
-        fprintf(fid,'D50_CFS  D90_CFS   rc_CFS    wval_CFS  crit_d_CFSb_d1_CFS  crit_s_CFSb_d2_CFS\n');
-        fprintf(fid,'%7.2f %7.2f %6.3f %7.4f %6.3f %3.1f %6.3f %3.1f\n',[varargin{1} varargin{2} varargin{3} varargin{4} varargin{5} varargin{6} varargin{7} varargin{8}]');
+        fprintf(fid,'D50  D90  RhoS  RhoW  Por  Rc  WVal  Crit_d  B_d1  Crit_s  B_d2\n');
+        fprintf(fid,'%1.3e %1.3e %1.3e %1.3e %1.3e %1.3e %1.3e %1.3e %1.3e %1.3e %1.3e\n',[varargin{1} varargin{2} varargin{3} varargin{4} varargin{5} varargin{6} varargin{7} varargin{8} varargin{9} varargin{10} varargin{11}]');
         fclose(fid);
+    else
+        error('Wrong number of input parameters specified for Bijker formula');
     end
 
-%Van Rijn 2004
+%Van Rijn 1992 ('RIJ')
 elseif ~isempty(strfind(lower(transp_formula),'rij'))
-    if nargin==12;
+    if length(varargin)==11;
         fid = fopen(filename,'wt');
         fprintf(fid,'\''RIJ''\n',transp_formula);
-        fprintf(fid,'D50_CFS  D90_CFS  Rhos_CFS  Rc_CFS  Rw_CFS  wval_CFS  Visc_CFS  Alfrij_CFS  Arij_CFS  Por_CFS\n');
-        fprintf(fid,'%7.2f %7.2f %7.2f %6.3f %6.3f %7.5f %10.8f %6.4f %6.4f %6.4f\n',[varargin{1} varargin{2} varargin{3} varargin{4} varargin{5} varargin{6} varargin{7} varargin{8} varargin{9} varargin{10}]');
+        fprintf(fid,'D50  D90  RhoS  RhoW  Rc  Rw  Wval  Visc  Alfrij  Arij  Por\n');
+        fprintf(fid,'%1.3e %1.3e %1.3e %1.3e %1.3e %1.3e %1.3e %1.3e %1.3e %1.3e %1.3e\n',[varargin{1} varargin{2} varargin{3} varargin{4} varargin{5} varargin{6} varargin{7} varargin{8} varargin{9} varargin{10} varargin{11}]');
         fclose(fid);
+    else
+        error('Wrong number of input parameters specified for v. Rijn ''92 formula');
     end
-
-% GRAVEL van der Meer / Pilarczyk
-elseif ~isempty(strfind(lower(transp_formula),'gra'))
-
-    if nargin==7;
+    
+%Van Rijn 1993 ('R93')
+elseif ~isempty(strfind(lower(transp_formula),'r93'))
+    if length(varargin)==14;
         fid = fopen(filename,'wt');
-        fprintf(fid,'\''GRA''\n',transp_formula);
-        fprintf(fid,'DN50_CFS D90_ks_CFSrhogr_CFS shkrit_CFSgrfac_CFS\n');
-        fprintf(fid,'%7.4f %7.4f %7.2f %8.5f %5.2f\n',[varargin{1} varargin{2} varargin{3} varargin{4} varargin{5}]');
+        fprintf(fid,'\''R93''\n',transp_formula);
+        fprintf(fid,'D50  D90  DSS  RhoS  RhoW  Por  Rc  Rw  T  Sal.  CurSTF  CurBTF  WaveSTF  WaveBTF\n');
+        fprintf(fid,'%1.3e %1.3e %1.3e %1.3e %1.3e %1.3e %1.3e %1.3e %1.3e %1.3e %1.3e %1.3e %1.3e %1.3e\n',[varargin{1} varargin{2} varargin{3} varargin{4} varargin{5} varargin{6} varargin{7} varargin{8} varargin{9} varargin{10} varargin{11} varargin{12} varargin{13} varargin{14}]');
         fclose(fid);
+    else
+        error('Wrong number of input parameters specified for v. Rijn ''93 formula');
     end
 
-% CERC 1984
+%Van Rijn 2004 ('R04')
+elseif ~isempty(strfind(lower(transp_formula),'r04'))
+    if length(varargin)==13;
+        fid = fopen(filename,'wt');
+        fprintf(fid,'\''R04''\n',transp_formula);
+        fprintf(fid,'D10  D50  D90  DSS  RhoS  RhoW  Por  T  Sal.  CurSTF  CurBTF  WaveSTF  WaveBTF\n');
+        fprintf(fid,'%1.3e %1.3e %1.3e %1.3e %1.3e %1.3e %1.3e %1.3e %1.3e %1.3e %1.3e %1.3e %1.3e\n',[varargin{1} varargin{2} varargin{3} varargin{4} varargin{5} varargin{6} varargin{7} varargin{8} varargin{9} varargin{10} varargin{11} varargin{12} varargin{13}]');
+        fclose(fid);
+    else
+        error('Wrong number of input parameters specified for v. Rijn ''04 formula');
+    end
+    
+%Soulsby & Van Rijn ('SRY') --> PLEASE NOTE THE DOUBLE Visc IN THE TEXT = ERROR IN UNIBEST!
+elseif ~isempty(strfind(lower(transp_formula),'sry'))
+    if length(varargin)==8;
+        fid = fopen(filename,'wt');
+        fprintf(fid,'\''SRY''\n',transp_formula);
+        fprintf(fid,'D50  D90  RhoS  RhoW  Por  Rc  Visc  Visc  CalF\n');
+        fprintf(fid,'%1.3e %1.3e %1.3e %1.3e %1.3e %1.3e %1.3e %1.3e\n',[varargin{1} varargin{2} varargin{3} varargin{4} varargin{5} varargin{6} varargin{7} varargin{8}]');
+        fclose(fid);
+    else
+        error('Wrong number of input parameters specified for Soulsby/v. Rijn formula');
+    end
+
+% CERC 1984 ('CER')
 elseif ~isempty(strfind(lower(transp_formula),'cer'))
-    if nargin==4;
+    if length(varargin)==3;
         fid = fopen(filename,'wt');
         fprintf(fid,'\''CER''\n',transp_formula);
-        fprintf(fid,'ACErc_CFSgamc_CFS\n');
-        fprintf(fid,'%8.5f %7.4f\n',[varargin{1} varargin{2}]');
+        fprintf(fid,'ACErc  Gamc  RhoS\n');
+        fprintf(fid,'%1.3e %1.3e %1.3e\n',[varargin{1} varargin{2} varargin{3}]');
         fclose(fid);
+    else
+        error('Wrong number of input parameters specified for CERC formula');
+    end    
+    
+% Kamphuis ('KAM')
+elseif ~isempty(strfind(lower(transp_formula),'kam'))
+    if length(varargin)==5;
+        fid = fopen(filename,'wt');
+        fprintf(fid,'\''KAM''\n',transp_formula);
+        fprintf(fid,'D50  RhoS  RhoW  Por  Gamc\n');
+        fprintf(fid,'%1.3e %1.3e %1.3e %1.3e %1.3e\n',[varargin{1} varargin{2} varargin{3} varargin{4} varargin{5}]');
+        fclose(fid);
+    else
+        error('Wrong number of input parameters specified for Kamphuis formula');
     end
-
+    
+% GRAVEL van der Meer/Pilarczyk ('GRA')
+elseif ~isempty(strfind(lower(transp_formula),'gra'))
+    if length(varargin)==6;
+        fid = fopen(filename,'wt');
+        fprintf(fid,'\''GRA''\n',transp_formula);
+        fprintf(fid,'DN50  D90Ks  RhoGr  RhoW  ShKrit  GrFac\n');
+        fprintf(fid,'%1.3e %1.3e %1.3e %1.3e %1.3e %1.3e\n',[varargin{1} varargin{2} varargin{3} varargin{4} varargin{5} varargin{6}]');
+        fclose(fid);
+    else
+        error('Wrong number of input parameters specified for v.d. Meer/Pilarczyk (gravel) formula');
+    end
+    
 else
-    fprintf('\n warning: transport formula not correctly specified!\n');
+    disp('Warning: Unknown transport formula specified...');
+    disp(' ');
+    disp('Script ended without generating a CFS file...');
 end

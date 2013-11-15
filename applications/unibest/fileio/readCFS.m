@@ -1,14 +1,19 @@
 function output = readCFS(filename)
-%read CFS : Reads a unibest transport parameter file
+%read CFS : Reads a unibest transport parameter file and returns a
+%           data-structure containing all parameters and formula abbrevation
 %
 %   Syntax:
-%     function readCFS(filename)
+%     output = readCFS(filename)
 % 
 %   Input:
 %     filename              string with filename
+%
+%   Output:
+%     Data structure for cfs file containing variables, their values and
+%     selected transport formula, can be used as input for writeCFS
 %     
 %     Parameters for Bijker (1967, 1971) formula:
-%     Default naming is 'BIJ'
+%     Default Unibest naming is 'BIJ'
 %
 %       D50                  D50, Median (50%) grain diameter (µm)
 %       D90                  D90, 90% grain diameter (µm)
@@ -24,11 +29,12 @@ function output = readCFS(filename)
 %     
 %
 %     Parameters for Van Rijn (1992) formula:
-%     Default naming is 'RIJ'
+%     Default Unibest naming is 'RIJ'
 %
 %       D50                  D50, Median (50%) grain diameter (µm)
 %       D90                  D90, 90% grain diameter (µm)
 %       RhoS                 Sediment density (kg/m3)
+%       RhoW                 Seawater density (kg/m3)
 %       Rc                   Current related bottom roughness (m)
 %       Rw                   Wave related bottom roughness (m)
 %       Wval                 Sediment fall velocity (m/s)
@@ -39,7 +45,7 @@ function output = readCFS(filename)
 %
 %
 %     Parameters for Van Rijn (1993) formula:
-%     Default naming is 'R93'
+%     Default Unibest naming is 'R93'
 %
 %       D50                  D50, Median (50%) grain diameter (µm)
 %       D90                  D90, 90% grain diameter (µm)
@@ -58,7 +64,7 @@ function output = readCFS(filename)
 %
 %
 %     Parameters for Van Rijn (2004) formula:
-%     Default naming is 'R04'
+%     Default Unibest naming is 'R04'
 %
 %       D10                  D10, 10% grain diameter (µm)
 %       D50                  D50, Median (50%) grain diameter (µm)
@@ -76,7 +82,7 @@ function output = readCFS(filename)
 %     
 %
 %     Parameters for Soulsby/Van Rijn formula:
-%     Default naming is 'SRY'
+%     Default Unibest naming is 'SRY'
 %
 %       D50                  D50, Median (50%) grain diameter (µm)
 %       D90                  D90, 90% grain diameter (µm)
@@ -89,7 +95,7 @@ function output = readCFS(filename)
 %
 %
 %     Parameters for CERC formula:
-%     Default naming is 'CER'
+%     Default Unibest naming is 'CER'
 %
 %       ACERc                Coefficient A (-)
 %       Gamc                 Wave breaking coefficient gamma (-)
@@ -97,7 +103,7 @@ function output = readCFS(filename)
 %
 %
 %     Parameters for Kamphuis formula:
-%     Default naming is 'KAM'
+%     Default Unibest naming is 'KAM'
 %
 %       D50                  D50, Median (50%) grain diameter (µm)
 %       RhoS                 Sediment density (kg/m3)
@@ -107,7 +113,7 @@ function output = readCFS(filename)
 %
 %
 %     Parameters for van der Meer & Pilarczyk formula:
-%     Default naming is 'GRA' (as linked to gravel)
+%     Default Unibest naming is 'GRA' (as linked to gravel)
 %
 %       DN50                 Dn50 nominal diameter (m)
 %       D90Ks                Roughness lenght (m)
@@ -120,9 +126,6 @@ function output = readCFS(filename)
 %  are all supported by this script, though their variables might not be
 %  mentioned here in the help..
 %  
-%   Output:
-%     data structure for cfs file containing variables, their values and
-%     selected transport formula
 %
 %   Example:
 %     readCFS('test.cfs')
@@ -130,7 +133,7 @@ function output = readCFS(filename)
 %   Testing this script was limited, please contact me including the CFS
 %   file(s) if errors arise..
 %
-%   See also 
+%   See also writeCFS
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -173,7 +176,14 @@ fid = fopen(filename,'rt');
 
 transp_formula = strrep(fgetl(fid),' ','');
 
-line2 = [fgetl(fid) '   dummy']; % Dummy is added to make the last variable name be ok (due to end-1)
+line2 = [fgetl(fid) '  dummy']; % Dummy is added to make the last variable name be ok (due to end-1)
+
+if size(strfind(line2,'Visc'),2)>1 % This is due to double Visc in the file for type 'SRY', this is an error in Unibest...
+    visc_line = 'Visc  ';
+    visc_line_length = size(visc_line,2);
+    visc_inds = strfind(line2,visc_line);
+    line2 = line2([1:(visc_inds(2)-1) visc_inds(2)+visc_line_length:end]);
+end
 
 values = str2num(fgetl(fid));
 
