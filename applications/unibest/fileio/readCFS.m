@@ -7,39 +7,115 @@ function output = readCFS(filename)
 %   Input:
 %     filename              string with filename
 %     
-%     Parameters for Bijker formula:
-%       D50                  D50, Median (50%) grain diameter (µm)
-%       D90                  D90, 90% grain diameter (µm)
-%       rc                   Bottom roughness (m)
-%       wval                 Sediment fall velocity (m/s)
-%       crit_d               Criterion deep water, Hsig/h (-)
-%       b_d1                 Coefficient b deep water (-)
-%       crit_s               Criterion shallow water, Hsig/h (-)
-%       b_d2                 Coefficient b shallow water (-)
-%     
-%     Parameters for Van Rijn formula:
-%       D50                  D50, Median (50%) grain diameter (µm)
-%       D90                  D90, 90% grain diameter (µm)
-%       rho                  Sediment density (kg/m3)
-%       rc                   Current related bottom roughness (m)
-%       rw                   Wave related bottom roughness (m)
-%       wval                 Sediment fall velocity (m/s)
-%       visc                 Viscosity []*10e-6
-%       alfa                 Correction factor (-)
-%       A                    Relative bottom transport layer thickness (-)
-%       por                  Porosity (-)
-%     
-%     Parameters for GRA formula:
-%       Dn50                 Dn50 nominal diameter (m)
-%       R                    Roughness length (m)
-%       rho                  Density of material (kg/m3)
-%       shields              Shields number (-)
-%       n                    Multiplication factor (-)
-%     
-%     Parameters for CERC formula:
-%       A                    Coefficient A (-)
-%       gamma                Wave breaking coefficient gamma (-)
+%     Parameters for Bijker (1967, 1971) formula:
+%     Default naming is 'BIJ'
 %
+%       D50                  D50, Median (50%) grain diameter (µm)
+%       D90                  D90, 90% grain diameter (µm)
+%       RhoS                 Sediment density (kg/m3)
+%       RhoW                 Seawater density (kg/m3)
+%       Por                  Porosity (-)
+%       Rc                   Bottom roughness (m)
+%       WVal                 Sediment fall velocity (m/s)
+%       Crit_d               Criterion deep water, Hsig/h (-)
+%       B_d1                 Coefficient b deep water (-)
+%       Crit_s               Criterion shallow water, Hsig/h (-)
+%       B_d2                 Coefficient b shallow water (-)
+%     
+%
+%     Parameters for Van Rijn (1992) formula:
+%     Default naming is 'RIJ'
+%
+%       D50                  D50, Median (50%) grain diameter (µm)
+%       D90                  D90, 90% grain diameter (µm)
+%       RhoS                 Sediment density (kg/m3)
+%       Rc                   Current related bottom roughness (m)
+%       Rw                   Wave related bottom roughness (m)
+%       Wval                 Sediment fall velocity (m/s)
+%       Visc                 Viscosity []*10e-6
+%       Alfrij               Correction factor (-)
+%       Arij                 Relative bottom transport layer thickness (-)
+%       Por                  Porosity (-)
+%
+%
+%     Parameters for Van Rijn (1993) formula:
+%     Default naming is 'R93'
+%
+%       D50                  D50, Median (50%) grain diameter (µm)
+%       D90                  D90, 90% grain diameter (µm)
+%       DSS                  50% grain diameter of suspended sediment (µm)
+%       RhoS                 Sediment density (kg/m3)
+%       RhoW                 Seawater density (kg/m3)
+%       Por                  Porosity (-)
+%       Rc                   Current related bottom roughness (m)
+%       Rw                   Wave related bottom roughness (m)
+%       T                    Temperature (deg C)
+%       Sal.                 Salinity (PPM)
+%       CurSTF               Current related suspended transport factor (-)
+%       CurBTF               Current related bedload transport factor (-)
+%       WaveSTF              Wave related suspended transport factor (-)
+%       WaveBTF              Wave related bedload transport factor (-)
+%
+%
+%     Parameters for Van Rijn (2004) formula:
+%     Default naming is 'R04'
+%
+%       D10                  D10, 10% grain diameter (µm)
+%       D50                  D50, Median (50%) grain diameter (µm)
+%       D90                  D90, 90% grain diameter (µm)
+%       DSS                  50% grain diameter of suspended sediment (µm)
+%       RhoS                 Sediment density (kg/m3)
+%       RhoW                 Seawater density (kg/m3)
+%       Por                  Porosity (-)
+%       T                    Temperature (deg C)
+%       Sal.                 Salinity (PPM)
+%       CurSTF               Current related suspended transport factor (-)
+%       CurBTF               Current related bedload transport factor (-)
+%       WaveSTF              Wave related suspended transport factor (-)
+%       WaveBTF              Wave related bedload transport factor (-)
+%     
+%
+%     Parameters for Soulsby/Van Rijn formula:
+%     Default naming is 'SRY'
+%
+%       D50                  D50, Median (50%) grain diameter (µm)
+%       D90                  D90, 90% grain diameter (µm)
+%       RhoS                 Sediment density (kg/m3)
+%       RhoW                 Seawater density (kg/m3)
+%       Por                  Porosity (-)
+%       Rc                   Current related bottom roughness (m)
+%       Visc                 Kinematic viscosity of water (m2s * 10^-6) (def. = 1) 
+%       CalF                 Calibration Factor (-)
+%
+%
+%     Parameters for CERC formula:
+%     Default naming is 'CER'
+%
+%       ACERc                Coefficient A (-)
+%       Gamc                 Wave breaking coefficient gamma (-)
+%       RhoS                 Sediment density (kg/m3)
+%
+%
+%     Parameters for Kamphuis formula:
+%     Default naming is 'KAM'
+%
+%       D50                  D50, Median (50%) grain diameter (µm)
+%       RhoS                 Sediment density (kg/m3)
+%       RhoW                 Seawater density (kg/m3)
+%       Por                  Porosity (-)
+%       Gamc                 Wave breaking coefficient gamma (-)
+%
+%
+%     Parameters for van der Meer & Pilarczyk formula:
+%     Default naming is 'GRA' (as linked to gravel)
+%
+%       DN50                 Dn50 nominal diameter (m)
+%       D90Ks                Roughness lenght (m)
+%       RhoGr                Density of material (kg/m3)
+%       RhoW                 Seawater density (kg/m3)
+%       ShKrit               Shields number (-)
+%       GrFac                Multiplication factor (-)
+%     
 %  Please resort to the manual as more formulas are encorporated, these
 %  are all supported by this script, though their variables might not be
 %  mentioned here in the help..
@@ -51,8 +127,8 @@ function output = readCFS(filename)
 %   Example:
 %     readCFS('test.cfs')
 %
-%   This script was not tested much, please contact me including the CFS
-%   file if errors arise
+%   Testing this script was limited, please contact me including the CFS
+%   file(s) if errors arise..
 %
 %   See also 
 
@@ -97,7 +173,7 @@ fid = fopen(filename,'rt');
 
 transp_formula = strrep(fgetl(fid),' ','');
 
-line2 = fgetl(fid);
+line2 = [fgetl(fid) '   dummy']; % Dummy is added to make the last variable name be ok (due to end-1)
 
 values = str2num(fgetl(fid));
 
@@ -105,12 +181,12 @@ inds = find((double(line2)~=32)==1);
 
 start_inds = [1 (find(diff(inds)~=1)+1) size(inds,2)];
 
-for ii=1:(size(start_inds,2)-1)
-    names{ii,1} = strrep(line2(inds(start_inds(ii)):(inds(start_inds(ii+1)-1))),'.','');
-    eval(['output.' names{ii,1} ' = values(1,ii);']);
+for ii=1:(size(start_inds,2)-2)
     if ii==1
         output.TRANSPORT_FORMULA = strrep(transp_formula,'''','');
     end
+    names{ii,1} = strrep(line2(inds(start_inds(ii)):(inds(start_inds(ii+1)-1))),'.','');
+    eval(['output.' names{ii,1} ' = values(1,ii);']);
 end
 
 fclose(fid);
