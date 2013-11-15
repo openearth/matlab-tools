@@ -69,8 +69,8 @@ function writeCFE(filename, coeff_gamma, coeff_alfa, fw, kb)
 fid = fopen(filename,'wt');
 
 if nargin==5;
-    fprintf(fid,'gamma_CFEalfac_CFE fwee_CFE  rkval_CFE\n');
-    fprintf(fid,'%6.3f %6.3f %7.4f %7.4f\n',[coeff_gamma, coeff_alfa, fw, kb]');
+    fprintf(fid,'      gamma_CFE      alfac_CFE      fwee_CFE      rkval_CFE\n');
+    fprintf(fid,'%1.4e %1.4e %1.4e %1.4e\n',[coeff_gamma, coeff_alfa, fw, kb]');
 else
     fprintf('\n incorrect number of input parameters!\n');
 end
