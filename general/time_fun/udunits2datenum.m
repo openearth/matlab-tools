@@ -85,7 +85,7 @@ function varargout = udunits2datenum(varargin)
    for irow=1:length(isounits)
       rest              = isounits{irow};
      [units{irow},rest] = strtok(rest);
-     [dummy      ,rest] = strtok(rest);
+     [dummy      ,rest] = strtok(rest); % since
      [refdatenum(irow),...
       zone{irow}]       = iso2datenum(rest);
    end
