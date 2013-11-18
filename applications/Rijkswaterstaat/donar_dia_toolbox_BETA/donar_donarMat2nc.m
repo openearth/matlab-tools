@@ -11,7 +11,7 @@ function [] = donar_donarMat2nc(donarMat,filename)
 
          %% Create the netCDF file
             
-            ncfile   = [filename,'_',thefields{ifield},'.nc'];
+            ncfile   = [filename,'_',thefields{ifield},'.nc']
             nc_create_empty(ncfile);
 
          %% GLOBAL ATTRIBUTES

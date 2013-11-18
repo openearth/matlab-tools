@@ -4,7 +4,7 @@ function thedon_donar_CTD_depth_profiles
 %See also: donar_depth_profiles
 
 OPT.diadir = 'p:\1204561-noordzee\data\raw\RWS\';
-OPT.diadir = 'p:\1209005-eutrotracks\raw\CTD\mat\';
+OPT.diadir = 'p:\1209005-eutrotracks\raw\';
 
 thedonarfiles = { ...
     'CTD\mat\CTD_2003_the_compend.mat'; ...
@@ -30,8 +30,8 @@ warning off;
             sensor      = sensors{3};
         end
         
-        disp(['Loading: ',thedonarfiles{i}]);
-        thefile = importdata(thedonarfiles{i});
+        disp(['Loading: ',OPT.diadir,filesep,thedonarfiles{i}]);
+        thefile = importdata([OPT.diadir,filesep,thedonarfiles{i}]);
                 
         fig_name = ['depth_profiles_',thedonarfiles{i}(max(strfind(thedonarfiles{i},'\'))+1:strfind(thedonarfiles{i},'_the_compend.mat')-1)];
         

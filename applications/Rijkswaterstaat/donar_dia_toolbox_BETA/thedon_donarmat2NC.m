@@ -19,12 +19,13 @@ for ifile = 1:1:nfile
         
 %% Load the Information
 
-        disp(['Loading: ', files_to_convert{ifile}]);
-        thecompend  = importdata([OPT.diadir,filesep,files_to_convert{ifile}]);
+        disp(['Loading: ', diafiles{ifile}]);
+        thecompend  = importdata([diafiles{ifile}]);
         
 %% Folder for Saving
 
-        the_filename = [OPT.diadir,filesep,files_to_convert{ifile}(1:max(strfind(files_to_convert{ifile},'_the_compend.mat'))-1)]
+        the_filename = [diafiles{ifile}(1:max(strfind(diafiles{ifile},'_the_compend.mat'))-1)]
+        the_filename = strrep(the_filename,'\mat\','\nc\');
         
 %% Produce the NetCDF File
 
