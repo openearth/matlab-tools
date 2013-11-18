@@ -1,15 +1,15 @@
-function theDon
-% theDon steering module for donar_* toolbox
-% requires addpath([pwd,filesep,'private',filesep])
+function theDon(varargin)
+%theDon steering module for donar_* toolbox
 %
 %See also: rijkswaterstaat
 
+OPT.diadir = 'p:\1204561-noordzee\data\svnchkout\donar_dia\';
 
 %% Make time plots and histograms.
 if false
     
     clc; clear; close all, fclose all;
-    thedonarfiles = dirrec('p:\1204561-noordzee\data\svnchkout\donar_dia\','.dia');
+    thedonarfiles = dirrec(OPT.diadir,'.dia');
         
     load([thedonarfiles{1}(1:end-4),'_the_compend','.mat'])
 
@@ -37,7 +37,7 @@ end
 if false
     
     clc; clear; close all, fclose all;
-    thedonarfiles = dirrec('p:\1204561-noordzee\data\svnchkout\donar_dia\','.dia');
+    thedonarfiles = dirrec(OPT.diadir,'.dia');
         
     load([thedonarfiles{1}(1:end-4),'_the_compend','.mat'])
 
@@ -62,7 +62,7 @@ end
 if false
     
     clc; close all, fclose all;
-    thedonarfiles = dirrec('p:\1204561-noordzee\data\svnchkout\donar_dia\','.dia');        
+    thedonarfiles = dirrec(OPT.diadir,'.dia');        
     for i = 1:length(thedonarfiles)
 
         if strfind(lower(thedonarfiles{i}),'ctd')
@@ -81,7 +81,7 @@ end
 if false
     
     clc; close all, fclose all;
-    thedonarfiles = dirrec('p:\1204561-noordzee\data\svnchkout\donar_dia\','.dia');        
+    thedonarfiles = dirrec(OPT.diadir,'.dia');        
     for i = 1:length(thedonarfiles)
 
         if strfind(lower(thedonarfiles{i}),'ctd')
@@ -102,7 +102,7 @@ end
 if false
     
     clc; close all, fclose all;
-    thedonarfiles = dirrec('p:\1204561-noordzee\data\svnchkout\donar_dia\','.dia');        
+    thedonarfiles = dirrec(OPT.diadir,'.dia');        
     for i = 1:length(thedonarfiles)
 
         if strfind(lower(thedonarfiles{i}),'ctd')
@@ -121,7 +121,7 @@ end
 
 if false
     clc; close all, fclose all;
-    thedonarfiles = dirrec('p:\1204561-noordzee\data\svnchkout\donar_dia\','.dia');
+    thedonarfiles = dirrec(OPT.diadir,'.dia');
     thefontsize = 8;
         
         for i = 1:length(thedonarfiles)
@@ -147,11 +147,11 @@ if false
 
     clc; clear; close all;
     
-    thedonarfiles = dirrec('p:\1204561-noordzee\data\svnchkout\donar_dia\','.dia');
+    thedonarfiles = dirrec(OPT.diadir,'.dia');
     thegrid = delwaq('open','grid_zuno_dd.lga');
     [thegrid.X,thegrid.Y] = convertCoordinates(thegrid.X,thegrid.Y,'CS1.code',28992,'CS2.code',4326);
     
-    fileID = fopen('p:\1204561-noordzee\data\svnchkout\donar_dia\donar_dia_TeX\theTeX_Locations.tex','w');
+    fileID = fopen([OPT.diadir,filesep,'\donar_dia_TeX\theTeX_Locations.tex'],'w');
     
 % -->    
     size_quad = 1; % "size_quad = 4" the quadrant will be a fourth of a degree
@@ -277,7 +277,7 @@ if false
                        'FontSize',6);
        
                     clear temp thisplot laleyenda;
-                    fileName = ['p:\1204561-noordzee\data\svnchkout\donar_dia\figures\locations\',thedonarfiles{i}(1+max(findstr(thedonarfiles{i},'\')):end-4),'_',thefields{j},'_quadrant_',num2str(ilon*100+ilat,'%04.0f'),'.png'];
+                    fileName = [OPT.diadir,filesep,'\figures\locations\',thedonarfiles{i}(1+max(findstr(thedonarfiles{i},'\')):end-4),'_',thefields{j},'_quadrant_',num2str(ilon*100+ilat,'%04.0f'),'.png'];
                     print('-dpng',fileName);                disp([fileName,' -- SAVED']);
                     thestr = ['\begin{figure}[htbp] \centering \includegraphics[width=1\textwidth]{',fileName,'} \end{figure}'];
                     %close(f);
@@ -296,11 +296,11 @@ if false
 
     clc; clear; close all;
     
-    thedonarfiles = dirrec('p:\1204561-noordzee\data\svnchkout\donar_dia\','.dia');
+    thedonarfiles = dirrec(OPT.diadir,'.dia');
     thegrid = delwaq('open','grid_zuno_dd.lga');
     [thegrid.X,thegrid.Y] = convertCoordinates(thegrid.X,thegrid.Y,'CS1.code',28992,'CS2.code',4326);
     
-    fileID = fopen('p:\1204561-noordzee\data\svnchkout\donar_dia\donar_dia_TeX\theTeX_stats.tex','w');
+    fileID = fopen([OPT.diadir,filesep,'\donar_dia_TeX\theTeX_stats.tex'],'w');
     
 % -->    
     size_quad = 1; % "size_quad = 4" the quadrant will be a fourth of a degree
@@ -349,7 +349,7 @@ if false
             hBar = colorbar;                           %# Create the colorbar
             axes (hBar)
             title(gca,'Mean Value','fontsize',6,'fontweight','bold')
-            fileName = ['p:\1204561-noordzee\data\svnchkout\donar_dia\figures\stats\',thedonarfiles{i}(1+max(findstr(thedonarfiles{i},'\')):end-4),'_',thefields{j},'_stats','.png'];
+            fileName = [OPT.diadir,filesep,'\figures\stats\',thedonarfiles{i}(1+max(findstr(thedonarfiles{i},'\')):end-4),'_',thefields{j},'_stats','.png'];
             print('-dpng',fileName);                disp([fileName,' -- SAVED']);
 
         end
@@ -364,7 +364,7 @@ if true
     
     clear
     
-    thedonarfiles = dirrec('p:\1204561-noordzee\data\svnchkout\donar_dia\','.dia');
+    thedonarfiles = dirrec(OPT.diadir,'.dia');
     thefontsize = 8;
     thegrid = delwaq('open','grid_zuno_dd.lga');
     
@@ -428,10 +428,10 @@ if false
     
     thegrid = delwaq('open','grid_zuno_dd.lga');
     
-    thedonarfiles = dirrec('p:\1204561-noordzee\data\svnchkout\donar_dia\','.dia');
+    thedonarfiles = dirrec(OPT.diadir,'.dia');
     warning off;
     
-    fileID = fopen('p:\1204561-noordzee\data\svnchkout\donar_dia\donar_dia_TeX\theTeX_covertures.tex','w');
+    fileID = fopen([OPT.diadir,filesep,'\donar_dia_TeX\theTeX_covertures.tex'],'w');
     
     for i = 1:length(thedonarfiles)
         
@@ -453,7 +453,7 @@ if false
                 
                 unique_neighbors = unique(neighbors);
                 [freq_centers,centers] = hist(neighbors,unique_neighbors);
-                save(['p:\1204561-noordzee\data\svnchkout\donar_dia\figures\covertures\',thedonarfiles{i}(1+max(findstr(thedonarfiles{i},'\')):end-4),'_workspace']);
+                save([OPT.diadir,filesep,'\figures\covertures\',thedonarfiles{i}(1+max(findstr(thedonarfiles{i},'\')):end-4),'_workspace']);
                 
                 f = figure('visible','off')
                 hold on
@@ -469,7 +469,7 @@ if false
                 xlabel([num2str(size(unique_neighbors,1)),' gridcells with at least one observation'],'FontSize',8)
                 title(['Number of observations of "',lower(strrep(thefields{j},'_',' ')) ,'" per gridcell'],'FontWeight','bold','FontSize',8);
                 
-                fileName = ['p:\1204561-noordzee\data\svnchkout\donar_dia\figures\covertures\',thedonarfiles{i}(1+max(findstr(thedonarfiles{i},'\')):end-4),'_',thefields{j},'_coverture','.png'];
+                fileName = [OPT.diadir,filesep,'\figures\covertures\',thedonarfiles{i}(1+max(findstr(thedonarfiles{i},'\')):end-4),'_',thefields{j},'_coverture','.png'];
                 print('-dpng',fileName);                disp([fileName,' -- SAVED']);
                 thestr = ['\begin{figure}[htbp] \centering \includegraphics[width=1\textwidth]{',fileName,'} \end{figure}'];
                 

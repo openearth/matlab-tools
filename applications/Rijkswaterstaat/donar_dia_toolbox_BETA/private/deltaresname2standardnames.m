@@ -1,7 +1,7 @@
-function [standard_name,deltares_name] = donarname2standardnames(code)
-%DONARNAME2STANDARDNAMES
+function [standard_name,code] = donarname2standardnames(deltares_name)
+%DELTARESNAME2STANDARDNAMES
 %
-% [standard_name,deltares_name] = donarname2standardnames(code)
+% [standard_name,code] = deltaresname2standardnames(deltares_name)
 %
 % See also: 
 
@@ -19,10 +19,10 @@ parameter_database = { ...
 'Oxygen_in_mg/l_in_surface_water',                                          'mass_concentration_of_oxygen_in_sea_water',  'oxygen'; ...
 };
 
-if isempty(find(strcmpi(parameter_database(:,1),code)))
-    error(['Code word: ',code,' not found in database.']);
+if isempty(find(strcmpi(parameter_database(:,3),deltares_name)))
+    error(['deltares_name: ',deltares_name,' not found in database.']);
 end
 
-code          = parameter_database{strcmpi(parameter_database(:,1),code),1};
-standard_name = parameter_database{strcmpi(parameter_database(:,1),code),2};
-deltares_name = parameter_database{strcmpi(parameter_database(:,1),code),3};
+code          = parameter_database{strcmpi(parameter_database(:,3),deltares_name),1};
+standard_name = parameter_database{strcmpi(parameter_database(:,3),deltares_name),2};
+deltares_name = parameter_database{strcmpi(parameter_database(:,3),deltares_name),3};;

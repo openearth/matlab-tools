@@ -1,27 +1,29 @@
 function [thecompend] = donar_dia2donarMat(sourcename,cellstr_fields,timezone)
-%donar_dia2donarMat
+%donar_dia2donarMat convert dia file to mat file
+%
+% [thecompend] = donar_dia2donarMat(sourcename,cellstr_fields,timezone)
+%
+% See also: 
 
-%    sourcename = 'p:\1204561-noordzee\data\svnchkout\donar_dia\dia_ctd\Copy of ctd_2003_-_2009.dia'
+%   sourcename = 'p:\1204561-noordzee\data\svnchkout\donar_dia\dia_ctd\Copy of ctd_2003_-_2009.dia'
 %   cellstr_fields = {'longitude','latitude','z','datestring','timestring','variable'}
     
     warning('BETA Version')
     
     numcol = size(cellstr_fields,1);
-    fid   = fopen(sourcename);
+    fid    = fopen(sourcename);
     theformat = '%s';    
     
     for i=numcol:-1:1,      
         theformat = ['%f',theformat];
     end
-    
-    
-    
+              
     % The dia file that I am dealing with is divided into several batches
     % (stukjes) of data, separated by headers (Hdr). Lets read the file
     % identifying the separate batches.
-    res = struct([]);
+    res   = struct([]);
     iStuk = 1;
-    iHdr = 1;
+    iHdr  = 1;
     
     while true
         
@@ -49,47 +51,35 @@ function [thecompend] = donar_dia2donarMat(sourcename,cellstr_fields,timezone)
             
         else
             
+            %% Produce an array of information
             
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            % Produce an array of information %
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             batch_data = cell2mat(temp(:,1:end-1));
             
+            %% Get the coordinates degrees
             
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            % Get the coordinates degrees %
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             batch_data(:,1) = dms2degrees([mod(fix(batch_data(:,1)/1000000),100), ...
-                                     mod(fix(batch_data(:,1)/10000),100), ...
-                                     mod(    batch_data(:,1),10000)/100]);
+                                           mod(fix(batch_data(:,1)/10000),100), ...
+                                           mod(    batch_data(:,1),10000)/100]);
             
             batch_data(:,2) = dms2degrees([mod(fix(batch_data(:,2)/1000000),100), ...
-                                     mod(fix(batch_data(:,2)/10000),100), ...
-                                     mod(    batch_data(:,2),10000)/100]);
+                                           mod(fix(batch_data(:,2)/10000),100), ...
+                                           mod(    batch_data(:,2),10000)/100]);
             
+            %% Flag the data
             
-            
-
-            %%%%%%%%%%%%%%%%%
-            % Flag the data %
-            %%%%%%%%%%%%%%%%%
             variableCol = find(ismember(lower(cellstr_fields(:,1)),lower('variable')));
             batch_data(batch_data(:,variableCol)>1E9, :) = [];
             batch_data(:,numcol+1) = iStuk;
             batch_data = donar_flagValues(result.PAR{2},batch_data);
             
-            
-            
-            
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            % Organize information by time and flag the data %
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            %% Organize information by time and flag the data
+
             dateCol = find(ismember(lower(cellstr_fields(:,1)),lower('datestring')));
             timeCol = find(ismember(lower(cellstr_fields(:,1)),lower('timestring')));
             
             batch_data(:,dateCol) = time2datenum(batch_data(:,dateCol),batch_data(:,timeCol));
             the_years = year(batch_data(:,dateCol));
-            batch_data(:,dateCol) = batch_data(:,dateCol) - datenum('01-Jan-1970');
+            batch_data(:,dateCol) = batch_data(:,dateCol) - datenum(1970,1,1);
             
             batch_data(:,timeCol) = [];
             if variableCol > timeCol, variableCol = variableCol -1; end
@@ -103,11 +93,9 @@ function [thecompend] = donar_dia2donarMat(sourcename,cellstr_fields,timezone)
                 
                 data = batch_data(the_years == iyear,:);
                 
-                
-                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                % Organize the headers, just write one and store the ones %
-                % that change from piece to piece.                        %
-                %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                %% Organize the headers, just write one and store the ones
+                %  that change from piece to piece.
+
                 if iStuk == 1
 
                     % Structure is empty lets initialize it
@@ -176,13 +164,13 @@ function [thecompend] = donar_dia2donarMat(sourcename,cellstr_fields,timezone)
         eval(['thecompend.',(['year',num2str(whatyear)]),'.',name_of_field,'.data = data;'])
         
         thecompend.(['year',num2str(whatyear)]).(name_of_field).referenceDate = ...
-            datenum('01-Jan-1970','dd-mmm-yyyy');
+            datenum(1970,1,1);
         
         thecompend.(['year',num2str(whatyear)]).(name_of_field).dimensions = ...
             cellstr_fields(~ismember(cellstr_fields(:,1),'variable') & ~ismember(cellstr_fields(:,1),'timestring'),:);
         
         thecompend.(['year',num2str(whatyear)]).(name_of_field).dimensions(ismember(thecompend.(['year',num2str(whatyear)]).(name_of_field).dimensions(:,1),'datestring'),:) = ...
-            {'time',['days since ',datestr(datenum('01-Jan-1970'),'yyyy-mmm-dd HH:MM:SS'),' ',timezone]};
+            {'time',['days since ',datestr(datenum(1970,1,1),'yyyy-mm-dd HH:MM:SS'),' ',timezone]};
         
         thecompend.(['year',num2str(whatyear)]).(name_of_field).name = ...
             strrep(wns2name(thecompend.(['year',num2str(whatyear)]).(name_of_field).hdr.WNS),' ','_');

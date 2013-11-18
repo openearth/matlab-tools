@@ -1,26 +1,23 @@
 function [] = donar_donarMat2nc(donarMat,filename)
 %donar_donarMat2nc Generate the NetCDF files from the compends.
+%
+%  [] = donar_donarMat2nc(donarMat,ncfilename)
+%
+%See also:
         
-        
-        fileID = fopen('p:\1204561-noordzee\data\svnchkout\donar_dia\donar_dia_TeX\theTeX_General.tex','w');
         thefields = fields(donarMat);
         
         for ifield = 1:length(thefields)
 
-
-            %%%%%%%%%%%%%%%%%%%%%%%%%%
-            % Create the netCDF file %
-            %%%%%%%%%%%%%%%%%%%%%%%%%%
+         %% Create the netCDF file
+            
             ncfile   = [filename,'_',thefields{ifield},'.nc'];
             nc_create_empty(ncfile);
 
-
-
-            %%%%%%%%%%%%%%%%%%%%%
-            % GLOBAL ATTRIBUTES %
-            %%%%%%%%%%%%%%%%%%%%%
+         %% GLOBAL ATTRIBUTES
 
             % Store header as global attributes
+            
             theHDRfields = fields(donarMat.(thefields{ifield}).hdr);
             theHDRfields = donar_rawcode2NCcode(theHDRfields);
             for ihdrfield = 1:1:size(theHDRfields,1)
@@ -29,22 +26,16 @@ function [] = donar_donarMat2nc(donarMat,filename)
                 end
             end
 
-
-
-            %%%%%%%%%%%%%%%%%%%%%
-            % DEFINE DIMENSIONS %
-            %%%%%%%%%%%%%%%%%%%%%
+         %% DEFINE DIMENSIONS
 
             % Define dimensions in this order: [time,z,y,x]
+            
             numrec = length(donarMat.(thefields{ifield}).data);
             nc_adddim(ncfile, 'time' , numrec)
 
 
+         %% CREATE AND PUT DIMENSIONS
 
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            % CREATE AND PUT VARIABLES %
-            %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            disp(char(10));
             for idim = 1:size(donarMat.(thefields{ifield}).dimensions,1)
 
                 disp( ['Adding ',donarMat.(thefields{ifield}).dimensions{idim},'(Column: ',num2str(idim),') to the netCDF file'])
@@ -57,11 +48,13 @@ function [] = donar_donarMat2nc(donarMat,filename)
 
                 nc_addvar(ncfile, nc(idim));
                 nc_varput(ncfile, donarMat.(thefields{ifield}).dimensions{idim}, donarMat.(thefields{ifield}).data(:,idim));
+                
             end
 
 
-                %       Variable:
-                %       http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#longitude-coordinate
+         %% CREATE AND PUT VARIABLES
+         %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#longitude-coordinate
+         
                 idim = idim+1;
                 variableCol = donarMat.(thefields{ifield}).variableCol;
                 nc(idim).Name             = donarMat.(thefields{ifield}).standard_name;
