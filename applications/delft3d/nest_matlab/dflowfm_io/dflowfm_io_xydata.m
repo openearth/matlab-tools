@@ -36,9 +36,9 @@ case 'read'
            nrows   = nrowcol(1);
            ncols   = nrowcol(2);
            for i_row = 1: nrows
-               tline = fgetl(fid);
+               tline = strtrim(fgetl(fid));
                index = dflowfm_decomposestr(tline);
-               if ncols == 2
+               if length(index) == 3
                    LINE(iblck).DATA{i_row,1} = str2num(tline(index(1):index(2) - 1));
                    LINE(iblck).DATA{i_row,2} = str2num(tline(index(2):end         ));
                else

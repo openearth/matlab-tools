@@ -29,10 +29,13 @@ if ~isempty(tmp)
            end
        end
    end
+   
    %
    % Last entry
    %
    if tmp(end) ~= length(string)
-      index(i_field) = tmp(end);
+       index(i_field) = tmp(end) + 1;
+       i_field = i_field + 1;
+       index(i_field) = length(string) + 1;
    end
 end

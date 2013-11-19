@@ -65,7 +65,7 @@ mdf.pathd3d    = path_mdf;
 
 %% Generate the net file from the area information
 simona2mdf_message('Generating the Net file'                           ,'Window','D3D2DFLOWFM Message');
-d3d2dflowfm_grd2net([path_mdf filesep mdf.filcco],[path_mdf filesep mdf.fildep],name_mdu);
+d3d2dflowfm_grd2net([path_mdf filesep mdf.filcco],[path_mdf filesep mdf.fildep],[name_mdu '_net.nc'],[name_mdu '.xyz']);
 mdu.geometry.NetFile = [name_mdu '_net.nc'];
 mdu.geometry.NetFile = simona2mdf_rmpath(mdu.geometry.NetFile);
 
@@ -118,7 +118,7 @@ simona2mdf_message('Generating D-Flow FM OUTPUT            information','Window'
 mdu = d3d2dflowfm_output   (mdf,mdu,name_mdu);
 
 %% Finally,  write the mdu file and close everything
-mdu = rmfield(mdu,pathmdu);
+mdu = rmfield(mdu,'pathmdu');
 simona2mdf_message('Writing    D-Flow FM *.mdu file                   ','Window','D3D2DFLOWFM Message','Close',true,'n_sec',1);
 dflowfm_io_mdu('write',[name_mdu '.mdu'],mdu);
 

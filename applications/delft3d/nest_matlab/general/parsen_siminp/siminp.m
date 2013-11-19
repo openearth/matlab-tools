@@ -471,8 +471,9 @@ else
             case 4 % key
                S.ParsedTree.(Field(i).Name) = true;
                dprintf(debug,'%s\n',Field(i).Name);
-            otherwise
-               error('Keyword ''%s'' type %i not yet implemented',Field(i).Name,Field(i).Type)
+             otherwise
+               S.ParsedTree.(Field(i).Name) = [];
+%               error('Keyword ''%s'' type %i not yet implemented',Field(i).Name,Field(i).Type)
          end
       end
    end

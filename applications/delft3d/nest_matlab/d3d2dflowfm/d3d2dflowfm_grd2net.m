@@ -43,4 +43,5 @@ LINE.DATA     = num2cell(tmp(nonan,:));
 dflowfm_io_xydata('write',samfile,LINE);
 
 % Write netCDF-file
-convertWriteNetcdf;
+%convertWriteNetcdf;
+net2cdf;

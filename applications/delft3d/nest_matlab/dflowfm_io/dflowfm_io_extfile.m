@@ -8,44 +8,35 @@ switch lower(cmd)
 
 case 'read'
    i_forcing = 0;
-   
+
    fid     = fopen(fname  );
    line = strtrim(fgetl(fid));
    while ~feof(fid)
-       if ~(line(1) == '*')
+       if ~isempty(line) && ~(line(1) == '*')
            if ~isempty(strfind(lower(line),'quantity'))
                i_forcing = i_forcing + 1;
                index = strfind(line,'=');
-               ext_force(i_forcing).quantity = line(index(1) + 1:end);
-           elseif ~isempty(strfind(lower(line),'filename'))
+               ext_force(i_forcing).quantity = strtrim(line(index(1) + 1:end));
+           else
                index = strfind(line,'=');
-               ext_force(i_forcing).filename = line(index(1) + 1:end);
-           elseif ~isempty(strfind(lower(line),'filetype'))
-               index = strfind(line,'=');
-               ext_force(i_forcing).filetype = str2num(line(index(1) + 1:end));
-           elseif ~isempty(strfind(lower(line),'method'))
-               index = strfind(line,'=');
-              ext_force(i_forcing).method   = str2num(line(index(1) + 1:end));
-           elseif ~isempty(strfind(lower(line),'operand'))
-               index = strfind(line,'=');
-               ext_force(i_forcing).operand  = line(index(1) + 1:end);
+               if ~isempty(str2num(line(index(1) + 1: end)))
+                   ext_force(i_forcing).(strtrim(lower(line(1:index(1) - 1)))) = str2num(line(index(1) + 1:end));
+               else
+                   ext_force(i_forcing).(strtrim(lower(line(1:index(1) - 1)))) = strtrim(line(index(1) + 1:end));
+               end
            end
        end
        line = strtrim(fgetl(fid));
    end
-   
+
    fclose (fid);
-   
-   varargout = ext_force;
+
+   varargout = {ext_force};
 
 case 'write'
    OPT.Filcomments = '' ;
-   OPT.Quantity    = '' ;
-   OPT.Filename    = '' ;
-   OPT.Filetype    = 9  ; % xyz data
-   OPT.Method      = 4  ;
-   OPT.Operand     = 'O';
-   OPT             = setproperty(OPT,varargin);
+   OPT.ext_force   = [] ;
+   OPT = setproperty(OPT,varargin);
 
    %Comment lines
    if ~isempty(OPT.Filcomments)
@@ -57,15 +48,16 @@ case 'write'
        fclose (fid);
     end
 
-    if ~isempty(OPT.Quantity)
+    if ~isempty(OPT.ext_force)
         fid = fopen(fname,'a');
         fseek(fid,0,'eof');
-        fprintf(fid,['QUANTITY=' OPT.Quantity          '\n']);
-        fprintf(fid,['FILENAME=' OPT.Filename          '\n']);
-        fprintf(fid,['FILETYPE=' num2str(OPT.Filetype) '\n']);
-        fprintf(fid,['METHOD=  ' num2str(OPT.Method  ) '\n']);
-        fprintf(fid,['OPERAND= ' OPT.Operand           '\n']);
-        fprintf(fid,' \n');
+        for i_force = 1: length(OPT.ext_force)
+            names = fieldnames(OPT.ext_force(i_force));
+            for i_name = 1: length(names)
+                fprintf(fid,'%-12s = %-12s \n', upper(names{i_name}),num2str(OPT.ext_force(i_force).(names{i_name})));
+            end
+           fprintf(fid,' \n');
+        end
         fclose(fid);
    end
 end

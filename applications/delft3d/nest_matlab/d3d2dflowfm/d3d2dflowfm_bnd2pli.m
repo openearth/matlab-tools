@@ -127,7 +127,7 @@ for ipol = 1: length(LINE)
     %
 
     if nargout > 0;
-        filext{ipol} = LINE(ipol).Blckname;
+        filext{ipol} = [LINE(ipol).Blckname '.pli'];
     end
 end
 
