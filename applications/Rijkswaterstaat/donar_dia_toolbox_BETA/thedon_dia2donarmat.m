@@ -6,6 +6,67 @@ function thedon_dia2donarmat(OPT)
 %
 % Takes ~ 13 minutes for all 3 sensors.
 %
+% The donarMat structure per year looks like this:
+%
+%      donarMat = 
+%      
+%                air_radiance: [1x1 struct]
+%                fluorescence: [1x1 struct]
+%                      oxygen: [1x1 struct]
+%                          ph: [1x1 struct]
+%          sea_water_salinity: [1x1 struct]
+%                   turbidity: [1x1 struct]
+%                conductivity: [1x1 struct]
+%              water_radiance: [1x1 struct]
+%      
+%      donarMat.air_radiance
+%      
+%                    hdr: [1x1 struct]
+%                   data: [27852x7 double]
+%          referenceDate: 719529
+%             dimensions: {4x2 cell}
+%                   name: 'Irradiation_in_uE_in_air'
+%          standard_name: 'downwelling_longwave_radiance_in_air'
+%          deltares_name: 'air_radiance'
+%            variableCol: 5
+%      
+%      donarMat.air_radiance.hdr
+%      
+%          WNS: {'7788'}
+%          PAR: {'INSLG'  'Instraling'  'J'}
+%          CPM: {'80'  'Lucht'}
+%          EHD: {'E'  'uE'}
+%          HDH: {'NVT'  'Niet van toepassing'}
+%          ORG: {'NVT'  'Niet van toepassing'}
+%          SGK: {'NVT'}
+%          IVS: {'NVT'  'Niet van toepassing'}
+%          BTX: {'NVT'  'NVT'  'Niet van toepassing'}
+%          BTN: {'Niet van toepassing'}
+%          ANI: {'NZXXMTZRWK'  'Dienst Noordzee - afdeling WSM te Rijswijk'}
+%          BHI: {'WDZOUTCHEMIE'  'RWS WD - afdeling monitoring en laboratorium te Lelystad'}
+%          BMI: {'NZXXMTZRWK'  'Dienst Noordzee - afdeling WSM te Rijswijk'}
+%          OGI: {'WDMON_CTD'  'Waterdienst afd. monitoring mbv CTD'}
+%          GBD: {'NOORDZE'  'Noordzee  (internationaal)'}
+%          LOC: {'NOORDZEW84'  'Noordzeegrid'  'G'  'W84'  '-5000000'  '47000000'}
+%          GRD: {'0'}
+%          ANA: {'NVT'  'Niet van toepassing'}
+%          BEM: {'VELDMTG'  'Veldmeting, directe bepaling in het veld'}
+%          BEW: {'NVT'  'Niet van toepassing'}
+%          VAT: {'ROSSPR'  'Roset-sampler'}
+%          TYP: {'D4'}
+%          TYD: {'20070213'  '0736'  '20070213'  '0736'}
+%          PLT: {'WATSGL'}
+%          SYS: {'CENT'}
+%          STA: {'O'}
+%          BGS: {'6334679'  '53335821'  '6334679'  '53335821'}
+%          
+%      donarMat.air_radiance.dimensions
+%          
+%          'longitude'    'degrees_east'                           
+%          'latitude'     'degrees_north'                          
+%          'depth'        'centimeters'                            
+%          'time'         'days since 1970-Jan-01 00:00:00 UTC + 1    
+%
 %See also: findAllFiles, donar_dia2donarMat
 
 OPT.diadir = 'p:\1204561-noordzee\data\raw\RWS\';

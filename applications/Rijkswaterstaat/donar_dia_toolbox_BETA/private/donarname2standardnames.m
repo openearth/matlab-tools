@@ -3,7 +3,7 @@ function [standard_name,deltares_name] = donarname2standardnames(code)
 %
 % [standard_name,deltares_name] = donarname2standardnames(code)
 %
-% See also: 
+% See also: ehd2unitname
 
 % code - standard_name - deltares_name
 

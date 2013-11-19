@@ -1,5 +1,9 @@
 function  data = donar_flagValues(thefield,data)
-%donar_flagValues
+%donar_flagValues  flag donar values for unrealistic values
+%
+%  data = donar_flagValues(thefield,data)
+%
+%See also: 
 
 %% Flag strange values. 
 % Code 1: Not in mask

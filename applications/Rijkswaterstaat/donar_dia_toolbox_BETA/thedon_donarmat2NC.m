@@ -25,7 +25,6 @@ for ifile = 1:1:nfile
 %% Folder for Saving
 
         the_filename = [diafiles{ifile}(1:max(strfind(diafiles{ifile},'_the_compend.mat'))-1)]
-        the_filename = strrep(the_filename,'\mat\','\nc\');
         
 %% Produce the NetCDF File
 

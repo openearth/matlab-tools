@@ -1,9 +1,20 @@
 function  donarcode = donar_rawcode2NCcode(donarcode)
-%donar_rawcode2NCcode
+%donar_rawcode2NCcode translate DONAR datamodel property to global netCDF attribute
 %
-%  donarcode = donar_rawcode2NCcode(donarcode)
+%  C = donar_rawcode2NCcode(donarcode)
 %
-% see also: 
+% returns cell C = {data_type,variable_name,attribute_name,<?>,<?>,<?>}
+%
+% where data_type is 1 or 2, variable_name is -1 for 
+% global attributes, for ready use in nc_attput().
+%
+% Example:
+%
+% donar_rawcode2NCcode('par') % parameter, yields
+%
+% ans = {1,-1,'Variable_code';  2,-1,'Variable_name'}
+%
+% see also: nc_attput
 
     for icode = 1:1:length(donarcode)
         theinfo = get_the_code(donarcode{icode});

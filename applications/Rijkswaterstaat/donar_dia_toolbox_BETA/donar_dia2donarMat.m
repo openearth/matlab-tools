@@ -1,7 +1,7 @@
-function [thecompend] = donar_dia2donarMat(sourcename,cellstr_fields,timezone)
+function [T] = donar_dia2donarMat(sourcename,cellstr_fields,timezone)
 %donar_dia2donarMat convert dia file to mat file
 %
-% [thecompend] = donar_dia2donarMat(sourcename,cellstr_fields,timezone)
+% [T] = donar_dia2donarMat(sourcename,cellstr_fields,timezone)
 %
 % See also: 
 
@@ -115,7 +115,9 @@ function [thecompend] = donar_dia2donarMat(sourcename,cellstr_fields,timezone)
 
                         % Check that the headers are all the same
                         for k=1:length(thefields)
-                            if (~strcmpi(thefields{k},'tyd') && ~strcmpi(thefields{k},'bgs')) && ~strcmp(cell2mat(thecompend.(['year',num2str(iyear)]).(field_name).hdr.(thefields{k})(1,:)),[result.(thefields{k}){:}])
+                            if (~strcmpi(thefields{k},'tyd') && ...
+                                ~strcmpi(thefields{k},'bgs') ) && ...
+                                ~strcmp(cell2mat(thecompend.(['year',num2str(iyear)]).(field_name).hdr.(thefields{k})(1,:)),[result.(thefields{k}){:}])
 
                                 % The headers are not the same!!!! Lets
                                 % make a new field and store the data there.
