@@ -31,13 +31,15 @@ for i_bnd = 1: no_bnd
     end
 end
 
-%% Determine the type of forcing
+%% Determine the type of forcing (temporarly use additional information out of the pli file)
 for i_bnd = 1: no_bnd
     LINE = dflowfm_io_xydata('read',[mdu.pathmdu filesep ext_force(index(i_bnd)).filename]);
+
+
 end
 
-        
-        
+
+
 
 
 

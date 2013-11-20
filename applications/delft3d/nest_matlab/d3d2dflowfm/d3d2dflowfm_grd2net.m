@@ -17,7 +17,7 @@ yh(:,nmax)    = NaN;
 % Check coordinate system (for grd2net)
 spher         = 0;
 if strcmp(G.CoordinateSystem,'Spherical');
-    spher     = 1; 
+    spher     = 1;
 end
 
 % Read the depth data
@@ -43,5 +43,4 @@ LINE.DATA     = num2cell(tmp(nonan,:));
 dflowfm_io_xydata('write',samfile,LINE);
 
 % Write netCDF-file
-%convertWriteNetcdf;
-net2cdf;
+convertWriteNetcdf;
