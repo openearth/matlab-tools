@@ -530,6 +530,7 @@ try
             itype = 1;
         case{'jmv30'}
             tc=readjmv30([pathname filename]);
+%            tc=readgdacs([pathname filename]);
             handles.Toolbox(tb).Input.method=2;
             handles.Toolbox(tb).Input.quadrantOption='perquadrant';
         otherwise

@@ -71,7 +71,7 @@ n=0;
 while 1
     n=n+1;
     str=fgetl(fid);
-    f=strread(str,'%s','delimiter',' ')
+    f=strread(str,'%s','delimiter',' ');
     if strcmpi(f{1},'//')
         istart=n+1;
     end
