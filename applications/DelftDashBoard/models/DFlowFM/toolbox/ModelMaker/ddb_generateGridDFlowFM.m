@@ -85,7 +85,7 @@ set(gcf,'Pointer','arrow');
 % end
 % 
 netstruc=curv2net(x,y,z);
-handles.Model(md).Input(id).netfile=[handles.Model(md).Input(id).runid '_net.nc'];
+handles.Model(md).Input(id).netfile=[handles.Model(md).Input(id).attName '_net.nc'];
 handles.Model(md).Input(id).netstruc=netstruc;
 netStruc2nc(handles.Model(md).Input(id).netfile,netstruc,'cstype',handles.screenParameters.coordinateSystem.type);
 
