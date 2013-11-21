@@ -89,11 +89,13 @@ if exist(filename,'file')
     % Read xml file
     xml=xml2struct(filename);
     % Set model versions
-    for ii=1:length(xml.model)        
+    for ii=1:length(xml.model)
         imdl=strmatch(lower(xml.model(ii).model.name),lower({handles.Model.name}),'exact');
-        handles.Model(imdl).version=xml.model(ii).model.version;
-        handles.Model(imdl).exedir=xml.model(ii).model.exedir;
-    end   
+        if ~isempty(imdl)
+            handles.Model(imdl).version=xml.model(ii).model.version;
+            handles.Model(imdl).exedir=xml.model(ii).model.exedir;
+        end
+    end
 else
     % Save xml file
     for ii=1:length(handles.Model)

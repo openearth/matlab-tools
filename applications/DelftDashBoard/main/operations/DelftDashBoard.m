@@ -64,8 +64,11 @@ handles.debugMode=0;
 if isdeployed
     setpref ('SNCTOOLS','USE_JAVA'   , 1); % This requires SNCTOOLS 2.4.8 or better
     setpref ('SNCTOOLS','PRESERVE_FVD',0); % 0: backwards compatibility and consistent with ncBrowse
+%    setpref('SNCTOOLS','USE_NETCDF_JAVA',true);
     setenv('MCR_CACHE_SIZE','64M');
 end
+
+setpref('SNCTOOLS','USE_NETCDF_JAVA',true);
 
 % Turn off annoying warnings
 warning('off','all');
