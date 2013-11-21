@@ -33,7 +33,7 @@ for iac=1:length(element.dependency);
             if ok
                 switch element.style
                     case{'table'}
-                        table(element.handle,'enable');
+                        gui_table(element.handle,'enable');
                     case{'tab'}
                         tabpanel('enabletab','handle',element.handle,'tabname',element.tabstring);
                     otherwise
@@ -42,7 +42,7 @@ for iac=1:length(element.dependency);
             else
                 switch element.style
                     case{'table'}
-                        table(element.handle,'disable');
+                        gui_table(element.handle,'disable');
                     case{'tab'}
                         tabpanel('disabletab','handle',element.handle,'tabname',element.tabstring);
                     otherwise
@@ -55,8 +55,8 @@ for iac=1:length(element.dependency);
             else
                 turnOff(element);
             end
-        case{'update'}
-            setUIElement(element.handle,'dependencyupdate',0);
+%         case{'update'}
+%             setUIElement(element.handle,'dependencyupdate',0);
         case{'visible'}
             if ok
                 setVisible(element);

@@ -481,7 +481,7 @@ for i=1:length(element)
                         end
                     end
                 end
-                element(i).element.handle=table(gcf,'create','tag',tag,'data',data,'position',pos,'nrrows',nrrows,'columntypes',cltp,'width',width,'callbacks',callbacks, ...
+                element(i).element.handle=gui_table(gcf,'create','tag',tag,'data',data,'position',pos,'nrrows',nrrows,'columntypes',cltp,'width',width,'callbacks',callbacks, ...
                     'includebuttons',inclb,'includenumbers',incln,'format',format,'enable',enable,'columntext',txt,'popuptext',popuptext);
         end
     catch
@@ -1030,7 +1030,7 @@ function table_Callback(getFcn,setFcn,element,i,icol)
 
 el=element(i).element;
 
-data=table(el.handle,'getdata');
+data=gui_table(el.handle,'getdata');
 
 % Now set the data
 for j=1:length(el.column)

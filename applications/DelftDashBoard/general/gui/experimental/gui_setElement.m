@@ -355,9 +355,9 @@ switch lower(el.style)
             end
         end
         if ipopup
-            table(el.handle,'refresh','popuptext',popupText);
+            gui_table(el.handle,'refresh','popuptext',popupText);
         end
-        table(el.handle,'setdata',data);
+        gui_table(el.handle,'setdata',data);
 end
 
 % And now update the dependency of this element

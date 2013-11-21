@@ -1,4 +1,4 @@
-function varargout=table(varargin)
+function varargout=gui_table(varargin)
 
 position=[0 0];
 nrrows=0;
