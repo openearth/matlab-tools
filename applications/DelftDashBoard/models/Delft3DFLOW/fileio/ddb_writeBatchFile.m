@@ -149,7 +149,7 @@ if ispc,
             fclose(fini);
             
         otherwise
-            % older version
+            % older version, not writing batch file
     end
 
 %     fclose(fid);

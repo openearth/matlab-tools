@@ -63,9 +63,7 @@ function handles = ddb_initializeFlowDomain(handles, opt, id, runid)
 % $Keywords: $
 
 %%
-handles.Model(md).Version = '5.00.xx';
-handles.Model(md).VersionList = {'5.00.xx','6.00.xx'}; 
-handles.Model(md).VersionSelect = 0;
+
 handles.Model(md).Input(id).runid=runid;
 
 switch lower(opt)
@@ -358,8 +356,8 @@ handles.Model(md).Input(id).rhoW=1000.0;
 handles.Model(md).Input(id).tempW=15;
 handles.Model(md).Input(id).salW=31;
 handles.Model(md).Input(id).rouWav='FR84';
-handles.Model(md).Input(id).windStressCoefficients=[6.3000000e-004;7.2300000e-003];
-handles.Model(md).Input(id).windStressSpeeds=[0.0000000e+000;3.0000000e+001];
+handles.Model(md).Input(id).windStressCoefficients=[1.0000000e-003;3.0000000e-003];
+handles.Model(md).Input(id).windStressSpeeds=[0.0000000e+000;2.5000000e+001];
 handles.Model(md).Input(id).nrWindStressBreakpoints=2;
 handles.Model(md).Input(id).windType='uniform';
 handles.Model(md).Input(id).wndInt='Y';
