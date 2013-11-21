@@ -23,17 +23,24 @@
     </tab>
     <tab>
       <tag>dummy</tag>
-      <tabstring>Tropical Cyclone</tabstring>
+      <tabstring>Tsunami</tabstring>
       <callback>ddb_dummyTabCallback</callback>
       <formodel>delft3dwave</formodel>
       <element>Tsunami.delft3dwave.xml</element>
     </tab>
     <tab>
       <tag>dummy</tag>
-      <tabstring>Tropical Cyclone</tabstring>
+      <tabstring>Tsunami</tabstring>
       <callback>ddb_dummyTabCallback</callback>
       <formodel>dflowfm</formodel>
       <element>Tsunami.dflowfm.xml</element>
+    </tab>
+    <tab>
+      <tag>dummy</tag>
+      <tabstring>Tsunami</tabstring>
+      <callback>ddb_dummyTabCallback</callback>
+      <formodel>xbeach</formodel>
+      <element>Tsunami.xbeach.xml</element>
     </tab>
   </element>
 </root>
