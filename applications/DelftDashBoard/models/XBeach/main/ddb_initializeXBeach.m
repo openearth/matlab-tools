@@ -20,5 +20,3 @@ handles.GUIData.nrXBeachObservationCrossSections=1;
 handles.GUIData.nrXBeachOpenBoundaries=1;
 
 handles=ddb_initializeXBeachInput(handles,1,runid);
-
-set(handles.GUIHandles.Menu.Model.XBeach,'Enable','off');

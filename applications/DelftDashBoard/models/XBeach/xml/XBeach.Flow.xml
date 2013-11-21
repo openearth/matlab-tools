@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<root>
+  <longname>Flow input</longname>
+  <element>
+    <style>tabpanel</style>
+    <position>10.000,  10.000,1200.000, 140.000</position>
+    <tab>
+      <tabstring>Flow boundary condit...</tabstring>
+      <tooltipstring>Flow boundary condition parameters</tooltipstring>
+      <element>XBeach.Flow.FlowBoundaryConditionParameters.xml</element>
+    </tab>
+    <tab>
+      <tabstring>Tide boundary condit...</tabstring>
+      <tooltipstring>Tide boundary conditions</tooltipstring>
+      <element>XBeach.Flow.TideBoundaryConditions.xml</element>
+    </tab>
+    <tab>
+      <tabstring>Flow discharge bound...</tabstring>
+      <tooltipstring>Flow discharge boundary conditions</tooltipstring>
+      <element>XBeach.Flow.FlowDischargeBoundaryConditions.xml</element>
+    </tab>
+    <tab>
+      <tabstring>Flow parameters</tabstring>
+      <tooltipstring>Flow parameters</tooltipstring>
+      <element>XBeach.Flow.FlowParameters.xml</element>
+    </tab>
+    <tab>
+      <tabstring>Coriolis force param...</tabstring>
+      <tooltipstring>Coriolis force parameters</tooltipstring>
+      <element>XBeach.Flow.CoriolisForceParameters.xml</element>
+    </tab>
+    <tab>
+      <tabstring>Wind parameters</tabstring>
+      <tooltipstring>Wind parameters</tooltipstring>
+      <element>XBeach.Flow.WindParameters.xml</element>
+    </tab>
+    <tab>
+      <tabstring>Flow numerics parame...</tabstring>
+      <tooltipstring>Flow numerics parameters</tooltipstring>
+      <element>XBeach.Flow.FlowNumericsParameters.xml</element>
+    </tab>
+    <tab>
+      <tabstring>Flow advanced options</tabstring>
+      <tooltipstring>Flow advanced options</tooltipstring>
+      <element>XBeach.Flow.Advanced_1.xml</element>
+    </tab>
+  </element>
+</root>
