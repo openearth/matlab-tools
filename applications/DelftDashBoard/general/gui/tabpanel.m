@@ -1,4 +1,4 @@
-function [handle tabhandles] = tabpanel(fcn, varargin)
+function handle = tabpanel(fcn, varargin)
 %TABPANEL  One line description goes here.
 %
 %   More detailed description goes here.
@@ -74,6 +74,7 @@ fig=gcf;
 clr=[];
 activetabnr=1;
 callbackopt='withcallback';
+element=[];
 
 for i=1:length(varargin)
     if ischar(varargin{i})
@@ -106,6 +107,8 @@ for i=1:length(varargin)
                 if ~varargin{i+1}
                     callbackopt='nocallback';
                 end
+            case{'element'}
+                element=varargin{i+1};
         end
     end
 end
@@ -125,9 +128,10 @@ end
 switch lower(fcn)
     case{'create'}
         ntabs=length(tabnames);
-        [handle,tabhandles]=createTabPanel(fig,tag,clr,pos,parent,ntabs);
+        [handle,tabhandle]=createTabPanel(fig,tag,clr,pos,parent,ntabs,element);
         changeTabPanel(handle,strings,callbacks,inputarguments,tabnames);
         select(handle,activetabnr,'nocallback');
+%        select(handle,activetabnr,'withcallback');
     case{'change'}
         changeTabPanel(handle,strings,callbacks,inputarguments,tabnames);
         select(handle,activetabnr,'nocallback');
@@ -155,7 +159,7 @@ switch lower(fcn)
 end
 
 %%
-function [panelHandle,largeTabs]=createTabPanel(fig,panelname,clr,panelPosition,parent,ntabs)
+function [panelHandle,largeTab]=createTabPanel(fig,panelname,clr,panelPosition,parent,ntabs,element)
 
 foregroundColor=clr;
 backgroundColor=clr*0.9;
@@ -165,7 +169,6 @@ vertpos=panelPosition(4)-1;
 
 tabHeight=20;
 
-%ntabs=20;
 tabs=zeros(ntabs,1);
 tabText=tabs;
 blankText=tabs;
@@ -196,13 +199,15 @@ for i=1:ntabs
     
 end
 
+setappdata(panelHandle,'element',element);
+
 % Create new main panel
 visph = uipanel(fig,'Units','pixels','Parent',panelHandle,'Position',[1 1 panelPosition(3) panelPosition(4)],'BorderType','beveledout','BackgroundColor',foregroundColor);
 
 pos=[1 1 panelPosition(3) panelPosition(4)+20];
-for i=1:ntabs
-    largeTabs(i) = uipanel(fig,'Parent',panelHandle,'Units','pixels','Position',pos,'Tag','largeTab','BorderType','none','BackgroundColor','none','Visible','on','HitTest','off');
-end
+
+% Create one large tab to put elements in
+largeTab = uipanel(fig,'Parent',panelHandle,'Units','pixels','Position',pos,'Tag','largeTab','BorderType','none','BackgroundColor','none','Visible','on','HitTest','off');
 
 % Add blank texts
 leftpos=3;
@@ -220,7 +225,7 @@ set(blankText,'HandleVisibility','off','HitTest','off');
 panel.nrTabs=ntabs;
 panel.visiblePanel=visph;
 panel.tabHandles=tabs;
-panel.largeTabHandles=largeTabs;
+panel.largeTabHandle=largeTab;
 panel.tabTextHandles=tabText;
 panel.blankTextHandles=blankText;
 panel.handle=panelHandle;
@@ -230,7 +235,6 @@ panel.backgroundColor=backgroundColor;
 panel.activeTab=1;
 
 set(panelHandle,'UserData',panel);
-
 
 %%
 function changeTabPanel(panelHandle,strings,callbacks,inputarguments,tabnames)
@@ -248,7 +252,6 @@ panel=get(panelHandle,'UserData');
 tabs=panel.tabHandles;
 tabText=panel.tabTextHandles;
 blankText=panel.blankTextHandles;
-largeTabs=panel.largeTabHandles;
 
 set(tabs(1:ntabs),'Visible','on');
 set(tabText(1:ntabs),'Visible','on');
@@ -267,8 +270,6 @@ tabHeight=20;
 textHeight=15;
 
 for i=1:ntabs
-    
-    set(largeTabs(i),'Tag',tabnames{i});
     
     tmppos=get(tabText(i),'Position');
     tmppos(3)=150;
@@ -319,11 +320,6 @@ panel.inputArguments=inputarguments;
 
 set(panelHandle,'UserData',panel);
 
-for i=1:length(panel.largeTabHandles)
-    set(panel.largeTabHandles(i),'Visible','off');
-end
-%drawnow;
-
 %%
 function clickTab(hObject,eventdata)
 
@@ -331,35 +327,20 @@ usd=get(hObject,'UserData');
 h=usd.panelHandle;
 nr=usd.nr;
 enable=get(hObject,'Enable');
-%profile on
+
 switch lower(enable)
     case{'off'}
     otherwise
         select(h,nr,'withcallback');
 end
-% profile off
-% profile viewer
 
 %%
 function select(h,iac,opt)
 
+setappdata(gcf,'activetabpanel',h);
+setappdata(gcf,'activetab',iac);
+
 panel=get(h,'UserData');
-
-%drawnow
-% for i=1:length(panel.largeTabHandles)
-%     if i~=iac
-%         set(panel.largeTabHandles(i),'Visible','off');
-%         drawnow;
-%     end
-% end
-%drawnow;
-
-set(panel.largeTabHandles(panel.activeTab),'Visible','off');
-%drawnow('expose');
-
-% Set new tab visible
-set(panel.largeTabHandles(iac),'Visible','on');
-%drawnow('expose');
 
 panel.activeTab=iac;
 set(h,'UserData',panel);
@@ -369,7 +350,6 @@ try
     el=getappdata(h,'element');
 end
 el.activetabnr=iac;
-setappdata(h,'element',el);
 
 % All tabs
 set(panel.tabHandles,'BackgroundColor',panel.backgroundColor);
@@ -383,60 +363,38 @@ set(panel.tabTextHandles(iac),'BackgroundColor',panel.foregroundColor);
 set(panel.tabTextHandles(iac),'FontWeight','bold');
 set(panel.blankTextHandles(iac),'Visible','on');
 
+% Delete original elements
+p=panel.largeTabHandle;
+ch=get(p,'Children');
+delete(ch);
 
+% New elements in selected tab
+p=panel.largeTabHandle;
+newelements=el.tab(iac).tab.element;
+newelements=gui_addElements(gcf,newelements,'getFcn',@getHandles,'setFcn',@setHandles,'Parent',p);
+el.tab(iac).tab.element=newelements;
+setappdata(h,'element',el);
 
-% % Callback
-% if strcmpi(opt,'withcallback') && ~isempty(panel.callbacks{iac})
-%     % Execute callback
-%     if isempty(panel.inputArguments{iac})
-%         feval(panel.callbacks{iac});
-%     else
-%         feval(panel.callbacks{iac},panel.inputArguments{iac});
-%     end
-% end
-
-
-
-% Find handle of tab panel and get tab info
-% h=findobj(gcf,'Tag',tag,'Type','uipanel');
-% el=getappdata(h,'element');
-% tab=el.tabs(tabnr).tab;
-
-activetabhandle=panel.largeTabHandles(iac);
-setappdata(gcf,'activetabhandle',activetabhandle);
-
+% Deal with callbacks
 if strcmpi(opt,'withcallback')
     
     % Elements is structure of elements inside selected tab
     element=el.tab(iac).tab.element;
     
     callback=el.tab(iac).tab.callback;
-    elementstoupdate=element;
+
     % Now look for tab panels within this tab, and execute callback associated
     % with active tabs
     for k=1:length(element)
         if strcmpi(element(k).element.style,'tabpanel')
-%             % Update tabs (some may have to be disabled or enabled)
-            for itab=1:length(element(k).element.tab)
-                htab=element(k).element.tab(itab).tab.handle;
-                gui_updateDependency(htab);
-            end
             % Find active tab
             hh=element(k).element.handle;
             el=getappdata(hh,'element');
             iac=el.activetabnr;
             callback=el.tab(iac).tab.callback;
-            elementstoupdate=el.tab(iac).tab.element;
-            activetabhandle=el.tab(iac).tab.handle;
             break
         end
     end
-    
-    if ~isempty(elementstoupdate)
-        gui_setElements(elementstoupdate);
-    end
-    
-    setappdata(gcf,'activetabhandle',activetabhandle);
     
     if ~isempty(callback)
         feval(callback);
@@ -444,8 +402,25 @@ if strcmpi(opt,'withcallback')
     
 end
 
-
-% Check if there are any tab panels inside this tab
+% Change element structure of parent (if that is also a tab panel)
+if isfield(el,'parenthandle')
+    if ~isempty(el.parenthandle)
+        tg=get(el.parenthandle,'tag');
+        switch lower(tg)
+            case{'largetab'}
+                pp=get(el.parenthandle,'parent'); % handle of larger tab panel
+                pelement=getappdata(pp,'element');                
+                itabp=pelement.activetabnr;
+                % Assuming only one tab panel
+                for iel=1:length(pelement.tab(itabp).tab.element)
+                    if strcmpi(pelement.tab(itabp).tab.element(iel).element.style,'tabpanel')
+                        pelement.tab(itabp).tab.element(iel).element.activetabnr=iac;
+                    end
+                end
+                setappdata(pp,'element',pelement);                
+        end
+    end
+end
 
 
 %%
@@ -475,9 +450,10 @@ vertPosText=vertPosTabs+bottomTextMargin;
 
 posLargeTabs=[1 1 panelPosition(3) panelPosition(4)+20];
 
+set(panel.largeTabHandle,'Position',posLargeTabs);
+
 for i=1:panel.nrTabs
     
-    set(panel.largeTabHandles(i),'Position',posLargeTabs);
     
     pos=get(panel.tabHandles(i),'Position');
     pos(2)=vertPosTabs;

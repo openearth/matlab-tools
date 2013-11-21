@@ -102,7 +102,6 @@ if isfield(xml,'element')
             xml.element(ielm).element=converttonewformat(xml.element(ielm).element,'tabs','tab');
             for j=1:length(xml.element(ielm).element.tab)
               xml.element(ielm).element.tab(j).tab=renamefield(xml.element(ielm).element.tab(j).tab,'elements','element');
-%              xml.element(ielm).element.tab(j).tab=converttonewformat(xml.element(ielm).element.tab(j).tab,'elements','element');
             end
         end
 

@@ -420,25 +420,17 @@ for i=1:length(element)
                 end
                 
                 % Create tab panel
-                [element(i).element.handle tabhandles]=tabpanel('create','figure',figh,'tag',panelname,'position',pos,'strings',strings, ...
+                tabhandle=tabpanel('create','figure',figh,'tag',panelname,'position',pos,'strings',strings, ...
                     'callbacks',callbacks,'tabnames',tabnames,'activetabnr',element(i).element.activetabnr, ...
-                    'inputarguments',inputArguments,'parent',parenthandle);
-
-                % Add UI element to different tabs
-                for j=1:length(element(i).element.tab)
-                    element(i).element.tab(j).tab.style='tab';
-                    element(i).element.tab(j).tab.element=gui_addElements(figh,element(i).element.tab(j).tab.element,'getFcn',getFcn,'setFcn',setFcn, ...
-                    'Parent',tabhandles(j));
-                if isfield(element(i).element.tab(j).tab,'tag')
-                    set(tabhandles(j),'Tag',element(i).element.tab(j).tab.tag);
-                end
-                    element(i).element.tab(j).tab.handle=tabhandles(j);
-                end
+                    'inputarguments',inputArguments,'parent',parenthandle,'element',element(i).element);
+                % Element structure has been updated with handles
+                element(i).element=getappdata(tabhandle,'element');
+                element(i).element.handle=tabhandle;
                 
                 for j=1:length(element(i).element.tab)
                     if element(i).element.tab(j).tab.enable==0
                         tabpanel('disabletab','handle',element(i).element.handle,'tabname',element(i).element.tab(j).tab.tabstring);
-                    end                    
+                    end
                 end
 
             case{'table'}
@@ -949,6 +941,10 @@ if isfield(el.extension,'extension')
     extension=gui_getValue(el,el.extension.extension.variable);
 else
     extension=el.extension;
+end
+
+if isempty(extension)
+    extension='*.*';
 end
 
 [filename, pathname, filterindex] = uigetfile(extension,selectiontext);

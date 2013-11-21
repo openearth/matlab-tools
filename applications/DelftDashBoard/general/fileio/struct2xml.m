@@ -132,7 +132,7 @@ fclose(fid);
 %%
 function splitstruct(fid,s,ilev,nindent,includeattributes,structuretype)
 
-fldnames=fieldnames(s);
+fldnames=fieldnames(s);    
 
 for k=1:length(fldnames)
     fldname=fldnames{k};
@@ -184,23 +184,19 @@ for k=1:length(fldnames)
                             attributes=[];
                             prefix='';
                             % Find out if this is an end node
-                            try
-                                if ~isstruct(s.(fldname)(j).(fldname))
-                                    % This is an end node
-                                    name=fldname;
-                                    value=s.(fldname)(j).(fldname);
-                                    % Write end node
-                                    writeendnode(fid,ilev,nindent,name,prefix,value,attributes,includeattributes);
-                                else
-                                    % Not an end node
-                                    writeopennode(fid,ilev,nindent,fldname,prefix,attributes,includeattributes);
-                                    ilev=ilev+1;
-                                    splitstruct(fid,s.(fldname)(j).(fldname),ilev,nindent,includeattributes,structuretype);
-                                    ilev=ilev-1;
-                                    writeclosenode(fid,ilev,nindent,fldname,prefix);
-                                end
-                            catch
-                                shite=1
+                            if ~isstruct(s.(fldname)(j).(fldname))
+                                % This is an end node
+                                name=fldname;
+                                value=s.(fldname)(j).(fldname);
+                                % Write end node
+                                writeendnode(fid,ilev,nindent,name,prefix,value,attributes,includeattributes);
+                            else
+                                % Not an end node
+                                writeopennode(fid,ilev,nindent,fldname,prefix,attributes,includeattributes);
+                                ilev=ilev+1;
+                                splitstruct(fid,s.(fldname)(j).(fldname),ilev,nindent,includeattributes,structuretype);
+                                ilev=ilev-1;
+                                writeclosenode(fid,ilev,nindent,fldname,prefix);
                             end
                         end
                     end
