@@ -3,6 +3,7 @@
   <toolbox>DD</toolbox>
   <longname>Domain Decomposition</longname>
   <enable>1</enable>
+  <formodel>delft3dflow</formodel>
   <element>
     <tag>ddpanel</tag>
     <style>panel</style>
