@@ -26,6 +26,12 @@
       <element>ModelMaker.quickmode.delft3dwave.xml</element>
     </tab>
     <tab>
+      <formodel>xbeach</formodel>
+      <tabstring>Quick Mode</tabstring>
+      <callback>ddb_ModelMakerToolbox_quickMode_XBeach</callback>
+      <element>ModelMaker.quickmode.xbeach.xml</element>
+    </tab>
+    <tab>
       <formodel>delft3dflow</formodel>
       <formodel>dflowfm</formodel>
       <tabstring>Bathymetry</tabstring>
