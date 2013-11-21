@@ -122,7 +122,6 @@ switch lower(varargin{1}),
             set(handles.GUIHandles.mainWindow,'WindowScrollWheelFcn',@ddb_zoomScrollWheel);
         end
         
-        %         set(handles.GUIHandles.mainWindow,'KeyPressFcn',@ddb_shiftPan);
         set(handles.GUIHandles.mainWindow,'ResizeFcn',@ddb_resize);
         
         ddb_setWindowButtonUpDownFcn;

@@ -67,32 +67,30 @@ handles=getHandles;
 
 lbl=get(hObject,'Label');
 
-h=get(hObject,'Parent');
-hp=get(h,'Parent');
-if hp~=1
-    h=hp;
-end
-ch=get(h,'Children');
-set(ch,'Checked','off');
-for ii=1:length(ch)
-    chc=get(ch(ii),'children');
-    if ~isempty(chc)
-        set(chc,'Checked','off');
+hmain=findobj(gcf,'Tag','menuBathymetry');
+set(hmain,'ForegroundColor',[0 0 0]);        
+
+% First uncheck ALL datasets
+ch=get(hmain,'Children');
+for ich=1:length(ch)
+    set(ch(ich),'Checked','off');
+    set(ch(ich),'ForegroundColor',[0 0 0]);        
+    gch=get(ch(ich),'Children');
+    for igch=1:length(gch)
+        set(gch(igch),'Checked','off');
     end
 end
 
+% Now check selected dataset
 set(hObject,'Checked','on');
+ch=get(hObject,'Children');
 p=get(hObject,'Parent');
-pp=get(p,'Parent');
-ppp=get(pp,'Parent');
-if ppp==1
-    ch=get(pp,'Children');
-    set(ch,'ForegroundColor',[0 0 0]);    
+if isempty(ch) && p~=hmain
     set(p,'ForegroundColor',[0 0 1]);    
-else
-    ch=get(p,'Children');
-    set(ch,'ForegroundColor',[0 0 0]);    
 end
+
+% And select new bathymetry
+
 iac=strmatch(lbl,handles.bathymetry.longNames,'exact');
 
 if ~strcmpi(handles.screenParameters.backgroundBathymetry,handles.bathymetry.datasets{iac})

@@ -79,6 +79,18 @@ if exist([xmldir fname],'file')>0
     handles.Toolbox(j).longName=xml.longname;
     handles.Toolbox(j).enable=xml.enable;
     
+    handles.Toolbox(j).formodel=[];
+    
+    if isfield(xml,'formodel')
+        if iscell(xml.formodel)
+            for ii=1:length(xml.formodel)
+                handles.Toolbox(j).formodel{ii}=xml.formodel(ii).formodel;
+            end
+        else
+            handles.Toolbox(j).formodel{1}=xml.formodel;
+        end
+    end
+    
 end
 
 handles.Toolbox(j).GUI.element=xml.element;

@@ -60,13 +60,6 @@ set(handles.Model(md).GUI.element(1).element.handle,'Visible','off');
 % Deactivate current model
 feval(handles.Model(md).plotFcn,'update','active',0,'visible',1,'domain',0,'wavedomain',0,'deactivate',1);
 
-% Remove all elements from toolbox tab
-parent=handles.Model(md).GUI.element(1).element.tab(1).tab.handle;
-ch=get(parent,'Children');
-if ~isempty(ch)
-    delete(ch);
-end
-
 % Setting new active model
 ii=strmatch(mdl,{handles.Model.name},'exact');
 handles.activeModel.name=mdl;

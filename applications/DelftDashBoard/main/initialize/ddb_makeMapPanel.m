@@ -109,19 +109,28 @@ handles.GUIHandles.textBathymetry = uicontrol(gcf,'Units','pixels','Parent',hand
     'String','Bathymetry : GEBCO 08','Position',[550 655 400 15],'BackgroundColor',handles.backgroundColor,'HorizontalAlignment','left');
 
 % Text box
+
+screensize=get(0,'ScreenSize');
+ihres=1;
+if screensize(3)>1900
+    ihres=1.2;
+end
+
 handles.GUIHandles.textAnn1=annotation('textbox',[0.02 0.3 0.7 0.2]);
 set(handles.GUIHandles.textAnn1,'Units','pixels','HitTest','off');
-set(handles.GUIHandles.textAnn1,'Position',[50 235 1000 20]);
+set(handles.GUIHandles.textAnn1,'Position',[50 235*ihres 1000 20]);
 set(handles.GUIHandles.textAnn1,'VerticalAlignment','bottom');
 set(handles.GUIHandles.textAnn1,'FontSize',12,'FontWeight','bold','LineStyle','none','Color',[1 1 0]);
+
 handles.GUIHandles.textAnn2=annotation('textbox',[0.02 0.3 0.7 0.2]);
 set(handles.GUIHandles.textAnn2,'Units','pixels','HitTest','off');
-set(handles.GUIHandles.textAnn2,'Position',[50 215 1000 20]);
+set(handles.GUIHandles.textAnn2,'Position',[50 215*ihres 1000 20]);
 set(handles.GUIHandles.textAnn2,'VerticalAlignment','bottom');
 set(handles.GUIHandles.textAnn2,'FontSize',12,'FontWeight','bold','LineStyle','none','Color',[1 1 0]);
+
 handles.GUIHandles.textAnn3=annotation('textbox',[0.02 0.3 0.7 0.2]);
 set(handles.GUIHandles.textAnn3,'Units','pixels','HitTest','off');
-set(handles.GUIHandles.textAnn3,'Position',[50 195 1000 20]);
+set(handles.GUIHandles.textAnn3,'Position',[50 195*ihres 1000 20]);
 set(handles.GUIHandles.textAnn3,'VerticalAlignment','bottom');
 set(handles.GUIHandles.textAnn3,'FontSize',12,'FontWeight','bold','LineStyle','none','Color',[1 1 0]);
 

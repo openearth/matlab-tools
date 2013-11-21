@@ -51,12 +51,17 @@ xmlfile='delftdashboard.xml';
 filename=[xmldir xmlfile];
 
 % Set defaults
-
 for imdl=1:length(handles.Model)
+
+    handles.Model(imdl).versionlist = {''}; 
+    handles.Model(imdl).version = ''; 
 
     switch lower(handles.Model(imdl).name)
         case{'delft3dflow'}
             
+            % Version list (used in GUI)
+            handles.Model(imdl).versionlist = {'5.00.xx','6.00.xx'}; 
+
             % Delft3D-FLOW
             if exist([getenv('D3D_HOME') '\' getenv('ARCH') '\flow2d3d\bin\d_hydro.exe'],'file')
                 handles.Model(imdl).version='6.00.xx';

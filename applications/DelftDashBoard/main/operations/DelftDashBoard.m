@@ -107,10 +107,12 @@ try
     %maximizeWindow('Delft Dashboard');
     
     pause(1);
+        
+    set(handles.GUIHandles.mainWindow,'Visible','on');
+
+    drawnow;
     
     ddb_updateDataInScreen;
-    
-    set(handles.GUIHandles.mainWindow,'Visible','on');
     
     % Maximize Figure
     %maximize(handles.GUIHandles.MainWindow);

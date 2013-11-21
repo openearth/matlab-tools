@@ -102,14 +102,15 @@ else
 end
 
 %% Menu View
-if ~isempty(xml.menu.menu.menuview)
-    for i=1:length(xml.menu.menu.menuview.menuview.attribute)
-        handles.Model(j).GUI.menu.view(i).string   = xml.menu.menu.menuview.menuview.attribute(i).attribute.string;
-        handles.Model(j).GUI.menu.view(i).callback = str2func(xml.menu.menu.menuview.menuview.attribute(i).attribute.callback);
-        handles.Model(j).GUI.menu.view(i).option   = xml.menu.menu.menuview.menuview.attribute(i).attribute.option;
+handles.Model(j).GUI.menu.view=[];
+if isfield(xml.menu.menu,'menuview')
+    if ~isempty(xml.menu.menu.menuview)
+        for i=1:length(xml.menu.menu.menuview.menuview.attribute)
+            handles.Model(j).GUI.menu.view(i).string   = xml.menu.menu.menuview.menuview.attribute(i).attribute.string;
+            handles.Model(j).GUI.menu.view(i).callback = str2func(xml.menu.menu.menuview.menuview.attribute(i).attribute.callback);
+            handles.Model(j).GUI.menu.view(i).option   = xml.menu.menu.menuview.menuview.attribute(i).attribute.option;
+        end
     end
-else
-    handles.Model(j).GUI.menu.view=[];
 end
 
 

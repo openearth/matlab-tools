@@ -102,6 +102,7 @@ handles=ddb_addMenuItem(handles,'Domain','tst',                 'Callback',{@ddb
 
 %% Bathymetry
 uimenu('Label','Bathymetry','Tag','menuBathymetry');
+
 % First datasets without source
 for i=1:handles.bathymetry.nrDatasets
     if isempty(handles.bathymetry.dataset(i).source)

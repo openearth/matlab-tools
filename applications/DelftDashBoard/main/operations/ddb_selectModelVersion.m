@@ -1,25 +1,9 @@
-function ddb_addModelTabPanels
-%DDB_ADDMODELTABPANELS  One line description goes here.
-%
-%   More detailed description goes here.
-%
-%   Syntax:
-%   ddb_addModelTabPanels
-%
-%   Input:
-
-%
-%
-%
-%
-%   Example
-%   ddb_addModelTabPanels
-%
-%   See also
+function ddb_selectModelVersion(opt)
+%ddb_selectModelVersion - GUI script to select model version.
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2011 Deltares
+%   Copyright (C) 2013 Deltares
 %       Maarten van Ormondt
 %
 %       Maarten.vanOrmondt@deltares.nl
@@ -52,28 +36,45 @@ function ddb_addModelTabPanels
 % Created: 29 Nov 2011
 % Created with Matlab version: 7.11.0.584 (R2010b)
 
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
+% $Id: $
+% $Date: $
+% $Author: $
+% $Revision: $
+% $HeadURL: $
 % $Keywords: $
 
 %%
 handles=getHandles;
 
-% Model tabs
-for i=1:length(handles.Model)
-    handles.activeModel.nr = i;
-    setHandles(handles);
-    element=handles.Model(i).GUI.element;
-    if ~isempty(element)
-%        element.element.tab(1).tab.callback=@ddb_selectToolbox;
-        element=gui_addElements(gcf,element,'getFcn',@getHandles,'setFcn',@setHandles);
-        set(element(1).element.handle,'Visible','off');
-        handles.Model(i).GUI.element=element;
-    end
+xmldir=[handles.settingsDir 'xml' filesep];
+xmlfile='delftdashboard.modelversion.xml';
+
+switch lower(opt)
+    case{'selectversion'}
+        ddb_zoomOff;
+        h.versionlist=handles.Model(md).versionlist;
+        h.version=handles.Model(md).version;
+        h.exedir=handles.Model(md).exedir;
+        [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir filesep 'icons' filesep 'deltares.gif']);
+        if ok            
+            handles.Model(md).version=h.version;
+            handles.Model(md).exedir=h.exedir;            
+            % Things have changed, so save xml file
+            xmldir=handles.xmlConfigDir;
+            xmlfile='delftdashboard.xml';
+            filename=[xmldir xmlfile];
+            xml=xml2struct(filename);
+            for ii=1:length(xml.model)
+                if strcmpi(xml.model(ii).model.name,handles.Model(md).name)
+                    xml.model(ii).model.name=handles.Model(md).name;
+                    xml.model(ii).model.version=h.version;
+                    xml.model(ii).model.exedir=h.exedir;
+                    struct2xml(filename,xml,'structuretype','short');
+                    break
+                end
+            end
+        end
 end
 
-handles.activeModel.nr = 1;
 setHandles(handles);
+
