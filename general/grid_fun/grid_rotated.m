@@ -1,4 +1,4 @@
-function [x y pind] = grid_rotated(xs, ys, alfa, m, n)
+function [x y pind] = grid_rotated(xs, ys, alfa, m, n, dm, dn)
 %GRID_ROTATED  Create a rotated structured grid for interpolation of scattered data.
 %
 %   Creates a structured grid under a user-specified rotation angle, which fits tightly around a scattered 2D dataset.
@@ -11,9 +11,18 @@ function [x y pind] = grid_rotated(xs, ys, alfa, m, n)
 %   ys   =  Vector of y-coordinates of scattered dataset
 %   alfa =  User-specified rotation angle of output grid (degrees clockwise)
 %   m    =  Number of gridpoints in North-South direction (before rotation)
+%           Set to zero if gridsize is used
 %   n    =  Number of gridpoints in East-West direction (before rotation)
+%           Set to zero if gridsize is used
+%   dm   =  Gridsize in north-south direction (before rotation) in units of scatter data
+%           Set to zero if number of gridpoints is used
+%   dn   =  Gridsize in East-West direction (before rotation) in units of  scatter data 
+%           Set to zero is number of gridpoints is used
+% 
+%   Number of gridpoints overrules gridsize !
 %
-%   Output:
+% 
+% %   Output:
 %   x    =  Matrix of x-coordinates of rotated structured grid
 %   y    =  Matrix of y-coordinates of rotated structured grid
 %   pind =  Indices of gridpoints outside of the scattered data boundingbox
@@ -25,12 +34,14 @@ function [x y pind] = grid_rotated(xs, ys, alfa, m, n)
 %   from NW to SE. 'Interpolated' values that fall outside the bounding box
 %   of the scattered dataset are set to nan.
 %
-%   [x,y,pind] = grid_rotated(xs,ys,45,100,50);
+%   [x,y,pind] = grid_rotated(xs,ys,45,100,50,0,0);
 %   zint = scatteredInterpolant(xs,ys,zs);
 %   z = zint(x,y);
 %   z(~pind) = nan;
 %
-
+%   UPDATE: 
+%   Option to use gridsize instead of number gridpoints
+% 
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2013 Delft University of Technology
@@ -42,8 +53,12 @@ function [x y pind] = grid_rotated(xs, ys, alfa, m, n)
 %       Stevinweg 1
 %       2628CN Delft
 %       The Netherlands
-%
-%   This library is free software: you can redistribute it and/or modify
+%   
+%   Updated by 
+%       B J T van der Spek | Royal HaskoningDHV
+%       Bart-jan.van.der.spek@rhdhv.com
+% 
+% This library is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
 %   the Free Software Foundation, either version 3 of the License, or
 %   (at your option) any later version.
@@ -66,6 +81,8 @@ function [x y pind] = grid_rotated(xs, ys, alfa, m, n)
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
 % Created: 28 Aug 2013
 % Created with Matlab version: 8.1.0.604 (R2013a)
+% Updated: 21 Nov 2013 with Matlab version: 8.2.0.701 (R2013b)
+% 
 
 % $Id$
 % $Date$
@@ -96,10 +113,18 @@ cmin = min(cr);
 cmax = max(cr);
 
 %% Create structured grid
-xv = linspace(cmin(1),cmax(1),n);
-yv = linspace(cmin(2),cmax(2),m);
-[xr,yr] = meshgrid(xv,yv);
+% If m,n are defined, 
+if m~=0 || n~=0
+    xv = linspace(cmin(1),cmax(1),n);
+    yv = linspace(cmin(2),cmax(2),m);
+% If no m,n is defined, gridsize is used
+else 
+    cmax_tmp=cmax-mod((cmax-cmin),[dm dn])+[dm dn]; % make sure scatterdata is inside grid
+    xv = cmin(1):dm:cmax_tmp(1);
+    yv = cmin(2):dn:cmax_tmp(2);
+end
 
+[xr,yr] = meshgrid(xv,yv);
 %% Rotate and translate back to original frame of reference
 x = xr.*cos(alfa) + yr.*sin(alfa);
 y = -xr.*sin(alfa) + yr.*cos(alfa);
