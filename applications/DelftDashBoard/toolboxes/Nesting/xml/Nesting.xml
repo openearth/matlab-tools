@@ -42,5 +42,11 @@
       <formodel>dflowfm</formodel>
       <element>Nesting.dflowfm.nesthd2.xml</element>
     </tab>
+    <tab>
+      <tabstring>Nesting</tabstring>
+      <callback>ddb_dummyTabCallback</callback>
+      <formodel>xbeach</formodel>
+      <element>Nesting.xbeach.xml</element>
+    </tab>
   </element>
 </root>
