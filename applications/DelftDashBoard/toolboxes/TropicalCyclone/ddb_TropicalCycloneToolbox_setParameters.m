@@ -641,6 +641,8 @@ try
         
         handles=ddb_setTrackTableValues(handles);
         
+        handles=deleteCycloneTrack(handles);
+        
         setHandles(handles);
         
         ddb_plotCycloneTrack;
