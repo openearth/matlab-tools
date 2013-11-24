@@ -37,7 +37,7 @@ case 'read'
            ncols   = nrowcol(2);
            for i_row = 1: nrows
                tline = strtrim(fgetl(fid));
-               index = dflowfm_decomposestr(tline);
+               index = d3d2flowfm_decomposestr(tline);
                if length(index) == 3
                    LINE(iblck).DATA{i_row,1} = str2num(tline(index(1):index(2) - 1));
                    LINE(iblck).DATA{i_row,2} = str2num(tline(index(2):end         ));
@@ -58,12 +58,12 @@ case 'read'
        %
        fseek (fid,0,'bof');
        LINE  = rmfield(LINE,'Blckname');
-       
+
        i_row = 0;
        while~feof(fid)
            i_row = i_row + 1;
            tline = fgetl(fid);
-           index = dflowfm_decomposestr(tline);
+           index = d3d2flowfm_decomposestr(tline);
            LINE.DATA{i_row,1} = str2num(tline(index(1):index(2)-1));
            if length(index) == 2
                LINE.DATA{i_row,2} = str2num(tline(index(2):end));
@@ -77,11 +77,11 @@ case 'read'
            end
        end
     end
-   
+
    fclose(fid);
-   
+
    varargout{1} = LINE;
-  
+
 case 'write'
 
    fid  =  fopen(fname,'w+');
