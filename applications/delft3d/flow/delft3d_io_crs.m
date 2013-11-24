@@ -98,13 +98,18 @@ else
     %   S.mn2  ,...
     %   S.mn3  ,...
     %   S.mn4  ]=textread(S.filename,'%20c%d%d%d%d');
-       S.DATA(i).name         = fscanf(fid,'%20c',1); 
-       S.DATA(i).mn           = fscanf(fid,'%i'  ,4);
+    %   TK: fscanf does not work when cross section names contain integers  
+    %   S.DATA(i).name         = fscanf(fid,'%20c',1); 
+    %   S.DATA(i).mn           = fscanf(fid,'%i'  ,4);
+    %   ==> read the line and scan the line
+       line      = fgetl(fid);
+       S.DATA(i).name         = sscanf(line( 1: 20),'%20c',1); 
+       S.DATA(i).mn           = sscanf(line(21:end),'%i'  ,4);
        S.NTables = length(S.DATA);
       [S.DATA(i).m,... % turn the endpoint-description along gridlines into vectors
        S.DATA(i).n]=meshgrid(S.DATA(i).mn(1):S.DATA(i).mn(3),...
                                   S.DATA(i).mn(2):S.DATA(i).mn(4));
-      fgetl(fid); % read rest of line
+%      fgetl(fid); % read rest of line
     end
    
     S.iostat   = 1;
