@@ -13,6 +13,7 @@ xc          = G.cend.x';
 yc          = G.cend.y';
 mmax        = size(xc,1);
 nmax        = size(xc,2);
+nr_harm     = 0;
 
 % Read the boundary file
 D           = delft3d_io_bnd('read',filbnd);
@@ -34,8 +35,8 @@ iline        = 1;                     % is number of polylines
 
 % Set initial boundary orientation
 dir_old = 'n';
-if mbnd(1,1) == mbnd(1,2); 
-    dir_old = 'm'; 
+if mbnd(1,1) == mbnd(1,2);
+    dir_old = 'm';
 end
 
 for ibnd = 1 : no_bnd;
@@ -60,13 +61,13 @@ for ibnd = 1 : no_bnd;
     astronomical = false;
     timeseries   = false;
     harmonic     = false;
-    if strcmpi(D.DATA(ibnd).datatype,'a'); 
+    if strcmpi(D.DATA(ibnd).datatype,'a');
         astronomical  = true;
     end
-    if strcmpi(D.DATA(ibnd).datatype,'t'); 
+    if strcmpi(D.DATA(ibnd).datatype,'t');
         timeseries    = true;
     end
-    if strcmpi(D.DATA(ibnd).datatype,'h'); 
+    if strcmpi(D.DATA(ibnd).datatype,'h');
         harmonic      = true;
     end
 
@@ -74,14 +75,15 @@ for ibnd = 1 : no_bnd;
     LINE(iline).DATA{irow,1} = xb(ibnd,1);
     LINE(iline).DATA{irow,2} = yb(ibnd,1);
     string = sprintf(' %1s %1s ',D.DATA(ibnd).bndtype,D.DATA(ibnd).datatype);
-    if astronomical && ~OPT.Salinity; 
+    if astronomical && ~OPT.Salinity;
         string = [string D.DATA(ibnd).labelA];
     end
-    if timeseries   && ~OPT.Salinity; 
-        string = [string D.DATA(ibnd).name 'A'];
+    if timeseries   ||  OPT.Salinity;
+        string = [string D.DATA(ibnd).name 'sideA'];
     end
-    if harmonic     && ~OPT.Salinity; 
-        string = [string 'boundA'];
+    if harmonic     && ~OPT.Salinity;
+        nr_harm = nr_harm + 1;
+        string  = [string num2str(nr_harm,'%04i') 'sideA'];
     end
     LINE(iline).DATA{irow,3} = string;
 
@@ -92,14 +94,14 @@ for ibnd = 1 : no_bnd;
        LINE(iline).DATA{irow,1} = xb(ibnd,2);
        LINE(iline).DATA{irow,2} = yb(ibnd,2);
        string = sprintf(' %1s %1s ',D.DATA(ibnd).bndtype,D.DATA(ibnd).datatype);
-       if astronomical && ~OPT.Salinity; 
+       if astronomical && ~OPT.Salinity;
            string = [string D.DATA(ibnd).labelB];
        end
-       if timeseries   && ~OPT.Salinity; 
-           string = [string D.DATA(ibnd).name 'B'];
+       if timeseries   || OPT.Salinity;
+           string = [string D.DATA(ibnd).name 'sideB'];
        end
        if harmonic     && ~OPT.Salinity;
-           string = [string 'boundB'];
+           string  = [string num2str(nr_harm,'%04i') 'sideB'];
        end
        LINE(iline).DATA{irow,3} = string;
     end
@@ -138,5 +140,3 @@ if ~OPT.Salinity
 end
 
 varargout = {filext};
-
-

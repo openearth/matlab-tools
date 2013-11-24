@@ -11,4 +11,4 @@ mdu.time.TStart       = mdf.tstart*60.;
 mdu.time.TStop        = mdf.tstop*60.;
 
 %% Overwrite automatic time step, stay as close to Delft3D-Flow as possible
-mdu.time.AutoTimestep = 0
+mdu.time.AutoTimestep = 0;

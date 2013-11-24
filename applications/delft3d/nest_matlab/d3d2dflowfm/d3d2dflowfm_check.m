@@ -2,10 +2,12 @@ function d3d2dlowfm_check
 
 % check : performs a number of test conversions to check if everything went okay
 
-filmdf ={'d:\open_earth_test\matlab\applications\delft3d\nest_matlab\simona\simona-kustzuid-2004-v4\mdf\kzv4.mdf'
-         'd:\open_earth_test\matlab\applications\delft3d\nest_matlab\simona\A80\mdf_csm\dcsmv6.mdf'             };
-filmdu ={'d:\open_earth_test\matlab\applications\delft3d\nest_matlab\simona\simona-kustzuid-2004-v4\mdu\kzv4.mdu'
-         'd:\open_earth_test\matlab\applications\delft3d\nest_matlab\simona\A80\mdu\dcsmv6.mdu'                 };
+filmdf ={'d:\open_earth_test\matlab\applications\delft3d\nest_matlab\simona\simona-scaloost-fijn-exvd-v1\mdf_fou\scaloost_fou.mdf'
+         'd:\open_earth_test\matlab\applications\delft3d\nest_matlab\simona\simona-kustzuid-2004-v4\mdf\kzv4.mdf'
+         'd:\open_earth_test\matlab\applications\delft3d\nest_matlab\simona\A80\mdf_csm\dcsmv6.mdf'                              };
+filmdu ={'d:\open_earth_test\matlab\applications\delft3d\nest_matlab\simona\simona-scaloost-fijn-exvd-v1\mdu_fou\scaloost_fou.mdu'
+         'd:\open_earth_test\matlab\applications\delft3d\nest_matlab\simona\simona-kustzuid-2004-v4\mdu\kzv4.mdu'
+         'd:\open_earth_test\matlab\applications\delft3d\nest_matlab\simona\A80\mdu\dcsmv6.mdu'                                  };
 
 for itest = 1 : length(filmdf) 
 
