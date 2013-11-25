@@ -80,7 +80,8 @@ end
 if pathname~=0
 
     fname=filename;
-    dr=fileparts(fname);
+%    dr=fileparts(fname);
+    dr=pathname;
 
     ii=strfind(fname,'.');
     prefix=fname(1:ii-1);

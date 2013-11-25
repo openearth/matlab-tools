@@ -349,6 +349,8 @@ if handles.Model(1).Input(1).comInterval==0 || handles.Model(1).Input(1).comStar
     ddb_giveWarning('text','Please make sure to set the communication file times in Delft3D-FLOW model!');
 end
 
+handles.Model(md).Input.runid=handles.Model(1).Input(1).runid;
+
 handles.Model(md).Input.domains=[];
 handles.Model(md).Input.nrgrids=1;
 handles.Model(md).Input.gridnames=[];
