@@ -21,13 +21,15 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
 %         'flat'     - same as specifying: 'depth',0
 %         'not'      - negates the following filter: 'not','class','c' returns all elements EXCEPT those with class 'c'
 %         'persist'  - persist figure components information, allowing much faster results for subsequent invocations
+%         'nomenu'   - skip menu processing, for "lean" list of handles & much faster processing;
+%                      This option is the default for HG containers but not for figure, Java or no container
 %         'print'    - display all java elements in a hierarchical list, indented appropriately
 %                      Note1: optional PropValue of element index or handle to java container
 %                      Note2: normally this option would be placed last, after all filtering is complete. Placing this
 %                             option before some filters enables debug print-outs of interim filtering results.
 %                      Note3: output is to the Matlab command window unless the 'listing' (4th) output arg is requested
 %         'list'     - same as 'print'
-%         'nomenu'   - skip menu processing, for "lean" list of handles & much faster processing
+%         'debug'    - list found component positions in the Command Window
 %
 % Output parameters:
 %    handles   - list of handles to java elements
@@ -54,17 +56,22 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
 %
 % Sample usage:
 %    hButton = uicontrol('string','click me');
-%    jButton = findjobj(hButton);      % or: jButton = findjobj('property',{'Text','click me'});
+%    jButton = findjobj(hButton,'nomenu');
+%      % or: jButton = findjobj('property',{'Text','click me'});
 %    jButton.setFlyOverAppearance(1);
 %    jButton.setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.HAND_CURSOR));
 %    set(jButton,'FocusGainedCallback',@myMatlabFunction);   % some 30 callback points available...
 %    jButton.get;   % list all changeable properties...
 %
-%    hEditbox = uicontrol('style',edit');
-%    jEditbox = findjobj(hEditbox);
+%    hEditbox = uicontrol('style','edit');
+%    jEditbox = findjobj(hEditbox,'nomenu');
 %    jEditbox.setCaretColor(java.awt.Color.red);
 %    jEditbox.KeyTypedCallback = @myCallbackFunc;  % many more callbacks where this came from...
 %    jEdit.requestFocus;
+%
+% Technical explanation & details:
+%    http://undocumentedmatlab.com/blog/findjobj/
+%    http://undocumentedmatlab.com/blog/findjobj-gui-display-container-hierarchy/
 %
 % Known issues/limitations:
 %    - Cannot currently process multiple container objects - just one at a time
@@ -81,6 +88,37 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
 %    Please send to Yair Altman (altmany at gmail dot com)
 %
 % Change log:
+%    2013-06-30: Additional fixes for the upcoming HG2
+%    2013-05-15: Fix for the upcoming HG2
+%    2013-02-21: Fixed HG-Java warnings
+%    2013-01-23: Fixed callbacks table grouping & editing bugs; added hidden properties to the properties tooltip; updated help section
+%    2013-01-13: Improved callbacks table; fixed tree refresh failure; fixed: tree node-selection didn't update the props pane nor flash the selected component
+%    2012-07-25: Fixes for R2012a as well as some older Matlab releases
+%    2011-12-07: Fixed 'File is empty' messages in compiled apps
+%    2011-11-22: Fix suggested by Ward
+%    2011-02-01: Fixes for R2011a
+%    2010-06-13: Fixes for R2010b; fixed download (m-file => zip-file)
+%    2010-04-21: Minor fix to support combo-boxes (aka drop-down, popup-menu) on Windows
+%    2010-03-17: Important release: Fixes for R2010a, debug listing, objects not found, component containers that should be ignored etc.
+%    2010-02-04: Forced an EDT redraw before processing; warned if requested handle is invisible
+%    2010-01-18: Found a way to display label text next to the relevant node name
+%    2009-10-28: Fixed uitreenode warning
+%    2009-10-27: Fixed auto-collapse of invisible container nodes; added dynamic tree tooltips & context-menu; minor fix to version-check display
+%    2009-09-30: Fix for Matlab 7.0 as suggested by Oliver W; minor GUI fix (classname font)
+%    2009-08-07: Fixed edge-case of missing JIDE tables
+%    2009-05-24: Added support for future Matlab versions that will not support JavaFrame
+%    2009-05-15: Added sanity checks for axes items
+%    2009-04-28: Added 'debug' input arg; increased size tolerance 1px => 2px
+%    2009-04-23: Fixed location of popupmenus (always 20px high despite what's reported by Matlab...); fixed uiinspect processing issues; added blog link; narrower action buttons
+%    2009-04-09: Automatic 'nomenu' for uicontrol inputs; significant performance improvement
+%    2009-03-31: Fixed position of some Java components; fixed properties tooltip; fixed node visibility indication
+%    2009-02-26: Indicated components visibility (& auto-collapse non-visible containers); auto-highlight selected component; fixes in node icons, figure title & tree refresh; improved error handling; display FindJObj version update description if available
+%    2009-02-24: Fixed update check; added dedicated labels icon
+%    2009-02-18: Fixed compatibility with old Matlab versions
+%    2009-02-08: Callbacks table fixes; use uiinspect if available; fix update check according to new FEX website
+%    2008-12-17: R2008b compatibility
+%    2008-09-10: Fixed minor bug as per Johnny Smith
+%    2007-11-14: Fixed edge case problem with class properties tooltip; used existing object icon if available; added checkbox option to hide standard callbacks
 %    2007-08-15: Fixed object naming relative property priorities; added sanity check for illegal container arg; enabled desktop (0) container; cleaned up warnings about special class objects
 %    2007-08-03: Fixed minor tagging problems with a few Java sub-classes; displayed UIClassID if text/name/tag is unavailable
 %    2007-06-15: Fixed problems finding HG components found by J. Wagberg
@@ -91,13 +129,13 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
 %    2007-03-20: First version posted on the MathWorks file exchange: <a href="http://www.mathworks.com/matlabcentral/fileexchange/loadFile.do?objectId=14317">http://www.mathworks.com/matlabcentral/fileexchange/loadFile.do?objectId=14317</a>
 %
 % See also:
-%    java, handle, findobj, findall, javaGetHandles
+%    java, handle, findobj, findall, javaGetHandles, uiinspect (on the File Exchange)
 
 % License to use and modify this code is granted freely to all interested, as long as the original author is
 % referenced and attributed as such. The original author maintains the right to be solely associated with this work.
 
 % Programmed and Copyright by Yair M. Altman: altmany(at)gmail.com
-% $Revision: 2568 $  $Date: 2009-11-12 15:27:10 +0100 (Thu, 12 Nov 2009) $
+% $Revision: 1.39 $  $Date: 2013/06/30 22:34:52 $
 
     % Ensure Java AWT is enabled
     error(javachk('awt'));
@@ -117,6 +155,9 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
         hg_parentIdx = [];
         nomenu = false;
         menuBarFoundFlag = false;
+
+        % Force an EDT redraw before processing, to ensure all uicontrols etc. are rendered
+        drawnow;  pause(0.02);
 
         % Default container is the current figure's root panel
         if nargin
@@ -146,17 +187,37 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
                         pos = fix(getpixelposition(container,1));
                         %varargin = {'position',pos(1:2), 'size',pos(3:4), 'not','class','java.awt.Panel', varargin{:}};
                     catch
-                        jFig = get(hFig,'JavaFrame');
+                        try
+                            figName = get(hFig,'name');
+                            if strcmpi(get(hFig,'number'),'on')
+                                figName = regexprep(['Figure ' num2str(hFig) ': ' figName],': $','');
+                            end
+                            mde = com.mathworks.mde.desk.MLDesktop.getInstance;
+                            jFig = mde.getClient(figName);
+                            if isempty(jFig), error('dummy');  end
+                        catch
+                            warning('off','MATLAB:HandleGraphics:ObsoletedProperty:JavaFrame');  % R2008b compatibility
+                            jFig = get(get(hFig,'JavaFrame'),'FigurePanelContainer');
+                        end
                         pos = [];
                         try
-                            size = get(container,'PixelBounds');
-                            pos = [size(1)+5, jFig.getFigurePanelContainer.getHeight - (size(4)-5)];
+                            pxsize = get(container,'PixelBounds');
+                            pos = [pxsize(1)+5, jFig.getHeight - (pxsize(4)-5)];
                         catch
+                            % never mind...
                         end
                     end
+                    if size(pos,2) == 2
+                        pos(:,3:4) = 0;
+                    end
                     if ~isempty(pos)
+                        if isa(handle(container),'uicontrol') && strcmp(get(container,'style'),'popupmenu')
+                            % popupmenus (combo-box dropdowns) are always 20px high
+                            pos(2) = pos(2) + pos(4) - 20;
+                            pos(4) = 20;
+                        end
                         %varargin = {'position',pos(1:2), 'size',size(3:4)-size(1:2)-10, 'not','class','java.awt.Panel', varargin{:}};
-                        varargin = {'position',pos(1:2)+[0,pos(4)], 'size',pos(3:4), 'not','class','java.awt.Panel', varargin{:}};
+                        varargin = {'position',pos(1:2)+[0,pos(4)], 'size',pos(3:4), 'not','class','java.awt.Panel', 'nomenu', varargin{:}};
                     end
                 elseif isempty(hFig)
                     hFig = handle(container);
@@ -208,9 +269,18 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
         selectedIdx = 1:length(handles);
         %[positions(:,1)-container.getX, container.getHeight - positions(:,2)]
 
+        % Debug-list all found compponents and their positions
+        if paramSupplied(varargin,'debug')
+            for handleIdx = 1 : length(allHandles)
+                thisObj = handles(handleIdx);
+                pos = sprintf('%d,%d %dx%d',[positions(handleIdx,:) getWidth(thisObj) getHeight(thisObj)]);
+                disp([repmat(' ',1,levels(handleIdx)) '[' pos '] ' char(toString(thisObj))]);
+            end
+        end
+
         % Process optional args
         % Note: positions is NOT returned since it's based on java coord system (origin = top-left): will confuse Matlab users
-        processArgs(varargin{:});  %#ok
+        processArgs(varargin{:});
 
         % De-cell and trim listing, if only one element was found (no use for indented listing in this case)
         if iscell(listing) && length(listing)==1
@@ -219,9 +289,19 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
 
         % If no output args and no listing requested, present the FINDJOBJ interactive GUI
         if nargout == 0 && isempty(listing)
-            presentObjectTree();
 
-            % Display the listing, if this was specifically requested yet no relevant output arg was specified
+            % Get all label positions
+            hg_labels = [];
+            labelPositions = getLabelsJavaPos(container);
+
+            % Present the GUI (object tree)
+            if ~isempty(container)
+                presentObjectTree();
+            else
+                warnInvisible;
+            end
+
+        % Display the listing, if this was specifically requested yet no relevant output arg was specified
         elseif nargout < 4 && ~isempty(listing)
             if ~iscell(listing)
                 disp(listing);
@@ -232,11 +312,16 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
             end
         end
 
+        % Display a warning if the requested handle was not found because it's invisible
+        if nargout && isempty(handles)
+            warnInvisible;
+        end
+
         return;  %debug point
 
     catch
         % 'Cleaner' error handling - strip the stack info etc.
-        err = lasterror;
+        err = lasterror;  %#ok
         err.message = regexprep(err.message,'Error using ==> [^\n]+\n','');
         if isempty(findstr(mfilename,err.message))
             % Indicate error origin, if not already stated within the error message
@@ -245,29 +330,72 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
         rethrow(err);
     end
 
-%% Check existence of a (case-insensitive) optional parameter in the params list
-    function flag = paramSupplied(paramsList,paramName)
-        flag = any(~cellfun('isempty',regexpi(paramsList(cellfun(@ischar,paramsList)),['^-?' paramName])));
+    %% Display a warning if the requested handle was not found because it's invisible
+    function warnInvisible
+        try
+            stk = dbstack;
+            stkNames = {stk.name};
+            OutputFcnIdx = find(~cellfun(@isempty,regexp(stkNames,'_OutputFcn')));
+            if ~isempty(OutputFcnIdx)
+                OutputFcnName = stkNames{OutputFcnIdx};
+                warning('YMA:FindJObj:OutputFcn',['No Java reference was found for the requested handle, because the figure is still invisible in ' OutputFcnName '()']);
+            elseif ishandle(origContainer) && isprop(origContainer,'Visible') && strcmpi(get(origContainer,'Visible'),'off')
+                warning('YMA:FindJObj:invisibleHandle','No Java reference was found for the requested handle, probably because it is still invisible');
+            end
+        catch
+            % Never mind...
+        end
     end
 
-%% Get current figure (even if its 'HandleVisibility' property is 'off')
+    %% Check existence of a (case-insensitive) optional parameter in the params list
+    function [flag,idx] = paramSupplied(paramsList,paramName)
+        %idx = find(~cellfun('isempty',regexpi(paramsList(cellfun(@ischar,paramsList)),['^-?' paramName])));
+        idx = find(~cellfun('isempty',regexpi(paramsList(cellfun('isclass',paramsList,'char')),['^-?' paramName])));  % 30/9/2009 fix for ML 7.0 suggested by Oliver W
+        flag = any(idx);
+    end
+
+    %% Get current figure (even if its 'HandleVisibility' property is 'off')
     function curFig = getCurrentFigure
         oldShowHidden = get(0,'ShowHiddenHandles');
-        set(0,'ShowHiddenHandles','off');
+        set(0,'ShowHiddenHandles','on');  % minor fix per Johnny Smith
         curFig = gcf;
         set(0,'ShowHiddenHandles',oldShowHidden);
     end
 
-%% Get Java reference to top-level (root) panel - actually, a reference to the java figure
+    %% Get Java reference to top-level (root) panel - actually, a reference to the java figure
     function [jRootPane,contentSize] = getRootPanel(hFig)
         try
             contentSize = [0,0];  % initialize
             jRootPane = hFig;
-            jFrame = get(hFig,'JavaFrame');
-            jFigPanel = get(jFrame,'FigurePanelContainer');
+            figName = get(hFig,'name');
+            if strcmpi(get(hFig,'number'),'on')
+                figName = regexprep(['Figure ' num2str(hFig) ': ' figName],': $','');
+            end
+            mde = com.mathworks.mde.desk.MLDesktop.getInstance;
+            jFigPanel = mde.getClient(figName);
             jRootPane = jFigPanel;
-            jRootPane = jFigPanel.getComponent(0).getRootPane;
-
+            jRootPane = jFigPanel.getRootPane;
+        catch
+            try
+                warning('off','MATLAB:HandleGraphics:ObsoletedProperty:JavaFrame');  % R2008b compatibility
+                jFrame = get(hFig,'JavaFrame');
+                jFigPanel = get(jFrame,'FigurePanelContainer');
+                jRootPane = jFigPanel;
+                jRootPane = jFigPanel.getComponent(0).getRootPane;
+            catch
+                % Never mind
+            end
+        end
+        try
+            % If invalid RootPane - try another method...
+            warning('off','MATLAB:HandleGraphics:ObsoletedProperty:JavaFrame');  % R2008b compatibility
+            jFrame = get(hFig,'JavaFrame');
+            jAxisComponent = get(jFrame,'AxisComponent');
+            jRootPane = jAxisComponent.getParent.getParent.getRootPane;
+        catch
+            % Never mind
+        end
+        try
             % If invalid RootPane, retry up to N times
             tries = 10;
             while isempty(jRootPane) && tries>0  % might happen if figure is still undergoing rendering...
@@ -289,7 +417,7 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
         end
     end
 
-%% Traverse the container hierarchy and extract the elements within
+    %% Traverse the container hierarchy and extract the elements within
     function traverseContainer(jcontainer,level,parent)
         persistent figureComponentFound menuRootFound
 
@@ -300,7 +428,7 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
         parentIdx(thisIdx) = parent;
         handles(thisIdx) = handle(jcontainer,'callbackproperties');
         try
-            positions(thisIdx,:) = [jcontainer.getX, jcontainer.getY];
+            positions(thisIdx,:) = getXY(jcontainer);
             %sizes(thisIdx,:) = [jcontainer.getWidth, jcontainer.getHeight];
         catch
             positions(thisIdx,:) = [0,0];
@@ -334,7 +462,7 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
             catch
                 % Probably not a Menu container, but maybe a top-level JMenu, so discard duplicates
                 %if isa(handles(end).java,'javax.swing.JMenuBar')
-                if ~menuRootFound && strcmp(handles(end).java.class,'javax.swing.JMenuBar')  %faster...
+                if ~menuRootFound && strcmp(class(java(handles(end))),'javax.swing.JMenuBar')  %faster...
                     if removeDuplicateNode(thisIdx)
                         menuRootFound = true;
                         return;
@@ -347,7 +475,7 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
         %if isa(jcontainer,'java.awt.Container')
         try  % try-catch is faster than checking isa(jcontainer,'java.awt.Container')...
             %if jcontainer.getComponentCount,  jcontainer.getComponents,  end
-            if ~nomenu || menuBarFoundFlag || isempty(strfind(jcontainer.class,'FigureMenuBar'))
+            if ~nomenu || menuBarFoundFlag || isempty(strfind(class(jcontainer),'FigureMenuBar'))
                 lastChildComponent = java.lang.Object;
                 child = 0;
                 while (child < jcontainer.getComponentCount)
@@ -358,7 +486,7 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
                         childComponent = jcontainer.getComponent(child);
                     end
                     lastChildComponent = childComponent;
-                    %disp([repmat(' ',1,level) '=> ' num2str(child) ': ' char(childComponent.class)])
+                    %disp([repmat(' ',1,level) '=> ' num2str(child) ': ' char(class(childComponent))])
                     traverseContainer(childComponent,level+1,parentId);
                     child = child + 1;
                 end
@@ -367,23 +495,58 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
             end
         catch
             % do nothing - probably not a container
-            %disp(lasterr)
+            %dispError
         end
 
         % ...and yet another type of child traversal...
         try
-            for child = 1 : jcontainer.java.getChildCount
-                traverseContainer(jcontainer.java.getChildAt(child-1),level+1,parentId);
+            if ~isdeployed  % prevent 'File is empty' messages in compiled apps
+                jc = jcontainer.java;
+            else
+                jc = jcontainer;
+            end
+            for child = 1 : jc.getChildCount
+                traverseContainer(jc.getChildAt(child-1),level+1,parentId);
             end
         catch
             % do nothing - probably not a container
-            %disp(lasterr)
+            %dispError
         end
 
         % TODO: Add axis (plot) component handles
     end
 
-%% Get the number of menu sub-elements
+    %% Get the XY location of a Java component
+    function xy = getXY(jcontainer)
+            % Note: getX/getY are better than get(..,'X') (mem leaks),
+            % ^^^^  but sometimes they fail and revert to getx.m ...
+            % Note2: try awtinvoke() catch is faster than checking ismethod()...
+            % Note3: using AWTUtilities.invokeAndWait() directly is even faster than awtinvoke()...
+            try %if ismethod(jcontainer,'getX')
+                %positions(thisIdx,:) = [jcontainer.getX, jcontainer.getY];
+                cls = getClass(jcontainer);
+                location = com.mathworks.jmi.AWTUtilities.invokeAndWait(jcontainer,getMethod(cls,'getLocation',[]),[]);
+                x = location.getX;
+                y = location.getY;
+            catch %else
+                try
+                    x = com.mathworks.jmi.AWTUtilities.invokeAndWait(jcontainer,getMethod(cls,'getX',[]),[]);
+                    y = com.mathworks.jmi.AWTUtilities.invokeAndWait(jcontainer,getMethod(cls,'getY',[]),[]);
+                catch
+                    try
+                        x = awtinvoke(jcontainer,'getX()');
+                        y = awtinvoke(jcontainer,'getY()');
+                    catch
+                        x = get(jcontainer,'X');
+                        y = get(jcontainer,'Y');
+                    end
+                end
+            end
+            %positions(thisIdx,:) = [x, y];
+            xy = [x,y];
+    end
+
+    %% Get the number of menu sub-elements
     function numMenuComponents  = getNumMenuComponents(jcontainer)
 
         % The following line will raise an Exception for anything except menus
@@ -429,7 +592,7 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
         end
     end
 
-%% Remove a specific tree node's data
+    %% Remove a specific tree node's data
     function nodeRemovedFlag = removeDuplicateNode(thisIdx)
         nodeRemovedFlag = false;
         for idx = 1 : thisIdx-1
@@ -445,7 +608,7 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
         end
     end
 
-%% Process optional args
+    %% Process optional args
     function processArgs(varargin)
 
         % Initialize
@@ -485,8 +648,8 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
                     if invertFlag,  foundIdx = ~foundIdx;  invertFlag = false;  end
                 case {'print','list'}
                     [varargin,listing] = processPrintArgs(varargin{:});
-                case {'persist','nomenu'}
-                    % ignore - already handled in main fauntion above
+                case {'persist','nomenu','debug'}
+                    % ignore - already handled in main function above
                 otherwise
                     error('YMA:findjobj:IllegalOption',['Option ' num2str(varargin{1}) ' is not a valid option. Type ''help ' mfilename ''' for the full options list.']);
             end
@@ -496,6 +659,12 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
             if ~isempty(foundIdx) && isequal(parentIdx(foundIdx(2:2:end)),foundIdx(1:2:end))
                 % Return just the children (the parent panels are uninteresting)
                 foundIdx(1:2:end) = [];
+            end
+            
+            % If several possible handles were found and the first is the container of the second
+            if length(foundIdx) > 1 && isequal(handles(foundIdx(1)).java, handles(foundIdx(2)).getParent)
+                % Discard the uninteresting component container
+                foundIdx(1) = [];
             end
 
             % Filter the results
@@ -511,7 +680,7 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
         end  % Loop over all args
     end
 
-%% Process 'print' option
+    %% Process 'print' option
     function [varargin,listing] = processPrintArgs(varargin)
         if length(varargin)<2 || ischar(varargin{2})
             % No second arg given, so use the first available element
@@ -544,7 +713,7 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
         end
     end
 
-%% Process 'position' option
+    %% Process 'position' option
     function [varargin,foundIdx] = processPositionArgs(varargin)
         if length(varargin)>1
             positionFilter = varargin{2};
@@ -619,7 +788,7 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
         end
     end
 
-%% Process 'size' option
+    %% Process 'size' option
     function [varargin,foundIdx] = processSizeArgs(varargin)
         if length(varargin)>1
             sizeFilter = lower(varargin{2});
@@ -657,9 +826,9 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
             foundIdx(length(handles)) = false;  % faster than repmat()...
             for componentIdx = 1 : length(handles)
                 %foundIdx(componentIdx) = handles(componentIdx).getSize.equals(sizeFilter);
-                % Allow a 1-pixel tollerance to account for non-integer pixel sizes
-                foundIdx(componentIdx) = abs(handles(componentIdx).getWidth  - filterWidth)  <= 1 && ...  % faster than getSize.equals()
-                                         abs(handles(componentIdx).getHeight - filterHeight) <= 1;
+                % Allow a 2-pixel tollerance to account for non-integer pixel sizes
+                foundIdx(componentIdx) = abs(handles(componentIdx).getWidth  - filterWidth)  <= 3 && ...  % faster than getSize.equals()
+                                         abs(handles(componentIdx).getHeight - filterHeight) <= 3;
             end
             varargin(2) = [];
         else
@@ -667,7 +836,7 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
         end
     end
 
-%% Process 'class' option
+    %% Process 'class' option
     function [varargin,foundIdx] = processClassArgs(varargin)
         if length(varargin)>1
             classFilter = varargin{2};
@@ -702,7 +871,7 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
         end
     end
 
-%% Process 'property' option
+    %% Process 'property' option
     function [varargin,foundIdx] = processPropertyArgs(varargin)
         if length(varargin)>1
             propertyName = varargin{2};
@@ -756,7 +925,7 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
         end
     end
 
-%% Process 'depth' option
+    %% Process 'depth' option
     function [varargin,foundIdx] = processDepthArgs(varargin)
         if length(varargin)>1
             level = varargin{2};
@@ -770,19 +939,243 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
         end
     end
 
-%% Present the object hierarchy tree
+    %% Convert property data into a string
+    function data = charizeData(data)
+        if isa(data,'com.mathworks.hg.types.HGCallback')
+            data = get(data,'Callback');
+        end
+        if ~ischar(data) && ~isa(data,'java.lang.String')
+            newData = strtrim(evalc('disp(data)'));
+            try
+                newData = regexprep(newData,'  +',' ');
+                newData = regexprep(newData,'Columns \d+ through \d+\s','');
+                newData = regexprep(newData,'Column \d+\s','');
+            catch
+                %never mind...
+            end
+            if iscell(data)
+                newData = ['{ ' newData ' }'];
+            elseif isempty(data)
+                newData = '';
+            elseif isnumeric(data) || islogical(data) || any(ishandle(data)) || numel(data) > 1 %&& ~isscalar(data)
+                newData = ['[' newData ']'];
+            end
+            data = newData;
+        elseif ~isempty(data)
+            data = ['''' data ''''];
+        end
+    end  % charizeData
+
+    %% Prepare a hierarchical callbacks table data
+    function setProp(list,name,value,category)
+        prop = eval('com.jidesoft.grid.DefaultProperty();');  % prevent JIDE alert by run-time (not load-time) evaluation
+        prop.setName(name);
+        prop.setType(java.lang.String('').getClass);
+        prop.setValue(value);
+        prop.setEditable(true);
+        prop.setExpert(true);
+        %prop.setCategory(['<html><b><u><font color="blue">' category ' callbacks']);
+        prop.setCategory([category ' callbacks']);
+        list.add(prop);
+    end  % getTreeData
+
+    %% Prepare a hierarchical callbacks table data
+    function list = getTreeData(data)
+        list = java.util.ArrayList();
+        names = regexprep(data,'([A-Z][a-z]+).*','$1');
+        %hash = java.util.Hashtable;
+        others = {};
+        for propIdx = 1 : length(data)
+            if (propIdx < length(data) && strcmp(names{propIdx},names{propIdx+1})) || ...
+               (propIdx > 1            && strcmp(names{propIdx},names{propIdx-1}))
+                % Child callback property
+                setProp(list,data{propIdx,1},data{propIdx,2},names{propIdx});
+            else
+                % Singular callback property => Add to 'Other' category at bottom of the list
+                others(end+1,:) = data(propIdx,:);  %#ok
+            end
+        end
+        for propIdx = 1 : size(others,1)
+            setProp(list,others{propIdx,1},others{propIdx,2},'Other');
+        end
+    end  % getTreeData
+
+    %% Get callbacks table data
+    function [cbData, cbHeaders, cbTableEnabled] = getCbsData(obj, stripStdCbsFlag)
+        % Initialize
+        cbData = {'(no callbacks)'};
+        cbHeaders = {'Callback name'};
+        cbTableEnabled = false;
+
+        try
+            classHdl = classhandle(handle(obj));
+            cbNames = get(classHdl.Events,'Name');
+            if ~isempty(cbNames) && ~iscom(obj)  %only java-based please...
+                cbNames = strcat(cbNames,'Callback');
+            end
+            propNames = get(classHdl.Properties,'Name');
+            propCbIdx = [];
+            if ischar(propNames),  propNames={propNames};  end  % handle case of a single callback
+            if ~isempty(propNames)
+                propCbIdx = find(~cellfun(@isempty,regexp(propNames,'(Fcn|Callback)$')));
+                cbNames = unique([cbNames; propNames(propCbIdx)]);  %#ok logical is faster but less debuggable...
+            end
+            if ~isempty(cbNames)
+                if stripStdCbsFlag
+                    cbNames = stripStdCbs(cbNames);
+                end
+                if iscell(cbNames)
+                    cbNames = sort(cbNames);
+                    if size(cbNames,1) < size(cbNames,2)
+                        cbNames = cbNames';
+                    end
+                end
+                hgHandleFlag = 0;  try hgHandleFlag = ishghandle(obj); catch, end  %#ok
+                try
+                    obj = handle(obj,'CallbackProperties');
+                catch
+                    hgHandleFlag = 1;
+                end
+                if hgHandleFlag
+                    % HG handles don't allow CallbackProperties - search only for *Fcn
+                    cbNames = propNames(propCbIdx);
+                end
+                if iscom(obj)
+                    cbs = obj.eventlisteners;
+                    if ~isempty(cbs)
+                        cbNamesRegistered = cbs(:,1);
+                        cbData = setdiff(cbNames,cbNamesRegistered);
+                        %cbData = charizeData(cbData);
+                        if size(cbData,2) > size(cbData(1))
+                            cbData = cbData';
+                        end
+                        cbData = [cbData, cellstr(repmat(' ',length(cbData),1))];
+                        cbData = [cbData; cbs];
+                        [sortedNames, sortedIdx] = sort(cbData(:,1));
+                        sortedCbs = cellfun(@charizeData,cbData(sortedIdx,2),'un',0);
+                        cbData = [sortedNames, sortedCbs];
+                    else
+                        cbData = [cbNames, cellstr(repmat(' ',length(cbNames),1))];
+                    end
+                elseif iscell(cbNames)
+                    cbNames = sort(cbNames);
+                    %cbData = [cbNames, get(obj,cbNames)'];
+                    cbData = cbNames;
+                    oldWarn = warning('off','MATLAB:hg:JavaSetHGProperty');
+                    warning('off','MATLAB:hg:PossibleDeprecatedJavaSetHGProperty');
+                    for idx = 1 : length(cbNames)
+                        try
+                            cbData{idx,2} = charizeData(get(obj,cbNames{idx}));
+                        catch
+                            cbData{idx,2} = '(callback value inaccessible)';
+                        end
+                    end
+                    warning(oldWarn);
+                else  % only one event callback
+                    %cbData = {cbNames, get(obj,cbNames)'};
+                    %cbData{1,2} = charizeData(cbData{1,2});
+                    try
+                        cbData = {cbNames, charizeData(get(obj,cbNames))};
+                    catch
+                        cbData = {cbNames, '(callback value inaccessible)'};
+                    end
+                end
+                cbHeaders = {'Callback name','Callback value'};
+                cbTableEnabled = true;
+            end
+        catch
+            % never mind - use default (empty) data
+        end
+    end  % getCbsData
+
+    %% Get relative (0.0-1.0) divider location
+    function divLocation = getRalativeDivlocation(jDiv)
+        divLocation = jDiv.getDividerLocation;
+        if divLocation > 1  % i.e. [pixels]
+            visibleRect = jDiv.getVisibleRect;
+            if jDiv.getOrientation == 0  % vertical
+                start = visibleRect.getY;
+                extent = visibleRect.getHeight - start;
+            else
+                start = visibleRect.getX;
+                extent = visibleRect.getWidth - start;
+            end
+            divLocation = (divLocation - start) / extent;
+        end
+    end  % getRalativeDivlocation
+
+    %% Try to set a treenode icon based on a container's icon
+    function setTreeNodeIcon(treenode,container)
+        try
+            iconImage = [];
+            iconImage = container.getIcon;
+            if ~isempty(findprop(handle(iconImage),'Image'))  % get(iconImage,'Image') is easier but leaks memory...
+                iconImage = iconImage.getImage;
+            else
+                a=b; %#ok cause an error
+            end
+        catch
+            try
+                iconImage = container.getIconImage;
+            catch
+                try
+                    if ~isempty(iconImage)
+                        ge = java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment;
+                        gd = ge.getDefaultScreenDevice;
+                        gc = gd.getDefaultConfiguration;
+                        image = gc.createCompatibleImage(iconImage.getIconWidth, iconImage.getIconHeight);  % a BufferedImage object
+                        g = image.createGraphics;
+                        iconImage.paintIcon([], g, 0, 0);
+                        g.dispose;
+                        iconImage = image;
+                    end
+                catch
+                    % never mind...
+                end
+            end
+        end
+        if ~isempty(iconImage)
+            iconImage = setIconSize(iconImage);
+            treenode.setIcon(iconImage);
+        end
+    end  % setTreeNodeIcon
+
+    %% Present the object hierarchy tree
     function presentObjectTree()
         import java.awt.*
         import javax.swing.*
         hTreeFig = findall(0,'tag','findjobjFig');
         iconpath = [matlabroot, '/toolbox/matlab/icons/'];
+        cbHideStd = 0;  % Initial state of the cbHideStdCbs checkbox
         if isempty(hTreeFig)
             % Prepare the figure
             hTreeFig = figure('tag','findjobjFig','menuBar','none','toolBar','none','Name','FindJObj','NumberTitle','off','handleVisibility','off','IntegerHandle','off');
-            jTreeFig = get(hTreeFig,'JavaFrame');
             figIcon = ImageIcon([iconpath 'tool_legend.gif']);
-            jTreeFig.setFigureIcon(figIcon);
+            drawnow;
+            try
+                mde = com.mathworks.mde.desk.MLDesktop.getInstance;
+                jTreeFig = mde.getClient('FindJObj').getTopLevelAncestor;
+                jTreeFig.setIcon(figIcon);
+            catch
+                warning('off','MATLAB:HandleGraphics:ObsoletedProperty:JavaFrame');  % R2008b compatibility
+                jTreeFig = get(hTreeFig,'JavaFrame');
+                jTreeFig.setFigureIcon(figIcon);
+            end
+            vsplitPaneLocation = 0.8;
+            hsplitPaneLocation = 0.5;
         else
+            % Remember cbHideStdCbs checkbox & dividers state for later
+            userdata = get(hTreeFig, 'userdata');
+            try cbHideStd = userdata.cbHideStdCbs.isSelected; catch, end  %#ok
+            try
+                vsplitPaneLocation = getRalativeDivlocation(userdata.vsplitPane);
+                hsplitPaneLocation = getRalativeDivlocation(userdata.hsplitPane);
+            catch
+                vsplitPaneLocation = 0.8;
+                hsplitPaneLocation = 0.5;
+            end
+
+            % Clear the figure and redraw
             clf(hTreeFig);
             figure(hTreeFig);   % bring to front
         end
@@ -793,13 +1186,26 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
         end
 
         % Prepare the tree pane
+        warning('off','MATLAB:uitreenode:MigratingFunction');  % R2008b compatibility
+        warning('off','MATLAB:uitreenode:DeprecatedFunction'); % R2008a compatibility
         tree_h = com.mathworks.hg.peer.UITreePeer;
         hasChildren = sum(allParents==1) > 1;
-        root = uitreenode(handle(container), getNodeName(container), [iconpath 'upfolder.gif'], ~hasChildren);
+        icon = [iconpath 'upfolder.gif'];
+        [rootName, rootTitle] = getNodeName(container);
+        try
+            root = uitreenode('v0', handle(container), rootName, icon, ~hasChildren);
+        catch  % old matlab version don't have the 'v0' option
+            root = uitreenode(handle(container), rootName, icon, ~hasChildren);
+        end
+        setTreeNodeIcon(root,container);  % constructor must accept a char icon unfortunately, so need to do this afterwards...
+        if ~isempty(rootTitle)
+            set(hTreeFig, 'Name',['FindJObj - ' char(rootTitle)]);
+        end
         nodedata.idx = 1;
         nodedata.obj = container;
         set(root,'userdata',nodedata);
         root.setUserObject(container);
+        setappdata(root,'childHandle',container);
         tree_h.setRoot(root);
         treePane = tree_h.getScrollPane;
         treePane.setMinimumSize(Dimension(50,50));
@@ -838,8 +1244,8 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
         leftPanel = treePanel;
 
         % Prepare the inspector pane
-        classNameLabel = JLabel(['      ' char(container.class)]);
-        classNameLabel.setForeground(Color.red);
+        classNameLabel = JLabel(['      ' char(class(container))]);
+        classNameLabel.setForeground(Color.blue);
         updateNodeTooltip(container, classNameLabel);
         inspectorPanel = JPanel(BorderLayout);
         inspectorPanel.add(classNameLabel, BorderLayout.NORTH);
@@ -854,8 +1260,13 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
         % TODO: Add property listeners
         % TODO: Display additional props
         inspectorTable = inspectorPane;
-        while ~isa(inspectorTable,'javax.swing.JTable')
-            inspectorTable = inspectorTable.getComponent(0);
+        try
+            while ~isa(inspectorTable,'javax.swing.JTable')
+                inspectorTable = inspectorTable.getComponent(0);
+            end
+        catch
+            % R2010a
+            inspectorTable = inspectorPane.getComponent(0).getScrollPane.getViewport.getComponent(0);
         end
         toolTipText = 'hover mouse over the red classname above to see the full list of properties';
         inspectorTable.setToolTipText(toolTipText);
@@ -875,34 +1286,88 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
 
         % Prepare the callbacks pane
         callbacksPanel = JPanel(BorderLayout);
-        classHdl = classhandle(handle(container));
-        eventNames = get(classHdl.Events,'Name');
-        if ~isempty(eventNames)
-            cbNames = sort(strcat(eventNames,'Callback'));
-            cbData = [cbNames, get(container,cbNames)'];
-            cbTableEnabled = true;
-        else
-            cbData = {'(no callbacks)',''};
-            cbTableEnabled = false;
-        end
-        cbHeaders = {'Callback name','Callback value'};
+        stripStdCbsFlag = true;  % initial value
+        [cbData, cbHeaders, cbTableEnabled] = getCbsData(container, stripStdCbsFlag);
+        %{
+        %classHdl = classhandle(handle(container));
+        %eventNames = get(classHdl.Events,'Name');
+        %if ~isempty(eventNames)
+        %    cbNames = sort(strcat(eventNames,'Callback'));
+        %    try
+        %        cbData = [cbNames, get(container,cbNames)'];
+        %    catch
+        %        % R2010a
+        %        cbData = cbNames;
+        %        if isempty(cbData)
+        %            cbData = {};
+        %        elseif ~iscell(cbData)
+        %            cbData = {cbData};
+        %        end
+        %        for idx = 1 : length(cbNames)
+        %            cbData{idx,2} = get(container,cbNames{idx});
+        %        end
+        %    end
+        %    cbTableEnabled = true;
+        %else
+        %    cbData = {'(no callbacks)',''};
+        %    cbTableEnabled = false;
+        %end
+        %cbHeaders = {'Callback name','Callback value'};
+        %}
         try
             % Use JideTable if available on this system
             %callbacksTableModel = javax.swing.table.DefaultTableModel(cbData,cbHeaders);  %#ok
             %callbacksTable = eval('com.jidesoft.grid.PropertyTable(callbacksTableModel);');  % prevent JIDE alert by run-time (not load-time) evaluation
-            callbacksTable = eval('com.jidesoft.grid.TreeTable(cbData,cbHeaders);');  % prevent JIDE alert by run-time (not load-time) evaluation
+            try
+                list = getTreeData(cbData);  %#ok
+                model = eval('com.jidesoft.grid.PropertyTableModel(list);');  %#ok prevent JIDE alert by run-time (not load-time) evaluation
+
+                % Auto-expand if only one category
+                if model.getRowCount==1   % length(model.getCategories)==1 fails for some unknown reason...
+                    model.expandFirstLevel;
+                end
+
+                %callbacksTable = eval('com.jidesoft.grid.TreeTable(model);');  %#ok prevent JIDE alert by run-time (not load-time) evaluation
+                callbacksTable = eval('com.jidesoft.grid.PropertyTable(model);');  %#ok prevent JIDE alert by run-time (not load-time) evaluation
+
+                %callbacksTable.expandFirstLevel;
+                callbacksTable.setShowsRootHandles(true);
+                callbacksTable.setShowTreeLines(false);
+                %callbacksTable.setShowNonEditable(0);  %=SHOW_NONEDITABLE_NEITHER
+                callbacksPane = eval('com.jidesoft.grid.PropertyPane(callbacksTable);');  % prevent JIDE alert by run-time (not load-time) evaluation
+                callbacksPane.setShowDescription(false);
+            catch
+                callbacksTable = eval('com.jidesoft.grid.TreeTable(cbData,cbHeaders);');  % prevent JIDE alert by run-time (not load-time) evaluation
+            end
             callbacksTable.setRowAutoResizes(true);
             callbacksTable.setColumnAutoResizable(true);
             callbacksTable.setColumnResizable(true);
             jideTableUtils.autoResizeAllColumns(callbacksTable);
             callbacksTable.setTableHeader([]);  % hide the column headers since now we can resize columns with the gridline
             callbacksLabel = JLabel(' Callbacks:');  % The column headers are replaced with a header label
-            callbacksPanel.add(callbacksLabel, BorderLayout.NORTH);
+            callbacksLabel.setForeground(Color.blue);
+            %callbacksPanel.add(callbacksLabel, BorderLayout.NORTH);
+
+            % Add checkbox to show/hide standard callbacks
+            callbacksTopPanel = JPanel;
+            callbacksTopPanel.setLayout(BoxLayout(callbacksTopPanel, BoxLayout.LINE_AXIS));
+            callbacksTopPanel.add(callbacksLabel);
+            callbacksTopPanel.add(Box.createHorizontalGlue);
+            jcb = JCheckBox('Hide standard callbacks', cbHideStd);
+            set(handle(jcb,'CallbackProperties'), 'ActionPerformedCallback',{@cbHideStdCbs_Callback,callbacksTable});
+            try
+                set(jcb, 'userdata',callbacksTable, 'tooltip','Hide standard Swing callbacks - only component-specific callbacks will be displayed');
+            catch
+                jcb.setToolTipText('Hide standard Swing callbacks - only component-specific callbacks will be displayed');
+                %setappdata(jcb,'userdata',callbacksTable);
+            end
+            callbacksTopPanel.add(jcb);
+            callbacksPanel.add(callbacksTopPanel, BorderLayout.NORTH);
         catch
             % Otherwise, use a standard Swing JTable (keep the headers to enable resizing)
             callbacksTable = JTable(cbData,cbHeaders);
         end
-        cbToolTipText = 'Callbacks may be strings or {@myFunc,arg1,...}';
+        cbToolTipText = 'Callbacks may be ''strings'', @funcHandle or {@funcHandle,arg1,...}';
         callbacksTable.setToolTipText(cbToolTipText);
         callbacksTable.setGridColor(inspectorTable.getGridColor);
         cbNameTextField = JTextField;
@@ -913,9 +1378,16 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
         if ~cbTableEnabled
             callbacksTable.getColumnModel.getColumn(1).setCellEditor(cbNameCellEditor);
         end
-        set(callbacksTable.getModel, 'TableChangedCallback',@tbCallbacksChanged, 'UserData',container);
-        cbScrollPane = JScrollPane(callbacksTable);
-        cbScrollPane.setVerticalScrollBarPolicy(cbScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        hModel = callbacksTable.getModel;
+        set(handle(hModel,'CallbackProperties'), 'TableChangedCallback',{@tbCallbacksChanged,container,callbacksTable});
+        %set(hModel, 'UserData',container);
+        try
+            cbScrollPane = callbacksPane; %JScrollPane(callbacksPane);
+            %cbScrollPane.setHorizontalScrollBarPolicy(cbScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        catch
+            cbScrollPane = JScrollPane(callbacksTable);
+            cbScrollPane.setVerticalScrollBarPolicy(cbScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        end
         callbacksPanel.add(cbScrollPane, BorderLayout.CENTER);
         callbacksPanel.setToolTipText(cbToolTipText);
 
@@ -934,11 +1406,15 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
 
         % Prepare the bottom pane with all buttons
         lowerPanel = JPanel(FlowLayout);
-        lowerPanel.add(createJButton('Refresh tree',        {@btRefresh_Callback, origContainer, hTreeFig}, 'Rescan the component tree, from the root down'));
-        lowerPanel.add(createJButton('Export to workspace', {@btExport_Callback,  jTreeObj, classNameLabel}, 'Export the selected component handles to workspace variable findjobj_hdls'));
-        lowerPanel.add(createJButton('Request focus',       {@btFocus_Callback,   jTreeObj, root}, 'Set the focus on the first selected component'));
-        lowerPanel.add(createJButton('View methods',        {@btMethods_Callback, jTreeObj, root}, 'View the signature of all methods supported by the first selected component'));
-        lowerPanel.add(createJButton('Check updates',       {@btCheckFex_Callback}, 'Check the MathWorks FileExchange for the latest version of FindJObj'));
+        blogUrlLabel = '<a href="http://UndocumentedMatlab.com">Undocumented<br>Matlab.com</a>';
+        jWebsite = createJButton(blogUrlLabel, @btWebsite_Callback, 'Visit the UndocumentedMatlab.com blog');
+        jWebsite.setContentAreaFilled(0);
+        lowerPanel.add(jWebsite);
+        lowerPanel.add(createJButton('Refresh<br>tree',        {@btRefresh_Callback, origContainer, hTreeFig}, 'Rescan the component tree, from the root down'));
+        lowerPanel.add(createJButton('Export to<br>workspace', {@btExport_Callback,  jTreeObj, classNameLabel}, 'Export the selected component handles to workspace variable findjobj_hdls'));
+        lowerPanel.add(createJButton('Request<br>focus',       {@btFocus_Callback,   jTreeObj, root}, 'Set the focus on the first selected component'));
+        lowerPanel.add(createJButton('Inspect<br>object',      {@btInspect_Callback, jTreeObj, root}, 'View the signature of all methods supported by the first selected component'));
+        lowerPanel.add(createJButton('Check for<br>updates',   {@btCheckFex_Callback}, 'Check the MathWorks FileExchange for the latest version of FindJObj'));
 
         % Display everything on-screen
         globalPanel = JPanel(BorderLayout);
@@ -947,8 +1423,8 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
         [obj, hcontainer] = javacomponent(globalPanel, [0,0,pos(3:4)], hTreeFig);
         set(hcontainer,'units','normalized');
         drawnow;
-        hsplitPane.setDividerLocation(0.6);  % this only works after the JSplitPane is displayed...
-        vsplitPane.setDividerLocation(0.8);  % this only works after the JSplitPane is displayed...
+        hsplitPane.setDividerLocation(hsplitPaneLocation);  % this only works after the JSplitPane is displayed...
+        vsplitPane.setDividerLocation(vsplitPaneLocation);  % this only works after the JSplitPane is displayed...
         %restoreDbstopError(identifiers);
 
         % Refresh & resize the screenshot thumbnail
@@ -971,12 +1447,6 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
             selectedIdx = 1;
         end
 
-        % Select the root node if requested
-        % Note: we must do so here since all other nodes except the root are processed by expandNode
-        if any(selectedIdx==1)
-            tree_h.setSelectedNode(root);
-        end
-
         % Store handles for callback use
         userdata.handles = allHandles;
         userdata.levels  = allLevels;
@@ -995,12 +1465,66 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
         userdata.inspectorPane = inspectorPane;
         userdata.callbacksTable = callbacksTable;
         userdata.jideTableUtils = jideTableUtils;
-        set(tree_h,  'userdata',userdata);
+        try
+            userdata.cbHideStdCbs = jcb;
+        catch
+            userdata.cbHideStdCbs = [];
+        end
+
+        % Update userdata for use in callbacks
+        try
+            set(tree_h,'userdata',userdata);
+        catch
+            setappdata(tree_h,'userdata',userdata);
+        end
+        try
+            set(callbacksTable,'userdata',userdata);
+        catch
+            setappdata(callbacksTable,'userdata',userdata);
+        end
         set(hTreeFig,'userdata',userdata);
 
+        % Select the root node if requested
+        % Note: we must do so here since all other nodes except the root are processed by expandNode
+        if any(selectedIdx==1)
+            tree_h.setSelectedNode(root);
+        end
+
+        % Set the initial cbHideStdCbs state
+        try
+            if jcb.isSelected
+                drawnow;
+                evd.getSource.isSelected = jcb.isSelected;
+                cbHideStdCbs_Callback(jcb,evd,callbacksTable);
+            end
+        catch
+            % never mind...
+        end
+
         % Set the callback functions
-        set(tree_h, 'NodeExpandedCallback', {@nodeExpanded, tree_h});
-        set(tree_h, 'NodeSelectedCallback', {@nodeSelected, tree_h});
+        tree_hh = handle(tree_h,'CallbackProperties');
+        set(tree_hh, 'NodeExpandedCallback', {@nodeExpanded, tree_h});
+        set(tree_hh, 'NodeSelectedCallback', {@nodeSelected, tree_h});
+
+        % Set the tree mouse-click callback
+        % Note: default actions (expand/collapse) will still be performed?
+        % Note: MousePressedCallback is better than MouseClickedCallback
+        %       since it fires immediately when mouse button is pressed,
+        %       without waiting for its release, as MouseClickedCallback does
+        handleTree = tree_h.getScrollPane;
+        jTreeObj = handleTree.getViewport.getComponent(0);
+        jTreeObjh = handle(jTreeObj,'CallbackProperties');
+        set(jTreeObjh, 'MousePressedCallback', {@treeMousePressedCallback,tree_h});  % context (right-click) menu
+        set(jTreeObjh, 'MouseMovedCallback',   @treeMouseMovedCallback);    % mouse hover tooltips
+
+        % Update userdata
+        userdata.inInit = false;
+        try
+            set(tree_h,'userdata',userdata);
+        catch
+            setappdata(tree_h,'userdata',userdata);
+        end
+        set(hTreeFig,'userdata',userdata);
 
         % Pre-expand all rows
         expandNode(progressBar, jTreeObj, tree_h, root, 0);
@@ -1013,12 +1537,7 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
             % Probably not a vSplitPane on the left...
             hsplitPane.setLeftComponent(treePane);
         end
-        hsplitPane.setDividerLocation(0.5);  % need to do it again...
-
-        % Update userdata
-        userdata.inInit = false;
-        set(tree_h,  'userdata',userdata);
-        set(hTreeFig,'userdata',userdata);
+        hsplitPane.setDividerLocation(hsplitPaneLocation);  % need to do it again...
 
         % Set keyboard focus on the tree
         jTreeObj.requestFocus;
@@ -1028,10 +1547,10 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
         checkVersion();
 
         % Reset the last error
-        lasterr('');
+        lasterr('');  %#ok
     end
 
-%% Rresize image pane
+    %% Rresize image pane
     function resizeImg(varargin)  %#ok - unused (TODO: waiting for img placement fix...)
         try
             hPanel = varargin{1};
@@ -1044,12 +1563,12 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
             set(hPanel,'Opaque','off');  % also no good...
         catch
             % Never mind...
-            disp(lasterr)
+            dispError
         end
         return;
     end
 
-%% "dbstop if error" causes inspect.m to croak due to a bug - so workaround by temporarily disabling this dbstop
+    %% "dbstop if error" causes inspect.m to croak due to a bug - so workaround by temporarily disabling this dbstop
     function identifiers = disableDbstopError
         dbStat = dbstatus;
         idx = find(strcmp({dbStat.cond},'error'));
@@ -1060,14 +1579,14 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
         end
     end
 
-%% Restore any previous "dbstop if error"
+    %% Restore any previous "dbstop if error"
     function restoreDbstopError(identifiers)  %#ok
         for itemIdx = 1 : length(identifiers)
             eval(['dbstop if error ' identifiers{itemIdx}]);
         end
     end
 
-%% Recursively expand all nodes (except toolbar/menubar) in startup
+    %% Recursively expand all nodes (except toolbar/menubar) in startup
     function expandNode(progressBar, tree, tree_h, parentNode, parentRow)
         try
             if nargin < 5
@@ -1081,43 +1600,57 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
                 pause(0.0002);  % as short as possible...
                 drawnow;
             end
-            nodesToUnExpand = {'FigureMenuBar','MJToolBar','Box','uimenu','uitoolbar'};
+            nodesToUnExpand = {'FigureMenuBar','MLMenuBar','MJToolBar','Box','uimenu','uitoolbar','ScrollBar'};
             numChildren = parentNode.getChildCount;
             for childIdx = 0 : numChildren-1
                 childNode = parentNode.getChildAt(childIdx);
 
+                % Pre-select the node based upon the user's FINDJOBJ filters
+                try
+                    nodedata = get(childNode, 'userdata');
+                    try
+                        userdata = get(tree_h, 'userdata');
+                    catch
+                        userdata = getappdata(tree_h, 'userdata');
+                    end
+                    %fprintf('%d - %s\n',nodedata.idx,char(nodedata.obj))
+                    if ~ishghandle(nodedata.obj) && ~userdata.userSelected && any(userdata.initialIdx == nodedata.idx)
+                        pause(0.0002);  % as short as possible...
+                        drawnow;
+                        if isempty(tree_h.getSelectedNodes)
+                            tree_h.setSelectedNode(childNode);
+                        else
+                            newSelectedNodes = [tree_h.getSelectedNodes, childNode];
+                            tree_h.setSelectedNodes(newSelectedNodes);
+                        end
+                    end
+                catch
+                    % never mind...
+                    dispError
+                end
+
                 % Expand child node if not leaf & not toolbar/menubar
                 if childNode.isLeafNode
-                    progressBar.setValue(progressBar.getValue+1);
 
-                    % Pre-select the node based upon the user's FINDJOBJ filters
-                    try
-                        nodedata = get(childNode, 'userdata');
-                        userdata = get(tree_h, 'userdata');
-                        if ~ishghandle(nodedata.obj) && ~userdata.userSelected && any(userdata.initialIdx == nodedata.idx)
-                            pause(0.0002);  % as short as possible...
-                            drawnow;
-                            if isempty(tree_h.getSelectedNodes)
-                                tree_h.setSelectedNode(childNode);
-                            else
-                                newSelectedNodes = [tree_h.getSelectedNodes, childNode];
-                                tree_h.setSelectedNodes(newSelectedNodes);
-                            end
-                        end
-                    catch
-                        % never mind...
-                        disp(lasterr)
-                    end
+                    % This is a leaf node, so simply update the progress-bar
+                    progressBar.setValue(progressBar.getValue+1);
 
                 else
                     % Expand all non-leaves
                     expandNode(progressBar, tree, tree_h, childNode);
 
-                    % Re-collapse toolbar/menubar
+                    % Re-collapse toolbar/menubar etc., and also invisible containers
                     % Note: if we simply did nothing, progressbar would not have been updated...
-                    
+                    try
+                        childHandle = getappdata(childNode,'childHandle');  %=childNode.getUserObject
+                        visible = childHandle.isVisible;
+                    catch
+                        visible = 1;
+                    end
+                    visible = visible && isempty(findstr(get(childNode,'Name'),'color="gray"'));
                     %if any(strcmp(childNode.getName,nodesToUnExpand))
-                    if any(cellfun(@(s)~isempty(strmatch(s,char(childNode.getName))),nodesToUnExpand))
+                    %name = char(childNode.getName);
+                    if any(cellfun(@(s)~isempty(strmatch(s,char(childNode.getName))),nodesToUnExpand)) || ~visible
                         childPath = javax.swing.tree.TreePath(childNode.getPath);
                         childRow = tree.getRowForPath(childPath);
                         tree.collapseRow(childRow);
@@ -1126,30 +1659,168 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
             end
         catch
             % never mind...
-            disp(lasterr)
+            dispError
         end
     end
 
-%% Create utility buttons
+    %% Create utility buttons
     function hButton = createJButton(nameStr, handler, toolTipText)
         try
-            jButton = javax.swing.JButton(nameStr);
+            jButton = javax.swing.JButton(['<html><body><center>' nameStr]);
             jButton.setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.HAND_CURSOR));
             jButton.setToolTipText(toolTipText);
+            try
+                minSize = jButton.getMinimumSize;
+            catch
+                minSize = jButton.getMinimumSize;  % for HG2 - strange indeed that this is needed!
+            end
+            jButton.setMinimumSize(java.awt.Dimension(minSize.getWidth,35));
             hButton = handle(jButton,'CallbackProperties');
             set(hButton,'ActionPerformedCallback',handler);
         catch
             % Never mind...
+            a= 1;
         end
     end
 
-%% Select tree node
+    %% Flash a component off/on for the specified duration
+    % note: starts with 'on'; if numTimes is odd then ends with 'on', otherwise with 'off'
+    function flashComponent(jComps,delaySecs,numTimes)
+        persistent redBorder redBorderPanels
+        try
+            % Handle callback data from right-click (context-menu)
+            if iscell(numTimes)
+                [jComps,delaySecs,numTimes] = deal(numTimes{:});
+            end
+
+            if isempty(redBorder)  % reuse if possible
+                redBorder = javax.swing.border.LineBorder(java.awt.Color.red,2,0);
+            end
+            for compIdx = 1 : length(jComps)
+                try
+                    oldBorder{compIdx} = jComps(compIdx).getBorder;  %#ok grow
+                catch
+                    oldBorder{compIdx} = [];  %#ok grow
+                end
+                isSettable(compIdx) = ismethod(jComps(compIdx),'setBorder');  %#ok grow
+                if isSettable(compIdx)
+                    try
+                        % some components prevent border modification:
+                        oldBorderFlag = jComps(compIdx).isBorderPainted;
+                        if ~oldBorderFlag
+                            jComps(compIdx).setBorderPainted(1);
+                            isSettable(compIdx) = jComps(compIdx).isBorderPainted;  %#ok grow
+                            jComps(compIdx).setBorderPainted(oldBorderFlag);
+                        end
+                    catch
+                        % do nothing...
+                    end
+                end
+                if compIdx > length(redBorderPanels)
+                    redBorderPanels{compIdx} = javax.swing.JPanel;
+                    redBorderPanels{compIdx}.setBorder(redBorder);
+                    redBorderPanels{compIdx}.setOpaque(0);  % transparent interior, red border
+                end
+                try
+                    redBorderPanels{compIdx}.setBounds(jComps(compIdx).getBounds);
+                catch
+                    % never mind - might be an HG handle
+                end
+            end
+            for idx = 1 : 2*numTimes
+                if idx>1,  pause(delaySecs);  end  % don't pause at start
+                visible = mod(idx,2);
+                for compIdx = 1 : length(jComps)
+                    try
+                        jComp = jComps(compIdx);
+
+                        % Prevent Matlab crash (java buffer overflow...)
+                        if jComp.isa('com.mathworks.mwswing.desk.DTSplitPane') || ...
+                           jComp.isa('com.mathworks.mwswing.MJSplitPane')
+                            continue;
+                        end
+
+                        % HG handles are highlighted by setting their 'Selected' property
+                        if isa(jComp,'uimenu')
+                            if visible
+                                oldColor = get(jComp,'ForegroundColor');
+                                setappdata(jComp,'findjobj_oldColor',oldColor);
+                                set(jComp,'ForegroundColor','red');
+                            else
+                                oldColor = getappdata(jComp,'findjobj_oldColor');
+                                set(jComp,'ForegroundColor',oldColor);
+                                rmappdata(jComp,'ForegroundColor');
+                            end
+                            
+                        elseif ishghandle(jComp)
+                            if visible
+                                set(jComp,'Selected','on');
+                            else
+                                set(jComp,'Selected','off');
+                            end
+
+                        else %if isjava(jComp)
+
+                            jParent = jComps(compIdx).getParent;
+
+                            % Most Java components allow modifying their borders
+                            if isSettable(compIdx)
+                                if visible
+                                    jComp.setBorder(redBorder);
+                                    try jComp.setBorderPainted(1); catch, end  %#ok
+                                else %if ~isempty(oldBorder{compIdx})
+                                    jComp.setBorder(oldBorder{compIdx});
+                                end
+                                jComp.repaint;
+
+                            % The other Java components are highlighted by a transparent red-border
+                            % panel that is placed on top of them in their parent's space
+                            elseif ~isempty(jParent)
+                                if visible
+                                    jParent.add(redBorderPanels{compIdx});
+                                    jParent.setComponentZOrder(redBorderPanels{compIdx},0);
+                                else
+                                    jParent.remove(redBorderPanels{compIdx});
+                                end
+                                jParent.repaint
+                            end
+                        end
+                    catch
+                        % never mind - try the next component (if any)
+                    end
+                end
+                drawnow;
+            end
+        catch
+            % never mind...
+            dispError;
+        end
+        return;  % debug point
+    end  % flashComponent
+
+    %% Select tree node
     function nodeSelected(src, evd, tree)  %#ok
         try
-            %nodeHandle = evd.getCurrentNode.getUserObject;
-            nodedata = get(evd.getCurrentNode,'userdata');
+            if iscell(tree)
+                [src,node] = deal(tree{:});
+            else
+                node = evd.getCurrentNode;
+            end
+            %nodeHandle = node.getUserObject;
+            nodedata = get(node,'userdata');
             nodeHandle = nodedata.obj;
-            userdata = get(src,'userdata');
+            try
+                userdata = get(src,'userdata');
+            catch
+                try
+                    userdata = getappdata(java(src),'userdata');
+                catch
+                    userdata = getappdata(src,'userdata');
+                end
+                if isempty(userdata)
+                    try userdata = get(java(src),'userdata'); catch, end
+                end
+            end
             if ~isempty(nodeHandle) && ~isempty(userdata)
                 numSelections  = userdata.jTree.getSelectionCount;
                 selectionPaths = userdata.jTree.getSelectionPaths;
@@ -1157,18 +1828,29 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
                     % Indicate that the user has modified the initial selection (except if this was an initial auto-selected node)
                     if ~userdata.inInit
                         userdata.userSelected = true;
-                        set(src,'userdata',userdata);
+                        try
+                            set(src,'userdata',userdata);
+                        catch
+                            try
+                                setappdata(java(src),'userdata',userdata);
+                            catch
+                                setappdata(src,'userdata',userdata);
+                            end
+                        end
                     end
 
                     % Update the fully-qualified class name label
                     numInitialIdx = length(userdata.initialIdx);
+                    thisHandle = nodeHandle;
                     try
-                        thisHandle = java(nodeHandle);
+                        if ~ishghandle(thisHandle)
+                            thisHandle = java(nodeHandle);
+                        end
                     catch
-                        thisHandle = nodeHandle;
+                        % never mind...
                     end
                     if ~userdata.inInit || (numInitialIdx == 1)
-                        userdata.classNameLabel.setText(['      ' char(thisHandle.class)]);
+                        userdata.classNameLabel.setText(['      ' char(class(thisHandle))]);
                     else
                         userdata.classNameLabel.setText([' ' num2str(numInitialIdx) 'x handles (some handles hidden by unexpanded tree nodes)']);
                     end
@@ -1188,22 +1870,35 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
 
                     % Update the callbacks table
                     try
-                        classHdl = classhandle(handle(nodeHandle));
-                        cbNames = sort(strcat(get(classHdl.Events,'Name'),'Callback'));
-                        cbData = [cbNames, get(nodeHandle,cbNames)'];
-                        cbHeaders = {'Callback name','Callback value'};
-                        callbacksTableModel = javax.swing.table.DefaultTableModel(cbData,cbHeaders);
-                        set(callbacksTableModel, 'TableChangedCallback',@tbCallbacksChanged, 'UserData',nodeHandle);
+                        stripStdCbsFlag = getappdata(userdata.callbacksTable,'hideStdCbs');
+                        [cbData, cbHeaders, cbTableEnabled] = getCbsData(nodeHandle, stripStdCbsFlag);  %#ok cbTableEnabled unused
+                        try
+                            % Use JideTable if available on this system
+                            list = getTreeData(cbData);  %#ok
+                            callbacksTableModel = eval('com.jidesoft.grid.PropertyTableModel(list);');  %#ok prevent JIDE alert by run-time (not load-time) evaluation
+                            
+                            % Expand if only one category
+                            if length(callbacksTableModel.getCategories)==1
+                                callbacksTableModel.expandFirstLevel;
+                            end
+                        catch
+                            callbacksTableModel = javax.swing.table.DefaultTableModel(cbData,cbHeaders);
+                        end
+                        set(handle(callbacksTableModel,'CallbackProperties'), 'TableChangedCallback',{@tbCallbacksChanged,nodeHandle,userdata.callbacksTable});
+                        %set(callbacksTableModel, 'UserData',nodeHandle);
                         userdata.callbacksTable.setModel(callbacksTableModel)
                         userdata.callbacksTable.setRowAutoResizes(true);
                         userdata.jideTableUtils.autoResizeAllColumns(userdata.callbacksTable);
                     catch
                         % never mind...
+                        %dispError
                     end
-                    pause(0.01);
+                    pause(0.005);
                     drawnow;
                     %restoreDbstopError(identifiers);
 
+                    % Highlight the selected object (if visible)
+                    flashComponent(nodeHandle,0.2,3);
 
                 elseif (numSelections > 1)  % Multiple selections
 
@@ -1219,8 +1914,8 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
                         catch
                             jArray(idx) = nodedata.obj;
                         end
-                        toolTipStr = [toolTipStr '&nbsp;' jArray(idx).class '&nbsp;'];
-                        if (idx < numSelections),  toolTipStr = [toolTipStr '<br>'];  end
+                        toolTipStr = [toolTipStr '&nbsp;' class(jArray(idx)) '&nbsp;'];  %#ok grow
+                        if (idx < numSelections),  toolTipStr = [toolTipStr '<br>'];  end  %#ok grow
                         if (idx > 1) && sameClassFlag && ~isequal(jArray(idx).getClass,jArray(1).getClass)
                             sameClassFlag = false;
                         end
@@ -1229,7 +1924,7 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
 
                     % Update the fully-qualified class name label
                     if sameClassFlag
-                        classNameStr = jArray(1).class;
+                        classNameStr = class(jArray(1));
                     else
                         classNameStr = 'handle';
                     end
@@ -1251,45 +1946,70 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
                     % Update the callbacks table
                     try
                         % Get intersecting callback names & values
-                        classHdl = classhandle(handle(jArray(1)));
-                        cbNames = sort(strcat(get(classHdl.Events,'Name'),'Callback'));
-                        cbData = [cbNames, get(jArray(1),cbNames)'];
-                        for idx = 2 : length(jArray)
-                            classHdl = classhandle(handle(jArray(idx)));
-                            newCbNames = sort(strcat(get(classHdl.Events,'Name'),'Callback'));
-                            [cbNames, cbIdx] = intersect(cbNames,newCbNames);
-                            cbData = cbData(cbIdx,:);
-                            newCbVals = get(jArray(idx),cbNames)';
-                            for cbIdx = 1 : length(cbNames)
-                                if ~isequal(newCbVals{cbIdx}, cbData{cbIdx,2})
-                                    cbData{cbIdx,2} = '<different values>';
+                        stripStdCbsFlag = getappdata(userdata.callbacksTable,'hideStdCbs');
+                        [cbData, cbHeaders, cbTableEnabled] = getCbsData(jArray(1), stripStdCbsFlag);  %#ok cbHeaders & cbTableEnabled unused
+                        if ~isempty(cbData)
+                            cbNames = cbData(:,1);
+                            for idx = 2 : length(jArray)
+                                [cbData2, cbHeaders2] = getCbsData(jArray(idx), stripStdCbsFlag);  %#ok cbHeaders2 unused
+                                if ~isempty(cbData2)
+                                    newCbNames = cbData2(:,1);
+                                    [cbNames, cbIdx, cb2Idx] = intersect(cbNames,newCbNames);  %#ok cb2Idx unused
+                                    cbData = cbData(cbIdx,:);
+                                    for cbIdx = 1 : length(cbNames)
+                                        newIdx = find(strcmp(cbNames{cbIdx},newCbNames));
+                                        if ~isequal(cbData2{newIdx,2}, cbData{cbIdx,2})
+                                            cbData{cbIdx,2} = '<different values>';
+                                        end
+                                    end
+                                else
+                                    cbData = cbData([],:);  %=empty cell array
+                                end
+                                if isempty(cbData)
+                                    break;
                                 end
                             end
                         end
                         cbHeaders = {'Callback name','Callback value'};
-                        callbacksTableModel = javax.swing.table.DefaultTableModel(cbData,cbHeaders);
-                        set(callbacksTableModel, 'TableChangedCallback',@tbCallbacksChanged, 'UserData',jArray);
+                        try
+                            % Use JideTable if available on this system
+                            list = getTreeData(cbData);  %#ok
+                            callbacksTableModel = eval('com.jidesoft.grid.PropertyTableModel(list);');  %#ok prevent JIDE alert by run-time (not load-time) evaluation
+                            
+                            % Expand if only one category
+                            if length(callbacksTableModel.getCategories)==1
+                                callbacksTableModel.expandFirstLevel;
+                            end
+                        catch
+                            callbacksTableModel = javax.swing.table.DefaultTableModel(cbData,cbHeaders);
+                        end
+                        set(handle(callbacksTableModel,'CallbackProperties'), 'TableChangedCallback',{@tbCallbacksChanged,jArray,userdata.callbacksTable});
+                        %set(callbacksTableModel, 'UserData',jArray);
                         userdata.callbacksTable.setModel(callbacksTableModel)
                         userdata.callbacksTable.setRowAutoResizes(true);
                         userdata.jideTableUtils.autoResizeAllColumns(userdata.callbacksTable);
                     catch
                         % never mind...
+                        dispError
                     end
 
-                    pause(0.01);
+                    pause(0.005);
                     drawnow;
                     %restoreDbstopError(identifiers);
+
+                    % Highlight the selected objects (if visible)
+                    flashComponent(jArray,0.2,3);
                 end
 
                 % TODO: Auto-highlight selected object (?)
                 %nodeHandle.requestFocus;
             end
         catch
-            disp(lasterr)
+            dispError
         end
     end
 
-%% IFF utility function for annonymous cellfun funcs
+    %% IFF utility function for annonymous cellfun funcs
     function result = iff(test,trueVal,falseVal)  %#ok
         try
             if test
@@ -1302,10 +2022,12 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
         end
     end
 
-%% Get an HTML representation of the object's properties
+    %% Get an HTML representation of the object's properties
     function dataFieldsStr = getPropsHtml(nodeHandle, dataFields)
         try
             % Get a text representation of the fieldnames & values
+            undefinedStr = '';
+            hiddenStr = '';
             dataFieldsStr = '';  % just in case the following croaks...
             if isempty(dataFields)
                 return;
@@ -1317,14 +2039,34 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
             dataFieldsStr = regexprep(dataFieldsStr,'^\s*\w*Callback(Data)?:[^\n]*$','','lineanchors');
             dataFieldsStr = regexprep(dataFieldsStr,'\n\n','\n');
 
+            % Convert into a Matlab handle()
+            %nodeHandle = handle(nodeHandle);
+            try
+                % ensure this is a Matlab handle, not a java object
+                nodeHandle = handle(nodeHandle, 'CallbackProperties');
+            catch
+                try
+                    % HG handles don't allow CallbackProperties...
+                    nodeHandle = handle(nodeHandle);
+                catch
+                    % Some Matlab class objects simply cannot be converted into a handle()
+                end
+            end
+
             % HTMLize tooltip data
             % First, set the fields' font based on its read-write status
-            nodeHandle = handle(nodeHandle);  % ensure this is a Matlab handle, not a java object
             fieldNames = fieldnames(dataFields);
-            undefinedStr = '';
             for fieldIdx = 1 : length(fieldNames)
                 thisFieldName = fieldNames{fieldIdx};
-                accessFlags = get(findprop(nodeHandle,thisFieldName),'AccessFlags');
+                %accessFlags = get(findprop(nodeHandle,thisFieldName),'AccessFlags');
+                try
+                    hProp = findprop(nodeHandle,thisFieldName);
+                    accessFlags = get(hProp,'AccessFlags');
+                    visible = get(hProp,'Visible');
+                catch
+                    accessFlags = [];
+                    visible = 'on';
+                end
                 if isfield(accessFlags,'PublicSet') && strcmp(accessFlags.PublicSet,'on')
                     % Bolden read/write fields
                     thisFieldFormat = ['<b>' thisFieldName '<b>:$2'];
@@ -1334,28 +2076,33 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
                     undefinedStr = ', <font color="blue">undefined</font>';
                 else % PublicSet=='off'
                     % Gray-out & italicize any read-only fields
-                    thisFieldFormat = ['<font color="#C0C0C0"><i>' thisFieldName '</i></font>:<font color="#C0C0C0"><i>$2<i></font>'];
+                    thisFieldFormat = ['<font color="#C0C0C0">' thisFieldName '</font>:<font color="#C0C0C0">$2</font>'];
+                end
+                if strcmpi(visible,'off')
+                    %thisFieldFormat = ['<i>' thisFieldFormat '</i>']; %#ok<AGROW>
+                    thisFieldFormat = regexprep(thisFieldFormat, '(.*):(.*)', '<i>$1:<i>$2');
+                    hiddenStr = ', <i>hidden</i>';
                 end
                 dataFieldsStr = regexprep(dataFieldsStr, ['([\s\n])' thisFieldName ':([^\n]*)'], ['$1' thisFieldFormat]);
             end
-
-            % Method 1: simple <br> list
-            %dataFieldsStr = strrep(dataFieldsStr,char(10),'&nbsp;<br>&nbsp;&nbsp;');
-
-            % Method 2: 2x2-column <table>
-            dataFieldsStr = regexprep(dataFieldsStr, '^\s*([^:]+:)([^\n]*)\n^\s*([^:]+:)([^\n]*)$', '<tr><td>&nbsp;$1</td><td>&nbsp;$2</td><td>&nbsp;&nbsp;&nbsp;&nbsp;$3</td><td>&nbsp;$4&nbsp;</td></tr>', 'lineanchors');
-            dataFieldsStr = regexprep(dataFieldsStr, '^[^<]\s*([^:]+:)([^\n]*)$', '<tr><td>&nbsp;$1</td><td>&nbsp;$2</td><td>&nbsp;</td><td>&nbsp;</td></tr>', 'lineanchors');
-            dataFieldsStr = ['(<b>modifiable</b>' undefinedStr ' &amp; <font color="#C0C0C0"><i>read-only</i></font> fields)<p>&nbsp;&nbsp;<table cellpadding="0" cellspacing="0">' dataFieldsStr '</table>'];
         catch
-            % never mind...
-            disp(lasterr)
+            % never mind... - probably an ambiguous property name
+            %dispError
         end
+
+        % Method 1: simple <br> list
+        %dataFieldsStr = strrep(dataFieldsStr,char(10),'&nbsp;<br>&nbsp;&nbsp;');
+
+        % Method 2: 2-column <table>
+        dataFieldsStr = regexprep(dataFieldsStr, '^\s*([^:]+:)([^\n]*)\n^\s*([^:]+:)([^\n]*)$', '<tr><td>&nbsp;$1</td><td>&nbsp;$2</td><td>&nbsp;&nbsp;&nbsp;&nbsp;$3</td><td>&nbsp;$4&nbsp;</td></tr>', 'lineanchors');
+        dataFieldsStr = regexprep(dataFieldsStr, '^[^<]\s*([^:]+:)([^\n]*)$', '<tr><td>&nbsp;$1</td><td>&nbsp;$2</td><td>&nbsp;</td><td>&nbsp;</td></tr>', 'lineanchors');
+        dataFieldsStr = ['(<b>modifiable</b>' undefinedStr hiddenStr ' &amp; <font color="#C0C0C0">read-only</font> fields)<p>&nbsp;&nbsp;<table cellpadding="0" cellspacing="0">' dataFieldsStr '</table>'];
     end
 
-%% Update tooltip string with a node's data
+    %% Update tooltip string with a node's data
     function updateNodeTooltip(nodeHandle, uiObject)
         try
-            toolTipStr = nodeHandle.class;
+            toolTipStr = class(nodeHandle);
             dataFieldsStr = '';
 
             % Add HG annotation if relevant
@@ -1365,16 +2112,24 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
                 hgStr = '';
             end
 
-            % Note: don't bulk-get because (1) not all properties are returned & (2) some properties case a Java exception
+            % Prevent HG-Java warnings
+            oldWarn = warning('off','MATLAB:hg:JavaSetHGProperty');
+            warning('off','MATLAB:hg:PossibleDeprecatedJavaSetHGProperty');
+
+            % Note: don't bulk-get because (1) not all properties are returned & (2) some properties cause a Java exception
             % Note2: the classhandle approach does not enable access to user-defined schema.props
-            ch = classhandle(nodeHandle);
+            ch = classhandle(handle(nodeHandle));
             dataFields = [];
             [sortedNames, sortedIdx] = sort(get(ch.Properties,'Name'));
             for idx = 1 : length(sortedIdx)
                 sp = ch.Properties(sortedIdx(idx));
                 % TODO: some fields (see EOL comment below) generate a Java Exception from: com.mathworks.mlwidgets.inspector.PropertyRootNode$PropertyListener$1$1.run
                 if strcmp(sp.AccessFlags.PublicGet,'on') % && ~any(strcmp(sp.Name,{'FixedColors','ListboxTop','Extent'}))
-                    dataFields.(sp.Name) = get(nodeHandle, sp.Name);
+                    try
+                        dataFields.(sp.Name) = get(nodeHandle, sp.Name);
+                    catch
+                        dataFields.(sp.Name) = '<font color="red">Error!</font>';
+                    end
                 else
                     dataFields.(sp.Name) = '(no public getter method)';
                 end
@@ -1390,7 +2145,7 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
                 % Probably a missing property getter implementation
                 try
                     % Inform the user - bail out on error
-                    err = lasterror;
+                    err = lasterror;  %#ok
                     dataFieldsStr = ['<p>' strrep(err.message, char(10), '<br>')];
                 catch
                     % forget it...
@@ -1398,19 +2153,21 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
             end
         end
 
+        % Restore warnings
+        try warning(oldWarn); catch, end
+
         % Set the object tooltip
         if ~isempty(dataFieldsStr)
-            toolTipStr = ['<html>&nbsp;<b><u><font color="red">' char(toolTipStr) '</font></u></b>' hgStr ':&nbsp;' dataFieldsStr '</html>'];
+            toolTipStr = ['<html>&nbsp;<b><font color="blue">' char(toolTipStr) '</font></b>' hgStr ':&nbsp;' dataFieldsStr '</html>'];
         end
         uiObject.setToolTipText(toolTipStr);
     end
 
-%% Expand tree node
+    %% Expand tree node
     function nodeExpanded(src, evd, tree)  %#ok
         % tree = handle(src);
         % evdsrc = evd.getSource;
         evdnode = evd.getCurrentNode;
-        % indices = [];
 
         if ~tree.isLoaded(evdnode)
 
@@ -1418,11 +2175,12 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
             childnodes = getChildrenNodes(tree, evdnode);
 
             % Add the HG sub-tree (unless already included in the first tree)
-            if evdnode.isRoot && ~isempty(hg_handles) && ~isequal(hg_handles(1).java, evdnode.getUserObject)
+            childHandle = getappdata(evdnode.handle,'childHandle');  %=evdnode.getUserObject
+            if evdnode.isRoot && ~isempty(hg_handles) && ~isequal(hg_handles(1).java, childHandle)
                 childnodes = [childnodes, getChildrenNodes(tree, evdnode, true)];
             end
 
-            % If we have a single child handle, wrap it within a javaArray for tree.add() tp "swallow"
+            % If we have a single child handle, wrap it within a javaArray for tree.add() to "swallow"
             if (length(childnodes) == 1)
                 chnodes = childnodes;
                 childnodes = javaArray('com.mathworks.hg.peer.UITreeNode', 1);
@@ -1435,12 +2193,33 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
         end
     end
 
-%% Get list of children nodes
+    %% Get an icon image no larger than 16x16 pixels
+    function iconImage = setIconSize(iconImage)
+        try
+            iconWidth  = iconImage.getWidth;
+            iconHeight = iconImage.getHeight;
+            if iconWidth > 16
+                newHeight = fix(iconHeight * 16 / iconWidth);
+                iconImage = iconImage.getScaledInstance(16,newHeight,iconImage.SCALE_SMOOTH);
+            elseif iconHeight > 16
+                newWidth = fix(iconWidth * 16 / iconHeight);
+                iconImage = iconImage.getScaledInstance(newWidth,16,iconImage.SCALE_SMOOTH);
+            end
+        catch
+            % never mind... - return original icon
+        end
+    end  % setIconSize
+
+    %% Get list of children nodes
     function nodes = getChildrenNodes(tree, parentNode, isRootHGNode)
         try
             iconpath = [matlabroot, '/toolbox/matlab/icons/'];
             nodes = handle([]);
-            userdata = get(tree,'userData');
+            try
+                userdata = get(tree,'userdata');
+            catch
+                userdata = getappdata(tree,'userdata');
+            end
             hdls = userdata.handles;
             nodedata = get(parentNode,'userdata');
             if nargin < 3
@@ -1474,12 +2253,21 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
                         childName = childName.concat(' - HG root container');
                         icon = [iconpath 'figureicon.gif'];
                     end
-                    nodes = uitreenode(thisChildHandle, childName, icon, ~hasGrandChildren);
+                    try
+                        nodes = uitreenode('v0', thisChildHandle, childName, icon, ~hasGrandChildren);
+                    catch  % old matlab version don't have the 'v0' option
+                        try
+                            nodes = uitreenode(thisChildHandle, childName, icon, ~hasGrandChildren);
+                        catch
+                            % probably an invalid handle - ignore...
+                        end
+                    end
 
                     % Add the handler to the node's internal data
                     % Note: could also use 'userdata', but setUserObject() is recommended for TreeNodes
                     % Note2: however, setUserObject() sets a java *BeenAdapter object for HG handles instead of the required original class, so use setappdata
-                    nodes.setUserObject(thisChildHandle);
+                    %nodes.setUserObject(thisChildHandle);
+                    setappdata(nodes,'childHandle',thisChildHandle);
                     nodedata.idx = 1;
                     nodedata.obj = thisChildHandle;
                     set(nodes,'userdata',nodedata);
@@ -1487,8 +2275,8 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
                 else  % non-root HG node
                     parents = userdata.hg_parents;
                     hdls    = userdata.hg_handles;
-                end
-            end
+                end  % if isRootHGNode
+            end  % if ~isJavaNode
 
             % If this node was found, get the list of its children
             if ~isempty(nodeIdx)
@@ -1500,13 +2288,46 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
                     thisChildIdx = childIdx(cIdx);
                     thisChildHandle = hdls(thisChildIdx);
                     childName = getNodeName(thisChildHandle);
+                    try
+                        visible = thisChildHandle.Visible;
+                        if visible
+                            try visible = thisChildHandle.Width > 0; catch, end  %#ok
+                        end
+                        if ~visible
+                            childName = ['<HTML><i><font color="gray">' char(childName) '</font></i></html>'];  %#ok grow
+                        end
+                    catch
+                        % never mind...
+                    end
                     hasGrandChildren = any(parents==thisChildIdx);
-                    if hasGrandChildren && ~any(strcmp(thisChildHandle.class,{'axes'}))
+                    try
+                        isaLabel = isa(thisChildHandle.java,'javax.swing.JLabel');
+                    catch
+                        isaLabel = 0;
+                    end
+                    if hasGrandChildren && ~any(strcmp(class(thisChildHandle),{'axes'}))
                         icon = [iconpath 'foldericon.gif'];
+                    elseif isaLabel
+                        icon = [iconpath 'tool_text.gif'];
                     else
                         icon = [];
                     end
-                    nodes(cIdx) = uitreenode(thisChildHandle, childName, icon, ~hasGrandChildren);
+                    try
+                        nodes(cIdx) = uitreenode('v0', thisChildHandle, childName, icon, ~hasGrandChildren);
+                    catch  % old matlab version don't have the 'v0' option
+                        try
+                            nodes(cIdx) = uitreenode(thisChildHandle, childName, icon, ~hasGrandChildren);
+                        catch
+                            % probably an invalid handle - ignore...
+                        end
+                    end
+
+                    % Use existing object icon, if available
+                    try
+                        setTreeNodeIcon(nodes(cIdx),thisChildHandle);
+                    catch
+                        % probably an invalid handle - ignore...
+                    end
 
                     % Pre-select the node based upon the user's FINDJOBJ filters
                     try
@@ -1527,30 +2348,37 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
                     % Add the handler to the node's internal data
                     % Note: could also use 'userdata', but setUserObject() is recommended for TreeNodes
                     % Note2: however, setUserObject() sets a java *BeenAdapter object for HG handles instead of the required original class, so use setappdata
-                    if isJavaNode
-                        thisChildHandle = thisChildHandle.java;
+                    % Note3: the following will error if invalid handle - ignore
+                    try
+                        if isJavaNode
+                            thisChildHandle = thisChildHandle.java;
+                        end
+                        %nodes(cIdx).setUserObject(thisChildHandle);
+                        setappdata(nodes(cIdx),'childHandle',thisChildHandle);
+                        nodedata.idx = thisChildIdx;
+                        nodedata.obj = thisChildHandle;
+                        set(nodes(cIdx),'userdata',nodedata);
+                    catch
+                        % never mind (probably an invalid handle) - leave unchanged (like a leaf)
                     end
-                    nodes(cIdx).setUserObject(thisChildHandle);
-                    nodedata.idx = thisChildIdx;
-                    nodedata.obj = thisChildHandle;
-                    set(nodes(cIdx),'userdata',nodedata);
                 end
             end
         catch
             % Never mind - leave unchanged (like a leaf)
             %error('YMA:findjobj:UnknownNodeType', 'Error expanding component tree node');
-            disp(lasterr)
+            dispError
         end
     end
 
-%% Get a node's name
-    function nodeName = getNodeName(hndl)
+    %% Get a node's name
+    function [nodeName, nodeTitle] = getNodeName(hndl,charsLimit)
         try
             % Initialize (just in case one of the succeding lines croaks)
             nodeName = '';
+            nodeTitle = '';
             if ~ismethod(hndl,'getClass')
                 try
-                    nodeName = hndl.class;
+                    nodeName = class(hndl);
                 catch
                     nodeName = hndl.type;  % last-ditch try...
                 end
@@ -1574,24 +2402,43 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
             end
 
             % Get any unique identifying string (if available in one of several fields)
-            labelsToCheck = {'label','title','text','string','displayname','toolTipText','TooltipString','actionCommand','name','Tag','style','UIClassID'};
-            extraStr = '';
+            labelsToCheck = {'label','title','text','string','displayname','toolTipText','TooltipString','actionCommand','name','Tag','style'}; %,'UIClassID'};
+            nodeTitle = '';
             strField = '';  %#ok - used for debugging
-            while ((~isa(extraStr,'java.lang.String') && ~ischar(extraStr)) || isempty(extraStr)) && ~isempty(labelsToCheck)
+            while ((~isa(nodeTitle,'java.lang.String') && ~ischar(nodeTitle)) || isempty(nodeTitle)) && ~isempty(labelsToCheck)
                 try
-                    extraStr = get(hndl,labelsToCheck{1});
+                    nodeTitle = get(hndl,labelsToCheck{1});
                     strField = labelsToCheck{1};  %#ok - used for debugging
                 catch
                     % never mind - probably missing prop, so skip to next one
                 end
                 labelsToCheck(1) = [];
             end
-            if length(extraStr) ~= numel(extraStr)
+            if length(nodeTitle) ~= numel(nodeTitle)
                 % Multi-line - convert to a long single line
-                extraStr = extraStr';
-                extraStr = extraStr(:)';
+                nodeTitle = nodeTitle';
+                nodeTitle = nodeTitle(:)';
             end
-            extraStr = regexprep(extraStr,{sprintf('(.{25,%d}).*',min(25,length(extraStr)-1)),' +'},{'$1...',' '},'once');
+            if isempty(char(nodeTitle))
+                % No title - check whether this is an HG label whose text is gettable
+                try
+                    location = hndl.getLocationOnScreen;
+                    pos = [location.getX, location.getY, hndl.getWidth, hndl.getHeight];
+                    dist = sum((labelPositions-repmat(pos,size(labelPositions,1),[1,1,1,1])).^2, 2);
+                    [minVal,minIdx] = min(dist);
+                    % Allow max distance of 8 = 2^2+2^2 (i.e. X&Y off by up to 2 pixels, W&H exact)
+                    if minVal <= 8  % 8=2^2+2^2
+                        nodeTitle = get(hg_labels(minIdx),'string');
+                        % Preserve the label handles & position for the tooltip & context-menu
+                        %hg_labels(minIdx) = [];
+                        %labelPositions(minIdx,:) = [];
+                    end
+                catch
+                    % never mind...
+                end
+            end
+            if nargin<2,  charsLimit = 25;  end
+            extraStr = regexprep(nodeTitle,{sprintf('(.{%d,%d}).*',charsLimit,min(charsLimit,length(nodeTitle)-1)),' +'},{'$1...',' '},'once');
             if ~isempty(extraStr)
                 if ischar(extraStr)
                     nodeName = nodeName.concat(' (''').concat(extraStr).concat(''')');
@@ -1602,11 +2449,77 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
             end
         catch
             % Never mind - use whatever we have so far
-            disp(lasterr)
+            %dispError
         end
     end
 
-%% Callback function for <Refresh data> button
+    %% Strip standard Swing callbacks from a list of events
+    function evNames = stripStdCbs(evNames)
+        try
+            stdEvents = {'AncestorAdded', 'AncestorMoved', 'AncestorRemoved', 'AncestorResized', ...
+                         'CaretPositionChanged', 'ComponentAdded', 'ComponentRemoved', ...
+                         'ComponentHidden', 'ComponentMoved', 'ComponentResized', 'ComponentShown', ...
+                         'PropertyChange', 'FocusGained', 'FocusLost', ...
+                         'HierarchyChanged', 'InputMethodTextChanged', ...
+                         'KeyPressed', 'KeyReleased', 'KeyTyped', ...
+                         'MouseClicked', 'MouseDragged', 'MouseEntered', 'MouseExited', ...
+                         'MouseMoved', 'MousePressed', 'MouseReleased', 'MouseWheelMoved', ...
+                         'VetoableChange'};
+            stdEvents = [stdEvents, strcat(stdEvents,'Callback'), strcat(stdEvents,'Fcn')];
+            evNames = setdiff(evNames,stdEvents)';
+        catch
+            % Never mind...
+            dispError
+        end
+    end
+
+    %% Callback function for <Hide standard callbacks> checkbox
+    function cbHideStdCbs_Callback(src, evd, callbacksTable, varargin)  %#ok
+        try
+            % Store the current checkbox value for later use
+            if nargin < 3
+                try
+                    callbacksTable = get(src,'userdata');
+                catch
+                    callbacksTable = getappdata(src,'userdata');
+                end
+            end
+            if evd.getSource.isSelected
+                setappdata(callbacksTable,'hideStdCbs',1);
+            else
+                setappdata(callbacksTable,'hideStdCbs',[]);
+            end
+
+            % Rescan the current node
+            try
+                userdata = get(callbacksTable,'userdata');
+            catch
+                userdata = getappdata(callbacksTable,'userdata');
+            end
+            nodepath = userdata.jTree.getSelectionModel.getSelectionPath;
+            try
+                ed.getCurrentNode = nodepath.getLastPathComponent;
+                nodeSelected(handle(userdata.jTreePeer),ed,[]);
+            catch
+                % ignore - probably no node selected
+            end
+        catch
+            % Never mind...
+            dispError
+        end
+    end
+
+    %% Callback function for <UndocumentedMatlab.com> button
+    function btWebsite_Callback(src, evd, varargin)  %#ok
+        try
+            web('http://UndocumentedMatlab.com/');
+        catch
+            % Never mind...
+            dispError
+        end
+    end
+
+    %% Callback function for <Refresh data> button
     function btRefresh_Callback(src, evd, varargin)  %#ok
         try
             % Set cursor shape to hourglass until we're done
@@ -1617,41 +2530,56 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
 
             % Re-invoke this utility to re-scan the container for all children
             findjobj(object);
-
-            % Restore default cursor shape
-            set(hTreeFig,'Pointer','arrow');
         catch
             % Never mind...
-            set(hTreeFig,'Pointer','arrow');
         end
+
+        % Restore default cursor shape
+        set(hTreeFig,'Pointer','arrow');
     end
 
-%% Callback function for <Export> button
+    %% Callback function for <Export> button
     function btExport_Callback(src, evd, varargin)  %#ok
         try
             % Get the list of all selected nodes
-            jTree = varargin{1};
-            numSelections  = jTree.getSelectionCount;
-            selectionPaths = jTree.getSelectionPaths;
-            hdls = handle([]);
-            for idx = 1 : numSelections
-                %hdls(idx) = handle(selectionPaths(idx).getLastPathComponent.getUserObject);
-                nodedata = get(selectionPaths(idx).getLastPathComponent,'userdata');
-                hdls(idx) = handle(nodedata.obj);
-            end
+            if length(varargin) > 1
+                jTree = varargin{1};
+                numSelections  = jTree.getSelectionCount;
+                selectionPaths = jTree.getSelectionPaths;
+                hdls = handle([]);
+                for idx = 1 : numSelections
+                    %hdls(idx) = handle(selectionPaths(idx).getLastPathComponent.getUserObject);
+                    nodedata = get(selectionPaths(idx).getLastPathComponent,'userdata');
+                    hdls(idx) = handle(nodedata.obj,'CallbackProperties');
+                end
 
-            % Assign the handles in the base workspace & inform user
-            assignin('base','findjobj_hdls',hdls);
-            classNameLabel = varargin{2};
-            msg = ['Exported ' char(classNameLabel.getText.trim) ' to base workspace variable findjobj_hdls'];
+                % Assign the handles in the base workspace & inform user
+                assignin('base','findjobj_hdls',hdls);
+                classNameLabel = varargin{2};
+                msg = ['Exported ' char(classNameLabel.getText.trim) ' to base workspace variable findjobj_hdls'];
+            else
+                % Right-click (context-menu) callback
+                data = varargin{1};
+                obj = data{1};
+                varName = data{2};
+                if isempty(varName)
+                    varName = inputdlg('Enter workspace variable name','FindJObj');
+                    if isempty(varName),  return;  end  % bail out on <Cancel>
+                    varName = varName{1};
+                    if isempty(varName) || ~ischar(varName),  return;  end  % bail out on empty/null
+                    varName = genvarname(varName);
+                end
+                assignin('base',varName,handle(obj,'CallbackProperties'));
+                msg = ['Exported object to base workspace variable ' varName];
+            end
             msgbox(msg,'FindJObj','help');
         catch
             % Never mind...
-            disp(lasterr)
+            dispError
         end
     end
 
-%% Callback function for <Request focus> button
+    %% Callback function for <Request focus> button
     function btFocus_Callback(src, evd, varargin)  %#ok
         try
             % Request focus for the specified object
@@ -1663,39 +2591,99 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
                 object.requestFocus;
             catch
                 % Never mind...
-                %disp(lasterr)
+                %dispError
             end
         end
     end
 
-%% Callback function for <View methods> button
-    function btMethods_Callback(src, evd, varargin)  %#ok
+    %% Callback function for <Inspect> button
+    function btInspect_Callback(src, evd, varargin)  %#ok
         try
             % Inspect the specified object
-            object = getTopSelectedObject(varargin{:});
-            methodsview(object);
+            if length(varargin) == 1
+                object = varargin{1};
+            else
+                object = getTopSelectedObject(varargin{:});
+            end
+            if isempty(which('uiinspect'))
+
+                % If the user has not indicated NOT to be informed about UIInspect
+                if ~ispref('FindJObj','dontCheckUIInspect')
+
+                    % Ask the user whether to download UIINSPECT (YES, no, no & don't ask again)
+                    answer = questdlg({'The object inspector requires UIINSPECT from the MathWorks File Exchange. UIINSPECT was created by Yair Altman, like this FindJObj utility.','','Download & install UIINSPECT?'},'UIInspect','Yes','No','No & never ask again','Yes');
+                    switch answer
+                        case 'Yes'  % => Yes: download & install
+                            try
+                                % Download UIINSPECT
+                                baseUrl = 'http://www.mathworks.com/matlabcentral/fileexchange/17935';
+                                fileUrl = [baseUrl '?controller=file_infos&download=true'];
+                                %file = urlread(fileUrl);
+                                %file = regexprep(file,[char(13),char(10)],'\n');  %convert to OS-dependent EOL
+
+                                % Install...
+                                %newPath = fullfile(fileparts(which(mfilename)),'uiinspect.m');
+                                %fid = fopen(newPath,'wt');
+                                %fprintf(fid,'%s',file);
+                                %fclose(fid);
+                                [fpath,fname,fext] = fileparts(which(mfilename));
+                                zipFileName = fullfile(fpath,'uiinspect.zip');
+                                urlwrite(fileUrl,zipFileName);
+                                unzip(zipFileName,fpath);
+                                rehash;
+                            catch
+                                % Error downloading: inform the user
+                                msgbox(['Error in downloading: ' lasterr], 'UIInspect', 'warn');  %#ok
+                                web(baseUrl);
+                            end
+
+                            % ...and now run it...
+                            %pause(0.1); 
+                            drawnow;
+                            dummy = which('uiinspect');  %#ok used only to load into memory
+                            uiinspect(object);
+                            return;
+
+                        case 'No & never ask again'   % => No & don't ask again
+                            setpref('FindJObj','dontCheckUIInspect',1);
+
+                        otherwise
+                            % forget it...
+                    end
+                end
+                drawnow;
+
+                % No UIINSPECT available - run the good-ol' METHODSVIEW()...
+                methodsview(object);
+            else
+                uiinspect(object);
+            end
         catch
             try
-                methodsview(object.java);
+                if isjava(object)
+                    methodsview(object)
+                else
+                    methodsview(object.java);
+                end
             catch
                 % Never mind...
-                disp(lasterr)
+                dispError
             end
         end
     end
 
-%% Callback function for <Check for updates> button
+    %% Callback function for <Check for updates> button
     function btCheckFex_Callback(src, evd, varargin)  %#ok
         try
             % Check the FileExchange for the latest version
             web('http://www.mathworks.com/matlabcentral/fileexchange/loadFile.do?objectId=14317');
         catch
             % Never mind...
-            disp(lasterr)
+            dispError
         end
     end
 
-%% Check for existence of a newer version
+    %% Check for existence of a newer version
     function checkVersion()
         try
             % If the user has not indicated NOT to be informed
@@ -1703,37 +2691,70 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
 
                 % Get the latest version date from the File Exchange webpage
                 baseUrl = 'http://www.mathworks.com/matlabcentral/fileexchange/';
-                webPage = ddb_urlread([baseUrl 'loadFile.do?objectId=14317']);
-                modIdx = strfind(webPage,'Modification Comments');
+                webUrl = [baseUrl '14317'];  % 'loadFile.do?objectId=14317'];
+                webPage = urlread(webUrl);
+                modIdx = strfind(webPage,'>Updates<');
                 if ~isempty(modIdx)
                     webPage = webPage(modIdx:end);
                     % Note: regexp hangs if substr not found, so use strfind instead...
                     %latestWebVersion = regexprep(webPage,'.*?>(20[\d-]+)</td>.*','$1');
-                    dateIdx = strfind(webPage,'>20');
+                    dateIdx = strfind(webPage,'class="date">');
                     if ~isempty(dateIdx)
-                        latestDate = webPage(dateIdx(1)+1 : dateIdx(1)+10);
+                        latestDate = webPage(dateIdx(end)+13 : dateIdx(end)+23);
+                        try
+                            startIdx = dateIdx(end)+27;
+                            descStartIdx = startIdx + strfind(webPage(startIdx:startIdx+999),'<td>');
+                            descEndIdx   = startIdx + strfind(webPage(startIdx:startIdx+999),'</td>');
+                            descStr = webPage(descStartIdx(1)+3 : descEndIdx(1)-2);
+                            descStr = regexprep(descStr,'</?[pP]>','');
+                        catch
+                            descStr = '';
+                        end
 
                         % Get this file's latest date
-                        thisFile = which(mfilename);  %#ok
-                        thisFileText = evalc('type(thisFile)');
-                        thisFileLatestDate = regexprep(thisFileText,'.*Change log:[\s%]+([\d-]+).*','$1');
+                        thisFileName = which(mfilename);  %#ok
+                        try
+                            thisFileData = dir(thisFileName);
+                            try
+                                thisFileDatenum = thisFileData.datenum;
+                            catch  % old ML versions...
+                                thisFileDatenum = datenum(thisFileData.date);
+                            end
+                        catch
+                            thisFileText = evalc('type(thisFileName)');
+                            thisFileLatestDate = regexprep(thisFileText,'.*Change log:[\s%]+([\d-]+).*','$1');
+                            thisFileDatenum = datenum(thisFileLatestDate,'yyyy-mm-dd');
+                        end
 
                         % If there's a newer version on the File Exchange webpage (allow 2 days grace period)
-                        if (datenum(thisFileLatestDate,'yyyy-mm-dd') < datenum(latestDate,'yyyy-mm-dd')-2)
+                        if (thisFileDatenum < datenum(latestDate,'dd mmm yyyy')-2)
 
                             % Ask the user whether to download the newer version (YES, no, no & don't ask again)
-                            answer = questdlg(['A newer version (' latestDate ') of ' mfilename ' is available on the MathWorks File Exchange. Download & install the new version?'],'FindJObj','Yes','No','No & never ask again','Yes');
+                            msg = {['A newer version (' latestDate ') of FindJObj is available on the MathWorks File Exchange:'], '', ...
+                                   ['\color{blue}' descStr '\color{black}'], '', ...
+                                   'Download & install the new version?'};
+                            createStruct.Interpreter = 'tex';
+                            createStruct.Default = 'Yes';
+                            answer = questdlg(msg,'FindJObj','Yes','No','No & never ask again',createStruct);
                             switch answer
                                 case 'Yes'  % => Yes: download & install newer file
                                     try
-                                        webPage = ddb_urlread([baseUrl '/download.do?objectId=14317&fn=findjobj&fe=.m']);
-                                        webPage = regexprep(webPage,[char(13),char(10)],'\n');  %convert to OS-dependent EOL
-                                        fid = fopen(which(mfilename),'wt');
-                                        fprintf(fid,'%s',webPage);
-                                        fclose(fid);
+                                        %fileUrl = [baseUrl '/download.do?objectId=14317&fn=findjobj&fe=.m'];
+                                        fileUrl = [baseUrl '/14317?controller=file_infos&download=true'];
+                                        %file = urlread(fileUrl);
+                                        %file = regexprep(file,[char(13),char(10)],'\n');  %convert to OS-dependent EOL
+                                        %fid = fopen(thisFileName,'wt');
+                                        %fprintf(fid,'%s',file);
+                                        %fclose(fid);
+                                        [fpath,fname,fext] = fileparts(thisFileName);
+                                        zipFileName = fullfile(fpath,[fname '.zip']);
+                                        urlwrite(fileUrl,zipFileName);
+                                        unzip(zipFileName,fpath);
+                                        rehash;
                                     catch
                                         % Error downloading: inform the user
-                                        msgbox(['Error in downloading: ' lasterr], 'FindJObj', 'warn');
+                                        msgbox(['Error in downloading: ' lasterr], 'FindJObj', 'warn');  %#ok
+                                        web(webUrl);
                                     end
                                 case 'No & never ask again'   % => No & don't ask again
                                     setpref('FindJObj','dontCheckNewerVersion',1);
@@ -1751,7 +2772,7 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
         end
     end
 
-%% Get the first selected object (might not be the top one - depends on selection order)
+    %% Get the first selected object (might not be the top one - depends on selection order)
     function object = getTopSelectedObject(jTree, root)
         try
             object = [];
@@ -1768,68 +2789,422 @@ function [handles,levels,parentIdx,listing] = findjobj(container,varargin)
             object = nodedata.obj;
         catch
             % Never mind...
-            disp(lasterr)
+            dispError
         end
     end
 
-%% Update component callback upon callbacksTable data change
-    function tbCallbacksChanged(src, evd)
-      % exit if invalid handle
-      if ~ishandle(src)  % || length(dbstack)>1  %exit also if not called from user action
-          return;
-      end
+    %% Update component callback upon callbacksTable data change
+    function tbCallbacksChanged(src, evd, object, table)
+        persistent hash
+        try
+            % exit if invalid handle or already in Callback
+            %if ~ishandle(src) || ~isempty(getappdata(src,'inCallback')) % || length(dbstack)>1  %exit also if not called from user action
+            if isempty(hash), hash = java.util.Hashtable;  end
+            if ~ishandle(src) || ~isempty(hash.get(src)) % || length(dbstack)>1  %exit also if not called from user action
+                return;
+            end
+            %setappdata(src,'inCallback',1);  % used to prevent endless recursion   % can't use getappdata(src,...) because it fails on R2010b!!!
+            hash.put(src,1);
 
-      % Update the object's callback with the modified value
-      modifiedColIdx = evd.getColumn;
-      modifiedRowIdx = evd.getFirstRow;
-      if modifiedColIdx==1 && modifiedRowIdx>=0  %sanity check - should always be true
-          table = evd.getSource;
-          object = get(src,'userdata');
-          for objIdx = 1 : length(object)
-              set(object(objIdx), table.getValueAt(modifiedRowIdx,0), table.getValueAt(modifiedRowIdx,1));
-          end
-      end
+            % Update the object's callback with the modified value
+            modifiedColIdx = evd.getColumn;
+            modifiedRowIdx = evd.getFirstRow;
+            if modifiedRowIdx>=0 %&& modifiedColIdx==1  %sanity check - should always be true
+                %table = evd.getSource;
+                %object = get(src,'userdata');
+                modifiedRowIdx = table.getSelectedRow;  % overcome issues with hierarchical table
+                cbName = strtrim(table.getValueAt(modifiedRowIdx,0));
+                try
+                    cbValue = strtrim(char(table.getValueAt(modifiedRowIdx,1)));
+                    if ~isempty(cbValue) && ismember(cbValue(1),'{[@''')
+                        cbValue = eval(cbValue);
+                    end
+                    if (~ischar(cbValue) && ~isa(cbValue, 'function_handle') && (~iscell(cbValue) || iscom(object(1))))
+                        revertCbTableModification(table, modifiedRowIdx, modifiedColIdx, cbName, object, '');
+                    else
+                        for objIdx = 1 : length(object)
+                            obj = object(objIdx);
+                            if ~iscom(obj)
+                                try
+                                    try
+                                        if isjava(obj)
+                                            obj = handle(obj,'CallbackProperties');
+                                        end
+                                    catch
+                                        % never mind...
+                                    end
+                                    set(obj, cbName, cbValue);
+                                catch
+                                    try
+                                        set(handle(obj,'CallbackProperties'), cbName, cbValue);
+                                    catch
+                                        % never mind - probably a callback-group header
+                                    end
+                                end
+                            else
+                                cbs = obj.eventlisteners;
+                                if ~isempty(cbs)
+                                    cbs = cbs(strcmpi(cbs(:,1),cbName),:);
+                                    obj.unregisterevent(cbs);
+                                end
+                                if ~isempty(cbValue) && ~strcmp(cbName,'-')
+                                    obj.registerevent({cbName, cbValue});
+                                end
+                            end
+                        end
+                    end
+                catch
+                    revertCbTableModification(table, modifiedRowIdx, modifiedColIdx, cbName, object, lasterr)  %#ok
+                end
+            end
+        catch
+            % never mind...
+        end
+        %setappdata(src,'inCallback',[]);  % used to prevent endless recursion   % can't use setappdata(src,...) because it fails on R2010b!!!
+        hash.remove(src);
     end
 
-%% Traverse an HG container hierarchy and extract the HG elements within
+    %% Revert Callback table modification
+    function revertCbTableModification(table, modifiedRowIdx, modifiedColIdx, cbName, object, errMsg)  %#ok
+        try
+            % Display a notification MsgBox
+            msg = 'Callbacks must be a ''string'', or a @function handle';
+            if ~iscom(object(1)),  msg = [msg ' or a {@func,args...} construct'];  end
+            if ~isempty(errMsg),  msg = {errMsg, '', msg};  end
+            msgbox(msg, ['Error setting ' cbName ' value'], 'warn');
+
+            % Revert to the current value
+            curValue = '';
+            try
+                if ~iscom(object(1))
+                    curValue = charizeData(get(object(1),cbName));
+                else
+                    cbs = object(1).eventlisteners;
+                    if ~isempty(cbs)
+                        cbs = cbs(strcmpi(cbs(:,1),cbName),:);
+                        curValue = charizeData(cbs(1,2));
+                    end
+                end
+            catch
+                % never mind... - clear the current value
+            end
+            table.setValueAt(curValue, modifiedRowIdx, modifiedColIdx);
+        catch
+            % never mind...
+        end
+    end  % revertCbTableModification
+
+    %% Get the Java positions of all HG text labels
+    function labelPositions = getLabelsJavaPos(container)
+        try
+            labelPositions = [];
+
+            % Ensure we have a figure handle
+            try
+                h = hFig;  %#ok unused
+            catch
+                hFig = getCurrentFigure;
+            end
+
+            % Get the figure's margins from the Matlab properties
+            hg_labels = findall(hFig, 'Style','text');
+            units = get(hFig,'units');
+            set(hFig,'units','pixels');
+            outerPos = get(hFig,'OuterPosition');
+            innerPos = get(hFig,'Position');
+            set(hFig,'units',units);
+            margins = abs(innerPos-outerPos);
+
+            figX = container.getX;        % =outerPos(1)
+            figY = container.getY;        % =outerPos(2)
+            %figW = container.getWidth;   % =outerPos(3)
+            figH = container.getHeight;   % =outerPos(4)
+
+            % Get the relevant screen pixel size
+            %monitorPositions = get(0,'MonitorPositions');
+            %for monitorIdx = size(monitorPositions,1) : -1 : 1
+            %    screenSize = monitorPositions(monitorIdx,:);
+            %    if (outerPos(1) >= screenSize(1)) % && (outerPos(1)+outerPos(3) <= screenSize(3))
+            %        break;
+            %    end
+            %end
+            %monitorBaseY = screenSize(4) - monitorPositions(1,4);
+
+            % Compute the labels' screen pixel position in Java units ([0,0] = top left)
+            for idx = 1 : length(hg_labels)
+                matlabPos = getpixelposition(hg_labels(idx),1);
+                javaX = figX + matlabPos(1) + margins(1);
+                javaY = figY + figH - matlabPos(2) - matlabPos(4) - margins(2);
+                labelPositions(idx,:) = [javaX, javaY, matlabPos(3:4)];  %#ok grow
+            end
+        catch
+            % never mind...
+            err = lasterror;  %#ok debug point
+        end
+    end
+
+    %% Traverse an HG container hierarchy and extract the HG elements within
     function traverseHGContainer(hcontainer,level,parent)
-       try
-           % Record the data for this node
-           thisIdx = length(hg_levels) + 1;
-           hg_levels(thisIdx) = level;
-           hg_parentIdx(thisIdx) = parent;
-           hg_handles(thisIdx) = handle(hcontainer);
-           parentId = length(hg_parentIdx);
+        try
+            % Record the data for this node
+            thisIdx = length(hg_levels) + 1;
+            hg_levels(thisIdx) = level;
+            hg_parentIdx(thisIdx) = parent;
+            try
+                hg_handles(thisIdx) = handle(hcontainer);
+            catch
+                hg_handles = handle(hcontainer);
+            end
+            parentId = length(hg_parentIdx);
 
-           % Now recursively process all this node's children (if any)
-           %if ishghandle(hcontainer)
-           try  % try-catch is faster than checking ishghandle(hcontainer)...
-               allChildren = allchild(handle(hcontainer));
-               for childIdx = 1 : length(allChildren)
-                   traverseHGContainer(allChildren(childIdx),level+1,parentId);
-               end
-           catch
-               % do nothing - probably not a container
-               %disp(lasterr)
-           end
+            % Now recursively process all this node's children (if any)
+            %if ishghandle(hcontainer)
+            try  % try-catch is faster than checking ishghandle(hcontainer)...
+                allChildren = allchild(handle(hcontainer));
+                for childIdx = 1 : length(allChildren)
+                    traverseHGContainer(allChildren(childIdx),level+1,parentId);
+                end
+            catch
+                % do nothing - probably not a container
+                %dispError
+            end
 
-           % TODO: Add axis (plot) component handles
-       catch
-           % forget it...
-       end
+            % TODO: Add axis (plot) component handles
+        catch
+            % forget it...
+        end
     end
+
+    %% Debuggable "quiet" error-handling
+    function dispError
+        err = lasterror;  %#ok
+        msg = err.message;
+        for idx = 1 : length(err.stack)
+            filename = err.stack(idx).file;
+            if ~isempty(regexpi(filename,mfilename))
+                funcname = err.stack(idx).name;
+                line = num2str(err.stack(idx).line);
+                msg = [msg ' at <a href="matlab:opentoline(''' filename ''',' line ');">' funcname ' line #' line '</a>']; %#ok grow
+                break;
+            end
+        end
+        disp(msg);
+        return;  % debug point
+    end
+
+    %% ML 7.0 - compatible ischar() function
+    function flag = ischar(data)
+        try
+            flag = builtin('ischar',data);
+        catch
+            flag = isa(data,'char');
+        end
+    end
+
+    %% Set up the uitree context (right-click) menu
+    function jmenu = setTreeContextMenu(obj,node,tree_h)
+          % Prepare the context menu (note the use of HTML labels)
+          import javax.swing.*
+          titleStr = getNodeTitleStr(obj,node);
+          titleStr = regexprep(titleStr,'<hr>.*','');
+          menuItem0 = JMenuItem(titleStr);
+          menuItem0.setEnabled(false);
+          menuItem0.setArmed(false);
+          %menuItem1 = JMenuItem('Export handle to findjobj_hdls');
+          if isjava(obj), prefix = 'j';  else,  prefix = 'h';  end  %#ok<NOCOM>
+          varname = strrep([prefix strtok(char(node.getName))], '$','_');
+          varname = genvarname(varname);
+          varname(2) = upper(varname(2));  % ensure lowerCamelCase
+          menuItem1 = JMenuItem(['Export handle to ' varname]);
+          menuItem2 = JMenuItem('Export handle to...');
+          menuItem3 = JMenuItem('Request focus (bring to front)');
+          menuItem4 = JMenuItem('Flash component borders');
+          menuItem5 = JMenuItem('Display properties & callbacks');
+          menuItem6 = JMenuItem('Inspect object');
+
+          % Set the menu items' callbacks
+          set(handle(menuItem1,'CallbackProperties'), 'ActionPerformedCallback', {@btExport_Callback,{obj,varname}});
+          set(handle(menuItem2,'CallbackProperties'), 'ActionPerformedCallback', {@btExport_Callback,{obj,[]}});
+          set(handle(menuItem3,'CallbackProperties'), 'ActionPerformedCallback', {@requestFocus,obj});
+          set(handle(menuItem4,'CallbackProperties'), 'ActionPerformedCallback', {@flashComponent,{obj,0.2,3}});
+          set(handle(menuItem5,'CallbackProperties'), 'ActionPerformedCallback', {@nodeSelected,{tree_h,node}});
+          set(handle(menuItem6,'CallbackProperties'), 'ActionPerformedCallback', {@btInspect_Callback,obj});
+
+          % Add all menu items to the context menu (with internal separator)
+          jmenu = JPopupMenu;
+          jmenu.add(menuItem0);
+          jmenu.addSeparator;
+          handleValue=[];  try handleValue = double(obj); catch, end;  %#ok
+          if ~isempty(handleValue)
+              % For valid HG handles only
+              menuItem0a = JMenuItem('Copy handle value to clipboard');
+              set(handle(menuItem0a,'CallbackProperties'), 'ActionPerformedCallback', sprintf('clipboard(''copy'',%.99g)',handleValue));
+              jmenu.add(menuItem0a);
+          end
+          jmenu.add(menuItem1);
+          jmenu.add(menuItem2);
+          jmenu.addSeparator;
+          jmenu.add(menuItem3);
+          jmenu.add(menuItem4);
+          jmenu.add(menuItem5);
+          jmenu.add(menuItem6);
+    end  % setTreeContextMenu
+
+    %% Set the mouse-press callback
+    function treeMousePressedCallback(hTree, eventData, tree_h)  %#ok hTree is unused
+        if eventData.isMetaDown  % right-click is like a Meta-button
+            % Get the clicked node
+            clickX = eventData.getX;
+            clickY = eventData.getY;
+            jtree = eventData.getSource;
+            treePath = jtree.getPathForLocation(clickX, clickY);
+            try
+                % Modify the context menu based on the clicked node
+                node = treePath.getLastPathComponent;
+                userdata = get(node,'userdata');
+                obj = userdata.obj;
+                jmenu = setTreeContextMenu(obj,node,tree_h);
+
+                % TODO: remember to call jmenu.remove(item) in item callback
+                % or use the timer hack shown here to remove the item:
+                %    timerFcn = {@menuRemoveItem,jmenu,item};
+                %    start(timer('TimerFcn',timerFcn,'StartDelay',0.2));
+
+                % Display the (possibly-modified) context menu
+                jmenu.show(jtree, clickX, clickY);
+                jmenu.repaint;
+
+                % This is for debugging:
+                userdata.tree = jtree;
+                setappdata(gcf,'findjobj_hgtree',userdata)
+            catch
+                % clicked location is NOT on top of any node
+                % Note: can also be tested by isempty(treePath)
+            end
+        end
+    end  % treeMousePressedCallback
+
+    %% Remove the extra context menu item after display
+    function menuRemoveItem(hObj,eventData,jmenu,item) %#ok unused
+        jmenu.remove(item);
+    end  % menuRemoveItem
+
+    %% Get the title for the tooltip and context (right-click) menu
+    function nodeTitleStr = getNodeTitleStr(obj,node)
+        try
+            % Display the full classname and object name in the tooltip
+            %nodeName = char(node.getName);
+            %nodeName = strrep(nodeName, '<HTML><i><font color="gray">','');
+            %nodeName = strrep(nodeName, '</font></i></html>','');
+            nodeName = char(getNodeName(obj,99));
+            [objClass,objName] = strtok(nodeName);
+            objName = objName(3:end-1);  % strip leading ( and trailing )
+            if isempty(objName),  objName = '(none found)';  end
+            nodeName = char(node.getName);
+            objClass = char(obj.getClass.getName);
+            nodeTitleStr = sprintf('<html>Class name: <font color="blue">%s</font><br>Text/title: %s',objClass,objName);
+
+            % If the component is invisible, state this in the tooltip
+            if ~isempty(strfind(nodeName,'color="gray"'))
+                nodeTitleStr = [nodeTitleStr '<br><font color="gray"><i><b>*** Invisible ***</b></i></font>'];
+            end
+            nodeTitleStr = [nodeTitleStr '<hr>Right-click for context-menu'];
+        catch
+            % Possible not a Java object - try treating as an HG handle
+            try
+                handleValueStr = sprintf('#: <font color="blue"><b>%.99g<b></font>',double(obj));
+                try
+                    type = '';
+                    type = get(obj,'type');
+                    type(1) = upper(type(1));
+                catch
+                    if ~ishandle(obj)
+                        type = ['<font color="red"><b>Invalid <i>' char(node.getName) '</i>'];
+                        handleValueStr = '!!!</b></font><br>Perhaps this handle was deleted after this UIInspect tree was<br>already drawn. Try to refresh by selecting any valid node handle';
+                    end
+                end
+                nodeTitleStr = sprintf('<html>%s handle %s',type,handleValueStr);
+                try
+                    % If the component is invisible, state this in the tooltip
+                    if strcmp(get(obj,'Visible'),'off')
+                        nodeTitleStr = [nodeTitleStr '<br><center><font color="gray"><i>Invisible</i></font>'];
+                    end
+                catch
+                    % never mind...
+                end
+            catch
+                % never mind... - ignore
+            end
+        end
+    end  % getNodeTitleStr
+
+    %% Handle tree mouse movement callback - used to set the tooltip & context-menu
+    function treeMouseMovedCallback(hTree, eventData)
+          try
+              x = eventData.getX;
+              y = eventData.getY;
+              jtree = eventData.getSource;
+              treePath = jtree.getPathForLocation(x, y);
+              try
+                  % Set the tooltip string based on the hovered node
+                  node = treePath.getLastPathComponent;
+                  userdata = get(node,'userdata');
+                  obj = userdata.obj;
+                  tooltipStr = getNodeTitleStr(obj,node);
+                  set(hTree,'ToolTipText',tooltipStr)
+              catch
+                  % clicked location is NOT on top of any node
+                  % Note: can also be tested by isempty(treePath)
+              end
+          catch
+              dispError;
+          end
+          return;  % denug breakpoint
+    end  % treeMouseMovedCallback
+
+    %% Request focus for a specific object handle
+    function requestFocus(hTree, eventData, obj)  %#ok hTree & eventData are unused
+        % Ensure the object handle is valid
+        if isjava(obj)
+            obj.requestFocus;
+            return;
+        elseif ~ishandle(obj)
+            msgbox('The selected object does not appear to be a valid handle as defined by the ishandle() function. Perhaps this object was deleted after this hierarchy tree was already drawn. Refresh this tree by selecting a valid node handle and then retry.','FindJObj','warn');
+            beep;
+            return;
+        end
+
+        try
+            foundFlag = 0;
+            while ~foundFlag
+                if isempty(obj),  return;  end  % sanity check
+                type = get(obj,'type');
+                obj = double(obj);
+                foundFlag = any(strcmp(type,{'figure','axes','uicontrol'}));
+                if ~foundFlag
+                    obj = get(obj,'Parent');
+                end
+            end
+            feval(type,obj);
+        catch
+            % never mind...
+            dispError;
+        end
+    end  % requestFocus
+
 
 end  % FINDJOBJ
 
 
 %% TODO TODO TODO
 %{
-- Improve performance - esp. expandNode() & traverseContainer()
-- Add property listeners - same problem in MathWork's inspect.m
-- Display additional properties - same problem in MathWork's inspect.m
-- Group callbacks according to the first word (up to 2nd cap letter)
-- Auto-highlight selected object (?)
-- Add axis (plot, Graphics) component handles
-- Add figure thumbnail image below the java tree (& indicate corresponding jObject when selected)
-- Fix java exceptions when getting some fields (com.mathworks.mlwidgets.inspector.PropertyRootNode$PropertyListener$1$1.run)
+- Enh: Improve performance - esp. expandNode() (performance solved in non-nteractive mode)
+- Enh: Add property listeners - same problem in MathWork's inspect.m
+- Enh: Display additional properties - same problem in MathWork's inspect.m
+- Enh: Add axis (plot, Graphics) component handles
+- Enh: Group callbacks according to the first word (up to 2nd cap letter)
+- Enh: Add figure thumbnail image below the java tree (& indicate corresponding jObject when selected)
+- Enh: scroll initially-selected node into view (problem because treenode has no pixel location)
+- Fix: java exceptions when getting some fields (com.mathworks.mlwidgets.inspector.PropertyRootNode$PropertyListener$1$1.run)
+- Fix: use EDT if available (especially in flashComponent)
 %}
