@@ -101,10 +101,15 @@ else
     %   TK: fscanf does not work when cross section names contain integers  
     %   S.DATA(i).name         = fscanf(fid,'%20c',1); 
     %   S.DATA(i).mn           = fscanf(fid,'%i'  ,4);
-    %   ==> read the line and scan the line
+    %   ==> read the line and scan the line; use str2num because 001 is not
+    %                                        read properly using sscanf
        line      = fgetl(fid);
-       S.DATA(i).name         = sscanf(line( 1: 20),'%20c',1); 
-       S.DATA(i).mn           = sscanf(line(21:end),'%i'  ,4);
+       S.DATA(i).name         = sscanf(line( 1: 20),'%20c',1);
+       numbers                = line(21:end);
+       index                  = d3d2dflowfm_decomposestr(numbers);
+       for i_mn = 1:4
+           S.DATA(i).mn(i_mn) = str2num(numbers(index(i_mn):index(i_mn + 1) - 1));
+       end
        S.NTables = length(S.DATA);
       [S.DATA(i).m,... % turn the endpoint-description along gridlines into vectors
        S.DATA(i).n]=meshgrid(S.DATA(i).mn(1):S.DATA(i).mn(3),...
