@@ -41,9 +41,9 @@ if ~isempty(OPT.Filbnd)
                 tline     = fgetl(fid2);
             end
             fclose (fid2);
-            tlinecell     = textscan(tline,'%s%s%s%s%s');
-            tlinestr      = cell2mat(tlinecell{3});
-            switch tlinestr;
+            index         = d3d2dflowfm_decomposestr(tline);
+            type_bnd      = strtrim(tline(index(3):index(4) - 1));
+            switch type_bnd
                 case 'Z';
                     type  = 'waterlevelbnd';
                 case 'C';

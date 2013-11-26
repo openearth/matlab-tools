@@ -38,24 +38,24 @@ for i_pli = 1: length(filpli)
 
     %% Check if astronomical bc exist in this pli
     for i_pnt = 1: size(LINE.DATA,1)
-        index =  d3d2flowfm_decomposestr(LINE.DATA{i_pnt,3});
+        index =  d3d2dflowfm_decomposestr(LINE.DATA{i_pnt,3});
         b_type = lower(strtrim(LINE.DATA{i_pnt,3}(index(2):index(3) - 1)));
         switch b_type
-            
+
             %% Astronomical boundary forcing
             case 'a'
                 if OPT.Astronomical
                     %% Open file with astronomical bc
                     filename = [path_output filesep LINE.Blckname '_' num2str(i_pnt,'%0.4d') '.cmp'];
                     fid      = fopen(filename,'wt');
-                    
+
                     %% Write the general information
                     fprintf(fid,['* COLUMNN=3','\n']);
                     fprintf(fid,['* COLUMN1=Period (min) or Astronomical Componentname','\n']);
                     fprintf(fid,['* COLUMN2=Amplitude (ISO)','\n']);
                     fprintf(fid,['* COLUMN3=Phase (deg)','\n']);
                     pntname  = strtrim(LINE.DATA{i_pnt,3}(index(3):index(4) - 1));
-                    
+
                     %% Find correct label and write names, amplitudes and phases
                     for i_bca=1:length(bca.DATA);
                         if strcmp(pntname,bca.DATA(i_bca).label);
@@ -71,32 +71,32 @@ for i_pli = 1: length(filpli)
                     end
                 end
 
-            %% Harmonic boundary forcing     
+            %% Harmonic boundary forcing
             case 'h'
                 if OPT.Harmonic
                     %% Open file with harmonic bc
                     filename = [path_output filesep LINE.Blckname '_' num2str(i_pnt,'%0.4d') '.cmp'];
                     fid      = fopen(filename,'wt');
-                    
+
                     %% Write some general information
                     fprintf(fid,['* COLUMNN=3','\n']);
                     fprintf(fid,['* COLUMN1=Period (min) or Astronomical Componentname','\n']);
                     fprintf(fid,['* COLUMN2=Amplitude (ISO)','\n']);
                     fprintf(fid,['* COLUMN3=Phase (deg)','\n']);
-                    
+
                     %% find harmonic boundary number and side
-                    
+
                     i_harm = str2num(LINE.DATA{i_pnt,3}(index(3):index(3) + 3));
                     if strcmpi      (LINE.DATA{i_pnt,3}(end     :end         ),'a');
                         i_side = 1;
                     else
                         i_side = 2;
                     end
-                    
+
                     %% Write harmonic data to forcing file
                     string  = sprintf('%12.4f %12.4f %12.4f', 0.0, a0(i_side,i_harm),0.0);
                     fprintf(fid,[string '\n']);
-                    
+
                     for i_freq = 1:no_freq
                         string = sprintf('%12.4f %12.4f %12.4f', freq(i_freq)                  , ...
                                                                  amp (i_side,i_harm,i_freq)    , ...
@@ -105,9 +105,9 @@ for i_pli = 1: length(filpli)
                     end
                     fclose(fid);
                 end
-            %% Time series forcing data    
+            %% Time series forcing data
             case 't'
-                if OPT.Series 
+                if OPT.Series
                 % to implement yet
                 end
         end
