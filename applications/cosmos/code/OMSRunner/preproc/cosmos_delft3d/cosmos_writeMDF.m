@@ -161,7 +161,7 @@ if model.includeTemperature && model.includeHeatExchange
     fprintf(fid,'%s\n','Ktemp = 5');
     fprintf(fid,'%s\n','Fclou =  0.0000000e+000');
     fprintf(fid,'%s\n','Sarea =  6.0000000e+009');
-    fprintf(fid,'%s\n','Secchi=  3.0000000e+000');
+    fprintf(fid,'%s\n',['Secchi=  ' num2str(model.secchidepth)]);
     fprintf(fid,'%s\n','Stantn=  1.4500000e-003');
     fprintf(fid,'%s\n','Dalton=  1.2000000e-003');
     fprintf(fid,'%s\n','Filtmp= #dummy.tem#');

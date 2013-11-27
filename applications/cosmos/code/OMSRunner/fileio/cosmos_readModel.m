@@ -350,6 +350,12 @@ if isfield(xml,'heatexchange')
     end
 end
 
+if isfield(xml,'secchidepth')
+    model.secchidepth=str2double(xml.secchidepth);
+else
+    model.secchidepth=3;
+end
+    
 model.includeAirPressure=1;
 if isfield(xml,'airpressure')
     if strcmpi(xml.airpressure(1),'n')
