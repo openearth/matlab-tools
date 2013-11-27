@@ -155,6 +155,7 @@ for ii=1:length(iopen)
         end
         % Find attributes in node
         attributes=[];
+        name=deblank(name);
         isp=find(name==' ');
         if ~isempty(isp)
             attstr = name(isp(1)+1:end);
