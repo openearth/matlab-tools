@@ -4,7 +4,7 @@ fname=[hm.scenarioDir filesep hm.scenario '.xml'];
 
 %scn=xml_load(fname);
 
-xml=xml2struct3(fname);
+xml=xml2struct(fname);
 
 %hm.runEnv='win32';
 hm.numCores=1;

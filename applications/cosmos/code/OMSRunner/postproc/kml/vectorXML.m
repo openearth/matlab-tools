@@ -83,12 +83,12 @@ isn=isnan(x);
 x=x(~isn);
 y=y(~isn);
 
-mdl.scalefactor.value=scalefactor;
-mdl.scalefactor.type='real';
+mdl.scalefactor.scalefactor.value=scalefactor;
+mdl.scalefactor.scalefactor.ATTRIBUTES.type.value='real';
 
 if ~isempty(overlayfile)
-    mdl.screenoverlay.value=overlayfile;
-    mdl.screenoverlay.type='char';
+    mdl.screenoverlay.screenoverlay.value=overlayfile;
+    mdl.screenoverlay.screenoverlay.ATTRIBUTES.type.value='char';
 end
 
 %% Styles
@@ -106,22 +106,22 @@ for ic=1:length(levs)
     if length(bstr)==1
         bstr=['0' bstr];
     end
-    mdl.styles(ic).style.color.value=['ff' bstr gstr rstr];
-    mdl.styles(ic).style.color.type='char';
+    mdl.styles.styles.style(ic).style.color.color.value=['ff' bstr gstr rstr];
+    mdl.styles.styles.style(ic).style.color.color.ATTRIBUTES.type.value='char';
 end
 
 %% Levels
-mdl.cmin.value=levs(1);
-mdl.cmin.type='real';
-mdl.cmax.value=levs(end);
-mdl.cmax.type='real';
+mdl.cmin.cmin.value=levs(1);
+mdl.cmin.cmin.ATTRIBUTES.type.value='real';
+mdl.cmax.cmax.value=levs(end);
+mdl.cmax.cmax.ATTRIBUTES.type.value='real';
 
-mdl.x.value=x;
-mdl.x.type='real';
-mdl.x.format='%0.5f';
-mdl.y.value=y;
-mdl.y.type='real';
-mdl.y.format='%0.5f';
+mdl.x.x.value=x;
+mdl.x.x.ATTRIBUTES.type.value='real';
+mdl.x.x.FORMAT='%0.5f';
+mdl.y.y.value=y;
+mdl.y.y.ATTRIBUTES.type.value='real';
+mdl.y.y.FORMAT='%0.5f';
 
 for it=1:length(t)
     
@@ -133,16 +133,16 @@ for it=1:length(t)
     uu=uu(~isn);
     vv=vv(~isn);
 
-    mdl.times(it).time.u.value=uu;
-    mdl.times(it).time.u.type='real';
-    mdl.times(it).time.u.format='%0.2f';
-    mdl.times(it).time.v.value=vv;
-    mdl.times(it).time.v.type='real';
-    mdl.times(it).time.v.format='%0.2f';
+    mdl.times.times.time(it).time.u.u.value=uu;
+    mdl.times.times.time(it).time.u.u.ATTRIBUTES.type.value='real';
+    mdl.times.times.time(it).time.u.u.FORMAT='%0.2f';
+    mdl.times.times.time(it).time.v.v.value=vv;
+    mdl.times.times.time(it).time.v.v.ATTRIBUTES.type.value='real';
+    mdl.times.times.time(it).time.v.v.FORMAT='%0.2f';
 
 end
 
-struct2xml([dr fname],mdl,'includeattributes',1,'structuretype',0);
+struct2xml([dr fname],mdl,'includeattributes',1,'structuretype','long');
 
 %%
 function rgb=makeColorMap(clmap,n)

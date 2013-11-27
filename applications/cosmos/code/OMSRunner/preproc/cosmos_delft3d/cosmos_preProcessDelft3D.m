@@ -329,7 +329,8 @@ switch lower(model.type)
                 fprintf(fid,'%s\n','wavelibdir=$D3D_HOME/wave/lib');
                 fprintf(fid,'%s\n','swanexedir=$D3D_HOME/swan/bin');
                 fprintf(fid,'%s\n','swanlibdir=$D3D_HOME/swan/lib');
-                fprintf(fid,'%s\n','swanbatdir=$D3D_HOME/swan/scripts'); 
+                fprintf(fid,'%s\n','swanbatdir=./');
+%                fprintf(fid,'%s\n','swanbatdir=$D3D_HOME/swan/scripts'); 
                 fprintf(fid,'%s\n','');
                 fprintf(fid,'%s\n','    # Set some (environment) parameters');
                 fprintf(fid,'%s\n','    # needed on h4:');
@@ -340,6 +341,7 @@ switch lower(model.type)
                 fprintf(fid,'%s\n','$flowexedir/deltares_hydro.exe $argfile &');
                 fprintf(fid,'%s\n','');
                 fprintf(fid,'%s\n','export LD_LIBRARY_PATH=$swanbatdir:$waveexedir:$swanexedir:$wavelibdir:$swanlibdir:$LD_LIBRARY_PATH');
+                fprintf(fid,'%s\n','export LD_LIBRARY_PATH=$waveexedir:$swanexedir:$wavelibdir:$swanlibdir:$LD_LIBRARY_PATH');
                 fprintf(fid,'%s\n','export PATH=$swanbatdir:$PATH');
                 fprintf(fid,'%s\n','$waveexedir/wave.exe $mdwfile 1');
                 fprintf(fid,'%s\n','');

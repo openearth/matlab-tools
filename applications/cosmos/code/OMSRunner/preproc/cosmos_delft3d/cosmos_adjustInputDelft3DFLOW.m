@@ -379,9 +379,11 @@ try
         
         % Try reading from p drive for now
         dr='p:\argus\argusdata\beachWizard\jvspeijk\zboutput\';
+        dr='p:\argus\argusdata\cbathy\jvspeijk\';
         flist=dir([dr '*.nc']);
         for ii=1:length(flist)
-            tstr=flist(ii).name(end-17:end-3);
+%            tstr=flist(ii).name(end-17:end-3);
+            tstr=[flist(ii).name(10:18) flist(ii).name(22:27)];
             bwtimes(ii)=datenum(tstr,'yyyymmdd.HHMMSS');
         end
         it=find(bwtimes<=hm.cycle,1,'last');
@@ -389,7 +391,8 @@ try
         
         x=nc_varget(url,'x');
         y=nc_varget(url,'y');
-        z=nc_varget(url,'z');
+%        z=nc_varget(url,'z');
+        z=-nc_varget(url,'z');
         grd=wlgrid('read',[tmpdir model.name '.grd']);
         mmax=size(grd.X,1)+1;
         nmax=size(grd.X,2)+1;

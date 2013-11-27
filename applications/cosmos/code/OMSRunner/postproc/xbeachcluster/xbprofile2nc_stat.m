@@ -71,6 +71,7 @@ for i=1:length(datfil)
 %     end
 end
 
+
 ncid     = netcdf.create([archivedir mopid '.nc'],'clobber');
 
 %% Defining dimensions

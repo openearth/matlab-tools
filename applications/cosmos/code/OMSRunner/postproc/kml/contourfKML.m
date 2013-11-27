@@ -110,7 +110,7 @@ end
 
 for it=1:length(t)
     
-    disp(['Processing ' num2str(it) ' of ' num2str(length(t)) ' ...']);
+%    disp(['Processing ' num2str(it) ' of ' num2str(length(t)) ' ...']);
     
     fprintf(fid,'%s\n','<Folder>');
     

@@ -4,7 +4,8 @@ function cosmos_makeMapKMZs(hm,m)
 model=hm.models(m);
 
 fdr=model.cycledirfigures;
-appendeddirmaps=model.appendeddirmaps;
+% appendeddirmaps=model.appendeddirmaps;
+cycledirmaps=model.cycledirmaps;
 
 t=0;
 
@@ -15,27 +16,27 @@ if exist(posfile,'file')
 end
 
 name='';
-
-try
     
-    nmaps=length(model.mapPlots);
+nmaps=length(model.mapPlots);
 
-    for im=1:nmaps
-
+for im=1:nmaps
+    
+    try
+        
         if model.mapPlots(im).plot
-
+            
             if exist(posfile,'file')
                 delete(posfile);
             end
-
+            
             % Dataset
-
+            
             ndat=model.mapPlots(im).nrDatasets;
-
+            
             name=model.mapPlots(im).name;
-
+            
             s=[];
-
+            
             nt=0;
             
             for id=1:ndat
@@ -43,9 +44,9 @@ try
                 plotRoutine=model.mapPlots(im).datasets(id).plotRoutine;
                 barlabel=model.mapPlots(im).datasets(id).barLabel;
                 clmap=model.mapPlots(im).datasets(id).colorMap;
-
+                
                 par{id}=model.mapPlots(im).datasets(id).name;
-
+                
                 switch lower(par{id})
                     case{'landboundary'}
                         if exist([model.dir 'data' filesep model.name '.ldb'],'file')
@@ -56,11 +57,15 @@ try
                         end
                         s(id).data.X=xldb;
                         s(id).data.Y=yldb;
+                    case{'argusmerged'}
+                        s=1;
                     otherwise
-                        fname=[appendeddirmaps par{id} '.mat'];
+                        fname=[cycledirmaps par{id} '.mat'];
+%                        fname=[appendeddirmaps par{id} '.mat'];
                         if exist(fname,'file')
                             s(id).data=load(fname);
                         else
+                            disp(['File ' fname ' not found! - ' model.name]);
                             break;
                         end
                         switch lower(model.mapPlots(im).datasets(id).component)
@@ -91,18 +96,25 @@ try
                                 end
                         end
                         nt=length(s(id).data.Time);
-                end
 
-                if ~strcmpi(model.coordinateSystemType,'geographic')
-                    if isvector(s(id).data.X)
-                        [xxx,yyy]=meshgrid(s(id).data.X,s(id).data.Y);
-                    else
-                        xxx=s(id).data.X;
-                        yyy=s(id).data.Y;
-                    end
-                    [s(id).data.X,s(id).data.Y]=convertCoordinates(xxx,yyy,'persistent','CS1.name',model.coordinateSystem,'CS1.type',model.coordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
+                        if ~strcmpi(model.coordinateSystemType,'geographic')
+                            if isvector(s(id).data.X)
+                                [xxx,yyy]=meshgrid(s(id).data.X,s(id).data.Y);
+                            else
+                                xxx=s(id).data.X;
+                                yyy=s(id).data.Y;
+                            end
+                            [s(id).data.X,s(id).data.Y]=convertCoordinates(xxx,yyy,'persistent','CS1.name',model.coordinateSystem,'CS1.type',model.coordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
+                        end
+                
                 end
-
+                
+                
+            end
+            
+            if isempty(s)
+                % File not found
+                break
             end
             
             if nt>1
@@ -116,9 +128,9 @@ try
                 n3=1;
                 it1=1;
             end
-          
+            
             switch lower(plotRoutine)
-
+                
                 case{'coloredvectors'}
                     % Quiver KML
                     clrbarname=[fdr name '.colorbar.png'];
@@ -131,7 +143,7 @@ try
                     thin=model.mapPlots(im).datasets.thinning;
                     thinX=model.mapPlots(im).datasets.thinningX;
                     thinY=model.mapPlots(im).datasets.thinningY;
-                    if thin>thinX 
+                    if thin>thinX
                         thinX=thin;
                     end
                     if thin>thinY
@@ -144,7 +156,7 @@ try
                     if exist([fdr name '.colorbar.png'],'file')
                         delete([fdr name '.colorbar.png']);
                     end
-
+                    
                 case{'vectorxml'}
                     % Quiver KML
                     clrbarname=[fdr name '.colorbar.png'];
@@ -157,7 +169,7 @@ try
                     thin=model.mapPlots(im).datasets.thinning;
                     thinX=model.mapPlots(im).datasets.thinningX;
                     thinY=model.mapPlots(im).datasets.thinningY;
-                    if thin>thinX 
+                    if thin>thinX
                         thinX=thin;
                     end
                     if thin>thinY
@@ -237,7 +249,7 @@ try
                         
                         clrbarname=[fdr name '.colorbar.png'];
                         cosmos_makeColorBar(clrbarname,'contours',clim(1):clim(2):clim(3),'colormap',clmap,'label',barlabel,'decimals',cdec);
-
+                        
                         for it=it1:n3:nt
                             
                             if it<nt
@@ -310,7 +322,7 @@ try
                             end
                             
                         end
-                                                
+                        
                         flist=[];
                         
                         for it=1:length(t2)
@@ -322,13 +334,13 @@ try
                         end
                         
                     end
-
+                    
                 case{'argusmerged'}
                     
                     try
                         station=model.mapPlots(im).datasets(id).argusstation;
                         t=floor(hm.cycle)-1+0.5;
-                        figdr=[cycledir 'figures' filesep];
+%                        figdr=[cycledir 'figures' filesep];
                         xori=model.mapPlots(im).datasets(id).argusxorigin;
                         yori=model.mapPlots(im).datasets(id).argusyorigin;
                         wdt=model.mapPlots(im).datasets(id).arguswidth;
@@ -346,14 +358,15 @@ try
                 delete(posfile);
             end
         end
-
+        
+    catch
+        
+        WriteErrorLogFile(hm,['Something went wrong with generating map figures of ' name ' - ' model.name]);
+        
     end
-
-catch
-
-    WriteErrorLogFile(hm,['Something went wrong with generating map figures of ' name ' - ' model.name]);
-
+    
 end
+
 
 if exist(posfile,'file')
     delete(posfile);

@@ -60,8 +60,8 @@ for it=1:nt
         for n=1:1000
             t0=t+n*dt;
             tstr=datestr(t0,'yyyymmddHHMMSS');
-            fstru=[meteodir meteoname '.u.' tstr '.mat'];
-            fstrv=[meteodir meteoname '.v.' tstr '.mat'];
+            fstru=[meteodir meteowind '.u.' tstr '.mat'];
+            fstrv=[meteodir meteowind '.v.' tstr '.mat'];
 %            fstrp=[meteodir meteoname '.p.' tstr '.mat'];
             if exist(fstru,'file')
                 su=load(fstru);

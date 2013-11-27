@@ -4,7 +4,7 @@ model=hm.models(m);
 
 hazard=model.hazards(ih);
 
-maparchdir=model.appendeddirmaps;
+maparchdir=model.cycledirmaps;
 hisarchdir=model.cycledirtimeseries;
 hazarchdir=model.cycledirhazards;
 figdir=model.cycledirfigures;
@@ -63,17 +63,17 @@ end
 %% Hazard xml and html
 fname=[hazarchdir hazard.name '.xml'];
 
-hzrd.type.value='ripcurrents';
-hzrd.type.type='char';
+hzrd.type.type.value='ripcurrents';
+hzrd.type.type.ATTRIBUTES.type.value='char';
 
-hzrd.name.value=hazard.name;
-hzrd.name.type='char';
+hzrd.name.name.value=hazard.name;
+hzrd.name.name.ATTRIBUTES.type.value='char';
 
-hzrd.longname.value=hazard.longName;
-hzrd.longname.type='char';
+hzrd.longname.longname.value=hazard.longName;
+hzrd.longname.longname.ATTRIBUTES.type.value='char';
 
-hzrd.html.value=[hazard.name '.html'];
-hzrd.html.type='char';
+hzrd.html.html.value=[hazard.name '.html'];
+hzrd.html.html.ATTRIBUTES.type.value='char';
 
 %% Write html code
 fi2=fopen([figdir hazard.name '.html'],'wt');
@@ -95,10 +95,10 @@ else
     lat=hazard.location(2);
 end
 
-hzrd.longitude.value=lon;
-hzrd.longitude.type='real';
-hzrd.latitude.value=lat;
-hzrd.latitude.type='real';
+hzrd.longitude.longitude.value=lon;
+hzrd.longitude.longitude.ATTRIBUTES.type.value='real';
+hzrd.latitude.latitude.value=lat;
+hzrd.latitude.latitude.ATTRIBUTES.type.value='real';
 
 % First try to determine distance between corner points of model limits
 % Get value from xml
@@ -113,23 +113,23 @@ dst=sqrt(dstx^2+dsty^2);
 % Elevation is distance times 2
 dst=dst*2;
 dst=min(dst,10000000);
-hzrd.elevation.value=dst;
-hzrd.elevation.type='real';
+hzrd.elevation.elevation.value=dst;
+hzrd.elevation.elevation.ATTRIBUTES.type.value='real';
 
 for ir=1:length(rips)
     
-    hzrd.warninglocations(ir).warninglocation.name.value=['ripcurrent' num2str(ir)];
-    hzrd.warninglocations(ir).warninglocation.name.type='char';
+    hzrd.warninglocations.warninglocations.warninglocation(ir).warninglocation.name.name.value=['ripcurrent' num2str(ir)];
+    hzrd.warninglocations.warninglocations.warninglocation(ir).warninglocation.name.name.ATTRIBUTES.type.value='char';
     
     switch rips(ir).warningLevel
         case 1
-            hzrd.warninglocations(ir).warninglocation.longname.value='Moderate rip current';
+            hzrd.warninglocations.warninglocations.warninglocation(ir).warninglocation.longname.longname.value='Moderate rip current';
         case 2
-            hzrd.warninglocations(ir).warninglocation.longname.value='Strong rip current';
+            hzrd.warninglocations.warninglocations.warninglocation(ir).warninglocation.longname.longname.value='Strong rip current';
         case 3
-            hzrd.warninglocations(ir).warninglocation.longname.value='Very strong rip current';
+            hzrd.warninglocations.warninglocations.warninglocation(ir).warninglocation.longname.longname.value='Very strong rip current';
     end
-    hzrd.warninglocations(ir).warninglocation.longname.type='char';
+    hzrd.warninglocations.warninglocations.warninglocation(ir).warninglocation.longname.longname.ATTRIBUTES.type.value='char';
     
     if ~strcmpi(model.coordinateSystem,'wgs 84')
         [lon,lat]=convertCoordinates(rips(ir).x,rips(ir).y,'persistent','CS1.name',model.coordinateSystem,'CS1.type',model.coordinateSystemType,'CS2.name','WGS 84','CS2.type','geographic');
@@ -138,19 +138,19 @@ for ir=1:length(rips)
         lat=rips(ir).y;
     end
 
-    hzrd.warninglocations(ir).warninglocation.longitude.value=lon;
-    hzrd.warninglocations(ir).warninglocation.longitude.type='real';
-    hzrd.warninglocations(ir).warninglocation.latitude.value=lat;
-    hzrd.warninglocations(ir).warninglocation.latitude.type='real';
+    hzrd.warninglocations.warninglocations.warninglocation(ir).warninglocation.longitude.longitude.value=lon;
+    hzrd.warninglocations.warninglocations.warninglocation(ir).warninglocation.longitude.longitude.ATTRIBUTES.type.value='real';
+    hzrd.warninglocations.warninglocations.warninglocation(ir).warninglocation.latitude.latitude.value=lat;
+    hzrd.warninglocations.warninglocations.warninglocation(ir).warninglocation.latitude.latitude.ATTRIBUTES.type.value='real';
     
-    hzrd.warninglocations(ir).warninglocation.warninglevel.value=rips(ir).warningLevel;
-    hzrd.warninglocations(ir).warninglocation.warninglevel.type='int';
+    hzrd.warninglocations.warninglocations.warninglocation(ir).warninglocation.warninglevel.warninglevel.value=rips(ir).warningLevel;
+    hzrd.warninglocations.warninglocations.warninglocation(ir).warninglocation.warninglevel.warninglevel.ATTRIBUTES.type.value='int';
     
-    hzrd.warninglocations(ir).warninglocation.html.value=[hazard.name '.ripcurrent' num2str(ir) '.html'];
-    hzrd.warninglocations(ir).warninglocation.html.type='char';
+    hzrd.warninglocations.warninglocations.warninglocation(ir).warninglocation.html.html.value=[hazard.name '.ripcurrent' num2str(ir) '.html'];
+    hzrd.warninglocations.warninglocations.warninglocation(ir).warninglocation.html.html.ATTRIBUTES.type.value='char';
     
-    hzrd.warninglocations(ir).warninglocation.warninglevel.value=rips(ir).warningLevel;
-    hzrd.warninglocations(ir).warninglocation.warninglevel.type='int';
+    hzrd.warninglocations.warninglocations.warninglocation(ir).warninglocation.warninglevel.warninglevel.value=rips(ir).warningLevel;
+    hzrd.warninglocations.warninglocations.warninglocation(ir).warninglocation.warninglevel.warninglevel.ATTRIBUTES.type.value='int';
 
     %% Write html code
     fi2=fopen([figdir hazard.name '.ripcurrent' num2str(ir) '.html'],'wt');
@@ -167,4 +167,4 @@ for ir=1:length(rips)
     
 end
 
-struct2xml(fname,hzrd,'includeattributes',1,'structuretype',0);
+struct2xml(fname,hzrd,'includeattributes',1,'structuretype','long');

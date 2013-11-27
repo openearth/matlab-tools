@@ -7,6 +7,7 @@ dst=ii(2)-ii(1);
 for j=1:length(ii)
     str=h(ii(j):ii(j)+dst-1);
     d=strread(str,'%s','delimiter',',');
-    t(j)=datenum(d{7});
+    tstr=d{7}(2:end-1);
+    t(j)=datenum(tstr);
     wl(j)=str2double(d{8});
 end

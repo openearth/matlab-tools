@@ -5,7 +5,7 @@ model=hm.models(m);
 mdl=model.name;
 
 % Create archive folders
-archivedir=[hm.archiveDir filesep model.continent filesep model.name filesep 'archive' filesep];
+archivedir=[hm.archiveDir model.continent filesep model.name filesep 'archive' filesep];
 
 hm.models(m).cycledirinput=[archivedir 'input' filesep hm.cycStr filesep];
 hm.models(m).cyclediroutput=[archivedir 'output' filesep hm.cycStr filesep];
@@ -26,8 +26,13 @@ makedir(hm.models(m).cycledirmaps);
 makedir(hm.models(m).cycledirtimeseries);
 makedir(hm.models(m).cycledirsp2);
 makedir(hm.models(m).cycledirhazards);
+makedir(hm.models(m).cycledirnetcdf);
 makedir(hm.models(m).appendeddirmaps);
 makedir(hm.models(m).appendeddirtimeseries);
+
+% Remove older input and output folders
+deleteoldercycles(archivedir,'input',hm.cycle);
+deleteoldercycles(archivedir,'output',hm.cycle);
 
 % Old stuff
 if exist([model.dir filesep 'lastrun'],'dir')
@@ -37,6 +42,7 @@ if exist([model.dir filesep 'lastrun'],'dir')
     rmdir([model.dir filesep 'lastrun']);
 end
 
+%% Extract data
 if model.extractData
     try
         disp('Extracting Data ...');
@@ -73,6 +79,7 @@ end
 %     end
 % end
 
+%% Determine hazards
 if model.DetermineHazards
     try
         disp('Determining hazards ...');
@@ -99,6 +106,7 @@ if model.DetermineHazards
     hm.models(m).hazardDuration=toc;
 end
 
+%% Make figures
 if model.runPost
     disp('Making figures ...');
     try
@@ -113,6 +121,7 @@ if model.runPost
     hm.models(m).plotDuration=toc;
 end
 
+%% Determine hazards (again?)
 if model.DetermineHazards
     try
         disp('Determining hazards ...');
@@ -125,6 +134,7 @@ if model.DetermineHazards
     hm.models(m).hazardDuration=toc;
 end
 
+%% Copy figures to local website
 if model.makeWebsite
     disp('Copying figures to local website ...');
     try
@@ -147,6 +157,7 @@ if model.makeWebsite
     end
 end
 
+%% Copy figures and xml files to web server
 if model.uploadFTP
     disp('Uploading figures to web server ...');
     try
@@ -172,6 +183,26 @@ if model.uploadFTP
             WriteErrorLogFile(hm,['Something went wrong while uploading models.xml to website for ' hm.models(m).name]);
             %         hm.models(m).status='failed';
             %         return;
+        end
+    end
+end
+
+
+%%
+function deleteoldercycles(archivedir,fldrname,cycl)
+flist=dir([archivedir fldrname]);
+for ii=1:length(flist)
+    dr=[archivedir fldrname filesep flist(ii).name];
+    try
+        if isdir(dr)
+            switch flist(ii).name
+                case{'.','..'}
+                otherwise
+                    dt=datenum(flist(ii).name(1:end-1),'yyyymmdd_HH');
+                    if dt<cycl-0.01
+                        rmdir(dr,'s');
+                    end
+            end
         end
     end
 end

@@ -16,6 +16,9 @@ for ip=1:model.nrProfiles
     inputdir=[model.cycledirinput profile filesep];
     outputdir=[outdir profile filesep];
     archivedir=[cycledirnetcdf profile filesep];
+    if ~exist(archivedir,'dir')
+        mkdir(archivedir);
+    end
     
     % Check if simulation has run
     if exist([outputdir 'dims.dat'],'file')

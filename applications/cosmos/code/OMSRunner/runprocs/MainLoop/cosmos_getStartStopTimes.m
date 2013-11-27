@@ -11,8 +11,6 @@ for i=1:hm.nrModels
     t0(i)=hm.cycle;
 end
 
-    
-
 for i=1:hm.nrModels
     hm.models(i).tFlowStart=t0(i)+hm.models(i).startTime/24;
     hm.models(i).tOutputStart=hm.cycle+hm.models(i).startTime/24;
@@ -122,4 +120,3 @@ for i=1:hm.nrModels
     end
 
 end
-

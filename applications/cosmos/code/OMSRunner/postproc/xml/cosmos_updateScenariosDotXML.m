@@ -26,6 +26,7 @@ for iw=1:length(wb)
         system(['TortoiseProc.exe /command:update /path:"' fname '" /closeonend:1']);
 
         scenarios=xml_load(fname);
+%        scenarios=xml2struct(fname);
         
         ifound = 0;
         

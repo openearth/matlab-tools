@@ -21,28 +21,36 @@ end
 for i=1:hm.nrModels
     switch lower(hm.models(i).type)
         case{'xbeachcluster'}
-            nprfperjob=hm.nrProfilesPerJob;
-            njobs=ceil(hm.models(i).nrProfiles/nprfperjob);
-            allready=1;
-            for j=1:njobs
-                fname=[hm.jobDir hm.models(i).name filesep 'finished' num2str(j) '.txt'];
-                if ~exist(fname,'file')
-                    allready=0;
+            if isdir([hm.jobDir hm.models(i).name])
+                hm.models(i).status='running';
+                nprfperjob=hm.nrProfilesPerJob;
+                njobs=ceil(hm.models(i).nrProfiles/nprfperjob);
+                allready=1;
+                for j=1:njobs
+                    fname=[hm.jobDir hm.models(i).name filesep 'finished' num2str(j) '.txt'];
+                    if ~exist(fname,'file')
+                        allready=0;
+                    end
+                end
+                if allready
+                    k=k+1;
+                    ifin(k)=i;
+%                     hm.models(i).status='simulationfinished';
                 end
             end
-            if allready
-                k=k+1;
-                ifin(k)=i;
-            end
         otherwise
-            fname=[hm.jobDir hm.models(i).name filesep 'finished.txt'];
-            if exist(fname,'file')
-                k=k+1;
-                ifin(k)=i;
+            if isdir([hm.jobDir hm.models(i).name])
+                hm.models(i).status='running';
+                if exist([hm.jobDir hm.models(i).name filesep 'finished.txt'],'file')
+                    k=k+1;
+                    ifin(k)=i;
+%                     hm.models(i).status='simulationfinished';
+                end
             end
     end
 end
 
+% Determine run times (only used to present on website)
 for i=1:length(ifin)
 
     m=ifin(i);

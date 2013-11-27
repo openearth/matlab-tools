@@ -2,6 +2,8 @@ function cosmos
 
 delete(timerfind);
 
+warning('off','MATLAB:hg:ColorSpec_None');
+
 hm=cosmos_readConfigFile;
 hm=cosmos_readScenario(hm);
 
