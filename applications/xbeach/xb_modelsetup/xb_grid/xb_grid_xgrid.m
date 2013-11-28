@@ -114,6 +114,9 @@ if isempty(OPT.zdry)
 end
 
 %% make grid
+% fix if z-values contain NaN's
+xin = xin(~isnan(zin));
+zin = zin(~isnan(zin));
 
 % set boundaries
 xend    = xin(end);
