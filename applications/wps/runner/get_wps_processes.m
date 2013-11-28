@@ -13,7 +13,10 @@ D(strmatch('..',{D.name},'exact'))=[];
 
 % Get metadata from processes
 for ii=1:length(D)
-    WPS(ii) = parse_oet_wps(fullfile(dirname,'..','processes',D(ii).name));
+    [dirname2,name2,ext2] = fileparts(D(ii).name);
+    if strcmp(ext2,'.m')
+        WPS(ii) = parse_oet_wps(fullfile(dirname,'..','processes',D(ii).name));
+    end
 end
 
 % Write to json
