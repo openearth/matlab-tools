@@ -1,0 +1,1 @@
+[{"inputs":{"location":{"type":"point"},"timeseries":{"type":"text/csv"}},"outputs":{"constituents":{"type":"application/netcdf"}},"identifier":"tide_analysis"},{"inputs":{"location":{"type":"point"},"constituents":{"type":"application/netcdf"}},"outputs":{"timeseries":{"type":"text/csv"}},"identifier":"tide_predict"}]
