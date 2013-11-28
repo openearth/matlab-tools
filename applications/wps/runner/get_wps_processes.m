@@ -18,7 +18,7 @@ end
 
 % Write to json
 wps_processes = json.dump(WPS);
-fid = fopen('wps_matlab_processes.json','wt');
+fid = fopen(fullfile(dirname,'..','processes','wps_matlab_processes.json'),'wt');
 fwrite(fid,wps_processes);
 fclose(fid);
 
