@@ -1,5 +1,10 @@
-function [wpsstruct] = parseoetwps(filename)
-    [argout, argin, fcn] = parse_function_call(filename)
+% PARSE_OET_WPS  Parse a function that adheres to the OETWPS convention
+%    [WPSSTRUCT] = PARSE_OET_WPS(FILENAME) parses the specified
+%    file and returns a struct that contains all the metadata for the 
+%    WPS server
+ 
+function [wpsstruct] = parse_oet_wps(filename)
+    [argout, argin, fcn] = parse_function_call(filename);
     
     txt = fileread(filename);
     inputs = struct();
