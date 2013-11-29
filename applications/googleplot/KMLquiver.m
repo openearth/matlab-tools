@@ -140,7 +140,7 @@ OPT2 = struct(...
     'W1'         ,0.05,'W2'       ,0.25,'W3'       ,0.25,'W4'       ,0.10,...
     'L1'         ,0.70,'L2'       ,0.60,'L3'       ,0.60,'L4'       ,0.20);
 
-OPT2 = mergestructs(OPT2,KML_header());
+OPT2 = mergestructs('overwrite',OPT2,KML_header());
 
 switch lower(OPT.arrowStyle)
     case 'default'
