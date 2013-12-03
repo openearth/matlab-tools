@@ -142,8 +142,6 @@ iostat       = 1;
 OPT.OS       = 'windows'; % or 'unix'
 OPT.format   = 'obs';
 
-OPT = setproperty(OPT,varargin);
-   
 if strcmpi(OPT.format,'obs')
 
    fid          = fopen(filename,'w');
@@ -173,7 +171,7 @@ if strcmpi(OPT.format,'obs')
       
       fprintf(fid,' %7d',D.m    (iobs  ));
       fprintf(fid,' %7d',D.n    (iobs  ));
-      fprinteol(fid,OS)
+      fprinteol(fid,OPT.OS)
       
    end
 
