@@ -10,8 +10,8 @@ This HTML is auto-generated from an M-file.
 To make changes, update the M-file and republish this document.
       -->
       <title>JarKus volume calculations</title>
-      <meta name="generator" content="MATLAB 7.10">
-      <meta name="date" content="2010-06-22">
+      <meta name="generator" content="MATLAB 8.1">
+      <meta name="date" content="2013-07-17">
       <meta name="m-file" content="jarkus_tutorial_calculate_volume">
       <link type="text/css" href="script/css/jquery-ui-1.7.2.custom.css" rel="stylesheet">
       <link type="text/css" href="script/css/jquery.collapsible.css" rel="stylesheet"><script type="text/javascript" src="script/js/jquery-1.3.2.min.js"></script><script type="text/javascript" src="script/js/jquery-ui-1.7.2.custom.min.js"></script><script type="text/javascript" src="script/js/matlab2collapsible.js"></script><script type="text/javascript" src="script/js/jquery.collapsible.js"></script><script type="text/javascript" src="script/js/matlabhelp.js"></script><script src="http://www.google.com/jsapi?key=ABQIAAAA9KO06BPsmsvzw4PogoawhRRxYg1slSMvxuda9W0Kolc-SbeLlhQGHwE9W-XlCfe8WtZh74R56zOChQ"></script><script type="text/javascript" src="script/js/googleEarthApi.js"></script><script type="text/javascript">
@@ -62,51 +62,56 @@ xRSP        = nc_varget(url,<span class="string">'cross_shore'</span>);
 z           = nc_varget(url,<span class="string">'altitude'</span>,[year_nr,transect_nr,0],[1,1,-1]);
 x    = xRSP(~isnan(z));
 z    =    z(~isnan(z));
+</pre><pre class="codeoutput">Error using netcdflib
+The NetCDF library encountered an error during execution of 'open' function - 'I/O failure (NC_EIO)'. If the data source was an  OPeNDAP URL, see the OPeNDAP Troubleshooting section in the Users Guide.
+
+Error in netcdf.open (line 60)
+        [varargout{:}] = netcdflib ( 'open', filename, varargin{1} );
+
+Error in nc_varget_tmw&gt;varget_nc (line 21)
+ncid=netcdf.open(ncfile,'NOWRITE');
+
+Error in nc_varget_tmw (line 5)
+    [data,info] = varget_nc(ncfile,varname,varargin{:});
+
+Error in nc_vargetr (line 38)
+   		[data,info] = nc_varget_tmw(ncfile,varname,varargin{:});
+
+Error in nc_varget (line 35)
+[data,info] = nc_vargetr(ncfile,varname,varargin{:});
+
+Error in jarkus_tutorial_calculate_volume (line 9)
+id          = nc_varget(url,'id');
+
+Error in evalinemptyworkspace&gt;eval_fun (line 8)
+eval(getappdata(0,'emptyworkspaceevaluation'));
+
+Error in evalinemptyworkspace (line 3)
+eval_fun();
+
+Error in evalmxdom&gt;instrumentAndRun (line 89)
+text = evalc(evalstr);
+
+Error in evalmxdom (line 20)
+[data,text,laste] = instrumentAndRun(file,cellBoundaries,imageDir,imagePrefix,options);
+
+Error in publish (line 164)
+    dom = evalmxdom(file,dom,cellBoundaries,prefix,imageDir,outputDir,options);
+
+Error in tutorials2html (line 234)
+                htmlref{idr}{itutorials} = publish(tutorialname,publishopts);
+
+Error in oetpublish (line 90)
+    tutorials2html;
+
+Error in tutorials_include_tutorial (line 26)
+oetpublish all
 </pre></div>
             </div>
             <div>
                <h2><a name="2">Available options</a></h2>
                <div>
                   <p>First we want an overview of available jarkus functions</p><pre class="codeinput">help <span class="string">jarkus</span>
-</pre><pre class="codeoutput">Contents of jarkus:
-
-jarkus_areaName2AreaCode       - returns jarkus area code of selected jarkus area name
-jarkus_check                   - Checks validity of jarkus result structure
-jarkus_createtransectstruct    - create jarkus transect struct
-jarkus_curvature               - Derives the coastal curvature from JARKUS data
-jarkus_curvature_test          - Test function for jarkus_curvature function
-jarkus_decurve                 - Removes spatial curvatures from a JARKUS results struct
-jarkus_deriveCurvature         - Derives the coastal curvature from JARKUS data
-jarkus_deriveCurvature_test    - Test function for jarkus_deriveCurvature function
-jarkus_findCrossings           - routine to find crossings of 2 profiles
-jarkus_getBKL                  - gets BKL values based on transectID
-jarkus_getMKL                  - returns the cross shore coordinate of the volume based coastal indicator MKL 
-jarkus_getTKL                  - returns the cross shore coordinate of the TKL (te toetsen kustlijn)
-jarkus_getVolume               - generic routine to determine volumes on transects
-jarkus_getVolumeFast           - generic routine to determine volumes on transects
-jarkus_googleearth             - Plots jarkus transects into google earth
-jarkus_grid2netcdf             - converts Jarkus grid struct to netCDF-CF file
-jarkus_interpolatenans         - Interpolates the missing altitude values in jarkus transects
-jarkus_merge                   - Merges transect altitudes in specific dimension
-jarkus_netcdf2grid             - converts netCDF-CF file to Jarkus grid struct
-jarkus_plotMKL                 - plot MCL
-jarkus_plot_in_googleEarth     - plot one or more jarkus transects in google Earth
-jarkus_readTransectDataNetcdf  - create transect structure out of jarkus netcdf file
-jarkus_shoreline               - Returns the location of the shoreline based on a set of jarkus transects
-jarkus_transect2grid           - converts Jarkus transect struct to Jarkus grid struct
-jarkus_transect2netcdf         - converts Jarkus transect struct to netCDF-CF file
-jarkus_transect2oldtransect    - converts Jarkus transect struct
-jarkus_transects               - Retrieves a selection of JARKUS data from repository
-jarkus_tutorial_calculate_MKL  - JarKus MKL calculations
-jarkus_tutorial_calculate_volume - JarKus volume calculations
-jarkus_tutorial_coordinates_RSP_2_RD - Coordinate conversion from RSP to RD
-jarkus_tutorial_plot_in_googleEarth - Jarkus &amp; Google Earth
-jarkus_tutorial_reading_data_1 - Extracting JarKus data from netCDF (1)
-jarkus_tutorial_reading_data_2 - Extracting JarKus data from netCDF (2)
-jarkus_updategrid              - update Jarkus grid struct with jarkus_raaien.txt &amp; jarkus_tideinfo.txt
-jarkus_url                     - returns the link to the jarkus netCDF. 
-jarkus_url_grid                - returns the links to the jarkus grid netCDF's. 
-
 </pre></div>
             </div>
             <div>
@@ -130,12 +135,7 @@ SeawardBoundary     = max(x);
                <div>
                   <p>and the we call the function. We use the additional 'plot' argument to get a plot of the result.</p><pre class="codeinput">[Volume] = jarkus_getVolumeFast(x, z, UpperBoundary, LowerBoundary,<span class="keyword">...</span>
     LandwardBoundary, SeawardBoundary,<span class="string">'plot'</span>)
-</pre><pre class="codeoutput">
-Volume =
-
-  987.5781
-
-</pre><img vspace="5" hspace="5" src="jarkus_tutorial_calculate_volume_01.png" relsrc="jarkus_tutorial_calculate_volume_01.png"> </div>
+</pre></div>
             </div>
             <div>
                <h2><a name="6">jarkus_getVolume</a></h2>
@@ -151,8 +151,8 @@ Volume =
             </div>
          </div>
          <p class="footer"><br>
-            this tutorial is based on: <a class="matlabhref" href="matlab:edit('jarkus_tutorial_calculate_volume');" browserhref="http://crucible.delftgeosystems.nl/browse/~raw,r=2703/OpenEarthTools/trunk/matlab/applications/Rijkswaterstaat/jarkus/jarkus_tutorial_calculate_volume.m">jarkus_tutorial_calculate_volume.m (revision: 2703)</a><br>
-Published with MATLAB&reg; 7.10<br></p>
+            this tutorial is based on: <a class="matlabhref" href="matlab:edit('jarkus_tutorial_calculate_volume');" browserhref="http://crucible.delftgeosystems.nl/browse/~raw,r=NaN/OpenEarthTools/trunk/matlab/applications/Rijkswaterstaat/jarkus/jarkus_tutorial_calculate_volume.m">jarkus_tutorial_calculate_volume.m (revision: NaN)</a><br>
+Published with MATLAB&reg; 8.1<br></p>
       </div>
       <!--
 ##### SOURCE BEGIN #####

@@ -107,7 +107,7 @@ function varargout = KMLline(lat,lon,varargin)
    OPT.fillAlpha     = .4;
    OPT.openInGE      = false;
    OPT.is3D          = false;
-   OPT.extrude       = true; % false is google's default
+   OPT.extrude       = false; % false is google's default
    OPT.tessellate    = ~OPT.is3D;
    OPT.zScaleFun     = @(z) (z+0)*1;
    OPT.fid           = -1;
@@ -273,7 +273,8 @@ output = '';
        'name',{OPT.name},...
        'styleName',['line_style' num2str(OPT.line_nr(1))],...
        'tessellate',OPT.tessellate,...
-       'visibility',OPT.visible);
+       'visibility',OPT.visible,...
+           'extrude',OPT.extrude);
    if isempty(OPT.timeIn) ,OPT_line.timeIn  = [];else  OPT_line.timeIn = datestr( OPT.timeIn(1),OPT.dateStrStyle); end
    if isempty(OPT.timeOut),OPT_line.timeOut = [];else OPT_line.timeOut = datestr(OPT.timeOut(1),OPT.dateStrStyle); end
    
@@ -283,7 +284,7 @@ output = '';
            'name'      ,'',...
            'styleName' ,['fill_style' num2str(OPT.fill_nr(1))],...
            'visibility',OPT.visible,...
-           'extrude'   ,OPT.extrude);
+           'extrude'   ,1);
        if isempty(OPT.timeIn) , OPT_fill.timeIn = [];else  OPT_fill.timeIn = datestr( OPT.timeIn(1),OPT.dateStrStyle); end
        if isempty(OPT.timeOut),OPT_fill.timeOut = [];else OPT_fill.timeOut = datestr(OPT.timeOut(1),OPT.dateStrStyle); end
    end
