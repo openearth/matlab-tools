@@ -1,30 +1,34 @@
 function [Data, Meta] = read(File,ivar,ncolumn)
-%read read one variable from donar file (across blocks)
+%READ read one variable from DONAr dia file (aggregating blocks)
 %
-%   Data = donar.read(Info, variable_index, ncolumn)
+%   [D,M] = donar.read(Info, variable_index, ncolumn)
 %
-% reads one variable from a dia file, merging internal
-% dia blocks, where Info ios the result from donar.open,
+% reads one variable from a dia file info array D, merging the internal
+% dia blocks, where Info is the result from donar.open(),
 % variable_index is the index of the variables found
 % in the donar file (varies per file), and ncolumn is
-% the number of column (where ncolumn is the data column),
-% needed internally to reshape the ascii donar data.
+% the number of columns (where ncolumn is the variable column),
+% needed internally to reshape the ascii donar data. M 
+% contains a copy of the relevant variable metadata from Info.
 %
 % The coordinate columns 1+2 are parsed (WGS84 ONLY yet),
-% the date columns 3 is in Matlab datenumbers.
+% and the date columns 3 is converted to Matlab datenumbers.
+%
+% Note that timezone information is NOT in de dia files !
 %
 % Example: 
 %
-%   Info  = donar.open(diafile)
-%   [D,M] = donar.read(Info, 1, 6); % 6 columns
+%  File            = donar.open(diafile)
+% [data, metadata] = donar.read(File,1,6) % 1st variable, residing in 6th column
 %
-%See also: donar.open
+%See also: open, read, disp
 
     OPT.disp        = 100;
-    OPT.squeeze     = 0;
-    OPT.nodatavalue = []; % default for squeeze
+    OPT.nodatavalue = []; % default to squeeze them out
 
     fid  = fopen(File.Filename,'r');
+
+%% read data from multipel blocks into one array
 
     i0   = 1;
     if OPT.disp > 0
@@ -43,15 +47,19 @@ function [Data, Meta] = read(File,ivar,ncolumn)
     end % ibl
     fclose(fid);
     
-    %% remove nodatavalues
+ %% Remove or NaNify nodatavalues
+
     Data = donar.squeeze_block(Data,ncolumn,'nodatavalue',OPT.nodatavalue);
     
-   %% either do both inline D{i}, or do both explicit D{i}(:,column)
+ %% either do both inline D{i}, or do both explicit D{i}(:,column)
+
     Data(:,1) = donar.parse_coordinates(Data(:,1));
     Data(:,2) = donar.parse_coordinates(Data(:,2));
     Data      = donar.parse_time(Data, ncolumn - [2 1]); % has to be inline due to sort
      
-    %% copy relevant meta-data fields (not dia-file specific)
+ %% copy relevant meta-data fields (not dia-file specific)
+ %  Should perhaps better be in se[erate substruct of File
+
     OPT.metafields = {'WNS','hdr','long_name','standard_name','long_units','units'};
     for ifld=1:length(OPT.metafields)
         try

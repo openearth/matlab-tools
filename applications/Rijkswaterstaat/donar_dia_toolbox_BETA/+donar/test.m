@@ -11,8 +11,8 @@ clc;clear all;fclose all;
 basedir = 'D:\P\1209005-eutrotracks';
 
 OPT.scan = 0; % otherwise cache is loaded
-OPT.read = 1;
-OPT.plot = 1;
+OPT.read = 0;
+OPT.plot = 0;
 diafiles = {'\raw\ferry_2005_-_2012_shortened.dia'};
 diafiles = {'raw\CTD\raw\ctd_1998_-_1999.dia',...        %  40 s,  50 Mb, 3562 blocks
             'raw\CTD\raw\ctd_2000_-_2002.dia',...        %  97 s,  63 Mb, 5815 blocks
