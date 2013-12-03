@@ -85,27 +85,64 @@ alfa        = xs_get(xs, 'alfa');
 xori        = xs_get(xs, 'xori');
 yori        = xs_get(xs, 'yori');
 thetanaut   = xs_get(xs, 'thetanaut');
+
+if isempty(thetanaut)
+    thetanaut   = 0;
+end
+
+if isempty(xori)
+    xori        = 0;
+end
+
+if isempty(yori)
+    yori        = 0;
+end
+
 if thetanaut
-    thetamin    = xs_get(xs, 'thetamin');
-    thetamax    = xs_get(xs, 'thetamax');
+    thetamin    = xs_get(xs, 'thetamin')+180;
+    thetamax    = xs_get(xs, 'thetamax')+180;
     dtheta      = xs_get(xs, 'dtheta');
 else
-    thetamin    = 90 - xs_get(xs, 'thetamin');
-    thetamax    = 90 - xs_get(xs, 'thetamax');    
+    thetamin    = 90 - xs_get(xs, 'thetamin')-alfa;
+    thetamax    = 90 - xs_get(xs, 'thetamax')-alfa;    
     dtheta      = xs_get(xs, 'dtheta');
 end
 
 xfile       = xs_get(xs, 'xfile');
 yfile       = xs_get(xs, 'yfile');
 zfile       = xs_get(xs, 'depfile');
-xgrid       = xfile.data.value;
-ygrid       = yfile.data.value;
-zgrid       = zfile.data.value;
+if isempty(xfile) && isempty(yfile)
+    xyfile  = xs_get(xs, 'xyfile');
+    
+    if ~isempty(xyfile)
+        % Read xyfile & depth
+        gridStruct      = wlgrid('read',xyfile.file);
+        xgrid           = gridStruct.X;
+        ygrid           = gridStruct.Y;
+        zgrid           = -1*wldep('read',zfile.file, gridStruct);
+        % Remove dummy values added by wldep.m
+        zgrid           = zgrid(1:end-1,1:end-1);
+        
+        % flip to XBeach standard if necessary
+        if xgrid(1,1) == xgrid(1,end) && ygrid(1,1) == ygrid(end,1)
+            xgrid       = xgrid';
+            ygrid       = ygrid';
+            zgrid       = zgrid';
+        end
+    end
+else
+    xgrid   = xfile.data.value;
+    ygrid   = yfile.data.value;
+    zgrid   = zfile.data.value;
+end
 
 bcfile      = xs_get(xs, 'bcfile');
 if xs_check(bcfile)
     if strcmp(xs_get(bcfile, 'type'), 'unknown')
         wave_angles = xs_get(xs, 'dir0');
+        if isempty(wave_angles)
+            wave_angles = xs_get(bcfile, 'mainang');
+        end
     elseif strcmp(xs_get(bcfile, 'type'), 'jonswap')
         wave_angles = xs_get(bcfile, 'mainang');
     elseif strcmp(xs_get(bcfile, 'type'), 'jonswap_mtx')
@@ -120,20 +157,26 @@ end
 if (~isempty(alfa) && abs(alfa) > 0) || ...
    (~isempty(xori) && abs(xori) > 0) || ...
    (~isempty(yori) && abs(yori) > 0)
-    [xw, yw] = xb_grid_xb2world(xgrid, ygrid, xori, yori, alfa);
+    [xw, yw]    = xb_grid_xb2world(xgrid, ygrid, xori, yori, alfa);
+    
+    % Check whether grid rotation is really 0
+    if alfa == 0 && abs(atand((yw(1,end)-yw(1,1))/(xw(1,end)-xw(1,1)))) > 1
+        alfa        = atand((yw(1,end)-yw(1,1))/(xw(1,end)-xw(1,1)));
+    end 
 else 
-    [xw, yw] = deal(xgrid, ygrid);
+    [xw, yw]    = deal(xgrid, ygrid);
+    
+    % Check grid rotation
+    alfa        = atand((yw(1,end)-yw(1,1))/(xw(1,end)-xw(1,1)));
 end
 
 %% Plot bathymetry, thetagrid & wave directions
 
 if ~isempty(OPT.figureHandle)
     figHandle = OPT.figureHandle;
-    figure(figHandle)
-    %maximize(figHandle)
+    figure(figHandle);
 elseif isempty(OPT.figureHandle)
     figHandle = figure;
-    %maximize(figHandle)
 end
 ax1 = subplot(1,4,[1 2 3]);
 if ~isvector(zgrid)
@@ -148,13 +191,17 @@ axis equal;
 % add shadow zone
 if OPT.showShadowZone
     for i = 1:length(wave_angles)
+        lCrossShore = sqrt((xw(1,end)-xw(1,1))^2+(yw(1,end)-yw(1,1))^2);
+        lDiagonal   = abs(lCrossShore/cosd((wave_angles(i)-180)-(90-alfa)));
         for j = [1 size(yw,1)]
-            xw_start  = xw(j,1);
-            xw_end    = xw(j,end);
-            yw_start  = yw(j,1);
-            yw_end    = yw(j,1) + diff(xw(1,[1 end])) / tand(wave_angles(i));
+            xw_start    = xw(j,1);
+            xw_end      = xw(j,end);
+            xw_mid      = xw(j,1) + sind(wave_angles(i)-180)*lDiagonal;
+            yw_start    = yw(j,1);
+            yw_end      = yw(j,end);
+            yw_mid      = yw(j,1) + cosd(wave_angles(i)-180)*lDiagonal;
 
-            p2 = patch([xw_start xw_end xw_end],[yw_start yw_start yw_end],'w','FaceAlpha',3/length(wave_angles),'EdgeColor','none'); % don't know why the 3 should be there...
+            p2 = patch([xw_start xw_end xw_mid],[yw_start yw_end yw_mid],'w','FaceAlpha',0.4,'EdgeColor','none');
         end
     end
 else
@@ -162,10 +209,11 @@ else
 end
 
 % visualize origin and offshore boundary
-line1 = line(xw([1 end],1),yw([1 end],1));
+line1   = line(xw([1 end],1),yw([1 end],1));
 set(line1,'color','r','linewidth',3);
 hold on
-p3 = scatter(xw(1,1),yw(1,1),75,'go','filled');
+p3      = scatter(xw(1,1),yw(1,1),75,'go','filled');
+line2   = line([xw(1,[1 end])' xw(end,[1 end])' xw([1 end], end)],[yw(1,[1 end])' yw(end,[1 end])' yw([1 end], end)], 'Color', 'k');
 hold off
 title('Bathymetric grid')
 legend([p1 line1 p3 p2],'location','NorthEast','Bed level','Offshore boundary','Origin','Shadow zone');
@@ -193,10 +241,10 @@ hold on
 
 % add wave angles
 for i = 1:length(wave_angles)
-    xw_start  = sind(wave_angles(i));
-    xw_end    = sind(wave_angles(i))*0.2;
-    yw_start  = cosd(wave_angles(i));
-    yw_end    = cosd(wave_angles(i))*0.2;
+    xw_start  = sind(wave_angles(i)-180)*0.05;
+    xw_end    = sind(wave_angles(i)-180);
+    yw_start  = cosd(wave_angles(i)-180)*0.05;
+    yw_end    = cosd(wave_angles(i)-180);
     
     arrow([xw_start yw_start],[xw_end yw_end],'Length',10,'TipAngle',10,'BaseAngle',50);
 end
