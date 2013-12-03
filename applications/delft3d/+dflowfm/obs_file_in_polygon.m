@@ -73,7 +73,7 @@ function varargout = obs_file_in_polygon(varargin);
 %    of observation points are no longer on flownodes (might not be
 %    preferable).
 %
-% See also: dflowfm, dflowfm.readNet, inpolygon, landboundary, LDBTool
+% See also: dflowfm, dflowfm.readNet, inpolygon, landboundary, LDBTool, delft3d_obs_file_in_polygon
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2013 Deltares
