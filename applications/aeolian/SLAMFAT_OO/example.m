@@ -62,8 +62,10 @@ profile        = zeros(1,100);
 profile(1:n)   = linspace(-1,1,n);
 profile(n:end) = linspace(1,15,100-n+1);
 
-t = 0:60:3600;
-w = slamfat_wind('duration',60,'block',10,'velocity_mean',4+4*sin(t/3600*2*pi));
+duration = 60 * ones(1,60);
+velocity = 4+4*sin(cumsum(duration)/3600*2*pi);
+velstd   = 1+sin(cumsum(duration)/3600*2*pi);
+w = slamfat_wind('duration',duration,'velocity_mean',velocity,'velocity_std',velstd);
 s = slamfat('wind',w,'profile',profile,'animate',true);
 
 source = zeros(length(s.profile),1);
@@ -75,7 +77,7 @@ s.bedcomposition.grain_size         = .3*1e-3;
 
 s.max_threshold = slamfat_threshold_basic;
 s.max_threshold.time = 0:3600;
-s.max_threshold.threshold = 1*sin(t/3600*2*pi);
+s.max_threshold.threshold = 1*sin((0:3600)/3600*2*pi);
 
 %s.run;
 

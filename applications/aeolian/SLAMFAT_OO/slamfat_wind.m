@@ -80,8 +80,8 @@ classdef slamfat_wind < handle
                 l_series = [];
 
                 while sum(l_series) < this.duration(i)
-                    f_series = [f_series     normrnd(this.velocity_mean(i), this.velocity_std(i), this.block, 1)    ]; %#ok<AGROW>
-                    l_series = [l_series max(normrnd(this.gust_mean(i),     this.gust_std(i),     this.block, 1), 0)]; %#ok<AGROW>
+                    f_series = [f_series;     normrnd(this.velocity_mean(i), this.velocity_std(i), this.block, 1)    ]; %#ok<AGROW>
+                    l_series = [l_series; max(normrnd(this.gust_mean(i),     this.gust_std(i),     this.block, 1), 0)]; %#ok<AGROW>
                 end
 
                 n_series = round(l_series / this.dt);
@@ -99,7 +99,7 @@ classdef slamfat_wind < handle
             end
             wind(wind<0) = 0;
             
-            this.time_series = wind;
+            this.time_series = wind(:)';
         end
         
         function val = get.time_series(this)
