@@ -56,7 +56,7 @@ s.run;
 %% async
 
 close all; clear classes; clear w; clear s;
-
+%
 n = 90;
 profile        = zeros(1,100);
 profile(1:n)   = linspace(-1,1,n);
@@ -77,7 +77,7 @@ s.bedcomposition.grain_size         = .3*1e-3;
 
 s.max_threshold = slamfat_threshold_basic;
 s.max_threshold.time = 0:3600;
-s.max_threshold.threshold = 3*sin(s.max_threshold.time/3600*2*pi);
+s.max_threshold.threshold = 3*sin(s.max_threshold.time/600*2*pi);
 
 s.run;
 

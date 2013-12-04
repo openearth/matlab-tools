@@ -85,6 +85,7 @@ classdef slamfat < handle
         io                      = 1
         transport_transportltd  = []
         transport_supplyltd     = []
+        total_transport         = []
         isinitialized           = false
         performance             = struct()
     end
@@ -123,6 +124,7 @@ classdef slamfat < handle
                 this.transport_supplyltd    = this.empty_matrix;
                 this.supply                 = this.empty_matrix;
                 this.capacity               = this.empty_matrix;
+                this.total_transport        = this.empty_matrix;
 
                 n  = this.size_of_output;
                 nx = this.number_of_gridcells;
@@ -132,11 +134,13 @@ classdef slamfat < handle
                 this.data = struct(                     ...
                     'profile',          zeros(n,nx),    ...
                     'transport',        zeros(n,nx,nf), ...
+                    'total_transport',  zeros(n,nx,nf), ...    
                     'supply',           zeros(n,nx,nf), ...
                     'capacity',         zeros(n,nx,nf), ...
                     'supply_limited',   false(n,nx,nf), ...
                     'moisture',         zeros(n,nx),    ...
                     'd50',              zeros(n,nx,nl), ...
+                    'threshold',        zeros(n,nx), ...
                     'thickness',        zeros(n,nx,nl));
                 
                 this.performance = struct(  ...
@@ -205,6 +209,8 @@ classdef slamfat < handle
                 this.transport(~idx) = this.transport_transportltd(~idx);
                 this.transport( idx) = this.transport_supplyltd   ( idx);
                 
+                this.total_transport = this.total_transport + this.transport*(this.wind.time_series(this.it-1) * this.relative_velocity);
+                
                 this.performance.transport = this.performance.transport + toc; tic;
                 
                 source = this.get_maximum_source;
@@ -260,7 +266,8 @@ classdef slamfat < handle
                 this.data.transport     (this.io,:,:) = this.transport;
                 this.data.supply        (this.io,:,:) = this.supply;
                 this.data.capacity      (this.io,:,:) = this.capacity;
-                this.data.supply_limited(this.io,:,:) = this.supply_limited;
+                this.data.supply_limited(this.io,:,:) = this.supply_limited;         
+                this.data.total_transport(this.io,:,:) = this.total_transport;       
                 
                 this.data = this.max_threshold.output(this.data, this.io);
                 
@@ -351,7 +358,7 @@ classdef slamfat < handle
                 'bed composition',  this.performance.bedcomposition,    tmp(2), ...
                 'grain size',       this.performance.grainsize,         tmp(3), ...
                 'visualization',    this.performance.visualization,     tmp(4), ...
-                'total', sum(tm), this.timestep/this.wind.number_of_timesteps*100);
+                'total', sum(tm), this.timestep/sum(this.wind.number_of_timesteps)*100);
         end
     end
 end

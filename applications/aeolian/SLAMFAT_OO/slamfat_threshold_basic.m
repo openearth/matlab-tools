@@ -50,6 +50,7 @@ classdef slamfat_threshold_basic < handle
     properties
         time                = [] % [s]
         threshold           = []
+
     end
     
     properties(Access = protected)
@@ -59,6 +60,7 @@ classdef slamfat_threshold_basic < handle
         profile             = []
         wind                = []
         isinitialized       = false
+        threshold_out       = 0
     end
     
     %% Methods
@@ -91,6 +93,7 @@ classdef slamfat_threshold_basic < handle
                 this.dt       = 0;
                 this.dx       = dx;
                 this.profile  = profile;
+%                 this.threshold_out  = 0;
                 
                 this.isinitialized = true;
             end
@@ -103,10 +106,13 @@ classdef slamfat_threshold_basic < handle
             this.wind    = wind;
             
             threshold    = threshold + this.interpolate_time(this.threshold);
+            this.threshold_out  = threshold;
         end
         
-        function data = output(~, data, ~)
+        function data = output(this, data, io)
             % no output
+                        data.threshold(io,:) = this.threshold_out;
+
         end
         
         function val = unify_series(this, val)
