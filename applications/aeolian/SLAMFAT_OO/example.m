@@ -66,7 +66,7 @@ duration = 60 * ones(1,60);
 velocity = 4+4*sin(cumsum(duration)/3600*2*pi);
 velstd   = 1+sin(cumsum(duration)/3600*2*pi);
 w = slamfat_wind('duration',duration,'velocity_mean',velocity,'velocity_std',velstd);
-s = slamfat('wind',w,'profile',profile,'animate',true);
+s = slamfat('wind',w,'profile',profile,'animate',false);
 
 source = zeros(length(s.profile),1);
 source(1:20) = 1.5e-2 * w.dt * s.dx;
@@ -79,7 +79,7 @@ s.max_threshold = slamfat_threshold_basic;
 s.max_threshold.time = 0:3600;
 s.max_threshold.threshold = 1*sin((0:3600)/3600*2*pi);
 
-%s.run;
+s.run;
 
 %% Aeolian Sand and Sand Dunes By Kenneth Pye, Haim Tsoar
 

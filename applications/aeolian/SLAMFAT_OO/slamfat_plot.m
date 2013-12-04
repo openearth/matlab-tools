@@ -377,7 +377,7 @@ classdef slamfat_plot < handle
                 set(this.lines.capacity(i),  'YData', f5);
             end
 
-            title(this.subplots.profile, sprintf('t = %d s (%d%%)', round((it-1)*this.obj.wind.dt), round(it/this.obj.wind.number_of_timesteps*100)));
+            title(this.subplots.profile, sprintf('t = %d s (%d%%)', round((it-1)*this.obj.wind.dt), round(it/sum(this.obj.wind.number_of_timesteps)*100)));
 
             set(this.vlines, 'XData', this.axes.t_out(ot) * [1 1]);
 

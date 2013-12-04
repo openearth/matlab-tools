@@ -170,7 +170,7 @@ classdef slamfat < handle
             this.performance.initialization = toc;
             
             this.it = this.it + 1;
-            while this.it < this.wind.number_of_timesteps
+            while this.it < sum(this.wind.number_of_timesteps)
                 this.next;
                 this.output;
             end
@@ -288,7 +288,7 @@ classdef slamfat < handle
         
         function val = get.output_timesteps(this)
             if isscalar(this.output_timesteps)
-                val = 1:this.output_timesteps:this.wind.number_of_timesteps;
+                val = 1:this.output_timesteps:sum(this.wind.number_of_timesteps);
             else
                 val = this.output_timesteps;
             end
