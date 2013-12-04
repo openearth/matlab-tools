@@ -171,7 +171,7 @@ classdef slamfat_threshold < slamfat_threshold_basic
         end
         
         function threshold = apply_salt(~, threshold)
-            if ~ismepty(this.salt)
+            if ~isempty(this.salt)
                 salt_content = this.interpolate_time(this.salt);
                 threshold    = .97 .* exp(.1031 * salt_content) .* threshold;
             end

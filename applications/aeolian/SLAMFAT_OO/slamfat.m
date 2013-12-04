@@ -240,6 +240,7 @@ classdef slamfat < handle
         function threshold = get_maximum_threshold(this)
             threshold = repmat(this.bedcomposition.threshold_velocity, this.number_of_gridcells, 1);
             threshold = this.max_threshold.maximize_threshold(threshold, this.wind.dt, this.profile, this.wind.time_series(this.it-1));
+            threshold = max(0, threshold);
         end
         
         function source = get_maximum_source(this)

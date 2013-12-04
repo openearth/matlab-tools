@@ -63,8 +63,8 @@ profile(1:n)   = linspace(-1,1,n);
 profile(n:end) = linspace(1,15,100-n+1);
 
 duration = 60 * ones(1,60);
-velocity = 2%4+4*sin(cumsum(duration)/600*2*pi);
-velstd   = 0%1+sin(cumsum(duration)/600*2*pi);
+velocity = 4+4*sin(cumsum(duration)/600*2*pi);
+velstd   = 2;
 w = slamfat_wind('duration',duration,'velocity_mean',velocity,'velocity_std',velstd);
 s = slamfat('wind',w,'profile',profile,'animate',true);
 
