@@ -105,7 +105,9 @@ classdef slamfat_threshold_basic < handle
             this.profile = profile;
             this.wind    = wind;
             
-            threshold    = threshold + this.interpolate_time(this.threshold);
+            if ~isempty(this.threshold)
+                threshold = threshold + this.interpolate_time(this.threshold);
+            end
             this.threshold_out  = threshold;
         end
         

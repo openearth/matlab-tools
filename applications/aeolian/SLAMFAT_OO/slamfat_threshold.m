@@ -48,6 +48,7 @@ classdef slamfat_threshold < slamfat_threshold_basic
     
     %% Properties
     properties
+        bedslope                = true
         tide                    = [] % [m]
         rain                    = [] % [mm]
         solar_radiation         = [] % [J/m^2]
@@ -124,40 +125,41 @@ classdef slamfat_threshold < slamfat_threshold_basic
             maximize_threshold@slamfat_threshold_basic(this, threshold, dt, profile, wind);
             
             if this.isinitialized
-                threshold = this.apply_bedslope   (threshold);
-                threshold = this.apply_evaporation(threshold);
-                threshold = this.apply_tide       (threshold);
-                threshold = this.apply_rain       (threshold);
-                %threshold = this.apply_salt       (threshold);
+                this.apply_evaporation;
+                this.apply_tide;
+                this.apply_rain;
+                
+                threshold = this.threshold_from_moisture(threshold);
+                threshold = this.apply_bedslope         (threshold);
+                threshold = this.apply_salt             (threshold);
             else
                 error('threshold module is not initialized');
             end
         end
         
         function threshold = apply_bedslope(this, threshold)
-            angle     = atan(diff(this.profile) / this.dx);
-            %threshold = this.beta.^2 ./ this.A.^2 .* threshold.^2 .* ...
-            %    (tan(this.internal_friction/180*pi) * cos(angle) - sin(angle));
-            %threshold = threshold + repmat(tan(angle([1 1:end]))',1,size(threshold,2));
+            if this.bedslope
+                i = this.internal_friction / 180 * pi;
+                b = repmat([0 -atan(diff(this.profile) / this.dx)]',1,size(threshold,2));
+                threshold = sqrt(max(0,tan(i) - tan(b)) ./ tan(i) .* cos(b)) .* threshold;
+            end
         end
         
-        function threshold = apply_tide(this, threshold)
+        function apply_tide(this)
             if ~isempty(this.tide)
                 idx                 = this.profile <= this.interpolate_time(this.tide);
                 this.moisture(idx)  = this.porosity;
-                threshold           = this.threshold_from_moisture(threshold);
             end
         end
         
-        function threshold = apply_rain(this, threshold)
+        function apply_rain(this)
             if ~isempty(this.rain)
                 rainfall        = this.interpolate_time(this.rain);
                 this.moisture   = min(this.moisture + rainfall ./ this.penetration_depth, this.porosity);
-                threshold       = this.threshold_from_moisture(threshold);
             end
         end
         
-        function threshold = apply_evaporation(this, threshold)
+        function apply_evaporation(this)
             if ~isempty(this.solar_radiation)
                 radiation       = this.interpolate_time(this.solar_radiation);
                 m               = this.vaporation_pressure_slope(this.air_temperature);
@@ -166,11 +168,10 @@ classdef slamfat_threshold < slamfat_threshold_basic
                 evaporation     = max(0, (m * radiation + gamma * 6.43 * (1 + 0.536 * this.wind) * delta) / ...
                                     (this.latent_heat * (m + gamma)) / 24 / 3600 * this.dt);
                 this.moisture   = max(this.moisture - evaporation ./ this.penetration_depth, 0);
-                threshold       = this.threshold_from_moisture(threshold);
             end
         end
         
-        function threshold = apply_salt(~, threshold)
+        function threshold = apply_salt(this, threshold)
             if ~isempty(this.salt)
                 salt_content = this.interpolate_time(this.salt);
                 threshold    = .97 .* exp(.1031 * salt_content) .* threshold;
