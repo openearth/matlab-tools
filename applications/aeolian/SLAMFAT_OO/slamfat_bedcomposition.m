@@ -1,4 +1,4 @@
-classdef slamfat_bedcomposition < handle
+classdef slamfat_bedcomposition < slamfat_bedcomposition_basic
     %SLAMFAT_BEDCOMPOSITION  One line description goes here.
     %
     %   More detailed description goes here.
@@ -48,44 +48,36 @@ classdef slamfat_bedcomposition < handle
     
     %% Properties
     properties
-        number_of_gridcells     = 100
-        number_of_layers        = 3
-        number_of_actual_layers = 5
-        number_of_fractions     = 1
-        
-        initial_deposit     = 0.1
-        source              = []
-        
         layer_thickness     = 1e-3
-        grain_size          = 255e-6
-        distribution        = 1
-        bed_density         = 1600
-        grain_density       = 2650
-        air_density         = 1.25
-        water_density       = 1025
         
         sediment_type       = 1
         logsigma            = 1.34
         morfac              = 1
-        g                   = 9.81
-        A                   = 100
-        dt                  = 0.05
-        initial_mass_unit   = 0
         
         layer_mass          = []
-        top_layer_mass      = []
         d50                 = []
-        threshold_velocity  = []
-        
-        enabled             = true
     end
     
-    properties(Access = private)
-        isinitialized           = false
+    properties(Access = protected)
         bedcomposition_module   = []
     end
     
     %% Methods
+    methods(Static)    
+        function addpath()
+            if ~exist('bedcomposition.m','file')
+                fpath = fullfile(fileparts(which(mfilename)), ...
+                    '../../../../programs/SandMudBedModule/02_Matlab/');
+                if exist(fpath,'dir')
+                    warning('Added %s to path', fpath);
+                    addpath(fpath);
+                else
+                    error('Bed composition module not found');
+                end
+            end
+        end
+    end
+    
     methods
         function this = slamfat_bedcomposition(varargin)
             %SLAMFAT_BEDCOMPOSITION  One line description goes here.
@@ -111,43 +103,47 @@ classdef slamfat_bedcomposition < handle
         
         function initialize(this)
             if ~this.isinitialized
-                
-                if this.enabled
                     
-                    this.addpath;
+                this.addpath;
 
-                    fprintf('LOADED: %s\n\n', bedcomposition.version);
+                fprintf('LOADED: %s\n\n', bedcomposition.version);
 
-                    this.bedcomposition_module = bedcomposition;
+                this.bedcomposition_module = bedcomposition;
 
-                    this.bedcomposition_module.number_of_columns            = this.number_of_gridcells;
-                    this.bedcomposition_module.number_of_fractions          = this.number_of_fractions;
-                    this.bedcomposition_module.bed_layering_type            = 2;
-                    this.bedcomposition_module.base_layer_updating_type     = 1;
-                    this.bedcomposition_module.number_of_lagrangian_layers  = 0;
-                    this.bedcomposition_module.number_of_eulerian_layers    = this.number_of_layers;
-                    this.bedcomposition_module.diffusion_model_type         = 0;
-                    this.bedcomposition_module.number_of_diffusion_values   = 5;
-                    this.bedcomposition_module.flufflayer_model_type        = 0;
+                this.bedcomposition_module.number_of_columns            = this.number_of_gridcells;
+                this.bedcomposition_module.number_of_fractions          = this.number_of_fractions;
+                this.bedcomposition_module.bed_layering_type            = 2;
+                this.bedcomposition_module.base_layer_updating_type     = 1;
+                this.bedcomposition_module.number_of_lagrangian_layers  = 0;
+                this.bedcomposition_module.number_of_eulerian_layers    = this.number_of_layers;
+                this.bedcomposition_module.diffusion_model_type         = 0;
+                this.bedcomposition_module.number_of_diffusion_values   = 5;
+                this.bedcomposition_module.flufflayer_model_type        = 0;
 
-                    this.bedcomposition_module.initialize
+                this.bedcomposition_module.initialize
 
-                    this.bedcomposition_module.thickness_of_transport_layer   = this.layer_thickness * ones(this.number_of_gridcells,1);
-                    this.bedcomposition_module.thickness_of_lagrangian_layers = this.layer_thickness;
-                    this.bedcomposition_module.thickness_of_eulerian_layers   = this.layer_thickness;
+                this.bedcomposition_module.thickness_of_transport_layer   = this.layer_thickness * ones(this.number_of_gridcells,1);
+                this.bedcomposition_module.thickness_of_lagrangian_layers = this.layer_thickness;
+                this.bedcomposition_module.thickness_of_eulerian_layers   = this.layer_thickness;
 
-                    this.bedcomposition_module.fractions(           ...
-                        this.sediment_type, ...
-                        this.grain_size,    ...
-                        this.logsigma,      ...
-                        this.bed_density);
-                    
-                    this.isinitialized = true;
-                    
-                    % initial deposit
-                    mass = this.initial_deposit * this.initial_mass_unit;
-                    this.deposit(mass);
-                end
+                this.bedcomposition_module.fractions(           ...
+                    this.sediment_type, ...
+                    this.grain_size,    ...
+                    this.logsigma,      ...
+                    this.bed_density);
+
+                th = zeros(this.get_number_of_actual_layers, this.number_of_gridcells) + this.layer_thickness;
+                p  = zeros(this.get_number_of_actual_layers, this.number_of_gridcells) + this.porosity;
+
+                this.bedcomposition_module.init_layer_thickness(th);
+                this.bedcomposition_module.init_porosity(p);
+
+                this.isinitialized = true;
+
+                % initial bed composition
+                mass = permute(repmat(th',[1 1 this.number_of_fractions]) .* ...
+                    repmat(reshape(this.initial_mass_unit, [this.number_of_gridcells, 1, this.number_of_fractions]), [1 this.get_number_of_actual_layers 1]), [3 2 1]);
+                this.bedcomposition_module.init_layer_mass(mass);
 
                 % source
                 if isempty(this.source)
@@ -177,7 +173,7 @@ classdef slamfat_bedcomposition < handle
             
             nx = this.number_of_gridcells;
             nf = this.number_of_fractions;
-            nl = this.number_of_actual_layers;
+            nl = this.get_number_of_actual_layers;
                 
             if this.isinitialized
 
@@ -206,6 +202,25 @@ classdef slamfat_bedcomposition < handle
             end
         end
         
+        function data = output(this, data, io)
+            data = output@slamfat_bedcomposition_basic(this, data, io);
+            data.d50      (io,:,:) = this.d50;
+            data.thickness(io,:,:) = this.layer_thickness;
+        end
+        
+        function mass = get_top_layer_mass(this)
+            if this.isinitialized
+                mass = permute(this.bedcomposition_module.layer_mass(:,1,:),[3 2 1]); % frac, lyr, x -> x, lyr, frac
+                mass = reshape(mass, [size(mass,1) size(mass,3)]);
+            else
+                error('bedcomposition module is not initialized');
+            end
+        end
+        
+        function val = get_number_of_actual_layers(this)
+            val = this.number_of_layers + 2;
+        end
+        
         function val = get.d50(this)
             val = this.compute_percentile(.5);
         end
@@ -213,15 +228,6 @@ classdef slamfat_bedcomposition < handle
         function mass = get.layer_mass(this)
             if this.isinitialized
                 mass = permute(this.bedcomposition_module.layer_mass,[3 2 1]); % frac, lyr, x -> x, lyr, frac
-            else
-                error('bedcomposition module is not initialized');
-            end
-        end
-        
-        function mass = get.top_layer_mass(this)
-            if this.isinitialized
-                mass = permute(this.bedcomposition_module.layer_mass(:,1,:),[3 2 1]); % frac, lyr, x -> x, lyr, frac
-                mass = reshape(mass, [size(mass,1) size(mass,3)]);
             else
                 error('bedcomposition module is not initialized');
             end
@@ -235,67 +241,12 @@ classdef slamfat_bedcomposition < handle
             end
         end
         
-        function val = get.threshold_velocity(this)
-            % Bagnold formulation for threshold velocity:
-            %     u* = A * sqrt(((rho_p - rho_a) * g * D) / rho_p)
-            val = this.A * sqrt(((this.bed_density - this.air_density) .* ...
-                  this.g .* this.grain_size) ./ this.bed_density);
-        end
-        
-        function val = get.initial_mass_unit(this)
-            val = repmat(this.bed_density .* this.distribution, this.number_of_gridcells, 1);
-        end
-        
-        function val = get.number_of_fractions(this)
-            val = length(this.grain_size);
-        end
-        
-        function val = get.number_of_actual_layers(this)
-            val = this.number_of_layers + 2;
-        end
-        
-        function val = get.distribution(this)
-            val = this.unify_series(this.distribution);
-            val = val ./ sum(val); % normalize
-        end
-        
-        function val = get.bed_density(this)
-            val = this.unify_series(this.bed_density);
-        end
-        
-        function val = get.grain_density(this)
-            val = this.unify_series(this.grain_density);
-        end
-        
         function val = get.logsigma(this)
             val = this.unify_series(this.logsigma);
         end
         
         function val = get.sediment_type(this)
             val = this.unify_series(this.sediment_type);
-        end
-        
-        function val = unify_series(this, val)
-            if length(this.grain_size) > 1
-                if length(val) == 1
-                    val = repmat(val, 1, length(this.grain_size));
-                end
-            else
-                this.grain_size = repmat(this.grain_size, 1, length(val));
-            end
-        end
-        
-        function addpath(this)
-            if ~exist('bedcomposition.m','file')
-                fpath = fullfile(fileparts(which(mfilename)), ...
-                    '../../../../programs/SandMudBedModule/02_Matlab/');
-                if exist(fpath,'dir')
-                    warning('Added %s to path', fpath);
-                    addpath(fpath);
-                else
-                    error('Bed composition module not found');
-                end
-            end
         end
     end
 end

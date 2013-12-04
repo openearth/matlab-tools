@@ -81,7 +81,7 @@ classdef slamfat < handle
     end
     
     properties(Access = private)
-        it                      = 2
+        it                      = 1
         io                      = 1
         transport_transportltd  = []
         transport_supplyltd     = []
@@ -99,7 +99,7 @@ classdef slamfat < handle
             end
 
             if isempty(this.bedcomposition) || ~ishandle(this.bedcomposition)
-                this.bedcomposition = slamfat_bedcomposition;
+                this.bedcomposition = slamfat_bedcomposition_basic;
             end
 
             if isempty(this.figure)
@@ -107,7 +107,7 @@ classdef slamfat < handle
             end
             
             if isempty(this.max_threshold)
-                this.max_threshold = slamfat_threshold;
+                this.max_threshold = slamfat_threshold_basic;
             end
         end
         
@@ -127,7 +127,7 @@ classdef slamfat < handle
                 n  = this.size_of_output;
                 nx = this.number_of_gridcells;
                 nf = this.bedcomposition.number_of_fractions;
-                nl = this.bedcomposition.number_of_actual_layers;
+                nl = this.bedcomposition.get_number_of_actual_layers;
 
                 this.data = struct(                     ...
                     'profile',          zeros(n,nx),    ...
@@ -135,7 +135,9 @@ classdef slamfat < handle
                     'supply',           zeros(n,nx,nf), ...
                     'capacity',         zeros(n,nx,nf), ...
                     'supply_limited',   false(n,nx,nf), ...
-                    'd50',              zeros(n,nx,nl));
+                    'moisture',         zeros(n,nx),    ...
+                    'd50',              zeros(n,nx,nl), ...
+                    'thickness',        zeros(n,nx,nl));
                 
                 this.performance = struct(  ...
                     'initialization',   0,  ...
@@ -145,7 +147,7 @@ classdef slamfat < handle
                     'visualization',    0);
                 
                 this.initial_profile = this.profile;
-                this.max_threshold.initialize(this.profile);
+                this.max_threshold.initialize(this.dx, this.profile);
 
                 this.isinitialized = true;
             end
@@ -167,6 +169,7 @@ classdef slamfat < handle
             
             this.performance.initialization = toc;
             
+            this.it = this.it + 1;
             while this.it < this.wind.number_of_timesteps
                 this.next;
                 this.output;
@@ -206,21 +209,15 @@ classdef slamfat < handle
                 
                 source = this.get_maximum_source;
 
-                if this.bedcomposition.enabled
-                    mass       = zeros(this.number_of_gridcells,this.bedcomposition.number_of_fractions);
-                    mass( idx) = source( idx) / this.dx - this.supply(idx) / (this.relaxation/this.wind.dt);
-                    mass(~idx) = source(~idx) / this.dx - (this.capacity(~idx) - this.transport(~idx)) / (this.relaxation / this.wind.dt);
+                % coompute added mass
+                mass       = zeros(this.number_of_gridcells,this.bedcomposition.number_of_fractions);
+                mass( idx) = source( idx) / this.dx - this.supply(idx) / (this.relaxation/this.wind.dt);
+                mass(~idx) = source(~idx) / this.dx - (this.capacity(~idx) - this.transport(~idx)) / (this.relaxation / this.wind.dt);
 
-                    dz = this.bedcomposition.deposit(mass);
+                dz = this.bedcomposition.deposit(mass);
 
-                    this.profile = this.profile + dz;
-                    this.supply  = this.bedcomposition.top_layer_mass;
-                else
-                    this.supply( idx) = this.supply( idx) + source( idx) / this.dx - ...
-                                        this.supply( idx) / (this.relaxation / this.wind.dt);
-                    this.supply(~idx) = this.supply(~idx) + source(~idx) / this.dx - ...
-                                        (this.capacity(~idx) - this.transport(~idx)) / (this.relaxation / this.wind.dt);
-                end
+                this.profile = this.profile + dz;
+                this.supply  = this.bedcomposition.get_top_layer_mass;
                 
                 this.performance.bedcomposition = this.performance.bedcomposition + toc;
 
@@ -264,9 +261,11 @@ classdef slamfat < handle
                 this.data.capacity      (this.io,:,:) = this.capacity;
                 this.data.supply_limited(this.io,:,:) = this.supply_limited;
                 
+                this.data = this.max_threshold.output(this.data, this.io);
+                
                 tic;
                 
-                this.data.d50           (this.io,:,:) = this.bedcomposition.d50;
+                this.data = this.bedcomposition.output(this.data, this.io);
                 
                 this.performance.grainsize = this.performance.grainsize + toc; tic;
                 

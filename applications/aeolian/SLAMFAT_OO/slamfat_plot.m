@@ -59,8 +59,6 @@ classdef slamfat_plot < handle
         hide_profile    = true
         timestep        = 1
         
-        sy              = 10
-        sx              = 1
         window          = inf
         
         obj             = []
@@ -131,7 +129,7 @@ classdef slamfat_plot < handle
         end
         
         function initialize(this)
-            if ~this.isinitialized || ~ishandle(this.figure)
+            if ~this.isinitialized || any(~ishandle(this.figure))
                 
                 this.figure          = [];
                 this.subplots        = struct();
@@ -145,32 +143,40 @@ classdef slamfat_plot < handle
                 
                 nx = this.obj.number_of_gridcells;
                 nf = this.obj.bedcomposition.number_of_fractions;
-                nl = this.obj.bedcomposition.number_of_actual_layers;
-                th = this.obj.bedcomposition.layer_thickness;
+                nl = this.obj.bedcomposition.get_number_of_actual_layers;
+                th = squeeze(this.obj.data.thickness(1,:,:));
+                
+                if isvector(th)
+                    th = th(:);
+                end
 
                 this.axes = struct();
                 this.axes.t_out = this.obj.output_time;
                 this.axes.t_in  = this.obj.wind.time;
                 this.axes.x     = [1:this.obj.number_of_gridcells] * this.obj.dx;
 
-                this.figure = figure;
-                set(this.figure,'keypressfcn',@(obj,event) this.handleKeyPress(this,obj,event));
+                %% space window
+                this.figure(1) = figure('Name','SLAMFAT: space');
+                set(this.figure(1),'keypressfcn',@(obj,event) this.handleKeyPress(this,obj,event));
 
                 % set colormap
                 colormap(this.colormap);
-
-                % set figure dimensiond
-                pos    = get(this.figure,'Position');
-                pos(4) = pos(4) * 2;
-                set(gcf,'Position',pos);
+                
+                n  = 0;
+                sy = 7;
+                sx = 1;
 
                 % plot profile
-                this.subplots.profile = subplot(this.sy,this.sx,1:5); hold on;
+                this.subplots.profile = subplot(sy,sx,n+[1:5]); hold on; n = n + 5;
 
                 f1 = squeeze(this.obj.data.profile(1,:));
                 f2 = squeeze(this.obj.data.d50(:,:,:)) * 1e6;
-
-                this.lines.d50          = pcolor(repmat(this.axes.x,nl,1),repmat(f1,nl,1) - repmat([0:nl-1]',1,nx).*th',squeeze(f2(1,:,:))');
+                
+                if this.hide_profile
+                    f1 = f1 - this.obj.initial_profile;
+                end
+            
+                this.lines.d50          = pcolor(repmat(this.axes.x,nl+1,1),repmat(f1,nl+1,1) - cumsum([zeros(nx,1) th],2)',squeeze(f2(1,:,[1 1:end]))');
                 this.lines.profile      = plot(this.axes.x,f1,'-k','LineWidth',2);
                 this.lines.capacity     = plot(this.axes.x,zeros(nx,nf),':k');
                 this.lines.transport    = plot(this.axes.x,zeros(nx,nf),'-k');
@@ -188,14 +194,14 @@ classdef slamfat_plot < handle
                 ylabel(this.colorbars.profile,'Median grain size [\mum]');
 
                 % plot supply limitation indicator
-                this.subplots.supply_limited = subplot(this.sy,this.sx,6); hold on;
-                this.lines.supply_limited    = pcolor(repmat(this.axes.x,2,1),repmat([0;1],1,nx),zeros(2,length(this.axes.x)));
+                this.subplots.supply_limited = subplot(sy,sx,n+1); hold on; n = n + 1;
+                this.lines.supply_limited    = bar(this.axes.x,zeros(1,length(this.axes.x)));
 
-                set(this.subplots.supply_limited,'YTick',[]);
-                xlabel(this.subplots.supply_limited, 'distance [m]');
+                set(this.subplots.supply_limited,'YTick',[],'XTick',[]);
+                %xlabel(this.subplots.supply_limited, 'distance [m]');
 
                 xlim(this.subplots.supply_limited, minmax(this.axes.x));
-                ylim(this.subplots.supply_limited, [0 1]);
+                ylim(this.subplots.supply_limited, [0 nf]);
                 clim(this.subplots.supply_limited, [0 nf]);
 
                 box on;
@@ -204,10 +210,39 @@ classdef slamfat_plot < handle
                 set(this.colorbars.supply_limited,'YTick',[]);
                 ylabel(this.colorbars.supply_limited,{'Supply' 'limitations'});
 
+                % plot moisture indicator
+                this.subplots.moisture = subplot(sy,sx,n+1); hold on; n = n + 1;
+                this.lines.moisture    = bar(this.axes.x,zeros(1,length(this.axes.x)));
+
+                set(this.subplots.moisture,'YTick',[]);
+                xlabel(this.subplots.moisture, 'distance [m]');
+
+                xlim(this.subplots.moisture, minmax(this.axes.x));
+                ylim(this.subplots.moisture, [0 .4]);
+                clim(this.subplots.moisture, [0 .4]);
+
+                box on;
+
+                this.colorbars.moisture = colorbar;
+                set(this.colorbars.moisture,'YTick',[]);
+                ylabel(this.colorbars.moisture,{'Moisture' 'content'});
+                
+                %% time window
+                
+                this.figure(2) = figure('Name','SLAMFAT: time');
+                set(this.figure(2),'keypressfcn',@(obj,event) this.handleKeyPress(this,obj,event));
+
+                % set colormap
+                colormap(this.colormap);
+                
+                n  = 0;
+                sy = 4;
+                sx = 1;
+                
                 cmap = this.colormap(nf+1);
 
                 % plot wind time series
-                this.subplots.wind = subplot(this.sy,this.sx,7:8); hold on;
+                this.subplots.wind = subplot(sy,sx,n+[1:2]); hold on; n = n + 2;
 
                 f1 = squeeze(this.obj.wind.time_series);
                 this.lines.wind = plot(this.axes.t_in,f1,'-k');
@@ -232,7 +267,7 @@ classdef slamfat_plot < handle
                 end
 
                 % plot transport time series
-                this.subplots.transport = subplot(this.sy,this.sx,9:10); hold on;
+                this.subplots.transport = subplot(sy,sx,n+[1:2]); hold on; n = n + 2;
 
                 f1 = squeeze(this.obj.data.transport(:,end,:));
                 f2 = squeeze(this.obj.data.capacity(:,end,:));
@@ -258,6 +293,17 @@ classdef slamfat_plot < handle
                     set(this.lines.transport_t(i),'Color',cmap(i+1,:));
                 end
                 
+                %% finalization
+                
+                linkaxes([this.subplots.profile this.subplots.supply_limited this.subplots.moisture], 'x');
+                linkaxes([this.subplots.wind this.subplots.transport], 'x');
+                
+                pos = get(this.figure,'Position');
+                for i = 2:length(pos)
+                    pos{i} = pos{1}; pos{i}(1) = pos{i-1}(1) + pos{i-1}(3);
+                    set(this.figure(i),'Position',pos{i});
+                end
+                
                 this.isinitialized = true;
             end
             
@@ -275,8 +321,9 @@ classdef slamfat_plot < handle
                 set(this.lines.transport_t(i), 'YData', f1(:,i));
             end
             
-            f3 = squeeze(this.obj.data.d50(:,:,:)) * 1e6;
-            clim(this.subplots.profile, [max([0 min(f3(f3~=0))]) max([1;f3(:)])]);
+            f3a = squeeze(this.obj.data.d50(1,:,1:end-1)) * 1e6;
+            f3b = squeeze(this.obj.data.d50(:,:,1:end-1)) * 1e6;
+            clim(this.subplots.profile, [max([0 min(f3a(f3a~=0))]) 1+max([0;f3b(:)])]);
             
             f1 = squeeze(this.obj.data.transport(:,end,:));
             ylim(this.subplots.transport, [0 max(abs(f1(:))) + 1e-3]);
@@ -284,31 +331,44 @@ classdef slamfat_plot < handle
         
         function this = update(this)
             
-            if ~this.isinitialized || ~ishandle(this.figure)
+            if ~this.isinitialized || any(~ishandle(this.figure))
                 this.initialize;
             elseif this.obj.output_timestep < this.obj.size_of_output
                 this.reinitialize;
             end
             
             ot = this.timestep;
-            it = this.timestep;
+            it = this.obj.output_timesteps(this.timestep);
             nx = this.obj.number_of_gridcells;
             nf = this.obj.bedcomposition.number_of_fractions;
-            nl = this.obj.bedcomposition.number_of_actual_layers;
-            th = this.obj.bedcomposition.layer_thickness;
+            nl = this.obj.bedcomposition.get_number_of_actual_layers;
+            th = squeeze(this.obj.data.thickness(ot,:,:));
+            
+            if isvector(th)
+                th = th(:);
+            end
             
             f1  = squeeze(this.obj.data.profile(ot,:));
             f2  = squeeze(this.obj.data.d50(ot,:,:))' * 1e6;
             f3  = squeeze(sum(this.obj.data.supply_limited(ot,:,:),3));
+            f4  = squeeze(this.obj.data.moisture(ot,:));
+            
+            if isvector(f2)
+                f2 = f2(:)';
+            end
 
             if this.hide_profile
                 f1 = f1 - this.obj.initial_profile;
             end
             
             set(this.lines.profile, 'YData', f1);
-            set(this.lines.d50,     'YData', repmat(f1,nl,1) - repmat([0:nl-1]',1,nx).*th', ...
+            set(this.lines.d50,     'YData', repmat(f1,nl+1,1) - cumsum([zeros(nx,1) th],2)', ...
                                     'CData', f2);
-            set(this.lines.supply_limited, 'CData', repmat(f3(:)',2,1));
+            set(this.lines.supply_limited, 'YData', f3);
+            set(this.lines.moisture,       'YData', f4);
+            
+            set(get(this.lines.supply_limited,'Children'),'CData',f3(:));
+            set(get(this.lines.moisture,      'Children'),'CData',f4(:))
 
             for i = 1:nf
                 f4 = squeeze(this.obj.data.transport(ot,:,i));

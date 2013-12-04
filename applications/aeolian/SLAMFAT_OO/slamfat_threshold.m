@@ -1,4 +1,4 @@
-classdef slamfat_threshold < handle
+classdef slamfat_threshold < slamfat_threshold_basic
     %SLAMFAT_THRESHOLD  One line description goes here.
     %
     %   More detailed description goes here.
@@ -48,29 +48,28 @@ classdef slamfat_threshold < handle
     
     %% Properties
     properties
-        time                    = [] % [s]
         tide                    = [] % [m]
         rain                    = [] % [mm]
         solar_radiation         = [] % [J/m^2]
+        salt                    = [] % [mg/g]
         initial_moisture        = .003
+        moisture_content        = []
         porosity                = .4
+        internal_friction       = 40 % [degrees]
         penetration_depth       = 10 % [mm]
         air_temperature         = 10 % [oC]
         latent_heat             = 2.45 % [MJ/kg]
         atmospheric_pressure    = 101.325 % [kPa]
-        air_specific_heat       = 1.0035 % [J/g/K]
+        air_specific_heat       = 1.0035e-3 % [J/g/K]
         relative_humidity       = .4
+        beta                    = .31
+        A                       = .1
         
         method_moisture         = 'belly_johnson'
     end
     
-    properties(Access = private)
-        t                   = 0
-        dt                  = 0
-        profile             = []
-        wind                = []
+    properties(Access = protected)
         moisture            = []
-        isinitialized       = false
     end
     
     %% Methods
@@ -81,7 +80,7 @@ classdef slamfat_threshold < handle
         
         function vp = saturation_pressure(T)
             T  = T + 273.15;
-            A  = -1.88e-4;
+            A  = -1.88e4;
             B  = -13.1;
             C  = -1.5e-2;
             D  =  8e-7;
@@ -114,67 +113,68 @@ classdef slamfat_threshold < handle
             setproperty(this, varargin);
         end
         
-        function initialize(this, profile)
+        function initialize(this, dx, profile)
             if ~this.isinitialized
-                this.t        = 0;
-                this.dt       = 0;
-                this.profile  = profile;
+                initialize@slamfat_threshold_basic(this, dx, profile);
                 this.moisture = this.initial_moisture * ones(size(profile));
-                
-                this.isinitialized = true;
             end
         end
         
         function threshold = maximize_threshold(this, threshold, dt, profile, wind)
-            this.t       = this.t + this.dt;
-            this.dt      = dt;
-            this.profile = profile;
-            this.wind    = wind;
+            maximize_threshold@slamfat_threshold_basic(this, threshold, dt, profile, wind);
             
             if this.isinitialized
-                %threshold = this.apply_bedslope   (threshold);
-                %threshold = this.apply_evaporation(threshold);
+                threshold = this.apply_bedslope   (threshold);
+                threshold = this.apply_evaporation(threshold);
                 threshold = this.apply_tide       (threshold);
-                %threshold = this.apply_rain       (threshold);
+                threshold = this.apply_rain       (threshold);
                 %threshold = this.apply_salt       (threshold);
             else
                 error('threshold module is not initialized');
             end
         end
         
-        function threshold = apply_bedslope(~, threshold)
+        function threshold = apply_bedslope(this, threshold)
+            angle     = atan(diff(this.profile) / this.dx);
+            %threshold = this.beta.^2 ./ this.A.^2 .* threshold.^2 .* ...
+            %    (tan(this.internal_friction/180*pi) * cos(angle) - sin(angle));
+            %threshold = threshold + repmat(tan(angle([1 1:end]))',1,size(threshold,2));
         end
         
         function threshold = apply_tide(this, threshold)
             if ~isempty(this.tide)
-                idx = this.profile <= this.interpolate_time(this.tide);
-                this.moisture(idx) = this.porosity;
-                threshold = this.threshold_from_moisture(threshold);
+                idx                 = this.profile <= this.interpolate_time(this.tide);
+                this.moisture(idx)  = this.porosity;
+                threshold           = this.threshold_from_moisture(threshold);
             end
         end
         
         function threshold = apply_rain(this, threshold)
             if ~isempty(this.rain)
-                rainfall = this.interpolate_time(this.rain);
-                this.moisture = min(this.moisture + rainfall ./ this.penetration_depth, this.porosity);
-                threshold = this.threshold_from_moisture(threshold);
+                rainfall        = this.interpolate_time(this.rain);
+                this.moisture   = min(this.moisture + rainfall ./ this.penetration_depth, this.porosity);
+                threshold       = this.threshold_from_moisture(threshold);
             end
         end
         
         function threshold = apply_evaporation(this, threshold)
             if ~isempty(this.solar_radiation)
-                radiation = this.interpolate_time(this.solar_radiation);
-                m = this.vaporation_pressure_slope(this.air_temperature);
-                delta = saturation_pressure(this.air_temperature) * (1 - this.relative_humidity);
-                gamma = (this.air_specific_heat * this.atmospheric_pressure) / (.622 * this.latent_heat);
-                evaporation = max(0, (m * radiation + gamma * 6.43 * (1 + 0.536 * this.wind) * delta) / ...
-                    (this.latent_heat * (m + gamma)) / 24 / 3600 * this.dt);
-                this.moisture = max(this.moisture - evaporation ./ this.penetration_depth, 0);
-                threshold = this.threshold_from_moisture(threshold);
+                radiation       = this.interpolate_time(this.solar_radiation);
+                m               = this.vaporation_pressure_slope(this.air_temperature);
+                delta           = this.saturation_pressure(this.air_temperature) * (1 - this.relative_humidity);
+                gamma           = (this.air_specific_heat * this.atmospheric_pressure) / (.622 * this.latent_heat);
+                evaporation     = max(0, (m * radiation + gamma * 6.43 * (1 + 0.536 * this.wind) * delta) / ...
+                                    (this.latent_heat * (m + gamma)) / 24 / 3600 * this.dt);
+                this.moisture   = max(this.moisture - evaporation ./ this.penetration_depth, 0);
+                threshold       = this.threshold_from_moisture(threshold);
             end
         end
         
         function threshold = apply_salt(~, threshold)
+            if ~ismepty(this.salt)
+                salt_content = this.interpolate_time(this.salt);
+                threshold    = .97 .* exp(.1031 * salt_content) .* threshold;
+            end
         end
         
         function threshold = threshold_from_moisture(this, threshold)
@@ -182,7 +182,7 @@ classdef slamfat_threshold < handle
             
             switch this.method_moisture
                 case 'belly_johnson'
-                    threshold_moist = threshold .* (1.8 + 0.6 .* log10(moist));
+                    threshold_moist = threshold .* max(1,1.8 + 0.6 .* log10(moist));
                 case 'hotta'
                     threshold_moist = threshold + 7.5 .* moist;
                 otherwise
@@ -192,37 +192,29 @@ classdef slamfat_threshold < handle
             threshold(this.moisture > .04 ,:) = inf;
         end
         
-%         function val = get.tide(this)
-%             val = this.unify_series(this.tide);
-%         end
-%         
-%         function val = get.rain(this)
-%             val = this.unify_series(this.rain);
-%         end
-%         
-%         function val = get.solar_radiation(this)
-%             val = this.unify_series(this.solar_radiation);
-%         end
-%         
-%         function val = unify_series(this, val)
-%             if length(this.time) > 1
-%                 if length(val) == 1
-%                     val = repmat(val, 1, length(this.time));
-%                 end
-%             end
-%             if length(val) > length(this.time)
-%                 val = val(1:length(this.time));
-%             elseif length(val) < length(this.time)
-%                 this.time = this.time(1:length(val));
-%             end
-%         end
+        function data = output(this, data, io)
+            data = output@slamfat_threshold_basic(this, data, io);
+            data.moisture(io,:) = this.moisture_content;
+        end
         
-        function val = interpolate_time(this, data)
-            if length(data) > 1
-                val = interp1(this.time, data, this.t);
-            else
-                val = data;
-            end
+        function val = get.tide(this)
+            val = this.unify_series(this.tide);
+        end
+        
+        function val = get.rain(this)
+            val = this.unify_series(this.rain);
+        end
+        
+        function val = get.solar_radiation(this)
+            val = this.unify_series(this.solar_radiation);
+        end
+        
+        function val = get.salt(this)
+            val = this.unify_series(this.salt);
+        end
+        
+        function val = get.moisture_content(this)
+            val = this.moisture;
         end
     end
 end

@@ -1,26 +1,55 @@
-%close all; clear all; clc;
-close all; clear w; clear s;
+%% advanced
+
+close all; clear classes; clear w; clear s;
+
+n = 90;
+profile        = zeros(1,100);
+profile(1:n)   = linspace(-1,1,n);
+profile(n:end) = linspace(1,15,100-n+1);
 
 w = slamfat_wind;
-%s = slamfat('wind',w,'profile',linspace(0,1,100),'animate',true);
-s = slamfat('wind',w,'profile',zeros(1,100),'animate',true);
-
+s = slamfat('wind',w,'profile',profile,'animate',true);
 
 source = zeros(length(s.profile),1);
-source(1:20) = 1.5e-4 * w.dt * s.dx;
+source(1:20) = 1.5e-2 * w.dt * s.dx;
 
-s.bedcomposition.enabled            = true;
+s.bedcomposition = slamfat_bedcomposition;
 s.bedcomposition.source             = source;
-%s.bedcomposition.initial_deposit    = .01;
-%s.bedcomposition.layer_thickness    = 5e-4;
-%s.bedcomposition.number_of_layers   = 5;
-%s.bedcomposition.grain_size         = [1.18 0.6 0.425 0.3 0.212 0.15 0.063]*1e-3;
-%s.bedcomposition.distribution       = [0.63 0.94 6.80 51.35 30.73 8.07 1.43];
+s.bedcomposition.layer_thickness    = 5e-4;
+s.bedcomposition.number_of_layers   = 3;
+s.bedcomposition.grain_size         = [1.18 0.6 0.425 0.3 0.212 0.15 0.063]*1e-3;
+s.bedcomposition.distribution       = [0.63 0.94 6.80 51.35 30.73 8.07 1.43];
 
-%s.max_threshold.time = [0 3600];
-%s.max_threshold.tide = [0 .5];
+s.max_threshold = slamfat_threshold;
+s.max_threshold.time = 0:3600;
+s.max_threshold.tide = 0.25 * sin(s.max_threshold.time * 2 * pi / 600);
+s.max_threshold.solar_radiation = 1e4;
 
-%s.max_source    = 'initial_profile';
+s.max_source    = 'initial_profile';
+
+s.run;
+
+%% basic
+
+close all; clear classes; clear w; clear s;
+
+n = 90;
+profile        = zeros(1,100);
+profile(1:n)   = linspace(-1,1,n);
+profile(n:end) = linspace(1,15,100-n+1);
+
+w = slamfat_wind;
+s = slamfat('wind',w,'profile',profile,'animate',true);
+
+source = zeros(length(s.profile),1);
+source(1:20) = 1.5e-2 * w.dt * s.dx;
+
+s.bedcomposition = slamfat_bedcomposition_basic;
+s.bedcomposition.source             = source;
+s.bedcomposition.grain_size         = .3*1e-3;
+
+s.max_threshold = slamfat_threshold_basic;
+s.max_threshold.time = 0:3600;
 
 s.run;
 
