@@ -79,7 +79,7 @@ classdef slamfat_wind < handle
                 f_series = [];
                 l_series = [];
 
-                while sum(l_series) < this.duration
+                while sum(l_series) < this.duration(i)
                     f_series = [f_series     normrnd(this.velocity_mean(i), this.velocity_std(i), this.block, 1)    ]; %#ok<AGROW>
                     l_series = [l_series max(normrnd(this.gust_mean(i),     this.gust_std(i),     this.block, 1), 0)]; %#ok<AGROW>
                 end

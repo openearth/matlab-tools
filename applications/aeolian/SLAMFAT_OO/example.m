@@ -1,3 +1,27 @@
+%% basic
+
+close all; clear classes; clear w; clear s;
+
+n = 90;
+profile        = zeros(1,100);
+profile(1:n)   = linspace(-1,1,n);
+profile(n:end) = linspace(1,15,100-n+1);
+
+w = slamfat_wind;
+s = slamfat('wind',w,'profile',profile,'animate',true);
+
+source = zeros(length(s.profile),1);
+source(1:20) = 1.5e-2 * w.dt * s.dx;
+
+s.bedcomposition = slamfat_bedcomposition_basic;
+s.bedcomposition.source             = source;
+s.bedcomposition.grain_size         = .3*1e-3;
+
+s.max_threshold = slamfat_threshold_basic;
+s.max_threshold.time = 0:3600;
+
+s.run;
+
 %% advanced
 
 close all; clear classes; clear w; clear s;
@@ -29,7 +53,7 @@ s.max_source    = 'initial_profile';
 
 s.run;
 
-%% basic
+%% async
 
 close all; clear classes; clear w; clear s;
 
@@ -38,7 +62,8 @@ profile        = zeros(1,100);
 profile(1:n)   = linspace(-1,1,n);
 profile(n:end) = linspace(1,15,100-n+1);
 
-w = slamfat_wind;
+t = 0:60:3600;
+w = slamfat_wind('duration',60,'block',10,'velocity_mean',4+4*sin(t/3600*2*pi));
 s = slamfat('wind',w,'profile',profile,'animate',true);
 
 source = zeros(length(s.profile),1);
@@ -50,8 +75,9 @@ s.bedcomposition.grain_size         = .3*1e-3;
 
 s.max_threshold = slamfat_threshold_basic;
 s.max_threshold.time = 0:3600;
+s.max_threshold.threshold = 1*sin(t/3600*2*pi);
 
-s.run;
+%s.run;
 
 %% Aeolian Sand and Sand Dunes By Kenneth Pye, Haim Tsoar
 

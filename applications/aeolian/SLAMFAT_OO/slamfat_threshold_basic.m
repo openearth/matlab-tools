@@ -48,7 +48,8 @@ classdef slamfat_threshold_basic < handle
     
     %% Properties
     properties
-        time                    = [] % [s]
+        time                = [] % [s]
+        threshold           = []
     end
     
     properties(Access = protected)
