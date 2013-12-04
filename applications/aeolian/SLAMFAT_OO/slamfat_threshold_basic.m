@@ -101,6 +101,7 @@ classdef slamfat_threshold_basic < handle
             this.dt      = dt;
             this.profile = profile;
             this.wind    = wind;
+            threshold   =  this.interpolate_time(this.threshold)*ones(size(threshold));
         end
         
         function data = output(~, data, ~)
