@@ -143,13 +143,16 @@ elseif OPT.vardx == 1 && ~isempty(OPT.xgrid)
 elseif OPT.vardx == 1
     
     % prepare
-    hin     = max(OPT.wl-zin,0.01);
-    k       = disper(2*pi/OPT.Tm, hin(1), OPT.g);
+    hin      = max(OPT.wl-zin,0.01);
+    %k       = disper(2*pi/OPT.Tm, hin(1), OPT.g);
     if OPT.nonh
-        Llong = 2*pi/k;
+    	k       = disper(2*pi/OPT.Tm, hin(1), OPT.g);
+        %Llong = 2*pi/k;
     else
-        Llong   = 4*2*pi/k;
+        %Llong   = 4*2*pi/k;
+        k       = disper(2*pi/(OPT.Tm*4), hin(1), OPT.g);% assume Tlong = 4 * Tshort, instead of Llong = 4*Lshort
     end
+    Llong = 2*pi/k;
     x       = xin;
         
     % grid settings
