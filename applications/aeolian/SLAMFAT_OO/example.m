@@ -58,7 +58,7 @@ s.show_performance;
 %% async
 
 close all; clear classes; clear w; clear s;
-%
+
 n = 90;
 profile        = zeros(1,100);
 profile(1:n)   = linspace(-1,1,n);
@@ -68,20 +68,84 @@ duration = 60 * ones(1,60);
 velocity = 4+4*sin(cumsum(duration)/600*2*pi);
 velstd   = 2;
 w = slamfat_wind('duration',duration,'velocity_mean',velocity,'velocity_std',velstd);
-s = slamfat('wind',w,'profile',profile,'animate',true);
 
-source = zeros(length(s.profile),1);
-source(1:20) = 1.5e-2 * w.dt * s.dx;
+%%
 
-s.bedcomposition = slamfat_bedcomposition_basic;
-s.bedcomposition.source             = source;
-s.bedcomposition.grain_size         = .3*1e-3;
+phi = linspace(-pi,pi,21);
+A   = 4; %0:2:8;
 
-s.max_threshold = slamfat_threshold_basic;
-s.max_threshold.time = 0:3600;
-s.max_threshold.threshold = 3*sin(s.max_threshold.time/600*2*pi);
+for i = 1:length(phi)
+    for j = 1:length(A)
+        fname = sprintf('s_phi%3.2f_A%d.mat',phi(i),A(j));
+        
+        if ~exist(fname,'file')
+    
+            disp(fname);
+            
+            clear s;
+            s = slamfat('wind',w,'profile',profile,'animate',false,'progress',false);
 
-s.run;
+            source = zeros(length(s.profile),1);
+            source(1:20) = 1.5e-4 * w.dt * s.dx;
+
+            s.bedcomposition = slamfat_bedcomposition_basic;
+            s.bedcomposition.source             = source;
+            s.bedcomposition.grain_size         = .3*1e-3;
+
+            s.max_threshold = slamfat_threshold_basic;
+            s.max_threshold.time      = 0:3600;
+            s.max_threshold.threshold = A(j)*sin(s.max_threshold.time/600*2*pi + phi(i));
+
+            s.run;
+
+            save(fname,'s');
+        end
+    end
+end
+
+%% plot results
+
+figure; hold on;
+
+clr = 'rgbcymk';
+
+phi_old = linspace(-pi,pi,20);
+phi_old = [phi_old(1:10) 0 phi_old(11:end)];
+
+phi = linspace(-pi,pi,21);
+A   = 3:4; %0:2:8;
+
+transport = zeros(length(phi),length(A),1);
+
+for j = 1:length(A)
+    for i = 1:length(phi)
+        fname = sprintf('s_phi%3.2f_A%d.mat',phi(i),A(j));
+        
+        if exist(fname,'file')
+            disp(fname);
+            load(fname);
+            transport(i,j,:) = squeeze(s.data.total_transport(end,end,:));
+        else
+            fname = sprintf('s_phi%3.2f_A%d.mat',phi_old(i),A(j));
+
+            if exist(fname,'file')
+                disp(fname);
+                load(fname);
+                transport(i,j,:) = squeeze(s.data.total_transport(end,end,:));
+            end
+        end
+    end
+    
+    plot(phi/pi*180,squeeze(transport(:,j,:)),'Color',clr(j));
+
+end
+
+xlabel('phase difference between threshold and wind velocity [^o]')
+ylabel('transport volume [m^3/hr]')
+
+xlim([-180 180]);
+
+grid on;
 
 %% Aeolian Sand and Sand Dunes By Kenneth Pye, Haim Tsoar
 

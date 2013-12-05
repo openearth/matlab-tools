@@ -248,7 +248,9 @@ classdef slamfat < handle
         
         function finalize(this)
             if this.progress
-                close(this.progressbar);
+                if ishandle(this.progressbar)
+                    close(this.progressbar);
+                end
             end
             
             if this.animate && ~isempty(this.figure)
