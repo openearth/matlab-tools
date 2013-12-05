@@ -1,10 +1,12 @@
 function output_text = delft3d_obs_file_in_polygon(grd_file,pol_file,obs_file_out,varargin)
 % delft3d_obs_file_in_polygon creates observation points in all grid cells
-% within the specified polygon (generated with e.g. RGFGRID or ldbTool)
+% within the specified polygon (generated with e.g. RGFGRID or ldbTool) and
+% names them according to nesting standards (so you can use them for ad hoc
+% nesting without having to run the model again, nesthd2 can be started directly)
 %
 %  <obs_text> = dflowfm.obs_file_in_polygon(grd_file,pol_file,obs_file_out,<obs_file_in>);
 %
-%  <obs_text>    = Optional, output text that is written to obs_file_out
+%  <obs_text>    = Optional, output text that is written to obs_file_out as well
 %  grd_file      = Required, grid file (its name with or without location in
 %                  a text string)
 %  pol_file      = Required, polygon file (its name with or without location in
