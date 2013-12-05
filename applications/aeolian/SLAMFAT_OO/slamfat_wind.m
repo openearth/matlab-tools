@@ -47,7 +47,7 @@ classdef slamfat_wind < handle
     % $Keywords: $
     
     %% Properties
-    properties
+    properties(GetAccess = public, SetAccess = public)
         velocity_mean       = 5
         velocity_std        = 2.5
         gust_mean           = 4
@@ -55,12 +55,12 @@ classdef slamfat_wind < handle
         duration            = 3600
         dt                  = 0.05
         block               = 1000
+    end
+    
+    properties(GetAccess = public, SetAccess = protected)
         time                = []
         time_series         = []
         number_of_timesteps = 0
-    end
-    
-    properties(Access = private)
         isinitialized       = false
     end
     
@@ -68,9 +68,25 @@ classdef slamfat_wind < handle
     methods
         function this = slamfat_wind(varargin)
             setproperty(this, varargin);
+            
+            this.generate;
+        end
+        
+        function initialize(this)
+            this.velocity_mean          = this.unify_series(this.velocity_mean);
+            this.velocity_std           = this.unify_series(this.velocity_std);
+            this.gust_mean              = this.unify_series(this.gust_mean);
+            this.gust_std               = this.unify_series(this.gust_std);
+
+            
+            this.number_of_timesteps    = round(this.duration/this.dt) + 1;
+            this.time                   = [0:sum(this.number_of_timesteps)-1] * this.dt;
         end
         
         function wind = generate(this)
+            
+            this.initialize;
+            
             wind = zeros(sum(this.number_of_timesteps),1);
             for i = 1:length(this.duration)
                 n_wind  = this.number_of_timesteps(i);
@@ -99,39 +115,8 @@ classdef slamfat_wind < handle
             end
             wind(wind<0) = 0;
             
-            this.time_series = wind(:)';
-        end
-        
-        function val = get.time_series(this)
-            if ~this.isinitialized
-                this.generate;
-                this.isinitialized = true;
-            end
-            val = this.time_series;
-        end
-        
-        function val = get.time(this)
-            val = [0:sum(this.number_of_timesteps)-1] * this.dt;
-        end
-        
-        function val = get.number_of_timesteps(this)
-            val = round(this.duration/this.dt) + 1;
-        end
-        
-        function val = get.velocity_mean(this)
-            val = this.unify_series(this.velocity_mean);
-        end
-        
-        function val = get.velocity_std(this)
-            val = this.unify_series(this.velocity_std);
-        end
-        
-        function val = get.gust_mean(this)
-            val = this.unify_series(this.gust_mean);
-        end
-        
-        function val = get.gust_std(this)
-            val = this.unify_series(this.gust_std);
+            this.time_series   = wind(:)';
+            this.isinitialized = true;
         end
         
         function val = unify_series(this, val)

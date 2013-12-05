@@ -7,11 +7,11 @@ profile        = zeros(1,100);
 profile(1:n)   = linspace(-1,1,n);
 profile(n:end) = linspace(1,15,100-n+1);
 
-w = slamfat_wind;
-s = slamfat('wind',w,'profile',profile,'animate',true);
+w = slamfat_wind('duration',3600);
+s = slamfat('wind',w,'profile',profile,'animate',false,'progress',false);
 
 source = zeros(length(s.profile),1);
-source(1:20) = 1.5e-2 * w.dt * s.dx;
+source(1:20) = 1.5e-3 * w.dt * s.dx;
 
 s.bedcomposition = slamfat_bedcomposition_basic;
 s.bedcomposition.source             = source;
@@ -21,6 +21,7 @@ s.max_threshold = slamfat_threshold_basic;
 s.max_threshold.time = 0:3600;
 
 s.run;
+s.show_performance;
 
 %% advanced
 
@@ -31,11 +32,11 @@ profile        = zeros(1,100);
 profile(1:n)   = linspace(-1,1,n);
 profile(n:end) = linspace(1,15,100-n+1);
 
-w = slamfat_wind;
-s = slamfat('wind',w,'profile',profile,'animate',true);
+w = slamfat_wind('duration',600);
+s = slamfat('wind',w,'profile',profile,'animate',false);
 
 source = zeros(length(s.profile),1);
-source(1:20) = 1.5e-2 * w.dt * s.dx;
+source(1:100) = 1.5e-2 * w.dt * s.dx;
 
 s.bedcomposition = slamfat_bedcomposition;
 s.bedcomposition.source             = source;
@@ -52,6 +53,7 @@ s.max_threshold.solar_radiation = 1e4;
 s.max_source    = 'initial_profile';
 
 s.run;
+s.show_performance;
 
 %% async
 

@@ -47,14 +47,13 @@ classdef slamfat_threshold < slamfat_threshold_basic
     % $Keywords: $
     
     %% Properties
-    properties
+    properties(GetAccess = public, SetAccess = public)
         bedslope                = true
         tide                    = [] % [m]
         rain                    = [] % [mm]
         solar_radiation         = [] % [J/m^2]
         salt                    = [] % [mg/g]
         initial_moisture        = .003
-        moisture_content        = []
         porosity                = .4
         internal_friction       = 40 % [degrees]
         penetration_depth       = 10 % [mm]
@@ -69,8 +68,8 @@ classdef slamfat_threshold < slamfat_threshold_basic
         method_moisture         = 'belly_johnson'
     end
     
-    properties(Access = protected)
-        moisture            = []
+    properties(GetAccess = public, SetAccess = protected)
+        moisture                = []
     end
     
     %% Methods
@@ -117,7 +116,12 @@ classdef slamfat_threshold < slamfat_threshold_basic
         function initialize(this, dx, profile)
             if ~this.isinitialized
                 initialize@slamfat_threshold_basic(this, dx, profile);
-                this.moisture = this.initial_moisture * ones(size(profile));
+                
+                this.tide               = this.unify_series(this.tide);
+                this.rain               = this.unify_series(this.rain);
+                this.solar_radiation    = this.unify_series(this.solar_radiation);
+                this.salt               = this.unify_series(this.salt);
+                this.moisture           = this.initial_moisture * ones(size(profile));
             end
         end
         
@@ -132,6 +136,8 @@ classdef slamfat_threshold < slamfat_threshold_basic
                 threshold = this.threshold_from_moisture(threshold);
                 threshold = this.apply_bedslope         (threshold);
                 threshold = this.apply_salt             (threshold);
+                
+                this.current_threshold = threshold;
             else
                 error('threshold module is not initialized');
             end
@@ -195,27 +201,7 @@ classdef slamfat_threshold < slamfat_threshold_basic
         
         function data = output(this, data, io)
             data = output@slamfat_threshold_basic(this, data, io);
-            data.moisture(io,:) = this.moisture_content;
-        end
-        
-        function val = get.tide(this)
-            val = this.unify_series(this.tide);
-        end
-        
-        function val = get.rain(this)
-            val = this.unify_series(this.rain);
-        end
-        
-        function val = get.solar_radiation(this)
-            val = this.unify_series(this.solar_radiation);
-        end
-        
-        function val = get.salt(this)
-            val = this.unify_series(this.salt);
-        end
-        
-        function val = get.moisture_content(this)
-            val = this.moisture;
+            data.moisture(io,:) = this.moisture;
         end
     end
 end

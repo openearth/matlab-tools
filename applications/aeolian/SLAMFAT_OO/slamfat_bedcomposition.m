@@ -47,18 +47,20 @@ classdef slamfat_bedcomposition < slamfat_bedcomposition_basic
     % $Keywords: $
     
     %% Properties
-    properties
+    properties(GetAccess = public, SetAccess = public)
         layer_thickness     = 1e-3
         
         sediment_type       = 1
         logsigma            = 1.34
         morfac              = 1
-        
+    end
+    
+    properties(GetAccess = public, SetAccess = protected)
         layer_mass          = []
         d50                 = []
     end
     
-    properties(Access = protected)
+    properties(GetAccess = protected, SetAccess = protected)
         bedcomposition_module   = []
     end
     
@@ -103,7 +105,13 @@ classdef slamfat_bedcomposition < slamfat_bedcomposition_basic
         
         function initialize(this)
             if ~this.isinitialized
-                    
+                initialize@slamfat_bedcomposition_basic(this);
+                
+                this.number_of_fractions = length(this.grain_size);
+                
+                this.logsigma      = this.unify_series(this.logsigma);
+                this.sediment_type = this.unify_series(this.sediment_type);
+                
                 this.addpath;
 
                 fprintf('LOADED: %s\n\n', bedcomposition.version);
@@ -122,9 +130,9 @@ classdef slamfat_bedcomposition < slamfat_bedcomposition_basic
 
                 this.bedcomposition_module.initialize
 
-                this.bedcomposition_module.thickness_of_transport_layer   = this.layer_thickness * ones(this.number_of_gridcells,1);
-                this.bedcomposition_module.thickness_of_lagrangian_layers = this.layer_thickness;
-                this.bedcomposition_module.thickness_of_eulerian_layers   = this.layer_thickness;
+                this.bedcomposition_module.thickness_of_transport_layer   = this.get_layer_thickness * ones(this.number_of_gridcells,1);
+                this.bedcomposition_module.thickness_of_lagrangian_layers = this.get_layer_thickness;
+                this.bedcomposition_module.thickness_of_eulerian_layers   = this.get_layer_thickness;
 
                 this.bedcomposition_module.fractions(           ...
                     this.sediment_type, ...
@@ -132,7 +140,7 @@ classdef slamfat_bedcomposition < slamfat_bedcomposition_basic
                     this.logsigma,      ...
                     this.bed_density);
 
-                th = zeros(this.get_number_of_actual_layers, this.number_of_gridcells) + this.layer_thickness;
+                th = zeros(this.get_number_of_actual_layers, this.number_of_gridcells) + this.get_layer_thickness;
                 p  = zeros(this.get_number_of_actual_layers, this.number_of_gridcells) + this.porosity;
 
                 this.bedcomposition_module.init_layer_thickness(th);
@@ -181,7 +189,7 @@ classdef slamfat_bedcomposition < slamfat_bedcomposition_basic
                 gs = repmat(this.grain_size(:)', nx*nl, 1);
 
                 % normalize mass fractions
-                m  = reshape(this.layer_mass, nx*nl, nf);
+                m  = reshape(this.get_layer_mass, nx*nl, nf);
                 m  = cumsum(m,2)./repmat(sum(m,2),1,nf);
 
                 idx = false(size(m));
@@ -204,8 +212,8 @@ classdef slamfat_bedcomposition < slamfat_bedcomposition_basic
         
         function data = output(this, data, io)
             data = output@slamfat_bedcomposition_basic(this, data, io);
-            data.d50      (io,:,:) = this.d50;
-            data.thickness(io,:,:) = this.layer_thickness;
+            data.d50      (io,:,:) = this.get_d50;
+            data.thickness(io,:,:) = this.get_layer_thickness;
         end
         
         function mass = get_top_layer_mass(this)
@@ -221,11 +229,11 @@ classdef slamfat_bedcomposition < slamfat_bedcomposition_basic
             val = this.number_of_layers + 2;
         end
         
-        function val = get.d50(this)
+        function val = get_d50(this)
             val = this.compute_percentile(.5);
         end
         
-        function mass = get.layer_mass(this)
+        function mass = get_layer_mass(this)
             if this.isinitialized
                 mass = permute(this.bedcomposition_module.layer_mass,[3 2 1]); % frac, lyr, x -> x, lyr, frac
             else
@@ -233,20 +241,12 @@ classdef slamfat_bedcomposition < slamfat_bedcomposition_basic
             end
         end
         
-        function thickness = get.layer_thickness(this)
+        function thickness = get_layer_thickness(this)
             if this.isinitialized
                 thickness = this.bedcomposition_module.layer_thickness';
             else
                 thickness = this.layer_thickness;
             end
-        end
-        
-        function val = get.logsigma(this)
-            val = this.unify_series(this.logsigma);
-        end
-        
-        function val = get.sediment_type(this)
-            val = this.unify_series(this.sediment_type);
         end
     end
 end

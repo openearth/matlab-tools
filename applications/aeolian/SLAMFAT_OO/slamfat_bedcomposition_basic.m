@@ -47,10 +47,10 @@ classdef slamfat_bedcomposition_basic < handle
     % $Keywords: $
     
     %% Properties
-    properties
-        number_of_gridcells     = 100
-        number_of_fractions     = 1
-        number_of_layers        = 1
+    properties(GetAccess = public, SetAccess = public)
+        number_of_gridcells = 100
+        number_of_fractions = 1
+        number_of_layers    = 1
         
         source              = []
         
@@ -62,18 +62,20 @@ classdef slamfat_bedcomposition_basic < handle
         air_density         = 1.25
         water_density       = 1025
         
-        initial_mass_unit   = 0
-        
         g                   = 9.81
         A                   = 100
         dt                  = 0.05
- 
-        threshold_velocity  = []
     end
     
-    properties(Access = protected)
-        mass                = []
+    properties(GetAccess = public, SetAccess = protected)
+        initial_mass_unit   = 0
+        threshold_velocity  = 0
+        
         isinitialized       = false
+    end
+    
+    properties(GetAccess = protected, SetAccess = protected)
+        mass                = []
     end
     
     %% Methods
@@ -102,10 +104,19 @@ classdef slamfat_bedcomposition_basic < handle
         
         function initialize(this)
             if ~this.isinitialized
-
+                this.grain_density      = this.unify_series(this.grain_density);
+                this.bed_density        = this.unify_series(this.grain_density * (1-this.porosity));
+                this.distribution       = this.unify_series(this.distribution);
+                this.distribution       = this.distribution ./ sum(this.distribution); % normalize
+                this.initial_mass_unit  = repmat(this.bed_density .* this.distribution, this.number_of_gridcells, 1);
+                
+                % Bagnold formulation for threshold velocity:
+                %     u* = A * sqrt(((rho_p - rho_a) * g * D) / rho_p)
+                this.threshold_velocity  = this.A * sqrt(((this.bed_density - this.air_density) .* ...
+                                           this.g .* this.grain_size) ./ this.bed_density);
+                
                 % source
                 if isempty(this.source)
-                    this.number_of_fractions = 1;
                     this.source = zeros(this.number_of_gridcells,1);
                 end
                 
@@ -122,40 +133,12 @@ classdef slamfat_bedcomposition_basic < handle
             % no output
         end
         
-        function val = get.threshold_velocity(this)
-            % Bagnold formulation for threshold velocity:
-            %     u* = A * sqrt(((rho_p - rho_a) * g * D) / rho_p)
-            val = this.A * sqrt(((this.bed_density - this.air_density) .* ...
-                  this.g .* this.grain_size) ./ this.bed_density);
-        end
-        
         function mass = get_top_layer_mass(this)
             mass = this.mass;
         end
         
         function val = get_number_of_actual_layers(this)
             val = this.number_of_layers;
-        end
-        
-        function val = get.number_of_fractions(this)
-            val = length(this.grain_size);
-        end
-        
-        function val = get.grain_density(this)
-            val = this.unify_series(this.grain_density);
-        end
-        
-        function val = get.bed_density(this)
-            val = this.unify_series(this.grain_density * (1-this.porosity));
-        end
-        
-        function val = get.distribution(this)
-            val = this.unify_series(this.distribution);
-            val = val ./ sum(val); % normalize
-        end
-        
-        function val = get.initial_mass_unit(this)
-            val = repmat(this.bed_density .* this.distribution, this.number_of_gridcells, 1);
         end
         
         function val = unify_series(this, val)

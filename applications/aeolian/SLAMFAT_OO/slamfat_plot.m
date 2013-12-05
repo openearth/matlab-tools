@@ -47,15 +47,7 @@ classdef slamfat_plot < handle
     % $Keywords: $
     
     %% Properties
-    properties
-        figure          = []
-        subplots        = struct()
-        axes            = struct()
-        lines           = struct()
-        hlines          = []
-        vlines          = []
-        colorbars       = []
-        
+    properties(GetAccess = public, SetAccess = public)
         hide_profile    = true
         timestep        = 1
         
@@ -63,8 +55,18 @@ classdef slamfat_plot < handle
         
         obj             = []
     end
+        
+    properties(GetAccess = public, SetAccess = protected)
+        figure          = []
+        subplots        = struct()
+        axes            = struct()
+        lines           = struct()
+        hlines          = []
+        vlines          = []
+        colorbars       = []
+    end
     
-    properties(Access = private)
+    properties(GetAccess = protected, SetAccess = protected)
         isinitialized           = false
         animating               = false
     end

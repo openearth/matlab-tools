@@ -54,13 +54,11 @@ classdef slamfat < handle
         g                       = 9.81
         relative_velocity       = 1
         output_timesteps        = 100
-        output_time             = []
-        size_of_output          = 0
         
-        transport               = []
-        capacity                = []
-        supply                  = []
-        supply_limited          = []
+        transport               = 0
+        capacity                = 0
+        supply                  = 0
+        supply_limited          = false
         
         max_source              = 'none'
         max_threshold           = []
@@ -68,6 +66,8 @@ classdef slamfat < handle
         data                    = struct()
         timestep                = 0
         output_timestep         = 0
+        output_time             = 0
+        size_of_output          = 0
         
         profile                 = zeros(1,100)
         initial_profile         = []
@@ -86,6 +86,7 @@ classdef slamfat < handle
         transport_transportltd  = []
         transport_supplyltd     = []
         total_transport         = []
+        
         isinitialized           = false
         performance             = struct()
     end
@@ -114,6 +115,16 @@ classdef slamfat < handle
         
         function initialize(this)
             if ~this.isinitialized
+                
+                if isscalar(this.output_timesteps)
+                    this.output_timesteps = 1:this.output_timesteps:sum(this.wind.number_of_timesteps);
+                else
+                    this.output_timesteps = this.output_timesteps;
+                end
+                
+                this.output_time         = this.output_timesteps * this.wind.dt;
+                this.size_of_output      = length(this.output_timesteps);
+                this.number_of_gridcells = length(this.profile);
 
                 this.bedcomposition.number_of_gridcells = this.number_of_gridcells;
                 this.bedcomposition.dt                  = this.wind.dt;
@@ -137,10 +148,10 @@ classdef slamfat < handle
                     'total_transport',  zeros(n,nx,nf), ...    
                     'supply',           zeros(n,nx,nf), ...
                     'capacity',         zeros(n,nx,nf), ...
+                    'threshold',        zeros(n,nx,nf), ...
                     'supply_limited',   false(n,nx,nf), ...
                     'moisture',         zeros(n,nx),    ...
                     'd50',              zeros(n,nx,nl), ...
-                    'threshold',        zeros(n,nx), ...
                     'thickness',        zeros(n,nx,nl));
                 
                 this.performance = struct(  ...
@@ -204,8 +215,8 @@ classdef slamfat < handle
                     (this.transport(2:end,:) - this.transport(1:end-1,:)) / this.dx) * this.wind.dt + ...
                      this.transport(2:end,:) + this.supply   (2:end  ,:)  / (this.relaxation/this.wind.dt);
 
-                idx = this.supply_limited;
-
+                idx = (this.capacity - this.transport_transportltd) / (this.relaxation/this.wind.dt) > this.supply;
+                
                 this.transport(~idx) = this.transport_transportltd(~idx);
                 this.transport( idx) = this.transport_supplyltd   ( idx);
                 
@@ -222,8 +233,9 @@ classdef slamfat < handle
 
                 dz = this.bedcomposition.deposit(mass);
 
-                this.profile = this.profile + dz;
-                this.supply  = this.bedcomposition.get_top_layer_mass;
+                this.profile        = this.profile + dz;
+                this.supply         = this.bedcomposition.get_top_layer_mass;
+                this.supply_limited = idx;
                 
                 this.performance.bedcomposition = this.performance.bedcomposition + toc;
 
@@ -238,7 +250,7 @@ classdef slamfat < handle
                 close(this.progressbar);
             end
             
-            if ~isempty(this.figure)
+            if this.animate && ~isempty(this.figure)
                 this.figure.reinitialize;
             end
         end
@@ -261,12 +273,14 @@ classdef slamfat < handle
         function output(this)
             if ismember(this.it, this.output_timesteps)
                 
+                this.output_timestep = find(this.output_timesteps <= this.it,1,'last');
+                
                 % update output matrices
-                this.data.profile       (this.io,:)   = this.profile;
-                this.data.transport     (this.io,:,:) = this.transport;
-                this.data.supply        (this.io,:,:) = this.supply;
-                this.data.capacity      (this.io,:,:) = this.capacity;
-                this.data.supply_limited(this.io,:,:) = this.supply_limited;         
+                this.data.profile        (this.io,:)   = this.profile;
+                this.data.transport      (this.io,:,:) = this.transport;
+                this.data.supply         (this.io,:,:) = this.supply;
+                this.data.capacity       (this.io,:,:) = this.capacity;
+                this.data.supply_limited (this.io,:,:) = this.supply_limited;
                 this.data.total_transport(this.io,:,:) = this.total_transport;       
                 
                 this.data = this.max_threshold.output(this.data, this.io);
@@ -290,36 +304,8 @@ classdef slamfat < handle
             end
         end
         
-        function val = get.supply_limited(this)
-            val = (this.capacity - this.transport_transportltd) / (this.relaxation/this.wind.dt) > this.supply;
-        end
-        
-        function val = get.output_timesteps(this)
-            if isscalar(this.output_timesteps)
-                val = 1:this.output_timesteps:sum(this.wind.number_of_timesteps);
-            else
-                val = this.output_timesteps;
-            end
-        end
-        
-        function val = get.output_time(this)
-            val = this.output_timesteps * this.wind.dt;
-        end
-        
-        function val = get.number_of_gridcells(this)
-            val = length(this.profile);
-        end
-        
-        function val = get.size_of_output(this)
-            val = length(this.output_timesteps);
-        end
-        
         function val = get.timestep(this)
             val = this.it;
-        end
-        
-        function val = get.output_timestep(this)
-            val = find(this.output_timesteps <= this.it,1,'last');
         end
         
         function mtx = empty_matrix(this)
@@ -358,7 +344,7 @@ classdef slamfat < handle
                 'bed composition',  this.performance.bedcomposition,    tmp(2), ...
                 'grain size',       this.performance.grainsize,         tmp(3), ...
                 'visualization',    this.performance.visualization,     tmp(4), ...
-                'total', sum(tm), this.timestep/sum(this.wind.number_of_timesteps)*100);
+                'total', sum(tm), this.it/sum(this.wind.number_of_timesteps)*100);
         end
     end
 end

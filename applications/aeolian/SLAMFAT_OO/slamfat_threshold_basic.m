@@ -47,20 +47,22 @@ classdef slamfat_threshold_basic < handle
     % $Keywords: $
     
     %% Properties
-    properties
+    properties(GetAccess = public, SetAccess = public)
         time                = [] % [s]
         threshold           = []
-
     end
     
-    properties(Access = protected)
+    properties(GetAccess = public, SetAccess = protected)
+        isinitialized       = false
+        current_threshold   = 0
+    end
+    
+    properties(GetAccess = protected, SetAccess = protected)
         t                   = 0
         dt                  = 0
         dx                  = 0
         profile             = []
         wind                = []
-        isinitialized       = false
-        threshold_out       = 0
     end
     
     %% Methods
@@ -90,31 +92,35 @@ classdef slamfat_threshold_basic < handle
         function initialize(this, dx, profile)
             if ~this.isinitialized
                 this.t        = 0;
-                this.dt       = 0;
                 this.dx       = dx;
                 this.profile  = profile;
-%                 this.threshold_out  = 0;
                 
                 this.isinitialized = true;
             end
         end
         
         function threshold = maximize_threshold(this, threshold, dt, profile, wind)
-            this.t       = this.t + this.dt;
+            this.t       = this.t + dt;
             this.dt      = dt;
             this.profile = profile;
             this.wind    = wind;
             
+            if this.isinitialized
+                threshold = this.apply_threshold(threshold);
+                this.current_threshold = threshold;
+            else
+                error('threshold module is not initialized');
+            end
+        end
+        
+        function threshold = apply_threshold(this, threshold)
             if ~isempty(this.threshold)
                 threshold = threshold + this.interpolate_time(this.threshold);
             end
-            this.threshold_out  = threshold;
         end
         
         function data = output(this, data, io)
-            % no output
-                        data.threshold(io,:) = this.threshold_out;
-
+            data.threshold(io,:,:) = this.current_threshold;
         end
         
         function val = unify_series(this, val)
