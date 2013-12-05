@@ -1,4 +1,4 @@
-function slamfat_masscontent(s)
+function slamfat_masscontent(s, varargin)
 %SLAMFAT_MASSCONTENT  One line description goes here.
 %
 %   More detailed description goes here.
