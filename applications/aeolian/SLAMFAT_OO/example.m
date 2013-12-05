@@ -145,6 +145,8 @@ ylabel('transport volume [m^3/hr]')
 
 xlim([-180 180]);
 
+legend(arrayfun(@(x) sprintf('threshold amplitude = %d',x), A, 'UniformOutput', false));
+
 grid on;
 
 %% Aeolian Sand and Sand Dunes By Kenneth Pye, Haim Tsoar
