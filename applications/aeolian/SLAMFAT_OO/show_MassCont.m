@@ -17,10 +17,10 @@ legend('show','location','nw')
 % let's calciulate the total mass
 tot_sup = sum(s.bedcomposition.source(2:end))/(s.wind.dt*s.dx)*s.output_time'; % total cumulative supply
 tot_out = s.data.total_transport(:,end); % total cumulative transport at downwind boundary
-tot_bed = sum(s.data.supply'); % sediment at the bed at any moment
-tot_transport = sum(s.data.transport'); % sediment in transport at any moment
+tot_bed = sum(s.data.supply(:,2:end)')'; % sediment at the bed at any moment
+tot_transport = sum(s.data.transport')'; % sediment in transport at any moment
 
-tot_mass = tot_sup-tot_out-tot_bed'-tot_transport';
+tot_mass = tot_sup-tot_out-tot_bed-tot_transport;
 subplot(3,1,3)
 
 plot(s.output_time,tot_mass,'Displayname','Sum of total mass (this should be zero)')
@@ -28,6 +28,8 @@ xlabel('Time [s]')
 ylabel('mass [kg/m]')
 hline(0)
 legend('show','location','nw')
+
+
 
 
 % plot(sum(s.bedcomposition.source(2:end))/(s.wind.dt*s.dx)*s.output_time'-s.data.total_transport(:,end))

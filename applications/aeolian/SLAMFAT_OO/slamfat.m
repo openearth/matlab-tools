@@ -144,6 +144,7 @@ classdef slamfat < handle
 
                 this.data = struct(                     ...
                     'profile',          zeros(n,nx),    ...
+                    'wind',             zeros(n),    ...
                     'transport',        zeros(n,nx,nf), ...
                     'total_transport',  zeros(n,nx,nf), ...    
                     'supply',           zeros(n,nx,nf), ...
@@ -220,7 +221,7 @@ classdef slamfat < handle
                 this.transport(~idx) = this.transport_transportltd(~idx);
                 this.transport( idx) = this.transport_supplyltd   ( idx);
                 
-                this.total_transport = this.total_transport + this.transport*(this.wind.time_series(this.it-1) * this.relative_velocity);
+                this.total_transport = this.total_transport + this.transport*(this.wind.time_series(this.it) * this.relative_velocity) * this.wind.dt;
                 
                 this.performance.transport = this.performance.transport + toc; tic;
                 
@@ -277,11 +278,12 @@ classdef slamfat < handle
                 
                 % update output matrices
                 this.data.profile        (this.io,:)   = this.profile;
+                this.data.wind           (this.io)     = this.wind.time_series(this.it);
                 this.data.transport      (this.io,:,:) = this.transport;
+                this.data.total_transport(this.io,:,:) = this.total_transport;       
                 this.data.supply         (this.io,:,:) = this.supply;
                 this.data.capacity       (this.io,:,:) = this.capacity;
                 this.data.supply_limited (this.io,:,:) = this.supply_limited;
-                this.data.total_transport(this.io,:,:) = this.total_transport;       
                 
                 this.data = this.max_threshold.output(this.data, this.io);
                 
