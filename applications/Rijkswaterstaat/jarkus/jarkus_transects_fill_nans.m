@@ -114,7 +114,7 @@ datefmt = 'yyyy-mm-ddTHH:MMZ';
 tzoffset = java.util.Date().getTimezoneOffset()/60/24; % time zone offset [days]
 timestr = datestr(now+tzoffset, datefmt);
 utcnow = now + tzoffset;
-nc_attput( ncfile, nc_global, 'data_modified', datestr(utcnow, datefmt))
+nc_attput( ncfile, nc_global, 'date_modified', datestr(utcnow, datefmt))
 histstr = nc_attget(ncfile, nc_global, 'history');
 id = nc_attget(ncfile, nc_global, 'id');
 nc_attput( ncfile, nc_global, 'id', sprintf('%s_filled', id))

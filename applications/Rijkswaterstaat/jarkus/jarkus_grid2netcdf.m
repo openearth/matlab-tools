@@ -46,7 +46,7 @@ STRINGSIZE = 100;
 	nc_attput( filename, nc_global, 'standard_name_vocabulary', 'http://cf-pcmdi.llnl.gov/documents/cf-standard-names/');
     nc_attput( filename, nc_global, 'history', sprintf('%s: NetCDF created by %s on computer %s\\%s with script %s\n%s',...
     datestr(utcnow, datefmt), getenv('USERNAME'), getenv('USERDOMAIN'), getenv('COMPUTERNAME'), '$Id$', OPT.rawsvninfo));
-    nc_attput( filename, nc_global, 'commment', sprintf('The transects in this file are a combination of origins:%s (%s )', sprintf(' %i', OPT.origins), sprintf(' %s', origin_descriptions{OPT.origins})));
+    nc_attput( filename, nc_global, 'comment', sprintf('The transects in this file are a combination of origins:%s (%s )', sprintf(' %i', OPT.origins), sprintf(' %s', origin_descriptions{OPT.origins})));
     nc_attput( filename, nc_global, 'institution', 'Rijkswaterstaat');
     nc_attput( filename, nc_global, 'source'     , 'on shore and off shore measurements');
     nc_attput( filename, nc_global, 'references' , 'Original source: http://www.watermarkt.nl/kustenzeebodem/');
@@ -55,9 +55,9 @@ STRINGSIZE = 100;
     nc_attput( filename, nc_global, 'creator_name', 'Rijkswaterstaat');
     nc_attput( filename, nc_global, 'creator_url', 'http://www.rijkswaterstaat.nl');
     nc_attput( filename, nc_global, 'creator_email', 'info@rijkswaterstaat.nl');
-    nc_attput( filename, nc_global, 'data_created', datestr(utcnow, datefmt))
-    nc_attput( filename, nc_global, 'data_modified', datestr(utcnow, datefmt))
-    nc_attput( filename, nc_global, 'data_issued', datestr(utcnow, datefmt))
+    nc_attput( filename, nc_global, 'date_created', datestr(utcnow, datefmt))
+    nc_attput( filename, nc_global, 'date_modified', datestr(utcnow, datefmt))
+    nc_attput( filename, nc_global, 'date_issued', datestr(utcnow, datefmt))
     % Publisher Search attributes
     nc_attput( filename, nc_global, 'publisher_name', sprintf('%s', getenv('USERNAME')));
     nc_attput( filename, nc_global, 'publisher_url', 'http://www.deltares.nl');
