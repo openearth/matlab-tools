@@ -19,6 +19,10 @@ OPT = struct(...
 
 OPT = setproperty(OPT, varargin);
 
+datefmt = 'yyyy-mm-ddTHH:MMZ'; % date format
+tzoffset = java.util.Date().getTimezoneOffset()/60/24; % time zone offset [days]
+utcnow = now+tzoffset;
+
 STRINGSIZE = 100;
 %% Create file    
 %     make sure there's enough space for headers. This will speed up
@@ -41,7 +45,7 @@ STRINGSIZE = 100;
 	nc_attput( filename, nc_global, 'keywords_vocabulary', 'http://www.eionet.europa.eu/gemet');
 	nc_attput( filename, nc_global, 'standard_name_vocabulary', 'http://cf-pcmdi.llnl.gov/documents/cf-standard-names/');
     nc_attput( filename, nc_global, 'history', sprintf('%s: NetCDF created by %s on computer %s\\%s with script %s\n%s',...
-    datestr(now, 'ddd mmm dd hh:MM:SS yyyy'), getenv('USERNAME'), getenv('USERDOMAIN'), getenv('COMPUTERNAME'), '$Id$', OPT.rawsvninfo));
+    datestr(utcnow, datefmt), getenv('USERNAME'), getenv('USERDOMAIN'), getenv('COMPUTERNAME'), '$Id$', OPT.rawsvninfo));
     nc_attput( filename, nc_global, 'commment', sprintf('The transects in this file are a combination of origins:%s (%s )', sprintf(' %i', OPT.origins), sprintf(' %s', origin_descriptions{OPT.origins})));
     nc_attput( filename, nc_global, 'institution', 'Rijkswaterstaat');
     nc_attput( filename, nc_global, 'source'     , 'on shore and off shore measurements');
@@ -51,9 +55,6 @@ STRINGSIZE = 100;
     nc_attput( filename, nc_global, 'creator_name', 'Rijkswaterstaat');
     nc_attput( filename, nc_global, 'creator_url', 'http://www.rijkswaterstaat.nl');
     nc_attput( filename, nc_global, 'creator_email', 'info@rijkswaterstaat.nl');
-    datefmt = 'yyyy-mm-ddTHH:MMZ'; % date format
-    tzoffset = java.util.Date().getTimezoneOffset()/60/24; % time zone offset [days]
-    utcnow = now+tzoffset;
     nc_attput( filename, nc_global, 'data_created', datestr(utcnow, datefmt))
     nc_attput( filename, nc_global, 'data_modified', datestr(utcnow, datefmt))
     nc_attput( filename, nc_global, 'data_issued', datestr(utcnow, datefmt))

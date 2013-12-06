@@ -63,7 +63,8 @@ function varargout = jarkus_svnrev_transects(varargin)
 %%
 OPT = struct(...
     'mainpath', '',...
-    'filenames', {{}});
+    'filenames', {{}},...
+    'datefmt', 'yyyy-mm-ddTHH:MMZ');
 
 % return defaults (aka introspection)
 if nargin==0;
@@ -78,8 +79,15 @@ rawurl = SVNgetURL(OPT.mainpath);
 [svnErr svnversionMsg] = system(['svnversion "' OPT.mainpath '"']);
 
 [svnErr svninfoMsg] = system(['svn info "' OPT.mainpath '"']);
-timematch = regexp(svninfoMsg, '(?<=Last Changed Date: ).*?(?= (\(|+))', 'match');
-timestr = datestr(datenum(timematch{1}, 'yyyy-mm-dd HH:MM:SS'), 'ddd mmm dd hh:MM:SS yyyy');
+timematch = regexp(svninfoMsg, '(?<=Last Changed Date: ).*?(?= (\(|[+-]))', 'match');
+timelocal = timematch{1};
+timeoffset = regexp(svninfoMsg, ['(?<=' timelocal ' )[^ ]+'], 'match');
+timeoffset = eval(timeoffset{1});
+offsetM = mod(abs(timeoffset), 100);
+offsetH = (abs(timeoffset) - offsetM)/100;
+offsetDays = sign(timeoffset) * (offsetH + offsetM/60) / 24;
+
+timestr = datestr(datenum(timelocal) - offsetDays, OPT.datefmt);
 
 txt = sprintf('%s: Raw data received from Rijkswaterstaat\nHEADurl: %s (rev %s)\nFiles:', timestr, rawurl, strtrim(svnversionMsg));
 
