@@ -51,10 +51,12 @@ STRINGSIZE = 100;
     nc_attput( filename, nc_global, 'creator_name', 'Rijkswaterstaat');
     nc_attput( filename, nc_global, 'creator_url', 'http://www.rijkswaterstaat.nl');
     nc_attput( filename, nc_global, 'creator_email', 'info@rijkswaterstaat.nl');
-    datefmt = 'yyyy-mm-ddTHH:MMZ';
-    nc_attput( filename, nc_global, 'data_created', datestr(now, datefmt))
-    nc_attput( filename, nc_global, 'data_modified', datestr(now, datefmt))
-    nc_attput( filename, nc_global, 'data_issued', datestr(now, datefmt))
+    datefmt = 'yyyy-mm-ddTHH:MMZ'; % date format
+    tzoffset = java.util.Date().getTimezoneOffset()/60/24; % time zone offset [days]
+    utcnow = now+tzoffset;
+    nc_attput( filename, nc_global, 'data_created', datestr(utcnow, datefmt))
+    nc_attput( filename, nc_global, 'data_modified', datestr(utcnow, datefmt))
+    nc_attput( filename, nc_global, 'data_issued', datestr(utcnow, datefmt))
     % Publisher Search attributes
     nc_attput( filename, nc_global, 'publisher_name', sprintf('%s', getenv('USERNAME')));
     nc_attput( filename, nc_global, 'publisher_url', 'http://www.deltares.nl');
