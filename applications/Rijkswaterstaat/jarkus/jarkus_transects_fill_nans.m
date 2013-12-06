@@ -110,7 +110,12 @@ for idx = 1:length(trh.id)
 end
 
 %% put info about the modifications in the history
-D = dir(ncfile);
-timestr = datestr(D.datenum, 'ddd mmm dd hh:MM:SS yyyy');
+datefmt = 'yyyy-mm-ddTHH:MMZ';
+tzoffset = java.util.Date().getTimezoneOffset()/60/24; % time zone offset [days]
+timestr = datestr(now+tzoffset, datefmt);
+utcnow = now + tzoffset;
+nc_attput( ncfile, nc_global, 'data_modified', datestr(utcnow, datefmt))
 histstr = nc_attget(ncfile, nc_global, 'history');
-nc_attput(ncfile, nc_global, 'history', sprintf('%s: %s applied; %s\n%s', timestr, '$Id$', 'NaN values successively  (1) cross-shore linear interpolated, (2) linear interpolated in time and (3) nearest neighbour extrapolated in time', histstr));
+id = nc_attget(ncfile, nc_global, 'id');
+nc_attput( ncfile, nc_global, 'id', sprintf('%s_filled', id))
+nc_attput(ncfile, nc_global, 'history', sprintf('%s: %s applied; %s\n%s', timestr, '$Id$', sprintf('NaN values in file with id "%s" successively  (1) cross-shore linear interpolated, (2) linear interpolated in time and (3) nearest neighbour extrapolated in time', id), histstr));
