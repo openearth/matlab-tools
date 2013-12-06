@@ -7,8 +7,15 @@ function jarkus_grid2netcdf(filename, grid, varargin)
 % See also: JARKUS_TRANSECT2GRID  , JARKUS_NETCDF2GRID, JARKUS_UPDATEGRID, 
 %           JARKUS_TRANSECT2NETCDF, JARKUS_GRID2NETCDF 
 
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+
 OPT = struct(...
-    'rawsvninfo', '');
+    'rawsvninfo', '',...
+    'origins', 1:5);
 
 OPT = setproperty(OPT, varargin);
 
@@ -19,31 +26,51 @@ STRINGSIZE = 100;
 
     nc_create_empty(filename)
     nc_padheader ( filename, 400000 );   
+
+    origin_codes = 1:5;
+    origin_descriptions = {'beach_only' 'beach_overlap' 'interpolation' 'sea_overlap' 'sea_only'};
     
 %% Put global attributes    
     nc_attput( filename, nc_global, 'naming_authority', 'deltares.nl') % based on reverse DNS lookup (http://remote.12dt.com/)
-    nc_attput( filename, nc_global, 'title', 'Jarkus Data (cross-shore transects)');
+    nc_attput( filename, nc_global, 'id', sprintf('JarKus_release%s_origins%s', datestr(now, 'yyyymmdd'), sprintf('%i', OPT.origins)))
+    nc_attput( filename, nc_global, 'Metadata_Conventions', 'Unidata Dataset Discovery v1.0')
+    nc_attput( filename, nc_global, 'title', 'JarKus Data (cross-shore transects)');
     nc_attput( filename, nc_global, 'summary', 'Cross-shore transect bathymetry measurements along the Dutch coast since 1965');
-    nc_attput( filename, nc_global, 'keywords', 'Bathymetry, JARKUS, Dutch coast');
+    nc_attput( filename, nc_global, 'keywords', 'Bathymetry, JarKus, Dutch coast');
 	nc_attput( filename, nc_global, 'keywords_vocabulary', 'http://www.eionet.europa.eu/gemet');
 	nc_attput( filename, nc_global, 'standard_name_vocabulary', 'http://cf-pcmdi.llnl.gov/documents/cf-standard-names/');
     nc_attput( filename, nc_global, 'history', sprintf('%s: NetCDF created by %s on computer %s\\%s with script %s\n%s',...
     datestr(now, 'ddd mmm dd hh:MM:SS yyyy'), getenv('USERNAME'), getenv('USERDOMAIN'), getenv('COMPUTERNAME'), '$Id$', OPT.rawsvninfo));
+    nc_attput( filename, nc_global, 'commment', sprintf('The transects in this file are a combination of origins:%s (%s )', sprintf(' %i', OPT.origins), sprintf(' %s', origin_descriptions{OPT.origins})));
     nc_attput( filename, nc_global, 'institution', 'Rijkswaterstaat');
     nc_attput( filename, nc_global, 'source'     , 'on shore and off shore measurements');
-    nc_attput( filename, nc_global, 'references' , sprintf(['Original source: http://www.watermarkt.nl/kustenzeebodem/\n' ...
-                                                    'Deltares storage: https://repos.deltares.nl/repos/mcdata/trunk/jarkus/']));
-    nc_attput( filename, nc_global, 'Conventions', 'CF-1.4');    
+    nc_attput( filename, nc_global, 'references' , 'Original source: http://www.watermarkt.nl/kustenzeebodem/');
+    nc_attput( filename, nc_global, 'Conventions', 'CF-1.6');
+    % Creator Search attributes
     nc_attput( filename, nc_global, 'creator_name', 'Rijkswaterstaat');
-    nc_attput( filename, nc_global, 'creator_url', 'www.rijkswaterstaat.nl');
+    nc_attput( filename, nc_global, 'creator_url', 'http://www.rijkswaterstaat.nl');
     nc_attput( filename, nc_global, 'creator_email', 'info@rijkswaterstaat.nl');
-    nc_attput( filename, nc_global, 'publisher_name', sprintf('%s (%s)', getenv('USERNAME'), getenv('USERID')));
-    nc_attput( filename, nc_global, 'publisher_url', 'www.deltares.nl');
+    datefmt = 'yyyy-mm-ddTHH:MMZ';
+    nc_attput( filename, nc_global, 'data_created', datestr(now, datefmt))
+    nc_attput( filename, nc_global, 'data_modified', datestr(now, datefmt))
+    nc_attput( filename, nc_global, 'data_issued', datestr(now, datefmt))
+    % Publisher Search attributes
+    nc_attput( filename, nc_global, 'publisher_name', sprintf('%s', getenv('USERNAME')));
+    nc_attput( filename, nc_global, 'publisher_url', 'http://www.deltares.nl');
     nc_attput( filename, nc_global, 'publisher_email', 'Kees.denHeijer@deltares.nl');
-    ... % Other attributes
+    % Extent Search attributes
+%     % these attributes will be added in jarkus_transect2netcdf.m
+%     nc_attput( filename, nc_global, 'geospatial_vertical_min', NaN)
+%     nc_attput( filename, nc_global, 'geospatial_vertical_max', NaN)
+    % Other Extent Information attributes
+    nc_attput( filename, nc_global, 'geospatial_vertical_units', 'm')
+    nc_attput( filename, nc_global, 'geospatial_vertical_resolution', .01)
+    nc_attput( filename, nc_global, 'geospatial_vertical_positive', 'up')
+    % Other attributes
 	nc_attput( filename, nc_global, 'processing_level', 'preliminary');
 	nc_attput( filename, nc_global, 'license',[sprintf('These data can be used freely for research purposes provided that the following source is acknowledged: %s. ', 'RIJKSWATERSTAAT')...
                 'disclaimer: This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.']);
+    nc_attput( filename, nc_global, 'cdm_data_type', 'grid');
     % spatial reference using wkt. approach used by gdal.
     % nc_attput( filename, nc_global, 'spatial_ref', 'COMPD_CS["Amersfoort / RD New + NAP",PROJCS["Amersfoort / RD New",GEOGCS["Amersfoort",DATUM["Amersfoort",SPHEROID["Bessel 1841",6377397.155,299.1528128,AUTHORITY["EPSG","7004"]],TOWGS84[565.04,49.91,465.84,-0.40939438743923684,-0.35970519561431136,1.868491000350572,0.8409828680306614],AUTHORITY["EPSG","6289"]],PRIMEM["Greenwich",0.0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.017453292519943295],AXIS["Geodetic latitude",NORTH],AXIS["Geodetic longitude",EAST],AUTHORITY["EPSG","4289"]],PROJECTION["Oblique Stereographic",AUTHORITY["EPSG","9809"]],PARAMETER["central_meridian",5.387638888888891],PARAMETER["latitude_of_origin",52.15616055555556],PARAMETER["scale_factor",0.9999079],PARAMETER["false_easting",155000.0],PARAMETER["false_northing",463000.0],UNIT["m",1.0],AXIS["Easting",EAST],AXIS["Northing",NORTH],AUTHORITY["EPSG","28992"]],VERT_CS["Normaal Amsterdams Peil",VERT_DATUM["Normaal Amsterdams Peil",2005,AUTHORITY["EPSG","5109"]],UNIT["m",1.0],AXIS["Gravity-related height",UP],AUTHORITY["EPSG","5709"]],AUTHORITY["EPSG","7415"]]');
     
@@ -291,8 +318,8 @@ STRINGSIZE = 100;
 %     s.Attribute = struct('Name' ,{'long_name'         , 'comment'},...
 %                          'Value',{'measurement method', 'Measurement method 1:TO DO, 3:TO DO, 5:TO DO used short for space considerations'});
     flag_values   = [ 1          2             3             4           5        ]; 
-    s.Attribute = struct('Name' ,{'long_name'         , 'flag_values','flag_meanings'},...
-                         'Value',{'measurement method',  flag_values  ,'beach_only beach_overlap interpolation sea_overlap sea_only'});
+    s.Attribute = struct('Name' ,{'long_name'         , 'flag_values','flag_meanings', 'comment'},...
+                         'Value',{'measurement method',  flag_values  ,'beach_only beach_overlap interpolation sea_overlap sea_only', sprintf('The transects in this file are a combination of origins (flags):%s', sprintf(' %i', OPT.origins))});
     nc_addvar(filename, s);    
     
 %% Store index variables

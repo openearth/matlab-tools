@@ -161,6 +161,10 @@ for i = 1 : length(yearArray)
     
     altrange = minmax([minaltrange maxaltrange]);
     nc_attput(filename, 'altitude', 'actual_range', altrange);
+    nc_attput( filename, nc_global, 'geospatial_vertical_min', min(altrange))
+    nc_attput( filename, nc_global, 'geospatial_vertical_max', max(altrange))
 end
+
+
 
 end % jarkus_transect2netcdf
