@@ -118,4 +118,4 @@ nc_attput( ncfile, nc_global, 'date_modified', datestr(utcnow, datefmt))
 histstr = nc_attget(ncfile, nc_global, 'history');
 id = nc_attget(ncfile, nc_global, 'id');
 nc_attput( ncfile, nc_global, 'id', sprintf('%s_filled', id))
-nc_attput(ncfile, nc_global, 'history', sprintf('%s: %s applied; %s\n%s', timestr, '$Id$', sprintf('NaN values in file with id "%s" successively  (1) cross-shore linear interpolated, (2) linear interpolated in time and (3) nearest neighbour extrapolated in time', id), histstr));
+nc_attput(ncfile, nc_global, 'history', sprintf('%s: %s applied by %s on computer %s\\%s; %s\n%s', timestr, '$Id$', getenv('USERNAME'), getenv('USERDOMAIN'), getenv('COMPUTERNAME'), sprintf('NaN values in file with id "%s" successively  (1) cross-shore linear interpolated, (2) linear interpolated in time and (3) nearest neighbour extrapolated in time', id), histstr));
