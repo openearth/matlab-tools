@@ -28,6 +28,7 @@ STRINGSIZE = 100;
     nc_padheader ( filename, 400000 );   
 
     origin_codes = 1:5;
+    origins = OPT.origins;
     origin_descriptions = {'beach_only' 'beach_overlap' 'interpolation' 'sea_overlap' 'sea_only'};
     
 %% Put global attributes    
@@ -319,7 +320,7 @@ STRINGSIZE = 100;
 %                          'Value',{'measurement method', 'Measurement method 1:TO DO, 3:TO DO, 5:TO DO used short for space considerations'});
     flag_values   = [ 1          2             3             4           5        ]; 
     s.Attribute = struct('Name' ,{'long_name'         , 'flag_values','flag_meanings', 'comment'},...
-                         'Value',{'measurement method',  flag_values  ,'beach_only beach_overlap interpolation sea_overlap sea_only', sprintf('The transects in this file are a combination of origins (flags):%s', sprintf(' %i', OPT.origins))});
+                         'Value',{'measurement method',  flag_values  ,'beach_only beach_overlap interpolation sea_overlap sea_only', sprintf('The transects in this file are a combination of origins (flags):%s', sprintf(' %i', origins))});
     nc_addvar(filename, s);    
     
 %% Store index variables
