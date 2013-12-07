@@ -1,21 +1,20 @@
-function varargout = ncwritetutorial_timeseries(ncfile,varargin);
-%NCWRITETUTORIAL_TIMESERIES tutorial for writing timeseries on disconnected platforms to netCDF-CF file
-%
-% For too legacy matlab releases, plase see instead: see nc_cf_timeseries.
+function ncwritetutorial_trajectory(ncfile,varargin)
+%NCWRITETUTORIAL_TRAJECTORY tutorial for writing trajectory to netCDF-CF file
 %
 %  Tutorial of how to make a netCDF file with CF conventions of a 
-%  variable that is a timeseries. In this special case 
+%  variable that is a trajectory. In this special case 
 %  the main dimension coincides with the time axis.
 %
 %  This case is described in CF: http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/ch09.html
 %
-%See also: nc_cf_timeseries_write_tutorial, nc_cf_timeseries,
-%          netcdf, ncwriteschema, ncwrite, SNCTOOLS,
+% An example of a 3D trajectory is FerryBox data (http://www.ferrybox.org/)
+%
+%See also: netcdf, ncwriteschema, ncwrite, SNCTOOLS,
 %          ncwritetutorial_grid
-%          ncwritetutorial_trajectory
+%          ncwritetutorial_timeseries
 
 %%  --------------------------------------------------------------------
-%   Copyright (C) 2013 DeltaresNUS
+%   Copyright (C) 2013 Deltares 4 Rijkswaterstaat
 %
 %   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
@@ -38,11 +37,11 @@ function varargout = ncwritetutorial_timeseries(ncfile,varargin);
 %  your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-%  $Id$
-%  $Date$
-%  $Author$
-%  $Revision$
-%  $HeadURL$
+%  $Id: ncwritetutorial_timeseries.m 8921 2013-07-19 06:13:40Z boer_g $
+%  $Date: 2013-07-19 08:13:40 +0200 (Fri, 19 Jul 2013) $
+%  $Author: boer_g $
+%  $Revision: 8921 $
+%  $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/io/netcdf/nctools/ncwritetutorial_timeseries.m $
 %  $Keywords: $
 
    if nargin==0
@@ -52,19 +51,17 @@ function varargout = ncwritetutorial_timeseries(ncfile,varargin);
 %% Required spatio-temporal fields
 
    OPT.title          = '';
-   OPT.institution    = 'DeltaresNUS';
+   OPT.institution    = '';
    OPT.version        = '';
    OPT.references     = '';
    OPT.email          = '';
-
-   OPT.datenum        = datenum(2009,1:12,1);
-   OPT.lon            = 103.2:.2:103.8;
-   OPT.lat            = 1.2:.1:1.5;
+   
+   OPT.datenum        = datenum(2009,0,1:365);
+   OPT.lon            =  3+2*cos(2*pi*OPT.datenum./365); % lissajous
+   OPT.lat            = 52+1*cos(4*pi*OPT.datenum./365+pi/2);
    OPT.epsg           = 4326;
-   OPT.platform_names = {'RLS','RLD','KUS','HTF'};
 
-   OPT.var            = repmat(20+15*cos(2*pi*(OPT.datenum - OPT.datenum(1))./(365.25)),[length(OPT.lon) 1]);
-   OPT.var            = OPT.var + 5*rand(size(OPT.var));
+   OPT.var            = 3-2*cos(2*pi*OPT.datenum/365);
 
 %% Required data fields
    
@@ -96,7 +93,7 @@ function varargout = ncwritetutorial_timeseries(ncfile,varargin);
    nc.Attributes(    1) = struct('Name','title'              ,'Value',  OPT.title);
    nc.Attributes(end+1) = struct('Name','institution'        ,'Value',  OPT.institution);
    nc.Attributes(end+1) = struct('Name','source'             ,'Value',  '');
-   nc.Attributes(end+1) = struct('Name','history'            ,'Value',  '$HeadURL$ $Id$');
+   nc.Attributes(end+1) = struct('Name','history'            ,'Value',  '$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/io/netcdf/nctools/ncwritetutorial_timeseries.m $ $Id: ncwritetutorial_timeseries.m 8921 2013-07-19 06:13:40Z boer_g $');
    nc.Attributes(end+1) = struct('Name','references'         ,'Value',  OPT.version);
    nc.Attributes(end+1) = struct('Name','email'              ,'Value',  OPT.email);
    nc.Attributes(end+1) = struct('Name','featureType'        ,'Value',  'timeSeries');
@@ -111,13 +108,8 @@ function varargout = ncwritetutorial_timeseries(ncfile,varargin);
 
 %% 2 Create dimensions
 
-   ncdimlen.time        = length(OPT.datenum);
-   ncdimlen.location    = length(OPT.platform_names);
-   ncdimlen.string_len  = size(char(OPT.platform_names),2);
-
+   ncdimlen.time        = length(OPT.var(:));
    nc.Dimensions(    1) = struct('Name','time'            ,'Length',ncdimlen.time      );
-   nc.Dimensions(end+1) = struct('Name','location'        ,'Length',ncdimlen.location  );
-   nc.Dimensions(end+1) = struct('Name','string_len'      ,'Length',ncdimlen.string_len);
       
 %% 3a Create (primary) variables: time
 
@@ -137,70 +129,37 @@ function varargout = ncwritetutorial_timeseries(ncfile,varargin);
 
    ifld     = ifld + 1;clear attr
    attr(    1)  = struct('Name', 'standard_name', 'Value', 'longitude');
-   attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'Longitude of platform');
+   attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'Longitude');
    attr(end+1)  = struct('Name', 'units'        , 'Value', 'degrees_east');
    attr(end+1)  = struct('Name', 'axis'         , 'Value', 'X');
    attr(end+1)  = struct('Name', '_FillValue'   , 'Value', OPT.fillvalue);
    attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(OPT.lon(:)) max(OPT.lon(:))]);
    nc.Variables(ifld) = struct('Name'       , 'lon', ...
                                'Datatype'   , 'double', ...
-                               'Dimensions' , struct('Name', 'location','Length',ncdimlen.location), ...
+                               'Dimensions' , struct('Name', 'time','Length',ncdimlen.time), ...
                                'Attributes' , attr,...
                                'FillValue'  , []);
    
    ifld     = ifld + 1;clear attr
    attr(    1)  = struct('Name', 'standard_name', 'Value', 'latitude');
-   attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'Latitude of platform');
+   attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'Latitude');
    attr(end+1)  = struct('Name', 'units'        , 'Value', 'degrees_north');
    attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Y');
    attr(end+1)  = struct('Name', '_FillValue'   , 'Value', OPT.fillvalue);
    attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(OPT.lat(:)) max(OPT.lat(:))]);
    nc.Variables(ifld) = struct('Name'       , 'lat', ...
                                'Datatype'   , 'double', ...
-                               'Dimensions' , struct('Name', 'location','Length',ncdimlen.location), ...
+                               'Dimensions' , struct('Name', 'time','Length',ncdimlen.time), ...
                                'Attributes' , attr,...
                                'FillValue'  , []);    
                            
-   ifld     = ifld + 1;clear attr;
-   attr(    1)  = struct('Name', 'standard_name', 'Value', 'platform_name');
-   attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'platform name');
-   dims(    1)  = struct('Name', 'string_len','Length',ncdimlen.string_len);
-   dims(    2)  = struct('Name', 'location'  ,'Length',ncdimlen.location);
-   nc.Variables(ifld) = struct('Name'      , 'platform_name', ...
-                               'Datatype'  , 'char', ...
-                               'Dimensions', dims, ...
-                               'Attributes' , attr,...
-                               'FillValue'  , []);     
-                           
-   ifld     = ifld + 1;clear attr;
-   attr(    1)  = struct('Name', 'standard_name', 'Value', 'platform_id');
-   attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'platform id');
-   attr(end+1)  = struct('Name', 'cf_role'      , 'Value', 'timeseries_id');
-   % Where feasible a variable with the attribute cf_role should be included.
-   % The only acceptable values of cf_role for Discrete Geometry CF data sets
-   % are timeseries_id, profile_id, and trajectory_id.The variable carrying
-   % the cf_role attribute may have any data type. When a variable is assigned
-   % this attribute, it must provide a unique identifier for each feature instance.
-   % CF files that contain timeSeries, profile or trajectory featureTypes,
-   % should include only a single occurrence of a cf_role attribute;
-   % CF files that contain timeSeriesProfile or trajectoryProfile may
-   % contain two occurrences, corresponding to the two levels of structure
-   % in these feature types: cf_role	timeseries_id
-   dims(    1)  = struct('Name', 'string_len','Length',ncdimlen.string_len);
-   dims(    2)  = struct('Name', 'location'  ,'Length',ncdimlen.location);
-   nc.Variables(ifld) = struct('Name'      , 'platform_id', ...
-                               'Datatype'  , 'char', ...
-                               'Dimensions', dims, ...
-                               'Attributes' , attr,...
-                               'FillValue'  , []);     
-                              
 %% 3c Create (primary) variables: data
                               
    ifld     = ifld + 1;clear attr;
    attr(    1)  = struct('Name', 'standard_name', 'Value', OPT.standard_name);
    attr(end+1)  = struct('Name', 'long_name'    , 'Value', OPT.long_name);
    attr(end+1)  = struct('Name', 'units'        , 'Value', OPT.units);
-   attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'lat lon platform_name'); % platform_name needed to sdhow up in QuickPlot
+   attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'lat lon'); % platform_name needed to sdhow up in QuickPlot
    attr(end+1)  = struct('Name', '_FillValue'   , 'Value', OPT.fillvalue);
    attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(OPT.var(:)) max(OPT.var(:))]);
       
@@ -208,11 +167,9 @@ function varargout = ncwritetutorial_timeseries(ncfile,varargin);
    attr(end+1)  = struct('Name', OPT.Attributes{iatt}, 'Value', OPT.Attributes{iatt+1});
    end
 
-   dims(1) = struct('Name', 'location','Length',ncdimlen.location);
-   dims(2) = struct('Name', 'time'    ,'Length',ncdimlen.time    );
    nc.Variables(ifld) = struct('Name'       , OPT.Name, ...
                                'Datatype'   , 'double', ...
-                               'Dimensions' , dims, ...
+                               'Dimensions' , struct('Name', 'time','Length',ncdimlen.time), ...
                                'Attributes' , attr,...
                                'FillValue'  , []);                              
                               
@@ -225,13 +182,15 @@ function varargout = ncwritetutorial_timeseries(ncfile,varargin);
       
 %% 5 Fill variables
 
-   ncwrite   (ncfile,'time'         , OPT.datenum - OPT.refdatenum);
-   ncwrite   (ncfile,'lon'          , OPT.lon);
-   ncwrite   (ncfile,'lat'          , OPT.lat);
-   ncwrite   (ncfile,'platform_name', char(OPT.platform_names)');
-   ncwrite   (ncfile,'platform_id'  , char(OPT.platform_names)');
-   ncwrite   (ncfile,OPT.Name       , OPT.var);
+   ncwrite   (ncfile,'time'         , OPT.datenum(:) - OPT.refdatenum);
+   ncwrite   (ncfile,'lon'          , OPT.lon(:));
+   ncwrite   (ncfile,'lat'          , OPT.lat(:));
+   ncwrite   (ncfile,OPT.Name       , OPT.var(:));
       
 %% test and check
 
    nc_dump(ncfile,[],strrep(ncfile,'.nc','.cdl'))
+
+
+    
+    

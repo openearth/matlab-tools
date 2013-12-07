@@ -68,7 +68,7 @@ variables:
 		:title = "nc_cf_grid_write_lat_lon_curvilinear_tutorial" ;
 		:institution = "Deltares" ;
 		:source = "" ;
-		:history = "$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/io/netcdf/nctools/nc_cf_grid_write_lat_lon_curvilinear_tutorial.m $ $Id: nc_cf_grid_write_lat_lon_curvilinear_tutorial.m 8864 2013-06-28 08:05:56Z boer_g $" ;
+		:history = "$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/io/netcdf/nctools/nc_cf_grid_write_lat_lon_curvilinear_tutorial.m $ $Id: nc_cf_grid_write_lat_lon_curvilinear_tutorial.m 8907 2013-07-10 12:39:16Z boer_g $" ;
 		:references = "http://svn.oss.deltares.nl" ;
 		:email = "" ;
 		:featureType = "grid" ;

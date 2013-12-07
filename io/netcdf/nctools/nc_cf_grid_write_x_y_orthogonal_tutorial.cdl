@@ -112,7 +112,7 @@ variables:
 		:title = "nc_cf_grid_write_x_y_orthogonal_tutorial" ;
 		:institution = "Deltares" ;
 		:source = "" ;
-		:history = "$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/io/netcdf/nctools/nc_cf_grid_write_x_y_orthogonal_tutorial.m $ $Id: nc_cf_grid_write_x_y_orthogonal_tutorial.m 8864 2013-06-28 08:05:56Z boer_g $" ;
+		:history = "$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/io/netcdf/nctools/nc_cf_grid_write_x_y_orthogonal_tutorial.m $ $Id: nc_cf_grid_write_x_y_orthogonal_tutorial.m 8907 2013-07-10 12:39:16Z boer_g $" ;
 		:references = "http://svn.oss.deltares.nl" ;
 		:email = "" ;
 		:featureType = "grid" ;
@@ -158,16 +158,16 @@ epsg = 32631;
 projection = 4326;
 
 x_bnds =
- 350000, 500000, 9.96921e+36, 9.96921e+36,
- 500000, 650000, 9.96921e+36, 9.96921e+36,
- 650000, 800000, 9.96921e+36, 9.96921e+36 ;
+ 350000, 500000, NaN, NaN,
+ 500000, 650000, NaN, NaN,
+ 650000, 800000, NaN, NaN ;
 
 y_bnds =
- 5.5e+06, 5.61e+06, 9.96921e+36, 9.96921e+36,
- 5.61e+06, 5.72e+06, 9.96921e+36, 9.96921e+36,
- 5.72e+06, 5.83e+06, 9.96921e+36, 9.96921e+36,
- 5.83e+06, 5.94e+06, 9.96921e+36, 9.96921e+36,
- 5.94e+06, 6.05e+06, 9.96921e+36, 9.96921e+36 ;
+ 5.5e+06, 5.61e+06, NaN, NaN,
+ 5.61e+06, 5.72e+06, NaN, NaN,
+ 5.72e+06, 5.83e+06, NaN, NaN,
+ 5.83e+06, 5.94e+06, NaN, NaN,
+ 5.94e+06, 6.05e+06, NaN, NaN ;
 
 lon_bnds =
  0.922647, 3, 3, 0.879386,

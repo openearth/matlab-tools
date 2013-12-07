@@ -229,7 +229,7 @@
    nc(ifld).Dimension        = {'row','col','bounds'};
    nc(ifld).Attribute(    1) = struct('Name', 'standard_name', 'Value', 'projection_x_coordinate');
    nc(ifld).Attribute(end+1) = struct('Name', 'long_name'    , 'Value', 'Easting bounds');
-   nc(ifld).Attribute(end+1) = struct('Name', 'units'        , 'Value', 'degrees_east');
+   nc(ifld).Attribute(end+1) = struct('Name', 'units'        , 'Value', 'm');
    nc(ifld).Attribute(end+1) = struct('Name', 'actual_range' , 'Value', [min(D.cor.lon(:)) max(D.cor.lon(:))]);
 
    ifld = ifld + 1;
@@ -238,7 +238,7 @@
    nc(ifld).Dimension        = {'row','col','bounds'};
    nc(ifld).Attribute(    1) = struct('Name', 'standard_name'  ,'Value', 'projection_y_coordinate');
    nc(ifld).Attribute(end+1) = struct('Name', 'long_name'      ,'Value', 'Northing bounds');
-   nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'degrees_north');
+   nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', 'm');
    nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(D.cor.lat(:)) max(D.cor.lat(:))]);
 
    ifld = ifld + 1;
@@ -274,7 +274,7 @@
    nc(ifld).Attribute(end+1) = struct('Name', 'units'          ,'Value', M.units        );
    nc(ifld).Attribute(end+1) = struct('Name', 'actual_range'   ,'Value', [min(D.val(:)) max(D.val(:))]);
    nc(ifld).Attribute(end+1) = struct('Name', 'grid_mapping'   ,'Value', 'projection epsg');
-   nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'lat lon');
+   nc(ifld).Attribute(end+1) = struct('Name', 'coordinates'    ,'Value', 'x y');
    % coordinates is ESSENTIAL CF attribute to connect 2D (lat,lon) matrices to data
    nc(ifld).Attribute(end+1) = struct('Name', '_FillValue'     ,'Value', realmax('single')); % SNCTOOLS replaces NaN with _FillValue under the hood
       

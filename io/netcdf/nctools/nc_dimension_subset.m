@@ -26,7 +26,7 @@ function nc_dimension_subset(nc0,nc1,dim_name,dim_index,varargin)
 %   ind = find(hour > 12);
 %   nc_dimension_subset('fmrc.nc','fmrc12.nc','forecast_time',ind)
 %
-%See also: ncinfo
+%See also: ncinfo, structsubs
 
 %% Copyright notice
 %   --------------------------------------------------------------------
