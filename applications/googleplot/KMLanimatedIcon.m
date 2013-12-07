@@ -289,6 +289,22 @@ fprintf(OPT.fid,output);
 
 fclose(OPT.fid);
 
+%% compress to kmz and include image files
+
+   if strcmpi  ( OPT.fileName(end-2:end),'kmz')
+      movefile( OPT.fileName,[OPT.fileName(1:end-3) 'kml'])
+      if OPT.colorbar
+          files = [{[OPT.fileName(1:end-3) 'kml']},pngNames];
+      else
+          files =  {[OPT.fileName(1:end-3) 'kml']};
+      end
+      zip     ( OPT.fileName,files);
+      for ii = 1:length(files)
+          delete  (files{ii})
+      end
+      movefile([OPT.fileName '.zip'],OPT.fileName)
+   end
+
 %% openInGoogle?
 
 if OPT.openInGE

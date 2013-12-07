@@ -300,14 +300,13 @@ end
    
 if ~(OPT.fileName==-1)
    
-   fprintf(OPT.fid,output(1:kk-1)); output = ''; % print and clear output
+   fprintf(OPT.fid,output(1:kk-1)); % print
    
    fprintf(OPT.fid,'</Folder>');
 
 %% close KML
 
-   output = KML_footer;
-   fprintf(OPT.fid,output);
+   fprintf(OPT.fid,KML_footer);
    fclose(OPT.fid);
 
 %% compress to kmz and include image fileds
