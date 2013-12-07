@@ -142,6 +142,8 @@ iostat       = 1;
 OPT.OS       = 'windows'; % or 'unix'
 OPT.format   = 'obs';
 
+OPT = setproperty(OPT,varargin);
+
 if strcmpi(OPT.format,'obs')
 
    fid          = fopen(filename,'w');
