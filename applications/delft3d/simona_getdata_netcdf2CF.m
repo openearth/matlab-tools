@@ -1,9 +1,18 @@
 function simona_getdata_netcdf2CF(ncfile0)
 %simona_getdata_netcdf2CF  make netCDF file from SIMONA getdata.exe CF compliant
 %
-%  http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_%28ACDD%29
+%  simona_getdata_netcdf2CF(ncfile) modified ncfile produces by getdata.exe
 %
-%See also: netcdf, vs_trim2nc, waqua
+% This extra functionality is being implemented in getdata, this matlab fucntion
+% is used to explore what exactly to implement (ensure complaince with THREDDS and ADAGUC)
+% and for future fixes of netCDF files from previous (and current) getdata releases.
+%
+%See also: netcdf, vs_trim2nc, waqua, 
+%  http://www.helpdeskwater.nl/onderwerpen/applicaties-modellen/water_en_ruimte/simona/simona/simona-stekkers/
+%  http://apps.helpdeskwater.nl/downloads/extra/simona/release/doc/usedoc/getdata/getdata.pdf
+
+% TODO
+% http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_%28ACDD%29
 
 OPT.ll     = 0;
 OPT.xybnds = 1; % ADAGUC can work with [x,y] coordinates only by mapping on-the-fly, THREDDS cannot map on-the-fly
