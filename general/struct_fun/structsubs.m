@@ -1,5 +1,5 @@
 function D2 = structsubs(D,ind)
-%STRUCTSUBS  make subset from all struct fields (as in database table-query)
+%STRUCTSUBS  make subset from all struct or class fields (as in database table-query)
 %
 % D2 = structsubs(D,ind) takes subset ind from
 % all field of struct D (array and cell field)
@@ -13,7 +13,7 @@ function D2 = structsubs(D,ind)
 % ind = strmatchb('NY',T.c) & T.a <3
 % T2 = structsubs(T,ind) % where T2 = struct('a',{[1 2]},'b', {{'a','b'}},'c',{{'NY','NY'}})
 %
-%See also: strmatchb, strfindb, csv2struct, xls2struct, nc2struct, struct_fun, postgresql
+%See also: strmatchb, strfindb, csv2struct, xls2struct, nc2struct, struct_fun, postgresql, class
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
 % Created: 11 Sep 2012
@@ -26,11 +26,18 @@ function D2 = structsubs(D,ind)
 % $HeadURL$
 % $Keywords: $
 
-if ~all(diff(structfun(@(x) length(x),D))==0)
-   error([mfilename, ' requires all struct field to have the exact same length.'])
+flds = fieldnames(D);
+    
+for ifld=1:length(flds)
+fld = flds{ifld};       
+   lengths(ifld) = length(D.(fld));
 end
 
-flds = fieldnames(D);
+if ~all(diff(lengths)==0)
+   error([mfilename, ' requires all struct field to have the exact same length.'])
+end   
+
+D2   = D; % needed for classes: output should be class too
 for ifld=1:length(flds)
     fld = flds{ifld};
     if iscell(D.(fld))
