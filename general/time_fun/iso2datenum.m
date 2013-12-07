@@ -56,7 +56,7 @@ function varargout = iso2datenum(isounits)
 
 %% Date + Time
 
-   rest = isounits;
+   rest = strtok(isounits);
    
    OPT.yyyy   = 0;
    OPT.mm     = 0;
@@ -96,6 +96,7 @@ function varargout = iso2datenum(isounits)
        if ~isempty(rest);[OPT.HH   ,rest] = strtok(rest,'-:T Z');OPT.HH     = str2num(OPT.HH  );end
        if ~isempty(rest);[OPT.MM   ,rest] = strtok(rest,'-:T Z');OPT.MM     = str2num(OPT.MM  );end
        if ~isempty(rest);[OPT.SS   ,rest] = strtok(rest,'-:T Z');OPT.SS     = str2num(OPT.SS  );end
+       
     
    end
    
