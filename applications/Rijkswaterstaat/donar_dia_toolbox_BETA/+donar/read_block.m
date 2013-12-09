@@ -18,7 +18,7 @@ function block_data = read_block(fid,ncolumn,nval)
 %
 % Use donar.squeeze_block to remove nodatavalue data.
 %
-% See also: scan_block, scan_block, squeeze_block
+% See also: scan_block, squeeze_block
 
 OPT.format   = '%s';
 

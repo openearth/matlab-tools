@@ -10,10 +10,34 @@ function Blocks = scan_file(diafile,varargin)
 % * nlines - number of ascii lines
 % * nval   - number of data tuples :-separated (x,y,t,value)
 %
-%See also: read_header, scan_block
+%See also: open = scan_file + merge_headers, scan_file = read_header + scan_block
+
+%%  --------------------------------------------------------------------
+%   Copyright (C) 2013 Deltares 4 Rijkswaterstaat
+%
+%   This library is free software: you can redistribute it and/or
+%   modify it under the terms of the GNU Lesser General Public
+%   License as published by the Free Software Foundation, either
+%   version 2.1 of the License, or (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+%   Lesser General Public License for more details.
+%
+%   You should have received a copy of the GNU Lesser General Public
+%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% $Id: $
+% $Date: $
+% $Author: $
+% $Revision: $
+% $HeadURL: $
+% $Keywords: $
 
 OPT.disp = 100;
-
 OPT = setproperty(OPT,varargin);
 
 fid = fopen(diafile,'r');

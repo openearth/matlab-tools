@@ -1,5 +1,5 @@
-function [Data, Meta] = read(File,ivar,ncolumn)
-%READ read one variable from DONAr dia file (aggregating blocks)
+function [Data, M] = read(File,ivar,ncolumn,varargin)
+%READ read one variable from DONAR dia file (aggregating blocks)
 %
 %   [D,M] = donar.read(Info, variable_index, ncolumn)
 %
@@ -19,27 +19,63 @@ function [Data, Meta] = read(File,ivar,ncolumn)
 % Example: 
 %
 %  File            = donar.open(diafile)
+%                    donar.disp(File)
 % [data, metadata] = donar.read(File,1,6) % 1st variable, residing in 6th column
 %
 %See also: open, read, disp
 
+%%  --------------------------------------------------------------------
+%   Copyright (C) 2013 Deltares 4 Rijkswaterstaat
+%
+%   This library is free software: you can redistribute it and/or
+%   modify it under the terms of the GNU Lesser General Public
+%   License as published by the Free Software Foundation, either
+%   version 2.1 of the License, or (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+%   Lesser General Public License for more details.
+%
+%   You should have received a copy of the GNU Lesser General Public
+%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% $Id: $
+% $Date: $
+% $Author: $
+% $Revision: $
+% $HeadURL: $
+% $Keywords: $
+
+% TODO determine percentage nodatavalue
+
     OPT.disp        = 100;
     OPT.nodatavalue = []; % default to squeeze them out
+    
+    if nargin==0
+        Data = OPT;return
+    end
+    OPT = setproperty(OPT,varargin);
 
     fid  = fopen(File.Filename,'r');
 
 %% read data from multipel blocks into one array
 
-    i0   = 1;
+    i0  = 1;
+    nbl = length(File.Variables(ivar).index);    
     if OPT.disp > 0
-    disp([mfilename,' loading ',File.Variables(ivar).long_name,':',File.Variables(ivar).long_name]) % in case one of first OPT.disp blocks is BIG
+       disp([mfilename,' loading: ',File.Variables(ivar).hdr.PAR{1},': ',File.Variables(ivar).long_name]) % in case one of first OPT.disp blocks is BIG
+       disp([mfilename,' loaded block ',num2str(0),'/',num2str(nbl)])
     end
     
     Data = repmat(nan,[sum(File.Variables(ivar).nval),ncolumn+1]);
-    for ibl=1:length(File.Variables(ivar).index)
+
+    for ibl=1:nbl
        i1 = sum(File.Variables(ivar).nval(1:ibl));
        if mod(ibl,OPT.disp)==0
-       disp([mfilename,' loaded block ',num2str(ibl)])
+       disp([mfilename,' loaded block ',num2str(ibl),'/',num2str(nbl),' (',num2str(ibl/nbl*100),'%)'])
        end
        fseek(fid,File.Variables(ivar).ftell(2,ibl),'bof');% posituion file pointer
        Data(i0:i1,:) = donar.read_block(fid,ncolumn,File.Variables(ivar).nval(ibl));
@@ -64,8 +100,6 @@ function [Data, Meta] = read(File,ivar,ncolumn)
     for ifld=1:length(OPT.metafields)
         try
         fld = OPT.metafields{ifld};
-        Meta.(fld) = File.Variables(ivar).(fld);
+        M.(fld) = File.Variables(ivar).(fld);
         end
     end
-     
-     

@@ -11,7 +11,7 @@ function [iline, ival, bob]= scan_block(fid,varargin)
 % [iline, ival,position] = donar.scan_block(fid) returns the
 % ftell position of the begin of the block.
 %
-% See also: read_header, read_block
+% See also: scan_file = read_header + scan_block, read_block
 
 % warning('TO DO: return # ncolumns')
 
