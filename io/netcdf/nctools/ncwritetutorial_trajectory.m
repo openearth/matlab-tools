@@ -59,9 +59,8 @@ function ncwritetutorial_trajectory(ncfile,varargin)
    OPT.datenum        = datenum(2009,0,1:365);
    OPT.lon            =  3+2*cos(2*pi*OPT.datenum./365); % lissajous
    OPT.lat            = 52+1*cos(4*pi*OPT.datenum./365+pi/2);
-   OPT.epsg           = 4326;
-
    OPT.var            = 3-2*cos(2*pi*OPT.datenum/365);
+   OPT.z              = cos(2*pi*OPT.datenum/365);;
 
 %% Required data fields
    
@@ -110,7 +109,7 @@ function ncwritetutorial_trajectory(ncfile,varargin)
 
    ncdimlen.time        = length(OPT.var(:));
    nc.Dimensions(    1) = struct('Name','time'            ,'Length',ncdimlen.time      );
-      
+   
 %% 3a Create (primary) variables: time
 
    ifld     = 1;clear attr dims
@@ -152,6 +151,31 @@ function ncwritetutorial_trajectory(ncfile,varargin)
                                'Dimensions' , struct('Name', 'time','Length',ncdimlen.time), ...
                                'Attributes' , attr,...
                                'FillValue'  , []);    
+
+%% 3c Create (primary) variables: vertical
+
+   variable.dims(1) = struct('Name', 'time','Length',ncdimlen.time);
+if length(unique(OPT.z))==1
+   ncdimlen.z           = 1;
+   nc.Dimensions(    2) = struct('Name','z'               ,'Length',ncdimlen.z         );
+   variable.dims(2) = struct('Name', 'z'   ,'Length',ncdimlen.z   );
+   variable.coordinates = 'lat lon z';
+else
+   variable.coordinates = 'lat lon';
+   ifld     = ifld + 1;clear attr
+   attr(    1)  = struct('Name', 'standard_name', 'Value', 'altitude');
+   attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'z');
+   attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
+   attr(end+1)  = struct('Name', 'positive'     , 'Value', 'down');
+   attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Z');
+   attr(end+1)  = struct('Name', '_FillValue'   , 'Value', OPT.fillvalue);
+   attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(OPT.z(:)) max(OPT.z(:))]);
+   nc.Variables(ifld) = struct('Name'       , 'z', ...
+                               'Datatype'   , 'double', ...
+                               'Dimensions' , struct('Name', 'time','Length',ncdimlen.time), ...
+                               'Attributes' , attr,...
+                               'FillValue'  , []);
+end
                            
 %% 3c Create (primary) variables: data
                               
@@ -159,17 +183,17 @@ function ncwritetutorial_trajectory(ncfile,varargin)
    attr(    1)  = struct('Name', 'standard_name', 'Value', OPT.standard_name);
    attr(end+1)  = struct('Name', 'long_name'    , 'Value', OPT.long_name);
    attr(end+1)  = struct('Name', 'units'        , 'Value', OPT.units);
-   attr(end+1)  = struct('Name', 'coordinates'  , 'Value', 'lat lon'); % platform_name needed to sdhow up in QuickPlot
+   attr(end+1)  = struct('Name', 'coordinates'  , 'Value', variable.coordinates); % platform_name needed to sdhow up in QuickPlot
    attr(end+1)  = struct('Name', '_FillValue'   , 'Value', OPT.fillvalue);
    attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(OPT.var(:)) max(OPT.var(:))]);
       
    for iatt=1:2:length(OPT.Attributes)
    attr(end+1)  = struct('Name', OPT.Attributes{iatt}, 'Value', OPT.Attributes{iatt+1});
    end
-
+   
    nc.Variables(ifld) = struct('Name'       , OPT.Name, ...
                                'Datatype'   , 'double', ...
-                               'Dimensions' , struct('Name', 'time','Length',ncdimlen.time), ...
+                               'Dimensions' , variable.dims, ...
                                'Attributes' , attr,...
                                'FillValue'  , []);                              
                               

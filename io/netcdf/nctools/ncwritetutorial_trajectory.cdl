@@ -24,6 +24,14 @@ variables:
 		lat:axis = "Y" ;
 		lat:_FillValue = 9.96921e+36 ;
 		lat:actual_range = 51 53 ;
+	double z(time), shape = [365]
+		z:standard_name = "altitude" ;
+		z:long_name = "z" ;
+		z:units = "m" ;
+		z:positive = "down" ;
+		z:axis = "Z" ;
+		z:_FillValue = 9.96921e+36 ;
+		z:actual_range = -0.999963 1 ;
 	double TSS(time), shape = [365]
 		TSS:standard_name = "mass_concentration_of_suspended_matter_in_sea_water" ;
 		TSS:long_name = "TSS" ;
