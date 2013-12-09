@@ -1,4 +1,4 @@
-NetCDF-3 Classic d:\checkouts\OpenEarthTools\matlab\io\netcdf\nctools\ncwritetutorial_trajectory.nc {
+NetCDF-3 Classic d:\checkouts\OpenEarthTools\matlab\io\netcdf\nctools\ncwritetutorial_trajectory_3D.nc {
 dimensions:
 	time = 365 ;
 

@@ -1,4 +1,4 @@
-function ncwritetutorial_trajectory(ncfile,varargin)
+function ncwritetutorial_trajectory(ncfile0,varargin)
 %NCWRITETUTORIAL_TRAJECTORY tutorial for writing trajectory to netCDF-CF file
 %
 %  Tutorial of how to make a netCDF file with CF conventions of a 
@@ -45,9 +45,9 @@ function ncwritetutorial_trajectory(ncfile,varargin)
 %  $Keywords: $
 
    if nargin==0
-      ncfile         = [mfilename('fullpath'),'.nc'];
+      ncfile0         = [mfilename('fullpath'),'.nc'];
    end
-
+   
 %% Required spatio-temporal fields
 
    OPT.title          = '';
@@ -60,7 +60,7 @@ function ncwritetutorial_trajectory(ncfile,varargin)
    OPT.lon            =  3+2*cos(2*pi*OPT.datenum./365); % lissajous
    OPT.lat            = 52+1*cos(4*pi*OPT.datenum./365+pi/2);
    OPT.var            = 3-2*cos(2*pi*OPT.datenum/365);
-   OPT.z              = cos(2*pi*OPT.datenum/365);;
+   OPT.z              = [];
 
 %% Required data fields
    
@@ -86,6 +86,10 @@ function ncwritetutorial_trajectory(ncfile,varargin)
 
 %% CF attributes: add overall meta info
 %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#description-of-file-contents
+
+for dz = [0 1]; % ampliotude of z undulation: 0=2D, otherwise=3D
+
+   OPT.z              = dz*cos(2*pi*OPT.datenum/365);
 
    nc = struct('Name','/','Format','classic');
 
@@ -155,12 +159,9 @@ function ncwritetutorial_trajectory(ncfile,varargin)
 %% 3c Create (primary) variables: vertical
 
    variable.dims(1) = struct('Name', 'time','Length',ncdimlen.time);
-if length(unique(OPT.z))==1
-   ncdimlen.z           = 1;
-   nc.Dimensions(    2) = struct('Name','z'               ,'Length',ncdimlen.z         );
-   variable.dims(2) = struct('Name', 'z'   ,'Length',ncdimlen.z   );
-   variable.coordinates = 'lat lon z';
-else
+   z0 = nanunique(OPT.z);
+if length(z0)>1
+   ncfile = strrep(ncfile0,'.nc','_3D.nc');
    variable.coordinates = 'lat lon';
    ifld     = ifld + 1;clear attr
    attr(    1)  = struct('Name', 'standard_name', 'Value', 'altitude');
@@ -173,6 +174,26 @@ else
    nc.Variables(ifld) = struct('Name'       , 'z', ...
                                'Datatype'   , 'double', ...
                                'Dimensions' , struct('Name', 'time','Length',ncdimlen.time), ...
+                               'Attributes' , attr,...
+                               'FillValue'  , []);
+else
+   ncfile = strrep(ncfile0,'.nc','_2D.nc');
+   OPT.z = z0; 
+   ncdimlen.z           = 1;
+   nc.Dimensions(    2) = struct('Name','z'               ,'Length',ncdimlen.z         );
+   variable.dims(2) = struct('Name', 'z'   ,'Length',ncdimlen.z   );
+   variable.coordinates = 'lat lon z';
+   ifld     = ifld + 1;clear attr
+   attr(    1)  = struct('Name', 'standard_name', 'Value', 'altitude');
+   attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'z');
+   attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
+   attr(end+1)  = struct('Name', 'positive'     , 'Value', 'down');
+   attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Z');
+   attr(end+1)  = struct('Name', '_FillValue'   , 'Value', OPT.fillvalue);
+   attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(OPT.z(:)) max(OPT.z(:))]);
+   nc.Variables(ifld) = struct('Name'       , 'z', ...
+                               'Datatype'   , 'double', ...
+                               'Dimensions' , struct('Name', 'z','Length',ncdimlen.z), ...
                                'Attributes' , attr,...
                                'FillValue'  , []);
 end
@@ -209,12 +230,13 @@ end
    ncwrite   (ncfile,'time'         , OPT.datenum(:) - OPT.refdatenum);
    ncwrite   (ncfile,'lon'          , OPT.lon(:));
    ncwrite   (ncfile,'lat'          , OPT.lat(:));
+   ncwrite   (ncfile,'z'            , z0);
    ncwrite   (ncfile,OPT.Name       , OPT.var(:));
       
 %% test and check
 
    nc_dump(ncfile,[],strrep(ncfile,'.nc','.cdl'))
-
-
-    
-    
+   nc
+   nc.Variables(end)
+   clear variable ncdimlen nc
+end
