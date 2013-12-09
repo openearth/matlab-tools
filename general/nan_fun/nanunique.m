@@ -1,24 +1,19 @@
-function [b ndx pos] = nanunique(a, varargin)
+function [C IA IC] = nanunique(A, varargin)
 %NANUNIQUE  Set unique, considering all nan-values as equal.
 %
-%   More detailed description goes here.
+%    C = unique(A) for the array A returns the same values as in A but with 
+%    no repetitions. C will be sorted. Unlike UNIQUE, C has one NaN
+%    at most, positioned at then end. See UNIQUE fore more details. 
 %
-%   Syntax:
-%   varargout = nanunique(varargin)
+%    [C,IA,IC] = unique(A) also returns index vectors IA and IC such that
+%    C = A(IA) and A = C(IC).
 %
-%   Input:
-%   a         = array to be made unique
-%   varargin  = optional flag1 and flag2 as used in unique
+%   Example:
 %
-%   Output:
-%   b   = unique values of a, sorted
-%   ndx =
-%   pos =
+%     nanunique([1 2 nan nan])
+%     unique   ([1 2 nan nan])
 %
-%   Example
-%   nanunique
-%
-%   See also unique
+%   See also: unique, sortrows, poly_unique, unique_rows_tolerance
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -65,15 +60,18 @@ function [b ndx pos] = nanunique(a, varargin)
 
 %%
 % derive the maximum finite value in a
-maxval = max(a(isfinite(a(:))));
+maxval = max(A(isfinite(A(:))));
 if isempty(maxval)
     maxval = 0;
 end
 % create dummy-value for NaN which is larger than the maximum value
 nandummyval = maxval + 1;
-% replace all NaN-values with the dummy-value
-a(isnan(a)) = nandummyval;
+
+% replace all NaN-values with this dummy-value
+A(isnan(A)) = nandummyval;
+
 % run the unique function
-[b ndx pos] = unique(a, varargin{:});
+[C IA IC] = unique(A, varargin{:});
+
 % replace the dummy-value by NaN
-b(b == nandummyval) = NaN;
+C(C == nandummyval) = NaN;
