@@ -351,21 +351,25 @@ classdef slamfat < handle
         
         function add_meta(this)
             info = getlocalsettings;
+            
+            url     = regexprep('$HeadURL$', '\s*[^\s]*\$[^\s]*\s*', '');
+            comment = regexprep('SLAMFAT revision $Revision$ $Author$ $Date$', '[^\s]*\$[^\s]*\s*', '');
+            
             if isempty(this.output_file)
                 this.data.info_ = struct( ...
                     'title','SLAMFAT model output', ...
                     'creator_name',info.NAME, ...
                     'creator_email',info.EMAIL, ...
                     'date_created',datestr(now), ...
-                    'references','$HeadURL$', ...
-                    'comment','SLAMFAT\n$Date$\n$Author$\n$Revision$');
+                    'references',url, ...
+                    'comment',comment);
             else
                 ncwriteatt(this.output_file,'/','title','SLAMFAT model output');
                 ncwriteatt(this.output_file,'/','creator_name',info.NAME);
                 ncwriteatt(this.output_file,'/','creator_email',info.EMAIL);
                 ncwriteatt(this.output_file,'/','date_created',datestr(now));
-                ncwriteatt(this.output_file,'/','references','$HeadURL$');
-                ncwriteatt(this.output_file,'/','comment','SLAMFAT\n$Date$\n$Author$\n$Revision$');                
+                ncwriteatt(this.output_file,'/','references',url);
+                ncwriteatt(this.output_file,'/','comment',comment);                
             end
         end
         
