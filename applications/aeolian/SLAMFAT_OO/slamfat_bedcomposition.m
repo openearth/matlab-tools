@@ -211,9 +211,9 @@ classdef slamfat_bedcomposition < slamfat_bedcomposition_basic
         end
         
         function data = output(this, data, io)
-            data = output@slamfat_bedcomposition_basic(this, data, io);
-            data.d50      (io,:,:) = this.get_d50;
-            data.thickness(io,:,:) = this.get_layer_thickness;
+            data = output@slamfat_bedcomposition_basic(this);
+            data.d50       = this.get_d50;
+            data.thickness = this.get_layer_thickness;
         end
         
         function mass = get_top_layer_mass(this)

@@ -199,9 +199,9 @@ classdef slamfat_threshold < slamfat_threshold_basic
             threshold(this.moisture > .04 ,:) = inf;
         end
         
-        function data = output(this, data, io)
-            data = output@slamfat_threshold_basic(this, data, io);
-            data.moisture(io,:) = this.moisture;
+        function data = output(this)
+            data = output@slamfat_threshold_basic(this);
+            data.moisture = this.moisture;
         end
     end
 end

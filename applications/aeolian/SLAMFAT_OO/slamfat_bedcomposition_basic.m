@@ -129,8 +129,8 @@ classdef slamfat_bedcomposition_basic < handle
             dz = zeros(size(mass))';
         end
         
-        function data = output(~, data, ~)
-            % no output
+        function data = output(~)
+            data = struct();
         end
         
         function mass = get_top_layer_mass(this)

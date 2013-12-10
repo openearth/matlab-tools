@@ -33,7 +33,7 @@ profile(1:n)   = linspace(-1,1,n);
 profile(n:end) = linspace(1,15,100-n+1);
 
 w = slamfat_wind('duration',600);
-s = slamfat('wind',w,'profile',profile,'animate',false);
+s = slamfat('wind',w,'profile',profile,'animate',false,'output_file','slamfat.nc');
 
 source = zeros(length(s.profile),1);
 source(1:100) = 1.5e-2 * w.dt * s.dx;
@@ -55,6 +55,10 @@ s.max_source    = 'initial_profile';
 s.run;
 s.show_performance;
 
+%% knmi and waterbase data
+
+
+
 %% async
 
 close all; clear classes; clear w; clear s;
@@ -65,20 +69,20 @@ profile(1:n)   = linspace(-1,1,n);
 profile(n:end) = linspace(1,15,100-n+1);
 
 duration = 60 * ones(1,60);
-velocity = 4+4*sin(cumsum(duration)/600*2*pi);
-velstd   = 2;
+velocity = 4+4*sin((cumsum(duration)-30)/600*2*pi);
+velstd   = 0;
 w = slamfat_wind('duration',duration,'velocity_mean',velocity,'velocity_std',velstd);
 
 %%
 
 phi = linspace(-pi,pi,21);
-A   = 4; %0:2:8;
+A   = [3 4 5]; %2:6; %0:2:8;
 
-for i = 1:length(phi)
-    for j = 1:length(A)
+for j = 1:length(A)
+    for i = 1:length(phi)
         fname = sprintf('s_phi%3.2f_A%d.mat',phi(i),A(j));
         
-        if ~exist(fname,'file')
+        if ~exist(fullfile(pwd,fname),'file')
     
             disp(fname);
             
@@ -103,51 +107,226 @@ for i = 1:length(phi)
     end
 end
 
+%% T=0
+
+phi = linspace(-pi,pi,21);
+A   = 3;
+
+for j = 1:length(A)
+    for i = 1:length(phi)
+        fname = sprintf('s_phi%3.2f_A%d_T=0.mat',phi(i),A(j));
+        
+        if ~exist(fullfile(pwd,fname),'file')
+    
+            disp(fname);
+            
+            clear s;
+            s = slamfat('wind',w,'profile',profile,'relaxation',0.05,'animate',false,'progress',false);
+
+            source = zeros(length(s.profile),1);
+            source(1:20) = 1.5e-4 * w.dt * s.dx;
+
+            s.bedcomposition = slamfat_bedcomposition_basic;
+            s.bedcomposition.source             = source;
+            s.bedcomposition.grain_size         = .3*1e-3;
+
+            s.max_threshold = slamfat_threshold_basic;
+            s.max_threshold.time      = 0:3600;
+            s.max_threshold.threshold = A(j)*sin(s.max_threshold.time/600*2*pi + phi(i));
+
+            s.run;
+
+            save(fname,'s');
+        end
+    end
+end
+
+%% S = small
+
+phi = linspace(-pi,pi,21);
+A   = 3;
+S   = [3e-5 1.5e-5 3e-6 1.5e-6];
+
+for k = 1:length(S)
+    for j = 1:length(A)
+        for i = 1:length(phi)
+            fname = sprintf('s_phi%3.2f_A%d_S=%3.2e.mat',phi(i),A(j),S(k));
+
+            if ~exist(fullfile(pwd,fname),'file')
+
+                disp(fname);
+
+                clear s;
+                s = slamfat('wind',w,'profile',profile,'animate',false,'progress',false);
+
+                source = zeros(length(s.profile),1);
+                source(1:20) = S(k) * w.dt * s.dx;
+
+                s.bedcomposition = slamfat_bedcomposition_basic;
+                s.bedcomposition.source             = source;
+                s.bedcomposition.grain_size         = .3*1e-3;
+
+                s.max_threshold = slamfat_threshold_basic;
+                s.max_threshold.time      = 0:3600;
+                s.max_threshold.threshold = A(j)*sin(s.max_threshold.time/600*2*pi + phi(i));
+
+                s.run;
+
+                save(fname,'s');
+            end
+        end
+    end
+end
+
 %% plot results
+
+close all;
 
 figure; hold on;
 
 clr = 'rgbcymk';
 
-phi_old = linspace(-pi,pi,20);
-phi_old = [phi_old(1:10) 0 phi_old(11:end)];
-
 phi = linspace(-pi,pi,21);
-A   = 3:4; %0:2:8;
+A   = 3:5; %0:2:8;
+S   = [3e-5 1.5e-5 3e-6 1.5e-6];
 
 transport = zeros(length(phi),length(A),1);
-
 for j = 1:length(A)
     for i = 1:length(phi)
         fname = sprintf('s_phi%3.2f_A%d.mat',phi(i),A(j));
         
         if exist(fname,'file')
             disp(fname);
-            load(fname);
-            transport(i,j,:) = squeeze(s.data.total_transport(end,end,:));
-        else
-            fname = sprintf('s_phi%3.2f_A%d.mat',phi_old(i),A(j));
-
-            if exist(fname,'file')
-                disp(fname);
+            try
                 load(fname);
                 transport(i,j,:) = squeeze(s.data.total_transport(end,end,:));
             end
         end
     end
     
-    plot(phi/pi*180,squeeze(transport(:,j,:)),'Color',clr(j));
+    t = squeeze(transport(:,j,:));
+    if ~all(t==0)
+        plot(phi/pi*180,t/t(1),'-','Color',clr(j));
+    end
+end
 
+transport = zeros(length(phi),length(A),1);
+for j = 1:length(A)
+    for i = 1:length(phi)
+        fname = sprintf('s_phi%3.2f_A%d_T=0.mat',phi(i),A(j));
+        
+        if exist(fname,'file')
+            disp(fname);
+            load(fname);
+            transport(i,j,:) = squeeze(s.data.total_transport(end,end,:));
+        end
+    end
+    
+    t = squeeze(transport(:,j,:));
+    if ~all(t==0)
+        plot(phi/pi*180,t/t(1),':','Color',clr(j));
+    end
+end
+
+transport = zeros(length(phi),length(A),length(S),1);
+for k = 1:length(S)
+    for j = 1:length(A)
+        for i = 1:length(phi)
+            fname = sprintf('s_phi%3.2f_A%d_S=%3.2e.mat',phi(i),A(j),S(k));
+
+            if exist(fname,'file')
+                disp(fname);
+                load(fname);
+                transport(i,j,k,:) = squeeze(s.data.total_transport(end,end,:));
+            end
+        end
+
+        t = squeeze(transport(:,j,k,:));
+        if ~all(t==0)
+            plot(phi/pi*180,t/t(1),'--','Color',clr(j));
+        end
+    end
 end
 
 xlabel('phase difference between threshold and wind velocity [^o]')
-ylabel('transport volume [m^3/hr]')
+ylabel('relative transport volume w.r.t. 180^o phase difference [-]')
 
 xlim([-180 180]);
 
-legend(arrayfun(@(x) sprintf('threshold amplitude = %d',x), A, 'UniformOutput', false));
+legend([arrayfun(@(x) sprintf('threshold amplitude = %d',x), A, 'UniformOutput', false) ...
+    {'no relaxation' 'decreasing supply'}], ...
+    'Location','SouthWest');
 
 grid on;
+box on;
+
+set(findobj(gca,'Type','line'),'LineWidth',2)
+
+%% plot supply
+
+load('s_phi0.00_A3.mat');
+
+figure;
+pcolor(s.data.supply);
+shading flat;
+colorbar;
+title(sprintf('S = %d', 1.4e-4));
+
+fnames = dir('s_phi0.00_A3_S=*.mat');
+
+for i = 1:length(fnames)
+    fname = fnames(i).name;
+    
+    re = regexp(fname, 's_phi0.00_A3_S=([\d-+\.e]+).mat', 'tokens');
+    
+    if ~isempty(re)
+        load(fname);
+        
+        figure;
+        pcolor(s.data.supply);
+        shading flat;
+        colorbar;
+        title(sprintf('S = %d', str2double(re{1}{1})));
+    end
+end
+
+%% 
+
+figure;
+s1 = subplot(2,2,1); hold on;
+
+x = linspace(0,6*pi,1000);
+
+plot(x,sin(x),'-k');
+plot(x,.6*sin(x+20/180*pi),'-r');
+plot(x,.6*sin(x-20/180*pi),'-b');
+
+s2 = subplot(2,2,3); hold on;
+plot(x,max(0,sin(x)-.6*sin(x+20/180*pi)),'-r');
+plot(x,max(0,sin(x)-.6*sin(x-20/180*pi)),'-b');
+
+s3 = subplot(2,2,2); hold on;
+
+s_plus = load('s_phi0.63_A3.mat');
+s_min  = load('s_phi-0.63_A3.mat');
+
+plot(s_plus.s.output_time, s_plus.s.data.wind,'-k');
+plot(s_plus.s.output_time, s_plus.s.data.threshold(:,1),'-r');
+plot(s_min.s.output_time, s_min.s.data.threshold(:,1),'-b');
+
+duration = 60 * ones(1,60);
+velocity = 4+4*sin(cumsum(duration)/600*2*pi);
+plot(cumsum(duration)-60, velocity,'-k');
+
+s4 = subplot(2,2,4); hold on;
+
+plot(s_plus.s.output_time, max(0,s_plus.s.data.wind(:,1) - s_plus.s.data.threshold(:,1)),'-r');
+plot(s_min.s.output_time, max(0,s_plus.s.data.wind(:,1) - s_min.s.data.threshold(:,1)),'-b');
+
+linkaxes([s1 s2],'x');
+linkaxes([s3 s4],'x');
+
+%xlim(minmax(x));
 
 %% Aeolian Sand and Sand Dunes By Kenneth Pye, Haim Tsoar
 

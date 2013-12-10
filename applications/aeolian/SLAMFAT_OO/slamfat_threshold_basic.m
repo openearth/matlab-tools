@@ -119,8 +119,9 @@ classdef slamfat_threshold_basic < handle
             end
         end
         
-        function data = output(this, data, io)
-            data.threshold(io,:,:) = this.current_threshold;
+        function data = output(this)
+            data = struct( ...
+                'threshold', this.current_threshold);
         end
         
         function val = unify_series(this, val)

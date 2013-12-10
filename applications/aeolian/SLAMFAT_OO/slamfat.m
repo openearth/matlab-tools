@@ -47,47 +47,53 @@ classdef slamfat < handle
     % $Keywords: $
     
     %% Properties
-    properties
-        number_of_gridcells     = 100
+    properties(GetAccess = public, SetAccess = public)
         dx                      = 1
         relaxation              = 0.5
         g                       = 9.81
         relative_velocity       = 1
         output_timesteps        = 100
-        
-        transport               = 0
-        capacity                = 0
-        supply                  = 0
-        supply_limited          = false
+        output_file             = ''
         
         max_source              = 'none'
         max_threshold           = []
         
+        profile                 = zeros(1,100)
+        wind                    = []
+        bedcomposition          = []
+        
+        animate                 = false;
+        progress                = true;
+    end
+    
+    properties(GetAccess = public, SetAccess = protected)
+        number_of_gridcells     = 100
+
+        transport               = 0
+        capacity                = 0
+        supply                  = 0
+        supply_limited          = false
+
         data                    = struct()
         timestep                = 0
         output_timestep         = 0
         output_time             = 0
         size_of_output          = 0
-        
-        profile                 = zeros(1,100)
+
         initial_profile         = []
-        wind                    = []
-        bedcomposition          = []
-        figure                  = []
         
-        animate                 = false;
-        progress                = true;
         progressbar             = []
+        figure                  = []
+ 
+        isinitialized           = false
     end
-    
-    properties(Access = private)
+
+    properties(GetAccess = protected, SetAccess = protected)
         it                      = 1
         io                      = 1
         transport_transportltd  = []
         transport_supplyltd     = []
         total_transport         = []
-        
-        isinitialized           = false
         performance             = struct()
     end
     
@@ -142,18 +148,36 @@ classdef slamfat < handle
                 nf = this.bedcomposition.number_of_fractions;
                 nl = this.bedcomposition.get_number_of_actual_layers;
 
-                this.data = struct(                     ...
-                    'profile',          zeros(n,nx),    ...
-                    'wind',             zeros(n),    ...
-                    'transport',        zeros(n,nx,nf), ...
-                    'total_transport',  zeros(n,nx,nf), ...    
-                    'supply',           zeros(n,nx,nf), ...
-                    'capacity',         zeros(n,nx,nf), ...
-                    'threshold',        zeros(n,nx,nf), ...
-                    'supply_limited',   false(n,nx,nf), ...
-                    'moisture',         zeros(n,nx),    ...
-                    'd50',              zeros(n,nx,nl), ...
-                    'thickness',        zeros(n,nx,nl));
+                this.data = struct();
+                
+                if ~isempty(this.output_file)
+                    if exist(this.output_file, 'file')
+                        switch questdlg('Overwrite existing netCDF file?', 'File exists', 'Yes', 'No', 'Yes')
+                            case 'Yes'
+                                delete(this.output_file);
+                            case 'No'
+                                return
+                        end
+                    end
+                end
+                
+                this.add_dimension('time',      this.output_time);
+                this.add_dimension('x',         0:this.dx:nx-1);
+                this.add_dimension('fractions', this.bedcomposition.grain_size);
+                
+                this.add_variable('profile',                {'time' n 'x' nx});
+                this.add_variable('wind',                   {'time' n});
+                this.add_variable('transport',              {'time' n 'x' nx 'fractions' nf});
+                this.add_variable('cummulative_transport',  {'time' n 'x' nx 'fractions' nf});
+                this.add_variable('supply',                 {'time' n 'x' nx 'fractions' nf});
+                this.add_variable('capacity',               {'time' n 'x' nx 'fractions' nf});
+                this.add_variable('threshold',              {'time' n 'x' nx 'fractions' nf});
+                this.add_variable('supply_limited',         {'time' n 'x' nx 'fractions' nf});
+                this.add_variable('moisture',               {'time' n 'x' nx});
+                this.add_variable('d50',                    {'time' n 'x' nx 'layers' nl});
+                this.add_variable('thickness',              {'time' n 'x' nx 'layers' nl});
+                
+                this.add_meta();
                 
                 this.performance = struct(  ...
                     'initialization',   0,  ...
@@ -227,7 +251,7 @@ classdef slamfat < handle
                 
                 source = this.get_maximum_source;
 
-                % coompute added mass
+                % compute added mass
                 mass       = zeros(this.number_of_gridcells,this.bedcomposition.number_of_fractions);
                 mass( idx) = source( idx) / this.dx - this.supply(idx) / (this.relaxation/this.wind.dt);
                 mass(~idx) = source(~idx) / this.dx - (this.capacity(~idx) - this.transport(~idx)) / (this.relaxation / this.wind.dt);
@@ -279,19 +303,19 @@ classdef slamfat < handle
                 this.output_timestep = find(this.output_timesteps <= this.it,1,'last');
                 
                 % update output matrices
-                this.data.profile        (this.io,:)   = this.profile;
-                this.data.wind           (this.io)     = this.wind.time_series(this.it);
-                this.data.transport      (this.io,:,:) = this.transport;
-                this.data.total_transport(this.io,:,:) = this.total_transport;       
-                this.data.supply         (this.io,:,:) = this.supply;
-                this.data.capacity       (this.io,:,:) = this.capacity;
-                this.data.supply_limited (this.io,:,:) = this.supply_limited;
+                this.write_variable('profile',                  this.profile);
+                this.write_variable('wind',                     this.wind.time_series(this.it));
+                this.write_variable('transport',                this.transport);
+                this.write_variable('cummulative_transport',    this.total_transport);
+                this.write_variable('supply',                   this.supply);
+                this.write_variable('capacity',                 this.capacity);
+                this.write_variable('supply_limited',           this.supply_limited);
                 
-                this.data = this.max_threshold.output(this.data, this.io);
+                this.write_variables(this.max_threshold.output);
                 
                 tic;
                 
-                this.data = this.bedcomposition.output(this.data, this.io);
+                this.write_variables(this.bedcomposition.output);
                 
                 this.performance.grainsize = this.performance.grainsize + toc; tic;
                 
@@ -305,6 +329,81 @@ classdef slamfat < handle
                 this.performance.visualization = this.performance.visualization + toc;
                 
                 this.io = this.io + 1;
+            end
+        end
+        
+        function add_dimension(this, dim, value)
+            if isempty(this.output_file)
+                this.data.(dim) = value;
+            else
+                nccreate(this.output_file, dim, 'Dimensions', {dim length(value)});
+                ncwrite(this.output_file, dim, value);
+            end
+        end
+        
+        function add_variable(this, var, dims)
+            if isempty(this.output_file)
+                this.data.(var) = zeros([dims{2:2:end} 1]);
+            else
+                nccreate(this.output_file, var, 'Dimensions', dims);
+            end
+        end
+        
+        function add_meta(this)
+            info = getlocalsettings;
+            if isempty(this.output_file)
+                this.data.info_ = struct( ...
+                    'title','SLAMFAT model output', ...
+                    'creator_name',info.NAME, ...
+                    'creator_email',info.EMAIL, ...
+                    'date_created',datestr(now), ...
+                    'references','$HeadURL$', ...
+                    'comment','SLAMFAT\n$Date$\n$Author$\n$Revision$');
+            else
+                ncwriteatt(this.output_file,'/','title','SLAMFAT model output');
+                ncwriteatt(this.output_file,'/','creator_name',info.NAME);
+                ncwriteatt(this.output_file,'/','creator_email',info.EMAIL);
+                ncwriteatt(this.output_file,'/','date_created',datestr(now));
+                ncwriteatt(this.output_file,'/','references','$HeadURL$');
+                ncwriteatt(this.output_file,'/','comment','SLAMFAT\n$Date$\n$Author$\n$Revision$');                
+            end
+        end
+        
+        function write_variable(this, var, value)
+            if isempty(this.output_file)
+                idx = [{this.io} num2cell(repmat(':',1,ndims(this.data.(var))-1))];
+                this.data.(var)(idx{:}) = value;
+            else
+                info  = ncinfo(this.output_file, var);
+                sz    = info.Size;
+                sz(1) = 1;
+                if isscalar(value)
+                    value = zeros(sz) + value;
+                end
+                if ~any(size(value) == 1)
+                    value = reshape(value,[1 size(value)]);
+                end
+                idx = [this.io ones(1,sum(size(value)>1))];
+                ncwrite(this.output_file, var, double(value), idx);
+            end
+        end
+        
+        function write_variables(this, vars)
+            if isstruct(vars)
+                vars = reshape([fieldnames(vars) struct2cell(vars)]',1,[]);
+            end
+            for i = 1:2:length(vars)
+                this.write_variable(vars{i}, vars{i+1});
+            end
+        end
+        
+        function val = get.data(this)
+            if isempty(this.output_file)
+                val = this.data;
+            else
+                info = ncinfo(this.output_file);
+                vars = {info.Variables.Name};
+                val  = cell2struct(cellfun(@(x) ncread(this.output_file,x), vars, 'UniformOutput', false), vars, 2);
             end
         end
         
