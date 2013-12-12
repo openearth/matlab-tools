@@ -137,10 +137,10 @@ function varargout = run(data, time, mask, varargin)
       error('transformFunInv(x) is not the inverse of transformFun(x) for x=1')
    end
 
-   OPT.data     = ['[''./',OPT.ncfile ,'#',OPT.dataname,''']'];
-   OPT.mask     = ['[''./',OPT.ncfile ,'#',OPT.maskname,''']'];
-   OPT.time     = [ '''./',OPT.ncfile ,'#',OPT.timename,'''']; % no brackets !!
-   OPT.results  = ['[''./',OPT.resfile,'#',OPT.dataname,''']'];
+   OPT.data     = ['[''',OPT.ncfile ,'#',OPT.dataname,''']'];
+   OPT.mask     = ['[''',OPT.ncfile ,'#',OPT.maskname,''']'];
+   OPT.time     = [ '''',OPT.ncfile ,'#',OPT.timename,'''']; % no brackets !!
+   OPT.results  = ['[''',OPT.resfile,'#',OPT.dataname,''']'];
    
    if OPT.version > 3 % DINEOF now writes mode to netCDF
    OPT.EOF_U    = ['[''./DINEOF_diagnostics.nc#U'']'];
