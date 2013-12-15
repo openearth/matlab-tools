@@ -1,7 +1,7 @@
 function handles=muppet_readXmlFiles(handles)
 
 dr=handles.xmldir;
-dr='d:\checkouts\OpenEarthTools\trunk\matlab\applications\muppet_v4\src\newxml\';
+% dr='d:\checkouts\OpenEarthTools\trunk\matlab\applications\muppet_v4\src\newxml\';
 
 %% Data types
 flist=dir([dr 'datatypes' filesep '*.xml']);
