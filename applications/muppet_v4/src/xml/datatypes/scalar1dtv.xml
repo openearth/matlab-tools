@@ -1,20 +1,33 @@
 <?xml version="1.0"?>
 <root>
-  <name>scalar1dtv</name>
   <longname>Scalar Time Series</longname>
-  <plot>
-    <type>timeseries</type>
+  <plottype>
+    <name>timeseries</name>
     <plotroutine>
-      <name>plotline</name>
-      <longname>Plot Line</longname>
+      <name>Line</name>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>linegroup</name>
+        <name>linecolor</name>
       </plotoption>
       <plotoption>
-        <name>markergroup</name>
+        <name>linewidth</name>
+      </plotoption>
+      <plotoption>
+        <name>linestyle</name>
+      </plotoption>
+      <plotoption>
+        <name>marker</name>
+      </plotoption>
+      <plotoption>
+        <name>markersize</name>
+      </plotoption>
+      <plotoption>
+        <name>markeredgecolor</name>
+      </plotoption>
+      <plotoption>
+        <name>markerfacecolor</name>
       </plotoption>
       <plotoption>
         <name>rightaxis</name>
@@ -23,20 +36,62 @@
         <name>legendtext</name>
       </plotoption>
       <plotoption>
-        <name>timebargroup</name>
+        <name>timebartype</name>
       </plotoption>
+      <plotoption>
+        <name>timebartime</name>
+      </plotoption>
+      <plotoption>
+        <name>timebarlinecolor</name>
+      </plotoption>
+      <plotoption>
+        <name>timebarlinewidth</name>
+      </plotoption>
+      <plotoption>
+        <name>timebarlinestyle</name>
+      </plotoption>
+      <plotoption>
+        <name>timebarmarker</name>
+      </plotoption>
+      <plotoption>
+        <name>timebarmarkersize</name>
+      </plotoption>
+      <plotoption>
+        <name>timebarmarkeredgecolor</name>
+      </plotoption>
+      <plotoption>
+        <name>timebarmarkerfacecolor</name>
+      </plotoption>
+      <elementgroup>line</elementgroup>
+      <elementgroup>marker</elementgroup>
+      <elementgroup>timebar</elementgroup>
+      <elementgroup>legendtext</elementgroup>
     </plotroutine>
     <plotroutine>
-      <name>plotstackedarea</name>
-      <longname>Plot Stacked Area</longname>
+      <name>Spline</name>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>polygongroup</name>
+        <name>linecolor</name>
       </plotoption>
       <plotoption>
-        <name>linegroup</name>
+        <name>linewidth</name>
+      </plotoption>
+      <plotoption>
+        <name>linestyle</name>
+      </plotoption>
+      <plotoption>
+        <name>marker</name>
+      </plotoption>
+      <plotoption>
+        <name>markersize</name>
+      </plotoption>
+      <plotoption>
+        <name>markeredgecolor</name>
+      </plotoption>
+      <plotoption>
+        <name>markerfacecolor</name>
       </plotoption>
       <plotoption>
         <name>rightaxis</name>
@@ -45,20 +100,56 @@
         <name>legendtext</name>
       </plotoption>
       <plotoption>
-        <name>timebargroup</name>
+        <name>timebartype</name>
       </plotoption>
+      <plotoption>
+        <name>timebartime</name>
+      </plotoption>
+      <plotoption>
+        <name>timebarlinecolor</name>
+      </plotoption>
+      <plotoption>
+        <name>timebarlinewidth</name>
+      </plotoption>
+      <plotoption>
+        <name>timebarlinestyle</name>
+      </plotoption>
+      <plotoption>
+        <name>timebarmarker</name>
+      </plotoption>
+      <plotoption>
+        <name>timebarmarkersize</name>
+      </plotoption>
+      <plotoption>
+        <name>timebarmarkeredgecolor</name>
+      </plotoption>
+      <plotoption>
+        <name>timebarmarkerfacecolor</name>
+      </plotoption>
+      <elementgroup>line</elementgroup>
+      <elementgroup>marker</elementgroup>
+      <elementgroup>timebar</elementgroup>
+      <elementgroup>legendtext</elementgroup>
     </plotroutine>
     <plotroutine>
-      <name>plothistogram</name>
-      <longname>Plot Histogram</longname>
+      <name>Stacked Area</name>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>polygongroup</name>
+        <name>fillclosedpolygons</name>
       </plotoption>
       <plotoption>
-        <name>linegroup</name>
+        <name>fillcolor</name>
+      </plotoption>
+      <plotoption>
+        <name>linecolor</name>
+      </plotoption>
+      <plotoption>
+        <name>linewidth</name>
+      </plotoption>
+      <plotoption>
+        <name>linestyle</name>
       </plotoption>
       <plotoption>
         <name>rightaxis</name>
@@ -67,8 +158,94 @@
         <name>legendtext</name>
       </plotoption>
       <plotoption>
-        <name>timebargroup</name>
+        <name>timebartype</name>
       </plotoption>
+      <plotoption>
+        <name>timebartime</name>
+      </plotoption>
+      <plotoption>
+        <name>timebarlinecolor</name>
+      </plotoption>
+      <plotoption>
+        <name>timebarlinewidth</name>
+      </plotoption>
+      <plotoption>
+        <name>timebarlinestyle</name>
+      </plotoption>
+      <plotoption>
+        <name>timebarmarker</name>
+      </plotoption>
+      <plotoption>
+        <name>timebarmarkersize</name>
+      </plotoption>
+      <plotoption>
+        <name>timebarmarkeredgecolor</name>
+      </plotoption>
+      <plotoption>
+        <name>timebarmarkerfacecolor</name>
+      </plotoption>
+      <elementgroup>polygon</elementgroup>
+      <elementgroup>line</elementgroup>
+      <elementgroup>timebar</elementgroup>
+      <elementgroup>legendtext</elementgroup>
     </plotroutine>
-  </plot>
+    <plotroutine>
+      <name>Histogram</name>
+      <plotoption>
+        <name>plotroutine</name>
+      </plotoption>
+      <plotoption>
+        <name>fillclosedpolygons</name>
+      </plotoption>
+      <plotoption>
+        <name>fillcolor</name>
+      </plotoption>
+      <plotoption>
+        <name>linecolor</name>
+      </plotoption>
+      <plotoption>
+        <name>linewidth</name>
+      </plotoption>
+      <plotoption>
+        <name>linestyle</name>
+      </plotoption>
+      <plotoption>
+        <name>rightaxis</name>
+      </plotoption>
+      <plotoption>
+        <name>legendtext</name>
+      </plotoption>
+      <plotoption>
+        <name>timebartype</name>
+      </plotoption>
+      <plotoption>
+        <name>timebartime</name>
+      </plotoption>
+      <plotoption>
+        <name>timebarlinecolor</name>
+      </plotoption>
+      <plotoption>
+        <name>timebarlinewidth</name>
+      </plotoption>
+      <plotoption>
+        <name>timebarlinestyle</name>
+      </plotoption>
+      <plotoption>
+        <name>timebarmarker</name>
+      </plotoption>
+      <plotoption>
+        <name>timebarmarkersize</name>
+      </plotoption>
+      <plotoption>
+        <name>timebarmarkeredgecolor</name>
+      </plotoption>
+      <plotoption>
+        <name>timebarmarkerfacecolor</name>
+      </plotoption>
+      <elementgroup>polygon</elementgroup>
+      <elementgroup>line</elementgroup>
+      <elementgroup>timebar</elementgroup>
+      <elementgroup>legendtext</elementgroup>
+    </plotroutine>
+  </plottype>
 </root>

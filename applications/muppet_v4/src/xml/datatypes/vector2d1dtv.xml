@@ -1,37 +1,87 @@
 <?xml version="1.0"?>
 <root>
-  <name>vector2d1dtv</name>
   <longname>Time Series Vector 2D</longname>
-  <plot>
-    <type>timeseries</type>
+  <plottype>
+    <name>timeseries</name>
     <plotroutine>
-      <name>plotfeather</name>
-      <longname>Feather</longname>
+      <name>Feather</name>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>linegroup</name>
-      </plotoption> 
+        <name>linecolor</name>
+      </plotoption>
       <plotoption>
-        <name>vectortimeseriesthinninggroup</name>
+        <name>linewidth</name>
+      </plotoption>
+      <plotoption>
+        <name>linestyle</name>
+      </plotoption>
+      <plotoption>
+        <name>thinning</name>
+      </plotoption>
+      <plotoption>
+        <name>thinning</name>
+      </plotoption>
+      <plotoption>
+        <name>thinning</name>
+      </plotoption>
+      <plotoption>
+        <name>thinning</name>
+      </plotoption>
+      <plotoption>
+        <name>thinning</name>
+      </plotoption>
+      <plotoption>
+        <name>thinning</name>
+      </plotoption>
+      <plotoption>
+        <name>thinning</name>
+      </plotoption>
+      <plotoption>
+        <name>thinning</name>
       </plotoption>
       <plotoption>
         <name>legendtext</name>
       </plotoption>
+      <elementgroup>line</elementgroup>
+      <elementgroup>vectortimeseriesthinning</elementgroup>
+      <elementgroup>legendtext</elementgroup>
     </plotroutine>
     <plotroutine>
-      <name>plottimeseriesarrows</name>
-      <longname>Arrows</longname>
+      <name>Time Series Arrows</name>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>vectortimeseriesthinninggroup</name>
+        <name>thinning</name>
+      </plotoption>
+      <plotoption>
+        <name>thinning</name>
+      </plotoption>
+      <plotoption>
+        <name>thinning</name>
+      </plotoption>
+      <plotoption>
+        <name>thinning</name>
+      </plotoption>
+      <plotoption>
+        <name>thinning</name>
+      </plotoption>
+      <plotoption>
+        <name>thinning</name>
+      </plotoption>
+      <plotoption>
+        <name>thinning</name>
+      </plotoption>
+      <plotoption>
+        <name>thinning</name>
       </plotoption>
       <plotoption>
         <name>legendtext</name>
       </plotoption>
+      <elementgroup>vectortimeseriesthinning</elementgroup>
+      <elementgroup>legendtext</elementgroup>
     </plotroutine>
-  </plot>
+  </plottype>
 </root>

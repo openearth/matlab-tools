@@ -19,7 +19,7 @@ for k=1:nodat
     plt.datasets(k).dataset.barnr=0;
     plt.datasets(k).dataset.areanr=0;
     switch lower(plt.datasets(k).dataset.plotroutine)
-        case {'plothistogram'}
+        case {'histogram'}
             nbar=nbar+1;
             plt.datasets(k).dataset.barnr=nbar;
             bary(:,nbar)=handles.datasets(ii).dataset.y;
@@ -28,7 +28,7 @@ for k=1:nodat
             else
                 plt.xtcklab=[];
             end
-        case {'plotstackedarea'}
+        case {'stacked area'}
             nstackedarea=nstackedarea+1;
             plt.datasets(k).dataset.areanr=nstackedarea;
             stackedareay(:,nstackedarea)=handles.datasets(ii).dataset.y;

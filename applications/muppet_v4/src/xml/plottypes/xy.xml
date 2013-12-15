@@ -1,225 +1,222 @@
 <?xml version="1.0"?>
 <root>
-  <plottype>
-    <name>xy</name>  
-  <option>
+  <subplotoption>
     <name>position</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>drawbox</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>type</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>backgroundcolor</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>xlim</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>ylim</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>xtick</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>xtickmultiply</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>xtickadd</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>ytick</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>ytickmultiply</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>ytickadd</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>xdecimals</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>ydecimals</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>xgrid</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>ygrid</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>fontname</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>fontsize</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>fontweight</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>fontangle</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>fontcolor</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>titletext</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>titlefontname</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>titlefontsize</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>titlefontweight</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>titlefontangle</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>titlefontcolor</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>xlabeltext</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>xlabelfontname</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>xlabelfontsize</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>xlabelfontweight</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>xlabelfontangle</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>xlabelfontcolor</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>ylabeltext</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>ylabelfontname</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>ylabelfontsize</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>ylabelfontweight</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>ylabelfontangle</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>ylabelfontcolor</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>colormap</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>colorbar</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>colorbarposition</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>colorbarlabel</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>colorbarttickincrement</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>colorbarunit</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>colorbartype</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>colorbarfontname</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>colorbarfontsize</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>colorbarfontweight</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>colorbarfontangle</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>colorbarfontcolor</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>colorbardecimals</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>clim</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>usecustomcontours</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>customcontours</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>legend</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>legendposition</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>legendcustomposition</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>legendbox</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>legendorientation</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>legendcolor</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>legendfontname</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>legendfontsize</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>legendfontweight</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>legendfontangle</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>legendfontcolor</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>vectorlegend</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>vectorlegendposition</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>vectorlegendfontname</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>vectorlegendfontsize</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>vectorlegendfontweight</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>vectorlegendfontangle</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>vectorlegendfontcolor</name>
-  </option>
-  </plottype>
+  </subplotoption>
 </root>

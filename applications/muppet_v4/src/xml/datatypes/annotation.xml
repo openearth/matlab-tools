@@ -1,91 +1,148 @@
 <?xml version="1.0"?>
 <root>
-  <name>annotation</name>
   <longname>Annotation</longname>
-  <plot>
-    <type>annotation</type>
+  <plottype>
+    <name>annotation</name>
     <plotroutine>
-      <name>line</name>
+      <name>Single Line</name>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>linegroup</name>
+        <name>linecolor</name>
       </plotoption>
       <plotoption>
-        <name>positiongroup</name>
+        <name>linewidth</name>
       </plotoption>
+      <plotoption>
+        <name>linestyle</name>
+      </plotoption>
+      <plotoption>
+        <name>position</name>
+      </plotoption>
+      <elementgroup>line</elementgroup>
+      <elementgroup>position</elementgroup>
     </plotroutine>
     <plotroutine>
-      <name>arrow</name>
+      <name>Arrow</name>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>linegroup</name>
+        <name>linecolor</name>
       </plotoption>
       <plotoption>
-        <name>head1group</name>
-        <value>plain</value>
+        <name>linewidth</name>
       </plotoption>
       <plotoption>
-        <name>positiongroup</name>
+        <name>linestyle</name>
       </plotoption>
+      <plotoption>
+        <name>head1style</name>
+      </plotoption>
+      <plotoption>
+        <name>head1width</name>
+      </plotoption>
+      <plotoption>
+        <name>head1length</name>
+      </plotoption>
+      <plotoption>
+        <name>position</name>
+      </plotoption>
+      <elementgroup>line</elementgroup>
+      <elementgroup>head1</elementgroup>
+      <elementgroup>position</elementgroup>
     </plotroutine>
     <plotroutine>
-      <name>doublearrow</name>
+      <name>Double Arrow</name>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>linegroup</name>
+        <name>linecolor</name>
       </plotoption>
       <plotoption>
-        <name>head1group</name>
-        <value>plain</value>
+        <name>linewidth</name>
       </plotoption>
       <plotoption>
-        <name>head2group</name>
-        <value>plain</value>
+        <name>linestyle</name>
       </plotoption>
       <plotoption>
-        <name>positiongroup</name>
+        <name>head1style</name>
       </plotoption>
+      <plotoption>
+        <name>head1width</name>
+      </plotoption>
+      <plotoption>
+        <name>head1length</name>
+      </plotoption>
+      <plotoption>
+        <name>head2style</name>
+      </plotoption>
+      <plotoption>
+        <name>head2width</name>
+      </plotoption>
+      <plotoption>
+        <name>head2length</name>
+      </plotoption>
+      <plotoption>
+        <name>position</name>
+      </plotoption>
+      <elementgroup>line</elementgroup>
+      <elementgroup>head1</elementgroup>
+      <elementgroup>head2</elementgroup>
+      <elementgroup>position</elementgroup>
     </plotroutine>
     <plotroutine>
-      <name>rectangle</name>
+      <name>Rectangle</name>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>linegroup</name>
+        <name>linecolor</name>
+      </plotoption>
+      <plotoption>
+        <name>linewidth</name>
+      </plotoption>
+      <plotoption>
+        <name>linestyle</name>
       </plotoption>
       <plotoption>
         <name>backgroundcolor</name>
-        <value>white</value>
       </plotoption>
       <plotoption>
-        <name>positiongroup</name>
+        <name>position</name>
       </plotoption>
+      <elementgroup>backgroundcolor</elementgroup>
+      <elementgroup>line</elementgroup>
+      <elementgroup>position</elementgroup>
     </plotroutine>
     <plotroutine>
-      <name>ellipse</name>
+      <name>Ellipse</name>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>linegroup</name>
+        <name>linecolor</name>
+      </plotoption>
+      <plotoption>
+        <name>linewidth</name>
+      </plotoption>
+      <plotoption>
+        <name>linestyle</name>
       </plotoption>
       <plotoption>
         <name>backgroundcolor</name>
-        <value>white</value>
       </plotoption>
       <plotoption>
-        <name>positiongroup</name>
+        <name>position</name>
       </plotoption>
+      <elementgroup>backgroundcolor</elementgroup>
+      <elementgroup>line</elementgroup>
+      <elementgroup>position</elementgroup>
     </plotroutine>
     <plotroutine>
-      <name>textbox</name>
+      <name>Text Box</name>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>
@@ -93,7 +150,25 @@
         <name>string</name>
       </plotoption>
       <plotoption>
-        <name>fontgroup</name>
+        <name>fontname</name>
+      </plotoption>
+      <plotoption>
+        <name>fontcolor</name>
+      </plotoption>
+      <plotoption>
+        <name>fontsize</name>
+      </plotoption>
+      <plotoption>
+        <name>fontangle</name>
+      </plotoption>
+      <plotoption>
+        <name>fontweight</name>
+      </plotoption>
+      <plotoption>
+        <name>fonthorizontalalignment</name>
+      </plotoption>
+      <plotoption>
+        <name>fontverticalalignment</name>
       </plotoption>
       <plotoption>
         <name>backgroundcolor</name>
@@ -102,11 +177,20 @@
         <name>box</name>
       </plotoption>
       <plotoption>
-        <name>linegroup</name>
+        <name>linecolor</name>
       </plotoption>
       <plotoption>
-        <name>positiongroup</name>
+        <name>linewidth</name>
       </plotoption>
+      <plotoption>
+        <name>linestyle</name>
+      </plotoption>
+      <plotoption>
+        <name>position</name>
+      </plotoption>
+      <elementgroup>textbox</elementgroup>
+      <elementgroup>line</elementgroup>
+      <elementgroup>position</elementgroup>
     </plotroutine>
-  </plot>
+  </plottype>
 </root>

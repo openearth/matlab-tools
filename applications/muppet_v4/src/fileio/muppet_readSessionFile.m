@@ -38,54 +38,30 @@ fclose(fid);
 %% Determine location of datasets, figures etc.
 
 nd=0;
-% ncd=0;
 
 if ilayout==0
     
     for ii=1:length(str)
-        
         b=strread(deblank2(str{ii}),'%s');
         if ~isempty(b)
-            firststring=b{1};
-            
+            firststring=b{1};            
             keyword='dataset';
-            %        if length(str{ii})>=length(keyword)
             if strcmpi(firststring,keyword)
                 nd=nd+1;
                 data(nd).i1=ii;
             end
-            %        end
             keyword='enddataset';
-            %        if length(str{ii})>=length(keyword)
             if strcmpi(firststring,keyword)
                 data(nd).i2=ii;
             end
-            %        end
-            %         keyword='combineddataset';
-            %         if length(str{ii})>=length(keyword)
-            %             if strcmpi(str{ii}(1:length(keyword)),keyword)
-            %                 ncd=ncd+1;
-            %                 combineddata(ncd).i1=ii;
-            %             end
-            %         end
-            %         keyword='endcombineddataset';
-            %         if length(str{ii})>=length(keyword)
-            %             if strcmpi(str{ii}(1:length(keyword)),keyword)
-            %                 combineddata(ncd).i2=ii;
-            %             end
-            %         end
             if strcmpi(firststring,'figure')
-                %        if length(str{ii})>=6
-                %            if strcmpi(str{ii}(1:6),'figure')
                 break
-                %            end
             end
         end
         
     end
 
     handles.nrdatasets=nd;
-%     handles.nrcombineddatasets=ncd;
 
 end
 
@@ -264,12 +240,21 @@ for ifig=1:handles.nrfigures
             i1=fig(ifig).sub(isub).d(id).i1;
             i2=fig(ifig).sub(isub).d(id).i2-1;
             [keywords,values]=readkeywordvaluepairs(str,i1,i2);
-            for j=1:length(keywords)
+            dataset.name=values{1};
+            for j=2:length(keywords)
                 dataset=readoption(dataset,handles.plotoption,keywords{j},values{j});                
+            end
+
+            % Dataset types for interactive text and polylines
+            switch lower(dataset.plotroutine)
+                case{'plotinteractivetext'}
+                    dataset.type='interactivetext';
+                case{'plotinteractivepolyline'}
+                    dataset.type='interactivepolyline';
             end
             
             subplt.datasets(id).dataset=dataset;
-                
+            
         end
         
         figr.subplots(isub).subplot=subplt;

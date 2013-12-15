@@ -1,64 +1,143 @@
 <?xml version="1.0"?>
 <root>
-  <name>scalar2dtx</name>
   <longname>Time Stack (horizontal)</longname>
-  <plot>
-    <type>timestack</type>
+  <plottype>
+    <name>timestack</name>
     <plotroutine>
-      <name>plotcontourmap</name>
-      <longname>Contour Map</longname>
+      <name>Contour Map</name>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>contourlabelgroup</name>
+        <name>contourlabels</name>
       </plotoption>
+      <plotoption>
+        <name>labelsspacing</name>
+      </plotoption>
+      <plotoption>
+        <name>labelsfontname</name>
+      </plotoption>
+      <plotoption>
+        <name>labelfontsize</name>
+      </plotoption>
+      <plotoption>
+        <name>labelsfontweight</name>
+      </plotoption>
+      <plotoption>
+        <name>labelsfontangle</name>
+      </plotoption>
+      <plotoption>
+        <name>labelsfontcolor</name>
+      </plotoption>
+      <elementgroup>contourlabel</elementgroup>
     </plotroutine>
     <plotroutine>
-      <name>plotcontourlines</name>
-      <longname>Contour Lines</longname>
+      <name>Contour Lines</name>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>linegroup</name>
+        <name>linecolor</name>
       </plotoption>
       <plotoption>
-        <name>climgroup</name>
+        <name>linewidth</name>
       </plotoption>
       <plotoption>
-        <name>contourlabelgroup</name>
+        <name>linestyle</name>
       </plotoption>
+      <plotoption>
+        <name>clim</name>
+      </plotoption>
+      <plotoption>
+        <name>usecustomcontours</name>
+      </plotoption>
+      <plotoption>
+        <name>customcontours</name>
+      </plotoption>
+      <plotoption>
+        <name>contourlabels</name>
+      </plotoption>
+      <plotoption>
+        <name>labelsspacing</name>
+      </plotoption>
+      <plotoption>
+        <name>labelsfontname</name>
+      </plotoption>
+      <plotoption>
+        <name>labelfontsize</name>
+      </plotoption>
+      <plotoption>
+        <name>labelsfontweight</name>
+      </plotoption>
+      <plotoption>
+        <name>labelsfontangle</name>
+      </plotoption>
+      <plotoption>
+        <name>labelsfontcolor</name>
+      </plotoption>
+      <elementgroup>line</elementgroup>
+      <elementgroup>clim</elementgroup>
+      <elementgroup>contourlabel</elementgroup>
     </plotroutine>
     <plotroutine>
-      <name>plotcontourmaplines</name>
-      <longname>Contour Map and Lines</longname>
+      <name>Contour Map and Lines</name>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>linegroup</name>
+        <name>linecolor</name>
       </plotoption>
       <plotoption>
-        <name>climgroup</name>
+        <name>linewidth</name>
       </plotoption>
       <plotoption>
-        <name>contourlabelgroup</name>
+        <name>linestyle</name>
       </plotoption>
+      <plotoption>
+        <name>clim</name>
+      </plotoption>
+      <plotoption>
+        <name>usecustomcontours</name>
+      </plotoption>
+      <plotoption>
+        <name>customcontours</name>
+      </plotoption>
+      <plotoption>
+        <name>contourlabels</name>
+      </plotoption>
+      <plotoption>
+        <name>labelsspacing</name>
+      </plotoption>
+      <plotoption>
+        <name>labelsfontname</name>
+      </plotoption>
+      <plotoption>
+        <name>labelfontsize</name>
+      </plotoption>
+      <plotoption>
+        <name>labelsfontweight</name>
+      </plotoption>
+      <plotoption>
+        <name>labelsfontangle</name>
+      </plotoption>
+      <plotoption>
+        <name>labelsfontcolor</name>
+      </plotoption>
+      <elementgroup>line</elementgroup>
+      <elementgroup>clim</elementgroup>
+      <elementgroup>contourlabel</elementgroup>
     </plotroutine>
     <plotroutine>
-      <name>plotshadesmap</name>
-      <longname>Shades Map</longname>
+      <name>Shades Map</name>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>
     </plotroutine>
     <plotroutine>
-      <name>plotpatches</name>
-      <longname>Patches</longname>
+      <name>Patches</name>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>
     </plotroutine>
-  </plot>
+  </plottype>
 </root>

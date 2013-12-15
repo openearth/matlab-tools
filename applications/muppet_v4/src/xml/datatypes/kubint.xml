@@ -1,20 +1,57 @@
 <?xml version="1.0"?>
 <root>
-  <name>kubint</name>
   <longname>Kubint</longname>
-  <plot>
-    <type>map</type>
+  <plottype>
+    <name>map</name>
     <plotroutine>
-      <name>plotkubint</name>
+      <name>Kubint</name>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>kubintgroup</name>
+        <name>kubfill</name>
       </plotoption>
       <plotoption>
-        <name>linegroup</name>
+        <name>opacity</name>
       </plotoption>
+      <plotoption>
+        <name>areatext</name>
+      </plotoption>
+      <plotoption>
+        <name>multiply</name>
+      </plotoption>
+      <plotoption>
+        <name>decimals</name>
+      </plotoption>
+      <plotoption>
+        <name>fontname</name>
+      </plotoption>
+      <plotoption>
+        <name>fontsize</name>
+      </plotoption>
+      <plotoption>
+        <name>fontangle</name>
+      </plotoption>
+      <plotoption>
+        <name>fontweight</name>
+      </plotoption>
+      <plotoption>
+        <name>fonthorizontalalignment</name>
+      </plotoption>
+      <plotoption>
+        <name>fontverticalalignment</name>
+      </plotoption>
+      <plotoption>
+        <name>linecolor</name>
+      </plotoption>
+      <plotoption>
+        <name>linewidth</name>
+      </plotoption>
+      <plotoption>
+        <name>linestyle</name>
+      </plotoption>
+      <elementgroup>kubint</elementgroup>
+      <elementgroup>line</elementgroup>
     </plotroutine>
-  </plot>
+  </plottype>
 </root>

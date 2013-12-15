@@ -3,7 +3,7 @@
   <plotoption>
     <name>climgroup</name>
     <element>
-      <name>climgroup</name>
+      <name>clim</name>
       <variable>cmin cstep cmax</variable>
       <keyword>Contours</keyword>
       <check>

@@ -10,6 +10,7 @@ arthck=2;
 hdthck=4;
 hdlength=8;
 nrhead=1;
+% iexport=0;
 
 for ii=1:length(varargin)
     if ischar(varargin{ii})
@@ -22,6 +23,8 @@ for ii=1:length(varargin)
                 hdlength=varargin{ii+1};
             case{'nrarrowheads'}
                 nrhead=varargin{ii+1};
+%             case{'cm2pix'}
+%                 cm2pix=varargin{ii+1};
         end
     end
 end
@@ -30,9 +33,11 @@ end
 xl=get(gca,'xlim');
 papersize=get(gcf,'PaperSize');
 figpos=get(gcf,'Position');
-cm2pix=figpos(3)/papersize(1);
+cm2pix=getappdata(gcf,'cm2pix');
+if isempty(cm2pix)
+    cm2pix=figpos(3)/papersize(1);
+end
 axpos=get(gca,'position')/cm2pix;
-% axpos=get(gca,'position');
 scl=(xl(2)-xl(1))/(0.01*axpos(3));
 arthck=0.001*arthck*scl;
 hdthck=0.001*hdthck*scl;

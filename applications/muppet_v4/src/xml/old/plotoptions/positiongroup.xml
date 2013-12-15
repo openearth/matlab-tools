@@ -3,7 +3,7 @@
   <plotoption>
     <name>positiongroup</name>
     <element>
-      <name>positiongroup</name>
+      <name>position</name>
       <keyword>Position</keyword>
       <variable>position</variable>
       <type>real</type>

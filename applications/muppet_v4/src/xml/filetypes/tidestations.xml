@@ -1,29 +1,33 @@
 <?xml version="1.0"?>
 <root>
-  <name>tidestations</name>
   <longname>Tide Stations (*.mat)</longname>
   <title>Tide Stations File</title>
   <filterspec>*.mat</filterspec>
   <callback>muppet_addDatasetTideStations</callback>
-  <option>
+  <dataproperty>
     <name>filename</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>filetype</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>parameter</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>station</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>tidalcomponent</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>tidalcomponentset</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>tidalparameter</name>
-  </option>
+  </dataproperty>
+  <elementgroup>parameter</elementgroup>
+  <elementgroup>station</elementgroup>
+  <elementgroup>tidalcomponent</elementgroup>
+  <elementgroup>tidalcomponentset</elementgroup>
+  <elementgroup>tidalparameter</elementgroup>
 </root>

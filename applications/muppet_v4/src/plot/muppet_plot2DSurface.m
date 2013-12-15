@@ -13,14 +13,14 @@ data.z=data.z(1:opt.fieldthinningfactor1:end,1:opt.fieldthinningfactor1:end);
 data.zz=data.zz(1:opt.fieldthinningfactor1:end,1:opt.fieldthinningfactor1:end);
 
 switch(lower(opt.plotroutine)),
-    case{'plotpatches','plotshadesmap','plotcontourmap','plotcontourmaplines'}
+    case{'patches','shades map','contour map','contour map and lines'}
         % Contours from axis properties
         if ~plt.usecustomcontours
             col=plt.cmin:plt.cstep:plt.cmax;
         else
             col=plt.customcontours;
         end
-    case{'plotcontourlines'}
+    case{'contour lines'}
         % Contours from plot properties
         if ~opt.usecustomcontours
             col=opt.cmin:opt.cstep:opt.cmax;
@@ -34,9 +34,11 @@ c2=col(end);
 dc=col(2)-col(1);
 
 switch(lower(opt.plotroutine))
-    case{'plotpatches'}
+    case{'patches'}
         x=data.x;
         y=data.y;
+        z(isnan(data.zz))=NaN;
+        y(isnan(data.zz))=NaN;
         z=data.zz;
         
         if ~plt.usecustomcontours
@@ -57,7 +59,7 @@ switch(lower(opt.plotroutine))
         h=pcolor(x,y,zc);
         shading flat;
         caxis(cax);
-    case{'plotcontourmap','plotcontourmaplines'}
+    case{'contour map','contour map and lines'}
         z=max(data.z,c1-dc);
         z=min(z,c2+dc);
         z(isnan(data.z))=NaN;
@@ -86,7 +88,7 @@ switch(lower(opt.plotroutine))
         clmap=muppet_getColors(handles.colormaps,plt.colormap,64);
         caxis(cax);
         colormap(clmap);
-    case{'plotshadesmap'}
+    case{'shades map'}
         x=data.x;
         y=data.y;
         z=data.z;
@@ -110,7 +112,7 @@ switch(lower(opt.plotroutine))
         h=pcolor(x,y,zc);
         shading interp;
         caxis(cax);
-    case{'plotcontourlines'}
+    case{'contour lines'}
         x=data.x;
         y=data.y;
         z=data.z;
@@ -124,7 +126,7 @@ end
 
 hold on;
 
-if strcmpi(opt.plotroutine,'plotcontourmaplines')
+if strcmpi(opt.plotroutine,'contour map and lines')
     [c,h]=contour(x,y,z,col);
     if strcmpi(opt.linecolor,'auto')==0
         set(h,'LineColor',colorlist('getrgb','color',opt.linecolor));
@@ -137,7 +139,7 @@ end
 
 if opt.contourlabels
     switch lower(opt.plotroutine)
-        case{'plotcontourmap','plotpatches'}
+        case{'contour map','patches'}
             [c,h]=contour(x,y,z,col);
             set(h,'LineStyle','none');
     end

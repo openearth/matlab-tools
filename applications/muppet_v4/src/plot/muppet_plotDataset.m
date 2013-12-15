@@ -11,7 +11,7 @@ nr=handles.figures(ifig).figure.subplots(isub).subplot.datasets(id).dataset.numb
 if ~isempty(nr)
     data=handles.datasets(nr).dataset;
 else
-    % Must be an annotation
+    % Must be an annotation, interactive text or interactive polygon
     data=[];
 end
 
@@ -26,42 +26,61 @@ end
 
 %% If this is a map plot, try to convert coordinates of datasets if necessary
 switch handles.figures(ifig).figure.subplots(isub).subplot.type
-
-    case{'map'} 
+    
+    case{'map'}
         % Convert data to correct coordinate system
         
-%        if isfield(data,'coordinatesystem')
-            if ~strcmpi(plt.coordinatesystem.name,'unspecified') && ~strcmpi(data.coordinatesystem.name,'unspecified')
-                if ~strcmpi(plt.coordinatesystem.name,data.coordinatesystem.name) && ...
-                        ~strcmpi(plt.coordinatesystem.type,data.coordinatesystem.type)
+        if ~strcmpi(plt.coordinatesystem.name,'unspecified') && ~strcmpi(data.coordinatesystem.name,'unspecified')
+            if ~strcmpi(plt.coordinatesystem.name,data.coordinatesystem.name) || ...
+                    ~strcmpi(plt.coordinatesystem.type,data.coordinatesystem.type)
+                switch lower(data.type)
+                    case{'vector2d2dxy','scalar2dxy','location1dxy','location2dxy'}
+                        [data.x,data.y]=convertCoordinates(data.x,data.y,handles.EPSG,'CS1.name',data.coordinatesystem.name,'CS1.type',data.coordinatesystem.type, ...
+                            'CS2.name',plt.coordinatesystem.name,'CS2.type',plt.coordinatesystem.type);
+                    case{'scalar2duxy','vector2d2duxy'}
+                        [data.G.cor.x,data.G.cor.y]=convertCoordinates(data.G.cor.x,data.G.cor.y,handles.EPSG,'CS1.name',data.coordinatesystem.name,'CS1.type',data.coordinatesystem.type, ...
+                            'CS2.name',plt.coordinatesystem.name,'CS2.type',plt.coordinatesystem.type);
+                        [data.G.peri.x,data.G.peri.y]=convertCoordinates(data.G.peri.x,data.G.peri.y,handles.EPSG,'CS1.name',data.coordinatesystem.name,'CS1.type',data.coordinatesystem.type, ...
+                            'CS2.name',plt.coordinatesystem.name,'CS2.type',plt.coordinatesystem.type);
+                end
+            end
+        end
+        
+        % Set projection (in case of geographic coordinate systems)
+        if strcmpi(handles.figures(ifig).figure.subplots(isub).subplot.coordinatesystem.type,'geographic')
+            switch handles.figures(ifig).figure.subplots(isub).subplot.projection
+                case{'mercator'}
                     switch lower(data.type)
-                        case{'vector2d2dxy','scalar2dxy','location1dxy','location2dxy'}
-                            [data.x,data.y]=convertCoordinates(data.x,data.y,handles.EPSG,'CS1.name',data.coordinatesystem.name,'CS1.type',data.coordinatesystem.type, ...
-                                'CS2.name',plt.coordinatesystem.name,'CS2.type',plt.coordinatesystem.type);
                         case{'scalar2duxy','vector2d2duxy'}
-                            [data.G.cor.x,data.G.cor.y]=convertCoordinates(data.G.cor.x,data.G.cor.y,handles.EPSG,'CS1.name',data.coordinatesystem.name,'CS1.type',data.coordinatesystem.type, ...
-                                'CS2.name',plt.coordinatesystem.name,'CS2.type',plt.coordinatesystem.type);
-                            shite=1
                             % Unstructured data
-                            % TODO convert unstructured data
+                            data.G.cor.y=merc(data.G.cor.y);
+                            data.G.peri.y=merc(data.G.peri.y);
+                        otherwise
+                            data.y=merc(data.y);
                     end
-                end
+                case{'albers'}
+                    switch lower(data.type)
+                        case{'scalar2duxy','vector2d2duxy'}                            
+                            % Unstructured data
+                            x=data.G.cor.x;
+                            y=data.G.cor.y;
+                            [x,y]=albers(x,y,plt.labda0,plt.phi0,plt.phi1,plt.phi2);
+                            data.G.cor.x=x;
+                            data.G.cor.y=y;                            
+                            x=data.G.peri.x;
+                            y=data.G.peri.y;
+                            [x,y]=albers(x,y,plt.labda0,plt.phi0,plt.phi1,plt.phi2);
+                            data.G.peri.x=x;
+                            data.G.peri.y=y;
+                        otherwise
+                            x=data.x;
+                            y=data.y;
+                            [x,y]=albers(x,y,plt.labda0,plt.phi0,plt.phi1,plt.phi2);
+                            data.x=x;
+                            data.y=y;
+                    end
             end
-            
-            % Set projection (in case of geographic coordinate systems)
-            if strcmpi(handles.figures(ifig).figure.subplots(isub).subplot.coordinatesystem.type,'geographic')
-                switch handles.figures(ifig).figure.subplots(isub).subplot.projection
-                    case{'mercator'}
-                        data.y=merc(data.y);
-                    case{'albers'}
-                        x=data.x;
-                        y=data.y;
-                        [x,y]=albers(x,y,plt.labda0,plt.phi0,plt.phi1,plt.phi2);
-                        data.x=x;
-                        data.y=y;
-                end
-            end
-%        end
+        end
 end
 
 % Normprob scaling
@@ -84,72 +103,75 @@ end
 if ~isempty(nr)
     handles.datasets(nr).dataset=data;
 end
+
 % Copy subplot structure back to handles structure
 handles.figures(ifig).figure.subplots(isub).subplot=plt;
 
 %% Plot dataset
 switch lower(plt.datasets(id).dataset.plotroutine)
-    case {'plottimeseries','plotxy','plotxyseries','plotline','plotspline'}
+    case {'line','spline'}
         h=muppet_plotLine(handles,ifig,isub,id);
-    case {'plothistogram'}
+    case {'histogram'}
         h=muppet_plotHistogram(handles,ifig,isub,id);
-    case {'plotstackedarea'}
+    case {'stacked area'}
         h=muppet_plotStackedArea(handles,ifig,isub,id);
-    case {'plotcontourmap','plotcontourmaplines','plotpatches','plotcontourlines','plotshadesmap'}
+    case {'contour map','contour map and lines','patches','contour lines','shades map'}
         muppet_plot2DSurface(handles,ifig,isub,id);
-    case {'plotunstructuredpatches'}
+    case {'unstructured patches'}
         muppet_plotUnstructuredPatches(handles,ifig,isub,id);
-    case {'plot3dsurface','plot3dsurfacelines'}
+    case {'unstructured mesh'}
+        muppet_plotUnstructuredMesh(handles,ifig,isub,id);
+    case {'3d surface','3d surface and lines'}
         muppet_plot3DSurface(handles,ifig,isub,id);
-    case {'plotgrid'}
+    case {'grid'}
         h=muppet_plotGrid(handles,ifig,isub,id);
-    case {'plotgrid3d'}
+    case {'3d grid'}
         h=muppet_plotGrid3D(handles,ifig,isub,id);
-    case {'plotannotation'},
+    case {'annotation'},
         h=muppet_plotAnnotation(handles,ifig,isub,id);
 %     case {'plotcrosssections'}
 %         handles=muppet_plotCrossSections(handles,ifig,isub,id);
-    case {'plotsamples'}
+    case {'samples'}
         h=muppet_plotSamples(handles,ifig,isub,id);
-    case {'plotvectors','plotcoloredvectors'}
+    case {'vectors','colored vectors'}
         % Colored vectors don't work under 2007b!
         h=muppet_plotVectors(handles,ifig,isub,id);
-    case {'plotfeather'}
+    case {'feather'}
         h=muppet_plotFeather(handles,ifig,isub,id);
-    case {'plotcurvedarrows','plotcoloredcurvedarrows'}
+    case {'curved arrows','colored curved arrows'}
         % Original mex file work under 2007b!
         h=muppet_plotCurVec(handles,ifig,isub,id);
 %     case {'plotvectormagnitude'}
 %         handles=PlotVectorMagnitude(handles,ifig,isub,id,mode);
-    case {'plotpolyline','plotpolygon'}
+    case {'polyline'}
         h=muppet_plotPolygon(handles,ifig,isub,id);
-    case {'plotkubint'}
+    case {'kubint'}
         h=muppet_plotKub(handles,ifig,isub,id);
-    case {'plotlint'}
+    case {'lint'}
         h=muppet_plotLint(handles,ifig,isub,id);
-    case {'plotimage','plotgeoimage'}
+    case {'image'}
         h=muppet_plotImage(handles,ifig,isub,id);
 %     case {'plot3dsurface','plot3dsurfacelines'}
 %         handles=Plot3DSurface(handles,ifig,isub,id,mode);
 %     case {'plotpolygon3d'}
 %         handles=PlotPolygon3D(handles,ifig,isub,id,mode);
-    case {'plotrose'}
+    case {'rose'}
         h=muppet_plotRose(handles,ifig,isub,id);
 %     case {'plottext'}
 %         h=muppet_plotText(handles,ifig,isub,id,1);
-    case {'plotinteractivetext'}
-        h=muppet_plotFreeText(handles,ifig,isub,id);
-    case {'plotinteractivepolyline'}
+    case {'interactive text'}
+        h=muppet_plotInteractiveText(handles,ifig,isub,id);
+    case {'interactive polyline'}
         muppet_plotInteractivePolyline(handles,ifig,isub,id);
-    case {'drawspline'}
-        DrawSpline(Data,Plt,handles.DefaultColors,opt);
-    case {'drawcurvedarrow'}
-        DrawCurvedArrow(Data,Ax,Plt,handles.DefaultColors,opt2,1);
-    case {'drawcurveddoublearrow'}
-        DrawCurvedArrow(Data,Ax,Plt,handles.DefaultColors,opt2,2);
-    case{'textbox','rectangle','ellipse','arrow','doublearrow','line'}
+%     case {'drawspline'}
+%         DrawSpline(Data,Plt,handles.DefaultColors,opt);
+%     case {'drawcurvedarrow'}
+%         DrawCurvedArrow(Data,Ax,Plt,handles.DefaultColors,opt2,1);
+%     case {'drawcurveddoublearrow'}
+%         DrawCurvedArrow(Data,Ax,Plt,handles.DefaultColors,opt2,2);
+    case{'text box','rectangle','ellipse','arrow','double arrow','single line'}
         muppet_addAnnotation(handles.figures(ifig).figure,ifig,isub,id);
-    case {'plottidalellipse'}
+    case {'tidal ellipse'}
         h=muppet_plotTidalEllipse(handles,ifig,isub,id);
 end
 

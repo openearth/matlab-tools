@@ -1,17 +1,23 @@
 <?xml version="1.0"?>
 <root>
-  <name>geoimage</name>
   <longname>Geo-referenced image</longname>
-  <plot>
-    <type>map</type>
+  <plottype>
+    <name>map</name>
     <plotroutine>
-      <name>plotimage</name>
+      <name>Image</name>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>imagegroup</name>
+        <name>whitevalue</name>
       </plotoption>
+      <plotoption>
+        <name>opacity</name>
+      </plotoption>
+      <plotoption>
+        <name>verticallevel</name>
+      </plotoption>
+      <elementgroup>image</elementgroup>
     </plotroutine>
-  </plot>
+  </plottype>
 </root>

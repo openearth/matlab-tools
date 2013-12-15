@@ -30,8 +30,8 @@ fig.subplots(isub).subplot.nrdatasets=j;
 usd.x=usd.x*fig.width;
 usd.y=usd.y*fig.height;
 
-switch(typ)
-    case{'arrow','doublearrow','line'}
+switch(lower(typ))
+    case{'arrow','double arrow','single line'}
     otherwise
         x1=min(usd.x);
         x2=max(usd.x);
@@ -47,12 +47,12 @@ fig.subplots(isub).subplot.datasets(j).dataset.type='annotation';
 fig.subplots(isub).subplot.datasets(j).dataset.plotroutine=typ;
 fig.subplots(isub).subplot.datasets(j).dataset.style=typ;
 fig.subplots(isub).subplot.datasets(j).dataset.position=[usd.x(1) usd.y(1) usd.x(2)-usd.x(1) usd.y(2)-usd.y(1)];
-if strcmp(typ,'textbox')
+if strcmpi(typ,'text box')
     fig.subplots(isub).subplot.datasets(j).dataset.string='Textbox';
     fig.subplots(isub).subplot.datasets(j).dataset.box=1;
 end
-switch(typ),
-    case{'arrow','doublearrow'}
+switch(lower(typ))
+    case{'arrow','double arrow'}
         fig.subplots(isub).subplot.datasets(j).dataset.linewidth=1;
     otherwise
         fig.subplots(isub).subplot.datasets(j).dataset.linewidth=0.5;

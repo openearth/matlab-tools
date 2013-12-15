@@ -45,8 +45,8 @@ tg=get(h,'Tag');
 switch(tg)
     case{'annotation'}
         stl=getappdata(h,'style');
-        switch(stl)
-            case{'arrow','doublearrow','line'}
+        switch(lower(stl))
+            case{'arrow','double arrow','single line'}
                 lineelement=1;
             otherwise
                 lineelement=0;
@@ -188,8 +188,8 @@ end
 switch(tg)
     case{'annotation'}
         stl=getappdata(h,'style');
-        switch(stl)
-            case{'arrow','doublearrow','line'}
+        switch(lower(stl))
+            case{'arrow','double arrow','single line'}
                 lineelement=1;
             otherwise
                 lineelement=0;

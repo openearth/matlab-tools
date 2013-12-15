@@ -41,7 +41,7 @@ if plt.rightaxis
     y=plt.ymin+a*(plt.ymax-plt.ymin);
 end
 
-if strcmpi(opt.plotroutine,'plotspline')
+if strcmpi(opt.plotroutine,'spline')
     
     dx=(xmax-xmin)/1000;
     xx=xmin:dx:xmax;
@@ -66,6 +66,7 @@ if strcmpi(opt.plotroutine,'plotspline')
     
     yy = interp1(x1,y1,xx,'pchip');
     h1=plot(xx,yy);
+    h2=[];
     if strcmpi(opt.marker,'none')==0
         h2=plot(x,y);
     end
@@ -73,7 +74,7 @@ else
     h1=plot(x,y);
 end
     
-if strcmpi(opt.plotroutine,'plotspline')
+if strcmpi(opt.plotroutine,'spline')
     if ~isempty(h1)>0
         set(h1,'color',colorlist('getrgb','color',opt.linecolor));
         set(h1,'Linestyle',opt.linestyle);

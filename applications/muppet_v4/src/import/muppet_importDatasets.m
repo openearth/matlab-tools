@@ -52,19 +52,24 @@ for id=1:handles.nrdatasets
     end
 end
 
-% Find numbers and types of dataset in subplot
+% Find types of datasets in subplots
 for ifig=1:handles.nrfigures
     for isub=1:handles.figures(ifig).figure.nrsubplots
         if ~strcmpi(handles.figures(ifig).figure.subplots(isub).subplot.type,'annotation')
             for id=1:handles.figures(ifig).figure.subplots(isub).subplot.nrdatasets
-                nr=muppet_findIndex(handles.datasets,'dataset','name',handles.figures(ifig).figure.subplots(isub).subplot.datasets(id).dataset.name);
-                handles.figures(ifig).figure.subplots(isub).subplot.datasets(id).dataset.nr=nr;
-                if ~isempty(nr)
-                    handles.figures(ifig).figure.subplots(isub).subplot.datasets(id).dataset.type=handles.datasets(nr).dataset.type;
+                if strcmpi(handles.figures(ifig).figure.subplots(isub).subplot.datasets(id).dataset.plotroutine,'plotinteractivepolyline')
+                    handles.figures(ifig).figure.subplots(isub).subplot.datasets(id).dataset.type='interactivepolyline';
+                elseif strcmpi(handles.figures(ifig).figure.subplots(isub).subplot.datasets(id).dataset.plotroutine,'plotinteractivetext')
+                    handles.figures(ifig).figure.subplots(isub).subplot.datasets(id).dataset.type='interactivetext';
                 else
-                    ok=0;
-                    muppet_giveWarning('text',['Dataset ' handles.figures(ifig).figure.subplots(isub).subplot.datasets(id).dataset.name ' not found!']);
-                    return
+                    nr=muppet_findIndex(handles.datasets,'dataset','name',handles.figures(ifig).figure.subplots(isub).subplot.datasets(id).dataset.name);
+                    if ~isempty(nr)
+                        handles.figures(ifig).figure.subplots(isub).subplot.datasets(id).dataset.type=handles.datasets(nr).dataset.type;
+                    else
+                        ok=0;
+                        muppet_giveWarning('text',['Dataset ' handles.figures(ifig).figure.subplots(isub).subplot.datasets(id).dataset.name ' not found!']);
+                        return
+                    end
                 end
             end
         end

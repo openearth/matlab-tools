@@ -2,10 +2,25 @@ function an=muppet_addAnnotation(fig,i,isub,j)
 
 ann=fig.subplots(isub).subplot.datasets(j).dataset;
 
-an=findall(gcf,'Tag','annotation','UserData',[i,j]);
+an=findobj(gcf,'Tag','annotation','UserData',[i,j]);
 delete(an);
 
-an=annotation(ann.plotroutine);
+% Add new annotation
+switch lower(ann.plotroutine)
+    case 'text box'
+        style='textbox';
+    case 'single line'
+        style='line';
+    case 'arrow'
+        style='arrow';
+    case 'double arrow'
+        style='doublearrow';
+    case 'rectangle'
+        style='rectangle';
+    case 'ellipse'
+        style='ellipse';
+end
+an=annotation(style);
 set(an,'Tag','annotation');
 set(an,'UserData',[i,j]);
 set(an,'ButtonDownFcn',{@muppet_UIEditAnnotationOptions});
@@ -17,8 +32,8 @@ ann.position(2)=pos0(2)/fig.height;
 ann.position(3)=pos0(3)/fig.width;
 ann.position(4)=pos0(4)/fig.height;
 
-switch ann.plotroutine
-    case 'textbox'
+switch lower(ann.plotroutine)
+    case 'text box'
         set(an,'position',ann.position);
         set(an,'string',ann.string);
         set(an,'fontname',ann.font.name);
@@ -37,7 +52,7 @@ switch ann.plotroutine
         end
         set(an,'linewidth',ann.linewidth);
         set(an,'linestyle',ann.linestyle);
-    case 'line'
+    case 'single line'
         set(an,'position',ann.position);
         set(an,'color',colorlist('getrgb','color',ann.linecolor));
         set(an,'linewidth',ann.linewidth);
@@ -50,7 +65,7 @@ switch ann.plotroutine
         set(an,'headwidth',ann.head1width);
         set(an,'headstyle',ann.head1style);
         set(an,'headlength',ann.head1length);
-    case 'doublearrow'
+    case 'double arrow'
         set(an,'position',ann.position);
         set(an,'color',colorlist('getrgb','color',ann.linecolor));
         set(an,'linewidth',ann.linewidth);

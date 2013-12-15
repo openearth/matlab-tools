@@ -22,19 +22,16 @@ z=zeros(size(u));
 z=z+500;
 w=zeros(size(u));
 
-% if plt.AxesEqual==0
-%     VertScale=(plt.YMax-plt.YMin)/plt.Position(4);
-%     HoriScale=(plt.XMax-plt.XMin)/plt.Position(3);
-%     multiY=HoriScale/VertScale;
-% else
-%     multiY=1.0;
-% end
 multiy=1.0;
 multiv=opt.verticalvectorscaling;
 
-if strcmpi(opt.plotroutine,'plotvectors')
+if strcmpi(plt.coordinatesystem.type,'geographic')
+    opt.unitvector=opt.unitvector/111111;
+end
+
+if strcmpi(opt.plotroutine,'vectors')
     % Regular vectors
-    qv=quiver3(x,multiy*y,z,opt.unitvector*u,multiv*opt.unitvector*v,w,0);hold on;
+    qv=quiver(x,multiy*y,opt.unitvector*u,multiv*opt.unitvector*v,0);hold on;
     set(qv,'Color',colorlist('getrgb','color',opt.vectorcolor));
 else
     % Colored vectors

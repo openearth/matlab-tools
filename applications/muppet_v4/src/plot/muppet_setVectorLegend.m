@@ -17,7 +17,7 @@ for id=1:nodat
             k=k+1;
             idat(k)=id;
             txt{k}=data.vectorlegendtext;
-            if strcmpi(data.plotroutine,'plotcurvedarrows') || strcmpi(data.plotroutine,'plotcoloredcurvedarrows')
+            if strcmpi(data.plotroutine,'curved arrows') || strcmpi(data.plotroutine,'colored curved arrows')
                 length(k)=data.vectorlegendlength*data.dtcurvec/plt.scale;
             else
                 length(k)=data.vectorlegendlength*data.unitvector/plt.scale;
@@ -36,7 +36,7 @@ if k>0
     for i=1:k
         ii=idat(i);
         data=plt.datasets(ii).dataset;
-        if strcmpi(data.plotroutine,'plotcurvedarrows') || strcmpi(data.plotroutine,'plotcoloredcurvedarrows')
+        if strcmpi(data.plotroutine,'curved arrows') || strcmpi(data.plotroutine,'colored curved arrows')
             hdthck=data.headthickness;
             arthck=data.arrowthickness;
             y=0.01*(0.4*k-0.4*i);

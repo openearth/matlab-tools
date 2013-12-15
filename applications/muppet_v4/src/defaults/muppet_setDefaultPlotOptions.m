@@ -45,6 +45,7 @@ opt.contourtype='limits';
 opt.transparency=1.0;
 opt.contours=0:0.1:1;
 opt.rightaxis=0;
+opt.closepolygons=0;
 opt.fillclosedpolygons=0;
 opt.fillcolor='LightGreen';
 opt.edgecolor='Black';
@@ -90,7 +91,7 @@ opt.verticalvectorscaling=1.0;
 opt.fieldthinningtype='none';
 opt.fieldthinningfactor1=1;
 opt.fieldthinningfactor2=1;
-opt.fieldthinningfactor=1;
+opt.fieldthinningdistance=1;
 
 % CurVec
 opt.arrowthickness=0.05;
@@ -181,3 +182,7 @@ opt.faceopacity=1;
 opt.plotgrid=0;
 
 % Annotation
+opt.x=0;
+opt.y=0;
+opt.rotation=0;
+opt.curvature=0;

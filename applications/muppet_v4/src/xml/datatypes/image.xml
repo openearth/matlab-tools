@@ -1,17 +1,23 @@
 <?xml version="1.0"?>
 <root>
-  <name>image</name>
   <longname>Image</longname>
-  <plot>
-    <type>image</type>
+  <plottype>
+    <name>Image</name>
     <plotroutine>
       <name>plotimage</name>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>imagegroup</name>
+        <name>whitevalue</name>
       </plotoption>
+      <plotoption>
+        <name>opacity</name>
+      </plotoption>
+      <plotoption>
+        <name>verticallevel</name>
+      </plotoption>
+      <elementgroup>image</elementgroup>
     </plotroutine>
-  </plot>
+  </plottype>
 </root>

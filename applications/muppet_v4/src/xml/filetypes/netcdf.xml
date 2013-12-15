@@ -1,54 +1,70 @@
 <?xml version="1.0"?>
 <root>
-  <name>netcdf</name>
   <longname>NetCDF</longname>
   <title>NetCDF File</title>
   <filterspec>*.nc</filterspec>
   <callback>muppet_addDatasetQP</callback>
   <fromurl>yes</fromurl>
-  <option>
+  <dataproperty>
     <name>filetype</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>filename</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>quantity</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>parameter</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>ucomponent</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>vcomponent</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>plotcoordinate</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>component</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>timestep</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>time</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>station</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>stationnumber</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>m</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>n</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>k</name>
-  </option>
+  </dataproperty>
+  <dataproperty>
+    <name>coordinatesystemname</name>
+  </dataproperty>
+  <dataproperty>
+    <name>coordinatesystemtype</name>
+  </dataproperty>
+  <elementgroup>quantity</elementgroup>
+  <elementgroup>parameter</elementgroup>
+  <elementgroup>ucomponent</elementgroup>
+  <elementgroup>vcomponent</elementgroup>
+  <elementgroup>plotcoordinate</elementgroup>
+  <elementgroup>component</elementgroup>
+  <elementgroup>timestep</elementgroup>
+  <elementgroup>station</elementgroup>
+  <elementgroup>m</elementgroup>
+  <elementgroup>n</elementgroup>
+  <elementgroup>k</elementgroup>
 </root>

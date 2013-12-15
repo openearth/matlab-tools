@@ -31,6 +31,10 @@ if fig.nrsubplots>0
             plt1.yscale=plt0.yscale;
             plt1.yearmin=plt0.yearmin;
             plt1.yearmax=plt0.yearmax;
+            plt1.xtickmultiply=plt0.xtickmultiply;
+            plt1.ytickmultiply=plt0.ytickmultiply;
+            plt1.xtickadd=plt0.xtickadd;
+            plt1.ytickadd=plt0.ytickadd;
             plt1.monthmin=plt0.monthmin;
             plt1.monthmax=plt0.monthmax;
             plt1.daymin=plt0.daymin;
@@ -48,6 +52,7 @@ if fig.nrsubplots>0
             plt1.minutetick=plt0.minutetick;
             plt1.secondtick=plt0.secondtick;
 %            plt1.datetickformatnumber=plt0.datetickformatnumber;
+            plt1.font=plt0.font;
             
             fig.subplots(ii).subplot=plt1;
             

@@ -1,17 +1,17 @@
 <?xml version="1.0"?>
 <root>
-  <name>lint</name>
   <longname>Lint Transports</longname>
   <title>Lint File</title>
   <callback>muppet_addDatasetLint</callback>
   <filterspec>*.int</filterspec>
-  <option>
+  <dataproperty>
     <name>filetype</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>filename</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>polygonfile</name>
-  </option>
+  </dataproperty>
+  <elementgroup>polygonfile</elementgroup>
 </root>

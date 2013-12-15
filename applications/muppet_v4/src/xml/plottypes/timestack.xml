@@ -1,168 +1,165 @@
 <?xml version="1.0"?>
 <root>
-  <plottype>
-    <name>timestack</name>  
-  <option>
+  <subplotoption>
     <name>position</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>type</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>backgroundcolor</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>tmin</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>tmax</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>dateticks</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>datetickformat</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>ylim</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>ytick</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>ydecimals</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>timegrid</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>ygrid</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>titletext</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>titlefontname</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>titlefontsize</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>titlefontweight</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>titlefontangle</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>xlabeltext</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>xlabelfontname</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>xlabelfontsize</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>xlabelfontweight</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>xlabelfontangle</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>ylabeltext</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>ylabelfontname</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>ylabelfontsize</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>ylabelfontweight</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>ylabelfontangle</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>legend</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>legendposition</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>legendcustomposition</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>legendbox</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>legendorientation</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>legendcolor</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>legendfontname</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>legendfontsize</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>legendfontweight</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>legendfontangle</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>legendfontcolor</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>colormap</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>colorbar</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>colorbarposition</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>colorbarlabel</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>colorbarttickincrement</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>colorbarunit</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>colorbartype</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>colorbarfontname</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>colorbarfontsize</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>colorbarfontweight</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>colorbarfontangle</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>colorbarfontcolor</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>colorbardecimals</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>clim</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>usecustomcontours</name>
-  </option>
-  <option>
+  </subplotoption>
+  <subplotoption>
     <name>customcontours</name>
-  </option>
-  </plottype>
+  </subplotoption>
 </root>

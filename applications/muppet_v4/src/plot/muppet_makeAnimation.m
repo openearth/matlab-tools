@@ -78,9 +78,12 @@ if ~isempty(animationsettings.avifilename)
         open(avihandle);
     else
         if ~strcmpi(animationsettings.avifilename(end-2:end),'gif')
-            avihandle = writeavi('initialize');
-            avihandle = writeavi('open', avihandle,animationsettings.avifilename);
-            avihandle = writeavi('addvideo', avihandle, animationsettings.framerate, sz(1),sz(2), 24, aviops);
+%             avihandle = writeavi('initialize');
+%             avihandle = writeavi('open', avihandle,animationsettings.avifilename);
+%             avihandle = writeavi('addvideo', avihandle, animationsettings.framerate, sz(1),sz(2), 24, aviops);
+            avihandle = avi('initialize');
+            avihandle = avi('open', avihandle,animationsettings.avifilename);
+            avihandle = avi('addvideo', avihandle, animationsettings.framerate, sz(1),sz(2), 24, aviops);
         end
     end
 end
@@ -239,7 +242,8 @@ try
             else
                 if ~strcmpi(animationsettings.avifilename(end-2:end),'gif')
                     aaa=uint8(a(1:sz(1),1:sz(2),:));
-                    avihandle = writeavi('addframe', avihandle, aaa, iblock);
+%                    avihandle = writeavi('addframe', avihandle, aaa, iblock);
+                    avihandle = avi('addframe', avihandle, aaa, iblock);
                     clear aaa
                 else
                     nf = nf+1;
@@ -284,7 +288,8 @@ try
             close(avihandle);
         else
             if ~strcmpi(animationsettings.avifilename(end-2:end),'gif')
-                avihandle=writeavi('close', avihandle);
+%                avihandle=writeavi('close', avihandle);
+                avihandle=avi('close', avihandle);
             else
                 % Try to make animated gif (not very succesful so far)
                 %    imwrite(im,map,'test.gif','DelayTime',1/animationsettings.FrameRate,'LoopCount',inf) %g443800

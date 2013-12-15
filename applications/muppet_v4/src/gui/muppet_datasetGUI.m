@@ -57,7 +57,12 @@ dataset=muppet_setDefaultDatasetProperties(dataset);
 % Find file type
 ift=muppet_findIndex(handles.filetype,'filetype','name',filetype);
 dataset.filetype=filetype;
-options=handles.filetype(ift).filetype.option;
+if isfield(handles.filetype(ift).filetype,'elementgroup')
+    elementgroup=handles.filetype(ift).filetype.elementgroup;
+else
+    elementgroup=[];
+end
+%elementgroup=handles.datapropertyelementgroup;
 callback=str2func(handles.filetype(ift).filetype.callback);
 dataset.callback=callback;
 
@@ -128,13 +133,13 @@ dataset.stations={''};
 height=0;
 width=0;
 % First determine width and height of gui
-for ii=1:length(options)
+for ii=1:length(elementgroup)
     % Find corresponding gui element
-    id=muppet_findIndex(handles.dataproperty,'dataproperty','name',options(ii).option.name);
+    id=muppet_findIndex(handles.datapropertyelementgroup,'datapropertyelementgroup','name',elementgroup(ii).elementgroup);
     if ~isempty(id)
         % Include in gui
-        height=height+handles.dataproperty(id).dataproperty.height+10;
-        width=max(handles.dataproperty(id).dataproperty.width,width);
+        height=height+handles.datapropertyelementgroup(id).datapropertyelementgroup.height+10;
+        width=max(handles.datapropertyelementgroup(id).datapropertyelementgroup.width,width);
     end
 end
 
@@ -147,22 +152,21 @@ width=max(width,350);
 posy=height-10;
 nelm=0;
 
-for ii=1:length(options)
-  % Find corresponding gui element
-  id=muppet_findIndex(handles.dataproperty,'dataproperty','name',options(ii).option.name);
-  if ~isempty(id)
-    % Include in gui
-    posy=posy-handles.dataproperty(id).dataproperty.height-10;
-    if isfield(handles.dataproperty(id).dataproperty,'element')
-      for jj=1:length(handles.dataproperty(id).dataproperty.element)
-        nelm=nelm+1;
-        el=handles.dataproperty(id).dataproperty.element(jj).element;
-        pos=str2num(el.position);
-        el.position=[pos(1)+20 posy+pos(2) pos(3) pos(4)];
-        element(nelm).element=el;
-      end
+for ii=1:length(elementgroup)
+    % Find corresponding gui element
+    id=muppet_findIndex(handles.datapropertyelementgroup,'datapropertyelementgroup','name',elementgroup(ii).elementgroup);
+    if ~isempty(id)
+        % Include in gui
+        elgroup=handles.datapropertyelementgroup(id).datapropertyelementgroup;
+        posy=posy-elgroup.height-10;
+        for jj=1:length(elgroup.element)
+            nelm=nelm+1;
+            el=elgroup.element(jj).element;
+            pos=str2num(el.position);
+            el.position=[pos(1)+20 posy+pos(2) pos(3) pos(4)];
+            element(nelm).element=el;
+        end
     end
-  end
 end
 
 % Dataset name

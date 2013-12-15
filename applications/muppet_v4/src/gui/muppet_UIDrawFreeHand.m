@@ -17,7 +17,7 @@ end
 opt=muppet_setDefaultPlotOptions;
 
 opt.markersize=4;
-opt.fillclosedpolygons=1;
+opt.fillclosedpolygons=0;
 opt.fillcolor='red';
 
 if opt.fillclosedpolygons
@@ -54,6 +54,8 @@ function createPolygon(h,x,y,nr)
 fig=getappdata(gcf,'figure');
 ifig=fig.number;
 
+options=getappdata(h,'options');
+
 % Find subplot number
 hax=getappdata(h,'axis');
 hh=get(hax,'UserData');
@@ -69,10 +71,13 @@ opt.markersize=4;
 opt.fillclosedpolygons=1;
 opt.fillcolor='red';
 opt.type='interactivepolyline';
+opt.plotroutine='plotinteractivepolyline';
+opt.polylinetype=options.type;
+opt.x=x;
+opt.y=y;
 
 fig.subplots(isub).subplot.datasets(nrd).dataset=opt;
 
-options=getappdata(h,'options');
 usd=[ifig,isub,nrd];
 options.userdata=usd;
 setappdata(h,'options',options);

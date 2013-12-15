@@ -10,10 +10,9 @@ set(gcf, 'Pointer', 'crosshair');
 function starttrack(imagefig, varargins) 
 set(gcf, 'Units', 'normalized');
 set(gcf, 'Pointer', 'crosshair');
-set(gcf, 'windowbuttonmotionfcn', {@followtrack});
 
 an=annotation('textbox');
-set(an,'Tag','textbox');
+set(an,'Tag','Text Box');
 
 usd.h=an;
 usd.x=[0.5 0.6];
@@ -25,8 +24,6 @@ AnnOpt.BackgroundColor='white';
 AnnOpt.FontColor='black';
 AnnOpt.Text={'dummy'};
 set(usd.h,'UserData',AnnOpt);
-
-set(0,'UserData',usd);
 
 set(usd.h,'Visible','on');
 CurPnt = get(gcf, 'CurrentPoint');
@@ -41,6 +38,8 @@ pos(3)=min(abs(usd.x(2)-usd.x(1)),1-pos(1))+1e-6;
 pos(4)=min(abs(usd.y(2)-usd.y(1)),1-pos(2))+1e-6;
 set(usd.h,'Position',pos);
 set(0,'UserData',usd);
+
+set(gcf, 'windowbuttonmotionfcn', {@followtrack});
 
 %%
 function followtrack(imagefig, varargins) 

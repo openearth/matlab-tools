@@ -24,137 +24,145 @@ if isfield(info,'write')
 end
 
 iok=1;
-% Look for checks
-if isfield(info,'check')
-    if isfield(info,'checkfor')
-        checkfor=info.checkfor;
-    else
-        checkfor='all';
+if isfield(info,'dependency')
+    for idep=1:length(info.dependency)
+        dependency=info.dependency(idep).dependency;
+        iok=gui_checkDependency(dependency,data);
     end
-    % Run checks
-    for icheck=1:length(info.check)
-        iok=1;
-        if isfield(info.check(icheck).check,'variable')
-            % Take variable
-            checkvariable=info.check(icheck).check.variable;
-        else
-            % No variable given, take variable from option itself
-            checkvariable=info.variable;
-        end
-        if isfield(info.check(icheck).check,'value')
-            % Take value
-            checkvalue=info.check(icheck).check.value;
-        else
-            % No value given, take default from option
-            checkvalue=info.default;
-        end
-        % Always an operator
-        operator=info.check(icheck).check.operator;
-        % Evaluate variable
-        
-        checkvariable=eval(['data.' checkvariable]);
-        if ischar(checkvariable)
-            % Character
-            switch operator
-                case{'eq'}
-                    switch checkvalue
-                        case{'isempty'}
-                            if ~isempty(checkvariable)
-                                iok=0;
-                            end
-                        otherwise
-                            if ~strcmpi(checkvariable,checkvalue)
-                                iok=0;
-                            end
-                    end
-                case{'ne'}
-                    switch checkvalue
-                        case{'isempty'}
-                            if isempty(checkvariable)
-                                iok=0;
-                            end
-                        otherwise
-                            if strcmpi(checkvariable,checkvalue)
-                                iok=0;
-                            end
-                    end
-            end
-        else
-            % Numeric
-            checkvalue=str2double(checkvalue);
-            switch operator
-                case{'eq'}
-                    switch checkvalue
-                        case{'isempty'}
-                            if ~isempty(checkvariable)
-                                iok=0;
-                            end
-                        otherwise
-                            if checkvariable~=checkvalue
-                                iok=0;
-                            end
-                    end
-                case{'ne'}
-                    switch checkvalue
-                        case{'isempty'}
-                            if isempty(checkvariable)
-                                iok=0;
-                            end
-                        otherwise
-                            if checkvariable==checkvalue
-                                iok=0;
-                            end
-                    end
-                case{'gt'}
-                    if checkvariable<=checkvalue
-                        iok=0;
-                    end
-                case{'ge'}
-                    if checkvariable<checkvalue
-                        iok=0;
-                    end
-                case{'lt'}
-                    if checkvariable>=checkvalue
-                        iok=0;
-                    end
-                case{'le'}
-                    if checkvariable>checkvalue
-                        iok=0;
-                    end
-                case{'notempty'}
-                    if isempty(deblank(checkvariable))
-                        iok=0;
-                    end
-            end
-        end
-        
-        iokall(icheck)=iok;
-        
-    end
-    
-    switch checkfor
-        case{'all'}
-            if sum(iokall)==length(iokall)
-                iok=1;
-            else
-                iok=0;
-            end
-        case{'none'}
-            if sum(iokall)==0
-                iok=1;
-            else
-                iok=0;
-            end
-            iok=0;
-        case{'any'}
-            if sum(iokall)>0
-                iok=1;
-            else
-                iok=0;
-            end
-    end    
-    
 end
+
+% iok=1;
+% % Look for checks
+% if isfield(info,'check')
+%     if isfield(info,'checkfor')
+%         checkfor=info.checkfor;
+%     else
+%         checkfor='all';
+%     end
+%     % Run checks
+%     for icheck=1:length(info.check)
+%         iok=1;
+%         if isfield(info.check(icheck).check,'variable')
+%             % Take variable
+%             checkvariable=info.check(icheck).check.variable;
+%         else
+%             % No variable given, take variable from option itself
+%             checkvariable=info.variable;
+%         end
+%         if isfield(info.check(icheck).check,'value')
+%             % Take value
+%             checkvalue=info.check(icheck).check.value;
+%         else
+%             % No value given, take default from option
+%             checkvalue=info.default;
+%         end
+%         % Always an operator
+%         operator=info.check(icheck).check.operator;
+%         % Evaluate variable
+%         
+%         checkvariable=eval(['data.' checkvariable]);
+%         if ischar(checkvariable)
+%             % Character
+%             switch operator
+%                 case{'eq'}
+%                     switch checkvalue
+%                         case{'isempty'}
+%                             if ~isempty(checkvariable)
+%                                 iok=0;
+%                             end
+%                         otherwise
+%                             if ~strcmpi(checkvariable,checkvalue)
+%                                 iok=0;
+%                             end
+%                     end
+%                 case{'ne'}
+%                     switch checkvalue
+%                         case{'isempty'}
+%                             if isempty(checkvariable)
+%                                 iok=0;
+%                             end
+%                         otherwise
+%                             if strcmpi(checkvariable,checkvalue)
+%                                 iok=0;
+%                             end
+%                     end
+%             end
+%         else
+%             % Numeric
+%             checkvalue=str2double(checkvalue);
+%             switch operator
+%                 case{'eq'}
+%                     switch checkvalue
+%                         case{'isempty'}
+%                             if ~isempty(checkvariable)
+%                                 iok=0;
+%                             end
+%                         otherwise
+%                             if checkvariable~=checkvalue
+%                                 iok=0;
+%                             end
+%                     end
+%                 case{'ne'}
+%                     switch checkvalue
+%                         case{'isempty'}
+%                             if isempty(checkvariable)
+%                                 iok=0;
+%                             end
+%                         otherwise
+%                             if checkvariable==checkvalue
+%                                 iok=0;
+%                             end
+%                     end
+%                 case{'gt'}
+%                     if checkvariable<=checkvalue
+%                         iok=0;
+%                     end
+%                 case{'ge'}
+%                     if checkvariable<checkvalue
+%                         iok=0;
+%                     end
+%                 case{'lt'}
+%                     if checkvariable>=checkvalue
+%                         iok=0;
+%                     end
+%                 case{'le'}
+%                     if checkvariable>checkvalue
+%                         iok=0;
+%                     end
+%                 case{'notempty'}
+%                     if isempty(deblank(checkvariable))
+%                         iok=0;
+%                     end
+%             end
+%         end
+%         
+%         iokall(icheck)=iok;
+%         
+%     end
+%     
+%     switch checkfor
+%         case{'all'}
+%             if sum(iokall)==length(iokall)
+%                 iok=1;
+%             else
+%                 iok=0;
+%             end
+%         case{'none'}
+%             if sum(iokall)==0
+%                 iok=1;
+%             else
+%                 iok=0;
+%             end
+%             iok=0;
+%         case{'any'}
+%             if sum(iokall)>0
+%                 iok=1;
+%             else
+%                 iok=0;
+%             end
+%     end    
+%     
+% end
 
 
 if ~iok

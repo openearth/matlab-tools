@@ -1,17 +1,74 @@
 function muppet_UIAddText(varargin)
 
-h=findobj(gcf,'Tag','UIToggleToolEditFigure');
-set(h,'State','off');
-h=(findobj(gcf,'TooltipString','Zoom In'));
-set(h,'State','off');
-h=(findobj(gcf,'TooltipString','Zoom Out'));
-set(h,'State','off');
-h=(findobj(gcf,'TooltipString','Pan'));
-set(h,'State','off');
+handles=getHandles;
 
 muppet_setPlotEdit(0);
 
-set(gcf, 'windowbuttonmotionfcn', {@movemouse});
+fig=getappdata(gcf,'figure');
+ifig=fig.number;
+
+n=0;
+for j=1:fig.nrsubplots
+    if strcmpi(fig.subplots(j).subplot.type,'map')
+        n=n+1;
+        h(n)=findobj(gcf,'Tag','axis','UserData',[ifig,j]);
+    end
+end
+
+opt=muppet_setDefaultPlotOptions;
+
+
+% Open GUI for text
+s.text='txt';
+[s,ok]=gui_newWindow(s, 'xmldir', handles.xmlguidir, 'xmlfile', 'interactivetext.xml','iconfile',[handles.settingsdir 'icons' filesep 'deltares.gif']);
+if ok
+    gui_text('draw','text',s.text,'tag','interactivetext','marker','o', ...
+        'createcallback',@addText, ...
+        'changecallback',@muppet_changeInteractiveText,'axis',h, ...
+        'markersize',opt.markersize,'markeredgecolor',colorlist('getrgb','color',opt.markeredgecolor), ...
+        'markerfacecolor',colorlist('getrgb','color',opt.markerfacecolor), ...
+        'font',opt.font);
+end
+
+%%
+function addText(h,x,y)
+
+fig=getappdata(gcf,'figure');
+ifig=fig.number;
+options=getappdata(h,'options');
+
+% Find subplot number
+hax=getappdata(h,'axis');
+hh=get(hax,'UserData');
+isub=hh(2);
+
+fig.subplots(isub).subplot.annotationsadded=1;
+
+fig.subplots(isub).subplot.nrdatasets=fig.subplots(isub).subplot.nrdatasets+1;
+nrd=fig.subplots(isub).subplot.nrdatasets;
+opt=muppet_setDefaultPlotOptions;
+
+% opt.markersize=4;
+% opt.fillclosedpolygons=1;
+% opt.fillcolor='red';
+opt.x=x;
+opt.y=y;
+opt.rotation=0;
+opt.curvature=0;
+opt.text=options.text;
+opt.type='interactivetext';
+opt.plotroutine='plotinteractivetext';
+opt.name=options.text;
+
+fig.subplots(isub).subplot.datasets(nrd).dataset=opt;
+
+usd=[ifig,isub,nrd];
+options.userdata=usd;
+setappdata(h,'options',options);
+
+fig.changed=1;
+
+setappdata(gcf,'figure',fig);
 
 %%
 function gettextposition(imagefig, varargins,h) 
@@ -84,36 +141,37 @@ end
 set(gcf, 'windowbuttondownfcn','');
 set(gcf,'Pointer','arrow');
 
-%%
-
-function movemouse(imagefig, varargins)
-
-handles=getHandles;
-
-ifig=get(gcf,'UserData');
-
-posgcf = get(gcf, 'CurrentPoint')/handles.figures(ifig).figure.cm2pix;
-
-typ='none';
-
-for j=1:handles.figures(ifig).figure.nrsubplots
-    h0=findobj(gcf,'Tag','axis','UserData',[ifig,j]);
-    if ~isempty(h0)
-        pos=get(h0,'Position')/handles.figures(ifig).figure.cm2pix;
-        if posgcf(1)>pos(1) && posgcf(1)<pos(1)+pos(3) && posgcf(2)>pos(2) && posgcf(2)<pos(2)+pos(4)
-            typ=handles.figures(ifig).figure.subplots(j).subplot.type;
-            h=h0;
-        end
-    end
-end
-
-oktypes={'map'};
-ii=strmatch(lower(typ),oktypes,'exact');
-
-if isempty(ii)
-    set(gcf,'Pointer','arrow');
-    set(gcf,'WindowButtonDownFcn',[]);
-else
-    set(gcf, 'Pointer', 'crosshair');
-    set(gcf, 'windowbuttondownfcn', {@gettextposition,h});
-end
+% %%
+% 
+% function movemouse(imagefig, varargins)
+% 
+% handles=getHandles;
+% 
+% ifig=get(gcf,'UserData');
+% fig=getappdata(gcf,'figure');
+% 
+% posgcf = get(gcf, 'CurrentPoint')/fig.cm2pix;
+% 
+% typ='none';
+% 
+% for j=1:fig.nrsubplots
+%     h0=findobj(gcf,'Tag','axis','UserData',[ifig,j]);
+%     if ~isempty(h0)
+%         pos=get(h0,'Position')/fig.cm2pix;
+%         if posgcf(1)>pos(1) && posgcf(1)<pos(1)+pos(3) && posgcf(2)>pos(2) && posgcf(2)<pos(2)+pos(4)
+%             typ=fig.subplots(j).subplot.type;
+%             h=h0;
+%         end
+%     end
+% end
+% 
+% oktypes={'map'};
+% ii=strmatch(lower(typ),oktypes,'exact');
+% 
+% if isempty(ii)
+%     set(gcf,'Pointer','arrow');
+%     set(gcf,'WindowButtonDownFcn',[]);
+% else
+%     set(gcf, 'Pointer', 'crosshair');
+%     set(gcf, 'windowbuttondownfcn', {@gettextposition,h});
+% end

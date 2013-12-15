@@ -1,20 +1,27 @@
 <?xml version="1.0"?>
 <root>
-  <name>histogram</name>
   <longname>Histogram</longname>
-  <plot>
-    <type>xy</type>
+  <plottype>
+    <name>xy</name>
     <plotroutine>
-      <name>plothistogram</name>
-      <longname>Plot Histogram</longname>
+      <name>Histogram</name>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>polygongroup</name>
+        <name>fillclosedpolygons</name>
       </plotoption>
       <plotoption>
-        <name>linegroup</name>
+        <name>fillcolor</name>
+      </plotoption>
+      <plotoption>
+        <name>linecolor</name>
+      </plotoption>
+      <plotoption>
+        <name>linewidth</name>
+      </plotoption>
+      <plotoption>
+        <name>linestyle</name>
       </plotoption>
       <plotoption>
         <name>rightaxis</name>
@@ -22,6 +29,9 @@
       <plotoption>
         <name>legendtext</name>
       </plotoption>
+      <elementgroup>polygon</elementgroup>
+      <elementgroup>line</elementgroup>
+      <elementgroup>legendtext</elementgroup>
     </plotroutine>
-  </plot>
+  </plottype>
 </root>

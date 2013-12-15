@@ -1,96 +1,293 @@
 <?xml version="1.0"?>
 <root>
-  <name>vector2d2dxy</name>
   <longname>Vector 2D</longname>
-  <plot>
-    <type>map</type>
+  <plottype>
+    <name>map</name>
     <plotroutine>
-      <name>plotvectors</name>
-      <longname>Vectors</longname>
+      <name>Vectors</name>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>vectorgroup2d</name>
+        <name>unitvector</name>
       </plotoption>
       <plotoption>
-        <name>vectorlegendgroup</name>
+        <name>fieldthinningtype</name>
       </plotoption>
       <plotoption>
-        <name>adddategroup</name>
+        <name>fieldthinningfactor1</name>
       </plotoption>
+      <plotoption>
+        <name>fieldthinningfactor2</name>
+      </plotoption>
+      <plotoption>
+        <name>fieldthinningdistance</name>
+      </plotoption>
+      <plotoption>
+        <name>vectorlegendlength</name>
+      </plotoption>
+      <plotoption>
+        <name>vectorlegendtext</name>
+      </plotoption>
+      <plotoption>
+        <name>adddatestring</name>
+      </plotoption>
+      <plotoption>
+        <name>adddateposition</name>
+      </plotoption>
+      <plotoption>
+        <name>adddateformat</name>
+      </plotoption>
+      <plotoption>
+        <name>adddateprefix</name>
+      </plotoption>
+      <plotoption>
+        <name>adddatesuffix</name>
+      </plotoption>
+      <elementgroup>vectorxy</elementgroup>
+      <elementgroup>vectorlegend</elementgroup>
+      <elementgroup>adddate</elementgroup>
     </plotroutine>
     <plotroutine>
-      <name>plotcoloredvectors</name>
-      <longname>Colored Vectors</longname>
+      <name>Colored Vectors</name>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>vectorgroup2d</name>
+        <name>unitvector</name>
       </plotoption>
       <plotoption>
-        <name>climwithcolorbargroup</name>
+        <name>fieldthinningtype</name>
       </plotoption>
       <plotoption>
-        <name>vectorlegendgroup</name>
+        <name>fieldthinningfactor1</name>
       </plotoption>
       <plotoption>
-        <name>adddategroup</name>
+        <name>fieldthinningfactor2</name>
       </plotoption>
+      <plotoption>
+        <name>fieldthinningdistance</name>
+      </plotoption>
+      <plotoption>
+        <name>cmin cstep cmax</name>
+      </plotoption>
+      <plotoption>
+        <name>colormap</name>
+      </plotoption>
+      <plotoption>
+        <name>plotcolorbar</name>
+      </plotoption>
+      <plotoption>
+        <name>colorbarposition</name>
+      </plotoption>
+      <plotoption>
+        <name>customcontours</name>
+      </plotoption>
+      <plotoption>
+        <name>vectorlegendlength</name>
+      </plotoption>
+      <plotoption>
+        <name>vectorlegendtext</name>
+      </plotoption>
+      <plotoption>
+        <name>adddatestring</name>
+      </plotoption>
+      <plotoption>
+        <name>adddateposition</name>
+      </plotoption>
+      <plotoption>
+        <name>adddateformat</name>
+      </plotoption>
+      <plotoption>
+        <name>adddateprefix</name>
+      </plotoption>
+      <plotoption>
+        <name>adddatesuffix</name>
+      </plotoption>
+      <elementgroup>vectorxy</elementgroup>
+      <elementgroup>climwithcolorbar</elementgroup>
+      <elementgroup>vectorlegend</elementgroup>
+      <elementgroup>adddate</elementgroup>
     </plotroutine>
     <plotroutine>
-      <name>plotcurvedarrows</name>
-      <longname>Curvy Arrows</longname>
+      <name>Curved Arrows</name>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>curvyarrowsgroup</name>
+        <name>curvecspacing</name>
       </plotoption>
       <plotoption>
-        <name>curvyarrowsanimationgroup</name>
+        <name>curveclength</name>
       </plotoption>
       <plotoption>
-        <name>vectorlegendgroup</name>
+        <name>edgecolor</name>
       </plotoption>
       <plotoption>
-        <name>adddategroup</name>
+        <name>facecolor</name>
       </plotoption>
+      <plotoption>
+        <name>arrowthickness</name>
+      </plotoption>
+      <plotoption>
+        <name>headthickness</name>
+      </plotoption>
+      <plotoption>
+        <name>fadecurvyarrows</name>
+      </plotoption>
+      <plotoption>
+        <name>curvecrelativespeed</name>
+      </plotoption>
+      <plotoption>
+        <name>curveclifespan</name>
+      </plotoption>
+      <plotoption>
+        <name>vectorlegendlength</name>
+      </plotoption>
+      <plotoption>
+        <name>vectorlegendtext</name>
+      </plotoption>
+      <plotoption>
+        <name>adddatestring</name>
+      </plotoption>
+      <plotoption>
+        <name>adddateposition</name>
+      </plotoption>
+      <plotoption>
+        <name>adddateformat</name>
+      </plotoption>
+      <plotoption>
+        <name>adddateprefix</name>
+      </plotoption>
+      <plotoption>
+        <name>adddatesuffix</name>
+      </plotoption>
+      <elementgroup>curvyarrows</elementgroup>
+      <elementgroup>curvyarrowsanimation</elementgroup>
+      <elementgroup>vectorlegend</elementgroup>
+      <elementgroup>adddate</elementgroup>
     </plotroutine>
     <plotroutine>
-      <name>plotcoloredcurvedarrows</name>
-      <longname>Colored Curvy Arrows</longname>
+      <name>Colored Curved Arrows</name>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>curvyarrowsgroup</name>
+        <name>curvecspacing</name>
       </plotoption>
       <plotoption>
-        <name>curvyarrowsanimationgroup</name>
+        <name>curveclength</name>
       </plotoption>
       <plotoption>
-        <name>climwithcolorbargroup</name>
+        <name>edgecolor</name>
       </plotoption>
       <plotoption>
-        <name>vectorlegendgroup</name>
+        <name>facecolor</name>
       </plotoption>
       <plotoption>
-        <name>adddategroup</name>
+        <name>arrowthickness</name>
       </plotoption>
+      <plotoption>
+        <name>headthickness</name>
+      </plotoption>
+      <plotoption>
+        <name>fadecurvyarrows</name>
+      </plotoption>
+      <plotoption>
+        <name>curvecrelativespeed</name>
+      </plotoption>
+      <plotoption>
+        <name>curveclifespan</name>
+      </plotoption>
+      <plotoption>
+        <name>cmin cstep cmax</name>
+      </plotoption>
+      <plotoption>
+        <name>colormap</name>
+      </plotoption>
+      <plotoption>
+        <name>plotcolorbar</name>
+      </plotoption>
+      <plotoption>
+        <name>colorbarposition</name>
+      </plotoption>
+      <plotoption>
+        <name>customcontours</name>
+      </plotoption>
+      <plotoption>
+        <name>vectorlegendlength</name>
+      </plotoption>
+      <plotoption>
+        <name>vectorlegendtext</name>
+      </plotoption>
+      <plotoption>
+        <name>adddatestring</name>
+      </plotoption>
+      <plotoption>
+        <name>adddateposition</name>
+      </plotoption>
+      <plotoption>
+        <name>adddateformat</name>
+      </plotoption>
+      <plotoption>
+        <name>adddateprefix</name>
+      </plotoption>
+      <plotoption>
+        <name>adddatesuffix</name>
+      </plotoption>
+      <elementgroup>curvyarrows</elementgroup>
+      <elementgroup>curvyarrowsanimation</elementgroup>
+      <elementgroup>climwithcolorbar</elementgroup>
+      <elementgroup>vectorlegend</elementgroup>
+      <elementgroup>adddate</elementgroup>
     </plotroutine>
-  </plot>
-  <plot>
-    <type>xy</type>
+  </plottype>
+  <plottype>
+    <name>xy</name>
     <plotroutine>
-      <name>plotpatches</name>
+      <name>Vectors</name>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>linestyle</name>
+        <name>unitvector</name>
       </plotoption>
+      <plotoption>
+        <name>fieldthinningtype</name>
+      </plotoption>
+      <plotoption>
+        <name>fieldthinningfactor1</name>
+      </plotoption>
+      <plotoption>
+        <name>fieldthinningfactor2</name>
+      </plotoption>
+      <plotoption>
+        <name>fieldthinningdistance</name>
+      </plotoption>
+      <plotoption>
+        <name>vectorlegendlength</name>
+      </plotoption>
+      <plotoption>
+        <name>vectorlegendtext</name>
+      </plotoption>
+      <plotoption>
+        <name>adddatestring</name>
+      </plotoption>
+      <plotoption>
+        <name>adddateposition</name>
+      </plotoption>
+      <plotoption>
+        <name>adddateformat</name>
+      </plotoption>
+      <plotoption>
+        <name>adddateprefix</name>
+      </plotoption>
+      <plotoption>
+        <name>adddatesuffix</name>
+      </plotoption>
+      <elementgroup>vectorxy</elementgroup>
+      <elementgroup>adddate</elementgroup>
+      <elementgroup>vectorlegend</elementgroup>
     </plotroutine>
-  </plot>
+  </plottype>
 </root>

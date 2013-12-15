@@ -27,7 +27,7 @@ end
 function dataset=read(dataset,varargin)
 
 try
-    fid=tekal('open',dataset.filename);
+    fid=tekal('open',dataset.filename,'loaddata');
 catch
     disp([dataset.filename ' does not appear to be a valid tekal file!']);    
 end
@@ -156,7 +156,7 @@ switch dataset.tekaltype
         end
     case{'map'}
         parameter.x=fid.Field(iblock).Data(:,:,1);
-        parameter.y=fid.Field(iblock).Data(:,:,2);                
+        parameter.y=fid.Field(iblock).Data(:,:,2);
         parameter.x(parameter.x==999.999)=NaN;
         parameter.x(parameter.x==-999)=NaN;
         parameter.y(parameter.y==999.999)=NaN;
@@ -167,6 +167,8 @@ switch dataset.tekaltype
                 parameter.val=fid.Field(iblock).Data(:,:,icol);
                 parameter.val(parameter.val==999.999)=NaN;
                 parameter.val(parameter.val==-999)=NaN;
+                parameter.x(isnan(parameter.val))=NaN;
+                parameter.y(isnan(parameter.val))=NaN;
             case{'vector2d'}
                 icolu=strmatch(lower(dataset.ucomponent),lower(dataset.columnlabels),'exact');
                 icolv=strmatch(lower(dataset.vcomponent),lower(dataset.columnlabels),'exact');
@@ -176,6 +178,8 @@ switch dataset.tekaltype
                 parameter.v=fid.Field(iblock).Data(:,:,icolv);
                 parameter.v(parameter.u==999.999)=NaN;
                 parameter.v(parameter.u==-999)=NaN;
+                parameter.x(isnan(parameter.u))=NaN;
+                parameter.y(isnan(parameter.u))=NaN;
         end
     case{'xy'}
 end

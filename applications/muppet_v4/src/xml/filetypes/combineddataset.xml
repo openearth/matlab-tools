@@ -1,26 +1,25 @@
 <?xml version="1.0"?>
 <root>
-  <name>combineddataset</name>
   <longname>Combined Dataset</longname>
-  <option>
+  <dataproperty>
     <name>filetype</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>dataseta</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>multiplya</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>datasetb</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>multiplyb</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>operation</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>uniformvalue</name>
-  </option>
+  </dataproperty>
 </root>

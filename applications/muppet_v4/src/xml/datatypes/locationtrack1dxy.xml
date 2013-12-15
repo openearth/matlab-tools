@@ -1,48 +1,120 @@
 <?xml version="1.0"?>
 <root>
-  <name>locationtrack1dxy</name>
   <longname>Track</longname>
-  <plotoptionplottype>2d</plotoptionplottype>
-  <plot>
-    <type>map</type>
+  <plottype>
+    <name>map</name>
     <plotroutine>
-      <name>plotpolyline</name>
+      <name>Polyline</name>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>linegroup</name>
+        <name>linecolor</name>
       </plotoption>
       <plotoption>
-        <name>markergroup</name>
+        <name>linewidth</name>
       </plotoption>
       <plotoption>
-        <name>timemarkergroup</name>
+        <name>linestyle</name>
+      </plotoption>
+      <plotoption>
+        <name>marker</name>
+      </plotoption>
+      <plotoption>
+        <name>markersize</name>
+      </plotoption>
+      <plotoption>
+        <name>markeredgecolor</name>
+      </plotoption>
+      <plotoption>
+        <name>markerfacecolor</name>
+      </plotoption>
+      <plotoption>
+        <name>timemarkerenable</name>
+      </plotoption>
+      <plotoption>
+        <name>timemarkertime</name>
+      </plotoption>
+      <plotoption>
+        <name>timemarkertrackoption</name>
+      </plotoption>
+      <plotoption>
+        <name>timemarkermarker</name>
+      </plotoption>
+      <plotoption>
+        <name>timemarkermarkersize</name>
+      </plotoption>
+      <plotoption>
+        <name>timemarkermarkeredgecolor</name>
+      </plotoption>
+      <plotoption>
+        <name>timemarkermarkerfacecolor</name>
       </plotoption>
       <plotoption>
         <name>legendtext</name>
       </plotoption>
+      <elementgroup>line</elementgroup>
+      <elementgroup>marker</elementgroup>
+      <elementgroup>timemarker</elementgroup>
+      <elementgroup>legendtext</elementgroup>
     </plotroutine>
-  </plot>
-  <plot>
-    <type>xy</type>
+  </plottype>
+  <plottype>
+    <name>xy</name>
     <plotroutine>
-      <name>plotpolyline</name>
+      <name>Polyline</name>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>linegroup</name>
+        <name>linecolor</name>
       </plotoption>
       <plotoption>
-        <name>markergroup</name>
+        <name>linewidth</name>
       </plotoption>
       <plotoption>
-        <name>timemarkergroup</name>
+        <name>linestyle</name>
+      </plotoption>
+      <plotoption>
+        <name>marker</name>
+      </plotoption>
+      <plotoption>
+        <name>markersize</name>
+      </plotoption>
+      <plotoption>
+        <name>markeredgecolor</name>
+      </plotoption>
+      <plotoption>
+        <name>markerfacecolor</name>
+      </plotoption>
+      <plotoption>
+        <name>timemarkerenable</name>
+      </plotoption>
+      <plotoption>
+        <name>timemarkertime</name>
+      </plotoption>
+      <plotoption>
+        <name>timemarkertrackoption</name>
+      </plotoption>
+      <plotoption>
+        <name>timemarkermarker</name>
+      </plotoption>
+      <plotoption>
+        <name>timemarkermarkersize</name>
+      </plotoption>
+      <plotoption>
+        <name>timemarkermarkeredgecolor</name>
+      </plotoption>
+      <plotoption>
+        <name>timemarkermarkerfacecolor</name>
       </plotoption>
       <plotoption>
         <name>legendtext</name>
       </plotoption>
+      <elementgroup>line</elementgroup>
+      <elementgroup>marker</elementgroup>
+      <elementgroup>timemarker</elementgroup>
+      <elementgroup>legendtext</elementgroup>
     </plotroutine>
-  </plot>
+  </plottype>
 </root>

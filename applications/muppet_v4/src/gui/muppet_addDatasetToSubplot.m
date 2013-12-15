@@ -17,15 +17,15 @@ switch plottype
     case{'unknown'}
         % New type
         handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot=muppet_setDefaultAxisProperties(handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot);
-        handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type=handles.datatype(idtype).datatype.plot(1).plot.type;        
+        handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type=handles.datatype(idtype).datatype.plottype(1).plottype.name;        
         updateaxes=1;
         iplttype=1;
     otherwise
         % Subplot already has a type, check if dataset can be added to this
         % subplot
         iplttype=[];
-        for ii=1:length(handles.datatype(idtype).datatype.plot)
-            if strcmpi(plottype,handles.datatype(idtype).datatype.plot(ii).plot.type)
+        for ii=1:length(handles.datatype(idtype).datatype.plottype)
+            if strcmpi(plottype,handles.datatype(idtype).datatype.plottype(ii).plottype.name)
                 iplttype=ii;
                 break
             end
@@ -50,7 +50,7 @@ plotdata.name=data.name;
 plotdata.type=data.type;
 
 %% Add plot options
-plotroutine=handles.datatype(idtype).datatype.plot(iplttype).plot.plotroutine(1).plotroutine;
+plotroutine=handles.datatype(idtype).datatype.plottype(iplttype).plottype.plotroutine(1).plotroutine;
 plotdata.plotroutine=plotroutine.name;
 for ii=1:length(plotroutine.plotoption)
     name=plotroutine.plotoption(ii).plotoption.name;
@@ -79,41 +79,6 @@ for ii=1:length(plotroutine.plotoption)
                 end
             end
             eval(['plotdata.' name '=value;']);
-        end
-        if isfield(plotoption,'element')
-            for ielm=1:length(plotoption.element)
-
-                name=plotroutine.plotoption(ii).plotoption.name;
-
-                if isfield(plotoption.element(ielm).element,'default')
-                    
-                    if isfield(plotoption.element(ielm).element,'variable')
-                        varname=plotoption.element(ielm).element.variable;
-                    end
-
-                    if isstruct(plotoption.element(ielm).element.default)
-                        % Count number of datasets in this subplot that use the same
-                        % plot routine
-                        n=1;
-                        for jj=1:nrd-1
-                            if strcmpi(plt.datasets(jj).dataset.plotroutine,plotdata.plotroutine)
-                                n=n+1;
-                            end
-                        end
-                        n=min(n,length(plotoption.element(ielm).element.default));
-                        value=plotoption.element(ielm).element.default(n).default;
-                    else
-                        value=plotoption.element(ielm).element.default;
-                    end
-                    if isfield(plotoption.element(ielm).element,'type')
-                        switch lower(plotoption.element(ielm).element.type)
-                            case{'real','int','boolean','integer'}
-                                value=str2num(value);
-                        end
-                    end
-                    eval(['plotdata.' varname '=value;']);
-                end
-            end
         end
         if strcmpi(name,'legendtext')
             plotdata.legendtext=plotdata.name;

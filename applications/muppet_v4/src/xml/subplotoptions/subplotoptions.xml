@@ -4,6 +4,7 @@
     <name>name</name>
     <keyword>Subplot</keyword>
     <write>0</write>
+    <variable>name</variable>
   </subplotoption>
   <subplotoption>
     <name>position</name>
@@ -21,9 +22,15 @@
     <variable>backgroundcolor</variable>
     <default>White</default>
     <keyword>BackgroundColor</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>backgroundcolor</variable>
+        <operator>ne</operator>
+        <value>White</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>xlim</name>
@@ -41,57 +48,92 @@
     <name>scale</name>
     <type>real</type>
     <keyword>Scale</keyword>
-    <check>
-      <variable>axesequal</variable>
-      <operator>eq</operator>
-      <value>1</value>
-    </check>
+    <variable>scale</variable>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>axesequal</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>xtick</name>
     <type>real</type>
     <keyword>XTick</keyword>
+    <variable>xtick</variable>
   </subplotoption>
   <subplotoption>
     <name>xtickmultiply</name>
     <type>real</type>
     <default>1</default>
     <keyword>XTickMultiply</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
+    <variable>xtickmultiply</variable>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>xtickmultiply</variable>
+        <operator>ne</operator>
+        <value>1</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>xtickadd</name>
     <type>real</type>
     <default>0</default>
     <keyword>XTickAdd</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
+    <variable>xtickadd</variable>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>xtickadd</variable>
+        <operator>ne</operator>
+        <value>0</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>ytick</name>
     <type>real</type>
     <keyword>YTick</keyword>
+    <variable>ytick</variable>
   </subplotoption>
   <subplotoption>
     <name>ytickmultiply</name>
     <type>real</type>
     <default>1</default>
     <keyword>YTickMultiply</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
+    <variable>ytickmultiply</variable>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>ytickmultiply</variable>
+        <operator>ne</operator>
+        <value>1</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>ytickadd</name>
     <type>real</type>
     <default>0</default>
     <keyword>YTickAdd</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
+    <variable>ytickadd</variable>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>ytickadd</variable>
+        <operator>ne</operator>
+        <value>0</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>xdecimals</name>
@@ -99,6 +141,7 @@
     <default>-1</default>
     <keyword>XDecimals</keyword>
     <keyword2>DecimalsX</keyword2>
+    <variable>xdecimals</variable>
   </subplotoption>
   <subplotoption>
     <name>ydecimals</name>
@@ -106,18 +149,21 @@
     <default>-1</default>
     <keyword>YDecimals</keyword>
     <keyword2>DecimalsY</keyword2>
+    <variable>ydecimals</variable>
   </subplotoption>
   <subplotoption>
     <name>xgrid</name>
     <type>boolean</type>
     <default>0</default>
     <keyword>XGrid</keyword>
+    <variable>xgrid</variable>
   </subplotoption>
   <subplotoption>
     <name>ygrid</name>
     <type>boolean</type>
     <default>0</default>
     <keyword>YGrid</keyword>
+    <variable>ygrid</variable>
   </subplotoption>
   <subplotoption>
     <name>tmin</name>
@@ -147,6 +193,7 @@
     <type>boolean</type>
     <default>0</default>
     <keyword>XGrid</keyword>
+    <variable>timegrid</variable>
   </subplotoption>
   <subplotoption>
     <name>fontname</name>
@@ -154,9 +201,15 @@
     <default>Helvetica</default>
     <keyword>FontName</keyword>
     <keyword2>Font</keyword2>
-    <check>
-      <operator>ne</operator>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>font.name</variable>
+        <operator>ne</operator>
+        <value>Helvetica</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>fontsize</name>
@@ -164,36 +217,60 @@
     <variable>font.size</variable>
     <default>8</default>
     <keyword>FontSize</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>font.size</variable>
+        <operator>ne</operator>
+        <value>8</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>fontweight</name>
     <variable>font.weight</variable>
     <default>normal</default>
     <keyword>FontWeight</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>font.weight</variable>
+        <operator>ne</operator>
+        <value>normal</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>fontangle</name>
     <variable>font.angle</variable>
     <default>normal</default>
     <keyword>FontAngle</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>font.angle</variable>
+        <operator>ne</operator>
+        <value>normal</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>fontcolor</name>
     <variable>font.color</variable>
     <default>Black</default>
     <keyword>FontColor</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>font.color</variable>
+        <operator>ne</operator>
+        <value>Black</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>titletext</name>
@@ -207,9 +284,15 @@
     <default>Helvetica</default>
     <keyword>TitleFontName</keyword>
     <keyword2>Font</keyword2>
-    <check>
-      <operator>ne</operator>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>title.font.name</variable>
+        <operator>ne</operator>
+        <value>Helvetica</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>titlefontsize</name>
@@ -217,36 +300,60 @@
     <variable>title.font.size</variable>
     <default>10</default>
     <keyword>TitleFontSize</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>title.font.size</variable>
+        <operator>ne</operator>
+        <value>10</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>titlefontweight</name>
     <variable>title.font.weight</variable>
     <default>normal</default>
     <keyword>TitleFontWeight</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>title.font.weight</variable>
+        <operator>ne</operator>
+        <value>normal</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>titlefontangle</name>
     <variable>title.font.angle</variable>
     <default>normal</default>
     <keyword>TitleFontAngle</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>title.font.angle</variable>
+        <operator>ne</operator>
+        <value>normal</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>titlefontcolor</name>
     <variable>title.font.color</variable>
     <default>Black</default>
     <keyword>TitleFontColor</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>title.font.color</variable>
+        <operator>ne</operator>
+        <value>Black</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>xlabeltext</name>
@@ -260,9 +367,15 @@
     <default>Helvetica</default>
     <keyword>XLabelFontName</keyword>
     <keyword2>Font</keyword2>
-    <check>
-      <operator>ne</operator>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>xlabel.font.name</variable>
+        <operator>ne</operator>
+        <value>Helvetica</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>xlabelfontsize</name>
@@ -270,36 +383,60 @@
     <variable>xlabel.font.size</variable>
     <default>8</default>
     <keyword>XLabelFontSize</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>xlabel.font.size</variable>
+        <operator>ne</operator>
+        <value>8</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>xlabelfontweight</name>
     <variable>xlabel.font.weight</variable>
     <default>normal</default>
     <keyword>XLabelFontWeight</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>xlabel.font.weight</variable>
+        <operator>ne</operator>
+        <value>normal</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>xlabelfontangle</name>
     <variable>xlabel.font.angle</variable>
     <default>normal</default>
     <keyword>XLabelFontAngle</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>xlabel.font.angle</variable>
+        <operator>ne</operator>
+        <value>normal</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>xlabelfontcolor</name>
     <variable>xlabel.font.color</variable>
     <default>Black</default>
     <keyword>XLabelFontColor</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>xlabel.font.color</variable>
+        <operator>ne</operator>
+        <value>Black</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>ylabeltext</name>
@@ -313,9 +450,15 @@
     <default>Helvetica</default>
     <keyword>YLabelFontName</keyword>
     <keyword2>Font</keyword2>
-    <check>
-      <operator>ne</operator>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>ylabel.font.name</variable>
+        <operator>ne</operator>
+        <value>Helvetica</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>ylabelfontsize</name>
@@ -323,41 +466,66 @@
     <variable>ylabel.font.size</variable>
     <default>8</default>
     <keyword>YLabelFontSize</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>ylabel.font.size</variable>
+        <operator>ne</operator>
+        <value>8</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>ylabelfontweight</name>
     <variable>ylabel.font.weight</variable>
     <default>normal</default>
     <keyword>YLabelFontWeight</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>ylabel.font.weight</variable>
+        <operator>ne</operator>
+        <value>normal</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>ylabelfontangle</name>
     <variable>ylabel.font.angle</variable>
     <default>normal</default>
     <keyword>YLabelFontAngle</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>ylabel.font.angle</variable>
+        <operator>ne</operator>
+        <value>normal</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>ylabelfontcolor</name>
     <variable>ylabel.font.color</variable>
     <default>Black</default>
     <keyword>YLabelFontColor</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>ylabel.font.color</variable>
+        <operator>ne</operator>
+        <value>Black</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>colormap</name>
     <default>jet</default>
     <keyword>ColorMap</keyword>
+    <variable>colormap</variable>
   </subplotoption>
   <subplotoption>
     <name>colorbar</name>
@@ -371,22 +539,30 @@
     <variable>colorbar.position</variable>
     <type>real</type>
     <keyword>ColorBarPosition</keyword>
-    <check>
-      <variable>plotcolorbar</variable>
-      <operator>eq</operator>
-      <value>1</value>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>plotcolorbar</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>colorbarlabel</name>
     <variable>colorbar.label</variable>
     <keyword>ColorBarLabel</keyword>
     <default> </default>
-    <check>
-      <variable>plotcolorbar</variable>
-      <operator>eq</operator>
-      <value>1</value>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>plotcolorbar</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>colorbartickincrement</name>
@@ -394,25 +570,35 @@
     <keyword>ColorBarTickIncrement</keyword>
     <type>int</type>
     <default>1</default>
-    <check>
-      <variable>plotcolorbar</variable>
-      <operator>eq</operator>
-      <value>1</value>
-    </check>
-    <check>
-      <operator>ne</operator>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>plotcolorbar</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+      <check>
+        <variable>colorbar.tickincrement</variable>
+        <operator>ne</operator>
+        <value>1</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>colorbarunit</name>
     <variable>colorbar.unit</variable>
     <keyword>ColorBarUnit</keyword>
     <default> </default>
-    <check>
-      <variable>plotcolorbar</variable>
-      <operator>eq</operator>
-      <value>1</value>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>plotcolorbar</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>colorbartype</name>
@@ -421,14 +607,20 @@
     <keyword>ColorBarType</keyword>
     <keyword2>BarType</keyword2>
     <default>1</default>
-    <check>
-      <variable>plotcolorbar</variable>
-      <operator>eq</operator>
-      <value>1</value>
-    </check>
-    <check>
-      <operator>ne</operator>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>plotcolorbar</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+      <check>
+        <variable>colorbar.type</variable>
+        <operator>ne</operator>
+        <value>1</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>colorbarfontname</name>
@@ -436,14 +628,20 @@
     <default>Helvetica</default>
     <keyword>ColorBarFontName</keyword>
     <keyword2>Font</keyword2>
-    <check>
-      <operator>ne</operator>
-    </check>
-    <check>
-      <variable>plotcolorbar</variable>
-      <operator>eq</operator>
-      <value>1</value>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>colorbar.font.name</variable>
+        <operator>ne</operator>
+        <value>Helvetica</value>
+      </check>
+      <check>
+        <variable>plotcolorbar</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>colorbarfontsize</name>
@@ -451,56 +649,80 @@
     <variable>colorbar.font.size</variable>
     <default>8</default>
     <keyword>ColorBarFontSize</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
-    <check>
-      <variable>plotcolorbar</variable>
-      <operator>eq</operator>
-      <value>1</value>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>colorbar.font.size</variable>
+        <operator>ne</operator>
+        <value>8</value>
+      </check>
+      <check>
+        <variable>plotcolorbar</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>colorbarfontweight</name>
     <variable>colorbar.font.weight</variable>
     <default>normal</default>
     <keyword>ColorBarFontWeight</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
-    <check>
-      <variable>plotcolorbar</variable>
-      <operator>eq</operator>
-      <value>1</value>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>colorbar.font.weight</variable>
+        <operator>ne</operator>
+        <value>normal</value>
+      </check>
+      <check>
+        <variable>plotcolorbar</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>colorbarfontangle</name>
     <variable>colorbar.font.angle</variable>
     <default>normal</default>
     <keyword>ColorBarFontAngle</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
-    <check>
-      <variable>plotcolorbar</variable>
-      <operator>eq</operator>
-      <value>1</value>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>colorbar.font.angle</variable>
+        <operator>ne</operator>
+        <value>normal</value>
+      </check>
+      <check>
+        <variable>plotcolorbar</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>colorbarfontcolor</name>
     <variable>colorbar.font.color</variable>
     <default>Black</default>
     <keyword>ColorBarFontColor</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
-    <check>
-      <variable>plotcolorbar</variable>
-      <operator>eq</operator>
-      <value>1</value>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>colorbar.font.color</variable>
+        <operator>ne</operator>
+        <value>Black</value>
+      </check>
+      <check>
+        <variable>plotcolorbar</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>colorbardecimals</name>
@@ -509,14 +731,20 @@
     <type>int</type>
     <keyword>ColorBarDecimals</keyword>
     <keyword2>BarDecim</keyword2>
-    <check>
-      <operator>ne</operator>
-    </check>
-    <check>
-      <variable>plotcolorbar</variable>
-      <operator>eq</operator>
-      <value>1</value>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>colorbar.decimals</variable>
+        <operator>ne</operator>
+        <value>-1</value>
+      </check>
+      <check>
+        <variable>plotcolorbar</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>usecustomcontours</name>
@@ -524,31 +752,45 @@
     <type>boolean</type>
     <keyword>UseCustomContours</keyword>
     <default>0</default>
-    <check>
-      <operator>ne</operator>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>usecustomcontours</variable>
+        <operator>ne</operator>
+        <value>0</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>clim</name>
     <variable>cmin cstep cmax</variable>
     <type>real</type>
     <keyword>Contours</keyword>
-    <check>
-      <variable>usecustomcontours</variable>
-      <operator>eq</operator>
-      <value>0</value>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>usecustomcontours</variable>
+        <operator>eq</operator>
+        <value>0</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>customcontours</name>
     <variable>customcontours</variable>
     <type>real</type>
     <keyword>CustomContours</keyword>
-    <check>
-      <variable>usecustomcontours</variable>
-      <operator>eq</operator>
-      <value>1</value>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>usecustomcontours</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>scalebar</name>
@@ -556,41 +798,59 @@
     <default>0</default>
     <type>booleanorreal</type>
     <keyword>ScaleBar</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>plotscalebar</variable>
+        <operator>ne</operator>
+        <value>0</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>scalebarposition</name>
     <variable>scalebar.position</variable>
     <type>real</type>
     <keyword>ScaleBarPosition</keyword>
-    <check>
-      <variable>plotscalebar</variable>
-      <operator>eq</operator>
-      <value>1</value>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>plotscalebar</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>scalebarlength</name>
     <variable>scalebar.length</variable>
     <type>real</type>
     <keyword>ScaleBarLength</keyword>
-    <check>
-      <variable>plotscalebar</variable>
-      <operator>eq</operator>
-      <value>1</value>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>plotscalebar</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>scalebartext</name>
     <variable>scalebar.text</variable>
     <keyword>ScaleBarText</keyword>
-    <check>
-      <variable>plotscalebar</variable>
-      <operator>eq</operator>
-      <value>1</value>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>plotscalebar</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>scalebarfontname</name>
@@ -598,14 +858,20 @@
     <default>Helvetica</default>
     <keyword>ScaleBarFontName</keyword>
     <keyword2>Font</keyword2>
-    <check>
-      <operator>ne</operator>
-    </check>
-    <check>
-      <variable>plotscalebar</variable>
-      <operator>eq</operator>
-      <value>1</value>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>scalebar.font.name</variable>
+        <operator>ne</operator>
+        <value>Helvetica</value>
+      </check>
+      <check>
+        <variable>plotscalebar</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>scalebarfontsize</name>
@@ -613,56 +879,80 @@
     <variable>scalebar.font.size</variable>
     <default>8</default>
     <keyword>ScaleBarFontSize</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
-    <check>
-      <variable>plotscalebar</variable>
-      <operator>eq</operator>
-      <value>1</value>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>scalebar.font.size</variable>
+        <operator>ne</operator>
+        <value>8</value>
+      </check>
+      <check>
+        <variable>plotscalebar</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>scalebarfontweight</name>
     <variable>scalebar.font.weight</variable>
     <default>normal</default>
     <keyword>ScaleBarFontWeight</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
-    <check>
-      <variable>plotscalebar</variable>
-      <operator>eq</operator>
-      <value>1</value>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>scalebar.font.weight</variable>
+        <operator>ne</operator>
+        <value>normal</value>
+      </check>
+      <check>
+        <variable>plotscalebar</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>scalebarfontangle</name>
     <variable>scalebar.font.angle</variable>
     <default>normal</default>
     <keyword>ScaleBarFontAngle</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
-    <check>
-      <variable>plotscalebar</variable>
-      <operator>eq</operator>
-      <value>1</value>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>scalebar.font.angle</variable>
+        <operator>ne</operator>
+        <value>normal</value>
+      </check>
+      <check>
+        <variable>plotscalebar</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>scalebarfontcolor</name>
     <variable>scalebar.font.color</variable>
     <default>Black</default>
     <keyword>ScaleBarFontColor</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
-    <check>
-      <variable>plotscalebar</variable>
-      <operator>eq</operator>
-      <value>1</value>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>scalebar.font.color</variable>
+        <operator>ne</operator>
+        <value>Black</value>
+      </check>
+      <check>
+        <variable>plotscalebar</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>northarrow</name>
@@ -670,40 +960,75 @@
     <default>0</default>
     <type>booleanorreal</type>
     <keyword>NorthArrow</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>plotnortharrow</variable>
+        <operator>ne</operator>
+        <value>0</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>northarrowposition</name>
     <variable>northarrow.position</variable>
     <type>real</type>
     <keyword>NorthArrowPosition</keyword>
-    <check>
-      <variable>plotnortharrow</variable>
-      <operator>eq</operator>
-      <value>1</value>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>plotnortharrow</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>coordinatesystemname</name>
     <variable>coordinatesystem.name</variable>
     <keyword>CoordinateSystemName</keyword>
     <default>unspecified</default>
-    <check>
-      <operator>ne</operator>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>coordinatesystem.name</variable>
+        <operator>ne</operator>
+        <value>unspecified</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>coordinatesystemtype</name>
     <variable>coordinatesystem.type</variable>
     <keyword>CoordinateSystemType</keyword>
     <default>projected</default>
-    <check>
-      <variable>coordinatesystem.name</variable>
-      <operator>ne</operator>
-      <value>unspecified</value>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>coordinatesystem.name</variable>
+        <operator>ne</operator>
+        <value>unspecified</value>
+      </check>
+    </dependency>
+  </subplotoption>
+  <subplotoption>
+    <name>projection</name>
+    <variable>projection</variable>
+    <keyword>Projection</keyword>
+    <default>equirectangular</default>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>coordinatesystem.type</variable>
+        <operator>eq</operator>
+        <value>geographic</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>vectorlegend</name>
@@ -711,20 +1036,30 @@
     <default>0</default>
     <type>boolean</type>
     <keyword>VectorLegend</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>plotvectorlegend</variable>
+        <operator>ne</operator>
+        <value>0</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>vectorlegendposition</name>
     <variable>vectorlegend.position</variable>
     <type>real</type>
     <keyword>VectorLegendPosition</keyword>
-    <check>
-      <variable>plotvectorlegend</variable>
-      <operator>eq</operator>
-      <value>1</value>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>plotvectorlegend</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>vectorlegendfontname</name>
@@ -732,14 +1067,20 @@
     <default>Helvetica</default>
     <keyword>VectorLegendFontName</keyword>
     <keyword2>Font</keyword2>
-    <check>
-      <operator>ne</operator>
-    </check>
-    <check>
-      <variable>plotvectorlegend</variable>
-      <operator>eq</operator>
-      <value>1</value>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>vectorlegend.font.name</variable>
+        <operator>ne</operator>
+        <value>Helvetica</value>
+      </check>
+      <check>
+        <variable>plotvectorlegend</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>vectorlegendfontsize</name>
@@ -747,56 +1088,80 @@
     <variable>vectorlegend.font.size</variable>
     <default>8</default>
     <keyword>VectorLegendFontSize</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
-    <check>
-      <variable>plotvectorlegend</variable>
-      <operator>eq</operator>
-      <value>1</value>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>vectorlegend.font.size</variable>
+        <operator>ne</operator>
+        <value>8</value>
+      </check>
+      <check>
+        <variable>plotvectorlegend</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>vectorlegendfontweight</name>
     <variable>vectorlegend.font.weight</variable>
     <default>normal</default>
     <keyword>VectorLegendFontWeight</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
-    <check>
-      <variable>plotvectorlegend</variable>
-      <operator>eq</operator>
-      <value>1</value>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>vectorlegend.font.weight</variable>
+        <operator>ne</operator>
+        <value>normal</value>
+      </check>
+      <check>
+        <variable>plotvectorlegend</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>vectorlegendfontangle</name>
     <variable>vectorlegend.font.angle</variable>
     <default>normal</default>
     <keyword>VectorLegendFontAngle</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
-    <check>
-      <variable>plotvectorlegend</variable>
-      <operator>eq</operator>
-      <value>1</value>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>vectorlegend.font.angle</variable>
+        <operator>ne</operator>
+        <value>normal</value>
+      </check>
+      <check>
+        <variable>plotvectorlegend</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>vectorlegendfontcolor</name>
     <variable>vectorlegend.font.color</variable>
     <default>Black</default>
     <keyword>VectorLegendFontColor</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
-    <check>
-      <variable>plotvectorlegend</variable>
-      <operator>eq</operator>
-      <value>1</value>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>vectorlegend.font.color</variable>
+        <operator>ne</operator>
+        <value>Black</value>
+      </check>
+      <check>
+        <variable>plotvectorlegend</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>legend</name>
@@ -804,9 +1169,15 @@
     <default>0</default>
     <type>boolean</type>
     <keyword>Legend</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>plotlegend</variable>
+        <operator>ne</operator>
+        <value>0</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>legendposition</name>
@@ -814,11 +1185,15 @@
     <default>NorthEast</default>
     <type>string</type>
     <keyword>LegendPosition</keyword>
-    <check>
-      <variable>plotlegend</variable>
-      <operator>eq</operator>
-      <value>1</value>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>plotlegend</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>legendcustomposition</name>
@@ -826,30 +1201,40 @@
     <default>0 0 1 1</default>
     <type>real</type>
     <keyword>LegendCustomPosition</keyword>
-    <check>
-      <variable>plotlegend</variable>
-      <operator>eq</operator>
-      <value>1</value>
-    </check>
-    <check>
-      <variable>legend.position</variable>
-      <operator>eq</operator>
-      <value>custom</value>
-    </check>    
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>plotlegend</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+      <check>
+        <variable>legend.position</variable>
+        <operator>eq</operator>
+        <value>custom</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>legendcolor</name>
     <variable>legend.color</variable>
     <keyword>LegendColor</keyword>
     <default>White</default>
-    <check>
-      <variable>plotlegend</variable>
-      <operator>eq</operator>
-      <value>1</value>
-    </check>
-    <check>
-      <operator>ne</operator>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>plotlegend</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+      <check>
+        <variable>legend.color</variable>
+        <operator>ne</operator>
+        <value>White</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>legendbox</name>
@@ -857,28 +1242,40 @@
     <type>boolean</type>
     <keyword>LegendBox</keyword>
     <default>1</default>
-    <check>
-      <variable>plotlegend</variable>
-      <operator>eq</operator>
-      <value>1</value>
-    </check>
-    <check>
-      <operator>ne</operator>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>plotlegend</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+      <check>
+        <variable>legend.border</variable>
+        <operator>ne</operator>
+        <value>1</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>legendorientation</name>
     <variable>legend.orientation</variable>
     <keyword>LegendOrientation</keyword>
     <default>Vertical</default>
-    <check>
-      <variable>plotlegend</variable>
-      <operator>eq</operator>
-      <value>1</value>
-    </check>
-    <check>
-      <operator>ne</operator>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>plotlegend</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+      <check>
+        <variable>legend.orientation</variable>
+        <operator>ne</operator>
+        <value>Vertical</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>legendfontname</name>
@@ -886,14 +1283,20 @@
     <default>Helvetica</default>
     <keyword>LegendFontName</keyword>
     <keyword2>Font</keyword2>
-    <check>
-      <operator>ne</operator>
-    </check>
-    <check>
-      <variable>plotlegend</variable>
-      <operator>eq</operator>
-      <value>1</value>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>legend.font.name</variable>
+        <operator>ne</operator>
+        <value>Helvetica</value>
+      </check>
+      <check>
+        <variable>plotlegend</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>legendfontsize</name>
@@ -901,65 +1304,96 @@
     <variable>legend.font.size</variable>
     <default>8</default>
     <keyword>LegendFontSize</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
-    <check>
-      <variable>plotlegend</variable>
-      <operator>eq</operator>
-      <value>1</value>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>legend.font.size</variable>
+        <operator>ne</operator>
+        <value>8</value>
+      </check>
+      <check>
+        <variable>plotlegend</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>legendfontweight</name>
     <variable>legend.font.weight</variable>
     <default>normal</default>
     <keyword>LegendFontWeight</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
-    <check>
-      <variable>plotlegend</variable>
-      <operator>eq</operator>
-      <value>1</value>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>legend.font.weight</variable>
+        <operator>ne</operator>
+        <value>normal</value>
+      </check>
+      <check>
+        <variable>plotlegend</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>legendfontangle</name>
     <variable>legend.font.angle</variable>
     <default>normal</default>
     <keyword>LegendFontAngle</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
-    <check>
-      <variable>plotlegend</variable>
-      <operator>eq</operator>
-      <value>1</value>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>legend.font.angle</variable>
+        <operator>ne</operator>
+        <value>normal</value>
+      </check>
+      <check>
+        <variable>plotlegend</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>legendfontcolor</name>
     <variable>legend.font.color</variable>
     <default>Black</default>
     <keyword>LegendFontColor</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
-    <check>
-      <variable>plotlegend</variable>
-      <operator>eq</operator>
-      <value>1</value>
-    </check>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>legend.font.color</variable>
+        <operator>ne</operator>
+        <value>Black</value>
+      </check>
+      <check>
+        <variable>plotlegend</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>adddate</name>
     <default>0</default>
     <keyword>AddDate</keyword>
     <type>boolean</type>
-    <check>
-      <operator>ne</operator>
-    </check>
+    <variable>adddate</variable>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>adddate</variable>
+        <operator>ne</operator>
+        <value>0</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>zlim</name>
@@ -971,24 +1405,39 @@
     <name>ztick</name>
     <type>real</type>
     <keyword>ZTick</keyword>
+    <variable>ztick</variable>
   </subplotoption>
   <subplotoption>
     <name>ztickadd</name>
     <type>real</type>
     <default>0</default>
     <keyword>ZTickAdd</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
+    <variable>ztickadd</variable>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>ztickadd</variable>
+        <operator>ne</operator>
+        <value>0</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>ztickmultiply</name>
     <type>real</type>
     <default>1</default>
     <keyword>ZTickMultiply</keyword>
-    <check>
-      <operator>ne</operator>
-    </check>
+    <variable>ztickmultiply</variable>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>ztickmultiply</variable>
+        <operator>ne</operator>
+        <value>1</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>zdecimals</name>
@@ -996,72 +1445,92 @@
     <default>-1</default>
     <keyword>ZDecimals</keyword>
     <keyword2>DecimalsZ</keyword2>
+    <variable>zdecimals</variable>
   </subplotoption>
   <subplotoption>
     <name>zgrid</name>
     <type>boolean</type>
     <default>0</default>
     <keyword>ZGrid</keyword>
+    <variable>zgrid</variable>
   </subplotoption>
   <subplotoption>
     <name>viewmode3d</name>
     <type>int</type>
     <default>1</default>
     <keyword>ViewMode3D</keyword>
+    <variable>viewmode3d</variable>
   </subplotoption>
   <subplotoption>
     <name>cameratarget</name>
     <type>real</type>
     <keyword>CameraTarget</keyword>
+    <variable>cameratarget</variable>
   </subplotoption>
   <subplotoption>
     <name>cameraposition</name>
     <type>real</type>
     <keyword>CameraPosition</keyword>
+    <variable>cameraposition</variable>
   </subplotoption>
   <subplotoption>
     <name>cameraangle</name>
     <type>real</type>
     <keyword>CameraAngle</keyword>
+    <variable>cameraangle</variable>
   </subplotoption>
   <subplotoption>
     <name>cameradistance</name>
     <type>real</type>
     <keyword>CameraDistance</keyword>
+    <variable>cameradistance</variable>
   </subplotoption>
   <subplotoption>
     <name>cameraviewangle</name>
     <type>real</type>
     <keyword>CameraViewAngle</keyword>
+    <variable>cameraviewangle</variable>
   </subplotoption>
   <subplotoption>
     <name>dataaspectratio</name>
     <type>real</type>
     <keyword>DataAspectRatio</keyword>
+    <variable>dataaspectratio</variable>
   </subplotoption>
   <subplotoption>
     <name>light</name>
     <type>boolean</type>
     <keyword>Light</keyword>
+    <variable>light</variable>
   </subplotoption>
   <subplotoption>
     <name>lightangle</name>
     <type>real</type>
     <keyword>LightAngle</keyword>
-    <check>
-      <variable>light</variable>
-      <operator>eq</operator>
-      <value>1</value>
-    </check>
+    <variable>lightangle</variable>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>light</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
   </subplotoption>
   <subplotoption>
     <name>drawbox</name>
     <type>boolean</type>
     <keyword>Box</keyword>
-    <check>
-      <variable>drawbox</variable>
-      <operator>ne</operator>
-      <value>1</value>
-    </check>
+    <variable>drawbox</variable>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>drawbox</variable>
+        <operator>ne</operator>
+        <value>1</value>
+      </check>
+    </dependency>
   </subplotoption>
 </root>

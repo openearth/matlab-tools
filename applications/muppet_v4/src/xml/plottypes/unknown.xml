@@ -1,12 +1,9 @@
 <?xml version="1.0"?>
 <root>
-  <plottype>
-    <name>unknown</name>  
-    <option>
-      <name>type</name>
-    </option>
-    <option>
-      <name>position</name>
-    </option>
-  </plottype>
+  <subplotoption>
+    <name>type</name>
+  </subplotoption>
+  <subplotoption>
+    <name>position</name>
+  </subplotoption>
 </root>

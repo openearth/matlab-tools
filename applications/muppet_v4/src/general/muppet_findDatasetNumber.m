@@ -9,6 +9,6 @@ for ii=1:length(handles.datasets)
     end
 end
 
-if isempty(datasetnr)
-    disp(['Dataset ' name ' not found!'])
-end
+% if isempty(datasetnr)
+%     disp(['Dataset ' name ' not found!'])
+% end

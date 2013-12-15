@@ -1,20 +1,21 @@
 <?xml version="1.0"?>
 <root>
-  <name>kubint</name>
   <longname>Kubint Files</longname>
   <title>Kubint File</title>
   <filterspec>*.kub</filterspec>
   <callback>muppet_addDatasetKubint</callback>
-  <option>
+  <dataproperty>
     <name>filetype</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>filename</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>parameter</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>polygonfile</name>
-  </option>
+  </dataproperty>
+  <elementgroup>parameter</elementgroup>
+  <elementgroup>polygonfile</elementgroup>
 </root>

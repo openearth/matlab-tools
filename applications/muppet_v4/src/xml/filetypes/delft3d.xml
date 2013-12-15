@@ -1,53 +1,63 @@
 <?xml version="1.0"?>
 <root>
-  <name>delft3d</name>
   <longname>Delft3D Output File</longname>
   <title>Delft3D Output File</title>
   <filterspec>trim-*.dat;trih-*.dat;com-*.dat;wavm-*.dat;hwgxy*.dat;*.dat</filterspec>
   <callback>muppet_addDatasetQP</callback>
-  <option>
+  <dataproperty>
     <name>filetype</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>filename</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>domain</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>parameter</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>subfield</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>plotcoordinate</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>component</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>timestep</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>time</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>station</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>m</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>n</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>k</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>coordinatesystemname</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>coordinatesystemtype</name>
-  </option>
+  </dataproperty>
+  <elementgroup>domain</elementgroup>
+  <elementgroup>parameter</elementgroup>
+  <elementgroup>subfield</elementgroup>
+  <elementgroup>plotcoordinate</elementgroup>
+  <elementgroup>component</elementgroup>
+  <elementgroup>timestep</elementgroup>
+  <elementgroup>station</elementgroup>
+  <elementgroup>m</elementgroup>
+  <elementgroup>n</elementgroup>
+  <elementgroup>k</elementgroup>
+  <elementgroup>coordinatesystemname</elementgroup>
 </root>

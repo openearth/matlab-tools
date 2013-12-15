@@ -11,10 +11,9 @@ set(gcf, 'Pointer', 'crosshair');
 function starttrack(imagefig, varargins) 
 set(gcf, 'Units', 'normalized');
 set(gcf, 'Pointer', 'crosshair');
-set(gcf, 'windowbuttonmotionfcn', {@followtrack});
 
 an=annotation('doublearrow');
-set(an,'Tag','doublearrow');
+set(an,'Tag','Double Arrow');
 set(an,'Head1Style','plain');
 set(an,'Head1Width',6);
 set(an,'Head1Length',6);
@@ -33,8 +32,6 @@ AnnOpt.BackgroundColor='white';
 AnnOpt.FontColor='black';
 set(usd.h,'UserData',AnnOpt);
 
-set(0,'UserData',usd);
-
 set(usd.h,'Visible','on');
 CurPnt = get(gcf, 'CurrentPoint');
 usd.x(1)=CurPnt(1);
@@ -48,6 +45,8 @@ usd.y=min(usd.y,1);
 set(usd.h,'X',usd.x);
 set(usd.h,'Y',usd.y);
 set(0,'UserData',usd);
+
+set(gcf, 'windowbuttonmotionfcn', {@followtrack});
 
 %%
 function followtrack(imagefig, varargins) 

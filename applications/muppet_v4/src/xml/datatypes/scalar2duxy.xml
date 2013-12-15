@@ -1,21 +1,58 @@
 <?xml version="1.0"?>
 <root>
-  <name>scalar2duxy</name>
   <longname>Scalar 2D (unstructured)</longname>
-  <plot>
-    <type>map</type>
+  <plottype>
+    <name>map</name>
     <plotroutine>
-      <name>plotunstructuredpatches</name>
-      <longname>Patches</longname>
+      <name>Unstructured Patches</name>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>plotgridgroup</name>
+        <name>plotgrid</name>
       </plotoption>
       <plotoption>
-        <name>adddategroup</name>
+        <name>linecolor</name>
       </plotoption>
+      <plotoption>
+        <name>linewidth</name>
+      </plotoption>
+      <plotoption>
+        <name>linestyle</name>
+      </plotoption>
+      <plotoption>
+        <name>adddatestring</name>
+      </plotoption>
+      <plotoption>
+        <name>adddateposition</name>
+      </plotoption>
+      <plotoption>
+        <name>adddateformat</name>
+      </plotoption>
+      <plotoption>
+        <name>adddateprefix</name>
+      </plotoption>
+      <plotoption>
+        <name>adddatesuffix</name>
+      </plotoption>
+      <elementgroup>plotgrid</elementgroup>
+      <elementgroup>adddate</elementgroup>
     </plotroutine>
-  </plot>
+    <plotroutine>
+      <name>Unstructured Mesh</name>
+      <plotoption>
+        <name>plotroutine</name>
+      </plotoption>
+      <plotoption>
+        <name>linecolor</name>
+      </plotoption>
+      <plotoption>
+        <name>linewidth</name>
+      </plotoption>
+      <plotoption>
+        <name>linestyle</name>
+      </plotoption>
+      <elementgroup>plotgrid</elementgroup>
+    </plotroutine>
+  </plottype>
 </root>

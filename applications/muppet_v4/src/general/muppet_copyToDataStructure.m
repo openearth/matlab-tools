@@ -93,6 +93,11 @@ switch dataset.plane
             case{'vector3d'}
                 dataset.u=d.XComp;
                 dataset.v=d.YComp;
+            case{'tidalellipse'}
+                dataset.uamplitude=d.UAmplitude;
+                dataset.vamplitude=d.VAmplitude;
+                dataset.uphase=d.UPhase;
+                dataset.vphase=d.VPhase;
         end
     
     case{'xv'}

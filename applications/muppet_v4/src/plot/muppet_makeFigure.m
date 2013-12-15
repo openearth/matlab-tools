@@ -54,6 +54,7 @@ for j=1:fig.nrsubplots
     fig.subplots(j).subplot.annotationschanged=0;
 end
 setappdata(figh,'figure',fig);
+setappdata(figh,'cm2pix',handles.figures(ifig).figure.cm2pix);
 
 % Make frame
 if fig.useframe

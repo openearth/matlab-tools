@@ -101,7 +101,7 @@ else
     end
 end
 
-iopt=0;
+iopt=1;
 
 if iopt==1
 
@@ -112,10 +112,10 @@ if iopt==1
     set(tx0,'Fontweight',opt.font.weight);
     set(tx0,'FontName',opt.font.name);
     set(tx0,'rotation',data.rotation);
-    ext=get(tx0,'Extent');
     set(tx0,'Visible','off');
     
     ext=get(tx0,'Extent');
+    len=ext(3);
     cenx=ext(1)+0.5*ext(3);
     ceny=ext(2)+0.5*ext(4);
     extentx=[cenx-0.5*len*cos(data.rotation*pi/180) cenx+0.5*len*cos(data.rotation*pi/180)];

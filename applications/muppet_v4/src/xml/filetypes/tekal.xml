@@ -1,56 +1,68 @@
 <?xml version="1.0"?>
 <root>
-  <name>tekal</name>
   <longname>Tekal Files</longname>
   <title>Tekal File</title>
   <filterspec>*.tek;*.map</filterspec>
   <callback>muppet_addDatasetTekal</callback>
-  <option>
+  <dataproperty>
     <name>filetype</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>filename</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>xcoordinate</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>ycoordinate</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>quantity</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>parameter</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>ucomponent</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>vcomponent</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>plotcoordinate</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>component</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>timestep</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>time</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>block</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>m</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>n</name>
-  </option>
-  <option>
+  </dataproperty>
+  <dataproperty>
     <name>k</name>
-  </option>
+  </dataproperty>
+  <elementgroup>xcoordinate</elementgroup>
+  <elementgroup>ycoordinate</elementgroup>
+  <elementgroup>quantity</elementgroup>
+  <elementgroup>parameter</elementgroup>
+  <elementgroup>ucomponent</elementgroup>
+  <elementgroup>vcomponent</elementgroup>
+  <elementgroup>plotcoordinate</elementgroup>
+  <elementgroup>component</elementgroup>
+  <elementgroup>timestep</elementgroup>
+  <elementgroup>block</elementgroup>
+  <elementgroup>m</elementgroup>
+  <elementgroup>n</elementgroup>
+  <elementgroup>k</elementgroup>
 </root>

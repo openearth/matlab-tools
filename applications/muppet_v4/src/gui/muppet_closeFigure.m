@@ -4,8 +4,7 @@ muppet_setPlotEdit(0);
 
 try
     plotedit off;
-    handles=getHandles;
-    changed=muppet_checkForChanges(handles);
+    changed=muppet_checkForChanges;
     if changed==1
         button = questdlg(strvcat('The figure has changed','Keep new settings?'),'','Cancel','No','Yes','Yes');
         switch(button),

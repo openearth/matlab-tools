@@ -1,133 +1,350 @@
 <?xml version="1.0"?>
 <root>
-  <name>scalar2dxy</name>
   <longname>Scalar 2D</longname>
-  <plot>
-    <type>map</type>
+  <plottype>
+    <name>map</name>
     <plotroutine>
-      <name>plotcontourmap</name>
-      <longname>Contour Map</longname>
+      <name>Contour Map</name>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>contourlabelgroup</name>
+        <name>contourlabels</name>
       </plotoption>
       <plotoption>
-        <name>adddategroup</name>
+        <name>labelsspacing</name>
       </plotoption>
+      <plotoption>
+        <name>labelsfontname</name>
+      </plotoption>
+      <plotoption>
+        <name>labelfontsize</name>
+      </plotoption>
+      <plotoption>
+        <name>labelsfontweight</name>
+      </plotoption>
+      <plotoption>
+        <name>labelsfontangle</name>
+      </plotoption>
+      <plotoption>
+        <name>labelsfontcolor</name>
+      </plotoption>
+      <plotoption>
+        <name>adddatestring</name>
+      </plotoption>
+      <plotoption>
+        <name>adddateposition</name>
+      </plotoption>
+      <plotoption>
+        <name>adddateformat</name>
+      </plotoption>
+      <plotoption>
+        <name>adddateprefix</name>
+      </plotoption>
+      <plotoption>
+        <name>adddatesuffix</name>
+      </plotoption>
+      <elementgroup>contourlabel</elementgroup>
+      <elementgroup>adddate</elementgroup>
     </plotroutine>
     <plotroutine>
-      <name>plotcontourlines</name>
-      <longname>Contour Lines</longname>
+      <name>Contour Lines</name>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>linegroup</name>
+        <name>linecolor</name>
       </plotoption>
       <plotoption>
-        <name>climgroup</name>
+        <name>linewidth</name>
       </plotoption>
       <plotoption>
-        <name>contourlabelgroup</name>
+        <name>linestyle</name>
       </plotoption>
       <plotoption>
-        <name>adddategroup</name>
+        <name>clim</name>
       </plotoption>
+      <plotoption>
+        <name>usecustomcontours</name>
+      </plotoption>
+      <plotoption>
+        <name>customcontours</name>
+      </plotoption>
+      <plotoption>
+        <name>contourlabels</name>
+      </plotoption>
+      <plotoption>
+        <name>labelsspacing</name>
+      </plotoption>
+      <plotoption>
+        <name>labelsfontname</name>
+      </plotoption>
+      <plotoption>
+        <name>labelfontsize</name>
+      </plotoption>
+      <plotoption>
+        <name>labelsfontweight</name>
+      </plotoption>
+      <plotoption>
+        <name>labelsfontangle</name>
+      </plotoption>
+      <plotoption>
+        <name>labelsfontcolor</name>
+      </plotoption>
+      <plotoption>
+        <name>adddatestring</name>
+      </plotoption>
+      <plotoption>
+        <name>adddateposition</name>
+      </plotoption>
+      <plotoption>
+        <name>adddateformat</name>
+      </plotoption>
+      <plotoption>
+        <name>adddateprefix</name>
+      </plotoption>
+      <plotoption>
+        <name>adddatesuffix</name>
+      </plotoption>
+      <elementgroup>line</elementgroup>
+      <elementgroup>clim</elementgroup>
+      <elementgroup>contourlabel</elementgroup>
+      <elementgroup>adddate</elementgroup>
     </plotroutine>
     <plotroutine>
-      <name>plotcontourmaplines</name>
-      <longname>Contour Map and Lines</longname>
+      <name>Contour Map and Lines</name>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>linegroup</name>
+        <name>linecolor</name>
       </plotoption>
       <plotoption>
-        <name>climgroup</name>
+        <name>linewidth</name>
       </plotoption>
       <plotoption>
-        <name>contourlabelgroup</name>
+        <name>linestyle</name>
       </plotoption>
       <plotoption>
-        <name>adddategroup</name>
+        <name>clim</name>
       </plotoption>
+      <plotoption>
+        <name>usecustomcontours</name>
+      </plotoption>
+      <plotoption>
+        <name>customcontours</name>
+      </plotoption>
+      <plotoption>
+        <name>contourlabels</name>
+      </plotoption>
+      <plotoption>
+        <name>labelsspacing</name>
+      </plotoption>
+      <plotoption>
+        <name>labelsfontname</name>
+      </plotoption>
+      <plotoption>
+        <name>labelfontsize</name>
+      </plotoption>
+      <plotoption>
+        <name>labelsfontweight</name>
+      </plotoption>
+      <plotoption>
+        <name>labelsfontangle</name>
+      </plotoption>
+      <plotoption>
+        <name>labelsfontcolor</name>
+      </plotoption>
+      <plotoption>
+        <name>adddatestring</name>
+      </plotoption>
+      <plotoption>
+        <name>adddateposition</name>
+      </plotoption>
+      <plotoption>
+        <name>adddateformat</name>
+      </plotoption>
+      <plotoption>
+        <name>adddateprefix</name>
+      </plotoption>
+      <plotoption>
+        <name>adddatesuffix</name>
+      </plotoption>
+      <elementgroup>line</elementgroup>
+      <elementgroup>clim</elementgroup>
+      <elementgroup>contourlabel</elementgroup>
+      <elementgroup>adddate</elementgroup>
     </plotroutine>
     <plotroutine>
-      <name>plotshadesmap</name>
-      <longname>Shades Map</longname>
+      <name>Shades Map</name>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>adddategroup</name>
+        <name>adddatestring</name>
       </plotoption>
+      <plotoption>
+        <name>adddateposition</name>
+      </plotoption>
+      <plotoption>
+        <name>adddateformat</name>
+      </plotoption>
+      <plotoption>
+        <name>adddateprefix</name>
+      </plotoption>
+      <plotoption>
+        <name>adddatesuffix</name>
+      </plotoption>
+      <elementgroup>adddate</elementgroup>
     </plotroutine>
     <plotroutine>
-      <name>plotpatches</name>
-      <longname>Patches</longname>
+      <name>Patches</name>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>adddategroup</name>
+        <name>adddatestring</name>
       </plotoption>
+      <plotoption>
+        <name>adddateposition</name>
+      </plotoption>
+      <plotoption>
+        <name>adddateformat</name>
+      </plotoption>
+      <plotoption>
+        <name>adddateprefix</name>
+      </plotoption>
+      <plotoption>
+        <name>adddatesuffix</name>
+      </plotoption>
+      <elementgroup>adddate</elementgroup>
     </plotroutine>
     <plotroutine>
-      <name>plotgrid</name>
-      <longname>Grid</longname>
+      <name>Grid</name>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>linegroup</name>
+        <name>linecolor</name>
       </plotoption>
+      <plotoption>
+        <name>linewidth</name>
+      </plotoption>
+      <plotoption>
+        <name>linestyle</name>
+      </plotoption>
+      <elementgroup>line</elementgroup>
     </plotroutine>
-  </plot>
-  <plot>
-    <type>xy</type>
+  </plottype>
+  <plottype>
+    <name>xy</name>
     <plotroutine>
-      <name>plotpatches</name>
+      <name>Patches</name>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>linegroup</name>
+        <name>linecolor</name>
       </plotoption>
+      <plotoption>
+        <name>linewidth</name>
+      </plotoption>
+      <plotoption>
+        <name>linestyle</name>
+      </plotoption>
+      <elementgroup>line</elementgroup>
     </plotroutine>
-  </plot>
-  <plot>
-    <type>3d</type>
+  </plottype>
+  <plottype>
+    <name>3d</name>
     <plotroutine>
-      <name>plot3dsurface</name>
-      <longname>3d Surface</longname>
+      <name>3D Surface</name>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>surface3dgroup</name>
+        <name>onecolor</name>
       </plotoption>
       <plotoption>
-        <name>plotgridgroup</name>
+        <name>color</name>
       </plotoption>
       <plotoption>
-        <name>opacitygroup</name>
+        <name>facelighting</name>
       </plotoption>
       <plotoption>
-        <name>adddategroup</name>
+        <name>backfacelighting</name>
       </plotoption>
+      <plotoption>
+        <name>edgelighting</name>
+      </plotoption>
+      <plotoption>
+        <name>ambientstrength</name>
+      </plotoption>
+      <plotoption>
+        <name>diffusestrength</name>
+      </plotoption>
+      <plotoption>
+        <name>specularstrength</name>
+      </plotoption>
+      <plotoption>
+        <name>specularexponent</name>
+      </plotoption>
+      <plotoption>
+        <name>specularcolorreflectance</name>
+      </plotoption>
+      <plotoption>
+        <name>plotgrid</name>
+      </plotoption>
+      <plotoption>
+        <name>linecolor</name>
+      </plotoption>
+      <plotoption>
+        <name>linewidth</name>
+      </plotoption>
+      <plotoption>
+        <name>linestyle</name>
+      </plotoption>
+      <plotoption>
+        <name>faceopacity</name>
+      </plotoption>
+      <plotoption>
+        <name>edgeopacity</name>
+      </plotoption>
+      <plotoption>
+        <name>adddatestring</name>
+      </plotoption>
+      <plotoption>
+        <name>adddateposition</name>
+      </plotoption>
+      <plotoption>
+        <name>adddateformat</name>
+      </plotoption>
+      <plotoption>
+        <name>adddateprefix</name>
+      </plotoption>
+      <plotoption>
+        <name>adddatesuffix</name>
+      </plotoption>
+      <elementgroup>surface3d</elementgroup>
+      <elementgroup>plotgrid</elementgroup>
+      <elementgroup>opacity</elementgroup>
+      <elementgroup>adddate</elementgroup>
     </plotroutine>
     <plotroutine>
-      <name>plotgrid3d</name>
-      <longname>Grid</longname>
+      <name>3D Grid</name>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>linegroup</name>
+        <name>linecolor</name>
       </plotoption>
+      <plotoption>
+        <name>linewidth</name>
+      </plotoption>
+      <plotoption>
+        <name>linestyle</name>
+      </plotoption>
+      <elementgroup>line</elementgroup>
     </plotroutine>
-  </plot>
+  </plottype>
 </root>

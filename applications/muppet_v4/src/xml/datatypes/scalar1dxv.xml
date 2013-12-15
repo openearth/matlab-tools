@@ -1,17 +1,23 @@
 <?xml version="1.0"?>
 <root>
-  <name>scalar1dxv</name>
   <longname>Cross-section 1D - scalar</longname>
-  <plot>
-    <type>xy</type>
+  <plottype>
+    <name>xy</name>
     <plotroutine>
-      <name>plotline</name>
+      <name>Line</name>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>linegroup</name>
+        <name>linecolor</name>
       </plotoption>
+      <plotoption>
+        <name>linewidth</name>
+      </plotoption>
+      <plotoption>
+        <name>linestyle</name>
+      </plotoption>
+      <elementgroup>line</elementgroup>
     </plotroutine>
-  </plot>
+  </plottype>
 </root>
