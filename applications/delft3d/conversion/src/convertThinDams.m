@@ -10,29 +10,37 @@ convertGuiDirectoriesCheck;
 
 % Check if the dry points file name has been specified (Delft3D)
 filedry     = get(handles.edit19,'String');
-if isempty(filedry);
-    errordlg('The dry points file name has not been specified.','Error');
-    return;
+nodry       = 0;
+if ~isempty(filedry);
+    filedry = [pathin,'\',filedry];
+    if exist(filedry,'file')==0;
+        errordlg('The specified dry points file does not exist.','Error');
+        set(handles.edit27,'String','');
+        break;
+    end
+else
+    nodry = 1;
 end
 
 % Check if the thin dams file name has been specified (Delft3D)
 filethd     = get(handles.edit20,'String');
-if isempty(filethd);
-    errordlg('The thin dams file name has not been specified.','Error');
-    return;
+nothd       = 0;
+if ~isempty(filethd);
+    filethd = [pathin,'\',filethd];
+    if exist(filethd,'file')==0;
+        errordlg('The specified thin dams file does not exist.','Error');
+        set(handles.edit27,'String','');
+        break;
+    end
+else
+    nothd = 1;
 end
 
-% Check if the dry points file name has been specified (D-Flow FM)
-dryfile     = get(handles.edit26,'String');
-if isempty(dryfile);
-    errordlg('The dry points file name has not been specified.','Error');
-    return;
-end
-if length(dryfile) > 8;
-    if strcmp(dryfile(end-7:end),'_dry.xyz') == 0;
-        errordlg('The dry points file name has an improper extension.','Error');
-        return;
-    end
+% Check if 
+if nodry == 1 & nothd == 1;
+    errordlg('Neither a dry points file nor a thin dams file has not been specified.','Error');
+    set(handles.edit27,'String','');
+    break;
 end
 
 % Check if the thin dams file name has been specified (D-Flow FM)
@@ -49,9 +57,6 @@ if length(thdfile) > 8;
 end
 
 % Put the output directory name in the filenames
-filedry     = [pathin ,'\',filedry];
-filethd     = [pathin ,'\',filethd];
-dryfile     = [pathout,'\',dryfile];
 thdfile     = [pathout,'\',thdfile];
 
 

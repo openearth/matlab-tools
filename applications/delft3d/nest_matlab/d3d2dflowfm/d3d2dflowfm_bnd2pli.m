@@ -79,7 +79,9 @@ for ibnd = 1 : no_bnd;
         string = [string D.DATA(ibnd).labelA];
     end
     if timeseries   ||  OPT.Salinity;
-        string = [string D.DATA(ibnd).name 'sideA'];
+        bcname                = D.DATA(ibnd).name;
+        bcname(bcname==' ')   = [];
+        string = [string bcname 'sideA'];
     end
     if harmonic     && ~OPT.Salinity;
         nr_harm = nr_harm + 1;
@@ -98,7 +100,9 @@ for ibnd = 1 : no_bnd;
            string = [string D.DATA(ibnd).labelB];
        end
        if timeseries   || OPT.Salinity;
-           string = [string D.DATA(ibnd).name 'sideB'];
+           bcname                = D.DATA(ibnd).name;
+           bcname(bcname==' ')   = [];
+           string = [string bcname 'sideB'];
        end
        if harmonic     && ~OPT.Salinity;
            string  = [string num2str(nr_harm,'%04i') 'sideB'];

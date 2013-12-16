@@ -10,13 +10,16 @@ convertGuiDirectoriesCheck;
 
 % Check if the bca file name has been specified (Delft3D)
 filebct     = get(handles.edit11,'String');
-if isempty(filebct);
+if ~isempty(filebct);
+    filebct = [pathin,'\',filebct];
+    if exist(filebct,'file')==0;
+        errordlg('The specified bct file does not exist.','Error');
+        break;
+    end
+else
     errordlg('The bct file name has not been specified.','Error');
-    return;
+    break;
 end
-
-% Put the output directory name in the filenames
-filebct     = [pathin ,'\',filebct];
 
 % Catch the polyline names for the boundary conditions
 filepli     = get(handles.listbox1,'String');
@@ -41,7 +44,9 @@ for i=1:npli;
         tline             = textscan(tline,'%s%s%s%s%s');
         location          = cell2mat(tline{5});
         for k=1:length(bctdata.Table);
-            if strcmpi(location(1:end-1),bctdata.Table(k).Location);
+            bcname               = bctdata.Table(k).Location;
+            bcname(bcname==' ')  = [];
+            if strcmpi(location(1:end-5),bcname);
                 nametim          = [pathout,'\',filepli(i,1:end-4),'_',num2str(j,'%0.4d'),'.tim'];
                 nametim          = fopen(nametim,'wt');
                 fprintf(nametim,['* COLUMNN=3','\n']);
@@ -54,15 +59,24 @@ for i=1:npli;
                 end
                 if strcmpi(location(end),'b');
                     w            = 3;
-                    if dataset(1,w) == 9.9999900e+002;
+                    if dataset(1,w) == 9.9999900e+002 | dataset(1,w) == 9.99e+002;
                         w        = 2;
                     end
                 end
-                for ii=1:size(dataset,1);
-                    information  = [num2str(dataset(ii,1),'%7.7f'),'    ', ...
-                                    num2str(dataset(ii,w),'%7.7f'),'    ', ...
-                                    num2str(0.0          ,'%7.7f')];
-                    fprintf(nametim,[information,'\n']);
+                if strcmpi(tline{3},'t');
+                    for ii=1:size(dataset,1);
+                        information  = [num2str(    dataset(ii,1) ,'%7.7f'),'    ', ...
+                                        num2str(abs(dataset(ii,w)),'%7.7f'),'    ', ...
+                                        num2str(    0.0           ,'%7.7f')];
+                        fprintf(nametim,[information,'\n']);
+                    end
+                else
+                    for ii=1:size(dataset,1);
+                        information  = [num2str(dataset(ii,1)     ,'%7.7f'),'    ', ...
+                                        num2str(dataset(ii,w)     ,'%7.7f'),'    ', ...
+                                        num2str(0.0               ,'%7.7f')];
+                        fprintf(nametim,[information,'\n']);
+                    end
                 end
                 alltimfiles(cnt,:) = [filepli(i,1:end-4),'_',num2str(j,'%0.4d'),'.tim'];
                 cnt                = cnt + 1;

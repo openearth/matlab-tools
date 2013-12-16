@@ -10,9 +10,17 @@ convertGuiDirectoriesCheck;
 
 % Check if the cross-sections file name has been specified (Delft3D)
 filecrs     = get(handles.edit16,'String');
-if isempty(filecrs);
+if ~isempty(filecrs);
+    filecrs = [pathin,'\',filecrs];
+    if exist(filecrs,'file')==0;
+        errordlg('The specified cross-sections file does not exist.','Error');
+        set(handles.edit31,'String','');
+        break;
+    end
+else
     errordlg('The cross-sections file name has not been specified.','Error');
-    return;
+    set(handles.edit31,'String','');
+    break;
 end
 
 % Check if the cross-sections file name has been specified (D-Flow FM)
@@ -29,7 +37,6 @@ if length(crsfile) > 8;
 end
 
 % Put the output directory name in the filenames
-filecrs     = [pathin ,'\',filecrs];
 crsfile     = [pathout,'\',crsfile];
 
 

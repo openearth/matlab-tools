@@ -10,15 +10,15 @@ convertGuiDirectoriesCheck;
 
 % Check if the bnd file name has been specified
 filebnd     = get(handles.edit9,'String');
-if isempty(filebnd);
-    errordlg('The boundary file name has not been specified.','Error');
-    return;
-end
-if length(filebnd) > 4;
-    if strcmp(filebnd(end-3:end),'.bnd') == 0;
-        errordlg('The boundary file name has an improper extension.','Error');
-        return;
+if ~isempty(filebnd);
+    filebnd = [pathin,'\',filebnd];
+    if exist(filebnd,'file')==0;
+        errordlg('The specified boundary file does not exist.','Error');
+        break;
     end
+else
+    errordlg('The boundary file name has not been specified.','Error');
+    break;
 end
 
 % Check if the mdu file name has been specified
@@ -35,7 +35,6 @@ if length(mdufile) > 4;
 end
 
 % Put the output directory name in the filenames
-filebnd     = [pathin ,'\',filebnd];
 mdufile     = [pathout,'\',mdufile];
 
 

@@ -10,9 +10,17 @@ convertGuiDirectoriesCheck;
 
 % Check if the initial conditions file name has been specified (Delft3D)
 fileini     = get(handles.edit21,'String');
-if isempty(fileini);
+if ~isempty(fileini);
+    fileini = [pathin,'\',fileini];
+    if exist(fileini,'file')==0;
+        errordlg('The specified initial conditions file does not exist.','Error');
+        set(handles.edit28,'String','');
+        break;
+    end
+else
     errordlg('The initial conditions file name has not been specified.','Error');
-    return;
+    set(handles.edit28,'String','');
+    break;
 end
 
 % Check if the viscosity file name has been specified (D-Flow FM)
@@ -29,7 +37,6 @@ if length(inifile) > 8;
 end
 
 % Put the output directory name in the filenames
-fileini     = [pathin ,'\',fileini];
 inifile     = [pathout,'\',inifile];
 
 

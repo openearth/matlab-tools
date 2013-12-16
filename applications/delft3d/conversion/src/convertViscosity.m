@@ -10,9 +10,17 @@ convertGuiDirectoriesCheck;
 
 % Check if the viscosity file name has been specified (Delft3D)
 fileedy     = get(handles.edit18,'String');
-if isempty(fileedy);
+if ~isempty(fileedy);
+    fileedy = [pathin,'\',fileedy];
+    if exist(fileedy,'file')==0;
+        errordlg('The specified eddy viscosity file does not exist.','Error');
+        set(handles.edit25,'String','');
+        break;
+    end
+else
     errordlg('The eddy viscosity file name has not been specified.','Error');
-    return;
+    set(handles.edit25,'String','');
+    break;
 end
 
 % Check if the viscosity file name has been specified (D-Flow FM)
@@ -29,7 +37,6 @@ if length(edyfile) > 8;
 end
 
 % Put the output directory name in the filenames
-fileedy     = [pathin ,'\',fileedy];
 edyfile     = [pathout,'\',edyfile];
 
 

@@ -64,6 +64,14 @@ if isempty(visfile);
     javis   = 0;
 end
 
+% Check if the thin dam file name has been specified (D-Flow FM)
+thdfile     = get(handles.edit27,'String');
+jathd       = 1;
+if isempty(thdfile);
+    thdfile = [];
+    jathd   = 0;
+end
+
 % Put the output directory name in the filenames
 filemdf     = [pathin ,'\',filemdf];
 mdufile     = [pathout,'\',mdufile];
@@ -100,7 +108,11 @@ fprintf(fid2,'%s\n'  ,['NetFile                             = ',netfile,'       
 fprintf(fid2,'%s\n'  ,['BathymetryFile                      =                                    # *.xyb']);
 fprintf(fid2,'%s\n'  ,['WaterLevIniFile                     =                                    # Initial water levels sample file *.xyz']);
 fprintf(fid2,'%s\n'  ,['LandBoundaryFile                    =                                    # Only for plotting']);
-fprintf(fid2,'%s\n'  ,['ThinDamFile                         =                                    # *_thd.pli, Polyline(s) for tracing thin dams.']);
+if jathd == 1;
+    fprintf(fid2,'%s\n'  ,['ThinDamFile                         = ',thdfile,'                      # *_thd.pli, Polyline(s) for tracing thin dams.']);
+else
+    fprintf(fid2,'%s\n'  ,['ThinDamFile                         =                                    # *_thd.pli, Polyline(s) for tracing thin dams.']);
+end
 fprintf(fid2,'%s\n'  ,['ThindykeFile                        =                                    # *._tdk.pli, Polyline(s) x,y,z, z = thin dyke top levels']);
 fprintf(fid2,'%s\n'  ,['ProflocFile                         =                                    # *_proflocation.xyz)    x,y,z, z = profile refnumber']);
 fprintf(fid2,'%s\n'  ,['ProfdefFile                         =                                    # *_profdefinition.def) definition for all profile nrs']);
@@ -172,7 +184,16 @@ if isfield(mdfkeywds,'ccofu') == 0;
 else
     rouval = (mdfkeywds.ccofu + mdfkeywds.ccofv)/2;
 end
-if isfield(mdfkeywds,'vicoww') == 0; 
+if javis == 0;
+    if isfield(mdfkeywds,'vicouv') == 0;
+        mdfkeywds.vicouv = 0;
+        mdfkeywds.dicouv = 0;
+    elseif isempty(mdfkeywds.vicouv) == 1;
+        mdfkeywds.vicouv = 0;
+        mdfkeywds.dicouv = 0;
+    end
+end
+if isfield(mdfkeywds,'vicoww') == 0;
     mdfkeywds.vicoww = 0;
 elseif isempty(mdfkeywds.vicoww) == 1;
     mdfkeywds.vicoww = 0;

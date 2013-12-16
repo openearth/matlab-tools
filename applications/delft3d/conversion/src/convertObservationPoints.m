@@ -10,9 +10,17 @@ convertGuiDirectoriesCheck;
 
 % Check if the observation file name has been specified (Delft3D)
 filesta     = get(handles.edit15,'String');
-if isempty(filesta);
+if ~isempty(filesta);
+    filesta = [pathin,'\',filesta];
+    if exist(filesta,'file')==0;
+        errordlg('The specified observation points file does not exist.','Error');
+        set(handles.edit22,'String','');
+        break;
+    end
+else
     errordlg('The observation points file name has not been specified.','Error');
-    return;
+    set(handles.edit22,'String','');
+    break;
 end
 
 % Check if the observation file name has been specified (D-Flow FM)
@@ -29,7 +37,6 @@ if length(obsfile) > 8;
 end
 
 % Put the output directory name in the filenames
-filesta     = [pathin ,'\',filesta];
 obsfile     = [pathout,'\',obsfile];
 
 

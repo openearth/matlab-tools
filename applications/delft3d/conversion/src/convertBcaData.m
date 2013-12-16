@@ -10,13 +10,16 @@ convertGuiDirectoriesCheck;
 
 % Check if the bca file name has been specified (Delft3D)
 filebca     = get(handles.edit12,'String');
-if isempty(filebca);
+if ~isempty(filebca);
+    filebca = [pathin,'\',filebca];
+    if exist(filebca,'file')==0;
+        errordlg('The specified bca file does not exist.','Error');
+        break;
+    end
+else
     errordlg('The bca file name has not been specified.','Error');
-    return;
+    break;
 end
-
-% Put the output directory name in the filenames
-filebca     = [pathin ,'\',filebca];
 
 % Catch the polyline names for the boundary conditions
 filepli     = get(handles.listbox1,'String');

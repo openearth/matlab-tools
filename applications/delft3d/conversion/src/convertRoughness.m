@@ -10,9 +10,17 @@ convertGuiDirectoriesCheck;
 
 % Check if the roughness file name has been specified (Delft3D)
 filergh     = get(handles.edit17,'String');
-if isempty(filergh);
-    errordlg('The observation points file name has not been specified.','Error');
-    return;
+if ~isempty(filergh);
+    filergh = [pathin,'\',filergh];
+    if exist(filergh,'file')==0;
+        errordlg('The specified roughness file does not exist.','Error');
+        set(handles.edit24,'String','');
+        break;
+    end
+else
+    errordlg('The roughness file name has not been specified.','Error');
+    set(handles.edit24,'String','');
+    break;
 end
 
 % Check if the roughness file name has been specified (D-Flow FM)
@@ -29,7 +37,6 @@ if length(rghfile) > 8;
 end
 
 % Put the output directory name in the filenames
-filergh     = [pathin ,'\',filergh];
 rghfile     = [pathout,'\',rghfile];
 
 

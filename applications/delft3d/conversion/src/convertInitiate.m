@@ -179,13 +179,6 @@ if isfield(mdfkeywds,'FilEdy') | isfield(mdfkeywds,'filedy');
     end
 end
 
-% Check if dry file is specified in mdf file; if yes, apply mdu core name
-if isfield(mdfkeywds,'FilDry') | isfield(mdfkeywds,'fildry');
-    if ~isempty(get(handles.edit19,'String'));
-        set(handles.edit26,'String',[mducore,'_dry.xyz']);
-    end
-end
-
 % Check if thd file is specified in mdf file; if yes, apply mdu core name
 if isfield(mdfkeywds,'FilTd') | isfield(mdfkeywds,'filtd');
     if ~isempty(get(handles.edit20,'String'));
