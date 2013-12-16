@@ -1,4 +1,4 @@
-function wind = slamfat_wind(varargin)
+function wind = slamfat_wind_old(varargin)
 %SLAMFAT_WIND  Generates a wind time series with varying gustiness
 %
 %   Generates a wind time series based on a mean wind speed and

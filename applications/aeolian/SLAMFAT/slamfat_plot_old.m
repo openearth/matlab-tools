@@ -1,4 +1,4 @@
-function fig = slamfat_plot(result, varargin)
+function fig = slamfat_plot_old(result, varargin)
 %SLAMFAT_PLOT  Plot routine for SLAMFAT result structure
 %
 %   Animates the result from the SLAMFAT result structure. Time-varying

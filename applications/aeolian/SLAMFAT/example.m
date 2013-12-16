@@ -2,16 +2,16 @@ L  = 100;
 dx = 1;
 dt = .05;
 
-wind = slamfat_wind('f_mean',3,'f_sigma',2.5,'dt',dt);
+wind = slamfat_wind_old('f_mean',3,'f_sigma',2.5,'dt',dt);
 
 source = zeros(L,1);
 source(1:20) = 1.5e-7 * dt * dx;
 
 %%
 
-result = slamfat_core('wind',wind,'source',source,'dx',dx,'dt',dt);
+result = slamfat_core_old('wind',wind,'source',source,'dx',dx,'dt',dt);
 
-slamfat_plot(result,'slice',100,'window',100);
+slamfat_plot_old(result,'slice',100,'window',100);
 
 %%
 

@@ -1,4 +1,4 @@
-function R = slamfat_core(varargin)
+function R = slamfat_core_old(varargin)
 %SLAMFAT_CORE  Supply Limited Advection Model For Aeolian Transport (SLAMFAT)
 %
 %   Supply Limited Advection Model For Aeolian Transport (SLAMFAT). This
@@ -246,7 +246,7 @@ end
 
 % initialize plot
 if OPT.plot
-    fig = slamfat_plot(R,'start',1,'length',1);
+    fig = slamfat_plot_old(R,'start',1,'length',1);
 end
 
 %% initialize bed composition module
@@ -367,7 +367,7 @@ for t = 2:nt
     
     if mod(t,OPT.slice) == 0
         if OPT.plot
-            slamfat_plot(R,'start',t,'length',1,'figure',fig);
+            slamfat_plot_old(R,'start',t,'length',1,'figure',fig);
         elseif OPT.progress
             waitbar(t/nt, wb, sprintf('Simulating... %d%%', round(t/nt*100)));
         elseif OPT.verbose
