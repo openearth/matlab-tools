@@ -189,7 +189,7 @@ end
 % Check if thd file is specified in mdf file; if yes, apply mdu core name
 if isfield(mdfkeywds,'FilTd') | isfield(mdfkeywds,'filtd');
     if ~isempty(get(handles.edit20,'String'));
-        set(handles.edit27,'String',[mducore,'_thd.xyz']);
+        set(handles.edit27,'String',[mducore,'_thd.pli']);
     end
 end
 

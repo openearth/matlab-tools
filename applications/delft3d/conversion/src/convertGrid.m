@@ -9,8 +9,8 @@ convertGuiDirectoriesCheck;
 %%% GUI CHECKS
 
 % Check if the input is correct
-filedep     = get(handles.edit7,'String');
 if ~isempty(filedep);
+    filedep = [pathin,'\',filedep];
     if exist(filedep,'file')==0;
         errordlg('The specified dep-file does not exist in the specified input directory.','Error');
         break;

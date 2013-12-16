@@ -316,6 +316,8 @@ function pushbutton16_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton16 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+convertThinDams;
+msgbox('The thin dams file has been written.','Message');
 
 
 % --- Executes on button press in pushbutton17.
@@ -962,6 +964,7 @@ function pushbutton2_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 convertDirectoryOut;
 convertDefaultScreen;
+convertGetMdf;
 
 
 function edit1_Callback(hObject, eventdata, handles)

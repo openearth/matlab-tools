@@ -8,31 +8,53 @@ convertGuiDirectoriesCheck;
 
 %%% GUI CHECKS
 
-% Check if the observation file name has been specified (Delft3D)
-filesta     = get(handles.edit15,'String');
-if isempty(filesta);
-    errordlg('The observation points file name has not been specified.','Error');
+% Check if the dry points file name has been specified (Delft3D)
+filedry     = get(handles.edit19,'String');
+if isempty(filedry);
+    errordlg('The dry points file name has not been specified.','Error');
     return;
 end
 
-% Check if the observation file name has been specified (D-Flow FM)
-obsfile     = get(handles.edit22,'String');
-if isempty(obsfile);
-    errordlg('The observation points sample file name has not been specified.','Error');
+% Check if the thin dams file name has been specified (Delft3D)
+filethd     = get(handles.edit20,'String');
+if isempty(filethd);
+    errordlg('The thin dams file name has not been specified.','Error');
     return;
 end
-if length(obsfile) > 8;
-    if strcmp(obsfile(end-7:end),'_obs.xyn') == 0;
-        errordlg('The observation points sample file name has an improper extension.','Error');
+
+% Check if the dry points file name has been specified (D-Flow FM)
+dryfile     = get(handles.edit26,'String');
+if isempty(dryfile);
+    errordlg('The dry points file name has not been specified.','Error');
+    return;
+end
+if length(dryfile) > 8;
+    if strcmp(dryfile(end-7:end),'_dry.xyz') == 0;
+        errordlg('The dry points file name has an improper extension.','Error');
+        return;
+    end
+end
+
+% Check if the thin dams file name has been specified (D-Flow FM)
+thdfile     = get(handles.edit27,'String');
+if isempty(thdfile);
+    errordlg('The thin dams file name has not been specified.','Error');
+    return;
+end
+if length(thdfile) > 8;
+    if strcmp(thdfile(end-7:end),'_thd.pli') == 0;
+        errordlg('The thin dams file name has an improper extension.','Error');
         return;
     end
 end
 
 % Put the output directory name in the filenames
-filesta     = [pathin ,'\',filesta];
-obsfile     = [pathout,'\',obsfile];
+filedry     = [pathin ,'\',filedry];
+filethd     = [pathin ,'\',filethd];
+dryfile     = [pathout,'\',dryfile];
+thdfile     = [pathout,'\',thdfile];
 
 
 %%% ACTUAL CONVERSION OF THE GRID
 
-d3d2dflowfm_obs(filegrd,filesta,obsfile);
+d3d2dflowfm_thd_xyz(filegrd,filedry,filethd,thdfile);

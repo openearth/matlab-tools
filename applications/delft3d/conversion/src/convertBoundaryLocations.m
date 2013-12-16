@@ -47,6 +47,6 @@ plis        = d3d2dflowfm_bnd2pli(filegrd,filebnd,mdufile(1:end-4));
 %%% PUT PLI-FILES IN LISTBOX
 
 for i=1:length(plis);
-    allboundaryplis(i,:)     = [cell2mat(plis(i)),'.pli'];
+    allboundaryplis(i,:)     = [cell2mat(plis(i))];
 end
 set(handles.listbox1,'String',allboundaryplis);

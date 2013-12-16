@@ -18,16 +18,23 @@ if exist(pathout,'dir')==0;
     return;
 end
 
-% Check if grid actually exists
+% Check if the edit boxes are filled
 filegrd     = get(handles.edit5,'String');
 fileenc     = get(handles.edit6,'String');
 filedep     = get(handles.edit7,'String');
-filegrd     = [pathin,'\',filegrd];
-fileenc     = [pathin,'\',fileenc];
-filedep     = [pathin,'\',filedep];
+
+% Check if the files specified in the edit boxes do exist
 if ~isempty(filegrd);
+    filegrd = [pathin,'\',filegrd];
     if exist(filegrd,'file')==0;
         errordlg('The specified grd-file does not exist in the specified input directory.','Error');
+        break;
+    end
+end
+if ~isempty(fileenc);
+    fileenc = [pathin,'\',fileenc];
+    if exist(fileenc,'file')==0;
+        errordlg('The specified enc-file does not exist in the specified input directory.','Error');
         break;
     end
 end
