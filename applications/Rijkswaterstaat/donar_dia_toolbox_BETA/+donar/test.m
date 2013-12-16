@@ -48,34 +48,45 @@ for ifile = 2 %:length(diafiles);
     
         [D,M0] = donar.read(File,ivar,ncolumn);
         %%
+        close
+        % each profile_id seems to be in a seperate block !
         if type(ifile)==1
            [S,M ] = donar.ctd_struct(D,M0);
             if 1 %OPT.plot
             subplot(3,2,1)
             plot(S.datenum,S.profile_id)
+            hold on
+            plot(S.datenum,S.block,'r--')
             datetick('x')
+            ylabel({'profile\_id ','== dia block id ??'})
             grid on
             subplot(3,2,3)        
             plot(S.datenum,[0;diff(S.datenum)])
             datetick('x')
+            ylabel('dt')
             grid on
             subplot(3,2,5)        
             plot(S.datenum,S.station_id)
             datetick('x')
+            ylabel('station\_id')
             grid on    
             
             subplot(3,2,[2 4 6])
-            scatter(S.station_lon,S.station_lat,50,S.station_n,'filled')
+            scatter(S.station_lon,S.station_lat,50,log10(S.station_n),'filled')
             hold on
+            text(S.station_lon,S.station_lat,num2str([1:length(S.station_lat)]',' %d'))
             plot(L.lon,L.lat,'-' ,'color',[0 0 0])
             plot(E.lon,E.lat,'--','color',[0 0 0])        
             grid on
             axis([-2 9 50 57])    
             axislat
-            colorbarwithhtext('horiz','n')
-            
-            
+            tickmap('ll')
+            clim(log10([1 1e5]))
+            colormap(clrmap(jet,5*2))
+            [h,~]=colorbarwithhtext('number of profiles',log10([1 10 100 1000 1e4 1e5]),'horiz')
+            set(h,'xticklabel',{'1','10','100','1000','1e4','1e5'});
             end
+            print2screensize(strrep(diafile,'.dia',['_',M.data.WNS,'_ctd.png']))
         elseif type(ifile)==2
            [S,M ] = donar.trajectory_struct(D,M0);
             if OPT.plot
@@ -89,7 +100,7 @@ for ifile = 2 %:length(diafiles);
             axis([-2 9 50 57])    
             axislat
             title(mktex(diafiles{ifile}))
-            print2a4(strrep(diafile,'.dia',['_',M.data.WNS,'.png']),'v','w')
+            print2a4(strrep(diafile,'.dia',['_',M.data.WNS,'_trajectory.png']),'v','w')
             end           
         end
         

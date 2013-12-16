@@ -7,12 +7,13 @@ function [Data, M] = read(File,ivar,ncolumn,varargin)
 % dia blocks, where Info is the result from donar.open(),
 % variable_index is the index of the variables found
 % in the donar file (varies per file), and ncolumn is
-% the number of columns (where ncolumn is the variable column),
+% the number of data columns (where ncolumn is the variable column),
 % needed internally to reshape the ascii donar data. M 
 % contains a copy of the relevant variable metadata from Info.
 %
 % The coordinate columns 1+2 are parsed (WGS84 ONLY yet),
 % and the date columns 3 is converted to Matlab datenumbers.
+% Two extra columns are added next t ncolumn: dia flags and dia block index
 %
 % Note that timezone information is NOT in de dia files !
 %
@@ -61,7 +62,7 @@ function [Data, M] = read(File,ivar,ncolumn,varargin)
 
     fid  = fopen(File.Filename,'r');
 
-%% read data from multipel blocks into one array
+%% read data from multiple blocks into one array
 
     i0  = 1;
     nbl = length(File.Variables(ivar).index);    
@@ -70,7 +71,7 @@ function [Data, M] = read(File,ivar,ncolumn,varargin)
        disp([mfilename,' loaded block ',num2str(0),'/',num2str(nbl)])
     end
     
-    Data = repmat(nan,[sum(File.Variables(ivar).nval),ncolumn+1]);
+    Data = repmat(nan,[sum(File.Variables(ivar).nval),ncolumn+2]); % extra column for flags and for dia index
 
     for ibl=1:nbl
        i1 = sum(File.Variables(ivar).nval(1:ibl));
@@ -78,7 +79,8 @@ function [Data, M] = read(File,ivar,ncolumn,varargin)
        disp([mfilename,' loaded block ',num2str(ibl),'/',num2str(nbl),' (',num2str(ibl/nbl*100),'%)'])
        end
        fseek(fid,File.Variables(ivar).ftell(2,ibl),'bof');% posituion file pointer
-       Data(i0:i1,:) = donar.read_block(fid,ncolumn,File.Variables(ivar).nval(ibl));
+       Data(i0:i1,1:end-1) = donar.read_block(fid,ncolumn,File.Variables(ivar).nval(ibl));
+       Data(i0:i1,  end  ) = ibl;
        i0 = i1+1;
     end % ibl
     fclose(fid);
@@ -91,7 +93,7 @@ function [Data, M] = read(File,ivar,ncolumn,varargin)
 
     Data(:,1) = donar.parse_coordinates(Data(:,1));
     Data(:,2) = donar.parse_coordinates(Data(:,2));
-    Data      = donar.parse_time(Data, ncolumn - [2 1]); % has to be inline due to sort
+    Data      = donar.parse_time(Data, ncolumn - [2 1]); % has to be inline due to sorting by parse_time
      
  %% copy relevant meta-data fields (not dia-file specific)
  %  Should perhaps better be in se[erate substruct of File

@@ -60,6 +60,7 @@ for i=1:length(B)
 end
 
 %% get unique variable names, one per block by definition
+
 WNS = unique([hdr.WNS]);
 for iwns=1:length(WNS)
     V(iwns).WNS   = WNS{iwns};
@@ -68,6 +69,7 @@ end
 
 %% check rest, except of course place and time: hdr.TYD, hdr.BGS
 % this actually does not happen for any CTD, Meetvis and Ferrybox data
+
 fldnames = fields(B(1).hdr);
 
 for iwns=1:length(WNS)
