@@ -332,11 +332,13 @@ classdef DirectionalSampling < ProbabilisticMethod
         %Plot directional sampling results
         function plot(this)
             figureHandle = figure('Tag','ProbabilisticMethodResults');
-           if  strcmp(class(this),'DirectionalSampling')
-            this.LimitState.plot(figureHandle, this.EvaluationApproachesZero,class(this),this.Pf, this.NrDirectionsEvaluated, this.UNormalIndexPerEvaluation )
-           elseif strcmp(class(this),'AdaptiveDirectionalImportanceSampling')
-               this.LimitState.plot(figureHandle, this.EvaluationApproachesZero,class(this),this.Pf, this.NrDirectionsEvaluated, this.UNormalIndexPerEvaluation,this.PfApproximated  )
-           end            
+            % strcmp instead of isa is needed because ADIS is a child of
+            % DirectionalSampling
+            if  strcmp(class(this),'DirectionalSampling')
+                this.LimitState.plot(figureHandle, this.EvaluationApproachesZero,class(this),this.Pf, this.NrDirectionsEvaluated, this.UNormalIndexPerEvaluation )
+            elseif strcmp(class(this),'AdaptiveDirectionalImportanceSampling')
+                this.LimitState.plot(figureHandle, this.EvaluationApproachesZero,class(this),this.Pf, this.NrDirectionsEvaluated, this.UNormalIndexPerEvaluation,this.PfApproximated  )
+            end
         end
     end
 end
