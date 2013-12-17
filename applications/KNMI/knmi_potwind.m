@@ -185,8 +185,11 @@ function varargout = knmi_potwind(varargin)
          % POTENTIAL WIND STATION  235    De Kooy           
          % MOST RECENT COORDINATES  X :     114254; Y :     549042
 
-         W.stationnumber = strtrim (W.comments{1}(24:28));
-         W.stationname   = strtrim (W.comments{1}(29:end));
+         % Regular expression to allow for stationnumbers with =~3 digits
+%          W.stationnumber = strtrim (W.comments{1}(24:28));
+%          W.stationname   = strtrim (W.comments{1}(29:end));
+         W.stationnumber = W.comments{1}(regexp(W.comments{1},'\<[0-9]'):regexp(W.comments{1},'[0-9]\o{40}'));
+         W.stationname   = W.comments{1}((regexp(W.comments{1},'[0-9]\o{40}')+2):end);
          
          semicolon       = strfind (W.comments{2},':');
          delimiter       = strfind (W.comments{2},';');

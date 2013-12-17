@@ -26,14 +26,14 @@ function knmi_all
 
 %% Initialize
 
-   OPT.download             = 0; % get fresh downloads
+   OPT.download             = 1; % get fresh downloads
    OPT.make_nc              = 1;
    OPT.make_catalog         = 1; % loading a cached one does not work at the moment
    OPT.make_kml             = 1;
    OPT.institution    = 'knmi'; % for construcitng relative path
-   OPT.directory_xml  = 'd:\checkouts\OpenEarthTools\configurations\dtvirt5.deltares.nl\'; % for static THREDDS catalogs in folder tomcat6/content/thredds
+   OPT.directory_xml  = 'D:\OpenEarthTools\configurations\dtvirt5.deltares.nl\'; % for static THREDDS catalogs in folder tomcat6/content/thredds
 
-   rawbase =              'd:\checkouts\OpenEarthRawData\';       % @ local
+   rawbase =              'D:\OpenEarthRawData\';       % @ local
     ncbase =     'D:\opendap.deltares.nl\thredds\dodsC\opendap\'; % @ local
    urlbase = 'http://opendap.deltares.nl/thredds/dodsC/opendap/'; % @ server
    kmlbase =                               'D:\kml.deltares.nl\'; % @ local   
@@ -63,7 +63,7 @@ n = n+1;
    OPT.directory_nc      = [ ncbase,'\knmi\',filesep,subdir,filesep];
    OPT.directory_kml     = [kmlbase,'\knmi\',filesep,];
    OPT.directory_raw     = [rawbase,'\knmi\',filesep,subdir,filesep,'raw',filesep];
-
+   
    multiWaitbar(mfilename,n/length(subdirs),'label',['Processing substance: ',num2str(ii)])
 
 %% Download from waterbase.nl and make netCDF
@@ -102,7 +102,9 @@ n = n+1;
    OPT.documentation.url       = resolveUrls{ii};
    OPT.documentation.title     = resolveTitles{ii};
    OPT.documentation.summary   = resolveSummaries{ii};
-
+   
+   if ~exist(OPT.directory_nc,'dir'); mkdir(OPT.directory_nc); end
+   
    CATALOG = nc_cf_harvest(OPT.directory_nc,...             % dir where to READ netcdf
                     'featuretype','timeseries',...
                           'debug',[],...
@@ -122,6 +124,9 @@ n = n+1;
 %  TO DO loop over varnames inside netCDF files (etmgeg)
 
    if OPT.make_kml
+      
+      if ~exist(OPT.directory_kml,'dir'); mkdir(OPT.directory_kml); end
+
       if (~OPT.make_catalog)
         CATALOG = nc2struct([OPT.directory_nc,'catalog.nc']);
       end

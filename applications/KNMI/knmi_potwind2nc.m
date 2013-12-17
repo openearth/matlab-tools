@@ -51,29 +51,31 @@ function knmi_potwind2nc(varargin)
    
 %% File loop
 
-%%%OPT.files = dir([OPT.directory_raw,filesep,OPT.mask]);
-   OPT.files = knmi_potwind_directory([OPT.directory_raw,filesep,OPT.mask]);
+   OPT.files = dir([OPT.directory_raw,filesep,OPT.mask]);
+%%%OPT.files = knmi_potwind_directory([OPT.directory_raw,filesep,OPT.mask]);
 
 for ifile=1:length(OPT.files)
 
-   basename = filename(OPT.files{ifile}{1});
-   basename = basename(1:11);
+%    basename = filename(OPT.files{ifile}{1});
+%    basename = basename(1:11);
 
-%%%OPT.filename = [OPT.directory_raw, filesep, OPT.files(ifile).name]; % e.g. 'potwind_210_1981'
-
-   disp(['Processing ',num2str(ifile),'/',num2str(length(OPT.files)),': ',basename,' +'])
+   OPT.filename = [OPT.directory_raw, filesep, OPT.files(ifile).name]; % e.g. 'potwind_210_1981'
+  
+   disp(['Processing ',num2str(ifile),'/',num2str(length(OPT.files)),': ',filename(OPT.filename)])
+   % disp(['Processing ',num2str(ifile),'/',num2str(length(OPT.files)),': ',basename,' +'])
 
 %% 0 Read raw data
 
 % use knmi_potwind_multi here to concatenate the decadal files
 
-%%%D             = knmi_potwind      (OPT.filename    ,'variables',OPT.fillvalue);
-   D             = knmi_potwind_multi(OPT.files{ifile},'variables',OPT.fillvalue);
+   D             = knmi_potwind      (OPT.filename    ,'variables',OPT.fillvalue);
+%    D             = knmi_potwind_multi(OPT.files{ifile},'variables',OPT.fillvalue);
 
 %% 1a Create file
 
-   outputfile    = [OPT.directory_nc,filesep,basename,OPT.ext,'.nc'];
-   
+%   outputfile    = [OPT.directory_nc,filesep,basename,OPT.ext,'.nc'];
+    outputfile    = [OPT.directory_nc filesep  filename(D.file.name),OPT.ext,'.nc'];
+  
    if ~exist(fileparts(outputfile))
       mkpath(fileparts(outputfile))
    end
@@ -87,7 +89,11 @@ for ifile=1:length(OPT.files)
    nc_attput(outputfile, nc_global, 'title'         , '');
    nc_attput(outputfile, nc_global, 'institution'   , 'KNMI');
    nc_attput(outputfile, nc_global, 'source'        , 'surface observation');
-   nc_attput(outputfile, nc_global, 'history'       , ['Original filename: ',str2line(filename(char(OPT.files{ifile})),'s',';'),...
+%    nc_attput(outputfile, nc_global, 'history'       , ['Original filename: ',str2line(filename(char(OPT.files{ifile})),'s',';'),...
+%                                                        ', version:' ,str2line(D.version  ,'s',';'),...
+%                                                        ', filedate:',str2line(D.file.date,'s',';'),...
+%                                                        ', tranformation to NetCDF: $HeadURL$ $Revision$ $Date$ $Author$']);
+   nc_attput(outputfile, nc_global, 'history'       , ['Original filename: ',str2line(filename(D.file.name),'s',';'),...
                                                        ', version:' ,str2line(D.version  ,'s',';'),...
                                                        ', filedate:',str2line(D.file.date,'s',';'),...
                                                        ', tranformation to NetCDF: $HeadURL$ $Revision$ $Date$ $Author$']);
@@ -261,15 +267,15 @@ for ifile=1:length(OPT.files)
    nc(ifld).Attribute(5) = struct('Name', 'coordinates'    ,'Value', 'lat lon');  % QuickPlot error
 
    % Filename of origin
-
-      ifld = ifld + 1;
-   nc(ifld).Name         = 'origin_number';
-   nc(ifld).Nctype       = 'int';
-   nc(ifld).Dimension    = {'locations','time'};
-   nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'KNMI file number of origin');
-   nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', '1');
-   nc(ifld).Attribute(3) = struct('Name', 'flag_values'    ,'Value', 1:length(OPT.files{ifile}));
-   nc(ifld).Attribute(4) = struct('Name', 'flag_meanings'  ,'Value', str2line(filename(char(OPT.files{ifile})),'s',' '));
+% 
+%       ifld = ifld + 1;
+%    nc(ifld).Name         = 'origin_number';
+%    nc(ifld).Nctype       = 'int';
+%    nc(ifld).Dimension    = {'locations','time'};
+%    nc(ifld).Attribute(1) = struct('Name', 'long_name'      ,'Value', 'KNMI file number of origin');
+%    nc(ifld).Attribute(2) = struct('Name', 'units'          ,'Value', '1');
+%    nc(ifld).Attribute(3) = struct('Name', 'flag_values'    ,'Value', 1:length(OPT.files{ifile}));
+%    nc(ifld).Attribute(4) = struct('Name', 'flag_meanings'  ,'Value', str2line(filename(char(OPT.files{ifile})),'s',' '));
 
 %% 4 Create variables with attibutes
 % When variable definitons are created before actually writing the
@@ -285,14 +291,15 @@ for ifile=1:length(OPT.files)
 
    nc_varput(outputfile, 'lon'                        , D.lon);
    nc_varput(outputfile, 'lat'                        , D.lat);
-   nc_varput(outputfile, 'platform_id'                , str2num(D.stationnumber));
+   nc_varput(outputfile, 'platform_id'                , str2double(D.stationnumber));
+%    nc_varput(outputfile, 'platform_id'                , D.stationnumber);
    nc_varput(outputfile, 'platform_name'              , D.stationname);
    nc_varput(outputfile, 'time'                       , D.datenum-OPT.refdatenum);
    nc_varput(outputfile, 'wind_speed'                 , D.UP(:)');
    nc_varput(outputfile, 'wind_from_direction'        , D.DD(:)'); % does not work with NaNs.
    nc_varput(outputfile, 'wind_speed_quality'         , int8(D.QUP(:)'));
    nc_varput(outputfile, 'wind_from_direction_quality', int8(D.QQD(:)'));
-   nc_varput(outputfile, 'origin_number'              , int8(D.origin_number(:)'));
+%   nc_varput(outputfile, 'origin_number'              , int8(D.origin_number(:)'));
    
 %% 6 Check
 

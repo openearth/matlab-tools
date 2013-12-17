@@ -79,7 +79,7 @@ function varargout = KNMI_potwind_get_url(varargin)
    
    OPT.debug           = 0; % load local download.html from OPT.directory_raw
    OPT.download        = 1;
-   OPT.nc              = 1;
+   OPT.nc              = 0;
    OPT.opendap         = 1; 
    OPT.directory_raw   = [basepath,filesep,'raw'      ,filesep]; % zip files
    OPT.directory_nc    = [basepath,filesep,'processed',filesep];
