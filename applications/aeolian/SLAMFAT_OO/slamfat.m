@@ -68,26 +68,26 @@ classdef slamfat < handle
     
     properties(GetAccess = public, SetAccess = protected)
         number_of_gridcells     = 100
-
+        
         transport               = 0
         capacity                = 0
         supply                  = 0
         supply_limited          = false
-
+        
         data                    = struct()
         timestep                = 0
         output_timestep         = 0
         output_time             = 0
         size_of_output          = 0
-
+        
         initial_profile         = []
         
         progressbar             = []
         figure                  = []
- 
+        
         isinitialized           = false
     end
-
+    
     properties(GetAccess = protected, SetAccess = protected)
         it                      = 1
         io                      = 1
@@ -105,11 +105,11 @@ classdef slamfat < handle
             if isempty(this.wind)
                 this.wind = slamfat_wind;
             end
-
+            
             if isempty(this.bedcomposition) || ~ishandle(this.bedcomposition)
                 this.bedcomposition = slamfat_bedcomposition_basic;
             end
-
+            
             if isempty(this.figure)
                 this.figure = slamfat_plot;
             end
@@ -131,7 +131,7 @@ classdef slamfat < handle
                 this.output_time         = this.output_timesteps * this.wind.dt;
                 this.size_of_output      = length(this.output_timesteps);
                 this.number_of_gridcells = length(this.profile);
-
+                
                 this.bedcomposition.number_of_gridcells = this.number_of_gridcells;
                 this.bedcomposition.dt                  = this.wind.dt;
                 this.bedcomposition.initialize;
@@ -142,12 +142,12 @@ classdef slamfat < handle
                 this.supply                 = this.empty_matrix;
                 this.capacity               = this.empty_matrix;
                 this.total_transport        = this.empty_matrix;
-
+                
                 n  = this.size_of_output;
                 nx = this.number_of_gridcells;
                 nf = this.bedcomposition.number_of_fractions;
                 nl = this.bedcomposition.get_number_of_actual_layers;
-
+                
                 this.data = struct();
                 
                 if ~isempty(this.output_file)
@@ -184,11 +184,12 @@ classdef slamfat < handle
                     'transport',        0,  ...
                     'bedcomposition',   0,  ...
                     'grainsize',        0,  ...
-                    'visualization',    0);
+                    'visualization',    0,  ...
+                    'write_output',     0);
                 
                 this.initial_profile = this.profile;
                 this.max_threshold.initialize(this.dx, this.profile);
-
+                
                 this.isinitialized = true;
             end
             
@@ -212,7 +213,10 @@ classdef slamfat < handle
             this.it = this.it + 1;
             while this.it < sum(this.wind.number_of_timesteps)
                 this.next;
+                
+                tt = tic;
                 this.output;
+                this.performance.write_output = this.performance.write_output + toc(tt);
             end
             
             this.finalize;
@@ -227,19 +231,19 @@ classdef slamfat < handle
                 threshold = this.get_maximum_threshold;
                 
                 % transport capacity according to Bagnold
-            	this.capacity = max(0, 1.5e-4 * ((this.wind.time_series(this.it-1) - threshold).^3) ./ ...
-                                                 (this.wind.time_series(this.it-1) * this.relative_velocity));
-            
+                this.capacity = max(0, 1.5e-4 * ((this.wind.time_series(this.it-1) - threshold).^3) ./ ...
+                    (this.wind.time_series(this.it-1) * this.relative_velocity));
+                
                 % transport limited concentration
                 this.transport_transportltd(2:end,:) = ((-this.relative_velocity * this.wind.time_series(this.it-1) .* ...
                     (this.transport(2:end,:) - this.transport(1:end-1,:)) / this.dx) * this.wind.dt + ...
-                     this.transport(2:end,:) + this.capacity(2:end,:) / (this.relaxation / this.wind.dt)) / (1 + 1/(this.relaxation/this.wind.dt));
+                    this.transport(2:end,:) + this.capacity(2:end,:) / (this.relaxation / this.wind.dt)) / (1 + 1/(this.relaxation/this.wind.dt));
                 
                 % supply limited concentration
                 this.transport_supplyltd(2:end,:)    = (-this.relative_velocity * this.wind.time_series(this.it-1) .* ...
                     (this.transport(2:end,:) - this.transport(1:end-1,:)) / this.dx) * this.wind.dt + ...
-                     this.transport(2:end,:) + this.supply   (2:end  ,:)  / (this.relaxation/this.wind.dt);
-
+                    this.transport(2:end,:) + this.supply   (2:end  ,:)  / (this.relaxation/this.wind.dt);
+                
                 idx = (this.capacity - this.transport_transportltd) / (this.relaxation/this.wind.dt) > this.supply;
                 
                 this.transport(~idx) = this.transport_transportltd(~idx);
@@ -250,20 +254,20 @@ classdef slamfat < handle
                 this.performance.transport = this.performance.transport + toc; tic;
                 
                 source = this.get_maximum_source;
-
+                
                 % compute added mass
                 mass       = zeros(this.number_of_gridcells,this.bedcomposition.number_of_fractions);
                 mass( idx) = source( idx) / this.dx - this.supply(idx) / (this.relaxation/this.wind.dt);
                 mass(~idx) = source(~idx) / this.dx - (this.capacity(~idx) - this.transport(~idx)) / (this.relaxation / this.wind.dt);
-
+                
                 dz = this.bedcomposition.deposit(mass);
-
+                
                 this.profile        = this.profile + dz;
                 this.supply         = this.bedcomposition.get_top_layer_mass;
                 this.supply_limited = idx;
                 
                 this.performance.bedcomposition = this.performance.bedcomposition + toc;
-
+                
                 this.it = this.it + 1;
             else
                 error('SLAMFAT model is not initialized');
@@ -369,7 +373,7 @@ classdef slamfat < handle
                 ncwriteatt(this.output_file,'/','creator_email',info.EMAIL);
                 ncwriteatt(this.output_file,'/','date_created',datestr(now));
                 ncwriteatt(this.output_file,'/','references',url);
-                ncwriteatt(this.output_file,'/','comment',comment);                
+                ncwriteatt(this.output_file,'/','comment',comment);
             end
         end
         
@@ -388,7 +392,17 @@ classdef slamfat < handle
                     value = reshape(value,[1 size(value)]);
                 end
                 idx = [this.io ones(1,sum(size(value)>1))];
-                ncwrite(this.output_file, var, double(value), idx);
+                
+                % Hier heeft Sierd er Quick & Dirty voor gezorgd dat de
+                % netcdf in het juiste format wordt opgeschreven als er
+                % slechts met 1 fractie wordt gerekend. Dit kan mogelijk
+                % beter maar het werkt wel.
+                if size(idx,2) == size(sz,2)
+                    ncwrite(this.output_file, var, double(value), idx);
+                else
+                    ncwrite(this.output_file, var, double(value'), [idx 1]);
+                end
+                % Einde van Sierd zijn gepruts.
             end
         end
         
@@ -451,6 +465,7 @@ classdef slamfat < handle
                 'bed composition',  this.performance.bedcomposition,    tmp(2), ...
                 'grain size',       this.performance.grainsize,         tmp(3), ...
                 'visualization',    this.performance.visualization,     tmp(4), ...
+                'write output',     this.performance.write_output,      tmp(5), ...
                 'total', sum(tm), this.it/sum(this.wind.number_of_timesteps)*100);
         end
     end
