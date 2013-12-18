@@ -11,13 +11,15 @@ convertGuiDirectoriesCheck;
 % Check if the ext file name has been specified (D-Flow FM)
 fileext     = get(handles.edit10,'String');
 if isempty(fileext);
+    if exist('wb'); close(wb); end;
     errordlg('The external forcings file name has not been specified.','Error');
-    return;
+    break;
 end
 if length(fileext) > 4;
     if strcmp(fileext(end-3:end),'.ext') == 0;
+        if exist('wb'); close(wb); end;
         errordlg('The external forcings file name has an improper extension.','Error');
-        return;
+        break;
     end
 end
 
@@ -28,6 +30,13 @@ fileext     = [pathout,'\',fileext];
 filepli     = get(handles.listbox1,'String');
 npli        = size(filepli,1);
 
+% Check if salinity is active
+filebcc     = get(handles.edit14,'String');
+jasal       = 1;
+if isempty(filebcc);
+    jasal   = 0;
+end
+
 
 %%% WRITE HEADER OF THE EXT FORCINGS FILE
 convertExtForcingHeader;
@@ -37,28 +46,38 @@ convertExtForcingHeader;
 
 % Loop over all the boundary pli-files
 for i=1:npli;
-    fid                     = fopen([pathout,'\',filepli(i,:)],'r');
-    tline                   = fgetl(fid);
-    tline                   = fgetl(fid);
-    tline                   = fgetl(fid);
-    tline                   = textscan(tline,'%s%s%s%s%s');
-    tlinestr                = cell2mat(tline{3});
-    switch tlinestr;
-        case 'Z';
-            typ  = 'waterlevelbnd';
-        case 'C';
-            typ  = 'velocitybnd';
-        case 'N';
-            typ  = 'neumannbnd';
-        case 'Q';
-            typ  = 'dischargepergridcellbnd';
-        case 'T';
-            typ  = 'dischargebnd';
-        case 'R';
-            typ  = 'riemannbnd';
+    fileplistr              = cell2mat(filepli(i,:));
+    fpli                    = [pathout,'\',fileplistr];
+    if strcmpi(fpli(end-7:end),'_sal.pli');
+        if jasal == 1;
+            typ             = 'salinitybnd';
+        else
+            break;
+        end
+    else
+        fid                 = fopen(fpli,'r');
+        tline               = fgetl(fid);
+        tline               = fgetl(fid);
+        tline               = fgetl(fid);
+        tline               = textscan(tline,'%s%s%s%s%s');
+        tlinestr            = cell2mat(tline{3});
+        switch tlinestr;
+            case 'Z';
+                typ  = 'waterlevelbnd';
+            case 'C';
+                typ  = 'velocitybnd';
+            case 'N';
+                typ  = 'neumannbnd';
+            case 'Q';
+                typ  = 'dischargepergridcellbnd';
+            case 'T';
+                typ  = 'dischargebnd';
+            case 'R';
+                typ  = 'riemannbnd';
+        end
     end
     fprintf(fidext,['QUANTITY='  ,typ         ,'\n']);
-    fprintf(fidext,['FILENAME='  ,filepli(i,:),'\n']);
+    fprintf(fidext,['FILENAME='  ,fileplistr  ,'\n']);
     fprintf(fidext,['FILETYPE=9'              ,'\n']);
     fprintf(fidext,['METHOD  =3'              ,'\n']);
     fprintf(fidext,['OPERAND =O'              ,'\n']);

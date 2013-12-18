@@ -1,11 +1,11 @@
 * QUANTITY    : waterlevelbnd, velocitybnd, dischargebnd, tangentialvelocitybnd, normalvelocitybnd  filetype=9         method=2,3
 *             : outflowbnd, neumannbnd, qhbnd                                                       filetype=9         method=2,3
 *             : salinitybnd                                                                         filetype=9         method=2,3
-*             : lowergatelevel, damlevel, pump                                                      filetype=9         method=2,3
-              : frictioncoefficient, horizontaleddyviscositycoefficient, advectiontype, ibotlevtype filetype=4,10      method=4
-*             : initialwaterlevel                                                                   filetype=4,10      method=4
+*             : gateloweredgelevel, damlevel, pump                                                  filetype=9         method=2,3
+              : frictioncoefficient, horizontaleddyviscositycoefficient, advectiontype, ibotlevtype filetype=4,7,10    method=4
+*             : initialwaterlevel                                                                   filetype=4,7,10    method=4
 *             : initialsalinity, initialsalinitytop: use initialsalinity for depth-uniform, or
-*             : as bed level value in combination with initialsalinitytop                           filetype=4,10      method=4
+*             : as bed level value in combination with initialsalinitytop                           filetype=4,7,10    method=4
 *             : windx, windy, windxy, rainfall_mmperday, atmosphericpressure                        filetype=1,2,4,7,8 method=1,2,3
 *             : shiptxy, movingstationtxy                                                           filetype=1         method=1
 *

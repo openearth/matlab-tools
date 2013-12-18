@@ -13,11 +13,13 @@ fileedy     = get(handles.edit18,'String');
 if ~isempty(fileedy);
     fileedy = [pathin,'\',fileedy];
     if exist(fileedy,'file')==0;
+        if exist('wb'); close(wb); end;
         errordlg('The specified eddy viscosity file does not exist.','Error');
         set(handles.edit25,'String','');
         break;
     end
 else
+    if exist('wb'); close(wb); end;
     errordlg('The eddy viscosity file name has not been specified.','Error');
     set(handles.edit25,'String','');
     break;
@@ -27,12 +29,13 @@ end
 edyfile     = get(handles.edit25,'String');
 if isempty(edyfile);
     errordlg('The eddy viscosity sample file name has not been specified.','Error');
-    return;
+    break;
 end
 if length(edyfile) > 8;
     if strcmp(edyfile(end-7:end),'_edy.xyz') == 0;
+        if exist('wb'); close(wb); end;
         errordlg('The eddy viscosity sample file name has an improper extension.','Error');
-        return;
+        break;
     end
 end
 

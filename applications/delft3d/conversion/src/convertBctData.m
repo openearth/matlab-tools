@@ -13,17 +13,29 @@ filebct     = get(handles.edit11,'String');
 if ~isempty(filebct);
     filebct = [pathin,'\',filebct];
     if exist(filebct,'file')==0;
+        if exist('wb'); close(wb); end;
         errordlg('The specified bct file does not exist.','Error');
         break;
     end
 else
+    if exist('wb'); close(wb); end;
     errordlg('The bct file name has not been specified.','Error');
     break;
 end
 
 % Catch the polyline names for the boundary conditions
-filepli     = get(handles.listbox1,'String');
-npli        = size(filepli,1);
+readpli     = get(handles.listbox1,'String');
+
+% Filter the salinity-plis out
+clear filepli;
+for i=1:length(readpli);
+    pli     = readpli{i};
+    if strcmpi(pli(end-7:end),'_sal.pli');
+        continue
+    else
+        filepli(i,:)  = readpli{i};
+    end
+end
 
 % Read the bca-file
 bctdata     = bct_io('read',filebct);
@@ -32,6 +44,7 @@ bctdata     = bct_io('read',filebct);
 %%% ACTUAL CONVERSION OF THE BCT DATA
 
 % Loop over all the boundary pli-files
+npli        = size(filepli,1);
 cnt         = 1;
 for i=1:npli;
     fid                   = fopen([pathout,'\',filepli(i,:)],'r');
@@ -49,10 +62,9 @@ for i=1:npli;
             if strcmpi(location(1:end-5),bcname);
                 nametim          = [pathout,'\',filepli(i,1:end-4),'_',num2str(j,'%0.4d'),'.tim'];
                 nametim          = fopen(nametim,'wt');
-                fprintf(nametim,['* COLUMNN=3','\n']);
-                fprintf(nametim,['* COLUMN1=Period (min) or Astronomical Componentname','\n']);
-                fprintf(nametim,['* COLUMN2=Amplitude (ISO)','\n']);
-                fprintf(nametim,['* COLUMN3=Phase (deg)','\n']);
+                fprintf(nametim,['* COLUMNN=2','\n']);
+                fprintf(nametim,['* COLUMN1=Time (in minutes) with respect to the reference date','\n']);
+                fprintf(nametim,['* COLUMN2=Quantity of the boundary condition','\n']);
                 dataset          = bctdata.Table(k).Data;
                 if strcmpi(location(end),'a');
                     w            = 2;
@@ -66,15 +78,13 @@ for i=1:npli;
                 if strcmpi(tline{3},'t');
                     for ii=1:size(dataset,1);
                         information  = [num2str(    dataset(ii,1) ,'%7.7f'),'    ', ...
-                                        num2str(abs(dataset(ii,w)),'%7.7f'),'    ', ...
-                                        num2str(    0.0           ,'%7.7f')];
+                                        num2str(abs(dataset(ii,w)),'%7.7f')];
                         fprintf(nametim,[information,'\n']);
                     end
                 else
                     for ii=1:size(dataset,1);
                         information  = [num2str(dataset(ii,1)     ,'%7.7f'),'    ', ...
-                                        num2str(dataset(ii,w)     ,'%7.7f'),'    ', ...
-                                        num2str(0.0               ,'%7.7f')];
+                                        num2str(dataset(ii,w)     ,'%7.7f')];
                         fprintf(nametim,[information,'\n']);
                     end
                 end

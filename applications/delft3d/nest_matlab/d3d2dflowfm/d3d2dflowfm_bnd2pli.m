@@ -2,9 +2,6 @@ function varargout = d3d2dflowfm_bnd2pli(filgrd,filbnd,filpli,varargin)
 
 % d3d2dflowfm_bnd2pli: genarates pli file for D-Flow FM out of a D3D bnd file
 
-% initialisation
-OPT.Salinity          = false;
-OPT                   = setproperty(OPT,varargin);
 [path_pli,name_pli,~] = fileparts(filpli);
 
 % Read the grid: OET-style
@@ -57,10 +54,11 @@ for ibnd = 1 : no_bnd;
         end
     end
 
-    % Astronomical boundary conditions?
+    % Type of boundary conditions?
     astronomical = false;
     timeseries   = false;
     harmonic     = false;
+    salinity     = true;                 % always make salinity boundaries
     if strcmpi(D.DATA(ibnd).datatype,'a');
         astronomical  = true;
     end
@@ -72,42 +70,54 @@ for ibnd = 1 : no_bnd;
     end
 
     % Fill LINE struct for side A
-    LINE(iline).DATA{irow,1} = xb(ibnd,1);
-    LINE(iline).DATA{irow,2} = yb(ibnd,1);
-    string = sprintf(' %1s %1s ',D.DATA(ibnd).bndtype,D.DATA(ibnd).datatype);
-    if astronomical && ~OPT.Salinity;
-        string = [string D.DATA(ibnd).labelA];
+    LINE(iline).DATA{irow,1}        = xb(ibnd,1);
+    LINE(iline).DATA{irow,2}        = yb(ibnd,1);
+    LINESAL(iline).DATA{irow,1}     = xb(ibnd,1);
+    LINESAL(iline).DATA{irow,2}     = yb(ibnd,1);
+    stringbas = sprintf(' %1s %1s ',D.DATA(ibnd).bndtype,D.DATA(ibnd).datatype);
+    if astronomical;
+        string  = [stringbas D.DATA(ibnd).labelA];
     end
-    if timeseries   ||  OPT.Salinity;
-        bcname                = D.DATA(ibnd).name;
-        bcname(bcname==' ')   = [];
-        string = [string bcname 'sideA'];
+    if timeseries;
+        bcname                      = D.DATA(ibnd).name;
+        bcname(bcname==' ')         = [];
+        string  = [stringbas bcname 'sideA'];
     end
-    if harmonic     && ~OPT.Salinity;
+    if harmonic;
         nr_harm = nr_harm + 1;
-        string  = [string num2str(nr_harm,'%04i') 'sideA'];
+        string  = [stringbas num2str(nr_harm,'%04i') 'sideA'];
     end
-    LINE(iline).DATA{irow,3} = string;
+    salname                         = D.DATA(ibnd).name;
+    salname(salname==' ')           = [];
+    stringsal                       = [stringbas salname 'sideA'];
+    LINE(iline).DATA{irow,3}        = string;
+    LINESAL(iline).DATA{irow,3}     = stringsal;
 
     % Fill LINE struct for side B (avoid double points by checking if it is not first point of next boundary segment)
 
     if ~(xb(ibnd,2) == xb(min(ibnd + 1,no_bnd),1) && yb(ibnd,2) == yb(min(ibnd +1,no_bnd),1))
        irow = irow + 1;
-       LINE(iline).DATA{irow,1} = xb(ibnd,2);
-       LINE(iline).DATA{irow,2} = yb(ibnd,2);
-       string = sprintf(' %1s %1s ',D.DATA(ibnd).bndtype,D.DATA(ibnd).datatype);
-       if astronomical && ~OPT.Salinity;
-           string = [string D.DATA(ibnd).labelB];
+       LINE(iline).DATA{irow,1}     = xb(ibnd,2);
+       LINE(iline).DATA{irow,2}     = yb(ibnd,2);
+       LINESAL(iline).DATA{irow,1}  = xb(ibnd,2);
+       LINESAL(iline).DATA{irow,2}  = yb(ibnd,2);
+       stringbas = sprintf(' %1s %1s ',D.DATA(ibnd).bndtype,D.DATA(ibnd).datatype);
+       if astronomical;
+           string  = [stringbas D.DATA(ibnd).labelB];
        end
-       if timeseries   || OPT.Salinity;
-           bcname                = D.DATA(ibnd).name;
-           bcname(bcname==' ')   = [];
-           string = [string bcname 'sideB'];
+       if timeseries;
+           bcname                   = D.DATA(ibnd).name;
+           bcname(bcname==' ')      = [];
+           string  = [stringbas bcname 'sideB'];
        end
-       if harmonic     && ~OPT.Salinity;
-           string  = [string num2str(nr_harm,'%04i') 'sideB'];
+       if harmonic;
+           string  = [stringbas num2str(nr_harm,'%04i') 'sideB'];
        end
-       LINE(iline).DATA{irow,3} = string;
+       salname                      = D.DATA(ibnd).name;
+       salname(salname==' ')        = [];
+       stringsal                    = [stringbas salname 'sideB'];
+       LINE(iline).DATA{irow,3}     = string;
+       LINESAL(iline).DATA{irow,3}  = stringsal;
     end
     irow = irow + 1;
 end
@@ -120,27 +130,26 @@ for ipol = 1: length(LINE)
     % Blockname = name of the file
     %
 
-    if ~OPT.Salinity
-       LINE(ipol).Blckname=[name_pli '_' num2str(ipol,'%3.3i')];
-       dflowfm_io_xydata ('write',[filpli '_' num2str(ipol,'%3.3i') '.pli'],LINE(ipol));
-    else
-       LINE(ipol).Blckname=[name_pli '_' num2str(ipol,'%3.3i') '_sal'];
-       dflowfm_io_xydata ('write',[filpli '_' num2str(ipol,'%3.3i') '_sal.pli'],LINE(ipol));
-    end
+    LINE(ipol).Blckname=[name_pli '_' num2str(ipol,'%3.3i')];
+    dflowfm_io_xydata ('write',[filpli '_' num2str(ipol,'%3.3i') '.pli'],LINE(ipol));
+
+    LINESAL(ipol).Blckname=[name_pli '_' num2str(ipol,'%3.3i') '_sal'];
+    dflowfm_io_xydata ('write',[filpli '_' num2str(ipol,'%3.3i') '_sal.pli'],LINESAL(ipol));
+
 
     %
     % Fil varargout for later wriing of the file names to the external forcing file
     %
 
     if nargout > 0;
-        filext{ipol} = [LINE(ipol).Blckname '.pli'];
+        filext{ipol}               = [LINE(ipol).Blckname '.pli'];
+        filext{ipol+length(LINE)}  = [LINESAL(ipol).Blckname '.pli'];
     end
 end
 
 % now, write all polylines (only for hydrodynamic bc)
 
-if ~OPT.Salinity
-   dflowfm_io_xydata ('write',[filpli '_all.pli'],LINE);
-end
+dflowfm_io_xydata ('write',[filpli '_all.pli'],LINE);
+
 
 varargout = {filext};

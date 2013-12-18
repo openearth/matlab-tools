@@ -22,7 +22,7 @@ function varargout = dflowfmConverter(varargin)
 
 % Edit the above text to modify the response to help dflowfmConverter
 
-% Last Modified by GUIDE v2.5 11-Nov-2013 16:27:40
+% Last Modified by GUIDE v2.5 17-Dec-2013 17:48:59
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -589,6 +589,8 @@ function pushbutton10_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton10 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+convertBccData;
+msgbox('The salinity boundary conditions file has been written.','Message');
 
 
 % --- Executes on selection change in listbox2.
@@ -1058,3 +1060,11 @@ function edit31_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in pushbutton20.
+function pushbutton20_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton20 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+convertAll;

@@ -13,52 +13,87 @@ filebcc     = get(handles.edit14,'String');
 if ~isempty(filebcc);
     filebcc = [pathin,'\',filebcc];
     if exist(filebcc,'file')==0;
+        if exist('wb'); close(wb); end;
         errordlg('The specified bcc file does not exist.','Error');
         break;
     end
 else
+    if exist('wb'); close(wb); end;
     errordlg('The bcc file name has not been specified.','Error');
     break;
 end
 
 % Catch the polyline names for the boundary conditions
-filepli     = get(handles.listbox1,'String');
-npli        = size(filepli,1);
+readpli     = get(handles.listbox1,'String');
+
+% Filter the salinity-plis in
+clear filepli;
+n           = 1;
+for i=1:length(readpli);
+    pli     = readpli{i};
+    if ~strcmpi(pli(end-7:end),'_sal.pli');
+        continue
+    else
+        filepli(n,:)  = readpli{i};
+        n             = n + 1;
+    end
+end
 
 % Read the bcc-file
-bccdata     = delft3d_io_bct('read',filebcc);
+bccdata     = bct_io('read',filebcc);
 
-
-% %%% ACTUAL CONVERSION OF THE BCA DATA
-% 
-% % Loop over all the boundary pli-files
-% for i=1:npli;
-%     fid                   = fopen([pathout,'\',filepli(i,:)],'r');
-%     tline                 = fgetl(fid);
-%     tline                 = fgetl(fid);
-%     tlinenum              = str2num(tline);
-%     J                     = tlinenum(1);
-%     for j=1:J;
-%         tline             = fgetl(fid);
-%         tline             = textscan(tline,'%s%s%s%s%s');
-%         location          = cell2mat(tline{5});
-%         for k=1:length(bcadata.DATA);
-%             if strcmpi(location,bcadata.DATA(k).label);
-%                 namecmp          = [pathout,'\',filepli(i,1:end-4),'_',num2str(j,'%0.4d'),'.cmp'];
-%                 namecmp          = fopen(namecmp,'wt');
-%                 fprintf(namecmp,['* COLUMNN=3','\n']);
-%                 fprintf(namecmp,['* COLUMN1=Period (min) or Astronomical Componentname','\n']);
-%                 fprintf(namecmp,['* COLUMN2=Amplitude (ISO)','\n']);
-%                 fprintf(namecmp,['* COLUMN3=Phase (deg)','\n']);
-%                 for ii=1:length(bcadata.DATA(k).names);
-%                     information  = [cell2mat(bcadata.DATA(k).names(ii))     ,'    ', ...
-%                                     num2str(bcadata.DATA(k).amp(ii),'%7.7f'),'    ', ...
-%                                     num2str(bcadata.DATA(k).phi(ii),'%7.7f') ];
-%                     fprintf(namecmp,[information,'\n']);
-%                 end
-%                 fclose(namecmp);
-%             end
-%         end
-%     end
-% end
-% fclose all;
+% Loop over all the boundary pli-files
+npli        = size(filepli,1);
+cnt         = 1;
+for i=1:npli;
+    fid                   = fopen([pathout,'\',filepli(i,:)],'r');
+    tline                 = fgetl(fid);
+    tline                 = fgetl(fid);
+    tlinenum              = str2num(tline);
+    J                     = tlinenum(1);
+    for j=1:J;
+        tline             = fgetl(fid);
+        tline             = textscan(tline,'%s%s%s%s%s');
+        location          = cell2mat(tline{5});
+        for k=1:length(bccdata.Table);
+            bcname               = bccdata.Table(k).Location;
+            bctype               = bccdata.Table(k).Parameter(end).Name(1:8);
+            bcname(bcname==' ')  = [];
+            if strcmpi(location(1:end-5),bcname) & strcmpi(bctype,'Salinity');
+                nametim          = [pathout,'\',filepli(i,1:end-4),'_',num2str(j,'%0.4d'),'.tim'];
+                nametim          = fopen(nametim,'wt');
+                fprintf(nametim,['* COLUMNN=2','\n']);
+                fprintf(nametim,['* COLUMN1=Time (in minutes) with respect to the reference date','\n']);
+                fprintf(nametim,['* COLUMN2=Salinity (in ppt)','\n']);
+                dataset          = bccdata.Table(k).Data;
+                if strcmpi(location(end),'a');
+                    w            = 2;
+                end
+                if strcmpi(location(end),'b');
+                    w            = 3;
+                    if dataset(1,w) == 9.9999900e+002 | dataset(1,w) == 9.99e+002;
+                        w        = 2;
+                    end
+                end
+                if strcmpi(tline{3},'t');
+                    for ii=1:size(dataset,1);
+                        information  = [num2str(    dataset(ii,1) ,'%7.7f'),'    ', ...
+                                        num2str(abs(dataset(ii,w)),'%7.7f')];
+                        fprintf(nametim,[information,'\n']);
+                    end
+                else
+                    for ii=1:size(dataset,1);
+                        information  = [num2str(dataset(ii,1)     ,'%7.7f'),'    ', ...
+                                        num2str(dataset(ii,w)     ,'%7.7f')];
+                        fprintf(nametim,[information,'\n']);
+                    end
+                end
+                alltimfiles(cnt,:) = [filepli(i,1:end-4),'_',num2str(j,'%0.4d'),'.tim'];
+                cnt                = cnt + 1;
+                fclose(nametim);
+            end
+        end
+    end
+end
+fclose all;
+set(handles.listbox5,'String',alltimfiles);

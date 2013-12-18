@@ -11,8 +11,9 @@ convertGuiDirectoriesCheck;
 % Check if the ext file name has been specified (D-Flow FM)
 extfile     = get(handles.edit10,'String');
 if isempty(extfile);
+    if exist('wb'); close(wb); end;
     errordlg('The external forcings file name has not been specified.','Error');
-    return;
+    break;
 end
 
 % Check if the roughness file name has been specified (D-Flow FM)

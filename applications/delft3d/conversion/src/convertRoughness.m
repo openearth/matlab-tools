@@ -13,11 +13,13 @@ filergh     = get(handles.edit17,'String');
 if ~isempty(filergh);
     filergh = [pathin,'\',filergh];
     if exist(filergh,'file')==0;
+        if exist('wb'); close(wb); end;
         errordlg('The specified roughness file does not exist.','Error');
         set(handles.edit24,'String','');
         break;
     end
 else
+    if exist('wb'); close(wb); end;
     errordlg('The roughness file name has not been specified.','Error');
     set(handles.edit24,'String','');
     break;
@@ -26,13 +28,15 @@ end
 % Check if the roughness file name has been specified (D-Flow FM)
 rghfile     = get(handles.edit24,'String');
 if isempty(rghfile);
+    if exist('wb'); close(wb); end;
     errordlg('The roughness sample file name has not been specified.','Error');
-    return;
+    break;
 end
 if length(rghfile) > 8;
     if strcmp(rghfile(end-7:end),'_rgh.xyz') == 0;
+        if exist('wb'); close(wb); end;
         errordlg('The roughness sample file name has an improper extension.','Error');
-        return;
+        break;
     end
 end
 

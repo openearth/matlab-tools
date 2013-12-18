@@ -4,15 +4,17 @@ inputdir              = get(handles.edit1,'String');
 % Read the mdf filename
 mdffile               = get(handles.edit3,'String');
 if isempty(mdffile);
+    if exist('wb'); close(wb); end;
     errordlg('No mdf-file specified.','Error');
-    return;
+    break;
 end
 
 % Read the mdu filename
 mdufile               = get(handles.edit4,'String');
 if isempty(mdufile);
+    if exist('wb'); close(wb); end;
     errordlg('No mdu-filename specified.','Error');
-    return;
+    break;
 else
     if length(mdufile) > 3;
         if ~strcmp(mdufile(end-3:end),'.mdu');

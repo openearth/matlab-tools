@@ -13,17 +13,29 @@ filebch     = get(handles.edit13,'String');
 if ~isempty(filebch);
     filebch = [pathin,'\',filebch];
     if exist(filebch,'file')==0;
+        if exist('wb'); close(wb); end;
         errordlg('The specified bch file does not exist.','Error');
         break;
     end
 else
+    if exist('wb'); close(wb); end;
     errordlg('The bch file name has not been specified.','Error');
     break;
 end
 
 % Catch the polyline names for the boundary conditions
-filepli     = get(handles.listbox1,'String');
-npli        = size(filepli,1);
+readpli     = get(handles.listbox1,'String');
+
+% Filter the salinity-plis out
+clear filepli;
+for i=1:length(readpli);
+    pli     = readpli{i};
+    if strcmpi(pli(end-7:end),'_sal.pli');
+        continue
+    else
+        filepli(i,:)  = readpli{i};
+    end
+end
 
 % Read the bch-file (comparable style as existent OET-files)
 fid               = fopen(filebch,'r');
@@ -86,6 +98,7 @@ end
 %%% ACTUAL CONVERSION OF THE BCH DATA
 
 % Loop over all the boundary pli-files
+npli                      = size(filepli,1);
 cnt                       = 1;
 for i=1:npli;
     fid                   = fopen([pathout,'\',filepli(i,:)],'r');

@@ -2,8 +2,7 @@ warning off all;
 
 
 % Read the header of the ext-file (in directory 'data')  
-% TODO: fix path after commit
-fidexthea   = fopen(['data\extheader.ext'],'r');
+fidexthea   = fopen(['extheader.ext'],'r');
 fidext      = fopen(fileext,'wt');
 while ~feof(fidexthea);
     tline   = fgetl(fidexthea);
