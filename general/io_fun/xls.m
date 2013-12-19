@@ -1,4 +1,4 @@
-classdef xls < handle
+classdef xls < handle_light
 %XLS  fast, object oriented, reading and writing of xls files
 %
 % xls is much faster than matlab native xls read when multiple calls are
