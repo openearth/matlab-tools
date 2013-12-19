@@ -14,16 +14,19 @@ function simona_getdata_netcdf2CF(ncfile0)
 % TODO
 % http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_%28ACDD%29
 
+OPT.xy     = 1;
 OPT.ll     = 0;
-OPT.xybnds = 1; % ADAGUC can work with [x,y] coordinates only by mapping on-the-fly, THREDDS cannot map on-the-fly
-OPT.llbnds = 0; % THREDDS need [lat,lon] matrices to be included
+OPT.llbnds = 1; % THREDDS need [lat,lon] matrices to be included
+OPT.xybnds = 0; % ADAGUC can work with [x,y] coordinates only by mapping on-the-fly, THREDDS cannot map on-the-fly
 
 ncfile  = [filepathstrname(ncfile0),num2str(OPT.ll),'_xybnds_',num2str(OPT.xybnds),'_llbnds_',num2str(OPT.llbnds),'.nc'];
 
+coords = '';
 if OPT.ll
-   coords  = 'lon lat';
-else
-   coords  = 'XZETA YZETA';
+   coords  = [coords ' lon lat'];
+end
+if OPT.xy
+   coords  = [coords ' XZETA YZETA'];
 end
 
 copyfile(ncfile0,ncfile);
@@ -60,12 +63,16 @@ nc_dump(ncfile);
  nc_attput(ncfile,'XZETA' ,'long_name'    ,'x coordinate Arakawa-C centers'); % change: make different than XDEP
  nc_attput(ncfile,'XZETA' ,'coordinates'  ,coords); % connect CENTER (x,y) to CENTER matrix
  nc_attput(ncfile,'XZETA' ,'grid_mapping' ,'CRS'); % add grid_mapping attribute
+ if OPT.xybnds
  nc_attput(ncfile,'XZETA' ,'bounds'       ,'XZETA_bnds'); % bounds:XDEP add bounds attribute once XDEP is 3D [4 x n x m]'); % add bounds attribute once XDEP is 3D [4 x n x m]
+ end
 
  nc_attput(ncfile,'YZETA' ,'long_name'    ,'y coordinate Arakawa-C centers'); % change: make different than YDEP
  nc_attput(ncfile,'YZETA' ,'coordinates'  ,coords); % connect CENTER (x,y) to CENTER matrix
  nc_attput(ncfile,'YZETA' ,'grid_mapping' ,'CRS'); % add grid_mapping attribute
+ if OPT.xybnds
  nc_attput(ncfile,'YZETA' ,'bounds'       ,'YZETA_bnds'); % bounds:YDEP add bounds attribute once YDEP is 3D [4 x n x m]'); % add bounds attribute once YDEP is 3D [4 x n x m]
+ end
  
  nc_attput(ncfile,'XDEP'  ,'long_name'    ,'x coordinate Arakawa-C corners'); % change: make different than XZETA
  nc_attput(ncfile,'XDEP'  ,'standard_name','projection_x_coordinate');        % change: make identical as XZETA
@@ -104,6 +111,10 @@ nc_dump(ncfile);
  attr(4).Value = 'degrees_north';
  attr(5).Name  = 'long_name';
  attr(5).Value = 'latitude';
+ if OPT.llbnds
+ attr(6).Name  = 'bounds';
+ attr(6).Value = 'lat_bnds';  
+ end
  nc  = struct('Name','lat', ...
                      'Datatype'   , 'float', ...
                      'Dimension' , {{'N','M'}}, ...
@@ -122,6 +133,11 @@ nc_dump(ncfile);
  attr(4).Value = 'degrees_east';
  attr(5).Name  = 'long_name';
  attr(5).Value = 'longitude';
+ if OPT.llbnds
+ attr(6).Name  = 'bounds';
+ attr(6).Value = 'lon_bnds'; 
+ end
+ 
  
  nc  = struct('Name','lon', ...
                      'Datatype'   , 'float', ...
@@ -131,11 +147,58 @@ nc_dump(ncfile);
  nc_addvar(ncfile,nc); clear attr;% ADD 
  nc_varput(ncfile,'lon',G.lon); % ADD 
  end
- %% x and y bounds
- if OPT.xybnds
- nc_adddim(ncfile,'bounds',4)
- G.XZETA_bnds = nc_cf_cor2bounds(G.XZETA)
- G.YZETA_bnds = nc_cf_cor2bounds(G.YZETA)
+ %%
+ if (OPT.xy & OPT.xybnds) | OPT.llbnds
+  nc_adddim(ncfile,'bounds',4)
+ end
+
+ %% (lat,lon) bounds
+ if OPT.llbnds
+ G.lon_bnds = nc_cf_cor2bounds(G.lon);
+ G.lat_bnds = nc_cf_cor2bounds(G.lat);
+ 
+ attr(1).Name  = '_FillValue';
+ attr(1).Value = 9.969209968386869e+36;
+ attr(2).Name  = 'missing_value';
+ attr(2).Value = 9.969209968386869e+36;
+ attr(3).Name  = 'standard_name';
+ attr(3).Value = 'longitude';
+ attr(4).Name  = 'units';
+ attr(4).Value = 'degrees_east';
+ attr(5).Name  = 'long_name';
+ attr(5).Value = 'lon corners';
+
+ nc  = struct('Name','lon_bnds', ...
+                     'Datatype'   , 'float', ...
+                     'Dimension' , {{'N','M','bounds'}}, ...
+                     'Attribute' , attr,...
+                     'FillValue'  , []); % this doesn't do anything
+ nc_addvar(ncfile,nc); clear attr;% ADD 
+ nc_varput(ncfile,'lon_bnds',G.lon_bnds); % ADD 
+ 
+ attr(1).Name  = '_FillValue';
+ attr(1).Value = 9.969209968386869e+36;
+ attr(2).Name  = 'missing_value';
+ attr(2).Value = 9.969209968386869e+36;
+ attr(3).Name  = 'standard_name';
+ attr(3).Value = 'latitude';
+ attr(4).Name  = 'units';
+ attr(4).Value = 'degrees_north';
+ attr(5).Name  = 'long_name';
+ attr(5).Value = 'lat corners';
+ 
+ nc  = struct('Name','lat_bnds', ...
+                     'Datatype'   , 'float', ...
+                     'Dimension' , {{'N','M','bounds'}}, ...
+                     'Attribute' , attr,...
+                     'FillValue'  , []); % this doesn't do anything
+ nc_addvar(ncfile,nc); clear attr;% ADD 
+ nc_varput(ncfile,'lat_bnds',G.lat_bnds); % ADD 
+ end
+  %% (x,y) bounds
+ if (OPT.xy & OPT.xybnds)
+ G.XZETA_bnds = nc_cf_cor2bounds(G.XZETA);
+ G.YZETA_bnds = nc_cf_cor2bounds(G.YZETA);
  
  attr(1).Name  = '_FillValue';
  attr(1).Value = 9.969209968386869e+36;
@@ -175,7 +238,6 @@ nc_dump(ncfile);
  nc_addvar(ncfile,nc); clear attr;% ADD 
  nc_varput(ncfile,'YZETA_bnds',G.YZETA_bnds); % ADD 
  end
- 
  %%
  nc_dump(ncfile0,[],[filename(ncfile0),'.cdl'])
  nc_dump(ncfile ,[],[filename(ncfile) ,'.cdl'])
