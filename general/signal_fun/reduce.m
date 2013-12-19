@@ -53,19 +53,19 @@ title(sprintf('max points set at %d ==> max error %.1f',length(ind),max_error))
 
 subplot(3,2,2)
 tolerance = 5;
-[ind,max_error]= reduce(x,y,tolerance);
+[ind,max_error]= reduce(x,y,tolerance,length(x));
 plot(x,y,x(ind),y(ind),x(ind),[y(ind)+max_error y(ind)-max_error],'r:')
 title(sprintf('tolerance set at %.1f ==> %d points needed',tolerance,length(ind)))
 
 subplot(3,2,4)
 tolerance = 3;
-[ind,max_error]= reduce(x,y,tolerance);
+[ind,max_error]= reduce(x,y,tolerance,length(x));
 plot(x,y,x(ind),y(ind),x(ind),[y(ind)+max_error y(ind)-max_error],'r:')
 title(sprintf('tolerance set at %.1f ==> %d points needed',tolerance,length(ind)))
 
 subplot(3,2,6)
 tolerance = 0.1;
-[ind,max_error]= reduce(x,y,tolerance);
+[ind,max_error]= reduce(x,y,tolerance,length(x));
 plot(x,y,x(ind),y(ind),x(ind),[y(ind)+max_error y(ind)-max_error],'r:')
 title(sprintf('tolerance set at %.1f ==> %d points needed',tolerance,length(ind)))
 
