@@ -14,9 +14,6 @@
       <plotoption>
         <name>opacity</name>
       </plotoption>
-      <plotoption>
-        <name>verticallevel</name>
-      </plotoption>
       <elementgroup>image</elementgroup>
     </plotroutine>
   </plottype>

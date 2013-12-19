@@ -137,10 +137,7 @@
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>fillclosedpolygons</name>
-      </plotoption>
-      <plotoption>
-        <name>fillcolor</name>
+        <name>facecolor</name>
       </plotoption>
       <plotoption>
         <name>linecolor</name>
@@ -184,7 +181,7 @@
       <plotoption>
         <name>timebarmarkerfacecolor</name>
       </plotoption>
-      <elementgroup>polygon</elementgroup>
+      <elementgroup>facecolor</elementgroup>
       <elementgroup>line</elementgroup>
       <elementgroup>timebar</elementgroup>
       <elementgroup>legendtext</elementgroup>
@@ -195,10 +192,7 @@
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>fillclosedpolygons</name>
-      </plotoption>
-      <plotoption>
-        <name>fillcolor</name>
+        <name>facecolor</name>
       </plotoption>
       <plotoption>
         <name>linecolor</name>
@@ -242,7 +236,7 @@
       <plotoption>
         <name>timebarmarkerfacecolor</name>
       </plotoption>
-      <elementgroup>polygon</elementgroup>
+      <elementgroup>facecolor</elementgroup>
       <elementgroup>line</elementgroup>
       <elementgroup>timebar</elementgroup>
       <elementgroup>legendtext</elementgroup>

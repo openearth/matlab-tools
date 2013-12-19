@@ -3,16 +3,24 @@
 <root>
   <title>Animation Settings</title>
   <width>217</width>
-  <height>451</height>
+  <height>481</height>
   <tag>animationsettings</tag>
     <element>
       <tag>framerate</tag>
       <style>edit</style>
-      <position>144 410 41 21</position>
+      <position>144 440 41 21</position>
       <variable>framerate</variable>
       <type>integer</type>
       <text>Frame Rate (fps)</text>
       <tooltipstring>Edit frame rate (in frames per second)</tooltipstring> 
+    </element>
+    <element>
+      <style>edit</style>
+      <position>144 410 41 21</position>
+      <variable>quality</variable>
+      <type>integer</type>
+      <text>Quality (1-100)</text>
+      <tooltipstring>Edit video quality (1-100)</tooltipstring> 
     </element>
     <element>
       <tag>starttime</tag>
@@ -39,7 +47,7 @@
       <variable>timestep</variable>
       <type>real</type>
       <text>Time Step (s)</text>
-      <tooltipstring>Edit time step of animation</tooltipstring> 
+      <tooltipstring>Edit time step of animation (in seconds)</tooltipstring> 
     </element>
     <element>
       <tag>editfilename</tag>
@@ -57,6 +65,7 @@
       <variable>makekmz</variable>
       <type>integer</type>
       <text>Make KMZ</text>
+      <tooltipstring>Make KMZ file instead of AVI file (only works on FIRST subplot)</tooltipstring> 
     </element>
     <element>
       <tag>keepfigures</tag>
@@ -82,7 +91,7 @@
       <variable>flightpath</variable>
       <type>integer</type>
       <text>Flight Path</text>
-      <tooltipstring>Keep figure files</tooltipstring> 
+      <tooltipstring>Use flight path file (only for 3D animations)</tooltipstring> 
     </element>
     <element>
       <style>pushselectfile</style>
@@ -110,6 +119,7 @@
       <variable>selectbits</variable>
       <type>integer</type>
       <text>Bit Depth</text>
+      <enable>0</enable>
       <list>
         <texts>
           <text>8</text>
@@ -129,6 +139,7 @@
       <tooltipstring>Edit codec options</tooltipstring> 
       <callback>muppet_animationSettings</callback>
       <option1>avioptions</option1>
+      <enable>0</enable>
     </element>
     <element>
       <tag>pushopen</tag>

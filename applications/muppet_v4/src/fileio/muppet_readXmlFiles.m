@@ -100,10 +100,13 @@ end
 %% Plot Types
 flist=dir([dr 'plottypes' filesep '*.xml']);
 for ii=1:length(flist)
+    handles.plottype(ii).plottype.subplotoption=[];
     handles.plottype(ii).plottype=xml2struct([dr 'plottypes' filesep flist(ii).name]);
     handles.plottype(ii).plottype.name=flist(ii).name(1:end-4);
-%     handles.plottype(ii).plottype=xml.plottype(1).plottype;
 end
+% Annotation
+handles.plottype(length(flist)+1).plottype.name='annotation';
+handles.plottype(length(flist)+1).plottype.subplotoption=[];
 
 %% Frames (also do str2num here, which is not consistent with other xml files, but that's okay)
 dr=[handles.settingsdir 'frames' filesep];

@@ -96,6 +96,8 @@ if pathname~=0
     fprintf(fid,'%s \n',txt);
     txt=['FrameRate      ' num2str(h.framerate)];
     fprintf(fid,'%s \n',txt);    
+    txt=['Quality      ' num2str(h.quality)];
+    fprintf(fid,'%s \n',txt);    
     txt=['NBits          ' num2str(h.selectbits)];
     fprintf(fid,'%s \n',txt);
     if h.keepfigures

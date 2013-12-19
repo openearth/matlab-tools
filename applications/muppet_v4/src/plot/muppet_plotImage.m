@@ -19,7 +19,7 @@ if ~isempty(data.georeferencefile)
 %     p=surf(data.x,data.y,data.z,double(data.c)/255);shading flat;
      p=image(data.x,data.y,data.c);
 else
-    data.z=zeros(size(data.c,1),size(data.c,2))+opt.verticallevel;
+    data.z=zeros(size(data.c,1),size(data.c,2));
     data.c(:,:,1)=flipud(data.c(:,:,1));
     data.c(:,:,2)=flipud(data.c(:,:,2));
     data.c(:,:,3)=flipud(data.c(:,:,3));

@@ -56,7 +56,7 @@ if plt.colorbar.type==1
         y(2)=0;
         y(3)=-0.1;
         fl=fill(x,y,'b');hold on;
-        set(fl,'FaceColor',col,'LineStyle','-');
+        set(fl,'FaceColor',col,'EdgeColor',colorlist('getrgb','color',plt.colorbar.font.color),'LineStyle','-');
         set(fl,'Clipping','off');
         % Top
         col=clmap(end,:);
@@ -65,7 +65,7 @@ if plt.colorbar.type==1
         y(2)=1;
         y(3)=1.1;
         fl=fill(x,y,'b');hold on;
-        set(fl,'FaceColor',col,'LineStyle','-');
+        set(fl,'FaceColor',col,'EdgeColor',colorlist('getrgb','color',plt.colorbar.font.color),'LineStyle','-');
         set(fl,'Clipping','off');
         
         ipos=0;
@@ -136,7 +136,7 @@ if plt.colorbar.type==1
         y(2)=1;
         y(3)=0.5;
         fl=fill(x,y,'b');hold on;
-        set(fl,'FaceColor',col,'LineStyle','-');
+        set(fl,'FaceColor',col,'EdgeColor',colorlist('getrgb','color',plt.colorbar.font.color),'LineStyle','-');
         set(fl,'Clipping','off');
         % Right
         col=clmap(end,:);
@@ -145,7 +145,7 @@ if plt.colorbar.type==1
         y(2)=1;
         y(3)=0.5;
         fl=fill(x,y,'b');hold on;
-        set(fl,'FaceColor',col,'LineStyle','-');
+        set(fl,'FaceColor',col,'EdgeColor',colorlist('getrgb','color',plt.colorbar.font.color),'LineStyle','-');
         set(fl,'Clipping','off');
         
         ipos=0;

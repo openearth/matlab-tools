@@ -18,7 +18,7 @@ for id=1:nodat
             idat(k)=id;
             txt{k}=data.vectorlegendtext;
             if strcmpi(data.plotroutine,'curved arrows') || strcmpi(data.plotroutine,'colored curved arrows')
-                length(k)=data.vectorlegendlength*data.dtcurvec/plt.scale;
+                length(k)=data.vectorlegendlength*data.curveclength/plt.scale;
             else
                 length(k)=data.vectorlegendlength*data.unitvector/plt.scale;
             end
@@ -41,11 +41,10 @@ if k>0
             arthck=data.arrowthickness;
             y=0.01*(0.4*k-0.4*i);
             x2=0.0005+length(i)*[0 15 15 20 15 15 0]/20;
-            y2=y+2*length(i)*[arthck arthck hdthck 0 -hdthck -arthck -arthck]/25;
-            z2=zeros(size(x2));
-            fl=patch(x2,y2,z2,'k');hold on;
-            set(fl,'EdgeColor',colorlist('getrgb','color',data.linecolor));
-            set(fl,'FaceColor',colorlist('getrgb','color',data.fillcolor));
+            y2=y+2*length(i)*[arthck arthck hdthck 0 -hdthck -arthck -arthck]/2;
+            fl=patch(x2,y2,'k');hold on;
+            set(fl,'EdgeColor',colorlist('getrgb','color',data.edgecolor));
+            set(fl,'FaceColor',colorlist('getrgb','color',data.facecolor));
         else
             x=0.0;
             y=0.01*(0.4*k-0.4*i);

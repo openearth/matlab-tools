@@ -68,22 +68,30 @@ if exist('tmpavi.png','file')
 end
 clear a
 
-useavifile=0;
+usevideowriter=1;
 
 if ~isempty(animationsettings.avifilename)
-    if useavifile
+    if usevideowriter
         avihandle=VideoWriter(animationsettings.avifilename);
         avihandle.FrameRate=animationsettings.framerate;
-        avihandle.Quality=50;
+        avihandle.Quality=animationsettings.quality;
         open(avihandle);
     else
         if ~strcmpi(animationsettings.avifilename(end-2:end),'gif')
 %             avihandle = writeavi('initialize');
 %             avihandle = writeavi('open', avihandle,animationsettings.avifilename);
 %             avihandle = writeavi('addvideo', avihandle, animationsettings.framerate, sz(1),sz(2), 24, aviops);
-            avihandle = avi('initialize');
+            avihandle=getappdata(0,'avihandle');
+            if ~isempty(avihandle)
+                try
+                    close(avihandle);
+                end
+            end
+            avihandle = avi('initialize')
+            setappdata(0,'avihandle',avihandle);
             avihandle = avi('open', avihandle,animationsettings.avifilename);
-            avihandle = avi('addvideo', avihandle, animationsettings.framerate, sz(1),sz(2), 24, aviops);
+%            avihandle = avi('addvideo', avihandle, animationsettings.framerate, sz(1),sz(2), 24, aviops);
+            avihandle = avi('addvideo', avihandle, animationsettings.framerate, sz(1),sz(2), 24);
         end
     end
 end
@@ -235,10 +243,9 @@ try
         % No avi file is made if avi filename is empty
         if  ~isempty(animationsettings.avifilename)
             a = imread(figname,'png');
-            if useavifile
+            if usevideowriter
                 F = im2frame(a);
                 writeVideo(avihandle,F);
-%                avihandle = addframe(avihandle,F);
             else
                 if ~strcmpi(animationsettings.avifilename(end-2:end),'gif')
                     aaa=uint8(a(1:sz(1),1:sz(2),:));
@@ -283,13 +290,13 @@ try
     
     % Close avi file
     if ~isempty(animationsettings.avifilename)
-        if useavifile
-%            avihandle = close(avihandle);
+        if usevideowriter
             close(avihandle);
         else
             if ~strcmpi(animationsettings.avifilename(end-2:end),'gif')
 %                avihandle=writeavi('close', avihandle);
                 avihandle=avi('close', avihandle);
+                setappdata(0,'avihandle',[]);
             else
                 % Try to make animated gif (not very succesful so far)
                 %    imwrite(im,map,'test.gif','DelayTime',1/animationsettings.FrameRate,'LoopCount',inf) %g443800
@@ -350,7 +357,12 @@ try
     
 catch
     try
-        avihandle=writeavi('close', avihandle);
+        if usevideowriter
+            close(avihandle);
+        else
+            avihandle=avi('close', avihandle);
+        end
+        setappdata(0,'avihandle',[]);
     end
     if ishandle(wb)
         close(wb);

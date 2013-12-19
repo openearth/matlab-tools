@@ -16,6 +16,7 @@ if ilayout
 else
     
     ip=muppet_findIndex(handles.plottype,'plottype','name',plt.type);
+    
     % First fix time axes
     switch plt.type
         case{'timeseries','timestack'}
@@ -24,9 +25,15 @@ else
     end
     
     % Name
-    txt=['   Subplot "' plt.name '"'];
-    fprintf(fid,'%s \n',txt);
-    fprintf(fid,'%s \n','');
+    switch plt.type
+        case{'annotation'}
+            txt='   Annotations';
+            fprintf(fid,'%s \n',txt);
+        otherwise
+            txt=['   Subplot "' plt.name '"'];
+            fprintf(fid,'%s \n',txt);
+            fprintf(fid,'%s \n','');
+    end
     
     for ii=1:length(handles.plottype(ip).plottype.subplotoption)
         iplt=muppet_findIndex(handles.subplotoption,'subplotoption','name',handles.plottype(ip).plottype.subplotoption(ii).subplotoption.name);       
@@ -45,35 +52,52 @@ else
         idt=muppet_findIndex(handles.datatype,'datatype','name',plt.datasets(id).dataset.type);
         % Find plot type
         iplt=muppet_findIndex(handles.datatype(idt).datatype.plottype,'plottype','name',plt.type);
-%         switch lower(plt.datasets(id).dataset.plotroutine)
-%             case{'plotgeoimage'}
-%                 plt.datasets(id).dataset.plotroutine='image';
-%         end                
         % Find plot routine
-        ipr=muppet_findIndex(handles.datatype(idt).datatype.plottype(iplt).plottype.plotroutine,'plotroutine','name',plt.datasets(id).dataset.plotroutine);        
+        ipr=muppet_findIndex(handles.datatype(idt).datatype.plottype(iplt).plottype.plotroutine,'plotroutine','name',plt.datasets(id).dataset.plotroutine);
+        
+        if isempty(ipr)
+            disp(['Plot routine ' plt.datasets(id).dataset.plotroutine ' does not exist!']);
+            break
+        end
         
         plotoption=handles.datatype(idt).datatype.plottype(iplt).plottype.plotroutine(ipr).plotroutine.plotoption;
+
+        switch plt.type
+            case{'annotation'}
+                txt=['      Annotation "' plt.datasets(id).dataset.name '"'];
+            otherwise
+                txt=['      Dataset "' plt.datasets(id).dataset.name '"'];
+        end
         
-        txt=['      Dataset "' plt.datasets(id).dataset.name '"'];
         fprintf(fid,'%s \n',txt);
 
         for ii=1:length(plotoption)
             ipltopt=muppet_findIndex(handles.plotoption,'plotoption','name',plotoption(ii).plotoption.name);
-            muppet_writeOption(handles.plotoption(ipltopt).plotoption,plt.datasets(id).dataset,fid,9,21);
-            if isfield(handles.plotoption(ipltopt).plotoption,'element')
-                for jj=1:length(handles.plotoption(ipltopt).plotoption.element)
-                    muppet_writeOption(handles.plotoption(ipltopt).plotoption.element(jj).element,plt.datasets(id).dataset,fid,9,21);
-                end
+            if isempty(ipltopt)
+                disp(['Plot option ' plotoption(ii).plotoption.name ' does not exist!']);
+                break
+            else
+                muppet_writeOption(handles.plotoption(ipltopt).plotoption,plt.datasets(id).dataset,fid,9,21);
             end
         end
         
-        txt='      EndDataset';
+        switch plt.type
+            case{'annotation'}
+                txt='      EndAnnotation';
+            otherwise
+                txt='      EndDataset';
+        end
         fprintf(fid,'%s \n',txt);
         fprintf(fid,'%s \n','');
         
     end
 end
 
-txt='   EndSubplot';
+switch plt.type
+    case{'annotation'}
+        txt='   EndAnnotations';
+    otherwise
+        txt='   EndSubplot';
+end
 fprintf(fid,'%s \n',txt);
 fprintf(fid,'%s \n','');

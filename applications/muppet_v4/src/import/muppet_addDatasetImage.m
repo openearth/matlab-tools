@@ -68,4 +68,5 @@ switch lower(opt)
         dataset.alpha = alpha;
         
         dataset.tc='c';
+        
 end

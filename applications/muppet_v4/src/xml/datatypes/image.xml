@@ -4,7 +4,7 @@
   <plottype>
     <name>Image</name>
     <plotroutine>
-      <name>plotimage</name>
+      <name>image</name>
       <plotoption>
         <name>plotroutine</name>
       </plotoption>
@@ -13,9 +13,6 @@
       </plotoption>
       <plotoption>
         <name>opacity</name>
-      </plotoption>
-      <plotoption>
-        <name>verticallevel</name>
       </plotoption>
       <elementgroup>image</elementgroup>
     </plotroutine>

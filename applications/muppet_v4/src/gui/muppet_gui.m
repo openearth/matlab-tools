@@ -6,7 +6,7 @@ if isempty(varargin)
     newSession('firsttime');
     handles=getHandles;
     figureiconfile=[handles.settingsdir 'icons' filesep 'deltares.gif'];
-    gui_newWindow(handles,'xmldir',handles.xmlguidir,'xmlfile','muppetgui.xml','modal',0, ...
+    gui_newWindow(handles,'xmldir',handles.xmlguidir,'xmlfile','muppetgui.xml','modal',0,'resize',0, ...
         'getfcn',@getHandles,'setfcn',@setHandles,'tag','muppetgui','Color',[0.941176 0.941176 0.941176], ...
         'iconfile',[handles.settingsdir 'icons' filesep 'deltares.gif']);
     set(gcf,'CloseRequestFcn','set(0,''ShowHiddenHandles'',''on'');delete(get(0,''Children''))');
@@ -38,6 +38,10 @@ else
             showColors;
         case{'editcolormaps'}            
             editColorMaps;
+        case{'saveinteractivetext'}
+            saveInteractiveText;
+        case{'saveinteractivepolylines'}
+            saveInteractivePolylines;
         case{'deltaresonline'}
              web('http://www.deltares.nl/en');
         case{'muppethelp'}
@@ -374,6 +378,71 @@ muppet_refreshColorMap(handles);
 
 setHandles(handles);
 
+%%
+function saveInteractiveText
+% Saves text for active subplot
+handles=getHandles;
+iok=0;
+plt=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot;
+% First check if 
+for id=1:plt.nrdatasets
+    if strcmpi(plt.datasets(id).dataset.plotroutine,'interactive text')
+        iok=1;
+    end
+end
+
+if ~iok
+    muppet_giveWarning('text','There is no interactive text in this subplot!');
+    return
+end
+
+[filename, pathname] = uiputfile('*.ann');
+
+if pathname~=0
+    fid=fopen([pathname filename],'wt');
+    for id=1:plt.nrdatasets
+        if strcmpi(plt.datasets(id).dataset.plotroutine,'interactive text')
+            str=['"' plt.datasets(id).dataset.text '"'];
+            str=[str repmat(' ',1,max(1,25-length(str)))];
+            fprintf(fid,'%s %14.7e %14.7e %7.2f %7.2f\n',str,plt.datasets(id).dataset.x,plt.datasets(id).dataset.y,0,0);
+        end
+    end
+end
+fclose(fid);
+
+%%
+function saveInteractivePolylines
+% Saves polylines for active subplot
+handles=getHandles;
+iok=0;
+plt=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot;
+% First check if there are polylines
+for id=1:plt.nrdatasets
+    if strcmpi(plt.datasets(id).dataset.plotroutine,'interactive polyline')
+        iok=1;
+    end
+end
+
+if ~iok
+    muppet_giveWarning('text','There are no interactive polylines in this subplot!');
+    return
+end
+
+[filename, pathname] = uiputfile('*.pol');
+
+if pathname~=0
+    fid=fopen([pathname filename],'wt');
+    for id=1:plt.nrdatasets
+        if strcmpi(plt.datasets(id).dataset.plotroutine,'interactive polyline')
+            fprintf(fid,'%s\n',plt.datasets(id).dataset.name);
+            fprintf(fid,'%i %i\n',length(plt.datasets(id).dataset.x),2);
+            for ip=1:length(plt.datasets(id).dataset.x)
+                fprintf(fid,'%14.7e %14.7e\n',plt.datasets(id).dataset.x(ip),plt.datasets(id).dataset.y(ip));
+            end
+        end
+    end
+end
+fclose(fid);
 
 %%
 function aboutMuppet
@@ -967,10 +1036,10 @@ muppet_animationSettings;
 %%
 function makeAnimation
 handles=getHandles;
-aviops=handles.animationsettings.avioptions;
-if isempty(aviops)
-    aviops=writeavi('getoptions',24);
-    handles.animationsettings.avioptions=aviops;
-    setHandles(handles);
-end
+% aviops=handles.animationsettings.avioptions;
+% if isempty(aviops)
+%     aviops=writeavi('getoptions',24);
+%     handles.animationsettings.avioptions=aviops;
+%     setHandles(handles);
+% end
 muppet_makeAnimation(handles,handles.activefigure);

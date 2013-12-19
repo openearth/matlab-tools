@@ -283,7 +283,7 @@
     <variable>title.font.name</variable>
     <default>Helvetica</default>
     <keyword>TitleFontName</keyword>
-    <keyword2>Font</keyword2>
+    <keyword2>TitleFont</keyword2>
     <dependency>
       <action>write</action>
       <checkfor>all</checkfor>
@@ -366,7 +366,7 @@
     <variable>xlabel.font.name</variable>
     <default>Helvetica</default>
     <keyword>XLabelFontName</keyword>
-    <keyword2>Font</keyword2>
+    <keyword2>XLabelFont</keyword2>
     <dependency>
       <action>write</action>
       <checkfor>all</checkfor>
@@ -449,7 +449,7 @@
     <variable>ylabel.font.name</variable>
     <default>Helvetica</default>
     <keyword>YLabelFontName</keyword>
-    <keyword2>Font</keyword2>
+    <keyword2>YLabelFont</keyword2>
     <dependency>
       <action>write</action>
       <checkfor>all</checkfor>

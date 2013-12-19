@@ -161,7 +161,7 @@ opt.areatext='values';
 % Image
 opt.whitevalue=0.9;
 opt.opacity=1;
-opt.verticallevel=1000;
+opt.verticallevel=-1000;
 
 % 3D
 opt.plot3dgrid=0;
@@ -186,3 +186,13 @@ opt.x=0;
 opt.y=0;
 opt.rotation=0;
 opt.curvature=0;
+
+% Annotations
+opt.head1style='plain';
+opt.head1width=6;
+opt.head1length=6;
+opt.head2style='plain';
+opt.head2width=6;
+opt.head2length=6;
+opt.box=1;
+opt.backgroundcolor='white';

@@ -42,23 +42,32 @@ hax=getappdata(h,'axis');
 hh=get(hax,'UserData');
 isub=hh(2);
 
-fig.subplots(isub).subplot.annotationsadded=1;
+plt=fig.subplots(isub).subplot;
+plt.annotationsadded=1;
 
-fig.subplots(isub).subplot.nrdatasets=fig.subplots(isub).subplot.nrdatasets+1;
-nrd=fig.subplots(isub).subplot.nrdatasets;
+plt.nrdatasets=plt.nrdatasets+1;
+nrd=plt.nrdatasets;
 opt=muppet_setDefaultPlotOptions;
 
-% opt.markersize=4;
-% opt.fillclosedpolygons=1;
-% opt.fillcolor='red';
+if strcmpi(plt.coordinatesystem.type,'geographic')
+    switch plt.projection
+        case{'mercator'}
+            y=invmerc(y);
+        case{'albers'}
+            [x,y]=albers(x,y,plt.labda0,plt.phi0,plt.phi1,plt.phi2,'inverse');
+    end
+end
+
 opt.x=x;
 opt.y=y;
 opt.rotation=0;
 opt.curvature=0;
 opt.text=options.text;
 opt.type='interactivetext';
-opt.plotroutine='plotinteractivetext';
+opt.plotroutine='interactive text';
 opt.name=options.text;
+
+fig.subplots(isub).subplot=plt;
 
 fig.subplots(isub).subplot.datasets(nrd).dataset=opt;
 

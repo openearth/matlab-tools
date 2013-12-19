@@ -18,11 +18,11 @@ end
 % Copy plot options to opt structure
 opt=plt.datasets(id).dataset;
 
-if handles.figures(ifig).figure.cm2pix==1
-    opt2=0;
-else
-    opt2=1;
-end
+% if handles.figures(ifig).figure.cm2pix==1
+%     opt2=0;
+% else
+%     opt2=1;
+% end
 
 %% If this is a map plot, try to convert coordinates of datasets if necessary
 switch handles.figures(ifig).figure.subplots(isub).subplot.type
@@ -30,57 +30,75 @@ switch handles.figures(ifig).figure.subplots(isub).subplot.type
     case{'map'}
         % Convert data to correct coordinate system
         
-        if ~strcmpi(plt.coordinatesystem.name,'unspecified') && ~strcmpi(data.coordinatesystem.name,'unspecified')
-            if ~strcmpi(plt.coordinatesystem.name,data.coordinatesystem.name) || ...
-                    ~strcmpi(plt.coordinatesystem.type,data.coordinatesystem.type)
-                switch lower(data.type)
-                    case{'vector2d2dxy','scalar2dxy','location1dxy','location2dxy'}
-                        [data.x,data.y]=convertCoordinates(data.x,data.y,handles.EPSG,'CS1.name',data.coordinatesystem.name,'CS1.type',data.coordinatesystem.type, ...
-                            'CS2.name',plt.coordinatesystem.name,'CS2.type',plt.coordinatesystem.type);
-                    case{'scalar2duxy','vector2d2duxy'}
-                        [data.G.cor.x,data.G.cor.y]=convertCoordinates(data.G.cor.x,data.G.cor.y,handles.EPSG,'CS1.name',data.coordinatesystem.name,'CS1.type',data.coordinatesystem.type, ...
-                            'CS2.name',plt.coordinatesystem.name,'CS2.type',plt.coordinatesystem.type);
-                        [data.G.peri.x,data.G.peri.y]=convertCoordinates(data.G.peri.x,data.G.peri.y,handles.EPSG,'CS1.name',data.coordinatesystem.name,'CS1.type',data.coordinatesystem.type, ...
-                            'CS2.name',plt.coordinatesystem.name,'CS2.type',plt.coordinatesystem.type);
+        if ~isempty(nr) % In case of interactive polylines and text, nr be empty
+            
+            if ~strcmpi(plt.coordinatesystem.name,'unspecified') && ~strcmpi(data.coordinatesystem.name,'unspecified')
+                if ~strcmpi(plt.coordinatesystem.name,data.coordinatesystem.name) || ...
+                        ~strcmpi(plt.coordinatesystem.type,data.coordinatesystem.type)
+                    switch lower(data.type)
+                        case{'vector2d2dxy','scalar2dxy','location1dxy','location2dxy'}
+                            [data.x,data.y]=convertCoordinates(data.x,data.y,handles.EPSG,'CS1.name',data.coordinatesystem.name,'CS1.type',data.coordinatesystem.type, ...
+                                'CS2.name',plt.coordinatesystem.name,'CS2.type',plt.coordinatesystem.type);
+                        case{'scalar2duxy','vector2d2duxy'}
+                            [data.G.cor.x,data.G.cor.y]=convertCoordinates(data.G.cor.x,data.G.cor.y,handles.EPSG,'CS1.name',data.coordinatesystem.name,'CS1.type',data.coordinatesystem.type, ...
+                                'CS2.name',plt.coordinatesystem.name,'CS2.type',plt.coordinatesystem.type);
+                            [data.G.peri.x,data.G.peri.y]=convertCoordinates(data.G.peri.x,data.G.peri.y,handles.EPSG,'CS1.name',data.coordinatesystem.name,'CS1.type',data.coordinatesystem.type, ...
+                                'CS2.name',plt.coordinatesystem.name,'CS2.type',plt.coordinatesystem.type);
+                    end
                 end
             end
         end
-        
+            
         % Set projection (in case of geographic coordinate systems)
         if strcmpi(handles.figures(ifig).figure.subplots(isub).subplot.coordinatesystem.type,'geographic')
             switch handles.figures(ifig).figure.subplots(isub).subplot.projection
                 case{'mercator'}
-                    switch lower(data.type)
-                        case{'scalar2duxy','vector2d2duxy'}
-                            % Unstructured data
-                            data.G.cor.y=merc(data.G.cor.y);
-                            data.G.peri.y=merc(data.G.peri.y);
-                        otherwise
-                            data.y=merc(data.y);
+                    if ~isempty(nr)
+                        switch lower(data.type)
+                            case{'scalar2duxy','vector2d2duxy'}
+                                % Unstructured data
+                                data.G.cor.y=merc(data.G.cor.y);
+                                data.G.peri.y=merc(data.G.peri.y);
+                            otherwise
+                                data.y=merc(data.y);
+                        end
+                    else
+                        % Interactive polylines and text
+                        plt.datasets(id).dataset.y=merc(plt.datasets(id).dataset.y);
                     end
                 case{'albers'}
-                    switch lower(data.type)
-                        case{'scalar2duxy','vector2d2duxy'}                            
-                            % Unstructured data
-                            x=data.G.cor.x;
-                            y=data.G.cor.y;
-                            [x,y]=albers(x,y,plt.labda0,plt.phi0,plt.phi1,plt.phi2);
-                            data.G.cor.x=x;
-                            data.G.cor.y=y;                            
-                            x=data.G.peri.x;
-                            y=data.G.peri.y;
-                            [x,y]=albers(x,y,plt.labda0,plt.phi0,plt.phi1,plt.phi2);
-                            data.G.peri.x=x;
-                            data.G.peri.y=y;
-                        otherwise
-                            x=data.x;
-                            y=data.y;
-                            [x,y]=albers(x,y,plt.labda0,plt.phi0,plt.phi1,plt.phi2);
-                            data.x=x;
-                            data.y=y;
+                    if ~isempty(nr)
+                        switch lower(data.type)
+                            case{'scalar2duxy','vector2d2duxy'}
+                                % Unstructured data
+                                x=data.G.cor.x;
+                                y=data.G.cor.y;
+                                [x,y]=albers(x,y,plt.labda0,plt.phi0,plt.phi1,plt.phi2);
+                                data.G.cor.x=x;
+                                data.G.cor.y=y;
+                                x=data.G.peri.x;
+                                y=data.G.peri.y;
+                                [x,y]=albers(x,y,plt.labda0,plt.phi0,plt.phi1,plt.phi2);
+                                data.G.peri.x=x;
+                                data.G.peri.y=y;
+                            otherwise
+                                x=data.x;
+                                y=data.y;
+                                [x,y]=albers(x,y,plt.labda0,plt.phi0,plt.phi1,plt.phi2);
+                                data.x=x;
+                                data.y=y;
+                        end
+                    else
+                        % Interactive polylines and text
+                        x=plt.datasets(id).dataset.x;
+                        y=plt.datasets(id).dataset.y;
+                        [x,y]=albers(x,y,plt.labda0,plt.phi0,plt.phi1,plt.phi2);
+                        plt.datasets(id).dataset.x=x;
+                        plt.datasets(id).dataset.y=y;
                     end
             end
         end
+        %         end
 end
 
 % Normprob scaling

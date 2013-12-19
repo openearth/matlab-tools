@@ -1,6 +1,7 @@
 function handles=muppet_initializeAnimationSettings(handles)
 
 handles.animationsettings.framerate=20;
+handles.animationsettings.quality=75;
 handles.animationsettings.selectbits=24;
 handles.animationsettings.keepfigures=0;
 handles.animationsettings.makekmz=0;

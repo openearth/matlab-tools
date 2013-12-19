@@ -1,9 +1,10 @@
 function h=muppet_readAnimationSettings(fname)
 
-h.framerate=5;
+h.framerate=20;
+h.quality=75;
 h.starttime=1;
 h.timestep=1;
-h.stopTtime=1;
+h.stoptime=1;
 h.keepfigures=0;
 h.makekmz=0;
 h.avifilename='anim.avi';
@@ -67,6 +68,9 @@ for i=1:length(txt)
         case {'framerate'}
             h.framerate=str2num(txt{i+1});
             
+        case {'quality'}
+            h.quality=str2num(txt{i+1});
+
         case {'fcchandler'}
             h.avioptions.fccHandler=str2num(txt{i+1});
             

@@ -80,6 +80,7 @@ for ii=i1:length(str)
             fig(nf).i1=ii;
             fig(nf).sub=[];
             fig(nf).i3=ii;
+            fig(nf).ann=[];
         end
     end
     keyword='subplot';
@@ -121,6 +122,42 @@ for ii=i1:length(str)
             end
         end
     end
+        
+    keyword='annotations';
+    if strcmpi(str{ii},keyword)
+        fig(nf).ann.i1=ii;
+        fig(nf).ann.d=[];
+        fig(nf).ann.nd=0;
+    end
+    keyword='annotation';
+    if ~strcmpi(str{ii},'annotations')
+        if length(str{ii})>=length(keyword)
+            if strcmpi(str{ii}(1:length(keyword)),keyword)
+                if fig(nf).ann.nd==0
+                    % First annotation found
+                    fig(nf).ann.i2=ii;
+                end
+                fig(nf).ann.nd=fig(nf).ann.nd+1;
+                fig(nf).ann.d(fig(nf).ann.nd).i1=ii;
+            end
+        end
+    end
+    keyword='endannotation';
+    if ~strcmpi(str{ii},'endannotations')
+        if length(str{ii})>=length(keyword)
+            if strcmpi(str{ii}(1:length(keyword)),keyword)
+                fig(nf).ann.d(fig(nf).ann.nd).i2=ii;
+            end
+        end
+    end
+    keyword='endannotations';
+    if length(str{ii})>=length(keyword)
+        if strcmpi(str{ii}(1:length(keyword)),keyword)
+              fig(nf).ann.i2=ii;
+              fig(nf).i3=ii;
+        end
+    end    
+        
     keyword='endfigure';
     if length(str{ii})>=length(keyword)
         if strcmpi(str{ii}(1:length(keyword)),keyword)            
@@ -247,9 +284,9 @@ for ifig=1:handles.nrfigures
 
             % Dataset types for interactive text and polylines
             switch lower(dataset.plotroutine)
-                case{'plotinteractivetext'}
+                case{'interactive text'}
                     dataset.type='interactivetext';
-                case{'plotinteractivepolyline'}
+                case{'interactive polyline'}
                     dataset.type='interactivepolyline';
             end
             
@@ -260,10 +297,49 @@ for ifig=1:handles.nrfigures
         figr.subplots(isub).subplot=subplt;
         
     end
+
+    % Annotations
+    if ~isempty(fig(ifig).ann)
+        
+        figr.nrsubplots=figr.nrsubplots+1;
+        isub=figr.nrsubplots;
+        
+        % Set dataset defaults
+        subplt=muppet_setDefaultAxisProperties;        
+        subplt.nrdatasets=fig(ifig).ann.nd;
+
+        subplt.name='Annotations';
+        subplt.type='annotation';
+                
+        % And the dataset in the subplot
+        for id=1:subplt.nrdatasets
+
+            % Set dataset defaults
+            dataset=muppet_setDefaultPlotOptions;
+            
+            i1=fig(ifig).ann.d(id).i1;
+            i2=fig(ifig).ann.d(id).i2-1;
+            [keywords,values]=readkeywordvaluepairs(str,i1,i2);
+            dataset.name=values{1};
+            for j=2:length(keywords)
+                dataset=readoption(dataset,handles.plotoption,keywords{j},values{j});                
+            end
+            
+            subplt.datasets(id).dataset=dataset;
+            
+        end
+        
+        figr.subplots(isub).subplot=subplt;
+        
+    end
+    
     
     handles.figures(ifig).figure=figr;
     
 end
+
+% Deal with backward compatibility
+handles=muppet_backwardCompatibility(handles);
 
 % Now fix some axes stuff and deal with backward compatibility issues
 for ifig=1:handles.nrfigures
@@ -310,37 +386,6 @@ for ifig=1:handles.nrfigures
                     handles.figures(ifig).figure.subplots(isub).subplot.datasets(id).dataset.type='annotation';
                 end
         end
-    end
-end
-
-% Backward compatibility
-for ifig=1:handles.nrfigures
-    for isub=1:handles.figures(ifig).figure.nrsubplots
-        
-        plt=handles.figures(ifig).figure.subplots(isub).subplot;
-        
-        % Scale bar
-        if plt.plotscalebar
-             if numel(plt.plotscalebar)==3
-                 plt.scalebar.position(1)=plt.plotscalebar(1)-plt.position(1);
-                 plt.scalebar.position(2)=plt.plotscalebar(2)-plt.position(2);                 
-                 plt.scalebar.position(3)=plt.plotscalebar(3);                 
-                 plt.plotscalebar=1;
-             end
-        end
-        
-        % North arrow
-        if plt.plotnortharrow
-             if numel(plt.plotnortharrow)==4
-                 plt.northarrow.position(1)=plt.plotnortharrow(1)-plt.position(1);
-                 plt.northarrow.position(2)=plt.plotnortharrow(2)-plt.position(2);                 
-                 plt.northarrow.position(3)=plt.plotnortharrow(3);                 
-                 plt.northarrow.position(4)=plt.plotnortharrow(4);                 
-                 plt.plotnortharrow=1;
-             end
-        end
-        
-        handles.figures(ifig).figure.subplots(isub).subplot=plt;
     end
 end
 

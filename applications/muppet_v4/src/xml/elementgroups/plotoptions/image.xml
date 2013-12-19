@@ -2,14 +2,14 @@
 <root>
   <element>
     <style>panel</style>
-    <position>0 0 350 80</position>
+    <position>0 0 350 50</position>
     <text>Image Properties</text>
   </element>
   <element>
     <variable>whitevalue</variable>
     <type>real</type>
     <style>edit</style>
-    <position>80 40 50 20</position>
+    <position>80 10 50 20</position>
     <text>White Value</text>
     <tooltipstring>Edit image white value (pixels with brightness that exceed this value will be made transparent)</tooltipstring>
   </element>
@@ -17,16 +17,8 @@
     <variable>opacity</variable>
     <type>real</type>
     <style>edit</style>
-    <position>190 40 50 20</position>
+    <position>190 10 50 20</position>
     <text>Opacity</text>
     <tooltipstring>Edit image opacity (setting to 0 make image fully transparent)</tooltipstring>
-  </element>
-  <element>
-    <variable>verticallevel</variable>
-    <type>real</type>
-    <style>edit</style>
-    <position>80 10 50 20</position>
-    <text>Vertical Level</text>
-    <tooltipstring>Edit vertical level</tooltipstring>
   </element>
 </root>

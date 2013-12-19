@@ -57,9 +57,9 @@ for ifig=1:handles.nrfigures
     for isub=1:handles.figures(ifig).figure.nrsubplots
         if ~strcmpi(handles.figures(ifig).figure.subplots(isub).subplot.type,'annotation')
             for id=1:handles.figures(ifig).figure.subplots(isub).subplot.nrdatasets
-                if strcmpi(handles.figures(ifig).figure.subplots(isub).subplot.datasets(id).dataset.plotroutine,'plotinteractivepolyline')
+                if strcmpi(handles.figures(ifig).figure.subplots(isub).subplot.datasets(id).dataset.plotroutine,'interactive polyline')
                     handles.figures(ifig).figure.subplots(isub).subplot.datasets(id).dataset.type='interactivepolyline';
-                elseif strcmpi(handles.figures(ifig).figure.subplots(isub).subplot.datasets(id).dataset.plotroutine,'plotinteractivetext')
+                elseif strcmpi(handles.figures(ifig).figure.subplots(isub).subplot.datasets(id).dataset.plotroutine,'interactive text')
                     handles.figures(ifig).figure.subplots(isub).subplot.datasets(id).dataset.type='interactivetext';
                 else
                     nr=muppet_findIndex(handles.datasets,'dataset','name',handles.figures(ifig).figure.subplots(isub).subplot.datasets(id).dataset.name);

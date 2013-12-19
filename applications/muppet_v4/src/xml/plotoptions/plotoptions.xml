@@ -101,6 +101,107 @@
     </dependency>
   </plotoption>
   <plotoption>
+    <name>adddatefontname</name>
+    <variable>adddate.font.name</variable>
+    <keyword>AddDateFontName</keyword>
+    <default>Helvetica</default>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>adddate.font.name</variable>
+        <operator>ne</operator>
+        <value>Helvetica</value>
+      </check>
+      <check>
+        <variable>adddatestring</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
+  </plotoption>
+  <plotoption>
+    <name>adddatefontsize</name>
+    <variable>adddate.font.size</variable>
+    <type>real</type>
+    <keyword>AddDateFontSize</keyword>
+    <default>12</default>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>adddate.font.size</variable>
+        <operator>ne</operator>
+        <value>12</value>
+      </check>
+      <check>
+        <variable>adddatestring</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
+  </plotoption>
+  <plotoption>
+    <name>adddatefontweight</name>
+    <variable>adddate.font.weight</variable>
+    <keyword>AddDateFontWeight</keyword>
+    <default>normal</default>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>adddate.font.weight</variable>
+        <operator>ne</operator>
+        <value>normal</value>
+      </check>
+      <check>
+        <variable>adddatestring</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
+  </plotoption>
+  <plotoption>
+    <name>adddatefontangle</name>
+    <variable>adddate.font.angle</variable>
+    <keyword>AddDateFontAngle</keyword>
+    <default>normal</default>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>adddate.font.angle</variable>
+        <operator>ne</operator>
+        <value>normal</value>
+      </check>
+      <check>
+        <variable>adddatestring</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
+  </plotoption>
+  <plotoption>
+    <name>adddatefontcolor</name>
+    <variable>adddate.font.color</variable>
+    <keyword>AddDateFontColor</keyword>
+    <default>Black</default>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>adddate.font.color</variable>
+        <operator>ne</operator>
+        <value>Black</value>
+      </check>
+      <check>
+        <variable>adddatestring</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
+  </plotoption>
+  <plotoption>
     <name>clim</name>
     <variable>cmin cstep cmax</variable>
     <type>real</type>
@@ -548,13 +649,6 @@
     <default>1</default>
   </plotoption>
   <plotoption>
-    <name>verticallevel</name>
-    <variable>verticallevel</variable>
-    <type>real</type>
-    <keyword>VerticalLevel</keyword>
-    <default>1000</default>
-  </plotoption>
-  <plotoption>
     <name>text</name>
     <variable>text</variable>
     <type>string</type>
@@ -805,6 +899,15 @@
     <variable>rightaxis</variable>
     <type>boolean</type>
     <keyword>RightAxis</keyword>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>rightaxis</variable>
+        <operator>ne</operator>
+        <value>0</value>
+      </check>
+    </dependency>
   </plotoption>
   <plotoption>
     <name>faceopacity</name>
@@ -1273,6 +1376,7 @@
     <name>fieldthinningtype</name>
     <variable>fieldthinningtype</variable>
     <keyword>Thinning</keyword>
+    <keyword2>FieldThinningType</keyword2>
     <default>none</default>
     <dependency>
       <action>write</action>
@@ -1289,6 +1393,7 @@
     <variable>fieldthinningfactor1</variable>
     <type>integer</type>
     <keyword>FieldThinningFactorM</keyword>
+    <keyword2>FieldThinningFactor1</keyword2>
     <default>1</default>
     <dependency>
       <action>write</action>
@@ -1305,6 +1410,7 @@
     <variable>fieldthinningfactor2</variable>
     <type>integer</type>
     <keyword>FieldThinningFactorN</keyword>
+    <keyword2>FieldThinningFactor2</keyword2>
     <default>1</default>
     <dependency>
       <action>write</action>

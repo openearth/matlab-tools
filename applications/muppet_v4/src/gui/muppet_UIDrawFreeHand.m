@@ -61,22 +61,38 @@ hax=getappdata(h,'axis');
 hh=get(hax,'UserData');
 isub=hh(2);
 
-fig.subplots(isub).subplot.annotationsadded=1;
+plt=fig.subplots(isub).subplot;
 
-fig.subplots(isub).subplot.nrdatasets=fig.subplots(isub).subplot.nrdatasets+1;
-nrd=fig.subplots(isub).subplot.nrdatasets;
+plt.annotationsadded=1;
+
+plt.nrdatasets=plt.nrdatasets+1;
+nrd=plt.nrdatasets;
 opt=muppet_setDefaultPlotOptions;
 
 opt.markersize=4;
-opt.fillclosedpolygons=1;
+opt.fillclosedpolygons=0;
 opt.fillcolor='red';
 opt.type='interactivepolyline';
-opt.plotroutine='plotinteractivepolyline';
+opt.plotroutine='interactive polyline';
 opt.polylinetype=options.type;
+
+if strcmpi(plt.coordinatesystem.type,'geographic')
+    switch plt.projection
+        case{'mercator'}
+            y=invmerc(y);
+        case{'albers'}
+            [x,y]=albers(x,y,plt.labda0,plt.phi0,plt.phi1,plt.phi2,'inverse');
+    end
+end
+
 opt.x=x;
 opt.y=y;
+opt.coordinatesystem.name='unspecified';
+opt.coordinatesystem.type='unspecified';
 
-fig.subplots(isub).subplot.datasets(nrd).dataset=opt;
+plt.datasets(nrd).dataset=opt;
+
+fig.subplots(isub).subplot=plt;
 
 usd=[ifig,isub,nrd];
 options.userdata=usd;
