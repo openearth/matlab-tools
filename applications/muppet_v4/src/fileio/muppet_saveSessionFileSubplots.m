@@ -87,6 +87,7 @@ else
             otherwise
                 txt='      EndDataset';
         end
+        
         fprintf(fid,'%s \n',txt);
         fprintf(fid,'%s \n','');
         
