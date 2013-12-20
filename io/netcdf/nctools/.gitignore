@@ -8,3 +8,4 @@
 /nc_cf_standard_names_generate.m
 /nc_cf_stationtimeseries2meta.m
 /nc_oe_standard_names_generate.m
+/ncwritetutorial_trajectory.cdl

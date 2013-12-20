@@ -1,18 +1,18 @@
-function ncwritetutorial_trajectory(ncfile0,varargin)
-%NCWRITETUTORIAL_TRAJECTORY tutorial for writing trajectory to netCDF-CF file
+function ncwritetutorial_profile(ncfile0,varargin)
+%NCWRITETUTORIAL_PROFILE tutorial for writing timeSeriesProfile to netCDF-CF file
 %
 %  Tutorial of how to make a netCDF file with CF conventions of a 
-%  variable that is a trajectory. In this special case 
-%  the main dimension coincides with the time axis.
+%  variable that is a timeSeriesProfile. In this special case 
+%  the main dimensions coincides with the time axis and the z axis.
 %
 %  This case is described in CF: http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/ch09.html
 %
-% An example of a 3D trajectory is FerryBox data (http://www.ferrybox.org/)
+% An example of a 3D trajectory is repeated CTD data.
 %
 %See also: netcdf, ncwriteschema, ncwrite, SNCTOOLS,
 %          ncwritetutorial_grid
 %          ncwritetutorial_timeseries
-%          ncwritetutorial_profile
+%          ncwritetutorial_trajectory
 
 %%  --------------------------------------------------------------------
 %   Copyright (C) 2013 Deltares 4 Rijkswaterstaat (SPA Eurotracks)
@@ -45,6 +45,8 @@ function ncwritetutorial_trajectory(ncfile0,varargin)
 %  $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/io/netcdf/nctools/ncwritetutorial_timeseries.m $
 %  $Keywords: $
 
+% contant z (binned) or varying z (ragged arrays)
+
    if nargin==0
       ncfile0         = [mfilename('fullpath'),'.nc'];
    end
@@ -57,11 +59,24 @@ function ncwritetutorial_trajectory(ncfile0,varargin)
    OPT.references     = '';
    OPT.email          = '';
    
-   OPT.datenum        = datenum(2009,0,1:365);
-   OPT.lon            =  3+2*cos(2*pi*OPT.datenum./365); % lissajous
-   OPT.lat            = 52+1*cos(4*pi*OPT.datenum./365+pi/2);
-   OPT.var            = 3-2*cos(2*pi*OPT.datenum/365);
-   OPT.z              = [];
+   OPT.datenum1       = datenum(2009,0,1:365); % nominal times per profile, e.g. beginning or mean
+   OPT.lon0           =  3; % 0D nominal/target location
+   OPT.lat0           = 52; % 0D nominal/target location
+   OPT.lon1           =  3 + .02*cos(2*pi*OPT.datenum1./365); % 1D we allow for some discrepnacy between target location and realized lcoation
+   OPT.lat1           = 52 + .01*cos(4*pi*OPT.datenum1./365+pi/2); % 1D
+   OPT.z1             = 0:.1:25; % 1D
+   
+   % we make a time-stack, using full time and z matrices
+   % in reality, the data also have full time and z variablesa
+   % z differs per cast, and is therefor every often a ragged-array
+   % time can include the time of the cast itself. usually this time is neglected,
+   % but when a CTD frame is used as a scanfish or glider, the full tiem matrix needs to be stored as well
+   % In this tutorial we assign nominal times per cast, the beginning.
+   
+   [OPT.datenum2,OPT.z2  ] = meshgrid(OPT.datenum1,OPT.z1);
+   [OPT.lon2,~]            = meshgrid(OPT.lon1    ,OPT.z1);
+   [OPT.lat2,~]            = meshgrid(OPT.lat1    ,OPT.z1);
+   OPT.var = exp(-OPT.z2./5).*2.*cos(2.*pi.*OPT.datenum2./365);
 
 %% Required data fields
    
@@ -90,8 +105,6 @@ function ncwritetutorial_trajectory(ncfile0,varargin)
 
 for dz = [0 1]; % amplitude of z undulation: 0=2D, otherwise=3D
 
-   OPT.z              = dz*cos(2*pi*OPT.datenum/365);
-
    nc = struct('Name','/','Format','classic');
 
    nc.Attributes(    1) = struct('Name','title'              ,'Value',  OPT.title);
@@ -100,7 +113,7 @@ for dz = [0 1]; % amplitude of z undulation: 0=2D, otherwise=3D
    nc.Attributes(end+1) = struct('Name','history'            ,'Value',  '$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/io/netcdf/nctools/ncwritetutorial_timeseries.m $ $Id: ncwritetutorial_timeseries.m 8921 2013-07-19 06:13:40Z boer_g $');
    nc.Attributes(end+1) = struct('Name','references'         ,'Value',  OPT.version);
    nc.Attributes(end+1) = struct('Name','email'              ,'Value',  OPT.email);
-   nc.Attributes(end+1) = struct('Name','featureType'        ,'Value',  'trajectory');
+   nc.Attributes(end+1) = struct('Name','featureType'        ,'Value',  'timeSeriesProfile');
 
    nc.Attributes(end+1) = struct('Name','comment'            ,'Value',  '');
    nc.Attributes(end+1) = struct('Name','version'            ,'Value',  '');
@@ -112,8 +125,14 @@ for dz = [0 1]; % amplitude of z undulation: 0=2D, otherwise=3D
 
 %% 2 Create dimensions
 
-   ncdimlen.time        = length(OPT.var(:));
-   nc.Dimensions(    1) = struct('Name','time'            ,'Length',ncdimlen.time      );
+   ncdimlen.time        = length(OPT.datenum1);
+   ncdimlen.z           = length(OPT.z1);
+   nc.Dimensions(1)     = struct('Name','time'  ,'Length', ncdimlen.time);
+   nc.Dimensions(2)     = struct('Name','z'     ,'Length', ncdimlen.z);
+   
+   variable.dims(1)     = nc.Dimensions(2); % show correct by default in ncBrowse
+   variable.dims(2)     = nc.Dimensions(1);
+   
    
 %% 3a Create (primary) variables: time
 
@@ -132,26 +151,52 @@ for dz = [0 1]; % amplitude of z undulation: 0=2D, otherwise=3D
 %% 3b Create (primary) variables: space
 
    ifld     = ifld + 1;clear attr
-   attr(    1)  = struct('Name', 'standard_name', 'Value', 'longitude');
+   attr(    1)  = struct('Name', 'standard_name', 'Value', 'nominal longitude');
    attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'Longitude');
    attr(end+1)  = struct('Name', 'units'        , 'Value', 'degrees_east');
    attr(end+1)  = struct('Name', 'axis'         , 'Value', 'X');
    attr(end+1)  = struct('Name', '_FillValue'   , 'Value', OPT.fillvalue);
-   attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(OPT.lon(:)) max(OPT.lon(:))]);
+   attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(OPT.lon0(:)) max(OPT.lon0(:))]);
    nc.Variables(ifld) = struct('Name'       , 'lon', ...
+                               'Datatype'   , 'double', ...
+                               'Dimensions' , {[]}, ...
+                               'Attributes' , attr,...
+                               'FillValue'  , []);
+   
+   ifld     = ifld + 1;clear attr
+   attr(    1)  = struct('Name', 'standard_name', 'Value', 'nominal latitude');
+   attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'Latitude');
+   attr(end+1)  = struct('Name', 'units'        , 'Value', 'degrees_north');
+   attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Y');
+   attr(end+1)  = struct('Name', '_FillValue'   , 'Value', OPT.fillvalue);
+   attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(OPT.lat0(:)) max(OPT.lat0(:))]);
+   nc.Variables(ifld) = struct('Name'       , 'lat', ...
+                               'Datatype'   , 'double', ...
+                               'Dimensions' , {[]}, ...
+                               'Attributes' , attr,...
+                               'FillValue'  , []);    
+
+   ifld     = ifld + 1;clear attr
+   attr(    1)  = struct('Name', 'standard_name', 'Value', 'actual longitude');
+   attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'Longitude');
+   attr(end+1)  = struct('Name', 'units'        , 'Value', 'degrees_east');
+   attr(end+1)  = struct('Name', 'axis'         , 'Value', 'X');
+   attr(end+1)  = struct('Name', '_FillValue'   , 'Value', OPT.fillvalue);
+   attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(OPT.lon1(:)) max(OPT.lon1(:))]);
+   nc.Variables(ifld) = struct('Name'       , 'lon1', ...
                                'Datatype'   , 'double', ...
                                'Dimensions' , struct('Name', 'time','Length',ncdimlen.time), ...
                                'Attributes' , attr,...
                                'FillValue'  , []);
    
    ifld     = ifld + 1;clear attr
-   attr(    1)  = struct('Name', 'standard_name', 'Value', 'latitude');
+   attr(    1)  = struct('Name', 'standard_name', 'Value', 'actual latitude');
    attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'Latitude');
    attr(end+1)  = struct('Name', 'units'        , 'Value', 'degrees_north');
    attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Y');
    attr(end+1)  = struct('Name', '_FillValue'   , 'Value', OPT.fillvalue);
-   attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(OPT.lat(:)) max(OPT.lat(:))]);
-   nc.Variables(ifld) = struct('Name'       , 'lat', ...
+   attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(OPT.lat1(:)) max(OPT.lat1(:))]);
+   nc.Variables(ifld) = struct('Name'       , 'lat1', ...
                                'Datatype'   , 'double', ...
                                'Dimensions' , struct('Name', 'time','Length',ncdimlen.time), ...
                                'Attributes' , attr,...
@@ -159,11 +204,6 @@ for dz = [0 1]; % amplitude of z undulation: 0=2D, otherwise=3D
 
 %% 3c Create (primary) variables: vertical
 
-   variable.dims(1) = struct('Name', 'time','Length',ncdimlen.time);
-   z0 = nanunique(OPT.z);
-if length(z0)>1
-   ncfile = strrep(ncfile0,'.nc','_3D.nc');
-   variable.coordinates = 'lat lon';
    ifld     = ifld + 1;clear attr
    attr(    1)  = struct('Name', 'standard_name', 'Value', 'altitude');
    attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'z');
@@ -171,36 +211,56 @@ if length(z0)>1
    attr(end+1)  = struct('Name', 'positive'     , 'Value', 'down');
    attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Z');
    attr(end+1)  = struct('Name', '_FillValue'   , 'Value', OPT.fillvalue);
-   attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(OPT.z(:)) max(OPT.z(:))]);
-   nc.Variables(ifld) = struct('Name'       , 'z', ...
-                               'Datatype'   , 'double', ...
-                               'Dimensions' , struct('Name', 'time','Length',ncdimlen.time), ...
-                               'Attributes' , attr,...
-                               'FillValue'  , []);
-else
-   ncfile = strrep(ncfile0,'.nc','_2D.nc');
-   OPT.z = z0; 
-   ncdimlen.z           = 1;
-   nc.Dimensions(    2) = struct('Name','z'               ,'Length',ncdimlen.z         );
-   variable.dims(2) = struct('Name', 'z'   ,'Length',ncdimlen.z   );
-   variable.coordinates = 'lat lon z';
-   ifld     = ifld + 1;clear attr
-   attr(    1)  = struct('Name', 'standard_name', 'Value', 'altitude');
-   attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'z');
-   attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
-   attr(end+1)  = struct('Name', 'positive'     , 'Value', 'down');
-   attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Z');
-   attr(end+1)  = struct('Name', '_FillValue'   , 'Value', OPT.fillvalue);
-   attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(OPT.z(:)) max(OPT.z(:))]);
+   
+if dz==0 % same z per profile: dimension(z)=variable(z)
+   ncfile = strrep(ncfile0,'.nc','_zlayers.nc');
+   attr(end+1)  = struct('Name', 'actual_range'  ,'Value' , [min(OPT.z1(:)) max(OPT.z1(:))]);
    nc.Variables(ifld) = struct('Name'       , 'z', ...
                                'Datatype'   , 'double', ...
                                'Dimensions' , struct('Name', 'z','Length',ncdimlen.z), ...
                                'Attributes' , attr,...
                                'FillValue'  , []);
+   variable.coordinates = '';
+   
+else % unique z per profile: ragged-array: dimension(z)=just an index
+   ncfile = strrep(ncfile0,'.nc','_ragged.nc');
+   attr(end+1)  = struct('Name', 'actual_range'  ,'Value' , [min(OPT.z2(:)) max(OPT.z2(:))]);
+   nc.Variables(ifld) = struct('Name'       , 'z2', ...
+                               'Datatype'   , 'double', ...
+                               'Dimensions' , variable.dims, ...
+                               'Attributes' , attr,...
+                               'FillValue'  , []);   
+   variable.coordinates = 'time z2';
+
+   ifld     = ifld + 1;clear attr
+   attr(    1)  = struct('Name', 'standard_name', 'Value', 'highres longitude');
+   attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'Longitude');
+   attr(end+1)  = struct('Name', 'units'        , 'Value', 'degrees_east');
+   attr(end+1)  = struct('Name', 'axis'         , 'Value', 'X');
+   attr(end+1)  = struct('Name', '_FillValue'   , 'Value', OPT.fillvalue);
+   attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(OPT.lon2(:)) max(OPT.lon2(:))]);
+   nc.Variables(ifld) = struct('Name'       , 'lon2', ...
+                               'Datatype'   , 'double', ...
+                               'Dimensions' , variable.dims, ...
+                               'Attributes' , attr,...
+                               'FillValue'  , []);
+   
+   ifld     = ifld + 1;clear attr
+   attr(    1)  = struct('Name', 'standard_name', 'Value', 'highres latitude');
+   attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'Latitude');
+   attr(end+1)  = struct('Name', 'units'        , 'Value', 'degrees_north');
+   attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Y');
+   attr(end+1)  = struct('Name', '_FillValue'   , 'Value', OPT.fillvalue);
+   attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(OPT.lat2(:)) max(OPT.lat2(:))]);
+   nc.Variables(ifld) = struct('Name'       , 'lat2', ...
+                               'Datatype'   , 'double', ...
+                               'Dimensions' , variable.dims, ...
+                               'Attributes' , attr,...
+                               'FillValue'  , []);    
 end
                            
 %% 3c Create (primary) variables: data
-                              
+
    ifld     = ifld + 1;clear attr;
    attr(    1)  = struct('Name', 'standard_name', 'Value', OPT.standard_name);
    attr(end+1)  = struct('Name', 'long_name'    , 'Value', OPT.long_name);
@@ -223,21 +283,29 @@ end
 
    try;delete(ncfile);end
    disp([mfilename,': NCWRITESCHEMA: creating netCDF file: ',ncfile])
+   %var2evalstr(nc)
    ncwriteschema(ncfile, nc);			        
-   disp([mfilename,': NCWRITE: filling  netCDF file: ',ncfile])
+   disp([mfilename,': NCWRITE      : filling  netCDF file: ',ncfile])
       
 %% 5 Fill variables
 
-   ncwrite   (ncfile,'time'         , OPT.datenum(:) - OPT.refdatenum);
-   ncwrite   (ncfile,'lon'          , OPT.lon(:));
-   ncwrite   (ncfile,'lat'          , OPT.lat(:));
-   ncwrite   (ncfile,'z'            , z0);
-   ncwrite   (ncfile,OPT.Name       , OPT.var(:));
+   ncwrite   (ncfile,'time'         , OPT.datenum1 - OPT.refdatenum);
+   ncwrite   (ncfile,'lon'          , OPT.lon0(:));
+   ncwrite   (ncfile,'lat'          , OPT.lat0(:));
+   ncwrite   (ncfile,'lon1'         , OPT.lon1(:));
+   ncwrite   (ncfile,'lat1'         , OPT.lat1(:));
+   if dz==0
+   ncwrite   (ncfile,'z'            , OPT.z1(:));
+   else
+   ncwrite   (ncfile,'z2'           , OPT.z2  );
+   ncwrite   (ncfile,'lon2'         , OPT.lon2);
+   ncwrite   (ncfile,'lat2'         , OPT.lat2);
+   end
+   ncwrite   (ncfile,OPT.Name       , OPT.var);
       
 %% test and check
 
    nc_dump(ncfile,[],strrep(ncfile,'.nc','.cdl'))
-   nc
-   nc.Variables(end)
    clear variable ncdimlen nc
-end
+
+end % z

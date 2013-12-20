@@ -10,10 +10,12 @@ function varargout = nc2struct(ncfile,varargin)
 %
 % For NC2STUCT <keyword,value> options and defaults call
 % without arguments: nc2struct() . 
-% * exclude: cell array with subset of variables NOT to load, e.g.: {'a','b'}
-% * include: cell array with subset of variables ONLY to load, e.g.: {'lon','lat'}
-% * rename : cell array describing how to rename variables in netCDF
-%            file to variables in struct, e.g.: {{'x','y'},{'x1','x2'}}
+% * exclude:   cell array with subset of variables NOT to load, e.g.: {'a','b'}
+% * include:   cell array with subset of variables ONLY to load, e.g.: {'lon','lat'}
+% * rename :   cell array describing how to rename variables in netCDF
+%              file to variables in struct, e.g.: {{'x','y'},{'x1','x2'}}
+% * structfun: apply function handle to each field, e.g. @(x) transpose(x)
+%              to turn rows into column vectors and vv, or @(x) maked1d(x)
 %
 % NC2STRUCT can be used to facilitate an experimental development: 
 % loading a catalog.nc for a THREDDS OPeNDAP server as an 
@@ -81,6 +83,7 @@ OPT.time2datenum = 1; % time > datenum in extra variable datenum
 OPT.exclude      = {};
 OPT.rename       = {{},{}};
 OPT.include      = {};
+OPT.structfun    = []; % apply transformation, e.g. make1D(), (:) or transpose()
 
 if nargin==0
    varargout = {OPT};
@@ -104,7 +107,7 @@ if isempty(OPT.include)
    OPT.include = {fileinfo.Dataset.Name};
 end
 
-%% deal with name change in scntools: DataSet > Dataset
+%% deal with legacy name change in scntools: DataSet > Dataset
 
    if     isfield(fileinfo,'Dataset'); % new
      fileinfo.DataSet = fileinfo.Dataset;
@@ -196,6 +199,17 @@ else
          end
       end % exclude/include
    end
+   
+%% Apply function
+
+   if ~isempty(OPT.structfun)
+      fldnames = fieldnames(D);
+      for i=1:length(fldnames)
+          D.(fldnames{i}) = OPT.structfun(D.(fldnames{i}));
+      end
+   end
+ 
+%%
    
    if nargout<2
    varargout = {D};
