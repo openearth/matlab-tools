@@ -17,7 +17,24 @@
       <plotoption>
         <name>linestyle</name>
       </plotoption>
+      <plotoption>
+        <name>marker</name>
+      </plotoption>
+      <plotoption>
+        <name>markersize</name>
+      </plotoption>
+      <plotoption>
+        <name>markeredgecolor</name>
+      </plotoption>
+      <plotoption>
+        <name>markerfacecolor</name>
+      </plotoption>
+      <plotoption>
+        <name>legendtext</name>
+      </plotoption>
       <elementgroup>line</elementgroup>
+      <elementgroup>marker</elementgroup>
+      <elementgroup>legendtext</elementgroup>
     </plotroutine>
   </plottype>
 </root>

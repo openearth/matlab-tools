@@ -67,7 +67,7 @@ nn=0;
 for j=1:fig.nrsubplots
     for k=1:fig.subplots(j).subplot.nrdatasets
         switch lower(fig.subplots(j).subplot.datasets(k).dataset.plotroutine)
-            case {'plotcontourmap','plotcontourmaplines','plotpatches','plotshadesmap','plotvectormagnitude','plotkubint'}
+            case {'contour map','contour map and lines','patches','shades map','vector magnitude','kubint'}
                 nn=nn+1;
                 if nn>1
                     kk=strmatch(fig.subplots(j).subplot.colormap,clmap);

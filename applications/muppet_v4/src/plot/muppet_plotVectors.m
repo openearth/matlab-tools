@@ -36,10 +36,11 @@ if strcmpi(opt.plotroutine,'vectors')
 else
     % Colored vectors
     if ~opt.plotcolorbar
-        if strcmpi(plt.contourtype,'limits')
+        % Using colormap of subplot
+        if ~opt.usecustomcontours
             col=plt.cmin:(plt.cmax-plt.cmin)/64:plt.cmax;
         else
-            col=plt.contours;
+            col=plt.customcontours;
         end
         ncol=size(col,2)-1;
         clmap=muppet_getColors(handles.colormaps,opt.colormap,ncol);
@@ -48,8 +49,13 @@ else
         qv=quiver3(x,multiy*y,z,opt.unitvector*u,multiv*opt.unitvector*v,w,0);hold on;
         qv=mp_colquiver(qv,sqrt(u.^2+v.^2));
     else
+        % Vectors get their own color scaling
         colorfix;
-        col=opt.cmin:(opt.cmax-opt.cmin)/64:opt.cmax;
+        if ~opt.usecustomcontours
+            col=opt.cmin:(opt.cmax-opt.cmin)/64:opt.cmax;
+        else
+            col=opt.customcontours;
+        end
         ncol=size(col,2)-1;
         clmap=muppet_getColors(handles.colormaps,opt.colormap,ncol);
         colormap(clmap);

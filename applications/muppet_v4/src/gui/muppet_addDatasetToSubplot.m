@@ -86,6 +86,9 @@ for ii=1:length(plotroutine.plotoption)
     end
 end
 
+
+
+
 plt.datasets(nrd).dataset=plotdata;
 
 handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot=plt;
@@ -94,5 +97,8 @@ handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).sub
 if updateaxes
      handles=muppet_adjustAxes(handles);
 end
+
+%% Adjust some of the plot options
+handles=muppet_adjustPlotOptions(handles);
 
 handles=muppet_updateDatasetInSubplotNames(handles);

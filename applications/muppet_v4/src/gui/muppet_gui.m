@@ -226,6 +226,7 @@ handles=getHandles;
 [filename pathname]=uiputfile('*.mup');
 if pathname~=0
   handles.sessionfile=[pathname filename];
+  cd(pathname);
   setHandles(handles);
   muppet_saveSessionFile(handles,handles.sessionfile,0);
 end
@@ -777,8 +778,8 @@ handles=getHandles;
 plt=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot;
 for id=1:plt.nrdatasets
     switch lower(plt.datasets(id).dataset.plotroutine)
-        case {'plot3dsurface'}
-            plt.datasets(id).dataset.plotroutine='plotcontourmap';
+        case {'3d surface'}
+            plt.datasets(id).dataset.plotroutine='contour map';
     end
 end
 handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot=plt;
@@ -790,8 +791,8 @@ handles=getHandles;
 plt=handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot;
 for id=1:plt.nrdatasets
     switch lower(plt.datasets(id).dataset.plotroutine)
-        case {'plotcontourmap','plotcontourmaplines','plotpatches','plotcontourlines','plotshadesmap'}
-            plt.datasets(id).dataset.plotroutine='plot3dsurface';
+        case {'contour map','contour map and lines','patches','contour lines','shades map'}
+            plt.datasets(id).dataset.plotroutine='3d Surface';
     end
 end
 handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot=plt;

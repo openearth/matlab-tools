@@ -12,7 +12,7 @@ data.y=data.y(1:opt.fieldthinningfactor1:end,1:opt.fieldthinningfactor1:end);
 data.z=data.z(1:opt.fieldthinningfactor1:end,1:opt.fieldthinningfactor1:end);
 data.zz=data.zz(1:opt.fieldthinningfactor1:end,1:opt.fieldthinningfactor1:end);
 
-switch(lower(opt.plotroutine)),
+switch(lower(opt.plotroutine))
     case{'patches','shades map','contour map','contour map and lines'}
         % Contours from axis properties
         if ~plt.usecustomcontours
@@ -37,8 +37,8 @@ switch(lower(opt.plotroutine))
     case{'patches'}
         x=data.x;
         y=data.y;
-        z(isnan(data.zz))=NaN;
-        y(isnan(data.zz))=NaN;
+%         z(isnan(data.zz))=NaN;
+%         y(isnan(data.zz))=NaN;
         z=data.zz;
         
         if ~plt.usecustomcontours
@@ -56,6 +56,8 @@ switch(lower(opt.plotroutine))
         
         clmap=muppet_getColors(handles.colormaps,plt.colormap,64);
         colormap(clmap);
+        
+%         plot(data.x,data.y,'o');
         h=pcolor(x,y,zc);
         shading flat;
         caxis(cax);

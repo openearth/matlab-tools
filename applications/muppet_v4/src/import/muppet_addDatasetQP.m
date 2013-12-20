@@ -98,13 +98,13 @@ for j=i1:i2
     ii=ii+1;
     
     par=[];
-
+    
     % Set default parameter properties (just the dimensions)
     par=muppet_setDefaultParameterProperties(par);
     
     par.fid=fid;
     par.lgafile=dataset.lgafile;
-    par.dataproperties=dataproperties;    
+    par.dataproperties=dataproperties;
     par.parametertimesequal=1;
     par.parameterstationsequal=1;
     par.parameterxequal=1;
@@ -113,104 +113,103 @@ for j=i1:i2
     par.adjustname=1;
     
     par.name=dataproperties(ii).Name;
-
+    
     if sum(dataproperties(ii).DimFlag)>0
-    
+        
         par.size=qpread(fid,1,dataproperties(ii),'size');
-    
-    % Bug in qpread?
-    par.size=par.size.*dataproperties(ii).DimFlag;
-    
-    % Times
-    if dataproperties(ii).DimFlag(1)>0
+        
+        % Bug in qpread?
+        par.size=par.size.*dataproperties(ii).DimFlag;
+        
+        % Times
+        if dataproperties(ii).DimFlag(1)>0
             % Try to copy times from previous parameter
             for ip=1:ii-1
-%                if dataproperties(ii).DimFlag(1)==dataproperties(ip).DimFlag(1)
-                    if par.size(1)==dataset.parameters(ip).parameter.size(1)
-                        % Same number of times
-                        if ~isempty(dataset.parameters(ip).parameter.times)
-                            par.times=dataset.parameters(ip).parameter.times;
-                        end
+                %                if dataproperties(ii).DimFlag(1)==dataproperties(ip).DimFlag(1)
+                if par.size(1)==dataset.parameters(ip).parameter.size(1)
+                    % Same number of times
+                    if ~isempty(dataset.parameters(ip).parameter.times)
+                        par.times=dataset.parameters(ip).parameter.times;
                     end
-%                end
+                end
+                %                end
             end
-            % 
+            %
             if isempty(par.times)
                 % Still empty, see if it's worth reading it now
                 par.times=qpread(fid,dataproperties(ii),'times');
-            end                        
-    end
-    
-    % Stations
-    if dataproperties(ii).DimFlag(2)>0
-        par.stations=qpread(fid,dataproperties(ii),'stations');
-    end
-
-    % NetCDF time series (should be fixed in qpread)
-    if strcmpi(fid.qp_filetype,'netcdf')
-        if isfield(dataproperties(ii),'Dimension')
-            if ~isempty(dataproperties(ii).Dimension)
-                if strcmpi(dataproperties(ii).Dimension{3},'locations')
-                    stations=nc_varget(dataset.filename,'platform_name');
-                    stations=stations';
-                    for istat=1:size(stations,1)
-                        par.stations{istat}=deblank(stations(istat,:));
+            end
+        end
+        
+        % Stations
+        if dataproperties(ii).DimFlag(2)>0
+            par.stations=qpread(fid,dataproperties(ii),'stations');
+        end
+        
+        % NetCDF time series (should be fixed in qpread)
+        if strcmpi(fid.qp_filetype,'netcdf')
+            if isfield(dataproperties(ii),'Dimension')
+                if ~isempty(dataproperties(ii).Dimension)
+                    if strcmpi(dataproperties(ii).Dimension{3},'locations')
+                        stations=nc_varget(dataset.filename,'platform_name');
+                        stations=stations';
+                        for istat=1:size(stations,1)
+                            par.stations{istat}=deblank(stations(istat,:));
+                        end
+                        par.size(2)=par.size(3);
+                        par.size(3)=0;
                     end
-                    par.size(2)=par.size(3);
-                    par.size(3)=0;
-                end
-                if strcmpi(dataproperties(ii).Dimension{3},'station')
-                    stations=nc_varget(dataset.filename,'station_name');
-                    for istat=1:size(stations,1)
-                        par.stations{istat}=deblank(stations(istat,:));
+                    if strcmpi(dataproperties(ii).Dimension{3},'station')
+                        stations=nc_varget(dataset.filename,'station_name');
+                        for istat=1:size(stations,1)
+                            par.stations{istat}=deblank(stations(istat,:));
+                        end
+                        par.size(2)=par.size(3);
+                        par.size(3)=0;
                     end
-                    par.size(2)=par.size(3);
-                    par.size(3)=0;
                 end
             end
         end
-    end
-    
-%     % Unstructured grid
-%     if strcmpi(fid.qp_filetype,'netcdf')
-%         if ~isempty(dataproperties(ii).Dimension)
-%             if strcmpi(dataproperties(ii).Dimension{3},'nFlowElem')
-%                 % unstructured grid
-%                 par.dataproperties(ii).Loc='z';
-%                 par.unstructuredgrid=1;
-%             end
-%             if strcmpi(dataproperties(ii).Dimension{3},'nNetNode')
-%                 % unstructured grid
-%                 par.dataproperties(ii).Loc='d';
-%                 par.unstructuredgrid=1;
-%             end
-%         end
-%     end
-
-    % Unstructured grid
-    if strcmpi(fid.qp_filetype,'netcdf')
-        if ~isempty(dataproperties(ii).DimName)
-            if strcmpi(dataproperties(ii).DimName{3},'nFlowElem')
-                % unstructured grid
-                par.dataproperties(ii).Loc='z';
-                par.unstructuredgrid=1;
-            end
-            if strcmpi(dataproperties(ii).DimName{3},'nNetNode')
-                % unstructured grid
-                par.dataproperties(ii).Loc='d';
-                par.unstructuredgrid=1;
+        
+        %     % Unstructured grid
+        %     if strcmpi(fid.qp_filetype,'netcdf')
+        %         if ~isempty(dataproperties(ii).Dimension)
+        %             if strcmpi(dataproperties(ii).Dimension{3},'nFlowElem')
+        %                 % unstructured grid
+        %                 par.dataproperties(ii).Loc='z';
+        %                 par.unstructuredgrid=1;
+        %             end
+        %             if strcmpi(dataproperties(ii).Dimension{3},'nNetNode')
+        %                 % unstructured grid
+        %                 par.dataproperties(ii).Loc='d';
+        %                 par.unstructuredgrid=1;
+        %             end
+        %         end
+        %     end
+        
+        % Unstructured grid
+        if strcmpi(fid.qp_filetype,'netcdf')
+            if ~isempty(dataproperties(ii).DimName)
+                if strcmpi(dataproperties(ii).DimName{3},'nFlowElem')
+                    % unstructured grid
+                    par.dataproperties(ii).Loc='z';
+                    par.unstructuredgrid=1;
+                end
+                if strcmpi(dataproperties(ii).DimName{3},'nNetNode')
+                    % unstructured grid
+                    par.dataproperties(ii).Loc='d';
+                    par.unstructuredgrid=1;
+                end
             end
         end
-    end
-    
-    
-    if ~isempty(cs)            
-        par.coordinatesystem=cs;
-    end
-    
-
+        
+        
+        if ~isempty(cs)
+            par.coordinatesystem=cs;
+        end
+                
         par.nval=dataproperties(ii).NVal;
-
+        
         switch dataproperties(ii).NVal
             case 0
                 par.quantity='location'; % Grids, open boundaries etc.
@@ -231,7 +230,7 @@ for j=i1:i2
     else
         active=0;
     end
-        
+    
     dataset.parameters(ii).parameter=par;
     dataset.parameters(ii).parameter.active=active;
     
