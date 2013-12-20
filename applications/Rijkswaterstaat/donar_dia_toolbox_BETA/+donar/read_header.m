@@ -17,7 +17,7 @@ function [result,boh] = read_header(fid)
 % See also: scan_file = read_header + scan_block, merge_headers
 
 %%  --------------------------------------------------------------------
-%   Copyright (C) 2013 Deltares 4 Rijkswaterstaat
+%   Copyright (C) 2013 Deltares 4 Rijkswaterstaat (SPA Eurotracks)
 %
 %   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public

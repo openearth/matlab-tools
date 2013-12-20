@@ -30,7 +30,7 @@ function V = merge_headers(B,varargin)
 %See also: open = scan_file + merge_headers, scan_file = read_header + scan_block
 
 %%  --------------------------------------------------------------------
-%   Copyright (C) 2013 Deltares 4 Rijkswaterstaat
+%   Copyright (C) 2013 Deltares 4 Rijkswaterstaat (SPA Eurotracks)
 %
 %   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public

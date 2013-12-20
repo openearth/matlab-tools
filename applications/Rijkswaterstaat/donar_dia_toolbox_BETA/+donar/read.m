@@ -26,7 +26,7 @@ function [Data, M] = read(File,ivar,ncolumn,varargin)
 %See also: open, read, disp
 
 %%  --------------------------------------------------------------------
-%   Copyright (C) 2013 Deltares 4 Rijkswaterstaat
+%   Copyright (C) 2013 Deltares 4 Rijkswaterstaat (SPA Eurotracks)
 %
 %   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public

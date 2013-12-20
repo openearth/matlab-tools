@@ -72,7 +72,9 @@ end
   S.profile_n = 0.*S.station_lon;
   for i=1:length(S.profile_datenum)
       S.profile_n(i) = sum(S.profile_id==i);
-  end    
+  end
+  
+  %% split profiles that take too long, these should be trated as trajectories
 
 %%
 % ctd_2000_-_2002.dia - 910 locations when eps=0
