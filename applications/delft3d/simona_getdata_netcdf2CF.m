@@ -14,12 +14,18 @@ function simona_getdata_netcdf2CF(ncfile0)
 % TODO
 % http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_%28ACDD%29
 
-OPT.xy     = 1;
-OPT.ll     = 0;
-OPT.llbnds = 1; % THREDDS need [lat,lon] matrices to be included
+OPT.xy     = 1; % 0 removed coord attribute but does not remove XZETA/YZETA arrays itself
 OPT.xybnds = 0; % ADAGUC can work with [x,y] coordinates only by mapping on-the-fly, THREDDS cannot map on-the-fly
 
-ncfile  = [filepathstrname(ncfile0),num2str(OPT.ll),'_xybnds_',num2str(OPT.xybnds),'_llbnds_',num2str(OPT.llbnds),'.nc'];
+OPT.ll     = 1; % required by THREDDS and Panoply
+OPT.llbnds = 0; % THREDDS need [lat,lon] matrices to be included
+
+
+if OPT.xy & OPT.ll
+   warning('Panoply cannot handle coords = "lon lat XZETA YZETA"')
+end
+
+ncfile  = [filepathstrname(ncfile0),'_xy_',num2str(OPT.xy),num2str(OPT.xybnds),'_ll_',num2str(OPT.ll),num2str(OPT.llbnds),'.nc'];
 
 coords = '';
 if OPT.ll
@@ -39,7 +45,7 @@ nc_dump(ncfile);
 
 % make time small caps
  nc_attput(ncfile,'TIME'  ,'standard_name','time');
- nc_attput(ncfile,'TIME'  ,'comment'      ,'make variable name lower case');
+%nc_attput(ncfile,'TIME'  ,'comment'      ,'make variable name lower case');
  
  nc_attput(ncfile,'SEP'   ,'grid_mapping' ,'CRS'); % add grid_mapping attribute
  nc_attput(ncfile,'SEP'   ,'coordinates'  ,coords); % connect CENTER (x,y) to CENTER matrix
@@ -101,142 +107,106 @@ nc_dump(ncfile);
  
  %% lat, lon
  if OPT.ll
- attr(1).Name  = '_FillValue';
- attr(1).Value = 9.969209968386869e+36;
- attr(2).Name  = 'missing_value';
- attr(2).Value = 9.969209968386869e+36;
- attr(3).Name  = 'standard_name';
- attr(3).Value = 'latitude';
- attr(4).Name  = 'units';
- attr(4).Value = 'degrees_north';
- attr(5).Name  = 'long_name';
- attr(5).Value = 'latitude';
- if OPT.llbnds
- attr(6).Name  = 'bounds';
- attr(6).Value = 'lat_bnds';  
- end
- nc  = struct('Name','lat', ...
-                     'Datatype'   , 'float', ...
-                     'Dimension' , {{'N','M'}}, ...
-                     'Attribute' , attr,...
-                     'FillValue'  , []); % this doesn't do anything
- nc_addvar(ncfile,nc); clear attr;% ADD 
- nc_varput(ncfile,'lat',G.lat); % ADD 
- 
- attr(1).Name  = '_FillValue';
- attr(1).Value = 9.969209968386869e+36;
- attr(2).Name  = 'missing_value';
- attr(2).Value = 9.969209968386869e+36;
- attr(3).Name  = 'standard_name';
- attr(3).Value = 'longitude';
- attr(4).Name  = 'units';
- attr(4).Value = 'degrees_east';
- attr(5).Name  = 'long_name';
- attr(5).Value = 'longitude';
- if OPT.llbnds
- attr(6).Name  = 'bounds';
- attr(6).Value = 'lon_bnds'; 
- end
- 
- 
- nc  = struct('Name','lon', ...
-                     'Datatype'   , 'float', ...
-                     'Dimension' , {{'N','M'}}, ...
-                     'Attribute' , attr,...
-                     'FillValue'  , []); % this doesn't do anything
- nc_addvar(ncfile,nc); clear attr;% ADD 
- nc_varput(ncfile,'lon',G.lon); % ADD 
+     attr(1) = struct('Name','_FillValue'   ,'Value',9.969209968386869e+36);
+     attr(2) = struct('Name','missing_value','Value',9.969209968386869e+36);
+     attr(3) = struct('Name','standard_name','Value','latitude');
+     attr(4) = struct('Name','units'        ,'Value','degrees_north');
+     attr(5) = struct('Name','long_name'    ,'Value','latitude');
+     attr(6) = struct('Name','coordinates'  ,'Value',coords); % connect CENTER (x,y) to CENTER matrix
+     if (OPT.ll & OPT.llbnds)
+     attr(7) = struct('Name','bounds'       ,'Value','lat_bnds');
+     end
+     nc  = struct('Name','lat', ...
+                         'Datatype'   , 'float', ...
+                         'Dimension' , {{'N','M'}}, ...
+                         'Attribute' , attr,...
+                         'FillValue'  , []); % this doesn't do anything
+     nc_addvar(ncfile,nc); clear attr;% ADD 
+     nc_varput(ncfile,'lat',G.lat); % ADD 
+
+     attr(1) = struct('Name','_FillValue'   ,'Value',9.969209968386869e+36);
+     attr(2) = struct('Name','missing_value','Value',9.969209968386869e+36);
+     attr(3) = struct('Name','standard_name','Value','longitude');
+     attr(4) = struct('Name','units'        ,'Value','degrees_east');
+     attr(5) = struct('Name','long_name'    ,'Value','longitude');
+     attr(6) = struct('Name','coordinates'  ,'Value',coords); % connect CENTER (x,y) to CENTER matrix     
+     if (OPT.ll & OPT.llbnds)
+     attr(7) = struct('Name','bounds'       ,'Value','lon_bnds');
+     end
+     nc  = struct('Name','lon', ...
+                         'Datatype'   , 'float', ...
+                         'Dimension' , {{'N','M'}}, ...
+                         'Attribute' , attr,...
+                         'FillValue'  , []); % this doesn't do anything
+     nc_addvar(ncfile,nc); clear attr;% ADD 
+     nc_varput(ncfile,'lon',G.lon); % ADD 
  end
  %%
- if (OPT.xy & OPT.xybnds) | OPT.llbnds
-  nc_adddim(ncfile,'bounds',4)
+ if (OPT.xy & OPT.xybnds) | (OPT.ll & OPT.llbnds)
+    nc_adddim(ncfile,'bounds',4)
  end
 
  %% (lat,lon) bounds
- if OPT.llbnds
- G.lon_bnds = nc_cf_cor2bounds(G.lon);
- G.lat_bnds = nc_cf_cor2bounds(G.lat);
- 
- attr(1).Name  = '_FillValue';
- attr(1).Value = 9.969209968386869e+36;
- attr(2).Name  = 'missing_value';
- attr(2).Value = 9.969209968386869e+36;
- attr(3).Name  = 'standard_name';
- attr(3).Value = 'longitude';
- attr(4).Name  = 'units';
- attr(4).Value = 'degrees_east';
- attr(5).Name  = 'long_name';
- attr(5).Value = 'lon corners';
+ if (OPT.ll & OPT.llbnds)
+     G.lon_bnds = nc_cf_cor2bounds(G.lon);
+     G.lat_bnds = nc_cf_cor2bounds(G.lat);
 
- nc  = struct('Name','lon_bnds', ...
-                     'Datatype'   , 'float', ...
-                     'Dimension' , {{'N','M','bounds'}}, ...
-                     'Attribute' , attr,...
-                     'FillValue'  , []); % this doesn't do anything
- nc_addvar(ncfile,nc); clear attr;% ADD 
- nc_varput(ncfile,'lon_bnds',G.lon_bnds); % ADD 
- 
- attr(1).Name  = '_FillValue';
- attr(1).Value = 9.969209968386869e+36;
- attr(2).Name  = 'missing_value';
- attr(2).Value = 9.969209968386869e+36;
- attr(3).Name  = 'standard_name';
- attr(3).Value = 'latitude';
- attr(4).Name  = 'units';
- attr(4).Value = 'degrees_north';
- attr(5).Name  = 'long_name';
- attr(5).Value = 'lat corners';
- 
- nc  = struct('Name','lat_bnds', ...
-                     'Datatype'   , 'float', ...
-                     'Dimension' , {{'N','M','bounds'}}, ...
-                     'Attribute' , attr,...
-                     'FillValue'  , []); % this doesn't do anything
- nc_addvar(ncfile,nc); clear attr;% ADD 
- nc_varput(ncfile,'lat_bnds',G.lat_bnds); % ADD 
+     attr(1) = struct('Name','_FillValue'   ,'Value',9.969209968386869e+36);
+     attr(2) = struct('Name','missing_value','Value',9.969209968386869e+36);
+     attr(3) = struct('Name','standard_name','Value','latitude');
+     attr(4) = struct('Name','units'        ,'Value','degrees_north');
+     attr(5) = struct('Name','long_name'    ,'Value','latitude corners');
+     nc  = struct('Name','lon_bnds', ...
+                         'Datatype'   , 'float', ...
+                         'Dimension' , {{'N','M','bounds'}}, ...
+                         'Attribute' , attr,...
+                         'FillValue'  , []); % this doesn't do anything
+     nc_addvar(ncfile,nc); clear attr;% ADD 
+     nc_varput(ncfile,'lon_bnds',G.lon_bnds); % ADD 
+
+     attr(1) = struct('Name','_FillValue'   ,'Value',9.969209968386869e+36);
+     attr(2) = struct('Name','missing_value','Value',9.969209968386869e+36);
+     attr(3) = struct('Name','standard_name','Value','longitude');
+     attr(4) = struct('Name','units'        ,'Value','degrees_east');
+     attr(5) = struct('Name','long_name'    ,'Value','longitude corners');
+     nc  = struct('Name','lat_bnds', ...
+                         'Datatype'   , 'float', ...
+                         'Dimension' , {{'N','M','bounds'}}, ...
+                         'Attribute' , attr,...
+                         'FillValue'  , []); % this doesn't do anything
+     nc_addvar(ncfile,nc); clear attr;% ADD 
+     nc_varput(ncfile,'lat_bnds',G.lat_bnds); % ADD 
  end
-  %% (x,y) bounds
+ %% (x,y) bounds
  if (OPT.xy & OPT.xybnds)
- G.XZETA_bnds = nc_cf_cor2bounds(G.XZETA);
- G.YZETA_bnds = nc_cf_cor2bounds(G.YZETA);
- 
- attr(1).Name  = '_FillValue';
- attr(1).Value = 9.969209968386869e+36;
- attr(2).Name  = 'missing_value';
- attr(2).Value = 9.969209968386869e+36;
- attr(3).Name  = 'standard_name';
- attr(3).Value = 'projection_x_coordinate';
- attr(4).Name  = 'units';
- attr(4).Value = 'm';
- attr(5).Name  = 'long_name';
- attr(5).Value = 'x corners';
+     G.XZETA_bnds = nc_cf_cor2bounds(G.XZETA);
+     G.YZETA_bnds = nc_cf_cor2bounds(G.YZETA);
 
- nc  = struct('Name','XZETA_bnds', ...
-                     'Datatype'   , 'float', ...
-                     'Dimension' , {{'N','M','bounds'}}, ...
-                     'Attribute' , attr,...
-                     'FillValue'  , []); % this doesn't do anything
- nc_addvar(ncfile,nc); clear attr;% ADD 
- nc_varput(ncfile,'XZETA_bnds',G.XZETA_bnds); % ADD 
- 
- attr(1).Name  = '_FillValue';
- attr(1).Value = 9.969209968386869e+36;
- attr(2).Name  = 'missing_value';
- attr(2).Value = 9.969209968386869e+36;
- attr(3).Name  = 'standard_name';
- attr(3).Value = 'projection_y_coordinate';
- attr(4).Name  = 'units';
- attr(4).Value = 'm';
- attr(5).Name  = 'long_name';
- attr(5).Value = 'y corners';
- 
- nc  = struct('Name','YZETA_bnds', ...
-                     'Datatype'   , 'float', ...
-                     'Dimension' , {{'N','M','bounds'}}, ...
-                     'Attribute' , attr,...
-                     'FillValue'  , []); % this doesn't do anything
- nc_addvar(ncfile,nc); clear attr;% ADD 
- nc_varput(ncfile,'YZETA_bnds',G.YZETA_bnds); % ADD 
+     attr(1) = struct('Name','_FillValue'   ,'Value',9.969209968386869e+36);
+     attr(2) = struct('Name','missing_value','Value',9.969209968386869e+36);
+     attr(3) = struct('Name','standard_name','Value','projection_x_coordinate');
+     attr(4) = struct('Name','units'        ,'Value','m');
+     attr(5) = struct('Name','long_name'    ,'Value','x corners');     
+     nc  = struct('Name','XZETA_bnds', ...
+                         'Datatype'   , 'float', ...
+                         'Dimension' , {{'N','M','bounds'}}, ...
+                         'Attribute' , attr,...
+                         'FillValue'  , []); % this doesn't do anything
+     nc_addvar(ncfile,nc); clear attr;% ADD 
+     nc_varput(ncfile,'XZETA_bnds',G.XZETA_bnds); % ADD 
+
+     attr(1) = struct('Name','_FillValue'   ,'Value',9.969209968386869e+36);
+     attr(2) = struct('Name','missing_value','Value',9.969209968386869e+36);
+     attr(3) = struct('Name','standard_name','Value','projection_y_coordinate');
+     attr(4) = struct('Name','units'        ,'Value','m');
+     attr(5) = struct('Name','long_name'    ,'Value','y corners'); 
+     nc  = struct('Name','YZETA_bnds', ...
+                         'Datatype'   , 'float', ...
+                         'Dimension' , {{'N','M','bounds'}}, ...
+                         'Attribute' , attr,...
+                         'FillValue'  , []); % this doesn't do anything
+     nc_addvar(ncfile,nc); clear attr;% ADD 
+     nc_varput(ncfile,'YZETA_bnds',G.YZETA_bnds); % ADD 
  end
  %%
  nc_dump(ncfile0,[],[filename(ncfile0),'.cdl'])
