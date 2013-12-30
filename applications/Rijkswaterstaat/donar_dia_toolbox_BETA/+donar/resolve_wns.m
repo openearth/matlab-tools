@@ -47,11 +47,13 @@ else
     cf_name       = WNS.standard_name{index}; % often still empty
     else
     cf_name       = '';
+    disp([code,' not mapped to CF standard_name yet.'])
     end
     
     if isfield(WNS,'deltares_name')
     deltares_name = WNS.deltares_name{index}; % not always present
     else
     deltares_name = '';
+    disp([code,' not mapped to Deltares netCDF name yet.'])
     end
 end

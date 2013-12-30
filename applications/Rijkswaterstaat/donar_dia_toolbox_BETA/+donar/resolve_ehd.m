@@ -51,6 +51,7 @@ else
     cf_name  = EHD.units{index}; % not always present
     else
     cf_name  = '';
+    disp([code,' not mapped to CF UDunits yet.'])
     end
     
     

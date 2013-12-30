@@ -258,3 +258,21 @@ for ifile = 1 %:length(diafiles);
   end % read
   
 end % diafiles    
+
+% D:\\P\1209005-eutrotracks\raw2\ctd_1.dia
+% -----+----+------+--------+--------+-----------------------------------------------------------------+---------->
+% File |WNS | # of |   # of |   DONAR|                                                              CF | DONAR
+% index|code|blocks|  values|    name|                                                   standard_name | long_name
+% -----+----+------+--------+--------+-----------------------------------------------------------------+---------->
+%     1|1926|    11|   46414|   INSLG|                               downwelling_radiance_in_sea_water | Irradiation in uE in surface water
+%     2| 209|    11|   69671|     %O2|                    fractional_saturation_of_oxygen_in_sea_water | Percentage oxygen in % in surface water
+%     3|2392|    11|   52981|  GELDHD|                               sea_water_electrical_conductivity | Conductivity in mS/m with respect to 20 degrees celsius in surface water
+%     4| 360|    11|  167320|      O2|                       mass_concentration_of_oxygen_in_sea_water | Oxygen in mg/l in surface water
+%     5| 377|    11|  162096|      pH|                            sea_water_ph_reported_on_total_scale | Acidity in surface water
+%     6|  44|    11|   81036|       T|                                           sea_water_temperature | Temperature in oC in surface water
+%     7|5108|    11|  143827| TROEBHD|                                             sea_water_turbidity | Turbidity in NTU in surface water
+%     8| 555|    11|  166163|FLUORCTE|                                          sea_water_fluorescence | Fluorescence in U in surface water
+%     9| 559|    11|  167318|  SALNTT|                                              sea_water_salinity | Salinity in surface water
+%    10|7647|    11|    2259|  GELSHD|                                     speed_of_sound_in_sea_water | Speed of sound in m/s in surface water
+%    11|7788|    11|   46392|   INSLG|                            downwelling_longwave_radiance_in_air | Irradiation in uE in air
+% -----+----+------+--------+--------+-----------------------------------------------------------------+---------->
