@@ -9,8 +9,8 @@
 clc;clear all;fclose all;tic;profile on
 profile clear
 
-root = 'D:\';
 root = 'x:\D'; % VM
+root = 'D:\';
 
 basedir   = [root,'\P\1209005-eutrotracks'];
 
@@ -18,24 +18,25 @@ OPT.cache = 1; % donar.open() cache
 OPT.read  = 1;
 OPT.plot  = 0;
 diafiles  = {'\raw\ferry_2005_-_2012_shortened.dia'};
-diafiles  = {'raw\CTD\raw\ctd_1998_-_1999.dia',...       %  40 s,  50 Mb, 3562 blocks
-            'raw\CTD\raw\ctd_2000_-_2002.dia',...        %  97 s,  63 Mb, 5815 blocks
-            'raw\CTD\raw\ctd_2003_-_2009.dia',...        % 150 s,  69 Mb, 4815 blocks
-            'raw\CTD\raw\ctd_2011_-_2012.dia',...        % 133 s,  11 Mb,  133 blocks
-            ...
-            'raw\FerryBox\raw\ferry_2005_-_2012.dia',... % 214 s, 120 Mb,  880 blocks
-            ...
-            'raw\ScanFish\raw\meetv_1998_-_1999.dia',... % 254 s,  73 Mb, 1501 blocks
-            'raw\ScanFish\raw\meetv_2000_-_2002.dia',... % 325 s, 133 Mb, 2124 blocks
-            'raw\ScanFish\raw\meetv_2003_-_2009.dia',... % 479 s, 290 Mb, 4032 blocks
-            'raw\ScanFish\raw\meetv_2011_-_2012.dia'};   % 493 s,  26 Mb,  400 blocks
+diafiles  = {'raw\CTD\raw\ctd_1998_-_1999.dia',...        %  40 s,  50 Mb, 3562 blocks
+             'raw\CTD\raw\ctd_2000_-_2002.dia',...        %  97 s,  63 Mb, 5815 blocks
+             'raw\CTD\raw\ctd_2003_-_2009.dia',...        % 150 s,  69 Mb, 4815 blocks
+             'raw\CTD\raw\ctd_2011_-_2012.dia',...        % 133 s,  11 Mb,  133 blocks
+             ...
+             'raw\FerryBox\raw\ferry_2005_-_2012.dia',... % 214 s, 120 Mb,  880 blocks
+             ...
+             'raw\ScanFish\raw\meetv_1998_-_1999.dia',... % 254 s,  73 Mb, 1501 blocks
+             'raw\ScanFish\raw\meetv_2000_-_2002.dia',... % 325 s, 133 Mb, 2124 blocks
+             'raw\ScanFish\raw\meetv_2003_-_2009.dia',... % 479 s, 290 Mb, 4032 blocks
+             'raw\ScanFish\raw\meetv_2011_-_2012.dia'};   % 493 s,  26 Mb,  400 blocks
+diafiles  = {'raw2\ctd_1.dia'};
             
 type = [1 1 1 1   2 2   3 3 3 3]; % 1=CTD profiles, 2=2Dtrajectory (fixed Z), 3=3Dtrajectory (undulating z)
 
 E = nc2struct([root,'\opendap.deltares.nl\thredds\dodsC\opendap\rijksoverheid\eez\Exclusieve_Economische_Zone_maart2012.nc']);
 L = nc2struct([root,'\opendap.deltares.nl\thredds\dodsC\opendap\deltares\landboundaries\northsea.nc']);
 
-for ifile = 2 %:length(diafiles);
+for ifile = 1 %:length(diafiles);
     
   disp(['File: ',num2str(ifile)])
 

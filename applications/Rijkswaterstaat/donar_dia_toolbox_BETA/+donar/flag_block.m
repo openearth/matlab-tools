@@ -16,6 +16,31 @@ function  dat = flag_block(dat,thefield)
 %
 %See also: 
 
+%%  --------------------------------------------------------------------
+%   Copyright (C) 2013 Deltares 4 Rijkswaterstaat (SPA Eurotracks)
+%
+%   This library is free software: you can redistribute it and/or
+%   modify it under the terms of the GNU Lesser General Public
+%   License as published by the Free Software Foundation, either
+%   version 2.1 of the License, or (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+%   Lesser General Public License for more details.
+%
+%   You should have received a copy of the GNU Lesser General Public
+%   License along with this library. If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% $Id: $
+% $Date: $
+% $Author: $
+% $Revision: $
+% $HeadURL: $
+% $Keywords: $
+
 %% Flag values out of the model domain: Code 1
     
     ncolumn = size(dat,2) + 1
