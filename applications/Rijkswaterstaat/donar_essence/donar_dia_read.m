@@ -30,7 +30,7 @@ function D = donar_dia_read(fname, varargin)
 %   D = donar_dia_read('example.dia','to',10)       % read first 10 blocks
 %   D = donar_dia_read('example.dia','stride',20)   % read every twentieth block
 %
-%   See also donar_dia_parse, donar_dia_view
+%   See also donar, donar_dia_parse, donar_dia_view
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -98,7 +98,10 @@ contents = fread(fid,'*char')';
 fclose(fid);
 
 %% read sections
-
+% [W3H]
+% [RKS]
+% [WRD]
+%
 % read all section headers
 ihdr = regexpi(contents,'\[(\w{3})\]\s*\n','start');
 shdr = regexpi(contents,'\[(\w{3})\]\s*\n','tokens');

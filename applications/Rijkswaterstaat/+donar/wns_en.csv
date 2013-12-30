@@ -1,5 +1,5 @@
-wnsnum;wnsoms;public;parcod;orgcod;sgkcod;cpmcod;hdhcod;domein;ehdcod;standard_name;deltares_name;;;;
-1;Water level in cm with respect to normal amsterdam level in surface water;J;WATHTE;NVT;NVT;10;NAP;I;cm;;;;;;
+wnsnum;wnsoms;public;parcod;orgcod;sgkcod;cpmcod;hdhcod;domein;ehdcod;standard_name;deltares_name;P01;;;
+1;Water level in cm with respect to normal amsterdam level in surface water;J;WATHTE;NVT;NVT;10;NAP;I;cm;sea_surface_height;;;;;
 4;Soil height in cm with respect to normal amsterdam level in surface/sediment;N;BODHTE;NVT;NVT;40;NAP;I;cm;;;;;;
 12;High tide day in cm with respect to normal amsterdam level in surface water;N;HOOGWTDG;NVT;NVT;10;NAP;I;cm;;;;;;
 13;Low-tide day in cm with respect to normal amsterdam level in surface water;N;LAAGWTDG;NVT;NVT;10;NAP;I;cm;;;;;;
@@ -10,14 +10,14 @@ wnsnum;wnsoms;public;parcod;orgcod;sgkcod;cpmcod;hdhcod;domein;ehdcod;standard_n
 19;Water scheme calculated in cm in surface water;N;WATOZBRKD;NVT;NVT;10;NVT;I;cm;;;;;;
 20;Average water height in cm with respect to normal amsterdam level in surface water;N;GEM_WTHTE;NVT;NVT;10;NAP;F;cm;;;;;;
 21;Tidal advance calculated in min in surface water;N;GETVVGBRKD;NVT;NVT;10;NVT;I;min;;;;;;
-22;Significant wave height from energy spectrum of 30-500 mhz in cm in surface water;J;Hm0;NVT;NVT;10;NVT;I;cm;;;;;;
-23;Average direction of wave direction spectra 30-500 mhz (with respect to kaartnrdn) in graad with respect to map north in surface water;J;Th0;NVT;NVT;10;KAARTNDN;I;graad;;;;;;
-24;Average wave period from spectral moments m0+m2 from 30-500 mhz in s in surface water;J;Tm02;NVT;NVT;10;NVT;F;s;;;;;;
+22;Significant wave height from energy spectrum of 30-500 mhz in cm in surface water;J;Hm0;NVT;NVT;10;NVT;I;cm;sea_surface_wave_significant_height;;;;;
+23;Average direction of wave direction spectra 30-500 mhz (with respect to kaartnrdn) in graad with respect to map north in surface water;J;Th0;NVT;NVT;10;KAARTNDN;I;graad;sea_surface_wave_from_direction;;;;;
+24;Average wave period from spectral moments m0+m2 from 30-500 mhz in s in surface water;J;Tm02;NVT;NVT;10;NVT;F;s;sea_surface_wind_wave_mean_period_from_variance_spectral_density_second_frequency_moment;;;;;
 25;Total energy from energy density spectrum of 30-100 mhz in cm2 in surface water;N;TE3;NVT;NVT;10;NVT;I;cm2;;;;;;
 26;Average direction of wave direction spectra 30-100 mhz (with respect to kaartnrdn) in graad with respect to map north in surface water;N;Th3;NVT;NVT;10;KAARTNDN;I;graad;;;;;;
 27;Current speed in m/s in surface water;N;STROOMSHD;NVT;NVT;10;NVT;F;m/s;;;;;;
 28;Current direction in graad with respect to map north in surface water;N;STROOMRTG;NVT;NVT;10;KAARTNDN;F;graad;;;;;;
-29;Flow in m3/s in surface water;J;Q;NVT;NVT;10;NVT;F;m3/s;;;;;;
+29;Flow in m3/s in surface water;J;Q;NVT;NVT;10;NVT;F;m3/s;water_volume_transport_into_sea_water_from_rivers;;;;;
 30;Average debit in m3/s in surface water;N;GEM_Q;NVT;NVT;10;NVT;F;m3/s;;;;;;
 31;Stuwregeling in surface water;N;STUWRGLG;NVT;NVT;10;NVT;T;DIMSLS;;;;;;
 32;Average distribution of the direction from the direction spectrum in graad in surface water;N;SObh;NVT;NVT;10;NVT;I;graad;;;;;;
@@ -39,7 +39,7 @@ wnsnum;wnsoms;public;parcod;orgcod;sgkcod;cpmcod;hdhcod;domein;ehdcod;standard_n
 51;80 percentile of the vitality in cm2 in surface water;N;80%_L;NVT;NVT;10;NVT;F;cm2;;;;;;
 52;90 percentile of the vitality in cm2 in surface water;N;90%_L;NVT;NVT;10;NVT;F;cm2;;;;;;
 53;Vitality in cm2 in surface water;N;L;NVT;NVT;10;NVT;F;cm2;;;;;;
-54;Water level in cm with respect to mean sea level in surface water;J;WATHTE;NVT;NVT;10;MSL;I;cm;;;;;;
+54;Water level in cm with respect to mean sea level in surface water;J;WATHTE;NVT;NVT;10;MSL;I;cm;sea_surface_height;;;;;
 55;Water height calculated in cm with respect to mean sea level in surface water;N;WATHTBRKD;NVT;NVT;10;MSL;I;cm;;;;;;
 56;Wave energy density between 25 and 35 mhz in cm2/Hz in surface water;N;Czz10(4);NVT;NVT;10;NVT;I;cm2/Hz;;;;;;
 57;Wave energy density between 35 and 45 mhz in cm2/Hz in surface water;N;Czz10(5);NVT;NVT;10;NVT;I;cm2/Hz;;;;;;
@@ -228,7 +228,7 @@ wnsnum;wnsoms;public;parcod;orgcod;sgkcod;cpmcod;hdhcod;domein;ehdcod;standard_n
 278;Calcium in mg/l after filtration in surface water;J;Ca;NVT;NVT;10;nf;E;mg/l;;;;;;
 279;Cadmium in ug/l in surface water;J;Cd;NVT;NVT;10;NVT;E;ug/l;;;;;;
 280;Cadmium in ug/l after filtration in surface water;J;Cd;NVT;NVT;10;nf;E;ug/l;;;;;;
-282;Chlorophyll-a in ug/l in surface water;J;CHLFa;NVT;NVT;10;NVT;E;ug/l;;;;;;
+282;Chlorophyll-a in ug/l in surface water;J;CHLFa;NVT;NVT;10;NVT;E;ug/l;concentration_of_chlorophyll_in_sea_water;;;;;
 283;Choline esterase inhibitor in ug/l in surface water;J;CHOLREM;NVT;NVT;10;NVT;E;ug/l;;;;;;
 284;Chrysene in ug/l in surface water;J;Chr;NVT;NVT;10;NVT;E;ug/l;;;;;;
 285;Cyanide in ug/l in surface water;J;CN;NVT;NVT;10;NVT;E;ug/l;;;;;;
@@ -325,7 +325,7 @@ wnsnum;wnsoms;public;parcod;orgcod;sgkcod;cpmcod;hdhcod;domein;ehdcod;standard_n
 407;Sum xylenes in ug/l in surface water;J;s_Xyl;NVT;NVT;10;NVT;E;ug/l;;;;;;
 408;Acid-binding capacity in meq/l in surface water;N;ZBV;NVT;NVT;10;NVT;E;meq/l;;;;;;
 409;Zinc in ug/l after filtration in surface water;J;Zn;NVT;NVT;10;nf;E;ug/l;;;;;;
-410;Suspended solids (undissolved components) in mg/l in surface water;J;ZS;NVT;NVT;10;NVT;E;mg/l;;;;;;
+410;Suspended solids (undissolved components) in mg/l in surface water;J;ZS;NVT;NVT;10;NVT;E;mg/l;concentration_of_suspended_matter_in_sea_water;;;;;
 411;Percentage residue on ignition in % in class FUK100 in surface water;N;%GR;NVT;FUK100;10;NVT;E;%;;;;;;
 412;Alpha-hexachlorocyclohexane in ug/l in surface water;J;aHCH;NVT;NVT;10;NVT;E;ug/l;;;;;;
 414;Alpha-hexachlorocyclohexane in ug/l after centrifugation in surface water;N;aHCH;NVT;NVT;10;nc;E;ug/l;;;;;;
@@ -420,7 +420,7 @@ wnsnum;wnsoms;public;parcod;orgcod;sgkcod;cpmcod;hdhcod;domein;ehdcod;standard_n
 538;Pyrene in mg/kg dry weight in suspendid solids;J;Pyr;NVT;NVT;50;dg;E;mg/kg;;;;;;
 539;Di-o-isopropylidene-a-l-sorbofuranose-2,3:4,6 in mg/l in surface water;N;Furanose;NVT;NVT;10;NVT;E;mg/l;;;;;;
 540;Sum 1,2,3,4- and 1,2,3,5- and 2,4,5-tetrachlorobenzene in ug/l in surface water;J;s_T4CB;NVT;NVT;10;NVT;E;ug/l;;;;;;
-541;View in dm in surface water;J;ZICHT;NVT;NVT;10;NVT;E;dm;;;;;;
+541;View in dm in surface water;J;ZICHT;NVT;NVT;10;NVT;E;dm;secchi_depth_of_sea_water;;;;;
 542;Sum methylene blue reactive substances (anion active) in mg/l in surface water;J;s_MBAS;NVT;NVT;10;NVT;E;mg/l;;;;;;
 543;Sum aromatic amines in ug/l in surface water;J;s_ARAM;NVT;NVT;10;NVT;E;ug/l;;;;;;
 544;Leftover beta ray activity in mBq/l in surface water;J;RESTB;NVT;NVT;10;NVT;E;mBq/l;;;;;;

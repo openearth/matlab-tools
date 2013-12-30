@@ -17,7 +17,7 @@ function donar_dia_view(D, varargin)
 %   Example
 %   donar_dia_view(D)
 %
-%   See also donar_dia_read, donar_dia_parse
+%   See also donar, donar_dia_read, donar_dia_parse
 
 %% Copyright notice
 %   --------------------------------------------------------------------

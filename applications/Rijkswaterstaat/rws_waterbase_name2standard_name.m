@@ -1,16 +1,18 @@
 function standard_name = rws_waterbase_name2standard_name(varargin)
-%RWS_WATERBASE_NAME2STANDARD_NAME   convert between ODV substance name and CF standard_name
+%RWS_WATERBASE_NAME2STANDARD_NAME   convert DONAR substance name to CF standard_name
 %
 %   standard_names = rws_waterbase_name2standard_name(DONARcodes)
 %
 % Note : vectorized for codes, e.g.: rws_waterbase_name2standard_name({'22','23'})
 % Note : codes can be numeric, e.g.: rws_waterbase_name2standard_name([ 22   23])
 %
+% Wrapper for donar.resolve_wns
+%
 % Examples:
 %
 %   odvname2standard_name('22') % gives 'sea_surface_wave_significant_height'
 %
-%See web: IDsW, CF standard_name table, www.waterbase.nl/metis
+%See web: donar.resolve_wns
 %See also: OceanDataView, ODVNAME2STANDARD_NAME
 
 %   --------------------------------------------------------------------
@@ -38,8 +40,6 @@ function standard_name = rws_waterbase_name2standard_name(varargin)
 %   License along with this library. If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
-   OPT.xlsfile = [filepathstr(mfilename('fullpath')),filesep,'rws_waterbase_name2standard_name.xls'];
-   DAT         = xls2struct(OPT.xlsfile);
    codes       = varargin{1};
    if ischar(codes) | iscell(codes)
       codes = str2num(char(codes));
@@ -47,12 +47,7 @@ function standard_name = rws_waterbase_name2standard_name(varargin)
    
    for icode=1:length(codes)
       code                 = codes(icode);
-      index                = find(code==DAT.rws_waterbase_code);
-      if ~isempty(index)
-      standard_name{icode} = DAT.standard_name{index};
-      else
-      standard_name{icode} = '';
-      end
+      standard_name{icode} = donar.resolve_wns(code);
    end
    
    %% Return character instead of cell if input is a single character or number

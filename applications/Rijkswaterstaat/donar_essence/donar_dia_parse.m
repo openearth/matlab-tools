@@ -22,7 +22,7 @@ function D = donar_dia_parse(D, varargin)
 %   Example
 %   D = donar_dia_parse(D)
 %
-%   See also donar_dia_read, donar_dia_view
+%   See also donar, donar_dia_read, donar_dia_view
 
 %% Copyright notice
 %   --------------------------------------------------------------------
