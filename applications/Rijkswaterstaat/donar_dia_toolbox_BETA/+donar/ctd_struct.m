@@ -10,7 +10,34 @@ function [S,M]=ctd_struct(D,M0,ncolumn,varargin)
 % [data ,  metadata] = donar.read(File,1,6) % 1st variable, residing in 6th column
 % [struct, metadata] = donar.struct(data, metadata)
 %
-%See also: open, read, disp, trajectory_struct
+% S.station_id is a unique id that contains all unique positions.
+% Use ctd_extract and ctd_plot to merge and plot profiles for one
+% such location.
+%
+% S.profile_id is a unique id per profile, and should probably be replaced
+% with unique dia blocks.
+%
+%         S = 
+% 
+%                         lon: [153590x1 double]
+%                         lat: [153590x1 double]
+%                           z: [153590x1 double]
+%                     datenum: [153590x1 double]
+%                        data: [153590x1 double]
+%                       block: [153590x1 double]
+%                  station_id: [153590x1 double]
+%                  profile_id: [153590x1 double]
+
+%                 station_lon: [36x1 double]
+%                 station_lat: [36x1 double]
+%                   station_n: [36x1 double]
+%
+%             profile_datenum: [813x1 double]
+%                   profile_n: [813x1 double]   
+%
+%See also: open, read, disp, trajectory_struct, ctd_timeSeriesProfile
+
+OPT.plot = 0;
 
 if nargin==2
     ncolumn = size(D,2)-2; % last ones are:  /-flags, dia index
@@ -43,6 +70,9 @@ end
     S.data    = D(:,ncolumn);
    %S.flag    = D(:,ncolumn+1); % always 0: no information
     S.block   = D(:,ncolumn+2);
+
+    S.station_id = []; % define here to ensture proper order in utruct
+    S.profile_id = [];
     
     %% Store header as global attributes
    
@@ -68,11 +98,18 @@ end
   end
   
   %%
- [S.profile_datenum,~,S.profile_id]=unique_rows_tolerance(S.datenum,10/24/60);
+ [S.profile_datenum,~,S.profile_id]=unique_rows_tolerance(S.datenum,10/24/60); % correlates very well with dia blocks, use unique() on that?
   S.profile_n = 0.*S.station_lon;
   for i=1:length(S.profile_datenum)
       S.profile_n(i) = sum(S.profile_id==i);
   end
+  
+if OPT.plot  
+   edges = [0 1 3 10 30 100 300 1000 3e3 1e4];
+   N = histc(S.profile_n,edges)
+   bar(edges,N,'histc')
+   set(gca,'xscale','log')  
+end
   
   %% split profiles that take too long, these should be trated as trajectories
 

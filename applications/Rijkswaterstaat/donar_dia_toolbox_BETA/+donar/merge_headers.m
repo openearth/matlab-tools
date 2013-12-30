@@ -103,7 +103,8 @@ for iwns=1:length(WNS)
    [V(iwns).long_name,...
     V(iwns).standard_name] = donar.resolve_wns(WNS{iwns});
    [V(iwns).long_units,...
-    V(iwns).units] = donar.resolve_ehd(V(1).hdr.EHD{2});
+    V(iwns).units] = donar.resolve_ehd(V(iwns).hdr.EHD{2});
+    V(iwns).EHD = V(iwns).hdr.EHD{2};
     
     %% duplicate relevant block meta-data into array format
     V(iwns).ftell = cell2mat({B(index).ftell}')';

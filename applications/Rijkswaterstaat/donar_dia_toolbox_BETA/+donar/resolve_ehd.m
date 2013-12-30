@@ -33,8 +33,8 @@ end
 %% load cache
 persistent EHD  % cache this as it takes too long to load many times
 if isempty(EHD)
-    disp('Loading persistent cache of DONAR units ...')
-    EHD = csv2struct('ehd_en.csv','delimiter',';');
+   disp('Loading persistent cache of DONAR units ...')
+   EHD = csv2struct([fileparts(mfilename('fullpath')),filesep,'ehd_en.csv'],'delimiter',';');
 end
 
 %%
@@ -51,9 +51,11 @@ else
     cf_name  = EHD.units{index}; % not always present
     else
     cf_name  = '';
-    disp([code,' not mapped to CF UDunits yet.'])
     end
     
+    if isempty(cf_name)
+        disp([code,' not mapped to CF UDunits yet.'])
+    end
     
 end
 

@@ -30,7 +30,7 @@ end
 persistent WNS  % cache this as it takes too long to load many times
 if isempty(WNS)
    disp('Loading persistent cache of DONAR variable names ...')
-   WNS = csv2struct('wns_en.csv','delimiter',';');
+   WNS = csv2struct([fileparts(mfilename('fullpath')),filesep,'wns_en.csv'],'delimiter',';');
 end
 
 %%
@@ -49,6 +49,9 @@ else
     cf_name       = '';
     disp([code,' not mapped to CF standard_name yet.'])
     end
+    if isempty(cf_name)
+        disp([code,' not mapped to CF standard_name yet.'])
+    end     
     
     if isfield(WNS,'deltares_name')
     deltares_name = WNS.deltares_name{index}; % not always present
@@ -56,4 +59,8 @@ else
     deltares_name = '';
     disp([code,' not mapped to Deltares netCDF name yet.'])
     end
+    if isempty(deltares_name)
+        disp([code,' not mapped to Deltares netCDF name yet.'])
+    end    
+    
 end

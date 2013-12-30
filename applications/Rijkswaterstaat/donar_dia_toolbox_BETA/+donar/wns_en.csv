@@ -3669,7 +3669,7 @@ wnsnum;wnsoms;public;parcod;orgcod;sgkcod;cpmcod;hdhcod;domein;ehdcod;standard_n
 7644;Activity of thallium-208 in Bq/kg dry weight in flesh;N;Tl208;VLEES;NVT;60;dg;E;Bq/kg;;;;;;
 7645;Activity of zink-65 in Bq/kg dry weight in flesh;N;Zn65;VLEES;NVT;60;dg;E;Bq/kg;;;;;;
 7646;Activity from lead 210 in Bq/kg dry weight in flesh;N;Pb210;VLEES;NVT;60;dg;E;Bq/kg;;;;;;
-7647;Speed of sound in m/s in surface water;N;GELSHD;NVT;NVT;10;NVT;F;m/s;speed_of_sound_in_sea_water;;;;;
+7647;Speed of sound in m/s in surface water;N;GELSHD;NVT;NVT;10;NVT;F;m/s;speed_of_sound_in_sea_water;sound_speed;;;;
 7648;Activity from ruthenium 106 in Bq/kg dry weight in surface/sediment;N;Ru106;NVT;NVT;40;dg;E;Bq/kg;;;;;;
 7650;Arsenic in mg/kg in class UITGMTRA dry weight in flesh;N;As;VLEES;UITGMTRA;60;dg;E;mg/kg;;;;;;
 7651;Calcium in mg/kg in class UITGMTRA dry weight in flesh;N;Ca;VLEES;UITGMTRA;60;dg;E;mg/kg;;;;;;
