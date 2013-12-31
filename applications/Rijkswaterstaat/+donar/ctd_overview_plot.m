@@ -1,4 +1,4 @@
-function ctd_overview_plot(S,E,L)
+function ctd_overview_plot(S,M,E,L)
 
             subplot(3,2,1)
             plot(S.datenum,S.profile_id)

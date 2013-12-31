@@ -42,6 +42,7 @@ OPT.plot = 0;
 if nargin==2
     ncolumn = size(D,2)-2; % last ones are:  /-flags, dia index
 end
+
  % TO DO make x,y, when M.data.hdr tells so
  
     M.data = M0;

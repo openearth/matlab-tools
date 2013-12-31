@@ -17,7 +17,7 @@ basedir   = [root,'\P\1209005-eutrotracks'];
 OPT.cache = 1; % donar.open() cache
 OPT.read  = 1;
 OPT.plot  = 1;
-OPT.case  = 'ctd';
+OPT.case  = 'ferry';
 
 switch OPT.case
 case '0',
@@ -80,7 +80,7 @@ for ifile = 1:length(diafiles);
         [D,M0] = donar.read(File,ivar,ncolumn);
         %% convert
         if type(ifile)==1 % each profile_id seems to be in a seperate block": profile_id==block
-           [S,M ] = donar.ctd_struct(D,M0);%save('ctd.mat','-struct','S')
+           [S,M ] = donar.ctd_struct       (D,M0);%save('ctd.mat','-struct','S')
         else
            [S,M ] = donar.trajectory_struct(D,M0);%save('trajectory.mat','-struct','S')
         end
@@ -91,7 +91,7 @@ for ifile = 1:length(diafiles);
         if type(ifile)==1
           close all
           if OPT.plot % overview
-          donar.ctd_overview_plot(S,E,L)
+          donar.ctd_overview_plot(S,M,E,L)
           print2a4(strrep(diafile,'.dia',['_',M.data.WNS,'_ctd.png']))
             for ist=1:length(S.station_lon)
                 disp(['processing ctd ',num2str(ist),'/',num2str(length(S.station_lon))])
@@ -112,7 +112,7 @@ for ifile = 1:length(diafiles);
           if OPT.plot
             close all
             donar.trajectory_overview_plot(S,M,E,L,mktex(diafiles{ifile}))
-            print2a4(strrep(diafile,'.dia',['_',M.data.WNS,'_trajectory.png']),'v','w')
+            print2screensize(strrep(diafile,'.dia',['_',M.data.WNS,'_trajectory.png']))
           end           
         end
         

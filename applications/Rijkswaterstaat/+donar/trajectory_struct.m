@@ -13,8 +13,9 @@ function [S,M]=trajectory_struct(D,M0,ncolumn,varargin)
 %See also: open, read, disp, ctd_struct
 
 if nargin==2
-    ncolumn = size(D,2)-1; % last ones are / flags
+    ncolumn = size(D,2)-2; % last ones are:  /-flags, dia index
 end
+
  % TO DO make x,y, when M.data.hdr tells so
  
     M.data = M0;
@@ -41,6 +42,8 @@ end
     S.z       = D(:,3);
     S.datenum = D(:,4);
     S.data    = D(:,ncolumn);
+   %S.flag    = D(:,ncolumn+1); % always 0: no information
+    S.block   = D(:,ncolumn+2);
     
     %% Store header as global attributes
    
