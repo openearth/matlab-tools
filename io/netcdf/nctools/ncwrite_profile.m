@@ -11,7 +11,10 @@ function varargout = ncwrite_profile(ncfile,varargin)
 %    a vessel for a while, the time vector is 2D [t,z] too, with the same
 %   size as the data.
 %
-%  This case is described in CF: http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/ch09.html
+%  This case is described in:
+%  CF:   http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/ch09.html
+%  GOOS: http://www.oceansites.org/docs/oceansites_user_manual_version1.2.pdf
+%  SDN:  http://www.seadatanet.org/Standards-Software/Data-Transport-Formats
 %
 %See also: netcdf, ncwriteschema, ncwrite, SNCTOOLS,
 %          ncwritetutorial_grid
@@ -116,9 +119,21 @@ function varargout = ncwrite_profile(ncfile,varargin)
    nc.Attributes(1    ) = struct('Name','institution'        ,'Value',  OPT.institution);
    nc.Attributes(end+1) = struct('Name','history'            ,'Value',  '$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/io/netcdf/nctools/ncwrite_timeseries.m $ $Id: ncwrite_timeseries.m 8921 2013-07-19 06:13:40Z boer_g $');
    nc.Attributes(end+1) = struct('Name','featureType'        ,'Value',  'timeSeriesProfile');
-   nc.Attributes(end+1) = struct('Name','Conventions'        ,'Value',  'CF-1.6');
+   nc.Attributes(end+1) = struct('Name','Conventions'        ,'Value',  'CF-1.6, OceanSITES 1.1');
    nc.Attributes(end+1) = struct('Name','terms_for_use'      ,'Value', ['These data can be used freely for research purposes provided that the following source is acknowledged: ',OPT.institution]);
    nc.Attributes(end+1) = struct('Name','disclaimer'         ,'Value',  'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.');
+
+%% mandatory oceansites atts: http://www.oceansites.org/documents/index.html
+%  http://www.oceansites.org/docs/oceansites_user_manual.pdf
+%  for ncISO extent see below
+
+   nc.Attributes(end+1) = struct('Name','data_type'          ,'Value',  'OceanSITES profile data');
+   nc.Attributes(end+1) = struct('Name','format_version'     ,'Value',  '1.1');
+   nc.Attributes(end+1) = struct('Name','platform_code'      ,'Value',  '');
+   nc.Attributes(end+1) = struct('Name','date_update'        ,'Value',  datestr(now,30));
+   nc.Attributes(end+1) = struct('Name','site_code'          ,'Value',  '');
+   nc.Attributes(end+1) = struct('Name','data_mode'          ,'Value',  'D');
+   nc.Attributes(end+1) = struct('Name','area'               ,'Value',  'North Sea');
 
 %% user-defined
 
@@ -127,9 +142,13 @@ function varargout = ncwrite_profile(ncfile,varargin)
    end
 
 %% 2 Create dimensions
+%    Standard names for OceanSITES dimensions should be in upper case: TIME and DEPTH for profiles
 
    ncdimlen.time        = length(OPT.datenum1);
-   nc.Dimensions(1)     = struct('Name','time'  ,'Length', ncdimlen.time);
+   nc.Dimensions(1)     = struct('Name','TIME'      ,'Length', ncdimlen.time);
+   nc.Dimensions(2)     = struct('Name','LATITUDE'  ,'Length', 1); % oceansites
+   nc.Dimensions(3)     = struct('Name','LONGITUDE' ,'Length', 1); % oceansites
+   variable.coordinates = 'LATITUDE LONGITUDE';
    
 %% 3a Create (primary) variables: time
 
@@ -139,9 +158,9 @@ function varargout = ncwrite_profile(ncfile,varargin)
    attr(end+1)  = struct('Name', 'units'        , 'Value', ['days since ',datestr(OPT.refdatenum,'yyyy-mm-dd HH:MM:SS'),OPT.timezone]);
    attr(end+1)  = struct('Name', 'axis'         , 'Value', 'T');
    
-   nc.Variables(ifld) = struct('Name'       , 'time', ...
+   nc.Variables(ifld) = struct('Name'       , 'TIME', ...
                                'Datatype'   , 'double', ...
-                               'Dimensions' , struct('Name', 'time','Length',ncdimlen.time), ...
+                               'Dimensions' , struct('Name', 'TIME','Length',ncdimlen.time), ...
                                'Attributes' , attr,...
                                'FillValue'  , []);
                            
@@ -153,6 +172,7 @@ function varargout = ncwrite_profile(ncfile,varargin)
    attr(end+1)  = struct('Name', 'positive'     , 'Value', 'down');
    attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Z');
    attr(end+1)  = struct('Name', '_FillValue'   , 'Value', OPT.fillvalue);
+   attr(end+1)  = struct('Name', 'reference'    , 'Value', 'sea_level'); % oceansites: is "sea_level","mean_sea_level","mean_lower_low_water","wgs84_geoid"
    
 if (isempty(OPT.z2) | ischar(OPT.z2)) & ...
    (isempty(OPT.z1) | ischar(OPT.z1))
@@ -167,33 +187,32 @@ elseif (isempty(OPT.z2) | ischar(OPT.z2)) | ...% constant (binned) z per profile
    end
 
    ncdimlen.z           = length(OPT.z1);
-   nc.Dimensions(2)     = struct('Name','z'     ,'Length', ncdimlen.z);
-   variable.dims(1)     = nc.Dimensions(2); % show correct by default in ncBrowse
+   nc.Dimensions(4)     = struct('Name','DEPTH','Length', ncdimlen.z);
+   variable.dims(1)     = nc.Dimensions(4); % CF: time as 1st dimension (= last in native matlab)
    variable.dims(2)     = nc.Dimensions(1);
    
-   variable.coordinates = ''; %'time z';  % no need: z and t are already dimensions
    extent.z = [min(OPT.z1(:)) max(OPT.z1(:))];
    attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'z bins');
    attr(end+1)  = struct('Name', 'actual_range'  ,'Value' , extent.z);
-   nc.Variables(ifld) = struct('Name'       , 'z', ...
+   nc.Variables(ifld) = struct('Name'       , 'DEPTH', ...
                                'Datatype'   , 'double', ...
-                               'Dimensions' , struct('Name', 'z','Length',ncdimlen.z), ...
+                               'Dimensions' , struct('Name', 'DEPTH','Length',ncdimlen.z), ...
                                'Attributes' , attr,...
                                'FillValue'  , []);
    
 else % unique z per profile: ragged-array: dimension(z)=just an index
 
    ncdimlen.z           = size(OPT.z2,1);
-   nc.Dimensions(2)     = struct('Name','z'     ,'Length', ncdimlen.z);
+   nc.Dimensions(2)     = struct('Name','DEPTH'     ,'Length', ncdimlen.z);
    variable.dims(1)     = nc.Dimensions(2); % show correct by default in ncBrowse
    variable.dims(2)     = nc.Dimensions(1);
 
-   variable.coordinates = 'z2';
+   variable.coordinates = [variable.coordinates ' DEPTH2'];
    extent.z = [min(OPT.z2(:)) max(OPT.z2(:))];
-   attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'z');
+   attr(end+1)  = struct('Name', 'long_name'    ,'Value', 'z');
    attr(end+1)  = struct('Name', 'actual_range' ,'Value' , extent.z);
    attr(end+1)  = struct('Name', 'coordinates'  ,'Value' , variable.coordinates);
-   nc.Variables(ifld) = struct('Name'       , 'z2', ...
+   nc.Variables(ifld) = struct('Name'       , 'DEPTH2', ...
                                'Datatype'   , 'double', ...
                                'Dimensions' , variable.dims, ...
                                'Attributes' , attr,...
@@ -234,7 +253,7 @@ if ~isempty(OPT.lon0) & ~isempty(OPT.lat0)
    attr(end+1)  = struct('Name', 'axis'         , 'Value', 'X');
    attr(end+1)  = struct('Name', '_FillValue'   , 'Value', OPT.fillvalue);
    attr(end+1)  = struct('Name', 'actual_range' , 'Value', extent.lon);
-   nc.Variables(ifld) = struct('Name'       , 'lon', ...
+   nc.Variables(ifld) = struct('Name'       , 'LONGITUDE', ...
                                'Datatype'   , 'double', ...
                                'Dimensions' , {[]}, ...
                                'Attributes' , attr,...
@@ -248,7 +267,7 @@ if ~isempty(OPT.lon0) & ~isempty(OPT.lat0)
    attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Y');
    attr(end+1)  = struct('Name', '_FillValue'   , 'Value', OPT.fillvalue);
    attr(end+1)  = struct('Name', 'actual_range' , 'Value', extent.lat);
-   nc.Variables(ifld) = struct('Name'       , 'lat', ...
+   nc.Variables(ifld) = struct('Name'       , 'LATITUDE', ...
                                'Datatype'   , 'double', ...
                                'Dimensions' , {[]}, ...
                                'Attributes' , attr,...
@@ -267,7 +286,7 @@ if ~isempty(OPT.lon1) & ~isempty(OPT.lat1)
    attr(end+1)  = struct('Name', 'actual_range' , 'Value', extent.lon);
    nc.Variables(ifld) = struct('Name'       , 'lon1', ...
                                'Datatype'   , 'double', ...
-                               'Dimensions' , struct('Name', 'time','Length',ncdimlen.time), ...
+                               'Dimensions' , struct('Name', 'TIME','Length',ncdimlen.time), ...
                                'Attributes' , attr,...
                                'FillValue'  , []);
                            
@@ -281,7 +300,7 @@ if ~isempty(OPT.lon1) & ~isempty(OPT.lat1)
    attr(end+1)  = struct('Name', 'actual_range' , 'Value', extent.lat);
    nc.Variables(ifld) = struct('Name'       , 'lat1', ...
                                'Datatype'   , 'double', ...
-                               'Dimensions' , struct('Name', 'time','Length',ncdimlen.time), ...
+                               'Dimensions' , struct('Name', 'TIME','Length',ncdimlen.time), ...
                                'Attributes' , attr,...
                                'FillValue'  , []);    
 end
@@ -361,18 +380,18 @@ end
 %% 5 Fill variables
 
    ncwrite   (ncfile,OPT.Name       , OPT.var);
-   ncwrite   (ncfile,'time'         , OPT.datenum1 - OPT.refdatenum);
+   ncwrite   (ncfile,'TIME'         , OPT.datenum1 - OPT.refdatenum);
 
 if     isempty(OPT.z2) | ischar(OPT.z2) | size(OPT.z2,2)==1
-   ncwrite   (ncfile,'z'            , OPT.z1(:));
+   ncwrite   (ncfile,'DEPTH'        , OPT.z1(:));
 else
-   ncwrite   (ncfile,'z2'           , OPT.z2  );
+   ncwrite   (ncfile,'DEPTH2'       , OPT.z2  );
 end
 
 %% 0D target
 if     ~ischar(OPT.lon0) | ~ischar(OPT.lon0)
-   ncwrite   (ncfile,'lon'          , OPT.lon0(:));
-   ncwrite   (ncfile,'lat'          , OPT.lat0(:));
+   ncwrite   (ncfile,'LONGITUDE'    , OPT.lon0(:));
+   ncwrite   (ncfile,'LATITUDE'     , OPT.lat0(:));
 end
 
 %% 1D realized profile start position
