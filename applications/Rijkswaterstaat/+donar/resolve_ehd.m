@@ -5,32 +5,37 @@ function [longname, cf_name] = resolve_ehd(code,varargin)
 %
 % resolves DONAR units longname "ehdoms" + CF UDunits units from DONAR datamodel "ehdcod"
 % published as web service here (we use csv format as it is smaller and extendable compared to RDF xml):
-% http://live.waterbase.nl/metis/cgi-bin/mivd.pl?lang=en&action=value&type=ehd&order=code&format=txt
+% http://live.waterbase.nl/metis/cgi-bin/mivd.pl?lang=en&action=value&type=ehd&order=code
 % manually extended with CF compliant UDunits units. Loading the cache the 1st
-% time is slow, byt the internal DB is persistent, so any 2nd time is faster.
+% time is slow, but the internal DB is persistent, so any 2nd time is faster.
 %
 % Example: resolve_ehd('doC') = 'decidegree_Celsius'
 %
 % To be applied to field EHD{2} from donar.read_header().
 %
-%see also: resolve_wns, convert_units, 
+%See also: resolve_wns, convert_units, 
 % http://www.unidata.ucar.edu/software/udunits/udunits-2/udunits2.html#Introduction
 % http://coastwatch.pfeg.noaa.gov/erddap/convert/units.html
+% https://data.overheid.nl/data/dataset/rws-donar-metis-service-rijkswaterstaat
+% http://live.waterbase.nl/metis/cgi-bin/mivd.pl?lang=en
 
-%% source (mind lang=nl of lang=en)
+%% source (mind lang=nl or lang=en)
 % http://live.waterbase.nl/metis/cgi-bin/mivd.pl?
 % http://live.waterbase.nl/metis/cgi-bin/mivd.pl?lang=nl&action=value&type=ehd
 % http://live.waterbase.nl/metis/cgi-bin/mivd.pl?lang=nl&action=value&type=ehd&order=code&format=xml
 % http://live.waterbase.nl/metis/cgi-bin/mivd.pl?lang=nl&action=value&type=ehd&order=code&format=txt
 
-% TO DO : add BODC SeaDataNet P6
+% TO DO: add BODC SeaDataNet P06
+% TO DO: vectorize
 
 %%
+
 if isnumeric(code)
    code = num2str(code);
 end
 
 %% load cache
+
 persistent EHD  % cache this as it takes too long to load many times
 if isempty(EHD)
    disp('Loading persistent cache of DONAR units ...')
@@ -38,6 +43,7 @@ if isempty(EHD)
 end
 
 %%
+
 index = find(strcmpi(EHD.ehdcod,code));
 if isempty(index)
     disp(['DONAR ehdcod units not in database cache: ',code])
@@ -59,6 +65,3 @@ else
     
 end
 
-%if isnan(udunits)
-%   warning(['Not implemented yet:',code])
-%end

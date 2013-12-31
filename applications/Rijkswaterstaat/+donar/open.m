@@ -20,6 +20,9 @@ function File = open(diafile,varargin)
 % [data, metadata] = donar.read(File,1,6) % 1st variable, residing in 6th column
 %
 %See also: open, read, disp, open = scan_file + merge_headers
+%          http://www.rws.nl/water/waterdata_waterberichtgeving/watergegevens/
+%          http://www.helpdeskwater.nl/onderwerpen/kust-zee/scheepvaart/historische-gegevens/
+%          https://data.overheid.nl/data/dataset/rws-donar-metis-service-rijkswaterstaat
 
 %%  --------------------------------------------------------------------
 %   Copyright (C) 2013 Deltares 4 Rijkswaterstaat (SPA Eurotracks)

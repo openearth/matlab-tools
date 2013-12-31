@@ -42,7 +42,7 @@ function ctd_timeSeriesProfile_plot(P,E,L,titletxt)
     title('<netCDF matrix space>')
     set(ax,'YDir','reverse')
     grid on
-    ttick = get(gca,'xtick')
+    ttick = get(gca,'xtick');
 
     subplot(2,2,3)
     colors = clrmap(jet,nt);

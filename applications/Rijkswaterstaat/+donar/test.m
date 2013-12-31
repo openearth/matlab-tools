@@ -17,7 +17,7 @@ basedir   = [root,'\P\1209005-eutrotracks'];
 OPT.cache = 1; % donar.open() cache
 OPT.read  = 1;
 OPT.plot  = 1;
-OPT.case  = 'ferry';
+OPT.case  = 'ctd';
 
 switch OPT.case
 case '0',
@@ -65,17 +65,17 @@ end
 E = nc2struct([root,'\opendap.deltares.nl\thredds\dodsC\opendap\rijksoverheid\eez\Exclusieve_Economische_Zone_maart2012.nc']);
 L = nc2struct([root,'\opendap.deltares.nl\thredds\dodsC\opendap\deltares\landboundaries\northsea.nc']);
 
-for ifile = 4:length(diafiles);
+for ifile = 1:length(diafiles);
     
   disp(['File: ',num2str(ifile)])
 
   diafile = [basedir,filesep,diafiles{ifile}];
   File    = donar.open(diafile,'cache',OPT.cache,'disp',1000);
   donar.disp(File)
-
+%%
   if OPT.read
      ncolumn = 6;
-     for ivar = 1 %:length(File.Variables);
+     for ivar = find(strcmp({File.Variables.standard_name},'sea_water_salinity')) %:length(File.Variables);
     
         [D,M0] = donar.read(File,ivar,ncolumn);
         %% convert
@@ -99,9 +99,11 @@ for ifile = 4:length(diafiles);
                 clear P
                 P = donar.ctd_timeSeriesProfile(S,ind);
                 if OPT.plot % per profile
-                    titletxt = [num2str(ist),' (n=',num2str(S.station_n(ist)),') :',donar.num2strll(S.station_lat(ist),S.station_lon(ist))];
+                    titletxt = [num2str(ist),' (n=',num2str(S.station_n(ist)),') :',num2strll(S.station_lat(ist),S.station_lon(ist))];
+                    close
                     donar.ctd_timeSeriesProfile_plot(P,E,L,titletxt)
-                    print2a4(strrep(diafile,'.dia',['_',M.data.WNS,'_ctd_',num2str(ist,'%0.3d'),'.png']),'v','t')
+                    donar.ctd_timeSeriesProfile2nc(strrep(diafile,'.dia',['_',M.data.WNS,'_ctd_',num2str(ist,'%0.3d'),'.nc' ]),P,M)
+                    print2a4                      (strrep(diafile,'.dia',['_',M.data.WNS,'_ctd_',num2str(ist,'%0.3d'),'.png']),'v','t')
                     close
                 end
             end
