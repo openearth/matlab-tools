@@ -1,8 +1,9 @@
 NetCDF-3 Classic d:\checkouts\OpenEarthTools\matlab\io\netcdf\nctools\ncwrite_profile_tutorial_zragged_trajectory.nc {
 dimensions:
 	TIME = 4 ;
-	DEPTH = 5 ;
+	LATITUDE = 1 ;
 	LONGITUDE = 1 ;
+	DEPTH = 5 ;
 
 variables:
 	// Preference 'PRESERVE_FVD':  false,
@@ -91,7 +92,7 @@ variables:
 		:data_type = "OceanSITES profile data" ;
 		:format_version = "1.1" ;
 		:platform_code = "" ;
-		:date_update = "20131231T160405" ;
+		:date_update = "$Date$" ;
 		:site_code = "" ;
 		:data_mode = "D" ;
 		:area = "North Sea" ;

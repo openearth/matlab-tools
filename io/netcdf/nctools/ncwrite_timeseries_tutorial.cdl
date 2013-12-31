@@ -1,4 +1,4 @@
-NetCDF-3 Classic d:\checkouts\OpenEarthTools\matlab\io\netcdf\nctools\ncwritetutorial_timeseries.nc {
+NetCDF-3 Classic d:\checkouts\OpenEarthTools\matlab\io\netcdf\nctools\ncwrite_timeseries_tutorial.nc {
 dimensions:
 	time = 12 ;
 	location = 4 ;
@@ -39,21 +39,36 @@ variables:
 		TSS:units = "kg m-3" ;
 		TSS:coordinates = "lat lon platform_name" ;
 		TSS:_FillValue = 9.96921e+36 ;
-		TSS:actual_range = 6.967 39.5669 ;
+		TSS:actual_range = 5.30476 37.5312 ;
 
 //global attributes:
-		:title = "" ;
 		:institution = "DeltaresNUS" ;
-		:source = "" ;
-		:history = "$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/io/netcdf/nctools/ncwritetutorial_timeseries.m $ $Id: ncwritetutorial_timeseries.m 8921 2013-07-19 06:13:40Z boer_g $" ;
-		:references = "" ;
-		:email = "" ;
-		:featureType = "timeSeries" ;
-		:comment = "" ;
-		:version = "" ;
-		:Conventions = "CF-1.6" ;
+		:history = "$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/io/netcdf/nctools/ncwrite_timeseries.m $ $Id: ncwrite_timeseries.m 8921 2013-07-19 06:13:40Z boer_g $" ;
+		:featureType = "TimeSeries" ;
+		:Conventions = "CF-1.6, OceanSITES 1.1" ;
 		:terms_for_use = "These data can be used freely for research purposes provided that the following source is acknowledged: DeltaresNUS" ;
 		:disclaimer = "This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE." ;
+		:data_type = "OceanSITES time-series data" ;
+		:format_version = "1.1" ;
+		:platform_code = "" ;
+		:date_update = "$Date$" ;
+		:site_code = "" ;
+		:data_mode = "D" ;
+		:area = "North Sea" ;
+		:title = "" ;
+		:references = "" ;
+		:email = "" ;
+		:source = "" ;
+		:comment = "" ;
+		:version = "" ;
+		:time_coverage_start = "20090101T000000" ;
+		:time_coverage_end = "20091201T000000" ;
+		:geospatial_lat_min = 103.2 ;
+		:geospatial_lat_max = 103.8 ;
+		:geospatial_lon_min = 1.2 ;
+		:geospatial_lon_max = 1.5 ;
+		:geospatial_vertical_min = 32 ;
+		:geospatial_vertical_max = 117 ;
 
 
 }

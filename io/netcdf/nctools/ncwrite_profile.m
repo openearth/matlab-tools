@@ -18,8 +18,8 @@ function varargout = ncwrite_profile(ncfile,varargin)
 %
 %See also: netcdf, ncwriteschema, ncwrite, SNCTOOLS,
 %          ncwritetutorial_grid
-%          ncwritetutorial_timeseries
-%          ncwritetutorial_trajectory
+%          ncwrite_timeseries_tutorial
+%          ncwrite_trajectory_tutorial
 
 %%  --------------------------------------------------------------------
 %   Copyright (C) 2013 Deltares 4 Rijkswaterstaat (SPA Eurotracks)
@@ -130,7 +130,7 @@ function varargout = ncwrite_profile(ncfile,varargin)
    nc.Attributes(end+1) = struct('Name','data_type'          ,'Value',  'OceanSITES profile data');
    nc.Attributes(end+1) = struct('Name','format_version'     ,'Value',  '1.1');
    nc.Attributes(end+1) = struct('Name','platform_code'      ,'Value',  '');
-   nc.Attributes(end+1) = struct('Name','date_update'        ,'Value',  datestr(now,30));
+   nc.Attributes(end+1) = struct('Name','date_update'        ,'Value',  '$Date$');
    nc.Attributes(end+1) = struct('Name','site_code'          ,'Value',  '');
    nc.Attributes(end+1) = struct('Name','data_mode'          ,'Value',  'D');
    nc.Attributes(end+1) = struct('Name','area'               ,'Value',  'North Sea');
@@ -203,8 +203,8 @@ elseif (isempty(OPT.z2) | ischar(OPT.z2)) | ...% constant (binned) z per profile
 else % unique z per profile: ragged-array: dimension(z)=just an index
 
    ncdimlen.z           = size(OPT.z2,1);
-   nc.Dimensions(2)     = struct('Name','DEPTH'     ,'Length', ncdimlen.z);
-   variable.dims(1)     = nc.Dimensions(2); % show correct by default in ncBrowse
+   nc.Dimensions(4)     = struct('Name','DEPTH'     ,'Length', ncdimlen.z);
+   variable.dims(1)     = nc.Dimensions(4); % CF: time as 1st dimension (= last in native matlab)
    variable.dims(2)     = nc.Dimensions(1);
 
    variable.coordinates = [variable.coordinates ' DEPTH2'];

@@ -85,8 +85,10 @@ function ncwrite_profile_tutorial(ncfile0,varargin)
    OPT.long_name      = 'TSS';
    OPT.units          = 'kg m-3';
 
+%% Cases
+
    for dz = [0 1 2 3]; % amplitude of z undulation: 0=2D, otherwise=3D
-   clc
+
       if dz==0 % same z per profile: dimension(z)=variable(z)
          ncfile = strrep(ncfile0,'.nc','_zbinned_fast.nc');
          OPT.Attributes     = {'xy_comment'  ,'fixed (lat,lon) position, e.g. platform, moored vessel',...

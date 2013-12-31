@@ -1,18 +1,20 @@
-function ncwritetutorial_trajectory(ncfile0,varargin)
-%NCWRITETUTORIAL_TRAJECTORY tutorial for writing trajectory to netCDF-CF file
+function varargout = ncwrite_trajectory(ncfile,varargin)
+%NCWRITE_TRAJECTORY write trajectory to netCDF-CF file
 %
-%  Tutorial of how to make a netCDF file with CF conventions of a 
-%  variable that is a trajectory. In this special case 
-%  the main dimension coincides with the time axis.
+%  Make a netCDF file with CF conventions of a variable that 
+%  is a trajectory gathered by a moving vessel with FerryBox (fixex z, 2D)
+%  or glider (varying z, 3D). In this special case the main dimension are 
+%  * a 1D time axis
 %
-%  This case is described in CF: http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/ch09.html
-%
-% An example of a 3D trajectory is FerryBox data (http://www.ferrybox.org/)
+%  This case is described in:
+%  CF:   http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/ch09.html
+%  GOOS: http://www.oceansites.org/docs/oceansites_user_manual_version1.2.pdf
+%  SDN:  http://www.seadatanet.org/Standards-Software/Data-Transport-Formats
 %
 %See also: netcdf, ncwriteschema, ncwrite, SNCTOOLS,
 %          ncwritetutorial_grid
-%          ncwritetutorial_timeseries
-%          ncwritetutorial_profile
+%          ncwrite_timeseries_tutorial
+%          ncwrite_profile_tutorial
 
 %%  --------------------------------------------------------------------
 %   Copyright (C) 2013 Deltares 4 Rijkswaterstaat (SPA Eurotracks)
@@ -38,17 +40,15 @@ function ncwritetutorial_trajectory(ncfile0,varargin)
 %  your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-%  $Id: ncwritetutorial_timeseries.m 8921 2013-07-19 06:13:40Z boer_g $
+%  $Id: ncwrite_timeseries.m 8921 2013-07-19 06:13:40Z boer_g $
 %  $Date: 2013-07-19 08:13:40 +0200 (Fri, 19 Jul 2013) $
 %  $Author: boer_g $
 %  $Revision: 8921 $
-%  $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/io/netcdf/nctools/ncwritetutorial_timeseries.m $
+%  $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/io/netcdf/nctools/ncwrite_timeseries.m $
 %  $Keywords: $
 
-   if nargin==0
-      ncfile0         = [mfilename('fullpath'),'.nc'];
-   end
-   
+% contant z (binned) or varying z (ragged arrays)
+
 %% Required spatio-temporal fields
 
    OPT.title          = '';
@@ -57,19 +57,20 @@ function ncwritetutorial_trajectory(ncfile0,varargin)
    OPT.references     = '';
    OPT.email          = '';
    
-   OPT.datenum        = datenum(2009,0,1:365);
-   OPT.lon            =  3+2*cos(2*pi*OPT.datenum./365); % lissajous
-   OPT.lat            = 52+1*cos(4*pi*OPT.datenum./365+pi/2);
-   OPT.var            = 3-2*cos(2*pi*OPT.datenum/365);
-   OPT.z              = [];
-
+   OPT.var            = '<required 1D(t) variable matrix>';
+   OPT.datenum        = '<required 1D(t) time vector>';
+   OPT.lon            = '<required 1D(t) position of ship>';
+   OPT.lat            = '<required 1D(t) position of ship>';
+   OPT.z              = '<required 1D(t) or 0D position of sensor>';
+   
 %% Required data fields
    
-   OPT.Name           = 'TSS';
-   OPT.standard_name  = 'mass_concentration_of_suspended_matter_in_sea_water';
-   OPT.long_name      = 'TSS';
-   OPT.units          = 'kg m-3';
-   OPT.Attributes     = {};
+   OPT.Name           = 'variable name';
+   OPT.standard_name  = '<CF standard name>';
+   OPT.long_name      = '<long name>';
+   OPT.units          = '<units>';
+   OPT.Attributes     = {'sdn_parameter_urn','','sdn_parameter_name','','sdn_uom_urn','','sdn_uom_name',''};
+   OPT.global         = {'title','','references','','email','','source','','comment','','version',''}; % CF
 
 %% Required settings
 
@@ -78,42 +79,54 @@ function ncwritetutorial_trajectory(ncfile0,varargin)
    OPT.refdatenum     = datenum(1970,1,1); % linux  datenumber convention
    OPT.fillvalue      = typecast(uint8([0    0    0    0    0    0  158   71]),'DOUBLE'); % ncetcdf default that is also recognized by ncBrowse % DINEOF does not accept NaNs; % realmax('single'); %
    OPT.timezone       = timezone_code2iso('GMT');
-   
+
+   if nargin==0;
+       varargout = {OPT};return
+   end
+   OPT      = setproperty(OPT,varargin);
+
    if verLessThan('matlab','7.12.0.635')
       error('At least Matlab release R2011a is required for writing netCDF files due tue NCWRITESCHEMA.')
    end
 
-   OPT      = setproperty(OPT,varargin);
-
-%% CF attributes: add overall meta info
-%  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#description-of-file-contents
-
-for dz = [0 1]; % amplitude of z undulation: 0=2D, otherwise=3D
-
-   OPT.z              = dz*cos(2*pi*OPT.datenum/365);
-
    nc = struct('Name','/','Format','classic');
 
-   nc.Attributes(    1) = struct('Name','title'              ,'Value',  OPT.title);
-   nc.Attributes(end+1) = struct('Name','institution'        ,'Value',  OPT.institution);
-   nc.Attributes(end+1) = struct('Name','source'             ,'Value',  '');
-   nc.Attributes(end+1) = struct('Name','history'            ,'Value',  '$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/io/netcdf/nctools/ncwritetutorial_timeseries.m $ $Id: ncwritetutorial_timeseries.m 8921 2013-07-19 06:13:40Z boer_g $');
-   nc.Attributes(end+1) = struct('Name','references'         ,'Value',  OPT.version);
-   nc.Attributes(end+1) = struct('Name','email'              ,'Value',  OPT.email);
+%% CF attributes: add overall meta info: http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/cf-conventions.html#description-of-file-contents
+%  for ncISO extent see below
+
+   nc.Attributes(1    ) = struct('Name','institution'        ,'Value',  OPT.institution);
+   nc.Attributes(end+1) = struct('Name','history'            ,'Value',  '$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/io/netcdf/nctools/ncwrite_timeseries.m $ $Id: ncwrite_timeseries.m 8921 2013-07-19 06:13:40Z boer_g $');
    nc.Attributes(end+1) = struct('Name','featureType'        ,'Value',  'trajectory');
-
-   nc.Attributes(end+1) = struct('Name','comment'            ,'Value',  '');
-   nc.Attributes(end+1) = struct('Name','version'            ,'Value',  '');
-
-   nc.Attributes(end+1) = struct('Name','Conventions'        ,'Value',  'CF-1.6');
-
+   nc.Attributes(end+1) = struct('Name','Conventions'        ,'Value',  'CF-1.6, OceanSITES 1.1');
    nc.Attributes(end+1) = struct('Name','terms_for_use'      ,'Value', ['These data can be used freely for research purposes provided that the following source is acknowledged: ',OPT.institution]);
    nc.Attributes(end+1) = struct('Name','disclaimer'         ,'Value',  'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.');
 
+%% mandatory oceansites atts: http://www.oceansites.org/documents/index.html
+%  http://www.oceansites.org/docs/oceansites_user_manual.pdf
+%  for ncISO extent see below
+
+   nc.Attributes(end+1) = struct('Name','data_type'          ,'Value',  'OceanSITES trajectory data');
+   nc.Attributes(end+1) = struct('Name','format_version'     ,'Value',  '1.1');
+   nc.Attributes(end+1) = struct('Name','platform_code'      ,'Value',  '');
+   nc.Attributes(end+1) = struct('Name','date_update'        ,'Value',  '$Date$');
+   nc.Attributes(end+1) = struct('Name','site_code'          ,'Value',  '');
+   nc.Attributes(end+1) = struct('Name','data_mode'          ,'Value',  'D');
+   nc.Attributes(end+1) = struct('Name','area'               ,'Value',  'North Sea');
+
+%% user-defined
+
+   for iatt=1:2:length(OPT.global)
+   nc.Attributes(end+1)  = struct('Name', OPT.global{iatt}, 'Value', OPT.global{iatt+1});
+   end
+
 %% 2 Create dimensions
+%    Standard names for OceanSITES dimensions should be in upper case: TIME and DEPTH for profiles
 
    ncdimlen.time        = length(OPT.var(:));
-   nc.Dimensions(    1) = struct('Name','time'            ,'Length',ncdimlen.time      );
+   nc.Dimensions(    1) = struct('Name','TIME'            ,'Length',ncdimlen.time      );
+   extent.z   = [min(OPT.z(:)) max(OPT.z(:))];
+   extent.lon = [min(OPT.lon(:)) max(OPT.lon(:))];
+   extent.lat = [min(OPT.lat(:)) max(OPT.lat(:))];
    
 %% 3a Create (primary) variables: time
 
@@ -122,10 +135,11 @@ for dz = [0 1]; % amplitude of z undulation: 0=2D, otherwise=3D
    attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'time');
    attr(end+1)  = struct('Name', 'units'        , 'Value', ['days since ',datestr(OPT.refdatenum,'yyyy-mm-dd HH:MM:SS'),OPT.timezone]);
    attr(end+1)  = struct('Name', 'axis'         , 'Value', 'T');
+   extent.time = [min(OPT.datenum(:)) max(OPT.datenum(:))];
    
-   nc.Variables(ifld) = struct('Name'       , 'time', ...
+   nc.Variables(ifld) = struct('Name'       , 'TIME', ...
                                'Datatype'   , 'double', ...
-                               'Dimensions' , struct('Name', 'time','Length',ncdimlen.time), ...
+                               'Dimensions' , struct('Name', 'TIME','Length',ncdimlen.time), ...
                                'Attributes' , attr,...
                                'FillValue'  , []);
                            
@@ -137,10 +151,10 @@ for dz = [0 1]; % amplitude of z undulation: 0=2D, otherwise=3D
    attr(end+1)  = struct('Name', 'units'        , 'Value', 'degrees_east');
    attr(end+1)  = struct('Name', 'axis'         , 'Value', 'X');
    attr(end+1)  = struct('Name', '_FillValue'   , 'Value', OPT.fillvalue);
-   attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(OPT.lon(:)) max(OPT.lon(:))]);
+   attr(end+1)  = struct('Name', 'actual_range' , 'Value', extent.lon);
    nc.Variables(ifld) = struct('Name'       , 'lon', ...
                                'Datatype'   , 'double', ...
-                               'Dimensions' , struct('Name', 'time','Length',ncdimlen.time), ...
+                               'Dimensions' , struct('Name', 'TIME','Length',ncdimlen.time), ...
                                'Attributes' , attr,...
                                'FillValue'  , []);
    
@@ -150,19 +164,18 @@ for dz = [0 1]; % amplitude of z undulation: 0=2D, otherwise=3D
    attr(end+1)  = struct('Name', 'units'        , 'Value', 'degrees_north');
    attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Y');
    attr(end+1)  = struct('Name', '_FillValue'   , 'Value', OPT.fillvalue);
-   attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(OPT.lat(:)) max(OPT.lat(:))]);
+   attr(end+1)  = struct('Name', 'actual_range' , 'Value', extent.lat);
    nc.Variables(ifld) = struct('Name'       , 'lat', ...
                                'Datatype'   , 'double', ...
-                               'Dimensions' , struct('Name', 'time','Length',ncdimlen.time), ...
+                               'Dimensions' , struct('Name', 'TIME','Length',ncdimlen.time), ...
                                'Attributes' , attr,...
                                'FillValue'  , []);    
 
 %% 3c Create (primary) variables: vertical
 
-   variable.dims(1) = struct('Name', 'time','Length',ncdimlen.time);
+   variable.dims(1) = struct('Name', 'TIME','Length',ncdimlen.time);
    z0 = nanunique(OPT.z);
 if length(z0)>1
-   ncfile = strrep(ncfile0,'.nc','_3D.nc');
    variable.coordinates = 'lat lon';
    ifld     = ifld + 1;clear attr
    attr(    1)  = struct('Name', 'standard_name', 'Value', 'altitude');
@@ -171,14 +184,13 @@ if length(z0)>1
    attr(end+1)  = struct('Name', 'positive'     , 'Value', 'down');
    attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Z');
    attr(end+1)  = struct('Name', '_FillValue'   , 'Value', OPT.fillvalue);
-   attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(OPT.z(:)) max(OPT.z(:))]);
+   attr(end+1)  = struct('Name', 'actual_range' , 'Value', extent.z);
    nc.Variables(ifld) = struct('Name'       , 'z', ...
                                'Datatype'   , 'double', ...
-                               'Dimensions' , struct('Name', 'time','Length',ncdimlen.time), ...
+                               'Dimensions' , struct('Name', 'TIME','Length',ncdimlen.time), ...
                                'Attributes' , attr,...
                                'FillValue'  , []);
 else
-   ncfile = strrep(ncfile0,'.nc','_2D.nc');
    OPT.z = z0; 
    ncdimlen.z           = 1;
    nc.Dimensions(    2) = struct('Name','z'               ,'Length',ncdimlen.z         );
@@ -191,7 +203,7 @@ else
    attr(end+1)  = struct('Name', 'positive'     , 'Value', 'down');
    attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Z');
    attr(end+1)  = struct('Name', '_FillValue'   , 'Value', OPT.fillvalue);
-   attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(OPT.z(:)) max(OPT.z(:))]);
+   attr(end+1)  = struct('Name', 'actual_range' , 'Value', extent.z);
    nc.Variables(ifld) = struct('Name'       , 'z', ...
                                'Datatype'   , 'double', ...
                                'Dimensions' , struct('Name', 'z','Length',ncdimlen.z), ...
@@ -221,14 +233,26 @@ end
                               
 %% 4 Create netCDF file
 
+%% ISO extent discovery meta-data: http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_%28ACDD%29
+   
+   nc.Attributes(end+1) = struct('Name','time_coverage_start'    ,'Value',  datestr(extent.time(1),30));
+   nc.Attributes(end+1) = struct('Name','time_coverage_end'      ,'Value',  datestr(extent.time(2),30));
+   nc.Attributes(end+1) = struct('Name','geospatial_lat_min'     ,'Value',  extent.lon(1));
+   nc.Attributes(end+1) = struct('Name','geospatial_lat_max'     ,'Value',  extent.lon(2));
+   nc.Attributes(end+1) = struct('Name','geospatial_lon_min'     ,'Value',  extent.lat(1));
+   nc.Attributes(end+1) = struct('Name','geospatial_lon_max'     ,'Value',  extent.lat(2));
+   nc.Attributes(end+1) = struct('Name','geospatial_vertical_min','Value',  extent.z(1));
+   nc.Attributes(end+1) = struct('Name','geospatial_vertical_max','Value',  extent.z(2));
+
    try;delete(ncfile);end
    disp([mfilename,': NCWRITESCHEMA: creating netCDF file: ',ncfile])
+   %var2evalstr(nc)
    ncwriteschema(ncfile, nc);			        
    disp([mfilename,': NCWRITE: filling  netCDF file: ',ncfile])
       
 %% 5 Fill variables
 
-   ncwrite   (ncfile,'time'         , OPT.datenum(:) - OPT.refdatenum);
+   ncwrite   (ncfile,'TIME'         , OPT.datenum(:) - OPT.refdatenum);
    ncwrite   (ncfile,'lon'          , OPT.lon(:));
    ncwrite   (ncfile,'lat'          , OPT.lat(:));
    ncwrite   (ncfile,'z'            , z0);
@@ -237,7 +261,4 @@ end
 %% test and check
 
    nc_dump(ncfile,[],strrep(ncfile,'.nc','.cdl'))
-   nc
-   nc.Variables(end)
    clear variable ncdimlen nc
-end
