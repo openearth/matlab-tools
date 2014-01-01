@@ -24,7 +24,7 @@ if ~isempty (filwnd)
     %
     % General Comments
     SERIES.Comments{1} = '* COLUMNN=3';
-    SERIES.Comments{2} = '* COLUMN1=Time (minutes since ITDATE?';
+    SERIES.Comments{2} = '* COLUMN1=Time (minutes since ITDATE?)';
     SERIES.Comments{3} = '* COLUMN2=Windspeed (m/s)';
     SERIES.Comments{4} = '* COLUMN3=Winddirection (deg, nautical convention)';
 
