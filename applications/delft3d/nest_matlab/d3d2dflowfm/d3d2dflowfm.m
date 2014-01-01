@@ -104,9 +104,12 @@ mdu = d3d2dflowfm_viscosity(mdf,mdu,name_mdu);
 
 simona2mdf_message('Generating External forcing file                  ','Window','D3D2DFLOWFM Message');
 mdu = d3d2dflowfm_genext   (name_mdu,'mdu',mdu,'Filbnd' ,mdu.Filbnd ,'Filini' ,mdu.Filini ,'Filrgh',mdu.Filrgh  ,  ...
-                                               'Filvico',mdu.Filvico,'Fildico',mdu.Fildico                      );
+                                               'Filvico',mdu.Filvico,'Fildico',mdu.Fildico,'Filwnd',mdu.Filwnd  );
 simona2mdf_message('Generating D-Flow FM boundary conditions          ','Window','D3D2DFLOWFM Message');
 mdu = d3d2dflowfm_bndforcing(mdf,mdu,name_mdu);
+
+simona2mdf_message('Generating D-Flow FM Wind Forcing                 ','Window','D3D2DFLOWFM Message');
+mdu = d3d2dflowfm_wndforcing(mdf,mdu,name_mdu);
 
 simona2mdf_message('Generating D-Flow FM STATION           information','Window','D3D2DFLOWFM Message');
 mdu = d3d2dflowfm_obs      (mdf,mdu,name_mdu);

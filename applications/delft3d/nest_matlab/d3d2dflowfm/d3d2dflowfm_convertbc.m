@@ -5,6 +5,7 @@ function d3d2dflow_convertbc(filinp,filpli,path_output,varargin)
 OPT.Astronomical = false;
 OPT.Harmonic     = false;
 OPT.Series       = false;
+OPT.Salinity     = false;
 
 if ~isempty(varargin)
     OPT = setproperty(OPT,varargin);
@@ -14,7 +15,10 @@ else
         if strcmp(extension,'.bca') OPT.Astronomical = true; end
         if strcmp(extension,'.bch') OPT.Harmonic     = true; end
         if strcmp(extension,'.bct') OPT.Series       = true; end
-        if strcmp(extension,'.bcc') OPT.Series       = true; end
+        if strcmp(extension,'.bcc')
+            OPT.Series       = true;
+            OPT.Salinity     = true;
+        end
     end
 end
 
@@ -35,11 +39,15 @@ end
 %% cycle over the pli's
 for i_pli = 1: length(filpli)
     LINE = dflowfm_io_xydata('read',filpli{i_pli});
-
-    %% Check if astronomical bc exist in this pli
     for i_pnt = 1: size(LINE.DATA,1)
+        %% Get the type of forcing for this point
         index =  d3d2dflowfm_decomposestr(LINE.DATA{i_pnt,3});
-        b_type = lower(strtrim(LINE.DATA{i_pnt,3}(index(2):index(3) - 1)));
+        if OPT.Salinity
+            b_type  = 't';
+        else
+            b_type = lower(strtrim(LINE.DATA{i_pnt,3}(index(2):index(3) - 1)));
+        end
+
         switch b_type
 
             %% Astronomical boundary forcing
@@ -51,7 +59,7 @@ for i_pli = 1: length(filpli)
 
                     %% Write the general information
                     fprintf(fid,['* COLUMNN=3','\n']);
-                    fprintf(fid,['* COLUMN1=Period (min) or Astronomical Componentname','\n']);
+                    fprintf(fid,['* COLUMN1=Astronomical Componentname','\n']);
                     fprintf(fid,['* COLUMN2=Amplitude (ISO)','\n']);
                     fprintf(fid,['* COLUMN3=Phase (deg)','\n']);
                     pntname  = strtrim(LINE.DATA{i_pnt,3}(index(3):index(4) - 1));
@@ -80,7 +88,7 @@ for i_pli = 1: length(filpli)
 
                     %% Write some general information
                     fprintf(fid,['* COLUMNN=3','\n']);
-                    fprintf(fid,['* COLUMN1=Period (min) or Astronomical Componentname','\n']);
+                    fprintf(fid,['* COLUMN1=Period (min)','\n']);
                     fprintf(fid,['* COLUMN2=Amplitude (ISO)','\n']);
                     fprintf(fid,['* COLUMN3=Phase (deg)','\n']);
 
@@ -108,7 +116,35 @@ for i_pli = 1: length(filpli)
             %% Time series forcing data
             case 't'
                 if OPT.Series
-                % to implement yet
+                    filename = [path_output filesep LINE.Blckname '_' num2str(i_pnt,'%0.4d') '.tim'];
+
+                    %% find Time series table number
+                    bndname = LINE.DATA{i_pnt,3}(index(3):end-5);
+                    for i_table = 1: bct.NTables
+                        if strcmp(strtrim(bndname),strtrim(bct.Table(i_table).Location))
+                            nr_table = i_table;
+                        end
+                    end
+
+                    %% Fill series array
+                    %  First: Time in minutes
+                    SERIES.Values(:,1) = bct.Table(nr_table).Data(:,1);
+
+                    % Then: Values (for now only depth averaged values)
+                    if strcmpi      (LINE.DATA{i_pnt,3}(end     :end         ),'a'); %end A
+                        SERIES.Values(:,2) = bct.Table(nr_table).Data(:,2);
+                    else                                                             %end B
+                        SERIES.Values(:,2) = bct.Table(nr_table).Data(:,3);
+                    end
+
+                    %% General Comments
+                    SERIES.Comments{1} = '* COLUMNN=2';
+                    SERIES.Comments{2} = '* COLUMN1=Time (min) since ITDATE?';
+                    SERIES.Comments{3} = '* COLUMN2=Value';
+
+                    dflowfm_io_series('write',filename,SERIES);
+
+                    clear SERIES
                 end
         end
      end

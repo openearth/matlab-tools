@@ -109,6 +109,12 @@ end
 
 %% write wind
 if ~isempty(OPT.Filwnd)
+    i_force = i_force + 1;
+    ext_force(i_force).quantity = 'windxy';
+    ext_force(i_force).filename = mdu.Filwnd;
+    ext_force(i_force).filetype = 2;
+    ext_force(i_force).method   = 1;
+    ext_force(i_force).operand  = 'O';
 end
 
 %% write the external forcing structure to the external forcing file
