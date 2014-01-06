@@ -1,5 +1,5 @@
 function simona_getdata_netcdf2CF(ncfile0)
-%simona_getdata_netcdf2CF  make netCDF file from SIMONA getdata.exe CF compliant
+%simona_getdata_netcdf2CF  make legacy netCDF file from SIMONA getdata.exe CF compliant
 %
 %  simona_getdata_netcdf2CF(ncfile) modified ncfile produces by getdata.exe
 %
@@ -7,19 +7,20 @@ function simona_getdata_netcdf2CF(ncfile0)
 % is used to explore what exactly to implement (ensure complaince with THREDDS and ADAGUC)
 % and for future fixes of netCDF files from previous (and current) getdata releases.
 %
-%See also: netcdf, vs_trim2nc, waqua, 
+%See also: netcdf, vs_trim2nc, waqua, matroos 
 %  http://www.helpdeskwater.nl/onderwerpen/applicaties-modellen/water_en_ruimte/simona/simona/simona-stekkers/
 %  http://apps.helpdeskwater.nl/downloads/extra/simona/release/doc/usedoc/getdata/getdata.pdf
 
 % TODO
 % http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_%28ACDD%29
 
-OPT.xy     = 1; % 0 removed coord attribute but does not remove XZETA/YZETA arrays itself
+OPT.xy     = 0; % 0 removed coord attribute but does not remove XZETA/YZETA arrays itself
 OPT.xybnds = 0; % ADAGUC can work with [x,y] coordinates only by mapping on-the-fly, THREDDS cannot map on-the-fly
 
 OPT.ll     = 1; % required by THREDDS and Panoply
-OPT.llbnds = 0; % THREDDS need [lat,lon] matrices to be included
+OPT.llbnds = 1; % THREDDS needs [lat,lon] matrices to be included
 
+% Panoply only works when xy=0, xybnds=0, ll=1, llbnds=1
 
 if OPT.xy & OPT.ll
    warning('Panoply cannot handle coords = "lon lat XZETA YZETA"')
@@ -44,27 +45,55 @@ nc_dump(ncfile);
  nc_attput(ncfile,nc_global,'cdm_data_type','Grid');
 
 % make time small caps
+
  nc_attput(ncfile,'TIME'  ,'standard_name','time');
 %nc_attput(ncfile,'TIME'  ,'comment'      ,'make variable name lower case');
+
  
  nc_attput(ncfile,'SEP'   ,'grid_mapping' ,'CRS'); % add grid_mapping attribute
  nc_attput(ncfile,'SEP'   ,'coordinates'  ,coords); % connect CENTER (x,y) to CENTER matrix
 
+ nc_attput(ncfile,'H'     ,'standard_name','sea_floor_depth_below_sea_level'); % change
+ nc_attput(ncfile,'H'     ,'coordinates'  ,'XDEP YDEP'); % connect CORNER (x,y) to CORNER matrix (is H at corners???)
+ nc_attput(ncfile,'H'     ,'grid_mapping' ,'CRS'); % add grid_mapping attribute
+ 
+%% staggered m-n velocities
+
+if nc_isvar(ncfile,'UP') % check for spherical
 %nc_attput(ncfile,'UP'    ,'standard_name','eastward_sea_water_velocity');
  nc_attput(ncfile,'UP'    ,'standard_name','sea_water_x_velocity'); % change: legal standard_name, different when grid is in spherical coordinates
  nc_attput(ncfile,'UP'    ,'long_name'    ,'velocity, x-component'); % change: QuickPlot requires this in order to show vectors
  nc_attput(ncfile,'UP'    ,'coordinates'  ,coords); % connect CENTER (x,y) to CENTER matrix
  nc_attput(ncfile,'UP'    ,'grid_mapping' ,'CRS'); % add grid_mapping attribute
+end
 
+if nc_isvar(ncfile,'VP') % check for spherical
 %nc_attput(ncfile,'VP'    ,'standard_name','northward_sea_water_velocity');
  nc_attput(ncfile,'VP'    ,'standard_name','sea_water_y_velocity'); % change: legal standard_name, different when grid is in spherical coordinates
  nc_attput(ncfile,'VP'    ,'long_name'    ,'velocity, y-component'); % change: QuickPlot requires this in order to show vectors
  nc_attput(ncfile,'VP'    ,'coordinates'  ,coords); % connect CENTER (x,y) to CENTER matrix
  nc_attput(ncfile,'VP'    ,'grid_mapping' ,'CRS'); % add grid_mapping attribute
+end
+ 
+%% unstaggared x-y velocities 
 
- nc_attput(ncfile,'H'     ,'standard_name','sea_floor_depth_below_sea_level'); % change
- nc_attput(ncfile,'H'     ,'coordinates'  ,'XDEP YDEP'); % connect CORNER (x,y) to CORNER matrix (is H at corners???)
- nc_attput(ncfile,'H'     ,'grid_mapping' ,'CRS'); % add grid_mapping attribute
+if nc_isvar(ncfile,'UVEL') % check for spherical
+%nc_attput(ncfile,'UVEL'    ,'standard_name','eastward_sea_water_velocity');
+ nc_attput(ncfile,'UVEL'    ,'standard_name','sea_water_x_velocity'); % change: legal standard_name, different when grid is in spherical coordinates
+ nc_attput(ncfile,'UVEL'    ,'long_name'    ,'velocity, x-component'); % change: QuickPlot requires this in order to show vectors
+ nc_attput(ncfile,'UVEL'    ,'coordinates'  ,coords); % connect CENTER (x,y) to CENTER matrix
+ nc_attput(ncfile,'UVEL'    ,'grid_mapping' ,'CRS'); % add grid_mapping attribute
+end
+
+if nc_isvar(ncfile,'VVEL') % check for spherical
+%nc_attput(ncfile,'VVEL'    ,'standard_name','northward_sea_water_velocity');
+ nc_attput(ncfile,'VVEL'    ,'standard_name','sea_water_y_velocity'); % change: legal standard_name, different when grid is in spherical coordinates
+ nc_attput(ncfile,'VVEL'    ,'long_name'    ,'velocity, y-component'); % change: QuickPlot requires this in order to show vectors
+ nc_attput(ncfile,'VVEL'    ,'coordinates'  ,coords); % connect CENTER (x,y) to CENTER matrix
+ nc_attput(ncfile,'VVEL'    ,'grid_mapping' ,'CRS'); % add grid_mapping attribute
+end
+
+%% coordinates
 
  nc_attput(ncfile,'XZETA' ,'long_name'    ,'x coordinate Arakawa-C centers'); % change: make different than XDEP
  nc_attput(ncfile,'XZETA' ,'coordinates'  ,coords); % connect CENTER (x,y) to CENTER matrix
@@ -101,12 +130,26 @@ nc_dump(ncfile);
                      'FillValue'  , []); % this doesn't do anything
  nc_addvar(ncfile,nc); clear attr;% ADD
  
- G.XZETA = nc_varget(ncfile,'XZETA');
- G.YZETA = nc_varget(ncfile,'YZETA');
- [G.lon,G.lat] = convertCoordinates(G.XZETA,G.YZETA,'CS1.code',28992,'CS2.code',4326);
- 
- %% lat, lon
+%% lat, lon
+
  if OPT.ll
+ 
+  % get center coordinates, incl dummy rows and columns
+  % put dummy rows and columns to NaN, to avoid strang uninitialized fill values
+
+  G.XZETA = nc_varget(ncfile,'XZETA');
+  G.YZETA = nc_varget(ncfile,'YZETA');
+ 
+  G.XZETA([1 end],:)=NaN;G.XZETA(:,[1 end])=NaN;
+  G.XZETA([1 end],:)=NaN;G.YZETA(:,[1 end])=NaN;
+  G.XZETA = [NaN   NaN   NaN   NaN
+             NaN   0     1e6   NaN
+             NaN   NaN   NaN   NaN];
+  G.YZETA = [NaN   NaN   NaN   NaN
+             NaN   1e6   2e6   NaN
+             NaN   NaN   NaN   NaN];
+ [G.LONZETA,G.LATZETA] = convertCoordinates(G.XZETA,G.YZETA,'CS1.code',28992,'CS2.code',4326);
+ 
      attr(1) = struct('Name','_FillValue'   ,'Value',9.969209968386869e+36);
      attr(2) = struct('Name','missing_value','Value',9.969209968386869e+36);
      attr(3) = struct('Name','standard_name','Value','latitude');
@@ -122,7 +165,7 @@ nc_dump(ncfile);
                          'Attribute' , attr,...
                          'FillValue'  , []); % this doesn't do anything
      nc_addvar(ncfile,nc); clear attr;% ADD 
-     nc_varput(ncfile,'lat',G.lat); % ADD 
+     nc_varput(ncfile,'lat',G.LATZETA); % ADD 
 
      attr(1) = struct('Name','_FillValue'   ,'Value',9.969209968386869e+36);
      attr(2) = struct('Name','missing_value','Value',9.969209968386869e+36);
@@ -139,17 +182,30 @@ nc_dump(ncfile);
                          'Attribute' , attr,...
                          'FillValue'  , []); % this doesn't do anything
      nc_addvar(ncfile,nc); clear attr;% ADD 
-     nc_varput(ncfile,'lon',G.lon); % ADD 
+     nc_varput(ncfile,'lon',G.LONZETA); % ADD 
  end
- %%
+ 
+%% get coordinates to determine bounds
+%  note: only 1 dummy row/col, whereas centers have two
+
  if (OPT.xy & OPT.xybnds) | (OPT.ll & OPT.llbnds)
-    nc_adddim(ncfile,'bounds',4)
+
+   G.XDEP  = nc_varget(ncfile,'XDEP');
+   G.YDEP  = nc_varget(ncfile,'YDEP');
+   
+
+   
+   if OPT.llbnds
+  [G.LONDEP ,G.LATDEP ] = convertCoordinates(G.XDEP ,G.YDEP ,'CS1.code',28992,'CS2.code',4326);
+   end
+ nc_adddim(ncfile,'bounds',4)
  end
 
- %% (lat,lon) bounds
+%% (lat,lon) bounds
+
  if (OPT.ll & OPT.llbnds)
-     G.lon_bnds = nc_cf_cor2bounds(G.lon);
-     G.lat_bnds = nc_cf_cor2bounds(G.lat);
+     G.lon_bnds = nc_cf_cor2bounds(addrowcol(G.LONDEP,-1,-1,nan));
+     G.lat_bnds = nc_cf_cor2bounds(addrowcol(G.LATDEP,-1,-1,nan));
 
      attr(1) = struct('Name','_FillValue'   ,'Value',9.969209968386869e+36);
      attr(2) = struct('Name','missing_value','Value',9.969209968386869e+36);
@@ -177,10 +233,12 @@ nc_dump(ncfile);
      nc_addvar(ncfile,nc); clear attr;% ADD 
      nc_varput(ncfile,'lat_bnds',G.lat_bnds); % ADD 
  end
- %% (x,y) bounds
+ 
+%% (x,y) bounds
+
  if (OPT.xy & OPT.xybnds)
-     G.XZETA_bnds = nc_cf_cor2bounds(G.XZETA);
-     G.YZETA_bnds = nc_cf_cor2bounds(G.YZETA);
+     G.XZETA_bnds = nc_cf_cor2bounds(addrowcol(G.XDEP,-1,-1,nan)); % add extra XDEP dummy row to get bounds for XZETA dummy row
+     G.YZETA_bnds = nc_cf_cor2bounds(addrowcol(G.YDEP,-1,-1,nan));
 
      attr(1) = struct('Name','_FillValue'   ,'Value',9.969209968386869e+36);
      attr(2) = struct('Name','missing_value','Value',9.969209968386869e+36);
@@ -208,7 +266,9 @@ nc_dump(ncfile);
      nc_addvar(ncfile,nc); clear attr;% ADD 
      nc_varput(ncfile,'YZETA_bnds',G.YZETA_bnds); % ADD 
  end
- %%
+ 
+%% make ascii dumps for easy comparison
+
  nc_dump(ncfile0,[],[filename(ncfile0),'.cdl'])
  nc_dump(ncfile ,[],[filename(ncfile) ,'.cdl'])
  
