@@ -1,5 +1,5 @@
 function [beta, Pf] = DSLinearZRho(alphas, betas, rhos, N)
-% function for combining m linear Z-functions, that are functions of n
+% function for combining a series system of m linear Z-functions, that are functions of n
 % variables u1.. un. Variables are differnt for each Z-function, i.e.
 % Zi = betai+alpha_i1*u_i1+...+alpha_in*u_in
 % Corresponding variables of different Z-functions (uij and ukj) are correlated

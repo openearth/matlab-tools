@@ -1,5 +1,5 @@
 function [beta, Pf] = DSLinearZ(alphas, betas, N)
-% function for combining m linear Z-functions, that are functions of n
+% function for combining a series system of m linear Z-functions, that are functions of n
 % variables u1.. un. Variables are the same for each Z-function, i.e.
 % Zi = betai+alpha_i1*u_1+...+alpha_in*u_n
 % This means correlation between variable ui of function Zj and variable ui of function Zk =1
