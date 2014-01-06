@@ -135,13 +135,53 @@ classdef slamfat_wind < handle
             else
                 figure(fig);
             end
-            
-            plot(this.time, this.time_series);
-            
-            xlabel('time [s]');
+
+            s1 = subplot(3,1,[1 2]); hold on;
+
+            p1 = plot(this.time, this.time_series(:), '-b');
+
+            t = [[0;cumsum(this.duration(1:end-1))] cumsum(this.duration(:))]';
+            v = [this.velocity_mean(:) this.velocity_mean(:)]';
+            s = [this.velocity_std(:) this.velocity_std(:)]';
+
+            p3 = patch([t(:) ; flipud(t(:))], [v(:) - s(:) ; flipud(v(:) + s(:))], 'r', 'FaceAlpha', .25, 'EdgeAlpha', 0);
+
+            p2 = plot(t(:), v(:), '-r');
+            plot(t(:), v(:) - s(:), ':r');
+            plot(t(:), v(:) + s(:), ':r');
+
+            xlim([0 max(t(:))]);
+            ylim([0 max(this.time_series(:))]);
+
+            box on;
+
             ylabel('wind speed [m/s]');
-            
-            set(gca,'XLim',[0 max(this.time)]);
+
+            legend([p1 p2 p3],{'output', 'input', 'std. deviation'});
+
+            s2 = subplot(3,1,3); hold on;
+
+            t = [[0;cumsum(this.duration(1:end-1))] cumsum(this.duration(:))]';
+            v = [this.gust_mean(:) this.gust_mean(:)]';
+            s = [this.gust_std(:) this.gust_std(:)]';
+
+            p2 = patch([t(:) ; flipud(t(:))], [v(:) - s(:) ; flipud(v(:) + s(:))], 'g', 'FaceAlpha', .25, 'EdgeAlpha', 0);
+
+            p1 = plot(t(:), v(:), '-g');
+            plot(t(:), v(:) - s(:), ':g');
+            plot(t(:), v(:) + s(:), ':g');
+
+            xlim([0 max(t(:))]);
+            ylim([0 max(v(:) + s(:))]);
+
+            box on;
+
+            xlabel('time [s]');
+            ylabel('gust length [s]');
+
+            legend([p1 p2],{'input', 'std. deviation'});
+
+            linkaxes([s1 s2],'x');
         end
     end
 end

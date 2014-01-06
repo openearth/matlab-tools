@@ -57,7 +57,6 @@ classdef slamfat_bedcomposition_basic < handle
         grain_size          = 255e-6
         distribution        = 1
         porosity            = .4
-        bed_density         = 1600
         grain_density       = 2650
         air_density         = 1.25
         water_density       = 1025
@@ -70,6 +69,7 @@ classdef slamfat_bedcomposition_basic < handle
     properties(GetAccess = public, SetAccess = protected)
         initial_mass_unit   = 0
         threshold_velocity  = 0
+        bed_density         = 1590
         
         isinitialized       = false
     end

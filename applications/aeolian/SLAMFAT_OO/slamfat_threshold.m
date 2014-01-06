@@ -56,26 +56,31 @@ classdef slamfat_threshold < slamfat_threshold_basic
         initial_moisture        = .003
         porosity                = .4
         internal_friction       = 40 % [degrees]
-        penetration_depth       = 10 % [mm]
+        penetration_depth       = 100 % [mm]
+        evaporation_depth       = 5 % [mm]
         air_temperature         = 10 % [oC]
         latent_heat             = 2.45 % [MJ/kg]
         atmospheric_pressure    = 101.325 % [kPa]
-        air_specific_heat       = 1.0035e-3 % [J/g/K]
+        air_specific_heat       = 1.0035e-3 % [MJ/kg/K]
         relative_humidity       = .4
         beta                    = .31
         A                       = .1
+        water_density           = 1025
+        grain_density           = 2650
         
         method_moisture         = 'belly_johnson'
     end
     
     properties(GetAccess = public, SetAccess = protected)
         moisture                = []
+        total_evaporation       = []
+        total_rainfall          = []
     end
     
     %% Methods
     methods(Static)
         function s = vaporation_pressure_slope(T)
-            s = 4098 * 0.6108 * exp((17.27 * T) / (T - 237.3)) / (T + 237.3)^2;
+            s = 4098 * 0.6108 * exp((17.27 * T) / (T - 237.3)) / (T + 237.3)^2; % [kPa/K] (Tetens, 1930; Murray, 1967)
         end
         
         function vp = saturation_pressure(T)
@@ -86,7 +91,7 @@ classdef slamfat_threshold < slamfat_threshold_basic
             D  =  8e-7;
             E  = -1.69e-11;
             F  =  6.456;
-            vp = exp(A/T + B + C*T + D*T^2 + E*T^3 + F*log(T));
+            vp = exp(A/T + B + C*T + D*T^2 + E*T^3 + F*log(T)); % [kPa]
         end
     end
     
@@ -122,6 +127,8 @@ classdef slamfat_threshold < slamfat_threshold_basic
                 this.solar_radiation    = this.unify_series(this.solar_radiation);
                 this.salt               = this.unify_series(this.salt);
                 this.moisture           = this.initial_moisture * ones(size(profile));
+                this.total_evaporation  = zeros(size(profile));
+                this.total_rainfall     = zeros(size(profile));
             end
         end
         
@@ -160,20 +167,30 @@ classdef slamfat_threshold < slamfat_threshold_basic
         
         function apply_rain(this)
             if ~isempty(this.rain)
-                rainfall        = this.interpolate_time(this.rain);
+                [rainfall, dt]  = this.interpolate_time(this.rain);
+                rainfall = rainfall ./ dt .* this.dt;
+                
+                this.total_rainfall = this.total_rainfall + rainfall;
+                
                 this.moisture   = min(this.moisture + rainfall ./ this.penetration_depth, this.porosity);
             end
         end
         
         function apply_evaporation(this)
             if ~isempty(this.solar_radiation)
-                radiation       = this.interpolate_time(this.solar_radiation);
-                m               = this.vaporation_pressure_slope(this.air_temperature);
-                delta           = this.saturation_pressure(this.air_temperature) * (1 - this.relative_humidity);
-                gamma           = (this.air_specific_heat * this.atmospheric_pressure) / (.622 * this.latent_heat);
+                [radiation, dt] = this.interpolate_time(this.solar_radiation);
+                radiation       = radiation / 1e6 / dt * 3600 * 24; % conversion from J/m2 to MJ/m2/day
+                
+                m               = this.vaporation_pressure_slope(this.air_temperature); % [kPa/K]
+                delta           = this.saturation_pressure(this.air_temperature) * (1 - this.relative_humidity); % [kPa]
+                gamma           = (this.air_specific_heat * this.atmospheric_pressure) / (.622 * this.latent_heat); % [kPa/K]
                 evaporation     = max(0, (m * radiation + gamma * 6.43 * (1 + 0.536 * this.wind) * delta) / ...
-                                    (this.latent_heat * (m + gamma)) / 24 / 3600 * this.dt);
-                this.moisture   = max(this.moisture - evaporation ./ this.penetration_depth, 0);
+                                    (this.latent_heat * (m + gamma)));
+                evaporation     = evaporation / 24 / 3600 * this.dt; % conversion from mm/day to mm in current time step
+                                
+                this.total_evaporation = this.total_evaporation + evaporation;
+                                
+                this.moisture   = max(this.moisture - evaporation ./ this.evaporation_depth, 0);
             end
         end
         
@@ -187,6 +204,10 @@ classdef slamfat_threshold < slamfat_threshold_basic
         function threshold = threshold_from_moisture(this, threshold)
             moist = repmat(this.moisture', 1, size(threshold,2));
             
+            % convert from volumetric content (percentage of volume) to
+            % geotechnical mass content (percentage of dry mass)
+            moist = moist * this.water_density / (this.grain_density * (1 - this.porosity));
+            
             switch this.method_moisture
                 case 'belly_johnson'
                     threshold_moist = threshold .* max(1,1.8 + 0.6 .* log10(moist));
@@ -195,13 +216,15 @@ classdef slamfat_threshold < slamfat_threshold_basic
                 otherwise
                     error('Unknown moisture formulation [%s]', this.method_moisture);
             end
-            threshold(this.moisture > .005,:) = threshold_moist(this.moisture > .005,:);
-            threshold(this.moisture > .04 ,:) = inf;
+            threshold(moist > .005,:) = threshold_moist(moist > .005,:);
+            threshold(moist > .2  ,:) = inf; % should be .04 according to Pye and Tsoar
         end
         
         function data = output(this)
             data = output@slamfat_threshold_basic(this);
             data.moisture = this.moisture;
+            data.cummulative_evaporation = this.total_evaporation;
+            data.cummulative_rainfall = this.total_rainfall;
         end
     end
 end

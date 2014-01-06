@@ -32,7 +32,7 @@ profile        = zeros(1,100);
 profile(1:n)   = linspace(-1,1,n);
 profile(n:end) = linspace(1,15,100-n+1);
 
-w = slamfat_wind('duration',600);
+w = slamfat_wind('duration',3600);
 s = slamfat('wind',w,'profile',profile,'animate',false,'output_file','slamfat.nc');
 
 source = zeros(length(s.profile),1);
@@ -57,7 +57,44 @@ s.show_performance;
 
 %% knmi and waterbase data
 
+close all; clear classes; clear w; clear s;
 
+load('environment.mat');
+
+t0 = datenum('2013-06-21 00:00');
+t1 = datenum('2013-06-28 00:00');
+
+idx1 = meteo.time >= t0 & meteo.time < t1;
+idx2 = tide.time >= t0 & tide.time < t1;
+
+n       = 300;
+n_foot  = 280;
+z_start = -1.5;
+z_foot  = 3;
+z_crest = 15;
+profile             = zeros(1,n);
+profile(1:n_foot)   = linspace(z_start,z_foot,n_foot);
+profile(n_foot:end) = linspace(z_foot,z_crest,n-n_foot+1);
+
+w = slamfat_wind('duration',3600 * ones(sum(idx1),1), 'velocity_mean', meteo.wind(idx1) / 10);
+s = slamfat('wind',w,'profile',profile,'animate',false,'progress',false,'output_file','slamfat.nc');
+
+source = zeros(length(s.profile),1) + 1.5e-4 * w.dt * s.dx;
+
+s.bedcomposition = slamfat_bedcomposition_basic;
+s.bedcomposition.source             = source;
+s.bedcomposition.grain_size         = .255*1e-3;
+
+t = tide.time(idx2);
+
+s.max_threshold = slamfat_threshold;
+s.max_threshold.time = (t - min(t)) * 24 * 3600;
+s.max_threshold.tide = tide.tide(idx2) / 100; % 100 is conversion from cm to m
+s.max_threshold.rain = interp1(meteo.time, meteo.rain, t) / 10 / 6; % 10 is conversion from .1mm to mm; 6 is factor between diff(tide.time) and diff(meteo.time)
+s.max_threshold.solar_radiation = interp1(meteo.time, meteo.sun, t) * 1e4 / 6; % 1e4 is conversion from J/cm2 to J/m2; 6 is factor between diff(tide.time) and diff(meteo.time)
+
+%s.run;
+%s.show_performance;
 
 %% async
 
@@ -283,14 +320,51 @@ for i = 1:length(fnames)
         load(fname);
         
         figure;
-        pcolor(s.data.supply);
+        pcolor(s.data.threshold);
         shading flat;
         colorbar;
         title(sprintf('S = %d', str2double(re{1}{1})));
     end
 end
 
-%% 
+%% plot supply
+
+figure;
+
+fnames = dir('s_phi*_A3.mat');
+
+n = ceil(length(fnames)/2);
+ny = ceil(sqrt(n));
+nx = ceil(n/ny);
+
+si = 1;
+ax = [];
+for i = 1:length(fnames)
+    fname = fnames(i).name;
+    
+    re = regexp(fname, 's_phi([\d-+\.e]+)_A3.mat', 'tokens');
+    
+    if ~isempty(re)
+        phi = str2double(re{1}{1});
+        
+        if phi >= 0
+        
+            load(fname);
+
+            ax(si) = subplot(ny,nx,si);
+            pcolor(s.data.supply);
+            shading flat;
+            title(sprintf('\\phi = %1.2f', phi));
+            
+            si = si + 1;
+        end
+    end
+end
+
+cl = cell2mat(arrayfun(@clim, ax, 'UniformOutput', false)');
+arrayfun(@(x) clim(x, [min(cl(:,1)) max(cl(:,2))]), ax);
+
+%% theoretical phase difference effect
 
 figure;
 s1 = subplot(2,2,1); hold on;
@@ -314,14 +388,22 @@ plot(s_plus.s.output_time, s_plus.s.data.wind,'-k');
 plot(s_plus.s.output_time, s_plus.s.data.threshold(:,1),'-r');
 plot(s_min.s.output_time, s_min.s.data.threshold(:,1),'-b');
 
+plot(s_plus.s.wind.time,s_plus.s.wind.time_series,'--k')
+
 duration = 60 * ones(1,60);
 velocity = 4+4*sin(cumsum(duration)/600*2*pi);
-plot(cumsum(duration)-60, velocity,'-k');
+%plot(cumsum(duration), velocity,'-k');
 
 s4 = subplot(2,2,4); hold on;
 
 plot(s_plus.s.output_time, max(0,s_plus.s.data.wind(:,1) - s_plus.s.data.threshold(:,1)),'-r');
 plot(s_min.s.output_time, max(0,s_plus.s.data.wind(:,1) - s_min.s.data.threshold(:,1)),'-b');
+
+t1 = interp1(s_plus.s.output_time,s_plus.s.data.threshold(:,1),s_plus.s.wind.time);
+t2 = interp1(s_plus.s.output_time,s_min.s.data.threshold(:,1),s_plus.s.wind.time);
+
+plot(s_plus.s.wind.time, max(0,s_plus.s.wind.time_series - t1),'--r');
+plot(s_plus.s.wind.time, max(0,s_plus.s.wind.time_series - t2),'--b');
 
 linkaxes([s1 s2],'x');
 linkaxes([s3 s4],'x');

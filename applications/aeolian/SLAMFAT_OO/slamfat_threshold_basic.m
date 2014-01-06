@@ -139,11 +139,18 @@ classdef slamfat_threshold_basic < handle
             end
         end
         
-        function val = interpolate_time(this, data)
+        function [val, dt] = interpolate_time(this, data)
             if length(data) > 1
+                i   = find(this.t >= this.time(1:end-1) & this.t <= this.time(2:end),1,'first');
+                dt  = diff(this.time(i:i+1));
                 val = interp1(this.time, data, this.t);
             else
+                dt  = 0;
                 val = data;
+            end
+            
+            if isempty(dt)
+                dt  = 0;
             end
         end
     end

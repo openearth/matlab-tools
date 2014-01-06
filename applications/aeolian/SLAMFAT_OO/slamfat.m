@@ -95,6 +95,7 @@ classdef slamfat < handle
         transport_supplyltd     = []
         total_transport         = []
         performance             = struct()
+        start                   = 0
     end
     
     %% Methods
@@ -171,9 +172,15 @@ classdef slamfat < handle
                 this.add_variable('cummulative_transport',  {'time' n 'x' nx 'fractions' nf});
                 this.add_variable('supply',                 {'time' n 'x' nx 'fractions' nf});
                 this.add_variable('capacity',               {'time' n 'x' nx 'fractions' nf});
-                this.add_variable('threshold',              {'time' n 'x' nx 'fractions' nf});
                 this.add_variable('supply_limited',         {'time' n 'x' nx 'fractions' nf});
+                
+                % rainfall output
+                this.add_variable('threshold',              {'time' n 'x' nx 'fractions' nf});
                 this.add_variable('moisture',               {'time' n 'x' nx});
+                this.add_variable('cummulative_evaporation',{'time' n 'x' nx});
+                this.add_variable('cummulative_rainfall',   {'time' n 'x' nx});
+                
+                % bedcomposition output
                 this.add_variable('d50',                    {'time' n 'x' nx 'layers' nl});
                 this.add_variable('thickness',              {'time' n 'x' nx 'layers' nl});
                 
@@ -210,6 +217,7 @@ classdef slamfat < handle
             
             this.performance.initialization = toc;
             
+            this.start = now;
             this.it = this.it + 1;
             while this.it < sum(this.wind.number_of_timesteps)
                 this.next;
@@ -323,11 +331,17 @@ classdef slamfat < handle
                 
                 this.performance.grainsize = this.performance.grainsize + toc; tic;
                 
+                ETA = (now - this.start) * (this.size_of_output - this.io) / this.io;
+                
                 if this.animate
                     this.figure.timestep = this.io;
                     this.figure.update;
                 elseif this.progress
-                    waitbar(this.io/this.size_of_output, this.progressbar);
+                    waitbar(this.io/this.size_of_output, this.progressbar, ...
+                        sprintf('[%s / %s]', datestr(now - this.start, 'HH:MM:SS'), datestr(ETA, 'HH:MM:SS')));
+                elseif mod(this.io, 100) == 0
+                    fprintf('%3.1f%% [%s / %s]\n', this.io/this.size_of_output*100, ...
+                        datestr(now - this.start, 'HH:MM:SS'), datestr(ETA, 'HH:MM:SS'));
                 end
                 
                 this.performance.visualization = this.performance.visualization + toc;
@@ -387,11 +401,10 @@ classdef slamfat < handle
                 sz(1) = 1;
                 if isscalar(value)
                     value = zeros(sz) + value;
+                else
+                    value = reshape(value, sz);
                 end
-                if ~any(size(value) == 1)
-                    value = reshape(value,[1 size(value)]);
-                end
-                idx = [this.io ones(1,sum(size(value)>1))];
+                idx = [this.io ones(1,numel(sz)-1)];
                 
                 % Hier heeft Sierd er Quick & Dirty voor gezorgd dat de
                 % netcdf in het juiste format wordt opgeschreven als er
