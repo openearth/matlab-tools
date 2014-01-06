@@ -56,7 +56,7 @@ function varargout = nc_kickstarter_var(varargin)
 % $Author$
 % $Revision$
 % $HeadURL$
-% $Keywords: $
+% $Keywords: $/g
 
 %% add variable data, including standard_names etc.
 
