@@ -58,6 +58,10 @@ end
 if nargin == 2
     [fPat fName] = fileparts(inFile);
 end
+if isempty(fPat)
+    fPat=cd;
+end
+
 fid=fopen(inFile);
 kmlFile=fread(fid,'char');
 coorsStart=findstr('<coordinates>',char(kmlFile)')+13;
