@@ -55,9 +55,9 @@ STRINGSIZE = 100;
     nc_attput( filename, nc_global, 'creator_name', 'Rijkswaterstaat');
     nc_attput( filename, nc_global, 'creator_url', 'http://www.rijkswaterstaat.nl');
     nc_attput( filename, nc_global, 'creator_email', 'info@rijkswaterstaat.nl');
-    nc_attput( filename, nc_global, 'date_created', datestr(utcnow, datefmt))
-    nc_attput( filename, nc_global, 'date_modified', datestr(utcnow, datefmt))
-    nc_attput( filename, nc_global, 'date_issued', datestr(utcnow, datefmt))
+    nc_attput( filename, nc_global, 'date_created', datestr(nowutc, datefmt))
+    nc_attput( filename, nc_global, 'date_modified', datestr(nowutc, datefmt))
+    nc_attput( filename, nc_global, 'date_issued', datestr(nowutc, datefmt))
     % Publisher Search attributes
     nc_attput( filename, nc_global, 'publisher_name', sprintf('%s', getenv('USERNAME')));
     nc_attput( filename, nc_global, 'publisher_url', 'http://www.deltares.nl');
