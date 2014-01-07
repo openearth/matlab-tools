@@ -50,7 +50,7 @@ function varargout=delft3d_io_obs(cmd,varargin),
 %   You should have received a copy of the GNU Lesser General Public
 %   License along with this library; if not, write to the Free Software
 %   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
-%   USA or 
+%   USA or
 %   http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
@@ -76,11 +76,11 @@ case 'read',
   elseif nargout ==4
     error('too much output parameters: [1..3]')
   end
-  
+
   if iostat<0,
      error(['Error opening file: ',varargin{1}])
   end;
-  
+
 case 'write',
   iostat=Local_write(varargin{:});
   if nargout ==1
@@ -104,11 +104,11 @@ S.filename = varargin{1};
      [S.namst,...
       S.m    ,...
       S.n    ]=textread(S.filename,'%20c%d%d');
-      
+
      S.NTables = length(S.m);
      S.m=S.m';
      S.n=S.n';
-      
+
     %% optionally get world coordinates
      if nargin >1
         if ischar(varargin{2})
@@ -121,16 +121,16 @@ S.filename = varargin{1};
            S.y(i) = G.cen.y(S.n(i)-1,S.m(i)-1);
         end
      end
-   
+
      iostat  = 1;
    catch
       iostat  = -1;
    end
 
 if nargout==1
-   varargout = {S};   
+   varargout = {S};
 else
-   varargout = {S,iostat};   
+   varargout = {S,iostat};
 end
 
 % ------------------------------------
@@ -142,21 +142,33 @@ iostat       = 1;
 OPT.OS       = 'windows'; % or 'unix'
 OPT.format   = 'obs';
 
-OPT = setproperty(OPT,varargin);
+%% Does not work like this
+% OPT = setproperty(OPT,varargin{2:end});
+if isstruct (varargin{2})
+    OPT = setproperty(OPT,varargin{3:end});
+else
+    names = false;
+    try
+        OPT = setproperty(OPT,varargin{4:end});
+     catch
+        OPT = setproperty(OPT,varargin{5:end});
+        names = true;
+    end
+end
 
 if strcmpi(OPT.format,'obs')
 
    fid          = fopen(filename,'w');
-   if     nargin ==2
+   if     isstruct (varargin{2})
       D       = varargin{2};
-   elseif nargin >2
+   else
       D.m     = varargin{2};
       D.n     = varargin{3};
-      if nargin==4
-      D.namst = varargin{4};
+      if names
+          D.namst = varargin{4};
       end
-   end   
-   
+   end
+
    if ~isfield(D,'namst')
       D.namst = [];
       for iobs=1:length(D.m)
@@ -164,25 +176,25 @@ if strcmpi(OPT.format,'obs')
                                         num2str(D.n(iobs)),')']);
       end
    end
-   
+
    D.namst = cellstr(D.namst);
-   
+
    for iobs=1:length(D.m)
-   
+
       fprintfstringpad(fid,20,D.namst{iobs});
-      
+
       fprintf(fid,' %7d',D.m    (iobs  ));
       fprintf(fid,' %7d',D.n    (iobs  ));
       fprinteol(fid,OPT.OS)
-      
+
    end
 
    iostat = fclose(fid);
-   
+
 elseif strcmpi(OPT.format,'ann')
 
 % TODO
-   
-end   
+
+end
 
 %% EOF
