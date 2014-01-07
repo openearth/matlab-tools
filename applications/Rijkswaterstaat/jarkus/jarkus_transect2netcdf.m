@@ -179,7 +179,7 @@ end
 comment_str = nc_attget(filename, nc_global, 'comment');
 nc_attput( filename, nc_global, 'comment', sprintf('%s\nYears covered: %i-%i (%s missing)', comment_str, all_years(1), all_years(end), missing_years))
 nc_attput( filename, nc_global, 'time_coverage_start', datestr(datenum(min(all_years),1,1), datefmt))
-nc_attput( filename, nc_global, 'time_coverage_end', datestr(datenum(min(all_years),12,31, 23,59), datefmt))
+nc_attput( filename, nc_global, 'time_coverage_end', datestr(datenum(min(all_years),12,31, 23,59,59), datefmt))
 nc_attput( filename, nc_global, 'time_coverage_resolution', 'year')
 
 
