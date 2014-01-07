@@ -202,9 +202,9 @@ if strcmpi(OPT.format,'thd')
            S.DATA(i).mn(4)   ,...
            S.DATA(i).direction    );
        
-       if     strcmp(lower(OS(1)),'u')
+       if     strcmp(lower(OPT.OS(1)),'u')
            fprintf(fid,'\n');
-       elseif strcmp(lower(OS(1)),'w')
+       elseif strcmp(lower(OPT.OS(1)),'w')
            fprintf(fid,'\r\n');
        end
        
