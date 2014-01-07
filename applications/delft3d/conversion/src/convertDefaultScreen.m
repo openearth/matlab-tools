@@ -1,3 +1,21 @@
+% Check if input directory does exist
+inputdir = get(handles.edit1,'String');
+if ~isempty(inputdir);
+    if ~exist(inputdir,'dir');
+        errordlg('The input directory does not exist.','Error');
+        break;
+    end
+end
+
+% Check if input directory does exist
+outputdir = get(handles.edit2,'String');
+if ~isempty(outputdir);
+    if ~exist(outputdir,'dir');
+        errordlg('The output directory does not exist.','Error');
+        break;
+    end
+end
+
 % Enable the listboxes
 set(handles.listbox1 ,'Enable','on');
 set(handles.listbox2 ,'Enable','on');
@@ -20,7 +38,6 @@ set(handles.listbox4 ,'Value',1);
 set(handles.listbox5 ,'Value',1);
 
 % Empty the edit boxes
-set(handles.edit3 ,'String','');
 set(handles.edit4 ,'String','');
 set(handles.edit5 ,'String','');
 set(handles.edit6 ,'String','');

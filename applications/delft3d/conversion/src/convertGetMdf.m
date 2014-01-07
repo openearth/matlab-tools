@@ -1,3 +1,6 @@
+% Empty the mdf editbox
+set(handles.edit3 ,'String','');
+
 % Read the input path
 inputdir              = get(handles.edit1,'String');
 

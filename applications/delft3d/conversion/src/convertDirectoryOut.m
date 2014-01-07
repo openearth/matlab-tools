@@ -19,7 +19,9 @@ else
    outputdir = handles.data.mdumap.outputDir;
    set(handles.edit2,'String',outputdir);
 end
+
+% Check if input directory does exist
 if exist(outputdir,'dir')==0;
     errordlg('The output directory does not exist.','Error');
-    return;
+    break;
 end

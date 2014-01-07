@@ -23,12 +23,23 @@ if length(fileext) > 4;
     end
 end
 
+
+
+%%% WRITE HEADER OF THE EXT FORCINGS FILE
+
 % Put the output directory name in the filenames
 fileext     = [pathout,'\',fileext];
+
+% Write header
+convertExtForcingHeader;
 
 % Catch the polyline names for the boundary conditions
 filepli     = get(handles.listbox1,'String');
 npli        = size(filepli,1);
+japli       = 1;
+if strcmpi(filepli,' '); 
+    japli   = 0;
+end
 
 % Check if salinity is active
 filebcc     = get(handles.edit14,'String');
@@ -38,49 +49,48 @@ if isempty(filebcc);
 end
 
 
-%%% WRITE HEADER OF THE EXT FORCINGS FILE
-convertExtForcingHeader;
-
 
 %%% READ POLYLINE FILES AND CHECK BOUNDARY CONDITIONS TYPE
 
 % Loop over all the boundary pli-files
-for i=1:npli;
-    fileplistr              = cell2mat(filepli(i,:));
-    fpli                    = [pathout,'\',fileplistr];
-    if strcmpi(fpli(end-7:end),'_sal.pli');
-        if jasal == 1;
-            typ             = 'salinitybnd';
+if japli == 1;
+    for i=1:npli;
+        fileplistr              = cell2mat(filepli(i,:));
+        fpli                    = [pathout,'\',fileplistr];
+        if strcmpi(fpli(end-7:end),'_sal.pli');
+            if jasal == 1;
+                typ             = 'salinitybnd';
+            else
+                break;
+            end
         else
-            break;
+            fid                 = fopen(fpli,'r');
+            tline               = fgetl(fid);
+            tline               = fgetl(fid);
+            tline               = fgetl(fid);
+            tline               = textscan(tline,'%s%s%s%s%s');
+            tlinestr            = cell2mat(tline{3});
+            switch tlinestr;
+                case 'Z';
+                    typ  = 'waterlevelbnd';
+                case 'C';
+                    typ  = 'velocitybnd';
+                case 'N';
+                    typ  = 'neumannbnd';
+                case 'Q';
+                    typ  = 'dischargepergridcellbnd';
+                case 'T';
+                    typ  = 'dischargebnd';
+                case 'R';
+                    typ  = 'riemannbnd';
+            end
         end
-    else
-        fid                 = fopen(fpli,'r');
-        tline               = fgetl(fid);
-        tline               = fgetl(fid);
-        tline               = fgetl(fid);
-        tline               = textscan(tline,'%s%s%s%s%s');
-        tlinestr            = cell2mat(tline{3});
-        switch tlinestr;
-            case 'Z';
-                typ  = 'waterlevelbnd';
-            case 'C';
-                typ  = 'velocitybnd';
-            case 'N';
-                typ  = 'neumannbnd';
-            case 'Q';
-                typ  = 'dischargepergridcellbnd';
-            case 'T';
-                typ  = 'dischargebnd';
-            case 'R';
-                typ  = 'riemannbnd';
-        end
+        fprintf(fidext,['QUANTITY='  ,typ         ,'\n']);
+        fprintf(fidext,['FILENAME='  ,fileplistr  ,'\n']);
+        fprintf(fidext,['FILETYPE=9'              ,'\n']);
+        fprintf(fidext,['METHOD  =3'              ,'\n']);
+        fprintf(fidext,['OPERAND =O'              ,'\n']);
+        fprintf(fidext,[                          ,'\n']);
     end
-    fprintf(fidext,['QUANTITY='  ,typ         ,'\n']);
-    fprintf(fidext,['FILENAME='  ,fileplistr  ,'\n']);
-    fprintf(fidext,['FILETYPE=9'              ,'\n']);
-    fprintf(fidext,['METHOD  =3'              ,'\n']);
-    fprintf(fidext,['OPERAND =O'              ,'\n']);
-    fprintf(fidext,[                          ,'\n']);
 end
 fclose all;

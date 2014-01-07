@@ -7,14 +7,26 @@ if isempty(mdffile);
     if exist('wb'); close(wb); end;
     errordlg('No mdf-file specified.','Error');
     break;
+else
+    if length(mdffile) > 3;
+        if ~strcmp(mdffile(end-3:end),'.mdf');
+            mdffile    = [mdffile,'.mdf'];
+            set(handles.edit3,'String',mdffile);
+        end
+    end
+    mdfexist          = [inputdir,'\',mdffile];
+    if exist(mdfexist,'file')==0;
+        errordlg('The specified mdf file does not exist.','Error');
+        break;
+    end
 end
 
 % Read the mdu filename
 mdufile               = get(handles.edit4,'String');
 if isempty(mdufile);
-    if exist('wb'); close(wb); end;
-    errordlg('No mdu-filename specified.','Error');
-    break;
+    mdufile           = mdffile(1:end-4);
+    mdufile           = [mdufile,'.mdu'];
+    set(handles.edit4,'String',mdufile);
 else
     if length(mdufile) > 3;
         if ~strcmp(mdufile(end-3:end),'.mdu');
@@ -145,9 +157,8 @@ end
 %%% Panel BOUNDARIES
 
 % Check if bnd file is specified in mdf file; if yes, apply mdu core name
-if isfield(mdfkeywds,'Filbnd') | isfield(mdfkeywds,'filbnd');
-    set(handles.edit10,'String',[mducore,'.ext']);
-end
+set(handles.edit10,'String',[mducore,'.ext']);
+
 
 
 

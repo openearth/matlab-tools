@@ -19,7 +19,9 @@ else
    inputdir = handles.data.mdfmap.inputDir;
    set(handles.edit1,'String',inputdir);
 end
+
+% Check if input directory does exist
 if exist(inputdir,'dir')==0;
     errordlg('The input directory does not exist.','Error');
-    return;
+    break;
 end

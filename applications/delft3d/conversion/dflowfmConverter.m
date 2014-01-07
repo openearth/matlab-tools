@@ -43,8 +43,6 @@ else
 end
 % End initialization code - DO NOT EDIT
 
-% TODO: delete this 'addpath' as soon as stuff is committed
-addpath d:\Checkouts\openearth\trunk\matlab\applications\delft3d\conversion\src
 
 
 
@@ -878,6 +876,7 @@ function pushbutton3_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton3 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+convertDefaultScreen;
 convertInitiate;
 
 
