@@ -26,13 +26,9 @@ xcoor_v        = grid.v_full.x;
 ycoor_v        = grid.v_full.y;
 
 % Read the roughness values
-rgh            = wldep('read',filrgh,[mmax+1 nmax+1],'multiple');
+rgh            = wldep('read',filrgh,[mmax nmax],'multiple');
 rghu           = rgh(1).Data';
 rghv           = rgh(2).Data';
-rghu(:,end)    = [];
-rghu(end,:)    = [];
-rghv(:,end)    = [];
-rghv(end,:)    = [];
 
 % Fill LINE struct with roughness values
 tmp(:,1)       = reshape(xcoor_u,mmax*nmax,1);
