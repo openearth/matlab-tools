@@ -22,7 +22,7 @@ for i=1:length(m)
             nobs=nobs+1;
             ObservationPoints(nobs).name=deblank(name(i,:));
             ObservationPoints(nobs).m=m(i);
-            ObservationPoints(nobs).N=n(i);
+            ObservationPoints(nobs).n=n(i);
         end
     end
 end
