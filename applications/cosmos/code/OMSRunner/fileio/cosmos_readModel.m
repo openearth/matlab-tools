@@ -240,6 +240,13 @@ if isfield(xml,'smvelo')
     end
 end
 
+model.sigcor=0;
+if isfield(xml,'sigcor')
+    if strcmpi(xml.sigcor(1),'y') || strcmpi(xml.sigcor(1),'1')
+        model.sigcor=1;
+    end
+end
+
 model.nonstationary=1;
 if isfield(xml,'stationary')
     if strcmpi(xml.stationary(1),'y') || strcmpi(xml.stationary(1),'1')
@@ -508,10 +515,23 @@ end
 % if isfield(xml,'oceanmodel')
 %     model.oceanModel=xml.oceanmodel;
 % end
-model.oceanmodelnesttype='file+astro';
+
+model.oceanmodelnesttypewl='file+astro';
+model.oceanmodelnesttypecur='file+astro';
+
 if isfield(xml,'oceanmodelnesttype')
-    model.oceanmodelnesttype=xml.oceanmodelnesttype;
+    model.oceanmodelnesttypewl=xml.oceanmodelnesttype;
+    model.oceanmodelnesttypecur=xml.oceanmodelnesttype;
 end
+
+if isfield(xml,'oceanmodelnesttypewl')
+    model.oceanmodelnesttypewl=xml.oceanmodelnesttypewl;
+end
+
+if isfield(xml,'oceanmodelnesttypecur')
+    model.oceanmodelnesttypecur=xml.oceanmodelnesttypecur;
+end
+
 model.wlboundarycorrection=0;
 if isfield(xml,'wlboundarycorrection')
     model.wlboundarycorrection=str2double(xml.wlboundarycorrection);
@@ -675,6 +695,7 @@ if isfield(xml,'stations')
             end
             
             model.stations(j).plots=[];
+            model.stations(j).nrPlots=0;
             %% Time-series plots
             if isfield(xml.stations(istat).station,'plots')
                 model.stations(j).nrPlots=length(xml.stations(istat).station.plots);
@@ -771,6 +792,7 @@ end
 
 %% Map plots
 model.nrMapPlots=0;
+model.mapPlots=[];
 if isfield(xml,'mapplots')
     model.nrMapPlots=length(xml.mapplots);
     for j=1:model.nrMapPlots

@@ -42,7 +42,7 @@ for im=1:length(hm.models)
         end
         hm.models(im).datafolder=[dirname continents{imd} filesep hm.models(im).name filesep];
     else
-        disp([dr(kk).name ' skipped']);
+        disp([hm.models(im).name ' skipped']);
     end
     
 end

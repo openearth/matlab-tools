@@ -56,6 +56,8 @@ hm.exedirflow='/u/ormondt/d3d_versions/delftflow_trunk2/bin/';
 hm.meteoVersion='1.03';
 hm.delay=8; % Delay in hours
 hm.runEnv='h4i7';
+hm.d3d_home='c:\delft3d';
+hm.ww3_home='c:\wavewatch3';
 
 for i=1:n
     switch lower(txt{i}),
@@ -93,6 +95,10 @@ for i=1:n
             hm.delay=str2double(txt{i+1});
         case {'runenvironment'}
             hm.runEnv=txt{i+1};
+        case {'d3d_home'}
+            hm.d3d_home=txt{i+1};
+        case {'ww3_home'}
+            hm.ww3_home=txt{i+1};
     end
 end
 
