@@ -30,9 +30,16 @@ makedir(hm.models(m).cycledirnetcdf);
 makedir(hm.models(m).appendeddirmaps);
 makedir(hm.models(m).appendeddirtimeseries);
 
-% Remove older input and output folders
-deleteoldercycles(archivedir,'input',hm.cycle);
-deleteoldercycles(archivedir,'output',hm.cycle);
+% Remove older input, output and figure folders
+if ~model.archiveinput
+    deleteoldercycles(archivedir,'input',hm.cycle);
+end
+if ~model.archiveoutput
+    deleteoldercycles(archivedir,'output',hm.cycle);
+end
+if ~model.archivefigures
+    deleteoldercycles(archivedir,'figures',hm.cycle);
+end
 
 % Old stuff
 if exist([model.dir filesep 'lastrun'],'dir')
