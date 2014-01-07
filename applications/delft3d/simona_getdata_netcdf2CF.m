@@ -47,8 +47,6 @@ nc_dump(ncfile);
 % make time small caps
 
  nc_attput(ncfile,'TIME'  ,'standard_name','time');
-%nc_attput(ncfile,'TIME'  ,'comment'      ,'make variable name lower case');
-
  
  nc_attput(ncfile,'SEP'   ,'grid_mapping' ,'CRS'); % add grid_mapping attribute
  nc_attput(ncfile,'SEP'   ,'coordinates'  ,coords); % connect CENTER (x,y) to CENTER matrix
@@ -142,12 +140,6 @@ end
  
   G.XZETA([1 end],:)=NaN;G.XZETA(:,[1 end])=NaN;
   G.XZETA([1 end],:)=NaN;G.YZETA(:,[1 end])=NaN;
-  G.XZETA = [NaN   NaN   NaN   NaN
-             NaN   0     1e6   NaN
-             NaN   NaN   NaN   NaN];
-  G.YZETA = [NaN   NaN   NaN   NaN
-             NaN   1e6   2e6   NaN
-             NaN   NaN   NaN   NaN];
  [G.LONZETA,G.LATZETA] = convertCoordinates(G.XZETA,G.YZETA,'CS1.code',28992,'CS2.code',4326);
  
      attr(1) = struct('Name','_FillValue'   ,'Value',9.969209968386869e+36);
