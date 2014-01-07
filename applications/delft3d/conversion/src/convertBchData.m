@@ -158,4 +158,9 @@ for i=1:npli;
     end
 end
 fclose all;
-set(handles.listbox4,'String',allcmpfiles);
+
+% Fill listbox with cmp files
+if exist('allcmpfiles');
+    set(handles.listbox4,'String',allcmpfiles);
+    clear allcmpfiles;
+end

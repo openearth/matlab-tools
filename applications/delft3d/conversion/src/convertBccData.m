@@ -96,4 +96,9 @@ for i=1:npli;
     end
 end
 fclose all;
-set(handles.listbox5,'String',alltimfiles);
+
+% Fill listbox with tim files
+if exist('alltimfiles');
+    set(handles.listbox5,'String',alltimfiles);
+    clear alltimfiles;
+end
