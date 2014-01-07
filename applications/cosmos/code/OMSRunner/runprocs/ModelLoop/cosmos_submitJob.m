@@ -6,62 +6,68 @@ switch model.runEnv
 
     case{'win32'}
 
-        % Daemon
+        % No more daemon
         
-        f=dir([hm.jobDir filesep 'action.*']);
+%         f=dir([hm.jobDir filesep 'action.*']);
+% 
+%         nrmax=0;
+%         if ~isempty(f)
+%             n=length(f);
+%             for i=1:n
+%                 nr=str2double(f(i).name(8:end));
+%                 nrmax=max(nr,nrmax);
+%             end
+%         end
+% 
+%         nrmax=nrmax+1;
+% 
+%         fname =[hm.jobDir 'action.' num2str(nrmax,'%0.4i')];
+% 
+%         %inpdir=[hm.jobDir model.name filesep];
+%         inpdir=[hm.jobDir model.name];
+% 
+%         fid=fopen(fname,'wt');
+% 
+%         cycstr=datestr(hm.cycle,'yyyymmddHHMMSS');
+%         % TODO: What does this do?
+%         % Copy the inpdir (job+model) directory to the current directory
+%         fprintf(fid,'%s\n',['xcopy /E /I ' inpdir ' ' model.name]);
+%         % remove the job/model directory
+%         fprintf(fid,'%s\n',['rmdir /Q /S ' inpdir]);
+%         % add the date to a file
+%         fprintf(fid,'%s\n',['realdate /f="CCYYMMDD hhmmss" >> ' hm.jobDir 'running.' cycstr '.' model.name]);
+%         % go into the model directory
+%         fprintf(fid,'%s\n',['cd ' model.name]);
+%         % start the run
+%         fprintf(fid,'%s\n','call run.bat');
+%         % ping yourself? Maybe some alternative for sleeping?
+%         fprintf(fid,'%s\n','ping localhost -n 1 -w 1000 > nul');
+%         fprintf(fid,'%s\n','cd ..');
+%         % and ping again but 3 times?
+%         fprintf(fid,'%s\n','ping localhost -n 3 -w 1000 > nul');
+%         % copy the model directory back to its original place
+%         fprintf(fid,'%s\n',['xcopy /E /I ' model.name ' ' inpdir]);
+%         fprintf(fid,'%s\n','ping localhost -n 1 -w 1000 > nul');
+%         % throw away the directory where the model was run
+%         fprintf(fid,'%s\n',['rmdir /Q /S ' model.name]);
+%         fprintf(fid,'%s\n','ping localhost -n 1 -w 1000 > nul');
+%         % echo a "."?
+%         fprintf(fid,'%s\n',['echo. >>  ' hm.jobDir 'running.' cycstr '.' model.name]);
+%         % add the date again? Finish time?
+%         fprintf(fid,'%s\n',['realdate /f="CCYYMMDD hhmmss" >> ' hm.jobDir 'running.' cycstr '.' model.name]);
+%         % echo a dot again?
+%         fprintf(fid,'%s\n',['echo. >>  ' hm.jobDir 'running.' cycstr '.' model.name]);
+%         % move the file which was called running to finished. This is what the
+%         % runner will check for
+%         fprintf(fid,'%s\n',['move ' hm.jobDir 'running.' cycstr '.' model.name ' ' hm.jobDir 'finished.' cycstr '.' model.name]);
+% 
+%         fclose(fid);
 
-        nrmax=0;
-        if ~isempty(f)
-            n=length(f);
-            for i=1:n
-                nr=str2double(f(i).name(8:end));
-                nrmax=max(nr,nrmax);
-            end
-        end
-
-        nrmax=nrmax+1;
-
-        fname =[hm.jobDir 'action.' num2str(nrmax,'%0.4i')];
-
-        %inpdir=[hm.jobDir model.name filesep];
-        inpdir=[hm.jobDir model.name];
-
-        fid=fopen(fname,'wt');
-
-        cycstr=datestr(hm.cycle,'yyyymmddHHMMSS');
-        % TODO: What does this do?
-        % Copy the inpdir (job+model) directory to the current directory
-        fprintf(fid,'%s\n',['xcopy /E /I ' inpdir ' ' model.name]);
-        % remove the job/model directory
-        fprintf(fid,'%s\n',['rmdir /Q /S ' inpdir]);
-        % add the date to a file
-        fprintf(fid,'%s\n',['realdate /f="CCYYMMDD hhmmss" >> ' hm.jobDir 'running.' cycstr '.' model.name]);
-        % go into the model directory
-        fprintf(fid,'%s\n',['cd ' model.name]);
-        % start the run
-        fprintf(fid,'%s\n','call run.bat');
-        % ping yourself? Maybe some alternative for sleeping?
-        fprintf(fid,'%s\n','ping localhost -n 1 -w 1000 > nul');
-        fprintf(fid,'%s\n','cd ..');
-        % and ping again but 3 times?
-        fprintf(fid,'%s\n','ping localhost -n 3 -w 1000 > nul');
-        % copy the model directory back to its original place
-        fprintf(fid,'%s\n',['xcopy /E /I ' model.name ' ' inpdir]);
-        fprintf(fid,'%s\n','ping localhost -n 1 -w 1000 > nul');
-        % throw away the directory where the model was run
-        fprintf(fid,'%s\n',['rmdir /Q /S ' model.name]);
-        fprintf(fid,'%s\n','ping localhost -n 1 -w 1000 > nul');
-        % echo a "."?
-        fprintf(fid,'%s\n',['echo. >>  ' hm.jobDir 'running.' cycstr '.' model.name]);
-        % add the date again? Finish time?
-        fprintf(fid,'%s\n',['realdate /f="CCYYMMDD hhmmss" >> ' hm.jobDir 'running.' cycstr '.' model.name]);
-        % echo a dot again?
-        fprintf(fid,'%s\n',['echo. >>  ' hm.jobDir 'running.' cycstr '.' model.name]);
-        % move the file which was called running to finished. This is what the
-        % runner will check for
-        fprintf(fid,'%s\n',['move ' hm.jobDir 'running.' cycstr '.' model.name ' ' hm.jobDir 'finished.' cycstr '.' model.name]);
-
-        fclose(fid);
+        fid=fopen('tmp.bat','wt');
+        fprintf(fid,'%s\n',['cd ' hm.jobDir model.name]);        
+        fclose(fid);        
+        system('call tmp.bat');        
+        delete('tmp.bat');
 
     case{'h4','h4i7'}
         
