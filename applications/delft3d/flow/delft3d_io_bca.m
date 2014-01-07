@@ -141,12 +141,17 @@ if fid > 0
       C       = textscan(rec,'%8c %f %f',1);
 
       icomp = 0;
-      while ~isempty(C{3})
+      while ~isempty(C{2})
          icomp = icomp + 1;
          BCA.DATA(iset).names{icomp} = strtrim(C{1});
          BCA.DATA(iset).amp  (icomp) = C{2};
-         BCA.DATA(iset).phi  (icomp) = C{3};
          
+         if ~isempty(C{3})
+             BCA.DATA(iset).phi(icomp) = C{3};
+         else
+             BCA.DATA(iset).phi(icomp) = 0;
+         end
+             
          rec     = fgetl(fid); if OPT.debug;disp(rec);end
          if ~ischar(rec), break, end % eof
          C       = textscan(rec,'%8c %f %f',1);
