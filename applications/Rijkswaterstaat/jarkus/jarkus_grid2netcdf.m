@@ -40,7 +40,7 @@ STRINGSIZE = 100;
     nc_attput( filename, nc_global, 'id', sprintf('JarKus_release%s_origins%s', datestr(now, 'yyyymmdd'), sprintf('%i', OPT.origins)))
     nc_attput( filename, nc_global, 'Metadata_Conventions', 'Unidata Dataset Discovery v1.0')
     nc_attput( filename, nc_global, 'title', 'JarKus Data (cross-shore transects)');
-    nc_attput( filename, nc_global, 'summary', 'Cross-shore transect bathymetry measurements along the Dutch coast since 1965');
+    nc_attput( filename, nc_global, 'summary', 'Cross-shore yearly transect bathymetry measurements along the Dutch coast since 1965');
     nc_attput( filename, nc_global, 'keywords', 'Bathymetry, JarKus, Dutch coast');
 	nc_attput( filename, nc_global, 'keywords_vocabulary', 'http://www.eionet.europa.eu/gemet');
 	nc_attput( filename, nc_global, 'standard_name_vocabulary', 'http://cf-pcmdi.llnl.gov/documents/cf-standard-names/');
@@ -90,7 +90,7 @@ STRINGSIZE = 100;
     s.Nctype    = nc_int;
     s.Dimension = {'alongshore'};
     s.Attribute = struct('Name' ,{'long_name' ,'comment'},...
-                         'Value',{'identifier','sum of area code (x1000000) and alongshore coordinate'});
+                         'Value',{'identifier','sum of area code (*1e6) and alongshore coordinate'});
     nc_addvar(filename, s);
     
     [flag_values,flag_meanings]=jarkus_area_definition;
@@ -100,7 +100,7 @@ STRINGSIZE = 100;
     s.Nctype    = nc_int;
     s.Dimension = {'alongshore'};
     s.Attribute = struct('Name' ,{'long_name','flag_values','flag_meanings','flag_comment'       ,'comment'},...
-                         'Value',{'area code', flag_values , flag_meanings ,'points to: areaname','codes for the 15 coastal areas as defined by Rijkswaterstaat'});
+                         'Value',{'area code', flag_values , flag_meanings ,'points to: areaname','codes for the 17 coastal areas (kustvakken) as defined by Rijkswaterstaat'});
     nc_addvar(filename, s);
 
     s.Name      = 'areaname';
@@ -108,14 +108,14 @@ STRINGSIZE = 100;
     
     s.Dimension = {'alongshore', 'stringsize'};
     s.Attribute = struct('Name' ,{'long_name','flag_comment'        ,'comment'},...
-                         'Value',{'area name','indexed in: areacode','names for the 15 coastal areas as defined by Rijkswaterstaat'});
+                         'Value',{'area name','indexed in: areacode','names for the 17 coastal areas (kustvakken) as defined by Rijkswaterstaat'});
     nc_addvar(filename, s);
 
     s.Name      = 'alongshore';
     s.Nctype    = nc_double;
     s.Dimension = {'alongshore'};
     s.Attribute = struct('Name' ,{'long_name'             , 'units', 'comment'},...
-                         'Value',{'alongshore coordinate', 'm'     , 'alongshore coordinate within the 15 coastal areas as defined by Rijkswaterstaat'});
+                         'Value',{'alongshore coordinate', 'm'     , 'alongshore coordinate within the 17 coastal areas (kustvakken) as defined by Rijkswaterstaat'});
     nc_addvar(filename, s);
     
     s.Name      = 'cross_shore';
@@ -130,7 +130,7 @@ STRINGSIZE = 100;
     s.Nctype    = nc_double;
     s.Dimension = {'time'};
     s.Attribute = struct('Name' ,{'standard_name'          ,'axis' ,'units'                 ,'cell_methods','bounds'     ,'comment'         },...
-                         'Value',{'time'                   ,'T'    ,'days since 1970-01-01' ,'mean'        ,'time_bounds','measurement year see bathy and time_topo for more details'});
+                         'Value',{'time'                   ,'T'    ,'days since 1970-01-01' ,'mean'        ,'time_bounds','measurement year (date is artificially set to July, 1st); see bathy and time_topo for more detailed measurement dates'});
     nc_addvar(filename, s);
 
     s.Name      = 'time_bounds';
@@ -212,14 +212,14 @@ STRINGSIZE = 100;
     s.Nctype    = nc_double;
     s.Dimension = {'alongshore'};
     s.Attribute = struct('Name' ,{'long_name'      , 'units', 'comment'},...
-                         'Value',{'mean high water', 'm'   , 'mean high water relative to nap'});
+                         'Value',{'mean high water level', 'm'   , 'mean high water level relative to nap'});
     nc_addvar(filename, s);
     
     s.Name      = 'mean_low_water';
     s.Nctype    = nc_double;
     s.Dimension = {'alongshore'};
     s.Attribute = struct('Name' ,{'long_name'     , 'units', 'comment'},...
-                         'Value',{'mean low water', 'm'    , 'mean low water relative to nap'});
+                         'Value',{'mean low water level', 'm'    , 'mean low water level relative to nap'});
     nc_addvar(filename, s);
     
 %% Some extra variables for convenience
@@ -270,28 +270,28 @@ STRINGSIZE = 100;
     s.Nctype    = nc_double;
     s.Dimension = {'alongshore'};
     s.Attribute = struct('Name' ,{'long_name'              , 'units'            , 'axis', 'comment'},...
-                         'Value',{'location for beach pole', 'm'                , 'X'   ,'Location of the beach pole (Rijks strand paal)'});
+                         'Value',{'location for beach pole', 'm'                , 'X'   ,'Location of the beach pole (rijks strand paal)'});
     nc_addvar(filename, s);
     
     s.Name      = 'rsp_y';
     s.Nctype    = nc_double;
     s.Dimension = {'alongshore'};
     s.Attribute = struct('Name' ,{'long_name'              , 'units'            , 'axis', 'comment'},...
-                         'Value',{'location for beach pole', 'm'                , 'Y'   , 'Location of the beach pole (Rijks strand paal)'});
+                         'Value',{'location for beach pole', 'm'                , 'Y'   , 'Location of the beach pole (rijks strand paal)'});
     nc_addvar(filename, s);
     
     s.Name      = 'rsp_lat';
     s.Nctype    = nc_double;
     s.Dimension = {'alongshore'};
     s.Attribute = struct('Name' ,{'long_name'              , 'units'            , 'comment'},...
-                         'Value',{'location for beach pole', 'degrees_north'    , 'Location of the beach pole (Rijks strand paal)'});
+                         'Value',{'location for beach pole', 'degrees_north'    , 'Location of the beach pole (rijks strand paal)'});
     nc_addvar(filename, s);
     
     s.Name      = 'rsp_lon';
     s.Nctype    = nc_double;
     s.Dimension = {'alongshore'};
     s.Attribute = struct('Name' ,{'long_name'              , 'units'            , 'comment'},...
-                         'Value',{'location for beach pole', 'degrees_east'     , 'Location of the beach pole (Rijks strand paal)'});
+                         'Value',{'location for beach pole', 'degrees_east'     , 'Location of the beach pole (rijks strand paal)'});
     nc_addvar(filename, s);
 
     

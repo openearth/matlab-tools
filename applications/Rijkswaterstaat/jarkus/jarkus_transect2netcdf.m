@@ -171,7 +171,7 @@ nc_attput( filename, nc_global, 'date_issued', datestr(nowutc, datefmt))
 dv = datevec(yearArray+datenum(1970,1,1)); % date vector matrix (first column contains the years)
 missing_years = 'None';
 all_years = colon(min(dv(:,1)), max(dv(:,1)));
-missing_year_ids = ismember(all_years, dv(:,1));
+missing_year_ids = ~ismember(all_years, dv(:,1));
 if any(missing_year_ids)
     missing_years = sprintf('%i, ', all_years(missing_year_ids));
     missing_years = missing_years(1:end-2);
@@ -179,7 +179,7 @@ end
 comment_str = nc_attget(filename, nc_global, 'comment');
 nc_attput( filename, nc_global, 'comment', sprintf('%s\nYears covered: %i-%i (%s missing)', comment_str, all_years(1), all_years(end), missing_years))
 nc_attput( filename, nc_global, 'time_coverage_start', datestr(datenum(min(all_years),1,1), datefmt))
-nc_attput( filename, nc_global, 'time_coverage_end', datestr(datenum(min(all_years),12,31, 23,59,59), datefmt))
+nc_attput( filename, nc_global, 'time_coverage_end', datestr(datenum(max(all_years),12,31, 23,59,59), datefmt))
 nc_attput( filename, nc_global, 'time_coverage_resolution', 'year')
 
 
