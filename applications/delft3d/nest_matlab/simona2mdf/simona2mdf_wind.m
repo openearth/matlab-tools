@@ -51,6 +51,20 @@ if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.GENERAL.WIND')
          else
             simona2mdf_message('TIME_AND_VALUE (wind series) not implemented yet','Window','SIMONA2MDF Warning','Close',true,'n_sec',10);
         end
+    else
+       %
+       % Constant value specified
+       %
+
+       wnd.minutes(1)   = mdf.tstart;
+       wnd.minutes(2)   = mdf.tstop;
+       wnd.speed(1)     = wind.WCONVERSIONF*wind.WSPEED;
+       wnd.speed(2)     = wind.WCONVERSIONF*wind.WSPEED;
+       wnd.direction(1) = wind.WANGLE;
+       wnd.direction(2) = wind.WANGLE;
+       mdf.filwnd       = [name_mdf '.wnd'];
+       simona2mdf_io_wnd('write',mdf.filwnd,wnd);
+       mdf.filwnd       = simona2mdf_rmpath(mdf.filwnd);
     end
 
     %

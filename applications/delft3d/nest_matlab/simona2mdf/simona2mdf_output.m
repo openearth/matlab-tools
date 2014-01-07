@@ -6,27 +6,40 @@ OPT.nesthd_path = getenv('nesthd_path');
 OPT = setproperty(OPT,varargin{1:end});
 
 
-siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'SDSOUTPUT'});
-if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.SDSOUTPUT')
-    output       = siminp_struc.ParsedTree.SDSOUTPUT;
+% Maps
+siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'SDSOUTPUT' 'MAPS'});
+if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.SDSOUTPUT.MAPS')
+    output       = siminp_struc.ParsedTree.SDSOUTPUT.MAPS;
 else
     return
 end
 
-% Maps
-if ~isempty(output.MAPS)
-    mdf.flmap(1) = output.MAPS.TFMAPS;
-    mdf.flmap(2) = output.MAPS.TIMAPS;
-    mdf.flmap(3) = output.MAPS.TLMAPS;
+if ~isempty(output)
+    mdf.flmap(1) = output.TFMAPS;
+    mdf.flmap(2) = output.TIMAPS;
+    mdf.flmap(3) = output.TLMAPS;
 end
 % Histories
-if ~isempty(output.HISTORIES)
+siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'SDSOUTPUT' 'HISTORIES'});
+if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.SDSOUTPUT.HISTORIES')
+    output       = siminp_struc.ParsedTree.SDSOUTPUT.HISTORIES;
+else
+    return
+end
+
+if ~isempty(output)
     mdf.flhis(1) = mdf.tstart;
-    mdf.flhis(2) = output.HISTORIES.TIHISTORIES;
+    mdf.flhis(2) = output.TIHISTORIES;
     mdf.flhis(3) = mdf.tstop;
 end
 % Restart
-if ~isempty(output.RESTART)
-    mdf.flrst = output.RESTART.TIRESTART;
+siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'SDSOUTPUT' 'RESTART'});
+if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.SDSOUTPUT.RESTART')
+    output       = siminp_struc.ParsedTree.SDSOUTPUT.RESTART;
+else
+    return
+end
+if ~isempty(output)
+    mdf.flrst = output.TIRESTART;
 end
 

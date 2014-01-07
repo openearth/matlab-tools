@@ -2,14 +2,16 @@ function simona2mdf_check
 
 % check : performs a number of test conversions to check if ewverything went okay
 
-filwaq ={'d:\open_earth_test\matlab\applications\delft3d\nest_matlab\simona\simona-scaloost-fijn-exvd-v1\SIMONA\berekeningen\siminp'    ;
+filwaq ={'d:\open_earth_test\matlab\applications\delft3d\nest_matlab\simona\Testmaas\s1\berekeningen\T1250\siminp.t1250'                ; 
+         'd:\open_earth_test\matlab\applications\delft3d\nest_matlab\simona\simona-scaloost-fijn-exvd-v1\SIMONA\berekeningen\siminp'    ;
          'd:\open_earth_test\matlab\applications\delft3d\nest_matlab\simona\A80\siminp.dcsmv6'                                          ;
          'd:\open_earth_test\matlab\applications\delft3d\nest_matlab\simona\tidal_flume_triwaq\triwaq_coarse\siminp.009'                ;
          'd:\open_earth_test\matlab\applications\delft3d\nest_matlab\simona\simona-kustzuid-2004-v4\SIMONA\berekeningen\siminp-kzv4'    ;
          'd:\open_earth_test\matlab\applications\delft3d\nest_matlab\simona\tidal_flume_triwaq\triwaq_small_3\siminp.small'             ;
          'd:\open_earth_test\matlab\applications\delft3d\nest_matlab\simona\simona-scaloost-fijn-exvd-v1\SIMONA\berekeningen\siminp.fou';
          'd:\open_earth_test\matlab\applications\delft3d\nest_matlab\simona\A80\siminp.zunov4'}                                         ;
-filmdf ={'d:\open_earth_test\matlab\applications\delft3d\nest_matlab\simona\simona-scaloost-fijn-exvd-v1\mdf\scaloost.mdf'              ;
+filmdf ={'d:\open_earth_test\matlab\applications\delft3d\nest_matlab\simona\Testmaas\mdf_t1250\t1250.mdf'                               ;
+         'd:\open_earth_test\matlab\applications\delft3d\nest_matlab\simona\simona-scaloost-fijn-exvd-v1\mdf\scaloost.mdf'              ;
          'd:\open_earth_test\matlab\applications\delft3d\nest_matlab\simona\A80\mdf_csm\dcsmv6.mdf'                                     ;
          'd:\open_earth_test\matlab\applications\delft3d\nest_matlab\simona\tidal_flume_triwaq\mdf_coarse\coarse.mdf'                   ;
          'd:\open_earth_test\matlab\applications\delft3d\nest_matlab\simona\simona-kustzuid-2004-v4\mdf\kzv4.mdf'                       ;
