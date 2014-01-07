@@ -187,19 +187,57 @@ switch lower(model.type)
                 fprintf(fid,'%s\n','mv running.txt finished.txt');
                 fclose(fid);                
         end
+        
     case{'delft3dflowwave'}
+    
         switch lower(model.runEnv)
             case{'win32'}
-                [success,message,messageid]=copyfile([hm.exeDir 'delftflow.exe'],tmpdir,'f');
-                [success,message,messageid]=copyfile([hm.exeDir 'swan.bat'],tmpdir,'f');
-                [success,message,messageid]=copyfile([hm.exeDir 'wave.exe'],tmpdir,'f');
-                [success,message,messageid]=copyfile([hm.exeDir 'swan4072Ad.exe'],tmpdir,'f');
-                [success,message,messageid]=copyfile([hm.exeDir 'mod.exe'],tmpdir,'f');
+            
+%                 [success,message,messageid]=copyfile([hm.exeDir 'delftflow.exe'],tmpdir,'f');
+%                 [success,message,messageid]=copyfile([hm.exeDir 'swan.bat'],tmpdir,'f');
+%                 [success,message,messageid]=copyfile([hm.exeDir 'wave.exe'],tmpdir,'f');
+%                 [success,message,messageid]=copyfile([hm.exeDir 'swan4072Ad.exe'],tmpdir,'f');
+%                 [success,message,messageid]=copyfile([hm.exeDir 'mod.exe'],tmpdir,'f');
+
+                % Run script
                 fid=fopen([tmpdir 'run.bat'],'wt');
-                fprintf(fid,'%s\n',['echo -r ' model.runid ' > runid']);
-                fprintf(fid,'%s\n','start delftflow runid dummy delft3d');
-                fprintf(fid,'%s\n',['wave.exe ' model.runid '.mdw 1']);
+                
+%                 fprintf(fid,'%s\n',['echo -r ' model.runid ' > runid']);
+%                 fprintf(fid,'%s\n','start delftflow runid dummy delft3d');
+%                 fprintf(fid,'%s\n',['wave.exe ' model.runid '.mdw 1']);
+%                 fprintf(fid,'%s\n','mv running.txt finished.txt');
+                
+                fprintf(fid,'%s\n','@ echo off');
+                fprintf(fid,'%s\n','DATE /T > running.txt');
+                fprintf(fid,'%s\n','set argfile=config_flow2d3d.xml');
+%                fprintf(fid,'%s\n','set D3D_HOME=c:\delft3d');
+                fprintf(fid,'%s\n',['set flowexedir=%D3D_HOME%\bin\win32\flow2d3d\bin']);
+                fprintf(fid,'%s\n',['set flowlibdir="' hm.d3d_home '\bin\win32\flow2d3d\lib"']);
+                fprintf(fid,'%s\n',['set waveexedir="' hm.d3d_home '\bin\win32\wave\bin"']);
+                fprintf(fid,'%s\n',['set wavelibdir="' hm.d3d_home '\bin\win32\wave\lib"']);
+                fprintf(fid,'%s\n',['set swanexedir="' hm.d3d_home '\bin\win32\swan\bin"']);
+                fprintf(fid,'%s\n',['set swanlibdir="' hm.d3d_home '\bin\win32\swan\lib"']);
+                fprintf(fid,'%s\n',['set swanbatdir="' hm.d3d_home '\bin\win32\swan\scripts"']);
+                fprintf(fid,'%s\n','set PATH=%swanbatdir%;%swanexedir%;%swanlibdir%;%waveexedir%;%wavelibdir%;%PATH%');
+                fprintf(fid,'%s\n','set PATH=%flowexedir%;%flowlibdir%;%PATH%');
+                fprintf(fid,'%s\n','start %flowexedir%\d_hydro.exe %argfile% > out.scr');
+                fprintf(fid,'%s\n',['%waveexedir%\wave.exe ' model.runid '.mdw 1']);                
+                fprintf(fid,'%s\n','copy running.txt finished.txt');                
                 fclose(fid);
+                
+                % Write xml config file
+                fini=fopen([tmpdir 'config_flow2d3d.xml'],'w');
+                fprintf(fini,'%s\n','<?xml version=''1.0'' encoding=''iso-8859-1''?>');
+                fprintf(fini,'%s\n','<DeltaresHydro start="flow2d3d">');
+                fprintf(fini,'%s\n',['<flow2d3d MDFile = ''' model.runid '.mdf''></flow2d3d>']);
+                fprintf(fini,'%s\n','</DeltaresHydro>');
+                fclose(fini);                
+                
+%                 % running.txt
+%                 fid=fopen([tmpdir 'running.txt'],'wt');
+%                 fprintf(fid,'%s\n',datestr(now,'yyyymmdd HHMMSS'));
+%                 fclose(fid);
+            
             case{'h4'}
 
                 switch lower(model.whiteCapping)

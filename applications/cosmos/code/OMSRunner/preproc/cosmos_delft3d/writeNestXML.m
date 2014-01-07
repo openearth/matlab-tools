@@ -1,4 +1,4 @@
-function writeNestXML(fname,inpdir,runid,datafolder,dataname,wlbndfile,wlbcafile,curbndfile,curbcafile,wlconst,cs,option)
+function writeNestXML(fname,inpdir,runid,datafolder,dataname,wlbndfile,wlbcafile,curbndfile,curbcafile,wlconst,cs,wloption,curoption)
 
 opt.bctTimeStep=10;
 opt.bccTimeStep=30;
@@ -7,7 +7,7 @@ opt.runid=runid;
 opt.csname=cs.name;
 opt.cstype=cs.type;
 
-opt.waterLevel.bc.source=option;
+opt.waterLevel.bc.source=wloption;
 opt.waterLevel.bc.dataFolder=datafolder;
 opt.waterLevel.bc.dataName=dataname;
 opt.waterLevel.bc.bndFile=wlbndfile;
@@ -18,7 +18,7 @@ opt.waterLevel.ic.dataFolder=datafolder;
 opt.waterLevel.ic.dataName=dataname;
 opt.waterLevel.ic.constant=wlconst;
 
-opt.current.bc.source=option;
+opt.current.bc.source=curoption;
 opt.current.bc.dataFolder=datafolder;
 opt.current.bc.dataName=dataname;
 opt.current.bc.bndFile=curbndfile;

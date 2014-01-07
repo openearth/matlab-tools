@@ -17,8 +17,9 @@ switch lower(model.flowNestType)
         wlconst=model.zLevel+model.wlboundarycorrection;
         cs.name=model.coordinateSystem;
         cs.type=model.coordinateSystemType;
-        option=model.oceanmodelnesttype;
-        writeNestXML([tmpdir 'nest.xml'],tmpdir,model.runid,datafolder,dataname,wlbndfile,wlbcafile,curbndfile,curbcafile,wlconst,cs,option);
+        wloption=model.oceanmodelnesttypewl;
+        curoption=model.oceanmodelnesttypecur;
+        writeNestXML([tmpdir 'nest.xml'],tmpdir,model.runid,datafolder,dataname,wlbndfile,wlbcafile,curbndfile,curbcafile,wlconst,cs,wloption,curoption);
         makeBctBccIni('bct','nestxml',[tmpdir 'nest.xml'],'inpdir',tmpdir,'runid',model.runid,'workdir',tmpdir,'cs',cs);
         makeBctBccIni('bcc','nestxml',[tmpdir 'nest.xml'],'inpdir',tmpdir,'runid',model.runid,'workdir',tmpdir,'cs',cs);
         delete([tmpdir 'nest.xml']);

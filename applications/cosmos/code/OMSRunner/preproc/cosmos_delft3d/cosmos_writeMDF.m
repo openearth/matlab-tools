@@ -211,7 +211,11 @@ end
 fprintf(fid,'%s\n','ThetQH= 0.0000000e+000');
 fprintf(fid,'%s\n','Forfuv= #N#');
 fprintf(fid,'%s\n','Forfww= #N#');
-fprintf(fid,'%s\n','Sigcor= #N#');
+if model.sigcor
+    fprintf(fid,'%s\n','Sigcor= #Y#');
+else
+    fprintf(fid,'%s\n','Sigcor= #N#');
+end
 fprintf(fid,'%s\n','Trasol= #Cyclic-method#');
 fprintf(fid,'%s\n',['Momsol= #' model.momSol '#']);
 fprintf(fid,'%s\n',['Filsta= #' model.name '.obs#']);

@@ -25,9 +25,9 @@ switch lower(hm.models(mm).type)
             trefxbeach=hm.models(m).tFlowStart;
             morfac=hm.models(m).morFac;
 
-            MakeSpecList(outputdir,tstart,dt,runid,tmpdir,outfile,trefxbeach,hm.models(m).runTime,morfac);
-
-            ok=ExtractSWANNestSpec(outputdir,tmpdir,runid,trefxbeach,trefxbeach+hm.models(m).runTime/1440,hm,mm,m);
+            [ok,times,files]=ExtractSWANNestSpec(outputdir,tmpdir,runid,trefxbeach,trefxbeach+hm.models(m).runTime/1440,hm,mm,m);
+            
+            cosmos_makeSpecList(tmpdir,outfile,times,files);
             
             disp('Compressing sp2 files ...');
             for j=1:np

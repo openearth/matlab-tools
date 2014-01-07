@@ -1,4 +1,4 @@
-function ok=ExtractSWANNestSpec(dr,outdir,runid,starttime,stoptime,varargin)
+function [ok,times,fnames]=ExtractSWANNestSpec(dr,outdir,runid,starttime,stoptime,varargin)
 
 convc=0;
 if nargin>3
@@ -13,6 +13,8 @@ lst=dir([dr runid '*.sp2']);
 n=length(lst);
 
 ok=zeros(hm.models(m2).nrProfiles,1)+1;
+
+nt=0;
 
 for i=1:n
     
@@ -31,9 +33,11 @@ for i=1:n
         end
     end
     
-    it=1;
+    it=1;    
     
     if spec.time(it).time>=starttime && spec.time(it).time<=stoptime
+        
+        nt=nt+1;
         
         % Writing
         
@@ -42,6 +46,9 @@ for i=1:n
             if hm.models(m2).profile(jj).run
                 
                 name=hm.models(m2).profile(jj).name;
+                
+                times(nt,jj)=spec.time(it).time;
+                fnames{nt,jj}=fname;
                 
                 fi2=fopen([outdir name filesep fname],'wt');
                 

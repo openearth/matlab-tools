@@ -1,4 +1,4 @@
-function cosmos_makeSpecList(outdir,outfile,times,files,dt)
+function cosmos_makeSpecList(outdir,outfile,times,files)
 %function MakeSpecList(inpdir,tstart,dt,runid,outdir,outfile,trefxbeach,runtime,morfac)
 
 % MakeSpecList(inpdir,tstart,dt,runid,imodel,outdir,fout,trefxbeach,morfac)
@@ -12,11 +12,14 @@ function cosmos_makeSpecList(outdir,outfile,times,files,dt)
 % trefxbeach : reference time xbeach (e.g. datenum(2008,5,10))
 % morfac : MORFAC
 
+
+dt=86400*(times(2,1)-times(1,1));
+
 fid=fopen([outdir outfile],'wt');
 fprintf(fid,'%s\n','FILELIST');
 for it=1:size(times,1)
-    fname=strrep(files{it,1},' ','');
-    fprintf(fid,'%8.1f %8.1f %s\n',dt*60,1.0,fname);
+    fname=files{it,1};
+    fprintf(fid,'%8.1f %8.1f %s\n',dt,1.0,fname);
 end
 fclose(fid);
 

@@ -21,7 +21,7 @@ if isempty(model.flowRstFile) && model.makeIniFile
     wlconst=model.zLevel+model.wlboundarycorrection;
     cs.name=model.coordinateSystem;
     cs.type=model.coordinateSystemType;
-    writeNestXML([tmpdir 'nest.xml'],tmpdir,model.runid,datafolder,dataname,wlbndfile,wlbcafile,curbndfile,curbcafile,wlconst,cs,'file');
+    writeNestXML([tmpdir 'nest.xml'],tmpdir,model.runid,datafolder,dataname,wlbndfile,wlbcafile,curbndfile,curbcafile,wlconst,cs,'file','file');
     disp('Making ini file ...');
     makeBctBccIni('ini','nestxml',[tmpdir 'nest.xml'],'inpdir',tmpdir,'runid',model.runid,'workdir',tmpdir,'cs',cs);
     delete([tmpdir 'nest.xml']);
@@ -322,6 +322,10 @@ for i=1:hm.nrModels
                     fclose(fi2);
 
                     system([hm.exeDir 'nesthd1.exe < ' hm.tempDir 'nesthd1.inp']);
+                    
+                    if ~isdir(nstdir)
+                        mkdir(nstdir);
+                    end
 
                     [status,message,messageid]=movefile([hm.tempDir hm.models(i).name '.nst'],nstdir,'f');
                     [status,message,messageid]=movefile([hm.tempDir 'temp.obs'],[nstdir model.name '.obs'],'f');
