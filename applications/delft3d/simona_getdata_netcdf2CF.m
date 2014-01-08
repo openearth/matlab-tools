@@ -16,13 +16,13 @@ function simona_getdata_netcdf2CF(ncfile0)
 
 OPT.xy     = 0; % 0 removed coord attribute but does not remove XZETA/YZETA arrays itself
 OPT.xybnds = 0; % ADAGUC can work with [x,y] coordinates only by mapping on-the-fly, THREDDS cannot map on-the-fly
-
 OPT.ll     = 1; % required by THREDDS and Panoply
 OPT.llbnds = 1; % THREDDS needs [lat,lon] matrices to be included
+OPT.epsg   = 28992;
 
-% Panoply only works when xy=0, xybnds=0, ll=1, llbnds=1
 
 if OPT.xy & OPT.ll
+   % Panoply only works when xy=0, xybnds=0, ll=1, llbnds=1
    warning('Panoply cannot handle coords = "lon lat XZETA YZETA"')
 end
 
@@ -119,7 +119,7 @@ end
  nc_attput(ncfile,'YDEP'  ,'grid_mapping' ,'CRS'); % add grid_mapping attribute
  nc_attput(ncfile,'YDEP'  ,'comment'      ,'XDEP and XZETA can''t be same size: document or remove dummy rows/columns');
  
- attr = nc_cf_grid_mapping(28992);
+ attr = nc_cf_grid_mapping(OPT.epsg);
  attr(end).Value = 'these values differ per coordinate system, for SIMONA this is mostly one of 3 flavours: Amersfoort/RD or UTM31/ED50 or LATLON/WGS84/ETRS89';
  nc  = struct('Name','CRS', ...
                      'Datatype'   , 'int32', ...
@@ -140,7 +140,7 @@ end
  
   G.XZETA([1 end],:)=NaN;G.XZETA(:,[1 end])=NaN;
   G.XZETA([1 end],:)=NaN;G.YZETA(:,[1 end])=NaN;
- [G.LONZETA,G.LATZETA] = convertCoordinates(G.XZETA,G.YZETA,'CS1.code',28992,'CS2.code',4326);
+ [G.LONZETA,G.LATZETA] = convertCoordinates(G.XZETA,G.YZETA,'CS1.code',OPT.epsg,'CS2.code',4326);
  
      attr(1) = struct('Name','_FillValue'   ,'Value',9.969209968386869e+36);
      attr(2) = struct('Name','missing_value','Value',9.969209968386869e+36);
@@ -188,7 +188,7 @@ end
 
    
    if OPT.llbnds
-  [G.LONDEP ,G.LATDEP ] = convertCoordinates(G.XDEP ,G.YDEP ,'CS1.code',28992,'CS2.code',4326);
+  [G.LONDEP ,G.LATDEP ] = convertCoordinates(G.XDEP ,G.YDEP ,'CS1.code',OPT.epsg,'CS2.code',4326);
    end
  nc_adddim(ncfile,'bounds',4)
  end

@@ -14,19 +14,21 @@ import netCDF4
 import shutil
 import numpy
 import os
+import os
+#TODO# import pyproj
+import openearthtools.io.netcdf.CF as CF
 
 ncfile0 = 'SDSddhzee.nc'
 
 OPT = {}
-OPT['xy']     = False # 0 removed coord attribute but does not remove XZETA/YZETA arrays itself
-OPT['xybnds'] = False # ADAGUC can work with [x,y] coordinates only by mapping on-the-fly, THREDDS cannot map on-the-fly
-
-OPT['ll']     = True  # required by THREDDS and Panoply
-OPT['llbnds'] = True  # THREDDS needs [lat,lon] matrices to be included
-
-# Panoply only works when xy=0, xybnds=0, ll=1, llbnds=1
+OPT['xy']           = True  # 0 removed coord attribute but does not remove XZETA/YZETA arrays itself
+OPT['xybnds']       = True  # ADAGUC can work with [x,y] coordinates only by mapping on-the-fly, THREDDS cannot map on-the-fly
+OPT['ll']           = True  # required by THREDDS and Panoply
+OPT['llbnds']       = True  # THREDDS needs [lat,lon] matrices to be included
+OPT['proj4_params'] = '+proj=sterea +lat_0=52.15616055555555 +lon_0=5.38763888888889 +k=0.999908 +x_0=155000 +y_0=463000 +ellps=bessel +units=m +towgs84=565.4174,50.3319,465.5542,-0.398957388243134,0.343987817378283,-1.87740163998045,4.0725 +no_defs' # OPT['epsg'] = 28992 # wrong in database
 
 if OPT['xy'] & OPT['ll']:
+   # Panoply only works when xy=0, xybnds=0, ll=1, llbnds=1
    print 'Panoply cannot handle coords = "lon lat XZETA YZETA"'
    
 ncfile  = os.path.split(ncfile0)[0] + '_xy_' + str(OPT['xy']) + str(OPT['xybnds']) + '_ll_' + str(OPT['ll']) + str(OPT['llbnds']) + '.nc'
@@ -146,7 +148,9 @@ if OPT['ll']:
   XZETA[:,-1] = numpy.nan
   YZETA[:,-1] = numpy.nan
   
-#TODO# [LONZETA,LATZETA] = convertCoordinates(XZETA,YZETA,'CS1.code',28992,'CS2.code',4326
+  #TODO# srs1 = pyproj.Proj(OPT['proj4_params'])
+  #TODO# srs2 = pyproj.Proj(init='epsg:4326' ) # wgs84
+  #TODO# LONZETA,LATZETA = pyproj.transform(srs1, srs2, XZETA+0.,YZETA+0.) # Do add 0. to avoid trunc issues. 
  
   nc_lat = f.createVariable('lat' , 'f8', ('M','N'),zlib=True,fill_value=numpy.nan) # zlib very effetive for loads of nans  (dry)
   nc_lat.missing_value = 9.969209968386869e+36
@@ -175,33 +179,40 @@ if OPT['ll']:
 ## get coordinates to determine bounds
 #  note: only 1 dummy row/col, whereas centers have two
 
-  if (OPT['xy'] and OPT['xybnds']) or (OPT['ll'] and OPT['llbnds']):
+if (OPT['xy'] and OPT['xybnds']) or (OPT['ll'] and OPT['llbnds']):
 
    XDEP  = f.variables['XDEP'][:]
    YDEP  = f.variables['YDEP'][:]
    
    if OPT['llbnds']:
-#TODO# [LONDEP ,LATDEP ] = convertCoordinates(XDEP ,YDEP ,'CS1.code',28992,'CS2.code',4326
      pass
+
+#TODO#      srs1 = pyproj.Proj(OPT['proj4_params'])
+#TODO#      srs2 = pyproj.Proj(init='epsg:4326' ) # wgs84
+#TODO#      LONDEP,LATDEP = pyproj.transform(srs1, srs2, XDEP+0.,YDEP+0.) # Do add 0. to avoid trunc issues. 
 
    f.createDimension('bounds',4)
 
-
 ## (lat,lon) bounds
+   print 'a'
+   if (OPT['ll'] and OPT['llbnds']):
+     print 'b'
+  
+#TODO#      shp = numpy.shape(LONDEP) # XDEP has not extra dummy column, so cor2bounds() does not need to remove it
+#TODO#      lon_bnds = numpy.zeros((shp[0],shp[1],4)))
+#TODO#      lat_bnds = numpy.zeros((shp[0],shp[1],4)))
 
-  if (OPT['ll'] and OPT['llbnds']):
+#TODO#      lon_bnds[1:,1:,:] = CF.cor2bounds(LONDEP)
+#TODO#      lat_bnds[1:,1:,:] = CF.cor2bounds(LATDEP)
 
-#TODO# lon_bnds = nc_cf_cor2bounds(addrowcol(LONDEP,-1,-1,nan)
-#TODO# lat_bnds = nc_cf_cor2bounds(addrowcol(LATDEP,-1,-1,nan)
-
-     nc_lonb = f.createVariable('lon_bnds' , 'f8', ('bounds','M','N'),zlib=True,fill_value=numpy.nan) # zlib very effetive due to loads of nans  (anypixel)
+     nc_lonb = f.createVariable('lon_bnds' , 'f8', ('N','M','bounds'),zlib=True,fill_value=numpy.nan) # zlib very effective when much land
      f.variables['lon_bnds'].missing_value = 9.969209968386869e+36
      f.variables['lon_bnds'].standard_name = 'latitude'
      f.variables['lon_bnds'].units         = 'degrees_north'
      f.variables['lon_bnds'].long_name     = 'latitude corners'
 #TODO# nc_lonb[:] = lon_bnds[:]
 
-     nc_latb = f.createVariable('lat_bnds' , 'f8', ('bounds','M','N'),zlib=True,fill_value=numpy.nan) # zlib very effetive due to loads of nans  (anypixel)
+     nc_latb = f.createVariable('lat_bnds' , 'f8', ('N','M','bounds'),zlib=True,fill_value=numpy.nan) # zlib very effective when much land
      f.variables['lat_bnds'].missing_value = 9.969209968386869e+36
      f.variables['lat_bnds'].standard_name = 'longitude'
      f.variables['lat_bnds'].units         = 'degrees_east'
@@ -210,13 +221,16 @@ if OPT['ll']:
  
 ## (x,y) bounds
 
-  if (OPT['xy'] & OPT['xybnds']):
+   if (OPT['xy'] & OPT['xybnds']):
 
-#TODO# XZETA_bnds = nc_cf_cor2bounds(addrowcol(XDEP,-1,-1,nan) # add extra XDEP dummy row to get bounds for XZETA dummy row
-#TODO# YZETA_bnds = nc_cf_cor2bounds(addrowcol(YDEP,-1,-1,nan)
+     shp = numpy.shape(XDEP) # XDEP has not extra dummy column, so cor2bounds() does not need to remove it
+     XZETA_bnds = numpy.zeros((shp[0],shp[1],4))
+     YZETA_bnds = numpy.zeros((shp[0],shp[1],4))
 
-     nc_xb = f.createVariable('XZETA_bnds' , 'f8', ('bounds','M','N'),zlib=True,fill_value=numpy.nan) # zlib very effetive due to loads of nans  (anypixel)
-     f.variables['XZETA_bnds']._FillValue    = 9.969209968386869e+36
+     XZETA_bnds[1:,1:,:] = CF.cor2bounds(XDEP)
+     YZETA_bnds[1:,1:,:] = CF.cor2bounds(YDEP)
+
+     nc_xb = f.createVariable('XZETA_bnds' , 'f8', ('N','M','bounds'),zlib=True,fill_value=numpy.nan) # zlib very effective when much land
      f.variables['XZETA_bnds'].missing_value = 9.969209968386869e+36
      f.variables['XZETA_bnds'].standard_name = 'projection_x_coordinate'
      f.variables['XZETA_bnds'].units         = 'm'
@@ -224,8 +238,7 @@ if OPT['ll']:
 
      nc_xb[:] = XZETA_bnds[:]
 
-     nc_yb = f.createVariable('YZETA_bnds' , 'f8', ('bounds','M','N'),zlib=True,fill_value=numpy.nan) # zlib very effetive due to loads of nans  (anypixel)
-     f.variables['YZETA_bnds']._FillValue    = 9.969209968386869e+36
+     nc_yb = f.createVariable('YZETA_bnds' , 'f8', ('N','M','bounds'),zlib=True,fill_value=numpy.nan) # zlib very effective when much land
      f.variables['YZETA_bnds'].missing_value = 9.969209968386869e+36
      f.variables['YZETA_bnds'].standard_name = 'projection_y_coordinate'
      f.variables['YZETA_bnds'].units         = 'm'
