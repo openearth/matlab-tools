@@ -102,9 +102,11 @@ handles.Model(md).Input(id).timeZone=MDF.tzone;
 if ~isempty(MDF.sub1)
     if MDF.sub1(1)=='S'
         handles.Model(md).Input(id).salinity.include=1;
+        handles.Model(md).Input(id).constituents=1;
     end
     if MDF.sub1(2)=='T'
         handles.Model(md).Input(id).temperature.include=1;
+        handles.Model(md).Input(id).constituents=1;
     end
     if MDF.sub1(3)=='W'
         handles.Model(md).Input(id).wind=1;

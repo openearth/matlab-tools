@@ -110,12 +110,13 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
         nrharmo=handles.Model(md).Input(id).nrHarmonicComponents;
         depthZ=handles.Model(md).Input(id).depthZ;
         kcs=handles.Model(md).Input(id).kcs;
+        kmax=handles.Model(md).Input(id).KMax;
 
         for ib=1:nb
             % Initialize
             handles.Model(md).Input(id).openBoundaries=delft3dflow_setDefaultBoundaryType(handles.Model(md).Input(id).openBoundaries,ib);
             handles.Model(md).Input(id).openBoundaries=delft3dflow_initializeOpenBoundary(handles.Model(md).Input(id).openBoundaries,ib, ...
-                t0,t1,nrsed,nrtrac,nrharmo,x,y,depthZ,kcs);
+                t0,t1,nrsed,nrtrac,nrharmo,x,y,depthZ,kcs,kmax);
             % Set boundary name in one cell array
             handles.Model(md).Input(ad).openBoundaryNames{ib}=handles.Model(md).Input(id).openBoundaries(ib).name;
         end

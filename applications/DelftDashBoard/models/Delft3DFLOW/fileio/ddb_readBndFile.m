@@ -73,13 +73,14 @@ x=handles.Model(md).Input(id).gridX;
 y=handles.Model(md).Input(id).gridY;
 z=handles.Model(md).Input(id).depthZ;
 kcs=handles.Model(md).Input(id).kcs;
+kmax=handles.Model(md).Input(id).KMax;
 
 % Read boundaries into structure
 openBoundaries=delft3dflow_readBndFile(handles.Model(md).Input(id).bndFile);
 
 % Initialize individual boundary sections
 for i=1:length(openBoundaries)
-    openBoundaries=delft3dflow_initializeOpenBoundary(openBoundaries,i,t0,t1,nrsed,nrtrac,nrharmo,x,y,z,kcs);
+    openBoundaries=delft3dflow_initializeOpenBoundary(openBoundaries,i,t0,t1,nrsed,nrtrac,nrharmo,x,y,z,kcs,kmax);
 end
 
 % Copy open boundaries to Dashboard structure

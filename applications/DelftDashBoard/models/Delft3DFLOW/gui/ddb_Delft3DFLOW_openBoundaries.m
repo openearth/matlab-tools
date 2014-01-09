@@ -443,9 +443,10 @@ if ok==1
     y=handles.Model(md).Input(ad).gridY;
     depthZ=handles.Model(md).Input(ad).depthZ;
     kcs=handles.Model(md).Input(ad).kcs;
+    kmax=handles.Model(md).Input(ad).KMax;
     
     handles.Model(md).Input(ad).openBoundaries=delft3dflow_initializeOpenBoundary(handles.Model(md).Input(ad).openBoundaries,iac, ...
-        t0,t1,nrsed,nrtrac,nrharmo,x,y,depthZ,kcs);
+        t0,t1,nrsed,nrtrac,nrharmo,x,y,depthZ,kcs,kmax);
     
     handles.Model(md).Input(ad).openBoundaries(iac).name=['(' num2str(m1) ',' num2str(n1) ')...(' num2str(m2) ',' num2str(n2) ')'];
     handles.Model(md).Input(ad).openBoundaryNames{iac}=handles.Model(md).Input(ad).openBoundaries(iac).name;

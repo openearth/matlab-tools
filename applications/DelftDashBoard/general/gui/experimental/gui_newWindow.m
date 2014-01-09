@@ -19,6 +19,7 @@ createinput=[];
 menuitem=[];
 getfcn=@gui_getUserData;
 setfcn=@gui_setUserData;
+rsz=1;
 
 for ii=1:length(varargin)
     if ischar(varargin{ii})
@@ -53,6 +54,8 @@ for ii=1:length(varargin)
                 createinput=varargin{ii+1};
             case{'color'}
                 color=varargin{ii+1};
+            case{'resize'}
+                rsz=varargin{ii+1};
         end
     end
 end
@@ -93,6 +96,10 @@ else
     else
         figh=MakeNewWindow(ttl,sz);
     end
+end
+
+if ~rsz
+    set(figh,'Resize','off');
 end
 
 if ~isempty(color)

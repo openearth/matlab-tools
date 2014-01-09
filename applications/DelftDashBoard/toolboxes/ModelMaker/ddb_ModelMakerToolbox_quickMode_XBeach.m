@@ -267,11 +267,16 @@ if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=npmax
         yg=yy;
     end
     
-    [x,y,z]=MakeRectangularGrid(xori,yori,nx,ny,dx,dy,rot,zmax,xg,yg,zz);
+    %
+    
+    % [x,y,z]=MakeRectangularGrid(xori,yori,nx,ny,dx,dy,rot,zmax,xg,yg,zz);
+    
+    
+    [x,y,z]=makexbeachgrid(xori,yori,nx,ny,dx,dy,rot,zmax,xg,yg,zz);
     
     close(wb);
     
-    handles=ddb_generateGridDFlowFM(handles,ad,x,y,z);
+    handles=ddb_generateGridXBeach(handles,ad,x,y,z);
     
     setHandles(handles);
     

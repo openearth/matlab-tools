@@ -143,9 +143,10 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
                     y=handles.Model(md).Input(id).gridY;
                     depthZ=handles.Model(md).Input(id).depthZ;
                     kcs=handles.Model(md).Input(id).kcs;
+                    kmax=handles.Model(md).Input(id).KMax;
                     
                     handles.Model(md).Input(id).openBoundaries=delft3dflow_initializeOpenBoundary(handles.Model(md).Input(id).openBoundaries,nb, ...
-                        t0,t1,nrsed,nrtrac,nrharmo,x,y,depthZ,kcs);
+                        t0,t1,nrsed,nrtrac,nrharmo,x,y,depthZ,kcs,kmax);
                     
                     handles.Model(md).Input(id).openBoundaries(nb).name=[dir{j} num2str(nd)];
                 end

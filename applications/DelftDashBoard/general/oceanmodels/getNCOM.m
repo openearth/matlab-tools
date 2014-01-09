@@ -89,6 +89,10 @@ for i=1:length(varargin)
     end
 end
 
+if ~isdir(outdir)
+    mkdir(outdir);
+end
+
 % Download NCOM data
 
 % Lon, lat, depth
@@ -126,7 +130,7 @@ if nargout==3
     varargout{1}=lon;
     varargout{2}=lat;
     varargout{3}=d;
-    return
+%    return
 end
 
 % Times

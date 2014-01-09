@@ -227,13 +227,14 @@ if isfield(flow,'bndFile')
     y=flow.gridY;
     z=flow.depthZ;
     kcs=flow.kcs;
+    kmax=flow.KMax;
     
     % Read boundaries into structure
     openBoundaries=delft3dflow_readBndFile([inpdir flow.bndFile]);
     
     % Initialize individual boundary sections
     for i=1:length(openBoundaries)
-        openBoundaries=delft3dflow_initializeOpenBoundary(openBoundaries,i,t0,t1,nrsed,nrtrac,nrharmo,x,y,z,kcs,'coordinatesystem',flow.cs);
+        openBoundaries=delft3dflow_initializeOpenBoundary(openBoundaries,i,t0,t1,nrsed,nrtrac,nrharmo,x,y,z,kcs,kmax,'coordinatesystem',flow.cs);
     end
     
 end

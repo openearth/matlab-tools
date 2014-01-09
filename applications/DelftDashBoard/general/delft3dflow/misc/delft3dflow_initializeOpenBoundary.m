@@ -1,4 +1,4 @@
-function openBoundaries = delft3dflow_initializeOpenBoundary(openBoundaries, nb, t0, t1, nrsed, nrtrac, nrharmo, x, y, depthZ, kcs, varargin)
+function openBoundaries = delft3dflow_initializeOpenBoundary(openBoundaries, nb, t0, t1, nrsed, nrtrac, nrharmo, x, y, depthZ, kcs, kmax, varargin)
 %DELFT3DFLOW_INITIALIZEOPENBOUNDARY  One line description goes here.
 %
 %   More detailed description goes here.
@@ -94,10 +94,20 @@ openBoundaries(nb).alphau=alphau;
 openBoundaries(nb).alphav=alphav;
 openBoundaries(nb).orientation=orientation;
 
+
+zeros2d=zeros(2,1);
+zeros3d=zeros(2,kmax);
+
 % Timeseries
 openBoundaries(nb).timeSeriesT=[t0;t1];
-openBoundaries(nb).timeSeriesA=[0.0;0.0];
-openBoundaries(nb).timeSeriesB=[0.0;0.0];
+switch lower(openBoundaries(nb).profile)
+    case{'3d-profile'}
+        openBoundaries(nb).timeSeriesA=zeros3d;
+        openBoundaries(nb).timeSeriesB=zeros3d;
+    otherwise
+        openBoundaries(nb).timeSeriesA=zeros2d;
+        openBoundaries(nb).timeSeriesB=zeros2d;
+end
 openBoundaries(nb).nrTimeSeries=2;
 
 % Harmonic

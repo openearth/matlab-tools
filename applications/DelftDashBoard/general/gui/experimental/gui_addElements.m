@@ -369,13 +369,13 @@ for i=1:length(element)
                 element(i).element.handle=uicontrol(figh,'Style','pushbutton','String','Coordinate System','Position',elpos);
 
                 elpos=pos;
-                elpos(3)=70;
+                elpos(3)=90;
                 elpos(4)=20;
                 element(i).element.prjhandle=uicontrol(figh,'Style','radiobutton','String','Projected','Position',elpos,'Enable','off','BackgroundColor',bgc);
 
                 elpos=pos;
-                elpos(1)=elpos(1)+80;
-                elpos(3)=80;
+                elpos(1)=elpos(1)+90;
+                elpos(3)=100;
                 elpos(4)=20;
                 element(i).element.geohandle=uicontrol(figh,'Style','radiobutton','String','Geographic','Position',elpos,'Enable','off','BackgroundColor',bgc);
                 
