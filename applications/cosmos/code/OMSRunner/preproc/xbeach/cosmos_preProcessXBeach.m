@@ -20,15 +20,16 @@ switch model.runEnv
     
     case{'win32'}
         
-        % copy xbeach executables
-        [success,message,messageid]=copyfile([hm.exeDir 'xbeach_noMPI.exe'],tmpdir,'f');
-        
         % Make run batch file
         fid=fopen([tmpdir 'run.bat'],'wt');
-        fprintf(fid,'%s\n','xbeach_noMPI.exe');
+        fprintf(fid,'%s\n','@ echo off');
+        fprintf(fid,'%s\n','DATE /T > running.txt');
+        fprintf(fid,'%s\n',[hm.xbeach_home filesep 'xbeach.exe']);
         fprintf(fid,'%s\n','del *.exe');
         fprintf(fid,'%s\n','del E_*.sp2');
         fprintf(fid,'%s\n','del q_*.sp2');
+        fprintf(fid,'%s\n','move running.txt finished.txt');                
+        fprintf(fid,'%s\n','exit');
         fclose(fid);
         
     case{'h4'}

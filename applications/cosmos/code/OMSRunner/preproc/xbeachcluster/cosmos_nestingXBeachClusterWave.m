@@ -18,12 +18,9 @@ switch lower(hm.models(mm).type)
 
             disp('Nesting in SWAN ...');
 
-            tstart=hm.models(mm).tWaveStart;
-            dt=hm.models(mm).wavmTimeStep;
             runid=hm.models(m).runid;
             outfile='sp2list.txt';
             trefxbeach=hm.models(m).tFlowStart;
-            morfac=hm.models(m).morFac;
 
             [ok,times,files]=ExtractSWANNestSpec(outputdir,tmpdir,runid,trefxbeach,trefxbeach+hm.models(m).runTime/1440,hm,mm,m);
             
@@ -35,7 +32,6 @@ switch lower(hm.models(mm).type)
                     [status,message,messageid]=copyfile([tmpdir outfile],[tmpdir hm.models(m).profile(j).name],'f');
                 end
                 system([hm.exeDir 'zip.exe -q -j ' tmpdir hm.models(m).profile(j).name filesep 'sp2.zip ' tmpdir hm.models(m).profile(j).name filesep '*.sp2']);
-%                zip([tmpdir hm.models(m).profile(j).name filesep 'sp2.zip'],[tmpdir hm.models(m).profile(j).name filesep '*.sp2']);
                 delete([tmpdir hm.models(m).profile(j).name filesep '*.sp2']);
             end
             

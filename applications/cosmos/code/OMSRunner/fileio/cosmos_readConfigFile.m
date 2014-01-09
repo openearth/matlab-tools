@@ -58,6 +58,7 @@ hm.delay=8; % Delay in hours
 hm.runEnv='h4i7';
 hm.d3d_home='c:\delft3d';
 hm.ww3_home='c:\wavewatch3';
+hm.xbeach_home='c:\xbeach';
 
 for i=1:n
     switch lower(txt{i}),
@@ -99,6 +100,8 @@ for i=1:n
             hm.d3d_home=txt{i+1};
         case {'ww3_home'}
             hm.ww3_home=txt{i+1};
+        case {'xbeach_home'}
+            hm.xbeach_home=txt{i+1};
     end
 end
 

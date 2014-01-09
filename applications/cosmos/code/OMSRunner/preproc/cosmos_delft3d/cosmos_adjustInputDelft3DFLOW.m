@@ -345,7 +345,7 @@ for i=1:hm.nrModels
                 for j=1:nrobs
                     % Check for duplicates
                     mobs=ObsPoints(j).m;
-                    nobs=ObsPoints(j).N;
+                    nobs=ObsPoints(j).n;
 
                     ii=find(obspm==mobs & obspn==nobs, 1);
 

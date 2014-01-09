@@ -1,4 +1,4 @@
-function writeWW3batchWin32(fname,names,datstr,trst1,trst2,exedir,zipdir)
+function writeWW3batchWin32(fname,names,datstr,trst1,trst2,exedir,zipdr)
 
 fid=fopen(fname,'wt');
 
@@ -6,7 +6,7 @@ fprintf(fid,'%s\n','DATE /T > running.txt');
 
 %% Unzip restart file (if necessary)
 if ~isempty(trst1)
-    fprintf(fid,'%s\n',['"' zipdir '\unzip" restart.ww3.' datestr(trst1,'yyyymmdd.HHMMSS') '.zip']);
+    fprintf(fid,'%s\n',['"' zipdr 'unzip" restart.ww3.' datestr(trst1,'yyyymmdd.HHMMSS') '.zip']);
     fprintf(fid,'%s\n',['move restart.ww3.' datestr(trst1,'yyyymmdd.HHMMSS') ' restart.ww3']);    
 end
 
@@ -29,9 +29,11 @@ end
 %% Zip restart file
 if ~isempty(trst2)
     fprintf(fid,'%s\n',['move restart1.ww3 restart.ww3.' datestr(trst2,'yyyymmdd.HHMMSS')]);    
-    fprintf(fid,'%s\n',['"' zipdir '\unzip" restart.ww3.' datestr(trst2,'yyyymmdd.HHMMSS') '.zip restart.ww3.' datestr(trst2,'yyyymmdd.HHMMSS')]);    
+    fprintf(fid,'%s\n',['"' zipdr 'zip" restart.ww3.' datestr(trst2,'yyyymmdd.HHMMSS') '.zip restart.ww3.' datestr(trst2,'yyyymmdd.HHMMSS')]);    
 end
 
 fprintf(fid,'%s\n','move running.txt finished.txt');
+fprintf(fid,'%s\n','');
+fprintf(fid,'%s\n','exit');
 
 fclose(fid);

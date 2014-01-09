@@ -4,7 +4,7 @@ tmpdir=hm.tempDir;
 
 mm=hm.models(m).waveNestModelNr;
 
-outputdir=[hm.models(mm).dir 'archive' hm.cycStr filesep 'output' filesep];
+outputdir=[hm.models(mm).dir 'archive' filesep 'output' filesep hm.cycStr filesep];
 
 switch lower(hm.models(mm).type)
 
@@ -16,24 +16,12 @@ switch lower(hm.models(mm).type)
 
             disp('Nesting in SWAN ...');
             
-            [success,message,messageid]=copyfile([outputdir hm.models(m).runid '*.sp2'],tmpdir,'f');
-            
-            % Get rid of spaces in sp2 file names
-            flist=dir([tmpdir '*.sp2']);
-            for i=1:length(flist)
-                newname=strrep(flist(i).name,' ','');
-                movefile([tmpdir flist(i).name],[tmpdir newname]);
-            end
-
-            tstart=hm.models(mm).tWaveStart;
-            dt=hm.models(mm).wavmTimeStep;
             runid=hm.models(m).runid;
             outfile='waves.txt';
             trefxbeach=hm.models(m).tFlowStart;
-            runtime=hm.models(m).runTime;
-            morfac=hm.models(m).morFac;
-            
-            MakeSpecList(tmpdir,tstart,dt,runid,tmpdir,outfile,trefxbeach,runtime,morfac);
+
+            [ok,times,files]=ExtractSWANNestSpec(outputdir,tmpdir,runid,trefxbeach,trefxbeach+hm.models(m).runTime/1440,hm,mm,m);
+            cosmos_makeSpecList(tmpdir,outfile,times,files);
             
             parfile=[tmpdir 'params.txt'];
             findreplace(parfile,'INSTATNR','5');

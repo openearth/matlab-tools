@@ -12,7 +12,13 @@ lst=dir([dr runid '*.sp2']);
 
 n=length(lst);
 
-ok=zeros(hm.models(m2).nrProfiles,1)+1;
+if strcmpi(hm.models(m2).type,'xbeachcluster')
+    nrprofiles=hm.models(m2).nrProfiles;
+else
+    nrprofiles=1;
+end
+
+ok=zeros(nrprofiles,1)+1;
 
 nt=0;
 
@@ -41,16 +47,24 @@ for i=1:n
         
         % Writing
         
-        for jj=1:hm.models(m2).nrProfiles
+        for jj=1:nrprofiles
             
-            if hm.models(m2).profile(jj).run
-                
-                name=hm.models(m2).profile(jj).name;
+            irun=1;
+            
+            if strcmpi(hm.models(m2).type,'xbeachcluster')
+                irun=hm.models(m2).profile(jj).run;
+                flname=[outdir hm.models(m2).profile(jj).name filesep fname];
+            else
+                % Regular xbeach model
+                flname=[outdir fname];
+            end
+            
+            if irun
                 
                 times(nt,jj)=spec.time(it).time;
                 fnames{nt,jj}=fname;
-                
-                fi2=fopen([outdir name filesep fname],'wt');
+                                
+                fi2=fopen(flname,'wt');
                 
                 fprintf(fi2,'%s\n','SWAN   1                                Swan standard spectral file, version');
                 fprintf(fi2,'%s\n','$   Data produced by SWAN version 40.51AB             ');
