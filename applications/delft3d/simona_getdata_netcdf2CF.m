@@ -14,12 +14,11 @@ function simona_getdata_netcdf2CF(ncfile0)
 % TODO
 % http://wiki.esipfed.org/index.php/Attribute_Convention_for_Data_Discovery_%28ACDD%29
 
-OPT.xy     = 0; % 0 removed coord attribute but does not remove XZETA/YZETA arrays itself
-OPT.xybnds = 0; % ADAGUC can work with [x,y] coordinates only by mapping on-the-fly, THREDDS cannot map on-the-fly
+OPT.xy     = 1; % 0 removed coord attribute but does not remove XZETA/YZETA arrays itself
+OPT.xybnds = 1; % ADAGUC can work with [x,y] coordinates only by mapping on-the-fly, THREDDS cannot map on-the-fly
 OPT.ll     = 1; % required by THREDDS and Panoply
 OPT.llbnds = 1; % THREDDS needs [lat,lon] matrices to be included
 OPT.epsg   = 28992;
-
 
 if OPT.xy & OPT.ll
    % Panoply only works when xy=0, xybnds=0, ll=1, llbnds=1
@@ -27,32 +26,31 @@ if OPT.xy & OPT.ll
 end
 
 ncfile  = [filepathstrname(ncfile0),'_xy_',num2str(OPT.xy),num2str(OPT.xybnds),'_ll_',num2str(OPT.ll),num2str(OPT.llbnds),'.nc'];
+coordinate_system = nc_attget(ncfile0,nc_global,'coordinate_system');
 
-coords = '';
-if OPT.ll
-   coords  = [coords ' lon lat'];
+coords  = ['YZETA XZETA']; % contains lat,lon if coordinate_system='WGS84'
+if OPT.ll & ~strcmpi(coordinate_system,'WGS84')
+   coords  = [coords ' lon lat']; % we'll have to add lon lat
 end
-if OPT.xy
-   coords  = [coords ' XZETA YZETA'];
-end
+
 
 copyfile(ncfile0,ncfile);
 
 nc_dump(ncfile);
 
  nc_attput(ncfile,nc_global,'Conventions','CF-1.6');
- nc_attput(ncfile,nc_global,'coordinate_system','THIS ATTRIBUTE SHOULD BE REPLACED BY NEW VARIABLE "CRS"');
  nc_attput(ncfile,nc_global,'cdm_data_type','Grid');
 
 % make time small caps
-
+if nc_isvar(ncfile,'TIME') % check for spherical
  nc_attput(ncfile,'TIME'  ,'standard_name','time');
+end
  
  nc_attput(ncfile,'SEP'   ,'grid_mapping' ,'CRS'); % add grid_mapping attribute
  nc_attput(ncfile,'SEP'   ,'coordinates'  ,coords); % connect CENTER (x,y) to CENTER matrix
 
  nc_attput(ncfile,'H'     ,'standard_name','sea_floor_depth_below_sea_level'); % change
- nc_attput(ncfile,'H'     ,'coordinates'  ,'XDEP YDEP'); % connect CORNER (x,y) to CORNER matrix (is H at corners???)
+ nc_attput(ncfile,'H'     ,'coordinates'  ,'YDEP XDEP'); % connect CORNER (x,y) to CORNER matrix (is H at corners???)
  nc_attput(ncfile,'H'     ,'grid_mapping' ,'CRS'); % add grid_mapping attribute
  
 %% staggered m-n velocities
@@ -97,14 +95,14 @@ end
  nc_attput(ncfile,'XZETA' ,'coordinates'  ,coords); % connect CENTER (x,y) to CENTER matrix
  nc_attput(ncfile,'XZETA' ,'grid_mapping' ,'CRS'); % add grid_mapping attribute
  if OPT.xybnds
- nc_attput(ncfile,'XZETA' ,'bounds'       ,'XZETA_bnds'); % bounds:XDEP add bounds attribute once XDEP is 3D [4 x n x m]'); % add bounds attribute once XDEP is 3D [4 x n x m]
+ nc_attput(ncfile,'XZETA' ,'bounds'       ,'grid_x'); % bounds:XDEP add bounds attribute once XDEP is 3D [4 x n x m]'); % add bounds attribute once XDEP is 3D [4 x n x m]
  end
 
  nc_attput(ncfile,'YZETA' ,'long_name'    ,'y coordinate Arakawa-C centers'); % change: make different than YDEP
  nc_attput(ncfile,'YZETA' ,'coordinates'  ,coords); % connect CENTER (x,y) to CENTER matrix
  nc_attput(ncfile,'YZETA' ,'grid_mapping' ,'CRS'); % add grid_mapping attribute
  if OPT.xybnds
- nc_attput(ncfile,'YZETA' ,'bounds'       ,'YZETA_bnds'); % bounds:YDEP add bounds attribute once YDEP is 3D [4 x n x m]'); % add bounds attribute once YDEP is 3D [4 x n x m]
+ nc_attput(ncfile,'YZETA' ,'bounds'       ,'grid_y'); % bounds:YDEP add bounds attribute once YDEP is 3D [4 x n x m]'); % add bounds attribute once YDEP is 3D [4 x n x m]
  end
  
  nc_attput(ncfile,'XDEP'  ,'long_name'    ,'x coordinate Arakawa-C corners'); % change: make different than XZETA
@@ -119,6 +117,7 @@ end
  nc_attput(ncfile,'YDEP'  ,'grid_mapping' ,'CRS'); % add grid_mapping attribute
  nc_attput(ncfile,'YDEP'  ,'comment'      ,'XDEP and XZETA can''t be same size: document or remove dummy rows/columns');
  
+if ~nc_isvar(ncfile,'CRS')
  attr = nc_cf_grid_mapping(OPT.epsg);
  attr(end).Value = 'these values differ per coordinate system, for SIMONA this is mostly one of 3 flavours: Amersfoort/RD or UTM31/ED50 or LATLON/WGS84/ETRS89';
  nc  = struct('Name','CRS', ...
@@ -127,10 +126,11 @@ end
                      'Attribute' , attr,...
                      'FillValue'  , []); % this doesn't do anything
  nc_addvar(ncfile,nc); clear attr;% ADD
+end
  
 %% lat, lon
 
- if OPT.ll
+ if OPT.ll & ~strcmpi(coordinate_system,'WGS84');
  
   % get center coordinates, incl dummy rows and columns
   % put dummy rows and columns to NaN, to avoid strang uninitialized fill values
@@ -185,17 +185,17 @@ end
    G.XDEP  = nc_varget(ncfile,'XDEP');
    G.YDEP  = nc_varget(ncfile,'YDEP');
    
-
-   
    if OPT.llbnds
   [G.LONDEP ,G.LATDEP ] = convertCoordinates(G.XDEP ,G.YDEP ,'CS1.code',OPT.epsg,'CS2.code',4326);
    end
- nc_adddim(ncfile,'bounds',4)
+   if ~nc_isdim(ncfile,'bounds')
+     nc_adddim(ncfile,'bounds',4)
+   end
  end
 
 %% (lat,lon) bounds
 
- if (OPT.ll & OPT.llbnds)
+ if (OPT.ll & OPT.llbnds) & ~strcmpi(coordinate_system,'WGS84');
      G.lon_bnds = nc_cf_cor2bounds(addrowcol(G.LONDEP,-1,-1,nan));
      G.lat_bnds = nc_cf_cor2bounds(addrowcol(G.LATDEP,-1,-1,nan));
 
@@ -229,39 +229,43 @@ end
 %% (x,y) bounds
 
  if (OPT.xy & OPT.xybnds)
-     G.XZETA_bnds = nc_cf_cor2bounds(addrowcol(G.XDEP,-1,-1,nan)); % add extra XDEP dummy row to get bounds for XZETA dummy row
-     G.YZETA_bnds = nc_cf_cor2bounds(addrowcol(G.YDEP,-1,-1,nan));
+     G.grid_x = nc_cf_cor2bounds(addrowcol(G.XDEP,-1,-1,nan)); % add extra XDEP dummy row to get bounds for XZETA dummy row
+     G.grid_y = nc_cf_cor2bounds(addrowcol(G.YDEP,-1,-1,nan));
 
      attr(1) = struct('Name','_FillValue'   ,'Value',9.969209968386869e+36);
      attr(2) = struct('Name','missing_value','Value',9.969209968386869e+36);
      attr(3) = struct('Name','standard_name','Value','projection_x_coordinate');
      attr(4) = struct('Name','units'        ,'Value','m');
      attr(5) = struct('Name','long_name'    ,'Value','x corners');     
-     nc  = struct('Name','XZETA_bnds', ...
+     nc  = struct('Name','grid_x', ...
                          'Datatype'   , 'float', ...
                          'Dimension' , {{'N','M','bounds'}}, ...
                          'Attribute' , attr,...
                          'FillValue'  , []); % this doesn't do anything
+     if ~nc_isvar(ncfile,'grid_x')
      nc_addvar(ncfile,nc); clear attr;% ADD 
-     nc_varput(ncfile,'XZETA_bnds',G.XZETA_bnds); % ADD 
+     end
+     nc_varput(ncfile,'grid_x',G.grid_x); % ADD or correct
 
      attr(1) = struct('Name','_FillValue'   ,'Value',9.969209968386869e+36);
      attr(2) = struct('Name','missing_value','Value',9.969209968386869e+36);
      attr(3) = struct('Name','standard_name','Value','projection_y_coordinate');
      attr(4) = struct('Name','units'        ,'Value','m');
      attr(5) = struct('Name','long_name'    ,'Value','y corners'); 
-     nc  = struct('Name','YZETA_bnds', ...
+     nc  = struct('Name','grid_y', ...
                          'Datatype'   , 'float', ...
                          'Dimension' , {{'N','M','bounds'}}, ...
                          'Attribute' , attr,...
                          'FillValue'  , []); % this doesn't do anything
+     if ~nc_isvar(ncfile,'grid_y')
      nc_addvar(ncfile,nc); clear attr;% ADD 
-     nc_varput(ncfile,'YZETA_bnds',G.YZETA_bnds); % ADD 
+     end
+     nc_varput(ncfile,'grid_y',G.grid_y); % ADD or correct
  end
  
 %% make ascii dumps for easy comparison
 
- nc_dump(ncfile0,[],[filename(ncfile0),'.cdl'])
- nc_dump(ncfile ,[],[filename(ncfile) ,'.cdl'])
+ nc_dump(ncfile0,[],[filepathstrname(ncfile0),'.cdl']);
+ nc_dump(ncfile ,[],[filepathstrname(ncfile) ,'.cdl']);
  
  fclose all
