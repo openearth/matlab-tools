@@ -48,13 +48,19 @@ if plt.colorbar.type==1
     
     if plt.colorbar.position(4)>plt.colorbar.position(3)
 
+        % Vertical orientation
+        
+        wdt=plt.colorbar.position(3);
+        len=plt.colorbar.position(4);
+        sztri=1*wdt/len;
+
         % First two triangles
         % Bottom
         col=clmap(1,:);
         x(1)=0;x(2)=1;x(3)=0.5;
         y(1)=0;
         y(2)=0;
-        y(3)=-0.1;
+        y(3)=-sztri;
         fl=fill(x,y,'b');hold on;
         set(fl,'FaceColor',col,'EdgeColor',colorlist('getrgb','color',plt.colorbar.font.color),'LineStyle','-');
         set(fl,'Clipping','off');
@@ -63,7 +69,7 @@ if plt.colorbar.type==1
         x(1)=0;x(2)=1;x(3)=0.5;
         y(1)=1;
         y(2)=1;
-        y(3)=1.1;
+        y(3)=1+sztri;
         fl=fill(x,y,'b');hold on;
         set(fl,'FaceColor',col,'EdgeColor',colorlist('getrgb','color',plt.colorbar.font.color),'LineStyle','-');
         set(fl,'Clipping','off');
@@ -128,10 +134,15 @@ if plt.colorbar.type==1
         
     else
 
+        
+        wdt=plt.colorbar.position(3);
+        len=plt.colorbar.position(4);
+        sztri=1*len/wdt;
+        
         % First two triangles
         % Left
         col=clmap(1,:);
-        x(1)=0;x(2)=0;x(3)=-0.1;
+        x(1)=0;x(2)=0;x(3)=-sztri;
         y(1)=0;
         y(2)=1;
         y(3)=0.5;
@@ -140,7 +151,7 @@ if plt.colorbar.type==1
         set(fl,'Clipping','off');
         % Right
         col=clmap(end,:);
-        x(1)=1;x(2)=1;x(3)=1.1;
+        x(1)=1;x(2)=1;x(3)=1+sztri;
         y(1)=0;
         y(2)=1;
         y(3)=0.5;
