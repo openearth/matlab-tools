@@ -13,6 +13,7 @@ end
 fprintf(fid,'%s\n',['"' exedir '\ww3_grid.exe"']);
 fprintf(fid,'%s\n',['"' exedir '\ww3_prep.exe"']);
 fprintf(fid,'%s\n',['"' exedir '\ww3_shel.exe"']);
+fprintf(fid,'%s\n',['"' exedir '\gx_outf.exe"']);
 
 %% 2D spectra
 for i=1:length(names)
