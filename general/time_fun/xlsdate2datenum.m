@@ -63,14 +63,20 @@ end
    
    elseif ischar(excelDates)
    
-      %% 'dd-mm-yyyy         '
-      %   or 
+      %  'dd-mmm-yy HH:MM:SS'
+      %  'dd-mmm-yy'
+      if size(excelDates,2)==18
+            matlabDates  = datenum(excelDates);
+      elseif size(excelDates,2)==9
+            matlabDates  = datenum(excelDates);
+      %  'dd-mm-yyyy         '
       %  'dd-mm-yyyy HH:MM:SS'
+      %  or 
       %  first we fill spaces with 00:00:00
       %  then we apply datenum to all rows
       %  ---------------------------------
       
-      if size(excelDates,2)==19
+      elseif size(excelDates,2)==19          
          mask                   = strmatch(' ',excelDates(:,19));
          excelDates(mask,12:19) = repmat('00:00:00',[length(mask) 1]);
          if OPT.debug
