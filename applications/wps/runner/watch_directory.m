@@ -8,21 +8,22 @@
 % stops watching the directory. 
 %
 % syntax:
-% [events] = watch_directory(dirname)
+% [events] = watch_directory(dirname, duration)
 %
 % input:
 % dirname = a directory (absolute path) which is watched
+% duration = how long should we wait for events to occur
 %
 % output:
 % events = a structure in the format {'kind': 'EVENT_TYPE', 'context':
 % 'filename'}
 %
 % example:
-% watch_directory(fullfile(pwd, '.'))
+% watch_directory(fullfile(pwd, '.'), 1000)
 %
 % See also: fullfile, ls
 
-function [events] = watch_directory(dirname)
+function [events] = watch_directory(dirname, duration)
 
     % Import java classes that we need
     import java.nio.file.*
@@ -55,12 +56,15 @@ function [events] = watch_directory(dirname)
     key = dir.register(watcher, events);
     
     % blocks, add poll with a timeout and timeunits if required
-    keyframe = watcher.take();
-
-    % get the array of events
-    events = keyframe.pollEvents();
+    keyframe = watcher.poll(duration, java.util.concurrent.TimeUnit.MILLISECONDS);
     % put them in a matlab struct, can this be done easier???
     matevents = struct('kind',[], 'context',[]);
+    % get the array of events
+    if isempty(keyframe)
+        events = matevents;
+        return
+    end
+    events = keyframe.pollEvents();
     % loop manually
     for i=1:events.size
         % java is 0 based
