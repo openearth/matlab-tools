@@ -1,5 +1,28 @@
-% keep track of changes to a directory
-function watch_directory(dirname, handle)
+%WATCH_DIRECTORY watch directory for file changes
+%
+% When the file system supports it, this function will listen to the
+% dirname directory for new, modified and deleted files. This is done using the
+% java nio api, which is only supported in java 1.7 and up, os it will not
+% work for all matlab versions. Once an event is generated the function
+% returns the event and possibly other events at the same time, the function then
+% stops watching the directory. 
+%
+% syntax:
+% [events] = watch_directory(dirname)
+%
+% input:
+% dirname = a directory (absolute path) which is watched
+%
+% output:
+% events = a structure in the format {'kind': 'EVENT_TYPE', 'context':
+% 'filename'}
+%
+% example:
+% watch_directory(fullfile(pwd, '.'))
+%
+% See also: fullfile, ls
+
+function [events] = watch_directory(dirname)
     import java.nio.file.*
 
     import java.nio.file.StandardWatchEventKinds.*
@@ -26,11 +49,12 @@ function watch_directory(dirname, handle)
     events = keyframe.pollEvents();
     matevents = struct('kind',[], 'context',[]);
     for i=1:events.size
-        event = events.get(i-1)
+        event = events.get(i-1);
         matevents(i) = struct('kind', char(event.kind), 'context', char(event.context));
     end
-
-    handle(matevents);
-
+    
+    watcher.close();
+    events = matevents;
+    
 
 end
