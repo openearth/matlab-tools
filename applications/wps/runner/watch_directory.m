@@ -45,7 +45,7 @@ function [events] = watch_directory(dirname, duration)
     % Start a watchservice, which can be used for listening
     watcher = filesystem.newWatchService();
     % subscribe to these events
-    events = [...
+    eventkinds = [...
             java.nio.file.StandardWatchEventKinds.ENTRY_CREATE,  ...
             java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY,  ...
             java.nio.file.StandardWatchEventKinds.ENTRY_DELETE,  ...
@@ -53,30 +53,27 @@ function [events] = watch_directory(dirname, duration)
     % start watching
     % there is no unregister method, seems that closing the watcher clears
     % the watch, double check with sysinternals or lsof on linux.
-    key = dir.register(watcher, events);
+    key = dir.register(watcher, eventkinds);
     
     % blocks, add poll with a timeout and timeunits if required
     keyframe = watcher.poll(duration, java.util.concurrent.TimeUnit.MILLISECONDS);
     % put them in a matlab struct, can this be done easier???
-    matevents = struct('kind',[], 'context',[]);
+    events = struct('kind',[], 'context',[]);
     % get the array of events
     if isempty(keyframe)
-        events = matevents;
         return
     end
-    events = keyframe.pollEvents();
+    javaevents = keyframe.pollEvents();
     % loop manually
-    for i=1:events.size
+    for i=1:javaevents.size
         % java is 0 based
-        event = events.get(i-1);
+        event = javaevents.get(i-1);
         % and matlab is 1 based, explicitly convert to char 
-        matevents(i) = struct('kind', char(event.kind), 'context', char(event.context));
+        events(i) = struct('kind', char(event.kind), 'context', char(event.context));
     end
     % stop listening otherwise the computer slows down (MS virus checker goes
     % crazy)
     watcher.close();
-    % return the events
-    events = matevents;
-    
+    % events is returned
 
 end
