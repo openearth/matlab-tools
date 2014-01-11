@@ -50,6 +50,8 @@ function [events] = watch_directory(dirname)
             java.nio.file.StandardWatchEventKinds.ENTRY_DELETE,  ...
             ];
     % start watching
+    % there is no unregister method, seems that closing the watcher clears
+    % the watch, double check with sysinternals or lsof on linux.
     key = dir.register(watcher, events);
     
     % blocks, add poll with a timeout and timeunits if required
