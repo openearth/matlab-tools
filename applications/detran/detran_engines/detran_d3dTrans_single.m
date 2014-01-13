@@ -105,8 +105,9 @@ curDir = pwd;
 
 if isempty(filename)
     % [names, pat] = uigetfiles('trim-*.dat', 'Please select trim-file(s)');
-    [names, pat] = uigetfile('trim-*.dat', 'Please select trim-file(s)','MultiSelect','on');
+    [names, pat] = uigetfile('trim-*.dat', 'Please select trim-file(s)','MultiSelect','on'); 1
     if names == 0
+        disp('No file was supplied');
         d3dTransData = [];
         return
     end
@@ -123,6 +124,9 @@ hW = waitbar(0,'Please wait...');
 for jj = 1 : length(names)
     N = vs_use ([pat filesep names{jj}],'quiet');
     grpDatNr=find(strcmp({N.GrpDat.Name},series));
+    if isempty(grpDatNr)
+        error(['Required group type: ''' series ''' is not found in file ' names{jj}]);
+    end
     if timeStep == 0;
         lastTimeStep = N.GrpDat(grpDatNr).SizeDim;
     elseif isempty(timeStep)
