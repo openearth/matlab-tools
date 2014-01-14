@@ -21,7 +21,7 @@ function [beta, Pf] = DSLinearZ(alphas, betas, N)
 %   Copyright (C) 2014 Deltares 
 %       F.L.M. Diermanse
 %
-%       Fedrinand.diermanse@Deltares.nl	
+%       Ferdinand.diermanse@Deltares.nl	
 %
 %   This library is free software; you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
@@ -45,7 +45,27 @@ function [beta, Pf] = DSLinearZ(alphas, betas, N)
 % dimensions of alpha
 [~,n]=size(alphas);
 
+% deal with memory issues
+if n*N<=1e8
+    [beta, Pf] = DSLinearZ2(alphas, betas, N);
+else
+   % carry out DS several times for smaller values of N
+   nbatch = ceil(n*N/1e8);
+   batchsize = round(N/nbatch);
+   Pfj = NaN(1,nbatch);
+   for j = 1:nbatch
+       [~, Pfj(j)] = DSLinearZ2(alphas, betas, batchsize);
+   end
+   Pf = mean(Pfj);
+   beta = -wnorminv(Pf);        % corresponding beta
+   
+end
+
+%% function where the actual DS takes place
+function [beta, Pf] = DSLinearZ2(alphas, betas, N)
+
 % sample N vectors of u-variables;
+[~,n]=size(alphas);
 U = randn(N,n);
 
 % normalise the N vectors
