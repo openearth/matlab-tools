@@ -104,22 +104,26 @@ end
 curDir = pwd;
 
 if isempty(filename)
-    if str2double(datestr(datenum(version('-date')),10)) > 2011
-        disp(['A bug in Matlab 2013 ignores the getfile through ui function in Detran']);
-        disp(['This is avoided automatically by using internal debugging']);
-        disp(['Though this requires the user to press F5 (or click ''Continue'' in the Matlab ''Run'' tab)']);
-        % Contact Freek Scheel for issues with this, or use any Matlab version from 2009-2011
-        this_file_in_struct = textscan(fopen(which(mfilename)),'%s','Delimiter','\n'); % get the entire file
-        for ii=1:size(this_file_in_struct{:},1) % Make it a char variable
-            this_file_in_text(ii,1) = this_file_in_struct{1}(ii,1);
+    if ~isdeployed
+        if str2double(datestr(datenum(version('-date')),10)) > 2011
+            disp(['A bug in Matlab 2013 ignores the getfile through ui function in Detran']);
+            disp(['This is avoided automatically by using internal debugging']);
+            disp(['Though this requires the user to press F5 (or click ''Continue'' in the Matlab ''Run'' tab)']);
+            % Contact Freek Scheel for issues with this, or use any Matlab version from 2009-2011
+            this_file_in_struct = textscan(fopen(which(mfilename)),'%s','Delimiter','\n'); % get the entire file
+            for ii=1:size(this_file_in_struct{:},1) % Make it a char variable
+                this_file_in_text(ii,1) = this_file_in_struct{1}(ii,1);
+            end
+            function_line = find(cellfun(@isempty,strfind(this_file_in_text,['[names, pat] = uigetfile(''trim-*.dat'',''Please select trim-file(s)'',''MultiSelect'',''on'');']))==0); % these are the line where the function is called (can be multiple, is also including this line)
+            eval(['dbstop in detran_d3dTrans_single at ' num2str(function_line(1))]);
+            warning_state = warning; warning on; warning('Press F5 to continue (this is implemented as you''re using a new version of matlab'); eval(['warning ' warning_state.state]);
         end
-        function_line = find(cellfun(@isempty,strfind(this_file_in_text,['[names, pat] = uigetfile(''trim-*.dat'',''Please select trim-file(s)'',''MultiSelect'',''on'');']))==0); % these are the line where the function is called (can be multiple, is also including this line)
-        eval(['dbstop in detran_d3dTrans_single at ' num2str(function_line(1))]);
-        warning_state = warning; warning on; warning('Press F5 to continue (this is implemented as you''re using a new version of matlab'); eval(['warning ' warning_state.state]);
     end
     [names, pat] = uigetfile('trim-*.dat','Please select trim-file(s)','MultiSelect','on'); % Press F5 when debug mode is applied
-    if str2double(datestr(datenum(version('-date')),10)) > 2011
-        eval(['dbclear in detran_d3dTrans_single at ' num2str(function_line(1))]);
+    if ~isdeployed
+        if str2double(datestr(datenum(version('-date')),10)) > 2011
+            eval(['dbclear in detran_d3dTrans_single at ' num2str(function_line(1))]);
+        end
     end
     if names == 0
         disp('No file was supplied');
