@@ -41,10 +41,33 @@ function varargout = get_d3d_output_times(varargin);
 
 warning('WarnTests:convertTest','vs_time has expanded functionality, and can handle more NEFIS types. \nOnly use this script when interested in considerable speed increase with less functionality/output.')
 
-% Freek Scheel - 2012
-% freek.scheel@deltares.nl
-% +31(0)88 355 82 41
+%   --------------------------------------------------------------------
+%   Copyright (C) 2013 Deltares
+%       Freek Scheel
+%       +31(0)88 335 8241
+%       <freek.scheel@deltares.nl>;
 %
+%       Please contact me if errors occur.
+%
+%       Deltares
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
 
 if isempty(varargin);
     file_name = [];
