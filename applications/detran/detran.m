@@ -111,6 +111,11 @@ if nargin==0 % start GUI
         if str2double(datestr(datenum(version('-date')),10))<2009
             msgbox('Please use at least Matlab version 2009b');
             return
+        elseif str2double(datestr(datenum(version('-date')),10))>2011
+            disp(['Using matlab version ' version ' - ' mexext]);
+            disp(' ');
+            disp(['Please note that some panels might not work ideally with Matlab versions later than 2011']);
+            disp(['A workaround was build in for some panels though, this requires you to simply press F5 again when asked']);
         end
         
         basePath=strrep(which('detran.m'),'detran.m','');
