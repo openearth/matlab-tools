@@ -46,6 +46,39 @@ function varargout = detran_convert_d3d_grid_to_transects(grd_file,varargin)
 %                                             'my_transects.pol');
 %plot(X,Y,'k'); axis equal; grid on; box on;
 %
+%
+%Note on advised Delft3D grids to use within this tool:
+%
+%A good way to start is by derefining your original grid, this way,
+%gridlines are more or less followed. Considering a smaller area (area of
+%interest) also speeds up the Detran process (transect transport computations)
+%
+%One could also generate a custom grid just for usage with Detran, Delft
+%Dashboard would be a good option to generate the grid. Also here, you are
+%advised to use quite large gridcells as Detran requires quite some time to
+%compute transports through each transect (especially when transects are
+%overlapping quite a number of computational cells).
+%
+%Eventually, aiming at something like the visual example below results in
+%Detran results being nicely depicted within final figures:
+%_   _   _   _   _   _   _   _   _   _   _   _   _   _   _   _   _   _   _ 
+% _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ 
+%\ _ \ _ \ _ \ __\___\___\___\___\___\___\___\___\___\___\ _ \ _ \ _ \ _ \ 
+% \ _ \ _ \ _ | _ \ _ \ _ \ _ \ _ \|_ \ _ \ _ \ _ \ _ \ _|\ _ \ _ \ _ \ _ \
+%_ \ _ \ _ \ _|\ _ \ _ \ _ \ _ \ _ | _ \ _ \ _ \ _ \ _ \ | \ _ \ _ \ _ \ _ 
+% _ \ _ \ _ \ | \ _ \ _ \ _ \ _ \ _|\ _ \ _ \ _ \ _ \ _ \|_ \ _ \ _ \ _ \ _
+%\ _ \ _ \ _ \|_ \ _ \ _ \ _ \ _ \ | \ _ \ _ \ _ \ _ \ _ | _ \ _ \ _ \ _ \ 
+% \ _ \ _ \ _ | _ \ _ \ _ \ _ \ _ \|_ \ _ \ _ \ _ \ _ \ _|\ _ \ _ \ _ \ _ \
+%_ \ _ \ _ \ _|\___\___\___\___\___|___\___\___\___\___\_| \ _ \ _ \ _ \ _ 
+% _ \ _ \ _ \ | \ _ \ _ \ _ \ _ \ _|\ _ \ _ \ _ \ _ \ _ \|_ \ _ \ _ \ _ \ _
+%\ _ \ _ \ _ \|_ \ _ \ _ \ _ \ _ \ | \ _ \ _ \ _ \ _ \ _ | _ \ _ \ _ \ _ \ 
+% \ _ \ _ \ _ | _ \ _ \ _ \ _ \ _ \|_ \ _ \ _ \ _ \ _ \ _|\ _ \ _ \ _ \ _ \
+%_ \ _ \ _ \ _|\ _ \ _ \ _ \ _ \ _ | _ \ _ \ _ \ _ \ _ \ | \ _ \ _ \ _ \ _ 
+% _ \ _ \ _ \ | \ _ \ _ \ _ \ _ \ _|\ _ \ _ \ _ \ _ \ _ \|_ \ _ \ _ \ _ \ _
+%\ _ \ _ \ _ \|__\___\___\___\___\_|_\___\___\___\___\___| _ \ _ \ _ \ _ \ 
+% \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \
+%_ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ 
+%              
 %See also: detran detran_engines
 
 %   --------------------------------------------------------------------
