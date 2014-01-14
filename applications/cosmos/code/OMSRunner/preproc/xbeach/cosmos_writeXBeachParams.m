@@ -8,13 +8,18 @@ model=hm.models(m);
 fid = fopen([tmpdir 'params.txt'],'w');
 fprintf(fid,'%s\n\n','----------------------------------------------------');
 fprintf(fid,'%s\n\n','Grid input');
-fprintf(fid,'%s\n',['nx       = ' num2str(model.nX)]);
-fprintf(fid,'%s\n',['ny       = ' num2str(model.nY)]);
-fprintf(fid,'%s\n','xfile    = x.grd');
-fprintf(fid,'%s\n','yfile    = y.grd');
-fprintf(fid,'%s\n',['xori     = ' num2str(model.xOri)]);
-fprintf(fid,'%s\n',['yori     = ' num2str(model.yOri)]);
-fprintf(fid,'%s\n',['alfa     = ' num2str(model.alpha)]);
+
+if strcmpi(model.gridform,'xbeach')
+    fprintf(fid,'%s\n',['nx       = ' num2str(model.nX)]);
+    fprintf(fid,'%s\n',['ny       = ' num2str(model.nY)]);
+    fprintf(fid,'%s\n','xfile    = x.grd');
+    fprintf(fid,'%s\n','yfile    = y.grd');
+    fprintf(fid,'%s\n',['xori     = ' num2str(model.xOri)]);
+    fprintf(fid,'%s\n',['yori     = ' num2str(model.yOri)]);
+    fprintf(fid,'%s\n',['alfa     = ' num2str(model.alpha)]);
+else
+    fprintf(fid,'%s\n',['xyfile    = ' model.name '.grd']);
+end
 fprintf(fid,'%s\n',['depfile  = ' model.name '.dep']);
 fprintf(fid,'%s\n','posdwn    = -1');
 fprintf(fid,'%s\n','thetanaut = 0');

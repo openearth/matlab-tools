@@ -474,6 +474,14 @@ else
     model.zSeaLevelRise=0;
 end
 
+%% XBeach
+
+model.gridform='xbeach';
+
+if isfield(xml,'gridform')
+    model.gridform=xml.gridform;
+end
+
 if isfield(xml,'xori')
     model.xOri=str2double(xml.xori);
 end
