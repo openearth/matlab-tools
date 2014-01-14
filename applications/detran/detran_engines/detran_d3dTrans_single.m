@@ -116,7 +116,7 @@ if isempty(filename)
             end
             function_line = find(cellfun(@isempty,strfind(this_file_in_text,['[names, pat] = uigetfile(''trim-*.dat'',''Please select trim-file(s)'',''MultiSelect'',''on'');']))==0); % these are the line where the function is called (can be multiple, is also including this line)
             eval(['dbstop in detran_d3dTrans_single at ' num2str(function_line(1))]);
-            warning_state = warning; warning on; warning('Press F5 to continue (this is implemented as you''re using a new version of matlab'); eval(['warning ' warning_state.state]);
+            warning_state = warning; warning on; warning('Press F5 to continue (this is implemented as you''re using a new version of matlab'); eval(['warning ' warning_state(1,1).state]);
         end
     end
     [names, pat] = uigetfile('trim-*.dat','Please select trim-file(s)','MultiSelect','on'); % Press F5 when debug mode is applied
