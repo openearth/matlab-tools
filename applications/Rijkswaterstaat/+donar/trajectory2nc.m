@@ -1,30 +1,22 @@
-function ctd_timeSeriesProfile2nc(ncfile,P,M)
-%ctd_timeSeriesProfile2nc write timeSeriesProfile to netCDF
+function trajectory2nc(ncfile,S,M)
+%trajectory2nc write 2D FerryBox or 3D Meetvis trajectory to netCDF
 %
-% ctd_timeSeriesProfile2nc(ncfile,P,M)
+% trajectory2nc(ncfile,S,M)
 %
-% where P = ctd_timeSeriesProfile(S,ind) and [S,M]=ctd_struct(D,M)
+% where [S,M]=trajectory_struct(D,M)
 %
-%See also: ncwrite_profile, trajectory2nc
+%See also: ncwrite_trajectory, ctd_timeSeriesProfile2nc
 %          CF: http://cf-pcmdi.llnl.gov/
 %          oceansites: http://www.oceansites.org/documents/index.html
 %          SDN: http://www.seadatanet.org/Standards-Software/Data-Transport-Formats
 
 %% Required spatio-temporal fields
 
-   OPT2.datenum1       = P.profile_datenum;
-   
-   % 0D nominal/target location which will not be exactly matched by realization.
-   OPT2.lon0           = mean(P.profile_lon);
-   OPT2.lat0           = mean(P.profile_lat);
-   
-   % 1D we allow for some discrepancy between target location and realized lcoation
-   OPT2.lon1           = P.profile_lon;
-   OPT2.lat1           = P.profile_lat;
-   
-   % 1D: centres of fixed 4 m binned data (processed, L2) data
-   OPT2.z2             = P.z;
-   OPT2.var            = P.data;
+   OPT2.datenum        = S.datenum;
+   OPT2.lon            = S.lon;
+   OPT2.lat            = S.lat;
+   OPT2.var            = S.data;
+   OPT2.z              = S.z;
    
 %% Required data fields: CF
   [~,~,OPT2.Name]          = donar.resolve_wns(M.data.WNS);
@@ -37,14 +29,14 @@ function ctd_timeSeriesProfile2nc(ncfile,P,M)
                               'sdn_parameter_name',M.data.sdn_parameter_name,...
                               'sdn_uom_urn'       ,M.data.sdn_uom_urn       ,...
                               'sdn_uom_name'      ,M.data.sdn_uom_name      };
-   
+
 %% Required data fields: discovery
    OPT2.global         = {'Conventions'                 ,'CF-1.6, OceanSITES 1.1, SeaDataNet_1.0',...
                           'geospatial_lat_units'        ,M.lat.units,...
                           'geospatial_lon_units'        ,M.lon.units,...
                           'geospatial_vertical_units'   ,M.z.units,...
                           'geospatial_vertical_positive',M.z.positive,...
-                          'title'                       ,'CTD profiles from vessel Zirfaea at one North Sea location',...
+                          'title'                       ,'Meetvis/FeryBox trajectories from vessel Zirfaea',...
                           'references'                  ,'http://www.researchvessels.org/ship_info_display.asp?shipID=543,http://www.marinetraffic.com/nl/ais/details/ships/246096000,http://www.rijkswaterstaat.nl/images/Zirfaea_tcm174-263725.pdf',...
                           'email'                       ,'http://www.helpdeskwater.nl',...
                           'source'                      ,'http://www.helpdeskwater.nl',...
@@ -59,4 +51,4 @@ function ctd_timeSeriesProfile2nc(ncfile,P,M)
 
 %% write
 
-   ncwrite_profile(ncfile,OPT2)
+   ncwrite_trajectory(ncfile,OPT2)

@@ -43,6 +43,13 @@ case 'ctd',
                  'raw2\ctd_7.dia',...
                  'raw2\ctd_8.dia'}; 
     type = [1 1 1 1 1 1 1 1]; % 1=CTD profiles, 2=2Dtrajectory (fixed Z), 3=3Dtrajectory (undulating z)
+case 'ferry',
+    diafiles  = {'raw2\ferry_4.dia',... % 02-Jun-1999 02:51:33 - 03:03:19: 1 profile  = 2 dia blocks
+                 'raw2\ferry_5.dia',...
+                 'raw2\ferry_6.dia',...
+                 'raw2\ferry_7.dia',...
+                 'raw2\ferry_8.dia'}; 
+    type = [2 2 2 2 2]; % 1=CTD profiles, 2=2Dtrajectory (fixed Z), 3=3Dtrajectory (undulating z)
 case 'meetv',
         diafiles  = {'raw2\meetv_1.dia',... % 02-Jun-1999 02:51:33 - 03:03:19: 1 profile  = 2 dia blocks
                      'raw2\meetv_2.dia',...
@@ -52,13 +59,6 @@ case 'meetv',
                      'raw2\meetv_6.dia',...
                      'raw2\meetv_7.dia'}; 
         type = [3 3 3 3 3 3 3]; % 1=CTD profiles, 2=2Dtrajectory (fixed Z), 3=3Dtrajectory (undulating z)
-case 'ferry',
-    diafiles  = {'raw2\ferry_4.dia',... % 02-Jun-1999 02:51:33 - 03:03:19: 1 profile  = 2 dia blocks
-                 'raw2\ferry_5.dia',...
-                 'raw2\ferry_6.dia',...
-                 'raw2\ferry_7.dia',...
-                 'raw2\ferry_8.dia'}; 
-    type = [2 2 2 2 2]; % 1=CTD profiles, 2=2Dtrajectory (fixed Z), 3=3Dtrajectory (undulating z)
 otherwise
 end
 
@@ -75,7 +75,8 @@ for ifile = 1:length(diafiles);
 %%
   if OPT.read
      ncolumn = 6;
-     for ivar = find(strcmp({File.Variables.standard_name},'sea_water_salinity')) %:length(File.Variables);
+    %for ivar = find(strcmp({File.Variables.standard_name},'sea_water_salinity')) %
+     for ivar = 1:length(File.Variables);
     
         [D,M0] = donar.read(File,ivar,ncolumn);
         %% convert
@@ -89,31 +90,34 @@ for ifile = 1:length(diafiles);
         %  only taken when boat does not move (unlike Ferrybox)
         
         if type(ifile)==1
-          close all
-          if OPT.plot % overview
-          donar.ctd_overview_plot(S,M,E,L)
-          print2a4(strrep(diafile,'.dia',['_',M.data.WNS,'_ctd.png']))
+         close all
+         if OPT.plot % overview
+            donar.ctd_overview_plot(S,M,E,L)
+            print2a4(strrep(diafile,'.dia',['_',M.data.WNS,'_ctd.png']))
             for ist=1:length(S.station_lon)
-                disp(['processing ctd ',num2str(ist),'/',num2str(length(S.station_lon))])
-                ind = (S.station_id==ist);
-                clear P
-                P = donar.ctd_timeSeriesProfile(S,ind);
-                if OPT.plot % per profile
-                    titletxt = [num2str(ist),' (n=',num2str(S.station_n(ist)),') :',num2strll(S.station_lat(ist),S.station_lon(ist))];
-                    close
-                    donar.ctd_timeSeriesProfile_plot(P,E,L,titletxt)
-                    donar.ctd_timeSeriesProfile2nc(strrep(diafile,'.dia',['_',M.data.WNS,'_ctd_',num2str(ist,'%0.3d'),'.nc' ]),P,M)
-                    print2a4                      (strrep(diafile,'.dia',['_',M.data.WNS,'_ctd_',num2str(ist,'%0.3d'),'.png']),'v','t')
-                    close
-                end
+             disp(['processing ctd ',num2str(ist),'/',num2str(length(S.station_lon))])
+             ind = (S.station_id==ist);
+             clear P
+             P = donar.ctd_timeSeriesProfile(S,ind);
+             donar.ctd_timeSeriesProfile2nc(strrep(diafile,'.dia',['_',M.data.WNS,'_ctd_',num2str(ist,'%0.3d'),'.nc' ]),P,M)
+            [P2,M2] = nc2struct(strrep(diafile,'.dia',['_',M.data.WNS,'_ctd_',num2str(ist,'%0.3d'),'.nc' ]),'rename',{{donar.resolve_wns(M.data.WNS)},{'data'}});
+             if OPT.plot % per profile
+               titletxt = [num2str(ist),' (n=',num2str(S.station_n(ist)),') :',num2strll(S.station_lat(ist),S.station_lon(ist))];
+                close
+                donar.ctd_timeSeriesProfile_plot(P,E,L,titletxt)
+                print2a4                      (strrep(diafile,'.dia',['_',M.data.WNS,'_ctd_',num2str(ist,'%0.3d'),'.png']),'v','t')
+                close
+             end
             end
-          end
+            endc
         elseif type(ifile)==2
-          if OPT.plot
-            close all
+             donar.trajectory2nc(strrep(diafile,'.dia',['_',M.data.WNS,'_trajectory.nc']),S,M)
+            [S2,M2] =  nc2struct(strrep(diafile,'.dia',['_',M.data.WNS,'_trajectory.nc' ]),'rename',{{donar.resolve_wns(M.data.WNS)},{'data'}});
+            if OPT.plot
+            %close all
             donar.trajectory_overview_plot(S,M,E,L,mktex(diafiles{ifile}))
             print2screensize(strrep(diafile,'.dia',['_',M.data.WNS,'_trajectory.png']))
-          end           
+            end           
         end
         
      end % ivar

@@ -75,3 +75,4 @@ function ctd_timeSeriesProfile_plot(P,E,L,titletxt)
     
     set(ax,'YDir','reverse')
     grid on
+    

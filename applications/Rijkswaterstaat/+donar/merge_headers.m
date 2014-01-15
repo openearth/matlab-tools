@@ -99,12 +99,22 @@ for iwns=1:length(WNS)
        end
     end % ifld
 
-    %% Resolve for international standards
+    %% Resolve for international standards: CF, Oceansites, SDN
+    
    [V(iwns).long_name,...
-    V(iwns).standard_name] = donar.resolve_wns(WNS{iwns});
+    V(iwns).standard_name,...
+    ~,... % netcdf
+    V(iwns).sdn_parameter_urn,...
+    ] = donar.resolve_wns(WNS{iwns});
+    V(iwns).sdn_parameter_name = P01('resolve',V(iwns).sdn_parameter_urn);
+    
    [V(iwns).long_units,...
-    V(iwns).units] = donar.resolve_ehd(V(iwns).hdr.EHD{2});
+    V(iwns).units,...
+    V(iwns).sdn_uom_urn] = donar.resolve_ehd(V(iwns).hdr.EHD{2});
     V(iwns).EHD = V(iwns).hdr.EHD{2};
+
+    V(iwns).sdn_uom_name = '';
+
     
     %% duplicate relevant block meta-data into array format
     V(iwns).ftell = cell2mat({B(index).ftell}')';

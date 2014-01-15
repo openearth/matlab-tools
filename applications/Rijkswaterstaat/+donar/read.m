@@ -96,9 +96,10 @@ function [Data, M] = read(File,ivar,ncolumn,varargin)
     Data      = donar.parse_time(Data, ncolumn - [2 1]); % has to be inline due to sorting by parse_time
      
  %% copy relevant meta-data fields (not dia-file specific)
- %  Should perhaps better be in se[erate substruct of File
+ %  Should perhaps better be in seperate substruct of File
 
-    OPT.metafields = {'WNS','hdr','long_name','standard_name','long_units','units'};
+    OPT.metafields = setdiff(fieldnames(File.Variables(ivar)),{'ftell','nline','nval'});
+
     for ifld=1:length(OPT.metafields)
         try
         fld = OPT.metafields{ifld};

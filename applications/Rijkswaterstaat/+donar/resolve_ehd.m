@@ -1,4 +1,4 @@
-function [longname, cf_name] = resolve_ehd(code,varargin)
+function [longname, cf_name, sdn_uom_urn] = resolve_ehd(code,varargin)
 %RESOLVE_EHD convert donar units code to english long_name, CF UDUNITS units,...
 %
 %   [longname,cf_udunits] = resolve_ehd(code)
@@ -57,6 +57,13 @@ else
     cf_name  = EHD.units{index}; % not always present
     else
     cf_name  = '';
+    end
+    
+    if isfield(EHD,'P06')
+    sdn_uom_urn  = EHD.P06{index}; % not always present
+    else
+    sdn_uom_urn  = '';
+    disp([code,' not mapped to SDN P06 urn yet.'])
     end
     
     if isempty(cf_name)

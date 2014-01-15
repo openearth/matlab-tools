@@ -1,7 +1,7 @@
-	function [longname, cf_name, deltares_name] = resolve_wns(code,varargin)
+function [longname, cf_name, deltares_name, sdn_parameter_urn] = resolve_wns(code,varargin)
 %resolve_wns   convert donar code to english long_name, CF standard name, ...
 %
-%  [longname,cf_name,...] = donar.resolve_wns(code)
+%  [longname,cf_name, netcdf_name, sdn_parameter_urn] = donar.resolve_wns(code)
 %
 % resolves DONAR longname "wnsoms" + CF standard name from DONAR datamodel "wnsnum"
 % published as web service here (we use csv format as it is smaller and extendable compared to RDF xml):
@@ -47,6 +47,7 @@ if isempty(index)
     error('.')
 else
     longname      = WNS.wnsoms{index};
+
     
     if isfield(WNS,'standard_name')
     cf_name       = WNS.standard_name{index}; % often still empty
@@ -57,6 +58,7 @@ else
     if isempty(cf_name)
         disp([code,' not mapped to CF standard_name yet.'])
     end     
+
     
     if isfield(WNS,'deltares_name')
     deltares_name = WNS.deltares_name{index}; % not always present
@@ -66,6 +68,17 @@ else
     end
     if isempty(deltares_name)
         disp([code,' not mapped to Deltares netCDF name yet.'])
+    end    
+
+    
+    if isfield(WNS,'P01')
+    sdn_parameter_urn = WNS.P01{index}; % not always present
+    else
+    sdn_parameter_urn = '';
+    disp([code,' not mapped to SDN P01 code yet.'])
+    end
+    if isempty(sdn_parameter_urn)
+        disp([code,' not mapped to SDN P01 code yet.'])
     end    
     
 end
