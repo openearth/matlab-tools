@@ -78,11 +78,13 @@ function varargout = detran_convert_d3d_grid_to_transects(grd_file,varargin)
 %\ _ \ _ \ _ \|__\___\___\___\___\_|_\___\___\___\___\___| _ \ _ \ _ \ _ \ 
 % \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \
 %_ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ \ _ 
-%              
+%
+%Contact Freek Scheel (freek.scheel@deltares.nl) if bugs are encountered
+%
 %See also: detran detran_engines
 
 %   --------------------------------------------------------------------
-%   Copyright (C) 2013 Deltares
+%   Copyright (C) 2014 Deltares
 %       Freek Scheel
 %       +31(0)88 335 8241
 %       <freek.scheel@deltares.nl>;
