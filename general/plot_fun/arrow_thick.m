@@ -1,7 +1,18 @@
 function varargout = arrow_thick(x1,y1,x2,y2,varargin)
-%ARROW_THICK allows you to generate fancy filled arrow plots, with the
-%speed of the regular 'arrow' and 'quiver' function, though like (straight)
-%curvec filled arrows.
+%__________________________________________________________________________
+%Introduction
+%
+%ARROW_THICK allows users to plot arrows just like the syntax of the
+%functions 'arrow' and 'quiver' and with identical speeds (so practically
+%instantaneous), though as fancy as (slower) curvec plots (straight arrows
+%though). It also includes functionality to plot magnitudes using colors in
+%the filled arrows (lacking functionality in curvec) and supports
+%(ir)regular grids, meshes and simple vectors and has a lot of user
+%flexibility by using optional <keyword,value> pairs.
+%
+%Have a look at the help below to get an idea of the syntax & functionality
+%__________________________________________________________________________
+%Help
 %
 %arrow_thick uses start (x1,y1) and end position (x2,y2) to generate 2D
 %plots of arrows as filled patches. Thus, the function works just like the
@@ -155,6 +166,8 @@ function varargout = arrow_thick(x1,y1,x2,y2,varargin)
 %                          provided in the third argument. When a thrid
 %                          argument is provided in case of plotting on, the
 %                          thrid argument will be empty
+%__________________________________________________________________________
+%Examples
 %_________
 %Example 1 - All default settings:
 %
@@ -197,7 +210,7 @@ function varargout = arrow_thick(x1,y1,x2,y2,varargin)
 %            'arrowhead_length_option','absolute',...
 %            'plot_colorbar',0);
 %box on; axis tight; set(gca,'XTick',[],'YTick',[]);
-%_________
+%__________________________________________________________________________
 %
 %Contact Freek Scheel (freek.scheel@deltares.nl) if bugs are encountered
 %              
