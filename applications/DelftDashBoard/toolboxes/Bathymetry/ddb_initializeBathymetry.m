@@ -114,7 +114,7 @@ handles.Toolbox(ii).Input.newDataset.dy=0;
 
 handles.Toolbox(ii).Input.num_merge = 0;
 handles.Toolbox(ii).Input.add_list = {};
-handles.Toolbox(ii).Input.bathy_to_cut = [];
+handles.Toolbox(ii).Input.bathy_to_cut = 1;
 handles.Toolbox(ii).Input.add_list_idx = [];
 
 handles.Toolbox(ii).Input.rectanglehandle=[];

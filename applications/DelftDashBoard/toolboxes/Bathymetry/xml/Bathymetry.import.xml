@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <root>
   <element>
-    <tag>getbathyfile</tag>
     <style>pushselectfile</style>
     <position>30 110 150 20</position>
     <text>Select Bathy</text>
@@ -9,19 +8,22 @@
     <onchange>ddb_BathymetryToolbox_import</onchange>
     <option1>getbathyfile</option1>
     <showfilename>yes</showfilename>
-    <extension>
-      <item>*.grd</item>
-      <item>*.xyz</item>
-      <item>*.nc</item>
-      <item>Grid Files (*.grd)</item>
-      <item>XYZ files (*.xyz)</item>
-      <item>NetCDF files (*.nc)</item>
-    </extension>
+    <filter>
+      <extension>*.grd</extension>
+      <text>Grid Files (*.grd)</text>
+    </filter>
+    <filter>
+      <extension>*.xyz</extension>
+      <text>XYZ files (*.xyz)</text>
+    </filter>
+    <filter>
+      <extension>*.nc</extension>
+      <text>NetCDF files (*.nc)</text>
+    </filter>
     <selectiontext>Select bathy file</selectiontext>
     <tooltipstring>Select bathymetry file</tooltipstring>
   </element>
   <element>
-    <tag>import</tag>
     <style>pushbutton</style>
     <position>30 80 150 20</position>
     <text>Import Bathy</text>
@@ -34,7 +36,6 @@
     <tooltipstring>Integrate new bathy into GUI</tooltipstring>
   </element>
   <element>
-    <tag>editOutputName</tag>
     <style>edit</style>
     <onchange>ddb_BathymetryToolbox_import</onchange>
     <option1>editOutputName</option1>
@@ -43,7 +44,6 @@
     <position>195 80 150 20 </position>
   </element>
   <element>
-    <tag>setresolution</tag>
     <style>edit</style>
     <text>Resolution (sec)</text>
     <onchange>ddb_BathymetryToolbox_import</onchange>
@@ -54,7 +54,6 @@
     <tooltipstring>Set the resolution (in seconds) of the grid.</tooltipstring>
   </element>
   <element>
-    <tag>selectpositivedirection</tag>
     <style>popupmenu</style>
     <text>Positive</text>
     <textposition>left</textposition>
@@ -68,7 +67,6 @@
     <listvalue>down</listvalue>
   </element>
   <element>
-    <tag>selectdatumtype</tag>
     <style>popupmenu</style>
     <text>Datum Type</text>
     <textposition>left</textposition>
@@ -85,7 +83,6 @@
     <listvalue>High Water Level</listvalue>
   </element>
   <element>
-    <tag>offsetvalue</tag>
     <style>edit</style>
     <text>Offset Value</text>
     <value>0</value>

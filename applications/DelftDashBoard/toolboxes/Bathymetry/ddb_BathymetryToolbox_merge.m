@@ -63,37 +63,38 @@ else
             mergedata;
     end
 end
-return
-%
+
+%%
 function selectdatasettoadd
 
-return
-%
+%%
 function addbathytolist
-handles=getHandles;
-val = get(findobj('tag','bathymetrypanel.merge.selectbathymetrytoadd'),'Value');
 
-if ~isempty(val)
-    
+handles=getHandles;
+
+val=handles.Toolbox(tb).Input.activeDataset;
+
+if ~isempty(val)    
     selected_file = handles.bathymetry.datasets{val};
     if ~any(strcmp(selected_file,handles.Toolbox(tb).Input.add_list))
         nf = handles.Toolbox(tb).Input.num_merge+1;
         handles.Toolbox(tb).Input.num_merge = nf;
         handles.Toolbox(tb).Input.add_list{nf} = selected_file;
         handles.Toolbox(tb).Input.add_list_idx(nf) = val;
+        handles.Toolbox(tb).Input.bathy_to_cut = nf;
         setHandles(handles);
-        % setUIElements('bathymetrypanel.merge');
     end
 end
-return
-%
+
+%%
 function handles=deletefromlist
 
 handles=getHandles;
 val = handles.Toolbox(tb).Input.bathy_to_cut;
-if ~isempty(val)
+nf = handles.Toolbox(tb).Input.num_merge;
+
+if nf>0
     
-    nf = handles.Toolbox(tb).Input.num_merge;
     keep_idx = true(1,nf);
 
     keep_idx(val)= false;
@@ -103,20 +104,22 @@ if ~isempty(val)
     handles.Toolbox(tb).Input.add_list = handles.Toolbox(tb).Input.add_list(keep_idx);
     handles.Toolbox(tb).Input.add_list_idx = handles.Toolbox(tb).Input.add_list_idx(keep_idx);
     
-    handles.Toolbox(tb).Input.bathy_to_cut = [];
-    
+    handles.Toolbox(tb).Input.bathy_to_cut=max(min(handles.Toolbox(tb).Input.num_merge,nf),1);
+
     setHandles(handles);
-    % setUIElements('bathymetrypanel.merge');
 end
-return
+    
+%%
 function handles=moveselection
 
 handles=getHandles;
+
 val = handles.Toolbox(tb).Input.bathy_to_cut;
-if ~isempty(val)
-    val = val(1);
-    if val > 1
-        
+nf = handles.Toolbox(tb).Input.num_merge;
+
+if nf>1
+
+    if val>1        
         tmp_str = handles.Toolbox(tb).Input.add_list(val);
         old_str = handles.Toolbox(tb).Input.add_list(val-1);
         handles.Toolbox(tb).Input.add_list(val) = old_str;
@@ -132,12 +135,10 @@ if ~isempty(val)
         handles.Toolbox(tb).Input.bathy_to_cut = val-1;
         
         setHandles(handles);
-        % setUIElements('bathymetrypanel.merge');
     end
 end
-return
 
-%
+%%
 function mergedata
 
 handles=getHandles;
@@ -188,8 +189,4 @@ end
 fprintf('X Range: (%.1f , %.1f)\nY Range: (%.1f , %.1f)\n',...
     total_min_x,total_max_x,total_min_y,total_max_y);
 fprintf('dx %.5f\tdy %.5f\n',min_dx,min_dy);
-
-
-return
-
 

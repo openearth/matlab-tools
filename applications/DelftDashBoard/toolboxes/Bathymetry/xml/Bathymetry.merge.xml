@@ -41,12 +41,6 @@
         <value>0</value>
         <operator>gt</operator>
       </check>
-      <check>
-        <variable>length(bathy_to_cut)</variable>
-        <type>integer</type>
-        <value>0</value>
-        <operator>gt</operator>
-      </check>
     </dependency>
   </element>
   <element>
