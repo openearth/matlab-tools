@@ -1,17 +1,20 @@
 function varargout = quiver_thick(x1,y1,u,v,varargin)
-%QUIVER_THICK allows you to generate fancy filled arrow plots, though with
-%the speed of the regular 'arrow' and 'quiver' function.
+%QUIVER_THICK allows you to generate fancy filled arrow plots, with the
+%speed of the regular 'arrow' and 'quiver' function, though like (straight)
+%curvec filled arrows.
 %
 %quiver_thick uses start locations (X,Y) and components (U,V) to generate 2D
 %plots of arrows as filled patches. Thus, the function works just like the
 %'quiver' function. The locations and components (input) can be specified 
 %on an (irregular) grid/mesh or basic matlab vectors. When using start (x1,y1)
 %and end (x2,y2) locations, one is referred to arrow_thick, which works
-%just like the well known function 'arrow' with (x1,y1,x2,y2).
+%just like the well known function 'arrow' with (x1,y1,x2,y2). By default,
+%arrows are colored (filled) according to their magnitude.
 %
 %quiver_thick is actually a wrapper for arrow_thick, it therefor uses identical
 %additional keywords and value pairs. Though, three additional keyword-value
-%pairs have been added ('scaling', 'scaling_type' & 'uniform_length')
+%pairs have been added ('scaling', 'scaling_type' & 'uniform_length') that
+%are relevant for quiver type plotting (using vectorial components)
 %
 %Syntax:
 %
