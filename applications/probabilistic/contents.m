@@ -8,3 +8,7 @@
 %   Subset                  - Subset simulation
 %   HohenBichler            - Hohen Bichler
 %   SystemAnalysis          - System Analysis
+%
+% Probability distributions
+%   distributions           - list of available probability distributions
+
