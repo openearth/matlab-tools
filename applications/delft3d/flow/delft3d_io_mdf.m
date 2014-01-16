@@ -65,7 +65,7 @@ function varargout=delft3d_io_mdf(cmd,varargin),
 %   Copyright (C) 2005-6 Delft University of Technology
 %       Gerben J. de Boer
 %
-%       g.j.deboer@tudelft.nl	
+%       g.j.deboer@tudelft.nl
 %
 %       Fluid Mechanics Section
 %       Faculty of Civil Engineering and Geosciences
@@ -99,25 +99,25 @@ function varargout=delft3d_io_mdf(cmd,varargin),
 %% Get filename from GUI
 
 if (nargin ==1) & strcmpi(cmd,'read')
-
+    
     [fname, pathname, filterindex] = uigetfile( ...
         {'*.mdf', 'Delft3D-FLOW input file (*.mdf)'; ...
-         '*.*'  , 'All Files               (*.*)'}, ...
-         'Delft3D-FLOW');
-
-      if ~ischar(fname) % uigetfile cancelled
-         fname = [];
-         iostat         = 0;
-      else
-         fname = [pathname, fname];
-         iostat         = 1;
-      end
-      nextarg = 1;
-  elseif (nargin ==1) & strcmpi(cmd,'write')
-      error('for write 2 input parameters required: delft3d_io_mdf(''write'',filename,DATA)')
-  elseif nargin>1
-      fname   = varargin{1};
-      nextarg = 2;
+        '*.*'  , 'All Files               (*.*)'}, ...
+        'Delft3D-FLOW');
+    
+    if ~ischar(fname) % uigetfile cancelled
+        fname = [];
+        iostat         = 0;
+    else
+        fname = [pathname, fname];
+        iostat         = 1;
+    end
+    nextarg = 1;
+elseif (nargin ==1) & strcmpi(cmd,'write')
+    error('for write 2 input parameters required: delft3d_io_mdf(''write'',filename,DATA)')
+elseif nargin>1
+    fname   = varargin{1};
+    nextarg = 2;
 end
 
 %disp   ('This is a beta version for writing with delft3d_io_mdf.')
@@ -126,83 +126,83 @@ end
 %% Switch read/write
 
 switch lower(cmd)
-
-case 'read'
-
-  if     nargout ==1
-
-     [DAT       ] = Local_read(fname,varargin{nextarg:end});
-     varargout  = {DAT};
-
-  elseif nargout  == 2
-
-     [DAT,iostat] = Local_read(fname,varargin{nextarg:end});
-     varargout  = {DAT,iostat};
-
-  elseif nargout >2
-
-     error('too much output parameters: 1 or 2')
-
-  end
-
-case 'write'
-
-  OS           = 'windows'; % or 'unix'
-  iostat=Local_write(OS,fname,varargin{nextarg:end});
-
-  if nargout ==1
-
-     varargout = {iostat};
-
-  elseif nargout >1
-
-     error('too much output parameters: 0 or 1')
-
-  end
-  if iostat<0,
-     error(['Error opening file: ',varargin{1}])
-  end;
-
-case 'new'
-
-  %
-  % TK: mfilename does NOT work when making an executable:
-  %     optional: If entire filename of the template is given use that one!
-  %
-
-  path_m = fileparts(mfilename('fullpath'));
-
-  if nargin==2
-     [path_file,dummy,dummy] = fileparts(varargin{1});
-     if ~isempty(path_file)
-         fname = varargin{1};
-     else
-         fname    = [path_m,filesep,varargin{1}];
-     end
-  else
-     fname    = [path_m,filesep,'template_gui.mdf'];
-  end
-
-  if     nargout ==1
-
-     [DAT       ] = Local_read(fname);
-     varargout  = {DAT};
-
-  elseif nargout  == 2
-
-     [DAT,iostat] = Local_read(fname);
-     varargout  = {DAT,iostat};
-
-  elseif nargout >2
-
-     error('too much output parameters: 1 or 2')
-
-  end
-
-otherwise
-
-   error(['option not implemented:',cmd])
-
+    
+    case 'read'
+        
+        if     nargout ==1
+            
+            [DAT       ] = Local_read(fname,varargin{nextarg:end});
+            varargout  = {DAT};
+            
+        elseif nargout  == 2
+            
+            [DAT,iostat] = Local_read(fname,varargin{nextarg:end});
+            varargout  = {DAT,iostat};
+            
+        elseif nargout >2
+            
+            error('too much output parameters: 1 or 2')
+            
+        end
+        
+    case 'write'
+        
+        OS           = 'windows'; % or 'unix'
+        iostat=Local_write(OS,fname,varargin{nextarg:end});
+        
+        if nargout ==1
+            
+            varargout = {iostat};
+            
+        elseif nargout >1
+            
+            error('too much output parameters: 0 or 1')
+            
+        end
+        if iostat<0,
+            error(['Error opening file: ',varargin{1}])
+        end;
+        
+    case 'new'
+        
+        %
+        % TK: mfilename does NOT work when making an executable:
+        %     optional: If entire filename of the template is given use that one!
+        %
+        
+        path_m = fileparts(mfilename('fullpath'));
+        
+        if nargin==2
+            [path_file,dummy,dummy] = fileparts(varargin{1});
+            if ~isempty(path_file)
+                fname = varargin{1};
+            else
+                fname    = [path_m,filesep,varargin{1}];
+            end
+        else
+            fname    = [path_m,filesep,'template_gui.mdf'];
+        end
+        
+        if     nargout ==1
+            
+            [DAT       ] = Local_read(fname);
+            varargout  = {DAT};
+            
+        elseif nargout  == 2
+            
+            [DAT,iostat] = Local_read(fname);
+            varargout  = {DAT,iostat};
+            
+        elseif nargout >2
+            
+            error('too much output parameters: 1 or 2')
+            
+        end
+        
+    otherwise
+        
+        error(['option not implemented:',cmd])
+        
 end;
 
 % ------------------------------------
@@ -213,9 +213,9 @@ function varargout=Local_read(fname,varargin),
 
 %% Input
 
-   OPT.case = 'lower';
+OPT.case = 'lower';
 
-   OPT = setproperty(OPT,varargin);
+OPT = setproperty(OPT,varargin);
 
 STRUCT.filename     = fname;
 STRUCT.case         = OPT.case;
@@ -235,122 +235,122 @@ if length(tmp)==0 & exist(fname,'file')==2
 end
 
 if length(tmp)==0
-
-   STRUCT.iostat = -1;
-   disp (['??? Error using ==> delft3d_io_mdf'])
-   disp (['Error finding file: ',fname])
-
+    
+    STRUCT.iostat = -1;
+    disp (['??? Error using ==> delft3d_io_mdf'])
+    disp (['Error finding file: ',fname])
+    
 elseif length(tmp)>0
-
-   STRUCT.filedate  = tmp.date;
-   STRUCT.filebytes = tmp.bytes;
-
-   fid              = fopen(STRUCT.filename,'r');
-
-   %% Open
-
-   if fid < 0
-
-      STRUCT.iostat = -2;
-      disp (['??? Error using ==> delft3d_io_mdf'])
-      disp (['Error opening file: ',fname])
-
-   elseif fid > 2
-
-   %% Read
-
-   %-% try
-
-      count.line    = 0;
-      count.comment = 0;
-      while 1
-
-         %% get line
-
-         newline          = fgetl(fid);
-         if ~ischar(newline);break, end % -1 when eof
-         count.line=count.line+1;
-
-         %% Keyword
-
-         keyword  = deblank(newline(1:6));
-
-         if     strcmpi(STRUCT.case,'lower')
-            keyword  = lower(keyword);
-         elseif strcmpi(STRUCT.case,'upper')
-            keyword  = upper(keyword);
-         elseif ~strcmpi(STRUCT.case,'auto')
-            error('case should be lower/upper/auto')
-         end
-
-         value    = newline(7:end);
-
-         if ~isempty(keyword)
-            keyword_last     = keyword;
-
-            % remove = sign and leading/trailing blanks
-            equalsignposition = findstr(value,'=');
-            value             = strtrim(value(equalsignposition+1:end));
-		else
-		    value=strtrim(value); 	
-         end
-
-         %% Look for strings
-
-         if ~strcmpi(keyword,'commnt')
-         [string,strstat] = strselect(value,'#');
-         if strstat ==1
-            value = string;
-         else
-            value =str2num(value); % vectorized !!
-         end
-         end
-
-         %% Assign value
-         if isempty(keyword)
-			STRUCT.keywords.(keyword_last)=[STRUCT.keywords.(keyword_last),value]; 
-         elseif strcmpi(keyword,'commnt')
-                            count.comment  = count.comment + 1;
-            STRUCT.comments{count.comment} = value;
-         else
-            if ~isempty(keyword)
-               STRUCT.keywords.(keyword)  = value;
-            elseif ~strcmpi(keyword,'commnt')
-               STRUCT.keywords.(keyword_last) = [STRUCT.keywords.(keyword_last) value];
+    
+    STRUCT.filedate  = tmp.date;
+    STRUCT.filebytes = tmp.bytes;
+    
+    fid              = fopen(STRUCT.filename,'r');
+    
+    %% Open
+    
+    if fid < 0
+        
+        STRUCT.iostat = -2;
+        disp (['??? Error using ==> delft3d_io_mdf'])
+        disp (['Error opening file: ',fname])
+        
+    elseif fid > 2
+        
+        %% Read
+        
+        %-% try
+        
+        count.line    = 0;
+        count.comment = 0;
+        while 1
+            
+            %% get line
+            
+            newline          = fgetl(fid);
+            if ~ischar(newline);break, end % -1 when eof
+            if length(deblank2(newline)) > 0;
+                count.line=count.line+1;
+                
+                %% Keyword
+                keyword  = deblank(newline(1:6));
+                
+                if     strcmpi(STRUCT.case,'lower')
+                    keyword  = lower(keyword);
+                elseif strcmpi(STRUCT.case,'upper')
+                    keyword  = upper(keyword);
+                elseif ~strcmpi(STRUCT.case,'auto')
+                    error('case should be lower/upper/auto')
+                end
+                
+                value    = newline(7:end);
+                
+                if ~isempty(keyword)
+                    keyword_last     = keyword;
+                    
+                    % remove = sign and leading/trailing blanks
+                    equalsignposition = findstr(value,'=');
+                    value             = strtrim(value(equalsignposition+1:end));
+                else
+                    value=strtrim(value);
+                end
+                
+                %% Look for strings
+                
+                if ~strcmpi(keyword,'commnt')
+                    [string,strstat] = strselect(value,'#');
+                    if strstat ==1
+                        value = string;
+                    else
+                        value =str2num(value); % vectorized !!
+                    end
+                end
+                
+                %% Assign value
+                if isempty(keyword)
+                    STRUCT.keywords.(keyword_last)=[STRUCT.keywords.(keyword_last),value];
+                elseif strcmpi(keyword,'commnt')
+                    count.comment  = count.comment + 1;
+                    STRUCT.comments{count.comment} = value;
+                else
+                    if ~isempty(keyword)
+                        STRUCT.keywords.(keyword)  = value;
+                    elseif ~strcmpi(keyword,'commnt')
+                        STRUCT.keywords.(keyword_last) = [STRUCT.keywords.(keyword_last) value];
+                    end
+                end
             end
-         end
-
-      end % while
-
-      %% Extract sensible data
-
-      STRUCT.data.datenum = time2datenum(STRUCT.keywords.itdate) + ...
-                                        [STRUCT.keywords.tstart:...
-                                         STRUCT.keywords.dt:...
-                                         STRUCT.keywords.tstop]./60./24;
-
-      %% Finished succesfully
-
-      STRUCT.linecount = count.line;
-      fclose(fid);
-      STRUCT.iostat    = 1;
-
-   %-% catch
-   %-%
-   %-%    STRUCT.iostat = -3;
-   %-%    disp (['??? Error using ==> delft3d_io_mdf'])
-   %-%    disp (['Error reading file: ',fname])
-   %-%
-   %-% end % catch
-
-end % if fid < 0
-
+        end % while
+        
+        %% Extract sensible data
+        
+        STRUCT.data.datenum = time2datenum(STRUCT.keywords.itdate) + ...
+            [STRUCT.keywords.tstart:...
+            STRUCT.keywords.dt:...
+            STRUCT.keywords.tstop]./60./24;
+        
+        %% Finished succesfully
+        
+        STRUCT.linecount = count.line;
+        fclose(fid);
+        STRUCT.iostat    = 1;
+        
+        %-% catch
+        %-%
+        %-%    STRUCT.iostat = -3;
+        %-%    disp (['??? Error using ==> delft3d_io_mdf'])
+        %-%    disp (['Error reading file: ',fname])
+        %-%
+        %-% end % catch
+        
+    end % if fid < 0
+    
 end %elseif length(tmp)>0
 
 if nargout==1
-   varargout = {STRUCT};
+    varargout = {STRUCT};
 else
-   varargout = {STRUCT,STRUCT.iostat};
+    varargout = {STRUCT,STRUCT.iostat};
 end
 
 % ------------------------------------
@@ -360,170 +360,170 @@ end
 
 function iostat=Local_write(OS,filename,STRUC,varargin),
 
-   iostat        = 1;
+iostat        = 1;
 
 %% Input
 
-   OPT.case      = 'lower';
-   OPT.selection = {};
-   OPT.stamp     = 1;
+OPT.case      = 'lower';
+OPT.selection = {};
+OPT.stamp     = 1;
 
-   OPT = setproperty(OPT,varargin);
+OPT = setproperty(OPT,varargin);
 
-   if OPT.stamp
-   STRUC.commnt  = ['Written $HeadURL$ $Id$ on ',datestr(now)];
-   end
+if OPT.stamp
+    STRUC.commnt  = ['Written $HeadURL$ $Id$ on ',datestr(now)];
+end
 
-   fid          = fopen(filename,'w');
-   if     strcmpi(lower(OS(1)),'u')
-      EOL = '\n';
-   elseif strcmpi(lower(OS(1)),'w')
-      EOL = '\r\n';
-   end
+fid          = fopen(filename,'w');
+if     strcmpi(lower(OS(1)),'u')
+    EOL = '\n';
+elseif strcmpi(lower(OS(1)),'w')
+    EOL = '\r\n';
+end
 
-   if ~isempty(OPT.selection)
-      fldnames = OPT.selection;
-   else
-      if    strcmpi(OPT.case,'lower')
-         fldnames = lower(fieldnames(STRUC));
-      elseif strcmpi(OPT.case,'upper')
-         fldnames = upper(fieldnames(STRUC));
-      elseif strcmpi(OPT.case,'auto')
-         fldnames =      (fieldnames(STRUC));
-      else
-         error('case should be lower/upper/auto')
-      end
-   end
+if ~isempty(OPT.selection)
+    fldnames = OPT.selection;
+else
+    if    strcmpi(OPT.case,'lower')
+        fldnames = lower(fieldnames(STRUC));
+    elseif strcmpi(OPT.case,'upper')
+        fldnames = upper(fieldnames(STRUC));
+    elseif strcmpi(OPT.case,'auto')
+        fldnames =      (fieldnames(STRUC));
+    else
+        error('case should be lower/upper/auto')
+    end
+end
 
-   for i=1:length(fldnames)
-
-      keyword  = char(fldnames{i});
-      keyword6 = pad(keyword,6,' ');
-
-      if ~isfield(STRUC,keyword)
-         error(['"',keyword,'" is not a valid mdf keyword, please mind that keywords are case-sesitive'])
-      else
-         value    = STRUC.(keyword);
-      end
-
-      %% HANDLE SPECIAL CASES (A LOT)
-      %  that makes tdatom or GUI fail to read these items
-
-      if iscell(value)
-         value0 = value;
-         value  = [];
-         for i=1:length(value0)
-         value = strvcat(value,['#',char(value0{i}),'#',]);
-         end
-      elseif ischar(value)
-         if strcmpi(keyword6,'Runtxt')
+for i=1:length(fldnames)
+    
+    keyword  = char(fldnames{i});
+    keyword6 = pad(keyword,6,' ');
+    
+    if ~isfield(STRUC,keyword)
+        error(['"',keyword,'" is not a valid mdf keyword, please mind that keywords are case-sesitive'])
+    else
+        value    = STRUC.(keyword);
+    end
+    
+    %% HANDLE SPECIAL CASES (A LOT)
+    %  that makes tdatom or GUI fail to read these items
+    
+    if iscell(value)
+        value0 = value;
+        value  = [];
+        for i=1:length(value0)
+            value = strvcat(value,['#',char(value0{i}),'#',]);
+        end
+    elseif ischar(value)
+        if strcmpi(keyword6,'Runtxt')
             if size(value,2) > 30
-               value = line2block(value,30);
+                value = line2block(value,30);
             end
-         end
-         value = addrowcol(value,[0],[-1 1],'#');
-      elseif isnumeric(value)
-
-         if isempty(value)
+        end
+        value = addrowcol(value,[0],[-1 1],'#');
+    elseif isnumeric(value)
+        
+        if isempty(value)
             value = '[.]';
-         else
+        else
             %% values that need to be written column wise rather than row wise (although short row vectors are allowed)
             %  pad keywordf to six with spaces
             if strcmpi(keyword6,'Thick ') | ...
-               strcmpi(keyword6,'Rettis') | ...
-               strcmpi(keyword6,'Rettib') | ...
-               strcmpi(keyword6,'u0    ') | ...
-               strcmpi(keyword6,'v0    ') | ...
-               strcmpi(keyword6,'s0    ') | ...
-               strcmpi(keyword6,'t0    ') | ...
-               strcmpi(keyword6,'c01   ') | ...
-               strcmpi(keyword6,'c02   ') | ...
-               strcmpi(keyword6,'c03   ') | ...
-               strcmpi(keyword6,'c04   ') | ...
-               strcmpi(keyword6,'c01   ') | ...
-               strcmpi(keyword6,'ilAggr')
-               value=value(:);
+                    strcmpi(keyword6,'Rettis') | ...
+                    strcmpi(keyword6,'Rettib') | ...
+                    strcmpi(keyword6,'u0    ') | ...
+                    strcmpi(keyword6,'v0    ') | ...
+                    strcmpi(keyword6,'s0    ') | ...
+                    strcmpi(keyword6,'t0    ') | ...
+                    strcmpi(keyword6,'c01   ') | ...
+                    strcmpi(keyword6,'c02   ') | ...
+                    strcmpi(keyword6,'c03   ') | ...
+                    strcmpi(keyword6,'c04   ') | ...
+                    strcmpi(keyword6,'c01   ') | ...
+                    strcmpi(keyword6,'ilAggr')
+                value=value(:);
             end
             value = num2str(value);
-         end
-      end
-
-
-      if strcmpi(keyword6,'MNtd  ')
+        end
+    end
+    
+    
+    if strcmpi(keyword6,'MNtd  ')
         value = ['[ ] [ ] [ ] [ ] ',value];
-      end
-
-      if strcmpi(keyword6,'MNbar ')
+    end
+    
+    if strcmpi(keyword6,'MNbar ')
         value = ['[ ] [ ] # #'];
-      end
-
-      if strcmpi(keyword6,'MNwlos')
+    end
+    
+    if strcmpi(keyword6,'MNwlos')
         value = ['[ ] [ ]'];
-      end
-
-      if strcmpi(keyword6,'MNgrd ')
+    end
+    
+    if strcmpi(keyword6,'MNgrd ')
         value = ['[ ] [ ]'];
-      end
-
-      if strcmpi(keyword6,'MNdry ')
+    end
+    
+    if strcmpi(keyword6,'MNdry ')
         value = ['[ ] [ ]'];
-      end
-
-      if strcmpi(keyword6,'MNcrs ')
+    end
+    
+    if strcmpi(keyword6,'MNcrs ')
         value = ['[ ] [ ] [ ] [ ]'];
-      end
-
-      if strcmpi(keyword6,'Prmap ')
+    end
+    
+    if strcmpi(keyword6,'Prmap ')
         value = ['[.] '];
-      end
-
-      if strcmpi(keyword6,'Prhis ')
+    end
+    
+    if strcmpi(keyword6,'Prhis ')
         value = ['[.] [.] [.] '];
-      end
-
-      if strcmpi(keyword6,'Tpar  ')
+    end
+    
+    if strcmpi(keyword6,'Tpar  ')
         value = ['[.] [.]'];
-      end
-
-      if strcmpi(keyword6,'XYpar ')
+    end
+    
+    if strcmpi(keyword6,'XYpar ')
         value = ['[.] [.]'];
-      end
-
-      if strcmpi(keyword6,'Eps   ')
+    end
+    
+    if strcmpi(keyword6,'Eps   ')
         value = ['[.]'];
-      end
-
-      if strcmpi(keyword6,'Z0v   ')
+    end
+    
+    if strcmpi(keyword6,'Z0v   ')
         value = ['[.]'];
-      end
-
-      if strcmpi(keyword6,'Cmu   ')
+    end
+    
+    if strcmpi(keyword6,'Cmu   ')
         value = ['[.]'];
-      end
-
-      if strcmpi(keyword6,'Cpran ')
+    end
+    
+    if strcmpi(keyword6,'Cpran ')
         value = ['[.]'];
-      end
-
-      %% Write key word and value
-
-      for i=1:size(value,1)
-         if i==1
+    end
+    
+    %% Write key word and value
+    
+    for i=1:size(value,1)
+        if i==1
             fprintf (fid,'%s = %s \n',keyword6,value(i,:));
-         else
+        else
             fprintf (fid,'%s  %s \n','       ',value(i,:)); % where value needs multiple lines but keyword not
-         end
-      end
+        end
+    end
+    
+end
 
-   end
+iostat = fclose  (fid);
 
-   iostat = fclose  (fid);
-
-   if iostat==0
-      disp(['File ',filename,' successfully written']);
-   else
-      disp(['Error: file ',filename,' NOT successfully written']);
-   end
+if iostat==0
+    disp(['File ',filename,' successfully written']);
+else
+    disp(['Error: file ',filename,' NOT successfully written']);
+end
 
 % ------------------------------------
 % --STRSELECT-------------------------
@@ -543,89 +543,89 @@ endoffset       =  1; % when 0 end   pattern is included in slected string
 warningsoff     = 1;
 
 if nargin==2
-   selectstart = varargin{1};
-   selectend   = selectstart;
+    selectstart = varargin{1};
+    selectend   = selectstart;
 else
-   selectstart = varargin{1};
-   selectend   = varargin{2};
+    selectstart = varargin{1};
+    selectend   = varargin{2};
 end
 
 if ~isempty(s) & ~isstr(s)
-   warning('Input must be a string.')
-   findstatus = -1;
+    warning('Input must be a string.')
+    findstatus = -1;
 end
 
 
 if isempty(s)
-   findstatus = -2;
+    findstatus = -2;
 else
-
-  indices_start= findstr(s,selectstart);
-  indices_end  = findstr(s,selectend  );
-
-  if isempty(indices_start)
-     if ~warningsoff
-        disp('No start of substring found')
-     end
-     findstatus = -3;
-  elseif isempty(indices_end)
-     if ~warningsoff
-        disp('No end of substring found')
-     end
-     findstatus = -4;
-  else
-     switch  lower(selectbehaviour)
-     case 'smallest_subsets_strings'
-        if strcmpi(selectstart,selectend)
-           if odd(size(indices_start))
-              if ~warningsoff
-                 disp('unenclosed string')
-              end
-              findstatus = -5;
-           else
-              % indices_start==indices_end
-              indices_start = indices_start(1:2:end-1);
-              indices_end   = indices_end  (2:2:end  );
-           end
-        else
-            if ~length(indices_start)==length(indices_start);
-               if ~warningsoff
-                  disp('unenclosed string')
-               end
-               findstatus = -6;
-            end
+    
+    indices_start= findstr(s,selectstart);
+    indices_end  = findstr(s,selectend  );
+    
+    if isempty(indices_start)
+        if ~warningsoff
+            disp('No start of substring found')
         end
-        % check if each substring start after the previous ended
-        for i=1:length(indices_start)-1
-           if indices_start(i+1) < indices_end(i)
-              if ~warningsoff
-                 disp('Intertwined pairs')
-              end
-              findstatus = -7;
-           end
+        findstatus = -3;
+    elseif isempty(indices_end)
+        if ~warningsoff
+            disp('No end of substring found')
         end
-        for i=1:length(indices_start)
-           s1{i} = s(:,min(indices_start(i))+ length(selectstart):...
-                       max(indices_end  (i))-1);
+        findstatus = -4;
+    else
+        switch  lower(selectbehaviour)
+            case 'smallest_subsets_strings'
+                if strcmpi(selectstart,selectend)
+                    if odd(size(indices_start))
+                        if ~warningsoff
+                            disp('unenclosed string')
+                        end
+                        findstatus = -5;
+                    else
+                        % indices_start==indices_end
+                        indices_start = indices_start(1:2:end-1);
+                        indices_end   = indices_end  (2:2:end  );
+                    end
+                else
+                    if ~length(indices_start)==length(indices_start);
+                        if ~warningsoff
+                            disp('unenclosed string')
+                        end
+                        findstatus = -6;
+                    end
+                end
+                % check if each substring start after the previous ended
+                for i=1:length(indices_start)-1
+                    if indices_start(i+1) < indices_end(i)
+                        if ~warningsoff
+                            disp('Intertwined pairs')
+                        end
+                        findstatus = -7;
+                    end
+                end
+                for i=1:length(indices_start)
+                    s1{i} = s(:,min(indices_start(i))+ length(selectstart):...
+                        max(indices_end  (i))-1);
+                end
+                findstatus = 1;
+            case 'largest_overall_string'
+                s1 = s(:,min(indices_start)+length(selectstart):...
+                    max(indices_end  )-1);
+                findstatus = 1;
         end
-        findstatus = 1;
-     case 'largest_overall_string'
-        s1 = s(:,min(indices_start)+length(selectstart):...
-                 max(indices_end  )-1);
-        findstatus = 1;
-     end
-  end
-
+    end
+    
 end
 
 if sign(findstatus)==-1
-   s1 = s([]);
+    s1 = s([]);
 end
 
 if nargout==1
-   varargout = {s1};
+    varargout = {s1};
 else
-   varargout = {s1,findstatus};
+    varargout = {s1,findstatus};
 end
 
 function out = odd(in)
