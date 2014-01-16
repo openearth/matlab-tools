@@ -73,6 +73,11 @@ image(img);
 axis off;
 box on;
 
+% Clear screen and ignore warnings
+fclose all;
+clc;
+warning off all;
+
 % Show default settings of the screen
 convertDefaultScreen;
 

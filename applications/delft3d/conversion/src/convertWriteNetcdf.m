@@ -1,3 +1,4 @@
+clc;
 warning off all;
 
 % Assign coordinates
@@ -129,3 +130,6 @@ ncwriteatt(netfile,'NetNode_y','actual_range',[min(Y(:)) max(Y(:))]);
 ncwriteatt(netfile,'NetNode_z','actual_range',[min(Z(:)) max(Z(:))]);
 ncwrite(netfile,'NetLink',NetLink');
 ncwrite(netfile,'NetLinkType',repmat(int32(2),[1 size(NetLink,1)]));
+
+% Clear the screen
+clc;

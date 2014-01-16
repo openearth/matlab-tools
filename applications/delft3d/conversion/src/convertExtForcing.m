@@ -1,3 +1,6 @@
+%%% Clear screen and ignore warnings
+
+clc;
 warning off all;
 
 

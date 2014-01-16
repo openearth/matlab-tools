@@ -1,3 +1,7 @@
+% Clear screen and ignore warnings
+
+fclose all;
+clc;
 warning off all;
 
 
