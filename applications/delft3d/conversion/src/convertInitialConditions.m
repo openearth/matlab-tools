@@ -14,6 +14,7 @@ convertGuiDirectoriesCheck;
 
 % Check if the initial conditions file name has been specified (Delft3D)
 fileini     = get(handles.edit21,'String');
+fileini     = deblank2(fileini);
 if ~isempty(fileini);
     fileini = [pathin,'\',fileini];
     if exist(fileini,'file')==0;

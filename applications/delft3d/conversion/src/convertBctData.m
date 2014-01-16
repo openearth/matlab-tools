@@ -14,6 +14,7 @@ convertGuiDirectoriesCheck;
 
 % Check if the bca file name has been specified (Delft3D)
 filebct     = get(handles.edit11,'String');
+filebct     = deblank2(filebct);
 if ~isempty(filebct);
     filebct = [pathin,'\',filebct];
     if exist(filebct,'file')==0;

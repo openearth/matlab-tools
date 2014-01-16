@@ -14,6 +14,7 @@ convertGuiDirectoriesCheck;
 
 % Check if the cross-sections file name has been specified (Delft3D)
 filecrs     = get(handles.edit16,'String');
+filecrs     = deblank2(filecrs);
 if ~isempty(filecrs);
     filecrs = [pathin,'\',filecrs];
     if exist(filecrs,'file')==0;

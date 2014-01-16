@@ -14,6 +14,7 @@ convertGuiDirectoriesCheck;
 
 % Check if the mdf file name has been specified (Delft3D)
 filemdf     = get(handles.edit3,'String');
+filemdf     = deblank2(filemdf);
 if isempty(filemdf);
     if exist('wb'); close(wb); end;
     errordlg('The mdf file name has not been specified.','Error');

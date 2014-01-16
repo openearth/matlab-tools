@@ -14,6 +14,7 @@ convertGuiDirectoriesCheck;
 
 % Check if the observation file name has been specified (Delft3D)
 filesta     = get(handles.edit15,'String');
+filesta     = deblank2(filesta);
 if ~isempty(filesta);
     filesta = [pathin,'\',filesta];
     if exist(filesta,'file')==0;

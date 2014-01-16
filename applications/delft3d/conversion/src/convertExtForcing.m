@@ -46,6 +46,7 @@ end
 
 % Check if salinity is active
 filebcc     = get(handles.edit14,'String');
+filebcc     = deblank2(filebcc);
 jasal       = 1;
 if isempty(filebcc);
     jasal   = 0;

@@ -14,6 +14,7 @@ convertGuiDirectoriesCheck;
 
 % Check if the roughness file name has been specified (Delft3D)
 filergh     = get(handles.edit17,'String');
+filergh     = deblank2(filergh);
 if ~isempty(filergh);
     filergh = [pathin,'\',filergh];
     if exist(filergh,'file')==0;

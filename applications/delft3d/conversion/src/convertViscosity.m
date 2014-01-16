@@ -14,6 +14,7 @@ convertGuiDirectoriesCheck;
 
 % Check if the viscosity file name has been specified (Delft3D)
 fileedy     = get(handles.edit18,'String');
+fileedy     = deblank2(fileedy);
 if ~isempty(fileedy);
     fileedy = [pathin,'\',fileedy];
     if exist(fileedy,'file')==0;

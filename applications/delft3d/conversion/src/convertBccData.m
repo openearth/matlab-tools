@@ -14,6 +14,7 @@ convertGuiDirectoriesCheck;
 
 % Check if the bcc file name has been specified (Delft3D)
 filebcc     = get(handles.edit14,'String');
+filebcc     = deblank2(filebcc);
 if ~isempty(filebcc);
     filebcc = [pathin,'\',filebcc];
     if exist(filebcc,'file')==0;

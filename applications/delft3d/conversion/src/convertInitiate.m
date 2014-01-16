@@ -3,6 +3,7 @@ inputdir              = get(handles.edit1,'String');
 
 % Read the mdf filename
 mdffile               = get(handles.edit3,'String');
+mdffile               = deblank2(mdffile);
 if isempty(mdffile);
     if exist('wb'); close(wb); end;
     errordlg('No mdf-file specified.','Error');

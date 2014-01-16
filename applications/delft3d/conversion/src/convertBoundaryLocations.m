@@ -14,6 +14,7 @@ convertGuiDirectoriesCheck;
 
 % Check if the bnd file name has been specified
 filebnd     = get(handles.edit9,'String');
+filebnd     = deblank2(filebnd);
 if ~isempty(filebnd);
     filebnd = [pathin,'\',filebnd];
     if exist(filebnd,'file')==0;

@@ -14,6 +14,7 @@ convertGuiDirectoriesCheck;
 
 % Check if the dry points file name has been specified (Delft3D)
 filedry     = get(handles.edit19,'String');
+filedry     = deblank2(filedry);
 jadry       = 1;
 if ~isempty(filedry);
     filedry = [pathin,'\',filedry];
@@ -29,6 +30,7 @@ end
 
 % Check if the thin dams file name has been specified (Delft3D)
 filethd     = get(handles.edit20,'String');
+filethd     = deblank2(filethd);
 jathd       = 1;
 if ~isempty(filethd);
     filethd = [pathin,'\',filethd];
