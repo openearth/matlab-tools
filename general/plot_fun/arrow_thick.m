@@ -166,6 +166,9 @@ function varargout = arrow_thick(x1,y1,x2,y2,varargin)
 %                          provided in the third argument. When a thrid
 %                          argument is provided in case of plotting on, the
 %                          thrid argument will be empty
+%
+%Note that in the output x- and y-locations the 2nd and 6th row contain the
+%original start and end locations
 %__________________________________________________________________________
 %Examples
 %_________
@@ -383,8 +386,8 @@ abs_head_widths      = max([abs_arrow_widths abs_arrowhead_length.*tand(keywords
 
 % Generate all arrows in 2 calls (used for patch plotting)
 
-output.arrows_x_values = [x1+(abs_arrow_widths.*arrow_x_cos) x1-(abs_arrow_widths.*arrow_x_cos) x2-(arrow_y_sin.*abs_arrowhead_length)-(abs_arrow_widths.*arrow_x_cos) x2-(arrow_y_sin.*abs_arrowhead_length)-(abs_head_widths.*arrow_x_cos) x2 x2-(arrow_y_sin.*abs_arrowhead_length)+(abs_head_widths.*arrow_x_cos) x2-(arrow_y_sin.*abs_arrowhead_length)+(abs_arrow_widths.*arrow_x_cos) x1+(abs_arrow_widths.*arrow_x_cos)]';
-output.arrows_y_values = [y1-(abs_arrow_widths.*arrow_y_sin) y1+(abs_arrow_widths.*arrow_y_sin) y2-(arrow_x_cos.*abs_arrowhead_length)+(abs_arrow_widths.*arrow_y_sin) y2-(arrow_x_cos.*abs_arrowhead_length)+(abs_head_widths.*arrow_y_sin) y2 y2-(arrow_x_cos.*abs_arrowhead_length)-(abs_head_widths.*arrow_y_sin) y2-(arrow_x_cos.*abs_arrowhead_length)-(abs_arrow_widths.*arrow_y_sin) y1-(abs_arrow_widths.*arrow_y_sin)]';
+output.arrows_x_values = [x1+(abs_arrow_widths.*arrow_x_cos) x1 x1-(abs_arrow_widths.*arrow_x_cos) x2-(arrow_y_sin.*abs_arrowhead_length)-(abs_arrow_widths.*arrow_x_cos) x2-(arrow_y_sin.*abs_arrowhead_length)-(abs_head_widths.*arrow_x_cos) x2 x2-(arrow_y_sin.*abs_arrowhead_length)+(abs_head_widths.*arrow_x_cos) x2-(arrow_y_sin.*abs_arrowhead_length)+(abs_arrow_widths.*arrow_x_cos) x1+(abs_arrow_widths.*arrow_x_cos)]';
+output.arrows_y_values = [y1-(abs_arrow_widths.*arrow_y_sin) y1 y1+(abs_arrow_widths.*arrow_y_sin) y2-(arrow_x_cos.*abs_arrowhead_length)+(abs_arrow_widths.*arrow_y_sin) y2-(arrow_x_cos.*abs_arrowhead_length)+(abs_head_widths.*arrow_y_sin) y2 y2-(arrow_x_cos.*abs_arrowhead_length)-(abs_head_widths.*arrow_y_sin) y2-(arrow_x_cos.*abs_arrowhead_length)-(abs_arrow_widths.*arrow_y_sin) y1-(abs_arrow_widths.*arrow_y_sin)]';
 
 % Plot to the current figure using hold on and axis equal (if not turned off by the user)
 

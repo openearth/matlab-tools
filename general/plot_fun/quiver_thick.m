@@ -198,6 +198,9 @@ function varargout = quiver_thick(x1,y1,u,v,varargin)
 %                          provided in the third argument. When a thrid
 %                          argument is provided in case of plotting on, the
 %                          thrid argument will be empty
+%
+%Note that in the output x- and y-locations the 2nd and 6th row contain the
+%start and end locations or the arrows (also usable for arrow_thick)
 %__________________________________________________________________________
 %Examples
 %_________
