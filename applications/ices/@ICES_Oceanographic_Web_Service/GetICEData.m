@@ -1,4 +1,4 @@
-function varargout = GetICEData(obj,ParameterCode,FromYear,ToYear,FromMonth,ToMonth,FromLongitude,ToLongitude,FromLatitude,ToLatitude,FromPressure,ToPressure)
+function varargout = GetICEData(obj,ParameterCode,FromYear,ToYear,FromMonth,ToMonth,FromLongitude,ToLongitude,FromLatitude,ToLatitude,FromPressure,ToPressure,varargin)
 %GetICEData Get ICES Bottle and low resolution CTD data
 %
 %   D = GetICEData(obj,ParameterCode,FromYear,ToYear,FromMonth,ToMonth,...
@@ -39,6 +39,9 @@ function varargout = GetICEData(obj,ParameterCode,FromYear,ToYear,FromMonth,ToMo
 %See also: GetICEDataAverage
 
 OPT.debug = 1;
+OPT.cache = 0;
+
+OPT = setproperty(OPT,varargin);
 
 % Build up the argument lists.
 values = { ...
@@ -108,8 +111,11 @@ types = { ...
 
 %%  ...and convert the response into a variable.
 
+   if OPT.cache
+      savestr(['soapResponse.xml'],char(soapResponse));
+   end
+   
    if OPT.debug
-      %savestr(['soapResponse.xml'],char(soapResponse))
       toc
       disp('busy: parseSoapResponse')
    end

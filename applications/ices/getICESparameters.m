@@ -72,7 +72,7 @@ if nargin==0
    return
 end
 
-ind = strmatch(code,{table{:,1}});
+ind = strmatch(lower(code),lower({table{:,1}}));
 
 if isempty(ind)
     error(['''',code,''' not a valid code.'])

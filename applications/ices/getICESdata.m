@@ -7,11 +7,11 @@ function varargout = getICESdata(varargin)
 % with arrays for easy plotting.
 %
 % Example:
-%  [D,A] = getICESdata('ParameterCode','PSAL','t0',datenum(2009,1,1),'t1',datenum(2010,1,1),...
+%  [D,A] = getICESdata('ParameterCode','CPCL','t0',datenum(2009,1,1),'t1',datenum(2010,1,1),...
 %              'lon',[-2  9],... % bounding box longitude 
 %              'lat',[49 57],... % bounding box latitude
 %              'p'  ,[0 1e5],... % bounding box depth (pressure)
-%              'kml','salinity.kml')
+%         'fileName','salinity.kml')
 %
 %See also: getICESdataAverage, getndbcdata, getcoopsdata, getICESparameters
 
@@ -61,7 +61,8 @@ OPT.t1            = [];        % datenum(2010,1,1);
 OPT.lon           = [nan nan]; % [-2  9];
 OPT.lat           = [nan nan]; % [49 57];
 OPT.p             = [nan nan]; % [0 1e5];
-OPT.kml           = '';
+OPT.fileName      = '';
+OPT.kmlName       = '';
 
 if nargin==0
    varargout = {OPT};
@@ -70,15 +71,20 @@ end
 
 OPT = setproperty(OPT,varargin);
 
+[A.code, A.name,~,A.units] = getICESparameters(OPT.ParameterCode);
+
 D = GetICEData(ICES_Oceanographic_Web_Service,OPT.ParameterCode,...
                year(OPT.t0),year(OPT.t1),month(OPT.t0),month(OPT.t1),...
                OPT.lon(1),OPT.lon(2),...
                OPT.lat(1),OPT.lat(2),...
                OPT.p  (1),OPT.p  (2));
 
+if isempty(D)
+   varargout = {D,A};    
+   return
+end
+    
 D = D.ICEData;
-
-[A.code, A.name,~,A.units] = getICESparameters(OPT.ParameterCode);
 
 for i=1:length(D)
 
@@ -105,9 +111,12 @@ end
 
 %% debug
 
-if ~isempty(OPT.kml)
-   dt = 14;
-   KMLscatter(A.Latitude,A.Longitude,A.Value,'fileName',OPT.kml,...
-       'CBcolorTitle',[A.name,' [',A.units,']'],...
-       'timeIn',floor(A.datenum),'timeOut',ceil(A.datenum+eps))
+if ~isempty(OPT.fileName)
+   KMLscatter(A.Latitude,A.Longitude,A.Value,...
+               'fileName',OPT.fileName,...
+           'CBcolorTitle',['ICES ', A.name,' [',A.units,']'],...
+       'scalenormalState',1,...       
+                'kmlName',OPT.kmlName,...       
+                 'timeIn',floor(A.datenum),...
+                'timeOut',ceil(A.datenum+eps))
 end
