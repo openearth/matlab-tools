@@ -116,7 +116,14 @@ switch handles.Toolbox(tb).Input.detailmodeltype
         fprintf(fid,'%s\n','ddtemp.obs');
         fclose(fid);
         
-        system(['"' handles.Toolbox(tb).dataDir 'nesthd1" < nesthd1.inp']);
+        %system(['"' handles.Toolbox(tb).dataDir 'nesthd1" < nesthd1.inp']);
+        % Should use the nesthd1 compiled for this system if that is
+        % available
+        if exist([handles.Model(md).exedir,'nesthd1.exe'],'file'),
+            system(['"' handles.Model(md).exedir 'nesthd1" < nesthd1.inp']);
+        else
+            system(['"' handles.Toolbox(tb).dataDir 'nesthd1" < nesthd1.inp']);
+        end
         
         [name,m,n] = textread('ddtemp.obs','%21c%f%f');
         
