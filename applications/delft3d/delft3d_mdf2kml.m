@@ -84,7 +84,7 @@ function OPT = delft3d_mdf2kml(mdf,varargin)
    OPT.ddep        = 10;               % height offset
    OPT.grdColor    = [0.7 0.7 0.7];    % color of grid lines
    OPT.dep         = false;            % switch for bathymetry
-   OPT.clim        = [-50 0];          % color limits for bathymetry
+   OPT.cLim        = [-50 25];         % color limits for bathymetry
    OPT.dry         = false;            % switch for dry points
    OPT.dryColor    = [163 208 1]./256; % color of dry points
    OPT.thd         = false;            % switch for thin dams
@@ -162,7 +162,7 @@ disp('Converting the grid...')
     nr=0;
     
     try
-        D = delft3d_io_dry('read' ,MDF.keywords.fildry);
+        D = delft3d_io_dry('read' ,[pathstr,filesep,MDF.keywords.fildry]);
         nr = length(D.m1);
     catch
         disp('No dry points found...')
@@ -201,7 +201,7 @@ disp('Converting the grid...')
     nr=0;
     
     try
-        D = delft3d_io_src('read' ,MDF.keywords.filsrc);
+        D = delft3d_io_src('read' ,[pathstr,filesep,MDF.keywords.filsrc]);
         nr = length(D.m);
     catch
         disp('No src points found...')
@@ -241,7 +241,7 @@ disp('Converting the grid...')
     nr=0;
     
     try
-        D = delft3d_io_obs('read' ,MDF.keywords.filsta);
+        D = delft3d_io_obs('read' ,[pathstr,filesep,MDF.keywords.filsta]);
         nr = length(D.m);
     catch
         disp('No obs points found...')
@@ -282,7 +282,7 @@ disp('Converting the grid...')
     nr = 0;
     
     try
-        T = delft3d_io_thd('read' ,MDF.keywords.filtd);
+        T = delft3d_io_thd('read' ,[pathstr,filesep,MDF.keywords.filtd]);
         nr = length(T.m);
     catch
         disp('No thin dams found');
