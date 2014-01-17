@@ -1,5 +1,6 @@
 % Course excercises of probabilistic course held on May 12, 2012
 % $HeadURL$
+% presentations are included in pdf
 %
 % probabilistic/course/case1   - Basic example
 % probabilistic/course/case2   - Run-up example with Hunt's formula
