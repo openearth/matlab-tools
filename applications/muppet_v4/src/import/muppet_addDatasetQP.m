@@ -147,7 +147,8 @@ for j=i1:i2
         end
         
         % NetCDF time series (should be fixed in qpread)
-        if strcmpi(fid.qp_filetype,'netcdf')
+%        if strcmpi(fid.qp_filetype,'netcdf')
+        if strcmpi(fid.QP_FileType,'NetCDF')
             if isfield(dataproperties(ii),'Dimension')
                 if ~isempty(dataproperties(ii).Dimension)
                     if strcmpi(dataproperties(ii).Dimension{3},'locations')
@@ -188,7 +189,8 @@ for j=i1:i2
         %     end
         
         % Unstructured grid
-        if strcmpi(fid.qp_filetype,'netcdf')
+%        if strcmpi(fid.qp_filetype,'netcdf')
+        if strcmpi(fid.QP_FileType,'NetCDF')
             if ~isempty(dataproperties(ii).DimName)
                 if strcmpi(dataproperties(ii).DimName{3},'nFlowElem')
                     % unstructured grid

@@ -1037,6 +1037,22 @@ muppet_animationSettings;
 %%
 function makeAnimation
 handles=getHandles;
+% Check animation size
+nhor=handles.figures(handles.activefigure).figure.width*handles.figures(handles.activefigure).figure.resolution/2.5;
+nver=handles.figures(handles.activefigure).figure.height*handles.figures(handles.activefigure).figure.resolution/2.5;
+
+switch lower(handles.animationsettings.format)
+    case{'mp4'}
+        if nhor>1920 || nver>1088
+            muppet_giveWarning('text','Figures to large for animation! Please reduce the resolution.');
+            return
+        end
+    case{'avi'}
+        if nhor>2000 || nver>2000
+            muppet_giveWarning('text','Animation output very large! Consider reducing the resolution.');
+        end
+end
+
 % aviops=handles.animationsettings.avioptions;
 % if isempty(aviops)
 %     aviops=writeavi('getoptions',24);

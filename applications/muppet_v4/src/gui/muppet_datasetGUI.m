@@ -278,13 +278,13 @@ if dataset.size(1)>0
         end
         if dataset.size(1)>0
             if ~isempty(dataset.times)
-                if length(dataset.times)<1000
+%                if length(dataset.times)<1000
                     timelist=datestr(dataset.times,0);
                     dataset.timelist=[];
                     for it=1:length(dataset.times)
                         dataset.timelist{it}=timelist(it,:);
                     end
-                end
+%                end
             end
         end
     end

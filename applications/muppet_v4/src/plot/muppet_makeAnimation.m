@@ -1,13 +1,18 @@
 function muppet_makeAnimation(handles,ifig)
 
+persistent AVIOptions
+
 animationsettings=handles.animationsettings;
 
 % Make temporary datasets structure
 datasets=handles.datasets;
 
-aviops=animationsettings.avioptions;
+% aviops=animationsettings.avioptions;
+
+AVIOptions.C24=animationsettings.avioptions;
 
 if animationsettings.makekmz
+    % Change plot positions etc. for KMZ option
     handles.figures(ifig).figure.width=handles.figures(ifig).figure.subplots(1).subplot.position(3);
     handles.figures(ifig).figure.height=handles.figures(ifig).figure.subplots(1).subplot.position(4);
     handles.figures(ifig).figure.backgroundcolor='none';
@@ -62,40 +67,45 @@ a = imread('tmpavi.png');
 sz=size(a);
 sz(1)=4*floor(sz(1)/4);
 sz(2)=4*floor(sz(2)/4);
+a=a(1:sz(1),1:sz(2),:);
 
 if exist('tmpavi.png','file')
     delete('tmpavi.png');
 end
-clear a
+%clear a
 
-usevideowriter=1;
-
+% Open animation file
 if ~isempty(animationsettings.avifilename)
-    if usevideowriter
-        avihandle=VideoWriter(animationsettings.avifilename);
-        avihandle.FrameRate=animationsettings.framerate;
-        avihandle.Quality=animationsettings.quality;
-        open(avihandle);
-    else
-        if ~strcmpi(animationsettings.avifilename(end-2:end),'gif')
-%             avihandle = writeavi('initialize');
-%             avihandle = writeavi('open', avihandle,animationsettings.avifilename);
-%             avihandle = writeavi('addvideo', avihandle, animationsettings.framerate, sz(1),sz(2), 24, aviops);
-            avihandle=getappdata(0,'avihandle');
-            if ~isempty(avihandle)
-                try
-                    close(avihandle);
+    % No movie is made when filename is empty
+    switch lower(animationsettings.format)
+        case{'mp4'}
+            if length(animationsettings.avifilename)>4
+                if ~strcmpi(animationsettings.avifilename,'.mp4')
+                    animationsettings.avifilename=[animationsettings.avifilename '.mp4'];
                 end
             end
-            avihandle = avi('initialize')
-            setappdata(0,'avihandle',avihandle);
+            avihandle=VideoWriter(animationsettings.avifilename,'MPEG-4');
+            avihandle.FrameRate=animationsettings.framerate;
+            avihandle.Quality=animationsettings.quality;
+            open(avihandle);
+        case{'avi'}
+            if length(animationsettings.avifilename)>4
+                if ~strcmpi(animationsettings.avifilename,'.avi')
+                    animationsettings.avifilename=[animationsettings.avifilename '.avi'];
+                end
+            end
+            avihandle = avi('initialize');
             avihandle = avi('open', avihandle,animationsettings.avifilename);
-%            avihandle = avi('addvideo', avihandle, animationsettings.framerate, sz(1),sz(2), 24, aviops);
-            avihandle = avi('addvideo', avihandle, animationsettings.framerate, sz(1),sz(2), 24);
-        end
+            avihandle = avi('addvideo', avihandle, animationsettings.framerate, a);
+        case{'gif'}
+            if length(animationsettings.avifilename)>4
+                if ~strcmpi(animationsettings.avifilename,'.gif')
+                    animationsettings.avifilename=[animationsettings.avifilename '.gif'];
+                end
+            end
     end
 end
-
+        
 wb = awaitbar(0,'Generating AVI...');
 
 try
@@ -243,23 +253,21 @@ try
         % No avi file is made if avi filename is empty
         if  ~isempty(animationsettings.avifilename)
             a = imread(figname,'png');
-            if usevideowriter
-                F = im2frame(a);
-                writeVideo(avihandle,F);
-            else
-                if ~strcmpi(animationsettings.avifilename(end-2:end),'gif')
+            switch lower(animationsettings.format)
+                case{'mp4'}
+                    F = im2frame(a);
+                    writeVideo(avihandle,F);
+                case{'avi'}
                     aaa=uint8(a(1:sz(1),1:sz(2),:));
-%                    avihandle = writeavi('addframe', avihandle, aaa, iblock);
                     avihandle = avi('addframe', avihandle, aaa, iblock);
                     clear aaa
-                else
+                case{'gif'}
                     nf = nf+1;
                     if nf==1
                         [im,map] = rgb2ind(a,256,'nodither');
                         itransp=find(sum(map,2)==3);
                     end
                     im(:,:,1,nf) = rgb2ind(a,map,'nodither');
-                end
             end
             clear a
         end
@@ -288,22 +296,8 @@ try
         close(wb);
     end
     
-    % Close avi file
-    if ~isempty(animationsettings.avifilename)
-        if usevideowriter
-            close(avihandle);
-        else
-            if ~strcmpi(animationsettings.avifilename(end-2:end),'gif')
-%                avihandle=writeavi('close', avihandle);
-                avihandle=avi('close', avihandle);
-                setappdata(0,'avihandle',[]);
-            else
-                % Try to make animated gif (not very succesful so far)
-                %    imwrite(im,map,'test.gif','DelayTime',1/animationsettings.FrameRate,'LoopCount',inf) %g443800
-                imwrite(im,map,'test.gif','DelayTime',1/animationsettings.framerate,'LoopCount',inf,'TransparentColor',itransp-1,'DisposalMethod','restoreBG');
-            end
-        end
-    end
+    % Close animation
+    closeanimation(avihandle,animationsettings.format);    
     
     % Delete curvec temporary files
     delete('curvecpos.*.dat');
@@ -356,14 +350,7 @@ try
     end
     
 catch
-    try
-        if usevideowriter
-            close(avihandle);
-        else
-            avihandle=avi('close', avihandle);
-        end
-        setappdata(0,'avihandle',[]);
-    end
+    closeanimation(avihandle,animationsettings.format);
     if ishandle(wb)
         close(wb);
     end
@@ -426,4 +413,19 @@ movefile(zipfilename,kmzname);
 delete(fname);
 if exist(colorbarfile,'file')
     delete(colorbarfile);
+end
+
+%%
+function closeanimation(h,fmt)
+
+try
+    switch lower(fmt)
+        case{'mp4'}
+            close(h);
+        case{'avi'}
+            h=avi('close', h);
+        case{'gif'}
+            % Try to make animated gif (not very succesful so far)
+            imwrite(im,map,'test.gif','DelayTime',1/animationsettings.framerate,'LoopCount',inf,'TransparentColor',itransp-1,'DisposalMethod','restoreBG');
+    end
 end

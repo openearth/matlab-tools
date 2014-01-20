@@ -10,6 +10,7 @@ h.makekmz=0;
 h.avifilename='anim.avi';
 h.prefix='anim';
 h.selectbits=24;
+h.format='avi';
 
 h.avioptions.fccHandler=1684633187;
 h.avioptions.KeyFrames=0;
@@ -71,14 +72,17 @@ for i=1:length(txt)
         case {'quality'}
             h.quality=str2num(txt{i+1});
 
+        case {'format'}
+            h.format=txt{i+1};
+
         case {'fcchandler'}
             h.avioptions.fccHandler=str2num(txt{i+1});
             
         case {'keyframes'}
             h.avioptions.KeyFrames=str2num(txt{i+1});
             
-        case {'quality'}
-            h.avioptions.Quality=str2num(txt{i+1});
+%         case {'quality'}
+%             h.avioptions.Quality=str2num(txt{i+1});
             
         case {'bytespersec'}
             h.avioptions.BytesPerSec=str2num(txt{i+1});
