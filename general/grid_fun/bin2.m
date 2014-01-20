@@ -349,8 +349,8 @@ ij = (j-1).*sz1 + i;
             %% Construct a subset to search for points in stencil:
             %  part of samples where previous search was positive
             %            
-            %  I. Pre select all points (a and b) that are within the orhtogonal
-            %  rectangle enlcloses by the minimum and maximum X and Y coordinates
+            %  I. Pre select all points (a and b) that are within the orthogonal
+            %  rectangle enclosed by the minimum and maximum X and Y coordinates
             %----------------------------------
             
                % +-----------+ 
@@ -363,7 +363,8 @@ ij = (j-1).*sz1 + i;
                % |aaa\/aaaaaa|                                                        
                % +-----------+                                                      
                
-               %% GJdB Jan 5th 2007: the eps offset to a larger outer domain is not sufficient refrain form using >= and <=
+               %% GJdB Jan 5th 2007: the eps offset to a larger outer domain is 
+               %  not sufficient refrain from using >= and <=
                if OPTIONS.exact
                % only consider points that do not have an index yet
                indpre1   = find(fx(:                           ) >=  min(Xstencil)-eps  & ...%size(in1)
@@ -382,7 +383,7 @@ ij = (j-1).*sz1 + i;
                % 'indpre' contains only ones when the coarse grid polygon 
                % covers at least a part of the fine grid ????
 
-            %% II. Now select form the points in the orhtogonal
+            %% II. Now select from the points in the orthogonal
             %  rectangle only those (namely b, not a) that are within the 
             %  curvilinear quadrangle. Using inpolygon for all fine points
             %  is way to slow.

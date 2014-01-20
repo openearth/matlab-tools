@@ -10,11 +10,8 @@ http://apps.helpdeskwater.nl/downloads/extra/simona/release/doc/usedoc/getdata/g
 
 """
 
-import netCDF4
-import shutil
-import numpy
-import os
-import os
+import numpy, netCDF4
+import os, shutil
 #TODO# import pyproj
 import openearthtools.io.netcdf.CF as CF
 

@@ -79,6 +79,9 @@ warning('TO DO: let m and n be only small arrays with corner points indices, and
 % $HeadURL$
 % $Keywords: $
 
+warning('data location changed: https://opendap-matroos.deltares.nl/thredds/catalog/archive/catalog.html')   
+warning('https://opendap-matroos.deltares.nl/thredds/catalog/archive/maps2d/YYYY/',OPT.source,'/YYYYMM/history/catalog.html')
+
 %% initialize
 
    OPT.basePath     = 'http://opendap-matroos.deltares.nl/thredds/dodsC/'; % same server as catalog.xml
@@ -287,4 +290,4 @@ warning('TO DO: let m and n be only small arrays with corner points indices, and
      print2screensize('matroos_opendap_maps2series3')
    end
                                            
-   varargout = {R};                                           
+   varargout = {R};

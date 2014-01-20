@@ -1,5 +1,5 @@
 function E = edges_structured_grid(x,y,z)
-%EDGES_STRUCTURED_GRID  One line description goes here.
+%EDGES_STRUCTURED_GRID   One line description goes here.
 %
 %   More detailed description goes here.
 %

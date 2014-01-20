@@ -9,7 +9,7 @@ function axislat(varargin)
 % scale in km is roughly the same as the horizontal one.
 % By default mean(ylim).
 %
-% See also: daspect
+% See also: daspect, num2strll
 
 %% Copyright notice
 %   --------------------------------------------------------------------

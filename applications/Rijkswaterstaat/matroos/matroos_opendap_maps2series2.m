@@ -56,6 +56,9 @@ warning('very preliminary test version')
 % $HeadURL$
 % $Keywords: $
 
+warning('data location changed: https://opendap-matroos.deltares.nl/thredds/catalog/archive/catalog.html')   
+warning('https://opendap-matroos.deltares.nl/thredds/catalog/archive/maps2d/YYYY/',OPT.source,'/YYYYMM/history/catalog.html')
+
 %% initialize
 
    OPT.basePath = 'http://opendap-matroos.deltares.nl/thredds/dodsC/'; % same server as catalog.xml

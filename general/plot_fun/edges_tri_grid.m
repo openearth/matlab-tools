@@ -1,5 +1,5 @@
 function varargout = edges_tri_grid(tri,x,y,z)
-%EDGES_TRI_GRID finds the edge vertices of a triangluated mesh
+%EDGES_TRI_GRID  finds the edge vertices of a triangluated mesh
 %
 %      E = edges_tri_grid(tri,x,y,z)
 %

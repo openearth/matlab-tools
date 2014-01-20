@@ -176,7 +176,7 @@ function varargout = ncwrite_trajectory(ncfile,varargin)
    variable.dims(1) = struct('Name', 'TIME','Length',ncdimlen.time);
    z0 = nanunique(OPT.z);
 if length(z0)>1
-   variable.coordinates = 'lat lon';
+   variable.coordinates = 'lat lon z';
    ifld     = ifld + 1;clear attr
    attr(    1)  = struct('Name', 'standard_name', 'Value', 'altitude');
    attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'z');
@@ -195,7 +195,7 @@ else
    ncdimlen.z           = 1;
    nc.Dimensions(    2) = struct('Name','z'               ,'Length',ncdimlen.z         );
    variable.dims(2) = struct('Name', 'z'   ,'Length',ncdimlen.z   );
-   variable.coordinates = 'lat lon z';
+   variable.coordinates = 'lat lon';
    ifld     = ifld + 1;clear attr
    attr(    1)  = struct('Name', 'standard_name', 'Value', 'altitude');
    attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'z');

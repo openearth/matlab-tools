@@ -172,7 +172,7 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin);
 %    using <a href="http://www.eos.ubc.ca/~rich/#T_Tide">"T_TIDE"</a>, <a href="http://dx.doi.org/10.1016/S0098-3004(02)00013-4">Computers and Geosciences, 28, 929-937 (2002)</a>.
 %   (citation would be appreciated if you find the toolbox useful).
 %
-%See also: UTide
+%See also: tide, UTide, modulation, harmanal
 
 % R. Pawlowicz 11/ 8/99 - Completely rewritten from the transliterated-
 %                         to-matlab IOS/Foreman fortran code by S. Lentz

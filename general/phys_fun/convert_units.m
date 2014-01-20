@@ -29,6 +29,7 @@ function Factor=convert_units(InUnits0,OutUnits0,varargin);
 % Note 3: add any unknown units by editing this function.
 %
 % See web: <a href="http://www.unidata.ucar.edu/software/udunit">http://www.unidata.ucar.edu/software/udunit</a>
+% http://coastwatch.pfeg.noaa.gov/erddap/convert/units.html
 % See also: qp_unitconversion, unitconv, convertUnits, unitsratio (mapping toolbox)
 %           eckart_1958
 

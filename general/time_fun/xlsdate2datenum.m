@@ -11,6 +11,13 @@ function matlabDates = xlsdate2datenum(excelDates)
 %    datenum(excelDates,'dd-mm-yyyy HH:MM:SS')
 %    datenum(excelDates,'dd-mm-yyyy         ') % for midnights 00:00
 %
+% DOES NOT WORK FOR MAC: Microsoft Excel stores dates as sequential serial 
+% numbers so they can be used in calculations. By default, January 1, 1900 is 
+% serial number 1, and January 1, 2008 is serial number 39448 because it is 
+% 39,448 days after January 1, 1900. Microsoft Excel for the Macintosh uses 
+% a different date system as its default.
+% http://office.microsoft.com/en-001/excel-help/networkdays-function-HP010062292.aspx
+%
 % See also: DATENUM, DATESTR, ISO2DATENUM, TIME2DATENUM, UDUNITS2DATENUM, XLSREAD
 
 %% Copyright notice

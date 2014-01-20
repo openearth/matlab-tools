@@ -2,7 +2,7 @@
 %
 %    [WPSSTRUCT] = PARSE_OET_WPS(FILENAME) parses the specified
 %    file and returns a struct that contains all the metadata for the 
-%    WPS server. FILEName should include the extension .m.
+%    WPS server. FILENAME should include the extension .m.
 %
 %See also: runner
 

@@ -83,7 +83,11 @@ else
       fprintf(fid,['%s\n'],OPT.headerlines{i});
    end   
    for i=1:n
+      if isnan(values(i))
+      fprintf(fid,['%s \n'],datestr(time(i),'yyyymmddHHMM'));
+      else
       fprintf(fid,['%s ',OPT.fmt,'\n'],datestr(time(i),'yyyymmddHHMM'),values(i));
+      end
    end   
    fclose(fid);
 

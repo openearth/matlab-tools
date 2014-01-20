@@ -191,14 +191,30 @@ function varargout = noos_read(varargin)
       for i = dind0(iloc):dind1(iloc)
           line                              = allLines{i};
           data                              = sscanf(line,'%f %f');
-          D(iloc).(OPT.varname)(pointIndex) = data(end);
-          year                              = sscanf(line( 1: 4),'%d');
-          month                             = sscanf(line( 5: 6),'%d');
-          day                               = sscanf(line( 7: 8),'%d');
-          hour                              = sscanf(line( 9:10),'%d');
-          min                               = sscanf(line(11:12),'%d');
-          sec                               = 0;
-          D(iloc).datenum(pointIndex)       = datenum(year,month,day,hour,min,sec);
+
+          if length(data)>0 % handle empty lines ??
+           year                              = sscanf(line( 1: 4),'%d');
+           month                             = sscanf(line( 5: 6),'%d');
+           day                               = sscanf(line( 7: 8),'%d');
+           hour                              = sscanf(line( 9:10),'%d');
+           min                               = sscanf(line(11:12),'%d');
+           sec                               = 0;
+           D(iloc).datenum(pointIndex)       = datenum(year,month,day,hour,min,sec);
+          else
+           D(iloc).datenum(pointIndex)       = nan;
+          end
+
+          if length(data)>1 % handle line with only date and no value
+          
+           % 201301311200  -0.3600
+           % 201301311210  
+           % 201301311220  -0.4400
+          
+           D(iloc).(OPT.varname)(pointIndex) = data(end);
+          else
+           D(iloc).(OPT.varname)(pointIndex) = nan;
+          end
+
           i                                 = i+1;
           pointIndex                        = pointIndex+1;
       end;
