@@ -45,8 +45,9 @@
 delete('bin\*');
 
 % Remove paths to statistics toolbox
-statspath='c:\Program Files\MATLAB2012a_64\toolbox\stats\';
+statspath='c:\Program Files\MATLAB2013b_64\toolbox\stats\';
 statspath='c:\Program Files\Mathlab\MATLAB2012a_64\toolbox\stats\';
+statspath='c:\Program Files\MATLAB\MATLAB2013b_64\toolbox\stats\';
 
 rmpath([statspath 'classreg']);
 rmpath([statspath 'stats']);

@@ -18,7 +18,7 @@ switch lower(dataset.type)
         opt.cstep=cstep;
         opt.customcontours=cmin:cstep:cmax;
         opt.font.size=6;
-    case {'vector2d2dxy'}
+    case {'vector2d2dxy','vector2d2duxy'}
         umag=sqrt(dataset.u.^2 + dataset.v.^2);
         umax=max(max(umag));
         unitvec=plt.scale*0.005/umax;
