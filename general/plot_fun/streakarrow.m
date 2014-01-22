@@ -20,6 +20,22 @@ function pnu = streakarrow(X0,Y0,U,V,np,arrow,colmap,varargin)
 % Bertrand Dano 10-25-08
 % Copyright 1984-2008 The MathWorks, Inc. 
 
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 22 Jan 2014
+% Created with Matlab version: 8.2.0.701 (R2013b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
    
 DX=abs(X0(1,1)-X0(1,2)); DY=abs(Y0(1,1)-Y0(2,1)); DD=min([DX DY]);
 ks=DD/100;      % Size of the "dot" for the tuft graphs
