@@ -20,6 +20,8 @@ function description = sdn_parameter_mapping_resolve(SDNstring,varargin)
 %
 %See also: OCEANDATAVIEW, sdn_parameter_mapping_parse
 
+warning('outdated, need to migrate from P011 to P01.')
+
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 Deltares for Building with Nature

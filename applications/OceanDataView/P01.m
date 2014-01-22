@@ -273,15 +273,17 @@ if ~isempty(OPT.find)
    standard_names = {L.(OPT.standard_name){ii}};
    standard_names = strrep(standard_names,'http://vocab.ndg.nerc.ac.uk/term/','');
    standard_names = char(standard_names);
+   definition     = char({L.definition{ii}});
    
    n  = length(ii);
    n1 = size(standard_names             ,2);
    n2 = size(char(L.(OPT.long_name){ii}),2);
+   col = repmat(' | ',[n 1]) ;
 
    disp([OPT.listReference ' entries matching: "',searchpattern,'"'])
    disp([OPT.listReference ' entries matching: "',searchpattern,'"'])
    disp([                            '-----+-'           repmat('-',[1 n1])   '-+-'               repmat('-',[1 n2])   ])
-   disp([pad(num2str([1:n]'),' ',-4) repmat(' | ',[n 1]) standard_names       repmat(' | ',[n 1]) char(L.(OPT.long_name){ii})])
+   disp([pad(num2str([1:n]'),' ',-4) repmat(' | ',[n 1]) standard_names       col char(L.(OPT.long_name){ii}) col definition])
    disp([                            '-----+-'           repmat('-',[1 n1])   '-+-'               repmat('-',[1 n2])   ])
    else
    disp([OPT.listReference ': no match found'])
@@ -298,9 +300,21 @@ end
 
 %% find and display results of a search (standard_name present)
 
-if ~isempty(OPT.resolve)
-
+if isempty(OPT.resolve)
+    OK = '';
+else
+        
+    
    searchpattern = OPT.resolve;
+   
+   ind = strfind(searchpattern,':');
+   if length(ind)==0
+       % ok
+   elseif length(ind)==3
+       searchpattern = searchpattern(ind(end)+1:end);
+   else
+       error('Only P01:SDN::xxxxxx and xxxxxx implemented.')
+   end
 
    % cannot search for exact only due to presence of both list and list number in standard_name
    
@@ -314,18 +328,18 @@ if ~isempty(OPT.resolve)
       OK = long_name;
    elseif ii > 1
       disp(char({L.(OPT.long_name){ii}}))
-      error('multiple occurences found, please specify unique id.')
+      error(['multiple occurences found for ',searchpattern,', please specify unique id.'])
    else
       OK = '';
    end
 
-   if nargout==1
+end
+
+   if nargout<2
       varargout = {OK};
    elseif nargout==2
       varargout = {OK,ii};
    end
-
-end
 
 %% subsidiary function to turn xml attributes into elements
 

@@ -1,7 +1,7 @@
-function [longname, cf_name, deltares_name, sdn_parameter_urn] = resolve_wns(code,varargin)
+function varargout = resolve_wns(code,varargin)
 %resolve_wns   convert donar code to english long_name, CF standard name, ...
 %
-%  [longname,cf_name, netcdf_name, sdn_parameter_urn] = donar.resolve_wns(code)
+%  [longname,cf_name, netcdf_name, <sdn_parameter_urn>] = donar.resolve_wns(code)
 %
 % resolves DONAR longname "wnsoms" + CF standard name from DONAR datamodel "wnsnum"
 % published as web service here (we use csv format as it is smaller and extendable compared to RDF xml):
@@ -10,6 +10,10 @@ function [longname, cf_name, deltares_name, sdn_parameter_urn] = resolve_wns(cod
 % time is slow, but the internal DB is persistent, so any 2nd time is faster.
 %
 % To be applied to field WNS from donar.read_header().
+%
+% One output argument can be chosen to be a struct with all columns from csv database or
+% just one specific column with keyword request is 'struct' or the column csv name respectively.
+%  [] = donar.resolve_wns(code)
 %
 %See also: resolve_ehd, CF standard_names: http://cf-pcmdi.llnl.gov/documents/cf-standard-names/
 % https://data.overheid.nl/data/dataset/rws-donar-metis-service-rijkswaterstaat
@@ -24,10 +28,17 @@ function [longname, cf_name, deltares_name, sdn_parameter_urn] = resolve_wns(cod
 % TO DO: add BODC SeaDataNet P01
 % TO DO: vectorize
 
+OPT.request = 'auto';
+
+OPT = setproperty(OPT,varargin);
+
 %%
 
-if isnumeric(code)
-   code = num2str(code);
+if ischar(code)
+   codestr = code;
+   code    = str2num(code);
+else
+   codestr = num2str(code);
 end
 
 %% load cache
@@ -38,25 +49,33 @@ if isempty(WNS)
    WNS = csv2struct([fileparts(mfilename('fullpath')),filesep,'wns_en.csv'],'delimiter',';');
 end
 
+if ischar(WNS.wnsnum)% csv2struct is not always consistent
+   WNS.wnsnum = str2num(WNS.wnsnum);
+end
+
 %%
 
-index = find(strcmpi(WNS.wnsnum,code));
+index = find(WNS.wnsnum==code);
 if isempty(index)
     disp(['DONAR wns code not in database cache: ',code])
     disp(['http://live.waterbase.nl/metis/cgi-bin/mivd.pl?lang=en&action=value&type=wns&order=code'])
     error('.')
+elseif strcmpi(OPT.request,'struct')
+    varargout = {structsubs(WNS,index)};
+elseif ~strcmpi(OPT.request,'auto')
+    WNS1 = structsubs(WNS,index);
+    varargout = {WNS1.(OPT.request)};
 else
     longname      = WNS.wnsoms{index};
-
     
     if isfield(WNS,'standard_name')
     cf_name       = WNS.standard_name{index}; % often still empty
     else
     cf_name       = '';
-    disp([code,' not mapped to CF standard_name yet.'])
+    disp([codestr,' not mapped to CF standard_name yet.'])
     end
     if isempty(cf_name)
-        disp([code,' not mapped to CF standard_name yet.'])
+        disp([codestr,' not mapped to CF standard_name yet.'])
     end     
 
     
@@ -64,10 +83,10 @@ else
     deltares_name = WNS.deltares_name{index}; % not always present
     else
     deltares_name = '';
-    disp([code,' not mapped to Deltares netCDF name yet.'])
+    disp([codestr,' not mapped to Deltares netCDF name yet.'])
     end
     if isempty(deltares_name)
-        disp([code,' not mapped to Deltares netCDF name yet.'])
+        disp([codestr,' not mapped to Deltares netCDF name yet.'])
     end    
 
     
@@ -75,10 +94,12 @@ else
     sdn_parameter_urn = WNS.P01{index}; % not always present
     else
     sdn_parameter_urn = '';
-    disp([code,' not mapped to SDN P01 code yet.'])
+    disp([codestr,' not mapped to SDN P01 code yet.'])
     end
     if isempty(sdn_parameter_urn)
-        disp([code,' not mapped to SDN P01 code yet.'])
+        disp([codestr,' not mapped to SDN P01 code yet.'])
     end    
+    
+    varargout = {longname, cf_name, deltares_name, sdn_parameter_urn};
     
 end

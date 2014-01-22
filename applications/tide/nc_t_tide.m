@@ -273,9 +273,9 @@ if ~isempty(OPT.ncfile)
    nc.Attribute(3) = struct('Name', 'units'          ,'Value',['days since ',datestr(OPT.refdatenum,'yyyy-mm-dd HH:MM')]);
    nc_addvar         (OPT.ncfile,nc); % 
    if getpref('SNCTOOLS','PRESERVE_FVD')
-   nc_varput         (OPT.ncfile,nc.Name,squeeze(t(mask([1 end])))'  - OPT.refdatenum);clear nc % 2D array so shape is relevant
+   nc_varput         (OPT.ncfile,nc.Name,squeeze(t(mask([1 end])))' - OPT.refdatenum);clear nc % 2D array so shape is relevant
    else
-   nc_varput         (OPT.ncfile,nc.Name,squeeze(t(mask([1 end]))) - OPT.refdatenum);clear nc % 2D array so shape is relevant
+   nc_varput         (OPT.ncfile,nc.Name,squeeze(t(mask([1 end])))' - OPT.refdatenum);clear nc % 2D array so shape is relevant
    end
 
    nc.Name = 'component_name';

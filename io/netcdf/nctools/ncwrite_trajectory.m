@@ -88,6 +88,10 @@ function varargout = ncwrite_trajectory(ncfile,varargin)
    if verLessThan('matlab','7.12.0.635')
       error('At least Matlab release R2011a is required for writing netCDF files due tue NCWRITESCHEMA.')
    end
+   
+   if isempty(OPT.Name)
+       error('Name is empty')
+   end
 
    nc = struct('Name','/','Format','classic');
 

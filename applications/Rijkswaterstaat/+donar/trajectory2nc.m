@@ -20,6 +20,9 @@ function trajectory2nc(ncfile,S,M)
    
 %% Required data fields: CF
   [~,~,OPT2.Name]          = donar.resolve_wns(M.data.WNS);
+   if isempty(OPT2.Name)
+       error('donar.resolve_wns() returns empty')
+   end
    OPT2.standard_name      = M.data.standard_name;
    OPT2.long_name          = M.data.long_name;
    OPT2.units              = M.data.units;

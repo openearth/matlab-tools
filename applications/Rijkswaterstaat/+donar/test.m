@@ -18,6 +18,7 @@ OPT.cache = 1; % donar.open() cache
 OPT.read  = 1;
 OPT.plot  = 1;
 OPT.case  = 'ferry';
+OPT.pause = 0;
 
 switch OPT.case
 case '0',
@@ -92,6 +93,7 @@ for ifile = 1:length(diafiles);
         if type(ifile)==1
          close all
          if OPT.plot % overview
+            close all % to avoid memory crash
             donar.ctd_overview_plot(S,M,E,L)
             print2a4(strrep(diafile,'.dia',['_',M.data.WNS,'_ctd.png']))
             for ist=1:length(S.station_lon)
@@ -104,20 +106,38 @@ for ifile = 1:length(diafiles);
              if OPT.plot % per profile
                titletxt = [num2str(ist),' (n=',num2str(S.station_n(ist)),') :',num2strll(S.station_lat(ist),S.station_lon(ist))];
                 close
+                close all % to avoid memory crash
                 donar.ctd_timeSeriesProfile_plot(P,E,L,titletxt)
                 print2a4                      (strrep(diafile,'.dia',['_',M.data.WNS,'_ctd_',num2str(ist,'%0.3d'),'.png']),'v','t')
                 close
              end
             end
-            endc
+         end
         elseif type(ifile)==2
-             donar.trajectory2nc(strrep(diafile,'.dia',['_',M.data.WNS,'_trajectory.nc']),S,M)
-            [S2,M2] =  nc2struct(strrep(diafile,'.dia',['_',M.data.WNS,'_trajectory.nc' ]),'rename',{{donar.resolve_wns(M.data.WNS)},{'data'}});
+            donar.trajectory2nc(strrep(diafile,'.dia',['_',M.data.WNS,'_trajectory.nc']),S,M)
+           %[S2,M2] =  nc2struct(strrep(diafile,'.dia',['_',M.data.WNS,'_trajectory.nc' ]),'rename',{{M.data.deltares_name},{'data'}});
             if OPT.plot
             %close all
-            donar.trajectory_overview_plot(S,M,E,L,mktex(diafiles{ifile}))
-            print2screensize(strrep(diafile,'.dia',['_',M.data.WNS,'_trajectory.png']))
+            tmp = donar.resolve_wns(M.data.WNS,'request','struct');
+            if isempty(tmp.valid_min{1})
+                tmp.valid_min    = nan;
+            else
+                tmp.valid_min    = str2num(tmp.valid_min{1});
+            end
+            if isempty(tmp.valid_max{1})
+                tmp.valid_max    = nan;
+            else
+                tmp.valid_max    = str2num(tmp.valid_max{1});
+            end
+            close all % to avoid memory crash
+            donar.trajectory_overview_plot(S,M,E,L,mktex(diafiles{ifile}),[tmp.valid_min, tmp.valid_max])
+            print2screensizeoverwrite(strrep(diafile,'.dia',['_',M.data.WNS,'_trajectory.png']))
+            saveas(gcf,strrep(diafile,'.dia',['_',M.data.WNS,'_trajectory.fig']))
             end           
+        end
+        
+        if OPT.pause
+           pausedisp
         end
         
      end % ivar
