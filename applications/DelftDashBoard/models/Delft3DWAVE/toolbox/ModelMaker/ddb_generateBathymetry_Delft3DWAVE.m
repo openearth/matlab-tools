@@ -39,7 +39,7 @@ if handles.Model(md).Input.domains(id).mmax>0
 
     if isempty(filename)
         % Get file name
-        [filename, pathname, filterindex] = uiputfile('*.dep', 'Depth File Name',[handles.Model(md).Input.attname '.dep']);
+        [filename, pathname, filterindex] = uiputfile('*.dep', 'Depth File Name',[handles.Model(md).Input.attName '.dep']);
         if pathname==0
             return
         end

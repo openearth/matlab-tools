@@ -170,7 +170,7 @@
     <tooltipstring>Edit name of attribute files</tooltipstring>
     <text>Attr Name</text>
     <textposition>left</textposition>
-    <variable>handles.Model(md).Input(ad).attname</variable>
+    <variable>handles.Model(md).Input(ad).attName</variable>
     <type>string</type>
   </element>
   <element>

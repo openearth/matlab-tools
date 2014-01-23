@@ -3,7 +3,7 @@ function handles=ddb_initializeDelft3DWAVEInput(handles,runid)
 ii=strmatch('Delft3DWAVE',{handles.Model.name},'exact');
 
 input.runid              =  runid;
-input.attname            =  runid;
+input.attName            =  runid;
 input.mdwfile            =  [runid '.mdw'];
 
 %% General
