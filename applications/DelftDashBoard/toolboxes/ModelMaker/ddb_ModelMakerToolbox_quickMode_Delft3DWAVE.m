@@ -189,7 +189,7 @@ npmax=20000000;
 
 if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=npmax
     
-    [filename, pathname, filterindex] = uiputfile('*.grd', 'Grid File Name',[handles.Model(md).Input.attname '.grd']);
+    [filename, pathname, filterindex] = uiputfile('*.grd', 'Grid File Name',[handles.Model(md).Input.attName '.grd']);
     
     switch opt
         case{'new'}
