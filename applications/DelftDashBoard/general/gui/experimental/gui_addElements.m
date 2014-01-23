@@ -956,8 +956,13 @@ if isfield(el,'filter')
 else    
     if isstruct(el.extension)
         for ii=1:length(el.extension)
-            extension{ii,1}=el.extension(ii).extension;
-            extension{ii,2}=el.extension(ii).extension;
+            if isfield(el.extension(ii).extension,'variable')
+                extension{ii,1}=gui_getValue(el,el.extension(ii).extension.variable);
+                extension{ii,2}=extension{ii,1};
+            else
+                extension{ii,1}=el.extension(ii).extension;
+                extension{ii,2}=el.extension(ii).extension;
+            end
         end
     else
         if isfield(el.extension,'variable')
