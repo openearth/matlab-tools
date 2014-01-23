@@ -111,8 +111,7 @@ function varargout = plotNet(varargin)
 
 %% plot centres (= flow cells = circumcenters)
 
-   if isfield(G,'cen') & ~isempty(OPT.cen)
-   
+   if isfield(G,'cen')
      if isempty(OPT.axis)
 %         cen.mask = 1:G.cen.n;
         cen.mask = true(1,G.cen.n);
@@ -125,7 +124,10 @@ function varargout = plotNet(varargin)
             cen.mask = (cen.mask & G.cen.idmn==OPT.idmn);
          end
      end
+   end
 
+   if isfield(G,'cen') & ~isempty(OPT.cen)
+   
        h.cor = plot(reshape(G.peri.x(:,cen.mask),1,[]), reshape(G.peri.y(:,cen.mask),1,[]), OPT.cor{:});
        hold on
 %      h.cen = plot(G.peri.x(:,cen.mask),G.peri.y(:,cen.mask),OPT.cen{:});
@@ -141,7 +143,7 @@ function varargout = plotNet(varargin)
 %  We turn all contours into a nan-separated polygon. 
 %  After plotting this is faster than patches (only one figure child handle).
 
-   if isfield(G,'peri') & ~isempty(OPT.peri)
+   if isfield(G,'peri') && ~isempty(OPT.peri)
 % SPvdP: the following can not work
 %     peri.mask1 = find(cen.mask(G.cen.LinkType(cen.mask)==1));
 %     peri.mask  = find(cen.mask(G.cen.LinkType(cen.mask)~=1)); % i.e. 0=closed or 2=between 2D elements
@@ -167,9 +169,9 @@ function varargout = plotNet(varargin)
    
 %% lay out
 
-   hold on
-   axis equal
-   grid on
+%    hold on
+%    axis equal
+%    grid on
    
 %% return handles
 
