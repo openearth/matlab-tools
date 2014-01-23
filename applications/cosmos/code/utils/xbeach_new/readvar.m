@@ -36,10 +36,15 @@ else
     nt=XBdims.nt;
 end
 
-% First open file
-fid=fopen(fname,'r');
-temp=fread(fid,'double');
-fclose(fid);
+% First open file using memmapfile if possible
+try
+    D = memmapfile(fname,'format','double');
+    temp = D.data;
+catch
+    fid=fopen(fname,'r');
+    temp=fread(fid,'double');
+    fclose(fid);
+end
 sz=length(temp)/(XBdims.nx+1)/(XBdims.ny+1)/nt;
 
 % In case file does not match dims.dat 

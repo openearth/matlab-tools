@@ -26,19 +26,23 @@ else
     nt=XBdims.nt;
 end
 
-graindis=zeros(XBdims.nx+1,XBdims.ny+1,XBdims.nd,XBdims.ngd,nt);
 info=['x  ' 'y  ' 'nd ' 'ngd' '  t'];
-
-fid=fopen(fname,'r');
-
-for i=1:nt
-    for ii=1:XBdims.ngd
-        for jj=1:XBdims.nd
-            graindis(:,:,jj,ii,i)=fread(fid,[XBdims.nx+1,XBdims.ny+1],'double');
+try
+    D = memmapfile(fname,'format','double');
+    % limit size of data return to what is specified in XBdims
+    graindis = reshape(D.data(1:(XBdims.nx+1)*(XBdims.ny+1)*XBdims.nd*XBdims.ngd*nt),XBdims.nx+1,XBdims.ny+1,XBdims.nd,XBdims.ngd,nt);
+catch
+    graindis=zeros(XBdims.nx+1,XBdims.ny+1,XBdims.nd,XBdims.ngd,nt);
+    fid=fopen(fname,'r');
+    for i=1:nt
+        for ii=1:XBdims.ngd
+            for jj=1:XBdims.nd
+                graindis(:,:,jj,ii,i)=fread(fid,[XBdims.nx+1,XBdims.ny+1],'double');
+            end
         end
     end
+    fclose(fid);
 end
 
-fclose(fid);
 
 

@@ -37,62 +37,29 @@ else
 end
 
 integernames={'wetz';
-              'wetu';
-              'wetv';
-              'struct';
-              'nd';
-              'respstruct'};
+    'wetu';
+    'wetv';
+    'struct';
+    'nd';
+    'respstruct'};
 
-if any(strcmpi(fname(1:end-nameend),integernames))
-    type='integer';
+[pathstr,name,ext] = fileparts(fname);
+if any(strcmpi(name,integernames))
+    type='int32';
 else
     type='double';
 end
-          
-fid=fopen(fname,'r');
-switch type
-    case'double'
-        switch nodims
-            case 2
-                Var=zeros(XBdims.nx+1,XBdims.ny+1,nt);
-                for i=1:nt
-                    Var(:,:,i)=fread(fid,size(XBdims.x),'double');
-                end
-                info=['x ' 'y ' 't '];
-            case 3
-                Var=zeros(XBdims.nx+1,XBdims.ny+1,nt);
-            case 4
-                Var=zeros(XBdims.nx+1,XBdims.ny+1,XBdims.nd,XBdims.ngd,nt);
-                for i=1:nt
-                    for ii=1:XBdims.ngd
-                        for iii=1:XBdims.nd
-                            Var(:,:,iii,ii,i)=fread(fid,size(XBdims.x),'double');
-                        end
-                    end
-                end
-                info=['x   ' 'y   ' 'nd  ' 'ngd ' 't   '];
-        end
-    case 'integer'
-        switch nodims
-            case 2
-                Var=zeros(XBdims.nx+1,XBdims.ny+1,nt);
-                for i=1:nt
-                    Var(:,:,i)=fread(fid,size(XBdims.x),'int');
-                end
-                info=['x ' 'y ' 't '];
-            case 3
-                Var=zeros(XBdims.nx+1,XBdims.ny+1,nt);
-            case 4
-                Var=zeros(XBdims.nx+1,XBdims.ny+1,XBdims.nd,XBdims.ngd,nt);
-                for i=1:nt
-                    for ii=1:XBdims.ngd
-                        for iii=1:XBdims.nd
-                            Var(:,:,iii,ii,i)=fread(fid,size(XBdims.x),'int');
-                        end
-                    end
-                end
-                info=['x   ' 'y   ' 'nd  ' 'ngd ' 't   '];
-        end
-end
 
-fclose(fid);
+try
+    D = memmapfile(fname,'format',type);
+    % limit size of data return to what is specified in XBdims
+    Var = reshape(D.data(1:(XBdims.nx+1)*(XBdims.ny+1)*nt),XBdims.nx+1,XBdims.ny+1,nt);
+catch
+    fid=fopen(fname,'r');
+    Var=zeros(XBdims.nx+1,XBdims.ny+1,nt,type);
+    for i=1:nt
+        Var(:,:,i)=fread(fid,size(XBdims.x),type);
+    end
+    fclose(fid);
+end
+info=['x ' 'y ' 't '];

@@ -31,7 +31,12 @@ function [xgr zgr] = xb_grid_xgrid(xin, zin, varargin)
 %     - maxfac   :: [-] Maximum allowed grid size ratio between adjacent cells (default = 1.15)
 %     - dy, 5    :: [m] dy (default = 5)
 %     - wl,0     :: [m] water level elevation relative to bathymetry used to estimate water depth (default = 0)
+%     - ppwl     :: [-] numer of points per wave length
 %     - depthfac :: [-] Maximum gridsize to water depth ratio (default = 2)
+%     - nonh     :: [-] Switch option for generation of non-hydrostatic
+%                       model grid
+%     - dxdry    :: [m] grid size for dry points
+%     - zdry     :: [m] elevation above which points are dry
 %
 %   Output:
 %   xgr   = x-grid coordinates

@@ -26,17 +26,22 @@ else
     nt=XBdims.nt;
 end
 
-bedlayers=zeros(XBdims.nx+1,XBdims.ny+1,XBdims.nd,nt);
+
 info=['x  ' 'y  ' 'nd ' 't  '];
 
-fid=fopen(fname,'r');
-
-for i=1:nt
-    for jj=1:XBdims.nd
-        bedlayers(:,:,jj,i)=fread(fid,[XBdims.nx+1,XBdims.ny+1],'double');
+try
+    D = memmapfile(fname,'format','double');
+    % limit size of data return to what is specified in XBdims
+    bedlayers = reshape(D.data(1:(XBdims.nx+1)*(XBdims.ny+1)*XBdims.nd*nt),XBdims.nx+1,XBdims.ny+1,XBdims.nd,nt);
+catch
+    bedlayers=zeros(XBdims.nx+1,XBdims.ny+1,XBdims.nd,nt);
+    fid=fopen(fname,'r');
+    for i=1:nt
+        for ii=1:XBdims.nd
+            bedlayers(:,:,ii,i)=fread(fid,[XBdims.nx+1,XBdims.ny+1],'double');
+        end
     end
+    fclose(fid);
 end
-
-fclose(fid);
 
 

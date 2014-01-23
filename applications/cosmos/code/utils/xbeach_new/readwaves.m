@@ -27,15 +27,20 @@ else
     nt=XBdims.nt;
 end
 
-var=zeros(XBdims.nx+1,XBdims.ny+1,XBdims.ngd,nt);
+
 info=['x  ' 'y  ' 'ntheta ' 't  '];
 
-fid=fopen(fname,'r');
-
-for i=1:nt
-    for ii=1:XBdims.ntheta
-        var(:,:,ii,i)=fread(fid,[XBdims.nx+1,XBdims.ny+1],'double');
+try
+    D = memmapfile(fname,'format','double');
+    % limit size of data return to what is specified in XBdims
+    var = reshape(D.data(1:(XBdims.nx+1)*(XBdims.ny+1)*XBdims.ntheta*nt),XBdims.nx+1,XBdims.ny+1,XBdims.ntheta,nt);
+catch
+    var=zeros(XBdims.nx+1,XBdims.ny+1,XBdims.ntheta,nt);
+    fid=fopen(fname,'r');
+    for i=1:nt
+        for ii=1:XBdims.ntheta
+            var(:,:,ii,i)=fread(fid,[XBdims.nx+1,XBdims.ny+1],'double');
+        end
     end
+    fclose(fid);
 end
-
-fclose(fid);

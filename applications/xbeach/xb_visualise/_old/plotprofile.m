@@ -11,6 +11,7 @@ function plotprofile(start,stop,inp,varargin)
 % - movie (true/false integer)
 % - row (plot row number, default 2, integer)
 % - stride (number of timesteps to stride)
+% - offset
 
 if mod(length(varargin),2)~=0
     error('Input parameter value pairs not correct length')
@@ -65,6 +66,10 @@ if  ~exist('stride','var')
     stride=1;
 end
 
+if  ~exist('offset','var')
+    offset=zeros(length(inp),1);
+end
+
 % original profile
 fidzb0=fopen('zb.dat','r');
 zb0=fread(fidzb0,size(x),'double');
@@ -89,7 +94,7 @@ end
 
 hold on;
 for ii=1:length(inp)
-    eval(['var',num2str(ii),'=fac(ii).*fread(fid',num2str(ii),',size(x),''double'');']);
+    eval(['var',num2str(ii),'=fac(ii).*fread(fid',num2str(ii),',size(x),''double'')+offset(ii);']);
     eval(['h',num2str(ii),'=plot(x(:,row),var',num2str(ii),'(:,row),''color'',''',cols(ii),''',''linewidth'',lw(ii));']);
 end
 legtext{1}='zb0';
@@ -111,7 +116,7 @@ times = [start:stride:stop];
 
 for i=2:stop
     for ii=1:length(inp)
-        eval(['var',num2str(ii),'=fac(ii).*fread(fid',num2str(ii),',size(x),''double'');']);
+        eval(['var',num2str(ii),'=fac(ii).*fread(fid',num2str(ii),',size(x),''double'')+offset(ii);']);
     end
     
     
