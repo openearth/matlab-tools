@@ -102,7 +102,7 @@ OPT.flipud = 1;
 % when Y is going up in the input you should set this to OPT.flipud = 1
 % when Y is going down in the input (as is default in ArcGisRead.m) you
 % should set this to OPT.flipud = 0;
-OPT.precision = 3;
+OPT.precision = 7;
 OPT.convert = 0;
 OPT.nodata = -9999; % you could also use -32768
 OPT = setproperty(OPT,varargin{:});
