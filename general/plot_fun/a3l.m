@@ -2,4 +2,5 @@ function a3l
 
 %Sets current papersize and position to a3 landscape and fills page
 
-set(gcf,'paperUnits','centimeters','papero','l','papertype','a3','paperpos',[0 0 42 29.7]);
+set(gcf,'paperUnits','centimeters','papero','p','papertype','a3','paperpos',[0 0 50*sqrt(1/sqrt(2)) 25*sqrt(sqrt(2))]);
+set(gcf,'PaperSize',fliplr(get(gcf,'PaperSize')));
