@@ -172,7 +172,7 @@ if exist(fname, 'file')
     if ~isnan(byt)
         switch byt
             case 1
-                ftype = 'int';
+                ftype = 'int32';
             case 4
                 ftype = 'single';
             case 8
@@ -182,19 +182,27 @@ if exist(fname, 'file')
                 warning('OET:xbeach:dimensions', ['Your filesize is weird, I assume it contains doubles [' fname ']']);
         end
 
-        fid = fopen(fname, 'r');
+        
 
         switch method
             case 'read'
                 % METHOD: minimal reads
+                
+                % check if memmapfile is an option
+                if exist('memmapfile.m','file')~=0
+                    D = memmapfile(fname,'format',ftype);
+                    dat = reshape(D.data(1:prod(dims_out)),dims_out);
+                else
+                    fid = fopen(fname, 'r');
+                    dat = nan(dims_out);
 
-                dat = nan(dims_out);
-
-                % read entire file
-                for i = 1:dims_out(1)
-                    for j = 1:prod(dims_out(4:end))
-                        dat(i,:,:,j) = fread(fid, dims(1:2), ftype)';
+                    % read entire file
+                    for i = 1:dims_out(1)
+                        for j = 1:prod(dims_out(4:end))
+                            dat(i,:,:,j) = fread(fid, dims(1:2), ftype)';
+                        end
                     end
+                    fclose(fid);
                 end
 
                 % dispose data out of range
@@ -213,7 +221,8 @@ if exist(fname, 'file')
                 end
             case 'memory'
                 % METHOD: minimal memory
-
+                
+                fid = fopen(fname, 'r');
                 loops = num2cell(ones(1,5));
                 
                 if isempty(OPT.index)
@@ -275,11 +284,11 @@ if exist(fname, 'file')
                         end
                     end
                 end
+                fclose(fid);
             otherwise
                 error(['Unknown read method [' method ']']);
         end
     
-        fclose(fid);
     else
         dat = [];
     end
