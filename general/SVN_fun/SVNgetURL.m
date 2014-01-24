@@ -68,7 +68,7 @@ end
 ParamStr = sprintf('info "%s"', WorkingCopy);
 svnMsg = SVNCall(ParamStr);
 
-URL_Idx = strmatch('URL:',svnMsg);
+URL_Idx = strncmp('URL:',svnMsg, 4);
 if isempty(URL_Idx)
     error('SVN:versioningProblem', '%s',...
         ['Problem using version control system - no URL found:' 10 ...

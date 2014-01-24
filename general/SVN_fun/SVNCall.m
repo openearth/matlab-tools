@@ -65,7 +65,7 @@ Msg = struct([]);
 % call subversion with the given parameter string
 %callStr=sprintf('svn %s',ParamStr);
 callStr = sprintf('set LC_MESSAGES=en_En&&svn %s',ParamStr);
-[svnErr svnMsg] = system(callStr);
+[svnErr, svnMsg] = system(callStr);
 
 % create cellstring with one row per line
 svnMsg = strread(svnMsg,'%s',...
