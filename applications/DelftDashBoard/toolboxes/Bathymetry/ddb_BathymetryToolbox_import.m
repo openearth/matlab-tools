@@ -1,10 +1,10 @@
-function ddb_TilingToolbox_bathymetry(varargin)
-%DDB_TILINGTOOLBOX_BATHYMETRY  One line description goes here.
+function ddb_BathymetryToolbox_import(varargin)
+%ddb_BathymetryToolbox_import  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   ddb_TilingToolbox_bathymetry(varargin)
+%   ddb_BathymetryToolbox_import(varargin)
 %
 %   Input:
 %   varargin =
@@ -19,7 +19,7 @@ function ddb_TilingToolbox_bathymetry(varargin)
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2011 Deltares
+%   Copyright (C) 2014 Deltares
 %       Maarten van Ormondt
 %
 %       Maarten.vanOrmondt@deltares.nl

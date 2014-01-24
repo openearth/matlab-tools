@@ -8,7 +8,7 @@
     <variable>handles.Toolbox(tb).Input.import.rawDataFormat</variable>
     <type>string</type>
     <tooltipstring>Select file format of raw data</tooltipstring>
-    <callback>ddb_TilingToolbox_bathymetry</callback>
+    <callback>ddb_BathymetryToolbox_import</callback>
     <option1>selectrawdataformat</option1>
     <listtext>
       <variable>handles.Toolbox(tb).Input.import.rawDataFormatsText</variable>
@@ -22,7 +22,7 @@
     <position>200 110 80 20</position>
     <text>Select File</text>
     <variable>handles.Toolbox(tb).Input.import.dataFile</variable>
-    <onchange>ddb_TilingToolbox_bathymetry</onchange>
+    <onchange>ddb_BathymetryToolbox_import</onchange>
     <option1>selectdataset</option1>
     <showfilename>yes</showfilename>
     <extension>
@@ -138,7 +138,7 @@
     <style>pushbutton</style>
     <position>270 80 100 20</position>
     <text>Select CS</text>
-    <callback>ddb_TilingToolbox_bathymetry</callback>
+    <callback>ddb_BathymetryToolbox_import</callback>
     <option1>selectcs</option1>
     <tooltipstring>Select horizontal coordinate system of data source</tooltipstring>
   </element>
@@ -261,7 +261,7 @@
     <style>pushbutton</style>
     <position>830 35 100 20</position>
     <text>Edit Attributes</text>
-    <callback>ddb_TilingToolbox_bathymetry</callback>
+    <callback>ddb_BathymetryToolbox_import</callback>
     <option1>editattributes</option1>
     <tooltipstring>Edit attributes for netCDF files</tooltipstring>
   </element>
@@ -270,7 +270,7 @@
     <style>pushbutton</style>
     <position>830 10 100 20</position>
     <text>Generate Tiles</text>
-    <callback>ddb_TilingToolbox_bathymetry</callback>
+    <callback>ddb_BathymetryToolbox_import</callback>
     <option1>generatetiles</option1>
     <tooltipstring>Generate tile system from source data</tooltipstring>
   </element>
