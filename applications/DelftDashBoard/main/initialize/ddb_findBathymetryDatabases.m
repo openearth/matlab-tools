@@ -233,7 +233,9 @@ for i=1:bathymetry.nrDatasets
 %             end
     end
     if ~isfield(bathymetry.dataset(i),'source')
-        bathymetry.dataset(i).source=[];
+        bathymetry.dataset(i).source='Unknown';
+    elseif isempty(bathymetry.dataset(i).source)
+        bathymetry.dataset(i).source='Unknown';
     end
 end
 

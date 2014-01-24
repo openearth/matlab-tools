@@ -12,7 +12,7 @@
     <onchange>ddb_BathymetryToolbox_export</onchange>
     <option1>selectdataset</option1>
     <listtext>
-      <variable>handles.bathymetry.datasets</variable>
+      <variable>handles.bathymetry.longNames</variable>
     </listtext>
   </element>
   <element>

@@ -76,19 +76,21 @@ else
             editAttributes;
         case{'generatetiles'}
             generateTiles;
-        case{'selectrawdatatype'}
-            selectRawDataType;
+        case{'selectrawdataformat'}
+            selectRawDataFormat;
     end    
 end
 
 
 %%
-function selectRawDataType
+function selectRawDataFormat
 
 handles=getHandles;
-ii=strmatch(handles.Toolbox(tb).Input.bathymetry.rawDataType,handles.Toolbox(tb).Input.bathymetry.rawDataTypes,'exact');
-handles.Toolbox(tb).Input.bathymetry.rawDataTypeExtension=handles.Toolbox(tb).Input.bathymetry.rawDataTypeExtensions{ii};
-handles.Toolbox(tb).Input.bathymetry.rawDataTypeSelectionText=['Select Data File (' handles.Toolbox(tb).Input.bathymetry.rawDataTypesText{ii} ')'];
+% Set raw data file extension and selection text
+ii=strmatch(handles.Toolbox(tb).Input.import.rawDataFormat,handles.Toolbox(tb).Input.import.rawDataFormats,'exact');
+handles.Toolbox(tb).Input.import.rawDataFormatExtension=handles.Toolbox(tb).Input.import.rawDataFormatsExtension{ii};
+handles.Toolbox(tb).Input.import.rawDataFormatSelectionText=['Select Data File (' handles.Toolbox(tb).Input.import.rawDataFormatsText{ii} ')'];
+handles.Toolbox(tb).Input.import.rawDataType=handles.Toolbox(tb).Input.import.rawDataFormatsType{ii};        
 setHandles(handles);
 
 %%
@@ -96,51 +98,69 @@ function selectDataset
 
 handles=getHandles;
 
-switch lower(handles.Toolbox(tb).Input.bathymetry.rawDataType)
+% First read data file to get meta data:
+
+% For regular grids, we read (but make not editable):
+% x0, y0, dx, dy
+% For unstructured data, we determine (and make not editable):
+% x0, y0, dx, dy
+
+% Nr zoom steps is determined automatically by the tiling function
+
+switch lower(handles.Toolbox(tb).Input.import.rawDataFormat)
     case{'arcinfogrid'}
-        [ncols,nrows,x0,y0,cellsz]=readArcInfo(handles.Toolbox(tb).Input.bathymetry.dataFile,'info');
+        [ncols,nrows,x0,y0,cellsz]=readArcInfo(handles.Toolbox(tb).Input.import.dataFile,'info');
+        dx=cellsz;
+        dy=cellsz;
     case{'arcbinarygrid'}
-        [x,y,z,m] = arc_info_binary([fileparts(handles.Toolbox(tb).Input.bathymetry.dataFile) filesep]);
+        [x,y,z,m] = arc_info_binary([fileparts(handles.Toolbox(tb).Input.import.dataFile) filesep]);
         clear x y z
         x0=m.X(1);
         y0=m.Y(end);
-        ncols=m.nColumns;
-        nrows=m.nRows;
+        dx=x(2)-x(1);
+        dy=y(2)-y(1);
     case{'matfile'}
-        s=load(handles.Toolbox(tb).Input.bathymetry.dataFile);
+        s=load(handles.Toolbox(tb).Input.import.dataFile);
         x0=s.x(1);
         y0=s.y(1);
-        ncols=length(s.x);
-        nrows=length(s.y);
     case{'netcdf'}
-        x=nc_varget(handles.Toolbox(tb).Input.bathymetry.dataFile,'x');
-        y=nc_varget(handles.Toolbox(tb).Input.bathymetry.dataFile,'y');
+        x=nc_varget(handles.Toolbox(tb).Input.import.dataFile,'x');
+        y=nc_varget(handles.Toolbox(tb).Input.import.dataFile,'y');
         x0=x(1);
         y0=y(1);
         nrows=length(y);
         ncols=length(x);
+    case{'adcircgrid'}
+        % unstructured data
+        % Read metadata
+        wb_h = waitbar(0,'Reading the adcirc data');
+        [x,y,z,n1,n2,n3]=import_adcirc_fort14(handles.Toolbox(tb).Input.import.dataFile,wb_h,[0,1/6]);   
+        close(wb_h);
+        x0=min(x);
+        y0=min(y);
+        x1=max(x);
+        y1=max(y);
+        % Compute average distance of xyz points
+        dataarea=(x1-x0)*(y1-y0);
+        dx=sqrt(dataarea/length(x));
+        dy=dx;        
+    case{'xyz'}
+        xyz=load(handles.Toolbox(tb).Input.import.dataFile);
+        x0=min(xyz(:,1));
+        y0=min(xyz(:,2));
+        x1=max(xyz(:,1));
+        y1=max(xyz(:,2));
+        % Compute average distance of xyz points
+        dataarea=(x1-x0)*(y1-y0);
+        dx=sqrt(dataarea/size(xyz,1));
+        dy=dx;        
 end
 
 % Determine default values for this dataset
-
-handles.Toolbox(tb).Input.bathymetry.x0=x0;
-handles.Toolbox(tb).Input.bathymetry.y0=y0;
-
-if ncols>500 && nrows>500
-    handles.Toolbox(tb).Input.bathymetry.nx=300;
-    handles.Toolbox(tb).Input.bathymetry.ny=300;
-    zm=1:50;
-    nnx=ncols./(handles.Toolbox(tb).Input.bathymetry.nx.*2.^(zm-1));
-    nny=nrows./(handles.Toolbox(tb).Input.bathymetry.ny.*2.^(zm-1));
-    iix=find(nnx>1,1,'last');
-    iiy=find(nny>1,1,'last');
-    handles.Toolbox(tb).Input.bathymetry.nrZoom=max(iix,iiy);
-else
-    % Small dataset, no tiling required
-    handles.Toolbox(tb).Input.bathymetry.nx=ncols;
-    handles.Toolbox(tb).Input.bathymetry.ny=nrows;
-    handles.Toolbox(tb).Input.bathymetry.nrZoom=1;
-end
+handles.Toolbox(tb).Input.import.x0=x0;
+handles.Toolbox(tb).Input.import.y0=y0;
+handles.Toolbox(tb).Input.import.dx=dx;
+handles.Toolbox(tb).Input.import.dy=dy;
 
 setHandles(handles);
 
@@ -151,20 +171,20 @@ handles=getHandles;
 
 % Open GUI to select data set
 
-[cs,type,nr,ok]=ddb_selectCoordinateSystem(handles.coordinateData,handles.EPSG,'default',handles.Toolbox(tb).Input.bathymetry.EPSGname,'type','both','defaulttype',handles.Toolbox(tb).Input.bathymetry.EPSGtype);
+[cs,type,nr,ok]=ddb_selectCoordinateSystem(handles.coordinateData,handles.EPSG,'default',handles.Toolbox(tb).Input.import.EPSGname,'type','both','defaulttype',handles.Toolbox(tb).Input.import.EPSGtype);
 
 if ok
-    handles.Toolbox(tb).Input.bathymetry.EPSGname=cs;
-    handles.Toolbox(tb).Input.bathymetry.EPSGtype=type;
-    handles.Toolbox(tb).Input.bathymetry.EPSGcode=nr;
+    handles.Toolbox(tb).Input.import.EPSGname=cs;
+    handles.Toolbox(tb).Input.import.EPSGtype=type;
+    handles.Toolbox(tb).Input.import.EPSGcode=nr;
     
-    switch lower(handles.Toolbox(tb).Input.bathymetry.EPSGtype)
+    switch lower(handles.Toolbox(tb).Input.import.EPSGtype)
         case{'geo','geographic','geographic 2d','geographic 3d','latlon','lonlat','spherical'}
-            handles.Toolbox(tb).Input.bathymetry.radioGeo=1;
-            handles.Toolbox(tb).Input.bathymetry.radioProj=0;
+            handles.Toolbox(tb).Input.import.radioGeo=1;
+            handles.Toolbox(tb).Input.import.radioProj=0;
         otherwise
-            handles.Toolbox(tb).Input.bathymetry.radioGeo=0;
-            handles.Toolbox(tb).Input.bathymetry.radioProj=1;
+            handles.Toolbox(tb).Input.import.radioGeo=0;
+            handles.Toolbox(tb).Input.import.radioProj=1;
     end
     setHandles(handles);
 
@@ -173,9 +193,9 @@ end
 %%
 function editAttributes
 handles=getHandles;
-attr=handles.Toolbox(tb).Input.bathymetry.attributes;
+attr=handles.Toolbox(tb).Input.import.attributes;
 attr=ddb_editTilingAttributes(attr);
-handles.Toolbox(tb).Input.bathymetry.attributes=attr;
+handles.Toolbox(tb).Input.import.attributes=attr;
 setHandles(handles);
 
 %%
@@ -183,40 +203,50 @@ function generateTiles
 
 handles=getHandles;
 
-OPT.EPSGcode                     = handles.Toolbox(tb).Input.bathymetry.EPSGcode;
-OPT.EPSGname                     = handles.Toolbox(tb).Input.bathymetry.EPSGname;
-OPT.EPSGtype                     = handles.Toolbox(tb).Input.bathymetry.EPSGtype;
-OPT.VertCoordName                = handles.Toolbox(tb).Input.bathymetry.vertCoordName;
-OPT.VertCoordLevel               = handles.Toolbox(tb).Input.bathymetry.vertCoordLevel;
-OPT.VertUnits                    = handles.Toolbox(tb).Input.bathymetry.vertUnits;
-OPT.nc_library                   = handles.Toolbox(tb).Input.bathymetry.nc_library;
-OPT.tp                           = handles.Toolbox(tb).Input.bathymetry.type;
-OPT.positiveup                   = handles.Toolbox(tb).Input.bathymetry.positiveUp;
+OPT.EPSGcode                     = handles.Toolbox(tb).Input.import.EPSGcode;
+OPT.EPSGname                     = handles.Toolbox(tb).Input.import.EPSGname;
+OPT.EPSGtype                     = handles.Toolbox(tb).Input.import.EPSGtype;
+OPT.VertCoordName                = handles.Toolbox(tb).Input.import.vertCoordName;
+OPT.VertCoordLevel               = handles.Toolbox(tb).Input.import.vertCoordLevel;
+OPT.VertUnits                    = handles.Toolbox(tb).Input.import.vertUnits;
+OPT.nc_library                   = handles.Toolbox(tb).Input.import.nc_library;
+OPT.tp                           = handles.Toolbox(tb).Input.import.type;
+OPT.positiveup                   = handles.Toolbox(tb).Input.import.positiveUp;
 
-f=fieldnames(handles.Toolbox(tb).Input.bathymetry.attributes);
+f=fieldnames(handles.Toolbox(tb).Input.import.attributes);
 
 for i=1:length(f);
-    OPT.(f{i})=handles.Toolbox(tb).Input.bathymetry.attributes.(f{i});
+    OPT.(f{i})=handles.Toolbox(tb).Input.import.attributes.(f{i});
 end
 
-fname=handles.Toolbox(tb).Input.bathymetry.dataFile;
-dr=[handles.Toolbox(tb).Input.bathymetry.dataDir filesep handles.Toolbox(tb).Input.bathymetry.dataName filesep];
-dataname=deblank(handles.Toolbox(tb).Input.bathymetry.dataName);
-datatype=handles.Toolbox(tb).Input.bathymetry.rawDataType;
-nrzoom=handles.Toolbox(tb).Input.bathymetry.nrZoom;
-nx=handles.Toolbox(tb).Input.bathymetry.nx;
-ny=handles.Toolbox(tb).Input.bathymetry.ny;
+fname=handles.Toolbox(tb).Input.import.dataFile;
+dr=[handles.Toolbox(tb).Input.import.dataDir filesep handles.Toolbox(tb).Input.import.dataName filesep];
+dataname=deblank(handles.Toolbox(tb).Input.import.dataName);
+datasource=deblank(handles.Toolbox(tb).Input.import.datasource);
+dataformat=handles.Toolbox(tb).Input.import.rawDataFormat;
+datatype=handles.Toolbox(tb).Input.import.rawDataType;
+%nrzoom=handles.Toolbox(tb).Input.import.nrZoom;
+nx=handles.Toolbox(tb).Input.import.nx;
+ny=handles.Toolbox(tb).Input.import.ny;
+x0=handles.Toolbox(tb).Input.import.x0;
+y0=handles.Toolbox(tb).Input.import.y0;
+dx=handles.Toolbox(tb).Input.import.dx;
+dy=handles.Toolbox(tb).Input.import.dy;
 
 % Check data name
 if isempty(dataname)
     ddb_giveWarning('text','Please first enter a data name.');
     return;
 end
+if isempty(datasource)
+    ddb_giveWarning('text','Please first enter a data source.');
+    return;
+end
 if ~isempty(find(dataname==' ', 1))
     ddb_giveWarning('text','Data name cannot have spaces in it.');
     return;
 end
-if strcmpi(handles.Toolbox(tb).Input.bathymetry.attributes.title,'Name of data set')
+if strcmpi(handles.Toolbox(tb).Input.import.attributes.title,'Name of data set')
     ddb_giveWarning('text','Please enter proper title of dataset in attributes.');
     return;
 end
@@ -224,46 +254,37 @@ if exist(dr,'dir')
     ddb_giveWarning('text','A dataset with this name already exists. Please remove it first.');
     return;
 end
-if ~isempty(strmatch(handles.Toolbox(tb).Input.bathymetry.attributes.title,handles.bathymetry.longNames))
+if ~isempty(strmatch(handles.Toolbox(tb).Input.import.attributes.title,handles.bathymetry.longNames))
     ddb_giveWarning('text','A dataset with this title already exists. Please change the title in attributes.');
     return;
 end
 
-makeNCBathyTiles(fname,dr,dataname,datatype,nrzoom,nx,ny,OPT);
+ddb_makeBathymetryTiles(fname,dr,dataname,dataformat,datatype,nx,ny,x0,y0,dx,dy,OPT);
 
 % Now add data to data xml
 fname = [handles.bathymetry.dir 'bathymetry.xml'];
 xmldata = xml_load(fname);
 nd=length(xmldata)+1;
 xmldata(nd).dataset.name=dataname;
-xmldata(nd).dataset.longName=handles.Toolbox(tb).Input.bathymetry.attributes.title;
+xmldata(nd).dataset.longName=handles.Toolbox(tb).Input.import.attributes.title;
 xmldata(nd).dataset.version='1';
 xmldata(nd).dataset.type='netCDFtiles';
 xmldata(nd).dataset.edit='0';
-xmldata(nd).dataset.URL=[handles.Toolbox(tb).Input.bathymetry.dataDir handles.Toolbox(tb).Input.bathymetry.dataName];
+xmldata(nd).dataset.URL=[handles.Toolbox(tb).Input.import.dataDir handles.Toolbox(tb).Input.import.dataName];
 xmldata(nd).dataset.useCache='1';
+xmldata(nd).dataset.source=datasource;
 xml_save(fname,xmldata,'off');
 
-% And finally add it to the menu
-handles=getHandles;
+% Find all bathymetries again
 handles.bathymetry=ddb_findBathymetryDatabases(handles.bathymetry);
-% Clear existing menu
-h=findobj(gcf,'Tag','menuBathymetry');
-ch=get(h,'Children');
-delete(ch);
-for ii=1:handles.bathymetry.nrDatasets
-    if strcmpi(handles.bathymetry.datasets{ii},handles.screenParameters.backgroundBathymetry)
-        if handles.bathymetry.dataset(ii).isAvailable
-            handles=ddb_addMenuItem(handles,'Bathymetry',handles.bathymetry.longNames{ii},'Callback',{@ddb_menuBathymetry},'Checked','on','Enable','on');
-        else
-            handles=ddb_addMenuItem(handles,'Bathymetry',handles.bathymetry.longNames{ii},'Callback',{@ddb_menuBathymetry},'Checked','on','Enable','off');
-        end
-    else
-        if handles.bathymetry.dataset(ii).isAvailable
-            handles=ddb_addMenuItem(handles,'Bathymetry',handles.bathymetry.longNames{ii},'Callback',{@ddb_menuBathymetry},'Checked','off','Enable','on');
-        else
-            handles=ddb_addMenuItem(handles,'Bathymetry',handles.bathymetry.longNames{ii},'Callback',{@ddb_menuBathymetry},'Checked','off','Enable','off');
-        end
-    end
-end
+
+% Select dataset that was just created
+handles.screenParameters.backgroundBathymetry=dataname;
+set(handles.GUIHandles.textBathymetry,'String',['Bathymetry : ' handles.bathymetry.longNames{nd} '   -   Datum : ' handles.bathymetry.dataset(nd).verticalCoordinateSystem.name]);
+
+% And finally add it to the menu
+ddb_updateBathymetryMenu(handles);
+
 setHandles(handles);
+
+ddb_updateDataInScreen;

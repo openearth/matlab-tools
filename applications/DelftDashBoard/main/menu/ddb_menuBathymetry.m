@@ -1,4 +1,4 @@
-function ddb_menuBathymetry(hObject, eventdata, handles)
+function ddb_menuBathymetry(hObject, eventdata)
 %DDB_MENUBATHYMETRY  One line description goes here.
 %
 %   More detailed description goes here.
@@ -65,7 +65,7 @@ function ddb_menuBathymetry(hObject, eventdata, handles)
 
 handles=getHandles;
 
-lbl=get(hObject,'Label');
+tag=get(hObject,'Tag');
 
 hmain=findobj(gcf,'Tag','menuBathymetry');
 set(hmain,'ForegroundColor',[0 0 0]);        
@@ -91,7 +91,7 @@ end
 
 % And select new bathymetry
 
-iac=strmatch(lbl,handles.bathymetry.longNames,'exact');
+iac=strmatch(tag,handles.bathymetry.datasets,'exact');
 
 if ~strcmpi(handles.screenParameters.backgroundBathymetry,handles.bathymetry.datasets{iac})
     handles.screenParameters.backgroundBathymetry=handles.bathymetry.datasets{iac};

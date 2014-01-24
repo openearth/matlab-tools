@@ -79,40 +79,60 @@ ddb_zoomOff;
 set(gcf,'Pointer','watch');
 pause(0.01);
 
-% Delete existing model tab panel
-for ii=2:length(handles.Model(md).GUI.element.element.tab)
-    parent=handles.Model(md).GUI.element(1).element.tab(ii).tab.handle;
-    ch=get(parent,'Children');
-    if ~isempty(ch)
-        delete(ch);
-    end
-end
+% % Delete existing model tab panel
+% for ii=2:length(handles.Model(md).GUI.element.element.tab)
+%     parent=handles.Model(md).GUI.element(1).element.tab(ii).tab.handle;
+%     ch=get(parent,'Children');
+%     if ~isempty(ch)
+%         delete(ch);
+%     end
+% end
 
-originalElements=handles.Model(md).GUI.element;
+% originalElements=handles.Model(md).GUI.element;
+
+% % First try to delete existing panels
+% for im=1:length(handles.Model)
+%     if isfield(handles.Model(im).GUI.element(1).element,'handle')
+%         try
+%             delete(handles.Model(im).GUI.element(1).element.handle);
+%         end
+%     end
+% end
 
 % Re-read xml files
 handles=ddb_readModelXML(handles,md);
 handles=ddb_readToolboxXML(handles,tb);
-
-handles.Model(md).GUI.element.element.handle=originalElements.element.handle;    
-el=getappdata(originalElements.element.handle,'element');
-
-% And add tab elements
-for ii=2:length(handles.Model(md).GUI.element.element.tab)
-    elements=handles.Model(md).GUI.element.element.tab(ii).tab.element;
-    parent=originalElements.element.tab(ii).tab.handle;
-    elements=gui_addElements(gcf,elements,'getFcn',@getHandles,'setFcn',@setHandles,'Parent',parent);    
-    handles.Model(md).GUI.element.element.tab(ii).tab.element=elements;
-    handles.Model(md).GUI.element.element.tab(ii).tab.handle=originalElements.element.tab(ii).tab.handle;
-    setappdata(handles.Model(md).GUI.element.element.tab(ii).tab.handle,'elements',elements);
-    el.tab(ii).tab.element=elements;
-end
-handles.Model(md).GUI.element.element.tab(1).tab.handle=originalElements.element.tab(1).tab.handle;    
-setappdata(originalElements.element.handle,'element',el);
+% 
+% handles.Model(md).GUI.element.element.handle=originalElements.element.handle;    
+% el=getappdata(originalElements.element.handle,'element');
+% 
+% % And add tab elements
+% for ii=2:length(handles.Model(md).GUI.element.element.tab)
+%     elements=handles.Model(md).GUI.element.element.tab(ii).tab.element;
+%     parent=originalElements.element.tab(ii).tab.handle;
+%     elements=gui_addElements(gcf,elements,'getFcn',@getHandles,'setFcn',@setHandles,'Parent',parent);    
+%     handles.Model(md).GUI.element.element.tab(ii).tab.element=elements;
+%     handles.Model(md).GUI.element.element.tab(ii).tab.handle=originalElements.element.tab(ii).tab.handle;
+%     setappdata(handles.Model(md).GUI.element.element.tab(ii).tab.handle,'elements',elements);
+%     el.tab(ii).tab.element=elements;
+% end
+% handles.Model(md).GUI.element.element.tab(1).tab.handle=originalElements.element.tab(1).tab.handle;    
+% setappdata(originalElements.element.handle,'element',el);
 
 setHandles(handles);
 
-ddb_selectToolbox;
+% disp('Adding model tabpanels ...');
+% ddb_addModelTabPanels;
+
+% disp('Loading additional map data ...');
+% ddb_loadMapData;
+
+% disp('Initializing screen ...');
+% ddb_makeMapPanel;
+
+%ddb_addModelTabPanels;
+
+% ddb_selectToolbox;
 
 drawnow;
 

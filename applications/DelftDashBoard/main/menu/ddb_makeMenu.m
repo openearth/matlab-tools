@@ -103,44 +103,46 @@ handles=ddb_addMenuItem(handles,'Domain','tst',                 'Callback',{@ddb
 %% Bathymetry
 uimenu('Label','Bathymetry','Tag','menuBathymetry');
 
-% First datasets without source
-for i=1:handles.bathymetry.nrDatasets
-    if isempty(handles.bathymetry.dataset(i).source)
-        if handles.bathymetry.dataset(i).isAvailable
-            enab='on';
-        else
-            enab='off';
-        end
-        if strcmpi(handles.bathymetry.datasets{i},handles.screenParameters.backgroundBathymetry)
-            checked='on';
-        else
-            checked='off';
-        end
-        handles=ddb_addMenuItem(handles,'Bathymetry',handles.bathymetry.longNames{i},'Callback',{@ddb_menuBathymetry},'Checked',checked,'Enable',enab);        
-    end
-end
+ddb_updateBathymetryMenu(handles);
 
-% Find sources
-sources={''};
-nsource=0;
-for i=1:handles.bathymetry.nrDatasets
-    if ~isempty(handles.bathymetry.dataset(i).source)
-        ii=strmatch(handles.bathymetry.dataset(i).source,sources);
-        if isempty(ii)
-            % New source
-            nsource=nsource+1;
-            sources{nsource}=handles.bathymetry.dataset(i).source;
-            handles=ddb_addMenuItem(handles,'Bathymetry',handles.bathymetry.dataset(i).source,'Enable','on');
-        end
-    end
-end
-
-for i=1:handles.bathymetry.nrDatasets
-    if ~isempty(handles.bathymetry.dataset(i).source)
-        ii=strmatch(handles.bathymetry.dataset(i).source,sources);
-        handles=ddb_addMenuItem(handles,['Bathymetry' strrep(sources{ii},' ','')],handles.bathymetry.longNames{i},'Callback',{@ddb_menuBathymetry},'Checked','off','Enable',enab);
-    end
-end
+% % First datasets without source
+% for i=1:handles.bathymetry.nrDatasets
+%     if isempty(handles.bathymetry.dataset(i).source)
+%         if handles.bathymetry.dataset(i).isAvailable
+%             enab='on';
+%         else
+%             enab='off';
+%         end
+%         if strcmpi(handles.bathymetry.datasets{i},handles.screenParameters.backgroundBathymetry)
+%             checked='on';
+%         else
+%             checked='off';
+%         end
+%         handles=ddb_addMenuItem(handles,'Bathymetry',handles.bathymetry.longNames{i},'Callback',{@ddb_menuBathymetry},'Checked',checked,'Enable',enab);        
+%     end
+% end
+% 
+% % Find sources
+% sources={''};
+% nsource=0;
+% for i=1:handles.bathymetry.nrDatasets
+%     if ~isempty(handles.bathymetry.dataset(i).source)
+%         ii=strmatch(handles.bathymetry.dataset(i).source,sources);
+%         if isempty(ii)
+%             % New source
+%             nsource=nsource+1;
+%             sources{nsource}=handles.bathymetry.dataset(i).source;
+%             handles=ddb_addMenuItem(handles,'Bathymetry',handles.bathymetry.dataset(i).source,'Enable','on');
+%         end
+%     end
+% end
+% 
+% for i=1:handles.bathymetry.nrDatasets
+%     if ~isempty(handles.bathymetry.dataset(i).source)
+%         ii=strmatch(handles.bathymetry.dataset(i).source,sources);
+%         handles=ddb_addMenuItem(handles,['Bathymetry' strrep(sources{ii},' ','')],handles.bathymetry.longNames{i},'Callback',{@ddb_menuBathymetry},'Checked','off','Enable',enab);
+%     end
+% end
 
 %% Shoreline
 uimenu('Label','Shoreline','Tag','menuShoreline');

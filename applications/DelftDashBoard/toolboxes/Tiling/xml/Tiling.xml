@@ -2,7 +2,7 @@
 <root>
   <toolbox>Tiling</toolbox>
   <longname>Tiling</longname>
-  <enable>1</enable>
+  <enable>0</enable>
   <element>
     <position>50 10 950 140</position>
     <style>tabpanel</style>

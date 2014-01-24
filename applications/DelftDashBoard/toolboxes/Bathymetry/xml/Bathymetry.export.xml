@@ -1,40 +1,36 @@
 <?xml version="1.0"?>
 <root>
   <element>
-    <tag>selectbathymetry</tag>
     <style>listbox</style>
     <text>Available Databases</text>
     <textposition>above-center</textposition>
     <variable>activeDataset</variable>
     <type>integer</type>
-    <position>10 10 150 105</position>
+    <position>10 10 250 105</position>
     <tooltipstring>Select bathymetry database</tooltipstring>
     <onchange>ddb_BathymetryToolbox_export</onchange>
     <option1>selectdataset</option1>
     <listtext>
-      <variable>handles.bathymetry.datasets</variable>
+      <variable>handles.bathymetry.longNames</variable>
     </listtext>
   </element>
   <element>
-    <tag>drawpolygon</tag>
     <style>pushbutton</style>
-    <position>170 95 80 20</position>
+    <position>270 95 80 20</position>
     <text>Draw Polygon</text>
     <callback>ddb_BathymetryToolbox_export</callback>
     <option1>drawpolygon</option1>
   </element>
   <element>
-    <tag>deletepolygon</tag>
     <style>pushbutton</style>
-    <position>170 70 80 20</position>
+    <position>270 70 80 20</position>
     <text>Delete Polygon</text>
     <callback>ddb_BathymetryToolbox_export</callback>
     <option1>deletepolygon</option1>
   </element>
   <element>
-    <tag>loadpolygon</tag>
     <style>pushselectfile</style>
-    <position>170 40 80 20</position>
+    <position>270 40 80 20</position>
     <text>Load Polygon</text>
     <variable>polygonFile</variable>
     <onchange>ddb_BathymetryToolbox_export</onchange>
@@ -45,9 +41,8 @@
     <tooltipstring>Select polygon file</tooltipstring>
   </element>
   <element>
-    <tag>savepolygon</tag>
     <style>pushsavefile</style>
-    <position>170 15 80 20</position>
+    <position>270 15 80 20</position>
     <text>Save Polygon</text>
     <variable>polygonFile</variable>
     <onchange>ddb_BathymetryToolbox_export</onchange>
@@ -68,13 +63,12 @@
     </dependency>
   </element>
   <element>
-    <tag>selectzoomlevel</tag>
     <style>popupmenu</style>
     <text>Zoom Level</text>
     <textposition>left</textposition>
     <variable>activeZoomLevel</variable>
     <type>integer</type>
-    <position>350 95 60 20</position>
+    <position>450 95 60 20</position>
     <tooltipstring>Select zoom level</tooltipstring>
     <onchange>ddb_BathymetryToolbox_export</onchange>
     <option1>selectzoomlevel</option1>
@@ -83,19 +77,17 @@
     </listtext>
   </element>
   <element>
-    <tag>textresolution</tag>
     <style>text</style>
     <variable>resolutionText</variable>
     <type>string</type>
-    <position>420 96</position>
+    <position>520 96</position>
   </element>
   <element>
-    <tag>selectpositivedirection</tag>
     <style>popupmenu</style>
     <text>Positive</text>
     <textposition>left</textposition>
     <variable>activeDirection</variable>
-    <position>350 70 60 20</position>
+    <position>450 70 60 20</position>
     <tooltipstring>Select positive up or down</tooltipstring>
     <type>string</type>
     <listtext>up</listtext>
@@ -104,9 +96,8 @@
     <listvalue>down</listvalue>
   </element>
   <element>
-    <tag>exportbathy</tag>
     <style>pushsavefile</style>
-    <position>290 15 120 20</position>
+    <position>390 15 120 20</position>
     <text>Export</text>
     <variable>bathyFile</variable>
     <onchange>ddb_BathymetryToolbox_export</onchange>

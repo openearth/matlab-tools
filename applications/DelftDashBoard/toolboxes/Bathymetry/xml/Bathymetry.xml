@@ -21,13 +21,6 @@
       <enable>1</enable>
     </tab>
     <tab>
-      <tag>merge</tag>
-      <tabstring>Merge</tabstring>
-      <callback>ddb_BathymetryToolbox_merge</callback>
-      <element>Bathymetry.merge.xml</element>
-      <enable>1</enable>
-    </tab>
-    <tab>
       <tag>cache</tag>
       <tabstring>Cache</tabstring>
       <callback>ddb_BathymetryToolbox_fillcache</callback>
