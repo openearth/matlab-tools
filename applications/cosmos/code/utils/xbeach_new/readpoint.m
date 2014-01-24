@@ -14,9 +14,14 @@ function Pointdata=readpoint(fname,XBdims,nvar)
 % See also getdimensions, readvar, readgraindist, readbedlayers,
 %          readsediment, readwaves
 
-Pointdata=zeros(XBdims.ntp,nvar+1);
-fid=fopen(fname,'r');
-for i=1:XBdims.ntp
-    Pointdata(i,:)=fread(fid,nvar+1,'double');
+if exist('memmapfile.m','file')==2
+    D = memmapfile(fname,'format','double');
+    Pointdata = reshape(D.data(1:XBdims.ntp*(nvar+1)),nvar+1,XBdims.ntp)';
+else
+    Pointdata=zeros(XBdims.ntp,nvar+1);
+    fid=fopen(fname,'r');
+    for i=1:XBdims.ntp
+        Pointdata(i,:)=fread(fid,nvar+1,'double');
+    end
+    fclose(fid);
 end
-fclose(fid);
