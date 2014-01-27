@@ -122,8 +122,8 @@ end
 
    i = i + 1;
    datatypes.grid.names{i}        =  'Jarkus 20m (test/next release)';
-   datatypes.grid.urls {i}        =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/jarkus/grids/';
-   datatypes.grid.catalog{i}      =  'http://dtvirt5.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/jarkus/grids/catalog.xml';
+   datatypes.grid.urls {i}        =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/jarkus/grids_r2014/';
+   datatypes.grid.catalog{i}      =  'http://dtvirt5.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/jarkus/grids_r2014/catalog.xml';
    datatypes.grid.ldbs{i}         =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc';
    datatypes.grid.axes{i}         =  1E5*[-0.239487 2.901701 2.999500 6.787223];
    datatypes.grid.cellsize{i}     =  20;
