@@ -183,6 +183,7 @@ else
 end
 
 dy=(ymax-ymin)/10;
+dy=max(dy,0.5);
 
 iy1=find(y<=ymin-dy,1,'last');
 if isempty(iy1)
@@ -194,7 +195,8 @@ if isempty(iy2)
 end
 
 dx=(xmax-xmin)/10;
-dx=0;
+dx=max(dx,0.5);
+%dx=0;
 
 iok=0;
 % Assuming global dataset
@@ -324,7 +326,7 @@ for i=1:length(gt)
         lonv=xv(ix1:ix2);
         latv=yv(iy1:iy2);
     end
-    gt(i).amp(gt(i).amp>100)=NaN;
+%    gt(i).amp(gt(i).amp>100)=NaN;
     gt(i).amp=permute(gt(i).amp,[2 1 3]);
     gt(i).phi=permute(gt(i).phi,[2 1 3]);
     gt(i).phi(gt(i).amp==0)=NaN;
