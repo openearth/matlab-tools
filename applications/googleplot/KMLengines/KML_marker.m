@@ -51,8 +51,14 @@ function varargout = KML_marker(lat,lon,varargin)
    timeSpan = KML_timespan('timeIn',OPT.timeIn,'timeOut',OPT.timeOut,'dateStrStyle',OPT.dateStrStyle);
 
    if ~isempty(OPT.icon)
-       OPT.icon = sprintf('<Style><IconStyle><Icon>%s</Icon></IconStyle></Style>',OPT.icon);
+      if ~isempty(OPT.scale)
+         OPT.icon = sprintf('<Style><IconStyle><Icon>%s</Icon><scale>%3.2f</scale></IconStyle></Style>',OPT.icon,OPT.scale);
+      else
+         OPT.icon  = sprintf('<Style><IconStyle><Icon>%s</Icon></IconStyle></Style>',OPT.icon);
+      end
    end
+
+   
 %% 
 output = sprintf([...
  '<Placemark>'...

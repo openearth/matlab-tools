@@ -62,6 +62,7 @@ function varargout = KML_header(varargin)
    OPT.description  = '';
    OPT.visible      = true;
    OPT.icon         = '';
+   OPT.scale        = [];
 
    OPT.cameralon    = [];
    OPT.cameralat    = [];
