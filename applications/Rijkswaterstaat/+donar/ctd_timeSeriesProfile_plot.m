@@ -1,4 +1,4 @@
-function ctd_timeSeriesProfile_plot(P,E,L,titletxt)
+function ctd_timeSeriesProfile_plot(P,E,L,titletxt,varargin)
 %CTD_TIMESERIESPROFILE_PLOT plot timeseries of profiles at 1 location
 %
 %  P = ctd_timeSeriesProfile_plot(P,titletext)
@@ -7,7 +7,19 @@ function ctd_timeSeriesProfile_plot(P,E,L,titletxt)
 %
 %See also: ctd_struct, ctd_timeSeriesProfile
 
-    setfig2screensize
+OPT.colorfield = 'z';
+OPT.colorlabel = 'z [cm]';
+OPT.clims      = [nan nan];
+OPT = setproperty(OPT,varargin);
+
+    if isnan(OPT.clims(1))
+        OPT.clims(1) = nanmin(P.(OPT.colorfield)(:))-100*eps;
+    end
+    if isnan(OPT.clims(2))
+        OPT.clims(2) = nanmax(P.(OPT.colorfield)(:))+100*eps;
+    end
+
+   %setfig2screensize
     
     nt = length(P.profile_id);
     nz = max(P.profile_n);
@@ -27,10 +39,10 @@ function ctd_timeSeriesProfile_plot(P,E,L,titletxt)
 
     subplot(2,2,2)
     if nt > 1
-    pcolorcorcen(tt,zz,P.z);
+    pcolorcorcen(tt,zz,P.(OPT.colorfield));
     hold on
     else
-    scatter     (tt(:),zz(:),10,P.z(:),'filled');
+    scatter     (tt(:),zz(:),10,P.(OPT.colorfield)(:),'filled');
     hold on
     end
     set(gca,'Color',[.8 .8 .8])
@@ -38,7 +50,8 @@ function ctd_timeSeriesProfile_plot(P,E,L,titletxt)
     set(gca,'YDir','reverse')
     xlabel('netCDF index of profile [#]')
     ylabel('netCDF ragged array index [#]')
-    [ax,~]=colorbarwithvtext('z [cm]');
+    clim([OPT.clims])
+    [ax,~]=colorbarwithvtext(OPT.colorlabel);
     title('<netCDF matrix space>')
     set(ax,'YDir','reverse')
     grid on
@@ -59,10 +72,10 @@ function ctd_timeSeriesProfile_plot(P,E,L,titletxt)
 
     subplot(2,2,4)
     if nt > 1
-    pcolorcorcen(P.datenum,P.z,P.z);
+    pcolorcorcen(P.datenum,P.z,P.(OPT.colorfield));
     hold on
     else
-    scatter     (P.datenum(:),P.z(:),10,P.z(:),'filled');
+    scatter     (P.datenum(:),P.z(:),10,P.(OPT.colorfield)(:),'filled');
     hold on
     end
     plot(P.datenum,P.z,'k.','markersize',4); 
@@ -70,7 +83,8 @@ function ctd_timeSeriesProfile_plot(P,E,L,titletxt)
     datetick('x')
     xlabel('time');
     ylabel('z [cm]')
-    [ax,~]=colorbarwithvtext('z [cm]');
+    clim([OPT.clims])
+    [ax,~]=colorbarwithvtext(OPT.colorlabel);
     title('<world space>')
     
     set(ax,'YDir','reverse')

@@ -11,16 +11,16 @@ axes(AX(1,1))
 
     plot(S.lon,S.lat,'k-','color',[.5 .5 .5])
     hold on
-    scatter(S.lon,S.lat,40,S.data,'.')
+   %scatter(S.lon,S.lat,40,S.data,'.')
     plot(L.lon,L.lat,'-' ,'color',[0 0 0])
     plot(E.lon,E.lat,'--','color',[0 0 0])
     grid on
     if nargin==6
         if isnan(clims(1))
-            clims(1) = min(S.data(:));
+            clims(1) = nanmin(S.data(:))-100*eps;
         end
         if isnan(clims(2))
-            clims(2) = max(S.data(:));
+            clims(2) = nanmax(S.data(:))+100*eps;
         end
         clim([clims])
     end
@@ -40,7 +40,7 @@ axes(AX(1,2))
 
     plot(S.datenum,S.data,'k-','color',[.5 .5 .5])
     hold on
-    scatter(S.datenum,S.data,40,S.data,'.')
+   %scatter(S.datenum,S.data,40,S.data,'.')
     axis tight
     datetick('x')
     %text(S.datenum(  1),clims(1),['\leftarrow',datestr(min(S.datenum),'yyyy-mmm-dd')],'vert','bot','hor','left')
