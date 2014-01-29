@@ -1,32 +1,28 @@
-function data = running_median_filter(data,window)
-%RUNNING_MEDIAN_FILTER  Fast running median calculation
+function maxdata = running_max_filter(data,window)
+%RUNNING_MAX_FILTER  Fast running max calculation
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   data = running_median_filter(data,window)
+%   data = running_max_filter(data,window)
 %
 %   Example
-%     % calculate running median over 100k points with a window width of 1k
+%     % calculate running max over 100k points with a window width of 1k
 %     d = 1:1e5;
 %     data = randn(size(d))+2*sind(d/15)+sind(d/16)+sind(d/17)+sind(d/18)+sind(d/19);
 %     window = uint16(1000);
-%     filtered = running_median_filter(data,window);
-%     plot(d,data,'.',d,filtered,'r')
+%     filtered = running_max_filter(data,window);
+%     plot(d,data,'.',d,filtered,'r');
+%     hold on
+%     filtered2 = running_median_filter(data,window);
+%     plot(d,filtered2,'g')
 %
-%   See also: running_max_filter, signal_fun
+%   See also: running_median_filter, signal_fun
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2012 Van Oord
-%       Thijs Damsma
-%
-%       tda@vanoord.com
-%
-%       Watermanweg 64
-%       3067 GG
-%       Rotterdam
-%       Netherlands
+%   Copyright (C) 2014 Deltares 4 Van Oord, based on running_median_filter.m
+%       Gerben de Boer
 %
 %   This library is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -52,11 +48,11 @@ function data = running_median_filter(data,window)
 % Created: 09 Nov 2012
 % Created with Matlab version: 8.0.0.783 (R2012b)
 
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
+% $Id: running_max_filter.m 8369 2013-03-22 12:02:48Z tda.x $
+% $Date: 2013-03-22 13:02:48 +0100 (Fri, 22 Mar 2013) $
+% $Author: tda.x $
+% $Revision: 8369 $
+% $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/general/signal_fun/running_max_filter.m $
 % $Keywords: $
 
 %% code
@@ -66,6 +62,16 @@ assert(isvector(data),'data is not a vector');
 assert(~isempty(window),'window is empty');
 assert(isscalar(window),'window is not a scalar');
 assert(~(isnan(window)| isinf(window)),'window must be a real number');
-assert(~any(isnan(data) | isinf(data)),'NaN''s and Inf''s are not accepted by running_median_filter');
+assert(~any(isnan(data) | isinf(data)),'NaN''s and Inf''s are not accepted by running_max_filter');
 window = min(window,numel(data));
-data = running_median_filter(double(data),uint16(window));
+
+maxdata = nan(size(data));
+
+window1 = double(ceil(window/2)); % mind that ceil yield int32 which is too small (65536)
+
+ii0 = window1+1;
+ii1 = length(data)-window1;
+
+for ii=ii0:ii1
+   maxdata(ii) = nanmax(data(ii-window1:ii+window1));
+end
