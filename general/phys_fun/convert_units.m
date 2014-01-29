@@ -80,6 +80,7 @@ debug = 0;
    ppm             = 1e-6;
 
    %% Length units 
+   um              = 1e-6;                    % micro meter [VO]
    mm              = 1e-3;                    % mms
    mms             = mm;                      % mms
    millimeter      = mm;                      % mms
@@ -155,6 +156,7 @@ debug = 0;
    hrs             = h;                       % hours
    hour            = h;                       % hours
    hours           = h;                       % hours
+   oh              = h;                       % (operating) hours [VO]
    
    sday            = 86164.09053*s;           % sidereal days
    sdays           = sday;                    % sidereal days
@@ -167,6 +169,7 @@ debug = 0;
    
    week            = 7.*day;                  % weeks
    weeks           = week;                    % weeks
+   wk              = week;                    % weeks [VO]
    
    %% Calendar units: years: http://en.wikipedia.org/wiki/Gregorian_year
    yr              = 365.24218967.*day;       % tropical year http://en.wikipedia.org/wiki/Gregorian_year#Sidereal.2C_tropical.2C_and_anomalistic_years
@@ -195,10 +198,16 @@ debug = 0;
    months          = month;                   % months
    
    %% Pressure units 
+   mpa             = 1e-3;                    % milli pascal [VO]
    Pa              = 1;                       % pascal
+   pa              = Pa;                      % pascal [VO]
    Pascal          = Pa;                      % pascal
    pascal          = Pa;                      % pascal
    hPa             = 100;                     % hectopascal
+   kpa             = 1e3;                     % kilo pascal [VO]
+   kPa             = 1e3;                     % kilo pascal [VO]
+   Mpa             = 1e6;                     % mega pascal [VO]
+   
    bar             = 1e5;                     % bar
    mbar            = 100;                     % millibar
 
@@ -230,6 +239,12 @@ debug = 0;
    libra            = 0.32736409;             % libra
    pound            = 0.45359237;             % pound
    
+   t                = 1e3;                    % tonnes    [VO]
+   ton              = 1e3;                    % tonnes    [VO]
+   tonnes           = ton;                    % tonnes    [VO]
+   TDS              = ton;                    % Tonnes Dry Solids [VO]
+   tds              = ton;                    % Tonnes Dry Solids [VO]
+   
    %% Angle units 
    rad             = 1;                       % radian
    deg             = 1./RAD;                  % degree
@@ -240,6 +255,7 @@ debug = 0;
    degree_north    = deg;
    degree_east     = deg;
    degree_true     = deg;
+   degree          = deg;                     % degree [VO]
    
    %% Solid Angle units 
    ster            = 1;                       % steradian
@@ -269,6 +285,26 @@ debug = 0;
    
    MW              = 1e6*W;
    megawatt        = 1e6*W;
+   
+   VA              = W;                         % volt Ampere
+   kVA             = 1000*W;                    % kilo volt amperes
+   
+   %% Electrical units
+   V               = 1;                         % volt
+   kV              = 1000*V;                    % kilo volt
+   
+   A               = 1;                         % ampere
+   Amp             = A;                         % ampere
+   Amps            = A;                         % ampere
+   
+   mA              = 1e-3;                      % milli ampere
+   
+   %% Frequency
+   hz              = 1;                         % hertz
+   Hz              = hz;                        % hertz 
+   rpm             = 60;                        % revolutions per minute
+   RPM             = rpm;                       % revolutions per minute
+   
    
 %% Find conversion factor 
    if debug
