@@ -1,8 +1,9 @@
 function plot_LL_PI(LL,PL)
 
-% This function creates a figure with Liquid Limit on the horizontal axis
-% and the Plasticity Index on the vertical axis. The plasticity index is
-% computed from the Liquid Limit and the Plastic Limit.
+% This function vizualises the Atterberg Limits. It creates a figure 
+% with the Liquid Limit on the horizontal axis and the Plasticity 
+% Index on the vertical axis. The plasticity index is computed from 
+% the Liquid Limit and the Plastic Limit.
 %
 % Input:
 % LL    Liquid Limit [%]
