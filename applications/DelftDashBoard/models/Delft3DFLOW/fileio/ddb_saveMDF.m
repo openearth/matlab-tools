@@ -259,11 +259,21 @@ if Flow.waves
 else
     MDF.Rouwav='    ';
 end
-if Flow.nrWindStressBreakpoints==2
-    MDF.Wstres=[Flow.windStressCoefficients(1) Flow.windStressSpeeds(1) Flow.windStressCoefficients(2) Flow.windStressSpeeds(2)];
-else
-    MDF.Wstres=[Flow.windStressCoefficients(1) Flow.windStressSpeeds(1) Flow.windStressCoefficients(2) Flow.windStressSpeeds(2) Flow.windStressCoefficients(3) Flow.windStressSpeeds(3)];
+%if Flow.nrWindStressBreakpoints==2
+%    MDF.Wstres=[Flow.windStressCoefficients(1) Flow.windStressSpeeds(1) Flow.windStressCoefficients(2) Flow.windStressSpeeds(2)];
+%else
+%    MDF.Wstres=[Flow.windStressCoefficients(1) Flow.windStressSpeeds(1) Flow.windStressCoefficients(2) Flow.windStressSpeeds(2) Flow.windStressCoefficients(3) Flow.windStressSpeeds(3)];
+%end
+% To allow for more than 3 break points - Should not affect normal course
+% of operations
+for ii=1:Flow.nrWindStressBreakpoints
+    if ii==1,
+        MDF.Wstres = [Flow.windStressCoefficients(ii) Flow.windStressSpeeds(ii)];
+    else
+        MDF.Wstres = [MDF.Wstres Flow.windStressCoefficients(ii) Flow.windStressSpeeds(ii)];
+    end
 end
+
 MDF.Rhoa=Flow.rhoAir;
 MDF.Betac=Flow.betaC;
 if Flow.equili==1
