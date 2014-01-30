@@ -1,4 +1,4 @@
-function out = isfontweight(fontweight)
+function out = isfontweight(value)
 %ISFONTWEIGHT check whether fontweight is a valid value
 %See also: 
 
@@ -9,6 +9,7 @@ function out = isfontweight(fontweight)
 % $HeadURL$
 % $Keywords$
 
-out = any(fontweight(value,set(text,'FontWeight')));
+% out = any(fontweight(value,set(text,'FontWeight')));
+out = any(strcmpi(value,set(text,'FontWeight')));
 
 % EOF
