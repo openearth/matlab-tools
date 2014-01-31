@@ -206,13 +206,15 @@ if ~isempty(deblank(MDF.rouwav))
     handles.Model(md).Input(id).rouWav=MDF.rouwav;
 end
 handles.Model(md).Input(id).nrWindStressBreakpoints=length(MDF.wstres)/2;
-if handles.Model(md).Input(id).nrWindStressBreakpoints==2
-    handles.Model(md).Input(id).windStressCoefficients=[MDF.wstres(1) MDF.wstres(3)];
-    handles.Model(md).Input(id).windStressSpeeds=[MDF.wstres(2) MDF.wstres(4)];
-else
-    handles.Model(md).Input(id).windStressCoefficients=[MDF.wstres(1) MDF.wstres(3) MDF.wstres(5)];
-    handles.Model(md).Input(id).windStressSpeeds=[MDF.wstres(2) MDF.wstres(4) MDF.wstres(6)];
-end
+% if handles.Model(md).Input(id).nrWindStressBreakpoints==2
+%     handles.Model(md).Input(id).windStressCoefficients=[MDF.wstres(1) MDF.wstres(3)];
+%     handles.Model(md).Input(id).windStressSpeeds=[MDF.wstres(2) MDF.wstres(4)];
+% else
+%     handles.Model(md).Input(id).windStressCoefficients=[MDF.wstres(1) MDF.wstres(3) MDF.wstres(5)];
+%     handles.Model(md).Input(id).windStressSpeeds=[MDF.wstres(2) MDF.wstres(4) MDF.wstres(6)];
+% end
+handles.Model(md).Input(id).windStressCoefficients=MDF.wstres(1:2:end);
+handles.Model(md).Input(id).windStressSpeeds=MDF.wstres(2:2:end);
 
 %% Heat model
 handles.Model(md).Input(id).rhoAir=MDF.rhoa;

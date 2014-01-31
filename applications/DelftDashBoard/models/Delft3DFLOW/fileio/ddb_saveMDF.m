@@ -264,15 +264,11 @@ end
 %else
 %    MDF.Wstres=[Flow.windStressCoefficients(1) Flow.windStressSpeeds(1) Flow.windStressCoefficients(2) Flow.windStressSpeeds(2) Flow.windStressCoefficients(3) Flow.windStressSpeeds(3)];
 %end
+%
 % To allow for more than 3 break points - Should not affect normal course
-% of operations
-for ii=1:Flow.nrWindStressBreakpoints
-    if ii==1,
-        MDF.Wstres = [Flow.windStressCoefficients(ii) Flow.windStressSpeeds(ii)];
-    else
-        MDF.Wstres = [MDF.Wstres Flow.windStressCoefficients(ii) Flow.windStressSpeeds(ii)];
-    end
-end
+% of operations - cleaner version
+MDF.Wstres(1:2:2*Flow.nrWindStressBreakpoints) = Flow.windStressCoefficients;
+MDF.Wstres(2:2:2*Flow.nrWindStressBreakpoints) = Flow.windStressSpeeds;
 
 MDF.Rhoa=Flow.rhoAir;
 MDF.Betac=Flow.betaC;
