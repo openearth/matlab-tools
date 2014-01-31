@@ -50,18 +50,24 @@ classdef XBeachLimitStateFunctionChecker < handle
     
     %% Properties
     properties
-        
+        Abort
+        Delay
+        TimeOut
+        Timer
+        SimulationFolder
     end
     
     %% Events
     events
         SimulationStarted
         SimulationCompleted
+        SimulationNotCompleted
     end
     
     %% Methods
     methods
-        function this = XBeachLimitStateFunctionChecker(varargin)
+        %% Constructor
+        function this = XBeachLimitStateFunctionChecker(limitState)
             %XBEACHLIMITSTATEFUNCTIONCHECKER  One line description goes here.
             %
             %   More detailed description goes here.
@@ -79,6 +85,47 @@ classdef XBeachLimitStateFunctionChecker < handle
             %   XBeachLimitStateFunctionChecker
             %
             %   See also XBeachLimitStateFunctionChecker
+            
+            addlistener(limitState, 'SimulationCompleted')%, @limitState.CallBackMethod)
+            addlistener(limitState, 'SimulationNotCompleted')
+            this.SetDefaults
+        end
+        
+        %% Other methods
+        % Check whether the simulation is done
+        function CheckProgress(this)
+            this.Timer  = timer('TimerFcn', @(h,e)this.StopWaiting, 'StartDelay', this.TimeOut);
+            start(this.Timer);
+            
+            while ~this.Abort
+                if this.CheckLogFile
+                    notify(this, 'SimulationCompleted');
+                end
+                pause(this.Delay)
+            end
+        end
+        
+        % Check XBeach logfile to see if it's done
+        function completed = CheckLogFile(this)
+            % TODO!!!! Figure out how you know here in which folder to check
+            completed   = false;
+            if exist(fullfile(this.SimulationFolder,'xboutput.nc'),'file') ...
+                    && ~exist(fullfile(this.SimulationFolder,'XBerror.txt'),'file')
+                completed   = true;
+            end
+        end
+        
+        % Stop waiting for the simulation to end
+        function StopWaiting(this)
+            this.Abort  = true;
+            notify(this, 'SimulationNotCompleted')
+        end
+        
+        % Set default property values
+        function SetDefaults(this)
+            this.Abort      = false;
+            this.Delay      = 5;
+            this.TimeOut    = 900; 
         end
     end
 end
