@@ -58,10 +58,35 @@ nrows=sz(1);
 ncols=sz(2);
 
 dataset.nrblocks=nblocks;
+
+fourier=0;
+% Check if this is a Fourier map file
+if ~isempty(fid.Field(1).Comments)
+    for ic=1:length(fid.Field(1).Comments)
+        ifou=strfind(fid.Field(1).Comments{ic},'Results fourier analysis');
+        if ~isempty(ifou)
+            fourier=1;
+            const=t_getconsts;
+            break
+        end            
+    end
+end
+
 for iblock=1:nblocks
     dataset.blocks{iblock}=fid.Field(iblock).Name;
+    if fourier
+        % Determine which component this is
+        [a,b,f]=strread(dataset.blocks{iblock},'%s %s %f');
+        % Recompute frequency degrees per hour to cycles per hour (as in t_getconst)
+        f=f/360;
+        % Find nearest frequency
+        ic= abs(const.freq-f)==min(abs(const.freq-f));
+        dataset.blocks{iblock}=deblank(const.name(ic,:));
+    end
 end
-dataset.block=dataset.blocks{1};
+if isempty(dataset.block)
+    dataset.block=dataset.blocks{1};
+end
 
 switch tp
     case{'timeseries'}        

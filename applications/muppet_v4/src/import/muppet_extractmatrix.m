@@ -29,7 +29,11 @@ if isfield(parameter,fld)
             sind=[sind str{ii} ','];
         end
         sind=sind(1:end-1);
-        evalstr=['val=squeeze(parameter.(fld)(' sind '));'];
+        if isempty(sind)
+            evalstr=['val=squeeze(parameter.(fld));'];
+        else
+            evalstr=['val=squeeze(parameter.(fld)(' sind '));'];
+        end
         eval(evalstr);
     end
 end

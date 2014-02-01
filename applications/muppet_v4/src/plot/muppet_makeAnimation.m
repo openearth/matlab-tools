@@ -85,6 +85,9 @@ if ~isempty(animationsettings.avifilename)
                 end
             end
             avihandle=VideoWriter(animationsettings.avifilename,'MPEG-4');
+%            avihandle=VideoWriter(animationsettings.avifilename,'Motion JPEG AVI');
+%            avihandle=VideoWriter(animationsettings.avifilename,'Motion JPEG 2000');
+            
             avihandle.FrameRate=animationsettings.framerate;
             avihandle.Quality=animationsettings.quality;
             open(avihandle);
@@ -255,8 +258,12 @@ try
             a = imread(figname,'png');
             switch lower(animationsettings.format)
                 case{'mp4'}
-                    F = im2frame(a);
-                    writeVideo(avihandle,F);
+                    a=a(1:sz(1),1:sz(2),:);
+%                    F=im2frame(a,jet(256));
+%                    F = im2frame(a);
+%                    writeVideo(avihandle,F);
+                    writeVideo(avihandle,a);
+%                    imgs(:,:,:,iblock)=a;
                 case{'avi'}
                     aaa=uint8(a(1:sz(1),1:sz(2),:));
                     avihandle = avi('addframe', avihandle, aaa, iblock);
@@ -295,10 +302,10 @@ try
     if ~isempty(hh)
         close(wb);
     end
-    
+
     % Close animation
     closeanimation(avihandle,animationsettings.format);    
-    
+
     % Delete curvec temporary files
     delete('curvecpos.*.dat');
     
