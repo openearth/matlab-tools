@@ -1,4 +1,4 @@
-function writeWW3batchWin32(fname,names,datstr,trst1,trst2,exedir,zipdr)
+function writeWW3batchWin32(fname,names,datstr,trst1,trst2,exedir,mpidir,zipdr)
 
 fid=fopen(fname,'wt');
 
@@ -12,7 +12,12 @@ end
 
 fprintf(fid,'%s\n',['"' exedir '\ww3_grid.exe"']);
 fprintf(fid,'%s\n',['"' exedir '\ww3_prep.exe"']);
-fprintf(fid,'%s\n',['"' exedir '\ww3_shel.exe"']);
+
+if isempty(mpidir)
+    fprintf(fid,'%s\n',['"' exedir '\ww3_shel.exe"']);
+else
+    fprintf(fid,'%s\n',['"' mpidir '\mpiexec" -n %NUMBER_OF_PROCESSORS%  -localonly "' exedir '\ww3_shel.exe"']);
+end
 fprintf(fid,'%s\n',['"' exedir '\gx_outf.exe"']);
 
 %% 2D spectra
