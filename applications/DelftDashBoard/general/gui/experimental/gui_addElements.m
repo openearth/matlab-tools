@@ -970,8 +970,7 @@ else
         else
             extension=el.extension;
         end
-    end
-    
+    end    
 end
 
 if isempty(extension)
@@ -1017,18 +1016,86 @@ else
     selectiontext=el.selectiontext;
 end
 
-if isstruct(el.extension)
-    for ii=1:length(el.extension)
-        extension{ii,1}=el.extension(ii).extension;
-        extension{ii,2}=el.extension(ii).extension;
-    end
-else
-    if isfield(el.extension,'variable')
-        extension=gui_getValue(el,el.extension.variable);
+
+if isfield(el,'filter')
+    %
+    % Filter structure
+    %
+    % First extensions
+    %
+    if isfield(el.filter(1).filter.extension,'extension')
+        % Extensions given as variable
+        ext=gui_getValue(el,el.filter(1).filter.extension.extension.variable);        
+        if ~iscell(ext)
+            % Make it a cell-array
+            ext0=ext;
+            ext=[];
+            ext{1}=ext0;
+        end
+        for ii=1:length(ext)
+            extension{ii,1}=ext{ii};
+            extension{ii,2}=extension{ii,1};
+        end
     else
-        extension=el.extension;
+        for ii=1:length(el.filter)
+            extension{ii,1}=el.filter(ii).filter.extension;
+            extension{ii,2}=extension{ii,1};
+        end
     end
+    %
+    % Now the text
+    %
+    if isfield(el.filter(1).filter,'text')
+        if isfield(el.filter(1).filter.text,'text')
+            % Texts given as variable
+            txt=gui_getValue(el,el.filter(1).filter.text.text.variable);
+            if ~iscell(txt)
+                % Make it a cell-array
+                txt0=txt;
+                txt=[];
+                txt{1}=txt0;
+            end
+            for ii=1:length(txt)
+                extension{ii,2}=txt{ii};
+            end
+        else
+            for ii=1:length(el.filter)
+                extension{ii,2}=el.filter(ii).filter.text;
+            end
+        end
+    end    
+else    
+    if isstruct(el.extension)
+        for ii=1:length(el.extension)
+            if isfield(el.extension(ii).extension,'variable')
+                extension{ii,1}=gui_getValue(el,el.extension(ii).extension.variable);
+                extension{ii,2}=extension{ii,1};
+            else
+                extension{ii,1}=el.extension(ii).extension;
+                extension{ii,2}=el.extension(ii).extension;
+            end
+        end
+    else
+        if isfield(el.extension,'variable')
+            extension=gui_getValue(el,el.extension.variable);
+        else
+            extension=el.extension;
+        end
+    end    
 end
+
+% if isstruct(el.extension)
+%     for ii=1:length(el.extension)
+%         extension{ii,1}=el.extension(ii).extension;
+%         extension{ii,2}=el.extension(ii).extension;
+%     end
+% else
+%     if isfield(el.extension,'variable')
+%         extension=gui_getValue(el,el.extension.variable);
+%     else
+%         extension=el.extension;
+%     end
+% end
 
 [filename, pathname, filterindex] = uiputfile(extension,selectiontext,fnameori);
 
