@@ -53,6 +53,7 @@ classdef LimitState < handle
         Name
         RandomVariables
         LimitStateFunction
+        LimitStateFunctionIsCalculating
         LimitStateFunctionIsDone
         LimitStateFunctionChecker
         BetaSphere
@@ -242,6 +243,7 @@ classdef LimitState < handle
         %Call if LSF calculation is completed
         function LimitStateFunctionCompleted(this, eventSource, eventData)
             this.LimitStateFunctionIsDone   = true;
+            display('Huzzah! LSF calculation is done!')
         end
         
         %Call if LSF calculation is completed

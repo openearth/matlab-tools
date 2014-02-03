@@ -52,9 +52,9 @@ classdef XBeachLimitStateFunctionChecker < handle
     properties
         Abort
         Delay
+        KeepChecking
         TimeOut
         Timer
-%         SimulationFolder
     end
     
     %% Events
@@ -92,17 +92,23 @@ classdef XBeachLimitStateFunctionChecker < handle
         %% Other methods
         % Check whether the simulation is done
         function CheckProgress(this, modelOutputDir)
+            this.KeepChecking   = true;
+            
             % Create & start timer
             this.Timer  = timer('TimerFcn', @(h,e)this.StopWaiting, 'StartDelay', this.TimeOut);
             start(this.Timer);
             
-            while ~this.Abort
+            while ~this.Abort && this.KeepChecking
+                % Wait for a bit
+                pause(this.Delay)
                 % Check if simulation is completed
                 if this.CheckLogFile(modelOutputDir)
                     % If so, trigger event
                     notify(this, 'SimulationCompleted');
+                    this.KeepChecking   = false;
+                    stop(this.Timer);
+                    delete(this.Timer);
                 end
-                pause(this.Delay)
             end
         end
         
@@ -118,14 +124,17 @@ classdef XBeachLimitStateFunctionChecker < handle
         % Stop waiting for the simulation to end
         function StopWaiting(this)
             this.Abort  = true;
+            stop(this.Timer);
+            delete(this.Timer);
             notify(this, 'SimulationNotCompleted')
         end
         
         % Set default property values
         function SetDefaults(this)
-            this.Abort      = false;
-            this.Delay      = 5;
-            this.TimeOut    = 900; 
+            this.Abort          = false;
+            this.Delay          = 1;
+            this.KeepChecking   = true;
+            this.TimeOut        = 900; 
         end
     end
 end 
