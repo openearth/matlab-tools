@@ -69,7 +69,8 @@ OPT = struct(...
     'ModelSetupDir', [],...
     'ModelRunDir', [],...
     'sshUser', [], ...
-    'sshPassword', []);
+    'sshPassword', [], ...
+    'LSFChecker', []);
 
 OPT = setproperty(OPT, varargin{:});
 
@@ -81,6 +82,7 @@ ModelOutputDir      = fullfile(OPT.ModelRunDir, FolderName);
 if ~isdir(ModelOutputDir)
     %% Setup & run model
     XBeachProbabilisticRun(varargin);
+    OPT.LSFChecker.CheckProgress(ModelOutputDir);
 end
 
 %% Dummy Limit State Function

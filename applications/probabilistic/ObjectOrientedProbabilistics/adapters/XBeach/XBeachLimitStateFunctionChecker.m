@@ -54,7 +54,7 @@ classdef XBeachLimitStateFunctionChecker < handle
         Delay
         TimeOut
         Timer
-        SimulationFolder
+%         SimulationFolder
     end
     
     %% Events
@@ -67,7 +67,7 @@ classdef XBeachLimitStateFunctionChecker < handle
     %% Methods
     methods
         %% Constructor
-        function this = XBeachLimitStateFunctionChecker(limitState)
+        function this = XBeachLimitStateFunctionChecker
             %XBEACHLIMITSTATEFUNCTIONCHECKER  One line description goes here.
             %
             %   More detailed description goes here.
@@ -86,31 +86,31 @@ classdef XBeachLimitStateFunctionChecker < handle
             %
             %   See also XBeachLimitStateFunctionChecker
             
-            addlistener(limitState, 'SimulationCompleted')%, @limitState.CallBackMethod)
-            addlistener(limitState, 'SimulationNotCompleted')
             this.SetDefaults
         end
         
         %% Other methods
         % Check whether the simulation is done
-        function CheckProgress(this)
+        function CheckProgress(this, modelOutputDir)
+            % Create & start timer
             this.Timer  = timer('TimerFcn', @(h,e)this.StopWaiting, 'StartDelay', this.TimeOut);
             start(this.Timer);
             
             while ~this.Abort
-                if this.CheckLogFile
+                % Check if simulation is completed
+                if this.CheckLogFile(modelOutputDir)
+                    % If so, trigger event
                     notify(this, 'SimulationCompleted');
                 end
                 pause(this.Delay)
             end
         end
         
-        % Check XBeach logfile to see if it's done
-        function completed = CheckLogFile(this)
-            % TODO!!!! Figure out how you know here in which folder to check
+        % Check XBeach logfile to see if the simulation is done
+        function completed = CheckLogFile(this, modelOutputDir)
             completed   = false;
-            if exist(fullfile(this.SimulationFolder,'xboutput.nc'),'file') ...
-                    && ~exist(fullfile(this.SimulationFolder,'XBerror.txt'),'file')
+            if exist(fullfile(modelOutputDir,'xboutput.nc'),'file') ...
+                    && ~exist(fullfile(modelOutputDir,'XBerror.txt'),'file')
                 completed   = true;
             end
         end
@@ -128,4 +128,4 @@ classdef XBeachLimitStateFunctionChecker < handle
             this.TimeOut    = 900; 
         end
     end
-end
+end 

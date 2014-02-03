@@ -53,6 +53,8 @@ classdef LimitState < handle
         Name
         RandomVariables
         LimitStateFunction
+        LimitStateFunctionIsDone
+        LimitStateFunctionChecker
         BetaSphere
         BetaValues
         XValues
@@ -68,7 +70,7 @@ classdef LimitState < handle
         NumberRandomVariables
         NumberExactEvaluations
     end
-        
+      
     %% Methods
     methods
         %% Constructor
@@ -99,6 +101,13 @@ classdef LimitState < handle
         function set.RandomVariables(this, RandomVariables)
             ProbabilisticChecks.CheckInputClass(RandomVariables,'RandomVariable')
             this.RandomVariables        = RandomVariables;
+        end
+        
+        %Set LimitStateFunctionChecker and immediately add this LimitState as listener for events
+        function set.LimitStateFunctionChecker(this, lsfChecker)
+            this.LimitStateFunctionChecker = lsfChecker;
+            addlistener(lsfChecker, 'SimulationCompleted', @this.LimitStateFunctionCompleted);
+            addlistener(lsfChecker, 'SimulationNotCompleted', @this.LimitStateFunctionFailed);
         end
         
         %% Getters
@@ -145,8 +154,10 @@ classdef LimitState < handle
                 this.UValues    = [this.UValues; uvalues];
                 
                 % calculate & save associated Z value
+                this.LimitStateFunctionIsDone   = false;
                 zvalue          = this.EvaluateAtX(input, uvalues);
-                % here we actually add to the vector of the limit state 
+                
+                % here we actually add the value to the vector of the limit state 
                 this.ZValues    = [this.ZValues; zvalue];
                 
                 % flag as exact evaluation (no use of response surface)
@@ -171,8 +182,15 @@ classdef LimitState < handle
         %Evaluate LSF at given point in X (regular) space, zvalue is
         %normalized with the zvalue in the origin
         function zvalue = EvaluateAtX(this, input, uvalues)
-            zvalue  = feval(this.LimitStateFunction,input{:});
-
+            % Use LimitStateFunctionChecker to see if simulation is
+            % completed already (if available)
+            if ~isempty(this.LimitStateFunctionChecker)
+                notify(this.LimitStateFunctionChecker, 'SimulationStarted')
+                zvalue  = feval(this.LimitStateFunction,input{:},'LSFChecker',this.LimitStateFunctionChecker);
+            else
+                zvalue  = feval(this.LimitStateFunction,input{:});
+            end
+            
             %Normalize with origin, or save zvalue of origin
             if ~isempty(this.ZValueOrigin) && ~isnan(this.ZValueOrigin)
                 zvalue  = zvalue/this.ZValueOrigin;
@@ -219,6 +237,17 @@ classdef LimitState < handle
                     this.EvaluationIsEnabled        = logical([this.EvaluationIsEnabled; true]);
                 end
             end
+        end
+        
+        %Call if LSF calculation is completed
+        function LimitStateFunctionCompleted(this, eventSource, eventData)
+            this.LimitStateFunctionIsDone   = true;
+        end
+        
+        %Call if LSF calculation is completed
+        function LimitStateFunctionFailed(this, eventSource, eventData)
+            this.LimitStateFunctionIsDone   = false;
+            error('The limit state function could not complete a calculation within the allowed time!');
         end
         
         %Check if a response surface is available and has a good fit
