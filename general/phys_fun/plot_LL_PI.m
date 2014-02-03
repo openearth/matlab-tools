@@ -14,8 +14,8 @@ function plot_LL_PI(LL,PL)
 PI = LL-PL;
 
 % Data needed for figure
-LLa = 29:160;
-LLb = 15:160;
+LLa = (4/0.73+20):160;
+LLb = (7/0.9+8):160;
 Aline = 0.73*(LLa-20);
 Bline = 0.9*(LLb-8);
 LLm = 45:135;
@@ -48,6 +48,10 @@ hold on
 plot(LLa,Aline,'k')
 hold on
 plot(LLb,Bline,'k')
+hold on
+plot([0 LLa(1)],[4 4],'k:')
+hold on
+plot([0 LLb(1)],[7 7],'k:')
 hold on
 
 plot(LL,PI,'bo','markerfacecolor','b')
