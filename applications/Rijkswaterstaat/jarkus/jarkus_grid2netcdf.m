@@ -14,6 +14,7 @@ function jarkus_grid2netcdf(filename, grid, varargin)
 % $HeadURL$
 
 OPT = struct(...
+    'username', getenv('USERNAME'),...
     'historyatt', '$HeadURL$ $Id$',...
     'origins', 1:5);
 
@@ -58,7 +59,7 @@ STRINGSIZE = 100;
     nc_attput( filename, nc_global, 'date_modified', datestr(nowutc, datefmt))
     nc_attput( filename, nc_global, 'date_issued', datestr(nowutc, datefmt))
     % Publisher Search attributes
-    nc_attput( filename, nc_global, 'publisher_name', sprintf('%s', getenv('USERNAME')));
+    nc_attput( filename, nc_global, 'publisher_name', OPT.username);
     nc_attput( filename, nc_global, 'publisher_url', 'http://www.deltares.nl');
     nc_attput( filename, nc_global, 'publisher_email', 'Kees.denHeijer@deltares.nl');
     % Extent Search attributes
