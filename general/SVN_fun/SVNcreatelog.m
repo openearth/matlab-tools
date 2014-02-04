@@ -68,7 +68,7 @@ else
     ReferencePath = cd;
 end
 
-[svnErr svnstatusMsg] = system(['svn status "' ReferencePath '"']);
+[svnErr, svnstatusMsg] = system(['svn status "' ReferencePath '"']);
 isSVNdir = isempty(strfind(svnstatusMsg, 'is not a working copy'));
 
 %%
@@ -84,8 +84,8 @@ end
 
 str = sprintf('%s\n', datestr(now));
 for i = 1:length(dirs)
-    [svnErr svnstatusMsg] = system(['svn status "' fullfile(ReferencePath, dirs{i}) '"']);
-    [svnErr svnversionMsg] = system(['svnversion "' fullfile(ReferencePath, dirs{i}) '"']);
+    [svnErr, svnstatusMsg] = system(['svn status "' fullfile(ReferencePath, dirs{i}) '"']);
+    [svnErr, svnversionMsg] = system(['svnversion "' fullfile(ReferencePath, dirs{i}) '"']);
     if isempty(strfind(svnstatusMsg, 'is not a working copy'))
         str = sprintf('%s\n', str, '%%', fullfile(ReferencePath, dirs{i}), svnversionMsg, svnstatusMsg);
     end

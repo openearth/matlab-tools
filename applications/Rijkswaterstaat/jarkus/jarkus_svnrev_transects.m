@@ -75,13 +75,13 @@ end
 OPT = setproperty(OPT, varargin);
 
 %% code
-rawurl = SVNgetURL(OPT.mainpath);
+svninfo = svn_info(OPT.mainpath);
+rawurl = svninfo.url;
 [~, svnversionMsg] = system(['svnversion "' OPT.mainpath '"']);
 
-[~, svninfoMsg] = system(['svn info "' OPT.mainpath '"']);
-timematch = regexp(svninfoMsg, '(?<=Last Changed Date: ).*?(?= (\(|[+-]))', 'match');
+timematch = regexp(svninfo.last_changed_date, '\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}', 'match');
 timelocal = timematch{1};
-timeoffset = regexp(svninfoMsg, ['(?<=' timelocal ' )[^ ]+'], 'match');
+timeoffset = regexp(svninfo.last_changed_date, ['(?<=' timelocal ' )[^ ]+'], 'match');
 timeoffset = eval(timeoffset{1});
 offsetM = mod(abs(timeoffset), 100);
 offsetH = (abs(timeoffset) - offsetM)/100;
@@ -91,9 +91,10 @@ timestr = datestr(datenum(timelocal) - offsetDays, OPT.datefmt);
 
 txt = sprintf('%s: Raw data received from Rijkswaterstaat\nHEADurl: %s (rev %s)\nFiles:', timestr, rawurl, strtrim(svnversionMsg));
 
-for i = 1:length(OPT.filenames)
-    [~, svnversionMsg] = system(['svnversion "' fullfile(OPT.mainpath, OPT.filenames{i}) '"']);
-    txt = sprintf('%s\n%s (rev %s)', txt, OPT.filenames{i}, strtrim(svnversionMsg));
+fullfiles = cellfun(@(f) fullfile(svninfo.path, f), OPT.filenames, 'uniformoutput', false);
+svnfileinfo = cellfun(@svn_info, fullfiles);
+for i = 1:length(svnfileinfo)
+    txt = sprintf('%s\n%s (rev %s)', txt, OPT.filenames{i}, svnfileinfo(i).last_changed_rev);
 end
 
-varargout = {txt};
+varargout = {txt, fullfiles};
