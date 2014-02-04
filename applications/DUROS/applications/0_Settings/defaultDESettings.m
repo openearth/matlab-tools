@@ -11,7 +11,7 @@ DESettings.Flags = struct(...
     'AdditionalErosionMax',true,...                  % can be used to turn on / off boundary limitation of the additional erosion to 15 meters
     'ChannelSlopes',true,...                         % can be used to turn on / off boundary limitation due to steep (channel) slopes
     'PreventLandwardTransport',true,...              % can be used to turn on / off volume correction for landward directed sediment transport
-    'AutoStrengthening',false,...                    % can be used to turn on / off automated strenghtening of a landward profile part
+    'AutoStrengthening',false,...                    % can be used to turn on / off automated strengthening of a landward profile part
     'DuneBreachCalculation',true ...                 % can be used to turn on / off secondary calculations after a first dune row has been breached
     );
 
@@ -20,7 +20,7 @@ DESettings.Constants = struct(...
     'b',2.18,...                                     % second constant used in calculation of the fall velocity of sediment
     'c',3.226,...                                    % third constant used in calculation of the fall velocity of sediment
     'rho',1024,...                                   % specific gravity of salt water
-    'g',9.81...                                      % fall excelleration
+    'g',9.81...                                      % fall acceleration
     );
 
 DESettings.Other = struct(...
