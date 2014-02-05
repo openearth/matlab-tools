@@ -205,6 +205,7 @@ classdef AdaptiveResponseSurface < handle
             else
                 this.GoodFit    = false;
             end
+            display(['The current ARS.GoodFit is ' this.GoodFit]) %DEBUG
         end
         
         %Determine modelterms in polynomial fit depending on number of
