@@ -1,42 +1,51 @@
-%% Test for donar toolbox with novel data from from Rijkswaterstaat ship Zirfaea
+%open_file_test test donar.open_file, to test delivered dia batches
+%
+% Test for donar toolbox with novel data from from Rijkswaterstaat ship Zirfaea
 %  * CTD     (station,z,t) 1D profiles at series of fixed positions
 %  * FerryBox(x,y      ,t) 2D trajectory (fixed z)
 %  * MeetVis (x,y    ,z,t) 3D trajectory (undulating z)
 %  requested at helpdeskwater.nl
+%
+% -----+----+------+--------+--------+-----------------------------------------------------------------+---------->
+% File |WNS | # of |   # of |   DONAR|                                                              CF | DONAR
+% index|code|blocks|  values|    name|                                         standard_name [UDunits] | long_name [EHD]
+% -----+----+------+--------+--------+-----------------------------------------------------------------+---------->
+%     1|1926|    11|   46414|   INSLG|               downwelling_radiance_in_sea_water [microEinstein] | Irradiation in uE in surface water [uE]
+%     2| 209|    11|   69671|     %O2|             fractional_saturation_of_oxygen_in_sea_water [0.01] | Percentage oxygen in % in surface water [%]
+%     3|2392|    11|   52981|  GELDHD|                        sea_water_electrical_conductivity [mS/m] | Conductivity in mS/m with respect to 20 degrees celsius in surface water [mS/m]
+%     4| 360|    11|  167320|      O2|                mass_concentration_of_oxygen_in_sea_water [mg/l] | Oxygen in mg/l in surface water [mg/l]
+%     5| 377|    11|  162096|      pH|                        sea_water_ph_reported_on_total_scale [1] | Acidity in surface water [DIMSLS]
+%     6|  44|    11|   81036|       T|                          sea_water_temperature [degree_Celsius] | Temperature in oC in surface water [oC]
+%     7|5108|    11|  143827| TROEBHD|                                       sea_water_turbidity [NTU] | Turbidity in NTU in surface water [NTU]
+%     8| 555|    11|  166163|FLUORCTE|                                      sea_water_fluorescence [1] | Fluorescence in U in surface water [U]
+%     9| 559|    11|  167318|  SALNTT|                                          sea_water_salinity [1] | Salinity in surface water [DIMSLS]
+%    10|7647|    11|    2259|  GELSHD|                               speed_of_sound_in_sea_water [m/s] | Speed of sound in m/s in surface water [m/s]
+%    11|7788|    11|   46392|   INSLG|            downwelling_longwave_radiance_in_air [microEinstein] | Irradiation in uE in air [uE]
+% -----+----+------+--------+--------+-----------------------------------------------------------------+---------->
 %
 %See also: rws_waterbase
 
 clc;clear all;fclose all;tic;profile on
 profile clear
 
-root = 'x:\D'; % VM
+root = 'x:\D'; % VMware
 root = 'D:\';
 
-basedir   = [root,'\P\1209005-eutrotracks'];
+E = nc2struct([root,'\opendap.deltares.nl\thredds\dodsC\opendap\rijksoverheid\eez\Exclusieve_Economische_Zone_maart2012.nc']);
+L = nc2struct([root,'\opendap.deltares.nl\thredds\dodsC\opendap\deltares\landboundaries\northsea.nc']);
+%E = nc2struct(['p:\1209005-eutrotracks\ldb\eez\Exclusieve_Economische_Zone_maart2012.nc']);
+%L = nc2struct(['p:\1209005-eutrotracks\ldb\landboundaries\northsea.nc']);
+
 basedir   = ['P:\1209005-eutrotracks\'];
+basedir   = [root,'\P\1209005-eutrotracks'];
 
 OPT.cache = 1; % donar.open() cache
 OPT.read  = 1;
 OPT.plot  = 1;
-OPT.case  = 'ctd'; %'ferry';
+OPT.case  = 'ferry'; %'ferry';
 OPT.pause = 0;
 
 switch OPT.case
-
-% previous delivery
-% case '0',
-%     diafiles  = {'raw\CTD\raw\ctd_1998_-_1999.dia',...        %  40 s,  50 Mb, 3562 blocks
-%                  'raw\CTD\raw\ctd_2000_-_2002.dia',...        %  97 s,  63 Mb, 5815 blocks
-%                  'raw\CTD\raw\ctd_2003_-_2009.dia',...        % 150 s,  69 Mb, 4815 blocks
-%                  'raw\CTD\raw\ctd_2011_-_2012.dia',...        % 133 s,  11 Mb,  133 blocks
-%                  ...
-%                  'raw\FerryBox\raw\ferry_2005_-_2012.dia',... % 214 s, 120 Mb,  880 blocks
-%                  ...
-%                  'raw\ScanFish\raw\meetv_1998_-_1999.dia',... % 254 s,  73 Mb, 1501 blocks
-%                  'raw\ScanFish\raw\meetv_2000_-_2002.dia',... % 325 s, 133 Mb, 2124 blocks
-%                  'raw\ScanFish\raw\meetv_2003_-_2009.dia',... % 479 s, 290 Mb, 4032 blocks
-%                  'raw\ScanFish\raw\meetv_2011_-_2012.dia'};   % 493 s,  26 Mb,  400 blocks
-%     type = [1 1 1 1   2 2   3 3 3 3]; % 1=CTD profiles, 2=2Dtrajectory (fixed Z), 3=3Dtrajectory (undulating z)
 
 % dec 2013 delivery: unzipped 'zip2 to folders below, sorting into ctd/ferry/meetv
 
@@ -69,19 +78,15 @@ case 'meetv',
 otherwise
 end
 
-%E = nc2struct([root,'\opendap.deltares.nl\thredds\dodsC\opendap\rijksoverheid\eez\Exclusieve_Economische_Zone_maart2012.nc']);
-%L = nc2struct([root,'\opendap.deltares.nl\thredds\dodsC\opendap\deltares\landboundaries\northsea.nc']);
-E = nc2struct(['p:\1209005-eutrotracks\ldb\eez\Exclusieve_Economische_Zone_maart2012.nc']);
-L = nc2struct(['p:\1209005-eutrotracks\ldb\landboundaries\northsea.nc']);
+%%
 
 for ifile = 1:length(diafiles);
     
   disp(['File: ',num2str(ifile)])
 
   diafile = [basedir,filesep,diafiles{ifile}];
-  File    = donar.open(diafile,'cache',OPT.cache,'disp',1000);
-  donar.disp(File)
-%%
+  File    = donar.open_file(diafile,'cache',OPT.cache,'disp',1000);
+
   if OPT.read
      ncolumn = 6; % dia syntax
     %for ivar = find(strcmp({File.Variables.standard_name},'sea_water_salinity')) %
@@ -114,15 +119,15 @@ for ifile = 1:length(diafiles);
                 tmp.valid_max    = str2num(tmp.valid_max{1});
             end             
          
-            file.png = strrep(diafile,'.dia',['_',M.data.WNS,'_ctd.png']);
+            file.png = strrep(diafile,'.dia',['_',M.data.deltares_name,'_ctd.png']);
 
             close all % to avoid memory crash
             donar.ctd_overview_plot(S,M,E,L)
             print2a4(file.png,'p','w',200,'o')
             for ist=1:length(S.station_lon)
             
-             file.nc  = strrep(diafile,'.dia',['_',M.data.WNS,'_ctd_',num2str(ist,'%0.3d'),'.nc' ]);
-             file.png = strrep(diafile,'.dia',['_',M.data.WNS,'_ctd_',num2str(ist,'%0.3d'),'.png' ]);
+             file.nc  = strrep(diafile,'.dia',['_',M.data.deltares_name,'_ctd_',num2str(ist,'%0.3d'),'.nc' ]);
+             file.png = strrep(diafile,'.dia',['_',M.data.deltares_name,'_ctd_',num2str(ist,'%0.3d'),'.png' ]);
              
              file.nc  = strrep(file.nc ,'raw2','nc2');
              file.png = strrep(file.png,'raw2','png2');
@@ -139,7 +144,7 @@ for ifile = 1:length(diafiles);
                 close all % to avoid memory crash
                 if ivar==1
                 donar.ctd_timeSeriesProfile_plot(P,E,L,titletxt,'colorfield','z','colorlabel','z [cm]')
-                print2a4(strrep(file.png,M.data.WNS,'z'),'v','t',200,'o')
+                print2a4(strrep(file.png,M.data.deltares_name,'z'),'v','t',200,'o')
                 end
                 donar.ctd_timeSeriesProfile_plot(P,E,L,titletxt,'colorfield','data','colorlabel',mktex([M.data.long_name,'[',M.data.units,']']),'clims',[tmp.valid_min, tmp.valid_max])
                 print2a4(file.png,'v','t',200,'o')
@@ -149,16 +154,16 @@ for ifile = 1:length(diafiles);
          end
         elseif type(ifile)==2
         
-            file.nc  = strrep(diafile,'.dia',['_',M.data.WNS,'_ferry.nc']);
-            file.png = strrep(diafile,'.dia',['_',M.data.WNS,'_ferry.png']);
-            file.fig = strrep(diafile,'.dia',['_',M.data.WNS,'_ferry.fig']);
+            file.nc  = strrep(diafile,'.dia',['_',M.data.deltares_name,'_ferry.nc' ]);
+            file.png = strrep(diafile,'.dia',['_',M.data.deltares_name,'_ferry.png']);
+            file.fig = strrep(diafile,'.dia',['_',M.data.deltares_name,'_ferry.fig']);
             
             file.nc  = strrep(file.nc ,'raw2','nc2' );
             file.png = strrep(file.png,'raw2','png2');
             file.fig = strrep(file.fig,'raw2','fig2');
             
             donar.trajectory2nc(file.nc,S,M)
-           %[S2,M2] =  nc2struct(strrep(diafile,'.dia',['_',M.data.WNS,'_ferrybox.nc' ]),'rename',{{M.data.deltares_name},{'data'}});
+           %[S2,M2] =  nc2struct(strrep(diafile,'.dia',['_',M.data.deltares_name,'_ferrybox.nc' ]),'rename',{{M.data.deltares_name},{'data'}});
             if OPT.plot
             %close all
             tmp = donar.resolve_wns(M.data.WNS,'request','struct');
@@ -190,21 +195,3 @@ for ifile = 1:length(diafiles);
   end % read
   
 end % diafiles    
-
-% D:\\P\1209005-eutrotracks\raw2\ctd_1.dia
-% -----+----+------+--------+--------+-----------------------------------------------------------------+---------->
-% File |WNS | # of |   # of |   DONAR|                                                              CF | DONAR
-% index|code|blocks|  values|    name|                                         standard_name [UDunits] | long_name [EHD]
-% -----+----+------+--------+--------+-----------------------------------------------------------------+---------->
-%     1|1926|    11|   46414|   INSLG|               downwelling_radiance_in_sea_water [microEinstein] | Irradiation in uE in surface water [uE]
-%     2| 209|    11|   69671|     %O2|             fractional_saturation_of_oxygen_in_sea_water [0.01] | Percentage oxygen in % in surface water [%]
-%     3|2392|    11|   52981|  GELDHD|                        sea_water_electrical_conductivity [mS/m] | Conductivity in mS/m with respect to 20 degrees celsius in surface water [mS/m]
-%     4| 360|    11|  167320|      O2|                mass_concentration_of_oxygen_in_sea_water [mg/l] | Oxygen in mg/l in surface water [mg/l]
-%     5| 377|    11|  162096|      pH|                        sea_water_ph_reported_on_total_scale [1] | Acidity in surface water [DIMSLS]
-%     6|  44|    11|   81036|       T|                          sea_water_temperature [degree_Celsius] | Temperature in oC in surface water [oC]
-%     7|5108|    11|  143827| TROEBHD|                                       sea_water_turbidity [NTU] | Turbidity in NTU in surface water [NTU]
-%     8| 555|    11|  166163|FLUORCTE|                                      sea_water_fluorescence [1] | Fluorescence in U in surface water [U]
-%     9| 559|    11|  167318|  SALNTT|                                          sea_water_salinity [1] | Salinity in surface water [DIMSLS]
-%    10|7647|    11|    2259|  GELSHD|                               speed_of_sound_in_sea_water [m/s] | Speed of sound in m/s in surface water [m/s]
-%    11|7788|    11|   46392|   INSLG|            downwelling_longwave_radiance_in_air [microEinstein] | Irradiation in uE in air [uE]
-% -----+----+------+--------+--------+-----------------------------------------------------------------+---------->

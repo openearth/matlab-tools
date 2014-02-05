@@ -5,11 +5,11 @@ function varargout = disp(File,varargin)
 %
 % Example:
 % 
-%  File            = donar.open(diafile)
+%  File            = donar.open_file(diafile)
 %                    donar.disp(File)
 % [data, metadata] = donar.read(File,1,6) % 1st variable, residing in 6th column
 %
-%See also: open, read, disp
+%See also: open_file, read, disp
 
 %%  --------------------------------------------------------------------
 %   Copyright (C) 2013 Deltares 4 Rijkswaterstaat (SPA Eurotracks)
@@ -29,11 +29,11 @@ function varargout = disp(File,varargin)
 %   --------------------------------------------------------------------
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% $Id: $
-% $Date: $
-% $Author: $
-% $Revision: $
-% $HeadURL: $
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 % $Keywords: $
 
 OPT.format = 0;
@@ -45,25 +45,37 @@ OPT = setproperty(OPT,varargin);
 
 V = File.Variables;
 %%
-disp(File.Filename)
-fmt = '%5s+%4s+%6s+%8s+%8s+%+64s-+%17s+-%s';
-disp(sprintf(fmt,'-----','----','------','--------','--------','----------------------------------------------------------------','-----------------','--------->'))
+if ischar(File.Filename)
+   File.Filename = cellstr(File.Filename);
+end
+
+    disp(['------+---------------------------------------->'])
+    disp(['File #| Filename'])
+    disp(['------+---------------------------------------->'])
+for ifile=1:length(File.Filename)
+    disp([pad(num2str(ifile,'%d'),-6,' '),'|',File.Filename{ifile}])
+end
+    disp(['------+---------------------------------------->'])
+    disp([' '])
+
+fmt = '%5s+%5s+%7s+%7s+%8s+%8s+%65s+%16s-+-%s';
+disp(sprintf(fmt,'-----','-----','-------','-------','--------','--------','-----------------------------------------------------------------','----------------','--------->'))
 
 %%
-fmt = '%5s|%4s|%6s|%8s|%8s|%64s |%17s| %s';
-disp(sprintf(fmt,'File ','WNS ', ' # of ', ' # of ', 'DONAR','CF', 'P01:SDN     ', 'DONAR'))
-disp(sprintf(fmt,'index','code', 'blocks', 'values', 'name','standard_name [UDunits]', '      urn        ', 'long_name [EHD]'))
+fmt = '%5s|%5s|%7s|%7s|%8s|%8s|%64s |%17s| %s';
+disp(sprintf(fmt,'Var'  ,'WNS ','overall', 'overall', 'overall', 'DONAR','CF', 'P01:SDN     ', 'DONAR'))
+disp(sprintf(fmt,'index','code','files', 'blocks', 'values', 'name','standard_name [UDunits]', '      urn        ', 'long_name [EHD]'))
 %%
-fmt = '%5s+%4s+%6s+%8s+%8s+%+64s-+-%s';
-disp(sprintf(fmt,'-----','----','------','--------','--------','----------------------------------------------------------------','-----------------','--------->'))
+fmt = '%5s+%5s+%4s+%6s+%8s+%8s+%65s+%16s-+-%s';
+disp(sprintf(fmt,'-----','-----','-------','-------','--------','--------','-----------------------------------------------------------------','----------------','--------->'))
 %%
-fmt = '%5d|%4s|%6d|%8d|%8s|%64s |%17s| %s';
+fmt = '%5d|%5s|%7d|%7d|%8d|%8s|%64s |%17s| %s';
 
 for i=1:length(V)
 
-disp(sprintf(fmt, i, V(i).WNS, length(V), sum(V(i).nval), V(i).hdr.PAR{1}, [V(i).standard_name,' [',V(i).units,']'], V(i).sdn_parameter_urn ,[V(i).long_name,' [',V(i).EHD,']']))
+disp(sprintf(fmt, i, V(i).WNS, length(unique(V(i).file_index)), length(V), sum(V(i).nval), V(i).hdr.PAR{1}, [V(i).standard_name,' [',V(i).units,']'], V(i).sdn_parameter_urn ,[V(i).long_name,' [',V(i).EHD,']']))
 
 end
 %%
-fmt = '%5s+%4s+%6s+%8s+%8s+%64s-+%17s+-%s';
-disp(sprintf(fmt,'-----','----','------','--------','--------','----------------------------------------------------------------','-----------------','--------->'))
+fmt = '%5s+%5s+%7s+%7s+%8s+%8s+%65s+%16s-+-%s';
+disp(sprintf(fmt,'-----','-----','-------','-------','--------','--------','-----------------------------------------------------------------','----------------','--------->'))

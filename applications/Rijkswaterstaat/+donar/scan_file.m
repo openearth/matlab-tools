@@ -30,11 +30,11 @@ function Blocks = scan_file(diafile,varargin)
 %   --------------------------------------------------------------------
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% $Id: $
-% $Date: $
-% $Author: $
-% $Revision: $
-% $HeadURL: $
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 % $Keywords: $
 
 OPT.disp = 100;
@@ -48,9 +48,9 @@ disp([mfilename,' scanning ',diafile]) % in case one of first OPT.disp blocks is
 end
 while ~isnumeric(hdr)
    i = i + 1;
-   Blocks(i).index    = i;
-   Blocks(i).hdr      = hdr;
-   Blocks(i).ftell(1) = boh;
+   Blocks(i).block_index = i;
+   Blocks(i).hdr         = hdr;
+   Blocks(i).ftell(1)    = boh;
   [Blocks(i).nline,...
    Blocks(i).nval, ...
    Blocks(i).ftell(2)] = donar.scan_block (fid,'rewind',0);

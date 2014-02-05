@@ -33,11 +33,12 @@ function ctd_timeSeriesProfile2nc(ncfile,P,M)
    OPT2.units              = M.data.units;
 
 %% Required data fields: SDN
-   OPT2.Attributes         = {'sdn_parameter_urn' ,M.data.sdn_parameter_urn ,...
-                              'sdn_parameter_name',M.data.sdn_parameter_name,...
-                              'sdn_uom_urn'       ,M.data.sdn_uom_urn       ,...
-                              'sdn_uom_name'      ,M.data.sdn_uom_name      };
-   
+   OPT2.Attributes         = {'sdn_parameter_urn'  ,M.data.sdn_parameter_urn ,...
+                              'sdn_parameter_name' ,M.data.sdn_parameter_name,...
+                              'sdn_uom_urn'        ,M.data.sdn_uom_urn       ,...
+                              'sdn_uom_name'       ,M.data.sdn_uom_name      ,...
+                              'aquo_grootheid_code',donar.resolve_wns(M.data.WNS,'request','parcod')};
+  
 %% Required data fields: discovery
    OPT2.global         = {'Conventions'                 ,'CF-1.6, OceanSITES 1.1, SeaDataNet_1.0',...
                           'geospatial_lat_units'        ,M.lat.units,...
@@ -49,8 +50,35 @@ function ctd_timeSeriesProfile2nc(ncfile,P,M)
                           'email'                       ,'http://www.helpdeskwater.nl',...
                           'source'                      ,'http://www.helpdeskwater.nl',...
                           'institution'                 ,'Rijkswaterstaat',...
-                          'SDN_EDMO_CODE'               ,'1527'};
+                          'SDN_EDMO_CODE'               ,'1527',...
+                          'history'                     ,'$HeadURL$ $Id$'};
                       
+% http://publicwiki.deltares.nl/display/NETCDF/UM+Aquo+Standard+names
+%//!! UMAquo 201x should prescribe the names of the required and optional 
+%//!! attributes that contain contents from the tables. Here are preliminary names
+%//!! after a discussion with Hinne Reitsma (IHW) and Gerben de Boer (Deltares)
+%//!! Any netCDF client can count on these keywords to be present when UMAquo 
+%//!! 201x is part of the global attribiute 'Conventions', see below.
+%//!!
+%//!! required: code form tables, same status as mandatory CF standard_name and units
+%//!!
+%//!!		sea_water_salinity:aquo_grootheid_code = "SALNTT" 
+%//!!		sea_water_salinity:aquo_grootheid_typering_code = "?" 
+%//!!		sea_water_salinity:aquo_eenheid_code = "?" 
+%//!!		sea_water_salinity:aquo_hoedanigheid_code = "?" 
+%//!!		sea_water_salinity:aquo_compartiment_code = "?" 
+%//!!
+%//!! optional: human readable text (resolved RDF), same status as optional CF long_name
+%//!!
+%//!!		sea_water_salinity:aquo_grootheid_omschrijving = "?" 
+%//!!		sea_water_salinity:aquo_grootheid_typering_omschrijving = "?" 
+%//!!		sea_water_salinity:aquo_eenheid_omschrijving = "?" 
+%//!!		sea_water_salinity:aquo_hoedanigheid_omschrijving = "?" 
+%//!!		sea_water_salinity:aquo_compartiment_omschrijving = "?" 
+%//!!		
+%//!!		sea_water_salinity:donar_wnsnum = 559 
+%//!!		sea_water_salinity:sdn_standard_name = "P011/185/ODSDM021" 
+
 % SDN_CRUISE       – this is an array (which can have a dimension of 1 for single object storage) containing text strings identifying a grouping label for the data object to which the array element belongs. This will obviously be the cruise name for data types such as CTD and bottle data, but could be something like a mooring name for current meter data. Note that NetCDF only supports fixed length string variables, set at 80 bytes in the SeaDataNet profiles.
 % SDN_STATION      – this is an array of text strings identifying the data object to which the array element belongs. This will be the station name for some types of data, but could also be an instrument deployment identifier. Again fixed-length size is set to 80 bytes.
 % SDN_LOCAL_CDI_ID - this is an array of text strings containing the local identifier of the Common Data Index record associated with the data object to which the array element belongs. The maximum size allowed for this parameter is 80 bytes.

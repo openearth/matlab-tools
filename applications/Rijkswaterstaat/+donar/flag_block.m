@@ -34,11 +34,11 @@ function  dat = flag_block(dat,thefield)
 %   --------------------------------------------------------------------
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% $Id: $
-% $Date: $
-% $Author: $
-% $Revision: $
-% $HeadURL: $
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 % $Keywords: $
 
 %% Flag values out of the model domain: Code 1

@@ -34,11 +34,11 @@ function [result,boh] = read_header(fid)
 %   --------------------------------------------------------------------
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% $Id: $
-% $Date: $
-% $Author: $
-% $Revision: $
-% $HeadURL: $
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 % $Keywords: $
 
 %     [IDT;*DIF*;A;CENT;20120510]

@@ -31,11 +31,11 @@ function [iline, ival, bob]= scan_block(fid,varargin)
 %   --------------------------------------------------------------------
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% $Id: $
-% $Date: $
-% $Author: $
-% $Revision: $
-% $HeadURL: $
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 % $Keywords: $
 
 % warning('TO DO: return # ncolumns')

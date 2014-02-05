@@ -1,4 +1,4 @@
-function block_data = read_block(fid,ncolumn,nval)
+function block_data = read_block(fid,ncolumn,nval,varargin)
 %READ_BLOCK reads one block of donar data
 %
 %    block_data = donar.read_block(fid,ncolumn,nval) 
@@ -38,14 +38,16 @@ function block_data = read_block(fid,ncolumn,nval)
 %   --------------------------------------------------------------------
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% $Id: $
-% $Date: $
-% $Author: $
-% $Revision: $
-% $HeadURL: $
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 % $Keywords: $
 
 OPT.format   = '%s';
+
+OPT = setproperty(OPT,varargin);
 
     fmt  = repmat(OPT.format,[1 ncolumn+1]); % variable column has sub-column
     temp = textscan(fid,fmt,nval,'delimiter',';:/');
