@@ -175,7 +175,10 @@ for ii=1:length(istation)
     timezonestation=handles.Toolbox(tb).Input.database(iac).timezone(istat);
     
     latitude=handles.Toolbox(tb).Input.database(iac).y(istat);
-    wl=makeTidePrediction(tim,handles.Toolbox(tb).Input.components,handles.Toolbox(tb).Input.amplitudes,handles.Toolbox(tb).Input.phases,latitude, ...
+    
+    [cmp,amp,phi]=getComponents(handles,iac,istat);
+    
+    wl=makeTidePrediction(tim,cmp,amp,phi,latitude, ...
         'timezone',handles.Toolbox(tb).Input.timeZone,'maincomponents',handles.Toolbox(tb).Input.usemaincomponents,'timezonestation',timezonestation);
     wl=wl+handles.Toolbox(tb).Input.verticalOffset;
     
@@ -249,15 +252,17 @@ for ii=1:length(istation)
     else
         fname=handles.Toolbox(tb).Input.database(iac).idCodes{istat};
     end
+
+    [cmp,amp,phi]=getComponents(handles,iac,istat);
     
     s.station.name=fname;
     s.station.id=handles.Toolbox(tb).Input.database(iac).idCodes{istat};
     s.station.longname=handles.Toolbox(tb).Input.database(iac).stationList{istat};
     s.station.x=handles.Toolbox(tb).Input.database(iac).xLocLocal(istat);
     s.station.y=handles.Toolbox(tb).Input.database(iac).yLocLocal(istat);
-    s.station.component=handles.Toolbox(tb).Input.components;
-    s.station.amplitude=handles.Toolbox(tb).Input.amplitudes;
-    s.station.phase=handles.Toolbox(tb).Input.phases;
+    s.station.component=cmp;
+    s.station.amplitude=amp;
+    s.station.phase=phi;
     
     switch handles.Toolbox(tb).Input.tidalcomponentsformat
         case{'tek'}
@@ -271,7 +276,44 @@ for ii=1:length(istation)
             save([fname '_tidalcomponents.mat'],'-struct','s');
     end    
     
+    % Store data from all stations in one file
+    cmps={'m2','s2','k2','n2','k1','o1','p1','q1'};
+    for j=1:length(cmps)
+        icmp=strmatch(lower(cmps{j}),lower(cmp),'exact');
+        samples(j).component=cmps{j};
+        samples(j).x(ii)=s.station.x;
+        samples(j).y(ii)=s.station.y;
+        if isempty(icmp)
+            samples(j).amp(ii)=NaN;
+            samples(j).phi(ii)=NaN;
+        else
+            samples(j).amp(ii)=amp(icmp);
+            samples(j).phi(ii)=phi(icmp);
+        end
+    end    
 end
+
+% Restructure samples
+for icmp=1:length(cmps)
+    % Amplitudes
+    k=icmp*2-1;
+    s.parameters(k).parameter.name=[cmps{icmp} ' - Amplitude'];
+    s.parameters(k).parameter.x=samples(icmp).x;
+    s.parameters(k).parameter.y=samples(icmp).y;
+    s.parameters(k).parameter.val=samples(icmp).amp;
+    s.parameters(k).parameter.quantity='scalar';
+    s.parameters(k).parameter.size=[0 0 0 0 0];    
+    % Phases
+    k=icmp*2;
+    s.parameters(k).parameter.name=[cmps{icmp} ' - Phase'];
+    s.parameters(k).parameter.x=samples(icmp).x;
+    s.parameters(k).parameter.y=samples(icmp).y;
+    s.parameters(k).parameter.val=samples(icmp).phi;
+    s.parameters(k).parameter.quantity='scalar';
+    s.parameters(k).parameter.size=[0 0 0 0 0];    
+end
+
+save('allstations_tidalcomponents_samples.mat','-struct','s');
 
 try
     close(wb);
@@ -362,10 +404,31 @@ handles=getHandles;
 
 iac=handles.Toolbox(tb).Input.activeDatabase;
 
-% Read data from nc file
-fname=[handles.Toolbox(tb).dataDir handles.Toolbox(tb).Input.database(iac).shortName '.nc'];
 ii=handles.Toolbox(tb).Input.activeTideStation;
+
+[cmp,amp,phi]=getComponents(handles,iac,ii);
+
+handles.Toolbox(tb).Input.components=[];
+handles.Toolbox(tb).Input.amplitudes=[];
+handles.Toolbox(tb).Input.phases=[];
+for i=1:length(cmp)
+    handles.Toolbox(tb).Input.components{i}=cmp{i};
+    handles.Toolbox(tb).Input.amplitudes(i)=amp(i);
+    handles.Toolbox(tb).Input.phases(i)=phi(i);
+end
+
+setHandles(handles);
+
+gui_updateActiveTab;
+
+%%
+function [cmp,amp,phi]=getComponents(handles,iac,ii)
+
+fname=[handles.Toolbox(tb).dataDir handles.Toolbox(tb).Input.database(iac).shortName '.nc'];
+
 ncomp=length(handles.Toolbox(tb).Input.database(iac).components);
+
+% Read data from nc file
 amp00=nc_varget(fname,'amplitude',[0 ii-1],[ncomp 1]);
 phi00=nc_varget(fname,'phase',[0 ii-1],[ncomp 1]);
 
@@ -385,19 +448,6 @@ for j=1:length(isort)
     cmp{j}=cmp0{k};
     phi(j)=phi0(k);
 end
-
-handles.Toolbox(tb).Input.components=[];
-handles.Toolbox(tb).Input.amplitudes=[];
-handles.Toolbox(tb).Input.phases=[];
-for i=1:length(isort)
-    handles.Toolbox(tb).Input.components{i}=cmp{i};
-    handles.Toolbox(tb).Input.amplitudes(i)=amp(i);
-    handles.Toolbox(tb).Input.phases(i)=phi(i);
-end
-
-setHandles(handles);
-
-gui_updateActiveTab;
 
 %%
 function refreshStationList
