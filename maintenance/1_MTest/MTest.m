@@ -1,9 +1,9 @@
 classdef MTest < MFunctionFile & handle
-    %MTESTFILE  One line description goes here.
+    %MTEST  One line description goes here.
     %
     %   More detailed description goes here.
     %
-    %   See also MTestFile.MTestFile
+    %   See also
     
     %% Copyright notice
     %   --------------------------------------------------------------------

@@ -10,9 +10,9 @@ function ncwrite_profile_tutorial(ncfile0,varargin)
 % An example of a timeSeriesProfile is repeated CTD data at the same spot.
 %
 %See also: netcdf, ncwriteschema, ncwrite, SNCTOOLS,
-%          ncwritetutorial_grid
-%          ncwritetutorial_timeseries
-%          ncwritetutorial_trajectory
+%          ncwritetutorial_grid_lat_lon_curvilinear
+%          ncwrite_timeseries_tutorial
+%          ncwrite_trajectory_tutorial
 
 %%  --------------------------------------------------------------------
 %   Copyright (C) 2013 Deltares 4 Rijkswaterstaat (SPA Eurotracks)

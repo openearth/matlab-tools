@@ -42,7 +42,7 @@ basedir   = ['p:\1209005-eutrotracks\helpdeskwater_delivery_2013\'];
 OPT.cache = 1; % donar.open() cache
 OPT.read  = 1;
 OPT.plot  = 0; % way too slow, and includes failed batches
-OPT.case  = 'ferry'; %'ferry';
+OPT.case  = 'meetv'; %'ferry';
 OPT.pause = 0;
 
 dir.raw   = 'raw';
@@ -75,7 +75,7 @@ case 'ferry',
     type = [2 2 2 2 2]; % 1=CTD profiles, 2=2Dtrajectory (fixed Z), 3=3Dtrajectory (undulating z)
     dir.sensor = 'ferrybox';
     
-case 'meetv',
+case 'meetv', % issue with z: cm and mm
     diafiles  = {'raw\meetv\meetv_1.dia',... % 02-Jun-1999 02:51:33 - 03:03:19: 1 profile  = 2 dia blocks
                  'raw\meetv\meetv_2.dia',...
                  'raw\meetv\meetv_3.dia',...
@@ -114,25 +114,15 @@ for ivar = 1:length(Files.Variables);
         if all(type==1)
          close all
          
-            if OPT.plot % overview
-                tmp = donar.resolve_wns(M.data.WNS,'request','struct');
-                if isempty(tmp.valid_min{1})
-                    tmp.valid_min    = nan;
-                else
-                    tmp.valid_min    = str2num(tmp.valid_min{1});
-                end
-                if isempty(tmp.valid_max{1})
-                    tmp.valid_max    = nan;
-                else
-                    tmp.valid_max    = str2num(tmp.valid_max{1});
-                end             
-
+            %if OPT.plot % overview
                 file.png = [basedir,filesep,dir.raw,filesep,dir.sensor,'_',M.data.deltares_name,'.png'];
 
                 close all % to avoid memory crash
                 donar.ctd_overview_plot(S,M,E,L)
                 print2a4(file.png,'p','w',200,'o')
-            end % plot
+            %end % plot
+            
+            S
             
             for ist=1:length(S.station_lon)
             
@@ -145,7 +135,7 @@ for ivar = 1:length(Files.Variables);
              P = donar.ctd_timeSeriesProfile(S,ind);
              donar.ctd_timeSeriesProfile2nc(file.nc,P,M)
             [P2,M2] = nc2struct(file.nc,'rename',{{donar.resolve_wns(M.data.WNS)},{'data'}});
-             if OPT.plot % per profile
+             if OPT.plot % per timeseries-profile
                 titletxt = [num2str(ist),' (n=',num2str(S.station_n(ist)),') :',num2strll(S.station_lat(ist),S.station_lon(ist))];
                 close
                 close all % to avoid memory crash
@@ -153,43 +143,32 @@ for ivar = 1:length(Files.Variables);
                 donar.ctd_timeSeriesProfile_plot(P,E,L,titletxt,'colorfield','z','colorlabel','z [cm]')
                 print2a4(strrep(file.png,M.data.deltares_name,'z'),'v','t',200,'o')
                 end
-                donar.ctd_timeSeriesProfile_plot(P,E,L,titletxt,'colorfield','data','colorlabel',mktex([M.data.long_name,'[',M.data.units,']']),'clims',[tmp.valid_min, tmp.valid_max])
+                donar.ctd_timeSeriesProfile_plot(P,E,L,titletxt,'colorfield','data','colorlabel',mktex([M.data.long_name,'[',M.data.units,']']),'clims',donar.resolve_clim(M.data.WNS));
                 print2a4(file.png,'v','t',200,'o')
                 close
              end
             end % ist
 
-        elseif all(type==2)
+        elseif all(type==2) | all(type==3)
         
             file.nc  = [basedir,filesep,dir.nc ,filesep,OPT.case,filesep,dir.sensor,'_',M.data.deltares_name,'.nc' ];
             file.png = [basedir,filesep,dir.png,filesep,OPT.case,filesep,dir.sensor,'_',M.data.deltares_name,'.nc' ];
             file.fig = [basedir,filesep,dir.fig,filesep,OPT.case,filesep,dir.sensor,'_',M.data.deltares_name,'.nc' ];
             
-            S.z(~(S.z==300))=nan; % remove error values
+            if all(type==2) % FerryBox: remove error values
+               S.z(~(S.z==300))=nan; 
+            end
 
             donar.trajectory2nc(file.nc,S,M);
             
            %[S2,M2] =  nc2struct(strrep(diafile,'.dia',['_',M.data.deltares_name,'_ferrybox.nc' ]),'rename',{{M.data.deltares_name},{'data'}});
             if OPT.plot
-            %close all
-            tmp = donar.resolve_wns(M.data.WNS,'request','struct');
-            if isempty(tmp.valid_min{1})
-                tmp.valid_min    = nan;
-            else
-                tmp.valid_min    = str2num(tmp.valid_min{1});
-            end
-            if isempty(tmp.valid_max{1})
-                tmp.valid_max    = nan;
-            else
-                tmp.valid_max    = str2num(tmp.valid_max{1});
-            end
             close all % to avoid memory crash
-            donar.trajectory_overview_plot(S,M,E,L,mktex(diafiles{ifile}),[tmp.valid_min, tmp.valid_max])
+            clf
+            donar.trajectory_overview_plot(S,M,E,L,mktex(diafiles{ifile}),'clims',donar.resolve_clim(M.data.WNS))
             print2screensizeoverwrite(file.png)
             saveas(gcf,file.fig)
             end           
-        elseif type(ifile)==3
-           % TO DO
         end
         
         if OPT.pause

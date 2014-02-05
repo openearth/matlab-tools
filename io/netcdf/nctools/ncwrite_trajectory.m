@@ -12,7 +12,7 @@ function varargout = ncwrite_trajectory(ncfile,varargin)
 %  SDN:  http://www.seadatanet.org/Standards-Software/Data-Transport-Formats
 %
 %See also: netcdf, ncwriteschema, ncwrite, SNCTOOLS,
-%          ncwritetutorial_grid
+%          ncwritetutorial_grid_lat_lon_curvilinear
 %          ncwrite_timeseries_tutorial
 %          ncwrite_profile_tutorial
 
@@ -128,7 +128,7 @@ function varargout = ncwrite_trajectory(ncfile,varargin)
 
    ncdimlen.time        = length(OPT.var(:));
    nc.Dimensions(    1) = struct('Name','TIME'            ,'Length',ncdimlen.time      );
-   extent.z   = [min(OPT.z(:)) max(OPT.z(:))];
+   extent.z   = [min(OPT.z(:))   max(OPT.z(:))  ];
    extent.lon = [min(OPT.lon(:)) max(OPT.lon(:))];
    extent.lat = [min(OPT.lat(:)) max(OPT.lat(:))];
    
@@ -140,6 +140,7 @@ function varargout = ncwrite_trajectory(ncfile,varargin)
    attr(end+1)  = struct('Name', 'units'        , 'Value', ['days since ',datestr(OPT.refdatenum,'yyyy-mm-dd HH:MM:SS'),OPT.timezone]);
    attr(end+1)  = struct('Name', 'axis'         , 'Value', 'T');
    extent.time = [min(OPT.datenum(:)) max(OPT.datenum(:))];
+   attr(end+1)  = struct('Name', 'actual_range' , 'Value', [datestr(extent.time(1),31),char(9),datestr(extent.time(2),31)]);
    
    nc.Variables(ifld) = struct('Name'       , 'TIME', ...
                                'Datatype'   , 'double', ...
@@ -178,9 +179,9 @@ function varargout = ncwrite_trajectory(ncfile,varargin)
 %% 3c Create (primary) variables: vertical
 
    variable.dims(1) = struct('Name', 'TIME','Length',ncdimlen.time);
-   z0 = nanunique(OPT.z);
-if length(z0)>1
-   variable.coordinates = 'lat lon z';
+   z0 = nanunique(OPT.z(~isnan(OPT.z)));
+if length(z0)>1 % varying z
+   variable.coordinates = 'lat lon z'; % does not work in QuickPlot
    ifld     = ifld + 1;clear attr
    attr(    1)  = struct('Name', 'standard_name', 'Value', 'altitude');
    attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'z');
@@ -194,7 +195,7 @@ if length(z0)>1
                                'Dimensions' , struct('Name', 'TIME','Length',ncdimlen.time), ...
                                'Attributes' , attr,...
                                'FillValue'  , []);
-else
+else % fixed z
    OPT.z = z0; 
    ncdimlen.z           = 1;
    nc.Dimensions(    2) = struct('Name','z'               ,'Length',ncdimlen.z         );
@@ -259,7 +260,7 @@ end
    ncwrite   (ncfile,'TIME'         , OPT.datenum(:) - OPT.refdatenum);
    ncwrite   (ncfile,'lon'          , OPT.lon(:));
    ncwrite   (ncfile,'lat'          , OPT.lat(:));
-   ncwrite   (ncfile,'z'            , z0);
+   ncwrite   (ncfile,'z'            , OPT.z(:));
    ncwrite   (ncfile,OPT.Name       , OPT.var(:));
       
 %% test and check

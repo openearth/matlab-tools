@@ -8,8 +8,8 @@ function varargout = KML_header(varargin)
 %   * kmlName      name that appears in Google Earth Places list (default 'ans.kml')
 %   * snippet      name that appears in Google Earth Places list (default 'ans.kml')
 %   * description  text balloon that appears when clicking the snippet/name
-%   * open         whether to open kml file in GoogleEarth in call of KMLline(default 0)
-%   * visible      whther by default visible outside GE list item menu
+%   * open         whether to open kml file in GoogleEarth in call of KMLline (default 0)
+%   * visible      whether by default visible outside GE list item menu
 % 
 %   * cameralon    specify camera viewpoint
 %   * cameralat    specify camera viewpoint

@@ -107,18 +107,6 @@ for ifile = 1:length(diafiles);
          close all
          if OPT.plot % overview
              
-            tmp = donar.resolve_wns(M.data.WNS,'request','struct');
-            if isempty(tmp.valid_min{1})
-                tmp.valid_min    = nan;
-            else
-                tmp.valid_min    = str2num(tmp.valid_min{1});
-            end
-            if isempty(tmp.valid_max{1})
-                tmp.valid_max    = nan;
-            else
-                tmp.valid_max    = str2num(tmp.valid_max{1});
-            end             
-         
             file.png = strrep(diafile,'.dia',['_',M.data.deltares_name,'_ctd.png']);
 
             close all % to avoid memory crash
@@ -146,7 +134,7 @@ for ifile = 1:length(diafiles);
                 donar.ctd_timeSeriesProfile_plot(P,E,L,titletxt,'colorfield','z','colorlabel','z [cm]')
                 print2a4(strrep(file.png,M.data.deltares_name,'z'),'v','t',200,'o')
                 end
-                donar.ctd_timeSeriesProfile_plot(P,E,L,titletxt,'colorfield','data','colorlabel',mktex([M.data.long_name,'[',M.data.units,']']),'clims',[tmp.valid_min, tmp.valid_max])
+                donar.ctd_timeSeriesProfile_plot(P,E,L,titletxt,'colorfield','data','colorlabel',mktex([M.data.long_name,'[',M.data.units,']']),'clims',donar.resolve_clim(M.data.WNS));
                 print2a4(file.png,'v','t',200,'o')
                 close
              end
@@ -165,20 +153,8 @@ for ifile = 1:length(diafiles);
             donar.trajectory2nc(file.nc,S,M)
            %[S2,M2] =  nc2struct(strrep(diafile,'.dia',['_',M.data.deltares_name,'_ferrybox.nc' ]),'rename',{{M.data.deltares_name},{'data'}});
             if OPT.plot
-            %close all
-            tmp = donar.resolve_wns(M.data.WNS,'request','struct');
-            if isempty(tmp.valid_min{1})
-                tmp.valid_min    = nan;
-            else
-                tmp.valid_min    = str2num(tmp.valid_min{1});
-            end
-            if isempty(tmp.valid_max{1})
-                tmp.valid_max    = nan;
-            else
-                tmp.valid_max    = str2num(tmp.valid_max{1});
-            end
             close all % to avoid memory crash
-            donar.trajectory_overview_plot(S,M,E,L,mktex(diafiles{ifile}),[tmp.valid_min, tmp.valid_max])
+            donar.trajectory_overview_plot(S,M,E,L,mktex(diafiles{ifile}),'clims',donar.resolve_clim(M.data.WNS));
             print2screensizeoverwrite(file.png)
             saveas(gcf,file.fig)
             end           

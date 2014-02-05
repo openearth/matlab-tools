@@ -1,10 +1,13 @@
-function trajectory_overview_plot(S,M,E,L,titletxt,clims)
+function trajectory_overview_plot(S,M,E,L,titletxt,varargin)
 %trajectory_overview_plot
 %
 %  trajectory_overview_plot(S,M,E,L,titletxt,clims)
 %
 %See also: trajectory_struct, trajectory2nc
-clf;
+
+OPT.clims      = [nan nan];
+OPT = setproperty(OPT,varargin);
+
 AX = subplot_meshgrid(2,2,[.07 .01 .06],[.025 .04 .045],[nan .1],[nan .14]);
 %%
 axes(AX(1,1))

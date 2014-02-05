@@ -15,9 +15,7 @@ function [xu,yu,varargout] = poly_unique(x,y,varargin)
 %
 %See also: unique, nanunique, poly_fun, sortrows, eps, unique_rows_tolerance
 
-warning('allow one NaN xu point at the end for automatic pointering?')
-
-% TO DO: make more generic: handle any number of inpout vectors
+% TO DO: make more generic: handle any number of input vectors
 % just like sortrows does: make UNIQUEROWS
 
 OPT.eps = eps('single');

@@ -43,39 +43,39 @@ if nargin==2
     ncolumn = size(D,2)-2; % last ones are:  /-flags, dia index
 end
 
- % TO DO make x,y, when M.data.hdr tells so
+ % TO DO make (x,y) instead of (lat,lon) when M.data.hdr tells so
  
-    M.data = M0;
-    
-    M.lon.standard_name  = 'degrees_east';
-    M.lon.units          = 'Longitude';
-    M.lon.long_name      = 'Longitude';
+   M.data = M0;
+   
+   M.lon.standard_name  = 'degrees_east';
+   M.lon.units          = 'Longitude';
+   M.lon.long_name      = 'Longitude';
 
-    M.lat.standard_name  = 'degrees_north';
-    M.lat.units          = 'Latitude';
-    M.lat.long_name      = 'Latitude';
+   M.lat.standard_name  = 'degrees_north';
+   M.lat.units          = 'Latitude';
+   M.lat.long_name      = 'Latitude';
 
-    M.z.standard_name    = 'cm';
-    M.z.units            = 'cm';
-    M.z.long_name        = 'Vertical coordinate';
-    M.z.positive         = 'down';
+   M.z.standard_name    = 'cm';
+   M.z.units            = 'cm';
+   M.z.long_name        = 'Vertical coordinate';
+   M.z.positive         = 'down';
+   
+   M.datenum.standard_name = 'time';
+   M.datenum.units         = 'days since 1970-01-01';
+   M.datenum.long_name     = 'time';
     
-    M.datenum.standard_name = 'time';
-    M.datenum.units         = 'days since 1970-01-01';
-    M.datenum.long_name     = 'time';
-     
-    S.lon     = D(:,1);
-    S.lat     = D(:,2);
-    S.z       = D(:,3);
-    S.datenum = D(:,4);
-    S.data    = D(:,ncolumn);
-   %S.flag    = D(:,ncolumn+1); % always 0: no information
-    S.block   = D(:,ncolumn+2);
+   S.lon     = D(:,1);
+   S.lat     = D(:,2);
+   S.z       = D(:,3);
+   S.datenum = D(:,4);
+   S.data    = D(:,ncolumn);
+  %S.flag    = D(:,ncolumn+1); % always 0: no information
+   S.block   = D(:,ncolumn+2);
 
-    S.station_id = []; % define here to ensture proper order in utruct
-    S.profile_id = [];
+   S.station_id = []; % define here to ensture proper order in utruct
+   S.profile_id = [];
     
-    %% Store header as global attributes
+%% Store header as global attributes
    
    flds = donar.headercode2attribute(fields(M0.hdr));
    
@@ -91,14 +91,20 @@ end
        end
    end
    
-  %%
+%% Find unique stations
+
+  disp([mfilename,' busy with unique stations'])
+  
  [S.station_lon,S.station_lat,S.station_id]=poly_unique(S.lon,S.lat,'eps',0.02);
   S.station_n = 0.*S.station_lon;
   for i=1:length(S.station_lon)
       S.station_n(i) = sum(S.station_id==i);
   end
   
-  %%
+%% Find unique profiles
+
+  disp([mfilename,' busy with unique profiles'])
+
  [S.profile_datenum,~,S.profile_id]=unique_rows_tolerance(S.datenum,10/24/60); % correlates very well with dia blocks, use unique() on that?
   S.profile_n = 0.*S.station_lon;
   for i=1:length(S.profile_datenum)
@@ -112,7 +118,9 @@ if OPT.plot
    set(gca,'xscale','log')  
 end
   
-  %% split profiles that take too long, these should be trated as trajectories
+  %% split profiles that take too long, these should be treated as trajectories
+  
+  % TODO
 
 %%
 % ctd_2000_-_2002.dia - 910 locations when eps=0

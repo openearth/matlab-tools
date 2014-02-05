@@ -84,7 +84,7 @@ OPT.listReference = 'P01';
 OPT.disp          = 1;
 OPT.list_method   = '';%'getList'        
 
-OPT.read          = 1;
+OPT.read          = 0;
 OPT.find          = ''; % description to standard_name
 OPT.resolve       = ''; % check existence of standard_name
 
@@ -249,7 +249,7 @@ if ~isempty(OPT.read) | isempty(L)
       save      (matfile,'-struct','L'); %  1.6 Mb, loads in   2.8 sec
    
    end
-   
+
    if nargout<2
       varargout = {L};
    end
@@ -301,7 +301,7 @@ end
 %% find and display results of a search (standard_name present)
 
 if isempty(OPT.resolve)
-    OK = '';
+      varargout = {''};
 else
         
     
@@ -332,14 +332,15 @@ else
    else
       OK = '';
    end
-
-end
-
+   
    if nargout<2
       varargout = {OK};
    elseif nargout==2
       varargout = {OK,ii};
-   end
+   end   
+
+end
+
 
 %% subsidiary function to turn xml attributes into elements
 
