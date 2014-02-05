@@ -126,6 +126,7 @@ classdef XBeachLimitStateFunctionChecker < handle
             this.Abort  = true;
             stop(this.Timer);
             delete(this.Timer);
+            this.Timer  = [];
             notify(this, 'SimulationNotCompleted')
         end
         
