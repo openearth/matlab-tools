@@ -83,6 +83,8 @@ else
             exportData;
         case{'editoutline'}
             editOutline;
+        case{'selectexportformat'}
+            selectExportFormat;
     end
 end
 
@@ -103,6 +105,15 @@ gui_updateActiveTab;
 %%
 function selectModel
 handles=getHandles;
+setHandles(handles);
+
+%%
+function selectExportFormat
+
+handles=getHandles;
+iac=handles.Toolbox(tb).Input.activeExportFormatIndex;
+handles.Toolbox(tb).Input.activeExportFormat=handles.Toolbox(tb).Input.exportFormats{iac};
+handles.Toolbox(tb).Input.activeExportFormatExtension=handles.Toolbox(tb).Input.exportFormatExtensions{iac};
 setHandles(handles);
 
 %%
@@ -145,7 +156,7 @@ try
         yy(2)=max(max(yg))+1;
     end
     
-    [lon,lat,ampz,phasez,conList] = readTideModel(tidefile,'type','h','xlim',xx,'ylim',yy,'constituent','all');
+    [lon,lat,ampz,phasez,conList] = readTideModel(tidefile,'type','h','xlim',xx,'ylim',yy,'constituent','all');    
     
     for i=1:length(conList)
         if ~strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
@@ -164,8 +175,31 @@ try
             phi{i}=squeeze(phasez(:,:,i));
         end
     end
-    
-    ddb_saveAstroMapFile([filename '.tek'],xg,yg,conList,amp,phi);
+
+    switch lower(handles.Toolbox(tb).Input.activeExportFormat)
+        case{'mat'}
+            for icon=1:length(conList)
+                ii=icon*2-1;
+                s.parameters(ii).parameter.name=['Amplitude - ' conList{icon}];
+                s.parameters(ii).parameter.type='scalar';
+                s.parameters(ii).parameter.x=xg;
+                s.parameters(ii).parameter.y=yg;
+                s.parameters(ii).parameter.val=amp{icon};
+                s.parameters(ii).parameter.size=[0 0 size(xg,1) size(xg,2) 0];
+                ii=icon*2;
+                s.parameters(ii).parameter.name=['Phase - ' conList{icon}];
+                s.parameters(ii).parameter.type='scalar';
+                s.parameters(ii).parameter.x=xg;
+                s.parameters(ii).parameter.y=yg;
+                s.parameters(ii).parameter.val=phi{icon};
+                s.parameters(ii).parameter.size=[0 0 size(xg,1) size(xg,2) 0];
+            end
+            save([filename '.mat'],'-struct','s');
+            close(wb);
+            return
+        case{'tek'}
+            ddb_saveAstroMapFile([filename '.tek'],xg,yg,conList,amp,phi);
+    end
 
     % U
 
@@ -184,8 +218,7 @@ try
         xx(2)=max(max(xg))+1;
         yy(2)=max(max(yg))+1;
     end
-    
-    
+        
     [lon,lat,ampz,phasez,conList] = readTideModel(tidefile,'type','u','xlim',xx,'ylim',yy,'constituent','all');
     
     for i=1:length(conList)
@@ -206,7 +239,10 @@ try
         end
     end
     
-    ddb_saveAstroMapFile([filename '.u.tek'],xg,yg,conList,amp,phi);
+    switch lower(handles.Toolbox(tb).Input.activeExportFormat)
+        case{'tek'}
+            ddb_saveAstroMapFile([filename '.u.tek'],xg,yg,conList,amp,phi);
+    end
 
     % V
 
@@ -246,7 +282,10 @@ try
         end
     end
     
-    ddb_saveAstroMapFile([filename '.v.tek'],xg,yg,conList,amp,phi);
+    switch lower(handles.Toolbox(tb).Input.activeExportFormat)
+        case{'tek'}
+            ddb_saveAstroMapFile([filename '.u.tek'],xg,yg,conList,amp,phi);
+    end
     
     close(wb);
     

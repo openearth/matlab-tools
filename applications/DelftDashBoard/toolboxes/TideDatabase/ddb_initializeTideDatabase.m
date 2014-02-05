@@ -68,8 +68,15 @@ handles.Toolbox(ii).Input.xLim(1)=0;
 handles.Toolbox(ii).Input.yLim(1)=0;
 handles.Toolbox(ii).Input.xLim(2)=0;
 handles.Toolbox(ii).Input.yLim(2)=0;
-handles.Toolbox(ii).Input.exportTypes={'tek'};
-handles.Toolbox(ii).Input.activeExportType='tek';
+
+handles.Toolbox(ii).Input.exportFormats={'tek','mat'};
+handles.Toolbox(ii).Input.exportFormatExtensions={'*.tek','*.mat'};
+handles.Toolbox(ii).Input.exportFormatNames={'Tekal file','Mat file'};
+
+handles.Toolbox(ii).Input.activeExportFormatIndex=1;
+handles.Toolbox(ii).Input.activeExportFormat=handles.Toolbox(ii).Input.exportFormats{1};
+handles.Toolbox(ii).Input.activeExportFormatExtension=handles.Toolbox(ii).Input.exportFormatExtensions{1};
+
 handles.Toolbox(ii).Input.tideDatabaseBoxHandle=[];
 handles.Toolbox(ii).Input.fourierFile='';
 handles.Toolbox(ii).Input.fourierOutFile='';

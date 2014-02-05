@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <root>
   <element>
-    <tag>selecttidemodels</tag>
     <style>listbox</style>
     <text>Available Tide Models</text>
     <textposition>above-center</textposition>
@@ -16,7 +15,6 @@
     </listtext>
   </element>
   <element>
-    <tag>editxmin</tag>
     <style>edit</style>
     <position>270 95 50 20</position>
     <text>X Min</text>
@@ -28,7 +26,6 @@
     <tooltipstring>Edit minimum x coordinate</tooltipstring>
   </element>
   <element>
-    <tag>editxmax</tag>
     <style>edit</style>
     <position>270 70 50 20</position>
     <text>X Max</text>
@@ -40,7 +37,6 @@
     <tooltipstring>Edit maximum x coordinate</tooltipstring>
   </element>
   <element>
-    <tag>editymin</tag>
     <style>edit</style>
     <position>270 45 50 20</position>
     <text>Y Min</text>
@@ -52,7 +48,6 @@
     <tooltipstring>Edit minimum y coordinate</tooltipstring>
   </element>
   <element>
-    <tag>editymax</tag>
     <style>edit</style>
     <position>270 20 50 20</position>
     <text>Y Max</text>
@@ -64,7 +59,6 @@
     <tooltipstring>Edit maximum y coordinate</tooltipstring>
   </element>
   <element>
-    <tag>drawbox</tag>
     <style>pushbutton</style>
     <position>330 95 80 20</position>
     <text>Draw Box</text>
@@ -72,20 +66,20 @@
     <option1>drawrectangle</option1>
   </element>
   <element>
-    <tag>selectexporttype</tag>
     <style>popupmenu</style>
-    <text>Export Type</text>
+    <text>Export Format</text>
     <textposition>left</textposition>
-    <variable>activeExportType</variable>
+    <variable>activeExportFormatIndex</variable>
     <position>500 40 70 20</position>
-    <tooltipstring>Select zoom level</tooltipstring>
-    <type>string</type>
+    <tooltipstring>Select output format</tooltipstring>
+    <type>integer</type>
+    <callback>ddb_TideDatabaseToolbox_export</callback>
+    <option1>selectexportformat</option1>
     <listtext>
-      <variable>exportTypes</variable>
+      <variable>exportFormatNames</variable>
     </listtext>
   </element>
   <element>
-    <tag>exportdata</tag>
     <style>pushsavefile</style>
     <position>500 15 70 20</position>
     <text>Export</text>
@@ -93,6 +87,11 @@
     <onchange>ddb_TideDatabaseToolbox_export</onchange>
     <option1>export</option1>
     <showfilename>no</showfilename>
+    <filter>
+      <extension>
+        <variable>activeExportFormatExtension</variable>
+      </extension>
+    </filter>
     <extension>*.tek</extension>
     <selectiontext>Select data file</selectiontext>
     <tooltipstring>Export tide data</tooltipstring>
