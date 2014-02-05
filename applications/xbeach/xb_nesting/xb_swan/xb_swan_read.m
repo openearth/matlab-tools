@@ -69,13 +69,13 @@ OPT = setproperty(OPT, varargin{:});
 
 %% read sp2 file
 
-% create empty sp2 spectrum struct
-sp2 = xb_swan_struct();
-
 fdir = fileparts(fname);
 files = dir(fname);
 for n = 1:length(files)
     fname = fullfile(fdir, files(n).name);
+    
+    % create empty sp2 spectrum struct
+    sp2(n) = xb_swan_struct();
     
     c = 1; l = 0;
 
@@ -91,9 +91,6 @@ for n = 1:length(files)
             % skip comments
             if strcmp(strtok(fline),'$') || ~isempty(regexp(fline,'^\s*$')) || isempty(fline); continue; end;
 
-            % determine time index
-            t = max(sp2(n).time.nr, 1);
-            
             % determine current part
             key = upper(strtok(fline));
             switch key
@@ -108,6 +105,11 @@ for n = 1:length(files)
 
                     sp2(n).has_time = logical(d);
 
+                    if sp2(n).has_time % stationary (0) or non-stationary (1)
+                        t = 0;
+                    else
+                        t = 1;
+                    end
                     sp2(n).time.nr = 0;
                     sp2(n).time.data = [];
                 case {'LOCATIONS','LOCATION','LONLAT'}
@@ -142,7 +144,7 @@ for n = 1:length(files)
                     end
                 case 'QUANT'
                     % read spectrum header
-                    sp2(n).spectrum.nr = read_double(fid);
+                    sp2(n).spectrum.nr = read_double(fid); % always 1 in sp2
                     sp2(n).spectrum.type = read_char(fid);
                     sp2(n).spectrum.unit = read_char(fid);
                     sp2(n).spectrum.exception = read_double(fid);
@@ -158,16 +160,25 @@ for n = 1:length(files)
                 case 'NODATA'
                     % skip line, since no data
                     sp2(n).spectrum.factor(t,c) = nan;
-                    sp2(n).spectrum.data(t,c,:,:) = nan;
+                    sp2(n).spectrum.data(t,c,:,:) = nan(sp2(n).frequency.nr,sp2(n).direction.nr);
+                    
+                    c = c + 1;
+                case 'ZERO'
+                    % skip line, spectrum is zero
+                    sp2(n).spectrum.factor(t,c) = 0;
+                    sp2(n).spectrum.data(t,c,:,:) = zeros(sp2(n).frequency.nr,sp2(n).direction.nr);
                     
                     c = c + 1;
                 otherwise
                     % check whether current unknown line is start of new
                     % timestep
                     if sp2(n).has_time && regexp(key,'^\d+.\d+$')
-                        sp2(n).time.data = [sp2(n).time.data; datenum(key,'yyyymmdd.HHMMSS')];
-                        sp2(n).time.nr = sp2(n).time.nr+1;
+                        % update time step
+                        t = t+1;
+                        sp2(n).time.data(t) = datenum(key,'yyyymmdd.HHMMSS');
+                        sp2(n).time.nr = t;
 
+                        % restart data index
                         c = 1;
                     else
                         error(['Invalid SP2 spectrum file [line ' num2str(l) ']']);

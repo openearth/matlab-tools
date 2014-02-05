@@ -86,12 +86,21 @@ files = xb_swan_struct();
 % select sp2 files in time window
 n = 1;
 for i = 1:length(sp2)
-    ti = sp2(i).time.data;
-    if  ti >= OPT.tstart && ti < OPT.tstart+OPT.tlength
-        files(n) = sp2(i);
-        t(n) = sp2(i).time.data;
+    for j = 1:sp2(i).time.nr
+        ti = sp2(i).time.data(j);
+        if  ti >= OPT.tstart && ti < OPT.tstart+OPT.tlength
+            files(n) = sp2(i);
+            t(n) = ti;
 
-        n = n + 1;
+            % reduce fields
+            ind = true(sp2(i).time.nr,1); ind(j) = false;
+            files(n).time.nr = 1;
+            files(n).time.data(ind) = [];
+            files(n).spectrum.data(ind,:,:,:) = [];
+            files(n).spectrum.factor(ind,:) = [];
+
+            n = n + 1;
+        end
     end
 end
 
