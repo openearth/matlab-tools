@@ -1,4 +1,4 @@
-function wavefile = xb_sp22xb(fnames, varargin)
+function wavefile = xb_sp22xb(files, varargin)
 %XB_SP22XB  Converts a set of Delft3D-WAVE SP2 files into XBeach wave boundary conditions
 %
 %   Converts a set of Delft3D-WAVE SP2 files into XBeach wave boundary
@@ -13,6 +13,8 @@ function wavefile = xb_sp22xb(fnames, varargin)
 %   varargin  = wavefile:       Path to output file
 %               tstart:         Datenum indicating simulation start time
 %               tlength:        Datenum indicating simulation length
+%               location:       Indeces of locations to include as numeric
+%                               array or 'all'
 %
 %   Output:
 %   wavefile  = Path to output file
@@ -68,20 +70,29 @@ function wavefile = xb_sp22xb(fnames, varargin)
 OPT = struct( ...
     'wavefile', 'waves.txt', ...
     'tstart', 0, ...
-    'tlength', Inf ...
+    'tlength', Inf, ...
+    'location','all' ...
 );
 
 OPT = setproperty(OPT, varargin{:});
 
 wavefile = OPT.wavefile;
+[fd fn fe] = fileparts(wavefile);
 
 %% convert sp2 files
 
 % read sp2 files
-sp2 = xb_swan_read(fnames);
+sp2 = xb_swan_read(files);
+
+if isnumeric(OPT.location)
+    ip = true(sp2(1).location.nr,1);
+    ip(OPT.location) = false;
+else
+    ip = false(sp2(1).location.nr,1);
+end
 
 t = [];
-files = xb_swan_struct();
+sp2_t = xb_swan_struct(); % one time step per file
 
 % select sp2 files in time window
 n = 1;
@@ -89,33 +100,38 @@ for i = 1:length(sp2)
     for j = 1:sp2(i).time.nr
         ti = sp2(i).time.data(j);
         if  ti >= OPT.tstart && ti < OPT.tstart+OPT.tlength
-            files(n) = sp2(i);
+            sp2_t(n) = sp2(i);
             t(n) = ti;
-
             % reduce fields
-            ind = true(sp2(i).time.nr,1); ind(j) = false;
-            files(n).time.nr = 1;
-            files(n).time.data(ind) = [];
-            files(n).spectrum.data(ind,:,:,:) = [];
-            files(n).spectrum.factor(ind,:) = [];
+            it = true(sp2(i).time.nr,1); it(j) = false;
+            sp2_t(n).time.nr = 1;
+            sp2_t(n).time.data(it) = [];
+            sp2_t(n).location.nr = sum(~ip);
+            sp2_t(n).location.data(ip,:) = [];
+            sp2_t(n).spectrum.data(:,ip,:,:) = [];
+            sp2_t(n).spectrum.data(it,:,:,:) = [];
+            sp2_t(n).spectrum.factor(:,ip) = [];
+            sp2_t(n).spectrum.factor(it,:) = [];
 
             n = n + 1;
         end
     end
 end
 
-fdir = fileparts(wavefile);
-
 % write selected spectrum files
-files = xb_swan_write(fullfile(fdir, 'wave.sp2'), files);
+files = xb_swan_write(fullfile(fd, [fn '.sp2']), sp2_t);
+files = cellstr(files);
 
 % make relative time axis
-t = [0 diff(t)];
+t = diff(t);
+t(end+1) = t(end);
 
-% write filelist
+% write FILELIST
+nt = numel(files);
+
 fid = fopen(wavefile, 'wt');
 fprintf(fid, '%s\n', 'FILELIST');
-for i = 1:length(files)
-    fprintf(fid, '%8.1f %8.1f %s\n', t(i)*24*60*60, 1.0, files{i});
+for n = 1:nt
+    fprintf(fid, '%8.1f %8.1f %s\n', t(n)*24*60*60, 1.0, files{n});
 end
 fclose(fid);
