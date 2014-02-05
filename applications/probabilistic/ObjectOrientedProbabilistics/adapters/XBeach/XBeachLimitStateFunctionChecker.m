@@ -108,6 +108,7 @@ classdef XBeachLimitStateFunctionChecker < handle
                     this.KeepChecking   = false;
                     stop(this.Timer);
                     delete(this.Timer);
+                    this.Timer = [];
                 end
             end
         end
