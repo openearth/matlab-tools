@@ -109,7 +109,16 @@ lines = lines(cellfun(@isempty, regexp(lines, '^(\*|\D)')));
 
 data = cellfun(@line2struct, lines);
 
-varargout = {data(ismember([data.id], OPT.id))};
+if isempty(data)
+    varargout = {struct(...
+        'id', NaN,...
+        'Hs', NaN,...
+        'Tp', NaN,...
+        'Rp', NaN,...
+        'D50', NaN)};
+else
+    varargout = {data(ismember([data.id], OPT.id))};
+end
 
 function S = line2struct(txtline)
 data = strread(strrep(txtline, '*', ' NaN '));
