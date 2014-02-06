@@ -64,7 +64,7 @@ for imdl=1:length(handles.Model)
 
             % Set default
             handles.Model(imdl).version='6.00.xx';
-            handles.Model(imdl).exedir='';
+            handles.Model(imdl).exedir='d:\unknownfolder\';
 
             % Delft3D-FLOW
             if exist([getenv('D3D_HOME') '\' getenv('ARCH') '\flow2d3d\bin\d_hydro.exe'],'file')
