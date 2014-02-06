@@ -1,13 +1,19 @@
 function result = FORM(varargin)
 %FORM  routine for First Order Reliability Method (FORM)
 %
-% Routine to perform the probabilistic First Order Reliability Method
+% Routine to perform the probabilistic First Order Reliability Method. At 
+% least the 'stochast' and the 'x2zFunction' are required as input. The 
+% stochast structure should contain the fields 'Name', 'Distr' and 'Params'.
 %   
 % syntax:
-% result = FORM(varargin)
+% result = FORM(stochast)
+% result = FORM('stochast', stochast,...
+%               'x2zFunction', @x2z)
 %
 % input:
-% varargin = series of keyword-value pairs to set properties
+% varargin = series of keyword-value pairs to set properties. The stochast
+%              structure with fields 'Name', 'Distr' and 'Params' as well
+%              as the x2zFunction are required input.
 %
 % output:
 % result = structure with settings, input and output

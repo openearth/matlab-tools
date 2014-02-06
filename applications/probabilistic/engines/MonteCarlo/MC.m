@@ -13,6 +13,7 @@ function result = MC(varargin)
 %   result = MC(stochast)
 %   result = MC(..
 %       'stochast', stochast,...
+%       'x2zFunction', @x2z,...
 %       'NrSamples', 1000);
 %
 %   Input:
