@@ -22,6 +22,7 @@ try
 end
 MDW.General.FlowFile.value = wave.mdffile;
 MDW.General.OnlyInputVerify.value = wave.onlyinputverify;
+MDW.General.OnlyInputVerify.type  = 'boolean';
 MDW.General.SimMode.value  = wave.simmode;
 switch lower(wave.simmode)
     case{'non-stationary'}
