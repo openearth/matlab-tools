@@ -90,7 +90,7 @@ if ispc,
                 iwav=strmatch('Delft3DWAVE',{handles.Model.name},'exact');
                 fprintf(fid,'%s\n',['set waveexedir="' handles.Model(iwav).exedir '"']);
             end
-            fprintf(fid,'%s\n','set PATH=%exedir%;%PATH%');
+            fprintf(fid,'%s\n','set PATH=%waveexedir%;%flowexedir%;%PATH%');
             if ~isempty(mdwfile)
                 fprintf(fid,'%s\n','start %flowexedir%\deltares_hydro.exe %argfile%');
                 fprintf(fid,'%s\n',['%waveexedir%\wave.exe ' mdwfile ' 1']);
@@ -118,7 +118,7 @@ if ispc,
                 iwav=strmatch('Delft3DWAVE',{handles.Model.name},'exact');
                 fprintf(fid,'%s\n',['set waveexedir="' handles.Model(iwav).exedir '"']);
             end
-            fprintf(fid,'%s\n','set PATH=%exedir%;%PATH%');
+            fprintf(fid,'%s\n','set PATH=%flowexedir%;%waveexedir%;%PATH%');
             if ~isempty(mdwfile)
                 fprintf(fid,'%s\n','start %flowexedir%\d_hydro.exe %argfile%');
                 fprintf(fid,'%s\n',['%waveexedir%\wave.exe ' mdwfile ' 1']);
