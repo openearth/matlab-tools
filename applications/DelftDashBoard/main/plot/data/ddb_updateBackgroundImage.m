@@ -147,10 +147,24 @@ switch handles.GUIData.backgroundImageType
         
     case{'satellite'}
         % Get the data
-%         tic
-%         disp('Getting image data ...');
-        [xx,yy,cdata]=ddb_getMSVEimage(xl0(1),xl0(2),yl0(1),yl0(2),'zoomlevel',0,'npix',1200,'whatKind',lower(handles.screenParameters.satelliteImageType),'cache',handles.satelliteDir);
-%         toc
+        
+        src='bing';
+%         src='googlemaps';
+        
+        switch src
+            case{'bing'}
+                [xx,yy,cdata]=ddb_getMSVEimage(xl0(1),xl0(2),yl0(1),yl0(2),'zoomlevel',0,'npix',1200,'whatKind',lower(handles.screenParameters.satelliteImageType),'cache',handles.satelliteDir);
+            case{'googlemaps'}                
+                pos=get(gca,'Position');
+                dx=0.1*(xl0(2)-xl0(1));
+                dy=0.1*(yl0(2)-yl0(1));
+                height=640;
+                width=640;
+%                 apikey='AIzaSyD3lK90hIDlKS-w2a1QAf312KADkxiR4IY';
+                [xx,yy,cdata]=plot_google_map('xlim',[xl0(1)-dx xl0(2)+dx],'ylim',[yl0(1)-dy yl0(2)+dy],'autoaxis',0,'height',height,'width',width, ...
+                    'maptype','terrain','scale',2);
+%                    'maptype','terrain','apikey',apikey,'scale',2);
+        end
         
         % Now convert to current coordinate system
         if ~strcmpi(coord.name,dataCoord.name) || ~strcmpi(coord.type,dataCoord.type)
