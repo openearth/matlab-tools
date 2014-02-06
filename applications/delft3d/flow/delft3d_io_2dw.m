@@ -116,40 +116,40 @@ if fid==-1
 else
     S.iostat   = -1;
     i            = 0;
-    
+
     while ~feof(fid)
-        
+
         i = i + 1;
-        
+
         S.DATA(i).direction = fscanf(fid,'%s',1);
-        
+
         S.DATA(i).mn        = fscanf(fid,'%i'  ,4);
-        
-        S.DATA(i).cal       = fscanf(fid,'%i'  ,1);
-        
+
+        S.DATA(i).cal       = fscanf(fid,'%f'  ,1);
+
         S.DATA(i).height    = fscanf(fid,'%f'  ,1);
-        
+
         S.DATA(i).real      = fscanf(fid,'%f'  ,1);
-        
+
         % turn the endpoint-description along gridlines into vectors
         % and make sure smallest index is first
-        
+
         [S.DATA(i).m,...
             S.DATA(i).n]=meshgrid(min(S.DATA(i).mn([1,3])):max(S.DATA(i).mn([1,3])),...
             min(S.DATA(i).mn([2,4])):max(S.DATA(i).mn([2,4])));
-        
+
         fgetl(fid); % read rest of line
-        
+
     end
-    
+
     S.iostat   = 1;
     S.NTables  = i;
-    
+
     for i=1:S.NTables
         S.m(:,i) = [S.DATA(i).mn(1) S.DATA(i).mn(3)];
         S.n(:,i) = [S.DATA(i).mn(2) S.DATA(i).mn(4)];
     end
-    
+
     if nargin >1
         G   = varargin{2};
         S.x = nan.*S.m;
@@ -158,17 +158,17 @@ else
             m = S.m(1,i);
             n = S.n(1,i);
             if     strcmpi(S.DATA(i).direction,'u')
-                
+
                 S.x(:,i) = [G.cor.x(n,m  ) G.cor.x(n-1  ,m  )];
                 S.y(:,i) = [G.cor.y(n,m  ) G.cor.y(n-1  ,m  )];
                 S.height(:,i) = [S.DATA(i).height S.DATA(i).height];
             elseif strcmpi(S.DATA(i).direction,'v')
-                
+
                 S.x(:,i) = [G.cor.x(n  ,m-1) G.cor.x(n  ,m  )];
                 S.y(:,i) = [G.cor.y(n  ,m-1) G.cor.y(n  ,m  )];
                 S.height(:,i) = [S.DATA(i).height S.DATA(i).height];
             end
-            
+
         end
     end
 end
@@ -186,27 +186,28 @@ fid          = fopen(filename,'w');
 OS           = 'windows';
 
 for i=1:length(STRUCT.DATA)
-    
+
     % fprintfstringpad(fid,20,STRUCT.DATA(i).name,' ');
-    
+
     fprintf(fid,'%1c',' ');
     % fprintf automatically adds one space between all printed variables
     % within one call
-    fprintf(fid,' %1c %5i %5i %5i %5i %3.2f %3.2f',...
+    fprintf(fid,' %1c %5i %5i %5i %5i %3.2f %3.2f %7.3f',...
         STRUCT.DATA(i).direction,...
         STRUCT.DATA(i).mn(1)    ,...
         STRUCT.DATA(i).mn(2)    ,...
         STRUCT.DATA(i).mn(3)    ,...
         STRUCT.DATA(i).mn(4)    ,...
         STRUCT.DATA(i).cal      ,...
-        STRUCT.DATA(i).height);
-    
+        STRUCT.DATA(i).height   ,...
+        -999.999                );
+
     if     strcmp(lower(OS(1)),'u')
         fprintf(fid,'\n');
     elseif strcmp(lower(OS(1)),'w')
         fprintf(fid,'\r\n');
     end
-    
+
 end;
 fclose(fid);
 iostat=1;
