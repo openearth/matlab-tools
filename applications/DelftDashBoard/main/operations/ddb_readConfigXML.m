@@ -53,18 +53,18 @@ filename=[xmldir xmlfile];
 % Set defaults
 for imdl=1:length(handles.Model)
 
-    handles.Model(imdl).versionlist = {''}; 
-    handles.Model(imdl).version = ''; 
+    handles.Model(imdl).versionlist = {'N/A'}; 
+    handles.Model(imdl).version = 'N/A'; 
+    handles.Model(imdl).exedir='d:\unknownfolder\';
 
     switch lower(handles.Model(imdl).name)
         case{'delft3dflow'}
             
             % Version list (used in GUI)
-            handles.Model(imdl).versionlist = {'5.00.xx','6.00.xx'}; 
+            handles.Model(imdl).versionlist = {'5.00.xx','6.00.xx','N/A'}; 
 
             % Set default
             handles.Model(imdl).version='6.00.xx';
-            handles.Model(imdl).exedir='d:\unknownfolder\';
 
             % Delft3D-FLOW
             if exist([getenv('D3D_HOME') '\' getenv('ARCH') '\flow2d3d\bin\d_hydro.exe'],'file')
@@ -76,13 +76,8 @@ for imdl=1:length(handles.Model)
             end
 
         case{'delft3dwave'}
-            handles.Model(imdl).version='';
             handles.Model(imdl).exedir=[getenv('D3D_HOME') '\' getenv('ARCH') '\wave\bin\'];
             
-        otherwise
-            handles.Model(imdl).version='';
-            handles.Model(imdl).exedir='';            
-
     end
 end
 
@@ -94,7 +89,13 @@ if exist(filename,'file')
         imdl=strmatch(lower(xml.model(ii).model.name),lower({handles.Model.name}),'exact');
         if ~isempty(imdl)
             handles.Model(imdl).version=xml.model(ii).model.version;
+            if isempty(handles.Model(imdl).version)
+                handles.Model(imdl).version='N/A';
+            end                
             handles.Model(imdl).exedir=xml.model(ii).model.exedir;
+            if isempty(handles.Model(imdl).exedir)
+                handles.Model(imdl).version='d:\unknownfolder\';
+            end                
         end
     end
 else

@@ -70,6 +70,7 @@ switch lower(opt)
             handles.Model(md).Input(ad).mduFile=[handles.Model(md).Input(ad).runid '.mdu'];
         end
         ddb_saveMDU(handles.Model(md).Input(ad).mduFile,inp);
+        ddb_DFlowFM_saveBatchFile(handles.Model(md).exedir,'unstruc.exe',handles.Model(md).Input(ad).mduFile);
 
     case{'saveas'}
         [filename, pathname, filterindex] = uiputfile('*.mdu', 'Select MDU File','');
@@ -82,6 +83,7 @@ switch lower(opt)
             handles.Model(md).Input(ad).runid=filename(1:ii-1);
             handles.Model(md).Input(ad).mduFile=filename;
             ddb_saveMDU(filename,handles.Model(md).Input(ad));
+            ddb_DFlowFM_saveBatchFile(handles.Model(md).exedir,'unstruc.exe',handles.Model(md).Input(ad).mduFile);
         end
         
     case{'saveall'}
@@ -164,6 +166,7 @@ switch lower(opt)
             handles.Model(md).Input(ad).mduFile=[handles.Model(md).Input(ad).runid '.mdu'];
         end
         ddb_saveMDU(handles.Model(md).Input(ad).mduFile,inp);
+        ddb_DFlowFM_saveBatchFile(handles.Model(md).exedir,'unstruc.exe',handles.Model(md).Input(ad).mduFile);
         
 end
 

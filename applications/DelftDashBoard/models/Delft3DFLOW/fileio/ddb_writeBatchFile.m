@@ -107,7 +107,7 @@ if ispc,
             fprintf(fini,'%s\n','</DeltaresHydro>');
             fclose(fini);
             
-        case{'6.00.xx'}
+        case{'6.00.xx','N/A'}
             
             % Batch file
             fid=fopen(fname,'w');            
