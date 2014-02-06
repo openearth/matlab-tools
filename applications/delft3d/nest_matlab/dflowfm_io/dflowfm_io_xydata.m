@@ -98,8 +98,13 @@ case 'write'
           block_name = LINE(iline).Blckname;
 
           fprintf(fid,'%s       \n',block_name      );
-          %fprintf(fid,'%5i  %5i \n',nrows     ,ncols);
-          fprintf(fid,'%5i  %5i \n',nrows     , 2);
+          ncols = 2;
+          if size(LINE(iline).DATA,2) == 3
+              if isnumeric(LINE(iline).DATA{1,3})
+                 ncols = 3;
+              end
+          end
+          fprintf(fid,'%5i  %5i \n',nrows     , ncols);
        end
 
        if size(LINE(iline).DATA,2) == 3

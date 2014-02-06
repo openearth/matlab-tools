@@ -33,11 +33,11 @@
 
       nostat = 0;
       for ist = 1: size(hulpst,1)
-          if strcmp(hulpst(ist,1:5),'(M,N)');
+%          if strcmp(hulpst(ist,1:5),'(M,N)');
              nostat = nostat + 1;
              nfs_inf.list_stations(nostat) = ist;
              nfs_inf.mnstat(:,nostat)      = mnstat_hulp(:,ist);
-          end
+%          end
       end
 
       %

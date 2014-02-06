@@ -6,7 +6,7 @@ Gen_inf    = {'This tool converts a SIMONA siminp file into a Delft3D-Flow mdf f
               'with belonging attribute files'                                                                     ;
               ' '                                                                                                  ;
               'Not everything is supported:'                                                                       ;
-              '- Transport other than Salinity (temp. and tracers) not supported yet'                              ;                                                          ;
+              '- Transport other than Salinity (temp. and tracers) not supported yet'                              ;                                                          
               '- Restarting is not supported yet'                                                                  ;
               '- Space varying wind is not supported yet'                                                          ;
               ' '                                                                                                  ;
@@ -86,6 +86,9 @@ mdf = simona2mdf_dryp     (S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);
 
 simona2mdf_message('Parsing THINDAM information'            ,'Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
 mdf = simona2mdf_thd      (S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);
+
+simona2mdf_message('Parsing WEIR information'               ,'Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
+mdf = simona2mdf_weirs    (S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);
 
 simona2mdf_message('Parsing TIMES information'              ,'Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
 mdf = simona2mdf_times    (S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);

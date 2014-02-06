@@ -119,9 +119,11 @@ for i_pli = 1: length(filpli)
                     filename = [path_output filesep LINE.Blckname '_' num2str(i_pnt,'%0.4d') '.tim'];
 
                     %% find Time series table number
-                    bndname = LINE.DATA{i_pnt,3}(index(3):end-5);
+                    bndname = LINE.DATA{i_pnt,3}(index(3):end-5); 
                     for i_table = 1: bct.NTables
-                        if strcmp(strtrim(bndname),strtrim(bct.Table(i_table).Location))
+                        name_bct = bct.Table(i_table).Location;
+                        name_bct (name_bct == ' ') = '';
+                        if strcmp(strtrim(bndname),strtrim(name_bct))
                             nr_table = i_table;
                         end
                     end

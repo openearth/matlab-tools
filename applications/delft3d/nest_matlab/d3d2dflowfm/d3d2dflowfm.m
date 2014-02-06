@@ -76,6 +76,9 @@ mdu = d3d2dflowfm_area     (mdf,mdu,name_mdu);
 simona2mdf_message('Generating D-Flow FM Thin Dam          information','Window','D3D2DFLOWFM Message');
 mdu = d3d2dflowfm_thd      (mdf,mdu,name_mdu);
 
+simona2mdf_message('Generating D-Flow FM Weir              information','Window','D3D2DFLOWFM Message');
+mdu = d3d2dflowfm_weirs    (mdf,mdu,name_mdu);
+
 simona2mdf_message('Generating D-Flow FM TIMES             information','Window','D3D2DFLOWFM Message');
 mdu = d3d2dflowfm_times    (mdf,mdu,name_mdu);
 
