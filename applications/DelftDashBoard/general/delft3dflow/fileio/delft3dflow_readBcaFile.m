@@ -78,7 +78,12 @@ for i=1:10000
         else
             astronomicComponentSets(k).component{j}=v0{1};
             astronomicComponentSets(k).amplitude(j)=str2double(v0{2});
-            astronomicComponentSets(k).phase(j)=str2double(v0{3});
+            if length(v0)>2
+                astronomicComponentSets(k).phase(j)=str2double(v0{3});
+            else
+                % Only amplitude given (A0 component)
+                astronomicComponentSets(k).phase=0;
+            end
             astronomicComponentSets(k).correction(j)=0;
             astronomicComponentSets(k).amplitudeCorrection(j)=1;
             astronomicComponentSets(k).phaseCorrection(j)=0;

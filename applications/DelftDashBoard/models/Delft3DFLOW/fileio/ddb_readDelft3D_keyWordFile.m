@@ -99,6 +99,9 @@ while 1
                 end
             else
                 isf=find(str=='=');
+                if isempty(isf)
+                    break
+                end
                 keyword=str(1:isf-1);
                 keyword=strrep(keyword,' ','');
                 if lowercase
@@ -174,7 +177,11 @@ while 1
                     end
                 end
                 if inormal
+                    try
                     s.(fld)(ifld).(keyword)=val;
+                    catch
+                        shite=1
+                    end
                 end
             end
         end
