@@ -121,6 +121,8 @@ MDF.Filana= '';
 MDF.Filcor= '';
 MDF.FilbcC= '';
 MDF.FmtbcC= 'FR';
+MDF.Filbc0= '';
+MDF.Fmtbc0= 'FR';
 MDF.Rettis=  0.0000000e+000;
 MDF.Rettib=  0.0000000e+000;
 MDF.Ag    =  9.8100000e+000;
@@ -214,6 +216,7 @@ MDF.Filwt = '';
 MDF.Wndgrd= 'A';
 MDF.MNmaxw= [0 0];
 MDF.Filweb = '';
+MDF.TraFrm = '';
 
 %% lower case
 fnames=fieldnames(MDF);

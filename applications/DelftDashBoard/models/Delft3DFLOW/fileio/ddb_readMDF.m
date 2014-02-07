@@ -186,6 +186,7 @@ handles.Model(md).Input(id).bctFile=MDF.filbct;
 handles.Model(md).Input(id).bcaFile=MDF.filana;
 handles.Model(md).Input(id).corFile=MDF.filcor;
 handles.Model(md).Input(id).bcqFile=MDF.filbcq;
+handles.Model(md).Input(id).bc0File=MDF.filbc0;
 if isfield(MDF,'filbcc')
     handles.Model(md).Input(id).bccFile=MDF.filbcc;
 else
@@ -369,6 +370,22 @@ if isfield(MDF,'waveol')
     end
 end
 
+% Output details
+handles.Model(md).Input(id).SMhydr=MDF.smhydr;
+handles.Model(md).Input(id).SMderv=MDF.smderv;
+handles.Model(md).Input(id).SMproc=MDF.smproc;
+handles.Model(md).Input(id).PMhydr=MDF.pmhydr;    
+handles.Model(md).Input(id).PMderv=MDF.pmderv;       
+handles.Model(md).Input(id).PMproc=MDF.pmproc;
+handles.Model(md).Input(id).SHhydr=MDF.shhydr;      
+handles.Model(md).Input(id).SHderv=MDF.shderv;     
+handles.Model(md).Input(id).SHproc=MDF.shproc;
+handles.Model(md).Input(id).SHflux=MDF.shflux;      
+handles.Model(md).Input(id).PHhydr=MDF.phhydr;    
+handles.Model(md).Input(id).PHderv=MDF.phderv;       
+handles.Model(md).Input(id).PHproc=MDF.phproc;
+handles.Model(md).Input(id).PHflux=MDF.phflux;      
+
 %% Output
 handles.Model(md).Input(id).prHis=MDF.prhis;
 handles.Model(md).Input(id).mapStartTime=handles.Model(md).Input(id).itDate+MDF.flmap(1)/1440;
@@ -474,6 +491,10 @@ end
 
 if isfield(MDF,'tmzrad')
     handles.Model(md).Input(id).timeZoneSolarRadiation=MDF.tmzrad;
+end
+
+if isfield(MDF,'trafrm')
+    handles.Model(md).Input(id).trafrm=MDF.trafrm;
 end
 
 % Cstbnd= #yes#

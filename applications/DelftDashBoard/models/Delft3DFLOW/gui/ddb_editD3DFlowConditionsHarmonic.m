@@ -80,7 +80,7 @@ for i=1:handles.nrHarmonicComponents
 end
 data{1,1}='Mean';
 callbacks={'',@refreshPeriod,'','','',''};
-handles.GUIHandles.table=table(gcf,'create','tag','table','position',[50 120],'nrrows',8,'columntypes',cltp,'width',wdt,'data',data,'callbacks',callbacks,'includebuttons',1);
+handles.GUIHandles.table=gui_table(gcf,'create','tag','table','position',[50 120],'nrrows',8,'columntypes',cltp,'width',wdt,'data',data,'callbacks',callbacks,'includebuttons',1);
 
 switch handles.openBoundaries(handles.activeOpenBoundary).type,
     case{'Z'}
@@ -144,7 +144,7 @@ function PushOK_CallBack(hObject,eventdata)
 
 h=guidata(gcf);
 handles=getHandles;
-data=table(h.GUIHandles.table,'getdata');
+data=gui_table(h.GUIHandles.table,'getdata');
 handles.Model(md).Input(ad).harmonicComponents=[];
 % handles.activeOpenBoundary.harmonicAmpA=[];
 % handles.activeOpenBoundary.harmonicPhaseA=[];
@@ -192,7 +192,7 @@ function refreshPeriod
 
 handles=guidata(gcf);
 
-data=table(handles.GUIHandles.table,'getdata');
+data=gui_table(handles.GUIHandles.table,'getdata');
 
 nr=size(data,1);
 
@@ -209,5 +209,5 @@ for i=2:min(nr,8)
         data{i,1}='';
     end
 end
-table(handles.GUIHandles.table,'setdata',data);
+gui_table(handles.GUIHandles.table,'setdata',data);
 

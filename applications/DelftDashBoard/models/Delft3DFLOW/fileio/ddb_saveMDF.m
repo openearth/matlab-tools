@@ -243,6 +243,14 @@ if Flow.nrCor>0
     MDF.Filcor=Flow.corFile;
     MDF.Fmtcor='FR';
 end
+if Flow.nrCor>0
+    MDF.Filcor=Flow.corFile;
+    MDF.Fmtcor='FR';
+end
+if ~isempty(Flow.bc0File)
+    MDF.Filbc0=Flow.bc0File;
+    MDF.Fmtbc0= 'FR';
+end
 if incconst
     for i=1:Flow.nrOpenBoundaries
         MDF.Rettis(i)=Flow.openBoundaries(i).THLag(1);
@@ -435,20 +443,21 @@ if Flow.nrDrogues>0
     MDF.Fmtpar='FR';
 end
 
-MDF.SMhydr= 'YYYYY';
-MDF.SMderv= 'YYYYYY';
-MDF.SMproc= 'YYYYYYYYYY';
-MDF.PMhydr= 'YYYYYY';
-MDF.PMderv= 'YYY';
-MDF.PMproc= 'YYYYYYYYYY';
-MDF.SHhydr= 'YYYY';
-MDF.SHderv= 'YYYYY';
-MDF.SHproc= 'YYYYYYYYYY';
-MDF.SHflux= 'YYYY';
-MDF.PHhydr= 'YYYYYY';
-MDF.PHderv= 'YYY';
-MDF.PHproc= 'YYYYYYYYYY';
-MDF.PHflux= 'YYYY';
+MDF.SMhydr=Flow.SMhydr; 
+MDF.SMderv=Flow.SMderv; 
+MDF.SMproc=Flow.SMproc; 
+MDF.PMhydr=Flow.PMhydr; 
+MDF.PMderv=Flow.PMderv; 
+MDF.PMproc=Flow.PMproc; 
+MDF.SHhydr=Flow.SHhydr; 
+MDF.SHderv=Flow.SHderv; 
+MDF.SHproc=Flow.SHproc; 
+MDF.SHflux=Flow.SHflux; 
+MDF.PHhydr=Flow.PHhydr; 
+MDF.PHderv=Flow.PHderv; 
+MDF.PHproc=Flow.PHproc; 
+MDF.PHflux=Flow.PHflux; 
+
 if Flow.onlineVisualisation
     MDF.Online='Y';
 else
@@ -543,6 +552,10 @@ end
 
 if Flow.timeZoneSolarRadiation~=0
     MDF.TmZRad=Flow.timeZoneSolarRadiation;
+end
+
+if ~isempty(Flow.trafrm)
+    MDF.TraFrm=Flow.trafrm;
 end
 
 %% Now save everything to mdf file

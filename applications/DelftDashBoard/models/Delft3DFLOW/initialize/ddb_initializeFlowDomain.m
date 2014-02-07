@@ -231,6 +231,7 @@ handles.Model(md).Input(id).bctFile='';
 handles.Model(md).Input(id).bcqFile='';
 handles.Model(md).Input(id).bccFile='';
 handles.Model(md).Input(id).bcaFile='';
+handles.Model(md).Input(id).bc0File='';
 handles.Model(md).Input(id).corFile='';
 handles.Model(md).Input(id).obsFile='';
 handles.Model(md).Input(id).crsFile='';
@@ -321,6 +322,21 @@ handles.Model(md).Input(id).onlineCoupling=0;
 handles.Model(md).Input(id).fourierAnalysis=0;
 handles.Model(md).Input(id).airOut=0;
 handles.Model(md).Input(id).heatOut=0;
+
+handles.Model(md).Input(id).SMhydr='#YYYYY#';
+handles.Model(md).Input(id).SMderv='#YYYYYY#';
+handles.Model(md).Input(id).SMproc='#YYYYYYYYYY#';
+handles.Model(md).Input(id).PMhydr='#YYYYYY#';    
+handles.Model(md).Input(id).PMderv='#YYY#';       
+handles.Model(md).Input(id).PMproc='#YYYYYYYYYY#';
+handles.Model(md).Input(id).SHhydr='#YYYY#';      
+handles.Model(md).Input(id).SHderv='#YYYYY#';     
+handles.Model(md).Input(id).SHproc='#YYYYYYYYYY#';
+handles.Model(md).Input(id).SHflux='#YYYY#';      
+handles.Model(md).Input(id).PHhydr='#YYYYYY#';    
+handles.Model(md).Input(id).PHderv='#YYY#';       
+handles.Model(md).Input(id).PHproc='#YYYYYYYYYY#';
+handles.Model(md).Input(id).PHflux='#YYYY#';      
 
 handles.Model(md).Input(id).salinity.include=0;
 handles.Model(md).Input(id).temperature.include=0;
@@ -459,6 +475,7 @@ for ii=1:5
     handles.Model(md).Input(id).sediment(ii).type='non-cohesive';
     handles=ddb_initializeSediment(handles,id,ii);
 end
+handles.Model(md).Input(id).trafrm='';
 
 %% Roller Model
 handles.Model(md).Input(id).roller.snellius=0;
