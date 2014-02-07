@@ -28,53 +28,61 @@
 clc;clear all;fclose all;tic;profile on
 profile clear
 
-root = 'x:\D'; % VMware
-root = 'D:\';
+root    = 'x:\D'; % VMware
+root    = 'D:\';
+basedir = ['p:\1209005-eutrotracks\helpdeskwater_delivery_2013\'];
+basedir = [root,'\P\1209005-eutrotracks\helpdeskwater_delivery_2013\'];
 
 E = nc2struct([root,'\opendap.deltares.nl\thredds\dodsC\opendap\rijksoverheid\eez\Exclusieve_Economische_Zone_maart2012.nc']);
 L = nc2struct([root,'\opendap.deltares.nl\thredds\dodsC\opendap\deltares\landboundaries\northsea.nc']);
 %E = nc2struct(['p:\1209005-eutrotracks\ldb\eez\Exclusieve_Economische_Zone_maart2012.nc']);
 %L = nc2struct(['p:\1209005-eutrotracks\ldb\landboundaries\northsea.nc']);
 
-basedir   = ['P:\1209005-eutrotracks\'];
-basedir   = [root,'\P\1209005-eutrotracks'];
-
 OPT.cache = 1; % donar.open() cache
 OPT.read  = 1;
 OPT.plot  = 1;
-OPT.case  = 'ferry'; %'ferry';
 OPT.pause = 0;
 
-switch OPT.case
+dir.raw   = 'raw';
+dir.nc    = 'nc';
+dir.png   = 'png';
+dir.fig   = 'fig';
+
+OPT.sensor.code  = 'ctd'; %'ferry';%'meetv'
+
+switch OPT.sensor.code
 
 % dec 2013 delivery: unzipped 'zip2 to folders below, sorting into ctd/ferry/meetv
 
 case 'ctd',
-    diafiles  = {'raw2\ctd\ctd_1.dia',... % 02-Jun-1999 02:51:33 - 03:03:19: 1 profile  = 2 dia blocks
-                 'raw2\ctd\ctd_2.dia',...
-                 'raw2\ctd\ctd_3.dia',...
-                 'raw2\ctd\ctd_4.dia',...
-                 'raw2\ctd\ctd_5.dia',...
-                 'raw2\ctd\ctd_6.dia',...
-                 'raw2\ctd\ctd_7.dia',...
-                 'raw2\ctd\ctd_8.dia'}; 
+    diafiles  = {'raw\ctd\ctd_1.dia',... % 02-Jun-1999 02:51:33 - 03:03:19: 1 profile  = 2 dia blocks
+                 'raw\ctd\ctd_2.dia',...
+                 'raw\ctd\ctd_3.dia',...
+                 'raw\ctd\ctd_4.dia',...
+                 'raw\ctd\ctd_5.dia',...
+                 'raw\ctd\ctd_6.dia',...
+                 'raw\ctd\ctd_7.dia',...
+                 'raw\ctd\ctd_8.dia'}; 
     type = [1 1 1 1 1 1 1 1]; % 1=CTD profiles, 2=2Dtrajectory (fixed Z), 3=3Dtrajectory (undulating z)
+    OPT.sensor.label = 'ctd';    
 case 'ferry',
-    diafiles  = {'raw2\ferry\ferry_4.dia',... % 02-Jun-1999 02:51:33 - 03:03:19: 1 profile  = 2 dia blocks
-                 'raw2\ferry\ferry_5.dia',...
-                 'raw2\ferry\ferry_6.dia',...
-                 'raw2\ferry\ferry_7.dia',...
-                 'raw2\ferry\ferry_8.dia'}; 
+    diafiles  = {'raw\ferry\ferry_4.dia',... % 02-Jun-1999 02:51:33 - 03:03:19: 1 profile  = 2 dia blocks
+                 'raw\ferry\ferry_5.dia',...
+             ... 'raw\ferry\ferry_6.dia',... % corrupt
+                 'raw\ferry\ferry_7.dia',...
+                 'raw\ferry\ferry_8.dia'}; 
     type = [2 2 2 2 2]; % 1=CTD profiles, 2=2Dtrajectory (fixed Z), 3=3Dtrajectory (undulating z)
-case 'meetv',
-    diafiles  = {'raw2\meetv\meetv_1.dia',... % 02-Jun-1999 02:51:33 - 03:03:19: 1 profile  = 2 dia blocks
-                 'raw2\meetv\meetv_2.dia',...
-                 'raw2\meetv\meetv_3.dia',...
-                 'raw2\meetv\meetv_4.dia',...
-                 'raw2\meetv\meetv_5.dia',...
-                 'raw2\meetv\meetv_6.dia',...
-                 'raw2\meetv\meetv_7.dia'}; 
+    OPT.sensor.label = 'ferrybox';
+case 'meetv', % issue with z: cm and mm
+    diafiles  = {'raw\meetv\meetv_1.dia',... % 02-Jun-1999 02:51:33 - 03:03:19: 1 profile  = 2 dia blocks
+                 'raw\meetv\meetv_2.dia',...
+                 'raw\meetv\meetv_3.dia',...
+                 'raw\meetv\meetv_4.dia',...
+                 'raw\meetv\meetv_5.dia',...
+                 'raw\meetv\meetv_6.dia',...
+                 'raw\meetv\meetv_7.dia'}; 
     type = [3 3 3 3 3 3 3]; % 1=CTD profiles, 2=2Dtrajectory (fixed Z), 3=3Dtrajectory (undulating z)
+    OPT.sensor.label = 'scanfish';
 otherwise
 end
 
@@ -89,7 +97,6 @@ for ifile = 1:length(diafiles);
 
   if OPT.read
      ncolumn = 6; % dia syntax
-    %for ivar = find(strcmp({File.Variables.standard_name},'sea_water_salinity')) %
      for ivar = 1:length(File.Variables);
     
         [D,M0] = donar.read(File,ivar,ncolumn);
@@ -107,18 +114,15 @@ for ifile = 1:length(diafiles);
          close all
          if OPT.plot % overview
              
-            file.png = strrep(diafile,'.dia',['_',M.data.deltares_name,'_ctd.png']);
+            file.png = [basedir,filesep,dir.raw,filesep,filename(fiafile),'_',M.data.deltares_name,'.png'];
 
             close all % to avoid memory crash
             donar.ctd_overview_plot(S,M,E,L)
             print2a4(file.png,'p','w',200,'o')
             for ist=1:length(S.station_lon)
             
-             file.nc  = strrep(diafile,'.dia',['_',M.data.deltares_name,'_ctd_',num2str(ist,'%0.3d'),'.nc' ]);
-             file.png = strrep(diafile,'.dia',['_',M.data.deltares_name,'_ctd_',num2str(ist,'%0.3d'),'.png' ]);
-             
-             file.nc  = strrep(file.nc ,'raw2','nc2');
-             file.png = strrep(file.png,'raw2','png2');
+             file.nc  = [basedir,filesep,dir.nc ,filesep,OPT.sensor.code,filesep,filename(fiafile),'_',M.data.deltares_name,'_',num2str(ist,'%0.3d'),'.nc' ];
+             file.png = [basedir,filesep,dir.png,filesep,OPT.sensor.code,filesep,,'_',M.data.deltares_name,'_',num2str(ist,'%0.3d'),'.png'];
 
              disp(['processing ctd ',num2str(ist),'/',num2str(length(S.station_lon))])
              ind = (S.station_id==ist);
@@ -140,16 +144,16 @@ for ifile = 1:length(diafiles);
              end
             end
          end
-        elseif type(ifile)==2
+        elseif type(ifile)==2 | type(ifile)==3
         
-            file.nc  = strrep(diafile,'.dia',['_',M.data.deltares_name,'_ferry.nc' ]);
-            file.png = strrep(diafile,'.dia',['_',M.data.deltares_name,'_ferry.png']);
-            file.fig = strrep(diafile,'.dia',['_',M.data.deltares_name,'_ferry.fig']);
+            file.nc  = [basedir,filesep,dir.nc ,filesep,OPT.sensor.code,filesep,filename(fiafile),'_',M.data.deltares_name,'.nc' ];
+            file.png = [basedir,filesep,dir.png,filesep,OPT.sensor.code,filesep,filename(fiafile),'_',M.data.deltares_name,'.nc' ];
+            file.fig = [basedir,filesep,dir.fig,filesep,OPT.sensor.code,filesep,filename(fiafile),'_',M.data.deltares_name,'.nc' ];
             
-            file.nc  = strrep(file.nc ,'raw2','nc2' );
-            file.png = strrep(file.png,'raw2','png2');
-            file.fig = strrep(file.fig,'raw2','fig2');
-            
+            if all(type==2) % FerryBox: remove error values
+               S.z(~(S.z==300))=nan; 
+            end
+
             donar.trajectory2nc(file.nc,S,M)
            %[S2,M2] =  nc2struct(strrep(diafile,'.dia',['_',M.data.deltares_name,'_ferrybox.nc' ]),'rename',{{M.data.deltares_name},{'data'}});
             if OPT.plot
@@ -158,15 +162,13 @@ for ifile = 1:length(diafiles);
             print2screensizeoverwrite(file.png)
             saveas(gcf,file.fig)
             end           
-        elseif type(ifile)==3
-           % TO DO
         end
         
         if OPT.pause
            pausedisp
         end
         
-     end % ivar
+     end % variables
      
   end % read
   

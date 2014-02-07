@@ -1301,7 +1301,7 @@ wnsnum;wnsoms;public;parcod;orgcod;sgkcod;cpmcod;hdhcod;domein;ehdcod;standard_n
 1920;Angle in graad with respect to optimal channel direction in surface/sediment;N;HOEK;NVT;NVT;40;RAAIRTG;F;graad;;;;;;
 1921;Number in surface/sediment;N;AANTL;NVT;NVT;40;NVT;I;DIMSLS;;;;;;
 1925;Standard deviation;N;SD;NVT;NVT;-99;NVT;F;DIMSLS;;;;;;
-1926;Irradiation in uE in surface water;N;INSLG;NVT;NVT;10;NVT;E;uE;downwelling_radiance_in_sea_water;water_r;;;;
+1926;Irradiation in uE in surface water;N;INSLG;NVT;NVT;10;NVT;E;uE;downwelling_radiance_in_sea_water;water_radiance;;;;
 1931;Streefvoetmaat in cm in surface water;N;STREEFVMT;NVT;NVT;10;NVT;I;cm;;;;;;
 1949;Sum pcbnr 28,52,101,118,138,153,180 (7 of ballschmiter) in ug/kg dry weight in surface/sediment;N;s_PCB;NVT;NVT;40;dg;E;ug/kg;;;;;;
 1951;Mineral oil in mg/kg diameter < 63 um dry weight in surface/sediment;N;MINRLOLE;NVT;DUK63;40;dg;E;mg/kg;;;;;;

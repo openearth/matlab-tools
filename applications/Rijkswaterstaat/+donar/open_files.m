@@ -1,9 +1,12 @@
-function Files = open_files(diafiles,varargin)
+function [Files,File] = open_files(diafiles,varargin)
 %open_files  open and scan multiple donar files
 %
 % Files = open_files(diafiles) where diafiles
 % is a cellstr array. For documention refer to 
-% donar.open_file()
+% donar.open_file().
+%
+% [~,File] = open_files(diafiles) returns also array
+% of donar.open_file objects in File(:)
 %
 %See also: open_file, read, disp 
 

@@ -79,7 +79,7 @@ for iwns=1:length(WNS)
     if iwns==1
         V(iwns).hdr = [];
     end
-    % Copy unique values from headers, and if not unque, 
+    % Copy unique values from headers, and if not unique, 
     % simply copy all values. TYD and BGS do not have to be unique.
     iblk0 = block_index(1);
     unique_meta_data = true;
@@ -92,11 +92,12 @@ for iwns=1:length(WNS)
             fld_is_unique = false;
          end % if
        end % iblk
-       if strcmpi(fld,'TYD') | strcmpi(fld,'BGS')
-           V(iwns).hdr.(fld) =  [];
-       elseif fld_is_unique
+      %if strcmpi(fld,'TYD') | strcmpi(fld,'BGS')
+      %    V(iwns).hdr.(fld) =  [];
+      %else
+       if fld_is_unique
            V(iwns).hdr.(fld) =  hdr(block_index(1)).(fld);
-       else
+       else % incl: strcmpi(fld,'TYD') | strcmpi(fld,'BGS')
            V(iwns).hdr.(fld) = {hdr(block_index   ).(fld)};
        end
     end % ifld
@@ -110,7 +111,7 @@ for iwns=1:length(WNS)
     ] = donar.resolve_wns(WNS{iwns});
     V(iwns).sdn_parameter_name = P01('resolve',V(iwns).sdn_parameter_urn);
     
-    V(iwns).aquo_grootheid_code = donar.resolve_wns(WNS{iwns},'request','parcod');
+    V(iwns).aquo_grootheid_code = char(donar.resolve_wns(WNS{iwns},'request','parcod'));
     
    [V(iwns).long_units,...
     V(iwns).units,...
