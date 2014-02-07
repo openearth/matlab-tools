@@ -1,6 +1,6 @@
 function obs=ddb_Delft3DWAVE_readObstaclePolylineFile(obs,filename)
 
-info = tekal('open',filename);
+info = tekal('open',filename,'loaddata');
 
 nobs=length(obs);
 
