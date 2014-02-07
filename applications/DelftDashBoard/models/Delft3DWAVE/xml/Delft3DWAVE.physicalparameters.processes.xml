@@ -193,7 +193,6 @@
     </dependency>
   </element>
   <element>
-    <tag>editcoefficientjonswap</tag>
     <style>edit</style>
     <position>480 35 50 20</position>
     <text>Coefficient : </text>
@@ -215,13 +214,12 @@
       <checkfor>all</checkfor>
       <check>
         <variable>handles.Model(md).Input.bedfriction</variable>
-        <value>1</value>
-        <operator>jonswap</operator>
+        <value>jonswap</value>
+        <operator>eq</operator>
       </check>
     </dependency>
   </element>
   <element>
-    <tag>editcoefficientjonswap</tag>
     <style>edit</style>
     <position>480 35 50 20</position>
     <text>Coefficient : </text>
@@ -243,13 +241,12 @@
       <checkfor>all</checkfor>
       <check>
         <variable>handles.Model(md).Input.bedfriction</variable>
-        <value>1</value>
-        <operator>collins</operator>
+        <value>collins</value>
+        <operator>eq</operator>
       </check>
     </dependency>
   </element>
   <element>
-    <tag>editcoefficientjonswap</tag>
     <style>edit</style>
     <position>480 35 50 20</position>
     <text>Coefficient : </text>
@@ -271,8 +268,8 @@
       <checkfor>all</checkfor>
       <check>
         <variable>handles.Model(md).Input.bedfriction</variable>
-        <value>1</value>
-        <operator>madsen</operator>
+        <value>madsen</value>
+        <operator>eq</operator>
       </check>
     </dependency>
   </element>

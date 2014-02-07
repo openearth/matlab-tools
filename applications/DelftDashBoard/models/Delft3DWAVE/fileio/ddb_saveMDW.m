@@ -225,7 +225,7 @@ for i=1:ndomains
     MDW.Domain(i).FlowWind.value       = wave.domains(i).flowwind;
     MDW.Domain(i).FlowWind.type        = 'integer';
     MDW.Domain(i).Output.value         = wave.domains(i).output;
-    MDW.Domain(i).Output.type          = 'integer';
+    MDW.Domain(i).Output.type          = 'boolean';
     % TODO vegetation
 end
 

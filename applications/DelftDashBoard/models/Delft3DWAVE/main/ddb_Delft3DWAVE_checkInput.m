@@ -58,7 +58,7 @@ end
 
 %% Bathymetry
 for ii=1:inp.nrgrids
-    if isempty(inp.domains(ii).bedlevelgrid)
+    if isempty(inp.domains(ii).bedlevel)
         ddb_giveWarning('text',['No bathymetry specified for domain ' inp.domains(ii).gridname '!']);
     end
 end

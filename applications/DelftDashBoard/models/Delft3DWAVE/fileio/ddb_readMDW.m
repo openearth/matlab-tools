@@ -25,6 +25,14 @@ fldnames=fieldnames(MDW.processes);
 for ii=1:length(fldnames)
     handles.Model(md).Input.(fldnames{ii})=MDW.processes.(fldnames{ii});
 end
+switch lower(handles.Model(md).Input.bedfriction)
+    case{'jonswap'}
+        handles.Model(md).Input.bedfriccoefjonswap=handles.Model(md).Input.bedfriccoef;
+    case{'collins'}
+        handles.Model(md).Input.bedfriccoefcollins=handles.Model(md).Input.bedfriccoef;
+    case{'madsen et al.'}
+        handles.Model(md).Input.bedfriccoefmadsen=handles.Model(md).Input.bedfriccoef;
+end
 
 %% Numerics
 fldnames=fieldnames(MDW.numerics);
