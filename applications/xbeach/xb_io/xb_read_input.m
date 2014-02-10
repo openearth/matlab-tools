@@ -115,7 +115,14 @@ if OPT.read_paths
                 switch xb.data(i).name
                     case {'bcfile' 'ezsfile'}
                         % read waves
+                        % keep original bcfile-name, later fix in
+                        % xb_read_waves.m?
+                        filtype = xb_get_wavefiletype(fpath);
                         value = xb_read_waves(fpath);
+                        if strcmp(filtype,'filelist')
+                           value.files = value.file;
+                           value.file  = fpath;
+                        end
                     case {'zs0file'}
                         % read tide
                         value = xb_read_tide(fpath);
