@@ -13,8 +13,8 @@ function varargout = ncwrite_trajectory(ncfile,varargin)
 %
 %See also: netcdf, ncwriteschema, ncwrite, SNCTOOLS,
 %          ncwritetutorial_grid_lat_lon_curvilinear
-%          ncwrite_timeseries_tutorial
-%          ncwrite_profile_tutorial
+%          ncwrite_timeseries, ncwrite_profile
+%          ncwrite_trajectory_tutorial
 
 %%  --------------------------------------------------------------------
 %   Copyright (C) 2013 Deltares 4 Rijkswaterstaat (SPA Eurotracks)

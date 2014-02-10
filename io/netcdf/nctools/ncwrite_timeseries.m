@@ -12,9 +12,9 @@ function varargout = ncwrite_timeseries(ncfile,varargin)
 %  SDN:  http://www.seadatanet.org/Standards-Software/Data-Transport-Formats
 %
 %See also: netcdf, ncwriteschema, ncwrite, SNCTOOLS,
-%          ncwritetutorial_grid
-%          ncwrite_profile_tutorial
-%          ncwrite_trajectory_tutorial
+%          ncwritetutorial_grid_lat_lon_curvilinear
+%          ncwrite_trajectory, ncwrite_profile
+%          ncwrite_timeseries_tutorial
 
 %%  --------------------------------------------------------------------
 %   Copyright (C) 2013 Deltares 4 Rijkswaterstaat (SPA Eurotracks)

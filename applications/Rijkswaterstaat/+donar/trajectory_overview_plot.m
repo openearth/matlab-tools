@@ -1,5 +1,5 @@
 function trajectory_overview_plot(S,M,E,L,varargin)
-%trajectory_overview_plot
+%trajectory_overview_plot plot maps and timeseries of trajectory
 %
 %  trajectory_overview_plot(S,M,E,L,titletxt,<keyword,value>)
 %
