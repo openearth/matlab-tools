@@ -1,7 +1,8 @@
 function varargout = disp(File,varargin)
 %DISP  displays overview of contents of DONAR (blocks + variables)
 %
-% File = disp(diafile) displays overview of File Variables
+% disp(Filex) displays overview of all variables in Filex for 
+% File1 = donar.open_file() and [File2,File3]=donar.open_files.
 %
 % Example:
 % 
@@ -43,39 +44,52 @@ if nargin==0
 end
 OPT = setproperty(OPT,varargin);
 
-V = File.Variables;
-%%
-if ischar(File.Filename)
-   File.Filename = cellstr(File.Filename);
+if length(File) > 1
+
+  for ifile=1:length(File)
+     disp(sprintf('======+ File % d ===============================>',ifile))
+     donar.disp(File(ifile))
+  end
+
+else
+
+   V = File.Variables;
+   
+   %%
+   if ischar(File.Filename)
+      File.Filename = cellstr(File.Filename);
+   end
+   
+       disp(['------+---------------------------------------->'])
+       disp(['File #| Filename'])
+       disp(['------+---------------------------------------->'])
+   for ifile=1:length(File.Filename)
+       disp([pad(num2str(ifile,'%d'),-6,' '),'|',File.Filename{ifile}])
+   end
+       %disp(['------+---------------------------------------->'])
+       %disp([' '])
+   
+   fmt = '%5s+%5s+%7s+%7s+%8s+%8s+%65s+%16s-+-%s';
+   disp(sprintf(fmt,'-----','-----','-------','-------','--------','--------','-----------------------------------------------------------------','----------------','--------->'))
+   
+   %%
+   fmt = '%5s|%5s|%7s|%7s|%8s|%8s|%64s |%17s| %s';
+   disp(sprintf(fmt,'Var'  ,'WNS ','overall', 'overall', 'overall', 'DONAR','CF', 'P01:SDN     ', 'DONAR'))
+   disp(sprintf(fmt,'index','code','files', 'blocks', 'values', 'name','standard_name [UDunits]', '      urn        ', 'long_name [EHD]'))
+   %%
+   fmt = '%5s+%5s+%4s+%6s+%8s+%8s+%65s+%16s-+-%s';
+   disp(sprintf(fmt,'-----','-----','-------','-------','--------','--------','-----------------------------------------------------------------','----------------','--------->'))
+   %%
+   fmt = '%5d|%5s|%7d|%7d|%8d|%8s|%64s |%17s| %s';
+   
+   for i=1:length(V)
+   
+   disp(sprintf(fmt, i, V(i).WNS, length(unique(V(i).file_index)), length(V), sum(V(i).nval), V(i).hdr.PAR{1}, [V(i).standard_name,' [',V(i).units,']'], V(i).sdn_parameter_urn ,[V(i).long_name,' [',V(i).EHD,']']))
+   
+   end
+   %%
+   fmt = '%5s+%5s+%7s+%7s+%8s+%8s+%65s+%16s-+-%s';
+   disp(sprintf(fmt,'-----','-----','-------','-------','--------','--------','-----------------------------------------------------------------','----------------','--------->'))
+   
+   
 end
-
-    disp(['------+---------------------------------------->'])
-    disp(['File #| Filename'])
-    disp(['------+---------------------------------------->'])
-for ifile=1:length(File.Filename)
-    disp([pad(num2str(ifile,'%d'),-6,' '),'|',File.Filename{ifile}])
-end
-    disp(['------+---------------------------------------->'])
-    disp([' '])
-
-fmt = '%5s+%5s+%7s+%7s+%8s+%8s+%65s+%16s-+-%s';
-disp(sprintf(fmt,'-----','-----','-------','-------','--------','--------','-----------------------------------------------------------------','----------------','--------->'))
-
-%%
-fmt = '%5s|%5s|%7s|%7s|%8s|%8s|%64s |%17s| %s';
-disp(sprintf(fmt,'Var'  ,'WNS ','overall', 'overall', 'overall', 'DONAR','CF', 'P01:SDN     ', 'DONAR'))
-disp(sprintf(fmt,'index','code','files', 'blocks', 'values', 'name','standard_name [UDunits]', '      urn        ', 'long_name [EHD]'))
-%%
-fmt = '%5s+%5s+%4s+%6s+%8s+%8s+%65s+%16s-+-%s';
-disp(sprintf(fmt,'-----','-----','-------','-------','--------','--------','-----------------------------------------------------------------','----------------','--------->'))
-%%
-fmt = '%5d|%5s|%7d|%7d|%8d|%8s|%64s |%17s| %s';
-
-for i=1:length(V)
-
-disp(sprintf(fmt, i, V(i).WNS, length(unique(V(i).file_index)), length(V), sum(V(i).nval), V(i).hdr.PAR{1}, [V(i).standard_name,' [',V(i).units,']'], V(i).sdn_parameter_urn ,[V(i).long_name,' [',V(i).EHD,']']))
-
-end
-%%
-fmt = '%5s+%5s+%7s+%7s+%8s+%8s+%65s+%16s-+-%s';
-disp(sprintf(fmt,'-----','-----','-------','-------','--------','--------','-----------------------------------------------------------------','----------------','--------->'))

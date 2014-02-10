@@ -40,7 +40,8 @@ L = nc2struct([root,'\opendap.deltares.nl\thredds\dodsC\opendap\deltares\landbou
 
 OPT.cache = 1; % donar.open() cache
 OPT.read  = 1;
-OPT.plot  = 1; % way too slow, and includes failed batches
+OPT.plot  = 1; % SLOW for trajectories, set 2 for scatter plot
+OPT.nc    = 1;
 OPT.pause = 0;
 
 dir.raw   = 'raw';
@@ -48,7 +49,7 @@ dir.nc    = 'nc';
 dir.png   = 'png';
 dir.fig   = 'fig';
 
-OPT.sensor.code  = 'ctd'; %'ferry';%'meetv'
+OPT.sensor.code  = 'meetv'; %'ferry';%'meetv'
 
 switch OPT.sensor.code
 % dec 2013 delivery: unzipped to folders below, sorting into ctd;ferry;meetv
@@ -61,7 +62,7 @@ case 'ctd',
                  'raw\ctd\ctd_6.dia',...
                  'raw\ctd\ctd_7.dia',...
                  'raw\ctd\ctd_8.dia'}; 
-    type = [1 1 1 1 1 1 1 1]; %[3 3 3 3 3 3 3 3]; % 1=CTD profiles, 2=2Dtrajectory (fixed Z), 3=3Dtrajectory (undulating z)
+    type = [3 3 3 3 3 3 3 3]; %[1 1 1 1 1 1 1 1]; % 1=CTD profiles, 2=2Dtrajectory (fixed Z), 3=3Dtrajectory (undulating z)
     OPT.sensor.label = 'ctd';    
 case 'ferry',
     diafiles  = {'raw\ferry\ferry_4.dia',... % 02-Jun-1999 02:51:33 - 03:03:19: 1 profile  = 2 dia blocks
@@ -86,9 +87,15 @@ end
 
 %% open and aggregate files
   [Files,File]    = donar.open_files(cellfun(@(x)[basedir,filesep,x],diafiles,'Uniform',0),'cache',OPT.cache,'disp',1000);
-
+  
+  donar.disp(Files)
+  
 %% loop variables
-for ivar = [3:length(Files.Variables)]; % ivar=2(209) too big
+for ivar = [3:length(Files.Variables)]; % CTD ivar=2(209) too big
+    
+  if (strcmpi(OPT.sensor.code,'meetv')|strcmpi(OPT.sensor.code,'ctd')) & strcmpi(Files.Variables(ivar).WNS,'209')
+      warning('ctd and meetv sweapped for 209')
+  end
     
   disp(['Variable: ',num2str(ivar)])
 
@@ -106,12 +113,11 @@ for ivar = [3:length(Files.Variables)]; % ivar=2(209) too big
         
         %% make netCDF file per station: they are disconnected anyway:
         %  only taken when boat does not move (unlike Ferrybox)
-        %%
+
         if all(type==1)
-          close all
         
           %% plot overview   
-          file.png = [basedir,filesep,dir.png,filesep,OPT.sensor.code,filesep,OPT.sensor.label,'_',M.data.deltares_name,'.png'];
+          file.png = [basedir,filesep,dir.png,filesep,OPT.sensor.code,filesep,OPT.sensor.label,'_',M.data.deltares_name,'_overview.png'];
           close all % to avoid memory crash
           donar.ctd_overview_plot(S,M,E,L)
           print2a4(file.png,'v','t',200,'o')
@@ -120,49 +126,50 @@ for ivar = [3:length(Files.Variables)]; % ivar=2(209) too big
           %% proces per location
           for ist=1:length(S.station_lon)
             
-             file.nc  = [basedir,filesep,dir.nc ,filesep,OPT.sensor.code,filesep,OPT.sensor.label,'_',M.data.deltares_name,'_',num2str(ist,'%0.3d'),'.nc' ];
-             file.png = [basedir,filesep,dir.png,filesep,OPT.sensor.code,filesep,OPT.sensor.label,'_',M.data.deltares_name,'_',num2str(ist,'%0.3d'),'.png'];
+             file.nc  = [basedir,filesep,dir.nc ,filesep,OPT.sensor.code,filesep,OPT.sensor.label,'_',M.data.deltares_name,filesep,OPT.sensor.label,'_',M.data.deltares_name,'_',num2str(ist,'%0.3d'),'.nc' ];
+             file.png = [basedir,filesep,dir.png,filesep,OPT.sensor.code,filesep,OPT.sensor.label,'_',M.data.deltares_name,filesep,OPT.sensor.label,'_',M.data.deltares_name,'_',num2str(ist,'%0.3d'),'.png'];
 
              disp(['processing ctd ',num2str(ist),'/',num2str(length(S.station_lon))])
              ind = (S.station_id==ist);
              clear P
              P = donar.ctd_timeSeriesProfile(S,ind);
-             donar.ctd_timeSeriesProfile2nc(file.nc,P,M)
+             if OPT.nc;donar.ctd_timeSeriesProfile2nc(file.nc,P,M);end
            %[P2,M2] = nc2struct(file.nc,'rename',{{donar.resolve_wns(M.data.WNS)},{'data'}});
-             if OPT.plot % per timeseries-profile
+             if OPT.plot>0 % per timeseries-profile
                 titletxt = [num2str(S.station_n(ist)),' points over ',num2str(length(P.profile_datenum)),' profiles ',num2strll(S.station_lat(ist),S.station_lon(ist))];
-                close
+
                 close all % to avoid memory crash
-                if ivar==1
-                clf
                 donar.ctd_timeSeriesProfile_plot(P,E,L,titletxt,'colorfield','z','colorlabel','z [cm]')
                 print2a4(strrep(file.png,M.data.deltares_name,[M.data.deltares_name,'_z']),'v','t',200,'o')
-                end
+
                 clf
                 donar.ctd_timeSeriesProfile_plot(P,E,L,titletxt,'colorfield','data','colorlabel',mktex([M.data.long_name,'[',M.data.units,']']),'clims',donar.resolve_clim(M.data.WNS));
                 print2a4(file.png,'v','t',200,'o')
                 close
+
              end % plot
           end % ist
 
         elseif all(type==2) | all(type==3)
         
             file.nc  = [basedir,filesep,dir.nc ,filesep,OPT.sensor.code,filesep,OPT.sensor.label,'_',M.data.deltares_name,'.nc' ];
-            file.png = [basedir,filesep,dir.png,filesep,OPT.sensor.code,filesep,OPT.sensor.label,'_',M.data.deltares_name,'.nc' ];
-            file.fig = [basedir,filesep,dir.fig,filesep,OPT.sensor.code,filesep,OPT.sensor.label,'_',M.data.deltares_name,'.nc' ];
+            file.png = [basedir,filesep,dir.png,filesep,OPT.sensor.code,filesep,OPT.sensor.label,'_',M.data.deltares_name];
+            file.fig = [basedir,filesep,dir.fig,filesep,OPT.sensor.code,filesep,OPT.sensor.label,'_',M.data.deltares_name];
             
-            if all(type==2) % FerryBox: remove error values
+            if strcmpi(OPT.sensor.code,'ferry') & all(type==2) % FerryBox: remove error values
                S.z(~(S.z==300))=nan; 
             end
 
-            donar.trajectory2nc(file.nc,S,M);
-            
+            if OPT.nc;donar.trajectory2nc(file.nc,S,M);end
            %[S2,M2] =  nc2struct(strrep(diafile,'.dia',['_',M.data.deltares_name,'_ferrybox.nc' ]),'rename',{{M.data.deltares_name},{'data'}});
-            if OPT.plot
+            if OPT.plot>0
             close all % to avoid memory crash
-            donar.trajectory_overview_plot(S,M,E,L,mktex(diafiles{ifile}),'clims',donar.resolve_clim(M.data.WNS))
+            donar.trajectory_overview_plot(S,M,E,L,...
+                'clims',donar.resolve_clim(M.data.WNS),...
+                'titletxt',[File.Variables(ivar).hdr.OGI{2}],...
+                'scatter',OPT.plot>1)
             print2screensizeoverwrite(file.png)
-            saveas(gcf,file.fig)
+            %saveas(gcf,file.fig); % matlab is terrible at rendering scatter
             end           
         end
         
