@@ -275,7 +275,7 @@ keywords.uniform_length          = 1;
 
 if nargin == 0
     default_keywords = keywords
-    disp('Please not that the keywords ''scaling'', ''scaling_type'' & ''uniform_length'' are only used when calling quiver_thick');
+    disp('Please note that the keywords ''scaling'', ''scaling_type'' & ''uniform_length'' are only used when calling quiver_thick');
     return
 end
 
