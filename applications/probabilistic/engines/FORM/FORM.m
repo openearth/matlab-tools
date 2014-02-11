@@ -125,8 +125,7 @@ stochast = OPT.stochast;
 % input
 Nstoch = length(stochast); % number of stochastic variables
 active = ~cellfun(@isempty, {stochast.Distr}) &...
-    ~strcmp('deterministic', cellfun(@func2str, {stochast.Distr},...
-    'UniformOutput', false));
+    ~cellfun(@(f) isequal(@deterministic, f), {stochast.Distr});
 
 % define du
 [id_low id_upp] = deal(NaN(1,Nstoch));
