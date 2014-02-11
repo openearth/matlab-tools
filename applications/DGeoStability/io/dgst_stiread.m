@@ -119,7 +119,7 @@ Tp = strtrim(regexprep(str, '[- ]', '_'));
 
 function Tp = funname2type()
 S = dbstack();
-Tp = regexprep(S(2).name, '_+read$', '');
+Tp = regexprep(S(2).name, '_read$', '');
 
 function varargout = getfilename(varargin)
 persistent fname
@@ -176,11 +176,18 @@ OPT = setproperty(OPT, varargin);
 
 D = xs_empty();
 D = xs_meta(D, getfunname(), funname2type(), getfilename());
-[datastr, hstr] = regexp(str, '\d+\s+-\s+(Curve|Boundary) number\r\n', 'split', 'match');
+[datastr, hstr] = regexp(str, '\d+\s+-\s+(Curve|Boundary|PlLine|Layer) number.*?\r\n', 'split', 'match');
 format = ['%0' num2str(ceil(log10(length(hstr)))) 'i'];
 for i = 2:length(datastr)
     tmp = regexprep(datastr{i}, '^.*?numbers', '');
-    D = xs_set(D, sprintf(['%s_' format], OPT.feature, sscanf(hstr{i-1}, '%i')), sscanf(tmp, '%i'));
+    if strcmpi(OPT.feature, 'layers')
+        Ds = nameisvalue(tmp, 'skiplines', 1, 'delimiter', ' - ', 'valcol', 1, 'namecol', 2);
+        tmpsoil = regexp(tmp, '(?<=^\s+).*?(?=\r\n)', 'match'); % first line of text block
+        Ds.type = header2type(strtrim(tmpsoil{1})); % soil type
+        D = xs_set(D, sprintf(['%s_' format], OPT.feature, sscanf(hstr{i-1}, '%i')), Ds);
+    else
+        D = xs_set(D, sprintf(['%s_' format], OPT.feature, sscanf(hstr{i-1}, '%i')), sscanf(tmp, '%i'));
+    end
 end
 
 
@@ -260,8 +267,14 @@ D = xs_set(D, 'GEOMETRY_DATA', Ds);
 
 function D = PIEZO_LINES_read(str, key, D)
 Ds = xs_get(D, 'GEOMETRY_DATA');
-Ds = xs_set(Ds, key, str);
+Dss = list_read(str,...
+    'feature', 'PlLine');
+Ds = xs_set(Ds, key, Dss);
 D = xs_set(D, 'GEOMETRY_DATA', Ds);
+
+% Ds = xs_get(D, 'GEOMETRY_DATA');
+% Ds = xs_set(Ds, key, str);
+% D = xs_set(D, 'GEOMETRY_DATA', Ds);
 
 function D = PHREATIC_LINE_read(str, key, D)
 Ds = xs_get(D, 'GEOMETRY_DATA');
@@ -275,7 +288,8 @@ D = xs_set(D, 'GEOMETRY_DATA', Ds);
 
 function D = LAYERS_read(str, key, D)
 Ds = xs_get(D, 'GEOMETRY_DATA');
-Ds = xs_set(Ds, key, str);
+Dss = list_read(str, 'feature', 'layers');
+Ds = xs_set(Ds, key, Dss);
 D = xs_set(D, 'GEOMETRY_DATA', Ds);
 
 function D = LAYERLOADS_read(str, key, D)
@@ -291,7 +305,7 @@ Ds = nameisvalue(str,...
     'namecol', 2,...
     'valcol', 1,...
     'delimiter', ' : ',...
-    'regexprep', {'\s+off$', ''});
+    'regexprep', {'\s+(on|off)$', ''});
 Ds.data(1).name = 'Model';
 Ds.data(2).name = 'default_shear_strength';
 D = xs_set(D, key, Ds);
@@ -450,6 +464,10 @@ Tp = header2type(regexprep(cellstr{end}, '^[\d\s]+(?=\D)|[\(\)]', ''));
 Ds = xs_set(Ds, Tp, sscanf(cellstr{end}, '%i'));
 D = xs_set(D, key, Ds);
 
+function D = MULTIPLE_LIFT_TANGENTS_read(str, key, D)
+tmp = cellfun(@str2double, regexp(str, '\r\n', 'split'));
+D = xs_set(D, funname2type(), tmp(~isnan(tmp)));
+
 function D = EXTERNAL_WATER_LEVELS_read(str, key, D)
 cellstr = regexp(str, '\r\n', 'split');
 Ds = nameisvalue(sprintf('%s\r\n', cellstr{2:4}),...
@@ -475,7 +493,11 @@ Ds = xs_set(Ds, 'Piezo_lines', val);
 D = xs_set(D, key, Ds);
 
 function D = MODEL_FACTOR_read(str, key, D)
-D = xs_set(D, key, str);
+Ds = nameisvalue(str,...
+    'namecol', 2,...
+    'valcol', 1,...
+    'delimiter', ' = ');
+D = xs_set(D, key, Ds);
 
 function D = CALCULATION_OPTIONS_read(str, key, D)
 Ds = nameisvalue(str);

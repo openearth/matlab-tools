@@ -85,7 +85,7 @@ if ischar(varargin{1})
     % assume the first input argument to be a path or filename
     fpath = varargin{1};
     if exist(fpath, 'file') || exist(fpath, 'dir')
-        varargin(1) = [];
+        varargin = [{'path'} varargin];
     end
     OPT = setproperty(OPT, varargin);
 elseif isstruct(varargin{1})
