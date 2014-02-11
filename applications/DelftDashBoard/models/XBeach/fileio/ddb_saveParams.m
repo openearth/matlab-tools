@@ -6,7 +6,10 @@ ii = strmatch('XBeach',{handles.Model.name},'exact');
 % Go from DDB structure to XBeach structure
 ixb = 1;
 fieldNamesDDB = fieldnames(handles.Model(ii).Input);
+% xbdum = xb_read_input('d:\projects\DDB_xb\SlufterModel\params.txt');
+
 for is = 1:length(fieldNamesDDB)
+    % TO DO: If statement so only adjusted / non-default input is saved
     if isnumeric(handles.Model(ii).Input.(fieldNamesDDB{is}))
         xbs.data(ixb).name = fieldNamesDDB{is};
         xbs.data(ixb).value= handles.Model(ii).Input.(fieldNamesDDB{is});
@@ -15,15 +18,39 @@ for is = 1:length(fieldNamesDDB)
         xbs.data(ixb).name = fieldNamesDDB{is};
         xbs.data(ixb).value= handles.Model(ii).Input.(fieldNamesDDB{is});
         ixb = ixb + 1; 
-        % % % % % CONTINUE HERE % % % % % 
-    elseif isstruct(xbs.data(is).value)
-% % % % %         [pathstr,fname,ext] = fileparts(xbs.data(is).value.file);
-% % % % %         ddb_xbmi.(xbs.data(is).name) = [fname ext]; % get name of file 
-%     else
-%         warning(['Parameter "', xbs.data(is).name, '" is not included in DDB (yet)'])
+    elseif isstruct(handles.Model(ii).Input.(fieldNamesDDB{is}))
+        xbs.data(ixb).name = fieldNamesDDB{is};
+        if strcmp(fieldNamesDDB{is},'zs0file')
+            xbs.data(ixb).value.data(1).name = 'time';
+            xbs.data(ixb).value.data(1).value= handles.Model(ii).Input.(fieldNamesDDB{is}).time;
+            xbs.data(ixb).value.data(2).name = 'tide';
+            xbs.data(ixb).value.data(2).value= handles.Model(ii).Input.(fieldNamesDDB{is}).data;
+        elseif strcmp(fieldNamesDDB{is},'bcfile')
+            xbw = xs_empty();
+            wavefnames = fieldnames(handles.Model(ii).Input.(fieldNamesDDB{is}));
+            for jf = 1:length(wavefnames)
+                xbw = xs_set(xbw, wavefnames{jf},...
+                handles.Model(ii).Input.(fieldNamesDDB{is}).(wavefnames{jf}));
+            end
+            xbw = xs_consolidate(xbw);
+            
+            % add meta data (file names etc.)
+            [fdir fname ext]=fileparts(handles.Model(ii).Input.ParamsFile);
+            [Hm0] = xs_get(xbw, 'Hm0');
+            filenames{1} = [fdir 'filelist.txt'];
+            for jf = 1:length(Hm0)
+                filenames{jf+1} = [fdir 'jonswap_' num2str(jf)];
+            end            
+            xbw = xs_meta(xbw, 'Delft Dashboard', 'waves', filenames);
+            xbs.data(ixb).value = xbw;     
+        else
+            
+            disp(fieldNamesDDB{is})
+            error()
+         end
     end
 end
-
+%% CONTINUE HERE AVR
 % Replace default values with model input
 fieldNames = fieldnames(ddb_xbmi);
 for i = 1:size(fieldNames,1)

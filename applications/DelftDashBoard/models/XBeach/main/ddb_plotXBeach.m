@@ -23,7 +23,13 @@ for id=n1:n2
 
    ddb_plotXBeachBathymetry(handles,id);
    ddb_plotXBeachGrid(handles,id);
+   
+   % % TO DO: ZOOM TO MODEL DOMAIN
     
+   % TO DO: 
+   % - PLOT OFFSHORE BOUNDARY + ORIGIN OF MODEL
+   % - PLOT OBSERVATION POINTS
+   
 %     if handles.Model(md).Input(id).NrObservationPoints>0
 %         ddb_plotFlowAttributes(handles,'ObservationPoints',opt,id,0,1);
 %     end
