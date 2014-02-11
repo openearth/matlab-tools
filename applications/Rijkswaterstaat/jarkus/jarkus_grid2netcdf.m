@@ -16,7 +16,8 @@ function jarkus_grid2netcdf(filename, grid, varargin)
 OPT = struct(...
     'username', getenv('USERNAME'),...
     'historyatt', '$HeadURL$ $Id$',...
-    'origins', 1:5);
+    'origins', 1:5,...
+    'processing_level', 'preliminary');
 
 OPT = setproperty(OPT, varargin);
 
@@ -71,7 +72,7 @@ STRINGSIZE = 100;
     nc_attput( filename, nc_global, 'geospatial_vertical_resolution', .01)
     nc_attput( filename, nc_global, 'geospatial_vertical_positive', 'up')
     % Other attributes
-	nc_attput( filename, nc_global, 'processing_level', 'preliminary');
+	nc_attput( filename, nc_global, 'processing_level', OPT.processing_level);
 	nc_attput( filename, nc_global, 'license',[sprintf('These data can be used freely for research purposes provided that the following source is acknowledged: %s. ', 'RIJKSWATERSTAAT')...
                 'disclaimer: This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.']);
     nc_attput( filename, nc_global, 'cdm_data_type', 'grid');
