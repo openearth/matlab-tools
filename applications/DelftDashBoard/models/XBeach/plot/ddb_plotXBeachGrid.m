@@ -1,10 +1,10 @@
-function ddb_plotXBeachGrid(handles,opt,id);
+function ddb_plotXBeachGrid(handles,id);
 
-ii=strmatch('XBeach',{handles.Model.Name},'exact');
+ii=strmatch('XBeach',{handles.Model.name},'exact');
 
-switch lower(opt)
-
-    case{'plot'}
+% switch lower(opt)
+% 
+%     case{'plot'}
 
         h=findall(gca,'Tag','XBeachGrid','UserData',id);
         delete(h);
@@ -27,19 +27,19 @@ switch lower(opt)
         set(grd,'HitTest','off');
         set(grd,'Tag','XBeachGrid','UserData',id);
 
-    case{'delete'}
-        h=findall(gca,'Tag','XBeachGrid','UserData',id);
-        delete(h);
-
-    case{'activate'}
-        h=findall(gca,'Tag','XBeachGrid','UserData',id);
-        if ~isempty(h)
-            set(h,'Color',[0 0 0]);
-        end
-
-    case{'deactivate'}
-        h=findall(gca,'Tag','XBeachGrid','UserData',id);
-        if ~isempty(h)
-            set(h,'Color',[0.7 0.7 0.7]);
-        end
-end
+%     case{'delete'}
+%         h=findall(gca,'Tag','XBeachGrid','UserData',id);
+%         delete(h);
+% 
+%     case{'activate'}
+%         h=findall(gca,'Tag','XBeachGrid','UserData',id);
+%         if ~isempty(h)
+%             set(h,'Color',[0 0 0]);
+%         end
+% 
+%     case{'deactivate'}
+%         h=findall(gca,'Tag','XBeachGrid','UserData',id);
+%         if ~isempty(h)
+%             set(h,'Color',[0.7 0.7 0.7]);
+%         end
+% end

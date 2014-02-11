@@ -441,8 +441,8 @@ fprintf(fid,'%s\n','');
 % Initial commands (are all these necessary?)
 fprintf(fid,'%s\n','ii=strmatch(''XBeach'',{handles.Model.name},''exact'');');
 fprintf(fid,'%s\n','handles.Model(ii).Input(id).Description={''''};');
-fprintf(fid,'%s\n','handles.Model(ii).Input(id).Runid=runid;');
-fprintf(fid,'%s\n','handles.Model(ii).Input(id).AttName=handles.Model(ii).Input(id).Runid;');
+fprintf(fid,'%s\n','handles.Model(ii).Input(id).runid=runid;');
+fprintf(fid,'%s\n','handles.Model(ii).Input(id).AttName=handles.Model(ii).Input(id).runid;');
 fprintf(fid,'%s\n','handles.Model(ii).Input(id).ItDate=floor(now);');
 fprintf(fid,'%s\n','handles.Model(ii).Input(id).StartTime=floor(now);');
 fprintf(fid,'%s\n','handles.Model(ii).Input(id).StopTime=floor(now)+2;');

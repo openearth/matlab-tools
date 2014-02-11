@@ -10,8 +10,8 @@ par=getdefaultpars;
 
 ii=strmatch('XBeach',{handles.Model.name},'exact');
 handles.Model(ii).Input(id).Description={''};
-handles.Model(ii).Input(id).Runid=runid;
-handles.Model(ii).Input(id).AttName=handles.Model(ii).Input(id).Runid;
+handles.Model(ii).Input(id).runid=runid;
+handles.Model(ii).Input(id).AttName=handles.Model(ii).Input(id).runid;
 handles.Model(ii).Input(id).ItDate=floor(now);
 handles.Model(ii).Input(id).StartTime=floor(now);
 handles.Model(ii).Input(id).StopTime=floor(now)+2;

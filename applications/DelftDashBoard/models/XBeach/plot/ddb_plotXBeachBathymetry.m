@@ -1,10 +1,10 @@
-function ddb_plotXBeachBathymetry(handles,opt,id)
+function ddb_plotXBeachBathymetry(handles,id)
 
 ii=strmatch('XBeach',{handles.Model.name},'exact');
 
-switch lower(opt)
+% switch lower(opt)
 
-    case{'plot'}
+%     case{'plot'}
 
         h=findall(gca,'Tag','XBeachBathymetry','UserData',id);
         delete(h);
@@ -13,7 +13,8 @@ switch lower(opt)
             clims=get(gca,'CLim');
             zmin=clims(1);
             zmax=clims(2);
-            colormap(handles.GUIData.ColorMaps.Earth);
+%             colormap(handles.GUIData.ColorMaps.Earth);
+            colormap(jet)
             caxis([zmin zmax]);
             x=handles.Model(ii).Input(id).GridX;
             y=handles.Model(ii).Input(id).GridY;
@@ -35,21 +36,21 @@ switch lower(opt)
             set(bathy,'ZData',z0);
         end
 
-    case{'delete'}
-        h=findall(gca,'Tag','XBeachBathymetry','UserData',id);
-        delete(h);
+%     case{'delete'}
+%         h=findall(gca,'Tag','XBeachBathymetry','UserData',id);
+%         delete(h);
+% 
+%     case{'activate'}
+%         h=findall(gca,'Tag','XBeachBathymetry','UserData',id);
+%         if ~isempty(h)
+%             set(h,'Visible','on');
+%         end
+% 
+%     case{'deactivate'}
+%         h=findall(gca,'Tag','XBeachBathymetry','UserData',id);
+%         if ~isempty(h)
+%             set(h,'Visible','off');
+%         end
 
-    case{'activate'}
-        h=findall(gca,'Tag','XBeachBathymetry','UserData',id);
-        if ~isempty(h)
-            set(h,'Visible','on');
-        end
-
-    case{'deactivate'}
-        h=findall(gca,'Tag','XBeachBathymetry','UserData',id);
-        if ~isempty(h)
-            set(h,'Visible','off');
-        end
-
-end
+% end
 

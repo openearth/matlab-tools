@@ -4,8 +4,13 @@ handles=getHandles;
 sz=get(gcf,'Position');
 
 strings={'Toolbox','Description','Domain','Time Frame','Phys. Params','Waves','Flow','Sediment'};
+
 callbacks={@ddb_selectToolbox,@ddb_editXBeachDescription,@ddb_editXBeachDomain,@ddb_editXBeachTimeFrame,@ddb_editXBeachPhysParams, ...
     @ddb_editXBeachWaves,@ddb_editXBeachFlow,@ddb_editXBeachSediment};
+
+% Take out XBeachDescription (AvR)
+% callbacks={@ddb_selectToolbox,@ddb_editXBeachDomain,@ddb_editXBeachTimeFrame,@ddb_editXBeachPhysParams, ...
+%     @ddb_editXBeachWaves,@ddb_editXBeachFlow,@ddb_editXBeachSediment};
 width=[60 70 60 70 80 60 60 60];
 tabpanel(gcf,'tabpanel','change','position',[10 10 sz(3)-20 sz(4)-40],'strings',strings,'callbacks',callbacks);
 
