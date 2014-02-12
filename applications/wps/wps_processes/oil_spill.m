@@ -8,4 +8,4 @@ function [data] = oil_spill(track, volume)
 % volume = double
 %
 % output:
-% data = file.nc
+% data = application/netcdf

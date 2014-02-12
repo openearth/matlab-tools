@@ -5,17 +5,21 @@ P = mfilename('fullpath');
 [dirname,name,ext] = fileparts(P);
 
 % Get processes from directory
-D = dir(fullfile(dirname,'..','processes'));
+wpsdir = fullfile(dirname,'..','wps_processes'); 
+D = dir(wpsdir);
 
 % Remove '.' and '..'
 D(strmatch('.',{D.name},'exact'))=[];
 D(strmatch('..',{D.name},'exact'))=[];
 
 % Get metadata from processes
+i = 1
 for ii=1:length(D)
     [dirname2,name2,ext2] = fileparts(D(ii).name);
     if strcmp(ext2,'.m')
-        WPS(ii) = parse_oet_wps(fullfile(dirname,'..','processes',D(ii).name));
+        wps_i = parse_oet_wps(fullfile(wpsdir,D(ii).name));
+        WPS(i) = wps_i;
+        i = i + 1;
     end
 end
 

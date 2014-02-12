@@ -18,7 +18,7 @@ function [wpsstruct] = parse_oet_wps(filename)
     for i=1:length(argin)
         % scan for type of input arguments
         arg   = argin{i};
-        match = regexp(txt, [arg, '\s*\:\s*(?<type>\w+(/\w+)?)'], 'names');
+        match = regexp(txt, [arg, '\s*\=\s*(?<type>\w+(/\w+)?)'], 'names');
         inputs.(arg) = match;
     end
     
@@ -26,7 +26,7 @@ function [wpsstruct] = parse_oet_wps(filename)
     for i=1:length(argout)
         % scan for type of output arguments
         arg   = argout{i};
-        match = regexp(txt, [arg, '\s*\:\s*(?<type>\w+(/\w+)?)'], 'names');
+        match = regexp(txt, [arg, '\s*\=\s*(?<type>\w+(/\w+)?)'], 'names');
         outputs.(arg) = match;
     end
     

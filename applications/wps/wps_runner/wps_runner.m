@@ -10,9 +10,38 @@ queue_url = 'http://192.168.178.148:5984';
 queue_database = 'wps';
 
 % Check for the latest processes
-wps_processes = json.load(get_wps_processes);
+text = get_wps_processes();
+processes = json.load(text);
+% publish processes
+% get list of processes for matlab,
+% overwrite with current list
+view = 'matlab';
+url = sprintf('%s/%s/_design/views/_view/%s', queue_url, queue_database, view);
+table = json.load(urlread(url));
+if isempty(table.rows)
+    uuids = json.load(urlread2(sprintf('%s/_uuids', queue_url)));
+    uuid = uuids.uuids{1};
+    doc = struct(... 
+        'processes', processes, ...
+        'language', 'matlab', ...
+        'type', 'processes' ...
+        );
+    url = sprintf('%s/%s/%s', queue_url, queue_database, uuid)
+    text = json.dump(doc);
+    urlread2(url, 'PUT', text)
+    %add a new doc
+else
+    % lookup existing doc
+    doc = table.rows{1}.value;
+    % Update the processes
+    doc.processes = processes;
+    text = json.dump(doc);
+    url = sprintf('%s/%s/%s', queue_url, queue_database, doc.x_id)
+    urlread2(url, 'PUT', text)
+end
+% urlwrite()
 
-
+% Start processing
 for i=1:10
     % watch for a while
     jsonfiles = watch_couchdb(queue_url, queue_database);
@@ -24,7 +53,7 @@ for i=1:10
     if isfield(data, 'identifier')
         identifier  = data.('identifier');
         disp(['Searching for ', identifier]);
-        idx = find(ismember({wps_processes.identifier}, identifier));
+        idx = find(ismember({processes.identifier}, identifier));
         disp(['Found ', identifier, ' at index ', idx])
         process = str2func(identifier);
         % download attachments
@@ -38,7 +67,7 @@ for i=1:10
             filenames{j} = filename;
         end
         % pass arguments one by one
-        args = orderfields(data.dataInputs, wps_processes(idx).inputs);
+        args = orderfields(data.dataInputs, processes(idx).inputs);
         values = struct2cell(args);
         process(values{:})
         

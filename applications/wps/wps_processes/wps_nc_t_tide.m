@@ -1,12 +1,11 @@
-function [ constituents ] = wps_nc_t_tide(noos_ascii,varargin)
+function [ constituents ] = wps_nc_t_tide(noos_ascii)
 %wps_nc_t_tide     tidal timeseries analysis as noos file to netcdf
 %
 % Input:
-%   noos_ascii: text/csv in NOOS format
-%   varargin
+%   noos_ascii= text/csv
 %
 % Output:
-%   constituents: application/netcdf
+%   constituents= application/netcdf
 %
 %See also: wps_nc_t_tide, nc_t_tide, noos_read, noos_write
 
