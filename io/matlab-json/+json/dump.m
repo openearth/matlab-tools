@@ -135,8 +135,11 @@ function obj = dump_data_(value, options)
   elseif isstruct(value)
     obj = org.json.JSONObject();
     keys = fieldnames(value);
+    % replace name mangling as a result of loading
+    % todo, do this using ^(x_)\w regexp
+    keynames = cellfun(@(x) strrep(x, 'x_','_'), keys, 'UniformOutput', 0);
     for i = 1:length(keys)
-      obj.put(keys{i},dump_data_(value.(keys{i}), options));
+      obj.put(keynames{i},dump_data_(value.(keys{i}), options));
     end
   else
     error('json:typeError', 'Unsupported data type: %s', class(value));
