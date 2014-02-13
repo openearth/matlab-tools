@@ -5,7 +5,7 @@ function [ output_args ] = wps_runner( input_args )
 %   function is called.
 json.startup
 % TODO add while
-
+addpath('../wps_processes');
 queue_url = 'http://ol-ws003.xtr.deltares.nl:5984';
 queue_database = 'wps';
 
@@ -32,7 +32,11 @@ if isempty(table.rows)
     %add a new doc
 else
     % lookup existing doc
-    doc = table.rows{1}.value;
+    if iscell(table.rows)
+        doc = table.rows{1}.value;
+    else
+        doc = table.rows(1).value;
+    end
     % Update the processes
     doc.processes = processes;
     text = json.dump(doc);
@@ -46,7 +50,8 @@ while 1
     % watch for a while
     jsonfiles = watch_couchdb(queue_url, queue_database);
     % select one file
-    if isempty(jsonfiles.url)
+    % the queue is empty
+    if isempty({jsonfiles.url}) || isa(jsonfiles.url,'double')
         % wait 2 seconds before we try again
         pause(2)
         continue
@@ -64,7 +69,11 @@ while 1
         process = str2func(identifier);
         % download attachments
         fixname = @(x) (strrep(x, '0x', '%'));
-        attachments = cellfun(fixname, fieldnames(data.x_attachments), 'UniformOutput', 0);
+        if isfield(data, 'x_attachments')
+            attachments = cellfun(fixname, fieldnames(data.x_attachments), 'UniformOutput', 0);
+        else
+            attachments = {}
+        end
         filenames = {};
         for j=1:length(attachments)
             attachment = attachments{j};
@@ -73,10 +82,21 @@ while 1
             filenames{j} = filename;
         end
         % pass arguments one by one
+        for j=1:length(data.inputs.datainputs)
+            item = data.inputs.datainputs(j);
+            data.dataInputs.(item.identifier) = item.value;
+        end
         args = orderfields(data.dataInputs, processes(idx).inputs);
         values = struct2cell(args);
-        process(values{:})
-
+        % now we can call the process
+        result = process(values{:})
+        
+        % store the result
+        data.result = result;
+        data.type = 'output';
+        url = sprintf('%s/%s/%s', queue_url, queue_database, data.x_id);
+        text = json.dump(data);
+        urlread2(url, 'PUT', text)
 
     else
         warning(['Found file ', jsonfile, ' but it has no process field.']);

@@ -24,7 +24,7 @@
 
 function [jsonfiles] = watch_couchdb(server, database)
  % get the documents
-    text = urlread2(sprintf('%s/%s/%s', server, database, 'views/matlab'));
+    text = urlread2(sprintf('%s/%s/%s', server, database, '_design/views/_view/input'));
     docs = json.load(text);
     jsonfiles = struct('url', [], 'rev', []);
     if isfield(docs, 'error')
@@ -45,7 +45,7 @@ function [jsonfiles] = watch_couchdb(server, database)
             row = docs.rows(1);
         end
         url = sprintf('%s/%s/%s', server, database, row.id);
-        rev = row.value.rev;
+        rev = row.value.x_rev;
         jsonfiles(i).url = url;
         jsonfiles(i).rev = rev;
     end

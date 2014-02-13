@@ -9,6 +9,6 @@ function [ c ] = addtwonumbers( a, b)
 %
 % output:
 % c = double
-
+c = double(a) + double(b);
 
 end
