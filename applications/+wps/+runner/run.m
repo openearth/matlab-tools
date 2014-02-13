@@ -1,16 +1,16 @@
-function [ output_args ] = wps_runner( input_args )
+function [ output_args ] = run( input_args )
 %WPS_RUNNER Function that calls matlab wps processes for which it finds
 %input
 %   The input directory is watched and when input arrives the corresponding
 %   function is called.
 json.startup
 % TODO add while
-addpath('../wps_processes');
+addpath('../processes');
 queue_url = 'http://ol-ws003.xtr.deltares.nl:5984';
 queue_database = 'wps';
 
 % Check for the latest processes
-text = get_wps_processes();
+text = wps.runner.get_processes();
 processes = json.load(text);
 % publish processes
 % get list of processes for matlab,
@@ -41,18 +41,19 @@ else
     doc.processes = processes;
     text = json.dump(doc);
     url = sprintf('%s/%s/%s', queue_url, queue_database, doc.x_id)
-    urlread2(url, 'PUT', text)
+    wps.runner.urlread2(url, 'PUT', text)
 end
 % urlwrite()
 
 % Start processing
 while 1
     % watch for a while
-    jsonfiles = watch_couchdb(queue_url, queue_database);
+    jsonfiles = wps.runner.watch_couchdb(queue_url, queue_database);
     % select one file
     % the queue is empty
-    if isempty({jsonfiles.url}) || isa(jsonfiles.url,'double')
+    if isempty({jsonfiles.url}) || all(cellfun(@isempty, {jsonfiles.url})) %any(isempty({jsonfiles.url}))
         % wait 2 seconds before we try again
+        fprintf('.');
         pause(2)
         continue
     end
@@ -66,7 +67,7 @@ while 1
         disp(['Searching for ', identifier]);
         idx = find(ismember({processes.identifier}, identifier));
         disp(['Found ', identifier, ' at index ', idx])
-        process = str2func(identifier);
+        process = str2func(['wps.processes.',identifier]);
         % download attachments
         fixname = @(x) (strrep(x, '0x', '%'));
         if isfield(data, 'x_attachments')
@@ -96,7 +97,7 @@ while 1
         data.type = 'output';
         url = sprintf('%s/%s/%s', queue_url, queue_database, data.x_id);
         text = json.dump(data);
-        urlread2(url, 'PUT', text)
+        wps.runner.urlread2(url, 'PUT', text)
 
     else
         warning(['Found file ', jsonfile, ' but it has no process field.']);

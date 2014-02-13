@@ -24,7 +24,7 @@
 
 function [jsonfiles] = watch_couchdb(server, database)
  % get the documents
-    text = urlread2(sprintf('%s/%s/%s', server, database, '_design/views/_view/input'));
+    text = wps.runner.urlread2(sprintf('%s/%s/%s', server, database, '_design/views/_view/input'));
     docs = json.load(text);
     jsonfiles = struct('url', [], 'rev', []);
     if isfield(docs, 'error')

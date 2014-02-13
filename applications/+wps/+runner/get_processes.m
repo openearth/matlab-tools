@@ -1,11 +1,11 @@
-function wps_processes = get_wps_processes()
+function wps_processes = get_processes()
 
 % Get path
 P = mfilename('fullpath');
 [dirname,name,ext] = fileparts(P);
 
 % Get processes from directory
-wpsdir = fullfile(dirname,'..','wps_processes'); 
+wpsdir = fullfile(dirname,'..','+processes'); 
 D = dir(wpsdir);
 
 % Remove '.' and '..'
@@ -14,10 +14,15 @@ D(strmatch('..',{D.name},'exact'))=[];
 
 % Get metadata from processes
 i = 1;
+WPS = struct( ...
+    'identifier', [], ...
+    'inputs', [],...
+    'outputs', [] ...
+        );
 for ii=1:length(D)
     [dirname2,name2,ext2] = fileparts(D(ii).name);
     if strcmp(ext2,'.m')
-        wps_i = parse_oet_wps(fullfile(wpsdir,D(ii).name));
+        wps_i = wps.runner.parse_oet(fullfile(wpsdir,D(ii).name));
         WPS(i) = wps_i;
         i = i + 1;
     end
@@ -25,7 +30,7 @@ end
 
 % Write to json
 wps_processes = json.dump(WPS);
-fid = fopen(fullfile(dirname,'..','wps_processes','wps_matlab_processes.json'),'wt');
+fid = fopen(fullfile(dirname,'..','+processes','wps_matlab_processes.json'),'wt');
 fwrite(fid,wps_processes);
 fclose(fid);
 

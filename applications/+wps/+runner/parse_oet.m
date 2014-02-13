@@ -8,7 +8,7 @@
 
 function [wpsstruct] = parse_oet_wps(filename)
 
-    [argout, argin, fcn] = parse_function_call(filename); % [argout, argin, fcn] = m.parse.call()
+    [argout, argin, fcn] = wps.runner.parse_function_call(filename); % [argout, argin, fcn] = m.parse.call()
     
     txt = fileread(filename); % txt = m.parse.header()
     
