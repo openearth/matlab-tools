@@ -13,7 +13,7 @@ D(strmatch('.',{D.name},'exact'))=[];
 D(strmatch('..',{D.name},'exact'))=[];
 
 % Get metadata from processes
-i = 1
+i = 1;
 for ii=1:length(D)
     [dirname2,name2,ext2] = fileparts(D(ii).name);
     if strcmp(ext2,'.m')
@@ -25,7 +25,7 @@ end
 
 % Write to json
 wps_processes = json.dump(WPS);
-fid = fopen(fullfile(dirname,'..','processes','wps_matlab_processes.json'),'wt');
+fid = fopen(fullfile(dirname,'..','wps_processes','wps_matlab_processes.json'),'wt');
 fwrite(fid,wps_processes);
 fclose(fid);
 
