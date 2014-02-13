@@ -6,7 +6,7 @@ function [ output_args ] = wps_runner( input_args )
 json.startup
 % TODO add while
 
-queue_url = 'http://192.168.178.148:5984';
+queue_url = 'http://ol-ws003.xtr.deltares.nl:5984';
 queue_database = 'wps';
 
 % Check for the latest processes
@@ -42,10 +42,16 @@ end
 % urlwrite()
 
 % Start processing
-for i=1:10
+while 1
     % watch for a while
     jsonfiles = watch_couchdb(queue_url, queue_database);
     % select one file
+    if isempty(jsonfiles.url)
+        % wait 2 seconds before we try again
+        pause(2)
+        continue
+    end
+    % pop  a job    
     jsonfile = jsonfiles(1).url;
     % load metadata
     text = urlread(jsonfile);
@@ -70,14 +76,13 @@ for i=1:10
         args = orderfields(data.dataInputs, processes(idx).inputs);
         values = struct2cell(args);
         process(values{:})
-        
+
 
     else
         warning(['Found file ', jsonfile, ' but it has no process field.']);
         continue
     end
     disp(data);
-    end
 end
 
 

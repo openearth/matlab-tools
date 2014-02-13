@@ -24,9 +24,18 @@
 
 function [jsonfiles] = watch_couchdb(server, database)
  % get the documents
-    text = urlread2(sprintf('%s/%s/%s', server, database, '_all_docs'));
+    text = urlread2(sprintf('%s/%s/%s', server, database, 'views/matlab'));
     docs = json.load(text);
     jsonfiles = struct('url', [], 'rev', []);
+    if isfield(docs, 'error')
+        % I assume there is a reason
+        msg = ['Looking for jobs in the queue failed, ', docs.error, ': ', docs.reason];
+        warning(msg)
+    end
+    if ~isfield(docs, 'rows')
+        % no jobs available, we're done
+        return
+    end
     for i=1:length(docs.rows)   
         if iscell(docs.rows)
             % sometimes it's a cell
