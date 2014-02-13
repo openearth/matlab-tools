@@ -52,7 +52,7 @@ function LDB = readldb(filename,varargin)
 %   USA
 %   --------------------------------------------------------------------
 
-   FileInfo=tekal('read',filename,'loaddata');
+   FileInfo=tekal('open',filename,'loaddata');
          
    if strcmp(FileInfo.Check,'OK')
       for i=1:length(FileInfo.Field)
