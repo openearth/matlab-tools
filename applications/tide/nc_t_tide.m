@@ -105,7 +105,6 @@ if odd(nargin) & ~isstruct(varargin{end}) % allow for passing OPT struct
       if isempty(OPT.ncfile)
       OPT.ncfile = [filenameext(fname),'.nc'];
       end
-
       
       OPT       = setproperty(OPT,varargin{2:end});
       D         = t_tide_read(fname);
@@ -119,12 +118,14 @@ else
       OPT = setproperty(OPT,varargin{3:end});
    
       if ~isempty(OPT.period)
-      mask = find(( t >= OPT.period(1)) & (t <= OPT.period(end)));
-      if t(1  ) > OPT.period(1);fprintf(2,['data starts after start of requested period ',datestr(t(  1)),'>',datestr(OPT.period(  1)),'\n']);end
-      if t(end) < OPT.period(2);fprintf(2,['data stops before end of requested period '  ,datestr(t(end)),'<',datestr(OPT.period(end)),'\n']);end
+          mask = find(( t >= OPT.period(1)) & (t <= OPT.period(end)));
+          if t(1  ) > OPT.period(1);fprintf(2,['data starts after start of requested period ',datestr(t(  1)),'>',datestr(OPT.period(  1)),'\n']);
+          end
+          if t(end) < OPT.period(2);fprintf(2,['data stops before end of requested period '  ,datestr(t(end)),'<',datestr(OPT.period(end)),'\n']);
+          end
       else
-      mask = 1:length(t);
-      OPT.period = [t(1) t(end)];
+          mask = 1:length(t);
+          OPT.period = [t(1) t(end)];
       end
       dt = diff(t(mask)).*24; % hour
 
@@ -143,8 +144,8 @@ else
       
       output = 'none';
       if ~isempty(OPT.ascfile)
-      mkdir(fileparts(OPT.ascfile));
-      output = [OPT.ascfile];
+         mkdir(fileparts(OPT.ascfile));
+         output = [OPT.ascfile];
       end
      
       [tidestruc,pout]=t_tide(var(mask),...
@@ -161,29 +162,29 @@ else
       D.component_name  = tidestruc.name;
       D.frequency       = tidestruc.freq;
       if isreal(var)
-      V.data.fmaj       = tidestruc.tidecon(:,1);V.name.fmaj = 'amplitude'      ;V.units.fmaj = OPT.units     ;V.long_name.fmaj = 'amplitude of tidal component';
-      V.data.emaj       = tidestruc.tidecon(:,2);V.name.emaj = 'amplitude_error';V.units.emaj = OPT.units     ;V.long_name.emaj = 'estimate of error of amplitude of tidal component';
-      V.data.pha        = tidestruc.tidecon(:,3);V.name.pha  = 'phase'          ;V.units.pha  = 'degrees'     ;V.long_name.pha  = 'phase of tidal component';
-      V.data.epha       = tidestruc.tidecon(:,4);V.name.epha = 'phase_error'    ;V.units.epha = 'degrees'     ;V.long_name.epha = 'estimate of error of phase of tidal component';
+      D.data.fmaj       = tidestruc.tidecon(:,1);D.name.fmaj = 'amplitude'      ;D.units.fmaj = OPT.units     ;D.long_name.fmaj = 'amplitude of tidal component';
+      D.data.emaj       = tidestruc.tidecon(:,2);D.name.emaj = 'amplitude_error';D.units.emaj = OPT.units     ;D.long_name.emaj = 'estimate of error of amplitude of tidal component';
+      D.data.pha        = tidestruc.tidecon(:,3);D.name.pha  = 'phase'          ;D.units.pha  = 'degrees'     ;D.long_name.pha  = 'phase of tidal component';
+      D.data.epha       = tidestruc.tidecon(:,4);D.name.epha = 'phase_error'    ;D.units.epha = 'degrees'     ;D.long_name.epha = 'estimate of error of phase of tidal component';
       else
-      V.data.fmaj       = tidestruc.tidecon(:,1);V.name.fmaj = 'sema'           ;V.units.fmaj = OPT.units     ;V.long_name.fmaj = 'major ellipse axis of tidal component';
-      V.data.emaj       = tidestruc.tidecon(:,2);V.name.emaj = 'sema_error'     ;V.units.emaj = OPT.units     ;V.long_name.emaj = 'estimate of error of major ellipse axis of tidal component';
-      V.data.fmin       = tidestruc.tidecon(:,3);V.name.fmin = 'semi'           ;V.units.fmin = OPT.units     ;V.long_name.fmin = 'minor ellipse axis of tidal component';
-      V.data.emin       = tidestruc.tidecon(:,4);V.name.emin = 'semi_error'     ;V.units.emin = OPT.units     ;V.long_name.emin = 'estimate of error of minor ellipse axis of tidal component';
-      V.data.finc       = tidestruc.tidecon(:,5);V.name.finc = 'inc'            ;V.units.finc = 'degrees_true';V.long_name.finc = 'ellipse orientation';
-      V.data.einc       = tidestruc.tidecon(:,6);V.name.einc = 'inc_error'      ;V.units.einc = 'degrees_true';V.long_name.einc = 'estimate of error of ellipse orientation';
-      V.data.pha        = tidestruc.tidecon(:,7);V.name.pha  = 'phase'          ;V.units.pha  = 'degrees'     ;V.long_name.pha  = 'phase of tidal component';
-      V.data.epha       = tidestruc.tidecon(:,8);V.name.epha = 'phase_error'    ;V.units.epha = 'degrees'     ;V.long_name.epha = 'estimate of error of phase of tidal component';
+      D.data.fmaj       = tidestruc.tidecon(:,1);D.name.fmaj = 'sema'           ;D.units.fmaj = OPT.units     ;D.long_name.fmaj = 'major ellipse axis of tidal component';
+      D.data.emaj       = tidestruc.tidecon(:,2);D.name.emaj = 'sema_error'     ;D.units.emaj = OPT.units     ;D.long_name.emaj = 'estimate of error of major ellipse axis of tidal component';
+      D.data.fmin       = tidestruc.tidecon(:,3);D.name.fmin = 'semi'           ;D.units.fmin = OPT.units     ;D.long_name.fmin = 'minor ellipse axis of tidal component';
+      D.data.emin       = tidestruc.tidecon(:,4);D.name.emin = 'semi_error'     ;D.units.emin = OPT.units     ;D.long_name.emin = 'estimate of error of minor ellipse axis of tidal component';
+      D.data.finc       = tidestruc.tidecon(:,5);D.name.finc = 'inc'            ;D.units.finc = 'degrees_true';D.long_name.finc = 'ellipse orientation';
+      D.data.einc       = tidestruc.tidecon(:,6);D.name.einc = 'inc_error'      ;D.units.einc = 'degrees_true';D.long_name.einc = 'estimate of error of ellipse orientation';
+      D.data.pha        = tidestruc.tidecon(:,7);D.name.pha  = 'phase'          ;D.units.pha  = 'degrees'     ;D.long_name.pha  = 'phase of tidal component';
+      D.data.epha       = tidestruc.tidecon(:,8);D.name.epha = 'phase_error'    ;D.units.epha = 'degrees'     ;D.long_name.epha = 'estimate of error of phase of tidal component';
       end
-      D.snr             = (V.data.fmaj./V.data.emaj).^2;  % signal to noise ratio (t_tide line 523)
-      
-      end
+      D.snr             = (D.data.fmaj./D.data.emaj).^2;  % signal to noise ratio (t_tide line 523)
       D.significance    = D.snr > OPT.synth;
+      
+end
 
-      D.platform_id     = OPT.platform_id  ;  
-      D.platform_name   = OPT.platform_name;
-      D.longitude       = OPT.lon;
-      D.latitude        = OPT.lat;
+D.platform_id     = OPT.platform_id  ;  
+D.platform_name   = OPT.platform_name;
+D.longitude       = OPT.lon;
+D.latitude        = OPT.lat;
 
 %% Save struct to netCDF file
 
@@ -293,20 +294,21 @@ if ~isempty(OPT.ncfile)
    nc_addvar         (OPT.ncfile,nc);
    nc_varput         (OPT.ncfile,nc.Name,D.frequency);clear nc
    
-fldnames = fieldnames(V.data);
-for ifld=1:length(fldnames)
-   fldname = fldnames{ifld};
-   nc.Name = V.name.(fldname);
-   nc.Datatype     = 'double';
-   nc.Dimension    = {'frequency'};
-   nc.Attribute(1) = struct('Name', 'long_name'      ,'Value', V.long_name.(fldname));
-   nc.Attribute(2) = struct('Name', 'units'          ,'Value',     V.units.(fldname));
-   nc.Attribute(3) = struct('Name', 'cell_methods'   ,'Value', 'time: period area: point');
-   nc_addvar         (OPT.ncfile,nc);
-   nc_varput         (OPT.ncfile,nc.Name,V.data.(fldname));clear nc
-
-end
+   fldnames = fieldnames(D.data);
+   for ifld=1:length(fldnames)
+      fldname = fldnames{ifld};
+      nc.Name = D.name.(fldname);
+      nc.Datatype     = 'double';
+      nc.Dimension    = {'frequency'};
+      nc.Attribute(1) = struct('Name', 'long_name'      ,'Value', D.long_name.(fldname));
+      nc.Attribute(2) = struct('Name', 'units'          ,'Value',     D.units.(fldname));
+      nc.Attribute(3) = struct('Name', 'cell_methods'   ,'Value', 'time: period area: point');
+      nc_addvar         (OPT.ncfile,nc);
+      nc_varput         (OPT.ncfile,nc.Name,D.data.(fldname));clear nc
    
+   end
+   
+   if isfield(D,'significance')
    nc.Name = 'significance';
    nc.Datatype     = 'int';
    nc.Dimension    = {'frequency'};
@@ -317,6 +319,7 @@ end
    nc_varput         (OPT.ncfile,nc.Name,int8(D.significance));clear nc
    % TO DO flag_values
    % TO DO flag_meanings
+   end
    
    nc.Name = 'snr';
    nc.Datatype     = 'double';
@@ -325,8 +328,8 @@ end
    nc.Attribute(1) = struct('Name', 'comment'        ,'Value', '(amplitude/amplitude_error)^2');
    nc_addvar         (OPT.ncfile,nc);
    nc_varput         (OPT.ncfile,nc.Name,D.snr);clear nc
-
-end
+   
+   end % file exist
 
 %% output
 

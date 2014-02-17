@@ -3,13 +3,13 @@ function [ output_args ] = run( input_args )
 %input
 %   The input directory is watched and when input arrives the corresponding
 %   function is called.
+
 json.startup
 % TODO add while
-addpath('../processes');
 queue_url = 'http://ol-ws003.xtr.deltares.nl:5984';
 queue_database = 'wps';
 
-% Check for the latest processes
+%% Check for the latest processes
 text = wps.runner.get_processes();
 processes = json.load(text);
 % publish processes
@@ -45,7 +45,7 @@ else
 end
 % urlwrite()
 
-% Start processing
+%% Start processing
 while 1
     % watch for a while
     jsonfiles = wps.runner.watch_couchdb(queue_url, queue_database);
