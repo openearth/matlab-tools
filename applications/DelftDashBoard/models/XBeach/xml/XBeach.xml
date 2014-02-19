@@ -3,7 +3,7 @@
   <model>XBeach</model>
   <longname>XBeach</longname>
   <multipledomains>no</multipledomains>
-  <enable>0</enable>
+  <enable>1</enable>
   <element>
     <style>tabpanel</style>
     <tag>XBeach</tag>
@@ -70,7 +70,7 @@
       <menuitem>
         <string>Save Params File As ...</string>
         <callback>ddb_saveXBeach</callback>
-        <option>save</option>
+        <option>saveas</option>
       </menuitem>
       <menuitem>
         <string>Save All</string>

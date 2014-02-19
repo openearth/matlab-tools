@@ -1,5 +1,5 @@
 function ddb_saveParams(handles)
-filename     = 'd:\projects\DDB_xb\SlufterModelOut\params.txt';% temp outputfile
+filename     = [handles.outDirectory '\params.txt'];
 
 id = 1;
 ii = strmatch('XBeach',{handles.Model.name},'exact');
@@ -9,12 +9,8 @@ ixb = 1;
 fieldNamesDDB = fieldnames(handles.Model(ii).Input);
 % xbdum = xb_read_input('d:\projects\DDB_xb\SlufterModel\params.txt');
 
-% Set meta data
-xbs.date     = datestr(now);
-xbs.function = 'Delft Dashboard';
-xbs.type     = 'input';
-xbs.file     = filename;
-
+xbs = xs_empty();
+xbs = xs_meta(xbs, 'Delft Dashboard','input',filename);
 for is = 1:length(fieldNamesDDB)
     if isfield(handles.Model(ii).InputDef,fieldNamesDDB{is}) && ...
             sum(strcmp(fieldNamesDDB{is},{'Description','runid','AttName','ItDate','StartTime','StopTime','TimeStep','ParamsFile'}))==0% Find ddb fieldNames that are unknown to XBeach toolbox (maybe change later?)        % TO DO: If statement so only adjusted / non-default input is saved
@@ -30,35 +26,55 @@ for is = 1:length(fieldNamesDDB)
             else
                 xbs.data(ixb).name            = fieldNamesDDB{is};
                 if strcmp(fieldNamesDDB{is},'depfile')
-                    xbs.data(ixb).value.date                      = datestr(now);
-                    xbs.data(ixb).value.function                  = 'Delft Dashboard';
-                    xbs.data(ixb).value.type                      = 'bathymetry';
-                    xbs.data(ixb).value.data.name                 = fieldNamesDDB{is};
-                    xbs.data(ixb).value.data.value                = handles.Model(ii).Input.Depth*-1;
+%                     xbs.data(ixb).value.date                      = datestr(now);
+%                     xbs.data(ixb).value.function                  = 'Delft Dashboard';
+%                     xbs.data(ixb).value.type                      = 'bathymetry';
+                    xbs.data(ixb).value                            = xs_empty();
+                    xbs.data(ixb).value = xs_set(xbs.data(ixb).value, fieldNamesDDB{is},handles.Model(ii).Input.Depth*-1);
+%                     xbs.data(ixb).value = xs_set(xbs.data(ixb).value, 'value', handles.Model(ii).Input.Depth*-1);
+%                     xbs.data(ixb).value.data.name                 = fieldNamesDDB{is};
+%                     xbs.data(ixb).value.data.value                = handles.Model(ii).Input.Depth*-1;
+                    xbs.data(ixb).value = xs_meta(xbs.data(ixb).value, 'Delft Dashboard', 'bathymetry');
                 elseif strcmp(fieldNamesDDB{is},'xfile')
-                    xbs.data(ixb).value.date                      = datestr(now);
-                    xbs.data(ixb).value.function                  = 'Delft Dashboard';
-                    xbs.data(ixb).value.type                      = 'bathymetry';
-                    xbs.data(ixb).value.data.name                 = fieldNamesDDB{is};
-                    xbs.data(ixb).value.data.value                = handles.Model(ii).Input.GridX;
+%                     xbs.data(ixb).value.date                      = datestr(now);
+%                     xbs.data(ixb).value.function                  = 'Delft Dashboard';
+%                     xbs.data(ixb).value.type                      = 'bathymetry';
+                    xbs.data(ixb).value                            = xs_empty();
+                    xbs.data(ixb).value = xs_set(xbs.data(ixb).value, fieldNamesDDB{is},handles.Model(ii).Input.GridX);
+%                     xbs.data(ixb).value = xs_set(xbs.data(ixb).value, 'value', handles.Model(ii).Input.GridX);
+                    xbs.data(ixb).value = xs_meta(xbs.data(ixb).value, 'Delft Dashboard', 'bathymetry');
+%                     xbs.data(ixb).value.data.name                 = fieldNamesDDB{is};
+%                     xbs.data(ixb).value.data.value                = handles.Model(ii).Input.GridX;
                 elseif strcmp(fieldNamesDDB{is},'yfile')
-                    xbs.data(ixb).value.date                      = datestr(now);
-                    xbs.data(ixb).value.function                  = 'Delft Dashboard';
-                    xbs.data(ixb).value.type                      = 'bathymetry';
-                    xbs.data(ixb).value.data.name                 = fieldNamesDDB{is};
-                    xbs.data(ixb).value.data.value                = handles.Model(ii).Input.GridY;
+%                     xbs.data(ixb).value.date                      = datestr(now);
+%                     xbs.data(ixb).value.function                  = 'Delft Dashboard';
+%                     xbs.data(ixb).value.type                      = 'bathymetry';
+                    xbs.data(ixb).value                            = xs_empty();       
+                    xbs.data(ixb).value = xs_set(xbs.data(ixb).value, fieldNamesDDB{is},handles.Model(ii).Input.GridY);
+%                     xbs.data(ixb).value = xs_set(xbs.data(ixb).value, 'value', handles.Model(ii).Input.GridY);
+                    xbs.data(ixb).value = xs_meta(xbs.data(ixb).value, 'Delft Dashboard', 'bathymetry');
+%                     xbs.data(ixb).value.data.name                 = fieldNamesDDB{is};
+%                     xbs.data(ixb).value.data.value                = handles.Model(ii).Input.GridY;
                 elseif strcmp(fieldNamesDDB{is},'xyfile')
-                    xbs.data(ixb).value.date                      = datestr(now);
-                    xbs.data(ixb).value.function                  = 'Delft Dashboard';
-                    xbs.data(ixb).value.type                      = 'bathymetry';
-                    xbs.data(ixb).value.data.name                 = fieldNamesDDB{is};
-                    xbs.data(ixb).value.data.value                = handles.Model(ii).Input.GridXY;
+%                     xbs.data(ixb).value.date                      = datestr(now);
+%                     xbs.data(ixb).value.function                  = 'Delft Dashboard';
+%                     xbs.data(ixb).value.type                      = 'bathymetry';
+                    xbs.data(ixb).value                            = xs_empty();
+                    xbs.data(ixb).value = xs_set(xbs.data(ixb).value, fieldNamesDDB{is},handles.Model(ii).Input.GridXY);
+%                     xbs.data(ixb).value = xs_set(xbs.data(ixb).value, 'value', handles.Model(ii).Input.GridXY);
+                    xbs.data(ixb).value = xs_meta(xbs.data(ixb).value, 'Delft Dashboard', 'bathymetry');
+%                     xbs.data(ixb).value.data.name                 = fieldNamesDDB{is};
+%                     xbs.data(ixb).value.data.value                = handles.Model(ii).Input.GridXY;
                 elseif strcmp(fieldNamesDDB{is},'ne_layer')
-                    xbs.data(ixb).value.date                      = datestr(now);
-                    xbs.data(ixb).value.function                  = 'Delft Dashboard';
-                    xbs.data(ixb).value.type                      = 'bathymetry';
-                    xbs.data(ixb).value.data.name                 = fieldNamesDDB{is};
-                    xbs.data(ixb).value.data.value                = handles.Model(ii).Input.SedThick;
+%                     xbs.data(ixb).value.date                      = datestr(now);
+%                     xbs.data(ixb).value.function                  = 'Delft Dashboard';
+%                     xbs.data(ixb).value.type                      = 'bathymetry';
+                    xbs.data(ixb).value                            = xs_empty();
+                    xbs.data(ixb).value = xs_set(xbs.data(ixb).value, fieldNamesDDB{is},handles.Model(ii).Input.SedThick);
+%                     xbs.data(ixb).value = xs_set(xbs.data(ixb).value, 'value', handles.Model(ii).Input.SedThick);
+                    xbs.data(ixb).value = xs_meta(xbs.data(ixb).value, 'Delft Dashboard', 'bathymetry');
+%                     xbs.data(ixb).value.data.name                 = fieldNamesDDB{is};
+%                     xbs.data(ixb).value.data.value                = handles.Model(ii).Input.SedThick;
                     %             elseif
                     %             strcmp(fieldNamesDDB{is},'fricfile')
                     %             (TODO)
@@ -72,9 +88,11 @@ for is = 1:length(fieldNamesDDB)
         elseif isstruct(handles.Model(ii).Input.(fieldNamesDDB{is}))
             xbs.data(ixb).name = fieldNamesDDB{is};
             if strcmp(fieldNamesDDB{is},'zs0file')
-                xbs.data(ixb).value.date         = datestr(now);
-                xbs.data(ixb).value.function     = 'Delft Dashboard';
-                xbs.data(ixb).value.type         = 'tide';
+%                 xbs.data(ixb).value.date         = datestr(now);
+%                 xbs.data(ixb).value.function     = 'Delft Dashboard';
+%                 xbs.data(ixb).value.type         = 'tide';
+                xbs.data(ixb).value                            = xs_empty();
+                xbs.data(ixb).value = xs_meta(xbs.data(ixb).value, 'Delft Dashboard', 'tide');
                 xbs.data(ixb).value.data(1).name = 'time';
                 xbs.data(ixb).value.data(1).value= handles.Model(ii).Input.(fieldNamesDDB{is}).time;
                 xbs.data(ixb).value.data(2).name = 'tide';
@@ -106,14 +124,6 @@ for is = 1:length(fieldNamesDDB)
         end
     end
 end
-%% CONTINUE HERE AVR
-% Replace default values with model input
-% fieldNames = fieldnames(ddb_xbmi);
-% for i = 1:size(fieldNames,1)
-%     handles.Model(handles.activeModel.nr).Input(handles.activeDomain).(fieldNames{i}) = ddb_xbmi.(fieldNames{i});
-% end
-
-
 xb_write_input(filename, xbs) % possibly add header to include run description?
 
 
