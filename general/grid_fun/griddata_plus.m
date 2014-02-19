@@ -126,7 +126,7 @@ else
 end
 
 
-F               = TriScatteredInterp(DT,z,OPT.method);
+F               = TriScatteredInterp(DT,z,OPT.method); 
 ZI              = F(XI,YI);
 
 if ~strcmpi(OPT.max_length,'none')

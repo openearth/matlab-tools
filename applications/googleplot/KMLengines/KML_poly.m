@@ -102,11 +102,12 @@ end
    end
 
 %% check
-
+if ~iscell(z)
    if all(isnan(z(:)))
       varargout = {''};
       return
    end
+end
 
 %% preprocess visibility
 
