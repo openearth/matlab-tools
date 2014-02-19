@@ -1,4 +1,5 @@
 function ddb_saveParams(handles)
+filename     = 'd:\projects\DDB_xb\SlufterModelOut\params.txt';% temp outputfile
 
 id = 1;
 ii = strmatch('XBeach',{handles.Model.name},'exact');
@@ -8,58 +9,112 @@ ixb = 1;
 fieldNamesDDB = fieldnames(handles.Model(ii).Input);
 % xbdum = xb_read_input('d:\projects\DDB_xb\SlufterModel\params.txt');
 
+% Set meta data
+xbs.date     = datestr(now);
+xbs.function = 'Delft Dashboard';
+xbs.type     = 'input';
+xbs.file     = filename;
+
 for is = 1:length(fieldNamesDDB)
-    % TO DO: If statement so only adjusted / non-default input is saved
-    if isnumeric(handles.Model(ii).Input.(fieldNamesDDB{is}))
-        xbs.data(ixb).name = fieldNamesDDB{is};
-        xbs.data(ixb).value= handles.Model(ii).Input.(fieldNamesDDB{is});
-        ixb = ixb + 1;
-    elseif ischar(handles.Model(ii).Input.(fieldNamesDDB{is}))
-        xbs.data(ixb).name = fieldNamesDDB{is};
-        xbs.data(ixb).value= handles.Model(ii).Input.(fieldNamesDDB{is});
-        ixb = ixb + 1; 
-    elseif isstruct(handles.Model(ii).Input.(fieldNamesDDB{is}))
-        xbs.data(ixb).name = fieldNamesDDB{is};
-        if strcmp(fieldNamesDDB{is},'zs0file')
-            xbs.data(ixb).value.data(1).name = 'time';
-            xbs.data(ixb).value.data(1).value= handles.Model(ii).Input.(fieldNamesDDB{is}).time;
-            xbs.data(ixb).value.data(2).name = 'tide';
-            xbs.data(ixb).value.data(2).value= handles.Model(ii).Input.(fieldNamesDDB{is}).data;
-        elseif strcmp(fieldNamesDDB{is},'bcfile')
-            xbw = xs_empty();
-            wavefnames = fieldnames(handles.Model(ii).Input.(fieldNamesDDB{is}));
-            for jf = 1:length(wavefnames)
-                xbw = xs_set(xbw, wavefnames{jf},...
-                handles.Model(ii).Input.(fieldNamesDDB{is}).(wavefnames{jf}));
+    if isfield(handles.Model(ii).InputDef,fieldNamesDDB{is}) && ...
+            sum(strcmp(fieldNamesDDB{is},{'Description','runid','AttName','ItDate','StartTime','StopTime','TimeStep','ParamsFile'}))==0% Find ddb fieldNames that are unknown to XBeach toolbox (maybe change later?)        % TO DO: If statement so only adjusted / non-default input is saved
+        if isnumeric(handles.Model(ii).Input.(fieldNamesDDB{is}))
+            xbs.data(ixb).name = fieldNamesDDB{is};
+            xbs.data(ixb).value= handles.Model(ii).Input.(fieldNamesDDB{is});
+            ixb = ixb + 1;
+        elseif ischar(handles.Model(ii).Input.(fieldNamesDDB{is}))
+            
+            % in case depfile, ne_layer file, fric file
+            if strcmp(handles.Model(ii).Input.(fieldNamesDDB{is}),'file')
+                % if empty input, don't put it in xb struc
+            else
+                xbs.data(ixb).name            = fieldNamesDDB{is};
+                if strcmp(fieldNamesDDB{is},'depfile')
+                    xbs.data(ixb).value.date                      = datestr(now);
+                    xbs.data(ixb).value.function                  = 'Delft Dashboard';
+                    xbs.data(ixb).value.type                      = 'bathymetry';
+                    xbs.data(ixb).value.data.name                 = fieldNamesDDB{is};
+                    xbs.data(ixb).value.data.value                = handles.Model(ii).Input.Depth*-1;
+                elseif strcmp(fieldNamesDDB{is},'xfile')
+                    xbs.data(ixb).value.date                      = datestr(now);
+                    xbs.data(ixb).value.function                  = 'Delft Dashboard';
+                    xbs.data(ixb).value.type                      = 'bathymetry';
+                    xbs.data(ixb).value.data.name                 = fieldNamesDDB{is};
+                    xbs.data(ixb).value.data.value                = handles.Model(ii).Input.GridX;
+                elseif strcmp(fieldNamesDDB{is},'yfile')
+                    xbs.data(ixb).value.date                      = datestr(now);
+                    xbs.data(ixb).value.function                  = 'Delft Dashboard';
+                    xbs.data(ixb).value.type                      = 'bathymetry';
+                    xbs.data(ixb).value.data.name                 = fieldNamesDDB{is};
+                    xbs.data(ixb).value.data.value                = handles.Model(ii).Input.GridY;
+                elseif strcmp(fieldNamesDDB{is},'xyfile')
+                    xbs.data(ixb).value.date                      = datestr(now);
+                    xbs.data(ixb).value.function                  = 'Delft Dashboard';
+                    xbs.data(ixb).value.type                      = 'bathymetry';
+                    xbs.data(ixb).value.data.name                 = fieldNamesDDB{is};
+                    xbs.data(ixb).value.data.value                = handles.Model(ii).Input.GridXY;
+                elseif strcmp(fieldNamesDDB{is},'ne_layer')
+                    xbs.data(ixb).value.date                      = datestr(now);
+                    xbs.data(ixb).value.function                  = 'Delft Dashboard';
+                    xbs.data(ixb).value.type                      = 'bathymetry';
+                    xbs.data(ixb).value.data.name                 = fieldNamesDDB{is};
+                    xbs.data(ixb).value.data.value                = handles.Model(ii).Input.SedThick;
+                    %             elseif
+                    %             strcmp(fieldNamesDDB{is},'fricfile')
+                    %             (TODO)
+                    %                 xbs.data(ixb).value.data.value= handles.Model(ii).Input.FricXY;
+                else
+                    xbs.data(ixb).value = handles.Model(ii).Input.(fieldNamesDDB{is});
+                end
+                ixb = ixb + 1;
             end
-            xbw = xs_consolidate(xbw);
             
-            % add meta data (file names etc.)
-            [fdir fname ext]=fileparts(handles.Model(ii).Input.ParamsFile);
-            [Hm0] = xs_get(xbw, 'Hm0');
-            filenames{1} = [fdir 'filelist.txt'];
-            for jf = 1:length(Hm0)
-                filenames{jf+1} = [fdir 'jonswap_' num2str(jf)];
-            end            
-            xbw = xs_meta(xbw, 'Delft Dashboard', 'waves', filenames);
-            xbs.data(ixb).value = xbw;     
-        else
-            
-            disp(fieldNamesDDB{is})
-            error()
-         end
+        elseif isstruct(handles.Model(ii).Input.(fieldNamesDDB{is}))
+            xbs.data(ixb).name = fieldNamesDDB{is};
+            if strcmp(fieldNamesDDB{is},'zs0file')
+                xbs.data(ixb).value.date         = datestr(now);
+                xbs.data(ixb).value.function     = 'Delft Dashboard';
+                xbs.data(ixb).value.type         = 'tide';
+                xbs.data(ixb).value.data(1).name = 'time';
+                xbs.data(ixb).value.data(1).value= handles.Model(ii).Input.(fieldNamesDDB{is}).time;
+                xbs.data(ixb).value.data(2).name = 'tide';
+                xbs.data(ixb).value.data(2).value= handles.Model(ii).Input.(fieldNamesDDB{is}).data;
+            elseif strcmp(fieldNamesDDB{is},'bcfile')
+                xbw = xs_empty();
+                wavefnames = fieldnames(handles.Model(ii).Input.(fieldNamesDDB{is}));
+                for jf = 1:length(wavefnames)
+                    xbw = xs_set(xbw, wavefnames{jf},...
+                        handles.Model(ii).Input.(fieldNamesDDB{is}).(wavefnames{jf}));
+                end
+                xbw = xs_consolidate(xbw);
+                
+                % add meta data (file names etc.)
+                [fdir fname ext]=fileparts(handles.Model(ii).Input.ParamsFile);
+                [Hm0] = xs_get(xbw, 'Hm0');
+                filenames{1} = [fdir 'filelist.txt'];
+                for jf = 1:length(Hm0)
+                    filenames{jf+1} = [fdir 'jonswap_' num2str(jf)];
+                end
+                xbw = xs_meta(xbw, 'Delft Dashboard', 'waves', filenames);
+                xbs.data(ixb).value = xbw;
+            else
+                
+                disp(fieldNamesDDB{is})
+                error()
+            end
+            ixb = ixb + 1;
+        end
     end
 end
 %% CONTINUE HERE AVR
 % Replace default values with model input
-fieldNames = fieldnames(ddb_xbmi);
-for i = 1:size(fieldNames,1)
-    handles.Model(handles.activeModel.nr).Input(handles.activeDomain).(fieldNames{i}) = ddb_xbmi.(fieldNames{i});
-end
+% fieldNames = fieldnames(ddb_xbmi);
+% for i = 1:size(fieldNames,1)
+%     handles.Model(handles.activeModel.nr).Input(handles.activeDomain).(fieldNames{i}) = ddb_xbmi.(fieldNames{i});
+% end
 
 
-
-xb_write_params(filename, xbs) % possibly add header to include run description?
+xb_write_input(filename, xbs) % possibly add header to include run description?
 
 
 
@@ -70,7 +125,7 @@ xb_write_params(filename, xbs) % possibly add header to include run description?
 % xb.txt30            = ['--------------------------------'];
 % xb.rho              = handles.Model(ii).Input(id).rho;
 % xb.g                = handles.Model(ii).Input(id).g;
-% 
+%
 % %% grid input
 % xb.txt11            = ['--------------------------------'];
 % xb.txt21            = [' Grid Input'];
@@ -102,13 +157,13 @@ xb_write_params(filename, xbs) % possibly add header to include run description?
 % xb.thetamin         = handles.Model(ii).Input(id).thetamax;
 % xb.dtheta           = handles.Model(ii).Input(id).dtheta;
 % xb.thetanaut        = handles.Model(ii).Input(id).thetanaut;
-% 
+%
 % %% Time input
 % xb.txt12            = ['--------------------------------'];
 % xb.txt22            = [' Time Input'];
 % xb.txt32            = ['--------------------------------'];
 % xb.tstop            = handles.Model(ii).Input(id).tstop;
-% 
+%
 % %% Numerics input
 % xb.txt13            = ['--------------------------------'];
 % xb.txt23            = [' Numerics Input'];
@@ -116,7 +171,7 @@ xb_write_params(filename, xbs) % possibly add header to include run description?
 % xb.CFL              = handles.Model(ii).Input(id).CFL;
 % xb.scheme           = handles.Model(ii).Input(id).scheme;
 % xb.thetanum         = handles.Model(ii).Input(id).thetanum;
-% 
+%
 % %% Limiters
 % xb.txt14            = ['--------------------------------'];
 % xb.txt24            = [' Limiters'];
@@ -126,7 +181,7 @@ xb_write_params(filename, xbs) % possibly add header to include run description?
 % xb.eps              = handles.Model(ii).Input(id).eps;
 % xb.umin             = handles.Model(ii).Input(id).umin;
 % xb.hwci             = handles.Model(ii).Input(id).hwci;
-% 
+%
 % %% Boundary numerics
 % xb.txt15            = ['--------------------------------'];
 % xb.txt25            = [' Boundary Numerics'];
@@ -135,7 +190,7 @@ xb_write_params(filename, xbs) % possibly add header to include run description?
 % xb.back             = handles.Model(ii).Input(id).back;
 % xb.left             = handles.Model(ii).Input(id).left;
 % xb.right            = handles.Model(ii).Input(id).right;
-% 
+%
 % %% Advanced wave boundary options
 % xb.txt16            = ['--------------------------------'];
 % xb.txt26            = [' Advanced Wave Boundary Options'];
@@ -145,7 +200,7 @@ xb_write_params(filename, xbs) % possibly add header to include run description?
 % xb.carspan          = handles.Model(ii).Input(id).carspan;
 % xb.nspr             = handles.Model(ii).Input(id).nspr;
 % xb.epsi             = handles.Model(ii).Input(id).epsi;
-% 
+%
 % %% Boundary tide options
 % xb.txt16            = ['--------------------------------'];
 % xb.txt26            = [' Boundary Tide Options'];
@@ -158,7 +213,7 @@ xb_write_params(filename, xbs) % possibly add header to include run description?
 %     xb.tidelen      = handles.Model(ii).Input(id).tidelen;
 %     xb.paulrevere   = handles.Model(ii).Input(id).paulrevere;
 % end
-% 
+%
 % %% Wave generating boundaries
 % xb.txt17            = ['--------------------------------'];
 % xb.txt27            = [' Wave Generating Boundaries'];
@@ -175,19 +230,19 @@ xb_write_params(filename, xbs) % possibly add header to include run description?
 %     if xb.instat == 0
 %         xb.wavint   = handles.Model(ii).Input(id).wavint;
 %     elseif xb.instat == 1
-%         xb.Tlong    = handles.Model(ii).Input(id).Tlong;    
+%         xb.Tlong    = handles.Model(ii).Input(id).Tlong;
 %     end
 % elseif xb.instat == 4 || 5 ||  6
 %     xb.bcfile       = handles.Model(ii).Input(id).bcfile;
 %     if strcmp('lst',xb.bcfile(end-2:end))==1
 %         xb.rt       = handles.Model(ii).Input(id).rt;
 %         xb.dtbc     = handles.Model(ii).Input(id).dtbc;
-%     end    
+%     end
 %     if xb.instat == 5
 %         xb.dthetaS_XB = handles.Model(ii).Input(id).dthetaS_XB;
 %     end
 % end
-% 
+%
 % %% Wind options
 % xb.txt18            = ['--------------------------------'];
 % xb.txt28            = [' Wind Options'];
@@ -196,14 +251,14 @@ xb_write_params(filename, xbs) % possibly add header to include run description?
 % xb.Cd               = handles.Model(ii).Input(id).Cd;
 % xb.windv            = handles.Model(ii).Input(id).windv;
 % xb.windth           = handles.Model(ii).Input(id).windth;
-% 
+%
 % %% Coriolis options
 % xb.txt19            = ['--------------------------------'];
 % xb.txt29            = [' Coriolis Options'];
 % xb.txt39            = ['--------------------------------'];
 % xb.lat              = handles.Model(ii).Input(id).lat;
 % xb.wearth           = handles.Model(ii).Input(id).wearth;
-% 
+%
 % %% Wave calculation options
 % xb.txt110           = ['--------------------------------'];
 % xb.txt210           = [' Wave Calculation Options'];
@@ -218,7 +273,7 @@ xb_write_params(filename, xbs) % possibly add header to include run description?
 % xb.delta            = handles.Model(ii).Input(id).delta;
 % xb.n                = handles.Model(ii).Input(id).n;
 % xb.swtable          = handles.Model(ii).Input(id).swtable;
-% 
+%
 % %% Flow calculation options
 % xb.txt111           = ['--------------------------------'];
 % xb.txt211           = [' Flow Calculation Options'];
@@ -227,7 +282,7 @@ xb_write_params(filename, xbs) % possibly add header to include run description?
 % xb.nuh              = handles.Model(ii).Input(id).nuh;
 % xb.nuhfac           = handles.Model(ii).Input(id).nuhfac;
 % xb.nuhv             = handles.Model(ii).Input(id).nuhv;
-% 
+%
 % %% Ground Water options
 % xb.txt112           = ['--------------------------------'];
 % xb.txt212           = [' Ground Water Options'];
@@ -241,7 +296,7 @@ xb_write_params(filename, xbs) % possibly add header to include run description?
 % xb.dwetlayer        = handles.Model(ii).Input(id).dwetlayer;
 % xb.gw0              = handles.Model(ii).Input(id).gw0;
 % xb.gw0file          = handles.Model(ii).Input(id).gw0file;
-% 
+%
 % %% Sediment transport calculation options
 % xb.txt113           = ['--------------------------------'];
 % xb.txt213           = [' Sediment Transport Calculation Options'];
@@ -263,7 +318,7 @@ xb_write_params(filename, xbs) % possibly add header to include run description?
 % xb.sedcal           = handles.Model(ii).Input(id).sedcal;
 % xb.rhos             = handles.Model(ii).Input(id).rhos;
 % xb.turb             = handles.Model(ii).Input(id).turb;
-% 
+%
 % %% Morphological calculation options
 % xb.txt114           = ['--------------------------------'];
 % xb.txt214           = [' Moprhological Calculation Options'];
@@ -275,7 +330,7 @@ xb_write_params(filename, xbs) % possibly add header to include run description?
 % xb.wetslp           = handles.Model(ii).Input(id).wetslp;
 % xb.hswitch          = handles.Model(ii).Input(id).hswitch;
 % xb.dzmax            = handles.Model(ii).Input(id).dzmax;
-% 
+%
 % %% Output options
 % xb.txt115           = ['--------------------------------'];
 % xb.txt215           = [' Output Options'];
@@ -287,15 +342,15 @@ xb_write_params(filename, xbs) % possibly add header to include run description?
 % xb.tsglobal         = handles.Model(ii).Input(id).tsglobal;
 % xb.tspoints         = handles.Model(ii).Input(id).tspoints;
 % xb.tsmean           = handles.Model(ii).Input(id).tsmean;
-% 
+%
 % xb.nglobalvar       = handles.Model(ii).Input(id).nglobalvar;
 % xb.npoints          = handles.Model(ii).Input(id).npoints;
 % xb.nrugauge         = handles.Model(ii).Input(id).nrugauge;
 % xb.nmeanvar         = handles.Model(ii).Input(id).nmeanvar;
-% 
+%
 % %%
 % Names = fieldnames(xb);
-% 
+%
 % for i=1:length(Names)
 %     p=xb.(Names{i});
 %     if ischar(p)
@@ -304,11 +359,11 @@ xb_write_params(filename, xbs) % possibly add header to include run description?
 %         Par.(Names{i})={p,1,1};
 %     end
 % end
-% 
+%
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% 
+%
 % fid=fopen(handles.Model(ii).Input(id).ParamsFile,'w');
-% 
+%
 % for i=1:length(Names)
 %     nm=getfield(Par,Names{i});
 %     name=Names{i};
