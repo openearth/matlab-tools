@@ -166,7 +166,7 @@ classdef AdaptiveDirectionalImportanceSampling < DirectionalSampling
         function SearchDirection(this, index)
             % Perform a line search in the chosen direction
             % (PerformSearch is a method of the LineSearch class)
-            display(['Searching direction #' num2str(index)]) %DEBUG
+            display(['Searching direction #' num2str(this.IndexQueue(index))]) %DEBUG
             if this.LimitState.CheckAvailabilityARS
                 % if a good response surface is available, use
                 % that in the line search
