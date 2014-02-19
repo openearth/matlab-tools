@@ -3,7 +3,7 @@
   <model>XBeach</model>
   <longname>XBeach</longname>
   <multipledomains>no</multipledomains>
-  <enable>1</enable>
+  <enable>0</enable>
   <element>
     <style>tabpanel</style>
     <tag>XBeach</tag>
