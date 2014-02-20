@@ -41,7 +41,7 @@ function D = t_tide_read(fname,varargin)
 % $HeadURL$
 % $Keywords: $
 
-   OPT.platform_id   = '';
+  %OPT.platform_id   = '';
    OPT.platform_name = '';
    OPT.lon           = [];
    OPT.lat           = [];
@@ -95,20 +95,20 @@ function D = t_tide_read(fname,varargin)
         
       fclose(fid);
    
-      D.component_name  = char(C{1});
-     %D.significance    = cellfun(@(x) strcmp(x(1),'*'),D.component_name);
-      D.significance    = D.component_name(:,1)=='*';
-      D.component_name(D.significance,1) = ' ';
-      D.component_name  = char(strtrim(cellstr(D.component_name)));
+      D.data.name  = char(C{1});
+     %D.data.significance    = cellfun(@(x) strcmp(x(1),'*'),D.component_name);
+      D.data.significance    = D.data.name(:,1)=='*';
+      D.data.name(D.significance,1) = ' ';
+      D.data.name  = char(strtrim(cellstr(D.component_name)));
       
-      D.frequency       = C{2};
+      D.data.frequency  = C{2};
 
       D.data.fmaj       = C{3};
       D.data.emaj       = C{4};
       D.data.pha        = C{5};
       D.data.epha       = C{6};
 
-% implement velocities
+% implement velocities too
 
 %     D.data.fmaj       = tidestruc.tidecon(:,1);D.name.fmaj = 'sema'           ;D.units.fmaj = OPT.units     ;D.long_name.fmaj = 'major ellipse axis of tidal component';
 %     D.data.emaj       = tidestruc.tidecon(:,2);D.name.emaj = 'sema_error'     ;D.units.emaj = OPT.units     ;D.long_name.emaj = 'estimate of error of major ellipse axis of tidal component';
@@ -119,10 +119,10 @@ function D = t_tide_read(fname,varargin)
 %     D.data.pha        = tidestruc.tidecon(:,7);D.name.pha  = 'phase'          ;D.units.pha  = 'degrees'     ;D.long_name.pha  = 'phase of tidal component';
 %     D.data.epha       = tidestruc.tidecon(:,8);D.name.epha = 'phase_error'    ;D.units.epha = 'degrees'     ;D.long_name.epha = 'estimate of error of phase of tidal component';
 
-      D.snr             = C{7};
+      D.data.snr        = C{7};
 
       %%
-      D.platform_id     = OPT.platform_id;  
-      D.platform_name   = OPT.platform_name;
+     %D.name            = OPT.platform_id;  
+      D.name            = OPT.platform_name;
       D.longitude       = OPT.lon;
       D.latitude        = OPT.lat;

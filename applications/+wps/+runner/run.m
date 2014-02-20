@@ -28,7 +28,7 @@ if isempty(table.rows)
         );
     url = sprintf('%s/%s/%s', queue_url, queue_database, uuid)
     text = json.dump(doc);
-    urlread2(url, 'PUT', text)
+    wps.runner.urlread2(url, 'PUT', text)
     %add a new doc
 else
     % lookup existing doc

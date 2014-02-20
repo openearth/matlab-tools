@@ -1,6 +1,9 @@
 function M = matroos_noos_header2meta(header)
 %MATROOS_NOOS_HEADER2META   parse NOOS time series header enriched by MATROOS
 %
+% M = matroos_noos_header2meta(headerlines) where
+% [~,~,headerlines] = noos_read()
+%
 % The NOOS format looks like this the lines with # are the Matroos header
 %
 % #------------------------------------------------------
@@ -8,7 +11,7 @@ function M = matroos_noos_header2meta(header)
 % # Created at Tue Oct 28 20:33:51 CET 2008
 % #------------------------------------------------------
 % # Location    : MAMO001_0
-% # Position    : (64040,444970)
+% # Position    : (64040,444970) % (lon,lat)
 % # Source      : sobek_hmr
 % # Unit        : waterlevel
 % # Analyse time: 200709020100

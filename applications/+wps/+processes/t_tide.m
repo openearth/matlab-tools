@@ -1,4 +1,4 @@
-function [ constituents ] = wps_nc_t_tide(noos_ascii,varargin)
+function [ constituents ] = t_tide(noos_ascii,varargin)
 %t_tide     tidal timeseries analysis from noos file
 %
 % Input:
@@ -14,7 +14,6 @@ function [ constituents ] = wps_nc_t_tide(noos_ascii,varargin)
 %% t_tide keywords
 
    OPT.period        = [];
-   OPT.lat           = NaN;
    OPT.synth         = 2;
    OPT.sort          = 'freq';
    
@@ -35,31 +34,50 @@ function [ constituents ] = wps_nc_t_tide(noos_ascii,varargin)
 % 200709010040   -0.425763547420502
 % 200709010050   -0.43956795334816
   
-   [time, data] = noos_read(noos_ascii);
+   [time, data, headerlines] = noos_read(noos_ascii);
+
+   M = matroos_noos_header2meta(headerlines);
    
-   OPT2 = OPT;OPT2 = rmfield(OPT,'format');
-   
+   OPT2     = OPT;
+   OPT2     = rmfield(OPT,'format');
+   OPT2.lat = M.lat;
+
+   if strcmpi(WPS.format,'text/plain') % native t_tide ascii garbage
+      OPT2.ascfile  = 't_tide.asc';
+   end
+   %%
+   D = t_tide2struc(time,data,OPT2);
+
+% IHO xml keywords	 
+
+   D.name                = M.loc;
+  %D.country             = ' '; % ?
+   D.position.latitude   = M.lat;
+   D.position.longitude  = M.lon;
+   D.timeZone            = M.timezone;
+  %D.units               = ' '; % ?
+  %D.observationStart    = ' '; % in struc from period
+  %D.observationEnd      = ' '; % in struc from period
+  %D.comments            = ' '; % ?
+%%
 if strcmpi(WPS.format,'text/plain') % native t_tide ascii garbage
 
-   OPT2.ascfile  = 't_tide.asc';
-   D = nc_t_tide(time,data,OPT2);
    constituents = loadstr(OPT2.ascfile);
 
 elseif strcmpi(WPS.format,'text/xml')
 
-   D = nc_t_tide(time,data,OPT2);
-   constituents = t_tide2xml(D);
+   constituents  = t_tide2xml (D);
 
-%elseif strcmpi(WPS.format,'application/netcdf')
+elseif strcmpi(WPS.format,'application/netcdf')
 
-%   OPT.ncfile   = 't_tide.nc';
-%   D = nc_t_tide(time,data,OPT2);
-%   constituents = binarystream(OPT.ncfile);
+   t_tide2nc  (D,'filename','t_tide.nc');
+   warning('find a way to send t_tide.nc back to user')
+   
+   constituents = 'ok';
    
 else %if strcmpi(WPS.format,'text/html') % default
    
-   D = nc_t_tide(time,data,OPT2);
-   constituents = t_tide2html(D);
+   constituents  = t_tide2html(D);
    
 end
 

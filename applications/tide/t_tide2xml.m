@@ -1,53 +1,70 @@
 function varargout = t_tide2html(D,varargin)
 %t_tide2html store t_tide constituents as IHO xml
 %
-% str = t_tide2xml(D) where D = nc_t_tide() or t_tide_read()
+% str = t_tide2xml(D) where D = t_tide2struc() or D = t_tide_read()
 %
-% Example: savestr('tst.xml',t_tide2xml(D));
+% Example: t_tide2xml(D,'filename','test.xml');
 %
-%See also: t_tide_read, t_tide, t_tide2html
+%See also: t_tide, t_tide2struc, t_tide_read, t_tide2html, t_tide2nc
 %          http://www.ukho.gov.uk/AdmiraltyPartners/FGHO/Pages/TidalHarmonics.aspx
 
-OPT.station_name    = '';
-OPT.station_country = '';
-OPT.station_lat     = nan;
-OPT.station_lon     = nan;
-OPT.timezone        = '';
-OPT.period          = [0 now];
+% IHO xml keywords	 
+   
+D0.name                = '';
+D0.country             = '';
+D0.position.latitude   = '';
+D0.position.longitude  = '';
+D0.timeZone            = [];
+D0.units               = '';
+D0.observationStart    = '';
+D0.observationEnd      = '';
+D0.comments            = '';
+   
+OPT.filename           = '';
+
+if nargin==0
+    varargout = {OPT};
+    return
+end
+OPT = setproperty(OPT,varargin);
 
 str = '';
 str = [str sprintf('<?xml version="1.0" encoding="UTF-8"?>')];
 str = [str sprintf('<Transfer xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="HC_Schema_V1.xsd">')];
 str = [str sprintf('	<Port>')];
-str = [str sprintf('		<name>%s</name>',OPT.station_name)];
-str = [str sprintf('		<country>%s</country>',OPT.station_country)];
+str = [str sprintf('		<name>%s</name>',D.name)];
+str = [str sprintf('		<country>%s</country>',D.country)];
 str = [str sprintf('		<position>')];
-str = [str sprintf('			<latitude>-90 27.09S</latitude>',OPT.station_lat)];
-str = [str sprintf('			<longitude>109 27W</longitude>',OPT.station_lon)];
+str = [str sprintf('			<latitude>%s N</latitude>',  num2str(D.position.latitude))];  % string: example: -90 27.09S
+str = [str sprintf('			<longitude>%s E</longitude>',num2str(D.position.longitude))]; % string: example: 109 27W
 str = [str sprintf('		</position>')];
-str = [str sprintf('		<timeZone>0700</timeZone>',OPT.timezone)];
-str = [str sprintf('		<units>m</units>')];
-str = [str sprintf('		<observationStart>2007-09-11</observationStart>',OPT.period(1))];
-str = [str sprintf('		<observationEnd>2007-09-12</observationEnd>',OPT.period(2))];
+str = [str sprintf('		<timeZone>%s</timeZone>',D.timeZone)];% integer ???
+str = [str sprintf('		<units>%s</units>',D.units)];
+str = [str sprintf('		<observationStart>%s</observationStart>',D.observationStart)]; % date
+str = [str sprintf('		<observationEnd>%s</observationEnd>',    D.observationEnd)]; % date
+str = [str sprintf('		<comments>%s</comments>',    D.comments)];
 str = [str sprintf('		<comments/>')];
 
 for i=1:length(D.data.fmaj)
 str = [str sprintf('		<Harmonic>')];
-str = [str sprintf('			<name>%s</name>',D.component_name(i,:))];
+str = [str sprintf('			<name>%s</name>',D.data.name(i,:))];
 str = [str sprintf('			<inferred>false</inferred>')];
 str = [str sprintf('			<phaseAngle>%g</phaseAngle>',D.data.pha(i))];
 str = [str sprintf('			<amplitude>%g</amplitude>',D.data.fmaj(i))];
-str = [str sprintf('			<speed>%g</speed>',D.frequency(i))];
+str = [str sprintf('			<speed>%g</speed>',D.data.frequency(i))];
 str = [str sprintf('		</Harmonic>')];
 end
 str = [str sprintf('	</Port>')];
 str = [str sprintf('</Transfer>')];
 
-if nargin==2
-   savestr(varargin{1},str)
-else
-    varargout = {str};
+if ~isempty(OPT.filename)
+   savestr(OPT.filename,str)
 end
+
+if nargin==1
+   varargout = {str};
+end
+
 
 %<?xml version="1.0" encoding="UTF-8"?>
 %<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
