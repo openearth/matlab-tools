@@ -357,8 +357,8 @@ classdef LimitState < handle
                 this.BetaSphere.plot(axisHandle);
             end
             
-            xlabel(axisHandle,'u_1');
-            ylabel(axisHandle,'u_2');
+            xlabel(axisHandle,this.RandomVariables(1).Name);
+            ylabel(axisHandle,this.RandomVariables(2).Name);
 
             legend(axisHandle,'-DynamicLegend','Location','NorthWestOutside');
             legend(axisHandle,'show');

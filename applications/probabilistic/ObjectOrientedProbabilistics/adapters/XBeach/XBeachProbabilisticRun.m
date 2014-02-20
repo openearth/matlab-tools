@@ -84,13 +84,24 @@ xbModel = xb_read_input(fullfile(OPT.ModelSetupDir, 'params.txt'));
 
 %% Calculate unspecified variables
 
+% N.B. OPT.Hm0 and OPT.Tp are variations around the mean that is calculated
+% below
+
+Hm0 = getHsig_t(OPT.h, 10.13, 0.6, 0.57, 7, 1.58) + OPT.Hm0; % Values for Borkum
+Tp  = getTp_t(Hm0, 4.67, 1.12) + OPT.Tp; % Values for Den Helder
+
+% Tp  = getTp_t(Hm0, 4.67, 1.12); % Values for Den Helder
+
 
 %% Change stochastic variables in XBeach model
 
 xbModel = xs_set(xbModel, 'zs0file.tide', [OPT.h -20; OPT.h -20]);
-xbModel = xs_set(xbModel, 'bcfile.Hm0', OPT.Hm0);
-xbModel = xs_set(xbModel, 'bcfile.Tp', OPT.Tp);
-xbModel = xs_set(xbModel, 'bcfile.fp', 1/OPT.Tp);
+xbModel = xs_set(xbModel, 'bcfile.Hm0', Hm0);
+xbModel = xs_set(xbModel, 'bcfile.Tp', Tp);
+xbModel = xs_set(xbModel, 'bcfile.fp', 1/Tp);
+% xbModel = xs_set(xbModel, 'bcfile.Hm0', OPT.Hm0);
+% xbModel = xs_set(xbModel, 'bcfile.Tp', OPT.Tp);
+% xbModel = xs_set(xbModel, 'bcfile.fp', 1/OPT.Tp);
 xbModel = xs_set(xbModel, 'D50', OPT.D50);
 xbModel = xs_set(xbModel, 'tstop', OPT.tstop);
 
