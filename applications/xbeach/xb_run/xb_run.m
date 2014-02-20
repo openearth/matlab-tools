@@ -102,7 +102,9 @@ else
     
 end
 
-if ~exist(fullfile(OPT.path, 'bin'),'dir'); mkdir(fullfile(OPT.path, 'bin')); end;
+if ~exist(fullfile(OPT.path, 'bin'),'dir') && OPT.copy
+    mkdir(fullfile(OPT.path, 'bin')); 
+end
 
 %% retrieve binary
 
@@ -130,7 +132,7 @@ if exist(OPT.binary, 'dir') == 7 && OPT.copy
 else
     if isunix()
         copyfile(OPT.binary, fullfile(OPT.path, 'bin', 'xbeach'));
-    else
+    elseif OPT.copy
         copyfile(OPT.binary, fullfile(OPT.path, 'bin', 'xbeach.exe'));
     end
 end

@@ -387,6 +387,7 @@ classdef LineSearch < handle
                     (abs(limitState.ZValues(end))/limitState.CheckOrigin) < this.MaxErrorZ && ...
                     limitState.BetaValues(end) > 0
                 this.SearchConverged                    = true;
+                display(['*A Z=~0 point has been found!*']) %DEBUG
             end
         end
         

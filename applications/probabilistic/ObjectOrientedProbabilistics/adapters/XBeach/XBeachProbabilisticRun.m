@@ -96,7 +96,7 @@ xbModel = xs_set(xbModel, 'tstop', OPT.tstop);
 
 %% Run model
 
-FolderName          = ['h' num2str(OPT.h) '_Hm0' num2str(OPT.Hm0)];
+FolderName          = ['h' num2str(OPT.h) '_H' num2str(OPT.Hm0) '_Tp' num2str(OPT.Tp)];
 ModelOutputDir      = fullfile(OPT.ModelRunDir, FolderName);
 ModelOutputDirLinux = path2os(ModelOutputDir);
 ModelOutputDirLinux = ['/' strrep(ModelOutputDirLinux,':','')];
@@ -109,5 +109,5 @@ if OPT.RunRemote
         'mpitype', 'OPENMPI', 'name', FolderName)
 else
     xb_run(xbModel, 'binary', OPT.ExecutablePath, 'netcdf', true, ...
-        'path', ModelOutputDir, 'name', '');
+        'path', ModelOutputDir, 'name', '', 'copy', false);
 end
