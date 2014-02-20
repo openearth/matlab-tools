@@ -186,7 +186,7 @@ else
             end
         else
             switch quantity
-                case{'location','scalar'}
+                case{'location','scalar','xy'}
 %                     shp='point';
                     plane='xy';
                     ndim=1;

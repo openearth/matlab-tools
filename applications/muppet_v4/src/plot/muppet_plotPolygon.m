@@ -17,25 +17,62 @@ end
 % z=z+opt.polygonelevation;
 
 if opt.timemarker.enable
+
+    if size(x,1)==1
+        % Data must be stored in column vector
+        x=x';
+        y=y';
+        data.times=data.times';
+    end
+    
     xm=interp1(data.times,x,opt.timemarker.time);
     ym=interp1(data.times,y,opt.timemarker.time);
+
+    if isnan(xm)
+        % xm and ym contain NaNs
+        if opt.timemarker.showfirstposition
+            % But we do want to show the marker
+            % Check if time is past last available time
+            ifirst=find(~isnan(x),1,'first');
+            if opt.timemarker.time<data.times(ifirst)
+                % All the real data happen earlier
+                xm=x(ifirst);
+                ym=y(ifirst);
+            end
+        end
+        if opt.timemarker.showlastposition
+            % But we do want to show the marker
+            % Check if time is past last available time
+            ilast=find(~isnan(x),1,'last');
+            if opt.timemarker.time>data.times(ilast)
+                % All the real data happen earlier
+                xm=x(ilast);
+                ym=y(ilast);
+            end
+        end
+    end
+    
     switch opt.timemarker.trackoption
         case{'uptomarker'}
             it=find(data.times<=opt.timemarker.time,1,'last');
             if isempty(it)
                 it=1;
             end
+            
             x=x(1:it,:);
             y=y(1:it,:);
+
 %             if size(x,1)==1
 %                 % row
 %                 x=[x xm];
 %                 y=[y ym];
 %             else
                 % column
+
                 x=[x;xm];
                 y=[y;ym];
-%             end
+
+                %             end
         case{'frommarker'}
             it=find(data.times>=opt.timemarker.time,1,'first');
             if isempty(it)

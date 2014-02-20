@@ -39,6 +39,12 @@
         <name>timemarkertrackoption</name>
       </plotoption>
       <plotoption>
+        <name>timemarkershowfirstposition</name>
+      </plotoption>
+      <plotoption>
+        <name>timemarkershowlastposition</name>
+      </plotoption>
+      <plotoption>
         <name>timemarkermarker</name>
       </plotoption>
       <plotoption>
@@ -95,6 +101,12 @@
       </plotoption>
       <plotoption>
         <name>timemarkertrackoption</name>
+      </plotoption>
+      <plotoption>
+        <name>timemarkershowfirstposition</name>
+      </plotoption>
+      <plotoption>
+        <name>timemarkershowlastposition</name>
       </plotoption>
       <plotoption>
         <name>timemarkermarker</name>

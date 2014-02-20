@@ -132,4 +132,34 @@
   <subplotoption>
     <name>adddate</name>
   </subplotoption>
+  <subplotoption>
+    <name>rightaxis</name>
+  </subplotoption>
+  <subplotoption>
+    <name>yminright</name>
+  </subplotoption>
+  <subplotoption>
+    <name>ymaxright</name>
+  </subplotoption>
+  <subplotoption>
+    <name>ytickright</name>
+  </subplotoption>
+  <subplotoption>
+    <name>ydecimalsright</name>
+  </subplotoption>
+  <subplotoption>
+    <name>ylabelrighttext</name>
+  </subplotoption>
+  <subplotoption>
+    <name>ylabelrightfontname</name>
+  </subplotoption>
+  <subplotoption>
+    <name>ylabelrightfontsize</name>
+  </subplotoption>
+  <subplotoption>
+    <name>ylabelrightfontweight</name>
+  </subplotoption>
+  <subplotoption>
+    <name>ylabelrightfontangle</name>
+  </subplotoption>
 </root>

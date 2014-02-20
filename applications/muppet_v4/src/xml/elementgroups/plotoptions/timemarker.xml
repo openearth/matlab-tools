@@ -53,6 +53,40 @@
     </dependency>
   </element>
   <element>
+    <text>Show first</text>
+    <type>boolean</type>
+    <variable>timemarker.showfirstposition</variable>
+    <style>checkbox</style>
+    <position>210 70 60 20</position>
+    <tooltipstring>Show marker at first position of track when marker time is before first available track time</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>timemarker.enable</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <text>Show last</text>
+    <type>boolean</type>
+    <variable>timemarker.showlastposition</variable>
+    <style>checkbox</style>
+    <position>280 70 60 20</position>
+    <tooltipstring>Show marker at last position of track when marker time is after last available track time</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>timemarker.enable</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
+  </element>
+  <element>
     <variable>timemarker.marker</variable>
     <type>string</type>
     <style>selectmarker</style>

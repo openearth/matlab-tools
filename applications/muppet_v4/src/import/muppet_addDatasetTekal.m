@@ -123,6 +123,17 @@ switch tp
             par.size=[0 0 sz(3) sz(4) 0];
             dataset.parameters(ipar).parameter=par;            
         end        
+    case{'xy'}
+        % x and y
+        npar=ncols;
+        dataset.selectcoordinates=1;        
+        for ipar=1:npar
+            par=[];
+            par=muppet_setDefaultParameterProperties(par);
+            par.name=columnlabels{ipar};
+            par.size=[0 0 0 0 0];
+            dataset.parameters(ipar).parameter=par;            
+        end        
 end
 
 % % % Tekal files can have multiple quantities, so ...

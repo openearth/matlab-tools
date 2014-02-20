@@ -1484,6 +1484,38 @@
     </dependency>
   </plotoption>
   <plotoption>
+    <name>timemarkershowfirstposition</name>
+    <variable>timemarker.showfirstposition</variable>
+    <type>boolean</type>
+    <keyword>TimeMarkerShowFirstPosition</keyword>
+    <default>1</default>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>timemarker.enable</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
+  </plotoption>
+  <plotoption>
+    <name>timemarkershowlastposition</name>
+    <variable>timemarker.showlastposition</variable>
+    <type>boolean</type>
+    <keyword>TimeMarkerShowLastPosition</keyword>
+    <default>1</default>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>timemarker.enable</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
+  </plotoption>
+  <plotoption>
     <name>timemarkermarker</name>
     <variable>timemarker.marker</variable>
     <type>string</type>
