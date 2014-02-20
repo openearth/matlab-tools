@@ -102,7 +102,6 @@ ModelOutputDirLinux = path2os(ModelOutputDir);
 ModelOutputDirLinux = ['/' strrep(ModelOutputDirLinux,':','')];
 
 mkdir(ModelOutputDir)
-
 if OPT.RunRemote
     xb_run_remote(xbModel, 'nodes', OPT.NrNodes, 'queuetype', OPT.QueueType, ...
         'netcdf', true, 'ssh_user', OPT.sshUser, 'ssh_pass', OPT.sshPassword, ...
@@ -112,5 +111,3 @@ else
     xb_run(xbModel, 'binary', OPT.ExecutablePath, 'netcdf', true, ...
         'path', ModelOutputDir, 'name', '');
 end
-
-% ModelRunning = xb_check_run(xbModel, 'sound', false, 'repeat', true);

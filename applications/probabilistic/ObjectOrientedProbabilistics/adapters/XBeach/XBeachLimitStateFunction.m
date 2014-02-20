@@ -80,14 +80,11 @@ OPT = setproperty(OPT, varargin{:});
 FolderName          = ['h' num2str(OPT.h) '_Hm0' num2str(OPT.Hm0)];
 ModelOutputDir      = fullfile(OPT.ModelRunDir, FolderName);
 
-% only for debugging! Remove when done
-if isdir(ModelOutputDir)
-    rmdir(ModelOutputDir,'s')
-end
-
 if ~isdir(ModelOutputDir)
     %% Setup & run model
     XBeachProbabilisticRun(varargin);
+    OPT.LSFChecker.CheckProgress(ModelOutputDir);
+else
     OPT.LSFChecker.CheckProgress(ModelOutputDir);
 end
 
