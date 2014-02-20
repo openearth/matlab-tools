@@ -71,6 +71,7 @@ function xb = xb_run(xb, varargin)
 OPT = struct( ...
     'name', ['xb_' datestr(now, 'YYYYmmddHHMMSS')], ...
     'binary', '', ...
+    'copy', true,...
     'nodes', 1, ...
     'netcdf', false, ...
     'path', pwd ...
@@ -124,7 +125,7 @@ if isempty(OPT.binary)
 end
 
 % move downloaded binary to destination directory
-if exist(OPT.binary, 'dir') == 7
+if exist(OPT.binary, 'dir') == 7 && OPT.copy
     copyfile(fullfile(OPT.binary, '*'), fullfile(OPT.path, 'bin'));
 else
     if isunix()
@@ -170,7 +171,11 @@ else
         drive = regexp(OPT.path, '^\s*([a-zA-Z]:)', 'match'); drive = drive{1};
         
         % start xbeach
-        [r messages] = system([drive ' && cd ' OPT.path ' && start bin\xbeach.exe']);
+        if ~OPT.copy
+            [r messages] = system([drive ' && cd ' OPT.path ' && start ' OPT.binary '\xbeach.exe']);
+        else
+            [r messages] = system([drive ' && cd ' OPT.path ' && start bin\xbeach.exe']);
+        end
         
         % get current running xbeach instances
         [r tasklist] = system('tasklist /FI "IMAGENAME eq xbeach.exe"');
