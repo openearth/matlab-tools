@@ -254,7 +254,8 @@ classdef AdaptiveResponseSurface < handle
         function [xGrid, yGrid, zGrid] = MakePlotGridARS(this)
             lim             = linspace(-10,10,1000);
             [xGrid, yGrid]   = meshgrid(lim,lim);
-            grid            = [xGrid(:) yGrid(:)];
+            % Take mean values for dimension 3 and onwards
+            grid            = [xGrid(:) yGrid(:) zeros(size(xGrid(:),1),max(size(this.Fit.ModelTerms,2)-2,0))]; 
             if this.GoodFit
                 zGrid   = reshape(polyvaln(this.Fit, grid), size(xGrid));
             else
@@ -264,7 +265,6 @@ classdef AdaptiveResponseSurface < handle
         
         %plot response surface
         function plot(this, axARS)
-            if size(this.Fit.ModelTerms,2) == 2
                 if nargin < 2 || isempty(axARS)
                     if isempty(findobj('Type','axes','Tag','axARS'))
                         axARS           = axes('Tag','axARS');
@@ -290,7 +290,6 @@ classdef AdaptiveResponseSurface < handle
                 colormap(axARS,[flipud(cm) ; cm]);
                 shading(axARS,'flat');
                 clim(axARS,[-1 1]);
-            end
         end
     end
 end
