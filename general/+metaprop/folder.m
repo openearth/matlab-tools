@@ -1,0 +1,26 @@
+classdef folder < metaprop.base
+    properties (Constant)
+        jType = metaprop.base.jClassNameToJType('java.lang.Character');
+    end
+    properties (SetAccess=immutable)    
+        jEditor = com.jidesoft.grid.FolderCellEditor; 
+        jRenderer = com.jidesoft.grid.ContextSensitiveCellRenderer;
+    end    
+    methods
+        function self = folder(varargin)
+            self = self@metaprop.base(varargin{:});
+            
+            % set specific restrictions
+            self.DefaultAttributes = {'row'};
+            self.DefaultClasses    = {'char'};
+
+            self.CheckDefault();
+        end
+    end
+    methods (Static)
+        function mValue = mValue(jValue)
+            % conversion from java value to matlab value
+            mValue = char(jValue);
+        end
+    end
+end
