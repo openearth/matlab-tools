@@ -60,6 +60,7 @@ classdef LineSearch < handle
         MaxIterationsFit
         MaxIterationsBisection
         MaxErrorZ
+        RelativeZCriterium
         IterationsFit
         IterationsBisection
         NrEvaluations
@@ -152,6 +153,14 @@ classdef LineSearch < handle
             ProbabilisticChecks.CheckInputClass(startZ,'double')
                                 
             this.StartZ     = startZ;
+        end
+        
+        %Set RelativeZCriterium: If true, z-values are normalized by the
+        %z-value in the origin when checking for convergence
+        function set.RelativeZCriterium(this, relativeZ)
+            ProbabilisticChecks.CheckInputClass(relativeZ,'logical')
+                                
+            this.RelativeZCriterium = relativeZ;
         end
         
         %% Main line search loop
@@ -383,11 +392,20 @@ classdef LineSearch < handle
         
         %Check convergence of line search
         function CheckConvergence(this, limitState)
-            if ...
-                    (abs(limitState.ZValues(end))/limitState.CheckOrigin) < this.MaxErrorZ && ...
-                    limitState.BetaValues(end) > 0
-                this.SearchConverged                    = true;
-                display(['*A Z=~0 point has been found!*']) %DEBUG
+            if this.RelativeZCriterium 
+                if ...
+                        (abs(limitState.ZValues(end))/limitState.CheckOrigin) < this.MaxErrorZ && ...
+                        limitState.BetaValues(end) > 0
+                    this.SearchConverged                    = true;
+                    display(['*A Z=~0 point has been found!*']) %DEBUG
+                end
+            else
+                if ...
+                        abs(limitState.ZValues(end)) < this.MaxErrorZ && ...
+                        limitState.BetaValues(end) > 0
+                    this.SearchConverged                    = true;
+                    display(['*A Z=~0 point has been found!*']) %DEBUG
+                end
             end
         end
         
@@ -477,6 +495,7 @@ classdef LineSearch < handle
             this.MaxIterationsFit           = 4;
             this.MaxIterationsBisection     = 4;
             this.MaxErrorZ                  = 1e-2;
+            this.RelativeZCriterium         = true;
             this.SearchConverged            = false;
             this.IterationsFit              = 0;
             this.IterationsBisection        = 0;

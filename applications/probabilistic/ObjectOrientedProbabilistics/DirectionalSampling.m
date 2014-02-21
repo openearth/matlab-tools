@@ -164,7 +164,11 @@ classdef DirectionalSampling < ProbabilisticMethod
         
         %Get EvaluationApproachesZero
         function evaluationApproachesZero = get.EvaluationApproachesZero(this)
-            evaluationApproachesZero = ((abs(this.LimitState.ZValues)/this.LineSearcher.OriginZ) < this.LineSearcher.MaxErrorZ) & this.LimitState.BetaValues > 0;
+            if this.LineSearcher.RelativeZCriterium
+                evaluationApproachesZero = ((abs(this.LimitState.ZValues)/this.LineSearcher.OriginZ) < this.LineSearcher.MaxErrorZ) & this.LimitState.BetaValues > 0;
+            else
+                evaluationApproachesZero = (abs(this.LimitState.ZValues) < this.LineSearcher.MaxErrorZ) & this.LimitState.BetaValues > 0;
+            end
         end
         
         %% Main Directional Sampling Loop: call this function to run DirectionalSampling (or ADIS)
@@ -266,7 +270,16 @@ classdef DirectionalSampling < ProbabilisticMethod
             % origin because the search actually begins in the origin and
             % if the points are very close to each other than we have
             % errors
-            if this.LimitState.ZValues(1) > this.LineSearcher.MaxErrorZ
+            if this.LineSearcher.RelativeZCriterium
+                this.CheckFailureOrigin(this.LimitState.ZValues(1))
+            else
+                this.CheckFailureOrigin(this.LimitState.ZValues(1)*this.LimitState.ZValueOrigin)
+            end
+        end
+        
+        %Check whether failure occurs at origin
+        function CheckFailureOrigin(this, zValueOrigin)
+            if zValueOrigin > this.LineSearcher.MaxErrorZ
                 this.AssignUNormalIndices(1,0);
             else
                 error('Failure at origin is not supported!');
