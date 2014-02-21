@@ -56,14 +56,14 @@ end
 
 %
 % Read associated .aru and arv. files
-% 
+%
 
 S_u = delft3d_io_aru_arv('read',filaru);
 S_v = delft3d_io_aru_arv('read',filarv);
 
 %
-% Create structure for .arl file 
-% 
+% Create structure for .arl file
+%
 
 k = 1;
 S_l.data{k}.comment = ['* Converted from Delft3D input files'];
@@ -74,38 +74,130 @@ for T = [S_u, S_v]
     LL = L_all{cc};
     k = k+1;
     S_l.data{k}.comment = ['* Based on ',T.filename];
-    for j = 1:length(T.data);
+    j = 1;
+    jlist = [];
+    while j <= length(T.data);
         if (length(setdiff(lower(fieldnames(T.data{j})),{'comment'})) == 0);
             k = k+1;
             S_l.data{k}.comment = T.data{j}.comment;
+            j = j + 1;
         elseif (length(setdiff(lower(fieldnames(T.data{j})),{'n','m','definition','percentage'})) == 0);
-            L = LL(T.data{j}.n,T.data{j}.m);
-            if ~isnan(L)
-                k = k+1;
-                S_l.data{k}.definition = T.data{j}.definition;
-                S_l.data{k}.percentage = T.data{j}.percentage;
-                S_l.data{k}.nm = L;
+            j0 = j;
+            jlist = j0;
+            jnotlist = [];
+            followup = 1;
+            while (followup) && (j < length(T.data))
+                if (followup) && (length(setdiff(lower(fieldnames(T.data{j+1})),{'n','m','definition','percentage'})) == 0)
+                    if (T.data{j+1}.n == T.data{j0}.n) && (T.data{j+1}.m == T.data{j0}.m)
+                        followup = 1;
+                        j = j+1;
+                        if j > j0;
+                            jlist = [jlist,j];
+                        end
+                    else
+                        followup = 0;
+                    end
+                elseif (followup) && (length(setdiff(lower(fieldnames(T.data{j+1})),{'comment'})) == 0)
+                    j = j+1;
+                    jnotlist = [jnotlist,j];
+                else
+                    followup = 0;
+                end
             end
+            L = LL(T.data{j0}.n,T.data{j0}.m);
+            k0 = k+1;  %keep track of first index to be written to
+            for ji = jnotlist;
+                if ji<jlist(end)   %done to ensure comments come before the point they are defined 
+                    k = k+1;
+                    S_l.data{k}.comment = T.data{ji}.comment;
+                end
+            end
+            if ~isnan(L)
+                for ji = jlist;
+                    k = k+1;
+                    S_l.data{k}.definition = T.data{ji}.definition;
+                    S_l.data{k}.percentage = T.data{ji}.percentage;
+                    S_l.data{k}.nm = L;
+                end
+                %search backwards and remove earlier instances of link L
+                ki = k0-1;
+                while ki > 0;
+                    if (length(setdiff(lower(fieldnames(S_l.data{ki})),{'nm','definition','percentage'})) == 0)
+                        if (S_l.data{ki}.nm == L);
+                            S_l.data = {S_l.data{1:ki-1},S_l.data{ki+1:end}};
+                            k  = k-1;
+                            k0 = k0-1;
+                        end
+                    end
+                    ki = ki-1;
+                end
+            end
+            j = jlist(end) + 1;
         elseif (length(setdiff(lower(fieldnames(T.data{j})),{'n1','m1','n2','m2','definition','percentage'})) == 0);
-            for m = T.data{j}.m1:T.data{j}.m2
-                for n = T.data{j}.n1:T.data{j}.n2
+            j0 = j;
+            jlist = j0;
+            jnotlist = [];
+            followup = 1;
+            while (followup) && (j < length(T.data))
+                if (followup) && (length(setdiff(lower(fieldnames(T.data{j+1})),{'n1','m1','n2','m2','definition','percentage'})) == 0)
+                    if (T.data{j+1}.n1 == T.data{j0}.n1) && (T.data{j+1}.m1 == T.data{j0}.m1) && ...
+                            (T.data{j+1}.n2 == T.data{j0}.n2) && (T.data{j+1}.m2 == T.data{j0}.m2)
+                        followup = 1;
+                        j = j+1;
+                        if j>j0
+                           jlist = [jlist,j];
+                        end
+                    else
+                        followup = 0;
+                    end
+                elseif (followup) && (length(setdiff(lower(fieldnames(T.data{j+1})),{'comment'})) == 0)
+                    j = j+1;
+                    jnotlist = [jnotlist,j];
+                else
+                    followup = 0;
+                end
+            end
+            k0 = k+1;  %keep track of first index to be written to
+            for ji = jnotlist;
+                if ji<jlist(end)   %done to ensure comments come before the point they are defined 
+                    k = k+1;
+                    S_l.data{k}.comment = T.data{ji}.comment;
+                end
+            end
+            for m = T.data{j0}.m1:T.data{j0}.m2
+                for n = T.data{j0}.n1:T.data{j0}.n2
                     L = LL(n,m);
                     if ~isnan(L)
-                        k = k+1;
-                        S_l.data{k}.definition = T.data{j}.definition;
-                        S_l.data{k}.percentage = T.data{j}.percentage;
-                        S_l.data{k}.nm = L;
+                        for ji = jlist;
+                            k = k+1;
+                            S_l.data{k}.definition = T.data{ji}.definition;
+                            S_l.data{k}.percentage = T.data{ji}.percentage;
+                            S_l.data{k}.nm = L;
+                        end
+                        %search backwards and remove earlier instances at link L
+                        ki = k0-1;
+                        while ki > 0;
+                            if (length(setdiff(lower(fieldnames(S_l.data{ki})),{'nm','definition','percentage'})) == 0)
+                                if (S_l.data{ki}.nm == L);
+                                    S_l.data = {S_l.data{1:ki-1},S_l.data{ki+1:end}};
+                                    k  = k-1;
+                                    k0 = k0-1;
+                                end
+                            end
+                            ki = ki-1;
+                        end                      
                     end
                 end
             end
+            j = jlist(end) + 1;
         end
-        %end
+        %disp([j, jlist])
     end
 end
 
 %
 % Write structure to .arl file (reusing Delft3d routine)
-% 
+%
 T = delft3d_io_aru_arv('write',filarl,S_l);
 
 end
@@ -130,7 +222,6 @@ end
 function L = find_net_link(x,y,GF);
 L = 0;
 found = 0;
-hold on;
 while L < GF.cor.nLink
     L = L+1;
     nl = GF.cor.Link(:,L);
