@@ -1,3 +1,4 @@
+% STRING property for a string
 classdef string < metaprop.base
     properties (Constant)
         jType = metaprop.base.jClassNameToJType('java.lang.Character');

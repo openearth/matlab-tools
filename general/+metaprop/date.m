@@ -1,3 +1,4 @@
+% DATE property for matlab datenums, has calender editor. Does not (yet) support editing time 
 classdef date < metaprop.base
     properties (Constant)
         jType = metaprop.base.jClassNameToJType('java.util.Date');

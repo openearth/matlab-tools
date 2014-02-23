@@ -1,3 +1,4 @@
+% STRINGENUMERATION property for a string that is limited to a set of possible values (on/off,left/right/top/bottom, etc)
 classdef stringEnumeration < metaprop.base
     properties (Constant)
         jType = metaprop.base.jClassNameToJType('java.lang.Character');
@@ -29,7 +30,7 @@ classdef stringEnumeration < metaprop.base
         end
         % Overload Check method
         function Check(self,value) % error/no error
-            validatestring(value,self.Options,self.DefiningClass.Name,self.Name)
+            validatestring(value,self.Options,self.DefiningClass.Name,self.Name);
         end
         
     end

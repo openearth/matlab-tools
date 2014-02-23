@@ -1,3 +1,4 @@
+% NUMERICSCALAR property for a numeric scalar
 classdef numericScalar < metaprop.base
     properties (Constant)
         jType = metaprop.base.jClassNameToJType('java.lang.Double');

@@ -1,3 +1,4 @@
+% DOUBLEROW property for a row of double precision numbers. Editor has one line for each element
 classdef doubleRow < metaprop.base
     properties (Constant)
         jType = metaprop.base.jClassNameToJType('[[D')

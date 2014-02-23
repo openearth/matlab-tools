@@ -1,3 +1,4 @@
+% FILE property that points to a file. Editor is a filepicker
 classdef file < metaprop.base
     properties (Constant)
         jType = metaprop.base.jClassNameToJType('java.lang.Character');

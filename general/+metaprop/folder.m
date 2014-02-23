@@ -1,3 +1,4 @@
+% FOLDER property that points to a directory. Editor is a directorypicker
 classdef folder < metaprop.base
     properties (Constant)
         jType = metaprop.base.jClassNameToJType('java.lang.Character');

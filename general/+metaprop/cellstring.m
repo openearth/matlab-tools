@@ -1,3 +1,4 @@
+% CELLSTRING property that can be either a string or a cellstring. Has multiline editor
 classdef cellstring < metaprop.base
     properties (Constant)
         jType = metaprop.base.jClassNameToJType('java.lang.Character');

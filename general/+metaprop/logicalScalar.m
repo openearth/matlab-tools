@@ -1,3 +1,4 @@
+% LOGICALSCALAR property for a single logical (true/false)
 classdef logicalScalar < metaprop.base
     properties (Constant)
         jType = metaprop.base.jClassNameToJType('java.lang.Boolean');

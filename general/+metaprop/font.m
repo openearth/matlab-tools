@@ -1,3 +1,4 @@
+% FONT property for a java font description. Editor is a dropdown with all available fonts
 classdef font < metaprop.base
     properties (Constant)
         jType = metaprop.base.jClassNameToJType('java.awt.Font');
@@ -17,10 +18,27 @@ classdef font < metaprop.base
             self.CheckDefault();
         end
     end
-%     methods (Static)
-%         function mValue = mValue(jValue)
-%             % conversion from java value to matlab value
-%             mValue = jValue;
-%         end
-%     end
+    % some methods to facilitate translation from java to matlab
+    methods (Static)
+        function FontName = FontName(value)
+            FontName = char(value.getName);
+        end
+        function FontSize = FontSize(value)
+            FontSize = double(value.getSize);
+        end
+        function FontAngle = FontAngle(value)
+            if value.isItalic
+                FontAngle = 'italic';
+            else
+                FontAngle = 'normal';
+            end
+        end
+        function FontWeight = FontWeight(value)
+            if value.isBold
+                FontWeight = 'bold';
+            else
+                FontWeight = 'normal';
+            end
+        end
+    end
 end

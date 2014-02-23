@@ -1,3 +1,4 @@
+% COLOR property with three numbers between 0 and 1. Has colorpicker editor
 classdef color < metaprop.base
     properties (Constant)
         jType = metaprop.base.jClassNameToJType('java.awt.Color')
@@ -12,7 +13,7 @@ classdef color < metaprop.base
             
             % set specific restrictions
             self.DefaultClasses    = {'numeric'};
-            self.DefaultAttributes = {'size',[1 3]};
+            self.DefaultAttributes = {'size',[1 3],'>=',0,'<=',1};
             self.CheckDefault();
         end
         function Check(self,value)

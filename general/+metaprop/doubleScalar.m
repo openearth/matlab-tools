@@ -1,3 +1,4 @@
+% DOUBLESCALAR property for a scalar (one value) double precision number.
 classdef doubleScalar < metaprop.base
     properties (Constant)
         jType = metaprop.base.jClassNameToJType('java.lang.Double')
