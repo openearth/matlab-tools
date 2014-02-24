@@ -2,7 +2,20 @@
 %   Can also be inspected with a gui
 %   Example:
 %     tb = textbox('String','Demonstration textbox')
-%     tb.inspect
+%     % change values with set
+%     set(tb,'String','This works')
+%     % or directly change property fields
+%     tb.String = 'This also works'
+%     % Call inspect method for an interactive gui 
+%     tb.inspect()
+%
+%   Allows dynamic resizing based on content, with or without text
+%   wrapping. For dynamic resizing, the position is calculated from the
+%   anchor point. if for example the anchor location is NorthEast, this
+%   means the upper left corner of the textbox will always be at the anchor
+%   position (which is specified relative to the parent figure). If the
+%   size is increased, the textbox will expand to the bottom en to the
+%   right. 
 %
 %   See also oop, metaprop
 
@@ -111,9 +124,9 @@ classdef textbox < oop.inspectable
             'FontSize',@metaprop.doubleScalar,{
                 'Category','Font'
                 'Attributes',{}}
-            'FontUnits',@metaprop.doubleScalar,{
+            'FontUnits',@metaprop.stringEnumeration,{
                 'Category','Font'
-                'Attributes',{}}
+                'Options',{'inches','centimeters','normalized','points','pixels'}}
             'FontWeight',@metaprop.stringEnumeration,{'Category','Font'
                 'Options',{'light','normal','demi','bold'}}
             'HorizontalAlignment',@metaprop.stringEnumeration,{
@@ -281,10 +294,9 @@ classdef textbox < oop.inspectable
         %% Dependent text related property setters
         function set.String             (self,value); self.metaprops.String             .Check(value); self.StringSet              = value; self.update(); end
         function set.Font               (self,value); self.metaprops.Font               .Check(value);
-            self.FontName   = metaprop.font.FontName  (self.metaprops.Font);
-            self.FontSize   = metaprop.font.FontSize  (self.metaprops.Font);
-            self.FontWeight = metaprop.font.FontWeight(self.metaprops.Font);
-            self.update();
+            self.FontName   = metaprop.font.FontName  (value);
+            self.FontSize   = metaprop.font.FontSize  (value);
+            self.FontWeight = metaprop.font.FontWeight(value);
         end
         function set.FontColor          (self,value); self.metaprops.FontColor          .Check(value); self.ht.Color               = value; self.update(); end
         function set.FontAngle          (self,value); self.metaprops.FontAngle          .Check(value); self.ht.FontAngle           = value; self.update(); end
