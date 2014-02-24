@@ -1,6 +1,6 @@
-% DATE property for matlab datenums, has calender editor. Does not (yet) support editing time 
+% DATE property for date in matlab datenums, has calender editor. Only for dates, not a date+time. 
 %
-% See also: metaprop.example
+% See also: metaprop.time, metaprop.example
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -65,7 +65,7 @@ classdef date < metaprop.base
             self.jEditor   = com.jidesoft.grid.DateCellEditor(dateModel, 1);
 
             % set specific restrictions
-            self.DefaultAttributes = {'scalar'};
+            self.DefaultAttributes = {'scalar','integer'};
             self.DefaultClasses    = {'double'};
 
             self.CheckDefault();

@@ -1,6 +1,8 @@
-% EXAMPLE Example script that shows how to inpect a custom class
+% TIME property for a time value (in matlab datenum, or fractional day). Edits as formatted string
+% Value must be greater than 0 and less than one, or greater than or equal
+% to 00:00:00 and less than or equal to  23:59:59.
 %
-% See also: metaprop.example_classdef
+% See also: metaprop.date, metaprop.example
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -45,26 +47,32 @@
 % $HeadURL$
 % $Keywords: $
 
-%% instantiate a class
-% an example class
-obj = metaprop.example_classdef;
+%%
+classdef time < metaprop.base
+    properties (Constant)
+        jType = metaprop.base.jClassNameToJType('java.lang.Character');
+    end
+    properties (SetAccess=immutable)
+        jEditor = com.jidesoft.grid.StringCellEditor;
+        jRenderer = com.jidesoft.grid.ContextSensitiveCellRenderer;
+    end
+    methods
+        function self = time(varargin)
+            self = self@metaprop.base(varargin{:});
+            
+            % set specific restrictions
+            self.DefaultAttributes = {'scalar','>=',0,'<=',1};
+            self.DefaultClasses    = {'double'};
 
-% View the properties of the object
-properties(obj)
-
-% Input verification 
-try
-    obj.Date = '2002/09/01';
-catch ME
-    disp(ME.message)
+            self.CheckDefault();
+        end
+    end
+    methods (Static)
+        function mValue = mValue(value)
+            mValue = rem(datenum(value,'HH:MM:SS'),1);
+        end        
+        function jValue = jValue(value)
+            jValue = datestr(value,'HH:MM:SS');
+        end
+    end
 end
-
-obj.Date = datenum(2002,9,1);
-
-%% Interactive inspection of class
-% open the inspector by calling the objects inspect method
-inspector = obj.inspect;
-% wait for output
-uiwait(inspector.Figure)
-
-fprintf('Date is now set to %s\n', obj.Datestring)

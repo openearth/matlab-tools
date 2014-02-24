@@ -56,6 +56,10 @@ classdef example_classdef < oop.inspectable
                 'Category','When'
                 'Description','Date field'
                 }
+            'Time',@metaprop.time,{
+                'Category','When'
+                'Description','Time field'
+                }
             'Number',@metaprop.doubleScalar,{
                 'Category','What'
                 'Description','A single double precision number greater than 1'
@@ -73,19 +77,30 @@ classdef example_classdef < oop.inspectable
     end
     %% Declaration of the properties, these are the same as 
     properties
-        Date = now()
+        Date = datenum(2012,1,16);
+        Time = datenum(0,0,0,12,00,36);
         Number = 2
         Position = [1 2 3 4]
         Array = magic(5);
     end
+    properties (Dependent)
+        Datetime % date+time
+        Datestring
+    end
     methods
-        %% construcor
+        %% constructor
         function self = example_classdef
         end
         
         %% setter methods
-        function set.Date  (self,value); self.metaprops.Date  .Check(value); self.Date   = value; end
-        function set.Number(self,value); self.metaprops.Number.Check(value); self.Number = value; end
-        function set.Array (self,value); self.metaprops.Array .Check(value); self.Array  = value; end
+        function set.Date    (self,value); self.metaprops.Date    .Check(value); self.Date     = value; end
+        function set.Time    (self,value); self.metaprops.Time    .Check(value); self.Time     = value; end
+        function set.Number  (self,value); self.metaprops.Number  .Check(value); self.Number   = value; end
+        function set.Position(self,value); self.metaprops.Position.Check(value); self.Position = value; end
+        function set.Array   (self,value); self.metaprops.Array   .Check(value); self.Array    = value; end
+        
+        %% getter methods
+        function value = get.Datetime  (self); value = self.Date+self.Time;    end
+        function value = get.Datestring(self); value = datestr(self.Datetime); end
     end
 end

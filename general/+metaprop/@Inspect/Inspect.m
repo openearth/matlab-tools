@@ -10,6 +10,7 @@ classdef Inspect < oop.handle_light
     properties
         Figure
         Object % object to be inspected
+        ObjectListener
     end
     methods
         function self = Inspect(Object)
@@ -17,6 +18,8 @@ classdef Inspect < oop.handle_light
             isprop(Object,'metaprops','Inspect can only inspect objects with metaprops');
             
             self.Object = Object;
+            
+            self.ObjectListener = addlistener(Object,'ObjectBeingDestroyed',@(varargin) delete(self));
             
             % Initialize JIDE's usage within Matlab
             com.mathworks.mwswing.MJUtilities.initJIDE;
@@ -64,7 +67,7 @@ classdef Inspect < oop.handle_light
         function callback_onPropertyChange(self, model, event)
             newValue = event.getNewValue();
             jProp = model.getProperty(event.getPropertyName());
-            
+            noWarnings = true;
             % discern between normal and child properties
             if jProp.getLevel > 0
                 % by convention, the index of the property is the last bit of the
@@ -84,20 +87,29 @@ classdef Inspect < oop.handle_light
                 try
                     oldValue(index{:}) = metaprop.mValue(newValue);
                 catch
-                    return
+                    warning('Could not change value of %s',propname);
+                    % do not change oldValue, thus leave it unchanged
+                    noWarnings = false;
                 end
                 newValue = oldValue;
                 
             else
                 propname = char(jProp.getName);
-                newValue = self.Object.metaprops.(propname).mValue(newValue);
+                try
+                    newValue = self.Object.metaprops.(propname).mValue(newValue);
+                catch
+                    warning('Could not change value of %s',propname);
+                    noWarnings = false;
+                end
             end
             
             % assign new value to Object
-            try
-                self.Object.(propname) = newValue;
-            catch 
-                return
+            if noWarnings
+                try
+                    self.Object.(propname) = newValue;
+                catch
+                    warning('Could not change value of %s',propname);
+                end
             end
             
             % refresh all property values
@@ -118,6 +130,9 @@ classdef Inspect < oop.handle_light
                        
             % delete figure
             delete(self.Figure);
+            
+            % delete listener
+            delete(self.ObjectListener);
             
             % call superclass delete method
             delete@handle(self);
