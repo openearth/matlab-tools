@@ -48,7 +48,7 @@
 %%
 classdef file < metaprop.base
     properties (Constant)
-        jType = metaprop.base.jClassNameToJType('java.lang.Character');
+        jType = metaprop.base.jClassNameToJType('java.io.File');
     end
     properties (SetAccess=immutable)    
         jEditor = com.jidesoft.grid.FileCellEditor; 
@@ -58,11 +58,17 @@ classdef file < metaprop.base
         function self = file(varargin)
             self = self@metaprop.base(varargin{:});
             
+            % adjust renderer
+            self.jRenderer = com.jidesoft.grid.CellRendererManager.getRenderer(self.jType, self.jContext);
+            com.jidesoft.grid.CellRendererManager.registerRenderer(self.jType, self.jRenderer, self.jContext);
+            
             % set specific restrictions
             self.DefaultAttributes = {'row'};
             self.DefaultClasses    = {'char'};
 
             self.CheckDefault();
+        end
+        function updateRenderer(self)
         end
     end
     methods (Static)

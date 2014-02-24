@@ -11,6 +11,8 @@ classdef Inspect < oop.handle_light
         Figure
         Object % object to be inspected
         ObjectListener
+        InitialState
+        Model
     end
     methods
         function self = Inspect(Object)
@@ -21,6 +23,8 @@ classdef Inspect < oop.handle_light
             
             self.ObjectListener = addlistener(Object,'ObjectBeingDestroyed',@(varargin) delete(self));
             
+            self.storeInitialState();
+            
             % Initialize JIDE's usage within Matlab
             com.mathworks.mwswing.MJUtilities.initJIDE;
             
@@ -30,43 +34,51 @@ classdef Inspect < oop.handle_light
             for ii = 1:length(propnames)
                 propname = propnames{ii};
                 metaprop = self.Object.metaprops.(propname);
-                jProp       = metaprop.jProp(self.Object.(propname));
+                jProp    = metaprop.jProp(self.Object.(propname));
                 list.add(jProp);
             end
             
             % Prepare a properties table containing the list
-            model = com.jidesoft.grid.PropertyTableModel(list);
-            model.expandFirstLevel();
-            grid = com.jidesoft.grid.PropertyTable(model);
+            self.Model = com.jidesoft.grid.PropertyTableModel(list);
+            self.Model.expandFirstLevel();
+            grid = com.jidesoft.grid.PropertyTable(self.Model);
             pane = com.jidesoft.grid.PropertyPane(grid);
             
-            hModel = handle(model, 'CallbackProperties');
+            hModel = handle(self.Model, 'CallbackProperties');
             set(hModel, 'PropertyChangeCallback', @self.callback_onPropertyChange);
             
             % Display the properties pane onscreen
             self.Figure = figure(...
                 'Number', 'off',...
                 'Name',   sprintf('%s property inspector',class(self.Object)),...
-                'Units',  'pixel',...
-                'Pos',    [300,200,300,500],...
+                'Units',  'Pixels',...
+                'Pos',    [300,200,400,500],...
                 'Menu',   'none',...
                 'Toolbar','none',...
                 'Tag',    'metaprop.Inspector',...
                 'Visible','off',...
                 'CloseRequestFcn',@(varargin) self.delete);
+            
+            % make menu buttons
+            uimenu('parent',self.Figure,'Label','&Undo'    ,'callback',{@releaseButtonAfterCallback,@self.undo},'Enable','off');
+            uimenu('parent',self.Figure,'Label','&Undo all','callback',{@releaseButtonAfterCallback,@self.undoAll});
+            uimenu('parent',self.Figure,'Label','&Ok'      ,'callback',{@releaseButtonAfterCallback,@self.ok});
+            uimenu('parent',self.Figure,'Label','&Cancel'  ,'callback',{@releaseButtonAfterCallback,@self.cancel});
+            
             % Set the figure icon & make visible
             jFrame = get(handle(self.Figure),'JavaFrame');
             icon = javax.swing.ImageIcon(fullfile(matlabroot, '/toolbox/matlab/icons/tool_legend.gif'));
             jFrame.setFigureIcon(icon);
             set(self.Figure, 'Visible','on'); % 'WindowStyle','modal',
-            panel = uipanel(self.Figure);
-            ppos = getpixelposition(panel);
-            javacomponent(pane, [0 0 ppos(3) ppos(4)], panel);
+            [~, container] =  javacomponent(pane);
+          
+            set(container,'Units', 'normalized');
+            set(container,'Position', [0,0,1,1]);
         end
         
-        function callback_onPropertyChange(self, model, event)
+        function callback_onPropertyChange(self, ~, event)
             newValue = event.getNewValue();
-            jProp = model.getProperty(event.getPropertyName());
+            jProp = self.Model.getProperty(event.getPropertyName());
             noWarnings = true;
             % discern between normal and child properties
             if jProp.getLevel > 0
@@ -111,17 +123,66 @@ classdef Inspect < oop.handle_light
                 end
             end
             
+            self.refreshPropertyValues();
+        end
+        
+        function refreshPropertyValues(self)
             % refresh all property values
             propnames = fieldnames(self.Object.metaprops);
             for ii = 1:length(propnames)
                 propname = propnames{ii};
-                jProp = model.getProperty(propname);
+                jProp = self.Model.getProperty(propname);
                 jProp.setValue(self.Object.metaprops.(propname).jValue(self.Object.(propname)));
                 
                 % update value of child jProps, if any
                 self.Object.metaprops.(propname).updateChildValues(jProp);
             end
-            model.refresh();  % refresh value onscreen
+            self.Model.refresh();  % refresh value onscreen
+        end
+        
+        function storeInitialState(self)
+            mc = metaclass(self.Object);
+            PropertyList = mc.PropertyList;
+            
+            % only store properties that 
+            propsTostore = (...
+                strcmp({PropertyList.GetAccess},'public') & ... both set and
+                strcmp({PropertyList.SetAccess},'public') & ...  get are public
+                ~[PropertyList.Constant] & ... are not constant
+                ~[PropertyList.Hidden]); % are not hidden
+            
+            PropertyList = PropertyList(propsTostore);
+            self.InitialState = cell(1,length(PropertyList)*2);
+            for ii = 1:length(PropertyList)
+                propname = PropertyList(ii).Name;
+                self.InitialState{2*ii-1} = propname;
+                self.InitialState{2*ii  } = self.Object.(propname);
+            end
+        end
+        function ok(self,~,~)
+            self.delete;
+        end
+        function cancel(self,~,~)
+            try
+                self.undoAll();
+            catch
+                uiwait(warndlg('Matlab will exit','Warning','modal'));
+                exit();
+            end
+            self.delete;
+        end
+        function undo(self,~,~)
+            % not implemented
+        end              
+        function undoAll(self,~,~)
+            try
+                self.Object.set(self.InitialState{:});
+                self.refreshPropertyValues();
+            catch ME
+                self.refreshPropertyValues();
+                uiwait(warndlg('Could not undo all','Warning','modal'));
+                throw(ME)
+            end
         end
         function delete(self)
             % clear Java mess
