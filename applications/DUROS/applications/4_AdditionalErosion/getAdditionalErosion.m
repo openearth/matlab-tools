@@ -189,6 +189,8 @@ if ~isnan(OPT.x0max)
         % x0max outside of possible calculation range
         OPT.x0max = x0max;
         writemessage(23, 'Original x0max outside of possible calculation range; x0max adjusted');
+    else
+        OPT.x0max = x0max;
     end
 end
 if ~isnan(OPT.x0min)
@@ -196,6 +198,8 @@ if ~isnan(OPT.x0min)
         % x0min outside of possible calculation range
         OPT.x0min = x0min;
         writemessage(24, 'Original x0min outside of possible calculation range; x0min adjusted');
+    else
+        OPT.x0min = x0min;
     end
 end
 
