@@ -50,7 +50,7 @@ classdef doubleArray2D < metaprop.base
         jType = metaprop.base.jClassNameToJType('[[D')
     end
     properties (SetAccess=immutable)        
-        jEditor = com.jidesoft.grid.CalculatorCellEditor;
+        jEditor = com.jidesoft.grid.DoubleCellEditor;
         jRenderer = com.jidesoft.grid.ContextSensitiveCellRenderer;
     end
     methods
@@ -65,6 +65,7 @@ classdef doubleArray2D < metaprop.base
         end
         function jProp = jProp(self,mValue)
             jProp = jProp@metaprop.base(self,mValue); %#ok<NODEF>
+            jjColPropType = metaprop.base.jClassNameToJType('java.lang.Double');
             for m = 1:size(mValue,1)
                 jRowProp = com.jidesoft.grid.DefaultProperty();
                 jRowProp.setName(sprintf('%s(%0.0f,:)',self.Name,m));
@@ -80,7 +81,7 @@ classdef doubleArray2D < metaprop.base
                     jColProp = com.jidesoft.grid.DefaultProperty();
                     jColProp.setName(sprintf('%s(%0.0f,%0.0f)',self.Name,m,n));
                     jColProp.setDescription(sprintf('Sub element of %s',self.Name));
-                    jColProp.setType(self.jType);
+                    jColProp.setType(jjColPropType);
                     
                     jColContext = com.jidesoft.grid.EditorContext(jColProp.getName);
                     jColProp.setEditorContext(jColContext);

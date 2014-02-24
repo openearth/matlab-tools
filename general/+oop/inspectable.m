@@ -52,7 +52,6 @@
 
 %%
 classdef (Abstract) inspectable < oop.setproperty
-
     properties (Abstract,Constant,Hidden)
         % metaprops = metaprop.helper.Construct(?metaprop_example,{
         %     'Date',@metaprop.date,{

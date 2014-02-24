@@ -4,7 +4,7 @@ classdef doubleRow < metaprop.base
         jType = metaprop.base.jClassNameToJType('[[D')
     end
     properties (SetAccess=immutable)        
-        jEditor = com.jidesoft.grid.CalculatorCellEditor;
+        jEditor = com.jidesoft.grid.DoubleCellEditor;
         jRenderer = com.jidesoft.grid.ContextSensitiveCellRenderer;
     end
     methods
@@ -19,12 +19,12 @@ classdef doubleRow < metaprop.base
         end
         function jProp = jProp(self,mValue)
             jProp = jProp@metaprop.base(self,mValue); %#ok<NODEF>
+            jChildType = metaprop.base.jClassNameToJType('java.lang.Double');
             for ii = 1:length(mValue)
                 jChildProp = com.jidesoft.grid.DefaultProperty();
                 jChildProp.setName(sprintf('%s(%0.0f)',self.Name,ii));
                 jChildProp.setDescription(sprintf('Sub element of %s',self.Name));
-                jChildProp.setType(self.jType);
-                
+                jChildProp.setType(jChildType);
                 
                 jChildContext = com.jidesoft.grid.EditorContext(jChildProp.getName);
                 jChildProp.setEditorContext(jChildContext);

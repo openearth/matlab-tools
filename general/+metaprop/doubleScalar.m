@@ -51,7 +51,7 @@ classdef doubleScalar < metaprop.base
         jType = metaprop.base.jClassNameToJType('java.lang.Double')
     end
     properties (SetAccess=immutable)
-        jEditor = com.jidesoft.grid.CalculatorCellEditor;
+        jEditor = com.jidesoft.grid.DoubleCellEditor;
         jRenderer = com.jidesoft.grid.ContextSensitiveCellRenderer;
     end
     methods

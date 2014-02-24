@@ -67,4 +67,4 @@ inspector = obj.inspect;
 % wait for output
 uiwait(inspector.Figure)
 
-fprintf('Date is now set to %s\n', obj.Datestring)
+disp(obj);

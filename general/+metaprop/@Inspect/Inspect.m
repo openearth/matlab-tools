@@ -86,9 +86,8 @@ classdef Inspect < oop.handle_light
                 oldValue = metaprop.mValue(self.Object.(propname));
                 try
                     oldValue(index{:}) = metaprop.mValue(newValue);
-                catch
-                    warning('Could not change value of %s',propname);
-                    % do not change oldValue, thus leave it unchanged
+                catch ME
+                    warning('Could not change value of %s\n%s',propname,ME.message);
                     noWarnings = false;
                 end
                 newValue = oldValue;
@@ -97,8 +96,8 @@ classdef Inspect < oop.handle_light
                 propname = char(jProp.getName);
                 try
                     newValue = self.Object.metaprops.(propname).mValue(newValue);
-                catch
-                    warning('Could not change value of %s',propname);
+                catch ME
+                    warning('Could not change value of %s\n%s',propname,ME.message);
                     noWarnings = false;
                 end
             end
@@ -107,8 +106,8 @@ classdef Inspect < oop.handle_light
             if noWarnings
                 try
                     self.Object.(propname) = newValue;
-                catch
-                    warning('Could not change value of %s',propname);
+                catch ME
+                    warning('Could not change value of %s\n%s',propname,ME.message);
                 end
             end
             
