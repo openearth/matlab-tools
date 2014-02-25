@@ -77,7 +77,7 @@ classdef (Abstract) base < oop.setproperty & matlab.mixin.Heterogeneous
     %% methods to enable gui inspection
     methods
         function jProp = jProp(self,mValue)
-            jProp = com.jidesoft.grid.DefaultProperty();
+            jProp = javaObjectEDT(com.jidesoft.grid.DefaultProperty);
             jProp.setName(self.Name);
             jProp.setDescription(self.Description)
             jProp.setType(self.jType);

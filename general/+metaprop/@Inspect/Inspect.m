@@ -39,10 +39,16 @@ classdef Inspect < oop.handle_light
             end
             
             % Prepare a properties table containing the list
-            self.Model = com.jidesoft.grid.PropertyTableModel(list);
+            self.Model = javaObjectEDT(com.jidesoft.grid.PropertyTableModel(list));
             self.Model.expandFirstLevel();
-            grid = com.jidesoft.grid.PropertyTable(self.Model);
-            pane = com.jidesoft.grid.PropertyPane(grid);
+            
+            grid = javaObjectEDT(com.jidesoft.grid.PropertyTable(self.Model));
+            grid.setShowNonEditable(grid.SHOW_NONEDITABLE_BOTH_NAME_VALUE);
+            com.jidesoft.grid.TableUtils.autoResizeAllColumns(grid);
+            grid.setRowHeight(19); 
+            grid.putClientProperty('terminateEditOnFocusLost',true);
+            
+            pane = javaObjectEDT(com.jidesoft.grid.PropertyPane(grid));
             
             hModel = handle(self.Model, 'CallbackProperties');
             set(hModel, 'PropertyChangeCallback', @self.callback_onPropertyChange);
@@ -71,7 +77,7 @@ classdef Inspect < oop.handle_light
             jFrame.setFigureIcon(icon);
             set(self.Figure, 'Visible','on'); % 'WindowStyle','modal',
             [~, container] =  javacomponent(pane);
-          
+            
             set(container,'Units', 'normalized');
             set(container,'Position', [0,0,1,1]);
         end
