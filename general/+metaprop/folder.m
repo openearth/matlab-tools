@@ -52,15 +52,13 @@ classdef folder < metaprop.base
     end
     properties (SetAccess=immutable)    
         jEditor = com.jidesoft.grid.FolderCellEditor; 
-        jRenderer
+        jRenderer = com.jidesoft.grid.ContextSensitiveCellRenderer;
     end    
     methods
         function self = folder(varargin)
             self = self@metaprop.base(varargin{:});
-            
-            % adjust renderer
-            self.jRenderer = com.jidesoft.grid.CellRendererManager.getRenderer(self.jType, self.jContext);
-            com.jidesoft.grid.CellRendererManager.registerRenderer(self.jType, self.jRenderer, self.jContext);
+
+
             
             % set specific restrictions
             self.DefaultAttributes = {'row'};
@@ -68,7 +66,9 @@ classdef folder < metaprop.base
 
             self.CheckDefault();
         end
-        function updateRenderer(self)
+        function registerRenderer(self)
+            renderer = com.jidesoft.grid.CellRendererManager.getRenderer(self.jType, self.jContext);
+            com.jidesoft.grid.CellRendererManager.registerRenderer(self.jType, renderer, self.jContext);
         end
     end
     methods (Static)

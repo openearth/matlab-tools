@@ -84,16 +84,28 @@ classdef (Abstract) base < oop.setproperty & matlab.mixin.Heterogeneous
             jProp.setValue(self.jValue(mValue));
             jProp.setCategory(self.Category);
 
-            self.jContext = com.jidesoft.grid.EditorContext(jProp.getName);
+            self.jContext = javaObjectEDT(com.jidesoft.grid.EditorContext(jProp.getName));
             jProp.setEditorContext(self.jContext);
 
-            com.jidesoft.grid.CellEditorManager.registerEditor(self.jType, self.jEditor, self.jContext);
             
-            com.jidesoft.grid.CellRendererManager.registerRenderer(self.jType, self.jRenderer, self.jContext);
-            self.updateRenderer;
+            self.registerEditor();
+            self.registerRenderer();
+            
+
+            % Right align everything
+            direction = javax.swing.SwingConstants.RIGHT;
+            try self.jRenderer.setHorizontalAlignment(direction); catch, end
+            try self.jEditor.setHorizontalAlignment(direction); catch, end
+            try self.jEditor.getTextField.setHorizontalAlignment(direction); catch, end
+            try self.jEditor.getComboBox.setHorizontalAlignment(direction); catch, end
         end
-        function updateRenderer(self)
-            self.jRenderer.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        
+        function registerEditor(self)
+            com.jidesoft.grid.CellEditorManager.registerEditor(self.jType, self.jEditor, self.jContext);
+        end
+        
+        function registerRenderer(self)
+            com.jidesoft.grid.CellRendererManager.registerRenderer(self.jType, self.jRenderer, self.jContext);
         end
     end
     methods (Static)

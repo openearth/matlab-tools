@@ -58,18 +58,19 @@ classdef file < metaprop.base
         function self = file(varargin)
             self = self@metaprop.base(varargin{:});
             
-            % adjust renderer
-            self.jRenderer = com.jidesoft.grid.CellRendererManager.getRenderer(self.jType, self.jContext);
-            com.jidesoft.grid.CellRendererManager.registerRenderer(self.jType, self.jRenderer, self.jContext);
-            
+            renderer = com.jidesoft.grid.CellRendererManager.getRenderer(self.jType, self.jContext);
+            com.jidesoft.grid.CellRendererManager.registerRenderer(self.jType, renderer, self.jContext);
+                
             % set specific restrictions
             self.DefaultAttributes = {'row'};
             self.DefaultClasses    = {'char'};
 
             self.CheckDefault();
         end
-        function updateRenderer(self)
-        end
+        function registerRenderer(self)
+            renderer = com.jidesoft.grid.CellRendererManager.getRenderer(self.jType, self.jContext);
+            com.jidesoft.grid.CellRendererManager.registerRenderer(self.jType, renderer, self.jContext);
+        end        
     end
     methods (Static)
         function mValue = mValue(jValue)
