@@ -128,10 +128,17 @@ try
 
     % no errors
     else
-
-        RetreatPoint        = result(3).VTVinfo.Xr;
-        InitialVolume       = result(2).VTVinfo.AVolume;
-        AdditionalVolume    = result(3).VTVinfo.TVolume;
+        if ~DuneErosionSettings('get','AdditionalErosion')
+            % No additional erosion
+            RetreatPoint        = result(1).VTVinfo.Xr;
+            InitialVolume       = result(2).VTVinfo.AVolume;
+            AdditionalVolume    = 0;
+            
+        else
+            RetreatPoint        = result(3).VTVinfo.Xr;
+            InitialVolume       = result(2).VTVinfo.AVolume;
+            AdditionalVolume    = result(3).VTVinfo.TVolume;
+        end
 
     end
 catch
