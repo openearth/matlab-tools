@@ -394,17 +394,17 @@ classdef LineSearch < handle
         function CheckConvergence(this, limitState)
             if this.RelativeZCriterium 
                 if ...
-                        (abs(limitState.ZValues(end))/limitState.CheckOrigin) < this.MaxErrorZ && ...
-                        limitState.BetaValues(end) > 0
-                    this.SearchConverged                    = true;
-                    display(['*A Z=~0 point has been found!*']) %DEBUG
-                end
-            else
-                if ...
                         abs(limitState.ZValues(end)) < this.MaxErrorZ && ...
                         limitState.BetaValues(end) > 0
                     this.SearchConverged                    = true;
-                    display(['*A Z=~0 point has been found!*']) %DEBUG
+                    display('*A Z=~0 point has been found!*') %DEBUG
+                end
+            else
+                if ...
+                        abs(limitState.ZValues(end)*limitState.ZValueOrigin) < this.MaxErrorZ && ...
+                        limitState.BetaValues(end) > 0
+                    this.SearchConverged                    = true;
+                    display('*A Z=~0 point has been found!*') %DEBUG
                 end
             end
         end

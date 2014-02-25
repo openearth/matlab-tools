@@ -165,9 +165,9 @@ classdef DirectionalSampling < ProbabilisticMethod
         %Get EvaluationApproachesZero
         function evaluationApproachesZero = get.EvaluationApproachesZero(this)
             if this.LineSearcher.RelativeZCriterium
-                evaluationApproachesZero = ((abs(this.LimitState.ZValues)/this.LineSearcher.OriginZ) < this.LineSearcher.MaxErrorZ) & this.LimitState.BetaValues > 0;
-            else
                 evaluationApproachesZero = (abs(this.LimitState.ZValues) < this.LineSearcher.MaxErrorZ) & this.LimitState.BetaValues > 0;
+            else
+                evaluationApproachesZero = (abs(this.LimitState.ZValues*this.LimitState.ZValueOrigin) < this.LineSearcher.MaxErrorZ) & this.LimitState.BetaValues > 0;
             end
         end
         
