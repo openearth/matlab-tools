@@ -62,12 +62,12 @@ function [locs,sources,units] = matroos_list(varargin)
    persistent matroos_list_cache
 
    if isempty(matroos_list_cache) % it is initialized []
-   matroos_list_cache.saved  = 0;
+       matroos_list_cache.saved  = 0;
 
-   matroos_list_cache.name1  = [fileparts(mfilename('fullpath')) filesep 'matroos_list_cache.',datestr(now,OPT.fmt)];
-   p = userpath;p(1:end-1); % remove trailing ;
-   p = tempdir;
-   matroos_list_cache.name2  = [p filesep 'matroos_list_cache.',datestr(now,OPT.fmt)];
+       matroos_list_cache.name1  = [fileparts(mfilename('fullpath')) filesep 'matroos_list_cache.',datestr(now,OPT.fmt)];
+       p = userpath;p(1:end-1); % remove trailing ;
+       p = tempdir;
+       matroos_list_cache.name2  = [p filesep 'matroos_list_cache.',datestr(now,OPT.fmt)];
    end
 
 %% read up-to-date list from matroos server 

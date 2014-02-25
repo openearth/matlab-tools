@@ -35,8 +35,13 @@ Plus                                    = DuneErosionSettings('get','Plus');
 [xref,xrefplusplus]                     = DuneErosionSettings('get','xref','xrefplusplus');
 [d_t]                                   = DuneErosionSettings('get','d');
 [gammaplusplus,thetaplusplus]           = DuneErosionSettings('get','gammaplusplus','thetaplusplus');
+[periodtype]                            = DuneErosionSettings('get','Period');
 cfdepth = 1;
 
+if strcmpi(periodtype,'TMM10')
+    % If Tm-1,0 is used, the base period is divided by 1.105
+    c_tp=c_tp/1.105;
+end
 %% ----------- DUROS ----------- 
 if strcmp(Plus,'')
     Tp_t      = 12;
@@ -62,6 +67,7 @@ elseif strcmp(Plus,'-plusplus')
     HS_d      = (Hsig_t/depth);
     delta     = max(min((HS_d-gammaplusplus)/thetaplusplus,1),0);
     cfdepth   = (1-delta) + delta*max((15/depth+0.11),1);    %overrule cfdepth with D++ values
+    %fprintf('cfepth value = %4.3f, depth=%3.1f, Hs=%3.1f\n',cfdepth,depth,Hsig_t);
 else
     error('Warning: variable "Plus" should be either '''' or ''-plus'' or ''-plusplus''');
 end

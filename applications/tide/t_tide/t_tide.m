@@ -853,26 +853,26 @@ function [nameu,fu,ju,namei,fi,jinf,jref]=constituents(minres,constit,...
 % Compute frequencies from astronomical considerations.
 
 if minres>1/(18.6*365.25*24),                       % Choose only resolveable pairs for short
-  [const,sat,cshallow]=t_getconsts(centraltime);    % Time series   
-  ju=find(const.df>=minres);
+    [const,sat,cshallow]=t_getconsts(centraltime);    % Time series   
+    ju=find(const.df>=minres);
 else                                                % Choose them all if > 18.6 years.
-  if isempty(centraltime)
+    if isempty(centraltime)
      error('time series longer than 18.6 years require keyword ''start time''')
-  end
-  [const,sat,cshallow]=t_get18consts(centraltime);
-  ju=[2:length(const.freq)]';  % Skip Z0
-  for ff=1:2,                  % loop twice to make sure of neightbouring pairs
+    end
+    [const,sat,cshallow]=t_get18consts(centraltime);
+    ju=[2:length(const.freq)]';  % Skip Z0
+    for ff=1:2,                  % loop twice to make sure of neightbouring pairs
     jck=find(diff(const.freq(ju))<minres);
     if (length(jck)>0)
        jrm=jck;
        jrm=jrm+(abs(const.doodsonamp(ju(jck+1)))<abs(const.doodsonamp(ju(jck))));
        disp(['  Warning! Following constituent pairs violate Rayleigh criterion']);
        for ick=1:length(jck);
-	 disp(['     ',const.name(ju(jck(ick)),:),' vs ',const.name(ju(jck(ick)+1),:) ' - not using ',const.name(ju(jrm(ick)),:)]);
+     disp(['     ',const.name(ju(jck(ick)),:),' vs ',const.name(ju(jck(ick)+1),:) ' - not using ',const.name(ju(jrm(ick)),:)]);
        end;
        ju(jrm)=[];
     end
-  end;
+    end;
 end;
   
 if ~isempty(constit),     % Selected if constituents are specified in input.

@@ -35,7 +35,8 @@ if size(Y,2)>size(Y,1)
     Y=Y';
 end
 
-id_zerocross=[];
+cntr=1;
+id_zerocross=[];errmsg={};
 clear x_zerocross
 if isnumeric(X) & isnumeric(Y)
     if size(X,2)==1 & size(X,1)>1 & size(Y,2)==1 & size(Y,1)>1
@@ -73,8 +74,8 @@ if isnumeric(X) & isnumeric(Y)
             id_zerocross(iiii+length(idplus)+length(idmin))     = mean(idzero(iiii));
         end
         if isempty(idplus) & isempty(idmin) & isempty(idzero)
-            %fprintf('warning cannot find crossing point!\n');
-            %fprintf('(polygon does not cross horizontal plane)\n');
+            x_zerocross=[];
+            errmsg{cntr} = ['warning cannot find crossing point! Polygon does not cross horizontal plane)'];cntr=cntr+1;
         end
     elseif size(X,2)==1 & size(X,1)==1 & size(Y,2)==1 & size(Y,1)==1
         x_zerocross=[];
@@ -89,6 +90,9 @@ else
 end
 x_zerocross=sort(x_zerocross);
 
-if nargout==2
+if nargout>=2
     varargout{1}=id_zerocross;
+end
+if nargout>2
+    varargout{2}=errmsg;
 end

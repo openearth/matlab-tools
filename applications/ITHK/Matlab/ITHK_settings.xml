@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <settings>
-  <basedir>d:\Repositories\oetools_oss\trunk\matlab\applications\ITHK\</basedir>
+  <basedir>d:\repositories\oetools\applications\ITHK\</basedir>
   <measures>
     <nourishment>
       <THRbeach>0</THRbeach>

@@ -27,6 +27,7 @@ DESettings.Other = struct(...
     'AdditionalVolume','min([-20,.25*Volume])',...   % formulation to use to determine the target volume
     'TP12slimiter',true,...                          % Switch TP limiter at 12s on/off (true/false)
     'Plus','-plus',...                               % DUROS-plus method (including Tp, as opposed to DUROS)
+    'Period','TP',...                                % Type of period measure that is used (either TP or TMM10)
     'n_d',1, ...                                     % scale factor
     'Bend',0, ...                                    % Coastal Bend
     'ProfileFluct',0, ...                            % Profile fluctuation

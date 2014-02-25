@@ -32,9 +32,14 @@ Plus                                    = DuneErosionSettings('get','Plus');
 [c_hs, c_tp, c_w]                       = DuneErosionSettings('get','c_hs','c_tp','c_w');
 [cp_hs, cp_tp, cp_w]                    = DuneErosionSettings('get','cp_hs','cp_tp','cp_w');
 [c_1, c_2, c_1plusplus, c_2plusplus]    = DuneErosionSettings('get','c_1','c_2','c_1plusplus','c_2plusplus');
+[periodtype]                            = DuneErosionSettings('get','Period');
 dz     = 0.05;
 ztemp  = [z-dz, z+dz];
 
+if strcmpi(periodtype,'TMM10')
+    % If Tm-1,0 is used, the base period is divided by 1.105
+    c_tp=c_tp/1.105;
+end
 %% ----------- DUROS ----------- 
 if strcmp(Plus,'')
     Tp_t      = 12;
