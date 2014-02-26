@@ -102,7 +102,7 @@ if nargin == 1 % don't set properties if an OPT struct was already given
     OPT = varargin{1};
     if isempty(OPT.CBfileName  ), OPT.CBfileName   = OPT.fileName  ; end
     if isempty(OPT.CBkmlName   ), OPT.CBkmlName    = OPT.kmlName   ; end
-    if isempty(OPT.CBcolorTitle), OPT.CBcolorTitle = OPT.kmlName   ; end
+    if isempty(OPT.CBcolorTitle), OPT.CBcolorTitle = OPT.CBkmlName   ; end
     if isempty(OPT.CBcolorMap  ), OPT.CBcolorMap   = OPT.colorMap  ; end
     if isempty(OPT.CBcolorSteps), OPT.CBcolorSteps = OPT.colorSteps; end
     if isempty(OPT.CBcLim      ), OPT.CBcLim       = OPT.cLim      ; end
