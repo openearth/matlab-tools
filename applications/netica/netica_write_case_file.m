@@ -23,7 +23,7 @@ function txt = netica_write_case_file(fname, varargin)
 %   txt = string of case file contents
 %
 %   Example
-%   netica_write_case_file
+%   netica_write_case_file('testfile.cas', 'node1', rand(1,100), 'node2', rand(1,100))
 %
 %   See also netica
 
