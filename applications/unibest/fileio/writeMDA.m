@@ -110,17 +110,52 @@ coast(find(isnan(coast(:,1))),:)=[];
 
 % specify resolution to cut up baseline
 % cut up baseline
+
 baselineFine=add_equidist_points(dx,baseline);
+baselineFine=baselineFine(2:end-1,:);
 
 % loop through points of coastline and find for each point the nearest point of the baseline
+tel = 1;
 for ii=1:length(coast)
     dist=sqrt((baselineFine(:,1)-coast(ii,1)).^2+(baselineFine(:,2)-coast(ii,2)).^2);
+    mindist(ii) = min(dist);
     [Y(ii),id]=min(dist);
     baselineNew(ii,:)=baselineFine(id,:);
+    
+    thrdist = 5;           % make sure the distance between reference points is at least 'thrdist' meters
+    if ii>1
+        if abs(baselineNew(ii,1)-baselineNew(ii-1,1))<thrdist && abs(baselineNew(ii,2)-baselineNew(ii-1,2))<thrdist
+            id_baseline(ii,1) = tel;
+        else
+            tel = tel+1;
+            id_baseline(ii,1) = tel;
+        end
+    else
+        id_baseline(ii,1) = tel;
+    end
 end
 
+%% thin out baselineNew
+baselineNew2 = [];
+for jj=1:max(id_baseline)
+    ID1 = find(id_baseline==jj);
+    [dum1,ID2]= min(mindist(ID1));
+    ID3 = ID1(ID2(1));
+    baselineNew2(jj,:) = baselineNew(ID3(1),:);
+    Y2(jj) = Y(ID3(1));
+end
+
+%% flip the coastline if it is defined in wrong direction
+dist1 = (baseline(1,1)-baselineNew2(1,1)).^2+(baseline(1,2)-baselineNew2(1,2)).^2;
+dist2 = (baseline(1,1)-baselineNew2(end,1)).^2+(baseline(1,2)-baselineNew2(end,2)).^2;
+if dist2<dist1
+    baselineNew2 = flipud(baselineNew2);
+    Y2 = flipud(Y2(:));
+end
+
+
 %specify minimal number of comp. points between two supporting points of baseline
-N=[0; ceil(diff(pathdistance(baselineNew(:,1),baselineNew(:,2)))/resolution)];
+N=[0; ceil(diff(pathdistance(baselineNew2(:,1),baselineNew2(:,2)))/resolution)];
 N=min(99,N);
 N(N==0)=1;N(1)=0;
 Ray=[1:length(N)]';
@@ -133,5 +168,5 @@ fid=fopen(mda_filename,'wt');
 fprintf(fid,'%s\n',' BASISPOINTS');
 fprintf(fid,'%4.0f\n',length(N));
 fprintf(fid,'%s\n','     Xw             Yw             Y              N              Ray');
-fprintf(fid,'%13.1f   %13.1f %11.0f%11.0f%11.0f\n',[baselineNew Y' N Ray]');
+fprintf(fid,'%13.1f   %13.1f %11.0f%11.0f%11.0f\n',[baselineNew2 Y2(:) N Ray]');
 fclose(fid);
