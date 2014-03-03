@@ -177,7 +177,10 @@ classdef slamfat_plot < handle
                 if this.hide_profile
                     f1 = f1 - this.obj.initial_profile;
                 end
-            
+                
+                f1(isnan(f1)|f1>1e10) = 0;
+                f2(isnan(f2)|f2>1e10) = 0;
+                
                 this.lines.d50          = pcolor(repmat(this.axes.x,nl+1,1),repmat(f1,nl+1,1) - cumsum([zeros(nx,1) th],2)',squeeze(f2(1,:,[1 1:end]))');
                 this.lines.profile      = plot(this.axes.x,f1,'-k','LineWidth',2);
                 this.lines.capacity     = plot(this.axes.x,zeros(nx,nf),':k');
@@ -317,6 +320,9 @@ classdef slamfat_plot < handle
 
             f1 = squeeze(this.obj.data.transport(:,end,:));
             f2 = squeeze(this.obj.data.capacity(:,end,:));
+            
+            f1(isnan(f1)|f1>1e10) = 0;
+            f2(isnan(f2)|f2>1e10) = 0;
 
             for i = 1:nf
                 set(this.lines.capacity_t(i),  'YData', f2(:,i));
@@ -325,9 +331,15 @@ classdef slamfat_plot < handle
             
             f3a = squeeze(this.obj.data.d50(1,:,1:end-1)) * 1e6;
             f3b = squeeze(this.obj.data.d50(:,:,1:end-1)) * 1e6;
+            
+            f3a(isnan(f3a)|f3a>1e10) = 0;
+            f3b(isnan(f3b)|f3b>1e10) = 0;
+            
             clim(this.subplots.profile, [max([0 min(f3a(f3a~=0))]) 1+max([0;f3b(:)])]);
             
             f1 = squeeze(this.obj.data.transport(:,end,:));
+            f1(isnan(f1)|f1>1e10) = 0;
+            
             ylim(this.subplots.transport, [0 max(abs(f1(:))) + 1e-3]);
         end
         

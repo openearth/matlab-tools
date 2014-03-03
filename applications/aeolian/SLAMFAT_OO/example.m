@@ -33,7 +33,7 @@ profile(1:n)   = linspace(-1,1,n);
 profile(n:end) = linspace(1,15,100-n+1);
 
 w = slamfat_wind('duration',3600);
-s = slamfat('wind',w,'profile',profile,'animate',false,'output_file','slamfat.nc');
+s = slamfat('wind',w,'profile',profile,'animate',false); %,'output_file','slamfat.nc');
 
 source = zeros(length(s.profile),1);
 source(1:100) = 1.5e-2 * w.dt * s.dx;
@@ -110,7 +110,7 @@ velocity = 4+4*sin((cumsum(duration)-30)/600*2*pi);
 velstd   = 0;
 w = slamfat_wind('duration',duration,'velocity_mean',velocity,'velocity_std',velstd);
 
-%%
+%% threshold amplitude
 
 phi = linspace(-pi,pi,21);
 A   = [3 4 5]; %2:6; %0:2:8;
@@ -409,6 +409,130 @@ linkaxes([s1 s2],'x');
 linkaxes([s3 s4],'x');
 
 %xlim(minmax(x));
+
+%% frequency difference
+
+close all; clear classes; clear w; clear s;
+
+n = 90;
+profile        = zeros(1,100);
+profile(1:n)   = linspace(-1,1,n);
+profile(n:end) = linspace(1,15,100-n+1);
+
+duration = 60 * ones(1,60);
+velocity = 4+4*sin((cumsum(duration)-30)/600*2*pi); % 24 * 3600 = 86400 s -> 600 s -> 0.0069444 -> 310 s tidal period
+velstd   = 0;
+w = slamfat_wind('duration',duration,'velocity_mean',velocity,'velocity_std',velstd);
+
+%% threshold frequency
+
+freq = [0:10:600]; %[0 150:20:600]; %[600 450 300 310 150]; % linspace(-pi,pi,21);
+A    = [3]; % 4 5]; %2:6; %0:2:8;
+
+for j = 1:length(A)
+    for i = 1:length(freq)
+        fname = sprintf('s_freq%d_A%d.mat',freq(i),A(j));
+        
+        if ~exist(fullfile(pwd,fname),'file')
+    
+            disp(fname);
+            
+            clear s;
+            s = slamfat('wind',w,'profile',profile,'animate',false,'progress',false);
+
+            source = zeros(length(s.profile),1);
+            source(1:20) = 1.5e-4 * w.dt * s.dx;
+
+            s.bedcomposition = slamfat_bedcomposition_basic;
+            s.bedcomposition.source             = source;
+            s.bedcomposition.grain_size         = .3*1e-3;
+
+            s.max_threshold = slamfat_threshold_basic;
+            s.max_threshold.time      = 0:3600;
+            
+            if freq(i) == 0
+                s.max_threshold.threshold = A(j)*0.9549;
+            else
+                s.max_threshold.threshold = A(j)*sin(s.max_threshold.time/freq(i)*2*pi);
+            end
+
+            s.run;
+
+            save(fname,'s');
+        end
+    end
+end
+
+%% plot time series
+
+figure; hold on;
+
+fnames = dir('s_freq*_A3.mat');
+
+n = 0;
+for i = 1:length(fnames)
+    fname = fnames(i).name;
+    
+    re = regexp(fname, 's_freq(\d+)_A3.mat', 'tokens');
+    
+    if ~isempty(re)
+        load(fname);
+        
+        if n == 0
+            plot(s.wind.time, s.wind.time_series,'-k');
+        end
+        
+        plot(s.max_threshold.time,max(0,s.max_threshold.threshold),'-r');
+        
+        disp(mean(max(0,s.max_threshold.threshold)));
+        
+        n = n + 1;
+    end
+end
+
+%% plot transport
+
+fnames = dir('s_freq*_A3.mat');
+
+f = [];
+T = [];
+Tr = [];
+Y = [];
+n = 1;
+for i = 1:length(fnames)
+    fname = fnames(i).name;
+    
+    re = regexp(fname, 's_freq(\d+)_A3.mat', 'tokens');
+    
+    if ~isempty(re)
+        load(fname);
+        
+        t1 = s.wind.time;
+        t2 = s.max_threshold.time;
+        
+        Y(n) = mean(max(0,s.wind.time_series - interp1(t2,max(0,s.max_threshold.threshold),t1)));
+        
+        f(n) = str2double(re{1}{1});
+        T(n) = s.data.cummulative_transport(end,end);
+        Tr(n) = s.data.cummulative_transport(end,end) * mean(max(0,s.max_threshold.threshold));
+        Tc(n) = s.data.cummulative_transport(end,end) * mean(max(0,s.max_threshold.threshold)) * Y(n)/Y(1);
+        
+        n = n + 1;
+    end
+end
+
+[f, idx] = sort(f);
+
+close all;
+
+figure; hold on;
+plot(f/600,T(idx),':k');
+plot(f/600,Tr(idx),'-xk');
+plot(f/600,Tc(idx),'-xr');
+%plot(f/600,Tr(idx)./Tc(idx),'-xg');
+
+xlabel('Threshold period relative to wind period [-]');
+ylabel('Transport [m^3/hr]');
 
 %% Aeolian Sand and Sand Dunes By Kenneth Pye, Haim Tsoar
 

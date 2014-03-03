@@ -216,8 +216,8 @@ classdef slamfat_threshold < slamfat_threshold_basic
                 otherwise
                     error('Unknown moisture formulation [%s]', this.method_moisture);
             end
-            threshold(moist > .005,:) = threshold_moist(moist > .005,:);
-            threshold(moist > .2  ,:) = inf; % should be .04 according to Pye and Tsoar
+            threshold(moist > .005) = threshold_moist(moist > .005);
+            threshold(moist > .064  ) = inf; % should be .04 according to Pye and Tsoar, 0.64 according to Delgado-Fernandez (10% vol.)
         end
         
         function data = output(this)
