@@ -1,7 +1,7 @@
 function varargout=d3d2dflowfm_friction_trachytopes(varargin)
-% Generate and write D-Flow FM trachytope *.aru from Delft3D definition
-% d3d2dflowfm_trachytopes generate and write D-Flow FM roughness from
-%         trachytopes distribution file (.aru) from space varying
+% Generate and write D-Flow FM trachytope *.arl from Delft3D definition
+% d3d2dflowfm_friction_trachytopes generates and writes D-Flow FM roughness 
+%         trachytopes distribution file (.arl) from space varying
 %         d3d-flow roughness from trachytopes distribution file (.aru/.arv)
 %
 %         Input arguments:
