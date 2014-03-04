@@ -453,9 +453,9 @@ classdef textbox < oop.inspectable
             % set string and wrap it
             self.ht.String = self.StringSet;
             if self.TextWrap
-                if self.ht.Extent(3) > 1
+                maxwidth       = 1 - self.MarginInAxesUnits(1)*2;
+                if self.ht.Extent(3) > maxwidth
                     % text is too wide, wrap it
-                    maxwidth       = 1 - self.MarginInAxesUnits(1)*2;
                     self.ht.String = self.textwrap(self.ht,self.StringSet,maxwidth);
                 end
             end
