@@ -76,10 +76,12 @@ classdef cellstring < metaprop.base
                     validateattributes(value,self.Classes,{},self.DefiningClass.Name,self.Name)
                 end
             elseif ischar(value)
-                atts = [{'row'},self.Attributes];
-                validateattributes(value,{'char'},atts,self.DefiningClass.Name,self.Name)
+                if ~isempty(value)
+                    atts = [{'row'},self.Attributes];
+                    validateattributes(value,{'char'},atts,self.DefiningClass.Name,self.Name)
+                end
             else
-                error('Eroro setting %s.%s, expected input to be a string or cellstring',self.DefiningClass.Name,self.Name)
+                error('Error setting %s.%s, expected input to be a string or cellstring',self.DefiningClass.Name,self.Name)
             end
         end
     end
