@@ -258,7 +258,7 @@ if imaketiles
                     if ~isnan(nanmax(nanmax(zz)))
                         zz=single(zz);
                         zz=zz';
-                        fname=[dr 'zl' num2str(k,'%0.2i') '\' dataname '.zl01.' num2str(i,'%0.5i') '.' num2str(j,'%0.5i') '.nc'];
+                        fname=[dr 'zl' num2str(k,'%0.2i') filesep dataname '.zl01.' num2str(i,'%0.5i') '.' num2str(j,'%0.5i') '.nc'];
                         
                         OPT.fillValue=-999;
                         
@@ -307,7 +307,7 @@ if imaketiles
                     % First check if surrouning files exist
                     for ii=1:4
                         for jj=1:4
-                            fname=[dr 'zl' num2str(k-1,'%0.2i') '\' dataname '.zl' num2str(k-1,'%0.2i') '.' num2str(iind(ii),'%0.5i') '.' num2str(jind(jj),'%0.5i') '.nc'];
+                            fname=[dr 'zl' num2str(k-1,'%0.2i') filesep dataname '.zl' num2str(k-1,'%0.2i') '.' num2str(iind(ii),'%0.5i') '.' num2str(jind(jj),'%0.5i') '.nc'];
                             if exist(fname,'file')
                                 iex(ii,jj)=1;
                             end
@@ -325,7 +325,7 @@ if imaketiles
                         
                         for ii=1:4
                             for jj=1:4
-                                fname=[dr 'zl' num2str(k-1,'%0.2i') '\' dataname '.zl' num2str(k-1,'%0.2i') '.' num2str(iind(ii),'%0.5i') '.' num2str(jind(jj),'%0.5i') '.nc'];
+                                fname=[dr 'zl' num2str(k-1,'%0.2i') filesep dataname '.zl' num2str(k-1,'%0.2i') '.' num2str(iind(ii),'%0.5i') '.' num2str(jind(jj),'%0.5i') '.nc'];
                                 if iex(ii,jj)
                                     ncid = netcdf.open (fname,'NOWRITE');
                                     varid = netcdf.inqVarID(ncid,'depth');
@@ -374,7 +374,7 @@ if imaketiles
                             %                             title(num2str(max(max(z))))
                             %                            pause(5)
                             
-                            fname=[dr 'zl' num2str(k,'%0.2i') '\' dataname '.zl' num2str(k,'%0.2i') '.' num2str(i,'%0.5i') '.' num2str(j,'%0.5i') '.nc'];
+                            fname=[dr 'zl' num2str(k,'%0.2i') filesep dataname '.zl' num2str(k,'%0.2i') '.' num2str(i,'%0.5i') '.' num2str(j,'%0.5i') '.nc'];
 
                             OPT.fillValue=-999;
 
@@ -403,7 +403,7 @@ if imakemeta
         nny=nnyk(k);
         nav=0;
         
-        flist2=dir([dr 'zl' num2str(k,'%0.2i') '\*.nc']);
+        flist2=dir([dr 'zl' num2str(k,'%0.2i') filesep '*.nc']);
         iin=[];
         jin=[];
         for jjj=1:length(flist2)

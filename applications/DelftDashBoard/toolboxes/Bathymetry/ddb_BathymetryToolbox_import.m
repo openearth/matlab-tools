@@ -130,6 +130,8 @@ switch lower(handles.Toolbox(tb).Input.import.rawDataFormat)
         y0=y(1);
         nrows=length(y);
         ncols=length(x);
+        dx=x(2)-x(1);
+        dy=y(2)-y(1);
     case{'adcircgrid'}
         % unstructured data
         % Read metadata
