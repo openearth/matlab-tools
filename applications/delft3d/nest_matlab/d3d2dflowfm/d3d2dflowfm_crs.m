@@ -15,7 +15,9 @@ if simona2mdf_fieldandvalue(mdf,'filcrs')
     grid = delft3d_io_grd('read',filgrd);
     xcoor = grid.cor.x';
     ycoor = grid.cor.y';
-
+    mmax  = size(xcoor,1);
+    nmax  = size(xcoor,2);
+    
     tmp = delft3d_io_crs('read',filcrs);
     crs = tmp.DATA;
 
@@ -37,7 +39,7 @@ if simona2mdf_fieldandvalue(mdf,'filcrs')
         npnt = 0;
         switch crs(icrs).direction
             case 'u'
-                for n = n(1) - 1: n(2)
+                for n = max(n(1) - 1,1): min(n(2),nmax)
                     if ~isnan(xcoor(m(1),n))
                         npnt = npnt + 1;
                         LINE(icrs).DATA{npnt,1} = xcoor(m(1),n);
@@ -45,7 +47,7 @@ if simona2mdf_fieldandvalue(mdf,'filcrs')
                     end
                 end
             case 'v'
-                for m = m(1) - 1:  m(2)
+                for m = max(m(1) - 1,1):  min(m(2),mmax)
                     if ~isnan(xcoor(m,n(1)))
                         npnt = npnt + 1;
                         LINE(icrs).DATA{npnt,1} = xcoor(m,n(1));

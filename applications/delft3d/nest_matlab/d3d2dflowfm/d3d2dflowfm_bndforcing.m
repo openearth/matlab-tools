@@ -22,9 +22,15 @@ for i_bnd = 1: no_bnd
 end
 
 %% Convert hydrodynamic boundary conditions
-d3d2dflowfm_convertbc ([mdf.pathd3d filesep mdf.filana],filpli,mdu.pathmdu);
-d3d2dflowfm_convertbc ([mdf.pathd3d filesep mdf.filbch],filpli,mdu.pathmdu);
-d3d2dflowfm_convertbc ([mdf.pathd3d filesep mdf.filbct],filpli,mdu.pathmdu);
+if simona2mdf_fieldandvalue(mdf,'filana') 
+    d3d2dflowfm_convertbc ([mdf.pathd3d filesep mdf.filana],filpli,mdu.pathmdu);
+end
+if simona2mdf_fieldandvalue(mdf,'filbch') 
+    d3d2dflowfm_convertbc ([mdf.pathd3d filesep mdf.filbch],filpli,mdu.pathmdu);
+end
+if simona2mdf_fieldandvalue(mdf,'filbct') 
+    d3d2dflowfm_convertbc ([mdf.pathd3d filesep mdf.filbct],filpli,mdu.pathmdu);
+end
 
 %% Same story, this time for the salinity boundaries
 
@@ -47,5 +53,7 @@ for i_bnd = 1: no_bnd
 end
 
 %% Convert salinity boundary conditions
-d3d2dflowfm_convertbc ([mdf.pathd3d filesep mdf.filbcc],filpli,mdu.pathmdu);
+if simona2mdf_fieldandvalue(mdf,'filbcc') 
+    d3d2dflowfm_convertbc ([mdf.pathd3d filesep mdf.filbcc],filpli,mdu.pathmdu);
+end
 

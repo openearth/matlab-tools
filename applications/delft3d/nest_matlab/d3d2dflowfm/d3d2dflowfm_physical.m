@@ -13,8 +13,10 @@ if strcmpi(mdf.sub1(3),'W')
     if strcmpi(mdf.wnsvwp,'N')
         %
         % Uniform wind
-        [~,name,~] = fileparts(mdf.filwnd);
-        mdu.Filwnd = [name '_unstruc.wnd'];
+        if simona2mdf_fieldandvalue(mdf,'filwnd')
+            [~,name,~] = fileparts(mdf.filwnd);
+            mdu.Filwnd = [name '_unstruc.wnd'];
+        end
     else
         %
         % Space varying wind (to implement yet)

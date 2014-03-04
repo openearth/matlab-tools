@@ -24,39 +24,41 @@ end
 
 iline = 0;
 
-for i_2dw = 1 : length(weirs.DATA)
-    type   = weirs.DATA(i_2dw).direction;
-    height = weirs.DATA(i_2dw).height;
-    m(1)   = weirs.DATA(i_2dw).mn(1);
-    n(1)   = weirs.DATA(i_2dw).mn(2);
-    m(2)   = weirs.DATA(i_2dw).mn(3);
-    n(2)   = weirs.DATA(i_2dw).mn(4);
-    if strcmpi(type,'u')
-        n = sort (n);
-        for idam = n(1):n(2)
-            if ~isnan(xcoor(m(1),idam - 1)) && ~isnan(xcoor(m(1),idam))
-                iline = iline + 1;
-                LINE(iline).Blckname  = ['L' num2str(iline,'%5.5i')];
-                LINE(iline).DATA{1,1} = xcoor(m(1)       ,idam - 1);
-                LINE(iline).DATA{1,2} = ycoor(m(1)       ,idam - 1);
-                LINE(iline).DATA{1,3} = height;
-                LINE(iline).DATA{2,1} = xcoor(m(1)       ,idam    );
-                LINE(iline).DATA{2,2} = ycoor(m(1)       ,idam    );
-                LINE(iline).DATA{2,3} = height;
+if ~isempty(weirs)
+    for i_2dw = 1 : length(weirs.DATA)
+        type   = weirs.DATA(i_2dw).direction;
+        height = weirs.DATA(i_2dw).height;
+        m(1)   = weirs.DATA(i_2dw).mn(1);
+        n(1)   = weirs.DATA(i_2dw).mn(2);
+        m(2)   = weirs.DATA(i_2dw).mn(3);
+        n(2)   = weirs.DATA(i_2dw).mn(4);
+        if strcmpi(type,'u')
+            n = sort (n);
+            for idam = n(1):n(2)
+                if ~isnan(xcoor(m(1),idam - 1)) && ~isnan(xcoor(m(1),idam))
+                    iline = iline + 1;
+                    LINE(iline).Blckname  = ['L' num2str(iline,'%5.5i')];
+                    LINE(iline).DATA{1,1} = xcoor(m(1)       ,idam - 1);
+                    LINE(iline).DATA{1,2} = ycoor(m(1)       ,idam - 1);
+                    LINE(iline).DATA{1,3} = height;
+                    LINE(iline).DATA{2,1} = xcoor(m(1)       ,idam    );
+                    LINE(iline).DATA{2,2} = ycoor(m(1)       ,idam    );
+                    LINE(iline).DATA{2,3} = height;
+                end
             end
-        end
-    else
-        m = sort(m);
-        for idam = m(1):m(2)
-            if ~isnan(xcoor(idam - 1,n(1))) && ~isnan(xcoor(idam,n(1)))
-                iline = iline + 1;
-                LINE(iline).Blckname  = ['L' num2str(iline,'%5.5i')];
-                LINE(iline).DATA{1,1} = xcoor(idam - 1   ,n(1)    );
-                LINE(iline).DATA{1,2} = ycoor(idam - 1   ,n(1)    );
-                LINE(iline).DATA{1,3} = height;
-                LINE(iline).DATA{2,1} = xcoor(idam       ,n(1)    );
-                LINE(iline).DATA{2,2} = ycoor(idam       ,n(1)    );
-                LINE(iline).DATA{2,3} = height;
+        else
+            m = sort(m);
+            for idam = m(1):m(2)
+                if ~isnan(xcoor(idam - 1,n(1))) && ~isnan(xcoor(idam,n(1)))
+                    iline = iline + 1;
+                    LINE(iline).Blckname  = ['L' num2str(iline,'%5.5i')];
+                    LINE(iline).DATA{1,1} = xcoor(idam - 1   ,n(1)    );
+                    LINE(iline).DATA{1,2} = ycoor(idam - 1   ,n(1)    );
+                    LINE(iline).DATA{1,3} = height;
+                    LINE(iline).DATA{2,1} = xcoor(idam       ,n(1)    );
+                    LINE(iline).DATA{2,2} = ycoor(idam       ,n(1)    );
+                    LINE(iline).DATA{2,3} = height;
+                end
             end
         end
     end

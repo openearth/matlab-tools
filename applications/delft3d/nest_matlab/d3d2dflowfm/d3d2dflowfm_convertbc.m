@@ -122,7 +122,7 @@ for i_pli = 1: length(filpli)
                     bndname = LINE.DATA{i_pnt,3}(index(3):end-5); 
                     for i_table = 1: bct.NTables
                         name_bct = bct.Table(i_table).Location;
-                        name_bct (name_bct == ' ') = '';
+%                        name_bct (name_bct == ' ') = '';
                         if strcmp(strtrim(bndname),strtrim(name_bct))
                             nr_table = i_table;
                         end
