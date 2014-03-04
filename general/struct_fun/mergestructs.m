@@ -102,34 +102,15 @@ for i=firststruct:nargin-1
    % for all field names
    for k = 1:length(FLDNAMES{i})
       if any(strcmp(FLDNAMES{i}{k},FLDNAMES{i+1}))
-          
-          FLD1 = varargin{1}.(FLDNAMES{i}{k});
-          FLD2 = varargin{2}.(FLDNAMES{i+1}{find(strcmp(FLDNAMES{i}{k},FLDNAMES{i+1}))});
-          notequalvalues  =1;
-          % do not stop if : (1) fields have similar content OR (2) fields are empty
-          if ischar(FLD1) && ischar(FLD2)
-              notequalvalues = 1-strcmpi(FLD1,FLD2);
-          elseif isnumeric(FLD1) && isnumeric(FLD2)
-              notequalvalues = 1-(FLD1==FLD2);
-          elseif isempty(FLD1)
-              %varargin{1}= rmfield(varargin{1},(FLDNAMES{i}{k}));
-              notequalvalues = 0;
-          elseif isempty(FLD2)
-              %varargin{2}= rmfield(varargin{2},(FLDNAMES{i+1}{find(strcmp(FLDNAMES{i}{k},FLDNAMES{i+1}))}));
-              notequalvalues = 0;
-          end
          % identical 1 1 1 1 1 1 1 1
          % overwrite 0 0 0 0 1 1 1 1
          % struct    0 0 1 1 0 0 1 1
          % recursive 0 1 0 1 0 1 0 1
          % error     1 1 1 0 0 0 0 0
-          
-         if notequalvalues
-             if (OPT.overwrite) | (OPT.recursive & ISSTRUCT{i}(k))
-                % delegate substructs to deeper call of mergestructs.
-             else
-                error(['Same field name is present in structs ',num2str(i),' and ',num2str(i+1)]);
-             end
+         if (OPT.overwrite) | (OPT.recursive & ISSTRUCT{i}(k))
+            % delegate substructs to deeper call of mergestructs.
+         else
+            error(['Same field name is present in structs ',num2str(i),' and ',num2str(i+1)]);
          end
       end
    end
