@@ -1,6 +1,6 @@
 function varargout=d3d2dflowfm_friction_trachytopes(varargin)
 % Generate and write D-Flow FM trachytope *.arl from Delft3D definition
-% d3d2dflowfm_friction_trachytopes generates and writes D-Flow FM roughness 
+% d3d2dflowfm_friction_trachytopes generates and writes D-Flow FM roughness
 %         trachytopes distribution file (.arl) from space varying
 %         d3d-flow roughness from trachytopes distribution file (.aru/.arv)
 %
@@ -10,6 +10,10 @@ function varargout=d3d2dflowfm_friction_trachytopes(varargin)
 %                3) Name of the delft3d friction from trachytope file (*.arv)
 %                4) Name of the dflowfm network file(*_net.nc)
 %                5) Name of the dflowfm trachytope file(*.arl)
+%                6) (optional) Integer specifying the debugmode (0=no/1=yes)
+%                7) (optional) Integer specifying the removal of previous links (0=no/1=yes)
+%                    - if no block inputs are present, the simulation
+%                    result is the same. 
 %
 % See also: dflowfm_io_mdu dflowfm_io_xydata d3d2dflowfm_friction_xyz
 
@@ -18,6 +22,20 @@ filaru         = varargin{2};
 filarv         = varargin{3};
 filnet         = varargin{4};
 filarl         = varargin{5};
+
+if (nargin == 6)
+    debugmode = varargin{6};
+else
+    debugmode = 0;
+end
+
+if (nargin == 7)
+    removepreviouslinks = varargin{7};
+    debugmode = varargin{6};
+else
+    removepreviouslinks = 1;
+    debugmode = 0;
+end
 
 %
 % Read the grid information
@@ -42,15 +60,26 @@ GF = dflowfm.readNet(filnet);
 %
 L_u = zeros(nmax,mmax);
 L_v = zeros(nmax,mmax);
-
+LU  = 0;
+LV  = 0;
 for n = 1:nmax
+    if debugmode
+        disp(['Processing n = ', num2str(n), ' of ',num2str(nmax)]);
+    end
     for m = 1:mmax;
+        %disp([n,nmax,m,mmax,LU,LV]);
         x_u = xcoor_u(n,m);
         y_u = ycoor_u(n,m);
-        L_u(n,m) = find_net_link(x_u,y_u,GF);
+        L_u(n,m) = find_net_link(x_u,y_u,GF,LU);
+        if ~isnan(L_u(n,m));
+            LU = max(L_u(n,m) - nmax - mmax,0);
+        end
         x_v = xcoor_v(n,m);
         y_v = ycoor_v(n,m);
-        L_v(n,m) = find_net_link(x_v,y_v,GF);
+        L_v(n,m) = find_net_link(x_v,y_v,GF,LV);
+        if ~isnan(L_v(n,m));
+            LV = max(L_v(n,m) - nmax - mmax,0);
+        end
     end
 end
 
@@ -77,15 +106,27 @@ for T = [S_u, S_v]
     j = 1;
     jlist = [];
     while j <= length(T.data);
+        if debugmode
+            disp(['Processing line ', num2str(j), ' of ', num2str(length(T.data))]);
+        end
         if (length(setdiff(lower(fieldnames(T.data{j})),{'comment'})) == 0);
+            if debugmode
+                disp('Processing comment')
+            end
             k = k+1;
             S_l.data{k}.comment = T.data{j}.comment;
             j = j + 1;
         elseif (length(setdiff(lower(fieldnames(T.data{j})),{'n','m','definition','percentage'})) == 0);
+            if debugmode
+                disp('Processing n m values')
+            end
             j0 = j;
             jlist = j0;
             jnotlist = [];
             followup = 1;
+            if debugmode
+                disp('... Read next link?')
+            end
             while (followup) && (j < length(T.data))
                 if (followup) && (length(setdiff(lower(fieldnames(T.data{j+1})),{'n','m','definition','percentage'})) == 0)
                     if (T.data{j+1}.n == T.data{j0}.n) && (T.data{j+1}.m == T.data{j0}.m)
@@ -107,7 +148,7 @@ for T = [S_u, S_v]
             L = LL(T.data{j0}.n,T.data{j0}.m);
             k0 = k+1;  %keep track of first index to be written to
             for ji = jnotlist;
-                if ji<jlist(end)   %done to ensure comments come before the point they are defined 
+                if ji<jlist(end)   %done to ensure comments come before the point they are defined
                     k = k+1;
                     S_l.data{k}.comment = T.data{ji}.comment;
                 end
@@ -119,25 +160,36 @@ for T = [S_u, S_v]
                     S_l.data{k}.percentage = T.data{ji}.percentage;
                     S_l.data{k}.nm = L;
                 end
-                %search backwards and remove earlier instances of link L
-                ki = k0-1;
-                while ki > 0;
-                    if (length(setdiff(lower(fieldnames(S_l.data{ki})),{'nm','definition','percentage'})) == 0)
-                        if (S_l.data{ki}.nm == L);
-                            S_l.data = {S_l.data{1:ki-1},S_l.data{ki+1:end}};
-                            k  = k-1;
-                            k0 = k0-1;
-                        end
+                if removepreviouslinks
+                    %search backwards and remove earlier instances of link L
+                    ki = k0-1;
+                    if debugmode
+                        disp(['... Removing previous instances of L ', num2str(L)])
                     end
-                    ki = ki-1;
+                    while ki > 0;
+                        if (length(setdiff(lower(fieldnames(S_l.data{ki})),{'nm','definition','percentage'})) == 0)
+                            if (S_l.data{ki}.nm == L);
+                                S_l.data = {S_l.data{1:ki-1},S_l.data{ki+1:end}};
+                                k  = k-1;
+                                k0 = k0-1;
+                            end
+                        end
+                        ki = ki-1;
+                    end
                 end
             end
             j = jlist(end) + 1;
         elseif (length(setdiff(lower(fieldnames(T.data{j})),{'n1','m1','n2','m2','definition','percentage'})) == 0);
+            if debugmode
+                disp('Processing block values')
+            end
             j0 = j;
             jlist = j0;
             jnotlist = [];
             followup = 1;
+            if debugmode
+                disp('... Read next line ?')
+            end
             while (followup) && (j < length(T.data))
                 if (followup) && (length(setdiff(lower(fieldnames(T.data{j+1})),{'n1','m1','n2','m2','definition','percentage'})) == 0)
                     if (T.data{j+1}.n1 == T.data{j0}.n1) && (T.data{j+1}.m1 == T.data{j0}.m1) && ...
@@ -145,7 +197,7 @@ for T = [S_u, S_v]
                         followup = 1;
                         j = j+1;
                         if j>j0
-                           jlist = [jlist,j];
+                            jlist = [jlist,j];
                         end
                     else
                         followup = 0;
@@ -159,7 +211,7 @@ for T = [S_u, S_v]
             end
             k0 = k+1;  %keep track of first index to be written to
             for ji = jnotlist;
-                if ji<jlist(end)   %done to ensure comments come before the point they are defined 
+                if ji<jlist(end)   %done to ensure comments come before the point they are defined
                     k = k+1;
                     S_l.data{k}.comment = T.data{ji}.comment;
                 end
@@ -174,18 +226,23 @@ for T = [S_u, S_v]
                             S_l.data{k}.percentage = T.data{ji}.percentage;
                             S_l.data{k}.nm = L;
                         end
-                        %search backwards and remove earlier instances at link L
-                        ki = k0-1;
-                        while ki > 0;
-                            if (length(setdiff(lower(fieldnames(S_l.data{ki})),{'nm','definition','percentage'})) == 0)
-                                if (S_l.data{ki}.nm == L);
-                                    S_l.data = {S_l.data{1:ki-1},S_l.data{ki+1:end}};
-                                    k  = k-1;
-                                    k0 = k0-1;
-                                end
+                        if removepreviouslinks
+                            %search backwards and remove earlier instances at link L
+                            ki = k0-1;
+                            if debugmode
+                                disp(['... Removing previous instances of L ', num2str(L)])
                             end
-                            ki = ki-1;
-                        end                      
+                            while ki > 0;
+                                if (length(setdiff(lower(fieldnames(S_l.data{ki})),{'nm','definition','percentage'})) == 0)
+                                    if (S_l.data{ki}.nm == L);
+                                        S_l.data = {S_l.data{1:ki-1},S_l.data{ki+1:end}};
+                                        k  = k-1;
+                                        k0 = k0-1;
+                                    end
+                                end
+                                ki = ki-1;
+                            end
+                        end
                     end
                 end
             end
@@ -198,11 +255,14 @@ end
 %
 % Write structure to .arl file (reusing Delft3d routine)
 %
-T = delft3d_io_aru_arv('write',filarl,S_l);
-
+if debugmode
+    disp('Writing to file')
+    T = delft3d_io_aru_arv('write',filarl,S_l);
+end
 end
 
 function found = isbetween(ax, ay, bx, by, cx, cy)
+% returns 1 if (cx,cy) lies between the line segment (ax,ay) - (bx,by)
 epsilon = 1e-8;
 crossproduct = (cy - ay) * (bx - ax) - (cx - ax) * (by - ay);
 found = 1;
@@ -219,8 +279,10 @@ if dotproduct > squaredlengthba
 end
 end
 
-function L = find_net_link(x,y,GF);
-L = 0;
+function L = find_net_link(x,y,GF,L);
+% start search from L because net-links of the previous search are likely
+% to be close to the next searched after
+L0 = L;
 found = 0;
 while L < GF.cor.nLink
     L = L+1;
@@ -230,6 +292,19 @@ while L < GF.cor.nLink
     if isbetween(xL(1),yL(1),xL(2),yL(2),x,y)
         found = 1;
         break
+    end
+end
+if (~found)
+    L = 0;
+    while L <= L0
+        L = L+1;
+        nl = GF.cor.Link(:,L);
+        xL = GF.cor.x(nl);
+        yL = GF.cor.y(nl);
+        if isbetween(xL(1),yL(1),xL(2),yL(2),x,y)
+            found = 1;
+            break
+        end
     end
 end
 if ((found == 0) || isnan(x) || isnan(y))
