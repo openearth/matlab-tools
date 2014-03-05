@@ -44,7 +44,7 @@ L_u = zeros(nmax,mmax);
 L_v = zeros(nmax,mmax);
 
 for n = 1:nmax
-    for m = 1:nmax;
+    for m = 1:mmax;
         x_u = xcoor_u(n,m);
         y_u = ycoor_u(n,m);
         L_u(n,m) = find_net_link(x_u,y_u,GF);
