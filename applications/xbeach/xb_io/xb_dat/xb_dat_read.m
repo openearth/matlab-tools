@@ -191,7 +191,9 @@ if exist(fname, 'file')
                 % check if memmapfile is an option
                 if exist('memmapfile.m','file')~=0
                     D = memmapfile(fname,'format',ftype);
-                    dat = reshape(D.data(1:prod(dims_out)),dims_out);
+                    tempdat = reshape(D.data(1:prod(dims_out)),dims);
+                    tempindx = xb_dims2nc(1:length(dims_out));
+                    dat = permute(tempdat,tempindx);
                 else
                     fid = fopen(fname, 'r');
                     dat = nan(dims_out);
