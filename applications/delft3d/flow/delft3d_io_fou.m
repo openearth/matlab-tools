@@ -16,6 +16,15 @@ function varargout=delft3d_io_fou(cmd,varargin),
 %    t1new = t0 + dt
 %    round(t1new) % times to be inserted into fou file.
 %
+% Example: take fou for one month, and make new fou for another month 
+% (of same year with same itdate reference date in mdf file)
+%
+%    D = delft3d_io_fou('read','01.fou');' % pre-configured for Jan
+%    yyy = 2009;mm = 2;                    % new one for Feb
+%    D.data.t_start = D.data.t_start + (datenum(yyyy,mm,1) - datenum(yyyy,1,1))*24*60;
+%    D.data.t_stop  = D.data.t_stop  + (datenum(yyyy,mm,1) - datenum(yyyy,1,1))*24*60;
+%    delft3d_io_fou('write',[num2str(mm),'.fou'],D)
+%
 % See also: delft3d, delft3d_fou2hdf, tekal
 
 %   --------------------------------------------------------------------
@@ -30,22 +39,25 @@ function varargout=delft3d_io_fou(cmd,varargin),
 %       2600 GA Delft
 %       The Netherlands
 %
-%   This library is free software; you can redistribute it and/or
-%   modify it under the terms of the GNU Lesser General Public
-%   License as published by the Free Software Foundation; either
-%   version 2.1 of the License, or (at your option) any later version.
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
 %
 %   This library is distributed in the hope that it will be useful,
 %   but WITHOUT ANY WARRANTY; without even the implied warranty of
-%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-%   Lesser General Public License for more details.
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
 %
-%   You should have received a copy of the GNU Lesser General Public
-%   License along with this library; if not, write to the Free Software
-%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
-%   USA or 
-%   http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
 
 % $Id$
 % $Date$
@@ -161,10 +173,12 @@ elseif length(tmp)>0
           try % optional for water levels
          [value,                                  newline] = strtok (newline);%7
           STRUCT.data.layer(iline)                         = str2num(value);
+          catch
+          STRUCT.data.layer(iline)                         =0; % irrelevant for for water levels or depth-averaged
           end
           try % optional
          [value,                                  newline] = strtok (newline);%8
-          STRUCT.data.flag{iline}                          = str2num(value);
+          STRUCT.data.flag{iline}                          = value; % char value like y/m or min/max
           end
          
       end % while
@@ -229,11 +243,13 @@ OPT.OS       = 'windows'; % or 'unix'
       fprintf   (fid,'%d '   ,STRUCT.data.n_cycles(iline)             );%4
       fprintf   (fid,'%5.3f ',STRUCT.data.nodal_amplification(iline)  );%5
       fprintf   (fid,'%5.3f ',STRUCT.data.astronomical_argument(iline));%6
-      if isfield(STRUCT.data,'layer')
+      if isfield(STRUCT.data,'layer') 
+      if ~(STRUCT.data.layer(iline)==0)
       fprintf   (fid,'%d ',STRUCT.data.layer(iline)                );%7
       end
+      end
       if isfield(STRUCT.data,'flag')
-      fprintf   (fid,'%d ',STRUCT.data.flag{iline}                 );%8
+      fprintf   (fid,'%s ',STRUCT.data.flag{iline}                 );%8
       end
       fprinteol (fid,OPT.OS);
       
