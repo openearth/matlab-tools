@@ -68,6 +68,7 @@ OPT = struct(...
     'FilterType',   'zero',         ...
     'FigName',      'AdisPlot',     ...
     'PlotARS',      true,           ...
+    'PlotBetaSphere',   true,           ...
     'PrintDir',     '',             ...
     'Print', false);
 
@@ -98,22 +99,25 @@ aH2 = subplot(2,2,2);
 AddARS(aH2,1,2, adisObject, OPT)
 hold(aH2,'on')
 AdisPlot2DCrossSection(aH2, 1, 2, filter, adisObject, OPT)
+AddBetaSphere(aH2, adisObject, OPT)
 hold(aH2,'off')
 
 aH3 = subplot(2,2,3);
 AddARS(aH3, 2, 3, adisObject, OPT)
 hold(aH3,'on')
 AdisPlot2DCrossSection(aH3, 2, 3, filter, adisObject, OPT)
+AddBetaSphere(aH3, adisObject, OPT)
 hold(aH3,'off')
 
 aH4 = subplot(2,2,4);
 AddARS(aH4, 1, 3, adisObject, OPT)
 hold(aH4,'on')
 AdisPlot2DCrossSection(aH4, 1, 3, filter, adisObject, OPT)
+AddBetaSphere(aH4, adisObject, OPT)
 hold(aH4,'off')
 
 if OPT.Print
-    print('-r600', '-dpng', fullfile(OPT.PrintDir,OPT.FigName))
+    print('-r600', '-dpng', fullfile(OPT.PrintDir,[OPT.FigName '_' OPT.FilterType]))
 end
 
 end
@@ -138,6 +142,7 @@ end
 
 function AddARS(axisHandle, Dim1, Dim2, adisObject, OPT)
 if OPT.PlotARS
+    if adisObject.LimitState.ResponseSurface.GoodFit
     lim             = linspace(-OPT.ULimits,OPT.ULimits,1000);
     [xGrid, yGrid]  = meshgrid(lim,lim);
     
@@ -151,6 +156,19 @@ if OPT.PlotARS
     
     pcolor(axisHandle, xGrid, yGrid, zGrid);
     shading flat
+    else
+        warning('This response surface does not have a good fit to the data!');
+    end
+end
+end
+
+function AddBetaSphere(axisHandle, adisObject, OPT)
+if OPT.PlotBetaSphere
+    [xMin, yMin]    = cylinder(adisObject.LimitState.BetaSphere.MinBeta, 100);
+    [xMax, yMax]    = cylinder(adisObject.LimitState.BetaSphere.BetaSphereUpperLimit, 100);
+    
+    plot(axisHandle,xMin(1,:),yMin(1,:),':g');
+    plot(axisHandle,xMax(1,:),yMax(1,:),'-g');
 end
 end
 
