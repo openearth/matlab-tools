@@ -1,4 +1,4 @@
-function mdu = d3d2dflowfm_obs_xy(filgrd,filsta,filsta_dflowfm)
+function d3d2dflowfm_obs_xy(filgrd,filsta,filsta_dflowfm)
 
 % d3d2dflowfm_obs : Convert and writes station information to D-Flow FM input files
 
