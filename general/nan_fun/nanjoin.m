@@ -58,7 +58,7 @@ function x_combined = nanjoin(x,dim)
 % $Keywords: $
 
 %%
-assert(iscell(x))
+assert(iscell(x),'Expected input to be a cell array')
 
 % remove empty entries
 x(cellfun(@isempty,x)) = [];
