@@ -53,6 +53,7 @@
 %%
 classdef (Abstract) inspectable < oop.setproperty
     properties (Abstract,Constant,Hidden)
+        metaprops
         % metaprops = metaprop.helper.Construct(?metaprop_example,{
         %     'Date',@metaprop.date,{
         %         'Description','Date field'}
@@ -61,10 +62,13 @@ classdef (Abstract) inspectable < oop.setproperty
         %         'Attributes',{'>',1}}
         %     });
     end
+    properties (Hidden)
+         Inspector_LastButtonPressed = ''
+    end
     methods
         %% add inspector method
-        function inspector = inspect(self)
-            inspector = metaprop.Inspect(self);
+        function inspector = inspect(self,varargin)
+            inspector = metaprop.Inspect(self,varargin{:});
         end
     end
 end

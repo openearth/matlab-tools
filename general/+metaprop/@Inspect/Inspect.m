@@ -17,7 +17,7 @@ classdef Inspect < oop.handle_light
     methods
         function self = Inspect(Object)
             % input check
-            isprop(Object,'metaprops','Inspect can only inspect objects with metaprops');
+            assert(isa(Object,'oop.inspectable'),'Inspect can only inspect objects derived from oop.inspectable');
             
             self.Object = Object;
             
@@ -166,6 +166,7 @@ classdef Inspect < oop.handle_light
             end
         end
         function ok(self,~,~)
+            self.Object.Inspector_LastButtonPressed = 'ok';
             self.delete;
         end
         function cancel(self,~,~)
@@ -175,9 +176,11 @@ classdef Inspect < oop.handle_light
                 uiwait(warndlg('Matlab will exit','Warning','modal'));
                 exit();
             end
+            self.Object.Inspector_LastButtonPressed = 'cancel';
             self.delete;
         end
         function undo(self,~,~)
+            self.Object.Inspector_LastButtonPressed = 'undo';
             % not implemented
         end              
         function undoAll(self,~,~)
@@ -189,6 +192,7 @@ classdef Inspect < oop.handle_light
                 uiwait(warndlg('Could not undo all','Warning','modal'));
                 throw(ME)
             end
+            self.Object.Inspector_LastButtonPressed = 'undoAll';
         end
         function delete(self)
             % clear Java mess
