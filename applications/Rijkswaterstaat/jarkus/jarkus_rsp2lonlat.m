@@ -62,7 +62,8 @@ function varargout = jarkus_rsp2lonlat(rsp, id, varargin)
 
 %%
 OPT = struct(...
-    'jarkus_transects', @(id) jarkus_transects('id', id, 'output', {'cross_shore' 'lat' 'lon' 'id'}),...
+    'url', jarkus_url,...
+    'jarkus_transects', @(id,url) jarkus_transects('url', url, 'id', id, 'output', {'cross_shore' 'lat' 'lon' 'id'}),...
     'method', 'linear');
 % return defaults (aka introspection)
 if nargin==0;
@@ -73,7 +74,7 @@ end
 OPT = setproperty(OPT, varargin);
 %% code
 if isa(OPT.jarkus_transects, 'function_handle')
-    tr = feval(OPT.jarkus_transects, id);
+    tr = feval(OPT.jarkus_transects, id, OPT.url);
 elseif isstruct(OPT.jarkus_transects)
     OK = jarkus_check(OPT.jarkus_transects, 'cross_shore', 'lat', 'lon', 'id');
     if OK
