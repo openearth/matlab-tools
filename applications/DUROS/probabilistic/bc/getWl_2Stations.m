@@ -62,8 +62,9 @@ function [Wl, Wl1, Wl2] = getWl_2Stations(lambda, P, Station1, Station2)
 
 %% Parameters per station
 
-% Station information obtained from "Ontwikkeling detailtoets duinen 2011
-% (D++)" Deltares 2010.
+% Station information obtained from "Dune erosion - Product 3:
+% Probabilistic dune erosion prediction method" WL|Delft
+% Hydraulics/DUT/Alkyon 2007
 %                           Omega   Rho     Alpha   Sigma
 StationInfo = {
     'Hoek van Holland',     1.95,   7.237,  0.57,   0.0158;

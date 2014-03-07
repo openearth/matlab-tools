@@ -70,17 +70,22 @@ OPT = setproperty(OPT, varargin{:});
 
 %% Parameters per station
 
-% Station information obtained from "Ontwikkeling detailtoets duinen 2011
-% (D++)" Deltares 2010.
+% Station information obtained from "Dune erosion - Product 3:
+% Probabilistic dune erosion prediction method" WL|Delft
+% Hydraulics/DUT/Alkyon 2007
 %                           a       b  
 StationInfo = {
-    'Hoek van Holland',     ;
-    'IJmuiden',             ;
-    'Den Helder',           ; 
-    'Eierlandse Gat',       ;
+    'Hoek van Holland',     3.86,   1.09;
+    'IJmuiden',             4.67,   1.12; 
+    'Den Helder',           4.67,   1.12; 
+    'Eierlandse Gat',       4.67,   1.12; 
     'Steunpunt Waddenzee',  [],     [];
-    'Borkum',               
+    'Borkum',               4.67,   1.12;
     };
+
+% Be aware that the Tp parameters are only defined for 2 stations: Hoek van
+% Holland (a = 3.86, b = 1.09) and Den Helder (a = 4.67, b = 1.12). The 
+% other stations have been filled by nearest-neighbour
 
 Station1Valid   = false;
 Station2Valid   = false;

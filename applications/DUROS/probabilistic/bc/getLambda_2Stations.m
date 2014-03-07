@@ -100,8 +100,9 @@ end
 
 %% Determine the two stations
 
-% Station information obtained from "Ontwikkeling detailtoets duinen 2011
-% (D++)" Deltares 2010.
+% Station information obtained from "Dune erosion - Product 3:
+% Probabilistic dune erosion prediction method" WL|Delft
+% Hydraulics/DUT/Alkyon 2007
 StationInfo = {
     'Hoek van Holland',     58748,  450830;
     'IJmuiden',             79249,  501800;
@@ -141,5 +142,5 @@ StationLine = interp1([Station1X Station2X], [Station1Y Station2Y], XDummy);
 [XIntersection, YIntersection]  = intersection(XDummy, JarkusLine, StationLine);
 
 % Calculate both Lambdas
-Lambda1     = distance([Station2X XIntersection],[Station2Y YIntersection])/distance([Station1X Station2X],[Station1Y Station2Y]);
-Lambda2     = distance([Station1X XIntersection],[Station1Y YIntersection])/distance([Station1X Station2X],[Station1Y Station2Y]);
+Lambda1     = sqrt(sum(distance([Station2X XIntersection],[Station2Y YIntersection]).^2))/sqrt(sum(distance([Station1X Station2X],[Station1Y Station2Y]).^2));
+Lambda2     = sqrt(sum(distance([Station1X XIntersection],[Station1Y YIntersection]).^2))/sqrt(sum(distance([Station1X Station2X],[Station1Y Station2Y]).^2));

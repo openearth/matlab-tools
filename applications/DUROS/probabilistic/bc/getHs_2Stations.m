@@ -70,8 +70,9 @@ OPT = setproperty(OPT, varargin{:});
 
 %% Parameters per station
 
-% Station information obtained from "Ontwikkeling detailtoets duinen 2011
-% (D++)" Deltares 2010.
+% Station information obtained from "Dune erosion - Product 3:
+% Probabilistic dune erosion prediction method" WL|Delft
+% Hydraulics/DUT/Alkyon 2007
 %                           a       b       c           d       e
 StationInfo = {
     'Hoek van Holland',     4.35,   0.6,    0.0008,     7,      4.67;
