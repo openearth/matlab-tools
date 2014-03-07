@@ -1,4 +1,4 @@
-function [Wl, Wl1, Wl2] = getWl_2Stations(lambda, P, Omega1, Omega2, rho1, rho2, alpha1, alpha2, sigma1, sigma2)
+function [Wl, Wl1, Wl2] = getWl_2Stations(lambda, P, Station1, Station2)
 %GETWL_2SUPPORTPOINTS  Calculates waterlevels in 2 stations and point
 %in between, given a probability and the parameters in both stations
 %
@@ -60,12 +60,62 @@ function [Wl, Wl1, Wl2] = getWl_2Stations(lambda, P, Omega1, Omega2, rho1, rho2,
 % $HeadURL$
 % $Keywords: $
 
-%% Settings
+%% Parameters per station
 
-%% Calculate Hs for both stations
+% Station information obtained from "Ontwikkeling detailtoets duinen 2011
+% (D++)" Deltares 2010.
+%                           Omega   Rho     Alpha   Sigma
+StationInfo = {
+    'Hoek van Holland',     1.95,   7.237,  0.57,   0.0158;
+    'IJmuiden',             1.85,   5.341,  0.63,   0.0358;
+    'Den Helder',           1.6,    3.254,  1.6,    0.9001; 
+    'Eierlandse Gat',       2.25,   0.5,    1.86,   1.0995;
+    'Steunpunt Waddenzee',  [],     [],     [],     [];
+    'Borkum',               1.85,   5.781,  1.27,   0.535
+    };
 
-Wl1 = conditionalWeibull(P, Omega1, rho1, alpha1, sigma1);
-Wl2 = conditionalWeibull(P, Omega2, rho2, alpha2, sigma2);
+Station1Valid   = false;
+Station2Valid   = false;
+
+for iStation = 1:size(StationInfo,1)
+    if strcmpi(StationInfo{iStation,1}, Station1)
+        Omega1          = StationInfo{iStation,2}; 
+        rho1            = StationInfo{iStation,3};
+        alpha1          = StationInfo{iStation,4};
+        sigma1          = StationInfo{iStation,5};
+        Station1Valid   = true;
+    elseif strcmpi(StationInfo{iStation,1}, Station2)
+        Omega2          = StationInfo{iStation,2}; 
+        rho2            = StationInfo{iStation,3};
+        alpha2          = StationInfo{iStation,4};
+        sigma2          = StationInfo{iStation,5};
+        Station2Valid   = true;
+    end
+end
+
+if ~Station1Valid || ~Station2Valid
+    error('Please specify valid station names!')
+end
+
+%% Calculate Wl for both stations
+
+% Steunpunt Waddenzee doesn't have it's own set of parameters, and is
+% itself an interpolation between Eierlandse Gat (Lambda = 0.57) and Borkum
+% (Lambda = 0.43)
+if strcmpi(Station1, 'Steunpunt Waddenzee')
+    [Wl1, ~, ~] = getWl_2Stations(0.57, P, 'Eierlandse Gat', 'Borkum');
+%     Wl2         = getWaterlevelWeibull(Omega2, rho2, alpha2, sigma2, P);
+    Wl2         = conditionalWeibull_inv(P, Omega2, rho2, alpha2, sigma2);
+elseif strcmpi(Station2, 'Steunpunt Waddenzee')
+%     Wl1         = getWaterlevelWeibull(Omega1, rho1, alpha1, sigma1, P);
+    Wl1         = conditionalWeibull_inv(P, Omega1, rho1, alpha1, sigma1);
+    [Wl2, ~, ~] = getWl_2Stations(0.57, P, 'Eierlandse Gat', 'Borkum');
+else
+%     Wl1         = getWaterlevelWeibull(Omega1, rho1, alpha1, sigma1, P);
+%     Wl2         = getWaterlevelWeibull(Omega2, rho2, alpha2, sigma2, P);
+    Wl1         = conditionalWeibull_inv(P, Omega1, rho1, alpha1, sigma1);
+    Wl2         = conditionalWeibull_inv(P, Omega2, rho2, alpha2, sigma2);
+end
 
 %% Interpolate
 

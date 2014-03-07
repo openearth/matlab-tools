@@ -1,4 +1,4 @@
-function [Tp, Tp1, Tp2] = getTp_2Stations(lambda, waveHeight1, waveHeight2, a1, a2, b1, b2)
+function [Tp, Tp1, Tp2] = getTp_2Stations(lambda, P, waveHeight1, waveHeight2, Station1, Station2, varargin)
 %GETTP_2SUPPORTPOINTS  Calculates peak period given sign. wave height in 2
 %stations
 %
@@ -61,11 +61,61 @@ function [Tp, Tp1, Tp2] = getTp_2Stations(lambda, waveHeight1, waveHeight2, a1, 
 % $Keywords: $
 
 %% Settings
+OPT = struct(...
+    'HsELD',        [],     ...
+    'HsBorkum',     []      ...
+    );
 
-%% Calculate Tp for both stations
+OPT = setproperty(OPT, varargin{:});
 
-Tp1 = getTp_t(waveHeight1, a1, b1);
-Tp2 = getTp_t(waveHeight2, a2, b2);
+%% Parameters per station
+
+% Station information obtained from "Ontwikkeling detailtoets duinen 2011
+% (D++)" Deltares 2010.
+%                           a       b  
+StationInfo = {
+    'Hoek van Holland',     ;
+    'IJmuiden',             ;
+    'Den Helder',           ; 
+    'Eierlandse Gat',       ;
+    'Steunpunt Waddenzee',  [],     [];
+    'Borkum',               
+    };
+
+Station1Valid   = false;
+Station2Valid   = false;
+
+for iStation = 1:size(StationInfo,1)
+    if strcmpi(StationInfo{iStation,1}, Station1)
+        a1              = StationInfo{iStation,2}; 
+        b1              = StationInfo{iStation,3};
+        Station1Valid   = true;
+    elseif strcmpi(StationInfo{iStation,1}, Station2)
+        a2              = StationInfo{iStation,2}; 
+        b2              = StationInfo{iStation,3};
+        Station2Valid   = true;
+    end
+end
+
+if ~Station1Valid || ~Station2Valid
+    error('Please specify valid station names!')
+end
+
+%% Calculate Hs for both stations
+
+% Steunpunt Waddenzee doesn't have it's own set of parameters, and is
+% itself an interpolation between Eierlandse Gat (Lambda = 0.57) and Borkum
+% (Lambda = 0.43)
+if strcmpi(Station1, 'Steunpunt Waddenzee')
+    [Tp1, ~, ~] = getTp_2Stations(0.57, P, OPT.HsELD, OPT.HsBorkum, 'Eierlandse Gat', 'Borkum');
+    Tp2         = P + getTp_t(waveHeight2, a2, b2);
+elseif strcmpi(Station2, 'Steunpunt Waddenzee')
+    Tp1         = P + getTp_t(waveHeight1, a1, b1);
+    [Tp2, ~, ~] = getTp_2Stations(0.57, P, OPT.HsELD, OPT.HsBorkum, 'Eierlandse Gat', 'Borkum');
+else
+    Tp1         = P + getTp_t(waveHeight1, a1, b1);
+    Tp2         = P + getTp_t(waveHeight2, a2, b2);
+end
 
 %% Interpolate
 

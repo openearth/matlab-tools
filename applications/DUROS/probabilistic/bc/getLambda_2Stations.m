@@ -1,9 +1,11 @@
-function [Lambda1, Lambda2] = getLambda_2Stations(varargin)
+function [Lambda1, Lambda2] = getLambda_2Stations(Station1, Station2, varargin)
 %GETLAMBDA_2STATIONS  Calculate lambda for profiles that are in between 2
 %stations
 %
 %   Lambda is the relative distance to station 1 from the intersection of
 %   the normal of the Jarkus profile and the line connecting the 2 stations
+%
+%   Be aware: a larger Lambda means a smaller distance to that station!
 %
 %   Syntax:
 %   varargout = getLambda_2Stations(varargin)
@@ -64,15 +66,14 @@ function [Lambda1, Lambda2] = getLambda_2Stations(varargin)
 %% Settings
 
 OPT = struct(...
-    'Station1',     '',         ...
-    'Station2',     '',         ...
     'JarkusId',     [],         ...
     'Distance',     40000,      ...
     'RSPX',         [],         ...
     'RSPY',         [],         ... 
     'Angle',        [],         ...
-    'JarkusURL',    jarkus_url  ...
+    'JarkusURL',    'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/jarkus/profiles/transect_r2014.nc'  ...
     );
+% 'JarkusURL',    jarkus_url  ...
 
 OPT = setproperty(OPT, varargin{:});
 
@@ -99,33 +100,33 @@ end
 
 %% Determine the two stations
 
-% Station information obtained from "Resultaten analyse HR2006 duinen" HKV
-% & WL|Delft Hydraulics, 2006
+% Station information obtained from "Ontwikkeling detailtoets duinen 2011
+% (D++)" Deltares 2010.
 StationInfo = {
     'Hoek van Holland',     58748,  450830;
     'IJmuiden',             79249,  501800;
-    'Den Helder',           99703,  552650;
+    'Den Helder',           98372,  549340; 
     'Eierlandse Gat',       106514, 587985;
     'Steunpunt Waddenzee',  150000, 621230;
     'Borkum',               221990, 621330
     };
 
-Station1X   = []; 
-Station1Y   = [];
-Station2X   = []; 
-Station2Y   = [];
+Station1Valid   = false;
+Station2Valid   = false;
 
 for iStation = 1:size(StationInfo,1)
-    if strcmpi(StationInfo{iStation,1}, OPT.Station1)
-        Station1X   = StationInfo{iStation,2}; 
-        Station1Y   = StationInfo{iStation,3};
-    elseif strcmpi(StationInfo{iStation,1}, OPT.Station2)
-        Station2X   = StationInfo{iStation,2}; 
-        Station2Y   = StationInfo{iStation,3};
+    if strcmpi(StationInfo{iStation,1}, Station1)
+        Station1X       = StationInfo{iStation,2}; 
+        Station1Y       = StationInfo{iStation,3};
+        Station1Valid   = true;
+    elseif strcmpi(StationInfo{iStation,1}, Station2)
+        Station2X       = StationInfo{iStation,2}; 
+        Station2Y       = StationInfo{iStation,3};
+        Station2Valid   = true;
     end
 end
 
-if isempty(Station1X) || isempty(Station1Y) || isempty(Station2X) || isempty(Station2Y)
+if ~Station1Valid || ~Station2Valid
     error('Please specify valid station names!')
 end
 
@@ -140,5 +141,5 @@ StationLine = interp1([Station1X Station2X], [Station1Y Station2Y], XDummy);
 [XIntersection, YIntersection]  = intersection(XDummy, JarkusLine, StationLine);
 
 % Calculate both Lambdas
-Lambda1     = distance([Station1X XIntersection],[Station1Y YIntersection])/distance([Station1X Station2X],[Station1Y Station2Y]);
-Lambda2     = distance([Station2X XIntersection],[Station2Y YIntersection])/distance([Station1X Station2X],[Station1Y Station2Y]);
+Lambda1     = distance([Station2X XIntersection],[Station2Y YIntersection])/distance([Station1X Station2X],[Station1Y Station2Y]);
+Lambda2     = distance([Station1X XIntersection],[Station1Y YIntersection])/distance([Station1X Station2X],[Station1Y Station2Y]);

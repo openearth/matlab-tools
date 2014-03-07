@@ -1,4 +1,4 @@
-function [Hs, Hs1, Hs2] = getHs_2Stations(lambda, waterLevel1, waterLevel2, a1, a2, b1, b2, c1, c2, d1, d2, e1, e2)
+function [Hs, Hs1, Hs2] = getHs_2Stations(lambda, P, waterLevel1, waterLevel2, Station1, Station2, varargin)
 %GETHS_2STATOIONS  Calculate sign. wave height given water level in two
 %support stations
 %
@@ -61,11 +61,67 @@ function [Hs, Hs1, Hs2] = getHs_2Stations(lambda, waterLevel1, waterLevel2, a1, 
 % $Keywords: $
 
 %% Settings
+OPT = struct(...
+    'WlELD',        [],     ...
+    'WlBorkum',     []      ...
+    );
+
+OPT = setproperty(OPT, varargin{:});
+
+%% Parameters per station
+
+% Station information obtained from "Ontwikkeling detailtoets duinen 2011
+% (D++)" Deltares 2010.
+%                           a       b       c           d       e
+StationInfo = {
+    'Hoek van Holland',     4.35,   0.6,    0.0008,     7,      4.67;
+    'IJmuiden',             5.88,   0.6,    0.0254,     7,      2.77;
+    'Den Helder',           9.43,   0.6,    0.68,       7,      1.26; 
+    'Eierlandse Gat',       12.19,  0.6,    1.23,       7,      1.14;
+    'Steunpunt Waddenzee',  [],     [],     [],         [],     [];
+    'Borkum',               10.13,  0.6,    0.57,       7,      1.58
+    };
+
+Station1Valid   = false;
+Station2Valid   = false;
+
+for iStation = 1:size(StationInfo,1)
+    if strcmpi(StationInfo{iStation,1}, Station1)
+        a1              = StationInfo{iStation,2}; 
+        b1              = StationInfo{iStation,3};
+        c1              = StationInfo{iStation,4};
+        d1              = StationInfo{iStation,5};
+        e1              = StationInfo{iStation,6};
+        Station1Valid   = true;
+    elseif strcmpi(StationInfo{iStation,1}, Station2)
+        a2              = StationInfo{iStation,2}; 
+        b2              = StationInfo{iStation,3};
+        c2              = StationInfo{iStation,4};
+        d2              = StationInfo{iStation,5};
+        e2              = StationInfo{iStation,6};
+        Station2Valid   = true;
+    end
+end
+
+if ~Station1Valid || ~Station2Valid
+    error('Please specify valid station names!')
+end
 
 %% Calculate Hs for both stations
 
-Hs1 = getHsig_t(waterLevel1, a1, b1, c1, d1, e1);
-Hs2 = getHsig_t(waterLevel2, a2, b2, c2, d2, e2);
+% Steunpunt Waddenzee doesn't have it's own set of parameters, and is
+% itself an interpolation between Eierlandse Gat (Lambda = 0.57) and Borkum
+% (Lambda = 0.43)
+if strcmpi(Station1, 'Steunpunt Waddenzee')
+    [Hs1, ~, ~] = getHs_2Stations(0.57, P, OPT.WlELD, OPT.WlBorkum, 'Eierlandse Gat', 'Borkum');
+    Hs2         = P + getHsig_t(waterLevel2, a2, b2, c2, d2, e2);
+elseif strcmpi(Station2, 'Steunpunt Waddenzee')
+    Hs1         = P + getHsig_t(waterLevel1, a1, b1, c1, d1, e1);
+    [Hs2, ~, ~] = getHs_2Stations(0.57, P, OPT.WlELD, OPT.WlBorkum, 'Eierlandse Gat', 'Borkum');
+else
+    Hs1         = P + getHsig_t(waterLevel1, a1, b1, c1, d1, e1);
+    Hs2         = P + getHsig_t(waterLevel2, a2, b2, c2, d2, e2);
+end
 
 %% Interpolate
 
