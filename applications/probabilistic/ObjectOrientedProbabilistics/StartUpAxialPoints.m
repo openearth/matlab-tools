@@ -107,7 +107,7 @@ classdef StartUpAxialPoints < StartUpMethod
         
         % Set default values
         function SetDefaults(this)
-            this.BetaOffset = 2;
+            this.BetaOffset = 4;
         end
     end
 end
