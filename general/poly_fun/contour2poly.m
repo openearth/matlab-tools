@@ -1,4 +1,4 @@
-function varargout = contour2poly(c)
+function varargout = contour2poly(c,varargin)
 %CONTOUR2POLY transforms contour array to NaN-delimited polygon vector
 %
 % [x,y] = CONTOUR2POLY(c) converts a contourc c vector like this
@@ -35,7 +35,7 @@ function varargout = contour2poly(c)
 %    L = contour2poly(c);
 %    plot(L.x,L.y,'o')
 %
-% See also: CONTOURC, POLYSPLIT, POLYJOIN, POLY2CONTOUR
+% See also: CONTOURC, POLY_SPLIT, POLY_JOIN, POLY2CONTOUR
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2006 Delft University of Technology
@@ -49,22 +49,44 @@ function varargout = contour2poly(c)
 %       2600 GA Delft
 %       The Netherlands
 %
-%   This library is free software; you can redistribute it and/or
-%   modify it under the terms of the GNU Lesser General Public
-%   License as published by the Free Software Foundation; either
-%   version 2.1 of the License, or (at your option) any later version.
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
 %
 %   This library is distributed in the hope that it will be useful,
 %   but WITHOUT ANY WARRANTY; without even the implied warranty of
-%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-%   Lesser General Public License for more details.
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
 %
-%   You should have received a copy of the GNU Lesser General Public
-%   License along with this library; if not, write to the Free Software
-%   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
-%   USA
-%   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
+
+%   Quick and ulgy fix for "When contourc creates the contour matrix, it replaces the x,y 
+%   coordinates containing the low z-values with NaNs to prevent contour lines that pass 
+%   along matrix edges from being displayed. This is why contour matrices returned by 
+%   contourf sometimes contain NaN values."
+%   http://www.mathworks.nl/help/matlab/creating_plots/the-contouring-algorithm.html
+%   We fill with last previous non-nan value (loopwise, not vectorized in
+%   case of subsequent NaNs!)
+
+OPT.fillnan = 0;
+
+OPT = setproperty(OPT,varargin);
+
+if OPT.fillnan
+
+    mask = find(isnan(c(1,:)) | isnan(c(2,:)));
+    disp(['filled ',num2str(length(mask)),' nans'])
+    if any(mask)
+        for ind = mask
+        c(1,ind) = c(1,ind - 1);
+        c(2,ind) = c(2,ind - 1);
+        end
+    end
+    
+end
 
    if ~isempty(c)
       
@@ -78,7 +100,7 @@ function varargout = contour2poly(c)
                 
       length_c               = size(c,2);
       
-      %% copy array and set delimiets to nan when all positions are known.
+      %% copy array and set delimiters to NaN when all positions are known.
       %  -----------------------------------------
       S.x = c(1,2:end);
       S.y = c(2,2:end);
@@ -87,11 +109,11 @@ function varargout = contour2poly(c)
       %  -----------------------------------------
       
       ncontours     = 1;
-      S.levels  (1) = c(1,1);%levels_per_contour
-      S.n       (1) = c(2,1);% linepieces_per_contour
+      S.levels  (1) = c(1,1); % levels_per_contour
+      S.n       (1) = c(2,1); % linepieces_per_contour
       delimiters(1) = S.n+1;
       
-      %% Scroll through array (perhaps better to pre allocate:?
+      %% Scroll through array (perhaps better to pre allocate)?
       %  S.levels = levels_per_contour
       %  S.n      = linepieces_per_contour
 
