@@ -74,6 +74,8 @@ OPT = struct(...
 
 OPT = setproperty(OPT, varargin{:});
 
+%% Plotting & filtering
+
 filter = FilterPoints(adisObject, OPT);
 
 aH1 = subplot(2,2,1);
