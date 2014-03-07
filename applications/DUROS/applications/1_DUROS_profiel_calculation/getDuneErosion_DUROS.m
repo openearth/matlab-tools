@@ -87,6 +87,8 @@ else
     result = createEmptyDUROSResult;
     result.xActive = xInitial;
     result.zActive = zInitial;
+    result.VTVinfo.Xr = xcrossWL_t(end);
+    result.VTVinfo.Zr = zcrossWL_t(end);
     SolutionPossibleBetweenBoundaries = false;
 end
 
