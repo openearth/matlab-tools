@@ -1,20 +1,21 @@
-function [Wl, Wl1, Wl2] = getWl_2SupportPoints(lambda, P, Omega1, Omega2, rho1, rho2, alpha1, alpha2, sigma1, sigma2)
-%GETWL_2SUPPORTPOINTS  Calculates waterlevels in 2 stations and point
-%in between, given a probability and the parameters in both stations
+function [lambda1, lambda2, station1, station2] = getLambda_2Stations(varargin)
+%GETLAMBDA_2STATIONS  Calculate lambda for profiles that are in between 2
+%stations
 %
-%   More detailed description goes here.
+%   Lambda is the relative distance to station 1 from the intersection of
+%   the normal of the Jarkus profile and the line connecting the 2 stations
 %
 %   Syntax:
-%   varargout = getWl_2SupportPoints(varargin)
+%   varargout = getLambda_2Stations(varargin)
 %
-%   Input: For <keyword,value> pairs call getWl_2SupportPoints() without arguments.
+%   Input: For <keyword,value> pairs call getLambda_2Stations() without arguments.
 %   varargin  =
 %
 %   Output:
 %   varargout =
 %
 %   Example
-%   getWl_2SupportPoints
+%   getLambda_2Stations
 %
 %   See also
 
@@ -50,7 +51,7 @@ function [Wl, Wl1, Wl2] = getWl_2SupportPoints(lambda, P, Omega1, Omega2, rho1, 
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 04 Mar 2014
+% Created: 07 Mar 2014
 % Created with Matlab version: 8.2.0.701 (R2013b)
 
 % $Id$
@@ -62,11 +63,27 @@ function [Wl, Wl1, Wl2] = getWl_2SupportPoints(lambda, P, Omega1, Omega2, rho1, 
 
 %% Settings
 
-%% Calculate Hs for both stations
+OPT = struct(...
+    'Station1',     '',         ...
+    'Station2',     '',         ...
+    'JarkusId',     [],         ...
+    'JarkusXRD',    [],         ...
+    'JarkusYRD',    [],         ... 
+    'JarkusAngle',  [],         ...
+    'JarkusURL',    jarkus_url  ...
+    );
 
-Wl1 = conditionalWeibull(P, Omega1, rho1, alpha1, sigma1);
-Wl2 = conditionalWeibull(P, Omega2, rho2, alpha2, sigma2);
+OPT = setproperty(OPT, varargin{:});
 
-%% Interpolate
+%% Determine Jarkus location
 
-Wl  = lambda*Wl1 + (1-lambda)*Wl2;
+if ~isempty(OPT.JarkusId)
+    
+elseif ~isempty(OPT.JarkusYRD) && ~isempty(OPT.JarkusYRD) && ~isempty(OPT.JarkusAngle)
+else
+    error('You need to specify either a Jarkus ID or a location (in RD coordinates) with an angle!')
+end
+
+%% Determine the two stations
+
+%% Calculate Lambda

@@ -1,4 +1,4 @@
-function [Tp, Tp1, Tp2] = getTp_2SupportPoints(lambda, waveHeight1, waveHeight2, a1, a2, b1, b2)
+function [Tp, Tp1, Tp2] = getTp_2Stations(lambda, waveHeight1, waveHeight2, a1, a2, b1, b2)
 %GETTP_2SUPPORTPOINTS  Calculates peak period given sign. wave height in 2
 %stations
 %
@@ -62,7 +62,7 @@ function [Tp, Tp1, Tp2] = getTp_2SupportPoints(lambda, waveHeight1, waveHeight2,
 
 %% Settings
 
-%% Calculate Hs for both stations
+%% Calculate Tp for both stations
 
 Tp1 = getTp_t(waveHeight1, a1, b1);
 Tp2 = getTp_t(waveHeight2, a2, b2);
