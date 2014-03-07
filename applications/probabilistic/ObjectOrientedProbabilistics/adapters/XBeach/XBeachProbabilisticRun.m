@@ -84,19 +84,34 @@ xbModel = xb_read_input(fullfile(OPT.ModelSetupDir, 'params.txt'));
 
 %% Calculate unspecified variables
 
-% N.B. OPT.Hm0 and OPT.Tp are variations around the mean that is calculated
-% below
+Station1    = 'Steunpunt Waddenzee';    % Change this according to location!
+Station2    = 'Den Helder';             % Change this according to location!
 
-Hm0 = getHsig_t(OPT.h, 10.13, 0.6, 0.57, 7, 1.58) + OPT.Hm0; % Values for Borkum
-Tp  = getTp_t(Hm0, 4.67, 1.12) + OPT.Tp; % Values for Den Helder
+[Lambda, ~] = getLambda_2Stations(Station1, Station2, 'JarkusId', 4000760);     % Change this according to location!
 
-% Tp  = getTp_t(Hm0, 4.67, 1.12); % Values for Den Helder
-
+% Steunpunt Waddenzee doesn't have it's own set of parameters, and is
+% itself an interpolation between Eierlandse Gat (Lambda = 0.57) and Borkum
+% (Lambda = 0.43)
+if strcmpi(Station1, 'Steunpunt Waddenzee') || strcmpi(Station2, 'Steunpunt Waddenzee')
+    [~, hELD, hBorkum]      = getWl_2Stations(0.57, norm_cdf(OPT.h, 0, 1), 'Eierlandse Gat', 'Borkum');
+    [h, h1, h2]             = getWl_2Stations(Lambda, norm_cdf(OPT.h, 0, 1), Station1, Station2);
+    
+    [~, HsELD, HsBorkum]    = getHs_2Stations(0.57, norm_cdf(OPT.Hm0, 0, 0.6), hELD, hBorkum, 'Eierlandse Gat', 'Borkum');
+    [Hs, Hs1, Hs2]          = getHs_2Stations(Lambda, norm_cdf(OPT.Hm0, 0, 0.6), h1, h2, Station1, Station2, 'WlELD', hELD, 'WlBorkum', hBorkum);
+    
+    [Tp, Tp1, Tp2]          = getTp_2Stations(Lambda, norm_cdf(OPT.Tp, 0, 1), Hs1, Hs2, Station1, Station2, 'HsELD', HsELD, 'HsBorkum', HsBorkum);
+else
+    [h, h1, h2]     = getWl_2Stations(Lambda, norm_cdf(OPT.h, 0, 1), Station1, Station2);
+    [Hs, Hs1, Hs2]  = getHs_2Stations(Lambda, norm_cdf(OPT.Hm0, 0, 0.6), h1, h2, Station1, Station2);
+    [Tp, Tp1, Tp2]  = getTp_2Stations(Lambda, norm_cdf(OPT.Tp, 0, 1), Hs1, Hs2, Station1, Station2);
+end
 
 %% Change stochastic variables in XBeach model
 
-xbModel = xs_set(xbModel, 'zs0file.tide', [OPT.h -20; OPT.h -20]);
-xbModel = xs_set(xbModel, 'bcfile.Hm0', Hm0);
+xbModel = xs_set(xbModel, 'zs0file.tide', [h -20; h -20]);
+% xbModel = xs_set(xbModel, 'zs0file.tide', [OPT.h -20; OPT.h -20]);
+% xbModel = xs_set(xbModel, 'bcfile.Hm0', Hm0);
+xbModel = xs_set(xbModel, 'bcfile.Hm0', Hs);
 xbModel = xs_set(xbModel, 'bcfile.Tp', Tp);
 xbModel = xs_set(xbModel, 'bcfile.fp', 1/Tp);
 % xbModel = xs_set(xbModel, 'bcfile.Hm0', OPT.Hm0);
