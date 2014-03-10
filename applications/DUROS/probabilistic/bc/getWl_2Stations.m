@@ -1,4 +1,4 @@
-function [Wl, Wl1, Wl2] = getWl_2Stations(lambda, P, Station1, Station2)
+function [Wl, Wl1, Wl2] = getWl_2Stations(P, lambda, Station1, Station2)
 %GETWL_2SUPPORTPOINTS  Calculates waterlevels in 2 stations and point
 %in between, given a probability and the parameters in both stations
 %
@@ -105,15 +105,11 @@ end
 % (Lambda = 0.43)
 if strcmpi(Station1, 'Steunpunt Waddenzee')
     [Wl1, ~, ~] = getWl_2Stations(0.57, P, 'Eierlandse Gat', 'Borkum');
-%     Wl2         = getWaterlevelWeibull(Omega2, rho2, alpha2, sigma2, P);
     Wl2         = conditionalWeibull_inv(P, Omega2, rho2, alpha2, sigma2);
 elseif strcmpi(Station2, 'Steunpunt Waddenzee')
-%     Wl1         = getWaterlevelWeibull(Omega1, rho1, alpha1, sigma1, P);
     Wl1         = conditionalWeibull_inv(P, Omega1, rho1, alpha1, sigma1);
     [Wl2, ~, ~] = getWl_2Stations(0.57, P, 'Eierlandse Gat', 'Borkum');
 else
-%     Wl1         = getWaterlevelWeibull(Omega1, rho1, alpha1, sigma1, P);
-%     Wl2         = getWaterlevelWeibull(Omega2, rho2, alpha2, sigma2, P);
     Wl1         = conditionalWeibull_inv(P, Omega1, rho1, alpha1, sigma1);
     Wl2         = conditionalWeibull_inv(P, Omega2, rho2, alpha2, sigma2);
 end

@@ -1,5 +1,5 @@
-function [Hs, Hs1, Hs2] = getHs_2Stations(lambda, P, waterLevel1, waterLevel2, Station1, Station2, varargin)
-%GETHS_2STATOIONS  Calculate sign. wave height given water level in two
+function [Hs, Hs1, Hs2] = getHs_2Stations(P, lambda, waterLevel1, waterLevel2, Station1, Station2, varargin)
+%GETHS_2STATIONS  Calculate sign. wave height given water level in two
 %support stations
 %
 %   More detailed description goes here.
