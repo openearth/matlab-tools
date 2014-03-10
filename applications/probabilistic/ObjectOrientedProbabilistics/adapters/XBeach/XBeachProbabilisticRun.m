@@ -84,26 +84,27 @@ xbModel = xb_read_input(fullfile(OPT.ModelSetupDir, 'params.txt'));
 
 %% Calculate unspecified variables
 
+JarkusID    = 4000760;                  % Change this according to location!
 Station1    = 'Steunpunt Waddenzee';    % Change this according to location!
 Station2    = 'Den Helder';             % Change this according to location!
 
-[Lambda, ~] = getLambda_2Stations(Station1, Station2, 'JarkusId', 4000760);     % Change this according to location!
+[Lambda, ~] = getLambda_2Stations(Station1, Station2, 'JarkusId', JarkusID);     % Change this according to location!
 
 % Steunpunt Waddenzee doesn't have it's own set of parameters, and is
 % itself an interpolation between Eierlandse Gat (Lambda = 0.57) and Borkum
 % (Lambda = 0.43)
 if strcmpi(Station1, 'Steunpunt Waddenzee') || strcmpi(Station2, 'Steunpunt Waddenzee')
-    [~, hELD, hBorkum]      = getWl_2Stations(0.57, norm_cdf(OPT.h, 0, 1), 'Eierlandse Gat', 'Borkum');
-    [h, h1, h2]             = getWl_2Stations(Lambda, norm_cdf(OPT.h, 0, 1), Station1, Station2);
+    [~, hELD, hBorkum]      = getWl_2Stations(norm_cdf(OPT.h, 0, 1), 0.57, 'Eierlandse Gat', 'Borkum');
+    [h, h1, h2]             = getWl_2Stations(norm_cdf(OPT.h, 0, 1), Lambda, Station1, Station2);
     
-    [~, HsELD, HsBorkum]    = getHs_2Stations(0.57, norm_cdf(OPT.Hm0, 0, 0.6), hELD, hBorkum, 'Eierlandse Gat', 'Borkum');
-    [Hs, Hs1, Hs2]          = getHs_2Stations(Lambda, norm_cdf(OPT.Hm0, 0, 0.6), h1, h2, Station1, Station2, 'WlELD', hELD, 'WlBorkum', hBorkum);
+    [~, HsELD, HsBorkum]    = getHs_2Stations(norm_cdf(OPT.Hm0, 0, 0.6), 0.57, hELD, hBorkum, 'Eierlandse Gat', 'Borkum');
+    [Hs, Hs1, Hs2]          = getHs_2Stations(norm_cdf(OPT.Hm0, 0, 0.6), Lambda, h1, h2, Station1, Station2, 'WlELD', hELD, 'WlBorkum', hBorkum);
     
-    [Tp, Tp1, Tp2]          = getTp_2Stations(Lambda, norm_cdf(OPT.Tp, 0, 1), Hs1, Hs2, Station1, Station2, 'HsELD', HsELD, 'HsBorkum', HsBorkum);
+    [Tp, Tp1, Tp2]          = getTp_2Stations(norm_cdf(OPT.Tp, 0, 1), Lambda, Hs1, Hs2, Station1, Station2, 'HsELD', HsELD, 'HsBorkum', HsBorkum);
 else
-    [h, h1, h2]     = getWl_2Stations(Lambda, norm_cdf(OPT.h, 0, 1), Station1, Station2);
-    [Hs, Hs1, Hs2]  = getHs_2Stations(Lambda, norm_cdf(OPT.Hm0, 0, 0.6), h1, h2, Station1, Station2);
-    [Tp, Tp1, Tp2]  = getTp_2Stations(Lambda, norm_cdf(OPT.Tp, 0, 1), Hs1, Hs2, Station1, Station2);
+    [h, h1, h2]     = getWl_2Stations(norm_cdf(OPT.h, 0, 1), Lambda, Station1, Station2);
+    [Hs, Hs1, Hs2]  = getHs_2Stations(norm_cdf(OPT.Hm0, 0, 0.6), Lambda, h1, h2, Station1, Station2);
+    [Tp, Tp1, Tp2]  = getTp_2Stations(norm_cdf(OPT.Tp, 0, 1), Lambda, Hs1, Hs2, Station1, Station2);
 end
 
 %% Change stochastic variables in XBeach model
