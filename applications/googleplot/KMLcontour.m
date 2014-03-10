@@ -26,7 +26,13 @@ function varargout = KMLcontour(lat,lon,c,varargin)
 %
 % For 3D contours always use KMLcontour3.
 %
-% See also: googlePlot, contour, contour3
+% Example: 
+%   [x,y,z] = peaks
+%   KMLcontour(x,y,z)
+%
+% See also: googlePlot, contour, contour3, contour2poly
+
+% 2014-mar-10 fixed contour2poly to deal with NaN in curvi-linear GCM models (Delft3D)
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature
