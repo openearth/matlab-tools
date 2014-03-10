@@ -1,8 +1,24 @@
-function xlswrite_clean(filename,cell_arr,sheetname,varargin);
+function xlswrite_report(filename,cell_arr,sheetname,varargin)
 
-% set the optianal property/value pairs
+%
+% Function                      : Generates a "report" xls file whereas matlab's own xlswrite produces
+%                                 a rather messy excell file. The top row an left most column are assumed to
+%                                 be describtive and displayed in a different color than the "body".
+% usage (identical to xlswrite) : xlswrite_report(filename,cell_arr,sheetname, ... , ...)
+%                                 filename  = name of the resulting xls file
+%                                 cell_arr  = cell array of values/names to be written to the excell file
+%                                 sheetname = name of the sheet in the xls file
+%                                 optional property/value pairs are:
+%                                 'format'   xls format like for instance '0.00'
+%                                 'colwidth' vector of nrow column widths (pts)
+%
+% start with setting the optional property/value pairs
 
-OPT.format = '0.000';
+OPT.format      = '0.000';
+OPT.colwidth(1) = 20;
+for i_col = 2: size(cell_arr,2)
+    OPT.colwidth(i_col) = 20;
+end
 OPT        = setproperty(OPT,varargin);
 
 % create filename including full path
@@ -20,9 +36,9 @@ delete_empty_excelsheets(filename);
 
 % set column widths
 
-set_colwidth_excel      (filename,1,1,20);
+set_colwidth_excel      (filename,1,1,OPT.colwidth(1));
 for i_col = 2: size(cell_arr,2)
-    set_colwidth_excel      (filename,1,i_col,15);
+    set_colwidth_excel      (filename,1,i_col,OPT.colwidth(i_col));
 end
 
 % topline allign right and bold font
