@@ -1,4 +1,4 @@
-function [Lambda1, Lambda2] = getLambda_2Stations(Station1, Station2, varargin)
+function [Lambda1, Lambda2, Station1, Station2] = getLambda_2Stations(Station1, Station2, varargin)
 %GETLAMBDA_2STATIONS  Calculate lambda for profiles that are in between 2
 %stations
 %

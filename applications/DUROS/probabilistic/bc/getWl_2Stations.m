@@ -1,4 +1,4 @@
-function [Wl, Wl1, Wl2] = getWl_2Stations(P, lambda, Station1, Station2)
+function [Wl, Wl1, Wl2, Station1, Station2] = getWl_2Stations(P, lambda, Station1, Station2)
 %GETWL_2SUPPORTPOINTS  Calculates waterlevels in 2 stations and point
 %in between, given a probability and the parameters in both stations
 %
@@ -75,6 +75,31 @@ StationInfo = {
     'Borkum',               1.85,   5.781,  1.27,   0.535
     };
 
+% Steunpunt Waddenzee doesn't have it's own set of parameters, and is
+% itself an interpolation between Eierlandse Gat (Lambda = 0.57) and Borkum
+% (Lambda = 0.43)
+SPWZ1   = strcmpi(Station1, 'Steunpunt Waddenzee');
+SPWZ2   = strcmpi(Station2, 'Steunpunt Waddenzee');
+if SPWZ1 
+    switch Station2
+        case 'Eierlandse Gat'
+            lambda      = (1-lambda)*(1-0.57)+(1-0.43);
+            Station1    = 'Borkum';
+        case 'Borkum'
+            lambda      = (1-lambda)*(1-0.43)+(1-0.57);
+            Station1    = 'Eierlandse Gat';
+    end
+elseif SPWZ2
+    switch Station1
+        case 'Eierlandse Gat'
+            lambda      = 1-(1-lambda)*(1-0.57);
+            Station2    = 'Borkum';
+        case 'Borkum'
+            lambda      = 1-(1-lambda)*(1-0.43);
+            Station2    = 'Eierlandse Gat';
+    end
+end
+
 Station1Valid   = false;
 Station2Valid   = false;
 
@@ -100,19 +125,8 @@ end
 
 %% Calculate Wl for both stations
 
-% Steunpunt Waddenzee doesn't have it's own set of parameters, and is
-% itself an interpolation between Eierlandse Gat (Lambda = 0.57) and Borkum
-% (Lambda = 0.43)
-if strcmpi(Station1, 'Steunpunt Waddenzee')
-    [Wl1, ~, ~] = getWl_2Stations(0.57, P, 'Eierlandse Gat', 'Borkum');
-    Wl2         = conditionalWeibull_inv(P, Omega2, rho2, alpha2, sigma2);
-elseif strcmpi(Station2, 'Steunpunt Waddenzee')
-    Wl1         = conditionalWeibull_inv(P, Omega1, rho1, alpha1, sigma1);
-    [Wl2, ~, ~] = getWl_2Stations(0.57, P, 'Eierlandse Gat', 'Borkum');
-else
-    Wl1         = conditionalWeibull_inv(P, Omega1, rho1, alpha1, sigma1);
-    Wl2         = conditionalWeibull_inv(P, Omega2, rho2, alpha2, sigma2);
-end
+Wl1         = conditionalWeibull_inv(P, Omega1, rho1, alpha1, sigma1);
+Wl2         = conditionalWeibull_inv(P, Omega2, rho2, alpha2, sigma2);
 
 %% Interpolate
 

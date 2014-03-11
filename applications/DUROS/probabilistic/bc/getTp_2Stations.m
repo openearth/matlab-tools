@@ -1,4 +1,4 @@
-function [Tp, Tp1, Tp2] = getTp_2Stations(P, lambda, waveHeight1, waveHeight2, Station1, Station2, varargin)
+function [Tp, Tp1, Tp2, Station1, Station2] = getTp_2Stations(P, lambda, waveHeight1, waveHeight2, Station1, Station2, varargin)
 %GETTP_2SUPPORTPOINTS  Calculates peak period given sign. wave height in 2
 %stations
 %
