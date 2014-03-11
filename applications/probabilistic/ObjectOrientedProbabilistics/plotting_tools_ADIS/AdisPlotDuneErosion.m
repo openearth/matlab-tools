@@ -1,21 +1,19 @@
-function AdisPlot3D(adisObject, varargin)
-%ADISPLOT3D  Plots a ADIS object with 3 stochastic variables
+function AdisPlotDuneErosion(adisObject, varargin)
+%ADISPLOTDUNEEROSION  One line description goes here.
 %
-%   Creates 1 3d plot and 3 2D subplots of each pair of stochastic
-%   variables
+%   More detailed description goes here.
 %
 %   Syntax:
-%   AdisPlot3D(adisObject, varargin)
+%   varargout = AdisPlotDuneErosion(varargin)
 %
-%   Input: For <keyword,value> pairs call AdisPlot3D() without arguments.
-%   adisObject =
-%   varargin   =
+%   Input: For <keyword,value> pairs call AdisPlotDuneErosion() without arguments.
+%   varargin  =
 %
-%
-%
+%   Output:
+%   varargout =
 %
 %   Example
-%   AdisPlot3D
+%   AdisPlotDuneErosion
 %
 %   See also
 
@@ -51,7 +49,7 @@ function AdisPlot3D(adisObject, varargin)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 28 Feb 2014
+% Created: 11 Mar 2014
 % Created with Matlab version: 8.2.0.701 (R2013b)
 
 % $Id$
@@ -64,7 +62,11 @@ function AdisPlot3D(adisObject, varargin)
 %% Settings
 OPT = struct(...
     'ColorLimits',      0.2,            ...
-    'ULimits',          10,             ...
+    'hLimits',          [0 10],         ...
+    'HsLimits',         [6.5 18],       ...
+    'TpLimits',         [12 26],        ...
+    'MarkerSize',       20,             ...
+    'MarkerEdgeColor',  'k',            ...
     'FilterType',       'zero',         ...
     'FigName',          'AdisPlot',     ...
     'PlotARS',          true,           ...
@@ -76,50 +78,109 @@ OPT = setproperty(OPT, varargin{:});
 
 %% Plotting & filtering
 
-filter = FilterPoints(adisObject, OPT);
+filter          = FilterPoints(adisObject, OPT);
+[~, ids]        = find(filter' == true);
+
+XValues         = NaN(sum(filter),3);
+
+
+JarkusID    = 4000760;                  % Change this according to location!
+Station1    = 'Steunpunt Waddenzee';    % Change this according to location!
+Station2    = 'Eierlandse Gat';         % Change this according to location!
+
+[Lambda, ~] = getLambda_2Stations(Station1, Station2, 'JarkusId', JarkusID);     % Change this according to location!
+
+for iPoint = 1:sum(filter)
+    [h, h1, h2, s1, s2]     = getWl_2Stations(norm_cdf(adisObject.LimitState.UValues(ids(iPoint),1), 0, 1), Lambda, Station1, Station2);
+    [Hs, Hs1, Hs2, s1, s2]  = getHs_2Stations(norm_cdf(adisObject.LimitState.UValues(ids(iPoint),1), 0, 1), Lambda, h1, h2, s1, s2);
+    [Tp, Tp1, Tp2, s1, s2]  = getTp_2Stations(norm_cdf(adisObject.LimitState.UValues(ids(iPoint),1), 0, 1), Lambda, Hs1, Hs2, s1, s2);
+
+    XValues(iPoint, 1)  = h;
+    XValues(iPoint, 2)  = Hs;
+    XValues(iPoint, 3)  = Tp;
+end
 
 aH1 = subplot(2,2,1);
-scatter3(aH1, adisObject.LimitState.UValues(filter, 1), ...
-    adisObject.LimitState.UValues(filter, 2), ...
-    adisObject.LimitState.UValues(filter, 3), ...
-    10*ones(size(adisObject.LimitState.UValues(filter,1))), ...
-    adisObject.LimitState.ZValues(filter,1), 'filled', 'MarkerEdgeColor','k')
+scatter3(aH1, XValues(:, 1), ...
+    XValues(:, 2), ...
+    XValues(:, 3), ...
+    OPT.MarkerSize*ones(size(XValues(:,1))), ...
+    adisObject.LimitState.ZValues(filter,1), 'filled', 'MarkerEdgeColor', OPT.MarkerEdgeColor)
 
-xlabel(adisObject.LimitState.RandomVariables(1).Name)
-ylabel(adisObject.LimitState.RandomVariables(2).Name)
-zlabel(adisObject.LimitState.RandomVariables(3).Name)
+xlabel('h [m]')
+ylabel('Hs [m]')
+zlabel('Tp [s]')
 title(['P_{f} = ' num2str(adisObject.Pf)])
 
 axis equal
 colormap([cbrewer('seq','Reds',200); flipud(cbrewer('seq','YlOrRd',200))])
 caxis([-OPT.ColorLimits OPT.ColorLimits])
-axis([-OPT.ULimits OPT.ULimits -OPT.ULimits OPT.ULimits -OPT.ULimits OPT.ULimits])
+axis(aH1,[min(OPT.hLimits) max(OPT.hLimits) min(OPT.HsLimits) max(OPT.HsLimits) min(OPT.TpLimits) max(OPT.TpLimits)])
 colorbar
 
 
 aH2 = subplot(2,2,2);
 AddARS(aH2,1,2, adisObject, OPT)
 hold(aH2,'on')
-AdisPlot2DCrossSection(aH2, 1, 2, filter, adisObject, OPT)
-AddBetaSphere(aH2, adisObject, OPT)
+scatter(aH2, XValues(:, 1), ...
+    XValues(:, 2), ...
+    OPT.MarkerSize*ones(size(XValues(:,1))), ...
+    adisObject.LimitState.ZValues(filter, 1), 'filled', 'MarkerEdgeColor', OPT.MarkerEdgeColor)
+
+scatter(0,0,10,'k','+')
+
+xlabel(aH2, 'h [m]')
+ylabel(aH2, 'Hs [m]')
+
+axis equal
+colormap(aH2, [cbrewer('seq','Reds',200); flipud(cbrewer('seq','YlOrRd',200))])
+caxis(aH2, [-OPT.ColorLimits OPT.ColorLimits])
+axis(aH2, [min(OPT.hLimits) max(OPT.hLimits) min(OPT.HsLimits) max(OPT.HsLimits)])
+colorbar
 hold(aH2,'off')
 
 aH3 = subplot(2,2,3);
 AddARS(aH3, 2, 3, adisObject, OPT)
 hold(aH3,'on')
-AdisPlot2DCrossSection(aH3, 2, 3, filter, adisObject, OPT)
-AddBetaSphere(aH3, adisObject, OPT)
+scatter(aH3, XValues(:, 2), ...
+    XValues(:, 3), ...
+    OPT.MarkerSize*ones(size(XValues(:,1))), ...
+    adisObject.LimitState.ZValues(filter, 1), 'filled', 'MarkerEdgeColor', OPT.MarkerEdgeColor)
+
+scatter(0,0,10,'k','+')
+
+xlabel(aH3, 'Hs [m]')
+ylabel(aH3, 'Tp [s]')
+
+axis equal
+colormap(aH3, [cbrewer('seq','Reds',200); flipud(cbrewer('seq','YlOrRd',200))])
+caxis(aH3, [-OPT.ColorLimits OPT.ColorLimits])
+axis(aH3, [min(OPT.HsLimits) max(OPT.HsLimits) min(OPT.TpLimits) max(OPT.TpLimits)])
+colorbar
 hold(aH3,'off')
 
 aH4 = subplot(2,2,4);
 AddARS(aH4, 1, 3, adisObject, OPT)
 hold(aH4,'on')
-AdisPlot2DCrossSection(aH4, 1, 3, filter, adisObject, OPT)
-AddBetaSphere(aH4, adisObject, OPT)
+scatter(aH4, XValues(:, 1), ...
+    XValues(:, 3), ...
+    OPT.MarkerSize*ones(size(XValues(:,1))), ...
+    adisObject.LimitState.ZValues(filter, 1), 'filled', 'MarkerEdgeColor', OPT.MarkerEdgeColor)
+
+scatter(0,0,10,'k','+')
+
+xlabel(aH4, 'h [m]')
+ylabel(aH4, 'Tp [s]')
+
+axis equal
+colormap(aH4, [cbrewer('seq','Reds',200); flipud(cbrewer('seq','YlOrRd',200))])
+caxis(aH4, [-OPT.ColorLimits OPT.ColorLimits])
+axis(aH4, [min(OPT.hLimits) max(OPT.hLimits) min(OPT.TpLimits) max(OPT.TpLimits)])
+colorbar
 hold(aH4,'off')
 
 if OPT.Print
-    print('-r600', '-dpng', fullfile(OPT.PrintDir,[OPT.FigName '_' OPT.FilterType]))
+    print('-r600', '-dpng', fullfile(OPT.PrintDir,[OPT.FigName '_' OPT.FilterType '_XValues']))
 end
 
 end
@@ -145,7 +206,7 @@ end
 function AddARS(axisHandle, Dim1, Dim2, adisObject, OPT)
 if OPT.PlotARS
     if adisObject.LimitState.ResponseSurface.GoodFit
-    lim             = linspace(-OPT.ULimits,OPT.ULimits,1000);
+    lim             = linspace(min([OPT.hLimits OPT.HsLimits OPT.TpLimits]),max([OPT.hLimits OPT.HsLimits OPT.TpLimits]),1000);
     [xGrid, yGrid]  = meshgrid(lim,lim);
     
     dims            = 1:3;
