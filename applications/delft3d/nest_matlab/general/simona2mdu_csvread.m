@@ -4,10 +4,11 @@ function [csv] = simona2mdu_csvread(filename,varargin)
 %                     empty lines are skipped
 %                     optionally, comment lines are ignored
 %                     csv = simona2mdu_csvread('test.csv','skiplines','%*')
-%                     reads csv file, returns cell array csv, lines starting with a % or * are ignored                   
-%                              
+%                     reads csv file, returns cell array csv, lines starting with a % or * are ignored
+%
 
 opt.skiplines = '';
+opt.delimiter = ',';
 opt = setproperty(opt,varargin);
 
 irow = 0;
@@ -24,7 +25,7 @@ while ~feof(fid)
         % Find comma's and quotes within the string
         %
         index_quote = strfind(line,'"');
-        index_comma = strfind(line,',');
+        index_comma = strfind(line,opt.delimiter);
         if ~isempty(index_quote)
             %
             % remove comma's between quotes (belong with a string)
@@ -39,17 +40,17 @@ while ~feof(fid)
             end
             index_comma = index_comma(~isnan(index_comma));
         end
-        
+
         %
         % Define cells (in between remaining comm's)
         %
- 
+
         index_comma = [0 index_comma length(line) + 1];
-        
+
         %
         % Fill output cell
         %
-        
+
         for icol = 1:length(index_comma) - 1
             csv{irow,icol} = line(index_comma(icol) + 1:index_comma(icol + 1) - 1);
             if ~isempty(str2num((csv{irow,icol})))
