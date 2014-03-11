@@ -61,9 +61,9 @@ function XBeachProbabilisticRun(varargin)
 
 %% Settings
 OPT = struct(...
-    'h', [],...
-    'Hm0', [], ...
-    'Tp', [],...
+    'Ph', [],...
+    'PHm0', [], ...
+    'PTp', [],...
     'D50', 225e-6,...
     'tstop', 5*3600, ...
     'ModelSetupDir', 'd:\ADIS_XB_testing\ModelSetup\Terschelling_4000760',...
@@ -86,44 +86,26 @@ xbModel = xb_read_input(fullfile(OPT.ModelSetupDir, 'params.txt'));
 
 JarkusID    = 4000760;                  % Change this according to location!
 Station1    = 'Steunpunt Waddenzee';    % Change this according to location!
-Station2    = 'Den Helder';             % Change this according to location!
+Station2    = 'Eierlandse Gat';         % Change this according to location!
 
 [Lambda, ~] = getLambda_2Stations(Station1, Station2, 'JarkusId', JarkusID);     % Change this according to location!
 
-% Steunpunt Waddenzee doesn't have it's own set of parameters, and is
-% itself an interpolation between Eierlandse Gat (Lambda = 0.57) and Borkum
-% (Lambda = 0.43)
-if strcmpi(Station1, 'Steunpunt Waddenzee') || strcmpi(Station2, 'Steunpunt Waddenzee')
-    [~, hELD, hBorkum]      = getWl_2Stations(norm_cdf(OPT.h, 0, 1), 0.57, 'Eierlandse Gat', 'Borkum');
-    [h, h1, h2]             = getWl_2Stations(norm_cdf(OPT.h, 0, 1), Lambda, Station1, Station2);
-    
-    [~, HsELD, HsBorkum]    = getHs_2Stations(norm_cdf(OPT.Hm0, 0, 0.6), 0.57, hELD, hBorkum, 'Eierlandse Gat', 'Borkum');
-    [Hs, Hs1, Hs2]          = getHs_2Stations(norm_cdf(OPT.Hm0, 0, 0.6), Lambda, h1, h2, Station1, Station2, 'WlELD', hELD, 'WlBorkum', hBorkum);
-    
-    [Tp, Tp1, Tp2]          = getTp_2Stations(norm_cdf(OPT.Tp, 0, 1), Lambda, Hs1, Hs2, Station1, Station2, 'HsELD', HsELD, 'HsBorkum', HsBorkum);
-else
-    [h, h1, h2]     = getWl_2Stations(norm_cdf(OPT.h, 0, 1), Lambda, Station1, Station2);
-    [Hs, Hs1, Hs2]  = getHs_2Stations(norm_cdf(OPT.Hm0, 0, 0.6), Lambda, h1, h2, Station1, Station2);
-    [Tp, Tp1, Tp2]  = getTp_2Stations(norm_cdf(OPT.Tp, 0, 1), Lambda, Hs1, Hs2, Station1, Station2);
-end
+[h, h1, h2, Station1, Station2]     = getWl_2Stations(norm_cdf(OPT.Ph, 0, 1), Lambda, Station1, Station2);
+[Hs, Hs1, Hs2, Station1, Station2]  = getHs_2Stations(norm_cdf(OPT.PHm0, 0, 0.6), Lambda, h1, h2, Station1, Station2);
+[Tp, Tp1, Tp2, Station1, Station2]  = getTp_2Stations(norm_cdf(OPT.PTp, 0, 1), Lambda, Hs1, Hs2, Station1, Station2);
 
 %% Change stochastic variables in XBeach model
 
 xbModel = xs_set(xbModel, 'zs0file.tide', [h -20; h -20]);
-% xbModel = xs_set(xbModel, 'zs0file.tide', [OPT.h -20; OPT.h -20]);
-% xbModel = xs_set(xbModel, 'bcfile.Hm0', Hm0);
 xbModel = xs_set(xbModel, 'bcfile.Hm0', Hs);
 xbModel = xs_set(xbModel, 'bcfile.Tp', Tp);
 xbModel = xs_set(xbModel, 'bcfile.fp', 1/Tp);
-% xbModel = xs_set(xbModel, 'bcfile.Hm0', OPT.Hm0);
-% xbModel = xs_set(xbModel, 'bcfile.Tp', OPT.Tp);
-% xbModel = xs_set(xbModel, 'bcfile.fp', 1/OPT.Tp);
 xbModel = xs_set(xbModel, 'D50', OPT.D50);
 xbModel = xs_set(xbModel, 'tstop', OPT.tstop);
 
 %% Run model
 
-FolderName          = ['h' num2str(OPT.h) '_H' num2str(OPT.Hm0) '_Tp' num2str(OPT.Tp)];
+FolderName          = ['h' num2str(OPT.Ph) '_H' num2str(OPT.PHm0) '_Tp' num2str(OPT.PTp)];
 ModelOutputDir      = fullfile(OPT.ModelRunDir, FolderName);
 ModelOutputDirLinux = path2os(ModelOutputDir);
 ModelOutputDirLinux = ['/' strrep(ModelOutputDirLinux,':','')];
