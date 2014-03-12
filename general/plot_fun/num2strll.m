@@ -1,7 +1,9 @@
 function s = num2strll(lat,lon,varargin)
 %num2strll print coordinate tuple for matlab title
 %
-%   s = num2strll(lat,lon)
+%   s = num2strll(lat,lon,<fmt>)
+%
+% 
 %
 %See also: tickmap, axislat
 

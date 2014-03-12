@@ -27,6 +27,8 @@ OPT.institution        = ' ';
 OPT.source             = ' ';
 OPT.history            = ' ';
 OPT.email              = ' ';
+OPT.platform_id        = '';
+OPT.platform_name      = '';
 
 if nargin==0
     varargout = {OPT};
@@ -55,13 +57,15 @@ if ~isempty(OPT.filename)
    
    nc_adddim      (OPT.filename,'frequency',length(D.data.frequency));
    nc_adddim      (OPT.filename,'strlen0'  ,1);
-   nc_adddim      (OPT.filename,'strlen1'  ,size(char(D.data.name),2));
-   if ~isempty(D.name)
-   nc_adddim      (OPT.filename,'strlen2'  ,length(D.name));
+   nc_adddim      (OPT.filename,'strlen1'  ,size(char(D.data.name),2)); % component names
+   
+   if isempty(OPT.platform_id  );OPT.platform_id   = D.name;
    end
-   if ~isempty(D.name)
-   nc_adddim      (OPT.filename,'strlen3'  ,length(D.name));
+   if isempty(OPT.platform_name);OPT.platform_name = D.name;
    end
+   
+   nc_adddim      (OPT.filename,'strlen2'  ,length(OPT.platform_id));
+   nc_adddim      (OPT.filename,'strlen3'  ,length(OPT.platform_name));
    nc_adddim      (OPT.filename,'time'     ,1);
    nc_adddim      (OPT.filename,'bounds'   ,2);
   
@@ -72,7 +76,7 @@ if ~isempty(OPT.filename)
    nc.Attribute(1) = struct('Name', 'long_name'      ,'Value', 'code of station');
    nc.Attribute(2) = struct('Name', 'standard_name'  ,'Value', 'platform_id');
    nc_addvar         (OPT.filename,nc);
-   nc_varput         (OPT.filename,nc.Name,D.name(:)');clear nc
+   nc_varput         (OPT.filename,nc.Name,OPT.platform_id(:)');clear nc
   end
   if ~isempty(D.name)   
    nc.Name = 'platform_name';
@@ -81,7 +85,7 @@ if ~isempty(OPT.filename)
    nc.Attribute(1) = struct('Name', 'long_name'      ,'Value', 'name of station');
    nc.Attribute(2) = struct('Name', 'standard_name'  ,'Value', 'platform_name');
    nc_addvar         (OPT.filename,nc);
-   nc_varput         (OPT.filename,nc.Name,D.name(:)');clear nc
+   nc_varput         (OPT.filename,nc.Name,OPT.platform_name(:)');clear nc
   end
   if ~(isempty(D.position.longitude) | isempty(D.position.latitude))
    nc.Name = 'longitude';

@@ -46,7 +46,7 @@ function varargout = analyseHis(varargin)
 %                        't_tide',0)
 %         end
 %
-%See also: dflowfm, NC_T_TIDE_COMPARE, NC_T_TIDE, T_TIDE, delft3d, OPENDAP_GET_CACHE, 
+%See also: dflowfm, NC_T_TIDE_COMPARE, T_TIDE2NC, delft3d, OPENDAP_GET_CACHE, 
 %          nc2struct, dflowfm.indexHis
 
 %   --------------------------------------------------------------------
@@ -296,7 +296,8 @@ for id=1:length(OPT.platform_name);
      if isempty(Dmeta.datenum.timezone )
          fprintf(2,['data has no explicit timezone, check whether it is indeed GMT.\n'])
      end
-     D.datenum = D.datenum - timezone_code2datenum(char(Dmeta.datenum.timezone)) + timezone_code2datenum(OPT.timezone);
+     
+     D.datenum = D.datenum -timezone_code2datenum(char(Dmeta.datenum.timezone)) +timezone_code2datenum(OPT.timezone);
      
      % copy meta-data that is not in model output (yet ...)
      M.lon           = D.lon;
@@ -421,7 +422,7 @@ for id=1:length(OPT.platform_name);
      asc_t_tide_model = [fileparts(OPT.nc),filesep,'t_tide'     ,filesep,filename(OPT.nc),'_',mkvar(M.platform_name{im}),'_t_tide.t_tide'];
      
      if isempty(D.datenum)
-         t_tide_msg = [];
+         TTD = [];
      else
         if isempty(OPT.platform_period{id})
           tlim = OPT.datelim([1 end]);
@@ -434,40 +435,48 @@ for id=1:length(OPT.platform_name);
         else
            lat = D.lat;
         end
-        t_tide_msg = nc_t_tide(D.datenum,D.(OPT.varname).*unitsfac,... % add period and midpoint
-          'platform_id',D.platform_id,...
-        'platform_name',D.platform_name,...
-              'period',tlim,... % OPT.datelim, ... % D.datenum([1 end]),...
+        
+        TTD = t_tide2struc(D.datenum,D.(OPT.varname).*unitsfac,... % add period and midpoint
                  'lat',lat,...
-                 'lon',D.lon,...
-               'units',Dmeta.(OPT.varname).units,...
+              'period',tlim,... % OPT.datelim, ... % D.datenum([1 end]),...
              'ascfile',asc_t_tide_data,...
-                'sort','-amp',...
-              'ncfile', nc_t_tide_data);
+                'sort','-amp');
+            
+      TTD.position.latitude  = D.lat;
+      TTD.position.longitude = D.lon;
+        
+        t_tide2nc(TTD,'filename',nc_t_tide_data,...
+          'platform_id',D.platform_id',...
+        'platform_name',D.platform_name',...
+                'units',Dmeta.(OPT.varname).units)
         clear D
      end %   if ~isempty(D.datenum)
 
      if isempty(M.lat)
-        lat = 45; % ensur enodal correction, 0 yields some nans
+        lat = 45; % ensure nodal correction, 0 yields some nans, so we guess 45
      else
         lat = M.lat;
      end     
-     nc_t_tide(M.datenum,M.(OPT.varname)(:,im),...% add period and midpoint
-       'platform_id',M.platform_id,...
-     'platform_name',M.platform_name{im},...
-           'period',OPT.datelim, ... % M.datenum([1 end]),...
-              'lat',lat,...
-              'lon',M.lon,...
-            'units',Dmeta.(OPT.varname).units,...
-          'ascfile',asc_t_tide_model,...
-             'sort','-amp',...
-           'ncfile', nc_t_tide_model);
+
+        TTM = t_tide2struc(M.datenum,M.(OPT.varname)(:,im),...% add period and midpoint
+                 'lat',lat,...
+              'period',OPT.datelim,... % OPT.datelim, ... % D.datenum([1 end]),...
+             'ascfile',asc_t_tide_model,...
+                'sort','-amp');
+            
+      TTM.position.latitude  = M.lat;
+      TTM.position.longitude = M.lon;            
+        
+        t_tide2nc(TTM,'filename',nc_t_tide_model,...
+          'platform_id',M.platform_id,...
+        'platform_name',M.platform_name{im},...
+                'units',Dmeta.(OPT.varname).units);
       
      if OPT.pause;pausedisp;end
 
      % if t_tide succesful, remembers platforms 
      % for which model and data are present for tidal comparison
-     if  ~isempty(t_tide_msg)
+     if  ~isempty(TTD)
         nc_t_tide_datas {end+1} = nc_t_tide_data ;
         nc_t_tide_models{end+1} = nc_t_tide_model;
      end

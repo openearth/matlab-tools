@@ -70,11 +70,7 @@ function varargout = t_tide2struc(varargin)
    OPT.ddatenumeps   = 1e-8;
    OPT.synth         = 2;
    OPT.sort          = 'freq';
-
-% result file
-
    OPT.ascfile       = '';
-   OPT.ncfile        = '';
    
 % IHO xml keywords	 
    
@@ -98,10 +94,6 @@ function varargout = t_tide2struc(varargin)
 if odd(nargin) & ~isstruct(varargin{end}) % allow for passing OPT struct
 
       fname = varargin{1};
-      
-      if isempty(OPT.ncfile)
-      OPT.ncfile = [filenameext(fname),'.nc'];
-      end
       
       OPT       = setproperty(OPT,varargin{2:end});
       D         = t_tide_read(fname);

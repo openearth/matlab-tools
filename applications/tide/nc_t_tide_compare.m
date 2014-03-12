@@ -133,49 +133,49 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
             
       %% SCATTER component loop
       
-         for dcomp = 1:size  (D.amplitude,1);
+         for dcomp = 1:size  (D.fmaj,1);
              mcomp = strmatch(D.component_name(dcomp,:),...
                               M.component_name);
                              
             if ~isempty(mcomp)     
             
-            if D.amplitude(dcomp) > OPT.amp_min;
+            if D.fmaj(dcomp) > OPT.amp_min;
          
                name = lower(deblank(D.component_name(dcomp,:)));
                tmp  = strmatch(name,OPT.names2label);
          
                subplot(1,2,1)
-               loglog(D.amplitude  (dcomp),...
-                      M.amplitude  (mcomp),'k+')
+               loglog(D.fmaj  (dcomp),...
+                      M.fmaj  (mcomp),'k+')
                hold on
                if ~isempty(tmp)
-               plot(D.amplitude(dcomp),M.amplitude(mcomp),'ko')
+               plot(D.fmaj(dcomp),M.fmaj(mcomp),'ko')
          
                %% draw name at side where not 45 degree line is located
-               loc = sign(D.amplitude(dcomp) - M.amplitude(mcomp));
+               loc = sign(D.fmaj(dcomp) - M.fmaj(mcomp));
                if loc < 0
-               text(D.amplitude(dcomp),M.amplitude(mcomp),...
+               text(D.fmaj(dcomp),M.fmaj(mcomp),...
                     [name,'     '],'rotation',-45,'horizontalalignment','right')
                else
-               text(D.amplitude(dcomp),M.amplitude(mcomp),...
+               text(D.fmaj(dcomp),M.fmaj(mcomp),...
                     ['     ',name],'rotation',-45)
                end
                end
 	       
                subplot(1,2,2)
-               plot(D.phase(dcomp),...
-                    M.phase(mcomp),'k+')
+               plot(D.pha(dcomp),...
+                    M.pha(mcomp),'k+')
                hold on
                if ~isempty(tmp)
-               plot(D.phase(dcomp),M.phase(mcomp),'ko')
+               plot(D.pha(dcomp),M.pha(mcomp),'ko')
          
                %% draw name at side where not 45 degree line is located
-               loc = sign(D.phase(dcomp) - M.phase(mcomp));
+               loc = sign(D.pha(dcomp) - M.phase(mcomp));
                if loc < 0
-               text(D.phase(dcomp),M.phase(mcomp),...
+               text(D.phase(dcomp),M.pha(mcomp),...
                     [name,'     '],'rotation',-45,'horizontalalignment','right')
                else
-               text(D.phase(dcomp),M.phase(mcomp),...
+               text(D.pha(dcomp),M.pha(mcomp),...
                     ['     ',name],'rotation',-45)
                end
                end
@@ -196,8 +196,8 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
          
          axis equal
          grid on
-         xlabel([ 'data amplitude [',mktex(Da.amplitude.units),']'],'Interpreter','none')
-         ylabel(['model amplitude [',mktex(Da.amplitude.units),']'],'Interpreter','none')
+         xlabel([ 'data amplitude [',mktex(Da.fmaj.units),']'],'Interpreter','none')
+         ylabel(['model amplitude [',mktex(Da.fmaj.units),']'],'Interpreter','none')
          xlim(xlims)
          ylim(ylims)
          plot(xlims       ,ylims + 0.01,'-','color',[.5 .5 .5])
@@ -258,16 +258,16 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
          
       %% SPECTRUM component loop
          
-         for dcomp = 1:size  (D.amplitude,1);
+         for dcomp = 1:size  (D.fmaj,1);
              mcomp = strmatch(D.component_name(dcomp,:),...
                               M.component_name);
                              
             if ~isempty(mcomp)     
-            if D.amplitude(dcomp) > OPT.amp_min & ...
-               M.amplitude(mcomp) > OPT.amp_min;
+            if D.fmaj(dcomp) > OPT.amp_min & ...
+               M.fmaj(mcomp) > OPT.amp_min;
 
             %disp([D.component_name(dcomp,:) M.component_name(mcomp,:)])
-            %disp(num2str([M.amplitude(mcomp) D.amplitude(dcomp)]))
+            %disp(num2str([M.fmaj(mcomp) D.fmaj(dcomp)]))
             
          
                if (D.frequency(dcomp) > 0     & ...
@@ -302,18 +302,18 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
             %% harmonic (incl. nodal)
 
                plot([M.frequency(mcomp)],...
-                    [M.amplitude(mcomp)],'k.','markersize',8)
+                    [M.fmaj(mcomp)],'k.','markersize',8)
                hold on
                plot([M.frequency(mcomp)],...
-                    [D.amplitude(dcomp)],'ko','markersize',6)
+                    [D.fmaj(dcomp)],'ko','markersize',6)
                plot([M.frequency(mcomp) M.frequency(mcomp)],...
-                    [M.amplitude(mcomp) D.amplitude(dcomp)],'k-')
+                    [M.fmaj(mcomp) D.fmaj(dcomp)],'k-')
                if leftright
                text([M.frequency(mcomp)],...
-                    [D.amplitude(dcomp)],[' ',spaces,name])
+                    [D.fmaj(dcomp)],[' ',spaces,name])
                else
                text([M.frequency(mcomp)],...
-                    [D.amplitude(dcomp)],[name,spaces,' '],'horizontalalignment','right')
+                    [D.fmaj(dcomp)],[name,spaces,' '],'horizontalalignment','right')
                end
                
                xlim([0 0.3]);
@@ -321,29 +321,29 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
 
                subplot(2,1,2)
                plot([M.frequency(mcomp)],...
-                    [M.phase(mcomp)],'k.','markersize',8)
+                    [M.pha(mcomp)],'k.','markersize',8)
                hold on
                plot([M.frequency(mcomp)],...
-                    [D.phase(dcomp)],'ko','markersize',6)
+                    [D.pha(dcomp)],'ko','markersize',6)
 
                if leftright
                text([M.frequency(mcomp)],...
-                    [D.phase(dcomp)],[' ',spaces,name])
+                    [D.pha(dcomp)],[' ',spaces,name])
                else
                text([M.frequency(mcomp)],...
-                    [D.phase(dcomp)],[name,spaces,' '],'horizontalalignment','right')
+                    [D.pha(dcomp)],[name,spaces,' '],'horizontalalignment','right')
                end
                
-               difference = M.phase(mcomp)  - ...
-                            D.phase(dcomp);
+               difference = M.pha(mcomp)  - ...
+                            D.pha(dcomp);
                
                xlim([0 0.3]);
 
                if (abs(difference) < 180)
-               plot([ M.frequency(mcomp) M.frequency(mcomp)],[M.phase(mcomp) D.phase(dcomp)],'k-')
+               plot([ M.frequency(mcomp) M.frequency(mcomp)],[M.pha(mcomp) D.pha(dcomp)],'k-')
                else
-               maximum = max([D.phase(dcomp) M.phase(mcomp)]);
-               minimum = min([D.phase(dcomp) M.phase(mcomp)]);
+               maximum = max([D.pha(dcomp) M.pha(mcomp)]);
+               minimum = min([D.pha(dcomp) M.pha(mcomp)]);
                plot    ([ M.frequency(mcomp) M.frequency(mcomp)],[0       minimum],'k-')
                plot    ([ M.frequency(mcomp) M.frequency(mcomp)],[maximum 360    ],'k-')
                end
@@ -365,7 +365,7 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
          set(gca,'yscale','log')
 
          grid on
-         ylabel(['Amplitude [',Da.amplitude.units,']'],'Interpreter','none')
+         ylabel(['Amplitude [',Da.fmaj.units,']'],'Interpreter','none')
 
          legend('model','data')
 
@@ -379,7 +379,7 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
 
          grid on
          xlabel(['Frequency [',Da.frequency.units,']'],'Interpreter','none')
-         ylabel(    ['Phase [',Da.phase.units    ,']'],'Interpreter','none')
+         ylabel(    ['Phase [',Da.pha.units    ,']'],'Interpreter','none')
          
          if OPT.export
          text(1,0,mktex('Created with t_tide (Pawlowicz et al, 2002) & OpenEarthTools <www.OpenEarth.eu>'),'rotation',90,'units','normalized','verticalalignment','top','fontsize',6)
@@ -398,12 +398,12 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
       
       %% PLANVIEW component loop
 
-         for dcomp = 1:size  (D.amplitude,1);
+         for dcomp = 1:size  (D.fmaj,1);
              mcomp = strmatch(D.component_name(dcomp,:),...
                               M.component_name);
                              
             if ~isempty(mcomp)     
-            if D.amplitude(dcomp) > OPT.amp_min;
+            if D.fmaj(dcomp) > OPT.amp_min;
          
                name  = lower(deblank(D.component_name(dcomp,:)));
                icomp = strmatch(name,lower(OPT.names2planview));
@@ -420,22 +420,22 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
                plot(D.longitude(1),D.latitude(1),'k.')
                hold on
 
-               txt.D.amp   = pad(num2str(D.amplitude(dcomp),'%4.2f'),5,' ');
-               txt.D.phase = pad(num2str(D.phase    (dcomp),'%4.1f'),5,' ');
+               txt.D.amp = pad(num2str(D.fmaj(dcomp),'%4.2f'),5,' ');
+               txt.D.pha = pad(num2str(D.pha (dcomp),'%4.1f'),5,' ');
                
-               txt.M.amp   = pad(num2str(M.amplitude(mcomp),'%4.2f'),5,' ');
-               txt.M.phase = pad(num2str(M.phase    (mcomp),'%4.1f'),5,' ');
+               txt.M.amp = pad(num2str(M.fmaj(mcomp),'%4.2f'),5,' ');
+               txt.M.pha = pad(num2str(M.pha (mcomp),'%4.1f'),5,' ');
                
                try;txt.D = rmfield(txt.D,'both');end
                try;txt.M = rmfield(txt.M,'both');end
 
                %if ~isempty(OPT.verticaloffset)
-               %   txt.D.both{OPT.verticaloffset(ifile)  } = [txt.D.amp  ,' ',Da.amplitude.units,' | ',txt.D.phase,' ',Da.phase.units];
-               %   txt.M.both{OPT.verticaloffset(ifile)+1} = [txt.M.amp  ,' ',Ma.amplitude.units,' | ',txt.M.phase,' ',Ma.phase.units];
+               %   txt.D.both{OPT.verticaloffset(ifile)  } = [txt.D.amp  ,' ',Da.fmaj.units,' | ',txt.D.pha,' ',Da.pha.units];
+               %   txt.M.both{OPT.verticaloffset(ifile)+1} = [txt.M.amp  ,' ',Ma.fmaj.units,' | ',txt.M.pha,' ',Ma.pha.units];
                %   txt.M.both{OPT.verticaloffset(ifile)+2} = [char(D.platform_id)];
                %else
-                  txt.D.both{1}                           = [txt.D.amp  ,' ',Da.amplitude.units,' | ',txt.D.phase,' ',Da.phase.units];
-                  txt.M.both{2}                           = [txt.M.amp  ,' ',Ma.amplitude.units,' | ',txt.M.phase,' ',Ma.phase.units];
+                  txt.D.both{1}                           = [txt.D.amp  ,' ',Da.fmaj.units,' | ',txt.D.pha,' ',Da.pha.units];
+                  txt.M.both{2}                           = [txt.M.amp  ,' ',Ma.fmaj.units,' | ',txt.M.pha,' ',Ma.pha.units];
                   txt.M.both{3}                           = [char(D.platform_id)];
                %end
                
@@ -443,11 +443,11 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
                text(D.longitude(1),D.latitude(1),txt.D.both,'verticalalignment',OPT.verticalalignment{ifile},'color',OPT.color.data ,'horizontalalignment',OPT.horizontalalignment{ifile},'fontsize',OPT.fontsize);
                text(D.longitude(1),D.latitude(1),txt.M.both,'verticalalignment',OPT.verticalalignment{ifile},'color',OPT.color.model,'horizontalalignment',OPT.horizontalalignment{ifile},'fontsize',OPT.fontsize);
 %                quiver(D.longitude(1),D.latitude(1),...
-%                       D.amplitude(dcomp).*cosd(D.phase(dcomp)).*scale,...
-%                       D.amplitude(dcomp).*sind(D.phase(dcomp)).*scale,0,'color',OPT.color.data )
+%                       D.fmaj(dcomp).*cosd(D.pha(dcomp)).*scale,...
+%                       D.fmaj(dcomp).*sind(D.pha(dcomp)).*scale,0,'color',OPT.color.data )
 %                quiver(D.longitude(1),D.latitude(1),...
-%                       M.amplitude(mcomp).*cosd(M.phase(mcomp)).*scale,...
-%                       M.amplitude(mcomp).*sind(M.phase(mcomp)).*scale,0,'color',OPT.color.model)
+%                       M.fmaj(mcomp).*cosd(M.pha(mcomp)).*scale,...
+%                       M.fmaj(mcomp).*sind(M.pha(mcomp)).*scale,0,'color',OPT.color.model)
                
                if ~isempty(OPT.axis)
                   axislat(mean(OPT.axis(3:4)))
@@ -461,10 +461,10 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
                S.ArrowAspectRatio = daspect;
                S.scale = OPT.names2planviewscale(icomp);
                
-               ud = D.amplitude(dcomp).*cosd(D.phase(dcomp));
-               vd = D.amplitude(dcomp).*sind(D.phase(dcomp));
-               um = M.amplitude(mcomp).*cosd(M.phase(mcomp));
-               vm = M.amplitude(mcomp).*sind(M.phase(mcomp));
+               ud = D.fmaj(dcomp).*cosd(D.pha(dcomp));
+               vd = D.fmaj(dcomp).*sind(D.pha(dcomp));
+               um = M.fmaj(mcomp).*cosd(M.pha(mcomp));
+               vm = M.fmaj(mcomp).*sind(M.pha(mcomp));
                
                S.color = OPT.color.data;
                arrow2(D.longitude(1),D.latitude(1),ud   ,vd   ,S)

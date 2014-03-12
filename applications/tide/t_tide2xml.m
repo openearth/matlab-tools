@@ -8,6 +8,11 @@ function varargout = t_tide2html(D,varargin)
 %See also: t_tide, t_tide2struc, t_tide_read, t_tide2html, t_tide2nc
 %          http://www.ukho.gov.uk/AdmiraltyPartners/FGHO/Pages/TidalHarmonics.aspx
 
+%          http://www.iho.int/mtg_docs/com_wg/IHOTC/IHOTC8/UK_HC_Exchange_format.pdf
+%          http://www.iho.int/mtg_docs/com_wg/IHOTC/IHOTC8/Product_Spec_for_Exchange_of_HCs.pdf
+%          http://www.iho.int/mtg_docs/com_wg/IHOTC/TWLWG%201/TWLWG1_4-3-1.pdf
+%          http://tidesandcurrents.noaa.gov/faq2.html
+
 % IHO xml keywords	 
    
 D0.name                = '';

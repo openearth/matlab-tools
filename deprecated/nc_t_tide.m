@@ -1,4 +1,4 @@
-function OPT = nc_t_tide.m(ATT,varargin)
+function OPT = nc_t_tide(ATT,varargin)
 %nc_t_tide  deprecated in favour of t_tide2struc > t_tide2nc
 %
 %
