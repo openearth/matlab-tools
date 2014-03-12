@@ -56,7 +56,7 @@ function varargout = iso2datenum(isounits)
 
 %% Date + Time
 
-   rest = strtok(isounits);
+   periodcheck = strtok(isounits);
    
    OPT.yyyy   = 0;
    OPT.mm     = 0;
@@ -65,9 +65,9 @@ function varargout = iso2datenum(isounits)
    OPT.MM     = 0;
    OPT.SS     = 0;   
    
-   if strcmpi(rest(1),'P') % period
+   if strcmpi(periodcheck(1),'P') % period
        
-       [long,shrt]=strtok(rest,'T');
+       [long,shrt]=strtok(isounits,'T');
        rest = '';
        zone = 'P';
        
@@ -84,8 +84,8 @@ function varargout = iso2datenum(isounits)
        
    else  % time
 
-                         [OPT.yyyy ,rest] = strtok(rest,'-:T Z');OPT.yyyy   = str2num(OPT.yyyy);
-       if ~isempty(rest);[OPT.mm   ,rest] = strtok(rest,'-:T Z');
+                         [OPT.yyyy ,rest] = strtok(isounits,'-:T Z');OPT.yyyy   = str2num(OPT.yyyy);
+       if ~isempty(rest);[OPT.mm   ,rest] = strtok(rest    ,'-:T Z');
            if length(OPT.mm)==2;
                OPT.mm = str2num(OPT.mm  );
            else
@@ -121,7 +121,7 @@ function varargout = iso2datenum(isounits)
    elseif nargout==2
         varargout = {datenum(OPT.yyyy,OPT.mm,OPT.dd,OPT.HH,OPT.MM,OPT.SS),zone};
    elseif nargout>3
-        varargout = {OPT.yyyy,OPT.mm,OPT.dd,OPT.HH,OPT.MM,OPT.SS,zone};
+        varargout =         {OPT.yyyy,OPT.mm,OPT.dd,OPT.HH,OPT.MM,OPT.SS, zone};
    end
    
 %% EOF   
