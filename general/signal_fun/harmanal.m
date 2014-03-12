@@ -2,7 +2,7 @@ function [varargout] = harmanal(t,h,varargin);
 %HARMANAL  harmonic analysis of timeseries
 %
 %  FIT     = harmanal(t,signal,<keyword,value>)
-%  [Ai,Bi] = harmanal(t,signal,<keyword,value>)
+%  [A,phi] = harmanal(t,signal,<keyword,value>)
 %
 %  performs a harmonic analysis on IRREGULARLY 
 %  spaced, scalar time series signal h according to :
@@ -16,8 +16,8 @@ function [varargout] = harmanal(t,h,varargin);
 % where t contains the times at which data points are available.
 %   Note: the units in which t is specified should be seconds
 %   Note: when using the matlab datenum convention for dates, 
-%   which is in days, make sure that you make seconds from
-%   t when you pass it to this function by multiplying it with 
+%   which is in days, make sure that you make days from e.g. seconds
+%   t when you pass it to this function by dividing it with 
 %   with 24*3600. (all data are in SI units, i.e. seconds for time).
 % where h is the signal to be analysed.
 % where  coef'        contains [bo   A1     B1    ...      An     Bn   ]
