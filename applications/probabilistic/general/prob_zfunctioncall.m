@@ -91,7 +91,7 @@ function [z OPT] = zfuntioncall(OPT, stochast, x, z_input)
     for icell = 1:length(OPT.x2zFunction)
         z{icell}    = feval(OPT.x2zFunction{icell}, inputargs{:}, OPT.x2zVariables{:});
     end
-    z = cell2mat(z);
+    z = cell2mat(z)';
 
 function [inputargs OPT] = get_inputargs(OPT, x, stochast, z_input)
 
