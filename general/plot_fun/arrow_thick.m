@@ -399,7 +399,7 @@ if keywords.plot_to_current_figure
             colorbar;
         end
     else
-        output.arrows_handle = patch(output.arrows_x_values,output.arrows_y_values,keywords.plot_color); axis equal;
+        output.arrows_handle = patch(output.arrows_x_values,output.arrows_y_values,keywords.plot_color);
     end
     if keywords.axis_equal
         axis equal
