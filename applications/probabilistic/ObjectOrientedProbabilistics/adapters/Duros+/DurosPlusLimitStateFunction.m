@@ -66,8 +66,8 @@ OPT = struct(...
     'PTp', [],...
     'D50', 225e-6,...
     'tstop', 5*3600, ...
-    'MaxErosionPoint', -351, ...
-    'ModelSetupDir', 'd:\ADIS_XB_testing\ModelSetup\Terschelling_4000760');
+    'MaxErosionPoint', 75, ...
+    'ModelSetupDir', 'd:\ADIS_XB_testing\ModelSetup\ReferenceProfile');
 
 OPT = setproperty(OPT, varargin{:});
 
@@ -81,9 +81,12 @@ zInitial    = fliplr(zInitial);
 
 xInitial    = -xInitial;
 
-JarkusID    = 4000760;                  % Change this according to location!
-Station1    = 'Steunpunt Waddenzee';    % Change this according to location!
-Station2    = 'Eierlandse Gat';         % Change this according to location!
+% JarkusID    = 4000760;                  % Change this according to location!
+% Station1    = 'Steunpunt Waddenzee';    % Change this according to location!
+% Station2    = 'Eierlandse Gat';         % Change this according to location!
+JarkusID    = 8006600;                  % Change this according to location!
+Station1    = 'IJmuiden';    % Change this according to location!
+Station2    = 'Hoek van Holland';         % Change this according to location!
 
 [Lambda, ~] = getLambda_2Stations(Station1, Station2, 'JarkusId', JarkusID);     
 
@@ -96,7 +99,7 @@ Station2    = 'Eierlandse Gat';         % Change this according to location!
 DuneErosionSettings('set', 'AdditionalErosion', false);
 
 %% run Duros+
-[~, ~, ErosionResult]   = x2z_DUROS(        ...
+[zTemp, Volume, ErosionResult]   = x2z_DUROS(        ...
     'Resistance',   OPT.MaxErosionPoint,    ...
     'xInitial',     xInitial,               ...
     'zInitial',     zInitial,               ...
@@ -112,7 +115,13 @@ DuneErosionSettings('set', 'AdditionalErosion', false);
 %% Limit State Function
 
 MaxErosionPoint = OPT.MaxErosionPoint;
-ErosionPoint    = -ErosionResult(1).VTVinfo.Xr;
+
+if isempty(ErosionResult(1).VTVinfo.Xr) && zTemp == MaxErosionPoint - 1000
+    ErosionPoint    = -min(xInitial);
+else
+    ErosionPoint    = -ErosionResult(1).VTVinfo.Xr;
+end
+
 z               = MaxErosionPoint - ErosionPoint;
 
 display(['The current exact Z-value is ' num2str(z) '(h = ' num2str(OPT.Ph), ...
