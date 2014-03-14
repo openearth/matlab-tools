@@ -123,5 +123,5 @@ fprintf(fid,'%5.1f  %5.1f\n',[min(x1) dx]);
 fprintf(fid,'%5.1f  %5.1f\n',[max(x1) dx]);
 fprintf(fid,'%3.0f                 (Number of points for Profile)\n',length(x1));
 fprintf(fid,'         X         Depth   (In any order)\n');
-fprintf(fid,'%5.1f  %5.1f\n',[x1 y1]');
+fprintf(fid,'%5.2f  %5.3f\n',[x1 y1]'); % with cm (cross-shore) and mm (depth) accuracy
 fclose(fid);

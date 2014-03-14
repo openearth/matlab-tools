@@ -112,7 +112,8 @@ coast(find(isnan(coast(:,1))),:)=[];
 % cut up baseline
 
 baselineFine=add_equidist_points(dx,baseline);
-baselineFine=baselineFine(2:end-1,:);
+baselineFine=[baselineFine(2:end-1,:); baseline(end,:)];
+% baselineFine=baselineFine(2:end-1,:);
 
 % loop through points of coastline and find for each point the nearest point of the baseline
 tel = 1;
