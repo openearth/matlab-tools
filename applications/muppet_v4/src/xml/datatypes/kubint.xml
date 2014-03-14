@@ -27,6 +27,9 @@
         <name>fontname</name>
       </plotoption>
       <plotoption>
+        <name>fontcolor</name>
+      </plotoption>
+      <plotoption>
         <name>fontsize</name>
       </plotoption>
       <plotoption>

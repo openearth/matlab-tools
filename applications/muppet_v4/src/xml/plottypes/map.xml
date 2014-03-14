@@ -181,6 +181,21 @@
     <name>scalebarlength</name>
   </subplotoption>
   <subplotoption>
+    <name>scalebarfontname</name>
+  </subplotoption>
+  <subplotoption>
+    <name>scalebarfontsize</name>
+  </subplotoption>
+  <subplotoption>
+    <name>scalebarfontweigth</name>
+  </subplotoption>
+  <subplotoption>
+    <name>scalebarfontangle</name>
+  </subplotoption>
+  <subplotoption>
+    <name>scalebarfontcolor</name>
+  </subplotoption>
+  <subplotoption>
     <name>northarrow</name>
   </subplotoption>
   <subplotoption>

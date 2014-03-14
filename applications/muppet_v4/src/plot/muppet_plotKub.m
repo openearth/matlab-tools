@@ -16,7 +16,7 @@ clmap=muppet_getColors(handles.colormaps,plt.colormap,100);
 colormap(clmap);
 
 for ii=1:sz;
-    x0=data.z(ii);
+    x0=data.average(ii);
     x0=max(min(x0,xmax),xmin);
     x=(x0-xmin)/(xmax-xmin);
     ix=round(99*x)+1;
@@ -32,7 +32,7 @@ for ii=1:sz
             % Filled polygons
             ldbplt=fill(data.polygon(ii).x,data.polygon(ii).y,'r');hold on;
             set(ldbplt,'FaceColor',[col{ii}(1) col{ii}(2) col{ii}(3)]);
-            set(ldbplt,'EdgeColor',colorlist('getrgb','color',opt.edgecolor));
+            set(ldbplt,'EdgeColor',colorlist('getrgb','color',opt.linecolor));
             set(ldbplt,'LineWidth',opt.linewidth);
             set(ldbplt,'FaceAlpha',opt.opacity);
         case 0
@@ -40,7 +40,7 @@ for ii=1:sz
             xxxx=data.polygon(ii).x;
             yyyy=data.polygon(ii).y;
             ldbplt=plot(xxxx,yyyy);hold on;
-            set(ldbplt,'LineWidth',opt.linewidth,'Color',colorlist('getrgb','color',opt.edgecolor));
+            set(ldbplt,'LineWidth',opt.linewidth,'Color',colorlist('getrgb','color',opt.linecolor));
     end
     
     xtxt=0.5*(max(data.polygon(ii).x(1:end-1))+min(data.polygon(ii).x(1:end-1)));

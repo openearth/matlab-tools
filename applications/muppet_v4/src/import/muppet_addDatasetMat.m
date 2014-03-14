@@ -65,7 +65,11 @@ for ii=1:length(s.parameters)
     if isfield(s.parameters(ii).parameter,'size')
         dataset.parameters(ii).parameter.size=s.parameters(ii).parameter.size;
     else
-        dataset.parameters(ii).parameter.size(1)=length(s.parameters(ii).parameter.time);
+        if isfield(s.parameters(ii).parameter,'time')
+            dataset.parameters(ii).parameter.size(1)=length(s.parameters(ii).parameter.time);
+        else
+            dataset.parameters(ii).parameter.size(1)=0;
+        end
         dataset.parameters(ii).parameter.size(2)=0;
         dataset.parameters(ii).parameter.size(3)=size(s.parameters(ii).parameter.x,1);
         dataset.parameters(ii).parameter.size(4)=size(s.parameters(ii).parameter.x,2);
@@ -192,6 +196,16 @@ end
 % Z
 if isfield(parameter,dataset.zname)
     d.Z=parameter.(dataset.zname)(m,n);
+end
+
+% Type
+if isfield(parameter,'type')
+    dataset.type=parameter.type;
+end
+
+% Labels
+if isfield(parameter,'labels')
+    dataset.xticklabel=parameter.labels;
 end
 
 % Get values (and store in same structure format as qpread)

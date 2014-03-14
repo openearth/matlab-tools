@@ -10,8 +10,8 @@ y=data.y;
 
 if opt.fillclosedpolygons==1
     ldb=[x y];
-%     h2=filledLDB(ldb,[0 0 0],[0 1 0],opt.maxdistance,opt.polygonelevation);
-    h2=filledLDB(ldb,[0 0 0],[0 1 0],opt.maxdistance,10000);
+    h2=filledLDB(ldb,'none',[0 1 0],opt.maxdistance,10000);
+    set(h2,'LineStyle','none');
 end
 % z=zeros(size(x));
 % z=z+opt.polygonelevation;

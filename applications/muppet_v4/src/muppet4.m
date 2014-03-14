@@ -28,6 +28,9 @@ if ~isempty(varargin)
         cd(pth);
     end
     [handles,ok]=muppet_newSession(handles,mupfile);
+    for isub=1:length(handles.figures(1).figure.subplots)
+        handles.figures(1).figure.subplots(isub).subplot=muppet_updateLimits(handles.figures(1).figure.subplots(isub).subplot,'computescale');
+    end
     muppet_exportFigure(handles,1,'export');
     cd(curdir);
 else

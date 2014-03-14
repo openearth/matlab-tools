@@ -12,10 +12,10 @@
         <name>fillclosedpolygons</name>
       </plotoption>
       <plotoption>
-        <name>fillcolor</name>
+        <name>facecolor</name>
       </plotoption>
       <plotoption>
-        <name>linecolor</name>
+        <name>edgecolor</name>
       </plotoption>
       <plotoption>
         <name>linewidth</name>
@@ -29,7 +29,7 @@
       <plotoption>
         <name>legendtext</name>
       </plotoption>
-      <elementgroup>polygon</elementgroup>
+      <elementgroup>facecolor</elementgroup>
       <elementgroup>line</elementgroup>
       <elementgroup>legendtext</elementgroup>
     </plotroutine>

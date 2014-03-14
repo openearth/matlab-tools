@@ -980,6 +980,13 @@
     <default>1</default>
   </plotoption>
   <plotoption>
+    <name>areatext</name>
+    <variable>areatext</variable>
+    <type>string</type>
+    <keyword>AreaText</keyword>
+    <default>values</default>
+  </plotoption>
+  <plotoption>
     <name>multiply</name>
     <variable>multiply</variable>
     <type>real</type>

@@ -39,16 +39,20 @@ columnlabels=fid.Field(1).ColLabels;
 sz=fid.Field(1).Size;
 nblocks=length(fid.Field);
 
-% Three types of tekal files
-switch lower(columnlabels{1})
-    case{'date'}
-        tp='timeseries';
-    otherwise
-        if length(sz)==4
-            tp='map';
-        else
-            tp='xy';
-        end
+% Four types of tekal files
+if strcmpi(fid.Field(1).DataTp,'annotation')
+    tp='histogram';
+else
+    switch lower(columnlabels{1})
+        case{'date'}
+            tp='timeseries';
+        otherwise
+            if length(sz)==4
+                tp='map';
+            else
+                tp='xy';
+            end
+    end
 end
 
 dataset.tekaltype=tp;
@@ -134,6 +138,17 @@ switch tp
             par.size=[0 0 0 0 0];
             dataset.parameters(ipar).parameter=par;            
         end        
+    case{'histogram'}
+        % x and y
+        npar=ncols-1;
+        dataset.selectcoordinates=0;        
+        for ipar=1:npar
+            par=[];
+            par=muppet_setDefaultParameterProperties(par);
+            par.name=columnlabels{ipar};
+            par.size=[0 0 0 0 0];
+            dataset.parameters(ipar).parameter=par;            
+        end
 end
 
 % % % Tekal files can have multiple quantities, so ...
@@ -218,6 +233,12 @@ switch dataset.tekaltype
                 parameter.y(isnan(parameter.u))=NaN;
         end
     case{'xy'}
+    case{'histogram'}
+        icol=strmatch(lower(dataset.parameter),lower(dataset.columnlabels),'exact');
+        parameter.x=1:size(fid.Field(iblock).Data{1},1);
+        parameter.y=fid.Field(iblock).Data{1}(:,icol);
+        dataset.xticklabel=fid.Field(iblock).Data{2};
+        dataset.type='histogram';
 end
 
 % Get values (and store in same structure format as qpread)

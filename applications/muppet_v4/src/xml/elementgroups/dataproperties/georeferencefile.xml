@@ -7,5 +7,6 @@
     <position>40 0 120 20</position>
     <text>Geo Reference File</text>
     <tooltipstring>Select geo-reference file</tooltipstring>
+    <extension>*.jgw</extension>
   </element>
 </root>

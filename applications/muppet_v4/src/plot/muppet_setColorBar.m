@@ -119,7 +119,7 @@ if plt.colorbar.type==1
         set(gca,'FontAngle',plt.colorbar.font.angle);
         set(gca,'YColor',colorlist('getrgb','color',plt.colorbar.font.color));
 
-        txx=-0.5/(plt.colorbar.position(3));
+        txx=-0.25/(plt.colorbar.position(3));
         txy=0.5;
         ylab=text(txx,txy,plt.colorbar.label);
 

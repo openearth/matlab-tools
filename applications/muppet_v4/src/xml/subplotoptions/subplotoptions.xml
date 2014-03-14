@@ -877,7 +877,7 @@
     <name>scalebarfontsize</name>
     <type>real</type>
     <variable>scalebar.font.size</variable>
-    <default>8</default>
+    <default>5</default>
     <keyword>ScaleBarFontSize</keyword>
     <dependency>
       <action>write</action>
@@ -885,7 +885,7 @@
       <check>
         <variable>scalebar.font.size</variable>
         <operator>ne</operator>
-        <value>8</value>
+        <value>5</value>
       </check>
       <check>
         <variable>plotscalebar</variable>

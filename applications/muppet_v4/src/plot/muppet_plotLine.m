@@ -35,9 +35,9 @@ switch lower(plt.yscale),
     case{'normprob'}
         y=norminv(0.01*data.y,0,1);
 end
-if k==2
-    opt.rightaxis=1;
-end
+% if k==2
+%     opt.rightaxis=1;
+% end
 if opt.rightaxis
     a=(data.y-plt.yminright)/(plt.ymaxright-plt.yminright);
     y=plt.ymin+a*(plt.ymax-plt.ymin);

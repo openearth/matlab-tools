@@ -174,7 +174,7 @@ else
                 ndim=2;
             else
                 switch quantity
-                    case{'location'}
+                    case{'location','scalar'}
 %                         shp='crosssection1d';
                         plane='xy';
                         ndim=1;

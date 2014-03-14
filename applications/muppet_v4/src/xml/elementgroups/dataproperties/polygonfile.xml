@@ -7,5 +7,7 @@
     <position>40 0 90 20</position>
     <text>Polygon File</text>
     <tooltipstring>Select polygon file</tooltipstring>
+    <extension>*.pol</extension>
+    <extension>*.ldb</extension>
   </element>
 </root>
