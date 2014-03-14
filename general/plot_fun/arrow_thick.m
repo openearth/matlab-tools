@@ -396,7 +396,7 @@ if keywords.plot_to_current_figure
     if strcmp(keywords.plot_color,'magnitude')
         output.arrows_handle = patch(output.arrows_x_values,output.arrows_y_values,arrow_lengths');
         if keywords.plot_colorbar == 1
-            colorbar;
+            output.colorbar_handle = colorbar;
         end
     else
         output.arrows_handle = patch(output.arrows_x_values,output.arrows_y_values,keywords.plot_color);
@@ -438,8 +438,18 @@ else
             else
                 varargout{ii} = ['No handle assigned since plotting is turned off'];
             end
+        elseif ii==4
+            if keywords.plot_colorbar == 1
+                if keywords.plot_to_current_figure
+                    varargout{ii} = output.colorbar_handle;
+                else
+                    varargout{ii} = ['No handle assigned since plotting is turned off'];
+                end
+            else
+                varargout{ii} = ['No colorbar handle was made as ''plot_colorbar'' = 0'];
+            end
         else
-            varargout{ii} = ['Output argument no. ' num2str(ii) ' is not assigned'];
+            varargout{ii} = ['Output argument no. ' num2str(ii) ' is not assigned, too many'];
         end
     end
 end
