@@ -24,9 +24,11 @@
       ncnes (1:nobnd,2,4) = 0 ;
       weight(1:nobnd,2,4) = 0.;
 
-      mnst                = [];
-      nnst                = [];
+      mold                = [];
+      nold                = [];
 
+      mmax                = size(x,1);
+      nmax                = size(x,2);
 
       for ibnd = 1: nobnd
          for isize = 1: 2
@@ -43,10 +45,10 @@
                inside = false;
 
                %
-               %% First check previous found point
-               if ~isempty (mnst)
-                   for m = mnst - 1: mnst + 1
-                       for n = nnst - 1: nnst + 1
+               %% First check vicinity previous found point to speed up the proces
+               if ~isempty (mold)
+                   for m = max(mnst - 2,1): min(mnst + 2,mmax - 1)
+                       for n = max(nnst - 2,1): min(nnst + 2,nmax - 1)
                            if icom(m+1,n+1) == 1
                                xx(1) = x(m  ,n  );yy(1) = y(m  ,n  );
                                xx(2) = x(m+1,n  );yy(2) = y(m+1,n  );
@@ -57,6 +59,8 @@
                                    inside = in;
                                    mnst   = m;
                                    nnst   = n;
+                                   mold   = mnst;
+                                   nold   = nnst;
                                    %
                                    % Determine relative distances (within a
                                    % computational cell)
@@ -72,8 +76,8 @@
                %
                %% Not found ==> cycle over all points
                if ~inside
-                   for m = 1: size(x,1) - 1
-                       for n = 1: size(x,2) - 1
+                   for m = 1: mmax - 1
+                       for n = 1: nmax - 1
                            if icom(m+1,n+1) == 1
                                xx(1) = x(m  ,n  );yy(1) = y(m  ,n  );
                                xx(2) = x(m+1,n  );yy(2) = y(m+1,n  );
@@ -84,6 +88,8 @@
                                    inside = in;
                                    mnst   = m;
                                    nnst   = n;
+                                   mold   = mnst;
+                                   nold   = nnst;
                                    %
                                    % Determine relative distances (within a
                                    % computational cell)
