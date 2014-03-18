@@ -24,6 +24,10 @@
       ncnes (1:nobnd,2,4) = 0 ;
       weight(1:nobnd,2,4) = 0.;
 
+      mnst                = [];
+      nnst                = [];
+
+
       for ibnd = 1: nobnd
          for isize = 1: 2
 
@@ -35,30 +39,64 @@
 %-----------find surrounding depth points overall model
 %
             if ~isnan(xbsp)
-                inside = false;
-                for m = 1: size(x,1) - 1
-                   for n = 1: size(x,2) - 1
-                      if icom(m+1,n+1) == 1
-                         xx(1) = x(m  ,n  );yy(1) = y(m  ,n  );
-                         xx(2) = x(m+1,n  );yy(2) = y(m+1,n  );
-                         xx(3) = x(m+1,n+1);yy(3) = y(m+1,n+1);
-                         xx(4) = x(m  ,n+1);yy(4) = y(m  ,n+1);
-                         in = inpolygon(xbsp,ybsp,xx,yy);
-                         if in
-                            inside = in;
-                            mnst   = m;
-                            nnst   = n;
-                            %
-                            % Determine relative distances (within a
-                            % computational cell)
-                            %
-                            [rmnst,rnnst] = nesthd_reldif(xbsp,ybsp,xx,yy,sphere);
-                         end
-                      end
-                   end
-                end
 
-                if inside
+               inside = false;
+
+               %
+               %% First check previous found point
+               if ~isempty (mnst)
+                   for m = mnst - 1: mnst + 1
+                       for n = nnst - 1: nnst + 1
+                           if icom(m+1,n+1) == 1
+                               xx(1) = x(m  ,n  );yy(1) = y(m  ,n  );
+                               xx(2) = x(m+1,n  );yy(2) = y(m+1,n  );
+                               xx(3) = x(m+1,n+1);yy(3) = y(m+1,n+1);
+                               xx(4) = x(m  ,n+1);yy(4) = y(m  ,n+1);
+                               in = inpolygon(xbsp,ybsp,xx,yy);
+                               if in
+                                   inside = in;
+                                   mnst   = m;
+                                   nnst   = n;
+                                   %
+                                   % Determine relative distances (within a
+                                   % computational cell)
+                                   %
+                                   [rmnst,rnnst] = nesthd_reldif(xbsp,ybsp,xx,yy,sphere);
+                                   break;
+                               end
+                           end
+                       end
+                   end
+               end
+
+               %
+               %% Not found ==> cycle over all points
+               if ~inside
+                   for m = 1: size(x,1) - 1
+                       for n = 1: size(x,2) - 1
+                           if icom(m+1,n+1) == 1
+                               xx(1) = x(m  ,n  );yy(1) = y(m  ,n  );
+                               xx(2) = x(m+1,n  );yy(2) = y(m+1,n  );
+                               xx(3) = x(m+1,n+1);yy(3) = y(m+1,n+1);
+                               xx(4) = x(m  ,n+1);yy(4) = y(m  ,n+1);
+                               in = inpolygon(xbsp,ybsp,xx,yy);
+                               if in
+                                   inside = in;
+                                   mnst   = m;
+                                   nnst   = n;
+                                   %
+                                   % Determine relative distances (within a
+                                   % computational cell)
+                                   %
+                                   [rmnst,rnnst] = nesthd_reldif(xbsp,ybsp,xx,yy,sphere);
+                                   break;
+                               end
+                           end
+                       end
+                   end
+               end
+
+               if inside
 
 %
 %--------------from depth points to zeta points
