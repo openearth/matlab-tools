@@ -85,16 +85,16 @@ elseif size(shoreline,2)==1
     locs2.angles = shoreline;
 end
 
-id = find(shoreline.x~=999.999);
-shoreline.x = shoreline.x(id);
-shoreline.y = shoreline.y(id);
+if isstr(locations)
+    locs = readldb(locations);
+else
+    locs = struct('x',locations(:,1),'y',locations(:,2));
+end
 
 if option==1
-    if isstr(locations)
-        locs = readldb(locations);
-    else
-        locs = struct('x',locations(:,1),'y',locations(:,2));
-    end
+    id = find(shoreline.x~=999.999);
+    shoreline.x = shoreline.x(id);
+    shoreline.y = shoreline.y(id);
 
     %----------determine coast angle------------
     %-------------------------------------------
