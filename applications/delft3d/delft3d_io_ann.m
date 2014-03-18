@@ -28,6 +28,9 @@ function varargout = delft3d_io_ann(cmd,varargin)
 % 2008 Jul 22: added write option
 % 2009 feb 13: made also [x,y,text] output
 % 2013 aug   : made also [x,y,text] input
+% 2014 march : TK added optional argument for writing "Muppet" (true/false,
+%              default false) allowing for writing a annotation file such that
+%              it can be used in Muppet.
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2004-2008 Delft University of Technology
@@ -142,13 +145,21 @@ function [S,iostat]=Local_read(varargin)
 
 function iostat=Local_write(varargin)   
 
+OPT.Muppet   = false;
 filename     = varargin{1};
 if isnumeric(varargin{2})
    S.x   = varargin{2};
    S.y   = varargin{3};
    S.txt = varargin{4};
+   if nargin > 4
+       OPT = setproperty(OPT,varargin{5:end});
+   end
 else
    S     = varargin{2};
+   if nargin > 2
+       OPT = setproperty(OPT,varargin{5:end});
+   end
+       
 end
 
 iostat       = 1;
@@ -157,26 +168,37 @@ OS           = 'windows';
 
 %% Header
 
-fprintf  (fid,'%s',['* File created on ',datestr(now),' with matlab function delft3d_io_ann.m']);
-fprinteol(fid,OS);
-
-fprintf  (fid,'%s',['BLOCK01']);
-fprinteol(fid,OS);
-
-fprintf  (fid,'%d ',length(S.x));
-fprintf  (fid,'%d ',3             );
-fprinteol(fid,OS);
-
-%% Table 
-
-for istat=1:length(S.x)
-
-   fprintf  (fid,'%f ',S.x  (istat));
-   fprintf  (fid,'%f ',S.y  (istat));
-   fprintf  (fid,'%s ',S.txt{istat});
-   fprinteol(fid,OS);
-   
-end   
+if ~OPT.Muppet
+    fprintf  (fid,'%s',['* File created on ',datestr(now),' with matlab function delft3d_io_ann.m']);
+    fprinteol(fid,OS);
+    
+    fprintf  (fid,'%s',['BLOCK01']);
+    fprinteol(fid,OS);
+    
+    fprintf  (fid,'%d ',length(S.x));
+    fprintf  (fid,'%d ',3             );
+    fprinteol(fid,OS);
+    
+    %% Table
+    
+    for istat=1:length(S.x)
+        
+        fprintf  (fid,'%f ',S.x  (istat));
+        fprintf  (fid,'%f ',S.y  (istat));
+        fprintf  (fid,'%s ',S.txt{istat});
+        fprinteol(fid,OS);
+        
+    end
+else
+    for istat=1:length(S.x)
+        
+        fprintf  (fid,'%f ',S.x  (istat));
+        fprintf  (fid,'%f ',S.y  (istat));
+        fprintf  (fid,'%s ',['"' S.txt{istat} '"']);
+        fprinteol(fid,OS);
+        
+    end
+end
 
 iostat = fclose(fid);
 
