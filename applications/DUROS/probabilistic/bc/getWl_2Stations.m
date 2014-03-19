@@ -1,4 +1,4 @@
-function [Wl, Wl1, Wl2, Station1, Station2] = getWl_2Stations(P, lambda, Station1, Station2)
+function [Wl, Wl1, Wl2, Station1, Station2, lambda] = getWl_2Stations(P, lambda, Station1, Station2)
 %GETWL_2SUPPORTPOINTS  Calculates waterlevels in 2 stations and point
 %in between, given a probability and the parameters in both stations
 %
