@@ -91,8 +91,8 @@ Station2    = 'Eierlandse Gat';         % Change this according to location!
 [Lambda, ~] = getLambda_2Stations(Station1, Station2, 'JarkusId', JarkusID);     % Change this according to location!
 
 [h, h1, h2, Station1, Station2, Lambda] = getWl_2Stations(norm_cdf(OPT.Ph, 0, 1), Lambda, Station1, Station2);
-[Hs, Hs1, Hs2, Station1, Station2]      = getHs_2Stations(norm_cdf(OPT.PHm0, 0, 0.6), Lambda, h1, h2, Station1, Station2);
-[Tp, Tp1, Tp2, Station1, Station2]      = getTp_2Stations(norm_cdf(OPT.PTp, 0, 1), Lambda, Hs1, Hs2, Station1, Station2);
+[Hs, Hs1, Hs2, Station1, Station2]      = getHs_2Stations(OPT.PHm0, Lambda, h1, h2, Station1, Station2);
+[Tp, Tp1, Tp2, Station1, Station2]      = getTp_2Stations(OPT.PTp, Lambda, Hs1, Hs2, Station1, Station2);
 
 %% Change stochastic variables in XBeach model
 

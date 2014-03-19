@@ -91,14 +91,14 @@ Station2    = 'Hoek van Holland';         % Change this according to location!
 [Lambda, ~] = getLambda_2Stations(Station1, Station2, 'JarkusId', JarkusID);     
 
 [h, h1, h2, Station1, Station2, Lambda]     = getWl_2Stations(norm_cdf(OPT.Ph, 0, 1), Lambda, Station1, Station2);
-[Hs, Hs1, Hs2, Station1, Station2]          = getHs_2Stations(norm_cdf(OPT.PHm0, 0, 0.6), Lambda, h1, h2, Station1, Station2);
-[Tp, Tp1, Tp2, Station1, Station2]          = getTp_2Stations(norm_cdf(OPT.PTp, 0, 1), Lambda, Hs1, Hs2, Station1, Station2);
+[Hs, Hs1, Hs2, Station1, Station2]          = getHs_2Stations(OPT.PHm0, Lambda, h1, h2, Station1, Station2);
+[Tp, Tp1, Tp2, Station1, Station2]          = getTp_2Stations(OPT.PTp, Lambda, Hs1, Hs2, Station1, Station2);
 
 %% Duros+ settings
 
 DuneErosionSettings('set', 'AdditionalErosion', false);
 
-MaxErosionPoint = OPT.MaxErosionPoint;%*ones(size(OPT.Ph));
+MaxErosionPoint = OPT.MaxErosionPoint;
 D50             = OPT.D50*ones(size(OPT.Ph));
 Duration        = zeros(size(OPT.Ph));
 Accuracy        = zeros(size(OPT.Ph));
