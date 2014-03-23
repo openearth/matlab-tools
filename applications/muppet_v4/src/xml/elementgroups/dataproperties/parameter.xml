@@ -14,10 +14,15 @@
     <tooltipstring>Select parameter</tooltipstring>
     <dependency>
       <action>enable</action>
-      <checkfor>any</checkfor>
+      <checkfor>all</checkfor>
       <check>
         <variable>selectedquantity</variable>
         <value>scalar</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>selectparameter</variable>
+        <value>1</value>
         <operator>eq</operator>
       </check>
     </dependency>

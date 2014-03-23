@@ -131,12 +131,16 @@ switch tp
         % x and y
         npar=ncols;
         dataset.selectcoordinates=1;        
+        dataset.selectparameter=0;        
+        dataset.xcoordinate=columnlabels{1};
+        dataset.ycoordinate=columnlabels{2};        
         for ipar=1:npar
             par=[];
             par=muppet_setDefaultParameterProperties(par);
             par.name=columnlabels{ipar};
             par.size=[0 0 0 0 0];
             dataset.parameters(ipar).parameter=par;            
+            
         end        
     case{'histogram'}
         % x and y
@@ -233,6 +237,11 @@ switch dataset.tekaltype
                 parameter.y(isnan(parameter.u))=NaN;
         end
     case{'xy'}
+        icolx=strmatch(lower(dataset.xcoordinate),lower(dataset.columnlabels),'exact');
+        icoly=strmatch(lower(dataset.ycoordinate),lower(dataset.columnlabels),'exact');
+        parameter.x=fid.Field(iblock).Data(:,icolx);
+        parameter.y=fid.Field(iblock).Data(:,icoly);
+        dataset.type='xy1dxy';
     case{'histogram'}
         icol=strmatch(lower(dataset.parameter),lower(dataset.columnlabels),'exact');
         parameter.x=1:size(fid.Field(iblock).Data{1},1);

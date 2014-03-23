@@ -130,6 +130,7 @@ for j=i1:i2
                     % Same number of times
                     if ~isempty(dataset.parameters(ip).parameter.times)
                         par.times=dataset.parameters(ip).parameter.times;
+                        par.morphtimes=dataset.parameters(ip).parameter.morphtimes;
                     end
                 end
                 %                end
@@ -138,6 +139,23 @@ for j=i1:i2
             if isempty(par.times)
                 % Still empty, see if it's worth reading it now
                 par.times=qpread(fid,dataproperties(ii),'times');
+
+                % Try reading morphological times as well
+                par.morphtimes=[];
+                try
+                    switch fid.SubType
+                        case{'Delft3D-trih'}
+                            [mt,ok]=vs_get(fid,'his-infsed-serie','MORFT','quiet');
+                        case{'Delft3D-trim'}
+                            [mt,ok]=vs_get(fid,'map-infsed-serie','MORFT','quiet');
+                    end
+                    if ok
+                        for it=1:length(mt)
+                            par.morphtimes(it)=par.times(1)+mt{it};
+                        end
+                    end
+                end
+                
             end
         end
         
@@ -306,6 +324,8 @@ switch length(arg)
     case{4}
         d=qpread(fid,idomain,dataproperties,'griddata',arg{1},arg{2},arg{3},arg{4});
 end
+
+% d.Time=dataset.morphtimes;
 
 % z or d
 if isfield(dataproperties,'Loc')

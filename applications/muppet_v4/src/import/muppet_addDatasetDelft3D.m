@@ -122,6 +122,17 @@ for j=i1:i2
     if dataproperties(ii).DimFlag(1)>0 && par.size(1)<1000
         % Only read times when there are less than 1,000
         par.times=qpread(fid,dataproperties(ii),'times');
+
+        % Try reading morphological times as well
+        par.morphtimes=[];
+        try
+            [mt,ok]=vs_get(fid,'map-infsed-serie','MORFT','quiet');
+            if ok
+                for it=1:length(mt)
+                    par.morphtimes(it)=par.times(1)+mt{it};
+                end
+            end
+        end
     end
 
     % Stations
@@ -223,6 +234,7 @@ if dataset.size(1)>0
     end
     if length(timestep)==1 && timestep~=0
         dataset.time=dataset.times(timestep);
+        dataset.time=dataset.morphtimes(timestep);
     end
     dataset.timestep=[];
 end
