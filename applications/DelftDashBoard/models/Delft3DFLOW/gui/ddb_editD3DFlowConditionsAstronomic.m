@@ -149,7 +149,7 @@ end
 ppm2={''};
 ppm3={''};
 ppm={ppm1,ppm2,ppm3};
-handles.GUIHandles.componentSetTable=table(wnd,'create','tag','componentSetTable','position',[50 110],'nrrows',8,'columntypes',cltp,'width',wdt,'popuptext',ppm,'callbacks',callbacks,'includebuttons',1);
+handles.GUIHandles.componentSetTable=gui_table(wnd,'create','tag','componentSetTable','position',[50 110],'nrrows',8,'columntypes',cltp,'width',wdt,'popuptext',ppm,'callbacks',callbacks,'includebuttons',1);
 
 %
 cltp={'pushbutton','editreal','editreal'};
@@ -157,7 +157,7 @@ enab=zeros(8,3)+1;
 enab(:,1)=0;
 wdt=[80 60 60];
 pushtext={'a','b','c'};
-handles.GUIHandles.correctionTable=table(wnd,'create','tag','correctiontable','position',[460 110],'nrrows',8,'columntypes',cltp,'width',wdt,'enable',enab,'pushtext',pushtext);
+handles.GUIHandles.correctionTable=gui_table(wnd,'create','tag','correctiontable','position',[460 110],'nrrows',8,'columntypes',cltp,'width',wdt,'enable',enab,'pushtext',pushtext);
 
 
 switch handles.openBoundaries(iac).type,
@@ -368,7 +368,7 @@ for i=1:length(handles.componentNames)
     ppm{i,3}='';
 end
 
-table(handles.GUIHandles.componentSetTable,'setdata',data);
+gui_table(handles.GUIHandles.componentSetTable,'setdata',data);
 
 %%
 
@@ -393,7 +393,7 @@ for i=1:handles.astronomicComponentSets(ii).nr
     end
 end
 if k>0
-    table(handles.GUIHandles.correctionTable,'setdata',data);
+    gui_table(handles.GUIHandles.correctionTable,'setdata',data);
     set(handles.GUIHandles.correctionTable,'Visible','on');
 else
     set(handles.GUIHandles.correctionTable,'Visible','off');
@@ -402,7 +402,7 @@ end
 %%
 function [handles,ok]=ChangeData(handles)
 ok=1;
-data=table(handles.GUIHandles.componentSetTable,'getdata');
+data=gui_table(handles.GUIHandles.componentSetTable,'getdata');
 for i=1:size(data,1)
     for j=i:size(data,1)
         if strcmp(data{i,1},data{j,1}) && i~=j
@@ -424,7 +424,7 @@ for i=1:handles.astronomicComponentSets(ii).nr
     handles.astronomicComponentSets(ii).phase(i)=data{i,3};
     handles.astronomicComponentSets(ii).correction(i)=data{i,4};
     if handles.astronomicComponentSets(ii).correction(i)
-        data2=table(handles.GUIHandles.correctionTable,'getdata');
+        data2=gui_table(handles.GUIHandles.correctionTable,'getdata');
         for j=1:size(data2,1)
             if strcmp(data2{j,1},handles.astronomicComponentSets(ii).component{i})
                 handles.astronomicComponentSets(ii).amplitudeCorrection(i)=data2{j,2};

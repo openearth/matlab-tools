@@ -64,8 +64,6 @@ switch lower(varargin{1}),
     
     case{'startup'}
         
-        ddb_setProxySettings('initialize');
-
         disp('Finding coordinate systems ...');
         ddb_getCoordinateSystems;
         
@@ -86,9 +84,10 @@ switch lower(varargin{1}),
         disp('Finding models ...');
         ddb_findModels;
         
-        disp('Reading settings ...');
-        ddb_readConfigXML;
-        
+        ddb_setModelSettings('initialize');
+        ddb_setProxySettings('initialize');
+        ddb_setSNCSettings('initialize');
+                
         disp('Initializing screen parameters ...');
         ddb_initializeScreenParameters;
         

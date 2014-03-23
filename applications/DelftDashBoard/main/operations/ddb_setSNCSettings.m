@@ -1,9 +1,9 @@
-function ddb_setProxySettings(varargin)
-%DDB_SETPROXYSETTINGS  Set the proxy settings on initialization or when changed in menu.
+function ddb_setSNCSettings(varargin)
+%DDB_SETPROXYSETTINGS  Set SNC settings on initialization or when changed in menu.
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2013 Deltares
+%   Copyright (C) 2014 Deltares
 %       Maarten van Ormondt
 %
 %       Maarten.vanOrmondt@deltares.nl
@@ -36,11 +36,11 @@ function ddb_setProxySettings(varargin)
 % Created: 29 Nov 2011
 % Created with Matlab version: 7.11.0.584 (R2010b)
 
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
+% $Id: ddb_setProxySettings.m 8254 2013-03-01 13:55:47Z ormondt $
+% $Date: 2013-03-01 14:55:47 +0100 (Fri, 01 Mar 2013) $
+% $Author: ormondt $
+% $Revision: 8254 $
+% $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/DelftDashBoard/main/operations/ddb_setProxySettings.m $
 % $Keywords: $
 
 %%
@@ -48,42 +48,42 @@ handles=getHandles;
 
 if isempty(varargin)
 
-    % Changing proxy settings from menu
+    % Changing SNC settings from menu
 
     ddb_zoomOff;
     
-    % Open GUI
+    % Where xml GUI files sit
     xmldir=[handles.settingsDir 'xml' filesep];
-    xmlfile='delftdashboard.proxysettings.xml';    
-    h=handles.proxysettings;    
+    xmlfile='delftdashboard.sncsettings.xml';
+    
+    h=handles.sncsettings;
+    
     [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir filesep 'icons' filesep 'deltares.gif']);
 
     if ok
         
-        handles.proxysettings=h;
+        handles.sncsettings=h;
         
-        if handles.proxysettings.use
-            com.mathworks.mlwidgets.html.HTMLPrefs.setUseProxy(true);
-            com.mathworks.mlwidgets.html.HTMLPrefs.setProxyHost(handles.proxysettings.host);
-            com.mathworks.mlwidgets.html.HTMLPrefs.setProxyPort(handles.proxysettings.port);
-        else
-            com.mathworks.mlwidgets.html.HTMLPrefs.setUseProxy(false);
-        end
-
-        % Read ddb config xml
+        setpref('SNCTOOLS','USE_JAVA',h.use_java);
+        setpref('SNCTOOLS','USE_NETCDF_JAVA',h.use_netcdf_java);
+        
+        % Read ddb config xml 
         xmldir=handles.xmlConfigDir;
         xmlfile='delftdashboard.xml';
         filename=[xmldir xmlfile];
-                
         xml=xml2struct(filename);
-        if handles.proxysettings.use
-            xml.proxysettings.proxysettings.use='yes';
-        else
-            xml.proxysettings.proxysettings.use='no';
-        end
-        xml.proxysettings.proxysettings.host=handles.proxysettings.host;
-        xml.proxysettings.proxysettings.port=handles.proxysettings.port;
         
+        if h.use_java
+            xml.sncsettings.sncsettings.use_java='yes';
+        else
+            xml.sncsettings.sncsettings.use_java='no';
+        end
+        if h.use_netcdf_java
+            xml.sncsettings.sncsettings.use_netcdf_java='yes';
+        else
+            xml.sncsettings.sncsettings.use_netcdf_java='no';
+        end
+                    
         % Now write ddb xml config file
         struct2xml(filename,xml,'structuretype','short');
                 
@@ -91,10 +91,11 @@ if isempty(varargin)
     
 else
     
-    % Changing proxy settings on initialization
-    handles.proxysettings.use=0;
-    handles.proxysettings.host='';
-    handles.proxysettings.port='';
+    % Changing snc settings on initialization
+
+    % Defaults
+    handles.sncsettings.use_java=1;
+    handles.sncsettings.use_netcdf_java=1;
 
     % Read ddb config xml
     xmldir=handles.xmlConfigDir;
@@ -103,23 +104,25 @@ else
 
     % File always exists
     xml=xml2struct(filename);
-
-    if isfield(xml,'proxysettings')
-        switch lower(xml.proxysettings.proxysettings.use(1))
+    if isfield(xml,'sncsettings')
+        switch lower(xml.sncsettings.sncsettings.use_java(1))
             case{'1','y','t'}
-                handles.proxysettings.use=1;
+                handles.sncsettings.use_java=1;
+            otherwise
+                handles.sncsettings.use_java=0;
         end
-        handles.proxysettings.host=xml.proxysettings.proxysettings.host;
-        handles.proxysettings.port=xml.proxysettings.proxysettings.port;
-        % If use proxy
-        if handles.proxysettings.use
-            com.mathworks.mlwidgets.html.HTMLPrefs.setUseProxy(true);
-            com.mathworks.mlwidgets.html.HTMLPrefs.setProxyHost(handles.proxysettings.host);
-            com.mathworks.mlwidgets.html.HTMLPrefs.setProxyPort(handles.proxysettings.port);
+        switch lower(xml.sncsettings.sncsettings.use_netcdf_java(1))
+            case{'1','y','t'}
+                handles.sncsettings.use_netcdf_java=1;
+            otherwise
+                handles.sncsettings.use_netcdf_java=0;
         end
     end
+
+    % And set the values
+    setpref('SNCTOOLS','USE_JAVA',handles.sncsettings.use_java);
+    setpref('SNCTOOLS','USE_NETCDF_JAVA',handles.sncsettings.use_netcdf_java);
     
 end
 
 setHandles(handles);
- 

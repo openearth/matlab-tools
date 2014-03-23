@@ -84,8 +84,8 @@ set(h,'Tag','MainWindow');
 handles=ddb_makeMenu(handles);
 handles=ddb_makeToolBar(handles);
 
-set(handles.GUIHandles.Menu.Toolbox.ModelMaker,'Checked','on');
-set(handles.GUIHandles.Menu.Model.Delft3DFLOW,'Checked','on');
+% set(handles.GUIHandles.Menu.Toolbox.ModelMaker,'Checked','on');
+% set(handles.GUIHandles.Menu.Model.Delft3DFLOW,'Checked','on');
 
 str=['WGS 84 / UTM zone ' num2str(handles.screenParameters.UTMZone{1}) 'N'];
 set(handles.GUIHandles.Menu.CoordinateSystem.UTM,'Label',str);

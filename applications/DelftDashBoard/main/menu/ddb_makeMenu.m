@@ -60,26 +60,12 @@ function handles = ddb_makeMenu(handles)
 % $Keywords: $
 
 %% File
-handles.GUIHandles.Menu.File.Main=uimenu('Label','File','Tag','menuFile');
-% Items are added in ddb_changeFileMenuItems
+uimenu('Label','File','Tag','menufile');
+% Items are added when ddb_selectModel is called
 
 %% Toolbox
-uimenu('Label','Toolbox','Tag','menuToolbox');
-for k=1:length(handles.Toolbox)
-    enab=handles.Toolbox(k).enable;
-    if enab==1
-        enab='on';
-    else
-        enab='off';
-    end
-    if strcmpi(enab,'on')
-        if k==2
-            handles=ddb_addMenuItem(handles,'Toolbox',handles.Toolbox(k).name,'Callback',{@ddb_menuToolbox},'longname',handles.Toolbox(k).longName,'Separator','on','enable',enab);
-        else
-            handles=ddb_addMenuItem(handles,'Toolbox',handles.Toolbox(k).name,'Callback',{@ddb_menuToolbox,},'longname',handles.Toolbox(k).longName,'enable',enab);
-        end
-    end
-end
+uimenu('Label','Toolbox','Tag','menutoolbox');
+ddb_menuToolbox;
 
 %% Models
 uimenu('Label','Model','Tag','menuModel');
@@ -102,47 +88,7 @@ handles=ddb_addMenuItem(handles,'Domain','tst',                 'Callback',{@ddb
 
 %% Bathymetry
 uimenu('Label','Bathymetry','Tag','menuBathymetry');
-
 ddb_updateBathymetryMenu(handles);
-
-% % First datasets without source
-% for i=1:handles.bathymetry.nrDatasets
-%     if isempty(handles.bathymetry.dataset(i).source)
-%         if handles.bathymetry.dataset(i).isAvailable
-%             enab='on';
-%         else
-%             enab='off';
-%         end
-%         if strcmpi(handles.bathymetry.datasets{i},handles.screenParameters.backgroundBathymetry)
-%             checked='on';
-%         else
-%             checked='off';
-%         end
-%         handles=ddb_addMenuItem(handles,'Bathymetry',handles.bathymetry.longNames{i},'Callback',{@ddb_menuBathymetry},'Checked',checked,'Enable',enab);        
-%     end
-% end
-% 
-% % Find sources
-% sources={''};
-% nsource=0;
-% for i=1:handles.bathymetry.nrDatasets
-%     if ~isempty(handles.bathymetry.dataset(i).source)
-%         ii=strmatch(handles.bathymetry.dataset(i).source,sources);
-%         if isempty(ii)
-%             % New source
-%             nsource=nsource+1;
-%             sources{nsource}=handles.bathymetry.dataset(i).source;
-%             handles=ddb_addMenuItem(handles,'Bathymetry',handles.bathymetry.dataset(i).source,'Enable','on');
-%         end
-%     end
-% end
-% 
-% for i=1:handles.bathymetry.nrDatasets
-%     if ~isempty(handles.bathymetry.dataset(i).source)
-%         ii=strmatch(handles.bathymetry.dataset(i).source,sources);
-%         handles=ddb_addMenuItem(handles,['Bathymetry' strrep(sources{ii},' ','')],handles.bathymetry.longNames{i},'Callback',{@ddb_menuBathymetry},'Checked','off','Enable',enab);
-%     end
-% end
 
 %% Shoreline
 uimenu('Label','Shoreline','Tag','menuShoreline');
@@ -185,15 +131,7 @@ handles=ddb_addMenuItem(handles,'CoordinateSystem','WGS 84 / UTM zone 31N','Call
 handles=ddb_addMenuItem(handles,'CoordinateSystem','Select UTM Zone ...',  'Callback',{@ddb_menuCoordinateSystem});
 
 %% Options
-uimenu('Label','Options','Tag','menuOptions');
-handles=ddb_addMenuItem(handles,'Options',               'Coordinate Conversion','Callback',{@ddb_menuOptions});
-handles=ddb_addMenuItem(handles,'Options',               'Quickplot',            'Callback',{@ddb_menuOptions});
-handles=ddb_addMenuItem(handles,'Options',               'Muppet',               'Callback',{@ddb_menuOptions}, 'Enable','off');
-handles=ddb_addMenuItem(handles,'Options',               'Ldb Tool',             'Callback',{@ddb_menuOptions},'Separator','on', 'Enable','off');
-handles=ddb_addMenuItem(handles,'Options',               'Data management', 'Enable','off');
-handles=ddb_addMenuItem(handles,'OptionsDatamanagement', 'bathymetry',           'Callback',{@ddb_menuOptions}, 'Enable','off');
-handles=ddb_addMenuItem(handles,'OptionsDatamanagement', 'shorelines',           'Callback',{@ddb_menuOptions}, 'Enable','off');
-handles=ddb_addMenuItem(handles,'OptionsDatamanagement', 'tidemodels',           'Callback',{@ddb_menuOptions}, 'Enable','off');
+ddb_menuOptions;
 
 %% Help
 uimenu('Label','Help','Tag','menuHelp');
@@ -206,5 +144,3 @@ if ~isdeployed
     uimenu('Label','Debug','Tag','menuDebug');
     handles=ddb_addMenuItem(handles,'Debug','Reload XML','Callback',{@ddb_menuDebug},'Checked','off');
 end
-
-

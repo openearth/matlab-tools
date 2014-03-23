@@ -50,7 +50,10 @@ xmldir=handles.xmlConfigDir;
 xmlfile='delftdashboard.xml';
 filename=[xmldir xmlfile];
 
-% Set defaults
+%% Set defaults
+
+% Models
+
 for imdl=1:length(handles.Model)
 
     handles.Model(imdl).versionlist = {'N/A'}; 
@@ -81,9 +84,17 @@ for imdl=1:length(handles.Model)
     end
 end
 
+% Proxy settings
+
+% SNC settings
+handles.sncsettings.use_java=1;
+handles.sncsettings.use_netcdf_java=1;
+
 if exist(filename,'file')
+    
     % Read xml file
     xml=xml2struct(filename);
+    
     % Set model versions
     for ii=1:length(xml.model)
         imdl=strmatch(lower(xml.model(ii).model.name),lower({handles.Model.name}),'exact');
@@ -98,14 +109,53 @@ if exist(filename,'file')
             end                
         end
     end
+    
+    % Set proxy settings
+    
+
+    % Set SNC settings
+    if isfield(xml,'sncsettings')
+        if ~isfield(xml.sncsettings.sncsettings,'use_java')
+            if ~isempty(xml.sncsettings.sncsettings.use_java)
+                switch lower(xml.sncsettings.sncsettings.use_java(1))
+                    case{'1','y','t'}
+                        handles.sncsettings.use_java=1;
+                    otherwise
+                        handles.sncsettings.use_java=0;
+                end
+            end
+        end
+        if ~isfield(xml.sncsettings.sncsettings,'use_netcdf_java')
+            if ~isempty(xml.sncsettings.sncsettings.use_netcdf_java)
+                switch lower(xml.sncsettings.sncsettings.use_netcdf_java(1))
+                    case{'1','y','t'}
+                        handles.sncsettings.use_netcdf_java=1;
+                    otherwise
+                        handles.sncsettings.use_netcdf_java=0;
+                end
+            end
+        end
+    end
+
 else
-    % Save xml file
+    
+    % File does not yet exist, save xml file
+    
+    % Models    
     for ii=1:length(handles.Model)
         xml.model(ii).model.name=handles.Model(ii).name;
         xml.model(ii).model.version=handles.Model(ii).version;
         xml.model(ii).model.exedir=handles.Model(ii).exedir;
     end
+
+    % Proxy settings
+
+    % SNC settings
+    if handles.sncsettings.use_netcdf_java
+    xml.sncsettings.sncsettings.use_java
+    
     struct2xml(filename,xml,'structuretype','short');
+
 end
 
 setHandles(handles);

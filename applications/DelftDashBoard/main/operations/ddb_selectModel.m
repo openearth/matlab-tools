@@ -71,7 +71,9 @@ setHandles(handles);
 set(handles.Model(md).GUI.element(1).element.handle,'Visible','on');
 
 % Change menu items (file, domain and view)
-ddb_changeFileMenuItems;
+ddb_menuFile;
+%ddb_menuView;
+%ddb_changeFileMenuItems;
 
 % Set the domain menu
 if handles.Model(md).supportsMultipleDomains

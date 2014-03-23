@@ -83,7 +83,7 @@ for i=1:handles.Bnd.nrTimeSeries
     data{i,2}=handles.Bnd.timeSeriesA(i,1);
     data{i,3}=handles.Bnd.timeSeriesB(i,1);
 end
-handles.GUIHandles.table=table(gcf,'create','tag','timeseriestable','position',[50 90],'nrrows',8,'columntypes',cltp,'width',wdt,'data',data,'callbacks',callbacks,'includebuttons',1);
+handles.GUIHandles.table=gui_table(gcf,'create','tag','timeseriestable','position',[50 90],'nrrows',8,'columntypes',cltp,'width',wdt,'data',data,'callbacks',callbacks,'includebuttons',1);
 
 switch handles.Bnd.type,
     case{'Z'}
@@ -166,7 +166,7 @@ handles=guidata(gcf);
 
 [data,ok]=ImportFromXLS;
 if ok
-    table(handles.GUIHandles.table,'setdata',data);
+    gui_table(handles.GUIHandles.table,'setdata',data);
 else
     ddb_giveWarning('Warning','Error importing xls file');
 end
@@ -184,7 +184,7 @@ try
         data{i,2}=str2double(char(a{2}(i)));
         data{i,3}=str2double(char(a{3}(i)));
     end
-    table(handles.GUIHandles.table,'setdata',data);
+    gui_table(handles.GUIHandles.table,'setdata',data);
 catch
     ddb_giveWarning('Warning','Could not copy selection');
 end
@@ -198,13 +198,13 @@ for i=1:handles.Bnd.nrTimeSeries
     data{i,2}=handles.Bnd.timeSeriesA(i,k);
     data{i,3}=handles.Bnd.timeSeriesB(i,k);
 end
-table(handles.GUIHandles.table,'setdata',data);
+gui_table(handles.GUIHandles.table,'setdata',data);
 
 %%
 function EditTable
 handles=guidata(gcf);
 k=get(handles.GUIHandles.SelectLayer,'Value');
-data=table(handles.GUIHandles.table,'getdata');
+data=gui_table(handles.GUIHandles.table,'getdata');
 nr=size(data,1);
 for i=1:nr
     handles.Bnd.timeSeriesT(i)=data{i,1};

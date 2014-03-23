@@ -135,10 +135,10 @@ nt=0;
 
         nt=nt+1;
 % Add current water level if sigma coordinates
-        if ~strcmpi(flow.vertCoord,'z')
-            wl_in = repmat(squeeze(wl(:,:,it)), [1, 1, D(3)]);
-            dplayer = dplayer + wl_in;
-        end        
+%         if ~strcmpi(flow.vertCoord,'z')
+%             wl_in = repmat(squeeze(wl(:,:,it)), [1, 1, D(3)]);
+%             dplayer = dplayer + wl_in;
+%         end        
         % Loop through all files
         
         disp(['Reading files ' num2str(nt) ' of ' num2str(it1-it0+1)]);

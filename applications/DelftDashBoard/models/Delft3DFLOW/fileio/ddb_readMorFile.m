@@ -67,7 +67,7 @@ if ~exist(handles.Model(md).Input(id).morFile,'file')
     return
 end
 
-s=ddb_readDelft3D_keyWordFile(handles.Model(md).Input(id).morFile);
+s=ddb_readDelft3D_keyWordFile(handles.Model(md).Input(id).morFile,'firstcharacterafterdata',' ');
 
 handles=ddb_Delft3DFLOW_initializeMorphology(handles,id);
 

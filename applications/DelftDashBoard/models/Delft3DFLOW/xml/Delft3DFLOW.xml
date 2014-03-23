@@ -52,7 +52,7 @@
       </menuitem>
       <menuitem>
         <string>Delft3D-FLOW version ...</string>
-        <callback>ddb_selectModelVersion</callback>
+        <callback>ddb_setModelSettings</callback>
         <option>selectversion</option>
       </menuitem>
     </menusavefile>

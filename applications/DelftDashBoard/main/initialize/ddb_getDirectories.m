@@ -142,6 +142,7 @@ handles.shorelineDir=[datadir 'shorelines' filesep];
 handles.satelliteDir=[datadir 'imagery' filesep];
 handles.superTransDir=[datadir 'supertrans' filesep];
 handles.proxyDir=[datadir 'proxysettings' filesep];
+handles.sncDir=[datadir 'sncsettings' filesep];
 handles.xmlConfigDir=datadir;
 
 %  Tropical Cyclone bulletin download directory (used by check_tc_files.pl):

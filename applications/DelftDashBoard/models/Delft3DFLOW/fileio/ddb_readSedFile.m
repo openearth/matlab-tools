@@ -67,7 +67,7 @@ if ~exist(handles.Model(md).Input(id).sedFile,'file')
     return
 end
 
-s=ddb_readDelft3D_keyWordFile(handles.Model(md).Input(id).sedFile);
+s=ddb_readDelft3D_keyWordFile(handles.Model(md).Input(id).sedFile,'firstcharacterafterdata',' ');
 
 handles.Model(md).Input(id).nrSediments=length(s.sediment);
 

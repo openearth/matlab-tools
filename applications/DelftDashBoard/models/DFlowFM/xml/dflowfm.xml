@@ -34,7 +34,7 @@
       </menuitem>
       <menuitem>
         <string>DFlow-FM version ...</string>
-        <callback>ddb_selectModelVersion</callback>
+        <callback>ddb_setModelSettings</callback>
         <option>selectversion</option>
       </menuitem>
     </menusavefile>

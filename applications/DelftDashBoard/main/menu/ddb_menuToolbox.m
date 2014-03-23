@@ -1,4 +1,4 @@
-function ddb_menuToolbox(hObject, eventdata)
+function ddb_menuToolbox(hObject, eventdata, varargin)
 %DDB_MENUTOOLBOX  One line description goes here.
 %
 %   More detailed description goes here.
@@ -63,25 +63,58 @@ function ddb_menuToolbox(hObject, eventdata)
 %%
 handles=getHandles;
 
-tg=get(hObject,'Tag');
-tbname=tg(12:end);
+if isempty(varargin)
 
-% Check the selected toolbox in the menu
-h=get(hObject,'Parent');
-ch=get(h,'Children');
-set(ch,'Checked','off');
-set(hObject,'Checked','on');
+    % Fill menu on initialization
 
-% Set the new active toolbox
-if ~strcmpi(handles.activeToolbox.name,tbname)
-    handles.activeToolbox.name=tbname;
-    handles.activeToolbox.nr=strmatch(tbname,{handles.Toolbox(:).name},'exact');
-    % Now add the new GUI elements to toolbox tab
-    setHandles(handles);
-    % Select toolbox
-    set(gcf,'Pointer','watch');
-    ddb_selectToolbox;
-    set(gcf,'Pointer','arrow');
+    p=findobj(gcf,'Tag','menutoolbox');
+    
+    for k=1:length(handles.Toolbox)
+        
+        if handles.Toolbox(k).enable
+            enab='on';
+        else
+            enab='off';
+        end
+        
+        % Separator below ModelMaker toolbox
+        if k==2
+            sep='on';
+        else
+            sep='off';
+        end
+        
+        if k==1
+            checked='on';
+        else
+            checked='off';
+        end
+        
+        uimenu(p,'Label',handles.Toolbox(k).longName,'Callback',{@ddb_menuToolbox,0},'separator',sep,'enable',enab,'checked',checked,'tag',handles.Toolbox(k).name);
+        
+    end
+    
+else
+
+    % Toolbox selected from menu
+    
+    % Check the selected toolbox in the menu
+    h=get(hObject,'Parent');
+    ch=get(h,'Children');
+    set(ch,'Checked','off');
+    set(hObject,'Checked','on');    
+    
+    % Set the new active toolbox
+    tbname=get(hObject,'Tag');
+    if ~strcmpi(handles.activeToolbox.name,tbname)
+        handles.activeToolbox.name=tbname;
+        handles.activeToolbox.nr=strmatch(tbname,{handles.Toolbox(:).name},'exact');
+        % Now add the new GUI elements to toolbox tab
+        setHandles(handles);
+        % Select toolbox
+        set(gcf,'Pointer','watch');
+        ddb_selectToolbox;
+        set(gcf,'Pointer','arrow');
+    end
+
 end
-
-

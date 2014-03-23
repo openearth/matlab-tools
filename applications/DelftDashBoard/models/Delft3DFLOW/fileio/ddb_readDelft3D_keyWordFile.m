@@ -62,11 +62,15 @@ function s = ddb_readDelft3D_keyWordFile(fname,varargin)
 %% Reads Delft3D keyword file into structure
 
 lowercase=1;
+firstcharacterafterdata=' ';
+
 for ii=1:length(varargin)
     if ischar(varargin{ii})
         switch lower(varargin{ii})
             case{'lowercase'}
                 lowercase=varargin{ii+1};
+            case{'firstcharacterafterdata'}
+                firstcharacterafterdata=varargin{ii+1};
         end
     end
 end
@@ -124,7 +128,7 @@ while 1
                             val=val{2};
                         end
                     else
-                        ish=find(v=='#', 1);
+                        ish=find(v==firstcharacterafterdata, 1);
                         if isempty(ish)
                             % No comments at end of line
                             val=deblank(v);

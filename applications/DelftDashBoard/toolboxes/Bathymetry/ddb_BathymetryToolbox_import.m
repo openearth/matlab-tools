@@ -114,7 +114,7 @@ switch lower(handles.Toolbox(tb).Input.import.rawDataFormat)
         dy=cellsz;
     case{'arcbinarygrid'}
         [x,y,z,m] = arc_info_binary([fileparts(handles.Toolbox(tb).Input.import.dataFile) filesep]);
-        clear x y z
+%         clear x y z
         x0=m.X(1);
         y0=m.Y(end);
         dx=x(2)-x(1);

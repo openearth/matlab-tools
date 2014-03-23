@@ -113,7 +113,7 @@ for i=1:2
     data{i,4}=0;
     data{i,5}=0;
 end
-handles.GUIHandles.table=table(gcf,'create','tag','table','position',[50 90],'nrrows',8,'columntypes',cltp,'width',wdt,'data',data,'callbacks',callbacks,'includebuttons',1);
+handles.GUIHandles.table=gui_table(gcf,'create','tag','table','position',[50 90],'nrrows',8,'columntypes',cltp,'width',wdt,'data',data,'callbacks',callbacks,'includebuttons',1);
 
 handles.GUIHandles.TextTime                = uicontrol(gcf,'Style','text','String','Time','Position',[50 265 120 15],'HorizontalAlignment','center');
 handles.GUIHandles.Textyyyy                = uicontrol(gcf,'Style','text','String','yyyy mm dd HH MM SS','Position',[50 250 120 15],'HorizontalAlignment','center');
@@ -205,7 +205,7 @@ guidata(gcf,handles);
 %%
 function SelectLayer_Callback(hObject,eventdata)
 handles=guidata(gcf);
-RefreshTable(handles);
+Refreshgui_table(handles);
 guidata(gcf,handles);
 
 %%
@@ -257,7 +257,7 @@ function EditTable
 handles=guidata(gcf);
 k=get(handles.GUIHandles.SelectLayer,'Value');
 ic=handles.activeConstituent;
-data=table(handles.GUIHandles.table,'getdata');
+data=gui_table(handles.GUIHandles.table,'getdata');
 nr=size(data,1);
 for i=1:nr
     switch lower(handles.Constituent(ic).profile)
@@ -337,10 +337,10 @@ else
     set(handles.GUIHandles.EditProfileJump,'String','');
 end
 
-RefreshTable(handles);
+Refreshgui_table(handles);
 
 %%
-function RefreshTable(handles)
+function Refreshgui_table(handles)
 k=get(handles.GUIHandles.SelectLayer,'Value');
 ic=handles.activeConstituent;
 enab=zeros(8,5)+1;
@@ -366,6 +366,6 @@ end
 
 %enable=[1 1 1 0 0];
 
-table(handles.GUIHandles.table,'setdata',data);
-table(handles.GUIHandles.table,'refresh','enable',enab);
+gui_table(handles.GUIHandles.table,'setdata',data);
+gui_table(handles.GUIHandles.table,'refresh','enable',enab);
 

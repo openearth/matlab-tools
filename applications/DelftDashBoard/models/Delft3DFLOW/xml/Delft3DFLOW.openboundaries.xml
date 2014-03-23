@@ -168,12 +168,14 @@
     <listtext>Total Discharge</listtext>
     <listtext>Discharge per Cell</listtext>
     <listtext>Riemann</listtext>
+    <listtext>Riemann + Tangential</listtext>
     <listvalue>Z</listvalue>
     <listvalue>C</listvalue>
     <listvalue>N</listvalue>
     <listvalue>T</listvalue>
     <listvalue>Q</listvalue>
     <listvalue>R</listvalue>
+    <listvalue>X</listvalue>
     <dependency>
       <action>enable</action>
       <tags>

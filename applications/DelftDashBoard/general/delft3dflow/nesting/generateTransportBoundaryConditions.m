@@ -191,9 +191,9 @@ switch opt.(par)(ii).BC.source
         
         for it=it0:it1
 % Reshape and repeat water level to match dplayer.
-            wl_in = squeeze(wl(it, :,:));
-            wl_in = reshape(wl_in, [length(openBoundaries), 2, 1]);
-            wl_in = repmat(wl_in, [1, 1, D(3)]);
+%             wl_in = squeeze(wl(it, :,:));
+%             wl_in = reshape(wl_in, [length(openBoundaries), 2, 1]);
+%             wl_in = repmat(wl_in, [1, 1, D(3)]);
             
             nt=nt+1;
             
@@ -238,7 +238,8 @@ switch opt.(par)(ii).BC.source
             t=times(nt);
 % Added water level to dplayer to take into account in the vertical
 % interpolation.
-            data=interpolate3D(x,y,dplayer + wl_in,s);
+%            data=interpolate3D(x,y,dplayer + wl_in,s);
+            data=interpolate3D(x,y,dplayer,s);
             
             for j=1:length(openBoundaries)
                 ta=squeeze(data(j,1,:))';
