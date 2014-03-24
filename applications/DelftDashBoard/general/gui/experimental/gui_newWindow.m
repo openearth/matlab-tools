@@ -82,7 +82,10 @@ else
     sz(2)=hgt;
 end
 
-sz=sz*1.2;
+screensize=get(0,'ScreenSize');
+if screensize(3)>1900
+    sz=sz*1.2;
+end
 
 if ~isempty(iconfile)
     if modal
