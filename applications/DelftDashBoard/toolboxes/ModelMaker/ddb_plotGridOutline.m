@@ -62,13 +62,13 @@ function ddb_plotGridOutline(c)
 %%
 handles=getHandles;
 
-xori=handles.Toolbox(tb).Input.XOri;
-yori=handles.Toolbox(tb).Input.YOri;
-rot=handles.Toolbox(tb).Input.Rotation;
-dx=handles.Toolbox(tb).Input.dX;
-dy=handles.Toolbox(tb).Input.dY;
-nx=handles.Toolbox(tb).Input.nX;
-ny=handles.Toolbox(tb).Input.nY;
+xori=handles.toolbox.modelmaker.XOri;
+yori=handles.toolbox.modelmaker.YOri;
+rot=handles.toolbox.modelmaker.Rotation;
+dx=handles.toolbox.modelmaker.dX;
+dy=handles.toolbox.modelmaker.dY;
+nx=handles.toolbox.modelmaker.nX;
+ny=handles.toolbox.modelmaker.nY;
 
 x(1)=xori;
 x(2)=x(1)+nx*dx*cos(pi*rot/180);
@@ -132,7 +132,7 @@ else
                 pos = get(gca, 'CurrentPoint');
                 h=findobj('Tag','MainWindow');
                 handles=guidata(h);
-                usd.rot0=handles.Toolbox(tb).Input.Rotation;
+                usd.rot0=handles.toolbox.modelmaker.Rotation;
                 usd.rot00=180*atan2(pos(1,2)-usd.y(1),pos(1,1)-usd.x(1))/pi;
                 set(gcf, 'windowbuttonmotionfcn', {@RotateGrid});
             end
@@ -170,14 +170,14 @@ switch usd.nr,
         disty=det([x2-x1 ; x1-x0])/pt;
         
         if distx>0 && disty>0
-            handles.Toolbox(tb).Input.nX=round(abs(distx)/handles.Toolbox(tb).Input.dX);
-            handles.Toolbox(tb).Input.nY=round(abs(disty)/handles.Toolbox(tb).Input.dY);
-            handles.Toolbox(tb).Input.XOri=posx;
-            handles.Toolbox(tb).Input.YOri=posy;
-            set(handles.GUIHandles.EditXOri,'String',num2str(handles.Toolbox(tb).Input.XOri));
-            set(handles.GUIHandles.EditYOri,'String',num2str(handles.Toolbox(tb).Input.YOri));
-            set(handles.GUIHandles.EditNX,'String',num2str(handles.Toolbox(tb).Input.nX));
-            set(handles.GUIHandles.EditNY,'String',num2str(handles.Toolbox(tb).Input.nY));
+            handles.toolbox.modelmaker.nX=round(abs(distx)/handles.toolbox.modelmaker.dX);
+            handles.toolbox.modelmaker.nY=round(abs(disty)/handles.toolbox.modelmaker.dY);
+            handles.toolbox.modelmaker.XOri=posx;
+            handles.toolbox.modelmaker.YOri=posy;
+            set(handles.GUIHandles.EditXOri,'String',num2str(handles.toolbox.modelmaker.XOri));
+            set(handles.GUIHandles.EditYOri,'String',num2str(handles.toolbox.modelmaker.YOri));
+            set(handles.GUIHandles.EditNX,'String',num2str(handles.toolbox.modelmaker.nX));
+            set(handles.GUIHandles.EditNY,'String',num2str(handles.toolbox.modelmaker.nY));
         end
         
     case 2
@@ -196,16 +196,16 @@ switch usd.nr,
         
         if distx>0 && disty>0
             
-            handles.Toolbox(tb).Input.nX=round(abs(distx)/handles.Toolbox(tb).Input.dX);
-            handles.Toolbox(tb).Input.nY=round(abs(disty)/handles.Toolbox(tb).Input.dY);
+            handles.toolbox.modelmaker.nX=round(abs(distx)/handles.toolbox.modelmaker.dX);
+            handles.toolbox.modelmaker.nY=round(abs(disty)/handles.toolbox.modelmaker.dY);
             
-            handles.Toolbox(tb).Input.XOri=posx-handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.dX*cos(pi*handles.Toolbox(tb).Input.Rotation/180);
-            handles.Toolbox(tb).Input.YOri=posy-handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.dX*sin(pi*handles.Toolbox(tb).Input.Rotation/180);
+            handles.toolbox.modelmaker.XOri=posx-handles.toolbox.modelmaker.nX*handles.toolbox.modelmaker.dX*cos(pi*handles.toolbox.modelmaker.Rotation/180);
+            handles.toolbox.modelmaker.YOri=posy-handles.toolbox.modelmaker.nX*handles.toolbox.modelmaker.dX*sin(pi*handles.toolbox.modelmaker.Rotation/180);
             
-            set(handles.GUIHandles.EditXOri,'String',num2str(handles.Toolbox(tb).Input.XOri));
-            set(handles.GUIHandles.EditYOri,'String',num2str(handles.Toolbox(tb).Input.YOri));
-            set(handles.GUIHandles.EditNX,'String',num2str(handles.Toolbox(tb).Input.nX));
-            set(handles.GUIHandles.EditNY,'String',num2str(handles.Toolbox(tb).Input.nY));
+            set(handles.GUIHandles.EditXOri,'String',num2str(handles.toolbox.modelmaker.XOri));
+            set(handles.GUIHandles.EditYOri,'String',num2str(handles.toolbox.modelmaker.YOri));
+            set(handles.GUIHandles.EditNX,'String',num2str(handles.toolbox.modelmaker.nX));
+            set(handles.GUIHandles.EditNY,'String',num2str(handles.toolbox.modelmaker.nY));
             
         end
         
@@ -223,11 +223,11 @@ switch usd.nr,
         disty=det([x2-x1 ; x1-x0])/pt;
         
         if distx>0 && disty>0
-            handles.Toolbox(tb).Input.nX=round(abs(distx)/handles.Toolbox(tb).Input.dX);
-            handles.Toolbox(tb).Input.nY=round(abs(disty)/handles.Toolbox(tb).Input.dY);
+            handles.toolbox.modelmaker.nX=round(abs(distx)/handles.toolbox.modelmaker.dX);
+            handles.toolbox.modelmaker.nY=round(abs(disty)/handles.toolbox.modelmaker.dY);
             
-            set(handles.GUIHandles.EditNX,'String',num2str(handles.Toolbox(tb).Input.nX));
-            set(handles.GUIHandles.EditNY,'String',num2str(handles.Toolbox(tb).Input.nY));
+            set(handles.GUIHandles.EditNX,'String',num2str(handles.toolbox.modelmaker.nX));
+            set(handles.GUIHandles.EditNY,'String',num2str(handles.toolbox.modelmaker.nY));
         end
         
     case 4
@@ -245,16 +245,16 @@ switch usd.nr,
         
         if distx>0 && disty>0
             
-            handles.Toolbox(tb).Input.nX=round(abs(distx)/handles.Toolbox(tb).Input.dX);
-            handles.Toolbox(tb).Input.nY=round(abs(disty)/handles.Toolbox(tb).Input.dY);
+            handles.toolbox.modelmaker.nX=round(abs(distx)/handles.toolbox.modelmaker.dX);
+            handles.toolbox.modelmaker.nY=round(abs(disty)/handles.toolbox.modelmaker.dY);
             
-            handles.Toolbox(tb).Input.XOri=posx+handles.Toolbox(tb).Input.nY*handles.Toolbox(tb).Input.dY*sin(pi*handles.Toolbox(tb).Input.Rotation/180);
-            handles.Toolbox(tb).Input.YOri=posy-handles.Toolbox(tb).Input.nY*handles.Toolbox(tb).Input.dY*cos(pi*handles.Toolbox(tb).Input.Rotation/180);
+            handles.toolbox.modelmaker.XOri=posx+handles.toolbox.modelmaker.nY*handles.toolbox.modelmaker.dY*sin(pi*handles.toolbox.modelmaker.Rotation/180);
+            handles.toolbox.modelmaker.YOri=posy-handles.toolbox.modelmaker.nY*handles.toolbox.modelmaker.dY*cos(pi*handles.toolbox.modelmaker.Rotation/180);
             
-            set(handles.GUIHandles.EditXOri,'String',num2str(handles.Toolbox(tb).Input.XOri));
-            set(handles.GUIHandles.EditYOri,'String',num2str(handles.Toolbox(tb).Input.YOri));
-            set(handles.GUIHandles.EditNX,'String',num2str(handles.Toolbox(tb).Input.nX));
-            set(handles.GUIHandles.EditNY,'String',num2str(handles.Toolbox(tb).Input.nY));
+            set(handles.GUIHandles.EditXOri,'String',num2str(handles.toolbox.modelmaker.XOri));
+            set(handles.GUIHandles.EditYOri,'String',num2str(handles.toolbox.modelmaker.YOri));
+            set(handles.GUIHandles.EditNX,'String',num2str(handles.toolbox.modelmaker.nX));
+            set(handles.GUIHandles.EditNY,'String',num2str(handles.toolbox.modelmaker.nY));
             
         end
 end
@@ -278,8 +278,8 @@ handles=getHandles;
 rot=180*atan2(pos(1,2)-usd.y(1),pos(1,1)-usd.x(1))/pi;
 drot=rot-usd.rot00;
 
-handles.Toolbox(tb).Input.Rotation=usd.rot0+drot;
-set(handles.GUIHandles.EditRotation,'String',num2str(handles.Toolbox(tb).Input.Rotation));
+handles.toolbox.modelmaker.Rotation=usd.rot0+drot;
+set(handles.GUIHandles.EditRotation,'String',num2str(handles.toolbox.modelmaker.Rotation));
 
 setHandles(handles);
 ddb_deleteGridOutline;
@@ -296,8 +296,8 @@ posy=pos(1,2);
 handles=getHandles;
 
 
-handles.Toolbox(tb).Input.XOri=posx;
-handles.Toolbox(tb).Input.YOri=posy;
+handles.toolbox.modelmaker.XOri=posx;
+handles.toolbox.modelmaker.YOri=posy;
 set(handles.GUIHandles.EditXOri,'String',num2str(posx));
 set(handles.GUIHandles.EditYOri,'String',num2str(posy));
 

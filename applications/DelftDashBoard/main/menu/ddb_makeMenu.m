@@ -68,18 +68,23 @@ uimenu('Label','Toolbox','Tag','menutoolbox');
 ddb_menuToolbox;
 
 %% Models
-uimenu('Label','Model','Tag','menuModel');
-for k=1:length(handles.Model)
-    enab=handles.Model(k).enable;
-    if enab
-        enab='on';
-    else
-        enab='off';
-    end
-    if strcmpi(enab,'on')
-        handles=ddb_addMenuItem(handles,'Model',handles.Model(k).name,     'Callback',{@ddb_menuModel},'longname',handles.Model(k).longName,'Checked','off','enable',enab);
-    end
-end
+uimenu('Label','Model','Tag','menumodel');
+ddb_menuModel;
+
+
+
+% uimenu('Label','Model','Tag','menuModel');
+% for k=1:length(handles.Model)
+%     enab=handles.Model(k).enable;
+%     if enab
+%         enab='on';
+%     else
+%         enab='off';
+%     end
+%     if strcmpi(enab,'on')
+%         handles=ddb_addMenuItem(handles,'Model',handles.Model(k).name,     'Callback',{@ddb_menuModel},'longname',handles.Model(k).longName,'Checked','off','enable',enab);
+%     end
+% end
 
 %% Domain
 uimenu('Label','Domain','Tag','menuDomain');

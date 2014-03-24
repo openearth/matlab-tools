@@ -67,8 +67,8 @@ function [handles mdd ndd] = ddb_makeDDModelNewGrid(handles, id1, id2, mdd, ndd,
 % $Keywords: $
 
 %%
-refm=handles.Toolbox(tb).Input.mRefinement;
-refn=handles.Toolbox(tb).Input.nRefinement;
+refm=handles.toolbox.dd.mRefinement;
+refn=handles.toolbox.dd.nRefinement;
 
 mmin=mdd(1);mmax=mdd(2);
 nmin=ndd(1);nmax=ndd(2);

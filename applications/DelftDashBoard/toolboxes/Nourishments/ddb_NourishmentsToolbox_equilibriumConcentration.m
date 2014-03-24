@@ -67,7 +67,6 @@ if isempty(varargin)
     ddb_plotNourishments('activate');
     handles=getHandles;
     clearInstructions;
-%     % setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
 else
     %Options selected
     opt=lower(varargin{1});
@@ -101,24 +100,24 @@ if strcmpi(tp,'vertex')
     % Vertex, so existing polygon
     p=getappdata(h,'parent');
     % Find which polygon this is
-    for ii=1:handles.Toolbox(tb).Input.nrConcentrationPolygons
-        if handles.Toolbox(tb).Input.concentrationPolygons(ii).polygonHandle==p
+    for ii=1:handles.toolbox.nourishments.nrConcentrationPolygons
+        if handles.toolbox.nourishments.concentrationPolygons(ii).polygonHandle==p
             iac=ii;
         end
     end
 else
     % New nourishment
-    iac=handles.Toolbox(tb).Input.nrConcentrationPolygons+1;
-    handles.Toolbox(tb).Input.nrConcentrationPolygons=iac;
-    handles.Toolbox(tb).Input.concentrationPolygons(iac).concentration=0.02;
-    handles.Toolbox(tb).Input.concentrationNames{iac}=['C' num2str(iac)];
-    handles.Toolbox(tb).Input.concentrationPolygons(iac).polygonHandle=h;
+    iac=handles.toolbox.nourishments.nrConcentrationPolygons+1;
+    handles.toolbox.nourishments.nrConcentrationPolygons=iac;
+    handles.toolbox.nourishments.concentrationPolygons(iac).concentration=0.02;
+    handles.toolbox.nourishments.concentrationNames{iac}=['C' num2str(iac)];
+    handles.toolbox.nourishments.concentrationPolygons(iac).polygonHandle=h;
 end
 
-handles.Toolbox(tb).Input.activeConcentrationPolygon=iac;
-handles.Toolbox(tb).Input.concentrationPolygons(iac).polygonX=x;
-handles.Toolbox(tb).Input.concentrationPolygons(iac).polygonY=y;
-handles.Toolbox(tb).Input.concentrationPolygons(iac).polyLength=length(x);
+handles.toolbox.nourishments.activeConcentrationPolygon=iac;
+handles.toolbox.nourishments.concentrationPolygons(iac).polygonX=x;
+handles.toolbox.nourishments.concentrationPolygons(iac).polygonY=y;
+handles.toolbox.nourishments.concentrationPolygons(iac).polyLength=length(x);
 
 setHandles(handles);
 
@@ -127,23 +126,23 @@ refresh;
 %%
 function deleteConcentrationPolygon
 handles=getHandles;
-if handles.Toolbox(tb).Input.nrConcentrationPolygons>0
-    iac=handles.Toolbox(tb).Input.activeConcentrationPolygon;
+if handles.toolbox.nourishments.nrConcentrationPolygons>0
+    iac=handles.toolbox.nourishments.activeConcentrationPolygon;
     try
-        UIPolyline(handles.Toolbox(tb).Input.concentrationPolygons(iac).polygonHandle,'delete');
+        UIPolyline(handles.toolbox.nourishments.concentrationPolygons(iac).polygonHandle,'delete');
     end
-    handles.Toolbox(tb).Input.nrConcentrationPolygons=handles.Toolbox(tb).Input.nrConcentrationPolygons-1;
-    handles.Toolbox(tb).Input.concentrationPolygons=removeFromStruc(handles.Toolbox(tb).Input.concentrationPolygons,iac);
-    handles.Toolbox(tb).Input.concentrationNames=[];
-    for ii=1:handles.Toolbox(tb).Input.nrConcentrationPolygons
-        handles.Toolbox(tb).Input.concentrationNames{ii}=['C' num2str(ii)];
+    handles.toolbox.nourishments.nrConcentrationPolygons=handles.toolbox.nourishments.nrConcentrationPolygons-1;
+    handles.toolbox.nourishments.concentrationPolygons=removeFromStruc(handles.toolbox.nourishments.concentrationPolygons,iac);
+    handles.toolbox.nourishments.concentrationNames=[];
+    for ii=1:handles.toolbox.nourishments.nrConcentrationPolygons
+        handles.toolbox.nourishments.concentrationNames{ii}=['C' num2str(ii)];
     end
-    handles.Toolbox(tb).Input.activeConcentrationPolygon=max(min(handles.Toolbox(tb).Input.nrConcentrationPolygons,iac),1);
-    if handles.Toolbox(tb).Input.nrConcentrationPolygons==0
-        handles.Toolbox(tb).Input.concentrationPolygons(1).polygonX=[];
-        handles.Toolbox(tb).Input.concentrationPolygons(1).polygonY=[];
-        handles.Toolbox(tb).Input.concentrationPolygons(1).polyLength=0;
-        handles.Toolbox(tb).Input.concentrationPolygons(1).concentration=0.02;
+    handles.toolbox.nourishments.activeConcentrationPolygon=max(min(handles.toolbox.nourishments.nrConcentrationPolygons,iac),1);
+    if handles.toolbox.nourishments.nrConcentrationPolygons==0
+        handles.toolbox.nourishments.concentrationPolygons(1).polygonX=[];
+        handles.toolbox.nourishments.concentrationPolygons(1).polygonY=[];
+        handles.toolbox.nourishments.concentrationPolygons(1).polyLength=0;
+        handles.toolbox.nourishments.concentrationPolygons(1).concentration=0.02;
     end
     setHandles(handles);
     refresh;

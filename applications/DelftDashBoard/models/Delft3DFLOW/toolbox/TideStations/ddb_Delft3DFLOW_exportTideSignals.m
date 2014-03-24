@@ -64,8 +64,8 @@ handles=getHandles;
 
 posx=[];
 
-iac=handles.Toolbox(tb).Input.activeDatabase;
-names=handles.Toolbox(tb).Input.database(iac).stationShortNames;
+iac=handles.toolbox.tidestations.activeDatabase;
+names=handles.toolbox.tidestations.database(iac).stationShortNames;
 
 xg=handles.Model(md).Input(ad).gridX;
 yg=handles.Model(md).Input(ad).gridY;
@@ -80,11 +80,11 @@ xmax=max(max(xg));
 ymin=min(min(yg));
 ymax=max(max(yg));
 
-ns=length(handles.Toolbox(tb).Input.database(iac).xLoc);
+ns=length(handles.toolbox.tidestations.database(iac).xLoc);
 n=0;
 
-x=handles.Toolbox(tb).Input.database(iac).xLoc;
-y=handles.Toolbox(tb).Input.database(iac).yLoc;
+x=handles.toolbox.tidestations.database(iac).xLoc;
+y=handles.toolbox.tidestations.database(iac).yLoc;
 
 wb = awaitbar(0,'Finding stations...');
 
@@ -116,7 +116,7 @@ for i=1:nrp
     
     k=istation(i);
     
-    stationName=handles.Toolbox(tb).Input.database(iac).stationList{k};
+    stationName=handles.toolbox.tidestations.database(iac).stationList{k};
     
     str=['Station ' stationName ' - ' num2str(i) ' of ' num2str(nrp) ' ...'];
     [hh,abort2]=awaitbar(i/(nrp),wb,str);
@@ -128,14 +128,14 @@ for i=1:nrp
         break;
     end;
     
-    t0=handles.Toolbox(tb).Input.startTime;
-    t1=handles.Toolbox(tb).Input.stopTime;
-    dt=handles.Toolbox(tb).Input.timeStep/1440;
+    t0=handles.toolbox.tidestations.startTime;
+    t1=handles.toolbox.tidestations.stopTime;
+    dt=handles.toolbox.tidestations.timeStep/1440;
     tim=t0:dt:t1;
     
     % Read data from nc file
-    fname=[handles.Toolbox(tb).dataDir handles.Toolbox(tb).Input.database(iac).shortName '.nc'];
-    ncomp=length(handles.Toolbox(tb).Input.database(iac).components);
+    fname=[handles.Toolbox(tb).dataDir handles.toolbox.tidestations.database(iac).shortName '.nc'];
+    ncomp=length(handles.toolbox.tidestations.database(iac).components);
     amp00=nc_varget(fname,'amplitude',[0 k-1],[ncomp 1]);
     phi00=nc_varget(fname,'phase',[0 k-1],[ncomp 1]);
     
@@ -147,30 +147,30 @@ for i=1:nrp
     ii=find(amp00~=0);
     for j=1:length(ii)
         ik=ii(j);
-        components{j}=handles.Toolbox(tb).Input.database(iac).components{ik};
+        components{j}=handles.toolbox.tidestations.database(iac).components{ik};
         amplitudes(j)=amp00(ik);
         phases(j)=phi00(ik);
     end
     
-    latitude=handles.Toolbox(tb).Input.database(iac).y(k);
+    latitude=handles.toolbox.tidestations.database(iac).y(k);
 
-    timezonestation=handles.Toolbox(tb).Input.database(iac).timezone(k);
+    timezonestation=handles.toolbox.tidestations.database(iac).timezone(k);
 
-    wl=makeTidePrediction(tim,components,amplitudes,phases,latitude,'timezone',handles.Toolbox(tb).Input.timeZone,...
-        'maincomponents',handles.Toolbox(tb).Input.usemaincomponents,'timezonestation',timezonestation);
-    wl=wl+handles.Toolbox(tb).Input.verticalOffset;
+    wl=makeTidePrediction(tim,components,amplitudes,phases,latitude,'timezone',handles.toolbox.tidestations.timeZone,...
+        'maincomponents',handles.toolbox.tidestations.usemaincomponents,'timezonestation',timezonestation);
+    wl=wl+handles.toolbox.tidestations.verticalOffset;
     
-    if handles.Toolbox(tb).Input.showstationnames
-        fname=[handles.Toolbox(tb).Input.database(iac).stationShortNames{k}];
+    if handles.toolbox.tidestations.showstationnames
+        fname=[handles.toolbox.tidestations.database(iac).stationShortNames{k}];
     else
-        fname=[handles.Toolbox(tb).Input.database(iac).idCodes{k}];
+        fname=[handles.toolbox.tidestations.database(iac).idCodes{k}];
     end
     exportTEK(wl',tim',[fname '.tek'],stationName);
 
     s.station(i).name=fname;
-    s.station(i).longname=handles.Toolbox(tb).Input.database(iac).stationList{k};
-    s.station(i).x=handles.Toolbox(tb).Input.database(iac).xLocLocal(k);
-    s.station(i).y=handles.Toolbox(tb).Input.database(iac).yLocLocal(k);
+    s.station(i).longname=handles.toolbox.tidestations.database(iac).stationList{k};
+    s.station(i).x=handles.toolbox.tidestations.database(iac).xLocLocal(k);
+    s.station(i).y=handles.toolbox.tidestations.database(iac).yLocLocal(k);
     s.station(i).component=components;
     s.station(i).amplitude=amplitudes;
     s.station(i).phase=phases;
@@ -179,7 +179,7 @@ for i=1:nrp
     
 end
 
-save(['allstations_' handles.Toolbox(tb).Input.database(iac).shortName '.mat'],'-struct','s');
+save(['allstations_' handles.toolbox.tidestations.database(iac).shortName '.mat'],'-struct','s');
 
 try
     close(wb);

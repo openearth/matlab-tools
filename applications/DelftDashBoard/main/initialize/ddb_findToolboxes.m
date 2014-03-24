@@ -69,8 +69,6 @@ else
     dr=[ddb_root filesep 'toolboxes'];
 end
 
-handles.Toolbox(1).name='dummy';
-
 if isdeployed
     
     % No difference between standard and additional toolboxes and toolboxes
@@ -143,60 +141,62 @@ end
 
 % Set names and functions
 nt=k;
-for i=1:nt
-    handles.Toolbox(i).name=name{i};
-    handles.Toolbox(i).longName=name{i};
-    handles.Toolbox(i).callFcn=str2func(['ddb_' name{i} 'Toolbox']);
-    handles.Toolbox(i).iniFcn=str2func(['ddb_initialize' name{i}]);
-    handles.Toolbox(i).plotFcn=str2func(['ddb_plot' name{i}]);
-    handles.Toolbox(i).coordConvertFcn=str2func(['ddb_coordConvert' name{i}]);
+for it=1:nt
+    nm=lower(name{it});
+    handles.toolbox.(nm).name=nm;
+    handles.toolbox.(nm).longName=nm;
+    handles.toolbox.(nm).callFcn=str2func(['ddb_' name{it} 'Toolbox']);
+    handles.toolbox.(nm).iniFcn=str2func(['ddb_initialize' name{it}]);
+    handles.toolbox.(nm).plotFcn=str2func(['ddb_plot' name{it}]);
+    handles.toolbox.(nm).coordConvertFcn=str2func(['ddb_coordConvert' name{it}]);
     if isdeployed
         % Executable
-        handles.Toolbox(i).dir=[dr filesep name{i} filesep];
-        handles.Toolbox(i).xmlDir=[handles.settingsDir filesep 'toolboxes' filesep name{i} filesep 'xml' filesep];
-%         handles.Toolbox(i).miscDir=[handles.settingsDir filesep 'toolboxes' filesep name{i} filesep 'misc' filesep];
-        handles.Toolbox(i).dataDir=[handles.toolBoxDir name{i} filesep];
+        handles.toolbox.(nm).dir=[dr filesep name{it} filesep];
+        handles.toolbox.(nm).xmlDir=[handles.settingsDir filesep 'toolboxes' filesep name{it} filesep 'xml' filesep];
+%         handles.toolbox.(nm).miscDir=[handles.settingsDir filesep 'toolboxes' filesep name{i} filesep 'misc' filesep];
+        handles.toolbox.(nm).dataDir=[handles.toolBoxDir name{it} filesep];
     else
         % From Matlab
-        if strcmpi(tp{i},'standard')
-            handles.Toolbox(i).dir=[dr filesep name{i} filesep];
-            handles.Toolbox(i).xmlDir=[handles.Toolbox(i).dir 'xml' filesep];
-%             handles.Toolbox(i).miscDir=[handles.Toolbox(i).dir 'misc' filesep];
-            handles.Toolbox(i).dataDir=[handles.toolBoxDir name{i} filesep];
+        if strcmpi(tp{it},'standard')
+            handles.toolbox.(nm).dir=[dr filesep name{it} filesep];
+            handles.toolbox.(nm).xmlDir=[handles.toolbox.(nm).dir 'xml' filesep];
+%             handles.toolbox.(nm).miscDir=[handles.toolbox.(nm).dir 'misc' filesep];
+            handles.toolbox.(nm).dataDir=[handles.toolBoxDir name{it} filesep];
         else
-            handles.Toolbox(i).dir=[dr2 filesep name{i} filesep];
-            handles.Toolbox(i).xmlDir=[handles.Toolbox(i).dir 'xml' filesep];
-%             handles.Toolbox(i).miscDir=[handles.Toolbox(i).dir 'misc' filesep];
-%             handles.Toolbox(i).dataDir=[handles.Toolbox(i).dir 'data' filesep];
-            handles.Toolbox(i).dataDir=[handles.toolBoxDir name{i} filesep];
+            handles.toolbox.(nm).dir=[dr2 filesep name{it} filesep];
+            handles.toolbox.(nm).xmlDir=[handles.toolbox.(nm).dir 'xml' filesep];
+%             handles.toolbox.(nm).miscDir=[handles.toolbox.(nm).dir 'misc' filesep];
+%             handles.toolbox.(nm).dataDir=[handles.toolbox.(nm).dir 'data' filesep];
+            handles.toolbox.(nm).dataDir=[handles.toolBoxDir name{it} filesep];
         end
     end
 end
 
-% Set ModelMaker to be the first toolbox
-ii=strmatch('ModelMaker',{handles.Toolbox(:).name},'exact');
-tt=handles.Toolbox;
-handles.Toolbox(1)=tt(ii);
-k=1;
-for i=1:length(handles.Toolbox)
-    if ~strcmpi(tt(i).name,'ModelMaker')
-        k=k+1;
-        handles.Toolbox(k)=tt(i);
-    end
-end
+% % Set ModelMaker to be the first toolbox
+% ii=strmatch('ModelMaker',{handles.Toolbox(:).name},'exact');
+% tt=handles.Toolbox;
+% handles.Toolbox(1)=tt(ii);
+% k=1;
+% for i=1:length(handles.Toolbox)
+%     if ~strcmpi(tt(i).name,'ModelMaker')
+%         k=k+1;
+%         handles.Toolbox(k)=tt(i);
+%     end
+% end
 
 % % Run very first initialize function
 % for i=1:nt
-%     f=handles.Toolbox(i).iniFcn;
+%     f=handles.toolbox.(nm).iniFcn;
 %     handles=f(handles,'veryfirst');
 % end
 
 % Read xml files
-for i=1:nt
-    handles=ddb_readToolboxXML(handles,i);
+toolboxes=fieldnames(handles.toolbox);
+for it=1:length(toolboxes)
+    handles=ddb_readToolboxXML(handles,toolboxes{it});
 end
 
-handles.activeToolbox.name='ModelMaker';
+handles.activeToolbox.name='modelmaker';
 handles.activeToolbox.nr=1;
 
 setHandles(handles);

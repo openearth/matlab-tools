@@ -59,6 +59,7 @@ function ddb_GeoImageToolbox(varargin)
 % $HeadURL: $
 % $Keywords: $
 
+
 %%
 if isempty(varargin)
     % New tab selected
@@ -86,11 +87,11 @@ function changeGeoImageOnMap(x0,y0,dx,dy,rotation,h)
 setInstructions({'','Left-click and drag markers to change corner points','Right-click and drag yellow marker to move entire box'});
 
 handles=getHandles;
-handles.Toolbox(tb).Input.imageOutlineHandle=h;
-handles.Toolbox(tb).Input.xLim(1)=x0;
-handles.Toolbox(tb).Input.yLim(1)=y0;
-handles.Toolbox(tb).Input.xLim(2)=x0+dx;
-handles.Toolbox(tb).Input.yLim(2)=y0+dy;
+handles.toolbox.geoimage.imageOutlineHandle=h;
+handles.toolbox.geoimage.xLim(1)=x0;
+handles.toolbox.geoimage.yLim(1)=y0;
+handles.toolbox.geoimage.xLim(2)=x0+dx;
+handles.toolbox.geoimage.yLim(2)=y0+dy;
 
 cs=handles.screenParameters.coordinateSystem;
 dataCoord.name='WGS 84';
@@ -105,12 +106,12 @@ if ~strcmpi(cs.name,'wgs 84') || ~strcmpi(cs.type,'geographic')
     dx=max(max(xtmp2))-min(min(xtmp2));
 end
 
-npix=handles.Toolbox(tb).Input.nPix;
+npix=handles.toolbox.geoimage.nPix;
 zmlev=round(log2(npix*3/(dx)));
 zmlev=max(zmlev,4);
 zmlev=min(zmlev,23);
 
-handles.Toolbox(tb).Input.zoomLevelStrings{1}=['auto (' num2str(zmlev) ')'];
+handles.toolbox.geoimage.zoomLevelStrings{1}=['auto (' num2str(zmlev) ')'];
 
 setHandles(handles);
 
@@ -119,27 +120,27 @@ gui_updateActiveTab;
 %%
 function editOutline
 handles=getHandles;
-if ~isempty(handles.Toolbox(tb).Input.imageOutlineHandle)
+if ~isempty(handles.toolbox.geoimage.imageOutlineHandle)
     try
-        delete(handles.Toolbox(tb).Input.imageOutlineHandle);
+        delete(handles.toolbox.geoimage.imageOutlineHandle);
     end
 end
-x0=handles.Toolbox(tb).Input.xLim(1);
-y0=handles.Toolbox(tb).Input.yLim(1);
-dx=handles.Toolbox(tb).Input.xLim(2)-x0;
-dy=handles.Toolbox(tb).Input.yLim(2)-y0;
+x0=handles.toolbox.geoimage.xLim(1);
+y0=handles.toolbox.geoimage.yLim(1);
+dx=handles.toolbox.geoimage.xLim(2)-x0;
+dy=handles.toolbox.geoimage.yLim(2)-y0;
 
 h=UIRectangle(handles.GUIHandles.mapAxis,'plot','Tag','ImageOutline','Marker','o','MarkerEdgeColor','k','MarkerSize',6,'rotate',0,'callback',@changeGeoImageOnMap, ...
     'onstart',@deleteImageOutline,'x0',x0,'y0',y0,'dx',dx,'dy',dy);
-handles.Toolbox(tb).Input.imageOutlineHandle=h;
+handles.toolbox.geoimage.imageOutlineHandle=h;
 setHandles(handles);
 
 %%
 function deleteImageOutline
 handles=getHandles;
-if ~isempty(handles.Toolbox(tb).Input.imageOutlineHandle)
+if ~isempty(handles.toolbox.geoimage.imageOutlineHandle)
     try
-        delete(handles.Toolbox(tb).Input.imageOutlineHandle);
+        delete(handles.toolbox.geoimage.imageOutlineHandle);
     end
 end
 
@@ -150,12 +151,12 @@ handles=getHandles;
 
 wb = waitbox('Generating image ...');pause(0.1);
 
-xl(1)=handles.Toolbox(tb).Input.xLim(1);
-xl(2)=handles.Toolbox(tb).Input.xLim(2);
-yl(1)=handles.Toolbox(tb).Input.yLim(1);
-yl(2)=handles.Toolbox(tb).Input.yLim(2);
+xl(1)=handles.toolbox.geoimage.xLim(1);
+xl(2)=handles.toolbox.geoimage.xLim(2);
+yl(1)=handles.toolbox.geoimage.yLim(1);
+yl(2)=handles.toolbox.geoimage.yLim(2);
 
-npix=handles.Toolbox(tb).Input.nPix;
+npix=handles.toolbox.geoimage.nPix;
 
 cs=handles.screenParameters.coordinateSystem;
 
@@ -178,7 +179,7 @@ else
 end
 
 try
-    [xx,yy,c2]=ddb_getMSVEimage(xl0(1),xl0(2),yl0(1),yl0(2),'zoomlevel',handles.Toolbox(tb).Input.zoomLevel,'npix',handles.Toolbox(tb).Input.nPix,'whatKind',handles.Toolbox(tb).Input.whatKind,'cache',handles.satelliteDir);
+    [xx,yy,c2]=ddb_getMSVEimage(xl0(1),xl0(2),yl0(1),yl0(2),'zoomlevel',handles.toolbox.geoimage.zoomLevel,'npix',handles.toolbox.geoimage.nPix,'whatKind',handles.toolbox.geoimage.whatKind,'cache',handles.satelliteDir);
     % Now crop the image
     ii1=find(xx>=xl0(1),1,'first');
     ii2=find(xx<xl0(2),1,'last');

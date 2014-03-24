@@ -67,20 +67,20 @@ handles=getHandles;
 ddb_plotModelMaker(handles,'activate');
 
 if strcmp(handles.ScreenParameters.CoordinateSystem.Type,'Geographic')
-    handles.Toolbox(tb).Input.dX=min(max(handles.Toolbox(tb).Input.dX,0.001),1);
-    handles.Toolbox(tb).Input.dY=min(max(handles.Toolbox(tb).Input.dY,0.001),1);
+    handles.toolbox.modelmaker.dX=min(max(handles.toolbox.modelmaker.dX,0.001),1);
+    handles.toolbox.modelmaker.dY=min(max(handles.toolbox.modelmaker.dY,0.001),1);
 else
-    handles.Toolbox(tb).Input.dX=min(max(handles.Toolbox(tb).Input.dX,100),100000);
-    handles.Toolbox(tb).Input.dY=min(max(handles.Toolbox(tb).Input.dY,100),100000);
+    handles.toolbox.modelmaker.dX=min(max(handles.toolbox.modelmaker.dX,100),100000);
+    handles.toolbox.modelmaker.dY=min(max(handles.toolbox.modelmaker.dY,100),100000);
 end
 
-handles.GUIHandles.EditXOri     = uicontrol(gcf,'Style','edit','String',num2str(handles.Toolbox(tb).Input.XOri),    'Position',[ 80 105 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.EditNX       = uicontrol(gcf,'Style','edit','String',num2str(handles.Toolbox(tb).Input.nX),      'Position',[ 80  80 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.EditDX       = uicontrol(gcf,'Style','edit','String',num2str(handles.Toolbox(tb).Input.dX),      'Position',[ 80  55 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.EditRotation = uicontrol(gcf,'Style','edit','String',num2str(handles.Toolbox(tb).Input.Rotation),'Position',[ 80  30 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.EditYOri     = uicontrol(gcf,'Style','edit','String',num2str(handles.Toolbox(tb).Input.YOri),    'Position',[190 105 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.EditNY       = uicontrol(gcf,'Style','edit','String',num2str(handles.Toolbox(tb).Input.nY),      'Position',[190  80 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.EditDY       = uicontrol(gcf,'Style','edit','String',num2str(handles.Toolbox(tb).Input.dY),      'Position',[190  55 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.EditXOri     = uicontrol(gcf,'Style','edit','String',num2str(handles.toolbox.modelmaker.XOri),    'Position',[ 80 105 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.EditNX       = uicontrol(gcf,'Style','edit','String',num2str(handles.toolbox.modelmaker.nX),      'Position',[ 80  80 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.EditDX       = uicontrol(gcf,'Style','edit','String',num2str(handles.toolbox.modelmaker.dX),      'Position',[ 80  55 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.EditRotation = uicontrol(gcf,'Style','edit','String',num2str(handles.toolbox.modelmaker.Rotation),'Position',[ 80  30 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.EditYOri     = uicontrol(gcf,'Style','edit','String',num2str(handles.toolbox.modelmaker.YOri),    'Position',[190 105 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.EditNY       = uicontrol(gcf,'Style','edit','String',num2str(handles.toolbox.modelmaker.nY),      'Position',[190  80 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.EditDY       = uicontrol(gcf,'Style','edit','String',num2str(handles.toolbox.modelmaker.dY),      'Position',[190  55 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
 
 handles.GUIHandles.TextXOri     = uicontrol(gcf,'Style','text','String','X Origin','Position',[ 35 102 40 20],'HorizontalAlignment','right','Tag','UIControl');
 handles.GUIHandles.TextNX       = uicontrol(gcf,'Style','text','String','MMax',    'Position',[ 35  77 40 20],'HorizontalAlignment','right','Tag','UIControl');
@@ -124,8 +124,8 @@ set(handles.GUIHandles.PushGenerateBoundaryLocations, 'CallBack',{@PushGenerateB
 set(handles.GUIHandles.PushGenerateBoundaryConditions,'CallBack',{@PushGenerateBoundaryConditions_Callback});
 set(handles.GUIHandles.PushGenerateInitialConditions, 'CallBack',{@PushGenerateInitialConditions_Callback});
 
-handles.GUIHandles.EditZMax          = uicontrol(gcf,'Style','edit','String',num2str(handles.Toolbox(tb).Input.ZMax),          'Position',[560 130 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.EditSectionLength = uicontrol(gcf,'Style','edit','String',num2str(handles.Toolbox(tb).Input.SectionLength), 'Position',[560  80 30 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.EditZMax          = uicontrol(gcf,'Style','edit','String',num2str(handles.toolbox.modelmaker.ZMax),          'Position',[560 130 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.EditSectionLength = uicontrol(gcf,'Style','edit','String',num2str(handles.toolbox.modelmaker.SectionLength), 'Position',[560  80 30 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
 handles.GUIHandles.TextZMax          = uicontrol(gcf,'Style','text','String','ZMax (m)',                     'Position',[615 126 50 20],'HorizontalAlignment','left','Tag','UIControl');
 handles.GUIHandles.TextSectionLength = uicontrol(gcf,'Style','text','String','Cells per Section',            'Position',[595  76 85 20],'HorizontalAlignment','left','Tag','UIControl');
 set(handles.GUIHandles.EditZMax,     'CallBack',{@EditZMax_CallBack});
@@ -165,102 +165,102 @@ setHandles(handles);
 %%
 function EditXOri_CallBack(hObject,eventdata)
 handles=getHandles;
-handles.Toolbox(tb).Input.XOri=str2double(get(hObject,'String'));
+handles.toolbox.modelmaker.XOri=str2double(get(hObject,'String'));
 setHandles(handles);
 
 h=findobj(gca,'Tag','GridOutline');
 if ~isempty(h)
-    lenx=handles.Toolbox(tb).Input.dX*handles.Toolbox(tb).Input.nX;
-    leny=handles.Toolbox(tb).Input.dY*handles.Toolbox(tb).Input.nY;
-    PlotRectangle('GridOutline',handles.Toolbox(tb).Input.XOri,handles.Toolbox(tb).Input.YOri,lenx,leny,handles.Toolbox(tb).Input.Rotation);
+    lenx=handles.toolbox.modelmaker.dX*handles.toolbox.modelmaker.nX;
+    leny=handles.toolbox.modelmaker.dY*handles.toolbox.modelmaker.nY;
+    PlotRectangle('GridOutline',handles.toolbox.modelmaker.XOri,handles.toolbox.modelmaker.YOri,lenx,leny,handles.toolbox.modelmaker.Rotation);
 end
 
 %%
 function EditDX_CallBack(hObject,eventdata)
 handles=getHandles;
-handles.Toolbox(tb).Input.nX=round(handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.dX/str2double(get(hObject,'String')));
-handles.Toolbox(tb).Input.dX=str2double(get(hObject,'String'));
-set(handles.GUIHandles.EditNX,'String',num2str(handles.Toolbox(tb).Input.nX));
+handles.toolbox.modelmaker.nX=round(handles.toolbox.modelmaker.nX*handles.toolbox.modelmaker.dX/str2double(get(hObject,'String')));
+handles.toolbox.modelmaker.dX=str2double(get(hObject,'String'));
+set(handles.GUIHandles.EditNX,'String',num2str(handles.toolbox.modelmaker.nX));
 setHandles(handles);
 h=findobj(gca,'Tag','GridOutline');
 if ~isempty(h)
-    lenx=handles.Toolbox(tb).Input.dX*handles.Toolbox(tb).Input.nX;
-    leny=handles.Toolbox(tb).Input.dY*handles.Toolbox(tb).Input.nY;
-    PlotRectangle('GridOutline',handles.Toolbox(tb).Input.XOri,handles.Toolbox(tb).Input.YOri,lenx,leny,handles.Toolbox(tb).Input.Rotation);
+    lenx=handles.toolbox.modelmaker.dX*handles.toolbox.modelmaker.nX;
+    leny=handles.toolbox.modelmaker.dY*handles.toolbox.modelmaker.nY;
+    PlotRectangle('GridOutline',handles.toolbox.modelmaker.XOri,handles.toolbox.modelmaker.YOri,lenx,leny,handles.toolbox.modelmaker.Rotation);
 end
 
 %%
 function EditNX_CallBack(hObject,eventdata)
 handles=getHandles;
-handles.Toolbox(tb).Input.nX=str2double(get(hObject,'String'));
+handles.toolbox.modelmaker.nX=str2double(get(hObject,'String'));
 setHandles(handles);
 h=findobj(gca,'Tag','GridOutline');
 if ~isempty(h)
-    lenx=handles.Toolbox(tb).Input.dX*handles.Toolbox(tb).Input.nX;
-    leny=handles.Toolbox(tb).Input.dY*handles.Toolbox(tb).Input.nY;
-    PlotRectangle('GridOutline',handles.Toolbox(tb).Input.XOri,handles.Toolbox(tb).Input.YOri,lenx,leny,handles.Toolbox(tb).Input.Rotation);
+    lenx=handles.toolbox.modelmaker.dX*handles.toolbox.modelmaker.nX;
+    leny=handles.toolbox.modelmaker.dY*handles.toolbox.modelmaker.nY;
+    PlotRectangle('GridOutline',handles.toolbox.modelmaker.XOri,handles.toolbox.modelmaker.YOri,lenx,leny,handles.toolbox.modelmaker.Rotation);
 end
 
 %%
 function EditYOri_CallBack(hObject,eventdata)
 handles=getHandles;
-handles.Toolbox(tb).Input.YOri=str2double(get(hObject,'String'));
+handles.toolbox.modelmaker.YOri=str2double(get(hObject,'String'));
 setHandles(handles);
 h=findobj(gca,'Tag','GridOutline');
 if ~isempty(h)
-    lenx=handles.Toolbox(tb).Input.dX*handles.Toolbox(tb).Input.nX;
-    leny=handles.Toolbox(tb).Input.dY*handles.Toolbox(tb).Input.nY;
-    PlotRectangle('GridOutline',handles.Toolbox(tb).Input.XOri,handles.Toolbox(tb).Input.YOri,lenx,leny,handles.Toolbox(tb).Input.Rotation);
+    lenx=handles.toolbox.modelmaker.dX*handles.toolbox.modelmaker.nX;
+    leny=handles.toolbox.modelmaker.dY*handles.toolbox.modelmaker.nY;
+    PlotRectangle('GridOutline',handles.toolbox.modelmaker.XOri,handles.toolbox.modelmaker.YOri,lenx,leny,handles.toolbox.modelmaker.Rotation);
 end
 
 %%
 function EditDY_CallBack(hObject,eventdata)
 handles=getHandles;
-handles.Toolbox(tb).Input.nY=round(handles.Toolbox(tb).Input.nY*handles.Toolbox(tb).Input.dY/str2double(get(hObject,'String')));
-handles.Toolbox(tb).Input.dY=str2double(get(hObject,'String'));
-set(handles.GUIHandles.EditNY,'String',num2str(handles.Toolbox(tb).Input.nY));
+handles.toolbox.modelmaker.nY=round(handles.toolbox.modelmaker.nY*handles.toolbox.modelmaker.dY/str2double(get(hObject,'String')));
+handles.toolbox.modelmaker.dY=str2double(get(hObject,'String'));
+set(handles.GUIHandles.EditNY,'String',num2str(handles.toolbox.modelmaker.nY));
 setHandles(handles);
 h=findobj(gca,'Tag','GridOutline');
 if ~isempty(h)
-    lenx=handles.Toolbox(tb).Input.dX*handles.Toolbox(tb).Input.nX;
-    leny=handles.Toolbox(tb).Input.dY*handles.Toolbox(tb).Input.nY;
-    PlotRectangle('GridOutline',handles.Toolbox(tb).Input.XOri,handles.Toolbox(tb).Input.YOri,lenx,leny,handles.Toolbox(tb).Input.Rotation);
+    lenx=handles.toolbox.modelmaker.dX*handles.toolbox.modelmaker.nX;
+    leny=handles.toolbox.modelmaker.dY*handles.toolbox.modelmaker.nY;
+    PlotRectangle('GridOutline',handles.toolbox.modelmaker.XOri,handles.toolbox.modelmaker.YOri,lenx,leny,handles.toolbox.modelmaker.Rotation);
 end
 
 %%
 function EditNY_CallBack(hObject,eventdata)
 handles=getHandles;
-handles.Toolbox(tb).Input.nY=str2double(get(hObject,'String'));
+handles.toolbox.modelmaker.nY=str2double(get(hObject,'String'));
 setHandles(handles);
 h=findobj(gca,'Tag','GridOutline');
 if ~isempty(h)
-    lenx=handles.Toolbox(tb).Input.dX*handles.Toolbox(tb).Input.nX;
-    leny=handles.Toolbox(tb).Input.dY*handles.Toolbox(tb).Input.nY;
-    PlotRectangle('GridOutline',handles.Toolbox(tb).Input.XOri,handles.Toolbox(tb).Input.YOri,lenx,leny,handles.Toolbox(tb).Input.Rotation);
+    lenx=handles.toolbox.modelmaker.dX*handles.toolbox.modelmaker.nX;
+    leny=handles.toolbox.modelmaker.dY*handles.toolbox.modelmaker.nY;
+    PlotRectangle('GridOutline',handles.toolbox.modelmaker.XOri,handles.toolbox.modelmaker.YOri,lenx,leny,handles.toolbox.modelmaker.Rotation);
 end
 
 %%
 function EditRotation_CallBack(hObject,eventdata)
 handles=getHandles;
-handles.Toolbox(tb).Input.Rotation=str2double(get(hObject,'String'));
+handles.toolbox.modelmaker.Rotation=str2double(get(hObject,'String'));
 setHandles(handles);
 h=findobj(gca,'Tag','GridOutline');
 if ~isempty(h)
-    lenx=handles.Toolbox(tb).Input.dX*handles.Toolbox(tb).Input.nX;
-    leny=handles.Toolbox(tb).Input.dY*handles.Toolbox(tb).Input.nY;
-    PlotRectangle('GridOutline',handles.Toolbox(tb).Input.XOri,handles.Toolbox(tb).Input.YOri,lenx,leny,handles.Toolbox(tb).Input.Rotation);
+    lenx=handles.toolbox.modelmaker.dX*handles.toolbox.modelmaker.nX;
+    leny=handles.toolbox.modelmaker.dY*handles.toolbox.modelmaker.nY;
+    PlotRectangle('GridOutline',handles.toolbox.modelmaker.XOri,handles.toolbox.modelmaker.YOri,lenx,leny,handles.toolbox.modelmaker.Rotation);
 end
 
 %%
 function EditZMax_CallBack(hObject,eventdata)
 handles=getHandles;
-handles.Toolbox(tb).Input.ZMax=str2double(get(hObject,'String'));
+handles.toolbox.modelmaker.ZMax=str2double(get(hObject,'String'));
 setHandles(handles);
 
 %%
 function EditSectionLength_CallBack(hObject,eventdata)
 handles=getHandles;
-handles.Toolbox(tb).Input.SectionLength=str2double(get(hObject,'String'));
+handles.toolbox.modelmaker.SectionLength=str2double(get(hObject,'String'));
 setHandles(handles);
 
 %%
@@ -329,7 +329,7 @@ setHandles(handles);
 function PushGenerateGrid_Callback(hObject,eventdata)
 handles=getHandles;
 
-if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=2000000
+if handles.toolbox.modelmaker.nX*handles.toolbox.modelmaker.nY<=2000000
     f=str2func(['ddb_generateGrid' handles.Model(md).Name]);
     try
         handles=feval(f,handles,ad,0,0,'ddb_test');
@@ -340,14 +340,14 @@ if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=2000000
     
     wb = waitbox('Generating grid ...');pause(0.1);
     
-    xori=handles.Toolbox(tb).Input.XOri;
-    nx=handles.Toolbox(tb).Input.nX;
-    dx=handles.Toolbox(tb).Input.dX;
-    yori=handles.Toolbox(tb).Input.YOri;
-    ny=handles.Toolbox(tb).Input.nY;
-    dy=handles.Toolbox(tb).Input.dY;
-    rot=pi*handles.Toolbox(tb).Input.Rotation/180;
-    zmax=handles.Toolbox(tb).Input.ZMax;
+    xori=handles.toolbox.modelmaker.XOri;
+    nx=handles.toolbox.modelmaker.nX;
+    dx=handles.toolbox.modelmaker.dX;
+    yori=handles.toolbox.modelmaker.YOri;
+    ny=handles.toolbox.modelmaker.nY;
+    dy=handles.toolbox.modelmaker.dY;
+    rot=pi*handles.toolbox.modelmaker.Rotation/180;
+    zmax=handles.toolbox.modelmaker.ZMax;
     [x,y]=MakeRectangularGrid(xori,yori,nx,ny,dx,dy,rot,zmax,handles.GUIData.x,handles.GUIData.y,handles.GUIData.z);
     
     close(wb);
@@ -386,24 +386,24 @@ handles=getHandles;
 f1=@ddb_deleteGridOutline;
 f2=@UpdateGridOutline;
 f3=@UpdateGridOutline;
-DrawRectangle('GridOutline',f1,f2,f3,'dx',handles.Toolbox(tb).Input.dX,'dy',handles.Toolbox(tb).Input.dY,'Color','g','Marker','o','MarkerColor','r','LineWidth',1.5,'Rotation','off');
+DrawRectangle('GridOutline',f1,f2,f3,'dx',handles.toolbox.modelmaker.dX,'dy',handles.toolbox.modelmaker.dY,'Color','g','Marker','o','MarkerColor','r','LineWidth',1.5,'Rotation','off');
 
 %%
 function UpdateGridOutline(x0,y0,lenx,leny,rotation)
 
 handles=getHandles;
 
-handles.Toolbox(tb).Input.XOri=x0;
-handles.Toolbox(tb).Input.YOri=y0;
-handles.Toolbox(tb).Input.Rotation=rotation;
-handles.Toolbox(tb).Input.nX=round(lenx/handles.Toolbox(tb).Input.dX);
-handles.Toolbox(tb).Input.nY=round(leny/handles.Toolbox(tb).Input.dY);
+handles.toolbox.modelmaker.XOri=x0;
+handles.toolbox.modelmaker.YOri=y0;
+handles.toolbox.modelmaker.Rotation=rotation;
+handles.toolbox.modelmaker.nX=round(lenx/handles.toolbox.modelmaker.dX);
+handles.toolbox.modelmaker.nY=round(leny/handles.toolbox.modelmaker.dY);
 
-set(handles.GUIHandles.EditXOri,'String',num2str(handles.Toolbox(tb).Input.XOri));
-set(handles.GUIHandles.EditYOri,'String',num2str(handles.Toolbox(tb).Input.YOri));
-set(handles.GUIHandles.EditNX,'String',num2str(handles.Toolbox(tb).Input.nX));
-set(handles.GUIHandles.EditNY,'String',num2str(handles.Toolbox(tb).Input.nY));
-set(handles.GUIHandles.EditRotation,'String',num2str(handles.Toolbox(tb).Input.Rotation));
+set(handles.GUIHandles.EditXOri,'String',num2str(handles.toolbox.modelmaker.XOri));
+set(handles.GUIHandles.EditYOri,'String',num2str(handles.toolbox.modelmaker.YOri));
+set(handles.GUIHandles.EditNX,'String',num2str(handles.toolbox.modelmaker.nX));
+set(handles.GUIHandles.EditNY,'String',num2str(handles.toolbox.modelmaker.nY));
+set(handles.GUIHandles.EditRotation,'String',num2str(handles.toolbox.modelmaker.Rotation));
 
 setHandles(handles);
 

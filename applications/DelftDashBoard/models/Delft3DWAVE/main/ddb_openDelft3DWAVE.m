@@ -12,7 +12,7 @@ switch lower(opt)
             ddb_plotDelft3DWAVE('delete','domain',0);
             handles.Model(md).Input = [];
             handles.activeWaveGrid                      = 1;
-            handles.Toolbox(tb).Input.domains           = [];
+%            handles.toolbox(tb).Input.domains           = [];
             handles  = ddb_initializeDelft3DWAVEInput(handles,runid);
             filename =[runid '.mdw'];
             handles  = ddb_readMDW(handles,[pathname filename]);

@@ -37,7 +37,7 @@ fw2 = 0.0;
 
 Areaeq = 4;
 
-Mw=handles.Toolbox(tb).Input.Magnitude;
+Mw=handles.toolbox.tsunami.Magnitude;
 mu=30.0e9;
 
 %
@@ -76,12 +76,12 @@ if (Mw > 5)
         fwidth     = area/totflength;
     end
 
-    handles.Toolbox(tb).Input.TotalFaultLength=totflength;
-    handles.Toolbox(tb).Input.FaultWidth=fwidth;
-    handles.Toolbox(tb).Input.Dislocation=disloc;
+    handles.toolbox.tsunami.TotalFaultLength=totflength;
+    handles.toolbox.tsunami.FaultWidth=fwidth;
+    handles.toolbox.tsunami.Dislocation=disloc;
 else
-    handles.Toolbox(tb).Input.Mw=0.0;
-    handles.Toolbox(tb).Input.TotalFaultLength=0;
-    handles.Toolbox(tb).Input.FaultWidth=0;
-    handles.Toolbox(tb).Input.Dislocation=0;
+    handles.toolbox.tsunami.Mw=0.0;
+    handles.toolbox.tsunami.TotalFaultLength=0;
+    handles.toolbox.tsunami.FaultWidth=0;
+    handles.toolbox.tsunami.Dislocation=0;
 end

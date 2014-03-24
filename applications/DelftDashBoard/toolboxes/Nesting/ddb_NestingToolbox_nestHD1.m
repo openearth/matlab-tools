@@ -82,21 +82,21 @@ function nestHD1
 
 handles=getHandles;
 
-switch handles.Toolbox(tb).Input.detailmodeltype
+switch handles.toolbox.nesting.detailmodeltype
 
     case{'delft3dflow'}
         
-        if isempty(handles.Toolbox(tb).Input.grdFile)
+        if isempty(handles.toolbox.nesting.grdFile)
             ddb_giveWarning('text','Please first load grid file of nested model!');
             return
         end
         
-        if isempty(handles.Toolbox(tb).Input.encFile)
+        if isempty(handles.toolbox.nesting.encFile)
             ddb_giveWarning('text','Please first load enclosure file of nested model!');
             return
         end
         
-        if isempty(handles.Toolbox(tb).Input.bndFile)
+        if isempty(handles.toolbox.nesting.bndFile)
             ddb_giveWarning('text','Please first load boundary file of nested model!');
             return
         end
@@ -109,20 +109,20 @@ switch handles.Toolbox(tb).Input.detailmodeltype
         fid=fopen('nesthd1.inp','wt');
         fprintf(fid,'%s\n',handles.Model(md).Input(ad).grdFile);
         fprintf(fid,'%s\n',handles.Model(md).Input(ad).encFile);
-        fprintf(fid,'%s\n',handles.Toolbox(tb).Input.grdFile);
-        fprintf(fid,'%s\n',handles.Toolbox(tb).Input.encFile);
-        fprintf(fid,'%s\n',handles.Toolbox(tb).Input.bndFile);
-        fprintf(fid,'%s\n',handles.Toolbox(tb).Input.admFile);
+        fprintf(fid,'%s\n',handles.toolbox.nesting.grdFile);
+        fprintf(fid,'%s\n',handles.toolbox.nesting.encFile);
+        fprintf(fid,'%s\n',handles.toolbox.nesting.bndFile);
+        fprintf(fid,'%s\n',handles.toolbox.nesting.admFile);
         fprintf(fid,'%s\n','ddtemp.obs');
         fclose(fid);
         
-        %system(['"' handles.Toolbox(tb).dataDir 'nesthd1" < nesthd1.inp']);
+        %system(['"' handles.toolbox.nesting.dataDir 'nesthd1" < nesthd1.inp']);
         % Should use the nesthd1 compiled for this system if that is
         % available
         if exist([handles.Model(md).exedir,'nesthd1.exe'],'file'),
             system(['"' handles.Model(md).exedir 'nesthd1" < nesthd1.inp']);
         else
-            system(['"' handles.Toolbox(tb).dataDir 'nesthd1" < nesthd1.inp']);
+            system(['"' handles.toolbox.nesting.dataDir 'nesthd1" < nesthd1.inp']);
         end
         
         [name,m,n] = textread('ddtemp.obs','%21c%f%f');
@@ -155,15 +155,15 @@ switch handles.Toolbox(tb).Input.detailmodeltype
         
     case{'dflowfm'}
 
-        if isempty(handles.Toolbox(tb).Input.extfile)
+        if isempty(handles.toolbox.nesting.extfile)
             ddb_giveWarning('text','Please first load external forcing file of nested model!');
             return
         end
         
-        cs.name=handles.Toolbox(tb).Input.detailmodelcsname;
-        cs.type=handles.Toolbox(tb).Input.detailmodelcstype;
+        cs.name=handles.toolbox.nesting.detailmodelcsname;
+        cs.type=handles.toolbox.nesting.detailmodelcstype;
 
-        newpoints=ddb_nesthd1_dflowfm_in_delft3dflow('admfile',handles.Toolbox(tb).Input.admFile,'extfile',handles.Toolbox(tb).Input.extfile, ...
+        newpoints=ddb_nesthd1_dflowfm_in_delft3dflow('admfile',handles.toolbox.nesting.admFile,'extfile',handles.toolbox.nesting.extfile, ...
             'grdfile',handles.Model(md).Input(ad).grdFile,'encfile',handles.Model(md).Input(ad).encFile, ...
             'csoverall',handles.screenParameters.coordinateSystem,'csdetail',cs);        
         
@@ -202,8 +202,8 @@ handles=getHandles;
 [cs,type,nr,ok]=ddb_selectCoordinateSystem(handles.coordinateData,handles.EPSG,'default','WGS 84','type','both','defaulttype','geographic');
 
 if ok
-    handles.Toolbox(tb).Input.detailmodelcsname=cs;
-    handles.Toolbox(tb).Input.detailmodelcstype=type;    
+    handles.toolbox.nesting.detailmodelcsname=cs;
+    handles.toolbox.nesting.detailmodelcstype=type;    
     setHandles(handles);
 end
 

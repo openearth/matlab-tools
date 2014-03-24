@@ -60,75 +60,61 @@ function handles = ddb_initializeTsunami(handles, varargin)
 % $HeadURL: $
 % $Keywords: $
 
-%%
-ii=strmatch('Tsunami',{handles.Toolbox(:).name},'exact');
+handles.toolbox.tsunami.nrSegments=0;
 
-ddb_getToolboxData(handles.Toolbox(ii).dataDir,ii);
-
-if nargin>1
-    switch varargin{1}
-        case{'test'}
-            return
-        case{'veryfirst'}
-            return
-    end
-end
-
-handles.Toolbox(ii).Input.nrSegments=0;
-
-% handles.Toolbox(ii).Input.magnitude=0.0;
-% handles.Toolbox(ii).Input.depthFromTop=0.0;
-% handles.Toolbox(ii).Input.relatedToEpicentre=0;
-% handles.Toolbox(ii).Input.latitude=0.0;
-% handles.Toolbox(ii).Input.longitude=0.0;
-% handles.Toolbox(ii).Input.totalFaultLength=0.0;
-% handles.Toolbox(ii).Input.totalUserFaultLength=0.0;
-% handles.Toolbox(ii).Input.faultWidth=0.0;
-% handles.Toolbox(ii).Input.dislocation=0.0;
-% handles.Toolbox(ii).Input.segment=0.0;
+% handles.toolbox.tsunami.magnitude=0.0;
+% handles.toolbox.tsunami.depthFromTop=0.0;
+% handles.toolbox.tsunami.relatedToEpicentre=0;
+% handles.toolbox.tsunami.latitude=0.0;
+% handles.toolbox.tsunami.longitude=0.0;
+% handles.toolbox.tsunami.totalFaultLength=0.0;
+% handles.toolbox.tsunami.totalUserFaultLength=0.0;
+% handles.toolbox.tsunami.faultWidth=0.0;
+% handles.toolbox.tsunami.dislocation=0.0;
+% handles.toolbox.tsunami.segment=0.0;
 %
-% handles.Toolbox(ii).Input.faultLength=0;
-% handles.Toolbox(ii).Input.strike=0;
-% handles.Toolbox(ii).Input.dip=0;
-% handles.Toolbox(ii).Input.slipRake=0;
-% handles.Toolbox(ii).Input.focalDepth=0;
+% handles.toolbox.tsunami.faultLength=0;
+% handles.toolbox.tsunami.strike=0;
+% handles.toolbox.tsunami.dip=0;
+% handles.toolbox.tsunami.slipRake=0;
+% handles.toolbox.tsunami.focalDepth=0;
 
 
 % Overall info
-handles.Toolbox(ii).Input.relatedToEpicentre=0;
-handles.Toolbox(ii).Input.updateTable=1;
-handles.Toolbox(ii).Input.updateParameters=1;
+handles.toolbox.tsunami.relatedToEpicentre=0;
+handles.toolbox.tsunami.updateTable=1;
+handles.toolbox.tsunami.updateParameters=1;
 
-handles.Toolbox(ii).Input.faulthandle=[];
+handles.toolbox.tsunami.faulthandle=[];
 
-handles.Toolbox(ii).Input.saveESRIGridFile=0;
-handles.Toolbox(ii).Input.adjustBathymetry=0;
+handles.toolbox.tsunami.saveESRIGridFile=0;
+handles.toolbox.tsunami.adjustBathymetry=0;
 
 % Earthquake info
-handles.Toolbox(ii).Input.Mw=0.0;
-handles.Toolbox(ii).Input.depth=20.0;
-handles.Toolbox(ii).Input.length=0.0;
-handles.Toolbox(ii).Input.theoreticalFaultLength=0.0;
-handles.Toolbox(ii).Input.width=0.0;
-handles.Toolbox(ii).Input.slip=0.0;
-handles.Toolbox(ii).Input.strike=0.0;
-handles.Toolbox(ii).Input.dip=10.0;
-handles.Toolbox(ii).Input.slipRake=90.0;
-handles.Toolbox(ii).Input.lonEpicentre=0.0;
-handles.Toolbox(ii).Input.latEpicentre=0.0;
+handles.toolbox.tsunami.Mw=0.0;
+handles.toolbox.tsunami.depth=20.0;
+handles.toolbox.tsunami.length=0.0;
+handles.toolbox.tsunami.theoreticalFaultLength=0.0;
+handles.toolbox.tsunami.width=0.0;
+handles.toolbox.tsunami.slip=0.0;
+handles.toolbox.tsunami.strike=0.0;
+handles.toolbox.tsunami.dip=10.0;
+handles.toolbox.tsunami.slipRake=90.0;
+handles.toolbox.tsunami.lonEpicentre=0.0;
+handles.toolbox.tsunami.latEpicentre=0.0;
 
 % Segment info (for table)
-handles.Toolbox(ii).Input.segmentLon=0.0;
-handles.Toolbox(ii).Input.segmentLat=0.0;
-handles.Toolbox(ii).Input.segmentX=0.0;
-handles.Toolbox(ii).Input.segmentY=0.0;
-handles.Toolbox(ii).Input.segmentStrike=0;
-handles.Toolbox(ii).Input.segmentDip=0;
-handles.Toolbox(ii).Input.segmentSlipRake=0;
-handles.Toolbox(ii).Input.segmentDepth=0;
-handles.Toolbox(ii).Input.segmentWidth=0;
-handles.Toolbox(ii).Input.segmentFocalDepth=0;
-handles.Toolbox(ii).Input.segmentSlip=0.0;
+handles.toolbox.tsunami.segmentLon=0.0;
+handles.toolbox.tsunami.segmentLat=0.0;
+handles.toolbox.tsunami.segmentX=0.0;
+handles.toolbox.tsunami.segmentY=0.0;
+handles.toolbox.tsunami.segmentStrike=0;
+handles.toolbox.tsunami.segmentDip=0;
+handles.toolbox.tsunami.segmentSlipRake=0;
+handles.toolbox.tsunami.segmentDepth=0;
+handles.toolbox.tsunami.segmentWidth=0;
+handles.toolbox.tsunami.segmentFocalDepth=0;
+handles.toolbox.tsunami.segmentSlip=0.0;
 
 % File
-handles.Toolbox(ii).Input.gridFile='';
+handles.toolbox.tsunami.gridFile='';

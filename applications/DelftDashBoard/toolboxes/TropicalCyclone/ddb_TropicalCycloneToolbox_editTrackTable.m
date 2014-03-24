@@ -88,23 +88,23 @@ function editTrackTable
 
 handles=getHandles;
 
-iq=handles.Toolbox(tb).Input.quadrant;
+iq=handles.toolbox.tropicalcyclone.quadrant;
 
-handles.Toolbox(tb).Input.trackVMax(:,iq)=handles.Toolbox(tb).Input.tableVMax;
-handles.Toolbox(tb).Input.trackRMax(:,iq)=handles.Toolbox(tb).Input.tableRMax;
-handles.Toolbox(tb).Input.trackPDrop(:,iq)=handles.Toolbox(tb).Input.tablePDrop;
-handles.Toolbox(tb).Input.trackR100(:,iq)=handles.Toolbox(tb).Input.tableR100;
-handles.Toolbox(tb).Input.trackR65(:,iq)=handles.Toolbox(tb).Input.tableR65;
-handles.Toolbox(tb).Input.trackR50(:,iq)=handles.Toolbox(tb).Input.tableR50;
-handles.Toolbox(tb).Input.trackR35(:,iq)=handles.Toolbox(tb).Input.tableR35;
-handles.Toolbox(tb).Input.trackA(:,iq)=handles.Toolbox(tb).Input.tableA;
-handles.Toolbox(tb).Input.trackB(:,iq)=handles.Toolbox(tb).Input.tableB;
+handles.toolbox.tropicalcyclone.trackVMax(:,iq)=handles.toolbox.tropicalcyclone.tableVMax;
+handles.toolbox.tropicalcyclone.trackRMax(:,iq)=handles.toolbox.tropicalcyclone.tableRMax;
+handles.toolbox.tropicalcyclone.trackPDrop(:,iq)=handles.toolbox.tropicalcyclone.tablePDrop;
+handles.toolbox.tropicalcyclone.trackR100(:,iq)=handles.toolbox.tropicalcyclone.tableR100;
+handles.toolbox.tropicalcyclone.trackR65(:,iq)=handles.toolbox.tropicalcyclone.tableR65;
+handles.toolbox.tropicalcyclone.trackR50(:,iq)=handles.toolbox.tropicalcyclone.tableR50;
+handles.toolbox.tropicalcyclone.trackR35(:,iq)=handles.toolbox.tropicalcyclone.tableR35;
+handles.toolbox.tropicalcyclone.trackA(:,iq)=handles.toolbox.tropicalcyclone.tableA;
+handles.toolbox.tropicalcyclone.trackB(:,iq)=handles.toolbox.tropicalcyclone.tableB;
 
 setHandles(handles);
 
 try
-    delete(handles.Toolbox(tb).Input.trackhandle);
+    delete(handles.toolbox.tropicalcyclone.trackhandle);
 end
-handles.Toolbox(tb).Input.trackhandle=[];
+handles.toolbox.tropicalcyclone.trackhandle=[];
 
 ddb_plotCycloneTrack;

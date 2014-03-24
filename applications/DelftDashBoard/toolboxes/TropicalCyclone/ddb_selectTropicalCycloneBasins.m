@@ -61,7 +61,7 @@ function handles = ddb_selectTropicalCycloneBasins(handles)
 %*******************************************************************************
 
 %  Extract the pertinent handles parameters.
-inp = handles.Toolbox(tb).Input;
+inp = handles.toolbox.tropicalcyclone;
 
 %  Check whether the basins are to be displayed.
 if (inp.showTCBasins == 1)
@@ -83,21 +83,21 @@ if (inp.showTCBasins == 1)
             %  polygon(s) & name(s).
             %  First, remove any existing polygons from the plot, and clear
             %  the handles vector.
-            for i = 1:length(handles.Toolbox(tb).Input.TCBasinHandles)
+            for i = 1:length(handles.toolbox.tropicalcyclone.TCBasinHandles)
                 %  Set the current TC basin polygon handle visibility to 'off'.
-                if (ishandle(handles.Toolbox(tb).Input.TCBasinHandles(i)))
-                    delete(handles.Toolbox(tb).Input.TCBasinHandles(i));
+                if (ishandle(handles.toolbox.tropicalcyclone.TCBasinHandles(i)))
+                    delete(handles.toolbox.tropicalcyclone.TCBasinHandles(i));
                 end
             end
             
             %  Clear the handles list; reinitialize the local TC output
             %  parameters.
-            handles.Toolbox(tb).Input.TCBasinHandles = [];
+            handles.toolbox.tropicalcyclone.TCBasinHandles = [];
             bname = '';
             bfname = {};
             babbrev = {};
             hpatch = [];
-            handles.Toolbox(tb).Input.oldTCBasinName = handles.Toolbox(tb).Input.TCBasinName;
+            handles.toolbox.tropicalcyclone.oldTCBasinName = handles.toolbox.tropicalcyclone.TCBasinName;
             
             %  Plot the polygon(s) & retrieve polygon info.
             [bname,bfname,babbrev,hpatch] = find_tc_polygon(inp.tcBasinsDir,inp.whichTCBasinOption, ...
@@ -105,23 +105,23 @@ if (inp.showTCBasins == 1)
             
             %  Store the info if the user did not cancel.
             if (~isempty(bname))
-                handles.Toolbox(tb).Input.oldTCBasinName = handles.Toolbox(tb).Input.TCBasinName;
-                handles.Toolbox(tb).Input.TCBasinName = bname;
-                handles.Toolbox(tb).Input.TCBasinFileName = bfname;
-                handles.Toolbox(tb).Input.TCBasinNameAbbrev = babbrev;
-                handles.Toolbox(tb).Input.TCBasinHandles = hpatch;
+                handles.toolbox.tropicalcyclone.oldTCBasinName = handles.toolbox.tropicalcyclone.TCBasinName;
+                handles.toolbox.tropicalcyclone.TCBasinName = bname;
+                handles.toolbox.tropicalcyclone.TCBasinFileName = bfname;
+                handles.toolbox.tropicalcyclone.TCBasinNameAbbrev = babbrev;
+                handles.toolbox.tropicalcyclone.TCBasinHandles = hpatch;
             end
         else
             %  This is the same which option, so loop over them.
             %  First, restore the basin name string.
-            nhold = handles.Toolbox(tb).Input.TCBasinName;
-            handles.Toolbox(tb).Input.TCBasinName = handles.Toolbox(tb).Input.oldTCBasinName;
-            handles.Toolbox(tb).Input.oldTCBasinName = nhold;
+            nhold = handles.toolbox.tropicalcyclone.TCBasinName;
+            handles.toolbox.tropicalcyclone.TCBasinName = handles.toolbox.tropicalcyclone.oldTCBasinName;
+            handles.toolbox.tropicalcyclone.oldTCBasinName = nhold;
             %  Loop over TC basin polygons....
             for i = 1:length(inp.TCBasinHandles)
                 %  Set the current TC basin polygon handle visibility to 'on'.
                 if (ishandle(inp.TCBasinHandles(i)))
-                    set(handles.Toolbox(tb).Input.TCBasinHandles(i),'Visible','on');
+                    set(handles.toolbox.tropicalcyclone.TCBasinHandles(i),'Visible','on');
                 end
             end
         end
@@ -133,11 +133,11 @@ if (inp.showTCBasins == 1)
         
         %  Store the info if the user did not cancel.
         if (~isempty(bname))
-            handles.Toolbox(tb).Input.oldTCBasinName = handles.Toolbox(tb).Input.TCBasinName;
-            handles.Toolbox(tb).Input.TCBasinName = bname;
-            handles.Toolbox(tb).Input.TCBasinFileName = bfname;
-            handles.Toolbox(tb).Input.TCBasinNameAbbrev = babbrev;
-            handles.Toolbox(tb).Input.TCBasinHandles = hpatch;
+            handles.toolbox.tropicalcyclone.oldTCBasinName = handles.toolbox.tropicalcyclone.TCBasinName;
+            handles.toolbox.tropicalcyclone.TCBasinName = bname;
+            handles.toolbox.tropicalcyclone.TCBasinFileName = bfname;
+            handles.toolbox.tropicalcyclone.TCBasinNameAbbrev = babbrev;
+            handles.toolbox.tropicalcyclone.TCBasinHandles = hpatch;
         end
     end
 else
@@ -147,22 +147,22 @@ else
         %  Plotting has been done, so store the previous name string and
         %  reset the current one (only if the current one is not empty).
         if (~isempty(inp.TCBasinName))
-            handles.Toolbox(tb).Input.oldTCBasinName = handles.Toolbox(tb).Input.TCBasinName;
-            handles.Toolbox(tb).Input.TCBasinName = '';
+            handles.toolbox.tropicalcyclone.oldTCBasinName = handles.toolbox.tropicalcyclone.TCBasinName;
+            handles.toolbox.tropicalcyclone.TCBasinName = '';
         end
         
         %  There have been plotted TC bason polygons, so loop over them.
-        for i = 1:length(handles.Toolbox(tb).Input.TCBasinHandles)
+        for i = 1:length(handles.toolbox.tropicalcyclone.TCBasinHandles)
             %  Set the current TC basin polygon handle visibility to 'off'.
-            if (ishandle(handles.Toolbox(tb).Input.TCBasinHandles(i)))
-                set(handles.Toolbox(tb).Input.TCBasinHandles(i),'Visible','off');
+            if (ishandle(handles.toolbox.tropicalcyclone.TCBasinHandles(i)))
+                set(handles.toolbox.tropicalcyclone.TCBasinHandles(i),'Visible','off');
             end
         end
     end
 end
 
 %  Update the "old" which option.
-handles.Toolbox(tb).Input.oldwhichTCBasinOption = handles.Toolbox(tb).Input.whichTCBasinOption;
+handles.toolbox.tropicalcyclone.oldwhichTCBasinOption = handles.toolbox.tropicalcyclone.whichTCBasinOption;
 
 %  Update the handles structure.
 setHandles(handles);

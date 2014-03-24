@@ -60,13 +60,13 @@ function ddb_saveTsunamiTableFile(handles, filename)
 % $HeadURL$
 % $Keywords: $
 
-xml.longitude=handles.Toolbox(tb).Input.segmentLon;
-xml.latitude=handles.Toolbox(tb).Input.segmentLat;
-xml.strike=handles.Toolbox(tb).Input.segmentStrike;
-xml.width=handles.Toolbox(tb).Input.segmentWidth;
-xml.depth=handles.Toolbox(tb).Input.segmentDepth;
-xml.dip=handles.Toolbox(tb).Input.segmentDip;
-xml.sliprake=handles.Toolbox(tb).Input.segmentSlipRake;
-xml.slip=handles.Toolbox(tb).Input.segmentSlip;
+xml.longitude=handles.toolbox.tsunami.segmentLon;
+xml.latitude=handles.toolbox.tsunami.segmentLat;
+xml.strike=handles.toolbox.tsunami.segmentStrike;
+xml.width=handles.toolbox.tsunami.segmentWidth;
+xml.depth=handles.toolbox.tsunami.segmentDepth;
+xml.dip=handles.toolbox.tsunami.segmentDip;
+xml.sliprake=handles.toolbox.tsunami.segmentSlipRake;
+xml.slip=handles.toolbox.tsunami.segmentSlip;
 xml_save(filename,xml,'off');
 

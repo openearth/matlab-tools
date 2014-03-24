@@ -62,7 +62,7 @@ function handles = ddb_readCycloneFile(handles, filename)
 
 %% DDB - reads cyclone file
 
-inp=handles.Toolbox(tb).Input;
+inp=handles.toolbox.tropicalcyclone;
 
 txt=ReadTextFile(filename);
 npoi = 0;
@@ -248,7 +248,7 @@ try
     
     inp.nrTrackPoints=npoi;
     
-    handles.Toolbox(tb).Input=inp;
+    handles.toolbox.tropicalcyclone=inp;
     
 catch
     ddb_giveWarning('text','An error occured while loading cyclone file! Please check the input.')

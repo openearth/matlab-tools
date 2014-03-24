@@ -1,6 +1,39 @@
-function ddb_plotXBeach(handles,varargin)
+function ddb_plotXBeach(option, varargin)
 
-ii=strmatch('XBeach',{handles.Model.name},'exact');
+handles=getHandles;
+
+imd=strmatch('XBeach',{handles.Model(:).name},'exact');
+
+vis=1;
+act=0;
+idomain=0;
+
+for i=1:length(varargin)
+    if ischar(varargin{i})
+        switch lower(varargin{i})
+            case{'active'}
+                act=varargin{i+1};
+            case{'visible'}
+                vis=varargin{i+1};
+            case{'domain'}
+                idomain=varargin{i+1};
+        end
+    end
+end
+
+if idomain==0
+    % Update all domains
+    n1=1;
+    n2=handles.Model(imd).nrDomains;
+else
+    % Update one domain
+    n1=idomain;
+    n2=n1;
+end
+
+if idomain==0 && ~act
+    vis=0;
+end
 
 % if isempty(varargin)
 %     n1=1;
@@ -21,8 +54,10 @@ for id=n1:n2
 %         opt=opt0;
 %     end
 
+try
    ddb_plotXBeachBathymetry(handles,id);
    ddb_plotXBeachGrid(handles,id);
+end
    
    % % TO DO: ZOOM TO MODEL DOMAIN
     

@@ -93,19 +93,19 @@ pos = get(gca, 'CurrentPoint');
 
 usd.x0=pos(1,1);
 usd.y0=pos(1,2);
-handles.Toolbox(tb).Input.XOri=usd.x0;
-handles.Toolbox(tb).Input.YOri=usd.y0;
-handles.Toolbox(tb).Input.nX=0;
-handles.Toolbox(tb).Input.nY=0;
-handles.Toolbox(tb).Input.dX=str2double(get(handles.EditDX,'String'));
-handles.Toolbox(tb).Input.dY=str2double(get(handles.EditDY,'String'));
+handles.toolbox.modelmaker.XOri=usd.x0;
+handles.toolbox.modelmaker.YOri=usd.y0;
+handles.toolbox.modelmaker.nX=0;
+handles.toolbox.modelmaker.nY=0;
+handles.toolbox.modelmaker.dX=str2double(get(handles.EditDX,'String'));
+handles.toolbox.modelmaker.dY=str2double(get(handles.EditDY,'String'));
 handles.GUIHandles.GridRotation=0;
 
 set(handles.GUIHandles.EditXOri,'String',num2str(usd.x0));
 set(handles.GUIHandles.EditYOri,'String',num2str(usd.y0));
-set(handles.GUIHandles.EditNX,'String',num2str(handles.Toolbox(tb).Input.nX));
-set(handles.GUIHandles.EditNY,'String',num2str(handles.Toolbox(tb).Input.nY));
-set(handles.GUIHandles.EditRotation,'String',num2str(handles.Toolbox(tb).Input.Rotation));
+set(handles.GUIHandles.EditNX,'String',num2str(handles.toolbox.modelmaker.nX));
+set(handles.GUIHandles.EditNY,'String',num2str(handles.toolbox.modelmaker.nY));
+set(handles.GUIHandles.EditRotation,'String',num2str(handles.toolbox.modelmaker.Rotation));
 
 guidata(h,handles);
 
@@ -129,17 +129,17 @@ posy=pos(1,2);
 
 ddb_deleteGridOutline;
 
-handles.Toolbox(tb).Input.XOri=min(posx,usd.x0);
-handles.Toolbox(tb).Input.YOri=min(posy,usd.y0);
-handles.Toolbox(tb).Input.nX=round(abs(posx-usd.x0)/handles.Toolbox(tb).Input.dX);
-handles.Toolbox(tb).Input.nY=round(abs(posy-usd.y0)/handles.Toolbox(tb).Input.dY);
-handles.Toolbox(tb).Input.Rotation=0;
+handles.toolbox.modelmaker.XOri=min(posx,usd.x0);
+handles.toolbox.modelmaker.YOri=min(posy,usd.y0);
+handles.toolbox.modelmaker.nX=round(abs(posx-usd.x0)/handles.toolbox.modelmaker.dX);
+handles.toolbox.modelmaker.nY=round(abs(posy-usd.y0)/handles.toolbox.modelmaker.dY);
+handles.toolbox.modelmaker.Rotation=0;
 
-set(handles.GUIHandles.EditXOri,'String',num2str(handles.Toolbox(tb).Input.XOri));
-set(handles.GUIHandles.EditYOri,'String',num2str(handles.Toolbox(tb).Input.YOri));
-set(handles.GUIHandles.EditNX,'String',num2str(handles.Toolbox(tb).Input.nX));
-set(handles.GUIHandles.EditNY,'String',num2str(handles.Toolbox(tb).Input.nY));
-set(handles.GUIHandles.EditRotation,'String',num2str(handles.Toolbox(tb).Input.Rotation));
+set(handles.GUIHandles.EditXOri,'String',num2str(handles.toolbox.modelmaker.XOri));
+set(handles.GUIHandles.EditYOri,'String',num2str(handles.toolbox.modelmaker.YOri));
+set(handles.GUIHandles.EditNX,'String',num2str(handles.toolbox.modelmaker.nX));
+set(handles.GUIHandles.EditNY,'String',num2str(handles.toolbox.modelmaker.nY));
+set(handles.GUIHandles.EditRotation,'String',num2str(handles.toolbox.modelmaker.Rotation));
 
 guidata(h,handles);
 ddb_plotGridOutline('g');

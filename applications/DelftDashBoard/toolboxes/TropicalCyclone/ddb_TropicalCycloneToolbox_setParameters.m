@@ -99,15 +99,15 @@ end
 function drawTrack
 handles=getHandles;
 
-xmldir=handles.Toolbox(tb).xmlDir;
+xmldir=handles.toolbox.tropicalcyclone.xmlDir;
 xmlfile='TropicalCyclone.initialtrackparameters.xml';
 
-h=handles.Toolbox(tb).Input;
+h=handles.toolbox.tropicalcyclone;
 [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir filesep 'icons' filesep 'deltares.gif']);
 
 if ok
     
-    handles.Toolbox(tb).Input=h;
+    handles.toolbox.tropicalcyclone=h;
     
     setInstructions({'','Click on map to draw cyclone track','Use right-click to end cyclone track'});
     
@@ -127,8 +127,8 @@ function selectQuadrantOption
 
 handles=getHandles;
 
-if strcmpi(handles.Toolbox(tb).Input.quadrantOption,'uniform')
-    handles.Toolbox(tb).Input.quadrant=1;
+if strcmpi(handles.toolbox.tropicalcyclone.quadrantOption,'uniform')
+    handles.toolbox.tropicalcyclone.quadrant=1;
 end
 
 handles=ddb_setTrackTableValues(handles);
@@ -152,7 +152,7 @@ hall = findobj(gcf,'Tag','radioallbasins');   % All
 hnear = findobj(gcf,'Tag','radionearbasin');  % Nearest
 
 %  Check which basin option was selected.
-if (handles.Toolbox(tb).Input.whichTCBasinOption == 1)
+if (handles.toolbox.tropicalcyclone.whichTCBasinOption == 1)
     %  All basins -- unset Nearest 
     set(hnear, 'Value', 0);
 else
@@ -161,7 +161,7 @@ else
 end
 
 %  Check whether the TC basins are to be displayed.
-if (handles.Toolbox(tb).Input.showTCBasins == 1)
+if (handles.toolbox.tropicalcyclone.showTCBasins == 1)
     %  One or more basins will be displayed, so load polygon data.
     handles = ddb_selectTropicalCycloneBasins(handles);
 else
@@ -186,10 +186,10 @@ end;
 
 filename=[pathname filename];
 
-handles.Toolbox(tb).Input.cycloneFile=[pathname filename];
+handles.toolbox.tropicalcyclone.cycloneFile=[pathname filename];
 handles=ddb_readCycloneFile(handles,filename);
 
-handles.Toolbox(tb).Input.quadrant=1;
+handles.toolbox.tropicalcyclone.quadrant=1;
 
 handles=ddb_setTrackTableValues(handles);
 
@@ -209,16 +209,16 @@ if filename==0
     return
 end
 filename=[pathname filename];
-handles.Toolbox(tb).Input.cycloneFile=filename;
+handles.toolbox.tropicalcyclone.cycloneFile=filename;
 setHandles(handles);
-ddb_saveCycloneFile(filename,handles.Toolbox(tb).Input,'version',handles.delftDashBoardVersion);
+ddb_saveCycloneFile(filename,handles.toolbox.tropicalcyclone,'version',handles.delftDashBoardVersion);
 
 %%
 function downloadTrackData
 
 handles=getHandles;
 
-switch lower(handles.Toolbox(tb).Input.downloadLocation)
+switch lower(handles.toolbox.tropicalcyclone.downloadLocation)
     case{'unisysbesttracks'}
         web http://weather.unisys.com/hurricane -browser
     case{'jtwcbesttracks'}
@@ -232,32 +232,32 @@ switch lower(handles.Toolbox(tb).Input.downloadLocation)
         %  Check whether the user wants to check certain basins.
         %  First, check whether the user has chosen to display basin
         %  polygons.
-        if (isempty(handles.Toolbox(tb).Input.TCBasinName))
+        if (isempty(handles.toolbox.tropicalcyclone.TCBasinName))
             %  The user has not chosen to display basins, so prompt for
             %  whether to select one or more basins.
             [indx,isok] = listdlg('PromptString',char('Select one or more TC basin(s)', 'to check for warnings:'),...
-                'ListSize',[160,70],'Name','TC Basins','ListString',handles.Toolbox(tb).Input.knownTCBasinName);
+                'ListSize',[160,70],'Name','TC Basins','ListString',handles.toolbox.tropicalcyclone.knownTCBasinName);
             
             %  Check the user's response.
             if (isok ~= 0)
                 %  The user responded with a selection, so update the
                 %  pertinent parameters.
-                handles.Toolbox(tb).Input.TCBasinName = handles.Toolbox(tb).Input.knownTCBasinName(indx);
-                handles.Toolbox(tb).Input.TCBasinNameAbbrev = handles.Toolbox(tb).Input.knownTCBasinNameAbbrev(indx);
+                handles.toolbox.tropicalcyclone.TCBasinName = handles.toolbox.tropicalcyclone.knownTCBasinName(indx);
+                handles.toolbox.tropicalcyclone.TCBasinNameAbbrev = handles.toolbox.tropicalcyclone.knownTCBasinNameAbbrev(indx);
             end
         end
         
         %  Now, build the '--region' option to the download scripts.
-        region_option = get_basin_option(handles.Toolbox(tb).Input.TCBasinNameAbbrev);
+        region_option = get_basin_option(handles.toolbox.tropicalcyclone.TCBasinNameAbbrev);
         
         %  Prompt for a storm name if so desired.
         iflag = 1;
         m_t = '';  % Empty string
-        storm_name = get_user_storm_name(iflag, handles.Toolbox(tb).Input.TCStormName,m_t,m_t);
+        storm_name = get_user_storm_name(iflag, handles.toolbox.tropicalcyclone.TCStormName,m_t,m_t);
         
         %  Store the storm name if one was entered.
         if (~isempty(storm_name))
-            handles.Toolbox(tb).Input.TCStormName = storm_name;
+            handles.toolbox.tropicalcyclone.TCStormName = storm_name;
             %  Build a Perl script command to download the file by name
             cmd = [which('check_tc_files.pl') ' --name ' storm_name ...
                 ' ' region_option ' --data_dir ' handles.tropicalCycloneDir];
@@ -273,7 +273,7 @@ switch lower(handles.Toolbox(tb).Input.downloadLocation)
         if (status == 0)
             %  The command was successful, so continue.
             %  Determine the name of the track file(s) based on data type (i.e., TC center).
-            if (strcmp(handles.Toolbox(tb).Input.downloadLocation, 'jtwccurrenttracks'))
+            if (strcmp(handles.toolbox.tropicalcyclone.downloadLocation, 'jtwccurrenttracks'))
                 %  JTWC
                 [startIndex, endIndex, tokIndex, matchStr, tokenStr, exprNames, splitStr] = ...
                 regexp(result,'web\.txt was moved to ([A-Z]{3,4})\/(wp[0-9]{4}web_[0-9]{12}\.txt*)');
@@ -309,9 +309,9 @@ switch lower(handles.Toolbox(tb).Input.downloadLocation)
                 %  Invoke another Perl script to convert to .trk format.
                 %  First, create the command string using the correct
                 %  script and current file names.
-                cmd = [prog ' ' txtfile ' wes.inp ' trkfile ' ' int2str(handles.Toolbox(tb).Input.nrRadialBins) ...
-                    ' ' int2str(handles.Toolbox(tb).Input.nrDirectionalBins) ' ' ...
-                    int2str(handles.Toolbox(tb).Input.radius)];
+                cmd = [prog ' ' txtfile ' wes.inp ' trkfile ' ' int2str(handles.toolbox.tropicalcyclone.nrRadialBins) ...
+                    ' ' int2str(handles.toolbox.tropicalcyclone.nrDirectionalBins) ' ' ...
+                    int2str(handles.toolbox.tropicalcyclone.radius)];
                 
                 %  Execute the command with a system() call.
                 [status2,result] = system(cmd);
@@ -320,7 +320,7 @@ switch lower(handles.Toolbox(tb).Input.downloadLocation)
                 if (status2 == 0)
                     %  The command was successful, so continue.
                     %  Store the present track file name.
-                    handles.Toolbox(tb).Input.TCTrackFile{k} = trkfile;
+                    handles.toolbox.tropicalcyclone.TCTrackFile{k} = trkfile;
                     
                 else
                     disp([' WARNING: Unable to convert the format of the TC file:' 10 txtfile 10 ...
@@ -343,7 +343,7 @@ handles=getHandles;
 
 iflag=0;
 
-switch lower(handles.Toolbox(tb).Input.importFormat)
+switch lower(handles.toolbox.tropicalcyclone.importFormat)
     case{'unisysbesttrack'}
         ext='dat';
         prefix = '';
@@ -354,15 +354,15 @@ switch lower(handles.Toolbox(tb).Input.importFormat)
         prefix = handles.tropicalCycloneDir;
         %  Prompt for a storm name if so desired.
         iflag = 2;
-        %storm_name = get_user_storm_name(iflag, handles.Toolbox(tb).Input.TCTrackFileStormName);
-        storm_name = get_user_storm_name(iflag, handles.Toolbox(tb).Input.TCTrackFileStormName,...
-            lower(handles.Toolbox(tb).Input.importFormat),handles.tropicalCycloneDir);
+        %storm_name = get_user_storm_name(iflag, handles.toolbox.tropicalcyclone.TCTrackFileStormName);
+        storm_name = get_user_storm_name(iflag, handles.toolbox.tropicalcyclone.TCTrackFileStormName,...
+            lower(handles.toolbox.tropicalcyclone.importFormat),handles.tropicalCycloneDir);
         iflag = 0;
         filename = 0;
             
         %  Set the basin(s) to check based on which data set was
         %  selected.
-        if (strcmp(lower(handles.Toolbox(tb).Input.importFormat), 'jtwccurrenttrack'))
+        if (strcmp(lower(handles.toolbox.tropicalcyclone.importFormat), 'jtwccurrenttrack'))
             %  JTWC -- currently, this data set is from the Western
             %  Pacific.
             region = '--region sh,wp';
@@ -370,7 +370,7 @@ switch lower(handles.Toolbox(tb).Input.importFormat)
             sname = 'parse_jtwc_warning.pl';  % Script name
             cprog = which(sname);             % Full path name of script
             prefix = [prefix 'JTWC' filesep];
-        elseif (strcmp(lower(handles.Toolbox(tb).Input.importFormat), 'nhccurrenttrack'))
+        elseif (strcmp(lower(handles.toolbox.tropicalcyclone.importFormat), 'nhccurrenttrack'))
             %  NHC -- Atlantic, Central Pacific, Eastern Pac.
             %  Define the file format conversion script name.
             sname = 'read_fcst_advisory.pl';  % Script name
@@ -381,8 +381,8 @@ switch lower(handles.Toolbox(tb).Input.importFormat)
         
         %  Store the storm name if one was entered, and get a list of files for storms of that name.
         if (~isempty(storm_name))
-            handles.Toolbox(tb).Input.TCStormName = storm_name;
-            handles.Toolbox(tb).Input.TCTrackFileStormName = storm_name;
+            handles.toolbox.tropicalcyclone.TCStormName = storm_name;
+            handles.toolbox.tropicalcyclone.TCTrackFileStormName = storm_name;
             
             %  Here, run something such as find_tc_files_byname.pl
             sname1 = 'find_tc_files_byname.pl';
@@ -434,9 +434,9 @@ switch lower(handles.Toolbox(tb).Input.importFormat)
                             %  First, create the command string using the correct
                             %  script and current file names.
                             cmd2 = [cprog ' ' char(m) ' wes.inp ' strrep(char(m),'.txt','.trk') ' '...
-                                int2str(handles.Toolbox(tb).Input.nrRadialBins) ...
-                            ' ' int2str(handles.Toolbox(tb).Input.nrDirectionalBins) ' '...
-                            int2str(handles.Toolbox(tb).Input.radius)];
+                                int2str(handles.toolbox.tropicalcyclone.nrRadialBins) ...
+                            ' ' int2str(handles.toolbox.tropicalcyclone.nrDirectionalBins) ' '...
+                            int2str(handles.toolbox.tropicalcyclone.radius)];
                         
                             %  Execute the command with a system() call.
                             disp([' NOTE: Performing a format conversion on the TC warning file ' char(m)]);
@@ -469,7 +469,7 @@ switch lower(handles.Toolbox(tb).Input.importFormat)
                         [pathname,filename,extn] = fileparts(fname{indx});
                         pathname = [pathname filesep];  % Append the file separator character.
                         filename = [filename extn];     % Append the file extension.
-                        handles.Toolbox(tb).Input.TCTrackFile = fname{indx};  % Store the file name.
+                        handles.toolbox.tropicalcyclone.TCTrackFile = fname{indx};  % Store the file name.
                         %  Update the data structure & the text box
                         setHandles(handles);
                         % setUIElement('tropicalcyclonepanel.parameters.selectedtrackfile');
@@ -496,7 +496,7 @@ if filename==0
     return
 else
     %  Store the file name.
-    handles.Toolbox(tb).Input.TCTrackFile = fullfile(pathname, filename);
+    handles.toolbox.tropicalcyclone.TCTrackFile = fullfile(pathname, filename);
     %  Update the data structure.
     setHandles(handles);
     %  Update the text box.
@@ -513,48 +513,48 @@ BG_Pres = 1013.25;
 bg_press_Pa = BG_Pres * 100;  % Same, in Pa
 try
     
-    switch lower(handles.Toolbox(tb).Input.importFormat)
+    switch lower(handles.toolbox.tropicalcyclone.importFormat)
         case{'jtwcbesttrack'}
             tc=readBestTrackJTWC([pathname filename]);
-            handles.Toolbox(tb).Input.method=2;
-            handles.Toolbox(tb).Input.quadrantOption='perquadrant';
+            handles.toolbox.tropicalcyclone.method=2;
+            handles.toolbox.tropicalcyclone.quadrantOption='perquadrant';
         case{'unisysbesttrack'}
             tc=readBestTrackUnisys([pathname filename]);
-            handles.Toolbox(tb).Input.method=4;
-            handles.Toolbox(tb).Input.quadrantOption='uniform';
+            handles.toolbox.tropicalcyclone.method=4;
+            handles.toolbox.tropicalcyclone.quadrantOption='uniform';
         case{'jtwccurrenttrack', 'nhccurrenttrack'}
             %  JTWC, NHC current tracks in generic .trk format:
             tc=ddb_readGenericTrackFile([pathname filename]);
-            handles.Toolbox(tb).Input.method=tc.method;
-            handles.Toolbox(tb).Input.quadrantOption=tc.quadrantOption;
+            handles.toolbox.tropicalcyclone.method=tc.method;
+            handles.toolbox.tropicalcyclone.quadrantOption=tc.quadrantOption;
             itype = 1;
         case{'jmv30'}
             tc=readjmv30([pathname filename]);
 %            tc=readgdacs([pathname filename]);
-            handles.Toolbox(tb).Input.method=2;
-            handles.Toolbox(tb).Input.quadrantOption='perquadrant';
+            handles.toolbox.tropicalcyclone.method=2;
+            handles.toolbox.tropicalcyclone.quadrantOption='perquadrant';
         otherwise
             giveWarning('text','Sorry, present import format not supported!');
             return
     end
        
-    handles.Toolbox(tb).Input.quadrant=1;
+    handles.toolbox.tropicalcyclone.quadrant=1;
     
     nt=length(tc.time);
     
     % Set dummy values
-    handles.Toolbox(tb).Input.trackT=zeros([nt 1]);
-    handles.Toolbox(tb).Input.trackX=zeros([nt 1]);
-    handles.Toolbox(tb).Input.trackY=zeros([nt 1]);
-    handles.Toolbox(tb).Input.trackVMax=zeros([nt 4])-999;
-    handles.Toolbox(tb).Input.trackPDrop=zeros([nt 4])-999;
-    handles.Toolbox(tb).Input.trackRMax=zeros([nt 4])-999;
-    handles.Toolbox(tb).Input.trackR100=zeros([nt 4])-999;
-    handles.Toolbox(tb).Input.trackR65=zeros([nt 4])-999;
-    handles.Toolbox(tb).Input.trackR50=zeros([nt 4])-999;
-    handles.Toolbox(tb).Input.trackR35=zeros([nt 4])-999;
-    handles.Toolbox(tb).Input.trackA=zeros([nt 4])-999;
-    handles.Toolbox(tb).Input.trackB=zeros([nt 4])-999;
+    handles.toolbox.tropicalcyclone.trackT=zeros([nt 1]);
+    handles.toolbox.tropicalcyclone.trackX=zeros([nt 1]);
+    handles.toolbox.tropicalcyclone.trackY=zeros([nt 1]);
+    handles.toolbox.tropicalcyclone.trackVMax=zeros([nt 4])-999;
+    handles.toolbox.tropicalcyclone.trackPDrop=zeros([nt 4])-999;
+    handles.toolbox.tropicalcyclone.trackRMax=zeros([nt 4])-999;
+    handles.toolbox.tropicalcyclone.trackR100=zeros([nt 4])-999;
+    handles.toolbox.tropicalcyclone.trackR65=zeros([nt 4])-999;
+    handles.toolbox.tropicalcyclone.trackR50=zeros([nt 4])-999;
+    handles.toolbox.tropicalcyclone.trackR35=zeros([nt 4])-999;
+    handles.toolbox.tropicalcyclone.trackA=zeros([nt 4])-999;
+    handles.toolbox.tropicalcyclone.trackB=zeros([nt 4])-999;
     
     k=0;
     for it=1:nt
@@ -563,72 +563,72 @@ try
         
         k=k+1;
         
-        handles.Toolbox(tb).Input.trackT(k)=tc.time(it);
-        handles.Toolbox(tb).Input.trackX(k)=tc.lon(it);
-        handles.Toolbox(tb).Input.trackY(k)=tc.lat(it);
+        handles.toolbox.tropicalcyclone.trackT(k)=tc.time(it);
+        handles.toolbox.tropicalcyclone.trackX(k)=tc.lon(it);
+        handles.toolbox.tropicalcyclone.trackY(k)=tc.lat(it);
         if isfield(tc,'vmax')
-            handles.Toolbox(tb).Input.trackVMax(k,1:4)=tc.vmax(it,:);
+            handles.toolbox.tropicalcyclone.trackVMax(k,1:4)=tc.vmax(it,:);
         end
         if isfield(tc,'p')
             if (itype == 0)
                 %  Modified to use a better value for background atm.
                 %  pressure (RSL, 16 Dec 2011)
-                %handles.Toolbox(tb).Input.trackPDrop(k,1:4)=[101200 101200 101200 101200] - tc.p(it,:);
-                handles.Toolbox(tb).Input.trackPDrop(k,1:4)=[bg_press_Pa bg_press_Pa bg_press_Pa bg_press_Pa] - tc.p(it,:);
+                %handles.toolbox.tropicalcyclone.trackPDrop(k,1:4)=[101200 101200 101200 101200] - tc.p(it,:);
+                handles.toolbox.tropicalcyclone.trackPDrop(k,1:4)=[bg_press_Pa bg_press_Pa bg_press_Pa bg_press_Pa] - tc.p(it,:);
             else
                 %  JTWC, NHC current warning files: pressure drop is
                 %  calculated by the parsing script(s).
-                handles.Toolbox(tb).Input.trackPDrop(k,1:4) = tc.p(it,:);
+                handles.toolbox.tropicalcyclone.trackPDrop(k,1:4) = tc.p(it,:);
             end
         end
         if isfield(tc,'rmax')
-            handles.Toolbox(tb).Input.trackRMax(k,1:4)=tc.rmax(it,:);
+            handles.toolbox.tropicalcyclone.trackRMax(k,1:4)=tc.rmax(it,:);
         end
         if isfield(tc,'a')
-            handles.Toolbox(tb).Input.trackA(k,1:4)=tc.a(it,:);
+            handles.toolbox.tropicalcyclone.trackA(k,1:4)=tc.a(it,:);
         end
         if isfield(tc,'b')
-            handles.Toolbox(tb).Input.trackB(k,1:4)=tc.b(it,:);
+            handles.toolbox.tropicalcyclone.trackB(k,1:4)=tc.b(it,:);
         end
         
         if isfield(tc,'r34')
-            handles.Toolbox(tb).Input.trackR35(k,1)=tc.r34(it,1);
-            handles.Toolbox(tb).Input.trackR35(k,2)=tc.r34(it,2);
-            handles.Toolbox(tb).Input.trackR35(k,3)=tc.r34(it,3);
-            handles.Toolbox(tb).Input.trackR35(k,4)=tc.r34(it,4);
+            handles.toolbox.tropicalcyclone.trackR35(k,1)=tc.r34(it,1);
+            handles.toolbox.tropicalcyclone.trackR35(k,2)=tc.r34(it,2);
+            handles.toolbox.tropicalcyclone.trackR35(k,3)=tc.r34(it,3);
+            handles.toolbox.tropicalcyclone.trackR35(k,4)=tc.r34(it,4);
         elseif isfield(tc,'r35')
             %  See ddb_readGenericTrackFile.m
-            handles.Toolbox(tb).Input.trackR35(k,1)=tc.r35(it,1);
-            handles.Toolbox(tb).Input.trackR35(k,2)=tc.r35(it,2);
-            handles.Toolbox(tb).Input.trackR35(k,3)=tc.r35(it,3);
-            handles.Toolbox(tb).Input.trackR35(k,4)=tc.r35(it,4);
+            handles.toolbox.tropicalcyclone.trackR35(k,1)=tc.r35(it,1);
+            handles.toolbox.tropicalcyclone.trackR35(k,2)=tc.r35(it,2);
+            handles.toolbox.tropicalcyclone.trackR35(k,3)=tc.r35(it,3);
+            handles.toolbox.tropicalcyclone.trackR35(k,4)=tc.r35(it,4);
         end
         
         if isfield(tc,'r50')
-            handles.Toolbox(tb).Input.trackR50(k,1)=tc.r50(it,1);
-            handles.Toolbox(tb).Input.trackR50(k,2)=tc.r50(it,2);
-            handles.Toolbox(tb).Input.trackR50(k,3)=tc.r50(it,3);
-            handles.Toolbox(tb).Input.trackR50(k,4)=tc.r50(it,4);
+            handles.toolbox.tropicalcyclone.trackR50(k,1)=tc.r50(it,1);
+            handles.toolbox.tropicalcyclone.trackR50(k,2)=tc.r50(it,2);
+            handles.toolbox.tropicalcyclone.trackR50(k,3)=tc.r50(it,3);
+            handles.toolbox.tropicalcyclone.trackR50(k,4)=tc.r50(it,4);
         end
         
         if isfield(tc,'r64')
-            handles.Toolbox(tb).Input.trackR65(k,1)=tc.r64(it,1);
-            handles.Toolbox(tb).Input.trackR65(k,2)=tc.r64(it,2);
-            handles.Toolbox(tb).Input.trackR65(k,3)=tc.r64(it,3);
-            handles.Toolbox(tb).Input.trackR65(k,4)=tc.r64(it,4);
+            handles.toolbox.tropicalcyclone.trackR65(k,1)=tc.r64(it,1);
+            handles.toolbox.tropicalcyclone.trackR65(k,2)=tc.r64(it,2);
+            handles.toolbox.tropicalcyclone.trackR65(k,3)=tc.r64(it,3);
+            handles.toolbox.tropicalcyclone.trackR65(k,4)=tc.r64(it,4);
         elseif isfield(tc, 'r65')
             %  See ddb_readGenericTrackFile.m
-            handles.Toolbox(tb).Input.trackR65(k,1)=tc.r65(it,1);
-            handles.Toolbox(tb).Input.trackR65(k,2)=tc.r65(it,2);
-            handles.Toolbox(tb).Input.trackR65(k,3)=tc.r65(it,3);
-            handles.Toolbox(tb).Input.trackR65(k,4)=tc.r65(it,4);
+            handles.toolbox.tropicalcyclone.trackR65(k,1)=tc.r65(it,1);
+            handles.toolbox.tropicalcyclone.trackR65(k,2)=tc.r65(it,2);
+            handles.toolbox.tropicalcyclone.trackR65(k,3)=tc.r65(it,3);
+            handles.toolbox.tropicalcyclone.trackR65(k,4)=tc.r65(it,4);
         end
         
         if isfield(tc,'r100')
-            handles.Toolbox(tb).Input.trackR100(k,1)=tc.r100(it,1);
-            handles.Toolbox(tb).Input.trackR100(k,2)=tc.r100(it,2);
-            handles.Toolbox(tb).Input.trackR100(k,3)=tc.r100(it,3);
-            handles.Toolbox(tb).Input.trackR100(k,4)=tc.r100(it,4);
+            handles.toolbox.tropicalcyclone.trackR100(k,1)=tc.r100(it,1);
+            handles.toolbox.tropicalcyclone.trackR100(k,2)=tc.r100(it,2);
+            handles.toolbox.tropicalcyclone.trackR100(k,3)=tc.r100(it,3);
+            handles.toolbox.tropicalcyclone.trackR100(k,4)=tc.r100(it,4);
         end
         
         %     end
@@ -636,8 +636,8 @@ try
     
     if k>0
         
-        handles.Toolbox(tb).Input.nrTrackPoints=k;
-        handles.Toolbox(tb).Input.name=tc.name;
+        handles.toolbox.tropicalcyclone.nrTrackPoints=k;
+        handles.toolbox.tropicalcyclone.name=tc.name;
         
         handles=ddb_setTrackTableValues(handles);
         
@@ -676,9 +676,9 @@ end
 %%
 function handles=deleteCycloneTrack(handles)
 try
-    delete(handles.Toolbox(tb).Input.trackhandle);
+    delete(handles.toolbox.tropicalcyclone.trackhandle);
 end
-handles.Toolbox(tb).Input.trackhandle=[];
+handles.toolbox.tropicalcyclone.trackhandle=[];
 
 %%
 function storm_name = get_user_storm_name(iflag,current_name,region_code,tc_dir)

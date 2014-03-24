@@ -65,7 +65,7 @@ if isempty(varargin)
     ddb_zoomOff;
     ddb_refreshScreen;
     handles=getHandles;
-    h=handles.Toolbox(tb).Input.tidestationshandle;
+    h=handles.toolbox.tidestations.tidestationshandle;
     ddb_plotTideStations('activate');
     if isempty(h)
         % First time to plot tide stations
@@ -132,20 +132,20 @@ function exportTideSignal
 
 handles=getHandles;
 
-iac=handles.Toolbox(tb).Input.activeDatabase;
+iac=handles.toolbox.tidestations.activeDatabase;
 
-if ~isempty(handles.Toolbox(tb).Input.polygonx)
+if ~isempty(handles.toolbox.tidestations.polygonx)
     
-    xpol=handles.Toolbox(tb).Input.polygonx;
-    ypol=handles.Toolbox(tb).Input.polygony;
+    xpol=handles.toolbox.tidestations.polygonx;
+    ypol=handles.toolbox.tidestations.polygony;
     
-    x=handles.Toolbox(tb).Input.database(iac).xLocLocal;
-    y=handles.Toolbox(tb).Input.database(iac).yLocLocal;
+    x=handles.toolbox.tidestations.database(iac).xLocLocal;
+    y=handles.toolbox.tidestations.database(iac).yLocLocal;
     
     istation=find(inpolygon(x,y,xpol,ypol)==1);
     
 else
-    istation=handles.Toolbox(tb).Input.activeTideStation;
+    istation=handles.toolbox.tidestations.activeTideStation;
 end
 
 wb = awaitbar(0,'Exporting time series ...');
@@ -154,7 +154,7 @@ for ii=1:length(istation)
 
     istat=istation(ii);
 
-    stationName=handles.Toolbox(tb).Input.database(iac).stationList{istat};
+    stationName=handles.toolbox.tidestations.database(iac).stationList{istat};
     
     str=['Station ' stationName ' - ' num2str(ii) ' of ' num2str(length(istation)) ' ...'];
     [hh,abort2]=awaitbar(ii/(length(istation)),wb,str);
@@ -166,30 +166,30 @@ for ii=1:length(istation)
         break;
     end;
     
-    t0=handles.Toolbox(tb).Input.startTime;
-    t1=handles.Toolbox(tb).Input.stopTime;
-    dt=handles.Toolbox(tb).Input.timeStep/1440;
+    t0=handles.toolbox.tidestations.startTime;
+    t1=handles.toolbox.tidestations.stopTime;
+    dt=handles.toolbox.tidestations.timeStep/1440;
     tim=t0:dt:t1;
-    iac=handles.Toolbox(tb).Input.activeDatabase;
+    iac=handles.toolbox.tidestations.activeDatabase;
     
-    timezonestation=handles.Toolbox(tb).Input.database(iac).timezone(istat);
+    timezonestation=handles.toolbox.tidestations.database(iac).timezone(istat);
     
-    latitude=handles.Toolbox(tb).Input.database(iac).y(istat);
+    latitude=handles.toolbox.tidestations.database(iac).y(istat);
     
     [cmp,amp,phi]=getComponents(handles,iac,istat);
     
     wl=makeTidePrediction(tim,cmp,amp,phi,latitude, ...
-        'timezone',handles.Toolbox(tb).Input.timeZone,'maincomponents',handles.Toolbox(tb).Input.usemaincomponents,'timezonestation',timezonestation);
-    wl=wl+handles.Toolbox(tb).Input.verticalOffset;
+        'timezone',handles.toolbox.tidestations.timeZone,'maincomponents',handles.toolbox.tidestations.usemaincomponents,'timezonestation',timezonestation);
+    wl=wl+handles.toolbox.tidestations.verticalOffset;
     
-    stationName=handles.Toolbox(tb).Input.database(iac).stationList{istat};
-    if handles.Toolbox(tb).Input.showstationnames
-        fname=handles.Toolbox(tb).Input.database(iac).stationShortNames{istat};
+    stationName=handles.toolbox.tidestations.database(iac).stationList{istat};
+    if handles.toolbox.tidestations.showstationnames
+        fname=handles.toolbox.tidestations.database(iac).stationShortNames{istat};
     else
-        fname=handles.Toolbox(tb).Input.database(iac).idCodes{istat};
+        fname=handles.toolbox.tidestations.database(iac).idCodes{istat};
     end
     
-    switch handles.Toolbox(tb).Input.tidesignalformat
+    switch handles.toolbox.tidestations.tidesignalformat
         case{'tek'}
             exportTEK(wl',tim',[fname '.tek'],stationName);
         case{'mat'}
@@ -213,20 +213,20 @@ function exportComponentSet
 
 handles=getHandles;
 
-iac=handles.Toolbox(tb).Input.activeDatabase;
+iac=handles.toolbox.tidestations.activeDatabase;
 
-if ~isempty(handles.Toolbox(tb).Input.polygonx)
+if ~isempty(handles.toolbox.tidestations.polygonx)
     
-    xpol=handles.Toolbox(tb).Input.polygonx;
-    ypol=handles.Toolbox(tb).Input.polygony;
+    xpol=handles.toolbox.tidestations.polygonx;
+    ypol=handles.toolbox.tidestations.polygony;
     
-    x=handles.Toolbox(tb).Input.database(iac).xLocLocal;
-    y=handles.Toolbox(tb).Input.database(iac).yLocLocal;
+    x=handles.toolbox.tidestations.database(iac).xLocLocal;
+    y=handles.toolbox.tidestations.database(iac).yLocLocal;
     
     istation=find(inpolygon(x,y,xpol,ypol)==1);
     
 else
-    istation=handles.Toolbox(tb).Input.activeTideStation;
+    istation=handles.toolbox.tidestations.activeTideStation;
 end
 
 wb = awaitbar(0,'Exporting tidal components ...');
@@ -235,7 +235,7 @@ for ii=1:length(istation)
     
     istat=istation(ii);
     
-    stationName=handles.Toolbox(tb).Input.database(iac).stationList{istat};
+    stationName=handles.toolbox.tidestations.database(iac).stationList{istat};
     
     str=['Station ' stationName ' - ' num2str(ii) ' of ' num2str(length(istation)) ' ...'];
     [hh,abort2]=awaitbar(ii/(length(istation)),wb,str);
@@ -247,24 +247,24 @@ for ii=1:length(istation)
         break;
     end;
     
-    if handles.Toolbox(tb).Input.showstationnames
-        fname=handles.Toolbox(tb).Input.database(iac).stationShortNames{istat};
+    if handles.toolbox.tidestations.showstationnames
+        fname=handles.toolbox.tidestations.database(iac).stationShortNames{istat};
     else
-        fname=handles.Toolbox(tb).Input.database(iac).idCodes{istat};
+        fname=handles.toolbox.tidestations.database(iac).idCodes{istat};
     end
 
     [cmp,amp,phi]=getComponents(handles,iac,istat);
     
     s.station.name=fname;
-    s.station.id=handles.Toolbox(tb).Input.database(iac).idCodes{istat};
-    s.station.longname=handles.Toolbox(tb).Input.database(iac).stationList{istat};
-    s.station.x=handles.Toolbox(tb).Input.database(iac).xLocLocal(istat);
-    s.station.y=handles.Toolbox(tb).Input.database(iac).yLocLocal(istat);
+    s.station.id=handles.toolbox.tidestations.database(iac).idCodes{istat};
+    s.station.longname=handles.toolbox.tidestations.database(iac).stationList{istat};
+    s.station.x=handles.toolbox.tidestations.database(iac).xLocLocal(istat);
+    s.station.y=handles.toolbox.tidestations.database(iac).yLocLocal(istat);
     s.station.component=cmp;
     s.station.amplitude=amp;
     s.station.phase=phi;
     
-    switch handles.Toolbox(tb).Input.tidalcomponentsformat
+    switch handles.toolbox.tidestations.tidalcomponentsformat
         case{'tek'}
             fid=fopen([fname '_tidalcomponents.txt'],'wt');
             for ic=1:length(s.station.component)
@@ -323,44 +323,44 @@ end
 function viewTideSignal
 
 handles=getHandles;
-t0=handles.Toolbox(tb).Input.startTime;
-t1=handles.Toolbox(tb).Input.stopTime;
-dt=handles.Toolbox(tb).Input.timeStep/1440;
+t0=handles.toolbox.tidestations.startTime;
+t1=handles.toolbox.tidestations.stopTime;
+dt=handles.toolbox.tidestations.timeStep/1440;
 tim=t0:dt:t1;
-iac=handles.Toolbox(tb).Input.activeDatabase;
-ii=handles.Toolbox(tb).Input.activeTideStation;
+iac=handles.toolbox.tidestations.activeDatabase;
+ii=handles.toolbox.tidestations.activeTideStation;
 
-latitude=handles.Toolbox(tb).Input.database(iac).y(ii);
-wl=makeTidePrediction(tim,handles.Toolbox(tb).Input.components,handles.Toolbox(tb).Input.amplitudes,handles.Toolbox(tb).Input.phases,latitude);
-wl=wl+handles.Toolbox(tb).Input.verticalOffset;
+latitude=handles.toolbox.tidestations.database(iac).y(ii);
+wl=makeTidePrediction(tim,handles.toolbox.tidestations.components,handles.toolbox.tidestations.amplitudes,handles.toolbox.tidestations.phases,latitude);
+wl=wl+handles.toolbox.tidestations.verticalOffset;
 
-stationName=handles.Toolbox(tb).Input.database(iac).stationList{ii};
+stationName=handles.toolbox.tidestations.database(iac).stationList{ii};
 ddb_plotTimeSeries(tim,wl,stationName);
 
 %%
 function selectTideStationFromMap(h,nr)
 handles=getHandles;
-handles.Toolbox(tb).Input.activeTideStation=nr;
+handles.toolbox.tidestations.activeTideStation=nr;
 setHandles(handles);
 selectTideStation;
 
 %%
 function selectTideStation
 handles=getHandles;
-gui_pointcloud(handles.Toolbox(tb).Input.tidestationshandle,'change','activepoint',handles.Toolbox(tb).Input.activeTideStation);
+gui_pointcloud(handles.toolbox.tidestations.tidestationshandle,'change','activepoint',handles.toolbox.tidestations.activeTideStation);
 refreshComponentSet;
 refreshStationText;
 
 %%
 function selectTideDatabase
 handles=getHandles;
-handles.Toolbox(tb).Input.activeTideStation=1;
-%handles.Toolbox(tb).Input.stationlist=handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activeDatabase).stationList;
+handles.toolbox.tidestations.activeTideStation=1;
+%handles.toolbox.tidestations.stationlist=handles.toolbox.tidestations.database(handles.toolbox.tidestations.activeDatabase).stationList;
 % First delete existing stations
 try
-    delete(handles.Toolbox(tb).Input.tidestationshandle);
+    delete(handles.toolbox.tidestations.tidestationshandle);
 end
-handles.Toolbox(tb).Input.tidestationshandle=[];
+handles.toolbox.tidestations.tidestationshandle=[];
 setHandles(handles);
 
 refreshStationList;
@@ -372,28 +372,28 @@ function plotTideStations
 
 handles=getHandles;
 
-iac=handles.Toolbox(tb).Input.activeDatabase;
+iac=handles.toolbox.tidestations.activeDatabase;
 
 % x and y in original coordinate system of database
-x=handles.Toolbox(tb).Input.database(iac).xLoc;
-y=handles.Toolbox(tb).Input.database(iac).yLoc;
+x=handles.toolbox.tidestations.database(iac).xLoc;
+y=handles.toolbox.tidestations.database(iac).yLoc;
 
-cs0.name=handles.Toolbox(tb).Input.database(iac).coordinateSystem;
-cs0.type=handles.Toolbox(tb).Input.database(iac).coordinateSystemType;
+cs0.name=handles.toolbox.tidestations.database(iac).coordinateSystem;
+cs0.type=handles.toolbox.tidestations.database(iac).coordinateSystemType;
 % x and y in active coordinate system
 [x,y]=ddb_coordConvert(x,y,cs0,handles.screenParameters.coordinateSystem);
 
-handles.Toolbox(tb).Input.database(iac).xLocLocal=x;
-handles.Toolbox(tb).Input.database(iac).yLocLocal=y;
+handles.toolbox.tidestations.database(iac).xLocLocal=x;
+handles.toolbox.tidestations.database(iac).yLocLocal=y;
 
 xy=[x y];
 
 h=gui_pointcloud('plot','xy',xy,'selectcallback',@selectTideStationFromMap,'tag','tidestations', ...
     'MarkerSize',5,'MarkerEdgeColor','k','MarkerFaceColor','y', ...
     'ActiveMarkerSize',6,'ActiveMarkerEdgeColor','k','ActiveMarkerFaceColor','r', ...
-    'activepoint',handles.Toolbox(tb).Input.activeTideStation);
+    'activepoint',handles.toolbox.tidestations.activeTideStation);
 
-handles.Toolbox(tb).Input.tidestationshandle=h;
+handles.toolbox.tidestations.tidestationshandle=h;
 
 setHandles(handles);
 
@@ -402,19 +402,19 @@ function refreshComponentSet
 
 handles=getHandles;
 
-iac=handles.Toolbox(tb).Input.activeDatabase;
+iac=handles.toolbox.tidestations.activeDatabase;
 
-ii=handles.Toolbox(tb).Input.activeTideStation;
+ii=handles.toolbox.tidestations.activeTideStation;
 
 [cmp,amp,phi]=getComponents(handles,iac,ii);
 
-handles.Toolbox(tb).Input.components=[];
-handles.Toolbox(tb).Input.amplitudes=[];
-handles.Toolbox(tb).Input.phases=[];
+handles.toolbox.tidestations.components=[];
+handles.toolbox.tidestations.amplitudes=[];
+handles.toolbox.tidestations.phases=[];
 for i=1:length(cmp)
-    handles.Toolbox(tb).Input.components{i}=cmp{i};
-    handles.Toolbox(tb).Input.amplitudes(i)=amp(i);
-    handles.Toolbox(tb).Input.phases(i)=phi(i);
+    handles.toolbox.tidestations.components{i}=cmp{i};
+    handles.toolbox.tidestations.amplitudes(i)=amp(i);
+    handles.toolbox.tidestations.phases(i)=phi(i);
 end
 
 setHandles(handles);
@@ -424,9 +424,9 @@ gui_updateActiveTab;
 %%
 function [cmp,amp,phi]=getComponents(handles,iac,ii)
 
-fname=[handles.Toolbox(tb).dataDir handles.Toolbox(tb).Input.database(iac).shortName '.nc'];
+fname=[handles.toolbox.tidestations.dataDir handles.toolbox.tidestations.database(iac).shortName '.nc'];
 
-ncomp=length(handles.Toolbox(tb).Input.database(iac).components);
+ncomp=length(handles.toolbox.tidestations.database(iac).components);
 
 % Read data from nc file
 amp00=nc_varget(fname,'amplitude',[0 ii-1],[ncomp 1]);
@@ -436,7 +436,7 @@ phi00=nc_varget(fname,'phase',[0 ii-1],[ncomp 1]);
 ii=find(amp00~=0);
 for j=1:length(ii)
     k=ii(j);
-    cmp0{j}=handles.Toolbox(tb).Input.database(iac).components{k};
+    cmp0{j}=handles.toolbox.tidestations.database(iac).components{k};
     amp0(j)=amp00(k);
     phi0(j)=phi00(k);
 end
@@ -452,10 +452,10 @@ end
 %%
 function refreshStationList
 handles=getHandles;
-if handles.Toolbox(tb).Input.showstationnames
-    handles.Toolbox(tb).Input.stationlist=handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activeDatabase).stationList;
+if handles.toolbox.tidestations.showstationnames
+    handles.toolbox.tidestations.stationlist=handles.toolbox.tidestations.database(handles.toolbox.tidestations.activeDatabase).stationList;
 else
-    handles.Toolbox(tb).Input.stationlist=handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activeDatabase).idCodes;
+    handles.toolbox.tidestations.stationlist=handles.toolbox.tidestations.database(handles.toolbox.tidestations.activeDatabase).idCodes;
 end
 setHandles(handles);
 
@@ -464,13 +464,13 @@ function refreshStationText
 
 handles=getHandles;
 
-iac=handles.Toolbox(tb).Input.activeDatabase;
-istat=handles.Toolbox(tb).Input.activeTideStation;
+iac=handles.toolbox.tidestations.activeDatabase;
+istat=handles.toolbox.tidestations.activeTideStation;
 
-if handles.Toolbox(tb).Input.showstationnames
-    handles.Toolbox(tb).Input.textstation=['Station ID : ' handles.Toolbox(tb).Input.database(iac).idCodes{istat}];
+if handles.toolbox.tidestations.showstationnames
+    handles.toolbox.tidestations.textstation=['Station ID : ' handles.toolbox.tidestations.database(iac).idCodes{istat}];
 else
-    handles.Toolbox(tb).Input.textstation=['Station Name : ' handles.Toolbox(tb).Input.database(iac).stationList{istat}];
+    handles.toolbox.tidestations.textstation=['Station Name : ' handles.toolbox.tidestations.database(iac).stationList{istat}];
 end
 setHandles(handles);
 gui_updateActiveTab;
@@ -487,11 +487,11 @@ if ~isempty(h)
     delete(h);
 end
 
-handles.Toolbox(tb).Input.polygonx=[];
-handles.Toolbox(tb).Input.polygony=[];
-handles.Toolbox(tb).Input.polygonlength=0;
+handles.toolbox.tidestations.polygonx=[];
+handles.toolbox.tidestations.polygony=[];
+handles.toolbox.tidestations.polygonlength=0;
 
-handles.Toolbox(tb).Input.polygonhandle=gui_polyline('draw','tag','tidestationspolygon','marker','o', ...
+handles.toolbox.tidestations.polygonhandle=gui_polyline('draw','tag','tidestationspolygon','marker','o', ...
     'createcallback',@createPolygon,'changecallback',@changePolygon, ...
     'closed',1);
 
@@ -500,19 +500,19 @@ setHandles(handles);
 %%
 function createPolygon(h,x,y)
 handles=getHandles;
-handles.Toolbox(tb).Input.polygonhandle=h;
-handles.Toolbox(tb).Input.polygonx=x;
-handles.Toolbox(tb).Input.polygony=y;
-handles.Toolbox(tb).Input.polygonlength=length(x);
+handles.toolbox.tidestations.polygonhandle=h;
+handles.toolbox.tidestations.polygonx=x;
+handles.toolbox.tidestations.polygony=y;
+handles.toolbox.tidestations.polygonlength=length(x);
 setHandles(handles);
 gui_updateActiveTab;
 
 %%
 function deletePolygon
 handles=getHandles;
-handles.Toolbox(tb).Input.polygonx=[];
-handles.Toolbox(tb).Input.polygony=[];
-handles.Toolbox(tb).Input.polygonlength=0;
+handles.toolbox.tidestations.polygonx=[];
+handles.toolbox.tidestations.polygony=[];
+handles.toolbox.tidestations.polygonlength=0;
 h=findobj(gcf,'Tag','tidestationspolygon');
 if ~isempty(h)
     delete(h);
@@ -522,8 +522,8 @@ setHandles(handles);
 %%
 function changePolygon(h,x,y,varargin)
 handles=getHandles;
-handles.Toolbox(tb).Input.polygonx=x;
-handles.Toolbox(tb).Input.polygony=y;
-handles.Toolbox(tb).Input.polygonlength=length(x);
+handles.toolbox.tidestations.polygonx=x;
+handles.toolbox.tidestations.polygony=y;
+handles.toolbox.tidestations.polygonlength=length(x);
 setHandles(handles);
 

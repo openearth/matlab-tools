@@ -61,24 +61,23 @@ function handles = ddb_initializeTideDatabase(handles, varargin)
 % $Keywords: $
 
 %%
-ii=strmatch('TideDatabase',{handles.Toolbox(:).name},'exact');
 
-handles.Toolbox(ii).Input.activeModel=1;
-handles.Toolbox(ii).Input.xLim(1)=0;
-handles.Toolbox(ii).Input.yLim(1)=0;
-handles.Toolbox(ii).Input.xLim(2)=0;
-handles.Toolbox(ii).Input.yLim(2)=0;
+handles.toolbox.tidedatabase.activeModel=1;
+handles.toolbox.tidedatabase.xLim(1)=0;
+handles.toolbox.tidedatabase.yLim(1)=0;
+handles.toolbox.tidedatabase.xLim(2)=0;
+handles.toolbox.tidedatabase.yLim(2)=0;
 
-handles.Toolbox(ii).Input.exportFormats={'tek','mat'};
-handles.Toolbox(ii).Input.exportFormatExtensions={'*.tek','*.mat'};
-handles.Toolbox(ii).Input.exportFormatNames={'Tekal file','Mat file'};
+handles.toolbox.tidedatabase.exportFormats={'tek','mat'};
+handles.toolbox.tidedatabase.exportFormatExtensions={'*.tek','*.mat'};
+handles.toolbox.tidedatabase.exportFormatNames={'Tekal file','Mat file'};
 
-handles.Toolbox(ii).Input.activeExportFormatIndex=1;
-handles.Toolbox(ii).Input.activeExportFormat=handles.Toolbox(ii).Input.exportFormats{1};
-handles.Toolbox(ii).Input.activeExportFormatExtension=handles.Toolbox(ii).Input.exportFormatExtensions{1};
+handles.toolbox.tidedatabase.activeExportFormatIndex=1;
+handles.toolbox.tidedatabase.activeExportFormat=handles.toolbox.tidedatabase.exportFormats{1};
+handles.toolbox.tidedatabase.activeExportFormatExtension=handles.toolbox.tidedatabase.exportFormatExtensions{1};
 
-handles.Toolbox(ii).Input.tideDatabaseBoxHandle=[];
-handles.Toolbox(ii).Input.fourierFile='';
-handles.Toolbox(ii).Input.fourierOutFile='';
-handles.Toolbox(ii).Input.exportFile='';
+handles.toolbox.tidedatabase.tideDatabaseBoxHandle=[];
+handles.toolbox.tidedatabase.fourierFile='';
+handles.toolbox.tidedatabase.fourierOutFile='';
+handles.toolbox.tidedatabase.exportFile='';
 

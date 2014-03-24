@@ -64,12 +64,12 @@ function nest1
 
 handles=getHandles;
 
-if isempty(handles.Toolbox(tb).Input.grdFile)
+if isempty(handles.toolbox.nesting.grdFile)
     ddb_giveWarning('text','Please first load grid file of nested model!');
     return
 end
 
-if isempty(handles.Toolbox(tb).Input.depFile)
+if isempty(handles.toolbox.nesting.depFile)
     ddb_giveWarning('text','Please first load depth file of nested model!');
     return
 end
@@ -79,8 +79,8 @@ if isempty(handles.Model(md).Input.domains(awg).gridx)
     return    
 end
 
-[xg,yg,enc,cs,nodatavalue] = wlgrid('read',handles.Toolbox(tb).Input.grdFile);
-depth = wldep('read',handles.Toolbox(tb).Input.depFile,[size(xg,1)+1 size(xg,2)+1]);
+[xg,yg,enc,cs,nodatavalue] = wlgrid('read',handles.toolbox.nesting.grdFile);
+depth = wldep('read',handles.toolbox.nesting.depFile,[size(xg,1)+1 size(xg,2)+1]);
 depth=depth(1:end-1,1:end-1);
 
 bnd=findboundarysectionsonregulargrid(xg,yg);

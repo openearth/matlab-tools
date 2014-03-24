@@ -69,25 +69,25 @@ workdir=pwd;
 degrad=pi/180;
 raddeg=180/pi;
 
-nseg=handles.Toolbox(tb).Input.NrSegments;
+nseg=handles.toolbox.tsunami.NrSegments;
 
 for i=1:nseg
-    userfaultL(i)=handles.Toolbox(tb).Input.FaultLength(i);
-    strike    (i)=handles.Toolbox(tb).Input.Strike(i);
-    dip       (i)=handles.Toolbox(tb).Input.Dip(i);
-    slip      (i)=handles.Toolbox(tb).Input.SlipRake(i);
+    userfaultL(i)=handles.toolbox.tsunami.FaultLength(i);
+    strike    (i)=handles.toolbox.tsunami.Strike(i);
+    dip       (i)=handles.toolbox.tsunami.Dip(i);
+    slip      (i)=handles.toolbox.tsunami.SlipRake(i);
 end
 
-Mw=handles.Toolbox(tb).Input.Magnitude;
-totflength=handles.Toolbox(tb).Input.TotalFaultLength;
-fwidth=handles.Toolbox(tb).Input.FaultWidth;
-disloc=handles.Toolbox(tb).Input.Dislocation;
-fdtop=handles.Toolbox(tb).Input.DepthFromTop;
+Mw=handles.toolbox.tsunami.Magnitude;
+totflength=handles.toolbox.tsunami.TotalFaultLength;
+fwidth=handles.toolbox.tsunami.FaultWidth;
+disloc=handles.toolbox.tsunami.Dislocation;
+fdtop=handles.toolbox.tsunami.DepthFromTop;
 
-faultX=handles.Toolbox(tb).Input.FaultX;
-faultY=handles.Toolbox(tb).Input.FaultY;
-xvrt=handles.Toolbox(tb).Input.VertexX;
-yvrt=handles.Toolbox(tb).Input.VertexY;
+faultX=handles.toolbox.tsunami.FaultX;
+faultY=handles.toolbox.tsunami.FaultY;
+xvrt=handles.toolbox.tsunami.VertexX;
+yvrt=handles.toolbox.tsunami.VertexY;
 
 filout=['dtt_out.txt'];
 fid=fopen(filout,'w');

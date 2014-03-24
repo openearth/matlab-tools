@@ -61,60 +61,59 @@ function handles = ddb_initializeNourishments(handles, varargin)
 % $Keywords: $
 
 %%
-ii=strmatch('Nourishments',{handles.Toolbox(:).name},'exact');
 
 if nargin>1
     switch varargin{1}
         case{'test'}
             return
         case{'veryfirst'}
-            handles.Toolbox(ii).longName='Nourishments';
+            handles.toolbox.nourishments.longName='Nourishments';
             return
     end
 end
 
 %% Domain
-handles.Toolbox(ii).Input.modelOutlineHandle=[];
-handles.Toolbox(ii).Input.xLim      = [0 0];
-handles.Toolbox(ii).Input.yLim      = [0 0];
-handles.Toolbox(ii).Input.dX        = 100;
+handles.toolbox.nourishments.modelOutlineHandle=[];
+handles.toolbox.nourishments.xLim      = [0 0];
+handles.toolbox.nourishments.yLim      = [0 0];
+handles.toolbox.nourishments.dX        = 100;
 
-handles.Toolbox(ii).Input.currentsFile='';
-handles.Toolbox(ii).Input.currentSource='file';
-handles.Toolbox(ii).Input.currentU=0;
-handles.Toolbox(ii).Input.currentV=0;
+handles.toolbox.nourishments.currentsFile='';
+handles.toolbox.nourishments.currentSource='file';
+handles.toolbox.nourishments.currentU=0;
+handles.toolbox.nourishments.currentV=0;
 
 %% Nourishments
-handles.Toolbox(ii).Input.nourishments(1).polygonX=[];
-handles.Toolbox(ii).Input.nourishments(1).polygonY=[];
-handles.Toolbox(ii).Input.nourishments(1).polyLength=0;
-handles.Toolbox(ii).Input.nourishments(1).type='volume';
-handles.Toolbox(ii).Input.nourishments(1).volume=1e6;
-handles.Toolbox(ii).Input.nourishments(1).thickness=1;
-handles.Toolbox(ii).Input.nourishments(1).height=1;
-handles.Toolbox(ii).Input.nourishments(1).area=0;
+handles.toolbox.nourishments.nourishments(1).polygonX=[];
+handles.toolbox.nourishments.nourishments(1).polygonY=[];
+handles.toolbox.nourishments.nourishments(1).polyLength=0;
+handles.toolbox.nourishments.nourishments(1).type='volume';
+handles.toolbox.nourishments.nourishments(1).volume=1e6;
+handles.toolbox.nourishments.nourishments(1).thickness=1;
+handles.toolbox.nourishments.nourishments(1).height=1;
+handles.toolbox.nourishments.nourishments(1).area=0;
 
-handles.Toolbox(ii).Input.nrNourishments=0;
-handles.Toolbox(ii).Input.activeNourishment=1;
-handles.Toolbox(ii).Input.nourishmentNames={''};
+handles.toolbox.nourishments.nrNourishments=0;
+handles.toolbox.nourishments.activeNourishment=1;
+handles.toolbox.nourishments.nourishmentNames={''};
 
 %% Concentration areas
-handles.Toolbox(ii).Input.concentrationPolygons(1).polygonX=[];
-handles.Toolbox(ii).Input.concentrationPolygons(1).polygonY=[];
-handles.Toolbox(ii).Input.concentrationPolygons(1).polyLength=0;
-handles.Toolbox(ii).Input.concentrationPolygons(1).concentration=0.02;
+handles.toolbox.nourishments.concentrationPolygons(1).polygonX=[];
+handles.toolbox.nourishments.concentrationPolygons(1).polygonY=[];
+handles.toolbox.nourishments.concentrationPolygons(1).polyLength=0;
+handles.toolbox.nourishments.concentrationPolygons(1).concentration=0.02;
 
-handles.Toolbox(ii).Input.nrConcentrationPolygons=0;
-handles.Toolbox(ii).Input.activeConcentrationPolygon=1;
-handles.Toolbox(ii).Input.concentrationNames={''};
+handles.toolbox.nourishments.nrConcentrationPolygons=0;
+handles.toolbox.nourishments.activeConcentrationPolygon=1;
+handles.toolbox.nourishments.concentrationNames={''};
 
 %% Runtime
-handles.Toolbox(ii).Input.nrYears=5;
-handles.Toolbox(ii).Input.outputInterval=1;
+handles.toolbox.nourishments.nrYears=5;
+handles.toolbox.nourishments.outputInterval=1;
 
 %% Parameters
-handles.Toolbox(ii).Input.equilibriumConcentration=0.02;
-handles.Toolbox(ii).Input.diffusionCoefficient=10;
-handles.Toolbox(ii).Input.settlingVelocity=0.02;
+handles.toolbox.nourishments.equilibriumConcentration=0.02;
+handles.toolbox.nourishments.diffusionCoefficient=10;
+handles.toolbox.nourishments.settlingVelocity=0.02;
 
 

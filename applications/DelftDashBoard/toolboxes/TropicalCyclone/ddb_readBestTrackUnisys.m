@@ -72,13 +72,13 @@ y=str2double(v0{nn});
 tx0=fgets(fid);
 name=tx0(1:end-1);
 
-handles.Toolbox(tb).Input.date=[];
-handles.Toolbox(tb).Input.trX=[];
-handles.Toolbox(tb).Input.trY=[];
-handles.Toolbox(tb).Input.par1=[];
-handles.Toolbox(tb).Input.par2=[];
+handles.toolbox.tropicalcyclone.date=[];
+handles.toolbox.tropicalcyclone.trX=[];
+handles.toolbox.tropicalcyclone.trY=[];
+handles.toolbox.tropicalcyclone.par1=[];
+handles.toolbox.tropicalcyclone.par2=[];
 
-handles.Toolbox(tb).Input.name=name;
+handles.toolbox.tropicalcyclone.name=name;
 
 tx0=fgets(fid);
 
@@ -100,20 +100,20 @@ for i=1:1000
         mm=str2double(tstr(1:2));
         dd=str2double(tstr(4:5));
         hh=str2double(tstr(7:8));
-        handles.Toolbox(tb).Input.date(n)=datenum(y,mm,dd,hh,0,0);
-        handles.Toolbox(tb).Input.trX(n)=lon;
-        handles.Toolbox(tb).Input.trY(n)=lat;
-        handles.Toolbox(tb).Input.par1(n)=vel;
-        handles.Toolbox(tb).Input.par2(n)=pr;
+        handles.toolbox.tropicalcyclone.date(n)=datenum(y,mm,dd,hh,0,0);
+        handles.toolbox.tropicalcyclone.trX(n)=lon;
+        handles.toolbox.tropicalcyclone.trY(n)=lat;
+        handles.toolbox.tropicalcyclone.par1(n)=vel;
+        handles.toolbox.tropicalcyclone.par2(n)=pr;
     else
         break;
     end
 end
-handles.Toolbox(tb).Input.nrPoint=n;
-handles.Toolbox(tb).Input.holland=0;
-handles.Toolbox(tb).Input.initSpeed=0;
-handles.Toolbox(tb).Input.initDir=0;
-handles.Toolbox(tb).Input.startTime=handles.Toolbox(tb).Input.date(1);
+handles.toolbox.tropicalcyclone.nrPoint=n;
+handles.toolbox.tropicalcyclone.holland=0;
+handles.toolbox.tropicalcyclone.initSpeed=0;
+handles.toolbox.tropicalcyclone.initDir=0;
+handles.toolbox.tropicalcyclone.startTime=handles.toolbox.tropicalcyclone.date(1);
 
 fclose(fid);
 

@@ -68,23 +68,23 @@ if isempty(varargin)
     handles=getHandles;
     
     % Make
-    handles.Toolbox(tb).Input.domains=[];
+    handles.toolbox.dd.domains=[];
     for i=1:length(handles.Model(md).Input)
-        handles.Toolbox(tb).Input.domains{i}=handles.Model(md).Input(i).runid;
+        handles.toolbox.dd.domains{i}=handles.Model(md).Input(i).runid;
     end
     
     % If m2 or n2 is nan, set m1 and n1 to NaN
-    m2=handles.Toolbox(tb).Input.secondCornerPointM;
-    n2=handles.Toolbox(tb).Input.secondCornerPointN;
+    m2=handles.toolbox.dd.secondCornerPointM;
+    n2=handles.toolbox.dd.secondCornerPointN;
     if isnan(m2) || isnan(n2)
-        handles.Toolbox(tb).Input.firstCornerPointM=NaN;
-        handles.Toolbox(tb).Input.firstCornerPointN=NaN;
+        handles.toolbox.dd.firstCornerPointM=NaN;
+        handles.toolbox.dd.firstCornerPointN=NaN;
     end
     setHandles(handles);
     
     % If m1 or n1 is nan, delete corner points
-    m1=handles.Toolbox(tb).Input.firstCornerPointM;
-    n1=handles.Toolbox(tb).Input.firstCornerPointN;
+    m1=handles.toolbox.dd.firstCornerPointM;
+    n1=handles.toolbox.dd.firstCornerPointN;
     if isnan(m1) || isnan(n1)
         plotCornerPoints('delete');
     end
@@ -118,7 +118,7 @@ end
 function editRefinement
 plotTemporaryDDGrid('plot');
 handles=getHandles;
-if ~odd(handles.Toolbox(tb).Input.mRefinement) || ~odd(handles.Toolbox(tb).Input.nRefinement)
+if ~odd(handles.toolbox.dd.mRefinement) || ~odd(handles.toolbox.dd.nRefinement)
     ddb_giveWarning('text','Refinement by an even number is not recommended!');
 end
 
@@ -126,13 +126,13 @@ end
 function editM1
 
 handles=getHandles;
-ii=handles.Toolbox(tb).Input.firstCornerPointM;
+ii=handles.toolbox.dd.firstCornerPointM;
 sz=size(handles.Model(md).Input(ad).gridX);
 if ii>sz(1)
-    handles.Toolbox(tb).Input.firstCornerPointM=sz(1);
+    handles.toolbox.dd.firstCornerPointM=sz(1);
 end
 if ii<1
-    handles.Toolbox(tb).Input.firstCornerPointM=1;
+    handles.toolbox.dd.firstCornerPointM=1;
 end
 
 setHandles(handles);
@@ -144,13 +144,13 @@ plotTemporaryDDGrid('plot');
 function editN1
 
 handles=getHandles;
-ii=handles.Toolbox(tb).Input.firstCornerPointN;
+ii=handles.toolbox.dd.firstCornerPointN;
 sz=size(handles.Model(md).Input(ad).gridX);
 if ii>sz(2)
-    handles.Toolbox(tb).Input.firstCornerPointN=sz(2);
+    handles.toolbox.dd.firstCornerPointN=sz(2);
 end
 if ii<1
-    handles.Toolbox(tb).Input.firstCornerPointN=1;
+    handles.toolbox.dd.firstCornerPointN=1;
 end
 
 setHandles(handles);
@@ -162,13 +162,13 @@ plotTemporaryDDGrid('plot');
 function editM2
 
 handles=getHandles;
-ii=handles.Toolbox(tb).Input.secondCornerPointM;
+ii=handles.toolbox.dd.secondCornerPointM;
 sz=size(handles.Model(md).Input(ad).gridX);
 if ii>sz(1)
-    handles.Toolbox(tb).Input.secondCornerPointM=sz(1);
+    handles.toolbox.dd.secondCornerPointM=sz(1);
 end
 if ii<1
-    handles.Toolbox(tb).Input.secondCornerPointM=1;
+    handles.toolbox.dd.secondCornerPointM=1;
 end
 
 setHandles(handles);
@@ -180,13 +180,13 @@ plotTemporaryDDGrid('plot');
 function editN2
 
 handles=getHandles;
-ii=handles.Toolbox(tb).Input.secondCornerPointN;
+ii=handles.toolbox.dd.secondCornerPointN;
 sz=size(handles.Model(md).Input(ad).gridX);
 if ii>sz(2)
-    handles.Toolbox(tb).Input.secondCornerPointN=sz(2);
+    handles.toolbox.dd.secondCornerPointN=sz(2);
 end
 if ii<1
-    handles.Toolbox(tb).Input.secondCornerPointN=1;
+    handles.toolbox.dd.secondCornerPointN=1;
 end
 
 setHandles(handles);
@@ -229,19 +229,19 @@ switch lower(handles.Model(md).name)
 end
 
 % Check indices
-m1=handles.Toolbox(tb).Input.firstCornerPointM;
-n1=handles.Toolbox(tb).Input.firstCornerPointN;
-m2=handles.Toolbox(tb).Input.secondCornerPointM;
-n2=handles.Toolbox(tb).Input.secondCornerPointN;
+m1=handles.toolbox.dd.firstCornerPointM;
+n1=handles.toolbox.dd.firstCornerPointN;
+m2=handles.toolbox.dd.secondCornerPointM;
+n2=handles.toolbox.dd.secondCornerPointN;
 mdd(1)=min(m1,m2);mdd(2)=max(m1,m2);
 ndd(1)=min(n1,n2);ndd(2)=max(n1,n2);
 
 % Check if domain with new runid already exists
-ii=strmatch(lower(handles.Toolbox(tb).Input.newRunid),handles.Toolbox(tb).Input.domains,'exact');
+ii=strmatch(lower(handles.toolbox.dd.newRunid),handles.toolbox.dd.domains,'exact');
 
 if ~isempty(ii)
     
-    ddb_giveWarning('Warning',['A domain with runid "' handles.Toolbox(tb).Input.newRunid '" already exists!']);
+    ddb_giveWarning('Warning',['A domain with runid "' handles.toolbox.dd.newRunid '" already exists!']);
     
 elseif mdd(2)>mdd(1) && ndd(2)>ndd(1)
 
@@ -266,16 +266,16 @@ elseif mdd(2)>mdd(1) && ndd(2)>ndd(1)
         
         % Generate new domain
         runid1=handles.Model(md).Input(ad).runid;
-        runid2=handles.Toolbox(tb).Input.newRunid;
+        runid2=handles.toolbox.dd.newRunid;
         handles.Model(md).nrDomains=handles.Model(md).nrDomains+1;
         id2=handles.Model(md).nrDomains;
-        handles.Toolbox(tb).Input.domains{handles.Model(md).nrDomains}=handles.Toolbox(tb).Input.newRunid;
+        handles.toolbox.dd.domains{handles.Model(md).nrDomains}=handles.toolbox.dd.newRunid;
         % Copy active domain to new domain
         handles.Model(md).Input(id2)=handles.Model(md).Input(ad);
         handles.Model(md).Input(id2).runid=runid2;
-        handles.Model(md).Input(id2).attName=handles.Toolbox(tb).Input.attributeName;
+        handles.Model(md).Input(id2).attName=handles.toolbox.dd.attributeName;
         % Create backup of original model with id0
-        handles.Toolbox(tb).Input.originalDomain=handles.Model(md).Input(ad);
+        handles.toolbox.dd.originalDomain=handles.Model(md).Input(ad);
         
         % Initialize grid dependent input new domain
         handles=ddb_initializeFlowDomain(handles,'griddependentinput',id2,runid2);
@@ -313,10 +313,10 @@ elseif mdd(2)>mdd(1) && ndd(2)>ndd(1)
         plotCornerPoints('delete');
         plotTemporaryDDGrid('delete');
         
-        handles.Toolbox(tb).Input.firstCornerPointM=NaN;
-        handles.Toolbox(tb).Input.secondCornerPointM=NaN;
-        handles.Toolbox(tb).Input.firstCornerPointN=NaN;
-        handles.Toolbox(tb).Input.secondCornerPointN=NaN;
+        handles.toolbox.dd.firstCornerPointM=NaN;
+        handles.toolbox.dd.secondCornerPointM=NaN;
+        handles.toolbox.dd.firstCornerPointN=NaN;
+        handles.toolbox.dd.secondCornerPointN=NaN;
         
         setHandles(handles);
         
@@ -347,7 +347,7 @@ elseif mdd(2)>mdd(1) && ndd(2)>ndd(1)
 end
 
 % Clear original domain
-handles.Toolbox(tb).Input.originalDomain=[];
+handles.toolbox.dd.originalDomain=[];
 
 %%
 function clickFirstCornerPoint(m,n)
@@ -357,10 +357,10 @@ setInstructions({'','','Click grid point on active grid for second corner point'
 
 % Set values of corner points
 handles=getHandles;
-handles.Toolbox(tb).Input.firstCornerPointM=m;
-handles.Toolbox(tb).Input.firstCornerPointN=n;
-handles.Toolbox(tb).Input.secondCornerPointM=NaN;
-handles.Toolbox(tb).Input.secondCornerPointN=NaN;
+handles.toolbox.dd.firstCornerPointM=m;
+handles.toolbox.dd.firstCornerPointN=n;
+handles.toolbox.dd.secondCornerPointM=NaN;
+handles.toolbox.dd.secondCornerPointN=NaN;
 setHandles(handles);
 
 % Plot markers on corner points
@@ -382,8 +382,8 @@ clearInstructions;
 
 handles=getHandles;
 if ~isnan(m)
-    handles.Toolbox(tb).Input.secondCornerPointM=m;
-    handles.Toolbox(tb).Input.secondCornerPointN=n;
+    handles.toolbox.dd.secondCornerPointM=m;
+    handles.toolbox.dd.secondCornerPointN=n;
     setHandles(handles);
     plotCornerPoints('plot');
     plotTemporaryDDGrid('plot');
@@ -407,16 +407,16 @@ switch lower(opt)
         handles=getHandles;
         xg=handles.Model(md).Input(ad).gridX;
         yg=handles.Model(md).Input(ad).gridY;
-        m1=handles.Toolbox(tb).Input.firstCornerPointM;
-        n1=handles.Toolbox(tb).Input.firstCornerPointN;
-        m2=handles.Toolbox(tb).Input.secondCornerPointM;
-        n2=handles.Toolbox(tb).Input.secondCornerPointN;
+        m1=handles.toolbox.dd.firstCornerPointM;
+        n1=handles.toolbox.dd.firstCornerPointN;
+        m2=handles.toolbox.dd.secondCornerPointM;
+        n2=handles.toolbox.dd.secondCornerPointN;
         mm1=min(m1,m2);mm2=max(m1,m2);
         nn1=min(n1,n2);nn2=max(n1,n2);
         xg=xg(mm1:mm2,nn1:nn2);
         yg=yg(mm1:mm2,nn1:nn2);
-        mref=handles.Toolbox(tb).Input.mRefinement;
-        nref=handles.Toolbox(tb).Input.nRefinement;
+        mref=handles.toolbox.dd.mRefinement;
+        nref=handles.toolbox.dd.nRefinement;
         [x2,y2]=ddb_refineD3DGrid(xg,yg,mref,nref);
         z2=zeros(size(x2))+9000;
         grd=mesh(x2,y2,z2);
@@ -439,8 +439,8 @@ switch lower(opt)
         handles=getHandles;
         
         % Delete old points
-        if isfield(handles.Toolbox(tb).Input,'cornerPointHandles')
-            hh=handles.Toolbox(tb).Input.cornerPointHandles;
+        if isfield(handles.toolbox.dd,'cornerPointHandles')
+            hh=handles.toolbox.dd.cornerPointHandles;
             if ~isempty(hh)
                 try
                     delete(hh);
@@ -449,10 +449,10 @@ switch lower(opt)
         end
         
         % Now plot the corner points
-        m1=handles.Toolbox(tb).Input.firstCornerPointM;
-        m2=handles.Toolbox(tb).Input.secondCornerPointM;
-        n1=handles.Toolbox(tb).Input.firstCornerPointN;
-        n2=handles.Toolbox(tb).Input.secondCornerPointN;
+        m1=handles.toolbox.dd.firstCornerPointM;
+        m2=handles.toolbox.dd.secondCornerPointM;
+        n1=handles.toolbox.dd.firstCornerPointN;
+        n2=handles.toolbox.dd.secondCornerPointN;
         
         plt1=plot(handles.Model(md).Input(ad).gridX(m1,n1),handles.Model(md).Input(ad).gridY(m1,n1),'go');
         set(plt1,'MarkerEdgeColor','k','MarkerFaceColor','y','HitTest','off');
@@ -465,7 +465,7 @@ switch lower(opt)
             set(plt2,'Tag','DDCornerPoint');
         end
         
-        handles.Toolbox(tb).Input.cornerPointHandles=[plt1 plt2];
+        handles.toolbox.dd.cornerPointHandles=[plt1 plt2];
         
         setHandles(handles);
         
@@ -503,7 +503,7 @@ for i=1:handles.Model(md).nrDomains-1
 end
 
 if ~isempty(ddbound)
-    if handles.Toolbox(tb).Input.adjustBathymetry
+    if handles.toolbox.dd.adjustBathymetry
         % Adjust bathymetries in all domains
         % This ensures that depths along boundaries in both domains are the same
         for i=1:handles.Model(md).nrDomains-1

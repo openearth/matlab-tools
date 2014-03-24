@@ -86,11 +86,10 @@ switch lower(option)
             set(h,'HandleVisibility','on');
         end
         
-        ii=strmatch('NavigationCharts',{handles.Toolbox(:).name},'exact');
         h=findobj(gca,'Tag','NavigationChartLayer','UserData','LNDARE');
         if ~isempty(h)
             set(h,'HandleVisibility','on');
-            if handles.Toolbox(ii).Input.showShoreline
+            if handles.toolbox.navigationcharts.showShoreline
                 set(h,'Visible','on');
             else
                 set(h,'Visible','off');
@@ -110,7 +109,7 @@ switch lower(option)
         h=findobj(gca,'Tag','NavigationChartLayer','UserData','DEPCNT');
         set(h,'HandleVisibility','on');
         if ~isempty(h)
-            if handles.Toolbox(ii).Input.showContours
+            if handles.toolbox.navigationcharts.showContours
                 set(h,'Visible','on');
             else
                 set(h,'Visible','off');

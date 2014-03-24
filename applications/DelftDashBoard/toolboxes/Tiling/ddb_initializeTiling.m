@@ -60,122 +60,110 @@ function handles = ddb_initializeTiling(handles, varargin)
 % $HeadURL$
 % $Keywords: $
 
-%%
-ii=strmatch('Tiling',{handles.Toolbox(:).name},'exact');
-if nargin>1
-    switch varargin{1}
-        case{'test'}
-            return
-        case{'veryfirst'}
-            handles.Toolbox(ii).longName='Tiling';
-            return
-    end
-end
+%% Tiling
 
-%% Bathymetry
+handles.toolbox.tiling.import.x0=0;
+handles.toolbox.tiling.import.y0=0;
+handles.toolbox.tiling.import.nx=300;
+handles.toolbox.tiling.import.ny=300;
+handles.toolbox.tiling.import.dx=0;
+handles.toolbox.tiling.import.dy=0;
+handles.toolbox.tiling.import.nrZoom=5;
 
-handles.Toolbox(ii).Input.import.x0=0;
-handles.Toolbox(ii).Input.import.y0=0;
-handles.Toolbox(ii).Input.import.nx=300;
-handles.Toolbox(ii).Input.import.ny=300;
-handles.Toolbox(ii).Input.import.dx=0;
-handles.Toolbox(ii).Input.import.dy=0;
-handles.Toolbox(ii).Input.import.nrZoom=5;
-
-handles.Toolbox(ii).Input.import.dataFile='';
-handles.Toolbox(ii).Input.import.dataName='';
-handles.Toolbox(ii).Input.import.datasource='';
-handles.Toolbox(ii).Input.import.dataDir=[handles.bathymetry.dir];
+handles.toolbox.tiling.import.dataFile='';
+handles.toolbox.tiling.import.dataName='';
+handles.toolbox.tiling.import.datasource='';
+handles.toolbox.tiling.import.dataDir=[handles.bathymetry.dir];
 
 % Raw data formats
-handles.Toolbox(ii).Input.import.rawDataFormats{1}='arcinfogrid';
-handles.Toolbox(ii).Input.import.rawDataFormatsText{1}='ArcInfo ASCII grid';
-handles.Toolbox(ii).Input.import.rawDataFormatsExtension{1}='*.asc';
-handles.Toolbox(tb).Input.bathymetry.rawDataFormatsType{1}='regulargrid';        
+handles.toolbox.tiling.import.rawDataFormats{1}='arcinfogrid';
+handles.toolbox.tiling.import.rawDataFormatsText{1}='ArcInfo ASCII grid';
+handles.toolbox.tiling.import.rawDataFormatsExtension{1}='*.asc';
+handles.toolbox.tiling.bathymetry.rawDataFormatsType{1}='regulargrid';        
 
-handles.Toolbox(ii).Input.import.rawDataFormats{2}='arcbinarygrid';
-handles.Toolbox(ii).Input.import.rawDataFormatsText{2}='Arc Binary Grid';
-handles.Toolbox(ii).Input.import.rawDataFormatsExtension{2}='*.adf';
-handles.Toolbox(ii).Input.import.rawDataFormatsType{2}='regulargrid';        
+handles.toolbox.tiling.import.rawDataFormats{2}='arcbinarygrid';
+handles.toolbox.tiling.import.rawDataFormatsText{2}='Arc Binary Grid';
+handles.toolbox.tiling.import.rawDataFormatsExtension{2}='*.adf';
+handles.toolbox.tiling.import.rawDataFormatsType{2}='regulargrid';        
 
-handles.Toolbox(ii).Input.import.rawDataFormats{3}='matfile';
-handles.Toolbox(ii).Input.import.rawDataFormatsText{3}='Mat File';
-handles.Toolbox(ii).Input.import.rawDataFormatsExtension{3}='*.mat';
-handles.Toolbox(ii).Input.import.rawDataFormatsType{3}='regulargrid';        
+handles.toolbox.tiling.import.rawDataFormats{3}='matfile';
+handles.toolbox.tiling.import.rawDataFormatsText{3}='Mat File';
+handles.toolbox.tiling.import.rawDataFormatsExtension{3}='*.mat';
+handles.toolbox.tiling.import.rawDataFormatsType{3}='regulargrid';        
 
-handles.Toolbox(ii).Input.import.rawDataFormats{4}='netcdf';
-handles.Toolbox(ii).Input.import.rawDataFormatsText{4}='netCDF File';
-handles.Toolbox(ii).Input.import.rawDataFormatsExtension{4}='*.nc';
-handles.Toolbox(tb).Input.bathymetry.rawDataFormatsType{4}='regulargrid';        
+handles.toolbox.tiling.import.rawDataFormats{4}='netcdf';
+handles.toolbox.tiling.import.rawDataFormatsText{4}='netCDF File';
+handles.toolbox.tiling.import.rawDataFormatsExtension{4}='*.nc';
+handles.toolbox.tiling.bathymetry.rawDataFormatsType{4}='regulargrid';        
 
-handles.Toolbox(ii).Input.import.rawDataFormats{5}='adcircgrid';
-handles.Toolbox(ii).Input.import.rawDataFormatsText{5}='ADCIRC grid';
-handles.Toolbox(ii).Input.import.rawDataFormatsExtension{5}='*.grd';
-handles.Toolbox(ii).Input.import.rawDataFormatsType{5}='unstructured';        
+handles.toolbox.tiling.import.rawDataFormats{5}='adcircgrid';
+handles.toolbox.tiling.import.rawDataFormatsText{5}='ADCIRC grid';
+handles.toolbox.tiling.import.rawDataFormatsExtension{5}='*.grd';
+handles.toolbox.tiling.import.rawDataFormatsType{5}='unstructured';        
 
-% handles.Toolbox(ii).Input.import.rawDataFormats{6}='xyz';
-% handles.Toolbox(ii).Input.import.rawDataFormatsText{6}='XYZ File';
-% handles.Toolbox(ii).Input.import.rawDataFormatsExtension{6}='*.xyz';
-% handles.Toolbox(ii).Input.import.rawDataFormatsType{6}='unstructured';        
+% handles.toolbox.tiling.import.rawDataFormats{6}='xyz';
+% handles.toolbox.tiling.import.rawDataFormatsText{6}='XYZ File';
+% handles.toolbox.tiling.import.rawDataFormatsExtension{6}='*.xyz';
+% handles.toolbox.tiling.import.rawDataFormatsType{6}='unstructured';        
 
-handles.Toolbox(ii).Input.import.rawDataFormat=handles.Toolbox(ii).Input.import.rawDataFormats{1};
-handles.Toolbox(ii).Input.import.rawDataFormatExtension=handles.Toolbox(ii).Input.import.rawDataFormatsExtension{1};
-handles.Toolbox(ii).Input.import.rawDataFormatSelectionText=['Select Data File (' handles.Toolbox(ii).Input.import.rawDataFormatsText{1} ')'];
-handles.Toolbox(ii).Input.import.rawDataType=handles.Toolbox(tb).Input.bathymetry.rawDataFormatsType{1};
+handles.toolbox.tiling.import.rawDataFormat=handles.toolbox.tiling.import.rawDataFormats{1};
+handles.toolbox.tiling.import.rawDataFormatExtension=handles.toolbox.tiling.import.rawDataFormatsExtension{1};
+handles.toolbox.tiling.import.rawDataFormatSelectionText=['Select Data File (' handles.toolbox.tiling.import.rawDataFormatsText{1} ')'];
+handles.toolbox.tiling.import.rawDataType=handles.toolbox.tiling.bathymetry.rawDataFormatsType{1};
 
-handles.Toolbox(ii).Input.import.EPSGcode                     = 4326;
-handles.Toolbox(ii).Input.import.EPSGname                     = 'WGS 84';
-handles.Toolbox(ii).Input.import.EPSGtype                     = 'geographic';
-handles.Toolbox(ii).Input.import.vertCoordName                = 'MSL';
-handles.Toolbox(ii).Input.import.vertCoordLevel               = 0.0;
-handles.Toolbox(ii).Input.import.vertUnits                    = 'm';
-handles.Toolbox(ii).Input.import.nc_library                   = 'matlab';
-handles.Toolbox(ii).Input.import.type                         = 'float';
-handles.Toolbox(ii).Input.import.positiveUp                   = 1;
+handles.toolbox.tiling.import.EPSGcode                     = 4326;
+handles.toolbox.tiling.import.EPSGname                     = 'WGS 84';
+handles.toolbox.tiling.import.EPSGtype                     = 'geographic';
+handles.toolbox.tiling.import.vertCoordName                = 'MSL';
+handles.toolbox.tiling.import.vertCoordLevel               = 0.0;
+handles.toolbox.tiling.import.vertUnits                    = 'm';
+handles.toolbox.tiling.import.nc_library                   = 'matlab';
+handles.toolbox.tiling.import.type                         = 'float';
+handles.toolbox.tiling.import.positiveUp                   = 1;
 
-handles.Toolbox(ii).Input.import.radioGeo                     = 1;
-handles.Toolbox(ii).Input.import.radioProj                    = 0;
+handles.toolbox.tiling.import.radioGeo                     = 1;
+handles.toolbox.tiling.import.radioProj                    = 0;
 
-handles.Toolbox(ii).Input.import.attributes.conventions                  = 'CF-1.4';
-handles.Toolbox(ii).Input.import.attributes.CF_featureType               = 'grid';
-handles.Toolbox(ii).Input.import.attributes.title                        = 'Name of data set';
-handles.Toolbox(ii).Input.import.attributes.institution                  = 'Institution';
-handles.Toolbox(ii).Input.import.attributes.source                       = 'Source';
-handles.Toolbox(ii).Input.import.attributes.history                      = 'created by : ';
-handles.Toolbox(ii).Input.import.attributes.references                   = 'No reference material available';
-handles.Toolbox(ii).Input.import.attributes.comment                      = 'none';
-handles.Toolbox(ii).Input.import.attributes.email                        = 'Your email here';
-handles.Toolbox(ii).Input.import.attributes.version                      = '1.0';
-handles.Toolbox(ii).Input.import.attributes.terms_for_use                = 'Use as you like';
-handles.Toolbox(ii).Input.import.attributes.disclaimer                   = 'These data are made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.';
+handles.toolbox.tiling.import.attributes.conventions                  = 'CF-1.4';
+handles.toolbox.tiling.import.attributes.CF_featureType               = 'grid';
+handles.toolbox.tiling.import.attributes.title                        = 'Name of data set';
+handles.toolbox.tiling.import.attributes.institution                  = 'Institution';
+handles.toolbox.tiling.import.attributes.source                       = 'Source';
+handles.toolbox.tiling.import.attributes.history                      = 'created by : ';
+handles.toolbox.tiling.import.attributes.references                   = 'No reference material available';
+handles.toolbox.tiling.import.attributes.comment                      = 'none';
+handles.toolbox.tiling.import.attributes.email                        = 'Your email here';
+handles.toolbox.tiling.import.attributes.version                      = '1.0';
+handles.toolbox.tiling.import.attributes.terms_for_use                = 'Use as you like';
+handles.toolbox.tiling.import.attributes.disclaimer                   = 'These data are made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.';
 
 
 %% Shoreline
 
-handles.Toolbox(ii).Input.shoreline.x0=0;
-handles.Toolbox(ii).Input.shoreline.y0=0;
+handles.toolbox.tiling.shoreline.x0=0;
+handles.toolbox.tiling.shoreline.y0=0;
 
-handles.Toolbox(ii).Input.shoreline.nrCellsX=0;
-handles.Toolbox(ii).Input.shoreline.nrCellsY=0;
+handles.toolbox.tiling.shoreline.nrCellsX=0;
+handles.toolbox.tiling.shoreline.nrCellsY=0;
 
-handles.Toolbox(ii).Input.shoreline.dataFile='';
-handles.Toolbox(ii).Input.shoreline.dataName='';
-handles.Toolbox(ii).Input.shoreline.dataDir=[handles.bathymetry.dir];
+handles.toolbox.tiling.shoreline.dataFile='';
+handles.toolbox.tiling.shoreline.dataName='';
+handles.toolbox.tiling.shoreline.dataDir=[handles.bathymetry.dir];
 
-handles.Toolbox(ii).Input.shoreline.EPSGcode                     = 4326;
-handles.Toolbox(ii).Input.shoreline.EPSGname                     = 'WGS 84';
-handles.Toolbox(ii).Input.shoreline.EPSGtype                     = 'geographic';
-handles.Toolbox(ii).Input.shoreline.conventions                  = 'CF-1.4';
-handles.Toolbox(ii).Input.shoreline.CF_featureType               = 'polyline';
-handles.Toolbox(ii).Input.shoreline.title                        = 'Name of data set';
-handles.Toolbox(ii).Input.shoreline.institution                  = 'Institution';
-handles.Toolbox(ii).Input.shoreline.source                       = 'Source';
-handles.Toolbox(ii).Input.shoreline.history                      = 'created by';
-handles.Toolbox(ii).Input.shoreline.references                   = 'No reference material available';
-handles.Toolbox(ii).Input.shoreline.comment                      = 'Comments';
-handles.Toolbox(ii).Input.shoreline.email                        = 'Your email here';
-handles.Toolbox(ii).Input.shoreline.version                      = '1.0';
-handles.Toolbox(ii).Input.shoreline.terms_for_use                = 'Use as you like';
-handles.Toolbox(ii).Input.shoreline.disclaimer                   = 'These data are made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.';
-handles.Toolbox(ii).Input.shoreline.nc_library                   = 'matlab';
-handles.Toolbox(ii).Input.shoreline.type                         = 'float';
+handles.toolbox.tiling.shoreline.EPSGcode                     = 4326;
+handles.toolbox.tiling.shoreline.EPSGname                     = 'WGS 84';
+handles.toolbox.tiling.shoreline.EPSGtype                     = 'geographic';
+handles.toolbox.tiling.shoreline.conventions                  = 'CF-1.4';
+handles.toolbox.tiling.shoreline.CF_featureType               = 'polyline';
+handles.toolbox.tiling.shoreline.title                        = 'Name of data set';
+handles.toolbox.tiling.shoreline.institution                  = 'Institution';
+handles.toolbox.tiling.shoreline.source                       = 'Source';
+handles.toolbox.tiling.shoreline.history                      = 'created by';
+handles.toolbox.tiling.shoreline.references                   = 'No reference material available';
+handles.toolbox.tiling.shoreline.comment                      = 'Comments';
+handles.toolbox.tiling.shoreline.email                        = 'Your email here';
+handles.toolbox.tiling.shoreline.version                      = '1.0';
+handles.toolbox.tiling.shoreline.terms_for_use                = 'Use as you like';
+handles.toolbox.tiling.shoreline.disclaimer                   = 'These data are made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.';
+handles.toolbox.tiling.shoreline.nc_library                   = 'matlab';
+handles.toolbox.tiling.shoreline.type                         = 'float';

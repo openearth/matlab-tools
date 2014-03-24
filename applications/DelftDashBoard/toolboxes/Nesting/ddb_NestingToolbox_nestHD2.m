@@ -80,20 +80,20 @@ function nestHD2
 
 handles=getHandles;
 
-if isempty(handles.Toolbox(tb).Input.trihFile)
+if isempty(handles.toolbox.nesting.trihFile)
     ddb_giveWarning('text','Please first load history file of overall model!');
     return
 end
 
-hisfile=handles.Toolbox(tb).Input.trihFile;
-nestadm=handles.Toolbox(tb).Input.admFile;
-z0=handles.Toolbox(tb).Input.zCor;
+hisfile=handles.toolbox.nesting.trihFile;
+nestadm=handles.toolbox.nesting.admFile;
+z0=handles.toolbox.nesting.zCor;
 opt='';
-if handles.Toolbox(tb).Input.nestHydro && handles.Toolbox(tb).Input.nestTransport
+if handles.toolbox.nesting.nestHydro && handles.toolbox.nesting.nestTransport
     opt='both';
-elseif handles.Toolbox(tb).Input.nestHydro
+elseif handles.toolbox.nesting.nestHydro
     opt='hydro';
-elseif handles.Toolbox(tb).Input.nestTransport
+elseif handles.toolbox.nesting.nestTransport
     opt='transport';
 end
 stride=1;
@@ -120,7 +120,7 @@ if ~isempty(opt)
         
         if strcmpi(bnd(i).forcing,'T')
             
-            if handles.Toolbox(tb).Input.nestHydro
+            if handles.toolbox.nesting.nestHydro
                 % Copy boundary data
                 % Hydrodynamics
                 handles.Model(md).Input(ad).openBoundaries(i).nrTimeSeries=length(bnd(i).timeSeriesT);
@@ -132,7 +132,7 @@ if ~isempty(opt)
                 handles.Model(md).Input(ad).openBoundaries(i).profile=bnd(i).profile;
             end
             
-            if handles.Toolbox(tb).Input.nestTransport
+            if handles.toolbox.nesting.nestTransport
                 % Transport
                 
                 % Salinity
@@ -219,7 +219,7 @@ if ~isempty(opt)
     end
     
     
-    if handles.Toolbox(tb).Input.nestHydro
+    if handles.toolbox.nesting.nestHydro
         [filename, pathname, filterindex] = uiputfile('*.bct','Select Timeseries Conditions File');
         if pathname~=0
             curdir=[lower(cd) '\'];
@@ -232,7 +232,7 @@ if ~isempty(opt)
     end
     
     
-    if handles.Toolbox(tb).Input.nestTransport
+    if handles.toolbox.nesting.nestTransport
         [filename, pathname, filterindex] = uiputfile('*.bcc','Select Transport Conditions File');
         if pathname~=0
             curdir=[lower(cd) '\'];

@@ -93,7 +93,7 @@ yldb=wcly;
 z=zeros(size(xldb))+10;
 landb=plot3(xldb,yldb,z,'k');
 
-load([handles.Toolbox(tb).dataDir 'plates.mat']);
+load([handles.toolbox.tsunami.dataDir 'plates.mat']);
 platesz=zeros(size(platesx))+10;
 h=plot3(platesx,platesy,platesz);
 set(h,'Color',[1.0 0.5 0.00]);

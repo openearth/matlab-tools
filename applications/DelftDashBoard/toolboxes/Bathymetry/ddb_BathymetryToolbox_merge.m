@@ -72,16 +72,16 @@ function addbathytolist
 
 handles=getHandles;
 
-val=handles.Toolbox(tb).Input.activeDataset;
+val=handles.toolbox.bathymetry.activeDataset;
 
 if ~isempty(val)    
     selected_file = handles.bathymetry.datasets{val};
-    if ~any(strcmp(selected_file,handles.Toolbox(tb).Input.add_list))
-        nf = handles.Toolbox(tb).Input.num_merge+1;
-        handles.Toolbox(tb).Input.num_merge = nf;
-        handles.Toolbox(tb).Input.add_list{nf} = selected_file;
-        handles.Toolbox(tb).Input.add_list_idx(nf) = val;
-        handles.Toolbox(tb).Input.bathy_to_cut = nf;
+    if ~any(strcmp(selected_file,handles.toolbox.bathymetry.add_list))
+        nf = handles.toolbox.bathymetry.num_merge+1;
+        handles.toolbox.bathymetry.num_merge = nf;
+        handles.toolbox.bathymetry.add_list{nf} = selected_file;
+        handles.toolbox.bathymetry.add_list_idx(nf) = val;
+        handles.toolbox.bathymetry.bathy_to_cut = nf;
         setHandles(handles);
     end
 end
@@ -90,8 +90,8 @@ end
 function handles=deletefromlist
 
 handles=getHandles;
-val = handles.Toolbox(tb).Input.bathy_to_cut;
-nf = handles.Toolbox(tb).Input.num_merge;
+val = handles.toolbox.bathymetry.bathy_to_cut;
+nf = handles.toolbox.bathymetry.num_merge;
 
 if nf>0
     
@@ -99,12 +99,12 @@ if nf>0
 
     keep_idx(val)= false;
     
-    handles.Toolbox(tb).Input.num_merge = nf-length(val);
+    handles.toolbox.bathymetry.num_merge = nf-length(val);
 
-    handles.Toolbox(tb).Input.add_list = handles.Toolbox(tb).Input.add_list(keep_idx);
-    handles.Toolbox(tb).Input.add_list_idx = handles.Toolbox(tb).Input.add_list_idx(keep_idx);
+    handles.toolbox.bathymetry.add_list = handles.toolbox.bathymetry.add_list(keep_idx);
+    handles.toolbox.bathymetry.add_list_idx = handles.toolbox.bathymetry.add_list_idx(keep_idx);
     
-    handles.Toolbox(tb).Input.bathy_to_cut=max(min(handles.Toolbox(tb).Input.num_merge,nf),1);
+    handles.toolbox.bathymetry.bathy_to_cut=max(min(handles.toolbox.bathymetry.num_merge,nf),1);
 
     setHandles(handles);
 end
@@ -114,25 +114,25 @@ function handles=moveselection
 
 handles=getHandles;
 
-val = handles.Toolbox(tb).Input.bathy_to_cut;
-nf = handles.Toolbox(tb).Input.num_merge;
+val = handles.toolbox.bathymetry.bathy_to_cut;
+nf = handles.toolbox.bathymetry.num_merge;
 
 if nf>1
 
     if val>1        
-        tmp_str = handles.Toolbox(tb).Input.add_list(val);
-        old_str = handles.Toolbox(tb).Input.add_list(val-1);
-        handles.Toolbox(tb).Input.add_list(val) = old_str;
-        handles.Toolbox(tb).Input.add_list(val-1) = tmp_str;
+        tmp_str = handles.toolbox.bathymetry.add_list(val);
+        old_str = handles.toolbox.bathymetry.add_list(val-1);
+        handles.toolbox.bathymetry.add_list(val) = old_str;
+        handles.toolbox.bathymetry.add_list(val-1) = tmp_str;
         
-        tmp_idx = handles.Toolbox(tb).Input.add_list_idx(val);
-        old_idx = handles.Toolbox(tb).Input.add_list_idx(val-1);
+        tmp_idx = handles.toolbox.bathymetry.add_list_idx(val);
+        old_idx = handles.toolbox.bathymetry.add_list_idx(val-1);
         
-        handles.Toolbox(tb).Input.add_list_idx(val) = old_idx;
-        handles.Toolbox(tb).Input.add_list_idx(val-1) = tmp_idx;
+        handles.toolbox.bathymetry.add_list_idx(val) = old_idx;
+        handles.toolbox.bathymetry.add_list_idx(val-1) = tmp_idx;
         
         
-        handles.Toolbox(tb).Input.bathy_to_cut = val-1;
+        handles.toolbox.bathymetry.bathy_to_cut = val-1;
         
         setHandles(handles);
     end
@@ -143,10 +143,10 @@ function mergedata
 
 handles=getHandles;
 
-file_list_idx = handles.Toolbox(tb).Input.add_list_idx;
-file_list = handles.Toolbox(tb).Input.add_list;
+file_list_idx = handles.toolbox.bathymetry.add_list_idx;
+file_list = handles.toolbox.bathymetry.add_list;
 
-nf = handles.Toolbox(tb).Input.num_merge;
+nf = handles.toolbox.bathymetry.num_merge;
 
 total_max_x = -inf;
 total_min_x =  inf;

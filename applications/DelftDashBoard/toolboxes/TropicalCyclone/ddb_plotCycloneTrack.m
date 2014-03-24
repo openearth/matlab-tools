@@ -62,12 +62,12 @@ function ddb_plotCycloneTrack
 %%
 handles=getHandles;
 
-for i=1:handles.Toolbox(tb).Input.nrTrackPoints
-    txt{i}=datestr(handles.Toolbox(tb).Input.trackT(i),'dd-mmm-yyyy HH:MM');
+for i=1:handles.toolbox.tropicalcyclone.nrTrackPoints
+    txt{i}=datestr(handles.toolbox.tropicalcyclone.trackT(i),'dd-mmm-yyyy HH:MM');
 end
 
-handles.Toolbox(tb).Input.trackhandle=gui_polyline('plot','tag','cyclonetrack','marker','o', ...
+handles.toolbox.tropicalcyclone.trackhandle=gui_polyline('plot','tag','cyclonetrack','marker','o', ...
     'changecallback',@ddb_changeCycloneTrack,'rightclickcallback',@ddb_selectCyclonePoint, ...
-    'closed',0,'x',handles.Toolbox(tb).Input.trackX,'y',handles.Toolbox(tb).Input.trackY,'text',txt);
+    'closed',0,'x',handles.toolbox.tropicalcyclone.trackX,'y',handles.toolbox.tropicalcyclone.trackY,'text',txt);
 
 setHandles(handles);

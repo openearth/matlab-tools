@@ -79,32 +79,32 @@ fprintf(fid,'%s \n',txt);
 txt='';
 fprintf(fid,'%s \n',txt);
 
-txt=['Magnitude      ' num2str(handles.Toolbox(tb).Input.Magnitude)];
+txt=['Magnitude      ' num2str(handles.toolbox.tsunami.Magnitude)];
 fprintf(fid,'%s \n',txt);
 
-txt=['DepthFromTop   ' num2str(handles.Toolbox(tb).Input.DepthFromTop)];
+txt=['DepthFromTop   ' num2str(handles.toolbox.tsunami.DepthFromTop)];
 fprintf(fid,'%s \n',txt);
 
-if handles.Toolbox(tb).Input.RelatedToEpicentre
+if handles.toolbox.tsunami.RelatedToEpicentre
     txt=['RelatedToEpicentre   yes'];
     fprintf(fid,'%s \n',txt);
-    txt=['Latitude       ' num2str(handles.Toolbox(tb).Input.Latitude)];
+    txt=['Latitude       ' num2str(handles.toolbox.tsunami.Latitude)];
     fprintf(fid,'%s \n',txt);
-    txt=['Longitude      ' num2str(handles.Toolbox(tb).Input.Longitude)];
+    txt=['Longitude      ' num2str(handles.toolbox.tsunami.Longitude)];
     fprintf(fid,'%s \n',txt);
 else
     txt=['RelatedToEpicentre   no'];
     fprintf(fid,'%s \n',txt);
 end
 
-txt=['NrSegments     ' num2str(handles.Toolbox(tb).Input.NrSegments)];
+txt=['NrSegments     ' num2str(handles.toolbox.tsunami.NrSegments)];
 fprintf(fid,'%s \n',txt);
-for i=1:handles.Toolbox(tb).Input.NrSegments
-    txt=['Segment        ' num2str(handles.Toolbox(tb).Input.Dip(i)) ' ' num2str(handles.Toolbox(tb).Input.SlipRake(i))];
+for i=1:handles.toolbox.tsunami.NrSegments
+    txt=['Segment        ' num2str(handles.toolbox.tsunami.Dip(i)) ' ' num2str(handles.toolbox.tsunami.SlipRake(i))];
     fprintf(fid,'%s \n',txt);
 end
-for i=1:handles.Toolbox(tb).Input.NrSegments+1
-    txt=['Vertex         ' num2str(handles.Toolbox(tb).Input.FaultX(i)) ' ' num2str(handles.Toolbox(tb).Input.FaultY(i))];
+for i=1:handles.toolbox.tsunami.NrSegments+1
+    txt=['Vertex         ' num2str(handles.toolbox.tsunami.FaultX(i)) ' ' num2str(handles.toolbox.tsunami.FaultY(i))];
     fprintf(fid,'%s \n',txt);
 end
 

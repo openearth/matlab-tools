@@ -64,16 +64,16 @@ handles=getHandles;
 %% Parameters
 
 % Numerical and physical parameters
-par.cE=handles.Toolbox(tb).Input.equilibriumConcentration;
+par.cE=handles.toolbox.nourishments.equilibriumConcentration;
 par.nfac=2;
-par.d=handles.Toolbox(tb).Input.diffusionCoefficient; % Diffusion
-par.ws=handles.Toolbox(tb).Input.settlingVelocity; % Diffusion
+par.d=handles.toolbox.nourishments.diffusionCoefficient; % Diffusion
+par.ws=handles.toolbox.nourishments.settlingVelocity; % Diffusion
 par.morfac=1000;
 par.cdryb=1600;
 
 % Time parameters
-nyear=handles.Toolbox(tb).Input.nrYears;
-toutp=handles.Toolbox(tb).Input.outputInterval; % years
+nyear=handles.toolbox.nourishments.nrYears;
+toutp=handles.toolbox.nourishments.outputInterval; % years
 t0=0;
 t1=nyear*365*86400/par.morfac;
 
@@ -87,10 +87,10 @@ ntout=round(toutp*365*86400/dt/par.morfac);
 
 %% Grid and bathymetry
 
-xlim=handles.Toolbox(tb).Input.xLim;
-ylim=handles.Toolbox(tb).Input.yLim;
-dx=handles.Toolbox(tb).Input.dX;
-dy=handles.Toolbox(tb).Input.dX;
+xlim=handles.toolbox.nourishments.xLim;
+ylim=handles.toolbox.nourishments.yLim;
+dx=handles.toolbox.nourishments.dX;
+dy=handles.toolbox.nourishments.dX;
 xx=xlim(1):dx:xlim(2);
 yy=ylim(1):dy:ylim(2);
 [xg,yg]=meshgrid(xx,yy);
@@ -105,21 +105,21 @@ zz=interp2(xb,yb,zb,xg,yg);
 
 nourdep=zeros(size(dps));
 
-for ipol=1:handles.Toolbox(tb).Input.nrNourishments
+for ipol=1:handles.toolbox.nourishments.nrNourishments
     
-    xpol=handles.Toolbox(tb).Input.nourishments(ipol).polygonX;
-    ypol=handles.Toolbox(tb).Input.nourishments(ipol).polygonY;
+    xpol=handles.toolbox.nourishments.nourishments(ipol).polygonX;
+    ypol=handles.toolbox.nourishments.nourishments(ipol).polygonY;
     inpol=inpolygon(grd.xg,grd.yg,xpol,ypol);
     polarea=polyarea(xpol,ypol);
     
-    switch handles.Toolbox(tb).Input.nourishments(ipol).type
+    switch handles.toolbox.nourishments.nourishments(ipol).type
         case{'volume'}
-            nourhgt=handles.Toolbox(tb).Input.nourishments(ipol).volume/polarea;
+            nourhgt=handles.toolbox.nourishments.nourishments(ipol).volume/polarea;
             nourdep(inpol)=nourhgt;
         case{'height'}
-            nourdep(inpol)=handles.Toolbox(tb).Input.nourishments(ipol).height-dps(inpol);
+            nourdep(inpol)=handles.toolbox.nourishments.nourishments(ipol).height-dps(inpol);
         case{'thickness'}
-            nourdep(inpol)=handles.Toolbox(tb).Input.nourishments(ipol).thickness;
+            nourdep(inpol)=handles.toolbox.nourishments.nourishments(ipol).thickness;
     end
     
 end
@@ -128,20 +128,20 @@ sedthick=nourdep;
 
 %% Equilibrium concentration
 par.cE=zeros(size(grd.xg))+par.cE;
-for ipol=1:handles.Toolbox(tb).Input.nrConcentrationPolygons
-    xpol=handles.Toolbox(tb).Input.concentrationPolygons(ipol).polygonX;
-    ypol=handles.Toolbox(tb).Input.concentrationPolygons(ipol).polygonY;
+for ipol=1:handles.toolbox.nourishments.nrConcentrationPolygons
+    xpol=handles.toolbox.nourishments.concentrationPolygons(ipol).polygonX;
+    ypol=handles.toolbox.nourishments.concentrationPolygons(ipol).polygonY;
     inpol=inpolygon(grd.xg,grd.yg,xpol,ypol);
-    par.cE(inpol)=handles.Toolbox(tb).Input.concentrationPolygons(ipol).concentration;    
+    par.cE(inpol)=handles.toolbox.nourishments.concentrationPolygons(ipol).concentration;    
 end
 ceplot=par.cE; % Only used for plotting
 
 %% Residual currents
 
-switch lower(handles.Toolbox(tb).Input.currentSource)
+switch lower(handles.toolbox.nourishments.currentSource)
     case{'file'}
         % Load mat file with currents
-        s=load(handles.Toolbox(tb).Input.currentsFile);        
+        s=load(handles.toolbox.nourishments.currentsFile);        
         xx=s.x(~isnan(s.x));
         yy=s.y(~isnan(s.y));
         uu=s.u(~isnan(s.u));
@@ -152,8 +152,8 @@ switch lower(handles.Toolbox(tb).Input.currentSource)
         u(isnan(u))=0;
         v(isnan(v))=0;        
     otherwise
-        u=zeros(size(grd.xg))+handles.Toolbox(tb).Input.currentU;
-        v=zeros(size(grd.xg))+handles.Toolbox(tb).Input.currentV;        
+        u=zeros(size(grd.xg))+handles.toolbox.nourishments.currentU;
+        v=zeros(size(grd.xg))+handles.toolbox.nourishments.currentV;        
 end
 
 ug=u;
@@ -189,8 +189,8 @@ dps=dps+nourdep;
 
 sedthick0=sedthick;
 
-xl=[min(min(grd.xg))+handles.Toolbox(tb).Input.dX max(max(grd.xg))];
-yl=[min(min(grd.yg))+handles.Toolbox(tb).Input.dX max(max(grd.yg))];
+xl=[min(min(grd.xg))+handles.toolbox.nourishments.dX max(max(grd.xg))];
+yl=[min(min(grd.yg))+handles.toolbox.nourishments.dX max(max(grd.yg))];
 
 
 figure(999)
@@ -299,8 +299,8 @@ for it=1:nt
         pcolor(grd.xg,grd.yg,dps2-dps0);shading flat;axis equal;clim([-mxthick mxthick]);colorbar;
         hold on;
         quiver(grd.xg(1:2:end,1:2:end),grd.yg(1:2:end,1:2:end),ug(1:2:end,1:2:end),vg(1:2:end,1:2:end),'k');
-        for ipol=1:handles.Toolbox(tb).Input.nrNourishments
-            pol=plot(handles.Toolbox(tb).Input.nourishments(ipol).polygonX,handles.Toolbox(tb).Input.nourishments(ipol).polygonY,'r');
+        for ipol=1:handles.toolbox.nourishments.nrNourishments
+            pol=plot(handles.toolbox.nourishments.nourishments(ipol).polygonX,handles.toolbox.nourishments.nourishments(ipol).polygonY,'r');
             set(pol,'LineWidth',2);
         end
         axis equal;
@@ -312,7 +312,7 @@ for it=1:nt
 %         pcolor(grd.xg,grd.yg,c1);shading flat;axis equal;clim([0 1]);colorbar;
 %         hold on;
 %         quiver(grd.xg(1:2:end,1:2:end),grd.yg(1:2:end,1:2:end),ug(1:2:end,1:2:end),vg(1:2:end,1:2:end),'k');
-%         pol=plot(handles.Toolbox(tb).Input.polygonX,handles.Toolbox(tb).Input.polygonY,'r');
+%         pol=plot(handles.toolbox.nourishments.polygonX,handles.toolbox.nourishments.polygonY,'r');
 %         set(pol,'LineWidth',2);
 %         axis equal;
 %         set(gca,'xlim',xl,'ylim',yl);
@@ -322,8 +322,8 @@ for it=1:nt
         pcolor(grd.xg,grd.yg,sedthick2);shading flat;axis equal;clim([0 mxthick]);colorbar;
         hold on;
         quiver(grd.xg(1:2:end,1:2:end),grd.yg(1:2:end,1:2:end),ug(1:2:end,1:2:end),vg(1:2:end,1:2:end),'k');
-        for ipol=1:handles.Toolbox(tb).Input.nrNourishments
-            pol=plot(handles.Toolbox(tb).Input.nourishments(ipol).polygonX,handles.Toolbox(tb).Input.nourishments(ipol).polygonY,'r');
+        for ipol=1:handles.toolbox.nourishments.nrNourishments
+            pol=plot(handles.toolbox.nourishments.nourishments(ipol).polygonX,handles.toolbox.nourishments.nourishments(ipol).polygonY,'r');
             set(pol,'LineWidth',2);
         end
         axis equal;
@@ -334,8 +334,8 @@ for it=1:nt
         pcolor(grd.xg,grd.yg,dps2);shading flat;axis equal;clim([-5 2]);colorbar;
         hold on;
         quiver(grd.xg(1:2:end,1:2:end),grd.yg(1:2:end,1:2:end),ug(1:2:end,1:2:end),vg(1:2:end,1:2:end),'k');
-        for ipol=1:handles.Toolbox(tb).Input.nrNourishments
-            pol=plot(handles.Toolbox(tb).Input.nourishments(ipol).polygonX,handles.Toolbox(tb).Input.nourishments(ipol).polygonY,'r');
+        for ipol=1:handles.toolbox.nourishments.nrNourishments
+            pol=plot(handles.toolbox.nourishments.nourishments(ipol).polygonX,handles.toolbox.nourishments.nourishments(ipol).polygonY,'r');
             set(pol,'LineWidth',2);
         end
         axis equal;
@@ -346,8 +346,8 @@ for it=1:nt
         pcolor(grd.xg,grd.yg,ceplot);shading flat;axis equal;clim([0 0.05]);colorbar;
         hold on;
         quiver(grd.xg(1:2:end,1:2:end),grd.yg(1:2:end,1:2:end),ug(1:2:end,1:2:end),vg(1:2:end,1:2:end),'k');
-        for ipol=1:handles.Toolbox(tb).Input.nrNourishments
-            pol=plot(handles.Toolbox(tb).Input.nourishments(ipol).polygonX,handles.Toolbox(tb).Input.nourishments(ipol).polygonY,'r');
+        for ipol=1:handles.toolbox.nourishments.nrNourishments
+            pol=plot(handles.toolbox.nourishments.nourishments(ipol).polygonX,handles.toolbox.nourishments.nourishments(ipol).polygonY,'r');
             set(pol,'LineWidth',2);
         end
         axis equal;

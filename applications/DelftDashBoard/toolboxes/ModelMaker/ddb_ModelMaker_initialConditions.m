@@ -72,7 +72,7 @@ if isempty(varargin)
     % setUIElements('modelmakerpanel.initialconditions');
     setHandles(handles);
 %    ddb_plotModelMaker('activate');
-%    if ~isempty(handles.Toolbox(tb).Input.gridOutlineHandle)
+%    if ~isempty(handles.toolbox.modelmaker.gridOutlineHandle)
 %        setInstructions({'Left-click and drag markers to change corner points','Right-click and drag YELLOW marker to move entire box', ...
 %            'Right-click and drag RED markers to rotate box (note: rotating grid in geographic coordinate systems is NOT recommended!)'});
 %    end

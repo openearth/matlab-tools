@@ -1,4 +1,4 @@
-function ddb_getToolboxData(localdir, a)
+function ddb_getToolboxData(localdir, name, varargin)
 %DDB_GETTOOLBOXDATA  Download toolbox related files (data, exe, mat) from
 %   OpenDAP server
 %
@@ -63,9 +63,16 @@ function ddb_getToolboxData(localdir, a)
 handles = getHandles;
 
 % Try to download data from server
-name = handles.Toolbox(a).name;
+
 try
-    url = ['http://opendap.deltares.nl/static/deltares/delftdashboard/toolboxes/' name '/' name '.xml'];
+
+    servername=name;
+
+    if ~isempty(varargin)
+        servername=varargin{1};
+    end
+    
+    url = ['http://opendap.deltares.nl/static/deltares/delftdashboard/toolboxes/' servername '/' servername '.xml'];
     xmlfile = [name '.xml'];
     toolboxdata = ddb_getXmlData(localdir,url,xmlfile);
     
@@ -74,8 +81,8 @@ try
             % Very (!) dirty work around for now
             vrsn=str2double(handles.delftDashBoardVersion(end-3:end));
             if vrsn>=7213
-                urlwrite(['http://opendap.deltares.nl/static/deltares/delftdashboard/toolboxes/' name '/ObservationStations.new.xml'],[localdir 'ObservationStations.xml']);
-                urlwrite(['http://opendap.deltares.nl/static/deltares/delftdashboard/toolboxes/' name '/ndbc.new.mat'],[localdir 'ndbc.mat']);
+                urlwrite(['http://opendap.deltares.nl/static/deltares/delftdashboard/toolboxes/' servername '/ObservationStations.new.xml'],[localdir 'ObservationStations.xml']);
+                urlwrite(['http://opendap.deltares.nl/static/deltares/delftdashboard/toolboxes/' servername '/ndbc.new.mat'],[localdir 'ndbc.mat']);
             end
     end
 
@@ -83,8 +90,8 @@ try
         if isfield(toolboxdata,'file')
             % Copy files from server
             for ii=1:length(toolboxdata.file)
-                if  toolboxdata.file(ii).update == 1 || ~exist([handles.Toolbox(a).dataDir filesep toolboxdata.file(ii).name],'file')
-                    ddb_urlwrite(toolboxdata.file(ii).URL,[handles.Toolbox(a).dataDir filesep toolboxdata.file(ii).name]);
+                if  toolboxdata.file(ii).update == 1 || ~exist([handles.toolbox.(name).dataDir filesep toolboxdata.file(ii).name],'file')
+                    ddb_urlwrite(toolboxdata.file(ii).URL,[handles.toolbox.(name).dataDir filesep toolboxdata.file(ii).name]);
                 end
             end
         end

@@ -81,42 +81,42 @@ end
 %%
 function showInfo
 handles=getHandles;
-iac=handles.Toolbox(tb).Input.bathymetry.activeDataset;
+iac=handles.toolbox.modelmaker.bathymetry.activeDataset;
 ddb_showBathyInfo(handles,iac);
 
 %%
 function useDataset
 
 handles=getHandles;
-iac=handles.Toolbox(tb).Input.bathymetry.activeDataset;
+iac=handles.toolbox.modelmaker.bathymetry.activeDataset;
 % Check if dataset is already selected
 usedd=1;
-for i=1:handles.Toolbox(tb).Input.bathymetry.nrSelectedDatasets
-    if handles.Toolbox(tb).Input.bathymetry.selectedDatasets(i).number==iac
+for i=1:handles.toolbox.modelmaker.bathymetry.nrSelectedDatasets
+    if handles.toolbox.modelmaker.bathymetry.selectedDatasets(i).number==iac
         usedd=0;
         break
     end
 end
 if usedd
-    handles.Toolbox(tb).Input.bathymetry.nrSelectedDatasets=handles.Toolbox(tb).Input.bathymetry.nrSelectedDatasets+1;
-    n=handles.Toolbox(tb).Input.bathymetry.nrSelectedDatasets;
+    handles.toolbox.modelmaker.bathymetry.nrSelectedDatasets=handles.toolbox.modelmaker.bathymetry.nrSelectedDatasets+1;
+    n=handles.toolbox.modelmaker.bathymetry.nrSelectedDatasets;
     
-    handles.Toolbox(tb).Input.bathymetry.selectedDatasets(n).number=handles.Toolbox(tb).Input.bathymetry.activeDataset;
-    handles.Toolbox(tb).Input.bathymetry.selectedDatasets(n).name=handles.bathymetry.datasets{iac};
-    handles.Toolbox(tb).Input.bathymetry.selectedDatasets(n).type=handles.bathymetry.dataset(iac).type;
-    handles.Toolbox(tb).Input.bathymetry.selectedDatasets(n).verticalDatum=handles.bathymetry.dataset(iac).verticalCoordinateSystem.name;
-    handles.Toolbox(tb).Input.bathymetry.selectedDatasets(n).verticalLevel=handles.bathymetry.dataset(iac).verticalCoordinateSystem.level;
+    handles.toolbox.modelmaker.bathymetry.selectedDatasets(n).number=handles.toolbox.modelmaker.bathymetry.activeDataset;
+    handles.toolbox.modelmaker.bathymetry.selectedDatasets(n).name=handles.bathymetry.datasets{iac};
+    handles.toolbox.modelmaker.bathymetry.selectedDatasets(n).type=handles.bathymetry.dataset(iac).type;
+    handles.toolbox.modelmaker.bathymetry.selectedDatasets(n).verticalDatum=handles.bathymetry.dataset(iac).verticalCoordinateSystem.name;
+    handles.toolbox.modelmaker.bathymetry.selectedDatasets(n).verticalLevel=handles.bathymetry.dataset(iac).verticalCoordinateSystem.level;
 
     % Default values
-    handles.Toolbox(tb).Input.bathymetry.selectedDatasets(n).zMax=1e4;
-    handles.Toolbox(tb).Input.bathymetry.selectedDatasets(n).zMin=-1e4;
+    handles.toolbox.modelmaker.bathymetry.selectedDatasets(n).zMax=1e4;
+    handles.toolbox.modelmaker.bathymetry.selectedDatasets(n).zMin=-1e4;
 
-    handles.Toolbox(tb).Input.bathymetry.selectedDatasets(n).startDate=floor(now);
-    handles.Toolbox(tb).Input.bathymetry.selectedDatasets(n).searchInterval=-1e5;
+    handles.toolbox.modelmaker.bathymetry.selectedDatasets(n).startDate=floor(now);
+    handles.toolbox.modelmaker.bathymetry.selectedDatasets(n).searchInterval=-1e5;
 
-    handles.Toolbox(tb).Input.bathymetry.selectedDatasetNames{n}=handles.bathymetry.longNames{iac};
+    handles.toolbox.modelmaker.bathymetry.selectedDatasetNames{n}=handles.bathymetry.longNames{iac};
     
-    handles.Toolbox(tb).Input.bathymetry.activeSelectedDataset=n;
+    handles.toolbox.modelmaker.bathymetry.activeSelectedDataset=n;
     
     setHandles(handles);
 end
@@ -125,14 +125,14 @@ end
 function removeDataset
 % Remove selected dataset
 handles=getHandles;
-if handles.Toolbox(tb).Input.bathymetry.nrSelectedDatasets>0
-    iac=handles.Toolbox(tb).Input.bathymetry.activeSelectedDataset;    
-    handles.Toolbox(tb).Input.bathymetry.selectedDatasets = removeFromStruc(handles.Toolbox(tb).Input.bathymetry.selectedDatasets, iac);
-    handles.Toolbox(tb).Input.bathymetry.selectedDatasetNames = removeFromCellArray(handles.Toolbox(tb).Input.bathymetry.selectedDatasetNames, iac);
-    handles.Toolbox(tb).Input.bathymetry.nrSelectedDatasets=handles.Toolbox(tb).Input.bathymetry.nrSelectedDatasets-1;
-    handles.Toolbox(tb).Input.bathymetry.activeSelectedDataset=max(min(handles.Toolbox(tb).Input.bathymetry.activeSelectedDataset,handles.Toolbox(tb).Input.bathymetry.nrSelectedDatasets),1);
-    if handles.Toolbox(tb).Input.bathymetry.nrSelectedDatasets==0
-        handles.Toolbox(tb).Input.bathymetry.selectedDatasets(1).type='unknown';
+if handles.toolbox.modelmaker.bathymetry.nrSelectedDatasets>0
+    iac=handles.toolbox.modelmaker.bathymetry.activeSelectedDataset;    
+    handles.toolbox.modelmaker.bathymetry.selectedDatasets = removeFromStruc(handles.toolbox.modelmaker.bathymetry.selectedDatasets, iac);
+    handles.toolbox.modelmaker.bathymetry.selectedDatasetNames = removeFromCellArray(handles.toolbox.modelmaker.bathymetry.selectedDatasetNames, iac);
+    handles.toolbox.modelmaker.bathymetry.nrSelectedDatasets=handles.toolbox.modelmaker.bathymetry.nrSelectedDatasets-1;
+    handles.toolbox.modelmaker.bathymetry.activeSelectedDataset=max(min(handles.toolbox.modelmaker.bathymetry.activeSelectedDataset,handles.toolbox.modelmaker.bathymetry.nrSelectedDatasets),1);
+    if handles.toolbox.modelmaker.bathymetry.nrSelectedDatasets==0
+        handles.toolbox.modelmaker.bathymetry.selectedDatasets(1).type='unknown';
     end    
     setHandles(handles);
 end
@@ -141,11 +141,11 @@ end
 function datasetUp
 % Move selected dataset up
 handles=getHandles;
-if handles.Toolbox(tb).Input.bathymetry.nrSelectedDatasets>0
-    iac=handles.Toolbox(tb).Input.bathymetry.activeSelectedDataset;
-    handles.Toolbox(tb).Input.bathymetry.selectedDatasetNames=moveUpDownInCellArray(handles.Toolbox(tb).Input.bathymetry.selectedDatasetNames,iac,'up');
-    [handles.Toolbox(tb).Input.bathymetry.selectedDatasets,iac,nr] = UpDownDeleteStruc(handles.Toolbox(tb).Input.bathymetry.selectedDatasets, iac, 'up');
-    handles.Toolbox(tb).Input.bathymetry.activeSelectedDataset=iac;
+if handles.toolbox.modelmaker.bathymetry.nrSelectedDatasets>0
+    iac=handles.toolbox.modelmaker.bathymetry.activeSelectedDataset;
+    handles.toolbox.modelmaker.bathymetry.selectedDatasetNames=moveUpDownInCellArray(handles.toolbox.modelmaker.bathymetry.selectedDatasetNames,iac,'up');
+    [handles.toolbox.modelmaker.bathymetry.selectedDatasets,iac,nr] = UpDownDeleteStruc(handles.toolbox.modelmaker.bathymetry.selectedDatasets, iac, 'up');
+    handles.toolbox.modelmaker.bathymetry.activeSelectedDataset=iac;
     setHandles(handles);
 end
 
@@ -154,11 +154,11 @@ function datasetDown
 
 % Move selected dataset down
 handles=getHandles;
-if handles.Toolbox(tb).Input.bathymetry.nrSelectedDatasets>0
-    iac=handles.Toolbox(tb).Input.bathymetry.activeSelectedDataset;
-    handles.Toolbox(tb).Input.bathymetry.selectedDatasetNames=moveUpDownInCellArray(handles.Toolbox(tb).Input.bathymetry.selectedDatasetNames,iac,'down');
-    [handles.Toolbox(tb).Input.bathymetry.selectedDatasets,iac,nr] = UpDownDeleteStruc(handles.Toolbox(tb).Input.bathymetry.selectedDatasets, iac, 'down');
-    handles.Toolbox(tb).Input.bathymetry.activeSelectedDataset=iac;
+if handles.toolbox.modelmaker.bathymetry.nrSelectedDatasets>0
+    iac=handles.toolbox.modelmaker.bathymetry.activeSelectedDataset;
+    handles.toolbox.modelmaker.bathymetry.selectedDatasetNames=moveUpDownInCellArray(handles.toolbox.modelmaker.bathymetry.selectedDatasetNames,iac,'down');
+    [handles.toolbox.modelmaker.bathymetry.selectedDatasets,iac,nr] = UpDownDeleteStruc(handles.toolbox.modelmaker.bathymetry.selectedDatasets, iac, 'down');
+    handles.toolbox.modelmaker.bathymetry.activeSelectedDataset=iac;
     setHandles(handles);
 end
 
@@ -166,30 +166,30 @@ end
 function generateBathymetry
 
 handles=getHandles;
-for i=1:handles.Toolbox(tb).Input.bathymetry.nrSelectedDatasets
-    nr=handles.Toolbox(tb).Input.bathymetry.selectedDatasets(i).number;
+for i=1:handles.toolbox.modelmaker.bathymetry.nrSelectedDatasets
+    nr=handles.toolbox.modelmaker.bathymetry.selectedDatasets(i).number;
     datasets{i}=handles.bathymetry.datasets{nr};
-    startdates(i)=handles.Toolbox(tb).Input.bathymetry.selectedDatasets(i).startDate;
-    searchintervals(i)=handles.Toolbox(tb).Input.bathymetry.selectedDatasets(i).searchInterval;
-    zmin(i)=handles.Toolbox(tb).Input.bathymetry.selectedDatasets(i).zMin;
-    zmax(i)=handles.Toolbox(tb).Input.bathymetry.selectedDatasets(i).zMax;
-    verticaloffsets(i)=handles.Toolbox(tb).Input.bathymetry.selectedDatasets(i).verticalLevel;
+    startdates(i)=handles.toolbox.modelmaker.bathymetry.selectedDatasets(i).startDate;
+    searchintervals(i)=handles.toolbox.modelmaker.bathymetry.selectedDatasets(i).searchInterval;
+    zmin(i)=handles.toolbox.modelmaker.bathymetry.selectedDatasets(i).zMin;
+    zmax(i)=handles.toolbox.modelmaker.bathymetry.selectedDatasets(i).zMax;
+    verticaloffsets(i)=handles.toolbox.modelmaker.bathymetry.selectedDatasets(i).verticalLevel;
 end
-verticaloffset=handles.Toolbox(tb).Input.bathymetry.verticalDatum;
+verticaloffset=handles.toolbox.modelmaker.bathymetry.verticalDatum;
 
 switch lower(handles.Model(md).name)
     case{'delft3dflow'}
         handles=ddb_generateBathymetry_Delft3DFLOW(handles,ad,'datasets',datasets,'startdates',startdates,'searchintervals',searchintervals, ...
             'zmin',zmin,'zmax',zmax,'verticaloffsets',verticaloffsets,'verticaloffset',verticaloffset,'internaldiffusion', ...
-            handles.Toolbox(tb).Input.bathymetry.internalDiffusion,'internaldiffusionrange',handles.Toolbox(tb).Input.bathymetry.internalDiffusionRange);
+            handles.toolbox.modelmaker.bathymetry.internalDiffusion,'internaldiffusionrange',handles.toolbox.modelmaker.bathymetry.internalDiffusionRange);
     case{'delft3dwave'}
         handles=ddb_generateBathymetry_Delft3DWAVE(handles,awg,'datasets',datasets,'startdates',startdates,'searchintervals',searchintervals, ...
             'zmin',zmin,'zmax',zmax,'verticaloffsets',verticaloffsets,'verticaloffset',verticaloffset, ...
-            handles.Toolbox(tb).Input.bathymetry.internalDiffusion,'internaldiffusionrange',handles.Toolbox(tb).Input.bathymetry.internalDiffusionRange);
+            handles.toolbox.modelmaker.bathymetry.internalDiffusion,'internaldiffusionrange',handles.toolbox.modelmaker.bathymetry.internalDiffusionRange);
     case{'dflowfm'}
         handles=ddb_generateBathymetry_DFlowFM(handles,awg,'datasets',datasets,'startdates',startdates,'searchintervals',searchintervals, ...
             'zmin',zmin,'zmax',zmax,'verticaloffsets',verticaloffsets,'verticaloffset',verticaloffset, ...
-            handles.Toolbox(tb).Input.bathymetry.internalDiffusion,'internaldiffusionrange',handles.Toolbox(tb).Input.bathymetry.internalDiffusionRange);
+            handles.toolbox.modelmaker.bathymetry.internalDiffusion,'internaldiffusionrange',handles.toolbox.modelmaker.bathymetry.internalDiffusionRange);
 end
 
 setHandles(handles);

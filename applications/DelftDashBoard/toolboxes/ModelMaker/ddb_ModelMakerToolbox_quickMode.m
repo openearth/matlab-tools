@@ -67,7 +67,7 @@ if isempty(varargin)
     % New tab selected
     ddb_refreshScreen;
     ddb_plotModelMaker('activate');
-    if ~isempty(handles.Toolbox(tb).Input.gridOutlineHandle)
+    if ~isempty(handles.toolbox.modelmaker.gridOutlineHandle)
         setInstructions({'Left-click and drag markers to change corner points','Right-click and drag YELLOW marker to move entire box', ...
             'Right-click and drag RED markers to rotate box (note: rotating grid in geographic coordinate systems is NOT recommended!)'});
     end
@@ -103,7 +103,7 @@ function drawGridOutline
 handles=getHandles;
 setInstructions({'','','Use mouse to draw grid outline on map'});
 UIRectangle(handles.GUIHandles.mapAxis,'draw','Tag','GridOutline','Marker','o','MarkerEdgeColor','k','MarkerSize',6,'rotate',1,'callback',@updateGridOutline,'onstart',@deleteGridOutline, ...
-    'ddx',handles.Toolbox(tb).Input.dX,'ddy',handles.Toolbox(tb).Input.dY);
+    'ddx',handles.toolbox.modelmaker.dX,'ddy',handles.toolbox.modelmaker.dY);
 
 %%
 function updateGridOutline(x0,y0,dx,dy,rotation,h)
@@ -113,15 +113,15 @@ setInstructions({'Left-click and drag markers to change corner points','Right-cl
 
 handles=getHandles;
 
-handles.Toolbox(tb).Input.gridOutlineHandle=h;
+handles.toolbox.modelmaker.gridOutlineHandle=h;
 
-handles.Toolbox(tb).Input.xOri=x0;
-handles.Toolbox(tb).Input.yOri=y0;
-handles.Toolbox(tb).Input.rotation=rotation;
-handles.Toolbox(tb).Input.nX=round(dx/handles.Toolbox(tb).Input.dX);
-handles.Toolbox(tb).Input.nY=round(dy/handles.Toolbox(tb).Input.dY);
-handles.Toolbox(tb).Input.lengthX=dx;
-handles.Toolbox(tb).Input.lengthY=dy;
+handles.toolbox.modelmaker.xOri=x0;
+handles.toolbox.modelmaker.yOri=y0;
+handles.toolbox.modelmaker.rotation=rotation;
+handles.toolbox.modelmaker.nX=round(dx/handles.toolbox.modelmaker.dX);
+handles.toolbox.modelmaker.nY=round(dy/handles.toolbox.modelmaker.dY);
+handles.toolbox.modelmaker.lengthX=dx;
+handles.toolbox.modelmaker.lengthY=dy;
 
 setHandles(handles);
 
@@ -130,9 +130,9 @@ gui_updateActiveTab;
 %%
 function deleteGridOutline
 handles=getHandles;
-if ~isempty(handles.Toolbox(tb).Input.gridOutlineHandle)
+if ~isempty(handles.toolbox.modelmaker.gridOutlineHandle)
     try
-        delete(handles.Toolbox(tb).Input.gridOutlineHandle);
+        delete(handles.toolbox.modelmaker.gridOutlineHandle);
     end
 end
 
@@ -141,21 +141,21 @@ function editGridOutline
 
 handles=getHandles;
 
-if ~isempty(handles.Toolbox(tb).Input.gridOutlineHandle)
+if ~isempty(handles.toolbox.modelmaker.gridOutlineHandle)
     try
-        delete(handles.Toolbox(tb).Input.gridOutlineHandle);
+        delete(handles.toolbox.modelmaker.gridOutlineHandle);
     end
 end
 
-handles.Toolbox(tb).Input.lengthX=handles.Toolbox(tb).Input.dX*handles.Toolbox(tb).Input.nX;
-handles.Toolbox(tb).Input.lengthY=handles.Toolbox(tb).Input.dY*handles.Toolbox(tb).Input.nY;
+handles.toolbox.modelmaker.lengthX=handles.toolbox.modelmaker.dX*handles.toolbox.modelmaker.nX;
+handles.toolbox.modelmaker.lengthY=handles.toolbox.modelmaker.dY*handles.toolbox.modelmaker.nY;
 
-lenx=handles.Toolbox(tb).Input.dX*handles.Toolbox(tb).Input.nX;
-leny=handles.Toolbox(tb).Input.dY*handles.Toolbox(tb).Input.nY;
+lenx=handles.toolbox.modelmaker.dX*handles.toolbox.modelmaker.nX;
+leny=handles.toolbox.modelmaker.dY*handles.toolbox.modelmaker.nY;
 h=UIRectangle(handles.GUIHandles.mapAxis,'plot','Tag','GridOutline','Marker','o','MarkerEdgeColor','k','MarkerSize',6,'rotate',1,'callback',@updateGridOutline, ...
-    'x0',handles.Toolbox(tb).Input.xOri,'y0',handles.Toolbox(tb).Input.yOri,'dx',lenx,'dy',leny,'rotation',handles.Toolbox(tb).Input.rotation, ...
-    'ddx',handles.Toolbox(tb).Input.dX,'ddy',handles.Toolbox(tb).Input.dY);
-handles.Toolbox(tb).Input.gridOutlineHandle=h;
+    'x0',handles.toolbox.modelmaker.xOri,'y0',handles.toolbox.modelmaker.yOri,'dx',lenx,'dy',leny,'rotation',handles.toolbox.modelmaker.rotation, ...
+    'ddx',handles.toolbox.modelmaker.dX,'ddy',handles.toolbox.modelmaker.dY);
+handles.toolbox.modelmaker.gridOutlineHandle=h;
 
 setHandles(handles);
 
@@ -164,32 +164,32 @@ function editResolution
 
 handles=getHandles;
 
-lenx=handles.Toolbox(tb).Input.lengthX;
-leny=handles.Toolbox(tb).Input.lengthY;
+lenx=handles.toolbox.modelmaker.lengthX;
+leny=handles.toolbox.modelmaker.lengthY;
 
-dx=handles.Toolbox(tb).Input.dX;
-dy=handles.Toolbox(tb).Input.dY;
+dx=handles.toolbox.modelmaker.dX;
+dy=handles.toolbox.modelmaker.dY;
 
 nx=round(lenx/max(dx,1e-9));
 ny=round(leny/max(dy,1e-9));
 
-handles.Toolbox(tb).Input.nX=nx;
-handles.Toolbox(tb).Input.nY=ny;
+handles.toolbox.modelmaker.nX=nx;
+handles.toolbox.modelmaker.nY=ny;
 
-handles.Toolbox(tb).Input.lengthX=nx*dx;
-handles.Toolbox(tb).Input.lengthY=ny*dy;
+handles.toolbox.modelmaker.lengthX=nx*dx;
+handles.toolbox.modelmaker.lengthY=ny*dy;
 
-if ~isempty(handles.Toolbox(tb).Input.gridOutlineHandle)
+if ~isempty(handles.toolbox.modelmaker.gridOutlineHandle)
     try
-        delete(handles.Toolbox(tb).Input.gridOutlineHandle);
+        delete(handles.toolbox.modelmaker.gridOutlineHandle);
     end
 end
 
 h=UIRectangle(handles.GUIHandles.mapAxis,'plot','Tag','GridOutline','Marker','o','MarkerEdgeColor','k','MarkerSize',6,'rotate',1,'callback',@updateGridOutline, ...
-    'x0',handles.Toolbox(tb).Input.xOri,'y0',handles.Toolbox(tb).Input.yOri,'dx',handles.Toolbox(tb).Input.lengthX,'dy',handles.Toolbox(tb).Input.lengthY, ...
-    'rotation',handles.Toolbox(tb).Input.rotation, ...
-    'ddx',handles.Toolbox(tb).Input.dX,'ddy',handles.Toolbox(tb).Input.dY);
-handles.Toolbox(tb).Input.gridOutlineHandle=h;
+    'x0',handles.toolbox.modelmaker.xOri,'y0',handles.toolbox.modelmaker.yOri,'dx',handles.toolbox.modelmaker.lengthX,'dy',handles.toolbox.modelmaker.lengthY, ...
+    'rotation',handles.toolbox.modelmaker.rotation, ...
+    'ddx',handles.toolbox.modelmaker.dX,'ddy',handles.toolbox.modelmaker.dY);
+handles.toolbox.modelmaker.gridOutlineHandle=h;
 
 setHandles(handles);
 
@@ -200,7 +200,7 @@ handles=getHandles;
 
 npmax=20000000;
 
-if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=npmax
+if handles.toolbox.modelmaker.nX*handles.toolbox.modelmaker.nY<=npmax
     
     [filename, pathname, filterindex] = uiputfile('*.grd', 'Grid File Name',[handles.Model(md).Input(ad).attName '.grd']);
     
@@ -208,14 +208,14 @@ if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=npmax
         
         wb = waitbox('Generating grid ...');pause(0.1);
         
-        xori=handles.Toolbox(tb).Input.xOri;
-        nx=handles.Toolbox(tb).Input.nX;
-        dx=handles.Toolbox(tb).Input.dX;
-        yori=handles.Toolbox(tb).Input.yOri;
-        ny=handles.Toolbox(tb).Input.nY;
-        dy=handles.Toolbox(tb).Input.dY;
-        rot=pi*handles.Toolbox(tb).Input.rotation/180;
-        zmax=handles.Toolbox(tb).Input.zMax;
+        xori=handles.toolbox.modelmaker.xOri;
+        nx=handles.toolbox.modelmaker.nX;
+        dx=handles.toolbox.modelmaker.dX;
+        yori=handles.toolbox.modelmaker.yOri;
+        ny=handles.toolbox.modelmaker.nY;
+        dy=handles.toolbox.modelmaker.dY;
+        rot=pi*handles.toolbox.modelmaker.rotation/180;
+        zmax=handles.toolbox.modelmaker.zMax;
         
         % Find minimum grid resolution (in metres)
         dmin=min(dx,dy);
@@ -228,12 +228,12 @@ if handles.Toolbox(tb).Input.nX*handles.Toolbox(tb).Input.nY<=npmax
         % Find coordinates of corner points
         x(1)=xori;
         y(1)=yori;
-        x(2)=x(1)+nx*dx*cos(pi*handles.Toolbox(tb).Input.rotation/180);
-        y(2)=y(1)+nx*dx*sin(pi*handles.Toolbox(tb).Input.rotation/180);
-        x(3)=x(2)+ny*dy*cos(pi*(handles.Toolbox(tb).Input.rotation+90)/180);
-        y(3)=y(2)+ny*dy*sin(pi*(handles.Toolbox(tb).Input.rotation+90)/180);
-        x(4)=x(3)+nx*dx*cos(pi*(handles.Toolbox(tb).Input.rotation+180)/180);
-        y(4)=y(3)+nx*dx*sin(pi*(handles.Toolbox(tb).Input.rotation+180)/180);
+        x(2)=x(1)+nx*dx*cos(pi*handles.toolbox.modelmaker.rotation/180);
+        y(2)=y(1)+nx*dx*sin(pi*handles.toolbox.modelmaker.rotation/180);
+        x(3)=x(2)+ny*dy*cos(pi*(handles.toolbox.modelmaker.rotation+90)/180);
+        y(3)=y(2)+ny*dy*sin(pi*(handles.toolbox.modelmaker.rotation+90)/180);
+        x(4)=x(3)+nx*dx*cos(pi*(handles.toolbox.modelmaker.rotation+180)/180);
+        y(4)=y(3)+nx*dx*sin(pi*(handles.toolbox.modelmaker.rotation+180)/180);
         
         xl(1)=min(x);
         xl(2)=max(x);

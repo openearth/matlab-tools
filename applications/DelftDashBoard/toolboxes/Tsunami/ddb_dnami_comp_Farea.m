@@ -32,20 +32,20 @@ function handles=ddb_dnami_comp_Farea(handles)
 
 degrad=pi/180;
 
-faultX=handles.Toolbox(tb).Input.FaultX;
-faultY=handles.Toolbox(tb).Input.FaultY;
-fwidth=handles.Toolbox(tb).Input.FaultWidth;
-dip=handles.Toolbox(tb).Input.Dip;
-strike=handles.Toolbox(tb).Input.Strike;
-fdtop=handles.Toolbox(tb).Input.DepthFromTop;
-nseg=handles.Toolbox(tb).Input.NrSegments;
-userfaultL=handles.Toolbox(tb).Input.FaultLength;
+faultX=handles.toolbox.tsunami.FaultX;
+faultY=handles.toolbox.tsunami.FaultY;
+fwidth=handles.toolbox.tsunami.FaultWidth;
+dip=handles.toolbox.tsunami.Dip;
+strike=handles.toolbox.tsunami.Strike;
+fdtop=handles.toolbox.tsunami.DepthFromTop;
+nseg=handles.toolbox.tsunami.NrSegments;
+userfaultL=handles.toolbox.tsunami.FaultLength;
 
-if (handles.Toolbox(tb).Input.Magnitude > 0)
+if (handles.toolbox.tsunami.Magnitude > 0)
     %
     % Okada definition
     %
-    if handles.Toolbox(tb).Input.RelatedToEpicentre==0
+    if handles.toolbox.tsunami.RelatedToEpicentre==0
         fw = fwidth*cos(dip(1)*degrad);
         if (fdtop >0)
             fd = fdtop /sin(dip(1)*degrad);
@@ -73,7 +73,7 @@ if (handles.Toolbox(tb).Input.Magnitude > 0)
         % Seismological definition (EQ positioned at the centre of the Fault Area)
         %
         fw = fwidth*cos(dip(1)*degrad);
-        [xvtc,yvtc]=ddb_det_nxtvrtx(handles.Toolbox(tb).Input.Longitude, handles.Toolbox(tb).Input.Latitude, strike(1)-90., fw/2);
+        [xvtc,yvtc]=ddb_det_nxtvrtx(handles.toolbox.tsunami.Longitude, handles.toolbox.tsunami.Latitude, strike(1)-90., fw/2);
         [xvrt(1,1),yvrt(1,1)]=ddb_det_nxtvrtx(xvtc, yvtc, strike(1)+180., userfaultL(1)/2);
         [xvrt(1,2),yvrt(1,2)]=ddb_det_nxtvrtx(xvrt(1,1), yvrt(1,1), strike(1), userfaultL(1));
         [xvrt(1,3),yvrt(1,3)]=ddb_det_nxtvrtx(xvrt(1,2), yvrt(1,2), strike(1)+90., fw);
@@ -87,6 +87,6 @@ if (handles.Toolbox(tb).Input.Magnitude > 0)
     end
 end
 
-handles.Toolbox(tb).Input.VertexX=xvrt;
-handles.Toolbox(tb).Input.VertexY=yvrt;
+handles.toolbox.tsunami.VertexX=xvrt;
+handles.toolbox.tsunami.VertexY=yvrt;
 

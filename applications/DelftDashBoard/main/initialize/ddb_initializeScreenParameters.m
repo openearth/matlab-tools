@@ -98,7 +98,7 @@ handles.screenParameters.xLim=[-180 180];
 handles.screenParameters.yLim=[-90 90];
 
 handles.screenParameters.activeTab='Toolbox';
-handles.activeToolbox.name='ModelMaker';
+handles.activeToolbox.name='modelmaker';
 handles.activeToolbox.nr=1;
 
 setHandles(handles);

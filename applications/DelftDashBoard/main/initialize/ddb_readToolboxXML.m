@@ -1,4 +1,4 @@
-function handles = ddb_readToolboxXML(handles, j)
+function handles = ddb_readToolboxXML(handles, name)
 %DDB_READTOOLBOXXML  One line description goes here.
 %
 %   More detailed description goes here.
@@ -62,35 +62,35 @@ function handles = ddb_readToolboxXML(handles, j)
 
 %%
 
-fname=[handles.Toolbox(j).name '.xml'];
+fname=[handles.toolbox.(name).name '.xml'];
 
-xmldir=handles.Toolbox(j).xmlDir;
+xmldir=handles.toolbox.(name).xmlDir;
 
-handles.Toolbox(j).useXML=0;
+handles.toolbox.(name).useXML=0;
 
-handles.Toolbox(j).enable=0;
+handles.toolbox.(name).enable=0;
 
 if exist([xmldir fname],'file')>0
     
-    handles.Toolbox(j).useXML=1;
+    handles.toolbox.(name).useXML=1;
     
-    xml=gui_readXMLfile(fname,xmldir,'variableprefix','Toolbox(tb).Input');
+    xml=gui_readXMLfile(fname,xmldir,'variableprefix',['toolbox.' name]);
     
-    handles.Toolbox(j).longName=xml.longname;
-    handles.Toolbox(j).enable=xml.enable;
+    handles.toolbox.(name).longName=xml.longname;
+    handles.toolbox.(name).enable=xml.enable;
     
-    handles.Toolbox(j).formodel=[];
+    handles.toolbox.(name).formodel=[];
     
     if isfield(xml,'formodel')
         if iscell(xml.formodel)
             for ii=1:length(xml.formodel)
-                handles.Toolbox(j).formodel{ii}=xml.formodel(ii).formodel;
+                handles.toolbox.(name).formodel{ii}=xml.formodel(ii).formodel;
             end
         else
-            handles.Toolbox(j).formodel{1}=xml.formodel;
+            handles.toolbox.(name).formodel{1}=xml.formodel;
         end
     end
     
 end
 
-handles.Toolbox(j).GUI.element=xml.element;
+handles.toolbox.(name).GUI.element=xml.element;

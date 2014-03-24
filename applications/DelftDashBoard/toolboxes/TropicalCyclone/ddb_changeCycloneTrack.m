@@ -77,9 +77,9 @@ end
 setInstructions({'','Left-click and drag track vertices to change track position','Right-click track vertices to change cyclone parameters'});
 
 
-handles.Toolbox(tb).Input.nrTrackPoints=length(x);
-handles.Toolbox(tb).Input.trackX=x;
-handles.Toolbox(tb).Input.trackY=y;
+handles.toolbox.tropicalcyclone.nrTrackPoints=length(x);
+handles.toolbox.tropicalcyclone.trackX=x;
+handles.toolbox.tropicalcyclone.trackY=y;
 
 if isempty(nr)
 
@@ -89,19 +89,19 @@ if isempty(nr)
     try
         delete(h);
     end
-    handles.Toolbox(tb).Input.trackhandle=[];
+    handles.toolbox.tropicalcyclone.trackhandle=[];
 
-    handles.Toolbox(tb).Input.trackT=handles.Toolbox(tb).Input.startTime:handles.Toolbox(tb).Input.timeStep/24:handles.Toolbox(tb).Input.startTime+(length(x)-1)*handles.Toolbox(tb).Input.timeStep/24;
+    handles.toolbox.tropicalcyclone.trackT=handles.toolbox.tropicalcyclone.startTime:handles.toolbox.tropicalcyclone.timeStep/24:handles.toolbox.tropicalcyclone.startTime+(length(x)-1)*handles.toolbox.tropicalcyclone.timeStep/24;
     zers=zeros(length(x),4);
-    handles.Toolbox(tb).Input.trackVMax=zers+handles.Toolbox(tb).Input.vMax;
-    handles.Toolbox(tb).Input.trackPDrop=zers+handles.Toolbox(tb).Input.pDrop;
-    handles.Toolbox(tb).Input.trackRMax=zers+handles.Toolbox(tb).Input.rMax;
-    handles.Toolbox(tb).Input.trackR100=zers+handles.Toolbox(tb).Input.r100;
-    handles.Toolbox(tb).Input.trackR65=zers+handles.Toolbox(tb).Input.r65;
-    handles.Toolbox(tb).Input.trackR50=zers+handles.Toolbox(tb).Input.r50;
-    handles.Toolbox(tb).Input.trackR35=zers+handles.Toolbox(tb).Input.r35;
-    handles.Toolbox(tb).Input.trackA=zers+handles.Toolbox(tb).Input.parA;
-    handles.Toolbox(tb).Input.trackB=zers+handles.Toolbox(tb).Input.parB;
+    handles.toolbox.tropicalcyclone.trackVMax=zers+handles.toolbox.tropicalcyclone.vMax;
+    handles.toolbox.tropicalcyclone.trackPDrop=zers+handles.toolbox.tropicalcyclone.pDrop;
+    handles.toolbox.tropicalcyclone.trackRMax=zers+handles.toolbox.tropicalcyclone.rMax;
+    handles.toolbox.tropicalcyclone.trackR100=zers+handles.toolbox.tropicalcyclone.r100;
+    handles.toolbox.tropicalcyclone.trackR65=zers+handles.toolbox.tropicalcyclone.r65;
+    handles.toolbox.tropicalcyclone.trackR50=zers+handles.toolbox.tropicalcyclone.r50;
+    handles.toolbox.tropicalcyclone.trackR35=zers+handles.toolbox.tropicalcyclone.r35;
+    handles.toolbox.tropicalcyclone.trackA=zers+handles.toolbox.tropicalcyclone.parA;
+    handles.toolbox.tropicalcyclone.trackB=zers+handles.toolbox.tropicalcyclone.parB;
     
     handles=ddb_setTrackTableValues(handles);
     
@@ -109,11 +109,11 @@ if isempty(nr)
     
     ddb_plotCycloneTrack;
 
-    if handles.Toolbox(tb).Input.trackT(1)>handles.Model(md).Input(ad).startTime
+    if handles.toolbox.tropicalcyclone.trackT(1)>handles.Model(md).Input(ad).startTime
         ddb_giveWarning('text','Start time cyclone is greater than simulation start time!');
     end
     
-    if handles.Toolbox(tb).Input.trackT(end)<handles.Model(md).Input(ad).stopTime
+    if handles.toolbox.tropicalcyclone.trackT(end)<handles.Model(md).Input(ad).stopTime
         ddb_giveWarning('text','Stop time cyclone is smaller than simulation stop time!');
     end
 

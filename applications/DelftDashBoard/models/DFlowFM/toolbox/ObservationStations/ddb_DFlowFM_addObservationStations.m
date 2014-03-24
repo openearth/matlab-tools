@@ -64,7 +64,7 @@ handles=getHandles;
 
 posx=[];
 
-iac=handles.Toolbox(tb).Input.activedatabase;
+iac=handles.toolbox.observationstations.activedatabase;
 
 xmin=min(handles.Model(md).Input(ad).netstruc.nodeX);
 xmax=max(handles.Model(md).Input(ad).netstruc.nodeX);
@@ -73,17 +73,17 @@ ymax=max(handles.Model(md).Input(ad).netstruc.nodeY);
 
 n=0;
 
-x=handles.Toolbox(tb).Input.database(iac).xLocLocal;
-y=handles.Toolbox(tb).Input.database(iac).yLocLocal;
+x=handles.toolbox.observationstations.database(iac).xLocLocal;
+y=handles.toolbox.observationstations.database(iac).yLocLocal;
 
 x=[x-360 x x+360];
 y=[y y y];
 k=0;
 for i=1:3
-    for j=1:length(handles.Toolbox(tb).Input.database(iac).stationids)
+    for j=1:length(handles.toolbox.observationstations.database(iac).stationids)
         k=k+1;
-        stationNames{k}=handles.Toolbox(tb).Input.database(iac).stationnames{j};
-        stationIDs{k}=handles.Toolbox(tb).Input.database(iac).stationids{j};
+        stationNames{k}=handles.toolbox.observationstations.database(iac).stationnames{j};
+        stationIDs{k}=handles.toolbox.observationstations.database(iac).stationids{j};
     end
 end
 
@@ -125,7 +125,7 @@ for i=1:nrp
         names{n}=handles.Model(md).Input(ad).observationpoints(n).name;
     end
 
-    if handles.Toolbox(tb).Input.showstationnames
+    if handles.toolbox.observationstations.showstationnames
         name=justletters(stationname);
         name=name(1:min(length(name),20));
     else
@@ -143,10 +143,10 @@ for i=1:nrp
 
 %         % Add some extra information for CoSMoS toolbox
 %         % First find station again
-%         ist=strmatch(stationid,handles.Toolbox(tb).Input.database(iac).stationids,'exact');
-%         handles.Model(md).Input(ad).observationPoints(nobs).longname=handles.Toolbox(tb).Input.database(iac).stationnames{ist};
+%         ist=strmatch(stationid,handles.toolbox.observationstations.database(iac).stationids,'exact');
+%         handles.Model(md).Input(ad).observationPoints(nobs).longname=handles.toolbox.observationstations.database(iac).stationnames{ist};
 %         handles.Model(md).Input(ad).observationPoints(nobs).type='observationstation';
-%         handles.Model(md).Input(ad).observationPoints(nobs).source=handles.Toolbox(tb).Input.database(iac).name;
+%         handles.Model(md).Input(ad).observationPoints(nobs).source=handles.toolbox.observationstations.database(iac).name;
 %         handles.Model(md).Input(ad).observationPoints(nobs).id=stationid;
         
     end

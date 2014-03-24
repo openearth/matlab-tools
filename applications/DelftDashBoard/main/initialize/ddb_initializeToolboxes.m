@@ -61,14 +61,18 @@ function ddb_initializeToolboxes
 
 %%
 handles=getHandles;
-for k=1:length(handles.Toolbox)
+toolboxnames=fieldnames(handles.toolbox);
+for k=1:length(toolboxnames)
+    name=toolboxnames{k};
+    longname=handles.toolbox.(name).longName;
     try
-        f=handles.Toolbox(k).iniFcn;
+        f=handles.toolbox.(name).iniFcn;
         handles=f(handles);
     catch
-        name=handles.Toolbox(k).name;
-        disp(['An error occured while initializing ' name ' toolbox. Toolbox will be made inactive!']);
-        set(handles.GUIHandles.Menu.Toolbox.(name),'Enable','off');
+        disp(['An error occured while initializing ' longname ' toolbox. Toolbox will be made inactive!']);
+        p=findobj(gcf,'Tag','menutoolbox');
+        ch=findobj(p,'Tag',name);
+        set(ch,'Enable','off');
     end
 end
 setHandles(handles);

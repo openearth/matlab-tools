@@ -61,29 +61,28 @@ function handles = ddb_initializeDD(handles, varargin)
 % $Keywords: $
 
 %%
-ii=strmatch('DD',{handles.Toolbox(:).name},'exact');
 
 if nargin>1
     switch varargin{1}
         case{'test'}
             return
         case{'veryfirst'}
-            handles.Toolbox(ii).longName='Domain Decomposition';
+            handles.toolbox.dd.longName='Domain Decomposition';
             return
     end
 end
 
-handles.Toolbox(ii).Input.mRefinement=5;
-handles.Toolbox(ii).Input.nRefinement=5;
-handles.Toolbox(ii).Input.firstCornerPointM=NaN;
-handles.Toolbox(ii).Input.firstCornerPointN=NaN;
-handles.Toolbox(ii).Input.secondCornerPointM=NaN;
-handles.Toolbox(ii).Input.secondCornerPointN=NaN;
-handles.Toolbox(ii).Input.domains={''};
-handles.Toolbox(ii).Input.newRunid='new';
-handles.Toolbox(ii).Input.attributeName='new';
-handles.Toolbox(ii).Input.DDBoundaries=[];
-handles.Toolbox(ii).Input.cornerPointHandles=[];
-handles.Toolbox(ii).Input.adjustBathymetry=1;
-%handles.Toolbox(ii).Input.ddFile='test.ddb';
+handles.toolbox.dd.mRefinement=5;
+handles.toolbox.dd.nRefinement=5;
+handles.toolbox.dd.firstCornerPointM=NaN;
+handles.toolbox.dd.firstCornerPointN=NaN;
+handles.toolbox.dd.secondCornerPointM=NaN;
+handles.toolbox.dd.secondCornerPointN=NaN;
+handles.toolbox.dd.domains={''};
+handles.toolbox.dd.newRunid='new';
+handles.toolbox.dd.attributeName='new';
+handles.toolbox.dd.DDBoundaries=[];
+handles.toolbox.dd.cornerPointHandles=[];
+handles.toolbox.dd.adjustBathymetry=1;
+%handles.toolbox.dd.ddFile='test.ddb';
 

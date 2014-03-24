@@ -61,9 +61,8 @@ function handles = ddb_initializeNesting(handles, varargin)
 % $Keywords: $
 
 %%
-ii=strmatch('Nesting',{handles.Toolbox(:).name},'exact');
 
-ddb_getToolboxData(handles.Toolbox(ii).dataDir,ii);
+ddb_getToolboxData(handles.toolbox.nesting.dataDir,'nesting','Nesting');
 
 if nargin>1
     switch varargin{1}
@@ -75,20 +74,20 @@ if nargin>1
 end
 
 % Nest 1
-handles.Toolbox(ii).Input.detailmodeltype   = 'delft3dflow';
-handles.Toolbox(ii).Input.detailmodelcsname = 'unspecified';
-handles.Toolbox(ii).Input.detailmodelcstype = 'unspecified';
-handles.Toolbox(ii).Input.grdFile       = '';
-handles.Toolbox(ii).Input.encFile       = '';
-handles.Toolbox(ii).Input.bndFile       = '';
-handles.Toolbox(ii).Input.depFile       = '';
-handles.Toolbox(ii).Input.extfile       = '';
+handles.toolbox.nesting.detailmodeltype   = 'delft3dflow';
+handles.toolbox.nesting.detailmodelcsname = 'unspecified';
+handles.toolbox.nesting.detailmodelcstype = 'unspecified';
+handles.toolbox.nesting.grdFile       = '';
+handles.toolbox.nesting.encFile       = '';
+handles.toolbox.nesting.bndFile       = '';
+handles.toolbox.nesting.depFile       = '';
+handles.toolbox.nesting.extfile       = '';
 
 % Nest 2
-handles.Toolbox(ii).Input.admFile       = 'nesting.adm';
-handles.Toolbox(ii).Input.trihFile      = '';
-handles.Toolbox(ii).Input.zCor          = 0;
-handles.Toolbox(ii).Input.nestHydro     = 1;
-handles.Toolbox(ii).Input.nestTransport = 1;
+handles.toolbox.nesting.admFile       = 'nesting.adm';
+handles.toolbox.nesting.trihFile      = '';
+handles.toolbox.nesting.zCor          = 0;
+handles.toolbox.nesting.nestHydro     = 1;
+handles.toolbox.nesting.nestTransport = 1;
 
-handles.Toolbox(ii).Input.singleSP2file='';
+handles.toolbox.nesting.singleSP2file='';

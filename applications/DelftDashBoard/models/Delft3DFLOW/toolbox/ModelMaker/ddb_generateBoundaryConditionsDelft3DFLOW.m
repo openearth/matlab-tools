@@ -76,7 +76,7 @@ wb = waitbox('Generating Boundary Conditions ...');
 
 try
     
-    ii=handles.Toolbox(tb).Input.activeTideModelBC;
+    ii=handles.toolbox.modelmaker.activeTideModelBC;
     name=handles.tideModels.model(ii).name;
     if strcmpi(handles.tideModels.model(ii).URL(1:4),'http')
         tidefile=[handles.tideModels.model(ii).URL '/' name '.nc'];

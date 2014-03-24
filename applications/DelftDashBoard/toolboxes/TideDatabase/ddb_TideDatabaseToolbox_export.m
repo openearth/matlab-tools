@@ -93,11 +93,11 @@ function changeTideDatabaseBox(x0,y0,dx,dy,rotation,h)
 
 setInstructions({'','Left-click and drag markers to change corner points','Right-click and drag yellow marker to move entire box'});
 handles=getHandles;
-handles.Toolbox(tb).Input.tideDatabaseBoxHandle=h;
-handles.Toolbox(tb).Input.xLim(1)=x0;
-handles.Toolbox(tb).Input.yLim(1)=y0;
-handles.Toolbox(tb).Input.xLim(2)=x0+dx;
-handles.Toolbox(tb).Input.yLim(2)=y0+dy;
+handles.toolbox.tidedatabase.tideDatabaseBoxHandle=h;
+handles.toolbox.tidedatabase.xLim(1)=x0;
+handles.toolbox.tidedatabase.yLim(1)=y0;
+handles.toolbox.tidedatabase.xLim(2)=x0+dx;
+handles.toolbox.tidedatabase.yLim(2)=y0+dy;
 setHandles(handles);
 
 gui_updateActiveTab;
@@ -111,9 +111,9 @@ setHandles(handles);
 function selectExportFormat
 
 handles=getHandles;
-iac=handles.Toolbox(tb).Input.activeExportFormatIndex;
-handles.Toolbox(tb).Input.activeExportFormat=handles.Toolbox(tb).Input.exportFormats{iac};
-handles.Toolbox(tb).Input.activeExportFormatExtension=handles.Toolbox(tb).Input.exportFormatExtensions{iac};
+iac=handles.toolbox.tidedatabase.activeExportFormatIndex;
+handles.toolbox.tidedatabase.activeExportFormat=handles.toolbox.tidedatabase.exportFormats{iac};
+handles.toolbox.tidedatabase.activeExportFormatExtension=handles.toolbox.tidedatabase.exportFormatExtensions{iac};
 setHandles(handles);
 
 %%
@@ -125,11 +125,11 @@ wb = waitbox('Exporting tide data ...');pause(0.1);
 
 try
     
-    filename=handles.Toolbox(tb).Input.exportFile;
+    filename=handles.toolbox.tidedatabase.exportFile;
     
     filename=filename(1:end-4);
     
-    ii=handles.Toolbox(tb).Input.activeModel;
+    ii=handles.toolbox.tidedatabase.activeModel;
     name=handles.tideModels.model(ii).name;
     
     if strcmpi(handles.tideModels.model(ii).URL(1:4),'http')
@@ -140,8 +140,8 @@ try
 
     % H
 
-    xx=handles.Toolbox(tb).Input.xLim;
-    yy=handles.Toolbox(tb).Input.yLim;
+    xx=handles.toolbox.tidedatabase.xLim;
+    yy=handles.toolbox.tidedatabase.yLim;
 
     if ~strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
         xg=xx(1):(xx(2)-xx(1))/10:xx(2);
@@ -160,8 +160,8 @@ try
     
     for i=1:length(conList)
         if ~strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
-            xx=handles.Toolbox(tb).Input.xLim;
-            yy=handles.Toolbox(tb).Input.yLim;
+            xx=handles.toolbox.tidedatabase.xLim;
+            yy=handles.toolbox.tidedatabase.yLim;
             xg=xx(1):10000:xx(2);
             yg=yy(1):10000:yy(2);
             [xg,yg]=meshgrid(xg,yg);
@@ -176,7 +176,7 @@ try
         end
     end
 
-    switch lower(handles.Toolbox(tb).Input.activeExportFormat)
+    switch lower(handles.toolbox.tidedatabase.activeExportFormat)
         case{'mat'}
             for icon=1:length(conList)
                 ii=icon*2-1;
@@ -203,8 +203,8 @@ try
 
     % U
 
-    xx=handles.Toolbox(tb).Input.xLim;
-    yy=handles.Toolbox(tb).Input.yLim;
+    xx=handles.toolbox.tidedatabase.xLim;
+    yy=handles.toolbox.tidedatabase.yLim;
 
     if ~strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
         xg=xx(1):(xx(2)-xx(1))/10:xx(2);
@@ -223,8 +223,8 @@ try
     
     for i=1:length(conList)
         if ~strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
-            xx=handles.Toolbox(tb).Input.xLim;
-            yy=handles.Toolbox(tb).Input.yLim;
+            xx=handles.toolbox.tidedatabase.xLim;
+            yy=handles.toolbox.tidedatabase.yLim;
             xg=xx(1):10000:xx(2);
             yg=yy(1):10000:yy(2);
             [xg,yg]=meshgrid(xg,yg);
@@ -239,15 +239,15 @@ try
         end
     end
     
-    switch lower(handles.Toolbox(tb).Input.activeExportFormat)
+    switch lower(handles.toolbox.tidedatabase.activeExportFormat)
         case{'tek'}
             ddb_saveAstroMapFile([filename '.u.tek'],xg,yg,conList,amp,phi);
     end
 
     % V
 
-    xx=handles.Toolbox(tb).Input.xLim;
-    yy=handles.Toolbox(tb).Input.yLim;
+    xx=handles.toolbox.tidedatabase.xLim;
+    yy=handles.toolbox.tidedatabase.yLim;
 
     if ~strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
         xg=xx(1):(xx(2)-xx(1))/10:xx(2);
@@ -266,8 +266,8 @@ try
     
     for i=1:length(conList)
         if ~strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
-            xx=handles.Toolbox(tb).Input.xLim;
-            yy=handles.Toolbox(tb).Input.yLim;
+            xx=handles.toolbox.tidedatabase.xLim;
+            yy=handles.toolbox.tidedatabase.yLim;
             xg=xx(1):10000:xx(2);
             yg=yy(1):10000:yy(2);
             [xg,yg]=meshgrid(xg,yg);
@@ -282,7 +282,7 @@ try
         end
     end
     
-    switch lower(handles.Toolbox(tb).Input.activeExportFormat)
+    switch lower(handles.toolbox.tidedatabase.activeExportFormat)
         case{'tek'}
             ddb_saveAstroMapFile([filename '.u.tek'],xg,yg,conList,amp,phi);
     end
@@ -298,21 +298,21 @@ end
 function editOutline
 handles=getHandles;
 deleteTideDatabaseBox;
-x0=handles.Toolbox(tb).Input.xLim(1);
-y0=handles.Toolbox(tb).Input.yLim(1);
-dx=handles.Toolbox(tb).Input.xLim(2)-x0;
-dy=handles.Toolbox(tb).Input.yLim(2)-y0;
+x0=handles.toolbox.tidedatabase.xLim(1);
+y0=handles.toolbox.tidedatabase.yLim(1);
+dx=handles.toolbox.tidedatabase.xLim(2)-x0;
+dy=handles.toolbox.tidedatabase.yLim(2)-y0;
 h=UIRectangle(handles.GUIHandles.mapAxis,'plot','Tag','ImageOutline','Marker','o','MarkerEdgeColor','k','MarkerSize',6,'rotate',0,'callback',@changeTideDatabaseBox, ...
     'onstart',@deleteTideDatabaseBox,'x0',x0,'y0',y0,'dx',dx,'dy',dy);
-handles.Toolbox(tb).Input.tideDatabaseBoxHandle=h;
+handles.toolbox.tidedatabase.tideDatabaseBoxHandle=h;
 setHandles(handles);
 
 %%
 function deleteTideDatabaseBox
 handles=getHandles;
-if ~isempty(handles.Toolbox(tb).Input.tideDatabaseBoxHandle)
+if ~isempty(handles.toolbox.tidedatabase.tideDatabaseBoxHandle)
     try
-        delete(handles.Toolbox(tb).Input.tideDatabaseBoxHandle);
+        delete(handles.toolbox.tidedatabase.tideDatabaseBoxHandle);
     end
 end
 

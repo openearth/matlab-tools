@@ -102,11 +102,11 @@ function changeModelOnMap(x0,y0,dx,dy,rotation,h)
 setInstructions({'','Left-click and drag markers to change corner points','Right-click and drag yellow marker to move entire box'});
 
 handles=getHandles;
-handles.Toolbox(tb).Input.modelOutlineHandle=h;
-handles.Toolbox(tb).Input.xLim(1)=x0;
-handles.Toolbox(tb).Input.yLim(1)=y0;
-handles.Toolbox(tb).Input.xLim(2)=x0+dx;
-handles.Toolbox(tb).Input.yLim(2)=y0+dy;
+handles.toolbox.nourishments.modelOutlineHandle=h;
+handles.toolbox.nourishments.xLim(1)=x0;
+handles.toolbox.nourishments.yLim(1)=y0;
+handles.toolbox.nourishments.xLim(2)=x0+dx;
+handles.toolbox.nourishments.yLim(2)=y0+dy;
 
 % cs=handles.screenParameters.coordinateSystem;
 % dataCoord.name='WGS 84';
@@ -121,12 +121,12 @@ handles.Toolbox(tb).Input.yLim(2)=y0+dy;
 %     dx=max(max(xtmp2))-min(min(xtmp2));
 % end
 % 
-% npix=handles.Toolbox(tb).Input.nPix;
+% npix=handles.toolbox.nourishments.nPix;
 % zmlev=round(log2(npix*3/(dx)));
 % zmlev=max(zmlev,4);
 % zmlev=min(zmlev,23);
 % 
-% handles.Toolbox(tb).Input.zoomLevelStrings{1}=['auto (' num2str(zmlev) ')'];
+% handles.toolbox.nourishments.zoomLevelStrings{1}=['auto (' num2str(zmlev) ')'];
 % 
 setHandles(handles);
 % setUIElement('nourishmentspanel.domain.editxmin');
@@ -137,27 +137,27 @@ setHandles(handles);
 %%
 function editOutline
 handles=getHandles;
-if ~isempty(handles.Toolbox(tb).Input.imageOutlineHandle)
+if ~isempty(handles.toolbox.nourishments.imageOutlineHandle)
     try
-        delete(handles.Toolbox(tb).Input.imageOutlineHandle);
+        delete(handles.toolbox.nourishments.imageOutlineHandle);
     end
 end
-x0=handles.Toolbox(tb).Input.xLim(1);
-y0=handles.Toolbox(tb).Input.yLim(1);
-dx=handles.Toolbox(tb).Input.xLim(2)-x0;
-dy=handles.Toolbox(tb).Input.yLim(2)-y0;
+x0=handles.toolbox.nourishments.xLim(1);
+y0=handles.toolbox.nourishments.yLim(1);
+dx=handles.toolbox.nourishments.xLim(2)-x0;
+dy=handles.toolbox.nourishments.yLim(2)-y0;
 
 h=UIRectangle(handles.GUIHandles.mapAxis,'plot','Tag','ImageOutline','Marker','o','MarkerEdgeColor','k','MarkerSize',6,'rotate',0,'callback',@changeGeoImageOnMap, ...
     'onstart',@deleteImageOutline,'x0',x0,'y0',y0,'dx',dx,'dy',dy);
-handles.Toolbox(tb).Input.imageOutlineHandle=h;
+handles.toolbox.nourishments.imageOutlineHandle=h;
 setHandles(handles);
 
 %%
 function deleteModel
 handles=getHandles;
-if ~isempty(handles.Toolbox(tb).Input.modelOutlineHandle)
+if ~isempty(handles.toolbox.nourishments.modelOutlineHandle)
     try
-        delete(handles.Toolbox(tb).Input.modelOutlineHandle);
+        delete(handles.toolbox.nourishments.modelOutlineHandle);
     end
 end
 
@@ -165,7 +165,7 @@ end
 function drawPolygon
 handles=getHandles;
 ddb_zoomOff;
-iac=handles.Toolbox(tb).Input.nrNourishments+1;
+iac=handles.toolbox.nourishments.nrNourishments+1;
 setHandles(handles);
 UIPolyline(gca,'draw','Tag','NourishmentOutline','Marker','o','Callback',@changePolygon,'closed',1,'LineColor','r','MarkerFaceColor','b','MarkerEdgeColor','k','UserData',iac);
 
@@ -180,28 +180,28 @@ if strcmpi(tp,'vertex')
     % Vertex, so existing polygon
     p=getappdata(h,'parent');
     % Find which polygon this is
-    for ii=1:handles.Toolbox(tb).Input.nrNourishments
-        if handles.Toolbox(tb).Input.nourishments(ii).polygonHandle==p
+    for ii=1:handles.toolbox.nourishments.nrNourishments
+        if handles.toolbox.nourishments.nourishments(ii).polygonHandle==p
             iac=ii;
         end
     end
 else
     % New nourishment
-    iac=handles.Toolbox(tb).Input.nrNourishments+1;
-    handles.Toolbox(tb).Input.nrNourishments=iac;
-    handles.Toolbox(tb).Input.nourishments(iac).type='volume';
-    handles.Toolbox(tb).Input.nourishments(iac).volume=1e6;
-    handles.Toolbox(tb).Input.nourishments(iac).thickness=1;
-    handles.Toolbox(tb).Input.nourishments(iac).height=1;
-    handles.Toolbox(tb).Input.nourishmentNames{iac}=['N' num2str(iac)];
-    handles.Toolbox(tb).Input.nourishments(iac).polygonHandle=h;
+    iac=handles.toolbox.nourishments.nrNourishments+1;
+    handles.toolbox.nourishments.nrNourishments=iac;
+    handles.toolbox.nourishments.nourishments(iac).type='volume';
+    handles.toolbox.nourishments.nourishments(iac).volume=1e6;
+    handles.toolbox.nourishments.nourishments(iac).thickness=1;
+    handles.toolbox.nourishments.nourishments(iac).height=1;
+    handles.toolbox.nourishments.nourishmentNames{iac}=['N' num2str(iac)];
+    handles.toolbox.nourishments.nourishments(iac).polygonHandle=h;
 end
 
-handles.Toolbox(tb).Input.activeNourishment=iac;
-handles.Toolbox(tb).Input.nourishments(iac).polygonX=x;
-handles.Toolbox(tb).Input.nourishments(iac).polygonY=y;
-handles.Toolbox(tb).Input.nourishments(iac).polyLength=length(x);
-handles.Toolbox(tb).Input.nourishments(iac).area=polyarea(x,y);
+handles.toolbox.nourishments.activeNourishment=iac;
+handles.toolbox.nourishments.nourishments(iac).polygonX=x;
+handles.toolbox.nourishments.nourishments(iac).polygonY=y;
+handles.toolbox.nourishments.nourishments(iac).polyLength=length(x);
+handles.toolbox.nourishments.nourishments(iac).area=polyarea(x,y);
 
 setHandles(handles);
 
@@ -215,27 +215,27 @@ refresh;
 %%
 function deleteNourishment
 handles=getHandles;
-if handles.Toolbox(tb).Input.nrNourishments>0
-    iac=handles.Toolbox(tb).Input.activeNourishment;
+if handles.toolbox.nourishments.nrNourishments>0
+    iac=handles.toolbox.nourishments.activeNourishment;
     try
-        UIPolyline(handles.Toolbox(tb).Input.nourishments(iac).polygonHandle,'delete');
+        UIPolyline(handles.toolbox.nourishments.nourishments(iac).polygonHandle,'delete');
     end
-    handles.Toolbox(tb).Input.nrNourishments=handles.Toolbox(tb).Input.nrNourishments-1;
-    handles.Toolbox(tb).Input.nourishments=removeFromStruc(handles.Toolbox(tb).Input.nourishments,iac);
-    handles.Toolbox(tb).Input.nourishmentNames=[];
-    for ii=1:handles.Toolbox(tb).Input.nrNourishments
-        handles.Toolbox(tb).Input.nourishmentNames{ii}=['N' num2str(ii)];
+    handles.toolbox.nourishments.nrNourishments=handles.toolbox.nourishments.nrNourishments-1;
+    handles.toolbox.nourishments.nourishments=removeFromStruc(handles.toolbox.nourishments.nourishments,iac);
+    handles.toolbox.nourishments.nourishmentNames=[];
+    for ii=1:handles.toolbox.nourishments.nrNourishments
+        handles.toolbox.nourishments.nourishmentNames{ii}=['N' num2str(ii)];
     end
-    handles.Toolbox(tb).Input.activeNourishment=max(min(handles.Toolbox(tb).Input.nrNourishments,iac),1);
-    if handles.Toolbox(tb).Input.nrNourishments==0
-        handles.Toolbox(tb).Input.nourishments(1).polygonX=[];
-        handles.Toolbox(tb).Input.nourishments(1).polygonY=[];
-        handles.Toolbox(tb).Input.nourishments(1).polyLength=0;
-        handles.Toolbox(tb).Input.nourishments(1).type='volume';
-        handles.Toolbox(tb).Input.nourishments(1).volume=1e6;
-        handles.Toolbox(tb).Input.nourishments(1).thickness=1;
-        handles.Toolbox(tb).Input.nourishments(1).height=1;
-        handles.Toolbox(tb).Input.nourishments(1).area=0;
+    handles.toolbox.nourishments.activeNourishment=max(min(handles.toolbox.nourishments.nrNourishments,iac),1);
+    if handles.toolbox.nourishments.nrNourishments==0
+        handles.toolbox.nourishments.nourishments(1).polygonX=[];
+        handles.toolbox.nourishments.nourishments(1).polygonY=[];
+        handles.toolbox.nourishments.nourishments(1).polyLength=0;
+        handles.toolbox.nourishments.nourishments(1).type='volume';
+        handles.toolbox.nourishments.nourishments(1).volume=1e6;
+        handles.toolbox.nourishments.nourishments(1).thickness=1;
+        handles.toolbox.nourishments.nourishments(1).height=1;
+        handles.toolbox.nourishments.nourishments(1).area=0;
     end
     setHandles(handles);
     refresh;
@@ -244,17 +244,17 @@ end
 %%
 function updateVolumesAndHeights
 handles=getHandles;
-iac=handles.Toolbox(tb).Input.activeNourishment;
-switch lower(handles.Toolbox(tb).Input.nourishments(iac).type)
+iac=handles.toolbox.nourishments.activeNourishment;
+switch lower(handles.toolbox.nourishments.nourishments(iac).type)
     case{'volume'}
-        handles.Toolbox(tb).Input.nourishments(iac).thickness=handles.Toolbox(tb).Input.nourishments(iac).volume / ...
-            handles.Toolbox(tb).Input.nourishments(iac).area;
+        handles.toolbox.nourishments.nourishments(iac).thickness=handles.toolbox.nourishments.nourishments(iac).volume / ...
+            handles.toolbox.nourishments.nourishments(iac).area;
     case{'height'}        
-%         handles.Toolbox(tb).Input.nourishments(iac).volume=handles.Toolbox(tb).Input.nourishments(iac).area * ...
-%             handles.Toolbox(tb).Input.nourishments(iac).thickness;
+%         handles.toolbox.nourishments.nourishments(iac).volume=handles.toolbox.nourishments.nourishments(iac).area * ...
+%             handles.toolbox.nourishments.nourishments(iac).thickness;
     case{'thickness'}
-        handles.Toolbox(tb).Input.nourishments(iac).volume=handles.Toolbox(tb).Input.nourishments(iac).area * ...
-            handles.Toolbox(tb).Input.nourishments(iac).thickness;
+        handles.toolbox.nourishments.nourishments(iac).volume=handles.toolbox.nourishments.nourishments(iac).area * ...
+            handles.toolbox.nourishments.nourishments(iac).thickness;
 end
 setHandles(handles);
 
@@ -270,7 +270,7 @@ refresh;
 %%
 function loadCurrents
 handles=getHandles;
-s=load(handles.Toolbox(tb).Input.currentsFile);
+s=load(handles.toolbox.nourishments.currentsFile);
 h=findobj(gcf,'Tag','ResidualCurrents');
 if ~isempty(h)
     delete(h);

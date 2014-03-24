@@ -85,9 +85,9 @@ try
     
     handles=getHandles;
     
-    [x,y,comp,amp,phi]=readFourierFile(handles.Toolbox(tb).Input.fourierFile);
+    [x,y,comp,amp,phi]=readFourierFile(handles.toolbox.tidedatabase.fourierFile);
     
-    ii=handles.Toolbox(tb).Input.activeModel;
+    ii=handles.toolbox.tidedatabase.activeModel;
     name=handles.tideModels.model(ii).name;
     if strcmpi(handles.tideModels.model(ii).URL(1:4),'http')
         tidefile=[handles.tideModels.model(ii).URL '/' name '.nc'];
@@ -234,8 +234,8 @@ handles=getHandles;
 
 wb = waitbox('Saving ...');pause(0.1);
 
-[x,y,comp,amp,phi]=readFourierFile(handles.Toolbox(tb).Input.fourierFile);
-ddb_saveAstroMapFile(handles.Toolbox(tb).Input.fourierOutFile,x,y,comp,amp,phi);
+[x,y,comp,amp,phi]=readFourierFile(handles.toolbox.tidedatabase.fourierFile);
+ddb_saveAstroMapFile(handles.toolbox.tidedatabase.fourierOutFile,x,y,comp,amp,phi);
 
 close(wb);
 

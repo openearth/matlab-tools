@@ -61,118 +61,108 @@ function handles = ddb_initializeTropicalCyclone(handles, varargin)
 % $Keywords: $
 
 %%
-ii=strmatch('TropicalCyclone',{handles.Toolbox(:).name},'exact');
 
-ddb_getToolboxData(handles.Toolbox(ii).dataDir,ii);
+ddb_getToolboxData(handles.toolbox.tropicalcyclone.dataDir,'tropicalcyclone','TropicalCyclone');
 
-if nargin>1
-    switch varargin{1}
-        case{'test'}
-            return
-        case{'veryfirst'}
-            return
-    end
+if ~isdir(handles.toolbox.tropicalcyclone.dataDir)
+    mkdir(handles.toolbox.tropicalcyclone.dataDir);
 end
 
-if ~isdir(handles.Toolbox(ii).dataDir)
-    mkdir(handles.Toolbox(ii).dataDir);
-end
+handles.toolbox.tropicalcyclone.nrTrackPoints   = 0;
+handles.toolbox.tropicalcyclone.name      = '';
+handles.toolbox.tropicalcyclone.initSpeed = 0;
+handles.toolbox.tropicalcyclone.initDir   = 0;
+handles.toolbox.tropicalcyclone.startTime=floor(now);
+handles.toolbox.tropicalcyclone.timeStep=6;
 
-handles.Toolbox(ii).Input.nrTrackPoints   = 0;
-handles.Toolbox(ii).Input.name      = '';
-handles.Toolbox(ii).Input.initSpeed = 0;
-handles.Toolbox(ii).Input.initDir   = 0;
-handles.Toolbox(ii).Input.startTime=floor(now);
-handles.Toolbox(ii).Input.timeStep=6;
+handles.toolbox.tropicalcyclone.quadrantOption='uniform';
+handles.toolbox.tropicalcyclone.quadrant=1;
 
-handles.Toolbox(ii).Input.quadrantOption='uniform';
-handles.Toolbox(ii).Input.quadrant=1;
-
-handles.Toolbox(ii).Input.vMax=120;
-handles.Toolbox(ii).Input.rMax=20;
-handles.Toolbox(ii).Input.pDrop=5000;
-handles.Toolbox(ii).Input.parA=1;
-handles.Toolbox(ii).Input.parB=1;
-handles.Toolbox(ii).Input.r100=0;
-handles.Toolbox(ii).Input.r65=0;
-handles.Toolbox(ii).Input.r50=0;
-handles.Toolbox(ii).Input.r35=0;
+handles.toolbox.tropicalcyclone.vMax=120;
+handles.toolbox.tropicalcyclone.rMax=20;
+handles.toolbox.tropicalcyclone.pDrop=5000;
+handles.toolbox.tropicalcyclone.parA=1;
+handles.toolbox.tropicalcyclone.parB=1;
+handles.toolbox.tropicalcyclone.r100=0;
+handles.toolbox.tropicalcyclone.r65=0;
+handles.toolbox.tropicalcyclone.r50=0;
+handles.toolbox.tropicalcyclone.r35=0;
 
 % Track
-handles.Toolbox(ii).Input.trackT=floor(now);
-handles.Toolbox(ii).Input.trackX=0;
-handles.Toolbox(ii).Input.trackY=0;
-handles.Toolbox(ii).Input.trackVMax=0;
-handles.Toolbox(ii).Input.trackPDrop=0;
-handles.Toolbox(ii).Input.trackRMax=0;
-handles.Toolbox(ii).Input.trackR100=0;
-handles.Toolbox(ii).Input.trackR65=0;
-handles.Toolbox(ii).Input.trackR50=0;
-handles.Toolbox(ii).Input.trackR35=0;
-handles.Toolbox(ii).Input.trackA=0;
-handles.Toolbox(ii).Input.trackB=0;
+handles.toolbox.tropicalcyclone.trackT=floor(now);
+handles.toolbox.tropicalcyclone.trackX=0;
+handles.toolbox.tropicalcyclone.trackY=0;
+handles.toolbox.tropicalcyclone.trackVMax=0;
+handles.toolbox.tropicalcyclone.trackPDrop=0;
+handles.toolbox.tropicalcyclone.trackRMax=0;
+handles.toolbox.tropicalcyclone.trackR100=0;
+handles.toolbox.tropicalcyclone.trackR65=0;
+handles.toolbox.tropicalcyclone.trackR50=0;
+handles.toolbox.tropicalcyclone.trackR35=0;
+handles.toolbox.tropicalcyclone.trackA=0;
+handles.toolbox.tropicalcyclone.trackB=0;
 
 % Table
-handles.Toolbox(ii).Input.tableVMax=0;
-handles.Toolbox(ii).Input.tablePDrop=0;
-handles.Toolbox(ii).Input.tableRMax=0;
-handles.Toolbox(ii).Input.tableR100=0;
-handles.Toolbox(ii).Input.tableR65=0;
-handles.Toolbox(ii).Input.tableR50=0;
-handles.Toolbox(ii).Input.tableR35=0;
-handles.Toolbox(ii).Input.tableA=0;
-handles.Toolbox(ii).Input.tableB=0;
+handles.toolbox.tropicalcyclone.tableVMax=0;
+handles.toolbox.tropicalcyclone.tablePDrop=0;
+handles.toolbox.tropicalcyclone.tableRMax=0;
+handles.toolbox.tropicalcyclone.tableR100=0;
+handles.toolbox.tropicalcyclone.tableR65=0;
+handles.toolbox.tropicalcyclone.tableR50=0;
+handles.toolbox.tropicalcyclone.tableR35=0;
+handles.toolbox.tropicalcyclone.tableA=0;
+handles.toolbox.tropicalcyclone.tableB=0;
 
-handles.Toolbox(ii).Input.showDetails=1;
-handles.Toolbox(ii).Input.name='TC Deepak';
-handles.Toolbox(ii).Input.radius=1000;
-handles.Toolbox(ii).Input.nrRadialBins=500;
-handles.Toolbox(ii).Input.nrDirectionalBins=36;
-handles.Toolbox(ii).Input.method=4;
+handles.toolbox.tropicalcyclone.showDetails=1;
+handles.toolbox.tropicalcyclone.name='TC Deepak';
+handles.toolbox.tropicalcyclone.radius=1000;
+handles.toolbox.tropicalcyclone.nrRadialBins=500;
+handles.toolbox.tropicalcyclone.nrDirectionalBins=36;
+handles.toolbox.tropicalcyclone.method=4;
 
-handles.Toolbox(ii).Input.deleteTemporaryFiles=1;
+handles.toolbox.tropicalcyclone.deleteTemporaryFiles=1;
 
-handles.Toolbox(ii).Input.trackhandle=[];
+handles.toolbox.tropicalcyclone.trackhandle=[];
 
 %  Tropical cyclone (TC) widgets, parameters added by QNA/NRL:
-handles.Toolbox(ii).Input.showTCBasins=0;
-handles.Toolbox(ii).Input.whichTCBasinOption=0;     % Nearest (0 for nearest, 1 for All)
-handles.Toolbox(ii).Input.oldwhichTCBasinOption=2;  % Nearest (init. to 2)
-handles.Toolbox(ii).Input.TCBasinName='';
-handles.Toolbox(ii).Input.TCBasinNameAbbrev='';
-handles.Toolbox(ii).Input.TCBasinFileName='';
-handles.Toolbox(ii).Input.oldTCBasinName='';
-handles.Toolbox(ii).Input.TCStormName='';
-handles.Toolbox(ii).Input.oldTCStormName='';
-handles.Toolbox(ii).Input.TCTrackFile={'Current Track File'};
-handles.Toolbox(ii).Input.TCTrackFileStormName='';
+handles.toolbox.tropicalcyclone.showTCBasins=0;
+handles.toolbox.tropicalcyclone.whichTCBasinOption=0;     % Nearest (0 for nearest, 1 for All)
+handles.toolbox.tropicalcyclone.oldwhichTCBasinOption=2;  % Nearest (init. to 2)
+handles.toolbox.tropicalcyclone.TCBasinName='';
+handles.toolbox.tropicalcyclone.TCBasinNameAbbrev='';
+handles.toolbox.tropicalcyclone.TCBasinFileName='';
+handles.toolbox.tropicalcyclone.oldTCBasinName='';
+handles.toolbox.tropicalcyclone.TCStormName='';
+handles.toolbox.tropicalcyclone.oldTCStormName='';
+handles.toolbox.tropicalcyclone.TCTrackFile={'Current Track File'};
+handles.toolbox.tropicalcyclone.TCTrackFileStormName='';
 %  Lists of known TC basin names and abbreviations:
-handles.Toolbox(ii).Input.knownTCBasinName = {'Atlantic','Central Pacific','East Pacific','Southern Hemisphere','West Pacific'};
-handles.Toolbox(ii).Input.knownTCBasinNameAbbrev = {'at', 'cp', 'ep', 'sh', 'wp'};
+handles.toolbox.tropicalcyclone.knownTCBasinName = {'Atlantic','Central Pacific','East Pacific','Southern Hemisphere','West Pacific'};
+handles.toolbox.tropicalcyclone.knownTCBasinNameAbbrev = {'at', 'cp', 'ep', 'sh', 'wp'};
 
 %  Check whether the TCBasinHandles list exists & is empty (may not be if
 %  File -> New was clicked).
-if (isfield(handles.Toolbox(ii).Input, 'TCBasinHandles') && ~isempty(handles.Toolbox(ii).Input.TCBasinHandles))
+if (isfield(handles.toolbox.tropicalcyclone, 'TCBasinHandles') && ~isempty(handles.toolbox.tropicalcyclone.TCBasinHandles))
     %  List is not empty, so delete any existing objects.
-    for i = 1:length(handles.Toolbox(tb).Input.TCBasinHandles)
+    for i = 1:length(handles.toolbox.tropicalcyclone.TCBasinHandles)
         %  Delete the current TC basin polygon handle.
-        if (ishandle(handles.Toolbox(tb).Input.TCBasinHandles(i)))
-            delete(handles.Toolbox(tb).Input.TCBasinHandles(i));
+        if (ishandle(handles.toolbox.tropicalcyclone.TCBasinHandles(i)))
+            delete(handles.toolbox.tropicalcyclone.TCBasinHandles(i));
         end
     end
 end
-handles.Toolbox(ii).Input.TCBasinHandles=[];
+handles.toolbox.tropicalcyclone.TCBasinHandles=[];
 
 %  Define the directory in which TC basin polygon files reside, then store a listing of the .xy files.
-handles.Toolbox(ii).Input.tcBasinsDir = [fileparts(fileparts(handles.settingsDir)) filesep 'external' filesep 'data'];
-handles.Toolbox(ii).Input.tcBasinsFiles = dir([handles.Toolbox(ii).Input.tcBasinsDir filesep '*.xy']);
+handles.toolbox.tropicalcyclone.tcBasinsDir = [fileparts(fileparts(handles.settingsDir)) filesep 'external' filesep 'data'];
+handles.toolbox.tropicalcyclone.tcBasinsFiles = dir([handles.toolbox.tropicalcyclone.tcBasinsDir filesep '*.xy']);
 
-handles.Toolbox(ii).Input.importFormat='JTWCCurrentTrack';
-handles.Toolbox(ii).Input.importFormats={'JTWCCurrentTrack','NHCCurrentTrack','JTWCBestTrack','UnisysBestTrack','jmv30'};
-handles.Toolbox(ii).Input.importFormatNames={'JTWC Current Track...','NHC Current Track...','JTWC Best Track','Unisys Best Track','JMV 3.0'};
+handles.toolbox.tropicalcyclone.importFormat='JTWCCurrentTrack';
+handles.toolbox.tropicalcyclone.importFormats={'JTWCCurrentTrack','NHCCurrentTrack','JTWCBestTrack','UnisysBestTrack','jmv30'};
+handles.toolbox.tropicalcyclone.importFormatNames={'JTWC Current Track...','NHC Current Track...','JTWC Best Track','Unisys Best Track','JMV 3.0'};
 
-handles.Toolbox(ii).Input.downloadLocation='JTWCCurrentTracks';
-handles.Toolbox(ii).Input.downloadLocations={'JTWCCurrentTracks','NHCCurrentTracks','UnisysBestTracks','JTWCBestTracks','JTWCCurrentCyclones'};
-handles.Toolbox(ii).Input.downloadLocationNames={'JTWC Current Cyclones...','NHC Current Hurricanes...','UNISYS Track Archive','JTWC Track Archive','JTWC Current Cyclones (Web)'};
+handles.toolbox.tropicalcyclone.downloadLocation='JTWCCurrentTracks';
+handles.toolbox.tropicalcyclone.downloadLocations={'JTWCCurrentTracks','NHCCurrentTracks','UnisysBestTracks','JTWCBestTracks','JTWCCurrentCyclones'};
+handles.toolbox.tropicalcyclone.downloadLocationNames={'JTWC Current Cyclones...','NHC Current Hurricanes...','UNISYS Track Archive','JTWC Track Archive','JTWC Current Cyclones (Web)'};
 
 

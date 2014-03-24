@@ -62,11 +62,11 @@ function handles = ddb_loadTsunamiTableFile(handles, filename)
 
 %%
 xml=xml_load(filename);
-handles.Toolbox(tb).Input.segmentLon=str2num(xml.longitude);
-handles.Toolbox(tb).Input.segmentLat=str2num(xml.latitude);
-handles.Toolbox(tb).Input.segmentStrike=str2num(xml.strike);
-handles.Toolbox(tb).Input.segmentWidth=str2num(xml.width);
-handles.Toolbox(tb).Input.segmentDepth=str2num(xml.depth);
-handles.Toolbox(tb).Input.segmentDip=str2num(xml.dip);
-handles.Toolbox(tb).Input.segmentSlipRake=str2num(xml.sliprake);
-handles.Toolbox(tb).Input.segmentSlip=str2num(xml.slip);
+handles.toolbox.tsunami.segmentLon=str2num(xml.longitude);
+handles.toolbox.tsunami.segmentLat=str2num(xml.latitude);
+handles.toolbox.tsunami.segmentStrike=str2num(xml.strike);
+handles.toolbox.tsunami.segmentWidth=str2num(xml.width);
+handles.toolbox.tsunami.segmentDepth=str2num(xml.depth);
+handles.toolbox.tsunami.segmentDip=str2num(xml.dip);
+handles.toolbox.tsunami.segmentSlipRake=str2num(xml.sliprake);
+handles.toolbox.tsunami.segmentSlip=str2num(xml.slip);

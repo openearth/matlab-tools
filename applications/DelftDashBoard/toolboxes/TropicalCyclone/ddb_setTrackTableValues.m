@@ -60,14 +60,14 @@ function handles = ddb_setTrackTableValues(handles)
 % $Keywords: $
 
 %%
-iq=handles.Toolbox(tb).Input.quadrant;
-handles.Toolbox(tb).Input.tableVMax=squeeze(handles.Toolbox(tb).Input.trackVMax(:,iq));
-handles.Toolbox(tb).Input.tableRMax=squeeze(handles.Toolbox(tb).Input.trackRMax(:,iq));
-handles.Toolbox(tb).Input.tablePDrop=squeeze(handles.Toolbox(tb).Input.trackPDrop(:,iq));
-handles.Toolbox(tb).Input.tableR100=squeeze(handles.Toolbox(tb).Input.trackR100(:,iq));
-handles.Toolbox(tb).Input.tableR65=squeeze(handles.Toolbox(tb).Input.trackR65(:,iq));
-handles.Toolbox(tb).Input.tableR50=squeeze(handles.Toolbox(tb).Input.trackR50(:,iq));
-handles.Toolbox(tb).Input.tableR35=squeeze(handles.Toolbox(tb).Input.trackR35(:,iq));
-handles.Toolbox(tb).Input.tableA=squeeze(handles.Toolbox(tb).Input.trackA(:,iq));
-handles.Toolbox(tb).Input.tableB=squeeze(handles.Toolbox(tb).Input.trackB(:,iq));
+iq=handles.toolbox.tropicalcyclone.quadrant;
+handles.toolbox.tropicalcyclone.tableVMax=squeeze(handles.toolbox.tropicalcyclone.trackVMax(:,iq));
+handles.toolbox.tropicalcyclone.tableRMax=squeeze(handles.toolbox.tropicalcyclone.trackRMax(:,iq));
+handles.toolbox.tropicalcyclone.tablePDrop=squeeze(handles.toolbox.tropicalcyclone.trackPDrop(:,iq));
+handles.toolbox.tropicalcyclone.tableR100=squeeze(handles.toolbox.tropicalcyclone.trackR100(:,iq));
+handles.toolbox.tropicalcyclone.tableR65=squeeze(handles.toolbox.tropicalcyclone.trackR65(:,iq));
+handles.toolbox.tropicalcyclone.tableR50=squeeze(handles.toolbox.tropicalcyclone.trackR50(:,iq));
+handles.toolbox.tropicalcyclone.tableR35=squeeze(handles.toolbox.tropicalcyclone.trackR35(:,iq));
+handles.toolbox.tropicalcyclone.tableA=squeeze(handles.toolbox.tropicalcyclone.trackA(:,iq));
+handles.toolbox.tropicalcyclone.tableB=squeeze(handles.toolbox.tropicalcyclone.trackB(:,iq));
 

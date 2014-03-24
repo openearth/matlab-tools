@@ -67,7 +67,7 @@ if isempty(varargin)
     handles=getHandles;
     h=findobj(gca,'Tag','Plates');
     if isempty(h)
-        dr=handles.Toolbox(tb).dataDir;
+        dr=handles.toolbox.tsunami.dataDir;
         load([dr 'plates.mat']);
         cs1=handles.screenParameters.coordinateSystem;
         if ~strcmpi(cs1.type,'geographic')
@@ -106,7 +106,7 @@ handles=getHandles;
 
 handles=updateTsunamiValues(handles,'mw');
 
-if handles.Toolbox(tb).Input.updateTable
+if handles.toolbox.tsunami.updateTable
     handles=updateTableValues(handles);
 end
 
@@ -124,7 +124,7 @@ if filename==0
 end
 
 filename=[pathname filename];
-handles.Toolbox(tb).Input.tsunameTableFile=[pathname filename];
+handles.toolbox.tsunami.tsunameTableFile=[pathname filename];
 handles=ddb_loadTsunamiTableFile(handles,filename);
 handles=convertFaultCoordinates(handles,'latlon2xy');
 handles=computeLengthAndStrike(handles);
@@ -144,16 +144,16 @@ handles=getHandles;
 ddb_zoomOff;
 
 if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
-    x=handles.Toolbox(tb).Input.segmentLon;
-    y=handles.Toolbox(tb).Input.segmentLat;
+    x=handles.toolbox.tsunami.segmentLon;
+    y=handles.toolbox.tsunami.segmentLat;
 else
-    x=handles.Toolbox(tb).Input.segmentX;
-    y=handles.Toolbox(tb).Input.segmentY;
+    x=handles.toolbox.tsunami.segmentX;
+    y=handles.toolbox.tsunami.segmentY;
 end
 
 handles=deleteFaultLine(handles);
 h=gui_polyline('plot','x',x,'y',y,'tag','tsunamifault','marker','o','changecallback',@changeFaultLine);
-handles.Toolbox(tb).Input.faulthandle=h;
+handles.toolbox.tsunami.faulthandle=h;
 
 setHandles(handles);
 
@@ -167,7 +167,7 @@ if filename==0
     return
 end
 filename=[pathname filename];
-handles.Toolbox(tb).Input.tsunameTableFile=filename;
+handles.toolbox.tsunami.tsunameTableFile=filename;
 setHandles(handles);
 ddb_saveTsunamiTableFile(handles,filename);
 
@@ -177,16 +177,16 @@ function drawFaultLine
 
 handles=getHandles;
 
-xmldir=handles.Toolbox(tb).xmlDir;
+xmldir=handles.toolbox.tsunami.xmlDir;
 xmlfile='Tsunami.initialparameters.xml';
 
-h=handles.Toolbox(tb).Input;
+h=handles.toolbox.tsunami;
 
 [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir filesep 'icons' filesep 'deltares.gif']);
 
 if ok
     
-    handles.Toolbox(tb).Input=h;
+    handles.toolbox.tsunami=h;
     
     ddb_zoomOff;
 
@@ -194,7 +194,7 @@ if ok
 
     gui_polyline('draw','Tag','tsunamifault','Marker','o','createcallback',@createFaultLine,'changecallback',@changeFaultLine,'closed',0);
 
-    handles.Toolbox(tb).Input.newFaultLine=1;
+    handles.toolbox.tsunami.newFaultLine=1;
 
     setHandles(handles);
 
@@ -203,16 +203,16 @@ end
 %%
 function handles=computeLengthAndStrike(handles)
 % Compute new length
-x = handles.Toolbox(tb).Input.segmentX;
-y = handles.Toolbox(tb).Input.segmentY;
+x = handles.toolbox.tsunami.segmentX;
+y = handles.toolbox.tsunami.segmentY;
 pd=pathdistance(x,y);
-handles.Toolbox(tb).Input.length=pd(end)/1000;
+handles.toolbox.tsunami.length=pd(end)/1000;
 
 % Compute new strike
-handles.Toolbox(tb).Input.segmentStrike=[];
-handles.Toolbox(tb).Input.segmentStrike(1)=90-180*atan2(y(2)-y(1),x(2)-x(1))/pi;
+handles.toolbox.tsunami.segmentStrike=[];
+handles.toolbox.tsunami.segmentStrike(1)=90-180*atan2(y(2)-y(1),x(2)-x(1))/pi;
 for i=2:length(x)
-    handles.Toolbox(tb).Input.segmentStrike(i)=90-180*atan2(y(i)-y(i-1),x(i)-x(i-1))/pi;
+    handles.toolbox.tsunami.segmentStrike(i)=90-180*atan2(y(i)-y(i-1),x(i)-x(i-1))/pi;
 end
 
 %%
@@ -220,33 +220,33 @@ function createFaultLine(h,x,y,nr)
 
 handles=getHandles;
 
-handles.Toolbox(tb).Input.faulthandle=h;
+handles.toolbox.tsunami.faulthandle=h;
 
 if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
-    handles.Toolbox(tb).Input.segmentLon=x;
-    handles.Toolbox(tb).Input.segmentLat=y;
+    handles.toolbox.tsunami.segmentLon=x;
+    handles.toolbox.tsunami.segmentLat=y;
     handles=convertFaultCoordinates(handles,'latlon2xy');
 else
-    handles.Toolbox(tb).Input.segmentX=x;
-    handles.Toolbox(tb).Input.segmentY=y;
+    handles.toolbox.tsunami.segmentX=x;
+    handles.toolbox.tsunami.segmentY=y;
     handles=convertFaultCoordinates(handles,'xy2latlon');
 end
 
 handles=computeLengthAndStrike(handles);
 
 % Update theoretical parameters
-if handles.Toolbox(tb).Input.updateParameters
+if handles.toolbox.tsunami.updateParameters
     handles=updateTsunamiValues(handles,'length');
 end
 
 % Update segment values
-handles.Toolbox(tb).Input.segmentDepth=[];
-handles.Toolbox(tb).Input.segmentDip=[];
-handles.Toolbox(tb).Input.segmentSlipRake=[];
+handles.toolbox.tsunami.segmentDepth=[];
+handles.toolbox.tsunami.segmentDip=[];
+handles.toolbox.tsunami.segmentSlipRake=[];
 for i=1:length(x)
-    handles.Toolbox(tb).Input.segmentDepth(i)=handles.Toolbox(tb).Input.depth;
-    handles.Toolbox(tb).Input.segmentDip(i)=handles.Toolbox(tb).Input.dip;
-    handles.Toolbox(tb).Input.segmentSlipRake(i)=handles.Toolbox(tb).Input.slipRake;
+    handles.toolbox.tsunami.segmentDepth(i)=handles.toolbox.tsunami.depth;
+    handles.toolbox.tsunami.segmentDip(i)=handles.toolbox.tsunami.dip;
+    handles.toolbox.tsunami.segmentSlipRake(i)=handles.toolbox.tsunami.slipRake;
 end
 handles=updateTableValues(handles);
 
@@ -260,31 +260,31 @@ function changeFaultLine(h,x,y,nr)
 handles=getHandles;
 
 if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
-    handles.Toolbox(tb).Input.segmentLon=x;
-    handles.Toolbox(tb).Input.segmentLat=y;
+    handles.toolbox.tsunami.segmentLon=x;
+    handles.toolbox.tsunami.segmentLat=y;
     handles=convertFaultCoordinates(handles,'latlon2xy');
 else
-    handles.Toolbox(tb).Input.segmentX=x;
-    handles.Toolbox(tb).Input.segmentY=y;
+    handles.toolbox.tsunami.segmentX=x;
+    handles.toolbox.tsunami.segmentY=y;
     handles=convertFaultCoordinates(handles,'xy2latlon');
 end
 
 handles=computeLengthAndStrike(handles);
 
 % Update theoretical parameters
-if handles.Toolbox(tb).Input.updateParameters
+if handles.toolbox.tsunami.updateParameters
     handles=updateTsunamiValues(handles,'length');
 end
 
 % Update segment values
-if handles.Toolbox(tb).Input.updateTable
-    handles.Toolbox(tb).Input.segmentDepth=[];
-    handles.Toolbox(tb).Input.segmentDip=[];
-    handles.Toolbox(tb).Input.segmentSlipRake=[];
+if handles.toolbox.tsunami.updateTable
+    handles.toolbox.tsunami.segmentDepth=[];
+    handles.toolbox.tsunami.segmentDip=[];
+    handles.toolbox.tsunami.segmentSlipRake=[];
     for i=1:length(x)
-        handles.Toolbox(tb).Input.segmentDepth(i)=handles.Toolbox(tb).Input.depth;
-        handles.Toolbox(tb).Input.segmentDip(i)=handles.Toolbox(tb).Input.dip;
-        handles.Toolbox(tb).Input.segmentSlipRake(i)=handles.Toolbox(tb).Input.slipRake;
+        handles.toolbox.tsunami.segmentDepth(i)=handles.toolbox.tsunami.depth;
+        handles.toolbox.tsunami.segmentDip(i)=handles.toolbox.tsunami.dip;
+        handles.toolbox.tsunami.segmentSlipRake(i)=handles.toolbox.tsunami.slipRake;
     end
     handles=updateTableValues(handles);
 end
@@ -301,8 +301,8 @@ function handles=convertFaultCoordinates(handles,opt)
 switch lower(opt)
     case{'latlon2xy'}
     % Convert x and y to lat-lon
-    x=handles.Toolbox(tb).Input.segmentLon;
-    y=handles.Toolbox(tb).Input.segmentLat;
+    x=handles.toolbox.tsunami.segmentLon;
+    y=handles.toolbox.tsunami.segmentLat;
     switch lower(handles.screenParameters.coordinateSystem.type)
         case{'projected','cartesian'}
             % Horizontal coordinate system already projected
@@ -321,24 +321,24 @@ switch lower(opt)
                 utmZone=['WGS 84 / UTM zone ' num2str(utmz) 'S'];
                 utmZoneShort=[num2str(utmz) 'S'];
             end
-            handles.Toolbox(tb).Input.utmZone=utmZone;
-            handles.Toolbox(tb).Input.utmZoneShort=utmZoneShort;
+            handles.toolbox.tsunami.utmZone=utmZone;
+            handles.toolbox.tsunami.utmZoneShort=utmZoneShort;
             cs1.name=utmZone;
             cs1.type='projected';
     end
     [x,y]=ddb_coordConvert(x,y,cs0,cs1);
-    handles.Toolbox(tb).Input.segmentX=x;
-    handles.Toolbox(tb).Input.segmentY=y;
+    handles.toolbox.tsunami.segmentX=x;
+    handles.toolbox.tsunami.segmentY=y;
 case{'xy2latlon'}
     % Only used if screen coordinate system is projected
-    x=handles.Toolbox(tb).Input.segmentX;
-    y=handles.Toolbox(tb).Input.segmentY;
+    x=handles.toolbox.tsunami.segmentX;
+    y=handles.toolbox.tsunami.segmentY;
     cs0=handles.screenParameters.coordinateSystem;
     cs1.name='WGS 84';
     cs1.type='geographic';
     [lon,lat]=ddb_coordConvert(x,y,cs0,cs1);
-    handles.Toolbox(tb).Input.segmentLon=lon;
-    handles.Toolbox(tb).Input.segmentLat=lat;
+    handles.toolbox.tsunami.segmentLon=lon;
+    handles.toolbox.tsunami.segmentLat=lat;
 end
 
 %%
@@ -346,12 +346,12 @@ function handles=updateTsunamiValues(handles,opt)
 
 switch opt
     case{'mw'}
-        Mw=handles.Toolbox(tb).Input.Mw;
+        Mw=handles.toolbox.tsunami.Mw;
     case{'length'}
         % Compute magnitude based on length
-        if (handles.Toolbox(tb).Input.length > 0)
-            Mw = (log10(handles.Toolbox(tb).Input.length) + 2.44) / 0.59;
-            handles.Toolbox(tb).Input.Mw = Mw ;
+        if (handles.toolbox.tsunami.length > 0)
+            Mw = (log10(handles.toolbox.tsunami.length) + 2.44) / 0.59;
+            handles.toolbox.tsunami.Mw = Mw ;
         end
 end
 
@@ -398,31 +398,31 @@ if (Mw > 5)
         fwidth     = area/totflength;
     end
     
-    %     handles.Toolbox(tb).Input.TotalFaultLength=totflength;
-    %     handles.Toolbox(tb).Input.FaultWidth=fwidth;
-    %     handles.Toolbox(tb).Input.Dislocation=disloc;
+    %     handles.toolbox.tsunami.TotalFaultLength=totflength;
+    %     handles.toolbox.tsunami.FaultWidth=fwidth;
+    %     handles.toolbox.tsunami.Dislocation=disloc;
 else
-    %     handles.Toolbox(tb).Input.Mw=0.0;
-    %     handles.Toolbox(tb).Input.TotalFaultLength=0;
-    %     handles.Toolbox(tb).Input.FaultWidth=0;
-    %     handles.Toolbox(tb).Input.Dislocation=0;
+    %     handles.toolbox.tsunami.Mw=0.0;
+    %     handles.toolbox.tsunami.TotalFaultLength=0;
+    %     handles.toolbox.tsunami.FaultWidth=0;
+    %     handles.toolbox.tsunami.Dislocation=0;
 end
 
-handles.Toolbox(tb).Input.width=fwidth;
-handles.Toolbox(tb).Input.slip=disloc;
-handles.Toolbox(tb).Input.theoreticalFaultLength=totflength;
+handles.toolbox.tsunami.width=fwidth;
+handles.toolbox.tsunami.slip=disloc;
+handles.toolbox.tsunami.theoreticalFaultLength=totflength;
 
 
 
 %%
 function handles=updateTableValues(handles)
 
-handles.Toolbox(tb).Input.segmentWidth=[];
-handles.Toolbox(tb).Input.segmentSlip=[];
+handles.toolbox.tsunami.segmentWidth=[];
+handles.toolbox.tsunami.segmentSlip=[];
 
-for i=1:length(handles.Toolbox(tb).Input.segmentLon)
-    handles.Toolbox(tb).Input.segmentWidth(i)=handles.Toolbox(tb).Input.width;
-    handles.Toolbox(tb).Input.segmentSlip(i)=handles.Toolbox(tb).Input.slip;
+for i=1:length(handles.toolbox.tsunami.segmentLon)
+    handles.toolbox.tsunami.segmentWidth(i)=handles.toolbox.tsunami.width;
+    handles.toolbox.tsunami.segmentSlip(i)=handles.toolbox.tsunami.slip;
 end
 
 %%
@@ -446,7 +446,7 @@ end
 for id=1:handles.Model(md).nrDomains
     [filename, pathname, filterindex] = uiputfile('*.ini', ['Select initial conditions file for domain ' upper(handles.Model(md).Input(id).runid)],'');
     filenames{id}=filename;
-    if handles.Toolbox(tb).Input.adjustBathymetry
+    if handles.toolbox.tsunami.adjustBathymetry
         [filename, pathname, filterindex] = uiputfile('*.dep', ['Select new depth file for domain ' upper(handles.Model(md).Input(id).runid)],'');
         depfiles{id}=filename;
     else
@@ -462,24 +462,24 @@ if ~isempty(pathname)
                 
         switch opt
             case{'fromparameters'}
-                xs=handles.Toolbox(tb).Input.segmentX;
-                ys=handles.Toolbox(tb).Input.segmentY;
-                wdts=handles.Toolbox(tb).Input.segmentWidth;
-                depths=handles.Toolbox(tb).Input.segmentDepth;
-                dips=handles.Toolbox(tb).Input.segmentDip;
-                sliprakes=handles.Toolbox(tb).Input.segmentSlipRake;
-                slips=handles.Toolbox(tb).Input.segmentSlip;
+                xs=handles.toolbox.tsunami.segmentX;
+                ys=handles.toolbox.tsunami.segmentY;
+                wdts=handles.toolbox.tsunami.segmentWidth;
+                depths=handles.toolbox.tsunami.segmentDepth;
+                dips=handles.toolbox.tsunami.segmentDip;
+                sliprakes=handles.toolbox.tsunami.segmentSlipRake;
+                slips=handles.toolbox.tsunami.segmentSlip;
                 
                 % Compute tsunami wave (in projected coordinate system!)
                 [xx,yy,zz]=ddb_computeTsunamiWave2(xs,ys,depths,dips,wdts,sliprakes,slips);
                 
-                if handles.Toolbox(tb).Input.saveESRIGridFile
+                if handles.toolbox.tsunami.saveESRIGridFile
                     % Write tsunami asc file (in geographic coordinates)
                     xmn=min(min(xx));
                     xmx=max(max(xx));
                     ymn=min(min(yy));
                     ymx=max(max(yy));
-                    oldSys.name=handles.Toolbox(tb).Input.utmZone;
+                    oldSys.name=handles.toolbox.tsunami.utmZone;
                     oldSys.type='projected';
                     newSys.name='WGS 84';
                     newSys.type='geographic';
@@ -494,7 +494,7 @@ if ~isempty(pathname)
 
                 % Plot figure (first convert to geographic coordinate system)
                 if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
-                    oldSys.name=handles.Toolbox(tb).Input.utmZone;
+                    oldSys.name=handles.toolbox.tsunami.utmZone;
                     oldSys.type='projected';
                     newSys.name='WGS 84';
                     newSys.type='geographic';
@@ -508,7 +508,7 @@ if ~isempty(pathname)
                 
             otherwise
                 % Load tsunami wave (in geographic coordinate system!)
-                [xx yy zz info] = arc_asc_read(handles.Toolbox(tb).Input.gridFile);
+                [xx yy zz info] = arc_asc_read(handles.toolbox.tsunami.gridFile);
                 xx1=xx;
                 yy1=yy;
 
@@ -532,12 +532,12 @@ if ~isempty(pathname)
                     % If in geographic coordinate system, convert grids first to
                     % projected coordinate system
                     if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
-                        newSys.name=handles.Toolbox(tb).Input.utmZone;
+                        newSys.name=handles.toolbox.tsunami.utmZone;
                         newSys.type='projected';
                     end
             end
 
-            adjustBathymetry=handles.Toolbox(tb).Input.adjustBathymetry;
+            adjustBathymetry=handles.toolbox.tsunami.adjustBathymetry;
             
             interpolateTsunamiToGrid('xgrid',xz,'ygrid',yz,'gridcs',oldSys,'tsunamics',newSys, ...
                 'xtsunami',xx,'ytsunami',yy,'ztsunami',zz,'inifile',filenames{id}, ...
@@ -546,7 +546,7 @@ if ~isempty(pathname)
             handles.Model(md).Input(id).iniFile=filenames{id};
             handles.Model(md).Input(id).initialConditions='ini';
             
-            if handles.Toolbox(tb).Input.adjustBathymetry
+            if handles.toolbox.tsunami.adjustBathymetry
                 handles.Model(md).Input(id).depFile=depfiles{id};
                 mmax=handles.Model(md).Input(id).MMax;
                 nmax=handles.Model(md).Input(id).NMax;
@@ -608,6 +608,6 @@ end
 %%
 function handles=deleteFaultLine(handles)
 try
-    delete(handles.Toolbox(tb).Input.faulthandle);
+    delete(handles.toolbox.tsunami.faulthandle);
 end
-handles.Toolbox(tb).Input.faulthandle=[];
+handles.toolbox.tsunami.faulthandle=[];

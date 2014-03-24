@@ -1,25 +1,9 @@
-function ddb_resetAll
-%DDB_RESETALL  One line description goes here.
-%
-%   More detailed description goes here.
-%
-%   Syntax:
-%   ddb_resetAll
-%
-%   Input:
-
-%
-%
-%
-%
-%   Example
-%   ddb_resetAll
-%
-%   See also
+function ddb_DFlowFM_saveBatchFile(exedir,exefile,mdufile)
+%ddb_DFlowFM_saveBatchFile - writes DFlow-FM batch file.
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2011 Deltares
+%   Copyright (C) 2013 Deltares
 %       Maarten van Ormondt
 %
 %       Maarten.vanOrmondt@deltares.nl
@@ -59,43 +43,13 @@ function ddb_resetAll
 % $HeadURL: $
 % $Keywords: $
 
+
 %%
 
-% Delete new axes that is sometimes created for no apparent reason. Another
-% fix for this should be found!!!
-h=findobj(gcf,'Type','axes');
-for i=1:length(h)
-    if isempty(get(h(i),'Tag'));
-        delete(h(i));
-    end
-end
-
-handles=getHandles;
-
-for i=1:length(handles.Model)
-    try
-        feval(handles.Model(i).plotFcn,'delete');
-    end
-end
-
-fldnames=fieldnames(handles.toolbox);
-for i=1:length(fldnames)
-    try
-        feval(handles.toolbox.(fldnames{i}).plotFcn,'delete');
-    end
-end
-
-% Want to keep current model active, so store in icurrentmodel
-icurrentmodel=md;
-
-ddb_initialize('all');
-
-% ddb_initialize set current model to delft3d-flow, so set back to original
-% model
-
-handles=getHandles;
-handles.activeModel.name=handles.Model(icurrentmodel).name;
-handles.activeModel.nr=icurrentmodel;
-setHandles(handles);
-
-ddb_selectModel(handles.Model(md).name);
+fname='run_dflowfm.bat';
+fid=fopen(fname,'w');
+fprintf(fid,'%s\n','@ echo off');
+fprintf(fid,'%s\n',['set dflowfmdir="' exedir '"']);
+fprintf(fid,'%s\n','set PATH=%exedir%;%PATH%');
+fprintf(fid,'%s\n',['%dflowfmdir%\' exefile ' ' mdufile]);
+fclose(fid);

@@ -5,31 +5,31 @@
     <position>60 110 130 20</position>
     <text>Format</text>
     <textposition>left</textposition>
-    <variable>handles.Toolbox(tb).Input.import.rawDataFormat</variable>
+    <variable>import.rawDataFormat</variable>
     <type>string</type>
     <tooltipstring>Select file format of raw data</tooltipstring>
     <callback>ddb_BathymetryToolbox_import</callback>
     <option1>selectrawdataformat</option1>
     <listtext>
-      <variable>handles.Toolbox(tb).Input.import.rawDataFormatsText</variable>
+      <variable>import.rawDataFormatsText</variable>
     </listtext>
     <listvalue>
-      <variable>handles.Toolbox(tb).Input.import.rawDataFormats</variable>
+      <variable>import.rawDataFormats</variable>
     </listvalue>
   </element>
   <element>
     <style>pushselectfile</style>
     <position>200 110 80 20</position>
     <text>Select File</text>
-    <variable>handles.Toolbox(tb).Input.import.dataFile</variable>
+    <variable>handles.toolbox.bathymetry.import.dataFile</variable>
     <onchange>ddb_BathymetryToolbox_import</onchange>
     <option1>selectdataset</option1>
     <showfilename>yes</showfilename>
     <extension>
-      <variable>handles.Toolbox(tb).Input.import.rawDataFormatExtension</variable>
+      <variable>import.rawDataFormatExtension</variable>
     </extension>
     <selectiontext>
-      <variable>handles.Toolbox(tb).Input.import.rawDataFormatSelectionText</variable>
+      <variable>import.rawDataFormatSelectionText</variable>
     </selectiontext>
     <tooltipstring>Select data file</tooltipstring>
   </element>
@@ -38,14 +38,14 @@
     <position>60 80 60 20</position>
     <text>X0</text>
     <textposition>left</textposition>
-    <variable>handles.Toolbox(tb).Input.import.x0</variable>
+    <variable>import.x0</variable>
     <type>real</type>
     <tooltipstring>Edit x origin of tiling system (lower left corner of lower left tile)</tooltipstring>
     <dependency>
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.Toolbox(tb).Input.import.rawDataType</variable>
+        <variable>import.rawDataType</variable>
         <type>string</type>
         <value>regulargrid</value>
         <operator>ne</operator>
@@ -57,14 +57,14 @@
     <position>180 80 60 20</position>
     <text>Y0</text>
     <textposition>left</textposition>
-    <variable>handles.Toolbox(tb).Input.import.y0</variable>
+    <variable>import.y0</variable>
     <type>real</type>
     <tooltipstring>Edit y origin of tiling system (lower left corner of lower left tile)</tooltipstring>
     <dependency>
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.Toolbox(tb).Input.import.rawDataType</variable>
+        <variable>import.rawDataType</variable>
         <type>string</type>
         <value>regulargrid</value>
         <operator>ne</operator>
@@ -77,14 +77,14 @@
     <text>dX</text>
     <textposition>left</textposition>
     <enable>1</enable>
-    <variable>handles.Toolbox(tb).Input.import.dx</variable>
+    <variable>import.dx</variable>
     <type>real</type>
     <tooltipstring>Edit grid size X of the highest resolution tiles</tooltipstring>
     <dependency>
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.Toolbox(tb).Input.import.rawDataType</variable>
+        <variable>import.rawDataType</variable>
         <type>string</type>
         <value>regulargrid</value>
         <operator>ne</operator>
@@ -97,14 +97,14 @@
     <text>dY</text>
     <textposition>left</textposition>
     <enable>1</enable>
-    <variable>handles.Toolbox(tb).Input.import.dy</variable>
+    <variable>import.dy</variable>
     <type>real</type>
     <tooltipstring>Edit grid size Y of the highest resolution tiles</tooltipstring>
     <dependency>
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.Toolbox(tb).Input.import.rawDataType</variable>
+        <variable>import.rawDataType</variable>
         <type>string</type>
         <value>regulargrid</value>
         <operator>ne</operator>
@@ -118,7 +118,7 @@
     <text>Nr X</text>
     <textposition>left</textposition>
     <enable>1</enable>
-    <variable>handles.Toolbox(tb).Input.import.nx</variable>
+    <variable>import.nx</variable>
     <type>integer</type>
     <tooltipstring>Edit number of grid cells per tile in x direction</tooltipstring>
   </element>
@@ -129,7 +129,7 @@
     <text>Nr Y</text>
     <textposition>left</textposition>
     <enable>1</enable>
-    <variable>handles.Toolbox(tb).Input.import.ny</variable>
+    <variable>import.ny</variable>
     <type>integer</type>
     <tooltipstring>Edit number of grid cells per tile in y direction</tooltipstring>
   </element>
@@ -146,14 +146,14 @@
     <tag>cstext</tag>
     <style>text</style>
     <position>375 80</position>
-    <variable>handles.Toolbox(tb).Input.import.EPSGname</variable>
+    <variable>import.EPSGname</variable>
     <type>string</type>
   </element>
   <element>
     <tag>radiogeo</tag>
     <style>radiobutton</style>
     <position>270 60</position>
-    <variable>handles.Toolbox(tb).Input.import.radioGeo</variable>
+    <variable>import.radioGeo</variable>
     <text>Geographic</text>
     <type>integer</type>
     <value>1</value>
@@ -163,7 +163,7 @@
     <tag>radioproj</tag>
     <style>radiobutton</style>
     <position>360 60</position>
-    <variable>handles.Toolbox(tb).Input.import.radioProj</variable>
+    <variable>import.radioProj</variable>
     <text>Projected</text>
     <type>integer</type>
     <value>1</value>
@@ -176,7 +176,7 @@
     <text>Vertical Coord Sys</text>
     <textposition>right</textposition>
     <enable>1</enable>
-    <variable>handles.Toolbox(tb).Input.import.vertCoordName</variable>
+    <variable>import.vertCoordName</variable>
     <type>string</type>
     <tooltipstring>Edit vertical coordinate system (e.g. MSL, NAP or NAVD88)</tooltipstring>
   </element>
@@ -186,7 +186,7 @@
     <position>500 35 60 20</position>
     <text>Unit</text>
     <textposition>left</textposition>
-    <variable>handles.Toolbox(tb).Input.import.vertUnits</variable>
+    <variable>import.vertUnits</variable>
     <type>string</type>
     <tooltipstring>Select units of vertical data</tooltipstring>
     <listtext>metres</listtext>
@@ -203,7 +203,7 @@
     <text>Vertical Level</text>
     <textposition>right</textposition>
     <enable>1</enable>
-    <variable>handles.Toolbox(tb).Input.import.vertCoordLevel</variable>
+    <variable>import.vertCoordLevel</variable>
     <type>real</type>
     <tooltipstring>Edit vertical level w.r.t. Mean Sea Level</tooltipstring>
   </element>
@@ -213,7 +213,7 @@
     <position>500 10 60 20</position>
     <text>Positive</text>
     <textposition>left</textposition>
-    <variable>handles.Toolbox(tb).Input.import.positiveUp</variable>
+    <variable>import.positiveUp</variable>
     <type>integer</type>
     <tooltipstring>Select positive direction in data file</tooltipstring>
     <listtext>up</listtext>
@@ -227,7 +227,7 @@
     <position>830 110 100 20</position>
     <text>Precision</text>
     <textposition>left</textposition>
-    <variable>handles.Toolbox(tb).Input.import.type</variable>
+    <variable>import.type</variable>
     <type>string</type>
     <tooltipstring>Select precision of data stored in netCDF tiles.</tooltipstring>
     <listtext>int</listtext>
@@ -243,7 +243,7 @@
     <text>Data Name</text>
     <textposition>left</textposition>
     <enable>1</enable>
-    <variable>handles.Toolbox(tb).Input.import.dataName</variable>
+    <variable>import.dataName</variable>
     <type>string</type>
     <tooltipstring>Edit short name of data files (no spaces)</tooltipstring>
   </element>
@@ -252,7 +252,7 @@
     <position>830 60 100 20</position>
     <text>Data Source</text>
     <textposition>left</textposition>
-    <variable>handles.Toolbox(tb).Input.import.datasource</variable>
+    <variable>import.datasource</variable>
     <type>string</type>
     <tooltipstring>Edit data source (as it will appear in the bathymetry menu)</tooltipstring>
   </element>

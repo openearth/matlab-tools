@@ -78,8 +78,8 @@ if pathname~=0
     d=handles.Model(md).Input(ad).depth;
     rgh=zeros(size(d));
     rgh(rgh==0)=NaN;    
-    rgh(d>handles.Toolbox(tb).Input.roughness.landelevation)=handles.Toolbox(tb).Input.roughness.landroughness;
-    rgh(isnan(rgh))=handles.Toolbox(tb).Input.roughness.searoughness;
+    rgh(d>handles.toolbox.modelmaker.roughness.landelevation)=handles.toolbox.modelmaker.roughness.landroughness;
+    rgh(isnan(rgh))=handles.toolbox.modelmaker.roughness.searoughness;
     ddb_wldep('write',[pathname filename],rgh,'negate','n');
     ddb_wldep('append',[pathname filename],rgh,'negate','n');
     

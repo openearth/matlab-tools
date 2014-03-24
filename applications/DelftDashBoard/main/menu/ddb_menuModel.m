@@ -1,4 +1,4 @@
-function ddb_menuModel(hObject, eventdata)
+function ddb_menuModel(hObject, eventdata, varargin)
 %DDB_MENUMODEL  One line description goes here.
 %
 %   More detailed description goes here.
@@ -61,16 +61,84 @@ function ddb_menuModel(hObject, eventdata)
 % $Keywords: $
 
 %%
-mdl=get(hObject,'Tag');
-
-mdl=mdl(10:end);
-
-h=get(hObject,'Parent');
-ch=get(h,'Children');
-set(ch,'Checked','off');
-set(hObject,'Checked','on');
 
 handles=getHandles;
-if ~strcmpi(mdl,handles.Model(md).name)    
-    ddb_selectModel(mdl);
+   
+for k=1:length(handles.Model)
+    models{k}=handles.Model(k).name;
 end
+
+if isempty(varargin)
+
+    % Fill menu on initialization
+
+%     % First sort models, Delft3D-FLOW must be the first one
+%     models{1}='delft3dflow';
+%     n=1;
+%     for k=1:length(models0)
+%         if ~strcmpi(models0{k},'delft3dflow')
+%             n=n+1;
+%             models{n}=models0{k};
+%         end
+%     end
+    
+    p=findobj(gcf,'Tag','menumodel');
+
+    for k=1:length(models)
+        
+        name=handles.Model(k).name;
+        
+        if handles.Model(k).enable
+            sep='off';
+            if k==1
+                checked='on';
+            else
+                checked='off';
+            end            
+            uimenu(p,'Label',handles.Model(k).longName,'Callback',{@ddb_menuModel,0},'separator',sep,'checked',checked,'tag',name);
+        end
+        
+    end
+    
+else
+
+    % Toolbox selected from menu
+    
+    % Check the selected toolbox in the menu
+    h=get(hObject,'Parent');
+    ch=get(h,'Children');
+    set(ch,'Checked','off');
+    set(hObject,'Checked','on');    
+    
+    % Set the new active toolbox
+    mdlname=get(hObject,'Tag');
+    if ~strcmpi(handles.activeModel.name,mdlname)
+%         handles.activeModel.name=mdlname;
+%         handles.activeModel.nr=strmatch(mdlname,models,'exact');
+%         % Now add the new GUI elements to toolbox tab
+%         setHandles(handles);
+        % Select toolbox
+        set(gcf,'Pointer','watch');
+        ddb_selectModel(mdlname);
+        set(gcf,'Pointer','arrow');
+    end
+
+end
+
+
+
+
+
+% mdl=get(hObject,'Tag');
+% 
+% mdl=mdl(10:end);
+% 
+% h=get(hObject,'Parent');
+% ch=get(h,'Children');
+% set(ch,'Checked','off');
+% set(hObject,'Checked','on');
+% 
+% handles=getHandles;
+% if ~strcmpi(mdl,handles.Model(md).name)    
+%     ddb_selectModel(mdl);
+% end

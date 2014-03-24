@@ -87,10 +87,10 @@ function selectRawDataFormat
 
 handles=getHandles;
 % Set raw data file extension and selection text
-ii=strmatch(handles.Toolbox(tb).Input.import.rawDataFormat,handles.Toolbox(tb).Input.import.rawDataFormats,'exact');
-handles.Toolbox(tb).Input.import.rawDataFormatExtension=handles.Toolbox(tb).Input.import.rawDataFormatsExtension{ii};
-handles.Toolbox(tb).Input.import.rawDataFormatSelectionText=['Select Data File (' handles.Toolbox(tb).Input.import.rawDataFormatsText{ii} ')'];
-handles.Toolbox(tb).Input.import.rawDataType=handles.Toolbox(tb).Input.import.rawDataFormatsType{ii};        
+ii=strmatch(handles.toolbox.bathymetry.import.rawDataFormat,handles.toolbox.bathymetry.import.rawDataFormats,'exact');
+handles.toolbox.bathymetry.import.rawDataFormatExtension=handles.toolbox.bathymetry.import.rawDataFormatsExtension{ii};
+handles.toolbox.bathymetry.import.rawDataFormatSelectionText=['Select Data File (' handles.toolbox.bathymetry.import.rawDataFormatsText{ii} ')'];
+handles.toolbox.bathymetry.import.rawDataType=handles.toolbox.bathymetry.import.rawDataFormatsType{ii};        
 setHandles(handles);
 
 %%
@@ -107,28 +107,30 @@ handles=getHandles;
 
 % Nr zoom steps is determined automatically by the tiling function
 
-wb = waitbox('Reading data file ...');
-
-try    
-    switch lower(handles.Toolbox(tb).Input.import.rawDataFormat)
+try
+    switch lower(handles.toolbox.bathymetry.import.rawDataFormat)
         case{'arcinfogrid'}
-            [ncols,nrows,x0,y0,cellsz]=readArcInfo(handles.Toolbox(tb).Input.import.dataFile,'info');
+            wb = waitbox('Reading data file ...');
+            [ncols,nrows,x0,y0,cellsz]=readArcInfo(handles.toolbox.bathymetry.import.dataFile,'info');
             dx=cellsz;
             dy=cellsz;
         case{'arcbinarygrid'}
-            [x,y,z,m] = arc_info_binary([fileparts(handles.Toolbox(tb).Input.import.dataFile) filesep]);
+            wb = waitbox('Reading data file ...');
+            [x,y,z,m] = arc_info_binary([fileparts(handles.toolbox.bathymetry.import.dataFile) filesep]);
             clear x y z
             x0=m.X(1);
             y0=m.Y(end);
             dx=x(2)-x(1);
             dy=y(2)-y(1);
         case{'matfile'}
-            s=load(handles.Toolbox(tb).Input.import.dataFile);
+            wb = waitbox('Reading data file ...');
+            s=load(handles.toolbox.bathymetry.import.dataFile);
             x0=s.x(1);
             y0=s.y(1);
         case{'netcdf'}
-            x=nc_varget(handles.Toolbox(tb).Input.import.dataFile,'x');
-            y=nc_varget(handles.Toolbox(tb).Input.import.dataFile,'y');
+            wb = waitbox('Reading data file ...');
+            x=nc_varget(handles.toolbox.bathymetry.import.dataFile,'x');
+            y=nc_varget(handles.toolbox.bathymetry.import.dataFile,'y');
             x0=x(1);
             y0=y(1);
             dx=x(2)-x(1);
@@ -136,9 +138,9 @@ try
         case{'adcircgrid'}
             % unstructured data
             % Read metadata
-%            wb_h = waitbar(0,'Reading the adcirc data');
-            [x,y,z,n1,n2,n3]=import_adcirc_fort14(handles.Toolbox(tb).Input.import.dataFile,wb_h,[0,1/6]);
-%            close(wb_h);
+            wb_h = waitbar(0,'Reading the adcirc data');
+            [x,y,z,n1,n2,n3]=import_adcirc_fort14(handles.toolbox.bathymetry.import.dataFile,wb_h,[0,1/6]);
+            close(wb_h);
             x0=min(x);
             y0=min(y);
             x1=max(x);
@@ -148,24 +150,35 @@ try
             dx=sqrt(dataarea/length(x));
             dy=dx;
         case{'xyzregular'}
-            [xg,yg,zg]=xyz2regulargrid(handles.Toolbox(tb).Input.import.dataFile);
+            wb = waitbox('Reading data file ...');
+            [xg,yg,zg]=xyz2regulargrid(handles.toolbox.bathymetry.import.dataFile);
             x0=min(xg);
             y0=min(yg);
             dx=xg(2)-xg(1);
             dy=yg(2)-yg(1);
-    end    
-    close(wb);
+    end
+    try
+        close(wb);
+    end
+    try
+        close(wb_h);
+    end
 catch
-    close(wb);
+    try
+        close(wb);
+    end
+    try
+        close(wb_h);
+    end
     ddb_giveWarning('text','An error occured while reading the data file!');
     return
 end
 
 % Determine default values for this dataset
-handles.Toolbox(tb).Input.import.x0=x0;
-handles.Toolbox(tb).Input.import.y0=y0;
-handles.Toolbox(tb).Input.import.dx=dx;
-handles.Toolbox(tb).Input.import.dy=dy;
+handles.toolbox.bathymetry.import.x0=x0;
+handles.toolbox.bathymetry.import.y0=y0;
+handles.toolbox.bathymetry.import.dx=dx;
+handles.toolbox.bathymetry.import.dy=dy;
 
 setHandles(handles);
 
@@ -176,20 +189,20 @@ handles=getHandles;
 
 % Open GUI to select data set
 
-[cs,type,nr,ok]=ddb_selectCoordinateSystem(handles.coordinateData,handles.EPSG,'default',handles.Toolbox(tb).Input.import.EPSGname,'type','both','defaulttype',handles.Toolbox(tb).Input.import.EPSGtype);
+[cs,type,nr,ok]=ddb_selectCoordinateSystem(handles.coordinateData,handles.EPSG,'default',handles.toolbox.bathymetry.import.EPSGname,'type','both','defaulttype',handles.toolbox.bathymetry.import.EPSGtype);
 
 if ok
-    handles.Toolbox(tb).Input.import.EPSGname=cs;
-    handles.Toolbox(tb).Input.import.EPSGtype=type;
-    handles.Toolbox(tb).Input.import.EPSGcode=nr;
+    handles.toolbox.bathymetry.import.EPSGname=cs;
+    handles.toolbox.bathymetry.import.EPSGtype=type;
+    handles.toolbox.bathymetry.import.EPSGcode=nr;
     
-    switch lower(handles.Toolbox(tb).Input.import.EPSGtype)
+    switch lower(handles.toolbox.bathymetry.import.EPSGtype)
         case{'geo','geographic','geographic 2d','geographic 3d','latlon','lonlat','spherical'}
-            handles.Toolbox(tb).Input.import.radioGeo=1;
-            handles.Toolbox(tb).Input.import.radioProj=0;
+            handles.toolbox.bathymetry.import.radioGeo=1;
+            handles.toolbox.bathymetry.import.radioProj=0;
         otherwise
-            handles.Toolbox(tb).Input.import.radioGeo=0;
-            handles.Toolbox(tb).Input.import.radioProj=1;
+            handles.toolbox.bathymetry.import.radioGeo=0;
+            handles.toolbox.bathymetry.import.radioProj=1;
     end
     setHandles(handles);
 
@@ -198,9 +211,9 @@ end
 %%
 function editAttributes
 handles=getHandles;
-attr=handles.Toolbox(tb).Input.import.attributes;
+attr=handles.toolbox.bathymetry.import.attributes;
 attr=ddb_editTilingAttributes(attr);
-handles.Toolbox(tb).Input.import.attributes=attr;
+handles.toolbox.bathymetry.import.attributes=attr;
 setHandles(handles);
 
 %%
@@ -208,35 +221,35 @@ function generateTiles
 
 handles=getHandles;
 
-OPT.EPSGcode                     = handles.Toolbox(tb).Input.import.EPSGcode;
-OPT.EPSGname                     = handles.Toolbox(tb).Input.import.EPSGname;
-OPT.EPSGtype                     = handles.Toolbox(tb).Input.import.EPSGtype;
-OPT.VertCoordName                = handles.Toolbox(tb).Input.import.vertCoordName;
-OPT.VertCoordLevel               = handles.Toolbox(tb).Input.import.vertCoordLevel;
-OPT.VertUnits                    = handles.Toolbox(tb).Input.import.vertUnits;
-OPT.nc_library                   = handles.Toolbox(tb).Input.import.nc_library;
-OPT.tp                           = handles.Toolbox(tb).Input.import.type;
-OPT.positiveup                   = handles.Toolbox(tb).Input.import.positiveUp;
+OPT.EPSGcode                     = handles.toolbox.bathymetry.import.EPSGcode;
+OPT.EPSGname                     = handles.toolbox.bathymetry.import.EPSGname;
+OPT.EPSGtype                     = handles.toolbox.bathymetry.import.EPSGtype;
+OPT.VertCoordName                = handles.toolbox.bathymetry.import.vertCoordName;
+OPT.VertCoordLevel               = handles.toolbox.bathymetry.import.vertCoordLevel;
+OPT.VertUnits                    = handles.toolbox.bathymetry.import.vertUnits;
+OPT.nc_library                   = handles.toolbox.bathymetry.import.nc_library;
+OPT.tp                           = handles.toolbox.bathymetry.import.type;
+OPT.positiveup                   = handles.toolbox.bathymetry.import.positiveUp;
 
-f=fieldnames(handles.Toolbox(tb).Input.import.attributes);
+f=fieldnames(handles.toolbox.bathymetry.import.attributes);
 
 for i=1:length(f);
-    OPT.(f{i})=handles.Toolbox(tb).Input.import.attributes.(f{i});
+    OPT.(f{i})=handles.toolbox.bathymetry.import.attributes.(f{i});
 end
 
-fname=handles.Toolbox(tb).Input.import.dataFile;
-dr=[handles.Toolbox(tb).Input.import.dataDir filesep handles.Toolbox(tb).Input.import.dataName filesep];
-dataname=deblank(handles.Toolbox(tb).Input.import.dataName);
-datasource=deblank(handles.Toolbox(tb).Input.import.datasource);
-dataformat=handles.Toolbox(tb).Input.import.rawDataFormat;
-datatype=handles.Toolbox(tb).Input.import.rawDataType;
-%nrzoom=handles.Toolbox(tb).Input.import.nrZoom;
-nx=handles.Toolbox(tb).Input.import.nx;
-ny=handles.Toolbox(tb).Input.import.ny;
-x0=handles.Toolbox(tb).Input.import.x0;
-y0=handles.Toolbox(tb).Input.import.y0;
-dx=handles.Toolbox(tb).Input.import.dx;
-dy=handles.Toolbox(tb).Input.import.dy;
+fname=handles.toolbox.bathymetry.import.dataFile;
+dr=[handles.toolbox.bathymetry.import.dataDir filesep handles.toolbox.bathymetry.import.dataName filesep];
+dataname=deblank(handles.toolbox.bathymetry.import.dataName);
+datasource=deblank(handles.toolbox.bathymetry.import.datasource);
+dataformat=handles.toolbox.bathymetry.import.rawDataFormat;
+datatype=handles.toolbox.bathymetry.import.rawDataType;
+%nrzoom=handles.toolbox.bathymetry.import.nrZoom;
+nx=handles.toolbox.bathymetry.import.nx;
+ny=handles.toolbox.bathymetry.import.ny;
+x0=handles.toolbox.bathymetry.import.x0;
+y0=handles.toolbox.bathymetry.import.y0;
+dx=handles.toolbox.bathymetry.import.dx;
+dy=handles.toolbox.bathymetry.import.dy;
 
 % Check data name
 if isempty(dataname)
@@ -251,7 +264,7 @@ if ~isempty(find(dataname==' ', 1))
     ddb_giveWarning('text','Data name cannot have spaces in it.');
     return;
 end
-if strcmpi(handles.Toolbox(tb).Input.import.attributes.title,'Name of data set')
+if strcmpi(handles.toolbox.bathymetry.import.attributes.title,'Name of data set')
     ddb_giveWarning('text','Please enter proper title of dataset in attributes.');
     return;
 end
@@ -259,7 +272,7 @@ if exist(dr,'dir')
     ddb_giveWarning('text','A dataset with this name already exists. Please remove it first.');
     return;
 end
-if ~isempty(strmatch(handles.Toolbox(tb).Input.import.attributes.title,handles.bathymetry.longNames))
+if ~isempty(strmatch(handles.toolbox.bathymetry.import.attributes.title,handles.bathymetry.longNames))
     ddb_giveWarning('text','A dataset with this title already exists. Please change the title in attributes.');
     return;
 end
@@ -271,11 +284,11 @@ fname = [handles.bathymetry.dir 'bathymetry.xml'];
 xmldata = xml_load(fname);
 nd=length(xmldata)+1;
 xmldata(nd).dataset.name=dataname;
-xmldata(nd).dataset.longName=handles.Toolbox(tb).Input.import.attributes.title;
+xmldata(nd).dataset.longName=handles.toolbox.bathymetry.import.attributes.title;
 xmldata(nd).dataset.version='1';
 xmldata(nd).dataset.type='netCDFtiles';
 xmldata(nd).dataset.edit='0';
-xmldata(nd).dataset.URL=[handles.Toolbox(tb).Input.import.dataDir handles.Toolbox(tb).Input.import.dataName];
+xmldata(nd).dataset.URL=[handles.toolbox.bathymetry.import.dataDir handles.toolbox.bathymetry.import.dataName];
 xmldata(nd).dataset.useCache='1';
 xmldata(nd).dataset.source=datasource;
 xml_save(fname,xmldata,'off');

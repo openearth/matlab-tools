@@ -62,7 +62,7 @@ function ddb_navigationChartPlotOptions
 %%
 h=getHandles;
 
-handles=h.Toolbox(tb);
+handles=handles.toolbox.navigationcharts;
 
 MakeNewWindow('Plot Options',[800 650],'modal',[h.SettingsDir filesep 'icons' filesep 'deltares.gif']);
 

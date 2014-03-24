@@ -61,11 +61,10 @@ function handles = ddb_initializeObservationStations(handles, varargin)
 % $Keywords: $
 
 %%
-ii=strmatch('ObservationStations',{handles.Toolbox(:).name},'exact');
 
-ddb_getToolboxData(handles.Toolbox(ii).dataDir,ii);
+ddb_getToolboxData(handles.toolbox.observationstations.dataDir,'observationstations','ObservationStations');
 
-dr=handles.Toolbox(ii).dataDir;
+dr=handles.toolbox.observationstations.dataDir;
 
 s=xml2struct([dr 'ObservationStations.xml'],'structuretype','supershort');
 
@@ -73,49 +72,49 @@ for k=1:length(s.database)
 
     f=str2func(s.database(k).callback);
 
-    handles.Toolbox(ii).Input.database(k).callback=f;
+    handles.toolbox.observationstations.database(k).callback=f;
 
     database=feval(f,'readdatabase','inputfile',[dr s.database(k).file]);
     fld=fieldnames(database);
     for j=1:length(fld)
-        handles.Toolbox(ii).Input.database(k).(fld{j})=database.(fld{j});
+        handles.toolbox.observationstations.database(k).(fld{j})=database.(fld{j});
     end
-    handles.Toolbox(ii).Input.databaselongnames{k}=s.database(k).longname;
-    handles.Toolbox(ii).Input.database(k).activeobservationstation=1;
+    handles.toolbox.observationstations.databaselongnames{k}=s.database(k).longname;
+    handles.toolbox.observationstations.database(k).activeobservationstation=1;
     
 end
 
-handles.Toolbox(ii).Input.starttime=floor(now)-10;
-handles.Toolbox(ii).Input.stoptime=floor(now)-1;
-handles.Toolbox(ii).Input.timestep=10.0;
+handles.toolbox.observationstations.starttime=floor(now)-10;
+handles.toolbox.observationstations.stoptime=floor(now)-1;
+handles.toolbox.observationstations.timestep=10.0;
 
-handles.Toolbox(ii).Input.activedatabase=1;
-handles.Toolbox(ii).Input.activeobservationstation=1;
+handles.toolbox.observationstations.activedatabase=1;
+handles.toolbox.observationstations.activeobservationstation=1;
 
-handles.Toolbox(ii).Input.observationstationshandle=[];
+handles.toolbox.observationstations.observationstationshandle=[];
 
-handles.Toolbox(ii).Input.activeparameter=1;
+handles.toolbox.observationstations.activeparameter=1;
 
 for jj=1:15
-    handles.Toolbox(ii).Input.(['radio' num2str(jj,'%0.2i')]).value=0;
-    handles.Toolbox(ii).Input.(['radio' num2str(jj,'%0.2i')]).enable=0;
-    handles.Toolbox(ii).Input.(['radio' num2str(jj,'%0.2i')]).text='';
+    handles.toolbox.observationstations.(['radio' num2str(jj,'%0.2i')]).value=0;
+    handles.toolbox.observationstations.(['radio' num2str(jj,'%0.2i')]).enable=0;
+    handles.toolbox.observationstations.(['radio' num2str(jj,'%0.2i')]).text='';
 end
 
-handles.Toolbox(ii).Input.downloadeddatasets=[];
-handles.Toolbox(ii).Input.downloadeddatanames=[];
+handles.toolbox.observationstations.downloadeddatasets=[];
+handles.toolbox.observationstations.downloadeddatanames=[];
 
-handles.Toolbox(ii).Input.polygonlength=0;
-handles.Toolbox(ii).Input.exporttype='mat';
+handles.toolbox.observationstations.polygonlength=0;
+handles.toolbox.observationstations.exporttype='mat';
 
 % Export options
-handles.Toolbox(ii).Input.includename=1;
-handles.Toolbox(ii).Input.includeid=0;
-handles.Toolbox(ii).Input.includedatabase=0;
-handles.Toolbox(ii).Input.includetimestamp=0;
-handles.Toolbox(ii).Input.exportallparameters=0;
+handles.toolbox.observationstations.includename=1;
+handles.toolbox.observationstations.includeid=0;
+handles.toolbox.observationstations.includedatabase=0;
+handles.toolbox.observationstations.includetimestamp=0;
+handles.toolbox.observationstations.exportallparameters=0;
 
-handles.Toolbox(ii).Input.showstationnames=1;
-handles.Toolbox(ii).Input.showstationids=0;
-handles.Toolbox(ii).Input.stationlist={''};
-handles.Toolbox(ii).Input.textstation='';
+handles.toolbox.observationstations.showstationnames=1;
+handles.toolbox.observationstations.showstationids=0;
+handles.toolbox.observationstations.stationlist={''};
+handles.toolbox.observationstations.textstation='';

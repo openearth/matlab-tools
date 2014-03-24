@@ -63,25 +63,25 @@ function handles = ddb_dnami_redrw_Farea(handles)
 xf =[0 0 0 0 0 0]; yf =[0 0 0 0 0 0];
 ufl=[0 0 0 0 0];   str=[ 0 0 0 0 0];  dp =[0 0 0 0 0];   sl =[0 0 0 0 0]; fd = [0 0 0 0 0];
 
-nseg=handles.Toolbox(tb).Input.NrSegments;
+nseg=handles.toolbox.tsunami.NrSegments;
 
 ishft=0;
 nsg  = nseg;
 nsegold=nseg;
 
 for i=1:nseg
-    val = handles.Toolbox(tb).Input.FaultLength(i);
+    val = handles.toolbox.tsunami.FaultLength(i);
     if val==0 % delete faultline
         ishft=ishft+1;
         nsg  = nsg -1;
     else
-        xf(i-ishft)=handles.Toolbox(tb).Input.FaultX(i);
-        yf(i-ishft)=handles.Toolbox(tb).Input.FaultY(i);
+        xf(i-ishft)=handles.toolbox.tsunami.FaultX(i);
+        yf(i-ishft)=handles.toolbox.tsunami.FaultY(i);
         ufl(i-ishft)=val;
-        str(i-ishft)=handles.Toolbox(tb).Input.Strike(i);
-        dp (i-ishft)=handles.Toolbox(tb).Input.Dip(i);
-        sl (i-ishft)=handles.Toolbox(tb).Input.SlipRake(i);
-        fd (i-ishft)=handles.Toolbox(tb).Input.FocalDepth(i);
+        str(i-ishft)=handles.toolbox.tsunami.Strike(i);
+        dp (i-ishft)=handles.toolbox.tsunami.Dip(i);
+        sl (i-ishft)=handles.toolbox.tsunami.SlipRake(i);
+        fd (i-ishft)=handles.toolbox.tsunami.FocalDepth(i);
     end
 end
 
@@ -89,8 +89,8 @@ totufl=sum(ufl);
 %
 % error in case fault length exceeds 10% of computed fault length through Mw
 %
-%if (abs(totufl-handles.Toolbox(tb).Input.TotalFaultLength) > handles.Toolbox(tb).Input.ToleranceLength*handles.Toolbox(tb).Input.TotalFaultLength)
-%   errordlg(['Specified fault length: ' int2str(totufl) ' Length computed: ' int2str(handles.Toolbox(tb).Input.TotalFaultLength)]);
+%if (abs(totufl-handles.toolbox.tsunami.TotalFaultLength) > handles.toolbox.tsunami.ToleranceLength*handles.toolbox.tsunami.TotalFaultLength)
+%   errordlg(['Specified fault length: ' int2str(totufl) ' Length computed: ' int2str(handles.toolbox.tsunami.TotalFaultLength)]);
 %   return
 %end
 
@@ -105,55 +105,55 @@ end
 % Now everything's OK: copy new values to old values
 %
 nseg = nsg;
-handles.Toolbox(tb).Input.TotalUserFaultLength = totufl;
+handles.toolbox.tsunami.TotalUserFaultLength = totufl;
 for i=1:nseg
-    handles.Toolbox(tb).Input.FaultX(i)=xf(i);
-    handles.Toolbox(tb).Input.FaultY(i)=yf(i);
-    handles.Toolbox(tb).Input.FaultLength(i)=ufl(i);
-    handles.Toolbox(tb).Input.Strike(i)=str(i);
-    handles.Toolbox(tb).Input.Dip(i)=dp(i);
-    handles.Toolbox(tb).Input.SlipRake(i)=sl(i);
-    handles.Toolbox(tb).Input.FocalDepth(i)=fd(i);
+    handles.toolbox.tsunami.FaultX(i)=xf(i);
+    handles.toolbox.tsunami.FaultY(i)=yf(i);
+    handles.toolbox.tsunami.FaultLength(i)=ufl(i);
+    handles.toolbox.tsunami.Strike(i)=str(i);
+    handles.toolbox.tsunami.Dip(i)=dp(i);
+    handles.toolbox.tsunami.SlipRake(i)=sl(i);
+    handles.toolbox.tsunami.FocalDepth(i)=fd(i);
 end
 
 % Clean up all fault segments that have been deleted
 for i=nseg+1:nsegold
-    handles.Toolbox(tb).Input.FaultX(i)=0;
-    handles.Toolbox(tb).Input.FaultY(i)=0;
-    handles.Toolbox(tb).Input.FaultLength(i)=0;
-    handles.Toolbox(tb).Input.Strike(i)=0;
-    handles.Toolbox(tb).Input.Dip(i)=0;
-    handles.Toolbox(tb).Input.SlipRake(i)=0;
-    handles.Toolbox(tb).Input.FocalDepth(i)=0;
+    handles.toolbox.tsunami.FaultX(i)=0;
+    handles.toolbox.tsunami.FaultY(i)=0;
+    handles.toolbox.tsunami.FaultLength(i)=0;
+    handles.toolbox.tsunami.Strike(i)=0;
+    handles.toolbox.tsunami.Dip(i)=0;
+    handles.toolbox.tsunami.SlipRake(i)=0;
+    handles.toolbox.tsunami.FocalDepth(i)=0;
 end
 
-handles.Toolbox(tb).Input.FaultX(nseg+1)=xf(nseg+1);
-handles.Toolbox(tb).Input.FaultY(nseg+1)=yf(nseg+1);
-handles.Toolbox(tb).Input.NrSegments = nseg;
+handles.toolbox.tsunami.FaultX(nseg+1)=xf(nseg+1);
+handles.toolbox.tsunami.FaultY(nseg+1)=yf(nseg+1);
+handles.toolbox.tsunami.NrSegments = nseg;
 
 handles = ddb_computeMw(handles);
-if handles.Toolbox(tb).Input.Magnitude <= 6 & handles.Toolbox(tb).Input.Magnitude > 0
+if handles.toolbox.tsunami.Magnitude <= 6 & handles.toolbox.tsunami.Magnitude > 0
     warndlg('Probably negligible Tsunami wave')
 end
 
 %
 % Moet VertexX/Y hier niet ook worden geupdate?
 %
-%handles.Toolbox(tb).Input.VertexX=xf;
-%handles.Toolbox(tb).Input.VertexY=yf;
+%handles.toolbox.tsunami.VertexX=xf;
+%handles.toolbox.tsunami.VertexY=yf;
 
 handles=ddb_dnami_comp_Farea(handles);
 h=findall(gcf,'Tag','FaultArea');
 if length(h)>0
     delete(h);
 end
-if (nseg > 0 & handles.Toolbox(tb).Input.Magnitude > 0)
+if (nseg > 0 & handles.toolbox.tsunami.Magnitude > 0)
     for i=1:nseg
         xx = [];
         yy = [];
         for k=1:5
-            xx(k) = handles.Toolbox(tb).Input.VertexX(i,k);
-            yy(k) = handles.Toolbox(tb).Input.VertexY(i,k);
+            xx(k) = handles.toolbox.tsunami.VertexX(i,k);
+            yy(k) = handles.toolbox.tsunami.VertexY(i,k);
         end
         fltpatch(i) = patch(xx,yy,'y');
         set(fltpatch(i),'FaceAlpha',0.8);

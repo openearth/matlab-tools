@@ -86,9 +86,9 @@ try
         f=handles.Model(md).plotFcn;
         feval(f,'update','active',0,'domain',ad,'visible',1,'wavedomain',awg);
 %     end
-    
-    for j=1:length(handles.Toolbox)
-        f=handles.Toolbox(j).plotFcn;
+    fldnames=fieldnames(handles.toolbox);
+    for j=1:length(fldnames)
+        f=handles.toolbox.(fldnames{j}).plotFcn;
         feval(f,'deactivate');
     end
     

@@ -7,7 +7,7 @@
     <text>Land Elevation</text>
     <textposition>left</textposition>
     <type>real</type>
-    <variable>handles.Toolbox(tb).Input.roughness.landelevation</variable>
+    <variable>roughness.landelevation</variable>
     <tooltipstring>Elevation of dry land</tooltipstring>
   </element>
   <element>
@@ -17,7 +17,7 @@
     <text>Land Roughness</text>
     <textposition>left</textposition>
     <type>real</type>
-    <variable>handles.Toolbox(tb).Input.roughness.landroughness</variable>
+    <variable>roughness.landroughness</variable>
     <tooltipstring>Roughness on land</tooltipstring>
   </element>
   <element>
@@ -27,7 +27,7 @@
     <text>Sea Roughness</text>
     <textposition>left</textposition>
     <type>real</type>
-    <variable>handles.Toolbox(tb).Input.roughness.searoughness</variable>
+    <variable>roughness.searoughness</variable>
     <tooltipstring>Roughness on open water</tooltipstring>
   </element>
   <element>

@@ -79,7 +79,7 @@ if exist(file,'file')
         disp(['Could not retrieve ' xmlfile ' from server, no data update!']);
     end 
 else
-    % Local file does not exist, so copy file from server (the should happen the first time DelftDashboard is started)
+    % Local file does not exist, so copy file from server (this should happen the first time DelftDashboard is started)
     try
         % Make folder
         if ~isdir(localdir)

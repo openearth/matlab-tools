@@ -63,10 +63,10 @@ function ddb_selectCyclonePoint(h,x,y,nr)
 % points. Called when double-clicking on cyclone track.
 handles=getHandles;
 
-handles.Toolbox(tb).Input.activeCyclonePoint=nr;
-handles.Toolbox(tb).Input.activeQuadrant=1;
+handles.toolbox.tropicalcyclone.activeCyclonePoint=nr;
+handles.toolbox.tropicalcyclone.activeQuadrant=1;
 
-xmldir=handles.Toolbox(tb).xmlDir;
+xmldir=handles.toolbox.tropicalcyclone.xmlDir;
 xmlfile='TropicalCyclone.PointTrackParameters.xml';
 h=handles;
 [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile);

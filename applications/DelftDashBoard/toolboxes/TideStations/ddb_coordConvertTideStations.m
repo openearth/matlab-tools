@@ -60,19 +60,18 @@ function handles = ddb_coordConvertTideStations(handles)
 % $Keywords: $
 
 %%
-ii=strmatch('TideStations',{handles.Toolbox(:).name},'exact');
 
 ddb_plotTideStations('delete');
-handles.Toolbox(ii).Input.tideStationHandle=[];
-handles.Toolbox(ii).Input.ActiveTideStationHandle=[];
+handles.toolbox.tidestations.tideStationHandle=[];
+handles.toolbox.tidestations.ActiveTideStationHandle=[];
 
-for iac=1:length(handles.Toolbox(ii).Input.databases)
-    x=handles.Toolbox(ii).Input.database(iac).x;
-    y=handles.Toolbox(ii).Input.database(iac).y;
-    cs.name=handles.Toolbox(ii).Input.database(iac).coordinateSystem;
-    cs.type=handles.Toolbox(ii).Input.database(iac).coordinateSystemType;
+for iac=1:length(handles.toolbox.tidestations.databases)
+    x=handles.toolbox.tidestations.database(iac).x;
+    y=handles.toolbox.tidestations.database(iac).y;
+    cs.name=handles.toolbox.tidestations.database(iac).coordinateSystem;
+    cs.type=handles.toolbox.tidestations.database(iac).coordinateSystemType;
     [x,y]=ddb_coordConvert(x,y,cs,handles.screenParameters.coordinateSystem);
-    handles.Toolbox(ii).Input.database(iac).xLoc=x;
-    handles.Toolbox(ii).Input.database(iac).yLoc=y;
+    handles.toolbox.tidestations.database(iac).xLoc=x;
+    handles.toolbox.tidestations.database(iac).yLoc=y;
 end
 

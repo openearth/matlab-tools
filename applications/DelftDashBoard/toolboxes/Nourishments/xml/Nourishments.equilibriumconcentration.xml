@@ -48,7 +48,7 @@
     <position>440 110 60 20</position>
     <text>Concentration (g/l)</text>
     <textposition>right</textposition>
-    <variable>handles.Toolbox(tb).Input.concentrationPolygons(handles.Toolbox(tb).Input.activeConcentrationPolygon).concentration</variable>
+    <variable>handles.toolbox.nourishments.concentrationPolygons(handles.toolbox.nourishments.activeConcentrationPolygon).concentration</variable>
     <type>real</type>
     <tooltipstring>Edit equilibrium concentration with polygon</tooltipstring>
     <onchange>ddb_NourishmentsToolbox_equilibriumConcentration</onchange>

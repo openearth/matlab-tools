@@ -62,16 +62,29 @@ function ddb_menuToolbox(hObject, eventdata, varargin)
 
 %%
 handles=getHandles;
-
+   
 if isempty(varargin)
 
     % Fill menu on initialization
 
-    p=findobj(gcf,'Tag','menutoolbox');
+    toolboxes0=fieldnames(handles.toolbox);
+    % First sort toolboxes, ModelMaker toolbox must be the first one
+    toolboxes{1}='modelmaker';
+    n=1;
+    for k=1:length(toolboxes0)
+        if ~strcmpi(toolboxes0{k},'modelmaker')
+            n=n+1;
+            toolboxes{n}=toolboxes0{k};
+        end
+    end
     
-    for k=1:length(handles.Toolbox)
+    p=findobj(gcf,'Tag','menutoolbox');
+
+    for k=1:length(toolboxes)
         
-        if handles.Toolbox(k).enable
+        name=toolboxes{k};
+        
+        if handles.toolbox.(name).enable
             enab='on';
         else
             enab='off';
@@ -90,7 +103,7 @@ if isempty(varargin)
             checked='off';
         end
         
-        uimenu(p,'Label',handles.Toolbox(k).longName,'Callback',{@ddb_menuToolbox,0},'separator',sep,'enable',enab,'checked',checked,'tag',handles.Toolbox(k).name);
+        uimenu(p,'Label',handles.toolbox.(name).longName,'Callback',{@ddb_menuToolbox,0},'separator',sep,'enable',enab,'checked',checked,'tag',name);
         
     end
     
@@ -108,7 +121,7 @@ else
     tbname=get(hObject,'Tag');
     if ~strcmpi(handles.activeToolbox.name,tbname)
         handles.activeToolbox.name=tbname;
-        handles.activeToolbox.nr=strmatch(tbname,{handles.Toolbox(:).name},'exact');
+%         handles.activeToolbox.nr=strmatch(tbname,toolboxes,'exact');
         % Now add the new GUI elements to toolbox tab
         setHandles(handles);
         % Select toolbox

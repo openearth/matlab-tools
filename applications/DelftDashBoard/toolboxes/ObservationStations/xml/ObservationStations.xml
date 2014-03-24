@@ -82,7 +82,7 @@
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).download</variable>
+        <variable>handles.toolbox.observationstations.database(handles.toolbox.observationstations.activedatabase).download</variable>
         <type>integer</type>
         <value>1</value>
         <operator>eq</operator>
@@ -101,7 +101,7 @@
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).download</variable>
+        <variable>handles.toolbox.observationstations.database(handles.toolbox.observationstations.activedatabase).download</variable>
         <type>integer</type>
         <value>1</value>
         <operator>eq</operator>
@@ -123,7 +123,7 @@
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).download</variable>
+        <variable>handles.toolbox.observationstations.database(handles.toolbox.observationstations.activedatabase).download</variable>
         <type>integer</type>
         <value>1</value>
         <operator>eq</operator>
@@ -142,7 +142,7 @@
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).download</variable>
+        <variable>handles.toolbox.observationstations.database(handles.toolbox.observationstations.activedatabase).download</variable>
         <type>integer</type>
         <value>1</value>
         <operator>eq</operator>
@@ -161,7 +161,7 @@
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).download</variable>
+        <variable>handles.toolbox.observationstations.database(handles.toolbox.observationstations.activedatabase).download</variable>
         <type>integer</type>
         <value>1</value>
         <operator>eq</operator>
@@ -186,7 +186,7 @@
         <operator>gt</operator>
       </check>
       <check>
-        <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).download</variable>
+        <variable>handles.toolbox.observationstations.database(handles.toolbox.observationstations.activedatabase).download</variable>
         <type>integer</type>
         <value>1</value>
         <operator>eq</operator>
@@ -205,7 +205,7 @@
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).download</variable>
+        <variable>handles.toolbox.observationstations.database(handles.toolbox.observationstations.activedatabase).download</variable>
         <type>integer</type>
         <value>1</value>
         <operator>eq</operator>
@@ -225,7 +225,7 @@
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).download</variable>
+        <variable>handles.toolbox.observationstations.database(handles.toolbox.observationstations.activedatabase).download</variable>
         <type>integer</type>
         <value>1</value>
         <operator>eq</operator>
@@ -245,7 +245,7 @@
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).download</variable>
+        <variable>handles.toolbox.observationstations.database(handles.toolbox.observationstations.activedatabase).download</variable>
         <type>integer</type>
         <value>1</value>
         <operator>eq</operator>
@@ -257,19 +257,19 @@
     <position>610 75 110 20</position>
     <type>string</type>
     <text>Subset</text>
-    <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).subset</variable>
+    <variable>handles.toolbox.observationstations.database(handles.toolbox.observationstations.activedatabase).subset</variable>
     <tooltipstring>Select subset</tooltipstring>
     <listtext>
-      <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).subsetnames</variable>
+      <variable>handles.toolbox.observationstations.database(handles.toolbox.observationstations.activedatabase).subsetnames</variable>
     </listtext>
     <listvalue>
-      <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).subsets</variable>
+      <variable>handles.toolbox.observationstations.database(handles.toolbox.observationstations.activedatabase).subsets</variable>
     </listvalue>
     <dependency>
       <action>visible</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).subset</variable>
+        <variable>handles.toolbox.observationstations.database(handles.toolbox.observationstations.activedatabase).subset</variable>
         <type>string</type>
         <value>isempty</value>
         <operator>ne</operator>
@@ -279,13 +279,13 @@
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).parameters(handles.Toolbox(tb).Input.activeobservationstation).name{handles.Toolbox(tb).Input.activeparameter}</variable>
+        <variable>handles.toolbox.observationstations.database(handles.toolbox.observationstations.activedatabase).parameters(handles.toolbox.observationstations.activeobservationstation).name{handles.toolbox.observationstations.activeparameter}</variable>
         <type>string</type>
         <value>water level</value>
         <operator>eq</operator>
       </check>
       <check>
-        <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).download</variable>
+        <variable>handles.toolbox.observationstations.database(handles.toolbox.observationstations.activedatabase).download</variable>
         <type>integer</type>
         <value>1</value>
         <operator>eq</operator>
@@ -297,16 +297,16 @@
     <position>610 50 110 20</position>
     <type>string</type>
     <text>Time Zone</text>
-    <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).timezone</variable>
+    <variable>handles.toolbox.observationstations.database(handles.toolbox.observationstations.activedatabase).timezone</variable>
     <tooltipstring>Select subset</tooltipstring>
     <listtext>
-      <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).timezones</variable>
+      <variable>handles.toolbox.observationstations.database(handles.toolbox.observationstations.activedatabase).timezones</variable>
     </listtext>
     <dependency>
       <action>visible</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).timezone</variable>
+        <variable>handles.toolbox.observationstations.database(handles.toolbox.observationstations.activedatabase).timezone</variable>
         <type>string</type>
         <value>isempty</value>
         <operator>ne</operator>
@@ -316,7 +316,7 @@
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).download</variable>
+        <variable>handles.toolbox.observationstations.database(handles.toolbox.observationstations.activedatabase).download</variable>
         <type>integer</type>
         <value>1</value>
         <operator>eq</operator>
@@ -328,16 +328,16 @@
     <position>610 25 110 20</position>
     <type>string</type>
     <text>Datum</text>
-    <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).datum</variable>
+    <variable>handles.toolbox.observationstations.database(handles.toolbox.observationstations.activedatabase).datum</variable>
     <tooltipstring>Select vertical datum</tooltipstring>
     <listtext>
-      <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).datums</variable>
+      <variable>handles.toolbox.observationstations.database(handles.toolbox.observationstations.activedatabase).datums</variable>
     </listtext>
     <dependency>
       <action>visible</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).subset</variable>
+        <variable>handles.toolbox.observationstations.database(handles.toolbox.observationstations.activedatabase).subset</variable>
         <type>string</type>
         <value>isempty</value>
         <operator>ne</operator>
@@ -347,7 +347,7 @@
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).parameters(handles.Toolbox(tb).Input.activeobservationstation).name{handles.Toolbox(tb).Input.activeparameter}</variable>
+        <variable>handles.toolbox.observationstations.database(handles.toolbox.observationstations.activedatabase).parameters(handles.toolbox.observationstations.activeobservationstation).name{handles.toolbox.observationstations.activeparameter}</variable>
         <type>string</type>
         <value>water level</value>
         <operator>eq</operator>
@@ -357,7 +357,7 @@
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>handles.Toolbox(tb).Input.database(handles.Toolbox(tb).Input.activedatabase).download</variable>
+        <variable>handles.toolbox.observationstations.database(handles.toolbox.observationstations.activedatabase).download</variable>
         <type>integer</type>
         <value>1</value>
         <operator>eq</operator>

@@ -6,7 +6,7 @@
     <position>10 110 130 20</position>
     <tooltipstring>Select ESRI grid file (coordinates must be geographic (i.e. WGS 84)!)</tooltipstring>
     <text>File</text>
-    <variable>handles.Toolbox(tb).Input.gridFile</variable>
+    <variable>gridFile</variable>
     <extension>*.asc</extension>
     <selectiontext>Select tsunami grid file</selectiontext>
     <callback>ddb_TsunamiToolbox</callback>

@@ -61,7 +61,7 @@ function handles = ddb_computeCyclone(handles, filename)
 % $Keywords: $
 
 %%
-inp=handles.Toolbox(tb).Input;
+inp=handles.toolbox.tropicalcyclone;
 
 [path,name,ext]=fileparts(filename);
 
@@ -191,8 +191,8 @@ for iq=1:nq
     
     fclose(fid);
     
-    if (exist(fullfile(handles.Toolbox(tb).dataDir,'wes.exe'),'file'))
-        system(['"' handles.Toolbox(tb).dataDir 'wes.exe" ' name iqstr '.inp']);
+    if (exist(fullfile(handles.toolbox.tropicalcyclone.dataDir,'wes.exe'),'file'))
+        system(['"' handles.toolbox.tropicalcyclone.dataDir 'wes.exe" ' name iqstr '.inp']);
     else
         fname = which('wes.exe');
         if (exist(fname,'file'))
@@ -221,7 +221,7 @@ if strcmpi(inp.quadrantOption,'perquadrant')
     fprintf(fid,'%s\n',['SW QUADRANT         = ' name '_3.spw']);
     fprintf(fid,'%s\n',['NW QUADRANT         = ' name '_4.spw']);
     fclose(fid);
-    system(['"' handles.Toolbox(tb).dataDir 'merge_spw.exe" ' name '.inp']);
+    system(['"' handles.toolbox.tropicalcyclone.dataDir 'merge_spw.exe" ' name '.inp']);
     movefile([name '_merge.spw'],[name '.spw']);
     
     if inp.deleteTemporaryFiles

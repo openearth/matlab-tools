@@ -73,7 +73,7 @@ end
 function selectDataset
 
 handles=getHandles;
-handles.Toolbox(tb).Input.activeZoomLevel=1;
+handles.toolbox.bathymetry.activeZoomLevel=1;
 setHandles(handles);
 
 %%
@@ -81,15 +81,15 @@ function fillCache
 
 handles=getHandles;
 
-if handles.bathymetry.dataset(handles.Toolbox(tb).Input.activeDataset).isAvailable
+if handles.bathymetry.dataset(handles.toolbox.bathymetry.activeDataset).isAvailable
     
-    cs.name=handles.bathymetry.dataset(handles.Toolbox(tb).Input.activeDataset).horizontalCoordinateSystem.name;
-    cs.type=handles.bathymetry.dataset(handles.Toolbox(tb).Input.activeDataset).horizontalCoordinateSystem.type;
+    cs.name=handles.bathymetry.dataset(handles.toolbox.bathymetry.activeDataset).horizontalCoordinateSystem.name;
+    cs.type=handles.bathymetry.dataset(handles.toolbox.bathymetry.activeDataset).horizontalCoordinateSystem.type;
     
-    x0=handles.Toolbox(tb).Input.rectanglex0;
-    y0=handles.Toolbox(tb).Input.rectangley0;
-    dx=handles.Toolbox(tb).Input.rectangledx;
-    dy=handles.Toolbox(tb).Input.rectangledy;
+    x0=handles.toolbox.bathymetry.rectanglex0;
+    y0=handles.toolbox.bathymetry.rectangley0;
+    dx=handles.toolbox.bathymetry.rectangledx;
+    dy=handles.toolbox.bathymetry.rectangledy;
     
     xx=[x0 x0+dx x0+dx x0];
     yy=[y0 y0 y0+dy y0+dy];
@@ -101,7 +101,7 @@ if handles.bathymetry.dataset(handles.Toolbox(tb).Input.activeDataset).isAvailab
     ylim(1)=min(yy);
     ylim(2)=max(yy);
 
-    ii=handles.Toolbox(tb).Input.activeDataset;
+    ii=handles.toolbox.bathymetry.activeDataset;
     str=handles.bathymetry.datasets;
     bset=str{ii};
     
@@ -119,10 +119,10 @@ if ~isempty(h)
     delete(h);
 end
 
-handles.Toolbox(tb).Input.rectanglex0=[];
-handles.Toolbox(tb).Input.rectanglex0=[];
-handles.Toolbox(tb).Input.rectangledx=[];
-handles.Toolbox(tb).Input.rectangledy=[];
+handles.toolbox.bathymetry.rectanglex0=[];
+handles.toolbox.bathymetry.rectanglex0=[];
+handles.toolbox.bathymetry.rectangledx=[];
+handles.toolbox.bathymetry.rectangledy=[];
 
 UIRectangle(handles.GUIHandles.mapAxis,'draw','Tag','bathymetryrectangle','Marker','o','MarkerEdgeColor','k', ...
     'MarkerSize',6,'rotate',0,'callback',@changeRectangle);
@@ -133,12 +133,12 @@ function changeRectangle(x0,y0,dx,dy,rotation,h)
 
 handles=getHandles;
 
-handles.Toolbox(tb).Input.rectanglehandle=h;
+handles.toolbox.bathymetry.rectanglehandle=h;
 
-handles.Toolbox(tb).Input.rectanglex0=x0;
-handles.Toolbox(tb).Input.rectangley0=y0;
-handles.Toolbox(tb).Input.rectangledx=dx;
-handles.Toolbox(tb).Input.rectangledy=dy;
+handles.toolbox.bathymetry.rectanglex0=x0;
+handles.toolbox.bathymetry.rectangley0=y0;
+handles.toolbox.bathymetry.rectangledx=dx;
+handles.toolbox.bathymetry.rectangledy=dy;
 
 setHandles(handles);
 
@@ -147,13 +147,13 @@ gui_updateActiveTab;
 %%
 function deleteRectangle
 handles=getHandles;
-if ~isempty(handles.Toolbox(tb).Input.rectanglehandle)
+if ~isempty(handles.toolbox.bathymetry.rectanglehandle)
     try
-        delete(handles.Toolbox(tb).Input.rectanglehandle);
+        delete(handles.toolbox.bathymetry.rectanglehandle);
     end
 end
-handles.Toolbox(tb).Input.rectanglex0=[];
-handles.Toolbox(tb).Input.rectanglex0=[];
-handles.Toolbox(tb).Input.rectangledx=[];
-handles.Toolbox(tb).Input.rectangledy=[];
+handles.toolbox.bathymetry.rectanglex0=[];
+handles.toolbox.bathymetry.rectanglex0=[];
+handles.toolbox.bathymetry.rectangledx=[];
+handles.toolbox.bathymetry.rectangledy=[];
 setHandles(handles);

@@ -94,11 +94,11 @@ end
 %%
 function selectDataset
 handles=getHandles;
-handles.Toolbox(tb).Input.activeZoomLevel=1;
+handles.toolbox.bathymetry.activeZoomLevel=1;
 handles=setResolutionText(handles);
-handles.Toolbox(tb).Input.zoomLevelText=[];
-for i=1:length(handles.bathymetry.dataset(handles.Toolbox(tb).Input.activeDataset).zoomLevel)
-    handles.Toolbox(tb).Input.zoomLevelText{i}=num2str(i);
+handles.toolbox.bathymetry.zoomLevelText=[];
+for i=1:length(handles.bathymetry.dataset(handles.toolbox.bathymetry.activeDataset).zoomLevel)
+    handles.toolbox.bathymetry.zoomLevelText{i}=num2str(i);
 end
 setHandles(handles);
 
@@ -111,12 +111,12 @@ setHandles(handles);
 %%
 function handles=setResolutionText(handles)
 
-cellSize=handles.bathymetry.dataset(handles.Toolbox(tb).Input.activeDataset).zoomLevel(handles.Toolbox(tb).Input.activeZoomLevel).dx;
-if strcmpi(handles.bathymetry.dataset(handles.Toolbox(tb).Input.activeDataset).horizontalCoordinateSystem.type,'Geographic')
+cellSize=handles.bathymetry.dataset(handles.toolbox.bathymetry.activeDataset).zoomLevel(handles.toolbox.bathymetry.activeZoomLevel).dx;
+if strcmpi(handles.bathymetry.dataset(handles.toolbox.bathymetry.activeDataset).horizontalCoordinateSystem.type,'Geographic')
     cellSize=cellSize*111111;
-    handles.Toolbox(tb).Input.resolutionText=['Cell Size : ~ ' num2str(cellSize,'%10.0f') ' m'];
+    handles.toolbox.bathymetry.resolutionText=['Cell Size : ~ ' num2str(cellSize,'%10.0f') ' m'];
 else
-    handles.Toolbox(tb).Input.resolutionText=['Cell Size : ' num2str(cellSize,'%10.0f') ' m'];
+    handles.toolbox.bathymetry.resolutionText=['Cell Size : ' num2str(cellSize,'%10.0f') ' m'];
 end
 
 %%
@@ -124,18 +124,18 @@ function exportData
 
 handles=getHandles;
 
-filename=handles.Toolbox(tb).Input.bathyFile;
+filename=handles.toolbox.bathymetry.bathyFile;
 
-if handles.bathymetry.dataset(handles.Toolbox(tb).Input.activeDataset).isAvailable
+if handles.bathymetry.dataset(handles.toolbox.bathymetry.activeDataset).isAvailable
     
     wb = waitbox('Exporting samples ...');pause(0.1);
     
-    cs.name=handles.bathymetry.dataset(handles.Toolbox(tb).Input.activeDataset).horizontalCoordinateSystem.name;
-    cs.type=handles.bathymetry.dataset(handles.Toolbox(tb).Input.activeDataset).horizontalCoordinateSystem.type;
+    cs.name=handles.bathymetry.dataset(handles.toolbox.bathymetry.activeDataset).horizontalCoordinateSystem.name;
+    cs.type=handles.bathymetry.dataset(handles.toolbox.bathymetry.activeDataset).horizontalCoordinateSystem.type;
     
-    [xx,yy]=ddb_coordConvert(handles.Toolbox(tb).Input.polygonX,handles.Toolbox(tb).Input.polygonY,handles.screenParameters.coordinateSystem,cs);
+    [xx,yy]=ddb_coordConvert(handles.toolbox.bathymetry.polygonX,handles.toolbox.bathymetry.polygonY,handles.screenParameters.coordinateSystem,cs);
     
-    ii=handles.Toolbox(tb).Input.activeDataset;
+    ii=handles.toolbox.bathymetry.activeDataset;
     str=handles.bathymetry.datasets;
     bset=str{ii};
     
@@ -146,7 +146,7 @@ if handles.bathymetry.dataset(handles.Toolbox(tb).Input.activeDataset).isAvailab
     
     fname=filename;
     
-    zoomlevel=handles.Toolbox(tb).Input.activeZoomLevel;
+    zoomlevel=handles.toolbox.bathymetry.activeZoomLevel;
     
     [x,y,z,ok]=ddb_getBathymetry(handles.bathymetry,xlim,ylim,'bathymetry',bset,'zoomlevel',zoomlevel);
     
@@ -163,7 +163,7 @@ if handles.bathymetry.dataset(handles.Toolbox(tb).Input.activeDataset).isAvailab
             y=reshape(y,[np,1]);
             z=reshape(z,[np,1]);
             
-            in = inpolygon(x,y,handles.Toolbox(tb).Input.polygonX,handles.Toolbox(tb).Input.polygonY);
+            in = inpolygon(x,y,handles.toolbox.bathymetry.polygonX,handles.toolbox.bathymetry.polygonY);
             
             x=x(in);
             y=y(in);
@@ -176,7 +176,7 @@ if handles.bathymetry.dataset(handles.Toolbox(tb).Input.activeDataset).isAvailab
             z=z(~isn);
             %     end
             
-            if strcmpi(handles.Toolbox(tb).Input.activeDirection,'down')
+            if strcmpi(handles.toolbox.bathymetry.activeDirection,'down')
                 z=z*-1;
             end
             
@@ -207,11 +207,11 @@ if ~isempty(h)
     delete(h);
 end
 
-handles.Toolbox(tb).Input.polygonX=[];
-handles.Toolbox(tb).Input.polygonY=[];
-handles.Toolbox(tb).Input.polyLength=0;
+handles.toolbox.bathymetry.polygonX=[];
+handles.toolbox.bathymetry.polygonY=[];
+handles.toolbox.bathymetry.polyLength=0;
 
-handles.Toolbox(tb).Input.polygonhandle=gui_polyline('draw','tag','bathymetrypolygon','marker','o', ...
+handles.toolbox.bathymetry.polygonhandle=gui_polyline('draw','tag','bathymetrypolygon','marker','o', ...
     'createcallback',@createPolygon,'changecallback',@changePolygon, ...
     'closed',1);
 
@@ -220,19 +220,19 @@ setHandles(handles);
 %%
 function createPolygon(h,x,y)
 handles=getHandles;
-handles.Toolbox(tb).Input.polygonhandle=h;
-handles.Toolbox(tb).Input.polygonX=x;
-handles.Toolbox(tb).Input.polygonY=y;
-handles.Toolbox(tb).Input.polyLength=length(x);
+handles.toolbox.bathymetry.polygonhandle=h;
+handles.toolbox.bathymetry.polygonX=x;
+handles.toolbox.bathymetry.polygonY=y;
+handles.toolbox.bathymetry.polyLength=length(x);
 setHandles(handles);
 gui_updateActiveTab;
 
 %%
 function deletePolygon
 handles=getHandles;
-handles.Toolbox(tb).Input.polygonX=[];
-handles.Toolbox(tb).Input.polygonY=[];
-handles.Toolbox(tb).Input.polyLength=0;
+handles.toolbox.bathymetry.polygonX=[];
+handles.toolbox.bathymetry.polygonY=[];
+handles.toolbox.bathymetry.polyLength=0;
 h=findobj(gcf,'Tag','bathymetrypolygon');
 if ~isempty(h)
     delete(h);
@@ -242,30 +242,30 @@ setHandles(handles);
 %%
 function changePolygon(h,x,y,varargin)
 handles=getHandles;
-handles.Toolbox(tb).Input.polygonX=x;
-handles.Toolbox(tb).Input.polygonY=y;
-handles.Toolbox(tb).Input.polyLength=length(x);
+handles.toolbox.bathymetry.polygonX=x;
+handles.toolbox.bathymetry.polygonY=y;
+handles.toolbox.bathymetry.polyLength=length(x);
 setHandles(handles);
 
 %%
 function loadPolygon
 handles=getHandles;
-[x,y]=landboundary('read',handles.Toolbox(tb).Input.polygonFile);
-handles.Toolbox(tb).Input.polygonX=x;
-handles.Toolbox(tb).Input.polygonY=y;
-handles.Toolbox(tb).Input.polyLength=length(x);
+[x,y]=landboundary('read',handles.toolbox.bathymetry.polygonFile);
+handles.toolbox.bathymetry.polygonX=x;
+handles.toolbox.bathymetry.polygonY=y;
+handles.toolbox.bathymetry.polyLength=length(x);
 h=findobj(gca,'Tag','bathymetrypolygon');
 delete(h);
 h=gui_polyline('plot','x',x,'y',y,'tag','bathymetrypolygon','marker','o', ...
         'changecallback',@changePolygon);
-handles.Toolbox(tb).Input.polygonhandle=h;
+handles.toolbox.bathymetry.polygonhandle=h;
 setHandles(handles);
 
 %%
 function savePolygon
 handles=getHandles;
-x=handles.Toolbox(tb).Input.polygonX;
-y=handles.Toolbox(tb).Input.polygonY;
+x=handles.toolbox.bathymetry.polygonX;
+y=handles.toolbox.bathymetry.polygonY;
 if size(x,1)==1
     x=x';
 end
@@ -273,4 +273,4 @@ if size(y,1)==1
     y=y';
 end
 
-landboundary('write',handles.Toolbox(tb).Input.polygonFile,x,y);
+landboundary('write',handles.toolbox.bathymetry.polygonFile,x,y);

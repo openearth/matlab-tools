@@ -61,30 +61,29 @@ function handles = ddb_initializeShoreline(handles, varargin)
 % $Keywords: $
 
 %%
-ii=strmatch('Shoreline',{handles.Toolbox(:).name},'exact');
 
-handles.Toolbox(ii).Input.activeDataset=1;
-handles.Toolbox(ii).Input.polyLength=0;
-handles.Toolbox(ii).Input.polygonFile='';
+handles.toolbox.shoreline.activeDataset=1;
+handles.toolbox.shoreline.polyLength=0;
+handles.toolbox.shoreline.polygonFile='';
 
-handles.Toolbox(ii).Input.activeScale=1;
-handles.Toolbox(ii).Input.scaleText={'1'};
+handles.toolbox.shoreline.activeScale=1;
+handles.toolbox.shoreline.scaleText={'1'};
 
-handles.Toolbox(ii).Input.resolutionText='';
+handles.toolbox.shoreline.resolutionText='';
 
-handles.Toolbox(ii).Input.exportTypes={'ldb'};
-handles.Toolbox(ii).Input.activeExportType='ldb';
+handles.toolbox.shoreline.exportTypes={'ldb'};
+handles.toolbox.shoreline.activeExportType='ldb';
 
-handles.Toolbox(ii).Input.usedDataset=[];
-handles.Toolbox(ii).Input.usedDatasets={''};
-handles.Toolbox(ii).Input.nrUsedDatasets=0;
-handles.Toolbox(ii).Input.activeUsedDataset=1;
+handles.toolbox.shoreline.usedDataset=[];
+handles.toolbox.shoreline.usedDatasets={''};
+handles.toolbox.shoreline.nrUsedDatasets=0;
+handles.toolbox.shoreline.activeUsedDataset=1;
 
-handles.Toolbox(ii).Input.newDataset.xmin=0;
-handles.Toolbox(ii).Input.newDataset.xmax=0;
-handles.Toolbox(ii).Input.newDataset.dx=0;
-handles.Toolbox(ii).Input.newDataset.ymin=0;
-handles.Toolbox(ii).Input.newDataset.ymax=0;
-handles.Toolbox(ii).Input.newDataset.dy=0;
+handles.toolbox.shoreline.newDataset.xmin=0;
+handles.toolbox.shoreline.newDataset.xmax=0;
+handles.toolbox.shoreline.newDataset.dx=0;
+handles.toolbox.shoreline.newDataset.ymin=0;
+handles.toolbox.shoreline.newDataset.ymax=0;
+handles.toolbox.shoreline.newDataset.dy=0;
 
 

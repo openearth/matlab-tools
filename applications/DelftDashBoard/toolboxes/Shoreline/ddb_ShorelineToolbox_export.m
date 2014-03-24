@@ -93,10 +93,10 @@ end
 %%
 function selectDataset
 handles=getHandles;
-handles.Toolbox(tb).Input.scaleText=[];
-scl=handles.shorelines.shoreline(handles.Toolbox(tb).Input.activeDataset).scale;
+handles.toolbox.shoreline.scaleText=[];
+scl=handles.shorelines.shoreline(handles.toolbox.shoreline.activeDataset).scale;
 for i=1:length(scl)
-    handles.Toolbox(tb).Input.scaleText{i}=['1 : ' num2str(scl(i),'%20.0f')];
+    handles.toolbox.shoreline.scaleText{i}=['1 : ' num2str(scl(i),'%20.0f')];
 end
 setHandles(handles);
 % setUIElements('shorelinepanel.export');
@@ -106,17 +106,17 @@ function exportData
 
 handles=getHandles;
 
-filename=handles.Toolbox(tb).Input.shorelineFile;
+filename=handles.toolbox.shoreline.shorelineFile;
 
-if handles.shorelines.shoreline(handles.Toolbox(tb).Input.activeDataset).isAvailable
+if handles.shorelines.shoreline(handles.toolbox.shoreline.activeDataset).isAvailable
     
     wb = waitbox('Exporting shoreline ...');pause(0.1);
     
-    cs.name=handles.shorelines.shoreline(handles.Toolbox(tb).Input.activeDataset).horizontalCoordinateSystem.name;
-    cs.type=handles.shorelines.shoreline(handles.Toolbox(tb).Input.activeDataset).horizontalCoordinateSystem.type;
+    cs.name=handles.shorelines.shoreline(handles.toolbox.shoreline.activeDataset).horizontalCoordinateSystem.name;
+    cs.type=handles.shorelines.shoreline(handles.toolbox.shoreline.activeDataset).horizontalCoordinateSystem.type;
     
     % Convert polygon to coordinate system of shoreline database
-    [xx,yy]=ddb_coordConvert(handles.Toolbox(tb).Input.polygonX,handles.Toolbox(tb).Input.polygonY,handles.screenParameters.coordinateSystem,cs);
+    [xx,yy]=ddb_coordConvert(handles.toolbox.shoreline.polygonX,handles.toolbox.shoreline.polygonY,handles.screenParameters.coordinateSystem,cs);
     
     % Determine limits
     xlim(1)=min(xx);
@@ -125,13 +125,13 @@ if handles.shorelines.shoreline(handles.Toolbox(tb).Input.activeDataset).isAvail
     ylim(2)=max(yy);
     
     % Fetch shoreline
-    [x,y]=ddb_getShoreline(handles,xlim,ylim,handles.Toolbox(tb).Input.activeScale);
+    [x,y]=ddb_getShoreline(handles,xlim,ylim,handles.toolbox.shoreline.activeScale);
     
     % Convert to local coordinate system
     [x,y]=ddb_coordConvert(x,y,cs,handles.screenParameters.coordinateSystem);
     
     % Remove points outside polygon
-    inp=inpolygon(x,y,handles.Toolbox(tb).Input.polygonX,handles.Toolbox(tb).Input.polygonY);
+    inp=inpolygon(x,y,handles.toolbox.shoreline.polygonX,handles.toolbox.shoreline.polygonY);
     x(~inp)=NaN;
     y(~inp)=NaN;
     
@@ -156,9 +156,9 @@ setHandles(handles);
 %%
 function deletePolygon
 handles=getHandles;
-handles.Toolbox(tb).Input.polygonX=[];
-handles.Toolbox(tb).Input.polygonY=[];
-handles.Toolbox(tb).Input.polyLength=0;
+handles.toolbox.shoreline.polygonX=[];
+handles.toolbox.shoreline.polygonY=[];
+handles.toolbox.shoreline.polyLength=0;
 h=findobj(gcf,'Tag','ShorelinePolygon');
 if ~isempty(h)
     delete(h);
@@ -168,19 +168,19 @@ setHandles(handles);
 %%
 function changePolygon(x,y,varargin)
 handles=getHandles;
-handles.Toolbox(tb).Input.polygonX=x;
-handles.Toolbox(tb).Input.polygonY=y;
-handles.Toolbox(tb).Input.polyLength=length(x);
+handles.toolbox.shoreline.polygonX=x;
+handles.toolbox.shoreline.polygonY=y;
+handles.toolbox.shoreline.polyLength=length(x);
 setHandles(handles);
 gui_updateActiveTab;
 
 %%
 function loadPolygon
 handles=getHandles;
-[x,y]=landboundary('read',handles.Toolbox(tb).Input.polygonFile);
-handles.Toolbox(tb).Input.polygonX=x;
-handles.Toolbox(tb).Input.polygonY=y;
-handles.Toolbox(tb).Input.polyLength=length(x);
+[x,y]=landboundary('read',handles.toolbox.shoreline.polygonFile);
+handles.toolbox.shoreline.polygonX=x;
+handles.toolbox.shoreline.polygonY=y;
+handles.toolbox.shoreline.polyLength=length(x);
 h=findobj(gca,'Tag','ShorelinePolygon');
 delete(h);
 UIPolyline(gca,'plot','Tag','ShorelinePolygon','Marker','o','Callback',@changePolygon,'closed',1,'x',x,'y',y);
@@ -189,15 +189,15 @@ setHandles(handles);
 %%
 function savePolygon
 handles=getHandles;
-x=handles.Toolbox(tb).Input.polygonX;
-y=handles.Toolbox(tb).Input.polygonY;
+x=handles.toolbox.shoreline.polygonX;
+y=handles.toolbox.shoreline.polygonY;
 if size(x,1)==1
     x=x';
 end
 if size(y,1)==1
     y=y';
 end
-landboundary('write',handles.Toolbox(tb).Input.polygonFile,x,y);
+landboundary('write',handles.toolbox.shoreline.polygonFile,x,y);
 
 %%
 function saveLdb(filename,x,y,cstype)

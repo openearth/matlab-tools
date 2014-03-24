@@ -51,6 +51,8 @@ function ddb_selectToolbox
 
 handles=getHandles;
 
+name=handles.activeToolbox.name;
+
 %% Get handle of model tab panel
 parent=handles.Model(md).GUI.element(1).element.handle;
 
@@ -58,17 +60,17 @@ parent=handles.Model(md).GUI.element(1).element.handle;
 element=getappdata(parent,'element');
 
 %% And now add the new elements
-toolboxelements=handles.Toolbox(tb).GUI.element;
+toolboxelements=handles.toolbox.(name).GUI.element;
 
 iok=1;
 
-if ~isempty(handles.Toolbox(tb).formodel)
-    imatch=strmatch(lower(handles.Model(md).name),lower(handles.Toolbox(tb).formodel),'exact');
+if ~isempty(handles.toolbox.(name).formodel)
+    imatch=strmatch(lower(handles.Model(md).name),lower(handles.toolbox.(name).formodel),'exact');
     if isempty(imatch)
         % Toolbox not to be used for this model
         toolboxelements=[];
         toolboxelements(1).element.style='text';
-        toolboxelements(1).element.text=['Sorry, the ' handles.Toolbox(tb).longName ' toolbox is not available for ' handles.Model(md).longName ' ...'];
+        toolboxelements(1).element.text=['Sorry, the ' handles.toolbox.(name).longName ' toolbox is not available for ' handles.Model(md).longName ' ...'];
         toolboxelements(1).element.position=[50 100 300 20];
         toolboxelements(1).element.tag='text';
         toolboxelements(1).element.horal='left';
@@ -124,7 +126,7 @@ end
 element.tab(1).tab.element=toolboxelements;
 
 if iok
-    element.tab(1).tab.callback=handles.Toolbox(tb).callFcn;
+    element.tab(1).tab.callback=handles.toolbox.(name).callFcn;
 else
     element.tab(1).tab.callback=[];
 end

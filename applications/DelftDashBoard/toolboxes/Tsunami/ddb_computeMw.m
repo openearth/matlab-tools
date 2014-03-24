@@ -60,11 +60,11 @@ function handles = ddb_computeMw(handles)
 % $Keywords: $
 
 %%
-totflength = sum(handles.Toolbox(tb).Input.FaultLength);
-handles.Toolbox(tb).Input.TotalUserFaultLength = totflength;
-handles.Toolbox(tb).Input.TotalFaultLength = totflength;
+totflength = sum(handles.toolbox.tsunami.FaultLength);
+handles.toolbox.tsunami.TotalUserFaultLength = totflength;
+handles.toolbox.tsunami.TotalFaultLength = totflength;
 if (totflength > 0)
     Mw = (log10(totflength) + 2.44) / 0.59;
-    handles.Toolbox(tb).Input.Magnitude = Mw ;
+    handles.toolbox.tsunami.Magnitude = Mw ;
 end
 

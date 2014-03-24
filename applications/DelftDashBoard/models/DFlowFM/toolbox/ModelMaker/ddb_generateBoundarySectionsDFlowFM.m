@@ -66,8 +66,8 @@ function handles = ddb_generateBoundarySectionsDFlowFM(handles,maxdist,maxangle)
 if ~isempty(handles.Model(md).Input(id).grdFile)
     if ~isempty(handles.Model(md).Input(id).depFile)
         
-        d=handles.Toolbox(tb).Input.sectionLength;
-        zmax=handles.Toolbox(tb).Input.zMax;
+        d=handles.toolbox.modelmaker.sectionLength;
+        zmax=handles.toolbox.modelmaker.zMax;
         
         attName=handles.Model(md).Input(id).attName;
         

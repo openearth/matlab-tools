@@ -107,8 +107,8 @@ h=findobj(gca,'Tag','NavigationChartLayer');
 if ~isempty(h)
     delete(h);
 end
-handles.Toolbox(tb).Input.activeChart=0;
-handles.Toolbox(tb).Input.activeChartName='';
+handles.toolbox.navigationcharts.activeChart=0;
+handles.toolbox.navigationcharts.activeChartName='';
 handles=plotChartOutlines(handles);
 setHandles(handles);
 
@@ -132,7 +132,7 @@ end
 %%
 function toggleShoreline
 handles=getHandles;
-iplt=handles.Toolbox(tb).Input.showShoreline;
+iplt=handles.toolbox.navigationcharts.showShoreline;
 h=findobj(gca,'Tag','NavigationChartLayer','UserData','LNDARE');
 if ~isempty(h)
     if iplt
@@ -145,7 +145,7 @@ end
 %%
 function toggleSoundings
 handles=getHandles;
-iplt=handles.Toolbox(tb).Input.showSoundings;
+iplt=handles.toolbox.navigationcharts.showSoundings;
 h=findobj(gca,'Tag','NavigationChartLayer','UserData','SOUNDG');
 if ~isempty(h)
     if iplt
@@ -158,7 +158,7 @@ end
 %%
 function toggleContours
 handles=getHandles;
-iplt=handles.Toolbox(tb).Input.showContours;
+iplt=handles.toolbox.navigationcharts.showContours;
 h=findobj(gca,'Tag','NavigationChartLayer','UserData','DEPCNT');
 if ~isempty(h)
     if iplt
@@ -172,9 +172,9 @@ end
 function exportShoreline
 handles=getHandles;
 
-iac=handles.Toolbox(tb).Input.activeDatabase;
-ii=handles.Toolbox(tb).Input.activeChart;
-fname=handles.Toolbox(tb).Input.charts(iac).box(ii).Name;
+iac=handles.toolbox.navigationcharts.activeDatabase;
+ii=handles.toolbox.navigationcharts.activeChart;
+fname=handles.toolbox.navigationcharts.charts(iac).box(ii).Name;
 
 [filename, pathname, filterindex] = uiputfile('*.ldb', 'Select land boundary file',[fname '_shoreline.ldb']);
 if pathname~=0
@@ -187,7 +187,7 @@ if pathname~=0
         
     newsys=handles.screenParameters.coordinateSystem;
     
-    s=handles.Toolbox(tb).Input.layers;
+    s=handles.toolbox.navigationcharts.layers;
 
     ddb_exportChartShoreline(s,filename,newsys);
     
@@ -200,9 +200,9 @@ end
 function exportSoundings
 handles=getHandles;
 
-iac=handles.Toolbox(tb).Input.activeDatabase;
-ii=handles.Toolbox(tb).Input.activeChart;
-fname=handles.Toolbox(tb).Input.charts(iac).box(ii).Name;
+iac=handles.toolbox.navigationcharts.activeDatabase;
+ii=handles.toolbox.navigationcharts.activeChart;
+fname=handles.toolbox.navigationcharts.charts(iac).box(ii).Name;
 
 [filename, pathname, filterindex] = uiputfile('*.xyz', 'Select XYZ File',[fname '_soundings.xyz']);
 
@@ -217,7 +217,7 @@ if pathname~=0
         
     newsys=handles.screenParameters.coordinateSystem;
     
-    s=handles.Toolbox(tb).Input.layers;
+    s=handles.toolbox.navigationcharts.layers;
     
     ddb_exportChartSoundings(s,filename,newsys);
     
@@ -229,9 +229,9 @@ end
 function exportContours
 handles=getHandles;
 
-iac=handles.Toolbox(tb).Input.activeDatabase;
-ii=handles.Toolbox(tb).Input.activeChart;
-fname=handles.Toolbox(tb).Input.charts(iac).box(ii).Name;
+iac=handles.toolbox.navigationcharts.activeDatabase;
+ii=handles.toolbox.navigationcharts.activeChart;
+fname=handles.toolbox.navigationcharts.charts(iac).box(ii).Name;
 
 [filename, pathname, filterindex] = uiputfile('*.xyz', 'Select XYZ File',[fname '_contours.xyz']);
 if pathname~=0
@@ -244,7 +244,7 @@ if pathname~=0
         
     newsys=handles.screenParameters.coordinateSystem;
     
-    s=handles.Toolbox(tb).Input.layers;
+    s=handles.toolbox.navigationcharts.layers;
 
     ddb_exportChartContours(s,filename,newsys);
 
@@ -256,22 +256,22 @@ end
 function exportAllDataInPolygon
 
 handles=getHandles;
-iac=handles.Toolbox(tb).Input.activeDatabase;
+iac=handles.toolbox.navigationcharts.activeDatabase;
 
 wb = awaitbar(0,'Downloading chart data ...');
 [hh,abort2]=awaitbar(0.001,wb,'Downloading chart data ...');
 
 % First determine which charts need to be exported
 ncharts=0;
-for ic=1:length(handles.Toolbox(tb).Input.charts(iac).box)    
-    x1=handles.Toolbox(tb).Input.charts(iac).xl(ic,1);
-    x2=handles.Toolbox(tb).Input.charts(iac).xl(ic,2);
-    y1=handles.Toolbox(tb).Input.charts(iac).yl(ic,1);
-    y2=handles.Toolbox(tb).Input.charts(iac).yl(ic,2);    
-    if inpolygon(x1,y1,handles.Toolbox(tb).Input.polygonX,handles.Toolbox(tb).Input.polygonY) || ...
-            inpolygon(x1,y2,handles.Toolbox(tb).Input.polygonX,handles.Toolbox(tb).Input.polygonY) || ...
-            inpolygon(x2,y2,handles.Toolbox(tb).Input.polygonX,handles.Toolbox(tb).Input.polygonY) || ...
-            inpolygon(x2,y1,handles.Toolbox(tb).Input.polygonX,handles.Toolbox(tb).Input.polygonY)        
+for ic=1:length(handles.toolbox.navigationcharts.charts(iac).box)    
+    x1=handles.toolbox.navigationcharts.charts(iac).xl(ic,1);
+    x2=handles.toolbox.navigationcharts.charts(iac).xl(ic,2);
+    y1=handles.toolbox.navigationcharts.charts(iac).yl(ic,1);
+    y2=handles.toolbox.navigationcharts.charts(iac).yl(ic,2);    
+    if inpolygon(x1,y1,handles.toolbox.navigationcharts.polygonX,handles.toolbox.navigationcharts.polygonY) || ...
+            inpolygon(x1,y2,handles.toolbox.navigationcharts.polygonX,handles.toolbox.navigationcharts.polygonY) || ...
+            inpolygon(x2,y2,handles.toolbox.navigationcharts.polygonX,handles.toolbox.navigationcharts.polygonY) || ...
+            inpolygon(x2,y1,handles.toolbox.navigationcharts.polygonX,handles.toolbox.navigationcharts.polygonY)        
         ncharts=ncharts+1;
         ichart(ncharts)=ic;
     end
@@ -282,7 +282,7 @@ for ich=1:ncharts
 
     ic=ichart(ich);
     
-    str=['Exporting ' handles.Toolbox(tb).Input.charts(iac).box(ic).Name ' - ' num2str(ich) ' of ' num2str(ncharts)];
+    str=['Exporting ' handles.toolbox.navigationcharts.charts(iac).box(ic).Name ' - ' num2str(ich) ' of ' num2str(ncharts)];
     [hh,abort2]=awaitbar(ich/ncharts,wb,str);
     
     if abort2 % Abort the process by clicking abort button
@@ -292,8 +292,8 @@ for ich=1:ncharts
         break;
     end;
             
-    name=handles.Toolbox(tb).Input.charts(iac).box(ic).Name;
-    dr=[handles.toolBoxDir 'NavigationCharts' filesep handles.Toolbox(tb).Input.charts(iac).name filesep];
+    name=handles.toolbox.navigationcharts.charts(iac).box(ic).Name;
+    dr=[handles.toolBoxDir 'NavigationCharts' filesep handles.toolbox.navigationcharts.charts(iac).name filesep];
     fname=[dr name filesep name '.mat'];
     
     if ~exist(fname,'file')
@@ -305,7 +305,7 @@ for ich=1:ncharts
             mkdir([dr name]);
         end
         try
-            ddb_urlwrite([handles.Toolbox(tb).Input.charts(iac).url '/' name '/' name '.mat'],fname);
+            ddb_urlwrite([handles.toolbox.navigationcharts.charts(iac).url '/' name '/' name '.mat'],fname);
         catch
             break
         end
@@ -318,11 +318,11 @@ for ich=1:ncharts
     
     newsys=handles.screenParameters.coordinateSystem;
     
-    filename=[handles.Toolbox(tb).Input.charts(iac).box(ic).Name '_contours.xyz'];
+    filename=[handles.toolbox.navigationcharts.charts(iac).box(ic).Name '_contours.xyz'];
     ddb_exportChartContours(s.Layers,filename,newsys);
-    filename=[handles.Toolbox(tb).Input.charts(iac).box(ic).Name '_soundings.xyz'];
+    filename=[handles.toolbox.navigationcharts.charts(iac).box(ic).Name '_soundings.xyz'];
     ddb_exportChartSoundings(s.Layers,filename,newsys);
-    filename=[handles.Toolbox(tb).Input.charts(iac).box(ic).Name '_shoreline.ldb'];
+    filename=[handles.toolbox.navigationcharts.charts(iac).box(ic).Name '_shoreline.ldb'];
     ddb_exportChartShoreline(s.Layers,filename,newsys);
     
 end
@@ -341,7 +341,7 @@ function moveMouse(hObject,eventdata)
 
 handles=getHandles;
 
-iac=handles.Toolbox(tb).Input.activeDatabase;
+iac=handles.toolbox.navigationcharts.activeDatabase;
 
 pos = get(gca, 'CurrentPoint');
 posx=pos(1,1);
@@ -358,10 +358,10 @@ if posx>xlim(1) && posx<xlim(2) && posy>ylim(1) && posy<ylim(2)
     i=findBox(handles,posx,posy);
     
     if ~isempty(i)
-        if ~strcmpi(handles.Toolbox(tb).Input.charts(iac).box(i).Description,handles.Toolbox(tb).Input.oldChartName)
+        if ~strcmpi(handles.toolbox.navigationcharts.charts(iac).box(i).Description,handles.toolbox.navigationcharts.oldChartName)
             % We've moved into a new chart
             % Make old box blue again
-            kar=findobj(gca,'Tag','BBoxENC','UserData',handles.Toolbox(tb).Input.selectedChart);
+            kar=findobj(gca,'Tag','BBoxENC','UserData',handles.toolbox.navigationcharts.selectedChart);
             if ~isempty(kar)
                 set(kar,'Color','Blue');
                 set(kar,'LineWidth',1);
@@ -369,27 +369,27 @@ if posx>xlim(1) && posx<xlim(2) && posy>ylim(1) && posy<ylim(2)
             kar=findobj(gca,'Tag','BBoxENC','UserData',i);
             set(kar,'Color',[1 0.5 0]);
             set(kar,'LineWidth',2);
-            handles.Toolbox(tb).Input.activeChartName=handles.Toolbox(tb).Input.charts(iac).box(i).Description;
-            handles.Toolbox(tb).Input.oldChartName=handles.Toolbox(tb).Input.activeChartName;
+            handles.toolbox.navigationcharts.activeChartName=handles.toolbox.navigationcharts.charts(iac).box(i).Description;
+            handles.toolbox.navigationcharts.oldChartName=handles.toolbox.navigationcharts.activeChartName;
             iupdate=1;
         end
-        handles.Toolbox(tb).Input.selectedChart=i;
+        handles.toolbox.navigationcharts.selectedChart=i;
     else
         % Outside of charts
-        if handles.Toolbox(tb).Input.activeChart>0
+        if handles.toolbox.navigationcharts.activeChart>0
             % Show chart selected originally
-            handles.Toolbox(tb).Input.activeChartName=handles.Toolbox(tb).Input.charts(iac).box(handles.Toolbox(tb).Input.activeChart).Description;
+            handles.toolbox.navigationcharts.activeChartName=handles.toolbox.navigationcharts.charts(iac).box(handles.toolbox.navigationcharts.activeChart).Description;
         end
-        if ~strcmpi(handles.Toolbox(tb).Input.activeChartName,handles.Toolbox(tb).Input.oldChartName)
-            handles.Toolbox(tb).Input.oldChartName=handles.Toolbox(tb).Input.activeChartName;
-            kar=findobj(gca,'Tag','BBoxENC','UserData',handles.Toolbox(tb).Input.selectedChart);
+        if ~strcmpi(handles.toolbox.navigationcharts.activeChartName,handles.toolbox.navigationcharts.oldChartName)
+            handles.toolbox.navigationcharts.oldChartName=handles.toolbox.navigationcharts.activeChartName;
+            kar=findobj(gca,'Tag','BBoxENC','UserData',handles.toolbox.navigationcharts.selectedChart);
             if ~isempty(kar)
                 set(kar,'Color','Blue');
                 set(kar,'LineWidth',1);
             end
             iupdate=1;
         end
-        handles.Toolbox(tb).Input.selectedChart=0;
+        handles.toolbox.navigationcharts.selectedChart=0;
     end
     
     setHandles(handles);
@@ -403,15 +403,15 @@ function selectArea(hObject,eventdata)
 
 handles=getHandles;
 
-iab=handles.Toolbox(tb).Input.activeDatabase;
-iac=handles.Toolbox(tb).Input.activeChart;
+iab=handles.toolbox.navigationcharts.activeDatabase;
+iac=handles.toolbox.navigationcharts.activeChart;
 
 switch get(gcf,'SelectionType')
     case{'normal'}        
-        i=handles.Toolbox(tb).Input.selectedChart;
+        i=handles.toolbox.navigationcharts.selectedChart;
         if i>0
             handles=selectNavigationChart(handles,i);
-            handles.Toolbox(tb).Input.activeChartName=handles.Toolbox(tb).Input.charts(iab).box(i).Description;
+            handles.toolbox.navigationcharts.activeChartName=handles.toolbox.navigationcharts.charts(iab).box(i).Description;
         end
     otherwise
         % Make chart outlines blue again
@@ -434,7 +434,7 @@ ddb_setWindowButtonMotionFcn;
 %%
 function handles=selectNavigationChart(handles,i)
 
-iac=handles.Toolbox(tb).Input.activeDatabase;
+iac=handles.toolbox.navigationcharts.activeDatabase;
 
 kar=findobj(gca,'Tag','BBoxENC');
 set(kar,'Color','Blue','LineWidth',1);
@@ -443,11 +443,11 @@ set(kar,'LineWidth',1);
 kar=findobj(gca,'Tag','BBoxENC','UserData',i);
 set(kar,'Color','Red');
 set(kar,'LineWidth',2);
-handles.Toolbox(tb).Input.activeChart=i;
+handles.toolbox.navigationcharts.activeChart=i;
 
 wb=waitbox('Loading chart ...');
-name=handles.Toolbox(tb).Input.charts(iac).box(i).Name;
-dr=[handles.toolBoxDir 'NavigationCharts' filesep handles.Toolbox(tb).Input.charts(iac).name filesep];
+name=handles.toolbox.navigationcharts.charts(iac).box(i).Name;
+dr=[handles.toolBoxDir 'NavigationCharts' filesep handles.toolbox.navigationcharts.charts(iac).name filesep];
 fname=[dr name filesep name '.mat'];
 
 if ~exist(fname,'file')
@@ -459,7 +459,7 @@ if ~exist(fname,'file')
         mkdir([dr name]);
     end
     try
-        ddb_urlwrite([handles.Toolbox(tb).Input.charts(iac).url '/' name '/' name '.mat'],fname);
+        ddb_urlwrite([handles.toolbox.navigationcharts.charts(iac).url '/' name '/' name '.mat'],fname);
     catch
         close(wb);
         ddb_giveWarning('text','Sorry, an error occured while downloading the chart data ...');
@@ -473,20 +473,20 @@ if isfield(s,'s')
     s=s.s;
 end
 
-handles.Toolbox(tb).Input.layers=s.Layers;
+handles.toolbox.navigationcharts.layers=s.Layers;
 
 fn=fieldnames(s.Layers);
 for i=1:length(fn)
     layer=deblank(fn{i});
     switch lower(layer)
         case{'lndare'}
-            handles.Toolbox(tb).Input.plotLayer.(layer)=handles.Toolbox(tb).Input.showShoreline;
+            handles.toolbox.navigationcharts.plotLayer.(layer)=handles.toolbox.navigationcharts.showShoreline;
         case{'depcnt'}
-            handles.Toolbox(tb).Input.plotLayer.(layer)=handles.Toolbox(tb).Input.showContours;
+            handles.toolbox.navigationcharts.plotLayer.(layer)=handles.toolbox.navigationcharts.showContours;
         case{'soundg'}
-            handles.Toolbox(tb).Input.plotLayer.(layer)=handles.Toolbox(tb).Input.showSoundings;
+            handles.toolbox.navigationcharts.plotLayer.(layer)=handles.toolbox.navigationcharts.showSoundings;
         otherwise
-            handles.Toolbox(tb).Input.plotLayer.(layer)=-1;
+            handles.toolbox.navigationcharts.plotLayer.(layer)=-1;
     end
 end
 
@@ -497,13 +497,13 @@ close(wb);
 %%
 function i=findBox(handles,x,y)
 
-iac=handles.Toolbox(tb).Input.activeDatabase;
+iac=handles.toolbox.navigationcharts.activeDatabase;
 
-area=handles.Toolbox(tb).Input.charts(iac).area;
-x1=handles.Toolbox(tb).Input.charts(iac).xl(:,1);
-x2=handles.Toolbox(tb).Input.charts(iac).xl(:,2);
-y1=handles.Toolbox(tb).Input.charts(iac).yl(:,1);
-y2=handles.Toolbox(tb).Input.charts(iac).yl(:,2);
+area=handles.toolbox.navigationcharts.charts(iac).area;
+x1=handles.toolbox.navigationcharts.charts(iac).xl(:,1);
+x2=handles.toolbox.navigationcharts.charts(iac).xl(:,2);
+y1=handles.toolbox.navigationcharts.charts(iac).yl(:,1);
+y2=handles.toolbox.navigationcharts.charts(iac).yl(:,2);
 
 ii=find(x>x1 & x<x2 & y>y1 & y<y2);
 
@@ -529,15 +529,15 @@ delete(h);
 cs.name='WGS 84';
 cs.type='Geographic';
 
-iac=handles.Toolbox(tb).Input.activeDatabase;
+iac=handles.toolbox.navigationcharts.activeDatabase;
 
-n=length(handles.Toolbox(tb).Input.charts(iac).box);
+n=length(handles.toolbox.navigationcharts.charts(iac).box);
 
 for i=1:n
-    x1(i)=handles.Toolbox(tb).Input.charts(iac).box(i).X(1);
-    y1(i)=handles.Toolbox(tb).Input.charts(iac).box(i).Y(1);
-    x2(i)=handles.Toolbox(tb).Input.charts(iac).box(i).X(2);
-    y2(i)=handles.Toolbox(tb).Input.charts(iac).box(i).Y(2);
+    x1(i)=handles.toolbox.navigationcharts.charts(iac).box(i).X(1);
+    y1(i)=handles.toolbox.navigationcharts.charts(iac).box(i).Y(1);
+    x2(i)=handles.toolbox.navigationcharts.charts(iac).box(i).X(2);
+    y2(i)=handles.toolbox.navigationcharts.charts(iac).box(i).Y(2);
 end
 
 [x1,y1]=ddb_coordConvert(x1,y1,cs,handles.screenParameters.coordinateSystem);
@@ -555,11 +555,11 @@ for i=1:n
     area(i)=(xl(i,2)-xl(i,1))*(yl(i,2)-yl(i,1));
 end
 
-handles.Toolbox(tb).Input.charts(iac).xl=xl;
-handles.Toolbox(tb).Input.charts(iac).yl=yl;
-handles.Toolbox(tb).Input.charts(iac).area=area;
+handles.toolbox.navigationcharts.charts(iac).xl=xl;
+handles.toolbox.navigationcharts.charts(iac).yl=yl;
+handles.toolbox.navigationcharts.charts(iac).area=area;
 
-i=handles.Toolbox(tb).Input.activeChart;
+i=handles.toolbox.navigationcharts.activeChart;
 kar=findobj(gca,'Tag','BBoxENC','UserData',i);
 set(kar,'Color','Red');
 set(kar,'LineWidth',2);
@@ -575,11 +575,11 @@ if ~isempty(h)
     delete(h);
 end
 
-handles.Toolbox(tb).Input.polygonX=[];
-handles.Toolbox(tb).Input.polygonY=[];
-handles.Toolbox(tb).Input.polyLength=0;
+handles.toolbox.navigationcharts.polygonX=[];
+handles.toolbox.navigationcharts.polygonY=[];
+handles.toolbox.navigationcharts.polyLength=0;
 
-handles.Toolbox(tb).Input.polygonhandle=gui_polyline('draw','tag','navigationchartspolygon','marker','o', ...
+handles.toolbox.navigationcharts.polygonhandle=gui_polyline('draw','tag','navigationchartspolygon','marker','o', ...
     'createcallback',@createPolygon,'changecallback',@changePolygon, ...
     'closed',1);
 
@@ -588,17 +588,17 @@ setHandles(handles);
 %%
 function createPolygon(h,x,y)
 handles=getHandles;
-handles.Toolbox(tb).Input.polygonhandle=h;
-handles.Toolbox(tb).Input.polygonX=x;
-handles.Toolbox(tb).Input.polygonY=y;
-handles.Toolbox(tb).Input.polyLength=length(x);
+handles.toolbox.navigationcharts.polygonhandle=h;
+handles.toolbox.navigationcharts.polygonX=x;
+handles.toolbox.navigationcharts.polygonY=y;
+handles.toolbox.navigationcharts.polyLength=length(x);
 setHandles(handles);
 gui_updateActiveTab;
 
 %%
 function changePolygon(h,x,y,varargin)
 handles=getHandles;
-handles.Toolbox(tb).Input.polygonX=x;
-handles.Toolbox(tb).Input.polygonY=y;
-handles.Toolbox(tb).Input.polyLength=length(x);
+handles.toolbox.navigationcharts.polygonX=x;
+handles.toolbox.navigationcharts.polygonY=y;
+handles.toolbox.navigationcharts.polyLength=length(x);
 setHandles(handles);

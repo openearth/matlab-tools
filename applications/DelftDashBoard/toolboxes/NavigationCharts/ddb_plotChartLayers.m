@@ -62,8 +62,8 @@ function ddb_plotChartLayers(handles)
 %%
 figure(handles.GUIHandles.mainWindow);
 
-s=handles.Toolbox(tb).Input.layers;
-p=handles.Toolbox(tb).Input.plotLayer;
+s=handles.toolbox.navigationcharts.layers;
+p=handles.toolbox.navigationcharts.plotLayer;
 
 orisys.name='WGS 84';
 orisys.type='geographic';

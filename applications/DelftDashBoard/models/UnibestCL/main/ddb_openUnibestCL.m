@@ -1,7 +1,5 @@
 function handles=ddb_openUnibestCL(opt)
 
-% tb=strmatch('DD',{handles.Toolbox(:).Name},'exact');
-% ii=strmatch('UnibestCL',{handles.Model.Name},'exact');
 handles=getHandles;
 
 switch opt

@@ -85,8 +85,8 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
         handles.Model(md).Input(id).activeOpenBoundaries=1;        
         handles=ddb_Delft3DFLOW_plotAttributes(handles,'delete','openboundaries');
         
-        d=handles.Toolbox(tb).Input.sectionLength;
-        zmax=handles.Toolbox(tb).Input.zMax;
+        d=handles.toolbox.modelmaker.sectionLength;
+        zmax=handles.toolbox.modelmaker.zMax;
         
         attName=filename(1:end-4);
         

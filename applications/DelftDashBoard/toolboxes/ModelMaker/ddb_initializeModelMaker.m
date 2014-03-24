@@ -61,85 +61,84 @@ function handles = ddb_initializeModelMaker(handles, varargin)
 % $Keywords: $
 
 %%
-ii=strmatch('ModelMaker',{handles.Toolbox(:).name},'exact');
 
 if nargin>1
     switch varargin{1}
         case{'test'}
             return
         case{'veryfirst'}
-            handles.Toolbox(ii).longName='Model Maker';
+            handles.toolbox.modelmaker.longName='Model Maker';
             return
     end
 end
 
-handles.Toolbox(ii).Input.nX=1;
-handles.Toolbox(ii).Input.dX=0.1;
-handles.Toolbox(ii).Input.xOri=0.0;
-handles.Toolbox(ii).Input.nY=1;
-handles.Toolbox(ii).Input.dY=0.1;
-handles.Toolbox(ii).Input.yOri=1.0;
-handles.Toolbox(ii).Input.lengthX=0.1;
-handles.Toolbox(ii).Input.lengthY=0.1;
-handles.Toolbox(ii).Input.rotation=0.0;
-handles.Toolbox(ii).Input.sectionLength=10;
-handles.Toolbox(ii).Input.sectionLengthMetres=50000;
-handles.Toolbox(ii).Input.zMax=0;
-handles.Toolbox(ii).Input.viewGridOutline=1;
+handles.toolbox.modelmaker.nX=1;
+handles.toolbox.modelmaker.dX=0.1;
+handles.toolbox.modelmaker.xOri=0.0;
+handles.toolbox.modelmaker.nY=1;
+handles.toolbox.modelmaker.dY=0.1;
+handles.toolbox.modelmaker.yOri=1.0;
+handles.toolbox.modelmaker.lengthX=0.1;
+handles.toolbox.modelmaker.lengthY=0.1;
+handles.toolbox.modelmaker.rotation=0.0;
+handles.toolbox.modelmaker.sectionLength=10;
+handles.toolbox.modelmaker.sectionLengthMetres=50000;
+handles.toolbox.modelmaker.zMax=0;
+handles.toolbox.modelmaker.viewGridOutline=1;
 
-handles.Toolbox(ii).Input.yOffshore=400;
-handles.Toolbox(ii).Input.dxCoast=100;
-handles.Toolbox(ii).Input.dyMinCoast=10;
-handles.Toolbox(ii).Input.dyMaxCoast=50;
-handles.Toolbox(ii).Input.coastSplineX=[];
-handles.Toolbox(ii).Input.coastSplineY=[];
-handles.Toolbox(ii).Input.courantCoast=10;
-handles.Toolbox(ii).Input.nSmoothCoast=1.1;
-handles.Toolbox(ii).Input.depthRelCoast=5;
+handles.toolbox.modelmaker.yOffshore=400;
+handles.toolbox.modelmaker.dxCoast=100;
+handles.toolbox.modelmaker.dyMinCoast=10;
+handles.toolbox.modelmaker.dyMaxCoast=50;
+handles.toolbox.modelmaker.coastSplineX=[];
+handles.toolbox.modelmaker.coastSplineY=[];
+handles.toolbox.modelmaker.courantCoast=10;
+handles.toolbox.modelmaker.nSmoothCoast=1.1;
+handles.toolbox.modelmaker.depthRelCoast=5;
 
-handles.Toolbox(ii).Input.activeTideModelBC=1;
-handles.Toolbox(ii).Input.activeTideModelIC=1;
+handles.toolbox.modelmaker.activeTideModelBC=1;
+handles.toolbox.modelmaker.activeTideModelIC=1;
 
 % Make TPXO72 the default tide model
 jj=strmatch('tpxo72',handles.tideModels.names,'exact');
 if ~isempty(jj)
-    handles.Toolbox(ii).Input.activeTideModelBC=jj;
-    handles.Toolbox(ii).Input.activeTideModelIC=jj;
+    handles.toolbox.modelmaker.activeTideModelBC=jj;
+    handles.toolbox.modelmaker.activeTideModelIC=jj;
 end
 
-handles.Toolbox(ii).Input.gridOutlineHandle=[];
+handles.toolbox.modelmaker.gridOutlineHandle=[];
 
 if strcmpi(handles.screenParameters.coordinateSystem.type,'cartesian')
-    handles.Toolbox(ii).Input.dX=1000;
-    handles.Toolbox(ii).Input.dY=1000;
+    handles.toolbox.modelmaker.dX=1000;
+    handles.toolbox.modelmaker.dY=1000;
 end
 
 %% Bathymetry
-handles.Toolbox(ii).Input.bathymetry.activeDataset=1;
-handles.Toolbox(ii).Input.bathymetry.activeSelectedDataset=1;
-handles.Toolbox(ii).Input.bathymetry.selectedDatasetNames={''};
-handles.Toolbox(ii).Input.bathymetry.selectedDatasets(1).verticalLevel=0;
-handles.Toolbox(ii).Input.bathymetry.selectedDatasets(1).verticalDatum=0;
-handles.Toolbox(ii).Input.bathymetry.nrSelectedDatasets=0;
-handles.Toolbox(ii).Input.bathymetry.selectedDatasets(1).type='unknown';
-handles.Toolbox(ii).Input.bathymetry.selectedDatasets(1).zMax=10000;
-handles.Toolbox(ii).Input.bathymetry.selectedDatasets(1).zMin=-10000;
-handles.Toolbox(ii).Input.bathymetry.selectedDatasets(1).startDate=datenum(2000,1,1);
-handles.Toolbox(ii).Input.bathymetry.selectedDatasets(1).searchInterval=5;
-handles.Toolbox(ii).Input.bathymetry.verticalDatum=0;
-handles.Toolbox(ii).Input.bathymetry.internalDiffusion=0;
-handles.Toolbox(ii).Input.bathymetry.internalDiffusionRange=[-20000 20000];
+handles.toolbox.modelmaker.bathymetry.activeDataset=1;
+handles.toolbox.modelmaker.bathymetry.activeSelectedDataset=1;
+handles.toolbox.modelmaker.bathymetry.selectedDatasetNames={''};
+handles.toolbox.modelmaker.bathymetry.selectedDatasets(1).verticalLevel=0;
+handles.toolbox.modelmaker.bathymetry.selectedDatasets(1).verticalDatum=0;
+handles.toolbox.modelmaker.bathymetry.nrSelectedDatasets=0;
+handles.toolbox.modelmaker.bathymetry.selectedDatasets(1).type='unknown';
+handles.toolbox.modelmaker.bathymetry.selectedDatasets(1).zMax=10000;
+handles.toolbox.modelmaker.bathymetry.selectedDatasets(1).zMin=-10000;
+handles.toolbox.modelmaker.bathymetry.selectedDatasets(1).startDate=datenum(2000,1,1);
+handles.toolbox.modelmaker.bathymetry.selectedDatasets(1).searchInterval=5;
+handles.toolbox.modelmaker.bathymetry.verticalDatum=0;
+handles.toolbox.modelmaker.bathymetry.internalDiffusion=0;
+handles.toolbox.modelmaker.bathymetry.internalDiffusionRange=[-20000 20000];
 
 %% Initial conditions
-handles.Toolbox(ii).Input.initialConditions.parameterList={'Water Level','Current'};
-handles.Toolbox(ii).Input.initialConditions.activeParameter=1;
-handles.Toolbox(ii).Input.initialConditions.parameter='Water Level';
+handles.toolbox.modelmaker.initialConditions.parameterList={'Water Level','Current'};
+handles.toolbox.modelmaker.initialConditions.activeParameter=1;
+handles.toolbox.modelmaker.initialConditions.parameter='Water Level';
 
-handles.Toolbox(ii).Input.initialConditions.activeDataSource=1;
-handles.Toolbox(ii).Input.initialConditions.dataSourceList={'Constant'};
-handles.Toolbox(ii).Input.initialConditions.dataSource='Constant';
+handles.toolbox.modelmaker.initialConditions.activeDataSource=1;
+handles.toolbox.modelmaker.initialConditions.dataSourceList={'Constant'};
+handles.toolbox.modelmaker.initialConditions.dataSource='Constant';
 
 %% Roughness
-handles.Toolbox(ii).Input.roughness.landelevation=0;
-handles.Toolbox(ii).Input.roughness.landroughness=0.08;
-handles.Toolbox(ii).Input.roughness.searoughness=0.024;
+handles.toolbox.modelmaker.roughness.landelevation=0;
+handles.toolbox.modelmaker.roughness.landroughness=0.08;
+handles.toolbox.modelmaker.roughness.searoughness=0.024;

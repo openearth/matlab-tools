@@ -71,35 +71,35 @@ if isempty(varargin)
     % New tab selected
     ddb_refreshScreen;
 
-    handles.Toolbox(tb).Input.initialConditions.parameter=[];
+    handles.toolbox.modelmaker.initialConditions.parameter=[];
 
     % Update lists in popupmenus
     str{1}='Water Level';
     str{2}='Velocity';
 
-    handles.Toolbox(tb).Input.initialConditions.parameter(1).type='wl';
-    handles.Toolbox(tb).Input.initialConditions.parameter(2).type='cur';
+    handles.toolbox.modelmaker.initialConditions.parameter(1).type='wl';
+    handles.toolbox.modelmaker.initialConditions.parameter(2).type='cur';
         
     k=2;
     
     if handles.Model(md).Input(ad).salinity.include
         k=k+1;
         str{k}='Salinity';
-        handles.Toolbox(tb).Input.initialConditions.parameter(k).type='sal';
+        handles.toolbox.modelmaker.initialConditions.parameter(k).type='sal';
     end
     
     if handles.Model(md).Input(ad).temperature.include
         k=k+1;
         str{k}='Temperature';
-        handles.Toolbox(tb).Input.initialConditions.parameter(k).type='tem';
+        handles.toolbox.modelmaker.initialConditions.parameter(k).type='tem';
     end
     
     if handles.Model(md).Input(ad).sediments.include
         for j=1:handles.Model(md).Input(ad).nrSediments
             k=k+1;
             str{k}=handles.Model(md).Input(ad).sediment(j).name;
-            handles.Toolbox(tb).Input.initialConditions.parameter(k).type='sediment';
-            handles.Toolbox(tb).Input.initialConditions.parameter(k).nr=j;
+            handles.toolbox.modelmaker.initialConditions.parameter(k).type='sediment';
+            handles.toolbox.modelmaker.initialConditions.parameter(k).nr=j;
         end
     end
     
@@ -107,17 +107,17 @@ if isempty(varargin)
         for j=1:handles.Model(md).Input(ad).nrTracers
             k=k+1;
             str{k}=handles.Model(md).Input(ad).tracer(j).name;
-            handles.Toolbox(tb).Input.initialConditions.parameter(k).type='tracer';
-            handles.Toolbox(tb).Input.initialConditions.parameter(k).nr=j;
+            handles.toolbox.modelmaker.initialConditions.parameter(k).type='tracer';
+            handles.toolbox.modelmaker.initialConditions.parameter(k).nr=j;
         end
     end
     
-    handles.Toolbox(tb).Input.initialConditions.parameterList=str;
+    handles.toolbox.modelmaker.initialConditions.parameterList=str;
     
-    handles.Toolbox(tb).Input.initialConditions.activeParameter=1;
-    handles.Toolbox(tb).Input.initialConditions.parameter='Water Level';
-    handles.Toolbox(tb).Input.initialConditions.activeDataSource=1;
-    handles.Toolbox(tb).Input.initialConditions.dataSource='Constant';
+    handles.toolbox.modelmaker.initialConditions.activeParameter=1;
+    handles.toolbox.modelmaker.initialConditions.parameter='Water Level';
+    handles.toolbox.modelmaker.initialConditions.activeDataSource=1;
+    handles.toolbox.modelmaker.initialConditions.dataSource='Constant';
     
     
     setHandles(handles);
@@ -125,7 +125,7 @@ if isempty(varargin)
     % setUIElements('modelmakerpanel.initialconditions');
 
     %    ddb_plotModelMaker('activate');
-%    if ~isempty(handles.Toolbox(tb).Input.gridOutlineHandle)
+%    if ~isempty(handles.toolbox.modelmaker.gridOutlineHandle)
 %        setInstructions({'Left-click and drag markers to change corner points','Right-click and drag YELLOW marker to move entire box', ...
 %            'Right-click and drag RED markers to rotate box (note: rotating grid in geographic coordinate systems is NOT recommended!)'});
 %    end
@@ -157,14 +157,14 @@ function selectParameter
 
 handles=getHandles;
 
-iac=handles.Toolbox(tb).Input.initialConditions.activeParameter;
+iac=handles.toolbox.modelmaker.initialConditions.activeParameter;
 
-handles.Toolbox(tb).Input.initialConditions.activeDataSource=1;
+handles.toolbox.modelmaker.initialConditions.activeDataSource=1;
 
-switch lower(handles.Toolbox(tb).Input.initialConditions.parameter(iac).type)
+switch lower(handles.toolbox.modelmaker.initialConditions.parameter(iac).type)
     case{'wl'}
         val=handles.Model(md).Input(ad).waterLevel.ICConst;
-        handles.Toolbox(tb).Input.initialConditions.dataSourceList={'Constant'};
+        handles.toolbox.modelmaker.initialConditions.dataSourceList={'Constant'};
     case{'cur'}
         val=handles.Model(md).Input(ad).velocity.ICConst;
     case{'sal','tem','sediment','tracer'}
@@ -172,7 +172,7 @@ switch lower(handles.Toolbox(tb).Input.initialConditions.parameter(iac).type)
         str{2}='Linear';
         str{3}='Block';
         str{4}='Per Layer';
-        handles.Toolbox(tb).Input.initialConditions.dataSourceList=str;
+        handles.toolbox.modelmaker.initialConditions.dataSourceList=str;
 end
 
 handles

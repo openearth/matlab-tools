@@ -103,9 +103,9 @@ else
         handles=feval(f,handles,id2,handles.Model(md).Input(id2).depFile);
     end
     
-    %     if exist(handles.Toolbox(tb).Input.originalDomain.obsFile)
+    %     if exist(handles.toolbox.dd.originalDomain.obsFile)
     %         % overall model based on original grid
-    %         %         nobs=ddb_obs2obs(handles.Toolbox(tb).Input.originalDomain.grdFile,handles.Model(md).Input(id1).obsFile,handles.Model(md).Input(id1).grdFile,handles.Model(md).Input(id1).obsFile);
+    %         %         nobs=ddb_obs2obs(handles.toolbox.dd.originalDomain.grdFile,handles.Model(md).Input(id1).obsFile,handles.Model(md).Input(id1).grdFile,handles.Model(md).Input(id1).obsFile);
     %         %         if nobs>0
     %         %             [name,m,n] = textread([handles.Model(md).Input(id1).obsFile],'%21c%f%f');
     %         %             handles.Model(md).Input(id1).observationPoints=[];
@@ -117,7 +117,7 @@ else
     %         %             handles.Model(md).Input(id2).nrObservationPoints = nobs;
     %         %         end
     %         % dd-model
-    %         nobs=ddb_obs2obs(handles.Toolbox(tb).Input.originalDomain.grdFile,handles.Model(md).Input(id1).obsFile,handles.Model(md).Input(id2).grdFile,[runid2 '.obs']);
+    %         nobs=ddb_obs2obs(handles.toolbox.dd.originalDomain.grdFile,handles.Model(md).Input(id1).obsFile,handles.Model(md).Input(id2).grdFile,[runid2 '.obs']);
     %         if nobs>0
     %             handles.Model(md).Input(id2).obsFile = [runid2 '.obs'];
     %             handles.activeDomain=id2;
@@ -126,8 +126,8 @@ else
     %             handles.Model(md).Input(id2).nrObservationPoints = nobs;
     %         end
     %     end
-    %     if exist(handles.Toolbox(tb).Input.originalDomain.thdFile)
-    %         nthd=ddb_thd2thd(handles.Toolbox(tb).Input.originalDomain.grdFile,handles.Model(md).Input(id1).thdFile,handles.Model(md).Input(id2).grdFile,[runid2 '.thd']);
+    %     if exist(handles.toolbox.dd.originalDomain.thdFile)
+    %         nthd=ddb_thd2thd(handles.toolbox.dd.originalDomain.grdFile,handles.Model(md).Input(id1).thdFile,handles.Model(md).Input(id2).grdFile,[runid2 '.thd']);
     %         if nthd>0
     %             handles.Model(md).Input(id2).thdFile = [runid2 '.thd'];
     %             handles.activeDomain=id2;
@@ -136,8 +136,8 @@ else
     %             handles.Model(md).Input(id2).nrThinDams = nthd;
     %         end
     %     end
-    %     if exist(handles.Toolbox(tb).Input.originalDomain.dryFile)
-    %         ndry=ddb_dry2dry(handles.Toolbox(tb).Input.originalDomain.grdFile,handles.Model(md).Input(id1).dryFile,handles.Model(md).Input(id2).grdFile,[runid2 '.dry']);
+    %     if exist(handles.toolbox.dd.originalDomain.dryFile)
+    %         ndry=ddb_dry2dry(handles.toolbox.dd.originalDomain.grdFile,handles.Model(md).Input(id1).dryFile,handles.Model(md).Input(id2).grdFile,[runid2 '.dry']);
     %         if ndry>0
     %             handles.Model(md).Input(id2).dryFile = [runid2 '.dry'];
     %             handles.activeDomain=id2;
@@ -146,8 +146,8 @@ else
     %             handles.Model(md).Input(id2).nrDryPoints = ndry;
     %         end
     %     end
-    %     if exist(handles.Toolbox(tb).Input.originalDomain.crsFile)
-    %         ncrs=ddb_crs2crs(handles.Toolbox(tb).Input.originalDomain.grdFile,handles.Model(md).Input(id1).crsFile,handles.Model(md).Input(id2).grdFile,[runid2 '.crs']);
+    %     if exist(handles.toolbox.dd.originalDomain.crsFile)
+    %         ncrs=ddb_crs2crs(handles.toolbox.dd.originalDomain.grdFile,handles.Model(md).Input(id1).crsFile,handles.Model(md).Input(id2).grdFile,[runid2 '.crs']);
     %         if ncrs>0
     %             handles.Model(md).Input(id2).crsFile = [runid2 '.crs'];
     %             handles.activeDomain=id2;
@@ -156,8 +156,8 @@ else
     %             handles.Model(md).Input(id2).nrCrossSections = ncrs;
     %         end
     %     end
-    %     if exist(handles.Toolbox(tb).Input.originalDomain.srcFile)
-    %         nsrc=ddb_src2src(handles.Toolbox(tb).Input.originalDomain.grdFile,handles.Model(md).Input(id1).srcFile,handles.Model(md).Input(id2).grdFile,[runid2 '.src']);
+    %     if exist(handles.toolbox.dd.originalDomain.srcFile)
+    %         nsrc=ddb_src2src(handles.toolbox.dd.originalDomain.grdFile,handles.Model(md).Input(id1).srcFile,handles.Model(md).Input(id2).grdFile,[runid2 '.src']);
     %         if nsrc>0
     %             handles.Model(md).Input(id2).srcFile = [runid2 '.src'];
     %             handles.activeDomain=id2;

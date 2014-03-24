@@ -61,13 +61,12 @@ function handles = ddb_initializeNavigationCharts(handles, varargin)
 % $Keywords: $
 
 %%
-ii=strmatch('NavigationCharts',{handles.Toolbox(:).name},'exact');
 
-ddb_getToolboxData(handles.Toolbox(ii).dataDir,ii);
+ddb_getToolboxData(handles.toolbox.navigationcharts.dataDir,'navigationcharts','NavigationCharts');
 
-handles.Toolbox(ii).Input.longName='Navigation Charts';
-handles.Toolbox(ii).Input.databases=[];
-handles.Toolbox(ii).Input.charts=[];
+handles.toolbox.navigationcharts.longName='Navigation Charts';
+handles.toolbox.navigationcharts.databases=[];
+handles.toolbox.navigationcharts.charts=[];
 
 if isdir([handles.toolBoxDir 'navigationcharts'])
 
@@ -81,33 +80,33 @@ if isdir([handles.toolBoxDir 'navigationcharts'])
         if exist([dr xml.file(jj).file.name],'file')
             n=n+1;
             s=load([dr xml.file(jj).file.name]);
-            handles.Toolbox(ii).Input.charts(n).name=s.name;
-            handles.Toolbox(ii).Input.charts(n).longname=s.longname;
-            handles.Toolbox(ii).Input.charts(n).box=s.Box;
-            handles.Toolbox(ii).Input.charts(n).url=fileparts(xml.file(jj).file.URL);
-            handles.Toolbox(ii).Input.databases{n}=s.longname;            
+            handles.toolbox.navigationcharts.charts(n).name=s.name;
+            handles.toolbox.navigationcharts.charts(n).longname=s.longname;
+            handles.toolbox.navigationcharts.charts(n).box=s.Box;
+            handles.toolbox.navigationcharts.charts(n).url=fileparts(xml.file(jj).file.URL);
+            handles.toolbox.navigationcharts.databases{n}=s.longname;            
         end
     end
 
 end
 
-handles.Toolbox(ii).Input.activeDatabase=1;
-handles.Toolbox(ii).Input.activeChart=1;
-handles.Toolbox(ii).Input.showShoreline=1;
-handles.Toolbox(ii).Input.showSoundings=1;
-handles.Toolbox(ii).Input.showContours=1;
-handles.Toolbox(ii).Input.activeChartName='';
-handles.Toolbox(ii).Input.oldChartName='';
-handles.Toolbox(ii).Input.selectedChart=1;
+handles.toolbox.navigationcharts.activeDatabase=1;
+handles.toolbox.navigationcharts.activeChart=1;
+handles.toolbox.navigationcharts.showShoreline=1;
+handles.toolbox.navigationcharts.showSoundings=1;
+handles.toolbox.navigationcharts.showContours=1;
+handles.toolbox.navigationcharts.activeChartName='';
+handles.toolbox.navigationcharts.oldChartName='';
+handles.toolbox.navigationcharts.selectedChart=1;
 
-if ~isfield(handles.Toolbox(ii).Input,'databases')
+if ~isfield(handles.toolbox.navigationcharts,'databases')
     set(handles.GUIHandles.Menu.Toolbox.NavigationCharts,'Enable','off');
-elseif isempty(handles.Toolbox(ii).Input.databases)
+elseif isempty(handles.toolbox.navigationcharts.databases)
     set(handles.GUIHandles.Menu.Toolbox.NavigationCharts,'Enable','off');
 end
 
 % Polygon
-handles.Toolbox(ii).Input.polygonX=[];
-handles.Toolbox(ii).Input.polygonY=[];
-handles.Toolbox(ii).Input.polygonLength=0;
-handles.Toolbox(ii).Input.polygonhandle=[];
+handles.toolbox.navigationcharts.polygonX=[];
+handles.toolbox.navigationcharts.polygonY=[];
+handles.toolbox.navigationcharts.polygonLength=0;
+handles.toolbox.navigationcharts.polygonhandle=[];

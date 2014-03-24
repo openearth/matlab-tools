@@ -48,8 +48,8 @@ handles=getHandles;
 
 posx=[];
 
-iac=handles.Toolbox(tb).Input.activeDatabase;
-names=handles.Toolbox(tb).Input.database(iac).stationShortNames;
+iac=handles.toolbox.tidestations.activeDatabase;
+names=handles.toolbox.tidestations.database(iac).stationShortNames;
 
 xg=handles.Model(md).Input(ad).gridX;
 yg=handles.Model(md).Input(ad).gridY;
@@ -59,11 +59,11 @@ xmax=max(max(xg));
 ymin=min(min(yg));
 ymax=max(max(yg));
 
-ns=length(handles.Toolbox(tb).Input.database(iac).xLoc);
+ns=length(handles.toolbox.tidestations.database(iac).xLoc);
 n=0;
 
-x=handles.Toolbox(tb).Input.database(iac).xLocLocal;
-y=handles.Toolbox(tb).Input.database(iac).yLocLocal;
+x=handles.toolbox.tidestations.database(iac).xLocLocal;
+y=handles.toolbox.tidestations.database(iac).yLocLocal;
 
 % First find points within grid bounding box
 for i=1:ns
@@ -98,10 +98,10 @@ for i=1:nrp
     
     k=istation(i);
         
-    if handles.Toolbox(tb).Input.showstationnames
-        name=handles.Toolbox(tb).Input.database(iac).stationShortNames{k};
+    if handles.toolbox.tidestations.showstationnames
+        name=handles.toolbox.tidestations.database(iac).stationShortNames{k};
     else
-        name=handles.Toolbox(tb).Input.database(iac).idCodes{k};
+        name=handles.toolbox.tidestations.database(iac).idCodes{k};
     end
         
     nobs=handles.Model(md).Input(ad).nrObservationPoints;
@@ -123,10 +123,10 @@ for i=1:nrp
         Names{nobs}=name;
         
         % Add some extra information for CoSMoS toolbox
-        handles.Model(md).Input(ad).observationPoints(nobs).longname=handles.Toolbox(tb).Input.database(iac).stationList{k};
+        handles.Model(md).Input(ad).observationPoints(nobs).longname=handles.toolbox.tidestations.database(iac).stationList{k};
         handles.Model(md).Input(ad).observationPoints(nobs).type='tidegauge';
-        handles.Model(md).Input(ad).observationPoints(nobs).source=handles.Toolbox(tb).Input.database(iac).shortName;
-        handles.Model(md).Input(ad).observationPoints(nobs).id=handles.Toolbox(tb).Input.database(iac).idCodes{k};
+        handles.Model(md).Input(ad).observationPoints(nobs).source=handles.toolbox.tidestations.database(iac).shortName;
+        handles.Model(md).Input(ad).observationPoints(nobs).id=handles.toolbox.tidestations.database(iac).idCodes{k};
         
     end
     
