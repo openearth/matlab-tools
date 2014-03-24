@@ -31,9 +31,9 @@ for jj=1:length(handles.dataproperty)
     handles.datapropertynames{jj}=handles.dataproperty(jj).dataproperty.name;
 end
 % And now the plot option element groups
-flist=dir([dr 'elementgroups\dataproperties' filesep '*.xml']);
+flist=dir([dr 'elementgroups' filesep 'dataproperties' filesep '*.xml']);
 for ii=1:length(flist)
-    handles.datapropertyelementgroup(ii).datapropertyelementgroup=xml2struct([dr 'elementgroups\dataproperties' filesep flist(ii).name]);
+    handles.datapropertyelementgroup(ii).datapropertyelementgroup=xml2struct([dr 'elementgroups' filesep 'dataproperties' filesep flist(ii).name]);
     handles.datapropertyelementgroup(ii).datapropertyelementgroup.name=flist(ii).name(1:end-4);
     handles.datapropertyelementgroupnames{ii}=flist(ii).name(1:end-4);
     % Determine total width and height of element group
@@ -55,9 +55,9 @@ for jj=1:length(handles.plotoption)
     handles.plotoptionnames{jj}=handles.plotoption(jj).plotoption.name;
 end
 % And now the plot option element groups
-flist=dir([dr 'elementgroups\plotoptions' filesep '*.xml']);
+flist=dir([dr 'elementgroups' filesep 'plotoptions' filesep '*.xml']);
 for ii=1:length(flist)
-    handles.plotoptionelementgroup(ii).plotoptionelementgroup=xml2struct([dr 'elementgroups\plotoptions' filesep flist(ii).name]);
+    handles.plotoptionelementgroup(ii).plotoptionelementgroup=xml2struct([dr 'elementgroups' filesep 'plotoptions' filesep flist(ii).name]);
     handles.plotoptionelementgroup(ii).plotoptionelementgroup.name=flist(ii).name(1:end-4);
     handles.plotoptionelementgroupnames{ii}=flist(ii).name(1:end-4);
     % Determine total width and height of element group
