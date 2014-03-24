@@ -133,6 +133,14 @@ switch lower(rawdataformat)
         y00=y0;
         ncols=length(xx);
         nrows=length(yy);        
+    case{'xyzregular'}
+        [x,y,z]=xyz2regulargrid(fname1);
+        x00=x(1,1);
+        y00=y(1,1);
+        dx=x(2)-x(1);
+        dy=y(2)-y(1);
+        ncols=length(x);
+        nrows=length(y);
 end
 close(wb);
 

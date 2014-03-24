@@ -107,55 +107,58 @@ handles=getHandles;
 
 % Nr zoom steps is determined automatically by the tiling function
 
-switch lower(handles.Toolbox(tb).Input.import.rawDataFormat)
-    case{'arcinfogrid'}
-        [ncols,nrows,x0,y0,cellsz]=readArcInfo(handles.Toolbox(tb).Input.import.dataFile,'info');
-        dx=cellsz;
-        dy=cellsz;
-    case{'arcbinarygrid'}
-        [x,y,z,m] = arc_info_binary([fileparts(handles.Toolbox(tb).Input.import.dataFile) filesep]);
-%         clear x y z
-        x0=m.X(1);
-        y0=m.Y(end);
-        dx=x(2)-x(1);
-        dy=y(2)-y(1);
-    case{'matfile'}
-        s=load(handles.Toolbox(tb).Input.import.dataFile);
-        x0=s.x(1);
-        y0=s.y(1);
-    case{'netcdf'}
-        x=nc_varget(handles.Toolbox(tb).Input.import.dataFile,'x');
-        y=nc_varget(handles.Toolbox(tb).Input.import.dataFile,'y');
-        x0=x(1);
-        y0=y(1);
-        nrows=length(y);
-        ncols=length(x);
-        dx=x(2)-x(1);
-        dy=y(2)-y(1);
-    case{'adcircgrid'}
-        % unstructured data
-        % Read metadata
-        wb_h = waitbar(0,'Reading the adcirc data');
-        [x,y,z,n1,n2,n3]=import_adcirc_fort14(handles.Toolbox(tb).Input.import.dataFile,wb_h,[0,1/6]);   
-        close(wb_h);
-        x0=min(x);
-        y0=min(y);
-        x1=max(x);
-        y1=max(y);
-        % Compute average distance of xyz points
-        dataarea=(x1-x0)*(y1-y0);
-        dx=sqrt(dataarea/length(x));
-        dy=dx;        
-    case{'xyz'}
-        xyz=load(handles.Toolbox(tb).Input.import.dataFile);
-        x0=min(xyz(:,1));
-        y0=min(xyz(:,2));
-        x1=max(xyz(:,1));
-        y1=max(xyz(:,2));
-        % Compute average distance of xyz points
-        dataarea=(x1-x0)*(y1-y0);
-        dx=sqrt(dataarea/size(xyz,1));
-        dy=dx;        
+wb = waitbox('Reading data file ...');
+
+try    
+    switch lower(handles.Toolbox(tb).Input.import.rawDataFormat)
+        case{'arcinfogrid'}
+            [ncols,nrows,x0,y0,cellsz]=readArcInfo(handles.Toolbox(tb).Input.import.dataFile,'info');
+            dx=cellsz;
+            dy=cellsz;
+        case{'arcbinarygrid'}
+            [x,y,z,m] = arc_info_binary([fileparts(handles.Toolbox(tb).Input.import.dataFile) filesep]);
+            clear x y z
+            x0=m.X(1);
+            y0=m.Y(end);
+            dx=x(2)-x(1);
+            dy=y(2)-y(1);
+        case{'matfile'}
+            s=load(handles.Toolbox(tb).Input.import.dataFile);
+            x0=s.x(1);
+            y0=s.y(1);
+        case{'netcdf'}
+            x=nc_varget(handles.Toolbox(tb).Input.import.dataFile,'x');
+            y=nc_varget(handles.Toolbox(tb).Input.import.dataFile,'y');
+            x0=x(1);
+            y0=y(1);
+            dx=x(2)-x(1);
+            dy=y(2)-y(1);
+        case{'adcircgrid'}
+            % unstructured data
+            % Read metadata
+%            wb_h = waitbar(0,'Reading the adcirc data');
+            [x,y,z,n1,n2,n3]=import_adcirc_fort14(handles.Toolbox(tb).Input.import.dataFile,wb_h,[0,1/6]);
+%            close(wb_h);
+            x0=min(x);
+            y0=min(y);
+            x1=max(x);
+            y1=max(y);
+            % Compute average distance of xyz points
+            dataarea=(x1-x0)*(y1-y0);
+            dx=sqrt(dataarea/length(x));
+            dy=dx;
+        case{'xyzregular'}
+            [xg,yg,zg]=xyz2regulargrid(handles.Toolbox(tb).Input.import.dataFile);
+            x0=min(xg);
+            y0=min(yg);
+            dx=xg(2)-xg(1);
+            dy=yg(2)-yg(1);
+    end    
+    close(wb);
+catch
+    close(wb);
+    ddb_giveWarning('text','An error occured while reading the data file!');
+    return
 end
 
 % Determine default values for this dataset

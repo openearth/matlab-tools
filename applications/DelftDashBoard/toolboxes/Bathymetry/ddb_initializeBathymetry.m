@@ -164,6 +164,11 @@ handles.Toolbox(ii).Input.import.rawDataFormatsText{5}='ADCIRC grid';
 handles.Toolbox(ii).Input.import.rawDataFormatsExtension{5}='*.grd';
 handles.Toolbox(ii).Input.import.rawDataFormatsType{5}='unstructured';        
 
+handles.Toolbox(ii).Input.import.rawDataFormats{6}='xyzregular';
+handles.Toolbox(ii).Input.import.rawDataFormatsText{6}='XYZ (regular grid)';
+handles.Toolbox(ii).Input.import.rawDataFormatsExtension{6}='*.xyz';
+handles.Toolbox(ii).Input.import.rawDataFormatsType{6}='structured';        
+
 % handles.Toolbox(ii).Input.import.rawDataFormats{6}='xyz';
 % handles.Toolbox(ii).Input.import.rawDataFormatsText{6}='XYZ File';
 % handles.Toolbox(ii).Input.import.rawDataFormatsExtension{6}='*.xyz';
