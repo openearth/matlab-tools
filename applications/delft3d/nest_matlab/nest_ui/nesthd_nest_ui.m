@@ -476,6 +476,12 @@ function get_hd1_obs_Callback(hObject, eventdata, handles)
 
 if ~isempty (handles.filedir); cd(handles.filedir); end
 [fin,pin] = uiputfile('*.obs;points*','Specify name of the file with the nesting stations');
+
+%% uiputfile by default puts  ".obs" to the file name. I do not want that for SIMONA files. Remove the extennsion if a name starts with points
+if strcmpi(fin(1:6),'points')
+    [~,fin,~] = fileparts(fin);
+end
+
 cd (handles.progdir);
 
 if fin ~= 0
