@@ -1,11 +1,11 @@
-function writeRAY(inhoudRAY)
+function varargout = writeRAY(RAYdata)
 %write RAY : Writes a RAY file
 %
 %   Syntax:
-%     function writeRAY(inhoudRAY)
+%     function writeRAY(RAYdata)
 % 
 %   Input:
-%     inhoudRAY       struct with contents of ray file
+%     RAYdata       struct with contents of ray file
 %                     .name    :  cell with filenames
 %                     .path    :  cell with path of files
 %                     .info    :  cell with header info of RAY file (e.g. pro-file used)
@@ -21,22 +21,39 @@ function writeRAY(inhoudRAY)
 %                     .perc50  :  distance from coastline point beyond which 50% of transport is located [m]
 %                     .perc80  :  distance from coastline point beyond which 80% of transport is located [m]
 %                     .perc100 :  distance from coastline point beyond which 100% of transport is located [m] 
+%                     .hass    :  (OPTIONAL) High Angle Stability Switch: When set to non-zero (e.g. 1), the 
+%                                 minimum and maximum transports (S) are also set for even larger angles (phi)
+%                                 This has a stabilizing effect on coastline development when coastline orientation
+%                                 and direction of average wave conditions differ largely (e.g. > 45 degrees)
+%
+%   Calling writeRAY without an input variable will return a default RAYdata structure 
+%
+%   Multiple Ray-files can be generated using a RAYdata multi-structure ([1xN] or [Nx1])
+%   An empty example of a RAYdata multi-structure can generated using
+%   writeRAY(number_of_ray_files). Alse see example 2 below.
 % 
 %   Output:
 %     .ray files
 %
-%   Example:
-%     inhoudRAY = readRAY('test.ray')
-%     writeRAY(inhoudRAY);
+%   Example 1:
+%     RAYdata = readRAY('test.ray')
+%     writeRAY(RAYdata);
 %
-%   See also 
+%   Example 2:
+%     disp('A default RAYdata structure for 10 Ray files looks like:');
+%     disp(' '); RAYdata = writeRAY(10); disp(RAYdata);
+%
+%   See also readRAY
 
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Deltares
 %       Bas Huisman
-%
 %       bas.huisman@deltares.nl	
+%
+%   Copyright (C) 2014 Deltares
+%       Freek Scheel
+%       freek.scheel@deltares.nl
 %
 %       Deltares
 %       Rotterdamseweg 185
@@ -75,14 +92,44 @@ function writeRAY(inhoudRAY)
 % $HeadURL$
 % $Keywords: $
 
-for ii=1:length(inhoudRAY.name)
-    fid4 = fopen([inhoudRAY.path{ii},'\',char(inhoudRAY.name{ii})],'wt');
-    for iii=1:6
-        fprintf(fid4,'%s\n',inhoudRAY.info{ii,iii});
+if nargin == 0
+    
+    varargout{1} = readRAY;
+    
+elseif nargin == 1
+    
+    if isnumeric(RAYdata)
+        varargout{1} = readRAY(RAYdata);
+        return
     end
-    fprintf(fid4,'    equi      c1     c2   h0    angle   fshape\n');
-    fprintf(fid4,'%8.2e %12.8f %8.4f %5.1f %9.2f %9.2f\n',[inhoudRAY.equi(ii) inhoudRAY.c1(ii) inhoudRAY.c2(ii) inhoudRAY.h0(ii) inhoudRAY.hoek(ii) inhoudRAY.fshape(ii)]);
-    fprintf(fid4,'       Xb      2 %%      20%%      50%%      80%%     100%%\n');
-    fprintf(fid4,'%9.1f %9.1f %9.1f %9.1f %9.1f %9.1f\n',[inhoudRAY.Xb(ii) inhoudRAY.perc2(ii) inhoudRAY.perc20(ii) inhoudRAY.perc50(ii) inhoudRAY.perc80(ii) inhoudRAY.perc100(ii)]);
-    fclose(fid4);
+    
+    for ii=1:length(RAYdata)
+        fid4 = fopen([RAYdata(ii).path filesep char(RAYdata(ii).name)],'wt');
+        for iii=1:6
+            fprintf(fid4,'%s\n',RAYdata(ii).info{1,iii});
+        end
+        fprintf(fid4,'    equi      c1     c2   h0    angle   fshape\n');
+        fprintf(fid4,'%8.2e %12.8f %8.4f %5.1f %9.2f %9.2f\n',[RAYdata(ii).equi RAYdata(ii).c1 RAYdata(ii).c2 RAYdata(ii).h0 RAYdata(ii).hoek RAYdata(ii).fshape]);
+        if ~isfield(RAYdata(ii),'hass')
+            % No hass fieldname found:
+            fprintf(fid4,'       Xb      2 %%      20%%      50%%      80%%     100%%\n');
+            fprintf(fid4,'%9.1f %9.1f %9.1f %9.1f %9.1f %9.1f\n',[RAYdata(ii).Xb RAYdata(ii).perc2 RAYdata(ii).perc20 RAYdata(ii).perc50 RAYdata(ii).perc80 RAYdata(ii).perc100]);
+        else
+            % hass fieldname found:
+            if ~isempty(RAYdata(ii).hass)
+                % hass is not empty:
+                % whatever non-zero value is set (e.g. 1, 1000, 'on', etc.), hass is printed as 1 (except for 0):
+                fprintf(fid4,'       Xb      2 %%      20%%      50%%      80%%     100%%     high_angle_stability_switch\n');
+                fprintf(fid4,'%9.1f %9.1f %9.1f %9.1f %9.1f %9.1f %9.0f\n',[RAYdata(ii).Xb RAYdata(ii).perc2 RAYdata(ii).perc20 RAYdata(ii).perc50 RAYdata(ii).perc80 RAYdata(ii).perc100 ~isempty(nonzeros(RAYdata(ii).hass))]);
+            else
+                % hass is empty, ignore it (not printed as zero, as in the original file):
+                fprintf(fid4,'       Xb      2 %%      20%%      50%%      80%%     100%%\n');
+                fprintf(fid4,'%9.1f %9.1f %9.1f %9.1f %9.1f %9.1f\n',[RAYdata(ii).Xb RAYdata(ii).perc2 RAYdata(ii).perc20 RAYdata(ii).perc50 RAYdata(ii).perc80 RAYdata(ii).perc100]);
+            end
+        end
+        fclose(fid4);
+    end
+else
+    % Should not be possible to get here:
+    error(['Specified ' num2str(nargin) ' input variables, maximum is 1'])
 end
