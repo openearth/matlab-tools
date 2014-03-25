@@ -60,7 +60,6 @@ function filename = xb_write_ship(xb, varargin)
 % $Keywords: $
 
 %% read options
-xb = xb_read_ship('allships.txt');
 if ~xs_check(xb); error('Invalid XBeach structure'); end;
 
 OPT = struct( ...
