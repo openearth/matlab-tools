@@ -96,11 +96,11 @@ end
 
 xProfile        = xInitial;
 
-if OPT.VariationVolume ~= 0
+if OPT.VariationVolume ~= 0 || OPT.VerticalIntersectionLevel > max(zInitial)
     % only calculate the profile variation if the volume is not null
     xIntersection   = max(findCrossings(xInitial, zInitial, [min(xInitial) max(xInitial)], ...
         [OPT.VerticalIntersectionLevel OPT.VerticalIntersectionLevel])); 
-    SigmaVariation  = 4*sqrt(OPT.VariationVolume);
+    SigmaVariation  = 4*sqrt(abs(OPT.VariationVolume));
     dzVariation     = OPT.VariationVolume*norm_pdf(xInitial, xIntersection, SigmaVariation);
 
     zProfile        = zInitial + dzVariation;
