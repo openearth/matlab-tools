@@ -60,28 +60,59 @@ function filename = xb_write_ship(xb, varargin)
 % $Keywords: $
 
 %% read options
-
+xb = xb_read_ship('allships.txt');
 if ~xs_check(xb); error('Invalid XBeach structure'); end;
 
 OPT = struct( ...
     'path', pwd, ...
-    'filename', 'ship.txt' ...
+    'filename', 'ships.txt' ...
 );
 
 OPT = setproperty(OPT, varargin{:});
 
-%% write file
-
+%% Write ship main file file
 filename = OPT.filename;
-
 try
     fid = fopen(fullfile(OPT.path, filename), 'w');
     for j = 1:length(xb)
         fname = sprintf('ship%03d.txt', j);
         fprintf(fid, '%s\n', fname);
-        xb_write_input(fullfile(OPT.path, fname), xb(j));
     end
     fclose(fid);
 catch
     error(['Could not create ship definition file [' filename ']']);
 end
+
+% Create individual files per ship
+fly = [];
+for i = 1:length(xb.data(1).value)
+    fid = fopen(fullfile(OPT.path, sprintf('ship%03d.txt', i)), 'w');
+    for j = 1:length(xb.data)
+        xb.data(j).name
+        if strcmp(xb.data(j).name,{'shiptrack'});
+            if length(xb.data(j).value.data) == 4
+                t = xs_get(xb.data(j).value,'time');
+                x = xs_get(xb.data(j).value,'x');
+                y = xs_get(xb.data(j).value,'y');
+                z = xs_get(xb.data(j).value,'z');
+                A = [t,x,y,z];
+            elseif length(xb.data(j).value.data) == 3
+                t = xs_get(xb.data(j).value,'time');
+                x = xs_get(xb.data(j).value,'x');
+                y = xs_get(xb.data(j).value,'y');
+                A = [t,x,y];
+            else 
+                error('something wrong with ship track data...')
+            end
+            save(fullfile(OPT.path, sprintf('track%03d.txt', i)),'A','-ascii');
+            fprintf(fid, '%s\n', [xb.data(j).name ' = ' sprintf('track%03d.txt', i)]);
+        elseif strcmp(xb.data(j).name,{'shipgeom'});
+            fprintf(fid, '%s\n', [xb.data(j).name ' = ' xb.data(j).value(i,:)]);
+        else
+            fprintf(fid, '%s\n', [xb.data(j).name ' = ' num2str(xb.data(j).value(i))]);
+        end
+    end
+end
+% function write_shiptrack(fname, tlength, xb)
+
+

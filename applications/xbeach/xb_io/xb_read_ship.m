@@ -60,7 +60,6 @@ function xb = xb_read_ship(filename)
 % $Keywords: $
 
 %% read ship file structure
-
 if ~exist(filename, 'file')
     error('File not found: %s', filename);
 end
@@ -69,10 +68,96 @@ fdir = fileparts(filename);
 xb   = xs_empty();
 fid  = fopen(filename, 'r');
 n    = 1;
-
 while ~feof(fid)
-    xb(n) = xb_read_input(fullfile(fdir, fgetl(fid)));
+    fullfile(fdir, fgetl(fid))
     n     = n + 1;
 end
 
+[names, values, filenames] = read_shipfile(filename);
+for i = 1:length(names)
+    if strcmp(names{i},'shipgeom')
+        for j = 1:length(filenames)
+            files(j,:) = char(values{i,j});
+%             xb_sg = read_shipgeom(values{i,j});
+            xb = xs_set(xb, names{i}, files);
+        end
+    elseif strcmp(names{i},'shiptrack')
+        for j = 1:length(filenames)
+            files(j,:) = char(values{i,j});
+            xb_st = read_shiptrack(values{i,j});
+            xb = xs_set(xb, names{i}, xb_st);
+        end
+    else
+        for j = 1:length(filenames)
+            val(j) = str2double(values{i,j});
+        end
+        xb = xs_set(xb, names{i}, val);
+    end
+    clearvars files 
+end
+
+% set meta data
+xb = xs_meta(xb, mfilename, 'ship', filename);
+
+function [names values filenames] = read_shipfile(filename) % read overall ship file
+names      = {};
+values    = {};
+filenames = {};
+
+fdir = fileparts(filename);
+
+nship = 0;
+fid = fopen(filename);
+while ~feof(fid)
+    fline = fgetl(fid);
+    if isempty(fline); continue; end;
+    nship = nship + 1;
+    fname = fullfile(fdir, fline);
+    filenames{nship} = fname;
+    if exist(fname, 'file')
+        
+        [n,v] = read_shipfile2(fname);
+        
+        for i = 1:length(n)
+            names = n;
+            values{i,nship} = v{i};
+        end
+    end
+end
 fclose(fid);
+
+function [names,values] = read_shipfile2(fname) % read ship settings file
+fid = fopen(fname);
+txt = fread(fid, '*char')';
+fclose(fid);
+
+[exprNames endIndex] = regexp([txt char(10)], ...
+    '\s*(?<name>.*?)\s*=\s*(?<value>.*?)\s*\n', 'names', 'end', 'dotexceptnewline');
+
+names  = {exprNames.name};
+values = {exprNames.value};
+
+function xb_st = read_shiptrack(filename) % read ship track file
+try
+    A = load(filename);
+    
+    xb_st = xs_empty;
+    xb_st = xs_meta(xb_st, mfilename, 'ship', filename);
+    
+    % check if txy or txyz
+    if size(A,2) == 3
+        xb_st = xs_set(xb_st, 'time', [], 'x', [], 'y', []);
+        xb_st = xs_set(xb_st, '-units', 'time', {A(:,1) 's'}, 'x', {A(:,2) 'm'}, 'y', {A(:,3) 'm'});
+    elseif size(A,2) == 4
+        xb_st = xs_set(xb_st, 'time', [], 'x', [], 'y', [], 'z', []);
+        xb_st = xs_set(xb_st, '-units', 'time', {A(:,1) 's'}, 'x', {A(:,2) 'm'}, 'y', {A(:,3) 'm'}, 'z', {A(:,4) 'm'});
+    else
+        error(['Error Reading Ship Track File [' filename ']'])
+    end
+catch
+   error(['Error Reading Ship Track File [' filename ']'])
+end
+
+% function xb_sg = read_shipgeom(filename)
+% To do, read in depfile for ship geometry
+
