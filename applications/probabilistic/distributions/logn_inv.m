@@ -19,7 +19,7 @@ function X = logn_inv(P, mu, sigma, varargin)
 %   Example
 %   logn_inv
 %
-%   See also 
+%   See also logn_moments2lambda logn_moments2zeta
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology

@@ -129,7 +129,7 @@ OPT = prob_is_convert(OPT);
 result_as_input = ~isempty(fieldnames(OPT.result));
 
 if result_as_input
-    newOPT          = OPT.result.Settings;
+    newOPT          = OPT.result.settings;
     newOPT.stochast = OPT.result.Input;
     newOPT.result   = struct();
     

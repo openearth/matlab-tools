@@ -94,10 +94,17 @@ end
 
 %% Generate profile variation and final profile
 
-xIntersection   = max(findCrossings(xInitial, zInitial, [min(xInitial) max(xInitial)], ...
-    [OPT.VerticalIntersectionLevel OPT.VerticalIntersectionLevel])); 
-SigmaVariation  = 4*sqrt(OPT.VariationVolume);
-dzVariation     = OPT.VariationVolume*norm_pdf(xInitial, xIntersection, SigmaVariation);
-
 xProfile        = xInitial;
-zProfile        = zInitial + dzVariation;
+
+if OPT.VariationVolume ~= 0
+    % only calculate the profile variation if the volume is not null
+    xIntersection   = max(findCrossings(xInitial, zInitial, [min(xInitial) max(xInitial)], ...
+        [OPT.VerticalIntersectionLevel OPT.VerticalIntersectionLevel])); 
+    SigmaVariation  = 4*sqrt(OPT.VariationVolume);
+    dzVariation     = OPT.VariationVolume*norm_pdf(xInitial, xIntersection, SigmaVariation);
+
+    zProfile        = zInitial + dzVariation;
+else
+    % reuse the initial profile
+    zProfile        = zInitial;
+end
