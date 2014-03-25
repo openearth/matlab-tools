@@ -45,7 +45,9 @@ for ii = 1:size(metaPropertyBlock,1)
     extraArgs = metaPropertyBlock{ii,3}';
     
     n = strcmp(name,{PropertyList.Name});
-    assert(sum(n)==1)
+    assert(sum(n)==1,...
+        'Unable to define metaproperty ''%s'' because no property with that name exists in class definition of ''%s''',...
+        name,metaclass.Name)
     
     metaprops.(name) = fcn(PropertyList(n),extraArgs{:});
 end

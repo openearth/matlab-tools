@@ -52,9 +52,9 @@
 
 %%
 classdef (Abstract) inspectable < oop.setproperty
-    properties (Abstract,Constant,Hidden)
+    properties (Abstract,Hidden)
         metaprops
-        % metaprops = metaprop.helper.Construct(?metaprop_example,{
+        % metaprops = metaprop.Construct(mfilename('class'),{
         %     'Date',@metaprop.date,{
         %         'Description','Date field'}
         %     'Number',@metaprop.doubleScalar,{
