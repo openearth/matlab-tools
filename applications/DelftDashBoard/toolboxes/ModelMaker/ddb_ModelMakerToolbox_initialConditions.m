@@ -82,31 +82,31 @@ if isempty(varargin)
         
     k=2;
     
-    if handles.Model(md).Input(ad).salinity.include
+    if handles.model.delft3dflow.domain(ad).salinity.include
         k=k+1;
         str{k}='Salinity';
         handles.toolbox.modelmaker.initialConditions.parameter(k).type='sal';
     end
     
-    if handles.Model(md).Input(ad).temperature.include
+    if handles.model.delft3dflow.domain(ad).temperature.include
         k=k+1;
         str{k}='Temperature';
         handles.toolbox.modelmaker.initialConditions.parameter(k).type='tem';
     end
     
-    if handles.Model(md).Input(ad).sediments.include
-        for j=1:handles.Model(md).Input(ad).nrSediments
+    if handles.model.delft3dflow.domain(ad).sediments.include
+        for j=1:handles.model.delft3dflow.domain(ad).nrSediments
             k=k+1;
-            str{k}=handles.Model(md).Input(ad).sediment(j).name;
+            str{k}=handles.model.delft3dflow.domain(ad).sediment(j).name;
             handles.toolbox.modelmaker.initialConditions.parameter(k).type='sediment';
             handles.toolbox.modelmaker.initialConditions.parameter(k).nr=j;
         end
     end
     
-    if handles.Model(md).Input(ad).tracers
-        for j=1:handles.Model(md).Input(ad).nrTracers
+    if handles.model.delft3dflow.domain(ad).tracers
+        for j=1:handles.model.delft3dflow.domain(ad).nrTracers
             k=k+1;
-            str{k}=handles.Model(md).Input(ad).tracer(j).name;
+            str{k}=handles.model.delft3dflow.domain(ad).tracer(j).name;
             handles.toolbox.modelmaker.initialConditions.parameter(k).type='tracer';
             handles.toolbox.modelmaker.initialConditions.parameter(k).nr=j;
         end
@@ -163,10 +163,10 @@ handles.toolbox.modelmaker.initialConditions.activeDataSource=1;
 
 switch lower(handles.toolbox.modelmaker.initialConditions.parameter(iac).type)
     case{'wl'}
-        val=handles.Model(md).Input(ad).waterLevel.ICConst;
+        val=handles.model.delft3dflow.domain(ad).waterLevel.ICConst;
         handles.toolbox.modelmaker.initialConditions.dataSourceList={'Constant'};
     case{'cur'}
-        val=handles.Model(md).Input(ad).velocity.ICConst;
+        val=handles.model.delft3dflow.domain(ad).velocity.ICConst;
     case{'sal','tem','sediment','tracer'}
         str{1}='Constant';
         str{2}='Linear';
@@ -194,33 +194,33 @@ setHandles(handles);
 % 
 % handles.GUIData.NSalTem=0;
 % 
-% if handles.Model(md).Input(ad).Salinity.Include
+% if handles.model.delft3dflow.domain(ad).Salinity.Include
 %     k=k+1;
 %     handles.GUIData.NSalTem=handles.GUIData.NSalTem+1;
 %     str{k}='Salinity';
 %     handles.GUIData.ConstType{k}='Salinity';
 % end
 % 
-% if handles.Model(md).Input(ad).Temperature.Include
+% if handles.model.delft3dflow.domain(ad).Temperature.Include
 %     k=k+1;
 %     handles.GUIData.NSalTem=handles.GUIData.NSalTem+1;
 %     str{k}='Temperature';
 %     handles.GUIData.ConstType{k}='Temperature';
 % end
 % 
-% if handles.Model(md).Input(ad).sediments.include
-%     for j=1:handles.Model(md).Input(ad).NrSediment
+% if handles.model.delft3dflow.domain(ad).sediments.include
+%     for j=1:handles.model.delft3dflow.domain(ad).NrSediment
 %         k=k+1;
-%         str{k}=handles.Model(md).Input(ad).Sediment(j).Name;
+%         str{k}=handles.model.delft3dflow.domain(ad).Sediment(j).Name;
 %         handles.GUIData.ConstType{k}='Sediment';
 %         handles.GUIData.ConstNr(k)=j;
 %     end
 % end
 % 
-% if handles.Model(md).Input(ad).Tracers
-%     for j=1:handles.Model(md).Input(ad).NrTracers
+% if handles.model.delft3dflow.domain(ad).Tracers
+%     for j=1:handles.model.delft3dflow.domain(ad).NrTracers
 %         k=k+1;
-%         str{k}=handles.Model(md).Input(ad).Tracer(j).Name;
+%         str{k}=handles.model.delft3dflow.domain(ad).Tracer(j).Name;
 %         handles.GUIData.ConstType{k}='Tracer';
 %         handles.GUIData.ConstNr(k)=j;
 %     end
@@ -263,15 +263,15 @@ setHandles(handles);
 %     return
 % end
 % 
-% [filename, pathname, filterindex] = uiputfile('*.ini', 'Select Ini File',handles.Model(md).Input(ad).IniFile);
+% [filename, pathname, filterindex] = uiputfile('*.ini', 'Select Ini File',handles.model.delft3dflow.domain(ad).IniFile);
 % if pathname~=0
 %     curdir=[lower(cd) '\'];
 %     if ~strcmpi(curdir,pathname)
 %         filename=[pathname filename];
 %     end
-%     handles.Model(md).Input(ad).IniFile=filename;
-%     handles.Model(md).Input(ad).InitialConditions='ini';
-%     handles.Model(md).Input(ad).SmoothingTime=0.0;
+%     handles.model.delft3dflow.domain(ad).IniFile=filename;
+%     handles.model.delft3dflow.domain(ad).InitialConditions='ini';
+%     handles.model.delft3dflow.domain(ad).SmoothingTime=0.0;
 %     handles=feval(f,handles,ad,filename);
 %     setHandles(handles);
 % end
@@ -290,19 +290,19 @@ setHandles(handles);
 % 
 % switch lower(handles.GUIData.ConstType{ival})
 %     case{'water level'}
-%         handles.Model(md).Input(ad).WaterLevel.ICConst=val;
+%         handles.model.delft3dflow.domain(ad).WaterLevel.ICConst=val;
 %     case{'velocity'}
-%         handles.Model(md).Input(ad).Velocity.ICConst=val;
+%         handles.model.delft3dflow.domain(ad).Velocity.ICConst=val;
 %     case{'salinity'}
-%         handles.Model(md).Input(ad).Salinity.ICConst=val;
+%         handles.model.delft3dflow.domain(ad).Salinity.ICConst=val;
 %     case{'temperature'}
-%         handles.Model(md).Input(ad).Temperature.ICConst=val;
+%         handles.model.delft3dflow.domain(ad).Temperature.ICConst=val;
 %     case{'sediment'}
 %         j=handles.GUIData.ConstNr(ival);
-%         handles.Model(md).Input(ad).Sediment(j).ICConst=val;
+%         handles.model.delft3dflow.domain(ad).Sediment(j).ICConst=val;
 %     case{'tracer'}
 %         j=handles.GUIData.ConstNr(ival);
-%         handles.Model(md).Input(ad).Tracer(j).ICConst=val;
+%         handles.model.delft3dflow.domain(ad).Tracer(j).ICConst=val;
 % end
 % setHandles(handles);
 % 
@@ -315,20 +315,20 @@ setHandles(handles);
 % 
 % switch lower(handles.GUIData.ConstType{ival})
 %     case{'water level'}
-%         handles.Model(md).Input(ad).WaterLevel.ICOpt=str{ii};
+%         handles.model.delft3dflow.domain(ad).WaterLevel.ICOpt=str{ii};
 %         handles.TideModels.ActiveTideModelIC=handles.TideModels.Name{ii};
 %     case{'velocity'}
-%         handles.Model(md).Input(ad).Velocity.ICOpt=str{ii};
+%         handles.model.delft3dflow.domain(ad).Velocity.ICOpt=str{ii};
 %     case{'salinity'}
-%         handles.Model(md).Input(ad).Salinity.ICOpt=str{ii};
+%         handles.model.delft3dflow.domain(ad).Salinity.ICOpt=str{ii};
 %     case{'temperature'}
-%         handles.Model(md).Input(ad).Temperature.ICOpt=str{ii};
+%         handles.model.delft3dflow.domain(ad).Temperature.ICOpt=str{ii};
 %     case{'sediment'}
 %         j=handles.GUIData.ConstNr(ival);
-%         handles.Model(md).Input(ad).Sediment(j).ICOpt=str{ii};
+%         handles.model.delft3dflow.domain(ad).Sediment(j).ICOpt=str{ii};
 %     case{'tracer'}
 %         j=handles.GUIData.ConstNr(ival);
-%         handles.Model(md).Input(ad).Tracer(j).ICOpt=str{ii};
+%         handles.model.delft3dflow.domain(ad).Tracer(j).ICOpt=str{ii};
 % end
 % RefreshInitialConditions(handles);
 % setHandles(handles);
@@ -342,10 +342,10 @@ setHandles(handles);
 % switch lower(handles.GUIData.ConstType{ival})
 %     case{'water level'}
 %         set(handles.GUIHandles.SelectDataSource,'String',handles.TideModels.longName);
-%         ii=strmatch(lower(handles.Model(md).Input(ad).WaterLevel.ICOpt),lower(handles.TideModels.Name),'exact');
+%         ii=strmatch(lower(handles.model.delft3dflow.domain(ad).WaterLevel.ICOpt),lower(handles.TideModels.Name),'exact');
 %         set(handles.GUIHandles.SelectDataSource,'Value',ii);
-%         icpar=handles.Model(md).Input(ad).WaterLevel.ICPar;
-%         icconst=handles.Model(md).Input(ad).WaterLevel.ICConst;
+%         icpar=handles.model.delft3dflow.domain(ad).WaterLevel.ICPar;
+%         icconst=handles.model.delft3dflow.domain(ad).WaterLevel.ICConst;
 %     case{'velocity'}
 %         str{1}='Constant';
 %         str{2}='Logarithmic';
@@ -354,10 +354,10 @@ setHandles(handles);
 %         str{4}='Per Layer';
 %         set(handles.GUIHandles.SelectDataSource,'Value',1);
 %         set(handles.GUIHandles.SelectDataSource,'String',str);
-%         ii=strmatch(lower(handles.Model(md).Input(ad).Velocity.ICOpt),lower(str),'exact');
+%         ii=strmatch(lower(handles.model.delft3dflow.domain(ad).Velocity.ICOpt),lower(str),'exact');
 %         set(handles.GUIHandles.SelectDataSource,'Value',ii);
-%         icpar=handles.Model(md).Input(ad).Velocity.ICPar;
-%         icconst=handles.Model(md).Input(ad).Velocity.ICConst;
+%         icpar=handles.model.delft3dflow.domain(ad).Velocity.ICPar;
+%         icconst=handles.model.delft3dflow.domain(ad).Velocity.ICConst;
 %     case{'salinity'}
 %         str{1}='Constant';
 %         str{2}='Linear';
@@ -365,10 +365,10 @@ setHandles(handles);
 %         str{4}='Per Layer';
 %         set(handles.GUIHandles.SelectDataSource,'Value',1);
 %         set(handles.GUIHandles.SelectDataSource,'String',str);
-%         ii=strmatch(lower(handles.Model(md).Input(ad).Salinity.ICOpt),lower(str),'exact');
+%         ii=strmatch(lower(handles.model.delft3dflow.domain(ad).Salinity.ICOpt),lower(str),'exact');
 %         set(handles.GUIHandles.SelectDataSource,'Value',ii);
-%         icpar=handles.Model(md).Input(ad).Salinity.ICPar;
-%         icconst=handles.Model(md).Input(ad).Salinity.ICConst;
+%         icpar=handles.model.delft3dflow.domain(ad).Salinity.ICPar;
+%         icconst=handles.model.delft3dflow.domain(ad).Salinity.ICConst;
 %     case{'temperature'}
 %         str{1}='Constant';
 %         str{2}='Linear';
@@ -376,10 +376,10 @@ setHandles(handles);
 %         str{4}='Per Layer';
 %         set(handles.GUIHandles.SelectDataSource,'Value',1);
 %         set(handles.GUIHandles.SelectDataSource,'String',str);
-%         ii=strmatch(lower(handles.Model(md).Input(ad).Temperature.ICOpt),lower(str),'exact');
+%         ii=strmatch(lower(handles.model.delft3dflow.domain(ad).Temperature.ICOpt),lower(str),'exact');
 %         set(handles.GUIHandles.SelectDataSource,'Value',ii);
-%         icpar=handles.Model(md).Input(ad).Temperature.ICPar;
-%         icconst=handles.Model(md).Input(ad).Temperature.ICConst;
+%         icpar=handles.model.delft3dflow.domain(ad).Temperature.ICPar;
+%         icconst=handles.model.delft3dflow.domain(ad).Temperature.ICConst;
 %     case{'sediment'}
 %         str{1}='Constant';
 %         str{2}='Linear';
@@ -388,10 +388,10 @@ setHandles(handles);
 %         set(handles.GUIHandles.SelectDataSource,'Value',1);
 %         set(handles.GUIHandles.SelectDataSource,'String',str);
 %         j=handles.GUIData.ConstNr(ival);
-%         ii=strmatch(lower(handles.Model(md).Input(ad).Sediment(j).ICOpt),lower(str),'exact');
+%         ii=strmatch(lower(handles.model.delft3dflow.domain(ad).Sediment(j).ICOpt),lower(str),'exact');
 %         set(handles.GUIHandles.SelectDataSource,'Value',ii);
-%         icpar=handles.Model(md).Input(ad).Sediment(j).ICPar;
-%         icconst=handles.Model(md).Input(ad).Sediment(j).ICConst;
+%         icpar=handles.model.delft3dflow.domain(ad).Sediment(j).ICPar;
+%         icconst=handles.model.delft3dflow.domain(ad).Sediment(j).ICConst;
 %     case{'tracer'}
 %         str{1}='Constant';
 %         str{2}='Linear';
@@ -400,10 +400,10 @@ setHandles(handles);
 %         set(handles.GUIHandles.SelectDataSource,'Value',1);
 %         set(handles.GUIHandles.SelectDataSource,'String',str);
 %         j=handles.GUIData.ConstNr(ival);
-%         ii=strmatch(lower(handles.Model(md).Input(ad).Tracer(j).ICOpt),lower(str),'exact');
+%         ii=strmatch(lower(handles.model.delft3dflow.domain(ad).Tracer(j).ICOpt),lower(str),'exact');
 %         set(handles.GUIHandles.SelectDataSource,'Value',ii);
-%         icpar=handles.Model(md).Input(ad).Tracer(j).ICPar;
-%         icconst=handles.Model(md).Input(ad).Tracer(j).ICConst;
+%         icpar=handles.model.delft3dflow.domain(ad).Tracer(j).ICPar;
+%         icconst=handles.model.delft3dflow.domain(ad).Tracer(j).ICConst;
 % end
 % 
 % str=get(handles.GUIHandles.SelectDataSource,'String');
@@ -432,7 +432,7 @@ setHandles(handles);
 %         set(handles.GUIHandles.TextValue,'Visible','on');
 %         set(handles.GUIHandles.TextDepth,'Visible','on');
 %     case{'per layer'}
-%         kmax=handles.Model(md).Input(ad).KMax;
+%         kmax=handles.model.delft3dflow.domain(ad).KMax;
 %         if size(icpar,1)~=kmax
 %             icpar=[];
 %             for i=1:kmax
@@ -469,17 +469,17 @@ setHandles(handles);
 % 
 % switch lower(handles.GUIData.ConstType{ival})
 %     case{'velocity'}
-%         handles.Model(md).Input(ad).Velocity.ICPar=icpar;
+%         handles.model.delft3dflow.domain(ad).Velocity.ICPar=icpar;
 %     case{'salinity'}
-%         handles.Model(md).Input(ad).Salinity.ICPar=icpar;
+%         handles.model.delft3dflow.domain(ad).Salinity.ICPar=icpar;
 %     case{'temperature'}
-%         handles.Model(md).Input(ad).Temperature.ICPar=icpar;
+%         handles.model.delft3dflow.domain(ad).Temperature.ICPar=icpar;
 %     case{'sediment'}
 %         j=handles.GUIData.ConstNr(ival);
-%         handles.Model(md).Input(ad).Sediment(j).ICPar=icpar;
+%         handles.model.delft3dflow.domain(ad).Sediment(j).ICPar=icpar;
 %     case{'tracer'}
 %         j=handles.GUIData.ConstNr(ival);
-%         handles.Model(md).Input(ad).Tracer(j).ICPar=icpar;
+%         handles.model.delft3dflow.domain(ad).Tracer(j).ICPar=icpar;
 % end
 % 
 % setHandles(handles);

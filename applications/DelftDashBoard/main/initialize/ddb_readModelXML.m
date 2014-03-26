@@ -1,4 +1,4 @@
-function handles = ddb_readModelXML(handles, j)
+function handles = ddb_readModelXML(handles, name)
 %DDB_READMODELXML  One line description goes here.
 %
 %   More detailed description goes here.
@@ -61,54 +61,54 @@ function handles = ddb_readModelXML(handles, j)
 % $Keywords: $
 
 %%
-fname=[handles.Model(j).name '.xml'];
+fname=['model.' name '.xml'];
 
-xmldir= handles.Model(j).xmlDir;
+xmldir= handles.model.(name).xmlDir;
 
 if exist([xmldir fname],'file')
     
-    handles.Model(j).useXML=1;
+    handles.model.(name).useXML=1;
     
-    xml=gui_readXMLfile(fname,xmldir,'variableprefix','Model(md).Input(ad)');
+    xml=gui_readXMLfile(fname,xmldir);
     
-    handles.Model(j).longName=xml.longname;    
-    handles.Model(j).supportsMultipleDomains=xml.multipledomains;    
-    handles.Model(j).enable=xml.enable;
-    handles.Model(j).element=xml.element;
+    handles.model.(name).longName=xml.longname;    
+    handles.model.(name).supportsMultipleDomains=xml.multipledomains;    
+    handles.model.(name).enable=xml.enable;
+    handles.model.(name).element=xml.element;
     
 end
 
-handles.Model(j).GUI.element=xml.element;
+handles.model.(name).GUI.element=xml.element;
 
 %% Menu File
 if isfield(xml.menu.menu,'menuopenfile')
     for i=1:length(xml.menu.menu.menuopenfile.menuopenfile.menuitem)
-        handles.Model(j).GUI.menu.openFile(i).string=xml.menu.menu.menuopenfile.menuopenfile.menuitem(i).menuitem.string;
-        handles.Model(j).GUI.menu.openFile(i).callback=str2func(xml.menu.menu.menuopenfile.menuopenfile.menuitem(i).menuitem.callback);
-        handles.Model(j).GUI.menu.openFile(i).option=xml.menu.menu.menuopenfile.menuopenfile.menuitem(i).menuitem.option;
+        handles.model.(name).GUI.menu.openFile(i).string=xml.menu.menu.menuopenfile.menuopenfile.menuitem(i).menuitem.string;
+        handles.model.(name).GUI.menu.openFile(i).callback=str2func(xml.menu.menu.menuopenfile.menuopenfile.menuitem(i).menuitem.callback);
+        handles.model.(name).GUI.menu.openFile(i).option=xml.menu.menu.menuopenfile.menuopenfile.menuitem(i).menuitem.option;
     end
 else
-    handles.Model(j).GUI.menu.openFile=[];
+    handles.model.(name).GUI.menu.openFile=[];
 end
 
 if isfield(xml.menu.menu,'menusavefile')
     for i=1:length(xml.menu.menu.menusavefile.menusavefile.menuitem)
-        handles.Model(j).GUI.menu.saveFile(i).string=xml.menu.menu.menusavefile.menusavefile.menuitem(i).menuitem.string;
-        handles.Model(j).GUI.menu.saveFile(i).callback=str2func(xml.menu.menu.menusavefile.menusavefile.menuitem(i).menuitem.callback);
-        handles.Model(j).GUI.menu.saveFile(i).option=xml.menu.menu.menusavefile.menusavefile.menuitem(i).menuitem.option;
+        handles.model.(name).GUI.menu.saveFile(i).string=xml.menu.menu.menusavefile.menusavefile.menuitem(i).menuitem.string;
+        handles.model.(name).GUI.menu.saveFile(i).callback=str2func(xml.menu.menu.menusavefile.menusavefile.menuitem(i).menuitem.callback);
+        handles.model.(name).GUI.menu.saveFile(i).option=xml.menu.menu.menusavefile.menusavefile.menuitem(i).menuitem.option;
     end
 else
-    handles.Model(j).GUI.menu.saveFile=[];
+    handles.model.(name).GUI.menu.saveFile=[];
 end
 
 %% Menu View
-handles.Model(j).GUI.menu.view=[];
+handles.model.(name).GUI.menu.view=[];
 if isfield(xml.menu.menu,'menuview')
     if ~isempty(xml.menu.menu.menuview)
         for i=1:length(xml.menu.menu.menuview.menuview.attribute)
-            handles.Model(j).GUI.menu.view(i).string   = xml.menu.menu.menuview.menuview.attribute(i).attribute.string;
-            handles.Model(j).GUI.menu.view(i).callback = str2func(xml.menu.menu.menuview.menuview.attribute(i).attribute.callback);
-            handles.Model(j).GUI.menu.view(i).option   = xml.menu.menu.menuview.menuview.attribute(i).attribute.option;
+            handles.model.(name).GUI.menu.view(i).string   = xml.menu.menu.menuview.menuview.attribute(i).attribute.string;
+            handles.model.(name).GUI.menu.view(i).callback = str2func(xml.menu.menu.menuview.menuview.attribute(i).attribute.callback);
+            handles.model.(name).GUI.menu.view(i).option   = xml.menu.menu.menuview.menuview.attribute(i).attribute.option;
         end
     end
 end

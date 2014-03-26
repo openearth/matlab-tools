@@ -62,7 +62,6 @@ function handles = ddb_DFlowFM_plotGrid(handles, opt, varargin)
 % $Keywords: $
 
 %%
-imd=strmatch('DFlowFM',{handles.Model(:).name},'exact');
 
 col=[0.35 0.35 0.35];
 vis=1;
@@ -89,18 +88,18 @@ switch lower(opt)
     case{'plot'}
         
         % First delete old grid
-        if isfield(handles.Model(imd).Input(id).grid,'handle')
-            if ~isempty(handles.Model(imd).Input(id).grid.handle)
+        if isfield(handles.model.dflowfm.domain(id).grid,'handle')
+            if ~isempty(handles.model.dflowfm.domain(id).grid.handle)
                 try
-                    delete(handles.Model(imd).Input(id).grid.handle);
+                    delete(handles.model.dflowfm.domain(id).grid.handle);
                 end
             end
         end
         
-        h=pltnet(handles.Model(imd).Input(id).netstruc);
-%         p=dflowfm.plotNet(handles.Model(imd).Input(id).netstruc,'cor',[],'cen',[]);
-%         handles.Model(imd).Input(id).grid.handle=p.per;
-        handles.Model(imd).Input(id).grid.handle=h;
+        h=pltnet(handles.model.dflowfm.domain(id).netstruc);
+%         p=dflowfm.plotNet(handles.model.dflowfm.domain(id).netstruc,'cor',[],'cen',[]);
+%         handles.model.dflowfm.domain(id).grid.handle=p.per;
+        handles.model.dflowfm.domain(id).grid.handle=h;
         set(h,'Tag','dflowfmnet');
 
         if vis
@@ -112,10 +111,10 @@ switch lower(opt)
     case{'delete'}
         
         % Delete old grid
-        if isfield(handles.Model(imd).Input(id).grid,'handle')
-            if ~isempty(handles.Model(imd).Input(id).grid.handle)
+        if isfield(handles.model.dflowfm.domain(id).grid,'handle')
+            if ~isempty(handles.model.dflowfm.domain(id).grid.handle)
                 try
-                    delete(handles.Model(imd).Input(id).grid.handle);
+                    delete(handles.model.dflowfm.domain(id).grid.handle);
                 end
             end
         end
@@ -128,15 +127,15 @@ switch lower(opt)
         end
         
     case{'update'}
-        if isfield(handles.Model(imd).Input(id).grid,'handle')
-            if ~isempty(handles.Model(imd).Input(id).grid.handle)
+        if isfield(handles.model.dflowfm.domain(id).grid,'handle')
+            if ~isempty(handles.model.dflowfm.domain(id).grid.handle)
                 try
-                    set(handles.Model(imd).Input(id).grid.handle,'HitTest','off');
-                    set(handles.Model(imd).Input(id).grid.handle,'Color',col);
+                    set(handles.model.dflowfm.domain(id).grid.handle,'HitTest','off');
+                    set(handles.model.dflowfm.domain(id).grid.handle,'Color',col);
                     if vis
-                        set(handles.Model(imd).Input(id).grid.handle,'Color',col,'Visible','on');
+                        set(handles.model.dflowfm.domain(id).grid.handle,'Color',col,'Visible','on');
                     else
-                        set(handles.Model(imd).Input(id).grid.handle,'Color',col,'Visible','off');
+                        set(handles.model.dflowfm.domain(id).grid.handle,'Color',col,'Visible','off');
                     end
                 end
             end

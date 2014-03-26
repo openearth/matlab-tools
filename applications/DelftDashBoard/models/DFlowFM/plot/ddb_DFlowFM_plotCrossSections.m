@@ -44,7 +44,6 @@ function handles = ddb_DFlowFM_plotBoundaries(handles, opt, varargin)
 % $Keywords: $
 
 %%
-imd=strmatch('DFlowFM',{handles.Model(:).name},'exact');
 
 vis=1;
 id=ad;
@@ -73,8 +72,8 @@ else
     markercolor=[0.5 0.5 0.5];
 end
 
-for ib=1:handles.Model(imd).Input(id).nrcrosssections
-    plothandles(ib)=handles.Model(imd).Input(id).crosssections(ib).handle;
+for ib=1:handles.model.dflowfm.domain(id).nrcrosssections
+    plothandles(ib)=handles.model.dflowfm.domain(id).crosssections(ib).handle;
 end
 
 switch lower(opt)
@@ -88,12 +87,12 @@ switch lower(opt)
 
         plothandles=[];
         
-        if handles.Model(imd).Input(id).nrcrosssections>0
+        if handles.model.dflowfm.domain(id).nrcrosssections>0
 
-            for isec=1:length(handles.Model(imd).Input(id).crosssections)
-                x=handles.Model(imd).Input(id).crosssections(isec).x;
-                y=handles.Model(imd).Input(id).crosssections(isec).y;
-                if isec==handles.Model(imd).Input(id).activecrosssection
+            for isec=1:length(handles.model.dflowfm.domain(id).crosssections)
+                x=handles.model.dflowfm.domain(id).crosssections(isec).x;
+                y=handles.model.dflowfm.domain(id).crosssections(isec).y;
+                if isec==handles.model.dflowfm.domain(id).activecrosssection
                     markercolor='r';
                 else
                     markercolor=[1 1 0];
@@ -101,7 +100,7 @@ switch lower(opt)
                 p=gui_polyline('plot','x',x,'y',y,'tag','dflowfmcrosssection', ...
                     'changecallback',@ddb_DFlowFM_crossSections,'changeinput','changecrosssection','closed',0, ...
                     'Marker','o','color',linecolor,'markeredgecolor',markercolor,'markerfacecolor',markercolor);
-                handles.Model(imd).Input(id).crosssections(isec).handle=p;
+                handles.model.dflowfm.domain(id).crosssections(isec).handle=p;
 
                 plothandles(isec)=p;
                 
@@ -131,12 +130,12 @@ switch lower(opt)
     case{'update'}
         try
 
-            if handles.Model(imd).Input(id).nrcrosssections>0
+            if handles.model.dflowfm.domain(id).nrcrosssections>0
                 
                 for ip=1:length(plothandles)
 
                     if iactive
-                        if ip==handles.Model(imd).Input(id).activecrosssection
+                        if ip==handles.model.dflowfm.domain(id).activecrosssection
                             markercolor='r';
                         else
                             markercolor=[1 1 0];

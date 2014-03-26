@@ -66,10 +66,10 @@ ddb_zoomOff;
 
 if isempty(varargin)
     ddb_refreshScreen;
-    handles.Model(md).Input(ad).addDrogue=0;
-    handles.Model(md).Input(ad).selectDrogue=0;
-    handles.Model(md).Input(ad).changeDrogue=0;
-    handles.Model(md).Input(ad).deleteDrogue=0;
+    handles.model.delft3dflow.domain(ad).addDrogue=0;
+    handles.model.delft3dflow.domain(ad).selectDrogue=0;
+    handles.model.delft3dflow.domain(ad).changeDrogue=0;
+    handles.model.delft3dflow.domain(ad).deleteDrogue=0;
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','drogues');
     setHandles(handles);    
 else
@@ -79,10 +79,10 @@ else
     switch(lower(opt))
         
         case{'add'}
-            handles.Model(md).Input(ad).selectDrogue=0;
-            handles.Model(md).Input(ad).changeDrogue=0;
-            handles.Model(md).Input(ad).deleteDrogue=0;
-            if handles.Model(md).Input(ad).addDrogue
+            handles.model.delft3dflow.domain(ad).selectDrogue=0;
+            handles.model.delft3dflow.domain(ad).changeDrogue=0;
+            handles.model.delft3dflow.domain(ad).deleteDrogue=0;
+            if handles.model.delft3dflow.domain(ad).addDrogue
                 handles.editMode='add';
                 ddb_dragLine(@addDrogue,'free');
                 setInstructions({'','','Click point on map for new drogue(s)'});
@@ -93,22 +93,22 @@ else
             setHandles(handles);
             
         case{'delete'}
-            handles.Model(md).Input(ad).addDrogue=0;
-            handles.Model(md).Input(ad).selectDrogue=0;
-            handles.Model(md).Input(ad).changeDrogue=0;
+            handles.model.delft3dflow.domain(ad).addDrogue=0;
+            handles.model.delft3dflow.domain(ad).selectDrogue=0;
+            handles.model.delft3dflow.domain(ad).changeDrogue=0;
             ddb_clickObject('tag','Drogue','callback',@deleteDrogueFromMap);
             setInstructions({'','','Select drogue from map to delete'});
-            if handles.Model(md).Input(ad).deleteDrogue
+            if handles.model.delft3dflow.domain(ad).deleteDrogue
                 % Delete drogue selected from list
                 handles=deleteDrogue(handles);
             end
             setHandles(handles);
             
         case{'select'}
-            handles.Model(md).Input(ad).addDrogue=0;
-            handles.Model(md).Input(ad).deleteDrogue=0;
-            handles.Model(md).Input(ad).changeDrogue=0;
-            if handles.Model(md).Input(ad).selectDrogue
+            handles.model.delft3dflow.domain(ad).addDrogue=0;
+            handles.model.delft3dflow.domain(ad).deleteDrogue=0;
+            handles.model.delft3dflow.domain(ad).changeDrogue=0;
+            if handles.model.delft3dflow.domain(ad).selectDrogue
                 ddb_clickObject('tag','Drogue','callback',@selectDrogueFromMap);
                 setInstructions({'','','Select drogue from map'});
             else
@@ -118,10 +118,10 @@ else
             setHandles(handles);
             
         case{'change'}
-            handles.Model(md).Input(ad).addDrogue=0;
-            handles.Model(md).Input(ad).selectDrogue=0;
-            handles.Model(md).Input(ad).deleteDrogue=0;
-            if handles.Model(md).Input(ad).changeDrogue
+            handles.model.delft3dflow.domain(ad).addDrogue=0;
+            handles.model.delft3dflow.domain(ad).selectDrogue=0;
+            handles.model.delft3dflow.domain(ad).deleteDrogue=0;
+            if handles.model.delft3dflow.domain(ad).changeDrogue
                 ddb_clickObject('tag','Drogue','callback',@changeDrogueFromMap);
                 setInstructions({'','','Select drogue to change from map'});
             else
@@ -131,29 +131,29 @@ else
             setHandles(handles);
             
         case{'edit'}
-            handles.Model(md).Input(ad).addDrogue=0;
-            handles.Model(md).Input(ad).selectDrogue=0;
-            handles.Model(md).Input(ad).changeDrogue=0;
-            handles.Model(md).Input(ad).deleteDrogue=0;
+            handles.model.delft3dflow.domain(ad).addDrogue=0;
+            handles.model.delft3dflow.domain(ad).selectDrogue=0;
+            handles.model.delft3dflow.domain(ad).changeDrogue=0;
+            handles.model.delft3dflow.domain(ad).deleteDrogue=0;
             handles.editMode='edit';
-            n=handles.Model(md).Input(ad).activeDrogue;
-            name=handles.Model(md).Input(ad).drogues(n).name;
-            if strcmpi(handles.Model(md).Input(ad).drogues(n).name(1),'(')
-                mstr=num2str(handles.Model(md).Input(ad).drogues(n).M);
-                nstr=num2str(handles.Model(md).Input(ad).drogues(n).N);
+            n=handles.model.delft3dflow.domain(ad).activeDrogue;
+            name=handles.model.delft3dflow.domain(ad).drogues(n).name;
+            if strcmpi(handles.model.delft3dflow.domain(ad).drogues(n).name(1),'(')
+                mstr=num2str(handles.model.delft3dflow.domain(ad).drogues(n).M);
+                nstr=num2str(handles.model.delft3dflow.domain(ad).drogues(n).N);
                 name=['('  mstr ',' nstr ')'];
             end
-            handles.Model(md).Input(ad).drogueNames{n}=name;
+            handles.model.delft3dflow.domain(ad).drogueNames{n}=name;
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','drogues');
             setHandles(handles);
             clearInstructions;
             
         case{'selectfromlist'}
-            handles.Model(md).Input(ad).addDrogue=0;
-            handles.Model(md).Input(ad).selectDrogue=0;
-            handles.Model(md).Input(ad).changeDrogue=0;
+            handles.model.delft3dflow.domain(ad).addDrogue=0;
+            handles.model.delft3dflow.domain(ad).selectDrogue=0;
+            handles.model.delft3dflow.domain(ad).changeDrogue=0;
             % Delete selected drogue next time delete is clicked
-            handles.Model(md).Input(ad).deleteDrogue=1;
+            handles.model.delft3dflow.domain(ad).deleteDrogue=1;
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','drogues');
             setHandles(handles);
             clearInstructions;
@@ -180,28 +180,28 @@ y1=y(1);
 
 handles=getHandles;
 % Find grid indices
-[m1,n1]=findgridcell(x1,y1,handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY);
+[m1,n1]=findgridcell(x1,y1,handles.model.delft3dflow.domain(ad).gridX,handles.model.delft3dflow.domain(ad).gridY);
 % Check if start and end are in one grid line
 if ~isempty(m1)
     if m1>0
-        if handles.Model(md).Input(ad).changeDrogue
-            iac=handles.Model(md).Input(ad).activeDrogue;
+        if handles.model.delft3dflow.domain(ad).changeDrogue
+            iac=handles.model.delft3dflow.domain(ad).activeDrogue;
         else
             % Add mode
-            handles.Model(md).Input(ad).nrDrogues=handles.Model(md).Input(ad).nrDrogues+1;
-            iac=handles.Model(md).Input(ad).nrDrogues;
+            handles.model.delft3dflow.domain(ad).nrDrogues=handles.model.delft3dflow.domain(ad).nrDrogues+1;
+            iac=handles.model.delft3dflow.domain(ad).nrDrogues;
         end
-        handles.Model(md).Input(ad).drogues(iac).M=m1;
-        handles.Model(md).Input(ad).drogues(iac).N=n1;
-        handles.Model(md).Input(ad).drogues(iac).releaseTime=handles.Model(md).Input(ad).startTime;
-        handles.Model(md).Input(ad).drogues(iac).recoveryTime=handles.Model(md).Input(ad).stopTime;
-        handles.Model(md).Input(ad).drogues(iac).name=['(' num2str(m1) ',' num2str(n1) ')'];
-        handles.Model(md).Input(ad).drogueNames{iac}=handles.Model(md).Input(ad).drogues(iac).name;
-        handles.Model(md).Input(ad).activeDrogue=iac;
+        handles.model.delft3dflow.domain(ad).drogues(iac).M=m1;
+        handles.model.delft3dflow.domain(ad).drogues(iac).N=n1;
+        handles.model.delft3dflow.domain(ad).drogues(iac).releaseTime=handles.model.delft3dflow.domain(ad).startTime;
+        handles.model.delft3dflow.domain(ad).drogues(iac).recoveryTime=handles.model.delft3dflow.domain(ad).stopTime;
+        handles.model.delft3dflow.domain(ad).drogues(iac).name=['(' num2str(m1) ',' num2str(n1) ')'];
+        handles.model.delft3dflow.domain(ad).drogueNames{iac}=handles.model.delft3dflow.domain(ad).drogues(iac).name;
+        handles.model.delft3dflow.domain(ad).activeDrogue=iac;
         handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','drogues');
         setHandles(handles);
         
-        if handles.Model(md).Input(ad).changeDrogue
+        if handles.model.delft3dflow.domain(ad).changeDrogue
             ddb_clickObject('tag','drogue','callback',@changeDrogueFromMap);
             setInstructions({'','','Select drogue'});
         else
@@ -215,25 +215,25 @@ refreshDrogues;
 %%
 function handles=deleteDrogue(handles)
 
-nrobs=handles.Model(md).Input(ad).nrDrogues;
+nrobs=handles.model.delft3dflow.domain(ad).nrDrogues;
 
 if nrobs>0
-    iac=handles.Model(md).Input(ad).activeDrogue;
+    iac=handles.model.delft3dflow.domain(ad).activeDrogue;
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'delete','drogues');
     if nrobs>1
-        handles.Model(md).Input(ad).drogues=removeFromStruc(handles.Model(md).Input(ad).drogues,iac);
-        handles.Model(md).Input(ad).drogueNames=removeFromCellArray(handles.Model(md).Input(ad).drogueNames,iac);
+        handles.model.delft3dflow.domain(ad).drogues=removeFromStruc(handles.model.delft3dflow.domain(ad).drogues,iac);
+        handles.model.delft3dflow.domain(ad).drogueNames=removeFromCellArray(handles.model.delft3dflow.domain(ad).drogueNames,iac);
     else
-        handles.Model(md).Input(ad).drogueNames={''};
-        handles.Model(md).Input(ad).activeDrogue=1;
-        handles.Model(md).Input(ad).drogues(1).M=[];
-        handles.Model(md).Input(ad).drogues(1).N=[];
+        handles.model.delft3dflow.domain(ad).drogueNames={''};
+        handles.model.delft3dflow.domain(ad).activeDrogue=1;
+        handles.model.delft3dflow.domain(ad).drogues(1).M=[];
+        handles.model.delft3dflow.domain(ad).drogues(1).N=[];
     end
     if iac==nrobs
         iac=nrobs-1;
     end
-    handles.Model(md).Input(ad).nrDrogues=nrobs-1;
-    handles.Model(md).Input(ad).activeDrogue=iac;
+    handles.model.delft3dflow.domain(ad).nrDrogues=nrobs-1;
+    handles.model.delft3dflow.domain(ad).activeDrogue=iac;
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','drogues');
     setHandles(handles);
     refreshDrogues;
@@ -244,7 +244,7 @@ function deleteDrogueFromMap(h)
 
 handles=getHandles;
 iac=get(h,'UserData');
-handles.Model(md).Input(ad).activeDrogue=iac;
+handles.model.delft3dflow.domain(ad).activeDrogue=iac;
 handles=deleteDrogue(handles);
 setHandles(handles);
 
@@ -253,7 +253,7 @@ function selectDrogueFromMap(h)
 
 handles=getHandles;
 iac=get(h,'UserData');
-handles.Model(md).Input(ad).activeDrogue=iac;
+handles.model.delft3dflow.domain(ad).activeDrogue=iac;
 ddb_Delft3DFLOW_plotAttributes(handles,'update','drogues');
 setHandles(handles);
 refreshDrogues;
@@ -263,7 +263,7 @@ function changeDrogueFromMap(h)
 
 handles=getHandles;
 iac=get(h,'UserData');
-handles.Model(md).Input(ad).activeDrogue=iac;
+handles.model.delft3dflow.domain(ad).activeDrogue=iac;
 ddb_Delft3DFLOW_plotAttributes(handles,'update','drogues');
 setHandles(handles);
 refreshDrogues;

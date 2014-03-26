@@ -61,9 +61,9 @@ function handles = ddb_readBchFile(handles, id)
 % $Keywords: $
 
 %%
-fid=fopen(handles.Model(md).Input(id).bchFile);
+fid=fopen(handles.model.delft3dflow.domain(id).bchFile);
 
-nrb=handles.Model(md).Input(id).nrOpenBoundaries;
+nrb=handles.model.delft3dflow.domain(id).nrOpenBoundaries;
 
 tx0=fgets(fid);
 if and(ischar(tx0), size(tx0>0))
@@ -71,59 +71,59 @@ if and(ischar(tx0), size(tx0>0))
 end
 v=str2num(char(v));
 
-handles.Model(md).Input(id).openBoundaries(1).nrHarmonicComponents=length(v);
+handles.model.delft3dflow.domain(id).openBoundaries(1).nrHarmonicComponents=length(v);
 nrh=length(v);
-handles.Model(md).Input(id).openBoundaries(1).harmonicComponents=v;
+handles.model.delft3dflow.domain(id).openBoundaries(1).harmonicComponents=v;
 
 tx0=fgets(fid);
 
 for i=1:nrb
-    handles.Model(md).Input(id).openBoundaries(i).nrHarmonicComponents=handles.Model(md).Input(id).openBoundaries(1).nrHarmonicComponents;
-    handles.Model(md).Input(id).openBoundaries(i).harmonicComponents=handles.Model(md).Input(id).openBoundaries(1).harmonicComponents;
-    if handles.Model(md).Input(id).openBoundaries(i).forcing=='H'
+    handles.model.delft3dflow.domain(id).openBoundaries(i).nrHarmonicComponents=handles.model.delft3dflow.domain(id).openBoundaries(1).nrHarmonicComponents;
+    handles.model.delft3dflow.domain(id).openBoundaries(i).harmonicComponents=handles.model.delft3dflow.domain(id).openBoundaries(1).harmonicComponents;
+    if handles.model.delft3dflow.domain(id).openBoundaries(i).forcing=='H'
         tx0=fgets(fid);
         if and(ischar(tx0), size(tx0>0))
             v=strread(tx0,'%q');
         end
         v=str2num(char(v));
-        handles.Model(md).Input(id).openBoundaries(i).harmonicAmpA=v;
+        handles.model.delft3dflow.domain(id).openBoundaries(i).harmonicAmpA=v;
     end
 end
 
 for i=1:nrb
-    if handles.Model(md).Input(id).openBoundaries(i).forcing=='H'
+    if handles.model.delft3dflow.domain(id).openBoundaries(i).forcing=='H'
         tx0=fgets(fid);
         if and(ischar(tx0), size(tx0>0))
             v=strread(tx0,'%q');
         end
         v=str2num(char(v));
-        handles.Model(md).Input(id).openBoundaries(i).harmonicAmpB=v;
+        handles.model.delft3dflow.domain(id).openBoundaries(i).harmonicAmpB=v;
     end
 end
 
 tx0=fgets(fid);
 
 for i=1:nrb
-    if handles.Model(md).Input(id).openBoundaries(i).forcing=='H'
+    if handles.model.delft3dflow.domain(id).openBoundaries(i).forcing=='H'
         tx0=fgets(fid);
         if and(ischar(tx0), size(tx0>0))
             v=strread(tx0,'%q');
         end
         v=str2num(char(v));
-        handles.Model(md).Input(id).openBoundaries(i).harmonicPhaseA=zeros(1,nrh);
-        handles.Model(md).Input(id).openBoundaries(i).harmonicPhaseA(2:end)=v;
+        handles.model.delft3dflow.domain(id).openBoundaries(i).harmonicPhaseA=zeros(1,nrh);
+        handles.model.delft3dflow.domain(id).openBoundaries(i).harmonicPhaseA(2:end)=v;
     end
 end
 
 for i=1:nrb
-    if handles.Model(md).Input(id).openBoundaries(i).forcing=='H'
+    if handles.model.delft3dflow.domain(id).openBoundaries(i).forcing=='H'
         tx0=fgets(fid);
         if and(ischar(tx0), size(tx0>0))
             v=strread(tx0,'%q');
         end
         v=str2num(char(v));
-        handles.Model(md).Input(id).openBoundaries(i).harmonicPhaseB=zeros(1,nrh);
-        handles.Model(md).Input(id).openBoundaries(i).harmonicPhaseB(2:end)=v;
+        handles.model.delft3dflow.domain(id).openBoundaries(i).harmonicPhaseB=zeros(1,nrh);
+        handles.model.delft3dflow.domain(id).openBoundaries(i).harmonicPhaseB(2:end)=v;
     end
 end
 

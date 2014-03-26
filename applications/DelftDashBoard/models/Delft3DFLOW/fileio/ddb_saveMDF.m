@@ -63,9 +63,9 @@ function handles = ddb_saveMDF(handles, id)
 %%
 handles=ddb_countOpenBoundaries(handles,id);
 
-Flow=handles.Model(md).Input(id);
+Flow=handles.model.delft3dflow.domain(id);
 
-runid=handles.Model(md).Input(id).runid;
+runid=handles.model.delft3dflow.domain(id).runid;
 
 incconst=Flow.salinity.include || Flow.temperature.include || Flow.sediments.include || Flow.tracers;
 
@@ -317,41 +317,41 @@ else
 end
 
 % Tidal forces
-if handles.Model(md).Input(id).tidalForces
+if handles.model.delft3dflow.domain(id).tidalForces
     MDF.Tidfor{1}='------------';
     MDF.Tidfor{2}='------------';
     MDF.Tidfor{3}='------------';
-    if handles.Model(md).Input(id).tidalForce.M2
+    if handles.model.delft3dflow.domain(id).tidalForce.M2
         MDF.Tidfor{1}(1:3)='M2 ';
     end
-    if handles.Model(md).Input(id).tidalForce.S2
+    if handles.model.delft3dflow.domain(id).tidalForce.S2
         MDF.Tidfor{1}(4:6)='S2 ';
     end
-    if handles.Model(md).Input(id).tidalForce.N2
+    if handles.model.delft3dflow.domain(id).tidalForce.N2
         MDF.Tidfor{1}(7:9)='N2 ';
     end
-    if handles.Model(md).Input(id).tidalForce.K2
+    if handles.model.delft3dflow.domain(id).tidalForce.K2
         MDF.Tidfor{1}(10:12)='K2 ';
     end
-    if handles.Model(md).Input(id).tidalForce.K1
+    if handles.model.delft3dflow.domain(id).tidalForce.K1
         MDF.Tidfor{2}(1:3)='K1 ';
     end
-    if handles.Model(md).Input(id).tidalForce.O1
+    if handles.model.delft3dflow.domain(id).tidalForce.O1
         MDF.Tidfor{2}(4:6)='O1 ';
     end
-    if handles.Model(md).Input(id).tidalForce.P1
+    if handles.model.delft3dflow.domain(id).tidalForce.P1
         MDF.Tidfor{2}(7:9)='P1 ';
     end
-    if handles.Model(md).Input(id).tidalForce.Q1
+    if handles.model.delft3dflow.domain(id).tidalForce.Q1
         MDF.Tidfor{2}(10:12)='Q1 ';
     end
-    if handles.Model(md).Input(id).tidalForce.MF
+    if handles.model.delft3dflow.domain(id).tidalForce.MF
         MDF.Tidfor{3}(1:3)='MF ';
     end
-    if handles.Model(md).Input(id).tidalForce.MM
+    if handles.model.delft3dflow.domain(id).tidalForce.MM
         MDF.Tidfor{3}(4:6)='MM ';
     end
-    if handles.Model(md).Input(id).tidalForce.SSA
+    if handles.model.delft3dflow.domain(id).tidalForce.SSA
         MDF.Tidfor{3}(7:9)='SSA';
     end
 else
@@ -559,7 +559,7 @@ if ~isempty(Flow.trafrm)
 end
 
 %% Now save everything to mdf file
-fname=[handles.Model(md).Input(id).runid '.mdf'];
+fname=[handles.model.delft3dflow.domain(id).runid '.mdf'];
 
 fid=fopen(fname,'w');
 
@@ -624,9 +624,8 @@ for i=1:length(Names)
 end
 fclose(fid);
 
-if handles.Model(md).Input(id).waves && handles.Model(md).Input(id).onlineWave
-    imd=strmatch('Delft3DWAVE',{handles.Model.name},'exact');
-    ddb_writeBatchFile(runid,'mdwfile',handles.Model(imd).Input.mdwfile);
+if handles.model.delft3dflow.domain(id).waves && handles.model.delft3dflow.domain(id).onlineWave
+    ddb_writeBatchFile(runid,'mdwfile',handles.model.delft3dwave.domain.mdwfile);
     ddb_writeDioConfig('.\');
 else
     ddb_writeBatchFile(runid);

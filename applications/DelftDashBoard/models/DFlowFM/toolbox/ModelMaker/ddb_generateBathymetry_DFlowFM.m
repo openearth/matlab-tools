@@ -40,13 +40,13 @@ for i=1:length(varargin)
     end
 end
 
-if ~isempty(handles.Model(md).Input(id).netstruc)
+if ~isempty(handles.model.dflowfm.domain(id).netstruc)
     
-    xg=handles.Model(md).Input(id).netstruc.nodeX;
-    yg=handles.Model(md).Input(id).netstruc.nodeX;
+    xg=handles.model.dflowfm.domain(id).netstruc.nodeX;
+    yg=handles.model.dflowfm.domain(id).netstruc.nodeX;
     
     % Check if there is already data in depth matrix
-    dmax=max(handles.Model(md).Input(id).netstruc.nodeZ);
+    dmax=max(handles.model.dflowfm.domain(id).netstruc.nodeZ);
     if isempty(dmax)
         dmax=NaN;
     end
@@ -76,12 +76,12 @@ if ~isempty(handles.Model(md).Input(id).netstruc)
     
     switch opt
         case{'overwrite'}
-            handles.Model(md).Input(id).netstruc.nodeZ=z;
+            handles.model.dflowfm.domain(id).netstruc.nodeZ=z;
         case{'combine'}
-            handles.Model(md).Input(id).netstruc.nodeZ(isnan(handles.Model(md).Input(id).netstruc.nodeZ))=z(isnan(handles.Model(md).Input(id).netstruc.nodeZ));
+            handles.model.dflowfm.domain(id).netstruc.nodeZ(isnan(handles.model.dflowfm.domain(id).netstruc.nodeZ))=z(isnan(handles.model.dflowfm.domain(id).netstruc.nodeZ));
     end
         
-    netStruc2nc(handles.Model(md).Input(id).netfile,handles.Model(md).Input(id).netstruc,'cstype',handles.screenParameters.coordinateSystem.type);
+    netStruc2nc(handles.model.dflowfm.domain(id).netfile,handles.model.dflowfm.domain(id).netstruc,'cstype',handles.screenParameters.coordinateSystem.type);
 
     try
         close(wb);

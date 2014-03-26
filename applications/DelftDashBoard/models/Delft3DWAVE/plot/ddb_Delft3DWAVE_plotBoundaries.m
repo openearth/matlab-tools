@@ -44,7 +44,6 @@ function handles = ddb_Delft3DWAVE_plotBoundaries(handles, opt, varargin)
 % $Keywords: $
 
 %%
-imd=strmatch('Delft3DWAVE',{handles.Model(:).name},'exact');
 
 active=1;
 vis=1;
@@ -67,47 +66,47 @@ switch lower(opt)
     case{'plot'}
         
         % First delete old obstacles
-        for ii=1:handles.Model(imd).Input.nrboundaries
+        for ii=1:handles.model.delft3dwave.domain.nrboundaries
             try
-                h=handles.Model(imd).Input.boundaries(ii).plothandle;
+                h=handles.model.delft3dwave.domain.boundaries(ii).plothandle;
                 delete(h);
             end
         end
         
         % Now plot new obstacles
-        for ii=1:handles.Model(imd).Input.nrboundaries
-            switch lower(handles.Model(imd).Input.boundaries(ii).definition)
+        for ii=1:handles.model.delft3dwave.domain.nrboundaries
+            switch lower(handles.model.delft3dwave.domain.boundaries(ii).definition)
                 case{'xy-coordinates'}
-                    x=[handles.Model(imd).Input.boundaries(ii).startcoordx handles.Model(imd).Input.boundaries(ii).endcoordx];
-                    y=[handles.Model(imd).Input.boundaries(ii).startcoordy handles.Model(imd).Input.boundaries(ii).endcoordy];
+                    x=[handles.model.delft3dwave.domain.boundaries(ii).startcoordx handles.model.delft3dwave.domain.boundaries(ii).endcoordx];
+                    y=[handles.model.delft3dwave.domain.boundaries(ii).startcoordy handles.model.delft3dwave.domain.boundaries(ii).endcoordy];
                     h=gui_polyline('plot','x',x,'y',y,'Tag','delft3dwaveobstacle','Marker','o', ...
                         'changecallback',@ddb_Delft3DWAVE_boundaries,'changeinput','changexyboundary','closed',0, ...
                         'color','g','markeredgecolor','g','markerfacecolor','g');
-                    if active && ii==handles.Model(imd).Input.activeboundary
+                    if active && ii==handles.model.delft3dwave.domain.activeboundary
                         gui_polyline(h,'change','color','r','markeredgecolor','r','markerfacecolor','r');
                     end
-                    handles.Model(imd).Input.boundaries(ii).plothandle=h;
+                    handles.model.delft3dwave.domain.boundaries(ii).plothandle=h;
                 case{'grid-coordinates'}
-                    x=[handles.Model(imd).Input.boundaries(ii).startcoordx handles.Model(imd).Input.boundaries(ii).endcoordx];
-                    y=[handles.Model(imd).Input.boundaries(ii).startcoordy handles.Model(imd).Input.boundaries(ii).endcoordy];
+                    x=[handles.model.delft3dwave.domain.boundaries(ii).startcoordx handles.model.delft3dwave.domain.boundaries(ii).endcoordx];
+                    y=[handles.model.delft3dwave.domain.boundaries(ii).startcoordy handles.model.delft3dwave.domain.boundaries(ii).endcoordy];
                     h=gui_polyline('plot','x',x,'y',y,'Tag','delft3dwaveobstacle','Marker','o', ...
                         'changecallback',@ddb_Delft3DWAVE_boundaries,'changeinput','changexyboundary','closed',0, ...
                         'color','g','markeredgecolor','g','markerfacecolor','g');
-                    if active && ii==handles.Model(imd).Input.activeboundary
+                    if active && ii==handles.model.delft3dwave.domain.activeboundary
                         gui_polyline(h,'change','color','r','markeredgecolor','r','markerfacecolor','r');
                     end
-                    handles.Model(imd).Input.boundaries(ii).plothandle=h;
+                    handles.model.delft3dwave.domain.boundaries(ii).plothandle=h;
             end
         end
         
     case{'delete'}
         
         % Delete old obstacles
-        for ii=1:handles.Model(imd).Input.nrboundaries
+        for ii=1:handles.model.delft3dwave.domain.nrboundaries
             try
-                h=handles.Model(imd).Input.boundaries(ii).plothandle;
+                h=handles.model.delft3dwave.domain.boundaries(ii).plothandle;
                 if ishandle(h)
-                    delete(handles.Model(imd).Input.boundaries(ii).plothandle);
+                    delete(handles.model.delft3dwave.domain.boundaries(ii).plothandle);
                 end
             end
         end
@@ -119,10 +118,10 @@ switch lower(opt)
     case{'update'}
 
         try
-            for ii=1:handles.Model(imd).Input.nrboundaries
-                h=handles.Model(imd).Input.boundaries(ii).plothandle;
+            for ii=1:handles.model.delft3dwave.domain.nrboundaries
+                h=handles.model.delft3dwave.domain.boundaries(ii).plothandle;
                 if ishandle(h)
-                    if ii==handles.Model(imd).Input.activeboundary && active
+                    if ii==handles.model.delft3dwave.domain.activeboundary && active
                         gui_polyline(h,'change','color','r','markeredgecolor','r','markerfacecolor','r');
                     else
                         gui_polyline(h,'change','color','g','markeredgecolor','g','markerfacecolor','g');

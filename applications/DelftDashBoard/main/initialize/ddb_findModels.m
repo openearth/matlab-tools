@@ -98,41 +98,31 @@ end
 nt=k;
 
 for i=1:nt
-    handles.Model(i).dir=[dr filesep name{i} filesep];
-    handles.Model(i).name=name{i};
-    handles.Model(i).longName=name{i};
-    handles.Model(i).iniFcn=str2func(['ddb_initialize' name{i}]);
-    handles.Model(i).plotFcn=str2func(['ddb_plot' name{i}]);
-    handles.Model(i).saveFcn=str2func(['ddb_save' name{i}]);
-    handles.Model(i).openFcn=str2func(['ddb_open' name{i}]);
-    handles.Model(i).clrFcn=str2func(['ddb_clear' name{i}]);
-    handles.Model(i).coordConvertFcn=str2func(['ddb_coordConvert' name{i}]);
-    handles.Model(i).GUI=[];
+    nm=lower(name{i});
+    handles.model.(nm).dir=[dr filesep name{i} filesep];
+    handles.model.(nm).name=nm;
+    handles.model.(nm).longName=name{i};
+    handles.model.(nm).iniFcn=str2func(['ddb_initialize' name{i}]);
+    handles.model.(nm).plotFcn=str2func(['ddb_plot' name{i}]);
+    handles.model.(nm).saveFcn=str2func(['ddb_save' name{i}]);
+    handles.model.(nm).openFcn=str2func(['ddb_open' name{i}]);
+    handles.model.(nm).clrFcn=str2func(['ddb_clear' name{i}]);
+    handles.model.(nm).coordConvertFcn=str2func(['ddb_coordConvert' name{i}]);
+    handles.model.(nm).GUI=[];
     if isdeployed
-        handles.Model(i).xmlDir=[handles.settingsDir filesep 'models' filesep name{i} filesep 'xml' filesep];
+        handles.model.(nm).xmlDir=[handles.settingsDir filesep 'models' filesep name{i} filesep 'xml' filesep];
     else
-        handles.Model(i).xmlDir=[dr filesep name{i} filesep 'xml' filesep];
-    end
-end
-
-% Set Delft3D-FLOW
-ii=strmatch('Delft3DFLOW',{handles.Model.name},'exact');
-tt=handles.Model;
-handles.Model(1)=tt(ii);
-k=1;
-for i=1:length(handles.Model)
-    if ~strcmpi(tt(i).name,'Delft3DFLOW')
-        k=k+1;
-        handles.Model(k)=tt(i);
+        handles.model.(nm).xmlDir=[dr filesep name{i} filesep 'xml' filesep];
     end
 end
 
 % Read xml files
-for i=1:nt
-    handles=ddb_readModelXML(handles,i);
+models=fieldnames(handles.model);
+for i=1:length(models)
+    handles=ddb_readModelXML(handles,models{i});
 end
 
-handles.activeModel.name='Delft3DFLOW';
+handles.activeModel.name='delft3dflow';
 handles.activeModel.nr=1;
 
 setHandles(handles);

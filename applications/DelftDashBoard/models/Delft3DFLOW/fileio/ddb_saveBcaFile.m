@@ -61,16 +61,16 @@ function handles = ddb_saveBcaFile(handles, id)
 % $Keywords: $
 
 %%
-fid=fopen(handles.Model(md).Input(id).bcaFile,'w');
+fid=fopen(handles.model.delft3dflow.domain(id).bcaFile,'w');
 
-nr=handles.Model(md).Input(id).nrAstronomicComponentSets;
+nr=handles.model.delft3dflow.domain(id).nrAstronomicComponentSets;
 
 for i=1:nr
-    fprintf(fid,'%s\n',handles.Model(md).Input(id).astronomicComponentSets(i).name);
-    for j=1:handles.Model(md).Input(id).astronomicComponentSets(i).nr
-        cmp=handles.Model(md).Input(id).astronomicComponentSets(i).component{j};
-        amp=handles.Model(md).Input(id).astronomicComponentSets(i).amplitude(j);
-        pha=handles.Model(md).Input(id).astronomicComponentSets(i).phase(j);
+    fprintf(fid,'%s\n',handles.model.delft3dflow.domain(id).astronomicComponentSets(i).name);
+    for j=1:handles.model.delft3dflow.domain(id).astronomicComponentSets(i).nr
+        cmp=handles.model.delft3dflow.domain(id).astronomicComponentSets(i).component{j};
+        amp=handles.model.delft3dflow.domain(id).astronomicComponentSets(i).amplitude(j);
+        pha=handles.model.delft3dflow.domain(id).astronomicComponentSets(i).phase(j);
 %         if isnan(pha) % then A0
 %             fprintf(fid,'%s %15.7e\n',[cmp repmat(' ',1,8-length(cmp))],amp);
 %         else

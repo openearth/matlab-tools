@@ -66,10 +66,10 @@ posx=[];
 
 iac=handles.toolbox.observationstations.activedatabase;
 
-xmin=min(handles.Model(md).Input(ad).netstruc.nodeX);
-xmax=max(handles.Model(md).Input(ad).netstruc.nodeX);
-ymin=min(handles.Model(md).Input(ad).netstruc.nodeY);
-ymax=max(handles.Model(md).Input(ad).netstruc.nodeY);
+xmin=min(handles.model.dflowfm.domain(ad).netstruc.nodeX);
+xmax=max(handles.model.dflowfm.domain(ad).netstruc.nodeX);
+ymin=min(handles.model.dflowfm.domain(ad).netstruc.nodeY);
+ymax=max(handles.model.dflowfm.domain(ad).netstruc.nodeY);
 
 n=0;
 
@@ -118,11 +118,11 @@ for i=1:nrp
     stationname=stationNames{k};
     stationid=stationIDs{k};
 
-    nobs=handles.Model(md).Input(ad).nrobservationpoints;
+    nobs=handles.model.dflowfm.domain(ad).nrobservationpoints;
 
     names{1}='';
     for n=1:nobs
-        names{n}=handles.Model(md).Input(ad).observationpoints(n).name;
+        names{n}=handles.model.dflowfm.domain(ad).observationpoints(n).name;
     end
 
     if handles.toolbox.observationstations.showstationnames
@@ -136,22 +136,22 @@ for i=1:nrp
     if isempty(strmatch(name,names,'exact'))
         
         nobs=nobs+1;
-        handles.Model(md).Input(ad).observationpoints(nobs).x=posx2(i);
-        handles.Model(md).Input(ad).observationpoints(nobs).y=posy2(i);
-        handles.Model(md).Input(ad).observationpoints(nobs).name=name;
-        handles.Model(md).Input(ad).observationpointnames{nobs}=name;
+        handles.model.dflowfm.domain(ad).observationpoints(nobs).x=posx2(i);
+        handles.model.dflowfm.domain(ad).observationpoints(nobs).y=posy2(i);
+        handles.model.dflowfm.domain(ad).observationpoints(nobs).name=name;
+        handles.model.dflowfm.domain(ad).observationpointnames{nobs}=name;
 
 %         % Add some extra information for CoSMoS toolbox
 %         % First find station again
 %         ist=strmatch(stationid,handles.toolbox.observationstations.database(iac).stationids,'exact');
-%         handles.Model(md).Input(ad).observationPoints(nobs).longname=handles.toolbox.observationstations.database(iac).stationnames{ist};
-%         handles.Model(md).Input(ad).observationPoints(nobs).type='observationstation';
-%         handles.Model(md).Input(ad).observationPoints(nobs).source=handles.toolbox.observationstations.database(iac).name;
-%         handles.Model(md).Input(ad).observationPoints(nobs).id=stationid;
+%         handles.model.dflowfm.domain(ad).observationPoints(nobs).longname=handles.toolbox.observationstations.database(iac).stationnames{ist};
+%         handles.model.dflowfm.domain(ad).observationPoints(nobs).type='observationstation';
+%         handles.model.dflowfm.domain(ad).observationPoints(nobs).source=handles.toolbox.observationstations.database(iac).name;
+%         handles.model.dflowfm.domain(ad).observationPoints(nobs).id=stationid;
         
     end
     
-    handles.Model(md).Input(ad).nrobservationpoints=nobs;
+    handles.model.dflowfm.domain(ad).nrobservationpoints=nobs;
     
 end
 

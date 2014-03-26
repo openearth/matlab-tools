@@ -1,6 +1,6 @@
 function ddb_saveMDW(handles)
 
-wave=handles.Model(md).Input;
+wave=handles.model.delft3dwave.domain;
 
 ndomains=length(wave.gridnames);
 
@@ -316,7 +316,7 @@ for i=1:wave.nrboundaries
     
 end
 
-fname=[handles.Model(md).Input.mdwfile];
+fname=[handles.model.delft3dwave.domain.mdwfile];
 
 ddb_saveDelft3D_keyWordFile(fname, MDW);
 

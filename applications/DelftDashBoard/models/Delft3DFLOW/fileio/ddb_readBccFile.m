@@ -61,7 +61,7 @@ function handles = ddb_readBccFile(handles, id)
 % $Keywords: $
 
 %%
-Flow=handles.Model(md).Input(id);
+Flow=handles.model.delft3dflow.domain(id);
 
 kmax=Flow.KMax;
 
@@ -200,7 +200,7 @@ for nb=1:Flow.nrOpenBoundaries
         end
     end
 end
-handles.Model(md).Input(id)=Flow;
+handles.model.delft3dflow.domain(id)=Flow;
 
 
 function nt=FindTable(Info,bndname,par)

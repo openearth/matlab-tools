@@ -9,7 +9,7 @@ handles=getHandles;
 [filename, pathname, filterindex] = uigetfile('*.txt', 'Select Params file');
 if pathname~=0   
 %     ddb_plotXBeach(handles,'DeleteAll',0); % TO MAKE (empty)
-    handles.Model(handles.activeModel.nr).Input=[];
+    handles.model.xbeach.domain=[];
     handles.GUIData.NrFlowDomains=1;
     handles.ActiveDomain=1;
 
@@ -20,7 +20,7 @@ if pathname~=0
     handles.Model(4).InputDef = handles.Model(4).Input;% Add default output
     
     filename=['params.txt'];
-    handles.Model(md).Input(handles.activeDomain).ParamsFile=[pathname filename];
+    handles.model.xbeach.domain(handles.activeDomain).ParamsFile=[pathname filename];
     handles=ddb_readParams(handles,[pathname filename],1);
     handles=ddb_readAttributeXBeachFiles(handles,pathname); % need to add all files
     ddb_plotXBeach(handles,'plot',0); % make

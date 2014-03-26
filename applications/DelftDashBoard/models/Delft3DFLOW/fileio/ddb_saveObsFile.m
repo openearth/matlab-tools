@@ -61,11 +61,11 @@ function ddb_saveObsFile(handles, id)
 % $Keywords: $
 
 %%
-fid=fopen(handles.Model(md).Input(id).obsFile,'w');
-for i=1:handles.Model(md).Input(id).nrObservationPoints
-    m=handles.Model(md).Input(id).observationPoints(i).M;
-    n=handles.Model(md).Input(id).observationPoints(i).N;
-    name=handles.Model(md).Input(id).observationPoints(i).name;
+fid=fopen(handles.model.delft3dflow.domain(id).obsFile,'w');
+for i=1:handles.model.delft3dflow.domain(id).nrObservationPoints
+    m=handles.model.delft3dflow.domain(id).observationPoints(i).M;
+    n=handles.model.delft3dflow.domain(id).observationPoints(i).N;
+    name=handles.model.delft3dflow.domain(id).observationPoints(i).name;
     if length(name)>20
         name=name(1:20);
     end

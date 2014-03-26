@@ -4,34 +4,34 @@ ddb_refreshScreen('Domain','Grid');
 handles=getHandles;
 
 str={'uniform','non-uniform'};
-handles.GUIHandles.EditVardx = uicontrol(gcf,'Style','popupmenu', 'String',str,'Value',handles.Model(md).Input(ad).vardx+1,'Position',[70 120 100 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.EditVardx = uicontrol(gcf,'Style','popupmenu', 'String',str,'Value',handles.model.xbeach.domain(ad).vardx+1,'Position',[70 120 100 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
 
 %% vardx
 handles.GUIHandles.PushOpenGridXV = uicontrol(gcf,'Style','pushbutton','String','Open X-Grid','Position',[200 120 130 20],'Tag','UIControl');
 handles.GUIHandles.PushOpenGridYV = uicontrol(gcf,'Style','pushbutton','String','Open Y-Grid','Position',[200 100 130 20],'Tag','UIControl');
-handles.GUIHandles.EditAlfaV      = uicontrol(gcf,'Style','edit','String',num2str(handles.Model(md).Input(ad).alfa),'Position',[350 70 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.EditThetaminV  = uicontrol(gcf,'Style','edit','String',num2str(handles.Model(md).Input(ad).thetamin),'Position',[840 120 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.EditThetamaxV  = uicontrol(gcf,'Style','edit','String',num2str(handles.Model(md).Input(ad).thetamax),'Position',[840 90 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.EditDthetaV    = uicontrol(gcf,'Style','edit','String',num2str(handles.Model(md).Input(ad).dtheta),'Position',[840 60 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.EditAlfaV      = uicontrol(gcf,'Style','edit','String',num2str(handles.model.xbeach.domain(ad).alfa),'Position',[350 70 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.EditThetaminV  = uicontrol(gcf,'Style','edit','String',num2str(handles.model.xbeach.domain(ad).thetamin),'Position',[840 120 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.EditThetamaxV  = uicontrol(gcf,'Style','edit','String',num2str(handles.model.xbeach.domain(ad).thetamax),'Position',[840 90 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.EditDthetaV    = uicontrol(gcf,'Style','edit','String',num2str(handles.model.xbeach.domain(ad).dtheta),'Position',[840 60 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
 
-handles.GUIHandles.TextMMaxV      = uicontrol(gcf,'Style','text','String',['Grid points in M direction : ' num2str(handles.Model(md).Input(ad).nx)],   'Position',[200 40  200 20],'HorizontalAlignment','left','Tag','UIControl');
-handles.GUIHandles.TextNMaxV      = uicontrol(gcf,'Style','text','String',['Grid points in N direction : ' num2str(handles.Model(md).Input(ad).ny)],   'Position',[200 20  200 20],'HorizontalAlignment','left','Tag','UIControl');   
-handles.GUIHandles.TextGridFileXV = uicontrol(gcf,'Style','text','String',['File : ' handles.Model(md).Input(ad).xfile],'Position',[340 117  400 20],'HorizontalAlignment','left','Tag','UIControl');
-handles.GUIHandles.TextGridFileYV = uicontrol(gcf,'Style','text','String',['File : ' handles.Model(md).Input(ad).yfile],'Position',[340 97  400 20],'HorizontalAlignment','left','Tag','UIControl');
+handles.GUIHandles.TextMMaxV      = uicontrol(gcf,'Style','text','String',['Grid points in M direction : ' num2str(handles.model.xbeach.domain(ad).nx)],   'Position',[200 40  200 20],'HorizontalAlignment','left','Tag','UIControl');
+handles.GUIHandles.TextNMaxV      = uicontrol(gcf,'Style','text','String',['Grid points in N direction : ' num2str(handles.model.xbeach.domain(ad).ny)],   'Position',[200 20  200 20],'HorizontalAlignment','left','Tag','UIControl');   
+handles.GUIHandles.TextGridFileXV = uicontrol(gcf,'Style','text','String',['File : ' handles.model.xbeach.domain(ad).xfile],'Position',[340 117  400 20],'HorizontalAlignment','left','Tag','UIControl');
+handles.GUIHandles.TextGridFileYV = uicontrol(gcf,'Style','text','String',['File : ' handles.model.xbeach.domain(ad).yfile],'Position',[340 97  400 20],'HorizontalAlignment','left','Tag','UIControl');
 handles.GUIHandles.TextAlfaV      = uicontrol(gcf,'Style','text','String','Angle of grid w.r.t. East (deg)','Position',[200 66 150 20],'HorizontalAlignment','left','Tag','UIControl');
 handles.GUIHandles.TextThetaminV  = uicontrol(gcf,'Style','text','String','thetamin (deg)','Position',[740 116 100 20],'HorizontalAlignment','left','Tag','UIControl');
 handles.GUIHandles.TextThetamaxV  = uicontrol(gcf,'Style','text','String','thetamax (deg)','Position',[740 86 100 20],'HorizontalAlignment','left','Tag','UIControl');
 handles.GUIHandles.TextDthetaV    = uicontrol(gcf,'Style','text','String','dtheta (deg)','Position',[740 56 100 20],'HorizontalAlignment','left','Tag','UIControl');
 
 %% uniform
-handles.GUIHandles.EditMMaxU      = uicontrol(gcf,'Style','edit','String',num2str(handles.Model(md).Input(ad).nx),'Position',[350 120 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.EditNMaxU      = uicontrol(gcf,'Style','edit','String',num2str(handles.Model(md).Input(ad).ny),'Position',[350 90 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.EditDxU        = uicontrol(gcf,'Style','edit','String',num2str(handles.Model(md).Input(ad).dx),'Position',[350 60 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.EditDyU        = uicontrol(gcf,'Style','edit','String',num2str(handles.Model(md).Input(ad).dy),'Position',[350 30 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.EditThetaminU  = uicontrol(gcf,'Style','edit','String',num2str(handles.Model(md).Input(ad).thetamin),'Position',[540 120 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.EditThetamaxU  = uicontrol(gcf,'Style','edit','String',num2str(handles.Model(md).Input(ad).thetamax),'Position',[540 90 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.EditDthetaU    = uicontrol(gcf,'Style','edit','String',num2str(handles.Model(md).Input(ad).dtheta),'Position',[540 60 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.EditAlfaU      = uicontrol(gcf,'Style','edit','String',num2str(handles.Model(md).Input(ad).alfa),'Position',[780 120 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.EditMMaxU      = uicontrol(gcf,'Style','edit','String',num2str(handles.model.xbeach.domain(ad).nx),'Position',[350 120 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.EditNMaxU      = uicontrol(gcf,'Style','edit','String',num2str(handles.model.xbeach.domain(ad).ny),'Position',[350 90 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.EditDxU        = uicontrol(gcf,'Style','edit','String',num2str(handles.model.xbeach.domain(ad).dx),'Position',[350 60 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.EditDyU        = uicontrol(gcf,'Style','edit','String',num2str(handles.model.xbeach.domain(ad).dy),'Position',[350 30 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.EditThetaminU  = uicontrol(gcf,'Style','edit','String',num2str(handles.model.xbeach.domain(ad).thetamin),'Position',[540 120 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.EditThetamaxU  = uicontrol(gcf,'Style','edit','String',num2str(handles.model.xbeach.domain(ad).thetamax),'Position',[540 90 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.EditDthetaU    = uicontrol(gcf,'Style','edit','String',num2str(handles.model.xbeach.domain(ad).dtheta),'Position',[540 60 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.EditAlfaU      = uicontrol(gcf,'Style','edit','String',num2str(handles.model.xbeach.domain(ad).alfa),'Position',[780 120 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
 
 handles.GUIHandles.TextMMaxU      = uicontrol(gcf,'Style','text','String',['Grid points in M direction : '],   'Position',[200 116 150 20],'HorizontalAlignment','left','Tag','UIControl');
 handles.GUIHandles.TextNMaxU      = uicontrol(gcf,'Style','text','String',['Grid points in N direction : '],   'Position',[200 86 150 20],'HorizontalAlignment','left','Tag','UIControl');   
@@ -67,7 +67,7 @@ setHandles(handles);
 %%
 function EditVardx_CallBack(hObject,eventdata)
 handles = guidata(findobj('Tag','MainWindow'));
-handles.Model(md).Input(ad).vardx = get(hObject,'Value')-1;
+handles.model.xbeach.domain(ad).vardx = get(hObject,'Value')-1;
 handles = Refresh(handles); 
 setHandles(handles);
 
@@ -82,8 +82,8 @@ if pathname~=0
     if ~strcmpi(curdir,pathname)
         filenamex=[pathname filename];
     end
-    handles.Model(md).Input(ad).GridX = x;
-    handles.Model(md).Input(ad).xfile = filenamex;
+    handles.model.xbeach.domain(ad).GridX = x;
+    handles.model.xbeach.domain(ad).xfile = filenamex;
     set(handles.GUIHandles.TextGridFileXV,'String',['File : ' filenamex]);
     setHandles(handles);
 end
@@ -99,12 +99,12 @@ if pathname~=0
     if ~strcmpi(curdir,pathname)
         filenamey=[pathname filename];
     end
-    handles.Model(md).Input(ad).GridY = y;
-    handles.Model(md).Input(ad).yfile = filenamey;
-    handles.Model(md).Input(ad).mmax = size(y,1);
-    handles.Model(md).Input(ad).nmax = size(y,2);
-    set(handles.GUIHandles.TextMMaxV,'String',['Grid points in M direction:',num2str(handles.Model(md).Input(ad).mmax)]);
-    set(handles.GUIHandles.TextNMaxV,'String',['Grid points in N direction:',num2str(handles.Model(md).Input(ad).nmax)]);
+    handles.model.xbeach.domain(ad).GridY = y;
+    handles.model.xbeach.domain(ad).yfile = filenamey;
+    handles.model.xbeach.domain(ad).mmax = size(y,1);
+    handles.model.xbeach.domain(ad).nmax = size(y,2);
+    set(handles.GUIHandles.TextMMaxV,'String',['Grid points in M direction:',num2str(handles.model.xbeach.domain(ad).mmax)]);
+    set(handles.GUIHandles.TextNMaxV,'String',['Grid points in N direction:',num2str(handles.model.xbeach.domain(ad).nmax)]);
     set(handles.GUIHandles.TextGridFileYV,'String',['File :',filenamey]);
     setHandles(handles);
 end
@@ -112,49 +112,49 @@ end
 %%
 function EditMMax_CallBack(hObject,eventdata)
 handles = guidata(findobj('Tag','MainWindow'));
-handles.Model(md).Input(ad).nx=str2num(get(hObject,'String'));
+handles.model.xbeach.domain(ad).nx=str2num(get(hObject,'String'));
 setHandles(handles);
 
 %%
 function EditNMax_CallBack(hObject,eventdata)
 handles = guidata(findobj('Tag','MainWindow'));
-handles.Model(md).Input(ad).ny=str2num(get(hObject,'String'));
+handles.model.xbeach.domain(ad).ny=str2num(get(hObject,'String'));
 setHandles(handles);
 
 %%
 function EditDx_CallBack(hObject,eventdata)
 handles = guidata(findobj('Tag','MainWindow'));
-handles.Model(md).Input(ad).dx=str2num(get(hObject,'String'));
+handles.model.xbeach.domain(ad).dx=str2num(get(hObject,'String'));
 setHandles(handles);
 
 %%
 function EditDy_CallBack(hObject,eventdata)
 handles = guidata(findobj('Tag','MainWindow'));
-handles.Model(md).Input(ad).dy=str2num(get(hObject,'String'));
+handles.model.xbeach.domain(ad).dy=str2num(get(hObject,'String'));
 setHandles(handles);
 
 %%
 function EditAlfa_CallBack(hObject,eventdata)
 handles = guidata(findobj('Tag','MainWindow'));
-handles.Model(md).Input(ad).alfa=str2num(get(hObject,'String'));
+handles.model.xbeach.domain(ad).alfa=str2num(get(hObject,'String'));
 setHandles(handles);
 
 %%
 function EditThetamin_CallBack(hObject,eventdata)
 handles = guidata(findobj('Tag','MainWindow'));
-handles.Model(md).Input(ad).thetamin=str2num(get(hObject,'String'));
+handles.model.xbeach.domain(ad).thetamin=str2num(get(hObject,'String'));
 setHandles(handles);
 
 %%
 function EditThetamax_CallBack(hObject,eventdata)
 handles = guidata(findobj('Tag','MainWindow'));
-handles.Model(md).Input(ad).thetamax=str2num(get(hObject,'String'));
+handles.model.xbeach.domain(ad).thetamax=str2num(get(hObject,'String'));
 setHandles(handles);
 
 %%
 function EditDtheta_CallBack(hObject,eventdata)
 handles = guidata(findobj('Tag','MainWindow'));
-handles.Model(md).Input(ad).dtheta=str2num(get(hObject,'String'));
+handles.model.xbeach.domain(ad).dtheta=str2num(get(hObject,'String'));
 setHandles(handles);
 
 function handles=Refresh(handles)

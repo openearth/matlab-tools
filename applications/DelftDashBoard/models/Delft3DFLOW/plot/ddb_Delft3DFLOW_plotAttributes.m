@@ -79,7 +79,6 @@ vis=1;
 act=1;
 
 % model number imd
-imd=strmatch('Delft3DFLOW',{handles.Model(:).name},'exact');
 
 % Read input arguments
 for i=1:length(varargin)
@@ -98,65 +97,65 @@ end
 switch lower(att)
     case{'observationpoints'}
         tag='observationpoint';
-        attStruc=handles.Model(imd).Input(iad).observationPoints;
-        nr=handles.Model(imd).Input(iad).nrObservationPoints;
-        iac=handles.Model(imd).Input(iad).activeObservationPoint(1);
+        attStruc=handles.model.delft3dflow.domain(iad).observationPoints;
+        nr=handles.model.delft3dflow.domain(iad).nrObservationPoints;
+        iac=handles.model.delft3dflow.domain(iad).activeObservationPoint(1);
         colpas='c';
         colact='r';
         tp='line';
     case{'crosssections'}
         tag='crosssection';
-        attStruc=handles.Model(imd).Input(iad).crossSections;
-        nr=handles.Model(imd).Input(iad).nrCrossSections;
-        iac=handles.Model(imd).Input(iad).activeCrossSection(1);
+        attStruc=handles.model.delft3dflow.domain(iad).crossSections;
+        nr=handles.model.delft3dflow.domain(iad).nrCrossSections;
+        iac=handles.model.delft3dflow.domain(iad).activeCrossSection(1);
         colpas='c';
         colact='r';
         tp='line';
     case{'drypoints'}
         tag='drypoint';
-        attStruc=handles.Model(imd).Input(iad).dryPoints;
-        nr=handles.Model(imd).Input(iad).nrDryPoints;
-        iac=handles.Model(imd).Input(iad).activeDryPoint(1);
+        attStruc=handles.model.delft3dflow.domain(iad).dryPoints;
+        nr=handles.model.delft3dflow.domain(iad).nrDryPoints;
+        iac=handles.model.delft3dflow.domain(iad).activeDryPoint(1);
         colpas=[0.85 0.85 0.50];
         colact='r';
         tp='patch';
     case{'openboundaries'}
         tag='openboundary';
-        attStruc=handles.Model(imd).Input(iad).openBoundaries;
-        nr=handles.Model(imd).Input(iad).nrOpenBoundaries;
-        iac=handles.Model(imd).Input(iad).activeOpenBoundary(1);
+        attStruc=handles.model.delft3dflow.domain(iad).openBoundaries;
+        nr=handles.model.delft3dflow.domain(iad).nrOpenBoundaries;
+        iac=handles.model.delft3dflow.domain(iad).activeOpenBoundary(1);
         colpas='b';
         colact='r';
         tp='line';
     case{'thindams'}
         tag='thindam';
-        attStruc=handles.Model(imd).Input(iad).thinDams;
-        nr=handles.Model(imd).Input(iad).nrThinDams;
-        iac=handles.Model(imd).Input(iad).activeThinDam(1);
+        attStruc=handles.model.delft3dflow.domain(iad).thinDams;
+        nr=handles.model.delft3dflow.domain(iad).nrThinDams;
+        iac=handles.model.delft3dflow.domain(iad).activeThinDam(1);
         colpas=[0.85 0.85 0.50];
         colact='r';
         tp='line';
     case{'weirs2d'}
         tag='weir2d';
-        attStruc=handles.Model(imd).Input(iad).weirs2D;
-        nr=handles.Model(imd).Input(iad).nrWeirs2D;
-        iac=handles.Model(imd).Input(iad).activeWeir2D(1);
+        attStruc=handles.model.delft3dflow.domain(iad).weirs2D;
+        nr=handles.model.delft3dflow.domain(iad).nrWeirs2D;
+        iac=handles.model.delft3dflow.domain(iad).activeWeir2D(1);
         colpas=[1 1 0];
         colact='r';
         tp='line';
     case{'discharges'}
         tag='discharge';
-        attStruc=handles.Model(imd).Input(iad).discharges;
-        nr=handles.Model(imd).Input(iad).nrDischarges;
-        iac=handles.Model(imd).Input(iad).activeDischarge(1);
+        attStruc=handles.model.delft3dflow.domain(iad).discharges;
+        nr=handles.model.delft3dflow.domain(iad).nrDischarges;
+        iac=handles.model.delft3dflow.domain(iad).activeDischarge(1);
         colpas=[1 0 1];
         colact='r';
         tp='line';
     case{'drogues'}
         tag='drogue';
-        attStruc=handles.Model(imd).Input(iad).drogues;
-        nr=handles.Model(imd).Input(iad).nrDrogues;
-        iac=handles.Model(imd).Input(iad).activeDrogue(1);
+        attStruc=handles.model.delft3dflow.domain(iad).drogues;
+        nr=handles.model.delft3dflow.domain(iad).nrDrogues;
+        iac=handles.model.delft3dflow.domain(iad).activeDrogue(1);
         colpas='g';
         colact='r';
         tp='line';
@@ -192,7 +191,7 @@ switch lower(opt)
         if nr>0
             % Now plot new objects
             for i=1:nr
-                [x,y,txt,xtxt,ytxt]=getXY(handles,att,imd,iad,i);
+                [x,y,txt,xtxt,ytxt]=getXY(handles,att,iad,i);
                 c=colpas;
                 if strcmpi(tp,'line')
                     
@@ -352,46 +351,46 @@ end
 
 switch lower(att)
     case{'observationpoints'}
-        handles.Model(imd).Input(iad).observationPoints=attStruc;
+        handles.model.delft3dflow.domain(iad).observationPoints=attStruc;
     case{'crosssections'}
-        handles.Model(imd).Input(iad).crossSections=attStruc;
+        handles.model.delft3dflow.domain(iad).crossSections=attStruc;
     case{'drypoints'}
-        handles.Model(imd).Input(iad).dryPoints=attStruc;
+        handles.model.delft3dflow.domain(iad).dryPoints=attStruc;
     case{'openboundaries'}
-        handles.Model(imd).Input(iad).openBoundaries=attStruc;
+        handles.model.delft3dflow.domain(iad).openBoundaries=attStruc;
     case{'thindams'}
-        handles.Model(imd).Input(iad).thinDams=attStruc;
+        handles.model.delft3dflow.domain(iad).thinDams=attStruc;
     case{'weirs2d'}
-        handles.Model(imd).Input(iad).weirs2D=attStruc;
+        handles.model.delft3dflow.domain(iad).weirs2D=attStruc;
     case{'discharges'}
-        handles.Model(imd).Input(iad).discharges=attStruc;
+        handles.model.delft3dflow.domain(iad).discharges=attStruc;
     case{'drogues'}
-        handles.Model(imd).Input(iad).drogues=attStruc;
+        handles.model.delft3dflow.domain(iad).drogues=attStruc;
 end
 
 
 
 %%
-function [x,y,txt,xtxt,ytxt]=getXY(handles,att,imd,id,i)
+function [x,y,txt,xtxt,ytxt]=getXY(handles,att,id,i)
 
-xg=handles.Model(imd).Input(id).gridX;
-yg=handles.Model(imd).Input(id).gridY;
+xg=handles.model.delft3dflow.domain(id).gridX;
+yg=handles.model.delft3dflow.domain(id).gridY;
 
 switch lower(att)
     case{'observationpoints'}
-        txt=handles.Model(imd).Input(id).observationPoints(i).name;
-        m=handles.Model(imd).Input(id).observationPoints(i).M;
-        n=handles.Model(imd).Input(id).observationPoints(i).N;
+        txt=handles.model.delft3dflow.domain(id).observationPoints(i).name;
+        m=handles.model.delft3dflow.domain(id).observationPoints(i).M;
+        n=handles.model.delft3dflow.domain(id).observationPoints(i).N;
         x{1}=[xg(m-1,n-1) xg(m,n)];
         y{1}=[yg(m-1,n-1) yg(m,n)];
         x{2}=[xg(m,n-1) xg(m-1,n)];
         y{2}=[yg(m,n-1) yg(m-1,n)];
     case{'drypoints'}
         txt='';
-        m1=min(handles.Model(imd).Input(id).dryPoints(i).M1,handles.Model(imd).Input(id).dryPoints(i).M2);
-        n1=min(handles.Model(imd).Input(id).dryPoints(i).N1,handles.Model(imd).Input(id).dryPoints(i).N2);
-        m2=max(handles.Model(imd).Input(id).dryPoints(i).M1,handles.Model(imd).Input(id).dryPoints(i).M2);
-        n2=max(handles.Model(imd).Input(id).dryPoints(i).N1,handles.Model(imd).Input(id).dryPoints(i).N2);
+        m1=min(handles.model.delft3dflow.domain(id).dryPoints(i).M1,handles.model.delft3dflow.domain(id).dryPoints(i).M2);
+        n1=min(handles.model.delft3dflow.domain(id).dryPoints(i).N1,handles.model.delft3dflow.domain(id).dryPoints(i).N2);
+        m2=max(handles.model.delft3dflow.domain(id).dryPoints(i).M1,handles.model.delft3dflow.domain(id).dryPoints(i).M2);
+        n2=max(handles.model.delft3dflow.domain(id).dryPoints(i).N1,handles.model.delft3dflow.domain(id).dryPoints(i).N2);
         x1=xg(m1-1:m2,n1-1)';
         y1=yg(m1-1:m2,n1-1)';
         x1=[x1 xg(m2,n1-1:n2)];
@@ -403,22 +402,22 @@ switch lower(att)
         x{1}=x1;
         y{1}=y1;
     case{'openboundaries'}
-        txt=handles.Model(imd).Input(id).openBoundaries(i).name;
-        x{1}=handles.Model(imd).Input(id).openBoundaries(i).x;
-        y{1}=handles.Model(imd).Input(id).openBoundaries(i).y;
+        txt=handles.model.delft3dflow.domain(id).openBoundaries(i).name;
+        x{1}=handles.model.delft3dflow.domain(id).openBoundaries(i).x;
+        y{1}=handles.model.delft3dflow.domain(id).openBoundaries(i).y;
     case{'thindams'}
         txt='';
-        m1=min(handles.Model(imd).Input(id).thinDams(i).M1,handles.Model(imd).Input(id).thinDams(i).M2);
-        n1=min(handles.Model(imd).Input(id).thinDams(i).N1,handles.Model(imd).Input(id).thinDams(i).N2);
-        m2=max(handles.Model(imd).Input(id).thinDams(i).M1,handles.Model(imd).Input(id).thinDams(i).M2);
-        n2=max(handles.Model(imd).Input(id).thinDams(i).N1,handles.Model(imd).Input(id).thinDams(i).N2);
+        m1=min(handles.model.delft3dflow.domain(id).thinDams(i).M1,handles.model.delft3dflow.domain(id).thinDams(i).M2);
+        n1=min(handles.model.delft3dflow.domain(id).thinDams(i).N1,handles.model.delft3dflow.domain(id).thinDams(i).N2);
+        m2=max(handles.model.delft3dflow.domain(id).thinDams(i).M1,handles.model.delft3dflow.domain(id).thinDams(i).M2);
+        n2=max(handles.model.delft3dflow.domain(id).thinDams(i).N1,handles.model.delft3dflow.domain(id).thinDams(i).N2);
         k=0;
         for jj=m1:m2
             for kk=n1:n2
                 k=k+1;
                 m=jj;
                 n=kk;
-                if strcmpi(handles.Model(imd).Input(id).thinDams(i).UV,'u')
+                if strcmpi(handles.model.delft3dflow.domain(id).thinDams(i).UV,'u')
                     x{k}=[xg(m,n-1) xg(m,n)];
                     y{k}=[yg(m,n-1) yg(m,n)];
                 else
@@ -429,17 +428,17 @@ switch lower(att)
         end
     case{'weirs2d'}
         txt='';
-        m1=min(handles.Model(imd).Input(id).weirs2D(i).M1,handles.Model(imd).Input(id).weirs2D(i).M2);
-        n1=min(handles.Model(imd).Input(id).weirs2D(i).N1,handles.Model(imd).Input(id).weirs2D(i).N2);
-        m2=max(handles.Model(imd).Input(id).weirs2D(i).M1,handles.Model(imd).Input(id).weirs2D(i).M2);
-        n2=max(handles.Model(imd).Input(id).weirs2D(i).N1,handles.Model(imd).Input(id).weirs2D(i).N2);
+        m1=min(handles.model.delft3dflow.domain(id).weirs2D(i).M1,handles.model.delft3dflow.domain(id).weirs2D(i).M2);
+        n1=min(handles.model.delft3dflow.domain(id).weirs2D(i).N1,handles.model.delft3dflow.domain(id).weirs2D(i).N2);
+        m2=max(handles.model.delft3dflow.domain(id).weirs2D(i).M1,handles.model.delft3dflow.domain(id).weirs2D(i).M2);
+        n2=max(handles.model.delft3dflow.domain(id).weirs2D(i).N1,handles.model.delft3dflow.domain(id).weirs2D(i).N2);
         k=0;
         for jj=m1:m2
             for kk=n1:n2
                 k=k+1;
                 m=jj;
                 n=kk;
-                if strcmpi(handles.Model(imd).Input(id).weirs2D(i).UV,'u')
+                if strcmpi(handles.model.delft3dflow.domain(id).weirs2D(i).UV,'u')
                     x{k}=[xg(m,n-1) xg(m,n)];
                     y{k}=[yg(m,n-1) yg(m,n)];
                 else
@@ -449,11 +448,11 @@ switch lower(att)
             end
         end
     case{'crosssections'}
-        txt=handles.Model(imd).Input(id).crossSections(i).name;
-        m1=min(handles.Model(imd).Input(id).crossSections(i).M1,handles.Model(imd).Input(id).crossSections(i).M2);
-        n1=min(handles.Model(imd).Input(id).crossSections(i).N1,handles.Model(imd).Input(id).crossSections(i).N2);
-        m2=max(handles.Model(imd).Input(id).crossSections(i).M1,handles.Model(imd).Input(id).crossSections(i).M2);
-        n2=max(handles.Model(imd).Input(id).crossSections(i).N1,handles.Model(imd).Input(id).crossSections(i).N2);
+        txt=handles.model.delft3dflow.domain(id).crossSections(i).name;
+        m1=min(handles.model.delft3dflow.domain(id).crossSections(i).M1,handles.model.delft3dflow.domain(id).crossSections(i).M2);
+        n1=min(handles.model.delft3dflow.domain(id).crossSections(i).N1,handles.model.delft3dflow.domain(id).crossSections(i).N2);
+        m2=max(handles.model.delft3dflow.domain(id).crossSections(i).M1,handles.model.delft3dflow.domain(id).crossSections(i).M2);
+        n2=max(handles.model.delft3dflow.domain(id).crossSections(i).N1,handles.model.delft3dflow.domain(id).crossSections(i).N2);
         k=0;
         for jj=m1:m2
             for kk=n1:n2
@@ -470,9 +469,9 @@ switch lower(att)
             end
         end
     case{'discharges'}
-        txt=handles.Model(imd).Input(id).discharges(i).name;
-        m=handles.Model(imd).Input(id).discharges(i).M;
-        n=handles.Model(imd).Input(id).discharges(i).N;
+        txt=handles.model.delft3dflow.domain(id).discharges(i).name;
+        m=handles.model.delft3dflow.domain(id).discharges(i).M;
+        n=handles.model.delft3dflow.domain(id).discharges(i).N;
         x{1}(1)=0.5*(xg(m-1,n-1)+xg(m  ,n-1));
         y{1}(1)=0.5*(yg(m-1,n-1)+yg(m  ,n-1));
         x{1}(2)=0.5*(xg(m  ,n-1)+xg(m  ,n  ));
@@ -484,9 +483,9 @@ switch lower(att)
         x{1}(5)=x{1}(1);
         y{1}(5)=y{1}(1);
     case{'drogues'}
-        txt=handles.Model(imd).Input(id).drogues(i).name;
-        m=ceil(handles.Model(imd).Input(id).drogues(i).M);
-        n=ceil(handles.Model(imd).Input(id).drogues(i).N);
+        txt=handles.model.delft3dflow.domain(id).drogues(i).name;
+        m=ceil(handles.model.delft3dflow.domain(id).drogues(i).M);
+        n=ceil(handles.model.delft3dflow.domain(id).drogues(i).N);
         x{1}(1)=0.5*(xg(m-1,n-1)+xg(m  ,n-1));
         y{1}(1)=0.5*(yg(m-1,n-1)+yg(m  ,n-1));
         x{1}(2)=0.5*(xg(m  ,n  )+xg(m-1,n  ));

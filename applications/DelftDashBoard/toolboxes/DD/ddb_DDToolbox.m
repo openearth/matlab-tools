@@ -69,8 +69,8 @@ if isempty(varargin)
     
     % Make
     handles.toolbox.dd.domains=[];
-    for i=1:length(handles.Model(md).Input)
-        handles.toolbox.dd.domains{i}=handles.Model(md).Input(i).runid;
+    for i=1:length(handles.model.delft3dflow.domain)
+        handles.toolbox.dd.domains{i}=handles.model.delft3dflow.domain(i).runid;
     end
     
     % If m2 or n2 is nan, set m1 and n1 to NaN
@@ -127,7 +127,7 @@ function editM1
 
 handles=getHandles;
 ii=handles.toolbox.dd.firstCornerPointM;
-sz=size(handles.Model(md).Input(ad).gridX);
+sz=size(handles.model.delft3dflow.domain(ad).gridX);
 if ii>sz(1)
     handles.toolbox.dd.firstCornerPointM=sz(1);
 end
@@ -145,7 +145,7 @@ function editN1
 
 handles=getHandles;
 ii=handles.toolbox.dd.firstCornerPointN;
-sz=size(handles.Model(md).Input(ad).gridX);
+sz=size(handles.model.delft3dflow.domain(ad).gridX);
 if ii>sz(2)
     handles.toolbox.dd.firstCornerPointN=sz(2);
 end
@@ -163,7 +163,7 @@ function editM2
 
 handles=getHandles;
 ii=handles.toolbox.dd.secondCornerPointM;
-sz=size(handles.Model(md).Input(ad).gridX);
+sz=size(handles.model.delft3dflow.domain(ad).gridX);
 if ii>sz(1)
     handles.toolbox.dd.secondCornerPointM=sz(1);
 end
@@ -181,7 +181,7 @@ function editN2
 
 handles=getHandles;
 ii=handles.toolbox.dd.secondCornerPointN;
-sz=size(handles.Model(md).Input(ad).gridX);
+sz=size(handles.model.delft3dflow.domain(ad).gridX);
 if ii>sz(2)
     handles.toolbox.dd.secondCornerPointN=sz(2);
 end
@@ -199,18 +199,18 @@ function selectCornerPoints
 
 handles=getHandles;
 
-switch lower(handles.Model(md).name)
+switch lower(handles.model.delft3dflow.name)
     case{'delft3dflow'}
     otherwise
-        ddb_giveWarning('text',['Sorry, the Domain Decomposition toolbox does not support ' handles.Model(md).longName ' ...']);
+        ddb_giveWarning('text',['Sorry, the Domain Decomposition toolbox does not support ' handles.model.delft3dflow.longName ' ...']);
         return
 end
 
 ddb_zoomOff;
 ddb_setWindowButtonUpDownFcn;
 setInstructions({'','','Click grid point on active grid for first corner point'});
-xg=handles.Model(md).Input(handles.activeDomain).gridX;
-yg=handles.Model(md).Input(handles.activeDomain).gridY;
+xg=handles.model.delft3dflow.domain(handles.activeDomain).gridX;
+yg=handles.model.delft3dflow.domain(handles.activeDomain).gridY;
 if ~isempty(xg)
     ddb_clickPoint('cornerpoint','grid',xg,yg,'callback',@clickFirstCornerPoint,'single');
     setHandles(handles);
@@ -221,10 +221,10 @@ function makeNewDomain
 
 handles=getHandles;
 
-switch lower(handles.Model(md).name)
+switch lower(handles.model.delft3dflow.name)
     case{'delft3dflow'}
     otherwise
-        ddb_giveWarning('text',['Sorry, the Domain Decomposition toolbox does not support ' handles.Model(md).longName ' ...']);
+        ddb_giveWarning('text',['Sorry, the Domain Decomposition toolbox does not support ' handles.model.delft3dflow.longName ' ...']);
         return
 end
 
@@ -247,7 +247,7 @@ elseif mdd(2)>mdd(1) && ndd(2)>ndd(1)
 
     ddb_giveWarning('txt','The overall grid has changed! Please select file name of new overall grid.');
     
-    [filename, pathname, filterindex] = uiputfile('*.grd', 'Select new overall grid file',handles.Model(md).Input(ad).grdFile);
+    [filename, pathname, filterindex] = uiputfile('*.grd', 'Select new overall grid file',handles.model.delft3dflow.domain(ad).grdFile);
     
     if pathname~=0
         
@@ -259,23 +259,23 @@ elseif mdd(2)>mdd(1) && ndd(2)>ndd(1)
         if ~strcmpi(curdir,pathname)
             filename=[pathname filename];
         end
-        handles.Model(md).Input(ad).grdFile=filename;
+        handles.model.delft3dflow.domain(ad).grdFile=filename;
         ii=findstr(filename,'.grd');
         str=filename(1:ii-1);
-        handles.Model(md).Input(ad).encFile=[str '.enc'];
+        handles.model.delft3dflow.domain(ad).encFile=[str '.enc'];
         
         % Generate new domain
-        runid1=handles.Model(md).Input(ad).runid;
+        runid1=handles.model.delft3dflow.domain(ad).runid;
         runid2=handles.toolbox.dd.newRunid;
-        handles.Model(md).nrDomains=handles.Model(md).nrDomains+1;
-        id2=handles.Model(md).nrDomains;
-        handles.toolbox.dd.domains{handles.Model(md).nrDomains}=handles.toolbox.dd.newRunid;
+        handles.model.delft3dflow.nrDomains=handles.model.delft3dflow.nrDomains+1;
+        id2=handles.model.delft3dflow.nrDomains;
+        handles.toolbox.dd.domains{handles.model.delft3dflow.nrDomains}=handles.toolbox.dd.newRunid;
         % Copy active domain to new domain
-        handles.Model(md).Input(id2)=handles.Model(md).Input(ad);
-        handles.Model(md).Input(id2).runid=runid2;
-        handles.Model(md).Input(id2).attName=handles.toolbox.dd.attributeName;
+        handles.model.delft3dflow.domain(id2)=handles.model.delft3dflow.domain(ad);
+        handles.model.delft3dflow.domain(id2).runid=runid2;
+        handles.model.delft3dflow.domain(id2).attName=handles.toolbox.dd.attributeName;
         % Create backup of original model with id0
-        handles.toolbox.dd.originalDomain=handles.Model(md).Input(ad);
+        handles.toolbox.dd.originalDomain=handles.model.delft3dflow.domain(ad);
         
         % Initialize grid dependent input new domain
         handles=ddb_initializeFlowDomain(handles,'griddependentinput',id2,runid2);
@@ -290,15 +290,15 @@ elseif mdd(2)>mdd(1) && ndd(2)>ndd(1)
         
         if max(mcut)>0 || max(ncut)>0
             
-            sz=size(handles.Model(md).Input(ad).depthZ);
-            handles.Model(md).Input(ad).depth=handles.Model(md).Input(ad).depth(mcut(1)+1:sz(1)-mcut(2),ncut(1)+1:sz(2)-ncut(2));
-            handles.Model(md).Input(ad).depthZ=handles.Model(md).Input(ad).depthZ(mcut(1)+1:sz(1)-mcut(2),ncut(1)+1:sz(2)-ncut(2));
+            sz=size(handles.model.delft3dflow.domain(ad).depthZ);
+            handles.model.delft3dflow.domain(ad).depth=handles.model.delft3dflow.domain(ad).depth(mcut(1)+1:sz(1)-mcut(2),ncut(1)+1:sz(2)-ncut(2));
+            handles.model.delft3dflow.domain(ad).depthZ=handles.model.delft3dflow.domain(ad).depthZ(mcut(1)+1:sz(1)-mcut(2),ncut(1)+1:sz(2)-ncut(2));
             
             if mcut(1)>0 || ncut(1)>0
                 % TODO Change m and n indices of attributes
-                for i=1:handles.Model(md).Input(ad).nrObservationPoints
-                    handles.Model(md).Input(ad).observationPoints(i).M=handles.Model(md).Input(ad).observationPoints(i).M - mcut(1);
-                    handles.Model(md).Input(ad).observationPoints(i).N=handles.Model(md).Input(ad).observationPoints(i).N - ncut(1);
+                for i=1:handles.model.delft3dflow.domain(ad).nrObservationPoints
+                    handles.model.delft3dflow.domain(ad).observationPoints(i).M=handles.model.delft3dflow.domain(ad).observationPoints(i).M - mcut(1);
+                    handles.model.delft3dflow.domain(ad).observationPoints(i).N=handles.model.delft3dflow.domain(ad).observationPoints(i).N - ncut(1);
                 end
             end
             
@@ -306,7 +306,7 @@ elseif mdd(2)>mdd(1) && ndd(2)>ndd(1)
         
         % New Domain
         % Attributes
-        handles=ddb_makeDDModelNewAttributes(handles,ad,id2,handles.Model(md).Input(id2).attName);
+        handles=ddb_makeDDModelNewAttributes(handles,ad,id2,handles.model.delft3dflow.domain(id2).attName);
         handles=ddb_removeDDModelAttributes(handles,ad);
         
         % Delete corner points and temporary grid
@@ -322,7 +322,7 @@ elseif mdd(2)>mdd(1) && ndd(2)>ndd(1)
         
         
         % Now replot all domains
-        for id=1:handles.Model(md).nrDomains
+        for id=1:handles.model.delft3dflow.nrDomains
             if id==ad
                 ddb_plotDelft3DFLOW('plot','active',1,'visible',1,'domain',id);
             else
@@ -335,7 +335,7 @@ elseif mdd(2)>mdd(1) && ndd(2)>ndd(1)
         % Generate dd boundaries
         generateDD;
         
-        switch lower(handles.Model(md).Input(ad).initialConditions)
+        switch lower(handles.model.delft3dflow.domain(ad).initialConditions)
             case{'ini','trim','rst'}
                 ddb_giveWarning('text',['The domain ' runid1 ' uses an initial conditions file. Please consider generating an initial conditions file for the domain ' runid2 ' as well.']);
         end
@@ -367,8 +367,8 @@ setHandles(handles);
 plotCornerPoints('plot');
 plotTemporaryDDGrid('delete');
 
-xg=handles.Model(md).Input(ad).gridX;
-yg=handles.Model(md).Input(ad).gridY;
+xg=handles.model.delft3dflow.domain(ad).gridX;
+yg=handles.model.delft3dflow.domain(ad).gridY;
 if ~isnan(m)
     ddb_clickPoint('cornerpoint','grid',xg,yg,'callback',@clickSecondCornerPoint,'single');
 end
@@ -405,8 +405,8 @@ switch lower(opt)
         
         %Plot new grid
         handles=getHandles;
-        xg=handles.Model(md).Input(ad).gridX;
-        yg=handles.Model(md).Input(ad).gridY;
+        xg=handles.model.delft3dflow.domain(ad).gridX;
+        yg=handles.model.delft3dflow.domain(ad).gridY;
         m1=handles.toolbox.dd.firstCornerPointM;
         n1=handles.toolbox.dd.firstCornerPointN;
         m2=handles.toolbox.dd.secondCornerPointM;
@@ -454,13 +454,13 @@ switch lower(opt)
         n1=handles.toolbox.dd.firstCornerPointN;
         n2=handles.toolbox.dd.secondCornerPointN;
         
-        plt1=plot(handles.Model(md).Input(ad).gridX(m1,n1),handles.Model(md).Input(ad).gridY(m1,n1),'go');
+        plt1=plot(handles.model.delft3dflow.domain(ad).gridX(m1,n1),handles.model.delft3dflow.domain(ad).gridY(m1,n1),'go');
         set(plt1,'MarkerEdgeColor','k','MarkerFaceColor','y','HitTest','off');
         set(plt1,'Tag','DDCornerPoint');
         
         plt2=[];
         if ~isnan(m2) && ~isnan(n2)
-            plt2=plot(handles.Model(md).Input(ad).gridX(m2,n2),handles.Model(md).Input(ad).gridY(m2,n2),'go');
+            plt2=plot(handles.model.delft3dflow.domain(ad).gridX(m2,n2),handles.model.delft3dflow.domain(ad).gridY(m2,n2),'go');
             set(plt2,'MarkerEdgeColor','k','MarkerFaceColor','y','HitTest','off');
             set(plt2,'Tag','DDCornerPoint');
         end
@@ -481,23 +481,23 @@ function generateDD
 
 handles=getHandles;
 
-switch lower(handles.Model(md).name)
+switch lower(handles.model.delft3dflow.name)
     case{'delft3dflow'}
     otherwise
-        ddb_giveWarning('text',['Sorry, the Domain Decomposition toolbox does not support ' handles.Model(md).longName ' ...']);
+        ddb_giveWarning('text',['Sorry, the Domain Decomposition toolbox does not support ' handles.model.delft3dflow.longName ' ...']);
         return
 end
 
 % Find DD boundaries
 ddbound=[];
-for i=1:handles.Model(md).nrDomains-1
-    for j=i+1:handles.Model(md).nrDomains
-        xg1=handles.Model(md).Input(i).gridX;
-        yg1=handles.Model(md).Input(i).gridY;
-        xg2=handles.Model(md).Input(j).gridX;
-        yg2=handles.Model(md).Input(j).gridY;
-        runid1=handles.Model(md).Input(i).runid;
-        runid2=handles.Model(md).Input(j).runid;
+for i=1:handles.model.delft3dflow.nrDomains-1
+    for j=i+1:handles.model.delft3dflow.nrDomains
+        xg1=handles.model.delft3dflow.domain(i).gridX;
+        yg1=handles.model.delft3dflow.domain(i).gridY;
+        xg2=handles.model.delft3dflow.domain(j).gridX;
+        yg2=handles.model.delft3dflow.domain(j).gridY;
+        runid1=handles.model.delft3dflow.domain(i).runid;
+        runid2=handles.model.delft3dflow.domain(j).runid;
         ddbound=ddb_findDDBoundaries(ddbound,xg1,yg1,xg2,yg2,runid1,runid2);
     end
 end
@@ -506,33 +506,33 @@ if ~isempty(ddbound)
     if handles.toolbox.dd.adjustBathymetry
         % Adjust bathymetries in all domains
         % This ensures that depths along boundaries in both domains are the same
-        for i=1:handles.Model(md).nrDomains-1
-            for j=i+1:handles.Model(md).nrDomains
-                z1=handles.Model(md).Input(i).depth;
-                z2=handles.Model(md).Input(j).depth;
-                runid1=handles.Model(md).Input(i).runid;
-                runid2=handles.Model(md).Input(j).runid;
-                [z1,z2]=ddb_matchDDDepths(ddbound,z1,z2,runid1,runid2,handles.Model(md).Input(i).dpsOpt);
-                handles.Model(md).Input(i).depth=z1;
-                handles.Model(md).Input(j).depth=z2;
+        for i=1:handles.model.delft3dflow.nrDomains-1
+            for j=i+1:handles.model.delft3dflow.nrDomains
+                z1=handles.model.delft3dflow.domain(i).depth;
+                z2=handles.model.delft3dflow.domain(j).depth;
+                runid1=handles.model.delft3dflow.domain(i).runid;
+                runid2=handles.model.delft3dflow.domain(j).runid;
+                [z1,z2]=ddb_matchDDDepths(ddbound,z1,z2,runid1,runid2,handles.model.delft3dflow.domain(i).dpsOpt);
+                handles.model.delft3dflow.domain(i).depth=z1;
+                handles.model.delft3dflow.domain(j).depth=z2;
             end
         end
         % And save all dep files
-        for id=1:handles.Model(md).nrDomains
-            handles.Model(md).Input(id).depthZ=getDepthZ(handles.Model(md).Input(id).depth,handles.Model(md).Input(id).dpsOpt);
+        for id=1:handles.model.delft3dflow.nrDomains
+            handles.model.delft3dflow.domain(id).depthZ=getDepthZ(handles.model.delft3dflow.domain(id).depth,handles.model.delft3dflow.domain(id).dpsOpt);
             % TODO make sure dep file has a name
-            ddb_wldep('write',handles.Model(md).Input(id).depFile,handles.Model(md).Input(id).depth);
+            ddb_wldep('write',handles.model.delft3dflow.domain(id).depFile,handles.model.delft3dflow.domain(id).depth);
         end
     end
 end
 
-handles.Model(md).DDBoundaries=ddbound;
+handles.model.delft3dflow.DDBoundaries=ddbound;
 
 handles=ddb_Delft3DFLOW_plotDD(handles,'plot');
 
 setHandles(handles);
 
 % Save ddbound file
-ddb_saveDDBoundFile(ddbound,handles.Model(md).ddFile);
+ddb_saveDDBoundFile(ddbound,handles.model.delft3dflow.ddFile);
 
-ddb_writeDDBatchFile(handles.Model(md).ddFile);
+ddb_writeDDBatchFile(handles.model.delft3dflow.ddFile);

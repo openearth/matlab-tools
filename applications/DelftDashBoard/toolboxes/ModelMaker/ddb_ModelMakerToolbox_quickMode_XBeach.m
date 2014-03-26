@@ -66,7 +66,6 @@ ddb_zoomOff;
 if isempty(varargin)
     % New tab selected
     ddb_refreshScreen;
-    % setUIElements('modelmakerpanel.quickmode');
     setHandles(handles);
     ddb_plotModelMaker('activate');
     if ~isempty(handles.toolbox.modelmaker.gridOutlineHandle)
@@ -287,7 +286,7 @@ end
 %%
 function generateBathymetry
 % handles=getHandles;
-% [filename, pathname, filterindex] = uiputfile('*.dep', 'Depth File Name',[handles.Model(md).Input(ad).attName '.dep']);
+% [filename, pathname, filterindex] = uiputfile('*.dep', 'Depth File Name',[handles.model.xbeach.domain(ad).attName '.dep']);
 % if pathname~=0
 %     handles=ddb_generateBathymetryDFlowFM(handles,ad,filename);
 % end
@@ -303,26 +302,26 @@ minlev=handles.toolbox.modelmaker.zMax;
 
 boundaries=[];
 
-boundarysections=findBoundarySections(handles.Model(md).Input(ad).netstruc,maxdist,minlev,handles.screenParameters.coordinateSystem.type);
+boundarysections=findBoundarySections(handles.model.xbeach.domain(ad).netstruc,maxdist,minlev,handles.screenParameters.coordinateSystem.type);
 
-handles.Model(md).Input(ad).boundarynames={''};
+handles.model.xbeach.domain(ad).boundarynames={''};
 
 for ib=1:length(boundarysections)
     boundaries = ddb_DFlowFM_initializeBoundary(boundaries,boundarysections(ib).x,boundarysections(ib).y,['bnd' num2str(ib,'%0.3i')],ib, ...
-        handles.Model(md).Input(ad).tstart,handles.Model(md).Input(ad).tstop);
-    handles.Model(md).Input(ad).boundarynames{ib}=['bnd' num2str(ib,'%0.3i')];
+        handles.model.xbeach.domain(ad).tstart,handles.model.xbeach.domain(ad).tstop);
+    handles.model.xbeach.domain(ad).boundarynames{ib}=['bnd' num2str(ib,'%0.3i')];
 end
 
-handles.Model(md).Input(ad).boundaries=boundaries;
-handles.Model(md).Input(ad).nrboundaries=length(boundaries);
+handles.model.xbeach.domain(ad).boundaries=boundaries;
+handles.model.xbeach.domain(ad).nrboundaries=length(boundaries);
 
 handles=ddb_DFlowFM_plotBoundaries(handles,'plot','active',1);
 
 %% Save file
-ddb_DFlowFM_saveBoundaryPolygons('.\',handles.Model(md).Input(ad).boundaries);
+ddb_DFlowFM_saveBoundaryPolygons('.\',handles.model.xbeach.domain(ad).boundaries);
 
 %% External forcing file
-handles.Model(md).Input(ad).extforcefile='forcing.ext';
+handles.model.xbeach.domain(ad).extforcefile='forcing.ext';
 ddb_DFlowFM_saveExtFile(handles);
 
 setHandles(handles);
@@ -347,7 +346,7 @@ try
     % Make one vector with all boundary points
     xb=[];
     yb=[];
-    boundaries=handles.Model(md).Input(ad).boundaries;
+    boundaries=handles.model.xbeach.domain(ad).boundaries;
     
     for ipol=1:length(boundaries)
         xb=[xb boundaries(ipol).x];
@@ -373,7 +372,7 @@ try
             ddb_DFlowFM_writeComponentsFile(boundaries,ipol,jj);
         end
     end
-    handles.Model(md).Input(ad).boundaries=boundaries;
+    handles.model.xbeach.domain(ad).boundaries=boundaries;
     
     setHandles(handles);
     
@@ -391,12 +390,12 @@ catch
     ddb_giveWarning('text',['Initial conditions generation not supported for ' handles.Model(md).longName]);
     return
 end
-if ~isempty(handles.Model(md).Input(ad).grdFile)
-    attName=handles.Model(md).Input(ad).attName;
-    handles.Model(md).Input(ad).iniFile=[attName '.ini'];
-    handles.Model(md).Input(ad).initialConditions='ini';
-    handles.Model(md).Input(ad).smoothingTime=0.0;
-    handles=feval(f,handles,ad,handles.Model(md).Input(ad).iniFile);
+if ~isempty(handles.model.xbeach.domain(ad).grdFile)
+    attName=handles.model.xbeach.domain(ad).attName;
+    handles.model.xbeach.domain(ad).iniFile=[attName '.ini'];
+    handles.model.xbeach.domain(ad).initialConditions='ini';
+    handles.model.xbeach.domain(ad).smoothingTime=0.0;
+    handles=feval(f,handles,ad,handles.model.xbeach.domain(ad).iniFile);
 else
     ddb_giveWarning('Warning','First generate or load a grid');
 end

@@ -16,5 +16,5 @@ end
 % Replace default values with model input
 fieldNames = fieldnames(ddb_xbmi);
 for i = 1:size(fieldNames,1)
-    handles.Model(handles.activeModel.nr).Input(handles.activeDomain).(fieldNames{i}) = ddb_xbmi.(fieldNames{i});
+    handles.model.xbeach.domain(ad).(fieldNames{i}) = ddb_xbmi.(fieldNames{i});
 end

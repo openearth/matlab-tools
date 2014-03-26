@@ -62,17 +62,17 @@ switch OPT.option
         ddb_wlgrid('write','FileName',[attName '.grd'],'X',x,'Y',y,'CoordinateSystem',coord);
 end
 
-handles.Model(md).Input.domains(id).coordsyst = coord;
-handles.Model(md).Input.domains(id).grid=[attName '.grd'];
-handles.Model(md).Input.domains(id).bedlevelgrid=[attName '.grd'];
-handles.Model(md).Input.domains(id).gridname=attName;
+handles.model.delft3dwave.domain.domains(id).coordsyst = coord;
+handles.model.delft3dwave.domain.domains(id).grid=[attName '.grd'];
+handles.model.delft3dwave.domain.domains(id).bedlevelgrid=[attName '.grd'];
+handles.model.delft3dwave.domain.domains(id).gridname=attName;
 
-handles.Model(md).Input.domains(id).gridx=x;
-handles.Model(md).Input.domains(id).gridy=y;
+handles.model.delft3dwave.domain.domains(id).gridx=x;
+handles.model.delft3dwave.domain.domains(id).gridy=y;
 
 nans=zeros(size(x));
 nans(nans==0)=NaN;
-handles.Model(md).Input.domains(id).depth=nans;
+handles.model.delft3dwave.domain.domains(id).depth=nans;
 
-handles.Model(md).Input.domains(id).mmax=size(x,1);
-handles.Model(md).Input.domains(id).nmax=size(x,2);
+handles.model.delft3dwave.domain.domains(id).mmax=size(x,1);
+handles.model.delft3dwave.domain.domains(id).nmax=size(x,2);

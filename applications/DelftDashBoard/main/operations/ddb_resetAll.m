@@ -72,9 +72,11 @@ end
 
 handles=getHandles;
 
-for i=1:length(handles.Model)
+models=fieldnames(handles.model);
+
+for i=1:length(models)
     try
-        feval(handles.Model(i).plotFcn,'delete');
+        feval(handles.model.(models{i}).plotFcn,'delete');
     end
 end
 
@@ -86,7 +88,7 @@ for i=1:length(fldnames)
 end
 
 % Want to keep current model active, so store in icurrentmodel
-icurrentmodel=md;
+currentmodel=handles.activeModel.name;
 
 ddb_initialize('all');
 
@@ -94,8 +96,7 @@ ddb_initialize('all');
 % model
 
 handles=getHandles;
-handles.activeModel.name=handles.Model(icurrentmodel).name;
-handles.activeModel.nr=icurrentmodel;
+handles.activeModel.name=currentmodel;
 setHandles(handles);
 
-ddb_selectModel(handles.Model(md).name);
+ddb_selectModel(handles.activeModel.name);

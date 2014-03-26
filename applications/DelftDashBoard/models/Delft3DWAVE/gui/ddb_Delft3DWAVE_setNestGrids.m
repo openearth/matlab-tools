@@ -1,10 +1,10 @@
 function handles = ddb_Delft3DWAVE_setNestGrids(handles)
 
 if handles.activeWaveGrid>1
-    handles.Model(md).Input.nestgrids=[];
+    handles.model.delft3dwave.domain.nestgrids=[];
     for ii=1:handles.activeWaveGrid-1
-        handles.Model(md).Input.nestgrids{ii}=handles.Model(md).Input.domains(ii).gridname;
+        handles.model.delft3dwave.domain.nestgrids{ii}=handles.model.delft3dwave.domain.domains(ii).gridname;
     end
 else
-    handles.Model(md).Input.nestgrids={''};
+    handles.model.delft3dwave.domain.nestgrids={''};
 end

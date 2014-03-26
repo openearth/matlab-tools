@@ -75,12 +75,14 @@ argin{1}='Callback';
 argin{2}=@ddb_resetAll;
 handles=ddb_addMenuItem(handles,'File','New','Callback',@ddb_menuSelect,'argin',argin);
 
+model=handles.activeModel.name;
+
 % File open
-for i=1:length(handles.Model(md).GUI.menu.openFile)
-    str=handles.Model(md).GUI.menu.openFile(i).string;
-    cb=handles.Model(md).GUI.menu.openFile(i).callback;
-    opt=handles.Model(md).GUI.menu.openFile(i).option;
-    %    tag=handles.Model(md).GUI.menu.openFile(i).tag;
+for i=1:length(handles.model.(model).GUI.menu.openFile)
+    str=handles.model.(model).GUI.menu.openFile(i).string;
+    cb=handles.model.(model).GUI.menu.openFile(i).callback;
+    opt=handles.model.(model).GUI.menu.openFile(i).option;
+    %    tag=handles.model.(model).GUI.menu.openFile(i).tag;
     argin=[];
     argin{1}='Callback';
     argin{2}=cb;
@@ -94,11 +96,11 @@ for i=1:length(handles.Model(md).GUI.menu.openFile)
 end
 
 % File save
-for i=1:length(handles.Model(md).GUI.menu.saveFile)
-    str=handles.Model(md).GUI.menu.saveFile(i).string;
-    cb=handles.Model(md).GUI.menu.saveFile(i).callback;
-    opt=handles.Model(md).GUI.menu.saveFile(i).option;
-    %    tag=handles.Model(md).GUI.menu.openFile(i).tag;
+for i=1:length(handles.model.(model).GUI.menu.saveFile)
+    str=handles.model.(model).GUI.menu.saveFile(i).string;
+    cb=handles.model.(model).GUI.menu.saveFile(i).callback;
+    opt=handles.model.(model).GUI.menu.saveFile(i).option;
+    %    tag=handles.model.(model).GUI.menu.openFile(i).tag;
     argin=[];
     argin{1}='Callback';
     argin{2}=cb;

@@ -65,44 +65,44 @@ if isempty(varargin)
     ddb_refreshScreen;
     handles=getHandles;
     
-    handles.Model(md).Input(ad).fourier.parameterList={'water level','velocity','discharge'};
-    handles.Model(md).Input(ad).fourier.pList={'wl','uv','qf'};
+    handles.model.delft3dflow.domain(ad).fourier.parameterList={'water level','velocity','discharge'};
+    handles.model.delft3dflow.domain(ad).fourier.pList={'wl','uv','qf'};
     k=3;
-    for i=1:handles.Model(md).Input(ad).salinity.include
+    for i=1:handles.model.delft3dflow.domain(ad).salinity.include
         k=k+1;
-        handles.Model(md).Input(ad).fourier.parameterList{k}='salinity';
-        handles.Model(md).Input(ad).fourier.pList{k}='cs';
+        handles.model.delft3dflow.domain(ad).fourier.parameterList{k}='salinity';
+        handles.model.delft3dflow.domain(ad).fourier.pList{k}='cs';
     end
-    for i=1:handles.Model(md).Input(ad).temperature.include
+    for i=1:handles.model.delft3dflow.domain(ad).temperature.include
         k=k+1;
-        handles.Model(md).Input(ad).fourier.parameterList{k}='temperature';
-        handles.Model(md).Input(ad).fourier.pList{k}='ct';
+        handles.model.delft3dflow.domain(ad).fourier.parameterList{k}='temperature';
+        handles.model.delft3dflow.domain(ad).fourier.pList{k}='ct';
     end
     ncon=0;
-    for i=1:handles.Model(md).Input(ad).nrTracers
+    for i=1:handles.model.delft3dflow.domain(ad).nrTracers
         k=k+1;
         ncon=ncon+1;
-        handles.Model(md).Input(ad).fourier.parameterList{k}=handles.Model(md).Input(ad).tracer(i).name;
-        handles.Model(md).Input(ad).fourier.pList{k}=['c' num2str(ncon)];
+        handles.model.delft3dflow.domain(ad).fourier.parameterList{k}=handles.model.delft3dflow.domain(ad).tracer(i).name;
+        handles.model.delft3dflow.domain(ad).fourier.pList{k}=['c' num2str(ncon)];
     end
-    for i=1:handles.Model(md).Input(ad).nrSediments
+    for i=1:handles.model.delft3dflow.domain(ad).nrSediments
         k=k+1;
         ncon=ncon+1;
-        handles.Model(md).Input(ad).fourier.parameterList{k}=handles.Model(md).Input(ad).sediment(i).name;
-        handles.Model(md).Input(ad).fourier.pList{k}=['c' num2str(ncon)];
+        handles.model.delft3dflow.domain(ad).fourier.parameterList{k}=handles.model.delft3dflow.domain(ad).sediment(i).name;
+        handles.model.delft3dflow.domain(ad).fourier.pList{k}=['c' num2str(ncon)];
     end
     
-    for k=1:handles.Model(md).Input(ad).KMax
-        handles.Model(md).Input(ad).fourier.layerList{k}=num2str(k);
+    for k=1:handles.model.delft3dflow.domain(ad).KMax
+        handles.model.delft3dflow.domain(ad).fourier.layerList{k}=num2str(k);
     end
     
     setHandles(handles);
     % setUIElements('delft3dflow.output.outputpanel.fourier');
     
     
-    %     enab=ones(length(handles.Model(md).Input(ad).fourier.editTable.startTime),10);
-    %     for i=1:length(handles.Model(md).Input(ad).fourier.editTable.startTime)
-    %         if handles.Model(md).Input(ad).fourier.editTable.nrCycles(i)==0
+    %     enab=ones(length(handles.model.delft3dflow.domain(ad).fourier.editTable.startTime),10);
+    %     for i=1:length(handles.model.delft3dflow.domain(ad).fourier.editTable.startTime)
+    %         if handles.model.delft3dflow.domain(ad).fourier.editTable.nrCycles(i)==0
     %             enab(i,10)=0;
     %         else
     %             enab(i,8:9)=0;
@@ -111,9 +111,9 @@ if isempty(varargin)
     %     h=findobj(gcf,'Tag','delft3dflow.output.outputpanel.fourier.fouriertable1');
     %     table(h,'refresh','enable',enab);
     
-    %     enab=ones(length(handles.Model(md).Input(ad).fourier.generateTable.parameterNumber),6);
-    %     for i=1:length(handles.Model(md).Input(ad).fourier.generateTable.parameterNumber)
-    %         if handles.Model(md).Input(ad).fourier.generateTable.componentNumber(i)==1
+    %     enab=ones(length(handles.model.delft3dflow.domain(ad).fourier.generateTable.parameterNumber),6);
+    %     for i=1:length(handles.model.delft3dflow.domain(ad).fourier.generateTable.parameterNumber)
+    %         if handles.model.delft3dflow.domain(ad).fourier.generateTable.componentNumber(i)==1
     %             % A0
     %             enab(i,6)=0;
     %         else
@@ -128,9 +128,9 @@ else
     opt=varargin{1};
     switch(lower(opt))
         case{'changetable1'}
-            %             enab=ones(length(handles.Model(md).Input(ad).fourier.editTable.startTime),10);
-            %             for i=1:length(handles.Model(md).Input(ad).fourier.editTable.startTime)
-            %                 if handles.Model(md).Input(ad).fourier.editTable.nrCycles(i)==0
+            %             enab=ones(length(handles.model.delft3dflow.domain(ad).fourier.editTable.startTime),10);
+            %             for i=1:length(handles.model.delft3dflow.domain(ad).fourier.editTable.startTime)
+            %                 if handles.model.delft3dflow.domain(ad).fourier.editTable.nrCycles(i)==0
             %                     enab(i,10)=0;
             %                 else
             %                     enab(i,8:9)=0;
@@ -140,9 +140,9 @@ else
             %             h=findobj(gcf,'Tag','delft3dflow.output.outputpanel.fourier.fouriertable1');
             %             table(h,'refresh','enable',enab);
         case{'changetable2'}
-            %             enab=ones(length(handles.Model(md).Input(ad).fourier.generateTable.parameterNumber),6);
-            %             for i=1:length(handles.Model(md).Input(ad).fourier.generateTable.parameterNumber)
-            %                 if handles.Model(md).Input(ad).fourier.generateTable.componentNumber(i)==1
+            %             enab=ones(length(handles.model.delft3dflow.domain(ad).fourier.generateTable.parameterNumber),6);
+            %             for i=1:length(handles.model.delft3dflow.domain(ad).fourier.generateTable.parameterNumber)
+            %                 if handles.model.delft3dflow.domain(ad).fourier.generateTable.componentNumber(i)==1
             %                     % A0
             %                     enab(i,6)=0;
             %                 else
@@ -157,13 +157,13 @@ else
             
             components={'M2','S2','N2','K2','K1','O1','P1','Q1'};
             
-            handles.Model(md).Input(ad).fourier.generateTable.parameterNumber=[];
-            handles.Model(md).Input(ad).fourier.generateTable.componentNumber=[];
-            handles.Model(md).Input(ad).fourier.generateTable.layer=[];
-            handles.Model(md).Input(ad).fourier.generateTable.fourier=[];
-            handles.Model(md).Input(ad).fourier.generateTable.max=[];
-            handles.Model(md).Input(ad).fourier.generateTable.min=[];
-            handles.Model(md).Input(ad).fourier.generateTable.ellipse=[];
+            handles.model.delft3dflow.domain(ad).fourier.generateTable.parameterNumber=[];
+            handles.model.delft3dflow.domain(ad).fourier.generateTable.componentNumber=[];
+            handles.model.delft3dflow.domain(ad).fourier.generateTable.layer=[];
+            handles.model.delft3dflow.domain(ad).fourier.generateTable.fourier=[];
+            handles.model.delft3dflow.domain(ad).fourier.generateTable.max=[];
+            handles.model.delft3dflow.domain(ad).fourier.generateTable.min=[];
+            handles.model.delft3dflow.domain(ad).fourier.generateTable.ellipse=[];
             
             tt=t_getconsts;
             names=tt.name;
@@ -174,13 +174,13 @@ else
             
             for i=1:length(components)
                 ii=strmatch(components{i},cnsts,'exact');
-                handles.Model(md).Input(ad).fourier.generateTable.parameterNumber(i)=1;
-                handles.Model(md).Input(ad).fourier.generateTable.componentNumber(i)=ii;
-                handles.Model(md).Input(ad).fourier.generateTable.layer(i)=1;
-                handles.Model(md).Input(ad).fourier.generateTable.fourier(i)=1;
-                handles.Model(md).Input(ad).fourier.generateTable.max(i)=0;
-                handles.Model(md).Input(ad).fourier.generateTable.min(i)=0;
-                handles.Model(md).Input(ad).fourier.generateTable.ellipse(i)=0;
+                handles.model.delft3dflow.domain(ad).fourier.generateTable.parameterNumber(i)=1;
+                handles.model.delft3dflow.domain(ad).fourier.generateTable.componentNumber(i)=ii;
+                handles.model.delft3dflow.domain(ad).fourier.generateTable.layer(i)=1;
+                handles.model.delft3dflow.domain(ad).fourier.generateTable.fourier(i)=1;
+                handles.model.delft3dflow.domain(ad).fourier.generateTable.max(i)=0;
+                handles.model.delft3dflow.domain(ad).fourier.generateTable.min(i)=0;
+                handles.model.delft3dflow.domain(ad).fourier.generateTable.ellipse(i)=0;
             end
             
             setHandles(handles);
@@ -190,13 +190,13 @@ else
         case{'generateinput'}
             
             % Compute mean latitude of model
-            xm=nanmean(nanmean(handles.Model(md).Input(ad).gridX));
-            ym=nanmean(nanmean(handles.Model(md).Input(ad).gridY));
+            xm=nanmean(nanmean(handles.model.delft3dflow.domain(ad).gridX));
+            ym=nanmean(nanmean(handles.model.delft3dflow.domain(ad).gridY));
             cs.name='WGS 84';
             cs.type='Geographic';
             [xm,ym]=ddb_coordConvert(xm,ym,handles.screenParameters.coordinateSystem,cs);
             
-            spinuptime=handles.Model(md).Input(ad).fourier.spinUpTime/1440;
+            spinuptime=handles.model.delft3dflow.domain(ad).fourier.spinUpTime/1440;
             
             tt=t_getconsts;
             names=tt.name;
@@ -206,24 +206,24 @@ else
                 cnsts{i}=deblank(names(i,:));
             end
             
-            handles.Model(md).Input(ad).fourier.editTable=[];
+            handles.model.delft3dflow.domain(ad).fourier.editTable=[];
             
             k=0;
             
-            for j=1:length(handles.Model(md).Input(ad).fourier.generateTable.componentNumber)
+            for j=1:length(handles.model.delft3dflow.domain(ad).fourier.generateTable.componentNumber)
                 
                 % Find index of component
-                ii=handles.Model(md).Input(ad).fourier.generateTable.componentNumber(j);
+                ii=handles.model.delft3dflow.domain(ad).fourier.generateTable.componentNumber(j);
                 
                 freq=freqs(ii);
                 
                 % Compute argument based on argument at reference time and correction of the mean model time
-                [v,u,f]=t_vuf('nodal',0.5*(handles.Model(md).Input(ad).startTime+handles.Model(md).Input(ad).stopTime),ii,ym);
-                [vref,uref,fref]=t_vuf('nodal',handles.Model(md).Input(ad).itDate,ii,ym);
+                [v,u,f]=t_vuf('nodal',0.5*(handles.model.delft3dflow.domain(ad).startTime+handles.model.delft3dflow.domain(ad).stopTime),ii,ym);
+                [vref,uref,fref]=t_vuf('nodal',handles.model.delft3dflow.domain(ad).itDate,ii,ym);
                 u=(vref+u)*360;
                 u=mod(u,360);
                 
-                ttot=handles.Model(md).Input(ad).stopTime-handles.Model(md).Input(ad).startTime-spinuptime;
+                ttot=handles.model.delft3dflow.domain(ad).stopTime-handles.model.delft3dflow.domain(ad).startTime-spinuptime;
                 
                 if freq==0
                     period=ttot;
@@ -232,43 +232,43 @@ else
                 end
                 
                 ncyc=floor(ttot/period);
-                dt=handles.Model(md).Input(ad).timeStep;
+                dt=handles.model.delft3dflow.domain(ad).timeStep;
                 ttot=ncyc*period;
                 ntimesteps=round(1440*ttot/dt);
-                tstart=handles.Model(md).Input(ad).stopTime-ntimesteps*dt/1440;
-                tstop=handles.Model(md).Input(ad).stopTime;
+                tstart=handles.model.delft3dflow.domain(ad).stopTime-ntimesteps*dt/1440;
+                tstop=handles.model.delft3dflow.domain(ad).stopTime;
                 
                 nopt=0;
                 optNr=[];
-                if handles.Model(md).Input(ad).fourier.generateTable.fourier(j)
+                if handles.model.delft3dflow.domain(ad).fourier.generateTable.fourier(j)
                     nopt=nopt+1;
                     optNr(nopt)=1;
                 end
-                if handles.Model(md).Input(ad).fourier.generateTable.max(j)
+                if handles.model.delft3dflow.domain(ad).fourier.generateTable.max(j)
                     nopt=nopt+1;
                     optNr(nopt)=2;
                 end
-                if handles.Model(md).Input(ad).fourier.generateTable.min(j)
+                if handles.model.delft3dflow.domain(ad).fourier.generateTable.min(j)
                     nopt=nopt+1;
                     optNr(nopt)=3;
                 end
-                if handles.Model(md).Input(ad).fourier.generateTable.ellipse(j)
+                if handles.model.delft3dflow.domain(ad).fourier.generateTable.ellipse(j)
                     nopt=nopt+1;
                     optNr(nopt)=4;
                 end
                 
                 for n=1:nopt
                     k=k+1;
-                    handles.Model(md).Input(ad).fourier.editTable.parameterNumber(k)=handles.Model(md).Input(ad).fourier.generateTable.parameterNumber(j);
-                    handles.Model(md).Input(ad).fourier.editTable.period(k)=period;
-                    handles.Model(md).Input(ad).fourier.editTable.startTime(k)=tstart;
-                    handles.Model(md).Input(ad).fourier.editTable.startTime(k)=tstart;
-                    handles.Model(md).Input(ad).fourier.editTable.stopTime(k)=tstop;
-                    handles.Model(md).Input(ad).fourier.editTable.nrCycles(k)=ncyc;
-                    handles.Model(md).Input(ad).fourier.editTable.nodalAmplificationFactor(k)=f;
-                    handles.Model(md).Input(ad).fourier.editTable.astronomicalArgument(k)=u;
-                    handles.Model(md).Input(ad).fourier.editTable.layer(k)=handles.Model(md).Input(ad).fourier.generateTable.layer(j);
-                    handles.Model(md).Input(ad).fourier.editTable.option(k)=optNr(n);
+                    handles.model.delft3dflow.domain(ad).fourier.editTable.parameterNumber(k)=handles.model.delft3dflow.domain(ad).fourier.generateTable.parameterNumber(j);
+                    handles.model.delft3dflow.domain(ad).fourier.editTable.period(k)=period;
+                    handles.model.delft3dflow.domain(ad).fourier.editTable.startTime(k)=tstart;
+                    handles.model.delft3dflow.domain(ad).fourier.editTable.startTime(k)=tstart;
+                    handles.model.delft3dflow.domain(ad).fourier.editTable.stopTime(k)=tstop;
+                    handles.model.delft3dflow.domain(ad).fourier.editTable.nrCycles(k)=ncyc;
+                    handles.model.delft3dflow.domain(ad).fourier.editTable.nodalAmplificationFactor(k)=f;
+                    handles.model.delft3dflow.domain(ad).fourier.editTable.astronomicalArgument(k)=u;
+                    handles.model.delft3dflow.domain(ad).fourier.editTable.layer(k)=handles.model.delft3dflow.domain(ad).fourier.generateTable.layer(j);
+                    handles.model.delft3dflow.domain(ad).fourier.editTable.option(k)=optNr(n);
                 end
             end
             

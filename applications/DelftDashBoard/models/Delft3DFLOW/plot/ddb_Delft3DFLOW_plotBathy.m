@@ -68,8 +68,6 @@ vis=1;
 act=1;
 
 % model number imd
-imd=strmatch('Delft3DFLOW',{handles.Model(:).name},'exact');
-
 % Read input arguments
 for i=1:length(varargin)
     if ischar(varargin{i})
@@ -84,58 +82,58 @@ for i=1:length(varargin)
     end
 end
 
-vis=vis*handles.Model(imd).menuview.bathymetry;
+vis=vis*handles.model.delft3dflow.menuview.bathymetry;
 
 switch lower(option)
     
     case{'plot'}
         
         % First delete old bathy
-        if isfield(handles.Model(imd).Input(id).bathy,'plotHandles')
-            if ~isempty(handles.Model(imd).Input(id).bathy.plotHandles)
+        if isfield(handles.model.delft3dflow.domain(id).bathy,'plotHandles')
+            if ~isempty(handles.model.delft3dflow.domain(id).bathy.plotHandles)
                 try
-                    delete(handles.Model(imd).Input(id).bathy.plotHandles);
+                    delete(handles.model.delft3dflow.domain(id).bathy.plotHandles);
                 end
             end
         end
         
-        if size(handles.Model(md).Input(id).depthZ,1)>0
+        if size(handles.model.delft3dflow.domain(id).depthZ,1)>0
             
-            x=handles.Model(imd).Input(id).gridX;
-            y=handles.Model(imd).Input(id).gridY;
-            %            z=handles.Model(md).Input(id).depth;
+            x=handles.model.delft3dflow.domain(id).gridX;
+            y=handles.model.delft3dflow.domain(id).gridY;
+            %            z=handles.model.delft3dflow.domain(id).depth;
             z=zeros(size(x));
             z(z==0)=NaN;
-            z(1:end-1,1:end-1)=handles.Model(imd).Input(id).depthZ(2:end,2:end);
-            %            z=handles.Model(md).Input(id).depthZ(2:end,2:end);
+            z(1:end-1,1:end-1)=handles.model.delft3dflow.domain(id).depthZ(2:end,2:end);
+            %            z=handles.model.delft3dflow.domain(id).depthZ(2:end,2:end);
             
-            handles.Model(imd).Input(id).bathy.plotHandles=ddb_plotBathy(x,y,z);
+            handles.model.delft3dflow.domain(id).bathy.plotHandles=ddb_plotBathy(x,y,z);
             
             if vis
-                set(handles.Model(imd).Input(id).bathy.plotHandles,'Visible','on');
+                set(handles.model.delft3dflow.domain(id).bathy.plotHandles,'Visible','on');
             else
-                set(handles.Model(imd).Input(id).bathy.plotHandles,'Visible','off');
+                set(handles.model.delft3dflow.domain(id).bathy.plotHandles,'Visible','off');
             end
             
         end
         
     case{'delete'}
-        if isfield(handles.Model(imd).Input(id).bathy,'plotHandles')
-            if ~isempty(handles.Model(imd).Input(id).bathy.plotHandles)
+        if isfield(handles.model.delft3dflow.domain(id).bathy,'plotHandles')
+            if ~isempty(handles.model.delft3dflow.domain(id).bathy.plotHandles)
                 try
-                    delete(handles.Model(imd).Input(id).bathy.plotHandles);
+                    delete(handles.model.delft3dflow.domain(id).bathy.plotHandles);
                 end
             end
         end
         
     case{'update'}
-        if isfield(handles.Model(imd).Input(id).bathy,'plotHandles')
-            if ~isempty(handles.Model(imd).Input(id).bathy.plotHandles)
+        if isfield(handles.model.delft3dflow.domain(id).bathy,'plotHandles')
+            if ~isempty(handles.model.delft3dflow.domain(id).bathy.plotHandles)
                 try
                     if vis
-                        set(handles.Model(imd).Input(id).bathy.plotHandles,'Visible','on');
+                        set(handles.model.delft3dflow.domain(id).bathy.plotHandles,'Visible','on');
                     else
-                        set(handles.Model(imd).Input(id).bathy.plotHandles,'Visible','off');
+                        set(handles.model.delft3dflow.domain(id).bathy.plotHandles,'Visible','off');
                     end
                 end
             end

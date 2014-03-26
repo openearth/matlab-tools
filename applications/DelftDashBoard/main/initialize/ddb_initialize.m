@@ -110,7 +110,7 @@ switch lower(varargin{1}),
         ddb_makeMapPanel;
         
         % Toolbox is selected in ddb_selectModel
-        ddb_selectModel('Delft3DFLOW');
+        ddb_selectModel('delft3dflow');
         
         % Refresh domains in menu
         ddb_refreshDomainMenu;

@@ -77,11 +77,13 @@ if isempty(varargin)
     % New
     uimenu(p,'Label','New','Callback',{@ddb_menuFile,@ddb_resetAll});
     
+    model=handles.activeModel.name;
+    
     % Model open options
-    for i=1:length(handles.Model(md).GUI.menu.openFile)
-        str=handles.Model(md).GUI.menu.openFile(i).string;
-        cb=handles.Model(md).GUI.menu.openFile(i).callback;
-        opt=handles.Model(md).GUI.menu.openFile(i).option;
+    for i=1:length(handles.model.(model).GUI.menu.openFile)
+        str=handles.model.(model).GUI.menu.openFile(i).string;
+        cb=handles.model.(model).GUI.menu.openFile(i).callback;
+        opt=handles.model.(model).GUI.menu.openFile(i).option;
         h=uimenu(p,'Label',str,'Callback',{@ddb_menuFile,cb,opt});
         if i==1
             set(h,'Separator','on');
@@ -91,10 +93,10 @@ if isempty(varargin)
     end
     
     % Model save options
-    for i=1:length(handles.Model(md).GUI.menu.saveFile)
-        str=handles.Model(md).GUI.menu.saveFile(i).string;
-        cb=handles.Model(md).GUI.menu.saveFile(i).callback;
-        opt=handles.Model(md).GUI.menu.saveFile(i).option;
+    for i=1:length(handles.model.(model).GUI.menu.saveFile)
+        str=handles.model.(model).GUI.menu.saveFile(i).string;
+        cb=handles.model.(model).GUI.menu.saveFile(i).callback;
+        opt=handles.model.(model).GUI.menu.saveFile(i).option;
         h=uimenu(p,'Label',str,'Callback',{@ddb_menuFile,cb,opt});
         if i==1
             set(h,'Separator','on');
@@ -103,10 +105,7 @@ if isempty(varargin)
         end
     end
     
-    % Save all
-    uimenu(p,'Label','Save All Model Files','Callback',{@ddb_menuFile,@ddb_saveAllModelFiles},'Separator','on');
-
-    % Save all
+    % Select working directory
     uimenu(p,'Label','Select Working Directory','Callback',{@ddb_menuFile,@ddb_selectWorkingDirectory},'Separator','on');
 
     % Exit

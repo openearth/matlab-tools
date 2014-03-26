@@ -1,8 +1,6 @@
 function ddb_Delft3DWAVE_saveObstaclePolylinesFile(handles)
 
-ii=strmatch('Delft3DWAVE',{handles.Model.name},'exact');
-
-inp=handles.Model(ii).Input;
+inp=handles.model.delft3dwave.domain;
 
 %% Polyline line
 

@@ -63,15 +63,17 @@ function ddb_addModelTabPanels
 handles=getHandles;
 
 % Model tabs
-for i=1:length(handles.Model)
+models=fieldnames(handles.model);
+for i=1:length(models)
+    model=models{i};
     handles.activeModel.nr = i;
     setHandles(handles);
-    element=handles.Model(i).GUI.element;
+    element=handles.model.(model).GUI.element;
     if ~isempty(element)
 %        element.element.tab(1).tab.callback=@ddb_selectToolbox;
         element=gui_addElements(gcf,element,'getFcn',@getHandles,'setFcn',@setHandles);
         set(element(1).element.handle,'Visible','off');
-        handles.Model(i).GUI.element=element;
+        handles.model.(model).GUI.element=element;
     end
 end
 

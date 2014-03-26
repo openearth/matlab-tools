@@ -82,10 +82,10 @@ try
     set(gcf, 'Pointer', 'arrow');
     ddb_zoomOff;
     
-%     for j=1:length(handles.Model)
-        f=handles.Model(md).plotFcn;
-        feval(f,'update','active',0,'domain',ad,'visible',1,'wavedomain',awg);
-%     end
+    model=handles.activeModel.name;
+    f=handles.model.(model).plotFcn;
+    feval(f,'update','active',0,'domain',ad,'visible',1,'wavedomain',awg);
+
     fldnames=fieldnames(handles.toolbox);
     for j=1:length(fldnames)
         f=handles.toolbox.(fldnames{j}).plotFcn;

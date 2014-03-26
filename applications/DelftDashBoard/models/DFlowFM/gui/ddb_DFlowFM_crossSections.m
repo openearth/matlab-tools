@@ -80,15 +80,15 @@ else
             
         case{'openfile'}
             handles=getHandles;
-            handles.Model(md).Input.crosssections=ddb_DFlowFM_readCrsFile(handles.Model(md).Input.crsfile);
-            handles.Model(md).Input.nrcrosssections=length(handles.Model(md).Input.crosssections);
+            handles.model.dflowfm.domain.crosssections=ddb_DFlowFM_readCrsFile(handles.model.dflowfm.domain.crsfile);
+            handles.model.dflowfm.domain.nrcrosssections=length(handles.model.dflowfm.domain.crosssections);
             handles=updateNames(handles);
             handles=ddb_DFlowFM_plotCrossSections(handles,'plot','active',1);
             setHandles(handles);
             
         case{'savefile'}
             handles=getHandles;
-            ddb_DFlowFM_saveCrsFile(handles.Model(md).Input.crsfile,handles.Model(md).Input.crosssections);
+            ddb_DFlowFM_saveCrsFile(handles.model.dflowfm.domain.crsfile,handles.model.dflowfm.domain.crosssections);
 
     end
 end
@@ -100,7 +100,7 @@ function drawCrossSection
 
 handles=getHandles;
 % Click Add in GUI
-handles.Model(md).Input(ad).deletecrosssection=0;
+handles.model.dflowfm.domain(ad).deletecrosssection=0;
 ddb_zoomOff;
 setInstructions({'','','Draw cross section'});
 gui_polyline('draw','tag','dflowfmcrosssection','Marker','o','createcallback',@addCrossSection,'changecallback',@changeCrossSection,'closed',0, ...
@@ -115,15 +115,15 @@ clearInstructions;
 handles=getHandles;
 
 % Add mode
-handles.Model(md).Input(ad).nrcrosssections=handles.Model(md).Input(ad).nrcrosssections+1;
-iac=handles.Model(md).Input(ad).nrcrosssections;
-handles.Model(md).Input(ad).crosssections(iac).name=['crosssection ' num2str(iac)];
-handles.Model(md).Input(ad).crosssectionnames{iac}=handles.Model(md).Input(ad).crosssections(iac).name;
+handles.model.dflowfm.domain(ad).nrcrosssections=handles.model.dflowfm.domain(ad).nrcrosssections+1;
+iac=handles.model.dflowfm.domain(ad).nrcrosssections;
+handles.model.dflowfm.domain(ad).crosssections(iac).name=['crosssection ' num2str(iac)];
+handles.model.dflowfm.domain(ad).crosssectionnames{iac}=handles.model.dflowfm.domain(ad).crosssections(iac).name;
 
-handles.Model(md).Input(ad).crosssections(iac).x=x;
-handles.Model(md).Input(ad).crosssections(iac).y=y;
-handles.Model(md).Input(ad).crosssections(iac).handle=h;
-handles.Model(md).Input(ad).activecrosssection=iac;
+handles.model.dflowfm.domain(ad).crosssections(iac).x=x;
+handles.model.dflowfm.domain(ad).crosssections(iac).y=y;
+handles.model.dflowfm.domain(ad).crosssections(iac).handle=h;
+handles.model.dflowfm.domain(ad).activecrosssection=iac;
 
 handles=ddb_DFlowFM_plotCrossSections(handles,'plot','active',1);
 
@@ -138,16 +138,16 @@ function changeCrossSection(h,x,y)
 
 handles=getHandles;
 
-for ii=1:handles.Model(md).Input(ad).nrcrosssections
-    if handles.Model(md).Input(ad).crosssections(ii).handle==h
+for ii=1:handles.model.dflowfm.domain(ad).nrcrosssections
+    if handles.model.dflowfm.domain(ad).crosssections(ii).handle==h
         iac=ii;
         break;
     end
 end
 
-handles.Model(md).Input(ad).crosssections(iac).x=x;
-handles.Model(md).Input(ad).crosssections(iac).y=y;
-handles.Model(md).Input(ad).activecrosssection=iac;
+handles.model.dflowfm.domain(ad).crosssections(iac).x=x;
+handles.model.dflowfm.domain(ad).crosssections(iac).y=y;
+handles.model.dflowfm.domain(ad).activecrosssection=iac;
 
 handles=ddb_DFlowFM_plotCrossSections(handles,'plot','active',1);
 
@@ -162,26 +162,26 @@ clearInstructions;
 
 handles=getHandles;
 
-nrobs=handles.Model(md).Input(ad).nrcrosssections;
+nrobs=handles.model.dflowfm.domain(ad).nrcrosssections;
 
 if nrobs>0
-    iac=handles.Model(md).Input(ad).activecrosssection;
+    iac=handles.model.dflowfm.domain(ad).activecrosssection;
     handles=ddb_DFlowFM_plotCrossSections(handles,'delete','crosssections');
     if nrobs>1
-        handles.Model(md).Input(ad).crosssections=removeFromStruc(handles.Model(md).Input(ad).crosssections,iac);
-        handles.Model(md).Input(ad).crosssectionnames=removeFromCellArray(handles.Model(md).Input(ad).crosssectionnames,iac);
+        handles.model.dflowfm.domain(ad).crosssections=removeFromStruc(handles.model.dflowfm.domain(ad).crosssections,iac);
+        handles.model.dflowfm.domain(ad).crosssectionnames=removeFromCellArray(handles.model.dflowfm.domain(ad).crosssectionnames,iac);
     else
-        handles.Model(md).Input(ad).crosssectionnames={''};
-        handles.Model(md).Input(ad).activecrosssection=1;
-        handles.Model(md).Input(ad).crosssections(1).name='';
-        handles.Model(md).Input(ad).crosssections(1).x=0;
-        handles.Model(md).Input(ad).crosssections(1).y=0;
+        handles.model.dflowfm.domain(ad).crosssectionnames={''};
+        handles.model.dflowfm.domain(ad).activecrosssection=1;
+        handles.model.dflowfm.domain(ad).crosssections(1).name='';
+        handles.model.dflowfm.domain(ad).crosssections(1).x=0;
+        handles.model.dflowfm.domain(ad).crosssections(1).y=0;
     end
     if iac==nrobs
         iac=max(nrobs-1,1);
     end
-    handles.Model(md).Input(ad).nrcrosssections=nrobs-1;
-    handles.Model(md).Input(ad).activecrosssection=iac;
+    handles.model.dflowfm.domain(ad).nrcrosssections=nrobs-1;
+    handles.model.dflowfm.domain(ad).activecrosssection=iac;
     handles=ddb_DFlowFM_plotCrossSections(handles,'plot','active',1);
     setHandles(handles);
     refreshCrossSections;
@@ -204,9 +204,9 @@ setHandles(handles);
 
 %%
 function handles=updateNames(handles)
-handles.Model(md).Input.crosssectionnames=[];
-for ib=1:handles.Model(md).Input.nrcrosssections
-    handles.Model(md).Input.crosssectionnames{ib}=handles.Model(md).Input.crosssections(ib).name;
+handles.model.dflowfm.domain.crosssectionnames=[];
+for ib=1:handles.model.dflowfm.domain.nrcrosssections
+    handles.model.dflowfm.domain.crosssectionnames{ib}=handles.model.dflowfm.domain.crosssections(ib).name;
 end
 
 %%

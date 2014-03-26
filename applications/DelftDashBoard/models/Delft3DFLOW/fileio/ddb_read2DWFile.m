@@ -67,21 +67,21 @@ n1=[];
 n2=[];
 uv=[];
 
-[uv,m1,n1,m2,n2,fric,hgt,dummy] = textread(handles.Model(md).Input(id).w2dFile,'%s%f%f%f%f%f%f%f');
+[uv,m1,n1,m2,n2,fric,hgt,dummy] = textread(handles.model.delft3dflow.domain(id).w2dFile,'%s%f%f%f%f%f%f%f');
 
 for i=1:length(m1)
-    handles.Model(md).Input(id).weirs2D(i).M1=m1(i);
-    handles.Model(md).Input(id).weirs2D(i).N1=n1(i);
-    handles.Model(md).Input(id).weirs2D(i).M2=m2(i);
-    handles.Model(md).Input(id).weirs2D(i).N2=n2(i);
-    handles.Model(md).Input(id).weirs2D(i).UV=uv{i};
-    handles.Model(md).Input(id).weirs2D(i).crestHeight=hgt(i);
-    handles.Model(md).Input(id).weirs2D(i).frictionCoefficient=fric(i);
+    handles.model.delft3dflow.domain(id).weirs2D(i).M1=m1(i);
+    handles.model.delft3dflow.domain(id).weirs2D(i).N1=n1(i);
+    handles.model.delft3dflow.domain(id).weirs2D(i).M2=m2(i);
+    handles.model.delft3dflow.domain(id).weirs2D(i).N2=n2(i);
+    handles.model.delft3dflow.domain(id).weirs2D(i).UV=uv{i};
+    handles.model.delft3dflow.domain(id).weirs2D(i).crestHeight=hgt(i);
+    handles.model.delft3dflow.domain(id).weirs2D(i).frictionCoefficient=fric(i);
 end
 
-handles.Model(md).Input(id).nrWeirs2D=length(m1);
+handles.model.delft3dflow.domain(id).nrWeirs2D=length(m1);
 for i=1:length(m1)
-    handles.Model(md).Input(id).weirs2D(i).name=['(' num2str(m1(i)) ',' num2str(n1(i)) ')...(' num2str(m2(i)) ',' num2str(n2(i)) ')'];
-    handles.Model(md).Input(id).weir2DNames{i}=handles.Model(md).Input(id).weirs2D(i).name;
+    handles.model.delft3dflow.domain(id).weirs2D(i).name=['(' num2str(m1(i)) ',' num2str(n1(i)) ')...(' num2str(m2(i)) ',' num2str(n2(i)) ')'];
+    handles.model.delft3dflow.domain(id).weir2DNames{i}=handles.model.delft3dflow.domain(id).weirs2D(i).name;
 end
 

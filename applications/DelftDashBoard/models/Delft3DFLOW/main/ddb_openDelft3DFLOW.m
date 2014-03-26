@@ -73,11 +73,11 @@ switch opt
                 handles.workingDirectory=pathname;
             end
             ddb_plotDelft3DFLOW('delete');
-            handles.Model(md).Input=[];
+            handles.model.delft3dflow.domain=[];
             handles=ddb_readDDBoundFile(handles,filename);
-            for i=1:handles.Model(md).nrDomains
+            for i=1:handles.model.delft3dflow.nrDomains
                 handles.activeDomain=i;
-                runid=handles.Model(md).Input(i).runid;
+                runid=handles.model.delft3dflow.domain(i).runid;
                 handles=ddb_initializeFlowDomain(handles,'all',i,runid);
                 filename=[runid '.mdf'];
                 handles=ddb_readMDF(handles,filename,i);
@@ -101,19 +101,19 @@ switch opt
             end
             ddb_plotDelft3DFLOW('delete');
             id=handles.activeDomain;
-            handles.Model(md).Input=clearStructure(handles.Model(md).Input,id);
+            handles.model.delft3dflow.domain=clearStructure(handles.model.delft3dflow.domain,id);
             runid=filename(1:end-4);
-            handles.Model(md).domains{id}=runid;
-            handles.Model(md).DDBoundaries=[];
+            handles.model.delft3dflow.domains{id}=runid;
+            handles.model.delft3dflow.DDBoundaries=[];
             handles=ddb_initializeFlowDomain(handles,'all',id,runid);
             filename=[runid '.mdf'];
             handles=ddb_readMDF(handles,filename,id);
             handles=ddb_readAttributeFiles(handles,id);
 
-            xl(1)=min(min(handles.Model(md).Input(id).gridX));
-            xl(2)=max(max(handles.Model(md).Input(id).gridX));
-            yl(1)=min(min(handles.Model(md).Input(id).gridY));
-            yl(2)=max(max(handles.Model(md).Input(id).gridY));
+            xl(1)=min(min(handles.model.delft3dflow.domain(id).gridX));
+            xl(2)=max(max(handles.model.delft3dflow.domain(id).gridX));
+            yl(1)=min(min(handles.model.delft3dflow.domain(id).gridY));
+            yl(2)=max(max(handles.model.delft3dflow.domain(id).gridY));
             handles=ddb_zoomTo(handles,xl,yl,0.1);
             
             setHandles(handles);
@@ -131,22 +131,22 @@ switch opt
                 handles.workingDirectory=pathname;
             end
             ddb_plotDelft3DFLOW('delete');
-            handles.Model(md).nrDomains=handles.Model(md).nrDomains+1;
-            handles.activeDomain=handles.Model(md).nrDomains;
+            handles.model.delft3dflow.nrDomains=handles.model.delft3dflow.nrDomains+1;
+            handles.activeDomain=handles.model.delft3dflow.nrDomains;
             id=handles.activeDomain;
-            handles.Model(md).Input=appendStructure(handles.Model(md).Input);
+            handles.model.delft3dflow.domain=appendStructure(handles.model.delft3dflow.domain);
             runid=filename(1:end-4);
-            handles.Model(md).domains{id}=runid;
-            handles.Model(md).DDBoundaries=[];
+            handles.model.delft3dflow.domains{id}=runid;
+            handles.model.delft3dflow.DDBoundaries=[];
             handles=ddb_initializeFlowDomain(handles,'all',id,runid);
             filename=[runid '.mdf'];
             handles=ddb_readMDF(handles,filename,id);
             handles=ddb_readAttributeFiles(handles,id);
 
-            xl(1)=min(min(handles.Model(md).Input(id).gridX));
-            xl(2)=max(max(handles.Model(md).Input(id).gridX));
-            yl(1)=min(min(handles.Model(md).Input(id).gridY));
-            yl(2)=max(max(handles.Model(md).Input(id).gridY));
+            xl(1)=min(min(handles.model.delft3dflow.domain(id).gridX));
+            xl(2)=max(max(handles.model.delft3dflow.domain(id).gridX));
+            yl(1)=min(min(handles.model.delft3dflow.domain(id).gridY));
+            yl(2)=max(max(handles.model.delft3dflow.domain(id).gridY));
             handles=ddb_zoomTo(handles,xl,yl,0.1);
             
             setHandles(handles);

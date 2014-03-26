@@ -166,30 +166,27 @@ end
 function generateBathymetry
 
 handles=getHandles;
-for i=1:handles.toolbox.modelmaker.bathymetry.nrSelectedDatasets
-    nr=handles.toolbox.modelmaker.bathymetry.selectedDatasets(i).number;
-    datasets{i}=handles.bathymetry.datasets{nr};
-    startdates(i)=handles.toolbox.modelmaker.bathymetry.selectedDatasets(i).startDate;
-    searchintervals(i)=handles.toolbox.modelmaker.bathymetry.selectedDatasets(i).searchInterval;
-    zmin(i)=handles.toolbox.modelmaker.bathymetry.selectedDatasets(i).zMin;
-    zmax(i)=handles.toolbox.modelmaker.bathymetry.selectedDatasets(i).zMax;
-    verticaloffsets(i)=handles.toolbox.modelmaker.bathymetry.selectedDatasets(i).verticalLevel;
-end
-verticaloffset=handles.toolbox.modelmaker.bathymetry.verticalDatum;
 
-switch lower(handles.Model(md).name)
+for ii=1:handles.toolbox.modelmaker.bathymetry.nrSelectedDatasets
+    nr=handles.toolbox.modelmaker.bathymetry.selectedDatasets(ii).number;
+    datasets(ii).name=handles.bathymetry.datasets{nr};
+    datasets(ii).startdates=handles.toolbox.modelmaker.bathymetry.selectedDatasets(ii).startDate;
+    datasets(ii).searchintervals=handles.toolbox.modelmaker.bathymetry.selectedDatasets(ii).searchInterval;
+    datasets(ii).zmin=handles.toolbox.modelmaker.bathymetry.selectedDatasets(ii).zMin;
+    datasets(ii).zmax=handles.toolbox.modelmaker.bathymetry.selectedDatasets(ii).zMax;
+    datasets(ii).verticaloffset=handles.toolbox.modelmaker.bathymetry.selectedDatasets(ii).verticalLevel;
+end
+
+switch lower(handles.activeModel.name)
     case{'delft3dflow'}
-        handles=ddb_generateBathymetry_Delft3DFLOW(handles,ad,'datasets',datasets,'startdates',startdates,'searchintervals',searchintervals, ...
-            'zmin',zmin,'zmax',zmax,'verticaloffsets',verticaloffsets,'verticaloffset',verticaloffset,'internaldiffusion', ...
-            handles.toolbox.modelmaker.bathymetry.internalDiffusion,'internaldiffusionrange',handles.toolbox.modelmaker.bathymetry.internalDiffusionRange);
+        handles=ddb_ModelMakerToolbox_Delft3DFLOW_generateBathymetry(handles,datasets,'modeloffset',handles.toolbox.modelmaker.bathymetry.verticalDatum);
     case{'delft3dwave'}
-        handles=ddb_generateBathymetry_Delft3DWAVE(handles,awg,'datasets',datasets,'startdates',startdates,'searchintervals',searchintervals, ...
-            'zmin',zmin,'zmax',zmax,'verticaloffsets',verticaloffsets,'verticaloffset',verticaloffset, ...
-            handles.toolbox.modelmaker.bathymetry.internalDiffusion,'internaldiffusionrange',handles.toolbox.modelmaker.bathymetry.internalDiffusionRange);
+        handles=ddb_ModelMakerToolbox_Delft3DWAVE_generateBathymetry(handles,datasets,'modeloffset',handles.toolbox.modelmaker.bathymetry.verticalDatum);
     case{'dflowfm'}
-        handles=ddb_generateBathymetry_DFlowFM(handles,awg,'datasets',datasets,'startdates',startdates,'searchintervals',searchintervals, ...
-            'zmin',zmin,'zmax',zmax,'verticaloffsets',verticaloffsets,'verticaloffset',verticaloffset, ...
-            handles.toolbox.modelmaker.bathymetry.internalDiffusion,'internaldiffusionrange',handles.toolbox.modelmaker.bathymetry.internalDiffusionRange);
+        handles=ddb_ModelMakerToolbox_DFlowFM_generateBathymetry(handles,datasets,'modeloffset',handles.toolbox.modelmaker.bathymetry.verticalDatum);
+    case{'xbeach'}
+        handles=ddb_ModelMakerToolbox_XBeach_generateBathymetry(handles,datasets,'modeloffset',handles.toolbox.modelmaker.bathymetry.verticalDatum);
 end
 
 setHandles(handles);
+

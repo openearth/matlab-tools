@@ -66,7 +66,7 @@ m2=[];
 n1=[];
 n2=[];
 
-dat=load(handles.Model(md).Input(id).dryFile);
+dat=load(handles.model.delft3dflow.domain(id).dryFile);
 
 m1=dat(:,1);
 n1=dat(:,2);
@@ -74,12 +74,12 @@ m2=dat(:,3);
 n2=dat(:,4);
 
 for i=1:length(m1);
-    handles.Model(md).Input(id).dryPoints(i).M1=m1(i);
-    handles.Model(md).Input(id).dryPoints(i).N1=n1(i);
-    handles.Model(md).Input(id).dryPoints(i).M2=m2(i);
-    handles.Model(md).Input(id).dryPoints(i).N2=n2(i);
-    handles.Model(md).Input(id).dryPoints(i).name=['(' num2str(m1(i)) ',' num2str(n1(i)) ')...(' num2str(m2(i)) ',' num2str(n2(i)) ')'];
-    handles.Model(md).Input(id).dryPointNames{i}=handles.Model(md).Input(id).dryPoints(i).name;
+    handles.model.delft3dflow.domain(id).dryPoints(i).M1=m1(i);
+    handles.model.delft3dflow.domain(id).dryPoints(i).N1=n1(i);
+    handles.model.delft3dflow.domain(id).dryPoints(i).M2=m2(i);
+    handles.model.delft3dflow.domain(id).dryPoints(i).N2=n2(i);
+    handles.model.delft3dflow.domain(id).dryPoints(i).name=['(' num2str(m1(i)) ',' num2str(n1(i)) ')...(' num2str(m2(i)) ',' num2str(n2(i)) ')'];
+    handles.model.delft3dflow.domain(id).dryPointNames{i}=handles.model.delft3dflow.domain(id).dryPoints(i).name;
 end
-handles.Model(md).Input(id).nrDryPoints=length(m1);
+handles.model.delft3dflow.domain(id).nrDryPoints=length(m1);
 

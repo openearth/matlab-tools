@@ -74,29 +74,29 @@ else
             handles=getHandles;
             
             % Depth in cell centres
-            handles.Model(md).Input(ad).depthZ=getDepthZ(handles.Model(md).Input(ad).depth,handles.Model(md).Input(ad).dpsOpt);
+            handles.model.delft3dflow.domain(ad).depthZ=getDepthZ(handles.model.delft3dflow.domain(ad).depth,handles.model.delft3dflow.domain(ad).dpsOpt);
             handles=ddb_Delft3DFLOW_plotBathy(handles,'plot','visible',1,'domain',ad);
             
             % Boundary depths
-            x=handles.Model(md).Input(ad).gridX;
-            y=handles.Model(md).Input(ad).gridY;
-            depthZ=handles.Model(md).Input(ad).depthZ;
-            kcs=handles.Model(md).Input(ad).kcs;
-            for ib=1:handles.Model(md).Input(ad).nrOpenBoundaries
-                [xb,yb,zb,alphau,alphav,side,orientation]=delft3dflow_getBoundaryCoordinates(handles.Model(md).Input(ad).openBoundaries(ib),x,y,depthZ,kcs);
-                handles.Model(md).Input(ad).openBoundaries(ib).depth=zb;
+            x=handles.model.delft3dflow.domain(ad).gridX;
+            y=handles.model.delft3dflow.domain(ad).gridY;
+            depthZ=handles.model.delft3dflow.domain(ad).depthZ;
+            kcs=handles.model.delft3dflow.domain(ad).kcs;
+            for ib=1:handles.model.delft3dflow.domain(ad).nrOpenBoundaries
+                [xb,yb,zb,alphau,alphav,side,orientation]=delft3dflow_getBoundaryCoordinates(handles.model.delft3dflow.domain(ad).openBoundaries(ib),x,y,depthZ,kcs);
+                handles.model.delft3dflow.domain(ad).openBoundaries(ib).depth=zb;
             end
             
-            if strcmpi(handles.Model(md).Input(ad).dpsOpt,'DP')
-                switch handles.Model(md).Input(ad).dpuOpt
+            if strcmpi(handles.model.delft3dflow.domain(ad).dpsOpt,'DP')
+                switch handles.model.delft3dflow.domain(ad).dpuOpt
                     case{'min','upw'}
                     otherwise
-                        handles.Model(md).Input(ad).dpuOptions={'MIN','UPW'};
-                        handles.Model(md).Input(ad).dpuOpt='MIN';
+                        handles.model.delft3dflow.domain(ad).dpuOptions={'MIN','UPW'};
+                        handles.model.delft3dflow.domain(ad).dpuOpt='MIN';
                         setHandles(handles);
                 end
             else
-                handles.Model(md).Input(ad).dpuOptions={'MEAN','MIN','UPW','MOR'};
+                handles.model.delft3dflow.domain(ad).dpuOptions={'MEAN','MIN','UPW','MOR'};
                 setHandles(handles);
             end
     end

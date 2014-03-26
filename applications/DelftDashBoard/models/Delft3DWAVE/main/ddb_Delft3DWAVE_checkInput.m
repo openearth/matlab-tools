@@ -42,9 +42,8 @@ function ddb_Delft3DWAVE_checkInput(handles)
 % $Keywords: $
 
 %%
-imd=strmatch('Delft3DWAVE',{handles.Model(:).name},'exact');
 
-inp=handles.Model(imd).Input;
+inp=handles.model.delft3dwave.domain;
 
 %% Domains
 if inp.nrgrids==0

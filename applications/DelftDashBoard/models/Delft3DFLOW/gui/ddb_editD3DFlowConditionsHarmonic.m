@@ -62,7 +62,7 @@ function ddb_editD3DFlowConditionsHarmonic
 %%
 h=getHandles;
 
-handles=h.Model(md).Input(ad);
+handles=h.model.delft3dflow.domain(ad);
 
 MakeNewWindow('Harmonic Boundary Conditions',[750 600],[h.settingsDir filesep 'icons' filesep 'deltares.gif']);
 
@@ -145,41 +145,41 @@ function PushOK_CallBack(hObject,eventdata)
 h=guidata(gcf);
 handles=getHandles;
 data=gui_table(h.GUIHandles.table,'getdata');
-handles.Model(md).Input(ad).harmonicComponents=[];
+handles.model.delft3dflow.domain(ad).harmonicComponents=[];
 % handles.activeOpenBoundary.harmonicAmpA=[];
 % handles.activeOpenBoundary.harmonicPhaseA=[];
 % handles.activeOpenBoundary.harmonicAmpB=[];
 % handles.activeOpenBoundary.harmonicPhaseB=[];
-j=handles.Model(md).Input(ad).activeOpenBoundary;
+j=handles.model.delft3dflow.domain(ad).activeOpenBoundary;
 for i=1:size(data,1)
-    handles.Model(md).Input(ad).harmonicComponents(i)=data{i,2};
-    handles.Model(md).Input(ad).openBoundaries(j).harmonicAmpA(i)=data{i,3};
-    handles.Model(md).Input(ad).openBoundaries(j).harmonicPhaseA(i)=data{i,4};
-    handles.Model(md).Input(ad).openBoundaries(j).harmonicAmpB(i)=data{i,5};
-    handles.Model(md).Input(ad).openBoundaries(j).harmonicPhaseB(i)=data{i,6};
+    handles.model.delft3dflow.domain(ad).harmonicComponents(i)=data{i,2};
+    handles.model.delft3dflow.domain(ad).openBoundaries(j).harmonicAmpA(i)=data{i,3};
+    handles.model.delft3dflow.domain(ad).openBoundaries(j).harmonicPhaseA(i)=data{i,4};
+    handles.model.delft3dflow.domain(ad).openBoundaries(j).harmonicAmpB(i)=data{i,5};
+    handles.model.delft3dflow.domain(ad).openBoundaries(j).harmonicPhaseB(i)=data{i,6};
 end
-if size(data,1)<handles.Model(md).Input(ad).nrHarmonicComponents
-    for j=1:handles.Model(md).Input(ad).nrOpenBoundaries
+if size(data,1)<handles.model.delft3dflow.domain(ad).nrHarmonicComponents
+    for j=1:handles.model.delft3dflow.domain(ad).nrOpenBoundaries
         if j~=handles.activeOpenBoundary
-            handles.Model(md).Input(ad).openBoundaries(j).harmonicAmpA=handles.Model(md).Input(ad).openBoundaries(j).harmonicAmpA(1:size(data,1));
-            handles.Model(md).Input(ad).openBoundaries(j).harmonicPhaseA=handles.Model(md).Input(ad).openBoundaries(j).harmonicPhaseA(1:size(data,1));
-            handles.Model(md).Input(ad).openBoundaries(j).harmonicAmpB=handles.Model(md).Input(ad).openBoundaries(j).harmonicAmpB(1:size(data,1));
-            handles.Model(md).Input(ad).openBoundaries(j).harmonicPhaseB=handles.Model(md).Input(ad).openBoundaries(j).harmonicPhaseB(1:size(data,1));
+            handles.model.delft3dflow.domain(ad).openBoundaries(j).harmonicAmpA=handles.model.delft3dflow.domain(ad).openBoundaries(j).harmonicAmpA(1:size(data,1));
+            handles.model.delft3dflow.domain(ad).openBoundaries(j).harmonicPhaseA=handles.model.delft3dflow.domain(ad).openBoundaries(j).harmonicPhaseA(1:size(data,1));
+            handles.model.delft3dflow.domain(ad).openBoundaries(j).harmonicAmpB=handles.model.delft3dflow.domain(ad).openBoundaries(j).harmonicAmpB(1:size(data,1));
+            handles.model.delft3dflow.domain(ad).openBoundaries(j).harmonicPhaseB=handles.model.delft3dflow.domain(ad).openBoundaries(j).harmonicPhaseB(1:size(data,1));
         end
     end
-elseif size(data,1)>handles.Model(md).Input(ad).nrHarmonicComponents
-    for j=1:handles.Model(md).Input(ad).nrOpenBoundaries
-        if j~=handles.Model(md).Input(ad).activeOpenBoundary
-            for i=handles.Model(md).Input(ad).nrHarmonicComponents:size(data,1)
-                handles.Model(md).Input(ad).openBoundaries(j).harmonicAmpA(i)=0;
-                handles.Model(md).Input(ad).openBoundaries(j).harmonicPhaseA(i)=0;
-                handles.Model(md).Input(ad).openBoundaries(j).harmonicAmpB(i)=0;
-                handles.Model(md).Input(ad).openBoundaries(j).harmonicPhaseB(i)=0;
+elseif size(data,1)>handles.model.delft3dflow.domain(ad).nrHarmonicComponents
+    for j=1:handles.model.delft3dflow.domain(ad).nrOpenBoundaries
+        if j~=handles.model.delft3dflow.domain(ad).activeOpenBoundary
+            for i=handles.model.delft3dflow.domain(ad).nrHarmonicComponents:size(data,1)
+                handles.model.delft3dflow.domain(ad).openBoundaries(j).harmonicAmpA(i)=0;
+                handles.model.delft3dflow.domain(ad).openBoundaries(j).harmonicPhaseA(i)=0;
+                handles.model.delft3dflow.domain(ad).openBoundaries(j).harmonicAmpB(i)=0;
+                handles.model.delft3dflow.domain(ad).openBoundaries(j).harmonicPhaseB(i)=0;
             end
         end
     end
 end
-handles.Model(md).Input(ad).nrHarmonicComponents=size(data,1);
+handles.model.delft3dflow.domain(ad).nrHarmonicComponents=size(data,1);
 setHandles(handles);
 closereq;
 

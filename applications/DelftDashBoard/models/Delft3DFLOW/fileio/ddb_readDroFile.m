@@ -61,18 +61,18 @@ function handles = ddb_readDroFile(handles, id)
 % $Keywords: $
 
 %%
-[name,t1,t2,m,n] = textread(handles.Model(md).Input(id).droFile,'%21c%f%f%f%f');
+[name,t1,t2,m,n] = textread(handles.model.delft3dflow.domain(id).droFile,'%21c%f%f%f%f');
 
-handles.Model(md).Input(id).drogues=[];
-handles.Model(md).Input(id).drogueNames={''};
+handles.model.delft3dflow.domain(id).drogues=[];
+handles.model.delft3dflow.domain(id).drogueNames={''};
 for i=1:length(m)
-    handles.Model(md).Input(id).drogues(i).name=deblank(name(i,:));
-    handles.Model(md).Input(id).drogues(i).releaseTime=handles.Model(md).Input(id).itDate+t1(i)/1440;
-    handles.Model(md).Input(id).drogues(i).recoveryTime=handles.Model(md).Input(id).itDate+t2(i)/1440;
-    handles.Model(md).Input(id).drogues(i).M=m(i);
-    handles.Model(md).Input(id).drogues(i).N=n(i);
-    handles.Model(md).Input(id).drogueNames{i}=handles.Model(md).Input(id).drogues(i).name;
+    handles.model.delft3dflow.domain(id).drogues(i).name=deblank(name(i,:));
+    handles.model.delft3dflow.domain(id).drogues(i).releaseTime=handles.model.delft3dflow.domain(id).itDate+t1(i)/1440;
+    handles.model.delft3dflow.domain(id).drogues(i).recoveryTime=handles.model.delft3dflow.domain(id).itDate+t2(i)/1440;
+    handles.model.delft3dflow.domain(id).drogues(i).M=m(i);
+    handles.model.delft3dflow.domain(id).drogues(i).N=n(i);
+    handles.model.delft3dflow.domain(id).drogueNames{i}=handles.model.delft3dflow.domain(id).drogues(i).name;
 end
 
-handles.Model(md).Input(id).nrDrogues=length(m);
+handles.model.delft3dflow.domain(id).nrDrogues=length(m);
 

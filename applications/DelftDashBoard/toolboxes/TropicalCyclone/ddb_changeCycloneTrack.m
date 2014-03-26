@@ -109,11 +109,12 @@ if isempty(nr)
     
     ddb_plotCycloneTrack;
 
-    if handles.toolbox.tropicalcyclone.trackT(1)>handles.Model(md).Input(ad).startTime
+    model=handles.activeModel.name;
+    if handles.toolbox.tropicalcyclone.trackT(1)>handles.model.(model).domain(ad).startTime
         ddb_giveWarning('text','Start time cyclone is greater than simulation start time!');
     end
     
-    if handles.toolbox.tropicalcyclone.trackT(end)<handles.Model(md).Input(ad).stopTime
+    if handles.toolbox.tropicalcyclone.trackT(end)<handles.model.(model).domain(ad).stopTime
         ddb_giveWarning('text','Stop time cyclone is smaller than simulation stop time!');
     end
 

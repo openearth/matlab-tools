@@ -66,10 +66,10 @@ ddb_zoomOff;
 
 if isempty(varargin)
     ddb_refreshScreen;
-    handles.Model(md).Input(ad).addDischarge=0;
-    handles.Model(md).Input(ad).selectDischarge=0;
-    handles.Model(md).Input(ad).changeDischarge=0;
-    handles.Model(md).Input(ad).deleteDischarge=0;
+    handles.model.delft3dflow.domain(ad).addDischarge=0;
+    handles.model.delft3dflow.domain(ad).selectDischarge=0;
+    handles.model.delft3dflow.domain(ad).changeDischarge=0;
+    handles.model.delft3dflow.domain(ad).deleteDischarge=0;
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','discharges');
     setHandles(handles);
 else
@@ -79,10 +79,10 @@ else
     switch(lower(opt))
         
         case{'add'}
-            handles.Model(md).Input(ad).selectDischarge=0;
-            handles.Model(md).Input(ad).changeDischarge=0;
-            handles.Model(md).Input(ad).deleteDischarge=0;
-            if handles.Model(md).Input(ad).addDischarge
+            handles.model.delft3dflow.domain(ad).selectDischarge=0;
+            handles.model.delft3dflow.domain(ad).changeDischarge=0;
+            handles.model.delft3dflow.domain(ad).deleteDischarge=0;
+            if handles.model.delft3dflow.domain(ad).addDischarge
                 handles.editMode='add';
                 ddb_dragLine(@addDischarge,'free');
                 setInstructions({'','','Click point on map for new discharge(s)'});
@@ -94,12 +94,12 @@ else
             refreshDischarges;
             
         case{'delete'}
-            handles.Model(md).Input(ad).addDischarge=0;
-            handles.Model(md).Input(ad).selectDischarge=0;
-            handles.Model(md).Input(ad).changeDischarge=0;
+            handles.model.delft3dflow.domain(ad).addDischarge=0;
+            handles.model.delft3dflow.domain(ad).selectDischarge=0;
+            handles.model.delft3dflow.domain(ad).changeDischarge=0;
             ddb_clickObject('tag','Discharge','callback',@deleteDischargeFromMap);
             setInstructions({'','','Select discharge from map to delete'});
-            if handles.Model(md).Input(ad).deleteDischarge
+            if handles.model.delft3dflow.domain(ad).deleteDischarge
                 % Delete discharge selected from list
                 handles=deleteDischarge(handles);
             end
@@ -107,10 +107,10 @@ else
             refreshDischarges;
             
         case{'select'}
-            handles.Model(md).Input(ad).addDischarge=0;
-            handles.Model(md).Input(ad).deleteDischarge=0;
-            handles.Model(md).Input(ad).changeDischarge=0;
-            if handles.Model(md).Input(ad).selectDischarge
+            handles.model.delft3dflow.domain(ad).addDischarge=0;
+            handles.model.delft3dflow.domain(ad).deleteDischarge=0;
+            handles.model.delft3dflow.domain(ad).changeDischarge=0;
+            if handles.model.delft3dflow.domain(ad).selectDischarge
                 ddb_clickObject('tag','Discharge','callback',@selectDischargeFromMap);
                 setInstructions({'','','Select discharge from map'});
             else
@@ -121,10 +121,10 @@ else
             refreshDischarges;
             
         case{'change'}
-            handles.Model(md).Input(ad).addDischarge=0;
-            handles.Model(md).Input(ad).selectDischarge=0;
-            handles.Model(md).Input(ad).deleteDischarge=0;
-            if handles.Model(md).Input(ad).changeDischarge
+            handles.model.delft3dflow.domain(ad).addDischarge=0;
+            handles.model.delft3dflow.domain(ad).selectDischarge=0;
+            handles.model.delft3dflow.domain(ad).deleteDischarge=0;
+            if handles.model.delft3dflow.domain(ad).changeDischarge
                 ddb_clickObject('tag','Discharge','callback',@changeDischargeFromMap);
                 setInstructions({'','','Select discharge to change from map'});
             else
@@ -135,38 +135,38 @@ else
             refreshDischarges;
             
         case{'edit'}
-            handles.Model(md).Input(ad).addDischarge=0;
-            handles.Model(md).Input(ad).selectDischarge=0;
-            handles.Model(md).Input(ad).changeDischarge=0;
-            handles.Model(md).Input(ad).deleteDischarge=0;
+            handles.model.delft3dflow.domain(ad).addDischarge=0;
+            handles.model.delft3dflow.domain(ad).selectDischarge=0;
+            handles.model.delft3dflow.domain(ad).changeDischarge=0;
+            handles.model.delft3dflow.domain(ad).deleteDischarge=0;
             handles.editMode='edit';
-            n=handles.Model(md).Input(ad).activeDischarge;
-            name=handles.Model(md).Input(ad).discharges(n).name;
-            if strcmpi(handles.Model(md).Input(ad).discharges(n).name(1),'(')
-                mstr=num2str(handles.Model(md).Input(ad).discharges(n).M);
-                nstr=num2str(handles.Model(md).Input(ad).discharges(n).N);
+            n=handles.model.delft3dflow.domain(ad).activeDischarge;
+            name=handles.model.delft3dflow.domain(ad).discharges(n).name;
+            if strcmpi(handles.model.delft3dflow.domain(ad).discharges(n).name(1),'(')
+                mstr=num2str(handles.model.delft3dflow.domain(ad).discharges(n).M);
+                nstr=num2str(handles.model.delft3dflow.domain(ad).discharges(n).N);
                 name=['('  mstr ',' nstr ')'];
             end
-            handles.Model(md).Input(ad).dischargeNames{n}=name;
+            handles.model.delft3dflow.domain(ad).dischargeNames{n}=name;
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','discharges');
             clearInstructions;
             setHandles(handles);
             refreshDischarges;
             
         case{'editdischargedata'}
-            handles.Model(md).Input(ad).selectDischarge=0;
-            handles.Model(md).Input(ad).changeDischarge=0;
-            handles.Model(md).Input(ad).deleteDischarge=0;
+            handles.model.delft3dflow.domain(ad).selectDischarge=0;
+            handles.model.delft3dflow.domain(ad).changeDischarge=0;
+            handles.model.delft3dflow.domain(ad).deleteDischarge=0;
             setHandles(handles);
             clearInstructions;
-            ddb_editD3DDischargeData(handles.Model(md).Input(ad).activeDischarge)
+            ddb_editD3DDischargeData(handles.model.delft3dflow.domain(ad).activeDischarge)
             
         case{'selectfromlist'}
-            handles.Model(md).Input(ad).addDischarge=0;
-            handles.Model(md).Input(ad).selectDischarge=0;
-            handles.Model(md).Input(ad).changeDischarge=0;
+            handles.model.delft3dflow.domain(ad).addDischarge=0;
+            handles.model.delft3dflow.domain(ad).selectDischarge=0;
+            handles.model.delft3dflow.domain(ad).changeDischarge=0;
             % Delete selected discharge next time delete is clicked
-            handles.Model(md).Input(ad).deleteDischarge=1;
+            handles.model.delft3dflow.domain(ad).deleteDischarge=1;
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','discharges');
             clearInstructions;
             setHandles(handles);
@@ -199,27 +199,27 @@ y1=y(1);
 
 handles=getHandles;
 % Find grid indices
-[m1,n1]=findgridcell(x1,y1,handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY);
+[m1,n1]=findgridcell(x1,y1,handles.model.delft3dflow.domain(ad).gridX,handles.model.delft3dflow.domain(ad).gridY);
 % Check if start and end are in one grid line
 if ~isempty(m1)
     if m1>0
-        if handles.Model(md).Input(ad).changeDischarge
-            iac=handles.Model(md).Input(ad).activeDischarge;
+        if handles.model.delft3dflow.domain(ad).changeDischarge
+            iac=handles.model.delft3dflow.domain(ad).activeDischarge;
         else
             % Add mode
-            handles.Model(md).Input(ad).nrDischarges=handles.Model(md).Input(ad).nrDischarges+1;
-            iac=handles.Model(md).Input(ad).nrDischarges;
+            handles.model.delft3dflow.domain(ad).nrDischarges=handles.model.delft3dflow.domain(ad).nrDischarges+1;
+            iac=handles.model.delft3dflow.domain(ad).nrDischarges;
             handles=ddb_initializeDischarge(handles,ad,iac);
         end
-        handles.Model(md).Input(ad).discharges(iac).M=m1;
-        handles.Model(md).Input(ad).discharges(iac).N=n1;
-        handles.Model(md).Input(ad).discharges(iac).name=['(' num2str(m1) ',' num2str(n1) ')'];
-        handles.Model(md).Input(ad).dischargeNames{iac}=handles.Model(md).Input(ad).discharges(iac).name;
-        handles.Model(md).Input(ad).activeDischarge=iac;
+        handles.model.delft3dflow.domain(ad).discharges(iac).M=m1;
+        handles.model.delft3dflow.domain(ad).discharges(iac).N=n1;
+        handles.model.delft3dflow.domain(ad).discharges(iac).name=['(' num2str(m1) ',' num2str(n1) ')'];
+        handles.model.delft3dflow.domain(ad).dischargeNames{iac}=handles.model.delft3dflow.domain(ad).discharges(iac).name;
+        handles.model.delft3dflow.domain(ad).activeDischarge=iac;
         handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','discharges');
         setHandles(handles);
         
-        if handles.Model(md).Input(ad).changeDischarge
+        if handles.model.delft3dflow.domain(ad).changeDischarge
             ddb_clickObject('tag','discharge','callback',@changeDischargeFromMap);
             setInstructions({'','','Select discharge'});
         else
@@ -233,26 +233,26 @@ refreshDischarges;
 %%
 function handles=deleteDischarge(handles)
 
-nrdis=handles.Model(md).Input(ad).nrDischarges;
+nrdis=handles.model.delft3dflow.domain(ad).nrDischarges;
 
 if nrdis>0
-    iac=handles.Model(md).Input(ad).activeDischarge;
+    iac=handles.model.delft3dflow.domain(ad).activeDischarge;
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'delete','discharges');
     if nrdis>1
-        handles.Model(md).Input(ad).discharges=removeFromStruc(handles.Model(md).Input(ad).discharges,iac);
-        handles.Model(md).Input(ad).dischargeNames=removeFromCellArray(handles.Model(md).Input(ad).dischargeNames,iac);
+        handles.model.delft3dflow.domain(ad).discharges=removeFromStruc(handles.model.delft3dflow.domain(ad).discharges,iac);
+        handles.model.delft3dflow.domain(ad).dischargeNames=removeFromCellArray(handles.model.delft3dflow.domain(ad).dischargeNames,iac);
     else
-        handles.Model(md).Input(ad).dischargeNames={''};
-        handles.Model(md).Input(ad).activeDischarge=1;
-        handles.Model(md).Input(ad).discharges(1).M=[];
-        handles.Model(md).Input(ad).discharges(1).N=[];
-        handles.Model(md).Input(ad).discharges(1).type='normal';
+        handles.model.delft3dflow.domain(ad).dischargeNames={''};
+        handles.model.delft3dflow.domain(ad).activeDischarge=1;
+        handles.model.delft3dflow.domain(ad).discharges(1).M=[];
+        handles.model.delft3dflow.domain(ad).discharges(1).N=[];
+        handles.model.delft3dflow.domain(ad).discharges(1).type='normal';
     end
     if iac==nrdis
         iac=nrdis-1;
     end
-    handles.Model(md).Input(ad).nrDischarges=nrdis-1;
-    handles.Model(md).Input(ad).activeDischarge=max(iac,1);
+    handles.model.delft3dflow.domain(ad).nrDischarges=nrdis-1;
+    handles.model.delft3dflow.domain(ad).activeDischarge=max(iac,1);
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','discharges');
     setHandles(handles);
     refreshDischarges;
@@ -263,7 +263,7 @@ function deleteDischargeFromMap(h)
 
 handles=getHandles;
 iac=get(h,'UserData');
-handles.Model(md).Input(ad).activeDischarge=iac;
+handles.model.delft3dflow.domain(ad).activeDischarge=iac;
 handles=deleteDischarge(handles);
 setHandles(handles);
 
@@ -272,7 +272,7 @@ function selectDischargeFromMap(h)
 
 handles=getHandles;
 iac=get(h,'UserData');
-handles.Model(md).Input(ad).activeDischarge=iac;
+handles.model.delft3dflow.domain(ad).activeDischarge=iac;
 ddb_Delft3DFLOW_plotAttributes(handles,'update','discharges');
 setHandles(handles);
 refreshDischarges;
@@ -282,7 +282,7 @@ function changeDischargeFromMap(h)
 
 handles=getHandles;
 iac=get(h,'UserData');
-handles.Model(md).Input(ad).activeDischarge=iac;
+handles.model.delft3dflow.domain(ad).activeDischarge=iac;
 ddb_Delft3DFLOW_plotAttributes(handles,'update','discharges');
 setHandles(handles);
 refreshDischarges;

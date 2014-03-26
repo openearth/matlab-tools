@@ -45,7 +45,7 @@ function handles = ddb_DFlowFM_readExternalForcing(handles)
 
 %% Reads DFlow-FM external forcing
 
-fname=handles.Model(md).Input.extforcefile;
+fname=handles.model.dflowfm.domain.extforcefile;
 
 s=[];
 n=0;
@@ -82,9 +82,9 @@ fclose(fid);
 % Clear boundary info
 boundaries=[];
 boundaries(1).name='';
-handles.Model(md).Input.activeboundary=1;
-handles.Model(md).Input.nrboundaries=0;
-handles.Model(md).Input.boundarynames={''};
+handles.model.dflowfm.domain.activeboundary=1;
+handles.model.dflowfm.domain.nrboundaries=0;
+handles.model.dflowfm.domain.boundarynames={''};
 nb=0;
 
 for ii=1:length(s)
@@ -94,32 +94,32 @@ for ii=1:length(s)
             plifile=s(ii).filename;
             name=plifile(1:end-4);
             [x,y]=landboundary('read',plifile);
-            boundaries = ddb_DFlowFM_initializeBoundary(boundaries,x,y,name,nb,handles.Model(md).Input.tstart,handles.Model(md).Input.tstop);
+            boundaries = ddb_DFlowFM_initializeBoundary(boundaries,x,y,name,nb,handles.model.dflowfm.domain.tstart,handles.model.dflowfm.domain.tstop);
             boundaries(nb).type=s(ii).quantity;
-            handles.Model(md).Input.boundarynames{nb}=name;            
+            handles.model.dflowfm.domain.boundarynames{nb}=name;            
         case{'dischargebnd'}
             nb=nb+1;
             plifile=s(ii).filename;
             name=plifile(1:end-4);
             [x,y]=landboundary('read',plifile);
-            boundaries = ddb_DFlowFM_initializeBoundary(boundaries,x,y,name,nb,handles.Model(md).Input.tstart,handles.Model(md).Input.tstop);
+            boundaries = ddb_DFlowFM_initializeBoundary(boundaries,x,y,name,nb,handles.model.dflowfm.domain.tstart,handles.model.dflowfm.domain.tstop);
             boundaries(nb).type=s(ii).quantity;
-            handles.Model(md).Input.boundarynames{nb}=name;            
+            handles.model.dflowfm.domain.boundarynames{nb}=name;            
         case{'spiderweb'}
-            handles.Model(md).Input.spiderwebfile=s(ii).filename;
-            handles.Model(md).Input.wind=1;
+            handles.model.dflowfm.domain.spiderwebfile=s(ii).filename;
+            handles.model.dflowfm.domain.wind=1;
         case{'windx'}
-            handles.Model(md).Input.windufile=s(ii).filename;
-            handles.Model(md).Input.wind=1;
+            handles.model.dflowfm.domain.windufile=s(ii).filename;
+            handles.model.dflowfm.domain.wind=1;
         case{'windy'}
-            handles.Model(md).Input.windvfile=s(ii).filename;
-            handles.Model(md).Input.wind=1;
+            handles.model.dflowfm.domain.windvfile=s(ii).filename;
+            handles.model.dflowfm.domain.wind=1;
         case{'atmosphericpressure'}
-            handles.Model(md).Input.airpressurefile=s(ii).filename;
-            handles.Model(md).Input.airpressure=1;
+            handles.model.dflowfm.domain.airpressurefile=s(ii).filename;
+            handles.model.dflowfm.domain.airpressure=1;
         case{'rain'}
-            handles.Model(md).Input.rainfile=s(ii).filename;
-            handles.Model(md).Input.rain=1;
+            handles.model.dflowfm.domain.rainfile=s(ii).filename;
+            handles.model.dflowfm.domain.rain=1;
     end
 end
 
@@ -148,7 +148,7 @@ for ib=1:length(boundaries)
         fname=[boundaries(ib).name '_' num2str(inode,'%0.4i') '.tim'];
         if exist(fname,'file')
             s=load(fname);
-            boundaries(ib).nodes(inode).timeseries.time=handles.Model(md).Input.refdate+s(:,1)/1440;            
+            boundaries(ib).nodes(inode).timeseries.time=handles.model.dflowfm.domain.refdate+s(:,1)/1440;            
             boundaries(ib).nodes(inode).timeseries.value=s(:,2);            
             boundaries(ib).nodes(inode).tim=1;
         else
@@ -158,5 +158,5 @@ for ib=1:length(boundaries)
     end
 end
 
-handles.Model(md).Input.nrboundaries=nb;
-handles.Model(md).Input.boundaries=boundaries;
+handles.model.dflowfm.domain.nrboundaries=nb;
+handles.model.dflowfm.domain.boundaries=boundaries;

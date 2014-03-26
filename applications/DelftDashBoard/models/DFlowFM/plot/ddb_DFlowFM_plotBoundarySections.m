@@ -62,7 +62,6 @@ function handles = ddb_DFlowFM_plotBoundaries(handles, opt, varargin)
 % $Keywords: $
 
 %%
-imd=strmatch('DFlowFM',{handles.Model(:).name},'exact');
 
 col=[0 0 1];
 vis=1;
@@ -87,42 +86,42 @@ switch lower(opt)
         
         % First delete old sections
         try
-            delete(handles.Model(imd).Input(id).plotHandles.boundarySections);
+            delete(handles.model.dflowfm.domain(id).plotHandles.boundarySections);
         end
                 
-        for isec=1:length(handles.Model(imd).Input(id).boundarySections)
-            xx=handles.Model(imd).Input(id).boundarySections(isec).x;
-            yy=handles.Model(imd).Input(id).boundarySections(isec).y;
+        for isec=1:length(handles.model.dflowfm.domain(id).boundarySections)
+            xx=handles.model.dflowfm.domain(id).boundarySections(isec).x;
+            yy=handles.model.dflowfm.domain(id).boundarySections(isec).y;
             p=plot(xx,yy,'o-');
             set(p,'Color',[0 0 1]);
             set(p,'LineWidth',2);
             set(p,'MarkerEdgeColor',[0 0 0]);
             set(p,'MarkerFaceColor',[1 0 0]);
-            handles.Model(imd).Input(id).plotHandles.boundarySections(isec)=p;
+            handles.model.dflowfm.domain(id).plotHandles.boundarySections(isec)=p;
         end
         
         if vis
-            set(handles.Model(imd).Input(id).plotHandles.boundarySections,'Color',col,'Visible','on');
+            set(handles.model.dflowfm.domain(id).plotHandles.boundarySections,'Color',col,'Visible','on');
         else
-            set(handles.Model(imd).Input(id).plotHandles.boundarySections,'Color',col,'Visible','off');
+            set(handles.model.dflowfm.domain(id).plotHandles.boundarySections,'Color',col,'Visible','off');
         end
         
     case{'delete'}
         
         % Delete old grid
         try
-            delete(handles.Model(imd).Input(id).plotHandles.boundarySections);
+            delete(handles.model.dflowfm.domain(id).plotHandles.boundarySections);
         end
         
     case{'update'}
-        if isfield(handles.Model(imd).Input(id).plotHandles,'boundarySections')
-            if ~isempty(handles.Model(imd).Input(id).plotHandles.boundarySections)
+        if isfield(handles.model.dflowfm.domain(id).plotHandles,'boundarySections')
+            if ~isempty(handles.model.dflowfm.domain(id).plotHandles.boundarySections)
                 try
-                    set(handles.Model(imd).Input(id).plotHandles.boundarySections,'Color',col);
+                    set(handles.model.dflowfm.domain(id).plotHandles.boundarySections,'Color',col);
                     if vis
-                        set(handles.Model(imd).Input(id).plotHandles.boundarySections,'Color',col,'Visible','on');
+                        set(handles.model.dflowfm.domain(id).plotHandles.boundarySections,'Color',col,'Visible','on');
                     else
-                        set(handles.Model(imd).Input(id).plotHandles.boundarySections,'Color',col,'Visible','off');
+                        set(handles.model.dflowfm.domain(id).plotHandles.boundarySections,'Color',col,'Visible','off');
                     end
                 end
             end

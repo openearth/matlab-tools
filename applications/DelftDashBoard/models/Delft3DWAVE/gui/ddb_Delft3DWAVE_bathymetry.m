@@ -16,16 +16,16 @@ end
 function selectBathy
 
 handles=getHandles;
-filenm = handles.Model(md).Input.domains(awg).bedlevel;
+filenm = handles.model.delft3dwave.domain.domains(awg).bedlevel;
 [pathstr,name,ext] = fileparts(filenm);
 % Set grid values in handles
-handles.Model(md).Input.domains(awg).bedlevelgrid=handles.Model(md).Input.domains(awg).grid;
-handles.Model(md).Input.domains(awg).bedlevel=[name ext];
-grid=ddb_wlgrid('read',handles.Model(md).Input.domains(awg).bedlevelgrid);
+handles.model.delft3dwave.domain.domains(awg).bedlevelgrid=handles.model.delft3dwave.domain.domains(awg).grid;
+handles.model.delft3dwave.domain.domains(awg).bedlevel=[name ext];
+grid=ddb_wlgrid('read',handles.model.delft3dwave.domain.domains(awg).bedlevelgrid);
 try 
     z = ddb_wldep('read',[name '.dep'],grid);
-    handles.Model(md).Input.domains(awg).depth = -z(1:end-1,1:end-1);
-    handles.Model(md).Input.domains(awg).depth(handles.Model(md).Input.domains(awg).depth==999.999)=NaN;
+    handles.model.delft3dwave.domain.domains(awg).depth = -z(1:end-1,1:end-1);
+    handles.model.delft3dwave.domain.domains(awg).depth(handles.model.delft3dwave.domain.domains(awg).depth==999.999)=NaN;
     handles=ddb_Delft3DWAVE_plotBathy(handles,'plot','wavedomain',awg);
     setHandles(handles);
 catch

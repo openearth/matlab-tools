@@ -70,8 +70,8 @@ nmin=ndd(1);
 mmax=mdd(2);
 nmax=ndd(2);
 
-x1=handles.Model(md).Input(id1).gridX;
-y1=handles.Model(md).Input(id1).gridY;
+x1=handles.model.delft3dflow.domain(id1).gridX;
+y1=handles.model.delft3dflow.domain(id1).gridY;
 
 % Set coordinates where new domain is made to nan
 x1(mmin+1:mmax-1,nmin+1:nmax-1)=NaN;
@@ -164,9 +164,9 @@ if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
 else
     coord='Cartesian';
 end
-ddb_wlgrid('write','FileName',handles.Model(md).Input(ad).grdFile,'X',x1,'Y',y1,'Enclosure',enc1,'CoordinateSystem',coord);
+ddb_wlgrid('write','FileName',handles.model.delft3dflow.domain(ad).grdFile,'X',x1,'Y',y1,'Enclosure',enc1,'CoordinateSystem',coord);
 
-handles.Model(md).Input(id1).gridX=x1;
-handles.Model(md).Input(id1).gridY=y1;
+handles.model.delft3dflow.domain(id1).gridX=x1;
+handles.model.delft3dflow.domain(id1).gridY=y1;
 
 

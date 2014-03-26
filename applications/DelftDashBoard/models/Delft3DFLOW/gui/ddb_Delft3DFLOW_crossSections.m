@@ -66,10 +66,10 @@ ddb_zoomOff;
 
 if isempty(varargin)
     ddb_refreshScreen;
-    handles.Model(md).Input(ad).addCrossSection=0;
-    handles.Model(md).Input(ad).selectCrossSection=0;
-    handles.Model(md).Input(ad).changeCrossSection=0;
-    handles.Model(md).Input(ad).deleteCrossSection=0;
+    handles.model.delft3dflow.domain(ad).addCrossSection=0;
+    handles.model.delft3dflow.domain(ad).selectCrossSection=0;
+    handles.model.delft3dflow.domain(ad).changeCrossSection=0;
+    handles.model.delft3dflow.domain(ad).deleteCrossSection=0;
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','crosssections');
     setHandles(handles);    
 else
@@ -77,11 +77,11 @@ else
     switch(lower(opt))
         
         case{'add'}
-            handles.Model(md).Input(ad).selectCrossSection=0;
-            handles.Model(md).Input(ad).changeCrossSection=0;
-            handles.Model(md).Input(ad).deleteCrossSection=0;
-            if handles.Model(md).Input(ad).addCrossSection
-                ddb_dragLine(@addCrossSection,'method','alonggridline','x',handles.Model(md).Input(ad).gridX,'y',handles.Model(md).Input(ad).gridY);
+            handles.model.delft3dflow.domain(ad).selectCrossSection=0;
+            handles.model.delft3dflow.domain(ad).changeCrossSection=0;
+            handles.model.delft3dflow.domain(ad).deleteCrossSection=0;
+            if handles.model.delft3dflow.domain(ad).addCrossSection
+                ddb_dragLine(@addCrossSection,'method','alonggridline','x',handles.model.delft3dflow.domain(ad).gridX,'y',handles.model.delft3dflow.domain(ad).gridY);
                 setInstructions({'','','Drag line on map for new cross section'});
             else
                 set(gcf, 'windowbuttondownfcn',[]);
@@ -90,59 +90,59 @@ else
             setHandles(handles);
             
         case{'delete'}
-            handles.Model(md).Input(ad).addCrossSection=0;
-            handles.Model(md).Input(ad).selectCrossSection=0;
-            handles.Model(md).Input(ad).changeCrossSection=0;
+            handles.model.delft3dflow.domain(ad).addCrossSection=0;
+            handles.model.delft3dflow.domain(ad).selectCrossSection=0;
+            handles.model.delft3dflow.domain(ad).changeCrossSection=0;
             ddb_clickObject('tag','crosssection','callback',@deleteCrossSectionFromMap);
             setInstructions({'','','Select cross section from map to delete'});
-            if handles.Model(md).Input(ad).deleteCrossSection
+            if handles.model.delft3dflow.domain(ad).deleteCrossSection
                 handles=deleteCrossSection(handles);
             end
             setHandles(handles);
             
         case{'select'}
-            handles.Model(md).Input(ad).addCrossSection=0;
-            handles.Model(md).Input(ad).deleteCrossSection=0;
-            handles.Model(md).Input(ad).changeCrossSection=0;
+            handles.model.delft3dflow.domain(ad).addCrossSection=0;
+            handles.model.delft3dflow.domain(ad).deleteCrossSection=0;
+            handles.model.delft3dflow.domain(ad).changeCrossSection=0;
             ddb_clickObject('tag','crosssection','callback',@selectCrossSectionFromMap);
             setInstructions({'','','Select cross section from map'});
             setHandles(handles);
             
         case{'change'}
-            handles.Model(md).Input(ad).addCrossSection=0;
-            handles.Model(md).Input(ad).selectCrossSection=0;
-            handles.Model(md).Input(ad).deleteCrossSection=0;
-            if handles.Model(md).Input(ad).changeCrossSection
+            handles.model.delft3dflow.domain(ad).addCrossSection=0;
+            handles.model.delft3dflow.domain(ad).selectCrossSection=0;
+            handles.model.delft3dflow.domain(ad).deleteCrossSection=0;
+            if handles.model.delft3dflow.domain(ad).changeCrossSection
                 ddb_clickObject('tag','crosssection','callback',@changeCrossSectionFromMap);
                 setInstructions({'','','Select cross section to change from map'});
             end
             setHandles(handles);
             
         case{'edit'}
-            handles.Model(md).Input(ad).addCrossSection=0;
-            handles.Model(md).Input(ad).selectCrossSection=0;
-            handles.Model(md).Input(ad).changeCrossSection=0;
-            handles.Model(md).Input(ad).deleteCrossSection=0;
+            handles.model.delft3dflow.domain(ad).addCrossSection=0;
+            handles.model.delft3dflow.domain(ad).selectCrossSection=0;
+            handles.model.delft3dflow.domain(ad).changeCrossSection=0;
+            handles.model.delft3dflow.domain(ad).deleteCrossSection=0;
             handles.editMode='edit';
-            n=handles.Model(md).Input(ad).activeCrossSection;
-            handles.Model(md).Input(ad).crossSectionNames{n}=handles.Model(md).Input(ad).crossSections(n).name;
-            if strcmpi(handles.Model(md).Input(ad).crossSections(n).name(1),'(')
-                m1str=num2str(handles.Model(md).Input(ad).crossSections(n).M1);
-                m2str=num2str(handles.Model(md).Input(ad).crossSections(n).M2);
-                n1str=num2str(handles.Model(md).Input(ad).crossSections(n).N1);
-                n2str=num2str(handles.Model(md).Input(ad).crossSections(n).N2);
-                handles.Model(md).Input(ad).crossSectionNames{n}=['('  m1str ',' n1str ')...(' m2str ',' n2str ')'];
+            n=handles.model.delft3dflow.domain(ad).activeCrossSection;
+            handles.model.delft3dflow.domain(ad).crossSectionNames{n}=handles.model.delft3dflow.domain(ad).crossSections(n).name;
+            if strcmpi(handles.model.delft3dflow.domain(ad).crossSections(n).name(1),'(')
+                m1str=num2str(handles.model.delft3dflow.domain(ad).crossSections(n).M1);
+                m2str=num2str(handles.model.delft3dflow.domain(ad).crossSections(n).M2);
+                n1str=num2str(handles.model.delft3dflow.domain(ad).crossSections(n).N1);
+                n2str=num2str(handles.model.delft3dflow.domain(ad).crossSections(n).N2);
+                handles.model.delft3dflow.domain(ad).crossSectionNames{n}=['('  m1str ',' n1str ')...(' m2str ',' n2str ')'];
             end
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','crosssections');
             clearInstructions;
             setHandles(handles);
             
         case{'selectfromlist'}
-            handles.Model(md).Input(ad).addCrossSection=0;
-            handles.Model(md).Input(ad).selectCrossSection=0;
-            handles.Model(md).Input(ad).changeCrossSection=0;
+            handles.model.delft3dflow.domain(ad).addCrossSection=0;
+            handles.model.delft3dflow.domain(ad).selectCrossSection=0;
+            handles.model.delft3dflow.domain(ad).changeCrossSection=0;
             % Delete selected cross section next time delete is clicked
-            handles.Model(md).Input(ad).deleteCrossSection=1;
+            handles.model.delft3dflow.domain(ad).deleteCrossSection=1;
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','crosssections');
             clearInstructions;
             setHandles(handles);
@@ -173,21 +173,21 @@ y1=y(1);y2=y(2);
 handles=getHandles;
 
 if x1==x2 && y1==y2
-    [m1,n1,uv]=findgridline(x1,y1,handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY);
+    [m1,n1,uv]=findgridline(x1,y1,handles.model.delft3dflow.domain(ad).gridX,handles.model.delft3dflow.domain(ad).gridY);
     m2=m1;
     n2=n1;
 else
-    [m1,n1]=findcornerpoint(x1,y1,handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY);
-    [m2,n2]=findcornerpoint(x2,y2,handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY);
+    [m1,n1]=findcornerpoint(x1,y1,handles.model.delft3dflow.domain(ad).gridX,handles.model.delft3dflow.domain(ad).gridY);
+    [m2,n2]=findcornerpoint(x2,y2,handles.model.delft3dflow.domain(ad).gridX,handles.model.delft3dflow.domain(ad).gridY);
 end
 if m1>0 && (m1==m2 || n1==n2)
     
-    if handles.Model(md).Input(ad).changeCrossSection
-        iac=handles.Model(md).Input(ad).activeCrossSection;
+    if handles.model.delft3dflow.domain(ad).changeCrossSection
+        iac=handles.model.delft3dflow.domain(ad).activeCrossSection;
     else
         % Add mode
-        handles.Model(md).Input(ad).nrCrossSections=handles.Model(md).Input(ad).nrCrossSections+1;
-        iac=handles.Model(md).Input(ad).nrCrossSections;
+        handles.model.delft3dflow.domain(ad).nrCrossSections=handles.model.delft3dflow.domain(ad).nrCrossSections+1;
+        iac=handles.model.delft3dflow.domain(ad).nrCrossSections;
     end
     
     if m2>m1
@@ -203,20 +203,20 @@ if m1>0 && (m1==m2 || n1==n2)
         n2=n2+1;
     end
     
-    handles.Model(md).Input(ad).crossSections(iac).M1=m1;
-    handles.Model(md).Input(ad).crossSections(iac).N1=n1;
-    handles.Model(md).Input(ad).crossSections(iac).M2=m2;
-    handles.Model(md).Input(ad).crossSections(iac).N2=n2;
-    handles.Model(md).Input(ad).crossSections(iac).name=['(' num2str(m1) ',' num2str(n1) ')...(' num2str(m2) ',' num2str(n2) ')'];
-    handles.Model(md).Input(ad).crossSectionNames{iac}=handles.Model(md).Input(ad).crossSections(iac).name;
-    handles.Model(md).Input(ad).activeCrossSection=iac;
+    handles.model.delft3dflow.domain(ad).crossSections(iac).M1=m1;
+    handles.model.delft3dflow.domain(ad).crossSections(iac).N1=n1;
+    handles.model.delft3dflow.domain(ad).crossSections(iac).M2=m2;
+    handles.model.delft3dflow.domain(ad).crossSections(iac).N2=n2;
+    handles.model.delft3dflow.domain(ad).crossSections(iac).name=['(' num2str(m1) ',' num2str(n1) ')...(' num2str(m2) ',' num2str(n2) ')'];
+    handles.model.delft3dflow.domain(ad).crossSectionNames{iac}=handles.model.delft3dflow.domain(ad).crossSections(iac).name;
+    handles.model.delft3dflow.domain(ad).activeCrossSection=iac;
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','crosssections');
     
-    if handles.Model(md).Input(ad).changeCrossSection
+    if handles.model.delft3dflow.domain(ad).changeCrossSection
         ddb_clickObject('tag','crosssection','callback',@changeCrossSectionFromMap);
         setInstructions({'','','Select cross section'});
     else
-        ddb_dragLine(@addCrossSection,'method','alonggridline','x',handles.Model(md).Input(ad).gridX,'y',handles.Model(md).Input(ad).gridY);
+        ddb_dragLine(@addCrossSection,'method','alonggridline','x',handles.model.delft3dflow.domain(ad).gridX,'y',handles.model.delft3dflow.domain(ad).gridY);
         setInstructions({'','','Drag new cross section'});
     end
 end
@@ -226,28 +226,28 @@ refreshCrossSections;
 %%
 function handles=deleteCrossSection(handles)
 
-nrcrs=handles.Model(md).Input(ad).nrCrossSections;
+nrcrs=handles.model.delft3dflow.domain(ad).nrCrossSections;
 
 if nrcrs>0
-    iac=handles.Model(md).Input(ad).activeCrossSection;
+    iac=handles.model.delft3dflow.domain(ad).activeCrossSection;
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'delete','crosssections');
     if nrcrs>1
-        handles.Model(md).Input(ad).crossSections=removeFromStruc(handles.Model(md).Input(ad).crossSections,iac);
-        handles.Model(md).Input(ad).crossSectionNames=removeFromCellArray(handles.Model(md).Input(ad).crossSectionNames,iac);
+        handles.model.delft3dflow.domain(ad).crossSections=removeFromStruc(handles.model.delft3dflow.domain(ad).crossSections,iac);
+        handles.model.delft3dflow.domain(ad).crossSectionNames=removeFromCellArray(handles.model.delft3dflow.domain(ad).crossSectionNames,iac);
     else
-        handles.Model(md).Input(ad).crossSectionNames={''};
-        handles.Model(md).Input(ad).activeCrossSection=1;
-        handles.Model(md).Input(ad).crossSections(1).M1=[];
-        handles.Model(md).Input(ad).crossSections(1).M2=[];
-        handles.Model(md).Input(ad).crossSections(1).N1=[];
-        handles.Model(md).Input(ad).crossSections(1).N2=[];
-        handles.Model(md).Input(ad).crossSections(1).name='';
+        handles.model.delft3dflow.domain(ad).crossSectionNames={''};
+        handles.model.delft3dflow.domain(ad).activeCrossSection=1;
+        handles.model.delft3dflow.domain(ad).crossSections(1).M1=[];
+        handles.model.delft3dflow.domain(ad).crossSections(1).M2=[];
+        handles.model.delft3dflow.domain(ad).crossSections(1).N1=[];
+        handles.model.delft3dflow.domain(ad).crossSections(1).N2=[];
+        handles.model.delft3dflow.domain(ad).crossSections(1).name='';
     end
     if iac==nrcrs
         iac=nrcrs-1;
     end
-    handles.Model(md).Input(ad).nrCrossSections=nrcrs-1;
-    handles.Model(md).Input(ad).activeCrossSection=iac;
+    handles.model.delft3dflow.domain(ad).nrCrossSections=nrcrs-1;
+    handles.model.delft3dflow.domain(ad).activeCrossSection=iac;
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','crosssections');
     setHandles(handles);
     refreshCrossSections;
@@ -258,7 +258,7 @@ function deleteCrossSectionFromMap(h)
 
 handles=getHandles;
 iac=get(h,'UserData');
-handles.Model(md).Input(ad).activeCrossSection=iac;
+handles.model.delft3dflow.domain(ad).activeCrossSection=iac;
 handles=deleteCrossSection(handles);
 setHandles(handles);
 
@@ -267,7 +267,7 @@ function selectCrossSectionFromMap(h)
 
 handles=getHandles;
 iac=get(h,'UserData');
-handles.Model(md).Input(ad).activeCrossSection=iac;
+handles.model.delft3dflow.domain(ad).activeCrossSection=iac;
 handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','crosssections');
 setHandles(handles);
 refreshCrossSections;
@@ -277,7 +277,7 @@ function changeCrossSectionFromMap(h)
 
 handles=getHandles;
 iac=get(h,'UserData');
-handles.Model(md).Input(ad).activeCrossSection=iac;
+handles.model.delft3dflow.domain(ad).activeCrossSection=iac;
 ddb_Delft3DFLOW_plotCrossSections(handles,'update');
 setHandles(handles);
 refreshCrossSections;

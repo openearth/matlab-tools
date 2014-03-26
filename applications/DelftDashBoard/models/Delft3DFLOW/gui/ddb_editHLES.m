@@ -62,7 +62,7 @@ function ddb_editHLES
 %%
 h=guidata(findobj('Tag','MainWindow'));
 
-handles=h.Model(md).Input(ad);
+handles=h.model.delft3dflow.domain(ad);
 
 fig=MakeNewWindow('Horizontal Large Eddy Simulation',[300 250],'modal',[handles.SettingsDir filesep 'icons' filesep 'deltares.gif']);
 
@@ -96,13 +96,13 @@ guidata(findobj('Name','Horizontal Large Eddy Simulation'),handles);
 function PushOK_CallBack(hObject,eventdata)
 h2=guidata(findobj('Name','Horizontal Large Eddy Simulation'));
 handles=getHandles;
-handles.Model(md).Input(ad).Htural=str2double(get(h2.GUIHandles.EditHtural,'String'));
-handles.Model(md).Input(ad).Hturnd=str2double(get(h2.GUIHandles.EditHturnd,'String'));
-handles.Model(md).Input(ad).Hturst=str2double(get(h2.GUIHandles.EditHturst,'String'));
-handles.Model(md).Input(ad).Hturlp=str2double(get(h2.GUIHandles.EditHturlp,'String'));
-handles.Model(md).Input(ad).Hturrt=str2double(get(h2.GUIHandles.EditHturrt,'String'));
-handles.Model(md).Input(ad).Hturdm=str2double(get(h2.GUIHandles.EditHturdm,'String'));
-%    handles.Model(md).Input(ad).Hturel=1;
+handles.model.delft3dflow.domain(ad).Htural=str2double(get(h2.GUIHandles.EditHtural,'String'));
+handles.model.delft3dflow.domain(ad).Hturnd=str2double(get(h2.GUIHandles.EditHturnd,'String'));
+handles.model.delft3dflow.domain(ad).Hturst=str2double(get(h2.GUIHandles.EditHturst,'String'));
+handles.model.delft3dflow.domain(ad).Hturlp=str2double(get(h2.GUIHandles.EditHturlp,'String'));
+handles.model.delft3dflow.domain(ad).Hturrt=str2double(get(h2.GUIHandles.EditHturrt,'String'));
+handles.model.delft3dflow.domain(ad).Hturdm=str2double(get(h2.GUIHandles.EditHturdm,'String'));
+%    handles.model.delft3dflow.domain(ad).Hturel=1;
 setHandles(handles);
 closereq;
 

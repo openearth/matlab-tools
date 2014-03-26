@@ -62,12 +62,12 @@ function ddb_editD3DFlowConditionsTimeSeries
 %%
 h=getHandles;
 
-kmax=h.Model(md).Input(ad).KMax;
+kmax=h.model.delft3dflow.domain(ad).KMax;
 handles.KMax=kmax;
 
-ibnd=h.Model(md).Input(ad).activeOpenBoundary;
+ibnd=h.model.delft3dflow.domain(ad).activeOpenBoundary;
 
-handles.Bnd=h.Model(md).Input(ad).openBoundaries(ibnd);
+handles.Bnd=h.model.delft3dflow.domain(ad).openBoundaries(ibnd);
 
 prf=handles.Bnd.profile;
 
@@ -148,9 +148,9 @@ function PushOK_CallBack(hObject,eventdata)
 h=guidata(gcf);
 handles=getHandles;
 
-ibnd=handles.Model(md).Input(ad).activeOpenBoundary;
+ibnd=handles.model.delft3dflow.domain(ad).activeOpenBoundary;
 
-handles.Model(md).Input(ad).openBoundaries(ibnd)=h.Bnd;
+handles.model.delft3dflow.domain(ad).openBoundaries(ibnd)=h.Bnd;
 
 setHandles(handles);
 closereq;

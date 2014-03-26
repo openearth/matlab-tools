@@ -66,10 +66,10 @@ ddb_zoomOff;
 
 if isempty(varargin)
     ddb_refreshScreen;
-    handles.Model(md).Input(ad).addWeir2D=0;
-    handles.Model(md).Input(ad).selectWeir2D=0;
-    handles.Model(md).Input(ad).changeWeir2D=0;
-    handles.Model(md).Input(ad).deleteWeir2D=0;
+    handles.model.delft3dflow.domain(ad).addWeir2D=0;
+    handles.model.delft3dflow.domain(ad).selectWeir2D=0;
+    handles.model.delft3dflow.domain(ad).changeWeir2D=0;
+    handles.model.delft3dflow.domain(ad).deleteWeir2D=0;
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','weirs2d');
     setHandles(handles);
 else
@@ -77,11 +77,11 @@ else
     switch(lower(opt))
         
         case{'add'}
-            handles.Model(md).Input(ad).selectWeir2D=0;
-            handles.Model(md).Input(ad).changeWeir2D=0;
-            handles.Model(md).Input(ad).deleteWeir2D=0;
-            if handles.Model(md).Input(ad).addWeir2D
-                ddb_dragLine(@addWeir2D,'method','alonggridline','x',handles.Model(md).Input(ad).gridX,'y',handles.Model(md).Input(ad).gridY);
+            handles.model.delft3dflow.domain(ad).selectWeir2D=0;
+            handles.model.delft3dflow.domain(ad).changeWeir2D=0;
+            handles.model.delft3dflow.domain(ad).deleteWeir2D=0;
+            if handles.model.delft3dflow.domain(ad).addWeir2D
+                ddb_dragLine(@addWeir2D,'method','alonggridline','x',handles.model.delft3dflow.domain(ad).gridX,'y',handles.model.delft3dflow.domain(ad).gridY);
                 setInstructions({'','','Drag line on map for new 2D weir'});
             else
                 set(gcf, 'windowbuttondownfcn',[]);
@@ -90,56 +90,56 @@ else
             setHandles(handles);
             
         case{'delete'}
-            handles.Model(md).Input(ad).addWeir2D=0;
-            handles.Model(md).Input(ad).selectWeir2D=0;
-            handles.Model(md).Input(ad).changeWeir2D=0;
+            handles.model.delft3dflow.domain(ad).addWeir2D=0;
+            handles.model.delft3dflow.domain(ad).selectWeir2D=0;
+            handles.model.delft3dflow.domain(ad).changeWeir2D=0;
             ddb_clickObject('tag','weir2d','callback',@deleteWeir2DFromMap);
             setInstructions({'','','Select 2D weir from map to delete'});
-            if handles.Model(md).Input(ad).deleteWeir2D
+            if handles.model.delft3dflow.domain(ad).deleteWeir2D
                 handles=deleteWeir2D(handles);
             end
             setHandles(handles);
             
         case{'select'}
-            handles.Model(md).Input(ad).addWeir2D=0;
-            handles.Model(md).Input(ad).deleteWeir2D=0;
-            handles.Model(md).Input(ad).changeWeir2D=0;
+            handles.model.delft3dflow.domain(ad).addWeir2D=0;
+            handles.model.delft3dflow.domain(ad).deleteWeir2D=0;
+            handles.model.delft3dflow.domain(ad).changeWeir2D=0;
             ddb_clickObject('tag','weir2d','callback',@selectWeir2DFromMap);
             setHandles(handles);
             setInstructions({'','','Select 2D weir from map'});
             
         case{'change'}
-            handles.Model(md).Input(ad).addWeir2D=0;
-            handles.Model(md).Input(ad).selectWeir2D=0;
-            handles.Model(md).Input(ad).deleteWeir2D=0;
-            if handles.Model(md).Input(ad).changeWeir2D
+            handles.model.delft3dflow.domain(ad).addWeir2D=0;
+            handles.model.delft3dflow.domain(ad).selectWeir2D=0;
+            handles.model.delft3dflow.domain(ad).deleteWeir2D=0;
+            if handles.model.delft3dflow.domain(ad).changeWeir2D
                 ddb_clickObject('tag','weir2d','callback',@changeWeir2DFromMap);
                 setInstructions({'','','Select 2D weir to change from map'});
             end
             setHandles(handles);
             
         case{'edit'}
-            handles.Model(md).Input(ad).addWeir2D=0;
-            handles.Model(md).Input(ad).selectWeir2D=0;
-            handles.Model(md).Input(ad).changeWeir2D=0;
-            handles.Model(md).Input(ad).deleteWeir2D=0;
+            handles.model.delft3dflow.domain(ad).addWeir2D=0;
+            handles.model.delft3dflow.domain(ad).selectWeir2D=0;
+            handles.model.delft3dflow.domain(ad).changeWeir2D=0;
+            handles.model.delft3dflow.domain(ad).deleteWeir2D=0;
             handles.editMode='edit';
-            n=handles.Model(md).Input(ad).activeWeir2D;
-            m1str=num2str(handles.Model(md).Input(ad).weirs2D(n).M1);
-            m2str=num2str(handles.Model(md).Input(ad).weirs2D(n).M2);
-            n1str=num2str(handles.Model(md).Input(ad).weirs2D(n).N1);
-            n2str=num2str(handles.Model(md).Input(ad).weirs2D(n).N2);
-            handles.Model(md).Input(ad).weir2DNames{n}=['('  m1str ',' n1str ')...(' m2str ',' n2str ')'];
+            n=handles.model.delft3dflow.domain(ad).activeWeir2D;
+            m1str=num2str(handles.model.delft3dflow.domain(ad).weirs2D(n).M1);
+            m2str=num2str(handles.model.delft3dflow.domain(ad).weirs2D(n).M2);
+            n1str=num2str(handles.model.delft3dflow.domain(ad).weirs2D(n).N1);
+            n2str=num2str(handles.model.delft3dflow.domain(ad).weirs2D(n).N2);
+            handles.model.delft3dflow.domain(ad).weir2DNames{n}=['('  m1str ',' n1str ')...(' m2str ',' n2str ')'];
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','weirs2d');
             setHandles(handles);
             clearInstructions;
             
         case{'selectfromlist'}
-            handles.Model(md).Input(ad).addWeir2D=0;
-            handles.Model(md).Input(ad).selectWeir2D=0;
-            handles.Model(md).Input(ad).changeWeir2D=0;
+            handles.model.delft3dflow.domain(ad).addWeir2D=0;
+            handles.model.delft3dflow.domain(ad).selectWeir2D=0;
+            handles.model.delft3dflow.domain(ad).changeWeir2D=0;
             % Delete selected dry point next time delete is clicked
-            handles.Model(md).Input(ad).deleteWeir2D=1;
+            handles.model.delft3dflow.domain(ad).deleteWeir2D=1;
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','weirs2d');
             setHandles(handles);
             clearInstructions;
@@ -171,34 +171,34 @@ y1=y(1);y2=y(2);
 handles=getHandles;
 
 if x1==x2 && y1==y2
-    [m1,n1,uv]=findgridline(x1,y1,handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY);
+    [m1,n1,uv]=findgridline(x1,y1,handles.model.delft3dflow.domain(ad).gridX,handles.model.delft3dflow.domain(ad).gridY);
     m2=m1;
     n2=n1;
 else
-    [m1,n1]=findcornerpoint(x1,y1,handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY);
-    [m2,n2]=findcornerpoint(x2,y2,handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY);
+    [m1,n1]=findcornerpoint(x1,y1,handles.model.delft3dflow.domain(ad).gridX,handles.model.delft3dflow.domain(ad).gridY);
+    [m2,n2]=findcornerpoint(x2,y2,handles.model.delft3dflow.domain(ad).gridX,handles.model.delft3dflow.domain(ad).gridY);
 end
 if m1>0 && (m1==m2 || n1==n2)
     
-    if handles.Model(md).Input(ad).changeWeir2D
-        iac=handles.Model(md).Input(ad).activeWeir2D;
+    if handles.model.delft3dflow.domain(ad).changeWeir2D
+        iac=handles.model.delft3dflow.domain(ad).activeWeir2D;
     else
         % Add mode
-        handles.Model(md).Input(ad).nrWeirs2D=handles.Model(md).Input(ad).nrWeirs2D+1;
-        iac=handles.Model(md).Input(ad).nrWeirs2D;
+        handles.model.delft3dflow.domain(ad).nrWeirs2D=handles.model.delft3dflow.domain(ad).nrWeirs2D+1;
+        iac=handles.model.delft3dflow.domain(ad).nrWeirs2D;
     end
     
     if x1==x2 && y1==y2
         if uv==1
-            handles.Model(md).Input(ad).weirs2D(iac).UV='V';
+            handles.model.delft3dflow.domain(ad).weirs2D(iac).UV='V';
         else
-            handles.Model(md).Input(ad).weirs2D(iac).UV='U';
+            handles.model.delft3dflow.domain(ad).weirs2D(iac).UV='U';
         end
     else
         if m2~=m1
-            handles.Model(md).Input(ad).weirs2D(iac).UV='V';
+            handles.model.delft3dflow.domain(ad).weirs2D(iac).UV='V';
         else
-            handles.Model(md).Input(ad).weirs2D(iac).UV='U';
+            handles.model.delft3dflow.domain(ad).weirs2D(iac).UV='U';
         end
     end
     if m2>m1
@@ -214,22 +214,22 @@ if m1>0 && (m1==m2 || n1==n2)
         n2=n2+1;
     end
     
-    handles.Model(md).Input(ad).weirs2D(iac).M1=m1;
-    handles.Model(md).Input(ad).weirs2D(iac).N1=n1;
-    handles.Model(md).Input(ad).weirs2D(iac).M2=m2;
-    handles.Model(md).Input(ad).weirs2D(iac).N2=n2;
-    handles.Model(md).Input(ad).weirs2D(iac).crestHeight=0.0;
-    handles.Model(md).Input(ad).weirs2D(iac).frictionCoefficient=1.0;
-    handles.Model(md).Input(ad).weirs2D(iac).name=['(' num2str(m1) ',' num2str(n1) ')...(' num2str(m2) ',' num2str(n2) ')'];
-    handles.Model(md).Input(ad).weir2DNames{iac}=handles.Model(md).Input(ad).weirs2D(iac).name;
-    handles.Model(md).Input(ad).activeWeir2D=iac;
+    handles.model.delft3dflow.domain(ad).weirs2D(iac).M1=m1;
+    handles.model.delft3dflow.domain(ad).weirs2D(iac).N1=n1;
+    handles.model.delft3dflow.domain(ad).weirs2D(iac).M2=m2;
+    handles.model.delft3dflow.domain(ad).weirs2D(iac).N2=n2;
+    handles.model.delft3dflow.domain(ad).weirs2D(iac).crestHeight=0.0;
+    handles.model.delft3dflow.domain(ad).weirs2D(iac).frictionCoefficient=1.0;
+    handles.model.delft3dflow.domain(ad).weirs2D(iac).name=['(' num2str(m1) ',' num2str(n1) ')...(' num2str(m2) ',' num2str(n2) ')'];
+    handles.model.delft3dflow.domain(ad).weir2DNames{iac}=handles.model.delft3dflow.domain(ad).weirs2D(iac).name;
+    handles.model.delft3dflow.domain(ad).activeWeir2D=iac;
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','weirs2d');
     
-    if handles.Model(md).Input(ad).changeWeir2D
+    if handles.model.delft3dflow.domain(ad).changeWeir2D
         ddb_clickObject('tag','thindam','callback',@changeWeir2DFromMap);
         setInstructions({'','','Select 2D weir'});
     else
-        ddb_dragLine(@addWeir2D,'method','alonggridline','x',handles.Model(md).Input(ad).gridX,'y',handles.Model(md).Input(ad).gridY);
+        ddb_dragLine(@addWeir2D,'method','alonggridline','x',handles.model.delft3dflow.domain(ad).gridX,'y',handles.model.delft3dflow.domain(ad).gridY);
         setInstructions({'','','Drag new 2D weir'});
     end
 end
@@ -239,30 +239,30 @@ refreshWeirs2D;
 %%
 function handles=deleteWeir2D(handles)
 
-nrdry=handles.Model(md).Input(ad).nrWeirs2D;
+nrdry=handles.model.delft3dflow.domain(ad).nrWeirs2D;
 
 if nrdry>0
-    iac=handles.Model(md).Input(ad).activeWeir2D;
+    iac=handles.model.delft3dflow.domain(ad).activeWeir2D;
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'delete','weirs2d');
     if nrdry>1
-        handles.Model(md).Input(ad).weirs2D=removeFromStruc(handles.Model(md).Input(ad).weirs2D,iac);
-        handles.Model(md).Input(ad).weir2DNames=removeFromCellArray(handles.Model(md).Input(ad).weir2DNames,iac);
+        handles.model.delft3dflow.domain(ad).weirs2D=removeFromStruc(handles.model.delft3dflow.domain(ad).weirs2D,iac);
+        handles.model.delft3dflow.domain(ad).weir2DNames=removeFromCellArray(handles.model.delft3dflow.domain(ad).weir2DNames,iac);
     else
-        handles.Model(md).Input(ad).weir2DNames={''};
-        handles.Model(md).Input(ad).activeWeir2D=1;
-        handles.Model(md).Input(ad).weirs2D(1).M1=[];
-        handles.Model(md).Input(ad).weirs2D(1).M2=[];
-        handles.Model(md).Input(ad).weirs2D(1).N1=[];
-        handles.Model(md).Input(ad).weirs2D(1).N2=[];
-        handles.Model(md).Input(ad).weirs2D(1).UV=[];
-        handles.Model(md).Input(ad).weirs2D(1).crestHeight=[];
-        handles.Model(md).Input(ad).weirs2D(1).frictionCoefficient=[];
+        handles.model.delft3dflow.domain(ad).weir2DNames={''};
+        handles.model.delft3dflow.domain(ad).activeWeir2D=1;
+        handles.model.delft3dflow.domain(ad).weirs2D(1).M1=[];
+        handles.model.delft3dflow.domain(ad).weirs2D(1).M2=[];
+        handles.model.delft3dflow.domain(ad).weirs2D(1).N1=[];
+        handles.model.delft3dflow.domain(ad).weirs2D(1).N2=[];
+        handles.model.delft3dflow.domain(ad).weirs2D(1).UV=[];
+        handles.model.delft3dflow.domain(ad).weirs2D(1).crestHeight=[];
+        handles.model.delft3dflow.domain(ad).weirs2D(1).frictionCoefficient=[];
     end
     if iac==nrdry
         iac=nrdry-1;
     end
-    handles.Model(md).Input(ad).nrWeirs2D=nrdry-1;
-    handles.Model(md).Input(ad).activeWeir2D=iac;
+    handles.model.delft3dflow.domain(ad).nrWeirs2D=nrdry-1;
+    handles.model.delft3dflow.domain(ad).activeWeir2D=iac;
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','weirs2d');
     setHandles(handles);
     refreshWeirs2D;
@@ -273,7 +273,7 @@ function deleteWeir2DFromMap(h)
 
 handles=getHandles;
 iac=get(h,'UserData');
-handles.Model(md).Input(ad).activeWeir2D=iac;
+handles.model.delft3dflow.domain(ad).activeWeir2D=iac;
 handles=deleteWeir2D(handles);
 setHandles(handles);
 
@@ -282,7 +282,7 @@ function selectWeir2DFromMap(h)
 
 handles=getHandles;
 iac=get(h,'UserData');
-handles.Model(md).Input(ad).activeWeir2D=iac;
+handles.model.delft3dflow.domain(ad).activeWeir2D=iac;
 handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','weirs2d');
 setHandles(handles);
 refreshWeirs2D;
@@ -292,7 +292,7 @@ function changeWeir2DFromMap(h)
 
 handles=getHandles;
 iac=get(h,'UserData');
-handles.Model(md).Input(ad).activeWeir2D=iac;
+handles.model.delft3dflow.domain(ad).activeWeir2D=iac;
 ddb_Delft3DFLOW_plotWeirs2D(handles,'update');
 setHandles(handles);
 refreshWeirs2D;

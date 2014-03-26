@@ -63,19 +63,19 @@ function handles = ddb_generateBoundarySectionsDFlowFM(handles,maxdist,maxangle)
 
 %%
 
-if ~isempty(handles.Model(md).Input(id).grdFile)
-    if ~isempty(handles.Model(md).Input(id).depFile)
+if ~isempty(handles.model.dflowfm.domain(id).grdFile)
+    if ~isempty(handles.model.dflowfm.domain(id).depFile)
         
         d=handles.toolbox.modelmaker.sectionLength;
         zmax=handles.toolbox.modelmaker.zMax;
         
-        attName=handles.Model(md).Input(id).attName;
+        attName=handles.model.dflowfm.domain(id).attName;
         
-        handles.Model(md).Input(id).bndFile=[attName '.bnd'];
+        handles.model.dflowfm.domain(id).bndFile=[attName '.bnd'];
         
-        x=handles.Model(md).Input(id).gridx;
-        y=handles.Model(md).Input(id).gridy;
-        z=handles.Model(md).Input(id).depth;
+        x=handles.model.dflowfm.domain(id).gridx;
+        y=handles.model.dflowfm.domain(id).gridy;
+        z=handles.model.dflowfm.domain(id).depth;
         
         mmax=size(x,1);
         nmax=size(x,2);
@@ -100,7 +100,7 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
                 while m<mmax
                     % Find start point
                     if ~isnan(x(m,n(j))) && ~isnan(x(m-1,n(j))) && ...
-                            handles.Model(md).Input(id).depth(m,n(j))<zmax
+                            handles.model.dflowfm.domain(id).depth(m,n(j))<zmax
                         mstart=m;
                         break
                     else
@@ -112,7 +112,7 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
                 while m<mstart+d && m<=mmax
                     % Find end point
                     if ~isnan(x(m,n(j))) && ~isnan(x(m-1,n(j))) && ...
-                            handles.Model(md).Input(id).depth(m,n(j))<zmax
+                            handles.model.dflowfm.domain(id).depth(m,n(j))<zmax
                         mend=m;
                     else
                         break
@@ -122,33 +122,33 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
                 if mstart>0 && mend>0
                     nb=nb+1;
                     nd=nd+1;
-                    handles.Model(md).Input(id).openBoundaries(nb).M1=mstart;
-                    handles.Model(md).Input(id).openBoundaries(nb).M2=mend;
-                    handles.Model(md).Input(id).openBoundaries(nb).N1=n2(j);
-                    handles.Model(md).Input(id).openBoundaries(nb).N2=n2(j);
+                    handles.model.dflowfm.domain(id).openBoundaries(nb).M1=mstart;
+                    handles.model.dflowfm.domain(id).openBoundaries(nb).M2=mend;
+                    handles.model.dflowfm.domain(id).openBoundaries(nb).N1=n2(j);
+                    handles.model.dflowfm.domain(id).openBoundaries(nb).N2=n2(j);
                     
-                    handles.Model(md).Input(id).openBoundaries(nb).alpha=0.0;
-                    handles.Model(md).Input(id).openBoundaries(nb).compA='unnamed';
-                    handles.Model(md).Input(id).openBoundaries(nb).compB='unnamed';
-                    handles.Model(md).Input(id).openBoundaries(nb).type='Z';
-                    handles.Model(md).Input(id).openBoundaries(nb).forcing='A';
-                    handles.Model(md).Input(id).openBoundaries(nb).profile='Uniform';
+                    handles.model.dflowfm.domain(id).openBoundaries(nb).alpha=0.0;
+                    handles.model.dflowfm.domain(id).openBoundaries(nb).compA='unnamed';
+                    handles.model.dflowfm.domain(id).openBoundaries(nb).compB='unnamed';
+                    handles.model.dflowfm.domain(id).openBoundaries(nb).type='Z';
+                    handles.model.dflowfm.domain(id).openBoundaries(nb).forcing='A';
+                    handles.model.dflowfm.domain(id).openBoundaries(nb).profile='Uniform';
                     
-                    t0=handles.Model(md).Input(id).startTime;
-                    t1=handles.Model(md).Input(id).stopTime;
-                    nrsed=handles.Model(md).Input(id).nrSediments;
-                    nrtrac=handles.Model(md).Input(id).nrTracers;
-                    nrharmo=handles.Model(md).Input(id).nrHarmonicComponents;
-                    x=handles.Model(md).Input(id).gridX;
-                    y=handles.Model(md).Input(id).gridY;
-                    depthZ=handles.Model(md).Input(id).depthZ;
-                    kcs=handles.Model(md).Input(id).kcs;
-                    kmax=handles.Model(md).Input(id).KMax;
+                    t0=handles.model.dflowfm.domain(id).startTime;
+                    t1=handles.model.dflowfm.domain(id).stopTime;
+                    nrsed=handles.model.dflowfm.domain(id).nrSediments;
+                    nrtrac=handles.model.dflowfm.domain(id).nrTracers;
+                    nrharmo=handles.model.dflowfm.domain(id).nrHarmonicComponents;
+                    x=handles.model.dflowfm.domain(id).gridX;
+                    y=handles.model.dflowfm.domain(id).gridY;
+                    depthZ=handles.model.dflowfm.domain(id).depthZ;
+                    kcs=handles.model.dflowfm.domain(id).kcs;
+                    kmax=handles.model.dflowfm.domain(id).KMax;
                     
-                    handles.Model(md).Input(id).openBoundaries=delft3dflow_initializeOpenBoundary(handles.Model(md).Input(id).openBoundaries,nb, ...
+                    handles.model.dflowfm.domain(id).openBoundaries=delft3dflow_initializeOpenBoundary(handles.model.dflowfm.domain(id).openBoundaries,nb, ...
                         t0,t1,nrsed,nrtrac,nrharmo,x,y,depthZ,kcs,kmax);
                     
-                    handles.Model(md).Input(id).openBoundaries(nb).name=[dir{j} num2str(nd)];
+                    handles.model.dflowfm.domain(id).openBoundaries(nb).name=[dir{j} num2str(nd)];
                 end
             end
             
@@ -170,7 +170,7 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
                 while n<nmax
                     % Find start point
                     if ~isnan(x(m(j),n)) && ~isnan(x(m(j),n-1)) && ...
-                            handles.Model(md).Input(id).depth(m(j),n)<zmax
+                            handles.model.dflowfm.domain(id).depth(m(j),n)<zmax
                         nstart=n;
                         break
                     else
@@ -182,7 +182,7 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
                 while n<nstart+d && n<=nmax
                     % Find end point
                     if ~isnan(x(m(j),n)) && ~isnan(x(m(j),n-1)) && ...
-                            handles.Model(md).Input(id).depth(m(j),n)<zmax
+                            handles.model.dflowfm.domain(id).depth(m(j),n)<zmax
                         nend=n;
                     else
                         break
@@ -192,48 +192,48 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
                 if nstart>0 && nend>0
                     nb=nb+1;
                     nd=nd+1;
-                    handles.Model(md).Input(id).openBoundaries(nb).M1=m2(j);
-                    handles.Model(md).Input(id).openBoundaries(nb).M2=m2(j);
-                    handles.Model(md).Input(id).openBoundaries(nb).N1=nstart;
-                    handles.Model(md).Input(id).openBoundaries(nb).N2=nend;
+                    handles.model.dflowfm.domain(id).openBoundaries(nb).M1=m2(j);
+                    handles.model.dflowfm.domain(id).openBoundaries(nb).M2=m2(j);
+                    handles.model.dflowfm.domain(id).openBoundaries(nb).N1=nstart;
+                    handles.model.dflowfm.domain(id).openBoundaries(nb).N2=nend;
                     
-                    handles.Model(md).Input(id).openBoundaries(nb).alpha=0.0;
-                    handles.Model(md).Input(id).openBoundaries(nb).compA='unnamed';
-                    handles.Model(md).Input(id).openBoundaries(nb).compB='unnamed';
-                    handles.Model(md).Input(id).openBoundaries(nb).type='Z';
-                    handles.Model(md).Input(id).openBoundaries(nb).forcing='A';
-                    handles.Model(md).Input(id).openBoundaries(nb).profile='Uniform';
+                    handles.model.dflowfm.domain(id).openBoundaries(nb).alpha=0.0;
+                    handles.model.dflowfm.domain(id).openBoundaries(nb).compA='unnamed';
+                    handles.model.dflowfm.domain(id).openBoundaries(nb).compB='unnamed';
+                    handles.model.dflowfm.domain(id).openBoundaries(nb).type='Z';
+                    handles.model.dflowfm.domain(id).openBoundaries(nb).forcing='A';
+                    handles.model.dflowfm.domain(id).openBoundaries(nb).profile='Uniform';
                     
-                    t0=handles.Model(md).Input(id).startTime;
-                    t1=handles.Model(md).Input(id).stopTime;
-                    nrsed=handles.Model(md).Input(id).nrSediments;
-                    nrtrac=handles.Model(md).Input(id).nrTracers;
-                    nrharmo=handles.Model(md).Input(id).nrHarmonicComponents;
-                    x=handles.Model(md).Input(id).gridX;
-                    y=handles.Model(md).Input(id).gridY;
-                    depthZ=handles.Model(md).Input(id).depthZ;
-                    kcs=handles.Model(md).Input(id).kcs;
+                    t0=handles.model.dflowfm.domain(id).startTime;
+                    t1=handles.model.dflowfm.domain(id).stopTime;
+                    nrsed=handles.model.dflowfm.domain(id).nrSediments;
+                    nrtrac=handles.model.dflowfm.domain(id).nrTracers;
+                    nrharmo=handles.model.dflowfm.domain(id).nrHarmonicComponents;
+                    x=handles.model.dflowfm.domain(id).gridX;
+                    y=handles.model.dflowfm.domain(id).gridY;
+                    depthZ=handles.model.dflowfm.domain(id).depthZ;
+                    kcs=handles.model.dflowfm.domain(id).kcs;
                     
-                    handles.Model(md).Input(id).openBoundaries=delft3dflow_initializeOpenBoundary(handles.Model(md).Input(id).openBoundaries,nb, ...
+                    handles.model.dflowfm.domain(id).openBoundaries=delft3dflow_initializeOpenBoundary(handles.model.dflowfm.domain(id).openBoundaries,nb, ...
                         t0,t1,nrsed,nrtrac,nrharmo,x,y,depthZ,kcs);
                     
-                    handles.Model(md).Input(id).openBoundaries(nb).name=[dir{j} num2str(nd)];
+                    handles.model.dflowfm.domain(id).openBoundaries(nb).name=[dir{j} num2str(nd)];
                 end
             end
         end
         
-        handles.Model(md).Input(id).nrOpenBoundaries=nb;
+        handles.model.dflowfm.domain(id).nrOpenBoundaries=nb;
         
         % Set boundary name in one cell array
         for ib=1:nb
-            handles.Model(md).Input(ad).openBoundaryNames{ib}=handles.Model(md).Input(id).openBoundaries(ib).name;
+            handles.model.dflowfm.domain(ad).openBoundaryNames{ib}=handles.model.dflowfm.domain(id).openBoundaries(ib).name;
         end
         
         handles=ddb_countOpenBoundaries(handles,id);
         
         handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','openboundaries','visible',1,'active',0);
         
-        ddb_saveBndFile(handles.Model(md).Input(id).openBoundaries,handles.Model(md).Input(id).bndFile);
+        ddb_saveBndFile(handles.model.dflowfm.domain(id).openBoundaries,handles.model.dflowfm.domain(id).bndFile);
         
     else
         ddb_giveWarning('Warning','First generate or load a bathymetry');

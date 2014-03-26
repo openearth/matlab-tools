@@ -61,7 +61,7 @@ function ddb_saveBccFile(handles, id)
 % $Keywords: $
 
 %%
-Flw=handles.Model(md).Input(id);
+Flw=handles.model.delft3dflow.domain(id);
 
 fname=Flw.bccFile;
 

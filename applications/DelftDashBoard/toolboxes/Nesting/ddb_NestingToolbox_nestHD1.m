@@ -101,14 +101,14 @@ switch handles.toolbox.nesting.detailmodeltype
             return
         end
         
-        if isempty(handles.Model(md).Input(ad).gridX)
+        if isempty(handles.model.delft3dflow.domain(ad).gridX)
             ddb_giveWarning('text','Please first load or create model grid!');
             return
         end
         
         fid=fopen('nesthd1.inp','wt');
-        fprintf(fid,'%s\n',handles.Model(md).Input(ad).grdFile);
-        fprintf(fid,'%s\n',handles.Model(md).Input(ad).encFile);
+        fprintf(fid,'%s\n',handles.model.delft3dflow.domain(ad).grdFile);
+        fprintf(fid,'%s\n',handles.model.delft3dflow.domain(ad).encFile);
         fprintf(fid,'%s\n',handles.toolbox.nesting.grdFile);
         fprintf(fid,'%s\n',handles.toolbox.nesting.encFile);
         fprintf(fid,'%s\n',handles.toolbox.nesting.bndFile);
@@ -119,35 +119,35 @@ switch handles.toolbox.nesting.detailmodeltype
         %system(['"' handles.toolbox.nesting.dataDir 'nesthd1" < nesthd1.inp']);
         % Should use the nesthd1 compiled for this system if that is
         % available
-        if exist([handles.Model(md).exedir,'nesthd1.exe'],'file'),
-            system(['"' handles.Model(md).exedir 'nesthd1" < nesthd1.inp']);
+        if exist([handles.model.delft3dflow.exedir,'nesthd1.exe'],'file'),
+            system(['"' handles.model.delft3dflow.exedir 'nesthd1" < nesthd1.inp']);
         else
             system(['"' handles.toolbox.nesting.dataDir 'nesthd1" < nesthd1.inp']);
         end
         
         [name,m,n] = textread('ddtemp.obs','%21c%f%f');
         
-        k=handles.Model(md).Input(ad).nrObservationPoints;
+        k=handles.model.delft3dflow.domain(ad).nrObservationPoints;
         for i=1:length(m)
             % Check if observation point already exists
             nm=deblank(name(i,:));
-            ii=strmatch(nm,handles.Model(md).Input(ad).observationPointNames,'exact');
+            ii=strmatch(nm,handles.model.delft3dflow.domain(ad).observationPointNames,'exact');
             if isempty(ii)
                 % Observation point does not yet exist
                 k=k+1;
-                handles.Model(md).Input(ad).observationPoints(k).name=nm;
-                handles.Model(md).Input(ad).observationPoints(k).M=m(i);
-                handles.Model(md).Input(ad).observationPoints(k).N=n(i);
-                handles.Model(md).Input(ad).observationPoints(k).x=handles.Model(md).Input(ad).gridXZ(m(i),n(i));
-                handles.Model(md).Input(ad).observationPoints(k).y=handles.Model(md).Input(ad).gridYZ(m(i),n(i));
-                handles.Model(md).Input(ad).observationPointNames{k}=handles.Model(md).Input(ad).observationPoints(k).name;
+                handles.model.delft3dflow.domain(ad).observationPoints(k).name=nm;
+                handles.model.delft3dflow.domain(ad).observationPoints(k).M=m(i);
+                handles.model.delft3dflow.domain(ad).observationPoints(k).N=n(i);
+                handles.model.delft3dflow.domain(ad).observationPoints(k).x=handles.model.delft3dflow.domain(ad).gridXZ(m(i),n(i));
+                handles.model.delft3dflow.domain(ad).observationPoints(k).y=handles.model.delft3dflow.domain(ad).gridYZ(m(i),n(i));
+                handles.model.delft3dflow.domain(ad).observationPointNames{k}=handles.model.delft3dflow.domain(ad).observationPoints(k).name;
             end
         end
         delete('nesthd1.inp');
         try
             delete('ddtemp.obs');
         end
-        handles.Model(md).Input(ad).nrObservationPoints=length(handles.Model(md).Input(ad).observationPoints);
+        handles.model.delft3dflow.domain(ad).nrObservationPoints=length(handles.model.delft3dflow.domain(ad).observationPoints);
         
         handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','observationpoints','domain',ad,'visible',1,'active',0);
         
@@ -164,28 +164,28 @@ switch handles.toolbox.nesting.detailmodeltype
         cs.type=handles.toolbox.nesting.detailmodelcstype;
 
         newpoints=ddb_nesthd1_dflowfm_in_delft3dflow('admfile',handles.toolbox.nesting.admFile,'extfile',handles.toolbox.nesting.extfile, ...
-            'grdfile',handles.Model(md).Input(ad).grdFile,'encfile',handles.Model(md).Input(ad).encFile, ...
+            'grdfile',handles.model.delft3dflow.domain(ad).grdFile,'encfile',handles.model.delft3dflow.domain(ad).encFile, ...
             'csoverall',handles.screenParameters.coordinateSystem,'csdetail',cs);        
         
         if ~isempty(newpoints)            
-            k=handles.Model(md).Input(ad).nrObservationPoints;
+            k=handles.model.delft3dflow.domain(ad).nrObservationPoints;
             for ip=1:length(newpoints)
                 % Check if observation point already exists
                 nm=deblank(newpoints(ip).name);
-                ii=strmatch(nm,handles.Model(md).Input(ad).observationPointNames,'exact');
+                ii=strmatch(nm,handles.model.delft3dflow.domain(ad).observationPointNames,'exact');
                 if isempty(ii)
                     % Observation point does not yet exist
                     k=k+1;
-                    handles.Model(md).Input(ad).observationPoints(k).name=nm;
-                    handles.Model(md).Input(ad).observationPoints(k).M=newpoints(ip).m;
-                    handles.Model(md).Input(ad).observationPoints(k).N=newpoints(ip).n;
-                    handles.Model(md).Input(ad).observationPoints(k).x=handles.Model(md).Input(ad).gridXZ(newpoints(ip).m,newpoints(ip).n);
-                    handles.Model(md).Input(ad).observationPoints(k).y=handles.Model(md).Input(ad).gridYZ(newpoints(ip).m,newpoints(ip).n);
-                    handles.Model(md).Input(ad).observationPointNames{k}=handles.Model(md).Input(ad).observationPoints(k).name;
+                    handles.model.delft3dflow.domain(ad).observationPoints(k).name=nm;
+                    handles.model.delft3dflow.domain(ad).observationPoints(k).M=newpoints(ip).m;
+                    handles.model.delft3dflow.domain(ad).observationPoints(k).N=newpoints(ip).n;
+                    handles.model.delft3dflow.domain(ad).observationPoints(k).x=handles.model.delft3dflow.domain(ad).gridXZ(newpoints(ip).m,newpoints(ip).n);
+                    handles.model.delft3dflow.domain(ad).observationPoints(k).y=handles.model.delft3dflow.domain(ad).gridYZ(newpoints(ip).m,newpoints(ip).n);
+                    handles.model.delft3dflow.domain(ad).observationPointNames{k}=handles.model.delft3dflow.domain(ad).observationPoints(k).name;
                 end
             end
-            handles.Model(md).Input(ad).activeObservationPoint=1;
-            handles.Model(md).Input(ad).nrObservationPoints=k;
+            handles.model.delft3dflow.domain(ad).activeObservationPoint=1;
+            handles.model.delft3dflow.domain(ad).nrObservationPoints=k;
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','observationpoints','domain',ad,'visible',1,'active',0);        
             setHandles(handles);
         end

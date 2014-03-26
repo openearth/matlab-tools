@@ -12,7 +12,7 @@
     <position>80 100 150 20</position>
     <text>Name</text>
     <textposition>left</textposition>
-    <variable>name</variable>
+    <variable>cyclonename</variable>
     <type>string</type>
     <tooltipstring>Edit name of tropical cyclone</tooltipstring>
   </element>

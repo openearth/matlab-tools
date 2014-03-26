@@ -74,9 +74,11 @@ end
 
 handles.toolbox.modelmaker.nX=1;
 handles.toolbox.modelmaker.dX=0.1;
+handles.toolbox.modelmaker.wavedX=0.1;
 handles.toolbox.modelmaker.xOri=0.0;
 handles.toolbox.modelmaker.nY=1;
 handles.toolbox.modelmaker.dY=0.1;
+handles.toolbox.modelmaker.wavedY=0.1;
 handles.toolbox.modelmaker.yOri=1.0;
 handles.toolbox.modelmaker.lengthX=0.1;
 handles.toolbox.modelmaker.lengthY=0.1;

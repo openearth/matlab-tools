@@ -17,7 +17,7 @@
       <tag>import</tag>
       <tabstring>Import</tabstring>
       <callback>ddb_BathymetryToolbox_import</callback>
-      <element>Bathymetry.import.xml</element>
+      <element>toolbox.bathymetry.import.xml</element>
       <enable>1</enable>
     </tab>
     <tab>

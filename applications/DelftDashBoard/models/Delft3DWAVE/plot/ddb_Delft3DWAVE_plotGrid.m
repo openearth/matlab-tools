@@ -62,7 +62,6 @@ function handles = ddb_Delft3DWAVE_plotGrid(handles, opt, varargin)
 % $Keywords: $
 
 %%
-imd=strmatch('Delft3DWAVE',{handles.Model(:).name},'exact');
 
 col=[0.35 0.35 0.35];
 vis=1;
@@ -86,31 +85,31 @@ switch lower(opt)
     case{'plot'}
         
         % First delete old grid
-        if isfield(handles.Model(imd).Input.domains(id).gridplot,'plothandles')
-            if ~isempty(handles.Model(imd).Input.domains(id).gridplot.plothandles)
+        if isfield(handles.model.delft3dwave.domain.domains(id).gridplot,'plothandles')
+            if ~isempty(handles.model.delft3dwave.domain.domains(id).gridplot.plothandles)
                 try
-                    delete(handles.Model(imd).Input.domains(id).gridplot.plothandles);
+                    delete(handles.model.delft3dwave.domain.domains(id).gridplot.plothandles);
                 end
             end
         end
         
         % Now plot new grid
-        x=handles.Model(imd).Input.domains(id).gridx;
-        y=handles.Model(imd).Input.domains(id).gridy;
-        handles.Model(imd).Input.domains(id).gridplot.plothandles=ddb_plotCurvilinearGrid(x,y,'color',col,'tag','delft3dwavegrid');
+        x=handles.model.delft3dwave.domain.domains(id).gridx;
+        y=handles.model.delft3dwave.domain.domains(id).gridy;
+        handles.model.delft3dwave.domain.domains(id).gridplot.plothandles=ddb_plotCurvilinearGrid(x,y,'color',col,'tag','delft3dwavegrid');
         if vis
-            set(handles.Model(imd).Input.domains(id).gridplot.plothandles,'Color',col,'Visible','on');
+            set(handles.model.delft3dwave.domain.domains(id).gridplot.plothandles,'Color',col,'Visible','on');
         else
-            set(handles.Model(imd).Input.domains(id).gridplot.plothandles,'Color',col,'Visible','off');
+            set(handles.model.delft3dwave.domain.domains(id).gridplot.plothandles,'Color',col,'Visible','off');
         end
         
     case{'delete'}
         
         % Delete old grid
-        if isfield(handles.Model(imd).Input.domains(id).gridplot,'plothandles')
-            if ~isempty(handles.Model(imd).Input.domains(id).gridplot.plothandles)
+        if isfield(handles.model.delft3dwave.domain.domains(id).gridplot,'plothandles')
+            if ~isempty(handles.model.delft3dwave.domain.domains(id).gridplot.plothandles)
                 try
-                    delete(handles.Model(imd).Input.domains(id).gridplot.plothandles);
+                    delete(handles.model.delft3dwave.domain.domains(id).gridplot.plothandles);
                 end
             end
         end
@@ -122,14 +121,14 @@ switch lower(opt)
 %        end
         
     case{'update'}
-        if isfield(handles.Model(imd).Input.domains(id).gridplot,'plothandles')
-            if ~isempty(handles.Model(imd).Input.domains(id).gridplot.plothandles)
+        if isfield(handles.model.delft3dwave.domain.domains(id).gridplot,'plothandles')
+            if ~isempty(handles.model.delft3dwave.domain.domains(id).gridplot.plothandles)
                 try
-                    set(handles.Model(imd).Input.domains(id).gridplot.plothandles,'Color',col);
+                    set(handles.model.delft3dwave.domain.domains(id).gridplot.plothandles,'Color',col);
                     if vis
-                        set(handles.Model(imd).Input.domains(id).gridplot.plothandles,'Color',col,'Visible','on');
+                        set(handles.model.delft3dwave.domain.domains(id).gridplot.plothandles,'Color',col,'Visible','on');
                     else
-                        set(handles.Model(imd).Input.domains(id).gridplot.plothandles,'Color',col,'Visible','off');
+                        set(handles.model.delft3dwave.domain.domains(id).gridplot.plothandles,'Color',col,'Visible','off');
                     end
                 end
             end

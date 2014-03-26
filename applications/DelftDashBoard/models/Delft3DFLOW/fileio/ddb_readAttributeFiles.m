@@ -61,98 +61,98 @@ function handles = ddb_readAttributeFiles(handles, id)
 % $Keywords: $
 
 %%
-if ~isempty(handles.Model(md).Input(id).grdFile)
-    [x,y,enc]=ddb_wlgrid('read',[handles.Model(md).Input(id).grdFile]);
-    handles.Model(md).Input(id).gridX=x;
-    handles.Model(md).Input(id).gridY=y;
-    [handles.Model(md).Input(id).gridXZ,handles.Model(md).Input(id).gridYZ]=getXZYZ(x,y);
-    handles.Model(md).Input(id).kcs=determineKCS(handles.Model(md).Input(id).gridX,handles.Model(md).Input(id).gridY);
-    if ~isempty(handles.Model(md).Input(id).encFile)
-        mn=ddb_enclosure('read',[handles.Model(md).Input(id).encFile]);
-        [handles.Model(md).Input(id).gridX,handles.Model(md).Input(id).gridY]=ddb_enclosure('apply',mn,handles.Model(md).Input(id).gridX,handles.Model(md).Input(id).gridY);
+if ~isempty(handles.model.delft3dflow.domain(id).grdFile)
+    [x,y,enc]=ddb_wlgrid('read',[handles.model.delft3dflow.domain(id).grdFile]);
+    handles.model.delft3dflow.domain(id).gridX=x;
+    handles.model.delft3dflow.domain(id).gridY=y;
+    [handles.model.delft3dflow.domain(id).gridXZ,handles.model.delft3dflow.domain(id).gridYZ]=getXZYZ(x,y);
+    handles.model.delft3dflow.domain(id).kcs=determineKCS(handles.model.delft3dflow.domain(id).gridX,handles.model.delft3dflow.domain(id).gridY);
+    if ~isempty(handles.model.delft3dflow.domain(id).encFile)
+        mn=ddb_enclosure('read',[handles.model.delft3dflow.domain(id).encFile]);
+        [handles.model.delft3dflow.domain(id).gridX,handles.model.delft3dflow.domain(id).gridY]=ddb_enclosure('apply',mn,handles.model.delft3dflow.domain(id).gridX,handles.model.delft3dflow.domain(id).gridY);
     end
-    nans=zeros(size(handles.Model(md).Input(id).gridX));
+    nans=zeros(size(handles.model.delft3dflow.domain(id).gridX));
     nans(nans==0)=NaN;
-    handles.Model(md).Input(id).depth=nans;
-    handles.Model(md).Input(id).depthZ=nans;
+    handles.model.delft3dflow.domain(id).depth=nans;
+    handles.model.delft3dflow.domain(id).depthZ=nans;
 end
-if ~isempty(handles.Model(md).Input(id).depFile)
-    mmax=handles.Model(md).Input(id).MMax;
-    nmax=handles.Model(md).Input(id).NMax;
-    dp=ddb_wldep('read',handles.Model(md).Input(id).depFile,[mmax nmax]);
+if ~isempty(handles.model.delft3dflow.domain(id).depFile)
+    mmax=handles.model.delft3dflow.domain(id).MMax;
+    nmax=handles.model.delft3dflow.domain(id).NMax;
+    dp=ddb_wldep('read',handles.model.delft3dflow.domain(id).depFile,[mmax nmax]);
     dp(dp==-999)=NaN;
-    handles.Model(md).Input(id).depth=-dp(1:end-1,1:end-1);
-    handles.Model(md).Input(id).depthZ=getDepthZ(handles.Model(md).Input(id).depth,handles.Model(md).Input(id).dpsOpt);
+    handles.model.delft3dflow.domain(id).depth=-dp(1:end-1,1:end-1);
+    handles.model.delft3dflow.domain(id).depthZ=getDepthZ(handles.model.delft3dflow.domain(id).depth,handles.model.delft3dflow.domain(id).dpsOpt);
 end
-if ~isempty(handles.Model(md).Input(id).bndFile)
+if ~isempty(handles.model.delft3dflow.domain(id).bndFile)
     handles=ddb_readBndFile(handles,id);
     handles=ddb_sortBoundaries(handles,id);
 end
 
 % ddb_initialize Tracers and Sediment
-for i=1:handles.Model(md).Input(id).nrTracers
+for i=1:handles.model.delft3dflow.domain(id).nrTracers
     handles=ddb_initializeTracer(handles,id,i);
 end
 
 % Initialize sediment
-if handles.Model(md).Input(id).sediments.include
+if handles.model.delft3dflow.domain(id).sediments.include
     handles=ddb_readSedFile(handles,id);
     handles=ddb_readMorFile(handles,id);
 end
 
-if ~isempty(handles.Model(md).Input(id).bcaFile)
-    if exist(handles.Model(md).Input(id).bcaFile,'file')
+if ~isempty(handles.model.delft3dflow.domain(id).bcaFile)
+    if exist(handles.model.delft3dflow.domain(id).bcaFile,'file')
         handles=ddb_readBcaFile(handles,id);
     else
-        handles.Model(md).Input(id).bcaFile='';        
-        ddb_giveWarning('text',['Bca file ' handles.Model(md).Input(id).bcaFile ' not found! Input was skipped!']);
+        handles.model.delft3dflow.domain(id).bcaFile='';        
+        ddb_giveWarning('text',['Bca file ' handles.model.delft3dflow.domain(id).bcaFile ' not found! Input was skipped!']);
     end
 end
-if ~isempty(handles.Model(md).Input(id).corFile)
-    if exist(handles.Model(md).Input(id).corFile,'file')
+if ~isempty(handles.model.delft3dflow.domain(id).corFile)
+    if exist(handles.model.delft3dflow.domain(id).corFile,'file')
         handles=ddb_readCorFile(handles,id);
     else
-        handles.Model(md).Input(id).corFile='';        
-        ddb_giveWarning('text',['Cor file ' handles.Model(md).Input(id).corFile ' not found! Input was skipped!']);
+        handles.model.delft3dflow.domain(id).corFile='';        
+        ddb_giveWarning('text',['Cor file ' handles.model.delft3dflow.domain(id).corFile ' not found! Input was skipped!']);
     end
 end
-if ~isempty(handles.Model(md).Input(id).bctFile)
+if ~isempty(handles.model.delft3dflow.domain(id).bctFile)
     try
         handles=ddb_readBctFile(handles,id);
     end
 end
-if ~isempty(handles.Model(md).Input(id).bchFile)
+if ~isempty(handles.model.delft3dflow.domain(id).bchFile)
     handles=ddb_readBchFile(handles,id);
 end
-if ~isempty(handles.Model(md).Input(id).bcqFile)
+if ~isempty(handles.model.delft3dflow.domain(id).bcqFile)
     handles=ReadBcqFile(handles,id);
 end
-if ~isempty(handles.Model(md).Input(id).bccFile)
+if ~isempty(handles.model.delft3dflow.domain(id).bccFile)
     try
         handles=ddb_readBccFile(handles,id);
     end
 end
-if ~isempty(handles.Model(md).Input(id).obsFile)
+if ~isempty(handles.model.delft3dflow.domain(id).obsFile)
     handles=ddb_readObsFile(handles,id);
 end
-if ~isempty(handles.Model(md).Input(id).crsFile)
+if ~isempty(handles.model.delft3dflow.domain(id).crsFile)
     handles=ddb_readCrsFile(handles,id);
 end
-if ~isempty(handles.Model(md).Input(id).droFile)
+if ~isempty(handles.model.delft3dflow.domain(id).droFile)
     handles=ddb_readDroFile(handles,id);
 end
-if ~isempty(handles.Model(md).Input(id).dryFile)
+if ~isempty(handles.model.delft3dflow.domain(id).dryFile)
     handles=ddb_readDryFile(handles,id);
 end
-if ~isempty(handles.Model(md).Input(id).thdFile)
+if ~isempty(handles.model.delft3dflow.domain(id).thdFile)
     handles=ddb_readThdFile(handles,id);
 end
-if ~isempty(handles.Model(md).Input(id).wndFile)
+if ~isempty(handles.model.delft3dflow.domain(id).wndFile)
     handles=ddb_readWndFile(handles,id);
 end
-if ~isempty(handles.Model(md).Input(id).srcFile)
+if ~isempty(handles.model.delft3dflow.domain(id).srcFile)
     handles=ddb_readSrcFile(handles,id);
-    if ~isempty(handles.Model(md).Input(id).disFile)
+    if ~isempty(handles.model.delft3dflow.domain(id).disFile)
         handles=ddb_readDisFile(handles,id);
     end
 end

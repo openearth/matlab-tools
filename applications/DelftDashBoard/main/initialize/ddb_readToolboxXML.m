@@ -62,7 +62,7 @@ function handles = ddb_readToolboxXML(handles, name)
 
 %%
 
-fname=[handles.toolbox.(name).name '.xml'];
+fname=['toolbox.' handles.toolbox.(name).name '.xml'];
 
 xmldir=handles.toolbox.(name).xmlDir;
 
@@ -74,7 +74,8 @@ if exist([xmldir fname],'file')>0
     
     handles.toolbox.(name).useXML=1;
     
-    xml=gui_readXMLfile(fname,xmldir,'variableprefix',['toolbox.' name]);
+%    xml=gui_readXMLfile(fname,xmldir,'variableprefix',['toolbox.' name]);
+    xml=gui_readXMLfile(fname,xmldir);
     
     handles.toolbox.(name).longName=xml.longname;
     handles.toolbox.(name).enable=xml.enable;

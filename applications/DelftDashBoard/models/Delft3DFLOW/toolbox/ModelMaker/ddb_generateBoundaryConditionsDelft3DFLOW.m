@@ -65,9 +65,9 @@ function [handles err] = ddb_generateBoundaryConditionsDelft3DFLOW(handles, id, 
 %%
 err='';
 
-% model=handles.Model(md).Input(id);
+% model=handles.model.delft3dflow.domain(id);
 
-if handles.Model(md).Input(id).nrOpenBoundaries==0
+if handles.model.delft3dflow.domain(id).nrOpenBoundaries==0
     err='First generate or load open boundaries';
     return
 end
@@ -86,16 +86,16 @@ try
     
     % Generate boundary conditions
     
-    nb=handles.Model(md).Input(id).nrOpenBoundaries;
+    nb=handles.model.delft3dflow.domain(id).nrOpenBoundaries;
     
     cs.name='WGS 84';
     cs.type='Geographic';
     
     for i=1:nb
-        xa(i)=handles.Model(md).Input(id).openBoundaries(i).x(1);
-        ya(i)=handles.Model(md).Input(id).openBoundaries(i).y(1);
-        xb(i)=handles.Model(md).Input(id).openBoundaries(i).x(end);
-        yb(i)=handles.Model(md).Input(id).openBoundaries(i).y(end);
+        xa(i)=handles.model.delft3dflow.domain(id).openBoundaries(i).x(1);
+        ya(i)=handles.model.delft3dflow.domain(id).openBoundaries(i).y(1);
+        xb(i)=handles.model.delft3dflow.domain(id).openBoundaries(i).x(end);
+        yb(i)=handles.model.delft3dflow.domain(id).openBoundaries(i).y(end);
         [xa(i),ya(i)]=ddb_coordConvert(xa(i),ya(i),handles.screenParameters.coordinateSystem,cs);
         [xb(i),yb(i)]=ddb_coordConvert(xb(i),yb(i),handles.screenParameters.coordinateSystem,cs);
     end
@@ -105,8 +105,8 @@ try
     
     igetwl=0;
     for i=1:nb
-        if strcmpi(handles.Model(md).Input(id).openBoundaries(i).forcing,'A')
-            switch lower(handles.Model(md).Input(id).openBoundaries(i).type)
+        if strcmpi(handles.model.delft3dflow.domain(id).openBoundaries(i).forcing,'A')
+            switch lower(handles.model.delft3dflow.domain(id).openBoundaries(i).type)
                 case{'r','z','n'}
                     igetwl=1;
             end
@@ -129,7 +129,7 @@ try
         ampz(1,:)=a0;
         phasez(1,:)=0;
                 
-        if handles.Model(md).Input(id).timeZone~=0
+        if handles.model.delft3dflow.domain(id).timeZone~=0
             % Try to make time zone changes
             cnst=t_getconsts;
             for ic=1:size(cnst.name,1)
@@ -141,7 +141,7 @@ try
                 ii=strmatch(conList{ic},cns,'exact');
                 freq=frq(ii); % Freq in cycles per hour
                 for jj=1:size(phasez,2)
-                    phasez(ic,jj)=phasez(ic,jj)+360*handles.Model(md).Input(id).timeZone*freq;
+                    phasez(ic,jj)=phasez(ic,jj)+360*handles.model.delft3dflow.domain(id).timeZone*freq;
                 end
             end
             phasez=mod(phasez,360);
@@ -161,8 +161,8 @@ try
     
     igetvel=0;
     for i=1:nb
-        if strcmpi(handles.Model(md).Input(id).openBoundaries(i).forcing,'A')
-            switch lower(handles.Model(md).Input(id).openBoundaries(i).type)
+        if strcmpi(handles.model.delft3dflow.domain(id).openBoundaries(i).forcing,'A')
+            switch lower(handles.model.delft3dflow.domain(id).openBoundaries(i).type)
                 case{'r','c'}
                     igetvel=1;
             end
@@ -210,7 +210,7 @@ try
         ampu(1,:)=abs(ua0);
         ampv(1,:)=abs(va0);
        
-        if handles.Model(md).Input(id).timeZone~=0
+        if handles.model.delft3dflow.domain(id).timeZone~=0
             % Try to make time zone changes
             cnst=t_getconsts;
             for ic=1:size(cnst.name,1)
@@ -221,8 +221,8 @@ try
                 ii=strmatch(conList{ic},cns,'exact');
                 freq=frq(ii); % Freq in cycles per hour
                 for jj=1:size(phasez,2)
-                    phaseu(ic,jj)=phaseu(ic,jj)+360*handles.Model(md).Input(id).timeZone*freq;
-                    phasev(ic,jj)=phasev(ic,jj)+360*handles.Model(md).Input(id).timeZone*freq;
+                    phaseu(ic,jj)=phaseu(ic,jj)+360*handles.model.delft3dflow.domain(id).timeZone*freq;
+                    phasev(ic,jj)=phasev(ic,jj)+360*handles.model.delft3dflow.domain(id).timeZone*freq;
                 end
             end
             phaseu=mod(phaseu,360);
@@ -254,7 +254,7 @@ try
         
         for n=1:nb
             
-            bnd=handles.Model(md).Input(id).openBoundaries(n);
+            bnd=handles.model.delft3dflow.domain(id).openBoundaries(n);
             dx=bnd.x(2)-bnd.x(1);
             dy=bnd.y(2)-bnd.y(1);
             
@@ -271,7 +271,7 @@ try
             alphaa=180*atan2(dy,dx)/pi;
             alphab=180*atan2(dy,dx)/pi;
             
-            switch lower(handles.Model(md).Input(id).openBoundaries(n).side)
+            switch lower(handles.model.delft3dflow.domain(id).openBoundaries(n).side)
                 case{'left','right'}
                     % u-point
                     alphaa=alphaa-90;
@@ -310,49 +310,49 @@ try
     k=0;
     
     for n=1:nb
-        if strcmp(handles.Model(md).Input(id).openBoundaries(n).forcing,'A')
+        if strcmp(handles.model.delft3dflow.domain(id).openBoundaries(n).forcing,'A')
             
-            handles.Model(md).Input(id).openBoundaries(n).compA=[handles.Model(md).Input(id).openBoundaries(n).name 'A'];
-            handles.Model(md).Input(id).openBoundaries(n).compB=[handles.Model(md).Input(id).openBoundaries(n).name 'B'];
+            handles.model.delft3dflow.domain(id).openBoundaries(n).compA=[handles.model.delft3dflow.domain(id).openBoundaries(n).name 'A'];
+            handles.model.delft3dflow.domain(id).openBoundaries(n).compB=[handles.model.delft3dflow.domain(id).openBoundaries(n).name 'B'];
             
             % Side A
             k=k+1;
             if igetvel && icor
-                dpcorfac=-1/handles.Model(md).Input(id).openBoundaries(n).depth(1);
+                dpcorfac=-1/handles.model.delft3dflow.domain(id).openBoundaries(n).depth(1);
             end
-            handles.Model(md).Input(id).astronomicComponentSets(k).name=handles.Model(md).Input(id).openBoundaries(n).compA;
-            handles.Model(md).Input(id).astronomicComponentSets(k).nr=NrCons;
+            handles.model.delft3dflow.domain(id).astronomicComponentSets(k).name=handles.model.delft3dflow.domain(id).openBoundaries(n).compA;
+            handles.model.delft3dflow.domain(id).astronomicComponentSets(k).nr=NrCons;
             for i=1:NrCons
                 
-                handles.Model(md).Input(id).astronomicComponentSets(k).component{i}=upper(Constituents(i).name);
+                handles.model.delft3dflow.domain(id).astronomicComponentSets(k).component{i}=upper(Constituents(i).name);
                 
-                switch lower(handles.Model(md).Input(id).openBoundaries(n).type)
+                switch lower(handles.model.delft3dflow.domain(id).openBoundaries(n).type)
                     case{'z','n'}
-                        handles.Model(md).Input(id).astronomicComponentSets(k).amplitude(i)=ampaz(i,n);
-                        handles.Model(md).Input(id).astronomicComponentSets(k).phase(i)=phaseaz(i,n);
+                        handles.model.delft3dflow.domain(id).astronomicComponentSets(k).amplitude(i)=ampaz(i,n);
+                        handles.model.delft3dflow.domain(id).astronomicComponentSets(k).phase(i)=phaseaz(i,n);
                     case{'c'}
-                        handles.Model(md).Input(id).astronomicComponentSets(k).amplitude(i)=ampau(i,n)*dpcorfac;
-                        handles.Model(md).Input(id).astronomicComponentSets(k).phase(i)=phaseau(i,n);
+                        handles.model.delft3dflow.domain(id).astronomicComponentSets(k).amplitude(i)=ampau(i,n)*dpcorfac;
+                        handles.model.delft3dflow.domain(id).astronomicComponentSets(k).phase(i)=phaseau(i,n);
                     case{'r'}
                         a1=ampau(i,n)*dpcorfac;
                         phi1=phaseau(i,n);
                         pp(n,i)=phi1;
                         % Minimum depth of 1 m !
-                        a2=ampaz(i,n)*sqrt(9.81/max(-handles.Model(md).Input(id).openBoundaries(n).depth(1),1));
+                        a2=ampaz(i,n)*sqrt(9.81/max(-handles.model.delft3dflow.domain(id).openBoundaries(n).depth(1),1));
                         phi2=phaseaz(i,n);
                         
                         phi1=pi*phi1/180;
                         phi2=pi*phi2/180;
                         
-                        if ~strcmpi(handles.Model(md).Input(id).astronomicComponentSets(k).component{i},'a0')
-                            switch lower(handles.Model(md).Input(id).openBoundaries(n).side)
+                        if ~strcmpi(handles.model.delft3dflow.domain(id).astronomicComponentSets(k).component{i},'a0')
+                            switch lower(handles.model.delft3dflow.domain(id).openBoundaries(n).side)
                                 case{'left','bottom'}
                                     [a3,phi3]=combinesin(a1,phi1,a2,phi2);
                                 case{'top','right'}
                                     [a3,phi3]=combinesin(a1,phi1,-a2,phi2);
                             end
                         else
-                            switch lower(handles.Model(md).Input(id).openBoundaries(n).side)
+                            switch lower(handles.model.delft3dflow.domain(id).openBoundaries(n).side)
                                 case{'left','bottom'}
                                     if phi1>0.5*pi && phi1<1.5*pi
                                         % A0 velocity is in grid direction
@@ -377,51 +377,51 @@ try
                         phi3=180*phi3/pi;
                         phi3=mod(phi3,360);
                         
-                        handles.Model(md).Input(id).astronomicComponentSets(k).amplitude(i)=a3;
-                        handles.Model(md).Input(id).astronomicComponentSets(k).phase(i)=phi3;
+                        handles.model.delft3dflow.domain(id).astronomicComponentSets(k).amplitude(i)=a3;
+                        handles.model.delft3dflow.domain(id).astronomicComponentSets(k).phase(i)=phi3;
                 end
                 
-                handles.Model(md).Input(id).astronomicComponentSets(k).correction(i)=0;
-                handles.Model(md).Input(id).astronomicComponentSets(k).amplitudeCorrection(i)=1;
-                handles.Model(md).Input(id).astronomicComponentSets(k).phaseCorrection(i)=0;
+                handles.model.delft3dflow.domain(id).astronomicComponentSets(k).correction(i)=0;
+                handles.model.delft3dflow.domain(id).astronomicComponentSets(k).amplitudeCorrection(i)=1;
+                handles.model.delft3dflow.domain(id).astronomicComponentSets(k).phaseCorrection(i)=0;
             end
             
             % Side B
             k=k+1;
             if igetvel && icor
-                dpcorfac=-1/handles.Model(md).Input(id).openBoundaries(n).depth(2);
+                dpcorfac=-1/handles.model.delft3dflow.domain(id).openBoundaries(n).depth(2);
             end
-            handles.Model(md).Input(id).astronomicComponentSets(k).name=handles.Model(md).Input(id).openBoundaries(n).compB;
-            handles.Model(md).Input(id).astronomicComponentSets(k).nr=NrCons;
+            handles.model.delft3dflow.domain(id).astronomicComponentSets(k).name=handles.model.delft3dflow.domain(id).openBoundaries(n).compB;
+            handles.model.delft3dflow.domain(id).astronomicComponentSets(k).nr=NrCons;
             for i=1:NrCons
-                handles.Model(md).Input(id).astronomicComponentSets(k).component{i}=upper(Constituents(i).name);
+                handles.model.delft3dflow.domain(id).astronomicComponentSets(k).component{i}=upper(Constituents(i).name);
                 
-                switch lower(handles.Model(md).Input(id).openBoundaries(n).type)
+                switch lower(handles.model.delft3dflow.domain(id).openBoundaries(n).type)
                     case{'z','n'}
-                        handles.Model(md).Input(id).astronomicComponentSets(k).amplitude(i)=ampbz(i,n);
-                        handles.Model(md).Input(id).astronomicComponentSets(k).phase(i)=phasebz(i,n);
+                        handles.model.delft3dflow.domain(id).astronomicComponentSets(k).amplitude(i)=ampbz(i,n);
+                        handles.model.delft3dflow.domain(id).astronomicComponentSets(k).phase(i)=phasebz(i,n);
                     case{'c'}
-                        handles.Model(md).Input(id).astronomicComponentSets(k).amplitude(i)=ampbu(i,n)*dpcorfac;
-                        handles.Model(md).Input(id).astronomicComponentSets(k).phase(i)=phasebu(i,n);
+                        handles.model.delft3dflow.domain(id).astronomicComponentSets(k).amplitude(i)=ampbu(i,n)*dpcorfac;
+                        handles.model.delft3dflow.domain(id).astronomicComponentSets(k).phase(i)=phasebu(i,n);
                     case{'r'}
                         a1=ampbu(i,n)*dpcorfac;
                         phi1=phasebu(i,n);
                         % Minimum depth of 1 m !
-                        a2=ampbz(i,n)*sqrt(9.81/max(-handles.Model(md).Input(id).openBoundaries(n).depth(2),1));
+                        a2=ampbz(i,n)*sqrt(9.81/max(-handles.model.delft3dflow.domain(id).openBoundaries(n).depth(2),1));
                         phi2=phasebz(i,n);
                         
                         phi1=pi*phi1/180;
                         phi2=pi*phi2/180;
                         
-                        if ~strcmpi(handles.Model(md).Input(id).astronomicComponentSets(k).component{i},'a0')
-                            switch lower(handles.Model(md).Input(id).openBoundaries(n).side)
+                        if ~strcmpi(handles.model.delft3dflow.domain(id).astronomicComponentSets(k).component{i},'a0')
+                            switch lower(handles.model.delft3dflow.domain(id).openBoundaries(n).side)
                                 case{'left','bottom'}
                                     [a3,phi3]=combinesin(a1,phi1,a2,phi2);
                                 case{'top','right'}
                                     [a3,phi3]=combinesin(a1,phi1,-a2,phi2);
                             end
                         else
-                            switch lower(handles.Model(md).Input(id).openBoundaries(n).side)
+                            switch lower(handles.model.delft3dflow.domain(id).openBoundaries(n).side)
                                 case{'left','bottom'}
                                     if phi1>0.5*pi && phi1<1.5*pi
                                         % A0 velocity is in grid direction
@@ -446,23 +446,23 @@ try
                         phi3=180*phi3/pi;
                         phi3=mod(phi3,360);
                         
-                        handles.Model(md).Input(id).astronomicComponentSets(k).amplitude(i)=a3;
-                        handles.Model(md).Input(id).astronomicComponentSets(k).phase(i)=phi3;
+                        handles.model.delft3dflow.domain(id).astronomicComponentSets(k).amplitude(i)=a3;
+                        handles.model.delft3dflow.domain(id).astronomicComponentSets(k).phase(i)=phi3;
                 end
                 
-                handles.Model(md).Input(id).astronomicComponentSets(k).correction(i)=0;
-                handles.Model(md).Input(id).astronomicComponentSets(k).amplitudeCorrection(i)=1;
-                handles.Model(md).Input(id).astronomicComponentSets(k).phaseCorrection(i)=0;
+                handles.model.delft3dflow.domain(id).astronomicComponentSets(k).correction(i)=0;
+                handles.model.delft3dflow.domain(id).astronomicComponentSets(k).amplitudeCorrection(i)=1;
+                handles.model.delft3dflow.domain(id).astronomicComponentSets(k).phaseCorrection(i)=0;
             end
         end
     end
-    handles.Model(md).Input(id).nrAstronomicComponentSets=k;
+    handles.model.delft3dflow.domain(id).nrAstronomicComponentSets=k;
     
     attName=filename(1:end-4);
-    handles.Model(md).Input(id).bcaFile=[attName '.bca'];
+    handles.model.delft3dflow.domain(id).bcaFile=[attName '.bca'];
     
     ddb_saveBcaFile(handles,id);
-    ddb_saveBndFile(handles.Model(md).Input(id).openBoundaries,handles.Model(md).Input(id).bndFile);
+    ddb_saveBndFile(handles.model.delft3dflow.domain(id).openBoundaries,handles.model.delft3dflow.domain(id).bndFile);
     
 catch
     err='An error occured while generating boundary conditions!';

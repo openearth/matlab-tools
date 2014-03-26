@@ -35,21 +35,21 @@ for i=1:length(varargin)
     end
 end
 
-if handles.Model(md).Input.domains(id).mmax>0
+if handles.model.delft3dwave.domain.domains(id).mmax>0
 
     if isempty(filename)
         % Get file name
-        [filename, pathname, filterindex] = uiputfile('*.dep', 'Depth File Name',[handles.Model(md).Input.attName '.dep']);
+        [filename, pathname, filterindex] = uiputfile('*.dep', 'Depth File Name',[handles.model.delft3dwave.domain.attName '.dep']);
         if pathname==0
             return
         end
     end
     
-    xg=handles.Model(md).Input.domains(id).gridx;
-    yg=handles.Model(md).Input.domains(id).gridy;
+    xg=handles.model.delft3dwave.domain.domains(id).gridx;
+    yg=handles.model.delft3dwave.domain.domains(id).gridy;
     
     % Check if there is already data in depth matrix
-    dmax=max(max(handles.Model(md).Input.domains(id).depth));
+    dmax=max(max(handles.model.delft3dwave.domain.domains(id).depth));
     if isempty(dmax)
         dmax=NaN;
     end
@@ -77,15 +77,15 @@ if handles.Model(md).Input.domains(id).mmax>0
     
     switch opt
         case{'overwrite'}
-            handles.Model(md).Input.domains(id).depth=z;
+            handles.model.delft3dwave.domain.domains(id).depth=z;
         case{'combine'}
-            handles.Model(md).Input.domains(id).depth(isnan(handles.Model(md).Input.domains(id).depth))=z(isnan(handles.Model(md).Input.domains(id).depth));
+            handles.model.delft3dwave.domain.domains(id).depth(isnan(handles.model.delft3dwave.domain.domains(id).depth))=z(isnan(handles.model.delft3dwave.domain.domains(id).depth));
     end
 
-    handles.Model(md).Input.domains(id).bedlevel=filename;
-    handles.Model(md).Input.domains(id).depthsource='file';
+    handles.model.delft3dwave.domain.domains(id).bedlevel=filename;
+    handles.model.delft3dwave.domain.domains(id).depthsource='file';
 
-    ddb_wldep('write',filename,handles.Model(md).Input.domains(id).depth);
+    ddb_wldep('write',filename,handles.model.delft3dwave.domain.domains(id).depth);
         
     try
         close(wb);

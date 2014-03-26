@@ -70,6 +70,6 @@ if ~isempty(varargin)
     end
 end
 
-handles.Model(md).Input(id).WindType='Uniform';
-handles.Model(md).Input(id).WindData=windData;
+handles.model.delft3dflow.domain(id).WindType='Uniform';
+handles.model.delft3dflow.domain(id).WindData=windData;
 

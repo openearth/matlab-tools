@@ -1,6 +1,5 @@
 function ddb_plotXBeachGrid(handles,id);
 
-ii=strmatch('XBeach',{handles.Model.name},'exact');
 
 % switch lower(opt)
 % 
@@ -9,11 +8,11 @@ ii=strmatch('XBeach',{handles.Model.name},'exact');
         h=findall(gca,'Tag','XBeachGrid','UserData',id);
         delete(h);
         
-        x=handles.Model(ii).Input(id).GridX;
-        y=handles.Model(ii).Input(id).GridY;
-        xori = handles.Model(ii).Input(id).xori;
-        yori = handles.Model(ii).Input(id).yori;
-        alfa = handles.Model(ii).Input(id).alfa;
+        x=handles.model.xbeach.domain(id).GridX;
+        y=handles.model.xbeach.domain(id).GridY;
+        xori = handles.model.xbeach.domain(id).xori;
+        yori = handles.model.xbeach.domain(id).yori;
+        alfa = handles.model.xbeach.domain(id).alfa;
         xw =  xori+x*cos(alfa)-y*sin(alfa);
         yw =  yori+x*sin(alfa)+y*cos(alfa);
         

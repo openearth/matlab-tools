@@ -44,7 +44,6 @@ function handles = ddb_Delft3DWAVE_plotOutputLocations(handles, opt, varargin)
 % $Keywords: $
 
 %%
-imd=strmatch('Delft3DWAVE',{handles.Model(:).name},'exact');
 
 active=1;
 vis=1;
@@ -65,18 +64,18 @@ switch lower(opt)
     case{'plot'}
         
         % First delete old locations
-        for ii=1:handles.Model(imd).Input.nrlocationsets
+        for ii=1:handles.model.delft3dwave.domain.nrlocationsets
             try
-                h=handles.Model(imd).Input.locationsets(ii).handle;
+                h=handles.model.delft3dwave.domain.locationsets(ii).handle;
                 delete(h);
             end
         end
         
         % Now plot new obstacles
-        for ii=1:handles.Model(imd).Input.nrlocationsets
-            if handles.Model(imd).Input.locationsets(ii).nrpoints>0
-                x=handles.Model(imd).Input.locationsets(ii).x;
-                y=handles.Model(imd).Input.locationsets(ii).y;
+        for ii=1:handles.model.delft3dwave.domain.nrlocationsets
+            if handles.model.delft3dwave.domain.locationsets(ii).nrpoints>0
+                x=handles.model.delft3dwave.domain.locationsets(ii).x;
+                y=handles.model.delft3dwave.domain.locationsets(ii).y;
                 xy=[x' y'];
                 h=gui_pointcloud('plot','xy',xy,'Tag','delft3dwavelocationset','Marker','o', ...
                     'selectcallback',@ddb_Delft3DWAVE_output_locations,'selectinput','selectpointfrommap', ...
@@ -84,7 +83,7 @@ switch lower(opt)
                     'activemarker','o','activemarkeredgecolor','none','activemarkerfacecolor',[0.5 0.5 0.5], ...
                     'activepoint',1);
                 if active
-                    if ii==handles.Model(imd).Input.activelocationset
+                    if ii==handles.model.delft3dwave.domain.activelocationset
                         gui_pointcloud(h,'change','markeredgecolor','k','markerfacecolor','y', ...
                             'activemarkeredgecolor','k','activemarkerfacecolor','r');
                     else
@@ -95,20 +94,20 @@ switch lower(opt)
                     gui_pointcloud(h,'change','markeredgecolor','none','markerfacecolor',[0.5 0.5 0.5], ...
                         'activemarkeredgecolor','none','activemarkerfacecolor',[0.5 0.5 0.5]);
                 end
-                handles.Model(imd).Input.locationsets(ii).handle=h;
+                handles.model.delft3dwave.domain.locationsets(ii).handle=h;
             else
-                handles.Model(imd).Input.locationsets(ii).handle=[];
+                handles.model.delft3dwave.domain.locationsets(ii).handle=[];
             end
         end
         
     case{'delete'}
         
         % Delete old obstacles
-        for ii=1:handles.Model(imd).Input.nrlocationsets
+        for ii=1:handles.model.delft3dwave.domain.nrlocationsets
             try
-                h=handles.Model(imd).Input.locationsets(ii).handle;
+                h=handles.model.delft3dwave.domain.locationsets(ii).handle;
                 if ishandle(h)
-                    delete(handles.Model(imd).Input.locationsets(ii).handle);
+                    delete(handles.model.delft3dwave.domain.locationsets(ii).handle);
                 end
             end
         end
@@ -120,12 +119,12 @@ switch lower(opt)
     case{'update'}
 
         try
-            for ii=1:handles.Model(imd).Input.nrlocationsets
-                h=handles.Model(imd).Input.locationsets(ii).handle;
+            for ii=1:handles.model.delft3dwave.domain.nrlocationsets
+                h=handles.model.delft3dwave.domain.locationsets(ii).handle;
                 if ishandle(h)
                     if active
-                        iac=handles.Model(imd).Input.locationsets(ii).activepoint;
-                        if ii==handles.Model(imd).Input.activelocationset
+                        iac=handles.model.delft3dwave.domain.locationsets(ii).activepoint;
+                        if ii==handles.model.delft3dwave.domain.activelocationset
                             gui_pointcloud(h,'change','markeredgecolor','k','markerfacecolor','y', ...
                                 'activemarkeredgecolor','k','activemarkerfacecolor','r','activepoint',iac);
                         else

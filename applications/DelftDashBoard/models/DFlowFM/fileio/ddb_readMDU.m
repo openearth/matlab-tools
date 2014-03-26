@@ -50,24 +50,24 @@ fldnames=fieldnames(s);
 for ii=1:length(fldnames)
     fldnames2=fieldnames(s.(fldnames{ii}));
     for jj=1:length(fldnames2)
-        handles.Model(md).Input(id).(fldnames2{jj})=s.(fldnames{ii}).(fldnames2{jj});
+        handles.model.dflowfm.domain(id).(fldnames2{jj})=s.(fldnames{ii}).(fldnames2{jj});
     end
 end
 
 % Time
-handles.Model(md).Input(id).refdate=datenum(num2str(handles.Model(md).Input(id).refdate),'yyyymmdd');
+handles.model.dflowfm.domain(id).refdate=datenum(num2str(handles.model.dflowfm.domain(id).refdate),'yyyymmdd');
 
-switch lower(handles.Model(md).Input(id).tunit)
+switch lower(handles.model.dflowfm.domain(id).tunit)
     case{'h'}
-        tstart=handles.Model(md).Input(id).tstart/24+handles.Model(md).Input(id).refdate;
-        tstop =handles.Model(md).Input(id).tstop/24+handles.Model(md).Input(id).refdate;
+        tstart=handles.model.dflowfm.domain(id).tstart/24+handles.model.dflowfm.domain(id).refdate;
+        tstop =handles.model.dflowfm.domain(id).tstop/24+handles.model.dflowfm.domain(id).refdate;
     case{'m'}
-        tstart=handles.Model(md).Input(id).tstart/1440+handles.Model(md).Input(id).refdate;
-        tstop =handles.Model(md).Input(id).tstop/1440+handles.Model(md).Input(id).refdate;
+        tstart=handles.model.dflowfm.domain(id).tstart/1440+handles.model.dflowfm.domain(id).refdate;
+        tstop =handles.model.dflowfm.domain(id).tstop/1440+handles.model.dflowfm.domain(id).refdate;
     case{'s'}
-        tstart=handles.Model(md).Input(id).tstart/86400+handles.Model(md).Input(id).refdate;
-        tstop =handles.Model(md).Input(id).tstop/86400+handles.Model(md).Input(id).refdate;
+        tstart=handles.model.dflowfm.domain(id).tstart/86400+handles.model.dflowfm.domain(id).refdate;
+        tstop =handles.model.dflowfm.domain(id).tstop/86400+handles.model.dflowfm.domain(id).refdate;
 end
 
-handles.Model(md).Input(id).tstart=tstart;
-handles.Model(md).Input(id).tstop =tstop;
+handles.model.dflowfm.domain(id).tstart=tstart;
+handles.model.dflowfm.domain(id).tstop =tstop;

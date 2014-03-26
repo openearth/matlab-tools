@@ -44,7 +44,6 @@ function handles = ddb_DFlowFM_plotObservationPoints(handles, opt, varargin)
 % $Keywords: $
 
 %%
-imd=strmatch('DFlowFM',{handles.Model(:).name},'exact');
 
 vis=1;
 id=ad;
@@ -70,27 +69,27 @@ switch lower(opt)
     
     case{'plot'}
         
-        h=handles.Model(imd).Input(id).observationpointshandle;
+        h=handles.model.dflowfm.domain(id).observationpointshandle;
         
         % First delete old sections
         try
             delete(h);
         end
         
-        if handles.Model(imd).Input.nrobservationpoints>0
+        if handles.model.dflowfm.domain.nrobservationpoints>0
             
-            for ip=1:handles.Model(imd).Input.nrobservationpoints
-                xy(ip,:)=[handles.Model(imd).Input.observationpoints(ip).x handles.Model(imd).Input.observationpoints(ip).y];
-                txt{ip}=handles.Model(imd).Input.observationpoints(ip).name;
+            for ip=1:handles.model.dflowfm.domain.nrobservationpoints
+                xy(ip,:)=[handles.model.dflowfm.domain.observationpoints(ip).x handles.model.dflowfm.domain.observationpoints(ip).y];
+                txt{ip}=handles.model.dflowfm.domain.observationpoints(ip).name;
             end
             
             h=gui_pointcloud('plot','xy',xy,'selectcallback',@ddb_DFlowFM_observationPoints,'selectinput','selectfrommap',...
                 'tag','dflowfm_observationpoints', ...
                 'MarkerSize',5,'MarkerEdgeColor','k','MarkerFaceColor','y', ...
                 'ActiveMarkerSize',6,'ActiveMarkerEdgeColor','k','ActiveMarkerFaceColor','r', ...
-                'activepoint',handles.Model(imd).Input.activeobservationpoint,'text',txt,'FontSize',10,'FontWeight','bold');
+                'activepoint',handles.model.dflowfm.domain.activeobservationpoint,'text',txt,'FontSize',10,'FontWeight','bold');
             
-            handles.Model(imd).Input(id).observationpointshandle=h;
+            handles.model.dflowfm.domain(id).observationpointshandle=h;
             
             if vis
                 set(h,'Visible','on');
@@ -102,7 +101,7 @@ switch lower(opt)
         
     case{'delete'}
         
-        plothandle=handles.Model(imd).Input(id).observationpointshandle;
+        plothandle=handles.model.dflowfm.domain(id).observationpointshandle;
         
         % Delete old grid
         try
@@ -117,11 +116,11 @@ switch lower(opt)
         
     case{'update'}
         
-        plothandle=handles.Model(imd).Input(id).observationpointshandle;
+        plothandle=handles.model.dflowfm.domain(id).observationpointshandle;
         
         try
             
-            if handles.Model(imd).Input.nrobservationpoints>0
+            if handles.model.dflowfm.domain.nrobservationpoints>0
                 
                 if iactive
                     gui_pointcloud(plothandle,'change','color','markeredgecolor','k','markerfacecolor','y', ...

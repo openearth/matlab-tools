@@ -71,11 +71,13 @@ function generateRoughness
 
 handles=getHandles;
 
-[filename, pathname, filterindex] = uiputfile('*.rgh', 'Roughness File Name',[handles.Model(md).Input(ad).attName '.rgh']);
+model=handles.activeModel.name;
+
+[filename, pathname, filterindex] = uiputfile('*.rgh', 'Roughness File Name',[handles.model.(model).domain(ad).attName '.rgh']);
 
 if pathname~=0
 
-    d=handles.Model(md).Input(ad).depth;
+    d=handles.model.(model).domain(ad).depth;
     rgh=zeros(size(d));
     rgh(rgh==0)=NaN;    
     rgh(d>handles.toolbox.modelmaker.roughness.landelevation)=handles.toolbox.modelmaker.roughness.landroughness;
@@ -83,11 +85,11 @@ if pathname~=0
     ddb_wldep('write',[pathname filename],rgh,'negate','n');
     ddb_wldep('append',[pathname filename],rgh,'negate','n');
     
-    handles.Model(md).Input(ad).uniformRoughness=0;
+    handles.model.(model).domain(ad).uniformRoughness=0;
     if strcmpi(pwd,pathname(1:end-1))
-        handles.Model(md).Input(ad).rghFile=filename;
+        handles.model.(model).domain(ad).rghFile=filename;
     else
-        handles.Model(md).Input(ad).rghFile=[pathname filename];
+        handles.model.(model).domain(ad).rghFile=[pathname filename];
     end
     
     setHandles(handles);

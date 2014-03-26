@@ -1,51 +1,49 @@
 function handles=ddb_readAttributeXBeachFiles(handles,pathname)
-
-ii=strmatch('XBeach',{handles.Model.name},'exact');
-             
+            
 id=handles.activeDomain;
 
 % Grid file % NEED TO INCLUDE DELFT3D-TYPE GRIDS
-if handles.Model(ii).Input(id).vardx==1
+if handles.model.xbeach.domain(id).vardx==1
     % Irregular grid
-    X=load([pathname,handles.Model(ii).Input(id).xfile]);
-    handles.Model(ii).Input(id).GridX=X;
-    Y=load([pathname,handles.Model(ii).Input(id).yfile]);    
-    handles.Model(ii).Input(id).GridY=Y;
+    X=load([pathname,handles.model.xbeach.domain(id).xfile]);
+    handles.model.xbeach.domain(id).GridX=X;
+    Y=load([pathname,handles.model.xbeach.domain(id).yfile]);    
+    handles.model.xbeach.domain(id).GridY=Y;
     nx = size(X,2)-1;
     ny = size(X,1)-1;
 %     handles=ddb_determineKCS(handles,id);
-    nans=zeros(size(handles.Model(ii).Input(id).GridX));
+    nans=zeros(size(handles.model.xbeach.domain(id).GridX));
     nans(nans==0)=NaN;
-    handles.Model(ii).Input(id).Depth=nans;
-    handles.Model(ii).Input(id).DepthZ=nans;
-elseif handles.Model(ii).Input(id).vardx==0
+    handles.model.xbeach.domain(id).Depth=nans;
+    handles.model.xbeach.domain(id).DepthZ=nans;
+elseif handles.model.xbeach.domain(id).vardx==0
     % Regular grid
-    dx = handles.Model(ii).Input(id).dx;
-    dy = handles.Model(ii).Input(id).dy;
-    nx = handles.Model(ii).Input(id).nx;
-    ny = handles.Model(ii).Input(id).ny;
+    dx = handles.model.xbeach.domain(id).dx;
+    dy = handles.model.xbeach.domain(id).dy;
+    nx = handles.model.xbeach.domain(id).nx;
+    ny = handles.model.xbeach.domain(id).ny;
     x = dx*[0:1:nx];
     y = dx*[0:1:ny];
     [X,Y] = meshgrid(x,y);
-    handles.Model(ii).Input(id).GridX=X;
-    handles.Model(ii).Input(id).GridY=Y;
+    handles.model.xbeach.domain(id).GridX=X;
+    handles.model.xbeach.domain(id).GridY=Y;
     
-    nans=zeros(size(handles.Model(ii).Input(id).GridX));
+    nans=zeros(size(handles.model.xbeach.domain(id).GridX));
     nans(nans==0)=NaN;
-    handles.Model(ii).Input(id).Depth=nans;
-    handles.Model(ii).Input(id).DepthZ=nans;
+    handles.model.xbeach.domain(id).Depth=nans;
+    handles.model.xbeach.domain(id).DepthZ=nans;
 end
 
 % % Depfile
-if ~strcmp(handles.Model(ii).Input(id).depfile,'file')
-    dp=load([pathname,handles.Model(ii).Input(id).depfile]);
-    handles.Model(ii).Input(id).Depth = -dp(1:ny+1,1:nx+1);
+if ~strcmp(handles.model.xbeach.domain(id).depfile,'file')
+    dp=load([pathname,handles.model.xbeach.domain(id).depfile]);
+    handles.model.xbeach.domain(id).Depth = -dp(1:ny+1,1:nx+1);
 end
 
 % % NE-file
-if ~strcmp(handles.Model(ii).Input(id).ne_layer,'file')
-    ne=load([pathname,handles.Model(ii).Input(id).ne_layer]);
-    handles.Model(ii).Input(id).SedThick = ne(1:ny+1,1:nx+1);
+if ~strcmp(handles.model.xbeach.domain(id).ne_layer,'file')
+    ne=load([pathname,handles.model.xbeach.domain(id).ne_layer]);
+    handles.model.xbeach.domain(id).SedThick = ne(1:ny+1,1:nx+1);
 end
 
 % Friction file % TODO
@@ -53,16 +51,16 @@ end
 % Vegetation file % TODO
 
 % Water level boundary condition
-if ~strcmp(handles.Model(ii).Input(id).zs0file,'file')
-    zsdat=load([pathname,handles.Model(ii).Input(id).zs0file]);
+if ~strcmp(handles.model.xbeach.domain(id).zs0file,'file')
+    zsdat=load([pathname,handles.model.xbeach.domain(id).zs0file]);
     
-    handles.Model(ii).Input(id).zs0file.time = zsdat(:,1);
-    handles.Model(ii).Input(id).zs0file.data = zsdat(:,2:end);
+    handles.model.xbeach.domain(id).zs0file.time = zsdat(:,1);
+    handles.model.xbeach.domain(id).zs0file.data = zsdat(:,2:end);
 end
 
 % Read boundarylist file and wave conditions...
-xbs = xb_read_waves([pathname handles.Model(md).Input(handles.activeDomain).bcfile]);
-ddb_xbmi.bcfile.filename = handles.Model(md).Input(handles.activeDomain).bcfile;
+xbs = xb_read_waves([pathname handles.model.xbeach.domain(handles.activeDomain).bcfile]);
+ddb_xbmi.bcfile.filename = handles.model.xbeach.domain(handles.activeDomain).bcfile;
 noCon = 0;
 for j = 1:length(xbs.data)% check how many wave conditions are specified
     noCon = max(noCon,length(xbs.data(j).value));

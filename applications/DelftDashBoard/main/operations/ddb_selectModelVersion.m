@@ -52,21 +52,22 @@ xmlfile='delftdashboard.modelversion.xml';
 switch lower(opt)
     case{'selectversion'}
         ddb_zoomOff;
-        h.versionlist=handles.Model(md).versionlist;
-        h.version=handles.Model(md).version;
-        h.exedir=handles.Model(md).exedir;
+        model=handles.activeModel.name;
+        h.versionlist=handles.model.(model).versionlist;
+        h.version=handles.model.(model).version;
+        h.exedir=handles.model.(model).exedir;
         [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir filesep 'icons' filesep 'deltares.gif']);
         if ok            
-            handles.Model(md).version=h.version;
-            handles.Model(md).exedir=h.exedir;            
+            handles.model.(model).version=h.version;
+            handles.model.(model).exedir=h.exedir;            
             % Things have changed, so save xml file
             xmldir=handles.xmlConfigDir;
             xmlfile='delftdashboard.xml';
             filename=[xmldir xmlfile];
             xml=xml2struct(filename);
             for ii=1:length(xml.model)
-                if strcmpi(xml.model(ii).model.name,handles.Model(md).name)
-                    xml.model(ii).model.name=handles.Model(md).name;
+                if strcmpi(xml.model(ii).model.name,model)
+                    xml.model(ii).model.name=handles.model.(model).name;
                     xml.model(ii).model.version=h.version;
                     xml.model(ii).model.exedir=h.exedir;
                     struct2xml(filename,xml,'structuretype','short');

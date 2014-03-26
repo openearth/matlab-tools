@@ -53,32 +53,34 @@ switch varargin{1}
         % Initialization
         
         % Set defaults
-        for imdl=1:length(handles.Model)
+        models=fieldnames(handles.model);
+        for imdl=1:length(models)
+            model=models{imdl};
             
-            handles.Model(imdl).versionlist = {'N/A'};
-            handles.Model(imdl).version = 'N/A';
-            handles.Model(imdl).exedir='d:\unknownfolder\';
+            handles.model.(model).versionlist = {'N/A'};
+            handles.model.(model).version = 'N/A';
+            handles.model.(model).exedir='d:\unknownfolder\';
             
-            switch lower(handles.Model(imdl).name)
+            switch lower(model)
                 case{'delft3dflow'}
                     
                     % Version list (used in GUI)
-                    handles.Model(imdl).versionlist = {'5.00.xx','6.00.xx','N/A'};
+                    handles.model.(model).versionlist = {'5.00.xx','6.00.xx','N/A'};
                     
                     % Set default
-                    handles.Model(imdl).version='6.00.xx';
+                    handles.model.(model).version='6.00.xx';
                     
                     % Delft3D-FLOW
                     if exist([getenv('D3D_HOME') '\' getenv('ARCH') '\flow2d3d\bin\d_hydro.exe'],'file')
-                        handles.Model(imdl).version='6.00.xx';
-                        handles.Model(imdl).exedir=[getenv('D3D_HOME') '\' getenv('ARCH') '\flow2d3d\bin\'];
+                        handles.model.(model).version='6.00.xx';
+                        handles.model.(model).exedir=[getenv('D3D_HOME') '\' getenv('ARCH') '\flow2d3d\bin\'];
                     elseif exist([getenv('D3D_HOME') '\' getenv('ARCH') '\flow\bin\deltares_hydro.exe'],'file')
-                        handles.Model(imdl).version='5.00.xx';
-                        handles.Model(imdl).exedir=[getenv('D3D_HOME') '\' getenv('ARCH') '\flow\bin\'];
+                        handles.model.(model).version='5.00.xx';
+                        handles.model.(model).exedir=[getenv('D3D_HOME') '\' getenv('ARCH') '\flow\bin\'];
                     end
                     
                 case{'delft3dwave'}
-                    handles.Model(imdl).exedir=[getenv('D3D_HOME') '\' getenv('ARCH') '\wave\bin\'];
+                    handles.model.(model).exedir=[getenv('D3D_HOME') '\' getenv('ARCH') '\wave\bin\'];
                     
             end
         end
@@ -88,6 +90,8 @@ switch varargin{1}
         xmlfile='delftdashboard.xml';
         filename=[xmldir xmlfile];
         
+        models=fieldnames(handles.model);
+        
         if exist(filename,'file')
             
             % Read xml file
@@ -95,17 +99,17 @@ switch varargin{1}
             
             % Set model versions
             for ii=1:length(xml.model)
-                imdl=strmatch(lower(xml.model(ii).model.name),lower({handles.Model.name}),'exact');
+                imdl=strmatch(lower(xml.model(ii).model.name),models,'exact');
                 if ~isempty(imdl)
                     % Version
-                    handles.Model(imdl).version=xml.model(ii).model.version;
-                    if isempty(handles.Model(imdl).version)
-                        handles.Model(imdl).version='N/A';
+                    handles.model.(model).version=xml.model(ii).model.version;
+                    if isempty(handles.model.(model).version)
+                        handles.model.(model).version='N/A';
                     end
                     % Exe dir
-                    handles.Model(imdl).exedir=xml.model(ii).model.exedir;
-                    if isempty(handles.Model(imdl).exedir)
-                        handles.Model(imdl).version='d:\unknownfolder\';
+                    handles.model.(model).exedir=xml.model(ii).model.exedir;
+                    if isempty(handles.model.(model).exedir)
+                        handles.model.(model).version='d:\unknownfolder\';
                     end
                 end
             end
@@ -113,10 +117,10 @@ switch varargin{1}
         else
             
             % File does not yet exist, save xml file
-            for ii=1:length(handles.Model)
-                xml.model(ii).model.name=handles.Model(ii).name;
-                xml.model(ii).model.version=handles.Model(ii).version;
-                xml.model(ii).model.exedir=handles.Model(ii).exedir;
+            for ii=1:length(models)
+                xml.model(ii).model.name=models{ii};
+                xml.model(ii).model.version=handles.model.(models{ii}).version;
+                xml.model(ii).model.exedir=handles.(models{ii}).exedir;
             end
             struct2xml(filename,xml,'structuretype','short');
             
@@ -130,22 +134,23 @@ switch varargin{1}
         xmldir=[handles.settingsDir 'xml' filesep];
         xmlfile='delftdashboard.modelversion.xml';
         ddb_zoomOff;
-        h.versionlist=handles.Model(md).versionlist;
-        h.version=handles.Model(md).version;
-        h.exedir=handles.Model(md).exedir;
+        model=handles.activeModel.name;
+        h.versionlist=handles.model.(model).versionlist;
+        h.version=handles.model.(model).version;
+        h.exedir=handles.model.(model).exedir;
         [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir filesep 'icons' filesep 'deltares.gif']);
         
         if ok
-            handles.Model(md).version=h.version;
-            handles.Model(md).exedir=h.exedir;
+            handles.model.(model).version=h.version;
+            handles.model.(model).exedir=h.exedir;
             % Things have changed, so save xml file
             xmldir=handles.xmlConfigDir;
             xmlfile='delftdashboard.xml';
             filename=[xmldir xmlfile];
             xml=xml2struct(filename);
             for ii=1:length(xml.model)
-                if strcmpi(xml.model(ii).model.name,handles.Model(md).name)
-                    xml.model(ii).model.name=handles.Model(md).name;
+                if strcmpi(xml.model(ii).model.name,handles.model.(model).name)
+                    xml.model(ii).model.name=handles.model.(model).name;
                     xml.model(ii).model.version=h.version;
                     xml.model(ii).model.exedir=h.exedir;
                     struct2xml(filename,xml,'structuretype','short');

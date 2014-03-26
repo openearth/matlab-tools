@@ -68,11 +68,10 @@ else
     switch lower(opt)
         case{'editcominterval'}
             handles=getHandles;
-            imd=strmatch('Delft3DWAVE',{handles.Model(:).name},'exact');
             % Change com write interval in Delft3D-WAVE
-            if handles.Model(md).Input(ad).waves==1 && handles.Model(md).Input(ad).onlineWave==1
-                if strcmpi(handles.Model(imd).Input.coupling,'ddbonline')
-                    handles.Model(imd).Input.comwriteinterval=handles.Model(md).Input(ad).comInterval;
+            if handles.model.delft3dflow.domain(ad).waves==1 && handles.model.delft3dflow.domain(ad).onlineWave==1
+                if strcmpi(handles.model.delft3dwave.domain.coupling,'ddbonline')
+                    handles.model.delft3dwave.domain.comwriteinterval=handles.model.delft3dflow.domain(ad).comInterval;
                 end
             end
             setHandles(handles);

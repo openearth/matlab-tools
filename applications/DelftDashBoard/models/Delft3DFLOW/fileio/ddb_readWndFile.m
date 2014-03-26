@@ -61,9 +61,9 @@ function handles = ddb_readWndFile(handles, id)
 % $Keywords: $
 
 %%
-fname=handles.Model(md).Input(id).wndFile;
+fname=handles.model.delft3dflow.domain(id).wndFile;
 data=load(fname);
-handles.Model(md).Input(id).windTimeSeriesT=handles.Model(md).Input(id).itDate+data(:,1)/1440;
-handles.Model(md).Input(id).windTimeSeriesSpeed=data(:,2);
-handles.Model(md).Input(id).windTimeSeriesDirection=data(:,3);
+handles.model.delft3dflow.domain(id).windTimeSeriesT=handles.model.delft3dflow.domain(id).itDate+data(:,1)/1440;
+handles.model.delft3dflow.domain(id).windTimeSeriesSpeed=data(:,2);
+handles.model.delft3dflow.domain(id).windTimeSeriesDirection=data(:,3);
 

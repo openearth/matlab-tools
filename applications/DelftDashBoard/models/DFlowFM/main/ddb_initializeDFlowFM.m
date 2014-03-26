@@ -61,19 +61,8 @@ function handles = ddb_initializeDFlowFM(handles, varargin)
 % $Keywords: $
 
 %%
-if nargin>1
-    switch varargin{1}
-        case{'veryfirst'}
-            ii=strmatch('DFlowFM',{handles.Model.name},'exact');
-            handles.Model(ii).longName='DFlowFM';
-            return
-    end
-end
 
-ii=strmatch('DFlowFM',{handles.Model.name},'exact');
-
-
-handles.Model(ii).Input=[];
+handles.model.dflowfm.domain=[];
 
 runid='tst';
 

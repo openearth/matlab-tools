@@ -15,17 +15,17 @@ end
 function addSegment
 
 handles=gui_getUserData;
-iac=handles.Model(md).Input.activeboundary;
-nrseg=handles.Model(md).Input.boundaries(iac).nrsegments;
-handles.Model(md).Input.boundaries(iac).segments(nrseg+1).condspecatdist=handles.Model(md).Input.boundaries(iac).segments(nrseg).condspecatdist;
-handles.Model(md).Input.boundaries(iac).segments(nrseg+1).waveheight=handles.Model(md).Input.boundaries(iac).segments(nrseg).waveheight;
-handles.Model(md).Input.boundaries(iac).segments(nrseg+1).period=handles.Model(md).Input.boundaries(iac).segments(nrseg).period;
-handles.Model(md).Input.boundaries(iac).segments(nrseg+1).direction=handles.Model(md).Input.boundaries(iac).segments(nrseg).direction;
-handles.Model(md).Input.boundaries(iac).segments(nrseg+1).dirspreading=handles.Model(md).Input.boundaries(iac).segments(nrseg).dirspreading;
-handles.Model(md).Input.boundaries(iac).nrsegments=nrseg+1;
-handles.Model(md).Input.boundaries(iac).activesegment=nrseg+1;
+iac=handles.model.delft3dwave.domain.activeboundary;
+nrseg=handles.model.delft3dwave.domain.boundaries(iac).nrsegments;
+handles.model.delft3dwave.domain.boundaries(iac).segments(nrseg+1).condspecatdist=handles.model.delft3dwave.domain.boundaries(iac).segments(nrseg).condspecatdist;
+handles.model.delft3dwave.domain.boundaries(iac).segments(nrseg+1).waveheight=handles.model.delft3dwave.domain.boundaries(iac).segments(nrseg).waveheight;
+handles.model.delft3dwave.domain.boundaries(iac).segments(nrseg+1).period=handles.model.delft3dwave.domain.boundaries(iac).segments(nrseg).period;
+handles.model.delft3dwave.domain.boundaries(iac).segments(nrseg+1).direction=handles.model.delft3dwave.domain.boundaries(iac).segments(nrseg).direction;
+handles.model.delft3dwave.domain.boundaries(iac).segments(nrseg+1).dirspreading=handles.model.delft3dwave.domain.boundaries(iac).segments(nrseg).dirspreading;
+handles.model.delft3dwave.domain.boundaries(iac).nrsegments=nrseg+1;
+handles.model.delft3dwave.domain.boundaries(iac).activesegment=nrseg+1;
 for ii=1:nrseg+1
-    handles.Model(md).Input.boundaries(iac).segmentnames{ii}=['Segment ' num2str(ii)];
+    handles.model.delft3dwave.domain.boundaries(iac).segmentnames{ii}=['Segment ' num2str(ii)];
 end
 gui_setUserData(handles);
 
@@ -33,15 +33,15 @@ gui_setUserData(handles);
 function deleteSegment
 
 handles=gui_getUserData;
-iac=handles.Model(md).Input.activeboundary;
-nrseg=handles.Model(md).Input.boundaries(iac).nrsegments;
+iac=handles.model.delft3dwave.domain.activeboundary;
+nrseg=handles.model.delft3dwave.domain.boundaries(iac).nrsegments;
 if nrseg>1
-    handles.Model(md).Input.boundaries(iac).segments=removeFromStruc(handles.Model(md).Input.boundaries(iac).segments,handles.Model(md).Input.boundaries(iac).activesegment);
-    handles.Model(md).Input.boundaries(iac).nrsegments=handles.Model(md).Input.boundaries(iac).nrsegments-1;
-    handles.Model(md).Input.boundaries(iac).activesegment=min(handles.Model(md).Input.boundaries(iac).activesegment,handles.Model(md).Input.boundaries(iac).nrsegments);
-    handles.Model(md).Input.boundaries(iac).segmentnames=[];
+    handles.model.delft3dwave.domain.boundaries(iac).segments=removeFromStruc(handles.model.delft3dwave.domain.boundaries(iac).segments,handles.model.delft3dwave.domain.boundaries(iac).activesegment);
+    handles.model.delft3dwave.domain.boundaries(iac).nrsegments=handles.model.delft3dwave.domain.boundaries(iac).nrsegments-1;
+    handles.model.delft3dwave.domain.boundaries(iac).activesegment=min(handles.model.delft3dwave.domain.boundaries(iac).activesegment,handles.model.delft3dwave.domain.boundaries(iac).nrsegments);
+    handles.model.delft3dwave.domain.boundaries(iac).segmentnames=[];
     for ii=1:nrseg-1
-        handles.Model(md).Input.boundaries(iac).segmentnames{ii}=['Segment ' num2str(ii)];
+        handles.model.delft3dwave.domain.boundaries(iac).segmentnames{ii}=['Segment ' num2str(ii)];
     end
     gui_setUserData(handles);
 end

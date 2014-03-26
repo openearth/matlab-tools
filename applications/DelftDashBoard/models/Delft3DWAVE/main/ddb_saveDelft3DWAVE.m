@@ -2,8 +2,6 @@ function ddb_saveDelft3DWAVE(opt)
 
 handles=getHandles;
 
-imd=strmatch('Delft3DWAVE',{handles.Model(:).name},'exact');
-
 switch lower(opt)
     case{'save'}
         ddb_saveMDW(handles);
@@ -15,8 +13,8 @@ switch lower(opt)
                 filename=[pathname filename];
             end
             ii=findstr(filename,'.mdw');
-            handles.Model(imd).Input.runid=filename(1:ii-1);
-            handles.Model(imd).Input.mdwfile=filename;
+            handles.model.delft3dwave.domain.runid=filename(1:ii-1);
+            handles.model.delft3dwave.domain.mdwfile=filename;
             ddb_saveMDW(handles);
         end
     case{'saveall'}
@@ -30,8 +28,8 @@ switch lower(opt)
                 filename=[pathname filename];
             end
             ii=findstr(filename,'.mdw');
-            handles.Model(imd).Input.runid=filename(1:ii-1);
-            handles.Model(imd).Input.mdwfile=filename;
+            handles.model.delft3dwave.domain.runid=filename(1:ii-1);
+            handles.model.delft3dwave.domain.mdwfile=filename;
             ddb_saveMDW(handles);
         end
         ddb_Delft3DWAVE_saveAttributeFiles(handles,'saveallas');

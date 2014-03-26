@@ -64,10 +64,10 @@ handles=getHandles;
 
 MakeNewWindow('Processes :  Pollutants and Tracers',[360 290],'modal',[handles.settingsDir filesep 'icons' filesep 'deltares.gif']);
 
-if handles.Model(md).Input(ad).nrTracers>0
-    for i=1:handles.Model(md).Input(ad).nrTracers
-        str{i}=handles.Model(md).Input(ad).tracer(i).name;
-        handles.Model(md).Input(ad).tracer(i).new=0;
+if handles.model.delft3dflow.domain(ad).nrTracers>0
+    for i=1:handles.model.delft3dflow.domain(ad).nrTracers
+        str{i}=handles.model.delft3dflow.domain(ad).tracer(i).name;
+        handles.model.delft3dflow.domain(ad).tracer(i).new=0;
     end
 else
     str{1}='';
@@ -102,25 +102,25 @@ handles=guidata(gcf);
 name=deblank(get(handles.GUIHandles.EditTracerName,'String'));
 if ~isempty(name)
     iex=0;
-    for i=1:handles.Model(md).Input(ad).nrTracers
-        if strcmpi(handles.Model(md).Input(ad).tracer(i).name,name)
+    for i=1:handles.model.delft3dflow.domain(ad).nrTracers
+        if strcmpi(handles.model.delft3dflow.domain(ad).tracer(i).name,name)
             iex=1;
         end
     end
     if ~iex
-        handles.Model(md).Input(ad).nrTracers=handles.Model(md).Input(ad).nrTracers+1;
-        ii=handles.Model(md).Input(ad).nrTracers;
-        handles.Model(md).Input(ad).tracer(ii).name=name;
-        handles.Model(md).Input(ad).tracer(ii).new=1;
+        handles.model.delft3dflow.domain(ad).nrTracers=handles.model.delft3dflow.domain(ad).nrTracers+1;
+        ii=handles.model.delft3dflow.domain(ad).nrTracers;
+        handles.model.delft3dflow.domain(ad).tracer(ii).name=name;
+        handles.model.delft3dflow.domain(ad).tracer(ii).new=1;
         str=[];
-        for i=1:handles.Model(md).Input(ad).nrTracers
-            str{i}=handles.Model(md).Input(ad).tracer(i).name;
+        for i=1:handles.model.delft3dflow.domain(ad).nrTracers
+            str{i}=handles.model.delft3dflow.domain(ad).tracer(i).name;
         end
         set(handles.GUIHandles.ListTracers,'String',str);
         set(handles.GUIHandles.ListTracers,'Value',ii);
         guidata(gcf,handles);
         
-        switch lower(handles.Model(md).Input(ad).initialConditions)
+        switch lower(handles.model.delft3dflow.domain(ad).initialConditions)
             case{'ini'}
                 ddb_giveWarning('text',['The initial conditions file (*.ini) may not contain values for ' name '! If it does not, regenerate it with the Model Maker toolbox.']);
             case{'trim','rst'}
@@ -138,10 +138,10 @@ handles=guidata(gcf);
 ii=get(handles.GUIHandles.ListTracers,'Value');
 name=deblank(get(handles.GUIHandles.EditTracerName,'String'));
 if ~isempty(name)
-    handles.Model(md).Input(ad).tracer(ii).name=name;
+    handles.model.delft3dflow.domain(ad).tracer(ii).name=name;
     str=[];
-    for i=1:handles.Model(md).Input(ad).nrTracers
-        str{i}=handles.Model(md).Input(ad).tracer(i).name;
+    for i=1:handles.model.delft3dflow.domain(ad).nrTracers
+        str{i}=handles.model.delft3dflow.domain(ad).tracer(i).name;
     end
     set(handles.GUIHandles.ListTracers,'String',str);
     guidata(gcf,handles);
@@ -153,26 +153,26 @@ handles=guidata(gcf);
 
 
 ii=get(handles.GUIHandles.ListTracers,'Value');
-nr=handles.Model(md).Input(ad).nrTracers;
+nr=handles.model.delft3dflow.domain(ad).nrTracers;
 if nr>0
     if nr==1
-        handles.Model(md).Input(ad).tracer=[];
+        handles.model.delft3dflow.domain(ad).tracer=[];
         iac=1;
     else
         for i=ii:nr-1
-            handles.Model(md).Input(ad).tracer(i)=handles.Model(md).Input(ad).tracer(i+1);
+            handles.model.delft3dflow.domain(ad).tracer(i)=handles.model.delft3dflow.domain(ad).tracer(i+1);
         end
-        handles.tracer=handles.Model(md).Input(ad).tracer(1:end-1);
+        handles.tracer=handles.model.delft3dflow.domain(ad).tracer(1:end-1);
         iac=ii;
     end
     if iac>nr-1
         iac=nr-1;
     end
     iac=max(iac,1);
-    handles.Model(md).Input(ad).nrTracers=nr-1;
+    handles.model.delft3dflow.domain(ad).nrTracers=nr-1;
     str{1}=' ';
-    for i=1:handles.Model(md).Input(ad).nrTracers
-        str{i}=handles.Model(md).Input(ad).tracer(i).name;
+    for i=1:handles.model.delft3dflow.domain(ad).nrTracers
+        str{i}=handles.model.delft3dflow.domain(ad).tracer(i).name;
     end
     set(handles.GUIHandles.ListTracers,'Value',iac);
     set(handles.GUIHandles.ListTracers,'String',str);
@@ -195,17 +195,17 @@ h2=getHandles;
 handles=guidata(gcf);
 
 
-h2.Model(md).Input(ad).tracer=handles.Model(md).Input(ad).tracer;
-h2.Model(md).Input(ad).nrTracers=handles.Model(md).Input(ad).nrTracers;
-for ii=1:handles.Model(md).Input(ad).nrTracers
-    if handles.Model(md).Input(ad).tracer(ii).new
+h2.model.delft3dflow.domain(ad).tracer=handles.model.delft3dflow.domain(ad).tracer;
+h2.model.delft3dflow.domain(ad).nrTracers=handles.model.delft3dflow.domain(ad).nrTracers;
+for ii=1:handles.model.delft3dflow.domain(ad).nrTracers
+    if handles.model.delft3dflow.domain(ad).tracer(ii).new
         h2=ddb_initializeTracer(h2,ad,ii);
     end
 end
-if handles.Model(md).Input(ad).nrTracers==0
-    h2.Model(md).Input(ad).tracers=0;
+if handles.model.delft3dflow.domain(ad).nrTracers==0
+    h2.model.delft3dflow.domain(ad).tracers=0;
 else
-    h2.Model(md).Input(ad).tracers=1;
+    h2.model.delft3dflow.domain(ad).tracers=1;
 end
 
 setHandles(h2);

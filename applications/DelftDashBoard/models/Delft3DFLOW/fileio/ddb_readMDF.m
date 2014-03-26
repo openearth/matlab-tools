@@ -65,436 +65,436 @@ function handles = ddb_readMDF(handles, filename, id)
 MDF=ddb_readMDFText(filename);
 
 %% Grid and bathymetry
-handles.Model(md).Input(id).grdFile=MDF.filcco;
-handles.Model(md).Input(id).description=MDF.runtxt;
+handles.model.delft3dflow.domain(id).grdFile=MDF.filcco;
+handles.model.delft3dflow.domain(id).description=MDF.runtxt;
 if isfield(MDF,'anglat')
-    handles.Model(md).Input(id).latitude=MDF.anglat;
+    handles.model.delft3dflow.domain(id).latitude=MDF.anglat;
 end
-handles.Model(md).Input(id).orientation=MDF.grdang;
-handles.Model(md).Input(id).encFile=MDF.filgrd;
-handles.Model(md).Input(id).MMax=MDF.mnkmax(1);
-handles.Model(md).Input(id).NMax=MDF.mnkmax(2);
-handles.Model(md).Input(id).KMax=MDF.mnkmax(3);
-handles.Model(md).Input(id).lastKMax=handles.Model(md).Input(id).KMax;
-handles.Model(md).Input(id).thick=MDF.thick;
-handles.Model(md).Input(id).dryFile=MDF.fildry;
-handles.Model(md).Input(id).thdFile=MDF.filtd;
-handles.Model(md).Input(id).w2dFile=MDF.fil2dw;
+handles.model.delft3dflow.domain(id).orientation=MDF.grdang;
+handles.model.delft3dflow.domain(id).encFile=MDF.filgrd;
+handles.model.delft3dflow.domain(id).MMax=MDF.mnkmax(1);
+handles.model.delft3dflow.domain(id).NMax=MDF.mnkmax(2);
+handles.model.delft3dflow.domain(id).KMax=MDF.mnkmax(3);
+handles.model.delft3dflow.domain(id).lastKMax=handles.model.delft3dflow.domain(id).KMax;
+handles.model.delft3dflow.domain(id).thick=MDF.thick;
+handles.model.delft3dflow.domain(id).dryFile=MDF.fildry;
+handles.model.delft3dflow.domain(id).thdFile=MDF.filtd;
+handles.model.delft3dflow.domain(id).w2dFile=MDF.fil2dw;
 if isfield(MDF,'fildep')
-    handles.Model(md).Input(id).depFile=MDF.fildep;
-    handles.Model(md).Input(id).uniformDepth=10.0;
-    handles.Model(md).Input(ad).depthSource='file';
+    handles.model.delft3dflow.domain(id).depFile=MDF.fildep;
+    handles.model.delft3dflow.domain(id).uniformDepth=10.0;
+    handles.model.delft3dflow.domain(ad).depthSource='file';
 else
-    handles.Model(md).Input(id).depFile='';
-    handles.Model(md).Input(id).uniformDepth=10.0;
-    handles.Model(md).Input(ad).depthSource='uniform';
+    handles.model.delft3dflow.domain(id).depFile='';
+    handles.model.delft3dflow.domain(id).uniformDepth=10.0;
+    handles.model.delft3dflow.domain(ad).depthSource='uniform';
 end;
 
 %% Time frame
-handles.Model(md).Input(id).itDate=datenum(MDF.itdate,'yyyy-mm-dd');
-handles.Model(md).Input(id).itDateString=datestr(handles.Model(md).Input(id).itDate,'yyyy mm dd');
-handles.Model(md).Input(id).startTime=handles.Model(md).Input(id).itDate+MDF.tstart/1440.0;
-handles.Model(md).Input(id).stopTime= handles.Model(md).Input(id).itDate+MDF.tstop/1440.0;
-handles.Model(md).Input(id).timeStep=MDF.dt;
-handles.Model(md).Input(id).timeZone=MDF.tzone;
+handles.model.delft3dflow.domain(id).itDate=datenum(MDF.itdate,'yyyy-mm-dd');
+handles.model.delft3dflow.domain(id).itDateString=datestr(handles.model.delft3dflow.domain(id).itDate,'yyyy mm dd');
+handles.model.delft3dflow.domain(id).startTime=handles.model.delft3dflow.domain(id).itDate+MDF.tstart/1440.0;
+handles.model.delft3dflow.domain(id).stopTime= handles.model.delft3dflow.domain(id).itDate+MDF.tstop/1440.0;
+handles.model.delft3dflow.domain(id).timeStep=MDF.dt;
+handles.model.delft3dflow.domain(id).timeZone=MDF.tzone;
 
 %% Constituents and processes
 if ~isempty(MDF.sub1)
     if MDF.sub1(1)=='S'
-        handles.Model(md).Input(id).salinity.include=1;
-        handles.Model(md).Input(id).constituents=1;
+        handles.model.delft3dflow.domain(id).salinity.include=1;
+        handles.model.delft3dflow.domain(id).constituents=1;
     end
     if MDF.sub1(2)=='T'
-        handles.Model(md).Input(id).temperature.include=1;
-        handles.Model(md).Input(id).constituents=1;
+        handles.model.delft3dflow.domain(id).temperature.include=1;
+        handles.model.delft3dflow.domain(id).constituents=1;
     end
     if MDF.sub1(3)=='W'
-        handles.Model(md).Input(id).wind=1;
+        handles.model.delft3dflow.domain(id).wind=1;
     end
     if MDF.sub1(4)=='I'
-        handles.Model(md).Input(id).secondaryFlow=1;
+        handles.model.delft3dflow.domain(id).secondaryFlow=1;
     end
 end
 if ~isempty(MDF.sub2)
     if MDF.sub2(2)=='C'
-        handles.Model(md).Input(id).constituents=1;
+        handles.model.delft3dflow.domain(id).constituents=1;
     end
     if MDF.sub2(3)=='W'
-        handles.Model(md).Input(id).waves=1;
+        handles.model.delft3dflow.domain(id).waves=1;
     end
 end
 for i=1:5
     fld=deblank(getfield(MDF,['namc' num2str(i)]));
     if ~isempty(fld)
         if strcmpi(fld(1:min(8,length(fld))),'sediment')
-            handles.Model(md).Input(id).sediments.include=1;
-            handles.Model(md).Input(id).nrSediments=handles.Model(md).Input(id).nrSediments+1;
-            handles.Model(md).Input(id).nrConstituents=handles.Model(md).Input(id).nrConstituents+1;
-            k=handles.Model(md).Input(id).nrSediments;
-            handles.Model(md).Input(id).sediment(k).name=deblank(fld);
-            handles.Model(md).Input(id).sediment(k).type='non-cohesive';
-            handles.Model(md).Input(id).sediments.sedimentNames{k}=deblank(fld);
+            handles.model.delft3dflow.domain(id).sediments.include=1;
+            handles.model.delft3dflow.domain(id).nrSediments=handles.model.delft3dflow.domain(id).nrSediments+1;
+            handles.model.delft3dflow.domain(id).nrConstituents=handles.model.delft3dflow.domain(id).nrConstituents+1;
+            k=handles.model.delft3dflow.domain(id).nrSediments;
+            handles.model.delft3dflow.domain(id).sediment(k).name=deblank(fld);
+            handles.model.delft3dflow.domain(id).sediment(k).type='non-cohesive';
+            handles.model.delft3dflow.domain(id).sediments.sedimentNames{k}=deblank(fld);
         else
-            handles.Model(md).Input(id).tracers=1;
-            handles.Model(md).Input(id).nrConstituents=handles.Model(md).Input(id).nrConstituents+1;
-            handles.Model(md).Input(id).nrTracers=handles.Model(md).Input(id).nrTracers+1;
-            k=handles.Model(md).Input(id).nrTracers;
-            handles.Model(md).Input(id).tracer(k).name=deblank(fld);
+            handles.model.delft3dflow.domain(id).tracers=1;
+            handles.model.delft3dflow.domain(id).nrConstituents=handles.model.delft3dflow.domain(id).nrConstituents+1;
+            handles.model.delft3dflow.domain(id).nrTracers=handles.model.delft3dflow.domain(id).nrTracers+1;
+            k=handles.model.delft3dflow.domain(id).nrTracers;
+            handles.model.delft3dflow.domain(id).tracer(k).name=deblank(fld);
         end
     end
 end
 
 
 %% Wind
-handles.Model(md).Input(id).wndFile=MDF.filwnd;
+handles.model.delft3dflow.domain(id).wndFile=MDF.filwnd;
 if MDF.wnsvwp=='N'
-    handles.Model(md).Input(id).windType='uniform';
+    handles.model.delft3dflow.domain(id).windType='uniform';
 else
-    handles.Model(md).Input(id).windType='curvilinear';
+    handles.model.delft3dflow.domain(id).windType='curvilinear';
 end
 
 %% Initial conditions
-handles.Model(md).Input(id).zeta0=MDF.zeta0;
-handles.Model(md).Input(id).u0=0.0;
-handles.Model(md).Input(id).v0=0.0;
-handles.Model(md).Input(id).s0=0.0;
-handles.Model(md).Input(id).c0=0.0;
+handles.model.delft3dflow.domain(id).zeta0=MDF.zeta0;
+handles.model.delft3dflow.domain(id).u0=0.0;
+handles.model.delft3dflow.domain(id).v0=0.0;
+handles.model.delft3dflow.domain(id).s0=0.0;
+handles.model.delft3dflow.domain(id).c0=0.0;
 
 if ~isempty(MDF.filic)
-    handles.Model(md).Input(id).iniFile=MDF.filic;
-    handles.Model(md).Input(id).initialConditions='ini';
+    handles.model.delft3dflow.domain(id).iniFile=MDF.filic;
+    handles.model.delft3dflow.domain(id).initialConditions='ini';
 else
-    handles.Model(md).Input(id).iniFile='';
+    handles.model.delft3dflow.domain(id).iniFile='';
 end
 if ~isempty(MDF.restid)
-    handles.Model(md).Input(id).rstId=MDF.restid;
-    handles.Model(md).Input(id).initialConditions='rst';
+    handles.model.delft3dflow.domain(id).rstId=MDF.restid;
+    handles.model.delft3dflow.domain(id).initialConditions='rst';
 else
-    handles.Model(md).Input(id).rstId='';
+    handles.model.delft3dflow.domain(id).rstId='';
 end
 % if isfield(MDF,'trim')
-%     handles.Model(md).Input(id).RstId=MDF.restid;
-%     handles.Model(md).Input(id).InitialConditions='rst';
+%     handles.model.delft3dflow.domain(id).RstId=MDF.restid;
+%     handles.model.delft3dflow.domain(id).InitialConditions='rst';
 % else
-%     handles.Model(md).Input(id).RstId='';
+%     handles.model.delft3dflow.domain(id).RstId='';
 % end
 
 %% Boundaries
-handles.Model(md).Input(id).bndFile=MDF.filbnd;
-handles.Model(md).Input(id).bchFile=MDF.filbch;
-handles.Model(md).Input(id).bctFile=MDF.filbct;
-handles.Model(md).Input(id).bcaFile=MDF.filana;
-handles.Model(md).Input(id).corFile=MDF.filcor;
-handles.Model(md).Input(id).bcqFile=MDF.filbcq;
-handles.Model(md).Input(id).bc0File=MDF.filbc0;
+handles.model.delft3dflow.domain(id).bndFile=MDF.filbnd;
+handles.model.delft3dflow.domain(id).bchFile=MDF.filbch;
+handles.model.delft3dflow.domain(id).bctFile=MDF.filbct;
+handles.model.delft3dflow.domain(id).bcaFile=MDF.filana;
+handles.model.delft3dflow.domain(id).corFile=MDF.filcor;
+handles.model.delft3dflow.domain(id).bcqFile=MDF.filbcq;
+handles.model.delft3dflow.domain(id).bc0File=MDF.filbc0;
 if isfield(MDF,'filbcc')
-    handles.Model(md).Input(id).bccFile=MDF.filbcc;
+    handles.model.delft3dflow.domain(id).bccFile=MDF.filbcc;
 else
-    handles.Model(md).Input(id).bccFile='';
+    handles.model.delft3dflow.domain(id).bccFile='';
 end
 
 %% Sources and sinks
-handles.Model(md).Input(id).srcFile=MDF.filsrc;
-handles.Model(md).Input(id).disFile=MDF.fildis;
+handles.model.delft3dflow.domain(id).srcFile=MDF.filsrc;
+handles.model.delft3dflow.domain(id).disFile=MDF.fildis;
 
 %% Constants
-handles.Model(md).Input(id).g=MDF.ag;
-handles.Model(md).Input(id).rhoW=MDF.rhow;
+handles.model.delft3dflow.domain(id).g=MDF.ag;
+handles.model.delft3dflow.domain(id).rhoW=MDF.rhow;
 %Alph0 = [.]
-handles.Model(md).Input(id).tempW=MDF.tempw;
-handles.Model(md).Input(id).salW=MDF.salw;
+handles.model.delft3dflow.domain(id).tempW=MDF.tempw;
+handles.model.delft3dflow.domain(id).salW=MDF.salw;
 if ~isempty(deblank(MDF.rouwav))
-    handles.Model(md).Input(id).rouWav=MDF.rouwav;
+    handles.model.delft3dflow.domain(id).rouWav=MDF.rouwav;
 end
-handles.Model(md).Input(id).nrWindStressBreakpoints=length(MDF.wstres)/2;
-% if handles.Model(md).Input(id).nrWindStressBreakpoints==2
-%     handles.Model(md).Input(id).windStressCoefficients=[MDF.wstres(1) MDF.wstres(3)];
-%     handles.Model(md).Input(id).windStressSpeeds=[MDF.wstres(2) MDF.wstres(4)];
+handles.model.delft3dflow.domain(id).nrWindStressBreakpoints=length(MDF.wstres)/2;
+% if handles.model.delft3dflow.domain(id).nrWindStressBreakpoints==2
+%     handles.model.delft3dflow.domain(id).windStressCoefficients=[MDF.wstres(1) MDF.wstres(3)];
+%     handles.model.delft3dflow.domain(id).windStressSpeeds=[MDF.wstres(2) MDF.wstres(4)];
 % else
-%     handles.Model(md).Input(id).windStressCoefficients=[MDF.wstres(1) MDF.wstres(3) MDF.wstres(5)];
-%     handles.Model(md).Input(id).windStressSpeeds=[MDF.wstres(2) MDF.wstres(4) MDF.wstres(6)];
+%     handles.model.delft3dflow.domain(id).windStressCoefficients=[MDF.wstres(1) MDF.wstres(3) MDF.wstres(5)];
+%     handles.model.delft3dflow.domain(id).windStressSpeeds=[MDF.wstres(2) MDF.wstres(4) MDF.wstres(6)];
 % end
-handles.Model(md).Input(id).windStressCoefficients=MDF.wstres(1:2:end);
-handles.Model(md).Input(id).windStressSpeeds=MDF.wstres(2:2:end);
+handles.model.delft3dflow.domain(id).windStressCoefficients=MDF.wstres(1:2:end);
+handles.model.delft3dflow.domain(id).windStressSpeeds=MDF.wstres(2:2:end);
 
 %% Heat model
-handles.Model(md).Input(id).rhoAir=MDF.rhoa;
-handles.Model(md).Input(id).betaC=MDF.betac;
-handles.Model(md).Input(id).kTemp=MDF.ktemp;
-handles.Model(md).Input(id).fClou=MDF.fclou;
-handles.Model(md).Input(id).sArea=MDF.sarea;
-handles.Model(md).Input(id).secchi=MDF.secchi;
-handles.Model(md).Input(id).stantn=MDF.stantn;
-handles.Model(md).Input(id).dalton=MDF.dalton;
+handles.model.delft3dflow.domain(id).rhoAir=MDF.rhoa;
+handles.model.delft3dflow.domain(id).betaC=MDF.betac;
+handles.model.delft3dflow.domain(id).kTemp=MDF.ktemp;
+handles.model.delft3dflow.domain(id).fClou=MDF.fclou;
+handles.model.delft3dflow.domain(id).sArea=MDF.sarea;
+handles.model.delft3dflow.domain(id).secchi=MDF.secchi;
+handles.model.delft3dflow.domain(id).stantn=MDF.stantn;
+handles.model.delft3dflow.domain(id).dalton=MDF.dalton;
 
 if isfield(MDF,'filtmp')
     if ~isempty(MDF.filtmp)
-        handles.Model(md).Input(id).tmpFile=MDF.filtmp;
+        handles.model.delft3dflow.domain(id).tmpFile=MDF.filtmp;
     end
 end
 
 if MDF.temint(1)=='N'
-    handles.Model(md).Input(id).temint=0;
+    handles.model.delft3dflow.domain(id).temint=0;
 else
-    handles.Model(md).Input(id).temint=1;
+    handles.model.delft3dflow.domain(id).temint=1;
 end
 
 %% Tidal forces
 if ~isempty(MDF.tidfor)
-    handles.Model(md).Input(id).tidalForces=1;
+    handles.model.delft3dflow.domain(id).tidalForces=1;
     for i=1:3
         line1=MDF.tidfor{i};
         for j=1:4
             str=line1((j-1)*3+1:(j-1)*3+3);
             if ~strcmpi(str,'---')
-                handles.Model(md).Input(id).tidalForce.(deblank(str))=1;
+                handles.model.delft3dflow.domain(id).tidalForce.(deblank(str))=1;
             end
         end
     end
 end
 
 %% Roughness
-handles.Model(md).Input(id).roughnessType=MDF.roumet;
-handles.Model(md).Input(id).uRoughness=MDF.ccofu;
-handles.Model(md).Input(id).vRoughness=MDF.ccofv;
-handles.Model(md).Input(id).xlo=MDF.xlo;
-handles.Model(md).Input(id).irov=MDF.irov;
-handles.Model(md).Input(id).rghFile='';
-handles.Model(md).Input(id).uniformRoughness=1;
+handles.model.delft3dflow.domain(id).roughnessType=MDF.roumet;
+handles.model.delft3dflow.domain(id).uRoughness=MDF.ccofu;
+handles.model.delft3dflow.domain(id).vRoughness=MDF.ccofv;
+handles.model.delft3dflow.domain(id).xlo=MDF.xlo;
+handles.model.delft3dflow.domain(id).irov=MDF.irov;
+handles.model.delft3dflow.domain(id).rghFile='';
+handles.model.delft3dflow.domain(id).uniformRoughness=1;
 if isfield(MDF,'filrgh')
     if ~isempty(MDF.filrgh)
-        handles.Model(md).Input(id).rghFile=MDF.filrgh;
-        handles.Model(md).Input(id).uniformRoughness=0;
+        handles.model.delft3dflow.domain(id).rghFile=MDF.filrgh;
+        handles.model.delft3dflow.domain(id).uniformRoughness=0;
     end
 end
 
 %% Viscosity
-handles.Model(md).Input(id).vicoUV=MDF.vicouv;
-handles.Model(md).Input(id).dicoUV=MDF.dicouv;
+handles.model.delft3dflow.domain(id).vicoUV=MDF.vicouv;
+handles.model.delft3dflow.domain(id).dicoUV=MDF.dicouv;
 if MDF.htur2d(1)=='N'
-    handles.Model(md).Input(id).HLES=0;
+    handles.model.delft3dflow.domain(id).HLES=0;
 else
-    handles.Model(md).Input(id).HLES=1;
-    handles.Model(md).Input(id).Htural=MDF.htural;
-    handles.Model(md).Input(id).Hturnd=MDF.hturnd;
-    handles.Model(md).Input(id).Hturst=MDF.hturst;
-    handles.Model(md).Input(id).Hturlp=MDF.hturlp;
-    handles.Model(md).Input(id).Hturrt=MDF.hturrt;
-    handles.Model(md).Input(id).Hturdm=MDF.hturdm;
-    handles.Model(md).Input(id).Hturel=1;
+    handles.model.delft3dflow.domain(id).HLES=1;
+    handles.model.delft3dflow.domain(id).Htural=MDF.htural;
+    handles.model.delft3dflow.domain(id).Hturnd=MDF.hturnd;
+    handles.model.delft3dflow.domain(id).Hturst=MDF.hturst;
+    handles.model.delft3dflow.domain(id).Hturlp=MDF.hturlp;
+    handles.model.delft3dflow.domain(id).Hturrt=MDF.hturrt;
+    handles.model.delft3dflow.domain(id).Hturdm=MDF.hturdm;
+    handles.model.delft3dflow.domain(id).Hturel=1;
 end
 if isfield(MDF,'vicoww')
-    handles.Model(md).Input(id).vicoWW=MDF.vicoww;
-    handles.Model(md).Input(id).vicoWW=MDF.dicoww;
+    handles.model.delft3dflow.domain(id).vicoWW=MDF.vicoww;
+    handles.model.delft3dflow.domain(id).vicoWW=MDF.dicoww;
 end
 if MDF.equili(1)=='N'
-    handles.Model(md).Input(id).equili=0;
+    handles.model.delft3dflow.domain(id).equili=0;
 else
-    handles.Model(md).Input(id).equili=1;
+    handles.model.delft3dflow.domain(id).equili=1;
 end
 if isempty(deblank(MDF.tkemod))
-    handles.Model(md).Input(id).verticalTurbulenceModel='K-epsilon   ';
+    handles.model.delft3dflow.domain(id).verticalTurbulenceModel='K-epsilon   ';
 else
-    handles.Model(md).Input(id).verticalTurbulenceModel=MDF.tkemod;
+    handles.model.delft3dflow.domain(id).verticalTurbulenceModel=MDF.tkemod;
 end
 
 %% Morphology
 if isfield(MDF,'filsed')
-    handles.Model(md).Input(id).sedFile=MDF.filsed;
+    handles.model.delft3dflow.domain(id).sedFile=MDF.filsed;
 else
-    handles.Model(md).Input(id).sedFile='';
+    handles.model.delft3dflow.domain(id).sedFile='';
 end
 if isfield(MDF,'filmor')
-    handles.Model(md).Input(id).morFile=MDF.filmor;
+    handles.model.delft3dflow.domain(id).morFile=MDF.filmor;
 else
-    handles.Model(md).Input(id).morFile='';
+    handles.model.delft3dflow.domain(id).morFile='';
 end
 
 %% Numerical
-handles.Model(md).Input(id).iter=MDF.iter;
+handles.model.delft3dflow.domain(id).iter=MDF.iter;
 if strcmpi(MDF.dryflp(1),'n')
-    handles.Model(md).Input(id).dryFlp=0;
+    handles.model.delft3dflow.domain(id).dryFlp=0;
 else
-    handles.Model(md).Input(id).dryFlp=1;
+    handles.model.delft3dflow.domain(id).dryFlp=1;
 end
-handles.Model(md).Input(id).dpsOpt=MDF.dpsopt;
-handles.Model(md).Input(id).dpuOpt=MDF.dpuopt;
-handles.Model(md).Input(id).dryFlc=MDF.dryflc;
-handles.Model(md).Input(id).dco=MDF.dco;
-handles.Model(md).Input(id).smoothingTime=MDF.tlfsmo;
-handles.Model(md).Input(id).thetQH=MDF.thetqh;
+handles.model.delft3dflow.domain(id).dpsOpt=MDF.dpsopt;
+handles.model.delft3dflow.domain(id).dpuOpt=MDF.dpuopt;
+handles.model.delft3dflow.domain(id).dryFlc=MDF.dryflc;
+handles.model.delft3dflow.domain(id).dco=MDF.dco;
+handles.model.delft3dflow.domain(id).smoothingTime=MDF.tlfsmo;
+handles.model.delft3dflow.domain(id).thetQH=MDF.thetqh;
 
 if strcmpi(MDF.forfuv(1),'n')
-    handles.Model(md).Input(id).forresterHor=0;
+    handles.model.delft3dflow.domain(id).forresterHor=0;
 else
-    handles.Model(md).Input(id).forresterHor=1;
+    handles.model.delft3dflow.domain(id).forresterHor=1;
 end
 if strcmpi(MDF.forfww(1),'n')
-    handles.Model(md).Input(id).forresterVer=0;
+    handles.model.delft3dflow.domain(id).forresterVer=0;
 else
-    handles.Model(md).Input(id).forresterVer=1;
+    handles.model.delft3dflow.domain(id).forresterVer=1;
 end
 if strcmpi(MDF.sigcor(1),'n')
-    handles.Model(md).Input(id).sigmaCorrection=0;
+    handles.model.delft3dflow.domain(id).sigmaCorrection=0;
 else
-    handles.Model(md).Input(id).sigmaCorrection=1;
+    handles.model.delft3dflow.domain(id).sigmaCorrection=1;
 end
-handles.Model(md).Input(id).traSol=MDF.trasol;
-handles.Model(md).Input(id).momSol=MDF.momsol;
+handles.model.delft3dflow.domain(id).traSol=MDF.trasol;
+handles.model.delft3dflow.domain(id).momSol=MDF.momsol;
 
 %% Observations
-handles.Model(md).Input(id).obsFile=MDF.filsta;
-handles.Model(md).Input(id).crsFile=MDF.filcrs;
-handles.Model(md).Input(id).droFile=MDF.filpar;
+handles.model.delft3dflow.domain(id).obsFile=MDF.filsta;
+handles.model.delft3dflow.domain(id).crsFile=MDF.filcrs;
+handles.model.delft3dflow.domain(id).droFile=MDF.filpar;
 
 %% Coupling
 if strcmpi(MDF.online(1),'n')
-    handles.Model(md).Input(id).onlineVisualisation=0;
+    handles.model.delft3dflow.domain(id).onlineVisualisation=0;
 else
-    handles.Model(md).Input(id).onlineVisualisation=1;
+    handles.model.delft3dflow.domain(id).onlineVisualisation=1;
 end
 if isfield(MDF,'waqmod')
     if strcmpi(MDF.waqmod(1),'n')
-        handles.Model(md).Input(id).waqMod=0;
+        handles.model.delft3dflow.domain(id).waqMod=0;
     else
-        handles.Model(md).Input(id).waqMod=1;
+        handles.model.delft3dflow.domain(id).waqMod=1;
     end
 end
 
 %% Wave online
 if isfield(MDF,'waveol')
     if strcmpi(MDF.waveol(1),'n')
-        handles.Model(md).Input(id).onlineWave=0;
+        handles.model.delft3dflow.domain(id).onlineWave=0;
     else
-        handles.Model(md).Input(id).onlineWave=1;
+        handles.model.delft3dflow.domain(id).onlineWave=1;
     end
 end
 
 % Output details
-handles.Model(md).Input(id).SMhydr=MDF.smhydr;
-handles.Model(md).Input(id).SMderv=MDF.smderv;
-handles.Model(md).Input(id).SMproc=MDF.smproc;
-handles.Model(md).Input(id).PMhydr=MDF.pmhydr;    
-handles.Model(md).Input(id).PMderv=MDF.pmderv;       
-handles.Model(md).Input(id).PMproc=MDF.pmproc;
-handles.Model(md).Input(id).SHhydr=MDF.shhydr;      
-handles.Model(md).Input(id).SHderv=MDF.shderv;     
-handles.Model(md).Input(id).SHproc=MDF.shproc;
-handles.Model(md).Input(id).SHflux=MDF.shflux;      
-handles.Model(md).Input(id).PHhydr=MDF.phhydr;    
-handles.Model(md).Input(id).PHderv=MDF.phderv;       
-handles.Model(md).Input(id).PHproc=MDF.phproc;
-handles.Model(md).Input(id).PHflux=MDF.phflux;      
+handles.model.delft3dflow.domain(id).SMhydr=MDF.smhydr;
+handles.model.delft3dflow.domain(id).SMderv=MDF.smderv;
+handles.model.delft3dflow.domain(id).SMproc=MDF.smproc;
+handles.model.delft3dflow.domain(id).PMhydr=MDF.pmhydr;    
+handles.model.delft3dflow.domain(id).PMderv=MDF.pmderv;       
+handles.model.delft3dflow.domain(id).PMproc=MDF.pmproc;
+handles.model.delft3dflow.domain(id).SHhydr=MDF.shhydr;      
+handles.model.delft3dflow.domain(id).SHderv=MDF.shderv;     
+handles.model.delft3dflow.domain(id).SHproc=MDF.shproc;
+handles.model.delft3dflow.domain(id).SHflux=MDF.shflux;      
+handles.model.delft3dflow.domain(id).PHhydr=MDF.phhydr;    
+handles.model.delft3dflow.domain(id).PHderv=MDF.phderv;       
+handles.model.delft3dflow.domain(id).PHproc=MDF.phproc;
+handles.model.delft3dflow.domain(id).PHflux=MDF.phflux;      
 
 %% Output
-handles.Model(md).Input(id).prHis=MDF.prhis;
-handles.Model(md).Input(id).mapStartTime=handles.Model(md).Input(id).itDate+MDF.flmap(1)/1440;
-handles.Model(md).Input(id).mapInterval=MDF.flmap(2);
-handles.Model(md).Input(id).mapStopTime=handles.Model(md).Input(id).itDate+MDF.flmap(3)/1440;
-handles.Model(md).Input(id).hisInterval=MDF.flhis(2);
-handles.Model(md).Input(id).comStartTime=handles.Model(md).Input(id).itDate+MDF.flpp(1)/1440;
-handles.Model(md).Input(id).comInterval=MDF.flpp(2);
-handles.Model(md).Input(id).comStopTime=handles.Model(md).Input(id).itDate+MDF.flpp(3)/1440;
-handles.Model(md).Input(id).rstInterval=MDF.flrst;
+handles.model.delft3dflow.domain(id).prHis=MDF.prhis;
+handles.model.delft3dflow.domain(id).mapStartTime=handles.model.delft3dflow.domain(id).itDate+MDF.flmap(1)/1440;
+handles.model.delft3dflow.domain(id).mapInterval=MDF.flmap(2);
+handles.model.delft3dflow.domain(id).mapStopTime=handles.model.delft3dflow.domain(id).itDate+MDF.flmap(3)/1440;
+handles.model.delft3dflow.domain(id).hisInterval=MDF.flhis(2);
+handles.model.delft3dflow.domain(id).comStartTime=handles.model.delft3dflow.domain(id).itDate+MDF.flpp(1)/1440;
+handles.model.delft3dflow.domain(id).comInterval=MDF.flpp(2);
+handles.model.delft3dflow.domain(id).comStopTime=handles.model.delft3dflow.domain(id).itDate+MDF.flpp(3)/1440;
+handles.model.delft3dflow.domain(id).rstInterval=MDF.flrst;
 
 %% Meteo data on equidistant grid
-handles.Model(md).Input(id).ampFile=MDF.filwp;
-handles.Model(md).Input(id).amuFile=MDF.filwu;
-handles.Model(md).Input(id).amvFile=MDF.filwv;
-handles.Model(md).Input(id).wndgrd=MDF.wndgrd;
-handles.Model(md).Input(id).MNmaxw=MDF.mnmaxw;
+handles.model.delft3dflow.domain(id).ampFile=MDF.filwp;
+handles.model.delft3dflow.domain(id).amuFile=MDF.filwu;
+handles.model.delft3dflow.domain(id).amvFile=MDF.filwv;
+handles.model.delft3dflow.domain(id).wndgrd=MDF.wndgrd;
+handles.model.delft3dflow.domain(id).MNmaxw=MDF.mnmaxw;
 
-handles.Model(md).Input(id).amtFile=MDF.filwt;
-handles.Model(md).Input(id).amcFile=MDF.filwc;
-handles.Model(md).Input(id).amrFile=MDF.filwr;
+handles.model.delft3dflow.domain(id).amtFile=MDF.filwt;
+handles.model.delft3dflow.domain(id).amcFile=MDF.filwc;
+handles.model.delft3dflow.domain(id).amrFile=MDF.filwr;
 
-handles.Model(md).Input(id).spwFile=MDF.filweb;
-if ~isempty(handles.Model(md).Input(id).spwFile)
-    handles.Model(md).Input(id).windType='spiderweb';
+handles.model.delft3dflow.domain(id).spwFile=MDF.filweb;
+if ~isempty(handles.model.delft3dflow.domain(id).spwFile)
+    handles.model.delft3dflow.domain(id).windType='spiderweb';
 end
 
-if ~isempty(handles.Model(md).Input(id).amuFile)
-    handles.Model(md).Input(id).windType='equidistant';
+if ~isempty(handles.model.delft3dflow.domain(id).amuFile)
+    handles.model.delft3dflow.domain(id).windType='equidistant';
 end
 
 if isfield(MDF,'pavbnd')
-    handles.Model(md).Input(id).pAvBnd=MDF.pavbnd;
+    handles.model.delft3dflow.domain(id).pAvBnd=MDF.pavbnd;
 end
 
 if isfield(MDF,'nudge')
     if MDF.nudge(1)=='Y'
-        handles.Model(md).Input(id).nudge=1;
+        handles.model.delft3dflow.domain(id).nudge=1;
     end
 end
 
 %% Z-layers
 if isfield(MDF,'zmodel')
     if strcmpi(MDF.zmodel(1),'y')
-        handles.Model(md).Input(id).layerType='z';
+        handles.model.delft3dflow.domain(id).layerType='z';
     end
 end
 if isfield(MDF,'zbot')
-    handles.Model(md).Input(id).zBot=MDF.zbot;
+    handles.model.delft3dflow.domain(id).zBot=MDF.zbot;
 end
 if isfield(MDF,'ztop')
-    handles.Model(md).Input(id).zTop=MDF.ztop;
+    handles.model.delft3dflow.domain(id).zTop=MDF.ztop;
 end
 
 %% Roller model
 if isfield(MDF,'roller')
     if strcmpi(MDF.roller(1),'y')
-        handles.Model(md).Input(id).roller.include=1;
+        handles.model.delft3dflow.domain(id).roller.include=1;
     end
 end
 if isfield(MDF,'snelli')
     if strcmpi(MDF.snelli(1),'y')
-        handles.Model(md).Input(id).roller.snellius=1;
+        handles.model.delft3dflow.domain(id).roller.snellius=1;
     end
 end
 if isfield(MDF,'gamdis')
-    handles.Model(md).Input(id).roller.gamDis=MDF.gamdis;
+    handles.model.delft3dflow.domain(id).roller.gamDis=MDF.gamdis;
 end
 if isfield(MDF,'betaro')
-    handles.Model(md).Input(id).roller.betaRo=MDF.betaro;
+    handles.model.delft3dflow.domain(id).roller.betaRo=MDF.betaro;
 end
 if isfield(MDF,'f_lam')
-    handles.Model(md).Input(id).roller.flam=MDF.f_lam;
+    handles.model.delft3dflow.domain(id).roller.flam=MDF.f_lam;
 end
 if isfield(MDF,'thr')
-    handles.Model(md).Input(id).roller.thr=MDF.thr;
+    handles.model.delft3dflow.domain(id).roller.thr=MDF.thr;
 end
 
 if isfield(MDF,'cstbnd')
     if strcmpi(MDF.cstbnd(1),'y')
-        handles.Model(md).Input(id).cstBnd=1;
+        handles.model.delft3dflow.domain(id).cstBnd=1;
     end
 end
 
 if isfield(MDF,'airout')
     if strcmpi(MDF.airout(1),'y')
-        handles.Model(md).Input(id).airOut=1;
+        handles.model.delft3dflow.domain(id).airOut=1;
     end
 end
 
 if isfield(MDF,'heaout')
     if strcmpi(MDF.heaout(1),'y')
-        handles.Model(md).Input(id).heatOut=1;
+        handles.model.delft3dflow.domain(id).heatOut=1;
     end
 end
 
 if isfield(MDF,'filfou')
     if ~isempty(MDF.filfou)
-        handles.Model(md).Input(id).fouFile=MDF.filfou;
-        handles.Model(md).Input(id).fourier.include=1;
+        handles.model.delft3dflow.domain(id).fouFile=MDF.filfou;
+        handles.model.delft3dflow.domain(id).fourier.include=1;
     end
 end
 
 if isfield(MDF,'tmzrad')
-    handles.Model(md).Input(id).timeZoneSolarRadiation=MDF.tmzrad;
+    handles.model.delft3dflow.domain(id).timeZoneSolarRadiation=MDF.tmzrad;
 end
 
 if isfield(MDF,'trafrm')
-    handles.Model(md).Input(id).trafrm=MDF.trafrm;
+    handles.model.delft3dflow.domain(id).trafrm=MDF.trafrm;
 end
 
 % Cstbnd= #yes#

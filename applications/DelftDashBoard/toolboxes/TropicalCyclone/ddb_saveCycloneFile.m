@@ -90,7 +90,7 @@ fprintf(fid,'%s \n',txt);
 txt='';
 fprintf(fid,'%s \n',txt);
 
-txt=['Name              "' storm.name '"'];
+txt=['Name              "' storm.cyclonename '"'];
 fprintf(fid,'%s \n',txt);
 
 txt=['Method            ' num2str(storm.method)];

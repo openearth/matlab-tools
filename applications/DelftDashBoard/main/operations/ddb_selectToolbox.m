@@ -54,7 +54,7 @@ handles=getHandles;
 name=handles.activeToolbox.name;
 
 %% Get handle of model tab panel
-parent=handles.Model(md).GUI.element(1).element.handle;
+parent=handles.model.(handles.activeModel.name).GUI.element(1).element.handle;
 
 %% Get element structure of tab panel
 element=getappdata(parent,'element');
@@ -62,15 +62,17 @@ element=getappdata(parent,'element');
 %% And now add the new elements
 toolboxelements=handles.toolbox.(name).GUI.element;
 
+model=handles.activeModel.name;
+
 iok=1;
 
 if ~isempty(handles.toolbox.(name).formodel)
-    imatch=strmatch(lower(handles.Model(md).name),lower(handles.toolbox.(name).formodel),'exact');
+    imatch=strmatch(lower(handles.model.(model).name),lower(handles.toolbox.(name).formodel),'exact');
     if isempty(imatch)
         % Toolbox not to be used for this model
         toolboxelements=[];
         toolboxelements(1).element.style='text';
-        toolboxelements(1).element.text=['Sorry, the ' handles.toolbox.(name).longName ' toolbox is not available for ' handles.Model(md).longName ' ...'];
+        toolboxelements(1).element.text=['Sorry, the ' handles.toolbox.(name).longName ' toolbox is not available for ' handles.model.(model).longName ' ...'];
         toolboxelements(1).element.position=[50 100 300 20];
         toolboxelements(1).element.tag='text';
         toolboxelements(1).element.horal='left';
@@ -99,13 +101,13 @@ if iok
                     if isstruct(toolboxelements(1).element.tab(itab).tab.formodel)
                         % Multiple models get this tab
                         for im=1:length(toolboxelements(1).element.tab(itab).tab.formodel)
-                            if strcmpi(toolboxelements(1).element.tab(itab).tab.formodel(im).formodel,handles.Model(md).name)
+                            if strcmpi(toolboxelements(1).element.tab(itab).tab.formodel(im).formodel,handles.model.(model).name)
                                 iadd=1;
                             end
                         end
                     else
                         % Only one model gets this tab
-                        if strcmpi(toolboxelements(1).element.tab(itab).tab.formodel,handles.Model(md).name)
+                        if strcmpi(toolboxelements(1).element.tab(itab).tab.formodel,handles.model.(model).name)
                             iadd=1;
                         end
                     end
@@ -138,4 +140,4 @@ setHandles(handles);
 drawnow;
 
 % And finally select the toolbox tab
-tabpanel('select','tag',handles.Model(md).name,'tabname','toolbox');
+tabpanel('select','handle',handles.model.(model).GUI.element.element.handle,'tabname','toolbox');

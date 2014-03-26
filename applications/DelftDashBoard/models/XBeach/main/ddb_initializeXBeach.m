@@ -1,17 +1,7 @@
 function handles=ddb_initializeXBeach(handles,varargin)
 
-if nargin>1
-    switch varargin{1}
-        case{'veryfirst'}
-            ii=strmatch('XBeach',{handles.Model.name},'exact');
-            handles.Model(ii).LongName='X-Beach';
-            return
-    end
-end
 
-ii=strmatch('XBeach',{handles.Model.name},'exact');
-
-handles.Model(ii).Input=[];
+handles.model.xbeach.domain=[];
 runid='tst';
 
 handles.GUIData.nrXBeachDomains=1;

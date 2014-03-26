@@ -68,10 +68,10 @@ function [handles ok] = ddb_getDDBoundaries(handles, id1, id2, runid1, runid2)
 ok=0;
 
 % DD Boundaries
-x1=handles.Model(md).Input(id1).gridX;
-y1=handles.Model(md).Input(id1).gridY;
-x2=handles.Model(md).Input(id2).gridX;
-y2=handles.Model(md).Input(id2).gridY;
+x1=handles.model.delft3dflow.domain(id1).gridX;
+y1=handles.model.delft3dflow.domain(id1).gridY;
+x2=handles.model.delft3dflow.domain(id2).gridX;
+y2=handles.model.delft3dflow.domain(id2).gridY;
 
 ddb=ddb_makeDDModelBoundaries(x1,y1,x2,y2,runid1,runid2);
 

@@ -7,8 +7,6 @@ function ddb_plotDelft3DWAVE(option,varargin)
 
 handles=getHandles;
 
-imd=strmatch('Delft3DWAVE',{handles.Model(:).name},'exact');
-
 vis=1;
 act=0;
 dact=0;
@@ -31,7 +29,7 @@ if dact
 end
 
 n1=1;
-n2=handles.Model(imd).Input.nrgrids;
+n2=handles.model.delft3dwave.domain.nrgrids;
     
 for id=n1:n2
     
@@ -52,7 +50,7 @@ end
 
 % Plot active grid on top
 try
-    uistack(handles.Model(imd).Input.domains(awg).gridplot.plothandles,'top');
+    uistack(handles.model.delft3dwave.domain.domains(awg).gridplot.plothandles,'top');
 end
 
 handles=ddb_Delft3DWAVE_plotBathy(handles,option,'visible',vis,'active',act);

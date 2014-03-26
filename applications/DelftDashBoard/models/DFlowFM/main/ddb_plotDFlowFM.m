@@ -69,8 +69,6 @@ function ddb_plotDFlowFM(option, varargin)
 
 handles=getHandles;
 
-imd=strmatch('DFlowFM',{handles.Model(:).name},'exact');
-
 vis=1;
 act=0;
 idomain=0;

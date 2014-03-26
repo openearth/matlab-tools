@@ -69,7 +69,6 @@ if ~isdir(handles.toolbox.tropicalcyclone.dataDir)
 end
 
 handles.toolbox.tropicalcyclone.nrTrackPoints   = 0;
-handles.toolbox.tropicalcyclone.name      = '';
 handles.toolbox.tropicalcyclone.initSpeed = 0;
 handles.toolbox.tropicalcyclone.initDir   = 0;
 handles.toolbox.tropicalcyclone.startTime=floor(now);
@@ -114,7 +113,7 @@ handles.toolbox.tropicalcyclone.tableA=0;
 handles.toolbox.tropicalcyclone.tableB=0;
 
 handles.toolbox.tropicalcyclone.showDetails=1;
-handles.toolbox.tropicalcyclone.name='TC Deepak';
+handles.toolbox.tropicalcyclone.cyclonename='TC Deepak';
 handles.toolbox.tropicalcyclone.radius=1000;
 handles.toolbox.tropicalcyclone.nrRadialBins=500;
 handles.toolbox.tropicalcyclone.nrDirectionalBins=36;

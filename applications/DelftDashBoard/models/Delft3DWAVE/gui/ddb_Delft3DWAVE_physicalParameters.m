@@ -15,8 +15,8 @@ end
 function toggleWind
 
 handles=getHandles;
-if ~handles.Model(md).Input.windgrowth
-    handles.Model(md).Input.whitecapping='off';
-    handles.Model(md).Input.quadruplets=0;
+if ~handles.model.delft3dwave.domain.windgrowth
+    handles.model.delft3dwave.domain.whitecapping='off';
+    handles.model.delft3dwave.domain.quadruplets=0;
 end
 setHandles(handles);

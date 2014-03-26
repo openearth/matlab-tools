@@ -61,24 +61,24 @@ function handles = ddb_sortBoundaries(handles, id)
 % $Keywords: $
 
 %%
-nr=handles.Model(md).Input(id).nrOpenBoundaries;
+nr=handles.model.delft3dflow.domain(id).nrOpenBoundaries;
 
 % First 3d-profiles
 k=0;
 for i=1:nr
-    if strcmpi(handles.Model(md).Input(id).openBoundaries(i).profile,'3d-profile')
+    if strcmpi(handles.model.delft3dflow.domain(id).openBoundaries(i).profile,'3d-profile')
         k=k+1;
-        Bnd(k)=handles.Model(md).Input(id).openBoundaries(i);
+        Bnd(k)=handles.model.delft3dflow.domain(id).openBoundaries(i);
     end
 end
 
 % Now the rest
 for i=1:nr
-    if ~strcmpi(handles.Model(md).Input(id).openBoundaries(i).profile,'3d-profile')
+    if ~strcmpi(handles.model.delft3dflow.domain(id).openBoundaries(i).profile,'3d-profile')
         k=k+1;
-        Bnd(k)=handles.Model(md).Input(id).openBoundaries(i);
+        Bnd(k)=handles.model.delft3dflow.domain(id).openBoundaries(i);
     end
 end
 
-handles.Model(md).Input(id).openBoundaries=Bnd;
+handles.model.delft3dflow.domain(id).openBoundaries=Bnd;
 

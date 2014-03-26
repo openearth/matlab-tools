@@ -74,7 +74,7 @@ cd(pathname);
 %DeleteAllObjects;
 handles=ddb_initialize(handles,'all');
 ii=findstr(filename,'.mdf');
-handles.Model(md).Input(ad).runid=filename(1:ii-1);
+handles.model.delft3dflow.domain(ad).runid=filename(1:ii-1);
 handles=ddb_readMDF(handles,filename,1);
 handles=ddb_readAttributeFiles(handles);
 

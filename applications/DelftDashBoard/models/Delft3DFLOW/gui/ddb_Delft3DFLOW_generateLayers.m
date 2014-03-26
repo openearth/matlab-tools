@@ -64,21 +64,21 @@ if isempty(varargin)
     ddb_zoomOff;
     % Make new GUI
     handles=getHandles;
-    xmldir=handles.Model(md).xmlDir;
+    xmldir=handles.model.delft3dflow.xmlDir;
     xmlfile='Delft3DFLOW.generatelayers.xml';
-    if strcmpi(handles.Model(md).Input(ad).layerType,'z')
-        handles.Model(md).Input(ad).layerOption=1;
+    if strcmpi(handles.model.delft3dflow.domain(ad).layerType,'z')
+        handles.model.delft3dflow.domain(ad).layerOption=1;
     end
-    for k=1:handles.Model(md).Input(ad).KMax
-        handles.Model(md).Input(ad).layerStrings{k}=num2str(handles.Model(md).Input(ad).thick(k),'%8.3f');
+    for k=1:handles.model.delft3dflow.domain(ad).KMax
+        handles.model.delft3dflow.domain(ad).layerStrings{k}=num2str(handles.model.delft3dflow.domain(ad).thick(k),'%8.3f');
     end
     
-    h=handles.Model(md).Input(ad);
+    h=handles.model.delft3dflow.domain(ad);
 
     [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir filesep 'icons' filesep 'deltares.gif']);
 
     if ok
-        handles.Model(md).Input(ad)=h;
+        handles.model.delft3dflow.domain(ad)=h;
         setHandles(handles);
         gui_updateActiveTab;
     end

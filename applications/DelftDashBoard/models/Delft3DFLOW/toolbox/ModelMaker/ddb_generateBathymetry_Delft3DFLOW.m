@@ -41,27 +41,27 @@ for i=1:length(varargin)
     end
 end
 
-if handles.Model(md).Input(id).MMax>0
+if handles.model.delft3dflow.domain(id).MMax>0
 
     if isempty(filename)
         % Get file name
-        [filename, pathname, filterindex] = uiputfile('*.dep', 'Depth File Name',[handles.Model(md).Input(ad).attName '.dep']);
+        [filename, pathname, filterindex] = uiputfile('*.dep', 'Depth File Name',[handles.model.delft3dflow.domain(ad).attName '.dep']);
         if pathname==0
             return
         end
     end
     
-    switch lower(handles.Model(md).Input(id).dpsOpt)
+    switch lower(handles.model.delft3dflow.domain(id).dpsOpt)
         case{'dp'}
-            xg=handles.Model(md).Input(id).gridXZ;
-            yg=handles.Model(md).Input(id).gridYZ;
+            xg=handles.model.delft3dflow.domain(id).gridXZ;
+            yg=handles.model.delft3dflow.domain(id).gridYZ;
         otherwise
-            xg=handles.Model(md).Input(id).gridX;
-            yg=handles.Model(md).Input(id).gridY;
+            xg=handles.model.delft3dflow.domain(id).gridX;
+            yg=handles.model.delft3dflow.domain(id).gridY;
     end
     
     % Check if there is already data in depth matrix
-    dmax=max(max(handles.Model(md).Input(id).depth));
+    dmax=max(max(handles.model.delft3dflow.domain(id).depth));
     if isempty(dmax)
         dmax=NaN;
     end
@@ -90,25 +90,25 @@ if handles.Model(md).Input(id).MMax>0
     
     switch opt
         case{'overwrite'}
-            handles.Model(md).Input(id).depth=z;
+            handles.model.delft3dflow.domain(id).depth=z;
         case{'combine'}
-            handles.Model(md).Input(id).depth(isnan(handles.Model(md).Input(id).depth))=z(isnan(handles.Model(md).Input(id).depth));
+            handles.model.delft3dflow.domain(id).depth(isnan(handles.model.delft3dflow.domain(id).depth))=z(isnan(handles.model.delft3dflow.domain(id).depth));
     end
     
     % Fill borders
-    switch lower(handles.Model(md).Input(id).dpsOpt)
+    switch lower(handles.model.delft3dflow.domain(id).dpsOpt)
         case{'dp'}
-            handles.Model(md).Input(id).depth(:,1)=handles.Model(md).Input(id).depth(:,2);
-            handles.Model(md).Input(id).depth(1,:)=handles.Model(md).Input(id).depth(2,:);
+            handles.model.delft3dflow.domain(id).depth(:,1)=handles.model.delft3dflow.domain(id).depth(:,2);
+            handles.model.delft3dflow.domain(id).depth(1,:)=handles.model.delft3dflow.domain(id).depth(2,:);
     end
     
-    z=handles.Model(md).Input(id).depth;
+    z=handles.model.delft3dflow.domain(id).depth;
     
-    handles.Model(md).Input(id).depthZ=getDepthZ(z,handles.Model(md).Input(id).dpsOpt);
+    handles.model.delft3dflow.domain(id).depthZ=getDepthZ(z,handles.model.delft3dflow.domain(id).dpsOpt);
 
-    handles.Model(md).Input(id).depFile=filename;
+    handles.model.delft3dflow.domain(id).depFile=filename;
 
-    handles.Model(md).Input(id).depthSource='file';
+    handles.model.delft3dflow.domain(id).depthSource='file';
 
     ddb_wldep('write',filename,z);
         

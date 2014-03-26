@@ -103,28 +103,28 @@ end
 %%
 function addObservationPoints
 handles=getHandles;
-
-switch lower(handles.Model(md).name)
+model=handles.activeModel.name;
+switch lower(model)
     case{'delft3dflow'}
-        [filename, pathname, filterindex] = uiputfile('*.obs', 'Observation File Name',[handles.Model(md).Input(ad).attName '.obs']);
+        [filename, pathname, filterindex] = uiputfile('*.obs', 'Observation File Name',[handles.model.delft3dflow.domain(ad).attName '.obs']);
         if pathname~=0
             ddb_Delft3DFLOW_addTideStations;
             handles=getHandles;
-            handles.Model(md).Input(ad).obsFile=filename;
+            handles.model.delft3dflow.domain(ad).obsFile=filename;
             ddb_saveObsFile(handles,ad);
             setHandles(handles);
         end
     case{'dflowfm'}
-        [filename, pathname, filterindex] = uiputfile('*.xyn', 'Observation File Name',[handles.Model(md).Input(ad).attName '.xyn']);
+        [filename, pathname, filterindex] = uiputfile('*.xyn', 'Observation File Name',[handles.model.dflowfm.domain(ad).attName '.xyn']);
         if pathname~=0
             ddb_DFlowFM_addTideStations;
             handles=getHandles;
-            handles.Model(md).Input(ad).obsfile=filename;
+            handles.model.dflowfm.domain(ad).obsfile=filename;
             ddb_DFlowFM_saveObsFile(handles,ad);
             setHandles(handles);
         end
     otherwise
-        ddb_giveWarning('text',['Sorry, generation of observation points from tide stations is not supported for ' handles.Model(md).longName ' ...']);
+        ddb_giveWarning('text',['Sorry, generation of observation points from tide stations is not supported for ' handles.model.(model).longName ' ...']);
 end
 
 %%

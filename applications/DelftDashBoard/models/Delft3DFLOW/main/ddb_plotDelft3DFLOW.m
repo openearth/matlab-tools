@@ -69,8 +69,6 @@ function ddb_plotDelft3DFLOW(option, varargin)
 
 handles=getHandles;
 
-imd=strmatch('Delft3DFLOW',{handles.Model(:).name},'exact');
-
 vis=1;
 act=0;
 idomain=0;
@@ -91,7 +89,7 @@ end
 if idomain==0
     % Update all domains
     n1=1;
-    n2=handles.Model(imd).nrDomains;
+    n2=handles.model.delft3dflow.nrDomains;
 else
     % Update one domain
     n1=idomain;
@@ -120,35 +118,35 @@ for id=n1:n2
     handles=ddb_Delft3DFLOW_plotGrid(handles,option,'domain',id,'color',col,'visible',1);
     
     
-    if handles.Model(imd).Input(id).nrObservationPoints>0
+    if handles.model.delft3dflow.domain(id).nrObservationPoints>0
         handles=ddb_Delft3DFLOW_plotAttributes(handles,option,'observationpoints','domain',id,'visible',vis,'active',act);
     end
     
-    if handles.Model(imd).Input(id).nrCrossSections>0
+    if handles.model.delft3dflow.domain(id).nrCrossSections>0
         handles=ddb_Delft3DFLOW_plotAttributes(handles,option,'crosssections','domain',id,'visible',vis,'active',act);
     end
     
-    if handles.Model(imd).Input(id).nrDryPoints>0
+    if handles.model.delft3dflow.domain(id).nrDryPoints>0
         handles=ddb_Delft3DFLOW_plotAttributes(handles,option,'drypoints','domain',id,'visible',vis,'active',act);
     end
     
-    if handles.Model(imd).Input(id).nrOpenBoundaries>0
+    if handles.model.delft3dflow.domain(id).nrOpenBoundaries>0
         handles=ddb_Delft3DFLOW_plotAttributes(handles,option,'openboundaries','domain',id,'visible',vis,'active',act);
     end
     
-    if handles.Model(imd).Input(id).nrThinDams>0
+    if handles.model.delft3dflow.domain(id).nrThinDams>0
         handles=ddb_Delft3DFLOW_plotAttributes(handles,option,'thindams','domain',id,'visible',vis,'active',act);
     end
 
-    if handles.Model(imd).Input(id).nrWeirs2D>0
+    if handles.model.delft3dflow.domain(id).nrWeirs2D>0
         handles=ddb_Delft3DFLOW_plotAttributes(handles,option,'weirs2d','domain',id,'visible',vis,'active',act);
     end
 
-    if handles.Model(imd).Input(id).nrDischarges>0
+    if handles.model.delft3dflow.domain(id).nrDischarges>0
         handles=ddb_Delft3DFLOW_plotAttributes(handles,option,'discharges','domain',id,'visible',vis,'active',act);
     end
     
-    if handles.Model(imd).Input(id).nrDrogues>0
+    if handles.model.delft3dflow.domain(id).nrDrogues>0
         handles=ddb_Delft3DFLOW_plotAttributes(handles,option,'drogues','domain',id,'visible',vis,'active',act);
     end
     

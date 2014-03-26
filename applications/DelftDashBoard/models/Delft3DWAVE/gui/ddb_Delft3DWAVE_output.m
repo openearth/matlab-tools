@@ -23,10 +23,10 @@ ddb_plotDelft3DWAVE('update','wavedomain',0,'active',1);
 %%
 function checkOutputGrid
 handles=getHandles;
-val=handles.Model(md).Input.domains(awg).output;
-iac=handles.Model(md).Input.activegrids;
+val=handles.model.delft3dwave.domain.domains(awg).output;
+iac=handles.model.delft3dwave.domain.activegrids;
 for ii=1:length(iac)
     n=iac(ii);
-    handles.Model(md).Input.domains(n).output=val;
+    handles.model.delft3dwave.domain.domains(n).output=val;
 end
 setHandles(handles);

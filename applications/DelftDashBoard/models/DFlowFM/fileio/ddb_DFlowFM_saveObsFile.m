@@ -62,12 +62,12 @@ function ddb_DFlowFM_saveObsFile(handles, id)
 
 %%
 
-if handles.Model(md).Input(id).nrobservationpoints>0
-    fid=fopen(handles.Model(md).Input(id).obsfile,'w');
-    for ip=1:handles.Model(md).Input(id).nrobservationpoints
-        x=handles.Model(md).Input(id).observationpoints(ip).x;
-        y=handles.Model(md).Input(id).observationpoints(ip).y;
-        name=handles.Model(md).Input(id).observationpoints(ip).name;
+if handles.model.dflowfm.domain(id).nrobservationpoints>0
+    fid=fopen(handles.model.dflowfm.domain(id).obsfile,'w');
+    for ip=1:handles.model.dflowfm.domain(id).nrobservationpoints
+        x=handles.model.dflowfm.domain(id).observationpoints(ip).x;
+        y=handles.model.dflowfm.domain(id).observationpoints(ip).y;
+        name=handles.model.dflowfm.domain(id).observationpoints(ip).name;
         fprintf(fid,'%14.6f %14.6f %s\n',x,y,['''' name '''']);
     end
     fclose(fid);

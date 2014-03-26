@@ -77,7 +77,7 @@ if ispc,
         end
     end
     
-    switch handles.Model(md).version
+    switch handles.model.delft3dflow.version
         
         case{'5.00.xx'}
 
@@ -85,10 +85,9 @@ if ispc,
             fid=fopen(fname,'w');            
             fprintf(fid,'%s\n','@ echo off');            
             fprintf(fid,'%s\n','set argfile=config_flow2d3d.xml');
-            fprintf(fid,'%s\n',['set flowexedir="' handles.Model(md).exedir '"']);
+            fprintf(fid,'%s\n',['set flowexedir="' handles.model.delft3dflow.exedir '"']);
             if ~isempty(mdwfile)
-                iwav=strmatch('Delft3DWAVE',{handles.Model.name},'exact');
-                fprintf(fid,'%s\n',['set waveexedir="' handles.Model(iwav).exedir '"']);
+                fprintf(fid,'%s\n',['set waveexedir="' handles.model.delft3dwave.exedir '"']);
             end
             fprintf(fid,'%s\n','set PATH=%waveexedir%;%flowexedir%;%PATH%');
             if ~isempty(mdwfile)
@@ -113,10 +112,9 @@ if ispc,
             fid=fopen(fname,'w');            
             fprintf(fid,'%s\n','@ echo off');            
             fprintf(fid,'%s\n','set argfile=config_d_hydro.xml');            
-            fprintf(fid,'%s\n',['set flowexedir="' handles.Model(md).exedir '"']);
+            fprintf(fid,'%s\n',['set flowexedir="' handles.model.delft3dflow.exedir '"']);
             if ~isempty(mdwfile)
-                iwav=strmatch('Delft3DWAVE',{handles.Model.name},'exact');
-                fprintf(fid,'%s\n',['set waveexedir="' handles.Model(iwav).exedir '"']);
+                fprintf(fid,'%s\n',['set waveexedir="' handles.model.delft3dwave.exedir '"']);
             end
             fprintf(fid,'%s\n','set PATH=%flowexedir%;%waveexedir%;%PATH%');
             if ~isempty(mdwfile)
@@ -158,17 +156,17 @@ if ispc,
 %         
 % %         % Check whether Delft3D FLOW version has been set
 % %         handles=getHandles;
-% %         if handles.Model(md).VersionSelect == 0
+% %         if handles.model.delft3dflow.VersionSelect == 0
 % %             clearInstructions;
 % %             ddb_zoomOff;
 % %             h=handles;
-% %             xmldir=handles.Model(md).xmlDir;
+% %             xmldir=handles.model.delft3dflow.xmlDir;
 % %             xmlfile='Delft3DFLOW.flowversion.xml';
 % %             [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir filesep 'icons' filesep 'deltares.gif']);
 % %             
 % %             if ok
 % %                 handles=h;
-% %                 handles.Model(md).VersionSelect=1;
+% %                 handles.model.delft3dflow.VersionSelect=1;
 % %                 setHandles(handles);
 % %             else
 % %                 ddb_giveWarning('','Could not generate batch file, because no flow version was selected')
@@ -180,7 +178,7 @@ if ispc,
 %         
 %         % New open-source version
 %         fprintf(fid,'%s\n','@ echo off');
-%         if strcmp(handles.Model(md).version,'5.00.xx')
+%         if strcmp(handles.model.delft3dflow.version,'5.00.xx')
 %             fprintf(fid,'%s\n','set argfile=config_flow2d3d.xml');
 %             fprintf(fid,'%s\n',['set exedir="' getenv('D3D_HOME') '\' getenv('ARCH') '\flow\bin\"']);
 %         else
@@ -196,7 +194,7 @@ if ispc,
 %             fprintf(fid,'%s\n','%exedir%\d_hydro.exe %argfile%');
 %         end
 %         
-%         if strcmp(handles.Model(md).version,'5.00.xx')
+%         if strcmp(handles.model.delft3dflow.version,'5.00.xx')
 %             % Xml only necessary for debugging in version 5.00.xx
 %             
 %             % Write xml config file

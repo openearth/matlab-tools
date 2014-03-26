@@ -23,38 +23,38 @@ end
 function setHydrodynamics
 
 handles=getHandles;
-if strcmp(handles.Model(md).Input.coupling,'uncoupled')
+if strcmp(handles.model.delft3dwave.domain.coupling,'uncoupled')
 
-   handles.Model(md).Input.mdffile = '';
-   handles.Model(md).Input.coupledwithflow=0;
-   handles.Model(md).Input.writecom = 0;
+   handles.model.delft3dwave.domain.mdffile = '';
+   handles.model.delft3dwave.domain.coupledwithflow=0;
+   handles.model.delft3dwave.domain.writecom = 0;
 
-elseif strcmp(handles.Model(md).Input.coupling,'ddbonline')
+elseif strcmp(handles.model.delft3dwave.domain.coupling,'ddbonline')
 
-   if handles.Model(1).Input(1).comInterval==0 || handles.Model(1).Input(1).comStartTime==handles.Model(1).Input(1).comStopTime
+   if handles.model.delft3dflow.domain(1).comInterval==0 || handles.model.delft3dflow.domain(1).comStartTime==handles.model.delft3dflow.domain(1).comStopTime
       ddb_giveWarning('text','Please make sure to set the communication file times in Delft3D-FLOW model!');
    end
 
-   handles.Model(md).Input.referencedate=handles.Model(1).Input(1).itDate;
-   handles.Model(md).Input.mapwriteinterval=handles.Model(1).Input(1).mapInterval;
-   handles.Model(md).Input.comwriteinterval=handles.Model(1).Input(1).comInterval;
-   handles.Model(md).Input.writecom=1;
-   handles.Model(md).Input.coupledwithflow=1;
-   handles.Model(md).Input.mdffile=handles.Model(1).Input(1).mdfFile;
-   handles.Model(md).Input.domains(1).flowbedlevel=1;
-   handles.Model(md).Input.domains(1).flowwaterlevel=1;
-   handles.Model(md).Input.domains(1).flowvelocity=1;
-   if handles.Model(1).Input(1).wind
-       handles.Model(md).Input.domains(1).flowwind=1;
+   handles.model.delft3dwave.domain.referencedate=handles.model.delft3dflow.domain(1).itDate;
+   handles.model.delft3dwave.domain.mapwriteinterval=handles.model.delft3dflow.domain(1).mapInterval;
+   handles.model.delft3dwave.domain.comwriteinterval=handles.model.delft3dflow.domain(1).comInterval;
+   handles.model.delft3dwave.domain.writecom=1;
+   handles.model.delft3dwave.domain.coupledwithflow=1;
+   handles.model.delft3dwave.domain.mdffile=handles.model.delft3dflow.domain(1).mdfFile;
+   handles.model.delft3dwave.domain.domains(1).flowbedlevel=1;
+   handles.model.delft3dwave.domain.domains(1).flowwaterlevel=1;
+   handles.model.delft3dwave.domain.domains(1).flowvelocity=1;
+   if handles.model.delft3dflow.domain(1).wind
+       handles.model.delft3dwave.domain.domains(1).flowwind=1;
    else
-       handles.Model(md).Input.domains(1).flowwind=0;
+       handles.model.delft3dwave.domain.domains(1).flowwind=0;
    end
-   handles.Model(1).Input(1).waves=1;
-   handles.Model(1).Input(1).onlineWave=1;
+   handles.model.delft3dflow.domain(1).waves=1;
+   handles.model.delft3dflow.domain(1).onlineWave=1;
 
 else
    
-    if isempty(handles.Model(md).Input.mdffile) || strcmp(handles.Model(md).Input.mdffile,handles.Model(1).Input(1).mdfFile)
+    if isempty(handles.model.delft3dwave.domain.mdffile) || strcmp(handles.model.delft3dwave.domain.mdffile,handles.model.delft3dflow.domain(1).mdfFile)
         [filename, pathname, filterindex] = uigetfile('*.mdf', 'Select MDF File');
         if pathname~=0
             curdir=[lower(cd) '\'];
@@ -62,25 +62,25 @@ else
                 filename=[pathname filename];
             end
             %ii=findstr(filename,'.mdf');
-            handles.Model(md).Input.mdffile=filename;%filename(1:ii-1);
+            handles.model.delft3dwave.domain.mdffile=filename;%filename(1:ii-1);
         else
             return
         end
     end
 
-    if ~exist(handles.Model(md).Input.mdffile,'file')
-        ddb_giveWarning('text',[handles.Model(md).Input.mdffile 'does not exist!']);
+    if ~exist(handles.model.delft3dwave.domain.mdffile,'file')
+        ddb_giveWarning('text',[handles.model.delft3dwave.domain.mdffile 'does not exist!']);
         return
     end
     
-    MDF=ddb_readMDFText(handles.Model(md).Input.mdffile);
-    handles.Model(md).Input.referencedate=datenum(MDF.itdate,'yyyy-mm-dd');
-    handles.Model(md).Input.mapwriteinterval=MDF.flmap(2);
-    handles.Model(md).Input.comwriteinterval=MDF.flpp(2);
-    handles.Model(md).Input.writecom=1;
-    handles.Model(md).Input.coupledwithflow=1;
+    MDF=ddb_readMDFText(handles.model.delft3dwave.domain.mdffile);
+    handles.model.delft3dwave.domain.referencedate=datenum(MDF.itdate,'yyyy-mm-dd');
+    handles.model.delft3dwave.domain.mapwriteinterval=MDF.flmap(2);
+    handles.model.delft3dwave.domain.comwriteinterval=MDF.flpp(2);
+    handles.model.delft3dwave.domain.writecom=1;
+    handles.model.delft3dwave.domain.coupledwithflow=1;
     
-    if strcmp(handles.Model(md).Input.coupling,'otheronline')
+    if strcmp(handles.model.delft3dwave.domain.coupling,'otheronline')
         if ~strcmp(MDF.waveol,'Y')
             ddb_giveWarning('text','Please make sure to tick the option ''Online Delft3D WAVE'' in Delft3D-FLOW model!');
         end
@@ -96,43 +96,43 @@ setHandles(handles);
 %%
 function checkWaterLevel
 handles=getHandles;
-val=handles.Model(md).Input.domains(awg).flowwaterlevel;
-iac=handles.Model(md).Input.activegrids;
+val=handles.model.delft3dwave.domain.domains(awg).flowwaterlevel;
+iac=handles.model.delft3dwave.domain.activegrids;
 for ii=1:length(iac)
     n=iac(ii);
-    handles.Model(md).Input.domains(n).flowwaterlevel=val;
+    handles.model.delft3dwave.domain.domains(n).flowwaterlevel=val;
 end
 setHandles(handles);
 
 %%
 function checkBedLevel
 handles=getHandles;
-val=handles.Model(md).Input.domains(awg).flowbedlevel;
-iac=handles.Model(md).Input.activegrids;
+val=handles.model.delft3dwave.domain.domains(awg).flowbedlevel;
+iac=handles.model.delft3dwave.domain.activegrids;
 for ii=1:length(iac)
     n=iac(ii);
-    handles.Model(md).Input.domains(n).flowbedlevel=val;
+    handles.model.delft3dwave.domain.domains(n).flowbedlevel=val;
 end
 setHandles(handles);
 
 %%
 function checkCurrent
 handles=getHandles;
-val=handles.Model(md).Input.domains(awg).flowvelocity;
-iac=handles.Model(md).Input.activegrids;
+val=handles.model.delft3dwave.domain.domains(awg).flowvelocity;
+iac=handles.model.delft3dwave.domain.activegrids;
 for ii=1:length(iac)
     n=iac(ii);
-    handles.Model(md).Input.domains(n).flowvelocity=val;
+    handles.model.delft3dwave.domain.domains(n).flowvelocity=val;
 end
 setHandles(handles);
 
 %%
 function checkWind
 handles=getHandles;
-val=handles.Model(md).Input.domains(awg).flowwind;
-iac=handles.Model(md).Input.activegrids;
+val=handles.model.delft3dwave.domain.domains(awg).flowwind;
+iac=handles.model.delft3dwave.domain.activegrids;
 for ii=1:length(iac)
     n=iac(ii);
-    handles.Model(md).Input.domains(n).flowwind=val;
+    handles.model.delft3dwave.domain.domains(n).flowwind=val;
 end
 setHandles(handles);

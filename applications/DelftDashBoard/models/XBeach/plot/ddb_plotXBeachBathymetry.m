@@ -1,6 +1,5 @@
 function ddb_plotXBeachBathymetry(handles,id)
 
-ii=strmatch('XBeach',{handles.Model.name},'exact');
 
 % switch lower(opt)
 
@@ -9,21 +8,21 @@ ii=strmatch('XBeach',{handles.Model.name},'exact');
         h=findall(gca,'Tag','XBeachBathymetry','UserData',id);
         delete(h);
 
-        if size(handles.Model(ii).Input(ad).Depth,1)>0
+        if size(handles.model.xbeach.domain(ad).Depth,1)>0
             clims=get(gca,'CLim');
             zmin=clims(1);
             zmax=clims(2);
 %             colormap(handles.GUIData.ColorMaps.Earth);
             colormap(jet)
             caxis([zmin zmax]);
-            x=handles.Model(ii).Input(id).GridX;
-            y=handles.Model(ii).Input(id).GridY;
-            z=handles.Model(ii).Input(id).Depth;
+            x=handles.model.xbeach.domain(id).GridX;
+            y=handles.model.xbeach.domain(id).GridY;
+            z=handles.model.xbeach.domain(id).Depth;
             
             % transform to world cooardinates
-            xori = handles.Model(ii).Input(id).xori;
-            yori = handles.Model(ii).Input(id).yori;
-            alfa = handles.Model(ii).Input(id).alfa;
+            xori = handles.model.xbeach.domain(id).xori;
+            yori = handles.model.xbeach.domain(id).yori;
+            alfa = handles.model.xbeach.domain(id).alfa;
             xw =  xori+x*cos(alfa)-y*sin(alfa);
             yw =  yori+x*sin(alfa)+y*cos(alfa);
 

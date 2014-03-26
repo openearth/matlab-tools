@@ -68,17 +68,17 @@ if handles.ConvertModelData
     
     for id=1:handles.GUIData.nrFlowDomains
         
-        if ~isempty(handles.Model(md).Input(id).grdFile)
+        if ~isempty(handles.model.delft3dflow.domain(id).grdFile)
             
             %% Grid
-            [filename, pathname, filterindex] = uiputfile('*.grd',['Select grid file for domain ' handles.Model(md).Input(id).runid],handles.Model(md).Input(id).grdFile);
+            [filename, pathname, filterindex] = uiputfile('*.grd',['Select grid file for domain ' handles.model.delft3dflow.domain(id).runid],handles.model.delft3dflow.domain(id).grdFile);
             if pathname~=0
                 curdir=[lower(cd) '\'];
                 if ~strcmpi(curdir,pathname)
                     filename=[pathname filename];
                 end
             else
-                filename=handles.Model(md).Input(id).grdFile;
+                filename=handles.model.delft3dflow.domain(id).grdFile;
             end
             
             x=handles.Model(handles.activeModel.Nr).Input(id).gridX;
@@ -87,12 +87,12 @@ if handles.ConvertModelData
             handles.Model(handles.ActiveModel.Nr).Input(id).gridX=x;
             handles.Model(handles.ActiveModel.Nr).Input(id).gridY=y;
             
-            handles.Model(md).Input(id).grdFile=filename;
+            handles.model.delft3dflow.domain(id).grdFile=filename;
             encfile=[filename(1:end-3) 'enc'];
-            if ~strcmpi(handles.Model(md).Input(id).encFile,encfile)
-                copyfile(handles.Model(md).Input(id).encFile,encfile);
+            if ~strcmpi(handles.model.delft3dflow.domain(id).encFile,encfile)
+                copyfile(handles.model.delft3dflow.domain(id).encFile,encfile);
             end
-            handles.Model(md).Input(id).encFile=encfile;
+            handles.model.delft3dflow.domain(id).encFile=encfile;
             
             if strcmpi(handles.screenParameters.CoordinateSystem.Type,'geographic')
                 coord='Spherical';
@@ -102,10 +102,10 @@ if handles.ConvertModelData
             ddb_wlgrid('write','FileName',filename,'X',x,'Y',y,'CoordinateSystem',coord);
             
             %% Open boundaries
-            for ib=1:handles.Model(md).Input(id).nrOpenBoundaries
+            for ib=1:handles.model.delft3dflow.domain(id).nrOpenBoundaries
                 [xb,yb,zb]=ddb_getBoundaryCoordinates(handles,id,ib);
-                handles.Model(md).Input(id).openBoundaries(ib).x=xb;
-                handles.Model(md).Input(id).openBoundaries(ib).y=yb;
+                handles.model.delft3dflow.domain(id).openBoundaries(ib).x=xb;
+                handles.model.delft3dflow.domain(id).openBoundaries(ib).y=yb;
             end
             
         end

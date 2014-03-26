@@ -62,7 +62,7 @@ function ddb_editD3DDischargeData(ii)
 %%
 handles=getHandles;
 
-Flw=handles.Model(md).Input(ad);
+Flw=handles.model.delft3dflow.domain(ad);
 
 Dis=Flw.discharges(ii);
 nr=length(Dis.timeSeriesT);
@@ -180,54 +180,54 @@ data=table(hh.table,'getdata');
 
 nr=size(data,1);
 id=ad;
-ii=handles.Model(md).Input(id).activeDischarge;
+ii=handles.model.delft3dflow.domain(id).activeDischarge;
 
 k=0;
 
 k=k+1;
 for i=1:nr
-    handles.Model(md).Input(id).discharges(ii).timeSeriesT(i)=data{i,k};
+    handles.model.delft3dflow.domain(id).discharges(ii).timeSeriesT(i)=data{i,k};
 end
 k=k+1;
 for i=1:nr
-    handles.Model(md).Input(id).discharges(ii).timeSeriesQ(i)=data{i,k};
+    handles.model.delft3dflow.domain(id).discharges(ii).timeSeriesQ(i)=data{i,k};
 end
-if handles.Model(md).Input(id).salinity.include
+if handles.model.delft3dflow.domain(id).salinity.include
     k=k+1;
     for i=1:nr
-        handles.Model(md).Input(id).discharges(ii).salinity.timeSeries(i)=data{i,k};
+        handles.model.delft3dflow.domain(id).discharges(ii).salinity.timeSeries(i)=data{i,k};
     end
 end
-if handles.Model(md).Input(id).temperature.include
+if handles.model.delft3dflow.domain(id).temperature.include
     k=k+1;
     for i=1:nr
-        handles.Model(md).Input(id).discharges(ii).temperature.timeSeries(i)=data{i,k};
+        handles.model.delft3dflow.domain(id).discharges(ii).temperature.timeSeries(i)=data{i,k};
     end
 end
-if handles.Model(md).Input(id).sediments.include
-    for j=1:handles.Model(md).Input(id).nrSediments
+if handles.model.delft3dflow.domain(id).sediments.include
+    for j=1:handles.model.delft3dflow.domain(id).nrSediments
         k=k+1;
         for i=1:nr
-            handles.Model(md).Input(id).discharges(ii).sediment(j).timeSeries(i)=data{i,k};
+            handles.model.delft3dflow.domain(id).discharges(ii).sediment(j).timeSeries(i)=data{i,k};
         end
     end
 end
-if handles.Model(md).Input(id).tracers
-    for j=1:handles.Model(md).Input(id).nrTracers
+if handles.model.delft3dflow.domain(id).tracers
+    for j=1:handles.model.delft3dflow.domain(id).nrTracers
         k=k+1;
         for i=1:nr
-            handles.Model(md).Input(id).discharges(ii).tracer(j).timeSeries(i)=data{i,k};
+            handles.model.delft3dflow.domain(id).discharges(ii).tracer(j).timeSeries(i)=data{i,k};
         end
     end
 end
-if strcmpi(handles.Model(md).Input(id).discharges(ii).type,'momentum')
+if strcmpi(handles.model.delft3dflow.domain(id).discharges(ii).type,'momentum')
     k=k+1;
     for i=1:nr
-        handles.Model(md).Input(id).discharges(ii).timeSeriesM(i)=data{i,k};
+        handles.model.delft3dflow.domain(id).discharges(ii).timeSeriesM(i)=data{i,k};
     end
     k=k+1;
     for i=1:nr
-        handles.Model(md).Input(id).discharges(ii).timeSeriesM(i)=data{i,k};
+        handles.model.delft3dflow.domain(id).discharges(ii).timeSeriesM(i)=data{i,k};
     end
 end
 

@@ -61,17 +61,17 @@ function ddb_save2DWFile(handles, id)
 % $Keywords: $
 
 %%
-fname=handles.Model(md).Input(id).w2dFile;
+fname=handles.model.delft3dflow.domain(id).w2dFile;
 
 fid=fopen(fname,'w');
-for i=1:handles.Model(md).Input(id).nrWeirs2D
-    m1=handles.Model(md).Input(id).weirs2D(i).M1;
-    n1=handles.Model(md).Input(id).weirs2D(i).N1;
-    m2=handles.Model(md).Input(id).weirs2D(i).M2;
-    n2=handles.Model(md).Input(id).weirs2D(i).N2;
-    uv=handles.Model(md).Input(id).weirs2D(i).UV;
-    frc=handles.Model(md).Input(id).weirs2D(i).frictionCoefficient;
-    hgt=handles.Model(md).Input(id).weirs2D(i).crestHeight;
+for i=1:handles.model.delft3dflow.domain(id).nrWeirs2D
+    m1=handles.model.delft3dflow.domain(id).weirs2D(i).M1;
+    n1=handles.model.delft3dflow.domain(id).weirs2D(i).N1;
+    m2=handles.model.delft3dflow.domain(id).weirs2D(i).M2;
+    n2=handles.model.delft3dflow.domain(id).weirs2D(i).N2;
+    uv=handles.model.delft3dflow.domain(id).weirs2D(i).UV;
+    frc=handles.model.delft3dflow.domain(id).weirs2D(i).frictionCoefficient;
+    hgt=handles.model.delft3dflow.domain(id).weirs2D(i).crestHeight;
     fprintf(fid,'%s %6i %6i %6i %6i %6.3f %6.3f %3.1f\n',uv,m1,n1,m2,n2,frc,hgt,0);
 end
 fclose(fid);

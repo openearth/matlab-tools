@@ -64,7 +64,7 @@ function nest2
 
 handles=getHandles;
 
-if handles.Model(md).Input.nrboundaries>0
+if handles.model.delft3dwave.domain.nrboundaries>0
     
     ButtonName = questdlg('Existing boundary sections will be removed! Continue?', ...
         '', ...
@@ -86,20 +86,20 @@ if pathname~=0
     ii=strfind(fname,'.');
     prefix=fname(1:ii-1);
     
-    [filename, pathname, filterindex] = uiputfile('*.sp2', 'Boundary SP2 File Name',handles.Model(md).Input.boundaries(1).spectrum);
+    [filename, pathname, filterindex] = uiputfile('*.sp2', 'Boundary SP2 File Name',handles.model.delft3dwave.domain.boundaries(1).spectrum);
     
     handles = ddb_Delft3DWAVE_plotBoundaries(handles,'delete');
 
-    handles.Model(md).Input.nrboundaries=1;
-    handles.Model(md).Input.boundarynames{1}=filename;
-    handles.Model(md).Input.activeboundary=1;
-    handles.Model(md).Input.boundaries=[];
-    handles.Model(md).Input.boundaries=ddb_initializeDelft3DWAVEBoundary(handles.Model(md).Input.boundaries,1);
-    handles.Model(md).Input.boundaries(1).definition='fromsp2file';
-    handles.Model(md).Input.boundaries(1).overallspecfile=filename;
-    handles.Model(md).Input.boundaries(1).name=filename;
+    handles.model.delft3dwave.domain.nrboundaries=1;
+    handles.model.delft3dwave.domain.boundarynames{1}=filename;
+    handles.model.delft3dwave.domain.activeboundary=1;
+    handles.model.delft3dwave.domain.boundaries=[];
+    handles.model.delft3dwave.domain.boundaries=ddb_initializeDelft3DWAVEBoundary(handles.model.delft3dwave.domain.boundaries,1);
+    handles.model.delft3dwave.domain.boundaries(1).definition='fromsp2file';
+    handles.model.delft3dwave.domain.boundaries(1).overallspecfile=filename;
+    handles.model.delft3dwave.domain.boundaries(1).name=filename;
     
-    fout=handles.Model(md).Input.boundaries(1).overallspecfile;
+    fout=handles.model.delft3dwave.domain.boundaries(1).overallspecfile;
 
     swan_io_mergesp2(dr,fout,'prefix',prefix);
         

@@ -141,32 +141,32 @@ setHandles(handles);
 function addObservationPoints
 
 handles=getHandles;
-
-switch lower(handles.Model(md).name)
+model=handles.activeModel.name;
+switch lower(model)
     case{'delft3dflow'}
-        if isempty(handles.Model(md).Input(ad).grdFile)
+        if isempty(handles.model.delft3dflow.domain(ad).grdFile)
             ddb_giveWarning('text','Please first generate or load a model grid!');
         else
-            [filename, pathname, filterindex] = uiputfile('*.obs', 'Observation File Name',[handles.Model(md).Input(ad).attName '.obs']);
+            [filename, pathname, filterindex] = uiputfile('*.obs', 'Observation File Name',[handles.model.delft3dflow.domain(ad).attName '.obs']);
             if pathname~=0
                 ddb_Delft3DFLOW_addObservationStations;
                 handles=getHandles;
-                handles.Model(md).Input(ad).obsFile=filename;
+                handles.model.delft3dflow.domain(ad).obsFile=filename;
                 ddb_saveObsFile(handles,ad);
                 setHandles(handles);
             end
         end
     case{'dflowfm'}
-            [filename, pathname, filterindex] = uiputfile('*.xyn', 'Observation File Name',[handles.Model(md).Input(ad).attName '.xyn']);
+            [filename, pathname, filterindex] = uiputfile('*.xyn', 'Observation File Name',[handles.model.dflowfm.domain(ad).attName '.xyn']);
             if pathname~=0
                 ddb_DFlowFM_addObservationStations;
                 handles=getHandles;
-                handles.Model(md).Input(ad).obsfile=filename;
+                handles.model.dflowfm.domain(ad).obsfile=filename;
                 ddb_DFlowFM_saveObsFile(handles,ad);
                 setHandles(handles);
             end
     otherwise
-        ddb_giveWarning('text',['Sorry, generation of observation points from stations is not supported for ' handles.Model(md).longName ' ...']);
+        ddb_giveWarning('text',['Sorry, generation of observation points from stations is not supported for ' handles.model.(model).longName ' ...']);
 end
 
 %%

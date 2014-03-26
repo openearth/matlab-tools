@@ -63,26 +63,26 @@ function handles = ddb_generateBoundaryLocationsDelft3DFLOW(handles, id, filenam
 
 %%
 
-if ~isempty(handles.Model(md).Input(id).grdFile)
-    if ~isempty(handles.Model(md).Input(id).depFile)
+if ~isempty(handles.model.delft3dflow.domain(id).grdFile)
+    if ~isempty(handles.model.delft3dflow.domain(id).depFile)
 
         % Clear existing boundaries
-        handles.Model(md).Input(id).openBoundaries=[];
-        handles.Model(md).Input(id).openBoundaries(1).name='';
-        handles.Model(md).Input(id).openBoundaries(1).M1=[];
-        handles.Model(md).Input(id).openBoundaries(1).M2=[];
-        handles.Model(md).Input(id).openBoundaries(1).N1=[];
-        handles.Model(md).Input(id).openBoundaries(1).N2=[];        
-        handles.Model(md).Input(id).openBoundaries(1).alpha=0.0;
-        handles.Model(md).Input(id).openBoundaries(1).compA='unnamed';
-        handles.Model(md).Input(id).openBoundaries(1).compB='unnamed';
-        handles.Model(md).Input(id).openBoundaries(1).type='Z';
-        handles.Model(md).Input(id).openBoundaries(1).forcing='A';
-        handles.Model(md).Input(id).openBoundaries(1).profile='Uniform';
-        handles.Model(md).Input(id).openBoundaryNames={''};
-        handles.Model(md).Input(id).nrOpenBoundaries=0;        
-        handles.Model(md).Input(id).activeOpenBoundary=1;        
-        handles.Model(md).Input(id).activeOpenBoundaries=1;        
+        handles.model.delft3dflow.domain(id).openBoundaries=[];
+        handles.model.delft3dflow.domain(id).openBoundaries(1).name='';
+        handles.model.delft3dflow.domain(id).openBoundaries(1).M1=[];
+        handles.model.delft3dflow.domain(id).openBoundaries(1).M2=[];
+        handles.model.delft3dflow.domain(id).openBoundaries(1).N1=[];
+        handles.model.delft3dflow.domain(id).openBoundaries(1).N2=[];        
+        handles.model.delft3dflow.domain(id).openBoundaries(1).alpha=0.0;
+        handles.model.delft3dflow.domain(id).openBoundaries(1).compA='unnamed';
+        handles.model.delft3dflow.domain(id).openBoundaries(1).compB='unnamed';
+        handles.model.delft3dflow.domain(id).openBoundaries(1).type='Z';
+        handles.model.delft3dflow.domain(id).openBoundaries(1).forcing='A';
+        handles.model.delft3dflow.domain(id).openBoundaries(1).profile='Uniform';
+        handles.model.delft3dflow.domain(id).openBoundaryNames={''};
+        handles.model.delft3dflow.domain(id).nrOpenBoundaries=0;        
+        handles.model.delft3dflow.domain(id).activeOpenBoundary=1;        
+        handles.model.delft3dflow.domain(id).activeOpenBoundaries=1;        
         handles=ddb_Delft3DFLOW_plotAttributes(handles,'delete','openboundaries');
         
         d=handles.toolbox.modelmaker.sectionLength;
@@ -90,42 +90,42 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
         
         attName=filename(1:end-4);
         
-        handles.Model(md).Input(id).bndFile=[attName '.bnd'];
+        handles.model.delft3dflow.domain(id).bndFile=[attName '.bnd'];
         
-        x=handles.Model(md).Input(id).gridX;
-        y=handles.Model(md).Input(id).gridY;
-        z=handles.Model(md).Input(id).depth;
+        x=handles.model.delft3dflow.domain(id).gridX;
+        y=handles.model.delft3dflow.domain(id).gridY;
+        z=handles.model.delft3dflow.domain(id).depth;
         
         % Boundary locations
-        handles.Model(md).Input(id).openBoundaries=findBoundarySectionsOnStructuredGrid(handles.Model(md).Input(id).openBoundaries,z,zmax,d);
+        handles.model.delft3dflow.domain(id).openBoundaries=findBoundarySectionsOnStructuredGrid(handles.model.delft3dflow.domain(id).openBoundaries,z,zmax,d);
 
-        nb=length(handles.Model(md).Input(id).openBoundaries);
-        handles.Model(md).Input(id).nrOpenBoundaries=nb;
+        nb=length(handles.model.delft3dflow.domain(id).openBoundaries);
+        handles.model.delft3dflow.domain(id).nrOpenBoundaries=nb;
                 
         % Initialize boundaries
-        t0=handles.Model(md).Input(id).startTime;
-        t1=handles.Model(md).Input(id).stopTime;
-        nrsed=handles.Model(md).Input(id).nrSediments;
-        nrtrac=handles.Model(md).Input(id).nrTracers;
-        nrharmo=handles.Model(md).Input(id).nrHarmonicComponents;
-        depthZ=handles.Model(md).Input(id).depthZ;
-        kcs=handles.Model(md).Input(id).kcs;
-        kmax=handles.Model(md).Input(id).KMax;
+        t0=handles.model.delft3dflow.domain(id).startTime;
+        t1=handles.model.delft3dflow.domain(id).stopTime;
+        nrsed=handles.model.delft3dflow.domain(id).nrSediments;
+        nrtrac=handles.model.delft3dflow.domain(id).nrTracers;
+        nrharmo=handles.model.delft3dflow.domain(id).nrHarmonicComponents;
+        depthZ=handles.model.delft3dflow.domain(id).depthZ;
+        kcs=handles.model.delft3dflow.domain(id).kcs;
+        kmax=handles.model.delft3dflow.domain(id).KMax;
 
         for ib=1:nb
             % Initialize
-            handles.Model(md).Input(id).openBoundaries=delft3dflow_setDefaultBoundaryType(handles.Model(md).Input(id).openBoundaries,ib);
-            handles.Model(md).Input(id).openBoundaries=delft3dflow_initializeOpenBoundary(handles.Model(md).Input(id).openBoundaries,ib, ...
+            handles.model.delft3dflow.domain(id).openBoundaries=delft3dflow_setDefaultBoundaryType(handles.model.delft3dflow.domain(id).openBoundaries,ib);
+            handles.model.delft3dflow.domain(id).openBoundaries=delft3dflow_initializeOpenBoundary(handles.model.delft3dflow.domain(id).openBoundaries,ib, ...
                 t0,t1,nrsed,nrtrac,nrharmo,x,y,depthZ,kcs,kmax);
             % Set boundary name in one cell array
-            handles.Model(md).Input(ad).openBoundaryNames{ib}=handles.Model(md).Input(id).openBoundaries(ib).name;
+            handles.model.delft3dflow.domain(ad).openBoundaryNames{ib}=handles.model.delft3dflow.domain(id).openBoundaries(ib).name;
         end
         
         handles=ddb_countOpenBoundaries(handles,id);
         
         handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','openboundaries','visible',1,'active',0);
         
-        ddb_saveBndFile(handles.Model(md).Input(id).openBoundaries,handles.Model(md).Input(id).bndFile);
+        ddb_saveBndFile(handles.model.delft3dflow.domain(id).openBoundaries,handles.model.delft3dflow.domain(id).bndFile);
         
     else
         ddb_giveWarning('Warning','First generate or load a bathymetry');

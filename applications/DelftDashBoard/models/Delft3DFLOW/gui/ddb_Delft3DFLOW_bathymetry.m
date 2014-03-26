@@ -75,13 +75,13 @@ end
 %%
 function selectDepthFile
 handles=getHandles;
-filename=handles.Model(md).Input(ad).depFile;
+filename=handles.model.delft3dflow.domain(ad).depFile;
 try
-    dp=ddb_wldep('read',filename,[handles.Model(md).Input(ad).MMax,handles.Model(md).Input(ad).NMax]);
+    dp=ddb_wldep('read',filename,[handles.model.delft3dflow.domain(ad).MMax,handles.model.delft3dflow.domain(ad).NMax]);
     dp(dp==-999)=NaN;
-    handles.Model(md).Input(ad).depth=-dp(1:end-1,1:end-1);
-    handles.Model(md).Input(ad).depth(handles.Model(md).Input(ad).depth==999.999)=NaN;
-    handles.Model(md).Input(ad).depthZ=getDepthZ(handles.Model(md).Input(ad).depth,handles.Model(md).Input(ad).dpsOpt);
+    handles.model.delft3dflow.domain(ad).depth=-dp(1:end-1,1:end-1);
+    handles.model.delft3dflow.domain(ad).depth(handles.model.delft3dflow.domain(ad).depth==999.999)=NaN;
+    handles.model.delft3dflow.domain(ad).depthZ=getDepthZ(handles.model.delft3dflow.domain(ad).depth,handles.model.delft3dflow.domain(ad).dpsOpt);
     handles=ddb_Delft3DFLOW_plotBathy(handles,'plot','domain',ad);
     setHandles(handles);
 catch

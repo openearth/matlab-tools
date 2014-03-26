@@ -44,17 +44,17 @@ function handles = ddb_DFlowFM_readObsFile(handles, id)
 % $Keywords: $
 
 %%
-[x,y,name] = textread(handles.Model(md).Input(id).obsfile,'%f%f%s','delimiter','''"');
+[x,y,name] = textread(handles.model.dflowfm.domain(id).obsfile,'%f%f%s','delimiter','''"');
 
-handles.Model(md).Input(id).observationpoints=[];
+handles.model.dflowfm.domain(id).observationpoints=[];
 
 for ip=1:length(x)
-    handles.Model(md).Input(id).observationpoints(ip).name=name{ip};
-    handles.Model(md).Input(id).observationpoints(ip).x=x(ip);
-    handles.Model(md).Input(id).observationpoints(ip).y=y(ip);
-    handles.Model(md).Input(id).observationpointnames{ip}=handles.Model(md).Input(id).observationpoints(ip).name;
+    handles.model.dflowfm.domain(id).observationpoints(ip).name=name{ip};
+    handles.model.dflowfm.domain(id).observationpoints(ip).x=x(ip);
+    handles.model.dflowfm.domain(id).observationpoints(ip).y=y(ip);
+    handles.model.dflowfm.domain(id).observationpointnames{ip}=handles.model.dflowfm.domain(id).observationpoints(ip).name;
 end
 
-handles.Model(md).Input(id).activeobservationpoint=1;
-handles.Model(md).Input(id).nrobservationpoints=length(x);
+handles.model.dflowfm.domain(id).activeobservationpoint=1;
+handles.model.dflowfm.domain(id).nrobservationpoints=length(x);
 

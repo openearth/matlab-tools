@@ -61,10 +61,10 @@ function handles = ddb_readCorFile(handles, id)
 % $Keywords: $
 
 %%
-fid=fopen(handles.Model(md).Input(id).corFile);
+fid=fopen(handles.model.delft3dflow.domain(id).corFile);
 
-for i=1:handles.Model(md).Input(id).nrAstronomicComponentSets
-    componentSets{i}=handles.Model(md).Input(id).astronomicComponentSets(i).name;
+for i=1:handles.model.delft3dflow.domain(id).nrAstronomicComponentSets
+    componentSets{i}=handles.model.delft3dflow.domain(id).astronomicComponentSets(i).name;
 end
 
 ii=[];
@@ -81,14 +81,14 @@ for i=1:10000
             ii=strmatch(v0{1},componentSets,'exact');
         else
             if ~isempty(ii)
-                for j=1:handles.Model(md).Input(id).astronomicComponentSets(ii).nr
-                    components{j}=handles.Model(md).Input(id).astronomicComponentSets(ii).component{j};
+                for j=1:handles.model.delft3dflow.domain(id).astronomicComponentSets(ii).nr
+                    components{j}=handles.model.delft3dflow.domain(id).astronomicComponentSets(ii).component{j};
                 end
                 jj=strmatch(v0{1},components,'exact');
                 if ~isempty(jj)
-                    handles.Model(md).Input(id).astronomicComponentSets(ii).correction(jj)=1;
-                    handles.Model(md).Input(id).astronomicComponentSets(ii).amplitudeCorrection(jj)=str2double(v0{2});
-                    handles.Model(md).Input(id).astronomicComponentSets(ii).phaseCorrection(jj)=str2double(v0{3});
+                    handles.model.delft3dflow.domain(id).astronomicComponentSets(ii).correction(jj)=1;
+                    handles.model.delft3dflow.domain(id).astronomicComponentSets(ii).amplitudeCorrection(jj)=str2double(v0{2});
+                    handles.model.delft3dflow.domain(id).astronomicComponentSets(ii).phaseCorrection(jj)=str2double(v0{3});
                 end
             end
         end

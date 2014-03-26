@@ -76,7 +76,7 @@ zmax=100000;
 startdates=floor(now);
 searchintervals=-1e5;
 
-if ~isempty(handles.Model(md).Input(id).grdFile)
+if ~isempty(handles.model.delft3dflow.domain(id).grdFile)
     
     for i=1:length(varargin)
         if ischar(varargin{i})
@@ -95,7 +95,7 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
         end
     end
     
-    dpori=handles.Model(md).Input(id).depth;
+    dpori=handles.model.delft3dflow.domain(id).depth;
     dmax=max(max(dpori));
     if isempty(dmax)
         dmax=NaN;
@@ -121,13 +121,13 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
     else
         % Merge method, more than one bathymetry dataset
         opt='combine';
-        handles.Model(md).Input(id).depth=zeros(size(handles.Model(md).Input(id).depth));
-        handles.Model(md).Input(id).depth(handles.Model(md).Input(id).depth==0)=NaN;
+        handles.model.delft3dflow.domain(id).depth=zeros(size(handles.model.delft3dflow.domain(id).depth));
+        handles.model.delft3dflow.domain(id).depth(handles.model.delft3dflow.domain(id).depth==0)=NaN;
     end
     
     wb = waitbox('Generating bathymetry ...');
     
-    attName=handles.Model(md).Input(id).attName;
+    attName=handles.model.delft3dflow.domain(id).attName;
     
     % Generate bathymetry    
     
@@ -182,27 +182,27 @@ if ~isempty(handles.Model(md).Input(id).grdFile)
         
         switch opt
             case{'overwrite'}
-                handles.Model(md).Input(id).depth=z;
+                handles.model.delft3dflow.domain(id).depth=z;
             case{'combine'}
-                handles.Model(md).Input(id).depth(isnan(handles.Model(md).Input(id).depth))=z(isnan(handles.Model(md).Input(id).depth));
+                handles.model.delft3dflow.domain(id).depth(isnan(handles.model.delft3dflow.domain(id).depth))=z(isnan(handles.model.delft3dflow.domain(id).depth));
         end
         
     end
     
-    switch lower(handles.Model(md).Input(id).dpsOpt)
+    switch lower(handles.model.delft3dflow.domain(id).dpsOpt)
         case{'dp'}
-            handles.Model(md).Input(id).depth(:,1)=handles.Model(md).Input(id).depth(:,2);
-            handles.Model(md).Input(id).depth(1,:)=handles.Model(md).Input(id).depth(2,:);
+            handles.model.delft3dflow.domain(id).depth(:,1)=handles.model.delft3dflow.domain(id).depth(:,2);
+            handles.model.delft3dflow.domain(id).depth(1,:)=handles.model.delft3dflow.domain(id).depth(2,:);
     end
     
-    z=handles.Model(md).Input(id).depth;
+    z=handles.model.delft3dflow.domain(id).depth;
     
     
-    handles.Model(md).Input(id).depthZ=getDepthZ(z,handles.Model(md).Input(id).dpsOpt);
+    handles.model.delft3dflow.domain(id).depthZ=getDepthZ(z,handles.model.delft3dflow.domain(id).dpsOpt);
     
     ddb_wldep('write',[attName '.dep'],z);
     
-    handles.Model(md).Input(id).depFile=[attName '.dep'];
+    handles.model.delft3dflow.domain(id).depFile=[attName '.dep'];
     
     
     %    setHandles(handles);

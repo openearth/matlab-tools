@@ -63,13 +63,15 @@ function ddb_initializeModels
 handles=getHandles;
 handles.activeDomain=1;
 handles.activeWaveGrid=1;
-for k=1:length(handles.Model)
-    f=handles.Model(k).iniFcn;
+models=fieldnames(handles.model);
+for k=1:length(models)
+    model=models{k};
+    f=handles.model.(model).iniFcn;
     handles.activeModel.nr=k;
     setHandles(handles);
     handles=f(handles);
     handles.activeModel.nr=1;
-    handles.Model(k).nrDomains=1;
+    handles.model.(model).nrDomains=1;
 end
 setHandles(handles);
 

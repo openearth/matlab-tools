@@ -15,5 +15,5 @@ end
 function setTimeList
 
 handles = getHandles;
-handles.Model(md).Input.listtimes={datestr(handles.Model(md).Input.selectedtime,'yyyy mm dd HH MM SS')};
+handles.model.delft3dwave.domain.listtimes={datestr(handles.model.delft3dwave.domain.selectedtime,'yyyy mm dd HH MM SS')};
 setHandles(handles);

@@ -61,7 +61,7 @@ function handles = ddb_readDisFile(handles, id)
 % $Keywords: $
 
 %%
-Flow=handles.Model(md).Input(id);
+Flow=handles.model.delft3dflow.domain(id);
 
 fname=Flow.disFile;
 
@@ -130,7 +130,7 @@ for n=1:Flow.nrDischarges
     end
 end
 
-handles.Model(md).Input(id)=Flow;
+handles.model.delft3dflow.domain(id)=Flow;
 
 %%
 function nt=FindTable(Info,bndname)

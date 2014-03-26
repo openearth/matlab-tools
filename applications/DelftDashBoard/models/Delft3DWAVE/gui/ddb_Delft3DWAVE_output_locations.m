@@ -41,15 +41,15 @@ function selectPointFromMap(h,nr)
 clearInstructions; 
 handles=getHandles;
 iac=[];
-for ii=1:handles.Model(md).Input.nrlocationsets
-    if handles.Model(md).Input.locationsets(ii).handle==h
+for ii=1:handles.model.delft3dwave.domain.nrlocationsets
+    if handles.model.delft3dwave.domain.locationsets(ii).handle==h
         iac=ii;
         break
     end       
 end
 if ~isempty(iac)
-    handles.Model(md).Input.activelocationset=iac;
-    handles.Model(md).Input.locationsets(ii).activepoint=nr;
+    handles.model.delft3dwave.domain.activelocationset=iac;
+    handles.model.delft3dwave.domain.locationsets(ii).activepoint=nr;
     ddb_Delft3DWAVE_plotOutputLocations(handles,'update');
     setHandles(handles);
     gui_updateActiveTab;
@@ -79,26 +79,26 @@ curdir=[lower(cd) '\'];
 if ~strcmpi(curdir,pathname)
     filename=[pathname filename];
 end
-n=handles.Model(md).Input.nrlocationsets+1;
-handles.Model(md).Input.nrlocationsets=n;
-handles.Model(md).Input.locationsets=ddb_initializeDelft3DWAVELocationSet(handles.Model(md).Input.locationsets,n);
-handles.Model(md).Input.locationfile{n}=filename;
-handles.Model(md).Input.activelocationset=n;
+n=handles.model.delft3dwave.domain.nrlocationsets+1;
+handles.model.delft3dwave.domain.nrlocationsets=n;
+handles.model.delft3dwave.domain.locationsets=ddb_initializeDelft3DWAVELocationSet(handles.model.delft3dwave.domain.locationsets,n);
+handles.model.delft3dwave.domain.locationfile{n}=filename;
+handles.model.delft3dwave.domain.activelocationset=n;
 setHandles(handles);
 
 %%
 function deleteLocationSet
 clearInstructions; 
 handles=getHandles;
-iac=handles.Model(md).Input.activelocationset;
-if handles.Model(md).Input.nrlocationsets>0
+iac=handles.model.delft3dwave.domain.activelocationset;
+if handles.model.delft3dwave.domain.nrlocationsets>0
     handles=ddb_Delft3DWAVE_plotOutputLocations(handles,'delete');
-    handles.Model(md).Input.nrlocationsets=handles.Model(md).Input.nrlocationsets-1;
-    handles.Model(md).Input.locationsets = removeFromStruc(handles.Model(md).Input.locationsets,iac);
-    handles.Model(md).Input.activelocationset=max(min(iac,handles.Model(md).Input.nrlocationsets),1);
-    handles.Model(md).Input.locationfile=removeFromCellArray(handles.Model(md).Input.locationfile,iac);
-    if handles.Model(md).Input.nrlocationsets==0
-        handles.Model(md).Input.locationfile={''};
+    handles.model.delft3dwave.domain.nrlocationsets=handles.model.delft3dwave.domain.nrlocationsets-1;
+    handles.model.delft3dwave.domain.locationsets = removeFromStruc(handles.model.delft3dwave.domain.locationsets,iac);
+    handles.model.delft3dwave.domain.activelocationset=max(min(iac,handles.model.delft3dwave.domain.nrlocationsets),1);
+    handles.model.delft3dwave.domain.locationfile=removeFromCellArray(handles.model.delft3dwave.domain.locationfile,iac);
+    if handles.model.delft3dwave.domain.nrlocationsets==0
+        handles.model.delft3dwave.domain.locationfile={''};
     end
     handles=ddb_Delft3DWAVE_plotOutputLocations(handles,'plot','visible',1,'active',1);
     ddb_Delft3DWAVE_plotOutputLocations(handles,'update');    
@@ -110,7 +110,7 @@ end
 function loadLocationFile
 clearInstructions; 
 handles=getHandles;
-newfile=handles.Model(md).Input.newlocationfile;
+newfile=handles.model.delft3dwave.domain.newlocationfile;
 try
     xy=load(newfile);
 catch
@@ -119,22 +119,22 @@ catch
 end
 x=xy(:,1)';
 y=xy(:,2)';
-n=strmatch(newfile,handles.Model(md).Input.locationfile,'exact');
+n=strmatch(newfile,handles.model.delft3dwave.domain.locationfile,'exact');
 if isempty(n)
     % New file
-    n=handles.Model(md).Input.nrlocationsets+1;
-    handles.Model(md).Input.locationsets=ddb_initializeDelft3DWAVELocationSet(handles.Model(md).Input.locationsets,n);
-    handles.Model(md).Input.nrlocationsets=n;
+    n=handles.model.delft3dwave.domain.nrlocationsets+1;
+    handles.model.delft3dwave.domain.locationsets=ddb_initializeDelft3DWAVELocationSet(handles.model.delft3dwave.domain.locationsets,n);
+    handles.model.delft3dwave.domain.nrlocationsets=n;
 end
-handles.Model(md).Input.locationfile{n}=newfile;
-handles.Model(md).Input.activelocationset=n;
-handles.Model(md).Input.locationsets(n).activepoint=1;
-handles.Model(md).Input.locationsets(n).x=x;
-handles.Model(md).Input.locationsets(n).y=y;
-handles.Model(md).Input.locationsets(n).nrpoints=length(x);
-handles.Model(md).Input.locationsets(n).pointtext={''};
+handles.model.delft3dwave.domain.locationfile{n}=newfile;
+handles.model.delft3dwave.domain.activelocationset=n;
+handles.model.delft3dwave.domain.locationsets(n).activepoint=1;
+handles.model.delft3dwave.domain.locationsets(n).x=x;
+handles.model.delft3dwave.domain.locationsets(n).y=y;
+handles.model.delft3dwave.domain.locationsets(n).nrpoints=length(x);
+handles.model.delft3dwave.domain.locationsets(n).pointtext={''};
 for ii=1:length(x)
-    handles.Model(md).Input.locationsets(n).pointtext{ii}=num2str(ii);
+    handles.model.delft3dwave.domain.locationsets(n).pointtext{ii}=num2str(ii);
 end
 handles=ddb_Delft3DWAVE_plotOutputLocations(handles,'plot','visible',1,'active',1);
 setHandles(handles);
@@ -143,24 +143,24 @@ setHandles(handles);
 function saveLocationFile
 clearInstructions; 
 handles=getHandles;
-iac=handles.Model(md).Input.activelocationset;
-handles.Model(md).Input.locationfile{iac}=handles.Model(md).Input.newlocationfile;
-ddb_Delft3DWAVE_saveLocationFile(handles.Model(md).Input.locationfile{iac},handles.Model(md).Input.locationsets(iac));
+iac=handles.model.delft3dwave.domain.activelocationset;
+handles.model.delft3dwave.domain.locationfile{iac}=handles.model.delft3dwave.domain.newlocationfile;
+ddb_Delft3DWAVE_saveLocationFile(handles.model.delft3dwave.domain.locationfile{iac},handles.model.delft3dwave.domain.locationsets(iac));
 setHandles(handles);
 
 %%
 function addPoint(x,y)
 clearInstructions; 
 handles=getHandles;
-iac=handles.Model(md).Input.activelocationset;
-nr=handles.Model(md).Input.locationsets(iac).nrpoints+1;
-handles.Model(md).Input.locationsets(iac).nrpoints=nr;
-handles.Model(md).Input.locationsets(iac).activepoint=nr;
-handles.Model(md).Input.locationsets(iac).x(nr)=x;
-handles.Model(md).Input.locationsets(iac).y(nr)=y;
-handles.Model(md).Input.locationsets(iac).pointtext={''};
+iac=handles.model.delft3dwave.domain.activelocationset;
+nr=handles.model.delft3dwave.domain.locationsets(iac).nrpoints+1;
+handles.model.delft3dwave.domain.locationsets(iac).nrpoints=nr;
+handles.model.delft3dwave.domain.locationsets(iac).activepoint=nr;
+handles.model.delft3dwave.domain.locationsets(iac).x(nr)=x;
+handles.model.delft3dwave.domain.locationsets(iac).y(nr)=y;
+handles.model.delft3dwave.domain.locationsets(iac).pointtext={''};
 for ii=1:nr
-    handles.Model(md).Input.locationsets(iac).pointtext{ii}=num2str(ii);
+    handles.model.delft3dwave.domain.locationsets(iac).pointtext{ii}=num2str(ii);
 end
 handles=ddb_Delft3DWAVE_plotOutputLocations(handles,'plot','visible',1,'active',1);
 ddb_Delft3DWAVE_plotOutputLocations(handles,'update');
@@ -171,19 +171,19 @@ gui_updateActiveTab;
 function deletePoint
 clearInstructions; 
 handles=getHandles;
-iac=handles.Model(md).Input.activelocationset;
-handles.Model(md).Input.locationsets(iac).nrpoints=handles.Model(md).Input.locationsets(iac).nrpoints-1;
-ii=handles.Model(md).Input.locationsets(iac).activepoint;
-nr=handles.Model(md).Input.locationsets(iac).nrpoints;
+iac=handles.model.delft3dwave.domain.activelocationset;
+handles.model.delft3dwave.domain.locationsets(iac).nrpoints=handles.model.delft3dwave.domain.locationsets(iac).nrpoints-1;
+ii=handles.model.delft3dwave.domain.locationsets(iac).activepoint;
+nr=handles.model.delft3dwave.domain.locationsets(iac).nrpoints;
 
-handles.Model(md).Input.locationsets(iac).x = removeFromVector(handles.Model(md).Input.locationsets(iac).x,ii);
-handles.Model(md).Input.locationsets(iac).y = removeFromVector(handles.Model(md).Input.locationsets(iac).y,ii);
+handles.model.delft3dwave.domain.locationsets(iac).x = removeFromVector(handles.model.delft3dwave.domain.locationsets(iac).x,ii);
+handles.model.delft3dwave.domain.locationsets(iac).y = removeFromVector(handles.model.delft3dwave.domain.locationsets(iac).y,ii);
 
-handles.Model(md).Input.locationsets(iac).activepoint=max(min(ii,nr),1);
+handles.model.delft3dwave.domain.locationsets(iac).activepoint=max(min(ii,nr),1);
 
-handles.Model(md).Input.locationsets(iac).pointtext={''};
+handles.model.delft3dwave.domain.locationsets(iac).pointtext={''};
 for ii=1:nr
-    handles.Model(md).Input.locationsets(iac).pointtext{ii}=num2str(ii);
+    handles.model.delft3dwave.domain.locationsets(iac).pointtext{ii}=num2str(ii);
 end
 
 handles=ddb_Delft3DWAVE_plotOutputLocations(handles,'plot','visible',1,'active',1);

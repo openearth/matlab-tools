@@ -93,11 +93,11 @@ else
     
     handles=getHandles;
     
-    if handles.Model(md).Input(ad).salinity.include || handles.Model(md).Input(ad).temperature.include || ...
-            handles.Model(md).Input(ad).sediments.include || handles.Model(md).Input(ad).tracers
-        handles.Model(md).Input(ad).constituents=1;
+    if handles.model.delft3dflow.domain(ad).salinity.include || handles.model.delft3dflow.domain(ad).temperature.include || ...
+            handles.model.delft3dflow.domain(ad).sediments.include || handles.model.delft3dflow.domain(ad).tracers
+        handles.model.delft3dflow.domain(ad).constituents=1;
     else
-        handles.Model(md).Input(ad).constituents=0;
+        handles.model.delft3dflow.domain(ad).constituents=0;
     end
     
     setHandles(handles);

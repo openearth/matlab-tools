@@ -43,7 +43,7 @@ function ddb_DFlowFM_saveExtFile(handles)
 % $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/DelftDashBoard/models/DFlowFM/fileio/ddb_DFlowFM_writeComponentsFile.m $
 % $Keywords: $
     
-fid=fopen(handles.Model(md).Input.extforcefile,'wt');
+fid=fopen(handles.model.dflowfm.domain.extforcefile,'wt');
 
 fprintf(fid,'%s\n','* QUANTITY    : waterlevelbnd, velocitybnd, dischargebnd, tangentialvelocitybnd, normalvelocitybnd  filetype=9         method=2,3');
 fprintf(fid,'%s\n','*             : salinitybnd                                                                         filetype=9         method=2,3');
@@ -81,54 +81,54 @@ fprintf(fid,'%s\n','************************************************************
 fprintf(fid,'%s\n','');
 
 % Boundaries
-for ip=1:handles.Model(md).Input.nrboundaries
-    fprintf(fid,'%s\n',['QUANTITY=' handles.Model(md).Input.boundaries(ip).type]);
-    fprintf(fid,'%s\n',['FILENAME=' handles.Model(md).Input.boundaries(ip).filename]);
+for ip=1:handles.model.dflowfm.domain.nrboundaries
+    fprintf(fid,'%s\n',['QUANTITY=' handles.model.dflowfm.domain.boundaries(ip).type]);
+    fprintf(fid,'%s\n',['FILENAME=' handles.model.dflowfm.domain.boundaries(ip).filename]);
     fprintf(fid,'%s\n','FILETYPE=9');
     fprintf(fid,'%s\n','METHOD=2');
     fprintf(fid,'%s\n','OPERAND=O');
     fprintf(fid,'%s\n','');
 end
 
-if ~isempty(handles.Model(md).Input.windufile)
+if ~isempty(handles.model.dflowfm.domain.windufile)
     fprintf(fid,'%s\n',['QUANTITY=windx']);
-    fprintf(fid,'%s\n',['FILENAME=' handles.Model(md).Input.windufile]);
+    fprintf(fid,'%s\n',['FILENAME=' handles.model.dflowfm.domain.windufile]);
     fprintf(fid,'%s\n','FILETYPE=4');
     fprintf(fid,'%s\n','METHOD=1');
     fprintf(fid,'%s\n','OPERAND=O');
     fprintf(fid,'%s\n','');
 end
 
-if ~isempty(handles.Model(md).Input.windvfile)
+if ~isempty(handles.model.dflowfm.domain.windvfile)
     fprintf(fid,'%s\n',['QUANTITY=windy']);
-    fprintf(fid,'%s\n',['FILENAME=' handles.Model(md).Input.windvfile]);
+    fprintf(fid,'%s\n',['FILENAME=' handles.model.dflowfm.domain.windvfile]);
     fprintf(fid,'%s\n','FILETYPE=4');
     fprintf(fid,'%s\n','METHOD=1');
     fprintf(fid,'%s\n','OPERAND=O');
     fprintf(fid,'%s\n','');
 end
 
-if ~isempty(handles.Model(md).Input.airpressurefile)
+if ~isempty(handles.model.dflowfm.domain.airpressurefile)
     fprintf(fid,'%s\n',['QUANTITY=atmosphericpressure']);
-    fprintf(fid,'%s\n',['FILENAME=' handles.Model(md).Input.airpressurefile]);
+    fprintf(fid,'%s\n',['FILENAME=' handles.model.dflowfm.domain.airpressurefile]);
     fprintf(fid,'%s\n','FILETYPE=4');
     fprintf(fid,'%s\n','METHOD=1');
     fprintf(fid,'%s\n','OPERAND=O');
     fprintf(fid,'%s\n','');
 end
 
-if ~isempty(handles.Model(md).Input.rainfile)
+if ~isempty(handles.model.dflowfm.domain.rainfile)
     fprintf(fid,'%s\n',['QUANTITY=rain']);
-    fprintf(fid,'%s\n',['FILENAME=' handles.Model(md).Input.rainfile]);
+    fprintf(fid,'%s\n',['FILENAME=' handles.model.dflowfm.domain.rainfile]);
     fprintf(fid,'%s\n','FILETYPE=4');
     fprintf(fid,'%s\n','METHOD=1');
     fprintf(fid,'%s\n','OPERAND=O');
     fprintf(fid,'%s\n','');
 end
 
-if ~isempty(handles.Model(md).Input.spiderwebfile)
+if ~isempty(handles.model.dflowfm.domain.spiderwebfile)
     fprintf(fid,'%s\n',['QUANTITY=spiderweb']);
-    fprintf(fid,'%s\n',['FILENAME=' handles.Model(md).Input.spiderwebfile]);
+    fprintf(fid,'%s\n',['FILENAME=' handles.model.dflowfm.domain.spiderwebfile]);
     fprintf(fid,'%s\n','FILETYPE=5');
     fprintf(fid,'%s\n','METHOD=1');
     fprintf(fid,'%s\n','OPERAND=O');

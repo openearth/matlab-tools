@@ -66,13 +66,13 @@ function [handles cancel] = ddb_makeDDModel(handles, id1, id2, runid)
 %%
 % wb = waitbox('Generating Subdomain ...');pause(0.1);
 
-runid1=handles.Model(md).Input(id1).runid;
+runid1=handles.model.delft3dflow.domain(id1).runid;
 runid2=runid;
 
-handles.Model(md).Input(id2)=handles.Model(md).Input(id1);
+handles.model.delft3dflow.domain(id2)=handles.model.delft3dflow.domain(id1);
 
 % create backup of original model with id0
-handles.toolbox.dd.originalDomain=handles.Model(md).Input(id1);
+handles.toolbox.dd.originalDomain=handles.model.delft3dflow.domain(id1);
 
 handles=ddb_initializeFlowDomain(handles,'griddependentinput',id2,runid);
 

@@ -8,10 +8,10 @@ handles.GUIHandles.TextReferenceDate = uicontrol(gcf,'Style','text','String','Re
 handles.GUIHandles.TextStartTime     = uicontrol(gcf,'Style','text','String','Start Time',         'Position',    [ 60  97  80 20],'HorizontalAlignment','right','Tag','UIControl');
 handles.GUIHandles.TextStopTime      = uicontrol(gcf,'Style','text','String','Stop Time',          'Position',    [ 60  67  80 20],'HorizontalAlignment','right','Tag','UIControl');
 handles.GUIHandles.TextMorStart      = uicontrol(gcf,'Style','text','String','Start Time MOR',     'Position',    [ 60  37  80 20],'HorizontalAlignment','right','Tag','UIControl');
-handles.GUIHandles.EditReferenceDate = uicontrol(gcf,'Style','edit','String',D3DTimeString(handles.Model(md).Input(ad).ItDate,'itdate'), 'Position',    [150 130 110 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.EditStartTime     = uicontrol(gcf,'Style','edit','String',num2str(handles.Model(md).Input(ad).tstart),'Position',  [150 100 110 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.EditStopTime      = uicontrol(gcf,'Style','edit','String',num2str(handles.Model(md).Input(ad).tstop),'Position',   [150  70 110 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.EditMorStart      = uicontrol(gcf,'Style','edit','String',num2str(handles.Model(md).Input(ad).morstart),'Position',[150  40 110 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.EditReferenceDate = uicontrol(gcf,'Style','edit','String',D3DTimeString(handles.model.xbeach.domain(ad).ItDate,'itdate'), 'Position',    [150 130 110 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.EditStartTime     = uicontrol(gcf,'Style','edit','String',num2str(handles.model.xbeach.domain(ad).tstart),'Position',  [150 100 110 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.EditStopTime      = uicontrol(gcf,'Style','edit','String',num2str(handles.model.xbeach.domain(ad).tstop),'Position',   [150  70 110 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.EditMorStart      = uicontrol(gcf,'Style','edit','String',num2str(handles.model.xbeach.domain(ad).morstart),'Position',[150  40 110 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
 
 set(handles.GUIHandles.EditReferenceDate,'CallBack',{@EditReferenceDate_CallBack});
 set(handles.GUIHandles.EditStartTime,    'CallBack',{@EditStartTime_CallBack});
@@ -22,23 +22,23 @@ set(handles.GUIHandles.EditMorStart,     'CallBack',{@EditMorStart_CallBack});
 function EditReferenceDate_CallBack(hObject,eventdata)
 
 handles=getHandles;
-handles.Model(md).Input(ad).ItDate=D3DTimeString(get(hObject,'String'));
+handles.model.xbeach.domain(ad).ItDate=D3DTimeString(get(hObject,'String'));
 setHandles(handles);
 
 %%
 function EditStartTime_CallBack(hObject,eventdata)
 handles=getHandles;
-handles.Model(md).Input(ad).tstart=str2num(get(hObject,'String'));
+handles.model.xbeach.domain(ad).tstart=str2num(get(hObject,'String'));
 setHandles(handles);
 
 %%
 function EditStopTime_CallBack(hObject,eventdata)
 handles=getHandles;
-handles.Model(md).Input(ad).tstop=str2num(get(hObject,'String'));
+handles.model.xbeach.domain(ad).tstop=str2num(get(hObject,'String'));
 setHandles(handles);
 
 %%
 function EditMorStart_CallBack(hObject,eventdata)
 handles=getHandles;
-handles.Model(md).Input(ad).morstart=str2num(get(hObject,'String'));
+handles.model.xbeach.domain(ad).morstart=str2num(get(hObject,'String'));
 setHandles(handles);

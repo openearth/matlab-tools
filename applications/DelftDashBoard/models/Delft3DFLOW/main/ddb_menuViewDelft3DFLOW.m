@@ -74,14 +74,12 @@ else
     set(hObject,'Checked','on');
 end
 
-imd=strmatch('Delft3DFLOW',{handles.Model(:).name},'exact');
-
 switch option
     case{'grid'}
-        handles.Model(imd).menuview.grid=ivis;
+        handles.model.delft3dflow.menuview.grid=ivis;
         handles=ddb_Delft3DFLOW_plotGrid(handles,'update','domain',1);
     case{'bathymetry'}
-        handles.Model(imd).menuview.bathymetry=ivis;
+        handles.model.delft3dflow.menuview.bathymetry=ivis;
         handles=ddb_Delft3DFLOW_plotBathy(handles,'update','domain',1);
 end
 

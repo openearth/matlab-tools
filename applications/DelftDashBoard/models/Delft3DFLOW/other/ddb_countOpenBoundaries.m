@@ -61,7 +61,7 @@ function handles = ddb_countOpenBoundaries(handles, id)
 % $Keywords: $
 
 %%
-nb=handles.Model(md).Input(id).nrOpenBoundaries;
+nb=handles.model.delft3dflow.domain(id).nrOpenBoundaries;
 
 ncor=0;
 nastro=0;
@@ -70,12 +70,12 @@ ntime=0;
 nqh=0;
 
 for i=1:nb
-    switch handles.Model(md).Input(id).openBoundaries(i).forcing,
+    switch handles.model.delft3dflow.domain(id).openBoundaries(i).forcing,
         case{'A'}
             nastro=nastro+1;
-            for j=1:handles.Model(md).Input(id).nrAstronomicComponentSets
-                for k=1:handles.Model(md).Input(id).astronomicComponentSets(j).nr
-                    if handles.Model(md).Input(id).astronomicComponentSets(j).correction(k)
+            for j=1:handles.model.delft3dflow.domain(id).nrAstronomicComponentSets
+                for k=1:handles.model.delft3dflow.domain(id).astronomicComponentSets(j).nr
+                    if handles.model.delft3dflow.domain(id).astronomicComponentSets(j).correction(k)
                         ncor=ncor+1;
                     end
                 end
@@ -89,9 +89,9 @@ for i=1:nb
     end
 end
 
-handles.Model(md).Input(id).nrAstro=nastro;
-handles.Model(md).Input(id).nrCor=ncor;
-handles.Model(md).Input(id).nrHarmo=nharmo;
-handles.Model(md).Input(id).nrTime=ntime;
-handles.Model(md).Input(id).nrQH=nqh;
+handles.model.delft3dflow.domain(id).nrAstro=nastro;
+handles.model.delft3dflow.domain(id).nrCor=ncor;
+handles.model.delft3dflow.domain(id).nrHarmo=nharmo;
+handles.model.delft3dflow.domain(id).nrTime=ntime;
+handles.model.delft3dflow.domain(id).nrQH=nqh;
 

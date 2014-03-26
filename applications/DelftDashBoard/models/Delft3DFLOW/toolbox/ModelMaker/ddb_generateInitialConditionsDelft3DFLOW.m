@@ -74,14 +74,14 @@ wb = waitbox('Generating Initial Conditions ...');%pause(0.1);
 
 %% Water Level
 
-xz=handles.Model(md).Input(id).gridXZ;
-yz=handles.Model(md).Input(id).gridYZ;
+xz=handles.model.delft3dflow.domain(id).gridXZ;
+yz=handles.model.delft3dflow.domain(id).gridYZ;
 
 mmax=size(xz,1);
 nmax=size(xz,2);
-kmax=handles.Model(md).Input(id).KMax;
+kmax=handles.model.delft3dflow.domain(id).KMax;
 
-if ~strcmpi(handles.Model(md).Input(id).waterLevel.ICOpt,'constant')
+if ~strcmpi(handles.model.delft3dflow.domain(id).waterLevel.ICOpt,'constant')
     
     % Tide Model
     
@@ -113,7 +113,7 @@ if ~strcmpi(handles.Model(md).Input(id).waterLevel.ICOpt,'constant')
     %     x00(x00<0.250 & x00>0.125)=0.25;
     %     x00(x00>360)=360;
     
-    t0=handles.Model(md).Input(id).startTime;
+    t0=handles.model.delft3dflow.domain(id).startTime;
     
     ii=handles.toolbox.modelmaker.activeTideModelIC;
     name=handles.tideModels.model(ii).name;
@@ -140,7 +140,7 @@ if ~strcmpi(handles.Model(md).Input(id).waterLevel.ICOpt,'constant')
     
 else
     % Constant
-    h=zeros(mmax+1,nmax+1)+handles.Model(md).Input(id).waterLevel.ICConst;
+    h=zeros(mmax+1,nmax+1)+handles.model.delft3dflow.domain(id).waterLevel.ICConst;
 end
 
 if exist(fname,'file')
@@ -163,23 +163,23 @@ nmax=nmax+1;
 
 dp=zeros(mmax,nmax);
 dp(dp==0)=NaN;
-dp(1:end-1,1:end-1)=-handles.Model(md).Input(id).depthZ;
-thick=handles.Model(md).Input(id).thick;
+dp(1:end-1,1:end-1)=-handles.model.delft3dflow.domain(id).depthZ;
+thick=handles.model.delft3dflow.domain(id).thick;
 
 %% Salinity
-if handles.Model(md).Input(id).salinity.include
-    switch lower(handles.Model(md).Input(id).salinity.ICOpt)
+if handles.model.delft3dflow.domain(id).salinity.include
+    switch lower(handles.model.delft3dflow.domain(id).salinity.ICOpt)
         case{'constant'}
-            s=zeros(mmax,nmax,kmax)+handles.Model(md).Input(id).salinity.ICConst;
+            s=zeros(mmax,nmax,kmax)+handles.model.delft3dflow.domain(id).salinity.ICConst;
         case{'linear'}
-            pars=handles.Model(md).Input(id).salinity.ICPar;
+            pars=handles.model.delft3dflow.domain(id).salinity.ICPar;
             s=ddb_interpolateInitialConditions(dp,thick,pars,'linear');
         case{'block'}
-            pars=handles.Model(md).Input(id).salinity.ICPar;
+            pars=handles.model.delft3dflow.domain(id).salinity.ICPar;
             s=ddb_interpolateInitialConditions(dp,thick,pars,'block');
         case{'per layer'}
             for k=1:kmax
-                s(:,:,k)=zeros(mmax,nmax)+handles.Model(md).Input(id).salinity.ICPar(k,1);
+                s(:,:,k)=zeros(mmax,nmax)+handles.model.delft3dflow.domain(id).salinity.ICPar(k,1);
             end
     end
     for k=1:kmax
@@ -188,19 +188,19 @@ if handles.Model(md).Input(id).salinity.include
 end
 
 %% Temperature
-if handles.Model(md).Input(id).temperature.include
-    switch lower(handles.Model(md).Input(id).temperature.ICOpt)
+if handles.model.delft3dflow.domain(id).temperature.include
+    switch lower(handles.model.delft3dflow.domain(id).temperature.ICOpt)
         case{'constant'}
-            s=zeros(mmax,nmax,kmax)+handles.Model(md).Input(id).temperature.ICConst;
+            s=zeros(mmax,nmax,kmax)+handles.model.delft3dflow.domain(id).temperature.ICConst;
         case{'linear'}
-            pars=handles.Model(md).Input(id).temperature.ICPar;
+            pars=handles.model.delft3dflow.domain(id).temperature.ICPar;
             s=ddb_interpolateInitialConditions(dp,thick,pars,'linear');
         case{'block'}
-            pars=handles.Model(md).Input(id).temperature.ICPar;
+            pars=handles.model.delft3dflow.domain(id).temperature.ICPar;
             s=ddb_interpolateInitialConditions(dp,thick,pars,'block');
         case{'per layer'}
             for k=1:kmax
-                s(:,:,k)=zeros(mmax,nmax)+handles.Model(md).Input(id).temperature.ICPar(k,1);
+                s(:,:,k)=zeros(mmax,nmax)+handles.model.delft3dflow.domain(id).temperature.ICPar(k,1);
             end
     end
     for k=1:kmax
@@ -209,20 +209,20 @@ if handles.Model(md).Input(id).temperature.include
 end
 
 %% Sediments
-if handles.Model(md).Input(id).sediments.include
-    for i=1:handles.Model(md).Input(id).nrSediments
-        switch lower(handles.Model(md).Input(id).sediment(i).ICOpt)
+if handles.model.delft3dflow.domain(id).sediments.include
+    for i=1:handles.model.delft3dflow.domain(id).nrSediments
+        switch lower(handles.model.delft3dflow.domain(id).sediment(i).ICOpt)
             case{'constant'}
-                s=zeros(mmax,nmax,kmax)+handles.Model(md).Input(id).sediment(i).ICConst;
+                s=zeros(mmax,nmax,kmax)+handles.model.delft3dflow.domain(id).sediment(i).ICConst;
             case{'linear'}
-                pars=handles.Model(md).Input(id).sediment(i).ICPar;
+                pars=handles.model.delft3dflow.domain(id).sediment(i).ICPar;
                 s=ddb_interpolateInitialConditions(dp,thick,pars,'linear');
             case{'block'}
-                pars=handles.Model(md).Input(id).sediment(i).ICPar;
+                pars=handles.model.delft3dflow.domain(id).sediment(i).ICPar;
                 s=ddb_interpolateInitialConditions(dp,thick,pars,'block');
             case{'per layer'}
                 for k=1:kmax
-                    s(:,:,k)=zeros(mmax,nmax)+handles.Model(md).Input(id).sediment(i).ICPar(k,1);
+                    s(:,:,k)=zeros(mmax,nmax)+handles.model.delft3dflow.domain(id).sediment(i).ICPar(k,1);
                 end
         end
         for k=1:kmax
@@ -232,20 +232,20 @@ if handles.Model(md).Input(id).sediments.include
 end
 
 %% Tracers
-if handles.Model(md).Input(id).tracers
-    for i=1:handles.Model(md).Input(id).nrTracers
-        switch lower(handles.Model(md).Input(id).tracer(i).ICOpt)
+if handles.model.delft3dflow.domain(id).tracers
+    for i=1:handles.model.delft3dflow.domain(id).nrTracers
+        switch lower(handles.model.delft3dflow.domain(id).tracer(i).ICOpt)
             case{'constant'}
-                s=zeros(mmax,nmax,kmax)+handles.Model(md).Input(id).tracer(i).ICConst;
+                s=zeros(mmax,nmax,kmax)+handles.model.delft3dflow.domain(id).tracer(i).ICConst;
             case{'linear'}
-                pars=handles.Model(md).Input(id).tracer(i).ICPar;
+                pars=handles.model.delft3dflow.domain(id).tracer(i).ICPar;
                 s=ddb_interpolateInitialConditions(dp,thick,pars,'linear');
             case{'block'}
-                pars=handles.Model(md).Input(id).tracer(i).ICPar;
+                pars=handles.model.delft3dflow.domain(id).tracer(i).ICPar;
                 s=ddb_interpolateInitialConditions(dp,thick,pars,'block');
             case{'per layer'}
                 for k=1:kmax
-                    s(:,:,k)=zeros(mmax,nmax)+handles.Model(md).Input(id).tracer(i).ICPar(k,1);
+                    s(:,:,k)=zeros(mmax,nmax)+handles.model.delft3dflow.domain(id).tracer(i).ICPar(k,1);
                 end
         end
         for k=1:kmax

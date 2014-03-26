@@ -67,209 +67,209 @@ if strcmpi(opt,'saveallas')
     sall=1;
 end
 
-runid=handles.Model(md).Input(id).runid;
+runid=handles.model.delft3dflow.domain(id).runid;
 
-if handles.Model(md).Input(id).nrOpenBoundaries>0
+if handles.model.delft3dflow.domain(id).nrOpenBoundaries>0
     
     handles=ddb_sortBoundaries(handles,id);
     
-    if isempty(handles.Model(md).Input(id).bndFile) || sall
+    if isempty(handles.model.delft3dflow.domain(id).bndFile) || sall
         [filename, pathname, filterindex] = uiputfile('*.bnd', ['Select Boundary Definitions File - domain ' runid],'');
         curdir=[lower(cd) '\'];
         if ~strcmpi(curdir,pathname)
             filename=[pathname filename];
         end
-        handles.Model(md).Input(id).bndFile=filename;
+        handles.model.delft3dflow.domain(id).bndFile=filename;
     end
-    ddb_saveBndFile(handles.Model(md).Input(id).openBoundaries,handles.Model(md).Input(id).bndFile);
+    ddb_saveBndFile(handles.model.delft3dflow.domain(id).openBoundaries,handles.model.delft3dflow.domain(id).bndFile);
     
     handles=ddb_countOpenBoundaries(handles,id);
     
-    if handles.Model(md).Input(id).nrAstro>0
-        if isempty(handles.Model(md).Input(id).bcaFile) || sall
+    if handles.model.delft3dflow.domain(id).nrAstro>0
+        if isempty(handles.model.delft3dflow.domain(id).bcaFile) || sall
             [filename, pathname, filterindex] = uiputfile('*.bca', ['Select Astronomic Conditions File - domain ' runid],'');
             curdir=[lower(cd) '\'];
             if ~strcmpi(curdir,pathname)
                 filename=[pathname filename];
             end
-            handles.Model(md).Input(id).bcaFile=filename;
+            handles.model.delft3dflow.domain(id).bcaFile=filename;
         end
         ddb_saveBcaFile(handles,id);
     end
     
-    if handles.Model(md).Input(id).nrCor>0
-        if isempty(handles.Model(md).Input(id).corFile) || sall
+    if handles.model.delft3dflow.domain(id).nrCor>0
+        if isempty(handles.model.delft3dflow.domain(id).corFile) || sall
             [filename, pathname, filterindex] = uiputfile('*.cor', ['Select Astronomic Corrections File - domain ' runid],'');
             curdir=[lower(cd) '\'];
             if ~strcmpi(curdir,pathname)
                 filename=[pathname filename];
             end
-            handles.Model(md).Input(id).corFile=filename;
+            handles.model.delft3dflow.domain(id).corFile=filename;
         end
         ddb_saveCorFile(handles,id);
     end
     
-    if handles.Model(md).Input(id).nrHarmo>0
-        if isempty(handles.Model(md).Input(id).bchFile) || sall
+    if handles.model.delft3dflow.domain(id).nrHarmo>0
+        if isempty(handles.model.delft3dflow.domain(id).bchFile) || sall
             [filename, pathname, filterindex] = uiputfile('*.bch', ['Select Harmonic Conditions File - domain ' runid],'');
             curdir=[lower(cd) '\'];
             if ~strcmpi(curdir,pathname)
                 filename=[pathname filename];
             end
-            handles.Model(md).Input(id).bchFile=filename;
+            handles.model.delft3dflow.domain(id).bchFile=filename;
         end
         ddb_saveBchFile(handles,id);
     end
     
-    if handles.Model(md).Input(id).nrTime>0
-        if isempty(handles.Model(md).Input(id).bctFile) || sall
+    if handles.model.delft3dflow.domain(id).nrTime>0
+        if isempty(handles.model.delft3dflow.domain(id).bctFile) || sall
             [filename, pathname, filterindex] = uiputfile('*.bct', ['Select Time Series Conditions File - domain ' runid],'');
             curdir=[lower(cd) '\'];
             if ~strcmpi(curdir,pathname)
                 filename=[pathname filename];
             end
-            handles.Model(md).Input(id).bctFile=filename;
+            handles.model.delft3dflow.domain(id).bctFile=filename;
         end
         ddb_saveBctFile(handles,id);
     end
     
-    incconst=handles.Model(md).Input(id).salinity.include || handles.Model(md).Input(id).temperature.include || ...
-        handles.Model(md).Input(id).sediments.include || handles.Model(md).Input(id).tracers;
+    incconst=handles.model.delft3dflow.domain(id).salinity.include || handles.model.delft3dflow.domain(id).temperature.include || ...
+        handles.model.delft3dflow.domain(id).sediments.include || handles.model.delft3dflow.domain(id).tracers;
     if incconst
-        if isempty(handles.Model(md).Input(id).bccFile) || sall
+        if isempty(handles.model.delft3dflow.domain(id).bccFile) || sall
             [filename, pathname, filterindex] = uiputfile('*.bcc', ['Select Transport Conditions File - domain ' runid],'');
             curdir=[lower(cd) '\'];
             if ~strcmpi(curdir,pathname)
                 filename=[pathname filename];
             end
-            handles.Model(md).Input(id).bccFile=filename;
+            handles.model.delft3dflow.domain(id).bccFile=filename;
         end
         ddb_saveBccFile(handles,id);
     end
     
 end
 
-if handles.Model(md).Input(id).nrObservationPoints>0
-    if isempty(handles.Model(md).Input(id).obsFile) || sall
+if handles.model.delft3dflow.domain(id).nrObservationPoints>0
+    if isempty(handles.model.delft3dflow.domain(id).obsFile) || sall
         [filename, pathname, filterindex] = uiputfile('*.obs', ['Select Observation Points File - domain ' runid],'');
         curdir=[lower(cd) '\'];
         if ~strcmpi(curdir,pathname)
             filename=[pathname filename];
         end
-        handles.Model(md).Input(id).obsFile=filename;
+        handles.model.delft3dflow.domain(id).obsFile=filename;
     end
     ddb_saveObsFile(handles,id);
 end
 
-if handles.Model(md).Input(id).nrCrossSections>0
-    if isempty(handles.Model(md).Input(id).crsFile) || sall
+if handles.model.delft3dflow.domain(id).nrCrossSections>0
+    if isempty(handles.model.delft3dflow.domain(id).crsFile) || sall
         [filename, pathname, filterindex] = uiputfile('*.crs', ['Select Cross Sections File - domain ' runid],'');
         curdir=[lower(cd) '\'];
         if ~strcmpi(curdir,pathname)
             filename=[pathname filename];
         end
-        handles.Model(md).Input(id).crsFile=filename;
+        handles.model.delft3dflow.domain(id).crsFile=filename;
     end
     ddb_saveCrsFile(handles,id);
 end
 
-if handles.Model(md).Input(id).nrDryPoints>0
-    if isempty(handles.Model(md).Input(id).dryFile) || sall
+if handles.model.delft3dflow.domain(id).nrDryPoints>0
+    if isempty(handles.model.delft3dflow.domain(id).dryFile) || sall
         [filename, pathname, filterindex] = uiputfile('*.dry', ['Select Dry Points File - domain ' runid],'');
         curdir=[lower(cd) '\'];
         if ~strcmpi(curdir,pathname)
             filename=[pathname filename];
         end
-        handles.Model(md).Input(id).dryFile=filename;
+        handles.model.delft3dflow.domain(id).dryFile=filename;
     end
     ddb_saveDryFile(handles,id);
 end
 
-if handles.Model(md).Input(id).nrThinDams>0
-    if isempty(handles.Model(md).Input(id).thdFile) || sall
+if handles.model.delft3dflow.domain(id).nrThinDams>0
+    if isempty(handles.model.delft3dflow.domain(id).thdFile) || sall
         [filename, pathname, filterindex] = uiputfile('*.thd', ['Select Thin Dams File - domain ' runid],'');
         curdir=[lower(cd) '\'];
         if ~strcmpi(curdir,pathname)
             filename=[pathname filename];
         end
-        handles.Model(md).Input(id).thdFile=filename;
+        handles.model.delft3dflow.domain(id).thdFile=filename;
     end
     ddb_saveThdFile(handles,id);
 end
 
-if handles.Model(md).Input(id).nrWeirs2D>0
-    if isempty(handles.Model(md).Input(id).w2dFile) || sall
+if handles.model.delft3dflow.domain(id).nrWeirs2D>0
+    if isempty(handles.model.delft3dflow.domain(id).w2dFile) || sall
         [filename, pathname, filterindex] = uiputfile('*.2dw', ['Select 2D Weirs File - domain ' runid],'');
         curdir=[lower(cd) '\'];
         if ~strcmpi(curdir,pathname)
             filename=[pathname filename];
         end
-        handles.Model(md).Input(id).w2dFile=filename;
+        handles.model.delft3dflow.domain(id).w2dFile=filename;
     end
     ddb_save2DWFile(handles,id);
 end
 
-if handles.Model(md).Input(id).nrDrogues>0
-    if isempty(handles.Model(md).Input(id).droFile) || sall
+if handles.model.delft3dflow.domain(id).nrDrogues>0
+    if isempty(handles.model.delft3dflow.domain(id).droFile) || sall
         [filename, pathname, filterindex] = uiputfile('*.dro', ['Select Drogues File - domain ' runid],'');
         curdir=[lower(cd) '\'];
         if ~strcmpi(curdir,pathname)
             filename=[pathname filename];
         end
-        handles.Model(md).Input(id).droFile=filename;
+        handles.model.delft3dflow.domain(id).droFile=filename;
     end
     ddb_saveDroFile(handles,id);
 end
 
-if handles.Model(md).Input(id).nrDischarges>0
+if handles.model.delft3dflow.domain(id).nrDischarges>0
     
-    if isempty(handles.Model(md).Input(id).srcFile) || sall
+    if isempty(handles.model.delft3dflow.domain(id).srcFile) || sall
         [filename, pathname, filterindex] = uiputfile('*.src', ['Select Discharge Locations File - domain ' runid],'');
         curdir=[lower(cd) '\'];
         if ~strcmpi(curdir,pathname)
             filename=[pathname filename];
         end
-        handles.Model(md).Input(id).srcFile=filename;
+        handles.model.delft3dflow.domain(id).srcFile=filename;
     end
     ddb_saveSrcFile(handles,id);
     
-    if isempty(handles.Model(md).Input(id).disFile) || sall
+    if isempty(handles.model.delft3dflow.domain(id).disFile) || sall
         [filename, pathname, filterindex] = uiputfile('*.dis', ['Select Discharge File - domain ' runid],'');
         curdir=[lower(cd) '\'];
         if ~strcmpi(curdir,pathname)
             filename=[pathname filename];
         end
-        handles.Model(md).Input(id).disFile=filename;
+        handles.model.delft3dflow.domain(id).disFile=filename;
     end
     ddb_saveDisFile(handles,id);
 end
 
-if handles.Model(md).Input(id).nrSediments>0 && handles.Model(md).Input(id).sediments.include
+if handles.model.delft3dflow.domain(id).nrSediments>0 && handles.model.delft3dflow.domain(id).sediments.include
     
-    if isempty(handles.Model(md).Input(id).sedFile) || sall
+    if isempty(handles.model.delft3dflow.domain(id).sedFile) || sall
         [filename, pathname, filterindex] = uiputfile('*.sed', ['Select Sediments File - domain ' runid],'');
         curdir=[lower(cd) '\'];
         if ~strcmpi(curdir,pathname)
             filename=[pathname filename];
         end
-        handles.Model(md).Input(id).sedFile=filename;
+        handles.model.delft3dflow.domain(id).sedFile=filename;
     end
     ddb_saveSedFile(handles,id);
     
-    if isempty(handles.Model(md).Input(id).morFile) || sall
+    if isempty(handles.model.delft3dflow.domain(id).morFile) || sall
         [filename, pathname, filterindex] = uiputfile('*.mor', ['Select Morphology File - domain ' runid],'');
         curdir=[lower(cd) '\'];
         if ~strcmpi(curdir,pathname)
             filename=[pathname filename];
         end
-        handles.Model(md).Input(id).morFile=filename;
+        handles.model.delft3dflow.domain(id).morFile=filename;
     end
     ddb_saveMorFile(handles,id);
 end
 
-if handles.Model(md).Input(id).wind
-    if strcmpi(handles.Model(md).Input(id).windType,'uniform')
-        if isempty(handles.Model(md).Input(id).wndFile)
+if handles.model.delft3dflow.domain(id).wind
+    if strcmpi(handles.model.delft3dflow.domain(id).windType,'uniform')
+        if isempty(handles.model.delft3dflow.domain(id).wndFile)
             [filename, pathname, filterindex] = uiputfile('*.wnd', ['Select Wind File - domain ' runid],'');
             if pathname~=0
                 curdir=[lower(cd) '\'];
@@ -280,10 +280,10 @@ if handles.Model(md).Input(id).wind
                 filename=[];
             end
             if ~isempty(filename)
-                handles.Model(md).Input(id).wndFile=filename;
+                handles.model.delft3dflow.domain(id).wndFile=filename;
             end
         end
-        if ~isempty(handles.Model(md).Input(id).wndFile)
+        if ~isempty(handles.model.delft3dflow.domain(id).wndFile)
             ddb_saveWndFile(handles,id)
         end
     end

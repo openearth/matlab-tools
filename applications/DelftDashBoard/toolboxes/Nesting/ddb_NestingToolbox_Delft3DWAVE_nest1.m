@@ -74,7 +74,7 @@ if isempty(handles.toolbox.nesting.depFile)
     return
 end
 
-if isempty(handles.Model(md).Input.domains(awg).gridx)
+if isempty(handles.model.delft3dwave.domain.domains(awg).gridx)
     ddb_giveWarning('text','Please first load or create model grid!');
     return    
 end
@@ -87,7 +87,7 @@ bnd=findboundarysectionsonregulargrid(xg,yg);
 
 nbnd=length(bnd);
 
-nlocsets=handles.Model(md).Input.nrlocationsets;
+nlocsets=handles.model.delft3dwave.domain.nrlocationsets;
 
 % File name locations file
 [filename, pathname, filterindex] = uiputfile('*.loc','File name locations file (length of file name should be less than 5 characters!)');
@@ -97,7 +97,7 @@ if ~pathname==0
         filename=[pathname filename];
     end
     if nlocsets>0
-        ii=strmatch(filename,handles.Model(md).Input.locationfile,'exact');
+        ii=strmatch(filename,handles.model.delft3dwave.domain.locationfile,'exact');
     else
         ii=[];
     end
@@ -105,12 +105,12 @@ if ~pathname==0
         % New location set
         nlocsets=nlocsets+1;
     end
-    handles.Model(md).Input.locationfile{nlocsets}=filename;
+    handles.model.delft3dwave.domain.locationfile{nlocsets}=filename;
 else
     return
 end
 
-handles.Model(md).Input.locationsets=ddb_initializeDelft3DWAVELocationSet(handles.Model(md).Input.locationsets,nlocsets);
+handles.model.delft3dwave.domain.locationsets=ddb_initializeDelft3DWAVELocationSet(handles.model.delft3dwave.domain.locationsets,nlocsets);
 
 np=0;
 ithin=20;
@@ -122,23 +122,23 @@ for ibnd=1:ithin:nbnd
         np=np+1;
         xp=xg(m,n);
         yp=yg(m,n);
-        handles.Model(md).Input.locationsets(nlocsets).x(np)=xp;
-        handles.Model(md).Input.locationsets(nlocsets).y(np)=yp;
+        handles.model.delft3dwave.domain.locationsets(nlocsets).x(np)=xp;
+        handles.model.delft3dwave.domain.locationsets(nlocsets).y(np)=yp;
     end
 end
 
-handles.Model(md).Input.locationsets(nlocsets).nrpoints=np;
+handles.model.delft3dwave.domain.locationsets(nlocsets).nrpoints=np;
 for ii=1:np
-    handles.Model(md).Input.locationsets(nlocsets).pointtext{ii}=num2str(ii);
+    handles.model.delft3dwave.domain.locationsets(nlocsets).pointtext{ii}=num2str(ii);
 end
 
-handles.Model(md).Input.nrlocationsets=nlocsets;
-handles.Model(md).Input.activelocationset=nlocsets;
+handles.model.delft3dwave.domain.nrlocationsets=nlocsets;
+handles.model.delft3dwave.domain.activelocationset=nlocsets;
 
 % Save locations file
-ddb_Delft3DWAVE_saveLocationFile(handles.Model(md).Input.locationfile{nlocsets},handles.Model(md).Input.locationsets(nlocsets));
+ddb_Delft3DWAVE_saveLocationFile(handles.model.delft3dwave.domain.locationfile{nlocsets},handles.model.delft3dwave.domain.locationsets(nlocsets));
 
-handles.Model(md).Input.writespec2d=1;
+handles.model.delft3dwave.domain.writespec2d=1;
 
 handles=ddb_Delft3DWAVE_plotOutputLocations(handles,'plot','visible',1,'active',0);
 

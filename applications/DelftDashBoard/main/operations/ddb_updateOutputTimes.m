@@ -45,34 +45,37 @@ function ddb_updateOutputTimes(varargin)
 % $Keywords: $
 
 handles=getHandles;
-nrdomains=length(handles.Model(md).Input);
+model=handles.activeModel.name;
+
+nrdomains=length(handles.model.(model).domain);
+
 % Start and stop times of other domains
 for id=1:nrdomains
     if id~=ad
-        handles.Model(md).Input(id).startTime=handles.Model(md).Input(id).startTime;
-        handles.Model(md).Input(id).stopTime=handles.Model(md).Input(ad).stopTime;
+        handles.model.(model).domain(id).startTime=handles.model.(model).domain(id).startTime;
+        handles.model.(model).domain(id).stopTime=handles.model.(model).domain(ad).stopTime;
     end
 end
 % Output times for all domains
 for id=1:nrdomains
-    if isfield(handles.Model(md).Input(id),'mapStartTime')
-        handles.Model(md).Input(id).mapStartTime=handles.Model(md).Input(id).startTime;
+    if isfield(handles.model.(model).domain(id),'mapStartTime')
+        handles.model.(model).domain(id).mapStartTime=handles.model.(model).domain(id).startTime;
     end
-    if isfield(handles.Model(md).Input(id),'mapStopTime')
-        handles.Model(md).Input(id).mapStopTime=handles.Model(md).Input(id).stopTime;
+    if isfield(handles.model.(model).domain(id),'mapStopTime')
+        handles.model.(model).domain(id).mapStopTime=handles.model.(model).domain(id).stopTime;
     end
-    if isfield(handles.Model(md).Input(id),'comStartTime')
-        handles.Model(md).Input(id).comStartTime=handles.Model(md).Input(id).startTime;
+    if isfield(handles.model.(model).domain(id),'comStartTime')
+        handles.model.(model).domain(id).comStartTime=handles.model.(model).domain(id).startTime;
     end
-    if isfield(handles.Model(md).Input(id),'comStopTime')
-        handles.Model(md).Input(id).comStopTime=handles.Model(md).Input(id).stopTime;
+    if isfield(handles.model.(model).domain(id),'comStopTime')
+        handles.model.(model).domain(id).comStopTime=handles.model.(model).domain(id).stopTime;
     end
-    if isfield(handles.Model(md).Input(id),'windTimeSeriesSpeed')
-        if length(handles.Model(md).Input(id).windTimeSeriesSpeed)==2
-            if handles.Model(md).Input(id).windTimeSeriesSpeed(1)==handles.Model(md).Input(id).windTimeSeriesSpeed(2) && ...
-                handles.Model(md).Input(id).windTimeSeriesDirection(1)==handles.Model(md).Input(id).windTimeSeriesDirection(2)
-                handles.Model(md).Input(id).windTimeSeriesT(1)=handles.Model(md).Input(id).startTime;
-                handles.Model(md).Input(id).windTimeSeriesT(2)=handles.Model(md).Input(id).stopTime;
+    if isfield(handles.model.(model).domain(id),'windTimeSeriesSpeed')
+        if length(handles.model.(model).domain(id).windTimeSeriesSpeed)==2
+            if handles.model.(model).domain(id).windTimeSeriesSpeed(1)==handles.model.(model).domain(id).windTimeSeriesSpeed(2) && ...
+                handles.model.(model).domain(id).windTimeSeriesDirection(1)==handles.model.(model).domain(id).windTimeSeriesDirection(2)
+                handles.model.(model).domain(id).windTimeSeriesT(1)=handles.model.(model).domain(id).startTime;
+                handles.model.(model).domain(id).windTimeSeriesT(2)=handles.model.(model).domain(id).stopTime;
             end
         end        
     end

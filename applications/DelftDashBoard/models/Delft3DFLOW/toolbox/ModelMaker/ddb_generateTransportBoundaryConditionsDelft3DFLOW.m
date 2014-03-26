@@ -69,7 +69,7 @@ end
 
 wb = waitbox('Generating Transport Boundary Conditions ...');%pause(0.1);
 
-Flow=handles.Model(md).Input(id);
+Flow=handles.model.delft3dflow.domain(id);
 
 nr=Flow.NrOpenBoundaries;
 
@@ -244,7 +244,7 @@ if Flow.Tracers
     end
 end
 
-handles.Model(md).Input(id)=Flow;
+handles.model.delft3dflow.domain(id)=Flow;
 
 ddb_saveBccFile(handles,id);
 

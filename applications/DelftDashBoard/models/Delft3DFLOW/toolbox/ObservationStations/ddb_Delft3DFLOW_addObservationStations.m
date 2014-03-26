@@ -66,8 +66,8 @@ posx=[];
 
 iac=handles.toolbox.observationstations.activedatabase;
 
-xg=handles.Model(md).Input(ad).gridX;
-yg=handles.Model(md).Input(ad).gridY;
+xg=handles.model.delft3dflow.domain(ad).gridX;
+yg=handles.model.delft3dflow.domain(ad).gridY;
 
 xmin=min(min(xg));
 xmax=max(max(xg));
@@ -108,7 +108,7 @@ end
 nrp=0;
 if ~isempty(posx)
     [m,n]=findgridcell(posx,posy,xg,yg);
-    [m,n]=CheckDepth(m,n,handles.Model(md).Input(ad).depthZ);
+    [m,n]=CheckDepth(m,n,handles.model.delft3dflow.domain(ad).depthZ);
     for i=1:length(m)
         if m(i)>0
             nrp=nrp+1;
@@ -127,11 +127,11 @@ for i=1:nrp
     stationname=stationNames{k};
     stationid=stationIDs{k};
 
-    nobs=handles.Model(md).Input(ad).nrObservationPoints;
+    nobs=handles.model.delft3dflow.domain(ad).nrObservationPoints;
 
     names{1}='';
     for n=1:nobs
-        names{n}=handles.Model(md).Input(ad).observationPoints(n).name;
+        names{n}=handles.model.delft3dflow.domain(ad).observationPoints(n).name;
     end
 
     if handles.toolbox.observationstations.showstationnames
@@ -145,24 +145,24 @@ for i=1:nrp
     if isempty(strmatch(name,names,'exact'))
         
         nobs=nobs+1;
-        handles.Model(md).Input(ad).observationPoints(nobs).M=mm(i);
-        handles.Model(md).Input(ad).observationPoints(nobs).N=nn(i);
-        handles.Model(md).Input(ad).observationPoints(nobs).x=posx2(i);
-        handles.Model(md).Input(ad).observationPoints(nobs).y=posy2(i);
-        handles.Model(md).Input(ad).observationPoints(nobs).name=name;
-        handles.Model(md).Input(ad).observationPointNames{nobs}=name;
+        handles.model.delft3dflow.domain(ad).observationPoints(nobs).M=mm(i);
+        handles.model.delft3dflow.domain(ad).observationPoints(nobs).N=nn(i);
+        handles.model.delft3dflow.domain(ad).observationPoints(nobs).x=posx2(i);
+        handles.model.delft3dflow.domain(ad).observationPoints(nobs).y=posy2(i);
+        handles.model.delft3dflow.domain(ad).observationPoints(nobs).name=name;
+        handles.model.delft3dflow.domain(ad).observationPointNames{nobs}=name;
 
         % Add some extra information for CoSMoS toolbox
         % First find station again
         ist=strmatch(stationid,handles.toolbox.observationstations.database(iac).stationids,'exact');
-        handles.Model(md).Input(ad).observationPoints(nobs).longname=handles.toolbox.observationstations.database(iac).stationnames{ist};
-        handles.Model(md).Input(ad).observationPoints(nobs).type='observationstation';
-        handles.Model(md).Input(ad).observationPoints(nobs).source=handles.toolbox.observationstations.database(iac).name;
-        handles.Model(md).Input(ad).observationPoints(nobs).id=stationid;
+        handles.model.delft3dflow.domain(ad).observationPoints(nobs).longname=handles.toolbox.observationstations.database(iac).stationnames{ist};
+        handles.model.delft3dflow.domain(ad).observationPoints(nobs).type='observationstation';
+        handles.model.delft3dflow.domain(ad).observationPoints(nobs).source=handles.toolbox.observationstations.database(iac).name;
+        handles.model.delft3dflow.domain(ad).observationPoints(nobs).id=stationid;
         
     end
     
-    handles.Model(md).Input(ad).nrObservationPoints=nobs;
+    handles.model.delft3dflow.domain(ad).nrObservationPoints=nobs;
     
 end
 

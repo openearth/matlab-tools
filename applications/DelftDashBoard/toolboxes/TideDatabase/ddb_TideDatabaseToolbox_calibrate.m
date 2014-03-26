@@ -95,7 +95,8 @@ try
         tidefile=[handles.tideModels.model(ii).URL filesep name '.nc'];
     end
     
-    bnd=handles.Model(md).Input(ad).openBoundaries;
+    model=handles.activeModel.name;
+    bnd=handles.model.(model).domain(ad).openBoundaries;
     for ib=1:length(bnd)
         switch bnd(ib).side
             case{'left'}
@@ -119,10 +120,10 @@ try
                 na=bnd(ib).N1-1;
                 nb=bnd(ib).N2-1;
         end
-        xb(ib,1)=handles.Model(md).Input(ad).gridXZ(ma,na);
-        yb(ib,1)=handles.Model(md).Input(ad).gridYZ(ma,na);
-        xb(ib,2)=handles.Model(md).Input(ad).gridXZ(mb,nb);
-        yb(ib,2)=handles.Model(md).Input(ad).gridYZ(mb,nb);
+        xb(ib,1)=handles.model.(model).domain(ad).gridXZ(ma,na);
+        yb(ib,1)=handles.model.(model).domain(ad).gridYZ(ma,na);
+        xb(ib,2)=handles.model.(model).domain(ad).gridXZ(mb,nb);
+        yb(ib,2)=handles.model.(model).domain(ad).gridYZ(mb,nb);
     end
     cs0.name='WGS 84';
     cs0.type='spherical';
@@ -138,15 +139,15 @@ try
             
             compSetA=bnd(ib).compA;
             compSetB=bnd(ib).compB;
-            astrosets=handles.Model(md).Input(ad).astronomicComponentSets;
+            astrosets=handles.model.(model).domain(ad).astronomicComponentSets;
             for iastr=1:length(astrosets)
                 astrosetNames{iastr}=lower(astrosets(iastr).name);
             end
             isetA=strmatch(lower(compSetA),astrosetNames,'exact');
             isetB=strmatch(lower(compSetB),astrosetNames,'exact');
             
-            ja=strmatch(comp{i},handles.Model(md).Input(ad).astronomicComponentSets(isetA).component,'exact');
-            jb=strmatch(comp{i},handles.Model(md).Input(ad).astronomicComponentSets(isetB).component,'exact');
+            ja=strmatch(comp{i},handles.model.(model).domain(ad).astronomicComponentSets(isetA).component,'exact');
+            jb=strmatch(comp{i},handles.model.(model).domain(ad).astronomicComponentSets(isetB).component,'exact');
             
             switch bnd(ib).side
                 case{'left'}
@@ -196,12 +197,13 @@ try
             ampfacb=min(max(ampfacb,0.5),2.0);
             
             
-            handles.Model(md).Input(ad).astronomicComponentSets(isetA).correction(ja)=1;
-            handles.Model(md).Input(ad).astronomicComponentSets(isetA).amplitudeCorrection(ja)=handles.Model(md).Input(ad).astronomicComponentSets(isetA).amplitudeCorrection(ja)*ampfaca;
-            handles.Model(md).Input(ad).astronomicComponentSets(isetA).phaseCorrection(ja)=handles.Model(md).Input(ad).astronomicComponentSets(isetA).phaseCorrection(ja)+phifaca;
-            handles.Model(md).Input(ad).astronomicComponentSets(isetB).correction(jb)=1;
-            handles.Model(md).Input(ad).astronomicComponentSets(isetB).amplitudeCorrection(jb)=handles.Model(md).Input(ad).astronomicComponentSets(isetB).amplitudeCorrection(jb)*ampfacb;
-            handles.Model(md).Input(ad).astronomicComponentSets(isetB).phaseCorrection(jb)=handles.Model(md).Input(ad).astronomicComponentSets(isetB).phaseCorrection(jb)+phifacb;
+            model=handles.activeModel.name;
+            handles.model.(model).domain(ad).astronomicComponentSets(isetA).correction(ja)=1;
+            handles.model.(model).domain(ad).astronomicComponentSets(isetA).amplitudeCorrection(ja)=handles.model.(model).domain(ad).astronomicComponentSets(isetA).amplitudeCorrection(ja)*ampfaca;
+            handles.model.(model).domain(ad).astronomicComponentSets(isetA).phaseCorrection(ja)=handles.model.(model).domain(ad).astronomicComponentSets(isetA).phaseCorrection(ja)+phifaca;
+            handles.model.(model).domain(ad).astronomicComponentSets(isetB).correction(jb)=1;
+            handles.model.(model).domain(ad).astronomicComponentSets(isetB).amplitudeCorrection(jb)=handles.model.(model).domain(ad).astronomicComponentSets(isetB).amplitudeCorrection(jb)*ampfacb;
+            handles.model.(model).domain(ad).astronomicComponentSets(isetB).phaseCorrection(jb)=handles.model.(model).domain(ad).astronomicComponentSets(isetB).phaseCorrection(jb)+phifacb;
             
         end
         
@@ -209,13 +211,14 @@ try
     
     close(wb);
     
-    [filename, pathname, filterindex] = uiputfile('*.cor', 'Select Astronomic Corrections File',handles.Model(md).Input(ad).corFile);
+    [filename, pathname, filterindex] = uiputfile('*.cor', 'Select Astronomic Corrections File',handles.model.(model).domain(ad).corFile);
     if ~isempty(pathname)
         curdir=[lower(cd) '\'];
         if ~strcmpi(curdir,pathname)
             filename=[pathname filename];
         end
-        handles.Model(md).Input(ad).corFile=filename;
+        
+        handles.model.(model).domain(ad).corFile=filename;
         handles=ddb_saveCorFile(handles,ad);
         handles=ddb_countOpenBoundaries(handles,ad);
         setHandles(handles);

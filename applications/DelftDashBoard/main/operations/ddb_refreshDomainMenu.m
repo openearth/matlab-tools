@@ -67,8 +67,10 @@ h=findobj(gcf,'Tag','menuDomain');
 hc=get(h,'Children');
 delete(hc);
 
-for i=1:handles.Model(md).nrDomains
-    str{i}=handles.Model(md).Input(i).runid;
+model=handles.activeModel.name;
+
+for i=1:handles.model.(model).nrDomains
+    str{i}=handles.model.(model).domain(i).runid;
     ui=uimenu(h,'Label',str{i},'Callback',{@selectDomain,i},'Checked','off','UserData',i);
     if i==ad
         set(ui,'Checked','on');
@@ -86,11 +88,12 @@ if nr>0
 else
     str=GetUIString('Enter Runid New Domain');
     if ~isempty(str)
-        id=handles.Model(md).nrDomains+1;
-        handles.Model(md).nrDomains=id;
+        model=handles.activeModel.name;
+        id=handles.model.(model).nrDomains+1;
+        handles.model.(model).nrDomains=id;
         handles.activeDomain=id;
-        handles.Model(md).Input(id).runid=str;
-        handles=ddb_initializeFlowDomain(handles,'all',id,handles.Model(md).Input(id).runid);
+        handles.model.(model).domain(id).runid=str;
+        handles=ddb_initializeFlowDomain(handles,'all',id,handles.model.(model).domain(id).runid);
         setHandles(handles);
         ddb_refreshDomainMenu;
         changeDomain(id);
@@ -106,18 +109,19 @@ handles.activeDomain=nr;
 setHandles(handles);
 h=findobj(gcf,'Tag','menuDomain');
 hc=get(h,'Children');
+model=handles.activeModel.name;
 for i=1:length(hc)
     set(hc(i),'Checked','off');
 end
 h=findobj(hc,'UserData',nr);
 set(h,'Checked','on');
 % Update the figure
-for i=1:handles.Model(md).nrDomains
-    feval(handles.Model(md).plotFcn,'update','active',0,'visible',1,'domain',i);
+for i=1:handles.model.(model).nrDomains
+    feval(handles.model.(model).plotFcn,'update','active',0,'visible',1,'domain',i);
 end
 
 % Select toolbox tab.
-tabpanel('select','tag',handles.Model(md).name,'tabname','toolbox','runcallback',0);
+tabpanel('select','tag',handles.model.(model).name,'tabname','toolbox','runcallback',0);
 
 %% And now set all elements and execute active tab!
 
@@ -125,14 +129,15 @@ tabpanel('select','tag',handles.Model(md).name,'tabname','toolbox','runcallback'
 %%
 function deleteDomain(hObject, eventdata)
 handles=getHandles;
-if handles.Model(md).nrDomains>1
-    feval(handles.Model(md).plotFcn,'delete');
-    handles.Model(md).Input=removeFromStruc(handles.Model(md).Input,ad);
-    handles.Model(md).nrDomains=handles.Model(md).nrDomains-1;
+model=handles.activeModel.name;
+if handles.model.(model).nrDomains>1
+    feval(handles.model.(model).plotFcn,'delete');
+    handles.model.(model).domain=removeFromStruc(handles.model.(model).domain,ad);
+    handles.model.(model).nrDomains=handles.model.(model).nrDomains-1;
     handles.activeDomain=1;
-    handles.Model(md).DDBoundaries=[];
+    handles.model.(model).DDBoundaries=[];
     setHandles(handles);
-    feval(handles.Model(md).plotFcn,'plot','active',0,'visible',1,'domain',0);
+    feval(handles.model.(model).plotFcn,'plot','active',0,'visible',1,'domain',0);
     ddb_refreshDomainMenu;
     
     %% And now set all elements and execute active tab!

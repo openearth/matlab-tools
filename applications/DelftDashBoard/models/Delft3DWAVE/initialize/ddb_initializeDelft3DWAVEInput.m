@@ -1,7 +1,5 @@
 function handles=ddb_initializeDelft3DWAVEInput(handles,runid)
 
-ii=strmatch('Delft3DWAVE',{handles.Model.name},'exact');
-
 input.runid              =  runid;
 input.attName            =  runid;
 input.mdwfile            =  [runid '.mdw'];
@@ -175,4 +173,4 @@ input.obstacletypestext={'Dam','Sheet'};
 input.obstaclereflectiontypes={'no','specular','diffuse'};
 input.obstaclereflectiontypestext={'No','Specular','Diffuse'};
 
-handles.Model(ii).Input=input;
+handles.model.delft3dwave.domain=input;

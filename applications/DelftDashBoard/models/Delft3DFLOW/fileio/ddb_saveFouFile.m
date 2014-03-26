@@ -61,9 +61,9 @@ function ddb_saveFouFile(handles, id)
 % $Keywords: $
 
 %%
-tab=handles.Model(md).Input(id).fourier.editTable;
-fid=fopen(handles.Model(md).Input(id).fouFile,'wt');
-plist=handles.Model(md).Input(ad).fourier.pList;
+tab=handles.model.delft3dflow.domain(id).fourier.editTable;
+fid=fopen(handles.model.delft3dflow.domain(id).fouFile,'wt');
+plist=handles.model.delft3dflow.domain(ad).fourier.pList;
 for i=1:length(tab.period)
     par=plist{tab.parameterNumber(i)};
     parstr=par;
@@ -83,9 +83,9 @@ for i=1:length(tab.period)
             optstr='y';
     end
     
-    t0str=num2str((tab.startTime(i)-handles.Model(md).Input(id).itDate)*1440,'%10.2f');
+    t0str=num2str((tab.startTime(i)-handles.model.delft3dflow.domain(id).itDate)*1440,'%10.2f');
     t0str=[repmat(' ',1,12-length(t0str)) t0str];
-    t1str=num2str((tab.stopTime(i)-handles.Model(md).Input(id).itDate)*1440,'%10.2f');
+    t1str=num2str((tab.stopTime(i)-handles.model.delft3dflow.domain(id).itDate)*1440,'%10.2f');
     t1str=[repmat(' ',1,12-length(t1str)) t1str];
     nrstr=num2str(tab.nrCycles(i));
     nrstr=[repmat(' ',1,6-length(nrstr)) nrstr];

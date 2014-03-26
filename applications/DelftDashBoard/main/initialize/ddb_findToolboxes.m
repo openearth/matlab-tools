@@ -97,7 +97,7 @@ else
             switch lower(flist(i).name)
                 case{'.','..','.svn'}
                 otherwise
-                    fname=[dr filesep flist(i).name filesep 'xml' filesep flist(i).name '.xml'];
+                    fname=[dr filesep flist(i).name filesep 'xml' filesep 'toolbox.' flist(i).name '.xml'];
                     if exist(fname,'file')
                         xml=xml2struct(fname,'structuretype','short');
                         switch lower(xml.enable)
@@ -121,7 +121,7 @@ else
                 switch lower(flist(i).name)
                     case{'.','..','.svn'}
                     otherwise
-                        fname=[dr2 filesep flist(i).name filesep 'xml' filesep flist(i).name '.xml'];
+                        fname=[dr2 filesep flist(i).name filesep 'xml' filesep 'toolbox.' flist(i).name '.xml'];
                         if exist(fname,'file')
                             xml=xml2struct(fname,'structuretype','short');
                             switch lower(xml.enable)
@@ -171,24 +171,6 @@ for it=1:nt
         end
     end
 end
-
-% % Set ModelMaker to be the first toolbox
-% ii=strmatch('ModelMaker',{handles.Toolbox(:).name},'exact');
-% tt=handles.Toolbox;
-% handles.Toolbox(1)=tt(ii);
-% k=1;
-% for i=1:length(handles.Toolbox)
-%     if ~strcmpi(tt(i).name,'ModelMaker')
-%         k=k+1;
-%         handles.Toolbox(k)=tt(i);
-%     end
-% end
-
-% % Run very first initialize function
-% for i=1:nt
-%     f=handles.toolbox.(nm).iniFcn;
-%     handles=f(handles,'veryfirst');
-% end
 
 % Read xml files
 toolboxes=fieldnames(handles.toolbox);

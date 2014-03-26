@@ -67,8 +67,8 @@ posx=[];
 iac=handles.toolbox.tidestations.activeDatabase;
 names=handles.toolbox.tidestations.database(iac).stationShortNames;
 
-xg=handles.Model(md).Input(ad).gridX;
-yg=handles.Model(md).Input(ad).gridY;
+xg=handles.model.delft3dflow.domain(ad).gridX;
+yg=handles.model.delft3dflow.domain(ad).gridY;
 
 xmin=min(min(xg));
 xmax=max(max(xg));
@@ -97,7 +97,7 @@ end
 nrp=0;
 if ~isempty(posx)
     [m,n]=findgridcell(posx,posy,xg,yg);
-    [m,n]=CheckDepth(m,n,handles.Model(md).Input(ad).depthZ);
+    [m,n]=CheckDepth(m,n,handles.model.delft3dflow.domain(ad).depthZ);
     for i=1:length(m)
         if m(i)>0
             nrp=nrp+1;
@@ -120,33 +120,33 @@ for i=1:nrp
         name=handles.toolbox.tidestations.database(iac).idCodes{k};
     end
         
-    nobs=handles.Model(md).Input(ad).nrObservationPoints;
+    nobs=handles.model.delft3dflow.domain(ad).nrObservationPoints;
     Names{1}='';
     for n=1:nobs
-        Names{n}=handles.Model(md).Input(ad).observationPoints(n).name;
+        Names{n}=handles.model.delft3dflow.domain(ad).observationPoints(n).name;
     end
     
     if isempty(strmatch(name,Names,'exact'))
         nobs=nobs+1;
-        handles.Model(md).Input(ad).observationPoints(nobs).M=mm(i);
-        handles.Model(md).Input(ad).observationPoints(nobs).N=nn(i);
-        handles.Model(md).Input(ad).observationPoints(nobs).x=posx2(i);
-        handles.Model(md).Input(ad).observationPoints(nobs).y=posy2(i);
+        handles.model.delft3dflow.domain(ad).observationPoints(nobs).M=mm(i);
+        handles.model.delft3dflow.domain(ad).observationPoints(nobs).N=nn(i);
+        handles.model.delft3dflow.domain(ad).observationPoints(nobs).x=posx2(i);
+        handles.model.delft3dflow.domain(ad).observationPoints(nobs).y=posy2(i);
         lname=length(name);
         shortName=name(1:min(lname,20));
-        handles.Model(md).Input(ad).observationPoints(nobs).name=name;
-        handles.Model(md).Input(ad).observationPointNames{nobs}=name;
+        handles.model.delft3dflow.domain(ad).observationPoints(nobs).name=name;
+        handles.model.delft3dflow.domain(ad).observationPointNames{nobs}=name;
         Names{nobs}=name;
         
         % Add some extra information for CoSMoS toolbox
-        handles.Model(md).Input(ad).observationPoints(nobs).longname=handles.toolbox.tidestations.database(iac).stationList{k};
-        handles.Model(md).Input(ad).observationPoints(nobs).type='tidegauge';
-        handles.Model(md).Input(ad).observationPoints(nobs).source=handles.toolbox.tidestations.database(iac).shortName;
-        handles.Model(md).Input(ad).observationPoints(nobs).id=handles.toolbox.tidestations.database(iac).idCodes{k};
+        handles.model.delft3dflow.domain(ad).observationPoints(nobs).longname=handles.toolbox.tidestations.database(iac).stationList{k};
+        handles.model.delft3dflow.domain(ad).observationPoints(nobs).type='tidegauge';
+        handles.model.delft3dflow.domain(ad).observationPoints(nobs).source=handles.toolbox.tidestations.database(iac).shortName;
+        handles.model.delft3dflow.domain(ad).observationPoints(nobs).id=handles.toolbox.tidestations.database(iac).idCodes{k};
         
     end
     
-    handles.Model(md).Input(ad).nrObservationPoints=nobs;
+    handles.model.delft3dflow.domain(ad).nrObservationPoints=nobs;
     
 end
 

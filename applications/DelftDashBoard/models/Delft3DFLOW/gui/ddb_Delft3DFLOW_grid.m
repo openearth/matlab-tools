@@ -93,18 +93,18 @@ end
 %%
 function selectGrid
 handles=getHandles;
-filename=handles.Model(md).Input(ad).grdFile;
+filename=handles.model.delft3dflow.domain(ad).grdFile;
 [x,y,enc]=ddb_wlgrid('read',filename);
-handles.Model(md).Input(ad).gridX=x;
-handles.Model(md).Input(ad).gridY=y;
-handles.Model(md).Input(ad).MMax=size(x,1)+1;
-handles.Model(md).Input(ad).NMax=size(x,2)+1;
-[handles.Model(md).Input(ad).gridXZ,handles.Model(md).Input(ad).gridYZ]=getXZYZ(x,y);
-handles.Model(md).Input(ad).kcs=determineKCS(handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY);
-nans=zeros(size(handles.Model(md).Input(ad).gridX));
+handles.model.delft3dflow.domain(ad).gridX=x;
+handles.model.delft3dflow.domain(ad).gridY=y;
+handles.model.delft3dflow.domain(ad).MMax=size(x,1)+1;
+handles.model.delft3dflow.domain(ad).NMax=size(x,2)+1;
+[handles.model.delft3dflow.domain(ad).gridXZ,handles.model.delft3dflow.domain(ad).gridYZ]=getXZYZ(x,y);
+handles.model.delft3dflow.domain(ad).kcs=determineKCS(handles.model.delft3dflow.domain(ad).gridX,handles.model.delft3dflow.domain(ad).gridY);
+nans=zeros(size(handles.model.delft3dflow.domain(ad).gridX));
 nans(nans==0)=NaN;
-handles.Model(md).Input(ad).depth=nans;
-handles.Model(md).Input(ad).depthZ=nans;
+handles.model.delft3dflow.domain(ad).depth=nans;
+handles.model.delft3dflow.domain(ad).depthZ=nans;
 setHandles(handles);
 % setUIElement('delft3dflow.domain.domainpanel.grid.textgridm');
 % setUIElement('delft3dflow.domain.domainpanel.grid.textgridn');
@@ -115,10 +115,10 @@ setHandles(handles);
 %%
 function selectEnclosure
 handles=getHandles;
-mn=ddb_enclosure('read',handles.Model(md).Input(ad).encFile);
-[handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY]=ddb_enclosure('apply',mn,handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY);
-[handles.Model(md).Input(ad).gridXZ,handles.Model(md).Input(ad).gridYZ]=getXZYZ(handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY);
-handles.Model(md).Input(ad).kcs=determineKCS(handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY);
+mn=ddb_enclosure('read',handles.model.delft3dflow.domain(ad).encFile);
+[handles.model.delft3dflow.domain(ad).gridX,handles.model.delft3dflow.domain(ad).gridY]=ddb_enclosure('apply',mn,handles.model.delft3dflow.domain(ad).gridX,handles.model.delft3dflow.domain(ad).gridY);
+[handles.model.delft3dflow.domain(ad).gridXZ,handles.model.delft3dflow.domain(ad).gridYZ]=getXZYZ(handles.model.delft3dflow.domain(ad).gridX,handles.model.delft3dflow.domain(ad).gridY);
+handles.model.delft3dflow.domain(ad).kcs=determineKCS(handles.model.delft3dflow.domain(ad).gridX,handles.model.delft3dflow.domain(ad).gridY);
 handles=ddb_Delft3DFLOW_plotGrid(handles,'plot');
 setHandles(handles);
 
@@ -129,7 +129,7 @@ ddb_Delft3DFLOW_generateLayers;
 %%
 function changeLayers
 handles=getHandles;
-handles.Model(md).Input(ad).sumLayers=sum(handles.Model(md).Input(ad).thick);
+handles.model.delft3dflow.domain(ad).sumLayers=sum(handles.model.delft3dflow.domain(ad).thick);
 setHandles(handles);
 % gui_updateActiveTab;
 
@@ -141,9 +141,9 @@ if ~isempty(pathname)
     lyrs=load([pathname filename]);
     sm=sum(lyrs);
     if abs(sm-100)<1e-8
-        handles.Model(md).Input(ad).thick=lyrs;
-        handles.Model(md).Input(ad).sumLayers=100;
-        handles.Model(md).Input(ad).KMax=length(lyrs);
+        handles.model.delft3dflow.domain(ad).thick=lyrs;
+        handles.model.delft3dflow.domain(ad).sumLayers=100;
+        handles.model.delft3dflow.domain(ad).KMax=length(lyrs);
         setHandles(handles);
     else
         ddb_giveWarning('Text','Sum of layers does not equal 100%');
@@ -155,20 +155,20 @@ function saveLayers
 handles=getHandles;
 [filename, pathname, filterindex] = uiputfile('*.lyr', 'Save layers file','');
 if ~isempty(pathname)
-    lyrs=handles.Model(md).Input(ad).thick;
+    lyrs=handles.model.delft3dflow.domain(ad).thick;
     save([pathname filename],'lyrs','-ascii');
 end
 
 %%
 function editKMax
 handles=getHandles;
-kmax0=handles.Model(md).Input(ad).lastKMax;
-kmax=handles.Model(md).Input(ad).KMax;
+kmax0=handles.model.delft3dflow.domain(ad).lastKMax;
+kmax=handles.model.delft3dflow.domain(ad).KMax;
 if kmax~=kmax0
-    handles.Model(md).Input(ad).lastKMax=kmax;
-    handles.Model(md).Input(ad).thick=[];
+    handles.model.delft3dflow.domain(ad).lastKMax=kmax;
+    handles.model.delft3dflow.domain(ad).thick=[];
     if kmax==1
-        handles.Model(md).Input(ad).thick=100;
+        handles.model.delft3dflow.domain(ad).thick=100;
     else
         for i=1:kmax
             thick(i)=0.01*round(100*100/kmax);
@@ -177,19 +177,19 @@ if kmax~=kmax0
         dif=sumlayers-100;
         thick(kmax)=thick(kmax)-dif;
         for i=1:kmax
-            handles.Model(md).Input(ad).thick(i)=thick(i);
+            handles.model.delft3dflow.domain(ad).thick(i)=thick(i);
         end
     end
     setHandles(handles);
-    handles.Model(md).Input(ad).sumLayers=sum(handles.Model(md).Input(ad).thick);
+    handles.model.delft3dflow.domain(ad).sumLayers=sum(handles.model.delft3dflow.domain(ad).thick);
 end
 
 %%
 function selectZModel
 handles=getHandles;
-switch handles.Model(md).Input(ad).dpuOpt
+switch handles.model.delft3dflow.domain(ad).dpuOpt
     case{'MEAN','UPW','MOR'}
-        handles.Model(md).Input(ad).dpuOpt='MIN';
+        handles.model.delft3dflow.domain(ad).dpuOpt='MIN';
         setHandles(handles);
         ddb_giveWarning('text','DPUOPT set to MIN in numerical options!');
 end
@@ -199,18 +199,18 @@ end
 %%
 function editZTop
 handles=getHandles;
-zmax=nanmax(nanmax(handles.Model(md).Input(ad).depth));
-if zmax>handles.Model(md).Input(ad).zTop
+zmax=nanmax(nanmax(handles.model.delft3dflow.domain(ad).depth));
+if zmax>handles.model.delft3dflow.domain(ad).zTop
     ButtonName = questdlg(['Maximum height model bathymetry (' num2str(zmax) ' m) exceeds Z Top! Adjust bathymetry?'], ...
         'Adjust bathymetry?', ...
         'No', 'Yes', 'Yes');
     switch ButtonName
         case 'Yes'
-            [filename, pathname, filterindex] = uiputfile('*.dep', 'Select depth file',handles.Model(md).Input(ad).depFile);
+            [filename, pathname, filterindex] = uiputfile('*.dep', 'Select depth file',handles.model.delft3dflow.domain(ad).depFile);
             if ~isempty(pathname)
-                handles.Model(md).Input(ad).depFile=filename;                
-                handles.Model(md).Input(ad).depth=min(handles.Model(md).Input(ad).depth,handles.Model(md).Input(ad).zTop);
-                ddb_wldep('write',filename,handles.Model(md).Input(ad).depth);
+                handles.model.delft3dflow.domain(ad).depFile=filename;                
+                handles.model.delft3dflow.domain(ad).depth=min(handles.model.delft3dflow.domain(ad).depth,handles.model.delft3dflow.domain(ad).zTop);
+                ddb_wldep('write',filename,handles.model.delft3dflow.domain(ad).depth);
                 handles=ddb_Delft3DFLOW_plotBathy(handles,'plot','domain',ad);
             end
     end    
@@ -220,8 +220,8 @@ setHandles(handles);
 %%
 function editZBot
 handles=getHandles;
-zmin=nanmin(nanmin(handles.Model(md).Input(ad).depth));
-if zmin<handles.Model(md).Input(ad).zBot
+zmin=nanmin(nanmin(handles.model.delft3dflow.domain(ad).depth));
+if zmin<handles.model.delft3dflow.domain(ad).zBot
     ddb_giveWarning('text',['Maximum depth in model (' num2str(zmin) ' m) exceeds Z Bot!']);
 end
 setHandles(handles);

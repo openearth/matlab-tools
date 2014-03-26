@@ -72,11 +72,11 @@ if ~isempty(varargin)
 end
 
 ddb_plotDFlowFM('delete','domain',id);
-handles=ddb_initializeDFlowFMdomain(handles,'griddependentinput',id,handles.Model(md).Input(id).runid);
+handles=ddb_initializeDFlowFMdomain(handles,'griddependentinput',id,handles.model.dflowfm.domain(id).runid);
 
 set(gcf,'Pointer','arrow');
 
-% attName=handles.Model(md).Input(id).attName;
+% attName=handles.model.dflowfm.domain(id).attName;
 % 
 % if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
 %     coord='Spherical';
@@ -85,9 +85,9 @@ set(gcf,'Pointer','arrow');
 % end
 % 
 netstruc=curv2net(x,y,z);
-handles.Model(md).Input(id).netfile=[handles.Model(md).Input(id).attName '_net.nc'];
-handles.Model(md).Input(id).netstruc=netstruc;
-netStruc2nc(handles.Model(md).Input(id).netfile,netstruc,'cstype',handles.screenParameters.coordinateSystem.type);
+handles.model.dflowfm.domain(id).netfile=[handles.model.dflowfm.domain(id).attName '_net.nc'];
+handles.model.dflowfm.domain(id).netstruc=netstruc;
+netStruc2nc(handles.model.dflowfm.domain(id).netfile,netstruc,'cstype',handles.screenParameters.coordinateSystem.type);
 
 handles=ddb_DFlowFM_plotGrid(handles,'plot','domain',id);
 

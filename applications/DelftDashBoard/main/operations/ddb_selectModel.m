@@ -54,21 +54,25 @@ function ddb_selectModel(mdl)
 %%
 handles=getHandles;
 
+model=handles.activeModel.name;
+
 % Making previous model invisible
-set(handles.Model(md).GUI.element(1).element.handle,'Visible','off');
+set(handles.model.(model).GUI.element(1).element.handle,'Visible','off');
 
 % Deactivate current model
-feval(handles.Model(md).plotFcn,'update','active',0,'visible',1,'domain',0,'wavedomain',0,'deactivate',1);
+feval(handles.model.(model).plotFcn,'update','active',0,'visible',1,'domain',0,'wavedomain',0,'deactivate',1);
 
 % Setting new active model
-ii=strmatch(mdl,{handles.Model.name},'exact');
+models=fieldnames(handles.model);
+ii=strmatch(mdl,models,'exact');
 handles.activeModel.name=mdl;
 handles.activeModel.nr=ii;
+
 
 setHandles(handles);
 
 % Make new active model visible
-set(handles.Model(md).GUI.element(1).element.handle,'Visible','on');
+set(handles.model.(mdl).GUI.element(1).element.handle,'Visible','on');
 
 % Change menu items (file, domain and view)
 ddb_menuFile;
@@ -76,14 +80,14 @@ ddb_menuFile;
 %ddb_changeFileMenuItems;
 
 % Set the domain menu
-if handles.Model(md).supportsMultipleDomains
+if handles.model.(mdl).supportsMultipleDomains
     set(handles.GUIHandles.Menu.Domain.Main,'Enable','on');
 else
     set(handles.GUIHandles.Menu.Domain.Main,'Enable','off');
 end
 
 % Make the map panel a child of the present model tab panel
-set(handles.GUIHandles.mapPanel,'Parent',handles.Model(md).GUI.element(1).element.handle);
+set(handles.GUIHandles.mapPanel,'Parent',handles.model.(mdl).GUI.element(1).element.handle);
 
 % Select toolbox
 ddb_selectToolbox;

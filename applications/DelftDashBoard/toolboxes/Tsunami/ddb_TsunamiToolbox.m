@@ -430,24 +430,24 @@ function computeWaterLevel(opt)
 
 handles=getHandles;
 
-switch lower(handles.Model(md).name)
+switch lower(handles.activeModel.name)
     case{'delft3dflow'}
     otherwise
-        ddb_giveWarning('text',['Sorry, the tsunami toolbox does not support ' handles.Model(md).longName ' ...']);
+        ddb_giveWarning('text',['Sorry, the tsunami toolbox does not support ' handles.model.delft3dflow.longName ' ...']);
         return
 end
 
 % First check to see if a grid was loaded
-if isempty(handles.Model(md).Input(ad).gridX)
+if isempty(handles.model.delft3dflow.domain(ad).gridX)
     ddb_giveWarning('text','Please first create or load model grid!');
     return
 end
 
-for id=1:handles.Model(md).nrDomains
-    [filename, pathname, filterindex] = uiputfile('*.ini', ['Select initial conditions file for domain ' upper(handles.Model(md).Input(id).runid)],'');
+for id=1:handles.model.delft3dflow.nrDomains
+    [filename, pathname, filterindex] = uiputfile('*.ini', ['Select initial conditions file for domain ' upper(handles.model.delft3dflow.domain(id).runid)],'');
     filenames{id}=filename;
     if handles.toolbox.tsunami.adjustBathymetry
-        [filename, pathname, filterindex] = uiputfile('*.dep', ['Select new depth file for domain ' upper(handles.Model(md).Input(id).runid)],'');
+        [filename, pathname, filterindex] = uiputfile('*.dep', ['Select new depth file for domain ' upper(handles.model.delft3dflow.domain(id).runid)],'');
         depfiles{id}=filename;
     else
         depfiles{id}='';
@@ -517,11 +517,11 @@ if ~isempty(pathname)
         ddb_plotInitialTsunami(handles,xx1,yy1,zz);
         
         % Interpolate initial tsunami wave onto model grid(s)
-        for id=1:handles.Model(md).nrDomains
+        for id=1:handles.model.delft3dflow.nrDomains
                         
-            xz=handles.Model(md).Input(id).gridXZ;
-            yz=handles.Model(md).Input(id).gridYZ;
-            dp=handles.Model(md).Input(id).depth;
+            xz=handles.model.delft3dflow.domain(id).gridXZ;
+            yz=handles.model.delft3dflow.domain(id).gridYZ;
+            dp=handles.model.delft3dflow.domain(id).depth;
 
             oldSys=handles.screenParameters.coordinateSystem;
             newSys.name='WGS 84';
@@ -543,17 +543,17 @@ if ~isempty(pathname)
                 'xtsunami',xx,'ytsunami',yy,'ztsunami',zz,'inifile',filenames{id}, ...
                 'adjustbathymetry',adjustBathymetry,'depth',dp,'newdepfile',depfiles{id});
             
-            handles.Model(md).Input(id).iniFile=filenames{id};
-            handles.Model(md).Input(id).initialConditions='ini';
+            handles.model.delft3dflow.domain(id).iniFile=filenames{id};
+            handles.model.delft3dflow.domain(id).initialConditions='ini';
             
             if handles.toolbox.tsunami.adjustBathymetry
-                handles.Model(md).Input(id).depFile=depfiles{id};
-                mmax=handles.Model(md).Input(id).MMax;
-                nmax=handles.Model(md).Input(id).NMax;
-                dp=ddb_wldep('read',handles.Model(md).Input(id).depFile,[mmax nmax]);
+                handles.model.delft3dflow.domain(id).depFile=depfiles{id};
+                mmax=handles.model.delft3dflow.domain(id).MMax;
+                nmax=handles.model.delft3dflow.domain(id).NMax;
+                dp=ddb_wldep('read',handles.model.delft3dflow.domain(id).depFile,[mmax nmax]);
                 dp(dp==-999)=NaN;
-                handles.Model(md).Input(id).depth=-dp(1:end-1,1:end-1);
-                handles.Model(md).Input(id).depthZ=getDepthZ(handles.Model(md).Input(id).depth,handles.Model(md).Input(id).dpsOpt);
+                handles.model.delft3dflow.domain(id).depth=-dp(1:end-1,1:end-1);
+                handles.model.delft3dflow.domain(id).depthZ=getDepthZ(handles.model.delft3dflow.domain(id).depth,handles.model.delft3dflow.domain(id).dpsOpt);
                 handles=ddb_Delft3DFLOW_plotBathy(handles,'plot','domain',id);                
             end
                         
@@ -566,9 +566,9 @@ if ~isempty(pathname)
         
         % First check whether other boundary types are there
         bndr=1;
-        for id=1:handles.Model(md).nrDomains
-            for nb=1:handles.Model(md).Input(id).nrOpenBoundaries
-                switch lower(handles.Model(md).Input(id).openBoundaries(nb).type)
+        for id=1:handles.model.delft3dflow.nrDomains
+            for nb=1:handles.model.delft3dflow.domain(id).nrOpenBoundaries
+                switch lower(handles.model.delft3dflow.domain(id).openBoundaries(nb).type)
                     case{'r'}
                     otherwise
                         bndr=0;
@@ -579,18 +579,18 @@ if ~isempty(pathname)
             ButtonName = questdlg('Reset all boundaries to Riemann in order to avoid boundary reflections?','','No', 'Yes', 'Yes');
             switch ButtonName,
                 case 'Yes'
-                    for id=1:handles.Model(md).nrDomains
-                        for nb=1:handles.Model(md).Input(id).nrOpenBoundaries
-                            switch lower(handles.Model(md).Input(id).openBoundaries(nb).type)
+                    for id=1:handles.model.delft3dflow.nrDomains
+                        for nb=1:handles.model.delft3dflow.domain(id).nrOpenBoundaries
+                            switch lower(handles.model.delft3dflow.domain(id).openBoundaries(nb).type)
                                 case{'r'}
                                 otherwise                                    
-                                    handles.Model(md).Input(id).openBoundaries(nb).type='R';
-                                    handles.Model(md).Input(id).openBoundaries(nb).forcing='T';
-                                    t0=handles.Model(md).Input(id).startTime;
-                                    t1=handles.Model(md).Input(id).stopTime;
-                                    handles.Model(md).Input(id).openBoundaries(nb).timeSeriesT=[t0 t1];
-                                    handles.Model(md).Input(id).openBoundaries(nb).timeSeriesA=[0.0 0.0];
-                                    handles.Model(md).Input(id).openBoundaries(nb).timeSeriesB=[0.0 0.0];
+                                    handles.model.delft3dflow.domain(id).openBoundaries(nb).type='R';
+                                    handles.model.delft3dflow.domain(id).openBoundaries(nb).forcing='T';
+                                    t0=handles.model.delft3dflow.domain(id).startTime;
+                                    t1=handles.model.delft3dflow.domain(id).stopTime;
+                                    handles.model.delft3dflow.domain(id).openBoundaries(nb).timeSeriesT=[t0 t1];
+                                    handles.model.delft3dflow.domain(id).openBoundaries(nb).timeSeriesA=[0.0 0.0];
+                                    handles.model.delft3dflow.domain(id).openBoundaries(nb).timeSeriesB=[0.0 0.0];
                             end
                         end
                     end

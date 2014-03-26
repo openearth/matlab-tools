@@ -62,36 +62,36 @@ function ddb_editD3DFlowTransportConditionsTimeSeries
 %%
 h=getHandles;
 
-kmax=h.Model(md).Input(ad).KMax;
+kmax=h.model.delft3dflow.domain(ad).KMax;
 handles.KMax=kmax;
 
-ii=h.Model(md).Input(ad).activeOpenBoundary;
-handles.Bnd=h.Model(md).Input(ad).openBoundaries(ii);
+ii=h.model.delft3dflow.domain(ad).activeOpenBoundary;
+handles.Bnd=h.model.delft3dflow.domain(ad).openBoundaries(ii);
 
 handles.activeConstituent=1;
 
 k=0;
-if h.Model(md).Input(ad).salinity.include
+if h.model.delft3dflow.domain(ad).salinity.include
     k=k+1;
     handles.Constituents{k}='Salinity';
     handles.Constituent(k)=handles.Bnd.salinity;
 end
-if h.Model(md).Input(ad).temperature.include
+if h.model.delft3dflow.domain(ad).temperature.include
     k=k+1;
     handles.Constituents{k}='Temperature';
     handles.Constituent(k)=handles.Bnd.temperature;
 end
-if h.Model(md).Input(ad).sediments.include
-    for j=1:h.Model(md).Input(ad).nrSediments
+if h.model.delft3dflow.domain(ad).sediments.include
+    for j=1:h.model.delft3dflow.domain(ad).nrSediments
         k=k+1;
-        handles.Constituents{k}=h.Model(md).Input(ad).sediment(j).name;
+        handles.Constituents{k}=h.model.delft3dflow.domain(ad).sediment(j).name;
         handles.Constituent(k)=handles.Bnd.sediment(j);
     end
 end
-if h.Model(md).Input(ad).tracers
-    for j=1:h.Model(md).Input(ad).nrTracers
+if h.model.delft3dflow.domain(ad).tracers
+    for j=1:h.model.delft3dflow.domain(ad).nrTracers
         k=k+1;
-        handles.Constituents{k}=h.Model(md).Input(ad).tracer(j).name;
+        handles.Constituents{k}=h.model.delft3dflow.domain(ad).tracer(j).name;
         handles.Constituent(k)=handles.Bnd.tracer(j);
     end
 end
@@ -165,26 +165,26 @@ function PushOK_Callback(hObject,eventdata)
 
 handles=guidata(gcf);
 h=getHandles;
-ib=h.Model(md).Input(ad).activeOpenBoundary;
+ib=h.model.delft3dflow.domain(ad).activeOpenBoundary;
 ic=0;
-if h.Model(md).Input(ad).salinity.include
+if h.model.delft3dflow.domain(ad).salinity.include
     ic=ic+1;
-    h.Model(md).Input(ad).openBoundaries(ib).salinity=handles.Constituent(ic);
+    h.model.delft3dflow.domain(ad).openBoundaries(ib).salinity=handles.Constituent(ic);
 end
-if h.Model(md).Input(ad).temperature.include
+if h.model.delft3dflow.domain(ad).temperature.include
     ic=ic+1;
-    h.Model(md).Input(ad).openBoundaries(ib).temperature=handles.Constituent(ic);
+    h.model.delft3dflow.domain(ad).openBoundaries(ib).temperature=handles.Constituent(ic);
 end
-if h.Model(md).Input(ad).sediments.include
-    for j=1:h.Model(md).Input(ad).nrSediments
+if h.model.delft3dflow.domain(ad).sediments.include
+    for j=1:h.model.delft3dflow.domain(ad).nrSediments
         ic=ic+1;
-        h.Model(md).Input(ad).openBoundaries(ib).sediment(j)=handles.Constituent(ic);
+        h.model.delft3dflow.domain(ad).openBoundaries(ib).sediment(j)=handles.Constituent(ic);
     end
 end
-if h.Model(md).Input(ad).tracers
-    for j=1:h.Model(md).Input(ad).nrTracers
+if h.model.delft3dflow.domain(ad).tracers
+    for j=1:h.model.delft3dflow.domain(ad).nrTracers
         ic=ic+1;
-        h.Model(md).Input(ad).openBoundaries(ib).tracer(j)=handles.Constituent(ic);
+        h.model.delft3dflow.domain(ad).openBoundaries(ib).tracer(j)=handles.Constituent(ic);
     end
 end
 setHandles(h);

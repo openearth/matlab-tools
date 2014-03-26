@@ -182,7 +182,7 @@
     <position>440 110 100 20</position>
     <text>DD File</text>
     <textposition>left</textposition>
-    <variable>handles.Model(md).ddFile</variable>
+    <variable>handles.model.delft3dflow.ddFile</variable>
     <type>string</type>
     <tooltipstring>Edit name of DD file</tooltipstring>
   </element>

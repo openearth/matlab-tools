@@ -44,7 +44,6 @@ function handles = ddb_DFlowFM_plotBoundaries(handles, opt, varargin)
 % $Keywords: $
 
 %%
-imd=strmatch('DFlowFM',{handles.Model(:).name},'exact');
 
 vis=1;
 id=ad;
@@ -73,8 +72,8 @@ else
     markercolor=[0.5 0.5 0.5];
 end
 
-for ib=1:handles.Model(imd).Input(id).nrboundaries
-    plothandles(ib)=handles.Model(imd).Input(id).boundaries(ib).handle;
+for ib=1:handles.model.dflowfm.domain(id).nrboundaries
+    plothandles(ib)=handles.model.dflowfm.domain(id).boundaries(ib).handle;
 end
 
 switch lower(opt)
@@ -88,12 +87,12 @@ switch lower(opt)
 
         plothandles=[];
         
-        if handles.Model(imd).Input(id).nrboundaries>0
+        if handles.model.dflowfm.domain(id).nrboundaries>0
 
-            for isec=1:length(handles.Model(imd).Input(id).boundaries)
-                x=handles.Model(imd).Input(id).boundaries(isec).x;
-                y=handles.Model(imd).Input(id).boundaries(isec).y;
-                if isec==handles.Model(imd).Input(id).activeboundary
+            for isec=1:length(handles.model.dflowfm.domain(id).boundaries)
+                x=handles.model.dflowfm.domain(id).boundaries(isec).x;
+                y=handles.model.dflowfm.domain(id).boundaries(isec).y;
+                if isec==handles.model.dflowfm.domain(id).activeboundary
                     markercolor='r';
                 else
                     markercolor=[1 1 0];
@@ -101,7 +100,7 @@ switch lower(opt)
                 p=gui_polyline('plot','x',x,'y',y,'tag','dflowfmboundary', ...
                     'changecallback',@ddb_DFlowFM_boundaries,'changeinput','changeboundary','closed',0, ...
                     'Marker','o','color',linecolor,'markeredgecolor',markercolor,'markerfacecolor',markercolor);
-                handles.Model(imd).Input(id).boundaries(isec).handle=p;
+                handles.model.dflowfm.domain(id).boundaries(isec).handle=p;
 
                 plothandles(isec)=p;
                 
@@ -131,12 +130,12 @@ switch lower(opt)
     case{'update'}
         try
 
-            if handles.Model(imd).Input(id).nrboundaries>0
+            if handles.model.dflowfm.domain(id).nrboundaries>0
                 
                 for ip=1:length(plothandles)
 
                     if iactive
-                        if ip==handles.Model(imd).Input(id).activeboundary
+                        if ip==handles.model.dflowfm.domain(id).activeboundary
                             markercolor='r';
                         else
                             markercolor=[1 1 0];

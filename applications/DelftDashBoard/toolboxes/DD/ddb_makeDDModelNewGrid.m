@@ -73,8 +73,8 @@ refn=handles.toolbox.dd.nRefinement;
 mmin=mdd(1);mmax=mdd(2);
 nmin=ndd(1);nmax=ndd(2);
 
-x0=handles.Model(md).Input(id1).gridX;
-y0=handles.Model(md).Input(id1).gridY;
+x0=handles.model.delft3dflow.domain(id1).gridX;
+y0=handles.model.delft3dflow.domain(id1).gridY;
 
 x2coarse=x0(mmin:mmax,nmin:nmax);
 y2coarse=y0(mmin:mmax,nmin:nmax);
@@ -97,12 +97,12 @@ else
 end
 ddb_wlgrid('write','FileName',grd2,'X',x2,'Y',y2,'Enclosure',enc2,'CoordinateSystem',coord);
 
-handles.Model(md).Input(id2).grdFile=[runid '.grd'];
-handles.Model(md).Input(id2).encFile=[runid '.enc'];
-handles.Model(md).Input(id2).gridX=x2;
-handles.Model(md).Input(id2).gridY=y2;
-[handles.Model(md).Input(id2).gridXZ,handles.Model(md).Input(id2).gridYZ]=getXZYZ(x2,y2);
-handles.Model(md).Input(id2).MMax=size(x2,1)+1;
-handles.Model(md).Input(id2).NMax=size(x2,2)+1;
-handles.Model(md).Input(id2).kcs=determineKCS(handles.Model(md).Input(id2).gridX,handles.Model(md).Input(id2).gridY);
+handles.model.delft3dflow.domain(id2).grdFile=[runid '.grd'];
+handles.model.delft3dflow.domain(id2).encFile=[runid '.enc'];
+handles.model.delft3dflow.domain(id2).gridX=x2;
+handles.model.delft3dflow.domain(id2).gridY=y2;
+[handles.model.delft3dflow.domain(id2).gridXZ,handles.model.delft3dflow.domain(id2).gridYZ]=getXZYZ(x2,y2);
+handles.model.delft3dflow.domain(id2).MMax=size(x2,1)+1;
+handles.model.delft3dflow.domain(id2).NMax=size(x2,2)+1;
+handles.model.delft3dflow.domain(id2).kcs=determineKCS(handles.model.delft3dflow.domain(id2).gridX,handles.model.delft3dflow.domain(id2).gridY);
 

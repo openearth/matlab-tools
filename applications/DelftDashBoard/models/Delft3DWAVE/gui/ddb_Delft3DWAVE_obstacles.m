@@ -6,7 +6,7 @@ if isempty(varargin)
     ddb_zoomOff;
     ddb_refreshScreen;
     ddb_Delft3DWAVE_plotObstacles(handles,'update');
-    if handles.Model(md).Input.nrobstacles>0
+    if handles.model.delft3dwave.domain.nrobstacles>0
         setInstructions({'','','Drag obstacle vertices to change its location'});
     end
 else
@@ -55,77 +55,77 @@ end
 %%
 function selectObstacleType
 handles=getHandles;
-val=handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).type;
-iac=handles.Model(md).Input.activeobstacles;
+val=handles.model.delft3dwave.domain.obstacles(handles.model.delft3dwave.domain.activeobstacle).type;
+iac=handles.model.delft3dwave.domain.activeobstacles;
 for ii=1:length(iac)
     n=iac(ii);
-    handles.Model(md).Input.obstacles(n).type=val;
+    handles.model.delft3dwave.domain.obstacles(n).type=val;
 end
 setHandles(handles);
 
 %%
 function selectReflections
 handles=getHandles;
-val=handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).reflections;
-iac=handles.Model(md).Input.activeobstacles;
+val=handles.model.delft3dwave.domain.obstacles(handles.model.delft3dwave.domain.activeobstacle).reflections;
+iac=handles.model.delft3dwave.domain.activeobstacles;
 for ii=1:length(iac)
     n=iac(ii);
-    handles.Model(md).Input.obstacles(n).reflections=val;
+    handles.model.delft3dwave.domain.obstacles(n).reflections=val;
 end
 setHandles(handles);
 
 %%
 function selectReflectionCoefficient
 handles=getHandles;
-val=handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).refleccoef;
-iac=handles.Model(md).Input.activeobstacles;
+val=handles.model.delft3dwave.domain.obstacles(handles.model.delft3dwave.domain.activeobstacle).refleccoef;
+iac=handles.model.delft3dwave.domain.activeobstacles;
 for ii=1:length(iac)
     n=iac(ii);
-    handles.Model(md).Input.obstacles(n).refleccoef=val;
+    handles.model.delft3dwave.domain.obstacles(n).refleccoef=val;
 end
 setHandles(handles);
 
 %%
 function selectTransmissionCoefficient
 handles=getHandles;
-val=handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).transmcoef;
-iac=handles.Model(md).Input.activeobstacles;
+val=handles.model.delft3dwave.domain.obstacles(handles.model.delft3dwave.domain.activeobstacle).transmcoef;
+iac=handles.model.delft3dwave.domain.activeobstacles;
 for ii=1:length(iac)
     n=iac(ii);
-    handles.Model(md).Input.obstacles(n).transmcoef=val;
+    handles.model.delft3dwave.domain.obstacles(n).transmcoef=val;
 end
 setHandles(handles);
 
 %%
 function selectHeight
 handles=getHandles;
-val=handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).height;
-iac=handles.Model(md).Input.activeobstacles;
+val=handles.model.delft3dwave.domain.obstacles(handles.model.delft3dwave.domain.activeobstacle).height;
+iac=handles.model.delft3dwave.domain.activeobstacles;
 for ii=1:length(iac)
     n=iac(ii);
-    handles.Model(md).Input.obstacles(n).height=val;
+    handles.model.delft3dwave.domain.obstacles(n).height=val;
 end
 setHandles(handles);
 
 %%
 function selectAlpha
 handles=getHandles;
-val=handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).alpha;
-iac=handles.Model(md).Input.activeobstacles;
+val=handles.model.delft3dwave.domain.obstacles(handles.model.delft3dwave.domain.activeobstacle).alpha;
+iac=handles.model.delft3dwave.domain.activeobstacles;
 for ii=1:length(iac)
     n=iac(ii);
-    handles.Model(md).Input.obstacles(n).alpha=val;
+    handles.model.delft3dwave.domain.obstacles(n).alpha=val;
 end
 setHandles(handles);
 
 %%
 function selectBeta
 handles=getHandles;
-val=handles.Model(md).Input.obstacles(handles.Model(md).Input.activeobstacle).beta;
-iac=handles.Model(md).Input.activeobstacles;
+val=handles.model.delft3dwave.domain.obstacles(handles.model.delft3dwave.domain.activeobstacle).beta;
+iac=handles.model.delft3dwave.domain.activeobstacles;
 for ii=1:length(iac)
     n=iac(ii);
-    handles.Model(md).Input.obstacles(n).beta=val;
+    handles.model.delft3dwave.domain.obstacles(n).beta=val;
 end
 setHandles(handles);
 
@@ -145,16 +145,16 @@ function addObstacle(h,x,y,nr)
 setInstructions({'','','Drag obstacle vertices to change the obstacle location'});
 
 handles=getHandles;
-handles.Model(md).Input.nrobstacles=handles.Model(md).Input.nrobstacles+1;
-nrobs=handles.Model(md).Input.nrobstacles;
-handles.Model(md).Input.obstacles=ddb_initializeDelft3DWAVEObstacle(handles.Model(md).Input.obstacles,nrobs);
-handles.Model(md).Input.obstacles(nrobs).name=['Obstacle ' num2str(nrobs)];
-handles.Model(md).Input.obstacles(nrobs).handle=h;
-handles.Model(md).Input.activeobstacle=nrobs;
-handles.Model(md).Input.activeobstacles=handles.Model(md).Input.activeobstacle;
-handles.Model(md).Input.obstaclenames{nrobs}=handles.Model(md).Input.obstacles(nrobs).name;
-handles.Model(md).Input.obstacles(nrobs).x=x;
-handles.Model(md).Input.obstacles(nrobs).y=y;
+handles.model.delft3dwave.domain.nrobstacles=handles.model.delft3dwave.domain.nrobstacles+1;
+nrobs=handles.model.delft3dwave.domain.nrobstacles;
+handles.model.delft3dwave.domain.obstacles=ddb_initializeDelft3DWAVEObstacle(handles.model.delft3dwave.domain.obstacles,nrobs);
+handles.model.delft3dwave.domain.obstacles(nrobs).name=['Obstacle ' num2str(nrobs)];
+handles.model.delft3dwave.domain.obstacles(nrobs).handle=h;
+handles.model.delft3dwave.domain.activeobstacle=nrobs;
+handles.model.delft3dwave.domain.activeobstacles=handles.model.delft3dwave.domain.activeobstacle;
+handles.model.delft3dwave.domain.obstaclenames{nrobs}=handles.model.delft3dwave.domain.obstacles(nrobs).name;
+handles.model.delft3dwave.domain.obstacles(nrobs).x=x;
+handles.model.delft3dwave.domain.obstacles(nrobs).y=y;
 setHandles(handles);
 
 ddb_Delft3DWAVE_plotObstacles(handles,'update');
@@ -166,16 +166,16 @@ function changeObstacle(h,x,y,nr)
 
 iac=[];
 handles=getHandles;
-for ii=1:length(handles.Model(md).Input.obstacles)
-    if handles.Model(md).Input.obstacles(ii).handle==h
+for ii=1:length(handles.model.delft3dwave.domain.obstacles)
+    if handles.model.delft3dwave.domain.obstacles(ii).handle==h
         iac=ii;
         break
     end
 end
 if ~isempty(iac)
-    handles.Model(md).Input.activeobstacle=iac;
-    handles.Model(md).Input.obstacles(iac).x=x;
-    handles.Model(md).Input.obstacles(iac).y=y;
+    handles.model.delft3dwave.domain.activeobstacle=iac;
+    handles.model.delft3dwave.domain.obstacles(iac).x=x;
+    handles.model.delft3dwave.domain.obstacles(iac).y=y;
 end
 
 setHandles(handles);
@@ -188,18 +188,18 @@ gui_updateActiveTab;
 function deleteObstacle
 
 handles=getHandles;
-if handles.Model(md).Input.nrobstacles>0
-    iac=handles.Model(md).Input.activeobstacle;
+if handles.model.delft3dwave.domain.nrobstacles>0
+    iac=handles.model.delft3dwave.domain.activeobstacle;
     try
-        delete(handles.Model(md).Input.obstacles(iac).handle);
+        delete(handles.model.delft3dwave.domain.obstacles(iac).handle);
     end
-    handles.Model(md).Input.obstacles=removeFromStruc(handles.Model(md).Input.obstacles,iac);
-    handles.Model(md).Input.obstaclenames=removeFromCellArray(handles.Model(md).Input.obstaclenames,iac);
-    handles.Model(md).Input.nrobstacles=handles.Model(md).Input.nrobstacles-1;
-    handles.Model(md).Input.activeobstacle=max(min(handles.Model(md).Input.activeobstacle,handles.Model(md).Input.nrobstacles),1);
-    handles.Model(md).Input.activeobstacles=handles.Model(md).Input.activeobstacle;
-    if handles.Model(md).Input.nrobstacles==0
-        handles.Model(md).Input.obstacles=ddb_initializeDelft3DWAVEObstacle(handles.Model(md).Input.obstacles,1);
+    handles.model.delft3dwave.domain.obstacles=removeFromStruc(handles.model.delft3dwave.domain.obstacles,iac);
+    handles.model.delft3dwave.domain.obstaclenames=removeFromCellArray(handles.model.delft3dwave.domain.obstaclenames,iac);
+    handles.model.delft3dwave.domain.nrobstacles=handles.model.delft3dwave.domain.nrobstacles-1;
+    handles.model.delft3dwave.domain.activeobstacle=max(min(handles.model.delft3dwave.domain.activeobstacle,handles.model.delft3dwave.domain.nrobstacles),1);
+    handles.model.delft3dwave.domain.activeobstacles=handles.model.delft3dwave.domain.activeobstacle;
+    if handles.model.delft3dwave.domain.nrobstacles==0
+        handles.model.delft3dwave.domain.obstacles=ddb_initializeDelft3DWAVEObstacle(handles.model.delft3dwave.domain.obstacles,1);
     end
     setHandles(handles);
     gui_updateActiveTab;
@@ -219,7 +219,7 @@ setHandles(handles);
 function loadObstaclePolylinesFile
 handles=getHandles;
 
-nrobs=handles.Model(md).Input.nrobstacles;
+nrobs=handles.model.delft3dwave.domain.nrobstacles;
 
 if nrobs>0
     ButtonName = questdlg('Overwrite existing obstacles?', ...
@@ -227,7 +227,7 @@ if nrobs>0
         'No', 'Yes', 'Yes');
     switch ButtonName,
         case 'No'
-            nrobs=handles.Model(md).Input.nrobstacles;
+            nrobs=handles.model.delft3dwave.domain.nrobstacles;
         case 'Yes'
             nrobs=0;
             handles=ddb_Delft3DWAVE_plotObstacles(handles,'delete');
@@ -235,20 +235,20 @@ if nrobs>0
 end
 
 obs=[];
-obs=ddb_Delft3DWAVE_readObstaclePolylineFile(obs,handles.Model(md).Input.obstaclepolylinesfile);
-handles.Model(md).Input.nrobstacles=nrobs+length(obs);
+obs=ddb_Delft3DWAVE_readObstaclePolylineFile(obs,handles.model.delft3dwave.domain.obstaclepolylinesfile);
+handles.model.delft3dwave.domain.nrobstacles=nrobs+length(obs);
 if nrobs==0
-    handles.Model(md).Input.obstacles=[];
-    handles.Model(md).Input.obstaclenames={''};
+    handles.model.delft3dwave.domain.obstacles=[];
+    handles.model.delft3dwave.domain.obstaclenames={''};
 end
-handles.Model(md).Input.activeobstacle=1;
-handles.Model(md).Input.activeobstacles=1;
+handles.model.delft3dwave.domain.activeobstacle=1;
+handles.model.delft3dwave.domain.activeobstacles=1;
 for ii=1:length(obs)
-    handles.Model(md).Input.obstacles=ddb_initializeDelft3DWAVEObstacle(handles.Model(md).Input.obstacles,nrobs+ii);
-    handles.Model(md).Input.obstacles(nrobs+ii).name=obs(ii).name;
-    handles.Model(md).Input.obstacles(nrobs+ii).x=obs(ii).x;
-    handles.Model(md).Input.obstacles(nrobs+ii).y=obs(ii).y;
-    handles.Model(md).Input.obstaclenames{nrobs+ii}=obs(ii).name;
+    handles.model.delft3dwave.domain.obstacles=ddb_initializeDelft3DWAVEObstacle(handles.model.delft3dwave.domain.obstacles,nrobs+ii);
+    handles.model.delft3dwave.domain.obstacles(nrobs+ii).name=obs(ii).name;
+    handles.model.delft3dwave.domain.obstacles(nrobs+ii).x=obs(ii).x;
+    handles.model.delft3dwave.domain.obstacles(nrobs+ii).y=obs(ii).y;
+    handles.model.delft3dwave.domain.obstaclenames{nrobs+ii}=obs(ii).name;
 end
 handles=ddb_Delft3DWAVE_plotObstacles(handles,'plot');
 setHandles(handles);
@@ -259,13 +259,13 @@ function loadObstaclesFile
 handles=getHandles;
 
 obs=[];
-[obs,plifile]=ddb_Delft3DWAVE_readObstacleFile(obs,handles.Model(md).Input.obstaclefile);
-handles.Model(md).Input.obstaclepolylinesfile=plifile;
-handles.Model(md).Input.obstacles=obs;
-handles.Model(md).Input.nrobstacles=length(obs);
-handles.Model(md).Input.activeobstacle=1;
+[obs,plifile]=ddb_Delft3DWAVE_readObstacleFile(obs,handles.model.delft3dwave.domain.obstaclefile);
+handles.model.delft3dwave.domain.obstaclepolylinesfile=plifile;
+handles.model.delft3dwave.domain.obstacles=obs;
+handles.model.delft3dwave.domain.nrobstacles=length(obs);
+handles.model.delft3dwave.domain.activeobstacle=1;
 for ii=1:length(obs)
-    handles.Model(md).Input.obstaclenames{ii}=obs(ii).name;
+    handles.model.delft3dwave.domain.obstaclenames{ii}=obs(ii).name;
 end
 handles=ddb_Delft3DWAVE_plotObstacles(handles,'plot');
 
@@ -275,13 +275,13 @@ gui_updateActiveTab;
 %%
 function saveObstaclesFile
 handles=getHandles;
-[filename, pathname, filterindex] = uiputfile('*.pli','Select Obstacles Polylines File',handles.Model(md).Input.obstaclepolylinesfile);
+[filename, pathname, filterindex] = uiputfile('*.pli','Select Obstacles Polylines File',handles.model.delft3dwave.domain.obstaclepolylinesfile);
 if pathname~=0
     curdir=[lower(cd) '\'];
     if ~strcmpi(curdir,pathname)
         filename=[pathname filename];
     end
-    handles.Model(md).Input.obstaclepolylinesfile=filename;
+    handles.model.delft3dwave.domain.obstaclepolylinesfile=filename;
     setHandles(handles);
 else
     return
@@ -293,35 +293,35 @@ function copyFromFlow
 
 handles=getHandles;
 
-if handles.Model(1).Input(1).nrThinDams>0
+if handles.model.delft3dflow.domain(1).nrThinDams>0
 
-    xg=handles.Model(1).Input(1).gridX;
-    yg=handles.Model(1).Input(1).gridY;
-    for ii=1:length(handles.Model(1).Input(1).thinDams)
+    xg=handles.model.delft3dflow.domain(1).gridX;
+    yg=handles.model.delft3dflow.domain(1).gridY;
+    for ii=1:length(handles.model.delft3dflow.domain(1).thinDams)
         
-        m1=handles.Model(1).Input(1).thinDams(ii).M1;
-        m2=handles.Model(1).Input(1).thinDams(ii).M2;
-        n1=handles.Model(1).Input(1).thinDams(ii).N1;
-        n2=handles.Model(1).Input(1).thinDams(ii).N2;
+        m1=handles.model.delft3dflow.domain(1).thinDams(ii).M1;
+        m2=handles.model.delft3dflow.domain(1).thinDams(ii).M2;
+        n1=handles.model.delft3dflow.domain(1).thinDams(ii).N1;
+        n2=handles.model.delft3dflow.domain(1).thinDams(ii).N2;
         x(1)=xg(m1,n1);
         x(2)=xg(m2,n2);
         y(1)=yg(m1,n1);
         y(2)=yg(m2,n2);
         
-        nrobs=handles.Model(md).Input.nrobstacles;
-        handles.Model(md).Input.nrobstacles=nrobs+1;
+        nrobs=handles.model.delft3dwave.domain.nrobstacles;
+        handles.model.delft3dwave.domain.nrobstacles=nrobs+1;
         if nrobs==0
-            handles.Model(md).Input.obstacles=[];
-            handles.Model(md).Input.obstaclenames={''};
+            handles.model.delft3dwave.domain.obstacles=[];
+            handles.model.delft3dwave.domain.obstaclenames={''};
         end
-        handles.Model(md).Input.activeobstacle=1;
-        handles.Model(md).Input.activeobstacles=1;
+        handles.model.delft3dwave.domain.activeobstacle=1;
+        handles.model.delft3dwave.domain.activeobstacles=1;
         
-        handles.Model(md).Input.obstacles=ddb_initializeDelft3DWAVEObstacle(handles.Model(md).Input.obstacles,nrobs+1);
-        handles.Model(md).Input.obstacles(nrobs+1).name=['Obstacle from FLOW ' num2str(ii)];
-        handles.Model(md).Input.obstacles(nrobs+1).x=x;
-        handles.Model(md).Input.obstacles(nrobs+1).y=y;
-        handles.Model(md).Input.obstaclenames{nrobs+1}=handles.Model(md).Input.obstacles(nrobs+1).name;
+        handles.model.delft3dwave.domain.obstacles=ddb_initializeDelft3DWAVEObstacle(handles.model.delft3dwave.domain.obstacles,nrobs+1);
+        handles.model.delft3dwave.domain.obstacles(nrobs+1).name=['Obstacle from FLOW ' num2str(ii)];
+        handles.model.delft3dwave.domain.obstacles(nrobs+1).x=x;
+        handles.model.delft3dwave.domain.obstacles(nrobs+1).y=y;
+        handles.model.delft3dwave.domain.obstaclenames{nrobs+1}=handles.model.delft3dwave.domain.obstacles(nrobs+1).name;
         
     end
     

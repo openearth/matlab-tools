@@ -74,11 +74,11 @@ switch opt
             end
             ddb_plotDFlowFM('delete');
             id=handles.activeDomain;
-            handles.Model(md).Input=clearStructure(handles.Model(md).Input,id);
+            handles.model.dflowfm.domain=clearStructure(handles.model.dflowfm.domain,id);
             runid=filename(1:end-4);
             handles=ddb_initializeDFlowFMdomain(handles,'all',id,runid);
             filename=[runid '.mdu'];
-            handles.Model(md).Input.mduFile=filename;
+            handles.model.dflowfm.domain.mduFile=filename;
             handles=ddb_readMDU(handles,filename,id);
             handles=ddb_DFlowFM_readAttributeFiles(handles,id);
             setHandles(handles);

@@ -67,8 +67,8 @@ posx=[];
 iac=handles.toolbox.tidestations.activeDatabase;
 names=handles.toolbox.tidestations.database(iac).stationShortNames;
 
-xg=handles.Model(md).Input(ad).gridX;
-yg=handles.Model(md).Input(ad).gridY;
+xg=handles.model.delft3dflow.domain(ad).gridX;
+yg=handles.model.delft3dflow.domain(ad).gridY;
 
 if isempty(xg)
     ddb_giveWarning('text','Please first load or generate a grid!');

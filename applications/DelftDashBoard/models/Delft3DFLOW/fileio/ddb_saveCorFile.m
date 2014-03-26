@@ -61,24 +61,24 @@ function handles = ddb_saveCorFile(handles, id)
 % $Keywords: $
 
 %%
-fid=fopen(handles.Model(md).Input(id).corFile,'w');
+fid=fopen(handles.model.delft3dflow.domain(id).corFile,'w');
 
-nr=handles.Model(md).Input(id).nrAstronomicComponentSets;
+nr=handles.model.delft3dflow.domain(id).nrAstronomicComponentSets;
 
 for i=1:nr
     k=0;
-    for j=1:handles.Model(md).Input(id).astronomicComponentSets(i).nr
-        if handles.Model(md).Input(id).astronomicComponentSets(i).correction(j)
+    for j=1:handles.model.delft3dflow.domain(id).astronomicComponentSets(i).nr
+        if handles.model.delft3dflow.domain(id).astronomicComponentSets(i).correction(j)
             k=k+1;
         end
     end
     if k>0
-        fprintf(fid,'%s\n',handles.Model(md).Input(id).astronomicComponentSets(i).name);
-        for j=1:handles.Model(md).Input(id).astronomicComponentSets(i).nr
-            if handles.Model(md).Input(id).astronomicComponentSets(i).correction(j)
-                cmp=handles.Model(md).Input(id).astronomicComponentSets(i).component{j};
-                amp=handles.Model(md).Input(id).astronomicComponentSets(i).amplitudeCorrection(j);
-                pha=handles.Model(md).Input(id).astronomicComponentSets(i).phaseCorrection(j);
+        fprintf(fid,'%s\n',handles.model.delft3dflow.domain(id).astronomicComponentSets(i).name);
+        for j=1:handles.model.delft3dflow.domain(id).astronomicComponentSets(i).nr
+            if handles.model.delft3dflow.domain(id).astronomicComponentSets(i).correction(j)
+                cmp=handles.model.delft3dflow.domain(id).astronomicComponentSets(i).component{j};
+                amp=handles.model.delft3dflow.domain(id).astronomicComponentSets(i).amplitudeCorrection(j);
+                pha=handles.model.delft3dflow.domain(id).astronomicComponentSets(i).phaseCorrection(j);
                 fprintf(fid,'%s %15.7e %15.7e\n',[cmp repmat(' ',1,8-length(cmp))],amp,pha);
             end
         end

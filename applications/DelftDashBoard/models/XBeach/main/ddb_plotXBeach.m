@@ -2,8 +2,6 @@ function ddb_plotXBeach(option, varargin)
 
 handles=getHandles;
 
-imd=strmatch('XBeach',{handles.Model(:).name},'exact');
-
 vis=1;
 act=0;
 idomain=0;
@@ -24,7 +22,7 @@ end
 if idomain==0
     % Update all domains
     n1=1;
-    n2=handles.Model(imd).nrDomains;
+    n2=handles.model.xbeach.nrDomains;
 else
     % Update one domain
     n1=idomain;
@@ -65,11 +63,11 @@ end
    % - PLOT OFFSHORE BOUNDARY + ORIGIN OF MODEL
    % - PLOT OBSERVATION POINTS
    
-%     if handles.Model(md).Input(id).NrObservationPoints>0
+%     if handles.model.xbeach.domain(id).NrObservationPoints>0
 %         ddb_plotFlowAttributes(handles,'ObservationPoints',opt,id,0,1);
 %     end
 % 
-%     if handles.Model(md).Input(id).NrCrossSections>0
+%     if handles.model.xbeach.domain(id).NrCrossSections>0
 %         ddb_plotFlowAttributes(handles,'CrossSections',opt,id,0,1);
 %     end
     

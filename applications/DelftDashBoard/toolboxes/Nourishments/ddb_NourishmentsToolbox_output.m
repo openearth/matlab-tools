@@ -67,7 +67,6 @@ if isempty(varargin)
     ddb_plotNourishments('activate');
     handles=getHandles;
     clearInstructions;
-%     % setUIElements(handles.Model(md).GUI.elements.tabs(1).elements);
 else
     %Options selected
     opt=lower(varargin{1});

@@ -202,7 +202,7 @@ npmax=20000000;
 
 if handles.toolbox.modelmaker.nX*handles.toolbox.modelmaker.nY<=npmax
     
-    [filename, pathname, filterindex] = uiputfile('*.grd', 'Grid File Name',[handles.Model(md).Input(ad).attName '.grd']);
+    [filename, pathname, filterindex] = uiputfile('*.grd', 'Grid File Name',[handles.model.delft3dflow.domain(ad).attName '.grd']);
     
     if pathname~=0
         
@@ -291,7 +291,7 @@ setHandles(handles);
 %%
 function generateOpenBoundaries
 handles=getHandles;
-[filename, pathname, filterindex] = uiputfile('*.bnd', 'Boundary File Name',[handles.Model(md).Input(ad).attName '.bnd']);
+[filename, pathname, filterindex] = uiputfile('*.bnd', 'Boundary File Name',[handles.model.delft3dflow.domain(ad).attName '.bnd']);
 if pathname~=0    
     handles=ddb_generateBoundaryLocationsDelft3DFLOW(handles,ad,filename);
     setHandles(handles);
@@ -300,7 +300,7 @@ end
 %%
 function generateBoundaryConditions
 handles=getHandles;
-[filename, pathname, filterindex] = uiputfile('*.bca', 'Boundary Conditions File Name',[handles.Model(md).Input(ad).attName '.bca']);
+[filename, pathname, filterindex] = uiputfile('*.bca', 'Boundary Conditions File Name',[handles.model.delft3dflow.domain(ad).attName '.bca']);
 if pathname~=0    
     handles=ddb_generateBoundaryConditionsDelft3DFLOW(handles,ad,filename);
     setHandles(handles);
@@ -309,19 +309,19 @@ end
 %%
 function generateInitialConditions
 handles=getHandles;
-f=str2func(['ddb_generateInitialConditions' handles.Model(md).name]);
+f=str2func(['ddb_generateInitialConditions' handles.model.delft3dflow.name]);
 try
     handles=feval(f,handles,ad,'ddb_test','ddb_test');
 catch
-    ddb_giveWarning('text',['Initial conditions generation not supported for ' handles.Model(md).longName]);
+    ddb_giveWarning('text',['Initial conditions generation not supported for ' handles.model.delft3dflow.longName]);
     return
 end
-if ~isempty(handles.Model(md).Input(ad).grdFile)
-    attName=handles.Model(md).Input(ad).attName;
-    handles.Model(md).Input(ad).iniFile=[attName '.ini'];
-    handles.Model(md).Input(ad).initialConditions='ini';
-    handles.Model(md).Input(ad).smoothingTime=0.0;
-    handles=feval(f,handles,ad,handles.Model(md).Input(ad).iniFile);
+if ~isempty(handles.model.delft3dflow.domain(ad).grdFile)
+    attName=handles.model.delft3dflow.domain(ad).attName;
+    handles.model.delft3dflow.domain(ad).iniFile=[attName '.ini'];
+    handles.model.delft3dflow.domain(ad).initialConditions='ini';
+    handles.model.delft3dflow.domain(ad).smoothingTime=0.0;
+    handles=feval(f,handles,ad,handles.model.delft3dflow.domain(ad).iniFile);
 else
     ddb_giveWarning('Warning','First generate or load a grid');
 end

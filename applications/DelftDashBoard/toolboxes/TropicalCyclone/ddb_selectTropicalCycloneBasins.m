@@ -101,7 +101,7 @@ if (inp.showTCBasins == 1)
             
             %  Plot the polygon(s) & retrieve polygon info.
             [bname,bfname,babbrev,hpatch] = find_tc_polygon(inp.tcBasinsDir,inp.whichTCBasinOption, ...
-                handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY);
+                handles.model.delft3dflow.domain(ad).gridX,handles.model.delft3dflow.domain(ad).gridY);
             
             %  Store the info if the user did not cancel.
             if (~isempty(bname))
@@ -129,7 +129,7 @@ if (inp.showTCBasins == 1)
         %  This should be the 1st time through, unless the user canceled previously.
         %  Plot the basin(s), and get basin, polygon file name info.
         [bname,bfname,babbrev,hpatch] = find_tc_polygon(inp.tcBasinsDir,inp.whichTCBasinOption, ...
-            handles.Model(md).Input(ad).gridX,handles.Model(md).Input(ad).gridY);
+            handles.model.delft3dflow.domain(ad).gridX,handles.model.delft3dflow.domain(ad).gridY);
         
         %  Store the info if the user did not cancel.
         if (~isempty(bname))

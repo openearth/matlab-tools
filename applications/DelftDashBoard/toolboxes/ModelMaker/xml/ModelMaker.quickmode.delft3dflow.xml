@@ -194,7 +194,7 @@
     <tooltipstring>Edit run ID</tooltipstring>
     <text>Run ID</text>
     <textposition>left</textposition>
-    <variable>handles.Model(md).Input(ad).runid</variable>
+    <variable>handles.model.delft3dflow.domain(ad).runid</variable>
     <type>string</type>
   </element>
   <element>
@@ -204,7 +204,7 @@
     <tooltipstring>Edit name of attribute files</tooltipstring>
     <text>Attr Name</text>
     <textposition>left</textposition>
-    <variable>handles.Model(md).Input(ad).attName</variable>
+    <variable>handles.model.delft3dflow.domain(ad).attName</variable>
     <type>string</type>
   </element>
   <element>
@@ -215,7 +215,7 @@
     <text>Reference Time</text>
     <textposition>left</textposition>
     <type>date</type>
-    <variable>handles.Model(md).Input(ad).itDate</variable>
+    <variable>handles.model.delft3dflow.domain(ad).itDate</variable>
   </element>
   <element>
     <tag>editstarttime</tag>
@@ -224,7 +224,7 @@
     <tooltipstring>Edit start time</tooltipstring>
     <text>Start Time</text>
     <textposition>left</textposition>
-    <variable>handles.Model(md).Input(ad).startTime</variable>
+    <variable>handles.model.delft3dflow.domain(ad).startTime</variable>
     <type>datetime</type>
     <onchange>ddb_updateOutputTimes</onchange>
   </element>
@@ -235,7 +235,7 @@
     <tooltipstring>Edit stop time</tooltipstring>
     <text>Stop Time</text>
     <textposition>left</textposition>
-    <variable>handles.Model(md).Input(ad).stopTime</variable>
+    <variable>handles.model.delft3dflow.domain(ad).stopTime</variable>
     <type>datetime</type>
     <onchange>ddb_updateOutputTimes</onchange>
   </element>
@@ -246,7 +246,7 @@
     <tooltipstring>Edit time step (min)</tooltipstring>
     <text>Time Step</text>
     <textposition>left</textposition>
-    <variable>handles.Model(md).Input(ad).timeStep</variable>
+    <variable>handles.model.delft3dflow.domain(ad).timeStep</variable>
     <type>real</type>
   </element>
 </root>

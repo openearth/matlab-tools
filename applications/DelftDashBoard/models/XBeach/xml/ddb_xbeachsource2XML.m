@@ -414,15 +414,14 @@ fprintf(fid,'%s\n','% pick up defaults from autogen subfunction');
 fprintf(fid,'%s\n','par=getdefaultpars;');
 fprintf(fid,'%s\n','');
 % Initial commands (are all these necessary?)
-fprintf(fid,'%s\n','ii=strmatch(''XBeach'',{handles.Model.name},''exact'');');
-fprintf(fid,'%s\n','handles.Model(ii).Input(id).Description={''''};');
-fprintf(fid,'%s\n','handles.Model(ii).Input(id).Runid=runid;');
-fprintf(fid,'%s\n','handles.Model(ii).Input(id).AttName=handles.Model(ii).Input(id).Runid;');
-fprintf(fid,'%s\n','handles.Model(ii).Input(id).ItDate=floor(now);');
-fprintf(fid,'%s\n','handles.Model(ii).Input(id).StartTime=floor(now);');
-fprintf(fid,'%s\n','handles.Model(ii).Input(id).StopTime=floor(now)+2;');
-fprintf(fid,'%s\n','handles.Model(ii).Input(id).TimeStep=1;');
-fprintf(fid,'%s\n','handles.Model(ii).Input(id).ParamsFile=[lower(cd) ''\\''];');
+fprintf(fid,'%s\n','handles.model.xbeach.domain(id).Description={''''};');
+fprintf(fid,'%s\n','handles.model.xbeach.domain(id).Runid=runid;');
+fprintf(fid,'%s\n','handles.model.xbeach.domain(id).AttName=handles.model.xbeach.domain(id).Runid;');
+fprintf(fid,'%s\n','handles.model.xbeach.domain(id).ItDate=floor(now);');
+fprintf(fid,'%s\n','handles.model.xbeach.domain(id).StartTime=floor(now);');
+fprintf(fid,'%s\n','handles.model.xbeach.domain(id).StopTime=floor(now)+2;');
+fprintf(fid,'%s\n','handles.model.xbeach.domain(id).TimeStep=1;');
+fprintf(fid,'%s\n','handles.model.xbeach.domain(id).ParamsFile=[lower(cd) ''\\''];');
 % now we go through all the parameters we have in XBeach params.F90 file
 defaultsneeded={};
 for i=1:length(params_array)
@@ -439,12 +438,12 @@ for i=1:length(params_array)
                 for j=1:length(match)
                     defaultsneeded{end+1}=match{j};
                 end
-                fprintf(fid,'%s\n',['handles.Model(ii).Input(id).' params_array(i).name '= ' def ';']);
+                fprintf(fid,'%s\n',['handles.model.xbeach.domain(id).' params_array(i).name '= ' def ';']);
             else
-                fprintf(fid,'%s\n',['handles.Model(ii).Input(id).' params_array(i).name '= ''' def ''';']);
+                fprintf(fid,'%s\n',['handles.model.xbeach.domain(id).' params_array(i).name '= ''' def ''';']);
             end
         else
-            fprintf(fid,'%s\n',['handles.Model(ii).Input(id).' params_array(i).name '=' num2str(def) ';']);
+            fprintf(fid,'%s\n',['handles.model.xbeach.domain(id).' params_array(i).name '=' num2str(def) ';']);
         end
     end
 end

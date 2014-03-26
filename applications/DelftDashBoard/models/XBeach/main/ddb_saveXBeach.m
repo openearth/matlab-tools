@@ -15,8 +15,8 @@ switch lower(opt)
 %             if ~strcmpi(curdir,pathname)
 %                 filename=[pathname filename];
 %             end
-%             handles.Model(md).Input(ad).Runid='tst';
-%             handles.Model(md).Input(ad).ParamsFile=filename;
+%             handles.model.xbeach.domain(ad).Runid='tst';
+%             handles.model.xbeach.domain(ad).ParamsFile=filename;
 %             ddb_saveParams(handles);
 %         end
     case{'saveall'}
@@ -28,8 +28,8 @@ switch lower(opt)
             if ~strcmpi(curdir,pathname)
                 filename=[pathname filename];
             end
-            handles.Model(md).Input(ad).Runid='tst';
-            handles.Model(md).Input(ad).ParamsFile=filename;
+            handles.model.xbeach.domain(ad).Runid='tst';
+            handles.model.xbeach.domain(ad).ParamsFile=filename;
             handles=ddb_saveParams(handles);
         end
 end

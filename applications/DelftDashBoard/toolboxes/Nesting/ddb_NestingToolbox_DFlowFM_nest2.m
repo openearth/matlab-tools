@@ -118,7 +118,7 @@ if ~isempty(opt)
     bnd=nesthd2_new('input',handles.Model(md).Input,'openboundaries',bnd,'vertgrid',vertGrid,'hisfile',hisfile, ...
         'admfile',nestadm,'zcor',z0,'stride',stride,'opt',opt,'coordinatesystem',cs,'save','n');
     
-    handles.Model(md).Input(ad).boundaries=bnd;
+    handles.model.dflowfm.domain.boundaries=bnd;
 
 %     zersunif=zeros(2,1);
 %     

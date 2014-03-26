@@ -49,29 +49,29 @@ if strcmpi(opt,'saveallas')
     sall=1;
 end
    
-if handles.Model(md).Input.nrobstacles>0
+if handles.model.delft3dwave.domain.nrobstacles>0
 
-    if isempty(handles.Model(md).Input.obstaclepolylinesfile)
+    if isempty(handles.model.delft3dwave.domain.obstaclepolylinesfile)
         [filename, pathname, filterindex] = uiputfile('*.pli','Select Obstacle Polylines File','');
         if pathname~=0
             curdir=[lower(cd) '\'];
             if ~strcmpi(curdir,pathname)
                 filename=[pathname filename];
             end
-            handles.Model(md).Input.obstaclepolylinesfile=filename;
+            handles.model.delft3dwave.domain.obstaclepolylinesfile=filename;
         else
             return
         end
     end    
 
-    if sall || isempty(handles.Model(md).Input.obstaclefile)
+    if sall || isempty(handles.model.delft3dwave.domain.obstaclefile)
         [filename, pathname, filterindex] = uiputfile('*.obs','Select Obstacles File','');
         if pathname~=0
             curdir=[lower(cd) '\'];
             if ~strcmpi(curdir,pathname)
                 filename=[pathname filename];
             end
-            handles.Model(md).Input.obstaclefile=filename;
+            handles.model.delft3dwave.domain.obstaclefile=filename;
         else
             return
         end
@@ -81,8 +81,8 @@ if handles.Model(md).Input.nrobstacles>0
 end
 
 % Location files
-for ii=1:handles.Model(md).Input.nrlocationsets
-    if handles.Model(md).Input.locationsets(ii).nrpoints>0
-       ddb_Delft3DWAVE_saveLocationFile(handles.Model(md).Input.locationfile{ii},handles.Model(md).Input.locationsets(ii));
+for ii=1:handles.model.delft3dwave.domain.nrlocationsets
+    if handles.model.delft3dwave.domain.locationsets(ii).nrpoints>0
+       ddb_Delft3DWAVE_saveLocationFile(handles.model.delft3dwave.domain.locationfile{ii},handles.model.delft3dwave.domain.locationsets(ii));
     end
 end

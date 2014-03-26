@@ -5,13 +5,13 @@ handles=getHandles;
 
 hp = uipanel('Title','Physical Params','Units','pixels','Position',[50 30 420 140],'Tag','UIControl');
 
-handles.GUIHandles.EditGravity = uicontrol(gcf,'Style','edit', 'String',num2str(handles.Model(md).Input(ad).g),'Position',[180 130 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.EditDensity = uicontrol(gcf,'Style','edit', 'String',num2str(handles.Model(md).Input(ad).rho),'Position',[180 100 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.EditDensitySand = uicontrol(gcf,'Style','edit', 'String',num2str(handles.Model(md).Input(ad).rhos),'Position',[390 130 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.EditNUH = uicontrol(gcf,'Style','edit', 'String',num2str(handles.Model(md).Input(ad).nuh),'Position',[180 70 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.EditD50 = uicontrol(gcf,'Style','edit', 'String',num2str(handles.Model(md).Input(ad).D50),'Position',[390 100 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.EditD90 = uicontrol(gcf,'Style','edit', 'String',num2str(handles.Model(md).Input(ad).D90),'Position',[390 70 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.GUIHandles.EditPor = uicontrol(gcf,'Style','edit', 'String',num2str(handles.Model(md).Input(ad).por),'Position',[390 40 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.EditGravity = uicontrol(gcf,'Style','edit', 'String',num2str(handles.model.xbeach.domain(ad).g),'Position',[180 130 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.EditDensity = uicontrol(gcf,'Style','edit', 'String',num2str(handles.model.xbeach.domain(ad).rho),'Position',[180 100 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.EditDensitySand = uicontrol(gcf,'Style','edit', 'String',num2str(handles.model.xbeach.domain(ad).rhos),'Position',[390 130 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.EditNUH = uicontrol(gcf,'Style','edit', 'String',num2str(handles.model.xbeach.domain(ad).nuh),'Position',[180 70 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.EditD50 = uicontrol(gcf,'Style','edit', 'String',num2str(handles.model.xbeach.domain(ad).D50),'Position',[390 100 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.EditD90 = uicontrol(gcf,'Style','edit', 'String',num2str(handles.model.xbeach.domain(ad).D90),'Position',[390 70 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
+handles.GUIHandles.EditPor = uicontrol(gcf,'Style','edit', 'String',num2str(handles.model.xbeach.domain(ad).por),'Position',[390 40 50 20],'HorizontalAlignment','right','BackgroundColor',[1 1 1],'Tag','UIControl');
 
 handles.GUIHandles.TextGravity = uicontrol(gcf,'Style','text', 'String','Gravity (m/s^2)','Position',[60 126 120 20],'HorizontalAlignment','left','Tag','UIControl');
 handles.GUIHandles.TextDensity = uicontrol(gcf,'Style','text', 'String','Density water (kg/m^3)','Position',[60 96 120 20],'HorizontalAlignment','left','Tag','UIControl');
@@ -34,42 +34,42 @@ setHandles(handles);
 %%
 function EditGravity_CallBack(hObject,eventdata);
 handles=getHandles;
-handles.Model(md).Input(ad).g=get(hObject,'String');
+handles.model.xbeach.domain(ad).g=get(hObject,'String');
 setHandles(handles);
 
 %%
 function EditDensity_CallBack(hObject,eventdata);
 handles=getHandles;
-handles.Model(md).Input(ad).rho=get(hObject,'String');
+handles.model.xbeach.domain(ad).rho=get(hObject,'String');
 setHandles(handles);
 
 %%
 function EditDensitySand_CallBack(hObject,eventdata);
 handles=getHandles;
-handles.Model(md).Input(ad).rhos=get(hObject,'String');
+handles.model.xbeach.domain(ad).rhos=get(hObject,'String');
 setHandles(handles);
 
 %%
 function EditNUH_CallBack(hObject,eventdata);
 handles=getHandles;
-handles.Model(md).Input(ad).nuh=get(hObject,'String');
+handles.model.xbeach.domain(ad).nuh=get(hObject,'String');
 setHandles(handles);
 
 %%
 function EditD50_CallBack(hObject,eventdata);
 handles=getHandles;
-handles.Model(md).Input(ad).D50=get(hObject,'String');
+handles.model.xbeach.domain(ad).D50=get(hObject,'String');
 setHandles(handles);
 
 %%
 function EditD90_CallBack(hObject,eventdata);
 handles=getHandles;
-handles.Model(md).Input(ad).D90=get(hObject,'String');
+handles.model.xbeach.domain(ad).D90=get(hObject,'String');
 setHandles(handles);
 
 %%
 function EditPor_CallBack(hObject,eventdata);
 handles=getHandles;
-handles.Model(md).Input(ad).por=get(hObject,'String');
+handles.model.xbeach.domain(ad).por=get(hObject,'String');
 setHandles(handles);
 

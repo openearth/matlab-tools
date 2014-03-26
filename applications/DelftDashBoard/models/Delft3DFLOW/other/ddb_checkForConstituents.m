@@ -61,10 +61,10 @@ function handles = ddb_checkForConstituents(handles, id)
 % $Keywords: $
 
 %%
-if handles.Model(md).Input(id).salinity.include || handles.Model(md).Input(id).temperature.include || ...
-        handles.Model(md).Input(id).sediments.include || handles.Model(md).Input(id).tracers
-    handles.Model(md).Input(id).constituents=1;
+if handles.model.delft3dflow.domain(id).salinity.include || handles.model.delft3dflow.domain(id).temperature.include || ...
+        handles.model.delft3dflow.domain(id).sediments.include || handles.model.delft3dflow.domain(id).tracers
+    handles.model.delft3dflow.domain(id).constituents=1;
 else
-    handles.Model(md).Input(id).constituents=0;
+    handles.model.delft3dflow.domain(id).constituents=0;
 end
 

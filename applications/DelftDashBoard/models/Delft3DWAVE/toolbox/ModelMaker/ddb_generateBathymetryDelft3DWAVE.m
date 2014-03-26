@@ -49,9 +49,9 @@ function handles = ddb_generateBathymetryDelft3DWAVE(handles, filename, id)
 % $HeadURL$
 % $Keywords: $
 
-if ~isempty(handles.Model(md).Input.domains(id).grid)
+if ~isempty(handles.model.delft3dwave.domain.domains(id).grid)
     
-    dpori=handles.Model(md).Input.domains(id).depth;
+    dpori=handles.model.delft3dwave.domain.domains(id).depth;
     dmax=max(max(dpori));
     if isempty(dmax)
         dmax=NaN;
@@ -79,8 +79,8 @@ if ~isempty(handles.Model(md).Input.domains(id).grid)
     
     % Generate bathymetry
     
-    xg=handles.Model(md).Input.domains(id).gridx;
-    yg=handles.Model(md).Input.domains(id).gridy;
+    xg=handles.model.delft3dwave.domain.domains(id).gridx;
+    yg=handles.model.delft3dwave.domain.domains(id).gridy;
     
     % Convert grid to cs of background image
     coord=handles.screenParameters.coordinateSystem;
@@ -116,17 +116,17 @@ if ~isempty(handles.Model(md).Input.domains(id).grid)
     
     switch opt
         case{'overwrite'}
-            handles.Model(md).Input.domains(id).depth=z;
+            handles.model.delft3dwave.domain.domains(id).depth=z;
         case{'combine'}
-            handles.Model(md).Input.domains(id).depth(isnan(handles.Model(md).Input.domains(id).depth))=z(isnan(handles.Model(md).Input.domains(id).depth));
+            handles.model.delft3dwave.domain.domains(id).depth(isnan(handles.model.delft3dwave.domain.domains(id).depth))=z(isnan(handles.model.delft3dwave.domain.domains(id).depth));
     end
     
-    z=handles.Model(md).Input.domains(id).depth;
+    z=handles.model.delft3dwave.domain.domains(id).depth;
     
     ddb_wldep('write',[attName '.dep'],z);
     
-    handles.Model(md).Input.domains(id).bedlevel=[attName '.dep'];
-    handles.Model(md).Input.domains(id).depthsource='file';
+    handles.model.delft3dwave.domain.domains(id).bedlevel=[attName '.dep'];
+    handles.model.delft3dwave.domain.domains(id).depthsource='file';
     
     try
         close(wb);

@@ -62,7 +62,7 @@ function ddb_editD3DFlowConditionsAstronomic
 %%
 h=getHandles;
 
-handles=h.Model(md).Input(ad);
+handles=h.model.delft3dflow.domain(ad);
 iac=handles.activeOpenBoundary;
 
 a=load([h.settingsDir 'tidalconstituents\t_constituents.mat']);
@@ -335,9 +335,9 @@ if ok==1
         h2.astronomicComponentSets=h2.astronomicComponentSets(1:end-1);
         h2.nrAstronomicComponentSets=h2.nrAstronomicComponentSets-1;
     end
-    handles.Model(md).Input(ad).astronomicComponentSets=h2.astronomicComponentSets;
-    handles.Model(md).Input(ad).nrAstronomicComponentSets=h2.nrAstronomicComponentSets;
-    handles.Model(md).Input(ad).openBoundaries=h2.openBoundaries;
+    handles.model.delft3dflow.domain(ad).astronomicComponentSets=h2.astronomicComponentSets;
+    handles.model.delft3dflow.domain(ad).nrAstronomicComponentSets=h2.nrAstronomicComponentSets;
+    handles.model.delft3dflow.domain(ad).openBoundaries=h2.openBoundaries;
     setHandles(handles);
     closereq;
 end

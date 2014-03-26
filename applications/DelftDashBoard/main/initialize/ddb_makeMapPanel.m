@@ -68,7 +68,7 @@ handles=getHandles;
 % First make large panel to contain map axis, colorbar etc.
 % The large panel will be a child of the active model gui
 
-handles.GUIHandles.mapPanel=uipanel('Units','pixels','Position',[5 175 870 440],'Parent',handles.Model(1).GUI.element(1).element.handle,'BorderType','none','BackgroundColor','none');
+handles.GUIHandles.mapPanel=uipanel('Units','pixels','Position',[5 175 870 440],'Parent',handles.model.delft3dflow.GUI.element(1).element.handle,'BorderType','none','BackgroundColor','none');
 
 % Add map axis
 
@@ -85,7 +85,7 @@ set(ax,'TickLength',[0 0]);
 set(ax,'Tag','map');
 
 view(2);
-set(ax,'xlim',[-180 180],'ylim',[-90 90],'zlim',[-12000 10000]);
+set(ax,'xlim',handles.screenParameters.xLim,'ylim',handles.screenParameters.yLim,'zlim',[handles.screenParameters.cMin handles.screenParameters.cMax]);
 hold on;
 zoom v6 on;
 
@@ -94,7 +94,7 @@ handles.GUIHandles.mapAxis=ax;
 % Adding colorbar
 setHandles(handles);
 ddb_colorBar('make');
-set(gcf,'Visible','off');
+% set(gcf,'Visible','off');
 
 handles=getHandles;
 

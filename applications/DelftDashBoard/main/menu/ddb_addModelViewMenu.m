@@ -62,15 +62,17 @@ function handles=ddb_addModelViewMenu(handles)
 %%
 hmain=handles.GUIHandles.Menu.View.Main;
 isep='on';
-for ii=1:length(handles.Model)
-    if ~isempty(handles.Model(ii).GUI.menu.view)
-        g=uimenu(hmain,'Label',handles.Model(ii).longName,'separator',isep);
+models=fieldnames(handles.model);
+for ii=1:length(models)
+    model=models{ii};
+    if ~isempty(handles.model.(model).GUI.menu.view)
+        g=uimenu(hmain,'Label',handles.model.(model).longName,'separator',isep);
         isep='off';
         % And the attributes
-        for iatt=1:length(handles.Model(ii).GUI.menu.view)
-            string=handles.Model(ii).GUI.menu.view(iatt).string;
-            callback=handles.Model(ii).GUI.menu.view(iatt).callback;
-            argin=handles.Model(ii).GUI.menu.view(iatt).option;
+        for iatt=1:length(handles.model.(model).GUI.menu.view)
+            string=handles.model.(model).GUI.menu.view(iatt).string;
+            callback=handles.model.(model).GUI.menu.view(iatt).callback;
+            argin=handles.model.(model).GUI.menu.view(iatt).option;
             uimenu(g,'Label',string,'Callback',{callback,argin},'Checked','on');
         end
     end

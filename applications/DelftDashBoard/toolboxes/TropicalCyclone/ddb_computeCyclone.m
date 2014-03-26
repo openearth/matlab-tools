@@ -236,8 +236,9 @@ if strcmpi(inp.quadrantOption,'perquadrant')
     
 end
 
-handles.Model(md).Input(ad).spwFile=[name '.spw'];
-handles.Model(md).Input(ad).wind=1;
-handles.Model(md).Input(ad).windType='spiderweb';
-handles.Model(md).Input(ad).airOut=1;
+model=handles.activeModel.name;
+handles.model.(model).domain(ad).spwFile=[name '.spw'];
+handles.model.(model).domain(ad).wind=1;
+handles.model.(model).domain(ad).windType='spiderweb';
+handles.model.(model).domain(ad).airOut=1;
 

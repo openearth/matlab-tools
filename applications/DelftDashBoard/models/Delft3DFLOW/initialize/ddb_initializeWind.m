@@ -61,10 +61,10 @@ function handles = ddb_initializeWind(handles, id)
 % $Keywords: $
 
 %%
-t0=handles.Model(md).Input(id).startTime;
-t1=handles.Model(md).Input(id).stopTime;
+t0=handles.model.delft3dflow.domain(id).startTime;
+t1=handles.model.delft3dflow.domain(id).stopTime;
 
-handles.Model(md).Input(id).windTimeSeriesT=[t0;t1];
-handles.Model(md).Input(id).windTimeSeriesSpeed=[0;0];
-handles.Model(md).Input(id).windTimeSeriesDirection=[0;0];
+handles.model.delft3dflow.domain(id).windTimeSeriesT=[t0;t1];
+handles.model.delft3dflow.domain(id).windTimeSeriesSpeed=[0;0];
+handles.model.delft3dflow.domain(id).windTimeSeriesDirection=[0;0];
 

@@ -61,11 +61,11 @@ function ddb_saveWndFile(handles, id)
 % $Keywords: $
 
 %%
-fname=handles.Model(md).Input(id).wndFile;
+fname=handles.model.delft3dflow.domain(id).wndFile;
 
-data(:,1)=1440*(handles.Model(md).Input(id).windTimeSeriesT-handles.Model(md).Input(id).itDate);
-data(:,2)=handles.Model(md).Input(id).windTimeSeriesSpeed;
-data(:,3)=handles.Model(md).Input(id).windTimeSeriesDirection;
+data(:,1)=1440*(handles.model.delft3dflow.domain(id).windTimeSeriesT-handles.model.delft3dflow.domain(id).itDate);
+data(:,2)=handles.model.delft3dflow.domain(id).windTimeSeriesSpeed;
+data(:,3)=handles.model.delft3dflow.domain(id).windTimeSeriesDirection;
 
 fid=fopen(fname,'w');
 fprintf(fid,'%16.7e %16.7e %16.7e\n',data');

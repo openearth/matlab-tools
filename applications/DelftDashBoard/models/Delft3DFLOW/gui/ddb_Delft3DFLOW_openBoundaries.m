@@ -79,12 +79,12 @@ else
     switch(lower(opt))
         
         case{'add'}
-            handles.Model(md).Input(ad).selectOpenBoundary=0;
-            handles.Model(md).Input(ad).changeOpenBoundary=0;
-            handles.Model(md).Input(ad).deleteOpenBoundary=0;
-            if handles.Model(md).Input(ad).addOpenBoundary
+            handles.model.delft3dflow.domain(ad).selectOpenBoundary=0;
+            handles.model.delft3dflow.domain(ad).changeOpenBoundary=0;
+            handles.model.delft3dflow.domain(ad).deleteOpenBoundary=0;
+            if handles.model.delft3dflow.domain(ad).addOpenBoundary
                 handles.editMode='add';
-                ddb_dragLine(@addOpenBoundary,'method','alonggridline','x',handles.Model(md).Input(ad).gridX,'y',handles.Model(md).Input(ad).gridY);
+                ddb_dragLine(@addOpenBoundary,'method','alonggridline','x',handles.model.delft3dflow.domain(ad).gridX,'y',handles.model.delft3dflow.domain(ad).gridY);
                 setInstructions({'','','Drag line on map for new open boundary'});
             else
                 set(gcf, 'windowbuttondownfcn',[]);
@@ -93,22 +93,22 @@ else
             setHandles(handles);
             
         case{'delete'}
-            handles.Model(md).Input(ad).addOpenBoundary=0;
-            handles.Model(md).Input(ad).selectOpenBoundary=0;
-            handles.Model(md).Input(ad).changeOpenBoundary=0;
+            handles.model.delft3dflow.domain(ad).addOpenBoundary=0;
+            handles.model.delft3dflow.domain(ad).selectOpenBoundary=0;
+            handles.model.delft3dflow.domain(ad).changeOpenBoundary=0;
             ddb_clickObject('tag','openboundary','callback',@deleteOpenBoundaryFromMap);
             setInstructions({'','','Select open boundary from map to delete'});
             setHandles(handles);
-            if handles.Model(md).Input(ad).deleteOpenBoundary
+            if handles.model.delft3dflow.domain(ad).deleteOpenBoundary
                 % Delete open boundary selected from list
                 deleteOpenBoundaries;
             end
             
         case{'select'}
-            handles.Model(md).Input(ad).addOpenBoundary=0;
-            handles.Model(md).Input(ad).deleteOpenBoundary=0;
-            handles.Model(md).Input(ad).changeOpenBoundary=0;
-            if handles.Model(md).Input(ad).selectOpenBoundary
+            handles.model.delft3dflow.domain(ad).addOpenBoundary=0;
+            handles.model.delft3dflow.domain(ad).deleteOpenBoundary=0;
+            handles.model.delft3dflow.domain(ad).changeOpenBoundary=0;
+            if handles.model.delft3dflow.domain(ad).selectOpenBoundary
                 ddb_clickObject('tag','openboundary','callback',@selectOpenBoundaryFromMap);
                 setInstructions({'','','Select open boundary from map'});
             else
@@ -118,10 +118,10 @@ else
             setHandles(handles);
             
         case{'change'}
-            handles.Model(md).Input(ad).addOpenBoundary=0;
-            handles.Model(md).Input(ad).selectOpenBoundary=0;
-            handles.Model(md).Input(ad).deleteOpenBoundary=0;
-            if handles.Model(md).Input(ad).changeOpenBoundary
+            handles.model.delft3dflow.domain(ad).addOpenBoundary=0;
+            handles.model.delft3dflow.domain(ad).selectOpenBoundary=0;
+            handles.model.delft3dflow.domain(ad).deleteOpenBoundary=0;
+            if handles.model.delft3dflow.domain(ad).changeOpenBoundary
                 ddb_clickObject('tag','openboundary','callback',@changeOpenBoundaryFromMap);
                 setInstructions({'','','Select open boundary to change from map'});
             else
@@ -131,33 +131,33 @@ else
             setHandles(handles);
             
         case{'editindices'}
-            handles.Model(md).Input(ad).addOpenBoundary=0;
-            handles.Model(md).Input(ad).selectOpenBoundary=0;
-            handles.Model(md).Input(ad).changeOpenBoundary=0;
-            handles.Model(md).Input(ad).deleteOpenBoundary=0;
+            handles.model.delft3dflow.domain(ad).addOpenBoundary=0;
+            handles.model.delft3dflow.domain(ad).selectOpenBoundary=0;
+            handles.model.delft3dflow.domain(ad).changeOpenBoundary=0;
+            handles.model.delft3dflow.domain(ad).deleteOpenBoundary=0;
             handles.editMode='edit';
-            n=handles.Model(md).Input(ad).activeOpenBoundary;
-            xg=handles.Model(md).Input(ad).gridX;
-            yg=handles.Model(md).Input(ad).gridY;
-            zg=handles.Model(md).Input(ad).depthZ;
-            kcs=handles.Model(md).Input(ad).kcs;
-            [xb,yb,zb,alphau,alphav,side,orientation]=delft3dflow_getBoundaryCoordinates(handles.Model(md).Input(ad).openBoundaries(n),xg,yg,zg,kcs);
-            handles.Model(md).Input(ad).openBoundaries(n).x=xb;
-            handles.Model(md).Input(ad).openBoundaries(n).y=yb;
-            handles.Model(md).Input(ad).openBoundaries(n).depth=zb;
-            handles.Model(md).Input(ad).openBoundaries(n).side=side;
-            handles.Model(md).Input(ad).openBoundaries(n).orientation=orientation;
-            handles.Model(md).Input(ad).openBoundaries(n).alphau=alphau;
-            handles.Model(md).Input(ad).openBoundaries(n).alphav=alphav;
-            m1str=num2str(handles.Model(md).Input(ad).openBoundaries(n).M1);
-            m2str=num2str(handles.Model(md).Input(ad).openBoundaries(n).M2);
-            n1str=num2str(handles.Model(md).Input(ad).openBoundaries(n).N1);
-            n2str=num2str(handles.Model(md).Input(ad).openBoundaries(n).N2);
+            n=handles.model.delft3dflow.domain(ad).activeOpenBoundary;
+            xg=handles.model.delft3dflow.domain(ad).gridX;
+            yg=handles.model.delft3dflow.domain(ad).gridY;
+            zg=handles.model.delft3dflow.domain(ad).depthZ;
+            kcs=handles.model.delft3dflow.domain(ad).kcs;
+            [xb,yb,zb,alphau,alphav,side,orientation]=delft3dflow_getBoundaryCoordinates(handles.model.delft3dflow.domain(ad).openBoundaries(n),xg,yg,zg,kcs);
+            handles.model.delft3dflow.domain(ad).openBoundaries(n).x=xb;
+            handles.model.delft3dflow.domain(ad).openBoundaries(n).y=yb;
+            handles.model.delft3dflow.domain(ad).openBoundaries(n).depth=zb;
+            handles.model.delft3dflow.domain(ad).openBoundaries(n).side=side;
+            handles.model.delft3dflow.domain(ad).openBoundaries(n).orientation=orientation;
+            handles.model.delft3dflow.domain(ad).openBoundaries(n).alphau=alphau;
+            handles.model.delft3dflow.domain(ad).openBoundaries(n).alphav=alphav;
+            m1str=num2str(handles.model.delft3dflow.domain(ad).openBoundaries(n).M1);
+            m2str=num2str(handles.model.delft3dflow.domain(ad).openBoundaries(n).M2);
+            n1str=num2str(handles.model.delft3dflow.domain(ad).openBoundaries(n).N1);
+            n2str=num2str(handles.model.delft3dflow.domain(ad).openBoundaries(n).N2);
             name=['('  m1str ',' n1str ')...(' m2str ',' n2str ')'];
-            if strcmpi(handles.Model(md).Input(ad).openBoundaries(n).name(1),'(') && ...
-                    strcmpi(handles.Model(md).Input(ad).openBoundaries(n).name(end),')')
-                handles.Model(md).Input(ad).openBoundaries(n).name=name;
-                handles.Model(md).Input(ad).openBoundaryNames{n}=name;
+            if strcmpi(handles.model.delft3dflow.domain(ad).openBoundaries(n).name(1),'(') && ...
+                    strcmpi(handles.model.delft3dflow.domain(ad).openBoundaries(n).name(end),')')
+                handles.model.delft3dflow.domain(ad).openBoundaries(n).name=name;
+                handles.model.delft3dflow.domain(ad).openBoundaryNames{n}=name;
             end
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','openboundaries');
             clearInstructions;
@@ -165,12 +165,12 @@ else
             refreshOpenBoundaries;
             
         case{'editname'}
-            handles.Model(md).Input(ad).addOpenBoundary=0;
-            handles.Model(md).Input(ad).selectOpenBoundary=0;
-            handles.Model(md).Input(ad).changeOpenBoundary=0;
-            handles.Model(md).Input(ad).deleteOpenBoundary=0;
-            n=handles.Model(md).Input(ad).activeOpenBoundary;
-            handles.Model(md).Input(ad).openBoundaryNames{n}=handles.Model(md).Input(ad).openBoundaries(n).name;
+            handles.model.delft3dflow.domain(ad).addOpenBoundary=0;
+            handles.model.delft3dflow.domain(ad).selectOpenBoundary=0;
+            handles.model.delft3dflow.domain(ad).changeOpenBoundary=0;
+            handles.model.delft3dflow.domain(ad).deleteOpenBoundary=0;
+            n=handles.model.delft3dflow.domain(ad).activeOpenBoundary;
+            handles.model.delft3dflow.domain(ad).openBoundaryNames{n}=handles.model.delft3dflow.domain(ad).openBoundaries(n).name;
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','openboundaries');
             setHandles(handles);
             % setUIElement('delft3dflow.openboundaries.listopenboundaries');
@@ -178,86 +178,86 @@ else
             refreshOpenBoundaries;
             
         case{'selectfromlist'}
-            handles.Model(md).Input(ad).addOpenBoundary=0;
-            handles.Model(md).Input(ad).selectOpenBoundary=0;
-            handles.Model(md).Input(ad).changeOpenBoundary=0;
+            handles.model.delft3dflow.domain(ad).addOpenBoundary=0;
+            handles.model.delft3dflow.domain(ad).selectOpenBoundary=0;
+            handles.model.delft3dflow.domain(ad).changeOpenBoundary=0;
             % Delete selected open boundary next time delete is clicked
-            handles.Model(md).Input(ad).deleteOpenBoundary=1;
+            handles.model.delft3dflow.domain(ad).deleteOpenBoundary=1;
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','openboundaries');
             clearInstructions;
             setHandles(handles);
             refreshOpenBoundaries;
             
         case{'selecttype'}
-            tp=handles.Model(md).Input(ad).openBoundaries(handles.Model(md).Input(ad).activeOpenBoundary).type;
-            iac=handles.Model(md).Input(ad).activeOpenBoundaries;
+            tp=handles.model.delft3dflow.domain(ad).openBoundaries(handles.model.delft3dflow.domain(ad).activeOpenBoundary).type;
+            iac=handles.model.delft3dflow.domain(ad).activeOpenBoundaries;
             for ii=1:length(iac)
                 n=iac(ii);
-                handles.Model(md).Input(ad).openBoundaries(n).type=tp;
-                if handles.Model(md).Input(ad).KMax>1
-                    switch lower(handles.Model(md).Input(ad).openBoundaries(n).type)
+                handles.model.delft3dflow.domain(ad).openBoundaries(n).type=tp;
+                if handles.model.delft3dflow.domain(ad).KMax>1
+                    switch lower(handles.model.delft3dflow.domain(ad).openBoundaries(n).type)
                         case{'z','n'}
-                            handles.Model(md).Input(ad).openBoundaries(n).profile='uniform';
+                            handles.model.delft3dflow.domain(ad).openBoundaries(n).profile='uniform';
                         case{'q','t'}
-                            if strcmpi(handles.Model(md).Input(ad).openBoundaries(n).profile,'3d-profile')
-                                handles.Model(md).Input(ad).openBoundaries(n).profile='uniform';
+                            if strcmpi(handles.model.delft3dflow.domain(ad).openBoundaries(n).profile,'3d-profile')
+                                handles.model.delft3dflow.domain(ad).openBoundaries(n).profile='uniform';
                             end
                         case{'r'}
-                            if strcmpi(handles.Model(md).Input(ad).openBoundaries(n).profile,'logarithmic')
-                                handles.Model(md).Input(ad).openBoundaries(n).profile='uniform';
+                            if strcmpi(handles.model.delft3dflow.domain(ad).openBoundaries(n).profile,'logarithmic')
+                                handles.model.delft3dflow.domain(ad).openBoundaries(n).profile='uniform';
                             end
                     end
                 else
-                    handles.Model(md).Input(ad).openBoundaries(n).profile='uniform';
+                    handles.model.delft3dflow.domain(ad).openBoundaries(n).profile='uniform';
                 end
             end
             setHandles(handles);
             refreshOpenBoundaries;
             
         case{'selectforcing'}
-            fc=handles.Model(md).Input(ad).openBoundaries(handles.Model(md).Input(ad).activeOpenBoundary).forcing;
-            iac=handles.Model(md).Input(ad).activeOpenBoundaries;
+            fc=handles.model.delft3dflow.domain(ad).openBoundaries(handles.model.delft3dflow.domain(ad).activeOpenBoundary).forcing;
+            iac=handles.model.delft3dflow.domain(ad).activeOpenBoundaries;
             for ii=1:length(iac)
                 n=iac(ii);
-                handles.Model(md).Input(ad).openBoundaries(n).forcing=fc;
+                handles.model.delft3dflow.domain(ad).openBoundaries(n).forcing=fc;
             end
             handles=ddb_countOpenBoundaries(handles,ad);
             setHandles(handles);
             refreshOpenBoundaries;
             
         case{'editalpha'}
-            alp=handles.Model(md).Input(ad).openBoundaries(handles.Model(md).Input(ad).activeOpenBoundary).alpha;
-            iac=handles.Model(md).Input(ad).activeOpenBoundaries;
+            alp=handles.model.delft3dflow.domain(ad).openBoundaries(handles.model.delft3dflow.domain(ad).activeOpenBoundary).alpha;
+            iac=handles.model.delft3dflow.domain(ad).activeOpenBoundaries;
             for ii=1:length(iac)
                 n=iac(ii);
-                handles.Model(md).Input(ad).openBoundaries(n).alpha=alp;
+                handles.model.delft3dflow.domain(ad).openBoundaries(n).alpha=alp;
             end
             handles=ddb_countOpenBoundaries(handles,ad);
             setHandles(handles);
             refreshOpenBoundaries;
             
         case{'selectprofile'}
-            prf=handles.Model(md).Input(ad).openBoundaries(handles.Model(md).Input(ad).activeOpenBoundary).profile;
-            iac=handles.Model(md).Input(ad).activeOpenBoundaries;
+            prf=handles.model.delft3dflow.domain(ad).openBoundaries(handles.model.delft3dflow.domain(ad).activeOpenBoundary).profile;
+            iac=handles.model.delft3dflow.domain(ad).activeOpenBoundaries;
             for ii=1:length(iac)
                 n=iac(ii);
-                handles.Model(md).Input(ad).openBoundaries(n).profile=prf;
-                switch lower(handles.Model(md).Input(ad).openBoundaries(n).type)
+                handles.model.delft3dflow.domain(ad).openBoundaries(n).profile=prf;
+                switch lower(handles.model.delft3dflow.domain(ad).openBoundaries(n).type)
                     case{'z','n'}
-                        handles.Model(md).Input(ad).openBoundaries(n).profile='uniform';
+                        handles.model.delft3dflow.domain(ad).openBoundaries(n).profile='uniform';
                     case{'q','t'}
-                        if strcmpi(handles.Model(md).Input(ad).openBoundaries(n).profile,'3d-profile')
-                            handles.Model(md).Input(ad).openBoundaries(n).profile='uniform';
+                        if strcmpi(handles.model.delft3dflow.domain(ad).openBoundaries(n).profile,'3d-profile')
+                            handles.model.delft3dflow.domain(ad).openBoundaries(n).profile='uniform';
                         end
                     case{'r'}
-                        if strcmpi(handles.Model(md).Input(ad).openBoundaries(n).profile,'logarithmic')
-                            handles.Model(md).Input(ad).openBoundaries(n).profile='uniform';
+                        if strcmpi(handles.model.delft3dflow.domain(ad).openBoundaries(n).profile,'logarithmic')
+                            handles.model.delft3dflow.domain(ad).openBoundaries(n).profile='uniform';
                         end
                 end
-                if size(handles.Model(md).Input(ad).openBoundaries(n).timeSeriesA,2)<handles.Model(md).Input(ad).KMax
-                    for k=2:handles.Model(md).Input(ad).KMax
-                        handles.Model(md).Input(ad).openBoundaries(n).timeSeriesA(:,k)=handles.Model(md).Input(ad).openBoundaries(n).timeSeriesA(:,1);
-                        handles.Model(md).Input(ad).openBoundaries(n).timeSeriesB(:,k)=handles.Model(md).Input(ad).openBoundaries(n).timeSeriesB(:,1);
+                if size(handles.model.delft3dflow.domain(ad).openBoundaries(n).timeSeriesA,2)<handles.model.delft3dflow.domain(ad).KMax
+                    for k=2:handles.model.delft3dflow.domain(ad).KMax
+                        handles.model.delft3dflow.domain(ad).openBoundaries(n).timeSeriesA(:,k)=handles.model.delft3dflow.domain(ad).openBoundaries(n).timeSeriesA(:,1);
+                        handles.model.delft3dflow.domain(ad).openBoundaries(n).timeSeriesB(:,k)=handles.model.delft3dflow.domain(ad).openBoundaries(n).timeSeriesB(:,1);
                     end
                 end
             end
@@ -267,15 +267,15 @@ else
         case{'flowconditions'}
             ddb_zoomOff;
             set(gcf, 'windowbuttondownfcn',   []);
-            i=handles.Model(md).Input(ad).activeOpenBoundary;
-            frc=handles.Model(md).Input(ad).openBoundaries(i).forcing;
+            i=handles.model.delft3dflow.domain(ad).activeOpenBoundary;
+            frc=handles.model.delft3dflow.domain(ad).openBoundaries(i).forcing;
             switch frc,
                 case{'A'}
                     ddb_editD3DFlowConditionsAstronomic;
                 case{'H'}
                     ddb_editD3DFlowConditionsHarmonic;
                 case{'T'}
-%                     if ~handles.Model(md).Input(ad).bctFileLoaded
+%                     if ~handles.model.delft3dflow.domain(ad).bctFileLoaded
 %                         handles=ddb_readBctFile(handles,ad);
 %                         setHandles(handles);
 %                     end
@@ -290,10 +290,10 @@ else
             ddb_editD3DFlowTransportConditionsTimeSeries;
             
         case{'open'}
-            handles.Model(md).Input(ad).addOpenBoundary=0;
-            handles.Model(md).Input(ad).selectOpenBoundary=0;
-            handles.Model(md).Input(ad).changeOpenBoundary=0;
-            handles.Model(md).Input(ad).deleteOpenBoundary=0;
+            handles.model.delft3dflow.domain(ad).addOpenBoundary=0;
+            handles.model.delft3dflow.domain(ad).selectOpenBoundary=0;
+            handles.model.delft3dflow.domain(ad).changeOpenBoundary=0;
+            handles.model.delft3dflow.domain(ad).deleteOpenBoundary=0;
             switch lower(opt2)
                 case{'bnd'}
                     tp='*.bnd';
@@ -322,23 +322,23 @@ else
                 end
                 switch lower(opt2)
                     case{'bnd'}
-                        handles.Model(md).Input(ad).bndFile=filename;
+                        handles.model.delft3dflow.domain(ad).bndFile=filename;
                         handles=ddb_readBndFile(handles,ad);
                         handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','openboundaries');
                     case{'bca'}
-                        handles.Model(md).Input(ad).bcaFile=filename;
+                        handles.model.delft3dflow.domain(ad).bcaFile=filename;
                         handles=ddb_readBcaFile(handles,ad);
                     case{'cor'}
-                        handles.Model(md).Input(ad).corFile=filename;
+                        handles.model.delft3dflow.domain(ad).corFile=filename;
                         handles=ddb_readCorFile(handles,ad);
                     case{'bch'}
-                        handles.Model(md).Input(ad).bchFile=filename;
+                        handles.model.delft3dflow.domain(ad).bchFile=filename;
                         handles=ddb_readBchFile(handles,ad);
                     case{'bct'}
-                        handles.Model(md).Input(ad).bctFile=filename;
+                        handles.model.delft3dflow.domain(ad).bctFile=filename;
                         handles=ddb_readBctFile(handles,ad);
                     case{'bcc'}
-                        handles.Model(md).Input(ad).bccFile=filename;
+                        handles.model.delft3dflow.domain(ad).bccFile=filename;
                         handles=ddb_readBccFile(handles,ad);
                 end
                 clearInstructions;
@@ -347,10 +347,10 @@ else
             end
             
         case{'save'}
-            handles.Model(md).Input(ad).addOpenBoundary=0;
-            handles.Model(md).Input(ad).selectOpenBoundary=0;
-            handles.Model(md).Input(ad).changeOpenBoundary=0;
-            handles.Model(md).Input(ad).deleteOpenBoundary=0;
+            handles.model.delft3dflow.domain(ad).addOpenBoundary=0;
+            handles.model.delft3dflow.domain(ad).selectOpenBoundary=0;
+            handles.model.delft3dflow.domain(ad).changeOpenBoundary=0;
+            handles.model.delft3dflow.domain(ad).deleteOpenBoundary=0;
             switch lower(opt2)
                 case{'bnd'}
                     tp='*.bnd';
@@ -379,22 +379,22 @@ else
                 end
                 switch lower(opt2)
                     case{'bnd'}
-                        handles.Model(md).Input(ad).bndFile=filename;
-                        ddb_saveBndFile(handles.Model(md).Input(ad).openBoundaries,handles.Model(md).Input(ad).bndFile);
+                        handles.model.delft3dflow.domain(ad).bndFile=filename;
+                        ddb_saveBndFile(handles.model.delft3dflow.domain(ad).openBoundaries,handles.model.delft3dflow.domain(ad).bndFile);
                     case{'bca'}
-                        handles.Model(md).Input(ad).bcaFile=filename;
+                        handles.model.delft3dflow.domain(ad).bcaFile=filename;
                         handles=ddb_saveBcaFile(handles,ad);
                     case{'cor'}
-                        handles.Model(md).Input(ad).corFile=filename;
+                        handles.model.delft3dflow.domain(ad).corFile=filename;
                         handles=ddb_saveCorFile(handles,ad);
                     case{'bch'}
-                        handles.Model(md).Input(ad).bchFile=filename;
+                        handles.model.delft3dflow.domain(ad).bchFile=filename;
                         handles=ddb_saveBchFile(handles,ad);
                     case{'bct'}
-                        handles.Model(md).Input(ad).bctFile=filename;
+                        handles.model.delft3dflow.domain(ad).bctFile=filename;
                         ddb_saveBctFile(handles,ad);
                     case{'bcc'}
-                        handles.Model(md).Input(ad).bccFile=filename;
+                        handles.model.delft3dflow.domain(ad).bccFile=filename;
                         ddb_saveBccFile(handles,ad);
                 end
                 clearInstructions;
@@ -413,55 +413,55 @@ x1=x(1);x2=x(2);
 y1=y(1);y2=y(2);
 handles=getHandles;
 id=ad;
-[m1,n1]=findcornerpoint(x1,y1,handles.Model(md).Input(id).gridX,handles.Model(md).Input(id).gridY);
-[m2,n2]=findcornerpoint(x2,y2,handles.Model(md).Input(id).gridX,handles.Model(md).Input(id).gridY);
+[m1,n1]=findcornerpoint(x1,y1,handles.model.delft3dflow.domain(id).gridX,handles.model.delft3dflow.domain(id).gridY);
+[m2,n2]=findcornerpoint(x2,y2,handles.model.delft3dflow.domain(id).gridX,handles.model.delft3dflow.domain(id).gridY);
 [m1,n1,m2,n2,ok]=checkBoundaryPoints(m1,n1,m2,n2,1);
 
 if ok==1
     
-    if handles.Model(md).Input(ad).changeOpenBoundary
-        iac=handles.Model(md).Input(ad).activeOpenBoundary;
+    if handles.model.delft3dflow.domain(ad).changeOpenBoundary
+        iac=handles.model.delft3dflow.domain(ad).activeOpenBoundary;
     else
         % Add mode
-        handles.Model(md).Input(ad).nrOpenBoundaries=handles.Model(md).Input(ad).nrOpenBoundaries+1;
-        iac=handles.Model(md).Input(ad).nrOpenBoundaries;
+        handles.model.delft3dflow.domain(ad).nrOpenBoundaries=handles.model.delft3dflow.domain(ad).nrOpenBoundaries+1;
+        iac=handles.model.delft3dflow.domain(ad).nrOpenBoundaries;
     end
     
-    handles.Model(md).Input(ad).openBoundaries(iac).M1=m1;
-    handles.Model(md).Input(ad).openBoundaries(iac).N1=n1;
-    handles.Model(md).Input(ad).openBoundaries(iac).M2=m2;
-    handles.Model(md).Input(ad).openBoundaries(iac).N2=n2;
+    handles.model.delft3dflow.domain(ad).openBoundaries(iac).M1=m1;
+    handles.model.delft3dflow.domain(ad).openBoundaries(iac).N1=n1;
+    handles.model.delft3dflow.domain(ad).openBoundaries(iac).M2=m2;
+    handles.model.delft3dflow.domain(ad).openBoundaries(iac).N2=n2;
     
-    handles.Model(md).Input(ad).openBoundaries=delft3dflow_setDefaultBoundaryType(handles.Model(md).Input(ad).openBoundaries,iac);
+    handles.model.delft3dflow.domain(ad).openBoundaries=delft3dflow_setDefaultBoundaryType(handles.model.delft3dflow.domain(ad).openBoundaries,iac);
     
-    t0=handles.Model(md).Input(ad).startTime;
-    t1=handles.Model(md).Input(ad).stopTime;
-    nrsed=handles.Model(md).Input(ad).nrSediments;
-    nrtrac=handles.Model(md).Input(ad).nrTracers;
-    nrharmo=handles.Model(md).Input(ad).nrHarmonicComponents;
-    x=handles.Model(md).Input(ad).gridX;
-    y=handles.Model(md).Input(ad).gridY;
-    depthZ=handles.Model(md).Input(ad).depthZ;
-    kcs=handles.Model(md).Input(ad).kcs;
-    kmax=handles.Model(md).Input(ad).KMax;
+    t0=handles.model.delft3dflow.domain(ad).startTime;
+    t1=handles.model.delft3dflow.domain(ad).stopTime;
+    nrsed=handles.model.delft3dflow.domain(ad).nrSediments;
+    nrtrac=handles.model.delft3dflow.domain(ad).nrTracers;
+    nrharmo=handles.model.delft3dflow.domain(ad).nrHarmonicComponents;
+    x=handles.model.delft3dflow.domain(ad).gridX;
+    y=handles.model.delft3dflow.domain(ad).gridY;
+    depthZ=handles.model.delft3dflow.domain(ad).depthZ;
+    kcs=handles.model.delft3dflow.domain(ad).kcs;
+    kmax=handles.model.delft3dflow.domain(ad).KMax;
     
-    handles.Model(md).Input(ad).openBoundaries=delft3dflow_initializeOpenBoundary(handles.Model(md).Input(ad).openBoundaries,iac, ...
+    handles.model.delft3dflow.domain(ad).openBoundaries=delft3dflow_initializeOpenBoundary(handles.model.delft3dflow.domain(ad).openBoundaries,iac, ...
         t0,t1,nrsed,nrtrac,nrharmo,x,y,depthZ,kcs,kmax);
     
-    handles.Model(md).Input(ad).openBoundaries(iac).name=['(' num2str(m1) ',' num2str(n1) ')...(' num2str(m2) ',' num2str(n2) ')'];
-    handles.Model(md).Input(ad).openBoundaryNames{iac}=handles.Model(md).Input(ad).openBoundaries(iac).name;
-    handles.Model(md).Input(ad).activeOpenBoundary=iac;
-    handles.Model(md).Input(ad).activeOpenBoundaries=iac;
+    handles.model.delft3dflow.domain(ad).openBoundaries(iac).name=['(' num2str(m1) ',' num2str(n1) ')...(' num2str(m2) ',' num2str(n2) ')'];
+    handles.model.delft3dflow.domain(ad).openBoundaryNames{iac}=handles.model.delft3dflow.domain(ad).openBoundaries(iac).name;
+    handles.model.delft3dflow.domain(ad).activeOpenBoundary=iac;
+    handles.model.delft3dflow.domain(ad).activeOpenBoundaries=iac;
     
     handles=ddb_countOpenBoundaries(handles,ad);
     
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','openboundaries');
     
-    if handles.Model(md).Input(ad).changeOpenBoundary
+    if handles.model.delft3dflow.domain(ad).changeOpenBoundary
         ddb_clickObject('tag','openboundary','callback',@changeOpenBoundaryFromMap);
         setInstructions({'','','Select open boundary'});
     else
-        ddb_dragLine(@addOpenBoundary,'method','alonggridline','x',handles.Model(md).Input(ad).gridX,'y',handles.Model(md).Input(ad).gridY);
+        ddb_dragLine(@addOpenBoundary,'method','alonggridline','x',handles.model.delft3dflow.domain(ad).gridX,'y',handles.model.delft3dflow.domain(ad).gridY);
         setInstructions({'','','Drag line on map for new open boundary'});
     end
 end
@@ -471,9 +471,9 @@ refreshOpenBoundaries;
 %%
 function deleteOpenBoundaries
 handles=getHandles;
-iac=handles.Model(md).Input(ad).activeOpenBoundaries;
+iac=handles.model.delft3dflow.domain(ad).activeOpenBoundaries;
 for ii=length(iac):-1:1
-    handles.Model(md).Input(ad).activeOpenBoundary=iac(ii);
+    handles.model.delft3dflow.domain(ad).activeOpenBoundary=iac(ii);
     setHandles(handles);
     deleteOpenBoundary;    
     handles=getHandles;
@@ -484,34 +484,34 @@ function deleteOpenBoundary
 
 handles=getHandles;
 
-nrbnd=handles.Model(md).Input(ad).nrOpenBoundaries;
+nrbnd=handles.model.delft3dflow.domain(ad).nrOpenBoundaries;
 
 if nrbnd>0
-    iac=handles.Model(md).Input(ad).activeOpenBoundary;
+    iac=handles.model.delft3dflow.domain(ad).activeOpenBoundary;
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'delete','openboundaries');
     if nrbnd>1
-        handles.Model(md).Input(ad).openBoundaries=removeFromStruc(handles.Model(md).Input(ad).openBoundaries,iac);
-        handles.Model(md).Input(ad).openBoundaryNames=removeFromCellArray(handles.Model(md).Input(ad).openBoundaryNames,iac);
+        handles.model.delft3dflow.domain(ad).openBoundaries=removeFromStruc(handles.model.delft3dflow.domain(ad).openBoundaries,iac);
+        handles.model.delft3dflow.domain(ad).openBoundaryNames=removeFromCellArray(handles.model.delft3dflow.domain(ad).openBoundaryNames,iac);
     else
-        handles.Model(md).Input(ad).openBoundaryNames={''};
-        handles.Model(md).Input(ad).activeOpenBoundary=1;
-        handles.Model(md).Input(ad).openBoundaries(1).name='';
-        handles.Model(md).Input(ad).openBoundaries(1).M1=[];
-        handles.Model(md).Input(ad).openBoundaries(1).M2=[];
-        handles.Model(md).Input(ad).openBoundaries(1).N1=[];
-        handles.Model(md).Input(ad).openBoundaries(1).N2=[];
-        handles.Model(md).Input(ad).openBoundaries(1).type='Z';
-        handles.Model(md).Input(ad).openBoundaries(1).forcing='A';
-        handles.Model(md).Input(ad).openBoundaries(1).profile='uniform';
-        handles.Model(md).Input(ad).openBoundaries(1).alpha=0;
+        handles.model.delft3dflow.domain(ad).openBoundaryNames={''};
+        handles.model.delft3dflow.domain(ad).activeOpenBoundary=1;
+        handles.model.delft3dflow.domain(ad).openBoundaries(1).name='';
+        handles.model.delft3dflow.domain(ad).openBoundaries(1).M1=[];
+        handles.model.delft3dflow.domain(ad).openBoundaries(1).M2=[];
+        handles.model.delft3dflow.domain(ad).openBoundaries(1).N1=[];
+        handles.model.delft3dflow.domain(ad).openBoundaries(1).N2=[];
+        handles.model.delft3dflow.domain(ad).openBoundaries(1).type='Z';
+        handles.model.delft3dflow.domain(ad).openBoundaries(1).forcing='A';
+        handles.model.delft3dflow.domain(ad).openBoundaries(1).profile='uniform';
+        handles.model.delft3dflow.domain(ad).openBoundaries(1).alpha=0;
         clearInstructions;
     end
     if iac==nrbnd
         iac=nrbnd-1;
     end
-    handles.Model(md).Input(ad).nrOpenBoundaries=nrbnd-1;
-    handles.Model(md).Input(ad).activeOpenBoundary=max(iac,1);
-    handles.Model(md).Input(ad).activeOpenBoundaries=handles.Model(md).Input(ad).activeOpenBoundary;
+    handles.model.delft3dflow.domain(ad).nrOpenBoundaries=nrbnd-1;
+    handles.model.delft3dflow.domain(ad).activeOpenBoundary=max(iac,1);
+    handles.model.delft3dflow.domain(ad).activeOpenBoundaries=handles.model.delft3dflow.domain(ad).activeOpenBoundary;
     
     handles=ddb_countOpenBoundaries(handles,ad);
     
@@ -526,7 +526,7 @@ function deleteOpenBoundaryFromMap(h)
 
 handles=getHandles;
 iac=get(h,'UserData');
-handles.Model(md).Input(ad).activeOpenBoundary=iac;
+handles.model.delft3dflow.domain(ad).activeOpenBoundary=iac;
 setHandles(handles);
 deleteOpenBoundary;
 
@@ -535,7 +535,7 @@ function selectOpenBoundaryFromMap(h)
 
 handles=getHandles;
 iac=get(h,'UserData');
-handles.Model(md).Input(ad).activeOpenBoundary=iac;
+handles.model.delft3dflow.domain(ad).activeOpenBoundary=iac;
 ddb_Delft3DFLOW_plotAttributes(handles,'update','openboundaries');
 setHandles(handles);
 refreshOpenBoundaries;
@@ -545,7 +545,7 @@ function changeOpenBoundaryFromMap(h)
 
 handles=getHandles;
 iac=get(h,'UserData');
-handles.Model(md).Input(ad).activeOpenBoundary=iac;
+handles.model.delft3dflow.domain(ad).activeOpenBoundary=iac;
 ddb_Delft3DFLOW_plotAttributes(handles,'update','openboundaries');
 setHandles(handles);
 refreshOpenBoundaries;
@@ -557,26 +557,26 @@ function refreshOpenBoundaries
 
 handles=getHandles;
 
-iac=handles.Model(md).Input(ad).activeOpenBoundary;
+iac=handles.model.delft3dflow.domain(ad).activeOpenBoundary;
 
-if handles.Model(md).Input(ad).KMax>1
-    switch lower(handles.Model(md).Input(ad).openBoundaries(iac).type)
+if handles.model.delft3dflow.domain(ad).KMax>1
+    switch lower(handles.model.delft3dflow.domain(ad).openBoundaries(iac).type)
         case{'z','n'}
-            handles.Model(md).Input(ad).profileTexts={'Uniform'};
-            handles.Model(md).Input(ad).profileOptions={'uniform'};
+            handles.model.delft3dflow.domain(ad).profileTexts={'Uniform'};
+            handles.model.delft3dflow.domain(ad).profileOptions={'uniform'};
         case{'c'}
-            handles.Model(md).Input(ad).profileTexts={'Uniform','Logarithmic','Per Layer'};
-            handles.Model(md).Input(ad).profileOptions={'uniform','logarithmic','3d-profile'};
+            handles.model.delft3dflow.domain(ad).profileTexts={'Uniform','Logarithmic','Per Layer'};
+            handles.model.delft3dflow.domain(ad).profileOptions={'uniform','logarithmic','3d-profile'};
         case{'r'}
-            handles.Model(md).Input(ad).profileTexts={'Uniform','Per Layer'};
-            handles.Model(md).Input(ad).profileOptions={'uniform','3d-profile'};
+            handles.model.delft3dflow.domain(ad).profileTexts={'Uniform','Per Layer'};
+            handles.model.delft3dflow.domain(ad).profileOptions={'uniform','3d-profile'};
         case{'t','q'}
-            handles.Model(md).Input(ad).profileTexts={'Uniform','Logarithmic'};
-            handles.Model(md).Input(ad).profileOptions={'uniform','logarithmic'};
+            handles.model.delft3dflow.domain(ad).profileTexts={'Uniform','Logarithmic'};
+            handles.model.delft3dflow.domain(ad).profileOptions={'uniform','logarithmic'};
     end
 else
-    handles.Model(md).Input(ad).profileTexts={'Uniform'};
-    handles.Model(md).Input(ad).profileOptions={'uniform'};
+    handles.model.delft3dflow.domain(ad).profileTexts={'Uniform'};
+    handles.model.delft3dflow.domain(ad).profileOptions={'uniform'};
 end
 
 setHandles(handles);
@@ -594,7 +594,7 @@ function [m1,n1,m2,n2,ok]=checkBoundaryPoints(m1,n1,m2,n2,icp)
 
 handles=getHandles;
 
-kcs=handles.Model(md).Input(ad).kcs;
+kcs=handles.model.delft3dflow.domain(ad).kcs;
 
 ok=0;
 

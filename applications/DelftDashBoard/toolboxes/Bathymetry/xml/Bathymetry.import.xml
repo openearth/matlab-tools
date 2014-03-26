@@ -5,16 +5,16 @@
     <position>60 110 130 20</position>
     <text>Format</text>
     <textposition>left</textposition>
-    <variable>import.rawDataFormat</variable>
+    <variable>handles.toolbox.bathymetry.import.rawDataFormat</variable>
     <type>string</type>
     <tooltipstring>Select file format of raw data</tooltipstring>
     <callback>ddb_BathymetryToolbox_import</callback>
     <option1>selectrawdataformat</option1>
     <listtext>
-      <variable>import.rawDataFormatsText</variable>
+      <variable>handles.toolbox.bathymetry.import.rawDataFormatsText</variable>
     </listtext>
     <listvalue>
-      <variable>import.rawDataFormats</variable>
+      <variable>handles.toolbox.bathymetry.import.rawDataFormats</variable>
     </listvalue>
   </element>
   <element>
@@ -26,10 +26,10 @@
     <option1>selectdataset</option1>
     <showfilename>yes</showfilename>
     <extension>
-      <variable>import.rawDataFormatExtension</variable>
+      <variable>handles.toolbox.bathymetry.import.rawDataFormatExtension</variable>
     </extension>
     <selectiontext>
-      <variable>import.rawDataFormatSelectionText</variable>
+      <variable>handles.toolbox.bathymetry.import.rawDataFormatSelectionText</variable>
     </selectiontext>
     <tooltipstring>Select data file</tooltipstring>
   </element>
@@ -38,14 +38,14 @@
     <position>60 80 60 20</position>
     <text>X0</text>
     <textposition>left</textposition>
-    <variable>import.x0</variable>
+    <variable>handles.toolbox.bathymetry.import.x0</variable>
     <type>real</type>
     <tooltipstring>Edit x origin of tiling system (lower left corner of lower left tile)</tooltipstring>
     <dependency>
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>import.rawDataType</variable>
+        <variable>handles.toolbox.bathymetry.import.rawDataType</variable>
         <type>string</type>
         <value>regulargrid</value>
         <operator>ne</operator>
@@ -57,14 +57,14 @@
     <position>180 80 60 20</position>
     <text>Y0</text>
     <textposition>left</textposition>
-    <variable>import.y0</variable>
+    <variable>handles.toolbox.bathymetry.import.y0</variable>
     <type>real</type>
     <tooltipstring>Edit y origin of tiling system (lower left corner of lower left tile)</tooltipstring>
     <dependency>
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>import.rawDataType</variable>
+        <variable>handles.toolbox.bathymetry.import.rawDataType</variable>
         <type>string</type>
         <value>regulargrid</value>
         <operator>ne</operator>
@@ -77,14 +77,14 @@
     <text>dX</text>
     <textposition>left</textposition>
     <enable>1</enable>
-    <variable>import.dx</variable>
+    <variable>handles.toolbox.bathymetry.import.dx</variable>
     <type>real</type>
     <tooltipstring>Edit grid size X of the highest resolution tiles</tooltipstring>
     <dependency>
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>import.rawDataType</variable>
+        <variable>handles.toolbox.bathymetry.import.rawDataType</variable>
         <type>string</type>
         <value>regulargrid</value>
         <operator>ne</operator>
@@ -97,14 +97,14 @@
     <text>dY</text>
     <textposition>left</textposition>
     <enable>1</enable>
-    <variable>import.dy</variable>
+    <variable>handles.toolbox.bathymetry.import.dy</variable>
     <type>real</type>
     <tooltipstring>Edit grid size Y of the highest resolution tiles</tooltipstring>
     <dependency>
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
-        <variable>import.rawDataType</variable>
+        <variable>handles.toolbox.bathymetry.import.rawDataType</variable>
         <type>string</type>
         <value>regulargrid</value>
         <operator>ne</operator>
@@ -118,7 +118,7 @@
     <text>Nr X</text>
     <textposition>left</textposition>
     <enable>1</enable>
-    <variable>import.nx</variable>
+    <variable>handles.toolbox.bathymetry.import.nx</variable>
     <type>integer</type>
     <tooltipstring>Edit number of grid cells per tile in x direction</tooltipstring>
   </element>
@@ -129,7 +129,7 @@
     <text>Nr Y</text>
     <textposition>left</textposition>
     <enable>1</enable>
-    <variable>import.ny</variable>
+    <variable>handles.toolbox.bathymetry.import.ny</variable>
     <type>integer</type>
     <tooltipstring>Edit number of grid cells per tile in y direction</tooltipstring>
   </element>
@@ -146,14 +146,14 @@
     <tag>cstext</tag>
     <style>text</style>
     <position>375 80</position>
-    <variable>import.EPSGname</variable>
+    <variable>handles.toolbox.bathymetry.import.EPSGname</variable>
     <type>string</type>
   </element>
   <element>
     <tag>radiogeo</tag>
     <style>radiobutton</style>
     <position>270 60</position>
-    <variable>import.radioGeo</variable>
+    <variable>handles.toolbox.bathymetry.import.radioGeo</variable>
     <text>Geographic</text>
     <type>integer</type>
     <value>1</value>
@@ -163,7 +163,7 @@
     <tag>radioproj</tag>
     <style>radiobutton</style>
     <position>360 60</position>
-    <variable>import.radioProj</variable>
+    <variable>handles.toolbox.bathymetry.import.radioProj</variable>
     <text>Projected</text>
     <type>integer</type>
     <value>1</value>
@@ -176,7 +176,7 @@
     <text>Vertical Coord Sys</text>
     <textposition>right</textposition>
     <enable>1</enable>
-    <variable>import.vertCoordName</variable>
+    <variable>handles.toolbox.bathymetry.import.vertCoordName</variable>
     <type>string</type>
     <tooltipstring>Edit vertical coordinate system (e.g. MSL, NAP or NAVD88)</tooltipstring>
   </element>
@@ -186,7 +186,7 @@
     <position>500 35 60 20</position>
     <text>Unit</text>
     <textposition>left</textposition>
-    <variable>import.vertUnits</variable>
+    <variable>handles.toolbox.bathymetry.import.vertUnits</variable>
     <type>string</type>
     <tooltipstring>Select units of vertical data</tooltipstring>
     <listtext>metres</listtext>
@@ -203,7 +203,7 @@
     <text>Vertical Level</text>
     <textposition>right</textposition>
     <enable>1</enable>
-    <variable>import.vertCoordLevel</variable>
+    <variable>handles.toolbox.bathymetry.import.vertCoordLevel</variable>
     <type>real</type>
     <tooltipstring>Edit vertical level w.r.t. Mean Sea Level</tooltipstring>
   </element>
@@ -213,7 +213,7 @@
     <position>500 10 60 20</position>
     <text>Positive</text>
     <textposition>left</textposition>
-    <variable>import.positiveUp</variable>
+    <variable>handles.toolbox.bathymetry.import.positiveUp</variable>
     <type>integer</type>
     <tooltipstring>Select positive direction in data file</tooltipstring>
     <listtext>up</listtext>
@@ -227,7 +227,7 @@
     <position>830 110 100 20</position>
     <text>Precision</text>
     <textposition>left</textposition>
-    <variable>import.type</variable>
+    <variable>handles.toolbox.bathymetry.import.type</variable>
     <type>string</type>
     <tooltipstring>Select precision of data stored in netCDF tiles.</tooltipstring>
     <listtext>int</listtext>
@@ -243,7 +243,7 @@
     <text>Data Name</text>
     <textposition>left</textposition>
     <enable>1</enable>
-    <variable>import.dataName</variable>
+    <variable>handles.toolbox.bathymetry.import.dataName</variable>
     <type>string</type>
     <tooltipstring>Edit short name of data files (no spaces)</tooltipstring>
   </element>
@@ -252,7 +252,7 @@
     <position>830 60 100 20</position>
     <text>Data Source</text>
     <textposition>left</textposition>
-    <variable>import.datasource</variable>
+    <variable>handles.toolbox.bathymetry.import.datasource</variable>
     <type>string</type>
     <tooltipstring>Edit data source (as it will appear in the bathymetry menu)</tooltipstring>
   </element>

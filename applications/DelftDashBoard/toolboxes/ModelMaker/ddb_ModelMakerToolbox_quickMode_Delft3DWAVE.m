@@ -105,8 +105,8 @@ handles.toolbox.modelmaker.gridOutlineHandle=h;
 handles.toolbox.modelmaker.xOri=x0;
 handles.toolbox.modelmaker.yOri=y0;
 handles.toolbox.modelmaker.rotation=rotation;
-handles.toolbox.modelmaker.nX=round(dx/handles.toolbox.modelmaker.dX);
-handles.toolbox.modelmaker.nY=round(dy/handles.toolbox.modelmaker.dY);
+handles.toolbox.modelmaker.nX=round(dx/handles.toolbox.modelmaker.wavedX);
+handles.toolbox.modelmaker.nY=round(dy/handles.toolbox.modelmaker.wavedY);
 handles.toolbox.modelmaker.lengthX=dx;
 handles.toolbox.modelmaker.lengthY=dy;
 
@@ -134,14 +134,14 @@ if ~isempty(handles.toolbox.modelmaker.gridOutlineHandle)
     end
 end
 
-handles.toolbox.modelmaker.lengthX=handles.toolbox.modelmaker.dX*handles.toolbox.modelmaker.nX;
-handles.toolbox.modelmaker.lengthY=handles.toolbox.modelmaker.dY*handles.toolbox.modelmaker.nY;
+handles.toolbox.modelmaker.lengthX=handles.toolbox.modelmaker.wavedX*handles.toolbox.modelmaker.nX;
+handles.toolbox.modelmaker.lengthY=handles.toolbox.modelmaker.wavedY*handles.toolbox.modelmaker.nY;
 
-lenx=handles.toolbox.modelmaker.dX*handles.toolbox.modelmaker.nX;
-leny=handles.toolbox.modelmaker.dY*handles.toolbox.modelmaker.nY;
+lenx=handles.toolbox.modelmaker.wavedX*handles.toolbox.modelmaker.nX;
+leny=handles.toolbox.modelmaker.wavedY*handles.toolbox.modelmaker.nY;
 h=UIRectangle(handles.GUIHandles.mapAxis,'plot','Tag','GridOutline','Marker','o','MarkerEdgeColor','k','MarkerSize',6,'rotate',1,'callback',@updateGridOutline, ...
     'x0',handles.toolbox.modelmaker.xOri,'y0',handles.toolbox.modelmaker.yOri,'dx',lenx,'dy',leny,'rotation',handles.toolbox.modelmaker.rotation, ...
-    'ddx',handles.toolbox.modelmaker.dX,'ddy',handles.toolbox.modelmaker.dY);
+    'ddx',handles.toolbox.modelmaker.wavedX,'ddy',handles.toolbox.modelmaker.wavedY);
 handles.toolbox.modelmaker.gridOutlineHandle=h;
 
 setHandles(handles);
@@ -154,8 +154,8 @@ handles=getHandles;
 lenx=handles.toolbox.modelmaker.lengthX;
 leny=handles.toolbox.modelmaker.lengthY;
 
-dx=handles.toolbox.modelmaker.dX;
-dy=handles.toolbox.modelmaker.dY;
+dx=handles.toolbox.modelmaker.wavedX;
+dy=handles.toolbox.modelmaker.wavedY;
 
 nx=round(lenx/max(dx,1e-9));
 ny=round(leny/max(dy,1e-9));
@@ -175,7 +175,7 @@ end
 h=UIRectangle(handles.GUIHandles.mapAxis,'plot','Tag','GridOutline','Marker','o','MarkerEdgeColor','k','MarkerSize',6,'rotate',1,'callback',@updateGridOutline, ...
     'x0',handles.toolbox.modelmaker.xOri,'y0',handles.toolbox.modelmaker.yOri,'dx',handles.toolbox.modelmaker.lengthX,'dy',handles.toolbox.modelmaker.lengthY, ...
     'rotation',handles.toolbox.modelmaker.rotation, ...
-    'ddx',handles.toolbox.modelmaker.dX,'ddy',handles.toolbox.modelmaker.dY);
+    'ddx',handles.toolbox.modelmaker.wavedX,'ddy',handles.toolbox.modelmaker.wavedY);
 handles.toolbox.modelmaker.gridOutlineHandle=h;
 
 setHandles(handles);
@@ -186,140 +186,31 @@ function generateGrid(opt)
 handles=getHandles;
 
 npmax=20000000;
-
-if handles.toolbox.modelmaker.nX*handles.toolbox.modelmaker.nY<=npmax
-    
-    [filename, pathname, filterindex] = uiputfile('*.grd', 'Grid File Name',[handles.Model(md).Input.attName '.grd']);
-    
-    switch opt
-        case{'new'}
-            for ii=1:handles.Model(md).Input.nrgrids
-                if strcmpi(filename(1:end-4),handles.Model(md).Input.domains(ii).gridname)
-                    ddb_giveWarning('text','A domain with this name already exists. Try again.');
-                    return
-                end
-            end
-    end
-    
-    if pathname~=0
-        
-        wb = waitbox('Generating grid ...');pause(0.1);
-        
-        xori=handles.toolbox.modelmaker.xOri;
-        nx=handles.toolbox.modelmaker.nX;
-        dx=handles.toolbox.modelmaker.dX;
-        yori=handles.toolbox.modelmaker.yOri;
-        ny=handles.toolbox.modelmaker.nY;
-        dy=handles.toolbox.modelmaker.dY;
-        rot=pi*handles.toolbox.modelmaker.rotation/180;
-        zmax=handles.toolbox.modelmaker.zMax;
-        
-        % Find minimum grid resolution (in metres)
-        dmin=min(dx,dy);
-        if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
-            dmin=dmin*111111;
-        end
-        %    dmin=dmin/2;
-        %     dmin=15000;
-        
-        % Find coordinates of corner points
-        x(1)=xori;
-        y(1)=yori;
-        x(2)=x(1)+nx*dx*cos(pi*handles.toolbox.modelmaker.rotation/180);
-        y(2)=y(1)+nx*dx*sin(pi*handles.toolbox.modelmaker.rotation/180);
-        x(3)=x(2)+ny*dy*cos(pi*(handles.toolbox.modelmaker.rotation+90)/180);
-        y(3)=y(2)+ny*dy*sin(pi*(handles.toolbox.modelmaker.rotation+90)/180);
-        x(4)=x(3)+nx*dx*cos(pi*(handles.toolbox.modelmaker.rotation+180)/180);
-        y(4)=y(3)+nx*dx*sin(pi*(handles.toolbox.modelmaker.rotation+180)/180);
-        
-        xl(1)=min(x);
-        xl(2)=max(x);
-        yl(1)=min(y);
-        yl(2)=max(y);
-        dbuf=(xl(2)-xl(1))/20;
-        xl(1)=xl(1)-dbuf;
-        xl(2)=xl(2)+dbuf;
-        yl(1)=yl(1)-dbuf;
-        yl(2)=yl(2)+dbuf;
-        
-        % Convert limits to cs of bathy data
-        coord=handles.screenParameters.coordinateSystem;
-        iac=strmatch(lower(handles.screenParameters.backgroundBathymetry),lower(handles.bathymetry.datasets),'exact');
-        dataCoord.name=handles.bathymetry.dataset(iac).horizontalCoordinateSystem.name;
-        dataCoord.type=handles.bathymetry.dataset(iac).horizontalCoordinateSystem.type;
-        
-        [xlb,ylb]=ddb_coordConvert(xl,yl,coord,dataCoord);
-        
-        [xx,yy,zz,ok]=ddb_getBathymetry(handles.bathymetry,xlb,ylb,'bathymetry',handles.screenParameters.backgroundBathymetry,'maxcellsize',dmin);
-        
-        % xx and yy are in coordinate system of bathymetry (usually WGS 84)
-        % convert bathy grid to active coordinate system
-        
-        if ~strcmpi(dataCoord.name,coord.name) || ~strcmpi(dataCoord.type,coord.type)
-            dmin=min(dx,dy);
-            [xg,yg]=meshgrid(xl(1):dmin:xl(2),yl(1):dmin:yl(2));
-            [xgb,ygb]=ddb_coordConvert(xg,yg,coord,dataCoord);
-            zz=interp2(xx,yy,zz,xgb,ygb);
-        else
-            xg=xx;
-            yg=yy;
-        end
-        
-        [x,y,z]=MakeRectangularGrid(xori,yori,nx,ny,dx,dy,rot,zmax,xg,yg,zz);
-        
-        close(wb);
-
-        switch opt
-            case{'new'}                
-                handles.Model(md).Input.nrgrids=handles.Model(md).Input.nrgrids+1;
-                nrgrids=handles.Model(md).Input.nrgrids;
-                handles.Model(md).Input.gridnames{nrgrids}=filename(1:end-4);
-                handles.Model(md).Input.domains=ddb_initializeDelft3DWAVEDomain(handles.Model(md).Input.domains,nrgrids);
-                handles.activeWaveGrid=nrgrids;
-                OPT.option = 'write'; OPT.x = x; OPT.y = y; OPT.z = z; OPT.filename = filename;
-                handles = ddb_generateGridDelft3DWAVE(handles,nrgrids,OPT);
-                if nrgrids>1
-                    handles.Model(md).Input.domains(nrgrids).nestgrid=handles.Model(md).Input.domains(1).gridname;
-                    for ii=1:handles.activeWaveGrid-1
-                        handles.Model(md).Input.nestgrids{ii}=handles.Model(md).Input.domains(ii).gridname;
-                    end
-                else
-                    handles.Model(md).Input.domains(nrgrids).nestgrid='';
-                end
-            case{'existing'}
-                nrgrids=handles.Model(md).Input.nrgrids;
-                handles.Model(md).Input.gridnames{nrgrids}=filename(1:end-4);
-                OPT.option = 'write'; OPT.x = x; OPT.y = y; OPT.z = z; OPT.filename = filename;
-                handles = ddb_generateGridDelft3DWAVE(handles,nrgrids,OPT);
-        end
-
-        % Plot new domain
-        handles=ddb_Delft3DWAVE_plotGrid(handles,'plot','wavedomain',nrgrids,'active',1);
-
-        setHandles(handles);
-
-        % Refresh all domains
-        ddb_plotDelft3DWAVE('update','wavedomain',0,'active',1);
-
-    end
-    
-else
+if handles.toolbox.modelmaker.nX*handles.toolbox.modelmaker.nY>npmax
     ddb_giveWarning('Warning',['Maximum number of grid points (' num2str(npmax) ') exceeded ! Please reduce grid resolution.']);
+    return
 end
+
+handles=ddb_ModelMakerToolbox_Delft3DWAVE_generateGrid(handles,'option',opt);
+
+setHandles(handles);
+
+    
 
 %%
 function generateBathymetry
 handles=getHandles;
-datasets{1}=handles.screenParameters.backgroundBathymetry;
-handles=ddb_generateBathymetry_Delft3DWAVE(handles,awg,'datasets',datasets);
+% Use background bathymetry data
+datasets(1).name=handles.screenParameters.backgroundBathymetry;
+handles=ddb_ModelMakerToolbox_Delft3DWAVE_generateBathymetry(handles,datasets);
 setHandles(handles);
 
 %%
 function copyFromFlow
 
 handles=getHandles;
-grdfile=handles.Model(1).Input(1).grdFile;
-depfile=handles.Model(1).Input(1).depFile;
+grdfile=handles.model.delft3dflow.domain(1).grdFile;
+depfile=handles.model.delft3dflow.domain(1).depFile;
 
 if isempty(grdfile)
     ddb_giveWarning('text','No grid file has been specified in Delft3D-FLOW model!');
@@ -345,50 +236,37 @@ end
 
 ddb_plotDelft3DWAVE('delete');
 
-if handles.Model(1).Input(1).comInterval==0 || handles.Model(1).Input(1).comStartTime==handles.Model(1).Input(1).comStopTime
+if handles.model.delft3dflow.domain(1).comInterval==0 || handles.model.delft3dflow.domain(1).comStartTime==handles.model.delft3dflow.domain(1).comStopTime
     ddb_giveWarning('text','Please make sure to set the communication file times in Delft3D-FLOW model!');
 end
 
-handles.Model(md).Input.runid=handles.Model(1).Input(1).runid;
+handles.model.delft3dwave.domain.runid=handles.model.delft3dflow.domain(1).runid;
 
-handles.Model(md).Input.domains=[];
-handles.Model(md).Input.nrgrids=1;
-handles.Model(md).Input.gridnames=[];
-handles.Model(md).Input.gridnames{1}=grdfile(1:end-4);
-handles.Model(md).Input.domains=[];
-handles.Model(md).Input.domains=ddb_initializeDelft3DWAVEDomain(handles.Model(md).Input.domains,1);
+handles.model.delft3dwave.domain.domains=[];
+handles.model.delft3dwave.domain.nrgrids=1;
+handles.model.delft3dwave.domain.gridnames=[];
+handles.model.delft3dwave.domain.gridnames{1}=grdfile(1:end-4);
+handles.model.delft3dwave.domain.domains=[];
+handles.model.delft3dwave.domain.domains=ddb_initializeDelft3DWAVEDomain(handles.model.delft3dwave.domain.domains,1);
 handles.activeWaveGrid=1;
-handles.Model(md).Input.domains(1).gridx=handles.Model(1).Input(1).gridX;
-handles.Model(md).Input.domains(1).gridy=handles.Model(1).Input(1).gridY;
-handles.Model(md).Input.domains(1).depth=handles.Model(1).Input(1).depth;
-handles.Model(md).Input.domains(1).grid=grdfile;
-handles.Model(md).Input.domains(1).bedlevelgrid=grdfile;
-handles.Model(md).Input.domains(1).bedlevel=depfile;
+handles.model.delft3dwave.domain.domains(1).gridx=handles.model.delft3dflow.domain(1).gridX;
+handles.model.delft3dwave.domain.domains(1).gridy=handles.model.delft3dflow.domain(1).gridY;
+handles.model.delft3dwave.domain.domains(1).depth=handles.model.delft3dflow.domain(1).depth;
+handles.model.delft3dwave.domain.domains(1).grid=grdfile;
+handles.model.delft3dwave.domain.domains(1).bedlevelgrid=grdfile;
+handles.model.delft3dwave.domain.domains(1).bedlevel=depfile;
 % TODO : change coordsyst
-handles.Model(md).Input.domains(1).coordsyst = handles.screenParameters.coordinateSystem.type;
-handles.Model(md).Input.domains(1).mmax=size(handles.Model(md).Input.domains(1).gridx,1);
-handles.Model(md).Input.domains(1).nmax=size(handles.Model(md).Input.domains(1).gridx,2);
-handles.Model(md).Input.domains(1).nestgrid='';
+handles.model.delft3dwave.domain.domains(1).coordsyst = handles.screenParameters.coordinateSystem.type;
+handles.model.delft3dwave.domain.domains(1).mmax=size(handles.model.delft3dwave.domain.domains(1).gridx,1);
+handles.model.delft3dwave.domain.domains(1).nmax=size(handles.model.delft3dwave.domain.domains(1).gridx,2);
+handles.model.delft3dwave.domain.domains(1).nestgrid='';
 
 if couplewithflow
-    handles.Model(md).Input.referencedate=handles.Model(1).Input(1).itDate;
-    handles.Model(md).Input.mapwriteinterval=handles.Model(1).Input(1).mapInterval;
-    handles.Model(md).Input.comwriteinterval=handles.Model(1).Input(1).comInterval;
-    handles.Model(md).Input.writecom=1;
-    handles.Model(md).Input.coupling='ddbonline';
-    handles.Model(md).Input.mdffile=handles.Model(1).Input(1).mdfFile;
-    handles.Model(md).Input.domains(1).flowbedlevel=1;
-    handles.Model(md).Input.domains(1).flowwaterlevel=1;
-    handles.Model(md).Input.domains(1).flowvelocity=1;
-    if handles.Model(1).Input(1).wind
-        handles.Model(md).Input.domains(1).flowwind=1;
-    end
-    
-    handles.Model(1).Input(1).waves=1;
-    handles.Model(1).Input(1).onlineWave=1;
-
+    handles=ddb_coupleWaveWithFlow(handles);
 end
 
 setHandles(handles);
 
 ddb_plotDelft3DWAVE('plot');
+
+%%

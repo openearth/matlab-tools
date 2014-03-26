@@ -51,7 +51,6 @@ id=ad;
 vis=1;
 
 % model number imd
-imd=strmatch('Delft3DWAVE',{handles.Model(:).name},'exact');
 
 % Read input arguments
 for i=1:length(varargin)
@@ -70,37 +69,37 @@ switch lower(option)
     case{'plot'}
         
         % First delete old bathy
-        if isfield(handles.Model(imd).Input.domains(id),'bathyplot')
-            if isfield(handles.Model(imd).Input.domains(id).bathyplot,'handles')
-                if ~isempty(handles.Model(imd).Input.domains(id).bathyplot.handle)
+        if isfield(handles.model.delft3dwave.domain.domains(id),'bathyplot')
+            if isfield(handles.model.delft3dwave.domain.domains(id).bathyplot,'handles')
+                if ~isempty(handles.model.delft3dwave.domain.domains(id).bathyplot.handle)
                     try
-                        delete(handles.Model(imd).Input.domains(id).bathyplot.handle);
+                        delete(handles.model.delft3dwave.domain.domains(id).bathyplot.handle);
                     end
                 end
             end
         end
                 
-        if size(handles.Model(imd).Input.domains(id).depth,1)>0
+        if size(handles.model.delft3dwave.domain.domains(id).depth,1)>0
             
-            x=handles.Model(imd).Input.domains(id).gridx;
-            y=handles.Model(imd).Input.domains(id).gridy;
-            z=handles.Model(imd).Input.domains(id).depth;
+            x=handles.model.delft3dwave.domain.domains(id).gridx;
+            y=handles.model.delft3dwave.domain.domains(id).gridy;
+            z=handles.model.delft3dwave.domain.domains(id).depth;
             
-            handles.Model(imd).Input.domains(id).bathyplot.handle=ddb_plotBathy(x,y,z,'tag','delft3dwavebathymetry');
+            handles.model.delft3dwave.domain.domains(id).bathyplot.handle=ddb_plotBathy(x,y,z,'tag','delft3dwavebathymetry');
             
             if vis
-                set(handles.Model(imd).Input.domains(id).bathyplot.handle,'Visible','on');
+                set(handles.model.delft3dwave.domain.domains(id).bathyplot.handle,'Visible','on');
             else
-                set(handles.Model(imd).Input.domains(id).bathyplot.handle,'Visible','off');
+                set(handles.model.delft3dwave.domain.domains(id).bathyplot.handle,'Visible','off');
             end
             
         end
         
     case{'delete'}
-        if isfield(handles.Model(imd).Input.domains(id).bathyplot,'handle')
-            if ~isempty(handles.Model(imd).Input.domains(id).bathyplot.handle)
+        if isfield(handles.model.delft3dwave.domain.domains(id).bathyplot,'handle')
+            if ~isempty(handles.model.delft3dwave.domain.domains(id).bathyplot.handle)
                 try
-                    delete(handles.Model(imd).Input.domains(id).bathyplot.handle);
+                    delete(handles.model.delft3dwave.domain.domains(id).bathyplot.handle);
                 end
             end
         end
@@ -112,13 +111,13 @@ switch lower(option)
         end
         
     case{'update'}
-        if isfield(handles.Model(imd).Input.domains(id).bathyplot,'handle')
-            if ~isempty(handles.Model(imd).Input.domains(id).bathyplot.handle)
+        if isfield(handles.model.delft3dwave.domain.domains(id).bathyplot,'handle')
+            if ~isempty(handles.model.delft3dwave.domain.domains(id).bathyplot.handle)
                 try
                     if vis
-                        set(handles.Model(imd).Input.domains(id).bathyplot.handle,'Visible','on');
+                        set(handles.model.delft3dwave.domain.domains(id).bathyplot.handle,'Visible','on');
                     else
-                        set(handles.Model(imd).Input.domains(id).bathyplot.handle,'Visible','off');
+                        set(handles.model.delft3dwave.domain.domains(id).bathyplot.handle,'Visible','off');
                     end
                 end
             end
