@@ -1,4 +1,20 @@
 function [xp,yp]=MakeCurvedArrow(xs,ys,arthck,hdthck,arlength,nrhead);
+%MakeCurvedArrow turn particle track into plottable nice arrow polygon
+%
+%  [xp,yp]=MakeCurvedArrow(xs,ys,arthck,hdthck,arlength,nrhead);
+%
+% Example: 
+%   t = 0:10
+%   x = cos(2*pi*t/40)
+%   y = sin(2*pi*t/40)
+%   close;
+%   [xp,yp]=MakeCurvedArrow(x ,y ,.05   ,.1    ,.2     ,1     );plot(xp,yp,'.-','DisplayName','particle arrow');
+%   hold on;
+%   plot(x,y,'r.-','DisplayName','particle track')
+%   legend show
+%
+%See also: mxcurvec
+
 
 relwdt=1;
 
@@ -17,7 +33,7 @@ if nrhead==1
 
     for ii=1:nt-nhead
         %
-        % Next two points along tra%k
+        % Next two points along track
         %
         xx1=xs(ii);
         yy1=ys(ii);
@@ -27,7 +43,7 @@ if nrhead==1
         dy=yy2-yy1;
         ang=atan2(dy,dx);
         %
-        % Compute points at arth%k*ds at either side
+        % Compute points at arthck*ds at either side
         %
         xar(2*ii-1) = xx1+sin(ang)*arthck*relwdt;
         yar(2*ii-1) = yy1-cos(ang)*arthck*relwdt;
