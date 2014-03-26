@@ -56,6 +56,7 @@ classdef LimitState < handle
         LimitStateFunctionIsCalculating
         LimitStateFunctionIsDone
         LimitStateFunctionChecker
+        LimitStateFunctionAdditionalVariables
         BetaSphere
         BetaValues
         XValues
@@ -94,6 +95,7 @@ classdef LimitState < handle
            
             % Adding a BetaSphere by default
             this.BetaSphere     = BetaSphere;
+            this.SetDefaults
         end
         
         %% Setters
@@ -183,14 +185,26 @@ classdef LimitState < handle
         %Evaluate LSF at given point in X (regular) space, zvalue is
         %normalized with the zvalue in the origin
         function zvalue = EvaluateAtX(this, input, uvalues)
+            if ~isempty(this.LimitStateFunctionChecker) && ~isempty(this.LimitStateFunctionAdditionalVariables)
+                LSFinput    = {input{:},'LSFChecker',this.LimitStateFunctionChecker,this.LimitStateFunctionAdditionalVariables{:}};
+            elseif isempty(this.LimitStateFunctionChecker) && ~isempty(this.LimitStateFunctionAdditionalVariables)
+                LSFinput    = {input{:},this.LimitStateFunctionAdditionalVariables{:}};
+            elseif ~isempty(this.LimitStateFunctionChecker) && isempty(this.LimitStateFunctionAdditionalVariables)
+                LSFinput    = {input{:},'LSFChecker',this.LimitStateFunctionChecker};
+            else
+                LSFinput    = input;
+            end
+            
+            zvalue  = feval(this.LimitStateFunction,LSFinput{:});
+                
             % Use LimitStateFunctionChecker to see if simulation is
             % completed already (if available)
-            if ~isempty(this.LimitStateFunctionChecker)
-                notify(this.LimitStateFunctionChecker, 'SimulationStarted')
-                zvalue  = feval(this.LimitStateFunction,input{:},'LSFChecker',this.LimitStateFunctionChecker);
-            else
-                zvalue  = feval(this.LimitStateFunction,input{:});
-            end
+%             if ~isempty(this.LimitStateFunctionChecker)
+%                 notify(this.LimitStateFunctionChecker, 'SimulationStarted')
+%                 zvalue  = feval(this.LimitStateFunction,input{:},'LSFChecker',this.LimitStateFunctionChecker,this.LimitStateFunctionAdditionalVariables{:});
+%             else
+%                 zvalue  = feval(this.LimitStateFunction,input{:},this.LimitStateFunctionAdditionalVariables{:});
+%             end
             
             %Normalize with origin, or save zvalue of origin
             if ~isempty(this.ZValueOrigin) && ~isnan(this.ZValueOrigin)
@@ -295,6 +309,11 @@ classdef LimitState < handle
                 this.ResponseSurface.plot(axARS);
                 set(axARS,'Position',get(axisHandle,'Position'));
             end
+        end
+        
+        %Set default values
+        function SetDefaults(this)
+            this.LimitStateFunctionAdditionalVariables  = [];
         end
         
         %Plot limit state (and response surface if applicable)
