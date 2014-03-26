@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<root>
+  <toolbox>Bathymetry</toolbox>
+  <longname>Bathymetry</longname>
+  <enable>1</enable>
+  <element>
+    <position>10 10 1000 140</position>
+    <style>tabpanel</style>
+    <tab>
+      <tabstring>Export</tabstring>
+      <callback>ddb_BathymetryToolbox_export</callback>
+      <element>toolbox.bathymetry.export.xml</element>
+    </tab>
+    <tab>
+      <tabstring>Import</tabstring>
+      <callback>ddb_BathymetryToolbox_import</callback>
+      <element>toolbox.bathymetry.import.xml</element>
+      <enable>1</enable>
+    </tab>
+    <tab>
+      <tabstring>Cache</tabstring>
+      <callback>ddb_BathymetryToolbox_fillcache</callback>
+      <element>toolbox.bathymetry.fillcache.xml</element>
+      <enable>1</enable>
+    </tab>
+  </element>
+</root>

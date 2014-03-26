@@ -1,0 +1,449 @@
+<?xml version="1.0"?>
+<root>
+  <element>
+    <style>popupmenu</style>
+    <position>10 90 80 20</position>
+    <text>Quadrant</text>
+    <textposition>above-left</textposition>
+    <variable>handles.toolbox.tropicalcyclone.quadrant</variable>
+    <type>integer</type>
+    <tooltipstring>Select quadrant</tooltipstring>
+    <onchange>ddb_TropicalCycloneToolbox_editTrackTable</onchange>
+    <option1>selectquadrant</option1>
+    <listtext>North East</listtext>
+    <listtext>North West</listtext>
+    <listtext>South West</listtext>
+    <listtext>South East</listtext>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.toolbox.tropicalcyclone.nrTrackPoints</variable>
+        <type>integer</type>
+        <value>1</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.toolbox.tropicalcyclone.quadrantOption</variable>
+        <value>perquadrant</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>table</style>
+    <position>110 10</position>
+    <nrrows>5</nrrows>
+    <includenumbers>yes</includenumbers>
+    <includebuttons>no</includebuttons>
+    <onchange>ddb_TropicalCycloneToolbox_editTrackTable</onchange>
+    <option1>edittracktable</option1>
+    <column>
+      <style>edittime</style>
+      <width>110</width>
+      <text>Date and time</text>
+      <enable>1</enable>
+      <variable>handles.toolbox.tropicalcyclone.trackT</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>80</width>
+      <text>Lon (deg)</text>
+      <enable>1</enable>
+      <variable>handles.toolbox.tropicalcyclone.trackX</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>80</width>
+      <text>Lat (deg)</text>
+      <enable>1</enable>
+      <variable>handles.toolbox.tropicalcyclone.trackY</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>60</width>
+      <text>Vmax (kts)</text>
+      <enable>1</enable>
+      <variable>handles.toolbox.tropicalcyclone.tableVMax</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>50</width>
+      <text>B</text>
+      <enable>1</enable>
+      <variable>handles.toolbox.tropicalcyclone.tableB</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>50</width>
+      <text>A</text>
+      <enable>1</enable>
+      <variable>handles.toolbox.tropicalcyclone.tableA</variable>
+    </column>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.toolbox.tropicalcyclone.nrTrackPoints</variable>
+        <type>integer</type>
+        <value>1</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.toolbox.tropicalcyclone.method</variable>
+        <type>integer</type>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>table</style>
+    <position>110 10</position>
+    <nrrows>5</nrrows>
+    <includenumbers>yes</includenumbers>
+    <includebuttons>no</includebuttons>
+    <onchange>ddb_TropicalCycloneToolbox_editTrackTable</onchange>
+    <option1>edittracktable</option1>
+    <column>
+      <style>edittime</style>
+      <width>110</width>
+      <text>Date and time</text>
+      <enable>1</enable>
+      <variable>handles.toolbox.tropicalcyclone.trackT</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>60</width>
+      <text>Lon (deg)</text>
+      <enable>1</enable>
+      <variable>handles.toolbox.tropicalcyclone.trackX</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>60</width>
+      <text>Lat (deg)</text>
+      <enable>1</enable>
+      <variable>handles.toolbox.tropicalcyclone.trackY</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>60</width>
+      <text>Vmax (kts)</text>
+      <enable>1</enable>
+      <variable>handles.toolbox.tropicalcyclone.tableVMax</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>55</width>
+      <text>R35 (NM)</text>
+      <enable>1</enable>
+      <variable>handles.toolbox.tropicalcyclone.tableR35</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>55</width>
+      <text>R50 (NM)</text>
+      <enable>1</enable>
+      <variable>handles.toolbox.tropicalcyclone.tableR50</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>55</width>
+      <text>R65 (NM)</text>
+      <enable>1</enable>
+      <variable>handles.toolbox.tropicalcyclone.tableR65</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>55</width>
+      <text>R100 (NM)</text>
+      <enable>1</enable>
+      <variable>handles.toolbox.tropicalcyclone.tableR100</variable>
+    </column>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.toolbox.tropicalcyclone.nrTrackPoints</variable>
+        <type>integer</type>
+        <value>1</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.toolbox.tropicalcyclone.method</variable>
+        <type>integer</type>
+        <value>2</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>table</style>
+    <position>110 10</position>
+    <nrrows>5</nrrows>
+    <includenumbers>yes</includenumbers>
+    <includebuttons>no</includebuttons>
+    <onchange>ddb_TropicalCycloneToolbox_editTrackTable</onchange>
+    <option1>edittracktable</option1>
+    <column>
+      <style>edittime</style>
+      <width>110</width>
+      <text>Date and time</text>
+      <enable>1</enable>
+      <variable>handles.toolbox.tropicalcyclone.trackT</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>60</width>
+      <text>Lon (deg)</text>
+      <enable>1</enable>
+      <variable>handles.toolbox.tropicalcyclone.trackX</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>60</width>
+      <text>Lat (deg)</text>
+      <enable>1</enable>
+      <variable>handles.toolbox.tropicalcyclone.trackY</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>60</width>
+      <text>Vmax (kts)</text>
+      <enable>1</enable>
+      <variable>handles.toolbox.tropicalcyclone.tableVMax</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>60</width>
+      <text>Rmax (NM)</text>
+      <enable>1</enable>
+      <variable>handles.toolbox.tropicalcyclone.tableRMax</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>60</width>
+      <text>Pd (Pa)</text>
+      <enable>1</enable>
+      <variable>handles.toolbox.tropicalcyclone.tablePDrop</variable>
+    </column>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.toolbox.tropicalcyclone.nrTrackPoints</variable>
+        <type>integer</type>
+        <value>1</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.toolbox.tropicalcyclone.method</variable>
+        <type>integer</type>
+        <value>3</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>table</style>
+    <position>110 10</position>
+    <nrrows>5</nrrows>
+    <includenumbers>yes</includenumbers>
+    <includebuttons>no</includebuttons>
+    <onchange>ddb_TropicalCycloneToolbox_editTrackTable</onchange>
+    <option1>edittracktable</option1>
+    <column>
+      <style>edittime</style>
+      <width>110</width>
+      <text>Date and time</text>
+      <enable>1</enable>
+      <variable>handles.toolbox.tropicalcyclone.trackT</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>60</width>
+      <text>Lon (deg)</text>
+      <enable>1</enable>
+      <variable>handles.toolbox.tropicalcyclone.trackX</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>60</width>
+      <text>Lat (deg)</text>
+      <enable>1</enable>
+      <variable>handles.toolbox.tropicalcyclone.trackY</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>60</width>
+      <text>Vmax (kts)</text>
+      <enable>1</enable>
+      <variable>handles.toolbox.tropicalcyclone.tableVMax</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>60</width>
+      <text>Pd (Pa)</text>
+      <enable>1</enable>
+      <variable>handles.toolbox.tropicalcyclone.tablePDrop</variable>
+    </column>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.toolbox.tropicalcyclone.nrTrackPoints</variable>
+        <type>integer</type>
+        <value>1</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.toolbox.tropicalcyclone.method</variable>
+        <type>integer</type>
+        <value>4</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>table</style>
+    <position>110 10</position>
+    <nrrows>5</nrrows>
+    <includenumbers>yes</includenumbers>
+    <includebuttons>no</includebuttons>
+    <onchange>ddb_TropicalCycloneToolbox_editTrackTable</onchange>
+    <option1>edittracktable</option1>
+    <column>
+      <style>edittime</style>
+      <width>110</width>
+      <text>Date and time</text>
+      <enable>1</enable>
+      <variable>handles.toolbox.tropicalcyclone.trackT</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>60</width>
+      <text>Lon (deg)</text>
+      <enable>1</enable>
+      <variable>handles.toolbox.tropicalcyclone.trackX</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>60</width>
+      <text>Lat (deg)</text>
+      <enable>1</enable>
+      <variable>handles.toolbox.tropicalcyclone.trackY</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>60</width>
+      <text>Vmax (kts)</text>
+      <enable>1</enable>
+      <variable>handles.toolbox.tropicalcyclone.tableVMax</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>60</width>
+      <text>Rmax (NM)</text>
+      <enable>1</enable>
+      <variable>handles.toolbox.tropicalcyclone.tableRMax</variable>
+    </column>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.toolbox.tropicalcyclone.nrTrackPoints</variable>
+        <type>integer</type>
+        <value>1</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.toolbox.tropicalcyclone.method</variable>
+        <type>integer</type>
+        <value>5</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>table</style>
+    <position>110 10</position>
+    <nrrows>5</nrrows>
+    <includenumbers>yes</includenumbers>
+    <includebuttons>no</includebuttons>
+    <onchange>ddb_TropicalCycloneToolbox_editTrackTable</onchange>
+    <option1>edittracktable</option1>
+    <column>
+      <style>edittime</style>
+      <width>110</width>
+      <text>Date and time</text>
+      <enable>1</enable>
+      <variable>handles.toolbox.tropicalcyclone.trackT</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>60</width>
+      <text>Lon (deg)</text>
+      <enable>1</enable>
+      <variable>handles.toolbox.tropicalcyclone.trackX</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>60</width>
+      <text>Lat (deg)</text>
+      <enable>1</enable>
+      <variable>handles.toolbox.tropicalcyclone.trackY</variable>
+    </column>
+    <column>
+      <style>editreal</style>
+      <width>60</width>
+      <text>Vmax (kts)</text>
+      <enable>1</enable>
+      <variable>handles.toolbox.tropicalcyclone.tableVMax</variable>
+    </column>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.toolbox.tropicalcyclone.nrTrackPoints</variable>
+        <type>integer</type>
+        <value>1</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+    <dependency>
+      <action>visible</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.toolbox.tropicalcyclone.method</variable>
+        <type>integer</type>
+        <value>6</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+</root>

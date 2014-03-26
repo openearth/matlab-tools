@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<root>
+  <element>
+    <style>panel</style>
+    <position>10 10 500 130</position>
+    <text>Detailed Model</text>
+  </element>
+  <element>
+    <style>pushselectfile</style>
+    <position>20 100 120 20</position>
+    <text>Select Grid File</text>
+    <variable>handles.toolbox.nesting.grdFile</variable>
+    <showfilename>yes</showfilename>
+    <extension>*.grd</extension>
+    <selectiontext>Select grid file of detailed model</selectiontext>
+    <tooltipstring>Select grid file (*.grd) of detailed model</tooltipstring>
+  </element>
+  <element>
+    <style>pushselectfile</style>
+    <position>20 75 120 20</position>
+    <text>Select Depth File</text>
+    <variable>handles.toolbox.nesting.depFile</variable>
+    <showfilename>yes</showfilename>
+    <extension>*.dep</extension>
+    <selectiontext>Select depth file of detailed model</selectiontext>
+    <tooltipstring>Select depth file (*.dep) of detailed model</tooltipstring>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>600 15 150 20</position>
+    <text>Make Observation Points</text>
+    <callback>ddb_NestingToolbox_Delft3DWAVE_nest1</callback>
+    <option1>nest1</option1>
+    <tooltipstring>Make observation points for overall model</tooltipstring>
+  </element>
+</root>

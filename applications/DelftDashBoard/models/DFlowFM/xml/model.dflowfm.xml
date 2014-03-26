@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<root>
+  <model>DFlowFM</model>
+  <longname>D-FLOW FM</longname>
+  <multipledomains>no</multipledomains>
+  <enable>1</enable>
+  <menu>
+    <menuopenfile>
+      <menuitem>
+        <string>Open MDU File</string>
+        <callback>ddb_openDFlowFM</callback>
+        <option>openpresent</option>
+      </menuitem>
+    </menuopenfile>
+    <menusavefile>
+      <menuitem>
+        <string>Save MDU File</string>
+        <callback>ddb_saveDFlowFM</callback>
+        <option>save</option>
+      </menuitem>
+      <menuitem>
+        <string>Save MDU File As ...</string>
+        <callback>ddb_saveDFlowFM</callback>
+        <option>saveas</option>
+      </menuitem>
+      <menuitem>
+        <string>Save All</string>
+        <callback>ddb_saveDFlowFM</callback>
+        <option>saveall</option>
+      </menuitem>
+      <menuitem>
+        <string>DFlow-FM version ...</string>
+        <callback>ddb_setModelSettings</callback>
+        <option>selectversion</option>
+      </menuitem>
+    </menusavefile>
+    <menuview/>
+  </menu>
+  <element>
+    <style>tabpanel</style>
+    <position>10 10 900 700</position>
+    <tab>
+      <tabstring>Toolbox</tabstring>
+    </tab>
+    <tab>
+      <tabstring>Model</tabstring>
+      <element>DFlowFM.model.xml</element>
+    </tab>
+    <tab>
+      <tabstring>Geometry</tabstring>
+      <element>DFlowFM.geometry.xml</element>
+    </tab>
+    <tab>
+      <tabstring>Time Frame</tabstring>
+      <callback>ddb_DFlowFM_timeFrame</callback>
+      <element>DFlowFM.timeframe.xml</element>
+    </tab>
+    <tab>
+      <tabstring>Numerics</tabstring>
+      <callback>ddb_DFlowFM_numerics</callback>
+      <element>DFlowFM.numerics.xml</element>
+    </tab>
+    <tab>
+      <tabstring>Physics</tabstring>
+      <callback>ddb_DFlowFM_physics</callback>
+      <element>DFlowFM.physics.xml</element>
+    </tab>
+    <tab>
+      <tabstring>Wind</tabstring>
+      <callback>ddb_DFlowFM_wind</callback>
+      <element>DFlowFM.wind.xml</element>
+    </tab>
+    <tab>
+      <tabstring>External Forcing</tabstring>
+      <element>DFlowFM.externalforcing.xml</element>
+    </tab>
+    <tab>
+      <tabstring>Output</tabstring>
+      <callback>ddb_DFlowFM_output</callback>
+      <element>DFlowFM.output.xml</element>
+    </tab>
+  </element>
+</root>

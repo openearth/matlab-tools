@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+<root>
+  <element>
+    <style>listbox</style>
+    <text>Available Tide Models</text>
+    <textposition>above-center</textposition>
+    <variable>handles.toolbox.tidedatabase.activeModel</variable>
+    <type>integer</type>
+    <position>10 10 200 105</position>
+    <tooltipstring>Select tide model</tooltipstring>
+    <onchange>ddb_TideDatabaseToolbox_export</onchange>
+    <option1>selectmodel</option1>
+    <listtext>
+      <variable>handles.tideModels.longNames</variable>
+    </listtext>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>270 95 50 20</position>
+    <text>X Min</text>
+    <textposition>left</textposition>
+    <onchange>ddb_TideDatabaseToolbox_export</onchange>
+    <option1>editoutline</option1>
+    <variable>handles.toolbox.tidedatabase.xLim(1)</variable>
+    <type>real</type>
+    <tooltipstring>Edit minimum x coordinate</tooltipstring>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>270 70 50 20</position>
+    <text>X Max</text>
+    <textposition>left</textposition>
+    <onchange>ddb_TideDatabaseToolbox_export</onchange>
+    <option1>editoutline</option1>
+    <variable>handles.toolbox.tidedatabase.xLim(2)</variable>
+    <type>real</type>
+    <tooltipstring>Edit maximum x coordinate</tooltipstring>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>270 45 50 20</position>
+    <text>Y Min</text>
+    <textposition>left</textposition>
+    <onchange>ddb_TideDatabaseToolbox_export</onchange>
+    <option1>editoutline</option1>
+    <variable>handles.toolbox.tidedatabase.yLim(1)</variable>
+    <type>real</type>
+    <tooltipstring>Edit minimum y coordinate</tooltipstring>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>270 20 50 20</position>
+    <text>Y Max</text>
+    <textposition>left</textposition>
+    <onchange>ddb_TideDatabaseToolbox_export</onchange>
+    <option1>editoutline</option1>
+    <variable>handles.toolbox.tidedatabase.yLim(2)</variable>
+    <type>real</type>
+    <tooltipstring>Edit maximum y coordinate</tooltipstring>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>330 95 80 20</position>
+    <text>Draw Box</text>
+    <callback>ddb_TideDatabaseToolbox_export</callback>
+    <option1>drawrectangle</option1>
+  </element>
+  <element>
+    <style>popupmenu</style>
+    <text>Export Format</text>
+    <textposition>left</textposition>
+    <variable>handles.toolbox.tidedatabase.activeExportFormatIndex</variable>
+    <position>500 40 70 20</position>
+    <tooltipstring>Select output format</tooltipstring>
+    <type>integer</type>
+    <callback>ddb_TideDatabaseToolbox_export</callback>
+    <option1>selectexportformat</option1>
+    <listtext>
+      <variable>handles.toolbox.tidedatabase.exportFormatNames</variable>
+    </listtext>
+  </element>
+  <element>
+    <style>pushsavefile</style>
+    <position>500 15 70 20</position>
+    <text>Export</text>
+    <variable>handles.toolbox.tidedatabase.exportFile</variable>
+    <onchange>ddb_TideDatabaseToolbox_export</onchange>
+    <option1>export</option1>
+    <showfilename>no</showfilename>
+    <filter>
+      <extension>
+        <variable>activeExportFormatExtension</variable>
+      </extension>
+    </filter>
+    <extension>*.tek</extension>
+    <selectiontext>Select data file</selectiontext>
+    <tooltipstring>Export tide data</tooltipstring>
+  </element>
+</root>

@@ -1,0 +1,245 @@
+<?xml version="1.0"?>
+<root>
+  <title>Cyclone Parameters</title>
+  <width>210</width>
+  <height>330</height>
+  <element>
+    <style>edit</style>
+    <position>90 295 110 20</position>
+    <variable>handles.toolbox.tropicalcyclone.startTime</variable>
+    <type>datetime</type>
+    <text>Start Time</text>
+    <textposition>left</textposition>
+    <tooltipstring>Edit start time of track</tooltipstring>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>90 270 110 20</position>
+    <variable>handles.toolbox.tropicalcyclone.timeStep</variable>
+    <type>real</type>
+    <text>Time Step (hrs)</text>
+    <textposition>left</textposition>
+    <tooltipstring>Edit time step of cyclone track</tooltipstring>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>90 245 110 20</position>
+    <variable>handles.toolbox.tropicalcyclone.vMax</variable>
+    <type>real</type>
+    <text>Vmax (kts)</text>
+    <textposition>left</textposition>
+    <tooltipstring>Edit maximum wind speed</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.toolbox.tropicalcyclone.method</variable>
+        <type>integer</type>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.toolbox.tropicalcyclone.method</variable>
+        <type>integer</type>
+        <value>2</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.toolbox.tropicalcyclone.method</variable>
+        <type>integer</type>
+        <value>3</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.toolbox.tropicalcyclone.method</variable>
+        <type>integer</type>
+        <value>4</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.toolbox.tropicalcyclone.method</variable>
+        <type>integer</type>
+        <value>5</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.toolbox.tropicalcyclone.method</variable>
+        <type>integer</type>
+        <value>6</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>90 220 110 20</position>
+    <variable>handles.toolbox.tropicalcyclone.rMax</variable>
+    <type>real</type>
+    <text>Rmax (NM)</text>
+    <textposition>left</textposition>
+    <tooltipstring>Edit radius of maximum wind speed</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.toolbox.tropicalcyclone.method</variable>
+        <type>integer</type>
+        <value>3</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.toolbox.tropicalcyclone.method</variable>
+        <type>integer</type>
+        <value>5</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>90 195 110 20</position>
+    <variable>handles.toolbox.tropicalcyclone.pDrop</variable>
+    <type>real</type>
+    <text>Pdrop (Pa)</text>
+    <textposition>left</textposition>
+    <tooltipstring>Edit pressure drop</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.toolbox.tropicalcyclone.method</variable>
+        <type>integer</type>
+        <value>3</value>
+        <operator>eq</operator>
+      </check>
+      <check>
+        <variable>handles.toolbox.tropicalcyclone.method</variable>
+        <type>integer</type>
+        <value>4</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>90 170 110 20</position>
+    <variable>handles.toolbox.tropicalcyclone.parB</variable>
+    <type>real</type>
+    <text>Holland B</text>
+    <textposition>left</textposition>
+    <tooltipstring>Edit Holland's B parameter</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.toolbox.tropicalcyclone.method</variable>
+        <type>integer</type>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>90 145 110 20</position>
+    <variable>handles.toolbox.tropicalcyclone.parA</variable>
+    <type>real</type>
+    <text>Holland A</text>
+    <textposition>left</textposition>
+    <tooltipstring>Edit Holland's A parameter</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.toolbox.tropicalcyclone.method</variable>
+        <type>integer</type>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>90 120 110 20</position>
+    <variable>handles.toolbox.tropicalcyclone.r35</variable>
+    <type>real</type>
+    <text>R35 (NM)</text>
+    <textposition>left</textposition>
+    <tooltipstring>Edit pressure drop</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.toolbox.tropicalcyclone.method</variable>
+        <type>integer</type>
+        <value>2</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>90 95 110 20</position>
+    <variable>handles.toolbox.tropicalcyclone.r50</variable>
+    <type>real</type>
+    <text>R50 (NM)</text>
+    <textposition>left</textposition>
+    <tooltipstring>Edit pressure drop</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.toolbox.tropicalcyclone.method</variable>
+        <type>integer</type>
+        <value>2</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>90 70 110 20</position>
+    <variable>handles.toolbox.tropicalcyclone.r65</variable>
+    <type>real</type>
+    <text>R65 (NM)</text>
+    <textposition>left</textposition>
+    <tooltipstring>Edit pressure drop</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.toolbox.tropicalcyclone.method</variable>
+        <type>integer</type>
+        <value>2</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>90 45 110 20</position>
+    <variable>handles.toolbox.tropicalcyclone.r100</variable>
+    <type>real</type>
+    <text>R100 (NM)</text>
+    <textposition>left</textposition>
+    <tooltipstring>Edit pressure drop</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>any</checkfor>
+      <check>
+        <variable>handles.toolbox.tropicalcyclone.method</variable>
+        <type>integer</type>
+        <value>2</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>pushok</style>
+    <position>150 10 50 20</position>
+  </element>
+  <element>
+    <style>pushcancel</style>
+    <position>90 10 50 20</position>
+  </element>
+</root>
