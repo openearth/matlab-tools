@@ -68,7 +68,7 @@ function varargout=curvec(x,y,u,v,varargin)
 % ptch=patch(0,0,'r');
 % axis equal;
 % set(gca,'xlim',[-10 110],'ylim',[-10 110]);
-% aviobj = avifile('example.avi','fps',20,'Compression','Cinepak','Quality',100);
+% %aviobj = avifile('example.avi','fps',20,'Compression','Cinepak','Quality',100);
 % pos=[];
 % for t=1:200
 %     disp(['Processing ' num2str(t) ' of 200 ...']);
@@ -77,12 +77,12 @@ function varargout=curvec(x,y,u,v,varargin)
 %     [polx,poly,xax,yax,len,pos]=curvec(x,y,u,v,'length',10,'dx',5,'position',pos,'timestep',2);
 %     set(ptch,'XData',polx,'YData',poly);
 %     F = getframe(fig);
-%     aviobj = addframe(aviobj,F);
+%     %aviobj = addframe(aviobj,F);
 % end
-% close(fig)
-% aviobj = close(aviobj);
+% %close(fig)
+% %aviobj = close(aviobj);
 %
-%See also: KMLcurvedArrows, mxcurvec, quiver, arrow2, arrow, particle_tracker
+%See also: KMLcurvedArrows, mxcurvec, quiver, arrow2, arrow, particle_tracker, MakeCurvedArrow
  
 % --------------------------------------------------------------------
 % Copyright (C) 2011 Deltares
