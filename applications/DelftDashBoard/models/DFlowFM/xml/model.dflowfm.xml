@@ -44,40 +44,40 @@
     </tab>
     <tab>
       <tabstring>Model</tabstring>
-      <element>DFlowFM.model.xml</element>
+      <element>model.dflowfm.model.xml</element>
     </tab>
     <tab>
       <tabstring>Geometry</tabstring>
-      <element>DFlowFM.geometry.xml</element>
+      <element>model.dflowfm.geometry.xml</element>
     </tab>
     <tab>
       <tabstring>Time Frame</tabstring>
       <callback>ddb_DFlowFM_timeFrame</callback>
-      <element>DFlowFM.timeframe.xml</element>
+      <element>model.dflowfm.timeframe.xml</element>
     </tab>
     <tab>
       <tabstring>Numerics</tabstring>
       <callback>ddb_DFlowFM_numerics</callback>
-      <element>DFlowFM.numerics.xml</element>
+      <element>model.dflowfm.numerics.xml</element>
     </tab>
     <tab>
       <tabstring>Physics</tabstring>
       <callback>ddb_DFlowFM_physics</callback>
-      <element>DFlowFM.physics.xml</element>
+      <element>model.dflowfm.physics.xml</element>
     </tab>
     <tab>
       <tabstring>Wind</tabstring>
       <callback>ddb_DFlowFM_wind</callback>
-      <element>DFlowFM.wind.xml</element>
+      <element>model.dflowfm.wind.xml</element>
     </tab>
     <tab>
       <tabstring>External Forcing</tabstring>
-      <element>DFlowFM.externalforcing.xml</element>
+      <element>model.dflowfm.externalforcing.xml</element>
     </tab>
     <tab>
       <tabstring>Output</tabstring>
       <callback>ddb_DFlowFM_output</callback>
-      <element>DFlowFM.output.xml</element>
+      <element>model.dflowfm.output.xml</element>
     </tab>
   </element>
 </root>
