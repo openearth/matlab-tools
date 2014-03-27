@@ -106,7 +106,9 @@ ze          = nc_varget(fullfile(ModelOutputDir,'xboutput.nc'), 'zb',[zsize(1)-1
 tide        = load(fullfile(ModelOutputDir,'tide.txt'));
 
 if tide(1,2) > max(zi)
-    ErosionPoint    = max(xi);
+    ErosionPoint    = max(xi); % replace by intersection of constant angle from water level with dune crest height
+    % Start (horizontally) at either the landward most 0 NAP crossing or
+    % the most landward gridcell
 else
     [TargetVolume, ~, ~] = getVolume('x',xi,'z',zi,'x2',xe,'z2',ze,'LowerBoundary',tide(1,2));
     ErosionResult = getAdditionalErosion(xi, zi, ...
@@ -116,7 +118,11 @@ else
         'zmin',tide(1,2));
     
     if ~isempty(ErosionResult.VTVinfo.Xr)
-        ErosionPoint    = ErosionResult.VTVinfo.Xr;
+        if ErosionResult.info.precision > 1
+            ErosionPoint    = ErosionResult.VTVinfo.Xr + ErosionResult.info.precision/(mean(zi(zi>tide(1,2)))-tide(1,2));
+        else
+            ErosionPoint    = ErosionResult.VTVinfo.Xr;
+        end
     else
         ErosionPoint    = min(findCrossings(xi,zi,[min(xi),max(xi)],ones(1,2)*tide(1,2)));
     end
