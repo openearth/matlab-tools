@@ -139,7 +139,7 @@ if hWaterLevel > max(zProfile)
     % with dune crest level from water height as ErosionPoint
     zReference      = 0;
     xReference      = -min(findCrossings(xProfile,zProfile,[min(xProfile),max(xProfile)],zReference*ones(1,2)));
-    if isempty(xReference)
+    if isempty(xReference) || xReference < max(findCrossings(xProfile,zProfile,[min(xProfile),max(xProfile)],max(zProfile)*ones(1,2)))
         xReference  = -min(xProfile);
     end
     Slope           = 1/100;

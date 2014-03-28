@@ -110,7 +110,7 @@ if tide(1,2) > max(zi)
     % with dune crest level from water height as ErosionPoint
     zReference      = 0;
     xReference      = max(findCrossings(xi,zi,[min(xi),max(xi)],zReference*ones(1,2)));
-    if isempty(xReference)
+    if isempty(xReference) || xReference < max(findCrossings(xi,zi,[min(xi),max(xi)],max(zi)*ones(1,2)))
         xReference  = max(xi);
     end
     Slope           = 1/100;
