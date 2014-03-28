@@ -9,8 +9,8 @@ function rws_waterbase_all
 %% Initialize
 
    OPT.download       = 0; % get fresh downloads from rws and move exisitng to sub dir old
-   OPT.make_nc        = 1; % makes also temporary mat files, moves exisiting nc to old subdir
-   OPT.make_catalog   = 1; % otherwise load existing one
+   OPT.make_nc        = 0; % makes also temporary mat files, moves exisiting nc to old subdir
+   OPT.make_catalog   = 0; % otherwise load existing one
    OPT.make_kml       = 1; % processing all kml only takas about 4 hours
    OPT.baseurl        = 'http://live.waterbase.nl';
    OPT.institution    = 'rijkswaterstaat'; % for construcitng relative path
@@ -35,8 +35,8 @@ function rws_waterbase_all
                     332  346  347  360  363  ... %    KjN   N   N  O2 PO4
                     364  380  491  492  493  ... %      P P04 NH4 N02 N03
                     541  560 1083    1  377  ... %    DSe  Si DOC zwl  pH
-                   1238  713 1082  401       ];  % NO3NO2  E POC TOC
-  %donar_wnsnum = [559] %1082 Use this if you want only an update of one some specific parameter.
+                   1238  713 1082  401       ];  % NO3NO2  E  POC TOC
+   donar_wnsnum = [282] %1082 Use this if you want only an update of one some specific parameter.
    
    mfilename('fullpath')
    DONAR = xls2struct([fileparts(mfilename('fullpath')) filesep 'rws_waterbase_name2standard_name.xls']);
@@ -159,7 +159,7 @@ function rws_waterbase_all
       OPT2.overlayXY          = {[.5 1],[0    0.00]};
       OPT2.screenXY           = {[.5 1],[0.01 0.03]};
       OPT2.imName             = {'http://www.rws.nl/en/images/ENRO_VW_RW~LI.png',[fileparts(oetlogo),filesep,'OpenEarth-logo-blurred-white-background4kml.png'];};
-      OPT2.logoName           = {'overheid4GE.png','oet4GE.png'};
+      OPT2.logoName           = {'overheid4GE.png','OpenEarth-logo-blurred-white-background4GE.png'};
       
       OPT2.varPathFcn         = @(s) path2os(strrep(s,urlbase,ncbase),filesep); % use local netCDF files for preview/statistics when CATALOG refers already to server
       OPT2.resolveUrl         = cellfun(@(x) ['http://live.waterbase.nl/waterbase_dbh.cfm?loc=',upper(x),'&page=start.locaties.databeschikbaarheid&taal=nl&loc=&wbwns=',num2str(OPT.donar_wnsnum),'|',strtrim(strrep(OPT.donar_wns_oms,' ','+')),'&whichform=2'],CATALOG.platform_id,'un',0);
