@@ -106,9 +106,14 @@ ze          = nc_varget(fullfile(ModelOutputDir,'xboutput.nc'), 'zb',[zsize(1)-1
 tide        = load(fullfile(ModelOutputDir,'tide.txt'));
 
 if tide(1,2) > max(zi)
-    ErosionPoint    = max(xi); % replace by intersection of constant angle from water level with dune crest height
-    % Start (horizontally) at either the landward most 0 NAP crossing or
-    % the most landward gridcell
+    % Waterlevel higher than dune crest, use intersection of 1/100 slope
+    % with dune crest level from water height as ErosionPoint
+    xReference      = max(findCrossings(xi,zi,[min(xi),max(xi)],zeros(1,2)));
+    if isempty(xReference)
+        xReference  = max(xi);
+    end
+    Slope           = 1/100;
+    ErosionPoint    = xReference + (tide(1,2)-max(zi))/Slope;
 else
     [TargetVolume, ~, ~] = getVolume('x',xi,'z',zi,'x2',xe,'z2',ze,'LowerBoundary',tide(1,2));
     ErosionResult = getAdditionalErosion(xi, zi, ...
@@ -119,11 +124,16 @@ else
     
     if ~isempty(ErosionResult.VTVinfo.Xr)
         if ErosionResult.info.precision > 1
+            % Eroded volume can't be fit completely in the available volume
+            % above waterlevel, add remainder as the distance it takes to
+            % erode the mean volume above waterlevel
             ErosionPoint    = ErosionResult.VTVinfo.Xr + ErosionResult.info.precision/(mean(zi(zi>tide(1,2)))-tide(1,2));
         else
             ErosionPoint    = ErosionResult.VTVinfo.Xr;
         end
     else
+        % Erosion volume can't be fitted, take most seaward crossing with
+        % waterlevel as ErosionPoint
         ErosionPoint    = min(findCrossings(xi,zi,[min(xi),max(xi)],ones(1,2)*tide(1,2)));
     end
 end
