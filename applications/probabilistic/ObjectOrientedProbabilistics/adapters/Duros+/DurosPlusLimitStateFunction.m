@@ -116,23 +116,44 @@ Accuracy        = zeros(size(OPT.Ph));
 
 
 if numel(ErosionResult) == 2
-    if isempty(ErosionResult(1).VTVinfo.Xr) && zTemp == MaxErosionPoint - 1000
-        ErosionPoint    = -min(xInitial);
-    else
-        ErosionPoint    = -ErosionResult(1).VTVinfo.Xr;
-    end
+    ErosionPoint = DetermineErosionPoint(ErosionResult(1).VTVinfo.Xr, h, MaxErosionPoint, zTemp, ErosionResult(1).info.precision, xInitial, zInitial);
 
     z               = MaxErosionPoint - ErosionPoint;
     display(['The current exact Z-value is ' num2str(z) '(h = ' num2str(OPT.Ph), ...
         ', Hm0 = ' num2str(OPT.PHm0) ', Tp = ' num2str(OPT.PTp) ')']) %DEBUG
 else
     for iResult = 1:numel(ErosionResult)
-        if isempty(ErosionResult{iResult}(1).VTVinfo.Xr) && zTemp(iResult) == MaxErosionPoint - 1000
-            ErosionPoint    = -min(xInitial);
-        else
-            ErosionPoint    = -ErosionResult{iResult}(1).VTVinfo.Xr;
-        end
-        
+        ErosionPoint = DetermineErosionPoint(ErosionResult{iResult}(1).VTVinfo.Xr, h(iResult), MaxErosionPoint, zTemp(iResult), ErosionResult{iResult}(1).info.precision, xInitial, zInitial);
         z(iResult)      = MaxErosionPoint - ErosionPoint;
+        
+        display(['The current exact Z-value is ' num2str(z(iResult)) '(h = ' num2str(OPT.Ph(iResult)), ...
+            ', Hm0 = ' num2str(OPT.PHm0(iResult)) ', Tp = ' num2str(OPT.PTp(iResult)) ')']) %DEBUG
     end
+end
+end
+
+function ErosionPoint = DetermineErosionPoint(Rx, hWaterLevel, MaxErosionPoint, Zvalue, Precision, xProfile, zProfile)
+
+if hWaterLevel > max(zProfile)
+    % Waterlevel higher than dune crest, use intersection of 1/100 slope
+    % with dune crest level from water height as ErosionPoint
+    zReference      = 0;
+    xReference      = -min(findCrossings(xProfile,zProfile,[min(xProfile),max(xProfile)],zReference*ones(1,2)));
+    if isempty(xReference)
+        xReference  = -min(xProfile);
+    end
+    Slope           = 1/100;
+    ErosionPoint    = -xReference + (hWaterLevel-max(zProfile))/Slope;
+else
+    if isempty(Rx) && Zvalue == MaxErosionPoint - 1000
+        ErosionPoint    = -min(xProfile);
+    elseif Precision > 1
+        % Eroded volume can't be fit completely in the available volume
+        % above waterlevel, add remainder as the distance it takes to
+        % erode the mean volume above waterlevel
+        ErosionPoint    = -Rx + Precision/(mean(zProfile(zProfile>hWaterLevel))-hWaterLevel);
+    else
+        ErosionPoint    = -Rx;
+    end
+end
 end

@@ -108,7 +108,8 @@ tide        = load(fullfile(ModelOutputDir,'tide.txt'));
 if tide(1,2) > max(zi)
     % Waterlevel higher than dune crest, use intersection of 1/100 slope
     % with dune crest level from water height as ErosionPoint
-    xReference      = max(findCrossings(xi,zi,[min(xi),max(xi)],zeros(1,2)));
+    zReference      = 0;
+    xReference      = max(findCrossings(xi,zi,[min(xi),max(xi)],zReference*ones(1,2)));
     if isempty(xReference)
         xReference  = max(xi);
     end
