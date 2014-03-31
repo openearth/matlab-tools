@@ -36,7 +36,8 @@ function [xgr zgr] = xb_grid_xgrid(xin, zin, varargin)
 %     - nonh     :: [-] Switch option for generation of non-hydrostatic
 %                       model grid
 %     - dxdry    :: [m] grid size for dry points
-%     - zdry     :: [m] elevation above which points are dry
+%     - zdry     :: [m] elevation above which points are dry 
+%     - xdry     :: [m] cross-shore distance from which points are dry
 %
 %   Output:
 %   xgr   = x-grid coordinates
@@ -106,7 +107,8 @@ OPT = struct(...
     'ppwl', 12 ,...        % desired points per wavelength
     'nonh', false, ...     % setting grid to solve individual short waves instead of infragravity waves
     'dxdry', [], ...       % grid size to use for dry cells
-    'zdry', [] ...         % vertical level above which cells should be considered dry
+    'zdry', [],...         % vertical level above which cells should be considered dry
+    'xdry', []...          % horizontal (cross-shore) level from which cells should be considered dry
     );
 
 % overrule default settings by propertyName-propertyValue pairs, given in varargin
@@ -168,7 +170,11 @@ elseif OPT.vardx == 1
     while xlast < xend
         
         % what is the minimum grid size in this area
-        drycell = zgr(ii)>OPT.zdry;
+        if ~isempty(OPT.xdry)
+            drycell = xgr(ii)>OPT.xdry;
+        else
+            drycell = zgr(ii)>OPT.zdry;
+        end
         if drycell
             localmin = OPT.dxdry;
         else
