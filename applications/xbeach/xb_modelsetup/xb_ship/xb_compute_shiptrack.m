@@ -30,6 +30,11 @@ function [xb_st] = xb_compute_shiptrack(iship,varargin)
 %   out = [t,x,y];
 %   save ship_track.txt out -ascii
 %
+%  TODO: 
+%  - add auto pilot option!
+%  - multiple ships
+%
+%
 %   Based on initial code by Dano Roelvink (UNESCO-IHE / Deltares)
 
 %% Copyright notice
@@ -71,6 +76,7 @@ function [xb_st] = xb_compute_shiptrack(iship,varargin)
 % $Revision$
 % $HeadURL$
 % $Keywords: $
+%% INPUT
 OPT.trackxyt      = sprintf('track%03d.txt', iship); % Ship track filename (t,x,y,z)
 OPT.dt            = 10;                              % Timestep [s]
 OPT.v             = [.1 8 8];    % Speed [m/s]

@@ -60,26 +60,19 @@ function xb_sg = xb_generate_ships(varargin)
 % $HeadURL$
 % $Keywords: $
 
-%%
+%% Input
 OPT = struct( 'noships',1,...
     'shipgeom', {{}}, ...
     'shiptrack', {{}}, ...
     'path', '');
 OPT = setproperty(OPT, varargin{:});
-%% code
-xb_st = xs_empty();
-xb_sg = xs_empty();
-
-for i = 1%:length(OPT.noships) % TODO: Only works for one ship for now
+%% Create xbeach structure with ship(s) information
+for i = 1%:length(OPT.noships) % TODO: Multiple ships (Only works for 1 ship now)
+    % compute ship track
     xb_st  = xb_compute_shiptrack(i,OPT.shiptrack{:});
+    % define ship geometry parametesr
     xb_sg  = xb_shipgeom(i,OPT.shipgeom{:});
+    % add shiptrack info to xbeach ship geometry structure
     xb_sg  = xs_set(xb_sg, 'shiptrack', xb_st); 
 end
-
 xb_sg = xs_meta(xb_sg, mfilename, 'ships');
-
-% Input
-% geometry: lxbxd
-% track: xy, t/speed
-
-
