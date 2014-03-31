@@ -132,6 +132,17 @@ else
         else
             ErosionPoint    = ErosionResult.VTVinfo.Xr;
         end
+        % DEBUG: make dune erosion plots to check results
+        hFig    = figure;
+        hAx     = gca;
+        plotDuneErosion(ErosionResult,'xdir','normal')
+        hold on
+        plot(hAx,xe,ze,'b.-')
+        hold off
+        xlim(hAx,[min(xe) max(xe)])
+        ylim(hAx,[min(ze) max(ze)+5])
+        print('-dpng','-r600',ModelOutputDir)
+        close(hFig)
     else
         % Erosion volume can't be fitted, take most seaward crossing with
         % waterlevel as ErosionPoint
@@ -140,5 +151,6 @@ else
 end
 
 z           = MaxErosionPoint - ErosionPoint;
+
 display(['The current exact Z-value is ' num2str(z) '(h = ' num2str(OPT.Ph), ...
     ', Hm0 = ' num2str(OPT.PHm0) ', Tp = ' num2str(OPT.PTp) ')']) %DEBUG
