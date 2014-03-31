@@ -160,6 +160,7 @@ OPT.parent      = 0;
 OPT.IncHiLow    = 1; % include values higher and lower than the limits of OPT.Ag.
 OPT.directionLabels = true; % labels North South etc..
 OPT.centersectors = true;% Center sectors around 0 .. 360 or not
+OPT.units = '';
 OPT = setproperty(OPT, varargin{:});
 
 if nargin==0
@@ -477,10 +478,10 @@ elseif OPT.legType==2 % separated boxes.
   for j=1:length(OPT.Ag)-1
     lab=[num2str(OPT.Ag(j)) ' - ' num2str(OPT.Ag(j+1))];
     if j==1 && hasL && OPT.IncHiLow
-      lab=['<',num2str(OPT.Ag(2))];
+      lab=['<',num2str(OPT.Ag(2)),' ',OPT.units];
     end
     if j==length(OPT.Ag)-1 && hasH && OPT.IncHiLow
-      lab=['>=',num2str(OPT.Ag(j))];
+      lab=['>=',num2str(OPT.Ag(j)),' ',OPT.units];
     end
     y1=y0+h;
     handles(end+1)=fill([x0 x1 x1 x0],[y0+dy y0+dy y1 y1],cor{j});
@@ -511,6 +512,7 @@ end
 if nargout>=2
   varargout{2}=E;
 end
+varargout{3}=g;
 
 function place_wr(ax,ax2,x,y,width)
 if nargin < 5
