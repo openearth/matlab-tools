@@ -198,13 +198,13 @@ for jj=1:1%length(sensitivities)
     if length(S.PP(jj).output.kmlfiles)>1
         for ii=1:length(S.PP(jj).output.kmlfiles)
             root(ii).tool = xml.tool;
-            root(ii).scenario = xml.data.scenarioname;
+            root(ii).scenario = S.userinput.name;%xml.data.scenarioname;
             root(ii).kmlTitle=strrep(S.PP(jj).output.addtxt{ii}(2:end),'_','');
             root(ii).kmlFile=[S.userinput.name S.PP(jj).output.addtxt{ii} '.kml'];
         end
     else
         root.item.tool = xml.tool;
-	    root.item.scenario = xml.data.scenarioname;
+	    root.item.scenario = S.userinput.name;%xml.data.scenarioname;
         root.item.kmlFile=strrep(S.PP(jj).output.addtxt{ii}(2:end),'_','');
         root.item.kmlTitle=[S.userinput.name S.PP(jj).output.addtxt{ii} '.kml'];
     end
@@ -247,7 +247,7 @@ d=dir(h,outputFilename);
 if isempty(d)
     warning(['OUTPUT XML FILE: ' outputFilename ' could not be copied to FTP!']);
 else
-    delete(outputFilename);
+    %delete(outputFilename);
 end
 
 %Then go back to the input dir for listener
@@ -255,5 +255,30 @@ end
 cd(h,'..');
 %Go into output dir
 cd(h,'input');
+
+%% Copy all to cache under sessionID folder
+cacheDir=[xml.cacheDir filesep xml.sessionID filesep 'ITHK'];
+if ~exist(cacheDir,'dir')
+    mkdir(cacheDir);
+end
+
+%Store S, xml and kml-files
+save([cacheDir filesep 'xml_' xml.uniqueID '.mat'],'xml');
+
+copyfile(outputFilename,[cacheDir filesep S.userinput.name '.xml']);%xml.data.scenarioname;
+delete(outputFilename);
+
+if length(S.PP(jj).output.kmlfiles)>1
+    for ii=1:length(S.PP(jj).output.kmlfiles)
+         movefile([S.settings.outputdir filesep root(ii).kmlFile],cacheDir);
+    end
+else
+     movefile([S.settings.outputdir filesep root.item.kmlFile],cacheDir);
+    %delete(root.item.kmlFile);
+end
+
+%% Clean up
+clear
+close all
 
 %}

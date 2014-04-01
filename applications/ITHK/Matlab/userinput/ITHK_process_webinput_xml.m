@@ -24,8 +24,14 @@ if isfield(xml.data,'features')
 end
 
 %% Scenario information
-S.name = [xml.data.scenarioname '_' xml.uniqueID];
-S.duration = min(95,xml.data.duration);
+try
+    S.name = [xml.data.features(1).properties.scenarioname '_' xml.uniqueID];
+    S.duration = min(95,xml.data.features(1).properties.duration);
+catch
+    S.name = [xml.data.scenarioname '_' xml.uniqueID];
+    S.duration = min(95,xml.data.duration);
+end
+
 S.Nmeasures = size(measure,2);
 
 %% Measures information

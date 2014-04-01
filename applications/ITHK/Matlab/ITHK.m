@@ -1,17 +1,16 @@
-function outputKML = ITHK(measure,lat,lon,impl,len,vol,fill,tin,varNameIn,slr,coast,eco,dunes,costs,economy,safety,recreation,residency,web)
+function S = ITHK(measure,lat,lon,impl,len,vol,fill,tin,varNameIn,slr,coast,eco,dunes,costs,economy,safety,recreation,residency,web)
 
-% function outputKML =  UnibestInteractiveTool(lat,lon,mag,time,name,measure,implementation)
-%UNIBESTINTERACTIVETOOL  Backbone function of Unibest Interactive Tool for the Holland Coast
+%ITHK  Backbone function of Unibest Interactive Tool for the Holland Coast
 %
 %   The Unibest Interactive Tool for the Holland Coast is developed in the Building with Nature program
-%   by the working packages HK4.1 and DM1.3. This function is the backbone of the tool in which simulates 
+%   by the working packages HK4.1, DM1.3 and HK3.8. This function is the backbone of the tool in which
 %   the effects of a number of (pre-defined) coastal measures on the coastline development of the Holland
-%   Coast by means of a UNIBEST model. The Unibest Interactive Tool can only run, when the user has a
+%   Coast are simulated by a UNIBEST model. The Unibest Interactive Tool can only run, when the user has a
 %   license of the UNIBEST software. The tool can be called either direclty from Matlab or from a web
 %   application.
 %
 %   Syntax:
-%   outputKML = UnibestInteractiveTool(lat,lon,mag,time,name,measure,implementation)
+%   outputKML      = ITHK(measure,lat,lon,impl,len,vol,fill,tin,varNameIn,slr,coast,eco,dunes,costs,economy,safety,recreation,residency,web)
 %
 %   Input:
 %   measure       = code indicating the type of coastal intervention:
@@ -19,7 +18,7 @@ function outputKML = ITHK(measure,lat,lon,impl,len,vol,fill,tin,varNameIn,slr,co
 %                   [1] Single triangular nourishment (only in year of implementation) 
 %                   [2] Groyne
 %                   [3] Revetment
-%				    [4] Evenly distributed nourishment (from year of implementation to end)
+%		    [4] Evenly distributed nourishment (from year of implementation to end)
 %   lat           = 1xN array with the latitudes of coastal interventions
 %   lon           = 1xN array with the longitudes of coastal interventions
 %   impl          = 1xN array with the years of implementation of coastal intervention (measured from base year)
@@ -28,10 +27,15 @@ function outputKML = ITHK(measure,lat,lon,impl,len,vol,fill,tin,varNameIn,slr,co
 %   fill          = 1xN array with the fillup behind revetments (0=no fillup, 1=fillup)
 %   tin           = string specifying the timespan for the Unibest calculations in years
 %   varNameIn     = string specifying the name of the scenario
-%   coast         = string specifying whether coastline output will be generated
-%   eco           = string specifying whether ecology output will be generated
-%   dunes         = string specifying whether dunes output will be generated
-%   slr           = string specifying whether sea level rise will be taken into account
+%   slr           = string specifying whether sea level rise will be taken into account (rate of slr can be set in ITHK_settings.xml)
+%   coast         = string specifying whether output for the coastline will be generated
+%   eco           = string specifying whether output for ecology will be generated
+%   dunes         = string specifying whether output for duneswill be generated
+%   costs         = string specifying whether output for costs will be generated
+%   economy       = string specifying whether output for economic functions will be generated
+%   safety        = string specifying whether output for safety indicator will be generated
+%   recreation    = string specifying whether output for recreation will be generated
+%   residency     = string specifying whether output for residency will be generated
 %
 %   Output:
 %   outputKML = contents of the KML-file (filename = varNameIn.kml) containing the model results of the Unibest calculations

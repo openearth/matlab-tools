@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <settings>
   <basedir>d:\repositories\oetools\applications\ITHK\</basedir>
+  <sessionCacheDir>p:\webtools\cache\</sessionCacheDir>
   <measures>
     <nourishment>
       <THRbeach>0</THRbeach>

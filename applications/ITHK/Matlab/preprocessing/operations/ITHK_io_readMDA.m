@@ -117,7 +117,7 @@ end
 MDAdata.Xi=interp1(dist,MDAdata.X,dist2,'spline');
 MDAdata.Yi=interp1(dist,MDAdata.Y,dist2,'spline');
 MDAdata.Y1i=interp1(dist,MDAdata.Y1,dist2,'spline');
-if length(MDAdata.Xi)<length(dist2)||MDAdata.Xi(end)~=MDAdata.X(end)
+if length(MDAdata.Xi)<length(dist2)%||MDAdata.Xi(end)~=MDAdata.X(end)
     MDAdata.Xi = [MDAdata.Xi;MDAdata.X(end)];
     MDAdata.Yi = [MDAdata.Yi;MDAdata.Y(end)];
     MDAdata.Y1i = [MDAdata.Y1i;MDAdata.Y1(end)];
