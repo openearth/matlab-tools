@@ -1,5 +1,10 @@
 
 function set_color_excell(fileName,sheet,range,color,varargin)
+%set_color_excell set color of xecel cells
+%
+%  set_color_excell(fileName,sheet,range,color,varargin)
+%
+% See also: xls_functions
 
 %
 % Get sheetnr ifname is specified

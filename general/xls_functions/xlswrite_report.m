@@ -12,6 +12,8 @@ function xlswrite_report(filename,cell_arr,sheetname,varargin)
 %                                 'format'   xls format like for instance '0.00'
 %                                 'colwidth' vector of nrow column widths (pts)
 %
+%                                 an eaxample of how to use this functions is given in xls_xmp.m
+%
 % start with setting the optional property/value pairs
 
 OPT.format      = '0.000';
@@ -36,16 +38,16 @@ delete_empty_excelsheets(filename);
 
 % set column widths
 
-set_colwidth_excel      (filename,1,1,OPT.colwidth(1));
+set_colwidth_excel      (filename,sheetname,1,OPT.colwidth(1));
 for i_col = 2: size(cell_arr,2)
-    set_colwidth_excel      (filename,1,i_col,OPT.colwidth(i_col));
+    set_colwidth_excel      (filename,sheetname,i_col,OPT.colwidth(i_col));
 end
 
 % topline allign right and bold font
 
 range = det_excel_range(1,1,1,size(cell_arr,2),'rowcol');
 xlsallign(filename,sheetname,range,'horizontal',4);
-xlsfont  (filename,sheetname,range,'size',12,'fontstyle','bold' );
+xlsfont  (filename,sheetname,range,'size',10,'fontstyle','bold' );
 
 % set format interior
 

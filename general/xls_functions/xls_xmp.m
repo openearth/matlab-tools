@@ -4,8 +4,8 @@
       % Defenitions:
       %
 
-      Filinp = 'testje_11';
-      Filout = 'variant1A_9';
+      Filinp = 'testje_testje';
+      Filout = 'testje';
 
       stations_wat = {'Culvert_Waddenzee_2';
                       'Culvert_IJsselmeer'};
@@ -42,7 +42,7 @@
          end
       end
 
-      filename = [Filout '_' quantity '_d3d.xls'];
+      filename = [Filout '.xls'];
       xlswrite_report(filename,cell_arr,quantity);
 
       % Discharges
@@ -66,5 +66,4 @@
          end
       end
 
-      filename = [Filout '_' quantity '_d3d.xls'];
-      xlswrite_report(filename,cell_arr,quantity);
+      xlswrite_report(filename,cell_arr,quantity,'format','.0','colwidth',[20 15]);
