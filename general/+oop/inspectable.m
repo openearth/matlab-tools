@@ -52,20 +52,39 @@
 
 %%
 classdef (Abstract) inspectable < oop.setproperty
-    properties (Abstract,Hidden)
-        metaprops
-        % metaprops = metaprop.Construct(mfilename('class'),{
-        %     'Date',@metaprop.date,{
-        %         'Description','Date field'}
-        %     'Number',@metaprop.doubleScalar,{
-        %         'Description','A single double precision number'
-        %         'Attributes',{'>',1}}
-        %     });
+    properties (Hidden,Transient,SetAccess = immutable)
+        metaprops % metaprops must be assigned by the constructor using the construct_metaprops functions
     end
-    properties (Hidden)
-         Inspector_LastButtonPressed = ''
+    
+    % object_metaprops = metaprop.Construct(mfilename('class'),{
+    %     'Date',@metaprop.date,{
+    %         'Description','Date field'}
+    %     'Number',@metaprop.doubleScalar,{
+    %         'Description','A single double precision number'
+    %         'Attributes',{'>',1}}
+    %     });
+        
+    properties (Hidden,Transient)
+        % Stores the reason why the inspector was closed (e.g. 'ok' or 'cancel').
+        Inspector_LastButtonPressed = ''
     end
-    methods
+    
+    methods (Abstract,Hidden,Access = protected)
+        % Each implementation must define a method to construct the metaprops. 
+        % Usually this should be of the form 
+        %     value = self.<class_name>_metaprops
+        % In the case of subclasses, this can be expanded
+        %     value = mergestructs(...
+        %                self.<class_name>_metaprops,...
+        %                construct_mp@<superclass_name>)
+        value = construct_metaprops(self)
+    end
+    
+    methods 
+        function self = inspectable() % constructor
+            % Constructor assigns value tp metaprops
+            self.metaprops = self.construct_metaprops;
+        end
         %% add inspector method
         function inspector = inspect(self,varargin)
             inspector = metaprop.Inspect(self,varargin{:});
