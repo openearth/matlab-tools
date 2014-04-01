@@ -107,10 +107,10 @@ for i=firststruct:nargin-1
          % struct    0 0 1 1 0 0 1 1
          % recursive 0 1 0 1 0 1 0 1
          % error     1 1 1 0 0 0 0 0
-         if (OPT.overwrite) | (OPT.recursive & ISSTRUCT{i}(k))
+         if (OPT.overwrite) || (OPT.recursive && ISSTRUCT{i}(k))
             % delegate substructs to deeper call of mergestructs.
          else
-            error(['Same field name is present in structs ',num2str(i),' and ',num2str(i+1)]);
+            error('Field name ''%s'' is present in structs %s and %s',FLDNAMES{i}{k},num2str(i),num2str(i+1));
          end
       end
    end
