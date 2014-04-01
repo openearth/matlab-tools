@@ -6,18 +6,20 @@ if isfield(xml.data,'features')
     for ii = 1:size(xml.data.features,1)
         if isfield(features(ii),'properties');
             if ~isempty(features(ii).properties)
-                measure{ii} = features(ii).properties.name;
-                if isfield(features(ii).properties,'type')
-                   type(ii) = features(ii).properties.type;
-                else
-                   type(ii) = NaN;
+                if isfield(features(ii).properties,'name')
+                    measure{ii} = features(ii).properties.name;
+                    if isfield(features(ii).properties,'type')
+                       type(ii) = features(ii).properties.type;
+                    else
+                       type(ii) = NaN;
+                    end
+                    lon(ii) = features(ii).properties.lon;
+                    lat(ii) = features(ii).properties.lat;
+                    S.implementation(ii) = features(ii).properties.year;
+                    len(ii) = features(ii).properties.length;
+                    volume(ii) = features(ii).properties.volume*1e6;
+                    fillup(ii) = features(ii).properties.fillup;
                 end
-                lon(ii) = features(ii).properties.lon;
-                lat(ii) = features(ii).properties.lat;
-                S.implementation(ii) = features(ii).properties.year;
-                len(ii) = features(ii).properties.length;
-                volume(ii) = features(ii).properties.volume*1e6;
-                fillup(ii) = features(ii).properties.fillup;
             end
         end
     end
