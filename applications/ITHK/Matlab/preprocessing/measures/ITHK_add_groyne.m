@@ -143,21 +143,44 @@ idRAY=findGRIDinrange(xGKL,yGKL,x,y,0);
 % Ray at GRO
 RAYfilename = rayfiles(idRAY);
 RAY = ITHK_io_readRAY([RAYfilename{1}(2:end-1) '.ray']);
+
+% Set local climate at GRO and 2 and 3 GRO lengths from GRO
+positions = [0 1 2].*S.userinput.groyne(ii).length;
+angles = [mod(RAY.equi-angleA,360),mod(RAY.equi-angleB,360),RAY.equi];
+names = {[RAYfilename{1}(2:end-1) 'A.RAY'],[RAYfilename{1}(2:end-1) 'B.RAY'],[RAYfilename{1}(2:end-1) 'C.RAY']};
+for jj=1:length(positions)
+    distance = abs(s1+positions(jj)-distXY(MDAdatanew.Xcoast,MDAdatanew.Ycoast));
+    ids(jj) = find(distance==min(distance));
+end
+
+%Write rays - if GRO length is small, less climates required
+ids2 = unique(ids);
+RAY.path = {S.settings.outputdir};
+for jj=1:length(ids2)
+    RAY.name = names(jj);
+    RAY.equi = angles(jj);
+    ITHK_io_writeRAY(RAY);
+    names2{jj} = names{jj}(1:end-4);
+end
+X = MDAdatanew.Xcoast(ids2);
+Y = MDAdatanew.Ycoast(ids2);
+XY = [X Y];
+
+%{
 equiA = mod(RAY.equi-angleA,360);
-XA = MDAdatanew.Xcoast(idNEAREST+8);
-YA = MDAdatanew.Ycoast(idNEAREST+8);
-% Ray 2 GRO lengths from GRO
-distC = abs(s1+2*S.userinput.groyne(ii).length-distXY(MDAdatanew.Xcoast,MDAdatanew.Ycoast));
-idC = find(distC==min(distC));
-XC = MDAdatanew.Xcoast(idC);
-YC = MDAdatanew.Ycoast(idC);
+XA = MDAdatanew.Xcoast(idNEAREST);%MDAdatanew.Xcoast(idNEAREST+8);
+YA = MDAdatanew.Ycoast(idNEAREST);%MDAdatanew.Ycoast(idNEAREST+8);
 % Ray 1 GRO length from GRO
 equiB = mod(RAY.equi-angleB,360);
 distB = abs(s1+S.userinput.groyne(ii).length-distXY(MDAdatanew.Xcoast,MDAdatanew.Ycoast));
 idB = find(distB==min(distB));
 XB = MDAdatanew.Xcoast(idB);
 YB = MDAdatanew.Ycoast(idB);
-
+% Ray 2 GRO lengths from GRO
+distC = abs(s1+2*S.userinput.groyne(ii).length-distXY(MDAdatanew.Xcoast,MDAdatanew.Ycoast));
+idC = find(distC==min(distC));
+XC = MDAdatanew.Xcoast(idC);
+YC = MDAdatanew.Ycoast(idC);
 
 %% Summarize
 XY = [XA YA; XB YB; XC YC];
@@ -176,7 +199,7 @@ ITHK_io_writeRAY(RAY);
 RAY.name = {nameB};
 RAY.equi = equiB;
 ITHK_io_writeRAY(RAY);
-
+%}
 
 %% GROdata
 Ngroynes = length(GROdata);
@@ -189,11 +212,11 @@ GROdata(Ngroynes+1).option = 'right';
 GROdata(Ngroynes+1).xyl = [];
 GROdata(Ngroynes+1).ray_file1 = [];
 GROdata(Ngroynes+1).xyr = XY;
-GROdata(Ngroynes+1).ray_file2 = names;
+GROdata(Ngroynes+1).ray_file2 = names2;
 ITHK_io_writeGRO([S.settings.outputdir S.userinput.groyne(ii).filename],GROdata);
 S.UB.input(sens).groyne(ii).GROdata = GROdata;
 S.UB.input(sens).groyne(ii).Ngroynes = length(GROdata)-4;
-S.UB.input(sens).groyne(ii).rayfiles = {nameA,nameB,nameC};
+S.UB.input(sens).groyne(ii).rayfiles = names;
 
 %% Function find grid in range
 function [idNEAREST,idRANGE]=findGRIDinrange(Xcoast,Ycoast,x,y,radius)

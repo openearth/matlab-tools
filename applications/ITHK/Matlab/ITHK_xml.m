@@ -198,13 +198,13 @@ for jj=1:1%length(sensitivities)
     if length(S.PP(jj).output.kmlfiles)>1
         for ii=1:length(S.PP(jj).output.kmlfiles)
             root(ii).tool = xml.tool;
-            root(ii).scenario = S.userinput.name;%xml.data.scenarioname;
+            root(ii).scenario = strrep(S.userinput.name,['_' xml.uniqueID],'');%xml.data.scenarioname;
             root(ii).kmlTitle=strrep(S.PP(jj).output.addtxt{ii}(2:end),'_','');
             root(ii).kmlFile=[S.userinput.name S.PP(jj).output.addtxt{ii} '.kml'];
         end
     else
         root.item.tool = xml.tool;
-	    root.item.scenario = S.userinput.name;%xml.data.scenarioname;
+	    root.item.scenario = strrep(S.userinput.name,['_' xml.uniqueID],'');%xml.data.scenarioname;
         root.item.kmlFile=strrep(S.PP(jj).output.addtxt{ii}(2:end),'_','');
         root.item.kmlTitle=[S.userinput.name S.PP(jj).output.addtxt{ii} '.kml'];
     end
@@ -257,16 +257,39 @@ cd(h,'..');
 cd(h,'input');
 
 %% Copy all to cache under sessionID folder
+% Create cachedir if necessary
 cacheDir=[xml.cacheDir filesep xml.sessionID filesep 'ITHK'];
 if ~exist(cacheDir,'dir')
     mkdir(cacheDir);
 end
 
+% Delete cached files if existing scenario is overwritten
+D = dir(cacheDir);
+for ii=1:length(D)
+    [filedir,name,ext] = fileparts([cacheDir filesep D(ii).name]);
+    %Check for xml containing same name
+    if ~isempty(ext)
+        if ~isempty(strmatch(ext,'.xml','exact')) && ~isempty(strfind(D(ii).name,strrep(S.userinput.name,['_' xml.uniqueID],'')))
+            cachedxml = xml_load([filedir filesep name ext]);
+            for kk=1:length(cachedxml);
+                %Check for exact name
+                if strmatch(strrep(S.userinput.name,['_' xml.uniqueID],''),cachedxml{kk}.scenario,'exact')
+                   delete([cacheDir filesep cachedxml{kk}.kmlFile]);
+                   deletexml = 1;
+               end
+            end
+            if deletexml == 1;
+                delete([cacheDir filesep D(ii).name]);
+            end
+        end
+    end
+end
+   
 %Store S, xml and kml-files
-save([cacheDir filesep 'xml_' xml.uniqueID '.mat'],'xml');
-
 copyfile(outputFilename,[cacheDir filesep S.userinput.name '.xml']);%xml.data.scenarioname;
 delete(outputFilename);
+%movefile([S.settings.outputdir filesep S.userinput.name,'.mat'],cachedir)
+%save([cacheDir filesep 'xml_' xml.uniqueID '.mat'],'xml');
 
 if length(S.PP(jj).output.kmlfiles)>1
     for ii=1:length(S.PP(jj).output.kmlfiles)
@@ -278,6 +301,7 @@ else
 end
 
 %% Clean up
+rmdir(S.settings.outputdir,'s')
 clear
 close all
 
