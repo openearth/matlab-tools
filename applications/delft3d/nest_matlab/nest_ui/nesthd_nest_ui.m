@@ -325,7 +325,7 @@ if strcmp(d3d_home(end),filesep)
 else
     file_man = [d3d_home filesep 'manuals' filesep 'Delft3D-Flow_User_Manual.pdf'];
 end
-    
+
 if exist(file_man,'file')
    open(file_man);
 else
@@ -615,6 +615,10 @@ if ~isempty (handles.filedir); cd(handles.filedir); end
 [fin,pin] = uiputfile('*.bct; timeser*','Specify file name hydrodynamic boundary conditions');
 cd (handles.progdir);
 
+if strcmpi(fin(1:7),'timeser')
+    [~,fin,~] = fileparts(fin);
+end
+
 if fin ~= 0
    handles.filedir = pin;
    handles.files_hd2{4} = [pin fin];
@@ -634,6 +638,10 @@ function get_hd2_bcc_Callback(hObject, eventdata, handles)
 if ~isempty (handles.filedir); cd(handles.filedir); end
 [fin,pin] = uiputfile('*.bcc; timeser*','Specify file name transport boundary conditions');
 cd (handles.progdir);
+
+if strcmpi(fin(1:7),'timeser')
+    [~,fin,~] = fileparts(fin);
+end
 
 if fin ~= 0
    handles.filedir = pin;
