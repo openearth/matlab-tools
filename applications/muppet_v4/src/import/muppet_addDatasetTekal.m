@@ -85,7 +85,7 @@ for iblock=1:nblocks
         f=f/360;
         % Find nearest frequency
         ic= abs(const.freq-f)==min(abs(const.freq-f));
-        dataset.blocks{iblock}=deblank(const.name(ic,:));
+        dataset.blocks{iblock}=[deblank(const.name(ic,:)) ' - ' a{1}];
     end
 end
 if isempty(dataset.block)
