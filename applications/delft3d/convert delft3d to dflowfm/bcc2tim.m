@@ -124,7 +124,44 @@ for i=1:I;
                             end
                         end
                         break;
-                    end
+                    elseif strcmp(bcctype(end-2:end),'[C]');
+                        for jj=1:JJ;
+                            tline                  = fgetl(fid1);
+                            if strcmp(tline( 1:20),'records-in-table    ');
+                                aantrecords  = str2num(tline(22:end));
+                                for k=1:aantrecords;
+                                    tline           = fgetl(fid1);
+                                    tlinenum        = str2num(tline);
+                                    tlinedata       = tlinenum(2:end);
+                                    tlinedataA      = tlinedata(                    1:length(tlinedata)/2);  % prevents crash if data is 3D
+                                    tlinedataB      = tlinedata(length(tlinedata)/2+1:end                );  % prevents crash if data is 3D
+                                    if tlinedataB(end)==9.9999900e+002;
+                                        tlinedataB(end)    = tlinedataA(end);
+                                    end
+                                    dataA           = [dataA; tlinenum(1) tlinedataA(end)];
+                                    dataB           = [dataB; tlinenum(1) tlinedataB(end)];
+                                end
+                                dataA(1,:)   = [];
+                                dataB(1,:)   = [];
+                                nametimA     = [pathout,'/',plibasis,'_',num2str(perm(tellerA,1),'%0.2d'),'_tem_',num2str(perm(tellerA,2),'%0.4d'),'.tim'];
+                                nametimB     = [pathout,'/',plibasis,'_',num2str(perm(tellerB,1),'%0.2d'),'_tem_',num2str(perm(tellerB,2),'%0.4d'),'.tim'];
+                                dlmwrite(nametimA,dataA,'delimiter','\t','precision','%1.7e');
+                                dlmwrite(nametimB,dataB,'delimiter','\t','precision','%1.7e');
+                                dataA        = zeros(1,2);
+                                dataB        = zeros(1,2);
+                                waitbar(tellerA/size(perm,1),wb);
+                                tellerA      = tellerA + 2;
+                                tellerB      = tellerB + 2;
+                                if tellerA>size(perm,1);
+                                    close(wb);
+                                    msgbox('Timeserie files for constituents have succesfully been generated.','Message');
+                                    return;
+                                end
+                                break;
+                            end
+                        end
+                        break;
+                    end    
                 end
             end
         end
