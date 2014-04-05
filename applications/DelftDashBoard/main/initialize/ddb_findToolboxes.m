@@ -97,7 +97,7 @@ else
             switch lower(flist(i).name)
                 case{'.','..','.svn'}
                 otherwise
-                    fname=[dr filesep flist(i).name filesep 'xml' filesep 'toolbox.' flist(i).name '.xml'];
+                    fname=[dr filesep flist(i).name filesep 'xml' filesep 'toolbox.' lower(flist(i).name) '.xml'];
                     if exist(fname,'file')
                         xml=xml2struct(fname,'structuretype','short');
                         switch lower(xml.enable)

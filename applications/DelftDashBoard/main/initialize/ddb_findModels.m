@@ -78,10 +78,10 @@ for i=1:length(flist)
             otherwise
                 if isdeployed
                     % xml file in settings dir
-                    xmlfile=[handles.settingsDir filesep 'models' filesep flist(i).name filesep 'xml' filesep flist(i).name '.xml'];
+                    xmlfile=[handles.settingsDir filesep 'models' filesep flist(i).name filesep 'xml' filesep lower(flist(i).name) '.xml'];
                 else
                     % xml file in model code dir
-                    xmlfile=[dr filesep flist(i).name filesep 'xml' filesep 'model.' flist(i).name '.xml'];
+                    xmlfile=[dr filesep flist(i).name filesep 'xml' filesep 'model.' lower(flist(i).name) '.xml'];
                 end
                 if exist(xmlfile,'file')
                     xml=xml2struct(xmlfile,'structuretype','short');
