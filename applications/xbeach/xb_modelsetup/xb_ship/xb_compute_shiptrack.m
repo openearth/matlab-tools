@@ -81,11 +81,14 @@ OPT.trackxyt      = sprintf('track%03d.txt', iship); % Ship track filename (t,x,
 OPT.dt            = 10;                              % Timestep [s]
 OPT.v             = [.1 8 8];    % Speed [m/s]
 OPT.tv            = [0 180 600]; % time points for speed [s]
-OPT.z             = [0 0 0];     % height of ship for flying in
+OPT.z             = [];     % height of ship for flying in
 OPT.tstop         = 600;         % Simulation stop time [s]
 OPT.plot          = 0;
-OPT.trackxy       = '';% Ship track filenames (x,y)
-OPT = setproperty(OPT,varargin{:});
+OPT.trackxy       = '';% Ship track filenames (x,y) 
+OPT.autopilot     = false;
+OPT.domain        = [];
+OPT.tfly          = [];
+OPT               = setproperty(OPT,varargin{:});
 
 %% Load ship track file
 try
@@ -98,7 +101,9 @@ end
 t = [0:OPT.dt:OPT.tstop];
 v = interp1(OPT.tv,OPT.v,t);
 s = zeros(size(t));
-z = interp1(OPT.tv,OPT.z,t);
+if length(OPT.z)>1 % if flying option is turned on
+    z = interp1(OPT.tv,OPT.z,t);
+end
 
 % Compute distance travelled
 for i = 2:length(t);
@@ -116,21 +121,78 @@ s = s(s<=max(str));
 x = interp1(str,xtr,s);
 y = interp1(str,ytr,s);
 
-if OPT.plot
+tstop = t(length(s));
+
+%% Auto pilot: find point from which ship should be flying
+if OPT.autopilot && length(OPT.z) == 1
+    if isempty(OPT.domain)
+        error('For auto pilot, please specify domain [x_{cornerpoints}; y_{cornerpoints}]')
+    end
+    inds = find(inpolygon(x,y,OPT.domain(1,:),OPT.domain(2,:)));
+    
+    t = t(inds);
+    x = x(inds);
+    y = y(inds);
+    s = s(inds);
+    
+    % compute ship height
+    z = zeros(1,length(t));
+    % stay away from border
+    z (s(end)-s < 500) = abs(OPT.z);
+    ii = length(s);
+    while z(ii) > 0
+        ii = ii-1;
+        if z(ii) == 0
+            z(ii) = z(ii+1) - OPT.v(end)*OPT.dt/8;
+        end
+    end
+    z = max(z,0);
+    z(z>0) = -z(z>0);
+elseif length(OPT.z) == 1 && OPT.tfly
+        if isempty(OPT.domain)
+        error('For auto pilot, please specify domain [x_{cornerpoints}; y_{cornerpoints}]')
+    end
+    inds = find(inpolygon(x,y,OPT.domain(1,:),OPT.domain(2,:)));
+    
+    t = t(inds);
+    x = x(inds);
+    y = y(inds);
+    s = s(inds);
+    
+    z = zeros(1,length(t));
+    z = interp1([t(t<= OPT.tfly) t(end)],[z(t<= OPT.tfly),OPT.z],t);
+end
+
+%% PLOT SHIP TRACK WITHIN DOMAIN
+if OPT.plot 
     figure()
     plot(x,y,'k-o');hold on
     for i = 1:round(60/OPT.dt):length(t)
         text(x(i)+50,y(i),[num2str(t(i)) ' s']);
     end
+    if ~isempty(OPT.domain)
+        plot([OPT.domain(1,:),OPT.domain(1,1)],[OPT.domain(2,:),OPT.domain(2,1)],'b');
+    end
     axis equal;xlabel('X');ylabel('Y');
     title('Ship track');
 end
-tstop = t(length(s));
-out = [t(1:length(s));x;y;z(1:length(s))]';
-% out(end+1
-% save([OPT.runDir OPT.ship_xytfile],'out','-ascii')
+   
 
-% Save data in xbeach structure
+%% Save data in xbeach structure
+if t(end)<OPT.tstop % make sure ship track is as long as simulation time
+    t(end+1) = OPT.tstop;
+    x(end+1) = x(end);
+    y(end+1) = y(end);
+    if ~isempty(OPT.z);
+        z(end+1) = z(end);
+    end
+end
+if isempty(OPT.z)
+    out = [t;x;y]';
+else
+    out = [t;x;y;z]';
+end
+
 xb_st = xs_empty;
 xb_st = xs_meta(xb_st, mfilename, 'ship', sprintf('track%03d.txt', iship));
 

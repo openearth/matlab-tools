@@ -77,6 +77,8 @@ OPT = setproperty(OPT,varargin{:});
 dsh = wldep('read',[OPT.shipdir OPT.shipdep],[OPT.nx+2,OPT.ny+2]);
 dsh(dsh==-999) = NaN;
 dsh = dsh*OPT.D/max(dsh(:));  
+dsh(isnan(dsh)) = -999;
+wldep('write',sprintf('ship%03d.dep', iship),dsh,'N','9');
 
 %% Compute ship grid
 if isempty(OPT.dx) || isempty(OPT.dy)
@@ -94,6 +96,6 @@ xb_sg = xs_set(xb_sg, 'nx', OPT.nx);
 xb_sg = xs_set(xb_sg, 'ny', OPT.ny);
 xb_sg = xs_set(xb_sg, 'dx', OPT.dx);
 xb_sg = xs_set(xb_sg, 'dy', OPT.dy);
-xb_sg = xs_set(xb_sg, 'shipgeom', OPT.shipdep);
+xb_sg = xs_set(xb_sg, 'shipgeom', sprintf('ship%03d.dep', iship));
 xb_sg = xs_set(xb_sg, 'shiptrack', OPT.track);
 xb_sg = xs_set(xb_sg, 'flying', OPT.flying);
