@@ -78,7 +78,7 @@ if wldep('write',fname,z')
 
     delete(fname);
 end
-
+end
 %% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function z = add_dummy_columns(z)
