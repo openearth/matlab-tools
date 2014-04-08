@@ -289,6 +289,10 @@ else
 end
 
 switch lower(par)
+    case{'waterlevel'}
+        dd=internaldiffusion(data,'nst',5);
+        dd(dd==-999)=0;
+        ddb_wldep('write',fname,dd,'negate','n','bndopt','n');
     case{'current'}
         for k=k1:dk:k2
             dd=squeeze(u(:,:,k));
@@ -300,9 +304,6 @@ switch lower(par)
             dd=internaldiffusion(dd,'nst',5);
             ddb_wldep('append',fname,dd,'negate','n','bndopt','n');
         end
-    case{'waterlevel'}
-            dd=internaldiffusion(data,'nst',5);
-            ddb_wldep('append',fname,dd,'negate','n','bndopt','n');
     otherwise
         for k=k1:dk:k2
             dd=squeeze(data(:,:,k));

@@ -142,7 +142,11 @@ if kmax>1
             vals(:,:,k)=griddata(xd,yd,vald,x,y);
             lev_int(:,:,k) = griddata(xd, yd, squeeze(levels(:,:,k)), x, y);
         end
-        vals(isnan(vals))=-9999;
+        if strcmpi(tp,'wl')
+            vals(isnan(vals))=0;
+        else
+            vals(isnan(vals))=-9999;
+        end
     end
 else
     for k=1:nlevels
