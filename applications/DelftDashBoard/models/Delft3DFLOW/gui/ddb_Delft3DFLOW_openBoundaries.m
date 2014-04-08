@@ -505,8 +505,8 @@ if ok==1
     handles.model.delft3dflow.domain(ad).activeOpenBoundary=iac;
     handles.model.delft3dflow.domain(ad).activeOpenBoundaries=iac;
 
-    handles.model.delft3dflow.domain(ad).bctChanged=0;
-    handles.model.delft3dflow.domain(ad).bccChanged=0;
+    handles.model.delft3dflow.domain(ad).bctChanged=1;
+    handles.model.delft3dflow.domain(ad).bccChanged=1;
     
     handles=ddb_countOpenBoundaries(handles,ad);
     
@@ -529,8 +529,6 @@ handles=getHandles;
 iac=handles.model.delft3dflow.domain(ad).activeOpenBoundaries;
 for ii=length(iac):-1:1
     handles.model.delft3dflow.domain(ad).activeOpenBoundary=iac(ii);
-    handles.model.delft3dflow.domain(ad).bctChanged=0;
-    handles.model.delft3dflow.domain(ad).bccChanged=0;
     setHandles(handles);
     deleteOpenBoundary;    
     handles=getHandles;
@@ -572,8 +570,8 @@ if nrbnd>0
     
     handles=ddb_countOpenBoundaries(handles,ad);
 
-    handles.model.delft3dflow.domain(ad).bctChanged=0;
-    handles.model.delft3dflow.domain(ad).bccChanged=0;
+    handles.model.delft3dflow.domain(ad).bctChanged=1;
+    handles.model.delft3dflow.domain(ad).bccChanged=1;
     
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','openboundaries');
     setHandles(handles);

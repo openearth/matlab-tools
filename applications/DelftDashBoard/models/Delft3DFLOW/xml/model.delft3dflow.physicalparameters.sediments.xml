@@ -48,6 +48,7 @@
   </element>
   <element>
     <style>panel</style>
+    <tag>sandpanel</tag>
     <bordertype>none</bordertype>
     <position>170 25 770 110</position>
     <dependency>
@@ -192,6 +193,7 @@
   </element>
   <element>
     <style>panel</style>
+    <tag>mudpanel</tag>
     <bordertype>none</bordertype>
     <position>170 25 770 110</position>
     <dependency>

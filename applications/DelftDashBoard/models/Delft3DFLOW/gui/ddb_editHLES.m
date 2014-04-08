@@ -60,20 +60,21 @@ function ddb_editHLES
 % $Keywords: $
 
 %%
-h=guidata(findobj('Tag','MainWindow'));
+
+h=getHandles;
 
 handles=h.model.delft3dflow.domain(ad);
 
-fig=MakeNewWindow('Horizontal Large Eddy Simulation',[300 250],'modal',[handles.SettingsDir filesep 'icons' filesep 'deltares.gif']);
+fig=MakeNewWindow('Horizontal Large Eddy Simulation',[300 250],'modal',[h.settingsDir filesep 'icons' filesep 'deltares.gif']);
 
 bgc=get(fig,'Color');
 
-handles.GUIHandles.EditHtural=uicontrol(gcf,'Style','edit','String',num2str(h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).Htural),'Position',[210 200 60 20],'HorizontalAlignment','right');
-handles.GUIHandles.EditHturnd=uicontrol(gcf,'Style','edit','String',num2str(h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).Hturnd),'Position',[210 175 60 20],'HorizontalAlignment','right');
-handles.GUIHandles.EditHturst=uicontrol(gcf,'Style','edit','String',num2str(h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).Hturst),'Position',[210 150 60 20],'HorizontalAlignment','right');
-handles.GUIHandles.EditHturlp=uicontrol(gcf,'Style','edit','String',num2str(h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).Hturlp),'Position',[210 125 60 20],'HorizontalAlignment','right');
-handles.GUIHandles.EditHturrt=uicontrol(gcf,'Style','edit','String',num2str(h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).Hturrt),'Position',[210 100 60 20],'HorizontalAlignment','right');
-handles.GUIHandles.EditHturdm=uicontrol(gcf,'Style','edit','String',num2str(h.Model(find(strcmp('Delft3DFLOW',{h.Model.Name}))).Input(h.ActiveDomain).Hturdm),'Position',[210  75 60 20],'HorizontalAlignment','right');
+handles.GUIHandles.EditHtural=uicontrol(gcf,'Style','edit','String',num2str(h.model.delft3dflow.domain(ad).Htural),'Position',[210 200 60 20],'HorizontalAlignment','right');
+handles.GUIHandles.EditHturnd=uicontrol(gcf,'Style','edit','String',num2str(h.model.delft3dflow.domain(ad).Hturnd),'Position',[210 175 60 20],'HorizontalAlignment','right');
+handles.GUIHandles.EditHturst=uicontrol(gcf,'Style','edit','String',num2str(h.model.delft3dflow.domain(ad).Hturst),'Position',[210 150 60 20],'HorizontalAlignment','right');
+handles.GUIHandles.EditHturlp=uicontrol(gcf,'Style','edit','String',num2str(h.model.delft3dflow.domain(ad).Hturlp),'Position',[210 125 60 20],'HorizontalAlignment','right');
+handles.GUIHandles.EditHturrt=uicontrol(gcf,'Style','edit','String',num2str(h.model.delft3dflow.domain(ad).Hturrt),'Position',[210 100 60 20],'HorizontalAlignment','right');
+handles.GUIHandles.EditHturdm=uicontrol(gcf,'Style','edit','String',num2str(h.model.delft3dflow.domain(ad).Hturdm),'Position',[210  75 60 20],'HorizontalAlignment','right');
 
 handles.GUIHandles.TextHtural=uicontrol(gcf,'Style','text','String','Slope in log-log spectrum [-]',          'Position',[25 197 175 20],'HorizontalAlignment','right','BackgroundColor',bgc);
 handles.GUIHandles.TextHturnd=uicontrol(gcf,'Style','text','String','Dimensional number [-]',                 'Position',[25 172 175 20],'HorizontalAlignment','right','BackgroundColor',bgc);

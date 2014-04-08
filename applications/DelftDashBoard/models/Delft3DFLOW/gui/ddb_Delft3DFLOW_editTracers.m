@@ -112,6 +112,7 @@ if ~isempty(name)
         ii=handles.model.delft3dflow.domain(ad).nrTracers;
         handles.model.delft3dflow.domain(ad).tracer(ii).name=name;
         handles.model.delft3dflow.domain(ad).tracer(ii).new=1;
+        handles.model.delft3dflow.domain(ad).bccChanged=1;
         str=[];
         for i=1:handles.model.delft3dflow.domain(ad).nrTracers
             str{i}=handles.model.delft3dflow.domain(ad).tracer(i).name;
@@ -139,6 +140,7 @@ ii=get(handles.GUIHandles.ListTracers,'Value');
 name=deblank(get(handles.GUIHandles.EditTracerName,'String'));
 if ~isempty(name)
     handles.model.delft3dflow.domain(ad).tracer(ii).name=name;
+    handles.model.delft3dflow.domain(ad).bccChanged=1;
     str=[];
     for i=1:handles.model.delft3dflow.domain(ad).nrTracers
         str{i}=handles.model.delft3dflow.domain(ad).tracer(i).name;
@@ -155,6 +157,7 @@ handles=guidata(gcf);
 ii=get(handles.GUIHandles.ListTracers,'Value');
 nr=handles.model.delft3dflow.domain(ad).nrTracers;
 if nr>0
+    handles.model.delft3dflow.domain(ad).bccChanged=1;
     if nr==1
         handles.model.delft3dflow.domain(ad).tracer=[];
         iac=1;
@@ -197,6 +200,7 @@ handles=guidata(gcf);
 
 h2.model.delft3dflow.domain(ad).tracer=handles.model.delft3dflow.domain(ad).tracer;
 h2.model.delft3dflow.domain(ad).nrTracers=handles.model.delft3dflow.domain(ad).nrTracers;
+h2.model.delft3dflow.domain(ad).bccChanged=handles.model.delft3dflow.domain(ad).bccChanged;
 for ii=1:handles.model.delft3dflow.domain(ad).nrTracers
     if handles.model.delft3dflow.domain(ad).tracer(ii).new
         h2=ddb_initializeTracer(h2,ad,ii);

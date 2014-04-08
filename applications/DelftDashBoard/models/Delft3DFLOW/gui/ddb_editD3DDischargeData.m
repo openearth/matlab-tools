@@ -158,7 +158,7 @@ for i=2:k
     callbacks{i}=[];
 end
 
-hh.table=table(gcf,'create','tag','table','position',[30 70],'nrrows',8,'columntypes',cltp,'width',wdt,'data',data,'callbacks',callbacks,'includebuttons',1);
+hh.table=gui_table(gcf,'create','tag','table','position',[30 70],'nrrows',8,'columntypes',cltp,'width',wdt,'data',data,'callbacks',callbacks,'includebuttons',1);
 
 %table2(gcf,'table','create','position',[30 70],'nrrows',8,'columntypes',cltp,'width',wdt,'data',data,'callbacks',callbacks,'includebuttons');
 
@@ -176,7 +176,7 @@ SetUIBackgroundColors;
 function PushOK_Callback(hObject,eventdata)
 handles=getHandles;
 hh=guidata(gcf);
-data=table(hh.table,'getdata');
+data=gui_table(hh.table,'getdata');
 
 nr=size(data,1);
 id=ad;

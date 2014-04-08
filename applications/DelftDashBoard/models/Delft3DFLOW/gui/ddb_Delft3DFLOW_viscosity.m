@@ -64,6 +64,9 @@ ddb_zoomOff;
 
 if isempty(varargin)
     ddb_refreshScreen;
-    % setUIElements('delft3dflow.physicalparameters.physicalparameterspanel.viscosity');
+else
+    switch lower(varargin{1})
+        case{'edithles'}
+            ddb_editHLES;
+    end
 end
-

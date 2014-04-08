@@ -116,6 +116,7 @@ if length(name)>8
                 end
             end
             if ~iex
+                handles.model.delft3dflow.domain(ad).bccChanged=1;
                 handles.model.delft3dflow.domain(ad).nrSediments=handles.model.delft3dflow.domain(ad).nrSediments+1;
                 ii=handles.model.delft3dflow.domain(ad).nrSediments;
                 handles.model.delft3dflow.domain(ad).sediment(ii).name=name;
@@ -165,6 +166,7 @@ name=deblank(get(handles.GUIHandles.EditSedimentName,'String'));
 if length(name)>8
     if strcmpi(name(1:8),'sediment')
         if ~isempty(name)
+            handles.model.delft3dflow.domain(ad).bccChanged=1;
             handles.model.delft3dflow.domain(ad).sediment(ii).name=name;
             str=[];
             for i=1:handles.model.delft3dflow.domain(ad).nrSediments
@@ -188,6 +190,7 @@ handles=guidata(gcf);
 ii=get(handles.GUIHandles.ListSediments,'Value');
 nr=handles.model.delft3dflow.domain(ad).nrSediments;
 if nr>0
+    handles.model.delft3dflow.domain(ad).bccChanged=1;
     if nr==1
         handles.model.delft3dflow.domain(ad).sediment=[];
         iac=1;
@@ -244,6 +247,7 @@ handles=guidata(gcf);
 
 h2.model.delft3dflow.domain(ad).sediment=handles.model.delft3dflow.domain(ad).sediment;
 h2.model.delft3dflow.domain(ad).nrSediments=handles.model.delft3dflow.domain(ad).nrSediments;
+h2.model.delft3dflow.domain(ad).bccChanged=handles.model.delft3dflow.domain(ad).bccChanged;
 h2.model.delft3dflow.domain(ad).sedimentNames=[];
 for ii=1:handles.model.delft3dflow.domain(ad).nrSediments
     if handles.model.delft3dflow.domain(ad).sediment(ii).new

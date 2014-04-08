@@ -346,7 +346,7 @@ ic=handles.activeConstituent;
 enab=zeros(8,5)+1;
 switch lower(handles.Constituent(ic).profile)
     case{'linear','step'}
-        for i=1:handles.Constituent(ic).nrTimeSeries
+        for i=1:length(handles.Constituent(ic).timeSeriesT)
             data{i,1}=handles.Constituent(ic).timeSeriesT(i);
             data{i,2}=handles.Constituent(ic).timeSeriesA(i,1);
             data{i,3}=handles.Constituent(ic).timeSeriesB(i,1);
@@ -354,7 +354,7 @@ switch lower(handles.Constituent(ic).profile)
             data{i,5}=handles.Constituent(ic).timeSeriesB(i,2);
         end
     otherwise
-        for i=1:handles.Constituent(ic).nrTimeSeries
+        for i=1:length(handles.Constituent(ic).timeSeriesT)
             data{i,1}=handles.Constituent(ic).timeSeriesT(i);
             data{i,2}=handles.Constituent(ic).timeSeriesA(i,k);
             data{i,3}=handles.Constituent(ic).timeSeriesB(i,k);
