@@ -191,6 +191,8 @@ handles.model.delft3dflow.domain(id).addOpenBoundary=0;
 handles.model.delft3dflow.domain(id).selectOpenBoundary=0;
 handles.model.delft3dflow.domain(id).deleteOpenBoundary=0;
 handles.model.delft3dflow.domain(id).changeOpenBoundary=0;
+handles.model.delft3dflow.domain(id).activeBoundaryType='Z';
+handles.model.delft3dflow.domain(id).activeBoundaryForcing='A';
 
 handles.model.delft3dflow.domain(id).bctLoaded=0;
 handles.model.delft3dflow.domain(id).bccLoaded=0;

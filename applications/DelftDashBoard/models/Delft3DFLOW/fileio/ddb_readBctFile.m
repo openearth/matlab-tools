@@ -80,6 +80,7 @@ for i=1:Info.NTables
         itd=datenum(num2str(itd),'yyyymmdd');
         t=itd+Info.Table(i).Data(:,1)/1440;
         handles.model.delft3dflow.domain(id).openBoundaries(kk).timeSeriesT=t;
+        handles.model.delft3dflow.domain(id).openBoundaries(kk).nrTimeSeries=length(t);
         switch lower(deblank(tab.Contents))
             case{'uniform','logarithmic'}
                 handles.model.delft3dflow.domain(id).openBoundaries(kk).timeSeriesA=tab.Data(:,2);

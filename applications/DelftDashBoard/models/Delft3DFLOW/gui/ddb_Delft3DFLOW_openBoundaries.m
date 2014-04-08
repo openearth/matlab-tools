@@ -190,27 +190,23 @@ else
             refreshOpenBoundaries;
             
         case{'selecttype'}
-            tp=handles.model.delft3dflow.domain(ad).openBoundaries(handles.model.delft3dflow.domain(ad).activeOpenBoundary).type;
+            tp=handles.model.delft3dflow.domain(ad).activeBoundaryType;
+            if strcmpi(tp,handles.model.delft3dflow.domain(ad).openBoundaries(handles.model.delft3dflow.domain(ad).activeOpenBoundary).type)
+                % No change in boundary type
+                return
+            end
+            buttonname = questdlg('Boundary conditions will be set to 0.0! Continue?', ...
+                '', ...
+                'Cancel', 'OK', 'OK');
+            switch buttonname,
+                case 'Cancel'
+                    return;
+            end
             iac=handles.model.delft3dflow.domain(ad).activeOpenBoundaries;
             for ii=1:length(iac)
                 n=iac(ii);
                 handles.model.delft3dflow.domain(ad).openBoundaries(n).type=tp;
-                if handles.model.delft3dflow.domain(ad).KMax>1
-                    switch lower(handles.model.delft3dflow.domain(ad).openBoundaries(n).type)
-                        case{'z','n'}
-                            handles.model.delft3dflow.domain(ad).openBoundaries(n).profile='uniform';
-                        case{'q','t'}
-                            if strcmpi(handles.model.delft3dflow.domain(ad).openBoundaries(n).profile,'3d-profile')
-                                handles.model.delft3dflow.domain(ad).openBoundaries(n).profile='uniform';
-                            end
-                        case{'r'}
-                            if strcmpi(handles.model.delft3dflow.domain(ad).openBoundaries(n).profile,'logarithmic')
-                                handles.model.delft3dflow.domain(ad).openBoundaries(n).profile='uniform';
-                            end
-                    end
-                else
-                    handles.model.delft3dflow.domain(ad).openBoundaries(n).profile='uniform';
-                end
+                handles=resetBoundaryConditions(handles,ii);
             end
             handles.model.delft3dflow.domain(ad).bctChanged=1;
             handles.model.delft3dflow.domain(ad).bccChanged=1;
@@ -218,11 +214,23 @@ else
             refreshOpenBoundaries;
             
         case{'selectforcing'}
-            fc=handles.model.delft3dflow.domain(ad).openBoundaries(handles.model.delft3dflow.domain(ad).activeOpenBoundary).forcing;
+            fc=handles.model.delft3dflow.domain(ad).activeBoundaryForcing;
+            if strcmpi(fc,handles.model.delft3dflow.domain(ad).openBoundaries(handles.model.delft3dflow.domain(ad).activeOpenBoundary).forcing)
+                % No change in boundary forcing
+                return
+            end
+            buttonname = questdlg('Boundary conditions will be set to 0.0! Continue?', ...
+                '', ...
+                'Cancel', 'OK', 'OK');
+            switch buttonname,
+                case 'Cancel'
+                    return;
+            end
             iac=handles.model.delft3dflow.domain(ad).activeOpenBoundaries;
             for ii=1:length(iac)
                 n=iac(ii);
                 handles.model.delft3dflow.domain(ad).openBoundaries(n).forcing=fc;
+                handles=resetBoundaryConditions(handles,ii);
             end
             handles=ddb_countOpenBoundaries(handles,ad);
             handles.model.delft3dflow.domain(ad).bctChanged=1;
@@ -283,7 +291,15 @@ else
                     % Check if there is a bct file and whether it has has been loaded
                     if ~isempty(handles.model.delft3dflow.domain(ad).bctFile)
                         if ~handles.model.delft3dflow.domain(ad).bctLoaded
-                            handles=ddb_readBctFile(handles,ad);
+                            wb = waitbox('Reading bct file ...');
+                            try
+                                handles=ddb_readBctFile(handles,ad);
+                            catch
+                                close(wb);
+                                ddb_giveWarning('text','An error occured while reading bct file!');
+                                return
+                            end
+                            close(wb);
                             handles.model.delft3dflow.domain(ad).bctLoaded=1;
                             setHandles(handles);
                         end
@@ -299,6 +315,23 @@ else
         case{'transportconditions'}
             ddb_zoomOff;
             set(gcf, 'windowbuttondownfcn',   []);
+            % Check if there is a bct file and whether it has has been loaded
+            if ~isempty(handles.model.delft3dflow.domain(ad).bccFile)
+                if ~handles.model.delft3dflow.domain(ad).bccLoaded
+                    
+                    wb = waitbox('Reading bcc file ...');
+                    try
+                        handles=ddb_readBccFile(handles,ad);
+                    catch
+                        close(wb);
+                        ddb_giveWarning('text','An error occured while reading bcc file!');
+                        return
+                    end
+                    close(wb);
+                    handles.model.delft3dflow.domain(ad).bccLoaded=1;
+                    setHandles(handles);
+                end
+            end
             ddb_editD3DFlowTransportConditionsTimeSeries;
             handles=getHandles;
             handles.model.delft3dflow.domain(ad).bccChanged=1;
@@ -586,6 +619,9 @@ handles=getHandles;
 
 iac=handles.model.delft3dflow.domain(ad).activeOpenBoundary;
 
+handles.model.delft3dflow.domain(ad).activeBoundaryType=handles.model.delft3dflow.domain(ad).openBoundaries(iac).type;
+handles.model.delft3dflow.domain(ad).activeBoundaryForcing=handles.model.delft3dflow.domain(ad).openBoundaries(iac).forcing;
+
 if handles.model.delft3dflow.domain(ad).KMax>1
     switch lower(handles.model.delft3dflow.domain(ad).openBoundaries(iac).type)
         case{'z','n'}
@@ -689,3 +725,52 @@ if icp==1
         end
     end
 end
+
+%%
+function handles=resetBoundaryConditions(handles,iac)
+
+kmax=handles.model.delft3dflow.domain(ad).KMax;
+
+zeros2d=zeros(2,1);
+zeros3d=zeros(2,kmax);
+
+if kmax>1
+    switch lower(handles.model.delft3dflow.domain(ad).openBoundaries(iac).type)
+        case{'z','n'}
+            handles.model.delft3dflow.domain(ad).openBoundaries(iac).profile='uniform';
+        case{'q','t'}
+            if strcmpi(handles.model.delft3dflow.domain(ad).openBoundaries(iac).profile,'3d-profile')
+                handles.model.delft3dflow.domain(ad).openBoundaries(iac).profile='uniform';
+            end
+        case{'r'}
+            if strcmpi(handles.model.delft3dflow.domain(ad).openBoundaries(iac).profile,'logarithmic')
+                handles.model.delft3dflow.domain(ad).openBoundaries(iac).profile='uniform';
+            end
+    end
+else
+    handles.model.delft3dflow.domain(ad).openBoundaries(iac).profile='uniform';
+end
+
+% Timeseries
+t0=handles.model.delft3dflow.domain(ad).openBoundaries(iac).timeSeriesT;
+handles.model.delft3dflow.domain(ad).openBoundaries(iac).timeSeriesT=[t0(1);t0(end)];
+switch lower(handles.model.delft3dflow.domain(ad).openBoundaries(iac).profile)
+    case{'3d-profile'}
+        handles.model.delft3dflow.domain(ad).openBoundaries(iac).timeSeriesA=zeros3d;
+        handles.model.delft3dflow.domain(ad).openBoundaries(iac).timeSeriesB=zeros3d;
+    otherwise
+        handles.model.delft3dflow.domain(ad).openBoundaries(iac).timeSeriesA=zeros2d;
+        handles.model.delft3dflow.domain(ad).openBoundaries(iac).timeSeriesB=zeros2d;
+end
+handles.model.delft3dflow.domain(ad).openBoundaries(iac).nrTimeSeries=2;
+
+% Harmonic
+nrharmo=2;
+handles.model.delft3dflow.domain(ad).openBoundaries(iac).harmonicAmpA=zeros(1,nrharmo);
+handles.model.delft3dflow.domain(ad).openBoundaries(iac).harmonicAmpB=zeros(1,nrharmo);
+handles.model.delft3dflow.domain(ad).openBoundaries(iac).harmonicPhaseA=zeros(1,nrharmo);
+handles.model.delft3dflow.domain(ad).openBoundaries(iac).harmonicPhaseB=zeros(1,nrharmo);
+
+% QH
+handles.model.delft3dflow.domain(ad).openBoundaries(iac).QHDischarge =[0.0 100.0];
+handles.model.delft3dflow.domain(ad).openBoundaries(iac).QHWaterLevel=[0.0 0.0];

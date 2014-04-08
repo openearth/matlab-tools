@@ -78,10 +78,10 @@ uipanel('Title','Time Series', 'Units','pixels','Position',[40 80 390 230],'Tag'
 cltp={'edittime','editreal','editreal'};
 callbacks={@EditTable,@EditTable,@EditTable};
 wdt=[120 60 60];
-for i=1:handles.Bnd.nrTimeSeries
-    data{i,1}=handles.Bnd.timeSeriesT(i);
-    data{i,2}=handles.Bnd.timeSeriesA(i,1);
-    data{i,3}=handles.Bnd.timeSeriesB(i,1);
+for it=1:handles.Bnd.nrTimeSeries
+    data{it,1}=handles.Bnd.timeSeriesT(it);
+    data{it,2}=handles.Bnd.timeSeriesA(it,1);
+    data{it,3}=handles.Bnd.timeSeriesB(it,1);
 end
 handles.GUIHandles.table=gui_table(gcf,'create','tag','timeseriestable','position',[50 90],'nrrows',8,'columntypes',cltp,'width',wdt,'data',data,'callbacks',callbacks,'includebuttons',1);
 
