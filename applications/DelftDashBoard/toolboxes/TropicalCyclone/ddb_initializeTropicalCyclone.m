@@ -79,7 +79,7 @@ handles.toolbox.tropicalcyclone.quadrant=1;
 
 handles.toolbox.tropicalcyclone.vMax=120;
 handles.toolbox.tropicalcyclone.rMax=20;
-handles.toolbox.tropicalcyclone.pDrop=5000;
+handles.toolbox.tropicalcyclone.pDrop=8000;
 handles.toolbox.tropicalcyclone.parA=1;
 handles.toolbox.tropicalcyclone.parB=1;
 handles.toolbox.tropicalcyclone.r100=0;

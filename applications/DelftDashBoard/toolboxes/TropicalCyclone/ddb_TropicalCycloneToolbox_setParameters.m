@@ -100,14 +100,15 @@ function drawTrack
 handles=getHandles;
 
 xmldir=handles.toolbox.tropicalcyclone.xmlDir;
-xmlfile='TropicalCyclone.initialtrackparameters.xml';
+xmlfile='toolbox.tropicalcyclone.initialtrackparameters.xml';
 
-h=handles.toolbox.tropicalcyclone;
+%h=handles.toolbox.tropicalcyclone;
+h=handles;
 [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir filesep 'icons' filesep 'deltares.gif']);
 
 if ok
     
-    handles.toolbox.tropicalcyclone=h;
+    handles=h;
     
     setInstructions({'','Click on map to draw cyclone track','Use right-click to end cyclone track'});
     

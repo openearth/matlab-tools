@@ -178,15 +178,15 @@ function drawFaultLine
 handles=getHandles;
 
 xmldir=handles.toolbox.tsunami.xmlDir;
-xmlfile='Tsunami.initialparameters.xml';
+xmlfile='toolbox.tsunami.initialparameters.xml';
 
-h=handles.toolbox.tsunami;
+h=handles;
 
 [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir filesep 'icons' filesep 'deltares.gif']);
 
 if ok
     
-    handles.toolbox.tsunami=h;
+    handles=h;
     
     ddb_zoomOff;
 
@@ -303,6 +303,7 @@ switch lower(opt)
     % Convert x and y to lat-lon
     x=handles.toolbox.tsunami.segmentLon;
     y=handles.toolbox.tsunami.segmentLat;
+    x(x>180)=x(x>180)-360;
     switch lower(handles.screenParameters.coordinateSystem.type)
         case{'projected','cartesian'}
             % Horizontal coordinate system already projected
@@ -314,6 +315,7 @@ switch lower(opt)
             % UTM system
             cs0=handles.screenParameters.coordinateSystem;
             utmz = fix( ( x(1) / 6 ) + 31);
+            utmz = mod(utmz,60);
             if y(1)>0
                 utmZone=['WGS 84 / UTM zone ' num2str(utmz) 'N'];
                 utmZoneShort=[num2str(utmz) 'N'];
@@ -325,7 +327,7 @@ switch lower(opt)
             handles.toolbox.tsunami.utmZoneShort=utmZoneShort;
             cs1.name=utmZone;
             cs1.type='projected';
-    end
+    end    
     [x,y]=ddb_coordConvert(x,y,cs0,cs1);
     handles.toolbox.tsunami.segmentX=x;
     handles.toolbox.tsunami.segmentY=y;
@@ -539,6 +541,7 @@ if ~isempty(pathname)
 
             adjustBathymetry=handles.toolbox.tsunami.adjustBathymetry;
             
+            xz=xz-360;
             interpolateTsunamiToGrid('xgrid',xz,'ygrid',yz,'gridcs',oldSys,'tsunamics',newSys, ...
                 'xtsunami',xx,'ytsunami',yy,'ztsunami',zz,'inifile',filenames{id}, ...
                 'adjustbathymetry',adjustBathymetry,'depth',dp,'newdepfile',depfiles{id});

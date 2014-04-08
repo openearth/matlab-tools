@@ -67,7 +67,7 @@ handles.toolbox.tropicalcyclone.activeCyclonePoint=nr;
 handles.toolbox.tropicalcyclone.activeQuadrant=1;
 
 xmldir=handles.toolbox.tropicalcyclone.xmlDir;
-xmlfile='TropicalCyclone.PointTrackParameters.xml';
+xmlfile='toolbox.tropicalcyclone.pointtrackparameters.xml';
 h=handles;
 [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile);
 if ok
