@@ -118,7 +118,8 @@ if ~isempty(handles.model.delft3dflow.domain(id).corFile)
 end
 if ~isempty(handles.model.delft3dflow.domain(id).bctFile)
     try
-        handles=ddb_readBctFile(handles,id);
+        % Don't read bct file
+%        handles=ddb_readBctFile(handles,id);
     end
 end
 if ~isempty(handles.model.delft3dflow.domain(id).bchFile)
@@ -129,7 +130,8 @@ if ~isempty(handles.model.delft3dflow.domain(id).bcqFile)
 end
 if ~isempty(handles.model.delft3dflow.domain(id).bccFile)
     try
-        handles=ddb_readBccFile(handles,id);
+        % Don't read bct file
+%        handles=ddb_readBccFile(handles,id);
     end
 end
 if ~isempty(handles.model.delft3dflow.domain(id).obsFile)

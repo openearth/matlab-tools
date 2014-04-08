@@ -130,7 +130,10 @@ if handles.model.delft3dflow.domain(id).nrOpenBoundaries>0
             end
             handles.model.delft3dflow.domain(id).bctFile=filename;
         end
-        ddb_saveBctFile(handles,id);
+        if handles.model.delft3dflow.domain(id).bctChanged
+            ddb_saveBctFile(handles,id);
+            handles.model.delft3dflow.domain(id).bctChanged=0;
+        end
     end
     
     incconst=handles.model.delft3dflow.domain(id).salinity.include || handles.model.delft3dflow.domain(id).temperature.include || ...
@@ -144,7 +147,10 @@ if handles.model.delft3dflow.domain(id).nrOpenBoundaries>0
             end
             handles.model.delft3dflow.domain(id).bccFile=filename;
         end
-        ddb_saveBccFile(handles,id);
+        if handles.model.delft3dflow.domain(id).bccChanged
+            ddb_saveBccFile(handles,id);
+            handles.model.delft3dflow.domain(id).bccChanged=0;
+        end
     end
     
 end

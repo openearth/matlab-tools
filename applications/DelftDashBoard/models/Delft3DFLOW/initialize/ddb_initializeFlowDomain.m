@@ -192,7 +192,10 @@ handles.model.delft3dflow.domain(id).selectOpenBoundary=0;
 handles.model.delft3dflow.domain(id).deleteOpenBoundary=0;
 handles.model.delft3dflow.domain(id).changeOpenBoundary=0;
 
-% handles.model.delft3dflow.domain(id).bctFileLoaded=1;
+handles.model.delft3dflow.domain(id).bctLoaded=0;
+handles.model.delft3dflow.domain(id).bccLoaded=0;
+handles.model.delft3dflow.domain(id).bctChanged=0;
+handles.model.delft3dflow.domain(id).bccChanged=0;
 
 handles.model.delft3dflow.domain(id).nrAstro=0;
 handles.model.delft3dflow.domain(id).nrHarmo=0;

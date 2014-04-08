@@ -65,7 +65,7 @@ if isempty(varargin)
     % Make new GUI
     handles=getHandles;
     xmldir=handles.model.delft3dflow.xmlDir;
-    xmlfile='Delft3DFLOW.generatelayers.xml';
+    xmlfile='model.delft3dflow.generatelayers.xml';
     if strcmpi(handles.model.delft3dflow.domain(ad).layerType,'z')
         handles.model.delft3dflow.domain(ad).layerOption=1;
     end
@@ -75,7 +75,7 @@ if isempty(varargin)
     
     h=handles.model.delft3dflow.domain(ad);
 
-    [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir filesep 'icons' filesep 'deltares.gif']);
+    [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir filesep 'icons' filesep 'deltares.gif'],'modal',0);
 
     if ok
         handles.model.delft3dflow.domain(ad)=h;

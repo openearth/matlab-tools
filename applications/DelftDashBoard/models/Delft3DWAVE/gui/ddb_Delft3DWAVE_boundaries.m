@@ -92,24 +92,24 @@ h=handles;
 iac=handles.model.delft3dwave.domain.activeboundary;
 switch lower(handles.model.delft3dwave.domain.boundaries(iac).periodtype)
     case{'peak'}
-        h.model.delft3dwave.Input.periodtext='Wave Period Tp (s)';
+        h.model.delft3dwave.domain.periodtext='Wave Period Tp (s)';
     case{'mean'}
-        h.model.delft3dwave.Input.periodtext='Wave Period Tm (s)';
+        h.model.delft3dwave.domain.periodtext='Wave Period Tm (s)';
 end
 switch lower(handles.model.delft3dwave.domain.boundaries(iac).dirspreadtype)
     case{'power'}
-        h.model.delft3dwave.Input.dirspreadtext='Directional Spreading (-)';
+        h.model.delft3dwave.domain.dirspreadtext='Directional Spreading (-)';
     case{'degrees'}
-        h.model.delft3dwave.Input.dirspreadtext='Directional Spreading (degrees)';
+        h.model.delft3dwave.domain.dirspreadtext='Directional Spreading (degrees)';
 end
 
 xmldir=handles.model.delft3dwave.xmlDir;
 switch lower(handles.model.delft3dwave.domain.boundaries(iac).alongboundary)
     case{'uniform'}
-        xmlfile='Delft3DWAVE.editboundaryconditionsuniform.xml';
+        xmlfile='model.delft3dwave.editboundaryconditionsuniform.xml';
         [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir filesep 'icons' filesep 'deltares.gif']);
     case{'varying'}
-        xmlfile='Delft3DWAVE.editboundaryconditionsvarying.xml';
+        xmlfile='model.delft3dwave.editboundaryconditionsvarying.xml';
         [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir filesep 'icons' filesep 'deltares.gif'],'modal',0);
 end
 
@@ -132,7 +132,7 @@ h=handles;
 xmldir=handles.model.delft3dwave.xmlDir;
 % switch lower(handles.model.delft3dwave.domain.boundaries(iac).alongboundary)
 %     case{'uniform'}
-        xmlfile='Delft3DWAVE.editspectralspace.xml';
+        xmlfile='model.delft3dwave.editspectralspace.xml';
         [h,ok]=gui_newWindow(h,'xmldir',xmldir,'xmlfile',xmlfile,'iconfile',[handles.settingsDir filesep 'icons' filesep 'deltares.gif']);
 %     case{'varying'}
 %         xmlfile='Delft3DWAVE.editboundaryconditionsvarying.xml';

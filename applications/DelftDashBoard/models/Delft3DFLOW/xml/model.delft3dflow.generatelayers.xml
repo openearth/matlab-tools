@@ -6,7 +6,7 @@
   <element>
     <style>popupmenu</style>
     <position>50 295 200 20</position>
-    <variable>handles.model.delft3dflow.domain(ad).layerOption</variable>
+    <variable>layerOption</variable>
     <type>integer</type>
     <text>Option</text>
     <textposition>left</textposition>
@@ -23,7 +23,7 @@
       <action>visible</action>
       <checkfor>any</checkfor>
       <check>
-        <variable>handles.model.delft3dflow.domain(ad).layerType</variable>
+        <variable>layerType</variable>
         <value>Sigma</value>
         <operator>eq</operator>
       </check>
@@ -32,7 +32,7 @@
   <element>
     <style>popupmenu</style>
     <position>50 295 200 20</position>
-    <variable>handles.model.delft3dflow.domain(ad).layerOption</variable>
+    <variable>layerOption</variable>
     <type>integer</type>
     <text>Option</text>
     <textposition>left</textposition>
@@ -45,7 +45,7 @@
       <action>visible</action>
       <checkfor>any</checkfor>
       <check>
-        <variable>handles.model.delft3dflow.domain(ad).layerType</variable>
+        <variable>layerType</variable>
         <value>Z</value>
         <operator>eq</operator>
       </check>
@@ -54,7 +54,7 @@
   <element>
     <style>edit</style>
     <position>200 270 50 20</position>
-    <variable>handles.model.delft3dflow.domain(ad).thickTop</variable>
+    <variable>thickTop</variable>
     <type>real</type>
     <text>Thickness Top (%)</text>
     <textposition>left</textposition>
@@ -63,13 +63,13 @@
       <action>enable</action>
       <checkfor>any</checkfor>
       <check>
-        <variable>handles.model.delft3dflow.domain(ad).layerOption</variable>
+        <variable>layerOption</variable>
         <type>integer</type>
         <value>1</value>
         <operator>eq</operator>
       </check>
       <check>
-        <variable>handles.model.delft3dflow.domain(ad).layerOption</variable>
+        <variable>layerOption</variable>
         <type>integer</type>
         <value>3</value>
         <operator>eq</operator>
@@ -79,7 +79,7 @@
       <action>visible</action>
       <checkfor>any</checkfor>
       <check>
-        <variable>handles.model.delft3dflow.domain(ad).layerType</variable>
+        <variable>layerType</variable>
         <value>Sigma</value>
         <operator>eq</operator>
       </check>
@@ -88,7 +88,7 @@
   <element>
     <style>edit</style>
     <position>200 270 50 20</position>
-    <variable>handles.model.delft3dflow.domain(ad).thickTop</variable>
+    <variable>thickTop</variable>
     <type>real</type>
     <text>Thickness Top (m)</text>
     <textposition>left</textposition>
@@ -97,7 +97,7 @@
       <action>enable</action>
       <checkfor>any</checkfor>
       <check>
-        <variable>handles.model.delft3dflow.domain(ad).layerOption</variable>
+        <variable>layerOption</variable>
         <type>integer</type>
         <value>1</value>
         <operator>eq</operator>
@@ -107,7 +107,7 @@
       <action>visible</action>
       <checkfor>any</checkfor>
       <check>
-        <variable>handles.model.delft3dflow.domain(ad).layerType</variable>
+        <variable>layerType</variable>
         <value>Z</value>
         <operator>eq</operator>
       </check>
@@ -116,7 +116,7 @@
   <element>
     <style>edit</style>
     <position>200 245 50 20</position>
-    <variable>handles.model.delft3dflow.domain(ad).thickBot</variable>
+    <variable>thickBot</variable>
     <type>real</type>
     <text>Thickness Bottom (%)</text>
     <textposition>left</textposition>
@@ -125,13 +125,13 @@
       <action>enable</action>
       <checkfor>any</checkfor>
       <check>
-        <variable>handles.model.delft3dflow.domain(ad).layerOption</variable>
+        <variable>layerOption</variable>
         <type>integer</type>
         <value>2</value>
         <operator>eq</operator>
       </check>
       <check>
-        <variable>handles.model.delft3dflow.domain(ad).layerOption</variable>
+        <variable>layerOption</variable>
         <type>integer</type>
         <value>3</value>
         <operator>eq</operator>
@@ -141,7 +141,7 @@
       <action>visible</action>
       <checkfor>any</checkfor>
       <check>
-        <variable>handles.model.delft3dflow.domain(ad).layerType</variable>
+        <variable>layerType</variable>
         <value>Sigma</value>
         <operator>eq</operator>
       </check>
@@ -152,7 +152,7 @@
     <position>10 10 80 200</position>
     <type>string</type>
     <listtext>
-      <variable>handles.model.delft3dflow.domain(ad).layerStrings</variable>
+      <variable>layerStrings</variable>
     </listtext>
   </element>
   <element>

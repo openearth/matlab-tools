@@ -171,9 +171,10 @@ else
             handles.model.delft3dflow.domain(ad).deleteOpenBoundary=0;
             n=handles.model.delft3dflow.domain(ad).activeOpenBoundary;
             handles.model.delft3dflow.domain(ad).openBoundaryNames{n}=handles.model.delft3dflow.domain(ad).openBoundaries(n).name;
+            handles.model.delft3dflow.domain(ad).bctChanged=1;
+            handles.model.delft3dflow.domain(ad).bccChanged=1;
             handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','openboundaries');
             setHandles(handles);
-            % setUIElement('delft3dflow.openboundaries.listopenboundaries');
             clearInstructions;
             refreshOpenBoundaries;
             
@@ -211,6 +212,8 @@ else
                     handles.model.delft3dflow.domain(ad).openBoundaries(n).profile='uniform';
                 end
             end
+            handles.model.delft3dflow.domain(ad).bctChanged=1;
+            handles.model.delft3dflow.domain(ad).bccChanged=1;
             setHandles(handles);
             refreshOpenBoundaries;
             
@@ -222,6 +225,7 @@ else
                 handles.model.delft3dflow.domain(ad).openBoundaries(n).forcing=fc;
             end
             handles=ddb_countOpenBoundaries(handles,ad);
+            handles.model.delft3dflow.domain(ad).bctChanged=1;
             setHandles(handles);
             refreshOpenBoundaries;
             
@@ -261,6 +265,7 @@ else
                     end
                 end
             end
+            handles.model.delft3dflow.domain(ad).bctChanged=1;
             setHandles(handles);
             refreshOpenBoundaries;
             
@@ -269,25 +274,35 @@ else
             set(gcf, 'windowbuttondownfcn',   []);
             i=handles.model.delft3dflow.domain(ad).activeOpenBoundary;
             frc=handles.model.delft3dflow.domain(ad).openBoundaries(i).forcing;
-            switch frc,
+            switch frc
                 case{'A'}
                     ddb_editD3DFlowConditionsAstronomic;
                 case{'H'}
                     ddb_editD3DFlowConditionsHarmonic;
                 case{'T'}
-%                     if ~handles.model.delft3dflow.domain(ad).bctFileLoaded
-%                         handles=ddb_readBctFile(handles,ad);
-%                         setHandles(handles);
-%                     end
+                    % Check if there is a bct file and whether it has has been loaded
+                    if ~isempty(handles.model.delft3dflow.domain(ad).bctFile)
+                        if ~handles.model.delft3dflow.domain(ad).bctLoaded
+                            handles=ddb_readBctFile(handles,ad);
+                            handles.model.delft3dflow.domain(ad).bctLoaded=1;
+                            setHandles(handles);
+                        end
+                    end
                     ddb_editD3DFlowConditionsTimeSeries;
+                    handles=getHandles;
+                    handles.model.delft3dflow.domain(ad).bctChanged=1;
+                    setHandles(handles);
                 case{'Q'}
-                    EditD3DFlowConditionsQHRelation;
+%                    EditD3DFlowConditionsQHRelation;
             end
             
         case{'transportconditions'}
             ddb_zoomOff;
             set(gcf, 'windowbuttondownfcn',   []);
             ddb_editD3DFlowTransportConditionsTimeSeries;
+            handles=getHandles;
+            handles.model.delft3dflow.domain(ad).bccChanged=1;
+            setHandles(handles);
             
         case{'open'}
             handles.model.delft3dflow.domain(ad).addOpenBoundary=0;
@@ -337,9 +352,11 @@ else
                     case{'bct'}
                         handles.model.delft3dflow.domain(ad).bctFile=filename;
                         handles=ddb_readBctFile(handles,ad);
+                        handles.model.delft3dflow.domain(ad).bctChanged=0;
                     case{'bcc'}
                         handles.model.delft3dflow.domain(ad).bccFile=filename;
                         handles=ddb_readBccFile(handles,ad);
+                        handles.model.delft3dflow.domain(ad).bccChanged=0;
                 end
                 clearInstructions;
                 setHandles(handles);
@@ -392,9 +409,11 @@ else
                         handles=ddb_saveBchFile(handles,ad);
                     case{'bct'}
                         handles.model.delft3dflow.domain(ad).bctFile=filename;
+                        handles.model.delft3dflow.domain(ad).bctChanged=0;
                         ddb_saveBctFile(handles,ad);
                     case{'bcc'}
                         handles.model.delft3dflow.domain(ad).bccFile=filename;
+                        handles.model.delft3dflow.domain(ad).bccChanged=0;
                         ddb_saveBccFile(handles,ad);
                 end
                 clearInstructions;
@@ -452,6 +471,9 @@ if ok==1
     handles.model.delft3dflow.domain(ad).openBoundaryNames{iac}=handles.model.delft3dflow.domain(ad).openBoundaries(iac).name;
     handles.model.delft3dflow.domain(ad).activeOpenBoundary=iac;
     handles.model.delft3dflow.domain(ad).activeOpenBoundaries=iac;
+
+    handles.model.delft3dflow.domain(ad).bctChanged=0;
+    handles.model.delft3dflow.domain(ad).bccChanged=0;
     
     handles=ddb_countOpenBoundaries(handles,ad);
     
@@ -474,6 +496,8 @@ handles=getHandles;
 iac=handles.model.delft3dflow.domain(ad).activeOpenBoundaries;
 for ii=length(iac):-1:1
     handles.model.delft3dflow.domain(ad).activeOpenBoundary=iac(ii);
+    handles.model.delft3dflow.domain(ad).bctChanged=0;
+    handles.model.delft3dflow.domain(ad).bccChanged=0;
     setHandles(handles);
     deleteOpenBoundary;    
     handles=getHandles;
@@ -514,6 +538,9 @@ if nrbnd>0
     handles.model.delft3dflow.domain(ad).activeOpenBoundaries=handles.model.delft3dflow.domain(ad).activeOpenBoundary;
     
     handles=ddb_countOpenBoundaries(handles,ad);
+
+    handles.model.delft3dflow.domain(ad).bctChanged=0;
+    handles.model.delft3dflow.domain(ad).bccChanged=0;
     
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','openboundaries');
     setHandles(handles);
