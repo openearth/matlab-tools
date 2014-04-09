@@ -120,7 +120,7 @@ switch varargin{1}
             for ii=1:length(models)
                 xml.model(ii).model.name=models{ii};
                 xml.model(ii).model.version=handles.model.(models{ii}).version;
-                xml.model(ii).model.exedir=handles.(models{ii}).exedir;
+                xml.model(ii).model.exedir=handles.model.(models{ii}).exedir;
             end
             struct2xml(filename,xml,'structuretype','short');
             
