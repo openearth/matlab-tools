@@ -3,9 +3,9 @@ function varargout = csv2struct(fname,varargin)
 %
 %    DATA = csv2struct(fname)
 %
-% reads columns from fname into struct fields. The first line
-% is used to make the field names, the second line is used
-% for the units (if 'units' set=1, but default 0) as in
+% reads columns from fname into struct fields. The 1st csv row
+% is used to make the field names, any "" are removed, illegals characters
+% become _. The 2nd line can optionally be used for units (default off) 
 %
 %    [DATA,units] = csv2struct(fname,'units',1,<keyword,value>)
 %
@@ -13,20 +13,20 @@ function varargout = csv2struct(fname,varargin)
 %
 % e.g. D = csv2struct('somefile.csv','delimiter',';','commentstyle','%')
 %
-% Note: columns are mapped to numeric, columns where char conversion
-% yields NaN are kept as char (incl lines with pure text)
-% Note: removal of double quotes needs to be specified explicitly for
-% column names (1) and column values (2) seperately with keyword 'quotes'
-% with a two-element vector. Note that viz. "korea, republic of" or
-% "100,000" would otherwise yield two columns each due to their internal
-% comma's, e.g.
+% Column values are mapped smartly to numeric, columns where char conversion
+% yields any NaN are kept as char (incl. lines with pure text, excl. empty values)
 %
-% Example: D = csv2struct('koreas.csv','delimiter',',','quotes',[0 1])
+% Double quotes are kept, unless explicitly specified not to, for 
+% (1) column names and (2) column values  with keyword 'quotes' as 
+% a two-element vector. For example in:
 % +---------------->
 % | column1,column2
 % | "Korea, Democratic People's Republic of","120,540"
-% | "Korea, Republic of","100,210"%          
+% | "Korea, Republic of","100,210"          
 % +---------------->
+% "korea, republic of" or "100,000" would otherwise yield 
+% two columns each due to their internal comma's, e.g.
+% Example: D = csv2struct('koreas.csv','delimiter',',','quotes',[0 1])
 %
 % See also: XLS2STRUCT, NC2STRUCT, LOAD & SAVE('-struct',...)
 
@@ -118,6 +118,8 @@ function varargout = csv2struct(fname,varargin)
        else
        fmt      = repmat('%s',[1 length(colnames)]);
        end
+      else
+       fmt      = repmat('%s',[1 length(colnames)]);
       end
    
       if OPT.units
@@ -133,27 +135,39 @@ function varargout = csv2struct(fname,varargin)
       RAW = textscan(fid,fmt,'Delimiter',OPT.delimiter,'commentstyle',OPT.commentstyle);
       fclose(fid);
       for icol=1:length(RAW)
-      
-         fldname = mkvar(colnames{icol});
+          
+         % turn csv column name intor struct name, ignore "
+          fldname = mkvar(colnames{icol});
+         if colnames{icol}(1)  =='"';fldname = fldname(3:end);end % x_*
+         if colnames{icol}(end)=='"';fldname = fldname(1:end-1);end % *_
          
-         if OPT.quotes
+         if OPT.quotes(2)
             % check whether each cellstr begins and ends with a "
             % i.e. whether it is a string, if yes, remove leading and trailing "
-            % TO DO Else make number
-            if all(all(char(cellfun(@(x) x([1 end]),RAW{icol},'UniformOutput',0))=='"'))
-               fldname = mkvar(colnames{icol});
-               DAT.(fldname) = cellfun(@(x) x([2:end-1]),RAW{icol},'UniformOutput',0);
+            % skip empty columns
+            % TO DO Else make number: only when quotes are not present
+            % [icol all(cell2mat(cellfun(@(x) length(x)>2,RAW{icol},'UniformOutput',0)))]
+            if all(cell2mat(cellfun(@(x) length(x)>2,RAW{icol},'UniformOutput',0)))
+              if all(all(char(cellfun(@(x) x([1 end]),RAW{icol},'UniformOutput',0))=='"'))
+                fldname = mkvar(colnames{icol});
+                DAT.(fldname) = cellfun(@(x) x([2:end-1]),RAW{icol},'UniformOutput',0);
+                % THIS SHOULD REMAIN A CHAR
+              else
+                DAT.(fldname) = cellfun(@(x) x,RAW{icol},'UniformOutput',0);
+                DAT.(fldname) = col2mat(RAW{icol});
+              end
+            else
+               DAT.(fldname) = cellfun(@(x) x,RAW{icol},'UniformOutput',0);
+               DAT.(fldname) = col2mat(RAW{icol});
             end
          else
-            DAT.(fldname) = str2double((RAW{icol}));
-            if any(isnan(DAT.(fldname)))
-               DAT.(fldname) = RAW{icol};
-            end
+            DAT.(fldname) = col2mat(RAW{icol});
          end
          
       end
 
    end
+   
 
 %% out
 
@@ -166,5 +180,12 @@ function varargout = csv2struct(fname,varargin)
    else
       error('syntax [DATA,<units>] = csv2struct(...)')
    end
+   
+function mat = col2mat(col)
+        
+   mat = str2double(col);
+   if any(isnan(mat) & cellfun(@(x) ~isempty(x),col))
+      mat = col; % revert entire col
+   end        
    
 %% EOF   
