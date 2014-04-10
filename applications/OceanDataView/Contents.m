@@ -19,7 +19,7 @@
 %   sdn_parameter_mapping_parse    - parse a SeaDataNet ODV parameter (SDN:list:version:element)
 %   sdn_parameter_mapping_resolve  - resolves a SeaDatNet vocabulary term from 
 %                                    http://vocab.ndg.nerc.ac.uk webservice using:
-%   P011,P061                      - read/search BODC P011 parameter,units vocabulary
+%   P01,P06                        - read/search BODC P011 parameter,units vocabulary
 %                                    a vobabulary cache is used to enable fast offline searches
 %
 % Example

@@ -6,8 +6,8 @@
 %See web : <a href="http://odv.awi.de">odv.awi.de</a>
 %See also: OceanDataView
 
-clear all
 close all
+clear all
 
 % $Id$
 % $Date$
@@ -19,7 +19,7 @@ close all
 OPT.pause        = 0;
 OPT.plot         = 0;
 OPT.kml          = 1; % 1=overall, 2=also per CDi
-OPT.basedir      = 'F:\checkouts\OpenEarthRawData\SeaDataNet\';
+OPT.basedir      = 'd:\checkouts\OpenEarthRawData\SeaDataNet\';
 
 %% cast: CTD NIOZ
 SET(1).vc                = 'F:\opendap\thredds\deltares\landboundaries\northsea.nc'; % 'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/noaa/gshhs/gshhs_i.nc';
@@ -82,18 +82,27 @@ SET(6).clim              = [0 2];
 SET(6).z                 = 'SDN:P011::COREDIST';
 SET(6).zScaleFun         = @(z)100*z; % deepest cores go down to O(100m)
 SET(6).urlFcn            = @(x,y,z,w,v)['station = ',y,' <br> LOCAL_CDI_ID = ',x,' <br> date = ',z,' <br> link = <a href="http://www.dinoloket.nl/dinoLks/minisite/Entry?datatype=bor&id=',x,'&queryProperty=NitgNumber">DINO</a> <br> strata = ',v];
+%% samples: EMODnet chemistry
+SET(7).vc                = 'd:\opendap.deltares.nl\thredds\dodsC\opendap\noaa\gshhs\gshhs_i.nc'; % 'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/noaa/gshhs/gshhs_i.nc'
+SET(7).directory         = [OPT.basedir,filesep,'usergd30d98-data_centre120-2014-03-20_result\'];
+SET(7).sdn_standard_name = 'SDN:P011::PHOSAADC';
+SET(7).clim              = [5 25];
+SET(7).z                 = 'SDN:P011::COREDIST';
+SET(7).zScaleFun         = @(z)10*z;
+SET(7).urlFcn            = @(x,y,z,w)['station = ',y,' <br> LOCAL_CDI_ID = ',x,' <br> date = ',z,' <br> link = <a href="http://www.nodc.nl/v_cdi_v2/print_xml.aspx?n_code=',w,'">NODC</a>'];
+SET(7).urlFcn            = @(x,y,z,w)['station = ',y,' <br> LOCAL_CDI_ID = ',x,' <br> date = ',z,' <br> link = <a href="http://seadatanet.maris2.nl/v_cdi_v2/print_xml.aspx?n_code=1018420=',w,'">NODC</a>'];
 
 % samples: RWS
 % http://live.waterbase.nl/index.cfm?loc=DELFZL&page=start.locaties.databeschikbaarheid&taal=nl&loc=&wbwns=1|Waterhoogte+in+cm+t.o.v.+normaal+amsterdams+peil+in+oppervlaktewater&whichform=2
 
-for i=6%1:length(SET)
+for i=7%1:length(SET)
 
    L = odv_metadata(SET(i).directory); % add extraction of # params and # 
    
 % Coastline of world
    
-   LBD.lon = nc_varget(SET(i).vc,'lon');
-   LBD.lat = nc_varget(SET(i).vc,'lat');
+   C.lon = nc_varget(SET(i).vc,'lon');
+   C.lat = nc_varget(SET(i).vc,'lat');
    
    clear D
    
@@ -108,7 +117,9 @@ for i=6%1:length(SET)
       set(gcf,'name',[num2str(ifile),': ',fname])
        
       jfile    = ifile;% = 1;
-      D(jfile) = odvread([SET(i).directory,filesep,fname],'resolve',0,'CDI_record_id',L.CDI_record_id{ifile});
+      D(jfile) = odvread([SET(i).directory,filesep,fname],...
+                'resolve',1,...
+          'CDI_record_id',L.CDI_record_id(ifile));
        
       %odvdisp(D)
       
@@ -116,9 +127,9 @@ for i=6%1:length(SET)
       clf
       if OPT.plot
        if D(jfile).cast==1
-        odvplot_cast    (D(jfile),'lon',L.lon,'lat',L.lat,'sdn_standard_name',SET(i).sdn_standard_name,'z',SET(i).z);
+        odvplot_cast    (D(jfile),'lon',C.lon,'lat',C.lat,'sdn_standard_name',SET(i).sdn_standard_name,'z',SET(i).z);
        else
-        odvplot_overview(D(jfile),'lon',L.lon,'lat',L.lat,'sdn_standard_name',SET(i).sdn_standard_name);
+        odvplot_overview(D(jfile),'lon',C.lon,'lat',C.lat,'sdn_standard_name',SET(i).sdn_standard_name);
        end
       end
       
@@ -168,15 +179,15 @@ for i=6%1:length(SET)
    
      M2D     = odv_merge(D,'sdn_standard_name',SET(i).sdn_standard_name,'z',SET(i).z,'metadataFcn',@(z) z(1),'dataFcn',@(z) sum(z));
      M3D     = odv_merge(D,'sdn_standard_name',SET(i).sdn_standard_name,'z',SET(i).z,'metadataFcn',@(z) z(1),'dataFcn',@(z) z(:));
-     M3Dtype = odv_merge(D,'sdn_standard_name','SDN:P011::XXXXXXXX'    ,'z',SET(i).z,'metadataFcn',@(z) z(1),'dataFcn',@(z) z(:));
+     M3Dtype = odv_merge(D,'sdn_standard_name',SET(i).sdn_standard_name,'z',SET(i).z,'metadataFcn',@(z) z(1),'dataFcn',@(z) z(:));
    
    %% make one kml with all data from downloaded set, encompassing multiple odv files
       text = cellfun(SET(i).urlFcn,...
                   cells2cell(M2D.LOCAL_CDI_ID),...
                   cells2cell(M2D.station),...
                   cellstr(datestr(cell2mat(M2D.datenum),'yyyy-mmm-dd'))',...
-                  cells2cell(M2D.CDI_record_id),...
-                  cellfun(@(x) str2line(x,'s','|'),M3Dtype.data,'uni',0)',...
+                  ... cells2cell(M2D.CDI_record_id),...
+                  cellfun(@(x) str2line(num2str(x),'s','|'),M3Dtype.data,'uni',0)',...
                   'uniformoutput',0);
    %%                  
       KMLmarker(cell2mat(M2D.latitude),cell2mat(M2D.longitude),cell2mat(M2D.data),...
@@ -196,9 +207,9 @@ for i=6%1:length(SET)
       % dataclasses = unique(cellstr(char(cellfun(@(x) char(unique(x)),M2.data,'uni',0)))); % see colormap_dino
       
 
-      [CB.map,CB.label]=colormap_dino;
-      M3Dtype.classes = cellfun(@(x) colormap_dino(x),M3Dtype.data,'uni',0);
-      M3D.z          = cellfun(@(z) (1.*[0;cumsum(z)]),M3D.data,'uniformoutput',0);
+     [CB.map,CB.label]= colormap_dino;
+      M3Dtype.classes  = M3Dtype.data; %cellfun(@(x) colormap_dino(x),M3Dtype.data,'uni',0);
+      M3D.z            = cellfun(@(z) (1.*[0;cumsum(z)]),M3D.data,'uniformoutput',0);
       
       KMLcolumn  (M2D.latitude   ,...
                   M2D.longitude  ,...

@@ -6,7 +6,7 @@ function R = odvplot_overview_kml(D,varargin)
 % merges one parameter from multiple odv files read into D(:)
 % into one struct with vectors.
 %
-%   odv_merge(D,'sdn_standard_name',''SDN:P011::ODSDM021'',<keyword,value>)
+%   odv_merge(D,'sdn_standard_name',''SDN:P01::ODSDM021'',<keyword,value>)
 %
 % Works for both trajectory and cast data, but only for 1 parameter.
 %
@@ -46,8 +46,8 @@ function R = odvplot_overview_kml(D,varargin)
 
 % TO DO: merge ALL  variables when none specified instead of throwing GUI
 
-   OPT.sdn_standard_name = ''; % char or numeric: (P011::PSSTTS01), or variable number in file: 0 is dots, 10 = first non-meta info variable
-   OPT.z                 = ''; % char or numeric: (P011::PSSTTS01), or variable number in file: 0 is dots, 10 = first non-meta info variable
+   OPT.sdn_standard_name = ''; % char or numeric: (P01::PSSTTS01), or variable number in file: 0 is dots, 10 = first non-meta info variable
+   OPT.z                 = ''; % char or numeric: (P01::PSSTTS01), or variable number in file: 0 is dots, 10 = first non-meta info variable
    OPT.metadataFcn       = @(z) z; %':'; % e.g. 1 extract only surface layer
    OPT.dataFcn           = @(z) z; %':'; % e.g. 1 extract only surface layer
    

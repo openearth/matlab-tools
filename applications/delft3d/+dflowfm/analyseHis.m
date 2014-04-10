@@ -345,7 +345,7 @@ for id=1:length(OPT.platform_name);
         timeaxis(OPT.datelim,'fmt',OPT.datestr,'tick',-1,'type','text'); %datetick('x')
         text    (1,0,OPT.txt,'rotation',90,'units','normalized','verticalalignment','top','fontsize',6)
         
-        print2screensizeoverwrite([fileparts(OPT.nc),filesep,'timeseries',filesep,OPT.ext,filesep,filename(OPT.nc),'_',OPT.ext,'_',mkvar(M.platform_name{im}),'_diff']) % ,'v','t'
+        print2screensizeoverwrite([fileparts(OPT.nc),filesep,'timeseries',filesep,OPT.ext,filesep,filename(OPT.nc),'_',OPT.ext,'_',mkvar(M.platform_name{im}),'_diff.png']) % ,'v','t'
 
 %% plot time series scatter
 %  TO DO: calculate R2 or GoF or Taylor diagram ??
@@ -387,7 +387,7 @@ for id=1:length(OPT.platform_name);
         end
         text    (1,0,OPT.txt,'rotation',90,'units','normalized','verticalalignment','top','fontsize',6)
         
-        print2screensizeoverwrite([fileparts(OPT.nc),filesep,'timeseries',filesep,OPT.ext,filesep,filename(OPT.nc),'_',OPT.ext,'_',mkvar(M.platform_name{im}),'_scatter'],[1024],[120],[-257 0]) % ,'v','t'
+        print2screensizeoverwrite([fileparts(OPT.nc),filesep,'timeseries',filesep,OPT.ext,filesep,filename(OPT.nc),'_',OPT.ext,'_',mkvar(M.platform_name{im}),'_scatter.png'],[1024],[120],[-257 0]) % ,'v','t'
 
      end % if ~isempty(D.datenum)
 
@@ -410,7 +410,7 @@ for id=1:length(OPT.platform_name);
      timeaxis(OPT.datelim,'fmt',OPT.datestr,'tick',-1,'type','text'); %datetick('x')
      text    (1,0,OPT.txt,'rotation',90,'units','normalized','verticalalignment','top','fontsize',6)
      
-     print2screensizeoverwrite([fileparts(OPT.nc),filesep,'timeseries',filesep,OPT.ext,filesep,filename(OPT.nc),'_',OPT.ext,'_',mkvar(M.platform_name{im})]) % ,'v','t'
+     print2screensizeoverwrite([fileparts(OPT.nc),filesep,'timeseries',filesep,OPT.ext,filesep,filename(OPT.nc),'_',OPT.ext,'_',mkvar(M.platform_name{im}),'.png']) % ,'v','t'
     
 %%  perform tidal analysis
 

@@ -22,7 +22,7 @@ function varargout = P01(varargin);
 %
 % The P01 parameter vocabulary needs to be downloaded (xml) first from
 % http://www.bodc.ac.uk/products/web_services/
-% into the directory >> fileparts(which('p011')), use the P01.url.
+% into the directory >> fileparts(which('p01')), use the P01.url.
 %
 % After one call, the P01 + P061 vocabs are saved as persistent
 % variables to boost performance, use munlock P01 to free ~ 10 MB memory.
@@ -77,7 +77,7 @@ function varargout = P01(varargin);
 %% input
 
 persistent P01  % cache this as it takes too long to load many times
-persistent P061
+persistent P06
 
 L                 = [];
 OPT.listReference = 'P01';
@@ -116,7 +116,7 @@ if ~isempty(OPT.read) | isempty(L)
     ncfile = [fileparts(mfilename('fullpath')) filesep OPT.listReference '.nc'];
    xlsfile = [fileparts(mfilename('fullpath')) filesep OPT.listReference '.xls'];
    matfile = [fileparts(mfilename('fullpath')) filesep OPT.listReference '.mat'];
-   
+
    if exist(matfile,'file')==2
    
       if strcmpi(OPT.listReference,'P01')
@@ -127,13 +127,13 @@ if ~isempty(OPT.read) | isempty(L)
           end
           L = P01; % variable P01 required for memory caching
           
-      elseif strcmpi(OPT.listReference,'P061') 
+      elseif strcmpi(OPT.listReference,'P06') 
       
-          if isempty(P061)
-          P061 = load(matfile); %P061 = nc2struct(ncfile);
+          if isempty(P06)
+          P06 = load(matfile); %P06 = nc2struct(ncfile);
           disp(['Loading cached ',OPT.listReference '.mat for persistent use (.4 Mb) to interpret SDN/ODV codes (>> clear P061 to free memory) ...'])
           end
-          L = P061; % variable P01 required for memory caching
+          L = P06; % variable P01 required for memory caching
       
       else
 

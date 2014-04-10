@@ -139,7 +139,9 @@ function odvplot_cast(D,varargin)
         xlabel([D.local_name{OPT.index.var(ivar)},' [',D.local_units{OPT.index.var(ivar)},']'])
         grid on
         hold on
+        if OPT.index.z==9 % only if z is actually depth
         plot(xlim,[D.metadata.bot_depth D.metadata.bot_depth],'r')
+        end
         hold off
         box on
         %if nvar > 1

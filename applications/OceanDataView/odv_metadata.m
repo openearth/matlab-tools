@@ -46,7 +46,10 @@ function L = odv_metadata(directory)
 % Sign up to recieve regular updates of this function, and to contribute 
 % your own tools.
 
-OPT.mask = '*.txt';
+L = struct();
+OPT.mask    = '*.txt';
+OPT.urlfun  = @(x) ['http://seadatanet.maris2.nl/v_cdi_v3/print_wfs.asp?n_code=',num2str(x)];
+%OPT.urlfun = @(x) ['http://seadatanet.maris2.nl/v_cdi_v3/print_wfs.asp?edmo=',,'&identifier=',L.LOCAL_CDI_ID];
 
 tmp = dir([directory,'*.csv']);
 
@@ -67,14 +70,18 @@ if isempty(tmp)==1
    L.isdir         = {tmp.isdir};
    L.datenum       = {tmp.datenum};
    L.CDI_record_id = cell(1,length(L.name));
-  [L.CDI_record_id{:}] = deal({nan});
+  [L.CDI_record_id{:}] = deal({nan});   
    
 else
 
 %% newer SDN server version at datacentre
 %  (why is there no datacentre software version number in name of zip?, pfffffff)
 
-   L = csv2struct([directory,filesep,tmp.name],'delimiter',',','quotes',1);
+   L = csv2struct([directory,filesep,tmp.name],'delimiter',',','quotes',[1 1]);
+   
+   if isnumeric(L.LOCAL_CDI_ID)
+      L.LOCAL_CDI_ID = cellstr(num2str(L.LOCAL_CDI_ID));
+   end   
    
    tmp  = dir([directory,'*.txt']);
    name = cellstr(char({tmp.name}));
@@ -130,6 +137,14 @@ else
 end
 
 L.fullfile  = cellfun(@(x) helperfun(x,directory),L.name,'UniformOutput',0);
+L.url       = cellfun(OPT.urlfun,cellstr(num2str(L.CDI_record_id)),'UniformOutput',0);
+L.EDMO_code = cellfun(@(x) CDI_partner2EDMO(x),cellstr(L.CDI_partner),'UniformOutput',0);
+
+function e=CDI_partner2EDMO(p)
+
+s0 = strfind(p,'(');
+s1 = strfind(p,')');
+e  = str2num(p(s0(end)+1:s1(end)-1));
 
 function y=helperfun(x,pre)
 

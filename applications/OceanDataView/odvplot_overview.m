@@ -43,7 +43,7 @@ function odvplot_overview(D,varargin)
 % $Revision$
 % $HeadURL
 
-   OPT.sdn_standard_name  = ''; %'P011::PSSTTS01'; % char or numeric: nerc vocab string (P011::PSSTTS01), or variable number in file: 0 is dots, 10 = first non-meta info variable
+   OPT.sdn_standard_name  = ''; %'P01::PSSTTS01'; % char or numeric: nerc vocab string (P01::PSSTTS01), or variable number in file: 0 is dots, 10 = first non-meta info variable
 
    OPT.clim      = [];
    OPT.vc        = 'gshhs_c.nc'; % http://opendap.deltares.nl:8080/thredds/dodsC/opendap/noaa/gshhs/gshhs_i.nc

@@ -20,8 +20,6 @@ function description = sdn_parameter_mapping_resolve(SDNstring,varargin)
 %
 %See also: OCEANDATAVIEW, sdn_parameter_mapping_parse
 
-warning('outdated, need to migrate from P011 to P01.')
-
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 Deltares for Building with Nature
@@ -105,6 +103,14 @@ warning('outdated, need to migrate from P011 to P01.')
       listReference    =  SDNstring(index(1)+1:index(2)-1); % e.g.'P011';
       listVersion      =  SDNstring(index(2)+1:index(3)-1); % e.g.'' or 213
       entryReference   =  SDNstring(index(3)+1:end       ); % e.g.'EWDAZZ01';
+      
+      % BODC migrated P011>P01 and P061>P06
+      if strcmpi(listReference,'P011')
+          listReference = 'P01';
+      end
+      if strcmpi(listReference,'P061')
+          listReference = 'P06';
+      end        
 
       if isempty(listVersion)
       listVersion      =  'current';
@@ -144,7 +150,7 @@ warning('outdated, need to migrate from P011 to P01.')
       
    elseif strcmpi(OPT.method,'loc')
    
-      description  = P011('resolve',entryReference,'listReference',listReference);
+      description  = P01('resolve',entryReference,'listReference',listReference);
       
    end   
    
