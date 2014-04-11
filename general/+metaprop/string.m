@@ -59,7 +59,7 @@ classdef string < metaprop.base
             self = self@metaprop.base(varargin{:});
             
             % set specific restrictions
-            self.DefaultAttributes = {'row'};
+            self.DefaultAttributes = {};
             self.DefaultClasses    = {'char'};
 
             self.CheckDefault();
