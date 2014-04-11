@@ -1,4 +1,5 @@
 classdef (Abstract) base < oop.setproperty & matlab.mixin.Heterogeneous
+% Abstract base class for metaproperties    
     properties
         Description = ''
         Classes = {} %--> to be passed to validateattributes
@@ -87,17 +88,15 @@ classdef (Abstract) base < oop.setproperty & matlab.mixin.Heterogeneous
             self.jContext = javaObjectEDT(com.jidesoft.grid.EditorContext(jProp.getName));
             jProp.setEditorContext(self.jContext);
 
-            
             self.registerEditor();
             self.registerRenderer();
-            
 
             % Right align everything
             direction = javax.swing.SwingConstants.RIGHT;
-            try self.jRenderer.setHorizontalAlignment(direction); catch, end
-            try self.jEditor.setHorizontalAlignment(direction); catch, end
-            try self.jEditor.getTextField.setHorizontalAlignment(direction); catch, end
-            try self.jEditor.getComboBox.setHorizontalAlignment(direction); catch, end
+            try self.jRenderer.setHorizontalAlignment(direction);            catch; end
+            try self.jEditor.setHorizontalAlignment(direction);              catch; end
+            try self.jEditor.getTextField.setHorizontalAlignment(direction); catch; end
+            try self.jEditor.getComboBox.setHorizontalAlignment(direction);  catch; end
         end
         
         function registerEditor(self)

@@ -27,13 +27,13 @@ end
 validateattributes(metaclass        ,{'meta.class'},{'scalar'});
 validateattributes(metaPropertyBlock,{'cell'}      ,{'ncols',3});
 
-% more asseriotns
+% more assertions
 assert(all(cellfun(@(x) isa(x,'char')            ,metaPropertyBlock(:,1))),...
-    'Expected the tirst column of the metaPropertyBlock to contain only char');
+    'Expected the first column of the metaPropertyBlock to contain only char');
 assert(all(cellfun(@(x) isa(x,'function_handle') ,metaPropertyBlock(:,2))),...
-    'Expected the tirst column of the metaPropertyBlock to contain function handles');
+    'Expected the second column of the metaPropertyBlock to contain function handles');
 assert(all(cellfun(@(x) isa(x,'cell')            ,metaPropertyBlock(:,3))),...
-    'Expected the tirst column of the metaPropertyBlock to contain cell arrays with additional arguments');
+    'Expected the thord column of the metaPropertyBlock to contain cell arrays with additional arguments');
 
 PropertyList =  metaclass.PropertyList;
 

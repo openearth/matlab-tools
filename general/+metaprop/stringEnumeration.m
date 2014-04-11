@@ -71,7 +71,7 @@ classdef stringEnumeration < metaprop.base
         end
         function set.Options(self,value)
             % check options
-            validateattributes(value,{'cell'},{'vector','nonempty'},self.DefiningClass.Name,self.Name)
+            validateattributes(value,{'cell'},{'vector','nonempty'},self.DefiningClass.Name,[self.Name '.Options'])
             assert(iscellstr(value))
             self.Options = value;
         end
