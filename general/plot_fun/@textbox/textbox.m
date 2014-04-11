@@ -491,10 +491,6 @@ classdef textbox < oop.inspectable
             end
         end
         
-        function inspector = inspect(self)
-            inspector = metaprop.Inspect(self);
-        end
-        
         function delete(self)
             if ishghandle(self.ha)
                 delete(self.ha);
