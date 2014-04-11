@@ -10,16 +10,20 @@ classdef Inspect < oop.handle_light
     properties
         Figure
         Object % object to be inspected
+        Metaprops
         ObjectListener
         InitialState
         Model
     end
     methods
-        function self = Inspect(Object)
+        function self = Inspect(Object,Metaprops,varargin)
             % input check
             assert(isa(Object,'oop.inspectable'),'Inspect can only inspect objects derived from oop.inspectable');
+            assert(isa(Metaprops,'struct'),'Second argument for Inspect must be a structure with instances of metaprop');
             
             self.Object = Object;
+            
+            self.Metaprops = Metaprops;
             
             self.ObjectListener = addlistener(Object,'ObjectBeingDestroyed',@(varargin) delete(self));
             
@@ -30,10 +34,10 @@ classdef Inspect < oop.handle_light
             
             % Prepare the properties list:
             list = java.util.ArrayList();
-            propnames = fieldnames(Object.metaprops);
+            propnames = fieldnames(self.Metaprops);
             for ii = 1:length(propnames)
                 propname = propnames{ii};
-                metaprop = self.Object.metaprops.(propname);
+                metaprop = self.Metaprops.(propname);
                 jProp    = metaprop.jProp(self.Object.(propname));
                 list.add(jProp);
             end
@@ -99,7 +103,7 @@ classdef Inspect < oop.handle_light
                 end
                 
                 propname = char(jProp.getName);
-                metaprop = self.Object.metaprops.(propname);
+                metaprop = self.Metaprops.(propname);
                 
                 oldValue = metaprop.mValue(self.Object.(propname));
                 try
@@ -113,7 +117,7 @@ classdef Inspect < oop.handle_light
             else
                 propname = char(jProp.getName);
                 try
-                    newValue = self.Object.metaprops.(propname).mValue(newValue);
+                    newValue = self.Metaprops.(propname).mValue(newValue);
                 catch ME
                     warning('Could not change value of %s\n%s',propname,ME.message);
                     noWarnings = false;
@@ -134,14 +138,14 @@ classdef Inspect < oop.handle_light
         
         function refreshPropertyValues(self)
             % refresh all property values
-            propnames = fieldnames(self.Object.metaprops);
+            propnames = fieldnames(self.Metaprops);
             for ii = 1:length(propnames)
                 propname = propnames{ii};
                 jProp = self.Model.getProperty(propname);
-                jProp.setValue(self.Object.metaprops.(propname).jValue(self.Object.(propname)));
+                jProp.setValue(self.Metaprops.(propname).jValue(self.Object.(propname)));
                 
                 % update value of child jProps, if any
-                self.Object.metaprops.(propname).updateChildValues(jProp);
+                self.Metaprops.(propname).updateChildValues(jProp);
             end
             self.Model.refresh();  % refresh value onscreen
         end
