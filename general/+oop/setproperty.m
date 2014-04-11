@@ -47,7 +47,27 @@
 
 %%
 classdef (Abstract) setproperty < oop.handle_light
+    properties (Hidden, Transient)
+        set_onInvalidInput = 'error'
+        % error           throw error (default)        
+        % warning         throw warning
+        % silent          silently ignore
+
+        set_onUnknownProperty = 'error'
+        % error           throw error (default)        
+        % warning         throw warning
+        % silent          silently ignore
+
+    end
     methods
+        function set.set_onInvalidInput(self,value)
+            value = validatestring(value,{'error','warning','silent'});
+            self.set_onInvalidInput = value;
+        end
+        function set.set_onUnknownProperty(self,value)
+            value = validatestring(value,{'error','warning','silent'});
+            self.set_onUnknownProperty = value;
+        end
         function set(self,varargin)
             if nargin == 1
                 % short circuit when nothing to set
@@ -86,20 +106,49 @@ classdef (Abstract) setproperty < oop.handle_light
                 if any(n)
                     % if there is exactly one match, check case
                     if sum(n) == 1 && ~strcmp(prop_name,availabe_props{n})
-                        error('Could not set ''%s'' for object of class ''%s'',\n Did you mean ''%s''?',...
+                        msg = sprintf('Property ''%s'' not available for object of class ''%s'',\n Did you mean ''%s''?',...
                             prop_name,class(self),availabe_props{n});
+                        switch self.set_onUnknownProperty
+                            case 'error'
+                                error(sprintf('%s:PropertyCaseMismatch',strrep(upper(class(self)),'.',':')),msg); %#ok<SPERR>
+                            case 'warning'
+                                warning(sprintf('%s:PropertyCaseMismatch',strrep(upper(class(self)),'.',':')),msg); %#ok<SPWRN>
+                                continue
+                            case 'silent'
+                                continue
+                        end
                     end
                     if ~isequaln(self.(prop_name),prop_values{ii})
                         % pass non-default values to self
-                        self.(prop_name) = prop_values{ii};
+                        try
+                            self.(prop_name) = prop_values{ii};
+                        catch ME
+                            msg = sprintf('Could not set property ''%s'' for object of class ''%s'' to desired value, Reason:\n%s',...
+                            prop_name,class(self),ME.message);
+                            switch self.set_onInvalidInput
+                                case 'error'
+                                    error(sprintf('%s:IllegalPropertyValue',strrep(upper(class(self)),'.',':')),msg); %#ok<SPERR>
+                                case 'warning'
+                                    warning(sprintf('%s:IllegalPropertyValue',strrep(upper(class(self)),'.',':')),msg); %#ok<SPWRN>
+                                    continue
+                                case 'silent'
+                                    continue
+                            end
+                        end
                     end
                 else
                     msg = [...
                         sprintf('Unknown property: ''%s'' for object of class ''%s''\n',prop_name,class(self)),...
                         sprintf('Available properties are:\n'),...
                         sprintf('   %s \n',availabe_props{:})];
-                    error('TEXTBOX:IllegalProperty',...
-                        msg);
+                    switch self.set_onUnknownProperty
+                        case 'error'
+                            error(sprintf('%s:PropertyNameUnknown',strrep(upper(class(self)),'.',':')), msg);
+                        case 'warning'
+                            warning(sprintf('%s:PropertyNameUnknown',strrep(upper(class(self)),'.',':')),msg); 
+                        case 'silent'
+                            % do nothing
+                    end
                 end
             end
         end
