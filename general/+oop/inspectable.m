@@ -87,7 +87,9 @@ classdef (Abstract) inspectable < oop.setproperty
         end
         %% add inspector method
         function inspector = inspect(self,varargin)
-            inspector = metaprop.Inspect(self,varargin{:});
+            % normally inspect will be called with it's metaprops, but it
+            % is possible to inspect with only a subset of the metaprops
+            inspector = metaprop.Inspect(self,self.metaprops,varargin{:});
         end
     end
 end
