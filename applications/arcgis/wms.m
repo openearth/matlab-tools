@@ -1,8 +1,8 @@
 function varargout = wms(varargin)
 %WMS construct and validate OGC WMS request from Web Mapping Service server
 %
-%  [url,OPT,lims] = wms_validate(<keyword,value>)
-%  [url,OPT,lims] = wms_validate(OPT)
+%  [url,OPT,lims] = wms(<keyword,value>)
+%  [url,OPT,lims] = wms(OPT)
 %
 % where
 % url  - is valid wms getmap request constructed from user-keywords 
@@ -37,9 +37,9 @@ function varargout = wms(varargin)
 %             representation is compared, which is often off due to format
 %             precision digits.
 %
-% Example:
+% Example: AHN2 http://www.nationaalgeoregister.nl/geonetwork/srv/dut/search#|94e5b115-bece-4140-99ed-93b8f363948e
 %
-%   [url,OPT] = wms_validate('server','http://opendap.deltares.nl/thredds/wms/opendap/test/vaklodingenKB121_2120wms.nc?');
+%   [url,OPT] = wms('server','http://geoport.whoi.edu/thredds/wms/bathy/smith_sandwell_v11?','colorscalerange',[-2e3 2e3]);
 %   urlwrite(url,['tmp',OPT.ext]);
 %   [A,map,alpha] = imread(['tmp',OPT.ext]);
 %  %[A,map,OPT] = imread(url); or read direct from www, but better keep local cache
@@ -48,11 +48,12 @@ function varargout = wms(varargin)
 %   tickmap('ll');grid on;
 %   set(gca,'ydir','normal')
 %
-%See also: WMS_IMAGE_PLOT, arcgis, netcdf, opendap, postgresql, xml_read
+%See also: wcs, WMS_IMAGE_PLOT, arcgis, netcdf, opendap, postgresql, xml_read
 %          KMLimage (wrap WMS in KML)
 %          http://publicwiki.deltares.nl/display/OET/WMS+primer
 %          https://pypi.python.org/pypi/OWSLib
 %          http://nbviewer.ipython.org/urls/raw.github.com/Unidata/tds-python-workshop/master/wms_sample.ipynb
+%          http://disc.sci.gsfc.nasa.gov/services/ogc_wms
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -91,9 +92,9 @@ url = '';
 % standard
 OPT.server          = 'http://www.dummy.yz';
 OPT.service         = 'WMS';
-OPT.version         = '1.3.0';
+OPT.version         = '1.3.0';       % or 1.1.1
 OPT.request         = 'GetMap';
-OPT.layers          = '';            % from getCapabilities
+OPT.layers          = '';            % from getCapabilities, coverage in WCS
 OPT.axis            = [];            % check for bounds from getCapabilities
 OPT.bbox            = '';            % check order for lat-lon vs. lon-lat
 OPT.format          = 'image/png';   % default; from getCapabilities
@@ -123,7 +124,10 @@ OPT.cachedir        = [tempdir,'matlab.wms',filesep]; % store cache of xml (and 
 
    ind0 = strfind(OPT.server,'//'); % remove http:// or https://
    ind1 = strfind(OPT.server,'?'); % cleanup
-   url0  = [OPT.server(1:ind1),'service=WMS&version=1.3.0&request=GetCapabilities']; % http://wms.agiv.be/ogc/wms/omkl? crashes on twice occurcne of service=wms
+   if ~(length(ind1)==1)
+       error(['OGC WxS url must have exactly 1 "?", found',length(ind1)])
+   end
+   url0  = [OPT.server(1:ind1),'service=WMS&version=',OPT.version,'&request=GetCapabilities']; % http://wms.agiv.be/ogc/wms/omkl? crashes on twice occurcne of service=wms
    if ~exist(OPT.cachedir);mkdir(OPT.cachedir);end
    OPT.cachename = [OPT.cachedir,filesep,mkvar(OPT.server(ind0+2:ind1-1))]; % remove ?
    xmlname = [OPT.cachename,'.xml'];
@@ -133,7 +137,7 @@ OPT.cachedir        = [tempdir,'matlab.wms',filesep]; % store cache of xml (and 
    else
       if OPT.disp;disp(['used WMS cache:',xmlname]);end % load last access time too
    end
-   xml   = xml_read(xmlname,struct('Str2Num',0)); % prevent parsing of 1.1.1 or 1.3.0 to numbers
+   xml   = xml_read(xmlname,struct('Str2Num',0,'KeepNS',0)); % prevent parsing of 1.1.1 or 1.3.0 to numbers
 
 %% check available WMS version
 
@@ -145,7 +149,7 @@ OPT.cachedir        = [tempdir,'matlab.wms',filesep]; % store cache of xml (and 
        error('WMS not 1.1.1 or 1.3.0')
    end
 
-%% check valid layers and get layer index into getcapabilities
+%% check valid layers and ...
 
    lim.layers = {};
    for i=1:length(xml.Capability.Layer.Layer)
@@ -158,7 +162,10 @@ OPT.cachedir        = [tempdir,'matlab.wms',filesep]; % store cache of xml (and 
       end
    end
 
-   [OPT.layers] = wms_keyword_match('a layer',OPT.layers,lim.layers,OPT);
+   [OPT.layers] = wxs_keyword_match('a layer',OPT.layers,lim.layers,OPT);
+
+%% ... get layer index into getcapabilities list
+
    for ilayer=1:length(xml.Capability.Layer.Layer)
       if isfield(xml.Capability.Layer.Layer(i),'Layer')       
          for jlayer=1:length(xml.Capability.Layer.Layer(ilayer).Layer)
@@ -180,7 +187,7 @@ OPT.cachedir        = [tempdir,'matlab.wms',filesep]; % store cache of xml (and 
 %% check valid format
 
    lim.format = xml.Capability.Request.GetMap.Format;
-   OPT.format = wms_keyword_match('a format',OPT.format,lim.format,OPT);
+   OPT.format = wxs_keyword_match('a format',OPT.format,lim.format,OPT);
    i = strfind(OPT.format,'/');OPT.ext = ['.',OPT.format(i+1:end)];
 
 %% check valid crs: handle symbol ":" inside
@@ -201,7 +208,7 @@ OPT.cachedir        = [tempdir,'matlab.wms',filesep]; % store cache of xml (and 
    end
    lim.crs = {crs0{:},crs1{:}};
    
-   OPT.crs = wms_keyword_match('a crs',strrep(OPT.crs,':','%3A'),lim.crs,OPT);
+   OPT.crs = wxs_keyword_match('a crs',strrep(OPT.crs,':','%3A'),lim.crs,OPT);
    
 %% check valid axis (not yet bbox):
 
@@ -270,7 +277,7 @@ OPT.cachedir        = [tempdir,'matlab.wms',filesep]; % store cache of xml (and 
    if isfield(xml.Capability.Layer,'Style');styles0 = {xml.Capability.Layer.Style.Name};end
    if isfield(               Layer,'Style');styles1 = {               Layer.Style.Name};end
    lim.styles = {styles0{:},styles1{:}};   
-   OPT.styles = wms_keyword_match('a style',OPT.styles,lim.styles,OPT);
+   OPT.styles = wxs_keyword_match('a style',OPT.styles,lim.styles,OPT);
    
 %% optional dimensions: time + elevation + dedicated
 %   current = 'true';
@@ -335,7 +342,7 @@ OPT.cachedir        = [tempdir,'matlab.wms',filesep]; % store cache of xml (and 
                 OPT.time = datestr(OPT.time,'yyyy-mm-ddTHH:MM:SS.FFFZ');
                 % perhaps better swap: turn lim.time into numeric and then compare    
              end
-            [OPT.time] = wms_keyword_match(['a time (default: ',default,')'],OPT.time,lim.time,OPT);
+            [OPT.time] = wxs_keyword_match(['a time (default: ',default,')'],OPT.time,lim.time,OPT);
          end
          ind = strfind([OPT.time],'/');
          if any(ind)
@@ -408,37 +415,3 @@ function c = ensure_cell(c)
 
    if ischar(c);c = cellstr(c);end
 
-function [val,i] = wms_keyword_match(txt,val,set,OPT)
-%WMS_KEYWORD_MATCH  validate choice against cellstr set, make choice from UI
-
-   if ischar(set)
-       set = cellstr(set);
-   end
-           
-   if isnumeric(val)
-      i = min(val,length(set));
-      val  = set{i};
-      if OPT.disp;disp(['wms:selected:  ',txt,'(',num2str(i),')="',val,'"']);end
-   elseif isempty(val)
-       
-       
-       if     isempty(set)  ;i = [];val = [];
-       elseif length(set)==1;i =  1;val = set{1};
-       else
-      [i, ok] = listdlg('ListString', set, .....
-                     'SelectionMode', 'single', ...
-                      'PromptString',['Select ',txt,':'], ....
-                              'Name',OPT.server,...
-                          'ListSize', [500, 300]);
-       val = set{i};
-       end
-   else
-      i = strmatch(lower(val),lower(set),'exact');
-      if isempty(i)
-          dprintf(2,['wms:not valid: ',txt,'="',val,'", choose from valid options:'])
-          % throw menu to show options that are available
-          [val,i] = wms_keyword_match(txt,'',set,OPT);
-      else       
-          if OPT.disp;disp(['wms:validated: ',txt,'="',val,'"']);end
-      end    
-   end
