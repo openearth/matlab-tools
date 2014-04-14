@@ -25,7 +25,7 @@ elseif s(1) == filesep
         end
     else
         tmp = pwd;
-        
+
         if ispc
         s   = [tmp(1:2) s];
         end
@@ -46,8 +46,9 @@ else
     end
 end
 
-% append filesep
-if ~strcmp(s(end),filesep)
+% append filesep (TK: only if s does not contail a '.' in which case it is
+% a file)
+if ~strcmp(s(end),filesep) && isempty(strfind(s,'.'))
     s = [s filesep];
 end
 
@@ -55,7 +56,7 @@ end
 while 1
     a = strfind(s,filesep);
     b = strfind(s,[filesep '..' filesep]);
-    
+
     if isempty(b)
         return
     end
@@ -66,4 +67,3 @@ while 1
         s = s([1:a(c(1)-1) a(c(1)+1)+1 : end]);
     end
 end
-
