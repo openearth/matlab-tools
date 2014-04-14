@@ -1,5 +1,7 @@
 function set_colwidth_excel (fileName,sheet,icol,width)
 
+fileName =  relativeToabsolutePath(fileName);
+
 %
 % Get sheetnr if name is specified
 %

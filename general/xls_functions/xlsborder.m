@@ -60,6 +60,8 @@ function xlsborder(filename,sheetname,varargin)
 %   Copyright 2004 Fahad Al Mahmood
 %   Version: 1.0 $  $Date: 21-Mar-2004
 
+filename =  relativeToabsolutePath(filename);
+
 borders_opt = {'DiagonalDown',5;...
         'DiagonalUp',6;
     'EdgeBottom',9;

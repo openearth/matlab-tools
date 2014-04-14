@@ -1,5 +1,7 @@
 function delete_empty_ecelsheets(fileName)
 
+fileName =  relativeToabsolutePath(fileName);
+
 %
 % Opens excel workbook
 %

@@ -2,7 +2,7 @@ function xlswrite_report(filename,cell_arr,sheetname,varargin)
 
 %
 % Function                      : Generates a "report" xls file whereas matlab's own xlswrite produces
-%                                 a rather messy excell file. The top row an left most column are assumed to
+%                                 a rather messy excel file. The top row an left most column are assumed to
 %                                 be describtive and displayed in a different color than the "body".
 % usage (identical to xlswrite) : xlswrite_report(filename,cell_arr,sheetname, ... , ...)
 %                                 filename  = name of the resulting xls file
@@ -12,7 +12,7 @@ function xlswrite_report(filename,cell_arr,sheetname,varargin)
 %                                 'format'   xls format like for instance '0.00'
 %                                 'colwidth' vector of nrow column widths (pts)
 %
-%                                 an eaxample of how to use this functions is given in xls_xmp.m
+%                                 an example of how to use this functions is given in xls_xmp.m
 %
 % start with setting the optional property/value pairs
 
@@ -23,10 +23,8 @@ for i_col = 2: size(cell_arr,2)
 end
 OPT        = setproperty(OPT,varargin);
 
-% create filename including full path
-
-[~,name,ext] = fileparts(filename);
-filename     = [pwd filesep name ext];
+%%
+filename =  relativeToabsolutePath(filename);
 
 % write default file
 

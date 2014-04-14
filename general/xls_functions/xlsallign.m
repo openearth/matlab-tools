@@ -55,7 +55,7 @@ function xlsalign(filename,sheetname,varargin)
 %   Copyright 2004 Fahad Al Mahmood
 %   Version: 1.0 $  $Date: 21-Mar-2004
 
-
+filename =  relativeToabsolutePath(filename);
 
 options = varargin;
 if strmatch(lower(varargin{1}),'find','exact')

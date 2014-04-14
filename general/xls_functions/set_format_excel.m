@@ -1,4 +1,6 @@
-function set_format_excell(fileName,sheet,range,format)
+function set_format_excel(fileName,sheet,range,format)
+
+filename =  relativeToabsolutePath(fileName);
 
 %
 % Get sheetnr ifname is specified
