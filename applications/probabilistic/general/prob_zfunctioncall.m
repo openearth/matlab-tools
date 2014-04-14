@@ -92,8 +92,7 @@ function [z OPT] = zfuntioncall(OPT, stochast, x, z_input)
         z{icell}    = feval(OPT.x2zFunction{icell}, inputargs{:}, OPT.x2zVariables{:});
     end
     z = cell2mat(z);
-    [len, dim] = max(size(x));
-    if size(z,dim) ~= len
+    if size(z,1) ~= size(x,1)
         z = z';
     end
 
