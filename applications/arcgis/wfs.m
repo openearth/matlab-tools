@@ -1,19 +1,17 @@
-function varargout = wcs(varargin)
-%WCS construct and validate OGC WCS request from Web Coverage Service server
+function varargout = wfs(varargin)
+%WFS construct and validate OGC WFS request from Web Feature Service server
 %
-%  [url,OPT,lims] = wcs(<keyword,value>)
-%  [url,OPT,lims] = wcs(OPT)
+%  [url,OPT,lims] = wfs(<keyword,value>)
+%  [url,OPT,lims] = wfs(OPT)
 %
 % where
-% url  - is valid wcs getcoverage request constructed from user-keywords 
+% url  - is valid wfs getcoverage request constructed from user-keywords 
 %        and (cached) getcapabilities request.
 % lims - are the available options per keyword.
 % OPT  - contains as input the user-keywords and as output valid
 %        values for the keywords, as first valid value from getcapabilities
 %        or interactive selection from UI pop-up with available options, or
 %        simply returns validated values unaltered.
-% OPT  - also contains the vectors x and y to be used
-%        for georeferencing the WCS data with the requested bounding box.
 %
 % Keywords layers, format and style can be 
 % 1  - get 1st value from list, to prevent all user interaction
@@ -24,13 +22,13 @@ function varargout = wcs(varargin)
 % [minlon minlat maxlon maxlat]. Note that numeric array OPT.axis 
 % can have lat/lon swapped with respect to character array OPT.bbox
 %
-% Example: AHN2 http://www.nationaalgeoregister.nl/geonetwork/srv/dut/search#|f20e948e-9e22-4b5a-96a1-f3cc1d16b808
+% Example: VLIZ.be
 %
-%   [url,OPT] = wcs('server','http://geoport.whoi.edu/thredds/wcs/bathy/srtm30plus_v6?');
+%   [url,OPT] = wfs('server','geo.vliz.be/geoserver/wfs?');
 %   urlwrite(url,['tmp',OPT.ext]);
 %
-%See also: wms, wfs, arcgis, netcdf, opendap, postgresql, xml_read
-%          http://publicwiki.deltares.nl/display/OET/WCS+primer
+%See also: wcs, wms, postgresql, xml_read
+%          http://publicwiki.deltares.nl/display/OET/WFS+primer
 %          https://pypi.python.org/pypi/OWSLib
 
 %% Copyright notice
@@ -69,19 +67,17 @@ function varargout = wcs(varargin)
 
 % standard
 OPT.server          = 'http://www.dummy.yz';
-OPT.service         = 'WCS';
-OPT.version         = '1.0.0';
-OPT.request         = 'GetCoverage';
-OPT.coverage        = '';            % from getCapabilities, layers in WMS
+OPT.service         = 'WFS';
+OPT.version         = '1.1.0';
+OPT.request         = 'GetFeature';
+OPT.typename        = '';            % from getCapabilities, layers in WFS
 OPT.axis            = [];            % check for bounds from getCapabilities
 OPT.bbox            = '';            % check order for lat-lon vs. lon-lat
-OPT.format          = 'netcdf3';     % not in getCapabilities, but in DescribeCoverage
+OPT.format          = 'json';        % in getCapabilities
 OPT.crs             = 'EPSG%3A4326'; % http://viswaug.wordpress.com/2009/03/15/reversed-co-ordinate-axis-order-for-epsg4326-vs-crs84-when-requesting-wms-130-images/
-OPT.resx            = [];            % from getCapabilities
-OPT.resy            = [];            % from getCapabilities
 
 OPT.disp            = 1;             % write screen logs
-OPT.cachedir        = [tempdir,'matlab.wcs',filesep]; % store cache of xml (and later png)
+OPT.cachedir        = [tempdir,'matlab.wfs',filesep]; % store cache of xml (and later png)
 
 %% non-standard
 
@@ -94,31 +90,31 @@ OPT.cachedir        = [tempdir,'matlab.wcs',filesep]; % store cache of xml (and 
 
 %% get_capabilities (rebuilt url)
 
-   xml = wxs_url_cache(OPT.server,['service=WCS&version=',OPT.version,'&request=GetCapabilities'],OPT.cachedir);
+   xml = wxs_url_cache(OPT.server,['service=WFS&version=',OPT.version,'&request=GetCapabilities'],OPT.cachedir);
 
-%% check available WCS version
+%% check available WDS version
 
-   if strcmpi(xml.ATTRIBUTE.version,'1.0.0')
-      OPT.version = '1.0.0';
+   if strcmpi(xml.ATTRIBUTE.version,'1.1.0')
+      OPT.version = '1.1.0';
    else
-       error('WMS not 1.0.0')
+       error('WFS not 1.1.0')
    end
 
 %% check valid layers and ...
 
-   L = xml.ContentMetadata.CoverageOfferingBrief;
+   L = xml.FeatureTypeList.FeatureType;
 
-   lim.coverage = {};
+   lim.featuretype = {};
    for i=1:length(L)
-         lim.coverage{end+1} = L(i).name;
+         lim.typename{end+1} = L(i).Name;
    end
 
-   [OPT.coverage] = wxs_keyword_match('a coverage',OPT.coverage,lim.coverage,OPT);
+   [OPT.typename] = wxs_keyword_match('a coverage',OPT.typename,lim.typename,OPT);
    
 %% ... get layer index into getcapabilities list
    
    for ilayer=1:length(L)
-      if strcmpi(OPT.coverage,L(ilayer).name)
+      if strcmpi(OPT.typename,L(ilayer).Name)
          Layer = L(ilayer);
          Layer.index = [ilayer];
          continue
@@ -127,45 +123,27 @@ OPT.cachedir        = [tempdir,'matlab.wcs',filesep]; % store cache of xml (and 
 
 %% check valid format: use server-optional DescribeCoverage
 
-   lim.requests = fieldnames(xml.Capability.Request);
-   if any(strmatch('DescribeCoverage',lim.requests))
-       
-      LL = xml.Capability.Request.DescribeCoverage.DCPType;
-       
-      for ii=1:length(LL)
-          if isfield(LL(ii).HTTP,'Get') % exclude Post
-             url2 = LL(ii).HTTP.Get.OnlineResource.ATTRIBUTE.href;
-             break
-          end
+   for ii=1:length(xml.OperationsMetadata.Operation)
+      if strcmpi(xml.OperationsMetadata.Operation(ii).ATTRIBUTE.name,'GetFeature')
+          break
       end
-      
-%% get_capabilities (rebuilt url)
-
-      xml2 = wxs_url_cache(url2,['service=WCS&version=',OPT.version,'&request=DescribeCoverage&coverage=',OPT.coverage],OPT.cachedir);
-      
-      lim.format = xml2.CoverageOffering.supportedFormats.formats;
-    
-   else % guess
-      warning('No DescribeCoverage, guessed file a format')
-      OPT.format = 'GeoTIFF';
    end
    
+   lim.format = xml.OperationsMetadata.Operation(ii).Parameter(2).Value;   
+ 
    [OPT.format] = wxs_keyword_match('a format',OPT.format,lim.format,OPT);
-  
    
 %% check crs
 
-   xml2.CoverageOffering.supportedCRSs
    
 %% check interpolation
 
-   xml2.CoverageOffering.supportedInterpolations
    
 %% check valid axis (not yet bbox):
 
    if isempty(OPT.axis)
-       LL = str2num(Layer.lonLatEnvelope.pos{1});
-       UR = str2num(Layer.lonLatEnvelope.pos{2});
+       LL = str2num(Layer.WGS84BoundingBox.LowerCorner);
+       UR = str2num(Layer.WGS84BoundingBox.UpperCorner);
        OPT.axis(1) = LL(1);
        OPT.axis(2) = LL(2);
        OPT.axis(3) = UR(1);
@@ -174,31 +152,20 @@ OPT.cachedir        = [tempdir,'matlab.wcs',filesep]; % store cache of xml (and 
 
 %% check valid bbox: handle lon-lat vs. lat-lon:
 
-   if     strcmpi(OPT.version,'1.0.0') % CRS:84
+   if     strcmpi(OPT.version,'1.1.0') % CRS:84
        % [min_lon,min_lat,max_lon,max_lat]
        % [minx   ,miny   ,maxx   ,maxy   ]
        OPT.bbox  = nums2str(OPT.axis,',');       
    end
-   
-%% check resolution
-
-   xml2.CoverageOffering.domainSet
-
-%% make center pixels
-
-  OPT.x = OPT.axis(1):OPT.resy:OPT.axis(3);
-  OPT.y = OPT.axis(4):-OPT.resy:OPT.axis(2); % images are generally upside down: pixel(1,1) is upper left corner
 
 %% construct url: standard keywords
 
-   url = [OPT.server,'&service=wcs',...
+   url = [OPT.server,'&service=wfs',...
    '&version='    ,         OPT.version,...
    '&request='    ,         OPT.request,...
    '&bbox='       ,         OPT.bbox,...
-   '&coverage='   ,         OPT.coverage,...
+   '&typename='   ,         OPT.typename,...
    '&format='     ,         OPT.format,...
-   '&resx='       ,         num2str(OPT.resx),...
-   '&resy='       ,         num2str(OPT.resy),...
    '&crs='        ,         OPT.crs];
 
    varargout = {url,OPT,lim};

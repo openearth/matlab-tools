@@ -1,10 +1,9 @@
-%WCS_test test for wcs5
+%WCS_test test for wcs
 %
 % test using these servers:
 % 
 % With dimensions
 %   1.1.0 4326=?? DescribeCoverage=1 http://geodata.nationaalgeoregister.nl/ahn1/wcs?service=WCS&version=1.0.0&request=GetCapabilities
-%   1.1.0 4326=?? DescribeCoverage=0 http://geoport.whoi.edu/thredds/wcs/bathy/srtm30plus_v6?
 %
 %  see also: http://disc.sci.gsfc.nasa.gov/services/ogc_wms
 

@@ -21,11 +21,11 @@ function varargout = wms(varargin)
 % '' - show drop-down menu with all options
 % 
 % Keyword axis can be [] to get overall axis from server 
-% [minlon minlat maxlon maxlat]. Note that numeric array
-% OPT.axis can have lat/lon swapped with respect to character 
-% OPT.bbox due to change betwen WMS 1.1.1 and 1.3.0
-% Note: some WMS servers erroneously still swap [lat,lon] 
-% in the bbox @ version 1.3.0 & crs=epsg:4326, notably Unidata THREDDS ncWMS.
+% [minlon minlat maxlon maxlat]. Note that numeric array OPT.axis 
+% can have lat/lon swapped with respect to character array OPT.bbox
+% due to change betwen WMS 1.1.1 and 1.3.0. NOTE: some WMS servers 
+% erroneously still swap [lat,lon] in the bbox @ version 1.3.0 & 
+% crs=epsg:4326, notably Unidata THREDDS ncWMS.
 %
 % Keyword/dimensions 'time' and 'elevation' can be a 
 % character - checked for validity against the possible range
@@ -48,7 +48,7 @@ function varargout = wms(varargin)
 %   tickmap('ll');grid on;
 %   set(gca,'ydir','normal')
 %
-%See also: wcs, WMS_IMAGE_PLOT, arcgis, netcdf, opendap, postgresql, xml_read
+%See also: wcs, wfs, WMS_IMAGE_PLOT, arcgis, netcdf, opendap, postgresql, xml_read
 %          KMLimage (wrap WMS in KML)
 %          http://publicwiki.deltares.nl/display/OET/WMS+primer
 %          https://pypi.python.org/pypi/OWSLib
