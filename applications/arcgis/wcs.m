@@ -77,8 +77,6 @@ function varargout = wcs(varargin)
 
 % http://geoport.whoi.edu/thredds/wcs/bathy/srtm30plus_v6?request=GetCoverage&version=1.0.0&service=WCS&format=netcdf3&coverage=topo&BBOX=0,50,10,55
 
-url = '';
-
 % standard
 OPT.server          = 'http://www.dummy.yz';
 OPT.service         = 'WCS';
@@ -106,24 +104,9 @@ OPT.cachedir        = [tempdir,'matlab.wcs',filesep]; % store cache of xml (and 
    
    OPT = setproperty(OPT,varargin);
 
-%% get_capabilities
+%% get_capabilities (rebuilt url)
 
-   ind0 = strfind(OPT.server,'//'); % remove http:// or https://
-   ind1 = strfind(OPT.server,'?'); % cleanup
-   if ~(length(ind1)==1)
-       error(['OGC WxS url must have exactly 1 "?", found',length(ind1)])
-   end
-   url0  = [OPT.server(1:ind1),'service=WCS&version=',OPT.version,'&request=GetCapabilities']; % http://wms.agiv.be/ogc/wms/omkl? crashes on twice occurcne of service=wms
-   if ~exist(OPT.cachedir);mkdir(OPT.cachedir);end
-   OPT.cachename = [OPT.cachedir,filesep,mkvar(OPT.server(ind0+2:ind1-1))]; % remove ?
-   xmlname = [OPT.cachename,'.xml'];
-   if ~exist(xmlname)
-      urlwrite(url0,xmlname);
-      urlfile_write([OPT.cachename,'.url'],url0,now);   
-   else
-      if OPT.disp;disp(['used WCS cache:',xmlname]);end % load last access time too
-   end
-   xml   = xml_read(xmlname,struct('Str2Num',0,'KeepNS',0)); % prevent parsing of 1.1.1 or 1.3.0 to numbers
+   xml = wxs_url_cache(OPT.server,['service=WCS&version=',OPT.version,'&request=GetCapabilities'],OPT.cachedir);
 
 %% check available WCS version
 
@@ -163,27 +146,14 @@ OPT.cachedir        = [tempdir,'matlab.wcs',filesep]; % store cache of xml (and 
        
       for ii=1:length(LL)
           if isfield(LL(ii).HTTP,'Get') % exclude Post
-             server2 = LL(ii).HTTP.Get.OnlineResource.ATTRIBUTE.href;
+             url2 = LL(ii).HTTP.Get.OnlineResource.ATTRIBUTE.href;
              break
           end
       end
+      
+%% get_capabilities (rebuilt url)
 
-      ind0 = strfind(server2,'//'); % remove http:// or https://
-      ind1 = strfind(server2,'?'); % cleanup
-      if ~(length(ind1)==1)
-          error(['OGC WxS url must have exactly 1 "?", found',length(ind1)])
-      end
-      url0  = [server2(1:ind1),'service=WCS&version=',OPT.version,'&request=DescribeCoverage&coverage=',OPT.coverage];
-      if ~exist(OPT.cachedir);mkdir(OPT.cachedir);end
-      OPT.cachename = [OPT.cachedir,filesep,mkvar(OPT.server(ind0+2:ind1-1)),'_DescribeCoverage']; % remove ?
-      xmlname = [OPT.cachename,'.xml'];
-      if ~exist(xmlname)
-         urlwrite(url0,xmlname);
-         urlfile_write([OPT.cachename,'.url'],url0,now);   
-      else
-         if OPT.disp;disp(['used WCS cache:',xmlname]);end % load last access time too
-      end
-      xml2   = xml_read(xmlname,struct('Str2Num',0,'KeepNS',0)); % prevent parsing of 1.1.1 or 1.3.0 to numbers
+      xml2 = wxs_url_cache(url2,['service=WCS&version=',OPT.version,'&request=DescribeCoverage&coverage=',OPT.coverage],OPT.cachedir);
       
       lim.format = xml2.CoverageOffering.supportedFormats.formats;
     

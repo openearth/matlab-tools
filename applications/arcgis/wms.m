@@ -122,22 +122,7 @@ OPT.cachedir        = [tempdir,'matlab.wms',filesep]; % store cache of xml (and 
 
 %% get_capabilities
 
-   ind0 = strfind(OPT.server,'//'); % remove http:// or https://
-   ind1 = strfind(OPT.server,'?'); % cleanup
-   if ~(length(ind1)==1)
-       error(['OGC WxS url must have exactly 1 "?", found',length(ind1)])
-   end
-   url0  = [OPT.server(1:ind1),'service=WMS&version=',OPT.version,'&request=GetCapabilities']; % http://wms.agiv.be/ogc/wms/omkl? crashes on twice occurcne of service=wms
-   if ~exist(OPT.cachedir);mkdir(OPT.cachedir);end
-   OPT.cachename = [OPT.cachedir,filesep,mkvar(OPT.server(ind0+2:ind1-1))]; % remove ?
-   xmlname = [OPT.cachename,'.xml'];
-   if ~exist(xmlname)
-      urlwrite(url0,xmlname);
-      urlfile_write([OPT.cachename,'.url'],url0,now);   
-   else
-      if OPT.disp;disp(['used WMS cache:',xmlname]);end % load last access time too
-   end
-   xml   = xml_read(xmlname,struct('Str2Num',0,'KeepNS',0)); % prevent parsing of 1.1.1 or 1.3.0 to numbers
+   xml = wxs_url_cache(OPT.server,['service=WMS&version=',OPT.version,'&request=GetCapabilities'],OPT.cachedir);
 
 %% check available WMS version
 
@@ -303,7 +288,7 @@ OPT.cachedir        = [tempdir,'matlab.wms',filesep]; % store cache of xml (and 
                  OPT.elevation = num2str(OPT.elevation);
                  % perhaps better swap: turn lim.elevation into numeric and then compare               
              end
-            [OPT.elevation] = wms_keyword_match(['an elevation (default: ',default,')'],OPT.elevation,lim.elevation,OPT);         
+            [OPT.elevation] = wxs_keyword_match(['an elevation (default: ',default,')'],OPT.elevation,lim.elevation,OPT);         
          end
          ind = strfind([OPT.elevation],'/');
          if any(ind)

@@ -6,7 +6,10 @@ function varargout = wms_image_plot(url,OPT)
 %
 %See also: wms, imread, urlwrite
 
-%% download cache of image  
+%% download cache of image
+
+   OPT.cachename = [OPT.cachedir,filesep,mkvar(OPT.layers),'_time=',mkvar(OPT.time),'_elevation=',mkvar(OPT.elevation)];
+
    urlwrite(url,[OPT.cachename,OPT.ext]);
    
    disp(['Cached WMS image to:',OPT.cachename,OPT.ext])
