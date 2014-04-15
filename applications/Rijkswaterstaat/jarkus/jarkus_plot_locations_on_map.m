@@ -112,7 +112,7 @@ else
 end
 
 % url of map
-url = 'http://opendap.tudelft.nl/thredds/dodsC/data2/deltares/deltares/landboundaries/holland.nc';
+url = 'http://opendap.tudelft.nl/thredds/dodsC/data2/deltares/deltares/landboundaries/holland_fillable.nc';
 
 %% obtain data
 x = nc_varget(url, projectionx);
