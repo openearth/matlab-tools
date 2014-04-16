@@ -115,6 +115,7 @@ debug = 0;
    
    %% Volume units 
    l               = 1e-3;                    % liter
+   ltr             = l;                       % liter    
    liter           = l;                       % liter
    liters          = l;                       % liter
    litre           = l;                       % liter
