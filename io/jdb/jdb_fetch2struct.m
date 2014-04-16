@@ -33,11 +33,11 @@ for i=1:length(nams) % 1-based column index
     elseif strcmp(typ,'double precision'           ); D.(nam)     =            [R{:,i}]';
     elseif ismember(typ,{'numeric' 'number'}       ); D.(nam)     =            [R{:,i}]';
         
-    elseif strcmp(typ,'date'                       ); D.(nam)     = jdb_datenum({R{:,i}})';
-    elseif strcmp(typ,'time without time zone'     ); D.(nam)     = jdb_datenum({R{:,i}})';
+    elseif strcmp(typ,'date'                       ); D.(nam)     = jdb_datenum({R{:,i}});%';
+    elseif strcmp(typ,'time without time zone'     ); D.(nam)     = jdb_datenum({R{:,i}});%';
     elseif strcmp(typ,'time with time zone'        );[D.(nam),...
             D.timezone] = jdb_datenum({R{:,i}});
-    elseif strcmp(typ,'timestamp without time zone'); D.(nam)     = jdb_datenum({R{:,i}})';
+    elseif strcmp(typ,'timestamp without time zone'); D.(nam)     = jdb_datenum({R{:,i}});%';
     elseif strcmp(typ,'timestamp with time zone'   );[D.(nam),...
             D.timezone] = jdb_datenum({R{:,i}});
         
