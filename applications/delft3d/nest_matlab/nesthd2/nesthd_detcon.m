@@ -43,6 +43,7 @@
             mcbsp = bnd.m(ibnd,isize);
             ncbsp = bnd.n(ibnd,isize);
             [mnes,nnes,weight] = nesthd_getwgh(fid_adm,mcbsp,ncbsp,'z');
+            if isempty(mnes) return; end;
 
             %
             % Get station numbers needed; store in ines

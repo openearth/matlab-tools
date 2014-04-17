@@ -8,6 +8,10 @@ function handles = set_add_inf(handles)
     %
 
     handles.bnd        = nesthd_get_bnd_data(handles.files_hd2{1});
+    if isempty(handles.bnd)
+        return
+    end
+    
     handles.no_bnd     = length(handles.bnd.DATA);
     handles.wlev       = false;
     handles.vel        = false;

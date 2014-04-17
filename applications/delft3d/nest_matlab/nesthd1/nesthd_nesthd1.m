@@ -47,6 +47,8 @@
       %
 
       bnd       = nesthd_get_bnd_data (files{3});
+      if isempty(bnd) return; end;
+
       grid_fine = wlgrid   ('read',files{2});
       icom_fine = nesthd_det_icom (grid_fine.X,grid_fine.MissingValue,files{6});
 

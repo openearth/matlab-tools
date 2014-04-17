@@ -44,5 +44,9 @@ for ibnd = 1: length(bnd.DATA)
     end
 end
 
+if isempty(hulp)
+    simona2mdf_message({'No time series boundaries specified'},'Window','Nesthd Error','Close',true,'n_sec',10);
+end
+
 clear bnd
 bnd = hulp;

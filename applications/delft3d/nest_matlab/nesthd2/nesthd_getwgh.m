@@ -15,6 +15,10 @@
 % limitations        :
 % subroutines called :
 %***********************************************************************
+      mnes   = [];
+      nnes   = [];
+      weight = [];
+      error  = false;
 
       fseek (fid,0,'bof');
 
@@ -71,4 +75,8 @@
              end
           end
           tline = fgetl(fid);
+      end
+
+      if ~found
+           error = true;
       end

@@ -1,4 +1,4 @@
-      function [bndval] = nesthd_dethyd(fid_adm,bnd,nfs_inf,add_inf,filename)
+      function [bndval,error] = dethyd(fid_adm,bnd,nfs_inf,add_inf,filename)
 
       % dethyd : determines nested hydrodynamic boundary conditions (part of nesthd2)
 
@@ -15,6 +15,7 @@
 % limitations        :
 % subroutines called : getwgh, check, getwcr
 %***********************************************************************
+      error = false;
 
       h = waitbar(0,'Generating Hydrodynamic boundary conditions','Color',[0.831 0.816 0.784]);
 
@@ -52,9 +53,16 @@
                case {'c' 'p'}
                   [mnes,nnes,weight,angle] = nesthd_getwgh(fid_adm,mcbsp,ncbsp,'c');
                case {'r' 'x'}
-                  [mnes,nnes,weight,angle,ori] = nesthd_getwgh(fid_adm,mcbsp,ncbsp,'r');
+                  [mnes,nnes,weightr,angle,ori] = nesthd_getwgh(fid_adm,mcbsp,ncbsp,'r');
                case 'n'
                   [mnes,nnes,weight,angle,ori,x,y] = nesthd_getwgh(fid_adm,mcbsp,ncbsp,'n');
+            end
+
+            if isempty(mnes)
+                error = true;
+                close(h);
+                simona2mdf_message({'Inconsistancy between boundary definition and' 'administration file'},'Window','Nesthd2 Error','Close',true,'n_sec',10);
+                return
             end
 
             %
