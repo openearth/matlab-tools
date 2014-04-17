@@ -146,19 +146,19 @@ OPT.cachedir        = [tempdir,'matlab.ows',filesep]; % store cache of xml (and 
    if isempty(OPT.axis)
        LL = str2num(Layer.WGS84BoundingBox.LowerCorner);
        UR = str2num(Layer.WGS84BoundingBox.UpperCorner);
-       OPT.axis(1) = LL(2);
-       OPT.axis(2) = LL(1);
-       OPT.axis(3) = UR(4);
-       OPT.axis(4) = UR(3); % swap for http://geo.vliz.be/geoserver/wfs?
+       OPT.axis(1) = LL(1);
+       OPT.axis(2) = LL(2);
+       OPT.axis(3) = UR(3);
+       OPT.axis(4) = UR(4); % swap for http://geo.vliz.be/geoserver/wfs?
    end
 
 %% check valid bbox: handle lon-lat vs. lat-lon:
 
-   if     strcmpi(OPT.version,'1.1.0') % CRS:84
-       % [min_lon,min_lat,max_lon,max_lat]
-       % [minx   ,miny   ,maxx   ,maxy   ]
-       OPT.bbox  = nums2str(OPT.axis,',');       
-   end
+   if     strcmpi(OPT.version,'1.1.0') & strcmpi(strrep(OPT.crs,':','%3A'),'EPSG%3A4326')
+       % [min_lat,min_lon,max_lat,max_lon]  % reversed
+       OPT.bbox  = nums2str(OPT.axis([2,1,4,3]),',');
+       dprintf(2,'crs=CRS:84 to be used instead of crs=EPSG:4326 to prevent mixing-up lat-lon in THREDDS')
+   end      
 
 %% construct url: standard keywords
 %  Note that the parameter names in all KVP encodings shall be handled

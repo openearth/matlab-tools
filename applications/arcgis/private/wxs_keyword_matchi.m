@@ -1,12 +1,12 @@
 function [val,i] = wxs_keyword_match(txt,val,set,OPT)
 %wxs_KEYWORD_MATCH  validate choice against cellstr set, make choice from UI
 %
-%  Keep case:
+%  Ignore case:
 %  Note that the parameter names in all KVP encodings shall be handled
 %  in a case insensitive manner while parameter values shall be handled in a case sensitive
-%  manner. [csw 2.0.2 p 128]
-%
+%  manner. [csw 2.0.2 p 128]%
 %See also: strcmpi
+
    if ischar(set)
        set = cellstr(set);
    end
@@ -30,7 +30,7 @@ function [val,i] = wxs_keyword_match(txt,val,set,OPT)
        val = set{i};
        end
    else
-      i = strmatch(val,set,'exact');
+      i = strmatch(lower(val),lower(set),'exact');
       if isempty(i)
           dprintf(2,['wxs:not valid: ',txt,'="',val,'", choose from valid options:'])
           % throw menu to show options that are available

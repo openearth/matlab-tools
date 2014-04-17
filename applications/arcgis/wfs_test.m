@@ -9,15 +9,20 @@
 
 warning('WIP')
 
- server = 'http://geo.vliz.be/geoserver/wfs?';
- [url,OPT,lims] = wfs('server',server,...
-                    'typename','World:worldcities');%,...
-                        %'axis',[4 51 5 55]) % swap ??
-url
-urlwrite(url,[OPT.cachedir,'json.xml']);
-%%
-F = xml_read([OPT.cachedir,'json.xml'],struct('Str2Num',0,'KeepNS',0))
-%%
+%% get url and data
+% http://www.nationaalgeoregister.nl/geonetwork/srv/dut/search#|94e5b115-bece-4140-99ed-93b8f363948e
+
+server = 'http://geo.vliz.be/geoserver/wfs?';
+[url,OPT,lim] = wfs('server',server,...
+                    'typename','World:worldcities',...
+                        'axis',[4 51 5 55]);
+cachename = [OPT.cachedir,mkvar(OPT.typename),'.xml'];
+urlwrite(url,cachename);
+
+%% load data
+F = xml_read(cachename,struct('Str2Num',0,'KeepNS',0))
+
+%% plot data
 clear P
 P.n   = length(F.featureMembers.worldcities);
 P.lon = nan(P.n,1);
@@ -34,3 +39,6 @@ end
 plot(P.lon,P.lat,'.')
 hold on
 text(P.lon,P.lat,P.txt)
+axislat
+tickmap('ll')
+print2screensize([filepathstrname(cachename),'.png'])

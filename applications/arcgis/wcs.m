@@ -159,7 +159,6 @@ else
    end
    
    [OPT.format] = wxs_keyword_match('a format',OPT.format,lim.format,OPT);
-  
    
 %% check crs
 
@@ -181,6 +180,11 @@ else
        OPT.axis(3) = UR(1);
        OPT.axis(4) = UR(2);
    end
+   
+   LL = str2num(xml2.CoverageOffering.domainSet.spatialDomain.Envelope.pos{1});
+   UR = str2num(xml2.CoverageOffering.domainSet.spatialDomain.Envelope.pos{2});
+   
+   lim.axis = [LL(1) LL(2) UR(1) UR(2)];
 
 %% check valid bbox: handle lon-lat vs. lat-lon:
 
@@ -192,7 +196,19 @@ else
    
 %% check resolution
 
-   xml2.CoverageOffering.domainSet
+   dx = str2num(xml2.CoverageOffering.domainSet.spatialDomain.RectifiedGrid.offsetVector{1});
+   dy = str2num(xml2.CoverageOffering.domainSet.spatialDomain.RectifiedGrid.offsetVector{2});
+   
+   % limits.GridEnvelope.low = '0 0';
+   % limits.GridEnvelope.high = '37151 39999';
+   % axisName = {'X' 'Y'};
+   % origin.pos = '19242.5 506247.5';
+   % offsetVector = {'5.0 0.0' '0.0 -5.0'};
+   % ATTRIBUTE.dimension = '2';
+   % ATTRIBUTE.srsName = 'EPSG:28992';
+
+   lim.resx = dx(1);
+   lim.resy = dy(2);
 
 %% make center pixels
 
