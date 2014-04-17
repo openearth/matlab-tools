@@ -57,47 +57,60 @@ function matlabDates = xlsdate2datenum(excelDates)
 % $Revision$
 % $HeadURL$
 % $Keywords: $
-
-OPT.debug = 0;
-
-if iscell(excelDates)
-   excelDates = char(excelDates);
+if ischar(excelDates)
+    excelDates = cellstr(excelDates);
 end
 
-   if isnumeric(excelDates)
-   
-      matlabDates = datenum('30-Dec-1899') + excelDates;
-   
-   elseif ischar(excelDates)
-   
-      %  'dd-mmm-yy HH:MM:SS'
-      %  'dd-mmm-yy'
-      if size(excelDates,2)==18
-            matlabDates  = datenum(excelDates);
-      elseif size(excelDates,2)==9
-            matlabDates  = datenum(excelDates);
-      %  'dd-mm-yyyy         '
-      %  'dd-mm-yyyy HH:MM:SS'
-      %  or 
-      %  first we fill spaces with 00:00:00
-      %  then we apply datenum to all rows
-      %  ---------------------------------
-      
-      elseif size(excelDates,2)==19          
-         mask                   = strmatch(' ',excelDates(:,19));
-         excelDates(mask,12:19) = repmat('00:00:00',[length(mask) 1]);
-         if OPT.debug
-            for j=1:size(excelDates,1)
-            disp(num2str(j))
-            matlabDates(j)         = datenum(excelDates(j,:),'dd-mm-yyyy HH:MM:SS');
-            end
-         else
-            matlabDates            = datenum(excelDates(:,:),'dd-mm-yyyy HH:MM:SS');
-         end
-      elseif size(excelDates,2)==10
-         matlabDates            = datenum(excelDates,'dd-mm-yyyy');
-      end
-      
-   end
+if isnumeric(excelDates)
+    
+    matlabDates = datenum('30-Dec-1899') + excelDates;
+    
+elseif iscell(excelDates)
+    %% query system settings
+    % excel date returned depends on locale settings
+    
+    shortDateFmt = winqueryreg('HKEY_CURRENT_USER', 'Control Panel\International', 'sShortDate');
+    switch shortDateFmt
+        case 'dd/MM/yyyy'
+            matlabDateFmt = 'dd/mm/yyyy';
+        case 'yyyy-MM-dd'
+            matlabDateFmt = 'yyyy-mm-dd';
+        otherwise
+            error('Unsupported short date ''%s'', consider using ''hh:mm:ss''',shortDateFmt)
+    end
+    
+    longTimeFmt = winqueryreg('HKEY_CURRENT_USER', 'Control Panel\International', 'sTimeFormat');
+    switch longTimeFmt
+        case 'HH:mm:ss'
+            matlabtimeFmt = 'HH:MM:SS';
+        otherwise
+            error('Unsupported long time ''%s'', consider using ''hh:mm:ss''',longTimeFmt)
+    end
+    
+    %% split between date with and without time
+    fmtWithTime     = [matlabDateFmt ' '  matlabtimeFmt];
+    fmtNoTime       = matlabDateFmt;
+    
+    lengthWithDate  = length(fmtWithTime);
+    lengthNoDate    = length(fmtNoTime);
+    
+    lengths         = cellfun(@length,excelDates);
+    
+    matlabDates     = nan(size(excelDates));
+    
+    n = lengths == lengthWithDate;
+    if any(n)
+        matlabDates(n) = datenum(excelDates(n),fmtWithTime);
+    end
+    
+    n = lengths == lengthNoDate;
+    if any(n)
+        matlabDates(n) = datenum(excelDates(n),fmtNoTime);
+    end
+    
+    if any(isnan(matlabDates))
+        error('Could not convert all excel dates')
+    end
+end
 
 %% EOF
