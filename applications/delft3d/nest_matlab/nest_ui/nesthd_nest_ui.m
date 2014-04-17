@@ -543,15 +543,21 @@ if fin ~= 0
    handles.filedir = pin;
    handles.files_hd2{1} = nesthd_get_bndname ([pin fin]);
    set (handles.name_hd2_bnd,'String',handles.files_hd2{1},'FontSize',10,'Enable','on','HorizontalAlignment','left');
-   [handles] = nesthd_check_nesthd2(handles);
-   set_nesthd2(handles,'on');
 end
 
 if ~isempty(handles.files_hd2{3}) && ~isempty(handles.files_hd2{1})
     add_inf_off(handles);
     [handles] = nesthd_set_add_inf(handles);
-    update_additional(handles);
+    if isempty(handles.bnd)
+        handles.name_hd2{1} = '';
+        set (handles.name_hd2_bnd,'String',handles.files_hd2{1},'FontSize',10,'Enable','on','HorizontalAlignment','left');
+    else
+        update_additional(handles);
+    end
 end
+
+[handles] = nesthd_check_nesthd2(handles);
+set_nesthd2(handles,'on');  
 
 guidata(hObject, handles);
 
@@ -597,7 +603,12 @@ end
 if ~isempty(handles.files_hd2{3}) && ~isempty(handles.files_hd2{1})
     add_inf_off(handles);
     [handles] = nesthd_set_add_inf(handles);
-    update_additional(handles);
+    if isempty(handles.bnd)
+        handles.files_hd2{1} = '';
+        set (handles.name_hd2_bnd,'String',handles.files_hd2{1},'FontSize',10,'Enable','on','HorizontalAlignment','left');
+    else
+        update_additional(handles);
+    end
 end
 
 [handles] = nesthd_check_nesthd2(handles);
