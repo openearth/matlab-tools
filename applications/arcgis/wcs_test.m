@@ -9,8 +9,15 @@
 
 warning('implement checks for: crs, resx, resy, interpolation')
 
+%% AHN2 http://www.nationaalgeoregister.nl/geonetwork/srv/dut/search#|f20e948e-9e22-4b5a-96a1-f3cc1d16b808
+
 server = 'http://geodata.nationaalgeoregister.nl/ahn1/wcs?';
-[url,OPT,lims] = wcs('server',server,'coverage','ahn1:ahn1_5m','crs','epsg:28992','axis',[94000 466000 96000 468000],'resx',5,'resy',5)
+[url,OPT,lims] = wcs('server',server,...
+    'coverage','ahn1:ahn1_5m',...
+    'crs','epsg:4326',...
+    'axis',[94000 466000 96000 468000],...
+    'resx',5,'resy',5)
+
 
 urlwrite(url,['tmp']);
 % Kaag: water and land, with train through it and some high buildings (loodsen)

@@ -14,6 +14,7 @@ function [val,i] = wxs_keyword_match(txt,val,set,OPT)
        
        if     isempty(set)  ;i = [];val = [];
        elseif length(set)==1;i =  1;val = set{1};
+          dprintf(2,['wxs:not valid: only valid option returned: ',val])
        else
       [i, ok] = listdlg('ListString', set, .....
                      'SelectionMode', 'single', ...

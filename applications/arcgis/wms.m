@@ -37,7 +37,7 @@ function varargout = wms(varargin)
 %             representation is compared, which is often off due to format
 %             precision digits.
 %
-% Example: AHN2 http://www.nationaalgeoregister.nl/geonetwork/srv/dut/search#|94e5b115-bece-4140-99ed-93b8f363948e
+% Example: World DEM
 %
 %   [url,OPT] = wms('server','http://geoport.whoi.edu/thredds/wms/bathy/smith_sandwell_v11?','colorscalerange',[-2e3 2e3]);
 %   urlwrite(url,['tmp',OPT.ext]);
@@ -87,11 +87,13 @@ function varargout = wms(varargin)
 % $HeadURL: $
 % $Keywords: $
 
-url = '';
+% http://geoport.whoi.edu/thredds/wms/bathy...';
+
+lim.service = 'WMS';
+lim.version = {''}; % union of those offered by server and those implemented here
 
 % standard
 OPT.server          = 'http://www.dummy.yz';
-OPT.service         = 'WMS';
 OPT.version         = '1.3.0';       % or 1.1.1
 OPT.request         = 'GetMap';
 OPT.layers          = '';            % from getCapabilities, coverage in WCS
@@ -107,7 +109,7 @@ OPT.time            = '';            % from getCapabilities
 OPT.elevation       = '';            % from getCapabilities
 
 OPT.disp            = 0;             % write screen logs
-OPT.cachedir        = [tempdir,'matlab.wms',filesep]; % store cache of xml (and later png)
+OPT.cachedir        = [tempdir,'matlab.ows',filesep]; % store cache of xml (and later png)
 
 %% non-standard
 
@@ -122,16 +124,16 @@ OPT.cachedir        = [tempdir,'matlab.wms',filesep]; % store cache of xml (and 
 
 %% get_capabilities
 
-   xml = wxs_url_cache(OPT.server,['service=WMS&version=',OPT.version,'&request=GetCapabilities'],OPT.cachedir);
+   xml = wxs_url_cache(OPT.server,['service=',lim.service,'&version=',OPT.version,'&request=GetCapabilities'],OPT.cachedir);
 
-%% check available WMS version
+%% check available version
 
    if strcmpi(xml.ATTRIBUTE.version,'1.3.0')
       OPT.version = '1.3.0';
    elseif strcmpi(xml.ATTRIBUTE.version,'1.1.1')
       OPT.version = '1.1.1';
    else
-       error('WMS not 1.1.1 or 1.3.0')
+       error([lim.service,' not 1.1.1 or 1.3.0'])
    end
 
 %% check valid layers and ...
@@ -359,8 +361,11 @@ OPT.cachedir        = [tempdir,'matlab.wms',filesep]; % store cache of xml (and 
   OPT.y = linspace(OPT.axis(4),OPT.axis(2),OPT.height); % images are generally upside down: pixel(1,1) is upper left corner
 
 %% construct url: standard keywords
+%  Note that the parameter names in all KVP encodings shall be handled
+%  in a case insensitive manner while parameter values shall be handled in a case sensitive
+%  manner. [csw 2.0.2 p 128]
 
-   url = [OPT.server,'&service=wms',...
+   url = [OPT.server,'&service=',lim.service,...
    '&version='    ,         OPT.version,...
    '&request='    ,         OPT.request,...
    '&bbox='       ,         OPT.bbox,...

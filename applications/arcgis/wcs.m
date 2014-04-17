@@ -24,7 +24,7 @@ function varargout = wcs(varargin)
 % [minlon minlat maxlon maxlat]. Note that numeric array OPT.axis 
 % can have lat/lon swapped with respect to character array OPT.bbox
 %
-% Example: AHN2 http://www.nationaalgeoregister.nl/geonetwork/srv/dut/search#|f20e948e-9e22-4b5a-96a1-f3cc1d16b808
+% Example: SRTM
 %
 %   [url,OPT] = wcs('server','http://geoport.whoi.edu/thredds/wcs/bathy/srtm30plus_v6?');
 %   urlwrite(url,['tmp',OPT.ext]);
@@ -67,9 +67,11 @@ function varargout = wcs(varargin)
 
 % http://geoport.whoi.edu/thredds/wcs/bathy/srtm30plus_v6?request=GetCoverage&version=1.0.0&service=WCS&format=netcdf3&coverage=topo&BBOX=0,50,10,55
 
+lim.service = 'WCS';
+lim.version = {''}; % union of those offered by server and those implemented here
+
 % standard
 OPT.server          = 'http://www.dummy.yz';
-OPT.service         = 'WCS';
 OPT.version         = '1.0.0';
 OPT.request         = 'GetCoverage';
 OPT.coverage        = '';            % from getCapabilities, layers in WMS
@@ -77,11 +79,12 @@ OPT.axis            = [];            % check for bounds from getCapabilities
 OPT.bbox            = '';            % check order for lat-lon vs. lon-lat
 OPT.format          = 'netcdf3';     % not in getCapabilities, but in DescribeCoverage
 OPT.crs             = 'EPSG%3A4326'; % http://viswaug.wordpress.com/2009/03/15/reversed-co-ordinate-axis-order-for-epsg4326-vs-crs84-when-requesting-wms-130-images/
-OPT.resx            = [];            % from getCapabilities
-OPT.resy            = [];            % from getCapabilities
+OPT.resx            = [];            % not in getCapabilities, but in DescribeCoverage
+OPT.resy            = [];            % not in getCapabilities, but in DescribeCoverage
+OPT.interpolation   = '';            % not in getCapabilities, but in DescribeCoverage
 
 OPT.disp            = 1;             % write screen logs
-OPT.cachedir        = [tempdir,'matlab.wcs',filesep]; % store cache of xml (and later png)
+OPT.cachedir        = [tempdir,'matlab.ows',filesep]; % store cache of xml (and later png)
 
 %% non-standard
 
@@ -94,18 +97,23 @@ OPT.cachedir        = [tempdir,'matlab.wcs',filesep]; % store cache of xml (and 
 
 %% get_capabilities (rebuilt url)
 
-   xml = wxs_url_cache(OPT.server,['service=WCS&version=',OPT.version,'&request=GetCapabilities'],OPT.cachedir);
+   xml = wxs_url_cache(OPT.server,['service=',lim.service,'&version=',OPT.version,'&request=GetCapabilities'],OPT.cachedir);
 
-%% check available WCS version
+%% check available version
 
    if strcmpi(xml.ATTRIBUTE.version,'1.0.0')
       OPT.version = '1.0.0';
    else
-       error('WMS not 1.0.0')
+       error([lim.service,' not 1.0.0'])
    end
 
 %% check valid layers and ...
 
+if isempty(xml.ContentMetadata)
+    warning('server has not any coverages to offer')
+    url = '';
+else
+    
    L = xml.ContentMetadata.CoverageOfferingBrief;
 
    lim.coverage = {};
@@ -141,7 +149,7 @@ OPT.cachedir        = [tempdir,'matlab.wcs',filesep]; % store cache of xml (and 
       
 %% get_capabilities (rebuilt url)
 
-      xml2 = wxs_url_cache(url2,['service=WCS&version=',OPT.version,'&request=DescribeCoverage&coverage=',OPT.coverage],OPT.cachedir);
+      xml2 = wxs_url_cache(url2,['service=',lim.service,'&version=',OPT.version,'&request=DescribeCoverage&coverage=',OPT.coverage],OPT.cachedir);
       
       lim.format = xml2.CoverageOffering.supportedFormats.formats;
     
@@ -155,11 +163,13 @@ OPT.cachedir        = [tempdir,'matlab.wcs',filesep]; % store cache of xml (and 
    
 %% check crs
 
-   xml2.CoverageOffering.supportedCRSs
+   lim.crs = xml2.CoverageOffering.supportedCRSs.requestResponseCRSs;
+   [OPT.crs] = wxs_keyword_match('a crs',OPT.crs,lim.crs,OPT);
    
-%% check interpolation
+%% check interpolation (or use default)
 
-   xml2.CoverageOffering.supportedInterpolations
+   lim.interpolation = xml2.CoverageOffering.supportedInterpolations.interpolationMethod;
+   [OPT.interpolation] = wxs_keyword_match('a interpolation',OPT.interpolation,lim.interpolation,OPT);
    
 %% check valid axis (not yet bbox):
 
@@ -188,10 +198,14 @@ OPT.cachedir        = [tempdir,'matlab.wcs',filesep]; % store cache of xml (and 
 
   OPT.x = OPT.axis(1):OPT.resy:OPT.axis(3);
   OPT.y = OPT.axis(4):-OPT.resy:OPT.axis(2); % images are generally upside down: pixel(1,1) is upper left corner
+  
 
 %% construct url: standard keywords
+%  Note that the parameter names in all KVP encodings shall be handled
+%  in a case insensitive manner while parameter values shall be handled in a case sensitive
+%  manner. [csw 2.0.2 p 128]
 
-   url = [OPT.server,'&service=wcs',...
+   url = [OPT.server,'&service=',lim.service,...
    '&version='    ,         OPT.version,...
    '&request='    ,         OPT.request,...
    '&bbox='       ,         OPT.bbox,...
@@ -200,6 +214,8 @@ OPT.cachedir        = [tempdir,'matlab.wcs',filesep]; % store cache of xml (and 
    '&resx='       ,         num2str(OPT.resx),...
    '&resy='       ,         num2str(OPT.resy),...
    '&crs='        ,         OPT.crs];
+
+end % any coverages 
 
    varargout = {url,OPT,lim};
    

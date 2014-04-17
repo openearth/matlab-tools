@@ -65,9 +65,11 @@ function varargout = wfs(varargin)
 
 % http://geoport.whoi.edu/thredds/wcs/bathy/srtm30plus_v6?request=GetCoverage&version=1.0.0&service=WCS&format=netcdf3&coverage=topo&BBOX=0,50,10,55
 
+lim.service = 'WFS';
+lim.version = {''}; % union of those offered by server and those implemented here
+
 % standard
 OPT.server          = 'http://www.dummy.yz';
-OPT.service         = 'WFS';
 OPT.version         = '1.1.0';
 OPT.request         = 'GetFeature';
 OPT.typename        = '';            % from getCapabilities, layers in WFS
@@ -77,7 +79,7 @@ OPT.format          = 'json';        % in getCapabilities
 OPT.crs             = 'EPSG%3A4326'; % http://viswaug.wordpress.com/2009/03/15/reversed-co-ordinate-axis-order-for-epsg4326-vs-crs84-when-requesting-wms-130-images/
 
 OPT.disp            = 1;             % write screen logs
-OPT.cachedir        = [tempdir,'matlab.wfs',filesep]; % store cache of xml (and later png)
+OPT.cachedir        = [tempdir,'matlab.ows',filesep]; % store cache of xml (and later png)
 
 %% non-standard
 
@@ -90,21 +92,21 @@ OPT.cachedir        = [tempdir,'matlab.wfs',filesep]; % store cache of xml (and 
 
 %% get_capabilities (rebuilt url)
 
-   xml = wxs_url_cache(OPT.server,['service=WFS&version=',OPT.version,'&request=GetCapabilities'],OPT.cachedir);
+   xml = wxs_url_cache(OPT.server,['service=',lim.service,'&version=',OPT.version,'&request=GetCapabilities'],OPT.cachedir);
 
-%% check available WDS version
+%% check available version
 
    if strcmpi(xml.ATTRIBUTE.version,'1.1.0')
       OPT.version = '1.1.0';
    else
-       error('WFS not 1.1.0')
+       error([lim.service,' not 1.1.0'])
    end
 
 %% check valid layers and ...
 
    L = xml.FeatureTypeList.FeatureType;
 
-   lim.featuretype = {};
+   lim.typename = {};
    for i=1:length(L)
          lim.typename{end+1} = L(i).Name;
    end
@@ -144,10 +146,10 @@ OPT.cachedir        = [tempdir,'matlab.wfs',filesep]; % store cache of xml (and 
    if isempty(OPT.axis)
        LL = str2num(Layer.WGS84BoundingBox.LowerCorner);
        UR = str2num(Layer.WGS84BoundingBox.UpperCorner);
-       OPT.axis(1) = LL(1);
-       OPT.axis(2) = LL(2);
-       OPT.axis(3) = UR(1);
-       OPT.axis(4) = UR(2);
+       OPT.axis(1) = LL(2);
+       OPT.axis(2) = LL(1);
+       OPT.axis(3) = UR(4);
+       OPT.axis(4) = UR(3); % swap for http://geo.vliz.be/geoserver/wfs?
    end
 
 %% check valid bbox: handle lon-lat vs. lat-lon:
@@ -159,8 +161,11 @@ OPT.cachedir        = [tempdir,'matlab.wfs',filesep]; % store cache of xml (and 
    end
 
 %% construct url: standard keywords
+%  Note that the parameter names in all KVP encodings shall be handled
+%  in a case insensitive manner while parameter values shall be handled in a case sensitive
+%  manner. [csw 2.0.2 p 128]
 
-   url = [OPT.server,'&service=wfs',...
+   url = [OPT.server,'&service=',lim.service,...
    '&version='    ,         OPT.version,...
    '&request='    ,         OPT.request,...
    '&bbox='       ,         OPT.bbox,...
