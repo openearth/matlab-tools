@@ -1,6 +1,6 @@
       function nesthd_nesthd2 (varargin)
 
-      % nesthd2 : nesting of hydrodynamic models (stahe 2)
+      % nesthd2 : nesting of hydrodynamic models (stage 2)
 
       %
       % Matlab version of nesthd2 (beta release; based on the original fortran code)
@@ -49,6 +49,7 @@
       %
 
       bnd         = nesthd_get_bnd_data (files{1});
+      if isempty(bnd) return; end;
 
       %
       % Get general information from history file
@@ -65,7 +66,8 @@
       % Generate hydrodynamic boundary conditions
       %
 
-      bndval      = nesthd_dethyd(fid_adm,bnd,nfs_inf,add_inf,files{3});
+      [bndval,error]      = nesthd_dethyd(fid_adm,bnd,nfs_inf,add_inf,files{3});
+      if error return; end;
 
       %
       % Generate depth averaged bc from 3D simulation
