@@ -1,40 +1,43 @@
-function result = running_percentile_filter(data,window,percentiles)
+function result = running_percentile_filter(data,window_left,window_right,percentiles)
 %RUNNING_PERCENTILE_FILTER  Moving percentile of 1D data.
 %
 %   Note difference with runing_median_filter: windo specifies one sided
-%   window. running_percentile_filter(data,10,50) is almost equivalent 
+%   window. running_percentile_filter(data,10,10,50) is (almost) equivalent 
 %   to running_median_filter(data,21). There is a difference in the way the
 %   boundary is handled.
 %
 %   Syntax:
 %   result = running_percentile_filter(data, window, percentiles)
 %
-%   data        = vector if input data
-%   window      = if one number, the window is symmetrical. If two numbers
-%   this is interpreted as the left and right sided window
-%   percentiles = numbers between 0 and 100
+%   data         = vector if input data
+%   window_left  = integer number of samples on the left side to include in
+%                  the percentile 
+%   window_right = integer number of samples on the left side to include in
+%                  the percentile 
+%   percentiles  = numbers between 0 and 100
 %
 %   Output:
-%   result      = value per percentile
+%   result       = value per percentile
 %
 %   Example
-%         x = (1:80)';
-%         data = sin(x)/2 + sin(x/3)+sin(x/4);
+%     x = (1:120)';
+%     data = sin(x)/2 + sin(x/3)+sin(x/4)+3*sin(x/10);
+%     percentiles = 0:20:100;
 % 
-%         subplot(3,1,1)
-%         result = running_percentile_filter(data,[20 0],[0 50 100]);
-%         plot([data result])
-%         title('Left filter, 20 samples')
+%     subplot(3,1,1)
+%     result = running_percentile_filter(data,20,0,percentiles);
+%     plot(x,data,'r.-',x,result,'b')
+%     title('Left filter, 20 samples')
 % 
-%         subplot(3,1,2)
-%         result = running_percentile_filter(data,20,[0 50 100]);
-%         plot([data result])
-%         title('Symmetrical window, 20 steps left and 20 steps right')
+%     subplot(3,1,2)
+%     result = running_percentile_filter(data,20,20,percentiles);
+%     plot(x,data,'r.-',x,result,'b')
+%     title('Symmetrical window, 20 samples left and 20 samples right')
 % 
-%         subplot(3,1,3)
-%         result = running_percentile_filter(data,[0 20],[0 50 100]);
-%         plot([data result])
-%         title('Right filter, 20 samples')
+%     subplot(3,1,3)
+%     result = running_percentile_filter(data,0,20,percentiles);
+%     plot(x,data,'r.-',x,result,'b')
+%     title('Right filter, 20 samples')
 %
 %   See also: running_median_filter, percentile
 
@@ -82,20 +85,11 @@ function result = running_percentile_filter(data,window,percentiles)
 % $Keywords: $
 
 %%
-narginchk(3,3)
-validateattributes(data       ,{'double'},{'column','nonnan','finite'});
-validateattributes(window     ,{'double'},{'integer','nonnan','finite'});
-validateattributes(percentiles,{'double'},{'row','nonnan','finite','>=',0,'<=',100});
-
-if numel(window) == 1
-    window_left = window;
-    window_right = window;
-elseif numel(window == 2)
-    window_left = window(1);
-    window_right = window(2);
-else
-    error('Window must have one or two values')
-end
+narginchk(4,4)
+validateattributes(data        ,{'double'},{'column','nonnan','finite'});
+validateattributes(window_left ,{'double'},{'scalar','integer','nonnan','finite'});
+validateattributes(window_right,{'double'},{'scalar','integer','nonnan','finite'});
+validateattributes(percentiles ,{'double'},{'row','nonnan','finite','>=',0,'<=',100});
 
 %% initialize
 result = nan(length(data(:)),length(percentiles(:)));
@@ -156,7 +150,7 @@ for ii = 2:n
         [a,b,ia,ib] = getPercentileFactors(list_length,percentiles);
     end
     
-    result(ii,:) = sl_val(ia) .* a + sl_val(ib) .* b;
+    result(ii,:) = a .* sl_val(ia) + b .* sl_val(ib);
 end
 
 function [a,b,ia,ib] = getPercentileFactors(list_length,percentiles)
