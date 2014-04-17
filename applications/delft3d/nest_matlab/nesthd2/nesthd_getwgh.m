@@ -18,7 +18,6 @@
       mnes   = [];
       nnes   = [];
       weight = [];
-      error  = false;
 
       fseek (fid,0,'bof');
 
@@ -77,6 +76,3 @@
           tline = fgetl(fid);
       end
 
-      if ~found
-           error = true;
-      end
