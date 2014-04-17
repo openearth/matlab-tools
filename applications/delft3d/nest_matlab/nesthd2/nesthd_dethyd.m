@@ -1,4 +1,4 @@
-      function [bndval] = dethyd(fid_adm,bnd,nfs_inf,add_inf,filename)
+      function [bndval] = nesthd_dethyd(fid_adm,bnd,nfs_inf,add_inf,filename)
 
       % dethyd : determines nested hydrodynamic boundary conditions (part of nesthd2)
 

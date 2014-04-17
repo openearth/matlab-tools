@@ -29,7 +29,7 @@ ymean=mean(y(isfinite(y)));
 x(isnan(x))=xmean;
 y(isnan(y))=ymean;
  
-[c,h,wb]=contourf_mvo(x,y,zz1,col,clmap);
+[c,h,wb]=contourf_mvo(x,y,zz1,col);
 
 SetObjectData(h,i,j,k,'vectormagnitude');
 SetObjectData(wb,i,j,k,'vectormagnitude');

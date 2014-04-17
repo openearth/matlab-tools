@@ -1,4 +1,4 @@
-      function nesthd2 (varargin)
+      function nesthd_nesthd2 (varargin)
 
       % nesthd2 : nesting of hydrodynamic models (stahe 2)
 
@@ -42,8 +42,8 @@
          add_inf     = nesthd_additional();
       end
 
-      fid_adm     = fopen(files{2},'r');
-
+      fid_adm     = fopen(files{2},'r')
+      files{2}
       %
       % Read the boundary definition
       %

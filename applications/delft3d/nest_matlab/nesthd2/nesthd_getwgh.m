@@ -1,4 +1,4 @@
-      function [mnes,nnes,weight,varargout] = getwgh (fid,mcbsp ,ncbsp ,typbnd)
+      function [mnes,nnes,weight,varargout] = nesthd_getwgh (fid,mcbsp ,ncbsp ,typbnd)
 
       % getwgh : gets coordinates and weights from the nest administration file
 
@@ -22,7 +22,7 @@
          case 'z'
             quantity = 'water level';
          case {'c' 'r' 'n'}
-            quantity = 'velocity(p)';
+            quantity = 'velocity';
          case {'x' 'p'}
             quantity = 'velocity(t)';
       end
@@ -34,8 +34,8 @@
       while ischar (tline) && ~found;
           pos = strfind (tline,quantity);
           if ~isempty(pos)
-             m = strread(tline(60:63),'%4d');
-             n = strread(tline(65:68),'%4d');
+             m = strread(tline(60:64),'%4d');
+             n = strread(tline(66:70),'%4d');
 
              if m == mcbsp && n == ncbsp
                 found = true;
@@ -43,7 +43,7 @@
 %---------------Read orientation (angle and positive inflow)
 %
                 if typbnd == 'c' || typbnd == 'r' || typbnd == 'x' || typbnd == 'p' || typbnd == 'n'
-                   varargout{1} = strread(tline(78:86),'%9.3f')*pi/180.;
+                   varargout{1} = strread(tline(80:88),'%9.3f')*pi/180.;
                 end
                 if typbnd == 'r'
                    varargout{2} = strread(tline(99:end),'%s');
@@ -53,9 +53,9 @@
 %
                 for iwght = 1: 4
                    switch typbnd
-                      case {'z' 'x' 'p'}
+                      case {'c' 'z' 'x' 'p'}
                          [values] = fscanf(fid,'%d %d %f',3);
-                      case {'c' 'r' 'n'}
+                      case {'r' 'n'}
                          [values] = fscanf(fid,'%d %d %f %g %g',5);
                          x(iwght) = values(4);
                          y(iwght) = values(5);
