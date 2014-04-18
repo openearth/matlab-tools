@@ -124,6 +124,12 @@ else
     catch
         additionalToolboxDir=[];
     end
+
+    try
+        additionalModelsDir=getINIValue(inifile,'AdditionalModelDir');
+    catch
+        additionalModelsDir=[];
+    end
     
     if ~isdir(datadir)
         % Usually done the first time ddb is run. Files are copied from
@@ -138,6 +144,7 @@ handles.bathymetry.dir=[datadir 'bathymetry' filesep];
 handles.tideDir=[datadir 'tidemodels' filesep];
 handles.toolBoxDir=[datadir 'toolboxes' filesep];
 handles.additionalToolboxDir=additionalToolboxDir;
+handles.additionalModelsDir=additionalModelsDir;
 handles.shorelineDir=[datadir 'shorelines' filesep];
 handles.satelliteDir=[datadir 'imagery' filesep];
 handles.superTransDir=[datadir 'supertrans' filesep];

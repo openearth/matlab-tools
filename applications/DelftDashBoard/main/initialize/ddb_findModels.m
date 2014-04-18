@@ -69,8 +69,9 @@ else
     dr=[ddb_root filesep 'models'];
 end
 
-flist=dir(dr);
 k=0;
+%% Standard models
+flist=dir(dr);
 for i=1:length(flist)
     if flist(i).isdir
         switch lower(flist(i).name)
@@ -89,8 +90,40 @@ for i=1:length(flist)
                         case{'1','y','yes'}
                             k=k+1;
                             name{k}=flist(i).name;
+                            tp{k}='standard';
                     end
                 end
+        end
+    end
+end
+
+%% Additional models
+dr2=handles.additionalModelsDir;
+if ~isempty(dr2)
+    addpath(genpath(dr2));
+    flist=dir(dr2);
+    for i=1:length(flist)
+        if flist(i).isdir
+            switch lower(flist(i).name)
+                case{'.','..','.svn'}
+                otherwise
+                    if isdeployed
+                        % xml file in settings dir
+                        xmlfile=[handles.settingsDir filesep 'models' filesep flist(i).name filesep 'xml' filesep lower(flist(i).name) '.xml'];
+                    else
+                        % xml file in model code dir
+                        xmlfile=[dr2 filesep flist(i).name filesep 'xml' filesep 'model.' lower(flist(i).name) '.xml'];
+                    end
+                    if exist(xmlfile,'file')
+                        xml=xml2struct(xmlfile,'structuretype','short');
+                        switch lower(xml.enable)
+                            case{'1','y','yes'}
+                                k=k+1;
+                                name{k}=flist(i).name;
+                                tp{k}='additional';
+                        end
+                    end
+            end
         end
     end
 end
@@ -99,7 +132,6 @@ nt=k;
 
 for i=1:nt
     nm=lower(name{i});
-    handles.model.(nm).dir=[dr filesep name{i} filesep];
     handles.model.(nm).name=nm;
     handles.model.(nm).longName=name{i};
     handles.model.(nm).iniFcn=str2func(['ddb_initialize' name{i}]);
@@ -110,11 +142,22 @@ for i=1:nt
     handles.model.(nm).coordConvertFcn=str2func(['ddb_coordConvert' name{i}]);
     handles.model.(nm).GUI=[];
     if isdeployed
+        handles.model.(nm).dir=[dr filesep name{i} filesep];
         handles.model.(nm).xmlDir=[handles.settingsDir filesep 'models' filesep name{i} filesep 'xml' filesep];
     else
         handles.model.(nm).xmlDir=[dr filesep name{i} filesep 'xml' filesep];
+        % From Matlab
+        if strcmpi(tp{i},'standard')
+            handles.model.(nm).dir=[dr filesep name{i} filesep];
+            handles.model.(nm).xmlDir=[handles.model.(nm).dir 'xml' filesep];
+        else
+            handles.model.(nm).dir=[dr2 filesep name{i} filesep];
+            handles.model.(nm).xmlDir=[handles.model.(nm).dir 'xml' filesep];
+        end
     end
 end
+
+
 
 % Read xml files
 models=fieldnames(handles.model);
