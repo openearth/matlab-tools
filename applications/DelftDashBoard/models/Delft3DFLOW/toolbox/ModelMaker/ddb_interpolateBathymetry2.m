@@ -119,6 +119,9 @@ for id=1:length(datasets)
         
 end
 
+%internaldiffusionrange=[-20000 20000];
+internaldiffusionrange=[-2 2];
+
 if strcmpi(gridtype,'structured')
     if internaldiff
         % Apply internal diffusion (for missing depth points)
