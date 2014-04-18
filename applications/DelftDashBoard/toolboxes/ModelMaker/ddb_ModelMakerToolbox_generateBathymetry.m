@@ -9,6 +9,7 @@ function [xg,yg,zg]=ddb_ModelMakerToolbox_generateBathymetry(handles,xg,yg,zg,da
 
 overwrite=1;
 modeloffset=0;
+gridtype='structured';
 % Set defaults for datasets
 for ii=1:length(datasets)
     datasets=filldatasets(datasets,ii,'zmin',-100000);

@@ -31,8 +31,15 @@
       <element>toolbox.modelmaker.quickmode.xbeach.xml</element>
     </tab>
     <tab>
+      <formodel>fast</formodel>
+      <tabstring>Quick Mode</tabstring>
+      <callback>ddb_ModelMakerToolbox_quickMode</callback>
+      <element>toolbox.modelmaker.quickmode.fast.xml</element>
+    </tab>
+    <tab>
       <formodel>delft3dflow</formodel>
       <formodel>dflowfm</formodel>
+      <formodel>fast</formodel>
       <tabstring>Bathymetry</tabstring>
       <callback>ddb_ModelMakerToolbox_bathymetry</callback>
       <enable>1</enable>

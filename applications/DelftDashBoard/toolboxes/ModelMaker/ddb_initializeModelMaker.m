@@ -115,6 +115,30 @@ if strcmpi(handles.screenParameters.coordinateSystem.type,'cartesian')
     handles.toolbox.modelmaker.dY=1000;
 end
 
+
+%% FAST
+% Polygon
+handles.toolbox.modelmaker.polygonHandle=[];
+handles.toolbox.modelmaker.polygonX=[];
+handles.toolbox.modelmaker.polygonY=[];
+handles.toolbox.modelmaker.polyLength=0;
+handles.toolbox.modelmaker.polygonFile='';
+% Contours
+handles.toolbox.modelmaker.depthcontour=-50;
+handles.toolbox.modelmaker.distance=200;
+handles.toolbox.modelmaker.dirbin=1;
+handles.toolbox.modelmaker.radbin=100;
+handles.toolbox.modelmaker.maxrad=30000;
+handles.toolbox.modelmaker.maxelevation=20;
+
+% DEM
+handles.toolbox.modelmaker.dem.outlinehandle=[];
+handles.toolbox.modelmaker.dem.xlim=[0 0];
+handles.toolbox.modelmaker.dem.ylim=[0 0];
+handles.toolbox.modelmaker.dem.dx=1;
+handles.toolbox.modelmaker.dem.dy=1;
+handles.toolbox.modelmaker.dem.demfile='';
+
 %% Bathymetry
 handles.toolbox.modelmaker.bathymetry.activeDataset=1;
 handles.toolbox.modelmaker.bathymetry.activeSelectedDataset=1;
