@@ -133,7 +133,7 @@ handles.toolbox.tropicalcyclone.TCBasinFileName='';
 handles.toolbox.tropicalcyclone.oldTCBasinName='';
 handles.toolbox.tropicalcyclone.TCStormName='';
 handles.toolbox.tropicalcyclone.oldTCStormName='';
-handles.toolbox.tropicalcyclone.TCTrackFile={'Current Track File'};
+handles.toolbox.tropicalcyclone.TCTrackFile='';
 handles.toolbox.tropicalcyclone.TCTrackFileStormName='';
 %  Lists of known TC basin names and abbreviations:
 handles.toolbox.tropicalcyclone.knownTCBasinName = {'Atlantic','Central Pacific','East Pacific','Southern Hemisphere','West Pacific'};
