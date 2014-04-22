@@ -1,18 +1,63 @@
-function outLDB=add_equidist_points(dx,ldb)
+function outLDB=add_equidist_points(dx,ldb,varargin)
 %=Overview=================================================================
 %
-% add_equidist_points - cuts up ldb's in dx sections (only finer, not coarser)
+% add_equidist_points - cuts up ldb's in sections of dx length (only works
+%                       for refinement, does not coarsen the ldb)
 %
-% Syntax:
+%        outLDB = add_equidist_points(<dx>,<ldb>,<dx option>)
 %
-% ldb_out=add_equidist_points            <-- 2 dialog prompts triggered (ldb & dx)
-% ldb_out=add_equidist_points(dx)        <-- 1 dialog prompt triggered (ldb)
-% ldb_out=add_equidist_points(dx,ldb_in) <-- scripting (no dialogs)
+% input variables:
 %
-%=Scematic overview of functionality=======================================
+%   <dx>             - Optional: Value to cut up the ldb
+%   <ldb>            - Optional: <ldb> as [Nx2] matrix or ldb structure
+%   <dx option>      - Optional: Defines the way the ldb is cut up, use
+%                                'exact' to cut up in exact dx sections
+%                                while the remainder (smaller than dx) is
+%                                added as well (this is the default
+%                                option, a visual description is given
+%                                below). Use 'equi' to add equidistant
+%                                sections in between ldb points of at most
+%                                dx length. Can only be used if dx and ldb
+%                                are defined a-priori (so not through UI's)
+%
+%                                Original ldb:
+%                                
+%                                X--------------------------------------X
+%                                :                                      :
+%                       dist. =  0                                     100
+%
+%                                dx = 40
+%
+%                                <dx option> = 'exact' (default):
+%
+%                                X---------------x---------------x------X
+%                                :               :               :      :
+%                       dist. =  0               40              80    100
+%
+%                                <dx option> = 'equi':
+%
+%                                X------------x------------x------------X
+%                                :            :            :            :
+%                       dist. =  0           33.3         66.7         100
+%
+%=Syntax===================================================================
+%
+% ldb_out=add_equidist_points            
+%            2 dialog prompts are triggered (for ldb & dx)
+%
+% ldb_out=add_equidist_points(dx)
+%            1 dialog prompt is triggered (for the ldb)
+%
+% ldb_out=add_equidist_points(dx,ldb_in)
+%            scripting only (no dialogs are triggered)
+%
+% ldb_out=add_equidist_points(dx,ldb_in,'equi')
+%            scripting only (no dialogs are triggered)
+%
+%=Elaborated overview of default 'exact' functionality=====================
 %
 % X = original ldb points
-% # = new points in between ldb points (X's) using dx
+% x = new points in between ldb points (X's) using dx
 %
 %(1)(start)            (2)                                    (3)
 % :                     :                                      :
@@ -30,16 +75,16 @@ function outLDB=add_equidist_points(dx,ldb)
 %                                                                        :
 %(1)(start)            (2)                                    (3)       (4)
 % :          1a         :          2a         2b         2c    :        end                                        
-% X__________#__________X__________#__________#__________#_____X
+% X__________x__________X__________x__________x__________x_____X
 %                                   <-- dx -->              ^   \
 %                                                           :    \
 %                                                           :     \ dx
 %                                                           :      \
 %                                                           :       \
-%                                                           :        #
+%                                                           :        x
 %                                                           :         \
 % !Note that 'remainder' parts may be smaller than dx! <....:.........>\
-%                                                                       \
+%      (when using default 'exact' <dx option>)                         \
 %                                                                        X
 %                                                                        :
 %                                                                       (4)
@@ -49,9 +94,19 @@ function outLDB=add_equidist_points(dx,ldb)
 % see also: landboundary ldbTool tekal disassembleLdb rebuildLdb
 
 %
-% Small additions 2014 (UI, endpoints check, help): Freek Scheel
+% Small additions 2014 by Freek Scheel:
+%
+%  - Added UI functionality
+%  - Added endpoints check
+%  - added help
+%  - added <dx option> equi for better Unibest use (updated writeMDA)
+%
 % freek.scheel@deltares.nl
 %
+
+%% Some initial handling:
+%
+
 outLDB=[];
 
 if nargin<2 
@@ -77,36 +132,124 @@ if nargin==0
     end
 end
 
+if nargin > 2
+    if nargin == 3
+        dx_opt = [];
+        switch varargin{1}
+            case 'exact'
+                dx_opt = 'exact';
+            case 'equi'
+                dx_opt = 'equi';
+        end
+        if isempty(dx_opt)
+            error(['specified <dx option> ''' varargin{1} ''' is unknown, use ''exact'' or ''equi''']);
+        end
+    else
+        error('Too many input arguments');
+    end
+else
+    dx_opt = 'exact';
+end
+
 if isempty(ldb)
+    error('Empty ldb');
     return
 end
 
-if ~isstruct(ldb)
-    [ldbCell, ldbBegin, ldbEnd, ldbIn]=disassembleLdb(ldb);
+if isnumeric(dx)
+    if max(size(dx))>1
+        error('Please specify one positive numeric value for dx')
+    else
+        if dx <= 0
+            error('Please specify a positive numeric value for dx')
+        end
+    end
 else
-    ldbCell=ldb.ldbCell;
-    ldbBegin=ldb.ldbBegin;
-    ldbEnd=ldb.ldbEnd;
+    error('Please specify a positive numeric value for dx')
 end
 
-
-for cc=1:length(ldbCell)
-    in=ldbCell{cc};
-    out=[];
-    for ii=1:size(in,1)-1
-        %Determine distance between two points 
-        dist=sqrt((in(ii+1,1)-in(ii,1)).^2 + (in(ii+1,2)-in(ii,2)).^2);
-        
-        ox=interp1([0 dist],in(ii:ii+1,1),0:dx:dist)';
-        oy=interp1([0 dist],in(ii:ii+1,2),0:dx:dist)';
-
-        out=[out ; [ox oy]];
+try
+    if ~isstruct(ldb)
+        if (size(ldb,1) == 2) & (size(ldb,2) ~= 2)
+            ldb = ldb';
+        elseif (size(ldb,1) ~= 2) & (size(ldb,2) ~= 2)
+            error('transferred to error below the catch...');
+        end
+        [ldbCell, ldbBegin, ldbEnd, ldbIn]=disassembleLdb(ldb);
+    else
+        ldbCell=ldb.ldbCell;
+        ldbBegin=ldb.ldbBegin;
+        ldbEnd=ldb.ldbEnd;
     end
-    outCell{cc}=out;
-    if (outCell{cc}(end,1) ~= ldbEnd(cc,1)) | (outCell{cc}(end,2) ~= ldbEnd(cc,2))
-        outCell{cc}(end+1,1:2) = ldbEnd(cc,:);
-    end
+catch
+    error('Unknown ldb format, please check this');
 end
+
+%% Actual ldb scripting:
+%
+
+if strcmp(dx_opt,'exact')
+    for cc=1:length(ldbCell)
+        in=ldbCell{cc};
+        out=[];
+        for ii=1:size(in,1)-1
+            %Determine distance between two points 
+            dist=sqrt((in(ii+1,1)-in(ii,1)).^2 + (in(ii+1,2)-in(ii,2)).^2);
+            if dist~=0
+                ox=interp1([0 dist],in(ii:ii+1,1),0:dx:dist)';
+                oy=interp1([0 dist],in(ii:ii+1,2),0:dx:dist)';
+                
+                if ii>1
+                    if (out(end,1) == ox(1,1)) & (out(end,2) == oy(1,1))
+                        out=[out ; [ox(2:end,1) oy(2:end,1)]];
+                    else
+                        out=[out ; [ox oy]];
+                    end
+                else
+                    out=[out ; [ox oy]];
+                end
+            end
+        end
+        outCell{cc}=out;
+        if (outCell{cc}(end,1) ~= ldbEnd(cc,1)) | (outCell{cc}(end,2) ~= ldbEnd(cc,2))
+            outCell{cc}(end+1,1:2) = ldbEnd(cc,:);
+        end
+    end
+elseif strcmp(dx_opt,'equi')
+    for cc=1:length(ldbCell)
+        in=ldbCell{cc};
+        out=[];
+        for ii=1:size(in,1)-1
+            %Determine distance between two points 
+            dist=sqrt((in(ii+1,1)-in(ii,1)).^2 + (in(ii+1,2)-in(ii,2)).^2);
+            if dist~=0
+                dx_cur = dist/(ceil(dist/dx));
+                
+                ox=interp1([0 dist],in(ii:ii+1,1),0:dx_cur:dist)';
+                oy=interp1([0 dist],in(ii:ii+1,2),0:dx_cur:dist)';
+                
+                if ii>1
+                    if (out(end,1) == ox(1,1)) & (out(end,2) == oy(1,1))
+                        out=[out ; [ox(2:end,1) oy(2:end,1)]];
+                    else
+                        out=[out ; [ox oy]];
+                    end
+                else
+                    out=[out ; [ox oy]];
+                end
+            end
+        end
+        outCell{cc}=out;
+        if (outCell{cc}(end,1) ~= ldbEnd(cc,1)) | (outCell{cc}(end,2) ~= ldbEnd(cc,2))
+            outCell{cc}(end+1,1:2) = ldbEnd(cc,:);
+        end
+    end
+else
+    error('Please contact developer with error code ''add_equidist_points_1001''');
+end
+
+%% Output:
+%
 
 if ~isstruct(ldb)
     outLDB=rebuildLdb(outCell);
