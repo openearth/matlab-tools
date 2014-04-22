@@ -1,26 +1,70 @@
 function writeMDA(mda_filename_tmp, baseline_ldb, varargin)
-%write MDA : Writes a unibest mda-file (also computes cross-shore distance between reference line and shoreline)
+%writeMDA: Writes a unibest mda-file based on a baseline (ldb). Can also
+%          include a shoreline (ldb), it will then automatically determine
+%          the cross-shore (perpendicular) distance between the baseline
+%          and shoreline. You can also specify a minimum grid resolution
+%          or cut-up your baseline with a certain resolution. Finally, the
+%          output can automatically be visualized using a keyword:
 %
 %   Syntax:
-%     function writeMDA(filename, baseline, resolution, shoreline, dx)
+%     writeMDA(mda_filename, baseline_ldb, <keyword,value>);
 % 
 %   Input:
-%     mda_filename        string with output filename of mda-file
-%     baseline            string with filename of polygon of reference line  OR  X,Y coordinates of ref.line [Nx2]
-%     resolution          (optional) specify max. distance between two supporting points [m](default = 10 m)
-%     shoreline           (optional) string with filename of polygon of shoreline (default : baseline = shoreline)
-%     dx                  (optional) resolution to cut up baseline (default = 0.05)
+%     mda_filename      Required: String with output filename of mda-file
+%     baseline_ldb      Required: String with a filename of polygon/ldb for 
+%                                 the baseline (reference line) OR a [Nx2]
+%                                 matrix containing the X,Y coordinates of
+%                                 the baseline (can also be [2xN] matrix).
+%     <coastline_ldb>   Optional: String with a filename of polygon/ldb for 
+%                                 the coastline OR a [Nx2] matrix 
+%                                 containing the X,Y coordinates of the 
+%                                 coastline (can also be [2xN] matrix). You
+%                                 are advised to not let N be too large
+%                                 (N > 10000) as the function polyintersect
+%                                 requires some time to be computed. Use
+%                                 ldbTool/RGFGRID/QUICKIN to change the ldb.
+%                                 Default: coastline_ldb = baseline_ldb.
+%     <min_resolution>  Optional: Single numerical value [1x1] specifying
+%                                 the minimal resolution of the final
+%                                 baseline grid as used in Unibest.
+%                                 Default: min_resolution = [] (baseline
+%                                 resolution is used).
+%     <baseline_dx>     Optional: Single numerical value [1x1] specifying
+%                                 the minimal distance of baseline
+%                                 sections. Cuts-up the baseline in finer
+%                                 equidistant sections, but only if 
+%                                 required (does not coarsen it).
+%                                 Default: baseline_dx = [] (original
+%                                 baseline resolution is used).
+%     <plot_figure>     Optional: Boolean (true/false, 1/0) to switch on
+%                                 function output plotting to a figure. Can
+%                                 be used to check the function and easily
+%                                 detect unintended behavior.
+%                                 Default: plot_figure = 0 (no figure)
+%     <save_to_mda>     Optional: Boolean (true/false, 1/0) to switch off
+%                                 writing the output to the *.mda file.
+%                                 This can be used to first inspect the
+%                                 behaviour of the function. When setting
+%                                 save_to_mda to false (0), plot_figure is
+%                                 automatically set to true (1).
+%                                 Default: save_to_mda = 1 (saving to file)
+%
+%   Call writeMDA() to get an overview of the default <keyword,value> pairs 
 % 
 %   Output:
-%     .mda file
+%     *.mda file as specified by mda_filename (or figure if save_to_mda = 0)
 %
 %   Example:
-%     x = [1:10:1000]';
-%     y = x.^1.2;
-%     writeMDA('test.mda', [x,y]);
-%     writeMDA('test.mda', [x,y], [x+20,y]);
+%     baseline  = [0:100:1000; 0:100:1000]';
+%     coastline = [-500:1000; 500+100*sin(0.01*[-500:1000])+[-500:1000]]';
+%     writeMDA('test.MDA',baseline,...
+%              'coastline_ldb',coastline,...
+%              'baseline_dx',50,...
+%              'min_resolution',25,...
+%              'plot_figure',true,...
+%              'save_to_mda',false);
 %
-%   See also 
+%   See also readMDA landboundary add_equidist_points polyintersect
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -60,10 +104,13 @@ function writeMDA(mda_filename_tmp, baseline_ldb, varargin)
 keywords.coastline_ldb   = [];
 keywords.min_resolution  = [];
 keywords.baseline_dx     = [];
-keywords.plot_figures    = 0;
+keywords.plot_figure     = 0;
+keywords.save_to_mda     = 1;
 
 if nargin == 0
-    default_keywords = keywords
+    disp('Default keywords:');
+    disp(' ');
+    disp(keywords)
     return
 end
 
@@ -179,31 +226,60 @@ if ~isempty(keywords.min_resolution)
     end
 end
 
-% plot_figures checks:
-if ~isempty(keywords.plot_figures)
-    if isstruct(keywords.plot_figures)
-        keywords.plot_figures = cell2mat(keywords.plot_figures);
+% plot_figure checks:
+if ~isempty(keywords.plot_figure)
+    if isstruct(keywords.plot_figure)
+        keywords.plot_figure = cell2mat(keywords.plot_figure);
     end
-    if ~isnumeric(keywords.plot_figures)
-        error('Please specify true/false (1/0) for plot_figures');
-    else
-        if length(keywords.plot_figures)>1
-            error('Please specify true/false (1/0) for plot_figures');
+    if isnumeric(keywords.plot_figure) | islogical(keywords.plot_figure)
+        if length(keywords.plot_figure)>1
+            error('Please specify true/false (1/0) for plot_figure');
         else
-            if keywords.plot_figures ~= 0
-                keywords.plot_figures = 1;
+            if keywords.plot_figure ~= 0
+                keywords.plot_figure = 1;
+            else
+                keywords.plot_figure = 0;
             end
         end
+    else
+        error('Please specify true/false (1/0) for plot_figure');
     end
 else
-    error('Please specify true/false (1/0) for plot_figures');
+    error('Please specify true/false (1/0) for plot_figure');
+end
+
+% save_to_mda checks:
+if ~isempty(keywords.save_to_mda)
+    if isstruct(keywords.save_to_mda)
+        keywords.save_to_mda = cell2mat(keywords.save_to_mda);
+    end
+    if isnumeric(keywords.save_to_mda) | islogical(keywords.save_to_mda)
+        if length(keywords.save_to_mda)>1
+            error('Please specify true/false (1/0) for save_to_mda');
+        else
+            if keywords.save_to_mda ~= 0
+                keywords.save_to_mda = 1;
+            else
+                keywords.save_to_mda = 0;
+                if keywords.plot_figure == 0
+                    disp('plot_figure is set to true, as MDA saving is set to false');
+                end
+                % keywords.save_to_mda = 0 so set figure plotting on:
+                keywords.plot_figure = 1;
+            end
+        end
+    else
+        error('Please specify true/false (1/0) for save_to_mda');
+    end
+else
+    error('Please specify true/false (1/0) for save_to_mda');
 end
 
 % coastline_ldb checks:
 if ~isempty(keywords.coastline_ldb)
     coast_is_baseline = 0;
     if isstruct(keywords.coastline_ldb)
-        keywords.plot_figures = cell2mat(keywords.coastline_ldb);
+        keywords.plot_figure = cell2mat(keywords.coastline_ldb);
     end
     if isstr(keywords.coastline_ldb)
         keywords.coastline_ldb = landboundary('read',keywords.coastline_ldb);
@@ -237,100 +313,163 @@ end
 %% Do some data manipulation
 
 if ~isempty(keywords.baseline_dx)
-    % add_equidist_points is to be changed by Freek
     baseline_ori = baseline;
-    baseline = add_equidist_points(keywords.baseline_dx,baseline,'equi');
-    baseline = baseline(2:end-1,:);
+    baseline     = add_equidist_points(keywords.baseline_dx,baseline,'equi');
+    baseline     = baseline(2:end-1,:);
 end
 
 % loop through points of the baseline and find for each point the
 % perpendicular distance to the coastline if coast ~= baseline
+leg_tel = 0;
 if coast_is_baseline
     y = zeros(size(baseline,1),1);
+    if keywords.plot_figure
+        fig = figure; hold on; grid on; box on; axis equal;
+        set(fig,'outerPosition',get(0,'ScreenSize').*[0 0 1 1],'color','w');
+        xlabel('X-coordinate'); ylabel('Y-coordinate');
+        title('This baseline equals the coastline position');
+        if ~isempty(baseline_ori)
+            leg_tel = leg_tel + 1;
+            leg_text{leg_tel} = ['Original baseline points'];
+            l(leg_tel) = plot(baseline_ori(:,1),baseline_ori(:,2),'x','linewidth',2,'markersize',14,'color','k'); % [139 69 19]/255
+            leg_tel  = leg_tel + 1;
+            leg_text{leg_tel} = ['Added baseline points (''baseline_dx'')'];
+            l(leg_tel) = plot(baseline(:,1),baseline(:,2),'.','linewidth',2,'markersize',16,'color','b');
+            plot(baseline(:,1),baseline(:,2),'-','linewidth',2,'markersize',16,'color','k');
+        else
+            leg_tel = leg_tel + 1;
+            leg_text{leg_tel} = ['Baseline points (equals coastline position)'];
+            l(leg_tel) = plot(baseline(:,1),baseline(:,2),'x-','linewidth',2,'markersize',14,'color','k');
+        end
+        legend(l,leg_text,'interpreter','none','location','SouthOutside');
+    end
 else
     max_dist_to_coast = ceil(sqrt(sum((diff([min(coastline(:,1)) min(coastline(:,2)); max(coastline(:,1)) max(coastline(:,2))])).^2)));
     if size(coastline,1)>10000 & size(baseline,1)>5
+        disp(' ');
         disp(['You''ve supplied quite a large coastline landboundary ([Nx2] with N=' num2str(size(coastline,1)) ')']);
         disp('Determining the cross-shore distance from the baseline to the coastline may take some time');
-        disp('You are advised to cut up the coastline to parts really needed for this analysis (if possible)');
+        disp('You are advised to cut up the coastline to parts really needed for this analysis (if possible, see the help)');
     end
     disp(' ');
     fprintf(1,'\nComputing cross-sectional distances from baseline to coastline:      ')
-    for ii=1:size(baseline,1)
-        fprintf(1,[repmat('\b',1,(length(num2str(100*((ii-1)/size(baseline,1)),'%9.0f'))+2)) num2str(100*(ii/size(baseline,1)),'%9.0f') ' %%']);
-        if ii==1
-            baseline_angle(ii,1) = mod((xy2degN(baseline(ii,1),baseline(ii,2),baseline(ii+1,1),baseline(ii+1,2)) - 90),360);
-        elseif ii==size(baseline,1)
-            baseline_angle(ii,1) = mod((xy2degN(baseline(ii-1,1),baseline(ii-1,2),baseline(ii,1),baseline(ii,2)) - 90),360);
-        else
-            baseline_angle(ii,1) = mod((xy2degN(baseline(ii-1,1),baseline(ii-1,2),baseline(ii+1,1),baseline(ii+1,2)) - 90),360);
-        end
-        [X_crs Y_crs] = polyintersect([baseline(ii,1) baseline(ii,1)+(sind(baseline_angle(ii,1))*max_dist_to_coast)],[baseline(ii,2) baseline(ii,2)+(cosd(baseline_angle(ii,1))*max_dist_to_coast)],coastline(:,1),coastline(:,2));
-        if keywords.plot_figures
-            if ii == 1
-                figure;
-                if ~isempty(baseline_ori)
-                    plot(baseline(:,1),baseline(:,2),'.-','linewidth',2,'markersize',16,'color','k'); hold on; grid on; box on; axis equal;
-                    plot(baseline_ori(:,1),baseline_ori(:,2),'x','linewidth',2,'markersize',14,'color','k'); % [139 69 19]/255
-                else
-                    plot(baseline(:,1),baseline(:,2),'x-','linewidth',2,'markersize',14,'color','k'); hold on; grid on; box on; axis equal;
+    try
+        for ii=1:size(baseline,1)
+            fprintf(1,[repmat('\b',1,(length(num2str(100*((ii-1)/size(baseline,1)),'%9.0f'))+2)) num2str(100*(ii/size(baseline,1)),'%9.0f') ' %%']);
+            if ii==1
+                baseline_angle(ii,1) = mod((xy2degN(baseline(ii,1),baseline(ii,2),baseline(ii+1,1),baseline(ii+1,2)) - 90),360);
+            elseif ii==size(baseline,1)
+                baseline_angle(ii,1) = mod((xy2degN(baseline(ii-1,1),baseline(ii-1,2),baseline(ii,1),baseline(ii,2)) - 90),360);
+            else
+                baseline_angle(ii,1) = mod((xy2degN(baseline(ii-1,1),baseline(ii-1,2),baseline(ii+1,1),baseline(ii+1,2)) - 90),360);
+            end
+            [X_crs Y_crs] = polyintersect([baseline(ii,1) baseline(ii,1)+(sind(baseline_angle(ii,1))*max_dist_to_coast)],[baseline(ii,2) baseline(ii,2)+(cosd(baseline_angle(ii,1))*max_dist_to_coast)],coastline(:,1),coastline(:,2));
+            if keywords.plot_figure
+                if ii == 1
+                    fig = figure; hold on; grid on; box on; axis equal;
+                    set(fig,'outerPosition',get(0,'ScreenSize').*[0 0 1 1],'color','w');
+                    xlabel('X-coordinate'); ylabel('Y-coordinate');
+                    title(['Overview of actions undertaken by writeMDA for ' mda_filename]);
+                    if ~isempty(baseline_ori)
+                        leg_tel = leg_tel + 1;
+                        leg_text{leg_tel} = ['Original baseline points'];
+                        l(leg_tel) = plot(baseline_ori(:,1),baseline_ori(:,2),'x','linewidth',2,'markersize',14,'color','k'); % [139 69 19]/255
+                        leg_tel  = leg_tel + 1;
+                        leg_text{leg_tel} = ['Added baseline points (''baseline_dx'')'];
+                        l(leg_tel) = plot(baseline(:,1),baseline(:,2),'.','linewidth',2,'markersize',16,'color','b');
+                        plot(baseline(:,1),baseline(:,2),'-','linewidth',2,'markersize',16,'color','k');
+                    else
+                        baseline_ori = baseline;
+                        leg_tel = leg_tel + 1;
+                        leg_text{leg_tel} = ['Baseline points'];
+                        l(leg_tel) = plot(baseline(:,1),baseline(:,2),'x-','linewidth',2,'markersize',14,'color','k');
+                    end
+                    leg_tel = leg_tel + 1;
+                    leg_text{leg_tel} = ['Coastline'];
+                    l(leg_tel) = plot(coastline(:,1),coastline(:,2),'-','linewidth',3,'color',[238 201 0]/255);
+                    legend(l,leg_text,'interpreter','none','location','SouthOutside');
                 end
-                plot(coastline(:,1),coastline(:,2),'-','linewidth',3,'color',[238 201 0]/255);
+            end
+            if size(X_crs,1)==0
+                y(ii,1) = NaN;
+            else
+                if size(X_crs,1)>1
+                    X_crs = X_crs(find(sqrt(((X_crs - baseline(ii,1)).^2) + ((Y_crs - baseline(ii,2)).^2)) == min(sqrt(((X_crs - baseline(ii,1)).^2) + ((Y_crs - baseline(ii,2)).^2)))),1);
+                    Y_crs = Y_crs(find(sqrt(((X_crs - baseline(ii,1)).^2) + ((Y_crs - baseline(ii,2)).^2)) == min(sqrt(((X_crs - baseline(ii,1)).^2) + ((Y_crs - baseline(ii,2)).^2)))),1);
+                end
+                y(ii,1) = sqrt(((X_crs - baseline(ii,1)).^2) + ((Y_crs - baseline(ii,2)).^2));
+                if keywords.plot_figure
+                    plot([baseline(ii,1) X_crs],[baseline(ii,2) Y_crs],'k--','linewidth',2);
+                    text(mean([baseline(ii,1) X_crs]),mean([baseline(ii,2) Y_crs]),['y_0 = ' num2str(y(ii,1),'%9.1f') ' mtr.'],'horizontalalignment','center'); drawnow;
+                end
+            end
+            if ii==size(baseline,1)
+                fprintf(1,[repmat('\b',1,(length(num2str(100*(ii/size(baseline,1)),'%9.0f'))+2)) num2str(100*(ii/size(baseline,1)),'%9.0f') ' %%']);
+                fprintf(1,'\n');
+                disp(' ');
             end
         end
-        if size(X_crs,1)==0
-            y(ii,1) = NaN;
-        else
-            if size(X_crs,1)>1
-                X_crs = X_crs(find(sqrt(((X_crs - baseline(ii,1)).^2) + ((Y_crs - baseline(ii,2)).^2)) == min(sqrt(((X_crs - baseline(ii,1)).^2) + ((Y_crs - baseline(ii,2)).^2)))),1);
-                Y_crs = Y_crs(find(sqrt(((X_crs - baseline(ii,1)).^2) + ((Y_crs - baseline(ii,2)).^2)) == min(sqrt(((X_crs - baseline(ii,1)).^2) + ((Y_crs - baseline(ii,2)).^2)))),1);
+    catch err
+        fprintf(1,'\n');
+        disp(' ');
+        error(err.message);
+    end
+    
+    if sum(isnan(y)) ~= size(baseline,1)
+        % Remove preceeding and trailing NaN's:
+        num_ini_nans_removed = 0;
+        num_end_nans_removed = 0;
+        while isnan(y(end,1))
+            if keywords.plot_figure
+                rem_handle = plot(baseline(end,1),baseline(end,2),'rx','markersize',16,'linewidth',3);
             end
-            y(ii,1) = sqrt(((X_crs - baseline(ii,1)).^2) + ((Y_crs - baseline(ii,2)).^2));
-            if keywords.plot_figures
-                plot([baseline(ii,1) X_crs],[baseline(ii,2) Y_crs],'k--','linewidth',2); drawnow;
-                text(mean([baseline(ii,1) X_crs]),mean([baseline(ii,2) Y_crs]),['y = ' num2str(y(ii,1),'%9.1f') ' mtr.'],'horizontalalignment','center');
-            end
+            y(end,:)              = [];
+            baseline(end,:)       = [];
+            baseline_angle(end,:) = [];
+            num_end_nans_removed = num_end_nans_removed + 1;
         end
-        if ii==size(baseline,1)
-            fprintf(1,[repmat('\b',1,(length(num2str(100*(ii/size(baseline,1)),'%9.0f'))+2)) num2str(100*(ii/size(baseline,1)),'%9.0f') ' %%']); pause(0.01);
-            fprintf(1,'\n');
-            disp(' ');
+        while isnan(y(1,1))
+            if keywords.plot_figure
+                rem_handle = plot(baseline(1,1),baseline(1,2),'rx','markersize',16,'linewidth',3);
+            end
+            y(1,:)              = [];
+            baseline(1,:)       = [];
+            baseline_angle(1,:) = [];
+            num_ini_nans_removed = num_ini_nans_removed + 1;
         end
     end
-    % Remove preceeding and trailing NaN's:
-    num_ini_nans_removed = 0;
-    num_end_nans_removed = 0;
-    while isnan(y(end,1))
-        if keywords.plot_figures
-            plot(baseline(end,1),baseline(end,2),'rx','markersize',16,'linewidth',3);
-        end
-        y(end,:)              = [];
-        baseline(end,:)       = [];
-        baseline_angle(end,:) = [];
-        num_end_nans_removed = num_end_nans_removed + 1;
-    end
-    while isnan(y(1,1))
-        if keywords.plot_figures
-            plot(baseline(1,1),baseline(1,2),'rx','markersize',16,'linewidth',3);
-        end
-        y(1,:)              = [];
-        baseline(1,:)       = [];
-        baseline_angle(1,:) = [];
-        num_ini_nans_removed = num_ini_nans_removed + 1;
+    
+    if ((num_ini_nans_removed + num_end_nans_removed)>0) & keywords.plot_figure
+        leg_tel = leg_tel + 1;
+        leg_text{leg_tel} = ['Removed baseline points'];
+        l(leg_tel) = rem_handle;
+        legend(l,leg_text,'interpreter','none','location','SouthOutside');
     end
     
     if sum(isnan(y))>0
-        if keywords.plot_figures
+        if keywords.plot_figure
             for ii = find(isnan(y)==1)'
-                plot([baseline(ii,1) baseline(ii,1)+(sind(baseline_angle(ii,1))*max_dist_to_coast)],[baseline(ii,2) baseline(ii,2)+(cosd(baseline_angle(ii,1))*max_dist_to_coast)],'r--','linewidth',3);
+                CS_handle = plot([baseline(ii,1) baseline(ii,1)+(sind(baseline_angle(ii,1))*max_dist_to_coast)],[baseline(ii,2) baseline(ii,2)+(cosd(baseline_angle(ii,1))*max_dist_to_coast)],'r--','linewidth',3); drawnow;
             end
-            xlim([min([baseline(:,1); coastline(:,1)]) max([baseline(:,1); coastline(:,1)])]);
-            ylim([min([baseline(:,2); coastline(:,2)]) max([baseline(:,2); coastline(:,2)])]);
+            leg_tel = leg_tel + 1;
+            leg_text{leg_tel} = ['Cross-sections without perpendicular coastline data'];
+            l(leg_tel) = CS_handle;
+            legend(l,leg_text,'interpreter','none','location','SouthOutside');
+            xlim([min([baseline_ori(:,1); coastline(:,1)]) max([baseline_ori(:,1); coastline(:,1)])]);
+            ylim([min([baseline_ori(:,2); coastline(:,2)]) max([baseline_ori(:,2); coastline(:,2)])]);
             title('The red line(s) indicate the cross-section(s) without perpendicular coastline data');
             drawnow;
-            error(['Not all internal baseline points have perpendicular coastline data (you can check the red lines in the figure for help)']);
+            if sum(isnan(y)) == size(baseline,1)
+                error('Not a single line crosses the coastline (see figure), is the orientation of the baseline correct? You can change this by using baseline = flipud(baseline);');
+            else
+                error(['Not all internal baseline points have perpendicular coastline data (you can check the red lines in the figure for help)']);
+            end
         end
-        error(['Not all internal baseline points have perpendicular coastline data (you can set plot_figures = true (1) to help you show the problem in a figure)']);
+        if sum(isnan(y)) == size(baseline,1)
+            error('Not a single line crosses the coastline, is the orientation of the baseline correct? You can change this by using baseline = flipud(baseline);');
+        else
+            error(['Not all internal baseline points have perpendicular coastline data (you can set plot_figure = true (1) to help you show the problem in a figure)']);
+        end
     end
     
     if num_ini_nans_removed>0
@@ -339,12 +478,11 @@ else
     if num_end_nans_removed>0
         disp(['ATTENTION: ' num2str(num_end_nans_removed) ' trailing baseline points were removed as no perpendicular coastline data was found']);
     end
-    if ((num_ini_nans_removed+num_end_nans_removed)>0) & (keywords.plot_figures == 0)
-        disp('If you want, you can inspect this behaviour by setting plot_figures to true (1)');
-    elseif ((num_ini_nans_removed+num_end_nans_removed)>0) & (keywords.plot_figures == 1)
+    if ((num_ini_nans_removed+num_end_nans_removed)>0) & (keywords.plot_figure == 0)
+        disp('If you want, you can inspect this behaviour by setting plot_figure to true (1)');
+    elseif ((num_ini_nans_removed+num_end_nans_removed)>0) & (keywords.plot_figure == 1)
         disp('Please check the figure to see if you agree with this automated removal');
     end
-    
 end
 
 % Add additional gridpoints in between the baselinepoints if keywords.min_resolution requires this:
@@ -359,10 +497,17 @@ end
 Ray = [1:size(baseline,1)]';
 
 %% Write everything to the MDA file:
-
-fid=fopen(mda_filename_tmp,'wt');
-fprintf(fid,'%s\n',' BASISPOINTS');
-fprintf(fid,'%4.0f\n',length(N));
-fprintf(fid,'%s\n','     Xw             Yw             Y              N              Ray');
-fprintf(fid,'%13.1f   %13.1f %11.2f %11.0f %11.0f\n',[baseline y(:) N Ray]');
-fclose(fid);
+if keywords.save_to_mda
+    fid=fopen(mda_filename,'wt');
+    fprintf(fid,'%s\n',' BASISPOINTS');
+    fprintf(fid,'%4.0f\n',length(N));
+    fprintf(fid,'%s\n','     Xw             Yw             Y              N              Ray');
+    fprintf(fid,'%13.1f   %13.1f %11.2f %11.0f %11.0f\n',[baseline y(:) N Ray]');
+    fclose(fid);
+    if keywords.plot_figure
+        disp([mda_filename ' was saved succesfully']);
+    end
+else
+    disp(' ');
+    disp('Script has completed succesfully, see the figure for information');
+end
