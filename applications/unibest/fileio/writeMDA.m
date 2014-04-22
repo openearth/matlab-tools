@@ -387,7 +387,7 @@ else
                     leg_tel = leg_tel + 1;
                     leg_text{leg_tel} = ['Coastline'];
                     l(leg_tel) = plot(coastline(:,1),coastline(:,2),'-','linewidth',3,'color',[238 201 0]/255);
-                    legend(l,leg_text,'interpreter','none','location','SouthOutside');
+                    legend(l,leg_text,'interpreter','none','location','SouthOutside'); drawnow;
                 end
             end
             if size(X_crs,1)==0
@@ -400,7 +400,7 @@ else
                 y(ii,1) = sqrt(((X_crs - baseline(ii,1)).^2) + ((Y_crs - baseline(ii,2)).^2));
                 if keywords.plot_figure
                     plot([baseline(ii,1) X_crs],[baseline(ii,2) Y_crs],'k--','linewidth',2);
-                    text(mean([baseline(ii,1) X_crs]),mean([baseline(ii,2) Y_crs]),['y_0 = ' num2str(y(ii,1),'%9.1f') ' mtr.'],'horizontalalignment','center'); drawnow;
+                    text(mean([baseline(ii,1) X_crs]),mean([baseline(ii,2) Y_crs]),['y_0 = ' num2str(y(ii,1),'%9.1f') ' mtr.'],'horizontalalignment','center','clipping','on'); drawnow;
                 end
             end
             if ii==size(baseline,1)
@@ -437,6 +437,9 @@ else
             baseline_angle(1,:) = [];
             num_ini_nans_removed = num_ini_nans_removed + 1;
         end
+    else
+        num_ini_nans_removed = 0;
+        num_end_nans_removed = 0;
     end
     
     if ((num_ini_nans_removed + num_end_nans_removed)>0) & keywords.plot_figure
@@ -460,6 +463,7 @@ else
             title('The red line(s) indicate the cross-section(s) without perpendicular coastline data');
             drawnow;
             if sum(isnan(y)) == size(baseline,1)
+                title({'The red line(s) indicate the cross-section(s) without perpendicular coastline data';'None of them feature coastline information, is the orientation of the baseline correct?'});
                 error('Not a single line crosses the coastline (see figure), is the orientation of the baseline correct? You can change this by using baseline = flipud(baseline);');
             else
                 error(['Not all internal baseline points have perpendicular coastline data (you can check the red lines in the figure for help)']);
