@@ -122,8 +122,10 @@ patName = fliplr(patName);
 
 curDir = pwd;
 
-if exist([patName '\merge'],'dir')
-    cd([patName '\merge']);
+%if exist([patName '\merge'],'dir') 
+if exist([patName '..\merge'],'dir') 
+    cd([patName]);
+    %cd([patName '\merge']);
     mergeFile = dir('*.mm');
     if length(mergeFile) > 1
         disp('**** ERROR : please verify that only 1 mm-file is present...');
@@ -158,7 +160,8 @@ weightFac = weightFac / sum (weightFac);
 hW = waitbar(0,'Please wait...');
 
 for ii = 1 : length(condMap)
-    cd(['..\' char(condMap{ii})]);
+    %cd(['..\' char(condMap{ii})]);
+    cd([patName char(condMap{ii})]);
     trimFile = dir('trim*.dat');
     
     for jj = 1 : length(trimFile)
