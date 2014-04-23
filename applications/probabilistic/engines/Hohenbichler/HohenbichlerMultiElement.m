@@ -12,7 +12,7 @@ function [alphas, betas] = HohenbichlerMultiElement(alphasIn, betasIn, rhos, sys
 % alphasIn:  alphas of all z-functions (dimension: m * n)
 % betasIn:   corresponding betas (dimension: m*1)
 % rhos:      correlation coefficients of u-valuues (dimensions: 1*n)
-% system:    type of system ('parallel' or 'serial') string
+% system:    type of system ('parallel' or 'series') string
 % method:    'Numerical'(default) or 'FORM'
 %
 %%
