@@ -136,8 +136,8 @@ handles.toolbox.tropicalcyclone.oldTCStormName='';
 handles.toolbox.tropicalcyclone.TCTrackFile='';
 handles.toolbox.tropicalcyclone.TCTrackFileStormName='';
 %  Lists of known TC basin names and abbreviations:
-handles.toolbox.tropicalcyclone.knownTCBasinName = {'Atlantic','Central Pacific','East Pacific','Southern Hemisphere','West Pacific'};
-handles.toolbox.tropicalcyclone.knownTCBasinNameAbbrev = {'at', 'cp', 'ep', 'sh', 'wp'};
+handles.toolbox.tropicalcyclone.knownTCBasinName = {'Atlantic','Central Pacific','East Pacific','Indian Ocean','Southern Hemisphere','West Pacific'};
+handles.toolbox.tropicalcyclone.knownTCBasinNameAbbrev = {'at', 'cp', 'ep', 'io', 'sh', 'wp'};
 
 %  Check whether the TCBasinHandles list exists & is empty (may not be if
 %  File -> New was clicked).
