@@ -138,6 +138,12 @@ else
     
 end
 
+% If toolbox "CSIPS" exists, move it to the end since it uses components
+% from the other toolboxes
+index=find(ismember(lower(name),'csips'));
+if ~isempty(index),
+   name = [name(1:index-1) name(index+1:end) name(index)];
+end
 
 % Set names and functions
 nt=k;
