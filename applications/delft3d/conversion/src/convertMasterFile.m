@@ -175,7 +175,12 @@ fprintf(fid2,'%s\n'  ,['Thindykescheme                      =                   
 fprintf(fid2,'%s\n'  ,['Thindykecontraction                 =                                    # flow width = flow width*thindykecontraction']);
 fprintf(fid2,'%s\n'  ,['Izbndpos                            = 0                                  # Position of z boundary, 0=D3Dflow, 1=on net boundary, 2 = on specified polyline']);
 fprintf(fid2,'%s\n'  ,['Jbasqbnddownwindhs                  = 0                                  # 0 : original hu on qbnd, 1 = downwind hs on qbnd']);
-fprintf(fid2,'%s\n'  ,['Tlfsmo                              = 0                                  # Fourier smoothing time on waterlevel boundaries (s) ']);
+if isfield(mdfkeywds,'tlfsmo') == 0; 
+    mdfkeywds.tlfsmo = 0;
+else
+    tlfsmo           = mdfkeywds.tlfsmo.*60;
+end
+fprintf(fid2,'%s\n'  ,['Tlfsmo                              = ',num2str(tlfsmo,'%2.2f')                ,'                           # Fourier smoothing time on waterlevel boundaries (s) ']);
 fprintf(fid2,'%s\n'  ,['Slopedrop2D                         = 0.3                                # Apply droplosses only if local bottom slope > Slopedrop2D ']);
 fprintf(fid2,'%s\n'  ,['Lincontin                           =                                    # 0 = no, 1 = yes linear continuity']);
 fprintf(fid2,'%s\n'  ,['Jaembed1D                           =                                    # 1 : use embedded 1d channels, first run: Operations: Embed 1D channels']);
