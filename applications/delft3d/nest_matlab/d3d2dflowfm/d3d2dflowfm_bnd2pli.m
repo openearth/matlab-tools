@@ -1,8 +1,22 @@
-function varargout = d3d2dflowfm_bnd2pli(filgrd,filbnd,filpli,varargin)
+function varargout = d3d2dflowfm_bnd2pli(filmdf,filgrd,filbnd,filpli,varargin)
 
 % d3d2dflowfm_bnd2pli: genarates pli file for D-Flow FM out of a D3D bnd file
 
 [path_pli,name_pli,~] = fileparts(filpli);
+
+% Read the mdf file (only to check if salinity is included)
+mdfcontents = delft3d_io_mdf('read',filmdf);
+mdfkeywds   = mdfcontents.keywords;
+if isfield(mdfkeywds,'sub1') == 1;
+    finds            = find(mdfkeywds.sub1 == 'S');
+    if isempty(finds);
+        salinity     = false;
+    else
+        salinity     = true;
+    end
+else
+    salinity         = false;
+end
 
 % Read the grid: OET-style
 G           = delft3d_io_grd('read',filgrd);
@@ -58,7 +72,6 @@ for ibnd = 1 : no_bnd;
     astronomical = false;
     timeseries   = false;
     harmonic     = false;
-    salinity     = true;                 % always make salinity boundaries
     if strcmpi(D.DATA(ibnd).datatype,'a');
         astronomical  = true;
     end
@@ -87,11 +100,13 @@ for ibnd = 1 : no_bnd;
         nr_harm = nr_harm + 1;
         string  = [stringbas num2str(nr_harm,'%04i') 'sideA'];
     end
-    salname                         = D.DATA(ibnd).name;
-    salname(salname==' ')           = [];
-    stringsal                       = [stringbas salname 'sideA'];
-    LINE(iline).DATA{irow,3}        = string;
-    LINESAL(iline).DATA{irow,3}     = stringsal;
+    LINE(iline).DATA{irow,3}    = string;
+    if salinity;
+        salname                     = D.DATA(ibnd).name;
+        salname(salname==' ')       = [];
+        stringsal                   = [' S T ' salname 'sideA'];
+        LINESAL(iline).DATA{irow,3} = stringsal;
+    end
 
     % Fill LINE struct for side B (avoid double points by checking if it is not first point of next boundary segment)
 
@@ -106,18 +121,20 @@ for ibnd = 1 : no_bnd;
            string  = [stringbas D.DATA(ibnd).labelB];
        end
        if timeseries;
-           bcname                   = D.DATA(ibnd).name;
-           bcname(bcname==' ')      = [];
+           bcname                       = D.DATA(ibnd).name;
+           bcname(bcname==' ')          = [];
            string  = [stringbas bcname 'sideB'];
        end
        if harmonic;
            string  = [stringbas num2str(nr_harm,'%04i') 'sideB'];
        end
-       salname                      = D.DATA(ibnd).name;
-       salname(salname==' ')        = [];
-       stringsal                    = [stringbas salname 'sideB'];
        LINE(iline).DATA{irow,3}     = string;
-       LINESAL(iline).DATA{irow,3}  = stringsal;
+       if salinity;
+           salname                      = D.DATA(ibnd).name;
+           salname(salname==' ')        = [];
+           stringsal                    = [' S T ' salname 'sideB'];
+           LINESAL(iline).DATA{irow,3}  = stringsal;
+       end
     end
     irow = irow + 1;
 end
@@ -133,17 +150,21 @@ for ipol = 1: length(LINE)
     LINE(ipol).Blckname=[name_pli '_' num2str(ipol,'%3.3i')];
     dflowfm_io_xydata ('write',[filpli '_' num2str(ipol,'%3.3i') '.pli'],LINE(ipol));
 
-    LINESAL(ipol).Blckname=[name_pli '_' num2str(ipol,'%3.3i') '_sal'];
-    dflowfm_io_xydata ('write',[filpli '_' num2str(ipol,'%3.3i') '_sal.pli'],LINESAL(ipol));
-
+    if salinity;
+        LINESAL(ipol).Blckname=[name_pli '_' num2str(ipol,'%3.3i') '_sal'];
+        dflowfm_io_xydata ('write',[filpli '_' num2str(ipol,'%3.3i') '_sal.pli'],LINESAL(ipol));
+    end
+        
 
     %
     % Fil varargout for later wriing of the file names to the external forcing file
     %
 
     if nargout > 0;
-        filext{ipol}               = [LINE(ipol).Blckname '.pli'];
-        filext{ipol+length(LINE)}  = [LINESAL(ipol).Blckname '.pli'];
+        filext{ipol}                   = [LINE(ipol).Blckname '.pli'];
+        if salinity;
+            filext{ipol+length(LINE)}  = [LINESAL(ipol).Blckname '.pli'];
+        end
     end
 end
 
