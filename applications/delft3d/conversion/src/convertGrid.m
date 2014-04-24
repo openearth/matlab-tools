@@ -12,6 +12,36 @@ convertGuiDirectoriesCheck;
 
 %%% GUI CHECKS
 
+% Check if the mdf file name has been specified (Delft3D)
+filemdf     = get(handles.edit3,'String');
+filemdf     = deblank2(filemdf);
+if ~isempty(filemdf);
+    filemdf = [pathin,'\',filemdf];
+    if exist(filemdf,'file')==0;
+        if exist('wb'); close(wb); end;
+        errordlg('The specified mdf file does not exist.','Error');
+        break;
+    end
+else
+    if exist('wb'); close(wb); end;
+    errordlg('The mdf file name has not been specified.','Error');
+    break;
+end
+
+% Check type of bathymetry data
+mdfcontents = delft3d_io_mdf('read',filemdf);
+mdfkeywds   = mdfcontents.keywords;
+if isfield(mdfkeywds,'dpsopt') == 1;
+    finds            = find(mdfkeywds.dpsopt == 'S');
+    if strcmpi(mdfkeywds.dpsopt,'DP');
+        dpsopt       = 0;
+    else
+        dpsopt       = 1;
+    end
+else
+    dpsopt           = 1;
+end
+
 % Check if the input is correct
 if ~isempty(filedep);
     filedep = [pathin,'\',filedep];
@@ -62,3 +92,9 @@ filebedsam  = [pathout,'\',filebedsam];
 d3d2dflowfm_grd2net(filegrd,filedep,filenetcdf,filebedsam);
 fclose all;
 clc;
+
+
+%%% GIVE WARNING IN CASE OF NON-MATCHING BATHYMETRY DATAPOINTS
+if dpsopt == 0;
+    warndlg('Important: the bathymetry locations are chosen differently in Delft3D compared to the standard of D-Flow FM (dpsopt = DP).','Warning');
+end
