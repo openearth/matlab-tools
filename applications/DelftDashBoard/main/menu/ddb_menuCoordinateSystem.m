@@ -190,7 +190,7 @@ function menuCoordinateSystemOtherGeographic_Callback(hObject, eventdata, handle
 
 [ok,iconv]=checkOK;
 if ok
-    cs0=get(handles.GUIHandles.Menu.coordinateSystem.Geographic,'Label');
+    cs0=get(handles.GUIHandles.Menu.CoordinateSystem.Geographic,'Label');
     %    [cs,ok]=ddb_selectCoordinateSystem(handles.coordinateData.coordSysGeo,cs0);
     [cs,type,nr,ok]=ddb_selectCoordinateSystem(handles.coordinateData,handles.EPSG,'default',cs0,'type','geographic');
     if ok
