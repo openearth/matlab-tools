@@ -32,11 +32,11 @@ if ~isempty(filegrd);
         break;
     end
 end
-if ~isempty(fileenc);
-    fileenc = [pathin,'\',fileenc];
-    if exist(fileenc,'file')==0;
-        if exist('wb'); close(wb); end;
-        errordlg('The specified enc-file does not exist in the specified input directory.','Error');
-        break;
-    end
-end
+% if ~isempty(fileenc);
+%     fileenc = [pathin,'\',fileenc];
+%     if exist(fileenc,'file')==0;
+%         if exist('wb'); close(wb); end;
+%         errordlg('The specified enc-file does not exist in the specified input directory.','Error');
+%         break;
+%     end
+% end
