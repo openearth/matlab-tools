@@ -48,7 +48,7 @@ function [datenumbers,zone] = ncread_cf_time(ncFile, varName, varargin)
 % $HeadURL$
 % $Keywords: $
 
-%% check if file is a cf comliant time variable
+%% check if file is a cf compliant time variable
 info          = ncinfo(ncFile,varName);
 unitAttribute = strcmpi({info.Attributes.Name},'units');
 
