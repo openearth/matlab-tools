@@ -99,6 +99,20 @@ end
 
 
 
+%%% Panel WIND
+
+% Check if wnd file is specified in mdf file; if yes, then put name in edit box
+if isfield(mdfkeywds,'Filwnd') | isfield(mdfkeywds,'filwnd');
+    set(handles.edit32,'String',mdfkeywds.filwnd);
+end
+
+% Check if spw file is specified in mdf file; if yes, then put name in edit box
+if isfield(mdfkeywds,'Filweb') | isfield(mdfkeywds,'filweb');
+    set(handles.edit34,'String',mdfkeywds.filweb);
+end
+
+
+
 %%% Panel ADDITIONAL FILES
 
 % Check if obs file is specified in mdf file; if yes, then put name in edit box
@@ -160,6 +174,23 @@ end
 % Check if bnd file is specified in mdf file; if yes, apply mdu core name
 set(handles.edit10,'String',[mducore,'.ext']);
 
+
+
+%%% Panel WIND
+
+% Check if wnd file is specified in mdf file; if yes, then put name in edit box
+if isfield(mdfkeywds,'Filwnd') | isfield(mdfkeywds,'filwnd');
+    if ~isempty(get(handles.edit32,'String'));
+        set(handles.edit33,'String',[mdfkeywds.filwnd]);
+    end
+end
+
+% Check if spw file is specified in mdf file; if yes, then put name in edit box
+if isfield(mdfkeywds,'Filweb') | isfield(mdfkeywds,'filweb');
+    if ~isempty(get(handles.edit34,'String'));
+        set(handles.edit35,'String',[mdfkeywds.filweb]);
+    end
+end
 
 
 

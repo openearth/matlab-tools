@@ -22,13 +22,17 @@ end
 
 % Remove waitbar if it exists
 if exist('wb'); close(wb); end;
+istep       =  1;
+numsteps    = 17;
 
-% Step  1: Convert the grid
-wb = waitbar( 1/15,'Converting the grid ...');
+% Convert the grid
+wb          = waitbar(istep/numsteps,'Converting the grid ...');
+istep       = istep + 1;
 convertGrid;
 
-% Step  2: Generate the pli-files
-waitbar( 2/15,wb,'Generating the boundary polylines ...');
+% Generate the pli-files
+waitbar(istep/numsteps,wb,'Generating the boundary polylines ...');
+istep       = istep + 1;
 filebnd     = get(handles.edit9,'String');
 filebnd     = deblank2(filebnd);
 if ~isempty(filebnd);
@@ -38,12 +42,14 @@ if ~isempty(filebnd);
     end
 end
 
-% Step  3: Set template of the ext-file
-waitbar( 3/15,wb,'Setting the template for the ext file ...');
+% Set template of the ext-file
+waitbar(istep/numsteps,wb,'Setting the template for the ext file ...');
+istep       = istep + 1;
 convertExtForcing;
 
-% Step  4: Check if bct-file is present; if yes, then convert the data
-waitbar( 4/15,wb,'Converting the timeseries boundary data ...');
+% Check if bct-file is present; if yes, then convert the data
+waitbar(istep/numsteps,wb,'Converting the timeseries boundary data ...');
+istep       = istep + 1;
 filebct     = get(handles.edit11,'String');
 filebct     = deblank2(filebct);
 if ~isempty(filebct);
@@ -53,8 +59,9 @@ if ~isempty(filebct);
     end
 end
 
-% Step  5: Check if bca-file is present; if yes, then convert the data
-waitbar( 5/15,wb,'Converting the astronomic boundary data ...');
+% Check if bca-file is present; if yes, then convert the data
+waitbar(istep/numsteps,wb,'Converting the astronomic boundary data ...');
+istep       = istep + 1;
 filebca     = get(handles.edit12,'String');
 filebca     = deblank2(filebca);
 if ~isempty(filebca);
@@ -64,8 +71,9 @@ if ~isempty(filebca);
     end
 end
 
-% Step  6: Check if bch-file is present; if yes, then convert the data
-waitbar( 6/15,wb,'Converting the harmonic boundary data ...');
+% Check if bch-file is present; if yes, then convert the data
+waitbar(istep/numsteps,wb,'Converting the harmonic boundary data ...');
+istep       = istep + 1;
 filebch     = get(handles.edit13,'String');
 filebch     = deblank2(filebch);
 if ~isempty(filebch);
@@ -75,8 +83,9 @@ if ~isempty(filebch);
     end
 end
 
-% Step  7: Check if bcc-file is present; if yes, then convert the data
-waitbar( 7/15,wb,'Converting the salinity boundary data ...');
+% Check if bcc-file is present; if yes, then convert the data
+waitbar(istep/numsteps,wb,'Converting the salinity boundary data ...');
+istep       = istep + 1;
 filebcc     = get(handles.edit14,'String');
 filebcc     = deblank2(filebcc);
 if ~isempty(filebcc);
@@ -86,8 +95,37 @@ if ~isempty(filebcc);
     end
 end
 
-% Step  8: Check if obs-file is present; if yes, then convert the data
-waitbar( 8/15,wb,'Converting the observation points ...');
+% Check if wnd-file is present; if yes, then convert the data
+waitbar(istep/numsteps,wb,'Converting the unimagdir wind ...');
+istep       = istep + 1;
+filewnd     = get(handles.edit32,'String');
+filewnd     = deblank2(filewnd);
+if ~isempty(filewnd);
+    filewnd = [pathin,'\',filewnd];
+    if exist(filewnd,'file')~=0;
+        convertUnimagdir;
+    else
+        set(handles.edit33,'String','');
+    end
+end
+
+% Check if spw-file is present; if yes, then convert the data
+waitbar(istep/numsteps,wb,'Converting the spiderweb wind ...');
+istep       = istep + 1;
+filespw     = get(handles.edit34,'String');
+filespw     = deblank2(filespw);
+if ~isempty(filespw);
+    filespw = [pathin,'\',filespw];
+    if exist(filespw,'file')~=0;
+        convertSpiderweb;
+    else
+        set(handles.edit35,'String','');
+    end
+end
+
+% Check if obs-file is present; if yes, then convert the data
+waitbar(istep/numsteps,wb,'Converting the observation points ...');
+istep       = istep + 1;
 fileobs     = get(handles.edit15,'String');
 fileobs     = deblank2(fileobs);
 if ~isempty(fileobs);
@@ -99,8 +137,9 @@ if ~isempty(fileobs);
     end
 end
 
-% Step  9: Check if crs-file is present; if yes, then convert the data
-waitbar( 9/15,wb,'Converting the cross sections ...');
+% Check if crs-file is present; if yes, then convert the data
+waitbar(istep/numsteps,wb,'Converting the cross sections ...');
+istep       = istep + 1;
 filecrs     = get(handles.edit16,'String');
 filecrs     = deblank2(filecrs);
 if ~isempty(filecrs);
@@ -112,8 +151,9 @@ if ~isempty(filecrs);
     end
 end
 
-% Step 10: Check if rgh-file is present; if yes, then convert the data
-waitbar(10/15,wb,'Converting the spatial friction data ...');
+% Check if rgh-file is present; if yes, then convert the data
+waitbar(istep/numsteps,wb,'Converting the spatial friction data ...');
+istep       = istep + 1;
 filergh     = get(handles.edit17,'String');
 filergh     = deblank2(filergh);
 if ~isempty(filergh);
@@ -125,8 +165,9 @@ if ~isempty(filergh);
     end
 end
 
-% Step 11: Check if edy-file is present; if yes, then convert the data
-waitbar(11/15,wb,'Converting the spatial viscosity data ...');
+% Check if edy-file is present; if yes, then convert the data
+waitbar(istep/numsteps,wb,'Converting the spatial viscosity data ...');
+istep       = istep + 1;
 fileedy     = get(handles.edit18,'String');
 fileedy     = deblank2(fileedy);
 if ~isempty(fileedy);
@@ -138,8 +179,9 @@ if ~isempty(fileedy);
     end
 end
 
-% Step 12: Check if ini-file is present; if yes, then convert the data
-waitbar(12/15,wb,'Converting the initial waterlevels ...');
+% Check if ini-file is present; if yes, then convert the data
+waitbar(istep/numsteps,wb,'Converting the initial waterlevels ...');
+istep       = istep + 1;
 fileini     = get(handles.edit21,'String');
 fileini     = deblank2(fileini);
 if ~isempty(fileini);
@@ -151,8 +193,9 @@ if ~isempty(fileini);
     end
 end
 
-% Step 13: Check if dry-file or thd-file is present; if yes, then convert the data
-waitbar(13/15,wb,'Converting the dry points and/or thin dams ...');
+% Check if dry-file or thd-file is present; if yes, then convert the data
+waitbar(istep/numsteps,wb,'Converting the dry points and/or thin dams ...');
+istep       = istep + 1;
 filedry     = get(handles.edit19,'String');
 filedry     = deblank2(filedry);
 nodry       = 0;
@@ -178,12 +221,14 @@ if nodry == 1 & nothd == 1;
     set(handles.edit27 ,'String','');
 end
 
-% Step 14: Finalize ext-file
-waitbar(14/15,wb,'Finalizing the ext file ...');
+% Finalize ext-file
+waitbar(istep/numsteps,wb,'Finalizing the ext file ...');
+istep       = istep + 1;
 convertExtForcingFin;
 
-% Step 15: Finalize mdu-file
-waitbar(15/15,wb,'Finalizing the mdu file ...');
+% Finalize mdu-file
+waitbar(istep/numsteps,wb,'Finalizing the mdu file ...');
+istep       = istep + 1;
 convertMasterFile;
 close(wb);
 

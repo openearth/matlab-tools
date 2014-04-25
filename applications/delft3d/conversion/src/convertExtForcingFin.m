@@ -21,6 +21,22 @@ if isempty(extfile);
 end
 
 % Check if the roughness file name has been specified (D-Flow FM)
+wndfile     = get(handles.edit33,'String');
+jawnd       = 1;
+if isempty(wndfile);
+    wndfile = [];
+    jawnd   = 0;
+end
+
+% Check if the roughness file name has been specified (D-Flow FM)
+spwfile     = get(handles.edit35,'String');
+jaspw       = 1;
+if isempty(spwfile);
+    spwfile = [];
+    jaspw   = 0;
+end
+
+% Check if the roughness file name has been specified (D-Flow FM)
 rghfile     = get(handles.edit24,'String');
 jargh       = 1;
 if isempty(rghfile);
@@ -72,6 +88,22 @@ end
 %%% APPEND NEW DATA TO THE ALREADY EXISTING EXT FILE
 
 fidext      = fopen(extfile,'at+');
+if jawnd == 1;
+    fprintf(fidext,['QUANTITY=' ,'windxy'                            ,'\n']);
+    fprintf(fidext,['FILENAME=' ,wndfile                             ,'\n']);
+    fprintf(fidext,['FILETYPE=2','\n']);
+    fprintf(fidext,['METHOD  =1','\n']);
+    fprintf(fidext,['OPERAND =O','\n']);
+    fprintf(fidext,[            ,'\n']);
+end
+if jaspw == 1 & jawnd == 0;
+    fprintf(fidext,['QUANTITY=' ,'spiderweb'                         ,'\n']);
+    fprintf(fidext,['FILENAME=' ,spwfile                             ,'\n']);
+    fprintf(fidext,['FILETYPE=5','\n']);
+    fprintf(fidext,['METHOD  =1','\n']);
+    fprintf(fidext,['OPERAND =O','\n']);
+    fprintf(fidext,[            ,'\n']);
+end
 if jargh == 1;
     fprintf(fidext,['QUANTITY=' ,'frictioncoefficient'               ,'\n']);
     fprintf(fidext,['FILENAME=' ,rghfile                             ,'\n']);
@@ -97,3 +129,11 @@ if jaini == 1;
     fprintf(fidext,[            ,'\n']);
 end
 fclose all;
+
+
+%%% CHECK SIMULATEOUS WIND USE 
+
+if jawnd == 1 & jaspw == 1;
+    errordlg('Simultaneous use of unimagdir wind and spiderweb wind not supported by D-Flow FM yet. Only unimagdir wind written to .ext file.','Error');
+    continue;
+end
