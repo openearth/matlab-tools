@@ -182,21 +182,26 @@ if kmax>1 && ~strcmpi(tp,'wl')
                     depths=depths';
                 end
                 
-                switch lower(tp(1))
-                    case{'u','v'}
-                        % Set velocities to 0 below where they are not available
-                        ddep=depths(end)-depths(end-1);
-                        ddep=1;
-                        depths=[-100000;depths;depths(end)+ddep;100000];
-% This won't work
-%                        temps =[temps(1);temps;0;0];
-% This seems to work since the same indexes are repeated for depths and
-% quantity
-                        temps =[0;temps;temps(end);0];
-                    otherwise
-                        depths=[-100000;depths;100000];
-                        temps =[temps(1);temps;temps(end)];
-                end
+%                 switch lower(tp(1))
+%                     case{'u','v'}
+%                         % Set velocities to 0 below where they are not available
+%                         ddep=depths(end)-depths(end-1);
+%                         ddep=1;
+%                         depths=[-100000;depths;depths(end)+ddep;100000];
+% % This won't work
+% %                        temps =[temps(1);temps;0;0];
+% % This seems to work since the same indexes are repeated for depths and
+% % quantity
+%                         temps =[0;temps;temps(end);0];
+%                     otherwise
+%                         depths=[-100000;depths;100000];
+%                         temps =[temps(1);temps;temps(end)];
+%                 end
+                
+                depths=[-100000;depths;100000];
+                temps =[temps(1);temps;temps(end)];
+                
+                
                 s(i,j,:)=interp1(depths,temps,squeeze(dplayer(i,j,:)));
 
 %            else
