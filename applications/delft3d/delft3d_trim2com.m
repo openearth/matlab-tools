@@ -1,4 +1,4 @@
-function delft3D_trim2com(oricom, newcom, t0, t1, reftime)
+function varargout = delft3D_trim2com(oricom, newcom, t0, t1, reftime, varargin)
 %DELF3D_TRIM2COM  Makes Delft3D-WAVE communication file from Delft3D-FLOW trim file.
 %
 % This script converts a Delft3D FLOW trim file to a communication file that can be
@@ -24,10 +24,10 @@ function delft3D_trim2com(oricom, newcom, t0, t1, reftime)
 % t0=[datenum(2009,02,1,00,00,00)];
 % t1=[datenum(2009,03,1,00,00,00)];
 % reftime=[datenum(2009,02,1,00,00,00)];
-
+%
 %
 % TO DO
-
+%
 % 1. Integrate a function for reading combining the necessary grid
 % parameters from multiple com files
 % 
@@ -83,21 +83,30 @@ function delft3D_trim2com(oricom, newcom, t0, t1, reftime)
 % Created: 25 Apr 2014
 % Created with Matlab version: 8.1.0.604 (R2013a)
 
-% $Id: $
-% $Date: $
-% $Author: $
-% $Revision: $
-% $HeadURL: $
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 % $Keywords: $
-%
 
+OPT.trimdat    = '';
+OPT.trimdef    = '';
+OPT.datafolder = '';
+
+if nargin==0
+  varargout  = {OPT};
+  return
+end
+
+OPT = setproperty(OPT,varargin)
 
 %% Get input arguments
 
-nefis=vs_use('p:\1000229-pace\hydrodynamica\dws_200m_v6\dws_200m_v6_2009_02\trim-dws_200m_v6_2009_02.dat','p:\1000229-pace\hydrodynamica\dws_200m_v6\dws_200m_v6_2009_02\trim-dws_200m_v6_2009_02.def'); 
-datafolder=['p:\1000229-pace\hydrodynamica\dws_200m_v6\dws_200m_v6_2009_01\'];
-dataname=[];
-mdffile = [];
+nefis      = vs_use(OPT.trimdat,OPT.trimdef); 
+datafolder = '';
+dataname   = '';
+mdffile    = '';
 
 % time definition
 
