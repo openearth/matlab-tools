@@ -21,12 +21,14 @@ nplotroutines=length(datatype.plotroutine);
 
 % First determine width and height of element groups
 for ipr=1:nplotroutines
-    elementgroup=datatype.plotroutine(ipr).plotroutine.elementgroup;
-    for ii=1:length(elementgroup)
-        name=elementgroup(ii).elementgroup;
-        iopt=strmatch(name,handles.plotoptionelementgroupnames,'exact');
-        widthopt(ipr,ii)=handles.plotoptionelementgroup(iopt).plotoptionelementgroup.width;
-        heightopt(ipr,ii)=handles.plotoptionelementgroup(iopt).plotoptionelementgroup.height;
+    if isfield(datatype.plotroutine(ipr).plotroutine,'elementgroup')
+        elementgroup=datatype.plotroutine(ipr).plotroutine.elementgroup;
+        for ii=1:length(elementgroup)
+            name=elementgroup(ii).elementgroup;
+            iopt=strmatch(name,handles.plotoptionelementgroupnames,'exact');
+            widthopt(ipr,ii)=handles.plotoptionelementgroup(iopt).plotoptionelementgroup.width;
+            heightopt(ipr,ii)=handles.plotoptionelementgroup(iopt).plotoptionelementgroup.height;
+        end
     end
 end
 
@@ -34,15 +36,17 @@ end
 width=0;
 height=0;
 for ipr=1:nplotroutines
-    elementgroup=datatype.plotroutine(ipr).plotroutine.elementgroup;
-    wdt=0;
-    hgt=0;
-    for ii=1:length(elementgroup)
-        wdt=max(wdt,widthopt(ipr,ii));
-        hgt=hgt+heightopt(ipr,ii)+10;
+    if isfield(datatype.plotroutine(ipr).plotroutine,'elementgroup')
+        elementgroup=datatype.plotroutine(ipr).plotroutine.elementgroup;
+        wdt=0;
+        hgt=0;
+        for ii=1:length(elementgroup)
+            wdt=max(wdt,widthopt(ipr,ii));
+            hgt=hgt+heightopt(ipr,ii)+10;
+        end
+        width=max(width,wdt);
+        height=max(height,hgt);
     end
-    width=max(width,wdt);
-    height=max(height,hgt);
 end
 
 if nplotroutines>1
@@ -95,36 +99,38 @@ for ipr=1:nplotroutines
         posy=height-10;
     end
     
-    for ii=1:length(datatype.plotroutine(ipr).plotroutine.elementgroup)
-        
-        name=datatype.plotroutine(ipr).plotroutine.elementgroup(ii).elementgroup;
-        
-        % Find element in plot options element file
-        iopt=strmatch(name,handles.plotoptionelementgroupnames,'exact');
-        
-        elementgroup=handles.plotoptionelementgroup(iopt).plotoptionelementgroup;
-        
-        posy=posy-heightopt(ipr,ii)-10;
-        
-        posori(1)=25;
-        posori(2)=posy;
-        
-        for ielm=1:length(elementgroup.element)            
-            el=elementgroup.element(ielm).element;            
-            if isfield(el,'style')                
-                nelm=nelm+1;
-                % Position relative to lower left corner
-                pos=str2num(el.position);
-                position=[posori(1)+pos(1) posori(2)+pos(2) pos(3) pos(4)];                
-                if isfield(elementgroup,'positionx')
-                    position(1)=position(1)+str2double(elementgroup.positionx);
-                end                
-                el.position=position;                
-                if nplotroutines>1
-                    el.parent=['panel' num2str(ipr)];
+    if isfield(datatype.plotroutine(ipr).plotroutine,'elementgroup')
+        for ii=1:length(datatype.plotroutine(ipr).plotroutine.elementgroup)
+            
+            name=datatype.plotroutine(ipr).plotroutine.elementgroup(ii).elementgroup;
+            
+            % Find element in plot options element file
+            iopt=strmatch(name,handles.plotoptionelementgroupnames,'exact');
+            
+            elementgroup=handles.plotoptionelementgroup(iopt).plotoptionelementgroup;
+            
+            posy=posy-heightopt(ipr,ii)-10;
+            
+            posori(1)=25;
+            posori(2)=posy;
+            
+            for ielm=1:length(elementgroup.element)
+                el=elementgroup.element(ielm).element;
+                if isfield(el,'style')
+                    nelm=nelm+1;
+                    % Position relative to lower left corner
+                    pos=str2num(el.position);
+                    position=[posori(1)+pos(1) posori(2)+pos(2) pos(3) pos(4)];
+                    if isfield(elementgroup,'positionx')
+                        position(1)=position(1)+str2double(elementgroup.positionx);
+                    end
+                    el.position=position;
+                    if nplotroutines>1
+                        el.parent=['panel' num2str(ipr)];
+                    end
+                    element(nelm).element=el;
                 end
-                element(nelm).element=el;
-            end            
+            end
         end
     end
 end

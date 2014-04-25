@@ -108,7 +108,7 @@ else
         elseif length(k)>1
 %            shp='timestack';
             plane='tz';
-            ndim=1;
+            ndim=2;
         elseif sz(3)==0 && sz(4)==0
             switch quantity
                 case{'location'}
@@ -169,31 +169,29 @@ else
             end
         elseif length(n)>1
             if length(k)>1
-%                 shp='crosssection2d';
                 plane='xz';
                 ndim=2;
             else
                 switch quantity
                     case{'location','scalar'}
-%                         shp='crosssection1d';
                         plane='xy';
                         ndim=1;
                     otherwise
-%                         shp='crosssection1d';
                         plane='xv';
                         ndim=1;
                 end
             end
         else
-            switch quantity
-                case{'location','scalar','xy'}
-%                     shp='point';
-                    plane='xy';
-                    ndim=1;
-                otherwise
-%                     shp='profile';
-                    plane='vz';
-                    ndim=1;
+            if length(k)>1
+                % Profile
+                plane='vz';
+                ndim=1;
+            else
+                switch quantity
+                    case{'location','scalar','xy'}
+                        plane='xy';
+                        ndim=1;
+                end
             end
         end
     end
@@ -201,4 +199,3 @@ end
 
 dataset.plane=plane;
 dataset.ndim=ndim;
-

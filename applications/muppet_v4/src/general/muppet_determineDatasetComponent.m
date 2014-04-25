@@ -24,10 +24,10 @@ switch dataset.quantity
             case('n-component')
                 d.Val=d.YComp;
                 dataset.quantity='scalar';
-            case('x-component')
+            case{'x-component','x component','xcomponent'}
                 d.Val=d.XComp;
                 dataset.quantity='scalar';
-            case('y-component')
+            case{'y-component','y component','ycomponent'}
                 d.Val=d.YComp;
                 dataset.quantity='scalar';
         end

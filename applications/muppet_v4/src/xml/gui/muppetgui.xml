@@ -2584,6 +2584,15 @@
     <tooltipstring>Make animation</tooltipstring>
     <callback>muppet_gui</callback>
     <option1>makeanimation</option1>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.animationsettings.set</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
   </element>
   <element>
     <tag>plotfigure</tag>

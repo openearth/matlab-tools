@@ -3,6 +3,14 @@ function dataset=muppet_computeCentresAndCorners(dataset)
 % Determine cell centres/corners
 switch dataset.type
 
+    case{'scalar2dtz'}
+
+        % Time stack
+
+        dataset.xz=dataset.x;
+        dataset.yz=dataset.y;
+        dataset.zz=dataset.z;
+
     case{'scalar2dxy'}
 
         dataset.xz=dataset.x;

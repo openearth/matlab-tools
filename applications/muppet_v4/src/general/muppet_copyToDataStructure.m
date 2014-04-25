@@ -100,6 +100,24 @@ switch dataset.plane
                 dataset.vphase=d.VPhase;
         end
     
+    case{'vz'}
+        % profile
+        dataset.x=d.Val;
+        dataset.y=d.Z;
+        switch dataset.quantity
+            case{'scalar'}
+                dataset.x=d.Val;
+                dataset.y=d.Z;
+            case{'vector2d'}
+                % Why would you want this ?
+                dataset.u=d.XComp;
+                dataset.v=d.YComp;
+            case{'vector3d'}
+                % Why would you want this ?
+                dataset.u=d.XComp;
+                dataset.v=d.ZComp;
+        end
+    
     case{'xv'}
         % cross-section 1d
         dataset.x=plotcoordinate;
@@ -167,7 +185,8 @@ switch dataset.plane
 
     case{'tz'}
         % time stack (vertical)
-        [dataset.x,dataset.y]=meshgrid(d.Time,d.Z);
+        [dataset.y,dataset.x]=meshgrid(squeeze(d.Z(1,:)),d.Time);
+        dataset.y=d.Z;
         switch dataset.quantity
             case{'scalar'}
                 dataset.z=d.Val;

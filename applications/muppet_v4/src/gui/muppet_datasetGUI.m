@@ -725,9 +725,9 @@ if dataset.adjustname
                     str='angle (radians)';
                   case{'angledegrees'}
                     str='angle (degrees)';
-                  case{'xcomponent'}
+                  case{'xcomponent','x component'}
                     str='x component';
-                  case{'ycomponent'}
+                  case{'ycomponent','y component'}
                     str='y component';
                   case{'mcomponent'}
                     str='m component';

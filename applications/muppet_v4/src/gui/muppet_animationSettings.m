@@ -38,7 +38,9 @@ if isempty(varargin)
         end
         
         [handles.animationsettings,ok]=gui_newWindow(handles.animationsettings,'xmldir',handles.xmlguidir, ...
-           'xmlfile','animationsettings.xml','iconfile',[handles.settingsdir 'icons' filesep 'deltares.gif']);
+            'xmlfile','animationsettings.xml','iconfile',[handles.settingsdir 'icons' filesep 'deltares.gif']);
+        
+        handles.animationsettings.set=1;
         
         setHandles(handles);
         
@@ -95,13 +97,13 @@ if pathname~=0
     txt=['TimeStep       ' num2str(h.timestep)];
     fprintf(fid,'%s \n',txt);
     txt=['FrameRate      ' num2str(h.framerate)];
-    fprintf(fid,'%s \n',txt);    
+    fprintf(fid,'%s \n',txt);
     txt=['Quality        ' num2str(h.quality)];
-    fprintf(fid,'%s \n',txt);    
+    fprintf(fid,'%s \n',txt);
     txt=['Format         ' h.format];
-    fprintf(fid,'%s \n',txt);    
-%     txt=['NBits          ' num2str(h.selectbits)];
-%     fprintf(fid,'%s \n',txt);
+    fprintf(fid,'%s \n',txt);
+    %     txt=['NBits          ' num2str(h.selectbits)];
+    %     fprintf(fid,'%s \n',txt);
     if h.keepfigures
         txt=['KeepFigures    yes'];
         fprintf(fid,'%s \n',txt);
@@ -117,7 +119,7 @@ if pathname~=0
     else
         txt=['MakeKMZ        no'];
         fprintf(fid,'%s \n',txt);
-    end        
+    end
     if h.flightpath
         txt=['FlightPath     yes'];
         fprintf(fid,'%s \n',txt);
@@ -126,7 +128,7 @@ if pathname~=0
     else
         txt=['FlightPath     no'];
         fprintf(fid,'%s \n',txt);
-    end        
+    end
     txt=[''];
     fprintf(fid,'%s \n',txt);
     txt=['# Do not change the following codec settings!'];
@@ -145,7 +147,7 @@ if pathname~=0
     fprintf(fid,'%s \n',txt);
     
     fclose(fid);
-
+    
 end
 
 %%

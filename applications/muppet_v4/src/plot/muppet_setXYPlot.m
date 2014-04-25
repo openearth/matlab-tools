@@ -50,7 +50,8 @@ switch plt.xscale
 
                 xticks=1:length(plt.xtcklab);
                 set(gca,'xtick',xticks);
-                xticklabel_rotate([],315,plt.xtcklab);
+%                xticklabel_rotate([],315,plt.xtcklab);
+                xticklabel_rotate([],340,plt.xtcklab);
                 
 %                 xticks=plt.xmin:plt.xmax;
 %                 set(gca,'xtick',xticks);

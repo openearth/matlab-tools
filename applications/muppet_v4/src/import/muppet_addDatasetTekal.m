@@ -46,6 +46,17 @@ else
     switch lower(columnlabels{1})
         case{'date'}
             tp='timeseries';
+            % Check if all column labels are numbers
+            % If so, assume that the data is a time stack
+            its=1;
+            for ic=3:length(columnlabels)
+                if isempty(str2num(columnlabels{ic}))
+                    its=0;
+                end
+            end
+            if its
+                tp='timestack';
+            end
         otherwise
             if length(sz)==4
                 tp='map';
@@ -111,6 +122,28 @@ switch tp
             par.timesbyblock=1;
             par.name=columnlabels{ipar+2};
             par.size=[nrows 0 0 0 0];
+            par.times=times;
+            dataset.parameters(ipar).parameter=par;            
+        end
+    case{'timestack'}        
+        % Different blocks contain time series for different stations 
+        npar=1;
+        dates=fid.Field(1).Data(:,1);
+        times=fid.Field(1).Data(:,2);
+        years=floor(dates/10000);
+        months=floor((dates-years*10000)/100);
+        days=dates-years*10000-months*100;
+        hours=floor(times/10000);
+        minutes=floor((times-hours*10000)/100);
+        seconds=times-hours*10000-minutes*100;
+        times=datenum(years,months,days,hours,minutes,seconds);
+        for ipar=1:npar
+            par=[];
+            par=muppet_setDefaultParameterProperties(par);
+            par.timesbyblock=1;
+%            par.name=columnlabels{ipar+2};
+            par.name='timestack';
+            par.size=[nrows 0 0 0 length(columnlabels)-2];
             par.times=times;
             dataset.parameters(ipar).parameter=par;            
         end
@@ -208,6 +241,18 @@ switch dataset.tekaltype
                 parameter.v=fid.Field(iblock).Data(:,icolv);
                 parameter.v(parameter.u==999.999)=NaN;
                 parameter.v(parameter.u==-999)=NaN;
+        end
+    case{'timestack'}
+        switch dataset.quantity
+            case{'scalar'}
+                parameter.time=dataset.times;
+                parameter.val=fid.Field(iblock).Data(:,3:end);
+                parameter.val(parameter.val==999.999)=NaN;
+                parameter.val(parameter.val==-999)=NaN;
+                for ic=3:length(dataset.columnlabels)
+                    y(ic-2)=str2num(dataset.columnlabels{ic});
+                end
+                parameter.y=repmat(y,[length(parameter.time) 1]);
         end
     case{'map'}
         parameter.x=fid.Field(iblock).Data(:,:,1);

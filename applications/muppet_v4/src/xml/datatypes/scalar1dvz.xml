@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <root>
-  <longname>xy</longname>
+  <longname>Profile 1D</longname>
   <plottype>
     <name>xy</name>
     <plotroutine>
@@ -9,25 +9,13 @@
         <name>plotroutine</name>
       </plotoption>
       <plotoption>
-        <name>addtext</name>
+        <name>linecolor</name>
       </plotoption>
       <plotoption>
-        <name>textposition</name>
+        <name>linewidth</name>
       </plotoption>
       <plotoption>
-        <name>fontname</name>
-      </plotoption>
-      <plotoption>
-        <name>fontsize</name>
-      </plotoption>
-      <plotoption>
-        <name>fontangle</name>
-      </plotoption>
-      <plotoption>
-        <name>fontweight</name>
-      </plotoption>
-      <plotoption>
-        <name>decimals</name>
+        <name>linestyle</name>
       </plotoption>
       <plotoption>
         <name>marker</name>
@@ -41,8 +29,12 @@
       <plotoption>
         <name>markerfacecolor</name>
       </plotoption>
-      <elementgroup>samples</elementgroup>
-      <elementgroup>markerautomatic</elementgroup>
+      <plotoption>
+        <name>legendtext</name>
+      </plotoption>
+      <elementgroup>line</elementgroup>
+      <elementgroup>marker</elementgroup>
+      <elementgroup>legendtext</elementgroup>
     </plotroutine>
   </plottype>
 </root>
