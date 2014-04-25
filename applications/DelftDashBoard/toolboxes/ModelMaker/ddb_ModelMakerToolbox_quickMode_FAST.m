@@ -362,12 +362,16 @@ itiles{1}=zeros(ntx,nty);
 
 s=sparse(npmax,npmax);
 
-kmlfile='sendai_test.kml';
+kmlfile=handles.model.fast.domain.kmlfile;
+if strcmpi(kmlfile(end-2:end),'kml')
+    kmlfile=kmlfile(1:end-3);
+end
+kmlfile=[kmlfile '.kml'];
 s(1:size(zg,1),1:size(zg,2))=zg;
 xmin=xdem(1);
 ymin=ydem(1);
 colorlimits=[0 20];
-folder='sendai2';
-name='sendai';
+folder=kmlfile;
+name=kmlfile;
 colorbarlabel='inundation height (m)';
 superoverlay(kmlfile,s,xmin,ymin,dx,dy,'name',name,'colorlimits',colorlimits,'directory',folder,'transparency',1,'colorbarlabel',colorbarlabel);
