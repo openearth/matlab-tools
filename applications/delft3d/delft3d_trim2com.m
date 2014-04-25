@@ -1,11 +1,7 @@
 function delft3D_trim2com(oricom, newcom, t0, t1, reftime)
-% Makes Delft3D com file from ocean model input
-
-% HELP:
-% 
-% What does this script do?
+%DELF3D_TRIM2COM  Makes Delft3D-WAVE communication file from Delft3D-FLOW trim file.
 %
-% It converts a Delft3D FLOW trim file to a communication file that can be
+% This script converts a Delft3D FLOW trim file to a communication file that can be
 % used for Delft3D-WAVE, including wind, water levels and current fields
 % and all the necessary grid parameters (dry points etc.) necessary for
 % WAVE.
@@ -17,7 +13,7 @@ function delft3D_trim2com(oricom, newcom, t0, t1, reftime)
 % are read from a mat file that has the combined parameters from multiple
 % com files - this part still needs to be integrated into the script so
 % for now this mat file has to be made manually and the path changed in
-% Line 460 - ask Katherine Cronin if questions. 
+% Line 460 - ask Katherine Cronin if questions.
 %
 % Example inputs:
 %
@@ -35,7 +31,65 @@ function delft3D_trim2com(oricom, newcom, t0, t1, reftime)
 % 1. Integrate a function for reading combining the necessary grid
 % parameters from multiple com files
 % 
+%
+%   Syntax:
+%   varargout = delf3d_trim2com(varargin)
+%
+%   Input: For <keyword,value> pairs call delf3d_trim2com() without arguments.
+%   varargin  = oricom, newcom, t0, t1, reftime
+%
+%   Output:
+%   varargout =
+%
+%   Example
+%   delf3d_trim2com
+%
+%   See also
 
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2014 <Deltares>
+%
+%        Katherine Cronin
+%
+%       <katherine.cronin@deltares.nl>
+%
+%       Deltares
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 25 Apr 2014
+% Created with Matlab version: 8.1.0.604 (R2013a)
+
+% $Id: $
+% $Date: $
+% $Author: $
+% $Revision: $
+% $HeadURL: $
+% $Keywords: $
+%
 
 
 %% Get input arguments
