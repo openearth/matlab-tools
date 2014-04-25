@@ -1,6 +1,6 @@
 function muppet4(varargin)
 
-handles.muppetversion='4.01';
+handles.muppetversion='4.02';
 
 warning('off','MATLAB:HandleGraphics:ObsoletedProperty:JavaFrame');
 warning('off','MATLAB:contours:DeprecatedErrorOutputArgument');
