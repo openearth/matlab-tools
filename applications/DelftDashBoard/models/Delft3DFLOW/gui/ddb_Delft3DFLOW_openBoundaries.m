@@ -206,7 +206,7 @@ else
             for ii=1:length(iac)
                 n=iac(ii);
                 handles.model.delft3dflow.domain(ad).openBoundaries(n).type=tp;
-                handles=resetBoundaryConditions(handles,ii);
+                handles=resetBoundaryConditions(handles,n);
             end
             handles.model.delft3dflow.domain(ad).bctChanged=1;
             handles.model.delft3dflow.domain(ad).bccChanged=1;
@@ -230,7 +230,7 @@ else
             for ii=1:length(iac)
                 n=iac(ii);
                 handles.model.delft3dflow.domain(ad).openBoundaries(n).forcing=fc;
-                handles=resetBoundaryConditions(handles,ii);
+                handles=resetBoundaryConditions(handles,n);
             end
             handles=ddb_countOpenBoundaries(handles,ad);
             handles.model.delft3dflow.domain(ad).bctChanged=1;
