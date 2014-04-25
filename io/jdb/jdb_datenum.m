@@ -43,11 +43,11 @@ elseif iscell(t0)
         t1 = datestr(cell2mat(t0),'yyyy-mm-dd HH:MM:SS');
     else
         disp('Error converting date')
-        t1 = nan(size(to));
+        t1 = nan(size(t0));
     end
 else
     disp('Error converting date')
-    t1 = nan(size(to));
+    t1 = nan(size(t0));
 %     error('?')
 end
   
