@@ -101,6 +101,7 @@ switch varargin{1}
             for ii=1:length(xml.model)
                 imdl=strmatch(lower(xml.model(ii).model.name),models,'exact');
                 if ~isempty(imdl)
+                    model=lower(xml.model(ii).model.name);
                     % Version
                     handles.model.(model).version=xml.model(ii).model.version;
                     if isempty(handles.model.(model).version)
