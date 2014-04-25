@@ -31,11 +31,30 @@ end
 
 if (nargin == 7)
     removepreviouslinks = varargin{7};
+    removepreviouslinks_set = 1;    
     debugmode = varargin{6};
 else
     removepreviouslinks = 1;
+    removepreviouslinks_set = 0;    
     debugmode = 0;
 end
+
+%
+% Read associated .aru and arv. files
+%
+
+S_u = delft3d_io_aru_arv('read',filaru);
+S_v = delft3d_io_aru_arv('read',filarv);
+
+if S_u.count.block + S_v.count.block == 0
+    if ~removepreviouslinks_set
+        % Do not remove previous links because it is much faster 
+        removepreviouslinks = 0;
+        warning('Setting removepreviouslinks=0 for faster conversion') 
+    else 
+        warning('Consider setting removepreviouslinks=0 for faster conversion') 
+    end  
+end 
 
 %
 % Read the grid information
@@ -83,12 +102,6 @@ for n = 1:nmax
     end
 end
 
-%
-% Read associated .aru and arv. files
-%
-
-S_u = delft3d_io_aru_arv('read',filaru);
-S_v = delft3d_io_aru_arv('read',filarv);
 
 %
 % Create structure for .arl file

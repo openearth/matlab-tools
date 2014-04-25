@@ -72,6 +72,7 @@ filename = varargin{1};
 T        = varargin{2};
 fid = fopen(filename,'w');
 S.iostat = -1;
+
 for k = 1:length(T.data);
     counts = [ ...
         length(setdiff(lower(fieldnames(T.data{k})),{'comment'})), ...
@@ -109,6 +110,10 @@ if fid==-1
 else
     S.iostat   = -1;
     line_no = 0;
+    S.count.comments = 0;
+    S.count.nm       = 0;
+    S.count.n_and_m  = 0;
+    S.count.block    = 0;    
     while 1
         %% get line
         newline          = fgetl(fid);
@@ -118,14 +123,18 @@ else
             if (sum(strfind('#*',newline(1)))>0);
                 type    = 'comment';
                 content = newline;
+                S.count.comments = S.count.comments+1;
             else
                 content = str2num(newline);
                 if length(content) == 4;
                     type    = 'n m definition percentage';
+                    S.count.n_and_m = S.count.n_and_m + 1;
                 elseif length(content) == 6;
                     type    = 'n1 m1 n2 m2 definition percentage';
+                    S.count.block = S.count.block + 1;    
                 elseif length(content) == 3;
                     type    = 'nm definition percentage';
+                    S.count.nm = S.count.nm + 1;
                 else
                     type    = 'unknown';
                     content = newline;
