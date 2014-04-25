@@ -1,4 +1,4 @@
-function getHYCOM2(url, outname, outdir, par, xl, yl, dx, dy, t, s)
+function getHYCOM3(url, outname, outdir, par, xl, yl, dx, dy, t, s)
 %GETHYCOM  One line description goes here.
 %
 %   More detailed description goes here.
@@ -115,14 +115,44 @@ s.lat=transpose(yl(1):dy:yl(2));
 s.levels=d';
 s.long_name=par;
 
+t1=[];
+yr0=-999;
+
 for it=1:nt
 
     s.time=t(it);
 
     yr=year(t(it));
-    ndays=t(it)-datenum(yr,1,1)+1;
-    tstr=[num2str(yr) '_' num2str(ndays,'%0.3i') '_00'];
-    
+
+    if yr>yr0
+        % We're in a new year
+        t1=[];
+        yr0=yr;
+    end
+
+    if isempty(t1)
+        % First date on file not known
+        % Determine first date on this file
+        switch lower(par)
+            case{'temperature'}
+                fname=[url '/' num2str(yr) '/temp'];
+            case{'salinity'}
+                fname=[url '/' num2str(yr) '/salt'];
+            case{'waterlevel'}
+                fname=[url '/' num2str(yr) '/2d'];
+            case{'current_u'}
+                fname=[url '/' num2str(yr) '/uvel'];
+            case{'current_v'}
+                fname=[url '/' num2str(yr) '/vvel'];
+        end
+        t1=nc_varget(fname,'Date',0,1);
+        t1=num2str(t1);
+        t1=datenum(t1,'yyyymmdd');
+    end
+
+    ndays=t(it)-t1;
+%    tstr=[num2str(yr) '_' num2str(ndays,'%0.3i') '_00'];
+        
     switch lower(par)
         
         case{'temperature'}
