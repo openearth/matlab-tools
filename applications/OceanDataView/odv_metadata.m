@@ -5,9 +5,10 @@ function L = odv_metadata(directory)
 %
 %  only works for data sent by later versions of seadatanet
 %
-% Example:
+% Example: show meta-data of first entry of csv
 %
 % L = odv_metadata('userab12c34-data_centre000-311210_result')
+% structsubs(L,1)
 %
 %See also: OceanDataView, 
 

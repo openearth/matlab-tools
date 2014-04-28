@@ -118,6 +118,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
                          'SSWV','SBUU','SBVV','SSUU','SSVV','RCA','DPS','BODSED','DPSED'};
    OPT.var            = {OPT.var_cf{:},OPT.var_primary{:}};
    OPT.var_all        = {OPT.var_cf{:},OPT.var_primary{:},OPT.var_derived{:}};
+   OPT.title          = ['NetCDF created from NEFIS-file ',filenameext(vsfile)];
 
    if nargin==0
       varargout = {OPT};
@@ -213,7 +214,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#description-of-file-contents
    
       nc = struct('Name','/','Format',OPT.Format);
-      nc.Attributes(    1) = struct('Name','title'              ,'Value',  '');
+      nc.Attributes(    1) = struct('Name','title'              ,'Value',  OPT.title);
       nc.Attributes(end+1) = struct('Name','institution'        ,'Value',  OPT.institution);
       nc.Attributes(end+1) = struct('Name','source'             ,'Value',  'Delft3D trim file');
       nc.Attributes(end+1) = struct('Name','history'            ,'Value', ['Original filename: ',filenameext(vsfile),...
@@ -260,7 +261,8 @@ function varargout = vs_trim2nc(vsfile,varargin)
       G.coordinates = strtrim(permute(vs_let(F,'map-const','COORDINATES','quiet'),[1 3 2]));
       
       G.cen.mask =  vs_let_scalar(F,'map-const','KCS'   ,'quiet'); G.cen.mask(G.cen.mask~=1) = NaN; % -1/0/1/2 Non-active/Non-active/Active/Boundary water level point (fixed)
-      G.cor.mask = permute(vs_let(F,'TEMPOUT'  ,'CODB'  ,'quiet'),[2 3 1]); G.cor.mask(G.cor.mask~=1) = NaN;
+%GONE?G.cor.mask = permute(vs_let(F,'TEMPOUT'  ,'CODB'  ,'quiet'),[2 3 1]); G.cor.mask(G.cor.mask~=1) = NaN;
+      G.cor.mask = ones(size(G.cen.mask)+[2 2]); % reduced later
 
       if any(strfind(G.coordinates,'SPHE'))
       G.cen.lon  =  vs_let_scalar(F,'map-const','XZ'    ,'quiet').*G.cen.mask;%G.cen.x = vs_let_scalar(F,'TEMPOUT','XWAT','quiet');
@@ -565,7 +567,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       if ~isempty(OPT.epsg)
       attr(end+1)  = struct('Name', 'grid_mapping' , 'Value', 'CRS');
       end
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:XZ map-const:KCS TEMPOUT:XWAT TEMPOUT:CODW map-const:COORDINATES');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:XZ map-const:KCS map-const:COORDINATES');
       if any(strcmp('grid_x',OPT.var)) && any(strcmp('grid_y',OPT.var))
       attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'grid_x');
       end
@@ -586,7 +588,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       if ~isempty(OPT.epsg)
       attr(end+1)  = struct('Name', 'grid_mapping' , 'Value', 'CRS');
       end
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:YZ map-const:KCS TEMPOUT:YWAT TEMPOUT:CODW map-const:COORDINATES');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:YZ map-const:KCS map-const:COORDINATES');
       if any(strcmp('grid_x',OPT.var)) && any(strcmp('grid_y',OPT.var))
       attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'grid_y');
       end
@@ -620,7 +622,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cor.x(:)) max(G.cor.x(:))]);
       attr(end+1)  = struct('Name', 'grid_mapping' , 'Value', 'CRS');
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:XCOR TEMPOUT:CODB map-const:COORDINATES');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:XCOR map-const:COORDINATES');
       attr(end+1)  = struct('Name', 'comment'      , 'Value', 'OpenEarth Matlab function nc_cf_bounds2cor.m reshapes it to a regular 2D array');
       nc.Variables(ifld) = struct('Name'       , 'grid_x', ...
                                   'Datatype'   , OPT.type, ...
@@ -636,7 +638,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cor.y(:)) max(G.cor.y(:))]);
       attr(end+1)  = struct('Name', 'grid_mapping' , 'Value', 'CRS');
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:YCOR TEMPOUT:CODB map-const:COORDINATES');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:YCOR map-const:COORDINATES');
       attr(end+1)  = struct('Name', 'comment'      , 'Value', 'OpenEarth Matlab function nc_cf_bounds2cor.m reshapes it to a regular 2D array');
       nc.Variables(ifld) = struct('Name'       , 'grid_y', ...
                                   'Datatype'   , OPT.type, ...
@@ -658,7 +660,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
       attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
       attr(end+1)  = struct('Name', 'actual_range' , 'Value', [min(G.cen.lon(:)) max(G.cen.lon(:))]);
-      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:XZ map-const:KCS TEMPOUT:XWAT map-const:CODW map-const:COORDINATES');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:XZ map-const:KCS map-const:CODW map-const:COORDINATES');
       if any(strcmp('grid_longitude',OPT.var)) & any(strcmp('grid_latitude',OPT.var))   
       attr(end+1)  = struct('Name', 'bounds'       , 'Value', 'grid_longitude');
       end

@@ -15,7 +15,7 @@ function varargout = KMLcolumn(lat,lon,z,c,varargin)
 %
 %  example:
 %
-%    KMLcylinder({51.9859},{4.3815},{[0 1 2 4 8 16 32]},{[1 2 3 4 5 6]},5e3,'fileName','KMLcylinder_test.kml')
+%    KMLcolumn({51.9859},{4.3815},{[0 1 2 4 8 16 32]},{[1 2 3 4 5 6]},5e3,'fileName','KMLcylinder_test.kml')
 %
 % See also: googlePlot, KMLcylinder
 

@@ -34,7 +34,7 @@ function varargout = odv_read(fullfilename,varargin)
 % +---------------------------------------------+----------------------------------------
 %
 %See web : <a href="http://odv.awi.de">odv.awi.de</a> (Ocean Data Viewer)
-%See also: OceanDataView
+%See also: OceanDataView, python module "openearthtools.io.pyodv"
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Delft University of Technology
