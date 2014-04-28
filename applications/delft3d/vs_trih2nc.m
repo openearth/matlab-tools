@@ -83,23 +83,25 @@ function varargout = vs_trih2nc(vsfile,varargin)
 
 %% keywords
     
-    OPT.Format         = 'classic'; % '64bit','classic','netcdf4','netcdf4_classic'
-    OPT.refdatenum     = datenum(0000,0,0); % matlab datenumber convention: A serial date number of 1 corresponds to Jan-1-0000. Gives wrong dates in ncbrowse due to different calendars. Must use doubles here.
-    OPT.refdatenum     = datenum(1970,1,1); % linux  datenumber convention
-    OPT.institution    = '';
-    OPT.timezone       = ''; %timezone_code2iso('GMT');
-    OPT.epsg           = [];
-    OPT.type           = 'single'; %'double'; % the nefis file is by default single precision, se better isn't useful
-    OPT.debug          = 0;
-    OPT.time           = 0; % subset of time indices in NEFIS file, 1-based
-    OPT.dump           = 1;
+   OPT.Format         = 'classic'; % '64bit','classic','netcdf4','netcdf4_classic'
+   OPT.refdatenum     = datenum(0000,0,0); % matlab datenumber convention: A serial date number of 1 corresponds to Jan-1-0000. Gives wrong dates in ncbrowse due to different calendars. Must use doubles here.
+   OPT.refdatenum     = datenum(1970,1,1); % linux  datenumber convention
+   OPT.institution    = '';
+   OPT.timezone       = ''; %timezone_code2iso('GMT');
+   OPT.epsg           = [];
+   OPT.type           = 'single'; %'double'; % the nefis file is by default single precision, se better isn't useful
+   OPT.debug          = 0;
+   OPT.time           = 0; % subset of time indices in NEFIS file, 1-based
+   OPT.dump           = 1;
 
-    OPT.quiet          = 'quiet';
-    OPT.stride         = 0; % write chunks per layer in case of large 3D matrices
-    OPT.ind            = 0; % index of stations to include in netCDF file, 0=all
-    OPT.crs.ind        = 0; % index of cross-sections to include in netCDF file, 0=all
-    OPT.trajectory     = 0; % consider 'Stations' dimension as spatial trajectory dimension
-    OPT.name           = ''; % addition to nc-filename
+   OPT.quiet          = 'quiet';
+   OPT.stride         = 0; % write chunks per layer in case of large 3D matrices
+   OPT.ind            = 0; % index of stations to include in netCDF file, 0=all
+   OPT.crs.ind        = 0; % index of cross-sections to include in netCDF file, 0=all
+   OPT.trajectory     = 0; % consider 'Stations' dimension as spatial trajectory dimension
+   OPT.name           = ''; % addition to nc-filename
+   OPT.title          = ['NetCDF created from NEFIS-file ',filenameext(vsfile)];
+   
       % TO DO: allow to transform sub-period too.
       % TO DO: implement WI and PI from griddata_near2, and add rename dimension 'Station' to 'distance'
       % TO DO: make QP fit for trajectory plotting
@@ -157,7 +159,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
     % http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#description-of-file-contents
 
     nc = struct('Name','/','Format',OPT.Format);
-    nc.Attributes(    1) = struct('Name','title'              ,'Value',  '');
+    nc.Attributes(    1) = struct('Name','title'              ,'Value',  OPT.title);
     nc.Attributes(end+1) = struct('Name','institution'        ,'Value',  OPT.institution);
     nc.Attributes(end+1) = struct('Name','source'             ,'Value',  'Delft3D trih file');
     nc.Attributes(end+1) = struct('Name','history'            ,'Value', ['Original filename: ',filenameext(vsfile),...

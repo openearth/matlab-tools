@@ -7,8 +7,10 @@ function nc_dimension_subset(nc0,nc1,dim_name,dim_index,varargin)
 % file, for instance to remove time indices where data is bad or old.
 % dim_index is a 1-based integer vector, so the new 
 % dimension length adds up to length(dim_index). You may
-% remove, shuffle or duplicate dimensiion slices from ncfile, but note that 
+% remove, shuffle or duplicate dimension slices from ncfile, but note that 
 % shuffling or duplication might destroy monotonicity in ncfile_new.
+%
+% Memory-efficiency: data is handled per variable per slice.
 %
 % Example: using test snctools data: replicate 1st and 2nd time step
 %   nc_dimension_subset('tst_pres_temp_4D_netcdf4.nc','B4.nc','time',[1 1 2 2])

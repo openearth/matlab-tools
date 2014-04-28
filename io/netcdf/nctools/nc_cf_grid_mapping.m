@@ -106,7 +106,7 @@ OPT = setproperty(OPT,varargin);
 
       switch epsg
       case  4326, OPT.projection_name = 'Latitude Longitude';
-      case 28992, OPT.projection_name = 'Dutch rijksdriekhoek system';
+      case 28992, OPT.projection_name = 'stereographic';
       otherwise,  
          if ~strcmpi(log.CS1.type,'geographic 2D'); % e.g. ED50 4230, WGS84 4326
             OPT.projection_name = log.CS1.name;
