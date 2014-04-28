@@ -140,8 +140,8 @@ else
         plot(hAx,xe,ze,'b.-')
         hold off
         xlim(hAx,[min(xe) max(xe)])
-        ylim(hAx,[min(ze) max(ze)+5])
-        print('-dpng','-r600',ModelOutputDir)
+        ylim(hAx,[min(zi) max(zi)+5])
+        print('-dpng','-r600',[ModelOutputDir '.png'])
         close(hFig)
     else
         % Erosion volume can't be fitted, take most seaward crossing with
