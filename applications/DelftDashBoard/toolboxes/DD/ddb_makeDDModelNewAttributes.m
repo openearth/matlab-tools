@@ -99,7 +99,7 @@ else
 
     % Bathymetry
     if isfield(handles.model.delft3dflow.domain(id1),'depth') && size(handles.model.delft3dflow.domain(id1).depth,1)>1        
-        f=str2func(['ddb_generateBathymetry' handles.activeModel.name]);
+        f=str2func(['ddb_generateBathymetry_Delft3DFLOW']);%Only DD for flow, otherwise make switch case since active model name is not exact case match for function
         handles=feval(f,handles,id2,handles.model.delft3dflow.domain(id2).depFile);
     end
     
