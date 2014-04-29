@@ -76,7 +76,7 @@ elseif iscell(excelDates)
         case 'yyyy-MM-dd'
             matlabDateFmt = 'yyyy-mm-dd';
         otherwise
-            error('Unsupported short date ''%s'', consider using ''yyyy-MM-dd'' or ''dd/MM/yyyy''',shortDateFmt)
+            error('Unsupported short date ''%s'', change your systems regional settings to use ''yyyy-MM-dd'' or ''dd/MM/yyyy''',shortDateFmt)
     end
     
     longTimeFmt = winqueryreg('HKEY_CURRENT_USER', 'Control Panel\International', 'sTimeFormat');
