@@ -375,7 +375,9 @@ function varargout = L2bin2nc(ncfile,varargin);
 %    This means can just fill only the active Delft3D cells m=[2:end-1] & n=[2:end-1]
 %    and leave the inactive dummy cells at =[1 end] & n=[1 end]
 
+      if ~isempty(OPT.time)
       ncwrite   (ncfile,'time'          , OPT.time - OPT.refdatenum);
+      end
 
 %% 5 Fill variables (optional)
 
