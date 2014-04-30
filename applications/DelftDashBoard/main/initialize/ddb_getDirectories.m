@@ -77,6 +77,7 @@ if isdeployed
     exeDir = char(regexpi(result, 'Path=(.*?);', 'tokens', 'once'));
     datadir=[fileparts(exeDir) filesep 'data' filesep];
     additionalToolboxDir=[];
+    additionalModelsDir=[];
 %     maindir=[fileparts(exeDir) filesep];
     
 else

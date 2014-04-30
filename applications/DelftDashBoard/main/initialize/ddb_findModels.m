@@ -79,7 +79,7 @@ for i=1:length(flist)
             otherwise
                 if isdeployed
                     % xml file in settings dir
-                    xmlfile=[handles.settingsDir filesep 'models' filesep flist(i).name filesep 'xml' filesep lower(flist(i).name) '.xml'];
+                    xmlfile=[handles.settingsDir filesep 'models' filesep flist(i).name filesep 'xml' filesep 'model.'  lower(flist(i).name) '.xml'];
                 else
                     % xml file in model code dir
                     xmlfile=[dr filesep flist(i).name filesep 'xml' filesep 'model.' lower(flist(i).name) '.xml'];
@@ -109,7 +109,7 @@ if ~isempty(dr2)
                 otherwise
                     if isdeployed
                         % xml file in settings dir
-                        xmlfile=[handles.settingsDir filesep 'models' filesep flist(i).name filesep 'xml' filesep lower(flist(i).name) '.xml'];
+                        xmlfile=[handles.settingsDir filesep 'models' filesep flist(i).name filesep 'xml' filesep 'model.'  lower(flist(i).name) '.xml'];
                     else
                         % xml file in model code dir
                         xmlfile=[dr2 filesep flist(i).name filesep 'xml' filesep 'model.' lower(flist(i).name) '.xml'];

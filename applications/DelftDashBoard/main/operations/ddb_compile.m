@@ -61,7 +61,7 @@ function ddb_compile
 
 %%
 
-matlabfolder='n:/Applications/Matlab/Matlab2012a_64/';
+matlabfolder='n:/Applications/Matlab/Matlab2013b/';
 compilefolder='d:/delftdashboardsetup/';
 ddbsettingsdir='d:/ddbsettings/';
 
@@ -118,7 +118,7 @@ for j=1:length(flist)
     if flist(j).isdir
         model=flist(j).name;
         % Check if xml file exists and whether model is enabled
-        xmlfile=[inipath 'models' filesep model filesep 'xml' filesep model '.xml'];
+        xmlfile=[inipath 'models' filesep model filesep 'xml' filesep 'model.' lower(model) '.xml'];
         if exist(xmlfile,'file')
             xml=xml_load(xmlfile);
             switch lower(xml(1).enable)
@@ -145,7 +145,7 @@ for j=1:length(flist)
     if flist(j).isdir
         toolbox=flist(j).name;
         % Check if xml file exists and whether toolbox is enabled
-        xmlfile=[inipath 'toolboxes' filesep toolbox filesep 'xml' filesep toolbox '.xml'];
+        xmlfile=[inipath 'toolboxes' filesep toolbox filesep 'xml' filesep 'toolbox.' lower(toolbox) '.xml'];
         if exist(xmlfile,'file')
             xml=xml_load(xmlfile);
             switch lower(xml(1).enable)
@@ -180,7 +180,7 @@ if ~isempty(additionalToolboxDir)
         if flist(j).isdir
             toolbox=flist(j).name;
             % Check if xml file exists and whether toolbox is enabled
-            xmlfile=[additionalToolboxDir filesep toolbox filesep 'xml' filesep toolbox '.xml'];
+            xmlfile=[additionalToolboxDir filesep toolbox filesep 'xml' filesep 'toolbox.' lower(toolbox) '.xml'];
             if exist(xmlfile,'file')
                 xml=xml_load(xmlfile);
                 switch lower(xml(1).enable)

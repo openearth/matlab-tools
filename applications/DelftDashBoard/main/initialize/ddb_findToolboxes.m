@@ -63,7 +63,10 @@ function ddb_findToolboxes
 handles=getHandles;
 
 if isdeployed
-    dr=[ctfroot filesep 'ddbsettings' filesep 'toolboxes'];
+%     [status, result] = system('path');
+%     exeDir = char(regexpi(result, 'Path=(.*?);', 'tokens', 'once'));
+%     dr=[fileparts(exeDir) filesep 'data' filesep 'toolboxes' filesep];
+    dr=[ctfroot filesep 'ddbsettings' filesep 'toolboxes'];%dr=[ctfroot filesep 'toolboxes'];%
 else
     ddb_root = fileparts(which('delftdashboard.ini'));
     dr=[ddb_root filesep 'toolboxes'];

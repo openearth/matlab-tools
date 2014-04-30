@@ -125,7 +125,8 @@ for i=1:length(flist)
         switch lower(toolbox)
             case{'.','..','.svn'}
             otherwise
-                xmlfile=[inipath 'toolboxes' filesep toolbox filesep 'xml' filesep toolbox '.xml'];
+                xmlfile=[inipath 'toolboxes' filesep toolbox filesep 'xml' filesep 'toolbox.' lower(toolbox) '.xml'];
+                %xmlfile=[inipath 'toolboxes' filesep toolbox filesep 'xml' filesep toolbox '.xml'];
                 if exist(xmlfile,'file')
                     xml=xml_load(xmlfile);
                     switch lower(xml(1).enable)
@@ -153,7 +154,8 @@ if ~isempty(additionalToolboxDir)
             switch lower(toolbox)
                 case{'.','..','.svn'}
                 otherwise
-                    xmlfile=[additionalToolboxDir filesep toolbox filesep 'xml' filesep toolbox '.xml'];
+                    xmlfile=[additionalToolboxDir filesep toolbox filesep 'xml' filesep 'toolbox.' lower(toolbox) '.xml'];
+                    %xmlfile=[additionalToolboxDir filesep toolbox filesep 'xml' filesep toolbox '.xml'];
                     if exist(xmlfile,'file')
                         xml=xml_load(xmlfile);
                         switch lower(xml.enable)
