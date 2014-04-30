@@ -111,6 +111,7 @@ function varargout = delwaq_map2nc(varargin)
       OPT.mapfile = cellstr(OPT.mapfile);
    end
    
+   T.datenum = []; % for case of scalars only
    for im=1:length(OPT.mapfile)
       D(im) = delwaq('open',OPT.mapfile{im}); % needs both lga and cco
       if im==1
