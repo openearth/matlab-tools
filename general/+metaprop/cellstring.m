@@ -73,7 +73,9 @@ classdef cellstring < metaprop.base
                 % more classes means more permissive, so do seperate checks for
                 % default attributes and custom classes. If no custom classes are
                 % defined, skip the ceck
-                validateattributes(value,{'cell'},atts,self.DefiningClass.Name,self.Name)
+                if ~isempty(value)
+                    validateattributes(value,{'cell'},atts,self.DefiningClass.Name,self.Name)
+                end
                 if ~isempty(self.Classes)
                     validateattributes(value,self.Classes,{},self.DefiningClass.Name,self.Name)
                 end

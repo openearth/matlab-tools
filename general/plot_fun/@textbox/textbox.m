@@ -187,18 +187,12 @@ classdef textbox < oop.inspectable
         AnchorLocationFactors
     end
     
-    properties (Dependent,Transient)
-        Position % --> self.AnchorPosition, ha.Position
-                
+    properties (Dependent)
         % axes settings
         BackgroundColor % --> ha.Color
         Units % --> ha.Units
-        Parent = [] % --> ha.Parent
-        Visible = 'on' % --> ha.Visible
-        
-        % text settings
-        StringWrapped % --> ht.String
-        Font % --> all font properties ;
+        Visible % --> ha.Visible
+       
         FontColor % --> ht.Color
         FontAngle % --> ht.FontAngle
         FontName % --> ht.FontName
@@ -207,10 +201,17 @@ classdef textbox < oop.inspectable
         FontWeight % --> ht.FontWeight
         HorizontalAlignment % --> ht.HorizontalAlignment & ht.Position
         VerticalAlignment % --> ht.VerticalAlignment & ht.Position
-        
-        % Anchor settings
+
         AnchorVisible % --> hp.Visible
     end
+    
+    properties (Dependent,Transient)
+        Position % --> self.AnchorPosition, ha.Position
+        Parent = [] % --> ha.Parent
+        StringWrapped % --> ht.String
+        Font % --> all font properties ;
+    end
+    
     
     methods (Static)
         OutString=textwrap(UIHandle,InString,UIWidth)
@@ -307,6 +308,7 @@ classdef textbox < oop.inspectable
             self.FontName   = metaprop.font.FontName  (value);
             self.FontSize   = metaprop.font.FontSize  (value);
             self.FontWeight = metaprop.font.FontWeight(value);
+            self.FontAngle  = metaprop.font.FontAngle (value);
         end
         function set.FontColor          (self,value); self.metaprops.FontColor          .Check(value); self.ht.Color               = value; self.update(); end
         function set.FontAngle          (self,value); self.metaprops.FontAngle          .Check(value); self.ht.FontAngle           = value; self.update(); end
