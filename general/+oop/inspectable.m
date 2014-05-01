@@ -85,7 +85,7 @@ classdef (Abstract) inspectable < oop.setproperty
             % Constructor assigns value tp metaprops
             self.metaprops = self.construct_metaprops;
         end
-        %% add inspector method
+
         function inspector = inspect(self,varargin)
             % normally inspect will be called with it's metaprops, but it
             % is possible to inspect with only a subset of the metaprops

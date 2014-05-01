@@ -96,7 +96,10 @@ classdef (Abstract) setproperty < oop.handle_light
                 prop_values    = varargin(2:2:end);
             end
             
-            availabe_props = properties(self);
+            mc          = metaclass(self);
+            pLst        = mc.PropertyList;
+               
+            availabe_props = {pLst(strcmp({pLst.SetAccess},'public')).Name}';
             
             for ii = 1:length(prop_names)
                 prop_name = prop_names{ii};

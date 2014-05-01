@@ -98,18 +98,19 @@ classdef textbox < oop.inspectable
                 'Attributes',{'size', [1 2]}}
             'Position',@metaprop.doubleRow,{
                 'Category','Position'
-                'Description','Details'
+                'Description','Position of the textbox in Units'
                 'Attributes',{'size', [1 4]}}
             'BackgroundColor',@metaprop.color,{
                 'Description','Background color'}
             'Units',@metaprop.stringEnumeration,{
-                'Description','Details'
+                'Category','Position'
+                'Description','Units in which the width is set'
                 'Options',{'inches','centimeters','normalized','points','pixels','characters'}}
             'Visible',@metaprop.stringEnumeration,{
-                'Description','Details'
+                'Description','Show/hide textbox'
                 'Options',{'on','off'}}
             'String',@metaprop.cellstring,{
-                'Description','Details'
+                'Description','Text in the textbox'
                 'Attributes',{}}
             'Font',@metaprop.font,{
                 'Category','Font'}                
@@ -130,10 +131,8 @@ classdef textbox < oop.inspectable
             'FontWeight',@metaprop.stringEnumeration,{'Category','Font'
                 'Options',{'light','normal','demi','bold'}}
             'HorizontalAlignment',@metaprop.stringEnumeration,{
-                'Description','Details'
                 'Options',{'left','center','right'}}
             'VerticalAlignment',@metaprop.stringEnumeration,{
-                'Description','Details'
                 'Options',{'top','cap','middle','baseline','bottom'}}
             });
     end
@@ -166,17 +165,19 @@ classdef textbox < oop.inspectable
         Size           = [.2 .2]; % Width, Height
     end
     
-    properties (Hidden,Transient)
+    properties (SetAccess = protected,Transient)
         ha % handle of box (axes object)
         ht % handle of text inside box (text object)
         hp % handle of anchor point (line object)
+    end
+    properties (Hidden,SetAccess = protected,Transient)
         ParentPosition
         parentBeingDestroyed
         parentPositionChanged
     end
     
-    properties (Hidden)
-        StringSet  = ''% stores the string (before wrapping)
+    properties
+        String  = ''% stores the string (before wrapping)
     end
     
     properties (Dependent,Hidden,Transient)
@@ -196,7 +197,7 @@ classdef textbox < oop.inspectable
         Visible = 'on' % --> ha.Visible
         
         % text settings
-        String % --> ht.String
+        StringWrapped % --> ht.String
         Font % --> all font properties ;
         FontColor % --> ht.Color
         FontAngle % --> ht.FontAngle
@@ -298,10 +299,10 @@ classdef textbox < oop.inspectable
         function set.Parent             (self,value); self.ha.Parent = value; self.updateParentListeners; end
         function set.BackgroundColor    (self,value); self.metaprops.BackgroundColor    .Check(value); self.ha.Color               = value; end
         function set.Units              (self,value); self.metaprops.Units              .Check(value); self.ha.Units               = value; end
-        function set.Visible            (self,value); self.metaprops.Visible            .Check(value); self.ha.Visible             = value; end
+        function set.Visible            (self,value); self.metaprops.Visible            .Check(value); self.ha.Visible             = value; self.ht.Visible = value; end
         
         %% Dependent text related property setters
-        function set.String             (self,value); self.metaprops.String             .Check(value); self.StringSet              = value; self.update(); end
+        function set.String             (self,value); self.metaprops.String             .Check(value); self.String                 = value; self.update(); end
         function set.Font               (self,value); self.metaprops.Font               .Check(value);
             self.FontName   = metaprop.font.FontName  (value);
             self.FontSize   = metaprop.font.FontSize  (value);
@@ -329,7 +330,7 @@ classdef textbox < oop.inspectable
         function value = get.Position           (self); value = self.ha.Position;	         end
         
         %% Dependent text related property getters
-        function value = get.String				(self); value = self.ht.String;				 end
+        function value = get.StringWrapped      (self); value = self.ht.String;				 end
         function value = get.Font               (self) 
             isItalic = ~strcmp(self.FontAngle,'normal');
             isBold   = ~strcmp(self.FontWeight,'normal');
@@ -378,7 +379,6 @@ classdef textbox < oop.inspectable
         end
     end
     
-    %% core functions
     methods
         function updateParentListeners(self)
             % clear old listeners
@@ -460,18 +460,18 @@ classdef textbox < oop.inspectable
             self.ha.Position = self.calculatePosition();
             
             % set string and wrap it
-            self.ht.String = self.StringSet;
+            self.ht.String = self.String;
             if self.TextWrap
                 maxwidth       = 1 - self.MarginInAxesUnits(1)*2;
                 if self.ht.Extent(3) > maxwidth
                     % text is too wide, wrap it
-                    self.ht.String = self.textwrap(self.ht,self.StringSet,maxwidth);
+                    self.ht.String = self.textwrap(self.ht,self.String,maxwidth);
                 end
             end
             
             if self.FitBoxToText
-                width  = (self.Size(1) * self.ht.Extent(3)) + self.MarginInParentUnits(1)*2;
-                height = (self.Size(2) * self.ht.Extent(4)) + self.MarginInParentUnits(2)*2;
+                width  = (self.ha.Position(3) * self.ht.Extent(3)) + self.MarginInParentUnits(1)*2;
+                height = (self.ha.Position(4) * self.ht.Extent(4)) + self.MarginInParentUnits(2)*2;
                 if self.TextWrap
                     width  = self.Size(1);
                     height = max(height,self.Size(2));
@@ -492,6 +492,9 @@ classdef textbox < oop.inspectable
         end
         
         function delete(self)
+            delete(self.parentBeingDestroyed)
+            delete(self.parentPositionChanged)
+            
             if ishghandle(self.ha)
                 delete(self.ha);
             end
@@ -499,11 +502,8 @@ classdef textbox < oop.inspectable
                 delete(self.ht);
             end
             
-            delete(self.parentBeingDestroyed)
-            delete(self.parentPositionChanged)
-            
             % call superclass delete method
-            delete@handle(self);
+            delete@oop.inspectable(self);
         end
     end
 end

@@ -63,6 +63,8 @@ classdef cellstring < metaprop.base
             self.DefaultClasses    = {};
             
             self.CheckDefault();
+            
+            self.jRenderer.disable();
         end
         function Check(self,value) % error/no error
             if iscellstr(value)
@@ -100,11 +102,10 @@ classdef cellstring < metaprop.base
         function mValue = mValue(jValue)
             % conversion from java value to matlab value
             % make cellstr from string with linebreaks
-            mValue = textscan(jValue,'%s');
-            mValue = mValue{1};
-            % if sinlge line, convert cell to char
-            if isscalar(mValue)
-                mValue = mValue{1};
+            if isempty(jValue)
+                mValue = '';
+            else
+                mValue = regexp(jValue,sprintf('\n'),'split')';
             end
         end
     end
