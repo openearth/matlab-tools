@@ -31,11 +31,15 @@ if iscellstr(t0)
 end
 
 if ischar(t0)
-    if size(t0,2) > 19
-        varargout = {t0(:,20:end)};
-        t0 = t0(:,1:19);
+    if isempty(t0)
+        t1 = [] ; 
+    else
+        if size(t0,2) > 19
+            varargout = {t0(:,20:end)};
+            t0 = t0(:,1:19);
+        end
+        t1 = datenum(t0);
     end
-    t1 = datenum(t0);
 elseif isnumeric(t0)
     t1 = datestr(t0,'yyyy-mm-dd HH:MM:SS');
 elseif iscell(t0)
