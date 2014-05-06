@@ -1,7 +1,7 @@
 function [dataset,d]=muppet_determineDatasetComponent(dataset,d)
 
 %% Determine component
-switch dataset.quantity
+switch dataset.rawquantity
     case{'vector2d','vector3d'}
         if isempty(dataset.component)
             dataset.component='vector';

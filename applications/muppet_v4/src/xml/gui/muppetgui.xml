@@ -2555,6 +2555,14 @@
     </listtext>
   </element>
   <element>
+    <style>checkbox</style>
+    <position>680 80</position>
+    <variable>handles.figures(handles.activefigure).figure.antialiasing</variable>
+    <type>integer</type>
+    <tooltipstring>Select antialiasing</tooltipstring>
+    <text>Anti Aliasing</text>
+  </element>
+  <element>
     <tag>exportfigure</tag>
     <style>pushbutton</style>
     <position>630 30 120 30</position>

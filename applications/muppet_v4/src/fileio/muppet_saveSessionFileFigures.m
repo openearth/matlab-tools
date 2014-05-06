@@ -40,15 +40,19 @@ if ilayout==0
 else
     str=['figure1.' fig.format];
 end
-txt=['   OutputFile "' str '"'];
+txt=['   OutputFile   "' str '"'];
 fprintf(fid,'%s \n',txt);
 
 k=muppet_findIndex(handles.figureoption,'figureoption','name','format');
-muppet_writeOption(handles.figureoption(k).figureoption,fig,fid,3,11);
+muppet_writeOption(handles.figureoption(k).figureoption,fig,fid,3,13);
 k=muppet_findIndex(handles.figureoption,'figureoption','name','resolution');
-muppet_writeOption(handles.figureoption(k).figureoption,fig,fid,3,11);
+muppet_writeOption(handles.figureoption(k).figureoption,fig,fid,3,13);
+if fig.antialiasing
+    k=muppet_findIndex(handles.figureoption,'figureoption','name','antialiasing');
+    muppet_writeOption(handles.figureoption(k).figureoption,fig,fid,3,13);
+end
 k=muppet_findIndex(handles.figureoption,'figureoption','name','renderer');
-muppet_writeOption(handles.figureoption(k).figureoption,fig,fid,3,11);
+muppet_writeOption(handles.figureoption(k).figureoption,fig,fid,3,13);
 
 txt='';
 fprintf(fid,'%s \n',txt);

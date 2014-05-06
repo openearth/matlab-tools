@@ -260,4 +260,11 @@
     <default>zbuffer</default>
     <variable>renderer</variable>
   </figureoption>
+  <figureoption>
+    <name>antialiasing</name>
+    <keyword>AntiAliasing</keyword>
+    <type>boolean</type>
+    <default>no</default>
+    <variable>antialiasing</variable>
+  </figureoption>
 </root>

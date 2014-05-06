@@ -17,6 +17,7 @@ opt.nrannotations=0;
 
 opt.frametext=[];
 opt.useframe=0;
+opt.antialiasing=0;
 
 for ii=1:12
     opt.frametext(ii).frametext.text='';

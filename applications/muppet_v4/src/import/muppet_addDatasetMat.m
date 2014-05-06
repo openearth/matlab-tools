@@ -88,6 +88,7 @@ for ii=1:length(s.parameters)
 
     % Quantity
     if isfield(s.parameters(ii).parameter,'quantity')
+        dataset.parameters(ii).parameter.rawquantity=s.parameters(ii).parameter.quantity;
         dataset.parameters(ii).parameter.quantity=s.parameters(ii).parameter.quantity;
     end
 

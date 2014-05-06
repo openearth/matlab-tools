@@ -3,7 +3,7 @@ function frame=muppet_exportFigure(handles,ifig,mode)
 frame=[];
 
 fig=handles.figures(ifig).figure;
-
+fff=[];
 try
     if strcmp(mode,'guiexport')
         wb = waitbox('Exporting figure...');
@@ -29,10 +29,19 @@ try
                 if strcmpi(fig.orientation,'l')
                     set(gcf,'PaperOrientation','landscape');
                 end
-                
-                print (gcf,['-d' fig.format],['-r' num2str(fig.resolution)], ...
-                    ['-' lower(fig.renderer)],fig.outputfile);
+%                curfig=gcf;
+%                fff=myaa(2);
 
+                aafac=1;
+                if fig.antialiasing
+                    aafac=2;
+                end
+                print (gcf,['-d' fig.format],['-r' num2str(fig.resolution*aafac)], ...
+                    ['-' lower(fig.renderer)],fig.outputfile);
+                if fig.antialiasing
+                    aa_mvo(fig.outputfile,fig.outputfile);
+                end
+                
                 %% Test for kml files
                 if strcmpi(fig.backgroundcolor,'none')
                     a=imread(fig.outputfile);
@@ -65,4 +74,7 @@ if exist('wb') && ishandle(wb)
 end
 if ishandle(999)
     close(999);
+end
+if ishandle(fff)
+    close(fff);
 end

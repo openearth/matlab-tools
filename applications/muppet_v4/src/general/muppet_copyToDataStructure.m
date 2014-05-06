@@ -185,7 +185,12 @@ switch dataset.plane
 
     case{'tz'}
         % time stack (vertical)
-        [dataset.y,dataset.x]=meshgrid(squeeze(d.Z(1,:)),d.Time);
+        t=d.Time;
+        if size(t,1)>1 && size(t,2)>1
+            % Matrix
+            t=squeeze(t(:,1));
+        end
+        [dataset.y,dataset.x]=meshgrid(squeeze(d.Z(1,:)),t);
         dataset.y=d.Z;
         switch dataset.quantity
             case{'scalar'}

@@ -220,6 +220,7 @@ fid=dataset.fid;
 
 iblock=strmatch(lower(dataset.block),lower(dataset.blocks),'exact');
 
+dataset.rawquantity=dataset.selectedquantity;
 dataset.quantity=dataset.selectedquantity;
 
 switch dataset.tekaltype
@@ -250,9 +251,11 @@ switch dataset.tekaltype
                 parameter.val(parameter.val==999.999)=NaN;
                 parameter.val(parameter.val==-999)=NaN;
                 for ic=3:length(dataset.columnlabels)
-                    y(ic-2)=str2num(dataset.columnlabels{ic});
+                    z(ic-2)=str2num(dataset.columnlabels{ic});
                 end
-                parameter.y=repmat(y,[length(parameter.time) 1]);
+%                parameter.z=z;
+                parameter.z=repmat(z,[length(parameter.time) 1]);
+                parameter.time=repmat(parameter.time,[1 length(z)]);
         end
     case{'map'}
         parameter.x=fid.Field(iblock).Data(:,:,1);
@@ -298,6 +301,7 @@ end
 % Get values (and store in same structure format as qpread)
 d.X=muppet_extractmatrix(parameter,'x',dataset.size,timestep,istation,m,n,k);
 d.Y=muppet_extractmatrix(parameter,'y',dataset.size,timestep,istation,m,n,k);
+d.Z=muppet_extractmatrix(parameter,'z',dataset.size,timestep,istation,m,n,k);
 d.Time=muppet_extractmatrix(parameter,'time',dataset.size,timestep,istation,m,n,k);
 d.Val=muppet_extractmatrix(parameter,'val',dataset.size,timestep,istation,m,n,k);
 d.XComp=muppet_extractmatrix(parameter,'u',dataset.size,timestep,istation,m,n,k);
