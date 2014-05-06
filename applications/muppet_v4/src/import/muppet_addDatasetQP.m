@@ -236,10 +236,8 @@ for j=i1:i2
             case 1
                 par.quantity='scalar';
             case 2
-                par.rawquantity='vector2d';
                 par.quantity='vector2d';
             case 3
-                par.rawquantity='vector3d';
                 par.quantity='vector3d';
             case 4
                 par.quantity='location';
@@ -248,6 +246,7 @@ for j=i1:i2
             otherwise
                 par.quantity='unknown';
         end
+        par.rawquantity=par.quantity;
         active=1;
     else
         active=0;
