@@ -278,7 +278,7 @@ for i=1:length(element)
                 
                 element(i).element.handle=uicontrol(figh,'Style','popupmenu','String','','Position',pos,'BackgroundColor',[1 1 1]);
                 
-                for ii=1:30
+                for ii=1:100
                     texts{ii}=num2str(ii);
                 end
                 set(element(i).element.handle,'String',texts);
