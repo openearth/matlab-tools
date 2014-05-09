@@ -6,12 +6,12 @@ function Ws = sediment_settling_velocity(D,varargin)
 % By default, Ws is computed using v. Rijn (1993) for the non-cohesive
 % regime based on the sediment particle diameter D (commonly D50) [microns]
 % For particles smaller than (or equal to) 0.000065 m (cohesive regime),
-% the basic Strokes' formula (which is identical to v. Rijn (1993) as well)
+% the basic Stokes' formula (which is identical to v. Rijn (1993) as well)
 % for a single, stationary falling spherical particle is used (not incl. 
 % e.g. hindred setting, (de-)flocculation, shape effects, turbulence, etc.)
 % 
 % So far only v. Rijn (1993) is implemented for the non-cohesive regime
-% (<Form_nc> = 1) and Strokes for the cohesive regime (<Form_c> = 1).
+% (<Form_nc> = 1) and Stokes for the cohesive regime (<Form_c> = 1).
 % Feel free to implement any formulation yourself, the script is setup for
 % this, inclusion of e.g. hindred setting, flocculation, shape effects and
 % turbulence for the cohesive regime would be interesting
@@ -30,12 +30,12 @@ function Ws = sediment_settling_velocity(D,varargin)
 %    <Form_nc>    Optional, indice of formulation used for the non-cohesive
 %                 regime (D > 0.000065 m), default is 1 (v. Rijn 1993)
 %    <Form_c>     Optional, indice of formulation used for the cohesive
-%                 regime (D <= 0.000065 m), default is 1 (Strokes)
+%                 regime (D <= 0.000065 m), default is 1 (Stokes)
 %
 %  Output:
 %
 %     <Ws>         Optional, output argument in which settling
-%                  velocity (m/s) is stored (else ans is shown)
+%                  velocity (m/s) is stored (else an ans is shown)
 %
 %  Example:
 % 
@@ -181,7 +181,7 @@ for ii=1:length(D)
         warning on;
         warning(['Negative or zero sediment diameter found for indice ' num2str(ii)]);
     elseif D(ii)<=0.000065 % Entering the cohesive regime:
-        if Form_c == 1 % Strokes
+        if Form_c == 1 % Stokes
             Ws(ii,1) = ((S-1)*g*(D(ii)^2))/(18*kin_visc);
         elseif Form_c == 2
             % 2nd cohesive formulation here, if statements can be added (see e.g. v. Rijn 1993 Form_nc == 1)...
