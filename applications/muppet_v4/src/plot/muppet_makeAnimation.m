@@ -98,6 +98,7 @@ if ~isempty(animationsettings.avifilename)
                 end
             end
             avihandle = avi('initialize');
+            pause(1);
             avihandle = avi('open', avihandle,animationsettings.avifilename);
             avihandle = avi('addvideo', avihandle, animationsettings.framerate, a);
         case{'gif'}
