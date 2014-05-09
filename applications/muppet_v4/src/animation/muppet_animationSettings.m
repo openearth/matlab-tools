@@ -39,6 +39,14 @@ if isempty(varargin)
         
         [handles.animationsettings,ok]=gui_newWindow(handles.animationsettings,'xmldir',handles.xmlguidir, ...
             'xmlfile','animationsettings.xml','iconfile',[handles.settingsdir 'icons' filesep 'deltares.gif']);
+
+        % Check if avi settings have been set
+        if strcmpi(handles.animationsettings.format,'avi')
+            if isempty(handles.animationsettings.avioptions)
+                aviops=avi('options');
+                handles.animationsettings.avioptions=aviops;
+            end
+        end
         
         handles.animationsettings.set=1;
         
@@ -65,7 +73,7 @@ end
 %%
 function editAviOptions
 h=gui_getUserData;
-aviops=writeavi('getoptions', h.selectbits);
+aviops=avi('options');
 h.avioptions=aviops;
 gui_setUserData(h);
 
@@ -73,6 +81,14 @@ gui_setUserData(h);
 function saveSettings
 
 h=gui_getUserData;
+
+% Check if avi settings have been set
+if strcmpi(h.format,'avi')
+    if isempty(h.avioptions)
+        aviops=avi('options');
+        h.avioptions=aviops;
+    end
+end
 
 [filename pathname]=uiputfile('*.ani');
 

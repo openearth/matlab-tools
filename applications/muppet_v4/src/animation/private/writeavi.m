@@ -40,8 +40,8 @@ function varargout=writeavi(varargin)
 %                                                                               
 %-------------------------------------------------------------------------------
 %   http://www.deltaressystems.com
-%   $HeadURL$
-%   $Id$
+%   $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/muppet_v4/src/plot/private/writeavi.m $
+%   $Id: writeavi.m 10043 2014-01-20 15:58:56Z ormondt $
 
 %   Compile using Visual Studio 6.0:
 %   > mex writeavi.cpp vfw32.lib user32.lib

@@ -34,6 +34,7 @@ function varargout=avi(cmd,varargin)
 %#function writeavi
 
 persistent AVIOptions
+
 if isempty(AVIOptions)
     AVIOptions.C8 = [];
     AVIOptions.C24 = [];

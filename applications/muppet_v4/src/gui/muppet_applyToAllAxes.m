@@ -29,6 +29,8 @@ if fig.nrsubplots>0
             plt1.ydecimals=plt0.ydecimals;
             plt1.xscale=plt0.xscale;
             plt1.yscale=plt0.yscale;
+            plt1.timegrid=plt0.timegrid;
+            plt1.datetickformat=plt0.datetickformat;
             plt1.yearmin=plt0.yearmin;
             plt1.yearmax=plt0.yearmax;
             plt1.xtickmultiply=plt0.xtickmultiply;

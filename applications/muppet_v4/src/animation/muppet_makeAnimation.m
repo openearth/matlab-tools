@@ -1,6 +1,6 @@
 function muppet_makeAnimation(handles,ifig)
 
-persistent AVIOptions
+%persistent AVIOptions
 
 animationsettings=handles.animationsettings;
 
@@ -9,7 +9,7 @@ datasets=handles.datasets;
 
 % aviops=animationsettings.avioptions;
 
-AVIOptions.C24=animationsettings.avioptions;
+%AVIOptions.C24=animationsettings.avioptions;
 
 if animationsettings.makekmz
     % Change plot positions etc. for KMZ option
@@ -42,6 +42,27 @@ handles.figures(ifig).figure.units='centimeters';
 handles.figures(ifig).figure.cm2pix=1;
 handles.figures(ifig).figure.fontreduction=1;
 
+switch lower(animationsettings.format)
+    case{'mp4'}
+        if length(animationsettings.avifilename)>4
+            if ~strcmpi(animationsettings.avifilename(end-3:end),'.mp4')
+                animationsettings.avifilename=[animationsettings.avifilename '.mp4'];
+            end
+        end
+    case{'avi'}
+        if length(animationsettings.avifilename)>4
+            if ~strcmpi(animationsettings.avifilename(end-3:end),'.avi')
+                animationsettings.avifilename=[animationsettings.avifilename '.avi'];
+            end
+        end
+    case{'gif'}
+        if length(animationsettings.avifilename)>4
+            if ~strcmpi(animationsettings.avifilename(end-3:end),'.gif')
+                animationsettings.avifilename=[animationsettings.avifilename '.gif'];
+            end
+        end
+end
+
 if exist(animationsettings.avifilename,'file')
     delete(animationsettings.avifilename);
 end
@@ -72,41 +93,21 @@ a=a(1:sz(1),1:sz(2),:);
 if exist('tmpavi.png','file')
     delete('tmpavi.png');
 end
-%clear a
 
 % Open animation file
 if ~isempty(animationsettings.avifilename)
     % No movie is made when filename is empty
     switch lower(animationsettings.format)
         case{'mp4'}
-            if length(animationsettings.avifilename)>4
-                if ~strcmpi(animationsettings.avifilename,'.mp4')
-                    animationsettings.avifilename=[animationsettings.avifilename '.mp4'];
-                end
-            end
             avihandle=VideoWriter(animationsettings.avifilename,'MPEG-4');
-%            avihandle=VideoWriter(animationsettings.avifilename,'Motion JPEG AVI');
-%            avihandle=VideoWriter(animationsettings.avifilename,'Motion JPEG 2000');
-            
             avihandle.FrameRate=animationsettings.framerate;
             avihandle.Quality=animationsettings.quality;
             open(avihandle);
         case{'avi'}
-            if length(animationsettings.avifilename)>4
-                if ~strcmpi(animationsettings.avifilename,'.avi')
-                    animationsettings.avifilename=[animationsettings.avifilename '.avi'];
-                end
-            end
             avihandle = avi('initialize');
             pause(1);
             avihandle = avi('open', avihandle,animationsettings.avifilename);
             avihandle = avi('addvideo', avihandle, animationsettings.framerate, a);
-        case{'gif'}
-            if length(animationsettings.avifilename)>4
-                if ~strcmpi(animationsettings.avifilename,'.gif')
-                    animationsettings.avifilename=[animationsettings.avifilename '.gif'];
-                end
-            end
     end
 end
         

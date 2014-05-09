@@ -1050,6 +1050,7 @@ switch lower(handles.animationsettings.format)
     case{'avi'}
         if nhor>2000 || nver>2000
             muppet_giveWarning('text','Animation output very large! Consider reducing the resolution.');
+%            return
         end
 end
 

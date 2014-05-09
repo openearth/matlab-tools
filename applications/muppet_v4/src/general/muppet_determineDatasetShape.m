@@ -188,7 +188,7 @@ else
                 ndim=1;
             else
                 switch quantity
-                    case{'location','scalar','xy'}
+                    case{'location','scalar','xy','vector2d'}
                         plane='xy';
                         ndim=1;
                 end
