@@ -18,6 +18,7 @@ OPT.Filrgh  = '';
 OPT.Filvico = '';
 OPT.Fildico = '';
 OPT.Filwnd  = '';
+OPT.Filtem  = '';
 OPT                   = setproperty(OPT,varargin);
 mdu         = OPT.mdu;
 
@@ -117,6 +118,18 @@ if ~isempty(OPT.Filwnd)
     ext_force(i_force).operand  = 'O';
 end
 
+%% write temperature
+if ~isempty(OPT.Filtem)
+    i_force = i_force + 1;
+    ext_force(i_force).quantity = 'humidity_airtemperature_cloudiness';
+    ext_force(i_force).filename = mdu.Filtem;
+    ext_force(i_force).filetype = 1;
+    ext_force(i_force).method   = 1;
+    ext_force(i_force).operand  = 'O';
+end
+
+
+
 %% write the external forcing structure to the external forcing file
 if ~isempty(ext_force)
     if ~isempty(OPT.Filcomments)
@@ -134,6 +147,7 @@ if ~isempty(mdu)
     if isfield(mdu,'Filvico') mdu = rmfield(mdu,'Filvico');end
     if isfield(mdu,'Fildico') mdu = rmfield(mdu,'Fildico');end
     if isfield(mdu,'Filwnd' ) mdu = rmfield(mdu,'Filwnd') ;end
+    if isfield(mdu,'Filtem' ) mdu = rmfield(mdu,'Filtem') ;end
     mdu.external_forcing.ExtForceFile = [name_mdu '.ext'];
     varargout{1} = mdu;
 end

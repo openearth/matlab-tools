@@ -2,6 +2,7 @@ function mdu = d3d2dflowfm_viscosity(mdf,mdu,name_mdu)
 
 % d3d2dflowfm_viscosity : Writes viscosity/diffusvity information to D-Flow FM input files
 
+%% Horizontal
 [~,nameshort,~] = fileparts(name_mdu);
 mdu.Filvico     = '';
 mdu.Fildico     = '';
@@ -28,9 +29,13 @@ else
     mdu.physics.Dicouv = mdf.dicouv;
 end
 
-%
-% Fill additonal parameters releated to viscosity
-%
+%% Vertical
+if mdu.geometry.Kmx > 1
+    mdu.physics.Vicoww = mdf.vicoww;
+    mdu.physics.Dicoww = mdf.dicoww;
+end
+
+%% Fill additonal parameters releated to viscosity
 mdu.physics.Smagorinsky = 0.0;
 mdu.physics.Elder       = 0;
 mdu.physics.irov        = 0;

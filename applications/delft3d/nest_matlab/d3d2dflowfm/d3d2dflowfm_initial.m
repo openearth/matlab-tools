@@ -11,11 +11,15 @@ if simona2mdf_fieldandvalue(mdf,'filic')
     mdu.geometry.WaterLevIni      = -999.999;
     mdu.geometry.WaterLevIniFile  = [nameshort '_ini_wlev.xyz'];
     filic                         = [mdf.pathd3d filesep mdf.filic ];
-    if ~mdu.physics.Salinity
+    if ~mdu.physics.Salinity && mdu.physics.Temperature == 0
         d3d2dflowfm_initial_xyz(filgrd,filic,[name_mdu  '_ini_wlev.xyz']);
-    else
+    elseif mdu.physics.Salinity && mdu.physics.Temperature == 0
         mdu.Filini                         = [nameshort '_ini_sal.xyz'];
-        d3d2dflowfm_initial_xyz(filgrd,filic,[name_mdu  '_ini_wlev.xyz'],[name_mdu '_ini_sal.xyz']);
+        d3d2dflowfm_initial_xyz(filgrd,filic,[name_mdu  '_ini_wlev.xyz'], ...
+                               'filic_sal',[name_mdu '_ini_sal.xyz']    , ...
+                               'kmax'     ,mdu.geometry.Kmx             );
+    else
+        % ic temperature to implement yet
     end
 else
 
@@ -29,6 +33,9 @@ else
     end
     mdu.geometry.WaterLevIni = mdf.zeta0;
     if mdu.physics.Salinity
-        mdu.physics.InitialSalinity = mdf.s0;
+        mdu.physics.InitialSalinity = mdf.s0(1);
+    end
+    if mdu.physics.Temperature > 0
+        mdu.physics.InitialTemperature = mdf.t0(1);
     end
 end

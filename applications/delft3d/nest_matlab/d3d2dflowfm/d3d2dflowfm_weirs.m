@@ -67,7 +67,7 @@ end
 % finally write to the unstruc thd file and fill in the name of the thd filw in the mdu_struct
 
 if ~isempty(LINE)
-    mdu.geometry.WeirFile    = [name_mdu '_2dw.pli'];
-    dflowfm_io_xydata('write',mdu.geometry.WeirFile,LINE);
-    mdu.geometry.WeirFile    = simona2mdf_rmpath(mdu.geometry.WeirFile);
+    mdu.geometry.ThindykeFile = [name_mdu '_2dw.pli'];
+    dflowfm_io_xydata('write',mdu.geometry.ThindykeFile,LINE);
+    mdu.geometry.ThindykeFile = simona2mdf_rmpath(mdu.geometry.ThindykeFile);
 end

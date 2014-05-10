@@ -10,14 +10,15 @@ function mdu = d3d2dflowfm_inital_xyz(varargin)
 %         WARNING: It is assumed that the Delft3D-Flow simulation is depth averaged and the last
 %                  Field in the initial condition file represents salinity
 
-salinity  = false;
+OPT.filic_sal     = '';
+OPT.filic_tem     = '';
+OPT.kmax          =  1;
+OPT               = setproperty(OPT,varargin{4:end});
+
+
 filgrd    = varargin{1};
 filic     = varargin{2};
 filic_wl  = varargin{3};
-if nargin == 4
-    salinity  = true;
-    filic_sal = varargin{4};
-end
 
 %% Get grid related information
 grid  = delft3d_io_grd('read',filgrd);
@@ -42,14 +43,30 @@ LINE.DATA = num2cell(tmp(nonan,:));
 %% Write inial water level data to unstruc xyz file
 dflowfm_io_xydata('write',filic_wl,LINE);
 
-%% Salinity (assume 2Dh, last field = salinity)
-if salinity
-
-    tmp(:,3) = reshape(ic(4).Data',mmax*nmax,1);
+%% Salinity
+if ~isempty(OPT.filic_sal)
+    i_start = 2*OPT.kmax + 2;
+    tmp(:,3) = reshape(ic(i_start).Data',mmax*nmax,1);
 
     %% Fill line structure with salinity values
     LINE.DATA = num2cell(tmp(nonan,:));
 
     %% Write inial salinity data to unstruc xyz file
-    dflowfm_io_xydata('write',filic_sal,LINE);
+    dflowfm_io_xydata('write',OPT.filic_sal,LINE);
+end
+
+%% Temperature
+if ~isempty(OPT.filic_tem)
+    if ~isempty(OPT.filic_sal)
+       i_start = 3*OPT.kmax + 2;
+    else
+       i_start = 2*OPT.kmax + 2;
+    end
+    tmp(:,3) = reshape(ic(i_start).Data',mmax*nmax,1);
+
+    %% Fill line structure with salinity values
+    LINE.DATA = num2cell(tmp(nonan,:));
+
+    %% Write inial salinity data to unstruc xyz file
+    dflowfm_io_xydata('write',OPT.filic_tem,LINE);
 end
