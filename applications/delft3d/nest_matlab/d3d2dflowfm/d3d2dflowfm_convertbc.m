@@ -53,44 +53,42 @@ for i_pli = 1: length(filpli)
             %% Astronomical boundary forcing
             case 'a'
                 if OPT.Astronomical
-                    %% Open file with astronomical bc
+                    %% Filename with astronomical bc
                     filename = [path_output filesep LINE.Blckname '_' num2str(i_pnt,'%0.4d') '.cmp'];
-                    fid      = fopen(filename,'wt');
 
-                    %% Write the general information
-                    fprintf(fid,['* COLUMNN=3','\n']);
-                    fprintf(fid,['* COLUMN1=Astronomical Componentname','\n']);
-                    fprintf(fid,['* COLUMN2=Amplitude (ISO)','\n']);
-                    fprintf(fid,['* COLUMN3=Phase (deg)','\n']);
-                    pntname  = strtrim(LINE.DATA{i_pnt,3}(index(3):index(4) - 1));
+                    %% Put General information in Series struct
+                    SERIES.Comments{1} = '* COLUMNN=3';
+                    SERIES.Comments{2} = '* COLUMN1=Astronomical Componentname';
+                    SERIES.Comments{3} = '* COLUMN2=Amplitude (ISO)';
+                    SERIES.Comments{4} = '* COLUMN3=Phase (deg)';
 
                     %% Find correct label and write names, amplitudes and phases
+                    pntname  = strtrim(LINE.DATA{i_pnt,3}(index(3):index(4) - 1));
                     for i_bca=1:length(bca.DATA);
                         if strcmp(pntname,bca.DATA(i_bca).label);
                             for i_cmp=1:length(bca.DATA(i_bca).names);
-                                information  = sprintf('%-8s %12.4f %12.4f',bca.DATA(i_bca).names{i_cmp}, ...
-                                    bca.DATA(i_bca).amp(i_cmp)  , ...
-                                    bca.DATA(i_bca).phi(i_cmp)  );
-                                fprintf(fid,[information,'\n']);
+                                SERIES.Values {i_cmp,1} = bca.DATA(i_bca).names{i_cmp};
+                                SERIES.Values {i_cmp,2} = bca.DATA(i_bca).amp(i_cmp);
+                                SERIES.Values {i_cmp,3} = bca.DATA(i_bca).phi(i_cmp);
                             end
-                            fclose(fid);
                             break
                         end
                     end
+                    dflowfm_io_series('write',filename,SERIES);
+                    clear SERIES
                 end
 
             %% Harmonic boundary forcing
             case 'h'
                 if OPT.Harmonic
-                    %% Open file with harmonic bc
+                    %% Filename with harmonic bc
                     filename = [path_output filesep LINE.Blckname '_' num2str(i_pnt,'%0.4d') '.cmp'];
-                    fid      = fopen(filename,'wt');
 
                     %% Write some general information
-                    fprintf(fid,['* COLUMNN=3','\n']);
-                    fprintf(fid,['* COLUMN1=Period (min)','\n']);
-                    fprintf(fid,['* COLUMN2=Amplitude (ISO)','\n']);
-                    fprintf(fid,['* COLUMN3=Phase (deg)','\n']);
+                    SERIES.Comments{1} = '* COLUMNN=3';
+                    SERIES.Comments{2} = '* COLUMN1=Period (min)';
+                    SERIES.Comments{3} = '* COLUMN2=Amplitude (ISO)';
+                    SERIES.Comments{4} = '* COLUMN3=Phase (deg)';
 
                     %% find harmonic boundary number and side
 
@@ -102,16 +100,18 @@ for i_pli = 1: length(filpli)
                     end
 
                     %% Write harmonic data to forcing file
-                    string  = sprintf('%12.4f %12.4f %12.4f', 0.0, a0(i_side,i_harm),0.0);
-                    fprintf(fid,[string '\n']);
+                    SERIES.Values(1,1) = 0.0;
+                    SERIES.Values(1,2) = a0(i_side,i_harm);
+                    SERIES.Values(1,3) = 0.0;
 
                     for i_freq = 1:no_freq
-                        string = sprintf('%12.4f %12.4f %12.4f', freq(i_freq)                  , ...
-                                                                 amp (i_side,i_harm,i_freq)    , ...
-                                                                 phases (i_side,i_harm,i_freq) ) ;
-                        fprintf(fid,[string '\n']);
+                        SERIES.Values(i_freq+1,1) = freq(i_freq);
+                        SERIES.Values(i_freq+1,2) = amp (i_side,i_harm,i_freq);
+                        SERIES.Values(i_freq+1,3) = phases (i_side,i_harm,i_freq);
                     end
-                    fclose(fid);
+                    SERIES.Values = num2cell(SERIES.Values);
+                    dflowfm_io_series('write',filename,SERIES);
+                    clear SERIES
                 end
             %% Time series forcing data
             case 't'
@@ -119,10 +119,9 @@ for i_pli = 1: length(filpli)
                     filename = [path_output filesep LINE.Blckname '_' num2str(i_pnt,'%0.4d') '.tim'];
 
                     %% find Time series table number
-                    bndname = LINE.DATA{i_pnt,3}(index(3):end-5); 
+                    bndname = LINE.DATA{i_pnt,3}(index(3):end-5);
                     for i_table = 1: bct.NTables
                         name_bct = bct.Table(i_table).Location;
-%                        name_bct (name_bct == ' ') = '';
                         if strcmp(strtrim(bndname),strtrim(name_bct))
                             nr_table = i_table;
                         end
@@ -138,6 +137,7 @@ for i_pli = 1: length(filpli)
                     else                                                             %end B
                         SERIES.Values(:,2) = bct.Table(nr_table).Data(:,3);
                     end
+                    SERIES.Values = num2cell(SERIES.Values);
 
                     %% General Comments
                     SERIES.Comments{1} = '* COLUMNN=2';
@@ -145,7 +145,6 @@ for i_pli = 1: length(filpli)
                     SERIES.Comments{3} = '* COLUMN2=Value';
 
                     dflowfm_io_series('write',filename,SERIES);
-
                     clear SERIES
                 end
         end

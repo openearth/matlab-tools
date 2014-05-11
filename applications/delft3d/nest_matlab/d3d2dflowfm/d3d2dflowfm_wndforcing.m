@@ -20,6 +20,7 @@ if ~isempty (filwnd)
     SERIES.Values(:,1) = wnd.data.minutes;
     SERIES.Values(:,2) = wnd.data.speed;
     SERIES.Values(:,3) = wnd.data.direction;
+    SERIES.Values      = num2cell(SERIES.Values);
 
     %
     % General Comments

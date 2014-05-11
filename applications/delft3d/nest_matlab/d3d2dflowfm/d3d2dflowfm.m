@@ -10,10 +10,11 @@ Gen_inf    = {'This tool converts a Delft3D-Flow mdf file into an D-Dlow FM mdu 
               'This tool does a basic first conversion'                                                            ;
               'Not everything is converted:'                                                                       ;
               '- Restart information is not converted yet'                                                         ;
-              '- Wind    information (space varying) is not converted yet'                                                         ;
+              '- Wind    information (space varying) is not converted yet'                                         ;
               '- Tracer  information is not converted yet'                                                         ;
-              'PLEASE CHECK CAREFULLY( USE AT OWN RISK)'                                                           ;                                                                          ;
-              ' '                                                                                                  ;
+              ' '                                                                                                  ;   
+              'PLEASE CHECK CAREFULLY( USE AT OWN RISK)'                                                           ;                                                                                        ' '                                                                                                  
+              ' '                                                                                                  ; 
               'If you encounter problems, please do not hesitate to contact me'                                    ;                                                                                   ;
               'Theo.vanderkaaij@deltares.nl'                                                                      };
 
@@ -92,13 +93,13 @@ mdu = d3d2dflowfm_numerical(mdf,mdu,name_mdu);
 
 if simona2mdf_fieldandvalue(mdf,'filbnd')
     simona2mdf_message('Generating D-Flow FM Boundary definition          ','Window','D3D2DFLOWFM Message');
-    mdu.Filbnd = d3d2dflowfm_bnd2pli([path_mdf filesep mdf.filcco],[path_mdf filesep mdf.filbnd],name_mdu);
+    mdu.Filbnd = d3d2dflowfm_bnd2pli_tk([path_mdf filesep mdf.filcco],[path_mdf filesep mdf.filbnd],name_mdu);
 else
     mdu.Filbnd = '';
 end
 
 if mdu.physics.Salinity && simona2mdf_fieldandvalue(mdf,'filbnd')        % Salinity, write _sal pli files
-    tmp = d3d2dflowfm_bnd2pli([path_mdf filesep mdf.filcco],[path_mdf filesep mdf.filbnd],name_mdu,'Salinity',true);
+    tmp = d3d2dflowfm_bnd2pli_tk([path_mdf filesep mdf.filcco],[path_mdf filesep mdf.filbnd],name_mdu,'Salinity',true);
     mdu.Filbnd = [mdu.Filbnd tmp];
 end
 

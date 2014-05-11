@@ -18,19 +18,19 @@ switch lower(cmd)
       SERIES = [];
       i_comm = 0;
       i_row  = 0;
-     
+
       %% Open File
       fid = fopen(fname,'r');
       while ~feof(fid)
           tline = strtrim(fgetl(fid));
           if ~isempty(tline)
               if strcmp(tline(1),'*')
-                  
+
                   %% Read comment lines
                   i_comm = i_comm + 1;
                   SERIES.Comments{i_comm} = strtrim(tline);
               else
-                  
+
                   %% Read the values (as long as you can find numbers!)
                   i_col = 0;
                   i_row = i_row + 1;
@@ -39,15 +39,15 @@ switch lower(cmd)
                       value = str2num(tline(index(i_val):index(i_val+1) - 1));
                       if ~isempty(value)
                           i_col = i_col + 1;
-                          SERIES.Values(i_row,i_col) = value;
+                          SERIES.Values{i_row,i_col} = value;
                       else
-                          break
+                          SERIES.Values{i_row,i_col} = strtrim(tline(index(i_val):index(i_val+1) - 1));
                       end
                   end
               end
           end
       end
-      
+
       %% Close the file and assign SERIES
       fclose (fid);
       varargout{1} = SERIES;
@@ -84,13 +84,20 @@ switch lower(cmd)
       if ~isempty(Values)
           n_rows = size(Values,1);
           n_cols = size(Values,2);
-          format = '%12.3f ';
-          format = [format repmat('%12.6f ',1,n_cols - 1) '\n'];
+          format = '';
+          for i_col = 1: n_cols
+              if ischar(Values{1,i_col})
+                  format = [format '%-8s '];
+              else
+                  format = [format '%12.6f '];
+              end
+          end
 
-          for i_row = 1:n_rows
-             fprintf(fid,format,Values(i_row,:));
+          format = [format '\n'];
+          for i_row = 1: n_rows
+             fprintf(fid,format,Values{i_row,:});
           end
       end
-      
+
       fclose(fid);
 end
