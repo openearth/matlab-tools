@@ -145,6 +145,7 @@ end
 fprintf(fid2,'%s\n'  ,['WaterLevIni                         = ',num2str(mdfkeywds.zeta0,'%5.7f')                 ,'                          # Initial water level']);
 fprintf(fid2,'%s\n'  ,['Bedlevuni                           = ',num2str(mdfkeywds.depuni,'%5.7f')                ,'                         # Uniform bottom level, (only if bedlevtype>=3, used at missing z values in netfile']);
 fprintf(fid2,'%s\n'  ,['Bedslope                            =                                    # bedslopeination, sets zk = bedlevuni + x*bedslope ans sets zbndz = xbndz*bedslope']);
+dpsopt         = 3;
 if isfield(mdfkeywds,'dpsopt') == 1;
     if     strcmpi(mdfkeywds.dpsopt,'mean');
         dpsopt = 3;

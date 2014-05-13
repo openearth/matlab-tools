@@ -13,7 +13,7 @@ convertGuiDirectoriesCheck;
 %%% GUI CHECKS
 
 % Check if the ext file name has been specified (D-Flow FM)
-extfile     = get(handles.edit10,'String');
+extfile     = deblank2(get(handles.edit10,'String'));
 if isempty(extfile);
     if exist('wb'); close(wb); end;
     errordlg('The external forcings file name has not been specified.','Error');
@@ -21,7 +21,7 @@ if isempty(extfile);
 end
 
 % Check if the roughness file name has been specified (D-Flow FM)
-wndfile     = get(handles.edit33,'String');
+wndfile     = deblank2(get(handles.edit33,'String'));
 jawnd       = 1;
 if isempty(wndfile);
     wndfile = [];
@@ -29,7 +29,7 @@ if isempty(wndfile);
 end
 
 % Check if the roughness file name has been specified (D-Flow FM)
-spwfile     = get(handles.edit35,'String');
+spwfile     = deblank2(get(handles.edit35,'String'));
 jaspw       = 1;
 if isempty(spwfile);
     spwfile = [];
@@ -37,7 +37,7 @@ if isempty(spwfile);
 end
 
 % Check if the roughness file name has been specified (D-Flow FM)
-rghfile     = get(handles.edit24,'String');
+rghfile     = deblank2(get(handles.edit24,'String'));
 jargh       = 1;
 if isempty(rghfile);
     rghfile = [];
@@ -45,7 +45,7 @@ if isempty(rghfile);
 end
 
 % Check if the viscosity file name has been specified (D-Flow FM)
-visfile     = get(handles.edit25,'String');
+visfile     = deblank2(get(handles.edit25,'String'));
 javis       = 1;
 if isempty(visfile);
     visfile = [];
@@ -53,7 +53,7 @@ if isempty(visfile);
 end
 
 % Check if the initial conditions file name has been specified (D-Flow FM)
-inifile     = get(handles.edit28,'String');
+inifile     = deblank2(get(handles.edit28,'String'));
 jaini       = 1;
 if isempty(inifile);
     inifile = [];

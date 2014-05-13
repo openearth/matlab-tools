@@ -21,13 +21,13 @@ if ~isempty(filespw);
     filespw = [pathin,'\',filespw];
     if exist(filespw,'file')==0;
         if exist('wb'); close(wb); end;
-        errordlg('The specified unimagdir wind file does not exist.','Error');
+        errordlg('The specified spiderweb wind file does not exist.','Error');
         set(handles.edit35,'String','');
         break;
     end
 else
     if exist('wb'); close(wb); end;
-    errordlg('The unimagdir wind file name has not been specified.','Error');
+    errordlg('The spiderweb wind file name has not been specified.','Error');
     set(handles.edit35,'String','');
     break;
 end

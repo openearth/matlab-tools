@@ -12,34 +12,42 @@ convertGuiDirectoriesCheck;
 
 %%% GUI CHECKS
 
-% Check if the mdf file name has been specified (Delft3D)
-filemdf     = get(handles.edit3,'String');
-filemdf     = deblank2(filemdf);
-if ~isempty(filemdf);
-    filemdf = [pathin,'\',filemdf];
-    if exist(filemdf,'file')==0;
+% In case of conversion of all stuff
+if convertallstuff == 1;
+    
+    % Check if the mdf file name has been specified (Delft3D)
+    filemdf     = get(handles.edit3,'String');
+    filemdf     = deblank2(filemdf);
+    if ~isempty(filemdf);
+        filemdf = [pathin,'\',filemdf];
+        if exist(filemdf,'file')==0;
+            if exist('wb'); close(wb); end;
+            errordlg('The specified mdf file does not exist.','Error');
+            break;
+        end
+    else
         if exist('wb'); close(wb); end;
-        errordlg('The specified mdf file does not exist.','Error');
+        errordlg('The mdf file name has not been specified.','Error');
         break;
     end
-else
-    if exist('wb'); close(wb); end;
-    errordlg('The mdf file name has not been specified.','Error');
-    break;
-end
-
-% Check type of bathymetry data
-mdfcontents = delft3d_io_mdf('read',filemdf);
-mdfkeywds   = mdfcontents.keywords;
-if isfield(mdfkeywds,'dpsopt') == 1;
-    finds            = find(mdfkeywds.dpsopt == 'S');
-    if strcmpi(mdfkeywds.dpsopt,'DP');
-        dpsopt       = 0;
+    
+    % Check type of bathymetry data
+    mdfcontents = delft3d_io_mdf('read',filemdf);
+    mdfkeywds   = mdfcontents.keywords;
+    if isfield(mdfkeywds,'dpsopt') == 1;
+        finds            = find(mdfkeywds.dpsopt == 'S');
+        if strcmpi(mdfkeywds.dpsopt,'DP');
+            dpsopt       = 0;
+        else
+            dpsopt       = 1;
+        end
     else
-        dpsopt       = 1;
+        dpsopt           = 1;
     end
+
+% If not: set default
 else
-    dpsopt           = 1;
+    dpsopt               = 3;
 end
 
 % Check if the input is correct

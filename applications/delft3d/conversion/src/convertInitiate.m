@@ -92,8 +92,20 @@ if isfield(mdfkeywds,'FilbcH') | isfield(mdfkeywds,'filbch');
     set(handles.edit13,'String',mdfkeywds.filbch);
 end
 
+% Read the mdf file (only to check if salinity is included)
+if isfield(mdfkeywds,'sub1') == 1;
+    finds            = find(mdfkeywds.sub1 == 'S');
+    if isempty(finds);
+        salinity     = false;
+    else
+        salinity     = true;
+    end
+else
+    salinity         = false;
+end
+
 % Check if bcc file is specified in mdf file; if yes, then put name in edit box
-if isfield(mdfkeywds,'FilbcC') | isfield(mdfkeywds,'filbcc');
+if (isfield(mdfkeywds,'FilbcC') | isfield(mdfkeywds,'filbcc')) & salinity == true;
     set(handles.edit14,'String',mdfkeywds.filbcc);
 end
 
@@ -198,49 +210,49 @@ end
 
 % Check if obs file is specified in mdf file; if yes, apply mdu core name
 if isfield(mdfkeywds,'FilSta') | isfield(mdfkeywds,'filsta');
-    if ~isempty(get(handles.edit15,'String'));
+    if ~isempty(deblank2(get(handles.edit15,'String')));
         set(handles.edit22,'String',[mducore,'_obs.xyn']);
     end
 end
 
 % Check if crs file is specified in mdf file; if yes, apply mdu core name
 if isfield(mdfkeywds,'FilCrs') | isfield(mdfkeywds,'filcrs');
-    if ~isempty(get(handles.edit16,'String'));
+    if ~isempty(deblank2(get(handles.edit16,'String')));
         set(handles.edit31,'String',[mducore,'_crs.pli']);
     end
 end
 
 % Check if rgh file is specified in mdf file; if yes, apply mdu core name
 if isfield(mdfkeywds,'FilRgh') | isfield(mdfkeywds,'filrgh');
-    if ~isempty(get(handles.edit17,'String'));
+    if ~isempty(deblank2(get(handles.edit17,'String')));
         set(handles.edit24,'String',[mducore,'_rgh.xyz']);
     end
 end
 
 % Check if edy file is specified in mdf file; if yes, apply mdu core name
 if isfield(mdfkeywds,'FilEdy') | isfield(mdfkeywds,'filedy');
-    if ~isempty(get(handles.edit18,'String'));
+    if ~isempty(deblank2(get(handles.edit18,'String')));
         set(handles.edit25,'String',[mducore,'_edy.xyz']);
     end
 end
 
 % Check if thd file is specified in mdf file; if yes, apply mdu core name
 if isfield(mdfkeywds,'FilTd') | isfield(mdfkeywds,'filtd');
-    if ~isempty(get(handles.edit20,'String'));
+    if ~isempty(deblank2(get(handles.edit20,'String')));
         set(handles.edit27,'String',[mducore,'_thd.pli']);
     end
 end
 
 % Check if dry file is specified in mdf file; if yes, apply mdu core name
 if isfield(mdfkeywds,'FilDry') | isfield(mdfkeywds,'fildry');
-    if ~isempty(get(handles.edit19,'String'));              
+    if ~isempty(deblank2(get(handles.edit19,'String')));              
         set(handles.edit27,'String',[mducore,'_thd.pli']);
     end
 end
 
 % Check if ini file is specified in mdf file; if yes, apply mdu core name
 if isfield(mdfkeywds,'FilIc') | isfield(mdfkeywds,'filic');
-    if ~isempty(get(handles.edit21,'String'));
+    if ~isempty(deblank2(get(handles.edit21,'String')));
         set(handles.edit28,'String',[mducore,'_ini.xyz']);
     end
 end
