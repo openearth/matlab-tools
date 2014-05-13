@@ -31,141 +31,35 @@ end
 % Catch the polyline names for the boundary conditions
 readpli     = get(handles.listbox1,'String');
 
+
+%%% ACTUAL CONVERSION OF THE BCH DATA
+
 % Filter the salinity-plis out
 clear filepli;
+i_pli       = 0;
 for i=1:length(readpli);
     pli     = readpli{i};
     if strcmpi(pli(end-7:end),'_sal.pli');
         continue
     else
-        filepli(i,:)  = readpli{i};
+        i_pli          = i_pli + 1;
+        filepli{i_pli} = [pathout filesep readpli{i}];
     end
 end
 
-% Read the bch-file (comparable style as existent OET-files)
-fid               = fopen(filebch,'r');
-j                 = 1;
-I                 = 1e8;
-tline             = fgetl(fid);
-freqs             = str2num(tline);
-for i=1:length(freqs);
-    BCH.data(i).freq                = freqs(i);
-end
-tline             = fgetl(fid);
-for i=1:I;
-    tline         = fgetl(fid);
-    if isempty(str2num(tline));
-        J                           = j - 1;
-        for j=1:J;
-            tline                   = fgetl(fid);
-            phase                   = str2num(tline);
-            for k=1:length(phase);
-                BCH.data(j).phi(k)  = phase(k);
-            end
-        end
-        break;
-    else
-        amplitude                   = str2num(tline);
-        BCH.data(j).mean            = amplitude(1);
-        for k=1:length(amplitude)-1;
-            BCH.data(j).amp(k)      = amplitude(k+1);
-        end
-        j                           = j + 1;
-    end
-end
-fclose all;
-
-% Rearrange the structure
-K                 = size(BCH.data,2);
-I1                = j/2;
-I2                = j  ;
-for k=2:K;
-    if isempty(BCH.data(k).freq);
-        break;
-    else
-        freq(k-1) = BCH.data(k).freq;
-    end
-end
-for i=1:I1;
-    meanA(i,1)    = BCH.data(i).mean;
-    ampA(i,:)     = BCH.data(i).amp(:);
-    phiA(i,:)     = BCH.data(i).phi(:);
-end
-j                 = 1;
-for i=I1+1:I2;
-    meanB(j,1)    = BCH.data(i).mean;
-    ampB(j,:)     = BCH.data(i).amp(:);
-    phiB(j,:)     = BCH.data(i).phi(:);
-    j             = j + 1;
-end
-
-
-%%% ACTUAL CONVERSION OF THE BCH DATA
-
-% Loop over all the boundary pli-files
-npli                      = size(filepli,1);
-cnt                       = 1;
-for i=1:npli;
-    fid                   = fopen([pathout,'\',filepli(i,:)],'r');
-    tline                 = fgetl(fid);
-    tline                 = fgetl(fid);
-    tlinenum              = str2num(tline);
-    if i>1;
-        nulpunt           = nulpunt + J;
-    else
-        nulpunt           = 0;
-    end
-    J                     = tlinenum(1);                  % number of pli-points
-    for j=1:2:J;
-        namecmpA          = [pathout,'\',filepli(i,1:end-4),'_',num2str(j  ,'%0.4d'),'.cmp'];
-        namecmpB          = [pathout,'\',filepli(i,1:end-4),'_',num2str(j+1,'%0.4d'),'.cmp'];
-        fidA              = fopen(namecmpA,'wt');
-        fidB              = fopen(namecmpB,'wt');
-        for k=1:length(freq);
-            if freq(k)~=0;
-                period(k) = 60*360/freq(k);
-            else
-                period(k) = 0.0;
-            end
-        end
-        dp           = (nulpunt + (j+1))/2;
-        fprintf(fidA,['* COLUMNN=3','\n']);
-        fprintf(fidA,['* COLUMN1=Period (min) or Astronomical Componentname','\n']);
-        fprintf(fidA,['* COLUMN2=Amplitude (ISO)','\n']);
-        fprintf(fidA,['* COLUMN3=Phase (deg)','\n']);
-        fprintf(fidB,['* COLUMNN=3','\n']);
-        fprintf(fidB,['* COLUMN1=Period (min) or Astronomical Componentname','\n']);
-        fprintf(fidB,['* COLUMN2=Amplitude (ISO)','\n']);
-        fprintf(fidB,['* COLUMN3=Phase (deg)','\n']);
-        basisA       = [num2str(0.0           ,'%7.7f'),'    ', ...
-                        num2str(meanA(dp)     ,'%7.7f'),'    ', ...
-                        num2str(0.0           ,'%7.7f')            ];
-        fprintf(fidA,[basisA,'\n']);
-        basisB       = [num2str(0.0           ,'%7.7f'),'    ', ...
-                        num2str(meanB(dp)     ,'%7.7f'),'    ', ...
-                        num2str(0.0           ,'%7.7f')            ];
-        fprintf(fidB,[basisB,'\n']);
-        for k=1:size(ampA,2);
-            infoA    = [num2str(period(k)     ,'%7.7f'),'    ', ...
-                        num2str(ampA(dp,k)    ,'%7.7f'),'    ', ...
-                        num2str(phiA(dp,k)    ,'%7.7f')            ];
-            fprintf(fidA,[infoA ,'\n']);
-        end
-        for k=1:size(ampB,2);
-            infoB    = [num2str(period(k)     ,'%7.7f'),'    ', ...
-                        num2str(ampB(dp,k)    ,'%7.7f'),'    ', ...
-                        num2str(phiB(dp,k)    ,'%7.7f')            ];
-            fprintf(fidB,[infoB ,'\n']);
-        end
-        allcmpfiles(cnt  ,:)   = [filepli(i,1:end-4),'_',num2str(j  ,'%0.4d'),'.cmp'];
-        allcmpfiles(cnt+1,:)   = [filepli(i,1:end-4),'_',num2str(j+1,'%0.4d'),'.cmp'];
-        cnt                    = cnt + 2;
-    end
-end
-fclose all;
+% Use general conversion routine (also works for harmonic and timeseries)
+allfiles    = [];
+allfiles    = d3d2dflowfm_convertbc(filebch,filepli,pathout,'Harmonic',true);
 
 % Fill listbox with cmp files
-if exist('allcmpfiles');
-    set(handles.listbox4,'String',allcmpfiles);
-    clear allcmpfiles;
+i_file      = 0;
+if ~isempty(allfiles);
+    for i = 1: length(allfiles);
+        if ~isempty(allfiles{i});
+            i_file              = i_file + 1;
+            alltimfiles{i_file} = allfiles{i};
+            [~,names{i_file},~] = fileparts(alltimfiles{i_file});
+        end
+    end
 end
+set(handles.listbox4,'String',names);

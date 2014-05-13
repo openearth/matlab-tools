@@ -31,61 +31,35 @@ end
 % Catch the polyline names for the boundary conditions
 readpli     = get(handles.listbox1,'String');
 
+
+%%% ACTUAL CONVERSION OF THE BCA DATA
+
 % Filter the salinity-plis out
 clear filepli;
+i_pli       = 0;
 for i=1:length(readpli);
     pli     = readpli{i};
     if strcmpi(pli(end-7:end),'_sal.pli');
         continue
     else
-        filepli(i,:)  = readpli{i};
+        i_pli          = i_pli + 1;
+        filepli{i_pli} = [pathout filesep readpli{i}];
     end
 end
 
-% Read the bca-file
-bcadata     = delft3d_io_bca('read',filebca);
+% Use general conversion routine (also works for harmonic and timeseries)
+allfiles    = [];
+allfiles    = d3d2dflowfm_convertbc(filebca,filepli,pathout,'Astronomical',true);
 
-
-%%% ACTUAL CONVERSION OF THE BCA DATA
-
-% Loop over all the boundary pli-files
-npli        = size(filepli,1);
-cnt         = 1;
-for i=1:npli;
-    fid                   = fopen([pathout,'\',filepli(i,:)],'r');
-    tline                 = fgetl(fid);
-    tline                 = fgetl(fid);
-    tlinenum              = str2num(tline);
-    J                     = tlinenum(1);                  % number of pli-points
-    for j=1:J;
-        tline             = fgetl(fid);
-        tline             = textscan(tline,'%s%s%s%s%s');
-        location          = cell2mat(tline{5});
-        for k=1:length(bcadata.DATA);
-            if strcmpi(location,bcadata.DATA(k).label);
-                namecmp            = [pathout,'\',filepli(i,1:end-4),'_',num2str(j,'%0.4d'),'.cmp'];
-                namecmp            = fopen(namecmp,'wt');
-                fprintf(namecmp,['* COLUMNN=3','\n']);
-                fprintf(namecmp,['* COLUMN1=Period (min) or Astronomical Componentname','\n']);
-                fprintf(namecmp,['* COLUMN2=Amplitude (ISO)','\n']);
-                fprintf(namecmp,['* COLUMN3=Phase (deg)','\n']);
-                for ii=1:length(bcadata.DATA(k).names);
-                    information    = [cell2mat(bcadata.DATA(k).names(ii))     ,'    ', ...
-                                      num2str(bcadata.DATA(k).amp(ii),'%7.7f'),'    ', ...
-                                      num2str(bcadata.DATA(k).phi(ii),'%7.7f') ];
-                    fprintf(namecmp,[information,'\n']);
-                end
-                allcmpfiles(cnt,:) = [filepli(i,1:end-4),'_',num2str(j,'%0.4d'),'.cmp'];
-                cnt                = cnt + 1;
-                fclose(namecmp);
-            end
+% Fill listbox with cmp files
+i_file      = 0;
+if ~isempty(allfiles);
+    for i = 1: length(allfiles);
+        if ~isempty(allfiles{i});
+            i_file              = i_file + 1;
+            alltimfiles{i_file} = allfiles{i};
+            [~,names{i_file},~] = fileparts(alltimfiles{i_file});
         end
     end
 end
-fclose all;
-
-% Fill listbox with cmp files
-if exist('allcmpfiles');
-    set(handles.listbox3,'String',allcmpfiles);
-    clear allcmpfiles;
-end
+set(handles.listbox3,'String',names);

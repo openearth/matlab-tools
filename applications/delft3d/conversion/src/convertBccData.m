@@ -31,79 +31,33 @@ end
 % Catch the polyline names for the boundary conditions
 readpli     = get(handles.listbox1,'String');
 
-% Filter the salinity-plis in
+
+%%% ACTUAL CONVERSION OF THE BCC DATA
+
+% Get the salinity pli's
 clear filepli;
-n           = 1;
+i_pli       = 0;
 for i=1:length(readpli);
     pli     = readpli{i};
-    if ~strcmpi(pli(end-7:end),'_sal.pli');
-        continue
-    else
-        filepli(n,:)  = readpli{i};
-        n             = n + 1;
+    if strcmpi(pli(end-7:end),'_sal.pli') == 1;
+        i_pli          = i_pli + 1;
+        filepli{i_pli} = [pathout filesep readpli{i}];
     end
 end
 
-% Read the bcc-file
-bccdata     = bct_io('read',filebcc);
+% Use general conversion routine (also works for harmonic and timeseries)
+allfiles    = [];
+allfiles    = d3d2dflowfm_convertbc(filebcc,filepli,pathout,'Salinity',true,'Series',true);
 
-% Loop over all the boundary pli-files
-npli        = size(filepli,1);
-cnt         = 1;
-for i=1:npli;
-    fid                   = fopen([pathout,'\',filepli(i,:)],'r');
-    tline                 = fgetl(fid);
-    tline                 = fgetl(fid);
-    tlinenum              = str2num(tline);
-    J                     = tlinenum(1);
-    for j=1:J;
-        tline             = fgetl(fid);
-        tline             = textscan(tline,'%s%s%s%s%s');
-        location          = cell2mat(tline{5});
-        for k=1:length(bccdata.Table);
-            bcname               = bccdata.Table(k).Location;
-            bctype               = bccdata.Table(k).Parameter(end).Name(1:8);
-            bcname(bcname==' ')  = [];
-            if strcmpi(location(1:end-5),bcname) & strcmpi(bctype,'Salinity');
-                nametim          = [pathout,'\',filepli(i,1:end-4),'_',num2str(j,'%0.4d'),'.tim'];
-                nametim          = fopen(nametim,'wt');
-                fprintf(nametim,['* COLUMNN=2','\n']);
-                fprintf(nametim,['* COLUMN1=Time (in minutes) with respect to the reference date','\n']);
-                fprintf(nametim,['* COLUMN2=Salinity (in ppt)','\n']);
-                dataset          = bccdata.Table(k).Data;
-                if strcmpi(location(end),'a');
-                    w            = 2;
-                end
-                if strcmpi(location(end),'b');
-                    w            = 3;
-                    if dataset(1,w) == 9.9999900e+002 | dataset(1,w) == 9.99e+002;
-                        w        = 2;
-                    end
-                end
-                if strcmpi(tline{3},'t');
-                    for ii=1:size(dataset,1);
-                        information  = [num2str(    dataset(ii,1) ,'%7.7f'),'    ', ...
-                                        num2str(abs(dataset(ii,w)),'%7.7f')];
-                        fprintf(nametim,[information,'\n']);
-                    end
-                else
-                    for ii=1:size(dataset,1);
-                        information  = [num2str(dataset(ii,1)     ,'%7.7f'),'    ', ...
-                                        num2str(dataset(ii,w)     ,'%7.7f')];
-                        fprintf(nametim,[information,'\n']);
-                    end
-                end
-                alltimfiles(cnt,:) = [filepli(i,1:end-4),'_',num2str(j,'%0.4d'),'.tim'];
-                cnt                = cnt + 1;
-                fclose(nametim);
-            end
+% Fill listbox with cmp files
+i_file      = 0;
+if ~isempty(allfiles);
+    for i = 1: length(allfiles);
+        if ~isempty(allfiles{i});
+            i_file              = i_file + 1;
+            alltimfiles{i_file} = allfiles{i};
+            [~,names{i_file},~] = fileparts(alltimfiles{i_file});
         end
     end
 end
-fclose all;
-
-% Fill listbox with tim files
-if exist('alltimfiles');
-    set(handles.listbox5,'String',alltimfiles);
-    clear alltimfiles;
-end
+set(handles.listbox5,'String',names);
