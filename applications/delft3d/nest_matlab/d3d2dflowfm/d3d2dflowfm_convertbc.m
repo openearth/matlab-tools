@@ -1,4 +1,4 @@
-function d3d2dflow_convertbc(filinp,filpli,path_output,varargin)
+function varargout = d3d2dflow_convertbc(filinp,filpli,path_output,varargin)
 
 %% Determine type of forcing for which conversion is requested,
 %% First check the additional input arguments, secondly by using the file extension
@@ -37,9 +37,12 @@ if OPT.Harmonic
 end
 
 %% cycle over the pli's
+i_output = 0;
 for i_pli = 1: length(filpli)
     LINE = dflowfm_io_xydata('read',filpli{i_pli});
     for i_pnt = 1: size(LINE.DATA,1)
+        SERIES   = [];      
+        i_output = i_output + 1;
         %% Get the type of forcing for this point
         index =  d3d2dflowfm_decomposestr(LINE.DATA{i_pnt,3});
         if OPT.Salinity
@@ -54,7 +57,7 @@ for i_pli = 1: length(filpli)
             case 'a'
                 if OPT.Astronomical
                     %% Filename with astronomical bc
-                    filename = [path_output filesep LINE.Blckname '_' num2str(i_pnt,'%0.4d') '.cmp'];
+                    filename{i_output} = [path_output filesep LINE.Blckname '_' num2str(i_pnt,'%0.4d') '.cmp'];
 
                     %% Put General information in Series struct
                     SERIES.Comments{1} = '* COLUMNN=3';
@@ -74,15 +77,13 @@ for i_pli = 1: length(filpli)
                             break
                         end
                     end
-                    dflowfm_io_series('write',filename,SERIES);
-                    clear SERIES
                 end
 
             %% Harmonic boundary forcing
             case 'h'
                 if OPT.Harmonic
                     %% Filename with harmonic bc
-                    filename = [path_output filesep LINE.Blckname '_' num2str(i_pnt,'%0.4d') '.cmp'];
+                    filename{i_output} = [path_output filesep LINE.Blckname '_' num2str(i_pnt,'%0.4d') '.cmp'];
 
                     %% Write some general information
                     SERIES.Comments{1} = '* COLUMNN=3';
@@ -110,13 +111,11 @@ for i_pli = 1: length(filpli)
                         SERIES.Values(i_freq+1,3) = phases (i_side,i_harm,i_freq);
                     end
                     SERIES.Values = num2cell(SERIES.Values);
-                    dflowfm_io_series('write',filename,SERIES);
-                    clear SERIES
                 end
             %% Time series forcing data
             case 't'
                 if OPT.Series
-                    filename = [path_output filesep LINE.Blckname '_' num2str(i_pnt,'%0.4d') '.tim'];
+                    filename{i_output} = [path_output filesep LINE.Blckname '_' num2str(i_pnt,'%0.4d') '.tim'];
 
                     %% find Time series table number
                     bndname = LINE.DATA{i_pnt,3}(index(3):end-5);
@@ -144,9 +143,16 @@ for i_pli = 1: length(filpli)
                     SERIES.Comments{2} = '* COLUMN1=Time (min) since ITDATE?';
                     SERIES.Comments{3} = '* COLUMN2=Value';
 
-                    dflowfm_io_series('write',filename,SERIES);
-                    clear SERIES
                 end
+                
+                    
+        end
+        %% Write the Series
+        if ~isempty(SERIES)
+            dflowfm_io_series( 'write',filename{i_output},SERIES);
+            clear SERIES
         end
      end
 end
+
+varargout{1} = filename;
