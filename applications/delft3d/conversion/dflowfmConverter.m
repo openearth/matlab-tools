@@ -65,6 +65,7 @@ guidata(hObject, handles);
 
 % Clear the screen
 clc;
+convertallstuff = 0;
 
 % Show Deltareslogo
 axes(handles.axes1);
@@ -98,6 +99,7 @@ function pushbutton18_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton18 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+convertallstuff = 0;
 convertExtForcingFin;
 msgbox('The external forcings file has been adapted.','Message');
 
@@ -107,6 +109,7 @@ function pushbutton19_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton19 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+convertallstuff = 0;
 convertMasterFile;
 msgbox('The master definition file has been written.','Message');
 
@@ -116,6 +119,7 @@ function pushbutton21_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton21 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+convertallstuff = 0;
 convertUnimagdir;
 msgbox('The unimagdir wind file has been copied.','Message');
 
@@ -125,6 +129,7 @@ function pushbutton22_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton22 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+convertallstuff = 0;
 convertSpiderweb;
 msgbox('The spiderweb wind file has been copied.','Message');
 
@@ -294,6 +299,7 @@ function pushbutton11_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton11 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+convertallstuff = 0;
 convertObservationPoints;
 msgbox('The observation points file has been written.','Message');
 
@@ -303,6 +309,7 @@ function pushbutton12_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton12 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+convertallstuff = 0;
 convertCrossSections;
 msgbox('The cross-sections file has been written.','Message');
 
@@ -312,6 +319,7 @@ function pushbutton13_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton13 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+convertallstuff = 0;
 convertRoughness;
 msgbox('The roughness file has been written.','Message');
 
@@ -321,6 +329,7 @@ function pushbutton14_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton14 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+convertallstuff = 0;
 convertViscosity;
 msgbox('The eddy viscosity file has been written.','Message');
 
@@ -337,6 +346,7 @@ function pushbutton16_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton16 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+convertallstuff = 0;
 convertThinDams;
 msgbox('The thin dams file has been written.','Message');
 
@@ -346,6 +356,7 @@ function pushbutton17_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton17 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+convertallstuff = 0;
 convertInitialConditions;
 msgbox('The initial conditions file has been written.','Message');
 
@@ -584,6 +595,7 @@ function pushbutton7_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton7 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+convertallstuff = 0;
 convertBctData;
 msgbox('The timeserie boundary conditions file has been written.','Message');
 
@@ -593,6 +605,7 @@ function pushbutton8_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton8 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+convertallstuff = 0;
 convertBcaData;
 msgbox('The astronomic boundary conditions file has been written.','Message');
 
@@ -602,6 +615,7 @@ function pushbutton9_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton9 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+convertallstuff = 0;
 convertBchData;
 msgbox('The harmonic boundary conditions file has been written.','Message');
 
@@ -610,6 +624,7 @@ function pushbutton10_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton10 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+convertallstuff = 0;
 convertBccData;
 msgbox('The salinity boundary conditions file has been written.','Message');
 
@@ -734,6 +749,7 @@ function pushbutton5_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton5 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+convertallstuff = 0;
 convertBoundaryLocations;
 msgbox('The boundary polyline files have been written.','Message');
 
@@ -766,6 +782,7 @@ function pushbutton6_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton6 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+convertallstuff = 0;
 convertExtForcing;
 msgbox('The external forcings file has been written.','Message');
 
@@ -866,6 +883,7 @@ function pushbutton4_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton4 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+convertallstuff = 0;
 convertGrid;
 msgbox('The net file has been written.','Message');
 
@@ -1089,6 +1107,7 @@ function pushbutton20_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton20 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+convertallstuff = 1;
 convertAll;
 
 
