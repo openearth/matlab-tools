@@ -91,6 +91,6 @@ zg(zg==0)=NaN;
 % Now for each point on the grid, find its i and j index
 for ip=1:np
     jj=round((x(ip)-xmin)/mdx)+1;
-    ii=round((y(ip)-ymin)/mdx)+1;
+    ii=round((y(ip)-ymin)/mdy)+1;
     zg(ii,jj)=z(ip);
 end
