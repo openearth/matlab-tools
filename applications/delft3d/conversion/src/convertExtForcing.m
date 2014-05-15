@@ -73,7 +73,7 @@ if japli == 1;
             tline               = fgetl(fid);
             tline               = fgetl(fid);
             tline               = textscan(tline,'%s%s%s%s%s');
-            tlinestr            = cell2mat(tline{3});
+            tlinestr            = tline{3}{1};
             switch tlinestr;
                 case 'Z';
                     typ  = 'waterlevelbnd';

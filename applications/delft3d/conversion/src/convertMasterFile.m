@@ -81,6 +81,14 @@ if isempty(thdfile);
     jathd   = 0;
 end
 
+% Check if the thin dykes file name has been specified (D-Flow FM)
+tdkfile     = get(handles.edit37,'String');
+jatdk       = 1;
+if isempty(tdkfile);
+    tdkfile = [];
+    jatdk   = 0;
+end
+
 % Put the output directory name in the filenames
 filemdf     = [pathin ,'\',filemdf];
 mdufile     = [pathout,'\',mdufile];
@@ -122,7 +130,11 @@ if jathd == 1;
 else
     fprintf(fid2,'%s\n'  ,['ThinDamFile                         =                                    # *_thd.pli, Polyline(s) for tracing thin dams.']);
 end
-fprintf(fid2,'%s\n'  ,['ThindykeFile                        =                                    # *._tdk.pli, Polyline(s) x,y,z, z = thin dyke top levels']);
+if jatdk == 1;
+    fprintf(fid2,'%s\n'  ,['ThindykeFile                        = ',tdkfile,'                       # *_tdk.pli, Polyline(s) x,y,z, z = thin dyke top levels']);
+else
+    fprintf(fid2,'%s\n'  ,['ThindykeFile                        =                                    # *_tdk.pli, Polyline(s) x,y,z, z = thin dyke top levels']);
+end
 fprintf(fid2,'%s\n'  ,['ProflocFile                         =                                    # *_proflocation.xyz)    x,y,z, z = profile refnumber']);
 fprintf(fid2,'%s\n'  ,['ProfdefFile                         =                                    # *_profdefinition.def) definition for all profile nrs']);
 fprintf(fid2,'%s\n'  ,['ManholeFile                         =                                    # *...']);

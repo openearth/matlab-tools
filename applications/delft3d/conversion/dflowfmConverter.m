@@ -1253,3 +1253,6 @@ function pushbutton23_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton23 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+convertallstuff = 0;
+convertThinDykes;
+msgbox('The thin dykes file has been written.','Message');

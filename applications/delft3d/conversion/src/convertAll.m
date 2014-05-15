@@ -23,7 +23,7 @@ end
 % Remove waitbar if it exists
 if exist('wb'); close(wb); end;
 istep       =  1;
-numsteps    = 17;
+numsteps    = 18;
 
 % Convert the grid
 wb          = waitbar(istep/numsteps,'Converting the grid ...');
@@ -219,6 +219,20 @@ if nodry == 0 | nothd == 0;
 end
 if nodry == 1 & nothd == 1;
     set(handles.edit27 ,'String','');
+end
+
+% Check if 2dw-file is present; if yes, then convert the data
+waitbar(istep/numsteps,wb,'Converting the 2D weir data ...');
+istep       = istep + 1;
+file2dw     = get(handles.edit36,'String');
+file2dw     = deblank2(file2dw);
+if ~isempty(file2dw);
+    file2dw = [pathin,'\',file2dw];
+    if exist(file2dw,'file')~=0;
+        convertThinDykes;
+    else
+        set(handles.edit37,'String','');
+    end
 end
 
 % Finalize ext-file
