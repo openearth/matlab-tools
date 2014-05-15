@@ -79,7 +79,13 @@ end
 %% code
 switch lower(meteosource)
     case{'hirlam'}
-        urlstr=['http://opendap-matroos.deltares.nl/thredds/dodsC/maps/normal/knmi_hirlam_maps/' datestr(cycledate+cyclehour/24,'yyyymmddHHMM') '.nc'];
+        if floor(now)>cycledate+31
+            ystr=num2str(year(cycledate));
+            mstr=num2str(month(cycledate),'%0.2i');
+            urlstr=['http://opendap-matroos.deltares.nl/thredds/dodsC/archive/maps2d/' ystr '/knmi_hirlam_maps/' ystr mstr '/' datestr(cycledate+cyclehour/24,'yyyymmddHHMM') '.nc'];
+        else
+            urlstr=['http://opendap-matroos.deltares.nl/thredds/dodsC/maps2d/knmi_hirlam_maps/' datestr(cycledate+cyclehour/24,'yyyymmddHHMM') '.nc'];
+        end
     case{'ncep_gfs_analysis'}
         urlstr='http://nomads.ncdc.noaa.gov/dods/NCEP_GFS_ANALYSIS/analysis_complete';
     case{'ncep_gfs'}
