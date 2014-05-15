@@ -3,6 +3,12 @@ function [varargout]=errorbarxy(varargin)
 %   with specified errors modified from codes written by Nils Sjöberg 
 %   (http://www.mathworks.com/matlabcentral/fileexchange/5444-xyerrorbar)
 %  
+%   errorbarxy(x, y, lerrx, uerrx, lerry, uerry, ticklength) plots the data 
+%   with errorbars on both x and y axes with error bars [x-lerrx, x+uerrx] 
+%   and [y-lerry, y+uerry] with a length of tick prescribed by the user. 
+%   If there is no error on one axis, set corresponding lower and upper 
+%   bounds to [].
+%
 %   errorbarxy(x, y, lerrx, uerrx, lerry, uerry) plots the data with errorbars on both 
 %   x and y axes with error bars [x-lerrx, x+uerrx] and [y-lerry, y+uerry]. If there is
 %   no error on one axis, set corresponding lower and upper bounds to [].
@@ -143,7 +149,22 @@ elseif length(varargin)==6 % using errorbarxy(x, y, lerrx, uerrx, lerry, uerry)
     else
         erry=[];
     end
-    
+elseif length(varargin)==7 % using errorbarxy(x, y, lerrx, uerrx, lerry, uerry)
+    lx=x-varargin{3};
+    ux=x+varargin{4};
+    ly=y-varargin{5};
+    uy=y+varargin{6};
+    length_tick=varargin{7};
+    if ~isempty(lx)
+        errx=length_tick/2*ones(size(lx));
+    else
+        errx=[];
+    end
+    if ~isempty(ly)
+        erry=length_tick/2*ones(size(lx));
+    else
+        erry=[];
+    end
 else
     error('Wrong number of inputs!');
 end
