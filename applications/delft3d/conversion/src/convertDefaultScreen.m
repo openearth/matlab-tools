@@ -67,3 +67,5 @@ set(handles.edit32,'String','');
 set(handles.edit33,'String','');
 set(handles.edit34,'String','');
 set(handles.edit35,'String','');
+set(handles.edit36,'String','');
+set(handles.edit37,'String','');

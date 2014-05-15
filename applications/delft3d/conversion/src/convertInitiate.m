@@ -153,13 +153,18 @@ if isfield(mdfkeywds,'FilDry') | isfield(mdfkeywds,'fildry');
 end
 
 % Check if thd file is specified in mdf file; if yes, then put name in edit box
-if isfield(mdfkeywds,'FilTd') | isfield(mdfkeywds,'filtd');
-    set(handles.edit20,'String',mdfkeywds.filtd);
+if isfield(mdfkeywds,'FilTd' ) | isfield(mdfkeywds,'filtd' );
+    set(handles.edit20,'String',mdfkeywds.filtd );
 end
 
 % Check if ini file is specified in mdf file; if yes, then put name in edit box
-if isfield(mdfkeywds,'FilIc') | isfield(mdfkeywds,'filic');
-    set(handles.edit21,'String',mdfkeywds.filic);
+if isfield(mdfkeywds,'FilIc' ) | isfield(mdfkeywds,'filic' );
+    set(handles.edit21,'String',mdfkeywds.filic );
+end
+
+% Check if 2dw file is specified in mdf file; if yes, then put name in edit box
+if isfield(mdfkeywds,'Fil2dw') | isfield(mdfkeywds,'fil2dw');
+    set(handles.edit36,'String',mdfkeywds.fil2dw);
 end
 
 
@@ -237,7 +242,7 @@ if isfield(mdfkeywds,'FilEdy') | isfield(mdfkeywds,'filedy');
 end
 
 % Check if thd file is specified in mdf file; if yes, apply mdu core name
-if isfield(mdfkeywds,'FilTd') | isfield(mdfkeywds,'filtd');
+if isfield(mdfkeywds,'FilTd' ) | isfield(mdfkeywds,'filtd' );
     if ~isempty(deblank2(get(handles.edit20,'String')));
         set(handles.edit27,'String',[mducore,'_thd.pli']);
     end
@@ -251,9 +256,16 @@ if isfield(mdfkeywds,'FilDry') | isfield(mdfkeywds,'fildry');
 end
 
 % Check if ini file is specified in mdf file; if yes, apply mdu core name
-if isfield(mdfkeywds,'FilIc') | isfield(mdfkeywds,'filic');
+if isfield(mdfkeywds,'FilIc' ) | isfield(mdfkeywds,'filic' );
     if ~isempty(deblank2(get(handles.edit21,'String')));
         set(handles.edit28,'String',[mducore,'_ini.xyz']);
+    end
+end
+
+% Check if 2dw file is specified in mdf file; if yes, apply mdu core name
+if isfield(mdfkeywds,'Fil2dw') | isfield(mdfkeywds,'fil2dw');
+    if ~isempty(deblank2(get(handles.edit36,'String')));
+        set(handles.edit37,'String',[mducore,'_tdk.pli']);
     end
 end
 
