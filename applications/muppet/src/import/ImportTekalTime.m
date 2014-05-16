@@ -1,6 +1,6 @@
 function DataProperties=ImportTekalTime(DataProperties,i)
  
-fi=tekal('open',[DataProperties(i).PathName DataProperties(i).FileName]);
+fi=tekal('open',[DataProperties(i).PathName DataProperties(i).FileName],'loaddata');
  
 dates=fi.Field(DataProperties(i).Block).Data(:,1);
 times=fi.Field(DataProperties(i).Block).Data(:,2);

@@ -1,6 +1,6 @@
 function DataProperties=ImportTekalMap(DataProperties,i)
  
-fil=tekal('open',[DataProperties(i).PathName DataProperties(i).FileName]);
+fil=tekal('open',[DataProperties(i).PathName DataProperties(i).FileName],'loaddata');
 
 data=squeeze(fil.Field(DataProperties(i).Block).Data);
 

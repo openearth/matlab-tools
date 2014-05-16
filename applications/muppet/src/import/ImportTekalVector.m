@@ -1,6 +1,6 @@
 function DataProperties=ImportTekalVector(DataProperties,i)
  
-fil=tekal('open',[DataProperties(i).PathName DataProperties(i).FileName]);
+fil=tekal('open',[DataProperties(i).PathName DataProperties(i).FileName],'loaddata');
 
 data=fil.Field(DataProperties(i).Block).Data;
 

@@ -1,6 +1,6 @@
 function DataProperties=ImportTekalTimeStack(DataProperties,i)
  
-fi=tekal('open',[DataProperties(i).PathName DataProperties(i).FileName]);
+fi=tekal('open',[DataProperties(i).PathName DataProperties(i).FileName],'loaddata');
 
 labels=fi.Field.ColLabels;
 

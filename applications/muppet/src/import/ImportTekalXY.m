@@ -1,6 +1,6 @@
 function DataProperties=ImportTekalXY(DataProperties,i)
  
-fi=tekal('open',[DataProperties(i).PathName DataProperties(i).FileName]);
+fi=tekal('open',[DataProperties(i).PathName DataProperties(i).FileName],'loaddata');
  
 j=DataProperties(i).Block;
 
