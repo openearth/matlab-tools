@@ -105,7 +105,7 @@ else
     %                                        read properly using sscanf
        line      = fgetl(fid);
        S.DATA(i).name         = sscanf(line( 1: 20),'%20c',1);
-       numbers                = line(21:end);
+       numbers                = strtrim(line(21:end));
        index                  = d3d2dflowfm_decomposestr(numbers);
        for i_mn = 1:4
            S.DATA(i).mn(i_mn) = str2num(numbers(index(i_mn):index(i_mn + 1) - 1));
