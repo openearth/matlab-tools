@@ -1,4 +1,4 @@
-      function [argout]  = convert (argin, formula, varargin)
+      function [argout]  = saco_convert (argin, formula, varargin)
 
       % convert : contains all conversion functions from slinity to density chlorinity etc for SACO
       %
