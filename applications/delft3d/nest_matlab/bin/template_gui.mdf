@@ -136,3 +136,5 @@ Flrst  =  1440
 Commnt = BarocP=NO(Y) switches off(on) the baroclinic pressure term at the open boundary
 BarocP = #Y#
 DenFrm = #UNESCO#
+Pcorr  = #N#
+Pavbnd = 0.0000
