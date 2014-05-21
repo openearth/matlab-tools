@@ -53,14 +53,14 @@ if strcmpi(mdf.sub1(3),'W')
     end
 
     if strcmpi(mdf.wnsvwp,'N')
-        
+
         %% Uniform wind
         if simona2mdf_fieldandvalue(mdf,'filwnd')
             [~,name,~] = fileparts(mdf.filwnd);
             mdu.Filwnd = [name '_unstruc.wnd'];
         end
     else
-        
+
         %% Space varying wind, start with inverse barometer correction
         if simona2mdf_fieldandvalue(mdf,'pcorr')
             if strcmpi(mdf.pcorr,'y')
@@ -69,12 +69,12 @@ if strcmpi(mdf.sub1(3),'W')
                 mdu.wind.PavBnd = 0.0;
             end
         end
-        
+
         %% Files
-        if simona2mdf_fieldandvalue(mdf,'fwndgp') Filwsvp{1} = mdf.fwndgp; end
-        if simona2mdf_fieldandvalue(mdf,'fwndgu') Filwsvp{2} = mdf.fwndgu; end
-        if simona2mdf_fieldandvalue(mdf,'fwndgv') Filwsvp{3} = mdf.fwndgv; end
-        
+        if simona2mdf_fieldandvalue(mdf,'fwndgp') mdu.Filwsvp{1} = mdf.fwndgp; end
+        if simona2mdf_fieldandvalue(mdf,'fwndgu') mdu.Filwsvp{2} = mdf.fwndgu; end
+        if simona2mdf_fieldandvalue(mdf,'fwndgv') mdu.Filwsvp{3} = mdf.fwndgv; end
+
     end
 end
 

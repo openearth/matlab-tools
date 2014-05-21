@@ -1,28 +1,26 @@
-function varargout = d3d2dflowfm_genext(filmdu,varargin)
+function mdu = d3d2dflowfm_genext(mdu,filmdu,varargin)
 
 % d3d2dflowfm_genext: writes the external forcing file for D-Flow FM
 
 %% initialisation
 ext_force   = [];
-nesthd_path = getenv('nesthd_path');
-if ~isempty (nesthd_path)
-   OPT.Filcomments = [nesthd_path filesep 'bin' filesep 'extcomments.csv'];
-else
-   OPT.Filcomments = '';
-end
 
-OPT.mdu     = [];
-OPT.Filbnd  = '';
-OPT.Filini  = '';
-OPT.Filrgh  = '';
-OPT.Filvico = '';
-OPT.Fildico = '';
-OPT.Filwnd  = '';
-OPT.Filtem  = '';
-OPT.Fileva  = '';
-OPT.Filwsvp = [];
-OPT                   = setproperty(OPT,varargin);
-mdu         = OPT.mdu;
+OPT.Comments = false;
+OPT.Filbnd   = '';
+OPT.Filini   = '';
+OPT.Filrgh   = '';
+OPT.Filvico  = '';
+OPT.Fildico  = '';
+OPT.Filwnd   = '';
+OPT.Filtem   = '';
+OPT.Fileva   = '';
+OPT.Filwsvp  = [];
+OPT          = setproperty(OPT,varargin);
+
+nesthd_path = getenv('nesthd_path');
+if ~isempty (nesthd_path) && OPT.Comments
+   Filcomments = [nesthd_path filesep 'bin' filesep 'extcomments.csv'];
+end
 
 [path_mdu,name_mdu,~] = fileparts(filmdu);
 
@@ -74,7 +72,7 @@ end
 if ~isempty(OPT.Filini)
     i_force = i_force + 1;
     ext_force(i_force).quantity = 'initialsalinity';
-    ext_force(i_force).filename = mdu.Filini;
+    ext_force(i_force).filename = OPT.Filini;
     ext_force(i_force).filetype = 7;
     ext_force(i_force).method   = 4;
     ext_force(i_force).operand  = 'O';
@@ -84,7 +82,7 @@ end
 if ~isempty(OPT.Filrgh)
     i_force = i_force + 1;
     ext_force(i_force).quantity = 'frictioncoefficient';
-    ext_force(i_force).filename = mdu.Filrgh;
+    ext_force(i_force).filename = OPT.Filrgh;
     ext_force(i_force).filetype = 7;
     ext_force(i_force).method   = 4;
     ext_force(i_force).operand  = 'O';
@@ -94,7 +92,7 @@ end
 if ~isempty(OPT.Filvico)
     i_force = i_force + 1;
     ext_force(i_force).quantity = 'horizontaleddyviscositycoefficient';
-    ext_force(i_force).filename = mdu.Filvico;
+    ext_force(i_force).filename = OPT.Filvico;
     ext_force(i_force).filetype = 7;
     ext_force(i_force).method   = 4;
     ext_force(i_force).operand  = 'O';
@@ -104,7 +102,7 @@ end
 if ~isempty(OPT.Fildico)
     i_force = i_force + 1;
     ext_force(i_force).quantity = 'horizontaleddydiffusivitycoefficient';
-    ext_force(i_force).filename = mdu.Fildico;
+    ext_force(i_force).filename = OPT.Fildico;
     ext_force(i_force).filetype = 7;
     ext_force(i_force).method   = 4;
     ext_force(i_force).operand  = 'O';
@@ -114,7 +112,7 @@ end
 if ~isempty(OPT.Filwnd)
     i_force = i_force + 1;
     ext_force(i_force).quantity = 'windxy';
-    ext_force(i_force).filename = mdu.Filwnd;
+    ext_force(i_force).filename = OPT.Filwnd;
     ext_force(i_force).filetype = 2;
     ext_force(i_force).method   = 1;
     ext_force(i_force).operand  = 'O';
@@ -124,7 +122,7 @@ end
 if ~isempty(OPT.Filtem)
     i_force = i_force + 1;
     ext_force(i_force).quantity = 'humidity_airtemperature_cloudiness';
-    ext_force(i_force).filename = mdu.Filtem;
+    ext_force(i_force).filename = OPT.Filtem;
     ext_force(i_force).filetype = 1;
     ext_force(i_force).method   = 1;
     ext_force(i_force).operand  = 'O';
@@ -134,34 +132,32 @@ end
 if ~isempty(OPT.Fileva)
     i_force = i_force + 1;
     ext_force(i_force).quantity = 'rainfall_mmperday';
-    ext_force(i_force).filename = mdu.Fileva;
+    ext_force(i_force).filename = OPT.Fileva;
     ext_force(i_force).filetype = 1;
     ext_force(i_force).method   = 1;
     ext_force(i_force).operand  = 'O';
 end
 
-
-%% write the external forcing structure to the external forcing file
-if ~isempty(ext_force)
-    if ~isempty(OPT.Filcomments)
-        dflowfm_io_extfile('write',[filmdu '.ext'],'Filcomments',OPT.Filcomments);
+if ~isempty(OPT.Filwsvp)
+    for i_param = 1:3
+        if i_param == 1 quantity = 'atmosphericpressure'; end
+        if i_param == 2 quantity = 'windx'              ; end
+        if i_param == 2 quantity = 'windy'              ; end
+        i_force = i_force + 1;
+        ext_force(i_force).quantity = quantity;
+        ext_force(i_force).filename = OPT.Filwsvp{i_param};
+        ext_force(i_force).filetype = 4;
+        ext_force(i_force).method   = 1;
+        ext_force(i_force).operand  = 'O';
     end
-    dflowfm_io_extfile('write',[filmdu '.ext'],'ext_force',ext_force);
 end
 
-%% Clean up mdu structure (if passed on) and set name of the external forcing file in the mdu structure
+%% write the external forcing structure to the external forcing file
+if OPT.Comments
+    dflowfm_io_extfile('write',[filmdu '.ext'],'Filcomments',Filcomments);
+end
 
-if ~isempty(mdu)
-    if isfield(mdu,'Filbnd' ) mdu = rmfield(mdu,'Filbnd') ;end
-    if isfield(mdu,'Filini' ) mdu = rmfield(mdu,'Filini') ;end
-    if isfield(mdu,'Filrgh' ) mdu = rmfield(mdu,'Filrgh') ;end
-    if isfield(mdu,'Filvico') mdu = rmfield(mdu,'Filvico');end
-    if isfield(mdu,'Fildico') mdu = rmfield(mdu,'Fildico');end
-    if isfield(mdu,'Filwnd' ) mdu = rmfield(mdu,'Filwnd') ;end
-    if isfield(mdu,'Filwsvp') mdu = rmfield(mdu,'Filwsvp');end
-    if isfield(mdu,'Filtem' ) mdu = rmfield(mdu,'Filtem') ;end
-    if isfield(mdu,'Fileva' ) mdu = rmfield(mdu,'Fileva') ;end
-    
+if ~isempty(ext_force)
+    dflowfm_io_extfile('write',[filmdu '.ext'],'ext_force',ext_force);
     mdu.external_forcing.ExtForceFile = [name_mdu '.ext'];
-    varargout{1} = mdu;
 end

@@ -116,12 +116,17 @@ mdu = d3d2dflowfm_friction (mdf,mdu,name_mdu);
 simona2mdf_message('Generating D-Flow FM Viscosity/diff.   information','Window','D3D2DFLOWFM Message');
 mdu = d3d2dflowfm_viscosity(mdf,mdu,name_mdu);
 
-simona2mdf_message('Generating External forcing file                  ','Window','D3D2DFLOWFM Message');
-mdu = d3d2dflowfm_genext   (name_mdu,'mdu',mdu,'Filbnd' ,mdu.Filbnd ,'Filini' ,mdu.Filini ,'Filrgh',mdu.Filrgh  ,  ...
-                                               'Filvico',mdu.Filvico,'Fildico',mdu.Fildico,'Filwnd',mdu.Filwnd  ,  ...
-                                               'Filtem' ,mdu.Filtem ,'Fileva' ,mdu.Fileva                       ,  ...
-                                               'Filwsvp',mdu.Filwsvp                                            );
-                                           
+simona2mdf_message('Generating External forcing file                  ','Window','D3D2DFLOWFM Message');    
+mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filbnd' ,mdu.Filbnd ,'Comments',true);
+mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filini' ,mdu.Filini );
+mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filrgh' ,mdu.Filrgh );
+mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filvico',mdu.Filvico);
+mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Fildico',mdu.Fildico);
+mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filwnd' ,mdu.Filwnd );
+mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filtem' ,mdu.Filtem );
+mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Fileva' ,mdu.Fileva );
+mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filwsvp',mdu.Filwsvp);
+
 simona2mdf_message('Generating D-Flow FM boundary conditions          ','Window','D3D2DFLOWFM Message');
 mdu = d3d2dflowfm_bndforcing(mdf,mdu,name_mdu);
 
@@ -144,8 +149,8 @@ simona2mdf_message('Generating D-Flow FM OUTPUT            information','Window'
 mdu = d3d2dflowfm_output   (mdf,mdu,name_mdu);
 
 %% Finally,  write the mdu file and close everything
-mdu = rmfield(mdu,'pathmdu');
 simona2mdf_message('Writing    D-Flow FM *.mdu file                   ','Window','D3D2DFLOWFM Message','Close',true,'n_sec',1);
+mdu = d3d2dflowfm_cleanup(mdu);
 dflowfm_io_mdu('write',[name_mdu '.mdu'],mdu);
 
 
