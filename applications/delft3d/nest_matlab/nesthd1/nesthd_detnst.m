@@ -171,7 +171,7 @@
 %
 
                if ~isnan(xbnd(ibnd,isize))
-                  [mcnes(ibnd,isize,1),ncnes(ibnd,isize,1)] = nesthd_nearmn (xbnd(ibnd, isize),ybnd(ibnd,isize),x,y,icom);
+                  [mcnes(ibnd,isize,1),ncnes(ibnd,isize,1)] = nesthd_nearmn (xbnd(ibnd,isize),ybnd(ibnd,isize),x,y,icom,'spherical',sphere);
                   weight(ibnd,isize,1) = 1.0;
                end
             end
