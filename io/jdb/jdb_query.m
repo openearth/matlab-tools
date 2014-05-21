@@ -45,6 +45,18 @@ m = 3;
 n = length(varargin);
 varargin(n+1:m) = cell(1,m-n);
 
+if ischar(varargin{1})
+    varargin{1} = cellstr(varargin{1});
+end
+
+if ~iscell(varargin{1})
+    error('argument 2 is not a char or cell: requested ')
+end
+
+if ~isstruct(varargin{2})
+    error('argument 3 is not a struct.')
+end
+
 %% built query
 % check table name with "
 if strcmp(table(1),'"') && strcmp(table(end),'"')
