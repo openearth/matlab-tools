@@ -1,9 +1,9 @@
-      function [mp,np] = nearmn (xp,yp,x,y,icom)
+      function [mp,np] = nesthd_nearmn (xp,yp,x,y,kcs)
 
       % nearmn: given a pair of X,Y co-ordinates, find the M,N co-ordinates of the nearest grid cell
 
-      % function           : given a pair of X,Y co-ordinates, find the
-      %                      M,N co-ordinates of the nearest grid cell
+      % function           : given a pair of Xp,Yp co-ordinates, find the
+      %                      M,N co-ordinates of the nearest (X,Y) grid cell
 
       dist0 = 1.0e37;
       mp    = NaN;
@@ -11,7 +11,7 @@
 
       for m = 2: size(x,1)
          for n = 2: size(x,2)
-            if icom(m,n) == 1
+            if kcs(m,n) == 1
 %
 %---------- Determine coordinates cell centre
 %
