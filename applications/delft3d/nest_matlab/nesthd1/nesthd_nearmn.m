@@ -1,6 +1,6 @@
-      function [mp,np] = nesthd_nearmn (xp,yp,x,y,kcs)
+      function [mp,np] = nesthd_nearmn (xp,yp,x,y,kcs,varargin)
 
-      % nearmn: given a pair of X,Y co-ordinates, find the M,N co-ordinates of the nearest grid cell
+      % given a pair of X,Y co-ordinates, find the M,N co-ordinates of the nearest grid cell
 
       % function           : given a pair of Xp,Yp co-ordinates, find the
       %                      M,N co-ordinates of the nearest (X,Y) grid cell
@@ -8,6 +8,10 @@
       dist0 = 1.0e37;
       mp    = NaN;
       np    = NaN;
+
+      %% Sferic or not
+      OPT.spherical = false;
+      OPT           = setproperty(OPT,varargin);
 
       for m = 2: size(x,1)
          for n = 2: size(x,2)
@@ -20,9 +24,9 @@
 %
 %------------- distance from specified location and centre of grid cell
 %
-               xdif = xp - xz;
-               ydif = yp - yz;
-               dist = sqrt (xdif * xdif + ydif * ydif);
+
+               dist = nesthd_distance(xp,yp,xz,yz,OPT.spherical);
+
 %
 %------------- if closer set M,N co-ordinates and reset minimal distance
 %

@@ -1,6 +1,6 @@
-      function icom = det_icom (X,default,varargin)
+      function icom = nesthd_det_icom (X,default,varargin)
 
-      % det_icom: determines whioch point is active(1) or inactive (0) based only on comp grid or on grid enclosure
+      % det_icom: determines which point is active(1) or inactive (0) based only on comp grid or on grid enclosure
       %
       %
       %
