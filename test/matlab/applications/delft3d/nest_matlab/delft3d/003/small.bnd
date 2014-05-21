@@ -1,0 +1,4 @@
+boven                P T     2    22    72    22  0.0000000e+000 3d-profile
+onder                P T     2     1    72     1  0.0000000e+000 3d-profile
+links                Z T     1    21     1     2  0.0000000e+000
+rechts               N T    73    21    73     2  0.0000000e+000

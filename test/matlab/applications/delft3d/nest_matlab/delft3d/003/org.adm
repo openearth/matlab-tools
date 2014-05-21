@@ -1,0 +1,95 @@
+*
+* Deltares, NESTHD1 Version 1.56.02.11129, Apr  2 2010, 13:33:25
+*
+* Run date: 2013/03/11 15:50:08 
+*
+* Name grid file overall model              : testje_1.grd                                                                    
+* Name enclosure file overall model         : testje_1.enc                                                                    
+*
+* Name grid file detailed model             : small.grd                                                                       
+* Name enclosure file detailed model        : small.enc                                                                       
+* Name bnd. definition file detailed model  : small.bnd                                                                       
+*
+* Name nest administration file             : org.adm                                                                         
+* Name FLOW observation file                : org.obs                                                                         
+*
+Nest administration for water level support point (M,N) = (    2,   22)
+    96    25 0.9993
+    97    25 0.0000
+    96    26 0.0006
+    97    26 0.0000
+Nest administration for water level support point (M,N) = (   72,   22)
+   165    25 0.0000
+   166    25 0.9993
+   165    26 0.0000
+   166    26 0.0006
+Nest administration for water level support point (M,N) = (    2,    1)
+    95     3 0.0000
+    96     3 0.0001
+    95     4 0.0000
+    96     4 0.9999
+Nest administration for water level support point (M,N) = (   72,    1)
+   165     3 0.0000
+   166     3 0.0001
+   165     4 0.0000
+   166     4 0.9999
+Nest administration for water level support point (M,N) = (    1,   21)
+    95    24 0.9425
+    96    24 0.0574
+    95    25 0.0002
+    96    25 0.0000
+Nest administration for water level support point (M,N) = (    1,    2)
+    95     4 0.0001
+    96     4 0.0000
+    95     5 0.9426
+    96     5 0.0573
+Nest administration for water level support point (M,N) = (   73,   21)
+   166    24 0.0490
+   167    24 0.9509
+   166    25 0.0000
+   167    25 0.0001
+Nest administration for water level support point (M,N) = (   73,    2)
+   166     4 0.0000
+   167     4 0.0001
+   166     5 0.0489
+   167     5 0.9510
+Nest administration for velocity    support point (M,N) = (    2,   22) Angle =  180.000
+    95    24 0.0000
+    96    24 0.5001
+    95    25 0.0000
+    96    25 0.4999
+Nest administration for velocity    support point (M,N) = (   72,   22) Angle =  180.000
+   166    24 0.5002
+   167    24 0.0000
+   166    25 0.4998
+   167    25 0.0000
+Nest administration for velocity    support point (M,N) = (    2,    1) Angle =  180.000
+    95     4 0.0000
+    96     4 0.4998
+    95     5 0.0000
+    96     5 0.5001
+Nest administration for velocity    support point (M,N) = (   72,    1) Angle =  180.000
+   166     4 0.4999
+   167     4 0.0000
+   166     5 0.5001
+   167     5 0.0000
+Nest administration for velocity    support point (M,N) = (    1,   21) Angle =   89.997
+    95    23 0.0000
+    96    23 0.0000
+    95    24 0.5001
+    96    24 0.4999
+Nest administration for velocity    support point (M,N) = (    1,    2) Angle =   89.997
+    95     5 0.4999
+    96     5 0.4997
+    95     6 0.0002
+    96     6 0.0002
+Nest administration for velocity    support point (M,N) = (   73,   21) Angle =   89.999
+   166    23 0.0002
+   167    23 0.0002
+   166    24 0.4998
+   167    24 0.4999
+Nest administration for velocity    support point (M,N) = (   73,    2) Angle =   89.999
+   166     4 0.0000
+   167     4 0.0000
+   166     5 0.4999
+   167     5 0.5001
