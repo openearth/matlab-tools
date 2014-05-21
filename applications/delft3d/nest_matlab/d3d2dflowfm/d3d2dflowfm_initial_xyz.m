@@ -46,7 +46,14 @@ dflowfm_io_xydata('write',filic_wl,LINE);
 %% Salinity
 if ~isempty(OPT.filic_sal)
     i_start = 2*OPT.kmax + 2;
-    tmp(:,3) = reshape(ic(i_start).Data',mmax*nmax,1);
+    i_stop  = 3*OPT.kmax + 1;
+    values(1:mmax,1:nmax) = 0.;
+    for i_lay = i_start:i_stop
+        values = values + ic(i_lay).Data;
+    end
+    values = values/OPT.kmax;
+    
+    tmp(:,3) = reshape(values',mmax*nmax,1);
 
     %% Fill line structure with salinity values
     LINE.DATA = num2cell(tmp(nonan,:));

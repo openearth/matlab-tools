@@ -20,6 +20,7 @@ OPT.Fildico = '';
 OPT.Filwnd  = '';
 OPT.Filtem  = '';
 OPT.Fileva  = '';
+OPT.Filwsvp = [];
 OPT                   = setproperty(OPT,varargin);
 mdu         = OPT.mdu;
 
@@ -157,8 +158,10 @@ if ~isempty(mdu)
     if isfield(mdu,'Filvico') mdu = rmfield(mdu,'Filvico');end
     if isfield(mdu,'Fildico') mdu = rmfield(mdu,'Fildico');end
     if isfield(mdu,'Filwnd' ) mdu = rmfield(mdu,'Filwnd') ;end
+    if isfield(mdu,'Filwsvp') mdu = rmfield(mdu,'Filwsvp');end
     if isfield(mdu,'Filtem' ) mdu = rmfield(mdu,'Filtem') ;end
     if isfield(mdu,'Fileva' ) mdu = rmfield(mdu,'Fileva') ;end
+    
     mdu.external_forcing.ExtForceFile = [name_mdu '.ext'];
     varargout{1} = mdu;
 end
