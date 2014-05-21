@@ -19,6 +19,7 @@ OPT.Filvico = '';
 OPT.Fildico = '';
 OPT.Filwnd  = '';
 OPT.Filtem  = '';
+OPT.Fileva  = '';
 OPT                   = setproperty(OPT,varargin);
 mdu         = OPT.mdu;
 
@@ -128,6 +129,15 @@ if ~isempty(OPT.Filtem)
     ext_force(i_force).operand  = 'O';
 end
 
+%% write rain/evaporation
+if ~isempty(OPT.Fileva)
+    i_force = i_force + 1;
+    ext_force(i_force).quantity = 'rainfall_mmperday';
+    ext_force(i_force).filename = mdu.Fileva;
+    ext_force(i_force).filetype = 1;
+    ext_force(i_force).method   = 1;
+    ext_force(i_force).operand  = 'O';
+end
 
 
 %% write the external forcing structure to the external forcing file
@@ -148,6 +158,7 @@ if ~isempty(mdu)
     if isfield(mdu,'Fildico') mdu = rmfield(mdu,'Fildico');end
     if isfield(mdu,'Filwnd' ) mdu = rmfield(mdu,'Filwnd') ;end
     if isfield(mdu,'Filtem' ) mdu = rmfield(mdu,'Filtem') ;end
+    if isfield(mdu,'Fileva' ) mdu = rmfield(mdu,'Fileva') ;end
     mdu.external_forcing.ExtForceFile = [name_mdu '.ext'];
     varargout{1} = mdu;
 end

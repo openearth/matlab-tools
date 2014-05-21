@@ -5,10 +5,14 @@ function mdu = d3d2dflowfm_physical(mdf, mdu, ~)
 mdu.Filwnd          = '';
 mdu.Filtem          = '';
 
+%% General
 mdu.physics.Ag      = mdf.ag;
 mdu.physics.Rhomean = mdf.rhow;
 
+%% Salinity
 if strcmpi(mdf.sub1(1),'S') mdu.physics.Salinity = true; end
+
+%% Temperature
 if strcmpi(mdf.sub1(2),'T')
     if mdf.ktemp == 0
         % No heat exchange with the atmosphere
@@ -33,6 +37,7 @@ else
     mdu.physics.Temparture = 0;
 end
 
+%% Wind
 if strcmpi(mdf.sub1(3),'W')
     if strcmpi(mdf.wnsvwp,'N')
         %
@@ -45,4 +50,10 @@ if strcmpi(mdf.sub1(3),'W')
         %
         % Space varying wind (to implement yet)
     end
+end
+
+%% Rain and evaporation
+if simona2mdf_fieldandvalue(mdf,'fileva')
+    [~,name,~] = fileparts(mdf.fileva);
+    mdu.Fileva = [name '_unstruc.eva'];
 end
