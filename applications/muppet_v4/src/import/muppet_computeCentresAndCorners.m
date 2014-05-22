@@ -17,7 +17,7 @@ switch dataset.type
         dataset.yz=dataset.y;
         dataset.zz=dataset.z;
                 
-        if strcmpi(dataset.location,'z')
+        if strcmpi(dataset.location,'z') || strcmpi(dataset.location,'u')
 
             % When data is stored in cell centres, load coordinates of cell corners (x and y)
             % and compute values z on cell corners (used for shading and contour plots)
