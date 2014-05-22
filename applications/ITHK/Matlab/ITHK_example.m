@@ -8,8 +8,8 @@
   tin = '20';
   varNameIn = 'example';
   coast = '1';
-  eco = '1';
-  dunes = '1';
+  eco = '0';%'1';
+  dunes = '0';%'1';
   slr = '1';
   costs = '0';
   economy = '0';

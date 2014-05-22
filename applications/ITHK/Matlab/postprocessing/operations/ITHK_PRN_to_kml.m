@@ -181,7 +181,7 @@ if S.userinput.indicators.coast == 1
         else
            time2    = datenum((S.PP(sens).settings.tvec(jj+1)+S.PP(sens).settings.t0),1,1)-0.5;
         end
-        [lon2,lat2] = convertCoordinates(S.PP(sens).coast.xcoast(:,jj),S.PP(sens).coast.ycoast(:,jj),S.EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
+        [lon2,lat2] = convertCoordinates(S.PP(sens).coast.xcoast(:,jj),S.PP(sens).coast.ycoast(:,jj),S.EPSG,'CS1.code',str2double(S.settings.EPSGcode),'CS2.name','WGS 84','CS2.type','geo');
         KMLdata     = ITHK_KMLline(lat2,lon2,'timeIn',time,'timeOut',time2,'lineColor',[1 1 0],'lineWidth',4,'lineAlpha',.7,'writefile',0);
         S.PP(sens).output.kml = [S.PP(sens).output.kml KMLdata];
     end

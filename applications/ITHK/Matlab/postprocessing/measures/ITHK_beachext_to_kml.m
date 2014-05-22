@@ -93,7 +93,7 @@ sVectorLength = S.kml.sVectorLength;
 idplotrough = S.kml.idplotrough;
 
 %% preparation
-[x,y]               = convertCoordinates(lon,lat,S.EPSG,'CS1.name','WGS 84','CS1.type','geo','CS2.code',28992);
+[x,y]               = convertCoordinates(lon,lat,S.EPSG,'CS1.name','WGS 84','CS1.type','geo','CS2.code',str2double(S.settings.EPSGcode));
 % dist2 = ((MDAdata_NEW.Xcoast-x0).^2 + (MDAdata_NEW.Ycoast-y0).^2).^0.5;
 % x1 = x0(dist2>1);x2 = MDAdata_NEW.Xcoast(dist2>1);
 % y1 = y0(dist2>1);y2 = MDAdata_NEW.Ycoast(dist2>1);
@@ -110,7 +110,7 @@ xpoly=[x1(1:end) x2(end:-1:1) x1(1)];
 ypoly=[y1(1:end) y2(end:-1:1) y1(1)];
 
 % convert coordinates
-[lonpoly,latpoly] = convertCoordinates(xpoly,ypoly,EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
+[lonpoly,latpoly] = convertCoordinates(xpoly,ypoly,EPSG,'CS1.code',str2double(S.settings.EPSGcode),'CS2.name','WGS 84','CS2.type','geo');
 lonpoly     = lonpoly';
 latpoly     = latpoly';
 

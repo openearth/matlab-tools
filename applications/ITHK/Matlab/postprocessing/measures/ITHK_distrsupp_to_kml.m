@@ -131,7 +131,7 @@ xpoly=[x; flipud(x2); x(1)];
 ypoly=[y; flipud(y2); y(1)];
 
 % convert coordinates
-[lonpoly,latpoly] = convertCoordinates(xpoly,ypoly,S.EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
+[lonpoly,latpoly] = convertCoordinates(xpoly,ypoly,S.EPSG,'CS1.code',str2double(S.settings.EPSGcode),'CS2.name','WGS 84','CS2.type','geo');
 
 % yellow triangle
 output = [output KML_stylePoly('name','default','fillColor',[1 1 0],'lineColor',[0 0 0],'lineWidth',0,'fillAlpha',0.7)];

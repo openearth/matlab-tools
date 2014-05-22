@@ -123,7 +123,7 @@ dist                 = distXY(x1,y1);
 distref              = [dist(1):min(diff(dist))/5:dist(end)];
 x1ref                = interp1(dist,x1,distref,'pchip','extrap');
 y1ref                = interp1(dist,y1,distref,'pchip','extrap');
-[lonref,latref]      = convertCoordinates(x1ref,y1ref,S.EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
+[lonref,latref]      = convertCoordinates(x1ref,y1ref,S.EPSG,'CS1.code',str2double(S.settings.EPSGcode),'CS2.name','WGS 84','CS2.type','geo');
 KMLdata              = [KMLdata ITHK_KMLline(latref,lonref,'timeIn',time1a,'timeOut',time2a,'lineColor',[0.3 0.3 0.3],'lineWidth',3,'lineAlpha',.8,'writefile',0)];
 
 %% loop over time
@@ -180,6 +180,8 @@ end
 
 %% sub-function
 function [latpoly,lonpoly]=getLatLon(x1,y1,zval,vectorscale,alpha,widthRough,EPSG)
+    global S
+
 % get x,y coordinates of base point of bars (x1,y1) and z-value in xy coordinates (xtip,ytip)
     xtip         = x1-zval.*vectorscale.*sin(alpha);
     ytip         = y1+zval.*vectorscale.*cos(alpha);
@@ -191,7 +193,7 @@ function [latpoly,lonpoly]=getLatLon(x1,y1,zval,vectorscale,alpha,widthRough,EPS
     ypoly        = [y1+dybar, ytip+dybar, ytip-dybar, y1-dybar, y1+dybar];
     
     %% convert coordinates to lat-lon
-    [lonpoly,latpoly] = convertCoordinates(xpoly,ypoly,EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
+    [lonpoly,latpoly] = convertCoordinates(xpoly,ypoly,EPSG,'CS1.code',str2double(S.settings.EPSGcode),'CS2.name','WGS 84','CS2.type','geo');
     lonpoly      = lonpoly';
     latpoly      = latpoly';
 end

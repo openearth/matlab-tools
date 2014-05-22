@@ -139,7 +139,6 @@ elseif ~isempty(dir(S.settings.outputdir))
     end
 end
 copyfile([S.settings.rundir],S.settings.outputdir);
-%S.settings.outputdir           = [baseDir 'UB model\'];
 
 %% Preprocessing Unibest Interactive Tool
 for ii=1:1%length(sensitivities)
@@ -150,11 +149,6 @@ for ii=1:1%length(sensitivities)
     ITHK_runUB;
     disp('running Unibest completed');
     
-%     %% Create output dir
-%     if ~isdir([S.settings.outputdir 'output' filesep S.userinput.name])
-%        mkdir([S.settings.outputdir 'output' filesep S.userinput.name]);
-%     end 
-
     %% Extract UB (PRN) results for current & reference scenario
     PRNfileName = [S.userinput.name,'.PRN']; 
     S.UB(ii).results.PRNdata = ITHK_io_readPRN([S.settings.outputdir PRNfileName]);

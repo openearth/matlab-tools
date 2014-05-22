@@ -84,7 +84,7 @@ y1         = y'+offset*cos(alpha);           %+offset*sin(alpha-pi()/2);
 IDii = round([1:(length(x1)-1)/9:length(x1)]);
 KMLdata=[];lookAt=1;
 for ii=1:length(x1)
-    [lon,lat] = convertCoordinates(x1(ii),y1(ii),S.EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
+    [lon,lat] = convertCoordinates(x1(ii),y1(ii),S.EPSG,'CS1.code',str2double(S.settings.EPSGcode),'CS2.name','WGS 84','CS2.type','geo');
     KMLdata2=[];
     
     %% add pop-up text with name of indicator

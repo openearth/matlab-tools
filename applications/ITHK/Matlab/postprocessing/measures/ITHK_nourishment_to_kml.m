@@ -144,7 +144,7 @@ for jj = 1:length(S.userinput.phases)
             end
 
             % convert coordinates
-            [lonpoly,latpoly] = convertCoordinates(xpoly,ypoly,S.EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
+            [lonpoly,latpoly] = convertCoordinates(xpoly,ypoly,S.EPSG,'CS1.code',str2double(S.settings.EPSGcode),'CS2.name','WGS 84','CS2.type','geo');
             lonpoly     = lonpoly';
             latpoly     = latpoly';
         

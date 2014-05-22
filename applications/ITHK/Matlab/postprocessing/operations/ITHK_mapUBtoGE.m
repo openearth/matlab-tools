@@ -147,7 +147,7 @@ for jj = 1:length(S.userinput.phases)
     if ~strcmp(lower(strtok(S.userinput.phase(jj).SOSfile,'.')),'basis')
         for ii = 1:length(S.userinput.phase(jj).supids)
             ss = S.userinput.phase(jj).supids(ii); 
-            [x,y] = convertCoordinates(S.userinput.nourishment(ss).lon,S.userinput.nourishment(ss).lat,S.EPSG,'CS1.name','WGS 84','CS1.type','geo','CS2.code',28992);
+            [x,y] = convertCoordinates(S.userinput.nourishment(ss).lon,S.userinput.nourishment(ss).lat,S.EPSG,'CS1.name','WGS 84','CS1.type','geo','CS2.code',str2double(S.settings.EPSGcode));
             [idNEAREST,idRANGE]=findGRIDinrange(S.PP(sens).coast.x0gridRough(1,:),S.PP(sens).coast.y0gridRough(1,:),x,y,0.5*S.userinput.nourishment(ss).width);
             startid      = S.userinput.nourishment(ss).start;
             stopid       = S.userinput.nourishment(ss).stop;
@@ -168,7 +168,7 @@ for jj = 1:length(S.userinput.phases)
     if ~strcmp(lower(strtok(S.userinput.phase(jj).REVfile,'.')),'basis')
         for ii = 1:length(S.userinput.phase(jj).revids)
             ss = S.userinput.phase(jj).revids(ii); 
-            [x,y] = convertCoordinates(S.userinput.revetment(ss).lon,S.userinput.revetment(ss).lat,S.EPSG,'CS1.name','WGS 84','CS1.type','geo','CS2.code',28992);
+            [x,y] = convertCoordinates(S.userinput.revetment(ss).lon,S.userinput.revetment(ss).lat,S.EPSG,'CS1.name','WGS 84','CS1.type','geo','CS2.code',str2double(S.settings.EPSGcode));
             [idNEAREST,idRANGE]=findGRIDinrange(S.PP(sens).coast.x0gridRough(1,:),S.PP(sens).coast.y0gridRough(1,:),x,y,0.5*S.userinput.revetment(ss).length);
             S.PP(sens).GEmapping.rev(S.userinput.revetment(ss).start+1:S.userinput.revetment(ss).stop,idRANGE) = 1;
             S.userinput.revetment(ss).idNEAREST2 = idNEAREST;
@@ -178,7 +178,7 @@ for jj = 1:length(S.userinput.phases)
     if ~strcmp(lower(strtok(S.userinput.phase(jj).GROfile,'.')),'basis')
         for ii = 1:length(S.userinput.phase(jj).groids)
             ss = S.userinput.phase(jj).groids(ii);
-            [x,y] = convertCoordinates(S.userinput.groyne(ss).lon,S.userinput.groyne(ss).lat,S.EPSG,'CS1.name','WGS 84','CS1.type','geo','CS2.code',28992);
+            [x,y] = convertCoordinates(S.userinput.groyne(ss).lon,S.userinput.groyne(ss).lat,S.EPSG,'CS1.name','WGS 84','CS1.type','geo','CS2.code',str2double(S.settings.EPSGcode));
             [idNEAREST,idRANGE]=findGRIDinrange(S.PP(sens).coast.x0gridRough(1,:),S.PP(sens).coast.y0gridRough(1,:),x,y,str2double(S.settings.measures.groyne.updatewidth)*S.userinput.groyne(ss).length); 
             S.PP(sens).GEmapping.gro(S.userinput.groyne(ss).start+1:S.userinput.groyne(ss).stop,idNEAREST) = 1;
             S.userinput.groyne(ss).idNEAREST2 = idNEAREST;

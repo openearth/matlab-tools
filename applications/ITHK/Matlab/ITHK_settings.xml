@@ -2,6 +2,8 @@
 <settings>
   <basedir>d:\repositories\oetools\applications\ITHK\</basedir>
   <sessionCacheDir>p:\webtools\cache\</sessionCacheDir>
+  <EPSGcode>28992</EPSGcode>
+  <CLRfile>BWN2005_1HOTSPOTS1IT.CLR</CLRfile>
   <measures>
     <nourishment>
       <THRbeach>0</THRbeach>

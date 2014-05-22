@@ -19,6 +19,8 @@ try
 catch
 end
 fprintf('ITHK preprocessing : Copy default UNIBEST model files\n');
+copyfile(S.settings.inputdir,S.settings.outputdir);
+%{
 copyfile([S.settings.inputdir 'BASIS.MDA'],S.settings.outputdir);
 copyfile([S.settings.inputdir 'BASIS_ORIG.MDA'],S.settings.outputdir);
 copyfile([S.settings.inputdir 'BASIS_ORIG_OLD.MDA'],S.settings.outputdir);
@@ -32,7 +34,7 @@ copyfile([S.settings.inputdir 'NULL.BCI'],S.settings.outputdir);
 copyfile([S.settings.inputdir 'NULL.BCO'],S.settings.outputdir);
 copyfile([S.settings.inputdir 'NULL.OBW'],S.settings.outputdir);
 copyfile([S.settings.inputdir 'locations5magrof2.GKL'],S.settings.outputdir);
-
+%}
 %% Prepare input Unibest CL for different measures
 status='ITHK preprocessing : Preparing UNIBEST structures amd nourishments';
 try
@@ -57,7 +59,7 @@ for jj = 1:length(S.userinput.phases)
                 copyfile([S.settings.outputdir S.userinput.phase(jj-1).GROfile],[S.settings.outputdir S.userinput.phase(jj).GROfile]);
             end
         else
-            copyfile([S.settings.inputdir 'BRIJN90A.GRO'],[S.settings.outputdir S.userinput.phase(jj).GROfile]);
+            copyfile([S.settings.inputdir 'BASIS.GRO'],[S.settings.outputdir S.userinput.phase(jj).GROfile]);
         end
         NGRO = 0;
         for ii = 1:length(S.userinput.phase(jj).groids)    
@@ -78,7 +80,7 @@ for jj = 1:length(S.userinput.phases)
         if exist([S.settings.outputdir '1HOTSPOTSIT_cont.sos'],'file') &&  ~strcmp([S.settings.outputdir S.userinput.phase(jj).SOSfile],[S.settings.outputdir '1HOTSPOTSIT_cont.sos'])
            copyfile([S.settings.outputdir '1HOTSPOTSIT_cont.sos'],[S.settings.outputdir S.userinput.phase(jj).SOSfile]); 
         elseif ~exist([S.settings.outputdir '1HOTSPOTSIT_cont.sos'],'file')
-            copyfile([S.settings.inputdir '1HOTSPOTS1IT.SOS'],[S.settings.outputdir S.userinput.phase(jj).SOSfile]);
+            copyfile([S.settings.inputdir 'BASIS.SOS'],[S.settings.outputdir S.userinput.phase(jj).SOSfile]);
         end
 %         elseif exist([S.settings.outputdir '1HOTSPOTSIT_cont.sos'],'file')
 %         else
@@ -103,7 +105,7 @@ for jj = 1:length(S.userinput.phases)
                 copyfile([S.settings.outputdir S.userinput.phase(jj-1).REVfile],[S.settings.outputdir S.userinput.phase(jj).REVfile]);
             end
         else
-            copyfile([S.settings.inputdir 'HOLLANDCOAST.REV'],[S.settings.outputdir S.userinput.phase(jj).REVfile]);
+            copyfile([S.settings.inputdir 'BASIS.REV'],[S.settings.outputdir S.userinput.phase(jj).REVfile]);
         end
         NREV = 0;
         for ii = 1:length(S.userinput.phase(jj).revids)

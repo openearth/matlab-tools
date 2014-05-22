@@ -92,7 +92,7 @@ for jj = 1:length(S.userinput.phases)
         ypoly2=MDAdata_NEW.Ycoast(S.userinput.revetment(ss).idRANGE);
         
         % convert coordinates
-        [lonpoly2,latpoly2] = convertCoordinates(xpoly2,ypoly2,S.EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
+        [lonpoly2,latpoly2] = convertCoordinates(xpoly2,ypoly2,S.EPSG,'CS1.code',str2double(S.settings.EPSGcode),'CS2.name','WGS 84','CS2.type','geo');
         lonpoly2     = lonpoly2';
         latpoly2     = latpoly2';
         

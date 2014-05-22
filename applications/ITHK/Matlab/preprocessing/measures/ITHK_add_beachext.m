@@ -66,7 +66,7 @@ lat = S.beachextension(ii).lat;
 lon = S.beachextension(ii).lon;
 
 %% convert coordinates
-[x,y]               = convertCoordinates(lon,lat,S.EPSG,'CS1.name','WGS 84','CS1.type','geo','CS2.code',28992);
+[x,y]               = convertCoordinates(lon,lat,S.EPSG,'CS1.name','WGS 84','CS1.type','geo','CS2.code',str2double(S.settings.EPSGcode));
 
 %% read files
 [MDAdata]=ITHK_io_readMDA('BASIS.MDA');
