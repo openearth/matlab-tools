@@ -82,15 +82,13 @@ if japli == 1;
                 case 'N';
                     typ  = 'neumannbnd';
                 case 'Q';
-                    typ  = 'dischargepergridcellbnd';
-                    warndlg('Option dischargepergridcellbnd is not yet supported by this converter. Hence, boundary is depicted as dischargebnd.','Error');
-                    continue;
+                    typ  = 'dischargebnd';
+                    warndlg('Option dischargepergridcellbnd is not yet supported by this converter. Hence, boundary is depicted as dischargebnd.','Warning');
                 case 'T';
                     typ  = 'dischargebnd';
                 case 'R';
                     typ  = 'riemannbnd';
-                    warndlg('Option riemannbnd is not supported yet by D-Flow FM.','Error');
-                    continue;
+                    warndlg('Option riemannbnd is not supported yet by D-Flow FM.','Warning');
             end
         end
         fprintf(fidext,['QUANTITY='  ,typ         ,'\n']);

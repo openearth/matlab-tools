@@ -121,14 +121,24 @@ for i_pli = 1: length(filpli)
                     bndname = LINE.DATA{i_pnt,3}(index(3):end-5);
                     for i_table = 1: bct.NTables
                         name_bct = bct.Table(i_table).Location;
-                        if strcmp(strtrim(bndname),strtrim(name_bct))
-                            nr_table = i_table;
+                        quan_bct = bct.Table(i_table).Parameter(end).Name;
+                        quan_bct = sscanf(quan_bct,'%s');
+                        if OPT.Salinity
+                            if strcmp(strtrim(bndname),strtrim(name_bct)) & strcmp(quan_bct(1:8),'Salinity');
+                                nr_table = i_table;
+                            end
+                        else
+                            if strcmp(strtrim(bndname),strtrim(name_bct));
+                                nr_table = i_table;
+                            end
                         end
                     end
-
+                    
                     %% Fill series array
                     %  First: Time in minutes
                     SERIES.Values(:,1) = bct.Table(nr_table).Data(:,1);
+                    quan_bct           = bct.Table(nr_table).Parameter(end).Name;
+                    quan_bct           = sscanf(quan_bct,'%s');
 
                     % Then: Values (for now only depth averaged values)
                     if strcmpi      (LINE.DATA{i_pnt,3}(end     :end         ),'a'); %end A
@@ -136,16 +146,22 @@ for i_pli = 1: length(filpli)
                     else                                                             %end B
                         SERIES.Values(:,2) = bct.Table(nr_table).Data(:,3);
                     end
+                    
+                    % Check if quantity under consideration comprises total discharge
+                    if length(quan_bct) > 13; 
+                        if strcmpi(quan_bct(1:14),'totaldischarge')
+                            SERIES.Values  = abs(SERIES.Values);   % always inflow
+                        end
+                    end
+                    
+                    % Fill values
                     SERIES.Values = num2cell(SERIES.Values);
 
                     %% General Comments
                     SERIES.Comments{1} = '* COLUMNN=2';
-                    SERIES.Comments{2} = '* COLUMN1=Time (min) since ITDATE?';
+                    SERIES.Comments{2} = '* COLUMN1=Time (min) since the reference date';
                     SERIES.Comments{3} = '* COLUMN2=Value';
-
-                end
-                
-                    
+                end                  
         end
         %% Write the Series
         if ~isempty(SERIES)
