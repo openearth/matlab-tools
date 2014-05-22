@@ -19,7 +19,7 @@ try
 catch
 end
 fprintf('ITHK preprocessing : Copy default UNIBEST model files\n');
-copyfile(S.settings.inputdir,S.settings.outputdir);
+%copyfile(S.settings.inputdir,S.settings.outputdir);
 %{
 copyfile([S.settings.inputdir 'BASIS.MDA'],S.settings.outputdir);
 copyfile([S.settings.inputdir 'BASIS_ORIG.MDA'],S.settings.outputdir);
@@ -59,7 +59,7 @@ for jj = 1:length(S.userinput.phases)
                 copyfile([S.settings.outputdir S.userinput.phase(jj-1).GROfile],[S.settings.outputdir S.userinput.phase(jj).GROfile]);
             end
         else
-            copyfile([S.settings.inputdir 'BASIS.GRO'],[S.settings.outputdir S.userinput.phase(jj).GROfile]);
+            copyfile([S.settings.rundir 'BASIS.GRO'],[S.settings.outputdir S.userinput.phase(jj).GROfile]);
         end
         NGRO = 0;
         for ii = 1:length(S.userinput.phase(jj).groids)    
@@ -80,7 +80,7 @@ for jj = 1:length(S.userinput.phases)
         if exist([S.settings.outputdir '1HOTSPOTSIT_cont.sos'],'file') &&  ~strcmp([S.settings.outputdir S.userinput.phase(jj).SOSfile],[S.settings.outputdir '1HOTSPOTSIT_cont.sos'])
            copyfile([S.settings.outputdir '1HOTSPOTSIT_cont.sos'],[S.settings.outputdir S.userinput.phase(jj).SOSfile]); 
         elseif ~exist([S.settings.outputdir '1HOTSPOTSIT_cont.sos'],'file')
-            copyfile([S.settings.inputdir 'BASIS.SOS'],[S.settings.outputdir S.userinput.phase(jj).SOSfile]);
+            copyfile([S.settings.rundir 'BASIS.SOS'],[S.settings.outputdir S.userinput.phase(jj).SOSfile]);
         end
 %         elseif exist([S.settings.outputdir '1HOTSPOTSIT_cont.sos'],'file')
 %         else
@@ -105,7 +105,7 @@ for jj = 1:length(S.userinput.phases)
                 copyfile([S.settings.outputdir S.userinput.phase(jj-1).REVfile],[S.settings.outputdir S.userinput.phase(jj).REVfile]);
             end
         else
-            copyfile([S.settings.inputdir 'BASIS.REV'],[S.settings.outputdir S.userinput.phase(jj).REVfile]);
+            copyfile([S.settings.rundir 'BASIS.REV'],[S.settings.outputdir S.userinput.phase(jj).REVfile]);
         end
         NREV = 0;
         for ii = 1:length(S.userinput.phase(jj).revids)
