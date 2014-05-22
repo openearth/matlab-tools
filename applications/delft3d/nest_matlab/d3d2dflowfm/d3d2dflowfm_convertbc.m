@@ -149,7 +149,7 @@ for i_pli = 1: length(filpli)
                     
                     % Check if quantity under consideration comprises total discharge
                     if length(quan_bct) > 13; 
-                        if strcmpi(quan_bct(1:14),'totaldischarge')
+                        if strcmpi(quan_bct(1:14),'totaldischarge') | strcmpi(quan_bct(1:14),'flux/discharge');
                             SERIES.Values  = abs(SERIES.Values);   % always inflow
                         end
                     end
