@@ -7,7 +7,7 @@ tstdir = 'd:\open_earth_test\matlab\applications\delft3d\nest_matlab\';
 filmdf ={[tstdir 'simona\simona-scaloost-fijn-exvd-v1\mdf_fou\scaloost_fou.mdf' ]
          [tstdir 'simona\Testmaas\mdf_t1250\t1250.mdf'                          ]
          [tstdir 'simona\Simona_waal_weir\mdf\hf1.mdf'                          ]
-         [tstdir 'simona\simona-kustzuid-2004-v4\mdf\kzv4.mdf'                  ]
+         [tstdir 'simona\simona-kustzuid-2004-v4\mdf\kzv4.mdf'                  ] 
          [tstdir 'simona\A80\mdf_zuno\zunov4.mdf'                               ]
          [tstdir 'simona\A80\mdf_csm\dcsmv6.mdf'                                ]};
 filmdu ={[tstdir 'simona\simona-scaloost-fijn-exvd-v1\mdu_fou\scaloost_fou.mdu' ]

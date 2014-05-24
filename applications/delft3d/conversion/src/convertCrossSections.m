@@ -51,4 +51,4 @@ crsfile     = [pathout,'\',crsfile];
 
 %%% ACTUAL CONVERSION OF THE GRID
 
-dflowfm_io_crs('write',filegrd,filecrs,crsfile);
+d3d2dflowfm_crs_xy (filegrd,filecrs,crsfile);

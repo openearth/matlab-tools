@@ -1,10 +1,10 @@
-function d3d2dflowfm_grd2net(filgrd,fildep,netfile,samfile)
+function d3d2dflowfm_grd2net(filgrd,filenc,fildep,netfile,samfile)
 
 % d3d2dflowfm_grd2net : Converts d3d-flow grid file to D-Flow FM net file
 %                       (Based upon grd2net from Wim van Balen, however UI dependencies removed)
 
 % Read the grid
-G             = delft3d_io_grd('read',filgrd);
+G             = delft3d_io_grd('read',filgrd,'enclosure',filenc);
 xh            = G.cor.x';
 yh            = G.cor.y';
 mmax          = G.mmax;
@@ -43,4 +43,5 @@ LINE.DATA     = num2cell(tmp(nonan,:));
 dflowfm_io_xydata('write',samfile,LINE);
 
 % Write netCDF-file
+if exist(netfile,'file') delete(netfile); end
 convertWriteNetcdf;

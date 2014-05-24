@@ -14,7 +14,7 @@ convertGuiDirectoriesCheck;
 
 % In case of conversion of all stuff
 if convertallstuff == 1;
-    
+
     % Check if the mdf file name has been specified (Delft3D)
     filemdf     = get(handles.edit3,'String');
     filemdf     = deblank2(filemdf);
@@ -30,7 +30,7 @@ if convertallstuff == 1;
         errordlg('The mdf file name has not been specified.','Error');
         break;
     end
-    
+
     % Check type of bathymetry data
     mdfcontents = delft3d_io_mdf('read',filemdf);
     mdfkeywds   = mdfcontents.keywords;
@@ -97,7 +97,7 @@ filebedsam  = [pathout,'\',filebedsam];
 
 %%% ACTUAL CONVERSION OF THE GRID
 
-d3d2dflowfm_grd2net(filegrd,filedep,filenetcdf,filebedsam);
+d3d2dflowfm_grd2net(filegrd,'',filedep,filenetcdf,filebedsam);
 fclose all;
 clc;
 

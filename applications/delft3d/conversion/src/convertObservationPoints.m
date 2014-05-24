@@ -51,4 +51,4 @@ obsfile     = [pathout,'\',obsfile];
 
 %%% ACTUAL CONVERSION OF THE GRID
 
-dflowfm_io_obs('write',filegrd,filesta,obsfile);
+d3d2dflowfm_obs_xy(filegrd,filesta,obsfile);
