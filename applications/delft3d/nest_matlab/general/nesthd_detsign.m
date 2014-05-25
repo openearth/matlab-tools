@@ -3,7 +3,7 @@ function sign = nesthd_detsign(ma,na,mb,nb,kcs)
 % determines whether or not positive means inflow or outflow
 
 %% iitialise
-sign = 1.0
+sign = 1.0;
 mmax = size(kcs,1);
 nmax = size(kcs,2);
 
