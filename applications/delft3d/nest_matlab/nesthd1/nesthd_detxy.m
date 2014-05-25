@@ -19,8 +19,13 @@
           na = bnd.n(ibnd,1);
           mb = bnd.m(ibnd,2);
           nb = bnd.n(ibnd,2);
-          positi{ibnd} = 'nvt';
-
+%
+%--------For Riemann type boundary conditions determine if inflow is
+%        positive or negative
+%
+          positi{ibnd} = 'in';
+          sign         = nesthd_detsign(ma,na,mb,nb,icom);
+          if sign == -1 positi{ibnd} = out; end
 %
 %---- 1.1 determine the orientation of the boundary section
 %
@@ -29,25 +34,14 @@
          if  ma == mb && na ~= nb
 %
 %.......... check left or right side active grid
-            left  = true;
             m     = ma;
             mstep = 1;
             if ma > 1
                n = round((na + nb) / 2);
                if icom(ma-1,n) ==  1
-                  left  = false;
                   m     = ma - 1 ;
                   mstep = -1;
                end
-            end
-%
-%-----------For Riemann type boundary conditions determine if inflow is
-%           positive or negative
-%
-            if left
-               positi {ibnd} = 'in ';
-            else
-               positi {ibnd} = 'out';
             end
 %
 %.......... then determine x and y coordinates boundary support points
@@ -79,25 +73,14 @@
 %
 %.......... check lower or upper side active grid
 %
-            lower = true;
             n     = na;
             nstep = 1;
             if na > 1
                m = round((ma + mb) / 2);
                if icom(m,na-1) == 1
-                  lower = false;
                   n     = na - 1;
                   nstep = -1;
                end
-            end
-%
-%-----------For Riemann type boundary conditions determine if inflow is
-%           positive or negative
-%
-            if lower
-               positi {ibnd} = 'in ';
-            else
-               positi {ibnd} = 'out';
             end
 %
 %.......... then determine x and y coordinates boundary support points
@@ -229,4 +212,3 @@
             end
          end
       end
-
