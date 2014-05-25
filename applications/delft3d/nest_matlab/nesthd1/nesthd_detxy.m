@@ -25,7 +25,7 @@
 %
           positi{ibnd} = 'in';
           sign         = nesthd_detsign(ma,na,mb,nb,icom);
-          if sign == -1 positi{ibnd} = out; end
+          if sign == -1 positi{ibnd} = 'out'; end
 %
 %---- 1.1 determine the orientation of the boundary section
 %
