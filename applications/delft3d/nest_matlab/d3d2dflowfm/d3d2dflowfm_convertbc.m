@@ -6,6 +6,7 @@ OPT.Astronomical = false;
 OPT.Harmonic     = false;
 OPT.Series       = false;
 OPT.Salinity     = false;
+OPT.Correction   = '';
 
 if ~isempty(varargin)
     OPT = setproperty(OPT,varargin);
@@ -23,9 +24,10 @@ else
 end
 
 %% Read the forcing data
-if OPT.Astronomical bca    = delft3d_io_bca('read',filinp);end
-if OPT.Harmonic     bch    = delft3d_io_bch('read',filinp);end
-if OPT.Series       bct    = ddb_bct_io    ('read',filinp);end
+if OPT.Astronomical         bca    = delft3d_io_bca('read',filinp)        ;end
+if OPT.Harmonic             bch    = delft3d_io_bch('read',filinp)        ;end
+if OPT.Series               bct    = ddb_bct_io    ('read',filinp)        ;end
+if ~isempty(OPT.Correction) cor    = delft3d_io_bca('read',OPT.Correction);end
 
 if OPT.Harmonic
     freq    = bch.frequencies(2:end);
@@ -41,7 +43,7 @@ i_output = 0;
 for i_pli = 1: length(filpli)
     LINE = dflowfm_io_xydata('read',filpli{i_pli});
     for i_pnt = 1: size(LINE.DATA,1)
-        SERIES   = [];      
+        SERIES   = [];
         i_output = i_output + 1;
         %% Get the type of forcing for this point
         index =  d3d2dflowfm_decomposestr(LINE.DATA{i_pnt,3});
@@ -77,7 +79,24 @@ for i_pli = 1: length(filpli)
                             break
                         end
                     end
-                end
+
+                    %% Include correcion from the *.cor file
+                    if ~isempty (OPT.Correction)
+                        for i_cor = 1: length(cor.DATA)
+                            if strcmp(pntname,cor.DATA(i_cor).label)
+                                for i_cmp = 1: size (SERIES.Values,1)
+                                    for i_cmp_cor = 1: length(cor.DATA(i_cor).names)
+                                        if strcmp(SERIES.Values{i_cmp,1},cor.DATA(i_cor).names{i_cmp_cor})
+                                            SERIES.Values{i_cmp,2} = SERIES.Values{i_cmp,2} *  cor.DATA(i_cor).amp(i_cmp_cor);
+                                            SERIES.Values{i_cmp,3} = SERIES.Values{i_cmp,3} +  cor.DATA(i_cor).phi(i_cmp_cor);
+                                        end
+                                        break
+                                    end
+                                end
+                            end
+                        end
+                    end
+               end
 
             %% Harmonic boundary forcing
             case 'h'
@@ -121,7 +140,7 @@ for i_pli = 1: length(filpli)
                     bndname = LINE.DATA{i_pnt,3}(index(3):end-5);
                     for i_table = 1: bct.NTables
                         name_bct = bct.Table(i_table).Location;
-                        quan_bct = bct.Table(i_table).Parameter(end).Name;
+                        quan_bct = bct.Table(i_table).Parameter(2).Name;
                         quan_bct = sscanf(quan_bct,'%s');
                         if OPT.Salinity
                             if strcmp(strtrim(bndname),strtrim(name_bct)) & strcmp(quan_bct(1:8),'Salinity');
@@ -133,27 +152,32 @@ for i_pli = 1: length(filpli)
                             end
                         end
                     end
-                    
+
                     %% Fill series array
                     %  First: Time in minutes
                     SERIES.Values(:,1) = bct.Table(nr_table).Data(:,1);
-                    quan_bct           = bct.Table(nr_table).Parameter(end).Name;
+                    quan_bct           = bct.Table(nr_table).Parameter(2).Name;
                     quan_bct           = sscanf(quan_bct,'%s');
 
                     % Then: Values (for now only depth averaged values)
                     if strcmpi      (LINE.DATA{i_pnt,3}(end     :end         ),'a'); %end A
                         SERIES.Values(:,2) = bct.Table(nr_table).Data(:,2);
                     else                                                             %end B
-                        SERIES.Values(:,2) = bct.Table(nr_table).Data(:,3);
+                        % Requires further refinement for 3d boundaries etc
+                        if strcmpi(bct.Table(nr_table).Contents,'step')              %Step function, take surface salinity
+                            SERIES.Values(:,2) = bct.Table(nr_table).Data(:,4);
+                        else                                                         %Uniform
+                            SERIES.Values(:,2) = bct.Table(nr_table).Data(:,3);
+                        end
                     end
-                    
+
                     % Check if quantity under consideration comprises total discharge
-                    if length(quan_bct) > 13; 
+                    if length(quan_bct) > 13;
                         if strcmpi(quan_bct(1:14),'totaldischarge') | strcmpi(quan_bct(1:14),'flux/discharge');
                             SERIES.Values  = abs(SERIES.Values);   % always inflow
                         end
                     end
-                    
+
                     % Fill values
                     SERIES.Values = num2cell(SERIES.Values);
 
@@ -161,7 +185,7 @@ for i_pli = 1: length(filpli)
                     SERIES.Comments{1} = '* COLUMNN=2';
                     SERIES.Comments{2} = '* COLUMN1=Time (min) since the reference date';
                     SERIES.Comments{3} = '* COLUMN2=Value';
-                end                  
+                end
         end
         %% Write the Series
         if ~isempty(SERIES)

@@ -10,7 +10,6 @@ Gen_inf    = {'This tool converts a Delft3D-Flow mdf file into an D-Dlow FM mdu 
               'This tool does a basic first conversion'                                                            ;
               'Not everything is converted:'                                                                       ;
               '- Restart information is not converted yet'                                                         ;
-              '- Wind    information (space varying) is not converted yet'                                         ;
               '- Tracer  information is not converted yet'                                                         ;
               ' '                                                                                                  ;
               'PLEASE CHECK CAREFULLY( USE AT OWN RISK)'                                                           ;                                                                                        ' '
@@ -99,6 +98,12 @@ else
     mdu.Filbnd = '';
 end
 
+if simona2mdf_fieldandvalue(mdf,'filbc0')
+    mdu.Filbc0 = mdu.Filbnd;
+else
+    mdu.Filbc0 = '';
+end
+
 if mdu.physics.Salinity && simona2mdf_fieldandvalue(mdf,'filbnd')        % Salinity, write _sal pli files
     tmp = d3d2dflowfm_bnd2pli([path_mdf filesep mdf.filcco],[path_mdf filesep mdf.filbnd],name_mdu,'Salinity',true);
     mdu.Filbnd = [mdu.Filbnd tmp];
@@ -117,7 +122,7 @@ mdu = d3d2dflowfm_friction (mdf,mdu,name_mdu);
 simona2mdf_message('Generating D-Flow FM Viscosity/diff.   information','Window','D3D2DFLOWFM Message');
 mdu = d3d2dflowfm_viscosity(mdf,mdu,name_mdu);
 
-simona2mdf_message('Generating External forcing file                  ','Window','D3D2DFLOWFM Message');    
+simona2mdf_message('Generating External forcing file                  ','Window','D3D2DFLOWFM Message');
 mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filbnd' ,mdu.Filbnd ,'Comments',true);
 mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filini' ,mdu.Filini );
 mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filrgh' ,mdu.Filrgh );
@@ -127,6 +132,7 @@ mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filwnd' ,mdu.Filwnd );
 mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filtem' ,mdu.Filtem );
 mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Fileva' ,mdu.Fileva );
 mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filwsvp',mdu.Filwsvp);
+% mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filbc0' ,mdu.Filbc0 );
 
 simona2mdf_message('Generating D-Flow FM boundary conditions          ','Window','D3D2DFLOWFM Message');
 mdu = d3d2dflowfm_bndforcing(mdf,mdu,name_mdu);
@@ -153,5 +159,3 @@ mdu = d3d2dflowfm_output   (mdf,mdu,name_mdu);
 simona2mdf_message('Writing    D-Flow FM *.mdu file                   ','Window','D3D2DFLOWFM Message','Close',true,'n_sec',1);
 mdu = d3d2dflowfm_cleanup(mdu);
 dflowfm_io_mdu('write',[name_mdu '.mdu'],mdu);
-
-

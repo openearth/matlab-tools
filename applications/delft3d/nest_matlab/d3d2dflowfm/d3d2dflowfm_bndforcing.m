@@ -21,14 +21,15 @@ for i_bnd = 1: no_bnd
 end
 
 %% Convert hydrodynamic boundary conditions
-if simona2mdf_fieldandvalue(mdf,'filana') 
-    d3d2dflowfm_convertbc ([mdf.pathd3d filesep mdf.filana],filpli,mdu.pathmdu);
+if simona2mdf_fieldandvalue(mdf,'filana')
+    if ~simona2mdf_fieldandvalue(mdf,'filcor') mdf.filcor = ''; end
+    d3d2dflowfm_convertbc ([mdf.pathd3d filesep mdf.filana],filpli,mdu.pathmdu,'Astronomical',true,'Correction',[mdf.pathd3d filesep mdf.filcor]);
 end
-if simona2mdf_fieldandvalue(mdf,'filbch') 
-    d3d2dflowfm_convertbc ([mdf.pathd3d filesep mdf.filbch],filpli,mdu.pathmdu);
+if simona2mdf_fieldandvalue(mdf,'filbch')
+    d3d2dflowfm_convertbc ([mdf.pathd3d filesep mdf.filbch],filpli,mdu.pathmdu,'Harmonic'    ,true);
 end
-if simona2mdf_fieldandvalue(mdf,'filbct') 
-    d3d2dflowfm_convertbc ([mdf.pathd3d filesep mdf.filbct],filpli,mdu.pathmdu);
+if simona2mdf_fieldandvalue(mdf,'filbct')
+    d3d2dflowfm_convertbc ([mdf.pathd3d filesep mdf.filbct],filpli,mdu.pathmdu,'Series'      ,true);
 end
 
 %% Same story, this time for the salinity boundaries
@@ -50,7 +51,7 @@ for i_bnd = 1: no_bnd
 end
 
 %% Convert salinity boundary conditions
-if simona2mdf_fieldandvalue(mdf,'filbcc') 
+if simona2mdf_fieldandvalue(mdf,'filbcc')
     d3d2dflowfm_convertbc ([mdf.pathd3d filesep mdf.filbcc],filpli,mdu.pathmdu);
 end
 

@@ -33,9 +33,21 @@ else
     end
     mdu.geometry.WaterLevIni = mdf.zeta0;
     if mdu.physics.Salinity
+        if ~simona2mdf_fieldandvalue(mdf,'s0')
+            %% Resatart file, not implemented yet
+            simona2mdf_message({'Conversion of restart file not supported yet';'Uniform salinity of 33.0 psu assumed'}, ...
+                                'Window','D3D2DFLOWFM Warning','Close',true,'n_sec',10);
+           mdf.s0(1) = 33.;
+        end
         mdu.physics.InitialSalinity = mdf.s0(1);
     end
     if mdu.physics.Temperature > 0
+        if ~simona2mdf_fieldandvalue(mdf,'t0')
+            %% Resatart file, not implemented yet
+            simona2mdf_message({'Conversion of restart file not supported yet';'Uniform temperature of oC assumed'}, ...
+                                'Window','D3D2DFLOWFM Warning','Close',true,'n_sec',10);
+           mdf.t0(1) = 15.;
+        end
         mdu.physics.InitialTemperature = mdf.t0(1);
     end
 end

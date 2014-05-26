@@ -12,3 +12,4 @@ if isfield(mdu,'Filwnd' ) mdu = rmfield(mdu,'Filwnd') ;end
 if isfield(mdu,'Filwsvp') mdu = rmfield(mdu,'Filwsvp');end
 if isfield(mdu,'Filtem' ) mdu = rmfield(mdu,'Filtem') ;end
 if isfield(mdu,'Fileva' ) mdu = rmfield(mdu,'Fileva') ;end
+if isfield(mdu,'Filbc0' ) mdu = rmfield(mdu,'Filbc0') ;end

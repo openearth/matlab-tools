@@ -14,6 +14,7 @@ OPT.Fildico  = '';
 OPT.Filwnd   = '';
 OPT.Filtem   = '';
 OPT.Fileva   = '';
+OPT.Filbc0   = '';
 OPT.Filwsvp  = [];
 OPT          = setproperty(OPT,varargin);
 
@@ -67,8 +68,9 @@ if ~isempty(OPT.Filbnd)
     end
 end
 
-%% Write initial conditions for salinity
+%% sea level anomalies through additional time series file
 
+%% Write initial conditions for salinity
 if ~isempty(OPT.Filini)
     i_force = i_force + 1;
     ext_force(i_force).quantity = 'initialsalinity';
@@ -138,6 +140,7 @@ if ~isempty(OPT.Fileva)
     ext_force(i_force).operand  = 'O';
 end
 
+%% space varying wind and pressure
 if ~isempty(OPT.Filwsvp)
     for i_param = 1:3
         if i_param == 1 quantity = 'atmosphericpressure'; end
