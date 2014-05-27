@@ -36,6 +36,13 @@ for idry = 1: length(m)
         LINE(iline).Blckname  = 'Line';
         LINE(iline).DATA{1,1} = xcoor(m(idry) - 1,n(idry) - 1);
         LINE(iline).DATA{1,2} = ycoor(m(idry) - 1,n(idry) - 1);
+        LINE(iline).DATA{2,1} = 0.5*(xcoor(m(idry) - 1,n(idry) - 1) + xcoor(m(idry) - 1,n(idry)    ) );
+        LINE(iline).DATA{2,2} = 0.5*(ycoor(m(idry) - 1,n(idry) - 1) + ycoor(m(idry) - 1,n(idry)    ) );
+
+        iline = iline + 1;
+        LINE(iline).Blckname  = 'Line';
+        LINE(iline).DATA{1,1} = 0.5*(xcoor(m(idry) - 1,n(idry) - 1) + xcoor(m(idry) - 1,n(idry)    ) );
+        LINE(iline).DATA{1,2} = 0.5*(ycoor(m(idry) - 1,n(idry) - 1) + ycoor(m(idry) - 1,n(idry)    ) );
         LINE(iline).DATA{2,1} = xcoor(m(idry) - 1,n(idry)    );
         LINE(iline).DATA{2,2} = ycoor(m(idry) - 1,n(idry)    );
 
@@ -43,6 +50,13 @@ for idry = 1: length(m)
         LINE(iline).Blckname  = 'Line';
         LINE(iline).DATA{1,1} = xcoor(m(idry) - 1,n(idry)    );
         LINE(iline).DATA{1,2} = ycoor(m(idry) - 1,n(idry)    );
+        LINE(iline).DATA{2,1} = 0.5*(xcoor(m(idry) - 1,n(idry)    ) + xcoor(m(idry)    ,n(idry)    ) );
+        LINE(iline).DATA{2,2} = 0.5*(ycoor(m(idry) - 1,n(idry)    ) + ycoor(m(idry)    ,n(idry)    ) );
+
+        iline = iline + 1;
+        LINE(iline).Blckname  = 'Line';
+        LINE(iline).DATA{1,1} = 0.5*(xcoor(m(idry) - 1,n(idry)    ) + xcoor(m(idry)    ,n(idry)    ) );
+        LINE(iline).DATA{1,2} = 0.5*(ycoor(m(idry) - 1,n(idry)    ) + ycoor(m(idry)    ,n(idry)    ) );
         LINE(iline).DATA{2,1} = xcoor(m(idry)    ,n(idry)    );
         LINE(iline).DATA{2,2} = ycoor(m(idry)    ,n(idry)    );
 
@@ -50,9 +64,15 @@ for idry = 1: length(m)
         LINE(iline).Blckname  = 'Line';
         LINE(iline).DATA{1,1} = xcoor(m(idry)    ,n(idry)    );
         LINE(iline).DATA{1,2} = ycoor(m(idry)    ,n(idry)    );
+        LINE(iline).DATA{2,1} = 0.5*(xcoor(m(idry)    ,n(idry)    ) + xcoor(m(idry)    ,n(idry) - 1) );
+        LINE(iline).DATA{2,2} = 0.5*(ycoor(m(idry)    ,n(idry)    ) + ycoor(m(idry)    ,n(idry) - 1) );
+
+        iline = iline + 1;
+        LINE(iline).Blckname  = 'Line';
+        LINE(iline).DATA{1,1} = 0.5*(xcoor(m(idry)    ,n(idry)    ) + xcoor(m(idry)    ,n(idry) - 1) );
+        LINE(iline).DATA{1,2} = 0.5*(ycoor(m(idry)    ,n(idry)    ) + ycoor(m(idry)    ,n(idry) - 1) );
         LINE(iline).DATA{2,1} = xcoor(m(idry)    ,n(idry) - 1);
         LINE(iline).DATA{2,2} = ycoor(m(idry)    ,n(idry) - 1);
-
         iline = iline + 1;
         LINE(iline).Blckname  = 'Line';
         LINE(iline).DATA{1,1} = xcoor(m(idry)    ,n(idry) - 1);
