@@ -90,7 +90,7 @@ err_message='';
 %-------------------------------------------
 % determine location of MSL-shoreline -> Define x-location of shoreline as x=0
 xoffset = find0crossing(x1,y1);
-x1 = x1 - xoffset;
+x1 = x1 - max(xoffset);
 % define coast landwards
 xdiep = x1(find(y1==max(y1)));
 xland = x1(find(y1==min(y1)));
