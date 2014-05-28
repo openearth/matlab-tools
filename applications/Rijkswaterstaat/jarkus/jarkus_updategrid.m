@@ -1,4 +1,4 @@
-function [grid, msg] = jarkus_updategrid(grid, raaienfile, tidefile)
+function [grid, msgpos] = jarkus_updategrid(grid, raaienfile, tidefile)
 %JARKUS_UPDATEGRID   update Jarkus grid struct with jarkus_raaien.txt & jarkus_tideinfo.txt
 %
 %     [grid] = jarkus_updategrid(grid, raaienfile, tidefile)
@@ -34,12 +34,8 @@ end
     % keep only the "0" transects.
     idx1 = mod(data(:,2), 10) ~= 0;
     filteredid = data(idx1,1)*1e6 + floor(data(idx1,2)/10);
-    msg = sprintf('Due to repositioning of a small number of transects in the period between 1965 and 1970, the position of the following transects can be incorrect in the first years of the measured period:%s', sprintf(' %i', sort(filteredid)));
-    idx = true(size(idx1));
-    for ix = find(idx1(:)')
-        idx(data(:,1)==data(ix,1) & data(:,2)==floor(data(ix,2)/10)*10) = false;
-    end
-    data = data(idx,:);
+    msgpos = sprintf('Due to repositioning of a small number of transects in the period between 1965 and 1970, the position of the following transects can be incorrect in the first years of the measured period:%s', sprintf(' %i', sort(filteredid)));
+    data = data(~idx1,:);
     
     transect.areaCode             =                data(:,1);      % kustvak
     transect.alongshoreCoordinate =          floor(data(:,2) / 10);% metrering
