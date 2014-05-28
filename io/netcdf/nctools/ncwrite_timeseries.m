@@ -3,8 +3,11 @@ function varargout = ncwrite_timeseries(ncfile,varargin)
 %
 %  Make a netCDF file with CF conventions of a variable that 
 %  is a timeseries at one specific target location.
-%  In this special case the main dimension are 
-%  * a 1D time axis
+%  In this special case the main dimension are:
+%  * a 1D [time] axis
+%  * a 1D [stations] axis
+% which allow a 2D variable [stations x time] to be written.
+% The resulting files open as history files in Delft3D-QuickPlot.
 %
 %  This case is described in:
 %  CF:   http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.6/ch09.html
@@ -58,19 +61,20 @@ function varargout = ncwrite_timeseries(ncfile,varargin)
    OPT.email          = '';
    
    OPT.platform_names = '<required 1D(t) platform matrix>';
-   OPT.var            = '<required 1D(t) variable matrix>';
-   OPT.datenum        = '<required 1D(t) time vector>';
-   OPT.lon            = '<required 1D(t) position of ship>';
-   OPT.lat            = '<required 1D(t) position of ship>';
-   OPT.z              = '<required 1D(t) or 0D position of sensor>';
+   OPT.var            = '<required 1D(t) variable matrix [station x time]>';
+   OPT.datenum        = []; % <required 1D(t) time vector [time]>
+   OPT.lon            = []; % <required 1D(t) position of station [1]>
+   OPT.lat            = []; % <required 1D(t) position of station [1]>
+   OPT.x              = []; % <required 1D(t) position of station [1]>
+   OPT.y              = []; % <required 1D(t) position of station [1]>
    
 %% Required data fields
    
-   OPT.Name           = 'variable name';
+   OPT.Name           = 'variable_name';
    OPT.standard_name  = '<CF standard name>';
    OPT.long_name      = '<long name>';
    OPT.units          = '<units>';
-   OPT.Attributes     = {'sdn_parameter_urn','','sdn_parameter_name','','sdn_uom_urn','','sdn_uom_name',''};
+   OPT.Attributes     = {'sdn_parameter_urn','','sdn_parameter_name','','sdn_uom_urn','','sdn_uom_name',''}; % SDN/BODC/EMODnet
    OPT.global         = {'title','','references','','email','','source','','comment','','version',''}; % CF
 
 %% Required settings
@@ -122,11 +126,12 @@ function varargout = ncwrite_timeseries(ncfile,varargin)
 
 %% 2 Create dimensions
 
+   if ischar(OPT.platform_names);OPT.platform_names = cellstr(OPT.platform_names);end
+
    ncdimlen.time        = length(OPT.datenum);
    ncdimlen.location    = length(OPT.platform_names);
    ncdimlen.string_len  = size(char(OPT.platform_names),2);
    
-   extent.z   = [min(OPT.z(:)) max(OPT.z(:))];
    extent.lon = [min(OPT.lon(:)) max(OPT.lon(:))];
    extent.lat = [min(OPT.lat(:)) max(OPT.lat(:))];
 
@@ -151,6 +156,7 @@ function varargout = ncwrite_timeseries(ncfile,varargin)
                            
 %% 3b Create (primary) variables: space
 
+   if ~(isempty(OPT.lon) | isempty(OPT.lat))
    ifld     = ifld + 1;clear attr
    attr(    1)  = struct('Name', 'standard_name', 'Value', 'longitude');
    attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'Longitude of platform');
@@ -175,7 +181,8 @@ function varargout = ncwrite_timeseries(ncfile,varargin)
                                'Datatype'   , 'double', ...
                                'Dimensions' , struct('Name', 'location','Length',ncdimlen.location), ...
                                'Attributes' , attr,...
-                               'FillValue'  , []);    
+                               'FillValue'  , []);
+   end                           
                            
    ifld     = ifld + 1;clear attr;
    attr(    1)  = struct('Name', 'standard_name', 'Value', 'platform_name');
@@ -186,7 +193,7 @@ function varargout = ncwrite_timeseries(ncfile,varargin)
                                'Datatype'  , 'char', ...
                                'Dimensions', dims, ...
                                'Attributes' , attr,...
-                               'FillValue'  , []);     
+                               'FillValue'  , []);
                            
    ifld     = ifld + 1;clear attr;
    attr(    1)  = struct('Name', 'standard_name', 'Value', 'platform_id');
@@ -208,7 +215,36 @@ function varargout = ncwrite_timeseries(ncfile,varargin)
                                'Datatype'  , 'char', ...
                                'Dimensions', dims, ...
                                'Attributes' , attr,...
-                               'FillValue'  , []);     
+                               'FillValue'  , []);
+                           
+
+   if ~(isempty(OPT.x) | isempty(OPT.y))
+                           ifld     = ifld + 1;clear attr
+   attr(    1)  = struct('Name', 'standard_name', 'Value', 'projection_x_coordinate');
+   attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'x of platform');
+   attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
+   attr(end+1)  = struct('Name', 'axis'         , 'Value', 'X');
+   attr(end+1)  = struct('Name', '_FillValue'   , 'Value', OPT.fillvalue);
+   attr(end+1)  = struct('Name', 'actual_range' , 'Value', extent.lon);
+   nc.Variables(ifld) = struct('Name'       , 'x', ...
+                               'Datatype'   , 'double', ...
+                               'Dimensions' , struct('Name', 'location','Length',ncdimlen.location), ...
+                               'Attributes' , attr,...
+                               'FillValue'  , []);
+   
+   ifld     = ifld + 1;clear attr
+   attr(    1)  = struct('Name', 'standard_name', 'Value', 'projection_y_coordinate');
+   attr(end+1)  = struct('Name', 'long_name'    , 'Value', 'y of platform');
+   attr(end+1)  = struct('Name', 'units'        , 'Value', 'm');
+   attr(end+1)  = struct('Name', 'axis'         , 'Value', 'Y');
+   attr(end+1)  = struct('Name', '_FillValue'   , 'Value', OPT.fillvalue);
+   attr(end+1)  = struct('Name', 'actual_range' , 'Value', extent.lat);
+   nc.Variables(ifld) = struct('Name'       , 'y', ...
+                               'Datatype'   , 'double', ...
+                               'Dimensions' , struct('Name', 'location','Length',ncdimlen.location), ...
+                               'Attributes' , attr,...
+                               'FillValue'  , []);
+   end                  
                               
 %% 3c Create (primary) variables: data
                               
@@ -238,14 +274,14 @@ function varargout = ncwrite_timeseries(ncfile,varargin)
    
    nc.Attributes(end+1) = struct('Name','time_coverage_start'    ,'Value',  datestr(extent.time(1),30));
    nc.Attributes(end+1) = struct('Name','time_coverage_end'      ,'Value',  datestr(extent.time(2),30));
+   if ~isempty(OPT.lon)
    nc.Attributes(end+1) = struct('Name','geospatial_lat_min'     ,'Value',  extent.lon(1));
    nc.Attributes(end+1) = struct('Name','geospatial_lat_max'     ,'Value',  extent.lon(2));
    nc.Attributes(end+1) = struct('Name','geospatial_lon_min'     ,'Value',  extent.lat(1));
    nc.Attributes(end+1) = struct('Name','geospatial_lon_max'     ,'Value',  extent.lat(2));
-   nc.Attributes(end+1) = struct('Name','geospatial_vertical_min','Value',  extent.z(1));
-   nc.Attributes(end+1) = struct('Name','geospatial_vertical_max','Value',  extent.z(2));
+   end
 
-   try;delete(ncfile);end
+   try;if exist(ncfile);delete(ncfile);end;end
    disp([mfilename,': NCWRITESCHEMA: creating netCDF file: ',ncfile])
    %var2evalstr(nc)
    ncwriteschema(ncfile, nc);			        
@@ -254,8 +290,15 @@ function varargout = ncwrite_timeseries(ncfile,varargin)
 %% 5 Fill variables
 
    ncwrite   (ncfile,'time'         , OPT.datenum - OPT.refdatenum);
+   
+   if ~(isempty(OPT.lon) | isempty(OPT.lat))
    ncwrite   (ncfile,'lon'          , OPT.lon);
    ncwrite   (ncfile,'lat'          , OPT.lat);
+   end
+   if ~(isempty(OPT.x) | isempty(OPT.y))
+   ncwrite   (ncfile,'x'            , OPT.x);
+   ncwrite   (ncfile,'y'            , OPT.y);
+   end
    ncwrite   (ncfile,'platform_name', char(OPT.platform_names)');
    ncwrite   (ncfile,'platform_id'  , char(OPT.platform_names)');
    ncwrite   (ncfile,OPT.Name       , OPT.var);
