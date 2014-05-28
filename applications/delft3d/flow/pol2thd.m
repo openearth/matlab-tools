@@ -130,7 +130,7 @@ elseif strcmpi(fext,'.pol') | strcmpi(fext,'.ldb')
 
 	
 	%open input
-	pol=tekal('read',fileIn); 
+	pol=tekal('read',fileIn,'loaddata'); 
 	pol=pol.Field; 
 	mpol=[]; npol=[]; 
 	
