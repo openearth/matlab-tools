@@ -1,9 +1,10 @@
-function varargout = d3d2dflowfm_bnd2pli_tk(filgrd,filbnd,filpli,varargin)
+function varargout = d3d2dflowfm_bnd2pli(filgrd,filbnd,filpli,varargin)
 
 % d3d2dflowfm_bnd2pli: genarates pli file for D-Flow FM out of a D3D bnd file
 
 % initialisation
 OPT.Salinity          = false;
+OPT.Temperature       = false;
 OPT                   = setproperty(OPT,varargin);
 [path_pli,name_pli,~] = fileparts(filpli);
 
@@ -75,13 +76,13 @@ for ibnd = 1 : no_bnd;
     LINE(iline).DATA{irow,1} = xb(ibnd,1);
     LINE(iline).DATA{irow,2} = yb(ibnd,1);
     string = sprintf(' %1s %1s ',D.DATA(ibnd).bndtype,D.DATA(ibnd).datatype);
-    if astronomical && ~OPT.Salinity;
+    if astronomical && ~OPT.Salinity && ~OPT.Temperature;
         string = [string D.DATA(ibnd).labelA];
     end
-    if timeseries   ||  OPT.Salinity;
+    if timeseries   ||  OPT.Salinity || OPT.Temperature;
         string = [string D.DATA(ibnd).name 'sideA'];
     end
-    if harmonic     && ~OPT.Salinity;
+    if harmonic     && ~OPT.Salinity && ~OPT.Temperature;
         nr_harm = nr_harm + 1;
         string  = [string num2str(nr_harm,'%04i') 'sideA'];
     end
@@ -94,13 +95,13 @@ for ibnd = 1 : no_bnd;
        LINE(iline).DATA{irow,1} = xb(ibnd,2);
        LINE(iline).DATA{irow,2} = yb(ibnd,2);
        string = sprintf(' %1s %1s ',D.DATA(ibnd).bndtype,D.DATA(ibnd).datatype);
-       if astronomical && ~OPT.Salinity;
+       if astronomical && ~OPT.Salinity && ~OPT.Temperature;
            string = [string D.DATA(ibnd).labelB];
        end
-       if timeseries   || OPT.Salinity;
+       if timeseries   || OPT.Salinity || OPT.Temperature; 
            string = [string D.DATA(ibnd).name 'sideB'];
        end
-       if harmonic     && ~OPT.Salinity;
+       if harmonic     && ~OPT.Salinity && ~OPT.Temperature;
            string  = [string num2str(nr_harm,'%04i') 'sideB'];
        end
        LINE(iline).DATA{irow,3} = string;
@@ -116,12 +117,15 @@ for ipol = 1: length(LINE)
     % Blockname = name of the file
     %
 
-    if ~OPT.Salinity
+    if ~OPT.Salinity && ~OPT.Temperature
        LINE(ipol).Blckname=[name_pli '_' num2str(ipol,'%3.3i')];
        dflowfm_io_xydata ('write',[filpli '_' num2str(ipol,'%3.3i') '.pli'],LINE(ipol));
-    else
+    elseif OPT.Salinity
        LINE(ipol).Blckname=[name_pli '_' num2str(ipol,'%3.3i') '_sal'];
        dflowfm_io_xydata ('write',[filpli '_' num2str(ipol,'%3.3i') '_sal.pli'],LINE(ipol));
+    elseif OPT.Temperature
+       LINE(ipol).Blckname=[name_pli '_' num2str(ipol,'%3.3i') '_tem'];
+       dflowfm_io_xydata ('write',[filpli '_' num2str(ipol,'%3.3i') '_tem.pli'],LINE(ipol));
     end
 
     %
@@ -135,7 +139,7 @@ end
 
 % now, write all polylines (only for hydrodynamic bc)
 
-if ~OPT.Salinity
+if ~OPT.Salinity && ~OPT.Temperature
    dflowfm_io_xydata ('write',[filpli '_all.pli'],LINE);
 end
 

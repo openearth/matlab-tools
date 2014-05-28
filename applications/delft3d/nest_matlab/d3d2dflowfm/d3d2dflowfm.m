@@ -110,7 +110,8 @@ if mdu.physics.Salinity && simona2mdf_fieldandvalue(mdf,'filbnd')        % Salin
 end
 
 if mdu.physics.Temperature > 0 && simona2mdf_fieldandvalue(mdf,'filbnd') % Temperature,
-    % to do!, implement temperature bc
+    tmp = d3d2dflowfm_bnd2pli([path_mdf filesep mdf.filcco],[path_mdf filesep mdf.filbnd],name_mdu,'Temperature',true);
+    mdu.Filbnd = [mdu.Filbnd tmp];
 end
 
 simona2mdf_message('Generating D-Flow FM Initial Condition information','Window','D3D2DFLOWFM Message');

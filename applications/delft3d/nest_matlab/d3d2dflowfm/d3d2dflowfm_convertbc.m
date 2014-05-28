@@ -6,6 +6,7 @@ OPT.Astronomical = false;
 OPT.Harmonic     = false;
 OPT.Series       = false;
 OPT.Salinity     = false;
+OPT.Temperature  = false;
 OPT.Correction   = '';
 
 if ~isempty(varargin)
@@ -16,11 +17,11 @@ else
         if strcmp(extension,'.bca') OPT.Astronomical = true; end
         if strcmp(extension,'.bch') OPT.Harmonic     = true; end
         if strcmp(extension,'.bct') OPT.Series       = true; end
-        if strcmp(extension,'.bcc')
-            OPT.Series       = true;
-            OPT.Salinity     = true;
-        end
     end
+end
+
+if OPT.Salinity || OPT.Temperature
+    OPT.Series = true;
 end
 
 %% Read the forcing data
@@ -47,7 +48,7 @@ for i_pli = 1: length(filpli)
         i_output = i_output + 1;
         %% Get the type of forcing for this point
         index =  d3d2dflowfm_decomposestr(LINE.DATA{i_pnt,3});
-        if OPT.Salinity
+        if OPT.Salinity || OPT.Temperature
             b_type  = 't';
         else
             b_type = lower(strtrim(LINE.DATA{i_pnt,3}(index(2):index(3) - 1)));
@@ -89,8 +90,8 @@ for i_pli = 1: length(filpli)
                                         if strcmp(SERIES.Values{i_cmp,1},cor.DATA(i_cor).names{i_cmp_cor})
                                             SERIES.Values{i_cmp,2} = SERIES.Values{i_cmp,2} *  cor.DATA(i_cor).amp(i_cmp_cor);
                                             SERIES.Values{i_cmp,3} = SERIES.Values{i_cmp,3} +  cor.DATA(i_cor).phi(i_cmp_cor);
+                                            break;
                                         end
-                                        break
                                     end
                                 end
                             end
@@ -143,7 +144,11 @@ for i_pli = 1: length(filpli)
                         quan_bct = bct.Table(i_table).Parameter(2).Name;
                         quan_bct = sscanf(quan_bct,'%s');
                         if OPT.Salinity
-                            if strcmp(strtrim(bndname),strtrim(name_bct)) & strcmp(quan_bct(1:8),'Salinity');
+                            if strcmp(strtrim(bndname),strtrim(name_bct)) && strcmpi(quan_bct(1:8 ),'Salinity');
+                                nr_table = i_table;
+                            end
+                        elseif OPT.Temperature
+                            if strcmp(strtrim(bndname),strtrim(name_bct)) && strcmpi(quan_bct(1:11),'Temperature');
                                 nr_table = i_table;
                             end
                         else
@@ -153,22 +158,27 @@ for i_pli = 1: length(filpli)
                         end
                     end
 
+                    %% Misuse kmax to adress the correct columns (for averaging in case of step/linear/3d-profile)
+                    kmax = 1;
+                    if strcmpi(bct.Table(nr_table).Contents,'step') || strcmpi(bct.Table(nr_table).Contents,'linear')
+                        kmax = 2;
+                    else
+                        % 3D-Profile
+                        kmax = floor(size(bct.Table(nr_table).Data,2) - 1) / 2;
+                    end
+
+
                     %% Fill series array
                     %  First: Time in minutes
                     SERIES.Values(:,1) = bct.Table(nr_table).Data(:,1);
                     quan_bct           = bct.Table(nr_table).Parameter(2).Name;
                     quan_bct           = sscanf(quan_bct,'%s');
 
-                    % Then: Values (for now only depth averaged values)
+                    % Then: Values (for now generaste the depth averaged values)
                     if strcmpi      (LINE.DATA{i_pnt,3}(end     :end         ),'a'); %end A
-                        SERIES.Values(:,2) = bct.Table(nr_table).Data(:,2);
+                        SERIES.Values(:,2) = mean(bct.Table(nr_table).Data(:,2       :2        + (kmax - 1)),2);
                     else                                                             %end B
-                        % Requires further refinement for 3d boundaries etc
-                        if strcmpi(bct.Table(nr_table).Contents,'step')              %Step function, take surface salinity
-                            SERIES.Values(:,2) = bct.Table(nr_table).Data(:,4);
-                        else                                                         %Uniform
-                            SERIES.Values(:,2) = bct.Table(nr_table).Data(:,3);
-                        end
+                        SERIES.Values(:,2) = mean(bct.Table(nr_table).Data(:,2 + kmax:2 + kmax + (kmax - 1)),2);
                     end
 
                     % Check if quantity under consideration comprises total discharge
