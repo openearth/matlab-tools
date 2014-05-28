@@ -1,4 +1,4 @@
-function [grid] = jarkus_updategrid(grid, raaienfile, tidefile)
+function [grid, msg] = jarkus_updategrid(grid, raaienfile, tidefile)
 %JARKUS_UPDATEGRID   update Jarkus grid struct with jarkus_raaien.txt & jarkus_tideinfo.txt
 %
 %     [grid] = jarkus_updategrid(grid, raaienfile, tidefile)
@@ -26,6 +26,21 @@ end
 %  replace with function jarkus_raaien
 
     data                          = dlmread(raaienfile, '\t', 1,0);
+    
+    % the positioning of 19 transects in the areas Voorne (11) and Goeree
+    % (12) have been in the years after 1965. The old ones all end at 1,
+    % whereas the current ones (and all the others) end at 0. The next
+    % lines of code filter the "1" transects from the data, in order to
+    % keep only the "0" transects.
+    idx1 = mod(data(:,2), 10) ~= 0;
+    filteredid = data(idx1,1)*1e6 + floor(data(idx1,2)/10);
+    msg = sprintf('Due to repositioning of a small number of transects in the period between 1965 and 1970, the position of the following transects can be incorrect in the first years of the measured period:%s', sprintf(' %i', sort(filteredid)));
+    idx = true(size(idx1));
+    for ix = find(idx1(:)')
+        idx(data(:,1)==data(ix,1) & data(:,2)==floor(data(ix,2)/10)*10) = false;
+    end
+    data = data(idx,:);
+    
     transect.areaCode             =                data(:,1);      % kustvak
     transect.alongshoreCoordinate =          floor(data(:,2) / 10);% metrering
     transect.x                    =                data(:,3)./100; % x
@@ -35,7 +50,7 @@ end
     transect.grad                 =          round(data(:,5)./100);
     transect.angle                = 0.5*pi - 2*pi*(data(:,5)/(100*360)); 
 
-    transect.id                   = transect.areaCode*1000000 + transect.alongshoreCoordinate;
+    transect.id                   = transect.areaCode*1e6 + transect.alongshoreCoordinate;
 
 %% find points in the transect which are also in the grid
     

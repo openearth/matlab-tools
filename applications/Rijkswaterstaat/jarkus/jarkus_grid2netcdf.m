@@ -47,7 +47,7 @@ STRINGSIZE = 100;
 	nc_attput( filename, nc_global, 'keywords_vocabulary', 'http://www.eionet.europa.eu/gemet');
 	nc_attput( filename, nc_global, 'standard_name_vocabulary', 'http://cf-pcmdi.llnl.gov/documents/cf-standard-names/');
     nc_attput( filename, nc_global, 'history', OPT.historyatt);
-    nc_attput( filename, nc_global, 'comment', sprintf('The transects in this file are a combination of origins:%s (%s )', sprintf(' %i', OPT.origins), sprintf(' %s', origin_descriptions{OPT.origins})));
+    nc_attput( filename, nc_global, 'comment', sprintf('The transects in this file are a combination of origins:%s (%s )\n%s', sprintf(' %i', OPT.origins), sprintf(' %s', origin_descriptions{OPT.origins}), OPT.msg));
     nc_attput( filename, nc_global, 'institution', 'Rijkswaterstaat');
     nc_attput( filename, nc_global, 'source'     , 'on shore and off shore measurements');
     nc_attput( filename, nc_global, 'references' , 'Original source: http://www.watermarkt.nl/kustenzeebodem/');
