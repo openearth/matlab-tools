@@ -7,7 +7,7 @@ global figureiconfile
 handles=getHandles;
 
 % Output options
-handles.outputformats={'png','jpeg','tiff','pdf','eps','eps2'};
+handles.outputformats={'png','jpeg','tiff','pdf','eps','epsc','eps2'};
 handles.outputresolutiontexts={'50','100','150','200','300','450','600'};
 handles.outputresolutions=[50 100 150 200 300 450 600];
 handles.renderers={'ZBuffer','Painters','OpenGL'};

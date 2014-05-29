@@ -1016,6 +1016,8 @@ switch lower(handles.figures(handles.activefigure).figure.format)
         handles.figures(handles.activefigure).figure.outputfile=[name '.pdf'];
     case {'eps'}
         handles.figures(handles.activefigure).figure.outputfile=[name '.eps'];
+    case {'epsc'}
+        handles.figures(handles.activefigure).figure.outputfile=[name '.eps'];
     case {'eps2'}
         handles.figures(handles.activefigure).figure.outputfile=[name '.ps2'];
 end
