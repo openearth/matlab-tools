@@ -5,6 +5,7 @@ function varargout = d3d2dflowfm_bnd2pli(filgrd,filbnd,filpli,varargin)
 % initialisation
 OPT.Salinity          = false;
 OPT.Temperature       = false;
+OPT.enclosure         = '';
 OPT                   = setproperty(OPT,varargin);
 [path_pli,name_pli,~] = fileparts(filpli);
 
@@ -30,6 +31,25 @@ for ibnd=1:no_bnd
     end
 end
 
+%% Type of bc (end determine signd for current and discharge bc)
+first          = true;
+kcs            = [];
+for i_bnd      = 1: no_bnd
+    sign(i_bnd) = 1;
+    type           = D.DATA(i_bnd).bndtype;
+    if strcmpi(type,'c') || strcmpi(type,'q') || strcmpi(type,'t')
+        if first && ~isempty(OPT.enclosure)
+            % Determine kcs values (1 active, 0 inctive)
+            kcs   = nesthd_det_icom(G.cor.x',G.nodatavalue,OPT.enclosure);
+            first = false;
+        end
+        if ~isempty(kcs)
+            sign(i_bnd) = nesthd_detsign(mbnd(i_bnd,1),nbnd(i_bnd,1),     ...
+                                         mbnd(i_bnd,2),nbnd(i_bnd,1),kcs  );
+        end
+    end
+end
+
 % Reshape the boundary locations into polylines
 irow         = 1;                     % is number of points in the polyline
 iline        = 1;                     % is number of polylines
@@ -46,10 +66,12 @@ for ibnd = 1 : no_bnd;
     if ibnd > 1;
         if mbnd(ibnd,1) == mbnd(ibnd,2)
             dir       = 'm';
-            diff      = abs(mbnd(ibnd,1) - mbnd(ibnd-1,2));
+            diff      = abs(nbnd(ibnd,1) - nbnd(ibnd-1,2));
+            if mbnd(ibnd,1) ~= mbnd(ibnd-1,2) diff = 1e6; end
         else
             dir       = 'n';
-            diff      = abs(nbnd(ibnd,1) - nbnd(ibnd-1,2));
+            diff      = abs(mbnd(ibnd,1) - mbnd(ibnd-1,2));
+            if nbnd(ibnd,1) ~= nbnd(ibnd-1,2) diff = 1e6; end
         end
         if ~strcmp(dir,dir_old) || diff > 1
             dir_old   = dir;
@@ -57,8 +79,8 @@ for ibnd = 1 : no_bnd;
             irow      = 1;
         end
     end
-
-    % Astronomical boundary conditions?
+    
+    %% Type of forcing
     astronomical = false;
     timeseries   = false;
     harmonic     = false;
@@ -72,7 +94,7 @@ for ibnd = 1 : no_bnd;
         harmonic      = true;
     end
 
-    % Fill LINE struct for side A
+    %% Fill LINE struct (starting with side A)
     LINE(iline).DATA{irow,1} = xb(ibnd,1);
     LINE(iline).DATA{irow,2} = yb(ibnd,1);
     string = sprintf(' %1s %1s ',D.DATA(ibnd).bndtype,D.DATA(ibnd).datatype);
@@ -86,10 +108,12 @@ for ibnd = 1 : no_bnd;
         nr_harm = nr_harm + 1;
         string  = [string num2str(nr_harm,'%04i') 'sideA'];
     end
+
+    % Add sign to the string
+    string = [string ' ' num2str(sign(ibnd))];
     LINE(iline).DATA{irow,3} = string;
 
-    % Fill LINE struct for side B (avoid double points by checking if it is not first point of next boundary segment)
-
+    %% Fill LINE struct for side B (avoid double points by checking if it is not first point of next boundary segment)
     if ~(xb(ibnd,2) == xb(min(ibnd + 1,no_bnd),1) && yb(ibnd,2) == yb(min(ibnd +1,no_bnd),1))
        irow = irow + 1;
        LINE(iline).DATA{irow,1} = xb(ibnd,2);
@@ -98,12 +122,15 @@ for ibnd = 1 : no_bnd;
        if astronomical && ~OPT.Salinity && ~OPT.Temperature;
            string = [string D.DATA(ibnd).labelB];
        end
-       if timeseries   || OPT.Salinity || OPT.Temperature; 
+       if timeseries   || OPT.Salinity || OPT.Temperature;
            string = [string D.DATA(ibnd).name 'sideB'];
        end
        if harmonic     && ~OPT.Salinity && ~OPT.Temperature;
            string  = [string num2str(nr_harm,'%04i') 'sideB'];
        end
+
+       % Add sign to the string
+       string = [string ' ' num2str(sign(ibnd))];
        LINE(iline).DATA{irow,3} = string;
     end
     irow = irow + 1;

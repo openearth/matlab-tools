@@ -93,7 +93,8 @@ mdu = d3d2dflowfm_numerical(mdf,mdu,name_mdu);
 
 if simona2mdf_fieldandvalue(mdf,'filbnd')
     simona2mdf_message('Generating D-Flow FM Boundary definition          ','Window','D3D2DFLOWFM Message');
-    mdu.Filbnd = d3d2dflowfm_bnd2pli([path_mdf filesep mdf.filcco],[path_mdf filesep mdf.filbnd],name_mdu);
+    mdu.Filbnd = d3d2dflowfm_bnd2pli([path_mdf filesep mdf.filcco],[path_mdf filesep mdf.filbnd],name_mdu,...
+                                      'enclosure',[path_mdf filesep mdf.filgrd]);
 else
     mdu.Filbnd = '';
 end
@@ -124,15 +125,16 @@ simona2mdf_message('Generating D-Flow FM Viscosity/diff.   information','Window'
 mdu = d3d2dflowfm_viscosity(mdf,mdu,name_mdu);
 
 simona2mdf_message('Generating External forcing file                  ','Window','D3D2DFLOWFM Message');
-mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filbnd' ,mdu.Filbnd ,'Comments',true);
-mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filini' ,mdu.Filini );
-mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filrgh' ,mdu.Filrgh );
-mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filvico',mdu.Filvico);
-mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Fildico',mdu.Fildico);
-mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filwnd' ,mdu.Filwnd );
-mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filtem' ,mdu.Filtem );
-mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Fileva' ,mdu.Fileva );
-mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filwsvp',mdu.Filwsvp);
+mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filbnd'     ,mdu.Filbnd ,'Comments',true);
+mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filini_sal' ,mdu.Filini_sal);
+mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filini_tem' ,mdu.Filini_tem);
+mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filrgh'     ,mdu.Filrgh    );
+mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filvico'    ,mdu.Filvico   );
+mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Fildico'    ,mdu.Fildico   );
+mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filwnd'     ,mdu.Filwnd    );
+mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filtem'     ,mdu.Filtem    );
+mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Fileva'     ,mdu.Fileva    );
+mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filwsvp'    ,mdu.Filwsvp   );
 % mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filbc0' ,mdu.Filbc0 );
 
 simona2mdf_message('Generating D-Flow FM boundary conditions          ','Window','D3D2DFLOWFM Message');

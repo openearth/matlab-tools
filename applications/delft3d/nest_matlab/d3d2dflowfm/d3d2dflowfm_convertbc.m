@@ -48,6 +48,7 @@ for i_pli = 1: length(filpli)
         i_output = i_output + 1;
         %% Get the type of forcing for this point
         index =  d3d2dflowfm_decomposestr(LINE.DATA{i_pnt,3});
+        sign = str2num(LINE.DATA{i_pnt,3}(index(end-1):index(end) - 1));
         if OPT.Salinity || OPT.Temperature
             b_type  = 't';
         else
@@ -74,7 +75,7 @@ for i_pli = 1: length(filpli)
                         if strcmp(pntname,bca.DATA(i_bca).label);
                             for i_cmp=1:length(bca.DATA(i_bca).names);
                                 SERIES.Values {i_cmp,1} = bca.DATA(i_bca).names{i_cmp};
-                                SERIES.Values {i_cmp,2} = bca.DATA(i_bca).amp(i_cmp);
+                                SERIES.Values {i_cmp,2} = sign*bca.DATA(i_bca).amp(i_cmp);
                                 SERIES.Values {i_cmp,3} = bca.DATA(i_bca).phi(i_cmp);
                             end
                             break
@@ -122,12 +123,12 @@ for i_pli = 1: length(filpli)
 
                     %% Write harmonic data to forcing file
                     SERIES.Values(1,1) = 0.0;
-                    SERIES.Values(1,2) = a0(i_side,i_harm);
+                    SERIES.Values(1,2) = sign*a0(i_side,i_harm);
                     SERIES.Values(1,3) = 0.0;
 
                     for i_freq = 1:no_freq
                         SERIES.Values(i_freq+1,1) = freq(i_freq);
-                        SERIES.Values(i_freq+1,2) = amp (i_side,i_harm,i_freq);
+                        SERIES.Values(i_freq+1,2) = sign*amp (i_side,i_harm,i_freq);
                         SERIES.Values(i_freq+1,3) = phases (i_side,i_harm,i_freq);
                     end
                     SERIES.Values = num2cell(SERIES.Values);
@@ -138,7 +139,9 @@ for i_pli = 1: length(filpli)
                     filename{i_output} = [path_output filesep LINE.Blckname '_' num2str(i_pnt,'%0.4d') '.tim'];
 
                     %% find Time series table number
-                    bndname = LINE.DATA{i_pnt,3}(index(3):end-5);
+                    bndname = strtrim(LINE.DATA{i_pnt,3}(index(3):index(end - 1) - 1));
+                    side    = bndname(end:end);
+                    bndname = bndname(1:end-5);
                     for i_table = 1: bct.NTables
                         name_bct = bct.Table(i_table).Location;
                         quan_bct = bct.Table(i_table).Parameter(2).Name;
@@ -159,11 +162,10 @@ for i_pli = 1: length(filpli)
                     end
 
                     %% Misuse kmax to adress the correct columns (for averaging in case of step/linear/3d-profile)
-                    kmax = 1;
                     if strcmpi(bct.Table(nr_table).Contents,'step') || strcmpi(bct.Table(nr_table).Contents,'linear')
                         kmax = 2;
                     else
-                        % 3D-Profile
+                        % Uniform/Logarithmic/3D-Profile
                         kmax = floor(size(bct.Table(nr_table).Data,2) - 1) / 2;
                     end
 
@@ -174,18 +176,11 @@ for i_pli = 1: length(filpli)
                     quan_bct           = bct.Table(nr_table).Parameter(2).Name;
                     quan_bct           = sscanf(quan_bct,'%s');
 
-                    % Then: Values (for now generaste the depth averaged values)
-                    if strcmpi      (LINE.DATA{i_pnt,3}(end     :end         ),'a'); %end A
-                        SERIES.Values(:,2) = mean(bct.Table(nr_table).Data(:,2       :2        + (kmax - 1)),2);
+                    % Then: Values (for now generate the depth averaged values)
+                    if strcmpi      (side,'a');                                      %end A
+                        SERIES.Values(:,2) = sign*mean(bct.Table(nr_table).Data(:,2       :2        + (kmax - 1)),2);
                     else                                                             %end B
-                        SERIES.Values(:,2) = mean(bct.Table(nr_table).Data(:,2 + kmax:2 + kmax + (kmax - 1)),2);
-                    end
-
-                    % Check if quantity under consideration comprises total discharge
-                    if length(quan_bct) > 13;
-                        if strcmpi(quan_bct(1:14),'totaldischarge') | strcmpi(quan_bct(1:14),'flux/discharge');
-                            SERIES.Values  = abs(SERIES.Values);   % always inflow
-                        end
+                        SERIES.Values(:,2) = sign*mean(bct.Table(nr_table).Data(:,2 + kmax:2 + kmax + (kmax - 1)),2);
                     end
 
                     % Fill values

@@ -5,18 +5,19 @@ function mdu = d3d2dflowfm_genext(mdu,filmdu,varargin)
 %% initialisation
 ext_force   = [];
 
-OPT.Comments = false;
-OPT.Filbnd   = '';
-OPT.Filini   = '';
-OPT.Filrgh   = '';
-OPT.Filvico  = '';
-OPT.Fildico  = '';
-OPT.Filwnd   = '';
-OPT.Filtem   = '';
-OPT.Fileva   = '';
-OPT.Filbc0   = '';
-OPT.Filwsvp  = [];
-OPT          = setproperty(OPT,varargin);
+OPT.Comments  = false;
+OPT.Filbnd    = '';
+OPT.Filini_sal= '';
+OPT.Filini_tem= '';
+OPT.Filrgh    = '';
+OPT.Filvico   = '';
+OPT.Fildico   = '';
+OPT.Filwnd    = '';
+OPT.Filtem    = '';
+OPT.Fileva    = '';
+OPT.Filbc0    = '';
+OPT.Filwsvp   =  [];
+OPT           = setproperty(OPT,varargin);
 
 nesthd_path = getenv('nesthd_path');
 if ~isempty (nesthd_path) && OPT.Comments
@@ -71,10 +72,20 @@ end
 %% sea level anomalies through additional time series file
 
 %% Write initial conditions for salinity
-if ~isempty(OPT.Filini)
+if ~isempty(OPT.Filini_sal)
     i_force = i_force + 1;
     ext_force(i_force).quantity = 'initialsalinity';
-    ext_force(i_force).filename = OPT.Filini;
+    ext_force(i_force).filename = OPT.Filini_sal;
+    ext_force(i_force).filetype = 7;
+    ext_force(i_force).method   = 4;
+    ext_force(i_force).operand  = 'O';
+end
+
+%% Write initial conditions for temperature
+if ~isempty(OPT.Filini_tem)
+    i_force = i_force + 1;
+    ext_force(i_force).quantity = 'initiatemperature';
+    ext_force(i_force).filename = OPT.Filini_tem;
     ext_force(i_force).filetype = 7;
     ext_force(i_force).method   = 4;
     ext_force(i_force).operand  = 'O';

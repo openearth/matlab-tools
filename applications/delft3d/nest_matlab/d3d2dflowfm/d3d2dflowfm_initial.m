@@ -4,50 +4,54 @@ function mdu = d3d2dflowfm_inital(mdf,mdu, name_mdu)
 
 filgrd          = [mdf.pathd3d filesep mdf.filcco];
 [~,nameshort,~] = fileparts(name_mdu);
-mdu.Filini      = '';
+mdu.Filini_sal  = '';
+mdu.Filini_tem  = '';
 
 %% Reads initial conditions from file (space varying)
-if simona2mdf_fieldandvalue(mdf,'filic')
+if simona2mdf_fieldandvalue(mdf,'filic') || simona2mdf_fieldandvalue(mdf,'restid')
     mdu.geometry.WaterLevIni      = -999.999;
     mdu.geometry.WaterLevIniFile  = [nameshort '_ini_wlev.xyz'];
-    filic                         = [mdf.pathd3d filesep mdf.filic ];
+    if simona2mdf_fieldandvalue(mdf,'filic')
+        filic                         = [mdf.pathd3d filesep mdf.filic ];
+        type                          = 'initial';
+    else
+        filic                         = [mdf.pathd3d filesep 'tri-rst.' mdf.restid];
+        type                          = 'rst';
+    end
+
     if ~mdu.physics.Salinity && mdu.physics.Temperature == 0
         d3d2dflowfm_initial_xyz(filgrd,filic,[name_mdu  '_ini_wlev.xyz']);
     elseif mdu.physics.Salinity && mdu.physics.Temperature == 0
-        mdu.Filini                         = [nameshort '_ini_sal.xyz'];
+        mdu.Filini_sal                     = [nameshort '_ini_sal.xyz'];
         d3d2dflowfm_initial_xyz(filgrd,filic,[name_mdu  '_ini_wlev.xyz'], ...
                                'filic_sal',[name_mdu '_ini_sal.xyz']    , ...
-                               'kmax'     ,mdu.geometry.Kmx             );
-    else
+                               'kmax'     ,mdu.geometry.Kmx             , ...
+                               'type'     ,type                         );
+    elseif mdu.physics.Salinity && mdu.physics.Temperature> 0
         % ic temperature to implement yet
+        mdu.Filini_sal                     = [nameshort '_ini_sal.xyz'];
+        mdu.Filini_tem                     = [nameshort '_ini_tem.xyz'];
+        d3d2dflowfm_initial_xyz(filgrd,filic,[name_mdu  '_ini_wlev.xyz'], ...
+                               'filic_sal',[name_mdu '_ini_sal.xyz']    , ...
+                               'filic_tem',[name_mdu '_ini_tem.xyz']    , ...
+                               'kmax'     ,mdu.geometry.Kmx             , ...
+                               'type'     ,type                         );
+    elseif ~mdu.physics.Salinity && mdu.physics.Temperature> 0
+        % ic temperature to implement yet
+        mdu.Filini_tem                     = [nameshort '_ini_tem.xyz'];
+        d3d2dflowfm_initial_xyz(filgrd,filic,[name_mdu  '_ini_wlev.xyz'], ...
+                               'filic_tem',[name_mdu '_ini_tem.xyz']    , ...
+                               'kmax'     ,mdu.geometry.Kmx             , ...
+                               'type'     ,type                         );
     end
 else
 
-    %% Constant values from mdf file; no initial condition for salinity
-
-    if ~simona2mdf_fieldandvalue(mdf,'zeta0')
-        %% Resatart file, not implemented yet
-        simona2mdf_message({'Conversion of restart file not supported yet';'Uniform water level of 0.0 m assumed'}, ...
-                            'Window','D3D2DFLOWFM Warning','Close',true,'n_sec',10);
-        mdf.zeta0 = 0.;
-    end
+    %% Constant values from mdf file; for salinity and temperature, take average value
     mdu.geometry.WaterLevIni = mdf.zeta0;
     if mdu.physics.Salinity
-        if ~simona2mdf_fieldandvalue(mdf,'s0')
-            %% Resatart file, not implemented yet
-            simona2mdf_message({'Conversion of restart file not supported yet';'Uniform salinity of 33.0 psu assumed'}, ...
-                                'Window','D3D2DFLOWFM Warning','Close',true,'n_sec',10);
-           mdf.s0(1) = 33.;
-        end
-        mdu.physics.InitialSalinity = mdf.s0(1);
+        mdu.physics.InitialSalinity    = mean(mdf.s0);
     end
     if mdu.physics.Temperature > 0
-        if ~simona2mdf_fieldandvalue(mdf,'t0')
-            %% Resatart file, not implemented yet
-            simona2mdf_message({'Conversion of restart file not supported yet';'Uniform temperature of oC assumed'}, ...
-                                'Window','D3D2DFLOWFM Warning','Close',true,'n_sec',10);
-           mdf.t0(1) = 15.;
-        end
-        mdu.physics.InitialTemperature = mdf.t0(1);
+        mdu.physics.InitialTemperature = mean(mdf.t0);
     end
 end

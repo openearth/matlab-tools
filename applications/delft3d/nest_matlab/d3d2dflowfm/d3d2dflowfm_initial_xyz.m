@@ -2,10 +2,11 @@ function mdu = d3d2dflowfm_inital_xyz(varargin)
 
 % d3d2dflowfm_initial_xyz : Writes dinitial conditions for waterlevel and salinity to D-Flow FM input files
 %
-%         input arguments 1) Delft3D-Flow grid file ("*.grd")
-%                         2) Delft3D-Flow initial condition file ("*.ini")
+%         input arguments 1) Delft3D-Flow grid file                          ("*.grd")
+%                         2) Delft3D-Flow initial condition file             ("*.ini")
 %                         3) Dflowfm initial condition file for water levels ("*.xyz")
-%              (optional) 4) Dflowfm initial condition for salinity ("*.xyz")
+%              (optional) 4) Dflowfm initial condition for salinity          ("*.xyz")
+%              (optional) 5) Dflowfm initial condition for temperature       ("*.xyz")
 %
 %         WARNING: It is assumed that the Delft3D-Flow simulation is depth averaged and the last
 %                  Field in the initial condition file represents salinity
@@ -13,8 +14,8 @@ function mdu = d3d2dflowfm_inital_xyz(varargin)
 OPT.filic_sal     = '';
 OPT.filic_tem     = '';
 OPT.kmax          =  1;
+OPT.type          = 'initial'; 
 OPT               = setproperty(OPT,varargin{4:end});
-
 
 filgrd    = varargin{1};
 filic     = varargin{2};
@@ -28,13 +29,16 @@ xcoor = grid.cend.x';
 ycoor = grid.cend.y';
 
 %% Read initial condition file
-ic    = wldep('read',filic,[mmax nmax],'multiple');
+if strcmpi(OPT.type,'initial');
+    ic    = wldep ('read',filic,[mmax nmax],'multiple');
+elseif strcmpi(OPT.type,'rst'); 
+    ic    = trirst('read',filic,[mmax nmax],'all'     );
+end
 
 %% Get initial conditions for water level
 tmp(:,1) = reshape(xcoor'     ,mmax*nmax,1);
 tmp(:,2) = reshape(ycoor'     ,mmax*nmax,1);
 tmp(:,3) = reshape(ic(1).Data',mmax*nmax,1);
-
 
 %% fill the LINE structure with initial conditions for water levels
 nonan     = ~isnan  (tmp(:,1));
@@ -52,7 +56,7 @@ if ~isempty(OPT.filic_sal)
         values = values + ic(i_lay).Data;
     end
     values = values/OPT.kmax;
-    
+
     tmp(:,3) = reshape(values',mmax*nmax,1);
 
     %% Fill line structure with salinity values
@@ -69,7 +73,15 @@ if ~isempty(OPT.filic_tem)
     else
        i_start = 2*OPT.kmax + 2;
     end
-    tmp(:,3) = reshape(ic(i_start).Data',mmax*nmax,1);
+    i_stop = i_start + OPT.kmax - 1;
+
+    values(1:mmax,1:nmax) = 0.;
+    for i_lay = i_start:i_stop
+        values = values + ic(i_lay).Data;
+    end
+    values = values/OPT.kmax;
+
+    tmp(:,3) = reshape(values',mmax*nmax,1);
 
     %% Fill line structure with salinity values
     LINE.DATA = num2cell(tmp(nonan,:));
