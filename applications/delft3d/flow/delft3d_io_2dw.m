@@ -150,27 +150,59 @@ else
         S.n(:,i) = [S.DATA(i).mn(2) S.DATA(i).mn(4)];
     end
 
+%     if nargin >1
+%         G   = varargin{2};
+%         S.x = nan.*S.m;
+%         S.y = nan.*S.m;
+%         for i=1:S.NTables
+%             m = S.m(1,i);
+%             n = S.n(1,i);
+%             if     strcmpi(S.DATA(i).direction,'u')
+%                 if n-1==0
+%                     disp(i);
+%                 end
+%                 S.x(:,i) = [G.cor.x(n,m  ) G.cor.x(n-1  ,m  )];
+%                 S.y(:,i) = [G.cor.y(n,m  ) G.cor.y(n-1  ,m  )];
+%                 S.height(:,i) = [S.DATA(i).height S.DATA(i).height];
+%             elseif strcmpi(S.DATA(i).direction,'v')
+% 
+%                 S.x(:,i) = [G.cor.x(n  ,m-1) G.cor.x(n  ,m  )];
+%                 S.y(:,i) = [G.cor.y(n  ,m-1) G.cor.y(n  ,m  )];
+%                 S.height(:,i) = [S.DATA(i).height S.DATA(i).height];
+%             end
+% 
+%         end
+%     end
+    
+    
+    %% optionally get world coordinates
     if nargin >1
-        G   = varargin{2};
-        S.x = nan.*S.m;
-        S.y = nan.*S.m;
+        if ischar(varargin{2})
+           G   = delft3d_io_grd('read',varargin{2});
+        else
+           G   = varargin{2};
+        end
         for i=1:S.NTables
-            m = S.m(1,i);
-            n = S.n(1,i);
+            m0 = min(S.m(:,i));m1 = max(S.m(:,i));
+            n0 = min(S.n(:,i));n1 = max(S.n(:,i));
             if     strcmpi(S.DATA(i).direction,'u')
-
-                S.x(:,i) = [G.cor.x(n,m  ) G.cor.x(n-1  ,m  )];
-                S.y(:,i) = [G.cor.y(n,m  ) G.cor.y(n-1  ,m  )];
+                if ~(m0==m1);error('m0 is not m1');end
+                S.x{i}   = [G.cor.x(n0-1:n1,m1     ); NaN]';
+                S.y{i}   = [G.cor.y(n0-1:n1,m1     ); NaN]';
                 S.height(:,i) = [S.DATA(i).height S.DATA(i).height];
             elseif strcmpi(S.DATA(i).direction,'v')
-
-                S.x(:,i) = [G.cor.x(n  ,m-1) G.cor.x(n  ,m  )];
-                S.y(:,i) = [G.cor.y(n  ,m-1) G.cor.y(n  ,m  )];
+                if ~(n0==n1);error('n0 is not n1');end
+                S.x{i}   = [G.cor.x(n0     ,m0-1:m1)  NaN];
+                S.y{i}   = [G.cor.y(n0     ,m0-1:m1)  NaN];
                 S.height(:,i) = [S.DATA(i).height S.DATA(i).height];
             end
-
         end
+        S.X = cell2mat(S.x);
+        S.Y = cell2mat(S.y);
     end
+    
+    
+    
 end
 
 
