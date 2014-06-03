@@ -1,3 +1,8 @@
+function t_tide_demo
+% t_tide_demo demo for t_tide
+%
+%See also: t_tide, harmanal
+
 clear all
 %% read
        url   = 'http://dods.ndbc.noaa.gov/thredds/dodsC/data/dart/46419/46419t2014.nc';
@@ -34,3 +39,20 @@ clear all
        t_tide2xml(T,'filename','46419t2014_comp.xml');
 
        t_tide2nc(T,'filename','46419t2014_comp.nc');  
+       
+%% harmonic
+%  use frequency units as timeseries: days
+%  abuse t_tide to get frequencies
+
+       ind = strmatch('M2',T.data.name);
+
+       H = harmanal(D.t,D.h(:),'freq',24/12.5);
+       a(1) = H.hamplitudes;
+       H = harmanal(D.t,D.h(:),'freq',24/(12+25/60));
+       a(2) = H.hamplitudes;
+       f = 1/T.data.frequency(ind) % 12.42
+       H = harmanal(D.t,D.h(:),'freq',24/f);
+       a(3) = H.hamplitudes;
+       a(4) = T.data.fmaj(ind);
+
+   
