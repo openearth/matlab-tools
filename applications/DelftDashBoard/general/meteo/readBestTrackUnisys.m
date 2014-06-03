@@ -1,16 +1,16 @@
 function tc = readBestTrackUnisys(fname)
-%READBESTTRACKUNISYS  One line description goes here.
+%READBESTTRACKUNISYS  Reads the best cyclone track from a Unisys file
 %
-%   More detailed description goes here.
+%   see http://weather.unisys.com/hurricane/ for best track files
 %
 %   Syntax:
 %   tc = readBestTrackUnisys(fname)
 %
 %   Input:
-%   fname =
+%   fname = filename string
 %
 %   Output:
-%   tc    =
+%   tc    = struct with date, name, meta, time, lon, lat, vmax and p
 %
 %   Example
 %   readBestTrackUnisys
@@ -68,13 +68,15 @@ tx0=fgets(fid);
 v0=strread(tx0,'%s','delimiter',' ');
 nn=length(v0);
 y=str2double(v0{nn});
+tc.date = strtrim(tx0);
 
 tx0=fgets(fid);
 name=tx0(1:end-1);
 
-tc.name=name;
+tc.name=strtrim(name);
 
 tx0=fgets(fid);
+tc.meta = strtrim(tx0);
 
 for i=1:10000
     tx0=fgets(fid);
