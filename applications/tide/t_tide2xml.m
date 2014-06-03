@@ -17,8 +17,8 @@ function varargout = t_tide2html(D,varargin)
    
 D0.name                = '';
 D0.country             = ''; % NL
-D0.position.latitude   = '';
-D0.position.longitude  = '';
+D0.position.latitude   = [];
+D0.position.longitude  = [];
 D0.timeZone            = [];
 D0.units               = ''; % m
 D0.observationStart    = '';

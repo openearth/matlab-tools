@@ -65,7 +65,9 @@ if ~isempty(OPT.filename)
    end
    
    nc_adddim      (OPT.filename,'strlen2'  ,length(OPT.platform_id));
+   if length(OPT.platform_name) > 0
    nc_adddim      (OPT.filename,'strlen3'  ,length(OPT.platform_name));
+   end
    nc_adddim      (OPT.filename,'time'     ,1);
    nc_adddim      (OPT.filename,'bounds'   ,2);
   
