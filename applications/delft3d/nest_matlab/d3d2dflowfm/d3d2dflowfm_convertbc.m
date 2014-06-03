@@ -178,13 +178,16 @@ for i_pli = 1: length(filpli)
 
                     % Then: Values (for now generate the depth averaged values)
                     if strcmpi      (side,'a');                                      %end A
-                        SERIES.Values(:,2) = sign*mean(bct.Table(nr_table).Data(:,2       :2        + (kmax - 1)),2);
+                        SERIES.Values(:,2)      = sign*mean(bct.Table(nr_table).Data(:,2       :2        + (kmax - 1)),2);
                     else                                                             %end B
-                        SERIES.Values(:,2) = sign*mean(bct.Table(nr_table).Data(:,2 + kmax:2 + kmax + (kmax - 1)),2);
+                        SERIES.Values(:,2)      = sign*mean(bct.Table(nr_table).Data(:,2 + kmax:2 + kmax + (kmax - 1)),2);
+                        if floor(mean(SERIES.Values(:,2))) == 999;
+                            SERIES.Values(:,2)  = sign*mean(bct.Table(nr_table).Data(:,2       :2        + (kmax - 1)),2);
+                        end
                     end
 
                     % Fill values
-                    SERIES.Values = num2cell(SERIES.Values);
+                    SERIES.Values      = num2cell(SERIES.Values);
 
                     %% General Comments
                     SERIES.Comments{1} = '* COLUMNN=2';

@@ -97,7 +97,11 @@ filebedsam  = [pathout,'\',filebedsam];
 
 %%% ACTUAL CONVERSION OF THE GRID
 
-d3d2dflowfm_grd2net(filegrd,'',filedep,filenetcdf,filebedsam);
+if ~isempty(fileenc);
+    d3d2dflowfm_grd2net(filegrd,''     ,filedep,filenetcdf,filebedsam);
+else
+    d3d2dflowfm_grd2net(filegrd,fileenc,filedep,filenetcdf,filebedsam);
+end
 fclose all;
 clc;
 
