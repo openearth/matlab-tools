@@ -1,30 +1,30 @@
 function varargout = writeBestTrackUnisys(tc_fname,tc,varargin)
-%UNTITLED  One line description goes here.
+%writeBestTrackUnisys write a Unisys cyclone best track file
 %
-%   More detailed description goes here.
+%   see http://weather.unisys.com/hurricane/ for best track files
 %
 %   Syntax:
 %   varargout = Untitled(varargin)
 %
 %   Input: For <keyword,value> pairs call Untitled() without arguments.
-%   varargin  =
+%   tc    = struct with date, name, meta, time, lon, lat, vmax and p
 %
 %   Output:
 %   varargout =
 %
 %   Example
-%   Untitled
+%   writeBestTrackUnisys(tc_fname,tc);
 %
-%   See also
+%   See also readBestTrackUnisys.m
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2014 <COMPANY>
+%   Copyright (C) 2014 ARCADIS
 %       grasmeijerb
 %
-%       <EMAIL>
+%       bart.grasmeijer@arcadis.nl
 %
-%       <ADDRESS>
+%       Hanzelaan 286, 8017 JJ,  Zwolle, The Netherlands
 %
 %   This library is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
