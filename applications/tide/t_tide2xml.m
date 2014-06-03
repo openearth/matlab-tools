@@ -16,16 +16,18 @@ function varargout = t_tide2html(D,varargin)
 % IHO xml keywords	 
    
 D0.name                = '';
-D0.country             = '';
+D0.country             = ''; % NL
 D0.position.latitude   = '';
 D0.position.longitude  = '';
 D0.timeZone            = [];
-D0.units               = '';
+D0.units               = ''; % m
 D0.observationStart    = '';
 D0.observationEnd      = '';
 D0.comments            = '';
    
 OPT.filename           = '';
+
+D = mergestructs('overwrite',D0,D);
 
 if nargin==0
     varargout = {OPT};
@@ -47,8 +49,11 @@ str = [str sprintf('		<timeZone>%s</timeZone>',D.timeZone)];% integer ???
 str = [str sprintf('		<units>%s</units>',D.units)];
 str = [str sprintf('		<observationStart>%s</observationStart>',D.observationStart)]; % date
 str = [str sprintf('		<observationEnd>%s</observationEnd>',    D.observationEnd)]; % date
-str = [str sprintf('		<comments>%s</comments>',    D.comments)];
+if isempty(D.comments)
 str = [str sprintf('		<comments/>')];
+else
+str = [str sprintf('		<comments>%s</comments>',    D.comments)];
+end
 
 for i=1:length(D.data.fmaj)
 str = [str sprintf('		<Harmonic>')];

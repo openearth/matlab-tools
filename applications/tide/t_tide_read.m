@@ -98,8 +98,8 @@ function D = t_tide_read(fname,varargin)
       D.data.name  = char(C{1});
      %D.data.significance    = cellfun(@(x) strcmp(x(1),'*'),D.component_name);
       D.data.significance    = D.data.name(:,1)=='*';
-      D.data.name(D.significance,1) = ' ';
-      D.data.name  = char(strtrim(cellstr(D.component_name)));
+      D.data.name(D.data.significance,1) = ' ';
+      D.data.name  = char(strtrim(cellstr(D.data.name)));
       
       D.data.frequency  = C{2};
 

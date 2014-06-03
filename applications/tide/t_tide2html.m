@@ -1,7 +1,7 @@
 function varargout = t_tide2html(D,varargin)
 %t_tide2html store t_tide constituents as html table
 %
-% str = t_tide2html(D) where D = t_tide2struct() or D = t_tide_read()
+% str = t_tide2html(D) where D = t_tide2struc() or D = t_tide_read()
 %
 % Example: t_tide2html(D,'filename','test.html');
 %
@@ -20,6 +20,8 @@ D0.observationEnd      = '';
 D0.comments            = '';
    
 OPT.filename           = '';
+
+D = mergestructs('overwrite',D0,D);
 
 %%
 

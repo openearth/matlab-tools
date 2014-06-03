@@ -1,7 +1,7 @@
 function t_tide2nc(D,varargin)
 %t_tide2nc store t_tide constituents as nc
 %
-% str = t_tide2nc(D) where D = nc_t_tide() or t_tide_read()
+% str = t_tide2nc(D) where D = t_tide2struc() or t_tide_read()
 %
 % Example: t_tide2nc(D,'filename','test.nc');
 %
