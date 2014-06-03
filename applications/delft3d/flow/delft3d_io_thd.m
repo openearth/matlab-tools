@@ -150,7 +150,7 @@ else
         S.m(:,i) = [S.DATA(i).mn(1) S.DATA(i).mn(3)];
         S.n(:,i) = [S.DATA(i).mn(2) S.DATA(i).mn(4)];
     end
-    %% optionally get world coordinates
+    %% optionally get world coordinates (different from delft3d_io_2dw)
     if nargin >1
         G   = varargin{2};
         S.x = nan.*S.m;
