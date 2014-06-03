@@ -81,7 +81,7 @@ function [q,bi,varargout] = quat2net(x,y,varargin)
 % $Revision$
 % $HeadURL$
 
-
+h_waitbar   = waitbar(0,'Converting Delft3D-Flow grid file into DflowFM grid');
 OPT.sub2ind = 1;
 OPT.debug   = 1;
 OPT = setproperty(OPT,varargin);
@@ -92,9 +92,12 @@ nq = size(q,1);
 for iq=1:nq
    if OPT.debug
       if mod(iq,100)==0
-      disp([mfilename,' progress ',num2str(100.*iq/nq),' %'])
+          waitbar(100.*iq/nq,h_waitbar);
+%         disp([mfilename,' progress ',num2str(100.*iq/nq),' %'])
       end
    end
    bi((iq-1)*4+1:iq*4,:) = [q(iq,:); q(iq,[2 3 4 1])]';
 end
 bi = poly_bi_unique(bi);
+
+close(h_waitbar);
