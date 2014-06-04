@@ -43,7 +43,7 @@ end
 %% combine different nourishment and initial data in file
 ids=[];
 for ii=1:length(SOSdata)
-    if isfield(SOSdata(ii),'Xw')
+    if isfield(SOSdata(ii),'XW')
         for jj=1:length(SOSdata(ii).XW)
             [idNEAREST]=findGRIDinrange(MDAdata.QpointsX,MDAdata.QpointsY,SOSdata(ii).XW(jj),SOSdata(ii).YW(jj),0);
             idVOL = find(ids==idNEAREST(1), 1);
@@ -58,7 +58,7 @@ for ii=1:length(SOSdata)
         end
     end 
 end
-if isfield(SOSdata2,'Xw')
+if isfield(SOSdata2,'XW')
     SOSdata2.CODE=abs(SOSdata2.Qs*0);
     SOSdata2.COLUMN=abs(SOSdata2.Qs*0)+1;
     SOSdata2.nrsourcesandsinks=length(SOSdata2.XW);
