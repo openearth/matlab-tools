@@ -8,9 +8,9 @@ Number of Cycli
  1
 Begin time (t0) 
 0.0000E+00
-'1999_3'      (MDA-file)
-'YSTAD'      (LAT-file)
+'BASIS'      (MDA-file)
+'BASIS'      (LAT-file)
 Fase      From      To       .GKL      .BCO      .GRO      .SOS      .REV      .OBW      .BCI
- 1      1999.0000      2007.0000      'YSTAD3'      'YSTAD'      'TEST'      'NULL'      'NULL'      'TEST'      'NULL'      
+ 1      1999.0000      2007.0000      'BASIS'      'BASIS'      'BASIS'      'BASIS'      'BASIS'      'BASIS'      'BASIS'      
 iaant      ifirst      ival
  100       0       20

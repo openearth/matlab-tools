@@ -81,7 +81,7 @@ S.PP(sens).output.kmlfiles = {'S.PP(sens).output.kml','S.PP(sens).output.kml_gro
     ITHK_PRN_to_kml(sens);
     
     % Add measures to KML
-%     ITHK_groyne_to_kml(sens);
+    ITHK_groyne_to_kml(sens);
     ITHK_nourishment_to_kml(sens);
     ITHK_revetment_to_kml(sens);
 
