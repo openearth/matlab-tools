@@ -14,3 +14,10 @@ else
     end
 end
 
+if times(1) > 0 && simona2mdf_fieldandvalue(series,'TID')
+    times (2:end+1)  = times (1:end);
+    values(2:end+1)  = values(1:end);
+    times (1      )  = 0.;
+    values(1      )  = series.TID;
+end
+

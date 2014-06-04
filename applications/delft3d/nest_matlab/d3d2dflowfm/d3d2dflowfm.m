@@ -9,12 +9,13 @@ Gen_inf    = {'This tool converts a Delft3D-Flow mdf file into an D-Dlow FM mdu 
               ' '                                                                                                  ;
               'This tool does a basic first conversion'                                                            ;
               'Not everything is converted:'                                                                       ;
-              '- Restart information is not converted yet'                                                         ;
               '- Tracer  information is not converted yet'                                                         ;
+              '- 3D is supported as far as DFLOWFM allows (depth-averaged ic and bc)'                              ;
               ' '                                                                                                  ;
               'PLEASE CHECK CAREFULLY( USE AT OWN RISK)'                                                           ;                                                                                        ' '
               ' '                                                                                                  ;
-              'If you encounter problems, please do not hesitate to contact me'                                    ;                                                                                   ;
+              'If you encounter problems, please do not hesitate to contact me'                                    ;
+              '<HTML><FONT color="red">Hello</Font></html>'                                                        ; 
               'Theo.vanderkaaij@deltares.nl'                                                                      };
 
 %% set path if necessary
@@ -99,12 +100,6 @@ else
     mdu.Filbnd = '';
 end
 
-if simona2mdf_fieldandvalue(mdf,'filbc0')
-    mdu.Filbc0 = mdu.Filbnd;
-else
-    mdu.Filbc0 = '';
-end
-
 if mdu.physics.Salinity && simona2mdf_fieldandvalue(mdf,'filbnd')        % Salinity, write _sal pli files
     tmp = d3d2dflowfm_bnd2pli([path_mdf filesep mdf.filcco],[path_mdf filesep mdf.filbnd],name_mdu,'Salinity',true);
     mdu.Filbnd = [mdu.Filbnd tmp];
@@ -135,7 +130,6 @@ mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filwnd'     ,mdu.Filwnd    );
 mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filtem'     ,mdu.Filtem    );
 mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Fileva'     ,mdu.Fileva    );
 mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filwsvp'    ,mdu.Filwsvp   );
-% mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filbc0' ,mdu.Filbc0 );
 
 simona2mdf_message('Generating D-Flow FM boundary conditions          ','Window','D3D2DFLOWFM Message');
 mdu = d3d2dflowfm_bndforcing(mdf,mdu,name_mdu);

@@ -42,8 +42,8 @@ tmp(no_val+1:no_val+mmax*nmax,2) = reshape(ycoor_v,mmax*nmax,1);
 tmp(no_val+1:no_val+mmax*nmax,3) = reshape(rghv   ,mmax*nmax,1);
 
 nonan          = ~isnan(tmp(:,1));
-
-LINE.DATA      = num2cell(tmp(nonan,:));
+tmp            = d3d2dflowfm_addsquare(tmp(nonan,:));
+LINE.DATA      = num2cell(tmp);
 
 % Write the roughness xyz file
 dflowfm_io_xydata('write',filrgh_dflowfm,LINE);

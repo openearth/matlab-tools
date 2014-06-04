@@ -46,12 +46,14 @@
        tmp(i_edy,mmax*nmax+1:2*mmax*nmax,1) = reshape(xcoor_v',mmax*nmax,1);
        tmp(i_edy,mmax*nmax+1:2*mmax*nmax,2) = reshape(ycoor_v',mmax*nmax,1);
        tmp(i_edy,mmax*nmax+1:2*mmax*nmax,3) = reshape(edy(i_edy).Data',mmax*nmax,1);
+
    end
 
    nonan = ~isnan(tmp(1,:,1));
 
    for i_edy = 1: no_edy
-       LINE(i_edy).DATA = num2cell(squeeze(tmp(i_edy,nonan,:)));
+       tmp2             = d3d2dflowfm_addsquare(squeeze(tmp(i_edy,nonan,:)));
+       LINE(i_edy).DATA = num2cell(tmp2);
    end
 
    % write viscosity to file

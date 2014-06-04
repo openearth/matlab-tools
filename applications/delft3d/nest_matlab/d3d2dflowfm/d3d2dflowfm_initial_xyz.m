@@ -14,7 +14,7 @@ function mdu = d3d2dflowfm_inital_xyz(varargin)
 OPT.filic_sal     = '';
 OPT.filic_tem     = '';
 OPT.kmax          =  1;
-OPT.type          = 'initial'; 
+OPT.type          = 'initial';
 OPT               = setproperty(OPT,varargin{4:end});
 
 filgrd    = varargin{1};
@@ -31,7 +31,7 @@ ycoor = grid.cend.y';
 %% Read initial condition file
 if strcmpi(OPT.type,'initial');
     ic    = wldep ('read',filic,[mmax nmax],'multiple');
-elseif strcmpi(OPT.type,'rst'); 
+elseif strcmpi(OPT.type,'rst');
     ic    = trirst('read',filic,[mmax nmax],'all'     );
 end
 
@@ -42,7 +42,8 @@ tmp(:,3) = reshape(ic(1).Data',mmax*nmax,1);
 
 %% fill the LINE structure with initial conditions for water levels
 nonan     = ~isnan  (tmp(:,1));
-LINE.DATA = num2cell(tmp(nonan,:));
+tmp2      = d3d2dflowfm_addsquare(tmp(nonan,:));
+LINE.DATA = num2cell(tmp2);
 
 %% Write inial water level data to unstruc xyz file
 dflowfm_io_xydata('write',filic_wl,LINE);
@@ -60,7 +61,8 @@ if ~isempty(OPT.filic_sal)
     tmp(:,3) = reshape(values',mmax*nmax,1);
 
     %% Fill line structure with salinity values
-    LINE.DATA = num2cell(tmp(nonan,:));
+    tmp2      = d3d2dflowfm_addsquare(tmp(nonan,:));
+    LINE.DATA = num2cell(tmp2);
 
     %% Write inial salinity data to unstruc xyz file
     dflowfm_io_xydata('write',OPT.filic_sal,LINE);
@@ -84,7 +86,8 @@ if ~isempty(OPT.filic_tem)
     tmp(:,3) = reshape(values',mmax*nmax,1);
 
     %% Fill line structure with salinity values
-    LINE.DATA = num2cell(tmp(nonan,:));
+    tmp2      = d3d2dflowfm_addsquare(tmp(nonan,:));
+    LINE.DATA = num2cell(tmp2);
 
     %% Write inial salinity data to unstruc xyz file
     dflowfm_io_xydata('write',OPT.filic_tem,LINE);

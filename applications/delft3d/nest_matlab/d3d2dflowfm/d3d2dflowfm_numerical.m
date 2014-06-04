@@ -4,5 +4,5 @@ function mdu = d3d2dflowfm_numerical(mdf,mdu,~)
 
 mdu.numerics.Limtypsa     = -999;
 if mdu.physics.Salinity  mdu.numerics.Limtypsa     = 4; end
-mdu.numerics.Tlfsmo       = mdf.tlfsmo;
+mdu.numerics.Tlfsmo       = mdf.tlfsmo*60.0;
 mdu.numerics.Slopedrop2D  = 0.;

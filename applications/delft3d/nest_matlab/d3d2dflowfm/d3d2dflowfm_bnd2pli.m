@@ -2,14 +2,14 @@ function varargout = d3d2dflowfm_bnd2pli(filgrd,filbnd,filpli,varargin)
 
 % d3d2dflowfm_bnd2pli: genarates pli file for D-Flow FM out of a D3D bnd file
 
-% initialisation
+%% initialisation
 OPT.Salinity          = false;
 OPT.Temperature       = false;
 OPT.enclosure         = '';
 OPT                   = setproperty(OPT,varargin);
 [path_pli,name_pli,~] = fileparts(filpli);
 
-% Read the grid: OET-style
+%% Read the grid: OET-style
 G           = delft3d_io_grd('read',filgrd);
 xc          = G.cend.x';
 yc          = G.cend.y';
@@ -17,21 +17,21 @@ mmax        = size(xc,1);
 nmax        = size(xc,2);
 nr_harm     = 0;
 
-% Read the boundary file
+%% Read the boundary file
 D           = delft3d_io_bnd('read',filbnd);
 mbnd        = D.m;
 nbnd        = D.n;
 no_bnd      = size(mbnd,1);
 
-% Determine (x,y)-values of boundary points
-for ibnd=1:no_bnd
-    for iside=1:2
-        xb(ibnd,iside) = xc(mbnd(ibnd,iside),nbnd(ibnd,iside));
-        yb(ibnd,iside) = yc(mbnd(ibnd,iside),nbnd(ibnd,iside));
+%% Determine (x,y)-values of boundary points
+for i_bnd=1:no_bnd
+    for i_side=1:2
+        xb(i_bnd,i_side) = xc(mbnd(i_bnd,i_side),nbnd(i_bnd,i_side));
+        yb(i_bnd,i_side) = yc(mbnd(i_bnd,i_side),nbnd(i_bnd,i_side));
     end
 end
 
-%% Type of bc (end determine signd for current and discharge bc)
+%% Type of bc (and determine signd for current and discharge bc)
 first          = true;
 kcs            = [];
 for i_bnd      = 1: no_bnd
@@ -39,22 +39,27 @@ for i_bnd      = 1: no_bnd
     type           = D.DATA(i_bnd).bndtype;
     if strcmpi(type,'c') || strcmpi(type,'q') || strcmpi(type,'t')
         if first && ~isempty(OPT.enclosure)
-            % Determine kcs values (1 active, 0 inctive)
-            kcs   = nesthd_det_icom(G.cor.x',G.nodatavalue,OPT.enclosure);
+            % Determine kcs values (1 active, 0 inactive)
+            kcs               = nesthd_det_icom(G.cor.x',G.nodatavalue,OPT.enclosure);
+            % Coordinates of velocity points and wheter inflow is positive
+            [Xuv, Yuv,positi] = nesthd_detxy (G.cor.x',G.cor.y',D,kcs,'UVp');
             first = false;
         end
         if ~isempty(kcs)
-            sign(i_bnd) = nesthd_detsign(mbnd(i_bnd,1),nbnd(i_bnd,1),     ...
-                                         mbnd(i_bnd,2),nbnd(i_bnd,1),kcs  );
+            if strcmpi(positi{i_bnd},'out') sign(i_bnd) = -1.0;end
+            for i_side = 1: 2
+                xb(i_bnd,i_side) = Xuv(i_bnd,i_side);
+                yb(i_bnd,i_side) = Yuv(i_bnd,i_side);
+            end
         end
     end
 end
 
-% Reshape the boundary locations into polylines
+%% Reshape the boundary locations into polylines
 irow         = 1;                     % is number of points in the polyline
 iline        = 1;                     % is number of polylines
 
-% Set initial boundary orientation
+%% Set initial boundary orientation
 dir_old = 'n';
 if mbnd(1,1) == mbnd(1,2);
     dir_old = 'm';
@@ -79,7 +84,7 @@ for ibnd = 1 : no_bnd;
             irow      = 1;
         end
     end
-    
+
     %% Type of forcing
     astronomical = false;
     timeseries   = false;
@@ -109,7 +114,7 @@ for ibnd = 1 : no_bnd;
         string  = [string num2str(nr_harm,'%04i') 'sideA'];
     end
 
-    % Add sign to the string
+    %% Add sign to the string
     string = [string ' ' num2str(sign(ibnd))];
     LINE(iline).DATA{irow,3} = string;
 
@@ -129,14 +134,14 @@ for ibnd = 1 : no_bnd;
            string  = [string num2str(nr_harm,'%04i') 'sideB'];
        end
 
-       % Add sign to the string
+       %% Add sign to the string
        string = [string ' ' num2str(sign(ibnd))];
        LINE(iline).DATA{irow,3} = string;
     end
     irow = irow + 1;
 end
 
-% Write the pli-files for the separate polygons
+%% Write the pli-files for the separate polygons
 
 for ipol = 1: length(LINE)
 
