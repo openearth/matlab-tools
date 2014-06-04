@@ -16,11 +16,11 @@ stochast(2).Params = {6 4};
 
 %% run FORM computation
 
-F = DS( ...
+F = FORM( ...
     'x2zFunction',  @x2z, ...
-    'stochast',     stochast, 'animate', true, 'z20Variables', {'animate', true});
+    'stochast',     stochast);
 
-%plotFORMresult(F);
+plotFORMresult(F);
 
 %% run Monte Carlo computation
 
