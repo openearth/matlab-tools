@@ -82,7 +82,7 @@ lon = S.userinput.nourishment(ss).lon;
 [x,y]               = convertCoordinates(lon,lat,S.EPSG,'CS1.name','WGS 84','CS1.type','geo','CS2.code',str2double(S.settings.EPSGcode));
 
 %% read files
-[MDAdata]=ITHK_io_readMDA([S.settings.rundir 'BASIS.MDA']);
+[MDAdata]=ITHK_io_readMDA([S.settings.outputdir 'BASIS.MDA']);
 [SOSdata0]=ITHK_io_readSOS([S.settings.outputdir S.userinput.phase(phase).SOSfile]);
 if strcmp(S.userinput.phase(phase).supcat{index},'cont') || strcmp(S.userinput.phase(phase).supcat{index},'distr')
     if exist([S.settings.outputdir '1HOTSPOTSIT_cont.sos'],'file')

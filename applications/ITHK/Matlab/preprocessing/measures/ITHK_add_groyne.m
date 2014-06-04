@@ -87,8 +87,8 @@ angleB = str2double(S.settings.measures.groyne.angleshiftclimateB);
 [x,y]               = convertCoordinates(lon,lat,S.EPSG,'CS1.name','WGS 84','CS1.type','geo','CS2.code',str2double(S.settings.EPSGcode));
 
 %% read files
-MDAdata=ITHK_io_readMDA('BASIS.MDA');
-MDAdata_ORIG=ITHK_io_readMDA('BASIS_ORIG.MDA');
+MDAdata=ITHK_io_readMDA([S.settings.outputdir 'BASIS.MDA']);
+MDAdata_ORIG=ITHK_io_readMDA([S.settings.outputdir 'BASIS_ORIG.MDA']);
 %GROdata_ORIG=ITHK_io_readGRO([S.settings.outputdir S.userinput.phase(1).GROfile]);
 if phase==1 || NGRO>1
     [GROdata]=ITHK_io_readGRO([S.settings.outputdir S.userinput.groyne(ii).filename]);
@@ -128,26 +128,26 @@ if ~ismember(idRANGE,[1,2,length(MDAdata_ORIG.Xcoast)-1,length(MDAdata_ORIG.Xcoa
         % Refine grid cells around groyne
         MDAdata.nrgridcells=MDAdata.Xi.*0+1;MDAdata.nrgridcells(1)=0;
         MDAdata.nrgridcells(idNEAREST:idNEAREST+1)=8;
-        ITHK_io_writeMDA('BASIS.MDA',[MDAdata.Xi MDAdata.Yi],Y1_new,[],MDAdata.nrgridcells);
+        ITHK_io_writeMDA([S.settings.outputdir 'BASIS.MDA'],[MDAdata.Xi MDAdata.Yi],Y1_new,[],MDAdata.nrgridcells);
 
         % For post-processing (same number of points)
         MDAdata_ORIG.nrgridcells=MDAdata_ORIG.Xi.*0+1;MDAdata_ORIG.nrgridcells(1)=0;
         MDAdata_ORIG.nrgridcells(idNEAREST:idNEAREST+1)=8;
-        ITHK_io_writeMDA('BASIS_ORIG.MDA',[MDAdata_ORIG.Xi MDAdata_ORIG.Yi],MDAdata_ORIG.Y1i,[],MDAdata_ORIG.nrgridcells);    
+        ITHK_io_writeMDA([S.settings.outputdir 'BASIS_ORIG.MDA'],[MDAdata_ORIG.Xi MDAdata_ORIG.Yi],MDAdata_ORIG.Y1i,[],MDAdata_ORIG.nrgridcells);    
     end
 
     %% Add local climates & adjust GROfile
     if localclimates == 1
         % Updated coastline
-        MDAdatanew=ITHK_io_readMDA('BASIS.MDA');
+        MDAdatanew=ITHK_io_readMDA([S.settings.outputdir 'BASIS.MDA']);
         % Find closest ray in GKL
-        [xGKL,yGKL,rayfiles]=ITHK_io_readGKL('BASIS.GKL');
+        [xGKL,yGKL,rayfiles]=ITHK_io_readGKL([S.settings.outputdir 'BASIS.GKL']);
         idRAY=findGRIDinrange(xGKL,yGKL,x,y,0);
 
         %% Info local climates
         % Ray at GRO
         RAYfilename = rayfiles(idRAY);
-        RAY = ITHK_io_readRAY([RAYfilename{1}(2:end-1) '.ray']);
+        RAY = ITHK_io_readRAY([S.settings.outputdir RAYfilename{1}(2:end-1) '.ray']);
 
         % Set local climate at GRO and 2 and 3 GRO lengths from GRO
         positions = [0 1 2].*S.userinput.groyne(ii).length;

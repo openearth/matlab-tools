@@ -104,33 +104,44 @@ for jj = 1:length(S.userinput.phases)
         xgroyne1 = x0(idNEAREST);
         ygroyne1 = y0(idNEAREST);
 
-        % Coastal point before
-        xs1             = x0(idNEAREST-1);
-        ys1             = y0(idNEAREST-1);
+        % Smoothed orientation of coastline
+        dx                   = x0(2:end)-x0(1:end-1);
+        dy                   = y0(2:end)-y0(1:end-1);
+        alpha                = atan2(dy,dx); %*180/pi()
+        alpha                = mod(alpha+2*pi,2*pi);
+        alpha                = [alpha(1);(alpha(1:end-1)+alpha(2:end))/2;alpha(end)];
+        [alpha]              = ITHK_smoothvariable(alpha,100);
+        alpha                = alpha(idNEAREST);
+        xgroyne2 = xgroyne1+Length*cos(alpha+pi()/2);% Length as is, include factor for enlargement
+        ygroyne2 = ygroyne1+Length*sin(alpha+pi()/2);
 
-        % Coastal point after
-        xn1             = x0(idNEAREST+1);
-        yn1             = y0(idNEAREST+1);
-
-        % Polygon (5*length, since length in groyne file represents only 0.2 of actual length)
-        alpha    = atan((yn1-ys1)/(xn1-xs1));
-        if alpha>0
-            if x0(end)>x0(1)  
-                xgroyne2 = xgroyne1+Length*cos(alpha+pi()/2);% Length as is, include factor for enlargement
-                ygroyne2 = ygroyne1+Length*sin(alpha+pi()/2);
-            else
-                xgroyne2 = xgroyne1+Length*cos(alpha-pi()/2);% Length as is, include factor for enlargement
-                ygroyne2 = ygroyne1+Length*sin(alpha-pi()/2);
-            end
-        elseif alpha<=0
-            if x0(end)>x0(1)              
-                xgroyne2 = xgroyne1+Length*cos(alpha-pi()/2);
-                ygroyne2 = ygroyne1+Length*sin(alpha-pi()/2);
-            else
-                xgroyne2 = xgroyne1+Length*cos(alpha+pi()/2);
-                ygroyne2 = ygroyne1+Length*sin(alpha+pi()/2);
-            end
-        end
+%         % Coastal point before
+%         xs1             = x0(idNEAREST-1);
+%         ys1             = y0(idNEAREST-1);
+% 
+%         % Coastal point after
+%         xn1             = x0(idNEAREST+1);
+%         yn1             = y0(idNEAREST+1);
+% 
+%         % Polygon (5*length, since length in groyne file represents only 0.2 of actual length)
+%         alpha    = atan((yn1-ys1)/(xn1-xs1));
+%         if alpha>0
+%             if x0(end)>x0(1)  
+%                 xgroyne2 = xgroyne1+Length*cos(alpha+pi()/2);% Length as is, include factor for enlargement
+%                 ygroyne2 = ygroyne1+Length*sin(alpha+pi()/2);
+%             else
+%                 xgroyne2 = xgroyne1+Length*cos(alpha-pi()/2);% Length as is, include factor for enlargement
+%                 ygroyne2 = ygroyne1+Length*sin(alpha-pi()/2);
+%             end
+%         elseif alpha<=0
+%             if x0(end)>x0(1)              
+%                 xgroyne2 = xgroyne1+Length*cos(alpha-pi()/2);
+%                 ygroyne2 = ygroyne1+Length*sin(alpha-pi()/2);
+%             else
+%                 xgroyne2 = xgroyne1+Length*cos(alpha+pi()/2);
+%                 ygroyne2 = ygroyne1+Length*sin(alpha+pi()/2);
+%             end
+%         end
 
         xpoly = [xgroyne1 xgroyne2];
         ypoly = [ygroyne1 ygroyne2];
