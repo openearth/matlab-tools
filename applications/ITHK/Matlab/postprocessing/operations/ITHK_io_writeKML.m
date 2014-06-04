@@ -44,10 +44,10 @@ tvec            = S.PP(sens).settings.tvec;
 tvec(length(tvec)+1)=round(2*tvec(end)-tvec(end-1));
 t0              = S.PP(sens).settings.t0;
 timeStamp      = datestr(datenum(tvec(end)+t0-1/365/24/60/60,1,1),'yyyy-mm-ddTHH:MM:SSZ');
-LookAtLon      = 4.238448851166381;
-LookAtLat      = 52.05719214488921;
+LookAtLon      = str2double(S.settings.LookAtLon);%4.238448851166381;
+LookAtLat      = str2double(S.settings.LookAtLat);%52.05719214488921;
 LookAtAltitude = 0;
-LookAtrange    = 50000;
+LookAtrange    = str2double(S.settings.LookAtRange);%50000;
 LookAtheading  = 0;
 LookAttilt     = 0;
 

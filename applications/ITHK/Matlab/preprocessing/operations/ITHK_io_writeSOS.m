@@ -89,13 +89,13 @@ if err==0
     end
     %write number of sources/sinks
     for nn=1:length(SOSdata)
-        no_sourcesandsinks(nn) = length(SOSdata(nn).XW);
+        no_sourcesandsinks(nn) = SOSdata(nn).nrsourcesandsinks;%length(SOSdata(nn).XW);
     end
     fprintf(fid,'%4.0f\n',sum(no_sourcesandsinks));
     fprintf(fid,' Xw      Yw       File/Code       Qs[m3/y]         column \n');
     %write data
     for nn=1:length(SOSdata)
-        for ii=1:length(SOSdata(nn).XW)
+        for ii=1:SOSdata(nn).nrsourcesandsinks;%length(SOSdata(nn).XW)
             fprintf(fid,' %9.1f %9.1f %9.0f %9.3f %9.0f\n',SOSdata(nn).XW(ii),SOSdata(nn).YW(ii),SOSdata(nn).CODE(ii),SOSdata(nn).Qs(ii),SOSdata(nn).COLUMN(ii));
         end
     end

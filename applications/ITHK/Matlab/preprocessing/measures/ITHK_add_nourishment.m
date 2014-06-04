@@ -89,7 +89,7 @@ if strcmp(S.userinput.phase(phase).supcat{index},'cont') || strcmp(S.userinput.p
         SOSdata_cont=ITHK_io_readSOS([S.settings.outputdir '1HOTSPOTSIT_cont.sos']);
     else
         SOSdata_cont=ITHK_io_readSOS([S.settings.outputdir 'BASIS.sos']);
-        ITHK_writeSOS([S.settings.outputdir '1HOTSPOTSIT_cont.sos'],SOSdata_cont);
+        ITHK_io_writeSOS([S.settings.outputdir '1HOTSPOTSIT_cont.sos'],SOSdata_cont);
     end
 end
 

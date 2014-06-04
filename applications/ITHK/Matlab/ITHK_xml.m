@@ -138,8 +138,8 @@ S.settings.basedir = baseDir;
 
 % subdirectories
 S.settings.inputdir            = [baseDir 'Matlab\preprocessing\input\'];
-S.settings.rundir              = [baseDir 'UB model\input\'];
-S.settings.outputdir           = [baseDir 'UB model\output\' S.userinput.name filesep]; 
+S.settings.rundir              = [baseDir 'UB model\' S.settings.model filesep 'input\'];
+S.settings.outputdir           = [baseDir 'UB model\' S.settings.model filesep 'output\' S.userinput.name filesep]; 
 if ~isdir(S.settings.outputdir)
     mkdir(S.settings.outputdir);
 elseif ~isempty(dir(S.settings.outputdir))
@@ -176,7 +176,7 @@ for ii=1:1%length(sensitivities)
     %% Extract UB (PRN) results for current & reference scenario
     PRNfileName = [S.userinput.name,'.PRN']; 
     S.UB(ii).results.PRNdata = ITHK_io_readPRN([S.settings.outputdir PRNfileName]);
-    S.UB(ii).data_ref.PRNdata = ITHK_io_readPRN([S.settings.outputdir 'Natural_development.PRN']);%REFERENCE_IT.PRN
+    %S.UB(ii).data_ref.PRNdata = ITHK_io_readPRN([S.settings.outputdir 'Natural_development.PRN']);%REFERENCE_IT.PRN
 
     %% Postprocessing Unibest Interactive Tool
     ITHK_postprocessing(ii);

@@ -71,38 +71,37 @@ global S
 
 S.PP(sens).output.kml_revetment=[];
 
-if isfield(S.userinput.phase(1),'revids')
-    for ii=1:length(S.userinput.phase);revids{ii}=S.userinput.phase(ii).revids;end
-    idfirst = find(~cellfun('isempty',revids),1,'first');
-end
-
+style = 0;
 for jj = 1:length(S.userinput.phases)
-    if ~strcmp(lower(strtok(S.userinput.phase(jj).REVfile,'.')),'basis')
-    for ii = 1:length(S.userinput.phase(jj).revids)
-        ss = S.userinput.phase(jj).revids(ii);
+    REVdata = ITHK_io_readREV([S.settings.outputdir S.userinput.phase(jj).REVfile]);
+    for ii = 1:length(REVdata)
+        if isfield(REVdata(ii),'Xw')
+            % Get info from structure
+            t0 = S.PP(sens).settings.t0;
 
-        % Get info from structure
-        t0 = S.PP(sens).settings.t0;
+        %         % MDA info
+        %         MDAdata_NEW = S.PP(sens).settings.MDAdata_NEW;
+        %         
+        %         %Polygon for location of revetment
+        %         xpoly2=MDAdata_NEW.Xcoast(S.userinput.revetment(ss).idRANGE);
+        %         ypoly2=MDAdata_NEW.Ycoast(S.userinput.revetment(ss).idRANGE);
 
-        % MDA info
-        MDAdata_NEW = S.PP(sens).settings.MDAdata_NEW;
-        
-        %Polygon for location of revetment
-        xpoly2=MDAdata_NEW.Xcoast(S.userinput.revetment(ss).idRANGE);
-        ypoly2=MDAdata_NEW.Ycoast(S.userinput.revetment(ss).idRANGE);
-        
-        % convert coordinates
-        [lonpoly2,latpoly2] = convertCoordinates(xpoly2,ypoly2,S.EPSG,'CS1.code',str2double(S.settings.EPSGcode),'CS2.name','WGS 84','CS2.type','geo');
-        lonpoly2     = lonpoly2';
-        latpoly2     = latpoly2';
-        
-        % orange line
-        if jj==idfirst && ii==1
-        S.PP(sens).output.kml_revetment = KML_stylePoly('name','revetment','lineColor',[238/255 118/255 0],'lineWidth',10);
+            xpoly2 = REVdata(ii).Xw; 
+            ypoly2 = REVdata(ii).Yw;
+
+            % convert coordinates
+            [lonpoly2,latpoly2] = convertCoordinates(xpoly2,ypoly2,S.EPSG,'CS1.code',str2double(S.settings.EPSGcode),'CS2.name','WGS 84','CS2.type','geo');
+            lonpoly2     = lonpoly2';
+            latpoly2     = latpoly2';
+
+            % orange line
+            if style==0
+                S.PP(sens).output.kml_revetment = KML_stylePoly('name','revetment','lineColor',[238/255 118/255 0],'lineWidth',10);
+                style=1;
+            end
+            % polygon to KML
+            S.PP(sens).output.kml_revetment = [S.PP(sens).output.kml_revetment KML_line(latpoly2 ,lonpoly2 ,'timeIn',datenum(t0+S.userinput.phase(jj).start,1,1),'timeOut',datenum(t0+S.userinput.phase(jj).stop,1,1)+364,'styleName','revetment')];
+            clear lonpoly2 latpoly2
         end
-        % polygon to KML
-        S.PP(sens).output.kml_revetment = [S.PP(sens).output.kml_revetment KML_line(latpoly2 ,lonpoly2 ,'timeIn',datenum(t0+S.userinput.revetment(ss).start,1,1),'timeOut',datenum(t0+S.userinput.revetment(ss).stop,1,1)+364,'styleName','revetment')];
-        clear lonpoly2 latpoly2
-    end
     end
 end

@@ -2,7 +2,11 @@
 <settings>
   <basedir>d:\repositories\oetools\applications\ITHK\</basedir>
   <sessionCacheDir>p:\webtools\cache\</sessionCacheDir>
-  <EPSGcode>28992</EPSGcode>
+  <EPSGcode>32633</EPSGcode>
+  <model>YSTAD</model>
+  <LookAtLon>13.937504</LookAtLon>
+  <LookAtLat>55.40229</LookAtLat>
+  <LookAtRange>10000</LookAtRange>
   <CLRfile>BWN2005_1HOTSPOTS1IT.CLR</CLRfile>
   <measures>
     <nourishment>
@@ -12,6 +16,7 @@
     </nourishment>
     <beachextension></beachextension>
     <groyne>
+      <localclimates>0</localclimates>
       <coastlineupdate>0</coastlineupdate>
       <updatewidth>3</updatewidth>
       <angleshiftclimateA>40</angleshiftclimateA>
@@ -292,7 +297,7 @@
   <plotting>
     <reference>initial</reference>
     <barplot>
-      <dsrough>2000</dsrough>
+      <dsrough>200</dsrough>
       <dsfine>500</dsfine>
       <widthfine>5000</widthfine>
       <barscalevector>2.5</barscalevector>

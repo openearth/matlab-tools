@@ -84,27 +84,29 @@ end
 number_of_revetments = length(REVdata);
 for ii=1:length(REVdata)
     Npoints = length(REVdata(ii).Xw);
-    if isempty(REVdata(ii).Top)
-        if isempty(varargin)
-            disp('Please specify MDAdata')
-            return
+    if Npoints>0
+        if isempty(REVdata(ii).Top)
+            if isempty(varargin)
+                disp('Please specify MDAdata')
+                return
+            end
+            MDAdata = varargin{1};
+            opt = REVdata(ii).Option;
+            switch opt
+                case 0
+                    xy=[MDAdata.Xcoast,MDAdata.Ycoast];
+                case 1
+                    xy=[MDAdata.Xi,MDAdata.Yi];
+                case 2
+                    xy=[MDAdata.Xcoast,MDAdata.Ycoast];
+                case 3
+                    xy=[MDAdata.Xi,MDAdata.Yi];
+            end
+            [xyNew0{ii}, y_offset{ii}] = ITHK_relativeoffset(xy,[REVdata(ii).Xw',REVdata(ii).Yw'],dx);
+        else
+            xyNew0{ii} = [REVdata(ii).Xw',REVdata(ii).Yw'];
+            y_offset{ii} = REVdata(ii).Top;
         end
-        MDAdata = varargin{1};
-        opt = REVdata(ii).Option;
-        switch opt
-            case 0
-                xy=[MDAdata.Xcoast,MDAdata.Ycoast];
-            case 1
-                xy=[MDAdata.Xi,MDAdata.Yi];
-            case 2
-                xy=[MDAdata.Xcoast,MDAdata.Ycoast];
-            case 3
-                xy=[MDAdata.Xi,MDAdata.Yi];
-        end
-        [xyNew0{ii}, y_offset{ii}] = ITHK_relativeoffset(xy,[REVdata(ii).Xw',REVdata(ii).Yw'],dx);
-    else
-        xyNew0{ii} = [REVdata(ii).Xw',REVdata(ii).Yw'];
-        y_offset{ii} = REVdata(ii).Top;
     end
 end
 

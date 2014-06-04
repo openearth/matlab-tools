@@ -55,7 +55,7 @@ for jj = 1:length(S.userinput.phases)
         % If groynes have been added in previous phase, use this file as 
         % the basis for adding groynes in current phase
         if jj>1
-            if ~strcmp(strtok(S.userinput.phase(jj-1).GROfile,'.'),'basis')
+            if ~strcmp(lower(strtok(S.userinput.phase(jj-1).GROfile,'.')),'basis')
                 copyfile([S.settings.outputdir S.userinput.phase(jj-1).GROfile],[S.settings.outputdir S.userinput.phase(jj).GROfile]);
             end
         else

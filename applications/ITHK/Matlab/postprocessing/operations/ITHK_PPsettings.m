@@ -96,9 +96,9 @@ end
 
 %% General PP settings
 % Extract MDAdata for original and updated coastline
-[S.PP(sens).settings.MDAdata_ORIG_OLD]=ITHK_io_readMDA('BASIS_ORIG_OLD.MDA');
-[S.PP(sens).settings.MDAdata_ORIG]=ITHK_io_readMDA('BASIS_ORIG.MDA');
-[S.PP(sens).settings.MDAdata_NEW]=ITHK_io_readMDA('BASIS.MDA');
+[S.PP(sens).settings.MDAdata_ORIG_OLD]=ITHK_io_readMDA([S.settings.outputdir filesep 'BASIS_ORIG_OLD.MDA']);
+[S.PP(sens).settings.MDAdata_ORIG]=ITHK_io_readMDA([S.settings.outputdir filesep 'BASIS_ORIG.MDA']);
+[S.PP(sens).settings.MDAdata_NEW]=ITHK_io_readMDA([S.settings.outputdir filesep 'BASIS.MDA']);
 
 % time settings
 S.PP(sens).settings.tvec = S.UB(sens).results.PRNdata.year;

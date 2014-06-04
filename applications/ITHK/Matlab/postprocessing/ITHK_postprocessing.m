@@ -81,7 +81,7 @@ S.PP(sens).output.kmlfiles = {'S.PP(sens).output.kml','S.PP(sens).output.kml_gro
     ITHK_PRN_to_kml(sens);
     
     % Add measures to KML
-    ITHK_groyne_to_kml(sens);
+%     ITHK_groyne_to_kml(sens);
     ITHK_nourishment_to_kml(sens);
     ITHK_revetment_to_kml(sens);
 
@@ -112,15 +112,17 @@ S.PP(sens).output.kmlfiles = {'S.PP(sens).output.kml','S.PP(sens).output.kml_gro
 % end
 
 for ii=1:length(S.PP(sens).output.kmlfiles)
-    kmltxt = [];
-    kmltxt = [kmltxt eval(S.PP(sens).output.kmlfiles{ii})];
-    addstr = regexp (S.PP.output.kmlfiles{ii}, '_', 'split');
-    if length(addstr)>1
-        S.PP(sens).output.addtxt{ii} = ['_' addstr{2:end}];
-    else
-        S.PP(sens).output.addtxt{ii} = '_CL';
+    if ~isempty(eval(S.PP(sens).output.kmlfiles{ii}))
+        kmltxt = [];
+        kmltxt = [kmltxt eval(S.PP(sens).output.kmlfiles{ii})];
+        addstr = regexp (S.PP.output.kmlfiles{ii}, '_', 'split');
+        if length(addstr)>1
+            S.PP(sens).output.addtxt{ii} = ['_' addstr{2:end}];
+        else
+            S.PP(sens).output.addtxt{ii} = '_CL';
+        end
+        ITHK_io_writeKML(kmltxt,S.PP(sens).output.addtxt{ii},sens);
     end
-    ITHK_io_writeKML(kmltxt,S.PP(sens).output.addtxt{ii},sens);
 end
 % addtxt = '';ITHK_io_writeKML(kmltxt,addtxt,sens);
 

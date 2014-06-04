@@ -74,79 +74,80 @@ global S
 
 S.PP(sens).output.kml_groyne=[];
 
-if isfield(S.userinput.phase(1),'groids')
-    for ii=1:length(S.userinput.phase);groids{ii}=S.userinput.phase(ii).groids;end
-    idfirst = find(~cellfun('isempty',groids),1,'first');
-end
+% if isfield(S.userinput.phase(1),'groids')
+%     for ii=1:length(S.userinput.phase);groids{ii}=S.userinput.phase(ii).groids;end
+%     idfirst = find(~cellfun('isempty',groids),1,'first');
+% end
 
+style = 0;
 for jj = 1:length(S.userinput.phases)
-    if ~strcmp(lower(strtok(S.userinput.phase(jj).GROfile,'.')),'basis')
-    for ii = 1:length(S.userinput.phase(jj).groids)
-        ids      = S.userinput.phase(jj).groids(ii);
-        Ngroynes = S.UB.input(sens).groyne(ids).Ngroynes;
-        for kk = 1:Ngroynes
-            ss   = S.userinput.phase(jj).groids(ii);
-            NGRO = kk;
+    GROdata = ITHK_io_readGRO([S.settings.outputdir S.userinput.phase(jj).GROfile]);
+    for ii = 1:length(GROdata)
 
-            %% Get info from structure
-            % General info
-            t0 = S.PP(sens).settings.t0;
-            % MDA info
-            x0 = S.PP(sens).settings.x0;
-            y0 = S.PP(sens).settings.y0;
-            s0 = S.PP(sens).settings.s0;
-            % % Grid info
-            % sgridRough = S.PP(sens).settings.sgridRough; 
-            % dxFine = S.PP(sens).settings.dxFine;
-            % GRO data
-            GROdata = ITHK_io_readGRO([S.settings.outputdir S.userinput.groyne(ss).filename]);
-            Xw = GROdata(4+NGRO).Xw;  %because of existing groynes in GRO file
-            Yw = GROdata(4+NGRO).Yw;  %because of existing groynes in GRO file
-            Length = GROdata(4+NGRO).Length;
+        %% Get info from structure
+        % General info
+        t0 = S.PP(sens).settings.t0;
+        % MDA info
+        x0 = S.PP(sens).settings.x0;
+        y0 = S.PP(sens).settings.y0;
+        s0 = S.PP(sens).settings.s0;
 
-            %% preparation
-            % Find groyne location
-            dist2 = ((x0-Xw).^2 + (y0-Yw).^2).^0.5;
-            idNEAREST = find(dist2==min(dist2),1,'first');
-            s1 = s0(idNEAREST);
-            xgroyne1 = x0(idNEAREST);
-            ygroyne1 = y0(idNEAREST);
+        Xw = GROdata(ii).Xw;
+        Yw = GROdata(ii).Yw;
+        Length = GROdata(ii).Length;
 
-            % Soutern coastal point
-            xs1             = x0(idNEAREST-1);
-            ys1             = y0(idNEAREST-1);
+        %% preparation
+        % Find groyne location
+        dist2 = ((x0-Xw).^2 + (y0-Yw).^2).^0.5;
+        idNEAREST = find(dist2==min(dist2),1,'first');
+        s1 = s0(idNEAREST);
+        xgroyne1 = x0(idNEAREST);
+        ygroyne1 = y0(idNEAREST);
 
-            % Northern coastal point
-            xn1             = x0(idNEAREST+1);
-            yn1             = y0(idNEAREST+1);
+        % Coastal point before
+        xs1             = x0(idNEAREST-1);
+        ys1             = y0(idNEAREST-1);
 
-            % Polygon (5*length, since length in groyne file represents only 0.2 of actual length)
-            alpha    = atan((yn1-ys1)/(xn1-xs1));
-            if alpha>0
-                xgroyne2 = xgroyne1+5*Length*cos(alpha+pi()/2);
-                ygroyne2 = ygroyne1+5*Length*sin(alpha+pi()/2);
-            elseif alpha<=0
-                xgroyne2 = xgroyne1+5*Length*cos(alpha-pi()/2);
-                ygroyne2 = ygroyne1+5*Length*sin(alpha-pi()/2);
+        % Coastal point after
+        xn1             = x0(idNEAREST+1);
+        yn1             = y0(idNEAREST+1);
+
+        % Polygon (5*length, since length in groyne file represents only 0.2 of actual length)
+        alpha    = atan((yn1-ys1)/(xn1-xs1));
+        if alpha>0
+            if x0(end)>x0(1)  
+                xgroyne2 = xgroyne1+Length*cos(alpha+pi()/2);% Length as is, include factor for enlargement
+                ygroyne2 = ygroyne1+Length*sin(alpha+pi()/2);
+            else
+                xgroyne2 = xgroyne1+Length*cos(alpha-pi()/2);% Length as is, include factor for enlargement
+                ygroyne2 = ygroyne1+Length*sin(alpha-pi()/2);
             end
-
-            xpoly = [xgroyne1 xgroyne2];
-            ypoly = [ygroyne1 ygroyne2];
-
-            % convert coordinates
-            [lonpoly,latpoly] = convertCoordinates(xpoly,ypoly,S.EPSG,'CS1.code',str2double(S.settings.EPSGcode),'CS2.name','WGS 84','CS2.type','geo');
-            lonpoly     = lonpoly';
-            latpoly     = latpoly';
-
-            % black rectangle
-            if jj==idfirst && ii==1
-            S.PP(sens).output.kml_groyne = KML_stylePoly('name','groyne','fillColor',[0 0 0],'lineColor',[0 0 0],'lineWidth',8,'fillAlpha',1);
+        elseif alpha<=0
+            if x0(end)>x0(1)              
+                xgroyne2 = xgroyne1+Length*cos(alpha-pi()/2);
+                ygroyne2 = ygroyne1+Length*sin(alpha-pi()/2);
+            else
+                xgroyne2 = xgroyne1+Length*cos(alpha+pi()/2);
+                ygroyne2 = ygroyne1+Length*sin(alpha+pi()/2);
             end
-            % polygon to KML
-            S.PP(sens).output.kml_groyne = [S.PP(sens).output.kml_groyne KML_line(latpoly ,lonpoly ,'timeIn',datenum(t0+S.userinput.groyne(ss).start,1,1),'timeOut',datenum(t0+S.userinput.groyne(ss).stop,1,1)+364,'styleName','groyne')];
-            clear lonpoly latpoly
-
         end
-    end
+
+        xpoly = [xgroyne1 xgroyne2];
+        ypoly = [ygroyne1 ygroyne2];
+
+        % convert coordinates
+        [lonpoly,latpoly] = convertCoordinates(xpoly,ypoly,S.EPSG,'CS1.code',str2double(S.settings.EPSGcode),'CS2.name','WGS 84','CS2.type','geo');
+        lonpoly     = lonpoly';
+        latpoly     = latpoly';
+
+        % black rectangle
+        if style == 0
+            S.PP(sens).output.kml_groyne = KML_stylePoly('name','groyne','fillColor',[0 0 0],'lineColor',[0 0 0],'lineWidth',8,'fillAlpha',1);
+            style = 1;
+        end
+        % polygon to KML
+        S.PP(sens).output.kml_groyne = [S.PP(sens).output.kml_groyne KML_line(latpoly ,lonpoly ,'timeIn',datenum(t0+S.userinput.phase(jj).start,1,1),'timeOut',datenum(t0+S.userinput.phase(jj).stop,1,1)+364,'styleName','groyne')];
+        clear lonpoly latpoly
+
     end
 end

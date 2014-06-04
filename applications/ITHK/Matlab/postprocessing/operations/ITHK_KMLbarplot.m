@@ -113,6 +113,7 @@ time2a               = datenum(tvec(end)+t0-1/365/24/60/60,1,1);
 dx                   = x(2:end)-x(1:end-1);
 dy                   = y(2:end)-y(1:end-1);
 alpha                = atan2(dy,dx)'; %*180/pi()
+alpha                = mod(alpha+2*pi,2*pi);
 alpha                = [alpha(1);(alpha(1:end-1)+alpha(2:end))/2;alpha(end)];
 [alpha]              = ITHK_smoothvariable(alpha,100);
 x1                   = x'-offset*sin(alpha);

@@ -136,8 +136,12 @@ for ii = 1:size(S.phases,2)
     S.phase(ii).SOSfile = '';S.phase(ii).GROfile = '';S.phase(ii).REVfile = '';
 end
 
+start = S.phases;
+stop = [S.phases(2:end) S.duration];
 % Add measures to phases based on start times
 for ii = 1:size(S.phases,2)
+    S.phase(ii).start = start(ii);
+    S.phase(ii).stop = stop(ii);
     idssup = find(ismember(supstart,S.phases(ii)));
     idsgro = find(ismember(grostart,S.phases(ii)));
     idsrev = find(ismember(revstart,S.phases(ii)));

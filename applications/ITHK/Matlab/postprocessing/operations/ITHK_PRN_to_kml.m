@@ -110,8 +110,8 @@ end
 xcoast       = S.UB(sens).results.PRNdata.xSLR;   % x-position of coast line
 ycoast       = S.UB(sens).results.PRNdata.ySLR;   % y-position of coast line
 zcoast       = S.UB(sens).results.PRNdata.zSLR;   % z-position of coast line
-xcoastref    = S.UB(sens).data_ref.PRNdata.x;
-zcoastref    = S.UB(sens).data_ref.PRNdata.z;
+%xcoastref    = S.UB(sens).data_ref.PRNdata.x;
+%zcoastref    = S.UB(sens).data_ref.PRNdata.z;
 
 z            = [];
 for jj = 1:NRtimesteps

@@ -1,0 +1,21 @@
+LAND POLYGON
+ 0
+Xmin  Xmax   Ymin  Ymax
+-44021.32 484234.51 -614371.05 6758081.57
+Polygons
+ 0
+Text Block
+ 0
+X[m]      Y[m]   Fontheight   Color   Text
+Point Block
+ 0
+ Place   Circle   Text 
+X[m]      Y[m]   Dia[m]   Fontheight  Color   Text
+Color Information
+ 16744448 (Sea)
+ 65535 (Land)
+ 128 (Groyns)
+ 32896 (Revetment)
+ 65535 (Sources/Sinks)
+ 8421504 (Offshore Breakwaters)
+ 255 (t0 line)

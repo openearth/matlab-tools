@@ -1,5 +1,24 @@
 function S = ITHK_process_webinput(measure,lat,lon,implementation,len,vol,fill,time,name,slr,coast,eco,dunes,costs,economy,safety,recreation,residency)
 
+% %% Add info from default files
+% D = dir([S.settings.outputdir '*.GRO']);
+% if ~isempty(D)
+%     GROdata = ITHK_io_readGRO([S.settings.outputdir D(1).name]);
+%     S.phase(1).GROfile
+% end
+% D = dir([S.settings.outputdir '*.REV']);
+% if ~isempty(D)
+%     REVdata = ITHK_io_readGRO([S.settings.outputdir D(1).name]);
+% end
+% D = dir([S.settings.outputdir '*.SOS']);
+% if ~isempty(D)
+%     SOSdata = ITHK_io_readSOS([S.settings.outputdir D(1).name]);
+% end
+% D = dir([S.settings.outputdir '*.OBW']);
+% if ~isempty(D)
+%     OBWdata = ITHK_io_readSOS([S.settings.outputdir D(1).name]);
+% end
+
 %% Process input from Viewer
 %% Scenario information
 S.name = name;
@@ -126,8 +145,12 @@ for ii = 1:length(S.phases)
     S.phase(ii).SOSfile = '';S.phase(ii).GROfile = '';S.phase(ii).REVfile = '';
 end
 
+start = S.phases;
+stop = [S.phases(2:end) S.duration];
 % Add measures to phases based on start times
 for ii = 1:length(S.phases)
+    S.phase(ii).start = start(ii);
+    S.phase(ii).stop = stop(ii);
     idssup = find(ismember(supstart,S.phases(ii)));
     idsgro = find(ismember(grostart,S.phases(ii)));
     idsrev = find(ismember(revstart,S.phases(ii)));
