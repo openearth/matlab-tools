@@ -189,19 +189,18 @@ else
                 if ~(m0==m1);error('m0 is not m1');end
                 S.x{i}   = [G.cor.x(n0-1:n1,m1     ); NaN]';
                 S.y{i}   = [G.cor.y(n0-1:n1,m1     ); NaN]';
-                S.height(:,i) = [S.DATA(i).height S.DATA(i).height];
+                S.height{i} = [S.DATA(i).height S.DATA(i).height NaN];
             elseif strcmpi(S.DATA(i).direction,'v')
                 if ~(n0==n1);error('n0 is not n1');end
                 S.x{i}   = [G.cor.x(n0     ,m0-1:m1)  NaN];
                 S.y{i}   = [G.cor.y(n0     ,m0-1:m1)  NaN];
-                S.height(:,i) = [S.DATA(i).height S.DATA(i).height];
+                S.height{i} = [S.DATA(i).height S.DATA(i).height NaN];
             end
         end
         S.X = cell2mat(S.x);
         S.Y = cell2mat(S.y);
+        S.HEIGHT = cell2mat(S.height);
     end
-    
-    
     
 end
 
