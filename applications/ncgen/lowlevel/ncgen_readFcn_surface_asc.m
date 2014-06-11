@@ -17,6 +17,8 @@ if nargin==0 || isempty(OPT)
     % return OPT structure with options specific to this function
     OPT.block_size          = 1e6;
     OPT.z_scalefactor       = 1; %scale factor of z values to metres altitude
+    OPT.xref_cell = 'xllcorner';
+    OPT.yref_cell = 'yllcorner';
     varargout = {OPT};
     return
 else
@@ -40,8 +42,8 @@ s = textscan(fid,'%s %f',6);
 
 ncols        = s{2}(strcmpi(s{1},'ncols'       ));
 nrows        = s{2}(strcmpi(s{1},'nrows'       ));
-xllcorner    = s{2}(strcmpi(s{1},'xllcorner'   ));
-yllcorner    = s{2}(strcmpi(s{1},'yllcorner'   ));
+xllcorner    = s{2}(strcmpi(s{1},OPT.read.xref_cell ));
+yllcorner    = s{2}(strcmpi(s{1},OPT.read.xref_cell ));
 cellsize     = s{2}(strcmpi(s{1},'cellsize'    ));
 nodata_value = s{2}(strcmpi(s{1},'nodata_value'));
 if isempty(ncols)||isempty(nrows)||isempty(xllcorner)||isempty(yllcorner)||isempty(cellsize)||isempty(nodata_value)
