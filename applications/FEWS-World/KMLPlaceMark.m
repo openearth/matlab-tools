@@ -61,8 +61,8 @@ function KMLPlaceMark(lat,lon,kmlName,varargin)
 
 %% Keywords
 
-OPT.name          = '';
-OPT.description   = '';
+OPT.name          = {''};
+OPT.description   = {''};
 OPT.Z             = zeros(size(lat));
 OPT.icon          = 'http://maps.google.com/mapfiles/kml/shapes/caution.png';
 [OPT, Set, Default] = setproperty(OPT, varargin{:});
