@@ -152,7 +152,7 @@ if isfield(mdfkeywds,'s0' ) == 0;
     end
 end
 if isfield(mdfkeywds,'depuni') == 0;
-    mdfkeywds.depuni = -5.0;
+    mdfkeywds.depuni = 5.0;
 end
 fprintf(fid2,'%s\n'  ,['WaterLevIni                         = ',num2str(mdfkeywds.zeta0,'%5.7f')                 ,'                          # Initial water level']);
 fprintf(fid2,'%s\n'  ,['Bedlevuni                           = ',num2str(-mdfkeywds.depuni,'%5.7f')                ,'                         # Uniform bottom level, (only if bedlevtype>=3, used at missing z values in netfile']);
