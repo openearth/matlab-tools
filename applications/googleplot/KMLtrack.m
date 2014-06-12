@@ -87,6 +87,8 @@ OPT.lineColor      = [0 0 0];
 OPT.lineAlpha      = 1;
 OPT.icon           = 'http://maps.google.com/mapfiles/kml/shapes/track.png';
 OPT.iconColor      = [];
+OPT.iconScale      = 1;
+OPT.hliconScale    = 1.2;
 OPT.fill           = true;
 OPT.fillColor      = [0 .5 0];
 OPT.fillAlpha      = .4;
@@ -106,6 +108,7 @@ OPT.model          = '';
 OPT.tessellate     = true;
 OPT.zScaleFun      = @(z) (z+0)*1;
 OPT.fid            = -1;
+OPT.extrude        = 1;
 
 if nargin==0
     varargout = {OPT};
@@ -239,6 +242,8 @@ for ii = 1:length(styles);
         'lineWidth'   ,OPT.lineWidth(styles(ii))  ,...
         'icon'        ,OPT.icon                   ,...
         'iconColor'   ,OPT.iconColor              ,...
+        'iconScale'   ,OPT.iconScale              ,...
+        'hlIconScale' ,OPT.hliconScale            ,...
         'hlLineColor' ,OPT.lineColor(styles(ii),:),...
         'hlLineAlpha' ,OPT.lineAlpha(styles(ii))  ,...
         'hlLineWidth' ,OPT.lineWidth(styles(ii))  ,...
@@ -282,6 +287,12 @@ for ii=1:size(lat,2)
         
         if addData
             OPT_track.schemaName = ['schema' num2str(ii)];
+        end
+        
+        if OPT.extrude
+            OPT_track.extrude = 1;
+        else
+            OPT_track.extrude = 0;
         end
         
         if iscell(OPT.trackName);           OPT_track.name = OPT.trackName{ii};     else  OPT_track.name         = OPT.trackName;       end
