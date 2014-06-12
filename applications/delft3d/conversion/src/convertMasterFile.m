@@ -244,13 +244,18 @@ end
 if isfield(mdfkeywds,'rhow') == 0; 
     mdfkeywds.rhow = 0;
 end
-if isfield(mdfkeywds,'salw') == 0; 
+if isfield(mdfkeywds,'sub1') == 0;
     mdfkeywds.salw = 0;
     jasal          = 0;
 else
-    jasal          = 1;
+    finds          = find(mdfkeywds.sub1=='S');
+    if isempty(finds);
+        mdfkeywds.salw    = 0;
+        jasal             = 0;
+    else
+        jasal             = 1;
+    end
 end
-jasal              = 0; % temp!
 
 fprintf(fid2,'%s\n'  ,'[physics]');
 if jargh == 1;
@@ -276,7 +281,11 @@ fprintf(fid2,'%s\n'  ,['wall_ks                             = 0.                
 fprintf(fid2,'%s\n'  ,['TidalForcing                        = 1                                  # Tidal forcing (0=no, 1=yes) (only for jsferic == 1)']);
 fprintf(fid2,'%s\n'  ,['Salinity                            = ',num2str(jasal,'%1.1d')                          ,'                                  # Include salinity, (0=no, 1=yes)']);
 if jasal == 1;
-    inisalvalue    = mdfkeywds.s0(1);
+    if isempty(mdfkeywds.s0) == 1;
+        inisalvalue     = 0.0;
+    else
+        inisalvalue     = mdfkeywds.s0(1);
+    end
 else
     inisalvalue    = 0.0;
 end

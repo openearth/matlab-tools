@@ -185,6 +185,11 @@ for i_pli = 1: length(filpli)
                             SERIES.Values(:,2)  = sign*mean(bct.Table(nr_table).Data(:,2       :2        + (kmax - 1)),2);
                         end
                     end
+                    
+                    % Temporary fix! Always positive discharges!
+                    if strcmpi(quan_bct(1:14),'flux/discharge') || strcmpi(quan_bct(1:14),'totaldischarge'); 
+                        SERIES.Values  = abs(SERIES.Values);
+                    end
 
                     % Fill values
                     SERIES.Values      = num2cell(SERIES.Values);
