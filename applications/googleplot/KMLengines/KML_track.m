@@ -86,7 +86,7 @@ end
 if  OPT.extrude
     extrude = '<extrude>1</extrude>\n';
 else
-    extrude = '';
+    extrude = '<extrude>0</extrude>\n';
 end
 %% preprocess tessellate
 if  OPT.tessellate
