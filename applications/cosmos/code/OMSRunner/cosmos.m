@@ -2,6 +2,8 @@ function cosmos
 
 delete(timerfind);
 
+setpref('SNCTOOLS','USE_NETCDF_JAVA',false);
+
 warning('off','MATLAB:hg:ColorSpec_None');
 
 hm=cosmos_readConfigFile;
