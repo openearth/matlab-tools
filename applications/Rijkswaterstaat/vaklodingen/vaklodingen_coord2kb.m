@@ -112,4 +112,4 @@ xcode = x0/1e4 + 111;
 ycode = round(11008 + ((y0+20) * -.01616));
 
 % create kaartblad name string
-kbname = sprintf('%s%3.0f_%4.0f', OPT.prefix, xcode, ycode);
+kbname = sprintf('%s%03.0f_%04.0f', OPT.prefix, xcode, ycode);
