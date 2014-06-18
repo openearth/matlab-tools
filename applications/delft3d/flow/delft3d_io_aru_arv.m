@@ -79,7 +79,11 @@ for k = 1:length(T.data);
         length(setdiff(lower(fieldnames(T.data{k})),{'nm','definition','percentage'})), ...
         length(setdiff(lower(fieldnames(T.data{k})),{'n','m','definition','percentage'})), ...
         length(setdiff(lower(fieldnames(T.data{k})),{'n1','m1','n2','m2','definition','percentage'})), ...
+        length(setdiff(lower(fieldnames(T.data{k})),{'x','y','z','definition','percentage'})), ...
         ];
+    if length(setdiff(lower(fieldnames(T.data{k})),{'nm','x','y','z','definition','percentage'})) == 0; 
+        counts(5) = 0;
+    end
     [y, type_no] = min(counts);
     switch (type_no)
         case 1
@@ -90,6 +94,8 @@ for k = 1:length(T.data);
             fprintf(fid,'%5i %5i %5i  %f\n',T.data{k}.n, T.data{k}.m, T.data{k}.definition, T.data{k}.percentage);
         case 4
             fprintf(fid,'%5i %5i %5i %5i %5i  %f\n',T.data{k}.n1, T.data{k}.m1, T.data{k}.n2, T.data{k}.m2, T.data{k}.definition, T.data{k}.percentage);
+        case 5
+            fprintf(fid,'%18f %18f %18f %5i  %f\n',T.data{k}.x, T.data{k}.y, T.data{k}.z, T.data{k}.definition, T.data{k}.percentage);
     end
     if y ~= 0
         fclose(fid)
@@ -129,6 +135,9 @@ else
                 if length(content) == 4;
                     type    = 'n m definition percentage';
                     S.count.n_and_m = S.count.n_and_m + 1;
+                elseif length(content) == 5;
+                    type    = 'x y z definition percentage';
+                    S.count.block = S.count.block + 1;    
                 elseif length(content) == 6;
                     type    = 'n1 m1 n2 m2 definition percentage';
                     S.count.block = S.count.block + 1;    
