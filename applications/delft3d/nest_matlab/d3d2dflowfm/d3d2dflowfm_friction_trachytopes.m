@@ -23,12 +23,6 @@ filarv         = varargin{3};
 filnet         = varargin{4};
 filarl         = varargin{5};
 
-if (nargin == 6)
-    debugmode = varargin{6};
-else
-    debugmode = 0;
-end
-
 if (nargin == 7)
     removepreviouslinks = varargin{7};
     removepreviouslinks_set = 1;    
@@ -37,6 +31,10 @@ else
     removepreviouslinks = 1;
     removepreviouslinks_set = 0;    
     debugmode = 0;
+end
+
+if (nargin == 6)
+    debugmode = varargin{6};
 end
 
 %
@@ -110,10 +108,14 @@ end
 k = 1;
 S_l.data{k}.comment = ['* Converted from Delft3D input files'];
 L_all = {L_u,L_v};
+x_all = {xcoor_u,xcoor_v};
+y_all = {ycoor_u,ycoor_v};
 cc = 0;
 for T = [S_u, S_v]
     cc = cc + 1;
     LL = L_all{cc};
+    xL = x_all{cc};
+    yL = y_all{cc};
     k = k+1;
     S_l.data{k}.comment = ['* Based on ',T.filename];
     j = 1;
@@ -159,6 +161,9 @@ for T = [S_u, S_v]
                 end
             end
             L = LL(T.data{j0}.n,T.data{j0}.m);
+            x = xL(T.data{j0}.n,T.data{j0}.m);
+            y = yL(T.data{j0}.n,T.data{j0}.m);
+            z = 0.0;   % dummy value for now. 
             k0 = k+1;  %keep track of first index to be written to
             for ji = jnotlist;
                 if ji<jlist(end)   %done to ensure comments come before the point they are defined
@@ -172,6 +177,9 @@ for T = [S_u, S_v]
                     S_l.data{k}.definition = T.data{ji}.definition;
                     S_l.data{k}.percentage = T.data{ji}.percentage;
                     S_l.data{k}.nm = L;
+                    S_l.data{k}.x  = x;
+                    S_l.data{k}.y  = y;
+                    S_l.data{k}.z  = z;
                 end
                 if removepreviouslinks
                     %search backwards and remove earlier instances of link L
@@ -232,12 +240,18 @@ for T = [S_u, S_v]
             for m = T.data{j0}.m1:T.data{j0}.m2
                 for n = T.data{j0}.n1:T.data{j0}.n2
                     L = LL(n,m);
+                    x = xL(n,m);
+                    y = yL(n,m);
+                    z = 0.0;   % dummy value for now. 
                     if ~isnan(L)
                         for ji = jlist;
                             k = k+1;
                             S_l.data{k}.definition = T.data{ji}.definition;
                             S_l.data{k}.percentage = T.data{ji}.percentage;
                             S_l.data{k}.nm = L;
+                            S_l.data{k}.x  = x;
+                            S_l.data{k}.y  = y;
+                            S_l.data{k}.z  = z;
                         end
                         if removepreviouslinks
                             %search backwards and remove earlier instances at link L
