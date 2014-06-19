@@ -1,14 +1,16 @@
-function PRN2KML_bars(PRNfile,MDAfile,timesteps,reftime,vectorscale,KMLfile,EPSGcode,EPSG)
+function PRN2KML_bars(PRNfile,MDAfile,timesteps,reftime,vectorscale,segments,KMLfile,EPSGcode,EPSG)
 %function PRN2KML_bars : Converts a UNIBEST PRN-file into a KML-file with bars
 %
 %   Syntax:
-%     PRN2kml_bars(PRNfile,MDAfile,timesteps,reftime,vectorscale,KMLfile,EPSGcode,EPSG)
+%     PRN2kml_bars(PRNfile,MDAfile,timesteps,reftime,vectorscale,segments,KMLfile,EPSGcode,EPSG)
 %
 %   Input:
 %     PRNfile      string with PRN filename
 %     MDAfile      (optional) MDA file used to compute the angle of coast
 %     timesteps    timesteps for which output is generated (leave empty for all data)
 %     reftime      reference time for start of model simulation ('yyyy-mm-dd' or in datenum format)
+%     vectorscale  scale of the vector
+%     segments     number of segments of the bar plot
 %     KMLfile      output filename of KML (possible to include the path)
 %     EPSGcode     code for transforming the cartesian system back to WGS84 geo (EPSGcode=28992 for RD-coordinates)
 %     EPSG         matlab structure database with EPSG information
@@ -21,11 +23,12 @@ function PRN2KML_bars(PRNfile,MDAfile,timesteps,reftime,vectorscale,KMLfile,EPSG
 %     MDAfile = 'd:\UB7\HollandCoast_HK41\A_defaultCL2005\Basis.mda';
 %     timesteps=[1:40];
 %     reftime='2005-01-01';
-%     vectorscale = 10;
+%     vectorscale =10;
+%     segments=100;
 %     EPSGcode=28992;
 %     EPSG = load('EPSG');
 %     KMLfile=''; %<- will then automatically get name of PRNfile
-%     PRN2kml_bars(PRNfile,MDAfile,timesteps,reftime,vectorscale,KMLfile,EPSGcode,EPSG)
+%     PRN2kml_bars(PRNfile,MDAfile,timesteps,reftime,vectorscale,segments,KMLfile,EPSGcode,EPSG)
 %
 %   See also 
 %     PRN2kml_lines
@@ -81,6 +84,7 @@ function PRN2KML_bars(PRNfile,MDAfile,timesteps,reftime,vectorscale,KMLfile,EPSG
     [pthnm,filnm,extnm]=fileparts(PRNfile);
     if ~isempty(MDAfile);    MDAdata=readMDA(MDAfile);end
     if isempty(vectorscale); vectorscale=10; end
+    if isempty(segments);    segments=100; end
     if isempty(EPSG);        EPSG=load('EPSG'); end
     if isempty(EPSGcode);    EPSGcode=28992; end
     if isempty(KMLfile);     KMLfile = [filnm,'.kml']; end
@@ -112,7 +116,6 @@ function PRN2KML_bars(PRNfile,MDAfile,timesteps,reftime,vectorscale,KMLfile,EPSG
         z = PRNdata.zminz0(:,tt);
         dx = diff(PRNdata.xdist);
 
-        segments = 100;
         ID = unique(round([length(x)/segments/2:length(x)/segments:length(x)-length(x)/segments/2]));
         ID1 = unique(round([1:length(x)/segments:length(x)-length(x)/segments+1]));
         ID2 = [ID1(2:end)-1,length(x)];

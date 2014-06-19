@@ -9,6 +9,7 @@ function PRN2kml_lines(PRNfile,MDAfile,timesteps,reftime,vectorscale,KMLfile,EPS
 %     MDAfile      (optional) MDA file used to compute the angle of coast (if applied than the orientation of the bars will be improved)
 %     timesteps    timesteps for which output is generated (leave empty for all data)
 %     reftime      reference time for start of model simulation ('yyyy-mm-dd' or in datenum format)
+%     vectorscale  scale of the vector
 %     KMLfile      output filename of KML (possible to include the path)
 %     EPSGcode     code for transforming the cartesian system back to WGS84 geo (EPSGcode=28992 for RD-coordinates)
 %     EPSG         matlab structure database with EPSG information
