@@ -19,12 +19,10 @@ function [x,y,ray_file]=readGKL(GKLfilename)
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2008 Deltares
-%       Robin Morelissen, Cilia Swinkels, DJR Walstra 2006-2008
-%       robin.morelissen@deltares.nl
-% 
-%       updated and submitted by BJA Huisman 2010
-%       bas.huisman@deltares.nl
+%   Copyright (C) 2014 Deltares
+%       Bas Huisman
+%
+%       bas.huisman@deltares.nl	
 %
 %       Deltares
 %       Rotterdamseweg 185
@@ -53,7 +51,7 @@ function [x,y,ray_file]=readGKL(GKLfilename)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 16 Sep 2010
+% Created: 14 Apr 2011
 % Created with Matlab version: 7.9.0.529 (R2009b)
 
 % $Id$

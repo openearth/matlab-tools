@@ -27,10 +27,10 @@ function [DIFdata]=readDIF(DIFfilename)
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2008 Deltares
+%   Copyright (C) 2014 Deltares
 %       Bas Huisman
 %
-%       bas.huisman@deltares.nl
+%       bas.huisman@deltares.nl	
 %
 %       Deltares
 %       Rotterdamseweg 185
@@ -59,7 +59,7 @@ function [DIFdata]=readDIF(DIFfilename)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 16 Sep 2010
+% Created: 14 Apr 2011
 % Created with Matlab version: 7.9.0.529 (R2009b)
 
 % $Id$

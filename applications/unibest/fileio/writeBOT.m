@@ -20,9 +20,9 @@ function varargout = writeBOT(x, z, fname, varargin)
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2013 Deltares
-%       Kees den Heijer
+%       Kees den huism_b
 %
-%       kees.denheijer@deltares.nl
+%       kees.denhuism_b@deltares.nl
 %
 %       P.O. Box 177
 %       2600 MH  DELFT

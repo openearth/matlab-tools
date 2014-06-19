@@ -67,11 +67,11 @@ function PRN2KML_bars(PRNfile,MDAfile,timesteps,reftime,vectorscale,KMLfile,EPSG
 % Created: 16 Sep 2010
 % Created with Matlab version: 7.9.0.529 (R2009b)
 
-% $Id: writeSOS.m 8631 2013-05-16 14:22:14Z heijer $
+% $Id: PRN2kml_bars.m 8631 2013-05-16 14:22:14Z huism_b $
 % $Date: 2013-05-16 16:22:14 +0200 (Thu, 16 May 2013) $
 % $Author: huism_b $
 % $Revision: 8631 $
-% $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/unibest/fileio/writeSOS.m $
+% $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/unibest/postprocess/PRN2kml_bars.m $
 % $Keywords: $
 
 

@@ -179,6 +179,17 @@ function writeCFS(filename, transp_formula, varargin)
 % Sign up to recieve regular updates of this function, and to contribute 
 % your own tools.
 
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 16 Sep 2010
+% Created with Matlab version: 7.9.0.529 (R2009b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
 %-----------Write data to file--------------
 %-------------------------------------------
 

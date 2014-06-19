@@ -29,9 +29,9 @@ function REVdata = readREV(filename)
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2011 Deltares
-%       Wiebe de Boer
+%       Bas Huisman
 %
-%       wiebe.deboer@deltares.nl	
+%       bas.huisman@deltares.nl	
 %
 %       Deltares
 %       Rotterdamseweg 185
@@ -60,8 +60,15 @@ function REVdata = readREV(filename)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 12 Sep 2011
-% Created with Matlab version: 7.11.0 (R2010b)
+% Created: 14 Apr 2011
+% Created with Matlab version: 7.9.0.529 (R2009b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
 
 %-----------Read data of revetments------------
 %-------------------------------------------
