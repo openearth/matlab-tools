@@ -54,11 +54,11 @@ function [PRNdata]=flipPRN(PRNdata)
 % Created: 16 Sep 2010
 % Created with Matlab version: 7.9.0.529 (R2009b)
 
-% $Id: writeTAB.m 8631 2013-05-16 14:22:14Z heijer $
+% $Id: flipPRN.m 8631 2013-05-16 14:22:14Z huism_b $
 % $Date: 2013-05-16 16:22:14 +0200 (Thu, 16 May 2013) $
-% $Author: heijer $
+% $Author: huism_b $
 % $Revision: 8631 $
-% $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/unibest/fileio/writeTAB.m $
+% $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/unibest/engines/flipPRN.m $
 % $Keywords: $
 
     for ii=1:length(PRNdata)
