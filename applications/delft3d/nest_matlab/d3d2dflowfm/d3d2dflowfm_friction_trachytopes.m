@@ -13,7 +13,7 @@ function varargout=d3d2dflowfm_friction_trachytopes(varargin)
 %                6) (optional) Integer specifying the debugmode (0=no/1=yes)
 %                7) (optional) Integer specifying the removal of previous links (0=no/1=yes)
 %                    - if no block inputs are present, the simulation
-%                    result is the same. 
+%                    result is the same.
 %
 % See also: dflowfm_io_mdu dflowfm_io_xydata d3d2dflowfm_friction_xyz
 
@@ -25,11 +25,11 @@ filarl         = varargin{5};
 
 if (nargin == 7)
     removepreviouslinks = varargin{7};
-    removepreviouslinks_set = 1;    
+    removepreviouslinks_set = 1;
     debugmode = varargin{6};
 else
     removepreviouslinks = 1;
-    removepreviouslinks_set = 0;    
+    removepreviouslinks_set = 0;
     debugmode = 0;
 end
 
@@ -46,13 +46,13 @@ S_v = delft3d_io_aru_arv('read',filarv);
 
 if S_u.count.block + S_v.count.block == 0
     if ~removepreviouslinks_set
-        % Do not remove previous links because it is much faster 
+        % Do not remove previous links because it is much faster
         removepreviouslinks = 0;
-        warning('Setting removepreviouslinks=0 for faster conversion') 
-    else 
-        warning('Consider setting removepreviouslinks=0 for faster conversion') 
-    end  
-end 
+        warning('Setting removepreviouslinks=0 for faster conversion')
+    else
+        warning('Consider setting removepreviouslinks=0 for faster conversion')
+    end
+end
 
 %
 % Read the grid information
@@ -163,7 +163,7 @@ for T = [S_u, S_v]
             L = LL(T.data{j0}.n,T.data{j0}.m);
             x = xL(T.data{j0}.n,T.data{j0}.m);
             y = yL(T.data{j0}.n,T.data{j0}.m);
-            z = 0.0;   % dummy value for now. 
+            z = 0.0;   % dummy value for now.
             k0 = k+1;  %keep track of first index to be written to
             for ji = jnotlist;
                 if ji<jlist(end)   %done to ensure comments come before the point they are defined
@@ -242,7 +242,7 @@ for T = [S_u, S_v]
                     L = LL(n,m);
                     x = xL(n,m);
                     y = yL(n,m);
-                    z = 0.0;   % dummy value for now. 
+                    z = 0.0;   % dummy value for now.
                     if ~isnan(L)
                         for ji = jlist;
                             k = k+1;
@@ -267,6 +267,13 @@ for T = [S_u, S_v]
                                         k0 = k0-1;
                                     end
                                 end
+                                if (length(setdiff(lower(fieldnames(S_l.data{ki})),{'nm','x','y','z','definition','percentage'})) == 0)
+                                    if (S_l.data{ki}.nm == L);
+                                        S_l.data = {S_l.data{1:ki-1},S_l.data{ki+1:end}};
+                                        k  = k-1;
+                                        k0 = k0-1;
+                                    end
+                                end
                                 ki = ki-1;
                             end
                         end
@@ -284,8 +291,8 @@ end
 %
 if debugmode
     disp('Writing to file')
-    T = delft3d_io_aru_arv('write',filarl,S_l);
 end
+T = delft3d_io_aru_arv('write',filarl,S_l);
 end
 
 function found = isbetween(ax, ay, bx, by, cx, cy)
