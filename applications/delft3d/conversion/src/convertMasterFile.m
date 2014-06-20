@@ -157,19 +157,19 @@ end
 fprintf(fid2,'%s\n'  ,['WaterLevIni                         = ',num2str(mdfkeywds.zeta0,'%5.7f')                 ,'                          # Initial water level']);
 fprintf(fid2,'%s\n'  ,['Bedlevuni                           = ',num2str(-mdfkeywds.depuni,'%5.7f')                ,'                         # Uniform bottom level, (only if bedlevtype>=3, used at missing z values in netfile']);
 fprintf(fid2,'%s\n'  ,['Bedslope                            =                                    # bedslopeination, sets zk = bedlevuni + x*bedslope ans sets zbndz = xbndz*bedslope']);
-dpsopt         = 3;
-if isfield(mdfkeywds,'dpsopt') == 1;
-    if     strcmpi(mdfkeywds.dpsopt,'mean');
-        dpsopt = 3;
-    elseif strcmpi(mdfkeywds.dpsopt,'min');
-        dpsopt = 4;
-    elseif strcmpi(mdfkeywds.dpsopt,'max');
-        dpsopt = 5;
+dpuopt         = 3;
+if isfield(mdfkeywds,'dpuopt') == 1;
+    if     strcmpi(mdfkeywds.dpuopt,'mean');
+        dpuopt = 3;
+    elseif strcmpi(mdfkeywds.dpuopt,'min');
+        dpuopt = 4;
+    elseif strcmpi(mdfkeywds.dpuopt,'max');
+        dpuopt = 5;
     end
 else
-    dpsopt     = 3;
+    dpuopt     = 3;
 end
-fprintf(fid2,'%s\n'  ,['BedLevType                          = ',num2str(dpsopt,'%1.0f')                ,'                                  # 1 : Bottom levels at waterlevel cells (=flow nodes), like tiles xz, yz, bl , bob = max(bl left, bl right)']);
+fprintf(fid2,'%s\n'  ,['BedLevType                          = ',num2str(dpuopt,'%1.0f')                ,'                                  # 1 : Bottom levels at waterlevel cells (=flow nodes), like tiles xz, yz, bl , bob = max(bl left, bl right)']);
 fprintf(fid2,'%s\n'  ,['                                                                         # 2 : Bottom levels at velocity points  (=flow links),            xu, yu, blu, bob = blu,    bl = lowest connected link']);
 fprintf(fid2,'%s\n'  ,['                                                                         # 3 : Bottom levels at velocity points  (=flow links), using mean network levels xk, yk, zk  bl = lowest connected link']);
 fprintf(fid2,'%s\n'  ,['                                                                         # 4 : Bottom levels at velocity points  (=flow links), using min  network levels xk, yk, zk  bl = lowest connected link']);

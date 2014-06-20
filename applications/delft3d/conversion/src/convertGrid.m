@@ -13,6 +13,7 @@ convertGuiDirectoriesCheck;
 %%% GUI CHECKS
 
 % In case of conversion of all stuff
+dpsopt      = 1;
 if convertallstuff == 1;
 
     % Check if the mdf file name has been specified (Delft3D)
@@ -34,20 +35,13 @@ if convertallstuff == 1;
     % Check type of bathymetry data
     mdfcontents = delft3d_io_mdf('read',filemdf);
     mdfkeywds   = mdfcontents.keywords;
+    dpsopt      = 1;
     if isfield(mdfkeywds,'dpsopt') == 1;
-        finds            = find(mdfkeywds.dpsopt == 'S');
         if strcmpi(mdfkeywds.dpsopt,'DP');
             dpsopt       = 0;
-        else
-            dpsopt       = 1;
         end
-    else
-        dpsopt           = 1;
     end
-
-% If not: set default
-else
-    dpsopt               = 3;
+    
 end
 
 % Check if the input is correct
@@ -108,5 +102,5 @@ clc;
 
 %%% GIVE WARNING IN CASE OF NON-MATCHING BATHYMETRY DATAPOINTS
 if dpsopt == 0;
-    warndlg('Important: the bathymetry locations are chosen differently in Delft3D compared to the standard of D-Flow FM (dpsopt = DP).','Warning');
+    warndlg('Important: bed level definition in Delft3D is not compliant with bed level definition in D-Flow FM (dpsopt = DP).','Warning');
 end
