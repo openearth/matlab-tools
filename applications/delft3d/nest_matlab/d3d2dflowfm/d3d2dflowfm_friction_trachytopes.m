@@ -23,6 +23,15 @@ filarv         = varargin{3};
 filnet         = varargin{4};
 filarl         = varargin{5};
 
+assert(exist(filgrd,'file')==2,'Delft3D grid file does not exist');
+assert(exist(filaru,'file')==2,'Delft3D aru file does not exist');
+assert(exist(filarv,'file')==2,'Delft3D arv file does not exist');
+assert(exist(filnet,'file')==2,'DFlowFM net file does not exist');
+assert(exist(filarl,'file')==0,'DFlowFM arl file already exists, please rename old file or specify different filename');
+
+
+
+
 if (nargin == 7)
     removepreviouslinks = varargin{7};
     removepreviouslinks_set = 1;
