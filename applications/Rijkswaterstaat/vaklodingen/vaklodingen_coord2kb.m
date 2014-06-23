@@ -1,4 +1,4 @@
-function kbname = vaklodingen_coord2kb(x, y, varargin)
+function varargout = vaklodingen_coord2kb(x, y, varargin)
 %VAKLODINGEN_COORD2KB  Find "kaartblad" name covering given coordinates.
 %
 %   Function to find the name of the "kaartblad" that covers the given
@@ -113,3 +113,4 @@ ycode = round(11008 + ((y0+20) * -.01616));
 
 % create kaartblad name string
 kbname = sprintf('%s%03.0f_%04.0f', OPT.prefix, xcode, ycode);
+varargout = {kbname};
