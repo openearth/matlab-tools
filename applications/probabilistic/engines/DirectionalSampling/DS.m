@@ -418,17 +418,15 @@ while Pr > OPT.Pratio || ~isempty(reevaluate)                               % WH
                     ii = [ii 2];
                 end
 
-                [bn zn zn_tot nn ce]    = feval(...                         % start exact line search to find zero crossing along sampled direction given the
+                [bn, zn, nn, ce]    = feval(...                         % start exact line search to find zero crossing along sampled direction given the
                     OPT.z20Function,            ...                          selected beta and z values and return the evaluated beta and z values, the number
                     un(idx,:),                  ...                          of evaluations and a flag indicating convergence
                     b(ii),                      ...
                     z(ii),                      ...
-                    'aggregateFunction', OPT.aggregateFunction, ...         % use aggregationfunction
                     'zFunction', @(x,y)beta2z(OPT,x,y), OPT.z20Variables{:});   % use model as z evaluation function
 
                 be          = [be bn];                                      % add evaluated beta values to corresponding vector with exact results
                 ze          = [ze zn];                                      % add evaluated z values to corresponding vector with exact results
-                ze_tot       = [ze_tot; zn_tot];
 
                 b           = [b  bn];                                      % add evaluated beta values to corresponding vector with all results
                 z           = [z  zn];                                      % add evaluated z values to corresponding vector with all results
