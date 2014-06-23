@@ -2,12 +2,13 @@ function data=readPRN(varargin)
 %read PRN : Reads PRN-files and puts data into a struct
 %   
 %   Syntax:
-%     function [data]=readPRN(PRNfilename)
+%     function [data]=readPRN(PRNfilename,INIswitch)
 %   
 %   Input:
 %     PRNfilename    (optional) struct with path and filenames, in the following fields
 %            PRNfilename.path    = string with path
 %            PRNfilename.files   = cellstring with filenames
+%   INIswitch        (optional) if INIswitch=1 then only the initial situation at t=0 is read (i.e. first timestep)
 %   
 %   Output:
 %     data       struct with contents of prn file
@@ -95,7 +96,7 @@ function data=readPRN(varargin)
 % $HeadURL$
 % $Keywords: $
 
-if nargin==1
+if nargin>=1
     PRNfilename  = varargin{1};
     if isstr(PRNfilename)
         [pathname,filen1,filen2]=fileparts(PRNfilename);
@@ -117,7 +118,12 @@ if nargin==1
     if isempty(pathname)
         pathname=cd;
     end
-else
+end
+INIswitch=0;
+if nargin==2
+    INIswitch=1;
+end
+if nargin==0
     % Get file
     try
         [filenames, pathname] = uigetfiles('*.prn','PRN-files (*.prn)');
@@ -126,6 +132,8 @@ else
         filenames={filenames};
     end
 end
+
+
 %if ~iscell(files);
 %    files=cellstr(files);
 %end
@@ -139,7 +147,8 @@ for ii=1:length(filenames)
     end
 
     teller =0;
-    while 1
+    continuereading=1;
+    while continuereading==1
         teller = teller +1;
         
         % regel 1
@@ -188,6 +197,9 @@ for ii=1:length(filenames)
         data.alfa(:,teller,ii)=data1.alfa(:);
         data.transport(:,teller,ii)=data1.transport(:);
         data.volume(:,teller,ii)=data1.volume(:);       
+        if INIswitch==1
+        continuereading=0;
+        end
     end
     fclose(fid);
     data.xdist(:,ii)=data1.xdist(:);
