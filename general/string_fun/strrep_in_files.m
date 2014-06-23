@@ -109,7 +109,7 @@ for ii = 1:length(fileNames)
             fid = fopen(fileNames{ii},'w');
         end
         fprintf(fid,'%s',newcontents);
-        fclose all;
+        fclose(fid);
     end
     
     % output something to screen
