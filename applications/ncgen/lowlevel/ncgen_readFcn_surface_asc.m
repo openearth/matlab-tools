@@ -43,7 +43,7 @@ s = textscan(fid,'%s %f',6);
 ncols        = s{2}(strcmpi(s{1},'ncols'       ));
 nrows        = s{2}(strcmpi(s{1},'nrows'       ));
 xllcorner    = s{2}(strcmpi(s{1},OPT.read.xref_cell ));
-yllcorner    = s{2}(strcmpi(s{1},OPT.read.xref_cell ));
+yllcorner    = s{2}(strcmpi(s{1},OPT.read.yref_cell ));
 cellsize     = s{2}(strcmpi(s{1},'cellsize'    ));
 nodata_value = s{2}(strcmpi(s{1},'nodata_value'));
 if isempty(ncols)||isempty(nrows)||isempty(xllcorner)||isempty(yllcorner)||isempty(cellsize)||isempty(nodata_value)
@@ -87,8 +87,8 @@ end
 %  to the cell CORNERS. From now on we only use x and y where data reside
 %  i.e. the centers [xllcenter +/- cellsize,yllcorner +/- cellsize]
 
-xllcenter = xllcorner+cellsize/2;
-yllcenter = yllcorner+cellsize/2;
+xllcenter = xllcorner+OPT.schema.grid_offset;
+yllcenter = yllcorner+OPT.schema.grid_offset;
 
 %% write data to nc files
 
