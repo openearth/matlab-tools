@@ -3,6 +3,12 @@ function cosmos_makeModelFigures(hm,m)
 % dr=[hm.models(m).dir 'lastrun' filesep 'figures' filesep '*.*'];
 % delete(dr);
 
+%% Mobile app
+switch lower(hm.models(m).type)
+    case{'delft3dflowwave','delft3dflow'}
+        disp('Making plots for app ...');
+        cosmos_makeAppPlots(hm,m);
+end
 %% Time Series
 disp('Making time series plots ...');
 cosmos_makeTimeSeriesPlots(hm,m);
@@ -13,6 +19,7 @@ switch lower(hm.models(m).type)
         disp('Making forecast plots ...');
         cosmos_makeForecastPlot(hm,m);
 end
+
 %% Maps
 switch lower(hm.models(m).type)
     case{'delft3dflowwave','delft3dflow'}

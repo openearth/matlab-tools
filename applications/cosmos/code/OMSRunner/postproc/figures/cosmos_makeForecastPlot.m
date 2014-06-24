@@ -2,19 +2,19 @@ function cosmos_makeForecastPlot(hm,m)
 
 % Makes map plots and KMZs
 
-model=hm.models(m);
-archivedir=[hm.archiveDir filesep model.continent filesep model.name filesep 'archive' filesep];
-cycledir=[archivedir hm.cycStr filesep];
-
 t=0;
 
 name='';
 
 try
     
+    model=hm.models(m);
+    dr=model.dir;
     if model.forecastplot.plot
         
-        [weather] = cosmos_urlReadWeather(model.forecastplot.weatherstation);
+        try
+            [weather] = cosmos_urlReadWeather(model.forecastplot.weatherstation);
+        end
         
         settings.thin = model.forecastplot.thinning;
         settings.scal = model.forecastplot.scalefactor;
@@ -25,24 +25,26 @@ try
         
         name=model.forecastplot.name;
         
-        fname=[cycledir 'maps' filesep 'vel.mat'];
+        fname=[model.archiveDir hm.cycStr filesep 'maps' filesep 'vel.mat'];
         s(1).data=load(fname);
-        fname=[cycledir 'maps' filesep 'bedlevel.mat'];
+        fname=[model.archiveDir hm.cycStr filesep 'maps' filesep 'bedlevel.mat'];
         s(2).data=load(fname);
-        fname=[cycledir 'maps' filesep 'waterdepth.mat'];
+        fname=[model.archiveDir hm.cycStr filesep 'maps' filesep 'waterdepth.mat'];
         s(3).data=load(fname);
-        fname=[cycledir 'timeseries' filesep 'wl.' model.forecastplot.wlstation '.mat'];
+        fname=[model.archiveDir hm.cycStr filesep 'timeseries' filesep 'wl.' model.forecastplot.wlstation '.mat'];
         s(4).data=load(fname);
         
-        fname=[cycledir 'timeseries' filesep 'hs.' model.forecastplot.wavestation '.mat'];
+        fname=[model.archiveDir hm.cycStr filesep 'timeseries' filesep 'hs.' model.forecastplot.wavestation '.mat'];
         wav(1).data=load(fname);
-        fname=[cycledir 'timeseries' filesep 'tp.' model.forecastplot.wavestation '.mat'];
+        fname=[model.archiveDir hm.cycStr filesep 'timeseries' filesep 'tp.' model.forecastplot.wavestation '.mat'];
         wav(2).data=load(fname);
-        fname=[cycledir 'timeseries' filesep 'wavdir.' model.forecastplot.wavestation '.mat'];
+        fname=[model.archiveDir hm.cycStr filesep 'timeseries' filesep 'wavdir.' model.forecastplot.wavestation '.mat'];
         wav(3).data=load(fname);
         
-        fname=[cycledir 'maps' filesep 'windvel.mat'];
-        wnd(1).data=load(fname);
+        try
+            fname=[model.archiveDir hm.cycStr filesep 'maps' filesep 'windvel.mat'];
+            wnd(1).data=load(fname);
+        end
         
         s(1).data.U(isnan(s(1).data.U)) = 0;
         s(1).data.V(isnan(s(1).data.V)) = 0;
@@ -210,7 +212,7 @@ try
             quiver(velX(remID),velY(remID),scal*(velXComp(remID)),scal*(velYComp(remID)),0,'color',[1 1 1])
             
             blank = squeeze(s(3).data.Val(it,:,:));
-            blank(mag>0.1) = NaN;
+            blank(mag>0.05) = NaN;
             pcolor(s(3).data.X,s(3).data.Y,blank);shading interp;axis equal
             
             try
@@ -227,7 +229,7 @@ try
             
             set(gca,'xlim',settings.xlim)
             set(gca,'ylim',settings.ylim)
-            kmaxis(gca,settings.kmaxis)
+            kmAxis(gca,settings.kmaxis)
             
             % axes 2
             ax2 = axes('position',[0.68 0.30 0.12 0.1]);
@@ -335,10 +337,10 @@ try
             set(gcf,'color','w')
             set(gcf,'renderer','zbuf')
             
-            if ~exist([cycledir 'figures' filesep 'forecast'],'dir')
-                mkdir([cycledir 'figures'],'forecast')
+            if ~exist([dr 'lastrun' filesep 'figures' filesep 'forecast'],'dir')
+                mkdir([dr 'lastrun' filesep 'figures'],'forecast')
             end
-            figname=[cycledir 'figures' filesep 'forecast' filesep name '_' datestr(timnowCET,'yyyymmddHH') '.png'];
+            figname=[dr 'lastrun' filesep 'figures' filesep 'forecast' filesep name '_' datestr(timnowCET,'yyyymmddHH') '.png'];
             print(gcf,'-dpng','-r400',figname);
             
             close(gcf)
@@ -365,7 +367,7 @@ try
             end
         end
         
-        struct2xml([cycledir 'figures' filesep 'forecast' filesep name '.xml'],fc,'includeattributes',1,'structuretype',0);
+        struct2xml([dr 'lastrun' filesep 'figures' filesep 'forecast' filesep name '.xml'],fc);
     end
     
 catch
