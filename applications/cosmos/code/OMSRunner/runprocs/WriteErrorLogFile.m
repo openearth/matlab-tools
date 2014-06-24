@@ -37,7 +37,7 @@ fclose(fid);
 if hm.eMailOnError.send
     try
         setpref('Internet','SMTP_Server','smtp.deltares.nl');
-        setpref('Internet','E_mail',hm.eMailOnError.Adress);
-        sendmail(hm.eMailOnError.Adress,'Shite! An error occurred in the operational model!',mess);
+        setpref('Internet','E_mail',hm.eMailOnError.adress);
+        sendmail(hm.eMailOnError.adress,'Shite! An error occurred in the operational model!',mess);
     end
 end
