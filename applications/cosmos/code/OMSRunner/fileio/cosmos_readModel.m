@@ -1197,4 +1197,91 @@ else
     model.forecastplot.archive=0;
 end
 
+%% Mobile application
+if isfield(xml,'mobileapp')
+    
+    model.mobileapp.timeStep=[];
+    if isfield(xml.mobileapp,'timestep')
+        model.mobileapp.timeStep=str2double(xml.mobileapp.timestep);
+    end
+    
+    if isfield(xml.mobileapp,'xlims')
+        model.mobileapp.xlims=str2num(xml.mobileapp.xlims);
+    end
+    
+    if isfield(xml.mobileapp,'ylims')
+        model.mobileapp.ylims=str2num(xml.mobileapp.ylims);
+    end
+    
+    if isfield(xml.mobileapp,'clims')
+        model.mobileapp.clims=str2num(xml.mobileapp.clims);
+    end
+    
+    if isfield(xml.mobileapp,'scalefactor')
+        model.mobileapp.scalefactor=str2num(xml.mobileapp.scalefactor);
+    end
+    
+    if isfield(xml.mobileapp,'thinning')
+        model.mobileapp.thinning=str2num(xml.mobileapp.thinning);
+    end
+    
+    if isfield(xml.mobileapp,'ldb')
+        model.mobileapp.ldb=xml.mobileapp.ldb;
+    end
+    
+    if isfield(xml.mobileapp,'name')
+        model.mobileapp.name=xml.mobileapp.name;
+    end
+    
+    if isfield(xml.mobileapp,'wlstation')
+        model.mobileapp.wlstation=xml.mobileapp.wlstation;
+    end
+    
+    if isfield(xml.mobileapp,'weatherstation')
+        model.mobileapp.weatherstation=xml.mobileapp.weatherstation;
+    end
+    
+    if isfield(xml.mobileapp,'windstation')
+        model.mobileapp.windstation=str2num(xml.mobileapp.windstation);
+    end
+    
+    if isfield(xml.mobileapp,'wavestation')
+        model.mobileapp.wavestation=xml.mobileapp.wavestation;
+    end
+    
+    if isfield(xml.mobileapp,'waterstation')
+        model.mobileapp.waterstation=xml.mobileapp.waterstation;
+    end
+    
+    if isfield(xml.mobileapp,'kmaxis')
+        model.mobileapp.kmaxis=str2num(xml.mobileapp.kmaxis);
+    end
+    
+    if isfield(xml.mobileapp,'archive')
+        model.mobileapp.archive=str2double(xml.mobileapp.archive);
+    else
+        model.mobileapp.archive=0;
+    end
+    
+    model.mobileapp.plot=1;
+    if isfield(xml.mobileapp,'plot')
+        model.mobileapp.plot=str2double(xml.mobileapp.plot);
+    end
+    
+    model.mobileapp.thresholdvel=1;
+    if isfield(xml.mobileapp,'thresholdvel')
+        model.mobileapp.thresholdvel=str2double(xml.mobileapp.thresholdvel);
+    end
+       
+    if isfield(xml.mobileapp,'colormapvel')
+        model.mobileapp.colormapvel=xml.mobileapp.colormapvel;
+    end
+    
+    if isfield(xml.mobileapp,'delay')
+        model.mobileapp.delay=round(str2double(xml.mobileapp.delay));
+    end
+else
+    model.mobileapp.plot=0;
+    model.mobileapp.archive=0;
+end
 ok=1;
