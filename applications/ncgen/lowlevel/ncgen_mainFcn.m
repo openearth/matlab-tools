@@ -93,6 +93,7 @@ OPT.main.defaultdate    = [];
 OPT.main.dir_depth      = inf;
 OPT.main.hash_source    = true;
 OPT.main.store_hash     = false;
+OPT.main.merge_data     = false;
 
 % path settings
 OPT.main.path_source    = ''; % path to source data. Can be a directory or a single file
@@ -323,7 +324,7 @@ source_file_hash = source_file_hash(~all(isnan(source_file_hash),2),:);
 %Remove rows with all zero's
 source_file_hash = source_file_hash(~all((source_file_hash==0),2),:);
 
-if ~outdated
+if ~outdated && ~OPT.main.merge_data
     % check hashes
     source_file_hash = unique(source_file_hash,'rows');
     % all hashes in nc structure must be in files.
