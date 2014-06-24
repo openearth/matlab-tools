@@ -30,7 +30,7 @@ end
 id_mt = find(~cellfun(@isempty,mt));
 
 for ii = 1:tel
-    strnow = A{id_mt(1)+ii*2};
+    strnow = A{id_mt(1)+1+ii};
     maxt(ii) = str2num(strnow(strfind(strnow,'"temp"')+7:findstr(strnow,'</span')-1));
 end
 
