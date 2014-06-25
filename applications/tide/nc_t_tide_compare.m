@@ -527,7 +527,8 @@ function varargout = t_tide_compare(ncmodel,ncdata,varargin)
          
          if OPT.export
          text(1,0,mktex('Created with t_tide (Pawlowicz et al, 2002) & OpenEarthTools <www.OpenEarth.eu>'),'rotation',90,'units','normalized','verticalalignment','top','fontsize',6)
-
+         annotation('textbox',[1,0.0,0,0],'string',[addslash([mfilename])],'fontsize',4,'horizontalalignment','right','verticalalignment','baseline','color',[0.5 0.5 0.5]);
+         
          % extract unique basename
          ind = find(~all(diff(filename(ncmodel),[],1)==0,1));
          if isempty(ind) | (ind==1)
