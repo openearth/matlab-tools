@@ -48,5 +48,11 @@
       <formodel>xbeach</formodel>
       <element>toolbox.nesting.xbeach.xml</element>
     </tab>
+    <tab>
+      <tabstring>Nesting</tabstring>
+      <callback>ddb_dummyTabCallback</callback>
+      <formodel>fast</formodel>
+      <element>toolbox.nesting.fast.xml</element>
+    </tab>    
   </element>
 </root>

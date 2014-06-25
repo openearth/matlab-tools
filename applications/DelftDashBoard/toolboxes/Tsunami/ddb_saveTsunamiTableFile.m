@@ -63,10 +63,13 @@ function ddb_saveTsunamiTableFile(handles, filename)
 xml.longitude=handles.toolbox.tsunami.segmentLon;
 xml.latitude=handles.toolbox.tsunami.segmentLat;
 xml.strike=handles.toolbox.tsunami.segmentStrike;
+xml.length=handles.toolbox.tsunami.segmentLength;
 xml.width=handles.toolbox.tsunami.segmentWidth;
 xml.depth=handles.toolbox.tsunami.segmentDepth;
 xml.dip=handles.toolbox.tsunami.segmentDip;
 xml.sliprake=handles.toolbox.tsunami.segmentSlipRake;
 xml.slip=handles.toolbox.tsunami.segmentSlip;
-xml_save(filename,xml,'off');
+xml.eqtype=handles.toolbox.tsunami.EQtype;
+struct2xml(filename,xml,'structuretype','supershort');
+%xml_save(filename,xml,'off');
 

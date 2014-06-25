@@ -36,5 +36,11 @@
       <formodel>xbeach</formodel>
       <element>toolbox.tsunami.xbeach.xml</element>
     </tab>
+    <tab>
+      <tabstring>Tsunami</tabstring>
+      <callback>ddb_dummyTabCallback</callback>
+      <formodel>fast</formodel>
+      <element>toolbox.tsunami.fast.xml</element>
+    </tab>    
   </element>
 </root>

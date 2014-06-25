@@ -1,4 +1,19 @@
-function [xg,yg,zg]=ddb_computeTsunamiWave2(xs,ys,depths,dips,wdts,sliprakes,slips)
+function [xg,yg,zg]=ddb_computeTsunamiWave2(xs,ys,depths,dips,wdts,sliprakes,slips,varargin)
+
+xg=[];
+yg=[];
+
+for ii=1:length(varargin)
+    if ischar(varargin{ii})
+        switch lower(varargin{ii})
+            case{'xg'}
+                xg=varargin{ii+1};
+            case{'yg'}
+                yg=varargin{ii+1};
+        end
+    end
+end
+
 % Generates 20 initial tsunami wave transects along fault line and
 % interpolates onto rectangular grid.
 
@@ -103,22 +118,27 @@ for i=1:n0+n1+n2
 
 end
 
-% Generate rectangular grid
+if isempty(xg)
 
-xg(1)=min(min(xx));
-xg(2)=max(max(xx));
-yg(1)=min(min(yy));
-yg(2)=max(max(yy));
-dborder=0.1*(xg(2)-xg(1));
-xg(1)=xg(1)-dborder;
-xg(2)=xg(2)+dborder;
-yg(1)=yg(1)-dborder;
-yg(2)=yg(2)+dborder;
+   % Generate rectangular grid
 
-dxg=2000;
-dyg=2000;
+   xg(1)=min(min(xx));
+   xg(2)=max(max(xx));
+   yg(1)=min(min(yy));
+   yg(2)=max(max(yy));
+   dborder=0.1*(xg(2)-xg(1));
+   xg(1)=xg(1)-dborder;
+   xg(2)=xg(2)+dborder;
+   yg(1)=yg(1)-dborder;
+   yg(2)=yg(2)+dborder;
 
-[xg,yg]=meshgrid(xg(1):dxg:xg(2),yg(1):dyg:yg(2));
+   dxg=2000;
+   dyg=2000;
+
+   [xg,yg]=meshgrid(xg(1):dxg:xg(2),yg(1):dyg:yg(2));
+else
+   [xg,yg]=meshgrid(xg,yg);
+end
 
 % And interpolate data
 zg=griddata(xx,yy,zz,xg,yg);

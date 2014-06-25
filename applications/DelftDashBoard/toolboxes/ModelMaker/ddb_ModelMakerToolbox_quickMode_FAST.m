@@ -33,7 +33,7 @@ function ddb_ModelMakerToolbox_quickMode_FAST(varargin)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 02 Dec 2011
+% wd: 02 Dec 2011
 % Created with Matlab version: 7.11.0.584 (R2010b)
 
 % $Id: ddb_ModelMakerToolbox_quickMode.m 10436 2014-03-24 22:26:17Z ormondt $
@@ -72,6 +72,12 @@ else
             drawPolygon;
         case{'makedem'}
             makeDEM;
+        case{'loaddem'}
+            loadDEM;
+            editOutline;
+        case{'loadpoints'}
+            loadPoints;
+            % moved from ddb_FAST_domain.m
         case{'createpoints'}
             createPoints;
         case{'runfast'}
@@ -249,6 +255,44 @@ arcgridwrite(filename,xg,yg,zg);
 setHandles(handles);
 
 %%
+function loadDEM
+
+handles=getHandles;
+
+
+[filename, pathname, filterindex] = uigetfile('*.asc', 'DEM File Name',handles.toolbox.modelmaker.dem.demfile);
+if pathname~=0
+    if ~strcmpi(pathname(1:end-1),pwd)
+        filename=[pathname filename];
+    end
+else
+    return
+end
+
+handles.toolbox.modelmaker.dem.demfile=filename;
+
+% Create DEM grid
+filedata=arcgrid('read',filename);
+dx=filedata.CellSize(1);
+dy=filedata.CellSize(2);
+defval=filedata.NoData;
+ncol=filedata.NCols;
+nrow=filedata.NRows;
+handles.toolbox.modelmaker.dem.xlim(1)=filedata.XCorner+0.5*dx;
+handles.toolbox.modelmaker.dem.ylim(1)=filedata.YCorner+0.5*dy;
+handles.toolbox.modelmaker.dem.xlim(2)=filedata.XCorner+(ncol-0.5)*dx;
+handles.toolbox.modelmaker.dem.ylim(2)=filedata.YCorner+(nrow-0.5)*dy;
+handles.toolbox.modelmaker.dem.dx=dx*60.*60.;
+handles.toolbox.modelmaker.dem.dy=dy*60.*60.;
+filedata.Data(filedata.Data==defval)=NaN;
+
+handles.toolbox.modelmaker.dem.x=filedata.x;
+handles.toolbox.modelmaker.dem.y=fliplr(filedata.y);
+handles.toolbox.modelmaker.dem.z=flipud(filedata.Data');
+
+setHandles(handles);
+
+%%
 function createPoints
 
 handles=getHandles;
@@ -261,6 +305,7 @@ if pathname~=0
 else
     return
 end
+filexyz=[filename(1:length(filename)-4) '.xyz'] 
 
 handles.model.fast.domain.domainfile=filename;
 
@@ -292,6 +337,7 @@ period=900;
 handles=ddb_FAST_initializeBoundaryConditions(handles,hmax,period);
 
 ddb_FAST_saveDomainFile(fast,filename);
+ddb_FAST_saveXYZFile(fast,filexyz,period);
 
 handles=ddb_FAST_updatePointNames(handles);
 
@@ -302,16 +348,55 @@ save([filename(1:end-4) '.mat'],'-struct','fast');
 setHandles(handles);
 
 %%
+function loadPoints
+handles=getHandles;
+if isempty(handles.toolbox.modelmaker.dem.demfile)
+    ddb_giveWarning('text','First load or create the DEM datasets!');
+    return
+end
+
+handles=ddb_FAST_loadPoints(handles);
+   
+%hmax=2;
+period=900;
+% hmax niet meer gebruiken; staat al in de file
+% handles=ddb_FAST_initializeBoundaryConditions(handles,hmax,period);
+for ip=1:handles.model.fast.domain.nrpoints
+    handles.model.fast.domain.points(ip).period=period;
+    handles.model.fast.domain.activehmax=handles.model.fast.domain.points(ip).hmax;
+    handles.model.fast.domain.activeperiod=period;
+end
+%
+% For consistency and screen update
+%
+handles.toolbox.modelmaker.depthcontour=handles.model.fast.domain.contourdepth;
+handles.toolbox.modelmaker.distance=handles.model.fast.domain.pinterval;
+handles.toolbox.modelmaker.maxrad=handles.model.fast.domain.lenmax;
+handles.toolbox.modelmaker.dirbin=handles.model.fast.domain.dphi;
+handles.toolbox.modelmaker.radbin=handles.model.fast.domain.dx;
+handles.toolbox.modelmaker.maxelevation=handles.model.fast.domain.zmax;
+
+handles=ddb_FAST_plotPoints(handles,'plot');
+setHandles(handles);
+
+%%
 function runFAST
 
 handles=getHandles;
+hmax=[];
+fast=handles.model.fast.domain;
+% In case hmax values has changed load and check hmax data from XYZ-file
+filename=handles.model.fast.domain.domainfile;
+filexyz=[filename(1:length(filename)-4) '.xyz'];
+period=handles.model.fast.domain.activeperiod; 
+% parameter period below is as yet a dummy paramater
+fast=ddb_FAST_loadcheckXYZFile(handles,fast,filexyz,period);
 
 % Assume same output grid as bathymetry grid
-%hmax=zeros(size(handles.model.fast.domain.points.xp))+10;
-hmax=[];
 
 xdem=handles.toolbox.modelmaker.dem.x;
 ydem=handles.toolbox.modelmaker.dem.y;
+zdem=handles.toolbox.modelmaker.dem.z;
 
 wb=waitbox('Running FAST ...');
 try
@@ -322,6 +407,14 @@ catch
     return
 end
 close(wb);
+
+% arcgridwrite('sendai_test_output.asc',xdem,ydem',zg);
+zmask=compzmask(xdem,ydem,zdem);
+zg=zg.*zmask;
+% arcgridwrite('sendai_test_output2.asc',xdem,ydem',zg);
+zg(zg<=0.1)=NaN;
+arcgridwrite('sendai_test_output3.asc',xdem,ydem',zg);
+
 
 % figure(250)
 % clf
@@ -362,16 +455,12 @@ itiles{1}=zeros(ntx,nty);
 
 s=sparse(npmax,npmax);
 
-kmlfile=handles.model.fast.domain.kmlfile;
-if strcmpi(kmlfile(end-2:end),'kml')
-    kmlfile=kmlfile(1:end-3);
-end
-kmlfile=[kmlfile '.kml'];
+kmlfile='sendai_test.kml';
 s(1:size(zg,1),1:size(zg,2))=zg;
 xmin=xdem(1);
 ymin=ydem(1);
 colorlimits=[0 20];
-folder=kmlfile;
-name=kmlfile;
+folder='sendai2';
+name='sendai';
 colorbarlabel='inundation height (m)';
 superoverlay(kmlfile,s,xmin,ymin,dx,dy,'name',name,'colorlimits',colorlimits,'directory',folder,'transparency',1,'colorbarlabel',colorbarlabel);

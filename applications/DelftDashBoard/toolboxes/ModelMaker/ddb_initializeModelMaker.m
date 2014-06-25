@@ -125,11 +125,11 @@ handles.toolbox.modelmaker.polyLength=0;
 handles.toolbox.modelmaker.polygonFile='';
 % Contours
 handles.toolbox.modelmaker.depthcontour=-50;
-handles.toolbox.modelmaker.distance=200;
-handles.toolbox.modelmaker.dirbin=1;
+handles.toolbox.modelmaker.distance=1000;
+handles.toolbox.modelmaker.dirbin=0.25;
 handles.toolbox.modelmaker.radbin=100;
-handles.toolbox.modelmaker.maxrad=30000;
-handles.toolbox.modelmaker.maxelevation=20;
+handles.toolbox.modelmaker.maxrad=50000;
+handles.toolbox.modelmaker.maxelevation=25;
 
 % DEM
 handles.toolbox.modelmaker.dem.outlinehandle=[];

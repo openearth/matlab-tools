@@ -36,5 +36,11 @@
       <formodel>xbeach</formodel>
       <element>toolbox.tropicalcyclone.xbeach.xml</element>
     </tab>
+    <tab>
+      <tabstring>Tropical Cyclone</tabstring>
+      <callback>ddb_dummyTabCallback</callback>
+      <formodel>fast</formodel>
+      <element>toolbox.tropicalcyclone.fast.xml</element>
+    </tab>    
   </element>
 </root>

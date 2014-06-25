@@ -61,12 +61,19 @@ function handles = ddb_loadTsunamiTableFile(handles, filename)
 % $Keywords: $
 
 %%
-xml=xml_load(filename);
+%xml=xml_load(filename);
+xml=xml2struct(filename,'structuretype','supershort');
 handles.toolbox.tsunami.segmentLon=str2num(xml.longitude);
 handles.toolbox.tsunami.segmentLat=str2num(xml.latitude);
 handles.toolbox.tsunami.segmentStrike=str2num(xml.strike);
+handles.toolbox.tsunami.segmentLength=str2num(xml.length);
 handles.toolbox.tsunami.segmentWidth=str2num(xml.width);
 handles.toolbox.tsunami.segmentDepth=str2num(xml.depth);
 handles.toolbox.tsunami.segmentDip=str2num(xml.dip);
 handles.toolbox.tsunami.segmentSlipRake=str2num(xml.sliprake);
 handles.toolbox.tsunami.segmentSlip=str2num(xml.slip);
+try
+    handles.toolbox.tsunami.EQtype=str2num(xml.eqtype);
+catch
+    handles.toolbox.tsunami.EQtype = 3
+end

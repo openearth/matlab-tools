@@ -1,4 +1,4 @@
-function observationPoints2=ddb_obs2obs(observationPoints1,x1,y1,observationPoints2,x2,y2)
+function observationPoints2=ddb_obs2obs(grd1,obs1,grd2,obs2)
 
 [x0,y0,enc1]=ddb_wlgrid('read',grd1);
 x1=zeros(size(x0,1)+1,size(x0,2)+1);
