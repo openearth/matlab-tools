@@ -1,4 +1,4 @@
-function handles = ddb_dnami_redrw_Farea(handles)
+function handles = ddb_redrw_Farea(handles)
 %DDB_DNAMI_REDRW_FAREA  One line description goes here.
 %
 %   More detailed description goes here.
@@ -143,13 +143,13 @@ end
 %handles.toolbox.tsunami.VertexX=xf;
 %handles.toolbox.tsunami.VertexY=yf;
 %}
-handles=ddb_dnami_comp_Farea(handles);
 h=findall(gcf,'Tag','FaultArea');
 if length(h)>0
     delete(h);
 end
-nseg = handles.toolbox.tsunami.Noseg;
+nseg = handles.toolbox.tsunami.nrSegments;
 if (nseg > 0 & handles.toolbox.tsunami.Mw > 0)
+    handles=ddb_comp_Farea(handles);
     for i=1:nseg
         xx = [];
         yy = [];

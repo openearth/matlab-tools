@@ -1,4 +1,4 @@
-function handles=ddb_dnami_comp_Farea(handles)
+function handles=ddb_comp_Farea(handles)
 %
 % ------------------------------------------------------------------------------------
 %
@@ -46,42 +46,31 @@ fwidth=handles.toolbox.tsunami.segmentWidth;
 dip=handles.toolbox.tsunami.segmentDip;
 strike=handles.toolbox.tsunami.segmentStrike;
 fdtop=handles.toolbox.tsunami.segmentDepth;
-nseg=handles.toolbox.tsunami.Noseg;
+nseg=handles.toolbox.tsunami.nrSegments;
+%nseg=handles.toolbox.tsunami.Noseg;
 userfaultL=handles.toolbox.tsunami.segmentLength;
 
 if (handles.toolbox.tsunami.Mw > 0)
     %
     % Okada definition
     %
-    if handles.toolbox.tsunami.EQtype==0
-        fw = fwidth*cos(dip(1)*degrad);
-        if (fdtop >0)
-            fd = fdtop /sin(dip(1)*degrad);
-            fd = min(fd,0.5*fw);
-        else
-            fd = 0;
-        end
-        [fxn(1),fyn(1)] = ddb_det_nxtvrtx(faultX(1)  , faultY(1)  , strike(1)+90.0, fd);
+    if handles.toolbox.tsunami.relatedToEpicentre==0
+        fw = fwidth.*cos(dip.*degrad); 
         for i=1:nseg
-            [fxn(i+1),fyn(i+1)] = ddb_det_nxtvrtx(faultX(i+1)  , faultY(i+1)  , strike(i)+90.0, fd);
-
-
-
-
-
-
-
+            if (fdtop(i) >0)
+                fd(i) = fdtop(i) /sin(dip(i)*degrad);
+                fd(i) = min(fd(i),0.5*fw(i));
+            else
+                fd(i) = 0;
+            end
         end
         for i=1:nseg
-            fw = fwidth*cos(dip(i)*degrad);
-            xvrt(i,1) = fxn(i);
-            yvrt(i,1) = fyn(i);
-            xvrt(i,2) = fxn(i+1);
-            yvrt(i,2) = fyn(i+1);
-            [xvrt(i,3),yvrt(i,3)] = ddb_det_nxtvrtx(xvrt(i,2), yvrt(i,2), strike(i)+90., fw);
+            [xvrt(i,1),yvrt(i,1)] = ddb_det_nxtvrtx(faultX(i),faultY(i),strike(i)+90.0,fd(i));
+            [xvrt(i,2),yvrt(i,2)] = ddb_det_nxtvrtx(xvrt(i,1), yvrt(i,1), strike(i),userfaultL(i));
+            [xvrt(i,3),yvrt(i,3)] = ddb_det_nxtvrtx(xvrt(i,2), yvrt(i,2), strike(i)+90., fw(i));
             [xvrt(i,4),yvrt(i,4)] = ddb_det_nxtvrtx(xvrt(i,3), yvrt(i,3), strike(i)+180., userfaultL(i));
-            xvrt(i,5) = fxn(i);
-            yvrt(i,5) = fyn(i);
+            xvrt(i,5) = xvrt(i,1);
+            yvrt(i,5) = yvrt(i,1);
         end
     else
         %
@@ -98,10 +87,10 @@ if (handles.toolbox.tsunami.Mw > 0)
             yvrt(i,5) = yvrt(i,1);
         end
     end
-    for i=nseg+1:5
-        xvrt(i,1:5) = 0;
-        yvrt(i,1:5) = 0;
-    end
+%     for i=nseg+1:5
+%         xvrt(i,1:5) = 0;
+%         yvrt(i,1:5) = 0;
+%     end
 end
 
 handles.toolbox.tsunami.VertexX=xvrt;
