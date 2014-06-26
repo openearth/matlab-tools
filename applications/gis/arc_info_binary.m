@@ -97,7 +97,7 @@ function varargout = arc_info_binary(varargin)
 %         end
 %     end
 %
-%See also: ArcGisRead, ARC_SHAPE_READ
+%See also: arcgrid, ARC_SHAPE_READ
 
 %%  --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Building with Nature

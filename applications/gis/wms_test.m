@@ -18,7 +18,9 @@
 %
 %  see also: http://disc.sci.gsfc.nasa.gov/services/ogc_wms
 
-SET.plot = 0; % 0 for catalogue only, 1 to download wms (SLOW)
+% http://www.nationaalgeoregister.nl/geonetwork/srv/dut/search#|94e5b115-bece-4140-99ed-93b8f363948e
+
+SET.plot = 1; % 0 for catalogue only, 1 to download wms (SLOW)
 clc
 %% THREDDS MyOcean (bit slow)
 %  test: need to use color range
@@ -145,14 +147,16 @@ server = 'http://geoport.whoi.edu/thredds/wms/bathy/etopo2_v2c.nc?';
 disp(['wms_test:version: ',num2str(OPT.version),' crs: ',num2str(OPT.crs), ' ',url])
 if SET.plot;wms_image_plot(url,OPT);end
 
-%% NL PDOK bathymetry
+%% AHN2 http://www.nationaalgeoregister.nl/geonetwork/srv/dut/search#|94e5b115-bece-4140-99ed-93b8f363948e
 %  test: layer.layer (no 3rd layer level)
 
 server = 'http://geodata.nationaalgeoregister.nl/ahn25m/wms?';
-[url,OPT,lims] = wms('server',server,'layers','ahn25m');
+[url,OPT,lims] = wms('server',server,'layers','ahn25m',...
+         'crs','epsg:28992',...    
+        'axis',[94000 466000 96000 468000]);
 disp(['wms_test:version: ',num2str(OPT.version),' crs: ',num2str(OPT.crs), ' ',url])
 if SET.plot;wms_image_plot(url,OPT);end
-  
+
 %% THREDDS vaklodingen
 %  test: lat,lon swap in bbox for version=1.3.0 and crs=epsg:4326: use crs=crs:84
 
@@ -160,3 +164,16 @@ if SET.plot;wms_image_plot(url,OPT);end
 % [url,OPT,lims] = wms('server',server,'crs','crs:84');
 % disp(['wms_test:version: ',num2str(OPT.version),' crs: ',num2str(OPT.crs), ' ',url])
 % if SET.plot;wms_image_plot(url,OPT);end
+
+%% SIMONA
+%  test: CF
+
+ server = 'http://opendap.deltares.nl/thredds/wms/opendap/test/SDSddhzee2CF3.nc?';
+ [url,OPT,lims] = wms('server',server,'crs','crs:84',...
+     'bbox',[],...
+    'format','image/png',...
+    'layers','SEP',... % 1st layer
+    'styles','boxfill/ferret',... % 9th style
+    'colorscalerange',[-1,1]);
+ disp(['wms_test:version: ',num2str(OPT.version),' crs: ',num2str(OPT.crs), ' ',url])
+ if SET.plot;wms_image_plot(url,OPT);end

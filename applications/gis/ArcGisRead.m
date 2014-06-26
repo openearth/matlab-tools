@@ -1,5 +1,5 @@
 function varargout = ArcGisRead(fname,varargin)
-%ARCGISREAD  Read gridded data set in Arc ASCII Grid Format, and save as *.mat, *.nc file
+%ARCGISREAD  Read gridded data set in Arc ASCII Grid Format [(1,1) at Upper Left as in GIS]
 %
 %   S      = arcgisread(filename,<keyword,value>)
 %  [X,Y,D] = arcgisread(filename,<keyword,value>)
@@ -17,8 +17,9 @@ function varargout = ArcGisRead(fname,varargin)
 %
 %See web: <a href="http://en.wikipedia.org/wiki/ESRI_grid">http://en.wikipedia.org/wiki/ESRI_grid</a>
 %         <a href="http://webhelp.esri.com/arcgisdesktop/9.2/index.cfm?id=1309&pid=1308&topicname=ASCII_to_Raster_%28Conversion%29">@ESRI</a>
-%See also: ARC_ASC_READ (reads same file)
-%          ARCGIS2NC, ARC_SHAPE_READ, ARCGRIDREAD (in $ mapping toolbox), arc_asc_read (reads same file)
+%
+%See also: arcgrid, ARCGRIDREAD (in $ mapping toolbox)
+
 
 %% User defined keywords
 

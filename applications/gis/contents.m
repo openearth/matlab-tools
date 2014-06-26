@@ -1,19 +1,19 @@
 % Toolbox for ESRI (http://www.esri.com/) ArcGis data files
 %
-% GRID files:
+% GRID files: ascii
 %  info: both:   http://en.wikipedia.org/wiki/Esri_grid
+%  info: ascii:  http://www.gdal.org/frmt_various.html#AAIGrid
+%  arcgrid              - (delft3d_matlab toolbox) read grid file        [(x=1,y=1) at Upper Left as in GIS]
+%  ArcGisRead           - Read gridded data set in Arc ASCII Grid Format [(y=1,x=1) at Upper Left as in GIS]
+%  arc_asc_read         - Read gridded data set in Arc ASCII Grid Format [(y=1,x=1) at Lower Left as in math]
+%  arcgridwrite         - save gridded data set in ArcGIS ASCII format
+%  arcgridread          - (matlab mapping toolbox) Read gridded data set in Arc ASCII Grid Format
+%
+% GRID files: binary
 %  info: binary: http://support.esri.com/en/knowledgebase/techarticles/detail/30616
 %  info: binary: http://home.gdal.org/projects/aigrid/aigrid_format.html
-%  info: ascii:  http://www.gdal.org/frmt_various.html#AAIGrid
-%
-%  ArcGisRead           - Read gridded data set in Arc ASCII Grid Format, and save as *.mat, *.nc file
-%  arc_asc_read         - Read gridded data set in Arc ASCII Grid Format
 %  arc_info_binary      - Read gridded data set in Arc Binary Grid Format (*.adf)
-%  arcgridwrite         - save gridded data set in ArcGIS ASCII format
 %  arc_info_binary2kml  - Example script to save ESRI grid (ascii or adf) file as kml
-%  grid_2D_orthogonal   - FYI: toolbox for manipulating tiled netCDF gridsets
-%  arcgrid              - (private delft3d_matlab toolbox) read grid file
-%  arcgridread          - (matlab mapping toolbox) Read gridded data set in Arc ASCII Grid Format
 %
 % SHAPE files: 
 %  info: http://www.gdal.org/ogr/drv_shapefile.html
@@ -29,4 +29,9 @@
 %  arc_shape2kml        - save ESRI shape file as Google Earth file
 %  ldbTool              - FYI: GUI interface for manipulation shape files (aka landboundaries)
 %
-%See also: convertCoordinates, googlePlot, nc_cf_grid, nc_cf_gridset
+% OGC WEB SERVICES
+%  wms                  - construct and validate OGC WMS request from Web Mapping Service server 
+%  wcs                  - construct and validate OGC WCS request from Web Coverage Service server 
+%  wfs                  - construct and validate OGC WFS request from Web Feature Service server 
+%
+%See also: convertCoordinates, googlePlot, nc_cf_grid, nc_cf_gridset, grid_2D_orthogonal

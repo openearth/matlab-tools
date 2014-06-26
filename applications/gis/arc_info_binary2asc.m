@@ -1,13 +1,13 @@
-function varargout = arc_asc_write(varargin)
-%ARC_ASC_WRITE  Read an arc/info binary grid and write to Arc ASCII Grid Format
+function varargout = arc_info_binary2asc(varargin)
+%arc_info_binary2asc  Read an arc/info binary grid and write to Arc ASCII Grid Format
 %
-%   The function reads an arc/info binary grid using the arc_info_binary.m
-%   Matlab file. The data is the written to a file with the Arc ASCII Grid
+%   The function reads an arc/info binary grid using arc_info_binary.
+%   The data is the written to a file with the Arc ASCII Grid
 %   Format (extension = .asc). The name of the binary and the ASCII file 
 %   are the same.
 %
 %   Syntax:
-%   varargout = arc_asc_write(varargin)
+%   varargout = arc_info_binary2asc(varargin)
 %
 %   Input:
 %   varargin  = various key/value pairs possible (see arc_info_binary)
@@ -27,9 +27,9 @@ function varargout = arc_asc_write(varargin)
 %               [X,Y,D,M] = arc_info_binary(name)
 %
 %   Example
-%   d=arc_asc_write(fname,'novalue',32444)
+%   d=arc_info_binary2asc(fname,'novalue',32444)
 %
-%   See also: arc_info_binary
+%   See also: arcgrid, arc_info_binary
 
 %% Copyright notice
 %   --------------------------------------------------------------------

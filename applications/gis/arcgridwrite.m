@@ -18,8 +18,8 @@ function arcgridwrite(fileName,X,Y,Z,varargin)
 %
 %   INPUTS
 %       fileName:  output filename including extension
-%       X:         X coordinates (m x n)
-%       Y:         Y coordinates (m x n)
+%       X:         X coordinates (m x n) or 1D stick (n)
+%       Y:         Y coordinates (m x n) or 1D stick (m)
 %       Z:         gridded data  (m x n)
 %
 %   SYNTAX AND OPTIONS
@@ -114,8 +114,13 @@ OPT = setproperty(OPT,varargin{:});
 
 minX=min(X(:));
 minY=min(Y(:));
+if isvector(X)
+dx=abs(diff(X(:)));
+dy=abs(diff(Y(:)));
+else
 dx=abs(diff(X(1,:)));
 dy=abs(diff(Y(:,1)));
+end
 
 maxDiff=0.01; %threshold for varying dx and dy.  increase or
 %decrease this parameter if necessary.

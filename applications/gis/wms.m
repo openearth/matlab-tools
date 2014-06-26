@@ -199,7 +199,7 @@ OPT.cachedir        = [tempdir,'matlab.ows',filesep]; % store cache of xml (and 
    
 %% check valid axis (not yet bbox):
 
-   if isempty(OPT.bbox)
+   if isempty(OPT.axis)
        if isfield(Layer,'EX_GeographicBoundingBox') & strcmpi(OPT.version,'1.3.0') % 1.3.0
           %disp([OPT.version,' ', OPT.crs,' ','EX_GeographicBoundingBox']);
            OPT.axis(1) = str2num(Layer.EX_GeographicBoundingBox.westBoundLongitude);
