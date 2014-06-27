@@ -10,6 +10,9 @@ function [val,i] = wxs_keyword_match(txt,val,set,OPT)
    if ischar(set)
        set = cellstr(set);
    end
+   if isempty(set)
+       set = {''};
+   end
            
    if isnumeric(val)
       i = min(val,length(set));
