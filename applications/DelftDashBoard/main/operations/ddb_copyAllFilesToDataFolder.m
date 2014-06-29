@@ -128,7 +128,7 @@ for i=1:length(flist)
                 xmlfile=[inipath 'toolboxes' filesep toolbox filesep 'xml' filesep 'toolbox.' lower(toolbox) '.xml'];
                 %xmlfile=[inipath 'toolboxes' filesep toolbox filesep 'xml' filesep toolbox '.xml'];
                 if exist(xmlfile,'file')
-                    xml=xml_load(xmlfile);
+                    xml=xml2struct(xmlfile);
                     switch lower(xml(1).enable)
                         case{'1','y','yes'}                            
                             % Check if there is a data folder in directory of this
@@ -157,7 +157,7 @@ if ~isempty(additionalToolboxDir)
                     xmlfile=[additionalToolboxDir filesep toolbox filesep 'xml' filesep 'toolbox.' lower(toolbox) '.xml'];
                     %xmlfile=[additionalToolboxDir filesep toolbox filesep 'xml' filesep toolbox '.xml'];
                     if exist(xmlfile,'file')
-                        xml=xml_load(xmlfile);
+                        xml=xml2struct(xmlfile);
                         switch lower(xml.enable)
                             case{'1','y','yes'}
                                 % Check if there is a data folder in directory of this

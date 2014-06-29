@@ -120,7 +120,7 @@ for j=1:length(flist)
         % Check if xml file exists and whether model is enabled
         xmlfile=[inipath 'models' filesep model filesep 'xml' filesep 'model.' lower(model) '.xml'];
         if exist(xmlfile,'file')
-            xml=xml_load(xmlfile);
+            xml=xml2struct(xmlfile);
             switch lower(xml(1).enable)
                 case{'1','y','yes'}
                     % Model is enabled
@@ -147,7 +147,7 @@ for j=1:length(flist)
         % Check if xml file exists and whether toolbox is enabled
         xmlfile=[inipath 'toolboxes' filesep toolbox filesep 'xml' filesep 'toolbox.' lower(toolbox) '.xml'];
         if exist(xmlfile,'file')
-            xml=xml_load(xmlfile);
+            xml=xml2struct(xmlfile);
             switch lower(xml(1).enable)
                 case{'1','y','yes'}
                     % Toolbox is enabled
@@ -182,7 +182,7 @@ if ~isempty(additionalToolboxDir)
             % Check if xml file exists and whether toolbox is enabled
             xmlfile=[additionalToolboxDir filesep toolbox filesep 'xml' filesep 'toolbox.' lower(toolbox) '.xml'];
             if exist(xmlfile,'file')
-                xml=xml_load(xmlfile);
+                xml=xml2struct(xmlfile);
                 switch lower(xml(1).enable)
                     case{'1','y','yes'}
                         % Model is enabled
