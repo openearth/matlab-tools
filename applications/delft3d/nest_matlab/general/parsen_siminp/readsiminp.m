@@ -26,9 +26,11 @@ while ~feof(fid)
    if length(Line)>258
       Line = Line(1:258);
    end
-   Line = strtrim(parseline(Line,separators));
-   if ~isempty(Line)
-      S.File{end+1} = Line;
+   if ischar(Line) 
+       Line = strtrim(parseline(Line,separators));
+       if ~isempty(Line)
+          S.File{end+1} = Line;
+       end
    end
 end
 fclose(fid);
