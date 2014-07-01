@@ -48,7 +48,9 @@ end
 
 [path_waq,name_waq,extension_waq] = fileparts([filwaq]);
 [path_mdf,name_mdf,~            ] = fileparts([filmdf]);
-name_mdf = [path_mdf filesep name_mdf];
+if ~isempty(path_mdf) 
+    name_mdf = [path_mdf filesep name_mdf];
+end
 
 %% Display the general information
 
@@ -64,8 +66,16 @@ end
 
 DATA = delft3d_io_mdf('new',[OPT.nesthd_path filesep 'bin' filesep 'template_gui.mdf']);
 mdf  = DATA.keywords;
-mdf.pathsimona = path_waq;
-mdf.pathd3d    = path_mdf;
+if ~isempty(path_waq)
+    mdf.pathsimona = path_waq;
+else
+    mdf.pathsimona = '.';
+end
+if ~isempty(path_mdf)
+    mdf.pathd3d    = path_mdf;
+else
+    mdf.pathd3d    = '.';
+end
 
 %% Read the entire siminp and parse everything into 1 structure
 

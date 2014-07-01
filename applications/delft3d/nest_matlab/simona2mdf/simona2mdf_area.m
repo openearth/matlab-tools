@@ -26,7 +26,9 @@ end
 %
 
 if ~isempty(mdf.filcco)
-   copyfile([mdf.pathsimona filesep mdf.filcco],[mdf.pathd3d filesep simona2mdf_rmpath(mdf.filcco)]);
+    if ~exist([mdf.pathd3d filesep simona2mdf_rmpath(mdf.filcco)],'file');
+        copyfile([mdf.pathsimona filesep mdf.filcco],[mdf.pathd3d filesep simona2mdf_rmpath(mdf.filcco)]);
+    end  
 %  mdf        = rmfield(mdf,'pathsimona');
 %  mdf        = rmfield(mdf,'pathd3d');
    mdf.filcco = simona2mdf_rmpath(mdf.filcco);
