@@ -75,6 +75,7 @@ OPT = setproperty(OPT, varargin{:});
 % Hydraulics/DUT/Alkyon 2007
 %                           a       b       c           d       e
 StationInfo = {
+    'Vlissingen',           2.40,   0.35,   0.0008,     7,      4.67;
     'Hoek van Holland',     4.35,   0.6,    0.0008,     7,      4.67;
     'IJmuiden',             5.88,   0.6,    0.0254,     7,      2.77;
     'Den Helder',           9.43,   0.6,    0.68,       7,      1.26; 

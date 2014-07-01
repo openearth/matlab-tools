@@ -24,7 +24,7 @@ function Hsig_t = getHsig_t(WL_t, a, b, c, d, e)
 
 %%
 % if nargin == 1 %|| isemtpy(Relation) % no Relation given: use relation between muHsig_t and WL_t as used in Van de Graaff (1984)
-WL_t(WL_t<3) = 3;
+%WL_t(WL_t<3) = 3;
 Hsig_t = a + b*WL_t; % WL_t > NAP + d [m]
 Hsig_t(WL_t < d) = Hsig_t(WL_t < d) - (c*((d-WL_t(WL_t < d)).^e)); % between NAP + 3m and NAP + d [m]
 %     mu(WL_t < 3) = NaN; %#ok<NASGU> % relation only holds for water levels above NAP + 3m

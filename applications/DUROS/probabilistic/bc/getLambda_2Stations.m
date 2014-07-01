@@ -1,4 +1,4 @@
-function [Lambda1, Lambda2, Station1, Station2] = getLambda_2Stations(Station1, Station2, varargin)
+function [Lambda1, Lambda2, Station1, Station2, XIntersection, YIntersection] = getLambda_2Stations(varargin)
 %GETLAMBDA_2STATIONS  Calculate lambda for profiles that are in between 2
 %stations
 %
@@ -71,7 +71,9 @@ OPT = struct(...
     'RSPX',         [],         ...
     'RSPY',         [],         ... 
     'Angle',        [],         ...
-    'JarkusURL',    jarkus_url  ...
+    'JarkusURL',    jarkus_url,  ...
+    'Station1',     [],         ...
+    'Station2',     []          ...
     );
 
 OPT = setproperty(OPT, varargin{:});
@@ -103,6 +105,7 @@ end
 % Probabilistic dune erosion prediction method" WL|Delft
 % Hydraulics/DUT/Alkyon 2007
 StationInfo = {
+    'Vlissingen',           -7797,  380645; % SciDoc HydraRing
     'Hoek van Holland',     58748,  450830;
     'IJmuiden',             79249,  501800;
     'Den Helder',           98372,  549340; 
@@ -111,35 +114,45 @@ StationInfo = {
     'Borkum',               221990, 621330
     };
 
-Station1Valid   = false;
-Station2Valid   = false;
-
-for iStation = 1:size(StationInfo,1)
-    if strcmpi(StationInfo{iStation,1}, Station1)
-        Station1X       = StationInfo{iStation,2}; 
-        Station1Y       = StationInfo{iStation,3};
-        Station1Valid   = true;
-    elseif strcmpi(StationInfo{iStation,1}, Station2)
-        Station2X       = StationInfo{iStation,2}; 
-        Station2Y       = StationInfo{iStation,3};
-        Station2Valid   = true;
+XIntersection = [];
+if (isempty(OPT.Station1) && isempty(OPT.Station2))
+    [XIntersection, YIntersection] = polyintersect([StationInfo{:,2}],[StationInfo{:,3}],[RSPX, ExtendedX],[RSPY, ExtendedY]);
+    if (isempty(XIntersection))
+        [Lambda1, Lambda2] = deal(NaN);
+        [Station1, Station2] = deal('');
+        return;
     end
+    [dum, distId] = sort(sqrt(([StationInfo{:,2}]-XIntersection).^2 + ([StationInfo{:,3}]-YIntersection).^2));
+    station1Id = distId(1);
+    station2Id = distId(2);
+else
+    [Station1Valid, station1Id] = ismember(OPT.Station1,StationInfo(:,1));
+    [Station2Valid, station2Id] = ismember(OPT.Station2,StationInfo(:,1));
+    
+    if ~Station1Valid || ~Station2Valid
+        error('Please specify valid station names!')
+    end
+    
 end
 
-if ~Station1Valid || ~Station2Valid
-    error('Please specify valid station names!')
+Station1X = StationInfo{station1Id,2};
+Station1Y = StationInfo{station1Id,3};
+Station2X = StationInfo{station2Id,2};
+Station2Y = StationInfo{station2Id,3};
+
+if (isempty(XIntersection))
+    % Interpolate both to the same grid
+    XDummy      = linspace(RSPX, ExtendedX, 1000);
+    JarkusLine  = interp1([RSPX ExtendedX], [RSPY ExtendedY], XDummy);
+    StationLine = interp1([Station1X Station2X], [Station1Y Station2Y], XDummy);
+    
+    % Find intersection
+    [XIntersection, YIntersection]  = intersection(XDummy, JarkusLine, StationLine);
 end
 
-%% Calculate Lambda
-
-% Interpolate both to the same grid
-XDummy      = linspace(RSPX, ExtendedX, 1000);
-JarkusLine  = interp1([RSPX ExtendedX], [RSPY ExtendedY], XDummy);
-StationLine = interp1([Station1X Station2X], [Station1Y Station2Y], XDummy);
-
-% Find intersection
-[XIntersection, YIntersection]  = intersection(XDummy, JarkusLine, StationLine);
-
+Station1 = StationInfo{station1Id,1};
+Station2 = StationInfo{station2Id,1};
+    
 % Calculate both Lambdas
 Lambda1     = sqrt(sum(distance([Station2X XIntersection],[Station2Y YIntersection]).^2))/sqrt(sum(distance([Station1X Station2X],[Station1Y Station2Y]).^2));
 Lambda2     = sqrt(sum(distance([Station1X XIntersection],[Station1Y YIntersection]).^2))/sqrt(sum(distance([Station1X Station2X],[Station1Y Station2Y]).^2));
