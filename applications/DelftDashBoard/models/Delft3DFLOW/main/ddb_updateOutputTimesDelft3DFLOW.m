@@ -1,4 +1,4 @@
-function ddb_updateOutputTimes(varargin)
+function ddb_updateOutputTimesDelft3DFLOW(varargin)
 %ddb_Delft3DFLOW_changeStartStopTimes
 %
 %   This function updates start and stop times of output, when start or

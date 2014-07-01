@@ -185,7 +185,7 @@
     <textposition>left</textposition>
     <variable>handles.model.dflowfm.domain(ad).tstart</variable>
     <type>datetime</type>
-    <onchange>ddb_updateOutputTimes</onchange>
+    <onchange>ddb_updateOutputTimesDelft3DFlow</onchange>
   </element>
   <element>
     <style>edit</style>
@@ -195,6 +195,6 @@
     <textposition>left</textposition>
     <variable>handles.model.dflowfm.domain(ad).tstop</variable>
     <type>datetime</type>
-    <onchange>ddb_updateOutputTimes</onchange>
+    <onchange>ddb_updateOutputTimesDelft3DFlow</onchange>
   </element>
 </root>
