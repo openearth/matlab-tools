@@ -162,7 +162,7 @@ else
     error('FORM:startU', 'The parameter "startU" should be either a scalar or a vector with the length of the # stochasts')
 end
 u = [];
-currentU = startU;
+currentU = startU + eps;    % add a perturbation based on machine precision to converge when you start in the design point (e.g. z=R-S, R=norm(6,2), S=norm(6,4)).
 Relaxation = OPT.Relaxation;
 
 %% initialise FORM-procedure
