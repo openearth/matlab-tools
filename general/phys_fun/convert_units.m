@@ -113,6 +113,10 @@ debug = 0;
    mile            = 1609;                    % miles
    miles           = mile;                    % miles
    
+   nautical_mile   = 1852;                    % nautical miles
+   nautical_miles  = nautical_mile;
+   NM              = nautical_mile;
+   
    %% Volume units 
    l               = 1e-3;                    % liter
    ltr             = l;                       % liter    
