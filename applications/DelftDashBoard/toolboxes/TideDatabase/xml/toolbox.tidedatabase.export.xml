@@ -89,7 +89,7 @@
     <showfilename>no</showfilename>
     <filter>
       <extension>
-        <variable>activeExportFormatExtension</variable>
+        <variable>handles.toolbox.tidedatabase.activeExportFormatExtension</variable>
       </extension>
     </filter>
     <extension>*.tek</extension>

@@ -105,11 +105,31 @@ switch handles.toolbox.nesting.detailmodeltype
             ddb_giveWarning('text','Please first load or create model grid!');
             return
         end
+                
+        grdfile=handles.toolbox.nesting.grdFile;
+        
+        % Convert grid (if necessary)
+        if ~strcmpi(handles.toolbox.nesting.detailmodelcsname,'unspecified')
+            grd=ddb_wlgrid('read',handles.toolbox.nesting.grdFile);
+            cs1.name=handles.toolbox.nesting.detailmodelcsname;
+            cs1.type=handles.toolbox.nesting.detailmodelcstype;
+            cs2=handles.screenParameters.coordinateSystem;
+            [grd.X,grd.Y]=convertCoordinates(grd.X,grd.Y,'CS1.name',cs1.name,'CS1.type',cs1.type,'CS2.name',cs2.name,'CS2.type',cs2.type);
+            ddb_wlgrid('write','TMP.grd',grd);
+            switch cs2.type
+                case{'geographic'}
+                    grd.CoordinateSystem='Spherical';
+                otherwise
+                    grd.CoordinateSystem='Cartesian';
+            end
+            grdfile='TMP.grd';
+        end
         
         fid=fopen('nesthd1.inp','wt');
         fprintf(fid,'%s\n',handles.model.delft3dflow.domain(ad).grdFile);
         fprintf(fid,'%s\n',handles.model.delft3dflow.domain(ad).encFile);
-        fprintf(fid,'%s\n',handles.toolbox.nesting.grdFile);
+%        fprintf(fid,'%s\n',handles.toolbox.nesting.grdFile);
+        fprintf(fid,'%s\n',grdfile);
         fprintf(fid,'%s\n',handles.toolbox.nesting.encFile);
         fprintf(fid,'%s\n',handles.toolbox.nesting.bndFile);
         fprintf(fid,'%s\n',handles.toolbox.nesting.admFile);
@@ -201,7 +221,7 @@ handles=getHandles;
 
 [cs,type,nr,ok]=ddb_selectCoordinateSystem(handles.coordinateData,handles.EPSG,'default','WGS 84','type','both','defaulttype','geographic');
 
-if ok
+if ok    
     handles.toolbox.nesting.detailmodelcsname=cs;
     handles.toolbox.nesting.detailmodelcstype=type;    
     setHandles(handles);

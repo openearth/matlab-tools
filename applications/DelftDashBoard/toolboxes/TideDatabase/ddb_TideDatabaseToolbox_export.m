@@ -181,14 +181,14 @@ try
             for icon=1:length(conList)
                 ii=icon*2-1;
                 s.parameters(ii).parameter.name=['Amplitude - ' conList{icon}];
-                s.parameters(ii).parameter.type='scalar';
+                s.parameters(ii).parameter.quantity='scalar';
                 s.parameters(ii).parameter.x=xg;
                 s.parameters(ii).parameter.y=yg;
                 s.parameters(ii).parameter.val=amp{icon};
                 s.parameters(ii).parameter.size=[0 0 size(xg,1) size(xg,2) 0];
                 ii=icon*2;
                 s.parameters(ii).parameter.name=['Phase - ' conList{icon}];
-                s.parameters(ii).parameter.type='scalar';
+                s.parameters(ii).parameter.quantity='scalar';
                 s.parameters(ii).parameter.x=xg;
                 s.parameters(ii).parameter.y=yg;
                 s.parameters(ii).parameter.val=phi{icon};

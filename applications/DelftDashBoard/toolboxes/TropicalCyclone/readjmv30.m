@@ -91,17 +91,34 @@ for ii=istart:istop
     str=fgetl(fid);
     f=strread(str,'%s','delimiter',' ');
 
+
+    tim=datenum(f{1}(3:end),'yymmddHH');
+
+    if it>0
+        if abs(tim-tc0.time(it))<1/86400
+            % Time was already given, skip this record
+            continue
+        end
+    end
+    
     it=it+1;
     
     tc0.time(it)=datenum(f{1}(3:end),'yymmddHH');
     
-    latstr=f{2};
+%    latstr=f{2};
+    idir=find(f{2}=='N');
+    if isempty(idir)
+        idir=find(f{2}=='S');
+    end        
+    latstr=f{2}(1:idir);
     if strcmpi(latstr(end),'N')
         tc0.lat(it)=0.10*str2double(latstr(1:end-1));
     else
         tc0.lat(it)=-0.10*str2double(latstr(1:end-1));
     end
-    lonstr=f{3};
+        
+%    lonstr=f{3};
+    lonstr=f{2}(idir+1:end);
     if strcmpi(lonstr(end),'E')
         tc0.lon(it)=0.10*str2double(lonstr(1:end-1));
     else
@@ -114,11 +131,24 @@ for ii=istart:istop
     hr=str2double(f{1}(9:10));
     tc0.time(it)=datenum(yr,mn,dy,hr,0,0);
     
-    tc0.vmax(it,1:4)=str2double(f{4}); 
+%    tc0.vmax(it,1:4)=str2double(f{4}); 
+    tc0.vmax(it,1:4)=str2double(f{3}); 
     tc0.r34(it,1:4)=[NaN NaN NaN NaN];
     tc0.r50(it,1:4)=[NaN NaN NaN NaN];
     tc0.r64(it,1:4)=[NaN NaN NaN NaN];
     tc0.r100(it,1:4)=[NaN NaN NaN NaN];
+end
+
+if abs(tc0.time(end)-tc.time(1))<1/86400
+    % Times of forecast and hindcast overlap
+    tc0.time=tc0.time(1:end-1);
+    tc0.lon=tc0.lon(1:end-1);
+    tc0.lat=tc0.lat(1:end-1);
+    tc0.vmax=tc0.vmax(1:end-1,:);
+    tc0.r34=tc0.r34(1:end-1,:);
+    tc0.r50=tc0.r50(1:end-1,:);
+    tc0.r64=tc0.r64(1:end-1,:);
+    tc0.r100=tc0.r100(1:end-1,:);
 end
 
 % Merge

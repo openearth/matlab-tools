@@ -73,6 +73,15 @@ else
     nq=1;
 end
 
+% Create polygon file for visualization
+fid=fopen([name '.pol'],'wt');
+fprintf(fid,'%s\n',name);
+fprintf(fid,'%i %i\n',inp.nrTrackPoints,2);
+for j=1:inp.nrTrackPoints
+    fprintf(fid,'%6.3f %6.3f\n',inp.trackX(j),inp.trackY(j));
+end
+fclose(fid);
+
 for iq=1:nq
     
     if strcmpi(inp.quadrantOption,'perquadrant')
