@@ -7,6 +7,7 @@ ext_force   = [];
 
 OPT.Comments  = false;
 OPT.Filbnd    = '';
+OPT.Filini_wl = '';
 OPT.Filini_sal= '';
 OPT.Filini_tem= '';
 OPT.Filrgh    = '';
@@ -72,13 +73,27 @@ end
 %% sea level anomalies through additional time series file
 
 %% Write initial conditions for salinity
+if ~isempty(OPT.Filini_wl )
+    i_force = i_force + 1;
+    ext_force(i_force).quantity = 'initialwaterlevel';
+    ext_force(i_force).filename = OPT.Filini_wl;
+    ext_force(i_force).filetype = 7;
+    ext_force(i_force).method   = 6;
+    ext_force(i_force).operand  = 'O';
+    ext_force(i_force).averagingtype          = 2;
+    ext_force(i_force).relativesearchcellsize = 2.0;
+end
+
+%% Write initial conditions for salinity
 if ~isempty(OPT.Filini_sal)
     i_force = i_force + 1;
     ext_force(i_force).quantity = 'initialsalinity';
     ext_force(i_force).filename = OPT.Filini_sal;
     ext_force(i_force).filetype = 7;
-    ext_force(i_force).method   = 4;
+    ext_force(i_force).method   = 6;
     ext_force(i_force).operand  = 'O';
+    ext_force(i_force).averagingtype          = 2;
+    ext_force(i_force).relativesearchcellsize = 2.0;
 end
 
 %% Write initial conditions for temperature
@@ -87,8 +102,10 @@ if ~isempty(OPT.Filini_tem)
     ext_force(i_force).quantity = 'initiatemperature';
     ext_force(i_force).filename = OPT.Filini_tem;
     ext_force(i_force).filetype = 7;
-    ext_force(i_force).method   = 4;
+    ext_force(i_force).method   = 6;
     ext_force(i_force).operand  = 'O';
+    ext_force(i_force).averagingtype          = 2;
+    ext_force(i_force).relativesearchcellsize = 2.0;
 end
 
 %% write space varying roughness
@@ -97,8 +114,10 @@ if ~isempty(OPT.Filrgh)
     ext_force(i_force).quantity = 'frictioncoefficient';
     ext_force(i_force).filename = OPT.Filrgh;
     ext_force(i_force).filetype = 7;
-    ext_force(i_force).method   = 4;
+    ext_force(i_force).method   = 6;
     ext_force(i_force).operand  = 'O';
+    ext_force(i_force).averagingtype          = 2;
+    ext_force(i_force).relativesearchcellsize = 2.0;
 end
 
 %% write space varying viscosity
@@ -107,8 +126,10 @@ if ~isempty(OPT.Filvico)
     ext_force(i_force).quantity = 'horizontaleddyviscositycoefficient';
     ext_force(i_force).filename = OPT.Filvico;
     ext_force(i_force).filetype = 7;
-    ext_force(i_force).method   = 4;
+    ext_force(i_force).method   = 6;
     ext_force(i_force).operand  = 'O';
+    ext_force(i_force).averagingtype          = 2;
+    ext_force(i_force).relativesearchcellsize = 2.0;
 end
 
 %% write space varying diffusivity
@@ -117,8 +138,10 @@ if ~isempty(OPT.Fildico)
     ext_force(i_force).quantity = 'horizontaleddydiffusivitycoefficient';
     ext_force(i_force).filename = OPT.Fildico;
     ext_force(i_force).filetype = 7;
-    ext_force(i_force).method   = 4;
+    ext_force(i_force).method   = 6;
     ext_force(i_force).operand  = 'O';
+    ext_force(i_force).averagingtype          = 2;
+    ext_force(i_force).relativesearchcellsize = 2.0;
 end
 
 %% write wind

@@ -4,6 +4,7 @@ function mdu = d3d2dflowfm_cleanup(mdu)
 
 mdu = rmfield(mdu,'pathmdu');
 if isfield(mdu,'Filbnd'    ) mdu = rmfield(mdu,'Filbnd'    ) ;end
+if isfield(mdu,'Filini_wl' ) mdu = rmfield(mdu,'Filini_wl' ) ;end
 if isfield(mdu,'Filini_sal') mdu = rmfield(mdu,'Filini_sal') ;end
 if isfield(mdu,'Filini_tem') mdu = rmfield(mdu,'Filini_tem') ;end
 if isfield(mdu,'Filrgh'    ) mdu = rmfield(mdu,'Filrgh'    ) ;end

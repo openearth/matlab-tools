@@ -4,13 +4,14 @@ function mdu = d3d2dflowfm_inital(mdf,mdu, name_mdu)
 
 filgrd          = [mdf.pathd3d filesep mdf.filcco];
 [~,nameshort,~] = fileparts(name_mdu);
+mdu.Filini_wl   = '';
 mdu.Filini_sal  = '';
 mdu.Filini_tem  = '';
 
 %% Reads initial conditions from file (space varying)
 if simona2mdf_fieldandvalue(mdf,'filic') || simona2mdf_fieldandvalue(mdf,'restid')
     mdu.geometry.WaterLevIni      = -999.999;
-    mdu.geometry.WaterLevIniFile  = [nameshort '_ini_wlev.xyz'];
+    mdu.Filini_wl                 = [nameshort '_ini_wlev.xyz'];
     if simona2mdf_fieldandvalue(mdf,'filic')
         filic                         = [mdf.pathd3d filesep mdf.filic ];
         type                          = 'initial';

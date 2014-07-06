@@ -14,8 +14,7 @@ Gen_inf    = {'This tool converts a Delft3D-Flow mdf file into an D-Dlow FM mdu 
               ' '                                                                                                  ;
               'PLEASE CHECK CAREFULLY( USE AT OWN RISK)'                                                           ;                                                                                        ' '
               ' '                                                                                                  ;
-              'If you encounter problems, please do not hesitate to contact me'                                    ;
-              '<HTML><FONT color="red">Hello</Font></html>'                                                        ; 
+              'If you encounter problems, please do not hesitate to contact me'                                    ;                                                    ; 
               'Theo.vanderkaaij@deltares.nl'                                                                      };
 
 %% set path if necessary
@@ -56,7 +55,7 @@ if OPT.DispGen
 end
 
 %% Start with creating empty mdu template
-mdu = dflowfm_io_mdu('new',[getenv('nesthd_path') filesep 'bin' filesep 'dflowfm-properties.csv']);
+[mdu,mdu_Comment] = dflowfm_io_mdu('new',[getenv('nesthd_path') filesep 'bin' filesep 'dflowfm-properties.csv']);
 mdu.pathmdu = path_mdu;
 
 %% Read the temporary mdf file, add the path of the d3d files to allow for reading later
@@ -121,6 +120,7 @@ mdu = d3d2dflowfm_viscosity(mdf,mdu,name_mdu);
 
 simona2mdf_message('Generating External forcing file                  ','Window','D3D2DFLOWFM Message');
 mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filbnd'     ,mdu.Filbnd ,'Comments',true);
+mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filini_wl'  ,mdu.Filini_wl );
 mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filini_sal' ,mdu.Filini_sal);
 mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filini_tem' ,mdu.Filini_tem);
 mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filrgh'     ,mdu.Filrgh    );
@@ -155,4 +155,4 @@ mdu = d3d2dflowfm_output   (mdf,mdu,name_mdu);
 %% Finally,  write the mdu file and close everything
 simona2mdf_message('Writing    D-Flow FM *.mdu file                   ','Window','D3D2DFLOWFM Message','Close',true,'n_sec',1);
 mdu = d3d2dflowfm_cleanup(mdu);
-dflowfm_io_mdu('write',[name_mdu '.mdu'],mdu);
+dflowfm_io_mdu('write',[name_mdu '.mdu'],mdu,mdu_Comment);

@@ -38,7 +38,7 @@ if strcmpi(mdf.sub1(2),'T')
         simona2mdf_message('Only Ocean Heat Flux model implemented','Window','D3D2DFLOWFM Warning','Close',true,'n_sec',10);
     end
 else
-    mdu.physics.Temparture = 0;
+    mdu.physics.Temperature = 0;
 end
 
 %% Wind
@@ -46,8 +46,8 @@ if strcmpi(mdf.sub1(3),'W')
 
     %% Rhoair and Cd
     mdu.wind.Rhoair  = mdf.rhoa;
-    mdu.wind.ICdtype = length(mdf.wstres)/2;
-    for i_cd = 1:mdu.wind.ICdtype
+    mdu.wind.ICdtyp  = length(mdf.wstres)/2;
+    for i_cd = 1:mdu.wind.ICdtyp 
         mdu.wind.Cdbreakpoints(i_cd)        = mdf.wstres(i_cd*2 - 1);
         mdu.wind.Windspeedbreakpoints(i_cd) = mdf.wstres(i_cd*2    );
     end
