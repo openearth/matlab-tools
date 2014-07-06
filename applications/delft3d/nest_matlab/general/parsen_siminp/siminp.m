@@ -764,8 +764,9 @@ for ilev = 1: no_lev
    foundrec_stop  = length(siminp_h);
 
    for ifield = 1: length(Field)
-      found = strfind( lower(subfields{ilev}(1:min(length(Field(ifield).Name),length(subfields{ilev})))),lower(Field(ifield).Name));
-      if ~isempty(found)
+%      found = strfind( lower(subfields{ilev}(1:min(length(Field(ifield).Name),length(subfields{ilev})))),lower(Field(ifield).Name));
+      found = strncmpi( subfields{ilev},Field(ifield).Name,min(length(Field(ifield).Name),length(subfields{ilev})));
+      if found
           nrfield = ifield;
           break
       end
@@ -778,7 +779,7 @@ for ilev = 1: no_lev
    if ilev == 1 && strcmpi(subfields{ilev},'general')
        ipos            = strcmpi('general',siminp_h);
    else
-       ipos            = strncmpi(subfields{ilev},siminp_h,length(Field(ifield).Name));
+       ipos            = strncmpi(subfields{ilev},siminp_h,min(length(Field(ifield).Name),length(subfields{ilev})));
    end
 
    foundrec_start  = find(ipos>0,1);
