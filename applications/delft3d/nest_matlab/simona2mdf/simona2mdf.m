@@ -48,7 +48,8 @@ end
 
 [path_waq,name_waq,extension_waq] = fileparts([filwaq]);
 [path_mdf,name_mdf,~            ] = fileparts([filmdf]);
-if ~isempty(path_mdf) 
+if ~isempty(path_mdf)
+    if ~isdir(path_mdf) mkdir(path_mdf); end
     name_mdf = [path_mdf filesep name_mdf];
 end
 
@@ -84,6 +85,9 @@ S = all_in_one(S);
 
 
 %% parse the siminp information
+
+simona2mdf_message('Parsing DISCHARGE POINTS information'   ,'Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
+mdf = simona2mdf_dis      (S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);
 
 simona2mdf_message('Parsing AREA information'               ,'Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
 mdf = simona2mdf_area     (S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);

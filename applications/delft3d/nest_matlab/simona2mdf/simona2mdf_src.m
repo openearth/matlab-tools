@@ -44,6 +44,7 @@ for isrc = 1: length(sources)
     else
         src(isrc).k = 1;
     end
-    src(isrc).type         = '';
+    src(isrc).type         = 'N';
+    src(isrc).pntnr        = points.P(no_pnt).SEQNR;
 end
 
