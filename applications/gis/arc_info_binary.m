@@ -216,7 +216,7 @@ end
 %% dblbnd.adf: Contains the bounds (LLX, LLY, URX, URY) of the portion of
 %  utilized portion of the grid.
 
-fid           = fopen([OPT.base,'dblbnd.adf'],'r','ieee-be'); % MSB > 'ieee-be'
+fid           = fopen(fullfile(OPT.base, 'dblbnd.adf'), 'r', 'ieee-be'); % MSB > 'ieee-be'
 D.D_LLX       =      fread(fid,  1,'double');  % Lower left  X (easting)  of the grid. Generally -0.5 for an ungeoreferenced grid.
 D.D_LLY       =      fread(fid,  1,'double');  % Lower left  Y (northing) of the grid. Generally -0.5 for an ungeoreferenced grid.
 D.D_URX       =      fread(fid,  1,'double');  % Upper right X (northing) of the grid. Generally #Pixels-0.5 for an ungeoreferenced grid.
@@ -227,7 +227,7 @@ fclose(fid);
 %  and number of tiles in the dataset. It also contains assorted other
 %  information I have yet to identify.
 
-fid           = fopen([OPT.base,'hdr.adf'],'r','ieee-be');% MSB > 'ieee-be'
+fid           = fopen(fullfile(OPT.base, 'hdr.adf'), 'r', 'ieee-be');% MSB > 'ieee-be'
 D.HMagic      = char(fread(fid,  8,'uchar' )');% Magic Number - always "GRID1.2\0"
 dummy         =      fread(fid,  8,'uint8' );  % assorted data, I don't know the purpose.
 D.HCellType   =      fread(fid,  1,'int32' );  % 1 = int cover, 2 = float cover.
@@ -248,7 +248,7 @@ fclose(fid);
 %% sta.adf: This contains raster statistics. In particular, the raster min,
 %  max, mean and standard deviation.
 
-fid           = fopen([OPT.base,'sta.adf'],'r','ieee-be'); % MSB > 'ieee-be'
+fid           = fopen(fullfile(OPT.base, 'sta.adf'), 'r', 'ieee-be'); % MSB > 'ieee-be'
 D.SMin        =      fread(fid,  1,'double');
 D.SMax        =      fread(fid,  1,'double');
 D.SMean       =      fread(fid,  1,'double');
@@ -317,7 +317,7 @@ D.Y = D.D_URY - (2*(1:D.nRows   )-1)/2*D.HPixelSizeX;
 %% w001001x.adf: This is an index file containing pointers to each of the
 %  tiles in the w001001.adf raster file.
 
-fid           = fopen([OPT.base,'w001001x.adf'],'r','ieee-be'); % MSB > 'ieee-be'
+fid           = fopen(fullfile(OPT.base, 'w001001x.adf'), 'r', 'ieee-be'); % MSB > 'ieee-be'
 D.RMagic      =      fread(fid,  8,'uint8' );   % Magic Number (always hex 00 00 27 0A FF FF FC 14 or 00 00 27 0A FF FF FB F8 in some (all?) Arc8 products).  (dec2hex(D.RMagic) is indeed 00 00 27 0A FF FF FC 14)
 dummy         =      fread(fid, 16,'uint8' );   % zero fill
 D.RFileSize   =      fread(fid,  1,'uint32')*2; % Size of whole file in shorts (multiply by two to get file size in bytes). (ok with 'ieee-be')
@@ -342,7 +342,7 @@ fclose(fid);
 
 %% w001001.adf: This is the file containing the actual raster data.
 
-fid            = fopen([OPT.base,'w001001.adf'],'r','ieee-be'); % MSB > 'ieee-be'
+fid            = fopen(fullfile(OPT.base, 'w001001.adf'),'r','ieee-be'); % MSB > 'ieee-be'
 D.RMagic       =      fread(fid,  8,'uint8' );   % Magic Number (always hex 00 00 27 0A FF FF FC 14 or 00 00 27 0A FF FF FB F8 in some (all?) Arc8 products).  (dec2hex(D.RMagic) is indeed 00 00 27 0A FF FF FC 14)
 dummy          =      fread(fid, 16,'uint8' );   % zero fill
 D.RFileSize    =      fread(fid,  1,'uint32')*2; % Size of whole file in shorts (multiply by two to get file size in bytes). (ok with 'ieee-be')
@@ -754,10 +754,10 @@ else
         %%
         if OPT.export
             if ~isempty(OPT.clim)
-                print2a4overwrite([OPT.base,'w001001.png'])
+                print2a4overwrite(fullfile(OPT.base, 'w001001.png'))
                 caxis([OPT.clim]);
                 colorbarwithtitle([mktex(OPT.long_name),' [',OPT.units,']']);
-                print2a4overwrite([OPT.base,'w001001_',num2str(OPT.clim(1)),'_',num2str(OPT.clim(2)),'.png'])
+                print2a4overwrite(fullfile(OPT.base, ['w001001_',num2str(OPT.clim(1)),'_',num2str(OPT.clim(2)),'.png']))
             end
         end
     end
@@ -766,14 +766,16 @@ end % OPT.data
 
 %% metadata
 
-if  exist([OPT.base,'\metadata.xml'])
+if  exist(fullfile(OPT.base, 'metadata.xml'), 'file')
     if strcmpi(OPT.base(2),':')
         D.metadata = urlread(['file:///',OPT.base,'\metadata.xml']);
     else
         D.metadata = urlread(['file:///',pwd,filesep,OPT.base,'\metadata.xml']);
     end
 else
-    disp([OPT.base,'metadata.xml missing']);
+    if OPT.warning
+        fprintf('"%s" missing\n', fullfile(OPT.base, 'metadata.xml'));
+    end
     D.metadata = [];
 end
 
