@@ -151,6 +151,12 @@ try
     else
         ncwriteatt(ncfile, 'isource', 'flag_meanings', [flag_meanings ' ' data.filename])
     end
+    if isfield(data, 'message')
+        if ~isempty(data.message)
+            comm = ncreadatt(ncfile,'/','comment');
+            ncwriteatt(ncfile,'/','comment', sprintf('%s\n%s', comm, data.message))
+        end
+    end
 catch
     max(data.z(:))
     min(data.z(:))

@@ -61,15 +61,13 @@ function [x, y, z, result, mess] = ncgen_checkFcn_surface(x, y, z, varargin)
 
 %%
 OPT = struct(...
-    'fname', '',...
-    'grid_cellsize_x', NaN,...
-    'grid_cellsize_y', NaN,...
-    'grid_offset', 0,...
-    'sort_x', true,...
-    'sort_y', true,...
-    'filter_x', false,...
-    'filter_y', false,...
-    'squares', false);
+    'fname', '',... % file name of raw file
+    'grid_cellsize', [NaN NaN],... % schema gridsize [x y]
+    'grid_offset', [0 0],... % schema offset [x y]
+    'sort', true,... % switch to sort grid in ascending order
+    'adjust_offset', false,... % adjust offset to schema, if not matching
+    'filter', false ... % apply filter and keep only points that are on schema grid
+    );
 % return defaults (aka introspection)
 % if nargin==0;
 %     varargout = {OPT};
@@ -84,14 +82,13 @@ result = struct(...
     'issorted_y', {{false, 'order of y not checked'}},...
     'equidistant_x', {{false, 'equidistance of x not checked'}},...
     'equidistant_y', {{false, 'equidistance of y not checked'}},...
-    'cellsize', {{false, 'cellsize not checked'}},...
     'match_x', {{false, 'matching of x not checked'}},...
     'match_y', {{false, 'matching of y not checked'}});
 
 %% check whether x is in ascending order
 if ~issorted(x)
     result.issorted_x = {issorted(x) 'x not in ascending order'};
-    if OPT.sort_x
+    if OPT.sort(1)
         % make sure X is sorted in ascending order
         [x, ix] = sort(x);
         z = z(:,ix);
@@ -104,7 +101,7 @@ end
 %% derive cell size and check wheter x grid is equidistant
 cellsizex = unique(diff(x));
 if ~isscalar(cellsizex)
-    result.equidistant_x = {false, 'cellsize in x direction is not constant'};
+    result.equidistant_x = {false, sprintf('cellsize in x direction is not constant, ranging from %g to %g', min(cellsizex), max(cellsizex))};
 else
     result.equidistant_x = {true, sprintf('cellsize in x direction is constant (value = %g)', cellsizex)};
 end
@@ -112,7 +109,7 @@ end
 %% check whether y is in ascending order
 if ~issorted(y)
     result.issorted_y = {issorted(y) 'y not in ascending order'};
-    if OPT.sort_y
+    if OPT.sort(end)
         % make sure y is sorted in ascending order
         [y, iy] = sort(y);
         z = z(iy,:);
@@ -125,29 +122,15 @@ end
 %% derive cell size and check wheter y grid is equidistant
 cellsizey = unique(diff(y));
 if ~isscalar(cellsizey)
-    result.equidistant_y = {false, 'cellsize in y direction is not constant'};
+    result.equidistant_y = {false, sprintf('cellsize in y direction is not constant, ranging from %g to %g', min(cellsizey), max(cellsizey))};
 else
     result.equidistant_y = {true, sprintf('cellsize in y direction is constant (value = %g)', cellsizey)};
 end
 
-%% check whether cell are squares
-cellsize = unique([cellsizex cellsizey]);
-if ~isscalar(cellsize)
-    if OPT.squares
-        % cells are supposed to be squares, but aren't
-        result.cellsize = {false, sprintf('cellsizes in x (%g) and y (%g) direction are different', cellsizex, cellsizey)};
-    else
-        % cells are rectangular, but that's not considered as a problem
-        result.cellsize = {true, sprintf('cellsizes in x (%g) and y (%g) direction are different', cellsizex, cellsizey)};
-    end
-else
-    result.cellsize = {true, sprintf('cells are squares (size = %g)', cellsize)};
-end
-
 %% check whether data cell size matches supposed size
-if ~isequal(cellsizex, OPT.grid_cellsize_x)
+if ~isequal(cellsizex, OPT.grid_cellsize(1))
     result.match_x = {false, sprintf('x cellsize (%g) differs from the supposed size (%g)', cellsizex, OPT.grid_cellsize_x)};
-    if OPT.filter_x
+    if OPT.filter(1)
         TODO('try to filter the x values')
     end
 else
@@ -155,9 +138,9 @@ else
 end
 
 %% check whether data cell size matches supposed size
-if ~isequal(cellsizey, OPT.grid_cellsize_y)
-    result.match_y = {false, sprintf('y cellsize (%g) differs from the supposed size (%g)', cellsizey, OPT.grid_cellsize_y)};
-    if OPT.filter_y
+if ~isequal(cellsizey, OPT.grid_cellsize(end))
+    result.match_y = {false, sprintf('y cellsize (%g) differs from the supposed size (%g)', cellsizey, OPT.grid_cellsize(end))};
+    if OPT.filter(end)
         TODO('try to filter the x values')
     end
 else
@@ -165,12 +148,32 @@ else
 end
 
 %%
-if ~all(mod(x-OPT.grid_offset, cellsizex) == 0)
-    result.offset_x = {false, 'x offset is wrong'};
+offset_x = unique(mod(x, cellsizex));
+if offset_x ~= OPT.grid_offset(1)
+    result.offset_x = {false, sprintf('x offset (%g) differs from the supposed offset (%g)', offset_x, OPT.grid_offset(1))};
+    if OPT.adjust_offset(1)
+        if offset_x <= cellsizex/2
+            offset_x_corr = -offset_x;
+        else
+            offset_x_corr = cellsizex-offset_x;
+        end
+        x = x + offset_x_corr;
+        result.offset_x = {true, sprintf('x offset modified by %g; original %s', offset_x_corr, result.offset_x{end})};
+    end
 end
 
-if ~all(mod(y-OPT.grid_offset, cellsizey) == 0)
-    result.offset_y = {false, 'y offset is wrong'};
+offset_y = unique(mod(y, cellsizey));
+if offset_y ~= OPT.grid_offset(end)
+    result.offset_y = {false, sprintf('y offset (%g) differs from the supposed offset (%g)', offset_y, OPT.grid_offset(end))};
+    if OPT.adjust_offset(end)
+        if offset_y <= cellsizey/2
+            offset_y_corr = -offset_y;
+        else
+            offset_y_corr = cellsizex-offset_y;
+        end
+        y = y + offset_y_corr;
+        result.offset_y = {true, sprintf('x offset modified by %g; original %s', offset_y_corr, result.offset_y{end})};
+    end
 end
 
 %%
@@ -185,6 +188,17 @@ if any(~idx)
         end
     end
     result = false;
+elseif offset_x ~=0 || offset_y ~= 0
+    svninfo = svn_info(OPT.fname);
+    [~, svnrev] = system(sprintf('svnversion %s', OPT.fname));
+    mess = sprintf('offset adjusted of "%s" revision %s', svninfo.url, strtrim(svnrev));
+    if offset_x ~=0
+        mess = sprintf('%s\n %s', mess, result.offset_x{end});
+    end
+    if offset_y ~=0
+        mess = sprintf('%s\n %s', mess, result.offset_y{end});
+    end
+    result = true;
 else
     mess = '';
     result = true;

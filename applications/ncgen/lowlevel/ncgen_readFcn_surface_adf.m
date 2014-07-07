@@ -17,6 +17,7 @@ if nargin==0 || isempty(OPT)
     % return OPT structure with options specific to this function
     OPT.block_size          = 1e6;
     OPT.z_scalefactor       = 1; %scale factor of z values to metres altitude
+    OPT.checkFcn_args       = {};
     varargout = {OPT};
     return
 else
@@ -43,39 +44,53 @@ WB.done = 0;
 ncols = length(X);
 nrows = length(Y);
 
-% make sure X is sorted in ascending order
-if ~issorted(X)
-    [X, ix] = sort(X);
-    D = D(:,ix);
-end
+[X, Y, D, result, mess] = ncgen_checkFcn_surface(X, Y, D,...
+    'fname', fns.pathname,...
+    'grid_cellsize', OPT.schema.grid_cellsize,...
+    'grid_offset', OPT.schema.grid_offset,...
+    'sort', true,...
+    OPT.read.checkFcn_args{:});
 
-% given that X is ascending, diff will always give a positive result
+if ~result
+    fprintf('%s\n', mess);
+    return
+elseif ~isempty(mess)
+    fprintf('%s\m', mess);
+end
+% % make sure X is sorted in ascending order
+% if ~issorted(X)
+%     [X, ix] = sort(X);
+%     D = D(:,ix);
+% end
+% 
+% % given that X is ascending, diff will always give a positive result
 cellsizex = unique(diff(X));
-if ~isscalar(cellsizex)
-    error('cellsize in x direction is not constant')
-end
-
-% make sure Y is sorted in ascending order
-if ~issorted(Y)
-    [Y, iy] = sort(Y);
-    D = D(iy,:);
-end
-
-% given that Y is ascending, diff will always give a positive result
+% if ~isscalar(cellsizex)
+%     error('cellsize in x direction is not constant')
+% end
+% 
+% % make sure Y is sorted in ascending order
+% if ~issorted(Y)
+%     [Y, iy] = sort(Y);
+%     D = D(iy,:);
+% end
+% 
+% % given that Y is ascending, diff will always give a positive result
 cellsizey = unique(diff(Y));
-if ~isscalar(cellsizey)
-    error('cellsize in y direction is not constant')
-end
-
-if cellsizex == cellsizey
-    cellsize = cellsizex;
-else
-    error('cellsizes in x and y direction are different')
-end
-
-if ~(cellsize == OPT.schema.grid_cellsize) % gridsizex==gridsizey already checked above
-    error('cellsize ~= OPT.schema.grid_cellsize')
-end
+% if ~isscalar(cellsizey)
+%     error('cellsize in y direction is not constant')
+% end
+%
+cellsize = unique([cellsizex cellsizey]);
+% if cellsizex == cellsizey
+%     cellsize = cellsizex;
+% else
+%     error('cellsizes in x and y direction are different')
+% end
+% 
+% if ~(cellsize == OPT.schema.grid_cellsize) % gridsizex==gridsizey already checked above
+%     error('cellsize ~= OPT.schema.grid_cellsize')
+% end
 
 %% calculate x,y of cell CENTRES, by adding half a grid cell
 %  to the cell CORNERS. From now on we only use x and y where data reside
@@ -128,6 +143,7 @@ for x0      = minx : mapsizex : maxx % loop over tiles in x direction within dat
             data.source_file_hash = fns.hash;
             data.filename         = fns.name;
             data.source           = double(~isnan(data.z));
+            data.message          = mess;
             
             writeFcn(OPT,data)
         end
