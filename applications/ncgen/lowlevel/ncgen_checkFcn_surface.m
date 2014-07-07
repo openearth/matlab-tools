@@ -129,7 +129,7 @@ end
 
 %% check whether data cell size matches supposed size
 if ~isequal(cellsizex, OPT.grid_cellsize(1))
-    result.match_x = {false, sprintf('x cellsize (%g) differs from the supposed size (%g)', cellsizex, OPT.grid_cellsize_x)};
+    result.match_x = {false, sprintf('x cellsize (%g) differs from the supposed size (%g)', cellsizex, OPT.grid_cellsize(1))};
     if OPT.filter(1)
         TODO('try to filter the x values')
     end
