@@ -767,11 +767,9 @@ end % OPT.data
 %% metadata
 
 if  exist(fullfile(OPT.base, 'metadata.xml'), 'file')
-    if strcmpi(OPT.base(2),':')
-        D.metadata = urlread(['file:///',OPT.base,'\metadata.xml']);
-    else
-        D.metadata = urlread(['file:///',pwd,filesep,OPT.base,'\metadata.xml']);
-    end
+    % read metadata using urlread (not clear whether urlread is needed
+    % here)
+    D.metadata = urlread(['file:///', fullfile(abspath(OPT.base),'metadata.xml')]);
 else
     if OPT.warning
         fprintf('"%s" missing\n', fullfile(OPT.base, 'metadata.xml'));
