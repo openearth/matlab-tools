@@ -55,7 +55,7 @@ if ~result
     fprintf('%s\n', mess);
     return
 elseif ~isempty(mess)
-    fprintf('%s\m', mess);
+    fprintf('%s\n', mess);
 end
 % % make sure X is sorted in ascending order
 % if ~issorted(X)
