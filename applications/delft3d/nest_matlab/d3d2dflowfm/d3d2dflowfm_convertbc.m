@@ -39,15 +39,20 @@ if OPT.Harmonic
     phases  = bch.phases;
 end
 
-%% cycle over the pli's
+%% Cycle over the pli's
 i_output = 0;
 for i_pli = 1: length(filpli)
     LINE = dflowfm_io_xydata('read',filpli{i_pli});
     for i_pnt = 1: size(LINE.DATA,1)
         SERIES   = [];
         i_output = i_output + 1;
+        
         %% Get the type of forcing for this point
-        index =  d3d2dflowfm_decomposestr(LINE.DATA{i_pnt,3});
+        if size(LINE.DATA,2) == 3;
+            index =  d3d2dflowfm_decomposestr(LINE.DATA{i_pnt,3});
+        else
+            continue
+        end
         sign = str2num(LINE.DATA{i_pnt,3}(index(end-1):index(end) - 1));
         if OPT.Salinity || OPT.Temperature
             b_type  = 't';
@@ -112,8 +117,7 @@ for i_pli = 1: length(filpli)
                     SERIES.Comments{3} = '* COLUMN2=Amplitude (ISO)';
                     SERIES.Comments{4} = '* COLUMN3=Phase (deg)';
 
-                    %% find harmonic boundary number and side
-
+                    %% Find harmonic boundary number and side
                     i_harm = str2num(LINE.DATA{i_pnt,3}(index(3):index(3) + 3));
                     if strcmpi      (LINE.DATA{i_pnt,3}(end     :end         ),'a');
                         i_side = 1;
@@ -133,12 +137,13 @@ for i_pli = 1: length(filpli)
                     end
                     SERIES.Values = num2cell(SERIES.Values);
                 end
+                
             %% Time series forcing data
             case 't'
                 if OPT.Series
                     filename{i_output} = [path_output filesep LINE.Blckname '_' num2str(i_pnt,'%0.4d') '.tim'];
 
-                    %% find Time series table number
+                    %% Find Time series table number
                     bndname = strtrim(LINE.DATA{i_pnt,3}(index(3):index(end - 1) - 1));
                     side    = bndname(end:end);
                     bndname = bndname(1:end-5);
@@ -202,10 +207,18 @@ for i_pli = 1: length(filpli)
         end
         %% Write the Series
         if ~isempty(SERIES)
+            % Write series
             dflowfm_io_series( 'write',filename{i_output},SERIES);
-            clear SERIES
+            clear SERIES;
+            
+            % Remove boundary conditions information from the pli-file
+            if i_pnt == size(LINE.DATA,1);
+                readData           = dflowfm_io_xydata('read' ,filpli{i_pli});
+                readData.DATA(:,3) = [];
+                dflowfm_io_xydata('write' ,filpli{i_pli} ,readData);
+            end
         end
-     end
+    end 
 end
 
 varargout{1} = filename;
