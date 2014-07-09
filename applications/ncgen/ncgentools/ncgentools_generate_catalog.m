@@ -66,6 +66,7 @@ OPT.var_att     = {'units','standard_name','long_name'};
 OPT.urlPath     = 'D:\products\nc\rijkswaterstaat\vaklodingen\combined';
 OPT.urlPathrep  = OPT.urlPath; % option to replace the local path by the intended web url
 OPT.catalogname = '';
+OPT.reduce      = false;
 OPT.mode        = 'clobber';
 
 OPT = setproperty(OPT,varargin{:});
@@ -242,12 +243,25 @@ multiWaitbar('catalogger',1,'label','catalog generation completed')
 fields = fieldnames(D);
 for ii = 1:length(fields)
     if iscellstr(D.(fields{ii}))
+        if isscalar(unique(D.(fields{ii})))
+            % attribute that all tiles have in common
+            % also use as global attribute in catalog
+            M.(fields{ii}) = D.(fields{ii}){1};
+            if OPT.reduce
+                % remove this field from D, as it has no added value
+                D = rmfield(D, fields{ii});
+                continue
+            end
+        end
         D.(fields{ii}) = char(D.(fields{ii}));
     end
 end
 
 fields = fieldnames(M);
 for ii = 1:length(fields)
+    if ~isstruct(M.(fields{ii}))
+        continue
+    end
     subfields = fieldnames(M.(fields{ii}));
     for jj = 1:length(subfields)
         unique_values = unique(M.(fields{ii}).(subfields{jj}));
