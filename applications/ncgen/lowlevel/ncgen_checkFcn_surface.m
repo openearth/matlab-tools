@@ -66,6 +66,8 @@ OPT = struct(...
     'grid_offset', [0 0],... % schema offset [x y]
     'sort', true,... % switch to sort grid in ascending order
     'adjust_offset', false,... % adjust offset to schema, if not matching
+    'zmin', [],... % lower z threshold, values below this level are set to nan
+    'zmax', [],... % upper z threshold, values above this level are set to nan
     'filter', false ... % apply filter and keep only points that are on schema grid
     );
 % return defaults (aka introspection)
@@ -75,6 +77,15 @@ OPT = struct(...
 % end
 % overwrite defaults with user arguments
 OPT = setproperty(OPT, varargin);
+
+%%
+if isa(OPT.adjust_offset, 'function_handle')
+    % evaluate adjust_offset function that should result in a boolean
+    OPT.adjust_offset = feval(OPT.adjust_offset, OPT.fname);
+    if ~islogical(OPT.adjust_offset)
+        error('adjust_offset option does not result in boolean')
+    end
+end
 
 %% code
 result = struct(...
@@ -174,6 +185,15 @@ if offset_y ~= OPT.grid_offset(end)
         y = y + offset_y_corr;
         result.offset_y = {true, sprintf('x offset modified by %g; original %s', offset_y_corr, result.offset_y{end})};
     end
+end
+
+%% check for z values outside threshold range
+if ~isempty(OPT.zmin) && any(z(:)<OPT.zmin)
+    z(z<OPT.zmin) = NaN;
+end
+
+if ~isempty(OPT.zmax) && any(z(:)>OPT.zmax)
+    z(z>OPT.zmax) = NaN;
 end
 
 %%
