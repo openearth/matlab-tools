@@ -52,11 +52,14 @@ case 'read'
    varargout  = {mdu};
 
 case 'write'
-   mdu = varargin{2};
+   mdu          = varargin{2};
+   mdu_Comments = varargin{3};
+
    %
    % Fill a temporary strucrure such hat it can be written by the function inifile
    %
-   names = fieldnames(mdu);
+   names  = fieldnames(mdu);
+   maxlen = 0;
 
    for igroup= 1: length(names)
        tmp.Data{igroup,1} = simona2mdu_replacechar(names{igroup},'_',' ');
@@ -65,13 +68,30 @@ case 'write'
            tmp2{ipar,1} = simona2mdu_replacechar(pars{ipar},'_',' ');
            if  strcmpi(tmp2{ipar,1},'wall ks') tmp2{ipar,1} = simona2mdu_replacechar(tmp2{ipar,1},' ','_'); end
            if ~isempty(num2str(mdu.(names{igroup}).(pars{ipar})))
-               tmp2{ipar,2} = num2str(mdu.(names{igroup}).(pars{ipar}));
+               line = num2str(mdu.(names{igroup}).(pars{ipar})) ;
            else
-               tmp2{ipar,2} = mdu.(names{igroup}).(pars{ipar});
+               line = mdu.(names{igroup}).(pars{ipar});
            end
+           maxlen = max(maxlen,length(line) + 1);
+%            line(40:c = ['# ' mdu_Comments.(names{igroup}).(pars{ipar})];
+            tmp2{ipar,2} = line;
        end
        tmp.Data{igroup,2} = tmp2;
        clear tmp2
+   end
+
+   %% add comments
+   for igroup = 1: length(names)
+       pars = fieldnames(mdu.(names{igroup}));
+       for ipar = 1: length(pars)
+           line = tmp.Data{igroup,2}{ipar,2};
+           while length(line) < maxlen + 4
+               line(end + 1) = ' ';
+           end
+           line(maxlen + 5:maxlen + length(mdu_Comments.(names{igroup}).(pars{ipar})) + 6) = ...
+           ['# ' mdu_Comments.(names{igroup}).(pars{ipar})];
+           tmp.Data{igroup,2}{ipar,2} = line;
+       end
    end
 
    inifile ('write',fname,tmp);
@@ -113,10 +133,17 @@ case 'new'
                     if strcmpi(tmp{irow,6},'false') tmp{irow,6} = 0;end
                 end
                 mdu.(grpnam{igrp}).(tmp{irow,2}) = tmp{irow,6};
+                comment = '';
+                for icol = 15: size(tmp,2)
+                    if ~isempty (tmp{irow,icol})
+                        comment = [comment ', ' tmp{irow,icol}];
+                    end
+                end
+                mdu_Comment.(grpnam{igrp}).(tmp{irow,2}) = strtrim(comment(2:end));
             end
         end
     end
 
-    varargout = {mdu};
+    varargout = {mdu,mdu_Comment};
 
 end

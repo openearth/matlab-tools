@@ -94,15 +94,25 @@ case 'write'
 
        if isfield(LINE(iline),'Blckname')
 
+          % Comments Specified
+          if isfield(LINE(iline),'Comments');
+              for i_com = 1: length(LINE(iline).Comments)
+                  fprintf(fid,'%s \n',LINE(iline).Comments{i_com});
+              end
+          end
+
           %Blockname specified, write blockname, nrows, ncols
           block_name = LINE(iline).Blckname;
 
           fprintf(fid,'%s       \n',block_name      );
           ncols = 2;
-          if size(LINE(iline).DATA,2) == 3
+          if size(LINE(iline).DATA,2) == 3 
               if isnumeric(LINE(iline).DATA{1,3})
                  ncols = 3;
               end
+          end
+          if ischar(LINE(iline).DATA{1,1})
+              ncols = 3;
           end
           fprintf(fid,'%5i  %5i \n',nrows     , ncols);
        end
@@ -117,17 +127,22 @@ case 'write'
                    fprintf(fid,'%14.8e %14.8e %s \n',LINE(iline).DATA{irow,1},LINE(iline).DATA{irow,2},LINE(iline).DATA{irow,3});
                end
            else
-
                % xyz data
                for irow = 1: size(LINE(iline).DATA,1)
                    fprintf(fid,'%14.8e %14.8e %14.8e \n',LINE(iline).DATA{irow,1},LINE(iline).DATA{irow,2},LINE(iline).DATA{irow,3});
                end
            end
        else
-
-           % only x and y values
-           for icol = 1: nrows
-              fprintf(fid,'%14.6e  %14.6e  \n',LINE(iline).DATA{icol,1},LINE(iline).DATA{icol,2});
+           if ischar(LINE(iline).DATA{1,1})
+               % Date Time value
+               for irow = 1: size(LINE(iline).DATA,1)
+                   fprintf(fid,'%s %12.4f \n',LINE(iline).DATA{irow,1},LINE(iline).DATA{irow,2});
+               end
+           else
+               % only x and y values
+               for icol = 1: nrows
+                  fprintf(fid,'%14.6e  %14.6e  \n',LINE(iline).DATA{icol,1},LINE(iline).DATA{icol,2});
+               end
            end
        end
    end
