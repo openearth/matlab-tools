@@ -15,7 +15,7 @@ function OK = isurl(str)
 %%
 % check whether string starts with http:// https:// or ftp://
 % check is case insensitive
-OK = regexpi(str, '^(h|f)tt?ps?://') == 1;
+OK = ~isempty(regexpi(str, '^(h|f)tt?ps?://'));
 % return boolean
 
 %% EOF
