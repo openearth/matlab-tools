@@ -26,22 +26,22 @@ if simona2mdf_fieldandvalue(mdf,'filana')
     if simona2mdf_fieldandvalue(mdf,'filcor') && ~isempty(mdf.filcor)
 
         %% with correction file
-        d3d2dflowfm_convertbc ([mdf.pathd3d filesep mdf.filana],filpli,mdu.pathmdu,'Astronomical',true,'Correction',[mdf.pathd3d filesep mdf.filcor]);
+        d3d2dflowfm_convertbc ([mdf.pathd3d filesep mdf.filana],filpli,mdu.pathmdu,'Astronomical',true,'Correction',[mdf.pathd3d filesep mdf.filcor],'Sign',true);
     else
 
         %% without correction file
-        d3d2dflowfm_convertbc ([mdf.pathd3d filesep mdf.filana],filpli,mdu.pathmdu,'Astronomical',true);
+        d3d2dflowfm_convertbc ([mdf.pathd3d filesep mdf.filana],filpli,mdu.pathmdu,'Astronomical',true,'Sign',true);
     end
 end
 if simona2mdf_fieldandvalue(mdf,'filbch')
 
     %% Harmonical bc
-    d3d2dflowfm_convertbc ([mdf.pathd3d filesep mdf.filbch],filpli,mdu.pathmdu,'Harmonic'    ,true);
+    d3d2dflowfm_convertbc ([mdf.pathd3d filesep mdf.filbch],filpli,mdu.pathmdu,'Harmonic'    ,true,'Sign',true);
 end
 if simona2mdf_fieldandvalue(mdf,'filbct')
 
     %% Time series bc
-    d3d2dflowfm_convertbc ([mdf.pathd3d filesep mdf.filbct],filpli,mdu.pathmdu,'Series'      ,true);
+    d3d2dflowfm_convertbc ([mdf.pathd3d filesep mdf.filbct],filpli,mdu.pathmdu,'Series'      ,true,'Sign',true);
 end
 
 %% Same story, this time for the salinity boundaries boundaries
@@ -63,7 +63,7 @@ end
 
 %% Convert salinity boundary conditions
 if simona2mdf_fieldandvalue(mdf,'filbcc') && ~isempty(filpli)
-    d3d2dflowfm_convertbc ([mdf.pathd3d filesep mdf.filbcc],filpli,mdu.pathmdu,'Salinity',true);
+    d3d2dflowfm_convertbc ([mdf.pathd3d filesep mdf.filbcc],filpli,mdu.pathmdu,'Salinity',true,'Sign',true);
 end
 
 %% Same story, this time for the temperature boundaries boundaries
@@ -85,5 +85,5 @@ end
 
 %% Convert salinity temperature boundary conditions
 if simona2mdf_fieldandvalue(mdf,'filbcc') && ~isempty(filpli)
-    d3d2dflowfm_convertbc ([mdf.pathd3d filesep mdf.filbcc],filpli,mdu.pathmdu,'Temperature',true);
+    d3d2dflowfm_convertbc ([mdf.pathd3d filesep mdf.filbcc],filpli,mdu.pathmdu,'Temperature',true,'Sign',true);
 end

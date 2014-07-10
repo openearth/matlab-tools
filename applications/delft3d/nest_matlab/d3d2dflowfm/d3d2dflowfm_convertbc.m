@@ -8,6 +8,7 @@ OPT.Series       = false;
 OPT.Salinity     = false;
 OPT.Temperature  = false;
 OPT.Correction   = '';
+OPT.Sign         = false;
 
 if ~isempty(varargin)
     OPT = setproperty(OPT,varargin);
@@ -191,9 +192,13 @@ for i_pli = 1: length(filpli)
                         end
                     end
                     
-                    % Temporary fix! Always positive discharges!
-                    if strcmpi(quan_bct(1:14),'flux/discharge') || strcmpi(quan_bct(1:14),'totaldischarge'); 
-                        SERIES.Values  = abs(SERIES.Values);
+                    % Temporary fix! Always positive discharges! 
+                    % (only for hydrodynamic bc if sign is not computed)
+                    % For salinity and temperature also specify sign = true (quan_bct does not contail 14 characters!) 
+                    if ~OPT.Sign
+                        if strcmpi(quan_bct(1:14),'flux/discharge') || strcmpi(quan_bct(1:14),'totaldischarge'); 
+                            SERIES.Values  = abs(SERIES.Values);
+                        end
                     end
 
                     % Fill values
