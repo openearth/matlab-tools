@@ -1,5 +1,5 @@
 function OK = isurl(str)
-%ISURL   boolend whether char is url or not
+%ISURL   boolean whether char is url or not
 %
 % ok = isurl(string)
 %
@@ -12,8 +12,10 @@ function OK = isurl(str)
 % $HeadURL$
 % $Keywords$
 
-OK = (length(str) >5 && strcmpi(str(1:6),'ftp://'  )) || ...
-     (length(str) >6 && strcmpi(str(1:7),'http://' )) || ...
-     (length(str) >7 && strcmpi(str(1:8),'https://'));
+%%
+% check whether string starts with http:// https:// or ftp://
+% check is case insensitive
+OK = regexpi(str, '^(h|f)tt?ps?://') == 1;
+% return boolean
 
 %% EOF
