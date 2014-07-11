@@ -16,10 +16,12 @@ function [ constituents ] = t_tide(noos_ascii,varargin)
    OPT.period        = [];
    OPT.synth         = 2;
    OPT.sort          = 'freq';
+   OPT.country       = '';
+   OPT.units         = '';
    
 % reserved WPS keyword
 
-   OPT.format        = 'text/html'; % http://en.wikipedia.org/wiki/Internet_media_type
+   OPT.format        = 'text/xml'; % http://en.wikipedia.org/wiki/Internet_media_type
    
 % call
 
@@ -51,11 +53,12 @@ function [ constituents ] = t_tide(noos_ascii,varargin)
 % IHO xml keywords	 
 
    D.name                = M.loc;
-  %D.country             = ' '; % ?
+   D.country             = OPT.country; % not in NOOS
    D.position.latitude   = M.lat;
    D.position.longitude  = M.lon;
    D.timeZone            = M.timezone;
-  %D.units               = ' '; % ?
+   D.units               = OPT.units; % not in NOOS
+
   %D.observationStart    = ' '; % in struc from period
   %D.observationEnd      = ' '; % in struc from period
   %D.comments            = ' '; % ?
@@ -72,6 +75,8 @@ elseif strcmpi(WPS.format,'application/netcdf')
 
    t_tide2nc  (D,'filename','t_tide.nc');
    warning('find a way to send t_tide.nc back to user')
+   % implement base 64 encoding
+   % or copy to local folder
    
    constituents = 'ok';
    
