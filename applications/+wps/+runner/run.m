@@ -1,32 +1,40 @@
 function [ output_args ] = run( input_args )
 %WPS_RUNNER Function that calls matlab wps processes for which it finds
-%input
-%   The input directory is watched and when input arrives the corresponding
-%   function is called.
+%input. The input directory is watched and when input arrives the 
+% corresponding function is called.
+%
+%See also: https://publicwiki.deltares.nl/display/OET/Matlab+WPS+convention
 
 json.startup
 % TODO add while
-queue_url = 'http://ol-ws003.xtr.deltares.nl:5984';
+queue_url = 'http://ol-ws003.xtr.deltares.nl:5984'; % test server
+queue_url = 'http://localhost:5984';
 queue_database = 'wps';
 
 %% Check for the latest processes
 text = wps.runner.get_processes();
 processes = json.load(text);
-% publish processes
+disp('wps processes loaded')
+for i=1:length(processes)
+    disp([num2str(i), ' identifier: ',processes(i).identifier])
+    disp(var2evalstr(processes(i)))
+end
+
+%% publish processes
 % get list of processes for matlab,
 % overwrite with current list
 view = 'matlab';
 url = sprintf('%s/%s/_design/views/_view/%s', queue_url, queue_database, view);
 table = json.load(urlread(url));
 if isempty(table.rows)
-    uuids = json.load(urlread2(sprintf('%s/_uuids', queue_url)));
+    uuids = json.load(wps.runner.urlread2(sprintf('%s/_uuids', queue_url)));
     uuid = uuids.uuids{1};
     doc = struct(... 
         'processes', processes, ...
         'language', 'matlab', ...
         'type', 'processes' ...
         );
-    url = sprintf('%s/%s/%s', queue_url, queue_database, uuid)
+    url = sprintf('%s/%s/%s', queue_url, queue_database, uuid);
     text = json.dump(doc);
     wps.runner.urlread2(url, 'PUT', text)
     %add a new doc
@@ -41,7 +49,7 @@ else
     doc.processes = processes;
     text = json.dump(doc);
     url = sprintf('%s/%s/%s', queue_url, queue_database, doc.x_id)
-    wps.runner.urlread2(url, 'PUT', text)
+    wps.runner.urlread2(url, 'PUT', text);
 end
 % urlwrite()
 
