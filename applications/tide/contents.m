@@ -7,14 +7,17 @@
 %
 % Tidal frequency-domain filters based on <a href="http://www.pac.dfo-mpo.gc.ca/science/oceans/tidal-marees/index-eng.htm">Foreman,'77,'78,'79</a>
 %
-%  UTide                 - tidal + harmonic analysis with constant + variable dt (external)
-%   UT_RECONSTR          - Reconstruct superposed harmonics
-%   UT_SOLV              - Execute harmonic tidal analysis.
 %  t_tide                - tidal + harmonic analysis with constant + variable dt (external)
 %   T_TIDE               - Harmonic analysis of a time series
 %   T_PREDIC             - Tidal prediction
 %   T_XTIDE              - Tidal predictionusing the harmonics file from XTIDE.
+%
+%  UTide                 - (signal processing toolbox needed)
+%                          tidal + harmonic analysis with constant + variable dt (external)
+%   UT_RECONSTR          - Reconstruct superposed harmonics
+%   UT_SOLV              - Execute harmonic tidal analysis.
 %   ...                  - and more
+%
 %  t_tide subsidiaries
 %   nc_t_tide            - t_tide with netCDF output
 %   nc_t_tide_compare    - visualize comparison of nc_t_tide results

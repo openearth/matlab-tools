@@ -96,6 +96,7 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin);
 %       'error'          'wboot'  - Boostrapped confidence intervals 
 %                                   based on a correlated bivariate 
 %                                   white-noise model.
+ %                METHODS THAT NEED SIGNAL PROCESSING TOOLBOX LICENSE:
 %                        'cboot'  - Boostrapped confidence intervals 
 %                                   based on an uncorrelated bivariate 
 %                                   coloured-noise model (default).

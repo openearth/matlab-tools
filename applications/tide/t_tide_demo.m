@@ -1,34 +1,47 @@
-function t_tide_demo
+%function t_tide_demo
 % t_tide_demo demo for t_tide
 %
 %See also: t_tide, harmanal
 
-clear all
+% for all tidal function please use 
+% >> help tide
+
 %% read
        url   = 'http://dods.ndbc.noaa.gov/thredds/dodsC/data/dart/46419/46419t2014.nc';
+       url   = 'x:/D/opendap.deltares.nl/46419t2014.nc';
        D.h   = ncread(url,'height',[1 1 1],[1 1 1e4]); % total water column height, so huge A0
        D.day = double(ncread(url,'time',1,1e4))/3600/24; % sec since 1970
        D.t   = datenum(1970,1,D.day); % irregular: 15, 30, 60,... 900 sec
        D.lat = ncread(url,'latitude');
 
-%% analyze easy
+%% analyze easy with t_tide wrapper
       D.z0 = nanmean(D.h);
       [T,hfit] = t_tide2struc(D.t, D.h - D.z0) ;    
 
-%% analyze  difficult
-       [T2,hfit2] = t_tide(D.h(:),...
-           'lat',D.lat,...
-           'sort','amp',...
-           'interval',diff(D.t)*24,...
-           'start',D.t(1),...
-           'output','46419t2014_comp.asc',...
-           'err','lin'); % D.z0 = T2.z0
-      
-%% plot      
+%% analyze somewhat more difficult with t_tide
+% requires licensed signal processing toolbox by default, switch of with 'err'='wboot'
+      [T2,hfit2] = t_tide(D.h(:),...
+          'lat',D.lat,... % required to active nodal corrections
+          'sort','amp',...
+          'interval',diff(D.t)*24,... % non-constant dt only with with t_tide in openearthtools
+          'start',D.t(1),...
+          'output','46419t2014_comp.asc',...
+          'err','wboot'); % only methods that does not need signal processing toolbox license
+      % D.z0 = T2.z0
+
+%% analyze with UTide
+% Requires licensed signal processing toolbox always, no option to switch off
+
+       T3 = ut_solv(D.t(:),D.h(:) - D.z0,[],D.lat,'auto','ols'); % hanning
+       hfit3 = ut_reconstr ( D.t(:), T3 ); 
+%% plot
        plot(D.t,D.h(:) - D.z0,'DisplayName','observation');
-       hold on;plot(D.t,hfit,'r','DisplayName','t\_tide');
+       hold on;
+       plot(D.t,hfit ,'r-','DisplayName','t\_tide');
+       plot(D.t,hfit3,'g:','DisplayName','UTide');
        legend show; grid on
        datetick('x')
+       plot(D.t,hfit - D.h(:)' + D.z0,'g','DisplayName','\eps');
        
 %% export
        
@@ -37,7 +50,7 @@ clear all
        t_tide2html(T,'filename','46419t2014_comp.html');
 
        t_tide2xml(T,'filename','46419t2014_comp.xml');
-
+   
        t_tide2nc(T,'filename','46419t2014_comp.nc');  
        
 %% harmonic
