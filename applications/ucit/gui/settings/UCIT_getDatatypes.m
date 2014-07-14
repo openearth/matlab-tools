@@ -218,29 +218,17 @@ end
    datatypes.grid.cellsize{i}     =  20;
    datatypes.grid.datatype{i}     =  'Zeeland';
 
-   %% Dienst zeeland (test)
-   
-   i = i + 1;
-   datatypes.grid.names{i}        =  'Dienst zeeland 20m (test/next release)';
-   datatypes.grid.urls {i}        =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/DienstZeeland/';
-   datatypes.grid.catalog{i}      =  'http://dtvirt5.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/DienstZeeland/catalog.xml';
-   datatypes.grid.ldbs{i}         =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc';
-   datatypes.grid.axes{i}         =  1E5*[-0.21 0.91 3.6 4.3];
-   datatypes.grid.cellsize{i}     =  20;
-   datatypes.grid.datatype{i}     =  'Zeeland';
-
       %% Dienst zeeland (test)
    
    i = i + 1;
    datatypes.grid.names{i}        =  'Dienst zeeland 20m (test/next release)';
-   datatypes.grid.urls {i}        =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/DienstZeeland/';
-   datatypes.grid.catalog{i}      =  'http://dtvirt5.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/DienstZeeland/catalog.xml';
+   datatypes.grid.urls {i}        =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/dienstzeeland/';
+   datatypes.grid.catalog{i}      =  'http://dtvirt5.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/dienstzeeland/catalog.xml';
    datatypes.grid.ldbs{i}         =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc';
    datatypes.grid.axes{i}         =  1E5*[-0.21 0.91 3.6 4.3];
    datatypes.grid.cellsize{i}     =  20;
    datatypes.grid.datatype{i}     =  'Zeeland';
    
-
    %% Western Scheldt (Dienst zeeland) (test)
 
    i = i + 1;
