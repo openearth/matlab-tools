@@ -15,7 +15,8 @@ function [xProfile, zProfile, xInitial, zInitial] = DuneProfileVariation(varargi
 %   varargout =
 %
 %   Example
-%   DuneProfileVariation
+%   [xProfile, zProfile, xInitial, zInitial] = DuneProfileVariation('JarkusID',7004300,...
+%       'JarkusYear',2013,'VariationVolume',-500,'VerticalIntersectionLevel',3.5)
 %
 %   See also
 
@@ -85,7 +86,7 @@ elseif ~isempty(OPT.xInitial) && ~isempty(OPT.zInitial)
     xInitial    = OPT.xInitial;
     zInitial    = OPT.zInitial;
 else
-    error('Neither a valid Jarkus ID/Year input or x/z input os given!')
+    error('Neither a valid Jarkus ID/Year input or x/z input is given!')
 end
 
 if isempty(xInitial) || isempty(zInitial)
