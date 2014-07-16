@@ -89,7 +89,7 @@ switch lower(cmd)
               if ischar(Values{1,i_col})
                   format = [format '%-8s '];
               else
-                  format = [format '%12.6f '];
+                  format = [format '%12.6d ']; % Change by Freek Scheel, values below 10^-7 (e.g. Neumann bnd's) were rounded down with too few accuracy
               end
           end
 
