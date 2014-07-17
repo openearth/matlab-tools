@@ -60,7 +60,8 @@ if ~isfield(OPT, 'tag'); OPT.tag = OPT.dataset; end
 if ~isempty(OPT.urls)
     urls = OPT.urls;
 else
-    OPT = mergestructs(OPT,grid_orth_getMapInfoFromDataset(OPT.dataset));
+    OPT = setproperty(OPT, {grid_orth_getMapInfoFromDataset(OPT.dataset)},...
+        'onExtraField', 'warnAppend');
 end
 
 if OPT.plotoverview
