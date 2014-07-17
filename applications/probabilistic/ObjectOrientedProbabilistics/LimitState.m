@@ -109,8 +109,10 @@ classdef LimitState < handle
         %Set LimitStateFunctionChecker and immediately add this LimitState as listener for events
         function set.LimitStateFunctionChecker(this, lsfChecker)
             this.LimitStateFunctionChecker = lsfChecker;
-            addlistener(lsfChecker, 'SimulationCompleted', @this.LimitStateFunctionCompleted);
-            addlistener(lsfChecker, 'SimulationNotCompleted', @this.LimitStateFunctionFailed);
+            if ~isempty(lsfChecker)
+                addlistener(lsfChecker, 'SimulationCompleted', @this.LimitStateFunctionCompleted);
+                addlistener(lsfChecker, 'SimulationNotCompleted', @this.LimitStateFunctionFailed);
+            end
         end
         
         %% Getters
