@@ -7,8 +7,7 @@ function [ output_args ] = run( input_args )
 
 json.startup
 % TODO add while
-queue_url = 'http://ol-ws003.xtr.deltares.nl:5984'; % test server
-queue_url = 'http://localhost:5984';
+queue_url = 'http://54.77.21.140:5984';
 queue_database = 'wps';
 
 %% Check for the latest processes
@@ -17,7 +16,7 @@ processes = json.load(text);
 disp('wps processes loaded')
 for i=1:length(processes)
     disp([num2str(i), ' identifier: ',processes(i).identifier])
-    disp(var2evalstr(processes(i)))
+    disp(json.dump(processes(i)))
 end
 
 %% publish processes
@@ -48,7 +47,7 @@ else
     % Update the processes
     doc.processes = processes;
     text = json.dump(doc);
-    url = sprintf('%s/%s/%s', queue_url, queue_database, doc.x_id)
+    url = sprintf('%s/%s/%s', queue_url, queue_database, doc.x_id);
     wps.runner.urlread2(url, 'PUT', text);
 end
 % urlwrite()
@@ -62,7 +61,7 @@ while 1
     if isempty({jsonfiles.url}) || all(cellfun(@isempty, {jsonfiles.url})) %any(isempty({jsonfiles.url}))
         % wait 2 seconds before we try again
         fprintf('.');
-        pause(2)
+        pause(10)
         continue
     end
     % pop  a job    
@@ -81,7 +80,7 @@ while 1
         if isfield(data, 'x_attachments')
             attachments = cellfun(fixname, fieldnames(data.x_attachments), 'UniformOutput', 0);
         else
-            attachments = {}
+            attachments = {};
         end
         filenames = {};
         for j=1:length(attachments)
@@ -91,14 +90,38 @@ while 1
             filenames{j} = filename;
         end
         % pass arguments one by one
+        data.datainputs = struct();
         for j=1:length(data.inputs.datainputs)
             item = data.inputs.datainputs(j);
-            data.dataInputs.(item.identifier) = item.value;
+            data.datainputs.(item.identifier) = item.value;
         end
-        args = orderfields(data.dataInputs, processes(idx).inputs);
-        values = struct2cell(args);
+        
+        % validate inputs
+        valid = 1;
+        message = '';
+        try
+            request = fieldnames(data.datainputs);
+            expected = fieldnames(processes(idx).inputs);
+            missing = setdiff(expected, request);
+            if ~isempty(missing)
+                valid = 0;
+                message = sprintf('Not all inputs were present, missing: %s', strjoin({missing{:}}));
+                values = {};
+            else
+                args = orderfields(data.datainputs, processes(idx).inputs);
+                values = struct2cell(args);
+            end
+        catch ME
+            valid = 0;
+            message = ME.message;
+        end
+        
         % now we can call the process
-        result = process(values{:})
+        if valid
+            result = process(values{:});
+        else
+            result = sprintf('Processing failed due to:\n%s', message);
+        end
         
         % store the result
         data.result = result;
