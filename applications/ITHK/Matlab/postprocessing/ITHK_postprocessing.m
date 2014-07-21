@@ -65,7 +65,7 @@ catch
 end
 fprintf('ITHK postprocessing\n');
 
-S.PP(sens).output.kmlfiles = {'S.PP(sens).output.kml','S.PP(sens).output.kml_groyne','S.PP(sens).output.kml_nourishment','S.PP(sens).output.kml_revetment'};
+S.PP(sens).output.kmlfiles = {'S.PP(sens).output.kml'};%,'S.PP(sens).output.kml_groyne','S.PP(sens).output.kml_nourishment','S.PP(sens).output.kml_revetment'};
 
 %% BASIC PARAMETERS
     % Grid settings used for postprocessing

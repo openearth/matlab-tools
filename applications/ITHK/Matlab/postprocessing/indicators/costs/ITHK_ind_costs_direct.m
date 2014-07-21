@@ -74,7 +74,7 @@ if S.userinput.indicators.costs == 1
     fprintf('ITHK postprocessing : Indicator for the direct costs due to dredging, transportation and nourishing\n');
 
     %% LOAD SETTINGS
-    costs                                    = xml_load(which('ITHK_ind_costs_direct.xml'));
+    costs                                    = xml2struct(which('ITHK_ind_costs_direct.xml'),'structuretype','supershort');%xml_load(which('ITHK_ind_costs_direct.xml'));
     costs.classdefinition.small              = str2num(costs.classdefinition.small);
     costs.classdefinition.medium             = str2num(costs.classdefinition.medium);
     costs.classdefinition.large              = str2num(costs.classdefinition.large);

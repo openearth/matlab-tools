@@ -119,7 +119,8 @@ S.EPSG = load(which('EPSG.mat'));
 S.userinput = ITHK_process_webinput(measure,lat,lon,impl,len,vol*1e6,fill,tin,varNameIn,slr,coast,eco,dunes,costs,economy,safety,recreation,residency);
 
 %Read settings
-S.settings = xml_load(which('ITHK_settings.xml'));
+S.settings =xml2struct(which('ITHK_settings.xml'),'structuretype','supershort');
+%S.settings = xml_load(which('ITHK_settings.xml'));
 S.settings.basedir = baseDir;
 
 % subdirectories

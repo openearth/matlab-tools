@@ -133,7 +133,8 @@ end
 S.userinput = ITHK_process_webinput_xml(xml);
 
 %Read settings
-S.settings = xml_load(which('ITHK_settings.xml'));
+S.settings =xml2struct(which('ITHK_settings.xml'),'structuretype','supershort');
+%S.settings = xml_load(which('ITHK_settings.xml'));
 S.settings.basedir = baseDir;
 
 % subdirectories

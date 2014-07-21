@@ -162,3 +162,7 @@ for jj = 1:length(S.userinput.phases)
 
     end
 end
+
+if ~isempty(S.PP(sens).output.kml_groyne)
+    S.PP(sens).output.kmlfiles = [S.PP(sens).output.kmlfiles,'S.PP(sens).output.kml_groyne'];
+end
