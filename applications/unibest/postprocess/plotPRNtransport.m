@@ -81,6 +81,8 @@ function [hfig]=plotPRN_transport(data,PRNfile_number,year,dx,dy,dS,dF,colour,li
 % $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/unibest/postprocess/plotPRN_transport.m $
 % $Keywords: $
 
+hfig0=gcf;hfig=hfig0;
+
 calibration_power = .3;
 if nargin<12
     flipfigure=0;
@@ -101,15 +103,6 @@ for ii=1:smoothing_steps
     B=[(A(1:end-1,:)+A(2:end,:))/2];
     A=[(A(1,:)+B(1,:))/2;(B(1:end-1,:)+B(2:end,:))/2;(A(end,:)+B(end,:))/2];
 end
-
-%plot smoothed data
-hfig0=gcf;hfig=figure;
-%subplot(3,1,1);plot(temp(:,1),'b');hold on;plot(A(:,1),'r');title('smoothed x-coordinate');
-%subplot(3,1,2);plot(temp(:,2),'b');hold on;plot(A(:,2),'r');title('smoothed y-coordinate');
-%subplot(3,1,3);
-plot(temp(:,3),'b');hold on;plot(A(:,3),'r');title('smoothed sediment transport (Qs)');
-ysize = ylim;
-
 data.x1smooth = [A(1:end-1,1)];
 data.y1smooth = [A(1:end-1,2)];
 data.transportsmooth = [A(:,3)];
@@ -152,11 +145,18 @@ Qtr=data.transportsmooth(idx);
 Qtr2=round(Qtr*10)/10;
 
 %-----------------plot selected locations as lines----------------------
-xx = reshape([idx;idx;nan(1,length(idx))],[length(idx)*3,1]);
-yy = repmat([ysize(1);ysize(2);NaN],[length(idx),1]);
-plot(xx,yy,'g');
-legend('Computed Qs','Smoothed Qs','Output rays');
-md_paper;
+% %plot smoothed data
+% hfig=figure;
+% %subplot(3,1,1);plot(temp(:,1),'b');hold on;plot(A(:,1),'r');title('smoothed x-coordinate');
+% %subplot(3,1,2);plot(temp(:,2),'b');hold on;plot(A(:,2),'r');title('smoothed y-coordinate');
+% %subplot(3,1,3);
+% plot(temp(:,3),'b');hold on;plot(A(:,3),'r');title('smoothed sediment transport (Qs)');
+% ysize = ylim;
+% xx = reshape([idx;idx;nan(1,length(idx))],[length(idx)*3,1]);
+% yy = repmat([ysize(1);ysize(2);NaN],[length(idx),1]);
+% plot(xx,yy,'g');
+% legend('Computed Qs','Smoothed Qs','Output rays');
+% md_paper;
 
 %-----------------Vector scaling----------------------
 magn0=sqrt(XY2(:,1).^2+XY2(:,2).^2);
