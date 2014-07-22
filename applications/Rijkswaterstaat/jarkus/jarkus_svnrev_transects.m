@@ -94,7 +94,7 @@ txt = sprintf('%s: Raw data received from Rijkswaterstaat\nHEADurl: %s (rev %s)\
 fullfiles = cellfun(@(f) fullfile(svninfo.path, f), OPT.filenames, 'uniformoutput', false);
 svnfileinfo = cellfun(@svn_info, fullfiles);
 for i = 1:length(svnfileinfo)
-    txt = sprintf('%s\n%s (rev %s)', txt, OPT.filenames{i}, svnfileinfo(i).last_changed_rev);
+    txt = sprintf('%s\n%s (rev %s)', txt, strrep(OPT.filenames{i}, filesep, '/'), svnfileinfo(i).last_changed_rev);
 end
 
 varargout = {txt, fullfiles};
