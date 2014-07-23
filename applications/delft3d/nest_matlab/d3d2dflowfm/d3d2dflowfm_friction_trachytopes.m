@@ -96,13 +96,17 @@ for n = 1:nmax
         %disp([n,nmax,m,mmax,LU,LV]);
         x_u = xcoor_u(n,m);
         y_u = ycoor_u(n,m);
-        L_u(n,m) = find_net_link(x_u,y_u,GF,LU);
+        if L_u(n,m) == 0   %not assigned yet
+            L_u(n,m) = find_net_link(x_u,y_u,GF,LU);
+        end
         if ~isnan(L_u(n,m));
             LU = max(L_u(n,m) - nmax - mmax,0);
         end
         x_v = xcoor_v(n,m);
         y_v = ycoor_v(n,m);
-        L_v(n,m) = find_net_link(x_v,y_v,GF,LV);
+        if L_v(n,m) == 0    %not assigned yet
+            L_v(n,m) = find_net_link(x_v,y_v,GF,LV);
+        end
         if ~isnan(L_v(n,m));
             LV = max(L_v(n,m) - nmax - mmax,0);
         end
