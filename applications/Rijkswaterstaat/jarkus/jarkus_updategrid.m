@@ -1,4 +1,4 @@
-function [grid, msgpos] = jarkus_updategrid(grid, raaienfile, tidefile)
+function [grid, msgpos, nometa_ids] = jarkus_updategrid(grid, raaienfile, tidefile)
 %JARKUS_UPDATEGRID   update Jarkus grid struct with jarkus_raaien.txt & jarkus_tideinfo.txt
 %
 %     [grid] = jarkus_updategrid(grid, raaienfile, tidefile)
@@ -55,14 +55,16 @@ end
         warning('JARKUS:inconsistency', 'found grids which are not present in meta information or vice versa'); 
         % assert.m is not compatible
     end
-    nnodata = length(setdiff(transect.id, grid.id));
+    nondata_ids = setdiff(transect.id, grid.id);
+    nnodata = length(nondata_ids);
     if (nnodata)
         msg = sprintf('found %d transects in metadata without data', nnodata);
         warning('JARKUS:inconsistency', msg);
     end
-    nnodata = length(setdiff(grid.id, transect.id));
-    if (nnodata)
-        msg = sprintf('found %d transects in data without metadata', nnodata);
+    nometa_ids = setdiff(grid.id, transect.id);
+    nnometa = length(nometa_ids);
+    if (nnometa)
+        msg = sprintf('found %d transects in data without metadata:\n%s', nnodata, sprintf('%8d\n', nometa_ids));
         warning('JARKUS:inconsistency', msg);
     end    
     
@@ -98,7 +100,7 @@ end
     transect                      = jarkus_createtransectstruct();
     transect.areaCode             = tideinfo.areaCode;
     transect.alongshoreCoordinate = tideinfo.alongshoreCoordinate;
-    transect.id                   = transect.areaCode*1000000 + transect.alongshoreCoordinate;
+    transect.id                   = transect.areaCode*1e6 + transect.alongshoreCoordinate;
     transect.meanHighWater        = tideinfo.MHW;
     transect.meanLowWater         = tideinfo.LMW;
     % find points in the transect which are also in the grid
@@ -106,8 +108,8 @@ end
 
 %% assign MHW and MLW to grid
 
-    grid.meanHighWater = zeros(size(grid.id)) * nan;
-    grid.meanLowWater  = zeros(size(grid.id)) * nan;
+    grid.meanHighWater = nan(size(grid.id));
+    grid.meanLowWater  = nan(size(grid.id));
     grid.meanHighWater(ia)            = transect.meanHighWater(ib); 
     grid.meanLowWater(ia)             = transect.meanLowWater(ib); 
     

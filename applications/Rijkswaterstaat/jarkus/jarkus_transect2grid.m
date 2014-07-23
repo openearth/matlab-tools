@@ -22,7 +22,7 @@ function [grid] = jarkus_transect2grid(transectStruct)
  
     % extract
     areaCode              =      [transectStruct.areaCode];
-    areaName              = char({transectStruct.areaName});
+    areaName              = char(cellfun(@(c) char(c{1}), {transectStruct.areaName}, 'uniformoutput', false));
     alongshoreCoordinate  =      [transectStruct.alongshoreCoordinate];
     % unique (== unique + sort)
     grid.areaCode              = areaCode(uniqueIdArray);
