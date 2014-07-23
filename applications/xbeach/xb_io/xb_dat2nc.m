@@ -1,21 +1,34 @@
 function ncfile = xb_dat2nc(fname, ncfile, varargin)
-%XB_DAT2NC  One line description goes here.
+%XB_DAT2NC  Copies XBeach output stored in *.dat files to a new netcdf file
 %
-%   More detailed description goes here.
+%   This function copies all output of specified variables in *.dat files
+%   to a newly created netcdf file.
 %
 %   Syntax:
-%   varargout = xb_dat2nc(varargin)
+%   ncfile = xb_dat2nc(fname, ncfile, varargin)
 %
 %   Input:
-%   varargin  =
+%   fname     = Path to the output directory or one of the *.dat files in
+%               the output directory.
+%   ncfile    = Name of or full path to the NetCDF file to generate. 
+%   varargin  = optional parameters that can be entered by means of
+%               key-value pairs. At this moment two optional parameters are 
+%               supported:
+%           vars - A cell array of strings specifying the names of the
+%                  output variables that should be copied to the nc file.
+%                  If vars is not specified, the function will copy all
+%                  output variables.
+%           verbose - bool that specifies whether to display logging
+%                  information in the command window while creating the nc
+%                  file. If not specified, the default (true) will be used.
 %
 %   Output:
-%   varargout =
+%   ncfile    = Name of or full path to the NetCDF file that was generated. 
 %
 %   Example
-%   xb_dat2nc
+%   xb_dat2nc('zb.dat','xboutput.nc',{'H','zb','zs'});
 %
-%   See also
+%   See also xb_read_dat xb_read_dims xb_read_netcdf
 
 %% Copyright notice
 %   --------------------------------------------------------------------
