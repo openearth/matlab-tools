@@ -29,8 +29,7 @@ assert(exist(filarv,'file')==2,'Delft3D arv file does not exist');
 assert(exist(filnet,'file')==2,'DFlowFM net file does not exist');
 assert(exist(filarl,'file')==0,'DFlowFM arl file already exists, please rename old file or specify different filename');
 
-
-
+debugmodeverbose = 0;
 
 if (nargin == 7)
     removepreviouslinks = varargin{7};
@@ -50,8 +49,16 @@ end
 % Read associated .aru and arv. files
 %
 
+if debugmode
+tic
+disp('##### Loading Files (aru/arv) #####');
+end
 S_u = delft3d_io_aru_arv('read',filaru);
 S_v = delft3d_io_aru_arv('read',filarv);
+if debugmode
+toc
+disp('##### Loading Files complete (aru/arv) #####');
+end
 
 if S_u.count.block + S_v.count.block == 0
     if ~removepreviouslinks_set
@@ -67,6 +74,10 @@ end
 % Read the grid information
 %
 
+if debugmode
+tic
+disp('##### Loading Files (grd) #####');
+end
 grid           = delft3d_io_grd('read',filgrd);
 mmax           = grid.mmax;
 nmax           = grid.nmax;
@@ -74,55 +85,100 @@ xcoor_u        = grid.u_full.x;
 ycoor_u        = grid.u_full.y;
 xcoor_v        = grid.v_full.x;
 ycoor_v        = grid.v_full.y;
-
+if debugmode
+toc
+disp('##### Loading Files complete (grd) #####');
+end
 %
 % Read the net information
 %
 
+if debugmode
+tic
+disp('##### Loading Files (net) #####');
+end
+
 GF = dflowfm.readNet(filnet);
 
+if debugmode
+toc
+disp('##### Loading Files complete (net) #####');
+end
 %
 % Get u/v grid points and find associated net link
 %
 L_u = zeros(nmax,mmax);
 L_v = zeros(nmax,mmax);
-LU  = 0;
-LV  = 0;
-for n = 1:nmax
-    if debugmode
-        disp(['Processing n = ', num2str(n), ' of ',num2str(nmax)]);
-    end
-    for m = 1:mmax;
-        %disp([n,nmax,m,mmax,LU,LV]);
-        x_u = xcoor_u(n,m);
-        y_u = ycoor_u(n,m);
-        if L_u(n,m) == 0   %not assigned yet
-            L_u(n,m) = find_net_link(x_u,y_u,GF,LU);
-        end
-        if ~isnan(L_u(n,m));
-            LU = max(L_u(n,m) - nmax - mmax,0);
-        end
-        x_v = xcoor_v(n,m);
-        y_v = ycoor_v(n,m);
-        if L_v(n,m) == 0    %not assigned yet
-            L_v(n,m) = find_net_link(x_v,y_v,GF,LV);
-        end
-        if ~isnan(L_v(n,m));
-            LV = max(L_v(n,m) - nmax - mmax,0);
-        end
-    end
+
+%
+% Build kd-trees
+%
+if debugmode
+disp('##### Build Tree #####');
+tic
+end
+
+missing_val = -999;
+X = [xcoor_u(:),ycoor_u(:)];
+X(isnan(X)) = missing_val;
+Y = [xcoor_v(:),ycoor_v(:)];
+Y(isnan(Y)) = missing_val;
+
+tree_u = kd_buildtree(X,0);
+tree_v = kd_buildtree(Y,0);
+
+if debugmode
+toc
+disp('##### Build Tree complete #####');
 end
 
 
+if debugmode
+disp('##### Build Mapping #####');
+tic
+end
+h = waitbar(0,'Build mapping');
+for L = 1:GF.cor.nLink;
+    P = mean([GF.cor.x(GF.cor.Link(:,13034)).',GF.cor.y(GF.cor.Link(:,13034)).']);
+    idx_u = kd_closestpointgood(tree_u,P);
+    udir = sum(diff([X(idx_u,:);P]).^2)<10e-14;
+    idx_v = kd_closestpointgood(tree_v,P);
+    vdir = sum(diff([Y(idx_v,:);P]).^2)<10e-14;
+    assert(udir~=vdir);
+    if udir
+        L_u(idx_u) = L;
+        %P_found = [xcoor_u(idx_u) ycoor_u(idx_u)];
+    else
+        L_v(idx_v) = L;
+        %P_found = [xcoor_v(idx_v) ycoor_v(idx_v)];
+    end
+    %if debugmode
+    %    assert(sum((P_found-P).^2)<1e-14)
+    %end
+    if mod(L,100) == 0;
+        waitbar(L/GF.cor.nLink,h)
+    end
+end
+delete(h); 
+
+if debugmode
+toc
+disp('##### Build Mapping complete #####');
+end
 %
 % Create structure for .arl file
 %
 
+if debugmode
+disp('##### Create .arl file #####');
+tic
+end
 k = 1;
 S_l.data{k}.comment = ['* Converted from Delft3D input files'];
 L_all = {L_u,L_v};
 x_all = {xcoor_u,xcoor_v};
 y_all = {ycoor_u,ycoor_v};
+dir_all = 'uv';
 cc = 0;
 for T = [S_u, S_v]
     cc = cc + 1;
@@ -133,26 +189,31 @@ for T = [S_u, S_v]
     S_l.data{k}.comment = ['* Based on ',T.filename];
     j = 1;
     jlist = [];
-    while j <= length(T.data);
-        if debugmode
-            disp(['Processing line ', num2str(j), ' of ', num2str(length(T.data))]);
+    lenTdata = length(T.data);
+    h = waitbar(0,sprintf('Processing arl in %s-direction',dir_all(cc)));
+    while j <= lenTdata;
+        if debugmodeverbose
+            disp(['Processing line ', num2str(j), ' of ', num2str(lenTdata)]);
+        end
+        if mod(j,100) == 0;
+            waitbar(j/lenTdata,h)
         end
         if (length(setdiff(lower(fieldnames(T.data{j})),{'comment'})) == 0);
-            if debugmode
+            if debugmodeverbose
                 disp('Processing comment')
             end
             k = k+1;
             S_l.data{k}.comment = T.data{j}.comment;
             j = j + 1;
         elseif (length(setdiff(lower(fieldnames(T.data{j})),{'n','m','definition','percentage'})) == 0);
-            if debugmode
+            if debugmodeverbose
                 disp('Processing n m values')
             end
             j0 = j;
             jlist = j0;
             jnotlist = [];
             followup = 1;
-            if debugmode
+            if debugmodeverbose
                 disp('... Read next link?')
             end
             while (followup) && (j < length(T.data))
@@ -197,7 +258,7 @@ for T = [S_u, S_v]
                 if removepreviouslinks
                     %search backwards and remove earlier instances of link L
                     ki = k0-1;
-                    if debugmode
+                    if debugmodeverbose
                         disp(['... Removing previous instances of L ', num2str(L)])
                     end
                     while ki > 0;
@@ -214,14 +275,14 @@ for T = [S_u, S_v]
             end
             j = jlist(end) + 1;
         elseif (length(setdiff(lower(fieldnames(T.data{j})),{'n1','m1','n2','m2','definition','percentage'})) == 0);
-            if debugmode
+            if debugmodeverbose
                 disp('Processing block values')
             end
             j0 = j;
             jlist = j0;
             jnotlist = [];
             followup = 1;
-            if debugmode
+            if debugmodeverbose
                 disp('... Read next line ?')
             end
             while (followup) && (j < length(T.data))
@@ -269,7 +330,7 @@ for T = [S_u, S_v]
                         if removepreviouslinks
                             %search backwards and remove earlier instances at link L
                             ki = k0-1;
-                            if debugmode
+                            if debugmodeverbose
                                 disp(['... Removing previous instances of L ', num2str(L)])
                             end
                             while ki > 0;
@@ -297,15 +358,25 @@ for T = [S_u, S_v]
         end
         %disp([j, jlist])
     end
+    delete(h);
+end
+if debugmode
+toc
+disp('##### Create .arl file complete #####');
 end
 
 %
 % Write structure to .arl file (reusing Delft3d routine)
 %
 if debugmode
-    disp('Writing to file')
+    disp('##### Writing to file ##### ')
+    tic
 end
 T = delft3d_io_aru_arv('write',filarl,S_l);
+if debugmode
+    toc
+    disp('##### Writing to file complete ##### ')
+end
 end
 
 function found = isbetween(ax, ay, bx, by, cx, cy)
