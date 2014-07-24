@@ -158,10 +158,10 @@ else
             otherwise
                 vald=internaldiffusion(vald,'nst',10);
         end
-        vals(:,:,k)=vald;
+        vald2(:,:,k)=vald;
     end
-    vals=dptavg(squeeze(vals),levels);
-    vals=interp2(xd,yd,vals,x,y);
+    vals=dptavg(squeeze(vald2),d.levels);%vals=dptavg(squeeze(vals),levels);
+    vals=interp2(xd,yd,vals,x,y);%vals=interp2(xd,yd,vals,x,y);
 end
 
 
