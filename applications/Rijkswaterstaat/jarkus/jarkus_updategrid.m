@@ -24,8 +24,17 @@ end
 
 %% read all data except first line
 %  replace with function jarkus_raaien
-
-    data                          = dlmread(raaienfile, '\t', 1,0);
+    if ischar(raaienfile)
+        transectfiles = {raaienfile};
+    else
+        transectfiles = raaienfile;
+    end
+    
+    tmp = cell(size(transectfiles));
+    for i = 1:length(transectfiles)
+        tmp{i} = dlmread(transectfiles{i}, '\t', 1,0);
+    end
+    data = vertcat(tmp{:});
     
     % the positioning of 19 transects in the areas Voorne (11) and Goeree
     % (12) have been in the years after 1965. The old ones all end at 1,
@@ -58,13 +67,13 @@ end
     nnodata = length(nondata_ids);
     if (nnodata)
         msg = sprintf('found %d transects in metadata without data', nnodata);
-        warning('JARKUS:inconsistency %s', msg);
+        warning('JARKUS:inconsistency: %s', msg);
     end
     nometa_ids = setdiff(grid.id, transect.id);
     nnometa = length(nometa_ids);
     if (nnometa)
-        msg = sprintf('found %d transects in data without metadata:\n%s', nnodata, sprintf('%8d\n', nometa_ids));
-        warning('JARKUS:inconsistency %s', msg);
+        msg = sprintf('found %d transects in data without metadata:\n%s', nnometa, sprintf('%8d\n', nometa_ids));
+        warning('JARKUS:inconsistency: %s', msg);
     end    
     
 %% remove points without metadata
