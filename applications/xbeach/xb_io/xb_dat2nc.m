@@ -1,4 +1,4 @@
-function ncfile = xb_dat2nc(fname, ncfile, varargin)
+function ncfile = xb_dat2nc(outputdir, ncfile, varargin)
 %XB_DAT2NC  Copies XBeach output stored in *.dat files to a new netcdf file
 %
 %   This function copies all output of specified variables in *.dat files
@@ -8,8 +8,7 @@ function ncfile = xb_dat2nc(fname, ncfile, varargin)
 %   ncfile = xb_dat2nc(fname, ncfile, varargin)
 %
 %   Input:
-%   fname     = Path to the output directory or one of the *.dat files in
-%               the output directory.
+%   outputdir = Path to the output directory.
 %   ncfile    = Name of or full path to the NetCDF file to generate. 
 %   varargin  = optional parameters that can be entered by means of
 %               key-value pairs. At this moment two optional parameters are 
@@ -26,7 +25,9 @@ function ncfile = xb_dat2nc(fname, ncfile, varargin)
 %   ncfile    = Name of or full path to the NetCDF file that was generated. 
 %
 %   Example
-%   xb_dat2nc('zb.dat','xboutput.nc',{'H','zb','zs'});
+%   xb_dat2nc(cd,'xboutput.nc','vars',{'H','zb','zs'});
+%
+%   TODO: This function does not support runup gauges and point output yet.
 %
 %   See also xb_read_dat xb_read_dims xb_read_netcdf
 
@@ -84,18 +85,13 @@ OPT = setproperty(OPT, varargin{:});
 if ~iscell(OPT.vars); OPT.vars = {OPT.vars}; end;
 
 %% Gather dat files
-if ~exist(fname, 'file')
-    error(['File does not exist [' fname ']'])
+if ~exist(outputdir, 'dir')
+    error(['Directory does not exist [' outputdir ']'])
 end
 
 % get filelist
-if length(fname) > 3 && strcmpi(fname(end-3:end), '.dat')
-    names = dir(fname);
-    fdir = fileparts(fname);
-else
-    names = dir([fname filesep '*.dat']);
-    fdir = fname;
-end
+names = dir([outputdir filesep '*.dat']);
+fdir = outputdir;
 
 if isempty(fdir); fdir = fullfile('.', ''); end;
 
@@ -206,7 +202,7 @@ for i = 1:length(names)
     if isbinary(fpath)
         
         % determine dimensions
-        [d variableDimNames] = xb_dat_dims(fpath);
+        [d, variableDimNames] = xb_dat_dims(fpath);
         
         % read dat file
         dat = xb_dat_read(fpath, d);
@@ -271,18 +267,7 @@ end
 
 function [variableDimNames] = constructdims(variableDimNames,varName)
 
-variableDimNames = strrep(variableDimNames,'x','globalx');
-variableDimNames = strrep(variableDimNames,'y','globaly');
 variableDimNames = strrep(variableDimNames,'theta','wave_angle');
 variableDimNames = strrep(variableDimNames,'gd','bed_layers');
 variableDimNames = strrep(variableDimNames,'d','sediment_classes');
-
-if regexp(varName, '_(mean|max|min|var)$')
-    variableDimNames = strrep(variableDimNames,'t','meantime');
-elseif regexp(varName, '^(point|rugau)\d+$')
-    variableDimNames = strrep(variableDimNames,'t','pointtime');
-else
-    variableDimNames = strrep(variableDimNames,'t','globaltime');
-end
-
 end
