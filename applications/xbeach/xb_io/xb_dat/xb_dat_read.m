@@ -192,7 +192,7 @@ if exist(fname, 'file')
                 if exist('memmapfile.m','file')~=0
                     D = memmapfile(fname,'format',ftype);
                     tempdat = reshape(D.data(1:prod(dims_out)),dims);
-                    tempindx = xb_dims2nc(1:length(dims_out));
+                    tempindx = xb_dims2nc(1:length(dims));
                     dat = permute(tempdat,tempindx);
                 else
                     fid = fopen(fname, 'r');
