@@ -24,8 +24,9 @@ OPT = setproperty(OPT, varargin);
 
 datefmt = 'yyyy-mm-ddTHH:MMZ'; % date format
 tzoffset = java.util.Date().getTimezoneOffset()/60/24; % time zone offset [days]
-utcnow = now+tzoffset;
+% utcnow = now+tzoffset;
 
+%TODO: adjust stringsize to maximum length of areaname
 STRINGSIZE = 100;
 %% Create file    
 %     make sure there's enough space for headers. This will speed up
@@ -37,10 +38,11 @@ STRINGSIZE = 100;
     origin_codes = 1:5;
     origins = OPT.origins;
     origin_descriptions = {'beach_only' 'beach_overlap' 'interpolation' 'sea_overlap' 'sea_only'};
+    origin_flagval_cell = [num2cell(origin_codes); origin_descriptions];
     
 %% Put global attributes    
     nc_attput( filename, nc_global, 'naming_authority', 'deltares.nl') % based on reverse DNS lookup (http://remote.12dt.com/)
-    nc_attput( filename, nc_global, 'id', sprintf('JarKus_release%s_origins%s', datestr(now, 'yyyymmdd'), sprintf('%i', OPT.origins)))
+    nc_attput( filename, nc_global, 'id', sprintf('JarKus_release%s_origins%s', datestr(nowutc, 'yyyymmdd'), sprintf('%i', OPT.origins)))
     nc_attput( filename, nc_global, 'Metadata_Conventions', 'Unidata Dataset Discovery v1.0')
     nc_attput( filename, nc_global, 'title', 'JarKus Data (cross-shore transects)');
     nc_attput( filename, nc_global, 'summary', 'Cross-shore yearly transect bathymetry measurements along the Dutch coast since 1965');
@@ -48,7 +50,7 @@ STRINGSIZE = 100;
 	nc_attput( filename, nc_global, 'keywords_vocabulary', 'http://www.eionet.europa.eu/gemet');
 	nc_attput( filename, nc_global, 'standard_name_vocabulary', 'http://cf-pcmdi.llnl.gov/documents/cf-standard-names/');
     nc_attput( filename, nc_global, 'history', OPT.historyatt);
-    nc_attput( filename, nc_global, 'comment', sprintf('The transects in this file are a combination of origins:%s (%s )\n%s', sprintf(' %i', OPT.origins), sprintf(' %s', origin_descriptions{OPT.origins}), OPT.msg));
+    nc_attput( filename, nc_global, 'comment', sprintf('The transects in this file are a combination of origins: %s\n%s', sprintf('%i: %s  ', origin_flagval_cell{:,origins}), OPT.msg));
     nc_attput( filename, nc_global, 'institution', 'Rijkswaterstaat');
     nc_attput( filename, nc_global, 'source'     , 'on shore and off shore measurements');
     nc_attput( filename, nc_global, 'references' , 'Original source: http://www.watermarkt.nl/kustenzeebodem/');
@@ -143,7 +145,7 @@ STRINGSIZE = 100;
     nc_addvar(filename, s);
 
     % smaller variables first
-    [lon,lat,OPT]=convertCoordinates(0,0,'CS1.code',28992,'CS2.code',4326);
+    [~,~,OPT]=convertCoordinates(0,0,'CS1.code',28992,'CS2.code',4326);
     %[CoordinateSystems, Operations , CoordSysCart ,CoordSysGeo] = GetCoordinateSystems();
     epsg        = 28992;
     s.Name      = 'epsg';
@@ -323,9 +325,9 @@ STRINGSIZE = 100;
     s.Dimension = {'time', 'alongshore', 'cross_shore'};
 %     s.Attribute = struct('Name' ,{'long_name'         , 'comment'},...
 %                          'Value',{'measurement method', 'Measurement method 1:TO DO, 3:TO DO, 5:TO DO used short for space considerations'});
-    flag_values   = [ 1          2             3             4           5        ]; 
+    flag_values   = origin_codes; 
     s.Attribute = struct('Name' ,{'long_name'         , 'flag_values','flag_meanings', 'comment'},...
-                         'Value',{'measurement method',  flag_values  ,'beach_only beach_overlap interpolation sea_overlap sea_only', sprintf('The transects in this file are a combination of origins (flags):%s', sprintf(' %i', origins))});
+                         'Value',{'measurement method',  flag_values  ,strtrim(sprintf('%s ', origin_descriptions{:})), sprintf('The transects in this file are a combination of origins: %s', sprintf('%i: %s  ', origin_flagval_cell{:,origins}))});
     nc_addvar(filename, s);    
     
 %% Store index variables
@@ -351,26 +353,23 @@ STRINGSIZE = 100;
     
 % add WGS84 [lat,lon]
     
-    [lon,lat,OPT]=convertCoordinates(grid.X,grid.Y,'CS1.code',28992,'CS2.code',4326);
+    [lon, lat]=convertCoordinates(grid.X, grid.Y, 'CS1.code', 28992,'CS2.code',4326);
     nc_varput(filename, 'lat', lat);
     nc_varput(filename, 'lon', lon);
 
-    [rsplon, rsplat] = convertCoordinates(grid.x_0,grid.y_0, 'CS1.code',28992, 'CS2.code', 4326);
+    [rsplon, rsplat] = convertCoordinates(grid.x_0, grid.y_0, 'CS1.code', 28992, 'CS2.code', 4326);
     nc_varput(filename, 'rsp_lat', rsplat)
     nc_varput(filename, 'rsp_lon', rsplon)
     
     
-    if isfield(grid,'angle')
-%     if strcmp('angle', fieldnames(grid)) % <= OLD CODE will not trigger "if", if angle is not first field!!! RPN 22-11-2012
-        nc_varput(filename, 'angle'          , grid.angle);
+    if isfield(grid, 'angle')
+        nc_varput(filename, 'angle', grid.angle);
     end
-    if isfield(grid,'meanHighWater')
-%     if strcmp('meanHighWater', fieldnames(grid)) % <= OLD CODE will not trigger "if", if meanHighWater is not first field!!! RPN 22-11-2012
+    if isfield(grid, 'meanHighWater')
         nc_varput(filename, 'mean_high_water', grid.meanHighWater);
     end
-    if isfield(grid,'meanLowWater')
-%     if strcmp('meanLowWater', fieldnames(grid)) % <= OLD CODE will not trigger "if", if meanLowWater is not first field!!! RPN 22-11-2012
-        nc_varput(filename, 'mean_low_water' , grid.meanLowWater);
+    if isfield(grid, 'meanLowWater')
+        nc_varput(filename, 'mean_low_water', grid.meanLowWater);
     end
 
 %% altitude is big therefor done seperately

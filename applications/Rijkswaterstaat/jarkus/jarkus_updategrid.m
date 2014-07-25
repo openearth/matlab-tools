@@ -42,9 +42,8 @@ end
     transect.x                    =                data(:,3)./100; % x
     transect.y                    =                data(:,4)./100; % y
     % from 0.1 degrees to radiants and 
-    % from pos clockwise 0 north to pos counterclockwise 0 east
-    transect.grad                 =          round(data(:,5)./100);
-    transect.angle                = 0.5*pi - 2*pi*(data(:,5)/(100*360)); 
+    % angle is pos clockwise 0 north
+    transect.angle                 =                data(:,5)./100;
 
     transect.id                   = transect.areaCode*1e6 + transect.alongshoreCoordinate;
 
@@ -59,13 +58,13 @@ end
     nnodata = length(nondata_ids);
     if (nnodata)
         msg = sprintf('found %d transects in metadata without data', nnodata);
-        warning('JARKUS:inconsistency', msg);
+        warning('JARKUS:inconsistency %s', msg);
     end
     nometa_ids = setdiff(grid.id, transect.id);
     nnometa = length(nometa_ids);
     if (nnometa)
         msg = sprintf('found %d transects in data without metadata:\n%s', nnodata, sprintf('%8d\n', nometa_ids));
-        warning('JARKUS:inconsistency', msg);
+        warning('JARKUS:inconsistency %s', msg);
     end    
     
 %% remove points without metadata
@@ -77,9 +76,9 @@ end
         
 %% use the angle to compute the coordinates in projected cartesian
 %  coordinates. (for jarkus Amersfoort RD new)
-
-    relativeX  = cos(transect.angle(ia)) * grid.crossShoreCoordinate;
-    relativeY  = sin(transect.angle(ia)) * grid.crossShoreCoordinate;
+    % use (90-angle) to express it as "pos counterclockwise 0 east"
+    relativeX  = cosd(90-transect.angle(ia)) * grid.crossShoreCoordinate;
+    relativeY  = sind(90-transect.angle(ia)) * grid.crossShoreCoordinate;
     X          = repmat(transect.x(ia),1,size(relativeX,2)) + relativeX;
     Y          = repmat(transect.y(ia),1,size(relativeY,2)) + relativeY;
     % store all coordinates
@@ -89,7 +88,7 @@ end
     grid.x_0   = transect.x(ia);
     grid.y_0   = transect.y(ia);
     % assign angle of coastline to grid
-    grid.angle = transect.grad(ia); 
+    grid.angle = transect.angle(ia); 
     
     %% Second part: update grid with information from TIDEINFO.txt
     disp(['Extracting info from ' tidefile])
@@ -104,7 +103,7 @@ end
     transect.meanHighWater        = tideinfo.MHW;
     transect.meanLowWater         = tideinfo.LMW;
     % find points in the transect which are also in the grid
-    [c, ia, ib] = intersect(grid.id, transect.id);
+    [~, ia, ib] = intersect(grid.id, transect.id);
 
 %% assign MHW and MLW to grid
 
