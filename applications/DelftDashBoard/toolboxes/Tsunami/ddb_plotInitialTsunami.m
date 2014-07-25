@@ -90,12 +90,12 @@ hold on;
 load([handles.settingsDir 'geo\worldcoastline.mat']);
 xldb=wclx;
 yldb=wcly;
-z=zeros(size(xldb))+10;
-landb=plot3(xldb,yldb,z,'k');
+%z=zeros(size(xldb))+10;
+landb=plot(xldb,yldb,'k');
 
 load([handles.toolbox.tsunami.dataDir 'plates.mat']);
-platesz=zeros(size(platesx))+10;
-h=plot3(platesx,platesy,platesz);
+%platesz=zeros(size(platesx))+10;
+h=plot(platesx,platesy);
 set(h,'Color',[1.0 0.5 0.00]);
 set(h,'LineWidth',1.5);
 set(h,'HitTest','off');
