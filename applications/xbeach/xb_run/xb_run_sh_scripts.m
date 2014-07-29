@@ -112,9 +112,12 @@ else
     % use plink for remote command execution
     exe_path = fullfile(fileparts(which(mfilename)), 'plink.exe');
     
-    if OPT.cd
+    if strcmpi(OPT.ssh_host,'h4') && OPT.cd
         cmd = sprintf('%s %s@%s -pw %s -batch "cd %s && dos2unix %s && %s"', ...
             exe_path, OPT.ssh_user, OPT.ssh_host, OPT.ssh_pass, rpath, script, script);
+    elseif strcmpi(OPT.ssh_host,'h5')
+        cmd = sprintf('%s %s@%s -pw %s -batch "qsub %s/%s"', ...
+            exe_path, OPT.ssh_user, OPT.ssh_host, OPT.ssh_pass, rpath, script);
     else
         cmd = sprintf('%s %s@%s -pw %s -batch "dos2unix %s/%s && %s/%s"', ...
             exe_path, OPT.ssh_user, OPT.ssh_host, OPT.ssh_pass, rpath, script, rpath, script);

@@ -1,7 +1,7 @@
 function fname = xb_write_sh_scripts(lpath, rpath, varargin)
-%XB_WRITE_SH_SCRIPTS  Writes SH scripts to run applications on H4 cluster using MPI
+%XB_WRITE_SH_SCRIPTS  Writes SH scripts to run applications on H4 or H5 cluster using MPI
 %
-%   Writes SH scripts to run applications on H4 cluster. Optionally
+%   Writes SH scripts to run applications on H4 or H% cluster. Optionally
 %   includes statements to run applications using MPI.
 %
 %   Syntax:
@@ -9,7 +9,7 @@ function fname = xb_write_sh_scripts(lpath, rpath, varargin)
 %
 %   Input:
 %   lpath     = Local path to store scripts
-%   rpath     = Path to store scripts seen from h$ cluster
+%   rpath     = Path to store scripts seen from H4/H5 cluster
 %   varargin  = name:       Name of the run
 %               binary:     Binary to use
 %               nodes:      Number of nodes to use (1 = no MPI)
@@ -76,7 +76,9 @@ function fname = xb_write_sh_scripts(lpath, rpath, varargin)
 
 OPT = struct( ...
     'name', ['xb_' datestr(now, 'YYYYmmddHHMMSS')], ...
+    'cluster', 'h4', ... 
     'binary', '', ...
+    'version', 1.21, ...
     'nodes', 1, ...
     'queuetype', 'normal', ...
     'mpitype', '' ...
@@ -94,26 +96,29 @@ if isempty(OPT.mpitype); OPT.mpitype = xb_getprefdef('mpitype', 'MPICH2'); end;
 
 %% write start script
 
-fname = [name '.sh'];
-
-fid = fopen(fullfile(lpath, fname), 'w');
-
-fprintf(fid,'#!/bin/sh\n');
-fprintf(fid,'cd %s\n', rpath);
-fprintf(fid,'. /opt/sge/InitSGE\n');
-fprintf(fid,'. /opt/intel/fc/10/bin/ifortvars.sh\n');
-% fprintf(fid,'dos2unix mpi.sh\n');
-if strcmp(OPT.queuetype,'normal')
-    fprintf(fid,'qsub -V -N %s mpi.sh\n', OPT.name);
-elseif strcmp(OPT.queuetype,'normal-i7')
-    fprintf(fid,'qsub -V -N %s -q normal-i7 mpi.sh\n', OPT.name);
-else
-    error(['Unknown queue type [' OPT.queuetype ']. Possible types are: normal & normal-i7']);
+if strcmpi(OPT.cluster,'h4')
+    fname = [name '.sh'];
+    
+    fid = fopen(fullfile(lpath, fname), 'w');
+    
+    fprintf(fid,'#!/bin/sh\n');
+    fprintf(fid,'cd %s\n', rpath);
+    fprintf(fid,'. /opt/sge/InitSGE\n');
+    fprintf(fid,'. /opt/intel/fc/10/bin/ifortvars.sh\n');
+    
+    if strcmp(OPT.queuetype,'normal')
+        fprintf(fid,'qsub -V -N %s mpi.sh\n', OPT.name);
+    elseif strcmp(OPT.queuetype,'normal-i7')
+        fprintf(fid,'qsub -V -N %s -q normal-i7 mpi.sh\n', OPT.name);
+    else
+        error(['Unknown queue type [' OPT.queuetype ']. Possible types are: normal & normal-i7']);
+    end
+    
+    
+    fprintf(fid,'exit\n');
+    
+    fclose(fid);
 end
-
-fprintf(fid,'exit\n');
-
-fclose(fid);
 
 %% write mpi script
 
@@ -155,20 +160,45 @@ switch upper(OPT.mpitype)
         if OPT.nodes > 1
             fprintf(fid,'#$ -cwd\n');
             fprintf(fid,'#$ -N %s\n', OPT.name);
-            fprintf(fid,'#$ -pe mpich2 %d\n', OPT.nodes);
+            fprintf(fid,'#$ -pe distrib %d\n', OPT.nodes);
         end
         
-        fprintf(fid,'. /opt/sge/InitSGE\n');
-        fprintf(fid,'export LD_LIBRARY_PATH=/opt/intel/Compiler/11.0/081/lib/ia32:/opt/netcdf-4.1.1/lib:/opt/hdf5-1.8.5/lib:$LD_LIBRARY_PATH\n');
-
-        if OPT.nodes > 1
-            fprintf(fid,'export MPICH2_ROOT=/opt/mpich2\n');
-            fprintf(fid,'export PATH=$MPICH2_ROOT/bin:$PATH\n');
-            fprintf(fid,'export MPD_CON_EXT="sge_$JOB_ID.$SGE_TASK_ID"\n');
-
-            fprintf(fid,'mpirun -machinefile $TMPDIR/machines -n $NSLOTS %s\n', OPT.binary);
-        else
-            fprintf(fid,'%s\n', OPT.binary);
+        switch OPT.cluster
+            case 'h4'
+                fprintf(fid,'. /opt/sge/InitSGE\n');
+                fprintf(fid,'export LD_LIBRARY_PATH=/opt/intel/Compiler/11.0/081/lib/ia32:/opt/netcdf-4.1.1/lib:/opt/hdf5-1.8.5/lib:$LD_LIBRARY_PATH\n');
+                
+                if OPT.nodes > 1
+                    fprintf(fid,'export MPICH2_ROOT=/opt/mpich2\n');
+                    fprintf(fid,'export PATH=$MPICH2_ROOT/bin:$PATH\n');
+                    fprintf(fid,'export MPD_CON_EXT="sge_$JOB_ID.$SGE_TASK_ID"\n');
+                else
+                    fprintf(fid,'%s\n', OPT.binary);
+                end
+                fprintf(fid,'mpirun -machinefile $TMPDIR/machines -n $NSLOTS %s\n', OPT.binary);
+            case 'h5'
+                % when using h5, only the mpi.sh script is created
+                fname = 'mpi.sh';
+                fprintf(fid,'module avail\n');
+                fprintf(fid,'module load use.own\n');
+                fprintf(fid,'module load mpich2-x86_64\n');
+                switch OPT.version
+                    % Define seperate cases for all different available versions
+                    case 1.21
+                        fprintf(fid,'module load xbeach121-gcc44-netcdf41-mpi10\n');
+                end
+                fprintf(fid,'pushd %s\n',rpath);
+                fprintf(fid,'. /opt/ge/InitSGE\n');
+                fprintf(fid,'awk ''{print $1":"1}'' $PE_HOSTFILE > $(pwd)/machinefile\n');
+                fprintf(fid,'mpdboot -n 2 -f $(pwd)/machinefile\n');
+                fprintf(fid,'export NSLOTS=`expr $NSLOTS \\* 4`\n');
+                fprintf(fid,'mpirun -n $NSLOTS xbeach\n');
+        end
+        
+        fprintf(fid,'mpdallexit\n');
+        
+        if strcmpi(OPT.cluster,'h5')
+            fprintf(fid,'popd\n');
         end
 otherwise
         error(['Unknown MPI type [' OPT.mpitype ']']);

@@ -198,7 +198,7 @@ end
 
 %% write run scripts
 
-fname = xb_write_sh_scripts(fpath, rpath, 'name', OPT.name, ...
+fname = xb_write_sh_scripts(fpath, rpath, 'name', OPT.name, 'cluster', OPT.ssh_host, ...
     'binary', binpath, 'nodes', OPT.nodes, 'mpitype', OPT.mpitype, 'queuetype', OPT.queuetype);
 
 %% run run scripts
