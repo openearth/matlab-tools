@@ -162,7 +162,12 @@ for it=it0:it1
     wl0(:,:,nt)=wl00;
 end
 t=t0:dt/1440:t1;
+
 for j=1:nr
+    wl111(isnan(squeeze(wl0(j,1,:))))=0;
+    wl222(isnan(squeeze(wl0(j,2,:))))=0;
+    wl0(j,1,:)=wl111;
+    wl0(j,2,:)=wl222;
     wl(j,1,:) = spline(times,squeeze(wl0(j,1,:)),t);
     wl(j,2,:) = spline(times,squeeze(wl0(j,2,:)),t);
 end
