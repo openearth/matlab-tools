@@ -185,7 +185,7 @@ switch upper(OPT.mpitype)
                 switch OPT.version
                     % Define seperate cases for all different available versions
                     case 1.21
-                        fprintf(fid,'module load xbeach121-gcc44-netcdf41-mpi10\n');
+                        fprintf(fid,'module load xbeach/xbeach121-gcc44-netcdf41-mpi10\n');
                 end
                 fprintf(fid,'pushd %s\n',rpath);
                 fprintf(fid,'. /opt/ge/InitSGE\n');
