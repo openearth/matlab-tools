@@ -13,7 +13,7 @@ function varargout=delft3d_io_2dw(cmd,varargin),
 %
 % To plot weirs use the example below:
 %
-%   plot(WEIRS.x,WEIRS.y)
+%   plot(WEIRS.X,WEIRS.Y)
 %
 % See also: delft3d_io_ann, delft3d_io_bca, delft3d_io_bch, delft3d_io_bnd,
 %           delft3d_io_crs, delft3d_io_dep, delft3d_io_dry, delft3d_io_eva,
