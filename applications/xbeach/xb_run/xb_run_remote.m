@@ -161,7 +161,7 @@ end
 
 %% retrieve binary
 
-if isempty(OPT.binary)
+if isempty(OPT.binary) && strcmpi(OPT.ssh_host,'h4')
     bin_type = 'unix';
 
     if OPT.nodes > 1

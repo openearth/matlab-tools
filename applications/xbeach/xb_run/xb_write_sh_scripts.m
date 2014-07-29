@@ -122,7 +122,7 @@ end
 
 %% write mpi script
 
-if ~ismember(OPT.binary(1), {'/' '~' '$'})
+if strcmpi(OPT.cluster,'h4') && ~ismember(OPT.binary(1), {'/' '~' '$'})
     OPT.binary = ['$(pwd)/' OPT.binary];
 end
 
@@ -190,9 +190,8 @@ switch upper(OPT.mpitype)
                 fprintf(fid,'pushd %s\n',rpath);
                 fprintf(fid,'. /opt/ge/InitSGE\n');
                 fprintf(fid,'awk ''{print $1":"1}'' $PE_HOSTFILE > $(pwd)/machinefile\n');
-                fprintf(fid,'mpdboot -n 2 -f $(pwd)/machinefile\n');
-                fprintf(fid,'export NSLOTS=`expr $NSLOTS \\* 4`\n');
-                fprintf(fid,'mpirun -n $NSLOTS xbeach\n');
+                fprintf(fid,'mpdboot -n %d -f $(pwd)/machinefile\n',OPT.nodes);
+                fprintf(fid,'mpirun -n %d xbeach\n',OPT.nodes*4);
         end
         
         fprintf(fid,'mpdallexit\n');
