@@ -129,16 +129,16 @@ end
    datatypes.grid.cellsize{i}     =  20;
    datatypes.grid.datatype{i}     =  'Jarkus';
 
-   %% Outer Deltas Zeeland (test)
-
-   i = i + 1;
-   datatypes.grid.names{i}        =  'Outer Deltas Zeeland 20m (test/next release)';
-   datatypes.grid.urls {i}        =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/DienstZeeland/outer_deltas/';
-   datatypes.grid.catalog{i}      =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/DienstZeeland/outer_deltas/catalog.xml';
-   datatypes.grid.ldbs{i}         =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc';
-   datatypes.grid.axes{i}         =  1E5*[-0.239487 2.901701 2.999500 6.787223];
-   datatypes.grid.cellsize{i}     =  20;
-   datatypes.grid.datatype{i}     =  'Zeeland';
+%    %% Outer Deltas Zeeland (test)
+% 
+%    i = i + 1;
+%    datatypes.grid.names{i}        =  'Outer Deltas Zeeland 20m (test/next release)';
+%    datatypes.grid.urls {i}        =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/DienstZeeland/outer_deltas/';
+%    datatypes.grid.catalog{i}      =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/DienstZeeland/outer_deltas/catalog.xml';
+%    datatypes.grid.ldbs{i}         =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc';
+%    datatypes.grid.axes{i}         =  1E5*[-0.239487 2.901701 2.999500 6.787223];
+%    datatypes.grid.cellsize{i}     =  20;
+%    datatypes.grid.datatype{i}     =  'Zeeland';
    
    %% Vaklodingen (matlab ncgen, release 2012)
 
@@ -154,7 +154,7 @@ end
    %% Vaklodingen (test, matlab ncgen, release 2012)
 
    i = i + 1;
-   datatypes.grid.names{i}        =  'Vaklodingen 20m (test/next release r2012)';
+   datatypes.grid.names{i}        =  'Vaklodingen 20m (test/next release r2014)';
    datatypes.grid.urls {i}        =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/vaklodingen/';
    datatypes.grid.catalog{i}      =  'http://dtvirt5.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.xml';
    datatypes.grid.ldbs{i}         =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc';
@@ -174,16 +174,16 @@ if 0 % set this to 1 to activate the local cache, and download it with OPENDAP_G
    datatypes.grid.datatype{i}     =  'vaklodingen'; % for rws_*
 end   
    
-   %% Zeeland outer deltas (test, matlab ncgen, release 2013)
-
-   i = i + 1;
-   datatypes.grid.names{i}        =  'Zeeland outer deltas 20m (test/next release r2013)';
-   datatypes.grid.urls {i}        =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/DienstZeeland/outer_deltas/';
-   datatypes.grid.catalog{i}      =  'http://dtvirt5.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/DienstZeeland/outer_deltas/catalog.xml';
-   datatypes.grid.ldbs{i}         =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc';
-   datatypes.grid.axes{i}         =  1E5*[-0.239487 2.901701 2.999500 6.787223];
-   datatypes.grid.cellsize{i}     =  20;
-   datatypes.grid.datatype{i}     =  'vaklodingen'; % for rws_*
+%    %% Zeeland outer deltas (test, matlab ncgen, release 2013)
+% 
+%    i = i + 1;
+%    datatypes.grid.names{i}        =  'Zeeland outer deltas 20m (test/next release r2013)';
+%    datatypes.grid.urls {i}        =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/DienstZeeland/outer_deltas/';
+%    datatypes.grid.catalog{i}      =  'http://dtvirt5.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/DienstZeeland/outer_deltas/catalog.xml';
+%    datatypes.grid.ldbs{i}         =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc';
+%    datatypes.grid.axes{i}         =  1E5*[-0.239487 2.901701 2.999500 6.787223];
+%    datatypes.grid.cellsize{i}     =  20;
+%    datatypes.grid.datatype{i}     =  'vaklodingen'; % for rws_*
 
    %% Kustlidar
 
@@ -200,8 +200,8 @@ end
 
    i = i + 1;
    datatypes.grid.names{i}        =  'AHN Kusthoogte 5m (test/next release 2012)';
-   datatypes.grid.urls {i}        =  'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/kusthoogte/';
-   datatypes.grid.catalog{i}      =  'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/kusthoogte/catalog.xml';
+   datatypes.grid.urls {i}        =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/kusthoogte/';
+   datatypes.grid.catalog{i}      =  'http://dtvirt5.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/kusthoogte/catalog.xml';
    datatypes.grid.ldbs{i}         =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc';
    datatypes.grid.axes{i}         =  1E5*[-0.239487 2.901701 2.999500 6.787223];
    datatypes.grid.cellsize{i}     =  5;
@@ -223,22 +223,22 @@ end
    i = i + 1;
    datatypes.grid.names{i}        =  'Dienst zeeland 20m (test/next release)';
    datatypes.grid.urls {i}        =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/dienstzeeland/';
-   datatypes.grid.catalog{i}      =  'http://dtvirt5.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/dienstzeeland/catalog.xml';
+   datatypes.grid.catalog{i}      =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/dienstzeeland/catalog.html';
    datatypes.grid.ldbs{i}         =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc';
    datatypes.grid.axes{i}         =  1E5*[-0.21 0.91 3.6 4.3];
    datatypes.grid.cellsize{i}     =  20;
    datatypes.grid.datatype{i}     =  'Zeeland';
    
-   %% Western Scheldt (Dienst zeeland) (test)
-
-   i = i + 1;
-   datatypes.grid.names{i}        =  'Westerschelde; Dienst zeeland 20m (test/next release)';
-   datatypes.grid.urls {i}        =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/DienstZeeland/western_scheldt/';
-   datatypes.grid.catalog{i}      =  'http://dtvirt5.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/DienstZeeland/western_scheldt/catalog.xml';
-   datatypes.grid.ldbs{i}         =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc';
-   datatypes.grid.axes{i}         =  1E5*[-0.21 0.91 3.6 4.3];
-   datatypes.grid.cellsize{i}     =  20;
-   datatypes.grid.datatype{i}     =  'Zeeland';
+%    %% Western Scheldt (Dienst zeeland) (test)
+% 
+%    i = i + 1;
+%    datatypes.grid.names{i}        =  'Westerschelde; Dienst zeeland 20m (test/next release)';
+%    datatypes.grid.urls {i}        =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/DienstZeeland/western_scheldt/';
+%    datatypes.grid.catalog{i}      =  'http://dtvirt5.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/DienstZeeland/western_scheldt/catalog.xml';
+%    datatypes.grid.ldbs{i}         =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc';
+%    datatypes.grid.axes{i}         =  1E5*[-0.21 0.91 3.6 4.3];
+%    datatypes.grid.cellsize{i}     =  20;
+%    datatypes.grid.datatype{i}     =  'Zeeland';
 
    %% AHN100
 
