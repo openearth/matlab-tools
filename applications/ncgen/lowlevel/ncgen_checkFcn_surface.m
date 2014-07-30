@@ -208,14 +208,14 @@ if any(~idx)
         end
     end
     result = false;
-elseif offset_x ~=0 || offset_y ~= 0
+elseif offset_x ~= OPT.grid_offset(1) || offset_y ~= OPT.grid_offset(end)
     svninfo = svn_info(OPT.fname);
     [~, svnrev] = system(sprintf('svnversion %s', OPT.fname));
     mess = sprintf('offset adjusted of "%s" revision %s', svninfo.url, strtrim(svnrev));
-    if offset_x ~=0
+    if offset_x ~= OPT.grid_offset(1)
         mess = sprintf('%s\n %s', mess, result.offset_x{end});
     end
-    if offset_y ~=0
+    if offset_y ~= OPT.grid_offset(end)
         mess = sprintf('%s\n %s', mess, result.offset_y{end});
     end
     result = true;
