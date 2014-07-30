@@ -179,14 +179,13 @@ switch upper(OPT.mpitype)
             case 'h5'
                 % when using h5, only the mpi.sh script is created
                 fname = 'mpi.sh';
-                fprintf(fid,'module avail\n');
-                fprintf(fid,'module load use.own\n');
                 fprintf(fid,'module load mpich2-x86_64\n');
                 switch OPT.version
                     % Define seperate cases for all different available versions
                     case 1.21
                         fprintf(fid,'module load xbeach/xbeach121-gcc44-netcdf41-mpi10\n');
                 end
+                fprintf(fid,'module list\n');
                 fprintf(fid,'pushd %s\n',rpath);
                 fprintf(fid,'. /opt/ge/InitSGE\n');
                 fprintf(fid,'awk ''{print $1":"1}'' $PE_HOSTFILE > $(pwd)/machinefile\n');
