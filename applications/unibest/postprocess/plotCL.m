@@ -76,26 +76,37 @@ function plotCL(input)
 % $Keywords: $
 
 
+color = [{'b'},{'r'}];
+markers1 = {'.','none'};
+markers2 = {'s','+'};
+linewidth = [4,2.5];
+fontsize = 12;
+
 addpath(genpath(input.dir));
 close all;
 
-figure();clf;set(gcf,'Position',[207 208 868 225]);set(gcf,'Color',[1 1 1]);
-set(gcf,'PaperSize',[14.8387 5.2385],'PaperPosition',[0 0 14.8387 5.2385], ...
-        'PaperUnits','centimeters','PaperType','A4','PaperPositionMode','manual');
+f = figure(1);clf;set(gcf,'Position',[60 300 1000 300]);set(gcf,'Color',[1 1 1]);hold off;
+set(gcf,'PaperSize',[9.8925    3.4973],'PaperPosition',[0 0 9.8925    3.4973],'PaperUnits','centimeters','PaperType','A4','PaperPositionMode','manual'); % made size three times smaller than 29.6774 10.492, since scaling is otherwise too small
+
 
 %% PLOT FIGURE
-h1 = axes;hold on; % plot axis 2
-curaxis              = gca;
-reffile              = input.reffile;
-settings.subfig      = 1;
-settings.year        = input.time1;
-settings.color       = 'b';
-settings.marker      = '.';
-settings.curaxis     = curaxis;
-settings.orientation = 'hor';
-settings.xlab        = 'Alongshore distance (km) \rightarrow';
-settings.ylab        = '';
-settings.offsety     = 100;
+h1 = gca;hold on;
+curaxis                  = gca;
+reffile                  = input.reffile;
+settings.subfig          = 1;
+settings.year            = input.time1;
+settings.color           = 'b';
+settings.marker          = 'none';
+settings.curaxis         = curaxis;
+settings.orientation     = 'hor';
+settings.xlab            = 'Alongshore distance (km) \rightarrow';
+settings.ylab            = '';
+settings.offsety         = 100;
+settings.fontsize        = 12;
+settings.linewidth       = 4;
+settings.linestyle       = '-';
+settings.axcolor         = [0.2 0.2 0.2];
+settings.backgroundcolor = [1 1 1];
 if isfield(input,'xlim'); settings.xlim=input.xlim; end
 if isfield(input,'ylim'); settings.ylim=input.ylim; end
 if  ~isempty(findstr(lower(input.type),'coast')) || ~isempty(findstr(lower(input.type),'cst'))
@@ -110,7 +121,7 @@ else
     hline(1)         = UBtransportlineplot(reffile,settings);hold on;
     settings.color   = 'r';
     settings.marker  = 'none';
-    settings.linestyle  = '--';
+    settings.linestyle = ':';
     hline(2)         = UBtransportlineplot(input.file,settings);
 end
 
