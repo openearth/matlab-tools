@@ -3,11 +3,11 @@
   <basedir>d:\repositories\oetools\applications\ITHK\</basedir>
   <sessionCacheDir>p:\webtools\cache\</sessionCacheDir>
   <EPSGcode>32633</EPSGcode>
-  <model>YSTAD</model>
+  <model>YSTAD_test</model>
   <LookAtLon>13.937504</LookAtLon>
   <LookAtLat>55.40229</LookAtLat>
   <LookAtRange>10000</LookAtRange>
-  <CLRfile>BWN2005_1HOTSPOTS1IT.CLR</CLRfile>
+  <CLRfile>YSTAD.CLR</CLRfile>
   <measures>
     <nourishment>
       <THRbeach>0</THRbeach>

@@ -87,8 +87,9 @@ angleB = str2double(S.settings.measures.groyne.angleshiftclimateB);
 [x,y]               = convertCoordinates(lon,lat,S.EPSG,'CS1.name','WGS 84','CS1.type','geo','CS2.code',str2double(S.settings.EPSGcode));
 
 %% read files
-MDAdata=ITHK_io_readMDA([S.settings.outputdir 'BASIS.MDA']);
-MDAdata_ORIG=ITHK_io_readMDA([S.settings.outputdir 'BASIS_ORIG.MDA']);
+% MDAdata=ITHK_io_readMDA([S.settings.outputdir 'BASIS.MDA']);
+% MDAdata_ORIG=ITHK_io_readMDA([S.settings.outputdir 'BASIS_ORIG.MDA']);
+MDAdata_ORIG=ITHK_io_readMDA([S.settings.outputdir S.settings.CLRdata.mdaname '.MDA']);
 %GROdata_ORIG=ITHK_io_readGRO([S.settings.outputdir S.userinput.phase(1).GROfile]);
 if phase==1 || NGRO>1
     [GROdata]=ITHK_io_readGRO([S.settings.outputdir S.userinput.groyne(ii).filename]);
@@ -111,6 +112,7 @@ if ~ismember(idRANGE,[1,2,length(MDAdata_ORIG.Xcoast)-1,length(MDAdata_ORIG.Xcoa
     s1 = s0(idNEAREST);
 
     %% Update initial coastline around groyne (in MDA)
+    %{
     if cstupdate == 1   
         % Beach extension south of groyne (0.5 GRO length)
         if length(idRANGE(1):idNEAREST)>1
@@ -135,13 +137,13 @@ if ~ismember(idRANGE,[1,2,length(MDAdata_ORIG.Xcoast)-1,length(MDAdata_ORIG.Xcoa
         MDAdata_ORIG.nrgridcells(idNEAREST:idNEAREST+1)=8;
         ITHK_io_writeMDA([S.settings.outputdir 'BASIS_ORIG.MDA'],[MDAdata_ORIG.Xi MDAdata_ORIG.Yi],MDAdata_ORIG.Y1i,[],MDAdata_ORIG.nrgridcells);    
     end
-
+    %}
     %% Add local climates & adjust GROfile
     if localclimates == 1
         % Updated coastline
-        MDAdatanew=ITHK_io_readMDA([S.settings.outputdir 'BASIS.MDA']);
+        MDAdatanew=ITHK_io_readMDA([S.settings.outputdir S.settings.CLRdata.mdaname '.MDA']);
         % Find closest ray in GKL
-        [xGKL,yGKL,rayfiles]=ITHK_io_readGKL([S.settings.outputdir 'BASIS.GKL']);
+        [xGKL,yGKL,rayfiles]=ITHK_io_readGKL([S.settings.outputdir S.settings.CLRdata.GKL{1} '.GKL']);
         idRAY=findGRIDinrange(xGKL,yGKL,x,y,0);
 
         %% Info local climates
@@ -229,7 +231,16 @@ if ~ismember(idRANGE,[1,2,length(MDAdata_ORIG.Xcoast)-1,length(MDAdata_ORIG.Xcoa
     ITHK_io_writeGRO([S.settings.outputdir S.userinput.groyne(ii).filename],GROdata);
     S.UB.input(sens).groyne(ii).GROdata = GROdata;
     S.UB.input(sens).groyne(ii).Ngroynes = length(GROdata);%-length(GROdata_ORIG);%to prevent double writing in PP
+    
+    % Keep track of user defined groynes
+    if ~isfield(S.userinput.userdefined,'GRO')
+        len = 0;
+    else
+        len = length(S.userinput.userdefined.GRO);
+    end
+    S.userinput.userdefined.GRO(len+1) = GROdata(end);    
 end
+
 
 %% Function find grid in range
 function [idNEAREST,idRANGE]=findGRIDinrange(Xcoast,Ycoast,x,y,radius)

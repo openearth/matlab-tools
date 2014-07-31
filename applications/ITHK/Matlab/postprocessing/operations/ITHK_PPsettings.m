@@ -96,13 +96,14 @@ end
 
 %% General PP settings
 % Extract MDAdata for original and updated coastline
-[S.PP(sens).settings.MDAdata_ORIG_OLD]=ITHK_io_readMDA([S.settings.outputdir filesep 'BASIS_ORIG_OLD.MDA']);
-[S.PP(sens).settings.MDAdata_ORIG]=ITHK_io_readMDA([S.settings.outputdir filesep 'BASIS_ORIG.MDA']);
-[S.PP(sens).settings.MDAdata_NEW]=ITHK_io_readMDA([S.settings.outputdir filesep 'BASIS.MDA']);
+%[S.PP(sens).settings.MDAdata_ORIG_OLD]=ITHK_io_readMDA([S.settings.outputdir filesep 'BASIS_ORIG_OLD.MDA']);
+%[S.PP(sens).settings.MDAdata_ORIG]=ITHK_io_readMDA([S.settings.outputdir filesep 'BASIS_ORIG.MDA']);
+[S.PP(sens).settings.MDAdata_ORIG]=ITHK_io_readMDA([S.settings.outputdir filesep S.settings.CLRdata.mdaname '.MDA']);
+[S.PP(sens).settings.MDAdata_NEW]=ITHK_io_readMDA([S.settings.outputdir filesep S.settings.CLRdata.mdaname '.MDA']);
 
 % time settings
 S.PP(sens).settings.tvec = S.UB(sens).results.PRNdata.year;
-S.PP(sens).settings.t0 = 2005;
+S.PP(sens).settings.t0 = S.settings.CLRdata.from(1);
 
 if ~isfield(S.settings,'plotting')
     S.settings.plotting.barplot = S.settings.barplot;
@@ -139,5 +140,5 @@ end
 
 % settings for 'postprocessDUNEGROWTH'
 S.settings.dunes.CSTorient   = 'BASIS_ORIG.MDA'; 
-S.settings.dunes.yposinitial = str2double(S.settings.indicators.dunes.yposinitial)+S.PP(sens).settings.MDAdata_NEW.Y1i-S.PP(sens).settings.MDAdata_ORIG.Y1i;
+S.settings.dunes.yposinitial = str2double(S.settings.indicators.dunes.yposinitial)+S.PP(sens).settings.MDAdata_ORIG.Y1i-S.PP(sens).settings.MDAdata_ORIG.Y1i;
 

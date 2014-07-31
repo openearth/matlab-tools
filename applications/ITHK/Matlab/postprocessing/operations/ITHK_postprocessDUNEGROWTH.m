@@ -69,8 +69,8 @@ global S
             settings.(fieldnames{ii})=set2.(fieldnames{ii});
         end
     end
-    if exist([S.settings.outputdir,'BASIS.mda'],'file')
-        settings.CSTorient=[S.settings.outputdir,'BASIS.mda'];
+    if exist([S.settings.outputdir,S.settings.CLRdata.mdaname '.MDA'],'file')
+        settings.CSTorient=[S.settings.outputdir,S.settings.CLRdata.mdaname '.MDA'];
     end
     
     %% READ PRN

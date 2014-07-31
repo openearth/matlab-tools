@@ -103,7 +103,8 @@ S.PP(sens).UBmapping.rev = zeros(NRtimesteps,NRgridcells);
 S.PP(sens).UBmapping.gro = zeros(NRtimesteps,NRgridcells);
 
 for jj = 1:length(S.userinput.phases)
-    if ~strcmp(lower(strtok(S.userinput.phase(jj).SOSfile,'.')),'basis')
+    %if ~strcmp(lower(strtok(S.userinput.phase(jj).SOSfile,'.')),'basis')
+    if isfield(S.userinput.phase(jj).SOSfile,'supids')    
         for ii = 1:length(S.userinput.phase(jj).supids)
             ss = S.userinput.phase(jj).supids(ii); 
             startid      = S.userinput.nourishment(ss).start;
@@ -121,13 +122,15 @@ for jj = 1:length(S.userinput.phases)
             end
         end
     end
-    if ~strcmp(lower(strtok(S.userinput.phase(jj).REVfile,'.')),'basis')
+    %if ~strcmp(lower(strtok(S.userinput.phase(jj).REVfile,'.')),'basis')
+    if isfield(S.userinput.phase(jj).SOSfile,'revids')
         for ii = 1:length(S.userinput.phase(jj).revids)
             ss = S.userinput.phase(jj).revids(ii); 
             S.PP(sens).UBmapping.rev(S.userinput.revetment(ss).start+1:S.userinput.revetment(ss).stop,S.userinput.revetment(ss).idRANGE) = 1;
         end
     end
-    if ~strcmp(lower(strtok(S.userinput.phase(jj).GROfile,'.')),'basis')
+    %if ~strcmp(lower(strtok(S.userinput.phase(jj).GROfile,'.')),'basis')
+    if isfield(S.userinput.phase(jj).SOSfile,'groids')
         for ii = 1:length(S.userinput.phase(jj).groids)
             ss = S.userinput.phase(jj).groids(ii); 
             S.PP(sens).UBmapping.gro(S.userinput.groyne(ss).start+1:S.userinput.groyne(ss).stop,S.userinput.groyne(ss).idNEAREST) = 1;
@@ -144,7 +147,8 @@ S.PP(sens).GEmapping.rev = zeros(NRtimesteps,NRmappedcells);
 S.PP(sens).GEmapping.gro= zeros(NRtimesteps,NRmappedcells);
 
 for jj = 1:length(S.userinput.phases)
-    if ~strcmp(lower(strtok(S.userinput.phase(jj).SOSfile,'.')),'basis')
+    %if ~strcmp(lower(strtok(S.userinput.phase(jj).SOSfile,'.')),'basis')
+    if isfield(S.userinput.phase(jj).SOSfile,'supids')
         for ii = 1:length(S.userinput.phase(jj).supids)
             ss = S.userinput.phase(jj).supids(ii); 
             [x,y] = convertCoordinates(S.userinput.nourishment(ss).lon,S.userinput.nourishment(ss).lat,S.EPSG,'CS1.name','WGS 84','CS1.type','geo','CS2.code',str2double(S.settings.EPSGcode));
@@ -165,7 +169,8 @@ for jj = 1:length(S.userinput.phases)
             S.userinput.nourishment(ss).idRANGE2   = idRANGE;
         end
     end
-    if ~strcmp(lower(strtok(S.userinput.phase(jj).REVfile,'.')),'basis')
+    %if ~strcmp(lower(strtok(S.userinput.phase(jj).REVfile,'.')),'basis')
+    if isfield(S.userinput.phase(jj).SOSfile,'revids')
         for ii = 1:length(S.userinput.phase(jj).revids)
             ss = S.userinput.phase(jj).revids(ii); 
             [x,y] = convertCoordinates(S.userinput.revetment(ss).lon,S.userinput.revetment(ss).lat,S.EPSG,'CS1.name','WGS 84','CS1.type','geo','CS2.code',str2double(S.settings.EPSGcode));
@@ -175,7 +180,8 @@ for jj = 1:length(S.userinput.phases)
             S.userinput.revetment(ss).idRANGE2   = idRANGE;
         end
     end
-    if ~strcmp(lower(strtok(S.userinput.phase(jj).GROfile,'.')),'basis')
+    %if ~strcmp(lower(strtok(S.userinput.phase(jj).GROfile,'.')),'basis')
+    if isfield(S.userinput.phase(jj).SOSfile,'groids')
         for ii = 1:length(S.userinput.phase(jj).groids)
             ss = S.userinput.phase(jj).groids(ii);
             [x,y] = convertCoordinates(S.userinput.groyne(ss).lon,S.userinput.groyne(ss).lat,S.EPSG,'CS1.name','WGS 84','CS1.type','geo','CS2.code',str2double(S.settings.EPSGcode));

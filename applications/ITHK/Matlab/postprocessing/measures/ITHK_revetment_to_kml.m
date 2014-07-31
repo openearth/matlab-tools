@@ -107,5 +107,5 @@ for jj = 1:length(S.userinput.phases)
 end
 
 if ~isempty(S.PP(sens).output.kml_revetment)
-    S.PP(sens).output.kmlfiles = [S.PP(sens).output.kmlfiles,'S.PP(sens).output.revetment'];
+    S.PP(sens).output.kmlfiles = [S.PP(sens).output.kmlfiles,'S.PP(sens).output.kml_revetment'];
 end

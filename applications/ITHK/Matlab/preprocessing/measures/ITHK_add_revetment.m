@@ -79,7 +79,7 @@ lon = S.userinput.revetment(ii).lon;
 [x,y]               = convertCoordinates(lon,lat,S.EPSG,'CS1.name','WGS 84','CS1.type','geo','CS2.code',str2double(S.settings.EPSGcode));
 
 %% read files
-[MDAdata]=ITHK_io_readMDA([S.settings.outputdir 'BASIS.MDA']);
+[MDAdata]=ITHK_io_readMDA([S.settings.outputdir S.settings.CLRdata.mdaname '.MDA']);
 if phase==1 || NREV>1
     [REVdata]=ITHK_io_readREV([S.settings.outputdir S.userinput.revetment(ii).filename]);
 else
@@ -103,6 +103,14 @@ end
 ITHK_io_writeREV(REVdata,MDAdata,0.1)
 S.UB.input(sens).revetment(ii).REVdata = REVdata;
 S.userinput.revetment(ii).idRANGE = idRANGE;
+
+% Keep track of user defined revetments
+if ~isfield(S.userinput.userdefined,'REV')
+    len = 0;
+else
+    len = length(S.userinput.userdefined.REV);
+end
+S.userinput.userdefined.REV(len+1) = REVdata(end);
 
 
 %% Function find grid in range

@@ -81,8 +81,8 @@ end
 no_phases      = length(time)-1;
 no_cycli       = 1;
 t0             = 0;
-% mda_file       = ['''',CL_filenames{1},''''];
-mda_file       = ['BASIS'];
+mda_file       = ['''',CL_filenames{1},''''];
+%mda_file       = ['BASIS'];
 
 %analysis
 t1             = time(1:end-1);
@@ -106,7 +106,7 @@ fprintf(fid,'%3.0f\n',t0);
 fprintf(fid,'%s    %s\n',mda_file,'(MDA-file)');
 fprintf(fid,'%s\n','    Fase      From      To        .GKL       .BCO       .GRO       .SOS       .REV       .OBW       .BCI');
 for ii=1:no_phases
-    fprintf(fid,'  %4.0f  %8.0f  %8.0f    ''%s''   ''%s''   ''%s''   ''%s''   ''%s''   ''%s''   ''%s''\n',ii,t1(ii),t2(ii),CL_filenames{1}{ii},CL_filenames{2}{ii},CL_filenames{3}{ii},CL_filenames{4}{ii},CL_filenames{5}{ii},CL_filenames{6}{ii},CL_filenames{7}{ii});
+    fprintf(fid,'  %4.0f  %8.0f  %8.0f    ''%s''   ''%s''   ''%s''   ''%s''   ''%s''   ''%s''   ''%s''\n',ii,t1(ii),t2(ii),CL_filenames{2}{ii},CL_filenames{3}{ii},CL_filenames{4}{ii},CL_filenames{5}{ii},CL_filenames{6}{ii},CL_filenames{7}{ii},CL_filenames{8}{ii});
 end
 fprintf(fid,'%s\n','iaant    ifirst    ival');
 fprintf(fid,'%8.0f  %8.0f  %8.0f\n',iaant,ifirst,output_step);

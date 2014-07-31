@@ -116,8 +116,6 @@ S = struct;
 S.EPSG = load(which('EPSG.mat'));
 
 %% Process input
-S.userinput = ITHK_process_webinput(measure,lat,lon,impl,len,vol*1e6,fill,tin,varNameIn,slr,coast,eco,dunes,costs,economy,safety,recreation,residency);
-
 %Read settings
 S.settings =xml2struct(which('ITHK_settings.xml'),'structuretype','supershort');
 %S.settings = xml_load(which('ITHK_settings.xml'));
@@ -126,6 +124,12 @@ S.settings.basedir = baseDir;
 % subdirectories
 S.settings.inputdir            = [baseDir 'Matlab\preprocessing\input\'];
 S.settings.rundir              = [baseDir 'UB model\' S.settings.model filesep 'input\'];
+S.settings.CLRdata             = ITHK_io_readCLR([baseDir 'UB model\' S.settings.model filesep 'input\' S.settings.CLRfile]);
+
+% Process user input
+S.userinput = ITHK_process_webinput(measure,lat,lon,impl,len,vol*1e6,fill,tin,varNameIn,slr,coast,eco,dunes,costs,economy,safety,recreation,residency,S.settings.CLRdata);%
+
+% Set output dir
 S.settings.outputdir           = [baseDir 'UB model\' S.settings.model filesep 'output\' S.userinput.name filesep]; 
 if ~isdir(S.settings.outputdir)
     mkdir(S.settings.outputdir);

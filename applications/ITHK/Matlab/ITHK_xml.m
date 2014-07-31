@@ -130,7 +130,6 @@ catch
 end
     
 %% Process input
-S.userinput = ITHK_process_webinput_xml(xml);
 
 %Read settings
 S.settings =xml2struct(which('ITHK_settings.xml'),'structuretype','supershort');
@@ -140,6 +139,12 @@ S.settings.basedir = baseDir;
 % subdirectories
 S.settings.inputdir            = [baseDir 'Matlab\preprocessing\input\'];
 S.settings.rundir              = [baseDir 'UB model\' S.settings.model filesep 'input\'];
+S.settings.CLRdata             = ITHK_io_readCLR([baseDir 'UB model\' S.settings.model filesep 'input\' S.settings.CLRfile]);
+
+% Process user input
+S.userinput = ITHK_process_webinput_xml(xml,S.settings.CLRdata);
+
+% Set output dir
 S.settings.outputdir           = [baseDir 'UB model\' S.settings.model filesep 'output\' S.userinput.name filesep]; 
 if ~isdir(S.settings.outputdir)
     mkdir(S.settings.outputdir);

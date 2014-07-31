@@ -57,12 +57,12 @@ end
 
 %% Find the full path of the icons specified in the xml-file
 iconfiles = struct;
-for kk=1:length(icons)
-    iconclass(kk)      = str2double(icons(kk).class);
+for kk=1:length(icons.class)
+    iconclass(kk)      = str2double(icons.class{kk});
     if isfield(S,'weburl')
-        iconfiles(kk).url  = strtrim(icons(kk).url);
+        iconfiles(kk).url  = strtrim(icons.url{kk});
     else
-        iconfiles(kk).url  = which(strtrim(icons(kk).url));
+        iconfiles(kk).url  = which(strtrim(icons.url{kk}));
     end
 end
 

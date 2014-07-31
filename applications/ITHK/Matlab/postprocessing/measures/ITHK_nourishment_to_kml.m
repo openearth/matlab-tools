@@ -82,7 +82,8 @@ if isfield(S.userinput.phase(1),'supids')
 end
 
 for jj = 1:length(S.userinput.phases)
-    if ~strcmp(lower(strtok(S.userinput.phase(jj).SOSfile,'.')),'basis')
+    %if ~strcmp(lower(strtok(S.userinput.phase(jj).SOSfile,'.')),'basis')
+    if isfield(S.userinput.phase(jj).SOSfile,'supids')
     for ii = 1:length(S.userinput.phase(jj).supids)
         ss = S.userinput.phase(jj).supids(ii);
 
@@ -161,5 +162,5 @@ for jj = 1:length(S.userinput.phases)
 end        
 
 if ~isempty(S.PP(sens).output.kml_nourishment)
-    S.PP(sens).output.kmlfiles = [S.PP(sens).output.kmlfiles,'S.PP(sens).output.nourishment'];
+    S.PP(sens).output.kmlfiles = [S.PP(sens).output.kmlfiles,'S.PP(sens).output.kml_nourishment'];
 end   

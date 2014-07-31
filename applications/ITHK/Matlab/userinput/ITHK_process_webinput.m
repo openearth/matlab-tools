@@ -1,4 +1,4 @@
-function S = ITHK_process_webinput(measure,lat,lon,implementation,len,vol,fill,time,name,slr,coast,eco,dunes,costs,economy,safety,recreation,residency)
+function S = ITHK_process_webinput(measure,lat,lon,implementation,len,vol,fill,time,name,slr,coast,eco,dunes,costs,economy,safety,recreation,residency,CLRdata)
 
 % %% Add info from default files
 % D = dir([S.settings.outputdir '*.GRO']);
@@ -35,7 +35,8 @@ id_gro = find(measure==2);
 id_rev = find(measure==3);
 id_distrsupp = find(measure==4);
 id_distrsupp_single = find(measure==5);
-su=0;gr=0;rev=0;%be=0;distr=0;% counters per measure
+su=0;gr=0;rev=0;
+%be=0;distr=0;% counters per measure
 if ~isempty(measure)
     for ii = 1:length(measure)
         if ismember(ii,id_contsupp)||ismember(ii,id_singlesupp)||ismember(ii,id_distrsupp)||ismember(ii,id_distrsupp_single)
@@ -117,10 +118,13 @@ if ~isempty(implementation)
     if length(implementation(:,1))>1
          implementation =  implementation';
     end
-    S.phases = unique([0 implementation yrstop]);
+    S.phases = unique([0 implementation yrstop CLRdata.to-CLRdata.from(1)]);
+elseif length(CLRdata.to)>1
+    S.phases = [0 CLRdata.to-CLRdata.from(1)];
 else
     S.phases = 0;
 end
+S.initphases = [CLRdata.from-CLRdata.from(1)];
 
 %% Add measures per phase
 % Get start times
@@ -144,11 +148,16 @@ idssup = [];idsgro = [];idsrev = [];
 for ii = 1:length(S.phases)
     S.phase(ii).SOSfile = '';S.phase(ii).GROfile = '';S.phase(ii).REVfile = '';
 end
+S.userdefined = [];
 
 start = S.phases;
 stop = [S.phases(2:end) S.duration];
 % Add measures to phases based on start times
 for ii = 1:length(S.phases)
+    phaseid = find(ismember(S.initphases,S.phases(ii)));
+    if ~isempty(phaseid)
+        S.phase(ii).ini = {CLRdata.GRO{phaseid},CLRdata.SOS{phaseid},CLRdata.REV{phaseid},CLRdata.OBW{phaseid}};
+    end    
     S.phase(ii).start = start(ii);
     S.phase(ii).stop = stop(ii);
     idssup = find(ismember(supstart,S.phases(ii)));
@@ -164,47 +173,47 @@ for ii = 1:length(S.phases)
                 % If nourishment is continuous, nourishment should be taken
                 % into account in every phase after implementation
                 for kk=ii:length(S.phases)
-                    S.phase(kk).SOSfilecont = '1HOTSPOTSIT_cont.sos';
+                    S.phase(kk).SOSfilecont = 'nourishment_cont.sos';
                 end
                 S.phase(ii).supcat{jj} = 'distr';
             else
                 % If nourishment is continuous, nourishment should be taken
                 % into account in every phase after implementation
                 for kk=ii:length(S.phases)
-                    S.phase(kk).SOSfilecont = '1HOTSPOTSIT_cont.sos';
+                    S.phase(kk).SOSfilecont = 'nourishment_cont.sos';
                 end
                 S.phase(ii).supcat{jj} = 'cont';
             end 
-            S.phase(ii).SOSfile = ['1HOTSPOTS',num2str(ii),'IT.sos'];
+            S.phase(ii).SOSfile = ['nourishment',num2str(ii),'.sos'];
             S.phase(ii).supids = idssup;
-            %S.nourishment(idssup(jj)).filename = ['1HOTSPOTS',num2str(ii),'IT.sos'];
+            %S.nourishment(idssup(jj)).filename = ['1HOTSPOTS',num2str(ii),'IT.sos'];           
         end
     elseif isfield(S.phase(ii),'SOSfilecont')
-           S.phase(ii).SOSfile ='1HOTSPOTSIT_cont.sos';
+           S.phase(ii).SOSfile ='nourishment_cont.sos';
     else
-        S.phase(ii).SOSfile = 'BASIS.sos';    
+        S.phase(ii).SOSfile = [CLRdata.SOS{1} '.SOS'];    
     end
     if ~isempty(idsgro)
         for kk=ii:length(S.phases)
-            S.phase(kk).GROfile = ['BRIJN90A' num2str(ii) '.GRO'];
+            S.phase(kk).GROfile = ['groyne' num2str(ii) '.GRO'];
             S.phase(kk).groids = idsgro;
         end
-        for jj=1:length(idsgro)
-            S.groyne(idsgro(jj)).filename = ['BRIJN90A' num2str(ii) '.GRO'];
+        for rr=1:length(idsgro)
+            S.groyne(idsgro(rr)).filename = ['groyne' num2str(ii) '.GRO'];
         end
     elseif isempty(S.phase(ii).GROfile)
-        S.phase(ii).GROfile = ['BASIS.GRO'];
+        S.phase(ii).GROfile = [CLRdata.GRO{1} '.GRO'];  
     end
     if ~isempty(idsrev)
         for kk=ii:length(S.phases)
-            S.phase(kk).REVfile = ['HOLLANDCOAST' num2str(ii) '.REV'];
+            S.phase(kk).REVfile = ['revetment' num2str(ii) '.REV'];
             S.phase(kk).revids = idsrev;
         end
-        for jj=1:length(idsrev)
-            S.revetment(idsrev(jj)).filename = ['HOLLANDCOAST' num2str(ii) '.REV'];
+        for rr=1:length(idsrev)
+            S.revetment(idsrev(rr)).filename = ['revetment' num2str(ii) '.REV'];
         end
     elseif isempty(S.phase(ii).REVfile)
-        S.phase(ii).REVfile = ['BASIS.REV'];
+        S.phase(ii).REVfile = [CLRdata.REV{1} '.REV']; 
     end
 end
 
