@@ -61,11 +61,12 @@ function varargout = ncgen_makefinal(ncpath, varargin)
 % $Keywords: $
 
 %%
-username = java.lang.System.getProperty('user.name');
+username = char(java.lang.System.getProperty('user.name'));
 OPT = struct(...
     'datefmt', 'yyyy-mm-ddTHH:MMZ',... % date format
     'message', sprintf('processing level changed to final by %s', username),...
-    'processing_level', 'final');
+    'processing_level', 'final',...
+    'verbose', true);
 
 OPT = setproperty(OPT, varargin);
 
@@ -76,7 +77,7 @@ D = dir2(ncpath,...
 
 %%
 % fix date beforehand to make it consistent throughout the whole dataset
-formatted_date = datestr(nowutc, datefmt);
+formatted_date = datestr(nowutc, OPT.datefmt);
 for i = 1:length(D)
     ncfile = fullfile(D(i).pathname, D(i).name);
     historyatt = nc_attget(ncfile, nc_global, 'history');
@@ -84,4 +85,5 @@ for i = 1:length(D)
     nc_attput(ncfile, nc_global, 'processing_level', OPT.processing_level);
     nc_attput(ncfile, nc_global, 'date_modified', formatted_date)
     nc_attput(ncfile, nc_global, 'date_issued', formatted_date)
+    fprintf('%s: %s ""\n', formatted_date, OPT.message, ncfile)
 end
