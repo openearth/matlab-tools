@@ -136,6 +136,10 @@ if  ~isfield(settings,'xlab');        settings.xlab = '';           end
 if  ~isfield(settings,'ylab');        settings.ylab = '';           end
 if  ~isfield(settings,'marker');      settings.marker = 'none';     end
 if  ~isfield(settings,'linestyle');   settings.linestyle = '-';     end
+if  ~isfield(settings,'linewidth');      settings.linewidth= 1;        end
+if  ~isfield(settings,'fontsize');       settings.fontsize = 8;        end
+if  ~isfield(settings,'backgroundcolor');settings.backgroundcolor=[0.95 0.95 0.95]; end
+if  ~isfield(settings,'axcolor');        settings.axcolor=[0.3 0.3 0.3]; end
 
 %% Check whether zoom box is indicated
 if      isfield(settings, 'xbox') & isfield(settings, 'ybox') & length(settings.xbox) == 2 & length(settings.ybox) == 2
@@ -172,7 +176,7 @@ if      isfield(settings, 'xbox') & isfield(settings, 'ybox') & length(settings.
         dynew = settings.D*dx/sqrt(dx^2+dy^2);
         xnew = [xx(1) xx(2) xx(2)-dxnew xx(1)-dxnew xx(1)];
         ynew = [yy(1) yy(2) yy(2)+dynew yy(1)+dynew yy(1)];
-        plot(xnew,ynew,'Color','k')
+        %plot(xnew,ynew,'Color','k','LineWidth',settings.linewidth)
 else    fprintf('Warning : no zoombox indicated for axis %1.0f, plot of total coastline.\n',settings.subfig)
 end
 
@@ -223,6 +227,7 @@ if      (isfield(settings, 'xbox') & isfield(settings, 'ybox') & length(settings
         return
 elseif  isfield(settings,'curaxis')  
         axes(settings.curaxis);
+        set(gca,'LineWidth',min(max(settings.linewidth-1,0.5),1));
 end
 if      strfind(lower(settings.orientation),'hor')
         xplot = xdist;
@@ -238,8 +243,8 @@ else    xplot = transport;
 end
 
 %% PLOT transport plot
-hline=plot(xplot,yplot,'Color',settings.color,'Marker',settings.marker,'LineStyle',settings.linestyle);hold on
-plot(x0,y0,'k'); hold on
+hline=plot(xplot,yplot,'Color',settings.color,'Marker',settings.marker,'LineStyle',settings.linestyle,'LineWidth',settings.linewidth);hold on
+plot(x0,y0,'Color','k','LineWidth',min(max(settings.linewidth-1,0.5),1)); hold on
 if      isfield(settings,'ylim') & ~isempty(settings.ylim)
         ylim(settings.ylim);
 else    ylim([min(yplot)-settings.offsety max(yplot)+settings.offsety]);
@@ -273,18 +278,18 @@ if  isfield(settings,'xid_hlight')
     for mm = 1:length(xid_hlight)
         for jj=1:2
             if  xdist(xid_hlight{mm}{jj})>reflimits(1) & xdist(xid_hlight{mm}{jj})<reflimits(2)
-                plot([plotX{mm,jj},plotX{mm,jj}],[plotY{mm,jj},plotY{mm,jj}],'Color',[0.3 0.3 0.3])
+                plot([plotX{mm,jj},plotX{mm,jj}],[plotY{mm,jj},plotY{mm,jj}],'Color',[0.3 0.3 0.3],'LineWidth',min(max(settings.linewidth-1,0.5),1))
             end
         end
-        fill([plotfill{mm}(1),plotfill{mm}(2),plotfill{mm}(2),plotfill{mm}(1),plotfill{mm}(1)],[plotfill{mm}(3),plotfill{mm}(3),plotfill{mm}(4),plotfill{mm}(4),plotfill{mm}(3)],[1 1 0.5]);
+        %fill([plotfill{mm}(1),plotfill{mm}(2),plotfill{mm}(2),plotfill{mm}(1),plotfill{mm}(1)],[plotfill{mm}(3),plotfill{mm}(3),plotfill{mm}(4),plotfill{mm}(4),plotfill{mm}(3)],[1 1 0.5]);
     end
 end
-xlabel(settings.xlab,'FontSize',8,'FontWeight','bold');
-ylabel(settings.ylab,'FontSize',8,'FontWeight','bold');
+xlabel(settings.xlab,'FontSize',settings.fontsize,'FontWeight','bold');
+ylabel(settings.ylab,'FontSize',settings.fontsize,'FontWeight','bold');
 box on
-set(gca,'XColor',[0.3 0.3 0.3]);set(gca,'YColor',[0.3 0.3 0.3]);
-set(gca,'Color',[0.95 0.95 0.95]);
-set(gca,'LineWidth',1);
-set(gca,'FontWeight','bold');set(gca,'FontSize',8);
-title(settings.title,'FontSize',8);
+set(gca,'XColor',settings.axcolor);set(gca,'YColor',settings.axcolor);
+set(gca,'Color',settings.backgroundcolor);
+set(gca,'FontWeight','bold');
+set(gca,'FontSize',settings.fontsize);
+title(settings.title,'FontSize',settings.fontsize);
 hold off;
