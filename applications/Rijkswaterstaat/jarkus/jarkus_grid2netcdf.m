@@ -97,8 +97,9 @@ STRINGSIZE = 100;
                          'Value',{'identifier','sum of area code (*1e6) and alongshore coordinate'});
     nc_addvar(filename, s);
     
-    [flag_values,flag_meanings]=jarkus_area_definition;
-     flag_meanings = str2line(flag_meanings,'s',' ');
+    flag_values = unique(grid.areaCode);
+    flag_meanings = rws_kustvak(flag_values);
+    flag_meanings = str2line(flag_meanings,'s',', ');
     
     s.Name      = 'areacode';
     s.Nctype    = nc_int;

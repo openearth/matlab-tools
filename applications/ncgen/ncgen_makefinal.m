@@ -85,5 +85,5 @@ for i = 1:length(D)
     nc_attput(ncfile, nc_global, 'processing_level', OPT.processing_level);
     nc_attput(ncfile, nc_global, 'date_modified', formatted_date)
     nc_attput(ncfile, nc_global, 'date_issued', formatted_date)
-    fprintf('%s: %s ""\n', formatted_date, OPT.message, ncfile)
+    fprintf('%s: %s "%s"\n', formatted_date, OPT.message, ncfile)
 end
