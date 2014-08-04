@@ -112,13 +112,19 @@ else
    while ~feof(fid)
    
       i = i + 1;
-   
-      S.DATA(i).name          = fscanf(fid,'%20c',1); 
-      S.DATA(i).interpolation = fscanf(fid,'%1s' ,1);
-      S.DATA(i).m             = fscanf(fid,'%i'  ,1);
-      S.DATA(i).n             = fscanf(fid,'%i'  ,1);
-      S.DATA(i).k             = fscanf(fid,'%i'  ,1);
-      S.DATA(i).type          = fscanf(fid,'%i'  ,1); % new
+      linedata = fgetl(fid);
+      [S.DATA(i).name, count, errmsg, nextindex] = sscanf(linedata,'%20c',1); 
+      linedata = linedata(nextindex:end);
+      [S.DATA(i).interpolation, count, errmsg, nextindex] = sscanf(linedata,'%1s' ,1);
+      linedata = linedata(nextindex:end);
+      [S.DATA(i).m, count, errmsg, nextindex] = sscanf(linedata,'%i'  ,1);
+      linedata = linedata(nextindex:end);
+      [S.DATA(i).n, count, errmsg, nextindex] = sscanf(linedata,'%i'  ,1);
+      linedata = linedata(nextindex:end);
+      [S.DATA(i).k, count, errmsg, nextindex] = sscanf(linedata,'%i'  ,1);
+      linedata = linedata(nextindex:end);
+      [S.DATA(i).type, count, errmsg, nextindex] = sscanf(linedata,'%i'  ,1); % new
+      linedata = linedata(nextindex:end);
       
      % if S.DATA(i).m==mmax+1
      %    S.DATA(i).m= mmax;
@@ -127,7 +133,7 @@ else
      %    S.DATA(i).n= nmax;
      % end
       
-      restofline = fgetl(fid); % read rest of line
+      restofline = linedata; % read rest of line
       
       if ~isempty(restofline)
       end
