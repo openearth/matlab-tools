@@ -136,7 +136,7 @@ elseif nargout>1
 end 
 
 %%
-function [names,coordCell]= kml_placemark_folder_read(p,varargin)
+function [names,coordCell,metadata]= kml_placemark_folder_read(p,varargin)
 
 if nargin==1
    nest = 1;
@@ -157,7 +157,7 @@ end
 %% ... recursively loop all folder
 if isfield(p,'Folder')
    for i=1:length(p.Folder)
-     [Dnames,DcoordCell]= kml_placemark_folder_read(p.Folder(i),nest+1);
+     [Dnames,DcoordCell,Dmetadata]= kml_placemark_folder_read(p.Folder(i),nest+1);
       names     = [names     Dnames    ];
       coordCell = [coordCell DcoordCell];
       metadata  = [metadata  Dmetadata ];
