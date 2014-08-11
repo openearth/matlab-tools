@@ -8,7 +8,7 @@
 
       h = waitbar(0,'Generate the nest administration','Color',[0.831 0.816 0.784]);
 
-      if nargin == 1
+      if nargin > 1
          %
          % Input specified through ui
          %
@@ -17,7 +17,7 @@
          %
          % Specify files here
          %
-         oetsetings;
+         oetsettings;
          addpath(genpath('..\general'));
          addpath(genpath('..\reawri'));
 
