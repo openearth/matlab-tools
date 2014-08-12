@@ -72,7 +72,7 @@ function data = godin_filter(data,varargin)
 
 %% Settings/Input
 % Sampling frequency in data
-if length(varargin{1}) == 1 % input is sampling frequency
+if length(varargin{1}) == 1 % input is sampling frequency [Hz]
     FS = varargin{1};
 else % input is time array
     FS   = 1/((varargin{1}(2)-varargin{1}(1))*24*60*60);
