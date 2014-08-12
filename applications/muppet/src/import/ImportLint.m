@@ -1,6 +1,6 @@
 function DataProperties=ImportLint(DataProperties,i)
 
-fi=tekal('open',[DataProperties(i).PathName DataProperties(i).FileName]);
+fi=tekal('open',[DataProperties(i).PathName DataProperties(i).FileName],'loaddata');
 
 [x,y]=landboundary('read',DataProperties(i).PolygonFile);
  
