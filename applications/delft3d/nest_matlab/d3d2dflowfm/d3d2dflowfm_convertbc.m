@@ -120,7 +120,7 @@ for i_pli = 1: length(filpli)
 
                     %% Find harmonic boundary number and side
                     i_harm = str2num(LINE.DATA{i_pnt,3}(index(3):index(3) + 3));
-                    if strcmpi      (LINE.DATA{i_pnt,3}(end     :end         ),'a');
+                    if strcmpi      (LINE.DATA{i_pnt,3}(end-2   :end-2       ),'a');
                         i_side = 1;
                     else
                         i_side = 2;

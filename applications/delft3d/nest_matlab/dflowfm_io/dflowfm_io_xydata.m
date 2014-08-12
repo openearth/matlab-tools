@@ -124,12 +124,12 @@ case 'write'
 
                % xy string data (stations for example
                for irow = 1: size(LINE(iline).DATA,1)
-                   fprintf(fid,'%14.8e %14.8e %s \n',LINE(iline).DATA{irow,1},LINE(iline).DATA{irow,2},LINE(iline).DATA{irow,3});
+                   fprintf(fid,'%14.9e %14.9e %s \n',LINE(iline).DATA{irow,1},LINE(iline).DATA{irow,2},LINE(iline).DATA{irow,3});
                end
            else
                % xyz data
                for irow = 1: size(LINE(iline).DATA,1)
-                   fprintf(fid,'%14.8e %14.8e %14.8e \n',LINE(iline).DATA{irow,1},LINE(iline).DATA{irow,2},LINE(iline).DATA{irow,3});
+                   fprintf(fid,'%14.9e %14.9e %14.9e \n',LINE(iline).DATA{irow,1},LINE(iline).DATA{irow,2},LINE(iline).DATA{irow,3});
                end
            end
        else
@@ -141,7 +141,7 @@ case 'write'
            else
                % only x and y values
                for icol = 1: nrows
-                  fprintf(fid,'%14.6e  %14.6e  \n',LINE(iline).DATA{icol,1},LINE(iline).DATA{icol,2});
+                  fprintf(fid,'%14.9e  %14.9e  \n',LINE(iline).DATA{icol,1},LINE(iline).DATA{icol,2});
                end
            end
        end
