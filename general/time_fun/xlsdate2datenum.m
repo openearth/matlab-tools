@@ -75,14 +75,20 @@ elseif iscell(excelDates)
             matlabDateFmt = 'dd/mm/yyyy';
         case 'yyyy-MM-dd'
             matlabDateFmt = 'yyyy-mm-dd';
+        case 'dd-MM-yyyy'
+            matlabDateFmt = 'dd-mm-yyyy';            
+        case 'M/d/yyyy'
+            matlabDateFmt = 'mm/dd/yyyy';
         otherwise
-            error('Unsupported short date ''%s'', change your systems regional settings to use ''yyyy-MM-dd'' or ''dd/MM/yyyy''',shortDateFmt)
+            error('Unsupported short date ''%s'', change your systems regional settings to use ''yyyy-MM-dd'', ''dd/MM/yyyy'' or ''dd-MM-yyyy''',shortDateFmt)
     end
     
     longTimeFmt = winqueryreg('HKEY_CURRENT_USER', 'Control Panel\International', 'sTimeFormat');
     switch longTimeFmt
         case 'HH:mm:ss'
             matlabtimeFmt = 'HH:MM:SS';
+        case 'h:mm:ss tt'
+            matlabtimeFmt = 'HH:MM:SS PM';
         otherwise
             error('Unsupported long time ''%s'', consider using ''hh:mm:ss''',longTimeFmt)
     end
@@ -98,12 +104,14 @@ elseif iscell(excelDates)
     
     matlabDates     = nan(size(excelDates));
     
-    n = lengths == lengthWithDate;
+    % some date formats don't have leading zero for month, day or hour. So
+    % add 3 to compensate for this
+    n = lengths + 3 >= lengthWithDate;
     if any(n)
         matlabDates(n) = datenum(excelDates(n),fmtWithTime);
     end
     
-    n = lengths == lengthNoDate;
+    n = lengths <= lengthNoDate;
     if any(n)
         matlabDates(n) = datenum(excelDates(n),fmtNoTime);
     end
