@@ -7,7 +7,7 @@ classdef xls < oop.handle_light
 % file) is reused and only updated when a differen workbook is opened.
 %
 %   Methods for class xls:
-%   open  read  write  save  getWorksheets  getUsedRange
+%   open  read  write  clear  save  getWorksheets  getUsedRange
 %
 %   Example
 %     % open instance of xls
@@ -267,5 +267,23 @@ classdef xls < oop.handle_light
             obj.data_written = true;
         end
         % write(obj,data,sheet,range)
+        
+        function clear(obj,sheet,range)
+            obj.open;
+            TargetSheet = get(obj.excel.sheets,'item',sheet);
+            %Activate silently fails if the sheet is hidden
+            set(TargetSheet, 'Visible','xlSheetVisible');
+            % activate worksheet
+            Activate(TargetSheet);
+            if nargin < 3
+                range = obj.getUsedRange(sheet);
+            end
+            Select(Range(obj.excel,range));
+            DataRange = get(obj.excel,'Selection');
+            %Clear range
+            DataRange.ClearContents
+            obj.data_written = true;
+       end
+        
     end
 end
