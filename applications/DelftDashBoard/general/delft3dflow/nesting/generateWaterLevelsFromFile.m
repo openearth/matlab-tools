@@ -158,7 +158,7 @@ for it=it0:it1
     %%%%%%%%%%%%  j.lencart@ua.pt        14/05/2013      %%%%%%%%%%%%%%%%%%%%%%%%%%%
     wl00=internaldiffusion(wl00);
     %    wl00=interp2(lon360,s.lat(ilat1:ilat2),wl00,x,y);
-    wl00=griddata(xp, yp , double(wl00), x , y);
+    wl00=griddata(double(xp), double(yp) , double(wl00), double(x) , double(y));
     wl0(:,:,nt)=wl00;
 end
 t=t0:dt/1440:t1;
@@ -166,8 +166,8 @@ t=t0:dt/1440:t1;
 for j=1:nr
     wl111(isnan(squeeze(wl0(j,1,:))))=0;
     wl222(isnan(squeeze(wl0(j,2,:))))=0;
-    wl0(j,1,:)=wl111;
-    wl0(j,2,:)=wl222;
+    if ~isempty(wl111); wl0(j,1,:)=wl111; end
+    if ~isempty(wl222); wl0(j,2,:)=wl222; end
     wl(j,1,:) = spline(times,squeeze(wl0(j,1,:)),t);
     wl(j,2,:) = spline(times,squeeze(wl0(j,2,:)),t);
 end
