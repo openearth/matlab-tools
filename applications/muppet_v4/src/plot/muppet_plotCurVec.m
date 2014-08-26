@@ -58,7 +58,7 @@ end
 
 edgecolor=colorlist('getrgb','color',opt.edgecolor);
 
-if strcmpi(opt.plotroutine,'plotcoloredcurvedarrows')
+if strcmpi(opt.plotroutine,'colored curved arrows')
     
     % Get rgb values
     speed=len/opt.curveclength;
