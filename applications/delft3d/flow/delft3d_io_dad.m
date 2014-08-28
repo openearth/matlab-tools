@@ -6,6 +6,19 @@ function D = delft3d_io_dad(fname,varargin)
 %
 % loads contents of *.dad file into struct D
 %
+% Example: plot the dump areas based on info from .dad and .ldb files
+%   dad_fname = 'mydad.dad';
+%   dadldb_fname = 'mydad.ldb'
+%   dad = delf3d_io_dad(dad_fname);
+%   dadldb = tekal('read',dadldb_fname,'loaddata');
+%   figure; hold on;
+%   for i = 1:length(dadldb.Field)
+%       index = find(ismember(cellstr(dad.Dump.UniqueNames),dadldb.Field(i).Name));
+%       if index
+%           plot(dadldb.Field(i).Data(:,1),dadldb.Field(i).Data(:,2),'c-','linewidth',1);
+%       end
+%   end
+%
 %See also: delft3d, inivalue, tekal, landboundary
 
 %   --------------------------------------------------------------------
