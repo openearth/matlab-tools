@@ -6,7 +6,7 @@ function D = delft3d_io_dad(fname,varargin)
 %
 % loads contents of *.dad file into struct D
 %
-%See also: delft3d, inivalue
+%See also: delft3d, inivalue, tekal, landboundary
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2011 ARCADIS
@@ -15,8 +15,8 @@ function D = delft3d_io_dad(fname,varargin)
 %       <bart.grasmeijer@arcadis.nl>
 %
 %       ARCADIS
-%       Voorsterweg 28
-%       8316 PT Marknesse
+%       Hanzelaan 286
+%       8017 JJ,  Zwolle
 %       The Netherlands
 %
 %   This library is free software: you can redistribute it and/or modify
@@ -46,7 +46,7 @@ function D = delft3d_io_dad(fname,varargin)
 % $Author$
 % $Revision$
 % $HeadURL$
-% $Keywords: $
+% $Keywords: dredge dump dad$
 
 OPT.commentchar = '*';
 
@@ -58,6 +58,12 @@ end
 
 D = inivalue_dad(fname,struct('commentchar',OPT.commentchar));
 
+DumpNames = [];
+for i = 1:length(D.Dredge)
+    DumpNames = [DumpNames; {D.Dredge(i).Dump}];
+end
+D.Dump.Names = char(DumpNames);
+D.Dump.UniqueNames = unique(char(DumpNames),'rows');
 
 
 function varargout=inivalue_dad(fileName,varargin)
