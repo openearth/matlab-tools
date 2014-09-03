@@ -113,7 +113,7 @@ disp(['Astronomic boundary data file read: ',OPT.bcafile]);
 %% Date / time
 
 if ischar(OPT.refdate)
-    if length(OPT.redate)==8
+    if length(OPT.refdate)==8
         %% "yyyymmdd"
         %  --------------------
         ReferenceTime       = str2num(OPT.refdate);
@@ -182,7 +182,7 @@ for ibnd=1:length(BND.DATA)
             
             if isize == 1
                 id = (ibnd*isize)+(ibnd-1);              
-            elseif iszie == 2
+            elseif isize == 2
                 id = (ibnd*isize);
             end
             
