@@ -313,6 +313,9 @@ classdef MTestRunner < handle
                     obj.Tests(itest).run;
                 catch me
                     cd(startdir);
+                    TeamCity.postmessage('testFinished',...
+                        'name',obj.Tests(itest).Name);
+            
                     wrongtests(itest)=true;
                     obj.WrongTestDefs{end+1} = fullfile(obj.Tests(itest).FilePath,[obj.Tests(itest).FileName '.m']);
                 end
