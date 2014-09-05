@@ -88,6 +88,7 @@ OPT.scalelabelStyle     =  1;
 OPT.colorlabelStyle     =  [1 1 1];
 OPT.iconHotspot         = ''; %<hotSpot x="0.5"  y="0.5" xunits="fraction" yunits="fraction"/>
 OPT.iconColor           =  [];
+OPT.altitudeMode        = 'absolute'
 
 if nargin==0
     varargout = {OPT};
@@ -341,7 +342,7 @@ for ii=1:nn
         case 'latlon'
             coordinates = sprintf(' <Point><coordinates>% 2.8f,% 2.8f, 0</coordinates></Point>\n',lon(ii),lat(ii));
         case 'latlonz'
-            coordinates = sprintf(' <Point><altitudeMode>absolute</altitudeMode><coordinates>% 2.8f,% 2.8f, % 2.4f</coordinates></Point>\n',lon(ii),lat(ii),z(ii));
+            coordinates = sprintf(' <Point><altitudeMode>%s</altitudeMode><coordinates>% 2.8f,% 2.8f, % 2.4f</coordinates></Point>\n',OPT.altitudeMode,lon(ii),lat(ii),z(ii));
     end
     
     

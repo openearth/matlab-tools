@@ -64,7 +64,7 @@ function KMLPlaceMark(lat,lon,kmlName,varargin)
 OPT.name          = {''};
 OPT.description   = {''};
 OPT.Z             = zeros(size(lat));
-OPT.icon          = 'http://maps.google.com/mapfiles/kml/shapes/caution.png';
+OPT.icon          = 'http://maps.google.com/mapfiles/kml/paddle/blu-stars.png';
 [OPT, Set, Default] = setproperty(OPT, varargin{:});
 if nargin<3
     disp('Minimal number of arguments is 3 (lat, lon, filename)');
