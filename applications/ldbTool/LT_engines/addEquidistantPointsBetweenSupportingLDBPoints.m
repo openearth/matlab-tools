@@ -89,7 +89,7 @@ for cc=1:length(ldbCell)
     
 end
 
-out=rebuildLDB(outCell);
+out=rebuildLdb(outCell);
 
 if ~isstruct(ldb)
     outLDB=rebuildLdb(outCell);
