@@ -86,7 +86,7 @@ OPT = struct( ...
 
 OPT = setproperty(OPT, varargin{:});
 
-[fdir name fext] = fileparts(OPT.binary);
+[fdir, name, fext] = fileparts(OPT.binary);
 
 % make slashes unix compatible
 OPT.binary = strrep(OPT.binary, '\', '/');
