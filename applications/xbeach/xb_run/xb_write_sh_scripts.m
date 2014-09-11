@@ -161,6 +161,9 @@ switch upper(OPT.mpitype)
             fprintf(fid,'#$ -cwd\n');
             fprintf(fid,'#$ -N %s\n', OPT.name);
             fprintf(fid,'#$ -pe distrib %d\n', OPT.nodes);
+        else
+            fprintf(fid,'#$ -cwd\n');
+            fprintf(fid,'#$ -N %s\n', OPT.name);
         end
         
         switch OPT.cluster
