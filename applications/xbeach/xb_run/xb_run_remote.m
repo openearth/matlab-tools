@@ -207,7 +207,8 @@ fname = xb_write_sh_scripts(fpath, rpath, 'name', OPT.name, 'cluster', OPT.ssh_h
 
 [job_id job_name OPT.ssh_user OPT.ssh_pass messages] = ...
     xb_run_sh_scripts(rpath, fname, 'ssh_host', OPT.ssh_host, ...
-	'ssh_user', OPT.ssh_user, 'ssh_pass', OPT.ssh_pass, 'ssh_prompt', OPT.ssh_prompt,'queue',OPT.queuetype);
+	'ssh_user', OPT.ssh_user, 'ssh_pass', OPT.ssh_pass, 'ssh_prompt', OPT.ssh_prompt, ...
+    'queue',OPT.queuetype, 'name', OPT.name);
 
 %% create xbeach structure
 
