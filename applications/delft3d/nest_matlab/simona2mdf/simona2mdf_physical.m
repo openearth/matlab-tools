@@ -9,7 +9,7 @@ function mdf=simona2mdf_physical(S,mdf,~, varargin);
 OPT.nesthd_path = getenv('nesthd_path');
 OPT = setproperty(OPT,varargin{1:end});
 
-siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'GENERAL'});
+siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'GENERAL' 'PHYSICALPARAM'});
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.GENERAL.PHYSICALPARAM')
     params   = siminp_struc.ParsedTree.GENERAL.PHYSICALPARAM;
 else

@@ -37,7 +37,7 @@ end
 % Check for wind
 %
 
-siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'GENERAL'});
+siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'GENERAL' 'WIND'});
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.GENERAL.WIND')
    mdf.sub1(3) = 'w';
 end

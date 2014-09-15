@@ -9,7 +9,7 @@ function mdf = simona2mdf_wind (S,mdf,name_mdf, varargin);
 OPT.nesthd_path = getenv('nesthd_path');
 OPT = setproperty(OPT,varargin{1:end});
 
-siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'GENERAL'});
+siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'GENERAL' 'WIND'});
 
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.GENERAL.WIND')
     wind = siminp_struc.ParsedTree.GENERAL.WIND;
