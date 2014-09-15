@@ -1,11 +1,12 @@
-% OOP.INSPECTABLE enables interactive (GUI) setting of custom object properties, similar to the matlab inspector
+%INSPECTABLE enables interactive (GUI) setting of custom object properties, similar to the matlab inspector
+%
 %   Relies on metaprop to descript the meta properties of the class
 %   properties
 %   
 %   Example:
 %      metaprop.example
 % 
-%   See also oop, metaprop
+%See also oop, metaprop, setproperty
 
 %% Copyright notice
 %   --------------------------------------------------------------------

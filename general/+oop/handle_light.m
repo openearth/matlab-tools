@@ -1,6 +1,11 @@
 classdef handle_light < handle
-   % retrieved from http://stackoverflow.com/questions/6621850/is-it-possible-to-hide-the-methods-inherited-from-the-handle-class-in-matlab
-   % hides most unnecessary handle methods to reduce cluttering
+%handle_light remove unnecessary handle methods to reduce cluttering
+%
+% retrieved from http://stackoverflow.com/questions/6621850/is-it-possible-to-hide-the-methods-inherited-from-the-handle-class-in-matlab
+% hides most unnecessary handle methods to reduce cluttering
+%
+%See also: handle, oop
+
    methods(Hidden)
       function lh = addlistener(varargin)
          lh = addlistener@handle(varargin{:});

@@ -1,4 +1,8 @@
 classdef saveload < oop.setproperty
+%saveload save oop to file or read oop from file
+%
+%See also: oop
+
     methods
         function data = objSave(self)
             % Convert object to struct. 

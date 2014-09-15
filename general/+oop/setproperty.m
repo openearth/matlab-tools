@@ -1,6 +1,6 @@
-% OOP.SETPROPERTY adds setproperty-like capabilities to a class.
+%SETPROPERTY adds setproperty-like capabilities to a class.
 %    
-%   See also oop.handle_light, oop.inspectable
+%See also oop.handle_light, oop.inspectable, setproperty
 
 %% Copyright notice
 %   --------------------------------------------------------------------
