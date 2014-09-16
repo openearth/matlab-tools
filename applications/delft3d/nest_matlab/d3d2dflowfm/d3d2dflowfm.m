@@ -99,6 +99,12 @@ else
     mdu.Filbnd = '';
 end
 
+if simona2mdf_fieldandvalue(mdf,'filbc0')
+     simona2mdf_message('Generating D-Flow FM bc0      definition          ','Window','D3D2DFLOWFM Message');
+     mdu.Filbc0 = d3d2dflowfm_bnd2pli([path_mdf filesep mdf.filcco],[path_mdf filesep mdf.filbnd],name_mdu,...
+                                      'bc0',[path_mdf filesep mdf.filbc0]);
+end
+
 if mdu.physics.Salinity && simona2mdf_fieldandvalue(mdf,'filbnd')        % Salinity, write _sal pli files
     tmp = d3d2dflowfm_bnd2pli([path_mdf filesep mdf.filcco],[path_mdf filesep mdf.filbnd],name_mdu,'Salinity',true);
     mdu.Filbnd = [mdu.Filbnd tmp];
@@ -119,7 +125,8 @@ simona2mdf_message('Generating D-Flow FM Viscosity/diff.   information','Window'
 mdu = d3d2dflowfm_viscosity(mdf,mdu,name_mdu);
 
 simona2mdf_message('Generating External forcing file                  ','Window','D3D2DFLOWFM Message');
-mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filbnd'     ,mdu.Filbnd ,'Comments',true);
+mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filbnd'     ,mdu.Filbnd    ,'Comments',true);
+mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filbc0'     ,mdu.Filbc0    );
 mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filini_wl'  ,mdu.Filini_wl );
 mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filini_sal' ,mdu.Filini_sal);
 mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filini_tem' ,mdu.Filini_tem);

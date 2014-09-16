@@ -7,6 +7,7 @@ ext_force   = [];
 
 OPT.Comments  = false;
 OPT.Filbnd    = '';
+OPT.Filbc0    = '';
 OPT.Filini_wl = '';
 OPT.Filini_sal= '';
 OPT.Filini_tem= '';
@@ -71,6 +72,16 @@ if ~isempty(OPT.Filbnd)
 end
 
 %% sea level anomalies through additional time series file
+if ~isempty(OPT.Filbc0)
+    for i_bnd = 1: length(OPT.Filbc0)
+        i_force = i_force + 1;
+        ext_force(i_force).quantity = 'waterlevelbnd';
+        ext_force(i_force).filename = OPT.Filbc0{i_bnd};
+        ext_force(i_force).filetype = 9;
+        ext_force(i_force).method   = 3;
+        ext_force(i_force).operand  = '+';
+    end
+end
 
 %% Write initial conditions for salinity
 if ~isempty(OPT.Filini_wl )

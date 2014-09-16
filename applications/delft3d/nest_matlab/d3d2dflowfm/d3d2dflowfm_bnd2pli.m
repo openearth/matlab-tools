@@ -6,6 +6,7 @@ function varargout = d3d2dflowfm_bnd2pli(filgrd,filbnd,filpli,varargin)
 OPT.Salinity          = false;
 OPT.Temperature       = false;
 OPT.enclosure         = '';
+OPT.bc0               = '';
 OPT                   = setproperty(OPT,varargin);
 [path_pli,name_pli,~] = fileparts(filpli);
 
@@ -22,6 +23,12 @@ D           = delft3d_io_bnd('read',filbnd);
 mbnd        = D.m;
 nbnd        = D.n;
 no_bnd      = size(mbnd,1);
+
+%% Read the bc0 file if requested
+if ~isempty(OPT.bc0)
+    bct = ddb_bct_io('read',OPT.bc0);
+    Locations = {bct.Table.Location};
+end
 
 %% Determine (x,y)-values of boundary points
 for i_bnd=1:no_bnd
@@ -58,6 +65,7 @@ end
 %% Reshape the boundary locations into polylines
 irow         = 1;                     % is number of points in the polyline
 iline        = 1;                     % is number of polylines
+bc0(iline)   = false;
 
 %% Set initial boundary orientation
 dir_old = 'n';
@@ -79,9 +87,10 @@ for ibnd = 1 : no_bnd;
             if nbnd(ibnd,1) ~= nbnd(ibnd-1,2) diff = 1e6; end
         end
         if ~strcmp(dir,dir_old) || diff > 1
-            dir_old   = dir;
-            iline     = iline + 1;
-            irow      = 1;
+            dir_old    = dir;
+            iline      = iline + 1;
+            irow       = 1;
+            bc0(iline) = false;
         end
     end
 
@@ -103,13 +112,13 @@ for ibnd = 1 : no_bnd;
     LINE(iline).DATA{irow,1} = xb(ibnd,1);
     LINE(iline).DATA{irow,2} = yb(ibnd,1);
     string = sprintf(' %1s %1s ',D.DATA(ibnd).bndtype,D.DATA(ibnd).datatype);
-    if astronomical && ~OPT.Salinity && ~OPT.Temperature;
+    if astronomical && ~OPT.Salinity && ~OPT.Temperature && isempty(OPT.bc0);
         string = [string D.DATA(ibnd).labelA];
     end
-    if timeseries   ||  OPT.Salinity || OPT.Temperature;
+    if timeseries   ||  OPT.Salinity || OPT.Temperature || ~isempty(OPT.bc0);
         string = [string D.DATA(ibnd).name 'sideA'];
     end
-    if harmonic     && ~OPT.Salinity && ~OPT.Temperature;
+    if harmonic     && ~OPT.Salinity && ~OPT.Temperature && isempty(OPT.bc0);
         nr_harm = nr_harm + 1;
         string  = [string num2str(nr_harm,'%04i') 'sideA'];
     end
@@ -124,13 +133,13 @@ for ibnd = 1 : no_bnd;
        LINE(iline).DATA{irow,1} = xb(ibnd,2);
        LINE(iline).DATA{irow,2} = yb(ibnd,2);
        string = sprintf(' %1s %1s ',D.DATA(ibnd).bndtype,D.DATA(ibnd).datatype);
-       if astronomical && ~OPT.Salinity && ~OPT.Temperature;
+       if astronomical && ~OPT.Salinity && ~OPT.Temperature && isempty(OPT.bc0);
            string = [string D.DATA(ibnd).labelB];
        end
-       if timeseries   || OPT.Salinity || OPT.Temperature;
+       if timeseries   || OPT.Salinity || OPT.Temperature || ~isempty(OPT.bc0);
            string = [string D.DATA(ibnd).name 'sideB'];
        end
-       if harmonic     && ~OPT.Salinity && ~OPT.Temperature;
+       if harmonic     && ~OPT.Salinity && ~OPT.Temperature && isempty(OPT.bc0);
            string  = [string num2str(nr_harm,'%04i') 'sideB'];
        end
 
@@ -139,19 +148,30 @@ for ibnd = 1 : no_bnd;
        LINE(iline).DATA{irow,3} = string;
     end
     irow = irow + 1;
+
+    %% Check if sea level anomolies are requested for this polygon (at least one boundary with additional signal)
+    if ~isempty(OPT.bc0)
+        if ~isempty(strmatch(D.DATA(i_bnd).name,Locations))
+            bc0(iline) = true;
+        end
+    end
 end
 
 %% Write the pli-files for the separate polygons
-
 for ipol = 1: length(LINE)
 
     %
     % Blockname = name of the file
     %
 
-    if ~OPT.Salinity && ~OPT.Temperature
+    if ~OPT.Salinity && ~OPT.Temperature && isempty(OPT.bc0)
        LINE(ipol).Blckname=[name_pli '_' num2str(ipol,'%3.3i')];
        dflowfm_io_xydata ('write',[filpli '_' num2str(ipol,'%3.3i') '.pli'],LINE(ipol));
+    elseif ~isempty(OPT.bc0)
+        if bc0(ipol)
+            LINE(ipol).Blckname=[name_pli '_' num2str(ipol,'%3.3i') '_bc0'];
+            dflowfm_io_xydata ('write',[filpli '_' num2str(ipol,'%3.3i') '_bc0.pli'],LINE(ipol));
+        end
     elseif OPT.Salinity
        LINE(ipol).Blckname=[name_pli '_' num2str(ipol,'%3.3i') '_sal'];
        dflowfm_io_xydata ('write',[filpli '_' num2str(ipol,'%3.3i') '_sal.pli'],LINE(ipol));
@@ -171,7 +191,7 @@ end
 
 % now, write all polylines (only for hydrodynamic bc)
 
-if ~OPT.Salinity && ~OPT.Temperature
+if ~OPT.Salinity && ~OPT.Temperature && isempty(OPT.bc0)
    dflowfm_io_xydata ('write',[filpli '_all.pli'],LINE);
 end
 

@@ -7,9 +7,11 @@ filpli = [];
 
 %% Find the open hydrodynamic boundaries
 for i_force = 1: length(ext_force)
-    if ~isempty(strfind(ext_force(i_force).quantity,'bnd')) &&  ...
-        isempty(strfind(ext_force(i_force).quantity,'salinity'))
-        no_bnd = no_bnd + 1;
+    if ~isempty(strfind(ext_force(i_force).quantity,'bnd'        )) && ...
+        isempty(strfind(ext_force(i_force).quantity,'salinity'   )) && ...
+        isempty(strfind(ext_force(i_force).quantity,'temperature')) && ...
+        strcmpi(ext_force(i_force).operand,'O')
+        no_bnd        = no_bnd + 1;
         index(no_bnd) = i_force;
     end
 end
@@ -43,6 +45,34 @@ if simona2mdf_fieldandvalue(mdf,'filbct')
     %% Time series bc
     d3d2dflowfm_convertbc ([mdf.pathd3d filesep mdf.filbct],filpli,mdu.pathmdu,'Series'      ,true,'Sign',true);
 end
+
+%% Same story, this time for sea level anomalies
+no_bnd  = 0;
+filpli = [];
+
+%% Find the open bc0 boundaries
+for i_force = 1: length(ext_force)
+    if ~isempty(strfind(ext_force(i_force).quantity,'bnd'        )) && ...
+        isempty(strfind(ext_force(i_force).quantity,'salinity'   )) && ...
+        isempty(strfind(ext_force(i_force).quantity,'temperature')) && ...
+        strcmpi(ext_force(i_force).operand,'+')
+        no_bnd        = no_bnd + 1;
+        index(no_bnd) = i_force;
+    end
+end
+
+%% Make the list of pli files
+for i_bnd = 1: no_bnd
+    filpli{i_bnd} = [mdu.pathmdu filesep ext_force(index(i_bnd)).filename];
+end
+
+%% Convert sea level anomolies boundaries
+if simona2mdf_fieldandvalue(mdf,'filbc0')
+
+    %% Time series bc
+    d3d2dflowfm_convertbc ([mdf.pathd3d filesep mdf.filbc0],filpli,mdu.pathmdu,'Series'      ,true,'Sign',true);
+end
+
 
 %% Same story, this time for the salinity boundaries boundaries
 no_bnd  = 0;
