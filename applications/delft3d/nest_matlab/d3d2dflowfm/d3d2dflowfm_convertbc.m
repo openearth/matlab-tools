@@ -47,7 +47,7 @@ for i_pli = 1: length(filpli)
     for i_pnt = 1: size(LINE.DATA,1)
         SERIES   = [];
         i_output = i_output + 1;
-        
+
         %% Get the type of forcing for this point
         if size(LINE.DATA,2) == 3;
             index =  d3d2dflowfm_decomposestr(LINE.DATA{i_pnt,3});
@@ -55,7 +55,7 @@ for i_pli = 1: length(filpli)
             continue
         end
         sign = str2num(LINE.DATA{i_pnt,3}(index(end-1):index(end) - 1));
-        if OPT.Salinity || OPT.Temperature
+        if OPT.Salinity || OPT.Temperature || OPT.Series
             b_type  = 't';
         else
             b_type = lower(strtrim(LINE.DATA{i_pnt,3}(index(2):index(3) - 1)));
@@ -120,7 +120,7 @@ for i_pli = 1: length(filpli)
 
                     %% Find harmonic boundary number and side
                     i_harm = str2num(LINE.DATA{i_pnt,3}(index(3):index(3) + 3));
-                    if strcmpi      (LINE.DATA{i_pnt,3}(end-2   :end-2       ),'a');
+                    if strcmpi      (LINE.DATA{i_pnt,3}(end -2  :end -2),'a');
                         i_side = 1;
                     else
                         i_side = 2;
@@ -138,7 +138,7 @@ for i_pli = 1: length(filpli)
                     end
                     SERIES.Values = num2cell(SERIES.Values);
                 end
-                
+
             %% Time series forcing data
             case 't'
                 if OPT.Series
@@ -191,12 +191,12 @@ for i_pli = 1: length(filpli)
                             SERIES.Values(:,2)  = sign*mean(bct.Table(nr_table).Data(:,2       :2        + (kmax - 1)),2);
                         end
                     end
-                    
-                    % Temporary fix! Always positive discharges! 
+
+                    % Temporary fix! Always positive discharges!
                     % (only for hydrodynamic bc if sign is not computed)
-                    % For salinity and temperature also specify sign = true (quan_bct does not contail 14 characters!) 
+                    % For salinity and temperature also specify sign = true (quan_bct does not contail 14 characters!)
                     if ~OPT.Sign
-                        if strcmpi(quan_bct(1:14),'flux/discharge') || strcmpi(quan_bct(1:14),'totaldischarge'); 
+                        if strcmpi(quan_bct(1:14),'flux/discharge') || strcmpi(quan_bct(1:14),'totaldischarge');
                             SERIES.Values  = abs(SERIES.Values);
                         end
                     end
@@ -215,7 +215,7 @@ for i_pli = 1: length(filpli)
             % Write series
             dflowfm_io_series( 'write',filename{i_output},SERIES);
             clear SERIES;
-            
+
             % Remove boundary conditions information from the pli-file
             if i_pnt == size(LINE.DATA,1);
                 readData           = dflowfm_io_xydata('read' ,filpli{i_pli});
@@ -223,7 +223,7 @@ for i_pli = 1: length(filpli)
                 dflowfm_io_xydata('write' ,filpli{i_pli} ,readData);
             end
         end
-    end 
+    end
 end
 
 varargout{1} = filename;
