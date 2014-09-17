@@ -175,12 +175,15 @@ TimeStep       = 1;
   d3dcen.kcu =        max(1,conv2([double(d3du.kcu(:,1))>0 double(d3du.kcu>0)],[1 1],'valid'));
   d3dcen.kcv =        max(1,conv2([double(d3dv.kcv(1,:))>0;double(d3dv.kcv>0)],[1;1],'valid'));
   
-  d3dcen.zwl(d3dcen.kfu==0 & d3dcen.kfv==0)=NaN;
+  d3dcen.zwl(d3dcen.kfu==1 & d3dcen.kfv==1)=NaN;
+  d3dcen.mask = ~(d3dcen.kfu==1 & d3dcen.kfv==1);
   
 %% Subset center data and extrapolate to corner data
   
      G.cen.zwl = d3dcen.zwl(2:end-1,2:end-1);
      G.cen.zwl_comment = 'Waterlevel at centers with application of time dependent velocity point masks';
+     G.cen.mask = d3dcen.mask(2:end-1,2:end-1);
+     G.cen.mask_comment = 'wet = true; dry = false';
 
   if P.cor.zwl 
     sz = size(G.cen.zwl);
