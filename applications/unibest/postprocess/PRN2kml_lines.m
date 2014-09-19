@@ -126,7 +126,7 @@ function PRN2kml_lines(PRNfile,MDAfile,timesteps,reftime,vectorscale,KMLfile,EPS
         S0.name      = ['col0'];
         S0.lineColor = [0.3 0.3 0.3];
 
-        [lon,lat] = convertCoordinates(x,y,EPSG,'CS1.code',28992,'CS2.name','WGS 84','CS2.type','geo');
+        [lon,lat] = convertCoordinates(x,y,EPSG,'CS1.code',EPSGcode,'CS2.name','WGS 84','CS2.type','geo');
 
         if tt==1
         kml         = [kml KML_style(S0)];
