@@ -55,7 +55,7 @@ for i_pli = 1: length(filpli)
             continue
         end
         sign = str2num(LINE.DATA{i_pnt,3}(index(end-1):index(end) - 1));
-        if OPT.Salinity || OPT.Temperature || OPT.Series
+        if OPT.Salinity || OPT.Temperature 
             b_type  = 't';
         else
             b_type = lower(strtrim(LINE.DATA{i_pnt,3}(index(2):index(3) - 1)));

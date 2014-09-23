@@ -98,13 +98,14 @@ for ibnd = 1 : no_bnd;
     astronomical = false;
     timeseries   = false;
     harmonic     = false;
-    if strcmpi(D.DATA(ibnd).datatype,'a');
+    if strcmpi(D.DATA(ibnd).datatype,'a') && isempty(OPT.bc0);
         astronomical  = true;
     end
-    if strcmpi(D.DATA(ibnd).datatype,'t');
-        timeseries    = true;
+    if strcmpi(D.DATA(ibnd).datatype,'t') || ~isempty(OPT.bc0);
+        D.DATA(ibnd).datatype = 'T';
+        timeseries            = true;
     end
-    if strcmpi(D.DATA(ibnd).datatype,'h');
+    if strcmpi(D.DATA(ibnd).datatype,'h') && isempty(OPT.bc0);
         harmonic      = true;
     end
 
@@ -112,13 +113,13 @@ for ibnd = 1 : no_bnd;
     LINE(iline).DATA{irow,1} = xb(ibnd,1);
     LINE(iline).DATA{irow,2} = yb(ibnd,1);
     string = sprintf(' %1s %1s ',D.DATA(ibnd).bndtype,D.DATA(ibnd).datatype);
-    if astronomical && ~OPT.Salinity && ~OPT.Temperature && isempty(OPT.bc0);
+    if astronomical && ~OPT.Salinity && ~OPT.Temperature 
         string = [string D.DATA(ibnd).labelA];
     end
-    if timeseries   ||  OPT.Salinity || OPT.Temperature || ~isempty(OPT.bc0);
+    if timeseries   ||  OPT.Salinity || OPT.Temperature 
         string = [string D.DATA(ibnd).name 'sideA'];
     end
-    if harmonic     && ~OPT.Salinity && ~OPT.Temperature && isempty(OPT.bc0);
+    if harmonic     && ~OPT.Salinity && ~OPT.Temperature 
         nr_harm = nr_harm + 1;
         string  = [string num2str(nr_harm,'%04i') 'sideA'];
     end
@@ -133,13 +134,13 @@ for ibnd = 1 : no_bnd;
        LINE(iline).DATA{irow,1} = xb(ibnd,2);
        LINE(iline).DATA{irow,2} = yb(ibnd,2);
        string = sprintf(' %1s %1s ',D.DATA(ibnd).bndtype,D.DATA(ibnd).datatype);
-       if astronomical && ~OPT.Salinity && ~OPT.Temperature && isempty(OPT.bc0);
+       if astronomical && ~OPT.Salinity && ~OPT.Temperature 
            string = [string D.DATA(ibnd).labelB];
        end
-       if timeseries   || OPT.Salinity || OPT.Temperature || ~isempty(OPT.bc0);
+       if timeseries   || OPT.Salinity || OPT.Temperature 
            string = [string D.DATA(ibnd).name 'sideB'];
        end
-       if harmonic     && ~OPT.Salinity && ~OPT.Temperature && isempty(OPT.bc0);
+       if harmonic     && ~OPT.Salinity && ~OPT.Temperature 
            string  = [string num2str(nr_harm,'%04i') 'sideB'];
        end
 

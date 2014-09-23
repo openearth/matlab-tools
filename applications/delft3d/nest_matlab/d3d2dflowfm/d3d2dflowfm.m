@@ -14,7 +14,7 @@ Gen_inf    = {'This tool converts a Delft3D-Flow mdf file into an D-Dlow FM mdu 
               ' '                                                                                                  ;
               'PLEASE CHECK CAREFULLY( USE AT OWN RISK)'                                                           ;                                                                                        ' '
               ' '                                                                                                  ;
-              'If you encounter problems, please do not hesitate to contact me'                                    ;                                                    ; 
+              'If you encounter problems, please do not hesitate to contact me'                                    ;                                                    ;
               'Theo.vanderkaaij@deltares.nl'                                                                      };
 
 %% set path if necessary
@@ -76,6 +76,9 @@ mdu.geometry.NetFile = simona2mdf_rmpath(mdu.geometry.NetFile);
 simona2mdf_message('Generating D-Flow FM Area              information','Window','D3D2DFLOWFM Message');
 mdu = d3d2dflowfm_area     (mdf,mdu,name_mdu);
 
+simona2mdf_message('Generating D-Flow FM Dry Point         information','Window','D3D2DFLOWFM Message');
+mdu = d3d2dflowfm_dry      (mdf,mdu,name_mdu);
+
 simona2mdf_message('Generating D-Flow FM Thin Dam          information','Window','D3D2DFLOWFM Message');
 mdu = d3d2dflowfm_thd      (mdf,mdu,name_mdu);
 
@@ -103,6 +106,8 @@ if simona2mdf_fieldandvalue(mdf,'filbc0')
      simona2mdf_message('Generating D-Flow FM bc0      definition          ','Window','D3D2DFLOWFM Message');
      mdu.Filbc0 = d3d2dflowfm_bnd2pli([path_mdf filesep mdf.filcco],[path_mdf filesep mdf.filbnd],name_mdu,...
                                       'bc0',[path_mdf filesep mdf.filbc0]);
+else
+    mdu.Filbc0 = '';
 end
 
 if mdu.physics.Salinity && simona2mdf_fieldandvalue(mdf,'filbnd')        % Salinity, write _sal pli files
@@ -114,6 +119,9 @@ if mdu.physics.Temperature > 0 && simona2mdf_fieldandvalue(mdf,'filbnd') % Tempe
     tmp = d3d2dflowfm_bnd2pli([path_mdf filesep mdf.filcco],[path_mdf filesep mdf.filbnd],name_mdu,'Temperature',true);
     mdu.Filbnd = [mdu.Filbnd tmp];
 end
+
+simona2mdf_message('Generating D-Flow FM Sources                      ','Window','D3D2DFLOWFM Message');
+mdu = d3d2dflowfm_src       (mdf,mdu,name_mdu);
 
 simona2mdf_message('Generating D-Flow FM Initial Condition information','Window','D3D2DFLOWFM Message');
 mdu = d3d2dflowfm_initial  (mdf,mdu,name_mdu);
@@ -127,6 +135,7 @@ mdu = d3d2dflowfm_viscosity(mdf,mdu,name_mdu);
 simona2mdf_message('Generating External forcing file                  ','Window','D3D2DFLOWFM Message');
 mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filbnd'     ,mdu.Filbnd    ,'Comments',true);
 mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filbc0'     ,mdu.Filbc0    );
+mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filsrc'     ,mdu.Filsrc    );
 mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filini_wl'  ,mdu.Filini_wl );
 mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filini_sal' ,mdu.Filini_sal);
 mdu = d3d2dflowfm_genext   (mdu,name_mdu,'Filini_tem' ,mdu.Filini_tem);

@@ -15,3 +15,4 @@ if isfield(mdu,'Filwsvp'   ) mdu = rmfield(mdu,'Filwsvp'   ) ;end
 if isfield(mdu,'Filtem'    ) mdu = rmfield(mdu,'Filtem'    ) ;end
 if isfield(mdu,'Fileva'    ) mdu = rmfield(mdu,'Fileva'    ) ;end
 if isfield(mdu,'Filbc0'    ) mdu = rmfield(mdu,'Filbc0'    ) ;end
+if isfield(mdu,'Filsrc'    ) mdu = rmfield(mdu,'Filsrc'    ) ;end

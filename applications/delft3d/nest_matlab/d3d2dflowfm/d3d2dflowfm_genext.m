@@ -8,6 +8,7 @@ ext_force   = [];
 OPT.Comments  = false;
 OPT.Filbnd    = '';
 OPT.Filbc0    = '';
+OPT.Filsrc    = '';
 OPT.Filini_wl = '';
 OPT.Filini_sal= '';
 OPT.Filini_tem= '';
@@ -82,6 +83,20 @@ if ~isempty(OPT.Filbc0)
         ext_force(i_force).operand  = '+';
     end
 end
+
+%% sea level anomalies through additional time series file
+if ~isempty(OPT.Filsrc)
+    for i_src = 1: length(OPT.Filsrc)
+        i_force = i_force + 1;
+        ext_force(i_force).quantity = 'discharge_salinity_temperature_sorsin';
+        ext_force(i_force).filename = OPT.Filsrc{i_src};
+        ext_force(i_force).filetype = 9;
+        ext_force(i_force).method   = 3;
+        ext_force(i_force).operand  = 'O';
+        ext_force(i_force).area     = 0.0;
+    end
+end
+
 
 %% Write initial conditions for salinity
 if ~isempty(OPT.Filini_wl )
