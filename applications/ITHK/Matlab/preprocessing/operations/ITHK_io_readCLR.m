@@ -95,20 +95,20 @@ if sum(strcmpi(str,'(LAT-file)'))>0
 end
 for ii=1:CLRdata.n_phases
     str = strsplit(fgetl(fid),' ');
-    CLRdata.fase(ii)=str2double(str{2});
-    CLRdata.from(ii)=str2double(str{3});
-    CLRdata.to(ii)=str2double(str{4});
-    CLRdata.GKL{ii}=str{5}(2:end-1);
-    CLRdata.BCO{ii}=str{6}(2:end-1);
-    CLRdata.GRO{ii}=str{7}(2:end-1);
-    CLRdata.SOS{ii}=str{8}(2:end-1);
-    CLRdata.REV{ii}=str{9}(2:end-1);
-    CLRdata.OBW{ii}=str{10}(2:end-1);
-    CLRdata.BCI{ii}=str{11}(2:end-1);
+    CLRdata.fase(ii)=str2double(str{1});
+    CLRdata.from(ii)=str2double(str{2});
+    CLRdata.to(ii)=str2double(str{3});
+    CLRdata.GKL{ii}=str{4}(2:end-1);
+    CLRdata.BCO{ii}=str{5}(2:end-1);
+    CLRdata.GRO{ii}=str{6}(2:end-1);
+    CLRdata.SOS{ii}=str{7}(2:end-1);
+    CLRdata.REV{ii}=str{8}(2:end-1);
+    CLRdata.OBW{ii}=str{9}(2:end-1);
+    CLRdata.BCI{ii}=str{10}(2:end-1);
 end
 fgetl(fid);
 str=strsplit(fgetl(fid),' ');
-CLRdata.iaant =str2double(str{2});
-CLRdata.ifirst =str2double(str{3});
-CLRdata.ival =str2double(str{4});
+CLRdata.iaant =str2double(str{1});
+CLRdata.ifirst =str2double(str{2});
+CLRdata.ival =str2double(str{3});
 fclose(fid);
