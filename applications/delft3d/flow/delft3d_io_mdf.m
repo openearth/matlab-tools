@@ -30,8 +30,11 @@ function varargout=delft3d_io_mdf(cmd,varargin),
 % Comment lines are read but cannot not be written to mdf file. The
 % delft3d_io_mdf version is added as keyword, except when keyword 'stamp'=0
 %
-% To control the order of keywors in the mdf file, or to write onyl a subset,
+% To control the order of keywords in the mdf file, or to write only a subset,
 % use keyword selection, e.g.: delft3d_io_mdf('write',filename,'selection',{'runtxt','mnkmax'});
+%
+% For keywords that use multiple lines use sprintf to make a formatted string, for example:
+% DATA.tidfor = sprintf('%s\n%s\n%s','M2 S2 N2 K2#','         #K1 O1 P1 Q1#','         #MF MM SSA--');
 %
 % Storage flags for map data (trim only)
 %     SMhydr(1:6)  - water level, U, V, magnitude, direction, w/omega velocities
