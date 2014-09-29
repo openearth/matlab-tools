@@ -49,9 +49,18 @@ function [column_name, data_type,data_length] = jdb_getcolumns(conn, table, owne
 % high-level: do
 % ?? why does "" encapsulation not work here ??
 % somehow order is  reversed, so we reverse it back
-dbtype = class(conn);
-C      = textscan(dbtype, '%s', 'delimiter','.');
-dbtype = C{:}{1};
+% dbtype = class(conn);
+% C      = textscan(dbtype, '%s', 'delimiter','.');
+% dbtype = C{:}{1};
+C = textscan(class(conn), '%s', 'delimiter','.');
+C = C{:};
+if ismember('oracle',C)
+    dbtype = 'oracle';
+elseif ismember('postgresql',C)
+    dbtype = 'postgresql';    
+else
+    dbtype = 'unknown';
+end
 
 switch dbtype
     case 'oracle' 

@@ -34,7 +34,7 @@ OPT = setproperty(OPT,varargin);
 
    
 %% show existing contents
-[tables owners] = jdb_gettables(conn,'all',false);
+[tables, owners] = jdb_gettables(conn,'all',false);
 % add_table = 1;
 itab = find(ismember(OPT.table,tables));
 for ii = itab
@@ -52,7 +52,7 @@ end
 
 
 %% read a table
-[tables owners] = jdb_gettables(conn,'all',false);
+[tables, owners] = jdb_gettables(conn,'all',false);
 table = tables{3};
 owner = owners{3};
 T = jdb_table2struct(conn, table, owner); %, column_names, varargin)

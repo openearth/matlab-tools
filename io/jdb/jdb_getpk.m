@@ -29,9 +29,18 @@ function varargout = jdb_getpk(conn, table, varargin)
 % OPT = setproperty(OPT,varargin{:});
 
 %% list tables
-dbtype = class(conn);
-C      = textscan(dbtype, '%s', 'delimiter','.');
-dbtype = C{:}{1};
+% dbtype = class(conn);
+% C      = textscan(dbtype, '%s', 'delimiter','.');
+% dbtype = C{:}{1};
+C = textscan(class(conn), '%s', 'delimiter','.');
+C = C{:};
+if ismember('oracle',C)
+    dbtype = 'oracle';
+elseif ismember('postgresql',C)
+    dbtype = 'postgresql';    
+else
+    dbtype = 'unknown';
+end
 
 switch dbtype
     case 'oracle' 

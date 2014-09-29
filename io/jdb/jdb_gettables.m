@@ -1,4 +1,4 @@
-function [tables owners]= jdb_gettables(conn, varargin)
+function [tables, owners]= jdb_gettables(conn, varargin)
 %JDB_GETTABLES  List all tables in current database
 %
 %   List all tables in current database. Return a list with table names in
@@ -30,9 +30,18 @@ OPT.all = true;
 OPT = setproperty(OPT,varargin{:});
 
 %% list tables
-dbtype = class(conn);
-C      = textscan(dbtype, '%s', 'delimiter','.');
-dbtype = C{:}{1};
+% dbtype = class(conn);
+% C      = textscan(dbtype, '%s', 'delimiter','.');
+% dbtype = C{:}{1};
+C = textscan(class(conn), '%s', 'delimiter','.');
+C = C{:};
+if ismember('oracle',C)
+    dbtype = 'oracle';
+elseif ismember('postgresql',C)
+    dbtype = 'postgresql';    
+else
+    dbtype = 'unknown';
+end
 
 switch dbtype
     case 'oracle'        
@@ -43,11 +52,14 @@ switch dbtype
     otherwise
         sql = '';
 end
+
 tables = jdb_fetch(conn, sql);
 
 if size(tables,2)==2
-    owners  = tables(:,1);
+    owners = tables(:,1);
     tables = tables(:,2);
+else
+    owners  = repmat({''},size(tables));
 end
 
 % Postproces tablenames

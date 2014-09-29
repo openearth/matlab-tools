@@ -40,6 +40,7 @@ function conn = jdb_connectdb(db, varargin)
 
 %% read options
    OPT = struct( ...
+    'dbtype',          'postgresql',...
     'host',            'localhost', ...
     'port',            5432, ...
     'user',            '', ...
@@ -52,7 +53,7 @@ function conn = jdb_connectdb(db, varargin)
    OPT = setproperty(OPT,varargin{:});
 
 %% connect to database
-switch lower(db)
+switch lower(OPT.dbtype) % lower(db)
     case 'postgresql'
         url    = ['jdbc:postgresql://' OPT.host ':' num2str(OPT.port) '/' db];   
         driver = org.postgresql.Driver;

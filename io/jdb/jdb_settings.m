@@ -16,14 +16,14 @@ function varargout = jdb_settings(varargin)
 
 OPT.check = 0;
 OPT.quiet = 0;
-OPT.db    = 'oracle';
+OPT.dbtype = 'oracle';
 
 OPT = setproperty(OPT,varargin);
 
 %Get all java classpath's
 alljavaclasspath = path2os(javaclasspath('-all')); % can also be in static path in <matlabroot>/toolbox/local/classpath.txt
 
-switch lower(OPT.db)
+switch lower(OPT.dbtype)
     case 'postgresql'
         
         if any(strfind(version('-java'),'Java 1.6')) | ...

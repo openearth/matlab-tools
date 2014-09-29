@@ -29,7 +29,7 @@ function rs = jdb_fetch(conn, sql, varargin)
    % inspect conn object to find out whether is was created with
    % the licensed database toolbox or the JDCB driver directly.
    OPT.database_toolbox = 0;
-   try
+   try %#ok<TRYNC>
        if any(strfind(char(conn.Constructor),'mathworks'))
            OPT.database_toolbox = 1;
        end
@@ -51,7 +51,7 @@ function rs = jdb_fetch(conn, sql, varargin)
           while 1
               icol = icol + 1;
               try
-                 rs{count,icol}=rsraw.getDouble(icol);
+                 rs{count,icol}=rsraw.getDouble(icol); %#ok<*AGROW>
               catch
                  try
                     rs{count,icol}=rsraw.getInt(icol);

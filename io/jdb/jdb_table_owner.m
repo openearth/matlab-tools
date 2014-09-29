@@ -1,7 +1,7 @@
 function table = jdb_table_owner(table,owner)
 % Constructs a tablename including the owner (Oracle specific)
 
-    idx = ismember(owner,{'SYS' 'SYSTEM' 'MDSYS' 'XDB' 'OLAPSYS' 'APEX_030200' 'EXFSYS' 'CTXSYS'});
+    idx = ismember(owner,{'SYS' 'SYSTEM' 'MDSYS' 'XDB' 'OLAPSYS' 'APEX_030200' 'EXFSYS' 'CTXSYS' ''});
     if idx
         table = jdb_quote(table);
     else

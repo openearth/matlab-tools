@@ -40,7 +40,7 @@ OPT.column_name  = '';
 OPT = setproperty(OPT,varargin{:});
 
 % First select the available tables
-[tables owners] = jdb_gettables(conn,'all',OPT.all);
+[tables, owners] = jdb_gettables(conn,'all',OPT.all);
 
 % Check if passed tables are present
 if ~isempty(OPT.table)

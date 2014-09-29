@@ -49,13 +49,13 @@ if ischar(varargin{1})
     varargin{1} = cellstr(varargin{1});
 end
 
-if ~iscell(varargin{1})
-    error('argument 2 is not a char or cell: requested ')
-end
+% if ~iscell(varargin{1})
+%     error('argument 2 is not a char or cell: requested ')
+% end
 
-if ~isstruct(varargin{2})
-    error('argument 3 is not a struct.')
-end
+% if ~isstruct(varargin{2})
+%     error('argument 3 is not a struct.')
+% end
 
 %% built query
 % check table name with "
@@ -161,7 +161,12 @@ if isstruct(insert)
         % make loop for inserting combined numeric-char column vectors
         % (instead of scalars)
         for i=1:size(v{1},1)
-           v1 = cellfun(@(x) x(i,:),v,'UniformOutput',0);
+%            emidx = cellfun(@isempty,v(:,i));
+%            vt = v(~emidx,1);
+%            v1 = cellfun(@(x) x(i,:),vt,'UniformOutput',0);
+
+%            v1 = cellfun(@(x) x(i,:),v,'UniformOutput',0);  original
+           v1 = v(:,i);
            [v1{:}]      = jdb_value2sql(v1{:});
            if i==1
            strSQL      =  sprintf(' (%s) VALUES (%s) ', concat(f,', '), concat(v1, ', '));
