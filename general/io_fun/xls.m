@@ -281,7 +281,7 @@ classdef xls < oop.handle_light
             Select(Range(obj.excel,range));
             DataRange = get(obj.excel,'Selection');
             %Clear range
-            DataRange.ClearContents
+            DataRange.ClearContents;
             obj.data_written = true;
        end
         
