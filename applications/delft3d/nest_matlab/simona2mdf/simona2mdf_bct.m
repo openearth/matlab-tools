@@ -34,7 +34,7 @@ if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.FLOW.FORCINGS.TIMESERIES')
 
             ibnd_bct = ibnd_bct + 1;
             clear times values
-            if strcmpi(bnd.DATA(ibnd).bndtype,'C') && ~strcmpi(bnd.DATA(ibnd).profile,'3D Profile')
+            if strcmpi(bnd.DATA(ibnd).bndtype,'C') && strcmpi(bnd.DATA(ibnd).vert_profile,'3D Profile')
                 kmax = mdf.mnkmax(3);
             else
                 kmax = 1;
@@ -85,7 +85,7 @@ if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.FLOW.FORCINGS.TIMESERIES')
                 case{'c'}
                     quant='Current         (C)  ';
                     unit='[m/s]';
-                    profile = bnd.DATA(ibnd).profile;
+                    profile = bnd.DATA(ibnd).vert_profile;
                 case{'r'}
                     quant='Riemann         (R)  ';
                     unit='[m/s]';

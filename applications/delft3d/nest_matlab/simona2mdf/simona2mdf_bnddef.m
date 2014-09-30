@@ -110,7 +110,7 @@ for iopen = 1: length(bnddef.B)
                 if vel_prof.BOUXDIM
                     prf = '3D Profile';
                 end
-                if vel_prof.LOG_BOUNDARIES
+                if vel_prof.LOG_BOUNDARI
                     prf = 'Logarithmic';
                 end
             end

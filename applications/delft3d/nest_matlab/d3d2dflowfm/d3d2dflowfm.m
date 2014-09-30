@@ -19,8 +19,8 @@ Gen_inf    = {'This tool converts a Delft3D-Flow mdf file into an D-Dlow FM mdu 
 
 %% set path if necessary
 
-if ~isdeployed && any(which('setproperty'))
-   addpath(genpath('..\..\..\..\..\matlab'));
+if ~isdeployed || ~any(which('setproperty'))
+   oetsettings('quiet');
 end
 
 %% Check if the general information needs to be displayed

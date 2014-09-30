@@ -6,7 +6,7 @@ Gen_inf    = {'This tool converts a SIMONA siminp file into a Delft3D-Flow mdf f
               'with belonging attribute files'                                                                     ;
               ' '                                                                                                  ;
               'Not everything is supported:'                                                                       ;
-              '- Transport other than Salinity (temp. and tracers) not supported yet'                              ;                                                          
+              '- Transport other than Salinity (temp. and tracers) not supported yet'                              ;
               '- Restarting is not supported yet'                                                                  ;
               '- Space varying wind is not supported yet'                                                          ;
               ' '                                                                                                  ;
@@ -18,8 +18,8 @@ Gen_inf    = {'This tool converts a SIMONA siminp file into a Delft3D-Flow mdf f
 
 %% set path if necessary
 
-if ~isdeployed && any(which('setproperty'))
-   addpath(genpath('..\..\..\..\..\matlab'));
+if ~isdeployed || ~any(which('setproperty'))
+   oetsetiings('quiet');
 end
 
 %% Display general information
@@ -85,7 +85,6 @@ S = all_in_one(S);
 
 
 %% parse the siminp information
-
 simona2mdf_message('Parsing AREA information'               ,'Logo',logo,'Logo2',logo2, 'nesthd_path', OPT.nesthd_path);
 mdf = simona2mdf_area     (S,mdf,name_mdf, 'nesthd_path', OPT.nesthd_path);
 

@@ -4,7 +4,8 @@ tstdir = 'd:\open_earth_test\matlab\applications\delft3d\nest_matlab\';
 
 % check : performs a number of test conversions to check if ewverything went okay
 
-filwaq ={[tstdir 'simona\Testmaas\s1\berekeningen\T1250\siminp.t1250'                ];
+filwaq ={[tstdir 'simona\test_erik\siminp.simN001'                                   ];
+         [tstdir 'simona\Testmaas\s1\berekeningen\T1250\siminp.t1250'                ];
          [tstdir 'simona\Simona_waal_weir\siminp.hf1'                                ];
          [tstdir 'simona\simona-scaloost-fijn-exvd-v1\SIMONA\berekeningen\siminp'    ];
          [tstdir 'simona\A80\siminp.dcsmv6'                                          ];
@@ -13,7 +14,8 @@ filwaq ={[tstdir 'simona\Testmaas\s1\berekeningen\T1250\siminp.t1250'           
          [tstdir 'simona\tidal_flume_triwaq\triwaq_small_3\siminp.small'             ];
          [tstdir 'simona\simona-scaloost-fijn-exvd-v1\SIMONA\berekeningen\siminp.fou'];
          [tstdir 'simona\A80\siminp.zunov4'                                          ]};
-filmdf ={[tstdir 'simona\Testmaas\mdf_t1250\t1250.mdf'                               ];
+filmdf ={[tstdir 'simona\test_erik\mdf\N001.mdf'                                     ];
+         [tstdir 'simona\Testmaas\mdf_t1250\t1250.mdf'                               ];
          [tstdir 'simona\Simona_waal_weir\mdf\hf1.mdf'                               ];
          [tstdir 'simona\simona-scaloost-fijn-exvd-v1\mdf\scaloost.mdf'              ];
          [tstdir 'simona\A80\mdf_csm\dcsmv6.mdf'                                     ];

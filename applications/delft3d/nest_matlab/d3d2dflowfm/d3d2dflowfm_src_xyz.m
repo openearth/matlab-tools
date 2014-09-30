@@ -66,7 +66,7 @@ for i_src = 1: length(m_src)
     if ~dav
         %% Determine height
         if strcmpi(OPT.zmodel,'y')
-            height(1) = OPT.zbot + 0.5*OPT.thick(1)*(OPT.ztop - OPT.zbot); 
+            height(1) = OPT.zbot + 0.5*OPT.thick(1)*(OPT.ztop - OPT.zbot);
             for i_lay = 2: kmax
                 height(i_lay) = height(i_lay -1) + 0.5*(OPT.thick(i_lay) + OPT.thick(i_lay - 1))*(OPT.ztop - OPT.zbot);
             end
@@ -81,12 +81,15 @@ for i_src = 1: length(m_src)
         LINE.DATA{1,3} = NaN;
         LINE.DATA{2,3} = height(k_src(i_src));
     end
-    
+
     %% Write to pli(z) file (name of the pli(z) file is the name  of the discharge point)
     filsrc{i_src}     = [pathdis filesep simona2mdu_replacechar(strtrim(names{i_src}),' ','_') '.pli'];
     if ~dav filsrc{i_src} = [filsrc{i_src} 'z']; end
     filsrc{i_src}     = simona2mdu_replacechar(filsrc{i_src},'(','');
     filsrc{i_src}     = simona2mdu_replacechar(filsrc{i_src},')','');
+    filsrc{i_src}     = simona2mdu_replacechar(filsrc{i_src},'%','');
+    filsrc{i_src}     = simona2mdu_replacechar(filsrc{i_src},'/','');
+    filsrc{i_src}     = simona2mdu_replacechar(filsrc{i_src},'+','');
     dflowfm_io_xydata('write',filsrc{i_src},LINE);
 
     %% Generate the series (for now always including salinity and temperature, not sure if that is allowed)

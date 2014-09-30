@@ -826,7 +826,11 @@ siminp = hulp;
 
 function found = parsethisrec(Field,rec,found)
 
+
 if found
+    return
+elseif ismember(rec(1),'-.0123456789') || strcmp (rec(1),'''')
+    found = true;
     return
 else
     for ifield = 1: length(Field)

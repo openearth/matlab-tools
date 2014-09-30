@@ -28,10 +28,10 @@ end
 %
 
 if ~isempty(initial.READ_FROM)
-    siminp2mdf_warning('READ_FROM (initial conditions) not supported');
+    simona2mdf_message('READ_FROM (initial conditions) not supported','Window','SIMONA2MDF Warning','Close',true,'n_sec',10);
 end
 if ~isempty(initial.COMPUTE)
-    siminp2mdf_warning('COMPUTE (initial conditions) not supported');
+    simona2mdf_message('COMPUTE (initial conditions) not supported','Window','SIMONA2MDF Warning','Close',true,'n_sec',10);
 end
 
 %

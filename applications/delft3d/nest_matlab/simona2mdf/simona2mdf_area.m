@@ -28,7 +28,7 @@ end
 if ~isempty(mdf.filcco)
     if ~exist([mdf.pathd3d filesep simona2mdf_rmpath(mdf.filcco)],'file');
         copyfile([mdf.pathsimona filesep mdf.filcco],[mdf.pathd3d filesep simona2mdf_rmpath(mdf.filcco)]);
-    end  
+    end
 %  mdf        = rmfield(mdf,'pathsimona');
 %  mdf        = rmfield(mdf,'pathd3d');
    mdf.filcco = simona2mdf_rmpath(mdf.filcco);
@@ -43,8 +43,12 @@ if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.MESH.GRID.AREA')
    %
    % For now: assume uniform layer thicknesses
    %
-
-   mdf.thick(1:mdf.mnkmax(3)) = 100./mdf.mnkmax(3);
+   siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'MESH' 'VERTICAL'});
+   if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.MESH.VERTICAL')
+       mdf.thick =  cell2mat({siminp_struc.ParsedTree.MESH.VERTICAL.LAYER(:).THICKNESS});
+   else
+       mdf.thick(1:mdf.mnkmax(3)) = 100./mdf.mnkmax(3);
+   end
 end
 
 %
