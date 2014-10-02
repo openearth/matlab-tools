@@ -190,6 +190,12 @@ elseif OPT.vardx == 1
         dx(ii) = max(dx(ii),localmin);
         if dxmax > localmin
             dx(ii) = min(dx(ii),dxmax);
+        else
+            dx(ii) = localmin;
+            if ii == 1
+                warning(['Computed dxmax (= ' num2str(dxmax) ' m) is smaller than the user defined dxmin (= ' num2str(localmin) ' m). ',...
+                    'Grid will be generated using constant dx = dxmin. Please change dxmin if this is not desired.']);
+            end
         end
         
         % make sure that dx(ii)<= maxfac*dx(ii-1) or dx(ii)>= 1/maxfac*dx(ii-1)
