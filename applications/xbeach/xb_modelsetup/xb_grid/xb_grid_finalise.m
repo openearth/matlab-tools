@@ -277,9 +277,9 @@ function [x y z] = landward_extend(x, y, z, OPT)
     n = OPT.n;
     dx = x(1,end)-x(1,end-1);
     
-    zn = [z ones(size(y,1),OPT.n)*OPT.z0];
-    xn = [x x(1,end)+repmat([1:1:OPT.n],size(y,1),1)*dx];
-    yn = [y repmat(y(:,1),1,OPT.n)];
+    zn = [z ones(size(y,1),n)*OPT.z0];
+    xn = [x x(1,end)+repmat([1:1:n],size(y,1),1)*dx];
+    yn = [y repmat(y(:,1),1,n)];
     
     x = xn;
     y = yn;

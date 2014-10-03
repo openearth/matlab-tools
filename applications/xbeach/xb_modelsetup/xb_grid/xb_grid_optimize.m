@@ -271,7 +271,7 @@ else
         % use other interpolation method if necessary
     catch error_message
         warning(['INTERP2 cannot be used, interpolation can take a little longer: ' error_message.message]);
-        interpolant = TriScatteredInterp(x_r(:), y_r(:), z_w(:));
+        interpolant = scatteredInterpolant(x_r(:), y_r(:), z_w(:));
         z_d = interpolant(x_d, y_d);
         clear interpolant
     end
@@ -357,7 +357,7 @@ else
         % use other interpolation method if necessary
     catch error_message
         warning(['INTERP2 cannot be used, interpolation can take a little longer: ' error_message.message]);
-        interpolant = TriScatteredInterp(x_w(:), y_w(:), z_w(:));
+        interpolant = scatteredInterpolant(x_w(:), y_w(:), z_w(:));
         zgrid = interpolant(x_xb_w, y_xb_w);
         clear interpolant
     end
