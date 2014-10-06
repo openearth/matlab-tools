@@ -66,13 +66,13 @@ switch lower(opt)
     case{'save'}
         ddb_saveMDF(handles,ad);
     case{'saveas'}
-        [filename, pathname, filterindex] = uiputfile('*.mdf', 'Select MDF File','');
+        [filename, pathname, ~] = uiputfile('*.mdf', 'Select MDF File','');
         if pathname~=0
             curdir=[lower(cd) '\'];
             if ~strcmpi(curdir,pathname)
                 filename=[pathname filename];
             end
-            ii=findstr(filename,'.mdf');
+            ii=strfind(filename,'.mdf');
             handles.model.delft3dflow.domain(ad).runid=filename(1:ii-1);
             handles.model.delft3dflow.domain(ad).mdfFile=filename;
             handles=ddb_saveMDF(handles,ad);
@@ -83,14 +83,14 @@ switch lower(opt)
             handles=ddb_saveMDF(handles,i);
         end
     case{'saveallas'}
-        [filename, pathname, filterindex] = uiputfile('*.mdf', 'Select MDF File','');
+        [filename, pathname, ~] = uiputfile('*.mdf', 'Select MDF File','');
         if pathname~=0
             handles=ddb_saveAttributeFiles(handles,ad,'saveallas');
             curdir=[lower(cd) '\'];
             if ~strcmpi(curdir,pathname)
                 filename=[pathname filename];
             end
-            ii=findstr(filename,'.mdf');
+            ii=strfind(filename,'.mdf');
             handles.model.delft3dflow.domain(ad).runid=filename(1:ii-1);
             handles.model.delft3dflow.domain(ad).mdfFile=filename;
             handles=ddb_saveMDF(handles,ad);
