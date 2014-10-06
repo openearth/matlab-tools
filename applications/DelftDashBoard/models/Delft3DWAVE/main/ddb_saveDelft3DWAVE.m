@@ -6,13 +6,13 @@ switch lower(opt)
     case{'save'}
         ddb_saveMDW(handles);
     case{'saveas'}
-        [filename, pathname, filterindex] = uiputfile('*.mdw', 'Select MDW File','');
+        [filename, pathname, ~] = uiputfile('*.mdw', 'Select MDW File','');
         if pathname~=0
             curdir=[lower(cd) '\'];
             if ~strcmpi(curdir,pathname)
                 filename=[pathname filename];
             end
-            ii=findstr(filename,'.mdw');
+            ii=strfind(filename,'.mdw');
             handles.model.delft3dwave.domain.runid=filename(1:ii-1);
             handles.model.delft3dwave.domain.mdwfile=filename;
             ddb_saveMDW(handles);
@@ -21,13 +21,13 @@ switch lower(opt)
         handles=ddb_Delft3DWAVE_saveAttributeFiles(handles,'saveall');
         ddb_saveMDW(handles);
     case{'saveallas'}
-        [filename, pathname, filterindex] = uiputfile('*.mdw', 'Select MDW File','');
+        [filename, pathname, ~] = uiputfile('*.mdw', 'Select MDW File','');
         if pathname~=0
             curdir=[lower(cd) '\'];
             if ~strcmpi(curdir,pathname)
                 filename=[pathname filename];
             end
-            ii=findstr(filename,'.mdw');
+            ii=strfind(filename,'.mdw');
             handles.model.delft3dwave.domain.runid=filename(1:ii-1);
             handles.model.delft3dwave.domain.mdwfile=filename;
             ddb_saveMDW(handles);
