@@ -204,7 +204,7 @@
     <textposition>left</textposition>
     <variable>handles.model.delft3dflow.domain(ad).startTime</variable>
     <type>datetime</type>
-    <onchange>ddb_updateOutputTimesDelft3DFlow</onchange>
+    <onchange>ddb_updateOutputTimesDelft3DFLOW</onchange>
   </element>
   <element>
     <style>edit</style>
@@ -214,7 +214,7 @@
     <textposition>left</textposition>
     <variable>handles.model.delft3dflow.domain(ad).stopTime</variable>
     <type>datetime</type>
-    <onchange>ddb_updateOutputTimesDelft3DFlow</onchange>
+    <onchange>ddb_updateOutputTimesDelft3DFLOW</onchange>
   </element>
   <element>
     <style>edit</style>
