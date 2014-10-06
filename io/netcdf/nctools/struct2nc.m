@@ -93,6 +93,7 @@ function varargout = struct2nc(outputfile,D,varargin)
    OPT.pause             = 0;
    OPT.debug             = 0;
    OPT.header            = 0;
+   OPT.write0dimension   = 1;
    OPT.mode              = 'clobber'; %'classic';% 'classic','64bit_offset','netcdf4-classic','netcdf4' 
    
    if nargin==0
@@ -212,6 +213,11 @@ function varargout = struct2nc(outputfile,D,varargin)
        if OPT.disp;disp([num2str(ifld),' ',nc(ifld).Name]);end
        if sum(~ismember(nc(ifld).Dimension,'dimension_length_0')) > 1 % also allow 3D variables
            nc_addvar(outputfile, nc(ifld));
+       elseif OPT.write0dimension
+           % make dim names empty if one dimension has length 0
+           tmp = nc(ifld);
+           tmp.Dimension = {};
+           nc_addvar(outputfile, tmp);
        end
    end
    
