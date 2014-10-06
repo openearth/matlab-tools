@@ -18,12 +18,14 @@ function varargout = nc_cf_time(ncfile,varargin)
 % When there is only one time variable, an array is returned, otherwise
 % a warning is thrown. All arguments beyond the 2nd are passed to nc_varget.
 %
+% Uses snctools as backend, for pure matlab libraries uses ncread_cf_time.
+%
 % Example:
 %
 %  base              = 'http://opendap.deltares.nl:8080/thredds/dodsC';
 % [D.datenum,D.zone] = nc_cf_time([base,'/opendap/knmi/potwind/potwind_343_2001.nc'],'time')
 %
-%See also: nc_cf_timeseries, NC_CF_GRID, UDUNITS2DATENUM
+%See also: nc_varget, nc_cf_timeseries, NC_CF_GRID, UDUNITS2DATENUM, ncread_cf_time
 
 %% Copyright notice
 %   --------------------------------------------------------------------

@@ -1,9 +1,11 @@
 function [datenumbers,zone] = ncread_cf_time(ncFile, varName, varargin)
-%NCREAD_CF_TIME  Returns time data from a specified cf compliant time variable in matlab date numbers 
+%NCREAD_CF_TIME  return time data from specified CF compliant time variable into matlab datenum 
 %
-%   Syntax is exactly like ncread.
+%   [datenumbers,zone] = ncread_cf_time(ncFile, varName)
 %
-%   See also NCREAD
+%ncread_cf_time uses only pure Matlab library ncinfo + ncread.
+%
+%   See also NCREAD, nc_cf_time, udunits2datenum
 
 %% Copyright notice
 %   --------------------------------------------------------------------
