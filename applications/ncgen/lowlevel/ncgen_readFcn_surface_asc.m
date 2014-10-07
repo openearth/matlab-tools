@@ -42,9 +42,41 @@ s = textscan(fid,'%s %f',6);
 
 ncols        = s{2}(strcmpi(s{1},'ncols'       ));
 nrows        = s{2}(strcmpi(s{1},'nrows'       ));
-xllcorner    = s{2}(strcmpi(s{1},OPT.read.xref_cell ));
-yllcorner    = s{2}(strcmpi(s{1},OPT.read.yref_cell ));
 cellsize     = s{2}(strcmpi(s{1},'cellsize'    ));
+xll    = s{2}(strcmpi(s{1},OPT.read.xref_cell ));
+if strcmp(OPT.read.xref_cell, 'xllcorner')
+    % xllcorner given
+    xllcorner = xll;
+    if ~(mod(xllcorner,cellsize)==0)
+        error(['xllcorner has offset: ',num2str(mod(xllcorner,cellsize))])
+    end
+    % derive xllcenter
+    xllcenter = xll + cellsize/2;
+elseif strcmp(OPT.read.xref_cell, 'xllcenter')
+    % xllcenter given
+    xllcenter = xll;
+    % derive xllcorner
+    xllcorner = xll - cellsize/2;
+else
+    error('xref_cell value "%s" not recognized', OPT.read.xref_cell)
+end
+yll    = s{2}(strcmpi(s{1},OPT.read.yref_cell ));
+if strcmp(OPT.read.yref_cell, 'yllcorner')
+    % yllcorner given
+    yllcorner = yll;
+    if ~(mod(yllcorner,cellsize)==0)
+        error(['yllcorner has offset: ',num2str(mod(xllcorner,cellsize))])
+    end
+    % derive xllcenter
+    yllcenter = yll + cellsize/2;
+elseif strcmp(OPT.read.yref_cell, 'yllcenter')
+    % yllcenter given
+    yllcenter = yll;
+    % derive yllcorner
+    yllcorner = yll - cellsize/2;
+else
+    error('yref_cell value "%s" not recognized', OPT.read.yref_cell)
+end
 nodata_value = s{2}(strcmpi(s{1},'nodata_value'));
 if isempty(ncols)||isempty(nrows)||isempty(xllcorner)||isempty(yllcorner)||isempty(cellsize)||isempty(nodata_value)
     error('reading asc file')
@@ -74,21 +106,6 @@ fclose(fid);
 if ~(cellsize == OPT.schema.grid_cellsize) % gridsizey==gridsizey already checked above
     error('cellsize ~= OPT.schema.grid_cellsize')
 end
-
-if ~(mod(xllcorner,cellsize)==0)
-    error(['xllcorner has offset: ',num2str(mod(xllcorner,cellsize))])
-end
-
-if ~(mod(yllcorner,cellsize)==0)
-    error(['yllcorner has offset: ',num2str(mod(xllcorner,cellsize))])
-end
-
-%% calculate x,y of cell CENTRES, by adding half a grid cell
-%  to the cell CORNERS. From now on we only use x and y where data reside
-%  i.e. the centers [xllcenter +/- cellsize,yllcorner +/- cellsize]
-
-xllcenter = xllcorner+OPT.schema.grid_offset;
-yllcenter = yllcorner+OPT.schema.grid_offset;
 
 %% write data to nc files
 
