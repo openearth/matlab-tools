@@ -2579,7 +2579,7 @@ NKEY = 1
 #
 6,2,5,1,1  DUM                 NCHAR = 0                        OPT
 #
- IREP = 1  NAME = POWER        NCHAR = 3  JREP = 1   TYPE = 1   MAND
+ IREP = 1  NAME = POWER        NCHAR =-3  JREP = 1   TYPE = 1   MAND
  IREP = 1  NAME = CO           NCHAR =-2  JREP = 1   TYPE = 1   MAND
  IREP = 1  NAME = SERIES       NCHAR = 3  JREP = 1   TYPE = 3   MAND
  IREP = 1  NAME = FRAME        NCHAR = 5  JREP = 3   TYPE = 2   OPT

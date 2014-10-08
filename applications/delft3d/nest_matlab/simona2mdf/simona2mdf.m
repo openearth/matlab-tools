@@ -19,7 +19,7 @@ Gen_inf    = {'This tool converts a SIMONA siminp file into a Delft3D-Flow mdf f
 %% set path if necessary
 
 if ~isdeployed || ~any(which('setproperty'))
-   oetsetiings('quiet');
+   oetsettings('quiet');
 end
 
 %% Display general information

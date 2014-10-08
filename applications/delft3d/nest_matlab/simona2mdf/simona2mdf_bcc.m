@@ -16,11 +16,12 @@ OPT = setproperty(OPT,varargin{1:end});
 % get information out of struc
 %
 
-siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'TRANSPORT'});
+siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'TRANSPORT' 'PROBLEM' 'SALINITY'});
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.TRANSPORT.PROBLEM.SALINITY')
 
     constnr = siminp_struc.ParsedTree.TRANSPORT.PROBLEM.SALINITY.CO;
 
+    siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'TRANSPORT' 'FORCINGS' 'BOUNDARIES' 'TIMESERIES'});
     series       = siminp_struc.ParsedTree.TRANSPORT.FORCINGS.BOUNDARIES.TIMESERIES.TS;
 
     %

@@ -98,44 +98,50 @@ fseek(fid,floc,-1);
 
 while ~isempty(fscanf(fid,'table-name %['']')),
     Info.Table(i).Name=deblank(strextract(fgetl(fid)));
-    
+
     if isempty(fscanf(fid,'contents %['']')),
         fclose(fid);
         return;
     end;
     Info.Table(i).Contents=deblank(strextract(fgetl(fid)));
-    
-    if isempty(fscanf(fid,'location %['']')),
+    %% TK reading doesnot go properly when location name starts with lo(cation)
+%    if isempty(fscanf(fid,'location %['']')),
+%        fclose(fid);
+%        return;
+%    end;
+    Line = fgetl(fid);
+    index = strfind(Line,'''');
+    if isempty(index)
         fclose(fid);
         return;
-    end;
-    Info.Table(i).Location=deblank(strextract(fgetl(fid)));
-    
+    end
+    Info.Table(i).Location=deblank(Line(index(1) + 1:index(2)-1));
+
     if isempty(fscanf(fid,'time-function %['']')),
         fclose(fid);
         return;
     end;
     Info.Table(i).TimeFunction=deblank(strextract(fgetl(fid)));
-    
+
     if isempty(fscanf(fid,'reference-tim%[e]')),
         fclose(fid);
         return;
     end;
     Info.Table(i).ReferenceTime=fscanf(fid,'%i',1);
     fgetl(fid); % skip remainder of line
-    
+
     if isempty(fscanf(fid,'time-unit %['']')),
         fclose(fid);
         return;
     end;
     Info.Table(i).TimeUnit=deblank(strextract(fgetl(fid)));
-    
+
     if isempty(fscanf(fid,'interpolation %['']')),
         fclose(fid);
         return;
     end;
     Info.Table(i).Interpolation=deblank(strextract(fgetl(fid)));
-    
+
     j=0;
     while ~isempty(fscanf(fid,'parameter %['']')),
         j=j+1;
@@ -156,7 +162,7 @@ while ~isempty(fscanf(fid,'table-name %['']')),
         end
     end;
     NPar=j;
-    
+
     if isempty(fscanf(fid,'records-in-tabl%[e]')),
         fclose(fid);
         return;
@@ -164,9 +170,9 @@ while ~isempty(fscanf(fid,'table-name %['']')),
     NRec=fscanf(fid,'%i',1);
     Info.Table(i).Data=transpose(fscanf(fid,'%f',[NPar NRec]));
     fgetl(fid); % skip remainder of line
-    
+
     i=i+1;
-    
+
     Info.NTables=Info.NTables+1;
 end;
 if Info.NTables==0
@@ -222,7 +228,7 @@ fid=fopen(filename,'w');
 %fprintf(fid,'# %i\n',linelength);
 
 for i=1:length(Info.Table),
-    
+
     fprintf(fid,'table-name          ''%s''\n',Info.Table(i).Name);
     fprintf(fid,'contents            ''%s''\n',Info.Table(i).Contents);
     fprintf(fid,'location            ''%s''\n',Info.Table(i).Location);
@@ -230,13 +236,13 @@ for i=1:length(Info.Table),
     fprintf(fid,'reference-time       %i\n',Info.Table(i).ReferenceTime);
     fprintf(fid,'time-unit           ''%s''\n',Info.Table(i).TimeUnit);
     fprintf(fid,'interpolation       ''%s''\n',Info.Table(i).Interpolation);
-    
+
     for j=1:length(Info.Table(i).Parameter),
         fprintf(fid,'parameter           ''%s'' unit ''%s''\n', ...
             Info.Table(i).Parameter(j).Name, ...
             Info.Table(i).Parameter(j).Unit);
     end;
-    
+
     fprintf(fid,'records-in-table     %i\n',size(Info.Table(i).Data,1));
     fprintf(fid,['%15.2f ' repmat('%13.5e ',1,length(Info.Table(i).Parameter)-1) '\n'], ...
         transpose(Info.Table(i).Data));
