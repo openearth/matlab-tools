@@ -42,7 +42,7 @@ switch cmd
         
         %% No type specified, try to figure out whether it is a regular of irregular series
         if isempty(OPT.Series_type)
-            intval = SERIES.Time(2:end) - SERIES.Time(1:end-1);
+            intval = SERIES.Times(2:end) - SERIES.Times(1:end-1);
             irregular = find (abs(intval(2:end) - intval(1:end-1)) > eps);
             if ~isempty(irregular)
                 OPT.Series_type = 'irregular';
@@ -58,16 +58,16 @@ switch cmd
             
             %% Regular Series
             case ('regular')
-                fprintf(fid,'FRAME = %12.3f %12.3f %12.3f \n',SERIES.Time(1),SERIES.Time(2) - SERIES.Time(1),SERIES.Time(end));
-                fprintf(fid,[repmat('%12.6f ',1,8) '\n'],SERIES.Value(:));
+                fprintf(fid,'FRAME = %12.3f %12.3f %12.3f \n',SERIES.Times(1),SERIES.Times(2) - SERIES.Times(1),SERIES.Times(end));
+                fprintf(fid,[repmat('%12.6f ',1,8) '\n'],SERIES.Values(:));
                 
             %% Irregular series
             case ('irregular')
-                for i_time = 1: length(SERIES.Time);
-                    i_day  = floor((SERIES.Time(i_time) + eps)/1440.);
-                    i_hour = floor((SERIES.Time(i_time) - i_day*1440. + eps)/60.);
-                    i_min  = floor(SERIES.Time(i_time) - i_day*1440. - i_hour*60. + eps);
-                    fprintf(fid,'TIME_AND_VALUES %3.3i  %2.2i:%2.2i  %12.6f \n',i_day,i_hour,i_min,SERIES.Value(i_time));
+                for i_time = 1: length(SERIES.Times);
+                    i_day  = floor((SERIES.Times(i_time) + eps)/1440.);
+                    i_hour = floor((SERIES.Times(i_time) - i_day*1440. + eps)/60.);
+                    i_min  = floor(SERIES.Times(i_time) - i_day*1440. - i_hour*60. + eps);
+                    fprintf(fid,'TIME_AND_VALUE %3.3i  %2.2i:%2.2i  %12.6f \n',i_day,i_hour,i_min,SERIES.Values(i_time));
                 end
         end
         fclose (fid);
