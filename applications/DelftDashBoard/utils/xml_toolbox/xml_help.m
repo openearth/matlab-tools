@@ -12,7 +12,7 @@
 %  xml_help         this file, displays info about available xml_* commands
 %  demo_xml         demonstrates step-by-step use of the XML Toolbox commands
 %  tests/xml_tests  tests the xml toolbox by writing/reading a number of xml test files
-%  strsplit         utility function which splits a string at specified characters
+%  strsplit2        utility function which splits a string at specified characters
 %  unblank          utility function which removes leading and trailing spaces
 %
 % MANUAL:
