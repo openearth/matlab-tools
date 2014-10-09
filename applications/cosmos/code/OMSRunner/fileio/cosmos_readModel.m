@@ -273,7 +273,7 @@ end
 if isfield(xml,'flowwaterlevel')
     model.flowWaterLevel=str2double(xml.flowwaterlevel);
 else
-    model.flowWaterLevel=1;
+    model.flowWaterLevel=2;
 end
 if isfield(xml,'flowvelocity')
     model.flowVelocity=str2double(xml.flowvelocity);
@@ -283,12 +283,12 @@ end
 if isfield(xml,'flowbedlevel')
     model.flowBedLevel=str2double(xml.flowbedlevel);
 else
-    model.flowBedLevel=1;
+    model.flowBedLevel=2;
 end
 if isfield(xml,'flowwind')
     model.flowWind=str2double(xml.flowwind);
 else
-    model.flowWind=1;
+    model.flowWind=2;
 end
 if isfield(xml,'maxiter')
     model.maxIter=str2double(xml.maxiter);
