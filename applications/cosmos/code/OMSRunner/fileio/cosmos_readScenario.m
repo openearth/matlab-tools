@@ -2,8 +2,6 @@ function hm=cosmos_readScenario(hm)
 
 fname=[hm.scenarioDir filesep hm.scenario '.xml'];
 
-%scn=xml_load(fname);
-
 xml=xml2struct(fname);
 
 %hm.runEnv='win32';
@@ -64,80 +62,89 @@ if isfield(xml,'getoceandata')
     end
 end
 
-nmdl=length(xml.model);
+switch hm.scenarioType
+    case{'globalcycloneforecast'}
+        % All models need to be used
+        
+    otherwise
+        
+        nmdl=length(xml.model);
 
-for im=1:nmdl
-    
-    modelnames{im}=xml.model(im).model.name;
-    hm.models(im).name=xml.model(im).model.name;
-    hm.models(im).webSite=[];
-    
-    %% Archiving
-    
-    hm.models(im).archiveinput=hm.archiveinput;
-    hm.models(im).archiveoutput=hm.archiveoutput;
-    hm.models(im).archivefigures=hm.archivefigures;
-
-    if isfield(xml.model(im).model,'archiveinput')
-        switch xml.model(im).model.archiveinput(1)
-            case{'y','t','1'}
-                hm.models(im).archiveinput=1;
-            otherwise
-                hm.models(im).archiveinput=0;
+        for im=1:nmdl
+            
+            modelnames{im}=xml.model(im).model.name;
+            hm.models(im).name=xml.model(im).model.name;
+            hm.models(im).webSite=[];
+            
+            %% Archiving
+            
+            hm.models(im).archiveinput=hm.archiveinput;
+            hm.models(im).archiveoutput=hm.archiveoutput;
+            hm.models(im).archivefigures=hm.archivefigures;
+            
+            if isfield(xml.model(im).model,'archiveinput')
+                switch xml.model(im).model.archiveinput(1)
+                    case{'y','t','1'}
+                        hm.models(im).archiveinput=1;
+                    otherwise
+                        hm.models(im).archiveinput=0;
+                end
+            end
+            if isfield(xml.model(im).model,'archiveoutput')
+                switch xml.model(im).model.archiveoutput(1)
+                    case{'y','t','1'}
+                        hm.models(im).archiveoutput=1;
+                    otherwise
+                        hm.models(im).archiveoutput=0;
+                end
+            end
+            if isfield(xml.model(im).model,'archivefigures')
+                switch xml.model(im).model.archivefigures(1)
+                    case{'y','t','1'}
+                        hm.models(im).archivefigures=1;
+                    otherwise
+                        hm.models(im).archivefigures=0;
+                end
+            end
+            
+            %% Meteo
+            
+            hm.models(im).meteowind=[];
+            hm.models(im).backupmeteowind=[];
+            hm.models(im).meteopressure=[];
+            hm.models(im).backupmeteopressure=[];
+            hm.models(im).meteoheat=[];
+            hm.models(im).backupmeteoheat=[];
+            
+            if isfield(xml.model(im).model,'meteowind')
+                hm.models(im).meteowind=xml.model(im).model.meteowind;
+            end
+            if isfield(xml.model(im).model,'meteopressure')
+                hm.models(im).meteopressure=xml.model(im).model.meteopressure;
+            end
+            if isfield(xml.model(im).model,'meteoheat')
+                hm.models(im).meteoheat=xml.model(im).model.meteoheat;
+            end
+            if isfield(xml.model(im).model,'backupmeteowind')
+                hm.models(im).backupmeteowind=xml.model(im).model.backupmeteowind;
+            end
+            if isfield(xml.model(im).model,'backupmeteopressure')
+                hm.models(im).backupmeteopressure=xml.model(im).model.backupmeteopressure;
+            end
+            if isfield(xml.model(im).model,'backupmeteoheat')
+                hm.models(im).backupmeteoheat=xml.model(im).model.backupmeteoheat;
+            end
+            
+            %% Ocean model
+            hm.models(im).oceanModel=[];
+            if isfield(xml.model(im).model,'oceanmodel')
+                hm.models(im).oceanModel=xml.model(im).model.oceanmodel;
+            end
+            
         end
-    end
-    if isfield(xml.model(im).model,'archiveoutput')
-        switch xml.model(im).model.archiveoutput(1)
-            case{'y','t','1'}
-                hm.models(im).archiveoutput=1;
-            otherwise
-                hm.models(im).archiveoutput=0;
-        end
-    end
-    if isfield(xml.model(im).model,'archivefigures')
-        switch xml.model(im).model.archivefigures(1)
-            case{'y','t','1'}
-                hm.models(im).archivefigures=1;
-            otherwise
-                hm.models(im).archivefigures=0;
-        end
-    end    
-    
-    %% Meteo
-
-    hm.models(im).meteowind=[];            
-    hm.models(im).backupmeteowind=[];            
-    hm.models(im).meteopressure=[];            
-    hm.models(im).backupmeteopressure=[];            
-    hm.models(im).meteoheat=[];            
-    hm.models(im).backupmeteoheat=[];            
-    
-    if isfield(xml.model(im).model,'meteowind')
-        hm.models(im).meteowind=xml.model(im).model.meteowind;    
-    end
-    if isfield(xml.model(im).model,'meteopressure')
-        hm.models(im).meteopressure=xml.model(im).model.meteopressure;    
-    end
-    if isfield(xml.model(im).model,'meteoheat')
-        hm.models(im).meteoheat=xml.model(im).model.meteoheat;    
-    end
-    if isfield(xml.model(im).model,'backupmeteowind')
-        hm.models(im).backupmeteowind=xml.model(im).model.backupmeteowind;    
-    end
-    if isfield(xml.model(im).model,'backupmeteopressure')
-        hm.models(im).backupmeteopressure=xml.model(im).model.backupmeteopressure;    
-    end
-    if isfield(xml.model(im).model,'backupmeteoheat')
-        hm.models(im).backupmeteoheat=xml.model(im).model.backupmeteoheat;    
-    end
-    
-    %% Ocean model
-    hm.models(im).oceanModel=[];    
-    if isfield(xml.model(im).model,'oceanmodel')
-        hm.models(im).oceanModel=xml.model(im).model.oceanmodel;    
-    end
-    
+        
 end
+
 
 %% Websites
 if isfield(xml,'website')

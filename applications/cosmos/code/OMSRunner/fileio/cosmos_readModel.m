@@ -4,7 +4,7 @@ ok=0;
 
 % Read Model
 
-xml=xml_load(fname);
+xml=xml2struct(fname);
 
 model.run=1;
 if isfield(xml,'run')
@@ -625,23 +625,23 @@ if isfield(xml,'stations')
             GRID = wlgrid('read', [dr 'input' filesep model.name '.grd']);
             GRID.Z = -10*zeros(size(GRID.X));
     end
-    for istat=1:length(xml.stations)
+    for istat=1:length(xml.stations.stations.station)
         iac=1;
-        if isfield(xml.stations(istat).station,'active')
-            iac=str2double(xml.stations(istat).station.active);
+        if isfield(xml.stations.stations.station(istat).station,'active')
+            iac=str2double(xml.stations.stations.station(istat).station.active);
         end
                 
         if iac
             switch lower(xml.type)
                 case{'delft3dflow','delft3dflowwave'}
-                    if ~isfield(xml.stations(istat).station,'locationm')
-                        [m n iindex] = ddb_findStations(str2double(xml.stations(istat).station.locationx),...
-                            str2double(xml.stations(istat).station.locationy),GRID.X,GRID.Y,GRID.Z);
+                    if ~isfield(xml.stations.stations.station(istat).station,'locationm')
+                        [m n iindex] = ddb_findStations(str2double(xml.stations.stations.station(istat).station.locationx),...
+                            str2double(xml.stations.stations.station(istat).station.locationy),GRID.X,GRID.Y,GRID.Z);
                         if isempty(m)
                             iac=0;
                         else
-                            xml.stations(istat).station.locationm=num2str(m);
-                            xml.stations(istat).station.locationn=num2str(n);
+                            xml.stations.stations.station(istat).station.locationm=num2str(m);
+                            xml.stations.stations.station(istat).station.locationn=num2str(n);
                         end
                     end
             end
@@ -652,30 +652,30 @@ if isfield(xml,'stations')
             j=j+1;
             model.nrStations=j;
             
-            model.stations(j).name=xml.stations(istat).station.name;
-            model.stations(j).longName=xml.stations(istat).station.longname;
-            model.stations(j).location(1)=str2double(xml.stations(istat).station.locationx);
-            model.stations(j).location(2)=str2double(xml.stations(istat).station.locationy);
-            if isfield(xml.stations(istat).station,'locationm')
-                model.stations(j).m=str2double(xml.stations(istat).station.locationm);
-                model.stations(j).n=str2double(xml.stations(istat).station.locationn);
+            model.stations(j).name=xml.stations.stations.station(istat).station.name;
+            model.stations(j).longName=xml.stations.stations.station(istat).station.longname;
+            model.stations(j).location(1)=str2double(xml.stations.stations.station(istat).station.locationx);
+            model.stations(j).location(2)=str2double(xml.stations.stations.station(istat).station.locationy);
+            if isfield(xml.stations.stations.station(istat).station,'locationm')
+                model.stations(j).m=str2double(xml.stations.stations.station(istat).station.locationm);
+                model.stations(j).n=str2double(xml.stations.stations.station(istat).station.locationn);
             end
-            model.stations(j).type=xml.stations(istat).station.type;
-            if isfield(xml.stations(istat).station,'toopendap')
-                model.stations(j).toOPeNDAP=str2double(xml.stations(istat).station.toopendap);
+            model.stations(j).type=xml.stations.stations.station(istat).station.type;
+            if isfield(xml.stations.stations.station(istat).station,'toopendap')
+                model.stations(j).toOPeNDAP=str2double(xml.stations.stations.station(istat).station.toopendap);
             else
                 model.stations(j).toOPeNDAP=0;
             end
             
-            if isfield(xml.stations(istat).station,'toOPeNDAP')
-                model.stations(j).toOPeNDAP=str2double(xml.stations(istat).station.toOPeNDAP);
+            if isfield(xml.stations.stations.station(istat).station,'toOPeNDAP')
+                model.stations(j).toOPeNDAP=str2double(xml.stations.stations.station(istat).station.toOPeNDAP);
             else
                 model.stations(j).toOPeNDAP=0;
             end
             
-            if isfield(xml.stations(istat).station,'timezone')
+            if isfield(xml.stations.stations.station(istat).station,'timezone')
                 % Use time zone specified in station
-                model.stations(j).timeZone=xml.stations(istat).station.timezone;
+                model.stations(j).timeZone=xml.stations.stations.station(istat).station.timezone;
             else
                 % Use model time
                 model.stations(j).timeZone=model.timeZone;
@@ -683,21 +683,21 @@ if isfield(xml,'stations')
             
             %% Time-series datasets
             model.stations(j).nrDatasets=0;
-            if isfield(xml.stations(istat).station,'datasets')
-                model.stations(j).nrDatasets=length(xml.stations(istat).station.datasets);
+            if isfield(xml.stations.stations.station(istat).station,'datasets')
+                model.stations(j).nrDatasets=length(xml.stations.stations.station(istat).station.datasets.datasets.dataset);
                 for k=1:model.stations(j).nrDatasets
-                    model.stations(j).datasets(k).parameter=xml.stations(istat).station.datasets(k).dataset.parameter;
+                    model.stations(j).datasets(k).parameter=xml.stations.stations.station(istat).station.datasets.datasets.dataset(k).dataset.parameter;
                     model.stations(j).datasets(k).layer=[];
                     model.stations(j).datasets(k).sp2id=model.stations(j).name;
                     model.stations(j).datasets(k).toOPeNDAP=model.stations(j).toOPeNDAP;
-                    if isfield(xml.stations(istat).station.datasets(k).dataset,'layer')
-                        model.stations(j).datasets(k).layer=str2double(xml.stations(istat).station.datasets(k).dataset.layer);
+                    if isfield(xml.stations.stations.station(istat).station.datasets.datasets.dataset(k).dataset,'layer')
+                        model.stations(j).datasets(k).layer=str2double(xml.stations.stations.station(istat).station.datasets.datasets.dataset(k).dataset.layer);
                     end
-                    if isfield(xml.stations(istat).station.datasets(k).dataset,'sp2id')
-                        model.stations(j).datasets(k).sp2id=xml.stations(istat).station.datasets(k).dataset.sp2id;
+                    if isfield(xml.stations.stations.station(istat).station.datasets.datasets.dataset(k).dataset,'sp2id')
+                        model.stations(j).datasets(k).sp2id=xml.stations.stations.station(istat).station.datasets.datasets.dataset(k).dataset.sp2id;
                     end
-                    if isfield(xml.stations(istat).station.datasets(k).dataset,'toopendap')
-                        model.stations(j).datasets(k).toOPeNDAP=str2double(xml.stations(istat).station.datasets(k).dataset.toopendap);
+                    if isfield(xml.stations.stations.station(istat).station.datasets.datasets.dataset(k).dataset,'toopendap')
+                        model.stations(j).datasets(k).toOPeNDAP=str2double(xml.stations.stations.station(istat).station.datasets.datasets.dataset(k).dataset.toopendap);
                     end
                 end
             end
@@ -705,24 +705,24 @@ if isfield(xml,'stations')
             model.stations(j).plots=[];
             model.stations(j).nrPlots=0;
             %% Time-series plots
-            if isfield(xml.stations(istat).station,'plots')
-                model.stations(j).nrPlots=length(xml.stations(istat).station.plots);
+            if isfield(xml.stations.stations.station(istat).station,'plots')
+                model.stations(j).nrPlots=length(xml.stations.stations.station(istat).station.plots.plots.plot);
                 for k=1:model.stations(j).nrPlots
                     model.stations(j).plots(k).type='timeseries';
-                    if isfield(xml.stations(istat).station.plots(k).plot,'type')
-                        model.stations(j).plots(k).type=xml.stations(istat).station.plots(k).plot.type;
+                    if isfield(xml.stations.stations.station(istat).station.plots.plots.plot(k).plot,'type')
+                        model.stations(j).plots(k).type=xml.stations.stations.station(istat).station.plots.plots.plot(k).plot.type;
                     end
-                    model.stations(j).plots(k).nrDatasets=length(xml.stations(istat).station.plots(k).plot.datasets);
-                    for id=1:length(xml.stations(istat).station.plots(k).plot.datasets)
-                        model.stations(j).plots(k).datasets(id).parameter=xml.stations(istat).station.plots(k).plot.datasets(id).dataset.parameter;
-                        model.stations(j).plots(k).datasets(id).type=xml.stations(istat).station.plots(k).plot.datasets(id).dataset.type;
+                    model.stations(j).plots(k).nrDatasets=length(xml.stations.stations.station(istat).station.plots.plots.plot(k).plot.datasets.datasets.dataset);
+                    for id=1:length(xml.stations.stations.station(istat).station.plots.plots.plot(k).plot.datasets.datasets)
+                        model.stations(j).plots(k).datasets(id).parameter=xml.stations.stations.station(istat).station.plots.plots.plot(k).plot.datasets.datasets.dataset(id).dataset.parameter;
+                        model.stations(j).plots(k).datasets(id).type=xml.stations.stations.station(istat).station.plots.plots.plot(k).plot.datasets.datasets.dataset(id).dataset.type;
                         model.stations(j).plots(k).datasets(id).source=[];
                         model.stations(j).plots(k).datasets(id).id=[];
-                        if isfield(xml.stations(istat).station.plots(k).plot.datasets(id).dataset,'source')
-                            model.stations(j).plots(k).datasets(id).source=xml.stations(istat).station.plots(k).plot.datasets(id).dataset.source;
+                        if isfield(xml.stations.stations.station(istat).station.plots.plots.plot(k).plot.datasets.datasets.dataset(id).dataset,'source')
+                            model.stations(j).plots(k).datasets(id).source=xml.stations.stations.station(istat).station.plots.plots.plot(k).plot.datasets.datasets.dataset(id).dataset.source;
                         end
-                        if isfield(xml.stations(istat).station.plots(k).plot.datasets(id).dataset,'id')
-                            model.stations(j).plots(k).datasets(id).id=xml.stations(istat).station.plots(k).plot.datasets(id).dataset.id;
+                        if isfield(xml.stations.stations.station(istat).station.plots.plots.plot(k).plot.datasets.datasets.dataset(id).dataset,'id')
+                            model.stations(j).plots(k).datasets(id).id=xml.stations.stations.station(istat).station.plots.plots.plot(k).plot.datasets.datasets.dataset(id).dataset.id;
                         end
                     end
                     model.stations(j).storeSP2=0;
@@ -788,12 +788,12 @@ end
 %% Map Datasets
 model.nrMapDatasets=0;
 if isfield(xml,'mapdatasets')
-    model.nrMapDatasets=length(xml.mapdatasets);
+    model.nrMapDatasets=length(xml.mapdatasets.mapdatasets.dataset);
     for j=1:model.nrMapDatasets
-        model.mapDatasets(j).name=xml.mapdatasets(j).dataset.name;
+        model.mapDatasets(j).name=xml.mapdatasets.mapdatasets.dataset(j).dataset.name;
         model.mapDatasets(j).layer=[];
-        if isfield(xml.mapdatasets(j).dataset,'layer')
-            model.mapDatasets(j).layer=str2double(xml.mapdatasets(j).dataset.layer);
+        if isfield(xml.mapdatasets.mapdatasets.dataset(j).dataset,'layer')
+            model.mapDatasets(j).layer=str2double(xml.mapdatasets.mapdatasets.dataset(j).dataset.layer);
         end
     end
 end
@@ -802,144 +802,144 @@ end
 model.nrMapPlots=0;
 model.mapPlots=[];
 if isfield(xml,'mapplots')
-    model.nrMapPlots=length(xml.mapplots);
+    model.nrMapPlots=length(xml.mapplots.mapplots.mapplot);
     for j=1:model.nrMapPlots
         
-        model.mapPlots(j).name=xml.mapplots(j).mapplot.name;
-        model.mapPlots(j).longName=xml.mapplots(j).mapplot.longname;
+        model.mapPlots(j).name=xml.mapplots.mapplots.mapplot(j).mapplot.name;
+        model.mapPlots(j).longName=xml.mapplots.mapplots.mapplot(j).mapplot.longname;
         
         model.mapPlots(j).timeStep=[];
-        if isfield(xml.mapplots(j).mapplot,'timestep')
-            model.mapPlots(j).timeStep=str2double(xml.mapplots(j).mapplot.timestep);
+        if isfield(xml.mapplots.mapplots.mapplot(j).mapplot,'timestep')
+            model.mapPlots(j).timeStep=str2double(xml.mapplots.mapplots.mapplot(j).mapplot.timestep);
         end
         
         model.mapPlots(j).plot=1;
-        if isfield(xml.mapplots(j).mapplot,'plot')
-            model.mapPlots(j).plot=str2double(xml.mapplots(j).mapplot.plot);
+        if isfield(xml.mapplots.mapplots.mapplot(j).mapplot,'plot')
+            model.mapPlots(j).plot=str2double(xml.mapplots.mapplots.mapplot(j).mapplot.plot);
         end
 
         model.mapPlots(j).type='kmz';
-        if isfield(xml.mapplots(j).mapplot,'type')
-            model.mapPlots(j).type=xml.mapplots(j).mapplot.type;
+        if isfield(xml.mapplots.mapplots.mapplot(j).mapplot,'type')
+            model.mapPlots(j).type=xml.mapplots.mapplots.mapplot(j).mapplot.type;
         end
 
-        if isfield(xml.mapplots(j).mapplot,'datasets')
+        if isfield(xml.mapplots.mapplots.mapplot(j).mapplot,'datasets')
             
-            model.mapPlots(j).nrDatasets=length(xml.mapplots(j).mapplot.datasets);
+            model.mapPlots(j).nrDatasets=length(xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset);
             
             for k=1:model.mapPlots(j).nrDatasets
                 
-                model.mapPlots(j).datasets(k).name=xml.mapplots(j).mapplot.datasets(k).dataset.name;
+                model.mapPlots(j).datasets(k).name=xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset.name;
                 
                 model.mapPlots(j).datasets(k).plotRoutine='patches';
-                if isfield(xml.mapplots(j).mapplot.datasets(k).dataset,'plotroutine')
-                    model.mapPlots(j).datasets(k).plotRoutine=xml.mapplots(j).mapplot.datasets(k).dataset.plotroutine;
+                if isfield(xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset,'plotroutine')
+                    model.mapPlots(j).datasets(k).plotRoutine=xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset.plotroutine;
                 end
                 
                 model.mapPlots(j).datasets(k).plot=1;
-                if isfield(xml.mapplots(j).mapplot.datasets(k).dataset,'plot')
-                    model.mapPlots(j).datasets(k).plot=str2num(xml.mapplots(j).mapplot.datasets(k).dataset.plot);
+                if isfield(xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset,'plot')
+                    model.mapPlots(j).datasets(k).plot=str2num(xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset.plot);
                 end
                 
                 model.mapPlots(j).datasets(k).component='magnitude';
-                if isfield(xml.mapplots(j).mapplot.datasets(k).dataset,'component')
-                    model.mapPlots(j).datasets(k).component=xml.mapplots(j).mapplot.datasets(k).dataset.component;
+                if isfield(xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset,'component')
+                    model.mapPlots(j).datasets(k).component=xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset.component;
                 end
                 
                 model.mapPlots(j).datasets(k).arrowLength=3600;
-                if isfield(xml.mapplots(j).mapplot.datasets(k).dataset,'arrowlength')
-                    model.mapPlots(j).datasets(k).arrowLength=str2num(xml.mapplots(j).mapplot.datasets(k).dataset.arrowlength);
+                if isfield(xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset,'arrowlength')
+                    model.mapPlots(j).datasets(k).arrowLength=str2num(xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset.arrowlength);
                 end
                 
                 model.mapPlots(j).datasets(k).spacing=10000;
-                if isfield(xml.mapplots(j).mapplot.datasets(k).dataset,'spacing')
-                    model.mapPlots(j).datasets(k).spacing=str2num(xml.mapplots(j).mapplot.datasets(k).dataset.spacing);
+                if isfield(xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset,'spacing')
+                    model.mapPlots(j).datasets(k).spacing=str2num(xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset.spacing);
                 end
                 
                 model.mapPlots(j).datasets(k).thinning=1;
-                if isfield(xml.mapplots(j).mapplot.datasets(k).dataset,'thinning')
-                    model.mapPlots(j).datasets(k).thinning=str2num(xml.mapplots(j).mapplot.datasets(k).dataset.thinning);
+                if isfield(xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset,'thinning')
+                    model.mapPlots(j).datasets(k).thinning=str2num(xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset.thinning);
                 end
                 
                 model.mapPlots(j).datasets(k).thinningX=1;
-                if isfield(xml.mapplots(j).mapplot.datasets(k).dataset,'thinningx')
-                    model.mapPlots(j).datasets(k).thinningX=str2num(xml.mapplots(j).mapplot.datasets(k).dataset.thinningx);
+                if isfield(xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset,'thinningx')
+                    model.mapPlots(j).datasets(k).thinningX=str2num(xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset.thinningx);
                 end
                 
                 model.mapPlots(j).datasets(k).thinningY=1;
-                if isfield(xml.mapplots(j).mapplot.datasets(k).dataset,'thinningy')
-                    model.mapPlots(j).datasets(k).thinningY=str2num(xml.mapplots(j).mapplot.datasets(k).dataset.thinningy);
+                if isfield(xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset,'thinningy')
+                    model.mapPlots(j).datasets(k).thinningY=str2num(xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset.thinningy);
                 end
                 
                 model.mapPlots(j).datasets(k).cLim=[];
-                if isfield(xml.mapplots(j).mapplot.datasets(k).dataset,'clim')
-                    model.mapPlots(j).datasets(k).cLim=str2num(xml.mapplots(j).mapplot.datasets(k).dataset.clim);
+                if isfield(xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset,'clim')
+                    model.mapPlots(j).datasets(k).cLim=str2num(xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset.clim);
                 end
 
                 model.mapPlots(j).datasets(k).cMinCutOff=[];
-                if isfield(xml.mapplots(j).mapplot.datasets(k).dataset,'cmincutoff')
-                    model.mapPlots(j).datasets(k).cMinCutOff=str2num(xml.mapplots(j).mapplot.datasets(k).dataset.cmincutoff);
+                if isfield(xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset,'cmincutoff')
+                    model.mapPlots(j).datasets(k).cMinCutOff=str2num(xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset.cmincutoff);
                 end
                 
                 model.mapPlots(j).datasets(k).cMaxCutOff=[];
-                if isfield(xml.mapplots(j).mapplot.datasets(k).dataset,'cmaxcutoff')
-                    model.mapPlots(j).datasets(k).cMaxCutOff=str2num(xml.mapplots(j).mapplot.datasets(k).dataset.cmaxcutoff);
+                if isfield(xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset,'cmaxcutoff')
+                    model.mapPlots(j).datasets(k).cMaxCutOff=str2num(xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset.cmaxcutoff);
                 end
                 
                 model.mapPlots(j).datasets(k).polygon=[];
-                if isfield(xml.mapplots(j).mapplot.datasets(k).dataset,'polygon')
-                    model.mapPlots(j).datasets(k).polygon=xml.mapplots(j).mapplot.datasets(k).dataset.polygon;
+                if isfield(xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset,'polygon')
+                    model.mapPlots(j).datasets(k).polygon=xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset.polygon;
                 end
                 
                 model.mapPlots(j).datasets(k).relativeSpeed=[];
-                if isfield(xml.mapplots(j).mapplot.datasets(k).dataset,'relativespeed')
-                    model.mapPlots(j).datasets(k).relativeSpeed=str2num(xml.mapplots(j).mapplot.datasets(k).dataset.relativespeed);
+                if isfield(xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset,'relativespeed')
+                    model.mapPlots(j).datasets(k).relativeSpeed=str2num(xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset.relativespeed);
                 end
                 
                 model.mapPlots(j).datasets(k).scaleFactor=0.001;
-                if isfield(xml.mapplots(j).mapplot.datasets(k).dataset,'scalefactor')
-                    model.mapPlots(j).datasets(k).scaleFactor=str2num(xml.mapplots(j).mapplot.datasets(k).dataset.scalefactor);
+                if isfield(xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset,'scalefactor')
+                    model.mapPlots(j).datasets(k).scaleFactor=str2num(xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset.scalefactor);
                 end
                 
                 model.mapPlots(j).datasets(k).colorBarDecimals=[];
-                if isfield(xml.mapplots(j).mapplot.datasets(k).dataset,'colorbardecimals')
-                    model.mapPlots(j).datasets(k).colorBarDecimals=str2num(xml.mapplots(j).mapplot.datasets(k).dataset.colorbardecimals);
+                if isfield(xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset,'colorbardecimals')
+                    model.mapPlots(j).datasets(k).colorBarDecimals=str2num(xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset.colorbardecimals);
                 end
                 
                 model.mapPlots(j).datasets(k).colorMap=[];
-                if isfield(xml.mapplots(j).mapplot.datasets(k).dataset,'colormap')
-                    model.mapPlots(j).datasets(k).colorMap=xml.mapplots(j).mapplot.datasets(k).dataset.colormap;
+                if isfield(xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset,'colormap')
+                    model.mapPlots(j).datasets(k).colorMap=xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset.colormap;
                 end
                 
                 model.mapPlots(j).datasets(k).barLabel=[];
-                if isfield(xml.mapplots(j).mapplot.datasets(k).dataset,'barlabel')
-                    model.mapPlots(j).datasets(k).barLabel=xml.mapplots(j).mapplot.datasets(k).dataset.barlabel;
+                if isfield(xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset,'barlabel')
+                    model.mapPlots(j).datasets(k).barLabel=xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset.barlabel;
                 end
 
                 % Argus merged image
                 model.mapPlots(j).datasets(k).argusstation=[];
-                if isfield(xml.mapplots(j).mapplot.datasets(k).dataset,'argusstation')
-                    model.mapPlots(j).datasets(k).argusstation=xml.mapplots(j).mapplot.datasets(k).dataset.argusstation;
+                if isfield(xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset,'argusstation')
+                    model.mapPlots(j).datasets(k).argusstation=xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset.argusstation;
                 end
                 model.mapPlots(j).datasets(k).argusxorigin=0;
-                if isfield(xml.mapplots(j).mapplot.datasets(k).dataset,'argusxorigin')
-                    model.mapPlots(j).datasets(k).argusxorigin=str2num(xml.mapplots(j).mapplot.datasets(k).dataset.argusxorigin);
+                if isfield(xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset,'argusxorigin')
+                    model.mapPlots(j).datasets(k).argusxorigin=str2num(xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset.argusxorigin);
                 end
                 model.mapPlots(j).datasets(k).argusyorigin=0;
-                if isfield(xml.mapplots(j).mapplot.datasets(k).dataset,'argusyorigin')
-                    model.mapPlots(j).datasets(k).argusyorigin=str2num(xml.mapplots(j).mapplot.datasets(k).dataset.argusyorigin);
+                if isfield(xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset,'argusyorigin')
+                    model.mapPlots(j).datasets(k).argusyorigin=str2num(xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset.argusyorigin);
                 end
                 model.mapPlots(j).datasets(k).arguswidth=0;
-                if isfield(xml.mapplots(j).mapplot.datasets(k).dataset,'arguswidth')
-                    model.mapPlots(j).datasets(k).arguswidth=str2num(xml.mapplots(j).mapplot.datasets(k).dataset.arguswidth);
+                if isfield(xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset,'arguswidth')
+                    model.mapPlots(j).datasets(k).arguswidth=str2num(xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset.arguswidth);
                 end
                 model.mapPlots(j).datasets(k).argusheight=0;
-                if isfield(xml.mapplots(j).mapplot.datasets(k).dataset,'argusheight')
-                    model.mapPlots(j).datasets(k).argusheight=str2num(xml.mapplots(j).mapplot.datasets(k).dataset.argusheight);
+                if isfield(xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset,'argusheight')
+                    model.mapPlots(j).datasets(k).argusheight=str2num(xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset.argusheight);
                 end
                 model.mapPlots(j).datasets(k).argusrotation=0;
-                if isfield(xml.mapplots(j).mapplot.datasets(k).dataset,'argusrotation')
-                    model.mapPlots(j).datasets(k).argusrotation=str2num(xml.mapplots(j).mapplot.datasets(k).dataset.argusrotation);
+                if isfield(xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset,'argusrotation')
+                    model.mapPlots(j).datasets(k).argusrotation=str2num(xml.mapplots.mapplots.mapplot(j).mapplot.datasets.datasets.dataset(k).dataset.argusrotation);
                 end
                 
                 
@@ -953,52 +953,52 @@ end
 model.nrHazards=0;
 model.hazards=[];
 if isfield(xml,'hazards')
-    model.nrHazards=length(xml.hazards);
+    model.nrHazards=length(xml.hazards.hazards.hazard);
     for j=1:model.nrHazards
-        model.hazards(j).type=xml.hazards(j).hazard.type;
-        model.hazards(j).name=xml.hazards(j).hazard.name;
-        model.hazards(j).longName=xml.hazards(j).hazard.longname;
-        model.hazards(j).location(1)=str2double(xml.hazards(j).hazard.locationx);
-        model.hazards(j).location(2)=str2double(xml.hazards(j).hazard.locationy);
+        model.hazards(j).type=xml.hazards.hazards.hazard(j).hazard.type;
+        model.hazards(j).name=xml.hazards.hazards.hazard(j).hazard.name;
+        model.hazards(j).longName=xml.hazards.hazards.hazard(j).hazard.longname;
+        model.hazards(j).location(1)=str2double(xml.hazards.hazards.hazard(j).hazard.locationx);
+        model.hazards(j).location(2)=str2double(xml.hazards.hazards.hazard(j).hazard.locationy);
         model.hazards(j).wlStation=[];
-        if isfield(xml.hazards(j).hazard,'wlstation')
-            model.hazards(j).wlStation=xml.hazards(j).hazard.wlstation;
+        if isfield(xml.hazards.hazards.hazard(j).hazard,'wlstation')
+            model.hazards(j).wlStation=xml.hazards.hazards.hazard(j).hazard.wlstation;
         end
         model.hazards(j).geoJpgFile=[];
-        if isfield(xml.hazards(j).hazard,'geojpgfile')
-            model.hazards(j).geoJpgFile=xml.hazards(j).hazard.geojpgfile;
+        if isfield(xml.hazards.hazards.hazard(j).hazard,'geojpgfile')
+            model.hazards(j).geoJpgFile=xml.hazards.hazards.hazard(j).hazard.geojpgfile;
         end
         model.hazards(j).geoJgwFile=[];
-        if isfield(xml.hazards(j).hazard,'geojgwfile')
-            model.hazards(j).geoJgwFile=xml.hazards(j).hazard.geojgwfile;
+        if isfield(xml.hazards.hazards.hazard(j).hazard,'geojgwfile')
+            model.hazards(j).geoJgwFile=xml.hazards.hazards.hazard(j).hazard.geojgwfile;
         end
         model.hazards(j).x0=[];
-        if isfield(xml.hazards(j).hazard,'x0')
-            model.hazards(j).x0=str2double(xml.hazards(j).hazard.x0);
+        if isfield(xml.hazards.hazards.hazard(j).hazard,'x0')
+            model.hazards(j).x0=str2double(xml.hazards.hazards.hazard(j).hazard.x0);
         end
         model.hazards(j).y0=[];
-        if isfield(xml.hazards(j).hazard,'y0')
-            model.hazards(j).y0=str2double(xml.hazards(j).hazard.y0);
+        if isfield(xml.hazards.hazards.hazard(j).hazard,'y0')
+            model.hazards(j).y0=str2double(xml.hazards.hazards.hazard(j).hazard.y0);
         end
         model.hazards(j).coastOrientation=[];
-        if isfield(xml.hazards(j).hazard,'orientation')
-            model.hazards(j).coastOrientation=str2double(xml.hazards(j).hazard.orientation);
+        if isfield(xml.hazards.hazards.hazard(j).hazard,'orientation')
+            model.hazards(j).coastOrientation=str2double(xml.hazards.hazards.hazard(j).hazard.orientation);
         end
         model.hazards(j).length1=[];
-        if isfield(xml.hazards(j).hazard,'length1')
-            model.hazards(j).length1=str2double(xml.hazards(j).hazard.length1);
+        if isfield(xml.hazards.hazards.hazard(j).hazard,'length1')
+            model.hazards(j).length1=str2double(xml.hazards.hazards.hazard(j).hazard.length1);
         end
         model.hazards(j).length2=[];
-        if isfield(xml.hazards(j).hazard,'length2')
-            model.hazards(j).length2=str2double(xml.hazards(j).hazard.length2);
+        if isfield(xml.hazards.hazards.hazard(j).hazard,'length2')
+            model.hazards(j).length2=str2double(xml.hazards.hazards.hazard(j).hazard.length2);
         end
         model.hazards(j).width1=[];
-        if isfield(xml.hazards(j).hazard,'width1')
-            model.hazards(j).width1=str2double(xml.hazards(j).hazard.width1);
+        if isfield(xml.hazards.hazards.hazard(j).hazard,'width1')
+            model.hazards(j).width1=str2double(xml.hazards.hazards.hazard(j).hazard.width1);
         end
         model.hazards(j).width2=[];
-        if isfield(xml.hazards(j).hazard,'width2')
-            model.hazards(j).width2=str2double(xml.hazards(j).hazard.width2);
+        if isfield(xml.hazards.hazards.hazard(j).hazard,'width2')
+            model.hazards(j).width2=str2double(xml.hazards.hazards.hazard(j).hazard.width2);
         end
     end
 end
@@ -1080,43 +1080,43 @@ end
 %
 %% X-Beach Profiles
 if isfield(xml,'profiles')
-    model.nrProfiles=length(xml.profiles);
+    model.nrProfiles=length(xml.profiles.profiles.profile);
     for j=1:model.nrProfiles
-        model.profile(j).name=xml.profiles(j).profile.name;
-        model.profile(j).Location(1)=str2double(xml.profiles(j).profile.originx);
-        model.profile(j).Location(2)=str2double(xml.profiles(j).profile.originy);
-        model.profile(j).originX=str2double(xml.profiles(j).profile.originx);
-        model.profile(j).originY=str2double(xml.profiles(j).profile.originy);
-        model.profile(j).alpha=str2double(xml.profiles(j).profile.alpha);
-        model.profile(j).length=str2double(xml.profiles(j).profile.length);
-        model.profile(j).nX=str2double(xml.profiles(j).profile.nx);
-        model.profile(j).nY=str2double(xml.profiles(j).profile.ny);
-        model.profile(j).dX=str2double(xml.profiles(j).profile.dx);
-        model.profile(j).dY=str2double(xml.profiles(j).profile.dy);
-        model.profile(j).DistBluff=str2double(xml.profiles(j).profile.distbluff);
-        model.profile(j).run=str2double(xml.profiles(j).profile.run);
-        if isfield(xml.profiles(j).profile,'dtheta')
-            model.profile(j).dTheta=str2double(xml.profiles(j).profile.dtheta);
+        model.profile(j).name=xml.profiles.profiles.profile(j).profile.name;
+        model.profile(j).Location(1)=str2double(xml.profiles.profiles.profile(j).profile.originx);
+        model.profile(j).Location(2)=str2double(xml.profiles.profiles.profile(j).profile.originy);
+        model.profile(j).originX=str2double(xml.profiles.profiles.profile(j).profile.originx);
+        model.profile(j).originY=str2double(xml.profiles.profiles.profile(j).profile.originy);
+        model.profile(j).alpha=str2double(xml.profiles.profiles.profile(j).profile.alpha);
+        model.profile(j).length=str2double(xml.profiles.profiles.profile(j).profile.length);
+        model.profile(j).nX=str2double(xml.profiles.profiles.profile(j).profile.nx);
+        model.profile(j).nY=str2double(xml.profiles.profiles.profile(j).profile.ny);
+        model.profile(j).dX=str2double(xml.profiles.profiles.profile(j).profile.dx);
+        model.profile(j).dY=str2double(xml.profiles.profiles.profile(j).profile.dy);
+        model.profile(j).DistBluff=str2double(xml.profiles.profiles.profile(j).profile.distbluff);
+        model.profile(j).run=str2double(xml.profiles.profiles.profile(j).profile.run);
+        if isfield(xml.profiles.profiles.profile(j).profile,'dtheta')
+            model.profile(j).dTheta=str2double(xml.profiles.profiles.profile(j).profile.dtheta);
         else
             model.profile(j).dTheta=5;
         end
-        if isfield(xml.profiles(j).profile,'xgrid')
-            model.profile(j).xGrid = xml.profiles(j).profile.xgrid;
+        if isfield(xml.profiles.profiles.profile(j).profile,'xgrid')
+            model.profile(j).xGrid = xml.profiles.profiles.profile(j).profile.xgrid;
         else
             model.profile(j).xGrid = '';
         end
-        if isfield(xml.profiles(j).profile,'ygrid')
-            model.profile(j).yGrid = xml.profiles(j).profile.ygrid;
+        if isfield(xml.profiles.profiles.profile(j).profile,'ygrid')
+            model.profile(j).yGrid = xml.profiles.profiles.profile(j).profile.ygrid;
         else
             model.profile(j).yGrid = '';
         end
-        if isfield(xml.profiles(j).profile,'zgrid')
-            model.profile(j).zGrid = xml.profiles(j).profile.zgrid;
+        if isfield(xml.profiles.profiles.profile(j).profile,'zgrid')
+            model.profile(j).zGrid = xml.profiles.profiles.profile(j).profile.zgrid;
         else
             model.profile(j).zGrid = '';
         end
-        if isfield(xml.profiles(j).profile,'negrid')
-            model.profile(j).neGrid = xml.profiles(j).profile.negrid;
+        if isfield(xml.profiles.profiles.profile(j).profile,'negrid')
+            model.profile(j).neGrid = xml.profiles.profiles.profile(j).profile.negrid;
         else
             model.profile(j).neGrid = '';
         end

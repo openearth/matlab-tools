@@ -2,17 +2,17 @@ function out=getParameterInfo(hm,par,varargin)
 
 out=[];
 
-npar=length(hm.parameters);
+npar=length(hm.parameters.parameter);
 
 % Make cell array of all available parameters
 for i=1:npar
-    names{i}=hm.parameters(i).parameter(1).shortname;
+    names{i}=hm.parameters.parameter(i).parameter.shortname;
 end
 
 % Find required parameter number
 ipar=strmatch(lower(par),lower(names),'exact');
 
-s=hm.parameters(ipar).parameter(1);
+s=hm.parameters.parameter(ipar).parameter;
 
 if length(varargin)==1   
     out=s.(varargin{1});
@@ -28,53 +28,40 @@ else
 
     nrp=k;
 
-    for i=1:nrp
-        switch lower(ptype2{i})
-            case{'source'}
-                ptype1{i}='sources';
-            case{'model'}
-                ptype1{i}='models';
-            case{'datatype'}
-                ptype1{i}='datatypes';
-            case{'plot'}
-                ptype1{i}='plots';
-        end
-    end
+    ptype1=ptype2;
+    
+    name1=ptype1{1};
+    name2=ptype1{2};
 
     switch nrp
 
         case 1
-
-            for j=1:length(s.(ptype1{1}))
-                nm{j}=s.(ptype1{1})(j).(ptype2{1}).type;
+            
+            for j=1:length(s.(name1))
+                nm{j}=s.(name1)(j).(name1).type;
             end
             ii=strmatch(lower(pname{1}),lower(nm),'exact');
             
             if ~isempty(ii)           
-                out=s.(ptype1{1})(ii).(ptype2{1}).(par);
+                out=s.(name1)(ii).(name1).(par);
             end
             
         case 2
 
             nm=[];
-            for j=1:length(s.(ptype1{1}))
-                nm{j}=s.(ptype1{1})(j).(ptype2{1}).type;
+            for j=1:length(s.(name1))
+                nm{j}=s.(name1)(j).(name1).type;
             end
             ii=strmatch(lower(pname{1}),lower(nm),'exact');
 
             if ~isempty(ii)
                 
                 nm=[];
-                for j=1:length(s.(ptype1{1})(ii).(ptype2{1}).(ptype1{2}))
-                    nm{j}=s.(ptype1{1})(ii).(ptype2{1}).(ptype1{2})(j).(ptype2{2}).type;
+                for j=1:length(s.(name1)(ii).(name1).(name2))
+                    nm{j}=s.(name1)(ii).(name1).(name2)(j).(name2).type;
                 end
-                jj=strmatch(lower(pname{2}),lower(nm),'exact');
-                
-                try
-                out=s.(ptype1{1})(ii).(ptype2{1}).(ptype1{2})(jj).(ptype2{2}).(par);
-                catch
-                    shite=1
-                end
+                jj=strmatch(lower(pname{2}),lower(nm),'exact');                
+                out=s.(name1)(ii).(name1).(name2)(jj).(name2).(par);
             end
             
     end
