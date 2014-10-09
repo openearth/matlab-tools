@@ -43,27 +43,44 @@ try
             
             % Moving data
             m=FinishedList(i);
-            
+
             if ~strcmpi(hm.models(m).status,'failed') && ~isempty(timerfind('Tag', 'ModelLoop'))
                 mdl=hm.models(m).name;
                 set(hm.textModelLoopStatus,'String',['Status : moving ' mdl ' ...']);drawnow;
-                try
-                    WriteLogFile(['Moving data ' hm.models(m).name]);
-                    tic
-                    % Move the model results to local main directory
-                    cosmos_moveModelData(hm,m);
-                catch
-                    WriteErrorLogFile(hm,['Something went wrong moving data of ' hm.models(m).name]);
-                    hm.models(m).status='failed';
-                end
-                hm.models(m).moveDuration=toc;
-                
-                % Set model status to simulationfinished (if everything went okay)
-                % The model is now ready for further post-processing (extracting data, making figures, uploading to website)
-                if ~strcmpi(hm.models(m).status,'failed')
-                    hm.models(m).status='simulationfinished';
+                                
+                % Build in check for WAVEWATCHIII
+                ok=1;
+                if strcmpi(hm.models(m).type,'ww3')
+                    rundir=[hm.jobDir hm.models(m).name filesep];
+                    if ~exist([rundir 'out_grd.ww3'],'file')
+                        % Something went wrong (probably related to MPI stuff)
+                        % Delete rundir and set status back to waiting
+                        [status,message,messageid]=rmdir(rundir, 's');
+                        hm.models(m).status='waiting';
+                        disp('Trying WAVEWATCH III again !!!');
+                        ok=0;
+                    end
                 end
                 
+                if ok
+                    try
+                        WriteLogFile(['Moving data ' hm.models(m).name]);
+                        tic
+                        % Move the model results to local main directory
+                        cosmos_moveModelData(hm,m);
+                    catch
+                        WriteErrorLogFile(hm,['Something went wrong moving data of ' hm.models(m).name]);
+                        hm.models(m).status='failed';
+                    end
+                    hm.models(m).moveDuration=toc;
+                    
+                    % Set model status to simulationfinished (if everything went okay)
+                    % The model is now ready for further post-processing (extracting data, making figures, uploading to website)
+                    if ~strcmpi(hm.models(m).status,'failed')
+                        hm.models(m).status='simulationfinished';
+                    end
+                    
+                end
             end
         end
     end
