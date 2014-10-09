@@ -48,7 +48,8 @@ fprintf(fid,'%s\n','$ 2 : Last process is reserved for all output, and does no')
 fprintf(fid,'%s\n','$ computing.');
 fprintf(fid,'%s\n','$ 3 : Multiple dedicated output processes.');
 fprintf(fid,'%s\n','$');
-fprintf(fid,'%s\n','   0');
+%fprintf(fid,'%s\n','   0');
+fprintf(fid,'%s\n','   1');
 fprintf(fid,'%s\n','$');
 fprintf(fid,'%s\n','$ Five output types are available (see below). All output types share');
 fprintf(fid,'%s\n','$ a similar format for the first input line:');
