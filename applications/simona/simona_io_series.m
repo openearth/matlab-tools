@@ -67,7 +67,11 @@ switch cmd
                     i_day  = floor((SERIES.Times(i_time) + eps)/1440.);
                     i_hour = floor((SERIES.Times(i_time) - i_day*1440. + eps)/60.);
                     i_min  = floor(SERIES.Times(i_time) - i_day*1440. - i_hour*60. + eps);
-                    fprintf(fid,'TIME_AND_VALUE %3.3i  %2.2i:%2.2i  %12.6f \n',i_day,i_hour,i_min,SERIES.Values(i_time));
+                    if (size(SERIES.Values,2) ==2)
+                        fprintf(fid,'TIME_AND_VALUE %3.3i  %2.2i:%2.2i  %12.6f %12.6f \n',i_day,i_hour,i_min,SERIES.Values(i_time,:));
+                    else
+                        fprintf(fid,'TIME_AND_VALUE %3.3i  %2.2i:%2.2i  %12.6f \n',i_day,i_hour,i_min,SERIES.Values(i_time));
+                    end
                 end
         end
         fclose (fid);
