@@ -8,7 +8,7 @@ switch lower(opt)
         dataset.name='integrated transports';
     case{'import'}
         
-        fi=tekal('open',dataset.filename);
+        fi=tekal('open',dataset.filename,'loaddata');
         [x,y]=landboundary('read',dataset.polygonfile);
         
         dataset.x(1)=min(min(x));
