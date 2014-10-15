@@ -1,5 +1,5 @@
 function paramsnew = get_distparam(fhandle,params,P,xP,param_idx)
-%GET_PARAM  Finds unknown input parameter for statistical distribution
+%GET_DISTPARAM  Finds unknown input parameter for statistical distribution
 %
 %   Finds unknown input parameter for statistical distribution based on 
 %   a known probabilty of non-exceedance and its known associated x-value.
