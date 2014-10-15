@@ -47,7 +47,7 @@
 
 %% instantiate a class
 % an example class
-obj = metaprop.example_classdef;
+obj = metaprop.example_options;
 
 % View the properties of the object
 properties(obj)
