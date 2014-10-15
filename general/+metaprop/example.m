@@ -1,6 +1,8 @@
 % EXAMPLE Example script that shows how to inpect a custom class
 %
-% See also: metaprop.example_classdef
+% example_options
+%
+% See also: metaprop.example_options
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -54,12 +56,12 @@ properties(obj)
 
 % Input verification 
 try
-    obj.Date = '2002/09/01';
+    obj.date = '2002/09/01';
 catch ME
     disp(ME.message)
 end
 
-obj.Date = datenum(2002,9,1);
+obj.date = datenum(2002,9,1);
 
 %% Interactive inspection of class
 % open the inspector by calling the objects inspect method
