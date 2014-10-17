@@ -158,6 +158,11 @@ function varargout = noos_read(varargin)
    ind   = strmatch('#',allLines)';
    
    % handle case where 1st line is data instead of header
+   if length(ind) == 0
+   hind0 = 0;
+   hind1 = 0;
+   D.header = '';
+   else
    if ~(ind(1)==1)
       ind = [0 ind];
    end
@@ -168,6 +173,7 @@ function varargout = noos_read(varargin)
    
    hind1 = ind(find(diff(ind)>1));
    hind1 = [hind1 ind(end)];
+   end
    
    % data start & end indices
    dind0 = hind1+1;
@@ -184,7 +190,9 @@ function varargout = noos_read(varargin)
       done                  = 0;
       pointIndex            = 1;
       nt                    = dind1(iloc) - dind0(iloc) + 1;
+      if length(ind) > 0
       D(iloc).header        = allLines(hind0(iloc):hind1(iloc));
+      end
       D(iloc).datenum       = repmat(nan,[1 nt]);
       D(iloc).(OPT.varname) = repmat(nan,[1 nt]);
       
