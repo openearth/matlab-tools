@@ -57,7 +57,7 @@ if nargin>0
     DELIM = ' ';
 end
 
-C = textscan(STR,format,'Delimiter',DELIM);
+C = textscan(STR,format,'Delimiter',DELIM,'MultipleDelimsAsOne',1);
 C = C{1};C = {C{:}};
 
 %% EOF

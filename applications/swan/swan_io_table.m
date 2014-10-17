@@ -220,11 +220,21 @@ if isfield(INP.table,'parameter')
    %% load table with default nodatavalues
 
    D = swan_quantity;
+   
+   quantitynames = fieldnames(D);
 
    for ifield=1:length(INP.table.parameter.nfields)
 
       ndata   = INP.table.parameter.nfields(ifield); % 1 or 2
-      fldname = char(strtrim(INP.table.parameter.names{ifield}));
+      fldname_long = char(strtrim(INP.table.parameter.names{ifield}));
+      
+      % find match with minimal short names, but return fldname_long to user
+      for i=1:length(quantitynames)
+         if strmatch(quantitynames{i},fldname_long)
+             fldname = quantitynames{i};
+             break
+         end
+      end
 
       %  determine nodatavalue that differs per parameter
       
@@ -253,9 +263,9 @@ if isfield(INP.table,'parameter')
          
          if ~isempty(INP.table.mmax) & ...
             ~isempty(INP.table.nmax)
-            TAB.(fldname)(:,:,idata) = reshape(data,[INP.table.mmax INP.table.nmax]);
+            TAB.(fldname_long)(:,:,idata) = reshape(data,[INP.table.mmax INP.table.nmax]);
          else
-            TAB.(fldname)(:,idata  ) = data;
+            TAB.(fldname_long)(:,idata  ) = data;
          end
       end
 

@@ -300,9 +300,9 @@ end
             end
             
 %% Read MODE (optional)
+            DAT.mode.stationary = 1; % default
+            DAT.mode.dim        = 2; % default
             if strcmp(strtok(upper(rec)),'MODE')
-               DAT.mode.stationary = 1;
-               DAT.mode.dim        = 2;
               [keyword,rec] = strtok(rec);
               [keyword,rec] = strtok(rec);
                if     strcmp(keyword(1:3),'STA')
@@ -417,8 +417,7 @@ end
 
                elseif strcmp(keyword1(1:7),'UNSTRUC') % sub-keyword REGular or no sub-keyword
                   DAT.cgrid.type       = 'unstructured';
-                  DAT.cgrid.rest = rec;
-                  warning('Parsing of unstructured grid parameters not implemented yet.')
+                  [keyword,rec]=strtok(rec);
                end
                
                %  CIRCle or SECTtor
@@ -470,7 +469,8 @@ end
             
 %% Read COORdinates (required if curvi-linear)
             if isfield(DAT,'cgrid')
-               if strcmp(DAT.cgrid.type,'curvilinear')
+               if strcmp(DAT.cgrid.type,'curvilinear') | ...
+                  strcmp(DAT.cgrid.type,'unstructured')
                   keyword = pad(strtok(upper(rec)),4,' ');
 
                   if strcmp(keyword(1:4),'READ')
@@ -502,7 +502,7 @@ end
                elseif strcmpi(keyword1(1:4),'CURV')
                gridtype = 'CURV';
               [keyword1,rec1]   = strtok(rec1);
-               elseif strcmpi(keyword1(1:6),'UNSTRUC')
+               elseif strcmpi(keyword1(1:7),'UNSTRUC')
                gridtype = 'UNSTRUC';
               [keyword1,rec1]   = strtok(rec1);
                else
@@ -622,8 +622,12 @@ end
             if   strfind(strtok(upper(rec)),'WIND')==1
                if OPT.debug
                   disp('WIND')
-               end 
-               DAT.wind        = rec;
+               end
+              [keyword,rec]    = strtok(rec);
+              [value,rec]      = strtok(rec);
+               DAT.wind.vel    = str2num(value);
+              [value,rec]      = strtok(rec);
+               DAT.wind.dir    = str2num(value);
                rec             = fgetlines_no_comment_line(fid);
                foundkeyword    = true;
             end              
@@ -854,6 +858,7 @@ end
                keyword         = lower(strtok(upper(rec)));
               [val,rec] = strtok(rec);
               [val,rec] = strtok(rec);
+               if length(val) > 3 % in case empty
                DAT.friction.expression = val;
                if     strcmpi(val(1:3),'JON')
                 [DAT.friction.cfjon      ,rec] = strtok(rec);
@@ -864,6 +869,7 @@ end
                elseif strcmpi(val(1:3),'MAD')
                  DAT.friction.kn    = str2num(strtok(rec));
                else
+               end
                end
                rec             = fgetlines_no_comment_line(fid);
                foundkeyword    = true;
@@ -1163,7 +1169,7 @@ end
                if OPT.debug
                   disp('NGRID')
                end
-               DAT.ngrid       = rec;
+               DAT.quantity    = rec;
                rec             = fgetlines_no_comment_line(fid);
                foundkeyword    = true;
             end
@@ -1253,9 +1259,9 @@ end
 
                output = strfind(rec,'OUT');
                if isempty(output)
-               DAT.table(N.tables).parameters = rec;
+               DAT.table(N.tables).parameters = strtrim(rec);
                else
-               DAT.table(N.tables).parameters = rec(1:output-1);
+               DAT.table(N.tables).parameters = strtrim(rec(1:output-1));
                DAT.table(N.tables).output     = rec(output:end);
                end
                
@@ -1628,6 +1634,10 @@ end
 % TO DO: make sure comment is treated as all data on a SWAN line (_& continuation) in between $ or after last (odd) $
    
       rec                  = fgetl_no_comment_line(fid,'$',0,1); % do not allow empty lines, do remove spaces at start (no tabs yet)
+      if isnumeric(rec) % eof -1
+          multilinerec = '';
+          return
+      end
 
       %% remove inline + end-of-line comments
       ind = strfind(rec,'$');
