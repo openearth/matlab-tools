@@ -632,26 +632,20 @@ end
                foundkeyword    = true;
             end              
 
-            %  Read BOUNDary (required ?)
-            %  ------------------------------------------
+%%  Read BOUndspec (required ?)
             
             j = 0;
             %keyword = strtok(upper(rec));
 % GIVES PROBLEMS WHEN BOUNDary IS NOT PRESENT IN swn FILE
 % use previous rec or check whetehr rec is empty next time
-            while strfind(strtok(upper(rec)),'BOU')==1 | ...
-                  strfind(strtok(upper(rec)),'BOUN')==1 | ...
-                  strfind(strtok(upper(rec)),'BOUND')==1 | ...
-                  strfind(strtok(upper(rec)),'BOUNDS')==1 | ...
-                  strfind(strtok(upper(rec)),'BOUNDSP')==1 | ...
-                  strfind(strtok(upper(rec)),'BOUNDSPE')==1 | ...
-                  strfind(strtok(upper(rec)),'BOUNDSPEC')==1
+            rec3 = rec(1:3); % BOUndspec
+            while lower(rec3)=='bou'
 
                if OPT.debug
                   disp('BOUN')
                end 
                
-              [keyword,rec] = strtok(rec); % remove BOUN
+              [keyword,rec] = strtok(rec); % remove BOUndspec
               [keyword,rec] = strtok(rec); % get next one
 
               %  SHAPe
@@ -702,8 +696,20 @@ end
                   DAT.boundspec(j)               = DAT.boundspec(j-1);
                   end
                   DAT.boundspec(j).specification = 'side';
-                  [winddir ,rec] = strtok(rec);DAT.boundspec(j).winddir  = winddir;
-                  [clockdir,rec] = strtok(rec);DAT.boundspec(j).clockdir = clockdir;
+                  
+                  [winddir ,rec] = strtok(rec);DAT.boundspec(j).side  = winddir;
+                  if strcmpi(DAT.cgrid.type,'unstructured')
+                      DAT.boundspec(j).side = str2num(DAT.boundspec(j).side);
+                  end
+                  
+                  % optional
+                  [tmpkeyword,~] = strtok(rec);
+                  if strcmpi(tmpkeyword,'CLOCKW') || strcmpi(tmpkeyword,'CCW')
+                  DAT.boundspec(j).orientation = tmpkeyword;
+                  [~,rec] = strtok(rec);
+                  else
+                  DAT.boundspec(j).orientation = '';
+                  end
                   
                elseif strcmp(keyword(1:4),'SEGM')
                   j                              = j+1;
@@ -731,8 +737,8 @@ end
                
                %  CONstant vs VARiable
                %  ------------------------------------------
-               if     strcmp(keyword(1:4),'SIDE') | ...
-                      strcmp(keyword(1:4),'SEGM')
+               if     strcmpi(keyword(1:4),'SIDE') | ...
+                      strcmpi(keyword(1:4),'SEGM')
                   [keyword,rec] = strtok(rec);
                   if     strcmp(keyword(1:3),'CON')
                      DAT.boundspec(j).constant_vs_variable = 'constant';
@@ -760,8 +766,9 @@ end
                rec             = fgetlines_no_comment_line(fid);
                keyword         = strtok(upper(rec));
                foundkeyword    = true;
+               rec3            = rec(1:3);
                
-            end            
+            end % while
             
 %% Read INITial
               [keyword1,rec1]   = strtok(rec);
