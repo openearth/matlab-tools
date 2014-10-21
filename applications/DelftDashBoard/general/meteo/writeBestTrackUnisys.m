@@ -62,9 +62,10 @@ fprintf(fid,'%s\n',tc.date);
 fprintf(fid,'%s\n',tc.name);
 fprintf(fid,'%s\n',tc.meta);
 for i = 1:length(tc.time)
-    mystring = [num2str(i,'%8.2f'),datestr(tc.time(i),'mm/dd/hh')];
-    fprintf(fid,'%3s %8s %8s %10s%s %8s %10s\n',num2str(i),num2str(tc.lat(i)),...
-        num2str(tc.lon(i)),datestr(tc.time(i),'mm/dd/hh'),'Z',num2str(tc.vmax(i,1)),num2str(tc.p(i,1)./100))
-    
+    if ~isnan(tc.time(i))
+        mystring = [num2str(i,'%8.2f'),datestr(tc.time(i),'mm/dd/hh')];
+        fprintf(fid,'%3s %8s %8s %10s%s %8s %10s\n',num2str(i),num2str(tc.lat(i)),...
+            num2str(tc.lon(i)),datestr(tc.time(i),'mm/dd/hh'),'Z',num2str(tc.vmax(i,1)),num2str(tc.p(i,1)./100))
+    end
 end
 fclose(fid)
