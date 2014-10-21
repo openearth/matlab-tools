@@ -12,16 +12,20 @@
 % swan_quantitytex               - returns LaTaX names of SWAN output parameters
 % swan_shortname2keyword         - get SWAN SWAN code (OVKEYW) from associated short name (OVSNAM)
 %
-%SWAN data file IO (note Deltares is preparing SWAN netCDF IO, with HOTFile already implemented)
+%SWAN mesh file IO (note latest release also has netCDF files)
 % swan_io_bot                    - read/write SWAN ASCII bottom file
 % swan_io_grd                    - read/write SWAN ASCII grid file  
+% swan_io_ele                    - read/write SWAN/triangular unstructured element file
+% swan_io_node                   - read/write SWAN/triangular unstructured node file  
+%
+%SWAN data file IO (note latest release also has netCDF files)
 % swan_io_table                  - read SWAN ASCII output table     .
 % swan_io_mergesp2               - Merge multiple sp2 files into 1 sp2 file
 % swan_io_spectrum               - read SWAN 1D or 2D spectrum file .
 % swan_io_spectrum_write         - Writes a 1D SWAN spectrum file
 %
 %SWAN input files
-% swan_io_input                  - read SWAN input file into struct .
+% swan_io_input                  - read SWAN input file into struct (to automate postprocessing)
 %
 %SWAN parameters calculation incl. high-freq. tail (energy not present in spectral matrix)
 % swan_hs                        - calculates significant wave height from wave spectrum as in SWAN

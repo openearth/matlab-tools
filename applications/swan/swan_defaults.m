@@ -1,7 +1,7 @@
-function set = swan_defaults
+function [set,inp] = swan_defaults
 %SWAN_DEFAULTS            returns SWAN default SET settings
 %
-%    set = swan_defaults()
+%    [set,<inp>] = swan_defaults()
 %
 % returns
 %
@@ -20,6 +20,8 @@ function set = swan_defaults
 %   set.froudmax = 0.80;
 %   set.printf   = 4;
 %   set.prtest   = 4;
+%
+% where inp has same structure as swn=SWAN_IO_INPUT()
 %
 %See also: SWAN_IO_SPECTRUM, SWAN_IO_INPUT, SWAN_IO_TABLE, SWAN_IO_GRD, SWAN_IO_BOT, 
 %          SWAN_SHORTNAME2KEYWORD, SWAN_QUANTITY
@@ -70,5 +72,45 @@ function set = swan_defaults
    set.froudmax = 0.80;
    set.printf   = 4;
    set.prtest   = 5;
+   
+   if nargout==2
+   inp.set = set;
+   
+   inp.breaking.alpha  = 1;
+   inp.breaking.gamma  = 0.73;
+   inp.breaking.gamma0 = 0.54;
+   inp.breaking.a1     = 7.59;
+   inp.breaking.a2     = -8.06;
+   inp.breaking.a3     = 8.09;
+   
+   inp.friction.cfjon  = 0.038;
+   inp.friction.cfw    = 0.15;
+   inp.friction.kn     = 0.05;
+   inp.friction.S      = 2.65;
+   inp.friction.D      = 0.0001;
+   
+   inp.wcap.cds2       = 2.36e-5;  
+   inp.wcap.stpm       = 3.02e-3;
+   inp.wcap.powst      = 2;
+   inp.wcap.delta      = 1;
+   inp.wcap.powk       = 1;
+   
+   inp.quad.iquad      = 2;
+   inp.quad.lambd      = 0.25;
+   inp.quad.Cnl4       = 3e7;
+   inp.quad.Csh1       = 5.5;
+   inp.quad.Csh2       = 0.833333;
+   inp.quad.Csh3       = -1.25;     
+   
+   inp.triad.itriad    = 1;
+   inp.triad.trfac     = 0.65;
+   inp.triad.cutfr     = 2.5;
+   inp.triad.a         = 0.95;
+   inp.triad.b         = -0.75;   
+   inp.triad.urcrit    = 0.2;
+   inp.triad.urslim    = 0.01;    
+   
+   end
+   
    
 %% EOF   

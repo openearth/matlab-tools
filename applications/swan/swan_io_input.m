@@ -1,5 +1,5 @@
 function varargout = swan_io_input(varargin)
-%SWAN_IO_INPUT            read SWAN input file into struct.
+%SWAN_IO_INPUT            read SWAN input file into struct  (to automate postprocessing)
 %
 %    DAT = swan_io_input(fname)
 %    DAT = swan_io_input        %launches load GUI.
@@ -53,15 +53,16 @@ function varargout = swan_io_input(varargin)
 
 %uses: mergestructs, iscommentline, fieldname, expressionsfromstring
 
-% 2009 Jun 05: add fullfilename to spec field
-% 2009 Jun 04: use new matlab code-cells syntax to divide code into 'chapters'
 % 2008 Apr 17: add *.swn path when reading points FILE (which still is not fool-proof)
 % 2008 Jul 01: allow for absence of SET NAUT/CART
 % 2008 Jul 01: add number of meshes for all table types to quick & allow uniform calls of SWAN_TABLE
 % 2008 Jul 10: interpret BOUND SHAPE line into struct
 % 2008 Oct 20: add default value for set.pwtail and update according to GEN keywords
 % 2009 Feb 05: use strtrim, use only 2 letter of keyword FRICtion, allow both presence and absence of continuation char (&) in PROJ keyword span.
+% 2009 Jun 04: use new matlab code-cells syntax to divide code into 'chapters'
+% 2009 Jun 05: add fullfilename to spec field
 % 2009 jul 20: in fgetlines_no_comment_line: make sure comment is treated as all data on a SWAN line (_& continuation) in between $ or after last (odd) $
+% 2014 oct 20: fixed io for unstructured, and solved small issues
 
 %% Defaults
 
@@ -817,20 +818,54 @@ end
             end             
             
 %% Read WCAP
-            if strfind(strtok(upper(rec)),'WCAP')==1
-               DAT.wcapping    = rec;
+              [keyword1,rec1]   = strtok(rec);
+               if isempty(keyword1);
+               keyword1         = ' ';
+               end
+               keyword1         = upper(pad(keyword1,8,' '));
+            if strfind(keyword1(1:4),'WCAP')==1
+              [val,rec]        = strtok(rec1);
+              if strcmpi(val(1:3),'KOM')
+              [val,rec]        = strtok(rec);            
+               DAT.wcap.cds2   = str2num(val);  
+              [val,rec]        = strtok(rec);
+               DAT.wcap.stpm   = str2num(val);
+              [val,rec]        = strtok(rec);
+               DAT.wcap.powst  = str2num(val);
+              [val,rec]        = strtok(rec);
+               DAT.wcap.delta  = str2num(val);
+              [val,rec]        = strtok(rec);
+               DAT.wcap.powk   = str2num(val);
+              end
+
                rec             = fgetlines_no_comment_line(fid);
                foundkeyword    = true;
-            end              
+            end          
          
 %% Read QUADrupl
               [keyword1,rec1]   = strtok(rec);
-               keyword1         = upper(pad(keyword1,4,' '));
+               if isempty(keyword1);
+               keyword1         = ' ';
+               end
+               keyword1         = upper(pad(keyword1,8,' '));
             if strfind(keyword1(1:4),'QUAD')==1
-               DAT.quadrupl    = rec;
+                
+              [val,rec]          = strtok(rec1);
+               DAT.quad.iquad    = str2num(val);  
+              [val,rec]          = strtok(rec);
+               DAT.quad.lambda   = str2num(val);
+              [val,rec]          = strtok(rec);
+               DAT.quad.Cnl4     = str2num(val);
+              [val,rec]          = strtok(rec);
+               DAT.quad.Csh1     = str2num(val);
+              [val,rec]          = strtok(rec);
+               DAT.quad.Csh2     = str2num(val);
+              [val,rec]          = strtok(rec);
+               DAT.quad.Csh3     = str2num(val);
+
                rec             = fgetlines_no_comment_line(fid);
                foundkeyword    = true;
-            end              
+            end             
 
 %% Read MDIA LAMbda
               [keyword1,rec1]   = strtok(rec);
@@ -845,8 +880,25 @@ end
               [keyword1,rec1]   = strtok(rec);
                keyword1         = upper(pad(keyword1,3,' '));
             if   strfind(keyword1(1:3),'BRE')==1
-               keyword         = lower(strtok(upper(rec)));
-               DAT.breaking    = rec;
+              [val,rec] = strtok(rec1);
+               DAT.breaking.type   = val(1:3);
+              [val,rec] = strtok(rec);
+               DAT.breaking.alpha  = str2num(val);               
+
+               if    strmatch(DAT.breaking.type,'CON')
+              [val,rec] = strtok(rec);
+               DAT.breaking.gamma  = str2num(val);
+               elseif strmatch(DAT.breaking.type,'BKD')
+              [val,rec] = strtok(rec);
+               DAT.breaking.gamma0 = str2num(val);
+              [val,rec] = strtok(rec);
+               DAT.breaking.a1     = str2num(val);
+              [val,rec] = strtok(rec);
+               DAT.breaking.a2     = str2num(val);
+              [val,rec] = strtok(rec);
+               DAT.breaking.a3     = str2num(val);               
+               end
+               
                rec             = fgetlines_no_comment_line(fid);
                foundkeyword    = true;
             end               
@@ -875,6 +927,10 @@ end
                  DAT.friction.cfw   = str2num(strtok(rec));
                elseif strcmpi(val(1:3),'MAD')
                  DAT.friction.kn    = str2num(strtok(rec));
+               elseif strcmpi(val(1:3),'RIP')
+                 DAT.friction.S      = str2num(strtok(rec));                 
+                 [val,rec] = strtok(rec);
+                 DAT.friction.D      = str2num(strtok(rec));                 
                else
                end
                end
@@ -882,29 +938,79 @@ end
                foundkeyword    = true;
             end     
             
-%% Read TRIAD
+%% Read TRIAD: insert defaults from swan_defaults.m?
+
               [keyword1,rec1]   = strtok(rec);
                if isempty(keyword1);
                keyword1         = ' ';
                end
                keyword1         = upper(pad(keyword1,8,' '));
             if strfind(keyword1(1:3),'TRI')==1
-               DAT.triad       = rec;
+                
+              [val,rec]          = strtok(rec1);
+               DAT.triad.itriad  = str2num(val);  
+              [val,rec]          = strtok(rec);
+               DAT.triad.trfac   = str2num(val);
+              [val,rec]          = strtok(rec);
+               DAT.triad.cutfr   = str2num(val);
+              [val,rec]          = strtok(rec);
+               DAT.triad.a       = str2num(val);
+              [val,rec]          = strtok(rec);
+               DAT.triad.b       = str2num(val);
+              [val,rec]          = strtok(rec);
+               DAT.triad.urcrit  = str2num(val);
+              [val,rec]          = strtok(rec);
+               DAT.triad.urslim  = str2num(val);               
+
                rec             = fgetlines_no_comment_line(fid);
                foundkeyword    = true;
             end 
+            
+%% Read VEGegation
+
+              [keyword1,rec1]   = strtok(rec);
+               if isempty(keyword1);
+               keyword1         = ' ';
+               end
+               keyword1         = upper(pad(keyword1,8,' '));
+            if strfind(keyword1(1:3),'VEG')==1
+                
+               DAT.vegetation.height = [];  
+               DAT.vegetation.diamtr = [];
+               DAT.vegetation.nstems = [];
+               DAT.vegetation.drag   = [];                
+                
+                while ~isempty(strtrim(rec1))
+              [val,rec]                     = strtok(rec1);
+               DAT.vegetation.height(end+1) = str2num(val);  
+              [val,rec]                     = strtok(rec);
+               DAT.vegetation.diamtr(end+1) = str2num(val);
+              [val,rec]                     = strtok(rec);
+               DAT.vegetation.nstems(end+1) = str2num(val);
+              [val,rec1]                    = strtok(rec);
+               DAT.vegetation.drag(end+1)   = str2num(val);
+                end
+             
+               rec             = fgetlines_no_comment_line(fid);
+               foundkeyword    = true;
+            end             
             
 %% Read LIMiter
               [keyword1,rec1]   = strtok(rec);
                if isempty(keyword1);
                keyword1         = ' ';
                end
-               keyword1         = upper(pad(keyword1,3,' '));
+               keyword1         = upper(pad(keyword1,8,' '));
             if strfind(keyword1(1:3),'LIM')==1
-               DAT.limiter     = rec;
+                
+              [val,rec]          = strtok(rec1);
+               DAT.lim.ursell    = str2num(val);  
+              [val,rec]          = strtok(rec);
+               DAT.lim.qb        = str2num(val);
+
                rec             = fgetlines_no_comment_line(fid);
                foundkeyword    = true;
-            end  
+            end 
             
 %% Read OBSTacle
               [keyword1,rec1]   = strtok(rec);
@@ -952,27 +1058,46 @@ end
             end    
             
 %% Read MUD
-            if strfind(strtok(upper(rec)),'MUD')==1
-               if OPT.debug
-                  disp('MUD')
-               end             
-               DAT.mud.disperr = 0;
-               DAT.mud.disperi = 0;
-               DAT.mud.source  = 0;
-               DAT.mud.cg      = 0;
-               [~,rec] = strtok(rec);
-               DAT.mud         = swan_keyword(rec,... % expressionsfromstring
-                                {'alpha','rhom','rho0','nu','layer','disperr','disperi','source','cg','power'});
-               rec             = fgetlines_no_comment_line(fid);
-            %else
-            %   %% make emtpy matrices
-            %   DAT.mud        = expressionsfromstring('',...
-            %                    {'rhom','nu','layer','alpha'});
-               foundkeyword    = true;
-            end    
+% special SWANmud
+%             if strfind(strtok(upper(rec)),'MUD')==1
+%                if OPT.debug
+%                   disp('MUD')
+%                end             
+%                DAT.mud.disperr = 0;
+%                DAT.mud.disperi = 0;
+%                DAT.mud.source  = 0;
+%                DAT.mud.cg      = 0;
+%                [~,rec] = strtok(rec);
+%                DAT.mud         = swan_keyword(rec,... % expressionsfromstring
+%                                 {'alpha','rhom','rho0','nu','layer','disperr','disperi','source','cg','power'});
+%                rec             = fgetlines_no_comment_line(fid);
+%             %else
+%             %   %% make emtpy matrices
+%             %   DAT.mud        = expressionsfromstring('',...
+%             %                    {'rhom','nu','layer','alpha'});
+%                foundkeyword    = true;
+%             end    
 
-            j=0;
+              [keyword1,rec1]   = strtok(rec);
+               if isempty(keyword1);
+               keyword1         = ' ';
+               end
+               keyword1         = upper(pad(keyword1,8,' '));
+            if strfind(keyword1(1:3),'MUD')==1
+                
+              [val,rec]        = strtok(rec1);
+               DAT.mud.layer   = str2num(val);  
+              [val,rec]        = strtok(rec);
+               DAT.mud.rhom    = str2num(val);
+              [val,rec]        = strtok(rec);
+               DAT.mud.viscm   = str2num(val);
+
+               rec             = fgetlines_no_comment_line(fid);
+               foundkeyword    = true;
+            end 
+
 %% Read NUMeric
+            j=0;
               [keyword1,rec1]   = strtok(rec);
                if isempty(keyword1);
                keyword1         = ' ';
@@ -1104,15 +1229,15 @@ end
                   DAT.points(N.points).fname = keyword(quotes(1)+1:quotes(end)-1);
                   
                   %% Load file as indicated in SWAN file:
-                  %% * OK when it has a full path associated with it,
-                  %% * WRONG when it has not a full path associated with it
-                  %%   and swan_io_input is called in a different folder
-                  %%   For that case we FIX THAT by also trying to load the file with the
-                  %%   path of the input file appaned to it. However, this goes
-                  %% * WRONG AGAIN when there is a file with the same name in the directory from 
-                  %%   which swan_io_input is called. Because then that one prevails over
-                  %%   the one in the swna input file directory. But that is a common
-                  %%   problem with relative references.
+                  % * OK when it has a full path associated with it,
+                  % * WRONG when it has not a full path associated with it
+                  %   and swan_io_input is called in a different folder
+                  %   For that case we FIX THAT by also trying to load the file with the
+                  %   path of the input file appaned to it. However, this goes
+                  % * WRONG AGAIN when there is a file with the same name in the directory from 
+                  %   which swan_io_input is called. Because then that one prevails over
+                  %   the one in the swna input file directory. But that is a common
+                  %   problem with relative references.
                   
                      loaded = 0;
                   if ~isempty(dir                 ([DAT.points(N.points).fname]))
