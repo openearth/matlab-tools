@@ -1,27 +1,27 @@
 function varargout = struct2csv(fname,S,varargin)
-%STRUCT2CSV   Save 1D data + fieldnames from matlab struct into csv file 
+%STRUCT2CSV   Save 1D data + fieldnames from matlab struct into csv file
 %
 % STRUCT2CSV is a modifed copy of STRUCT2XLS
 % Instead of writing to xls, which requires a installed Excel on the
 % machine, it writes to a Comma Separated Values file.
 % The conversion of the structure is not changed.
-% 
+%
 %   Remark: NOT ALL OPTIONS (from struct2xls) ARE TESTED YET!
 %
-% STRUCT2CSV(filename,struct) converts a matlab struct 
-% with 1D numerical fields !! to an csv file. Non-numeric 
+% STRUCT2CSV(filename,struct) converts a matlab struct
+% with 1D numerical fields !! to an csv file. Non-numeric
 % arrays are allowed.
-% Character arrays can be 2D. By default the 2nd dimension of all 
-% 1D arrays should be  equal, and are taken as the column 
+% Character arrays can be 2D. By default the 2nd dimension of all
+% 1D arrays should be  equal, and are taken as the column
 % length in the csv file.
 %
 %  Example of resulting *.csv file:
-% 
+%
 %  +---------------+---------------+---------------+---------------+
 %  |# textline 1   |               |               |               |
 %  |# textline 2   |               |               |               |
 %  |# textline 3   |               |               |               |
-%  | columnname_01 | columnname_02 | columnname_03 | columnname_04 |  
+%  | columnname_01 | columnname_02 | columnname_03 | columnname_04 |
 %  | units         | units         | units         | units         |
 %  | number/string | number/string | number/string | number/string |
 %  | number/string | number/string | number/string | number/string |
@@ -34,30 +34,32 @@ function varargout = struct2csv(fname,S,varargin)
 % * Is not (by default) reciprocal of xls2struct (due to units line below column headers)
 %   and cell aray for 2D char arrays
 %
-% STRUCT2CSV(filename,struct,<keyword,value>) where 
+% STRUCT2CSV(filename,struct,<keyword,value>) where
 % implemented key words are:
 % * units       - 0 = not,
 %               - 1 = empty line
 %               - cell array is yes
 %               - struct with a fieldnames matching the struct field names is yes
-% * coldimnum   dim ension of fieldname input arrays to be used as column in excel (1 or 2)
-%               (default 2) after option oneD has optionally reshaped so the 1st dimension is 1. 
-% * coldimchar   dim ension of fieldname input arrays to be used as column in excel (1 or 2)
-%               (default 2) after option oneD has optionally reshaped so the 1st dimension is 1. 
-% * oneD        makes sure that both numeric matrix columns and matrix rows are written as Excel 
+% * coldimnum   dimension of fieldname input arrays to be used as column in excel (1 or 2)
+%               (default 2) after option oneD has optionally reshaped so the 1st dimension is 1.
+% * coldimchar   dimension of fieldname input arrays to be used as column in excel (1 or 2)
+%               (default 2) after option oneD has optionally reshaped so the 1st dimension is 1.
+% * oneD        makes sure that both numeric matrix columns and matrix rows are written as Excel
 %               columns (default 1), only works for arrays where either 1st or 2nd dimension has lenght 1..
 % * header      cell array of comment lines above column names (see also keyword commentchar)
-% * overwrite   which can be 
+% * overwrite   which can be
 %               'o' = overwrite (1)
 %               'c' = cancel
 %               'p' = prompt (default, after which o/a/c can be chosen) (0)
-% * commentchar character to append to start of comment (header) line (default '#')  
+% * commentchar character to append to start of comment (header) line (default '#')
+% * sorfields   flag for sorting the fields before sending to the output (default = 0)
 %
 % [success]   = STRUCT2CSV(...)
 % [success,M] = STRUCT2CSV(...) where M is the cell array passed to WRITETABLE.
 %
 % See also: STRUCT2XLS, TABLE, WRITETABLE, XLS2STRUCT, XLSDATE2DATENUM, XLSREAD, XLSWRITE (2006b, otherwise mathsworks downloadcentral)
 
+%% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2014 Van Oord
 %       R.A. van der Hout
@@ -72,7 +74,7 @@ function varargout = struct2csv(fname,S,varargin)
 %   Copyright (C) 2006-2011 Delft University of Technology
 %       Gerben J. de Boer
 %
-%       g.j.deboer@tudelft.nl	
+%       g.j.deboer@tudelft.nl
 %
 %       Fluid Mechanics Section
 %       Faculty of Civil Engineering and Geosciences
@@ -97,190 +99,232 @@ function varargout = struct2csv(fname,S,varargin)
 %   or http://www.gnu.org/licenses/licenses.html, http://www.gnu.org/, http://www.fsf.org/
 %   --------------------------------------------------------------------
 
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 17 Oct 2014
+% Created with Matlab version: 8.3.0.532 (R2014a)
+
 % $Id$
 % $Date$
 % $Author$
 % $Revision$
 % $HeadURL$
-% $Keywords$
+% $Keywords: $
 
 %% Jan 15 2008: added logicals
 
 %% Keywords
 
-   OPT.coldimchar  = 1;
-   OPT.coldimnum   = 2;
-   OPT.addunits    = 1; % empty line
-   OPT.units       = [];
-   OPT.header{1}   = ['This file has been created with struct2csv.m and writetable.m @ ',datestr(now)];
-   OPT.oned        = 1; % reshape 1D matlab rows and columns into excel columns (numeric, logical and cellstr)
-   OPT.commentchar = '#';
-   OPT.overwrite   = 'p'; % prompt
-   OPT.warning     = 0;
- 
-   if nargin==0
-      varargout = {OPT};
-      return
-   end
+OPT.coldimchar  = 1;
+OPT.coldimnum   = 1; %2;
+OPT.addunits    = 1; % empty line
+OPT.units       = [];
+OPT.header{1}   = ['This file has been created with struct2csv.m and writetable.m @ ',datestr(now)];
+OPT.oned        = 1; % reshape 1D matlab rows and columns into excel columns (numeric, logical and cellstr)
+OPT.commentchar = '#';
+OPT.overwrite   = 'p'; %prompt
+OPT.warning     = 0;
+OPT.sortfields  = 0;
 
-   OPT = setproperty(OPT,varargin{:});
-   
-   if ischar(OPT.header)
-     OPT.header = cellstr(OPT.header);
-   end
-   
+if nargin==0
+    varargout = {OPT};
+    return
+end
+
+OPT = setproperty(OPT,varargin{:});
+
+if ischar(OPT.header)
+    OPT.header = cellstr(OPT.header);
+end
+
 %% Check if file already exists
 
-   if exist(fname,'file')==2
-      
-      if strcmp(OPT.overwrite,'p') | OPT.overwrite==0
-         disp(['File ',fname,' alreay exists. '])
-         OPT.overwrite = input(['Overwrite/cancel ? (o/c): '],'s');
-         % for some reason input in Matlab R14 SP3 removes slashes
-         % OPT.overwrite = input(['File ',fname,' alreay exists. Overwrite/cancel ? (o/a/c)'],'s');
-         while isempty(strfind('oac',OPT.overwrite))
-             OPT.overwrite = input(['Overwrite/cancel ? (o/c): '],'s');
-         end
-      end
-      
-      if strcmp(lower(OPT.overwrite),'o') | OPT.overwrite==1
-         disp (['File ',fname,' overwritten as it alreay exists.'])
-         delete(fname)
-      end      
-      
-      if strcmp(lower(OPT.overwrite),'c')
-         if nargout==0
+if exist(fname,'file')==2
+    
+    if strcmp(OPT.overwrite,'p') || OPT.overwrite==0
+        disp(['File ',fname,' alreay exists. '])
+        OPT.overwrite = input('Overwrite/cancel ? (o/c): ','s');
+        % for some reason input in Matlab R14 SP3 removes slashes
+        % OPT.overwrite = input(['File ',fname,' alreay exists. Overwrite/cancel ? (o/a/c)'],'s');
+        while isempty(strfind('oac',OPT.overwrite))
+            OPT.overwrite = input('Overwrite/cancel ? (o/c): ','s');
+        end
+    end
+    
+    if strcmpi(OPT.overwrite,'o') || OPT.overwrite==1
+        disp (['File ',fname,' overwritten as it alreay exists.'])
+        delete(fname)
+    end
+    
+    if strcmpi(OPT.overwrite,'c')
+        if nargout==0
             error(['File ',fname,' not saved as it alreay exists.'])
-         else
-            success = -2;
+        else
+            %             success = -2;
             disp(['File ',fname,' not saved as it alreay exists.'])
-         end
-      end        
-      
-   else
-      OPT.overwrite = 'o'; % create
-   end
+        end
+    end
+    
+else
+    OPT.overwrite = 'o'; % create
+end
 
 
 %% Transform into cell array
 %  that can contain all 1D arrays
 
-   fldnames  = fieldnames(S);
-   nfld      = length(fldnames);
+fldnames  = fieldnames(S);
+if OPT.sortfields
+    fldnames  = sort(fldnames);
+end
+
+nfld      = length(fldnames);
 
 %% Make 1D vectors (rowwise and columnwise) 1D in right dimension for excel columns
-      
-   if OPT.oned
-      for ifld=1:nfld
-         fldname   = char(fldnames(ifld));
-         if isnumeric(S.(fldname)) | ...
-            islogical(S.(fldname)) 
-            if length(size(S.(fldname)))==2
-               if (size(S.(fldname),2)==1)
-                  S.(fldname) = S.(fldname)';
-                  if OPT.warning
-                  fprintf(2,['warning: ' , mfilename,' field ''',fldname,''' has been transposed to fit into an Excel column.\n'])
-                  end
-               end
+
+if OPT.oned
+    for ifld=1:nfld
+        fldname   = char(fldnames(ifld));
+        if isnumeric(S.(fldname)) || islogical(S.(fldname))
+            if length(size(S.(fldname)))==2  % Meaning 2 dimensional
+                if (size(S.(fldname),1)==1)
+                    S.(fldname) = S.(fldname)';
+                    if OPT.warning
+                        returnmessage(1,['warning: ' , mfilename,' field ''',fldname,''' has been transposed to fit into an Excel column.\n'])
+                    end
+                elseif (size(S.(fldname),2)==2)
+                    %Convert to two colums
+                    data = S.(fldname);
+                    S.(fldname) = data(:,1);
+                    colname2 = [fldname '2'];
+                    S.(colname2)= data(:,2);
+                end
             end
-         % for some reason cellstr needs to be [n x 1] instead of [1 x n]
-         elseif iscellstr(S.(fldname))
+            % for some reason cellstr needs to be [n x 1] instead of [1 x n]
+        elseif iscellstr(S.(fldname))
             if length(size(S.(fldname)))==2
-               if (size(S.(fldname),1)==1)
-                  S.(fldname) = S.(fldname)';
-                  if OPT.warning
-                  fprintf(2,['warning: ' , mfilename,' field ''',fldname,''' has been transposed to fit into an Excel column.\n'])
-                  end
-               end
+                if (size(S.(fldname),1)==1)
+                    S.(fldname) = S.(fldname)';
+                    if OPT.warning
+                        returnmessage(1,['warning: ' , mfilename,' field ''',fldname,''' has been transposed to fit into an Excel column.\n'])
+                    end
+                end
             end
-         end
-      end
-   end
+        end
+    end
+end
+
+% re-define fieldnames
+fldnames  = fieldnames(S);
+fldnames  = sort(fldnames);
+nfld      = length(fldnames);
 
 %% Initialize cell array
 
-   maxlength = 0;
-   for ifld=1:nfld
-      fldname   = char(fldnames(ifld));
-      maxlength = max(maxlength,length(S.(fldname)));
-   end
-   
+maxlength = 0;
+for ifld=1:nfld
+    fldname   = char(fldnames(ifld));
+    maxlength = max(maxlength,length(S.(fldname)));
+end
 
-   nheader = length(OPT.header);
-   nextra  = nheader + 1 + (OPT.addunits==1 || iscell(OPT.addunits));
-   M       = cell (maxlength + nextra,nfld);
-   
+
+nheader = length(OPT.header);
+nextra  = nheader + 1 + (OPT.addunits==1 || iscell(OPT.addunits));
+M       = cell (maxlength + nextra,nfld);
+
 %% Add header and column names
 
-   for iheader=1:nheader
-      M{iheader,1} = [OPT.commentchar,' ',OPT.header{iheader}];
-   end
-         
+for iheader=1:nheader
+    M{iheader,1} = [OPT.commentchar,' ',OPT.header{iheader}];
+end
+
 %% Fill cell array
 
-   for ifld=1:nfld
-   
-      fldname             = char(fldnames(ifld));
-      fldsize             = size(S.(fldname));
-      
-      M{nheader + 1,ifld}    = fldname;
-      if ~isempty(OPT.units)
-         if iscell(OPT.units)
+for ifld=1:nfld
+    
+    fldname             = char(fldnames(ifld));
+    fldsize             = size(S.(fldname));
+    
+    M{nheader + 1,ifld}    = fldname;
+    if ~isempty(OPT.units)
+        if iscell(OPT.units)
             M{nheader + 2,ifld}    = char(OPT.units{ifld});
-         elseif isstruct(OPT.units)
+        elseif isstruct(OPT.units)
             if isfield(OPT.units,fldname)
-            M{nheader + 2,ifld}    = OPT.units.(fldname);
+                M{nheader + 2,ifld}    = OPT.units.(fldname);
             end
-         end
-      end
-
-      
-      if iscellstr(S.(fldname))
-         S.(fldname) = char(S.(fldname));
-      end
-
-         if isnumeric(S.(fldname)) | ...
-            islogical(S.(fldname))
-
-
-            if OPT.coldimnum==1
-               for irow=1:1:fldsize(OPT.coldimnum)
-               M{irow + nextra,ifld} = S.(fldname)(irow,:);
-               end
-            elseif OPT.coldimnum==2
-               for irow=1:1:fldsize(OPT.coldimnum)
-               M{irow + nextra,ifld} = S.(fldname)(:,irow);
-               end
+        end
+    end
+       
+    if iscellstr(S.(fldname))
+        S.(fldname) = char(S.(fldname));
+    end
+    
+    if isnumeric(S.(fldname)) || islogical(S.(fldname))
+               
+        if OPT.coldimnum==1
+            for irow=1:1:fldsize(OPT.coldimnum)
+                M{irow + nextra,ifld} = S.(fldname)(irow,:);
             end
-         elseif ischar(S.(fldname))
-
-
-            if OPT.coldimchar==1
-               for irow=1:1:fldsize(OPT.coldimchar)
-               M{irow + nextra,ifld} = S.(fldname)(irow,:);
-               end
-            elseif OPT.coldimchar==2
-               for irow=1:1:fldsize(OPT.coldimchar)
-               M{irow + nextra,ifld} = S.(fldname)(:,irow);
-               end
+        elseif OPT.coldimnum==2
+            for irow=1:1:fldsize(OPT.coldimnum)
+                M{irow + nextra,ifld} = S.(fldname)(:,irow);
             end
-         end
+        end
+    elseif ischar(S.(fldname))
+                
+        if OPT.coldimchar==1
+            for irow=1:1:fldsize(OPT.coldimchar)
+                M{irow + nextra,ifld} = S.(fldname)(irow,:);
+            end
+        elseif OPT.coldimchar==2
+            for irow=1:1:fldsize(OPT.coldimchar)
+                M{irow + nextra,ifld} = S.(fldname)(:,irow);
+            end
+        end
+    end
+    
+    %end
+end
 
-      %end
-   end
-   
-   try
-      T = cell2table(M);
-      writetable(T,path2os(fname))
-      success = true;
-   catch 
-      success = false; 
-   end
-   
-   if nargout==1
-      varargout = {success};
-   elseif nargout==2
-      varargout = {success,M};
-   end
-   
-%% EOF   
+try
+    % R2014 way
+    %       T = cell2table(M);
+    %       writetable(T,path2os(fname))
+    
+    % R2012 way (also faster)
+    T = M;
+    
+    % Convert empty cells to empty strings
+    idx    = cellfun(@isempty,M);
+    T(idx) = {' '};
+    
+    % Convert numeric to strings
+    idx    = cellfun(@isnumeric,M);
+    T(idx) = cellfun(@num2str, M(idx),'UniformOutput',false);
+%   fname  = strrep(fname,'.csv','_R2012a.csv');
+    
+    % Write
+    fileID = fopen(fname,'w');
+    [nrows,ncols] = size(T);  
+    for row = 1:nrows
+        %Create a single text row
+        tmp = strcat(T(row,:),repmat({', '},1,ncols));
+        tmp = [tmp{:}];
+        fprintf(fileID,'%s\n',tmp);
+    end
+    fclose(fileID);
+    
+    success = true;
+    
+catch ME
+    disp(ME.message)
+    success = false;
+end
+
+if nargout==1
+    varargout = {success};
+elseif nargout==2
+    varargout = {success,M};
+end
+
+%% EOF
