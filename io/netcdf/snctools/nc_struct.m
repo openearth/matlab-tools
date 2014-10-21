@@ -1,14 +1,15 @@
 function varargout = nc2struct(ncfile,varargin)
-%NC2STRUCT   load netCDF file with to struct (beta)
+%NC_STRUCT   load netCDF file with to struct (beta)
 %
-%   dat      = nc2struct(ncfile,<keyword,value>)
-%  [dat,atr] = nc2struct(ncfile,<keyword,value>)
+%   dat      = nc_struct(ncfile,<keyword,value>)
+%  [dat,atr] = nc_struct(ncfile,<keyword,value>)
 %
 %   ncfile - netCDF file name
 %   dat    - structure of 1D arrays of numeric/character data
 %   atr    - optional structure of file and variable attributes
 %
-% For NC2STUCT <keyword,value> options /defaults call without arguments: nc2struct() . 
+% For nc_struct <keyword,value> options and defaults call
+% without arguments: nc2struct() . 
 % * exclude:   cell array with subset of variables NOT to load, e.g.: {'a','b'}
 % * include:   cell array with subset of variables ONLY to load, e.g.: {'lon','lat'}
 % * rename :   cell array describing how to rename variables in netCDF
@@ -16,9 +17,9 @@ function varargout = nc2struct(ncfile,varargin)
 % * structfun: apply function handle to each field, e.g. @(x) transpose(x)
 %              to turn rows into column vectors and vv, or @(x) maked1d(x)
 %
-% - dimensions are swapped to accomodate C convention, so struct2nc does not behave as ncrreate.
-% - nc2struct writes char & cellstr  as char, nc2struct reads them as nx1 cellstr, so 
-%   nc2struct and nc2struct are not fully inverses of one another.
+% nc_struct can be used to facilitate an experimental development: 
+% loading a catalog.nc for a THREDDS OPeNDAP server as an 
+% alternative to the difficult-to-parse catalog.xml.
 %
 % Example:
 %
@@ -29,7 +30,9 @@ function varargout = nc2struct(ncfile,varargin)
 %
 % NOTE: do not use for VERY BIG! files, as your memory will be swamped.
 %
-%See also: STRUCT2NC, NCINFO, XLS2STRUCT, CSV2STRUCT, SDSAVE_CHAR, LOAD & SAVE('-struct',...)
+%See also: nc2struct, STRUCT_NC
+%          XLS2STRUCT, CSV2STRUCT, SDLOAD_CHAR, LOAD & SAVE('-struct',...)
+%          NC_DUMP,   STRUCT2XLS, CSV2STRUCT, SDSAVE_CHAR, NC_GETALL, 
 
 % TO DO: pass global attributes as <keyword,value> or as part of M.
 
@@ -66,11 +69,11 @@ function varargout = nc2struct(ncfile,varargin)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
+% $Id: nc2struct.m 9917 2013-12-20 16:36:34Z boer_g $
+% $Date: 2013-12-20 17:36:34 +0100 (Fri, 20 Dec 2013) $
+% $Author: boer_g $
+% $Revision: 9917 $
+% $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/io/netcdf/nctools/nc2struct.m $
 % $Keywords: $
 
 % Behaviour should be as of nc_getall, but without the data being part of M, but in a separate struct D.
@@ -82,7 +85,6 @@ OPT.exclude      = {};
 OPT.rename       = {{},{}};
 OPT.include      = {};
 OPT.structfun    = []; % apply transformation, e.g. make1D(), (:) or transpose()
-OPT.backend      = 'snctools';
 
 if nargin==0
    varargout = {OPT};
@@ -90,39 +92,49 @@ if nargin==0
 end
 
 OPT = setproperty(OPT,varargin);
-
+   
 %% handle legacy
 
    ver.str  = version('-release');;
    ver.year = str2num(ver.str(1:4));
    
-   if ver.year < 2011 % 2011a introduced good HDF for netCDF4
-       warning('Please upgrade to R2011a or higher, or use deprecated nc_struct.')
+   if ver.year =>= 2011 % 2011a introduced good HDF for netCDF4
+       warning('DEPRECATED, Please upgrade to nc2struct.')
        return
-   end
-
+   end   
 %% Load file info
 
    % get info from ncfile
    if isstruct(ncfile)
       fileinfo = ncfile;
    else
-      fileinfo = ncinfo(ncfile);
+      fileinfo = nc_info(ncfile);
    end
    
 %% get all variable names
 
 if isempty(OPT.include)
-   OPT.include = {fileinfo.Variables.Name};
+   OPT.include = {fileinfo.Dataset.Name};
 end
+
+%% deal with legacy name change in scntools: DataSet > Dataset
+
+   if     isfield(fileinfo,'Dataset'); % new
+     fileinfo.DataSet = fileinfo.Dataset;
+   elseif isfield(fileinfo,'DataSet'); % old
+     fileinfo.Dataset = fileinfo.DataSet;
+     disp(['warning: please use newer version of snctools (e.g. ',which('matlab\io\snctools\nc_info'),') instead of (',which('nc_info'),')'])
+   else
+      error('neither field ''Dataset'' nor ''DataSet'' returned by nc_info')
+   end
    
 %% Load all fields
 
   D = [];
 
-   ndat = length(fileinfo.Variables);
+   ndat = length(fileinfo.Dataset);
    for idat=1:ndat
-      fldname     = fileinfo.Variables(idat).Name;
+      fldname     = fileinfo.Dataset(idat).Name;
       if ~any(strmatch(fldname,OPT.exclude, 'exact')) & ...
           any(strmatch(fldname,OPT.include, 'exact'))
          fldname_nc = fldname;
@@ -130,43 +142,33 @@ end
             j = strmatch(fldname,OPT.rename{1}, 'exact');
             fldname = OPT.rename{2}{j};
          end
-         ndim = length(fileinfo.Variables(idat).Dimensions);
-         pm = ndim:-1:1;         
-         %for idim=1:length(fileinfo.Variables(idat).Dimensions)
-         %    disp([fldname,':',num2str(idim),' ',num2str(fileinfo.Variables(idat).Dimensions(idim).Length)])
-         %end
-         D.(fldname) = ncread(fileinfo.Filename,fldname_nc);
+         D.(fldname) = nc_varget(fileinfo.Filename,fldname_nc);
          if OPT.time2datenum
             if strcmp(fldname_nc,'time')
-               try
-                  units = ncreadatt(fileinfo.Filename,'time','units')
-                  D.datenum = ncread_cf_time(fileinfo.Filename,fldname);
-                  disp([mfilename,': added extra variable with Matlab datenum=f(',fldname,')'])
+               if nc_isatt(fileinfo.Filename,'time','units')
+                  D.datenum = nc_cf_time(fileinfo.Filename,fldname);
+                 disp([mfilename,': added extra variable with Matlab datenum=f(',fldname,')'])
                end
             else
-             if ~isempty(fileinfo.Variables(idat).Attributes);
-             j = strmatch('standard_name',{fileinfo.Variables(idat).Attributes.Name}, 'exact');
+             if ~isempty(fileinfo.Dataset(idat).Attribute);
+             j = strmatch('standard_name',{fileinfo.Dataset(idat).Attribute.Name}, 'exact');
               if ~isempty(j)
-               if strcmpi(fileinfo.Variables(idat).Attributes(j).Value,'time')
-               D.datenum = ncread_cf_time(fileinfo.Filename,fldname);
+               if strcmpi(fileinfo.Dataset(idat).Attribute(j).Value,'time')
+               D.datenum = nc_cf_time(fileinfo.Filename,fldname);
                disp([mfilename,': added extra variable with Matlab datenum=f(',fldname,')'])
                end
               end
              end
             end
          end
-         if length(pm)>1
-            D.(fldname) = permute(D.(fldname),pm);
-            if isfield(D,'datenum')
-            D.datenum   = permute(D.datenum  ,pm);
-            end
-         end         
          if ischar(D.(fldname))
-            D.(fldname) = cellstr(D.(fldname)); % always n x 1, can be wrong order if mat file was 1 x n
+            if isvector(D.(fldname))
+               D.(fldname) = D.(fldname)(:)';
+            end
+            D.(fldname) = cellstr(D.(fldname));
          end
       end % exclude/include
-
-   end % ivar
+   end
    
 if nargout==1
 
@@ -174,18 +176,18 @@ if nargout==1
    
 else
 
-   ndat = length(fileinfo.Variables);
+   ndat = length(fileinfo.Dataset);
    if OPT.global2att>0
    
 %% attributes
    
-   for iatt=1:length(fileinfo.Attributes);
-      attname  = fileinfo.Attributes(iatt).Name;
+   for iatt=1:length(fileinfo.Attribute);
+      attname  = fileinfo.Attribute(iatt).Name;
       attname  = mkvar(attname); % ??? Invalid field name: 'CF:featureType'.
       if     OPT.global2att==1;
-         M.(attname) = fileinfo.Attributes(iatt).Value;
+         M.(attname) = fileinfo.Attribute(iatt).Value;
       elseif OPT.global2att==2
-         M.nc_global.(attname) = fileinfo.Attributes(iatt).Value; % netcdf.getConstant('NC_GLOBAL')
+         M.nc_global.(attname) = fileinfo.Attribute(iatt).Value;
       end
    end
    end
@@ -193,17 +195,17 @@ else
 %% data
    
    for idat=1:ndat
-      fldname     = fileinfo.Variables(idat).Name;
+      fldname     = fileinfo.Dataset(idat).Name;
       if ~any(strmatch(fldname,OPT.exclude, 'exact')) & ...
           any(strmatch(fldname,OPT.include, 'exact'))
          if any(strmatch(fldname,OPT.rename{1}, 'exact'))
             j = strmatch(fldname,OPT.rename{1}, 'exact');
             fldname = OPT.rename{2}{j};
          end
-         for iatt=1:length(fileinfo.Variables(idat).Attributes);
-                      attname  = fileinfo.Variables(idat).Attributes(iatt).Name;
+         for iatt=1:length(fileinfo.Dataset(idat).Attribute);
+                      attname  = fileinfo.Dataset(idat).Attribute(iatt).Name;
                       attname  = mkvar(attname); % ??? Invalid field name: '_FillValue'.
-         M.(fldname).(attname) = fileinfo.Variables(idat).Attributes(iatt).Value;
+         M.(fldname).(attname) = fileinfo.Dataset(idat).Attribute(iatt).Value;
          end
       end % exclude/include
    end

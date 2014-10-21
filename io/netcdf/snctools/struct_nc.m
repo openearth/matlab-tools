@@ -1,9 +1,9 @@
 function varargout = struct2nc(outputfile,D,varargin)
-%STRUCT2NC   save struct with 1D arrays to netCDF file (beta)
+%STRUCT_NC   save struct with 1D arrays to netCDF file (beta)
 %
-%   struct2nc(ncfile,dat    ,<keyword,value>)
-%   struct2nc(dat   ,ncfile ,<keyword,value>)
-%   struct2nc(ncfile,dat,atr,<keyword,value>)
+%   struct_nc(ncfile,dat    ,<keyword,value>)
+%   struct_nc(dat   ,ncfile ,<keyword,value>)
+%   struct_nc(ncfile,dat,atr,<keyword,value>)
 %
 %   ncfile - netCDF file name
 %   dat    - structure of 1D arrays of numeric/character data
@@ -15,10 +15,12 @@ function varargout = struct2nc(outputfile,D,varargin)
 % because it does the naming of dimensions based on size only
 % and not on the actual meaning of the dimension.
 %
-% - dimensions are swapped to accomodate C convention, so struct2nc does not behave as ncrreate.
-% - nc2struct writes char & cellstr  as char, nc2struct reads them as nx1 cellstr, so 
-%   nc2struct and nc2struct are not fully inverses of one another.
-% - Default file type is netCDF3 classic, for other types see ncwriteschema.
+% Default file type is netCDF3 classic, set other types with
+% keuword 'mode' ('classic','64bit_offset','netcdf4-classic','netcdf4')
+%
+% struct_nc can be used to generate an experimental development:
+% creating a catalog.nc for a THREDDS OPeNDAP server as an alternative
+% to the difficult-to-parse catalog.xml.
 %
 % Example 1:
 %
@@ -37,7 +39,8 @@ function varargout = struct2nc(outputfile,D,varargin)
 %  [D,M.units] = xls2struct('file_created_with_struct2xls.xls');
 %  struct2nc('file.nc',D,M);
 %
-%See also: NC2STRUCT, NCINFO, XLS2STRUCT, CSV2STRUCT, SDLOAD_CHAR, LOAD & SAVE('-struct',...)
+%See also: struct2nc, NC_STRUCT, 
+%          XLS2STRUCT,  STRUCT2XLS, SDSAVE_CHAR, SDLOAD_CHAR, NC2STRUCT, NC_GETALL
 
 % TO DO: allow for meta/attribute info struct: atr.var_name.att_name
 % TO DO: pass global attributes as <keyword,value> or as part of M.
@@ -76,11 +79,11 @@ function varargout = struct2nc(outputfile,D,varargin)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
+% $Id: struct2nc.m 11178 2014-10-06 15:10:32Z gerben.deboer.x $
+% $Date: 2014-10-06 17:10:32 +0200 (Mon, 06 Oct 2014) $
+% $Author: gerben.deboer.x $
+% $Revision: 11178 $
+% $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/io/netcdf/nctools/struct2nc.m $
 % $Keywords: $
 
 %% Initialize
@@ -116,8 +119,8 @@ function varargout = struct2nc(outputfile,D,varargin)
    ver.str  = version('-release');;
    ver.year = str2num(ver.str(1:4));
    
-   if ver.year < 2011 % 2011a introduced good HDF for netCDF4
-       warning('Please upgrade to R2011a or higher, or use deprecated struct_nc.')
+   if ver.year =>= 2011 % 2011a introduced good HDF for netCDF4
+       warning('DEPRECATED, Please upgrade to struct2nc.')
        return
    end   
 
@@ -134,22 +137,22 @@ function varargout = struct2nc(outputfile,D,varargin)
 
 %% 0 Create file
 
-   nc.Name   = '/';
-   nc.Format = 'classic';   
+   nc_create_empty (outputfile,OPT.mode);
 
 %% 1 Add global meta-info to file
+%  Add overall meta info:
 %  http://cf-pcmdi.llnl.gov/documents/cf-conventions/1.4/cf-conventions.html#description-of-file-contents
 
    for iatt=1:natt
        attname = attnames{iatt};
        if ~isstruct(M.(attname)); % others are variable attributes
-           nc.Attributes(iatt) = struct('Name',attname,'Value',  M.(attname));           
+           nc_attput(outputfile, nc_global,attname,M.(attname));
        end
    end
 
 %% 2 Create dimensions
 %    Do realize automatic - and hence useless - dimension names 
-%    violates the self-describing philosphy of netCDF ...
+%    violoates the self-descrivbing philosphy of netCDF ...
 
    dimension_lengths = [];
    
@@ -170,47 +173,63 @@ function varargout = struct2nc(outputfile,D,varargin)
    end
    
    dimension_lengths = sort(unique(dimension_lengths));
-   dimension_lengths = setdiff(dimension_lengths,0); % exclude 0
+   dimension_lengths = setdiff(dimension_lengths,0);
    for ilen=1:length(dimension_lengths)
-       nc.Dimensions(ilen) = struct('Name', ['dimension_length_',num2str(dimension_lengths(ilen))],'Length',dimension_lengths(ilen)); % CF wants x last, which means 1st in Matlab       
+       nc_add_dimension(outputfile, ['dimension_length_',num2str(dimension_lengths(ilen))], dimension_lengths(ilen));
    end
 
 %% 3 Create variables
+
+   clear nc
+   ifld = 0;
    
    for ifld=1:nfld
        
        fldname = fldnames{ifld};
        
-       %disp(['fldname:',fldname,' (',nums2str(size(D.(fldname)),','),')'])
+       nc(ifld).Name               = fldname;
+       nc(ifld).Nctype             = nc_type(class(D.(fldname)));
        
-       nc.Variables(ifld).Name               = fldname;
-       nc.Variables(ifld).Datatype           = class(D.(fldname));
-       
-       dimensions = [];
-       %for idim=1:length(size(D.(fldname))) % NO: Matlab has reverse dimension order !
-       for idim=length(size(D.(fldname))):-1:1
+       dimensions = {};
+       for idim=1:length(size(D.(fldname)))
            dimension_length = ['dimension_length_',num2str(size(D.(fldname),idim))];
-           dimmatch = strmatch(dimension_length, {nc.Dimensions.Name},'exact');
-           if ~isempty(dimmatch)
-              dimensions(end+1)=dimmatch;
-           end
+           dimensions{idim} = dimension_length;
        end
-       nc.Variables(ifld).Dimensions = nc.Dimensions(dimensions);
+       
+       nc(ifld).Dimension          = dimensions;
        
        par_att = 0;
        for iatt=1:natt
-           attname = attnames{iatt};
+           attname                     = attnames{iatt};
            if isstruct(M.(attname)) % others are file attributes
                if isfield(M.(attname),fldname)
-                   par_att = par_att + 1;
-                   nc.Variables(ifld).Attributes(par_att) = struct('Name',attname,'Value', M.(attname).(fldname));
+                   par_att                     = par_att + 1;
+                   nc(ifld).Attribute(par_att) = struct('Name',attname,'Value', M.(attname).(fldname));
                end
            end
        end
        
    end
-   
-   ncwriteschema (outputfile,nc);  
+
+%% 4 Create variables with attibutes
+%  When variable definitons are created before actually writing the
+%  data in the next cell, netCDF can nicely fit all data into the
+%  file without the need to relocate any info.
+
+% var2evalstr(nc)
+
+   for ifld=1:length(nc)
+       fldname = fldnames{ifld};
+       if OPT.disp;disp([num2str(ifld),' ',nc(ifld).Name]);end
+       if sum(~ismember(nc(ifld).Dimension,'dimension_length_0')) > 1 % also allow 3D variables
+           nc_addvar(outputfile, nc(ifld));
+       elseif OPT.write0dimension
+           % make dim names empty if one dimension has length 0
+           tmp = nc(ifld);
+           tmp.Dimension = {};
+           nc_addvar(outputfile, tmp);
+       end
+   end
    
 %% 5 Fill variables
 
@@ -220,15 +239,41 @@ function varargout = struct2nc(outputfile,D,varargin)
        
        if ~length(D.(fldname))==0
            
+           % The MEXNC and JAVA netCDF interfaces cannot deal with the
+           % character 0 (the Matlab native interface can).
+           % You can solve this by writing to the file per line
+           % (slow for much lines), or replacing all 0s with a space character.
+           % 0 characters can end up in a string when you expand it by
+           % indexing a non-existing cell. Example:
+           % >>  a = repmat(' ',[2 2])
+           % >>  a(20) = 'b'
+           % >>  a==0
+           %
+           % The default fill value is 0, not ' '. Use strvcat() etc instead.
+           
+           if ischar(D.(fldname))
+               
+               nullmask = D.(fldname)==0;
+               D.(fldname)(nullmask) = ' ';
+               %col = size(D.(fldname),2);
+               %for row=1:size(D.(fldname),1)
+               %nc_varput(outputfile, fldname , D.(fldname)(row,:),[row 1]-1,[1 col],[1 1]); % zero-based !!
+               %end
+           end
            if OPT.debug
               disp(fldname)
               var2evalstr(nc(ifld))
            end
-           pm = fliplr(1:length(size(D.(fldname))));
-           ncwrite(outputfile, fldname , permute(D.(fldname),pm)); % cannot handle logicals
+           nc_varput(outputfile, fldname , D.(fldname)); % cannot handle logicals
            
        end
        
+   end
+
+%% 6 Check
+
+   if OPT.dump
+       nc_dump(outputfile);
    end
 
 %% Pause
