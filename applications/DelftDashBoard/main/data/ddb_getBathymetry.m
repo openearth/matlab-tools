@@ -342,7 +342,11 @@ switch lower(tp)
                             str=['Getting bathymetry - tile ' num2str(tilen) ' of ' ...
                                 num2str(ntiles) ' ...'];
                         end
-                        [hh,abort2]=awaitbar(tilen/ntiles,wb,str);
+                        if verLessThan('matlab', '8.4')
+                            [hh,abort2]=awaitbar(tilen/ntiles,wb,str);
+                        else
+                            [hh,abort2]=awaitbar(tilen/ntiles,get(wb,'Number'),str);
+                        end
                         if abort2 % Abort the process by clicking abort button
                             break;
                         end;
