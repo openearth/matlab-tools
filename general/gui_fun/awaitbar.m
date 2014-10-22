@@ -52,6 +52,17 @@ function [fout,abort] = awaitbar(x,whichbar,varargin)
 % $Date: 2007/06/07
 % $Revision$ $Date$
 %
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 22 Oct 2014
+% Created with Matlab version: 8.4.0.150421 (R2014b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
 %% Argument check
 figTitle = 'Progress'; % default title
 if nargin>=2
@@ -158,7 +169,6 @@ switch type
             'Resize','off', ...
             'CreateFcn','', ...
             'NumberTitle','off', ...
-            'IntegerHandle','off', ...
             'MenuBar', 'none', ...
             'Tag','TMWAWaitbar',...
             'Visible','on',...
