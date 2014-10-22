@@ -12,6 +12,8 @@ function delft3d_compute_cyclone(tc,fname,varargin)
 %       tc    = struct with at least date, name, meta, time, lon, lat, vmax and p
 %       fname = filename (without extension) of resulting spiderweb grid (string)
 %
+% note that tc.p is the pressure and not the pressure drop!!!
+%
 %   Optional input:
 %       perquadrant (default = 1);
 %       nrRadialBins (default = 500);
@@ -95,6 +97,9 @@ OPT.initSpeed = 0;
 OPT.deleteTemporaryFiles = false;
 OPT.wes_exe = 'C:\delftdashboard\data\toolboxes\TropicalCyclone\wes.exe';
 OPT.merge_spw_exe = 'c:\delftdashboard\data\toolboxes\TropicalCyclone\merge_spw.exe';
+OPT.bg_pres = 1013.25;
+bg_press_Pa = OPT.bg_pres * 100;  % Same, in Pa
+
 
 % return defaults (aka introspection)
 if nargin==0;
@@ -121,7 +126,7 @@ end
 fprintf(fid,'%s\n',fname);
 fprintf(fid,'%i %i\n',length(find(~isnan(tc.time))),2);
 for j=1:length(find(~isnan(tc.time)))
-    fprintf(fid,'%6.3f %6.3f\n',tc.lat(j),tc.lon(j));
+    fprintf(fid,'%6.3f %6.3f\n',tc.lon(j),tc.lat(j));
 end
 fclose(fid);
 
@@ -184,16 +189,16 @@ for iq=1:nq
                 
                 if tc.trackR35(j,iq)<0 || tc.trackR50(j,iq)<0
                     % Not enough input.
-                    if tc.trackPDrop(j,iq)<0
+                    if bg_press_Pa-tc.p(j,iq)<0
                         % switch to method 6
                         fprintf(fid,'  %s  %6.2f  %6.2f      %i  %6.1f  %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e\n',dstr,tc.lat(j),tc.lon(j),6,tc.vmax(j,iq),e,e,e,e,e,e,e,e);
                     else
                         if tc.trackRMax(j,iq)>=0
                             % RMax available. Switch to method 3.
-                            fprintf(fid,'  %s  %6.2f  %6.2f      %i  %6.1f  %6.1f %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %6.1f\n',dstr,tc.lat(j),tc.lon(j),3,tc.vmax(j,iq),tc.trackRMax(j,iq),e,e,e,e,e,e,tc.trackPDrop(j,iq));
+                            fprintf(fid,'  %s  %6.2f  %6.2f      %i  %6.1f  %6.1f %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %6.1f\n',dstr,tc.lat(j),tc.lon(j),3,tc.vmax(j,iq),tc.trackRMax(j,iq),e,e,e,e,e,e,bg_press_Pa-tc.p(j,iq));
                         else
                             % Switch to method 4.
-                            fprintf(fid,'  %s  %6.2f  %6.2f      %i  %6.1f  %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %6.1f\n',dstr,tc.lat(j),tc.lon(j),4,tc.vmax(j,iq),e,e,e,e,e,e,e,tc.trackPDrop(j,iq));
+                            fprintf(fid,'  %s  %6.2f  %6.2f      %i  %6.1f  %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %6.1f\n',dstr,tc.lat(j),tc.lon(j),4,tc.vmax(j,iq),e,e,e,e,e,e,e,bg_press_Pa-tc.p(j,iq));
                         end
                     end
                 else
@@ -234,9 +239,9 @@ for iq=1:nq
                 
                 
             case 3
-                fprintf(fid,'  %s  %6.2f  %6.2f      %i  %6.1f  %6.1f %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %6.1f\n',dstr,tc.lat(j),tc.lon(j),met,tc.vmax(j,iq),tc.trackRMax(j,iq),e,e,e,e,e,e,tc.trackPDrop(j,iq));
+                fprintf(fid,'  %s  %6.2f  %6.2f      %i  %6.1f  %6.1f %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %6.1f\n',dstr,tc.lat(j),tc.lon(j),met,tc.vmax(j,iq),tc.trackRMax(j,iq),e,e,e,e,e,e,bg_press_Pa-tc.p(j,iq));
             case 4
-                fprintf(fid,'  %s  %6.2f  %6.2f      %i  %6.1f  %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %6.1f\n',dstr,tc.lat(j),tc.lon(j),met,tc.vmax(j,iq),e,e,e,e,e,e,e,tc.p(j,iq));
+                fprintf(fid,'  %s  %6.2f  %6.2f      %i  %6.1f  %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %6.1f\n',dstr,tc.lat(j),tc.lon(j),met,tc.vmax(j,iq),e,e,e,e,e,e,e,bg_press_Pa-tc.p(j,iq));
             case 5
                 fprintf(fid,'  %s  %6.2f  %6.2f      %i  %6.1f  %6.1f %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e %1.0e\n',dstr,tc.lat(j),tc.lon(j),met,tc.vmax(j,iq),tc.trackRMax(j,iq),e,e,e,e,e,e,e);
             case 6
