@@ -102,7 +102,12 @@ else
 end
 
 if isdeployed
-    basepath = ''; %Thus the 7za.exe and 7zG.exe must reside on the location of the deployed product ! Add these exe's to the package.
+%Thus the 7za.exe and 7zG.exe must reside on the location of the deployed product ! Add these exe's to the package.    
+    if exist('getcurrentdir.m','file')
+        basepath = getcurrentdir();          % Path to the installation folder of the exe  
+    else
+        basepath = ''; 
+    end 
 else
     basepath = fullfile(fileparts(mfilename('fullpath')),'private','7z');
 end
