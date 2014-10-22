@@ -67,8 +67,11 @@ handles=getHandles;
 
 % First make large panel to contain map axis, colorbar etc.
 % The large panel will be a child of the active model gui
-
-handles.GUIHandles.mapPanel=uipanel('Units','pixels','Position',[5 175 870 440],'Parent',handles.model.delft3dflow.GUI.element(1).element.handle,'BorderType','none','BackgroundColor','w');
+if verLessThan('matlab', '8.4')
+    handles.GUIHandles.mapPanel=uipanel('Units','pixels','Position',[5 175 870 440],'Parent',handles.model.delft3dflow.GUI.element(1).element.handle,'BorderType','none','BackgroundColor','none');
+else
+    handles.GUIHandles.mapPanel=uipanel('Units','pixels','Position',[5 175 870 440],'Parent',handles.model.delft3dflow.GUI.element(1).element.handle,'BorderType','none','BackgroundColor','w');
+end
 
 % Add map axis
 
