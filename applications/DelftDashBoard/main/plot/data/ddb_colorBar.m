@@ -72,7 +72,7 @@ switch lower(opt)
         pos(3)=20;
         pos(4)=ppos(4)-50;
         handles.GUIHandles.colorBarPanel=uipanel('Units','pixels','Parent',mapPanel,'Position',[70 200 870 440]);
-        set(handles.GUIHandles.colorBarPanel,'BorderType','beveledout','BorderWidth',1,'BackgroundColor','none');
+        set(handles.GUIHandles.colorBarPanel,'BorderType','beveledout','BorderWidth',1,'BackgroundColor','w');
         set(handles.GUIHandles.colorBarPanel,'Position',pos);
         clrbar=axes;
         set(clrbar,'Units','pixels');
