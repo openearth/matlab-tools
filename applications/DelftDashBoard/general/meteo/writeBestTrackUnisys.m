@@ -65,7 +65,7 @@ for i = 1:length(tc.time)
     if ~isnan(tc.time(i))
         mystring = [num2str(i,'%8.2f'),datestr(tc.time(i),'mm/dd/hh')];
         fprintf(fid,'%3s %7s %7s %9s%s %7s %7s\n',num2str(i),num2str(tc.lat(i),'%6.2f'),...
-            num2str(tc.lon(i),'%6.2f'),datestr(tc.time(i),'mm/dd/hh'),'Z',num2str(tc.vmax(i,1),'%02.0f'),num2str(tc.p(i,1)./100))
+            num2str(tc.lon(i),'%6.2f'),datestr(tc.time(i),'mm/dd/hh'),'Z',num2str(tc.vmax(i,1),'%02.0f'),num2str(tc.p(i,1)./100));
     end
 end
-fclose(fid)
+fclose(fid);
