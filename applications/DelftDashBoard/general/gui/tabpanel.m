@@ -175,7 +175,7 @@ blankText=tabs;
 
 pos=[panelPosition(1)-1 panelPosition(2)-1 panelPosition(3)+2 panelPosition(4)+20];
 
-panelHandle = uipanel(fig,'Parent',parent,'Units','pixels','Position',pos,'BorderType','none','BackgroundColor','none','Tag',panelname);
+panelHandle = uipanel(fig,'Parent',parent,'Units','pixels','Position',pos,'BorderType','none','BackgroundColor','w','Tag',panelname);
 
 for i=1:ntabs
     
@@ -207,7 +207,7 @@ visph = uipanel(fig,'Units','pixels','Parent',panelHandle,'Position',[1 1 panelP
 pos=[1 1 panelPosition(3) panelPosition(4)+20];
 
 % Create one large tab to put elements in
-largeTab = uipanel(fig,'Parent',panelHandle,'Units','pixels','Position',pos,'Tag','largeTab','BorderType','none','BackgroundColor','none','Visible','on','HitTest','off');
+largeTab = uipanel(fig,'Parent',panelHandle,'Units','pixels','Position',pos,'Tag','largeTab','BorderType','none','BackgroundColor','w','Visible','on','HitTest','off');
 
 % Add blank texts
 leftpos=3;
