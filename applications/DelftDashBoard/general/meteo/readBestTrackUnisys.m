@@ -13,9 +13,10 @@ function tc = readBestTrackUnisys(fname)
 %   tc    = struct with date, name, meta, time, lon, lat, vmax and p
 %
 %   Example
-%   readBestTrackUnisys
+%       tc_fname = 'Haiyan_track_unisys.dat'
+%       readBestTrackUnisys(tc_fname)
 %
-%   See also
+%   See also writeBestTrackUnisys DelftDashBoard
 
 %% Copyright notice
 %   --------------------------------------------------------------------
