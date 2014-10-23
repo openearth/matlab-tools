@@ -1,0 +1,121 @@
+function varargout = xb_run_remote_multiple(varargin)
+%XB_RUN_REMOTE_MULTIPLE  Sends multiple different processes/model runs to
+%one single cluster node
+%
+%   More detailed description goes here.
+%
+%   Syntax:
+%   varargout = xb_run_remote_multiple(varargin)
+%
+%   Input: For <keyword,value> pairs call xb_run_remote_multiple() without arguments.
+%   varargin  =
+%
+%   Output:
+%   varargout =
+%
+%   Example
+%   xb_run_remote_multiple
+%
+%   See also
+
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2014 Deltares
+%       Joost den Bieman
+%
+%       joost.denbieman@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
+% Created: 20 Oct 2014
+% Created with Matlab version: 8.2.0.701 (R2013b)
+
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
+% $Keywords: $
+
+%% Settings
+OPT = struct( ...
+    'name', ['xb_' datestr(now, 'YYYYmmddHHMMSS')], ...
+    'binary', '', ...
+    'version', 1.21, ...
+    'cores_per_node', 4, ...
+    'mpitype', '', ...
+    'queuetype', 'normal', ...
+    'netcdf', false, ...
+    'ssh_host', 'h5', ...
+    'ssh_user', '', ...
+    'ssh_pass', '', ...
+    'ssh_prompt', false, ...
+    'path_local', '', ...
+    'path_remote', '', ...
+    'copy', true ...
+);
+
+OPT = setproperty(OPT, varargin{:});
+
+% check whether we deal with path or XBeach stucture
+% write = ~(ischar(xb) && (exist(xb, 'dir') || exist(xb, 'file')));
+
+if iscell(OPT.path_local) && iscell(OPT.path_remote)
+    nr_runs     = numel(path_local);
+    nr_nodes    = ceil(nr_runs/OPT.cores_per_node);
+else
+    error('path_local and path_remote need to be cells');
+end
+
+%% write model not possible???
+OPT.path_local = abspath(regexprep(xb, 'params.txt$', ''));
+
+if ischar(xb)
+    fpath = OPT.path_local;
+else
+    fpath = xb;
+end
+
+rpath = OPT.path_remote;
+
+%% Loop over nodes and runs
+for iNode = 1:nr_nodes
+    MinRun = (iNode-1)*OPT.cores_per_node+1;
+    MaxRun = iNode*OPT.cores_per_node;
+    RunFilter = MinRun:min(MaxRun,nr_runs);
+    
+    % write run scripts
+    fname = xb_write_sh_scripts_multiple(OPT.local_path{RunFilter}, OPT.remote_path{RunFilter}, ...
+        'name', [OPT.name num2str(iNode)], 'cluster', OPT.ssh_host, ...
+        'binary', binpath, 'mpitype', OPT.mpitype, ...
+        'version', OPT.version, 'queuetype', OPT.queuetype);
+    
+    % run run scripts
+    [job_id job_name OPT.ssh_user OPT.ssh_pass messages] = ...
+        xb_run_sh_scripts(rpath, fname, 'ssh_host', OPT.ssh_host, ...
+        'ssh_user', OPT.ssh_user, 'ssh_pass', OPT.ssh_pass, 'ssh_prompt', OPT.ssh_prompt, ...
+        'queue',OPT.queuetype);
+end
