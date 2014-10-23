@@ -151,8 +151,13 @@ if exist(fname,'file')==2
     end
     
     if strcmpi(OPT.overwrite,'o') || OPT.overwrite==1
-        disp (['File ',fname,' overwritten as it alreay exists.'])
-        delete(fname)
+        try 
+            delete(fname)
+        catch ME
+            returnmessage(1,'File: %s, is NOT UPDATED! Because of the following error:\n    %s\n', fname, ME.message)
+            return
+        end
+        returnmessage(1,'File %s, is overwritten as it alreay exists.\n',fname)
     end
     
     if strcmpi(OPT.overwrite,'c')
@@ -160,7 +165,7 @@ if exist(fname,'file')==2
             error(['File ',fname,' not saved as it alreay exists.'])
         else
             %             success = -2;
-            disp(['File ',fname,' not saved as it alreay exists.'])
+            returnmessage(1,'File %s, is not saved as it alreay exists.\n',fname)
         end
     end
     
@@ -184,12 +189,20 @@ nfld      = length(fldnames);
 if OPT.oned
     for ifld=1:nfld
         fldname   = char(fldnames(ifld));
-        if isnumeric(S.(fldname)) || islogical(S.(fldname))
+        
+        if iscell(S.(fldname))
+            if all(cellfun(@isnumeric,S.(fldname))) || all(cellfun(@islogical,S.(fldname)))
+                %Convert to numeric
+                S.(fldname) = cell2mat(S.(fldname));
+            end
+        end
+        
+        if isnumeric(S.(fldname)) || islogical(S.(fldname))     
             if length(size(S.(fldname)))==2  % Meaning 2 dimensional
                 if (size(S.(fldname),1)==1)
                     S.(fldname) = S.(fldname)';
                     if OPT.warning
-                        returnmessage(1,['warning: ' , mfilename,' field ''',fldname,''' has been transposed to fit into an Excel column.\n'])
+                        returnmessage(1,'Warning: in %s, field ''%s'' has been transposed to fit into a column.\n', mfilename,fldname)
                     end
                 elseif (size(S.(fldname),2)==2)
                     %Convert to two colums
@@ -205,7 +218,7 @@ if OPT.oned
                 if (size(S.(fldname),1)==1)
                     S.(fldname) = S.(fldname)';
                     if OPT.warning
-                        returnmessage(1,['warning: ' , mfilename,' field ''',fldname,''' has been transposed to fit into an Excel column.\n'])
+                        returnmessage(1,'Warning: in %s, field ''%s'' has been transposed to fit into a column.\n', mfilename,fldname)
                     end
                 end
             end
@@ -215,7 +228,9 @@ end
 
 % re-define fieldnames
 fldnames  = fieldnames(S);
-fldnames  = sort(fldnames);
+if OPT.sortfields
+    fldnames  = sort(fldnames);
+end
 nfld      = length(fldnames);
 
 %% Initialize cell array
@@ -301,7 +316,6 @@ try
     % Convert numeric to strings
     idx    = cellfun(@isnumeric,M);
     T(idx) = cellfun(@num2str, M(idx),'UniformOutput',false);
-%   fname  = strrep(fname,'.csv','_R2012a.csv');
     
     % Write
     fileID = fopen(fname,'w');
