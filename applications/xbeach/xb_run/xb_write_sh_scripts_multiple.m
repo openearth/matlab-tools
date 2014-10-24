@@ -1,4 +1,4 @@
-function varargout = xb_write_sh_scripts_multiple(varargin)
+function FileName = xb_write_sh_scripts_multiple(varargin)
 %XB_WRITE_SH_SCRIPTS_MULTIPLE  One line description goes here.
 %
 %   More detailed description goes here.
@@ -61,92 +61,51 @@ function varargout = xb_write_sh_scripts_multiple(varargin)
 
 %% Settings
 OPT = struct( ...
-    'name', ['xb_' datestr(now, 'YYYYmmddHHMMSS')], ...
-    'cluster', 'h5', ... 
-    'binary', '', ...
-    'version', 1.21, ...
-    'nodes', 1, ...
-    'queuetype', 'normal-i7', ...
-    'mpitype', '' ...
-);
+    'name',         ['xb_' datestr(now, 'YYYYmmddHHMMSS')], ...
+    'scriptNr',     [],                                     ...
+    'cluster',      'h5',                                   ...
+    'rundirLocal',  '',                                     ...
+    'rundir',       '',                                     ...
+    'subdirs',      '',                                     ...
+    'version',      1.21,                                   ...
+    'nodes',        1,                                      ...
+    'queuetype',    'normal-i7'                             ...
+    );
 
 OPT = setproperty(OPT, varargin{:});
 
-[fdir, name, fext] = fileparts(OPT.binary);
-
-% make slashes unix compatible
-OPT.binary = strrep(OPT.binary, '\', '/');
-
-% set preferences
-if isempty(OPT.mpitype); OPT.mpitype = xb_getprefdef('mpitype', 'MPICH2'); end;
-
 %% write mpi script
+FileName = ['mpi' num2str(OPT.scriptNr) '.sh'];
+fid = fopen(fullfile(OPT.rundirLocal, FileName), 'w');
 
-fid = fopen(fullfile(lpath, 'mpi.sh'), 'w');
+fprintf(fid,'#!/bin/sh\n');
+fprintf(fid,'#$ -cwd\n');
+fprintf(fid,'#$ -N %s\n', OPT.name);
 
-switch upper(OPT.mpitype)
-    case 'OPENMPI'
-        fprintf(fid,'#!/bin/bash\n');
-        fprintf(fid,'#$ -cwd\n');
-        fprintf(fid,'#$ -N %s\n', OPT.name);
-        fprintf(fid,'#$ -pe distrib %d\n', OPT.nodes);
+% when using h5, only the mpi.sh script is created
+fprintf(fid,'module load gcc/4.9.1\n');
+fprintf(fid,'module load hdf5/1.8.13_gcc_4.9.1\n');
+fprintf(fid,'module load netcdf/v4.3.2_v4.4.0_gcc_4.9.1\n');
 
-        fprintf(fid,'. /opt/sge/InitSGE\n');
-        fprintf(fid,'export LD_LIBRARY_PATH=/opt/intel/Compiler/11.0/081/lib/ia32:/opt/netcdf-4.1.1/lib:/opt/hdf5-1.8.5/lib:$LD_LIBRARY_PATH\n');
-
-        if OPT.nodes > 1
-            fprintf(fid,'export LD_LIBRARY_PATH="/opt/openmpi-1.4.3-gcc/lib/:${LD_LIBRARY_PATH}"\n');
-            fprintf(fid,'export PATH="/opt/mpich2/bin/:${PATH}"\n');
-            if strcmp(OPT.queuetype,'normal')
-                fprintf(fid,'export NSLOTS=`expr $NSLOTS \\* 2`\n');
-            elseif strcmp(OPT.queuetype,'normal-i7')
-                fprintf(fid,'export NSLOTS=`expr $NSLOTS \\* 4`\n');
-            else
-                error(['Unknown queue type [' OPT.mpitype ']. Possible types are: normal & normal-i7']);
-            end
-            fprintf(fid,'awk ''{print $1":"1}'' $PE_HOSTFILE > $(pwd)/machinefile\n');
-            fprintf(fid,'mpdboot -n $NHOSTS --rsh=/usr/bin/rsh -f $(pwd)/machinefile\n');
-            fprintf(fid,'mpirun -np $NSLOTS %s \n', OPT.binary);
-            fprintf(fid,'mpdallexit\n');
-        else
-            fprintf(fid,'%s\n', OPT.binary);
-        end
-    case 'MPICH2'
-        fprintf(fid,'#!/bin/sh\n');
-        if OPT.nodes > 1
-            fprintf(fid,'#$ -cwd\n');
-            fprintf(fid,'#$ -N %s\n', OPT.name);
-            fprintf(fid,'#$ -pe distrib %d\n', OPT.nodes);
-        else
-            fprintf(fid,'#$ -cwd\n');
-            fprintf(fid,'#$ -N %s\n', OPT.name);
-        end
-        
-        switch OPT.cluster
-            case 'h5'
-                % when using h5, only the mpi.sh script is created
-                fname = 'mpi.sh';
-                fprintf(fid,'module load mpich2-x86_64\n');
-                switch OPT.version
-                    % Define seperate cases for all different available versions
-                    case 1.21
-                        fprintf(fid,'module load xbeach/xbeach121-gcc44-netcdf41-mpi10\n');
-                end
-                fprintf(fid,'module list\n');
-                fprintf(fid,'pushd %s\n',rpath);
-                fprintf(fid,'. /opt/ge/InitSGE\n');
-                fprintf(fid,'awk ''{print $1":"1}'' $PE_HOSTFILE > $(pwd)/machinefile\n');
-                fprintf(fid,'mpdboot -n %d -f $(pwd)/machinefile\n',OPT.nodes);
-                fprintf(fid,'mpirun -n %d xbeach\n',OPT.nodes*4);
-        end
-        
-        fprintf(fid,'mpdallexit\n');
-        
-        if strcmpi(OPT.cluster,'h5')
-            fprintf(fid,'popd\n');
-        end
-otherwise
-        error(['Unknown MPI type [' OPT.mpitype ']']);
+switch OPT.version
+    % Define seperate cases for all different available versions
+    case 1.21
+        fprintf(fid,'module load xbeach/xbeach121-gcc44-netcdf41-mpi10\n');
+    case wtisettings
+        fprintf(fid,'module load /u/bieman/privatemodules/xbeach-wtisettings_gcc_4.9.1_1.8.1_HEAD\n');
 end
+
+fprintf(fid,'rundir="%s"\n',OPT.rundir);
+strs = '%s %s %s %s ';
+subdirsstr = ['subdirs="' strs(1:(3*numel(OPT.subdirs))) '"\n'];
+fprintf(fid,subdirsstr,OPT.subdirs{:});
+fprintf(fid,'for i in $subdirs\n');
+fprintf(fid,'do\n');
+fprintf(fid,'    cd $rundir/$i\n');
+fprintf(fid,'    pwd\n');
+fprintf(fid,'    xbeach > xb.log &\n');
+fprintf(fid,'    cd $OLDPWD\n');
+fprintf(fid,'done\n');
+fprintf(fid,'wait\n');
 
 fclose(fid);
