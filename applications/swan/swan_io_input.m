@@ -780,27 +780,71 @@ end
                foundkeyword    = true;
             end   
             
-%% Read GEN1/GEN2/GEN3
+%% Read GEN1
               [keyword1,rec1]   = strtok(rec);
+               if isempty(keyword1);
+               keyword1         = ' ';
+               end
                keyword1         = upper(pad(keyword1,4,' '));
-            if   strfind(keyword1(1:4),'GEN1')==1
-               DAT.gen1         = rec;
-               rec              = fgetlines_no_comment_line(fid);
-               foundkeyword     = true;
+            if strfind(keyword1(1:4),'GEN1')==1
+              [val,rec]        = strtok(rec1);            
+               DAT.gen1.cf10   = str2num(val);  
+              [val,rec]        = strtok(rec);
+               DAT.gen1.cf20   = str2num(val);
+              [val,rec]        = strtok(rec);
+               DAT.gen1.cf30   = str2num(val);
+              [val,rec]        = strtok(rec);
+               DAT.gen1.cf40   = str2num(val);
+              [val,rec]        = strtok(rec);
+               DAT.gen1.edmlpm = str2num(val);
+              [val,rec]        = strtok(rec);
+               DAT.gen1.cdrag  = str2num(val);
+              [val,rec]        = strtok(rec);
+               DAT.gen1.umin   = str2num(val);
+              [val,rec]        = strtok(rec);
+               DAT.gen1.cfpm   = str2num(val);               
+
+               rec             = fgetlines_no_comment_line(fid);
+               foundkeyword    = true;
                %% Adapt default settings pwtail
                DAT.set.pwtail   = 5;
-            end     
-
+            end  
+               
+               
+%% Read GEN2
               [keyword1,rec1]   = strtok(rec);
+               if isempty(keyword1);
+               keyword1         = ' ';
+               end
                keyword1         = upper(pad(keyword1,4,' '));
-            if   strfind(keyword1(1:4),'GEN2')==1
-               DAT.gen2         = rec;
-               rec              = fgetlines_no_comment_line(fid);
-               foundkeyword     = true;
+            if strfind(keyword1(1:4),'GEN1')==1
+              [val,rec]        = strtok(rec1);            
+               DAT.gen1.cf10   = str2num(val);  
+              [val,rec]        = strtok(rec);
+               DAT.gen1.cf20   = str2num(val);
+              [val,rec]        = strtok(rec);
+               DAT.gen1.cf30   = str2num(val);
+              [val,rec]        = strtok(rec);
+               DAT.gen1.cf40   = str2num(val);
+              [val,rec]        = strtok(rec);
+               DAT.gen1.cf50   = str2num(val);
+              [val,rec]        = strtok(rec);
+               DAT.gen1.cf60   = str2num(val);               
+              [val,rec]        = strtok(rec);
+               DAT.gen1.edmlpm = str2num(val);
+              [val,rec]        = strtok(rec);
+               DAT.gen1.cdrag  = str2num(val);
+              [val,rec]        = strtok(rec);
+               DAT.gen1.umin   = str2num(val);
+              [val,rec]        = strtok(rec);
+               DAT.gen1.cfpm   = str2num(val);               
+
+               rec             = fgetlines_no_comment_line(fid);
+               foundkeyword    = true;
                %% Adapt default settings pwtail
                DAT.set.pwtail   = 5;
-            end            
-
+            end        
+%% Read GEN3
               [keyword1,rec1]   = strtok(rec);
                keyword1         = upper(pad(keyword1,4,' '));
             if   strfind(keyword1(1:4),'GEN3')==1
@@ -809,10 +853,28 @@ end
               %% Adapt default settings pwtail
               [keyword1,rec1]   = strtok(rec1);
                if isempty(keyword1);keyword1 = ' ';end
-               keyword1         = upper(pad(keyword1,4,' '));
-               if   strfind(keyword1(1:4),'JANS')==1
-               DAT.set.pwtail   = 5;
+               keyword1         = upper(pad(keyword1,5,' '));
+               DAT.gen3.method  = keyword1;
+               if   strcmpi(DAT.gen3.method(1:4),'JANS')==1
+               DAT.gen3.pwtail   = 5;
+              [val,rec]        = strtok(rec1);
+               DAT.gen3.cds1   = str2num(val);
+              [val,rec]        = strtok(rec);
+               DAT.gen3.delta  = str2num(val);
+               elseif   strcmpi(DAT.gen3.method(1:3),'KOM')==1
+              [val,rec]        = strtok(rec1);
+               DAT.gen3.cds2   = str2num(val);
+              [val,rec]        = strtok(rec);
+               DAT.gen3.stpm   = str2num(val);
+               elseif   strcmpi(DAT.gen3.method(1:5),'WESTH')==1
                end
+               
+              [val,rec]        = strtok(rec);
+               if strcmpi(val,'AGROW')==1
+              [val,rec]        = strtok(rec);                   
+               DAT.gen3.a     = str2num(val);           
+               end
+               
                rec              = fgetlines_no_comment_line(fid);
                foundkeyword     = true;
             end             

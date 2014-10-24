@@ -1,4 +1,5 @@
 function varargout = quiver_thick(x1,y1,u,v,varargin)
+%quiver_thick plot fancy arrows like arrow and quiver
 %__________________________________________________________________________
 %Introduction
 %

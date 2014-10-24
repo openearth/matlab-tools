@@ -41,7 +41,9 @@ function [ constituents ] = t_tide(noos_ascii,varargin)
    M = matroos_noos_header2meta(headerlines);
    
    OPT2     = OPT;
-   OPT2     = rmfield(OPT,'format');
+   OPT2     = rmfield(OPT2,'format');
+   OPT2     = rmfield(OPT2,'country');
+   OPT2     = rmfield(OPT2,'units');   
    OPT2.lat = M.lat;
 
    if strcmpi(WPS.format,'text/plain') % native t_tide ascii garbage
@@ -57,7 +59,7 @@ function [ constituents ] = t_tide(noos_ascii,varargin)
    D.position.latitude   = M.lat;
    D.position.longitude  = M.lon;
    D.timeZone            = M.timezone;
-   D.units               = OPT.units; % not in NOOS
+   D.units               = OPT.units;   % not in NOOS
 
   %D.observationStart    = ' '; % in struc from period
   %D.observationEnd      = ' '; % in struc from period

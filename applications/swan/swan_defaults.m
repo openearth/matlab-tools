@@ -76,18 +76,25 @@ function [set,inp] = swan_defaults
    if nargout==2
    inp.set = set;
    
-   inp.breaking.alpha  = 1;
-   inp.breaking.gamma  = 0.73;
-   inp.breaking.gamma0 = 0.54;
-   inp.breaking.a1     = 7.59;
-   inp.breaking.a2     = -8.06;
-   inp.breaking.a3     = 8.09;
+   inp.gen1.cf10       = 188;
+   inp.gen1.cf20       = 0.59;
+   inp.gen1.cf30       = 0.12;
+   inp.gen1.cf40       = 250.;
+   inp.gen1.edmlpm     = 0.0036;
+   inp.gen1.cdrag      = 0.0012;
+   inp.gen1.umin       = 1;
+   inp.gen1.cfpm       = 0.13;
    
-   inp.friction.cfjon  = 0.038;
-   inp.friction.cfw    = 0.15;
-   inp.friction.kn     = 0.05;
-   inp.friction.S      = 2.65;
-   inp.friction.D      = 0.0001;
+   inp.gen2.cf10       = 188;
+   inp.gen2.cf20       = 0.59;
+   inp.gen2.cf30       = 0.12;
+   inp.gen2.cf40       = 250.;
+   inp.gen2.cf50       = 0.0023;
+   inp.gen2.cf60       = -0.223;   
+   inp.gen2.edmlpm     = 0.0036;
+   inp.gen2.cdrag      = 0.0012;
+   inp.gen2.umin       = 1;
+   inp.gen2.cfpm       = 0.13;   
    
    inp.wcap.cds2       = 2.36e-5;  
    inp.wcap.stpm       = 3.02e-3;
@@ -102,13 +109,32 @@ function [set,inp] = swan_defaults
    inp.quad.Csh2       = 0.833333;
    inp.quad.Csh3       = -1.25;     
    
+   inp.breaking.alpha  = 1;
+   inp.breaking.gamma  = 0.73;
+   inp.breaking.gamma0 = 0.54;
+   inp.breaking.a1     = 7.59;
+   inp.breaking.a2     = -8.06;
+   inp.breaking.a3     = 8.09;
+   
+   inp.friction.cfjon  = 0.038;
+   inp.friction.cfw    = 0.15;
+   inp.friction.kn     = 0.05;
+   inp.friction.S      = 2.65;
+   inp.friction.D      = 0.0001;
+   
    inp.triad.itriad    = 1;
    inp.triad.trfac     = 0.65;
    inp.triad.cutfr     = 2.5;
    inp.triad.a         = 0.95;
    inp.triad.b         = -0.75;   
    inp.triad.urcrit    = 0.2;
-   inp.triad.urslim    = 0.01;    
+   inp.triad.urslim    = 0.01;
+   
+   inp.mud.rhom        = 1300.;
+   inp.mud.viscm       = 0.0076;
+   
+   inp.lim.ursell      = 10.0;
+   inp.lim.qb          = 1.0;      
    
    end
    

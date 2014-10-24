@@ -68,9 +68,23 @@ function M = matroos_noos_header2meta(header)
 % $HeadURL$
 % $Keywords: $
 
-M = [];
+%% defaults
+M.loc              = [];
+M.latlonstr        = [];
+M.lon              = [];
+M.lat              = [];
+M.tanalysis        = [];
+M.datenumanalysis  = [];
+M.unit             = [];
+M.timezone         = [];
+M.source           = [];
+
 if isstr(header)
     header = {header};
+end
+
+if isempty(header)
+    return
 end
 
 for i=1:length(header)

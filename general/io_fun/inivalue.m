@@ -34,7 +34,7 @@ function varargout=inivalue(fileName,varargin)
 % Note that a *.url file is has the *.ini file format.
 % Optionally a struct with field 'commentchar' can be passed to skip comment lines.
 %
-%See also: textread, setproperty, xml_read, xml_load
+%See also: textread, setproperty, xml_read, xml_load, inifile
 
 % Based on code fragments from: http://www.mathworks.com/matlabcentral/fileexchange/5182-ini-file-reading-utility
 % Created By: Irtaza Barlas

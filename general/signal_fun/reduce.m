@@ -26,7 +26,8 @@ function varargout = reduce(x,y,tolerance,maximum_nr_of_points)
 %
 %
 %
-%   Example
+%   See also: running_median_filter
+%   Example_code:
 %{
 
 % generate some data
@@ -70,8 +71,6 @@ plot(x,y,x(ind),y(ind),x(ind),[y(ind)+max_error y(ind)-max_error],'r:')
 title(sprintf('tolerance set at %.1f ==> %d points needed',tolerance,length(ind)))
 
 %}
-%
-%   See also: running_median_filter
 
 %% Copyright notice
 %   --------------------------------------------------------------------

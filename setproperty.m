@@ -25,7 +25,8 @@ function [OPT Set Default] = setproperty(OPT, inputCell, varargin)
 %           
 % output:
 % OPT     = structure, similar to the input argument OPT, 
-%           with possibly changed values in the fields
+%           with possibly changed values in the fields. You can inspect
+%           an OPT struct this interactively with ui_structure_editor.
 % Set     = structure, similar to OPT, values are true 
 %           where OPT has been set (and possibly changed)
 % Default = structure, similar to OPT, values are true where 
@@ -91,7 +92,8 @@ function [OPT Set Default] = setproperty(OPT, inputCell, varargin)
 %                              'propertyName2', 2);
 %            varcell = reshape([fieldnames(OPT2)'; struct2cell(OPT2)'], 1, 2*length(fieldnames(OPT2)));
 %            OPT     = setproperty(OPT, varcell{:});
-% See also: VARARGIN, STRUCT, MERGESTRUCTS, oop
+%
+% See also: VARARGIN, STRUCT, MERGESTRUCTS, oop, ui_structure_editor
 
 %
 % Change log:
