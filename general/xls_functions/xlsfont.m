@@ -1,5 +1,4 @@
 function xlsfont(filename,sheetname,varargin)
-
 %XLSFONT modifies fonts of selected Excel cell(s)
 %
 % xlsfont(filename,sheetname,'Whole', param,value, ...)

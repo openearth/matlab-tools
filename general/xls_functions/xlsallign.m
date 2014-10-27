@@ -1,6 +1,5 @@
 function xlsalign(filename,sheetname,varargin)
-
-%XLSALIGN modifies alignment options of selected Excel cell(s)
+%xlsallign modifies alignment options of selected Excel cell(s)
 %
 % xlsalign(filename,sheetname,'Whole', param,value, ...)
 % xlsalign(filename,sheetname,'Find',text, param,value, ...)

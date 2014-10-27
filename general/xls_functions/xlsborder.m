@@ -1,5 +1,4 @@
 function xlsborder(filename,sheetname,varargin)
-
 %XLSBORDER modifies borders of selected Excel cell(s)
 %
 % xlsborder(filename,sheetname,'Whole', param,LineStyle,Weight,ColorIndex, ...)

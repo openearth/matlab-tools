@@ -6,6 +6,9 @@ classdef xls < oop.handle_light
 % object and reused. Similarly, the reference to the open workbook (xls
 % file) is reused and only updated when a differen workbook is opened.
 %
+% xls can read/write to named ranges, whereas xlswrite cannot write to named
+% ranges (xlsread can read from named ranges).
+%
 %   Methods for class xls:
 %   open  read  write  clear  save  getWorksheets  getUsedRange
 %
@@ -25,7 +28,10 @@ classdef xls < oop.handle_light
 %     % clearing the sheet also closes the xls server
 %     clear excelsheet
 %
-%   See also: xlsread
+%   See also: xls.open, xls.create, xls.read, xls.write, xls.save
+%             xls.clear, xls.close, xls.closeWorkbook
+%             xls.getUsedRange, xls.addsheet, xls.getWorksheets
+%             xlsread, xlswrite
     
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -124,7 +130,12 @@ classdef xls < oop.handle_light
         end
         
         function open(obj,filename)
-            % only open excel object if it is not available already
+        % xls.open only open excel object if it is not available already
+        %
+        % open(obj,filename)
+        %
+        % See also: xls            
+            
             if isempty(obj.excel)
                 obj.excel = actxserver('excel.application');
                 obj.excel.DisplayAlerts = 0;
@@ -144,7 +155,12 @@ classdef xls < oop.handle_light
         end
         
         function create(obj,filename)
-            % Create new workbook.  
+        % xls.create Create new workbook
+        %
+        %  create(obj,filename)
+        %
+        % See also: xls                
+            
             if isempty(obj.excel)
                 obj.excel = actxserver('excel.application');
                 obj.excel.DisplayAlerts = 0;
@@ -170,7 +186,13 @@ classdef xls < oop.handle_light
         end
         
         function newsheet = addsheet(obj,sheet)
-            % Add new worksheet.
+        % xls.addsheet Add new worksheet to excel object
+        %
+        %  newsheet = addsheet(obj,sheet)
+        %
+        % See also: xls           
+        
+            % .
             newsheet  = obj.workbook.WorkSheets.Add;
             % If Sheet is a string, rename new sheet to this string.
             if isnumeric(sheet)
@@ -180,6 +202,12 @@ classdef xls < oop.handle_light
         end
         
         function worksheets = getWorksheets(obj)
+        % xls.getWorksheets get worksheets
+        %
+        %  worksheets = getWorksheets(obj)
+        %
+        % See also: xls                
+        
             obj.open;
             num_of_worksheets = obj.workbook.Worksheets.count;
             for ii = num_of_worksheets:-1:1
@@ -189,6 +217,12 @@ classdef xls < oop.handle_light
         end
         
         function usedRange = getUsedRange(obj,sheet)
+        % xls.getUsedRange get used range
+        %
+        %  usedRange = getUsedRange(obj,sheet)
+        %
+        % See also: xls                
+        
             if nargin < 2
                 sheet = 1;
             end
@@ -196,6 +230,12 @@ classdef xls < oop.handle_light
         end
         
         function save(obj)
+        % xls.save save excel object
+        %
+        %  save(obj)
+        %
+        % See also: xls      
+        
             if obj.data_written
                 obj.workbook.Save;
                 obj.data_written = false;
@@ -203,6 +243,12 @@ classdef xls < oop.handle_light
         end
         
         function close(obj)
+        % xls.close close excel object
+        %
+        %  close(obj)
+        %
+        % See also: xls         
+        
             obj.closeWorkbook;
             if ~isempty(obj.excel)
                 obj.excel.Quit;
@@ -212,6 +258,12 @@ classdef xls < oop.handle_light
         end
         
         function closeWorkbook(obj)
+        % xls.closeWorkbook close workbook
+        %
+        %  closeWorkbook(obj)
+        %
+        % See also: xls          
+        
             if ~isempty(obj.workbook)
                 if obj.data_written
                     warning('XLS:dataDiscarded','Data was not saved in %s, call <obj>.save before closing',obj.filename);
@@ -222,6 +274,14 @@ classdef xls < oop.handle_light
         end
         
         function data = read(obj,sheet,range)
+        % xls.read read from excel object
+        %
+        % data = read(obj,sheet,range)
+        %
+        % range can be a named range.
+        %
+        % See also: xls   
+        
             obj.open;
             if nargin < 2
                 sheet = 1;
@@ -240,6 +300,14 @@ classdef xls < oop.handle_light
         end
         
         function write(obj,data,sheet,range)
+        % xls.write write to excel object
+        %
+        % write(obj,data,sheet,range)
+        %
+        % range can be a named range, unlike xlswrite.
+        %
+        % See also: xls
+        
             obj.open;
             if obj.workbook.ReadOnly ~= 0
                 %This means the file is probably open in another process.
@@ -269,6 +337,12 @@ classdef xls < oop.handle_light
         % write(obj,data,sheet,range)
         
         function clear(obj,sheet,range)
+        % xls.clear clear
+        %
+        %  clear(obj,sheet,range)
+        %
+        % See also: xls           
+        
             obj.open;
             TargetSheet = get(obj.excel.sheets,'item',sheet);
             %Activate silently fails if the sheet is hidden

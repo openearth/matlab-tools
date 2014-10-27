@@ -1,4 +1,5 @@
-      clear all; oetsettings;
+function xls_xmp
+%xls_xmp exampel how to compare xls files
 
       %
       % Defenitions:

@@ -1,4 +1,5 @@
 function xlswrite_report(filename,cell_arr,sheetname,varargin)
+%xlswrite_report
 
 %
 % Function                      : Generates a "report" xls file whereas matlab's own xlswrite produces

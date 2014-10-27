@@ -1,4 +1,5 @@
 function set_colwidth_excel (fileName,sheet,icol,width)
+%set_colwidth_excel
 
 fileName =  relativeToabsolutePath(fileName);
 

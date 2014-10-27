@@ -1,5 +1,5 @@
 function [range] = det_excel_range (col_start,row_start,col_stop,row_stop,varargin)
-
+%det_excel_range
 %
 % Specified as colrow (Exceltype) or rowcol (more mathematical)
 % default is colrow
