@@ -91,7 +91,7 @@ switch OPT.version
     % Define seperate cases for all different available versions
     case 1.21
         fprintf(fid,'module load xbeach/xbeach121-gcc44-netcdf41-mpi10\n');
-    case wtisettings
+    case 'wtisettings'
         fprintf(fid,'module load /u/bieman/privatemodules/xbeach-wtisettings_gcc_4.9.1_1.8.1_HEAD\n');
 end
 

@@ -191,8 +191,14 @@ switch upper(OPT.mpitype)
                         fprintf(fid,'module load gcc/4.9.1\n');
                         fprintf(fid,'module load hdf5/1.8.13_gcc_4.9.1\n');
                         fprintf(fid,'module load netcdf/v4.3.2_v4.4.0_gcc_4.9.1\n');
-                        fprintf(fid,'module load use.own\n');
                         fprintf(fid,'module load /u/bieman/privatemodules/xbeach-wtisettings_gcc_4.9.1_1.8.1_HEAD\n');
+                    otherwise
+                        % assume that OPT.version contains the complete
+                        % module name
+                        fprintf(fid,'module load gcc/4.9.1\n');
+                        fprintf(fid,'module load hdf5/1.8.13_gcc_4.9.1\n');
+                        fprintf(fid,'module load netcdf/v4.3.2_v4.4.0_gcc_4.9.1\n');
+                        fprintf(fid,'module load %s\n',OPT.version);
                 end
                 fprintf(fid,'module list\n');
                 fprintf(fid,'pushd %s\n',rpath);
