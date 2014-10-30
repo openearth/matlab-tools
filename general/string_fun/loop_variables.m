@@ -21,7 +21,7 @@ else
 end
 
 varargout{1} = [];
-for ii = 1:ceil(num/26)
+for ii = 1:ceil(max([1 num])/26)
     varargout{1} = [varargout{1}; cellstr(char(repmat(repmat('a',1,ii),26,1) + repmat([0:25]',1,ii)))];
 end
 varargout{1} = varargout{1}(1:num);
