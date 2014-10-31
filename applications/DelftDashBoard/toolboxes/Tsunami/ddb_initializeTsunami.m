@@ -102,6 +102,7 @@ handles.toolbox.tsunami.dip=10.0;
 handles.toolbox.tsunami.slipRake=90.0;
 handles.toolbox.tsunami.lonEpicentre=0.0;
 handles.toolbox.tsunami.latEpicentre=0.0;
+handles.toolbox.tsunami.EQtype=3;
 
 % Segment info (for table)
 handles.toolbox.tsunami.segmentLon=0.0;
