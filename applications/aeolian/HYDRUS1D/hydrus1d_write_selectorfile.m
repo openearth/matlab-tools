@@ -16,6 +16,7 @@ OPT = struct( ...
     'MPL', 240, ...
     'PrintTimes', 10000, ...
     'PrintInterval', 1, ...
+    'Enter', 't', ...
     'path', pwd);
 
 OPT = setproperty(OPT, varargin);
@@ -32,7 +33,7 @@ fprintf(fid, '%s\n', 'mmol');
 fprintf(fid, '%s\n', 'lWat   lChem lTemp  lSink lRoot lShort lWDep lScreen lVariabBC lEquil lInverse');
 fprintf(fid, '%s\n', ' t     f     f      f     f     f      f     t       t         t         f');
 fprintf(fid, '%s\n', 'lSnow  lHP1   lMeteo  lVapor lActiveU lFluxes lIrrig  lDummy  lDummy  lDummy');
-fprintf(fid, '%s\n', ' f       f       f       f       f       t       f       f       f       f');
+fprintf(fid, '%s\n', ' f       f       f       f       f       f       f       f       f       f');
 fprintf(fid, '%s\n', 'NMat    NLay  CosAlpha');
 fprintf(fid, '%s\n', '  1       1       1');
 fprintf(fid, '%s\n', '*** BLOCK B: WATER FLOW INFORMATION ************************************');
@@ -54,15 +55,22 @@ fprintf(fid, '%10e %10e %10e %10.1f %10.1f %10d %10d %10d\n', OPT.dt, OPT.dtMin,
 fprintf(fid, '%s\n', '      tInit        tMax');
 fprintf(fid, '%5d %5d\n', OPT.tInit, OPT.tMax);
 fprintf(fid, '%s\n', '  lPrintD  nPrintSteps tPrintInterval lEnter');
-fprintf(fid, '%10s %10d %10d %10s\n', 't', OPT.PrintTimes, OPT.PrintInterval, 't');
+fprintf(fid, '%10s %10d %10d %10s\n', 't', OPT.PrintTimes, OPT.PrintInterval, OPT.Enter);
 fprintf(fid, '%s\n', 'TPrint(1),TPrint(2),...,TPrint(MPL)');
 
 t = linspace(OPT.tInit, OPT.tMax, OPT.MPL+1);
 for i = 2:length(t)
     fprintf(fid, '%15f ', t(i));
-    if mod(i-1,6) == 0
+    if mod(i-1,6) == 0 || i == length(t)
         fprintf(fid, '\n');
     end
 end
 
+fprintf(fid, '%s\n', '?*** BLOCK E: HEAT TRANSPORT INFORMATION *********************************************************');
+fprintf(fid, '%s\n', '    Qn      Qo    Disper.    B1          B2          B3          Cn          Co           Cw');
+fprintf(fid, '%s\n', '   0.57       0       5 1.47054e+016 -1.5518e+017 3.16617e+017 1.43327e+014 1.8737e+014 3.12035e+014 ');
+fprintf(fid, '%s\n', '      tAmpl     tPeriod    Campbell   MeltConst  lDummy  lDummy  lDummy  lDummy  lDummy');
+fprintf(fid, '%s\n', '          0           1          0        0.43       f       f       f       f       f');
+fprintf(fid, '%s\n', '      kTopT       TTop      kBotT       TBot');
+fprintf(fid, '%s\n', '          1         20           0         10');
 fprintf(fid, '%s\n', '*** END OF INPUT FILE ''SELECTOR.IN'' ************************************');

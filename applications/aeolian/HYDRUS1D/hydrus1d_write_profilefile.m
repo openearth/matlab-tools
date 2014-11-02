@@ -20,7 +20,7 @@ fprintf(fid, '%5d %15e %15e %15e\n', 2, OPT.PressureHead(end), 1, 1);
 fprintf(fid, '%5d %5d %5d %5d x h Mat Lay Beta Axz Bxz Dxz Temp Conc\n', n, 0, 0, 1);
 
 for i = 1:n
-    fprintf(fid, '%5d %15e %15e %5d %5d %15e %15e %15e %15e\n', i, z(i), OPT.PressureHead(i), 1, 1, 0, 1, 1, 1);
+    fprintf(fid, '%5d %15e %15e %5d %5d %15e %15e %15e %15e %15e\n', i, z(i), OPT.PressureHead(i), 1, 1, 0, 1, 1, 1, 10);
 end
 
 fprintf(fid, '%5d\n', length(OPT.ObservationNodes));

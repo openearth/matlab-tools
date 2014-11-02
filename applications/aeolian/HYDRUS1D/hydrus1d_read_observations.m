@@ -89,7 +89,7 @@ while ~feof(fid)
 end
 
 info = dir(fname);
-n_lines = round((info.bytes - 677) / 247);
+n_lines = round((info.bytes - 677) / 247 * 1.1); % add 20% extra space
 
 n = 0;
 N = nan(n_lines, length(data));
@@ -111,6 +111,8 @@ while ~feof(fid)
 end
 fclose(fid);
 
+N = N(1:n,:); % remove abundant space
+
 %% compile data
 
 time = N(:,1);
@@ -122,4 +124,4 @@ S = struct( ...
     'data', struct( ...
         'h', squeeze(data(:,1,:)), ...
         'theta', squeeze(data(:,2,:)), ...
-        'flux', squeeze(data(:,3,:))));
+        'temp', squeeze(data(:,3,:))));

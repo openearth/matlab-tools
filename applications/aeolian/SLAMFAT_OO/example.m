@@ -33,7 +33,7 @@ profile(1:n)   = linspace(-1,1,n);
 profile(n:end) = linspace(1,15,100-n+1);
 
 w = slamfat_wind('duration',3600);
-s = slamfat('wind',w,'profile',profile,'animate',false); %,'output_file','slamfat.nc');
+s = slamfat('wind',w,'profile',profile,'animate',true); %,'output_file','slamfat.nc');
 
 source = zeros(length(s.profile),1);
 source(1:100) = 1.5e-2 * w.dt * s.dx;

@@ -165,7 +165,7 @@ classdef slamfat_plot < handle
                 colormap(this.colormap);
                 
                 n  = 0;
-                sy = 7;
+                sy = 6; %7;
                 sx = 1;
 
                 % plot profile
@@ -183,7 +183,7 @@ classdef slamfat_plot < handle
                 
                 this.lines.d50          = pcolor(repmat(this.axes.x,nl+1,1),repmat(f1,nl+1,1) - cumsum([zeros(nx,1) th],2)',squeeze(f2(1,:,[1 1:end]))');
                 this.lines.profile      = plot(this.axes.x,f1,'-k','LineWidth',2);
-                this.lines.capacity     = plot(this.axes.x,zeros(nx,nf),':k');
+                %this.lines.capacity     = plot(this.axes.x,zeros(nx,nf),':k');
                 this.lines.transport    = plot(this.axes.x,zeros(nx,nf),'-k');
 
                 set(this.subplots.profile,'XTick',[]);
@@ -199,21 +199,21 @@ classdef slamfat_plot < handle
                 ylabel(this.colorbars.profile,'Median grain size [\mum]');
 
                 % plot supply limitation indicator
-                this.subplots.supply_limited = subplot(sy,sx,n+1); hold on; n = n + 1;
-                this.lines.supply_limited    = bar(this.axes.x,zeros(1,length(this.axes.x)));
+                %this.subplots.supply_limited = subplot(sy,sx,n+1); hold on; n = n + 1;
+                %this.lines.supply_limited    = bar(this.axes.x,zeros(1,length(this.axes.x)));
 
-                set(this.subplots.supply_limited,'YTick',[],'XTick',[]);
+                %set(this.subplots.supply_limited,'YTick',[],'XTick',[]);
                 %xlabel(this.subplots.supply_limited, 'distance [m]');
 
-                xlim(this.subplots.supply_limited, minmax(this.axes.x));
-                ylim(this.subplots.supply_limited, [0 nf]);
-                clim(this.subplots.supply_limited, [0 nf]);
+                %xlim(this.subplots.supply_limited, minmax(this.axes.x));
+                %ylim(this.subplots.supply_limited, [0 nf]);
+                %clim(this.subplots.supply_limited, [0 nf]);
 
-                box on;
+                %box on;
 
-                this.colorbars.supply_limited = colorbar;
-                set(this.colorbars.supply_limited,'YTick',[]);
-                ylabel(this.colorbars.supply_limited,{'Supply' 'limitations'});
+                %this.colorbars.supply_limited = colorbar;
+                %set(this.colorbars.supply_limited,'YTick',[]);
+                %ylabel(this.colorbars.supply_limited,{'Supply' 'limitations'});
 
                 % plot moisture indicator
                 this.subplots.moisture = subplot(sy,sx,n+1); hold on; n = n + 1;
@@ -300,7 +300,8 @@ classdef slamfat_plot < handle
                 
                 %% finalization
                 
-                linkaxes([this.subplots.profile this.subplots.supply_limited this.subplots.moisture], 'x');
+                %linkaxes([this.subplots.profile this.subplots.supply_limited this.subplots.moisture], 'x');
+                linkaxes([this.subplots.profile this.subplots.moisture], 'x');
                 linkaxes([this.subplots.wind this.subplots.transport], 'x');
                 
                 pos = get(this.figure,'Position');
@@ -378,17 +379,17 @@ classdef slamfat_plot < handle
             set(this.lines.profile, 'YData', f1);
             set(this.lines.d50,     'YData', repmat(f1,nl+1,1) - cumsum([zeros(nx,1) th],2)', ...
                                     'CData', f2);
-            set(this.lines.supply_limited, 'YData', f3);
+            %set(this.lines.supply_limited, 'YData', f3);
             set(this.lines.moisture,       'YData', f4);
             
-            set(get(this.lines.supply_limited,'Children'),'CData',f3(:));
+            %set(get(this.lines.supply_limited,'Children'),'CData',f3(:));
             set(get(this.lines.moisture,      'Children'),'CData',f4(:))
 
             for i = 1:nf
                 f4 = squeeze(this.obj.data.transport(ot,:,i));
                 f5 = squeeze(this.obj.data.capacity(ot,:,i));
                 set(this.lines.transport(i), 'YData', f4);
-                set(this.lines.capacity(i),  'YData', f5);
+                %set(this.lines.capacity(i),  'YData', f5);
             end
 
             title(this.subplots.profile, sprintf('t = %d s (%d%%)', round((it-1)*this.obj.wind.dt), round(it/sum(this.obj.wind.number_of_timesteps)*100)));
@@ -399,7 +400,8 @@ classdef slamfat_plot < handle
                 set([this.subplots.wind this.subplots.transport], 'XLim', this.axes.t_out(ot) + [-.5 .5] * this.window);
             end
 
-            drawnow;
+            %drawnow;
+            saveas(this.figure(1), sprintf('~/Checkouts/PhD/Models/SLAMFAT/screen_1d/screen_%05d.png', ot));
         end
         
         function this = move(this, n)

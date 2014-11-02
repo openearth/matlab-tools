@@ -10,13 +10,15 @@ OPT = struct( ...
     'rB', 0, ...
     'hB', 0, ... % pressure head at bottom layer
     'hT', 0, ... % pressure head at top layer
+    'tTop', 0, ... % temperature at top layer
+    'tBot', 0, ... % temperature at bottom layer
     'version', 4, ...
     'path', pwd);
 
 OPT = setproperty(OPT, varargin);
 
 % make sure time series are of equal length
-ts = {'time', 'Prec', 'hCritA', 'rSoil', 'rRoot', 'rB', 'hB', 'hT'};
+ts = {'time', 'Prec', 'hCritA', 'rSoil', 'rRoot', 'rB', 'hB', 'hT', 'tTop', 'tBot'};
 ts_lengths = cellfun(@(x) length(OPT.(x)), ts);
 
 n = max([1,min(ts_lengths(ts_lengths>1))]);
@@ -40,10 +42,10 @@ fprintf(fid, '%s\n', ' DailyVar  SinusVar  lLay  lBCCycles lInterc lDummy  lDumm
 fprintf(fid, '%s\n', '       f       f       f       f       f       f       f       f       f       f');
 fprintf(fid, '%s\n', ' hCritS                 (max. allowed pressure head at the soil surface)');
 fprintf(fid, '%5d\n', OPT.hCritS);
-fprintf(fid, '%s\n', '       tAtm        Prec       rSoil       rRoot      hCritA          rB          hB          ht    RootDepth');
+fprintf(fid, '%s\n', '       tAtm        Prec       rSoil       rRoot      hCritA          rB          hB          ht        tTop        tBot        Ampl   RootDepth');
 
 for i = 1:n
-    fprintf(fid, '%15f %15f %5d %15f %5d %15f %15f %15f\n', OPT.time(i), OPT.Prec(i), OPT.rSoil(i), OPT.rRoot(i), OPT.hCritA(i), OPT.rB(i), OPT.hB(i), OPT.hT(i));
+    fprintf(fid, '%15f %15f %5d %15f %5d %15f %15f %15f %15f %15f 0\n', OPT.time(i), OPT.Prec(i), OPT.rSoil(i), OPT.rRoot(i), OPT.hCritA(i), OPT.rB(i), OPT.hB(i), OPT.hT(i), OPT.tTop(i), OPT.tBot(i));
 end
 
 fprintf(fid, '%s\n', 'end*** END OF INPUT FILE ''ATMOSPH.IN'' **********************************');
