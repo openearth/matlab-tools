@@ -118,4 +118,4 @@ M.evaporation = e / 10; % conversion from mm/day to cm/day
 
 %% compute net precipitation
 
-P = -M.precipitation_amount_sum(2:end) + M.evaporation(1:end-1);
+P = M.precipitation_amount_sum(2:end) - M.evaporation(1:end-1);
