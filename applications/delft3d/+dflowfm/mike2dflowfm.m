@@ -50,7 +50,7 @@ function varargout = mike2dflowfm(varargin);
 %    % Both structures are identical (in x, y, z, Links etc.)
 %    
 %
-% See also: dflowfm, dflowfm.writeNet
+% See also: dflowfm, dflowfm.writeNet, dflowfm.adcirc2dflowfm
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2013 Deltares
@@ -106,7 +106,7 @@ else
 end
 
 if size(varargin,2)==1
-    uiwait(msgbox('No FM grid name was choosen, specify one now...','MIKE grid missing','modal'));
+    uiwait(msgbox('No FM grid name was choosen, specify one now...','FM grid missing','modal'));
     varargin{2} = cell2mat(inputdlg('Specify an output name for the FM grid (*_net.nc) ','No output name specified',1,{'output_net.nc'}));
     if isempty(varargin{2})
         error('Aborted by user, since no output file was specified');
