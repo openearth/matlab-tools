@@ -39,6 +39,14 @@ function xml = wxs_url_cache(url,suffix,cachedir)
 % $HeadURL: $
 % $Keywords: $
 
+%% chop
+   k = strfind(url,'?');
+   if isempty(k)
+       error('OGC WxS url should have a trailing ?');
+   end
+   url = url(1:k(1));
+
+%%   
    ind0 = strfind(url,'//'); % remove http:// or https://
    ind1 = strfind(url,'?' ); % cleanup, keep untill and incl ?
    if ~(length(ind1)==1)

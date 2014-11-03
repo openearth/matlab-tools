@@ -27,7 +27,7 @@ function varargout = wcs(varargin)
 % Example: SRTM
 %
 %   [url,OPT] = wcs('server','http://geoport.whoi.edu/thredds/wcs/bathy/srtm30plus_v6?');
-%   urlwrite(url,['tmp',OPT.ext]);
+%   urlwrite(url,['tmp',OPT.format]);
 %
 %See also: wms, wfs, arcgis, netcdf, opendap, postgresql, xml_read
 %          http://publicwiki.deltares.nl/display/OET/WCS+primer
