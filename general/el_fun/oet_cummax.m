@@ -1,4 +1,4 @@
-function cu = cummax(x)
+function cu = oet_cummax(x)
 %CUMMAX  cumulative max value
 %
 %   B = cummax(A)

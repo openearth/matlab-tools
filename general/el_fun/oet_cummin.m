@@ -1,4 +1,4 @@
-function cu = cummin(x)
+function cu = oet_cummin(x)
 %CUMMIN  cumulative min value
 %
 %   B = cummin(A)
