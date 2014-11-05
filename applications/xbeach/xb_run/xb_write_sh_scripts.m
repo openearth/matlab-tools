@@ -94,33 +94,8 @@ OPT.binary = strrep(OPT.binary, '\', '/');
 % set preferences
 if isempty(OPT.mpitype); OPT.mpitype = xb_getprefdef('mpitype', 'MPICH2'); end;
 
-%% write start script
-
-if strcmpi(OPT.cluster,'h4')
-    fname = [name '.sh'];
-    
-    fid = fopen(fullfile(lpath, fname), 'w');
-    
-    fprintf(fid,'#!/bin/sh\n');
-    fprintf(fid,'cd %s\n', rpath);
-    fprintf(fid,'. /opt/sge/InitSGE\n');
-    fprintf(fid,'. /opt/intel/fc/10/bin/ifortvars.sh\n');
-    
-    if strcmp(OPT.queuetype,'normal')
-        fprintf(fid,'qsub -V -N %s mpi.sh\n', OPT.name);
-    elseif strcmp(OPT.queuetype,'normal-i7')
-        fprintf(fid,'qsub -V -N %s -q normal-i7 mpi.sh\n', OPT.name);
-    else
-        error(['Unknown queue type [' OPT.queuetype ']. Possible types are: normal & normal-i7']);
-    end
-    
-    
-    fprintf(fid,'exit\n');
-    
-    fclose(fid);
-end
-
 %% write mpi script
+fname = 'mpi.sh';
 
 if strcmpi(OPT.cluster,'h4') && ~ismember(OPT.binary(1), {'/' '~' '$'})
     OPT.binary = ['$(pwd)/' OPT.binary];
@@ -130,58 +105,60 @@ fid = fopen(fullfile(lpath, 'mpi.sh'), 'w');
 
 switch upper(OPT.mpitype)
     case 'OPENMPI'
-        fprintf(fid,'#!/bin/bash\n');
-        fprintf(fid,'#$ -cwd\n');
-        fprintf(fid,'#$ -N %s\n', OPT.name);
-        fprintf(fid,'#$ -pe distrib %d\n', OPT.nodes);
-
-        fprintf(fid,'. /opt/sge/InitSGE\n');
-        fprintf(fid,'export LD_LIBRARY_PATH=/opt/intel/Compiler/11.0/081/lib/ia32:/opt/netcdf-4.1.1/lib:/opt/hdf5-1.8.5/lib:$LD_LIBRARY_PATH\n');
-
-        if OPT.nodes > 1
-            fprintf(fid,'export LD_LIBRARY_PATH="/opt/openmpi-1.4.3-gcc/lib/:${LD_LIBRARY_PATH}"\n');
-            fprintf(fid,'export PATH="/opt/mpich2/bin/:${PATH}"\n');
-            if strcmp(OPT.queuetype,'normal')
-                fprintf(fid,'export NSLOTS=`expr $NSLOTS \\* 2`\n');
-            elseif strcmp(OPT.queuetype,'normal-i7')
-                fprintf(fid,'export NSLOTS=`expr $NSLOTS \\* 4`\n');
-            else
-                error(['Unknown queue type [' OPT.mpitype ']. Possible types are: normal & normal-i7']);
-            end
-            fprintf(fid,'awk ''{print $1":"1}'' $PE_HOSTFILE > $(pwd)/machinefile\n');
-            fprintf(fid,'mpdboot -n $NHOSTS --rsh=/usr/bin/rsh -f $(pwd)/machinefile\n');
-            fprintf(fid,'mpirun -np $NSLOTS %s \n', OPT.binary);
-            fprintf(fid,'mpdallexit\n');
-        else
-            fprintf(fid,'%s\n', OPT.binary);
-        end
-    case 'MPICH2'
         fprintf(fid,'#!/bin/sh\n');
+        fprintf(fid,'#$ -cwd\n');
+        fprintf(fid,'#$ -V\n');
+        fprintf(fid,'#$ -N %s\n', OPT.name);
+        fprintf(fid,'#$ -m ea\n');
+        fprintf(fid,'#$ -q %s\n', OPT.queuetype);
         if OPT.nodes > 1
-            fprintf(fid,'#$ -cwd\n');
-            fprintf(fid,'#$ -N %s\n', OPT.name);
             fprintf(fid,'#$ -pe distrib %d\n', OPT.nodes);
-        else
-            fprintf(fid,'#$ -cwd\n');
-            fprintf(fid,'#$ -N %s\n', OPT.name);
         end
         
+        fprintf(fid,'. /opt/ge/InitSGE\n');
+        fprintf(fid,'export NSLOTS=`expr $NHOSTS \\* 4`\n');
+        
         switch OPT.cluster
-            case 'h4'
-                fprintf(fid,'. /opt/sge/InitSGE\n');
-                fprintf(fid,'export LD_LIBRARY_PATH=/opt/intel/Compiler/11.0/081/lib/ia32:/opt/netcdf-4.1.1/lib:/opt/hdf5-1.8.5/lib:$LD_LIBRARY_PATH\n');
-                
-                if OPT.nodes > 1
-                    fprintf(fid,'export MPICH2_ROOT=/opt/mpich2\n');
-                    fprintf(fid,'export PATH=$MPICH2_ROOT/bin:$PATH\n');
-                    fprintf(fid,'export MPD_CON_EXT="sge_$JOB_ID.$SGE_TASK_ID"\n');
-                else
-                    fprintf(fid,'%s\n', OPT.binary);
-                end
-                fprintf(fid,'mpirun -machinefile $TMPDIR/machines -n $NSLOTS %s\n', OPT.binary);
             case 'h5'
-                % when using h5, only the mpi.sh script is created
-                fname = 'mpi.sh';
+                switch OPT.version
+                    % Define seperate cases for all different available versions
+                    case 1.21
+                        fprintf(fid,'module load mpich2-x86_64\n');
+                        fprintf(fid,'module load xbeach/xbeach121-gcc44-netcdf41-mpi10\n');
+                    case 'wtisettings'
+                        fprintf(fid,'module load gcc/4.9.1\n');
+                        fprintf(fid,'module load hdf5/1.8.13_gcc_4.9.1\n');
+                        fprintf(fid,'module load netcdf/v4.3.2_v4.4.0_gcc_4.9.1\n');
+                        fprintf(fid,'module load /opt/xbeach/openmpi/1.8.1_gcc_4.9.1\n');
+                        fprintf(fid,'module load /u/bieman/privatemodules/xbeach-wtisettings_gcc_4.9.1_1.8.1_HEAD\n');
+                    otherwise
+                        % assume that OPT.version contains the complete
+                        % module name
+                        fprintf(fid,'module load gcc/4.9.1\n');
+                        fprintf(fid,'module load hdf5/1.8.13_gcc_4.9.1\n');
+                        fprintf(fid,'module load netcdf/v4.3.2_v4.4.0_gcc_4.9.1\n');
+                        fprintf(fid,'module load /opt/xbeach/openmpi/1.8.1_gcc_4.9.1\n');
+                        fprintf(fid,'module load %s\n',OPT.version);
+                end
+                fprintf(fid,'module list\n');
+                fprintf(fid,'env\n');
+                fprintf(fid,'awk ''{print $1":"1}'' $PE_HOSTFILE > $(pwd)/machinefile\n');
+                fprintf(fid,'mpdboot -n $NHOSTS -f $(pwd)/machinefile\n');
+                fprintf(fid,'mpdtrace\n');
+                fprintf(fid,'mpirun -np $NSLOTS xbeach\n');
+        end
+        fprintf(fid,'mpdallexit\n');
+    case 'MPICH2'
+        fprintf(fid,'#!/bin/sh\n');
+        fprintf(fid,'#$ -cwd\n');
+        fprintf(fid,'#$ -N %s\n', OPT.name);
+        fprintf(fid,'#$ -m ea\n');
+        fprintf(fid,'#$ -q %s\n', OPT.queuetype);
+        fprintf(fid,'#$ -pe distrib %d\n', OPT.nodes);
+        fprintf(fid,'export NSLOTS=`expr $NHOSTS \\* 4`');
+        
+        switch OPT.cluster
+            case 'h5'
                 switch OPT.version
                     % Define seperate cases for all different available versions
                     case 1.21
@@ -201,18 +178,12 @@ switch upper(OPT.mpitype)
                         fprintf(fid,'module load %s\n',OPT.version);
                 end
                 fprintf(fid,'module list\n');
-                fprintf(fid,'pushd %s\n',rpath);
                 fprintf(fid,'. /opt/ge/InitSGE\n');
                 fprintf(fid,'awk ''{print $1":"1}'' $PE_HOSTFILE > $(pwd)/machinefile\n');
-                fprintf(fid,'mpdboot -n %d -f $(pwd)/machinefile\n',OPT.nodes);
-                fprintf(fid,'mpirun -n %d xbeach\n',OPT.nodes*4);
+                fprintf(fid,'mpdboot -n $NHOSTS -f $(pwd)/machinefile\n');
+                fprintf(fid,'mpirun -n $NSLOTS xbeach\n');
         end
-        
         fprintf(fid,'mpdallexit\n');
-        
-        if strcmpi(OPT.cluster,'h5')
-            fprintf(fid,'popd\n');
-        end
 otherwise
         error(['Unknown MPI type [' OPT.mpitype ']']);
 end
