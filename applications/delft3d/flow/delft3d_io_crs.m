@@ -172,7 +172,7 @@ OS           = 'windows'; % or 'unix'
 
 for i=1:size(S.m,1)
 
-   fprintf(fid,'%-20s %.3d %.3d %.3d %.3d',S.namst(i,:),S.m(i,1),S.n(i,1),S.m(i,2),S.n(i,2));
+   fprintf(fid,'%-20s %.3d %.3d %.3d %.3d',S.DATA(i).name,S.m(i,1),S.n(i,1),S.m(i,2),S.n(i,2));
    if     strcmp(lower(OS(1)),'u')
       fprintf(fid,'\n');
    elseif strcmp(lower(OS(1)),'w')
