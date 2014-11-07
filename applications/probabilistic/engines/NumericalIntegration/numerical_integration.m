@@ -1,7 +1,8 @@
 function varargout = numerical_integration(varargin)
-% 
 %NUMERICAL_INTEGRATION can be used to setup generic numerical integration
-%input and output structures through both scripting and a GUI.
+%input and output structures through both scripting and a GUI. The output
+%structure (generated from the input structure) can be used to perform a
+%probabilistic numerical integration analysis
 %
 %The generic numerical intergration input (nii) structures can be used to
 %construct numerical integration output (nio) structures, which contain
