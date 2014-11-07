@@ -57,7 +57,7 @@ end
 
 for i=1:length(D.data.fmaj)
 str = [str sprintf('		<Harmonic>')];
-str = [str sprintf('			<name>%s</name>',D.data.name(i,:))];
+str = [str sprintf('			<name>%s</name>',strtrim(D.data.name(i,:)))];
 str = [str sprintf('			<inferred>false</inferred>')];
 str = [str sprintf('			<phaseAngle>%g</phaseAngle>',D.data.pha(i))];
 str = [str sprintf('			<amplitude>%g</amplitude>',D.data.fmaj(i))];
