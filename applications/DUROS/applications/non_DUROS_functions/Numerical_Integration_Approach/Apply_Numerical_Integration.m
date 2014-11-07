@@ -1,5 +1,3 @@
-%NUMERICAL_INTEGRATION
-
 %%
 % clear; close all; clc
 dbstate off
