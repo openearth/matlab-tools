@@ -6,7 +6,7 @@ function varargout = noos_read(varargin)
 % When the file contains multiple data blocks,
 %  [time, values, headerlines], are cells. 
 %
-% The headerlines can be interpreted with MATROOS_NOOS_HEADER2META 
+% The headerlines can be interpreted with MATROOS_NOOS_HEADER 
 % if the <a href="http://www.noos.cc/">NOOS</a> file file originates from the matroos service: GET_SERIES. 
 %
 % The headerlines can also contain non-standard header information
@@ -18,7 +18,7 @@ function varargout = noos_read(varargin)
 %
 % where D has fields datenum, value and headers.
 %
-%See also: NOOS_WRITE, MATROOS_NOOS_HEADER2META
+%See also: NOOS_WRITE, MATROOS_NOOS_HEADER
 
 %% TO DO: parse a file with only concatenated comment blocks (in case of no data)
 %% TO DO: take missing value into account

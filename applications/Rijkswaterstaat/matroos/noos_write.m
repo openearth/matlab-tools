@@ -1,15 +1,15 @@
 function noos = noos_read(time, values,varargin)
 %NOOS_WRITE   write NOOS timeseries ASCII format
 %
-%   cellstr = noos_write(time, values)
+%   cellstr = noos_write(time, values, <keyword,value>)
 %
 % To save to file use SAVESTR:
 %
 %   savestr('matroos_opendap_maps2series2.tim',noos_write(time, values))
 %
-%See also: NOOS_READ, MATROOS_NOOS_HEADER2META
-
-% TO DO headerlines
+% Use keyword 'headerlines' for writing header.
+%
+%See also: NOOS_READ, MATROOS_NOOS_HEADER
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2012 Deltares
@@ -74,24 +74,27 @@ OPT = setproperty(OPT,varargin);
 n = length(values(:));
 
 if isempty(OPT.filename)
-   space = repmat(' ',[n 1]);
-   noos  = [datestr(time(:),'yyyymmddHHMM') space num2str(values(:),OPT.fmt)];
+    tmp = tempname;
+   fid = fopen(tmp,'w');
 else
-
    fid = fopen(OPT.filename,'w');
-   for i=1:length(OPT.headerlines)
-      fprintf(fid,['%s\n'],OPT.headerlines{i});
-   end   
-   for i=1:n
-      if isnan(values(i))
-      fprintf(fid,['%s \n'],datestr(time(i),'yyyymmddHHMM'));
-      else
-      fprintf(fid,['%s ',OPT.fmt,'\n'],datestr(time(i),'yyyymmddHHMM'),values(i));
-      end
-   end   
-   fclose(fid);
-
 end
-   
-   
+
+for i=1:length(OPT.headerlines)
+  fprintf(fid,['%s\n'],OPT.headerlines{i});
+end   
+for i=1:n
+  if isnan(values(i))
+  fprintf(fid,['%s \n'],datestr(time(i),'yyyymmddHHMM'));
+  else
+  fprintf(fid,['%s ',OPT.fmt,'\n'],datestr(time(i),'yyyymmddHHMM'),values(i));
+  end
+end   
+fclose(fid);
+
+if isempty(OPT.filename)
+   noos = loadstr(tmp);
+end
+
+  
    

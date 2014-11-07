@@ -206,7 +206,7 @@ function varargout = matroos_get_series(varargin);
           v={v};
       end
       for iloc=1:length(t)
-      D(iloc) = matroos_noos_header2meta(h{iloc}); % not official NOOS, so not in NOOS_READ
+      D(iloc) = matroos_noos_header(h{iloc}); % not official NOOS, so not in NOOS_READ
       end
       
       for iloc=1:length(t)
@@ -216,7 +216,7 @@ function varargout = matroos_get_series(varargin);
       end
    else
       disp('matroos_get_series: *** no data found ***')
-      D = matroos_noos_header2meta(h); % not official NOOS, so not in NOOS_READ
+      D = matroos_noos_header(h); % not official NOOS, so not in NOOS_READ
       D.datenum    = [];
       D.(OPT.unit) = [];
       D.header     = h;
