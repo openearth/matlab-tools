@@ -1,15 +1,12 @@
 function varargout = swan_io_bot(cmd,varargin)
 %SWAN_IO_BOT              read/write SWAN ASCII bottom file   (BETA VERSION)
 %
-%   dep = swan_io_bot('write',S)
+%   dep = swan_io_bot('read',S)
 %
 % where S is the field table{i} from swan_io_input or
 %
 %   dep = swan_io_bot('read' ,fname,[mcx myc],<IDLA>)
 %   dep = swan_io_bot('read' ,fname,struct   ,<IDLA>)
-%
-%   dep = swan_io_bot('load' ,fname,[mcx myc],<IDLA>)
-%   dep = swan_io_bot('load' ,fname,struct   ,<IDLA>)
 %
 %   dep = swan_io_bot('write',fname,dep      ,<IDLA>)
 %

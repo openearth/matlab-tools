@@ -5,10 +5,10 @@ function varargout = swan_io_node(cmd,varargin)
 % http://www.cs.cmu.edu/afs/cs/project/quake/public/www/triangle.node.html
 %
 %   [x,y,<b,<p>>] = swan_io_node('read',filename)
+%   [x,y,<b,<p>>] = swan_io_node('write',filename,x,y,<b,<p>>)
 %
-% where x,y are 1D vectors, 
-% b is the optional 1D boundary marker vector,
-% and p is a 2D property matrix.
+% where x,y are 1D vectors, b is the optional 1D boundary marker vector,
+% p is a 2D property matrix with size(p,2) properties; size(p,1) == length(x)
 %
 % See also: SWAN_IO_ELE, trisurf, triplot, triangular
 
@@ -35,12 +35,13 @@ function varargout = swan_io_node(cmd,varargin)
 % $Revision: 4776 $
 % $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/swan/swan_io_bot.m $
 
+nodefile = varargin{1};
+
 if     strcmp(cmd,'read') | ...
        strcmp(cmd,'load')
        
 % http://www.cs.cmu.edu/afs/cs/project/quake/public/www/triangle.node.html
        
-    nodefile = varargin{1};
     fid = fopen(nodefile);                        % load TRIANGLE vertex based connectivity file
     [nnode] = fscanf(fid,'%i',[1 4]);             % get number of nodes
     ncol = 3+nnode(3)+nnode(4);                   % specify number of columns in nodefile
@@ -52,7 +53,38 @@ if     strcmp(cmd,'read') | ...
     varargout = {x,y,b,p};
 
 elseif strcmp(cmd,'write')
-
+    
+    x = varargin{2};
+    y = varargin{3};
+    b = repmat(  0,[length(x) 0]);
+    p = repmat(nan,[length(x) 0]);
+    if nargin > 4
+       b = varargin{4};
+       if nargin > 5
+       p = varargin{5};
+       end
+    end
+    np = size(p,2);
+    nb = size(b,2);
+    
+    nnode(1) = length(x); % <# of vertices>
+    nnode(2) = 2;         % <dimension (must be 2)>
+    nnode(3) = np;        % <# of attributes>
+    nnode(4) = nb;        % <# of boundary markers (0 or 1)>
+    
+    fid = fopen(nodefile,'w');
+    fprintf(fid,'%i %i %i %i\n',nnode);
+    for i=1:nnode(1)
+        fprintf(fid,'%18.10f %18.10f ',x(i),y(i));
+        if ~isempty(p)
+        fprintf(fid,'%18.10f ',p(i,:));
+        end
+        if ~isempty(b)
+        fprintf(fid,'%d'   ,b(i));
+        end
+        fprintf(fid,'\n');
+    end
+    fclose(fid);
 
 end   
 

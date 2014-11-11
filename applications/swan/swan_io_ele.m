@@ -5,10 +5,10 @@ function varargout = swan_io_node(cmd,varargin)
 % http://www.cs.cmu.edu/afs/cs/project/quake/public/www/triangle.ele.html
 %
 %   [tri,<ind,<p>>] = swan_io_ele('read',filename)
+%   swan_io_ele('write',filename,tri,<ind,<p>>)
 %
-% where tri is the 2D connecvitiy matrix vectors, 
-% ind is the optional element index,
-% and p is a 2D property matrix.
+% where tri [nx3] is the 2D connecvitiy matrix vectors, ind an optional element index,
+% and p is a 2D property matrix with size(p,2) properties; size(p,1) == size(tri,1)
 %
 % Example:
 %
@@ -67,12 +67,13 @@ function varargout = swan_io_node(cmd,varargin)
 % $Revision: 4776 $
 % $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/swan/swan_io_bot.m $
 
+elefile = varargin{1};
+
 if     strcmp(cmd,'read') | ...
        strcmp(cmd,'load')
        
-% http://www.cs.cmu.edu/afs/cs/project/quake/public/www/triangle.node.html
+% http://www.cs.cmu.edu/afs/cs/project/quake/public/www/triangle.ele.html
        
-    elefile = varargin{1};
     fid = fopen(elefile);                         % load TRIANGLE element based connectivity file
     [nelem] = fscanf(fid,'%i',[1 3]);             % get number of triangles
     ncol = 4+nelem(3);                            % specify number of columns in elefile
@@ -85,7 +86,29 @@ if     strcmp(cmd,'read') | ...
     varargout = {tri,ind,p};
 
 elseif strcmp(cmd,'write')
+    
+    tri = varargin{2};
+    ind = 1:size(tri,1);
+    att = repmat(nan,[size(tri,1) 0]);
+    if nargin > 3
+       ind = varargin{3};
+       if nargin > 4
+       att = varargin{4};
+       end
+    end
+    nind = size(ind,2);
+    natt = size(att,2);
 
+    fid = fopen(elefile,'w');
+    fprintf(fid,'%i %i %i\n',size(tri,1),size(tri,2),natt);
+    for i=1:size(tri,1)
+        fprintf(fid,'%d ',ind(i),tri(i,:));
+        if ~isempty(att)
+        fprintf(fid,'%18.10f ',att(i,:));
+        end
+        fprintf(fid,'\n');
+    end    
+    fclose(fid);
 
 end   
 
