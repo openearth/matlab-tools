@@ -93,7 +93,7 @@ function [OPT Set Default] = setproperty(OPT, inputCell, varargin)
 %            varcell = reshape([fieldnames(OPT2)'; struct2cell(OPT2)'], 1, 2*length(fieldnames(OPT2)));
 %            OPT     = setproperty(OPT, varcell{:});
 %
-% See also: VARARGIN, STRUCT, MERGESTRUCTS, oop, ui_structure_editor
+% See also: VARARGIN, STRUCT, MERGESTRUCTS, oop, ui_structure_editor, inputparser
 
 %
 % Change log:
