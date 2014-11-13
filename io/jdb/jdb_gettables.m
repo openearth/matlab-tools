@@ -26,6 +26,7 @@ function [tables, owners]= jdb_gettables(conn, varargin)
 
 %% read options
 OPT.all = true;
+OPT.table = '';
 
 OPT = setproperty(OPT,varargin{:});
 
@@ -46,9 +47,14 @@ end
 switch dbtype
     case 'oracle'        
         sql = 'SELECT DISTINCT "OWNER", "OBJECT_NAME" FROM ALL_OBJECTS WHERE OBJECT_TYPE = ''TABLE''';
-%         sql = 'SELECT DISTINCT "OBJECT_NAME" FROM ALL_OBJECTS WHERE OBJECT_TYPE = ''TABLE''';
+        if ~isempty(OPT.table)
+            sql = [sql, sprintf(' AND "OBJECT_NAME" = ''%s''',OPT.table)];
+        end
     case 'postgresql'
         sql = 'SELECT tablename FROM pg_tables WHERE schemaname NOT IN (''pg_catalog'',''information_schema'')';
+        if ~isempty(OPT.table)
+            sql = [sql, sprintf(' AND tablename = ''%s''',OPT.table)];
+        end
     otherwise
         sql = '';
 end
@@ -66,10 +72,7 @@ end
 if ~OPT.all
     switch dbtype
         case 'oracle'        
-    %         "CDW"."F_PIPEL_CSD"
             idx = ~ismember(owners(:,1),{'SYS' 'SYSTEM' 'MDSYS' 'XDB' 'OLAPSYS' 'APEX_030200' 'EXFSYS' 'CTXSYS'});
-
-%             tmp =  strcat(jdb_quote(tables(idx,1)),repmat('.',size(tables(idx,1),1),1),jdb_quote(tables(idx,2)));
             tables = tables(idx,:);
             owners = owners(idx,:);
     end

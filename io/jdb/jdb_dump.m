@@ -7,7 +7,7 @@ function jdb_dump(conn,varargin)
 %
 % Example: pg_test datamodel
 %  jdb_dump(conn,{'TEST01'})
-%  jdb_dump(conn) 
+%  jdb_dump(conn)
 %
 %  TEST01(6) :
 %      ObservationID(integer)
@@ -23,40 +23,33 @@ OPT.all   = true;
 
 OPT = setproperty(OPT,varargin{:});
 
-   if ~isempty(OPT.table)
-      tables = OPT.table;
-      if ischar(tables)
-          tables = cellstr(tables);
-      end
-   else
-      [tables owners] = jdb_gettables(conn,'all',OPT.all);
-   end
+[tables, owners] = jdb_gettables(conn,'all',OPT.all,'table',OPT.table);
 
-   for ii=1:length(tables)
-      table = tables{ii};
-      owner = owners{ii};
-      try % ERROR: relation "topology" does not exist
-         [column_name,data_type,data_length] = jdb_getcolumns(conn, table, owner);
-
-         pk_name = jdb_getpk(conn, table);
-%         pk_name = '';
+for ii=1:length(tables)
+    table = tables{ii};
+    owner = owners{ii};
+    try % ERROR: relation "topology" does not exist
+        [column_name,data_type,data_length] = jdb_getcolumns(conn, table, owner);
         
-         disp([table,' (',num2str(data_length),'):'])
-         for j=1:length(column_name)
-             if strcmpi(column_name{j},pk_name)
+        pk_name = jdb_getpk(conn, table);
+        %         pk_name = '';
+        
+        disp([table,' (',num2str(data_length),'):'])
+        for j=1:length(column_name)
+            if strcmpi(column_name{j},pk_name)
                 disp(['    ',column_name{j},' (',data_type{j},') [PK]'])
-             else
+            else
                 disp(['    ',column_name{j},' (',data_type{j},')'])
-             end
-         end
-         disp(' ')
-      catch ME
-          disp(['ERROR in table: ' table])
-          disp(ME.message)
-          
-      end
-   end
-   
+            end
+        end
+        disp(' ')
+    catch ME
+        disp(['ERROR in table: ' table])
+        disp(ME.message)
+        
+    end
+end
+
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2012 Tu Delft / Deltares for Building with Nature
