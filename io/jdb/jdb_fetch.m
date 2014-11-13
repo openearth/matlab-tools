@@ -1,4 +1,4 @@
-function rs = jdb_fetch(conn, sql, varargin)
+function data = jdb_fetch(conn, sql, varargin)
 % Executes a SQL query and imports database data into matlab
 %
 %   Executes a SQL query with the (i) licensed Mathworks database
@@ -26,67 +26,77 @@ function rs = jdb_fetch(conn, sql, varargin)
 %% Copyright notice: see below
 
 %% execute sql query
-   % inspect conn object to find out whether is was created with
-   % the licensed database toolbox or the JDCB driver directly.
-   OPT.database_toolbox = 0;
-   try %#ok<TRYNC>
-       if any(strfind(char(conn.Constructor),'mathworks'))
-           OPT.database_toolbox = 1;
-       end
-   end
+% inspect conn object to find out whether is was created with
+% the licensed database toolbox or the JDCB driver directly.
+OPT.database_toolbox = 0;
+try %#ok<TRYNC>
+    if any(strfind(char(conn.Constructor),'mathworks'))
+        OPT.database_toolbox = 1;
+    end
+end
 
-   if OPT.database_toolbox
-       rs = fetch(conn, sql);
-   else
-      % http://docs.oracle.com/javase/7/docs/api/java/sql/PreparedStatement.html
+if OPT.database_toolbox
+    data = fetch(conn, sql);
+else
+    % http://docs.oracle.com/javase/7/docs/api/java/sql/PreparedStatement.html
+    
+    pstat = conn.prepareStatement(sql);
+    rs = pstat.executeQuery();
+    
+    rsMetaData = rs.getMetaData();
+    numberOfColumns = rsMetaData.getColumnCount();
+    
+    % a large fetch size greatly improves performance of large queries
+    rs.setFetchSize(10000)
+    
+    row = 0;
+    data = {};
+    while 1
+        try
+            if ~rs.next()
+                break
+            end
+            row=row+1;
+            for col = 1:numberOfColumns
+                jtype = char(rsMetaData.getColumnClassName(col));
+                switch jtype
+                    case 'java.lang.String'
+                        data{row,col} = char(rs.getString(col));  %#ok<*AGROW>
+                    case {'java.lang.Double','java.math.BigDecimal'}
+                        data{row,col} = rs.getDouble(col);
+                    case 'java.lang.Int'
+                        data{row,col} = rs.getInt(col);
+                    case 'oracle.sql.TIMESTAMP'
+                        data{row,col} = datenum(1970,0,0) + rs.getTimestamp(col).getTime()/1000/3600/24;
+                    otherwise
+                        warning('JDB:DATA_FETCH_ERROR:TYPE_NOT_IMPLEMENTED:datatype %s implemented',jtype)
+                end
+            end
+        catch ME
+            warning('JDB:DATA_FETCH_ERROR',ME.getReport())
+            break
+        end
+    end
+    
+    pstat.close();
+    rs.close();
+    
+end
 
-      pstat = conn.prepareStatement(sql);
-      rsraw = pstat.executeQuery();
+jdb_error(data);
 
-      count=0;
-      rs = {};
-      while rsraw.next()
-          count=count+1;
-          icol = 0;
-          while 1
-              icol = icol + 1;
-              try
-                 rs{count,icol}=rsraw.getDouble(icol); %#ok<*AGROW>
-              catch
-                 try
-                    rs{count,icol}=rsraw.getInt(icol);
-                 catch
-                    try
-                       rs{count,icol}=char(rsraw.getString(icol));
-                    catch
-                       % reached end
-                       % error('datatype not implemented')
-                       break
-                    end
-                 end
-              end
-          end
-      end
+prefs = getpref('postgresql');
+if isstruct(prefs) && isfield(prefs, 'verbose') && prefs.verbose
+    disp(sql);
+end
 
-      pstat.close();
-      rsraw.close();
-      
-   end
+if isstruct(prefs) && isfield(prefs, 'file') && ~isempty(prefs.file)
+    fid = fopen(prefs.file, 'a');
+    fprintf(fid, '%s\n', sql);
+    fclose(fid);
+end
 
-   jdb_error(rs);
-   
-   prefs = getpref('postgresql');
-   if isstruct(prefs) && isfield(prefs, 'verbose') && prefs.verbose
-   	disp(sql);
-   end
-           
-   if isstruct(prefs) && isfield(prefs, 'file') && ~isempty(prefs.file)
-       fid = fopen(prefs.file, 'a');
-       fprintf(fid, '%s\n', sql);
-       fclose(fid);
-   end
 
-   
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2012
