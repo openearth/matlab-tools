@@ -1,8 +1,9 @@
 function varargout = jdb_settings(varargin)
-%JDB_SETTINGS  Load toolbox for JDBC connection to a PostgreSQL database
+%JDB_SETTINGS  Load toolbox for JDBC connection to a PostgreSQL or Oracle
+%database 
 %
 % JDB_SETTINGS() adds correct JDBC to dynamic java path. You need to 
-% do this every Matlab session when you want to use PostgreSQL.
+% do this every Matlab session when you want to use PostgreSQL or Oracle.
 %
 
 % Alternatively you can let load it automatically into the static
