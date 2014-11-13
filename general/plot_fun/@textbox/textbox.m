@@ -388,7 +388,15 @@ classdef textbox < oop.inspectable
             delete(self.parentPositionChanged);
             
             % set new listeners
-            self.parentPositionChanged = addlistener(self.Parent,'Position','PostSet',@(varargin) self.ParentPositionChanged);
+            
+            if verLessThan('matlab', '8.4')
+                self.parentPositionChanged = addlistener(...
+                    self.Parent,'Position','PostSet',@(varargin) self.ParentPositionChanged);
+            else
+                self.parentPositionChanged = addlistener(...
+                    self.Parent,'LocationChanged',@(varargin) self.ParentPositionChanged);
+            end
+            
             self.parentBeingDestroyed  = addlistener(self.Parent,'ObjectBeingDestroyed',@(varargin) self.delete);
             
             % store position
