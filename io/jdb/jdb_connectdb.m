@@ -33,8 +33,9 @@ function conn = jdb_connectdb(db, varargin)
 %    conn = jdb_connectdb('postgres','user','postgres','pass','MyPassword')
 %    conn = jdb_connectdb('postgres','user','postgres','pass','MyPassword','schema','public')
 %
-%   See also database, jdb_connectdb_jdbc, jdb_exec, jdb_fetch, jdb_select_struct, jdb_insert_struct,
-%   jdb_update_struct, jdb_getpk, jdb_getid
+%   See also database, jdb_settings, jdb_connectdb_jdbc, jdb_exec,
+%   jdb_fetch, jdb_select_struct, jdb_insert_struct, jdb_update_struct,
+%   jdb_getpk, jdb_getid 
 
 %% Copyright notice: see below
 
@@ -58,8 +59,11 @@ switch lower(OPT.dbtype) % lower(db)
         url    = ['jdbc:postgresql://' OPT.host ':' num2str(OPT.port) '/' db];   
         driver = org.postgresql.Driver;
     case 'oracle'
-        url    = ['jdbc:oracle:thin:@' OPT.host ':' num2str(OPT.port) ':' OPT.host];        
+        % http://razorsql.com/articles/oracle_jdbc_connect.html
+        url    = ['jdbc:oracle:thin:@//' OPT.host ':' num2str(OPT.port) '/' db];        
         driver  = oracle.jdbc.driver.OracleDriver;
+    otherwise
+        error('Unknown dbtype: %s',OPT.dbtype)
 end
 
    if license('test','database_toolbox') && OPT.database_toolbox
