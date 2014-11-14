@@ -59,6 +59,15 @@ else
             row=row+1;
             for col = 1:numberOfColumns
                 jtype = char(rsMetaData.getColumnClassName(col));
+                
+                % not for editing:
+                % If you are getting a JDB:DATA_FETCH_ERROR, then the
+                % datatype you get is not implemented. There are many
+                % datatypes, which are easy to implement as long as you
+                % have test data. 
+                % 
+                % Please do not remove existing cases, just add more for
+                % more cases
                 switch jtype
                     case 'java.lang.String'
                         data{row,col} = char(rs.getString(col));  %#ok<*AGROW>
@@ -66,7 +75,7 @@ else
                         data{row,col} = rs.getDouble(col);
                     case 'java.lang.Int'
                         data{row,col} = rs.getInt(col);
-                    case 'java.sql.Timestamp'                       %'oracle.sql.TIMESTAMP'
+                    case {'java.sql.Timestamp','oracle.sql.TIMESTAMP'}
                         data{row,col} = datenum(1970,0,0) + rs.getTimestamp(col).getTime()/1000/3600/24;
                     otherwise
                         warning('JDB:DATA_FETCH_ERROR:TYPE_NOT_IMPLEMENTED:datatype %s implemented',jtype)
