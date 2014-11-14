@@ -254,7 +254,7 @@ if iostat==1 %  0 when uigetfile was cancelled
                  disp(['number_of_locations ',num2str(DAT.number_of_locations)])
                end         
    
-              %% read improvement in SWANmud version: mxc, myc
+              % read improvement in SWANmud version: mxc, myc
               [DAT.mxc,rec] = strtok(rec);
                DAT.mxc      = str2num(DAT.mxc);
               [DAT.myc,rec] = strtok(rec);
@@ -271,7 +271,7 @@ if iostat==1 %  0 when uigetfile was cancelled
                DAT.(y) = repmat(nan,[1 DAT.number_of_locations]);
                
                if ~OPT.fast
-               %% OLD: slow, but comments are allowed between numbers with this approach
+               % OLD: slow, but comments are allowed between numbers with this approach
                   for iloc=1:DAT.number_of_locations
                      rec         = fgetl_no_comment_line(fid,'$');
                      numbers     = sscanf(rec,'%f',2);
@@ -284,7 +284,7 @@ if iostat==1 %  0 when uigetfile was cancelled
                      end         
                   end
                elseif OPT.fast
-               %%  NEW:fast, but no comments allowed between numbers
+               %  NEW:fast, but no comments allowed between numbers
                   raw = fscanf(fid,'%f',2*DAT.number_of_locations);
                   DAT.(x) = raw(1:2:end);
                   DAT.(y) = raw(2:2:end);
@@ -416,6 +416,7 @@ if iostat==1 %  0 when uigetfile was cancelled
             end
    
 %% CASE: read integrated test quantities S1D
+
             if DAT.timecode >0
                rec = fgetl_no_comment_line(fid,'$');
                DAT.time = datenum(strtok(rec),DAT.timefmt);
@@ -424,7 +425,7 @@ if iostat==1 %  0 when uigetfile was cancelled
             
                while ~feof(fid)
    
-                  %% Read data block per location
+                  % Read data block per location
                   for iloc=1:DAT.number_of_locations
                      if iloc==1
                         rec       = fgetl_no_comment_line(fid,'$');
@@ -441,7 +442,7 @@ if iostat==1 %  0 when uigetfile was cancelled
    
                          rawdata = fscanf(fid,'%e',  DAT.number_of_quantities);
    
-                         %% Split block into array per quantity
+                         % Split block into array per quantity
                          %  where the 1st dimension is the location
                          for j=1:DAT.number_of_quantities
                             quantity_name = char(DAT.quantity_names{j});
@@ -462,7 +463,7 @@ if iostat==1 %  0 when uigetfile was cancelled
                
                while ~feof(fid)
                
-                  %% Read data block per location
+                  % Read data block per location
                   for iloc=1:DAT.number_of_locations
                      if iloc==1
                         rec       = fgetl_no_comment_line(fid,'$');
@@ -484,7 +485,7 @@ if iostat==1 %  0 when uigetfile was cancelled
                          rawdata  = reshape(rawdata,[DAT.number_of_quantities ...
                                                      DAT.number_of_frequencies]);
    
-                         %% Split block into array per quantity
+                         % Split block into array per quantity
                          %  where the 1st dimension is the location
                          for j=1:DAT.number_of_quantities
                             quantity_name = char(DAT.quantity_names{j});
@@ -502,14 +503,37 @@ if iostat==1 %  0 when uigetfile was cancelled
    
             elseif DAT.dimension_of_spectrum==1
             
-               %% pre-allocate for speed (makes HUGE difference)
+                % count times
+                if DAT.timecode > 0
+                    rec0 = rec;
+                    pos_pnt = ftell(fid);
+                    while ischar(rec)
+                       for iloc=1:DAT.number_of_locations
+                       rec = fgetl_no_comment_line(fid,'$');
+                       rawdata  = fscanf(fid,'%e', DAT.number_of_quantities*...
+                                                   DAT.number_of_frequencies);
+                       end
+                       rec = fgetl_no_comment_line(fid,'$');
+                       if ischar(rec)
+                       DAT.time(end+1) = datenum(strtok(rec),DAT.timefmt);
+                       end
+                    end
+                    fseek(fid, pos_pnt, 'bof'); % move of the pointer to the original position
+                    rec = rec0;
+                else
+                    DAT.time = [nan];  % mind length(DAT.time) should be 1 for allocating arrays
+                end
+                
+               % pre-allocate for speed (makes HUGE difference)
                for j=1:DAT.number_of_quantities
                   quantity_name       = char(DAT.quantity_names{j});
                   DAT.(quantity_name) = nan  ([DAT.number_of_locations ...
-                                               DAT.number_of_frequencies]);                
+                                               DAT.number_of_frequencies ...
+                                               length(DAT.time)]);                
                end
-   	    
-               %% Read data block per location
+               
+               for it=1:length(DAT.time)
+               % Read data block per location
                for iloc=1:DAT.number_of_locations
                
                   if OPT.debug(2)
@@ -532,52 +556,61 @@ if iostat==1 %  0 when uigetfile was cancelled
                            error(['order of data in file does not match location order for line with ',rec])
                         end
    
-%                         rawdata  = fscanf(fid,'%e', DAT.number_of_quantities*...
-%                                                     DAT.number_of_frequencies);
-%% START OF modification by sfl, stylianos.flampouris@gmail.com, 16 Jan 2013
-% The original script was importing the 1D-spectra with the fscanf as
-% applied at the lines 534-535. Some times the values of EnDens are
-% extremely small, e.g.  0.1991E-244. In order, the length of the output 
-% string, to be kept constant, the "E" is neglected, so for the example the
-% exported value is 0.1991-244. When this value is imported with fscanf, 
-% matlab interpets them as two values 0.1991 and -244 which apparantly is a 
-% mistake.
-%
-% In order to overcome the problem, the length of fscanf(fid,'%e',inf) is 
-% examined, when the length of the data is longer than the number of 
-% frequencies times the number of quantites the data are imported as
-% strings and are splitted into substrings according to the position of the
-% white spaces. The code of the split of the strings is not generic.
- 
-                        pos_pnt = ftell(fid);   %fscanf is used twice so it's necessary to know the possition of the pointer before the use of fscanf for first time
-                        rawdata = fscanf(fid,'%e',inf);
-                        if length(rawdata)==DAT.number_of_quantities*DAT.number_of_frequencies; % 1st time use of fscanf, now the pointer is at the end of the file
-                           % bussiness as usual: proceed
-                        else % when the previously described problem occurs
-                            fseek(fid, pos_pnt, 'bof'); % move of the pointer to the original position
-                            rawdata1 = fscanf(fid,'%100c', DAT.number_of_quantities*...
-                                                    DAT.number_of_frequencies); % the 100 is just a big number of characters for each line, fscanf stops at each line when there are not more values.
-                            rawdata=[];
-                            stp=length(rawdata1)/DAT.number_of_frequencies;
-                            spc_pos = strfind(rawdata1(1:stp),' '); % find the position of the white spaces
+                        if length(DAT.time) >1
+                            rawdata  = fscanf(fid,'%e', DAT.number_of_quantities*...
+                                                        DAT.number_of_frequencies);
+                        else
+                            % >>>> START OF modification by sfl, stylianos.flampouris@gmail.com, 16 Jan 2013
+                            % The original script was importing the 1D-spectra with the fscanf as
+                            % applied at the lines 534-535. Some times the values of EnDens are
+                            % extremely small, e.g.  0.1991E-244. In order, the length of the output 
+                            % string, to be kept constant, the "E" is neglected, so for the example the
+                            % exported value is 0.1991-244. When this value is imported with fscanf, 
+                            % matlab interpets them as two values 0.1991 and -244 which apparantly is a 
+                            % mistake.
+                            %
+                            % In order to overcome the problem, the length of fscanf(fid,'%e',inf) is 
+                            % examined, when the length of the data is longer than the number of 
+                            % frequencies times the number of quantites the data are imported as
+                            % strings and are splitted into substrings according to the position of the
+                            % white spaces. The code of the split of the strings is not generic.
+                            %
+                            % TODO note this does not work YET when multiple times are in 1 file, 
+                            % due to fscanf inf whcih scans also time of next block
+                            %
+                            % fscanf is used twice so it's necessary to know the possition of the 
+                            % pointer before the use of fscanf for first time
                             
-                            for ir=1:stp:length(rawdata1)
-                            
-                                if isempty(strfind(rawdata1(ir:ir+spc_pos(2)-1),'E'))
-                                    % Building the number x.xxxxE-zzz and converting it into double  
-                                    dum_str = [rawdata1(ir:ir+strfind(rawdata1(ir:ir+spc_pos(2)-1),'-')-2),...
-                                        'E',...
-                                    rawdata1(ir+strfind(rawdata1(ir:ir+spc_pos(2)-1),'-')-1:ir+spc_pos(2)-1)];
-                                    rawdata =[rawdata;str2double(dum_str) ];      
-                                else
-                                    rawdata =[rawdata;str2double(rawdata1(ir:ir+spc_pos(2)-1)) ];
-                                end
-                                rawdata =[rawdata;str2double(rawdata1(ir+spc_pos(2):ir+spc_pos(end)-1)) ]; %DIR
-                                rawdata =[rawdata;str2double(rawdata1(ir+spc_pos(end):ir+stp-1)) ]; %DirSPReaD
-                            end 
+                            pos_pnt = ftell(fid);   
+                            rawdata = fscanf(fid,'%e',inf);
+                            if length(rawdata)==DAT.number_of_quantities*DAT.number_of_frequencies; % 1st time use of fscanf, now the pointer is at the end of the file
+                               % bussiness as usual: proceed
+                            else % when the previously described problem occurs
+                                fseek(fid, pos_pnt, 'bof'); % move of the pointer to the original position
+                                rawdata1 = fscanf(fid,'%100c', DAT.number_of_quantities*...
+                                                        DAT.number_of_frequencies); % the 100 is just a big number of characters for each line, fscanf stops at each line when there are not more values.
+                                rawdata=[];
+                                stp=length(rawdata1)/DAT.number_of_frequencies;
+                                spc_pos = strfind(rawdata1(1:stp),' '); % find the position of the white spaces
+
+                                for ir=1:stp:length(rawdata1)
+
+                                    if isempty(strfind(rawdata1(ir:ir+spc_pos(2)-1),'E'))
+                                        % Building the number x.xxxxE-zzz and converting it into double  
+                                        dum_str = [rawdata1(ir:ir+strfind(rawdata1(ir:ir+spc_pos(2)-1),'-')-2),...
+                                            'E',...
+                                        rawdata1(ir+strfind(rawdata1(ir:ir+spc_pos(2)-1),'-')-1:ir+spc_pos(2)-1)];
+                                        rawdata =[rawdata;str2double(dum_str) ];      
+                                    else
+                                        rawdata =[rawdata;str2double(rawdata1(ir:ir+spc_pos(2)-1)) ];
+                                    end
+                                    rawdata =[rawdata;str2double(rawdata1(ir+spc_pos(2):ir+spc_pos(end)-1)) ]; %DIR
+                                    rawdata =[rawdata;str2double(rawdata1(ir+spc_pos(end):ir+stp-1)) ]; %DirSPReaD
+                                end 
+                            end
+                            % <<<< END OF modification, 16 Jan 2013
                         end
-%% END OF modification, 16 Jan 2013
-%%
+
                         if isinf(rawdata)
                             fclose(fid);
                             error([DAT.filename,' contains Inf data for location ',num2str(iloc)])
@@ -586,13 +619,13 @@ if iostat==1 %  0 when uigetfile was cancelled
                                                     DAT.number_of_frequencies]);
                         end
    	    
-                        %% Split block into array per quantity
+                        % Split block into array per quantity
                         %  where the 1st dimension is the location
                         for j=1:DAT.number_of_quantities
                            quantity_name               = char(DAT.quantity_names{j});
                            array                       = rawdata(j,:);
                            array(array==DAT.quantity_exception_values(j))=nan;
-                           DAT.(quantity_name)(iloc,:) = array;
+                           DAT.(quantity_name)(iloc,:,it) = array;
                         end
    
                   elseif strcmp(strtok(upper(rec)),'NODATA')
@@ -602,7 +635,7 @@ if iostat==1 %  0 when uigetfile was cancelled
                         nans = nan.*DAT.frequency;
                         for j=1:DAT.number_of_quantities
                            quantity_name               = char(DAT.quantity_names{j});
-                           DAT.(quantity_name)(iloc,:) = nans;
+                           DAT.(quantity_name)(iloc,:,it) = nans;
                         end
    
                   else
@@ -613,13 +646,15 @@ if iostat==1 %  0 when uigetfile was cancelled
                   end   
                         
                end % for i=1:DAT.number_of_locations
+               rec = fgetl_no_comment_line(fid,'$'); % skip time row
+               end % time
                
                if DAT.myc==1
                   DAT.data_description = ['1st dimension = number_of_locations          ';
                                           '2st dimension = number_of_frequencies        '];
                elseif DAT.myc>1
                
-               %% reshape locations into 2D matrix if present
+               % reshape locations into 2D matrix if present
                
                   DAT.data_description = ['1st dimension = mxc                          ';
                                           '2nd dimension = myc                          ';
@@ -630,7 +665,7 @@ if iostat==1 %  0 when uigetfile was cancelled
                                                   [DAT.myc DAT.mxc DAT.number_of_frequencies]);
                      % is this correctly reshaped
                   end  
-               end            
+               end
                
 %% CASE: read test points S2D
    
@@ -640,7 +675,7 @@ if iostat==1 %  0 when uigetfile was cancelled
                
                while ~feof(fid)
                
-               %% Read data block per location
+               % Read data block per location
                
                count = 0;
                
@@ -712,7 +747,7 @@ if iostat==1 %  0 when uigetfile was cancelled
                                        'xlabel(''freq [Hz]'')                          ';
                                        'ylabel(''dir [\circ]'')                        '];
    
-%% CASE: read S2D (incl HOTFile)
+%% CASE: read full S2D (incl HOTFile)
 
             elseif DAT.dimension_of_spectrum==2
             
@@ -733,8 +768,7 @@ if iostat==1 %  0 when uigetfile was cancelled
                      end
                   end
                   
-                  %% SWAN writes in following loop
-   
+                  % SWAN writes in following loop
                   %  DO 290 IX = 1, MXC
                   %    DO 280 IY = 1, MYC
                   %      INDX = KGRPNT(IX,IY)
@@ -795,7 +829,7 @@ if iostat==1 %  0 when uigetfile was cancelled
                                           'ylabel(''dir [\circ]'')                        '];
                elseif DAT.myc>1
                
-               %% reshape locations into 2D matrix if present
+               % reshape locations into 2D matrix if present
                
                   DAT.data_description = ['1st dimension = mxc                          ';
                                           '2nd dimension = myc                          ';
