@@ -420,6 +420,7 @@ if iostat==1 %  0 when uigetfile was cancelled
             if DAT.timecode >0
                rec = fgetl_no_comment_line(fid,'$');
                DAT.time = datenum(strtok(rec),DAT.timefmt);
+               DAT.time_ftell = ftell(fid); % breadcrumb
             end
             if DAT.dimension_of_spectrum==0 &  ~isempty(DAT.iter)
             
@@ -515,7 +516,8 @@ if iostat==1 %  0 when uigetfile was cancelled
                        end
                        rec = fgetl_no_comment_line(fid,'$');
                        if ischar(rec)
-                       DAT.time(end+1) = datenum(strtok(rec),DAT.timefmt);
+                       DAT.time(end+1)       = datenum(strtok(rec),DAT.timefmt);
+                       DAT.time_ftell(end+1) = ftell(fid); % breadcrumb
                        end
                     end
                     fseek(fid, pos_pnt, 'bof'); % move of the pointer to the original position
@@ -751,15 +753,39 @@ if iostat==1 %  0 when uigetfile was cancelled
 
             elseif DAT.dimension_of_spectrum==2
             
-               quantity_name = DAT.quantity_names{1}; % for 2D there can be only 1 quantity
+                % count times
+                if DAT.timecode > 0
+                    rec0 = rec;
+                    pos_pnt = ftell(fid);
+                    while ischar(rec)
+                       for iloc=1:DAT.number_of_locations
+                       rec = fgetl_no_comment_line(fid,'$'); % FACTOR, ZERO or NODATA
+                       if strcmp(strtok(upper(rec)),'FACTOR')
+                          rec    = fgetl_no_comment_line(fid,'$');
+                          data  = fscanf(fid,'%e',DAT.number_of_frequencies.*...
+                                                  DAT.number_of_directions);
+                       end
+                       end
+                       rec = fgetl_no_comment_line(fid,'$');
+                       if ischar(rec)
+                       DAT.time(end+1)       = datenum(strtok(rec),DAT.timefmt);
+                       DAT.time_ftell(end+1) = ftell(fid); % breadcrumb
+                       end
+                    end
+                    fseek(fid, pos_pnt, 'bof'); % move of the pointer to the original position
+                    rec = rec0;
+                else
+                    DAT.time = [nan];  % mind length(DAT.time) should be 1 for allocating arrays
+                end
             
+               quantity_name = DAT.quantity_names{1}; % for 2D there can be only 1 quantity
                %% pre-allocate for speed (makes HUGE difference)
                DAT.(quantity_name) = nan  ([DAT.number_of_locations ...
                                             DAT.number_of_frequencies ...
                                             DAT.number_of_directions  ...
-                                            ]);
-               %% Read data block per location
-
+                                            length(DAT.time)]);
+               for it=1:length(DAT.time)
+               % Read data block per location
                for iloc=1:DAT.number_of_locations
                
                   if OPT.debug(2)
@@ -794,17 +820,17 @@ if iostat==1 %  0 when uigetfile was cancelled
 %                    length(data)
                    data  = reshape(data  ,[DAT.number_of_directions DAT.number_of_frequencies]).*factor;
               
-                   DAT.(quantity_name)(iloc,:,:)   = data'; % note transpose
+                   DAT.(quantity_name)(iloc,:,:,it)   = data'; % note transpose
                      
                   elseif strcmp(strtok(upper(rec)),'ZERO')
                         
-                     DAT.(quantity_name)(iloc,:,:)   = zeros([DAT.number_of_frequencies ...
-                                                              DAT.number_of_directions]);
+                     DAT.(quantity_name)(iloc,:,:,it) = zeros([DAT.number_of_frequencies ...
+                                                               DAT.number_of_directions]);
                   
                   elseif strcmp(strtok(upper(rec)),'NODATA')
                         
-                     DAT.(quantity_name)(iloc,:,:)   = nan  ([DAT.number_of_frequencies ...
-                                                              DAT.number_of_directions]);
+                     DAT.(quantity_name)(iloc,:,:,it) = nan  ([DAT.number_of_frequencies ...
+                                                               DAT.number_of_directions]);
    
                   else
                         
@@ -814,6 +840,8 @@ if iostat==1 %  0 when uigetfile was cancelled
                   end
             
                end % for i=1:DAT.number_of_locations
+               rec = fgetl_no_comment_line(fid,'$'); % skip time row
+               end % time
                
                if DAT.myc==1
                   DAT.data_description = ['1st dimension = number_of_locations          ';

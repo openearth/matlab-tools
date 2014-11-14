@@ -301,9 +301,10 @@ end
             end
             
 %% Read MODE (optional)
-            DAT.mode.stationary = 1; % default
-            DAT.mode.dim        = 2; % default
-            if strcmp(strtok(upper(rec)),'MODE')
+
+            if strcmp(strtok(upper(rec(1:4))),'MODE')
+               DAT.mode.stationary = 1; % default
+               DAT.mode.dim        = 2; % default
               [keyword,rec] = strtok(rec);
               [keyword,rec] = strtok(rec);
                if     strcmp(keyword(1:3),'STA')
@@ -1761,14 +1762,6 @@ end
                end
                keyword1         = upper(pad(keyword1,4,' '));
             if strfind(keyword1(1:4),'COMP')==1
-               if DAT.mode.stationary
-                [keyword,rec] = strtok(rec);
-                 if ~isempty(rec);
-                    error('STATionary simiulations shouldn''t have any arguments after COMPUTE');
-                 end
-                 DAT.compute.time    = [];
-                 DAT.compute.datenum = [];
-               else
                 [keyword,rec] = strtok(rec);
                 [keyword,rec] = strtok(rec);
                  if     strcmp(keyword(1:4),'STAT')
@@ -1786,7 +1779,6 @@ end
                   DAT.compute.units = units;
                   DAT.compute.tendc = tendc;
                   DAT.compute.datenum = DAT.compute.tbegc:DAT.compute.deltc:DAT.compute.tendc;
-                 end
                end
                
                rec             = fgetlines_no_comment_line(fid);
