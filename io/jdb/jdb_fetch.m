@@ -76,7 +76,10 @@ else
                     case 'java.lang.Int'
                         data{row,col} = rs.getInt(col);
                     case {'java.sql.Timestamp','oracle.sql.TIMESTAMP'}
-                        data{row,col} = datenum(1970,0,0) + rs.getTimestamp(col).getTime()/1000/3600/24;
+                        jt = rs.getTimestamp(col);
+                        mils_since_epoch = jt.getTime() - (jt.getTimezoneOffset * 60 * 1000);
+                        epoch = datenum(1970,1,1);
+                        data{row,col} = epoch + mils_since_epoch/1000/3600/24;
                     otherwise
                         warning('JDB:DATA_FETCH_ERROR:TYPE_NOT_IMPLEMENTED:datatype %s implemented',jtype)
                 end
