@@ -66,7 +66,7 @@ else
                         data{row,col} = rs.getDouble(col);
                     case 'java.lang.Int'
                         data{row,col} = rs.getInt(col);
-                    case 'oracle.sql.TIMESTAMP'
+                    case 'java.sql.Timestamp'                       %'oracle.sql.TIMESTAMP'
                         data{row,col} = datenum(1970,0,0) + rs.getTimestamp(col).getTime()/1000/3600/24;
                     otherwise
                         warning('JDB:DATA_FETCH_ERROR:TYPE_NOT_IMPLEMENTED:datatype %s implemented',jtype)
