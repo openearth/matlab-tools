@@ -54,7 +54,11 @@ else
     t1 = nan(size(t0));
 %     error('?')
 end
-  
+
+% Be sure that the output is a cellstring
+t1 = cellstr(t1);
+
+
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2012 Tu Delft / Deltares for Building with Nature
