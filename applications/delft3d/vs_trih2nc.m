@@ -80,7 +80,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
 %  $Revision$
 %  $HeadURL$
 %  $Keywords: $
-
+vsfile = 'p:\1205711-edspa\ER\model\Qconstant\run1\trih-ER3D.dat';
 %% keywords
     
    OPT.Format         = 'classic'; % '64bit','classic','netcdf4','netcdf4_classic'
@@ -1298,19 +1298,22 @@ function varargout = vs_trih2nc(vsfile,varargin)
     ncwrite   (ncfile,'tau_y',permute(matrix,[2 1]));
     R.tau_y = [min(matrix(:)) max(matrix(:))];
 
-    disp([mfilename,': writing density...'])
-    if OPT.stride
-        for k=1:G.kmax
-            matrix = vs_let(F,'his-series','ZRHO',{OPT.ind,k},OPT.quiet);
-            ncwrite(ncfile,'density',permute(matrix,[3 2 1]),[k 1 1]);
-            R.density(1) = min(R.density(1),min(matrix(:)));
-            R.density(2) = max(R.density(2),max(matrix(:)));
-        end
-    else
-        matrix = vs_let(F,'his-series','ZRHO',{OPT.ind,0},OPT.quiet);
-        ncwrite(ncfile,'density',permute(matrix,[3 2 1]));
-        R.density = [min(R.density(1),min(matrix(:))) max(R.density(2),max(matrix(:)))];
-    end   
+    
+    if isfield(I,'density')  
+        disp([mfilename,': writing density...'])
+        if OPT.stride
+            for k=1:G.kmax
+                matrix = vs_let(F,'his-series','ZRHO',{OPT.ind,k},OPT.quiet);
+                ncwrite(ncfile,'density',permute(matrix,[3 2 1]),[k 1 1]);
+                R.density(1) = min(R.density(1),min(matrix(:)));
+                R.density(2) = max(R.density(2),max(matrix(:)));
+            end
+        else
+            matrix = vs_let(F,'his-series','ZRHO',{OPT.ind,0},OPT.quiet);
+            ncwrite(ncfile,'density',permute(matrix,[3 2 1]));
+            R.density = [min(R.density(1),min(matrix(:))) max(R.density(2),max(matrix(:)))];
+        end   
+    end
 
     if isfield(I,'salinity')  
         disp([mfilename,': writing salinity...'])
