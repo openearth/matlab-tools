@@ -80,7 +80,7 @@ function varargout = vs_trih2nc(vsfile,varargin)
 %  $Revision$
 %  $HeadURL$
 %  $Keywords: $
-vsfile = 'p:\1205711-edspa\ER\model\Qconstant\run1\trih-ER3D.dat';
+
 %% keywords
     
    OPT.Format         = 'classic'; % '64bit','classic','netcdf4','netcdf4_classic'
