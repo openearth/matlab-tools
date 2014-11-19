@@ -63,6 +63,7 @@ classdef LimitState < handle
         UValues
         ZValues
         ZValueOrigin
+        NormalizeZValues
         EvaluationIsExact
         EvaluationIsEnabled
         ResponseSurface
@@ -133,14 +134,14 @@ classdef LimitState < handle
             ProbabilisticChecks.CheckInputClass(randomVariables,'RandomVariable')
             
             % location to be evaluated
-            uvalues     = un.*beta;
+            uvalues     = un.*repmat(beta, 1, this.NumberRandomVariables);
             
             % initialise variable
             input       = cell(2,length(randomVariables));
             for i=1:length(randomVariables)
                 % translate location in standard normal space to regular
                 % space
-                xvalue      = randomVariables(i).GetXValue(uvalues(i));
+                xvalue      = randomVariables(i).GetXValue(uvalues(:,i));
                 
                 if isempty(xvalue)
                     % stop if no value can be found
@@ -198,28 +199,21 @@ classdef LimitState < handle
             end
             
             zvalue  = feval(this.LimitStateFunction,LSFinput{:});
-                
-            % Use LimitStateFunctionChecker to see if simulation is
-            % completed already (if available)
-%             if ~isempty(this.LimitStateFunctionChecker)
-%                 notify(this.LimitStateFunctionChecker, 'SimulationStarted')
-%                 zvalue  = feval(this.LimitStateFunction,input{:},'LSFChecker',this.LimitStateFunctionChecker,this.LimitStateFunctionAdditionalVariables{:});
-%             else
-%                 zvalue  = feval(this.LimitStateFunction,input{:},this.LimitStateFunctionAdditionalVariables{:});
-%             end
             
-            %Normalize with origin, or save zvalue of origin
-            if ~isempty(this.ZValueOrigin) && ~isnan(this.ZValueOrigin)
-                zvalue  = zvalue/this.ZValueOrigin;
-            elseif isempty(this.ZValueOrigin) && all(uvalues == 0)
-                this.ZValueOrigin   = zvalue;
-                zvalue              = 1;
-            elseif isnan(this.ZValueOrigin) && all(uvalues == 0)
-                % ZValueOrigin is set later (it's the aggregated value for
-                % all limit states)
-                zvalue  = zvalue;
-            else
-                error('The Z-Value in the origin is not available for normalizing, please calculate it first!')                
+            %Normalize with origin (optional, true by default), or save zvalue of origin
+            if this.NormalizeZValues
+                if ~isempty(this.ZValueOrigin) && ~isnan(this.ZValueOrigin)
+                    zvalue  = zvalue/this.ZValueOrigin;
+                elseif isempty(this.ZValueOrigin) && all(uvalues == 0)
+                    this.ZValueOrigin   = zvalue;
+                    zvalue              = 1;
+                elseif isnan(this.ZValueOrigin) && all(uvalues == 0)
+                    % ZValueOrigin is set later (it's the aggregated value for
+                    % all limit states)
+                    zvalue  = zvalue;
+                else
+                    error('The Z-Value in the origin is not available for normalizing, please calculate it first!')
+                end
             end
         end
         
@@ -316,6 +310,7 @@ classdef LimitState < handle
         %Set default values
         function SetDefaults(this)
             this.LimitStateFunctionAdditionalVariables  = [];
+            this.NormalizeZValues                       = true;
         end
         
         %Plot limit state (and response surface if applicable)

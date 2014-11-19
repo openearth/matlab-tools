@@ -101,11 +101,18 @@ classdef RandomVariable < handle
         %Get XValue and save the associated P (both in the usual and in the standard normal space)
         function xvalue = GetXValue(this, u)
             P       = norm_cdf(u,0,1);
-            if P == 0 || P == 1
-                xvalue = [];
+            xvalue  = NaN(size(P));
+            filter  = [];
+            if any(P == 0) || any(P == 1)
+                filter  = P == 0 | P == 1;
             else
                 xvalue    = feval(this.Distribution,P,this.DistributionParameters{:});
-                this.PValues    = [this.PValues P];
+                this.PValues    = [this.PValues; P];
+            end
+            
+            % Filter out the 0% and 100% chances
+            if ~isempty(filter)
+                xvalue(filter)  = [];
             end
         end
     end

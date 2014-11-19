@@ -1,4 +1,4 @@
-classdef CrudeMonteCarlo < Probabilistic Method
+classdef CrudeMonteCarlo < ProbabilisticMethod
     %CRUDEMONTECARLO  Base class for the Crude Monte Carlo method
     %
     %   More detailed description goes here.
@@ -88,6 +88,12 @@ classdef CrudeMonteCarlo < Probabilistic Method
             this.LimitState         = limitState;
             this.NumberSamples      = round(numberSamples);
             this.Seed               = seed;
+            
+            % We don't want the ZValues to be normalized by the value in
+            % the origin, so set thye option to false
+            this.LimitState.NormalizeZValues    = false;
+            
+            this.SetDefaults
         end
         
         %% Setters
@@ -96,8 +102,17 @@ classdef CrudeMonteCarlo < Probabilistic Method
         
         %% Main CrudeMonteCarlo loop: call this function to run Crude Monte Carlo
         function CalculatePf(this)
-            
             this.PrepareCalculation
+            
+            tempP       = this.GenerateRandomSamples(this.NumberSamples, this.LimitState.NumberRandomVariables);
+            tempU       = norm_inv(tempP, 0, 1);
+            tempBeta    = sqrt(sum(tempU.^2,2));
+            tempUn      = tempU./repmat(tempBeta,1,this.LimitState.NumberRandomVariables);
+            
+            this.LimitState.Evaluate(tempUn, tempBeta, this.LimitState.RandomVariables);
+            
+            % TODO, implement functionality of MCEstimator.m?
+            this.Pf     = sum(this.LimitState.ZValues < 0)/this.NumberSamples;
         end
         
         %% Other methods
@@ -108,7 +123,10 @@ classdef CrudeMonteCarlo < Probabilistic Method
         
         % Prepare calculation of Pf
         function PrepareCalculation(this)
-            
+        end
+        
+        % Plot results
+        function plot(this)
         end
     end
 end
