@@ -155,11 +155,7 @@ classdef DirectionalSampling < ProbabilisticMethod
         
         %Get StandardDeviation
         function sigma = get.StandardDeviation(this)
-%             n       = sum(this.LimitState.EvaluationIsConverged&this.LimitState.EvaluationIsExact) + sum(this.LimitState.EvaluationIsConverged&this.LimitState.EvaluationIsApproximated);
-%             sigma   = sqrt(1/(n*(n-1))*sum(([this.dPfExact; this.dPfApproximated]-this.Pf).^2)); 
-%             sigma2  = sqrt((1/n)*sum(([this.dPfExact; this.dPfApproximated]-(this.Pf/n)).^2)); 
             sigma   = sqrt(1/(this.NrDirectionsEvaluated*(this.NrDirectionsEvaluated-1))*sum((this.dPf-this.Pf).^2)); 
-%             sigma2  = sqrt((1/this.NrDirectionsEvaluated)*sum((this.dPf-(this.Pf/this.NrDirectionsEvaluated)).^2)); 
         end
         
         %Get EvaluationApproachesZero
