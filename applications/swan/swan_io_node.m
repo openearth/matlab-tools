@@ -75,7 +75,7 @@ elseif strcmp(cmd,'write')
     fid = fopen(nodefile,'w');
     fprintf(fid,'%i %i %i %i\n',nnode);
     for i=1:nnode(1)
-        fprintf(fid,'%18.10f %18.10f ',x(i),y(i));
+        fprintf(fid,'%d %18.10f %18.10f ',i,x(i),y(i));
         if ~isempty(p)
         fprintf(fid,'%18.10f ',p(i,:));
         end
