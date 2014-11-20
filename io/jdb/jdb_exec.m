@@ -50,7 +50,8 @@ function rs = jdb_exec(conn, sql, varargin)
          % executeUpdate() --- This is generally used for altering the databases. Generally DROP TABLE or DATABASE, INSERT into TABLE, UPDATE TABLE, DELETE from TABLE statements will be used in this. The output will be in the form of int. This int value denotes the number of rows affected by the query.
          % execute()       --- If you dont know which method to be used for executing SQL statements, this method can be used. This will return a boolean. TRUE indicates the result is a ResultSet and FALSE indicates it has the int value which denotes number of rows affected by the query.            
          pstat = conn.prepareStatement(sql);
-         if any(strfind('CREATE ALTER DROP INSERT UPDATE DELETE',strtok(sql)))
+         % mind that a query can begin with WITH followed later bij 1 of these
+         if ~isempty(intersect({'CREATE','ALTER','DROP','INSERT','UPDATE','DELETE'},strtokens2cell(sql)))
             rs = pstat.executeUpdate();
             %disp(['executeUpdate : ',sql])
             %pausedisp
