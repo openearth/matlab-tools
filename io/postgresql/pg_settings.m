@@ -4,13 +4,15 @@ function varargout = pg_settings(varargin)
 % PG_SETTINGS() adds correct JDBC to dynamic java path. You need to 
 % do this every Matlab session when you want to use PostgreSQL.
 %
-
+%
 % Alternatively you can let load it automatically into the static
 % java path by adding it to in the following file that is read
 % every new Matlab session: % <matlabroot>/toolbox/local/classpath.txt
 % The static jave path has better performance than the dynamci path.
 %
 %See also postgresql, http://jdbc.postgresql.org/download.html, netcdf_settings
+
+warning('The postgresql toolbox (pg_*) will be phased out in favor of jdb the toolbox (jdb_*) becuase it works with Oracle too.')
 
 %% Copyright notice
 %   --------------------------------------------------------------------

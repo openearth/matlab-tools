@@ -1,8 +1,5 @@
 %Toolbox for <a href="http://www.postgresql.org/">PostgreSQL</a> and Oracle relational database management system
 %
-% This jdb toolbox was first created as a pg (postgresql) toolbox
-% The toolbox was then modified for use with Oracle as wel.
-%
 % This PostgreSQL/Oracle/... toolbox uses:
 % (i) by default the licensed Mathworks database toolbox 
 % (ii) otherwise the JDBC4 driver is used directly without the need 
@@ -11,8 +8,7 @@
 %
 % Remarks/TODO's:
 %   - How do you create a blank new database from within the jdb tools?
-%   - Oracle database usage is not tested for writing etc. (it was not
-%     possible to create a test database)
+%   - Oracle database usage is not tested for writing etc. (not test database available)
 %   - MS Acces jdb is not (yet) found (without licencing)
 %   - Other databases ?
 %
@@ -63,7 +59,7 @@
 % pg_stationTimeSeries_tutorial  - tutorial for postgresql toolbox with simple scalar time series
 % pg_building_with_nature_zandmotor_tutorial - extract all tables with all columns into one struct
 %
-%See also: database, netcdf, save, load
+%See also: LICENSED database, save, load, netcdf, (replacement of postgresql)
 
 % some possibly useful links
 

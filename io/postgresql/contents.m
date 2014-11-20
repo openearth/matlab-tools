@@ -49,7 +49,7 @@
 % pg_datenum                     - conversion between Matlab datenumbers and PG datetime
 % pg_test                        - unit test for postgresql
 %
-%See also: database, netcdf, save, load
+%See also: TO BE REPLACED BY jdb, LICENSED database, save, load, netcdf
 
 % some possibly useful links
 
