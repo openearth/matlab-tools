@@ -73,7 +73,7 @@ else
                         data{row,col} = char(rs.getString(col));  %#ok<*AGROW>
                     case {'java.lang.Double','java.math.BigDecimal'}
                         data{row,col} = rs.getDouble(col);
-                    case 'java.lang.Int'
+                    case {'java.lang.Int','java.lang.Integer'}
                         data{row,col} = rs.getInt(col);
                     case {'java.sql.Timestamp','oracle.sql.TIMESTAMP'}
                         jt = rs.getTimestamp(col);
