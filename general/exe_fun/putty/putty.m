@@ -1,5 +1,5 @@
 function varargout = putty(server,varargin)
-%PUTTY
+%PUTTY - Turn Matlab into PuTTY
 %
 %This function allows you to use the Matlab Environment (IDE) for PuTTY 
 %functionality (SSH server connections only).
@@ -150,7 +150,5 @@ folder_name = total_name(1:max(strfind(total_name,filesep))-1);
 drive_name  = total_name(1,1:2);
 
 system([drive_name ' & cd ' folder_name ' & plink ' user '@' server ' -pw ' pass]);
-
-clc
 
 end
