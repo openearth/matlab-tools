@@ -121,26 +121,8 @@ switch upper(OPT.mpitype)
         
         switch OPT.cluster
             case 'h5'
-                switch OPT.version
-                    % Define seperate cases for all different available versions
-                    case 1.21
-                        fprintf(fid,'module load mpich2-x86_64\n');
-                        fprintf(fid,'module load xbeach/xbeach121-gcc44-netcdf41-mpi10\n\n');
-                    case 'wtisettings'
-                        fprintf(fid,'module load gcc/4.9.1\n');
-                        fprintf(fid,'module load hdf5/1.8.13_gcc_4.9.1\n');
-                        fprintf(fid,'module load netcdf/v4.3.2_v4.4.0_gcc_4.9.1\n');
-                        fprintf(fid,'module load /opt/xbeach/openmpi/1.8.1_gcc_4.9.1\n');
-                        fprintf(fid,'module load /u/bieman/privatemodules/xbeach-wtisettings_gcc_4.9.1_1.8.1_HEAD\n\n');
-                    otherwise
-                        % assume that OPT.version contains the complete
-                        % module name
-                        fprintf(fid,'module load gcc/4.9.1\n');
-                        fprintf(fid,'module load hdf5/1.8.13_gcc_4.9.1\n');
-                        fprintf(fid,'module load netcdf/v4.3.2_v4.4.0_gcc_4.9.1\n');
-                        fprintf(fid,'module load /opt/xbeach/openmpi/1.8.1_gcc_4.9.1\n');
-                        fprintf(fid,'module load %s\n\n',OPT.version);
-                end
+                xb_write_sh_scripts_xbversions(fid, 'version', OPT.version)
+                
                 fprintf(fid,'module list\n');
                 fprintf(fid,'env\n\n');
                 fprintf(fid,'awk ''{print $1":"1}'' $PE_HOSTFILE > $(pwd)/machinefile\n');
@@ -161,24 +143,8 @@ switch upper(OPT.mpitype)
         
         switch OPT.cluster
             case 'h5'
-                switch OPT.version
-                    % Define seperate cases for all different available versions
-                    case 1.21
-                        fprintf(fid,'module load mpich2-x86_64\n');
-                        fprintf(fid,'module load xbeach/xbeach121-gcc44-netcdf41-mpi10\n\n');
-                    case 'wtisettings'
-                        fprintf(fid,'module load gcc/4.9.1\n');
-                        fprintf(fid,'module load hdf5/1.8.13_gcc_4.9.1\n');
-                        fprintf(fid,'module load netcdf/v4.3.2_v4.4.0_gcc_4.9.1\n');
-                        fprintf(fid,'module load /u/bieman/privatemodules/xbeach-wtisettings_gcc_4.9.1_1.8.1_HEAD\n\n');
-                    otherwise
-                        % assume that OPT.version contains the complete
-                        % module name
-                        fprintf(fid,'module load gcc/4.9.1\n');
-                        fprintf(fid,'module load hdf5/1.8.13_gcc_4.9.1\n');
-                        fprintf(fid,'module load netcdf/v4.3.2_v4.4.0_gcc_4.9.1\n');
-                        fprintf(fid,'module load %s\n\n',OPT.version);
-                end
+                xb_write_sh_scripts_xbversions(fid, 'version', OPT.version)
+                
                 fprintf(fid,'module list\n\n');
                 fprintf(fid,'. /opt/ge/InitSGE\n\n');
                 fprintf(fid,'awk ''{print $1":"1}'' $PE_HOSTFILE > $(pwd)/machinefile\n');
@@ -191,3 +157,4 @@ otherwise
 end
 
 fclose(fid);
+end
