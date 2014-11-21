@@ -4,18 +4,22 @@ function [username password] = uilogin(varargin)
 %   Prompts for a username and password and returns password string
 %
 %   Syntax:
-%   [username password] = uilogin(<username>)
+%   [username password] = uilogin(<keyword>,<value>)
 %
 %   Input:
-%   <username>  = username string (OPTIONAL)
+%   <Optional> keyword value pairs:
+%
+%   username    = username (string)
+%   dialogname  = name of the dialog (string)
 %
 %   Output:
-%   username    = username string
-%   password    = password string
+%   username    = username (string)
+%   password    = password (string)
 %
 %   Example
 %   [username password] = uilogin;
-%   [username password] = uilogin('my username');
+%   [username password] = uilogin('username','my username');
+%   [username password] = uilogin('dialogname','Specify your credentials');
 %
 %   See also uicontrol
 
@@ -66,19 +70,25 @@ function [username password] = uilogin(varargin)
 
 if ~ispc(); error('This function only works for Windows systems'); end;
 
-if length(varargin) == 0
-    user_text = '';
-elseif ischar(varargin{1})
-    user_text = varargin{1};
-else
-    error('Unknown input specified');
+if length(varargin)>0
+    if odd(length(varargin))
+        error('Please specify keyword-value pairs only')
+    end
+    if min(cellfun(@ischar,varargin)) == 0
+        error('You can only specify strings as input, please do so');
+    end
 end
+
+OPT.username   = '';
+OPT.dialogname = 'Login';
+
+OPT = setproperty(OPT,varargin);
 
 s = get(0,'ScreenSize');
 w = 300; h = 90;
 pos = [(s(3)-w)/2 (s(4)-h)/2 w h];
 
-dlg = dialog('Name', 'Login', 'pos', pos);
+dlg = dialog('Name', OPT.dialogname, 'pos', pos);
 
 uicontrol(dlg, 'style', 'text', 'units', 'pixels', ...
     'pos', [20 50 60 15], 'Horiz', 'Left', ...
@@ -87,10 +97,9 @@ uicontrol(dlg, 'style', 'text', 'units', 'pixels', ...
 uicontrol(dlg, 'style', 'text', 'units', 'pixels', ...
     'pos', [20 20 60 15], 'Horiz', 'Left', ...
     'string', 'Password:');
-
 user = javax.swing.JTextField();
 user = javacomponent(user, [100 50 120 20], dlg);
-set(user, 'KeyPressedCallback', {@submit, dlg}, 'Text', user_text);
+set(user, 'KeyPressedCallback', {@submit, dlg}, 'Text', OPT.username);
 user.setFocusable(true);
 drawnow;
 
@@ -104,7 +113,7 @@ uicontrol(dlg, 'style', 'PushButton', ...
     'pos', [240 20 40 20], 'string', 'OK', ...
     'callback', 'uiresume', 'KeyPressFcn', {@submit, dlg});
 
-if strcmp(user_text,'')
+if strcmp(OPT.username,'')
     user.requestFocus;
 else
     pass.requestFocus;
