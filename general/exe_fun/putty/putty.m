@@ -1,8 +1,8 @@
 function varargout = putty(server,varargin)
-%TURN_MATLAB_INTO_PUTTY
+%PUTTY
 %
-%This function does what is says: It allows you to use the Matlab
-%Environment (IDE) for PuTTY functionality (SSH server connections only).
+%This function allows you to use the Matlab Environment (IDE) for PuTTY 
+%functionality (SSH server connections only).
 %
 %To connect to a server, the server/host along with a username and password
 %is required. These can be supplied as input for the function (optionally).
@@ -15,19 +15,19 @@ function varargout = putty(server,varargin)
 %
 %Syntax (all input is <optional>):
 %
-%   turn_matlab_into_putty(<'server name'>,<'username'>,<'quiet'>);
+%   putty(<'server name'>,<'username'>,<'quiet'>);
 %
 %Examples:
 %
-%   turn_matlab_into_putty; % all required input is interatively asked for
-%   turn_matlab_into_putty('server_name');
-%   turn_matlab_into_putty('server_name','username');
+%   putty; % all required input is interatively asked for
+%   putty('server_name');
+%   putty('server_name','username');
 %
 %You can end any of the above examples with 'quiet', to suppress the
 %message window (summary and explanation), e.g.:
 %
-%   turn_matlab_into_putty('quiet')
-%   turn_matlab_into_putty('server_name','username','quiet')
+%   putty('quiet')
+%   putty('server_name','username','quiet')
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -142,7 +142,7 @@ if return_func
 end
 
 if ~quiet
-    warndlg({['Connecting to server ''' server ''' using the following credentials:'];[' '];['Username:   ' user];['Password:   ' repmat('*',1,length(pass))];[' '];['Matlab will now act as a command prompt for this server (you can use the command line and run selections of shell scripts using F9).'];[' '];['To exit from the server and return to matlab, simply call ''exit'' in the command line;'];[' '];['To hide this message in the future, simply call the function ''turn_matlab_into_putty'' with a final input keyword ''quiet''']},['Connecting to server ''' server '''']);
+    warndlg({['Connecting to server ''' server ''' using the following credentials:'];[' '];['Username:   ' user];['Password:   ' repmat('*',1,length(pass))];[' '];['Matlab will now act as a command prompt for this server (you can use the command line and run selections of shell scripts using F9).'];[' '];['To exit from the server and return to matlab, simply call ''exit'' in the command line;'];[' '];['To hide this message in the future, simply call the function ''putty'' with a final input keyword ''quiet''']},['Connecting to server ''' server '''']);
 end
 
 total_name  = mfilename('fullpath');
