@@ -1,13 +1,13 @@
-function [username password] = uilogin()
+function [username password] = uilogin(varargin)
 %UILOGIN  Prompts for a username and password using a dialog
 %
 %   Prompts for a username and password and returns password string
 %
 %   Syntax:
-%   [username password] = uilogin()
+%   [username password] = uilogin(<username>)
 %
 %   Input:
-%   none
+%   <username>  = username string (OPTIONAL)
 %
 %   Output:
 %   username    = username string
@@ -15,6 +15,7 @@ function [username password] = uilogin()
 %
 %   Example
 %   [username password] = uilogin;
+%   [username password] = uilogin('my username');
 %
 %   See also uicontrol
 
@@ -27,6 +28,8 @@ function [username password] = uilogin()
 %
 %       Rotterdamseweg 185
 %       2629HD Delft
+%
+%       Freek Scheel (small update for username input)
 %
 %   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
@@ -62,7 +65,15 @@ function [username password] = uilogin()
 %% create password dialog
 
 if ~ispc(); error('This function only works for Windows systems'); end;
-    
+
+if length(varargin) == 0
+    user_text = '';
+elseif ischar(varargin{1})
+    user_text = varargin{1};
+else
+    error('Unknown input specified');
+end
+
 s = get(0,'ScreenSize');
 w = 300; h = 90;
 pos = [(s(3)-w)/2 (s(4)-h)/2 w h];
@@ -79,7 +90,7 @@ uicontrol(dlg, 'style', 'text', 'units', 'pixels', ...
 
 user = javax.swing.JTextField();
 user = javacomponent(user, [100 50 120 20], dlg);
-set(user, 'KeyPressedCallback', {@submit, dlg});
+set(user, 'KeyPressedCallback', {@submit, dlg}, 'Text', user_text);
 user.setFocusable(true);
 drawnow;
 
@@ -93,7 +104,11 @@ uicontrol(dlg, 'style', 'PushButton', ...
     'pos', [240 20 40 20], 'string', 'OK', ...
     'callback', 'uiresume', 'KeyPressFcn', {@submit, dlg});
 
-user.requestFocus;
+if strcmp(user_text,'')
+    user.requestFocus;
+else
+    pass.requestFocus;
+end
 
 uiwait(dlg);
 
