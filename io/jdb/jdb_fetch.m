@@ -69,11 +69,11 @@ else
                 % Please do not remove existing cases, just add more for
                 % more cases
                 switch jtype
-                    case 'java.lang.String'
+                    case {'java.lang.String'}
                         data{row,col} = char(rs.getString(col));  %#ok<*AGROW>
-                    case {'java.lang.Double','java.math.BigDecimal'}
+                    case {'java.lang.Float','java.lang.Double','java.math.BigDecimal'}
                         data{row,col} = rs.getDouble(col);
-                    case {'java.lang.Int','java.lang.Integer'}
+                    case {'java.lang.Short','java.lang.Int','java.lang.Integer','java.lang.Long'}
                         data{row,col} = rs.getInt(col);
                     case {'java.sql.Timestamp','oracle.sql.TIMESTAMP'}
                         jt = rs.getTimestamp(col);
