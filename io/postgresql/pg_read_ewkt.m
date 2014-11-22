@@ -12,9 +12,17 @@ function S = pg_read_ewkt(s)
 %   Output:
 %   S         = WKT struct
 %
-%   Example
-%   S = pg_read_ewkt(s)
-%   s = pg_write_ewkt(S)
+%   Examples from http://en.wikipedia.org/wiki/Well-known_text
+%   S = pg_read_ewkt('POINT (30 10)')
+%   S = pg_read_ewkt('LINESTRING (30 10, 10 30, 40 40)')
+%   S = pg_read_ewkt('POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))')
+%   S = pg_read_ewkt('POLYGON ((35 10, 45 45, 15 40, 10 20, 35 10),(20 30, 35 35, 30 20, 20 30)))')
+%
+%   S = pg_read_ewkt('MULTIPOINT ((10 40), (40 30), (20 20), (30 10))')
+%   S = pg_read_ewkt('MULTIPOINT (10 40, 40 30, 20 20, 30 10)')
+%   S = pg_read_ewkt('MULTILINESTRING ((10 10, 20 20, 10 40),(40 40, 30 30, 40 20, 30 10))')
+%   S = pg_read_ewkt('MULTIPOLYGON (((30 20, 45 40, 10 40, 30 20)),((15 5, 40 10, 10 20, 5 10, 15 5)))')
+%   S = pg_read_ewkt('MULTIPOLYGON (((40 40, 20 45, 45 30, 40 40)),((20 35, 10 30, 10 10, 30 5, 45 20, 20 35),(30 20, 20 15, 20 25, 30 20)))')
 %
 %   See also pg_write_ewkt, pg_read_ewkb, pg_write_ewkb,
 %            java: http://www.vividsolutions.com/jts/JTSHome.htm
@@ -63,6 +71,10 @@ function S = pg_read_ewkt(s)
 % $Keywords: $
 
 %% parse text
+
+if strmatch('MULTIPOLYGON',s)
+    error('MULTIPOLYGON not yet implemented')
+end
 
 S = regexp(s, '(?<srid>\s*SRID\s*=\s*\d+\s*;)?\s*(?<type>\w+)\s*\((?<coords>.*)\)\s*$', 'names');
 
