@@ -13,7 +13,7 @@ fid=fopen('scp.txt','wt');
 fprintf(fid,'%s\n','option batch on');
 fprintf(fid,'%s\n','option confirm off');
 fprintf(fid,'%s\n','option echo on');
-fprintf(fid,'%s\n','open cosmos:c0sm0sw3bs1t3@cosmos.deltares.nl -timeout=15 -hostkey="ssh-rsa 1024 cc:17:70:a2:d1:1e:ed:86:09:23:ea:2e:1c:3e:66:5e"');
+fprintf(fid,'%s\n',hm.scp.open);
 fprintf(fid,'%s\n',['cd ' dr]);
 fprintf(fid,'%s\n',['mkdir forecast']);
 fprintf(fid,'%s\n',['cd forecast']);

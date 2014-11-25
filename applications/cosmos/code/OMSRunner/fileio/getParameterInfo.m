@@ -31,7 +31,6 @@ else
     ptype1=ptype2;
     
     name1=ptype1{1};
-    name2=ptype1{2};
 
     switch nrp
 
@@ -47,6 +46,7 @@ else
             end
             
         case 2
+            name2=ptype1{2};
 
             nm=[];
             for j=1:length(s.(name1))

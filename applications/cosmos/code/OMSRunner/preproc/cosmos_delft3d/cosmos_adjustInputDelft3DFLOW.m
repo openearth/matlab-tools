@@ -82,6 +82,11 @@ if ~isempty(model.meteowind)
                     'parameter',par,'dx',dx,'dy',dy,'exedirflow',model.exedirflow);
             end
         end
+
+        % Spiderweb
+        if ~isempty(model.meteospw)
+            copyfile([hm.meteofolder 'spiderwebs' filesep model.meteospw],tmpdir);
+        end
         
         % Heat
         if model.includeTemperature && model.includeHeatExchange

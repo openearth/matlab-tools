@@ -308,7 +308,7 @@ end
 if isfield(xml,'wavebedfriccoef')
     model.waveBedFricCoef=str2double(xml.wavebedfriccoef);
 else
-    model.waveBedFricCoef=0.067;
+    model.waveBedFricCoef=0.038;
 end
 
 if isfield(xml,'whitecapping')
@@ -317,7 +317,7 @@ else
     model.whiteCapping='Westhuysen';
 end
 
-model.windStress=[6.3000000e-004  0.0000000e+000  7.2300000e-003  1.0000000e+002];
+model.windStress=[1.0000000e-003  0.0000000e+000  2.5000000e-003  3.0000000e+001];
 
 if isfield(xml,'windstress')
     model.windStress=str2num(xml.windstress);
@@ -713,7 +713,7 @@ if isfield(xml,'stations')
                         model.stations(j).plots(k).type=xml.stations.stations.station(istat).station.plots.plots.plot(k).plot.type;
                     end
                     model.stations(j).plots(k).nrDatasets=length(xml.stations.stations.station(istat).station.plots.plots.plot(k).plot.datasets.datasets.dataset);
-                    for id=1:length(xml.stations.stations.station(istat).station.plots.plots.plot(k).plot.datasets.datasets)
+                    for id=1:model.stations(j).plots(k).nrDatasets
                         model.stations(j).plots(k).datasets(id).parameter=xml.stations.stations.station(istat).station.plots.plots.plot(k).plot.datasets.datasets.dataset(id).dataset.parameter;
                         model.stations(j).plots(k).datasets(id).type=xml.stations.stations.station(istat).station.plots.plots.plot(k).plot.datasets.datasets.dataset(id).dataset.type;
                         model.stations(j).plots(k).datasets(id).source=[];

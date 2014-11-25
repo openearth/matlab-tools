@@ -35,11 +35,11 @@ for i=1:hm.nrMeteoDatasets
 
         outdir=[hm.meteofolder meteoname filesep];
 
-        s=xml_load([hm.dataDir 'meteo' filesep 'meteomodels.xml']);
+        s=xml2struct([hm.dataDir 'meteo' filesep 'meteomodels.xml']);
         
-        for im=1:length(s.models)
-            if strcmpi(s.models(im).model.name,meteosource)
-                meteomodel=s.models(im).model;
+        for im=1:length(s.models.models.model)
+            if strcmpi(s.models.models.model(im).model.name,meteosource)
+                meteomodel=s.models.models.model(im).model;
             end
         end
         

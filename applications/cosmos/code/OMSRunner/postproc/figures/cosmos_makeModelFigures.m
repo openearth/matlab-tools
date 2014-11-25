@@ -4,11 +4,15 @@ function cosmos_makeModelFigures(hm,m)
 % delete(dr);
 
 %% Mobile app
+
 switch lower(hm.models(m).type)
     case{'delft3dflowwave','delft3dflow'}
-        disp('Making plots for app ...');
-        cosmos_makeAppPlots(hm,m);
+        try    
+            disp('Making plots for app ...');
+            cosmos_makeAppPlots(hm,m);
+        end
 end
+
 %% Time Series
 disp('Making time series plots ...');
 cosmos_makeTimeSeriesPlots(hm,m);

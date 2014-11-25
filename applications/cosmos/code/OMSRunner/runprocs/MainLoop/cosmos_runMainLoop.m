@@ -19,6 +19,8 @@ hm=guidata(findobj('Tag','OMSMain'));
 
 disp('Start main loop ...');
 
+hm=cosmos_readScenario(hm,'notfirst');
+
 hm.cycStr=[datestr(hm.cycle,'yyyymmdd') '_' datestr(hm.cycle,'HH') 'z'];
 
 %% Read cycle info
@@ -122,7 +124,7 @@ end
 %% Start and stop times
 disp('Getting start and stop times ...');
 set(hm.textModelLoopStatus,'String','Status : Getting start and stop times ...');drawnow;
-hm=cosmos_getStartStopTimes(hm);
+hm=cosmos_getStartStopTimes2(hm);
 disp('Finished getting start and stop times');
 
 %% Determine time zones

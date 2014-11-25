@@ -5,7 +5,7 @@ delete(timerfind);
 warning('off','MATLAB:hg:ColorSpec_None');
 
 hm=cosmos_readConfigFile;
-hm=cosmos_readScenario(hm);
+hm=cosmos_readScenario(hm,'first');
 
 makedir([hm.scenarioDir 'joblist']);
 makedir([hm.scenarioDir 'cyclelist']);

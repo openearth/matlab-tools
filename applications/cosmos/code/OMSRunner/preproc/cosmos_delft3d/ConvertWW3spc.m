@@ -8,7 +8,7 @@ f=fgetl(fid);
 v=strread(f,'%s','whitespace','\\''');
 
 spec.name=v{1};
-spec.model=v{3};
+%spec.model=v{3};
 
 n=strread(v{2});
 

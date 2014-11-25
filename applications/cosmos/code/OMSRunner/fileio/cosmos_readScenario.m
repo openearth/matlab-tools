@@ -1,65 +1,74 @@
-function hm=cosmos_readScenario(hm)
+function hm=cosmos_readScenario(hm,opt)
 
 fname=[hm.scenarioDir filesep hm.scenario '.xml'];
 
 xml=xml2struct(fname);
 
-%hm.runEnv='win32';
-hm.numCores=1;
-
-hm.archiveinput=0;
-hm.archiveoutput=0;
-hm.archivefigures=0;
-
-nh=24*(now-floor(now));
-if nh>12
-    hm.cycle=floor(now)+0.5;
-else
-    hm.cycle=floor(now);
-end
-
-hm.stoptime=hm.cycle+1000;
-
-hm.scenarioLongName=xml.longname;
-hm.scenarioShortName=xml.shortname;
-
-hm.scenarioType='hindcast';
-if isfield(xml,'type')
-    hm.scenarioType=xml.type;
-end
-
-if isfield(xml,'cycle')
-    hm.cycle=datenum(xml.cycle,'yyyymmdd HHMMSS');
-end
-
-if isfield(xml,'stoptime')
-    hm.stoptime=datenum(xml.stoptime,'yyyymmdd HHMMSS');
-end
-
-hm.runInterval=str2double(xml.runinterval);
-hm.runTime=str2double(xml.runtime);
-hm.cycleMode=xml.cyclemode;
-
-txt=xml.getmeteodata;
-if strcmpi(txt(1),'t')
-    hm.getMeteo=1;
-else
-    hm.getMeteo=0;
-end
-
-txt=xml.getobsdata;
-if strcmpi(txt(1),'t')
-    hm.getObservations=1;
-else
-    hm.getObservations=0;
-end
-
-hm.getOceanModel=0;
-if isfield(xml,'getoceandata')
-    txt=xml.getoceandata;
-    if strcmpi(txt(1),'t')
-        hm.getOceanModel=1;
+if strcmpi(opt,'first')
+    
+    hm.runEnv='win32';
+    if isfield(xml,'runenv')
+        hm.runEnv=xml.runenv;
     end
+    
+    hm.numCores=1;
+    
+    hm.archiveinput=0;
+    hm.archiveoutput=0;
+    hm.archivefigures=0;
+    
+    nh=24*(now-floor(now));
+    if nh>12
+        hm.cycle=floor(now)+0.5;
+    else
+        hm.cycle=floor(now);
+    end
+    
+    hm.stoptime=hm.cycle+1000;
+    
+    hm.scenarioLongName=xml.longname;
+    hm.scenarioShortName=xml.shortname;
+    
+    hm.scenarioType='hindcast';
+    if isfield(xml,'type')
+        hm.scenarioType=xml.type;
+    end
+    
+    if isfield(xml,'cycle')
+        hm.cycle=datenum(xml.cycle,'yyyymmdd HHMMSS');
+    end
+    
+    if isfield(xml,'stoptime')
+        hm.stoptime=datenum(xml.stoptime,'yyyymmdd HHMMSS');
+    end
+    
+    hm.runInterval=str2double(xml.runinterval);
+    hm.runTime=str2double(xml.runtime);
+    hm.cycleMode=xml.cyclemode;
+    
+
+    txt=xml.getmeteodata;
+    if strcmpi(txt(1),'t')
+        hm.getMeteo=1;
+    else
+        hm.getMeteo=0;
+    end
+    
+    txt=xml.getobsdata;
+    if strcmpi(txt(1),'t')
+        hm.getObservations=1;
+    else
+        hm.getObservations=0;
+    end
+    
+    hm.getOceanModel=0;
+    if isfield(xml,'getoceandata')
+        txt=xml.getoceandata;
+        if strcmpi(txt(1),'t')
+            hm.getOceanModel=1;
+        end
+    end
+
 end
 
 switch hm.scenarioType
@@ -115,6 +124,7 @@ switch hm.scenarioType
             hm.models(im).backupmeteopressure=[];
             hm.models(im).meteoheat=[];
             hm.models(im).backupmeteoheat=[];
+            hm.models(im).meteospw=[];
             
             if isfield(xml.model(im).model,'meteowind')
                 hm.models(im).meteowind=xml.model(im).model.meteowind;
@@ -124,6 +134,9 @@ switch hm.scenarioType
             end
             if isfield(xml.model(im).model,'meteoheat')
                 hm.models(im).meteoheat=xml.model(im).model.meteoheat;
+            end
+            if isfield(xml.model(im).model,'meteospw')
+                hm.models(im).meteospw=xml.model(im).model.meteospw;
             end
             if isfield(xml.model(im).model,'backupmeteowind')
                 hm.models(im).backupmeteowind=xml.model(im).model.backupmeteowind;

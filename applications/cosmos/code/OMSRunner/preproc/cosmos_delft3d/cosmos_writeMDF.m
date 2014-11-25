@@ -259,6 +259,11 @@ if ~isempty(model.meteowind)
     end
     fprintf(fid,'%s\n','AirOut= #YES#');
 end
+
+if ~isempty(model.meteospw)
+    fprintf(fid,'%s\n',['Filweb= #' model.meteospw '#']);
+end
+
 if model.includeTemperature && model.includeHeatExchange
     fprintf(fid,'%s\n','Filwr = #meteo.amr#');
     fprintf(fid,'%s\n','Filwt = #meteo.amt#');

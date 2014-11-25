@@ -25,13 +25,13 @@ for iw=1:length(wb)
         
         system(['TortoiseProc.exe /command:update /path:"' fname '" /closeonend:1']);
 
-        scenarios=xml_load(fname);
-%        scenarios=xml2struct(fname);
+%        scenarios=xml_load(fname);
+        scenarios=xml2struct(fname);
         
         ifound = 0;
         
-        for i=1:length(scenarios)
-            if strcmpi(scenarios(i).scenario.name,hm.scenario)
+        for i=1:length(scenarios.scenario)
+            if strcmpi(scenarios.scenario(i).scenario.name,hm.scenario)
                 ifound=i;
                 break;
             end
@@ -51,10 +51,17 @@ for iw=1:length(wb)
     if iUpdate
         
         % Write scenarios.xml
-        scenarios(ii).scenario=[];
-        scenarios(ii).scenario.name=hm.scenarioShortName;
-        scenarios(ii).scenario.type=hm.scenarioType;
-        xml_save(fname,scenarios,'off');
+
+        scenarios.scenario(ii).scenario=[];
+        scenarios.scenario(ii).scenario.name=hm.scenarioShortName;
+        scenarios.scenario(ii).scenario.type=hm.scenarioType;
+        
+        
+        scenarios.scenario(ii).scenario=[];
+        scenarios.scenario(ii).scenario.name=hm.scenarioShortName;
+        scenarios.scenario(ii).scenario.type=hm.scenarioType;
+        struct2xml(fname,scenarios,'structuretype','short');
+%        xml_save(fname,scenarios,'off');
         
         % Commit scenarios.xml
         system(['TortoiseProc.exe /command:commit /path:"' fname '" /logmsg:" scenarios.xml for website ' wb{iw} ' updated" /closeonend:1']);
@@ -64,7 +71,7 @@ for iw=1:length(wb)
             fid=fopen('scp.txt','wt');
             fprintf(fid,'%s\n','option batch on');
             fprintf(fid,'%s\n','option confirm off');
-            fprintf(fid,'%s\n','open cosmos:c0sm0sw3bs1t3@cosmos.deltares.nl -timeout=15 -hostkey="ssh-rsa 1024 cc:17:70:a2:d1:1e:ed:86:09:23:ea:2e:1c:3e:66:5e"');
+            fprintf(fid,'%s\n',hm.scp.open);
             fprintf(fid,'%s\n',['cd ' wb{iw} '/scenarios']);
             fprintf(fid,'%s\n',['put ' fname]);
             fprintf(fid,'%s\n','close');

@@ -91,20 +91,30 @@ switch lower(model.type)
                 fprintf(fid,'%s\n','@ echo off');
                 fprintf(fid,'%s\n','DATE /T > running.txt');
                 fprintf(fid,'%s\n','set argfile=config_flow2d3d.xml');
-                fprintf(fid,'%s\n',['set flowexedir="' hm.d3d_home '\flow2d3d\lib"']);
-                fprintf(fid,'%s\n',['set flowlibdir="' hm.d3d_home '\flow2d3d\lib"']);
+                fprintf(fid,'%s\n',['set d3d_path=' hm.d3d_home]);
+                fprintf(fid,'%s\n','set flowexedir=%d3d_path%\flow2d3d\bin');
+                fprintf(fid,'%s\n','set flowlibdir=%d3d_path%\flow2d3d\lib');
                 fprintf(fid,'%s\n','set PATH=%flowexedir%;%flowlibdir%;%PATH%');
                 fprintf(fid,'%s\n','%flowexedir%\d_hydro.exe %argfile% > out.scr');
-                fprintf(fid,'%s\n','copy running.txt finished.txt');                
+                fprintf(fid,'%s\n','move running.txt finished.txt');                
                 fprintf(fid,'%s\n','exit');                
                 fclose(fid);
                 
                 % Write xml config file
-                fini=fopen([tmpdir 'config_flow2d3d.xml'],'w');
+                fini=fopen([tmpdir 'config_flow2d3d.xml'],'w');                
                 fprintf(fini,'%s\n','<?xml version=''1.0'' encoding=''iso-8859-1''?>');
-                fprintf(fini,'%s\n','<DeltaresHydro start="flow2d3d">');
-                fprintf(fini,'%s\n',['<flow2d3d MDFile = ''' model.runid '.mdf''></flow2d3d>']);
-                fprintf(fini,'%s\n','</DeltaresHydro>');
+                fprintf(fini,'%s\n','<deltaresHydro xmlns="http://schemas.deltares.nl/deltaresHydro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.deltares.nl/deltaresHydro http://content.oss.deltares.nl/schemas/d_hydro-1.00.xsd">');
+                fprintf(fini,'%s\n','  <documentation></documentation>');
+                fprintf(fini,'%s\n','  <control>');
+                fprintf(fini,'%s\n','    <sequence>');
+                fprintf(fini,'%s\n','      <start>myNameFlow</start>');
+                fprintf(fini,'%s\n','    </sequence>');
+                fprintf(fini,'%s\n','  </control>');
+                fprintf(fini,'%s\n','  <flow2D3D name="myNameFlow">');
+                fprintf(fini,'%s\n','    <library>flow2d3d</library>');
+                fprintf(fini,'%s\n',['    <mdfFile>' model.runid '.mdf</mdfFile>']);
+                fprintf(fini,'%s\n','  </flow2D3D>');
+                fprintf(fini,'%s\n','</deltaresHydro>');               
                 fclose(fini);                
             
             case{'h4'}

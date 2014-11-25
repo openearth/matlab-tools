@@ -67,6 +67,7 @@ switch model.runEnv
         fprintf(fid,'%s\n',['cd ' hm.jobDir model.name]);        
         fprintf(fid,'%s\n','call run.bat');        
         fclose(fid);
+        pause(0.1);
         system('start tmp.bat');
         pause(1);
         delete('tmp.bat');

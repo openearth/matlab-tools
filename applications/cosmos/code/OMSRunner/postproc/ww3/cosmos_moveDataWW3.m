@@ -15,6 +15,9 @@ delete([rundir 'out_grd.ww3']);
 [status,message,messageid]=movefile([rundir '*.obs'],inpdir,'f');
 [status,message,messageid]=movefile([rundir '*.bot'],inpdir,'f');
 [status,message,messageid]=movefile([rundir 'wind.ww3'],inpdir,'f');
+if exist([rundir 'nest.ww3'],'file')
+    [status,message,messageid]=movefile([rundir 'nest.ww3'],inpdir,'f');
+end
 
 % Don't copy restart file
 % [status,message,messageid]=movefile([rundir 'restart.ww3'],inpdir,'f');
