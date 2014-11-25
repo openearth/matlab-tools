@@ -84,7 +84,7 @@ switch lower(el.style)
 
         switch lower(tp)
             case{'string'}
-                if strcmpi(el.value,val)
+                if strcmpi(deblank(el.value),deblank(val))
                     set(el.handle,'Value',1);
                 else
                     set(el.handle,'Value',0);
