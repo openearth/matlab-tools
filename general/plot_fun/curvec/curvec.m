@@ -371,6 +371,10 @@ for it=1:nt
     end
     
     %% Compute arrows using mex file
+    if size(x1,1)==1 || size(x1,2)==1
+        [x1,y1]=meshgrid(x1,y1);
+    end
+
     [xar,yar,xax,yax,len]=mxcurvec(x2,y2,x1,y1,u1,v1,u2,v2,OPT.length,OPT.nrvertices,OPT.headthickness,OPT.arrowthickness,OPT.nhead,relwdt,OPT.iopt);
     
     %% Set nan values
