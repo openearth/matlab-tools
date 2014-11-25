@@ -583,6 +583,7 @@ if ~isempty(pathname)
             switch ButtonName,
                 case 'Yes'
                     for id=1:handles.model.delft3dflow.nrDomains
+                        ichanged=0;
                         for nb=1:handles.model.delft3dflow.domain(id).nrOpenBoundaries
                             switch lower(handles.model.delft3dflow.domain(id).openBoundaries(nb).type)
                                 case{'r'}
@@ -594,12 +595,49 @@ if ~isempty(pathname)
                                     handles.model.delft3dflow.domain(id).openBoundaries(nb).timeSeriesT=[t0 t1];
                                     handles.model.delft3dflow.domain(id).openBoundaries(nb).timeSeriesA=[0.0 0.0];
                                     handles.model.delft3dflow.domain(id).openBoundaries(nb).timeSeriesB=[0.0 0.0];
+                                    handles.model.delft3dflow.domain(id).bctChanged=1;
+                                    ichanged=1;
                             end
                         end
-                    end
+
+                        if ichanged
+
+                            [filename, pathname, filterindex] = uiputfile('*.bnd', ['Select Boundary Definitions File - domain ' handles.model.delft3dflow.domain(id).runid],'');
+                            if filename~=0
+                                curdir=[lower(cd) '\'];
+                                if ~strcmpi(curdir,pathname)
+                                    filename=[pathname filename];
+                                end
+                                handles.model.delft3dflow.domain(id).bndFile=filename;
+                                ddb_saveBndFile(handles.model.delft3dflow.domain(id).openBoundaries,handles.model.delft3dflow.domain(id).bndFile);
+                            end
+
+                            [filename, pathname, filterindex] = uiputfile('*.bct', ['Select Time Series Conditions File - domain ' handles.model.delft3dflow.domain(id).runid],'');
+                            if filename~=0
+                                curdir=[lower(cd) '\'];
+                                if ~strcmpi(curdir,pathname)
+                                    filename=[pathname filename];
+                                end
+                                handles.model.delft3dflow.domain(id).bctFile=filename;
+                                ddb_saveBctFile(handles,id);
+                                handles.model.delft3dflow.domain(id).bctChanged=0;
+                            end
+                        
+                        end
+
+                    end                    
             end
         end
         
+        % Adjust smoothing time
+        if handles.model.delft3dflow.domain(id).smoothingTime>0
+            ButtonName = questdlg('Reset smoothing time to 0.0?','','No', 'Yes', 'Yes');
+            switch ButtonName,
+                case 'Yes'
+                    handles.model.delft3dflow.domain(id).smoothingTime=0;
+            end
+        end
+
         setHandles(handles);
         
     catch
