@@ -25,7 +25,7 @@ fprintf(fid,'%s\n','$        - Format type not used for field type "DAT".');
 fprintf(fid,'%s\n','$');
 fprintf(fid,'%s\n','$   Time flag    : If true, time is included in file.');
 fprintf(fid,'%s\n','$');
-fprintf(fid,'%s\n',['   ''''' fld ''''' ''LL'' T T']);
+fprintf(fid,'%s\n',['   ''' fld ''' ''LL'' T T']);
 fprintf(fid,'%s\n','$');
 fprintf(fid,'%s\n','$ Additional time input ---------------------------------------------- $');
 fprintf(fid,'%s\n','$ If time flag is .FALSE., give time of field in yyyymmdd hhmmss format.');
