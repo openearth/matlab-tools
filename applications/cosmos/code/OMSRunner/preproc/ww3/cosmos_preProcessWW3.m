@@ -41,13 +41,35 @@ dt=3600;
 writeWW3Shell(inpfile,model.tWaveStart,toutstart,model.tStop,dt,trststart,trststop,dtrst,nestrid,x,y);
 
 %% Get meteo data
-ii=strmatch(lower(model.meteowind),lower(hm.meteoNames),'exact');
-dt=hm.meteo(ii).timeStep;
+
 meteoname=model.meteowind;
 meteodir=[hm.meteofolder meteoname filesep];
+fname='ww3.wnd';
+xlim=model.xLim;
+ylim=model.yLim;
+tstart=model.tWaveStart;
+tstop=model.tWaveStop;
+parameter={'u','v'};
+mdl='ww3';
 
-[lon,lat]=writeMeteoFileWW3(meteodir,meteoname,tmpdir,model.xLim,model.yLim,model.tWaveStart,model.tStop,dt,model.useDtAirSea);
-writeWW3_prepWind([tmpdir 'ww3_prep.inp'],lon,lat);
+% Perhaps inlcude spiderweb file?
+spwfile=[];
+dx=[];
+dy=[];
+dt=[];
+if ~isempty(model.meteospw)
+    spwfile=[hm.meteofolder 'spiderwebs' filesep model.meteospw];
+    dx=0.1;
+    dy=0.1;
+    dt=60; % time step in minutes
+end
+
+s=write_meteo_file(meteodir, meteoname, parameter, tmpdir, fname, xlim, ylim, tstart, tstop, 'dx',dx,'dy',dy,'dt',dt,'spwfile',spwfile,'model',mdl);
+
+ww3_write_prep_inp([tmpdir 'ww3_prep.inp'],s.parameter(1).x,s.parameter(1).y,'WND');
+
+clear s
+
 
 %% Pre and post-processing input files
 

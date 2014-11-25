@@ -40,10 +40,10 @@ if ~isempty(model.meteowind)
     
     try
         
-        coordsys=hm.models(m).coordinateSystem;
-        coordsystype=hm.models(m).coordinateSystemType;
+        cs.name=hm.models(m).coordinateSystem;
+        cs.type=hm.models(m).coordinateSystemType;
         
-        if ~strcmpi(coordsystype,'geographic')
+        if ~strcmpi(cs.type,'geographic')
             dx=model.dXMeteo;
             dy=model.dYMeteo;
         else
@@ -55,15 +55,19 @@ if ~isempty(model.meteowind)
         try
             meteodir=[hm.meteofolder model.meteowind filesep];
             par={'u','v'};
-            writeD3DMeteoFile4(meteodir,model.meteowind,tmpdir,'meteo',model.xLim,model.yLim, ...
-                coordsys,coordsystype,model.refTime,model.tFlowStart,model.tStop, ...
-                'parameter',par,'dx',dx,'dy',dy,'exedirflow',model.exedirflow);
+            write_meteo_file(meteodir,model.meteowind,par,tmpdir,'meteo',model.xLim,model.yLim, ...
+                model.tFlowStart,model.tStop,'cs',cs,'reftime',reftime,'dx',dx,'dy',dy);
+            %             writeD3DMeteoFile4(meteodir,model.meteowind,tmpdir,'meteo',model.xLim,model.yLim, ...
+            %                 coordsys,coordsystype,model.refTime,model.tFlowStart,model.tStop, ...
+            %                 'parameter',par,'dx',dx,'dy',dy,'exedirflow',model.exedirflow);
         catch
             meteodir=[hm.meteofolder model.backupmeteowind filesep];
             par={'u','v'};
-            writeD3DMeteoFile4(meteodir,model.backupmeteowind,tmpdir,'meteo',model.xLim,model.yLim, ...
-                coordsys,coordsystype,model.refTime,model.tFlowStart,model.tStop, ...
-                'parameter',par,'dx',dx,'dy',dy,'exedirflow',model.exedirflow);
+            write_meteo_file(meteodir,model.backupmeteowind,par,tmpdir,'meteo',model.xLim,model.yLim, ...
+                model.tFlowStart,model.tStop,'cs',cs,'reftime',reftime,'dx',dx,'dy',dy);
+            %             writeD3DMeteoFile4(meteodir,model.backupmeteowind,tmpdir,'meteo',model.xLim,model.yLim, ...
+            %                 coordsys,coordsystype,model.refTime,model.tFlowStart,model.tStop, ...
+            %                 'parameter',par,'dx',dx,'dy',dy,'exedirflow',model.exedirflow);
         end
         
         % Pressure
@@ -71,18 +75,22 @@ if ~isempty(model.meteowind)
             try
                 meteodir=[hm.meteofolder model.meteopressure filesep];
                 par={'p'};
-                writeD3DMeteoFile4(meteodir,model.meteopressure,tmpdir,'meteo',model.xLim,model.yLim, ...
-                    coordsys,coordsystype,model.refTime,model.tFlowStart,model.tStop, ...
-                    'parameter',par,'dx',dx,'dy',dy,'exedirflow',model.exedirflow);
+                write_meteo_file(meteodir,model.meteopressure,par,tmpdir,'meteo',model.xLim,model.yLim, ...
+                    model.tFlowStart,model.tStop,'cs',cs,'reftime',reftime,'dx',dx,'dy',dy);
+                %                 writeD3DMeteoFile4(meteodir,model.meteopressure,tmpdir,'meteo',model.xLim,model.yLim, ...
+                %                     coordsys,coordsystype,model.refTime,model.tFlowStart,model.tStop, ...
+                %                     'parameter',par,'dx',dx,'dy',dy,'exedirflow',model.exedirflow);
             catch
                 meteodir=[hm.meteofolder model.backupmeteopressure filesep];
                 par={'p'};
-                writeD3DMeteoFile4(meteodir,model.backupmeteopressure,tmpdir,'meteo',model.xLim,model.yLim, ...
-                    coordsys,coordsystype,model.refTime,model.tFlowStart,model.tStop, ...
-                    'parameter',par,'dx',dx,'dy',dy,'exedirflow',model.exedirflow);
+                write_meteo_file(meteodir,model.backupmeteopressure,par,tmpdir,'meteo',model.xLim,model.yLim, ...
+                    model.tFlowStart,model.tStop,'cs',cs,'reftime',reftime,'dx',dx,'dy',dy);
+                %                 writeD3DMeteoFile4(meteodir,model.backupmeteopressure,tmpdir,'meteo',model.xLim,model.yLim, ...
+                %                     coordsys,coordsystype,model.refTime,model.tFlowStart,model.tStop, ...
+                %                     'parameter',par,'dx',dx,'dy',dy,'exedirflow',model.exedirflow);
             end
         end
-
+        
         % Spiderweb
         if ~isempty(model.meteospw)
             copyfile([hm.meteofolder 'spiderwebs' filesep model.meteospw],tmpdir);
@@ -93,89 +101,23 @@ if ~isempty(model.meteowind)
             try
                 meteodir=[hm.meteofolder model.meteoheat filesep];
                 par={'airtemp','relhum','cloudcover'};
-                writeD3DMeteoFile4(meteodir,model.meteoheat,tmpdir,'meteo',model.xLim,model.yLim, ...
-                    coordsys,coordsystype,model.refTime,model.tFlowStart,model.tStop, ...
-                    'parameter',par,'dx',dx,'dy',dy,'exedirflow',model.exedirflow);
+                write_meteo_file(meteodir,model.meteoheat,par,tmpdir,'meteo',model.xLim,model.yLim, ...
+                    model.tFlowStart,model.tStop,'cs',cs,'reftime',reftime,'dx',dx,'dy',dy);
+                %                 writeD3DMeteoFile4(meteodir,model.meteoheat,tmpdir,'meteo',model.xLim,model.yLim, ...
+                %                     coordsys,coordsystype,model.refTime,model.tFlowStart,model.tStop, ...
+                %                     'parameter',par,'dx',dx,'dy',dy,'exedirflow',model.exedirflow);
             catch
                 meteodir=[hm.meteofolder model.backupmeteoheat filesep];
                 par={'airtemp','relhum','cloudcover'};
-                writeD3DMeteoFile4(meteodir,model.backupmeteoheat,tmpdir,'meteo',model.xLim,model.yLim, ...
-                    coordsys,coordsystype,model.refTime,model.tFlowStart,model.tStop, ...
-                    'parameter',par,'dx',dx,'dy',dy,'exedirflow',model.exedirflow);
+                write_meteo_file(meteodir,model.backupmeteoheat,par,tmpdir,'meteo',model.xLim,model.yLim, ...
+                    model.tFlowStart,model.tStop,'cs',cs,'reftime',reftime,'dx',dx,'dy',dy);
+                %                 writeD3DMeteoFile4(meteodir,model.backupmeteoheat,tmpdir,'meteo',model.xLim,model.yLim, ...
+                %                     coordsys,coordsystype,model.refTime,model.tFlowStart,model.tStop, ...
+                %                     'parameter',par,'dx',dx,'dy',dy,'exedirflow',model.exedirflow);
             end
-        end        
+        end
     end
 end
-
-% %% Meteo
-% if ~strcmpi(model.useMeteo,'none')
-% 
-%     try
-% 
-%         ii=strmatch(model.useMeteo,hm.meteoNames,'exact');
-% 
-%         coordsys=hm.models(m).coordinateSystem;
-%         coordsystype=hm.models(m).coordinateSystemType;
-% 
-%         if ~strcmpi(coordsystype,'geographic')
-%             dx=model.dXMeteo;
-%             dy=model.dYMeteo;
-%         else
-%             dx=[];
-%             dy=[];
-%         end
-%     
-%         meteodir=[hm.meteofolder model.useMeteo filesep];
-% 
-%         if model.includeTemperature && model.includeHeatExchange
-%             par={'u','v','p','airtemp','relhum','cloudcover'};
-%         else
-%            if model.includeAirPressure
-%                par={'u','v','p'};
-%            else
-%                par={'u','v'};
-%            end
-%         end
-%         writeD3DMeteoFile4(meteodir,model.useMeteo,tmpdir,'meteo',model.xLim,model.yLim, ...
-%             coordsys,coordsystype,model.refTime,model.tFlowStart,model.tStop, ...
-%             'parameter',par,'dx',dx,'dy',dy,'exedirflow',model.exedirflow);
-% 
-%     catch
-% 
-%         % Regular meteo failed
-%         disp(['Meteo from ' model.useMeteo ' failed. Trying ' model.backupMeteo]);
-% 
-%         if ~strcmpi(model.backupMeteo,'none')
-% 
-%             coordsys=hm.models(m).coordinateSystem;
-%             coordsystype=hm.models(m).coordinateSystemType;
-% 
-%             if ~strcmpi(coordsystype,'geographic')
-%                 dx=model.dXMeteo;
-%                 dy=model.dYMeteo;
-%             else
-%                 dx=[];
-%                 dy=[];
-%             end
-%     
-%             meteodir=[hm.runDir 'meteo' filesep model.backupMeteo filesep];
-% 
-%             if model.includeTemperature
-%                 par={'u','v','p','airtemp','relhum','cloudcover'};
-%             else
-%                 par={'u','v','p'};
-%             end
-%             
-%             writeD3DMeteoFile4(meteodir,model.backupMeteo,tmpdir,'meteo',model.xLim,model.yLim, ...
-%                 coordsys,coordsystype,model.refTime,model.tFlowStart,model.tStop, ...
-%                 'parameter',par,'dx',dx,'dy',dy,'version',hm.meteoVersion);
-%             
-%         else
-%             error('No backup meteo specified!');            
-%         end
-%     end
-%     
-% end
 
 %% Discharges
 if ~isempty(model.discharge)
