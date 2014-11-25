@@ -76,7 +76,7 @@ function writeD3DMeteoFile4(meteodir, meteoname, rundir, fname, xlim, ylim, coor
 parameter={'u','v','p'};
 vsn='1.03';
 
-dx=5000;
+dx=2000;
 dy=[];
 
 for i=1:length(varargin)
@@ -230,6 +230,8 @@ for ipar=1:npar
         end
         
         s2.time(n)=t(it);
+
+        istep=1;
         
         if ~strcmpi(coordsystype,'geographic')
             s2.x=xlim(1):dx:xlim(2);
@@ -238,19 +240,19 @@ for ipar=1:npar
             s2.dy=dy;
         else
             if isfield(s,'dLon')
-                csz(1)=s.dLon;
-                csz(2)=s.dLat;
+                csz(1)=istep*s.dLon;
+                csz(2)=istep*s.dLat;
             else
-                csz(1)=abs(s.lon(2)-s.lon(1));
-                csz(2)=abs(s.lat(2)-s.lat(1));
+                csz(1)=istep*abs(s.lon(2)-s.lon(1));
+                csz(2)=istep*abs(s.lat(2)-s.lat(1));
             end
-            s2.x=lon;
-            s2.y=lat;
+            s2.x=lon(1:istep:end);
+            s2.y=lat(1:istep:end);
             s2.dx=csz(1);
             s2.dy=csz(2);
         end
         
-        s2.(parameter{ipar})(:,:,n)=val;
+        s2.(parameter{ipar})(:,:,n)=val(1:istep:end,1:istep:end);
         
     end
     
