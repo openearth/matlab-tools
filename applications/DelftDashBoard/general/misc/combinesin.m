@@ -1,4 +1,4 @@
-function [a3 phi3] = combinesin(a1, phi1, a2, phi2)
+function [a3 phi3] = combinesin(a1, phi1, a2, phi2,varargin)
 %COMBINESIN  One line description goes here.
 %
 %   More detailed description goes here.
@@ -64,9 +64,27 @@ function [a3 phi3] = combinesin(a1, phi1, a2, phi2)
 % $Keywords: $
 
 %%
+
+operation='add';
+
+for ii=1:length(varargin)
+    if ischar(varargin{ii})
+        switch lower(varargin{ii})
+            case{'subtract'}
+                operation='subtract';
+        end
+    end
+end
+
 c1=a1.*exp(i*phi1);
 c2=a2.*exp(i*phi2);
-c3=c1+c2;
+
+switch operation
+    case{'add'}
+        c3=c1+c2;
+    otherwise
+        c3=c1-c2;
+end
 
 a=real(c3);
 b=imag(c3);

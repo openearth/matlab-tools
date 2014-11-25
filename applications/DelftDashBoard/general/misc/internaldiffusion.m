@@ -65,8 +65,8 @@ end
 isn=isnan(z);
 
 if ~isempty(find(~isnan(z)))
-    %z=fillValues(z,mask,'quickndirty');
-    z=fillValues(z,mask,'notquickndirty');
+    z=fillValues(z,mask,'quickndirty');
+    %z=fillValues(z,mask,'notquickndirty');
     z=smoothing(z,isn,mask,nsteps,fac);
 end
 
