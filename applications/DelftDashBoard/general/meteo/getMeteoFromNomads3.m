@@ -90,11 +90,12 @@ switch lower(meteosource)
 end
 
 try
-    
+
+    usenetcdfjava=getpref('SNCTOOLS','USE_NETCDF_JAVA');
+
     switch lower(meteosource)
         case{'hirlam'}
-            usenetcdfjava=getpref('SNCTOOLS','USE_NETCDF_JAVA');
-            setpref ( 'SNCTOOLS','USE_NETCDF_JAVA'   , 1); % This requires SNCTOOLS 2.4.8 or better
+            setpref( 'SNCTOOLS','USE_NETCDF_JAVA'   , 1); % This requires SNCTOOLS 2.4.8 or better
             tms=nc_varget(urlstr,'time');
             tmin=datenum(1970,1,1)+tms(1)/1440;
             tmax=datenum(1970,1,1)+tms(end)/1440;
@@ -107,6 +108,7 @@ try
             latstr='y';
             missvalstr=[];
         otherwise
+            setpref( 'SNCTOOLS','USE_NETCDF_JAVA'   , 0); 
             tminstr=nc_attget(urlstr,'time','minimum');
             tmaxstr=nc_attget(urlstr,'time','maximum');
             tminstr=deblank(strrep(tminstr,'z',''));
@@ -290,10 +292,10 @@ catch
     
 end
 
-switch lower(meteosource)
-    case{'hirlam'}
+%switch lower(meteosource)
+%    case{'hirlam'}
         setpref ( 'SNCTOOLS','USE_NETCDF_JAVA'   , usenetcdfjava);
-end
+%end
     
 %%
 function tmin=GetDatenum(tmin)
