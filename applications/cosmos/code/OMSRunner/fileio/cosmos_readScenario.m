@@ -16,6 +16,24 @@ if strcmpi(opt,'first')
     hm.archiveinput=0;
     hm.archiveoutput=0;
     hm.archivefigures=0;
+    if isfield(xml,'archiveinput')
+        txt=xml.archiveinput;
+        if strcmpi(txt(1),'t')
+            hm.archiveinput=1;
+        end
+    end
+    if isfield(xml,'archiveoutput')
+        txt=xml.archiveoutput;
+        if strcmpi(txt(1),'t')
+            hm.archiveoutput=1;
+        end
+    end
+    if isfield(xml,'archivefigures')
+        txt=xml.archivefigures;
+        if strcmpi(txt(1),'t')
+            hm.archivefigures=1;
+        end
+    end
     
     nh=24*(now-floor(now));
     if nh>12

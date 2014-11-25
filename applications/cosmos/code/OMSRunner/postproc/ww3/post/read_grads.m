@@ -123,7 +123,11 @@ while ~feof(fid_ctl)
 end
 
 % Opening the binary file for later reading:
-fid_bin = fopen(header.DATANAME,'r', header.BINTYPE );
+[pathstr,name,ext]=fileparts(file_name);
+if ~isempty(pathstr)
+    pathstr=[pathstr filesep];
+end
+fid_bin = fopen([pathstr header.DATANAME],'r', header.BINTYPE );
 % disp(['BIN opened: ',num2str(fid_bin)])
 [header(1).FID] = {fid_ctl, fid_bin};
 
