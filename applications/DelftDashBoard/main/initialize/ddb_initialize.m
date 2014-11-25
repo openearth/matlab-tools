@@ -90,16 +90,16 @@ switch lower(varargin{1}),
                 
         disp('Initializing screen parameters ...');
         ddb_initializeScreenParameters;
-        
+ 
         disp('Initializing figure ...');
         ddb_initializeFigure;
-        
+
         disp('Initializing models ...');
         ddb_initializeModels;
-        
+
         disp('Initializing toolboxes ...');
         ddb_initializeToolboxes;
-        
+
         disp('Adding model tabpanels ...');
         ddb_addModelTabPanels;
         

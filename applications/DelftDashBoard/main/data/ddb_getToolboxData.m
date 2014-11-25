@@ -81,8 +81,8 @@ try
             % Very (!) dirty work around for now
             vrsn=str2double(handles.delftDashBoardVersion(end-3:end));
             if vrsn>=7213
-                urlwrite(['http://opendap.deltares.nl/static/deltares/delftdashboard/toolboxes/' servername '/ObservationStations.new.xml'],[localdir 'ObservationStations.xml']);
-                urlwrite(['http://opendap.deltares.nl/static/deltares/delftdashboard/toolboxes/' servername '/ndbc.new.mat'],[localdir 'ndbc.mat']);
+%                urlwrite(['http://opendap.deltares.nl/static/deltares/delftdashboard/toolboxes/' servername '/ObservationStations.new.xml'],[localdir 'ObservationStations.xml']);
+%                urlwrite(['http://opendap.deltares.nl/static/deltares/delftdashboard/toolboxes/' servername '/ndbc.new.mat'],[localdir 'ndbc.mat']);
             end
     end
 

@@ -121,8 +121,8 @@ for i=1:handles.model.(model).nrDomains
 end
 
 % Select toolbox tab.
-tabpanel('select','tag',handles.model.(model).name,'tabname','toolbox','runcallback',0);
-
+%tabpanel('select','tag',handles.model.(model).name,'tabname','toolbox','runcallback',0);
+tabpanel('select','handle',handles.model.(model).GUI.element.element.handle,'tabname','toolbox');
 %% And now set all elements and execute active tab!
 
 
