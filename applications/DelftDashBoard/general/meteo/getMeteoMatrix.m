@@ -73,14 +73,15 @@ end
 if lon(end)-lon(1)>350
     % Probably covering the entire globe
     if lon(1)>=0
-        lon=[lon-360 lon];
+        lon=[lon-360 lon lon+360];
+        val=[val val val];
     else
         lon=[lon lon+360];
+        val=[val val];
     end
-    val=[val val];
-    % Add one extra column
-    lon(end+1)=lon(end);
-    val(:,end+1)=val(:,end);
+%     % Add one extra column
+%     lon(end+1)=lon(end);
+%     val(:,end+1)=val(:,end);
 end
 
 if xlim(2)<lon(1)
