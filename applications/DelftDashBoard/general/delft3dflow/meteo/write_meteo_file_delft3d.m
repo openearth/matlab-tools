@@ -158,7 +158,7 @@ fmt=repmat(fmt,1,nrows);
 
 for it=1:length(parameter.time)
     tim=1440*(parameter.time(it)-reftime);
-    val=flipud(squeeze(parameter.val(:,:,it)));
+    val=flipud(squeeze(parameter.val(it,:,:)));
     val(val>1e7)=NaN;
     if ~isnan(max(max(val)))
         val(isnan(val))=-999;
