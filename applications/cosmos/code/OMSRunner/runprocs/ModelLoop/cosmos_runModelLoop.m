@@ -85,10 +85,10 @@ try
         end
     end
         
-    %%   Pre-Processing
     
-    % Check which models need to run next
-    [hm,WaitingList]=cosmos_updateWaitingList(hm);
+    %%   Pre-Processing
+
+    [hm,WaitingList]=cosmos_updateWaitingList(hm);    
     
     % If there are model ready to run ...
     if ~isempty(WaitingList)

@@ -3,6 +3,19 @@ function [hm,WaitingList]=cosmos_updateWaitingList(hm)
 
 j=0;
 
+WaitingList=[];
+if strcmpi(hm.runEnv,'win32')
+    % Wait for models to finish
+    for ii=1:hm.nrModels
+        if strcmpi(hm.models(ii).status,'running')
+            % Wait for this model to finish
+            return;
+        end
+    end
+end
+    
+% Check which models need to run next
+
 for i=1:hm.nrModels
     if strcmpi(hm.models(i).status,'waiting') && hm.models(i).priority>0 && hm.models(i).run
         if ~hm.models(i).flowNested && ~hm.models(i).waveNested
@@ -46,6 +59,10 @@ end
 if j>0
     [y,ii]=sort(priority,'descend');
     WaitingList=tmplist(ii);
+    if strcmpi(hm.runEnv,'win32')
+        WaitingList=WaitingList(1);
+    end
 else
     WaitingList=[];
 end
+

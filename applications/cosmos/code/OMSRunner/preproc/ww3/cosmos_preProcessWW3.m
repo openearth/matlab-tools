@@ -48,7 +48,7 @@ fname='ww3.wnd';
 xlim=model.xLim;
 ylim=model.yLim;
 tstart=model.tWaveStart;
-tstop=model.tWaveStop;
+tstop=model.tStop;
 parameter={'u','v'};
 mdl='ww3';
 

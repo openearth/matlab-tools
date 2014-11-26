@@ -95,7 +95,7 @@ switch lower(model.type)
                 fprintf(fid,'%s\n','set flowexedir=%d3d_path%\flow2d3d\bin');
                 fprintf(fid,'%s\n','set flowlibdir=%d3d_path%\flow2d3d\lib');
                 fprintf(fid,'%s\n','set PATH=%flowexedir%;%flowlibdir%;%PATH%');
-                fprintf(fid,'%s\n','%flowexedir%\d_hydro.exe %argfile% > out.scr');
+                fprintf(fid,'%s\n','%flowexedir%\d_hydro.exe %argfile%');
                 fprintf(fid,'%s\n','move running.txt finished.txt');                
                 fprintf(fid,'%s\n','exit');                
                 fclose(fid);

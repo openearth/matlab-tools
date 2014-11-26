@@ -51,6 +51,8 @@ if ~isempty(model.meteowind)
             dy=[];
         end
         
+        reftime=model.refTime;
+        
         % Wind
         try
             meteodir=[hm.meteofolder model.meteowind filesep];
