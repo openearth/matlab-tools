@@ -6,7 +6,7 @@ xml=xml2struct(fname);
 
 if strcmpi(opt,'first')
     
-    hm.runEnv='win32';
+    hm.runEnv='h4';
     if isfield(xml,'runenv')
         hm.runEnv=xml.runenv;
     end
