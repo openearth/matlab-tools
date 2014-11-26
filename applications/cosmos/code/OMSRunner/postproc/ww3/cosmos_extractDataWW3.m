@@ -126,7 +126,7 @@ if model.nrStations>0
             save(fname,'-struct','s3','Parameter','Time','Val');
             
             % Tp
-            fname=[archdir 'tp.' st '.mat'];
+            fname=[appendeddirtimeseries 'tp.' st '.mat'];
             
             s.Time=[];
             s.Val=[];
@@ -143,7 +143,6 @@ if model.nrStations>0
                 end
             end
             
-            % wave heights
             s2.Val=tp(:,istat);
             s2.Time=t;
             
