@@ -126,7 +126,7 @@ else
       
       disp(['Reading ASCII fourier file, please wait ...'])
       t0  = clock;
-      TEK = tekal('open',tekfile);
+      TEK = tekal('open',tekfile,'loaddata');
       dt  = etime(clock,t0);
       dt  = etime(clock,t0);
       disp([' ,, in ',num2str(dt),' sec.'])
