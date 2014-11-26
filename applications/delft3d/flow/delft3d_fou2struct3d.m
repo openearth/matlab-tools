@@ -120,7 +120,10 @@ for ifield = 1:nfield
    for icom=1:ncom
        if any(strfind(Comments{icom},'Results fourier analysis on'));ind = strfind(Comments{icom},':');TEK.Field(ifield).varname = strtrim(Comments{icom}(ind+1:end));end % mutually exclusive
        if any(strfind(Comments{icom},'Elliptic parameters of     '));ind = strfind(Comments{icom},':');TEK.Field(ifield).varname = strtrim(Comments{icom}(ind+1:end));end % mutually exclusive
-       if any(strfind(Comments{icom},'Layer number'               ));ind = strfind(Comments{icom},':');TEK.Field(ifield).k       = str2num(Comments{icom}(ind+1:end));end
+       if any(strfind(Comments{icom},'Layer number'               ));ind = strfind(Comments{icom},':');TEK.Field(ifield).k       = str2num(Comments{icom}(ind+1:end));
+       else
+           TEK.Field(ifield).k=1;
+       end
        if any(strfind(Comments{icom},'Reference date in YYYYMMDD' ));ind = strfind(Comments{icom},':');TEK.Field(ifield).itdate  = str2num(Comments{icom}(ind+1:end));end    
        if any(strfind(Comments{icom},'Starttime fourier analysis' ));ind = strfind(Comments{icom},':');TEK.Field(ifield).tstart  = str2num(Comments{icom}(ind+1:end));end    
        if any(strfind(Comments{icom},'Stoptime  fourier analysis' ));ind = strfind(Comments{icom},':');TEK.Field(ifield).tstop   = str2num(Comments{icom}(ind+1:end));end    
