@@ -64,9 +64,12 @@ if strcmpi(gridtype,'structured')
 else
     % TODO determine minimum and maximum grid spacing fro unstructured
     % grids
-    dmin=100;
-    dmax=100;
+    dmin=5000;
+    dmax=5000;
 end
+
+xg0=xg;
+yg0=yg;
 
 for id=1:length(datasets)   
 
@@ -84,7 +87,7 @@ for id=1:length(datasets)
     iac=strmatch(lower(bathyset),lower(bathymetry.datasets),'exact');
     dataCoord.name=bathymetry.dataset(iac).horizontalCoordinateSystem.name;
     dataCoord.type=bathymetry.dataset(iac).horizontalCoordinateSystem.type;
-    [xg,yg]=ddb_coordConvert(xg,yg,coord,dataCoord);
+    [xg,yg]=ddb_coordConvert(xg0,yg0,coord,dataCoord);
 
     % Determine bounding box
     xl(1)=min(min(xg));
@@ -143,6 +146,6 @@ if overwrite
 else
     % Only use fill original bathymetry matrix with new data
     zgnew=zg0;
-    zgnew(~isnan(zg0))=zg(~isnan(zg0));
+    zgnew(isnan(zg0))=zg(isnan(zg0));
 end
 

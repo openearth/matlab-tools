@@ -97,7 +97,7 @@ if ~isempty(handles.model.delft3dflow.domain(id).grdFile)
         z=handles.model.delft3dflow.domain(id).depth;
         
         % Boundary locations
-        handles.model.delft3dflow.domain(id).openBoundaries=findBoundarySectionsOnStructuredGrid(handles.model.delft3dflow.domain(id).openBoundaries,z,zmax,d);
+        handles.model.delft3dflow.domain(id).openBoundaries=findBoundarySectionsOnStructuredGrid(handles.model.delft3dflow.domain(id).openBoundaries,z,zmax,d,'dpsopt',handles.model.delft3dflow.domain(id).dpsOpt);
 
         nb=length(handles.model.delft3dflow.domain(id).openBoundaries);
         handles.model.delft3dflow.domain(id).nrOpenBoundaries=nb;

@@ -143,7 +143,6 @@ for id=1:length(datasets)
     zmn=zmin(idata);
     zmx=zmax(idata);
     offset=verticaloffsets(idata);
-
         
     % Convert grid to cs of background image
     iac=strmatch(lower(bathyset),lower(bathymetry.datasets),'exact');
