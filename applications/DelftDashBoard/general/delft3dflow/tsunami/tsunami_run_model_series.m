@@ -23,6 +23,11 @@ end
 inputdir=[dr filesep 'input' filesep];
 runsdir=[dr filesep 'runs' filesep];
 
+
+if ~isdir(runsdir)
+    mkdir(runsdir);
+end
+
 if ~isdir([runsdir filesep run])
     mkdir([runsdir filesep run]);
 end
@@ -51,7 +56,7 @@ for imodel=1:nmodels
             ok=0;
         end
     end
-       
+
     if isfield(xml,'flownested') && ok
         if ~isempty(xml.flownested)
             %
@@ -153,6 +158,7 @@ for imodel=1:nmodels
             
             newSys.name='WGS 84';
             newSys.type='geographic';
+
             grd=wlgrid('read',[rundir filesep mdlname '.grd']);
             [xz,yz]=getXZYZ(grd.X,grd.Y);
             

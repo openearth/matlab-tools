@@ -251,7 +251,7 @@ for ig=1:ngrids
     isn=isnan(z);              % Missing indices in depth matrix    
     mask=zeros(size(z))+1;
     mask(isnan(xz))=0;         % Missing indices in grid matrix     
-    z=internaldiffusion(z,'mask',mask);    
+    z=internaldiffusion(z,'mask',mask); 
     isn2=logical(isn.*mask);   % Only update points that did not have a depth, but were in an active grid
     z(isn2)=min(z(isn2),-2);
 
@@ -261,6 +261,7 @@ for ig=1:ngrids
     
     % Make depth of non-active grid points NaN
     z(isnan(x))=NaN;
+    z(isnan(xz))=NaN;
     ddb_wldep('write',[dr filesep modelname filesep 'input' filesep modelname '.dep'],z);
     
     % Creates RGH file, based on land/water grid cell

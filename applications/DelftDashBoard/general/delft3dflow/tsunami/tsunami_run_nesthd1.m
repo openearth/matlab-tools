@@ -83,6 +83,11 @@ for jj=1:length(overallmodellist)
                     delete('tmp.enc');
                 end
             end
+            try
+                if exist('out.scr','file')
+                    delete('out.scr');
+                end
+            end
             
         end
         
