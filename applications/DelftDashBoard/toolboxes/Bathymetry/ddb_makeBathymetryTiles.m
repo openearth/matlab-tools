@@ -257,7 +257,8 @@ if imaketiles
 %                         [x,y,zz]=readArcInfo(fname1,'x',xx,'y',yy);
 %                         %                        zz(1:(j2-j1+1),1:(i2-i1+1))=single(z);
 %                     else
-                        zz(1:(j2-j1+1),1:(i2-i1+1))=single(z(j1:j2,i1:i2));
+                        zsingle=full(z(j1:j2,i1:i2));
+                        zz(1:(j2-j1+1),1:(i2-i1+1))=single(zsingle);
 %                     end
                     
                     %                    zz(1:(j2-j1+1),1:(i2-i1+1))=single(z(j1:j2,i1:i2));

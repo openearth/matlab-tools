@@ -117,11 +117,11 @@ try
         case{'arcbinarygrid'}
             wb = waitbox('Reading data file ...');
             [x,y,z,m] = arc_info_binary([fileparts(handles.toolbox.bathymetry.import.dataFile) filesep]);
-            clear x y z
             x0=m.X(1);
             y0=m.Y(end);
             dx=x(2)-x(1);
             dy=y(2)-y(1);
+            clear x y z
         case{'matfile'}
             wb = waitbox('Reading data file ...');
             s=load(handles.toolbox.bathymetry.import.dataFile);
@@ -281,17 +281,18 @@ ddb_makeBathymetryTiles(fname,dr,dataname,dataformat,datatype,nx,ny,x0,y0,dx,dy,
 
 % Now add data to data xml
 fname = [handles.bathymetry.dir 'bathymetry.xml'];
-xmldata = xml_load(fname);
-nd=length(xmldata)+1;
-xmldata(nd).dataset.name=dataname;
-xmldata(nd).dataset.longName=handles.toolbox.bathymetry.import.attributes.title;
-xmldata(nd).dataset.version='1';
-xmldata(nd).dataset.type='netCDFtiles';
-xmldata(nd).dataset.edit='0';
-xmldata(nd).dataset.URL=[handles.toolbox.bathymetry.import.dataDir handles.toolbox.bathymetry.import.dataName];
-xmldata(nd).dataset.useCache='1';
-xmldata(nd).dataset.source=datasource;
-xml_save(fname,xmldata,'off');
+%xmldata = xml_load(fname);
+xmldata = xml2struct(fname);
+nd=length(xmldata.dataset)+1;
+xmldata.dataset(nd).dataset.name=dataname;
+xmldata.dataset(nd).dataset.longName=handles.toolbox.bathymetry.import.attributes.title;
+xmldata.dataset(nd).dataset.version='1';
+xmldata.dataset(nd).dataset.type='netCDFtiles';
+xmldata.dataset(nd).dataset.edit='0';
+xmldata.dataset(nd).dataset.URL=[handles.toolbox.bathymetry.import.dataDir handles.toolbox.bathymetry.import.dataName];
+xmldata.dataset(nd).dataset.useCache='1';
+xmldata.dataset(nd).dataset.source=datasource;
+struct2xml(fname,xmldata,'structuretype','short');
 
 % Find all bathymetries again
 handles.bathymetry=ddb_findBathymetryDatabases(handles.bathymetry);
