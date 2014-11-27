@@ -1,11 +1,9 @@
-function ddb_ModelMakerToolbox_roughness(varargin)
-%DDB_MODELMAKERTOOLBOX_ROUGHNESS  One line description goes here.
-%
-%   More detailed description goes here.
+function ddb_NestingToolbox_ww3_nest1(varargin)
+%ddb_NestingToolbox_ww3_nest1
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2013 Deltares
+%   Copyright (C) 2014 Deltares
 %       Maarten van Ormondt
 %
 %       Maarten.vanOrmondt@deltares.nl
@@ -38,60 +36,59 @@ function ddb_ModelMakerToolbox_roughness(varargin)
 % Created: 02 Dec 2011
 % Created with Matlab version: 7.11.0.584 (R2010b)
 
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
+% $Id: ddb_NestingToolbox_Delft3DWAVE_nest1.m 10447 2014-03-26 07:06:47Z ormondt $
+% $Date: 2014-03-26 08:06:47 +0100 (Wed, 26 Mar 2014) $
+% $Author: ormondt $
+% $Revision: 10447 $
+% $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/DelftDashBoard/toolboxes/Nesting/ddb_NestingToolbox_Delft3DWAVE_nest1.m $
 % $Keywords: $
 
 %%
-handles=getHandles;
-ddb_zoomOff;
-
 if isempty(varargin)
     % New tab selected
+    ddb_zoomOff;
     ddb_refreshScreen;
-    setHandles(handles);
+    setInstructions({'','Click Make Nesting Sections in order to generate observation points in the overall grid', ...
+                'The overall model domain must be selected!'});
 else
-    
     %Options selected
-    
     opt=lower(varargin{1});
-    
     switch opt
-        case{'generateroughness'}
-            generateRoughness;
+        case{'nest1'}
+            nest1;
     end
-    
 end
 
-%% 
-function generateRoughness
+%%
+function nest1
 
 handles=getHandles;
 
-model=handles.activeModel.name;
-
-[filename, pathname, filterindex] = uiputfile('*.rgh', 'Roughness File Name',[handles.model.(model).domain(ad).attName '.rgh']);
-
-if pathname~=0
-
-    d=handles.model.(model).domain(ad).depth;
-    rgh=zeros(size(d));
-    rgh(rgh==0)=NaN;    
-    rgh(d>handles.toolbox.modelmaker.roughness.landelevation)=handles.toolbox.modelmaker.roughness.landroughness;
-    rgh(isnan(rgh))=handles.toolbox.modelmaker.roughness.searoughness;
-    ddb_wldep('write',[pathname filename],rgh,'negate','n');
-    ddb_wldep('append',[pathname filename],rgh,'negate','n');
-    
-    handles.model.(model).domain(ad).uniformRoughness=0;
-    if strcmpi(pwd,pathname(1:end-1))
-        handles.model.(model).domain(ad).rghFile=filename;
-    else
-        handles.model.(model).domain(ad).rghFile=[pathname filename];
-    end
-    
-    setHandles(handles);
-
+if isempty(handles.toolbox.nesting.ww3_grid_file)
+    ddb_giveWarning('text','Please first load ww3_shel file of nested model!');
+    return
 end
+
+if handles.model.ww3.domain.nx<=0
+    ddb_giveWarning('text','Please first load or create model grid!');
+    return    
+end
+
+[x0,y0,dx,dy,np]=ww3_define_nesting_sections(handles.toolbox.nesting.ww3_grid_file);
+nsec=length(x0);
+
+% Store in domain structure
+ww3=handles.model.ww3.domain;
+nobp=length(ww3.output_boundary_points);
+nobp=nobp+1;
+for ii=1:nsec
+    ww3.output_boundary_points(nobp).line(ii).x0=x0(ii);
+    ww3.output_boundary_points(nobp).line(ii).y0=y0(ii);
+    ww3.output_boundary_points(nobp).line(ii).dx=dx(ii);
+    ww3.output_boundary_points(nobp).line(ii).dy=dy(ii);
+    ww3.output_boundary_points(nobp).line(ii).np=np(ii);
+end
+handles.model.ww3.domain=ww3;
+
+setHandles(handles);
+

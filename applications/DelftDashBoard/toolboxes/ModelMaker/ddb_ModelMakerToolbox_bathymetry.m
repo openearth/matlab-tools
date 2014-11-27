@@ -186,6 +186,8 @@ switch lower(handles.activeModel.name)
         handles=ddb_ModelMakerToolbox_DFlowFM_generateBathymetry(handles,datasets,'modeloffset',handles.toolbox.modelmaker.bathymetry.verticalDatum);
     case{'xbeach'}
         handles=ddb_ModelMakerToolbox_XBeach_generateBathymetry(handles,datasets,'modeloffset',handles.toolbox.modelmaker.bathymetry.verticalDatum);
+    case{'ww3'}
+        handles=ddb_ModelMakerToolbox_ww3_generate_bathymetry(handles,datasets,'modeloffset',handles.toolbox.modelmaker.bathymetry.verticalDatum);
 end
 
 setHandles(handles);

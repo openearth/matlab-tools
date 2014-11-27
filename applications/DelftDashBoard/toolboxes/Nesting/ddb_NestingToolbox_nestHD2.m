@@ -113,6 +113,7 @@ if ~isempty(opt)
     % Run Nesthd2
     cs=handles.screenParameters.coordinateSystem.type;
     bnd=nesthd2('openboundaries',bnd,'vertgrid',vertGrid,'hisfile',hisfile,'admfile',nestadm,'zcor',z0,'stride',stride,'opt',opt,'coordinatesystem',cs,'save','n');
+%    bnd=nesthd2_new('openboundaries',bnd,'vertgrid',vertGrid,'hisfile',hisfile,'admfile',nestadm,'zcor',z0,'stride',stride,'opt',opt,'coordinatesystem',cs,'save','n');
     
     zersunif=zeros(2,1);
     

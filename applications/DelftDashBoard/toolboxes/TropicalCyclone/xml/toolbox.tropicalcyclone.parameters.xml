@@ -100,6 +100,15 @@
     </dependency>
   </element>
   <element>
+    <style>edit</style>
+    <position>400 50 50 20</position>
+    <text>Wind Conversion Factor</text>
+    <textposition>left</textposition>
+    <variable>handles.toolbox.tropicalcyclone.windconversionfactor</variable>
+    <type>real</type>
+    <tooltipstring>Edit wind speed conversion factor (e.g. in order to convert from 1-minute to 10-minutes max sustained winds)</tooltipstring>
+  </element>
+  <element>
     <style>pushbutton</style>
     <position>480 110 90 20</position>
     <text>Draw Track</text>

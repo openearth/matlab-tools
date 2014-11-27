@@ -54,5 +54,11 @@
       <formodel>fast</formodel>
       <element>toolbox.nesting.fast.xml</element>
     </tab>    
+    <tab>
+      <tabstring>Nesting - 1</tabstring>
+      <callback>ddb_NestingToolbox_ww3_nest1</callback>
+      <formodel>ww3</formodel>
+      <element>toolbox.nesting.ww3.nest1.xml</element>
+    </tab>
   </element>
 </root>

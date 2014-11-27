@@ -113,12 +113,15 @@ for ipli=1:length(boundaries)
     % Loop through polylines
 
     % Read boundary pli
-    [x,y]=landboundary('read',boundaries(ipli).filename);
+    dr=fileparts(extfile);
+    [x,y]=landboundary('read',[dr filesep boundaries(ipli).filename]);
     
     % Convert pli to current coordinate system (when necessary)
-    if ~strcmpi(csoverall.name,csdetail.name) || ~strcmpi(csoverall.type,csdetail.type)
-        [x,y]=convertCoordinates(x,y,'CS1.name',csdetail.name,'CS1.type',csdetail.type, ...
-            'CS2.name',csoverall.name,'CS2.type',csoverall.type);
+    if ~strcmpi(csdetail.name,'unspecified')
+        if ~strcmpi(csoverall.name,csdetail.name) || ~strcmpi(csoverall.type,csdetail.type)
+            [x,y]=convertCoordinates(x,y,'CS1.name',csdetail.name,'CS1.type',csdetail.type, ...
+                'CS2.name',csoverall.name,'CS2.type',csoverall.type);
+        end
     end
     
     % Find grid cells

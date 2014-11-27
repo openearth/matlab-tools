@@ -9,6 +9,7 @@ str=fgetl(fid);
 f=strread(str,'%s','delimiter',' ');
 t0=datenum(f{1}(1:10),'yyyymmddHH');
 tc.name=f{3};
+tc.advisorynumber=str2double(f{4});
 it=0;
 while 1
     str=fgetl(fid);
@@ -72,7 +73,9 @@ while 1
     n=n+1;
     str=fgetl(fid);
     f=strread(str,'%s','delimiter',' ');
-    if strcmpi(f{1},'//')
+    jjj=strfind(str,'//');
+%    if strcmpi(f{1},'//')
+    if ~isempty(jjj)
         istart=n+1;
     end
     if strcmpi(f{1},'NNNN')

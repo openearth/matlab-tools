@@ -499,8 +499,15 @@ for i=1:handles.model.delft3dflow.nrDomains-1
         runid1=handles.model.delft3dflow.domain(i).runid;
         runid2=handles.model.delft3dflow.domain(j).runid;
         ddbound=ddb_findDDBoundaries(ddbound,xg1,yg1,xg2,yg2,runid1,runid2);
+%        ddbound=ddb_findDDBoundaries(ddbound,xg2,yg2,xg1,yg1,runid1,runid2);
     end
 end
+
+
+ddbound=handles.model.delft3dflow.DDBoundaries;
+
+
+handles.model.delft3dflow.DDBoundaries=ddbound;
 
 if ~isempty(ddbound)
     if handles.toolbox.dd.adjustBathymetry
@@ -513,6 +520,9 @@ if ~isempty(ddbound)
                 runid1=handles.model.delft3dflow.domain(i).runid;
                 runid2=handles.model.delft3dflow.domain(j).runid;
                 [z1,z2]=ddb_matchDDDepths(ddbound,z1,z2,runid1,runid2,handles.model.delft3dflow.domain(i).dpsOpt);
+
+                
+                
                 handles.model.delft3dflow.domain(i).depth=z1;
                 handles.model.delft3dflow.domain(j).depth=z2;
             end
@@ -526,7 +536,6 @@ if ~isempty(ddbound)
     end
 end
 
-handles.model.delft3dflow.DDBoundaries=ddbound;
 
 handles=ddb_Delft3DFLOW_plotDD(handles,'plot');
 

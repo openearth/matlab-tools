@@ -118,6 +118,7 @@ handles.toolbox.tropicalcyclone.radius=1000;
 handles.toolbox.tropicalcyclone.nrRadialBins=500;
 handles.toolbox.tropicalcyclone.nrDirectionalBins=36;
 handles.toolbox.tropicalcyclone.method=4;
+handles.toolbox.tropicalcyclone.windconversionfactor=1.0;
 
 handles.toolbox.tropicalcyclone.deleteTemporaryFiles=1;
 

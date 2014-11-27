@@ -6,35 +6,35 @@
   <element>
     <style>checkbox</style>
     <position>20 170 50 20</position>
-    <variable>handles.toolbox.observationstations.includename</variable>
+    <variable>includename</variable>
     <type>integer</type>
     <text>Include station name in file name</text>
   </element>
   <element>
     <style>checkbox</style>
     <position>20 140 50 20</position>
-    <variable>handles.toolbox.observationstations.includeid</variable>
+    <variable>includeid</variable>
     <type>integer</type>
     <text>Include station ID in file name</text>
   </element>
   <element>
     <style>checkbox</style>
     <position>20 110 50 20</position>
-    <variable>handles.toolbox.observationstations.includedatabase</variable>
+    <variable>includedatabase</variable>
     <type>integer</type>
     <text>Include database in file name</text>
   </element>
   <element>
     <style>checkbox</style>
     <position>20 80 50 20</position>
-    <variable>handles.toolbox.observationstations.includetimestamp</variable>
+    <variable>includetimestamp</variable>
     <type>integer</type>
     <text>Include timestamp in file name</text>
   </element>
   <element>
     <style>checkbox</style>
     <position>20 50 50 20</position>
-    <variable>handles.toolbox.observationstations.exportallparameters</variable>
+    <variable>exportallparameters</variable>
     <type>integer</type>
     <text>Export all parameters (not just selected parameter)</text>
   </element>

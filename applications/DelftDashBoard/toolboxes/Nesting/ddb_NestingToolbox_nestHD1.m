@@ -82,135 +82,202 @@ function nestHD1
 
 handles=getHandles;
 
-switch handles.toolbox.nesting.detailmodeltype
-
+switch lower(handles.activeModel.name)
     case{'delft3dflow'}
         
-        if isempty(handles.toolbox.nesting.grdFile)
-            ddb_giveWarning('text','Please first load grid file of nested model!');
-            return
-        end
-        
-        if isempty(handles.toolbox.nesting.encFile)
-            ddb_giveWarning('text','Please first load enclosure file of nested model!');
-            return
-        end
-        
-        if isempty(handles.toolbox.nesting.bndFile)
-            ddb_giveWarning('text','Please first load boundary file of nested model!');
-            return
-        end
-        
-        if isempty(handles.model.delft3dflow.domain(ad).gridX)
-            ddb_giveWarning('text','Please first load or create model grid!');
-            return
-        end
+        %% Overall model is Delft3D-FLOW
+
+        switch handles.toolbox.nesting.detailmodeltype
+            
+            case{'delft3dflow'}
+
+                %% Detail model is Delft3D-FLOW
                 
-        grdfile=handles.toolbox.nesting.grdFile;
-        
-        % Convert grid (if necessary)
-        if ~strcmpi(handles.toolbox.nesting.detailmodelcsname,'unspecified')
-            grd=ddb_wlgrid('read',handles.toolbox.nesting.grdFile);
-            cs1.name=handles.toolbox.nesting.detailmodelcsname;
-            cs1.type=handles.toolbox.nesting.detailmodelcstype;
-            cs2=handles.screenParameters.coordinateSystem;
-            [grd.X,grd.Y]=convertCoordinates(grd.X,grd.Y,'CS1.name',cs1.name,'CS1.type',cs1.type,'CS2.name',cs2.name,'CS2.type',cs2.type);
-            ddb_wlgrid('write','TMP.grd',grd);
-            switch cs2.type
-                case{'geographic'}
-                    grd.CoordinateSystem='Spherical';
-                otherwise
-                    grd.CoordinateSystem='Cartesian';
-            end
-            grdfile='TMP.grd';
+                if isempty(handles.toolbox.nesting.grdFile)
+                    ddb_giveWarning('text','Please first load grid file of nested model!');
+                    return
+                end
+                
+                if isempty(handles.toolbox.nesting.encFile)
+                    ddb_giveWarning('text','Please first load enclosure file of nested model!');
+                    return
+                end
+                
+                if isempty(handles.toolbox.nesting.bndFile)
+                    ddb_giveWarning('text','Please first load boundary file of nested model!');
+                    return
+                end
+                
+                if isempty(handles.model.delft3dflow.domain(ad).gridX)
+                    ddb_giveWarning('text','Please first load or create model grid!');
+                    return
+                end
+                
+                grdfile=handles.toolbox.nesting.grdFile;
+                
+                % Convert grid (if necessary)
+                if ~strcmpi(handles.toolbox.nesting.detailmodelcsname,'unspecified')
+                    grd=ddb_wlgrid('read',handles.toolbox.nesting.grdFile);
+                    cs1.name=handles.toolbox.nesting.detailmodelcsname;
+                    cs1.type=handles.toolbox.nesting.detailmodelcstype;
+                    cs2=handles.screenParameters.coordinateSystem;
+                    [grd.X,grd.Y]=convertCoordinates(grd.X,grd.Y,'CS1.name',cs1.name,'CS1.type',cs1.type,'CS2.name',cs2.name,'CS2.type',cs2.type);
+                    switch lower(cs2.type)
+                        case{'geographic'}
+                            grd.CoordinateSystem='Spherical';
+                        otherwise
+                            grd.CoordinateSystem='Cartesian';
+                    end
+                    ddb_wlgrid('write','TMP.grd',grd);
+                    grdfile='TMP.grd';
+                end
+                
+                fid=fopen('nesthd1.inp','wt');
+                fprintf(fid,'%s\n',handles.model.delft3dflow.domain(ad).grdFile);
+                fprintf(fid,'%s\n',handles.model.delft3dflow.domain(ad).encFile);
+                %        fprintf(fid,'%s\n',handles.toolbox.nesting.grdFile);
+                fprintf(fid,'%s\n',grdfile);
+                fprintf(fid,'%s\n',handles.toolbox.nesting.encFile);
+                fprintf(fid,'%s\n',handles.toolbox.nesting.bndFile);
+                fprintf(fid,'%s\n',handles.toolbox.nesting.admFile);
+                fprintf(fid,'%s\n','ddtemp.obs');
+                fclose(fid);
+                
+                %system(['"' handles.toolbox.nesting.dataDir 'nesthd1" < nesthd1.inp']);
+                % Should use the nesthd1 compiled for this system if that is
+                % available
+                if exist([handles.model.delft3dflow.exedir,'nesthd1.exe'],'file'),
+                    system(['"' handles.model.delft3dflow.exedir 'nesthd1" < nesthd1.inp']);
+                else
+                    system(['"' handles.toolbox.nesting.dataDir 'nesthd1" < nesthd1.inp']);
+                end
+                
+                [name,m,n] = textread('ddtemp.obs','%21c%f%f');
+                
+                k=handles.model.delft3dflow.domain(ad).nrObservationPoints;
+                for i=1:length(m)
+                    % Check if observation point already exists
+                    nm=deblank(name(i,:));
+                    ii=strmatch(nm,handles.model.delft3dflow.domain(ad).observationPointNames,'exact');
+                    if isempty(ii)
+                        % Observation point does not yet exist
+                        k=k+1;
+                        handles.model.delft3dflow.domain(ad).observationPoints(k).name=nm;
+                        handles.model.delft3dflow.domain(ad).observationPoints(k).M=m(i);
+                        handles.model.delft3dflow.domain(ad).observationPoints(k).N=n(i);
+                        handles.model.delft3dflow.domain(ad).observationPoints(k).x=handles.model.delft3dflow.domain(ad).gridXZ(m(i),n(i));
+                        handles.model.delft3dflow.domain(ad).observationPoints(k).y=handles.model.delft3dflow.domain(ad).gridYZ(m(i),n(i));
+                        handles.model.delft3dflow.domain(ad).observationPointNames{k}=handles.model.delft3dflow.domain(ad).observationPoints(k).name;
+                    end
+                end
+                delete('nesthd1.inp');
+                try
+                    delete('ddtemp.obs');
+                end
+                handles.model.delft3dflow.domain(ad).nrObservationPoints=length(handles.model.delft3dflow.domain(ad).observationPoints);
+                
+                handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','observationpoints','domain',ad,'visible',1,'active',0);
+                
+                setHandles(handles);
+                
+            case{'dflowfm'}
+
+                %% Detail model is DFLOW-FM
+
+                if isempty(handles.toolbox.nesting.extfile)
+                    ddb_giveWarning('text','Please first load external forcing file of nested model!');
+                    return
+                end
+                
+                cs.name=handles.toolbox.nesting.detailmodelcsname;
+                cs.type=handles.toolbox.nesting.detailmodelcstype;
+                
+                newpoints=ddb_nesthd1_dflowfm_in_delft3dflow('admfile',handles.toolbox.nesting.admFile,'extfile',handles.toolbox.nesting.extfile, ...
+                    'grdfile',handles.model.delft3dflow.domain(ad).grdFile,'encfile',handles.model.delft3dflow.domain(ad).encFile, ...
+                    'csoverall',handles.screenParameters.coordinateSystem,'csdetail',cs);
+                
+                if ~isempty(newpoints)
+                    k=handles.model.delft3dflow.domain(ad).nrObservationPoints;
+                    for ip=1:length(newpoints)
+                        % Check if observation point already exists
+                        nm=deblank(newpoints(ip).name);
+                        ii=strmatch(nm,handles.model.delft3dflow.domain(ad).observationPointNames,'exact');
+                        if isempty(ii)
+                            % Observation point does not yet exist
+                            k=k+1;
+                            handles.model.delft3dflow.domain(ad).observationPoints(k).name=nm;
+                            handles.model.delft3dflow.domain(ad).observationPoints(k).M=newpoints(ip).m;
+                            handles.model.delft3dflow.domain(ad).observationPoints(k).N=newpoints(ip).n;
+                            handles.model.delft3dflow.domain(ad).observationPoints(k).x=handles.model.delft3dflow.domain(ad).gridXZ(newpoints(ip).m,newpoints(ip).n);
+                            handles.model.delft3dflow.domain(ad).observationPoints(k).y=handles.model.delft3dflow.domain(ad).gridYZ(newpoints(ip).m,newpoints(ip).n);
+                            handles.model.delft3dflow.domain(ad).observationPointNames{k}=handles.model.delft3dflow.domain(ad).observationPoints(k).name;
+                        end
+                    end
+                    handles.model.delft3dflow.domain(ad).activeObservationPoint=1;
+                    handles.model.delft3dflow.domain(ad).nrObservationPoints=k;
+                    handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','observationpoints','domain',ad,'visible',1,'active',0);
+                    setHandles(handles);
+                end
+                
         end
-        
-        fid=fopen('nesthd1.inp','wt');
-        fprintf(fid,'%s\n',handles.model.delft3dflow.domain(ad).grdFile);
-        fprintf(fid,'%s\n',handles.model.delft3dflow.domain(ad).encFile);
-%        fprintf(fid,'%s\n',handles.toolbox.nesting.grdFile);
-        fprintf(fid,'%s\n',grdfile);
-        fprintf(fid,'%s\n',handles.toolbox.nesting.encFile);
-        fprintf(fid,'%s\n',handles.toolbox.nesting.bndFile);
-        fprintf(fid,'%s\n',handles.toolbox.nesting.admFile);
-        fprintf(fid,'%s\n','ddtemp.obs');
-        fclose(fid);
-        
-        %system(['"' handles.toolbox.nesting.dataDir 'nesthd1" < nesthd1.inp']);
-        % Should use the nesthd1 compiled for this system if that is
-        % available
-        if exist([handles.model.delft3dflow.exedir,'nesthd1.exe'],'file'),
-            system(['"' handles.model.delft3dflow.exedir 'nesthd1" < nesthd1.inp']);
-        else
-            system(['"' handles.toolbox.nesting.dataDir 'nesthd1" < nesthd1.inp']);
-        end
-        
-        [name,m,n] = textread('ddtemp.obs','%21c%f%f');
-        
-        k=handles.model.delft3dflow.domain(ad).nrObservationPoints;
-        for i=1:length(m)
-            % Check if observation point already exists
-            nm=deblank(name(i,:));
-            ii=strmatch(nm,handles.model.delft3dflow.domain(ad).observationPointNames,'exact');
-            if isempty(ii)
-                % Observation point does not yet exist
-                k=k+1;
-                handles.model.delft3dflow.domain(ad).observationPoints(k).name=nm;
-                handles.model.delft3dflow.domain(ad).observationPoints(k).M=m(i);
-                handles.model.delft3dflow.domain(ad).observationPoints(k).N=n(i);
-                handles.model.delft3dflow.domain(ad).observationPoints(k).x=handles.model.delft3dflow.domain(ad).gridXZ(m(i),n(i));
-                handles.model.delft3dflow.domain(ad).observationPoints(k).y=handles.model.delft3dflow.domain(ad).gridYZ(m(i),n(i));
-                handles.model.delft3dflow.domain(ad).observationPointNames{k}=handles.model.delft3dflow.domain(ad).observationPoints(k).name;
-            end
-        end
-        delete('nesthd1.inp');
-        try
-            delete('ddtemp.obs');
-        end
-        handles.model.delft3dflow.domain(ad).nrObservationPoints=length(handles.model.delft3dflow.domain(ad).observationPoints);
-        
-        handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','observationpoints','domain',ad,'visible',1,'active',0);
-        
-        setHandles(handles);
         
     case{'dflowfm'}
-
-        if isempty(handles.toolbox.nesting.extfile)
-            ddb_giveWarning('text','Please first load external forcing file of nested model!');
-            return
-        end
         
-        cs.name=handles.toolbox.nesting.detailmodelcsname;
-        cs.type=handles.toolbox.nesting.detailmodelcstype;
+        %% Overall model is DFLOW-FM
 
-        newpoints=ddb_nesthd1_dflowfm_in_delft3dflow('admfile',handles.toolbox.nesting.admFile,'extfile',handles.toolbox.nesting.extfile, ...
-            'grdfile',handles.model.delft3dflow.domain(ad).grdFile,'encfile',handles.model.delft3dflow.domain(ad).encFile, ...
-            'csoverall',handles.screenParameters.coordinateSystem,'csdetail',cs);        
-        
-        if ~isempty(newpoints)            
-            k=handles.model.delft3dflow.domain(ad).nrObservationPoints;
-            for ip=1:length(newpoints)
-                % Check if observation point already exists
-                nm=deblank(newpoints(ip).name);
-                ii=strmatch(nm,handles.model.delft3dflow.domain(ad).observationPointNames,'exact');
-                if isempty(ii)
-                    % Observation point does not yet exist
-                    k=k+1;
-                    handles.model.delft3dflow.domain(ad).observationPoints(k).name=nm;
-                    handles.model.delft3dflow.domain(ad).observationPoints(k).M=newpoints(ip).m;
-                    handles.model.delft3dflow.domain(ad).observationPoints(k).N=newpoints(ip).n;
-                    handles.model.delft3dflow.domain(ad).observationPoints(k).x=handles.model.delft3dflow.domain(ad).gridXZ(newpoints(ip).m,newpoints(ip).n);
-                    handles.model.delft3dflow.domain(ad).observationPoints(k).y=handles.model.delft3dflow.domain(ad).gridYZ(newpoints(ip).m,newpoints(ip).n);
-                    handles.model.delft3dflow.domain(ad).observationPointNames{k}=handles.model.delft3dflow.domain(ad).observationPoints(k).name;
+        switch handles.toolbox.nesting.detailmodeltype
+            
+            case{'delft3dflow'}
+
+                %% Detail model is Delft3D-FLOW
+                
+                ddb_giveWarning('Sorry, this function has not been implemented yet ...');
+
+            case{'dflowfm'}
+
+                %% Detail model is DFLOW-FM
+
+                if isempty(handles.toolbox.nesting.extfile)
+                    ddb_giveWarning('text','Please first load external forcing file of nested model!');
+                    return
                 end
-            end
-            handles.model.delft3dflow.domain(ad).activeObservationPoint=1;
-            handles.model.delft3dflow.domain(ad).nrObservationPoints=k;
-            handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','observationpoints','domain',ad,'visible',1,'active',0);        
-            setHandles(handles);
+                
+                cs.name=handles.toolbox.nesting.detailmodelcsname;
+                cs.type=handles.toolbox.nesting.detailmodelcstype;
+                
+                newpoints=ddb_nesthd1_dflowfm_in_dflowfm('extfile',handles.toolbox.nesting.extfile, ...
+                    'csoverall',handles.screenParameters.coordinateSystem,'csdetail',cs);
+                
+                if ~isempty(newpoints)
+                    
+                    k=handles.model.dflowfm.domain(ad).nrobservationpoints;
+                    
+                    for ip=1:length(newpoints)
+                        handles.model.dflowfm.domain(ad).observationpoints(ip+k).name=newpoints(ip).name;
+                        handles.model.dflowfm.domain(ad).observationpoints(ip+k).x=newpoints(ip).x;
+                        handles.model.dflowfm.domain(ad).observationpoints(ip+k).y=newpoints(ip).y;
+                        handles.model.dflowfm.domain(ad).observationpointnames{ip+k}=newpoints(ip).name;
+                    end
+                    
+                    handles.model.dflowfm.domain(ad).nrobservationpoints=k+length(newpoints);
+
+                    [filename, pathname, filterindex] = uiputfile('*.xyn', 'Observation File Name',[handles.model.dflowfm.domain(ad).attName '.xyn']);
+                    if pathname~=0
+%                        ddb_DFlowFM_addTideStations;
+%                        handles=getHandles;
+                        handles.model.dflowfm.domain(ad).obsfile=filename;
+                        ddb_DFlowFM_saveObsFile(handles,ad);
+                        handles=ddb_DFlowFM_plotObservationPoints(handles,'plot','visible',1,'active',0);
+                        setHandles(handles);
+                    end
+                    
+                end
+                
+                
         end
         
 end
+
 
 %%
 function selectCS

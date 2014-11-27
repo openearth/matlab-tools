@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<root>
+  <element>
+    <style>panel</style>
+    <position>10 10 500 130</position>
+    <text>Detailed Model</text>
+  </element>
+  <element>
+    <style>pushselectfile</style>
+    <position>20 100 150 20</position>
+    <text>Select ww3_grid.inp</text>
+    <variable>handles.toolbox.nesting.ww3_grid_file</variable>
+    <showfilename>yes</showfilename>
+    <extension>ww3_grid.inp</extension>
+    <selectiontext>Select ww3_grid.inp file of detailed model</selectiontext>
+    <tooltipstring>Select ww3_grid.inp file of detailed model</tooltipstring>
+  </element>
+  <element>
+    <style>pushbutton</style>
+    <position>600 15 150 20</position>
+    <text>Make Nesting Sections</text>
+    <callback>ddb_NestingToolbox_ww3_nest1</callback>
+    <option1>nest1</option1>
+    <tooltipstring>Make nesting sections for overall model</tooltipstring>
+  </element>
+</root>

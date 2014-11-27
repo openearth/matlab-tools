@@ -147,6 +147,13 @@
     <tooltipstring>Check to only use the 13 main components (M2,S2,K2,N2,K1,O1,P1,Q1,MF,MM,M4,MS4,MN4) from this station</tooltipstring>
   </element>
   <element>
+    <style>checkbox</style>
+    <position>460 30 130 20</position>
+    <text>XTide</text>
+    <variable>handles.toolbox.tidestations.use_xtide</variable>
+    <tooltipstring>Use XTide engine to generate time series, instead of t_tide. This option must be used for the XTide datasets!</tooltipstring>
+  </element>
+  <element>
     <style>edit</style>
     <position>650 130 110 20</position>
     <variable>handles.toolbox.tidestations.startTime</variable>

@@ -102,7 +102,7 @@ if ~isempty(opt)
     
     % Make structure info for nesthd2
 %    bnd=handles.Model(md).Input(ad).openBoundaries;
-    bnd=handles.Model(md).Input(ad).boundaries;
+    bnd=handles.model.dflowfm.domain.boundaries;
     
     % Vertical grid info
 %     vertGrid.KMax=handles.Model(md).Input(ad).KMax;
@@ -115,8 +115,9 @@ if ~isempty(opt)
 
     % Run Nesthd2
     cs=handles.screenParameters.coordinateSystem.type;
-    bnd=nesthd2_new('input',handles.Model(md).Input,'openboundaries',bnd,'vertgrid',vertGrid,'hisfile',hisfile, ...
-        'admfile',nestadm,'zcor',z0,'stride',stride,'opt',opt,'coordinatesystem',cs,'save','n');
+    bnd=nesthd2_new('input',handles.model.dflowfm.domain,'openboundaries',bnd,'vertgrid',vertGrid,'hisfile',hisfile, ...
+        'admfile',nestadm,'zcor',z0,'stride',stride,'opt',opt,'coordinatesystem',cs,'save','n','overallmodeltype','dflowfm');
+%        'admfile',nestadm,'zcor',z0,'stride',stride,'opt',opt,'coordinatesystem',cs,'save','n','overallmodeltype','delft3dflow');
     
     handles.model.dflowfm.domain.boundaries=bnd;
 

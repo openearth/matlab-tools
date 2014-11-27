@@ -120,6 +120,19 @@ handles.toolbox.observationstations.activeobservationstation=handles.toolbox.obs
 
 handles.toolbox.observationstations.observationstationshandle=[];
 
+% xl=handles.screenParameters.xLim;
+% yl=handles.screenParameters.yLim;
+% if (xl(2)-xl(1))*(yl(2)-yl(1))<25   
+%     k=handles.toolbox.observationstations.activedatabase;    
+%     database=ddb_ObservationStations_usgs('readdatabase','xlim',xl,'ylim',yl);
+%     fld=fieldnames(database);
+%     for j=1:length(fld)
+%         handles.toolbox.observationstations.database(k).(fld{j})=database.(fld{j});
+%     end
+%     handles.toolbox.observationstations.databaselongnames{k}=database.longname;
+%     handles.toolbox.observationstations.database(k).activeobservationstation=1;
+% end
+
 setHandles(handles);
 
 refreshStationList;
@@ -346,6 +359,7 @@ handles.toolbox.observationstations.polygony=y;
 handles.toolbox.observationstations.polygonlength=length(x);
 setHandles(handles);
 
+%%
 function data=downloadObservations(iac,istation,ipar,iquiet)
 
 handles=getHandles;
@@ -680,7 +694,7 @@ function editExportOptions
 handles=getHandles;
 
 xmldir=handles.toolbox.observationstations.xmlDir;
-xmlfile='observationstations.exportoptions.xml';
+xmlfile='toolbox.observationstations.exportoptions.xml';
 
 h=handles.toolbox.observationstations;
 
