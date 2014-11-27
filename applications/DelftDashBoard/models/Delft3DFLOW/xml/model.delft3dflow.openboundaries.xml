@@ -137,7 +137,7 @@
     <position>350 130 120 20</position>
     <onchange>ddb_Delft3DFLOW_openBoundaries</onchange>
     <option1>selecttype</option1>
-    <variable>handles.model.delft3dflow.domain(ad).activeBoundaryType</variable>
+    <variable>handles.model.delft3dflow.domain(ad).openBoundaries(handles.model.delft3dflow.domain(ad).activeOpenBoundary).type</variable>
     <type>string</type>
     <listtext>Water Level</listtext>
     <listtext>Current</listtext>
@@ -204,7 +204,7 @@
     <position>350 80 120 20</position>
     <onchange>ddb_Delft3DFLOW_openBoundaries</onchange>
     <option1>selectforcing</option1>
-    <variable>handles.model.delft3dflow.domain(ad).activeBoundaryForcing</variable>
+    <variable>handles.model.delft3dflow.domain(ad).openBoundaries(handles.model.delft3dflow.domain(ad).activeOpenBoundary).forcing</variable>
     <type>string</type>
     <listtext>Astronomic</listtext>
     <listtext>Harmonic</listtext>

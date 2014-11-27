@@ -131,6 +131,24 @@
     <position>590 90 60 20</position>
     <text>Vertical Eddy Viscosity (m^2/s)</text>
     <textposition>left</textposition>
+    <variable>handles.model.delft3dflow.domain(ad).vicoWW</variable>
+    <type>real</type>
+    <tooltipstring>Enter vertical eddy viscosity</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.delft3dflow.domain(ad).KMax</variable>
+        <value>1</value>
+        <operator>gt</operator>
+      </check>
+    </dependency>
+  </element>
+  <element>
+    <style>edit</style>
+    <position>590 65 60 20</position>
+    <text>Vertical Eddy Diffusivity (m^2/s)</text>
+    <textposition>left</textposition>
     <variable>handles.model.delft3dflow.domain(ad).dicoWW</variable>
     <type>real</type>
     <tooltipstring>Enter vertical eddy diffusivity</tooltipstring>
@@ -175,15 +193,6 @@
     <type>string</type>
     <value>Constant</value>
     <dependency>
-      <action>on</action>
-      <checkfor>all</checkfor>
-      <check>
-        <variable>handles.model.delft3dflow.domain(ad).verticalTurbulenceModel</variable>
-        <value>Constant</value>
-        <operator>eq</operator>
-      </check>
-    </dependency>
-    <dependency>
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
@@ -200,15 +209,6 @@
     <variable>handles.model.delft3dflow.domain(ad).verticalTurbulenceModel</variable>
     <type>string</type>
     <value>Algebraic</value>
-    <dependency>
-      <action>on</action>
-      <checkfor>all</checkfor>
-      <check>
-        <variable>handles.model.delft3dflow.domain(ad).verticalTurbulenceModel</variable>
-        <value>Algebraic</value>
-        <operator>eq</operator>
-      </check>
-    </dependency>
     <dependency>
       <action>enable</action>
       <checkfor>all</checkfor>
@@ -227,15 +227,6 @@
     <type>string</type>
     <value>K-L</value>
     <dependency>
-      <action>on</action>
-      <checkfor>all</checkfor>
-      <check>
-        <variable>handles.model.delft3dflow.domain(ad).verticalTurbulenceModel</variable>
-        <value>K-L</value>
-        <operator>eq</operator>
-      </check>
-    </dependency>
-    <dependency>
       <action>enable</action>
       <checkfor>all</checkfor>
       <check>
@@ -252,15 +243,6 @@
     <variable>handles.model.delft3dflow.domain(ad).verticalTurbulenceModel</variable>
     <type>string</type>
     <value>K-epsilon</value>
-    <dependency>
-      <action>on</action>
-      <checkfor>all</checkfor>
-      <check>
-        <variable>handles.model.delft3dflow.domain(ad).verticalTurbulenceModel</variable>
-        <value>K-epsilon</value>
-        <operator>eq</operator>
-      </check>
-    </dependency>
     <dependency>
       <action>enable</action>
       <checkfor>all</checkfor>

@@ -98,6 +98,15 @@
     <textposition>left</textposition>
   </element>
   <element>
+    <style>checkbox</style>
+    <position>480 30</position>
+    <text>Original Coriolis</text>
+    <variable>handles.model.delft3dflow.domain(ad).ocorio</variable>
+    <type>integer</type>
+    <value>1</value>
+    <tooltipstring>When checked, the original Coriolis implementation is used. When left unchecked, the implementation according to Kleptsova (2009) is applied.</tooltipstring>
+  </element>
+  <element>
     <style>popupmenu</style>
     <text>Advection Scheme for Momentum</text>
     <position>780 120 60 20</position>
@@ -124,5 +133,14 @@
         <operator>eq</operator>
       </check>
     </dependency>
+  </element>
+  <element>
+    <style>checkbox</style>
+    <position>780 60</position>
+    <text>Nudging</text>
+    <variable>handles.model.delft3dflow.domain(ad).nudge</variable>
+    <type>integer</type>
+    <value>1</value>
+    <tooltipstring>Apply nudging of constituent at open boundaries.</tooltipstring>
   </element>
 </root>

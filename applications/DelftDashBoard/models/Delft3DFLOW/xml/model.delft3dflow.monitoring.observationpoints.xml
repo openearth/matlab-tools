@@ -120,8 +120,16 @@
     <variable>handles.model.delft3dflow.domain(ad).changeObservationPoint</variable>
   </element>
   <element>
+    <style>pushbutton</style>
+    <position>440 85 90 20</position>
+    <text>Add From File</text>
+    <tooltipstring>Add observation points from annotation file</tooltipstring>
+    <callback>ddb_Delft3DFLOW_observationPoints</callback>
+    <option1>addobservationpointsfromfile</option1>
+  </element>
+  <element>
     <style>pushselectfile</style>
-    <position>450 60 70 20</position>
+    <position>550 60 70 20</position>
     <tooltipstring>Open observation points file</tooltipstring>
     <text>Open</text>
     <variable>handles.model.delft3dflow.domain(ad).obsFile</variable>
@@ -135,7 +143,7 @@
   </element>
   <element>
     <style>pushsavefile</style>
-    <position>450 35 70 20</position>
+    <position>550 35 70 20</position>
     <tooltipstring>Save observation points file</tooltipstring>
     <text>Save</text>
     <variable>handles.model.delft3dflow.domain(ad).obsFile</variable>

@@ -126,4 +126,29 @@
       </check>
     </dependency>
   </element>
+  <element>
+    <style>checkbox</style>
+    <text>Re-use TMP files</text>
+    <position>650 60</position>
+    <variable>handles.model.delft3dflow.domain(ad).retmp</variable>
+    <value>1</value>
+    <tooltipstring>Re-use temporary input files.</tooltipstring>
+  </element>
+  <element>
+    <style>checkbox</style>
+    <text>Store GLM velocities</text>
+    <position>650 35</position>
+    <variable>handles.model.delft3dflow.domain(ad).storeglm</variable>
+    <value>1</value>
+    <tooltipstring>Store GLM velocities i.s.o. Eulerian velocities.</tooltipstring>
+    <dependency>
+      <action>enable</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>handles.model.delft3dflow.domain(ad).waves</variable>
+        <value>1</value>
+        <operator>eq</operator>
+      </check>
+    </dependency>
+  </element>
 </root>
