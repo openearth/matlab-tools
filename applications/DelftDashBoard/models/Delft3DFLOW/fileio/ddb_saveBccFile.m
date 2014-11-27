@@ -73,29 +73,65 @@ Info.FileName=fname;
 kmax=Flw.KMax;
 
 k=0;
+iok=1;
 for n=1:nr
     if Flw.salinity.include
         k=k+1;
         Info=SetInfo(Info,Flw.itDate,Flw.openBoundaries(n),Flw.openBoundaries(n).salinity,'Salinity','[ppt]',k,n,kmax);
+        % Check times
+        if Flw.openBoundaries(n).salinity.timeSeriesT(1)>Flw.startTime
+            iok=0;
+        end
+        if Flw.openBoundaries(n).salinity.timeSeriesT(end)<Flw.stopTime
+            iok=0;
+        end
     end
     if Flw.temperature.include
         k=k+1;
         Info=SetInfo(Info,Flw.itDate,Flw.openBoundaries(n),Flw.openBoundaries(n).temperature,'Temperature','[C]',k,n,kmax);
+        % Check times
+        if Flw.openBoundaries(n).temperature.timeSeriesT(1)>Flw.startTime
+            iok=0;
+        end
+        if Flw.openBoundaries(n).temperature.timeSeriesT(end)<Flw.stopTime
+            iok=0;
+        end
     end
     if Flw.sediments.include
         for i=1:Flw.nrSediments
             k=k+1;
             Info=SetInfo(Info,Flw.itDate,Flw.openBoundaries(n),Flw.openBoundaries(n).sediment(i),Flw.sediment(i).name,'[kg/m3]',k,n,kmax);
+            % Check times
+            if Flw.openBoundaries(n).sediment(i).timeSeriesT(1)>Flw.startTime
+                iok=0;
+            end
+            if Flw.openBoundaries(n).sediment(i).timeSeriesT(end)<Flw.stopTime
+                iok=0;
+            end
         end
     end
     if Flw.tracers
         for i=1:Flw.nrTracers
             k=k+1;
             Info=SetInfo(Info,Flw.itDate,Flw.openBoundaries(n),Flw.openBoundaries(n).tracer(i),Flw.tracer(i).name,'[kg/m3]',k,n,kmax);
+            % Check times
+            if Flw.openBoundaries(n).tracer(i).timeSeriesT(1)>Flw.startTime
+                iok=0;
+            end
+            if Flw.openBoundaries(n).tracer(i).timeSeriesT(end)<Flw.stopTime
+                iok=0;
+            end
         end
     end
+    
 end
 ddb_bct_io('write',fname,Info);
+
+% Give warning if time series do not match simulation time
+if ~iok
+    ddb_giveWarning('text','Time series in bcc file do not cover entire simulation period!');
+end
+
 
 function Info=SetInfo(Info,itDate,Bnd,Par,quant,unit,k,nr,kmax)
 Info.NTables=k;

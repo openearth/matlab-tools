@@ -70,6 +70,9 @@ handles.model.delft3dflow.domain(id).description=MDF.runtxt;
 if isfield(MDF,'anglat')
     handles.model.delft3dflow.domain(id).latitude=MDF.anglat;
 end
+if isfield(MDF,'anglon')
+    handles.model.delft3dflow.domain(id).longitude=MDF.anglon;
+end
 handles.model.delft3dflow.domain(id).orientation=MDF.grdang;
 handles.model.delft3dflow.domain(id).encFile=MDF.filgrd;
 handles.model.delft3dflow.domain(id).MMax=MDF.mnkmax(1);
@@ -285,7 +288,9 @@ else
 end
 if isfield(MDF,'vicoww')
     handles.model.delft3dflow.domain(id).vicoWW=MDF.vicoww;
-    handles.model.delft3dflow.domain(id).vicoWW=MDF.dicoww;
+end
+if isfield(MDF,'dicoww')
+    handles.model.delft3dflow.domain(id).dicoWW=MDF.dicoww;
 end
 if MDF.equili(1)=='N'
     handles.model.delft3dflow.domain(id).equili=0;
@@ -296,6 +301,12 @@ if isempty(deblank(MDF.tkemod))
     handles.model.delft3dflow.domain(id).verticalTurbulenceModel='K-epsilon   ';
 else
     handles.model.delft3dflow.domain(id).verticalTurbulenceModel=MDF.tkemod;
+end
+if isfield(MDF,'filedy')
+    if ~isempty(MDF.filedy)
+        handles.model.delft3dflow.domain(id).edyFile=MDF.filedy;
+        handles.model.delft3dflow.domain(id).uniformEddyViscosity=0;
+    end
 end
 
 %% Morphology
@@ -385,6 +396,11 @@ handles.model.delft3dflow.domain(id).PHhydr=MDF.phhydr;
 handles.model.delft3dflow.domain(id).PHderv=MDF.phderv;       
 handles.model.delft3dflow.domain(id).PHproc=MDF.phproc;
 handles.model.delft3dflow.domain(id).PHflux=MDF.phflux;      
+if isfield(MDF,'smvelo')
+    if MDF.smvelo(1)=='G'
+        handles.model.delft3dflow.domain(id).storeglm=1;
+    end
+end
 
 %% Output
 handles.model.delft3dflow.domain(id).prHis=MDF.prhis;
@@ -495,6 +511,18 @@ end
 
 if isfield(MDF,'trafrm')
     handles.model.delft3dflow.domain(id).trafrm=MDF.trafrm;
+end
+
+if isfield(MDF,'retmp')
+    if strcmpi(MDF.retmp(1),'y')
+        handles.model.delft3dflow.domain(id).retmp=1;
+    end
+end
+
+if isfield(MDF,'ocorio')
+    if strcmpi(MDF.ocorio(1),'n')
+        handles.model.delft3dflow.domain(id).ocorio=0;
+    end
 end
 
 % Cstbnd= #yes#

@@ -75,6 +75,9 @@ MDF.Filcco=Flow.grdFile;
 MDF.Fmtcco='FR';
 if strcmp(handles.screenParameters.coordinateSystem.type,'Cartesian')
     MDF.Anglat=Flow.latitude;
+    if Flow.longitude~=0
+        MDF.Anglon=Flow.longitude;
+    end
 end
 MDF.Grdang=Flow.orientation;
 MDF.Filgrd=Flow.encFile;
@@ -152,6 +155,10 @@ switch Flow.windType
 end
 MDF.Wndint=Flow.wndInt;
 if Flow.wind
+    % Always write wnd file
+    if ~isempty(Flow.wndFile)
+        MDF.Filwnd=Flow.wndFile;
+    end
     switch Flow.windType
         case{'uniform'}
             if ~isempty(Flow.wndFile)
@@ -281,9 +288,9 @@ MDF.Wstres(2:2:2*Flow.nrWindStressBreakpoints) = Flow.windStressSpeeds;
 MDF.Rhoa=Flow.rhoAir;
 MDF.Betac=Flow.betaC;
 if Flow.equili==1
-    MDF.Equili='N';
-else
     MDF.Equili='Y';
+else
+    MDF.Equili='N';
 end
 if Flow.KMax>1
     MDF.Tkemod=[Flow.verticalTurbulenceModel repmat(' ',1,12-length(Flow.verticalTurbulenceModel))];
@@ -293,12 +300,14 @@ end
 MDF.Ktemp=Flow.kTemp;
 MDF.Fclou=Flow.fClou;
 MDF.Sarea=Flow.sArea;
-if Flow.kTemp~=0
+if Flow.kTemp~=0 && Flow.temperature.include
     MDF.Secchi=Flow.secchi;
     MDF.Stantn=Flow.stanton;
     MDF.Dalton=Flow.dalton;
+    try
     MDF.Filtmp=Flow.tmpFile;
     MDF.Fmttmp='FR';
+    end
     if ~isempty(Flow.amtFile)
         MDF.Filwt=Flow.amtFile;
     end
@@ -369,6 +378,9 @@ end
 MDF.Xlo=Flow.xlo;
 MDF.Vicouv=Flow.vicoUV;
 MDF.Dicouv=Flow.dicoUV;
+if ~isempty(Flow.edyFile)
+    MDF.Filedy=Flow.edyFile;
+end
 if Flow.HLES==1
     MDF.Htur2d='Y';
     MDF.Htural=Flow.Htural;
@@ -385,6 +397,7 @@ if Flow.KMax>1
     MDF.Vicoww=Flow.vicoWW;
     MDF.Dicoww=Flow.dicoWW;
 end
+
 MDF.Irov=Flow.irov;
 if Flow.irov==1
     MDF.Z0v=Flow.z0v;
@@ -458,6 +471,10 @@ MDF.PHderv=Flow.PHderv;
 MDF.PHproc=Flow.PHproc; 
 MDF.PHflux=Flow.PHflux; 
 
+if Flow.storeglm
+    MDF.SMvelo='GLM'; 
+end
+    
 if Flow.onlineVisualisation
     MDF.Online='Y';
 else
@@ -556,6 +573,14 @@ end
 
 if ~isempty(Flow.trafrm)
     MDF.TraFrm=Flow.trafrm;
+end
+
+if Flow.retmp
+    MDF.ReTMP='Y';
+end
+
+if ~Flow.ocorio
+    MDF.OCorio='N';
 end
 
 %% Now save everything to mdf file

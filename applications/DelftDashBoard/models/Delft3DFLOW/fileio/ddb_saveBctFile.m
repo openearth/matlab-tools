@@ -69,8 +69,11 @@ kmax=handles.model.delft3dflow.domain(id).KMax;
 Info.Check='OK';
 Info.FileName=fname;
 
+iok=1;
 k=0;
 for n=1:nr
+    quant2=[];
+    unit2=[];
     if handles.model.delft3dflow.domain(id).openBoundaries(n).forcing=='T'
         k=k+1;
         Info.NTables=k;
@@ -103,6 +106,16 @@ for n=1:nr
             case{'R'}
                 quant='Riemann         (R)  ';
                 unit='[m/s]';
+            case{'X'}
+                quant='Riemann         (R)  ';
+                unit='[m/s]';
+                quant2='Parallel Vel.   (C)  ';
+                unit2='[m/s]';
+            case{'P'}
+                quant='Current         (C)  ';
+                unit='[m/s]';
+                quant2='Parallel Vel.   (C)  ';
+                unit2='[m/s]';
         end
         t=(handles.model.delft3dflow.domain(id).openBoundaries(n).timeSeriesT-handles.model.delft3dflow.domain(id).itDate)*1440;
         Info.Table(k).Data(:,1)=t;
@@ -114,6 +127,14 @@ for n=1:nr
                 Info.Table(k).Parameter(3).Unit=unit;
                 Info.Table(k).Data(:,2)=handles.model.delft3dflow.domain(id).openBoundaries(n).timeSeriesA;
                 Info.Table(k).Data(:,3)=handles.model.delft3dflow.domain(id).openBoundaries(n).timeSeriesB;
+                if ~isempty(quant2)
+                    Info.Table(k).Parameter(4).Name=[quant2 'End A layer uniform'];
+                    Info.Table(k).Parameter(4).Unit=unit2;
+                    Info.Table(k).Parameter(5).Name=[quant2 'End B layer uniform'];
+                    Info.Table(k).Parameter(5).Unit=unit2;
+                    Info.Table(k).Data(:,4)=handles.model.delft3dflow.domain(id).openBoundaries(n).timeSeriesAV;
+                    Info.Table(k).Data(:,5)=handles.model.delft3dflow.domain(id).openBoundaries(n).timeSeriesBV;
+                end
             case{'3d-profile'}
                 j=1;
                 for kk=1:kmax
@@ -126,6 +147,18 @@ for n=1:nr
                     Info.Table(k).Parameter(j).Name=[quant 'End B layer: ' num2str(kk)];
                     Info.Table(k).Parameter(j).Unit=unit;
                 end
+                if ~isempty(quant2)
+                    for kk=1:kmax
+                        j=j+1;
+                        Info.Table(k).Parameter(j).Name=[quant2 'End A layer: ' num2str(kk)];
+                        Info.Table(k).Parameter(j).Unit=unit2;
+                    end
+                    for kk=1:kmax
+                        j=j+1;
+                        Info.Table(k).Parameter(j).Name=[quant2 'End B layer: ' num2str(kk)];
+                        Info.Table(k).Parameter(j).Unit=unit2;
+                    end
+                end
                 j=1;
                 for kk=1:kmax
                     j=j+1;
@@ -135,8 +168,33 @@ for n=1:nr
                     j=j+1;
                     Info.Table(k).Data(:,j)=handles.model.delft3dflow.domain(id).openBoundaries(n).timeSeriesB(:,kk);
                 end
+                if ~isempty(quant2)
+                    for kk=1:kmax
+                        j=j+1;
+                        Info.Table(k).Data(:,j)=handles.model.delft3dflow.domain(id).openBoundaries(n).timeSeriesAV(:,kk);
+                    end
+                    for kk=1:kmax
+                        j=j+1;
+                        Info.Table(k).Data(:,j)=handles.model.delft3dflow.domain(id).openBoundaries(n).timeSeriesBV(:,kk);
+                    end
+                end
         end
+        
+        % Check times
+        if handles.model.delft3dflow.domain(id).openBoundaries(n).timeSeriesT(1)>handles.model.delft3dflow.domain(id).startTime
+            iok=0;
+        end
+        if handles.model.delft3dflow.domain(id).openBoundaries(n).timeSeriesT(end)<handles.model.delft3dflow.domain(id).stopTime
+            iok=0;
+        end
+        
     end
 end
 ddb_bct_io('write',fname,Info);
+
+% Give warning if time series do not match simulation time
+if ~iok
+    ddb_giveWarning('text','Time series in bct file do not cover entire simulation period!');
+end
+
 
