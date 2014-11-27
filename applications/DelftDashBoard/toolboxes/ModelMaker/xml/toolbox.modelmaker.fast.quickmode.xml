@@ -13,7 +13,7 @@
     <tooltipstring>Edit x coordinate or longitude of grid origin</tooltipstring>
     <text>X Start</text>
     <textposition>left</textposition>
-    <onchange>ddb_ModelMakerToolbox_quickMode_FAST</onchange>
+    <onchange>ddb_ModelMakerToolbox_FAST_quickMode</onchange>
     <option1>editdemoutline</option1>
     <type>real</type>
     <variable>handles.toolbox.modelmaker.dem.xlim(1)</variable>
@@ -24,7 +24,7 @@
     <tooltipstring>Edit number of grid cells in M direction</tooltipstring>
     <text>Y Start</text>
     <textposition>left</textposition>
-    <onchange>ddb_ModelMakerToolbox_quickMode_FAST</onchange>
+    <onchange>ddb_ModelMakerToolbox_FAST_quickMode</onchange>
     <option1>editdemoutline</option1>
     <type>real</type>
     <variable>handles.toolbox.modelmaker.dem.ylim(1)</variable>
@@ -44,7 +44,7 @@
     <tooltipstring>Edit y coordinate or longitude of grid origin</tooltipstring>
     <text>X End</text>
     <textposition>left</textposition>
-    <onchange>ddb_ModelMakerToolbox_quickMode_FAST</onchange>
+    <onchange>ddb_ModelMakerToolbox_FAST_quickMode</onchange>
     <option1>editdemoutline</option1>
     <type>real</type>
     <variable>handles.toolbox.modelmaker.dem.xlim(2)</variable>
@@ -55,7 +55,7 @@
     <tooltipstring>Edit number of grid cells in N direction</tooltipstring>
     <text>Y End</text>
     <textposition>left</textposition>
-    <onchange>ddb_ModelMakerToolbox_quickMode_FAST</onchange>
+    <onchange>ddb_ModelMakerToolbox_FAST_quickMode</onchange>
     <option1>editdemoutline</option1>
     <type>integer</type>
     <variable>handles.toolbox.modelmaker.dem.ylim(2)</variable>
@@ -74,7 +74,7 @@
     <position>20 20 80 20</position>
     <tooltipstring>Push to draw DEM outline</tooltipstring>
     <text>Draw Outline</text>
-    <callback>ddb_ModelMakerToolbox_quickMode_FAST</callback>
+    <callback>ddb_ModelMakerToolbox_FAST_quickMode</callback>
     <option1>drawdemoutline</option1>
   </element>
   <element>
@@ -82,7 +82,7 @@
     <position>120 20 35 20</position>
     <tooltipstring>Load to create DEM</tooltipstring>
     <text>LOAD</text>
-    <callback>ddb_ModelMakerToolbox_quickMode_FAST</callback>
+    <callback>ddb_ModelMakerToolbox_FAST_quickMode</callback>
     <option1>loaddem</option1>
   </element>
   <element>
@@ -90,7 +90,7 @@
     <position>160 20 50 20</position>
     <tooltipstring>Push to create DEM</tooltipstring>
     <text>CREATE</text>
-    <callback>ddb_ModelMakerToolbox_quickMode_FAST</callback>
+    <callback>ddb_ModelMakerToolbox_FAST_quickMode</callback>
     <option1>makedem</option1>
   </element>
   <element>
@@ -157,7 +157,7 @@
     <position>240 20 100 20</position>
     <tooltipstring>Push to draw polygon in which depth contours will be scanned</tooltipstring>
     <text>Draw Polygon</text>
-    <callback>ddb_ModelMakerToolbox_quickMode_FAST</callback>
+    <callback>ddb_ModelMakerToolbox_FAST_quickMode</callback>
     <option1>drawpolygon</option1>
   </element>
   <element>
@@ -165,7 +165,7 @@
     <position>355 20 35 20</position>
     <tooltipstring>Load to create DEM</tooltipstring>
     <text>LOAD</text>
-    <callback>ddb_ModelMakerToolbox_quickMode_FAST</callback>
+    <callback>ddb_ModelMakerToolbox_FAST_quickMode</callback>
     <option1>loadpoints</option1>
   </element>
   <element>
@@ -173,7 +173,7 @@
     <position>400 20 50 20</position>
     <tooltipstring>Push to create points along depth contours</tooltipstring>
     <text>CREATE</text>
-    <callback>ddb_ModelMakerToolbox_quickMode_FAST</callback>
+    <callback>ddb_ModelMakerToolbox_FAST_quickMode</callback>
     <option1>createpoints</option1>
   </element>
   <element>
@@ -181,7 +181,7 @@
     <position>600 20 60 20</position>
     <tooltipstring>Push to create points along depth contours</tooltipstring>
     <text>RUN</text>
-    <callback>ddb_ModelMakerToolbox_quickMode_FAST</callback>
+    <callback>ddb_ModelMakerToolbox_FAST_quickMode</callback>
     <option1>runfast</option1>
   </element>
 </root>

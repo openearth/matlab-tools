@@ -38,7 +38,7 @@
     <style>pushbutton</style>
     <position>870 10 100 20</position>
     <text>GENERATE</text>
-    <callback>ddb_ModelMakerToolbox_roughness</callback>
+    <callback>ddb_ModelMakerToolbox_Delft3DFLOW_roughness</callback>
     <option1>generateroughness</option1>
     <tooltipstring>Generate model roughness</tooltipstring>
   </element>

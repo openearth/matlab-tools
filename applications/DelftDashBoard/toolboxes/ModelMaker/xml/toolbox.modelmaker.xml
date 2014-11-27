@@ -9,44 +9,45 @@
     <tab>
       <formodel>delft3dflow</formodel>
       <tabstring>Quick Mode</tabstring>
-      <callback>ddb_ModelMakerToolbox_quickMode</callback>
-      <element>toolbox.modelmaker.quickmode.delft3dflow.xml</element>
+      <callback>ddb_ModelMakerToolbox_Delft3DFLOW_quickMode</callback>
+      <element>toolbox.modelmaker.delft3dflow.quickmode.xml</element>
     </tab>
     <tab>
       <formodel>dflowfm</formodel>
       <tabstring>Quick Mode</tabstring>
-      <callback>ddb_ModelMakerToolbox_quickMode_DFlowFM</callback>
-      <element>toolbox.modelmaker.quickmode.dflowfm.xml</element>
+      <callback>ddb_ModelMakerToolbox_DFlowFM_quickMode</callback>
+      <element>toolbox.modelmaker.dflowfm.quickmode.xml</element>
     </tab>
     <tab>
       <formodel>delft3dwave</formodel>
       <tabstring>Quick Mode</tabstring>
-      <callback>ddb_ModelMakerToolbox_quickMode_Delft3DWAVE</callback>
-      <element>toolbox.modelmaker.quickmode.delft3dwave.xml</element>
+      <callback>ddb_ModelMakerToolbox_Delft3DWAVE_quickMode</callback>
+      <element>toolbox.modelmaker.delft3dwave.quickmode.xml</element>
     </tab>
     <tab>
       <formodel>xbeach</formodel>
       <tabstring>Quick Mode</tabstring>
-      <callback>ddb_ModelMakerToolbox_quickMode_XBeach</callback>
-      <element>toolbox.modelmaker.quickmode.xbeach.xml</element>
+      <callback>ddb_ModelMakerToolbox_XBeach_quickMode</callback>
+      <element>toolbox.modelmaker.xbeach.quickmode.xml</element>
     </tab>
     <tab>
       <formodel>fast</formodel>
       <tabstring>Quick Mode</tabstring>
-      <callback>ddb_ModelMakerToolbox_quickMode</callback>
-      <element>toolbox.modelmaker.quickmode.fast.xml</element>
+      <callback>ddb_ModelMakerToolbox_FAST_quickMode</callback>
+      <element>toolbox.modelmaker.fast.quickmode.xml</element>
+    </tab>
+    <tab>
+      <formodel>ww3</formodel>
+      <tabstring>Quick Mode</tabstring>
+      <callback>ddb_ModelMakerToolbox_ww3_quickMode</callback>
+      <element>toolbox.modelmaker.ww3.quickmode.xml</element>
     </tab>
     <tab>
       <formodel>delft3dflow</formodel>
       <formodel>dflowfm</formodel>
       <formodel>fast</formodel>
-      <tabstring>Bathymetry</tabstring>
-      <callback>ddb_ModelMakerToolbox_bathymetry</callback>
-      <enable>1</enable>
-      <element>toolbox.modelmaker.bathymetry.xml</element>
-    </tab>
-    <tab>
       <formodel>delft3dwave</formodel>
+      <formodel>ww3</formodel>
       <tabstring>Bathymetry</tabstring>
       <callback>ddb_ModelMakerToolbox_bathymetry</callback>
       <enable>1</enable>
@@ -55,22 +56,22 @@
     <tab>
       <formodel>delft3dflow</formodel>
       <tabstring>Initial Conditions</tabstring>
-      <callback>ddb_ModelMakerToolbox_initialConditions</callback>
+      <callback>ddb_ModelMakerToolbox_Delft3DFLOW_initialConditions</callback>
       <enable>1</enable>
-      <element>toolbox.modelmaker.initialconditions.xml</element>
+      <element>toolbox.modelmaker.delft3dflow.initialconditions.xml</element>
     </tab>
     <tab>
       <formodel>delft3dflow</formodel>
       <tabstring>Boundary Conditions</tabstring>
-      <callback>ddb_ModelMakerToolbox</callback>
+      <callback>ddb_ModelMakerToolbox_Delft3DFLOW_boundaryConditions</callback>
       <enable>0</enable>
-      <element>toolbox.modelmaker.boundaryconditions.xml</element>
+      <element>toolbox.modelmaker.delft3dflow.boundaryconditions.xml</element>
     </tab>
     <tab>
       <formodel>delft3dflow</formodel>
       <tabstring>Roughness</tabstring>
-      <callback>ddb_ModelMakerToolbox_roughness</callback>
-      <element>toolbox.modelmaker.roughness.delft3dflow.xml</element>
+      <callback>ddb_ModelMakerToolbox_Delft3DFLOW_roughness</callback>
+      <element>toolbox.modelmaker.delft3dflow.roughness.xml</element>
     </tab>
   </element>
 </root>
