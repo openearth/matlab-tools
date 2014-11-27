@@ -299,6 +299,7 @@ handles.model.delft3dflow.domain(id).nrTracers=0;
 handles.model.delft3dflow.domain(id).nrConstituents=0;
 
 handles.model.delft3dflow.domain(id).latitude=0.0;
+handles.model.delft3dflow.domain(id).longitude=0.0;
 handles.model.delft3dflow.domain(id).orientation=0.0;
 handles.model.delft3dflow.domain(id).thick=100;
 handles.model.delft3dflow.domain(id).sumLayers=100;
@@ -342,6 +343,8 @@ handles.model.delft3dflow.domain(id).PHhydr='#YYYYYY#';
 handles.model.delft3dflow.domain(id).PHderv='#YYY#';       
 handles.model.delft3dflow.domain(id).PHproc='#YYYYYYYYYY#';
 handles.model.delft3dflow.domain(id).PHflux='#YYYY#';      
+
+handles.model.delft3dflow.domain(id).storeglm=0;
 
 handles.model.delft3dflow.domain(id).salinity.include=0;
 handles.model.delft3dflow.domain(id).temperature.include=0;
@@ -418,6 +421,7 @@ handles.model.delft3dflow.domain(id).momSol='Cyclic';
 handles.model.delft3dflow.domain(id).onlineVisualisation=0;
 handles.model.delft3dflow.domain(id).onlineWave=0;
 handles.model.delft3dflow.domain(id).nudge=0;
+handles.model.delft3dflow.domain(id).ocorio=1;
 
 % Heat model
 handles.model.delft3dflow.domain(id).kTemp=0;
@@ -547,4 +551,5 @@ handles.model.delft3dflow.domain(id).WAQcomInterval=0;
 handles.model.delft3dflow.domain(id).ilAggr = {'1'};
 handles.model.delft3dflow.domain(id).WaqAgg= 'active only';
 
+handles.model.delft3dflow.domain(id).retmp=0;
 
