@@ -45,7 +45,9 @@ function ddb_DFlowFM_saveTimFile(boundaries,ii,jj,refdate)
 
 fname=boundaries(ii).nodes(jj).timfile;
 
+data=zeros(length(boundaries(ii).nodes(jj).timeseries.time),size(boundaries(ii).nodes(jj).timeseries.value,2)+1);
+
 data(:,1)=1440*(boundaries(ii).nodes(jj).timeseries.time-refdate);
-data(:,2)=boundaries(ii).nodes(jj).timeseries.value;
+data(:,2:end)=boundaries(ii).nodes(jj).timeseries.value;
 
 save(fname,'-ascii','data');

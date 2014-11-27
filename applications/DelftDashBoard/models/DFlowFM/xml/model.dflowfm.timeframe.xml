@@ -22,7 +22,7 @@
     <tooltipstring>Edit model start time</tooltipstring>
     <text>Start Time</text>
     <textposition>left</textposition>
-    <onchange>ddb_updateOutputTimesDelft3DFlow</onchange>
+    <onchange>ddb_updateOutputTimesDelft3DFLOW</onchange>
   </element>
   <element>
     <style>edit</style>
@@ -32,7 +32,7 @@
     <tooltipstring>Edit model stop time</tooltipstring>
     <text>Stop Time</text>
     <textposition>left</textposition>
-    <onchange>ddb_updateOutputTimesDelft3DFlow</onchange>
+    <onchange>ddb_updateOutputTimesDelft3DFLOW</onchange>
   </element>
   <element>
     <style>popupmenu</style>

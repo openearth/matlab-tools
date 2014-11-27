@@ -43,7 +43,7 @@ function crosssections=ddb_DFlowFM_readCrsFile(filename)
 % $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/DelftDashBoard/models/DFlowFM/fileio/ddb_DFlowFM_saveBoundaryPolygons.m $
 % $Keywords: $
 
-crs=tekal('read',filename);
+crs=tekal('read',filename,'loaddata');
 for ic=1:length(crs.Field)
     crosssections(ic).name=crs.Field(ic).Name;
     crosssections(ic).x=crs.Field(ic).Data(:,1);

@@ -115,8 +115,10 @@
     <type>string</type>
     <listtext>Water Level</listtext>
     <listtext>Discharge</listtext>
+    <listtext>Riemann</listtext>
     <listvalue>waterlevelbnd</listvalue>
     <listvalue>dischargebnd</listvalue>
+    <listvalue>riemannbnd</listvalue>
     <dependency>
       <action>enable</action>
       <checkfor>all</checkfor>

@@ -45,7 +45,7 @@ function handles = ddb_readMDU(handles, filename, id)
 
 %%
 
-s = ddb_readDelft3D_keyWordFile(filename);
+s = ddb_readDelft3D_keyWordFile(filename,'firstcharacterafterdata','#');
 fldnames=fieldnames(s);
 for ii=1:length(fldnames)
     fldnames2=fieldnames(s.(fldnames{ii}));

@@ -60,19 +60,22 @@ while 1
         if strcmpi(str(1),'*')
             % Comment line
         else
+            
+            nis=find(str=='=');
             switch lower(str(1:6))
                 case{'quanti'}
                     n=n+1;
-                    s(n).quantity=str(10:end);
+                    s(n).quantity=deblank2(str(nis+1:end));
                 case{'filety'}
-                    s(n).filetype=str(10:end);
+                    s(n).filetype=deblank2(str(nis+1:end));
                 case{'filena'}
-                    s(n).filename=str(10:end);
+                    s(n).filename=deblank2(str(nis+1:end));
                 case{'method'}
-                    s(n).method=str(8:end);
+                    s(n).method=deblank2(str(nis+1:end));
                 case{'operan'}
-                    s(n).operand=str(9:end);
+                    s(n).operand=deblank2(str(nis+1:end));
             end
+            
         end
         
     end
@@ -90,6 +93,14 @@ nb=0;
 for ii=1:length(s)
     switch lower(s(ii).quantity)
         case{'waterlevelbnd'}
+            nb=nb+1;
+            plifile=s(ii).filename;
+            name=plifile(1:end-4);
+            [x,y]=landboundary('read',plifile);
+            boundaries = ddb_DFlowFM_initializeBoundary(boundaries,x,y,name,nb,handles.model.dflowfm.domain.tstart,handles.model.dflowfm.domain.tstop);
+            boundaries(nb).type=s(ii).quantity;
+            handles.model.dflowfm.domain.boundarynames{nb}=name;            
+        case{'riemannbnd'}
             nb=nb+1;
             plifile=s(ii).filename;
             name=plifile(1:end-4);

@@ -51,8 +51,8 @@ posx=[];
 iac=handles.toolbox.tidestations.activeDatabase;
 names=handles.toolbox.tidestations.database(iac).stationShortNames;
 
-xg=handles.model.dflowfm.domain(ad).gridX;
-yg=handles.model.dflowfm.domain(ad).gridY;
+xg=handles.model.dflowfm.domain(ad).netstruc.nodeX;
+yg=handles.model.dflowfm.domain(ad).netstruc.nodeY;
 
 xmin=min(min(xg));
 xmax=max(max(xg));
@@ -80,14 +80,17 @@ end
 % Find stations within grid
 nrp=0;
 if ~isempty(posx)
-    [m,n]=findgridcell(posx,posy,xg,yg);
-    [m,n]=CheckDepth(m,n,handles.model.dflowfm.domain(ad).depthZ);
-    for i=1:length(m)
-        if m(i)>0
+    [xx,yy,dd]=findNetCircumference(handles.model.dflowfm.domain(ad).netstruc);
+    inp1=inpolygon(posx,posy,xx,yy);
+    if ~isempty(handles.toolbox.tidestations.polygonx)
+        inp2=inpolygon(posx,posy,handles.toolbox.tidestations.polygonx,handles.toolbox.tidestations.polygony);
+    else
+        inp2=zeros(size(inp1))+1;
+    end
+    for i=1:length(posx)
+        if inp1(i)==1 && inp2(i)==1
             nrp=nrp+1;
             istation(nrp)=istat(i);
-            mm(nrp)=m(i);
-            nn(nrp)=n(i);
             posx2(nrp)=posx(i);
             posy2(nrp)=posy(i);
         end
@@ -104,38 +107,36 @@ for i=1:nrp
         name=handles.toolbox.tidestations.database(iac).idCodes{k};
     end
         
-    nobs=handles.model.dflowfm.domain(ad).nrObservationPoints;
+    nobs=handles.model.dflowfm.domain(ad).nrobservationpoints;
     Names{1}='';
     for n=1:nobs
-        Names{n}=handles.model.dflowfm.domain(ad).observationPoints(n).name;
+        Names{n}=handles.model.dflowfm.domain(ad).observationpoints(n).name;
     end
     
     if isempty(strmatch(name,Names,'exact'))
         nobs=nobs+1;
-        handles.model.dflowfm.domain(ad).observationPoints(nobs).M=mm(i);
-        handles.model.dflowfm.domain(ad).observationPoints(nobs).N=nn(i);
-        handles.model.dflowfm.domain(ad).observationPoints(nobs).x=posx2(i);
-        handles.model.dflowfm.domain(ad).observationPoints(nobs).y=posy2(i);
+        handles.model.dflowfm.domain(ad).observationpoints(nobs).x=posx2(i);
+        handles.model.dflowfm.domain(ad).observationpoints(nobs).y=posy2(i);
         lname=length(name);
         shortName=name(1:min(lname,20));
-        handles.model.dflowfm.domain(ad).observationPoints(nobs).name=name;
-        handles.model.dflowfm.domain(ad).observationPointNames{nobs}=name;
+        handles.model.dflowfm.domain(ad).observationpoints(nobs).name=name;
+        handles.model.dflowfm.domain(ad).observationpointnames{nobs}=name;
         Names{nobs}=name;
         
         % Add some extra information for CoSMoS toolbox
-        handles.model.dflowfm.domain(ad).observationPoints(nobs).longname=handles.toolbox.tidestations.database(iac).stationList{k};
-        handles.model.dflowfm.domain(ad).observationPoints(nobs).type='tidegauge';
-        handles.model.dflowfm.domain(ad).observationPoints(nobs).source=handles.toolbox.tidestations.database(iac).shortName;
-        handles.model.dflowfm.domain(ad).observationPoints(nobs).id=handles.toolbox.tidestations.database(iac).idCodes{k};
+        handles.model.dflowfm.domain(ad).observationpoints(nobs).longname=handles.toolbox.tidestations.database(iac).stationList{k};
+        handles.model.dflowfm.domain(ad).observationpoints(nobs).type='tidegauge';
+        handles.model.dflowfm.domain(ad).observationpoints(nobs).source=handles.toolbox.tidestations.database(iac).shortName;
+        handles.model.dflowfm.domain(ad).observationpoints(nobs).id=handles.toolbox.tidestations.database(iac).idCodes{k};
         
     end
     
-    handles.model.dflowfm.domain(ad).nrObservationPoints=nobs;
+    handles.model.dflowfm.domain(ad).nrobservationpoints=nobs;
     
 end
 
 if nrp>0
-    handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','observationpoints','domain',ad,'visible',1,'active',0);
+    handles=ddb_DFlowFM_plotObservationPoints(handles,'plot','active',0);
 end
 
 setHandles(handles);
