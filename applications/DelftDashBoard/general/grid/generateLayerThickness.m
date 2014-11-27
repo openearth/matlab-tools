@@ -161,8 +161,11 @@ else
     if ~isempty(thtop)
         
         % First layers above surface
-        kmax1=round(ztop/thtop);
-        thabovesurf=100*ztop/kmax1/zdif;
+%        unifdpt=40;
+        unifdpt=0;
+        
+        kmax1=round((ztop+unifdpt)/thtop);
+        thabovesurf=100*(ztop+unifdpt)/kmax1/zdif;
         thick1(1:kmax1,1)=thabovesurf;
         
         % And now layers below surface
