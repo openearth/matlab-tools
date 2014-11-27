@@ -137,7 +137,7 @@ setHandles(handles);
 function loadLayers
 handles=getHandles;
 [filename, pathname, filterindex] = uigetfile('*.lyr', 'Load layers file','');
-if ~isempty(pathname)
+if pathname~=0
     lyrs=load([pathname filename]);
     sm=sum(lyrs);
     if abs(sm-100)<1e-8
@@ -208,8 +208,10 @@ if zmax>handles.model.delft3dflow.domain(ad).zTop
         case 'Yes'
             [filename, pathname, filterindex] = uiputfile('*.dep', 'Select depth file',handles.model.delft3dflow.domain(ad).depFile);
             if ~isempty(pathname)
-                handles.model.delft3dflow.domain(ad).depFile=filename;                
+                handles.model.delft3dflow.domain(ad).depFile=filename;
+                isn=isnan(handles.model.delft3dflow.domain(ad).depth);
                 handles.model.delft3dflow.domain(ad).depth=min(handles.model.delft3dflow.domain(ad).depth,handles.model.delft3dflow.domain(ad).zTop);
+                handles.model.delft3dflow.domain(ad).depth(isn)=NaN;
                 ddb_wldep('write',filename,handles.model.delft3dflow.domain(ad).depth);
                 handles=ddb_Delft3DFLOW_plotBathy(handles,'plot','domain',ad);
             end

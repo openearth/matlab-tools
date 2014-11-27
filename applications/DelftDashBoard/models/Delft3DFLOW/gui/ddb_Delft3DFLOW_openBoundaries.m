@@ -68,6 +68,9 @@ ddb_setWindowButtonMotionFcn;
 
 if isempty(varargin)
     ddb_refreshScreen;
+%     iac=handles.model.delft3dflow.domain(ad).activeOpenBoundary;
+%     handles.model.delft3dflow.domain(ad).activeBoundaryType=handles.model.delft3dflow.domain(ad).openBoundaries(iac).type;
+%     handles.model.delft3dflow.domain(ad).activeBoundaryType=handles.model.delft3dflow.domain(ad).openBoundaries(iac).type;
     handles=ddb_Delft3DFLOW_plotAttributes(handles,'update','openboundaries');
     setHandles(handles);
 else
@@ -190,23 +193,24 @@ else
             refreshOpenBoundaries;
             
         case{'selecttype'}
-            tp=handles.model.delft3dflow.domain(ad).activeBoundaryType;
-            if strcmpi(tp,handles.model.delft3dflow.domain(ad).openBoundaries(handles.model.delft3dflow.domain(ad).activeOpenBoundary).type)
-                % No change in boundary type
-                return
-            end
-            buttonname = questdlg('Boundary conditions will be set to 0.0! Continue?', ...
-                '', ...
-                'Cancel', 'OK', 'OK');
-            switch buttonname,
-                case 'Cancel'
-                    return;
-            end
+            tp=handles.model.delft3dflow.domain(ad).openBoundaries(handles.model.delft3dflow.domain(ad).activeOpenBoundary).type;
+%            tp=handles.model.delft3dflow.domain(ad).activeBoundaryType;
+%            if strcmpi(tp,handles.model.delft3dflow.domain(ad).openBoundaries(iac).type)
+%                % No change in boundary type
+%                return
+%            end
+%             buttonname = questdlg('Boundary conditions will be set to 0.0! Continue?', ...
+%                 '', ...
+%                 'Cancel', 'OK', 'OK');
+%             switch buttonname,
+%                 case 'Cancel'
+%                     return;
+%             end
             iac=handles.model.delft3dflow.domain(ad).activeOpenBoundaries;
             for ii=1:length(iac)
                 n=iac(ii);
                 handles.model.delft3dflow.domain(ad).openBoundaries(n).type=tp;
-                handles=resetBoundaryConditions(handles,n);
+%                 handles=resetBoundaryConditions(handles,n);
             end
             handles.model.delft3dflow.domain(ad).bctChanged=1;
             handles.model.delft3dflow.domain(ad).bccChanged=1;
@@ -214,23 +218,23 @@ else
             refreshOpenBoundaries;
             
         case{'selectforcing'}
-            fc=handles.model.delft3dflow.domain(ad).activeBoundaryForcing;
-            if strcmpi(fc,handles.model.delft3dflow.domain(ad).openBoundaries(handles.model.delft3dflow.domain(ad).activeOpenBoundary).forcing)
-                % No change in boundary forcing
-                return
-            end
-            buttonname = questdlg('Boundary conditions will be set to 0.0! Continue?', ...
-                '', ...
-                'Cancel', 'OK', 'OK');
-            switch buttonname,
-                case 'Cancel'
-                    return;
-            end
+            fc=handles.model.delft3dflow.domain(ad).openBoundaries(handles.model.delft3dflow.domain(ad).activeOpenBoundary).forcing;
+%             if strcmpi(fc,handles.model.delft3dflow.domain(ad).openBoundaries(handles.model.delft3dflow.domain(ad).activeOpenBoundary).forcing)
+%                 % No change in boundary forcing
+%                 return
+%             end
+%             buttonname = questdlg('Boundary conditions will be set to 0.0! Continue?', ...
+%                 '', ...
+%                 'Cancel', 'OK', 'OK');
+%             switch buttonname,
+%                 case 'Cancel'
+%                     return;
+%             end
             iac=handles.model.delft3dflow.domain(ad).activeOpenBoundaries;
             for ii=1:length(iac)
                 n=iac(ii);
                 handles.model.delft3dflow.domain(ad).openBoundaries(n).forcing=fc;
-                handles=resetBoundaryConditions(handles,n);
+%                 handles=resetBoundaryConditions(handles,n);
             end
             handles=ddb_countOpenBoundaries(handles,ad);
             handles.model.delft3dflow.domain(ad).bctChanged=1;

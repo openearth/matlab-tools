@@ -120,6 +120,7 @@ end
 
 handles.thick=thick';
 
+handles.layerStrings=[];
 for k=1:handles.KMax
     handles.layerStrings{k}=num2str(handles.thick(k),'%8.3f');
 end

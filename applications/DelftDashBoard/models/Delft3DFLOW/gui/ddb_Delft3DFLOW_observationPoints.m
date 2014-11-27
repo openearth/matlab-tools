@@ -165,6 +165,9 @@ else
             
         case{'savefile'}
             ddb_saveObsFile(handles,ad);
+
+        case{'addobservationpointsfromfile'}
+            addObservationPointsFromFile;
             
     end
 end
@@ -208,6 +211,58 @@ if ~isempty(m1)
     end
 end
 refreshObservationPoints;
+
+%%
+function addObservationPointsFromFile
+
+handles=getHandles;
+
+[filename, pathname, filterindex] = uigetfile('*.ann', 'Load annotation file','');
+if pathname==0
+    return
+end
+
+fid=fopen([pathname filename],'r');
+
+k=0;
+while 1
+    tx0=fgets(fid);
+    if and(ischar(tx0), size(tx0>0))
+        v0=strread(tx0,'%q');
+        if ~strcmp(v0{1}(1),'#')
+            k=k+1;
+            x(k)=str2double(v0{1});
+            y(k)=str2double(v0{2});
+            text{k}=v0{3};
+        end
+    else
+        break
+    end
+end
+
+fclose(fid);
+
+%[x,y]=convertCoordinates(x,y,'CS1.name','WGS 84 / UTM zone 11N','CS1.type','projected','CS2.name','WGS 84','CS2.type','geographic');
+
+for ip=1:length(x)
+    % Find grid indices
+    [m1,n1]=findgridcell(x(ip),y(ip),handles.model.delft3dflow.domain(ad).gridX,handles.model.delft3dflow.domain(ad).gridY);
+    % Check if start and end are in one grid line
+    if ~isempty(m1)
+        if m1>0
+            handles.model.delft3dflow.domain(ad).nrObservationPoints=handles.model.delft3dflow.domain(ad).nrObservationPoints+1;
+            iac=handles.model.delft3dflow.domain(ad).nrObservationPoints;
+            handles.model.delft3dflow.domain(ad).observationPoints(iac).M=m1;
+            handles.model.delft3dflow.domain(ad).observationPoints(iac).N=n1;
+            handles.model.delft3dflow.domain(ad).observationPoints(iac).name=text{ip};
+            handles.model.delft3dflow.domain(ad).observationPointNames{iac}=handles.model.delft3dflow.domain(ad).observationPoints(iac).name;
+            handles.model.delft3dflow.domain(ad).activeObservationPoint=iac;
+            handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','observationpoints');
+        end
+    end
+end
+setHandles(handles);
+
 
 %%
 function handles=deleteObservationPoint(handles)
