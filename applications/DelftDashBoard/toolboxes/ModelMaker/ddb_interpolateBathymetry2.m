@@ -77,8 +77,14 @@ for id=1:length(datasets)
     % Start with coarsest data! (last index in datasets structure)
     idata=length(datasets)-id+1;
     bathyset=datasets(idata).name;
-    startdate=datasets(idata).startdates;
-    searchinterval=datasets(idata).searchintervals;
+    startdate=[];
+    if isfield(datasets(idata),'startdates')
+        startdate=datasets(idata).startdates;
+    end
+    searchinterval=[];
+    if isfield(datasets(idata),'searchintervals')
+        searchinterval=datasets(idata).searchintervals;
+    end
     zmn=datasets(idata).zmin;
     zmx=datasets(idata).zmax;
     verticaloffset=datasets(idata).verticaloffset;
