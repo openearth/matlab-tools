@@ -19,10 +19,11 @@
 % swan_io_node                   - read/write SWAN/triangular unstructured node file  
 %
 %SWAN data file IO (note latest release also has netCDF files)
-% swan_io_table                  - read SWAN ASCII output table     .
+% swan_io_table                  - read SWAN ASCII output table
 % swan_io_mergesp2               - Merge multiple sp2 files into 1 sp2 file
-% swan_io_spectrum               - read SWAN 1D or 2D spectrum file .
+% swan_io_spectrum               - Read SWAN 1D or 2D spectrum file
 % swan_io_spectrum_write         - Writes a 1D SWAN spectrum file
+% swan_io_spectrum2nc            - Writes a SWAN 1D or 2D spectrum file to netCDF file
 %
 %SWAN input files
 % swan_io_input                  - read SWAN input file into struct (to automate postprocessing)
