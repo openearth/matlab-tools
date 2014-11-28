@@ -92,10 +92,10 @@ function swan_io_spectrum2nc(S,ncfile)
         end
     else
         if     isfield(S,'NDIR')
-            OPT.d.name = 'spread_1d';OPT.d.units = 'degrees'; OPT.d.cf = 'sea_surface_wave_from_direction';
+            OPT.d.name = 'spread_1d';OPT.d.units = 'degrees_true'; OPT.d.cf = 'sea_surface_wave_from_direction';
             OPT.nautical = true;
         elseif isfield(S,'CDIR')
-            OPT.d.name = 'spread_1d';OPT.d.units = 'degrees'; OPT.d.cf = 'sea_surface_wave_to_direction';
+            OPT.d.name = 'spread_1d';OPT.d.units = 'degrees_true'; OPT.d.cf = 'sea_surface_wave_to_direction';
             OPT.nautical = false;
         end        
     end    
@@ -141,7 +141,7 @@ function swan_io_spectrum2nc(S,ncfile)
    nc.Dimensions(end+1) = struct('Name', 'xc'               ,'Length',length(S.(x)       ));m.x = length(nc.Dimensions);
    nc.Dimensions(end+1) = struct('Name', 'yc'               ,'Length',length(S.(x)       ));m.y = length(nc.Dimensions);m.xy = [m.x m.y];
    else
-   nc.Dimensions(end+1) = struct('Name', 'location'         ,'Length',length(S.(x)       ));m.x = length(nc.Dimensions);m.xy = m.x;
+   nc.Dimensions(end+1) = struct('Name', 'points'           ,'Length',length(S.(x)       ));m.x = length(nc.Dimensions);m.xy = m.x;
    end
    
    if isfield(S,'directions')
