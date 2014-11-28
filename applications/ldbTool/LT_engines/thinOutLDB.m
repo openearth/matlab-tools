@@ -93,7 +93,9 @@ end
 %% thin out (uitdunnen)
 
 for ii=1:length(ldbCell);
-    ldbCell{ii} = [ldbCell{ii}(1,:); ldbCell{ii}(1+reducepoints_v6(Thresh_Dist,ldbCell{ii}(2:end-1,1),ldbCell{ii}(2:end-1,2)),:) ; ldbCell{ii}(end,:)];
+    % note reducepoints is in private folder and unknown here. for now, 
+    % these functions were copied tot ldbtool engines
+    ldbCell{ii} = [ldbCell{ii}(1,:); ldbCell{ii}(1+reducepoints(Thresh_Dist,ldbCell{ii}(2:end-1,1),ldbCell{ii}(2:end-1,2)),:) ; ldbCell{ii}(end,:)];
 end
 
 if ~isstruct(ldb)
