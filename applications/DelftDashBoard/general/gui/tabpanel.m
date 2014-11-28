@@ -116,47 +116,96 @@ end
 if isempty(clr)
     clr=get(fig,'Color');
 end
-
 if isempty(tabnames) && ~isempty(strings)
     tabnames=strings;
 end
 
-if isempty(handle)
-    handle=findobj(fig,'Tag',tag,'Type','uipanel');
-end
-
-switch lower(fcn)
-    case{'create'}
-        ntabs=length(tabnames);
-        [handle,tabhandle]=createTabPanel(fig,tag,clr,pos,parent,ntabs,element);
-        changeTabPanel(handle,strings,callbacks,inputarguments,tabnames);
-        select(handle,activetabnr,'nocallback');
-%        select(handle,activetabnr,'withcallback');
-    case{'change'}
-        changeTabPanel(handle,strings,callbacks,inputarguments,tabnames);
-        select(handle,activetabnr,'nocallback');
-    case{'select'}
-        panel=get(handle,'UserData');
-        tabnames=panel.tabNames;
-        iac=strmatch(lower(tabname),lower(tabnames),'exact');
-        select(handle,iac,callbackopt);
-    case{'disabletab'}
-        panel=get(handle,'UserData');
-        tabnames=panel.tabNames;
-        iac=strmatch(lower(tabname),lower(tabnames),'exact');
-        set(panel.tabTextHandles(iac),'Enable','off');
-    case{'enabletab'}
-        panel=get(handle,'UserData');
-        tabnames=panel.tabNames;
-        iac=strmatch(lower(tabname),lower(tabnames),'exact');
-        set(panel.tabTextHandles(iac),'Enable','inactive');
-    case{'delete'}
-        deleteTabPanel(handle);
-    case{'resize'}
-        resizeTabPanel(handle,pos);
-    case{'update'}
-        updateTabElements(handle);
-end
+%if verLessThan('matlab', '8.4')
+    
+    % Use MvO tabpanel
+    
+    if isempty(handle)
+        handle=findobj(fig,'Tag',tag,'Type','uipanel');
+    end
+    
+    switch lower(fcn)
+        case{'create'}
+            ntabs=length(tabnames);
+            [handle,tabhandle]=createTabPanel(fig,tag,clr,pos,parent,ntabs,element);
+            changeTabPanel(handle,strings,callbacks,inputarguments,tabnames);
+            select(handle,activetabnr,'nocallback');
+            %        select(handle,activetabnr,'withcallback');
+        case{'change'}
+            changeTabPanel(handle,strings,callbacks,inputarguments,tabnames);
+            select(handle,activetabnr,'nocallback');
+        case{'select'}
+            panel=get(handle,'UserData');
+            tabnames=panel.tabNames;
+            iac=strmatch(lower(tabname),lower(tabnames),'exact');
+            select(handle,iac,callbackopt);
+        case{'disabletab'}
+            panel=get(handle,'UserData');
+            tabnames=panel.tabNames;
+            iac=strmatch(lower(tabname),lower(tabnames),'exact');
+            set(panel.tabTextHandles(iac),'Enable','off');
+        case{'enabletab'}
+            panel=get(handle,'UserData');
+            tabnames=panel.tabNames;
+            iac=strmatch(lower(tabname),lower(tabnames),'exact');
+            set(panel.tabTextHandles(iac),'Enable','inactive');
+        case{'delete'}
+            deleteTabPanel(handle);
+        case{'resize'}
+            resizeTabPanel(handle,pos);
+        case{'update'}
+            updateTabElements(handle);
+    end
+    
+% else
+%     
+%     % Use Matlab native tabpanel
+%     
+%     switch lower(fcn)
+%         case{'create'}
+%             ntabs=length(tabnames);
+%             handle = uitabgroup();
+%             for itab=1:ntabs
+%                 t = uitab(handle, 'title', strings{itab},'ButtonDownFcn',callbacks{itab});
+%             end
+%             setappdata(handle,'element',element);
+% 
+% % %             
+% % %             [handle,tabhandle]=createTabPanel(fig,tag,clr,pos,parent,ntabs,element);
+% % %             changeTabPanel(handle,strings,callbacks,inputarguments,tabnames);
+% % %             select(handle,activetabnr,'nocallback');
+% % %             %        select(handle,activetabnr,'withcallback');
+% %         case{'change'}
+% %             changeTabPanel(handle,strings,callbacks,inputarguments,tabnames);
+% %             select(handle,activetabnr,'nocallback');
+% %         case{'select'}
+% %             panel=get(handle,'UserData');
+% %             tabnames=panel.tabNames;
+% %             iac=strmatch(lower(tabname),lower(tabnames),'exact');
+% %             select(handle,iac,callbackopt);
+% %         case{'disabletab'}
+% %             panel=get(handle,'UserData');
+% %             tabnames=panel.tabNames;
+% %             iac=strmatch(lower(tabname),lower(tabnames),'exact');
+% %             set(panel.tabTextHandles(iac),'Enable','off');
+% %         case{'enabletab'}
+% %             panel=get(handle,'UserData');
+% %             tabnames=panel.tabNames;
+% %             iac=strmatch(lower(tabname),lower(tabnames),'exact');
+% %             set(panel.tabTextHandles(iac),'Enable','inactive');
+% %         case{'delete'}
+% %             deleteTabPanel(handle);
+% %         case{'resize'}
+% %             resizeTabPanel(handle,pos);
+% %         case{'update'}
+% %             updateTabElements(handle);
+%     end
+%     
+% end
 
 %%
 function [panelHandle,largeTab]=createTabPanel(fig,panelname,clr,panelPosition,parent,ntabs,element)
@@ -175,7 +224,11 @@ blankText=tabs;
 
 pos=[panelPosition(1)-1 panelPosition(2)-1 panelPosition(3)+2 panelPosition(4)+20];
 
-panelHandle = uipanel(fig,'Parent',parent,'Units','pixels','Position',pos,'BorderType','none','BackgroundColor','w','Tag',panelname);
+if verLessThan('matlab', '8.4')
+    panelHandle = uipanel(fig,'Parent',parent,'Units','pixels','Position',pos,'BorderType','none','BackgroundColor','none','Tag',panelname);
+else
+    panelHandle = uipanel(fig,'Parent',parent,'Units','pixels','Position',pos,'BorderType','none','BackgroundColor','w','Tag',panelname);
+end
 
 for i=1:ntabs
     
@@ -207,7 +260,12 @@ visph = uipanel(fig,'Units','pixels','Parent',panelHandle,'Position',[1 1 panelP
 pos=[1 1 panelPosition(3) panelPosition(4)+20];
 
 % Create one large tab to put elements in
-largeTab = uipanel(fig,'Parent',panelHandle,'Units','pixels','Position',pos,'Tag','largeTab','BorderType','none','BackgroundColor','w','Visible','on','HitTest','off');
+
+if verLessThan('matlab', '8.4')
+    largeTab = uipanel(fig,'Parent',panelHandle,'Units','pixels','Position',pos,'Tag','largeTab','BorderType','none','BackgroundColor','none','Visible','on','HitTest','off');
+else
+    largeTab = uipanel(fig,'Parent',panelHandle,'Units','pixels','Position',pos,'Tag','largeTab','BorderType','none','BackgroundColor','w','Visible','on','HitTest','off');
+end
 
 % Add blank texts
 leftpos=3;
