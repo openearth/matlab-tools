@@ -108,20 +108,6 @@ yg1a=yp(1,:);
 xg2a=xp(2,:);
 yg2a=yp(2,:);
 
-for ib=1:length(model.bathymetry)
-    datasets_bathy{ib}=model.bathymetry(ib).name;
-    zmn_bathy(ib)=model.bathymetry(ib).zmin;
-    zmx_bathy(ib)=model.bathymetry(ib).zmax;
-    verticaloffsets_bathy(ib)=model.bathymetry(ib).offset;
-end
-
-for ib=1:length(model.topography)
-    datasets_topo{ib}=model.topography(ib).name;
-    zmn_topo(ib)=model.topography(ib).zmin;
-    zmx_topo(ib)=model.topography(ib).zmax;
-    verticaloffsets_topo(ib)=model.topography(ib).offset;
-end
-
 gridlength=sqrt((xg2a-xg1a).^2+(yg2a-yg1a).^2);
 
 % Determine grid orientation
@@ -222,6 +208,8 @@ for ig=1:ngrids
 
     % Get coordinates of cell centres
     [xz,yz]=getXZYZ(x,y);
+    zz=zeros(size(xz));
+    zz(zz==0)=NaN;
 
     % Procedure is as follows:
     % 1) Create depth matrix on land (zland), copy it to z, but set all values to -2
@@ -235,15 +223,13 @@ for ig=1:ngrids
 
     % First interpolate land, and set depth to -2, basically creating land mask    
 
-    zland=ddb_interpolateBathymetry(bathymetry,xz,yz,'datasets',datasets_topo, ...
-        'zmin',zmn_topo,'zmax',zmx_topo,'verticaloffsets',verticaloffsets_topo,'verticaloffset',0,'coordinatesystem',model.cs);    
+    zland=ddb_interpolateBathymetry2(bathymetry,model.topography,xz,yz,zz,0,1,'structured',0,model.cs);
     z=zland;
     z(~isnan(z))=-2;
 
     % Then sea and apply internal diffusion
 
-    zsea=ddb_interpolateBathymetry(bathymetry,xz,yz,'datasets',datasets_bathy, ...
-        'zmin',zmn_bathy,'zmax',zmx_bathy,'verticaloffsets',verticaloffsets_bathy,'verticaloffset',0,'coordinatesystem',model.cs);    
+    zsea=ddb_interpolateBathymetry2(bathymetry,model.bathymetry,xz,yz,zz,0,1,'structured',0,model.cs);
     z(~isnan(zsea) & isnan(zland))=zsea(~isnan(zsea) & isnan(zland));
 
     % Now apply internal diffusion
