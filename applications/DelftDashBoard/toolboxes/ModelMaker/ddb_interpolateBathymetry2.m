@@ -87,7 +87,13 @@ for id=1:length(datasets)
     end
     zmn=datasets(idata).zmin;
     zmx=datasets(idata).zmax;
-    verticaloffset=datasets(idata).verticaloffset;
+    if isfield(datasets(idata),'verticaloffset')
+        verticaloffset=datasets(idata).verticaloffset;
+    elseif isfield(datasets(idata),'offset')
+        verticaloffset=datasets(idata).offset;
+    else
+        verticaloffset=0;
+    end
         
     % Convert grid to cs of dataset
     iac=strmatch(lower(bathyset),lower(bathymetry.datasets),'exact');
