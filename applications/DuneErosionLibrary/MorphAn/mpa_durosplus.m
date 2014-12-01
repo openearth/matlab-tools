@@ -112,13 +112,29 @@ morphAnInput.D50 = D50;
 morphAnInput.SignificantWaveHeight = Hsig_t;
 morphAnInput.PeakPeriod = Tp_t;
 morphAnInput.MaximumStormSurgeLevel = WL_t;
-morphAnInput.G0 = getG0(DuneErosionSettings('get','Bend'));
+morphAnInput.G0 = getG0(DuneErosionSettings('get','Bend')); % To work similar to the matlab implementation
+morphAnInput.MaximumRetreatDistance = DuneErosionSettings('get','maxRetreat'); % To work similar to the matlab implementation
+morphAnInput.UsePeakPeriod = true;
+morphAnInput.AutoCorrectPeakPeriod = DuneErosionSettings('get','TP12slimiter');
+morphAnInput.MaximumNumberOfIterations = DuneErosionSettings('get','maxiter');
+
 morphAnInput.DurosMethod = DeltaShell.Plugins.MorphAn.TRDA.Calculators.DurosMethod.DurosPlus;
+
+% This takes some time. To optimize probabilistics do this once...
 morphAnInput.InputProfile = DeltaShell.Plugins.MorphAn.Domain.Transect(...
     NET.convertArray(xInitial, 'System.Double'),...
     NET.convertArray(zInitial, 'System.Double'));
 
-morphAnResult = DeltaShell.Plugins.MorphAn.TRDA.CoastalSafetyAssessment.AssessDuneProfile(morphAnInput);
+TVolumeFunction = DuneErosionSettings('get','AdditionalVolume'); % function should accept a double as input (A volume) and a double (T volume) as output
+
+if ~ischar(TVolumeFunction)
+    morphAnResult = DeltaShell.Plugins.MorphAn.TRDA.CoastalSafetyAssessment.AssessDuneProfile(morphAnInput,TVolumeFunction);
+else
+    % assume default and use default factor. It is also possible to
+    % specify a factor that differs from 0.25. Use the input property
+    % TargetVolumeCalculationFactor for that purpose
+    morphAnResult = DeltaShell.Plugins.MorphAn.TRDA.CoastalSafetyAssessment.AssessDuneProfile(morphAnInput);
+end
 
 %% Step 1
 result = fillresultwithprofile(createEmptyDUROSResult,...
@@ -185,13 +201,13 @@ result(end).Volumes.Volume = morphAnResult.OutputAdditionalErosionVolume;
 result(end).info.ID = 'Additional Erosion';
 
 %% Step 5 (Boundary profile)
-result(end+1) = fillresultwithprofile(createEmptyDUROSResult,...
-    morphAnResult.OutputBoundaryPreProfile,...
-    morphAnResult.OutputBoundaryProfile,...
-    xInitial,zInitial);
-
-result(end).Volumes.Volume = morphAnResult.OutputBoundaryProfileVolume;
-result(end).info.ID = 'Boundary Profile';
+% result(end+1) = fillresultwithprofile(createEmptyDUROSResult,...
+%     morphAnResult.OutputBoundaryPreProfile,...
+%     morphAnResult.OutputBoundaryProfile,...
+%     xInitial,zInitial);
+% 
+% result(end).Volumes.Volume = morphAnResult.OutputBoundaryProfileVolume;
+% result(end).info.ID = 'Boundary Profile';
 
 end
 

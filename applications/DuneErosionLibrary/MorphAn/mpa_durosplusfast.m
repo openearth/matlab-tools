@@ -1,4 +1,4 @@
-function xRPoint = mpa_durosplusfast(xInitial, zInitial, D50, waterLevel, significantWaveHeight, peakPeriod, coastalBend)
+function xRPoint = mpa_durosplusfast(xInitial, zInitial, D50, waterLevel, significantWaveHeight, peakPeriod)
 %MPA_DUROSPLUSFAST  One line description goes here.
 %
 %   Assumes the MorphAn library is loaded correctly. Only outputs the
@@ -74,13 +74,28 @@ morphAnInput = DeltaShell.Plugins.MorphAn.TRDA.Calculators.TRDAInputParameters;
 
 morphAnInput.D50 = D50;
 morphAnInput.SignificantWaveHeight = significantWaveHeight;
+morphAnInput.UsePeakPeriod = true; % Can also use spectral wave period Tm-1,0
 morphAnInput.PeakPeriod = peakPeriod;
 morphAnInput.MaximumStormSurgeLevel = waterLevel;
-morphAnInput.CoastalBend = coastalBend;
+morphAnInput.MaximumRetreatDistance = DuneErosionSettings('get','maxRetreat'); % To work similar to the matlab implementation
+morphAnInput.AutoCorrectPeakPeriod = DuneErosionSettings('get','TP12slimiter');
+morphAnInput.MaximumNumberOfIterations = DuneErosionSettings('get','maxiter');
+morphAnInput.DurosMethod = DeltaShell.Plugins.MorphAn.TRDA.Calculators.DurosMethod.DurosPlus;
+
+% This takes some time. To optimize probabilistics do this once...
 morphAnInput.InputProfile = DeltaShell.Plugins.MorphAn.Domain.Transect(...
     NET.convertArray(xInitial, 'System.Double'),...
     NET.convertArray(zInitial, 'System.Double'));
 
-morphAnResult = DeltaShell.Plugins.MorphAn.TRDA.CoastalSafetyAssessment.AssessDuneProfileAccordingTo2006Rules(morphAnInput);
+TVolumeFunction = DuneErosionSettings('get','AdditionalVolume'); % function should accept a double as input (A volume) and a double (T volume) as output
+
+if ~ischar(TVolumeFunction)
+    morphAnResult = DeltaShell.Plugins.MorphAn.TRDA.CoastalSafetyAssessment.AssessDuneProfile(morphAnInput,TVolumeFunction);
+else
+    % assume default and use default factor. It is also possible to
+    % specify a factor that differs from 0.25. Use the input property
+    % TargetVolumeCalculationFactor for that purpose
+    morphAnResult = DeltaShell.Plugins.MorphAn.TRDA.CoastalSafetyAssessment.AssessDuneProfile(morphAnInput);
+end
 
 xRPoint = morphAnResult.OutputPointR.X;
