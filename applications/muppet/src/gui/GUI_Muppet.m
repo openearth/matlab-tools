@@ -3795,18 +3795,22 @@ if ~isfield(handles,'EPSG')
         fnames1=fieldnames(handles.EPSG);
         for i=1:length(fnames1)
             fnames2=fieldnames(handles.EPSG.(fnames1{i}));
-            for j=1:length(fnames2)
-                if ~isempty(sud.(fnames1{i}).(fnames2{j}))
-                    nori=length(handles.EPSG.(fnames1{i}).(fnames2{j}));
-                    nnew=length(sud.(fnames1{i}).(fnames2{j}));
-                    for k=1:nnew
-                        if iscell(handles.EPSG.(fnames1{i}).(fnames2{j}))
-                            handles.EPSG.(fnames1{i}).(fnames2{j}){nori+k}=sud.(fnames1{i}).(fnames2{j}){k};
-                        else
-                            handles.EPSG.(fnames1{i}).(fnames2{j})(nori+k)=sud.(fnames1{i}).(fnames2{j})(k);
+            switch fnames1{i}
+                case{'user_defined_data'}
+                otherwise
+                    for j=1:length(fnames2)
+                        if ~isempty(sud.(fnames1{i}).(fnames2{j}))
+                            nori=length(handles.EPSG.(fnames1{i}).(fnames2{j}));
+                            nnew=length(sud.(fnames1{i}).(fnames2{j}));
+                            for k=1:nnew
+                                if iscell(handles.EPSG.(fnames1{i}).(fnames2{j}))
+                                    handles.EPSG.(fnames1{i}).(fnames2{j}){nori+k}=sud.(fnames1{i}).(fnames2{j}){k};
+                                else
+                                    handles.EPSG.(fnames1{i}).(fnames2{j})(nori+k)=sud.(fnames1{i}).(fnames2{j})(k);
+                                end
+                            end
                         end
                     end
-                end
             end
         end
     end
