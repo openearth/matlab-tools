@@ -1,21 +1,57 @@
 function result = mpa_durosplus(varargin)
-%MPA_DUROSPLUS  One line description goes here.
+%MPA_DUROSPLUS  uses the MorphAn calculation kernel to calculate a Duros+ erosion profile
 %
-%   More detailed description goes here.
+%   This function returns an erosion profile calculated with Duros+. It
+%   uses the MorphAn calculation kernel.
 %
 %   Syntax:
-%   varargout = mpa_durosplus(varargin)
+%   result = mpa_durosplus(varargin)
 %
 %   Input:
-%   varargin  =
+%   varargin  = keyword value pairs. Possible keywords:
+%                           xInitial    - The x-coordinates of the pre storm profile
+%                           zInitial    - The z-coordinates of the pre storm profile
+%                           D50         - The grain diameter. (default 225 [mu])
+%                           WL_t        - The water level (default 5 [m])
+%                           Hsig_t      - The significant wave height (default 9 [m])
+%                           Tp_t        - The peak wave period (default 12 [s])
+%  Furthermore the routine also takes into account DuneErosionSettings
+%  specified with the DuneErosionSettings function. This controls the
+%  additional retreat length, maximum number of iterations and other
+%  optional settings.
 %
 %   Output:
-%   varargout =
+%   result             -    a struc that contains the results for each
+%                           calculation step. The result struct has fields:
+%                               info:    information about the calculation
+%                                           step
+%                               Volumes: Cumulative volumes, erosion volume
+%                                           and accretion volume
+%                               xActive: x-coordinates of the area that was
+%                                           changed during the calculation 
+%                                           step
+%                               zActive: z-coordinates of the points that
+%                                           were changed prior to the change
+%                               z2Active:z-coordinates of the changed
+%                                           points
+%                               xLand:   x-points landward of the coordinates
+%                                           that were changed during the
+%                                           calculation step
+%                               zLand:   z-points landward of the coordinates
+%                                           that were changed during the
+%                                           calculation step
+%                               xSea:    x-points seaward of the coordinates
+%                                           that were changed during the
+%                                           calculation step
+%                               zSea:    z-points seaward of the coordinates
+%                                           that were changed during the
+%                                           calculation step
 %
 %   Example
-%   mpa_durosplus
+%   r = mpa_durosplus();
+%   plotduneerosion(r,figure);
 %
-%   See also
+%   See also DUROS DuneErosionSettings
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -61,7 +97,7 @@ function result = mpa_durosplus(varargin)
 % $Keywords: $
 
 %% TODO
-% implement:
+% Implement / communicate output flags of various kinds:
 %
 % OutputFlagWaterLevelAboveProfile: 0
 % OutputFlagNotEnoughProfileInformationLandward: 0
@@ -74,7 +110,11 @@ function result = mpa_durosplus(varargin)
 % OutputFlagPrecisionNotMet: 0
 % OutputFlagNoSolutionPossible: 0
 
-%% Initiate variables
+if isempty(getappdata(0,'MorphAnCSharpLibInitialized'))
+    mpa_loadcsharp;
+end
+
+%% check and inventorise input
 % In this step the input is verified. If one of the input arguments is not
 % defined, a default value is used:
 % 
@@ -91,11 +131,6 @@ function result = mpa_durosplus(varargin)
 % _DuneErosionSettings_.
 %
 
-if isempty(getappdata(0,'MorphAnCSharpLibInitialized'))
-    mpa_loadcsharp;
-end
-
-%% check and inventorise input
 OPT = struct(...
     'xInitial', [-250 -24.375 5.625 55.725 230.625 1950]',...
     'zInitial', [15 15 3 0 -3 -14.4625]',...
@@ -104,35 +139,42 @@ OPT = struct(...
     'Hsig_t', 9,...
     'Tp_t', 12);
 
-[xInitial zInitial D50 WL_t Hsig_t Tp_t] = parseDUROSinput(OPT, varargin{:});
+[xInitial, zInitial, D50, WL_t, Hsig_t, Tp_t] = parseDUROSinput(OPT, varargin{:});
 
 %% Run MorphAn
+
 morphAnInput = DeltaShell.Plugins.MorphAn.TRDA.Calculators.TRDAInputParameters;
+
+% boundary conditions
 morphAnInput.D50 = D50;
 morphAnInput.SignificantWaveHeight = Hsig_t;
+morphAnInput.UsePeakPeriod = true;
 morphAnInput.PeakPeriod = Tp_t;
 morphAnInput.MaximumStormSurgeLevel = WL_t;
 morphAnInput.G0 = getG0(DuneErosionSettings('get','Bend')); % To work similar to the matlab implementation
+
+% Settings
 morphAnInput.MaximumRetreatDistance = DuneErosionSettings('get','maxRetreat'); % To work similar to the matlab implementation
-morphAnInput.UsePeakPeriod = true;
 morphAnInput.AutoCorrectPeakPeriod = DuneErosionSettings('get','TP12slimiter');
 morphAnInput.MaximumNumberOfIterations = DuneErosionSettings('get','maxiter');
-
 morphAnInput.DurosMethod = DeltaShell.Plugins.MorphAn.TRDA.Calculators.DurosMethod.DurosPlus;
 
-% This takes some time. To optimize probabilistics do this once...
+% Input profile (This takes some time. To optimize probabilistics do this once...)
 morphAnInput.InputProfile = DeltaShell.Plugins.MorphAn.Domain.Transect(...
     NET.convertArray(xInitial, 'System.Double'),...
     NET.convertArray(zInitial, 'System.Double'));
 
-TVolumeFunction = DuneErosionSettings('get','AdditionalVolume'); % function should accept a double as input (A volume) and a double (T volume) as output
+% Depending on calculation of additional erosion volume (T Volume) call the
+% main function.
 
+TVolumeFunction = DuneErosionSettings('get','AdditionalVolume'); % function should accept a double as input (A volume) and a double (T volume) as output
 if ~ischar(TVolumeFunction)
     morphAnResult = DeltaShell.Plugins.MorphAn.TRDA.CoastalSafetyAssessment.AssessDuneProfile(morphAnInput,TVolumeFunction);
 else
     % assume default and use default factor. It is also possible to
     % specify a factor that differs from 0.25. Use the input property
     % TargetVolumeCalculationFactor for that purpose
+    % TODO: Implement the factor and put it in the input parameters as well
     morphAnResult = DeltaShell.Plugins.MorphAn.TRDA.CoastalSafetyAssessment.AssessDuneProfile(morphAnInput);
 end
 
@@ -200,7 +242,7 @@ result(end).Volumes.Erosion = morphAnResult.OutputAdditionalErosionVolume;
 result(end).Volumes.Volume = morphAnResult.OutputAdditionalErosionVolume;
 result(end).info.ID = 'Additional Erosion';
 
-%% Step 5 (Boundary profile)
+%% Step 5 (Boundary profile) - Not present in MorphAn calculation (needs seperate routine)
 % result(end+1) = fillresultwithprofile(createEmptyDUROSResult,...
 %     morphAnResult.OutputBoundaryPreProfile,...
 %     morphAnResult.OutputBoundaryProfile,...
@@ -211,12 +253,9 @@ result(end).info.ID = 'Additional Erosion';
 
 end
 
-
 function result = fillresultwithprofile(result,morphAnPreProfile,morpAnProfile,xInitial,zInitial)
 profile = crossshoreprofile2matlabprofile(morpAnProfile);
 preProfile = crossshoreprofile2matlabprofile(morphAnPreProfile);
-
-
 
 result.xActive = unique([profile(:,1);preProfile(:,1)]);
 result.z2Active = interp1(profile(:,1),profile(:,2),result.xActive );
@@ -229,7 +268,5 @@ result.zSea = zInitial(xInitial > max(result.xActive));
 end
 
 function profile = crossshoreprofile2matlabprofile(morphAnProfile)
-x = double(morphAnProfile.XCoordinates)';
-z = double(morphAnProfile.ZCoordinates)';
-profile = [x,z];
+profile = [double(morphAnProfile.XCoordinates)',double(morphAnProfile.ZCoordinates)'];
 end

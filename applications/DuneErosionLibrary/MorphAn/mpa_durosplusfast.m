@@ -1,8 +1,10 @@
 function xRPoint = mpa_durosplusfast(xInitial, zInitial, D50, waterLevel, significantWaveHeight, peakPeriod)
-%MPA_DUROSPLUSFAST  One line description goes here.
+%MPA_DUROSPLUSFAST  This function calculates a Duros+ profile with MorphAn fast
 %
-%   Assumes the MorphAn library is loaded correctly. Only outputs the
-%   retreat distance
+%   A simple and fast calculation with the Duros+ function in MorphAn. This
+%   function only returns the location of the erosion point (R-point). It
+%   is therefore much faster than the equivalent (mpa_durosplus) which also
+%   outputs all calculated profiles.
 %
 %   Syntax:
 %   xRPoint = mpa_durosplusfast(xInitial, zInitial, D50, waterLevel, significantWaveHeight, peakPeriod, coastalBend)
@@ -12,19 +14,22 @@ function xRPoint = mpa_durosplusfast(xInitial, zInitial, D50, waterLevel, signif
 %   zInitial    = z coordinates of the initial profile
 %   D50         = Grain size (m)
 %   waterLevel  = Maximum storm surge level level (m + N.A.P.)
-%   significantWaveHeight = Significant wave height at the maximum of the
-%                 storm (m)
+%   significantWaveHeight = Significant wave height at the maximum of the storm (m)
 %   peakPeriod  = Peak period at the maximum of the storm (s)
-%   coastalBend = Coastal bend in longshore direction (degrees / 1000
-%                 meter)
+%   coastalBend = Coastal bend in longshore direction (degrees / 1000 meter)
+%
+%   This function also takes into account the DuneErosionSettings
 %
 %   Output:
 %   xRPoint     = x value of the retreat point (also retreat distance)
 %
 %   Example
-%   mpa_durosplusfast
+%   mpa_loadcsharp;
+%   [x,z] = referenceprofile;
+%   xR = mpa_durosplusfast(x,z,0.000250,5,9,16);
+%   disp(['xR = ' num2str(xR)]);
 %
-%   See also mpa_durosplus DUROS
+%   See also mpa_durosplus DUROS DuneErosionSettings
 
 %% Copyright notice
 %   --------------------------------------------------------------------

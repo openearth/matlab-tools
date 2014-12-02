@@ -1,21 +1,16 @@
 function mpa_loadcsharp()
-%MPA_LOADCSHARP  One line description goes here.
+%MPA_LOADCSHARP  Initializes (/imports) the MorphAn C# library
 %
-%   More detailed description goes here.
+%   This function imports the MorphAn C# libraries that are used by
+%   mpa_durosplus and mpa_durosplusfast
 %
 %   Syntax:
-%   varargout = mpa_loadcsharp(varargin)
-%
-%   Input:
-%   varargin  =
-%
-%   Output:
-%   varargout =
+%   mpa_loadcsharp();
 %
 %   Example
-%   mpa_loadcsharp
+%   mpa_loadcsharp;
 %
-%   See also
+%   See also mpa_durosplus mpa_durosplusfast
 
 %% Copyright notice
 %   --------------------------------------------------------------------
