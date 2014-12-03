@@ -1,10 +1,10 @@
-function [x2,y2]=Mercator1SP(x1,y1,a,finv,lato,lono,fe,fn,ko,iopt)
-
-% latitude of natural origin not used in these formulations !!!
+function [x2,y2]=Mercator2SP(x1,y1,a,finv,lono,fe,fn,lat1,iopt)
 
 f  = 1/finv;
 e2 = 2*f-f^2;
 e  = e2^.5;
+
+ko = cos(lat1) /sqrt((1.0 - e^2 * sin(lat1)^2));
 
 x2 = nan(size(x1));
 y2 = nan(size(y1));
@@ -17,7 +17,7 @@ if iopt==1
     lat   = y1;
     
     x2 = fe + a*ko*(lon - lono);
-    y2 = fn + a*ko*log(tan(pi/4 + lat/2)*((1.0 - e*sin(lat)) / (1.0 + e*sin(lat)))^(0.5*e));    
+    y2 = fn + a*ko*log( tan(pi/4.0 + lat/2.0) * ((1.0 - e*sin(lat)) / (1.0 + e*sin(lat)))^(0.5*e));    
     
 else
 

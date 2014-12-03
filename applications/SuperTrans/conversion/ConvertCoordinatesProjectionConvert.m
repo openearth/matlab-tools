@@ -185,6 +185,15 @@ switch method.name
         ii = strcmp('Scale factor at natural origin'          ,param.name); ko    = param.value(ii);
 
         [x1,y1]= Mercator1SP(x1,y1,a,invf,lato,lono,fe,fn,ko,iopt);
+
+    case 'Mercator (2SP)'
+
+        ii = strcmp('Longitude of natural origin'             ,param.name); lono  = convertUnits(param.value(ii),param.UoM.name{ii},'radian',STD);
+        ii = strcmp('False easting'                           ,param.name); fe    = convertUnits(param.value(ii),param.UoM.name{ii},'metre',STD);
+        ii = strcmp('False northing'                          ,param.name); fn    = convertUnits(param.value(ii),param.UoM.name{ii},'metre',STD);
+        ii = strcmp('Latitude of 1st standard parallel'       ,param.name); lat1  = convertUnits(param.value(ii),param.UoM.name{ii},'radian',STD);
+
+        [x1,y1]= Mercator2SP(x1,y1,a,invf,lono,fe,fn,lat1,iopt);
         
     otherwise
         error(['conversion method ' method.name ' not (yet) supported'])

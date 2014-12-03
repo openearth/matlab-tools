@@ -305,6 +305,11 @@ if strcmpi(CS.type,'projected')
             pars{4}='Northing at false origin';
             pars{5}='Latitude of 1st standard parallel';
             pars{6}='Latitude of 2nd standard parallel';
+        case{9805}
+            pars{1}='Longitude of false origin';
+            pars{3}='Easting at false origin';
+            pars{4}='Northing at false origin';
+            pars{5}='Latitude of 1st standard parallel';
         case{9804,9807,9808,9809}
             pars{1}='Longitude of natural origin';
             pars{2}='Latitude of natural origin';
@@ -368,7 +373,7 @@ if strcmpi(CS.type,'projected')
 
     % Check if conversion method is available
     switch proj_conv.method.code
-        case{9801,9802,9803,9804,9807,9808,9809,9812,9815}
+        case{9801,9802,9803,9804,9805,9807,9808,9809,9812,9815}
             handles.ConversionOK=1;
         otherwise
             % Conversion method not available
