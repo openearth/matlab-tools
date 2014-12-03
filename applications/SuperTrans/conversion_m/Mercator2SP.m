@@ -17,7 +17,7 @@ if iopt==1
     lat   = y1;
     
     x2 = fe + a*ko*(lon - lono);
-    y2 = fn + a*ko*log( tan(pi/4.0 + lat/2.0) * ((1.0 - e*sin(lat)) / (1.0 + e*sin(lat)))^(0.5*e));    
+    y2 = fn + a*ko*log( tan(pi/4.0 + lat/2.0) * ((1.0 - e*sin(lat)) / (1.0 + e*sin(lat))).^(0.5*e));    
     
 else
 

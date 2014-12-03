@@ -9,6 +9,7 @@ e  = e2^.5;
 x2 = nan(size(x1));
 y2 = nan(size(y1));
 
+
 if iopt==1
 
     %           geo2xy
@@ -17,7 +18,7 @@ if iopt==1
     lat   = y1;
     
     x2 = fe + a*ko*(lon - lono);
-    y2 = fn + a*ko*log(tan(pi/4 + lat/2)*((1.0 - e*sin(lat)) / (1.0 + e*sin(lat)))^(0.5*e));    
+    y2 = fn + a*ko*log(tan(pi/4 + lat/2)*((1.0 - e*sin(lat)) / (1.0 + e*sin(lat))).^(0.5*e));    
     
 else
 
