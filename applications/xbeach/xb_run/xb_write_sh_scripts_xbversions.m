@@ -72,40 +72,52 @@ switch OPT.version
     % Define seperate cases for all different available versions
     case 1.21
         % XBeach v1.21 Groundhog Day release
+        fprintf(FileID,'module purge\n');
         fprintf(FileID,'module load gcc/4.9.1\n');
         fprintf(FileID,'module load hdf5/1.8.13_gcc_4.9.1\n');
         fprintf(FileID,'module load netcdf/v4.3.2_v4.4.0_gcc_4.9.1\n');
         fprintf(FileID,'module load /opt/xbeach/openmpi/1.8.1_gcc_4.9.1\n');
         fprintf(FileID,'module load /u/bieman/privatemodules/xbeach-groundhogday_gcc_4.9.1_1.8.1_HEAD\n\n');
+        fprintf(FileID,'module list\n');
     case 1.20
         % XBeach v1.20 Sinterklaas release
+        fprintf(FileID,'module purge\n');
         fprintf(FileID,'module load gcc/4.9.1\n');
         fprintf(FileID,'module load hdf5/1.8.13_gcc_4.9.1\n');
         fprintf(FileID,'module load netcdf/v4.3.2_v4.4.0_gcc_4.9.1\n');
         fprintf(FileID,'module load /opt/xbeach/openmpi/1.8.1_gcc_4.9.1\n');
         fprintf(FileID,'module load /u/bieman/privatemodules/xbeach-sinterklaas_gcc_4.9.1_1.8.1_HEAD\n\n');
+        fprintf(FileID,'module list\n');
     case 1.19
         % XBeach v1.19 Easter release
+        fprintf(FileID,'module purge\n');
         fprintf(FileID,'module load gcc/4.9.1\n');
         fprintf(FileID,'module load hdf5/1.8.13_gcc_4.9.1\n');
         fprintf(FileID,'module load netcdf/v4.3.2_v4.4.0_gcc_4.9.1\n');
         fprintf(FileID,'module load /opt/xbeach/openmpi/1.8.1_gcc_4.9.1\n');
         fprintf(FileID,'module load /u/bieman/privatemodules/xbeach-easter_gcc_4.9.1_1.8.1_HEAD\n\n');
+        fprintf(FileID,'module list\n');
     case 'groundhogday_old'
+        fprintf(FileID,'module purge\n');
         fprintf(FileID,'module load mpich2-x86_64\n');
         fprintf(FileID,'module load xbeach/xbeach121-gcc44-netcdf41-mpi10\n\n');
+        fprintf(FileID,'module list\n');
     case 'wtisettings'
+        fprintf(FileID,'module purge\n');
         fprintf(FileID,'module load gcc/4.9.1\n');
         fprintf(FileID,'module load hdf5/1.8.13_gcc_4.9.1\n');
         fprintf(FileID,'module load netcdf/v4.3.2_v4.4.0_gcc_4.9.1\n');
         fprintf(FileID,'module load /opt/xbeach/openmpi/1.8.1_gcc_4.9.1\n');
         fprintf(FileID,'module load /u/bieman/privatemodules/xbeach-wtisettings_gcc_4.9.1_1.8.1_HEAD\n\n');
+        fprintf(FileID,'module list\n');
     otherwise
         % assume that OPT.version contains the complete
         % module name
+        fprintf(FileID,'module purge\n');
         fprintf(FileID,'module load gcc/4.9.1\n');
         fprintf(FileID,'module load hdf5/1.8.13_gcc_4.9.1\n');
         fprintf(FileID,'module load netcdf/v4.3.2_v4.4.0_gcc_4.9.1\n');
         fprintf(FileID,'module load /opt/xbeach/openmpi/1.8.1_gcc_4.9.1\n');
         fprintf(FileID,'module load %s\n\n',OPT.version);
+        fprintf(FileID,'module list\n');
 end

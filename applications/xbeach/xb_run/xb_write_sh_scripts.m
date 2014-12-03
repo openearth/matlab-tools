@@ -107,28 +107,27 @@ switch upper(OPT.mpitype)
     case 'OPENMPI'
         fprintf(fid,'#!/bin/sh\n');
         fprintf(fid,'#$ -cwd\n');
+        fprintf(fid,'#$ -j yes\n');
         fprintf(fid,'#$ -V\n');
         fprintf(fid,'#$ -N %s\n', OPT.name);
         fprintf(fid,'#$ -m ea\n');
         fprintf(fid,'#$ -q %s\n', OPT.queuetype);
         if OPT.nodes > 1
-            fprintf(fid,'#$ -pe distrib %d\n', OPT.nodes);
+            fprintf(fid,'#$ -pe distrib %d\n\n', OPT.nodes);
         end
-        
-        fprintf(fid,'. /opt/ge/InitSGE\n\n');
-        fprintf(fid,'export NSLOTS=`expr $NHOSTS \\* 4`\n');
-        fprintf(fid,'export DELTAQ_NumSlots=`expr $DELTAQ_NumNodes \\* 4`\n\n');
+        fprintf(fid,'hostFile="$JOB_NAME.h$JOB_ID"\n\n');
+        fprintf(fid,'hostFile="$JOB_NAME.h$JOB_ID"\n\n');
         
         switch OPT.cluster
-            case 'h5'
+            case 'h5'                
+                fprintf(fid,'hostFile="$JOB_NAME.h$JOB_ID"\n\n');
+                fprintf(fid,'cat $PE_HOSTFILE | while read line; do\n');
+                fprintf(fid,'   echo $line | awk ''{print $1 " slots=" $4}''\n');
+                fprintf(fid,'done > $hostFile\n\n');
+                fprintf(fid,'numProcesses=`awk -F= ''{sum += $2} END {print sum}'' $hostFile`\n\n');
                 xb_write_sh_scripts_xbversions(fid, 'version', OPT.version)
-                
-                fprintf(fid,'module list\n');
-                fprintf(fid,'env\n\n');
-                fprintf(fid,'awk ''{print $1":"1}'' $PE_HOSTFILE > $(pwd)/machinefile\n');
-                fprintf(fid,'mpdboot -n $NHOSTS -f $(pwd)/machinefile\n');
-                fprintf(fid,'mpdtrace\n');
-                fprintf(fid,'mpirun -np $NSLOTS xbeach\n');
+                fprintf(fid,'mpirun -report-bindings -np $numProcesses -map-by core -hostfile $hostFile xbeach\n\n');
+                fprintf(fid,'rm -f $hostFile\n'):
         end
         fprintf(fid,'mpdallexit\n');
     case 'MPICH2'
@@ -138,17 +137,16 @@ switch upper(OPT.mpitype)
         fprintf(fid,'#$ -m ea\n');
         fprintf(fid,'#$ -q %s\n', OPT.queuetype);
         fprintf(fid,'#$ -pe distrib %d\n\n', OPT.nodes);
-        fprintf(fid,'export NSLOTS=`expr $NHOSTS \\* 4`');
+        fprintf(fid,'export NSLOTS=`expr $NHOSTS \\* 4`\n');
         fprintf(fid,'export DELTAQ_NumSlots=`expr $DELTAQ_NumNodes \\* 4`\n\n');
         
         switch OPT.cluster
             case 'h5'
-                xb_write_sh_scripts_xbversions(fid, 'version', OPT.version)
-                
-                fprintf(fid,'module list\n\n');
                 fprintf(fid,'. /opt/ge/InitSGE\n\n');
                 fprintf(fid,'awk ''{print $1":"1}'' $PE_HOSTFILE > $(pwd)/machinefile\n');
                 fprintf(fid,'mpdboot -n $NHOSTS -f $(pwd)/machinefile\n');
+                xb_write_sh_scripts_xbversions(fid, 'version', OPT.version)
+                fprintf(fid,'module list\n\n');
                 fprintf(fid,'mpirun -n $NSLOTS xbeach\n');
         end
         fprintf(fid,'mpdallexit\n');
