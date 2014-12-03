@@ -66,7 +66,7 @@ switch lower(OPT.dbtype) % lower(db)
         error('Unknown dbtype: %s',OPT.dbtype)
 end
 
-   if license('test','database_toolbox') && OPT.database_toolbox
+   if ~isdeployed && license('test','database_toolbox') && OPT.database_toolbox
       OPT.database_toolbox = 1;
       conn = database( ...
        db, ...
