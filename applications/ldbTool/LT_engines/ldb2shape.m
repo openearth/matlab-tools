@@ -1,4 +1,4 @@
-function ldb2shape(ldbName)
+function ldb2shape(ldbName,varargin)
 %LDB2SHAPE Convert ldb to Pharos layout file
 %
 % Input is the name of the ldb-file or a nx2 matrix
@@ -8,11 +8,13 @@ function ldb2shape(ldbName)
 % You can also perform translation in x and/or y direction
 %
 % Syntax:
-% ldb2shape(ldb)
+% ldb2shape(ldb,type)
 %
 % ldb:      the landboury, which should already be specified by the 
 %           function ldb=landboundary('read','landboundary')
 %           (optional)
+% type:     'polyline' or 'polygon' (filled)
+% 
 %
 % See also: LDBTOOL, LDB2KML, LDB2PHAROS
 
@@ -27,6 +29,8 @@ function ldb2shape(ldbName)
 %       P.O. Box 177
 %       2600 MH Delft
 %       The Netherlands
+%   Updated (2014) BJT van der Spek Royal HaskoningDHV
+% 
 %
 %   This library is free software: you can redistribute it and/or
 %   modify it under the terms of the GNU Lesser General Public
@@ -90,7 +94,18 @@ end
 
 ldbCell = ldbCell(find(cellfun('size',ldbCell,1)>1));
 
+if nargin>1;
+    if strcmp(varargin{1},'polyline')
+     shpOutput='polyline';
+    elseif strcmp(varargin{2},'polygon')
+     shpOutput='polygon';
+    else
+    disp([varargin{2},'not known'])
+    shpOutput=questdlg('Select type of shape-ouput','ldb2shape','polyline','polygon (filled)','polyline');
+    end
+else
 shpOutput=questdlg('Select type of shape-ouput','ldb2shape','polyline','polygon (filled)','polyline');
+end
 
 switch shpOutput
     case 'polyline' 
