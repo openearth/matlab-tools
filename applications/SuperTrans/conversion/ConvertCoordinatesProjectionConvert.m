@@ -176,6 +176,16 @@ switch method.name
 
         [x1,y1]= HotineObliqueMercator(x1,y1,a,invf,latc,lonc,alphac,gammac,kc,fe,fn,iopt);
 
+    case 'Mercator (1SP)'
+
+        ii = strcmp('Latitude of natural origin'              ,param.name); lato  = convertUnits(param.value(ii),param.UoM.name{ii},'radian',STD);
+        ii = strcmp('Longitude of natural origin'             ,param.name); lono  = convertUnits(param.value(ii),param.UoM.name{ii},'radian',STD);
+        ii = strcmp('False easting'                           ,param.name); fe    = convertUnits(param.value(ii),param.UoM.name{ii},'metre',STD);
+        ii = strcmp('False northing'                          ,param.name); fn    = convertUnits(param.value(ii),param.UoM.name{ii},'metre',STD);
+        ii = strcmp('Scale factor at natural origin'          ,param.name); ko    = param.value(ii);
+
+        [x1,y1]= Mercator1SP(x1,y1,a,invf,lato,lono,fe,fn,ko,iopt);
+        
     otherwise
         error(['conversion method ' method.name ' not (yet) supported'])
 end
