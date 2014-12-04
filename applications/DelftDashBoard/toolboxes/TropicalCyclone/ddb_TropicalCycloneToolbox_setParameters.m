@@ -665,7 +665,16 @@ if filename==0
 else
     try
         wb = waitbox('Generating Spiderweb Wind Field ...');%pause(0.1);
-        handles=ddb_computeCyclone(handles,filename);
+
+        create_spw_file(filename, handles.toolbox.tropicalcyclone, handles.toolbox.tropicalcyclone.dataDir);
+        
+        [path,name,ext]=fileparts(filename);
+        model=handles.activeModel.name;
+        handles.model.(model).domain(ad).spwFile=[name '.spw'];
+        handles.model.(model).domain(ad).wind=1;
+        handles.model.(model).domain(ad).windType='spiderweb';
+        handles.model.(model).domain(ad).airOut=1;
+        
         close(wb);
         setHandles(handles);
     catch
