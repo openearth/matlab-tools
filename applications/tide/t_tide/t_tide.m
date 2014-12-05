@@ -173,7 +173,7 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin);
 %    using <a href="http://www.eos.ubc.ca/~rich/#T_Tide">"T_TIDE"</a>, <a href="http://dx.doi.org/10.1016/S0098-3004(02)00013-4">Computers and Geosciences, 28, 929-937 (2002)</a>.
 %   (citation would be appreciated if you find the toolbox useful).
 %
-%See also: tide, UTide, modulation, harmanal
+%See also: t_predic, tide, UTide, modulation, harmanal
 
 % R. Pawlowicz 11/ 8/99 - Completely rewritten from the transliterated-
 %                         to-matlab IOS/Foreman fortran code by S. Lentz
@@ -203,7 +203,7 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin);
 
 % Version 1.3+
 % $Id$
-% $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/tide/nc_t_tide
+% $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/tide/nc_t_tide$
 
 
 
@@ -783,7 +783,7 @@ elseif fid==1,
 end
 
 if fid>0,
-  fprintf(fid,'date: %s\n',date);
+  fprintf(fid,'t_tide version: $Id$ \n',);
   fprintf(fid,'nobs = %d,  ngood = %d,  record length (days) = %.2f\n',nobs,ngood,length(xin)*dt/24);
   if ~isempty(stime); fprintf(fid,'%s\n',['start time: ',datestr(stime)]); end
   fprintf(fid,'rayleigh criterion = %.1f\n',ray);

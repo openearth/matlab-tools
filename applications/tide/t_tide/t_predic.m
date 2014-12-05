@@ -51,6 +51,8 @@ function yout=t_predic(tim,varargin);
 %
 %  This is in fact the recommended calling procedure (and required
 %  when the analysis results are from series>18.6 years in length)
+%
+%See also: t_tide
 
 % R. Pawlowicz 11/8/99
 % Version 1.0
