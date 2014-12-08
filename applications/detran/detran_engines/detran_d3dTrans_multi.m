@@ -148,7 +148,7 @@ else
     namW = [namW extW];
 end
 
-tek=tekal('read',[patW filesep namW]);
+tek = tekal('open',[patW filesep namW],'loaddata'); 
 weightFac=tek.Field.Data(:,2)';
 weightFac = weightFac / sum (weightFac);
 
