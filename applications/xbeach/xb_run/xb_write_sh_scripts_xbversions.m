@@ -70,7 +70,7 @@ OPT = setproperty(OPT, varargin{:});
 
 switch OPT.version
     % Define seperate cases for all different available versions
-    case 1.21
+    case {1.21, 'groundhogday'}
         % XBeach v1.21 Groundhog Day release
         fprintf(FileID,'module purge\n');
         fprintf(FileID,'module load gcc/4.9.1\n');
@@ -79,7 +79,7 @@ switch OPT.version
         fprintf(FileID,'module load /opt/xbeach/openmpi/1.8.1_gcc_4.9.1\n');
         fprintf(FileID,'module load /u/bieman/privatemodules/xbeach-groundhogday_gcc_4.9.1_1.8.1_HEAD\n\n');
         fprintf(FileID,'module list\n');
-    case 1.20
+    case {1.20, 'sinterklaas'}
         % XBeach v1.20 Sinterklaas release
         fprintf(FileID,'module purge\n');
         fprintf(FileID,'module load gcc/4.9.1\n');
@@ -88,7 +88,7 @@ switch OPT.version
         fprintf(FileID,'module load /opt/xbeach/openmpi/1.8.1_gcc_4.9.1\n');
         fprintf(FileID,'module load /u/bieman/privatemodules/xbeach-sinterklaas_gcc_4.9.1_1.8.1_HEAD\n\n');
         fprintf(FileID,'module list\n');
-    case 1.19
+    case {1.19, 'easter'}
         % XBeach v1.19 Easter release
         fprintf(FileID,'module purge\n');
         fprintf(FileID,'module load gcc/4.9.1\n');
@@ -96,6 +96,15 @@ switch OPT.version
         fprintf(FileID,'module load netcdf/v4.3.2_v4.4.0_gcc_4.9.1\n');
         fprintf(FileID,'module load /opt/xbeach/openmpi/1.8.1_gcc_4.9.1\n');
         fprintf(FileID,'module load /u/bieman/privatemodules/xbeach-easter_gcc_4.9.1_1.8.1_HEAD\n\n');
+        fprintf(FileID,'module list\n');
+    case 'trunk'
+        % XBeach trunk (variable, the most recently compiled trunk)
+        fprintf(FileID,'module purge\n');
+        fprintf(FileID,'module load gcc/4.9.2\n');
+        fprintf(FileID,'module load hdf5/1.8.14_gcc_4.9.2\n');
+        fprintf(FileID,'module load netcdf/v4.3.2_v4.4.0_gcc_4.9.2\n');
+        fprintf(FileID,'module load openmpi/1.8.3_gcc_4.9.2\n');
+        fprintf(FileID,'module load /opt/xbeach/modules/xbeach-trunk_gcc_4.9.2_1.8.3_HEAD\n\n');
         fprintf(FileID,'module list\n');
     case 'groundhogday_old'
         fprintf(FileID,'module purge\n');
