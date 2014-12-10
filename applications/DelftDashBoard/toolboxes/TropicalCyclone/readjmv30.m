@@ -62,8 +62,9 @@ while 1
     end
 end
 
-
 fclose(fid);
+
+tc.first_forecast_time=tc.time(1);
 
 % Now read what came before
 % First find position
@@ -73,12 +74,12 @@ while 1
     n=n+1;
     str=fgetl(fid);
     f=strread(str,'%s','delimiter',' ');
-    jjj=strfind(str,'//');
-%    if strcmpi(f{1},'//')
-    if ~isempty(jjj)
+    f=f{end};
+    f=deblank2(f);
+    if strcmpi(f(end-1:end),'//')
         istart=n+1;
     end
-    if strcmpi(f{1},'NNNN')
+    if strcmpi(f,'NNNN')
         istop=n-2;
         break
     end
