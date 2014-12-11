@@ -274,8 +274,14 @@ if ~isempty(x2) % now if also an x2 and z2 are available match those too
     % upper with x2, z2 once more (this will NOT include new crossings so no further updating is needed)
     [xcr, zcr, x2, z2, UpperBoundary_new(:,1), UpperBoundary_new(:,2)] = findCrossings(x2, z2, UpperBoundary(:,1), UpperBoundary(:,2),'synchronizegrids');
     [UpperBoundary] = deal(UpperBoundary_new); clear UpperBoundary_new
-    % to make sure x and z and x2 and z2 contain all points match x, z with x2, z2 once more (this will NOT include new crossings so no further updating is needed)
+    % to make sure x and z and x2 and z2 contain all points match x, z with x2, z2 once more 
     [xcr, zcr, x, z, x2, z2] = findCrossings(x, z, x2, z2,'synchronizegrids');
+    % update upper and lower boundaries (in case of problems with number
+    % precision
+    [xcr, zcr, x2, z2, UpperBoundary_new(:,1), UpperBoundary_new(:,2)] = findCrossings(x2, z2, UpperBoundary(:,1), UpperBoundary(:,2),'synchronizegrids');
+    [UpperBoundary] = deal(UpperBoundary_new); clear UpperBoundary_new
+    [xcr, zcr, x2, z2, LowerBoundary_new(:,1), LowerBoundary_new(:,2)] = findCrossings(x2, z2, LowerBoundary(:,1), LowerBoundary(:,2),'synchronizegrids');
+    [LowerBoundary] = deal(LowerBoundary_new); clear LowerBoundary_new
 end
 
 
