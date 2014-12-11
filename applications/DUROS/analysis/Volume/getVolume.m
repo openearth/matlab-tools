@@ -179,10 +179,9 @@ result = createEmptyDUROSResult;
 %% Conform to the precision used in the volume determination
 if numel(OPT.x) == numel(OPT.x2)
     if all(OPT.x == OPT.x2)
-        sameID = roundoff(OPT.z,5) == roundoff(OPT.z2,5);
+        sameID = roundoff(OPT.z,7) == roundoff(OPT.z2,7);
         OPT.z2(sameID) = OPT.z(sameID);
     end
-    
     SameProfile = all(OPT.x == OPT.x2) && all(OPT.z == OPT.z2);
 else
     SameProfile = false;
@@ -274,11 +273,6 @@ if ~SameProfile
     [UpperBoundary] = deal(UpperBoundary_new); clear UpperBoundary_new
     
     if ~isempty(x2) % now if also an x2 and z2 are available match those too
-        % Round off to precision to prevent problems when using
-        % findCrossings multiple times
-        z   = roundoff(z,8);
-        z2  = roundoff(z2,8);
-        % first match x and z with z2 and z2
         [xcr, zcr, x, z, x2, z2] = findCrossings(x, z, x2, z2,'synchronizegrids');
         % now match upper boundary with x2 and z2 (this will include crossing points)
         [xcr, zcr, x2, z2, UpperBoundary_new(:,1), UpperBoundary_new(:,2)] = findCrossings(x2, z2, UpperBoundary(:,1), UpperBoundary(:,2),'synchronizegrids');
@@ -291,8 +285,6 @@ if ~SameProfile
         % upper with x2, z2 once more (this will NOT include new crossings so no further updating is needed)
         [xcr, zcr, x2, z2, UpperBoundary_new(:,1), UpperBoundary_new(:,2)] = findCrossings(x2, z2, UpperBoundary(:,1), UpperBoundary(:,2),'synchronizegrids');
         [UpperBoundary] = deal(UpperBoundary_new); clear UpperBoundary_new
-        % to make sure x and z and x2 and z2 contain all points match x, z with x2, z2 once more
-        [xcr, zcr, x, z, x2, z2] = findCrossings(x, z, x2, z2,'synchronizegrids');
     end
     
     
