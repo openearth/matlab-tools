@@ -59,7 +59,7 @@ function mpa_loadcsharp()
 assert(~verLessThan('matlab', '7.8'),'The MorphAn wrapper uses the .NET interface introduced in Matlab 2009a. The code cannot be executed whereas this matlab has an earlier version.');
         
 %% Find library
-if ~isempty(getappdata(0,'MorphAnCSharpLibInitialized'))
+if ~isempty(getappdata(0,'MorphAnCSharpLibInitialized')) && getappdata(0,'MorphAnCSharpLibInitialized')
     return;
 end
     
