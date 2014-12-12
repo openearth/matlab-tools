@@ -285,6 +285,17 @@ if ~SameProfile
         % upper with x2, z2 once more (this will NOT include new crossings so no further updating is needed)
         [xcr, zcr, x2, z2, UpperBoundary_new(:,1), UpperBoundary_new(:,2)] = findCrossings(x2, z2, UpperBoundary(:,1), UpperBoundary(:,2),'synchronizegrids');
         [UpperBoundary] = deal(UpperBoundary_new); clear UpperBoundary_new
+        
+        % to make sure x and z and x2 and z2 contain all points match x, z with x2, z2 once more
+        [xcrT, zcrT, xT, zT, x2T, z2T] = findCrossings(x, z, x2, z2,'synchronizegrids');
+        if numel(zT) == numel(UpperBoundary(:,1)) %only really use when it has the same size as the boundaries
+            xcr = xcrT;
+            zcr = zcrT;
+            x   = xT;
+            z   = zT;
+            x2  = x2T;
+            z2  = z2T;
+        end
     end
     
     
