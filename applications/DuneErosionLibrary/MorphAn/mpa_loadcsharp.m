@@ -63,11 +63,19 @@ if ~isempty(getappdata(0,'MorphAnCSharpLibInitialized'))
     return;
 end
     
-trdaLocation = which('DeltaShell.Plugins.MorphAn.TRDA.dll');
-if isempty(trdaLocation)
+domainLocation = which('DeltaShell.Plugins.MorphAn.TRDA.dll');
+if isempty(domainLocation)
     error('MPA:NoLib','Could not find MorphAn library');
 end
 
-NET.addAssembly(trdaLocation);
+NET.addAssembly(domainLocation);
+
+domainLocation = which('DeltaShell.Plugins.MorphAn.Domain.dll');
+if isempty(domainLocation)
+    error('MPA:NoLib','Could not find MorphAn library');
+end
+
+NET.addAssembly(domainLocation);
+
 setappdata(0,'MorphAnCSharpLibInitialized',true);
 
