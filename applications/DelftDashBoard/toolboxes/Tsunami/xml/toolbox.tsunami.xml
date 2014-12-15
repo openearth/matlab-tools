@@ -42,5 +42,11 @@
       <formodel>fast</formodel>
       <element>toolbox.tsunami.fast.xml</element>
     </tab>    
+    <tab>
+      <tabstring>Tsunami</tabstring>
+      <callback>ddb_dummyTabCallback</callback>
+      <formodel>ww3</formodel>
+      <element>toolbox.tsunami.ww3.xml</element>
+    </tab>    
   </element>
 </root>
