@@ -97,7 +97,7 @@ if jawnd == 1;
     fprintf(fidext,[            ,'\n']);
 end
 if jaspw == 1 & jawnd == 0;
-    fprintf(fidext,['QUANTITY=' ,'spiderweb'                         ,'\n']);
+    fprintf(fidext,['QUANTITY=' ,'airpressure_windx_windy'           ,'\n']);
     fprintf(fidext,['FILENAME=' ,spwfile                             ,'\n']);
     fprintf(fidext,['FILETYPE=5','\n']);
     fprintf(fidext,['METHOD  =1','\n']);
@@ -108,7 +108,7 @@ if jargh == 1;
     fprintf(fidext,['QUANTITY=' ,'frictioncoefficient'               ,'\n']);
     fprintf(fidext,['FILENAME=' ,rghfile                             ,'\n']);
     fprintf(fidext,['FILETYPE=7','\n']);
-    fprintf(fidext,['METHOD  =4','\n']);
+    fprintf(fidext,['METHOD  =5','\n']);
     fprintf(fidext,['OPERAND =O','\n']);
     fprintf(fidext,[            ,'\n']);
 end
@@ -116,7 +116,7 @@ if javis == 1;
     fprintf(fidext,['QUANTITY=' ,'horizontaleddyviscositycoefficient','\n']);
     fprintf(fidext,['FILENAME=' ,visfile                             ,'\n']);
     fprintf(fidext,['FILETYPE=7','\n']);
-    fprintf(fidext,['METHOD  =4','\n']);
+    fprintf(fidext,['METHOD  =5','\n']);
     fprintf(fidext,['OPERAND =O','\n']);
     fprintf(fidext,[            ,'\n']);
 end
@@ -124,7 +124,7 @@ if jaini == 1;
     fprintf(fidext,['QUANTITY=' ,'initialwaterlevel'                 ,'\n']);
     fprintf(fidext,['FILENAME=' ,inifile                             ,'\n']);
     fprintf(fidext,['FILETYPE=7','\n']);
-    fprintf(fidext,['METHOD  =4','\n']);
+    fprintf(fidext,['METHOD  =5','\n']);
     fprintf(fidext,['OPERAND =O','\n']);
     fprintf(fidext,[            ,'\n']);
 end

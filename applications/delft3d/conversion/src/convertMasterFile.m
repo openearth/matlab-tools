@@ -205,7 +205,7 @@ else
     tlfsmo           = mdfkeywds.tlfsmo.*60;
 end
 fprintf(fid2,'%s\n'  ,['Tlfsmo                              = ',num2str(tlfsmo,'%2.2f')                ,'                           # Fourier smoothing time on waterlevel boundaries (s) ']);
-fprintf(fid2,'%s\n'  ,['Slopedrop2D                         = 0.3                                # Apply droplosses only if local bottom slope > Slopedrop2D ']);
+fprintf(fid2,'%s\n'  ,['Slopedrop2D                         = 0.0                                # Apply droplosses only if local bottom slope > Slopedrop2D ']);
 fprintf(fid2,'%s\n'  ,['Lincontin                           =                                    # 0 = no, 1 = yes linear continuity']);
 fprintf(fid2,'%s\n'  ,['Jaembed1D                           =                                    # 1 : use embedded 1d channels, first run: Operations: Embed 1D channels']);
 fprintf(fid2,'%s\n'  ,['Chkadvd                             =                                    # Check advection terms if depth < chkadvdp, => less setbacks ']);
