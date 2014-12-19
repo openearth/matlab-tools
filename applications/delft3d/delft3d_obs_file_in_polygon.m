@@ -4,9 +4,10 @@ function output_text = delft3d_obs_file_in_polygon(grd_file,pol_file,obs_file_ou
 % names them according to nesting standards (so you can use them for ad hoc
 % nesting without having to run the model again, nesthd2 can be started directly)
 %
-%  <obs_text> = dflowfm.obs_file_in_polygon(grd_file,pol_file,obs_file_out,<obs_file_in>);
+%  <obs_text> = delft3d_obs_file_in_polygon(grd_file,pol_file,obs_file_out,<obs_file_in>);
 %
 %  <obs_text>    = Optional, output text that is written to obs_file_out as well
+%                  this text excludes the original points though (only added ones)
 %  grd_file      = Required, grid file (its name with or without location in
 %                  a text string)
 %  pol_file      = Required, polygon file (its name with or without location in
@@ -18,16 +19,16 @@ function output_text = delft3d_obs_file_in_polygon(grd_file,pol_file,obs_file_ou
 %                  within <obs_file_in> will be ignored
 %
 % Example 1:
-%    dflowfm.obs_file_in_polygon('grd.grd','pol.pol','additional_obs.obs');
+%    delft3d_obs_file_in_polygon('grd.grd','pol.pol','additional_obs.obs');
 %
 % Example 2:
-%    dflowfm.obs_file_in_polygon('D:/d3d/grd.grd',...
+%    delft3d_obs_file_in_polygon('D:/d3d/grd.grd',...
 %                                'C:/some_folder/pol.pol',...
 %                                'D:/d3d/testing/additional_obs.obs',...
 %                                'D:/d3d/original_obs.obs);
 %
 % Example 3:
-%    output_text = dflowfm.obs_file_in_polygon('grd.grd',...
+%    output_text = delft3d_obs_file_in_polygon('grd.grd',...
 %                                              'pol.pol',...
 %                                              'additional_obs.obs');
 %    disp('All locations as stored in additional_obs.obs:'); disp(' ');
@@ -158,6 +159,11 @@ end
 
 if ~exist('MN')
     error('No locations were found within the polygon, please check this');
+end
+
+if exist('obs')==1
+    MN        = [[obs.m; obs.n]' ;MN];
+    loc_names = [cellstr(obs.namst); loc_names];
 end
 
 obs_new.m = MN(:,1);
