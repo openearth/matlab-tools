@@ -9,7 +9,7 @@
       <checkfor>all</checkfor>
       <check>
         <variable>size(5)</variable>
-        <value>0</value>
+        <value>1</value>
         <operator>gt</operator>
       </check>
     </dependency>
@@ -27,7 +27,7 @@
       <checkfor>all</checkfor>
       <check>
         <variable>size(5)</variable>
-        <value>0</value>
+        <value>1</value>
         <operator>gt</operator>
       </check>
     </dependency>
@@ -45,7 +45,7 @@
       <checkfor>all</checkfor>
       <check>
         <variable>size(5)</variable>
-        <value>0</value>
+        <value>1</value>
         <operator>gt</operator>
       </check>
       <check>
@@ -64,7 +64,7 @@
       <checkfor>all</checkfor>
       <check>
         <variable>size(5)</variable>
-        <value>0</value>
+        <value>1</value>
         <operator>gt</operator>
       </check>
     </dependency>

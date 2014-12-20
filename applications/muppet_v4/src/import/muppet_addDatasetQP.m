@@ -163,7 +163,19 @@ for j=i1:i2
         if dataproperties(ii).DimFlag(2)>0
             par.stations=qpread(fid,dataproperties(ii),'stations');
         end
-        
+
+        % Subfields
+        par.subfields=qpread(fid,dataproperties(ii),'subfields');
+        if ~isempty(par.subfields)
+            par.nrsubfields=length(par.subfields);
+            if ~isempty(dataset.subfield)
+                par.subfieldnumber=strmatch(lower(dataset.subfield),lower(par.subfields),'exact');
+            end
+        else
+            par.subfields={''};
+            par.nrsubfields=0;
+        end
+
         % NetCDF time series (should be fixed in qpread)
 %        if strcmpi(fid.qp_filetype,'netcdf')
         if strcmpi(fid.QP_FileType,'NetCDF')
@@ -316,9 +328,17 @@ end
 % And get the data
 switch length(arg)
     case 1
-        d=qpread(fid,idomain,dataproperties,'griddata',arg{1});
+        if ~isempty(dataset.subfields)
+            d=qpread(fid,idomain,dataproperties,'griddata',dataset.subfieldnumber,arg{1});
+        else
+            d=qpread(fid,idomain,dataproperties,'griddata',arg{1});
+        end
     case 2
-        d=qpread(fid,idomain,dataproperties,'griddata',arg{1},arg{2});
+        if ~isempty(dataset.subfields)
+            d=qpread(fid,idomain,dataproperties,'griddata',dataset.subfieldnumber,arg{1},arg{2});
+        else
+            d=qpread(fid,idomain,dataproperties,'griddata',arg{1},arg{2});
+        end
         % Fix for DFlow-FM to make water levels NaN when depth<0.1 m
         if isfield(dataproperties,'Geom')
             if strcmpi(dataproperties.Geom,'polyg')
@@ -331,14 +351,21 @@ switch length(arg)
             end
         end
     case{3}
-        subfields = qpread(fid,idomain,dataproperties,'subfields');
-        if isempty(subfields)
-            d=qpread(fid,idomain,dataproperties,'griddata',arg{1},arg{2},arg{3});
+        if ~isempty(dataset.subfields)
+            d=qpread(fid,idomain,dataproperties,'griddata',dataset.subfieldnumber,arg{1},arg{2},arg{3});
         else
             d=qpread(fid,idomain,dataproperties,'griddata',1,arg{1},arg{2},arg{3});
         end
     case{4}
-        d=qpread(fid,idomain,dataproperties,'griddata',arg{1},arg{2},arg{3},arg{4});
+        if ~isempty(dataset.subfields)
+            d=qpread(fid,idomain,dataproperties,'griddata',dataset.subfieldnumber,arg{1},arg{2},arg{3},arg{4});
+        else
+            d=qpread(fid,idomain,dataproperties,'griddata',arg{1},arg{2},arg{3},arg{4});
+        end
+end
+
+if ~isempty(dataset.subfields)
+    dataset.subfield=dataset.subfields{dataset.subfieldnumber};
 end
 
 % d.Time=dataset.morphtimes;

@@ -53,6 +53,7 @@ dataset.nrdomains=0;
 dataset.domains={''};
 dataset.nrsubfields=0;
 dataset.subfields={''};
+dataset.subfieldnumber=1;
 
 dataset.nrblocks=0;
 

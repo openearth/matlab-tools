@@ -14,6 +14,8 @@ for ii=1:length(varargin)
                 addDataset;
             case{'selectparameter'}
                 selectParameter;
+            case{'selectsubfield'}
+                selectSubfield;
             case{'selectucomponent'}
                 selectParameter('u');
             case{'selectvcomponent'}
@@ -353,7 +355,7 @@ else
 end
 
 % K
-if dataset.size(5)>0
+if dataset.size(5)>1
     if dataset.size(5)~=oldsize(5)
         dataset.k=1;
         dataset.previousk=1;
@@ -435,6 +437,11 @@ if isfield(dataset.parameters(dataset.activeparameter).parameter,'data')
 end
 
 gui_setUserData(dataset);
+
+refreshDatasetName;
+
+%%
+function selectSubfield
 
 refreshDatasetName;
 
@@ -637,7 +644,7 @@ if dataset.size(4)>0
         dims(2)=1;
     end
 end
-if dataset.size(5)>0
+if dataset.size(5)>1
     if isempty(dataset.k) || length(dataset.k)>1
         dims(3)=1;
     end
@@ -700,6 +707,7 @@ if dataset.adjustname
             end
         end
         
+        subfstr='';
         compstr='';
         tstr='';
         statstr='';
@@ -707,6 +715,10 @@ if dataset.adjustname
         nstr='';
         kstr='';
         runidstr='';
+
+        if dataset.nrsubfields>0
+            subfstr=[ ' - ' dataset.subfields{dataset.subfieldnumber}];            
+        end
         
         switch dataset.quantity
           case{'vector2d','vector3d'}
@@ -773,7 +785,7 @@ if dataset.adjustname
             runidstr=[' - ' runid];
         end
         
-        dataset.name=[parstr compstr statstr tstr mstr nstr kstr runidstr];
+        dataset.name=[parstr subfstr compstr statstr tstr mstr nstr kstr runidstr];
         
     else
         dataset.name='';
