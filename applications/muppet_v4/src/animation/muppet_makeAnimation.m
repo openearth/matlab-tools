@@ -165,12 +165,21 @@ try
                         itime1=find(datasets(id).dataset.availabletimes-1e-4<t,1,'last');
                         if isempty(itime1)
                             % t bigger than any of the available times
-                            itime1=length(datasets(id).dataset.availabletimes);
+                            if datasets(id).dataset.availabletimes(end)<t
+                                itime1=length(datasets(id).dataset.availabletimes);
+                            else
+                                itime1=1;
+                            end
                         end
                         itime2=find(datasets(id).dataset.availabletimes+1e-4>=t,1,'first');
                         if isempty(itime2)
                             % t smaller than any of the available times
-                            itime2=length(datasets(id).dataset.availabletimes);
+                            % t bigger than any of the available times
+                            if datasets(id).dataset.availabletimes(end)<t
+                                itime2=length(datasets(id).dataset.availabletimes);
+                            else
+                                itime2=1;
+                            end
                         end
                         
                         t1=datasets(id).dataset.availabletimes(itime1);

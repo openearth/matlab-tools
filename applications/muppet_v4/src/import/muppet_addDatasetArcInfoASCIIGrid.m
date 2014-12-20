@@ -45,6 +45,8 @@ function dataset=import(dataset)
 [x,y,z]=readArcInfo(dataset.filename);
 [x,y]=meshgrid(x,y);
 
+dataset.rawquantity='scalar';
+
 imagefile=0;
 
 if ~isempty(dataset.imagefile) && ~isempty(dataset.georeferencefile)

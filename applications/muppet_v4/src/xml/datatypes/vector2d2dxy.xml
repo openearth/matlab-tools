@@ -12,6 +12,9 @@
         <name>unitvector</name>
       </plotoption>
       <plotoption>
+        <name>vectorcolor</name>
+      </plotoption>
+      <plotoption>
         <name>fieldthinningtype</name>
       </plotoption>
       <plotoption>

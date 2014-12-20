@@ -9,8 +9,11 @@ nodat=plt.nrdatasets;
 
 bary=[];
 stackedareay=[];
+stackedareayneg=[];
 
 plt.xtcklab=[];
+
+separatepositiveandnegative=1;
 
 nbar=0;
 nstackedarea=0;
@@ -31,7 +34,13 @@ for k=1:nodat
         case {'stacked area'}
             nstackedarea=nstackedarea+1;
             plt.datasets(k).dataset.areanr=nstackedarea;
-            stackedareay(:,nstackedarea)=handles.datasets(ii).dataset.y;
+            if separatepositiveandnegative
+                stackedareay(:,nstackedarea)=max(handles.datasets(ii).dataset.y,0);
+                stackedareayneg(:,nstackedarea)=min(handles.datasets(ii).dataset.y,0);
+            else
+                stackedareay(:,nstackedarea)=handles.datasets(ii).dataset.y;
+                stackedareayneg(:,nstackedarea)=zeros(size(handles.datasets(ii).dataset.y));
+            end
     end
 end
 
@@ -46,8 +55,9 @@ end
 
 plt.bary=bary;
 plt.stackedareay=stackedareay;
+plt.stackedareayneg=stackedareayneg;
 
-handles.figures(ifig).figure.subplots(isub).subplot.bary=bary;
-handles.figures(ifig).figure.subplots(isub).subplot.stackedareay=stackedareay;
+% handles.figures(ifig).figure.subplots(isub).subplot.bary=bary;
+% handles.figures(ifig).figure.subplots(isub).subplot.stackedareay=stackedareay;
 
 handles.figures(ifig).figure.subplots(isub).subplot=plt;

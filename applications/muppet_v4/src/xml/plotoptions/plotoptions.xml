@@ -963,7 +963,7 @@
     <variable>lintscale</variable>
     <type>real</type>
     <keyword>RelativeScale</keyword>
-    <default>0</default>
+    <default>1</default>
   </plotoption>
   <plotoption>
     <name>unitarrow</name>
@@ -1491,22 +1491,6 @@
     </dependency>
   </plotoption>
   <plotoption>
-    <name>timemarkershowfirstposition</name>
-    <variable>timemarker.showfirstposition</variable>
-    <type>boolean</type>
-    <keyword>TimeMarkerShowFirstPosition</keyword>
-    <default>1</default>
-    <dependency>
-      <action>write</action>
-      <checkfor>all</checkfor>
-      <check>
-        <variable>timemarker.enable</variable>
-        <operator>eq</operator>
-        <value>1</value>
-      </check>
-    </dependency>
-  </plotoption>
-  <plotoption>
     <name>timemarkershowlastposition</name>
     <variable>timemarker.showlastposition</variable>
     <type>boolean</type>
@@ -1586,6 +1570,81 @@
       </check>
     </dependency>
   </plotoption>
+
+
+  <plotoption>
+    <name>originmarkerenable</name>
+    <variable>originmarker.enable</variable>
+    <type>boolean</type>
+    <keyword>ShowOriginMarker</keyword>
+    <default>0</default>
+  </plotoption>
+  <plotoption>
+    <name>originmarkermarker</name>
+    <variable>originmarker.marker</variable>
+    <type>string</type>
+    <keyword>OriginMarkerType</keyword>
+    <default>o</default>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>originmarker.enable</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
+  </plotoption>
+  <plotoption>
+    <name>originmarkersize</name>
+    <variable>originmarker.size</variable>
+    <type>int</type>
+    <keyword>OriginMarkerSize</keyword>
+    <default>10</default>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>originmarker.enable</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
+  </plotoption>
+  <plotoption>
+    <name>originmarkeredgecolor</name>
+    <variable>originmarker.edgecolor</variable>
+    <type>string</type>
+    <keyword>OriginMarkerEdgeColor</keyword>
+    <default>Red</default>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>originmarker.enable</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
+  </plotoption>
+  <plotoption>
+    <name>originmarkerfacecolor</name>
+    <variable>originmarker.facecolor</variable>
+    <type>string</type>
+    <keyword>OriginMarkerFaceColor</keyword>
+    <default>Red</default>
+    <dependency>
+      <action>write</action>
+      <checkfor>all</checkfor>
+      <check>
+        <variable>originmarker.enable</variable>
+        <operator>eq</operator>
+        <value>1</value>
+      </check>
+    </dependency>
+  </plotoption>
+
+
   <plotoption>
     <name>unitvector</name>
     <variable>unitvector</variable>

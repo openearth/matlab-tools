@@ -33,7 +33,7 @@ end
     
 switch lower(datasets(nra).dataset.type)
  
-    case{'scalar2dxy','scalar2dxz'}
+    case{'scalar2dxy','scalar2dxz','scalar2dtz'}
         
         datasets(nr).dataset.x=datasets(nra).dataset.x;
         datasets(nr).dataset.y=datasets(nra).dataset.y;
@@ -236,6 +236,7 @@ datasets(nr).dataset.filetype='combineddataset';
 datasets(nr).dataset.combineddataset=1;
 datasets(nr).dataset.time=datasets(nra).dataset.time;
 datasets(nr).dataset.coordinatesystem=datasets(nra).dataset.coordinatesystem;
+datasets(nr).dataset.tc='c';
 
 if m==0
     if datasets(nra).dataset.tc=='t'

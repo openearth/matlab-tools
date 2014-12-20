@@ -51,7 +51,13 @@ switch plt.xscale
                 xticks=1:length(plt.xtcklab);
                 set(gca,'xtick',xticks);
 %                xticklabel_rotate([],315,plt.xtcklab);
-                xticklabel_rotate([],340,plt.xtcklab);
+                xh=xticklabel_rotate([],340,plt.xtcklab);
+                set(xh,'FontName',plt.font.name);
+                set(xh,'FontSize',plt.font.size*fontred);
+                set(xh,'FontAngle',plt.font.angle);
+                set(xh,'FontWeight',plt.font.weight);
+                set(xh,'Color',colorlist('getrgb','color',plt.font.color));
+
                 
 %                 xticks=plt.xmin:plt.xmax;
 %                 set(gca,'xtick',xticks);

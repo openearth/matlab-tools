@@ -13,5 +13,6 @@ h=dflowfm.plotNet(data.G,'cen',[],'cor',[]);
 set(h.per,'Color',opt.linecolor);
 set(h.per,'LineWidth',opt.linewidth);
 set(h.per,'LineStyle',opt.linestyle);
+set(h.per,'LineWidth',0.1);
 
 h=h.per;

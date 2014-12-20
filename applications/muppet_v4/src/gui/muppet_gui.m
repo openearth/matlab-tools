@@ -48,6 +48,8 @@ else
              web('https://publicwiki.deltares.nl/display/OET/Muppet');
         case{'aboutmuppet'}
             aboutMuppet;
+        case{'coordinateconversion'}
+            coordinateconversion;
         case{'reloadxml'}
             reloadXmlFiles;
         case{'selectdataset'}
@@ -1038,7 +1040,9 @@ muppet_animationSettings;
 
 %%
 function makeAnimation
+
 handles=getHandles;
+
 % Check animation size
 nhor=handles.figures(handles.activefigure).figure.width*handles.figures(handles.activefigure).figure.resolution/2.5;
 nver=handles.figures(handles.activefigure).figure.height*handles.figures(handles.activefigure).figure.resolution/2.5;
@@ -1052,7 +1056,6 @@ switch lower(handles.animationsettings.format)
     case{'avi'}
         if nhor>2000 || nver>2000
             muppet_giveWarning('text','Animation output very large! Consider reducing the resolution.');
-%            return
         end
 end
 
@@ -1063,3 +1066,9 @@ end
 %     setHandles(handles);
 % end
 muppet_makeAnimation(handles,handles.activefigure);
+
+%%
+function coordinateconversion
+
+handles=getHandles;
+SuperTrans(handles.EPSG);

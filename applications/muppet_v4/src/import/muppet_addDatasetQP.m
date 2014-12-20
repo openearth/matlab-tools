@@ -313,15 +313,30 @@ for ii=1:5
         arg{narg}=inparg{ii};    
     end
 end
-
 % And get the data
 switch length(arg)
     case 1
         d=qpread(fid,idomain,dataproperties,'griddata',arg{1});
     case 2
         d=qpread(fid,idomain,dataproperties,'griddata',arg{1},arg{2});
+        % Fix for DFlow-FM to make water levels NaN when depth<0.1 m
+        if isfield(dataproperties,'Geom')
+            if strcmpi(dataproperties.Geom,'polyg')
+                if strcmpi(dataproperties.Name,'waterlevel')
+                    ipar2=strmatch('waterdepth',lower(parameternames),'exact');
+                    dataproperties2=dataset.dataproperties(ipar2);
+                    dpt=qpread(fid,idomain,dataproperties2,'griddata',arg{1},arg{2});
+                    d.Val(dpt.Val<0.2)=NaN;
+                end
+            end
+        end
     case{3}
-        d=qpread(fid,idomain,dataproperties,'griddata',arg{1},arg{2},arg{3});
+        subfields = qpread(fid,idomain,dataproperties,'subfields');
+        if isempty(subfields)
+            d=qpread(fid,idomain,dataproperties,'griddata',arg{1},arg{2},arg{3});
+        else
+            d=qpread(fid,idomain,dataproperties,'griddata',1,arg{1},arg{2},arg{3});
+        end
     case{4}
         d=qpread(fid,idomain,dataproperties,'griddata',arg{1},arg{2},arg{3},arg{4});
 end

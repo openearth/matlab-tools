@@ -43,6 +43,8 @@ switch dataset.type
                         yg=grd.Y;                        
                 end
             end
+            
+            
 
             if ~isempty(xg)
                 dataset.x=xg;

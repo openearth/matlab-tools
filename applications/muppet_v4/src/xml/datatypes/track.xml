@@ -53,6 +53,7 @@
       <elementgroup>line</elementgroup>
       <elementgroup>marker</elementgroup>
       <elementgroup>timemarker</elementgroup>
+      <elementgroup>originmarker</elementgroup>
     </plotroutine>
   </plottype>
 </root>

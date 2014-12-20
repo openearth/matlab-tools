@@ -104,6 +104,7 @@ function dataset=import(dataset)
 % dataset.data
 
 s=dataset.data;
+dataset.rawquantity='scalar';
 
 % Find parameter to be read
 for ipar=1:length(s.parameters)
@@ -207,6 +208,11 @@ end
 % Labels
 if isfield(parameter,'labels')
     dataset.xticklabel=parameter.labels;
+end
+
+% Location
+if isfield(parameter,'location')
+    dataset.location=parameter.location;
 end
 
 % Get values (and store in same structure format as qpread)

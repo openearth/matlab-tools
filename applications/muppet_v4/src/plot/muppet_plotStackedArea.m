@@ -14,6 +14,7 @@ if opt.areanr==1
     end
     x=data.x-xback;
     h=area(x,plt.stackedareay);hold on;
+    h2=area(x,plt.stackedareayneg);hold on;
     set(h,'Tag','stackedarea');
 end
 

@@ -182,7 +182,7 @@ switch tp
         for ipar=1:npar
             par=[];
             par=muppet_setDefaultParameterProperties(par);
-            par.name=columnlabels{ipar};
+            par.name=columnlabels{ipar}; % Label is in the last column
             par.size=[0 0 0 0 0];
             dataset.parameters(ipar).parameter=par;            
         end

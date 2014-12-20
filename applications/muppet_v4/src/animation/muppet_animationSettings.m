@@ -87,6 +87,7 @@ if strcmpi(h.format,'avi')
     if isempty(h.avioptions)
         aviops=avi('options');
         h.avioptions=aviops;
+        gui_setUserData(h);
     end
 end
 

@@ -18,7 +18,6 @@ yarr(8)=0.50 ; xarr(8)=-5;
  
 [x,y]=landboundary('read',data.polygonfile);
 trcum0=data.z;
-%trcum=PlotOptions.LintScale*trcum0;
 trcum=trcum0;
  
 polno=1;
@@ -28,25 +27,32 @@ for ii=1:size(x,1)
         polno=polno+1;
         jj=1;
     else
-        lintldb{polno}(jj,1)=x(ii);
-        lintldb{polno}(jj,2)=y(ii);
-        lintldb{polno}(jj,3)=500;
+        pol(polno).x(jj)=x(ii);
+        pol(polno).y(jj)=y(ii);
+        pol(polno).z(jj)=500;
         jj=jj+1;
     end
 end
  
 for ii=1:polno;
-    x0 = lintldb{ii}(1,1);
-    x1 = lintldb{ii}(end,1);
-    y0 = lintldb{ii}(1,2);
-    y1 = lintldb{ii}(end,2);
-    alfa0 = atan2((y1-y0),(x1-x0));
+
+    xxx=pol(ii).x;
+    yyy=pol(ii).y;
+
+    alfa0 = atan2((yyy(end)-yyy(1)),(xxx(end)-xxx(1)));
     if (trcum(ii)>=0)
         alfa(ii)=alfa0+pi/2;
     else
         alfa(ii)=alfa0-pi/2;
     end
-    xcen=0.5*(x0+x1);ycen=0.5*(y0+y1);
+    
+    % Determine where the arrow must be plotted
+    pd=pathdistance(xxx,yyy);
+    ifirst=find(pd>=pd(end)/2,1,'first')-1;    
+    ifrac=(pd(end)/2-pd(ifirst))/(pd(ifirst+1)-pd(ifirst));
+    xcen=xxx(ifirst)+ifrac*(xxx(ifirst+1)-xxx(ifirst));
+    ycen=yyy(ifirst)+ifrac*(yyy(ifirst+1)-yyy(ifirst));
+    
     if opt.unitarrow==0    
         logval=log10(abs(max(trcum)));
     else
@@ -55,9 +61,8 @@ for ii=1:polno;
     minval=logval-3;
     scaling(ii)=opt.lintscale*plt.scale*max(log10(abs(trcum(ii)))-minval,0);
     scaling(ii)=scaling(ii)*0.005;
-%    if abs(trcum(i))<1000
-%        scaling=0;
-%    end
+
+    % Create arrows
     for jj=1:8;
         dist=scaling(ii)*0.1*sqrt(xarr(jj)^2+yarr(jj)^2);
         ang0=atan2(yarr(jj),xarr(jj));
@@ -66,6 +71,8 @@ for ii=1:polno;
         arr{ii}(jj,2)=dist*sin(ang1)+ycen;
         arr{ii}(jj,3)=3000+ii*10;
     end
+    
+    % Create text
     dist=0.002*plt.scale;
     if (cos(alfa(ii))>=0)
         ang0=atan2(1.2,-0.5);ang1=ang0+alfa(ii);
@@ -84,14 +91,16 @@ end
  
 for ii=1:polno;
     if scaling(ii)>0
+
+        % Plot arrows
         if opt.fillclosedpolygons
             fl=fill3(arr{ii}(:,1),arr{ii}(:,2),arr{ii}(:,3),'r');hold on;
             set(fl,'FaceColor',colorlist('getrgb','color',opt.fillcolor),'LineStyle','none');
         end
- 
         lin=line(arr{ii}(:,1),arr{ii}(:,2),arr{ii}(:,3));hold on;
         set(lin,'LineWidth',opt.linewidth,'Color',colorlist('getrgb','color',opt.linecolor));hold on;
 
+        % Plot text
         if opt.addtext
             frmt=['%0.' num2str(opt.decimals) 'f'];
             tx=num2str(abs(trcum(ii))*opt.multiply,frmt);

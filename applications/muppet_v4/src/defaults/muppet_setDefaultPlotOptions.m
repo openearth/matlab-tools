@@ -144,8 +144,14 @@ opt.timemarker.edgecolor='black';
 opt.timemarker.facecolor='black';
 opt.timemarker.size=10;
 opt.timemarker.trackoption='uptomarker';
-opt.timemarker.showfirstposition=1;
 opt.timemarker.showlastposition=1;
+
+% Origin marker
+opt.originmarker.enable=0;
+opt.originmarker.marker='o';
+opt.originmarker.edgecolor='black';
+opt.originmarker.facecolor='black';
+opt.originmarker.size=10;
 
 opt.thinning=1;
 

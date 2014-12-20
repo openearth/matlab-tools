@@ -39,9 +39,6 @@
         <name>timemarkertrackoption</name>
       </plotoption>
       <plotoption>
-        <name>timemarkershowfirstposition</name>
-      </plotoption>
-      <plotoption>
         <name>timemarkershowlastposition</name>
       </plotoption>
       <plotoption>
@@ -57,11 +54,27 @@
         <name>timemarkermarkerfacecolor</name>
       </plotoption>
       <plotoption>
+        <name>originmarkerenable</name>
+      </plotoption>
+      <plotoption>
+        <name>originmarkermarker</name>
+      </plotoption>
+      <plotoption>
+        <name>originmarkersize</name>
+      </plotoption>
+      <plotoption>
+        <name>originmarkeredgecolor</name>
+      </plotoption>
+      <plotoption>
+        <name>originmarkerfacecolor</name>
+      </plotoption>
+      <plotoption>
         <name>legendtext</name>
       </plotoption>
       <elementgroup>line</elementgroup>
       <elementgroup>marker</elementgroup>
       <elementgroup>timemarker</elementgroup>
+      <elementgroup>originmarker</elementgroup>
       <elementgroup>legendtext</elementgroup>
     </plotroutine>
   </plottype>
@@ -103,9 +116,6 @@
         <name>timemarkertrackoption</name>
       </plotoption>
       <plotoption>
-        <name>timemarkershowfirstposition</name>
-      </plotoption>
-      <plotoption>
         <name>timemarkershowlastposition</name>
       </plotoption>
       <plotoption>
@@ -121,11 +131,27 @@
         <name>timemarkermarkerfacecolor</name>
       </plotoption>
       <plotoption>
+        <name>originmarkerenable</name>
+      </plotoption>
+      <plotoption>
+        <name>originmarkermarker</name>
+      </plotoption>
+      <plotoption>
+        <name>originmarkersize</name>
+      </plotoption>
+      <plotoption>
+        <name>originmarkeredgecolor</name>
+      </plotoption>
+      <plotoption>
+        <name>originmarkerfacecolor</name>
+      </plotoption>
+      <plotoption>
         <name>legendtext</name>
       </plotoption>
       <elementgroup>line</elementgroup>
       <elementgroup>marker</elementgroup>
       <elementgroup>timemarker</elementgroup>
+      <elementgroup>originmarker</elementgroup>
       <elementgroup>legendtext</elementgroup>
     </plotroutine>
   </plottype>

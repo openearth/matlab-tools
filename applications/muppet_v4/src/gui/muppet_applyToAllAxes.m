@@ -53,6 +53,7 @@ if fig.nrsubplots>0
             plt1.hourtick=plt0.hourtick;
             plt1.minutetick=plt0.minutetick;
             plt1.secondtick=plt0.secondtick;
+            plt1.adddate=plt0.adddate;
 %            plt1.datetickformatnumber=plt0.datetickformatnumber;
             plt1.font=plt0.font;
             

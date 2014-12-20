@@ -35,6 +35,7 @@ switch handles.figures(ifig).figure.subplots(isub).subplot.type
             if ~strcmpi(plt.coordinatesystem.name,'unspecified') && ~strcmpi(data.coordinatesystem.name,'unspecified')
                 if ~strcmpi(plt.coordinatesystem.name,data.coordinatesystem.name) || ...
                         ~strcmpi(plt.coordinatesystem.type,data.coordinatesystem.type)
+                if ~strcmpi(data.coordinatesystem.name,'undefined')
                     switch lower(data.type)
                         case{'vector2d2dxy','scalar2dxy','location1dxy','location2dxy'}
                             [data.x,data.y]=convertCoordinates(data.x,data.y,handles.EPSG,'CS1.name',data.coordinatesystem.name,'CS1.type',data.coordinatesystem.type, ...
@@ -45,6 +46,7 @@ switch handles.figures(ifig).figure.subplots(isub).subplot.type
                             [data.G.peri.x,data.G.peri.y]=convertCoordinates(data.G.peri.x,data.G.peri.y,handles.EPSG,'CS1.name',data.coordinatesystem.name,'CS1.type',data.coordinatesystem.type, ...
                                 'CS2.name',plt.coordinatesystem.name,'CS2.type',plt.coordinatesystem.type);
                     end
+                end
                 end
             end
         end
