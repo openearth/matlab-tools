@@ -33,4 +33,7 @@
 % swan_tm01                      - calculates average absolute period Tm01 from wave spectrum as in SWAN
 % swan_tm02                      - calculates average absolute period Tm01 from wave spectrum as in SWAN
 %
+%Boundary conditions:
+% ftp://polar.ncep.noaa.gov/history/waves/README
+%
 %See also: xbeach, delft3d, waves
