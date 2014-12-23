@@ -22,6 +22,12 @@ function varargout = swan_io_table(varargin)
 %    Use swan_input to get these (in case of COMPGRID).
 %    If not specified, or empty, 1D bulk vectors are returned
 %    that you have to reshape yourselves.
+% if field TIME is present, the columns are reshaped into 2D matrices [points x time]
+%    and TIME is converted to matlab datenum
+%    Example: load and plot nonstationary profiles:
+%       pcolorcorcen(tab.TIME,tab.XP,tab.HS)
+%       datetick('x')
+%       tickmap('y')
 %
 % Example to load following SWAN table:
 %
@@ -269,6 +275,23 @@ if isfield(INP.table,'parameter')
          end
       end
 
+   end
+   
+   %% handle TIME
+   
+   if isfield(TAB,'TIME')
+       
+        nt  = length(unique(TAB.TIME));
+        nxy = length(TAB.TIME)/nt;
+        varnames = fieldnames(TAB);
+        for ivar=1:length(varnames)
+            varname = varnames{ivar};
+            TAB.(varname) = reshape(TAB.(varname),[nxy nt]);   
+        end
+        TAB.TIME = time2datenum(TAB.TIME(1,:));
+        if isfield(TAB,'XP');TAB.XP = TAB.XP(:,1);end
+        if isfield(TAB,'YP');TAB.YP = TAB.YP(:,1);end
+       
    end
    
    varargout = {TAB};

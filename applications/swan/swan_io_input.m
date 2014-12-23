@@ -572,26 +572,22 @@ end
                     DAT.inpgrid{j}.nhedf = str2num(val1);
 
                     [val1                    ,rec1]   = strtok(rec1);
-                    if     strcmpi(val1(1:3),'FRE')
-                    DAT.inpgrid{j}.format  = val1;
-                    elseif strcmpi(val1(1:3),'FOR')
-                    DAT.inpgrid{j}.format  = val1;
-                    elseif strcmpi(val1(1:3),'UNF')
-                    DAT.inpgrid{j}.format  = val1;
-                    else
-                    DAT.inpgrid{j}.nhedt   = str2num(val1);
-                       [val1                    ,rec1]   = strtok(rec1);
-		    if     strcmpi(val1(1:3),'FRE')
-		    DAT.inpgrid{j}.format  = val1;
-		    elseif strcmpi(val1(1:3),'FOR')
-		    DAT.inpgrid{j}.format  = val1;
-   		    elseif strcmpi(val1(1:3),'UNF')
-		    DAT.inpgrid{j}.format  = val1;
-		    else
-		    DAT.inpgrid{j}.nhedvec = str2num(val1);
-		    [val1                    ,rec1]   = strtok(rec1);
-		    DAT.inpgrid{j}.format  = val1;
-		    end
+                    while ~isempty(val1)
+                        val1 = pad(val1,3,' ');
+                        if     strcmpi(val1(1:3),'FRE')
+                        DAT.inpgrid{j}.format  = val1;
+                        elseif strcmpi(val1(1:3),'FOR')
+                        DAT.inpgrid{j}.format  = val1;
+                        elseif strcmpi(val1(1:3),'UNF')
+                        DAT.inpgrid{j}.format  = val1;
+                        else
+                            if isfield(DAT.inpgrid{j},'nhedt')
+                            DAT.inpgrid{j}.nhedvec = str2num(val1);
+                            else
+                            DAT.inpgrid{j}.nhedt   = str2num(val1);
+                            end
+                        end
+                        [val1                    ,rec1]   = strtok(rec1);
                     end
                     if strcmpi(DAT.inpgrid{j}.format(1:3),'FOR')
                     warning('READinp ... format not fully implemented')
@@ -1825,7 +1821,7 @@ end
           return
       end
 
-      %% remove inline + end-of-line comments
+      %% remove inline + end-of-line comments, except when in between quotes
       ind = strfind(rec,'$');
       if ~isempty(ind) & ~isempty(rec)
          recraw = rec;
@@ -1853,7 +1849,9 @@ end
 
          rec               = fgetl_no_comment_line(fid,'$',0,1); % do not allow empty lines, do remove spaces at start (no tabs yet)
          %% remove inline + end-of-line comments
-         ind = strfind(rec,'$');
+% TODO take care of $$ inside a string e.g. svn keywords
+         ind  = strfind(rec,'$');
+         inds = strfind(rec,'''');
          if ~isempty(ind) & ~isempty(rec)
             recraw = rec;
             rec    = [];

@@ -1,6 +1,5 @@
-function swan_io_spectrum2nc(S,ncfile)
+function swan_io_spectrum2nc(S,ncfile,varargin)
 %swan_io_spectrum2nc save spectral structure as netCDF-CF
-%
 %
 % swan_io_spectrum2nc(S,ncfile) saves struct S to netCDF file,
 % where S = swan_io_spectrum or can be constructed otherwise.
@@ -51,6 +50,14 @@ function swan_io_spectrum2nc(S,ncfile)
 % $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/general/signal_fun/running_median_filter.m $
 % $Keywords: $
 
+%% keywords
+
+OPT.project     = '';
+OPT.model       = '';
+OPT.run         = '';
+
+OPT = setproperty(OPT,varargin);
+
 %% detect all switches
 
 % coordinates
@@ -77,6 +84,7 @@ function swan_io_spectrum2nc(S,ncfile)
         OPT.nstatm = true ;
     else
         OPT.nstatm = false ;
+        S.TIME = nan; % include dummy dimension        
     end
     
 % 1d or 2d
@@ -101,8 +109,6 @@ function swan_io_spectrum2nc(S,ncfile)
         end        
     end    
 
-%
-
     if strcmpi(S.frequency_type,'absolute')
         OPT.relative_to_current = 0;% netcdf can't handle logicala
     else
@@ -113,7 +119,7 @@ function swan_io_spectrum2nc(S,ncfile)
    nc.Name   = '/';
    nc.Format = '64bit'; % 10 GB
    
-   nc.Attributes(    1) = struct('Name','title'              ,'Value',  'SWAN sxpectrum');
+   nc.Attributes(    1) = struct('Name','title'              ,'Value',  'SWAN spectrum');
    nc.Attributes(end+1) = struct('Name','institution'        ,'Value',  'Tu Delft');
    nc.Attributes(end+1) = struct('Name','source'             ,'Value',  '');
    nc.Attributes(end+1) = struct('Name','history'            ,'Value',  '$HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/io/netcdf/nctools/ncwritetutorial_grid_lat_lon_curvilinear.m $ $Id: ncwritetutorial_grid_lat_lon_curvilinear.m 8907 2013-07-10 12:39:16Z boer_g $');
@@ -129,12 +135,14 @@ function swan_io_spectrum2nc(S,ncfile)
    nc.Attributes(end+1) = struct('Name','terms_for_use'      ,'Value',  'please specify');
    nc.Attributes(end+1) = struct('Name','disclaimer'         ,'Value',  'This data is made available in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.');
    
+   if OPT.nstatm
    nc.Attributes(end+1) = struct('Name','time_coverage_start','Value',datestr(min(S.time),'yyyy-mm-ddTHH:MM'));
    nc.Attributes(end+1) = struct('Name','time_coverage_end'  ,'Value',datestr(max(S.time),'yyyy-mm-ddTHH:MM'));
+   end
    
-   nc.Attributes(end+1) = struct('Name','project'               ,'Value',  '');
-   nc.Attributes(end+1) = struct('Name','model'                 ,'Value',  '');
-   nc.Attributes(end+1) = struct('Name','run'                   ,'Value',  '');
+   nc.Attributes(end+1) = struct('Name','project'               ,'Value', OPT.project);
+   nc.Attributes(end+1) = struct('Name','model'                 ,'Value', OPT.model);
+   nc.Attributes(end+1) = struct('Name','run'                   ,'Value', OPT.run);
    
 %% Dimensions   
    
@@ -188,7 +196,6 @@ function swan_io_spectrum2nc(S,ncfile)
    M.d(end+1)     = struct('Name','mdc'          ,'Value',length(S.directions));   
    nc.Variables(end+1) = struct('Name','direction','Datatype','double','Dimensions',nc.Dimensions([m.d  ]),'Attributes',M.d);
    end
-
    
 %% Platform names
 
@@ -203,36 +210,36 @@ function swan_io_spectrum2nc(S,ncfile)
 
    
 %% Variables 
-    for i=1:length(S.quantity_names)
-       varcode = S.quantity_names{i};
+    for ivar=1:length(S.quantity_names)
+       varcode = S.quantity_names{ivar};
        
        if     strcmpi(varcode,'VaDens') | strcmpi(varcode,'EnDens')
            
         if OPT.ndir > 0
         M.density(    1) = struct('Name','long_name',     'Value','density');
-        M.density(end+1) = struct('Name','units'        , 'Value',strrep(S.quantity_units{i},'/Hz',' s'));
+        M.density(end+1) = struct('Name','units'        , 'Value',strrep(S.quantity_units{ivar},'/Hz',' s'));
         M.density(end+1) = struct('Name','standard_name', 'Value','sea_surface_wave_directional_variance_spectral_density');
         M.density(end+1) = struct('Name','swan_code',     'Value',varcode);
         M.density(end+1) = struct('Name','swan_name',     'Value',varcode);
-        M.density(end+1) = struct('Name','swan_long_name','Value',S.quantity_names_long{i});
+        M.density(end+1) = struct('Name','swan_long_name','Value',S.quantity_names_long{ivar});
         M.density(end+1) = struct('Name','relative_to_current','Value',OPT.relative_to_current);
         M.density(end+1) = struct('Name','coordinates'   ,'Value',OPT.coordinates);        
         
         nc.Variables(end+1) = struct('Name','density' ,'Datatype','double','Dimensions',nc.Dimensions([m.d m.f m.xy m.t]),'Attributes',M.density); % density(time, points, frequency, direction) ;
-        S.nc_names{i} = 'density';
+        S.nc_names{ivar} = 'density';
         S.(varcode) = permute(S.(varcode),[3 2 1 4]); % [m.xy m.f m.d m.t] > [m.d m.f m.xy m.t]
         else
         M.density(    1) = struct('Name','long_name',     'Value','energy');
-        M.density(end+1) = struct('Name','units'        , 'Value',strrep(S.quantity_units{i},'/Hz',' s'));
+        M.density(end+1) = struct('Name','units'        , 'Value',strrep(S.quantity_units{ivar},'/Hz',' s'));
         M.density(end+1) = struct('Name','standard_name', 'Value','sea_surface_wave_directional_variance_spectral_density');
         M.density(end+1) = struct('Name','swan_code',     'Value',varcode);
         M.density(end+1) = struct('Name','swan_name',     'Value',varcode);
-        M.density(end+1) = struct('Name','swan_long_name','Value',S.quantity_names_long{i});
+        M.density(end+1) = struct('Name','swan_long_name','Value',S.quantity_names_long{ivar});
         M.density(end+1) = struct('Name','relative_to_current','Value',OPT.relative_to_current);
         M.density(end+1) = struct('Name','coordinates'   ,'Value',OPT.coordinates);        
         
         nc.Variables(end+1) = struct('Name','energy_1d','Datatype','double','Dimensions',nc.Dimensions([   m.f m.xy m.t]),'Attributes',M.density);
-        S.nc_names{i} = 'energy_1d';
+        S.nc_names{ivar} = 'energy_1d';
         S.(varcode) = permute(S.(varcode),[2 1 3]);   % [    m.xy m.f m.t] > [    m.f m.xy m.t]        
         end
        
@@ -245,10 +252,10 @@ function swan_io_spectrum2nc(S,ncfile)
         M.DIR(end+1) = struct('Name','add_offset'    ,'Value',0);        
         M.DIR(end+1) = struct('Name','swan_code'     ,'Value',varcode);
         M.DIR(end+1) = struct('Name','swan_name'     ,'Value',varcode);
-        M.DIR(end+1) = struct('Name','swan_long_name','Value',S.quantity_names_long{i});
+        M.DIR(end+1) = struct('Name','swan_long_name','Value',S.quantity_names_long{ivar});
         M.DIR(end+1) = struct('Name','coordinates'   ,'Value',OPT.coordinates);        
         nc.Variables(end+1) = struct('Name','theta_1d' ,'Datatype','double','Dimensions',nc.Dimensions([m.xy m.f     m.t]),'Attributes',M.DIR);
-        S.nc_names{i} = 'theta_1d';
+        S.nc_names{ivar} = 'theta_1d';
         
        elseif strcmpi(varcode,'DSPRDEGR') 
            
@@ -256,10 +263,10 @@ function swan_io_spectrum2nc(S,ncfile)
         M.DSPRDEGR(    1) = struct('Name','units'         ,'Value','degree');
         M.DSPRDEGR(end+1) = struct('Name','swan_code'     ,'Value',varcode);        
         M.DSPRDEGR(end+1) = struct('Name','swan_name'     ,'Value',varcode);        
-        M.DSPRDEGR(end+1) = struct('Name','swan_long_name','Value',S.quantity_names_long{i});        
+        M.DSPRDEGR(end+1) = struct('Name','swan_long_name','Value',S.quantity_names_long{ivar});        
         M.DSPRDEGR(end+1) = struct('Name','coordinates'   ,'Value',[OPT.x.name ' ' OPT.y.name]);        
         nc.Variables(end+1) = struct('Name','spread_1d','Datatype','double','Dimensions',nc.Dimensions([m.xy m.f     m.t]),'Attributes',M.DSPRDEGR);
-        S.nc_names{i} = 'spread_1d';
+        S.nc_names{ivar} = 'spread_1d';
        
        end
    end
@@ -267,10 +274,14 @@ function swan_io_spectrum2nc(S,ncfile)
 %% Create file   
 
    %var2evalstr(nc)
+   if exist(ncfile,'file')
+       disp(['File already exist, press enmter to replace it, press CTRL_C to quit: ''',ncfile,''''])
+       pause
+       delete(ncfile)
+   end
    ncwriteschema(ncfile, nc);
    ncdisp(ncfile)
    nc_dump(ncfile,'',[filepathstrname(ncfile),'.cdl'])
-   
    
 %% write
     ncwrite(ncfile,'time'     ,S.time - datenum(1970,0,0))
@@ -287,5 +298,5 @@ function swan_io_spectrum2nc(S,ncfile)
     end    
     
     for ivar=1:length(S.quantity_names)
-    ncwrite(ncfile,S.nc_names{i},S.(S.quantity_names{i}))
+    ncwrite(ncfile,S.nc_names{ivar},S.(S.quantity_names{ivar}))
     end

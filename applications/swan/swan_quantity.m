@@ -7,16 +7,16 @@ function varargout = swan_quantity
 % where DAT is struct with field names as returned by 
 % SWAN_SHORTNAME2KEYWORD, each with subfields
 %
-%  OVKEYW(IVTYPE) =    keyword used in SWAN command      
-%  OVSNAM(IVTYPE) =    short name                        
-%  OVLNAM(IVTYPE) =    long name                         
-%  OVUNIT(IVTYPE) =    unit name                         
-%  OVSVTY(IVTYPE) =    type (scalar/vector etc.)         
-%  OVLLIM(IVTYPE) =    lower and upper limit for ascii plotting width
-%  OVULIM(IVTYPE) =                                      
-%  OVLEXP(IVTYPE) =    lowest and highest expected value: valid_range 
-%  OVHEXP(IVTYPE) =                                      
-%  OVEXCV(IVTYPE) =    exception value                   
+%  OVKEYW{IVTYPE} =    keyword used in SWAN command      
+%  OVSNAM{IVTYPE} =    short name                        
+%  OVLNAM{IVTYPE} =    long name                         
+%  OVUNIT{IVTYPE} =    unit name                         
+%  OVSVTY{IVTYPE} =    type (scalar/vector etc.)         
+%  OVLLIM{IVTYPE} =    lower and upper limit for ascii plotting width
+%  OVULIM{IVTYPE} =                                      
+%  OVLEXP{IVTYPE} =    lowest and highest expected value: valid_range 
+%  OVHEXP{IVTYPE} =                                      
+%  OVEXCV{IVTYPE} =    exception value                   
 %
 %See also: SWAN_IO_SPECTRUM, SWAN_IO_INPUT, SWAN_IO_TABLE, SWAN_IO_GRD, SWAN_IO_BOT, 
 %          SWAN_SHORTNAME2KEYWORD, SWAN_DEFAULTS, SWAN_QUANTITYTEX
@@ -94,6 +94,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = -1.E10;
       OVHEXP{IVTYPE} = 1.E10;
       OVEXCV{IVTYPE} = -1.E10;
+      OVCFNM{IVTYPE} = 'projection_x_coordinate';
 %;
       IVTYPE = 2;
       OVKEYW{IVTYPE} = 'YP'                                        ;
@@ -106,6 +107,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = -1.E10;
       OVHEXP{IVTYPE} = 1.E10;
       OVEXCV{IVTYPE} = -1.E10;
+      OVCFNM{IVTYPE} = 'projection_x_coordinate';
 %;
       IVTYPE = 3;
       OVKEYW{IVTYPE} = 'DIST'                                      ;
@@ -118,6 +120,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 1.E10;
       OVEXCV{IVTYPE} = -99.;
+      OVCFNM{IVTYPE} = 'sea_floor_depth_below_sea_level ';
 %;
       IVTYPE = 4;
       OVKEYW{IVTYPE} = 'DEP'                                       ;
@@ -130,6 +133,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = -100.;
       OVHEXP{IVTYPE} = 100.;
       OVEXCV{IVTYPE} = -99.;
+      OVCFNM{IVTYPE} = '';
 %;
       IVTYPE = 5;
       OVKEYW{IVTYPE} = 'VEL'                                       ;
@@ -142,6 +146,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = -2.;
       OVHEXP{IVTYPE} = 2.;
       OVEXCV{IVTYPE} = 0.;
+      OVCFNM{IVTYPE} = 'sea_water_x_velocity sea_water_y_velocity';
 %;
       IVTYPE = 6;
       OVKEYW{IVTYPE} = 'UBOT'                                      ;
@@ -154,6 +159,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 1.;
       OVEXCV{IVTYPE} = -10.;
+      OVCFNM{IVTYPE} = '';
 %;
       IVTYPE = 7;
       OVKEYW{IVTYPE} = 'DISS'                                      ;
@@ -166,6 +172,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 0.1;
       OVEXCV{IVTYPE} = -9.;
+      OVCFNM{IVTYPE} = '';
 %;
       IVTYPE = 8;
       OVKEYW{IVTYPE} = 'QB'                                        ;
@@ -178,6 +185,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 1.;
       OVEXCV{IVTYPE} = -1.;
+      OVCFNM{IVTYPE} = '';
 %;
       IVTYPE = 9;
       OVKEYW{IVTYPE} = 'LEA'                                       ;
@@ -190,6 +198,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 100.;
       OVEXCV{IVTYPE} = -9.;
+      OVCFNM{IVTYPE} = '';
 %;
       IVTYPE = 10;
       OVKEYW{IVTYPE} = 'HS'                                        ;
@@ -202,6 +211,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 10.;
       OVEXCV{IVTYPE} = -9.;
+      OVCFNM{IVTYPE} = 'sea_surface_wave_significant_height';
 %                                                                  ;
       IVTYPE = 11;
       OVKEYW{IVTYPE} = 'TM01'                                      ;
@@ -214,6 +224,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 100.;
       OVEXCV{IVTYPE} = -9.;
+      OVCFNM{IVTYPE} = 'sea_surface_wave_mean_period_from_variance_spectral_density_first_frequency_moment';
 %;
       IVTYPE = 12;
       OVKEYW{IVTYPE} = 'RTP'                                       ;
@@ -226,6 +237,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 100.;
       OVEXCV{IVTYPE} = -9.;
+      OVCFNM{IVTYPE} = 'sea_surface_wave_period_at_variance_spectral_density_maximum';
 %;
       IVTYPE = 13;
       OVKEYW{IVTYPE} = 'DIR'                                       ;
@@ -238,6 +250,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 360.;
       OVEXCV{IVTYPE} = -999.;
+      OVCFNM{IVTYPE} = 'sea_surface_wave_from_direction';
 %;
       IVTYPE = 14;
       OVKEYW{IVTYPE} = 'PDI'                                       ;
@@ -250,6 +263,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 360.;
       OVEXCV{IVTYPE} = -999.;
+      OVCFNM{IVTYPE} = '';
 %;
       IVTYPE = 15;
       OVKEYW{IVTYPE} = 'TDI'                                       ;
@@ -262,6 +276,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 360.;
       OVEXCV{IVTYPE} = -999.;
+      OVCFNM{IVTYPE} = '';
 %;
       IVTYPE = 16;
       OVKEYW{IVTYPE} = 'DSPR'                                      ;
@@ -274,6 +289,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 60.;
       OVEXCV{IVTYPE} = -9.;
+      OVCFNM{IVTYPE} = '';
 %;
       IVTYPE = 17;
       OVKEYW{IVTYPE} = 'WLEN'                                      ;
@@ -286,6 +302,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 200.;
       OVEXCV{IVTYPE} = -9.;
+      OVCFNM{IVTYPE} = '';
 %;
       IVTYPE = 18;
       OVKEYW{IVTYPE} = 'STEE'                                      ;
@@ -298,6 +315,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 0.1;
       OVEXCV{IVTYPE} = -9.;
+      OVCFNM{IVTYPE} = '';
 %;
       IVTYPE = 19;
       OVKEYW{IVTYPE} = 'TRA'                                       ;
@@ -310,6 +328,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = -10.;
       OVHEXP{IVTYPE} = 10.;
       OVEXCV{IVTYPE} = 0.;
+      OVCFNM{IVTYPE} = '';
 %;
       IVTYPE = 20;
       OVKEYW{IVTYPE} = 'FOR'                                       ;
@@ -322,6 +341,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = -10.;
       OVHEXP{IVTYPE} =  10.;
       OVEXCV{IVTYPE} = 0.;
+      OVCFNM{IVTYPE} = '';
 %;
       IVTYPE = 21;
       OVKEYW{IVTYPE} = 'AAAA'                                      ;
@@ -334,6 +354,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 100.;
       OVEXCV{IVTYPE} = -99.;
+      OVCFNM{IVTYPE} = '';
 %;
       IVTYPE = 22;
       OVKEYW{IVTYPE} = 'EEEE'                                      ;
@@ -346,6 +367,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 100.;
       OVEXCV{IVTYPE} = -99.;
+      OVCFNM{IVTYPE} = '';
 %;
       IVTYPE = 23;
       OVKEYW{IVTYPE} = 'AAAA'                                      ;
@@ -358,6 +380,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = -1.E10;
       OVHEXP{IVTYPE} = 1.E10;
       OVEXCV{IVTYPE} = -1.E10;
+      OVCFNM{IVTYPE} = '';
 %;
       IVTYPE = 24;
       OVKEYW{IVTYPE} = 'XC'                                        ;
@@ -370,6 +393,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 100.;
       OVEXCV{IVTYPE} = -9.;
+      OVCFNM{IVTYPE} = '';
 %;
       IVTYPE = 25;
       OVKEYW{IVTYPE} = 'YC'                                        ;
@@ -382,6 +406,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 100.;
       OVEXCV{IVTYPE} = -9.;
+      OVCFNM{IVTYPE} = '';
 %;
       IVTYPE = 26;
       OVKEYW{IVTYPE} = 'WIND'                                      ;
@@ -394,6 +419,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = -50.;
       OVHEXP{IVTYPE} = 50.;
       OVEXCV{IVTYPE} = 0.;
+      OVCFNM{IVTYPE} = '';
 %;
       IVTYPE = 27;
       OVKEYW{IVTYPE} = 'FRC'                                       ;
@@ -406,6 +432,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 1.;
       OVEXCV{IVTYPE} = -9.;
+      OVCFNM{IVTYPE} = '';
 %                                                                  ;
       IVTYPE = 28;
       OVKEYW{IVTYPE} = 'RTM01'                                     ;
@@ -418,6 +445,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 100.;
       OVEXCV{IVTYPE} = -9.;
+      OVCFNM{IVTYPE} = '';
 %;
       IVTYPE = 29                                                  ;
       OVKEYW{IVTYPE} = 'EEEE'                                      ;
@@ -430,6 +458,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 100.;
       OVEXCV{IVTYPE} = -99.;
+      OVCFNM{IVTYPE} = '';
 %;
       IVTYPE = 30                                                  ;
       OVKEYW{IVTYPE} = 'DHS'                                       ;
@@ -442,6 +471,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 1.;
       OVEXCV{IVTYPE} = -9.;
+      OVCFNM{IVTYPE} = '';
 %;
       IVTYPE = 31                                                  ;
       OVKEYW{IVTYPE} = 'DRTM01'                                    ;
@@ -454,6 +484,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 2.;
       OVEXCV{IVTYPE} = -9.;
+      OVCFNM{IVTYPE} = '';
 %                                                                  ;
       IVTYPE = 32;
       OVKEYW{IVTYPE} = 'TM02'                                      ;
@@ -466,6 +497,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 100.;
       OVEXCV{IVTYPE} = -9.;
+      OVCFNM{IVTYPE} = 'sea_surface_wave_mean_period_from_variance_spectral_density_second_frequency_moment';
 %                                                                  ;
       IVTYPE = 33;
       OVKEYW{IVTYPE} = 'FSPR'                                      ;
@@ -478,6 +510,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 1.;
       OVEXCV{IVTYPE} = -9.;
+      OVCFNM{IVTYPE} = '';
 %;
       IVTYPE = 34                                                  ;
       OVKEYW{IVTYPE} = 'URMS'                                      ;
@@ -490,6 +523,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 1.;
       OVEXCV{IVTYPE} = -9.;
+      OVCFNM{IVTYPE} = '';
 %;
       IVTYPE = 35                                                  ;
       OVKEYW{IVTYPE} = 'UFRI'                                      ;
@@ -502,6 +536,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 1.;
       OVEXCV{IVTYPE} = -9.;
+      OVCFNM{IVTYPE} = '';
 %;
       IVTYPE = 36                                                  ;
       OVKEYW{IVTYPE} = 'ZLEN'                                      ;
@@ -514,6 +549,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 1.;
       OVEXCV{IVTYPE} = -9.;
+      OVCFNM{IVTYPE} = '';
 %;
       IVTYPE = 37                                                  ;
       OVKEYW{IVTYPE} = 'TAUW'                                      ;
@@ -526,6 +562,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 1.;
       OVEXCV{IVTYPE} = -9.;
+      OVCFNM{IVTYPE} = '';
 %;
       IVTYPE = 38                                                  ;
       OVKEYW{IVTYPE} = 'CDRAG'                                     ;
@@ -538,6 +575,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 1.;
       OVEXCV{IVTYPE} = -9.;
+      OVCFNM{IVTYPE} = '';
 %;
 %     *** wave-induced setup ***                                   ;
 %;
@@ -552,6 +590,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = -1.                                         ;
       OVHEXP{IVTYPE} = 1.                                          ;
       OVEXCV{IVTYPE} = -9.                                         ;
+      OVCFNM{IVTYPE} = '';
 %;
       IVTYPE = 40                                                  ;
       OVKEYW{IVTYPE} = 'TIME'                                      ;
@@ -564,6 +603,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 1.;
       OVEXCV{IVTYPE} = -99999.;
+      OVCFNM{IVTYPE} = '';
 %;
       IVTYPE = 41                                                  ;
       OVKEYW{IVTYPE} = 'TSEC'                                      ;
@@ -576,6 +616,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = -100000.;
       OVHEXP{IVTYPE} = 1000000.;
       OVEXCV{IVTYPE} = -99999.;
+      OVCFNM{IVTYPE} = '';
 %                                                               ;
       IVTYPE = 42;
       OVKEYW{IVTYPE} = 'PER'                                       ;
@@ -588,6 +629,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 100.;
       OVEXCV{IVTYPE} = -9.;
+      OVCFNM{IVTYPE} = 'sea_surface_wind_wave_period';
 %                                                               ;
       IVTYPE = 43;
       OVKEYW{IVTYPE} = 'RPER'                                      ;
@@ -600,6 +642,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 100.;
       OVEXCV{IVTYPE} = -9.;
+      OVCFNM{IVTYPE} = 'sea_surface_wind_wave_period';
 %;
       IVTYPE = 44                                                  ;
       OVKEYW{IVTYPE} = 'HSWE'                                      ;
@@ -612,8 +655,9 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 10.;
       OVEXCV{IVTYPE} = -9.;
+      OVCFNM{IVTYPE} = 'sea_surface_swell_wave_significant_height';
 %;
-      IVTYPE = 45;
+      IVTYPE = 45; % 40.03
       OVKEYW{IVTYPE} = 'URSELL'                                    ;
       OVSNAM{IVTYPE} = 'Ursell';
       OVLNAM{IVTYPE} = 'Ursell number';
@@ -624,8 +668,9 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 1.;
       OVEXCV{IVTYPE} = -9.;
+      OVCFNM{IVTYPE} = '';
 %;
-      IVTYPE = 46;
+      IVTYPE = 46; % 40.03
       OVKEYW{IVTYPE} = 'ASTD'                                      ;
       OVSNAM{IVTYPE} = 'ASTD';
       OVLNAM{IVTYPE} = 'Air-Sea temperature difference';
@@ -636,8 +681,9 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = -10.;
       OVHEXP{IVTYPE} =  10.;
       OVEXCV{IVTYPE} = -99.;
+      OVCFNM{IVTYPE} = '';
 %;
-      IVTYPE = 47                                                  ;
+      IVTYPE = 47; % 40.41
       OVKEYW{IVTYPE} = 'TMM10';
       OVSNAM{IVTYPE} = 'Tm_10';
       OVLNAM{IVTYPE} = 'Average absolute wave period';
@@ -648,8 +694,9 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 100.;
       OVEXCV{IVTYPE} = -9.;
+      OVCFNM{IVTYPE} = 'sea_surface_wave_mean_period_from_variance_spectral_density_inverse_frequency_moment';
 %;
-      IVTYPE = 48                                                  ;
+      IVTYPE = 48; % 40.41
       OVKEYW{IVTYPE} = 'RTMM10';
       OVSNAM{IVTYPE} = 'RTm_10';
       OVLNAM{IVTYPE} = 'Average relative wave period';
@@ -660,9 +707,10 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 100.;
       OVEXCV{IVTYPE} = -9.;
+      OVCFNM{IVTYPE} = 'sea_surface_wave_mean_period_from_variance_spectral_density_inverse_frequency_moment';
 %;
-      IVTYPE = 49;
-      OVKEYW{IVTYPE} = 'DIFPAR'                                    ;
+      IVTYPE = 49; % 40.21
+      OVKEYW{IVTYPE} = 'DIFPAR';
       OVSNAM{IVTYPE} = 'DifPar';
       OVLNAM{IVTYPE} = 'Diffraction parameter';
       OVUNIT{IVTYPE} = ' ';
@@ -672,8 +720,9 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = -10.;
       OVHEXP{IVTYPE} =  10.;
       OVEXCV{IVTYPE} = -99.;
+      OVCFNM{IVTYPE} = '';
 %;
-      IVTYPE = 50                                                  ;
+      IVTYPE = 50; % 40.51
       OVKEYW{IVTYPE} = 'TMBOT';
       OVSNAM{IVTYPE} = 'TmBot';
       OVLNAM{IVTYPE} = 'Bottom wave period';
@@ -684,8 +733,9 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 100.;
       OVEXCV{IVTYPE} = -9.;
+      OVCFNM{IVTYPE} = '';
 %;
-      IVTYPE = 51                                                  ;
+      IVTYPE = 51; % 40.51
       OVKEYW{IVTYPE} = 'WATL';
       OVSNAM{IVTYPE} = 'Watlev';
       OVLNAM{IVTYPE} = 'Water level';
@@ -696,8 +746,9 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = -100.;
       OVHEXP{IVTYPE} = 100.;
       OVEXCV{IVTYPE} = -99.;
+      OVCFNM{IVTYPE} = '';
 %;
-      IVTYPE = 52                                                  ;
+      IVTYPE = 52; % 40.51
       OVKEYW{IVTYPE} = 'BOTL';
       OVSNAM{IVTYPE} = 'Botlev';
       OVLNAM{IVTYPE} = 'Bottom level';
@@ -708,8 +759,9 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = -100.;
       OVHEXP{IVTYPE} = 100.;
       OVEXCV{IVTYPE} = -99.;
+      OVCFNM{IVTYPE} = '';
 %;
-      IVTYPE = 53                                                  ;
+      IVTYPE = 53; % 40.51
       OVKEYW{IVTYPE} = 'TPS';
       OVSNAM{IVTYPE} = 'TPsmoo';
       OVLNAM{IVTYPE} = 'Relative peak period {smooth}';
@@ -720,10 +772,11 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 100.;
       OVEXCV{IVTYPE} = -9.;
+      OVCFNM{IVTYPE} = 'sea_surface_wave_period_at_variance_spectral_density_maximum';
 %;
       IVTYPE = 54;
-      OVKEYW{IVTYPE} = 'DISB'                                      ;
-      OVSNAM{IVTYPE} = 'Disbot';
+      OVKEYW{IVTYPE} = 'DISB';  % 40.61
+      OVSNAM{IVTYPE} = 'Sfric'; % 40.85
       OVLNAM{IVTYPE} = 'Bottom friction dissipation';
       OVUNIT{IVTYPE} = 'm2/s';
       OVSVTY{IVTYPE} = 1;
@@ -732,11 +785,12 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 0.1;
       OVEXCV{IVTYPE} = -9.;
+      OVCFNM{IVTYPE} = '';
 %;
       IVTYPE = 55;
-      OVKEYW{IVTYPE} = 'DISSU'                                     ;
-      OVSNAM{IVTYPE} = 'Dissrf';
-      OVLNAM{IVTYPE} = 'Wave breaking dissipation';
+      OVKEYW{IVTYPE} = 'DISSU'; % 40.61
+      OVSNAM{IVTYPE} = 'Ssurf'; % 40.85
+      OVLNAM{IVTYPE} = 'Surf breaking dissipation'; % 40.85
       OVUNIT{IVTYPE} = 'm2/s';
       OVSVTY{IVTYPE} = 1;
       OVLLIM{IVTYPE} = 0.;
@@ -744,10 +798,11 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 0.1;
       OVEXCV{IVTYPE} = -9.;
+      OVCFNM{IVTYPE} = '';
 %;
       IVTYPE = 56;
-      OVKEYW{IVTYPE} = 'DISW'                                      ;
-      OVSNAM{IVTYPE} = 'Diswcp';
+      OVKEYW{IVTYPE} = 'DISW';   % 40.61
+      OVSNAM{IVTYPE} = 'Swcap'; % 40.85
       OVLNAM{IVTYPE} = 'Whitecapping dissipation';
       OVUNIT{IVTYPE} = 'm2/s';
       OVSVTY{IVTYPE} = 1;
@@ -756,8 +811,225 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 0.1;
       OVEXCV{IVTYPE} = -9.;
+      OVCFNM{IVTYPE} = '';
 %;
       IVTYPE = 57;
+      OVKEYW{IVTYPE} = 'DISV';                                          % 40.61
+      OVSNAM{IVTYPE} = 'Sveg';                                          % 40.85
+      OVLNAM{IVTYPE} = 'Vegetation dissipation';
+      OVUNIT{IVTYPE} = 'm2/s';
+      OVSVTY{IVTYPE} = 1;
+      OVLLIM{IVTYPE} = 0.;
+      OVULIM{IVTYPE} = 1000.;
+      OVLEXP{IVTYPE} = 0.;
+      OVHEXP{IVTYPE} = 0.1;
+      OVEXCV{IVTYPE} = -9.;
+%;
+      IVTYPE = 58;                                                      % 40.64
+      OVKEYW{IVTYPE} = 'QP';
+      OVSNAM{IVTYPE} = 'Qp';
+      OVLNAM{IVTYPE} = 'Peakedness';
+      OVUNIT{IVTYPE} = ' ';
+      OVSVTY{IVTYPE} = 1;
+      OVLLIM{IVTYPE} = 0.;
+      OVULIM{IVTYPE} = 1.;
+      OVLEXP{IVTYPE} = 0.;
+      OVHEXP{IVTYPE} = 1.;
+      OVEXCV{IVTYPE} = -9.;
+%;
+      IVTYPE = 59;                                                      % 40.64
+      OVKEYW{IVTYPE} = 'BFI';
+      OVSNAM{IVTYPE} = 'BFI';
+      OVLNAM{IVTYPE} = 'Benjamin-Feir index';
+      OVUNIT{IVTYPE} = ' ';
+      OVSVTY{IVTYPE} = 1;
+      OVLLIM{IVTYPE} = 0.;
+      OVULIM{IVTYPE} = 1000.;
+      OVLEXP{IVTYPE} = 0.;
+      OVHEXP{IVTYPE} = 1000.;
+      OVEXCV{IVTYPE} = -9.;
+%;
+      IVTYPE = 60;
+      OVKEYW{IVTYPE} = 'GENE';                                          % 40.85
+      OVSNAM{IVTYPE} = 'Genera';
+      OVLNAM{IVTYPE} = 'Energy generation';
+      OVUNIT{IVTYPE} = 'm2/s';
+      OVSVTY{IVTYPE} = 1;
+      OVLLIM{IVTYPE} = 0.;
+      OVULIM{IVTYPE} = 1000.;
+      OVLEXP{IVTYPE} = 0.;
+      OVHEXP{IVTYPE} = 0.1;
+      OVEXCV{IVTYPE} = -9.;
+%;
+      IVTYPE = 61;
+      OVKEYW{IVTYPE} = 'GENW';                                          % 40.85
+      OVSNAM{IVTYPE} = 'Swind';
+      OVLNAM{IVTYPE} = 'Wind source term';
+      OVUNIT{IVTYPE} = 'm2/s';
+      OVSVTY{IVTYPE} = 1;
+      OVLLIM{IVTYPE} = 0.;
+      OVULIM{IVTYPE} = 1000.;
+      OVLEXP{IVTYPE} = 0.;
+      OVHEXP{IVTYPE} = 0.1;
+      OVEXCV{IVTYPE} = -9.;
+%;
+      IVTYPE = 62;
+      OVKEYW{IVTYPE} = 'REDI';                                          % 40.85
+      OVSNAM{IVTYPE} = 'Redist';
+      OVLNAM{IVTYPE} = 'Energy redistribution';
+      OVUNIT{IVTYPE} = 'm2/s';
+      OVSVTY{IVTYPE} = 1;
+      OVLLIM{IVTYPE} = 0.;
+      OVULIM{IVTYPE} = 1000.;
+      OVLEXP{IVTYPE} = 0.;
+      OVHEXP{IVTYPE} = 0.1;
+      OVEXCV{IVTYPE} = -9.;
+%;
+      IVTYPE = 63;
+      OVKEYW{IVTYPE} = 'REDQ';                                          % 40.85
+      OVSNAM{IVTYPE} = 'Snl4';
+      OVLNAM{IVTYPE} = 'Total absolute 4-wave interaction';
+      OVUNIT{IVTYPE} = 'm2/s';
+      OVSVTY{IVTYPE} = 1;
+      OVLLIM{IVTYPE} = 0.;
+      OVULIM{IVTYPE} = 1000.;
+      OVLEXP{IVTYPE} = 0.;
+      OVHEXP{IVTYPE} = 0.1;
+      OVEXCV{IVTYPE} = -9.;
+%;
+      IVTYPE = 64;
+      OVKEYW{IVTYPE} = 'REDT';                                          % 40.85
+      OVSNAM{IVTYPE} = 'Snl3';
+      OVLNAM{IVTYPE} = 'Total absolute 3-wave interaction';
+      OVUNIT{IVTYPE} = 'm2/s';
+      OVSVTY{IVTYPE} = 1;
+      OVLLIM{IVTYPE} = 0.;
+      OVULIM{IVTYPE} = 1000.;
+      OVLEXP{IVTYPE} = 0.;
+      OVHEXP{IVTYPE} = 0.1;
+      OVEXCV{IVTYPE} = -9.;
+%;
+      IVTYPE = 65;
+      OVKEYW{IVTYPE} = 'PROPA';                                         % 40.85
+      OVSNAM{IVTYPE} = 'Propag';
+      OVLNAM{IVTYPE} = 'Energy propagation';
+      OVUNIT{IVTYPE} = 'm2/s';
+      OVSVTY{IVTYPE} = 1;
+      OVLLIM{IVTYPE} = 0.;
+      OVULIM{IVTYPE} = 1000.;
+      OVLEXP{IVTYPE} = 0.;
+      OVHEXP{IVTYPE} = 0.1;
+      OVEXCV{IVTYPE} = -9.;
+%;
+      IVTYPE = 66;
+      OVKEYW{IVTYPE} = 'PROPX';                                         % 40.85
+      OVSNAM{IVTYPE} = 'Propxy';
+      OVLNAM{IVTYPE} = 'xy-propagation';
+      OVUNIT{IVTYPE} = 'm2/s';
+      OVSVTY{IVTYPE} = 1;
+      OVLLIM{IVTYPE} = 0.;
+      OVULIM{IVTYPE} = 1000.;
+      OVLEXP{IVTYPE} = 0.;
+      OVHEXP{IVTYPE} = 0.1;
+      OVEXCV{IVTYPE} = -9.;
+%;
+      IVTYPE = 67;
+      OVKEYW{IVTYPE} = 'PROPT';                                         % 40.85
+      OVSNAM{IVTYPE} = 'Propth';
+      OVLNAM{IVTYPE} = 'theta-propagation';
+      OVUNIT{IVTYPE} = 'm2/s';
+      OVSVTY{IVTYPE} = 1;
+      OVLLIM{IVTYPE} = 0.;
+      OVULIM{IVTYPE} = 1000.;
+      OVLEXP{IVTYPE} = 0.;
+      OVHEXP{IVTYPE} = 0.1;
+      OVEXCV{IVTYPE} = -9.;
+%;
+      IVTYPE = 68;
+      OVKEYW{IVTYPE} = 'PROPS';                                         % 40.85
+      OVSNAM{IVTYPE} = 'Propsi';
+      OVLNAM{IVTYPE} = 'sigma-propagation';
+      OVUNIT{IVTYPE} = 'm2/s';
+      OVSVTY{IVTYPE} = 1;
+      OVLLIM{IVTYPE} = 0.;
+      OVULIM{IVTYPE} = 1000.;
+      OVLEXP{IVTYPE} = 0.;
+      OVHEXP{IVTYPE} = 0.1;
+      OVEXCV{IVTYPE} = -9.;
+%;
+      IVTYPE = 69;
+      OVKEYW{IVTYPE} = 'RADS';                                          % 40.85
+      OVSNAM{IVTYPE} = 'Radstr';
+      OVLNAM{IVTYPE} = 'Radiation stress';
+      OVUNIT{IVTYPE} = 'm2/s';
+      OVSVTY{IVTYPE} = 1;
+      OVLLIM{IVTYPE} = 0.;
+      OVULIM{IVTYPE} = 1000.;
+      OVLEXP{IVTYPE} = 0.;
+      OVHEXP{IVTYPE} = 0.1;
+      OVEXCV{IVTYPE} = -9.;
+%;
+      IVTYPE = 70;
+      OVKEYW{IVTYPE} = 'NPL';                                           % 41.12
+      OVSNAM{IVTYPE} = 'Nplant';
+      OVLNAM{IVTYPE} = 'Plants per m2';
+      OVUNIT{IVTYPE} = '1/m2';
+      OVSVTY{IVTYPE} = 1;
+      OVLLIM{IVTYPE} = 0.;
+      OVULIM{IVTYPE} = 1000.;
+      OVLEXP{IVTYPE} = 0.;
+      OVHEXP{IVTYPE} = 100.;
+      OVEXCV{IVTYPE} = -9.;
+%;
+      IVTYPE = 71;
+      OVKEYW{IVTYPE} = 'LWAVP';                                         % 41.15
+      OVSNAM{IVTYPE} = 'Lwavp';
+      OVLNAM{IVTYPE} = 'Peak wave length';
+      OVUNIT{IVTYPE} = 'UL';
+      OVSVTY{IVTYPE} = 1;
+      OVLLIM{IVTYPE} = 0.;
+      OVULIM{IVTYPE} = 1000.;
+      OVLEXP{IVTYPE} = 0.;
+      OVHEXP{IVTYPE} = 200.;
+      OVEXCV{IVTYPE} = -9.;
+%;
+      IVTYPE = 72;
+      OVKEYW{IVTYPE} = 'DISTU';
+      OVSNAM{IVTYPE} = 'Stur';
+      OVLNAM{IVTYPE} = 'Turbulent dissipation';
+      OVUNIT{IVTYPE} = 'm2/s';
+      OVSVTY{IVTYPE} = 1;
+      OVLLIM{IVTYPE} = 0.;
+      OVULIM{IVTYPE} = 1000.;
+      OVLEXP{IVTYPE} = 0.;
+      OVHEXP{IVTYPE} = 0.1;
+      OVEXCV{IVTYPE} = -9.;
+%;
+      IVTYPE = 73;
+      OVKEYW{IVTYPE} = 'TURB';
+      OVSNAM{IVTYPE} = 'Turb';
+      OVLNAM{IVTYPE} = 'Turbulent viscosity';
+      OVUNIT{IVTYPE} = 'm2/s';
+      OVSVTY{IVTYPE} = 1;
+      OVLLIM{IVTYPE} = 0.;
+      OVULIM{IVTYPE} = 10.;
+      OVLEXP{IVTYPE} = 0.;
+      OVHEXP{IVTYPE} = 100.;
+      OVEXCV{IVTYPE} = -99.;
+%;
+      IVTYPE = 74;
+      OVKEYW{IVTYPE} = 'DISM';                                          % 40.61
+      OVSNAM{IVTYPE} = 'Smud';                                          % 40.85
+      OVLNAM{IVTYPE} = 'Fluid mud dissipation';
+      OVUNIT{IVTYPE} = 'm2/s';
+      OVSVTY{IVTYPE} = 1;
+      OVLLIM{IVTYPE} = 0.;
+      OVULIM{IVTYPE} = 1000.;
+      OVLEXP{IVTYPE} = 0.;
+      OVHEXP{IVTYPE} = 0.1;
+      OVEXCV{IVTYPE} = -9.;
+%;
+      IVTYPE = IVTYPE + 1;
       OVKEYW{IVTYPE} = 'DISM'                                      ;
       OVSNAM{IVTYPE} = 'Dismud';
       OVLNAM{IVTYPE} = 'Fluid mud dissipation';
@@ -768,8 +1040,9 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 0.1;
       OVEXCV{IVTYPE} = -9.;
+      OVCFNM{IVTYPE} = '';
 % MUD special;
-      IVTYPE = 58;
+      IVTYPE = IVTYPE + 1;
       OVKEYW{IVTYPE} = 'WLENMR'                                    ;
       OVSNAM{IVTYPE} = 'Wlenmr';
       OVLNAM{IVTYPE} = 'Average wave length with mud real part';
@@ -780,8 +1053,9 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 200.;
       OVEXCV{IVTYPE} = -9.;
+      OVCFNM{IVTYPE} = '';
 % % MUD special;
-%       IVTYPE = 59;
+%       IVTYPE = IVTYPE + 1;
 %       OVKEYW{IVTYPE} = 'WLENMI'                                    ;
 %       OVSNAM{IVTYPE} = 'Wlenmi';
 %       OVLNAM{IVTYPE} = 'Average wave length with mud imag part';
@@ -794,8 +1068,9 @@ function varargout = swan_quantity
 %       OVHEXP{IVTYPE} = 100000000. ;
 %       OVHEXP{IVTYPE} = 999999000. ;
 %       OVEXCV{IVTYPE} = -999.;
+%       OVCFNM{IVTYPE} = '';
 % MUD special;
-      IVTYPE = 59;
+      IVTYPE = IVTYPE + 1;
       OVKEYW{IVTYPE} = 'KI'                                    ;
       OVSNAM{IVTYPE} = 'ki';
       OVLNAM{IVTYPE} = 'Average wave number with mud imag part';
@@ -806,8 +1081,9 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 1.;
       OVEXCV{IVTYPE} = -9.;
+      OVCFNM{IVTYPE} = '';
 % MUD special;
-      IVTYPE = 60;
+      IVTYPE = IVTYPE + 1;
       OVKEYW{IVTYPE} = 'MUDL';
       OVSNAM{IVTYPE} = 'Mudlayer';
       OVLNAM{IVTYPE} = 'Mudlayer thickness';
@@ -818,6 +1094,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0   ;%!-100.
       OVHEXP{IVTYPE} = 100.;
       OVEXCV{IVTYPE} = -99.;
+      OVCFNM{IVTYPE} = '';
       
 %% Parameter in test spectral output (see SWANPRE2.for) to be obtained with:
 %  TEST 1 0 POINTS XY 0.0000 0 PAR 'x.par' S1D 'x.s1d' S2D 'x.s2d'
@@ -834,6 +1111,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 100.;
       OVEXCV{IVTYPE} = -99.;
+      OVCFNM{IVTYPE} = '';
 %;
       IVTYPE = IVTYPE + 1;
       OVKEYW{IVTYPE} = 'Swind';
@@ -846,6 +1124,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 100.;
       OVEXCV{IVTYPE} = -99.;
+      OVCFNM{IVTYPE} = '';
 %;
       IVTYPE = IVTYPE + 1;
       OVKEYW{IVTYPE} = 'Swcap';
@@ -858,6 +1137,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 100.;
       OVEXCV{IVTYPE} = -99.;
+      OVCFNM{IVTYPE} = '';
 %;
       IVTYPE = IVTYPE + 1;
       OVKEYW{IVTYPE} = 'Sfric';
@@ -870,6 +1150,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 100.;
       OVEXCV{IVTYPE} = -99.;
+      OVCFNM{IVTYPE} = '';
 %;
       IVTYPE = IVTYPE + 1;
       OVKEYW{IVTYPE} = 'Smud';
@@ -882,6 +1163,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 100.;
       OVEXCV{IVTYPE} = -99.;
+      OVCFNM{IVTYPE} = '';
 %;
       IVTYPE = IVTYPE + 1;
       OVKEYW{IVTYPE} = 'Ssurf';
@@ -894,6 +1176,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 100.;
       OVEXCV{IVTYPE} = -99.;
+      OVCFNM{IVTYPE} = '';
 %;
       IVTYPE = IVTYPE + 1;
       OVKEYW{IVTYPE} = 'Snl3';
@@ -906,6 +1189,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 100.;
       OVEXCV{IVTYPE} = -99.;
+      OVCFNM{IVTYPE} = '';
 %;
       IVTYPE = IVTYPE + 1;
       OVKEYW{IVTYPE} = 'Snl4';
@@ -918,7 +1202,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = 0.;
       OVHEXP{IVTYPE} = 100.;
       OVEXCV{IVTYPE} = -99.;
-      OVEXCV{IVTYPE} = -99.;
+      OVCFNM{IVTYPE} = '';
             
 %% Parameter in MUDF
 %------------------------
@@ -935,6 +1219,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = NaN;
       OVHEXP{IVTYPE} = NaN;
       OVEXCV{IVTYPE} = NaN;
+      OVCFNM{IVTYPE} = '';
 %;
       IVTYPE = IVTYPE + 1;
       OVKEYW{IVTYPE} = 'KREAL';
@@ -947,6 +1232,7 @@ function varargout = swan_quantity
       OVLEXP{IVTYPE} = NaN;
       OVHEXP{IVTYPE} = NaN;
       OVEXCV{IVTYPE} = NaN;
+      OVCFNM{IVTYPE} = '';
 
 
 %% Put into struct
@@ -961,6 +1247,7 @@ function varargout = swan_quantity
       DAT0.OVLEXP = OVLEXP;
       DAT0.OVHEXP = OVHEXP;
       DAT0.OVEXCV = OVEXCV;
+      DAT0.OVCFNM = OVCFNM;
       
 %% Restructure per parameter rather than per property
 
