@@ -157,9 +157,6 @@ end
          end
          if length(pm)>1
             D.(fldname) = permute(D.(fldname),pm);
-            if isfield(D,'datenum')
-            D.datenum   = permute(D.datenum  ,pm);
-            end
          end         
          if ischar(D.(fldname))
             D.(fldname) = cellstr(D.(fldname)); % always n x 1, can be wrong order if mat file was 1 x n
