@@ -378,7 +378,7 @@ function coef = ut_solv(tin,uin,vin,lat,cnstit,varargin)
 %
 % UTide v1p0 9/2011 d.codiga@gso.uri.edu
 %
-%See also: t_tide
+%See also: t_tide, UT_save
 
 if isequal(sum(size(uin)>2),1)  % single record
     coef = ut_solv1(tin,uin,vin,lat,cnstit,varargin{:});    

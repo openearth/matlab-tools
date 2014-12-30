@@ -21,6 +21,38 @@
 %          http://www.iho.int/mtg_docs/com_wg/IHOTC/TWLWG%201/TWLWG1_4-3-1.pdf
 %          http://tidesandcurrents.noaa.gov/faq2.html
 
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2014 TU Delft | Van Oord
+%       Gerben J de Boer <g.j.deboer@tudelft.nl> ; <gerben.deboer@vanoord.com>
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
+
+% $Id: $
+% $Date: $
+% $Author: $
+% $Revision: $
+% $HeadURL: $
+% $Keywords: $
+
 classdef tide_iho
 
     properties
@@ -44,7 +76,7 @@ classdef tide_iho
         phaseAngle       = []; % degree
         xdo              = repmat(' ',[7 0]); % 7-digit string, e.g. 2555555 or BZZZZZZ
      
-    % extra, for information form t_tide and Data Assimilation
+    % extra, for storing error estimate information: t_tide, Data Assimilation, UTide
         amplitudeError   = []; % <not IHO standard>
         phaseAngleError  = []; % <not IHO standard> 
         SNR              = []; % <not IHO standard> 
