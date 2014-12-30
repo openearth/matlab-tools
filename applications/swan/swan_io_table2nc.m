@@ -1,5 +1,5 @@
 function swan_io_table2nc(S,ncfile,varargin)
-%swan_io_table2nc save table structure as netCDF-CF
+%swan_io_table2nc save table structure as netCDF-CF (SWAN does not write netCDF for tables)
 %
 % swan_io_table2nc(S,ncfile) saves struct S to netCDF file,
 % where S = swan_io_table or can be constructed otherwise.
@@ -11,7 +11,7 @@ function swan_io_table2nc(S,ncfile,varargin)
 % NB Table fields TIME is needed for nonstationary datafiles.
 % NB Use  SWAN short names for variables (leaving out small caps].
 %
-%See also: swan_io_spectrum, netcdf
+%See also: swan_io_spectrum, netcdf, swan_io_spectrum2nc
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -61,8 +61,8 @@ OPT.project     = '';
 OPT.model       = '';
 OPT.run         = '';
 OPT.swap        = 0; % [time,locations] as in agioncmd, or [locations,time] as 10GB worldwaves
-OPT.rename      = {{'HS' ,'RTP' ,'TMM10','HSWELL','DIR'},...
-                   {'SWH','PP1D','MWP'  ,'SHPS'  ,'fro'}};
+OPT.rename      = {{},{}}; % ERA-40 WAM: {{'HS' ,'RTP' ,'TMM10','HSWELL','DIR'},{'SWH','PP1D','MWP'  ,'SHPS'  ,'fro'}};
+OPT.platform_name = '';
 
 OPT = setproperty(OPT,varargin);
 
@@ -75,8 +75,8 @@ OPT = setproperty(OPT,varargin);
 % coordinates
 
     if strcmpi(OPT.coordinates,'nautical')
-        x = 'XP' ;OPT.x.name = 'lon' ;OPT.x.units = 'degrees_east' ;OPT.x.cf = 'longitude';
-        y = 'YP' ;OPT.y.name = 'lat' ;OPT.y.units = 'degrees_north';OPT.y.cf = 'latitude';
+        x = 'XP' ;OPT.x.name = 'longitude' ;OPT.x.units = 'degrees_east' ;OPT.x.cf = 'longitude';
+        y = 'YP' ;OPT.y.name = 'latitude'  ;OPT.y.units = 'degrees_north';OPT.y.cf = 'latitude';
     else
         x = 'XP' ;OPT.x.name = 'x';        OPT.x.units = 'meter'        ;OPT.x.cf = 'projection_x_coordinate';
         y = 'YP' ;OPT.y.name = 'y';        OPT.y.units = 'meter'        ;OPT.y.cf = 'projection_y_coordinate';
@@ -122,8 +122,8 @@ OPT = setproperty(OPT,varargin);
    
 %% Dimensions   
    
-   nc.Dimensions(    1) = struct('Name', 'time'             ,'Length',length(S.TIME      ));m.t = 1;
-   nc.Dimensions(end+1) = struct('Name', 'points'           ,'Length',length(S.(x)       ));m.x = length(nc.Dimensions);m.xy = m.x;
+   nc.Dimensions(    1) = struct('Name', 'time'              ,'Length',length(S.TIME      ));m.t = 1;
+   nc.Dimensions(end+1) = struct('Name', 'points'            ,'Length',length(S.(x)       ));m.x = length(nc.Dimensions);m.xy = m.x;
    
 %% Coordinates
 % swap variable dimensions following C convention, and mimic agioncmd.ftn90
@@ -147,8 +147,9 @@ OPT = setproperty(OPT,varargin);
    
 %% Platform names
 
-   if isfield(S,'platform_name')
-   nc.Dimensions(end+1) = struct('Name','points_name_length','Length',size(S.platform_name,2));m.name = length(nc.Dimensions);;
+   if ~isempty(OPT.platform_name)
+   OPT.platform_name = cellstr(OPT.platform_name);
+   nc.Dimensions(end+1) = struct('Name','points_name_length','Length',length(OPT.platform_name));m.name = length(nc.Dimensions);;
    M.platform_name(    1) = struct('Name','standard_name'     ,'Value','platform_name');
    nc.Variables(end+1)  = struct('Name','platform_name','Datatype','char','Dimensions',nc.Dimensions([m.name m.xy]),'Attributes',M.platform_name);
    OPT.coordinates = [OPT.x.name ' ' OPT.y.name ' platform_name'];      
@@ -190,7 +191,7 @@ OPT = setproperty(OPT,varargin);
 
    %var2evalstr(nc)
    if exist(ncfile,'file')
-       disp(['File already exist, press enmter to replace it, press CTRL_C to quit: ''',ncfile,''''])
+       disp(['File already exist, press enter to replace it, press CTRL_C to quit: ''',ncfile,''''])
        pause
        delete(ncfile)
    end
@@ -204,7 +205,7 @@ OPT = setproperty(OPT,varargin);
     ncwrite(ncfile,OPT.y.name ,S.(y))
 
     if isfield(S,'platform_name')
-    ncwrite(ncfile,'platform_name',char(S.platform_name)')
+    ncwrite(ncfile,'platform_name',char(OPT.platform_name)')
     end    
     
     for ivar=1:length(S.quantity_names)

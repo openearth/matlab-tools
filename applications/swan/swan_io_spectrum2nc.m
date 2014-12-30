@@ -1,5 +1,5 @@
 function swan_io_spectrum2nc(S,ncfile,varargin)
-%swan_io_spectrum2nc save spectral structure as netCDF-CF
+%swan_io_spectrum2nc save spectral structure as netCDF-CF (same as SWAN does)
 %
 % swan_io_spectrum2nc(S,ncfile) saves struct S to netCDF file,
 % where S = swan_io_spectrum or can be constructed otherwise.
@@ -7,7 +7,7 @@ function swan_io_spectrum2nc(S,ncfile,varargin)
 % itself (agioncmd.f90), so it should be able to use swan_io_spectrum2nc
 % to construct SWAN netCDF input.
 %
-%See also: swan_io_spectrum, netcdf
+%See also: swan_io_spectrum, netcdf, swan_io_table2nc
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -140,25 +140,25 @@ OPT = setproperty(OPT,varargin);
    nc.Attributes(end+1) = struct('Name','time_coverage_end'  ,'Value',datestr(max(S.time),'yyyy-mm-ddTHH:MM'));
    end
    
-   nc.Attributes(end+1) = struct('Name','project'               ,'Value', OPT.project);
-   nc.Attributes(end+1) = struct('Name','model'                 ,'Value', OPT.model);
-   nc.Attributes(end+1) = struct('Name','run'                   ,'Value', OPT.run);
+   nc.Attributes(end+1) = struct('Name','project'            ,'Value', OPT.project);
+   nc.Attributes(end+1) = struct('Name','model'              ,'Value', OPT.model);
+   nc.Attributes(end+1) = struct('Name','run'                ,'Value', OPT.run);
    
 %% Dimensions   
    
-   nc.Dimensions(    1) = struct('Name', 'time'             ,'Length',length(S.time      ));m.t = 1;
+   nc.Dimensions(    1) = struct('Name', 'time'              ,'Length',length(S.time      ));m.t = 1;
    
    if OPT.mdc
-   nc.Dimensions(end+1) = struct('Name', OPT.x.name         ,'Length',length(S.(x)       ));m.x = length(nc.Dimensions);
-   nc.Dimensions(end+1) = struct('Name', OPT.y.name         ,'Length',length(S.(x)       ));m.y = length(nc.Dimensions);m.xy = [m.x m.y];
+   nc.Dimensions(end+1) = struct('Name', OPT.x.name          ,'Length',length(S.(x)       ));m.x = length(nc.Dimensions);
+   nc.Dimensions(end+1) = struct('Name', OPT.y.name          ,'Length',length(S.(x)       ));m.y = length(nc.Dimensions);m.xy = [m.x m.y];
    else
-   nc.Dimensions(end+1) = struct('Name', 'points'           ,'Length',length(S.(x)       ));m.x = length(nc.Dimensions);m.xy = m.x;
+   nc.Dimensions(end+1) = struct('Name', 'points'            ,'Length',length(S.(x)       ));m.x = length(nc.Dimensions);m.xy = m.x;
    end
    
-   nc.Dimensions(end+1) = struct('Name', 'frequency'        ,'Length',length(S.frequency ));m.f = length(nc.Dimensions);
+   nc.Dimensions(end+1) = struct('Name', 'frequency'         ,'Length',length(S.frequency ));m.f = length(nc.Dimensions);
 
    if isfield(S,'directions')
-   nc.Dimensions(end+1) = struct('Name', 'direction'        ,'Length',length(S.directions));m.d = length(nc.Dimensions); %  NB dropping of -s
+   nc.Dimensions(end+1) = struct('Name', 'direction'         ,'Length',length(S.directions));m.d = length(nc.Dimensions); %  NB dropping of -s
    nc.Attributes(end+1) = struct('Name','Directional_convention','Value',S.direction_convention);
    end
    
@@ -207,7 +207,6 @@ OPT = setproperty(OPT,varargin);
    else
    OPT.coordinates = [OPT.x.name ' ' OPT.y.name];
    end
-
    
 %% Variables 
     for ivar=1:length(S.quantity_names)
@@ -275,7 +274,7 @@ OPT = setproperty(OPT,varargin);
 
    %var2evalstr(nc)
    if exist(ncfile,'file')
-       disp(['File already exist, press enmter to replace it, press CTRL_C to quit: ''',ncfile,''''])
+       disp(['File already exist, press enter to replace it, press CTRL_C to quit: ''',ncfile,''''])
        pause
        delete(ncfile)
    end

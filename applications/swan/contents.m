@@ -23,7 +23,10 @@
 % swan_io_mergesp2               - Merge multiple sp2 files into 1 sp2 file
 % swan_io_spectrum               - Read SWAN 1D or 2D spectrum file
 % swan_io_spectrum_write         - Writes a 1D SWAN spectrum file
-% swan_io_spectrum2nc            - Writes a SWAN 1D or 2D spectrum file to netCDF file
+%
+%SWAN netCDF: the latest SWAN writes netCDF-CF for spectra and blocks
+% swan_io_table2nc               - Writes a SWAN ASCII output table to netCDF-CF file (SWAN does not write netCDF for tables)
+% swan_io_spectrum2nc            - Writes a SWAN 1D or 2D spectrum file to netCDF-CF file (same as SWAN does)
 %
 %SWAN input files
 % swan_io_input                  - read SWAN input file into struct (to automate postprocessing)
