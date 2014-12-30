@@ -11,6 +11,7 @@
 %   T_TIDE               - Harmonic analysis of a time series
 %   T_PREDIC             - Tidal prediction
 %   T_XTIDE              - Tidal predictionusing the harmonics file from XTIDE.
+%   tide_iho             - class for storing/importing/exporting IHO tidal components
 %
 %  UTide                 - (signal processing toolbox needed)
 %                          tidal + harmonic analysis with constant + variable dt (external)

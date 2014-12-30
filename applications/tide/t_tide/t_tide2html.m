@@ -7,6 +7,8 @@ function varargout = t_tide2html(D,varargin)
 %
 %See also: t_tide, t_tide2struc, t_tide_read, t_tide2xml, t_tide2nc
 
+warning('deprecated in favor of tide_iho.m method to_html')
+
 % IHO xml keywords	 
    
 D0.name                = '';

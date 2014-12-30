@@ -8,7 +8,7 @@
 
 %% read
        url   = 'http://dods.ndbc.noaa.gov/thredds/dodsC/data/dart/46419/46419t2014.nc';
-       url   = 'x:/D/opendap.deltares.nl/46419t2014.nc';
+       url   = 'c:\checkouts\openearthtoolsroot\test\matlab\applications\tide\46419t2014.nc';
        D.h   = ncread(url,'height',[1 1 1],[1 1 1e4]); % total water column height, so huge A0
        D.day = double(ncread(url,'time',1,1e4))/3600/24; % sec since 1970
        D.t   = datenum(1970,1,D.day); % irregular: 15, 30, 60,... 900 sec
@@ -22,10 +22,10 @@
 % requires licensed signal processing toolbox by default, switch of with 'err'='wboot'
       [T2,hfit2] = t_tide(D.h(:),...
           'lat',D.lat,... % required to active nodal corrections
-          'sort','amp',...
+          'sort','-amp',...
           'interval',diff(D.t)*24,... % non-constant dt only with with t_tide in openearthtools
           'start',D.t(1),...
-          'output','46419t2014_comp.asc',...
+          'output','46419t2014_t_tide.asc',...
           'err','wboot'); % only methods that does not need signal processing toolbox license
       % D.z0 = T2.z0
 
@@ -47,11 +47,7 @@
        
        %T = t_tide_read('46419t2014.asc');
 
-       t_tide2html(T,'filename','46419t2014_comp.html');
-
-       t_tide2xml(T,'filename','46419t2014_comp.xml');
-   
-       t_tide2nc(T,'filename','46419t2014_comp.nc');  
+       t_tide2html(T,'filename','46419t2014_t_tide.html');
        
 %% harmonic
 %  use frequency units as timeseries: days

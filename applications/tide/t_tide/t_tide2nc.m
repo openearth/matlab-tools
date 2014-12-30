@@ -7,6 +7,8 @@ function t_tide2nc(D,varargin)
 %
 %See also: t_tide, t_tide2struc, t_tide_read, t_tide2html, t_tide2xml
 
+warning('deprecated in favor of tide_iho.m method to_nc')
+
 % IHO xml keywords	 
    
 D0.name                = '';

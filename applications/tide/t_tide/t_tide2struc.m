@@ -1,5 +1,5 @@
 function varargout = t_tide2struc(varargin)
-%T_TIDE2STRUC    t_tide with netCDF output or ascii output
+%T_TIDE2STRUC    t_tide with structure output
 %
 %   [D,<fit>] = t_tide2struc(t,var,<keyword,value>)
 %
@@ -19,6 +19,8 @@ function varargout = t_tide2struc(varargin)
 % For list of <keyword,value> call t_tide2struc()
 %
 %See also: T_TIDE, UTide, t_tide2xml, t_tide2html, t_tide2nc
+
+warning('deprecated in favor of tide_iho.m method from_t_tide_tidestruc')
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 Deltares
@@ -187,5 +189,8 @@ if nargout==1
    varargout = {D};
 elseif nargout==2
    varargout = {D,pout};
+elseif nargout==3
+   varargout = {D,pout,tidestruc};
 end   
+ 
 

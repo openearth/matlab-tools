@@ -117,12 +117,12 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin);
 %                                   are included).
 %
 %   Least squares soln computational efficiency parameter
-%	'lsq'		'direct'  - use A\x fit
-%			'normal'  - use (A'A)\(A'x) (may be necessary
-%				    for very large input vectors since
+%         'lsq'          'direct' - use A\x fit
+%                       'normal'  - use (A'A)\(A'x) (may be necessary
+%                                   for very large input vectors since
 %                                   A'A is much smaller than A)
-%			'best'	  - automatically choose based on
-%				    length of series (default).
+%                         'best'  - automatically choose based on
+%                                   length of series (default).
 %
 %       It is possible to call t_tide without using property names,
 %       in which case the assumed calling sequence is
@@ -783,7 +783,7 @@ elseif fid==1,
 end
 
 if fid>0,
-  fprintf(fid,'t_tide version: $Id$ \n',);
+  fprintf(fid,'t_tide version: $Id$ \n');
   fprintf(fid,'nobs = %d,  ngood = %d,  record length (days) = %.2f\n',nobs,ngood,length(xin)*dt/24);
   if ~isempty(stime); fprintf(fid,'%s\n',['start time: ',datestr(stime)]); end
   fprintf(fid,'rayleigh criterion = %.1f\n',ray);
