@@ -919,6 +919,8 @@ else
     Yv = real(ap-am);
     [coef.Lsmaj,coef.Lsmin,coef.theta,coef.g] = ut_cs2cep([Xu Yu Xv Yv]);
 end
+
+coef.period = [tin(1) tin(end)];
     
 %% mean and trend
 if opt.twodim
@@ -3117,10 +3119,10 @@ end
 if coef.aux.opt.twodim
     fldord = {'name'; 'Lsmaj'; 'Lsmaj_ci';...
         'Lsmin'; 'Lsmin_ci'; 'theta'; 'theta_ci'; 'g'; 'g_ci';...
-        'umean'; 'vmean';};
+        'umean'; 'vmean';'period'};
 else
     fldord = {'name'; 'A'; 'A_ci'; 'g'; 'g_ci';...
-        'mean';};
+        'mean';'period'};
 end
 if ~coef.aux.opt.notrend
     if coef.aux.opt.twodim

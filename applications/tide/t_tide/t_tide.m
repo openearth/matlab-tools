@@ -827,9 +827,11 @@ xout=reshape(xout,inn,inm);
 switch nargout,
   case {0,3,4}
   case {1}
-   nameu = struct('name',nameu,'freq',fu,'tidecon',tidecon,'type',ltype,'z0',z0,'dz0',dz0);
+   nameu = struct('name',nameu,'freq',fu,'tidecon',tidecon,'type',ltype,'z0',z0,'dz0',dz0,...  % original t_tide fields
+       'lat',lat,'period',stime+[0 (t(end)-t(1))]/24);
   case {2}   
-   nameu = struct('name',nameu,'freq',fu,'tidecon',tidecon,'type',ltype,'z0',z0,'dz0',dz0);
+   nameu = struct('name',nameu,'freq',fu,'tidecon',tidecon,'type',ltype,'z0',z0,'dz0',dz0,...  % original t_tide fields
+       'lat',lat,'period',stime+[0 (t(end)-t(1))]/24);
    fu=xout;
 end;
    

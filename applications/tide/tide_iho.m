@@ -5,6 +5,7 @@
 %   obj = from_t_tide_asc(filename)        - 
 %   obj = from_nc(filename)                - 
 %   obj = from_t_tide_tidestruct(filename) - 
+%   obj = from_utide_coef(filename)        - 
 %
 % Object methods (PUT):
 %   ok  = to_iho_xml(obj,filename)    -
@@ -96,7 +97,7 @@ classdef tide_iho
             
             obj.units            = asc.units.fmaj;
             obj.component_name   = asc.data.name;
-            obj.speed            = asc.data.frequency;
+            obj.speed            = asc.data.frequency*360; % [cyc/hr] to [deg/hr]
             obj.amplitude        = asc.data.fmaj;
             obj.phaseAngle       = asc.data.pha;
 
@@ -127,7 +128,7 @@ classdef tide_iho
           obj.comments         = xml.Port.comments;
 
           obj.component_name   = {xml.Port.Harmonic.name}';
-          obj.speed            = [xml.Port.Harmonic.speed]';
+          obj.speed            = [xml.Port.Harmonic.speed]'; % keep in [deg/hr]
           obj.amplitude        = [xml.Port.Harmonic.amplitude]';
           obj.phaseAngle       = [xml.Port.Harmonic.phaseAngle]';
 
@@ -157,10 +158,53 @@ classdef tide_iho
 
         end
 
-        function obj = from_t_tide_tidestruct(tidestruct)
+        function obj = from_t_tide_tidestruct(T)
         %from_tide_tidestruct gmenerate from t_tide tidestruct output structure (in memory)
-            error('not implemented')            
+
+          obj = tide_iho;
+
+          if isfield(T,'lat')
+          obj.latitude         = T.lat;
+          end
+          %obj.timeZone         = ;
+          if isfield(T,'period')
+          obj.observationStart = T.period(1);
+          end
+          if isfield(T,'period')          
+          obj.observationEnd   = T.period(2);
+          end
+
+          obj.component_name   = cellstr(T.name);
+          obj.speed            = 360*T.freq; % [cyc/hr] to [deg/hr]
+          obj.amplitude        = T.tidecon(:,1);
+          obj.phaseAngle       = T.tidecon(:,3);
+          obj.amplitudeError   = T.tidecon(:,2); % <not IHO standard>
+          obj.phaseAngleError  = T.tidecon(:,4); % <not IHO standard>
+       
         end % function
+        
+        function obj = from_utide_coef(T)
+        %from_tide_tidestruct gmenerate from t_tide tidestruct output structure (in memory)
+
+          obj = tide_iho;
+
+          obj.latitude         = T.aux.lat;
+          %obj.timeZone         = ;
+          if isfield(T,'period')
+          obj.observationStart = T.period(1);
+          end
+          if isfield(T,'period')          
+          obj.observationEnd   = T.period(2);
+          end
+
+          obj.component_name   = T.name;
+          obj.speed            = 360*T.aux.frq; % [cyc/hr] to [deg/hr]
+          obj.amplitude        = T.A;
+          obj.phaseAngle       = T.g;
+          obj.amplitudeError   = T.A_ci; % <not IHO standard>
+          obj.phaseAngleError  = T.g_ci; % <not IHO standard>
+       
+        end % function        
         
     end % methods
     
@@ -230,12 +274,12 @@ classdef tide_iho
             str = [str     sprintf('<Harmonic>')];
             str = [str pad(sprintf('<name>%s</name>'        ,strtrim(obj.component_name{i})),18,' '        )]; % for strings, padding a space is not meaningless
             str = [str sprintf('<inferred>%s</inferred>'    ,pad('false'                           ,-5,' '))];
-            str = [str sprintf('<speed>%s</speed>'          ,pad(num2str(360*obj.speed(i) ,'%0.4f'),-8,' '))];
+            str = [str sprintf('<speed>%s</speed>'          ,pad(num2str(obj.speed(i) ,'%0.4f'),-8,' '))];
             str = [str sprintf('<amplitude>%s</amplitude>'  ,pad(num2str(obj.amplitude(i) ,'%0.4f'),-8,' '))];
-            str = [str sprintf('<phaseAngle>%s</phaseAngle>',pad(num2str(obj.phaseAngle(i),'%0.3f'),-7,' '))];
+            str = [str sprintf('<phaseAngle>%s</phaseAngle>',pad(num2str(obj.phaseAngle(i),'%0.2f'),-6,' '))];
             
             if ~isempty(obj.amplitudeError)
-            str = [str sprintf('<amplitudeError>%s</amplitudeError>',pad(num2str(obj.amplitudeError(i),'%0.3f'),-7,' '))];
+            str = [str sprintf('<amplitudeError>%s</amplitudeError>',pad(num2str(obj.amplitudeError(i),'%0.4f'),-8,' '))];
             end
             if ~isempty(obj.phaseAngleError)
             str = [str sprintf('<phaseAngleError>%s</phaseAngleError>',pad(num2str(obj.phaseAngleError(i),'%0.3f'),-7,' '))];
