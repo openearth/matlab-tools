@@ -3,15 +3,18 @@
 % Static methods (GET):
 %   obj = from_iho_xml(filename)           -
 %   obj = from_t_tide_asc(filename)        - 
-%   obj = from_nc(filename)                - 
 %   obj = from_t_tide_tidestruct(filename) - 
 %   obj = from_utide_coef(filename)        - 
 %
 % Object methods (PUT):
-%   ok  = to_iho_xml(obj,filename)    -
-%   ok  = to_t_tide_asc(obj,filename) -
-%   ok  = to_nc(obj,filename)         - 
-%   Cmp = to_t_tide_tidestruct(obj)   - 
+%   xml = to_iho_xml(obj,filename)         - to IHO xml file
+%   Cmp = to_t_tide_tidestruct(obj)        - struct for running t_predic()
+%   Cmp = to_utide_coef(obj)               - struct for running ut_reconstr() WIP
+%   ok  = to_nc(obj,filename)              - 
+%
+% WIP
+%   obj = from_nc(filename)                - WIP 
+%   ok  = to_t_tide_asc(obj,filename)      - WIP
 %
 % Example:
 %  C = tide_iho(); % generate empty IHO class fields
@@ -91,10 +94,10 @@ classdef tide_iho
             
             obj = tide_iho;
             asc = t_tide_read(fname);
-            
+
             obj.observationStart = asc.observationStart;
             obj.observationEnd   = asc.observationEnd;            
-            
+
             obj.units            = asc.units.fmaj;
             obj.component_name   = asc.data.name;
             obj.speed            = asc.data.frequency*360; % [cyc/hr] to [deg/hr]
@@ -104,9 +107,9 @@ classdef tide_iho
             obj.amplitudeError   = asc.data.emaj; % <not IHO standard>
             obj.phaseAngleError  = asc.data.epha; % <not IHO standard>
             obj.SNR              = asc.data.snr;  % <not IHO standard>
-            
+
             obj.comments         = 'method=t_tide';
-            
+
             obj = setproperty(obj,varargin);
             
         end % function
@@ -114,96 +117,100 @@ classdef tide_iho
         function   obj = from_iho_xml(fname)
             %from_iho_xml load from IHO xml file            
           
-          obj = tide_iho;
-          xml = xml_read(fname);
+            obj = tide_iho;
+            xml = xml_read(fname);
 
-          obj.platform_name    = xml.Port.name;
-          obj.country          = xml.Port.country;
-          obj.latitude         = xml.Port.position.latitude;
-          obj.longitude        = xml.Port.position.longitude;
-          obj.timeZone         = xml.Port.timeZone;
-          obj.units            = xml.Port.units;
-          obj.observationStart = xml.Port.observationStart;
-          obj.observationEnd   = xml.Port.observationEnd;
-          obj.comments         = xml.Port.comments;
+            obj.platform_name    = xml.Port.name;
+            obj.country          = xml.Port.country;
+            obj.latitude         = xml.Port.position.latitude;
+            obj.longitude        = xml.Port.position.longitude;
+            obj.timeZone         = xml.Port.timeZone;
+            obj.units            = xml.Port.units;
+            obj.observationStart = xml.Port.observationStart;
+            obj.observationEnd   = xml.Port.observationEnd;
+            obj.comments         = xml.Port.comments;
 
-          obj.component_name   = {xml.Port.Harmonic.name}';
-          obj.speed            = [xml.Port.Harmonic.speed]'; % keep in [deg/hr]
-          obj.amplitude        = [xml.Port.Harmonic.amplitude]';
-          obj.phaseAngle       = [xml.Port.Harmonic.phaseAngle]';
+            obj.component_name   = {xml.Port.Harmonic.name}';
+            obj.speed            = [xml.Port.Harmonic.speed]'; % keep in [deg/hr]
+            obj.amplitude        = [xml.Port.Harmonic.amplitude]';
+            obj.phaseAngle       = [xml.Port.Harmonic.phaseAngle]';
 
-          if isfield(xml.Port.Harmonic,'amplitudeError')
-          obj.amplitudeError   = [xml.Port.Harmonic.amplitudeError]'; % <not IHO standard>
-          end
-          if isfield(xml.Port.Harmonic,'phaseAngleError')
-          obj.phaseAngleError  = [xml.Port.Harmonic.phaseAngleError]'; % <not IHO standard>
-          end
-          if isfield(xml.Port.Harmonic,'SNR')
-          obj.SNR              = [xml.Port.Harmonic.SNR]'; % <not IHO standard>
-          end
-          
-          %% parse
-          obj.observationStart = time2datenum(obj.observationStart);
-          obj.observationEnd   = time2datenum(obj.observationEnd);
+            if isfield(xml.Port.Harmonic,'amplitudeError')
+            obj.amplitudeError   = [xml.Port.Harmonic.amplitudeError]'; % <not IHO standard>
+            end
+            if isfield(xml.Port.Harmonic,'phaseAngleError')
+            obj.phaseAngleError  = [xml.Port.Harmonic.phaseAngleError]'; % <not IHO standard>
+            end
+            if isfield(xml.Port.Harmonic,'SNR')
+            obj.SNR              = [xml.Port.Harmonic.SNR]'; % <not IHO standard>
+            end
 
-          [dd,mm]=strtok(strtrim(obj.latitude));dd=str2num(dd);
-          sgn=1;if mm(end)=='S';sgn = -1;end  
-          mm = str2num(mm(1:end-1));
-          obj.latitude  = (dd + mm/60).*sgn;
-          
-          [dd,mm]=strtok(strtrim(obj.longitude));dd=str2num(dd);
-          sgn=1;if mm(end)=='W';sgn = -1;end              
-          mm = str2num(mm(1:end-1));
-          obj.longitude = (dd + mm/60).*sgn;
+            %% parse
+            obj.observationStart = time2datenum(obj.observationStart);
+            obj.observationEnd   = time2datenum(obj.observationEnd);
+
+            [dd,mm]=strtok(strtrim(obj.latitude));dd=str2num(dd);
+            sgn=1;if mm(end)=='S';sgn = -1;end  
+            mm = str2num(mm(1:end-1));
+            obj.latitude  = (dd + mm/60).*sgn;
+
+            [dd,mm]=strtok(strtrim(obj.longitude));dd=str2num(dd);
+            sgn=1;if mm(end)=='W';sgn = -1;end              
+            mm = str2num(mm(1:end-1));
+            obj.longitude = (dd + mm/60).*sgn;
 
         end
 
         function obj = from_t_tide_tidestruct(T)
         %from_tide_tidestruct gmenerate from t_tide tidestruct output structure (in memory)
 
-          obj = tide_iho;
+            obj = tide_iho;
 
-          if isfield(T,'lat')
-          obj.latitude         = T.lat;
-          end
-          %obj.timeZone         = ;
-          if isfield(T,'period')
-          obj.observationStart = T.period(1);
-          end
-          if isfield(T,'period')          
-          obj.observationEnd   = T.period(2);
-          end
+            if isfield(T,'lat')
+            obj.latitude         = T.lat;
+            end
+            %obj.timeZone         = ;
+            if isfield(T,'period')
+            obj.observationStart = T.period(1);
+            end
+            if isfield(T,'period')          
+            obj.observationEnd   = T.period(2);
+            end
 
-          obj.component_name   = cellstr(T.name);
-          obj.speed            = 360*T.freq; % [cyc/hr] to [deg/hr]
-          obj.amplitude        = T.tidecon(:,1);
-          obj.phaseAngle       = T.tidecon(:,3);
-          obj.amplitudeError   = T.tidecon(:,2); % <not IHO standard>
-          obj.phaseAngleError  = T.tidecon(:,4); % <not IHO standard>
+            obj.component_name   = cellstr(T.name);
+            obj.speed            = 360*T.freq; % [cyc/hr] to [deg/hr]
+            obj.amplitude        = T.tidecon(:,1);
+            obj.phaseAngle       = T.tidecon(:,3);
+            obj.amplitudeError   = T.tidecon(:,2); % <not IHO standard>
+            obj.phaseAngleError  = T.tidecon(:,4); % <not IHO standard>
+
+            obj.comments         = 'method=t_tide';
        
         end % function
         
         function obj = from_utide_coef(T)
         %from_tide_tidestruct gmenerate from t_tide tidestruct output structure (in memory)
 
-          obj = tide_iho;
+            obj = tide_iho;
 
-          obj.latitude         = T.aux.lat;
-          %obj.timeZone         = ;
-          if isfield(T,'period')
-          obj.observationStart = T.period(1);
-          end
-          if isfield(T,'period')          
-          obj.observationEnd   = T.period(2);
-          end
+            obj.latitude         = T.aux.lat;
+            %obj.timeZone         = ;
+            if isfield(T,'period')
+            obj.observationStart = T.period(1);
+            end
+            if isfield(T,'period')          
+            obj.observationEnd   = T.period(2);
+            end
 
-          obj.component_name   = T.name;
-          obj.speed            = 360*T.aux.frq; % [cyc/hr] to [deg/hr]
-          obj.amplitude        = T.A;
-          obj.phaseAngle       = T.g;
-          obj.amplitudeError   = T.A_ci; % <not IHO standard>
-          obj.phaseAngleError  = T.g_ci; % <not IHO standard>
-       
+            obj.component_name   = T.name;
+            obj.speed            = 360*T.aux.frq; % [cyc/hr] to [deg/hr]
+            obj.amplitude        = T.A;
+            obj.phaseAngle       = T.g;
+            obj.amplitudeError   = T.A_ci; % <not IHO standard>
+            obj.phaseAngleError  = T.g_ci; % <not IHO standard>
+            
+            obj.comments         = 'method=utide';            
+
         end % function        
         
     end % methods
@@ -212,6 +219,10 @@ classdef tide_iho
     
         function  varargout = to_iho_xml(obj,xmlfile)
             %to_iho_xml save to IHO xml file
+            %
+            % <xml> = to_iho_xml(obj,<xmlfile>)
+            %
+            %See also: tide_iho.from_iho_xml
             
             str = '';
             str = [str sprintf('<?xml version="1.0" encoding="UTF-8"?>')];
@@ -276,7 +287,7 @@ classdef tide_iho
             str = [str sprintf('<inferred>%s</inferred>'    ,pad('false'                           ,-5,' '))];
             str = [str sprintf('<speed>%s</speed>'          ,pad(num2str(obj.speed(i) ,'%0.4f'),-8,' '))];
             str = [str sprintf('<amplitude>%s</amplitude>'  ,pad(num2str(obj.amplitude(i) ,'%0.4f'),-8,' '))];
-            str = [str sprintf('<phaseAngle>%s</phaseAngle>',pad(num2str(obj.phaseAngle(i),'%0.2f'),-6,' '))];
+            str = [str sprintf('<phaseAngle>%s</phaseAngle>',pad(num2str(obj.phaseAngle(i),'%0.2f'),-7,' '))];
             
             if ~isempty(obj.amplitudeError)
             str = [str sprintf('<amplitudeError>%s</amplitudeError>',pad(num2str(obj.amplitudeError(i),'%0.4f'),-8,' '))];
@@ -300,7 +311,74 @@ classdef tide_iho
             if nargout>0
             varargout = {str};
             end            
-        end    
+        end
+
+        function    T = to_t_tide_tidestruct(obj)
+            %from_t_tide_tidestruct export to t_tide struct to run t_predic
+            %
+            %   T = to_t_tide_tidestruct(obj)
+            %
+            %See also: t_predic
+
+            if ~isempty(obj.latitude)
+            T.lat           = obj.latitude;
+            end
+            %obj.timeZone
+            if ~isempty(obj.observationStart)
+            T.period(1)     = obj.observationStart;
+            end
+            if ~isempty(obj.observationEnd)         
+            T.period(2)     = obj.observationEnd;
+            end
+
+            T.name          = char(obj.component_name);
+            T.freq          = obj.speed/360; % [deg/hr] back to [cyc/hr]
+            T.tidecon(:,1)  = obj.amplitude      ;
+            T.tidecon(:,3)  = obj.phaseAngle     ;
+            T.tidecon(:,2)  = obj.amplitudeError ; % <not IHO standard>
+            T.tidecon(:,4)  = obj.phaseAngleError; % <not IHO standard>
+            
+        end % function  
+        
+        function    T = to_utide_coef(obj)
+            %to_utide_coef export to t_tide struct to run ut_solv
+            %
+            %   T = to_t_tide_tidestruct(obj)
+            %
+            %See also: ut_solv            
+
+            T.aux.lat   = obj.latitude;
+            %obj.timeZone         = ;
+            if ~isempty(obj.observationStart)
+            T.period(1) = obj.observationStart;
+            end
+            if ~isempty(obj.observationEnd)         
+            T.period(2) = obj.observationEnd;
+            end
+
+            T.name      = obj.component_name ;
+            T.aux.frq   = obj.speed/360      ; % [deg/hr] back to [cyc/hr]
+            T.A         = obj.amplitude      ;
+            T.g         = obj.phaseAngle     ;
+            T.A_ci      = obj.amplitudeError ; % <not IHO standard>
+            T.g_ci      = obj.phaseAngleError; % <not IHO standard>
+            
+            %% ut_reconstr() requires
+            T.aux.opt.twodim     = 0;
+            T.aux.opt.nodsatlint = 0;
+            T.aux.opt.nodsatnone = 0;
+            T.aux.opt.gwchlint   = 0;
+            T.aux.opt.gwchnone   = 0;
+            T.aux.opt.prefilt    = [];
+            T.aux.opt.notrend    = 0;
+            T.aux.reftime        = mean(T.period);
+            T.mean               = 0;
+            T.slope              = 0;
+            
+            warning('struct.aux.lind not yet mapped, ut_reconstr not yet possible')
+           %T.aux.lind           = ..; % load ut_constants.mat
+            
+        end % function         
         
         function ok = to_nc(obj,ncfile)
             %to_nc save to netCDF-CF  file  
@@ -424,19 +502,13 @@ classdef tide_iho
 
             error('not implemented')            
         end % function
-        
-        function    tidestruct = to_t_tide_tidestruct(obj)
-            %from_t_tide_tidestruct save to t_tide ascii file    
-
-            error('not implemented')            
-        end % function
-        
+      
         function    tidestruct = from_nc(obj)
             %from_nc load from netCDF-CF file    
 
             error('not implemented')            
-        end % function        
-    
+        end % function     
+        
     end % methods
     
 end % classdef

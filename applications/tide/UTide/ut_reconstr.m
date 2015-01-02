@@ -53,23 +53,23 @@ function [u,v] = ut_reconstr(tin,coef,varargin)
 %   of the option flags is not important but they must be passed in 
 %   after all other arguments. See report for more complete explanations.
 %
-%   ‘MinSNR’, MinSNR 
+%   'MinSNR', MinSNR 
 %
 %       * Only include constituents with SNR >= MinSNR. Default MinSNR=2.
 %
-%   ‘MinPE’, MinPE 
+%   'MinPE', MinPE 
 %
 %       * Only include constituents with PE > MinPE. Default MinPE=0. 
 %
-% If both of ‘MinSNR’ and ‘MinPE’ are selected no constituent with either 
+% If both of 'MinSNR' and 'MinPE' are selected no constituent with either 
 %   SNR or PE values lower than the specified thresholds will be included.
 %
-%   ‘Cnstit’, Cnstit
+%   'Cnstit', Cnstit
 %
 %       * Include only those constituents named in Cnstit, which must be 
 %           selected from those in coef.name.
 %               Cnstit = cell array of 4-character strings.
-%       * If ‘Cnstit’ is used then MinSNR and MinPE are ignored.
+%       * If 'Cnstit' is used then MinSNR and MinPE are ignored.
 % 
 % OUTPUTS
 %
