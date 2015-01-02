@@ -374,9 +374,11 @@ classdef tide_iho
             T.aux.reftime        = mean(T.period);
             T.mean               = 0;
             T.slope              = 0;
-            
-            warning('struct.aux.lind not yet mapped, ut_reconstr not yet possible')
-           %T.aux.lind           = ..; % load ut_constants.mat
+            ut_constants = load('ut_constants.mat');
+            for j=1:length(T.name)
+                T.aux.lind(j,1)=strmatch(T.name{j},ut_constants.const.name);
+            end
+            disp(['tide_iho.to_utide_coef: default: reftime=',datestr(T.aux.reftime),' and 0=mean/slope/twodim/nodsatlint/nodsatnone/gwchlint/gwchnone/prefilt/notrend'])
             
         end % function         
         

@@ -47,14 +47,13 @@
     T2b = X2.to_t_tide_tidestruct;
     X3 = tide_iho.from_utide_coef(T3)       ;X3.to_iho_xml('46419t2014_utide.xml') % [cyc/hr] to [deg/hr]
     T3b = X3.to_utide_coef;
-    T3b.aux.lind = T3.aux.lind; % not yet in .to_utide_coef()
     
-% predict    
+%% predict using struct from tide_iho class
 
     hfit2 = t_predic(D.t',T2b.name,T2b.freq,T2b.tidecon,T2b.lat); 
     hfit3 = ut_reconstr ( D.t', T3b );   
        
-% plot
+%% plot
 
     plot(D.t,D.h(:) - D.z0,'DisplayName','observation');
     hold on;
