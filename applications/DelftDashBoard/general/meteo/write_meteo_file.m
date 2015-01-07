@@ -417,6 +417,7 @@ switch lower(model)
     case{'ww3'}
         % Combined u and v
         ww3_write_wnd([rundir fname],s);
+        ww3_write_prep_inp([rundir 'ww3_prep.inp'],s.parameter(1).x,s.parameter(1).y,'WND');
 
     case{'mat'}
 
