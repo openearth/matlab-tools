@@ -100,7 +100,7 @@ function varargout = readMap(ncfile,varargin)
       D.cen.zwl  = nc_varget(ncfile, 's1' ,[it-1 0],[1 cen.mask]); % Waterlevel
    end  
    if OPT.sal & nc_isvar (ncfile, 'sa1');
-       info=nc_getvarinfo(ncfile,'ucx');
+       info=nc_getvarinfo(ncfile,'sa1');
        NDIM=length(info.Size);
        if ( NDIM==2 )
            D.cen.sal  = nc_varget(ncfile, 'sa1',[it-1 0],[1 cen.mask]); % Salinity
