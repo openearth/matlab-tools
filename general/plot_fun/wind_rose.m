@@ -169,7 +169,7 @@ if nargin==0
    close % jet launches figure, grr
    return
 end
-s
+
 %% error check
 
 if isempty(D)

@@ -2,14 +2,18 @@ function varargout = scatterbin(x,y,varargin)
 %plot bivariate histogram to indicate density of scatter plot
 %
 % scatterbin(x,y) plots pcolor density plot with automatic bin
-% edges. scatterbin(x,y,EDGESx,EDGESy) uses user-defined edges.
+% edges. Bin is scaled to represent percentage of total points.
+% Text is percentage is added to the plot.
+%
+% scatterbin(x,y,EDGESx,EDGESy) uses user-defined edges.
 % Edges can be a vector with edge corners, or a scaler as the 
-% number of bins (default 25), like hist.
+% number of bins (default 25), like hist. 
 %
 % Example:
 %  scatterbin(x,y,EDGESx,EDGESy) 
 %  hold on
 %  scatter (x,y)
+%  colorbarwithvtext('fraction [%]')
 %
 %See also: histc2, scatter, wind_rose
 
@@ -50,6 +54,10 @@ function varargout = scatterbin(x,y,varargin)
 % $HeadURL$
 % $Keywords: $
 
+OPT.scale = 100; % percent
+OPT.fmt   = '%0.2f'; % percent
+OPT.text  = 1;
+
 EDGESx = 25;
 EDGESy = 25;
 if nargin==3
@@ -66,12 +74,33 @@ if isscalar(EDGESy)
 end
 
 % c = bin2(x,y,ones(size(x)),EDGESx,EDGESy,'exact',1);c = c.n;
-c = histc2(x,y,EDGESx,EDGESy);
-c(c==0)=nan;
-h = pcolorcorcen(EDGESx,EDGESy,c(1:end-1,1:end-1)./max(c(:)));
+bin = histc2(x,y,EDGESx,EDGESy);
+bin = OPT.scale.*bin(1:end-1,1:end-1)./nansum(bin(:));
+bin(bin==0)=nan;
+h = pcolorcorcen(EDGESx,EDGESy,bin);
+set(gca,'xtick',EDGESx)
+set(gca,'ytick',EDGESy)
+
+if OPT.text
+    [xc,yc] = meshgrid(corner2center1(EDGESx),corner2center1(EDGESy));
+    txt = cellstr(num2str(bin(:),OPT.fmt));
+    txt = cellfun(@(x) strtrim(x),txt,'UniformOutput',0);
+    ind = strmatch('NaN',txt);
+    for i=ind(:)'
+        txt{i} = '';
+    end
+    text(xc(:),yc(:),txt,'horizontal','center')
+end
+
 
 if nargout==1
     varargout = {h};
+elseif nargout==2
+    varargout = {h,bin};    
+elseif nargout==4
+    varargout = {h,bin,EDGESx,EDGESy};
+elseif nargout==5
+    varargout = {h,bin,EDGESx,EDGESy,txt};       
 end
 
 

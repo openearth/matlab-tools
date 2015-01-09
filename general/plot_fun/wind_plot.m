@@ -1,8 +1,8 @@
-function varargout = wind_plot(t,D,F,varargin)
+function wind_plot(t,D,F,varargin)
 %WIND_PLOT   Wind rose of direction and intensity and feathers
 % 
 %   Syntax:
-%      [HANDLES,DATA] = WIND_PLOT(t,D,I,<keyword,value>)
+%      WIND_PLOT(t,D,I,<keyword,value>)
 %
 %   plots speed and direction in one axes, with directions
 %   overlaid on, and scaled to velocity range.
@@ -19,6 +19,10 @@ function varargout = wind_plot(t,D,F,varargin)
 %       - Ulim      velocity range, used scale directions to axis
 %
 %   For all keywords, call wind_plot()
+%
+% Example: adapt for waves
+%
+%   wind_plot(D.datenum,D.direction,D.Hs,'Ulabel','H_s [m]','Ulim',[0 2])
 %
 % See also: wind_rose, degN2degunitcircle, degunitcircle2degN
 
@@ -160,4 +164,3 @@ function varargout = wind_plot(t,D,F,varargin)
    quiver(t,0.*t+OPT.f_level,ux.*OPT.f_scale./OPT.f_aspect,... % distort x, not y, so we can ready uy at y-axis scale
                              uy.*OPT.f_scale,0,'.k','linewidth',OPT.f_width)
                                           
-
