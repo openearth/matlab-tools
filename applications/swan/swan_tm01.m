@@ -52,13 +52,12 @@ function Tm01 = swan_tm01(f,E,varargin)
    OPT.disp  = 0; % display mx and mx_tail
 
    %% contribution of known spectrum to total energy density
-   %% Note that SWAN uses N = E/sigma as variable
-   %% so the formulations in SWAN subroutine SWOEXA have an extra power of f
-   %% ------------------------------
+   %  Note that SWAN uses N = E/sigma as variable
+   %  so the formulations in SWAN subroutine SWOEXA have an extra power of f
 
       m0        = trapz(f,E);
       m1        = trapz(f,f.*E);
-      m2        = trapz(f,f.^2.*E);
+     %m2        = trapz(f,f.^2.*E);
 
    %% contribution of tail to total energy density
    %  command GEN1        : [pwtail] = 5
@@ -99,7 +98,7 @@ function Tm01 = swan_tm01(f,E,varargin)
 
    %% Tm01
 
-      Tm01   = m0./m1;%Tm01 = 2.*PI * ETOT / EFTOT % in SWAN
+      Tm01   = m0./m1; % Tm01 = 2.*PI * ETOT / EFTOT % in SWAN
 
    %% Debug
 
@@ -114,8 +113,8 @@ function Tm01 = swan_tm01(f,E,varargin)
                  
                  if OPT.debug
                  
-                 disp('m0 m1 m2 ETOT EFTOT')
-                 disp(num2str([m0 m1 m2 ETOT EFTOT]))
+                 disp('m0 m1 ETOT EFTOT')
+                 disp(num2str([m0 m1 ETOT EFTOT]))
                  end
             % ETOT = m1 , so why is Tm01 = 2.*PI * ETOT / EFTOT
             % EFTOT = m2, so why is Tm01 = 2.*PI * ETOT / EFTOT

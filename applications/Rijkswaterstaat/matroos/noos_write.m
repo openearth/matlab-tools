@@ -1,13 +1,13 @@
-function noos = noos_read(time, values,varargin)
-%NOOS_WRITE   write NOOS timeseries ASCII format
+function varargout = noos_read(time, values,varargin)
+%NOOS_WRITE   parse NOOS timeseries to ASCII array
 %
-%   cellstr = noos_write(time, values, <keyword,value>)
+%   noos = noos_write(time, values, <keyword,value>)
 %
-% To save to file use SAVESTR:
+% To save this ASCII array to file, pass keuyword filename, or use SAVESTR
 %
-%   savestr('matroos_opendap_maps2series2.tim',noos_write(time, values))
+%   savestr('matroos_opendap_maps2series2.tim',noos_write(time, data, hdr))
 %
-% Use keyword 'headerlines' for writing header.
+% Use keyword 'headerlines' for parsing header.
 %
 %See also: NOOS_READ, MATROOS_NOOS_HEADER
 
@@ -92,9 +92,9 @@ for i=1:n
 end   
 fclose(fid);
 
-if isempty(OPT.filename)
-   noos = loadstr(tmp);
-end
-
-  
+if isempty(OPT.filename);
+   varargout = {loadstr(tmp)};
+else
+   varargout = {loadstr(OPT.filename)};
+end  
    

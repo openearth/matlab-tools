@@ -1,10 +1,10 @@
 function [n, bin] = histc2(x, y, x_edges, y_edges)
-%HISTC3  Bivariate histogram, simial to builtin histc
+%HISTC2  Bivariate histogram, simial to builtin histc
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   [n bin] = histc3(x, y, x_edges, y_edges)
+%   [n bin] = histc2(x, y, x_edges, y_edges)
 %
 %   See histc for explanation of vectors
 %
@@ -29,7 +29,7 @@ function [n, bin] = histc2(x, y, x_edges, y_edges)
 %   y =  rand(1000,1);
 %   [n, bin] = histc2(x, y, -5:5,0:0.2:1);
 %
-%   See also: histc
+%   See also: histc, scatter, bin2 (for bivariate histc)
 
 %% Copyright notice
 %   --------------------------------------------------------------------

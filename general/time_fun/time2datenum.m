@@ -9,7 +9,7 @@ function dtnm = time2datenum(datestring,varargin)
 % * a  5 character wide character format: 'HH:MM'
 % * a  6 character wide character format: 'HHMMSS'
 % * an 8 character wide character format: 'HH:MM:SS'
-% * a    number                            HHMMSS
+% * a integer or float number              HHMMSS.HHMMSS
 %
 % where datestring can have 
 % * an 8 character wide character format: 'yyyymmdd'
@@ -17,6 +17,7 @@ function dtnm = time2datenum(datestring,varargin)
 % * a    NUMBER                            yyyymmdd
 %
 % or (NOTE timestring times are 'overwritten' by datestring times)
+% * a 11 character wide character format: 'yyyymmdd-HH'
 % * a 13 character wide character format: 'yyyymmdd-HHMM'
 % * a 14 character wide character format: 'yyyymmddHHMMSS'
 % * a 15 character wide character format: 'yyyymmdd-HHMMSS'
@@ -133,6 +134,13 @@ if ischar(datestring)
       yy       = str2num(datestring(:, 1: 4));
       mm       = str2num(datestring(:, 6: 7));
       dd       = str2num(datestring(:, 9:10));
+   elseif size(datestring,2)==11
+      yy       = str2num(datestring(:, 1: 4));
+      mm       = str2num(datestring(:, 5: 6));
+      dd       = str2num(datestring(:, 7: 8));
+      HH       = str2num(datestring(:,10:11));
+      MI       = str2num(datestring(:,12:13));
+      SC       = 0;      
    elseif size(datestring,2)==13
       yy       = str2num(datestring(:, 1: 4));
       mm       = str2num(datestring(:, 5: 6));
@@ -168,6 +176,9 @@ elseif isnumeric(datestring)
    yy       = floor( datestring ./10000);
    mm       = floor((datestring - 10000.*yy)./100);
    dd       = floor((datestring - 10000.*yy - 100.*mm));
+   HH       = round((datestring - 10000.*yy - 100.*mm - dd)*100);
+   MI       = round((datestring - 10000.*yy - 100.*mm - dd - HH/100)*1e4);
+   SC       = round((datestring - 10000.*yy - 100.*mm - dd - HH/100 - MI/1e4)*1e6);
 
 end % if iswhatever(datestring)
 

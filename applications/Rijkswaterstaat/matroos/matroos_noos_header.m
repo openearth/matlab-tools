@@ -1,5 +1,5 @@
 function M = matroos_noos_header(header)
-%matroos_noos_header   write/parse NOOS time series header enriched by MATROOS
+%matroos_noos_header   write <-> parse NOOS time series header enriched by MATROOS
 %
 % headerlines  = matroos_noos_header(headerstruct)
 % headerstruct = matroos_noos_header(headerlines ) where noos_write()
@@ -31,7 +31,7 @@ function M = matroos_noos_header(header)
 % 200709010120   -0.289261430501938
 % 200709010130   -0.256232291460037
 %
-%See also: MATROOS_GET_SERIES, NOOS_READ
+%See also: MATROOS_GET_SERIES, NOOS_READ, NOOS_WRITE
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2009 Deltares for Rijkswaterstaat

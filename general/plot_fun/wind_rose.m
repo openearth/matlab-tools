@@ -70,11 +70,12 @@ function varargout = wind_rose(D,F,varargin)
 %      plot(lon,lat)
 %      wind_rose(D,V,'ax',[ax x y 1/3])
 %
+% See also: wind_plot, degN2degunitcircle, degunitcircle2degN
+
+%
 %   MMA 26-11-2007, mma@odyle.net / IEO, Instituto Español de Oceanografía
 %   La Coruña, España /  Retrieved from the Matlab File Exchange on 22-07-2010 
 %   by Thijs Damsma http://www.mathworks.com/matlabcentral/fileexchange/17748-windrose
-%
-% See also: wind_plot, degN2degunitcircle, degunitcircle2degN
 
 %   10-12-2007 - Added varargin ci and n (nAngles removed as input)
 %   17-12-2007 - Added varargin ax, colors
@@ -159,8 +160,8 @@ OPT.inorm       = 0;
 OPT.parent      = 0;
 OPT.IncHiLow    = 1; % include values higher and lower than the limits of OPT.Ag.
 OPT.directionLabels = true; % labels North South etc..
-OPT.centersectors = true;% Center sectors around 0 .. 360 or not
-OPT.units = '';
+OPT.centersectors   = true;% Center sectors around 0 .. 360 or not
+OPT.units           = '';
 OPT = setproperty(OPT, varargin{:});
 
 if nargin==0
@@ -168,9 +169,7 @@ if nargin==0
    close % jet launches figure, grr
    return
 end
-
-
-
+s
 %% error check
 
 if isempty(D)
@@ -184,7 +183,6 @@ if OPT.onAxes
       OPT.onAxesR = OPT.onAxes(4);
       OPT.onAxes  = OPT.onAxes(1);
 end
-
 
 %% process auto quad function
 if ischar(OPT.quad)
@@ -280,7 +278,6 @@ if OPT.centersectors
 else
    Ay=linspace(0,360,OPT.nAngles+1);
 end
-    
 
 %% calc instensity subdivisions:
 if isempty(OPT.Ag)

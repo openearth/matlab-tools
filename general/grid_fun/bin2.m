@@ -37,7 +37,7 @@ function [varargout] = bin2(fx,fy,fz,varargin)
 %   Note that you cannot add ±Inf as the outermost coarse bin edges 
 %   (to encompass all fines).
 %
-%   See also: HIST3, GRIDDATA_AVERAGE, GRIDDATA, for use as in hist3([fx(:) fy(:)])
+%   See also: scatter, HISTC2, GRIDDATA_AVERAGE, GRIDDATA, for use as in hist3([fx(:) fy(:)])
 
 %% Copyright notice
 %   --------------------------------------------------------------------

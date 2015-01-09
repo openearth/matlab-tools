@@ -38,7 +38,7 @@ function [ constituents ] = t_tide(noos_ascii,varargin)
   
    [time, data, headerlines] = noos_read(noos_ascii);
 
-   M = matroos_noos_header2meta(headerlines);
+   M = matroos_noos_header(headerlines);
    
    OPT2     = OPT;
    OPT2     = rmfield(OPT2,'format');
@@ -50,7 +50,7 @@ function [ constituents ] = t_tide(noos_ascii,varargin)
       OPT2.ascfile  = 't_tide.asc';
    end
    %%
-   D = t_tide2struc(time,data,OPT2);
+   [D,fit] = t_tide2struc(time,data,OPT2);
 
 % IHO xml keywords	 
 
@@ -89,4 +89,3 @@ else %if strcmpi(WPS.format,'text/html') % default
 end
 
 % send file back: map local link to weblink ??
-
