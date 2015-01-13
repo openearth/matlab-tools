@@ -67,6 +67,7 @@ function [Wl, Wl1, Wl2, Station1, Station2, lambda] = getWl_2Stations(P, lambda,
 % Hydraulics/DUT/Alkyon 2007
 %                           Omega   Rho     Alpha   Sigma
 StationInfo = {
+    'Vlissingen ',          2.97,   3.907,  1.04,   0.2796; % Vlissingen parameters are from Hydra-Ring Scientific Documentation
     'Hoek van Holland',     1.95,   7.237,  0.57,   0.0158;
     'IJmuiden',             1.85,   5.341,  0.63,   0.0358;
     'Den Helder',           1.6,    3.254,  1.6,    0.9001; 
