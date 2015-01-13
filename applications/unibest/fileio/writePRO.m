@@ -111,7 +111,7 @@ xdynbound = find0crossing(x1,y1,z_dynamicboundary);
 %-----------Write data to file--------------
 %-------------------------------------------
 fid = fopen(filename,'wt');
-fprintf(fid,'-1                 (Code X-Direction: +1/-1  Landwards/Seawards)\n');
+fprintf(fid,'1                 (Code X-Direction: +1/-1  Landwards/Seawards)\n');
 fprintf(fid,'%3.0f                (reference X-point coastline)\n',0);
 fprintf(fid,'%3.0f                (X-point dynamic boundary)\n',xdynbound(1));
 fprintf(fid,'%3.0f                (X-point trunction transpor_CFSt)\n',xdynbound(1));
