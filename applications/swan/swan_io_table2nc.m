@@ -66,6 +66,19 @@ OPT.platform_name = '';
 
 OPT = setproperty(OPT,varargin);
 
+%% map vector quantitities
+
+q = swan_quantity;
+vecnames = {'VEL','TRA','WIND','FOR'};
+for i=1:length(vecnames);
+     vecname = vecnames{i};
+     if isfield(S,vecname)
+         S.([vecname,'_X']) = S.(vecname)(:,:,1);q.([vecname,'_X']) = q.(vecname);
+         S.([vecname,'_y']) = S.(vecname)(:,:,2);q.([vecname,'_y']) = q.(vecname);
+         S = rmfield(S,vecname);
+     end
+end
+
 %% detect all switches
 
     if ~(isfield(S,'XP') & isfield(S,'YP'))
@@ -160,7 +173,6 @@ OPT = setproperty(OPT,varargin);
 %% Variables
 
     S.quantity_names = setxor(fieldnames(S),{'XP','YP','TIME'});
-    q = swan_quantity;
  
     for ivar=1:length(S.quantity_names)
         OVSNAM = S.quantity_names{ivar};
@@ -210,8 +222,8 @@ OPT = setproperty(OPT,varargin);
     
     for ivar=1:length(S.quantity_names)
 	if OPT.swap        
-    ncwrite(ncfile,S.nc_names{ivar},S.(S.quantity_names{ivar}))
+        ncwrite(ncfile,S.nc_names{ivar},S.(S.quantity_names{ivar}))
     else
-    ncwrite(ncfile,S.nc_names{ivar},S.(S.quantity_names{ivar})')
+        ncwrite(ncfile,S.nc_names{ivar},S.(S.quantity_names{ivar})')
     end
     end

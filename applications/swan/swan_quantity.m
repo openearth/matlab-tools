@@ -1203,7 +1203,19 @@ function varargout = swan_quantity
       OVHEXP{IVTYPE} = 100.;
       OVEXCV{IVTYPE} = -99.;
       OVCFNM{IVTYPE} = '';
-            
+% extra from manual
+      IVTYPE = IVTYPE + 1;
+      OVKEYW{IVTYPE} = 'PDIR';
+      OVSNAM{IVTYPE} = 'PkDir';
+      OVLNAM{IVTYPE} = 'peak wave direction';
+      OVUNIT{IVTYPE} = 'degr';
+      OVSVTY{IVTYPE} = NaN;
+      OVLLIM{IVTYPE} = NaN;
+      OVULIM{IVTYPE} = NaN;
+      OVLEXP{IVTYPE} = NaN;
+      OVHEXP{IVTYPE} = NaN;
+      OVEXCV{IVTYPE} = NaN;
+      OVCFNM{IVTYPE} = '';            
 %% Parameter in MUDF
 %------------------------
 

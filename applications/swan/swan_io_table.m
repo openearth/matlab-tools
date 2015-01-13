@@ -165,7 +165,8 @@ function varargout = swan_io_table(varargin)
           %                               'FOR    ',... % 17 19-20 2
           %                               'RTP    ',... % 18 21    1
           %                               'PDIR   '};   % 19 22    1
-          
+
+          %                               'WIND   ',... %  x  x    2          
          INP.table.parameter.names  = upper(varargin{2});
          if ~iscell(INP.table.parameter.names)
             INP.table.parameter.names = strtokens2cell(strtrim(INP.table.parameter.names));
@@ -286,7 +287,8 @@ if isfield(INP.table,'parameter')
         varnames = fieldnames(TAB);
         for ivar=1:length(varnames)
             varname = varnames{ivar};
-            TAB.(varname) = reshape(TAB.(varname),[nxy nt]);   
+            ncol = size(TAB.(varname),2);
+            TAB.(varname) = reshape(TAB.(varname),[nxy nt ncol]);   
         end
         TAB.TIME = time2datenum(TAB.TIME(1,:));
         if isfield(TAB,'XP');TAB.XP = TAB.XP(:,1);end
