@@ -443,8 +443,14 @@ P.latlon       = 1; % labels x to lon, and y to lat if spherical
          G.cen.mask            = ones(size(cen.KCS));
          G.cen.mask(~cen.KCS)  = nan;
          
-%          G.cor.mask            = ones(size(cor.CODB));
-%          G.cor.mask(~cor.CODB) = nan;
+         G.cor.mask            = nan*ones(size(G.cor.x));
+         for n = 1:G.nmax-2;
+            for m = 1:G.mmax-2;
+                if G.cen.mask(n,m) == 1;
+                   G.cor.mask(n:n+1,m:m+1) = 1;
+                end
+            end
+         end         
       
          G.u.mask              = ones(size(u.KCU));
          G.u.mask(~u.KCU)      = nan;
