@@ -88,7 +88,7 @@ OPT.scalelabelStyle     =  1;
 OPT.colorlabelStyle     =  [1 1 1];
 OPT.iconHotspot         = ''; %<hotSpot x="0.5"  y="0.5" xunits="fraction" yunits="fraction"/>
 OPT.iconColor           =  [];
-OPT.altitudeMode        = 'absolute'
+OPT.altitudeMode        = 'absolute';
 
 if nargin==0
     varargout = {OPT};
