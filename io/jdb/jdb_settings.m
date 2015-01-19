@@ -28,9 +28,9 @@ switch lower(OPT.dbtype)
         
         if any(strfind(version('-java'),'Java 1.6')) | ...
                 any(strfind(version('-java'),'Java 1.7'))
-            java2add = 'postgresql-9.1-902.jdbc4.jar';
+            java2add = 'postgresql-9.3-1102.jdbc41.jar';
         else
-            java2add = 'postgresql-9.1-902.jdbc3.jar';
+            java2add = 'postgresql-9.3-1102.jdbc3.jar';
         end
         
         indices     = strfind(alljavaclasspath,path2os([fileparts(mfilename('fullpath')),filesep,java2add]));

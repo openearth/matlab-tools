@@ -80,6 +80,8 @@ else
                         mils_since_epoch = jt.getTime() - (jt.getTimezoneOffset * 60 * 1000);
                         epoch = datenum(1970,1,1);
                         data{row,col} = epoch + mils_since_epoch/1000/3600/24;
+                    case {'java.lang.Boolean'}
+                        data{row,col} = logical(rs.getBoolean(col));
                     otherwise
                         warning('JDB:DATA_FETCH_ERROR:TYPE_NOT_IMPLEMENTED:datatype %s implemented',jtype)
                 end

@@ -56,7 +56,7 @@ function rs = jdb_exec(conn, sql, varargin)
             %disp(['executeUpdate : ',sql])
             %pausedisp
          else
-            rs = pstat.executeQuery()
+            rs = pstat.executeQuery();
             rs.close();
             %disp(['executeQuery  : ',sql])
             %pausedisp
