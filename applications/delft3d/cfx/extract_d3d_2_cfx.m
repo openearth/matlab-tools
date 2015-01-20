@@ -16,7 +16,11 @@ function varargout = extract_d3d_2_cfx(filmap,varargin)
 %             or, the real matlab time,
 %             or, a date/time vector (as returned by datevec [1984 12 24 0 0 0])
 %             default (not specified) first time step on file
-%   Range  =  a 2x2 matrix giving the range to be extracted ([m1,n1;m2,n2])
+%
+%             NOTE: If you use reals note that "734167." is seen as "734167", use "734167.00001" instead
+%
+%   Range  =  a 2x2 matrix giving the range to be extracted, integer grid  indexes     [m1 ,n1 ;m2 ,n2 ], or,
+%                                                            real    world coordinates [xll,yll;xur,yur]
 %             default (not specified) [1,mmax;1,nmax]
 %   Filcsv =  name of csv file to write results to
 %   Rhow   =  density of water (kg/m3)
@@ -85,12 +89,20 @@ OPT.Range  = [1,mmax;1,nmax];
 OPT.Filcsv = '';
 OPT.Time   = 1;
 OPT.Rhow   = 1023.0; % By default assume density of sea water
-OPT.g      = 9.81;   % Acceleration of gravity
+OPT.Ag     = 9.81;   % Acceleration of gravity
 OPT        = setproperty(OPT,varargin);
 
-%% Time, integer, timestepnumber, real, matlab time, string datetimestring
-if isreal(OPT.Time)|| length(OPT.Time) > 1
-    if length(OPT.Time) > 1
+%% Time, integer, timestepnumber, real, matlab time, datevec
+Time_Real    = false;
+Time_Datevec = false;
+if length(OPT.Time) > 1
+    Time_Datevec = true;
+elseif OPT.Time ~= floor(OPT.Time)
+    Time_Real = true;
+end
+
+if Time_Real || Time_Datevec
+    if Time_Datevec
         OPT.Time = datenum(OPT.Time);
     end
     % determine timestepnumber
@@ -125,17 +137,17 @@ y_coor = Data.Y;
 
 % bed
 z_coor(1:mmax,1:nmax,1) = dep;
-pres  (1:mmax,1:nmax,1) = (s1 - dep)*OPT.Rhow*OPT.g;
+pres  (1:mmax,1:nmax,1) = (s1 - dep)*OPT.Rhow*OPT.Ag;
 
 % computational layers
 if kmax == 1
     z_coor(:,:,2) =  dep + (s1 - dep)/2.;
-    pres  (:,:,2) = ((s1 - dep)/2.)*OPT.Rhow*OPT.g;
+    pres  (:,:,2) = ((s1 - dep)/2.)*OPT.Rhow*OPT.Ag;
 else
     for k = 1: kmax
         k_act = kmax - k + 1; % Switch direction, from top to bottom to bottom to top
         z_coor(:,:,k+1) = Data.Z(:,:,k_act);
-        pres  (:,:,k+1) = (s1 - Data.Z(:,:,k_act))*OPT.Rhow*OPT.g;
+        pres  (:,:,k+1) = (s1 - Data.Z(:,:,k_act))*OPT.Rhow*OPT.Ag;
     end
 end
 
@@ -158,6 +170,15 @@ else
     end
 end
 
+%% Convert from world coordinates to grid indexes (if Range is specified in reals)
+if OPT.Range(1,1) ~= floor(OPT.Range(1,1))
+    for i_pnt = 1: 2
+        dist = sqrt((x_coor(:,:,1) - OPT.Range(i_pnt,1)).^2 + (y_coor(:,:,1) - OPT.Range(i_pnt,2)).^2);
+        [~,ind] = min(dist(:));
+        [m(i_pnt),n(i_pnt)] = ind2sub(size(dist),ind);
+    end
+    OPT.Range = [min(m) - 1, min(n) - 1; max(m) + 1, max(n) + 1];
+ end
  %% Fill matrix for writing
  i_tel = 0;
  for k = 0 : kmax + 2
