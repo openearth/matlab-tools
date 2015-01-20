@@ -65,10 +65,10 @@ function varargout = wind_rose(D,F,varargin)
 %      figure; wind_rose(D,V,'iflip',1)
 %      figure; wind_rose(D,V,'dtype','meteo','ci',[1 2 7])
 %
-%      % place it on a previous axes:
+%      % place it on a previous axes and modify axes afterwards:
 %      ax=axes;
-%      plot(lon,lat)
-%      wind_rose(D,V,'ax',[ax x y 1/3])
+%      wind_rose(D,V,'parent',ax)
+%      set(ax,'position',[0.05 0.05 0.9 0.9])
 %
 % See also: wind_plot, degN2degunitcircle, degunitcircle2degN
 
@@ -353,7 +353,7 @@ else
 end
 
 %% plot axes, percentage circles and percent. data:
-if OPT.parent
+if OPT.parent~=0
   wrAx=OPT.parent;
   set(wrAx,'units','normalized');
 else
