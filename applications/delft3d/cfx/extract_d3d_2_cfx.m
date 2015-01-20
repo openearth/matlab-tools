@@ -3,7 +3,7 @@ function varargout = extract_d3d_2_cfx(filmap,varargin)
 % extract_d3d_2_cfx extracts water level and velocity data from a trim file
 %                   writes to csv file that can be used by cfx and/or
 %                   returns a matrix with:
-%                   x,y,z,water level, vel_x,vel_y, vel_z, water_fraction
+%                   x,y,z,hydrostatic pressure,vel_x,vel_y, vel_z, water_fraction
 %
 % Syntax:
 %         extract_d3d_2_cfx(trimfile,<keyword>,<value>), or,
@@ -19,12 +19,18 @@ function varargout = extract_d3d_2_cfx(filmap,varargin)
 %   Range  =  a 2x2 matrix giving the range to be extracted ([m1,n1;m2,n2])
 %             default (not specified) [1,mmax;1,nmax]
 %   Filcsv =  name of csv file to write results to
+%   Rhow   =  density of water (kg/m3)
+%             default (not specified) 1024 (kg/m3)
+%   Ag     =  acceleration of gravity (m2/s)
+%             default (nmot specified) 9.81 (m2/s)
 %
 % Examples:
 %   extract_d3d_2_cfx('trim-3d_001_neap.dat','Time','20030320 000000','Range',[80,100;90,110],'Filcsv','tst.csv')
 %   extract_d3d_2_cfx('trim-3d_001_neap.dat','Time',23               ,'Range',[80,100;90,110],'Filcsv','tst.csv')
 %   extract_d3d_2_cfx('trim-3d_001_neap.dat','Time',731660.00        ,'Range',[80,100;90,110],'Filcsv','tst.csv')
 %   data = extract_d3d_2_cfx('trim-3d_001_neap.dat','Time',[1984 12 24 0 0 0],'Range',[80,100;90,110])
+%
+% V1.01 : Pressure added as 4th column (TK), re-arrangement of code
 %
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -59,7 +65,6 @@ function varargout = extract_d3d_2_cfx(filmap,varargin)
 %
 % $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/delft3d/extract_d3d_2_cfx.m $
 % $Keywords: $
-% Pressure added as 4th column
 
 
 %% Open nefis file and extract Fieldnames
@@ -74,10 +79,13 @@ dep        = Data.Val;
 mmax = size(dep,1);
 nmax = size(dep,2);
 
+
 %% Optional arguments
 OPT.Range  = [1,mmax;1,nmax];
 OPT.Filcsv = '';
 OPT.Time   = 1;
+OPT.Rhow   = 1023.0; % By default assume density of sea water
+OPT.g      = 9.81;   % Acceleration of gravity
 OPT        = setproperty(OPT,varargin);
 
 %% Time, integer, timestepnumber, real, matlab time, string datetimestring
@@ -88,6 +96,10 @@ if isreal(OPT.Time)|| length(OPT.Time) > 1
     % determine timestepnumber
     [~,OPT.Time] = min(abs(qpread(File,'water level','times')- OPT.Time));
 end
+
+%% Read the water levels;
+Data       = qpread (File,'water level','data',OPT.Time,0,0);
+s1         = Data.Val;
 
 %% Read Velocity data
 if ~isempty( find(strcmp('velocity',Fieldnames) == 1))
@@ -100,60 +112,75 @@ else
     kmax = 1;
 end
 
-%% Extract coordinates
+%% initialise heights, velocities and pressures
+z_coor(1:mmax,1:nmax,1:kmax + 3) = 0.;
+u_vel (1:mmax,1:nmax,1:kmax + 3) = 0.;
+v_vel (1:mmax,1:nmax,1:kmax + 3) = 0.;
+w_vel (1:mmax,1:nmax,1:kmax + 3) = 0.;
+pres  (1:mmax,1:nmax,1:kmax + 3) = 0.;
+
+%% Extract coordinates (and determine pressures)
 x_coor = Data.X;
 y_coor = Data.Y;
-if kmax > 1 z_coor = Data.Z; end
+
+% bed
+z_coor(1:mmax,1:nmax,1) = dep;
+pres  (1:mmax,1:nmax,1) = (s1 - dep)*OPT.Rhow*OPT.g;
+
+% computational layers
+if kmax == 1
+    z_coor(:,:,2) =  dep + (s1 - dep)/2.;
+    pres  (:,:,2) = ((s1 - dep)/2.)*OPT.Rhow*OPT.g;
+else
+    for k = 1: kmax
+        k_act = kmax - k + 1; % Switch direction, from top to bottom to bottom to top
+        z_coor(:,:,k+1) = Data.Z(:,:,k_act);
+        pres  (:,:,k+1) = (s1 - Data.Z(:,:,k_act))*OPT.Rhow*OPT.g;
+    end
+end
+
+% Water surface
+z_coor(:,:,kmax + 2) =  s1;
+
+% Air
+z_coor(:,:,kmax + 3) =  s1 + 0.001 ; % Air 1 mm above water surface
 
 %% Extract velocities
-u_vel   = Data.XComp;
-v_vel   = Data.YComp;
-if kmax > 1 w_vel   = Data.ZComp; end
-
-%% Read the water levels;
-Data       = qpread (File,'water level','data',OPT.Time,0,0);
-s1         = Data.Val;
-
-% Fill z_coor and w_vel for dav computation
 if kmax == 1
-    z_coor               = dep + 0.5*(s1-dep);
-    w_vel(1:mmax,1:nmax) = 0.;
+    u_vel(:,:,2)   = Data.XComp;
+    v_vel(:,:,2)   = Data.YComp;
+else
+    for k = 1: kmax
+        k_act = kmax - k + 1; % Switch direction, from top to bottom to bottom to top
+        u_vel(:,:,k+1)   = Data.XComp(:,:,k_act);
+        v_vel(:,:,k+1)   = Data.YComp(:,:,k_act);
+        w_vel(:,:,k+1)   = Data.ZComp(:,:,k_act);
+    end
 end
 
  %% Fill matrix for writing
  i_tel = 0;
  for k = 0 : kmax + 2
-     k_act = kmax - k + 1; % Switch direction, from top to bottom to bottom to top
      for m = OPT.Range(1,1): OPT.Range(2,1)
          for n = OPT.Range(1,2): OPT.Range(2,2)
              if ~isnan(x_coor(m,n,1))
                  i_tel = i_tel + 1;
-                 % Initialise
-                 M(i_tel,1:7) = 0.;
-                 % x,y-coordinate
+                 % x,y,z-coordinates
                  M(i_tel,1) = x_coor(m,n,1);
                  M(i_tel,2) = y_coor(m,n,1);
-                 % z_coordinate
-                 if k == 0
-                     % bed
-                     M(i_tel,3) = dep(m,n);
-                 elseif k<=kmax
-                     % computational points
-                     M(i_tel,3) = z_coor(m,n,k_act);
-                     % velocities for computational points
-                     M(i_tel,4) = u_vel(m,n,k_act);
-                     M(i_tel,5) = v_vel(m,n,k_act);
-                     M(i_tel,6) = w_vel(m,n,k_act);
-                 elseif k == kmax + 1
-                     % water level
-                     M(i_tel,3) = s1(m,n);
-                 elseif k == kmax + 2
-                     % air
-                     M(i_tel,3) = s1(m,n) + 0.001;
-                 end
+                 M(i_tel,3) = z_coor(m,n,k+1);
+
+                 % Hydrostatic pressure
+                 M(i_tel,4) = pres  (m,n,k+1);
+
+                 % Velocities
+                 M(i_tel,5) = u_vel (m,n,k+1);
+                 M(i_tel,6) = v_vel (m,n,k+1);
+                 M(i_tel,7) = w_vel (m,n,k+1);
+
                  % water fraction
-                 M(i_tel,7) = 1;
-                 if k == kmax + 2 M(i_tel,7) = 0; end
+                 M(i_tel,8) = 1;
+                 if k == kmax + 2 M(i_tel,8) = 0; end
              end
          end
      end
