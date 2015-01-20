@@ -19,7 +19,7 @@ function varargout = extract_d3d_2_cfx(filmap,varargin)
 %   Range  =  a 2x2 matrix giving the range to be extracted ([m1,n1;m2,n2])
 %             default (not specified) [1,mmax;1,nmax]
 %   Filcsv =  name of csv file to write results to
-%             
+%
 % Examples:
 %   extract_d3d_2_cfx('trim-3d_001_neap.dat','Time','20030320 000000','Range',[80,100;90,110],'Filcsv','tst.csv')
 %   extract_d3d_2_cfx('trim-3d_001_neap.dat','Time',23               ,'Range',[80,100;90,110],'Filcsv','tst.csv')
@@ -59,6 +59,8 @@ function varargout = extract_d3d_2_cfx(filmap,varargin)
 %
 % $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/delft3d/extract_d3d_2_cfx.m $
 % $Keywords: $
+% Pressure added as 4th column
+
 
 %% Open nefis file and extract Fieldnames
 File       = qpfopen(filmap);
@@ -161,7 +163,7 @@ end
  if ~isempty(OPT.Filcsv)
      csvwrite(OPT.Filcsv,M);
  end
- 
+
  %% Fill output argument with matrix
  if nargout >= 1
      varargout{1} = M;
