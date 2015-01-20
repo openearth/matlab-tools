@@ -1,7 +1,9 @@
 function varargout = extract_d3d_2_cfx(filmap,varargin)
 
-% extract_d3d_2_cfx extracts water level and velocity datat from a trim file
-%                   writes to csv file that can be used bi\y cfx
+% extract_d3d_2_cfx extracts water level and velocity data from a trim file
+%                   writes to csv file that can be used by cfx and/or
+%                   returns a matrix with:
+%                   x,y,z,water level, vel_x,vel_y, vel_z, water_fraction
 %
 % Syntax:
 %         extract_d3d_2_cfx(trimfile,<keyword>,<value>), or,
@@ -12,18 +14,17 @@ function varargout = extract_d3d_2_cfx(filmap,varargin)
 % Implemented <keyword>/<value> pairs:
 %   Time   =  either the integer time step number
 %             or, the real matlab time,
-%             or, a date/time string ('yyyymmdd  HHMMSS')
+%             or, a date/time vector (as returned by datevec [1984 12 24 0 0 0])
 %             default (not specified) first time step on file
 %   Range  =  a 2x2 matrix giving the range to be extracted ([m1,n1;m2,n2])
 %             default (not specified) [1,mmax;1,nmax]
 %   Filcsv =  name of csv file to write results to
-%             if not specified the function returns the matrix written to file
-%
+%             
 % Examples:
 %   extract_d3d_2_cfx('trim-3d_001_neap.dat','Time','20030320 000000','Range',[80,100;90,110],'Filcsv','tst.csv')
 %   extract_d3d_2_cfx('trim-3d_001_neap.dat','Time',23               ,'Range',[80,100;90,110],'Filcsv','tst.csv')
 %   extract_d3d_2_cfx('trim-3d_001_neap.dat','Time',731660.00        ,'Range',[80,100;90,110],'Filcsv','tst.csv')
-%   data = extract_d3d_2_cfx('trim-3d_001_neap.dat','Time','20030320 000000','Range',[80,100;90,110])
+%   data = extract_d3d_2_cfx('trim-3d_001_neap.dat','Time',[1984 12 24 0 0 0],'Range',[80,100;90,110])
 %
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -56,7 +57,7 @@ function varargout = extract_d3d_2_cfx(filmap,varargin)
 % Created: $date(dd mmm yyyy)
 % Created with Matlab version: $version
 %
-% $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/delft3d/delft3d_trim2ini.m $
+% $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/delft3d/extract_d3d_2_cfx.m $
 % $Keywords: $
 
 %% Open nefis file and extract Fieldnames
@@ -78,14 +79,12 @@ OPT.Time   = 1;
 OPT        = setproperty(OPT,varargin);
 
 %% Time, integer, timestepnumber, real, matlab time, string datetimestring
-if isreal(OPT.Time)|| isstring(OPT.Time)
-    if isstring(OPT.Time)
-        OPT.Time = datenum(OPT.Time,'yyyymmdd HHMMSS');
+if isreal(OPT.Time)|| length(OPT.Time) > 1
+    if length(OPT.Time) > 1
+        OPT.Time = datenum(OPT.Time);
     end
     % determine timestepnumber
-    times = qpread(File,'water level','times');
-    times = (abs(times - OPT.Time));
-    [~,OPT.Time] = min(times);
+    [~,OPT.Time] = min(abs(qpread(File,'water level','times')- OPT.Time));
 end
 
 %% Read Velocity data
@@ -122,7 +121,7 @@ end
  %% Fill matrix for writing
  i_tel = 0;
  for k = 0 : kmax + 2
-     k_act = kmax - k + 1; % Switch direction
+     k_act = kmax - k + 1; % Switch direction, from top to bottom to bottom to top
      for m = OPT.Range(1,1): OPT.Range(2,1)
          for n = OPT.Range(1,2): OPT.Range(2,2)
              if ~isnan(x_coor(m,n,1))
@@ -161,6 +160,9 @@ end
  %% Write the Matrix
  if ~isempty(OPT.Filcsv)
      csvwrite(OPT.Filcsv,M);
- else
+ end
+ 
+ %% Fill output argument with matrix
+ if nargout >= 1
      varargout{1} = M;
  end
