@@ -26,8 +26,9 @@ function varargout = extract_d3d_2_cfx(filmap,varargin)
 %   Rhow   =  density of water (kg/m3)
 %             default (not specified) 1024 (kg/m3)
 %   Ag     =  acceleration of gravity (m2/s)
-%             default (nmot specified) 9.81 (m2/s)
-%
+%             default (not specified) 9.81 (m2/s)
+%   Factor =  integer specifying to coarsen the output data
+%             default (not specified) 1 
 % Examples:
 %   extract_d3d_2_cfx('trim-3d_001_neap.dat','Time','20030320 000000','Range',[80,100;90,110],'Filcsv','tst.csv')
 %   extract_d3d_2_cfx('trim-3d_001_neap.dat','Time',23               ,'Range',[80,100;90,110],'Filcsv','tst.csv')
@@ -83,13 +84,13 @@ dep        = Data.Val;
 mmax = size(dep,1);
 nmax = size(dep,2);
 
-
 %% Optional arguments
 OPT.Range  = [1,mmax;1,nmax];
 OPT.Filcsv = '';
 OPT.Time   = 1;
 OPT.Rhow   = 1023.0; % By default assume density of sea water
 OPT.Ag     = 9.81;   % Acceleration of gravity
+OPT.Factor = 1;      % Coarse output
 OPT        = setproperty(OPT,varargin);
 
 %% Time, integer, timestepnumber, real, matlab time, datevec
@@ -136,8 +137,12 @@ x_coor = Data.X;
 y_coor = Data.Y;
 
 % bed
-z_coor(1:mmax,1:nmax,1) = dep;
-pres  (1:mmax,1:nmax,1) = (s1 - dep)*OPT.Rhow*OPT.Ag;
+for m = 1: mmax
+    for n = 1: nmax
+        z_coor(m,n,1) = dep(m,n);
+        pres  (m,n,1) = (s1(m,n) - dep(m,n))*OPT.Rhow*OPT.Ag;
+    end
+end
 
 % computational layers
 if kmax == 1
@@ -172,18 +177,24 @@ end
 
 %% Convert from world coordinates to grid indexes (if Range is specified in reals)
 if OPT.Range(1,1) ~= floor(OPT.Range(1,1))
-    for i_pnt = 1: 2
-        dist = sqrt((x_coor(:,:,1) - OPT.Range(i_pnt,1)).^2 + (y_coor(:,:,1) - OPT.Range(i_pnt,2)).^2);
+    % Define square
+    x(1) = OPT.Range(1,1); y(1) = OPT.Range(1,2);
+    x(2) = OPT.Range(2,1); y(2) = OPT.Range(1,2);
+    x(3) = OPT.Range(2,1); y(3) = OPT.Range(2,2);
+    x(4) = OPT.Range(1,1); y(4) = OPT.Range(2,2);
+    % find belonging m and n coordinates
+    for i_pnt = 1: length(x)
+        dist = sqrt((x_coor(:,:,1) - x(i_pnt)).^2 + (y_coor(:,:,1) - y(i_pnt)).^2);
         [~,ind] = min(dist(:));
         [m(i_pnt),n(i_pnt)] = ind2sub(size(dist),ind);
     end
-    OPT.Range = [min(m) - 1, min(n) - 1; max(m) + 1, max(n) + 1];
+    OPT.Range = [min(m) - OPT.Factor, min(n) - OPT.Factor; max(m) + OPT.Factor, max(n) + OPT.Factor];
  end
  %% Fill matrix for writing
  i_tel = 0;
  for k = 0 : kmax + 2
-     for m = OPT.Range(1,1): OPT.Range(2,1)
-         for n = OPT.Range(1,2): OPT.Range(2,2)
+     for m = OPT.Range(1,1): OPT.Factor: OPT.Range(2,1)
+         for n = OPT.Range(1,2): OPT.Factor: OPT.Range(2,2)
              if ~isnan(x_coor(m,n,1))
                  i_tel = i_tel + 1;
                  % x,y,z-coordinates
@@ -193,7 +204,7 @@ if OPT.Range(1,1) ~= floor(OPT.Range(1,1))
 
                  % Hydrostatic pressure
                  M(i_tel,4) = pres  (m,n,k+1);
-
+ 
                  % Velocities
                  M(i_tel,5) = u_vel (m,n,k+1);
                  M(i_tel,6) = v_vel (m,n,k+1);
