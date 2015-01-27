@@ -69,6 +69,8 @@ function varargout = wind_rose(D,F,varargin)
 %      ax=axes;
 %      wind_rose(D,V,'parent',ax)
 %      set(ax,'position',[0.05 0.05 0.9 0.9])
+%      set(gcf,'InvertHardcopy','off'); % for proper printing
+%      set(gcf,'Color',[1 1 1]) % for proper printing
 %
 % See also: wind_plot, degN2degunitcircle, degunitcircle2degN
 
@@ -173,7 +175,7 @@ end
 %% error check
 
 if isempty(D)
-    warning('WIND_ROSE:no data','D cannot be empty in wind_rose(D,F,varargin)');
+    warning('WIND_ROSE:no data: D cannot be empty in wind_rose(D,F,varargin)');
     return
 end
     
