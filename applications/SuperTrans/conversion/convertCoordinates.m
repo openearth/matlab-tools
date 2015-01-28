@@ -183,6 +183,10 @@ if ~strcmp(class(x1),'double')||~strcmp(class(y1),'double')
     y1 = double(y1);
 end
 
+if ~isequal(size(x1),size(y1))
+    error('size of x1,y1 different')
+end
+
 %% get and set keyword value parameters
 
 OPT = [];
