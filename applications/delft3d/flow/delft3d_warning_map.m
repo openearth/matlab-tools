@@ -82,7 +82,8 @@ disp(' ');
 
 grd = delft3d_io_grd('read',[mdf_folder filesep mdf_data.keywords.filcco]);
 
-tri_diag_files = dir([mdf_folder filesep 'tri-diag.*']);
+% only select tri-diag files for chosen mdf
+tri_diag_files = dir([mdf_folder filesep 'tri-diag.' ft_1(1:end-4)]);
 
 if length(tri_diag_files)>0
     for tri_file_ind = 1:size(tri_diag_files,1)
@@ -218,7 +219,8 @@ if ~isempty(MN_courant)
     fig = figure; set(fig,'color','w','inverthardcopy','off','name','Courant criteria warning locations')
     pcolor(grd.cor.x,grd.cor.y,nan(size(grd.cor.x))); hold on;
     for ii=1:size(MN_courant,1)
-        plot(grd.cen.x(MN_courant(ii,2),MN_courant(ii,1)),grd.cen.y(MN_courant(ii,2),MN_courant(ii,1)),'r.','markersize',20);
+        % grd.cen.x & grd.cen.y - 1
+        plot(grd.cen.x(MN_courant(ii,2),MN_courant(ii,1)-2),grd.cen.y(MN_courant(ii,2),MN_courant(ii,1)-2),'r.','markersize',20);
     end
     axis equal; grid on; box on; set(gca,'layer','top','color',[191 239 255]/255);
     xlabel(['X-direction [' grd.CoordinateSystem ' Coordinates]']);
@@ -231,7 +233,8 @@ if ~isempty(MN_vel_chan)
     fig = figure; set(fig,'color','w','inverthardcopy','off','name','Velocity change warning locations')
     pcolor(grd.cor.x,grd.cor.y,nan(size(grd.cor.x))); hold on;
     for ii=1:size(MN_vel_chan,1)
-        plot(grd.cen.x(MN_vel_chan(ii,2),MN_vel_chan(ii,1)),grd.cen.y(MN_vel_chan(ii,2),MN_vel_chan(ii,1)),'r.','markersize',20);
+        % grd.cen.x & grd.cen.y - 2
+        plot(grd.cen.x(MN_vel_chan(ii,2),MN_vel_chan(ii,1)-2),grd.cen.y(MN_vel_chan(ii,2),MN_vel_chan(ii,1)-2),'r.','markersize',20);
     end
     axis equal; grid on; box on; set(gca,'layer','top','color',[191 239 255]/255);
     xlabel(['X-direction [' grd.CoordinateSystem ' Coordinates]']);
