@@ -19,16 +19,22 @@ function varargout = extract_d3d_2_cfx(filmap,varargin)
 %
 %             NOTE: If you use reals note that "734167." is seen as "734167", use "734167.00001" instead
 %
-%   Range  =  a 2x2 matrix giving the range to be extracted, integer grid  indexes     [m1 ,n1 ;m2 ,n2 ], or,
-%                                                            real    world coordinates [xll,yll;xur,yur]
-%             default (not specified) [1,mmax;1,nmax]
-%   Filcsv =  name of csv file to write results to
-%   Rhow   =  density of water (kg/m3)
-%             default (not specified) 1024 (kg/m3)
-%   Ag     =  acceleration of gravity (m2/s)
-%             default (not specified) 9.81 (m2/s)
-%   Factor =  integer specifying to coarsen the output data
-%             default (not specified) 1 
+%   Range    =  a 2x2 matrix giving the range to be extracted, integer grid  indexes     [m1 ,n1 ;m2 ,n2 ], or,
+%                                                              real    world coordinates [xll,yll;xur,yur]
+%               default (not specified) [1,mmax;1,nmax]
+%   Filcsv   =  name of csv file to write results to
+%   Rhow     =  density of water (kg/m3)
+%               default (not specified) 1024 (kg/m3)
+%   Ag       =  acceleration of gravity (m2/s)
+%               default (not specified) 9.81 (m2/s)
+%   Factor   =  integer specifying to coarsen the output data
+%               default (not specified) 1
+%   z_values =  aray of z-values were to give the velocities (for a depth-averaged simulation a logarithmic velocity profile is assumed
+%                                                             for a 3-dimension simulation, values are obtained from a spline interpolation)
+%               default (not specified) 0
+%   Manning  =  Manning value to be used in logarithmic velocity profile
+%               default (not specified) 0.024
+%
 % Examples:
 %   extract_d3d_2_cfx('trim-3d_001_neap.dat','Time','20030320 000000','Range',[80,100;90,110],'Filcsv','tst.csv')
 %   extract_d3d_2_cfx('trim-3d_001_neap.dat','Time',23               ,'Range',[80,100;90,110],'Filcsv','tst.csv')
@@ -36,6 +42,7 @@ function varargout = extract_d3d_2_cfx(filmap,varargin)
 %   data = extract_d3d_2_cfx('trim-3d_001_neap.dat','Time',[1984 12 24 0 0 0],'Range',[80,100;90,110])
 %
 % V1.01 : Pressure added as 4th column (TK), re-arrangement of code
+% V1.02 : Interpolate depth averaged simulation to fixed z values
 %
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -85,13 +92,15 @@ mmax = size(dep,1);
 nmax = size(dep,2);
 
 %% Optional arguments
-OPT.Range  = [1,mmax;1,nmax];
-OPT.Filcsv = '';
-OPT.Time   = 1;
-OPT.Rhow   = 1023.0; % By default assume density of sea water
-OPT.Ag     = 9.81;   % Acceleration of gravity
-OPT.Factor = 1;      % Coarse output
-OPT        = setproperty(OPT,varargin);
+OPT.Range    = [1,mmax;1,nmax];
+OPT.Filcsv   = '';
+OPT.Time     = 1;
+OPT.Rhow     = 1023.0; % By default assume density of sea water
+OPT.Ag       = 9.81;   % Acceleration of gravity
+OPT.Factor   = 1;      % Coarse output
+OPT.z_values = 0;      %
+OPT.Manning  = 0.024;  % Manning value to be used in logarithmic velocity profile
+OPT          = setproperty(OPT,varargin);
 
 %% Time, integer, timestepnumber, real, matlab time, datevec
 Time_Real    = false;
@@ -125,55 +134,23 @@ else
     kmax = 1;
 end
 
+% Interpolate to fixed levels
+if length(OPT.z_values) > 1
+    kmax = length(OPT.z_values) - 3;
+end
+
 %% initialise heights, velocities and pressures
 z_coor(1:mmax,1:nmax,1:kmax + 3) = 0.;
 u_vel (1:mmax,1:nmax,1:kmax + 3) = 0.;
 v_vel (1:mmax,1:nmax,1:kmax + 3) = 0.;
 w_vel (1:mmax,1:nmax,1:kmax + 3) = 0.;
 pres  (1:mmax,1:nmax,1:kmax + 3) = 0.;
+frac  (1:mmax,1:nmax,1:kmax + 3) = 1.0;
+height(1:mmax,1:nmax,1:kmax + 3) = NaN;
 
 %% Extract coordinates (and determine pressures)
 x_coor = Data.X;
 y_coor = Data.Y;
-
-% bed
-for m = 1: mmax
-    for n = 1: nmax
-        z_coor(m,n,1) = dep(m,n);
-        pres  (m,n,1) = (s1(m,n) - dep(m,n))*OPT.Rhow*OPT.Ag;
-    end
-end
-
-% computational layers
-if kmax == 1
-    z_coor(:,:,2) =  dep + (s1 - dep)/2.;
-    pres  (:,:,2) = ((s1 - dep)/2.)*OPT.Rhow*OPT.Ag;
-else
-    for k = 1: kmax
-        k_act = kmax - k + 1; % Switch direction, from top to bottom to bottom to top
-        z_coor(:,:,k+1) = Data.Z(:,:,k_act);
-        pres  (:,:,k+1) = (s1 - Data.Z(:,:,k_act))*OPT.Rhow*OPT.Ag;
-    end
-end
-
-% Water surface
-z_coor(:,:,kmax + 2) =  s1;
-
-% Air
-z_coor(:,:,kmax + 3) =  s1 + 0.001 ; % Air 1 mm above water surface
-
-%% Extract velocities
-if kmax == 1
-    u_vel(:,:,2)   = Data.XComp;
-    v_vel(:,:,2)   = Data.YComp;
-else
-    for k = 1: kmax
-        k_act = kmax - k + 1; % Switch direction, from top to bottom to bottom to top
-        u_vel(:,:,k+1)   = Data.XComp(:,:,k_act);
-        v_vel(:,:,k+1)   = Data.YComp(:,:,k_act);
-        w_vel(:,:,k+1)   = Data.ZComp(:,:,k_act);
-    end
-end
 
 %% Convert from world coordinates to grid indexes (if Range is specified in reals)
 if OPT.Range(1,1) ~= floor(OPT.Range(1,1))
@@ -189,8 +166,100 @@ if OPT.Range(1,1) ~= floor(OPT.Range(1,1))
         [m(i_pnt),n(i_pnt)] = ind2sub(size(dist),ind);
     end
     OPT.Range = [min(m) - OPT.Factor, min(n) - OPT.Factor; max(m) + OPT.Factor, max(n) + OPT.Factor];
- end
- %% Fill matrix for writing
+end
+
+%% Extract Values: "Normal approach" just extract values from the Delft3D map file
+if length(OPT.z_values) == 1
+    % bed
+    for m = OPT.Range(1,1):OPT.Range(2,1)
+        for n = OPT.Range(1,2):OPT.Range(2,2)
+            z_coor(m,n,1) = dep(m,n);
+            pres  (m,n,1) = (s1(m,n) - dep(m,n))*OPT.Rhow*OPT.Ag;
+        end
+    end
+    
+    % computational layers
+    if kmax == 1
+        z_coor(:,:,2) =  dep + (s1 - dep)/2.;
+        pres  (:,:,2) = ((s1 - dep)/2.)*OPT.Rhow*OPT.Ag;
+    else
+        for k = 1: kmax
+            k_act = kmax - k + 1; % Switch direction, from top to bottom to bottom to top
+            z_coor(:,:,k+1) = Data.Z(:,:,k_act);
+            pres  (:,:,k+1) = (s1 - Data.Z(:,:,k_act))*OPT.Rhow*OPT.Ag;
+        end
+    end
+    
+    % Water surface
+    z_coor(:,:,kmax + 2) =  s1;
+    
+    % Air
+    z_coor(:,:,kmax + 3) =  s1 + 0.001 ; % Air 1 mm above water surface
+    frac  (:,:,kmax + 3) = 0.0;          % Water fraction
+    
+    %% Extract velocities
+    if kmax == 1
+        u_vel(:,:,2)   = Data.XComp;
+        v_vel(:,:,2)   = Data.YComp;
+    else
+        for k = 1: kmax
+            k_act = kmax - k + 1; % Switch direction, from top to bottom to bottom to top
+            u_vel(:,:,k+1)   = Data.XComp(:,:,k_act);
+            v_vel(:,:,k+1)   = Data.YComp(:,:,k_act);
+            w_vel(:,:,k+1)   = Data.ZComp(:,:,k_act);
+        end
+    end
+    
+%% Interpolate to fixed z-layer heights
+else
+    for m = OPT.Range(1,1):OPT.Range(2,1)
+        for n = OPT.Range(1,2):OPT.Range(2,2)
+            for k = 1: kmax + 3
+                % Levels
+                z_coor(m,n,k) = OPT.z_values(k);
+                % hydrostatic pressure
+                if z_coor(m,n,k) > dep(m,n) && z_coor(m,n,k) < s1(m,n)
+                    height(m,n,k) = z_coor(m,n,k) - dep(m,n);
+                    pres  (m,n,k) = height(m,n,k)*OPT.Rhow*OPT.Ag;
+                end
+                if z_coor(m,n,k) >= s1(m,n)
+                    height(m,n,k) = s1(m,n) - dep(m,n);
+                    frac  (m,n,k) = 0.0; % air instead of water 
+                end
+                % velocities
+                if ~isfield(Data,'Z')
+                    % 2Dh simulation, assume logarithmic velocity profile
+                    if ~isnan(height(m,n,k))
+                        kappa        = 0.4; % Von Karman constant
+                        Chezy        = (height(m,n,k)^(1./6.))/OPT.Manning;
+                        ks           = 12.*(s1(m,n) - dep(m,n))/(10^(Chezy/18.)); 
+                        z0           = ks/30.;
+                        u_vel(m,n,k) = (Data.XComp(m,n)*sqrt(OPT.Ag)/Chezy)*log(height(m,n,k)/z0); %Logarithmic velocity profile u_vel
+                        v_vel(m,n,k) = (Data.YComp(m,n)*sqrt(OPT.Ag)/Chezy)*log(height(m,n,k)/z0); %Logarithmic velocity profile v_vel
+                    end
+                else
+                    % 3 Dimensional simulation
+                    if ~isnan(x_coor(m,n)) && ~isnan(s1(m,n))
+                        if  z_coor (m,n,k) > dep (m,n) 
+                            if z_coor(m,n,k) <  s1 (m,n)
+                                % interpolate
+                                u_vel(m,n,k) = interp1(squeeze(Data.Z(m,n,:)),squeeze(Data.XComp(m,n,:)),z_coor(m,n,k),'linear','extrap');
+                                v_vel(m,n,k) = interp1(squeeze(Data.Z(m,n,:)),squeeze(Data.YComp(m,n,:)),z_coor(m,n,k),'linear','extrap');
+                                w_vel(m,n,k) = interp1(squeeze(Data.Z(m,n,:)),squeeze(Data.ZComp(m,n,:)),z_coor(m,n,k),'linear','extrap');
+                            elseif k > 1
+                                u_vel(m,n,k) = u_vel(m,n,k-1);
+                                v_vel(m,n,k) = v_vel(m,n,k-1);
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+end
+
+
+%% Fill matrix for writing
  i_tel = 0;
  for k = 0 : kmax + 2
      for m = OPT.Range(1,1): OPT.Factor: OPT.Range(2,1)
@@ -204,15 +273,14 @@ if OPT.Range(1,1) ~= floor(OPT.Range(1,1))
 
                  % Hydrostatic pressure
                  M(i_tel,4) = pres  (m,n,k+1);
- 
+
                  % Velocities
                  M(i_tel,5) = u_vel (m,n,k+1);
                  M(i_tel,6) = v_vel (m,n,k+1);
                  M(i_tel,7) = w_vel (m,n,k+1);
 
                  % water fraction
-                 M(i_tel,8) = 1;
-                 if k == kmax + 2 M(i_tel,8) = 0; end
+                 M(i_tel,8) = frac  (m,n,k+1);
              end
          end
      end
