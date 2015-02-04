@@ -170,37 +170,61 @@ else
         rec = fgetl(fid);
         
         %if threeD
+        %
+        % TK: here it gets complicated!!! We don't now from de bnd file if
+        % a simulation is 3D so if vert profile is included in the bnd file
+        % lets use the number of strings in rec as indication:
+        threeD = false;
+        astr0  = false;
+        if ~isempty(rec)
+            index =  d3d2dflowfm_decomposestr(strtrim(rec));
+            if isempty(index)
+                threeD =true;
+            elseif(length(index)) == 3
+                astro = true;
+            elseif(length(index)) == 4
+                threeD = true;
+                astro  = true;
+            end
+        end
+  
         if strcmpi('C',S.DATA(i).bndtype) | ...
            strcmpi('Q',S.DATA(i).bndtype) | ...
            strcmpi('T',S.DATA(i).bndtype) | ...
            strcmpi('R',S.DATA(i).bndtype)
             
-            [S.DATA(i).vert_profile,rec] = strtok(rec); %,fscanf(fid,'%20c',1);
-            
-            if strcmpi(S.DATA(i).vert_profile,'3D')
-                
-                [dummy,rec] = strtok(rec); %,fscanf(fid,'%20c',1);
-                
-                S.DATA(i).vert_profile = '3d-profile';
-                
-            end
-            
-            if ~(strcmpi(S.DATA(i).vert_profile,'uniform')     | ...
-                    strcmpi(S.DATA(i).vert_profile,'Logarithmic') | ...
-                    strcmpi(S.DATA(i).vert_profile,'3d-profile'))
-                
-                error(['Not a valid profile: ''',S.DATA(i).vert_profile])
-                
-            end
-            
+           % TK 
+           if threeD
+               [S.DATA(i).vert_profile,rec] = strtok(rec); %,fscanf(fid,'%20c',1);
+               %
+               if strcmpi(S.DATA(i).vert_profile,'3D')
+                   
+                   [dummy,rec] = strtok(rec); %,fscanf(fid,'%20c',1);
+                   
+                   S.DATA(i).vert_profile = '3d-profile';
+                   
+               end
+               
+               if ~(strcmpi(S.DATA(i).vert_profile,'uniform')     | ...
+                       strcmpi(S.DATA(i).vert_profile,'Logarithmic') | ...
+                       strcmpi(S.DATA(i).vert_profile,'3d-profile'))
+                   
+                   error(['Not a valid profile: ''',S.DATA(i).vert_profile])
+                   
+               end
+               
+           end
+           
         end
         %end
         
         if strcmp('A',S.DATA(i).datatype)
             
-            
-            [S.DATA(i).labelA,rec]  = strtok(rec); %[letter,fscanf(fid,'%11c',1)];
-            [S.DATA(i).labelB,rec]  = strtok(rec); %[letter,fscanf(fid,'%11c',1)];
+            % tk
+            if astro
+                [S.DATA(i).labelA,rec]  = strtok(rec); %[letter,fscanf(fid,'%11c',1)];
+                [S.DATA(i).labelB,rec]  = strtok(rec); %[letter,fscanf(fid,'%11c',1)];
+            end
             
         else
         end
