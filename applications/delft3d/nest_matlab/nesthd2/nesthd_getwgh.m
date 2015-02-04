@@ -37,8 +37,8 @@
       while ischar (tline) && ~found;
           pos = strfind (tline,quantity);
           if ~isempty(pos)
-             m = strread(tline(60:64),'%4d');
-             n = strread(tline(66:70),'%4d');
+             m = strread(tline(60:63),'%4d');
+             n = strread(tline(65:68),'%4d');
 
              if m == mcbsp && n == ncbsp
                 found = true;
@@ -46,10 +46,10 @@
 %---------------Read orientation (angle and positive inflow)
 %
                 if typbnd == 'c' || typbnd == 'r' || typbnd == 'x' || typbnd == 'p' || typbnd == 'n'
-                   varargout{1} = strread(tline(80:88),'%9.3f')*pi/180.;
+                   varargout{1} = strread(tline(78:86),'%9.3f')*pi/180.;
                 end
                 if typbnd == 'r'
-                   varargout{2} = strread(tline(99:end),'%s');
+                   varargout{2} = strread(tline(98:end),'%s');
                 end
 %
 %---------------Read nesting stations and belonging weights

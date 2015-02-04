@@ -179,11 +179,31 @@ if isfield(Field,'Field')
       end
       %
       if ~isempty(Keyword)
+          if length(Keyword) >= 5
+              if strncmp(Keyword,'POWER',min(length(Keyword),5))
+                  i = 1
+              end
+          end
          found = 0;
          for i = 1:length(Field)
             if Field(i).Nchar > 0
                if strncmp(Keyword,Field(i).Name,Field(i).Nchar)
                   dprintf(debug,'%s recognized as %s',Keyword,Field(i).Name);
+                  %
+                  % TK: For power stations; split power from the integer following the keyword
+                  nr_int = [];
+                  nr_int = find (ismember(Keyword,'0123456789'),1,'first');
+                  if ~isempty(nr_int)
+                      if LP(2)==1
+                         LP(1)=LP(1) - 1;
+                         LP(2)=length(S.File{LP(1)})+1;
+                      end
+                      insertspaceafter = LP(2)-length(Keyword)-1-Field(i).Nchar;
+                      S.File{LP(1)} = [S.File{LP(1)}(1:insertspaceafter) ...
+                         ' ' S.File{LP(1)}(insertspaceafter+1:end)];
+                      [Keyword,LP] = getnextkeyword(S.File,LP0);
+                  end
+                  %% TK
                   found = 1;
                end
             elseif Field(i).Nchar == 0

@@ -65,16 +65,16 @@ if ~isempty(index)
                 cross.m(icrs,iside)   =  points.P(pntnr).M;
                 cross.n(icrs,iside)   =  points.P(pntnr).N;
                 if ~isempty(crs.NAME)
-                    cross.namst(icrs,(1:length(crs.NAME)))   = crs.NAME;
+                    cross.DATA(icrs).name = crs.NAME;
                 else
-                    cross.namst(icrs,(1:1))   = ' ';
+                    cross.DATA(icrs).name = ' ';
                 end
             else
                 simona2mdf_message({['Output requested for P' num2str(chkpoints.(stat{ivar}).P(istat),'%4.4i')]; ...
                                     ' However, not defined as POINT. NaN written to crs file!'},'Window','SIMONA2MDF Warning','Close',true,'n_sec',10);
                 cross.m(icrs,iside)   =  NaN;
                 cross.n(icrs,iside)   =  NaN;
-                cross.namst(icrs,(1:length(crs.NAME)))   = crs.NAME;
+                cross.DATA(icrs).name = crs.NAME;
             end
         end
     end
