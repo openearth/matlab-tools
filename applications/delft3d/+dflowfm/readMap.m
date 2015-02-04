@@ -48,6 +48,7 @@ function varargout = readMap(ncfile,varargin)
    OPT.zwl       = 1; % whether to load data 
    OPT.sal       = 0; % whether to load data 
    OPT.vel       = 0; % whether to load data 
+   OPT.spir      = 0; % whether to load data 
 
    if nargin==0
       varargout = {OPT};
@@ -132,6 +133,12 @@ function varargout = readMap(ncfile,varargin)
          end
       end
    end
+   if OPT.spir & nc_isvar (ncfile, 'spircrv');
+      D.cen.crv  = nc_varget(ncfile, 'spircrv' ,[it-1 0],[1 cen.mask]); % Curvature
+   end  
+   if OPT.spir & nc_isvar (ncfile, 'spirint');
+      D.cen.I    = nc_varget(ncfile, 'spirint' ,[it-1 0],[1 cen.mask]); % Secondary fl;ow intensity
+   end  
 
 %% < read face data >
 
