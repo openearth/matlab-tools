@@ -53,7 +53,7 @@
                case {'c' 'p'}
                   [mnes,nnes,weight,angle] = nesthd_getwgh(fid_adm,mcbsp,ncbsp,'c');
                case {'r' 'x'}
-                  [mnes,nnes,weightr,angle,ori] = nesthd_getwgh(fid_adm,mcbsp,ncbsp,'r');
+                  [mnes,nnes,weight,angle,ori] = nesthd_getwgh(fid_adm,mcbsp,ncbsp,'r');
                case 'n'
                   [mnes,nnes,weight,angle,ori,x,y] = nesthd_getwgh(fid_adm,mcbsp,ncbsp,'n');
             end
