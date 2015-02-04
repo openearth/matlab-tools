@@ -14,6 +14,8 @@
 %                      and velocity boundaries
 % limitations        :
 % subroutines called :
+%
+% Modified dd 02/04/2015 to allow for more flexible (less formatted) reading
 %***********************************************************************
       mnes   = [];
       nnes   = [];
@@ -37,8 +39,18 @@
       while ischar (tline) && ~found;
           pos = strfind (tline,quantity);
           if ~isempty(pos)
-             m = strread(tline(60:63),'%4d');
-             n = strread(tline(65:68),'%4d');
+%------------old
+%            m = strread(tline(60:63),'%4d');
+%            n = strread(tline(65:68),'%4d');
+%------------new
+             s_equal = strfind(tline,'=');
+             str_temp = tline(s_equal(1) + 1: end);
+             i_start = strfind(str_temp,'(') + 1;
+             i_end   = strfind(str_temp,',') - 1;
+             m       = sscanf (str_temp(i_start:i_end),'%i');
+             i_start = i_end + 2;
+             i_end   = strfind(str_temp,')') - 1;
+             n       = sscanf (str_temp(i_start:i_end),'%i');
 
              if m == mcbsp && n == ncbsp
                 found = true;
@@ -46,10 +58,18 @@
 %---------------Read orientation (angle and positive inflow)
 %
                 if typbnd == 'c' || typbnd == 'r' || typbnd == 'x' || typbnd == 'p' || typbnd == 'n'
-                   varargout{1} = strread(tline(78:86),'%9.3f')*pi/180.;
+%-------------------old
+%                   varargout{1} = strread(tline(78:86),'%9.3f')*pi/180.;
+%-------------------new
+                    str_temp = tline(s_equal(2) + 1: end);
+                    i_end    = strfind(lower(str_temp),'posi') - 1;
+                    varargout{1} = sscanf(str_temp(1:i_end),'%f')*pi/180.;
                 end
                 if typbnd == 'r'
-                   varargout{2} = strread(tline(98:end),'%s');
+%------------------old 
+%                  varargout{2} = strread(tline(98:end),'%s');
+%------------------new
+                   varargout{2} = strtrim(tline(s_equal(3) + 1: end));
                 end
 %
 %---------------Read nesting stations and belonging weights
