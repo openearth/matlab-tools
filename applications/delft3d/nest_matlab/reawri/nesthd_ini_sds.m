@@ -28,16 +28,19 @@
       % get mn coordinates of the stations
       %
 
-      iistat = 0;
+      iistat = 1;
       for istat = 1: nostat
-          if ~isempty (findstr(stations{istat},'(M,N)'))
-             iistat = iistat + 1;
-             i1 = findstr (stations{istat},'(');
-             start = i1(2)+1;
-             sds_ini.mnstat(1,iistat)      = str2num(stations{istat}(start:start+3));
-             start = start + 5;
-             sds_ini.mnstat(2,iistat)      = str2num(stations{istat} (start:start+3));
-             sds_ini.list_stations(iistat) = istat;
+          i_start = findstr(stations{istat},'(');
+          i_stop  = findstr(stations{istat},',');
+          if ~isempty(i_start) && ~isempty(i_stop)
+             try
+                 sds_ini.mnstat(1,iistat)= str2num(stations{istat}(i_start(end) + 1:i_stop(end) - 1));
+                 i_start = i_stop;
+                 i_stop  = findstr(stations{istat},')');
+                 sds_ini.mnstat(2,iistat)= str2num(stations{istat}(i_start(end) + 1:i_stop(end) - 1));
+                 sds_ini.list_stations(iistat) = istat;
+                 iistat = iistat + 1;
+             end
           end
       end
 
