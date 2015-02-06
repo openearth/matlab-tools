@@ -13,6 +13,7 @@ function ut_save(coef,fname)
        for i=1:size      (coef.results,1)
        fprintf(fid,'%s\n',coef.results(i,:));
        end
+       
        fprintf(fid,'\n\n\n\n');      
        for i=1:size      (coef.diagn.table,1)
        fprintf(fid,'%s\n',coef.diagn.table(i,:));

@@ -53,7 +53,7 @@ function C = strtokens2cell(STR,DELIM)
 % $HeadURL$
 
 format = '%q';
-if nargin>0
+if nargin<2
     DELIM = ' ';
 end
 

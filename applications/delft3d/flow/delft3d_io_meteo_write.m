@@ -35,7 +35,6 @@ function fid = delft3d_io_meteo_write(filehandle,time,data,varargin)
 % on the meteo grid itself, with meteo time step identical to the meteo
 % interval. Add keywords to mdf file to make them end up in trim file:
 % airout and heaout. Use depth of 1e3 m to prevent crash.
-
 %
 %See also: DELFT3D_IO_METEO, KNMI, GRIB, NETCDF, DELFT3D_IO_METEO_WRITE_TUTORIAL
 

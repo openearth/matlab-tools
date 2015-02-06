@@ -33,9 +33,9 @@ function noaxis(varargin)
 
    for ich = 1:length(ch)
       if strcmp(lower(get(ch(ich),'Type')),'axes')
-         set(ch(ich),'xcolor','none'); %,color);
-         set(ch(ich),'ycolor','none'); %,color);
-         set(ch(ich),'zcolor','none'); %,color);
+         set(ch(ich),'xcolor',color); % 'none'); 2015
+         set(ch(ich),'ycolor',color); % 'none');
+         set(ch(ich),'zcolor',color); % 'none');
         %set(ch(ich),'xticklabel',{});
         %set(ch(ich),'yticklabel',{});
         %set(ch(ich),'zticklabel',{});

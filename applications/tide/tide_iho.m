@@ -27,7 +27,7 @@
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2014 TU Delft | Van Oord
+%   Copyright (C) 2014 TU Delft ; Van Oord
 %       Gerben J de Boer <g.j.deboer@tudelft.nl> ; <gerben.deboer@vanoord.com>
 %
 %   This library is free software: you can redistribute it and/or modify

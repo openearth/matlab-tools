@@ -140,14 +140,12 @@ disp('UNDER CONSTRUCTION')
    end;
    
 %% Error handling
-%% ------------------------
 
    if ~(length(x)==length(t))
       error('length signal and time vector should be equal')
    end
       
 %% FFT
-%% ------------------------
    
    % Use next highest power of 2 greater than or equal to 
    % length(x) to calculate FFT. 
@@ -163,7 +161,6 @@ disp('UNDER CONSTRUCTION')
    FFTX = fft(x,NFFT);
    
 %% Scale FFT results
-%% ------------------------
 
    % Calculate the numberof unique points 
    NumUniquePts = ceil((NFFT+1)/2); 

@@ -72,7 +72,7 @@ function varargout = wind_rose(D,F,varargin)
 %      set(gcf,'InvertHardcopy','off'); % for proper printing
 %      set(gcf,'Color',[1 1 1]) % for proper printing
 %
-% See also: wind_plot, degN2degunitcircle, degunitcircle2degN
+% See also: wind_plot, degN2degunitcircle, degunitcircle2degN, pcolor_spectral
 
 %
 %   MMA 26-11-2007, mma@odyle.net / IEO, Instituto Español de Oceanografía

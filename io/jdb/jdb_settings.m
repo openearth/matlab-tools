@@ -14,8 +14,8 @@ function varargout = jdb_settings(varargin)
 
 %% Copyright notice: see below
 
-OPT.check = 0;
-OPT.quiet = 0;
+OPT.check  = 0;
+OPT.quiet  = 0;
 OPT.dbtype = 'oracle';
 
 OPT = setproperty(OPT,varargin);

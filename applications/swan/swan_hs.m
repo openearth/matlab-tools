@@ -56,8 +56,8 @@ function Hs = swan_hs(f,E,varargin)
    %  so the formulations in SWAN subroutine SWOEXA have an extra power of f
 
       m0        = trapz(f(:),E(:));
-      m1        = trapz(f(:),E(:).*f(:));
-      m2        = trapz(f(:),E(:).*f(:).^2);
+     %m1        = trapz(f(:),E(:).*f(:));
+     %m2        = trapz(f(:),E(:).*f(:).^2);
 
    %% contribution of tail to total energy density
    %  command GEN1        : [pwtail] = 5

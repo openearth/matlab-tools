@@ -2,9 +2,10 @@ function set_color_excel(fileName,sheet,range_cell,color,varargin)
 %set_color_excell set color of excel cells
 %
 %  set_color_excell(fileName,sheet,range,color,varargin)
+% where range is a string like 'A1' color is hexadecimal like 'FF0000'
 %
-% See also: xls_functions
-%
+% See also: xls_functions, xls, xlsread, xlswrite
+
 %% Create complete filename inclusive of the path
 fileName =  relativeToabsolutePath(fileName);
 

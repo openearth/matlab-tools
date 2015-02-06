@@ -742,7 +742,7 @@ if iostat==1 %  0 when uigetfile was cancelled
                                        'For plotting:                                ';
                                        'd = swan_spectrum(filename);                 ';
                                        'surf(d.frequencies,d.directions,d.data)% or  ';
-                                       'pcolor(d.frequencies,d.directions,d.data)    ';
+                                       'pcolor(d.frequency,d.directions,d.data)    ';
                                        'shading interp                               ';
                                        'set(gca,''xscale'',''log'')                      ';
                                        'xlabel(''freq [Hz]'')                          ';
@@ -848,8 +848,8 @@ if iostat==1 %  0 when uigetfile was cancelled
                                           '3rd dimension = number_of_directions         ';
                                           'For plotting:                                ';
                                           'd = swan_spectrum(filename);                 ';
-                                          'surf(d.frequencies,d.directions,d.data)% or  ';
-                                          'pcolor(d.frequencies,d.directions,d.data)    ';
+                                          'surf(d.frequency,d.directions,d.data)% or  ';
+                                          'pcolor(d.frequency,d.directions,d.data)    ';
                                           'shading interp                               ';
                                           'set(gca,''xscale'',''log'')                      ';
                                           'xlabel(''freq [Hz]'')                          ';
@@ -864,8 +864,8 @@ if iostat==1 %  0 when uigetfile was cancelled
                                           '4th dimension = number_of_directions         ';
                                           'For plotting:                                ';
                                           'd = swan_spectrum(filename);                 ';
-                                          'surf(d.frequencies,d.directions,d.data)% or  ';
-                                          'pcolor(d.frequencies,d.directions,d.data)    ';
+                                          'surf(d.frequency,d.directions,d.data)% or  ';
+                                          'pcolor(d.frequency,d.directions,d.data)    ';
                                           'shading interp                               ';
                                           'set(gca,''xscale'',''log'')                      ';
                                           'xlabel(''freq [Hz]'')                          ';
