@@ -50,7 +50,7 @@ OPT = setproperty(OPT,varargin);
 axes(OPT.ax)
 if OPT.debug
     TMP = figure
-    pcolorcorcen(frequency,directions,log10(EnDens));
+    pcolorcorcen(frequency,directions,EnDens);
     set(gca,'ytick',[0:90:360])
     set(ax(1),'yticklabel',{'v N','< E','^ S','> W','v N'})
     set(ax(1),'xtick',tick.f)
@@ -59,7 +59,7 @@ end
 
 %% plot
 axes(OPT.ax)
-pcolorcorcen(x,y,log10(EnDens));
+pcolorcorcen(x,y,EnDens);
 axis equal;
 axis tight;
 colorbarwithvtext(['Energy density [',OPT.units,']']);
