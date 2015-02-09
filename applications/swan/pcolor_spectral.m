@@ -1,4 +1,4 @@
-function pcolor_spectral(frequency, directions, EnDens,varargin)
+function tick = pcolor_spectral(frequency, directions, EnDens,varargin)
 %pcolor_spectral plots radial wave 2D spectrum
 %
 %   pcolor_spectral(frequency, directions, EnDens, <keyword,value>)
@@ -62,7 +62,6 @@ axes(OPT.ax)
 pcolorcorcen(x,y,EnDens);
 axis equal;
 axis tight;
-colorbarwithvtext(['Energy density [',OPT.units,']']);
 noaxis(OPT.ax)
 
 %% ticks anf f-axis
