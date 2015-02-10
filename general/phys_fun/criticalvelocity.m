@@ -53,11 +53,11 @@ function ucr = criticalvelocity(d50,d90,h,varargin)
 % Created: 10 Feb 2015
 % Created with Matlab version: 8.4.0.150421 (R2014b)
 
-% $Id: $
-% $Date: $
-% $Author: $
-% $Revision: $
-% $HeadURL: $
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 % $Keywords: $
 
 %%
