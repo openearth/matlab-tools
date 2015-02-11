@@ -1,6 +1,6 @@
 function filetype = det_filetype (filename)
 
-% det_filetype : determines, based on name/extension, whether a fiel is a delft3d or simona file
+% det_filetype : determines, based on name/extension, whether a file is a delft3d or simona file (or DFLOWFM)
 
 filetype = 'none';
 
@@ -34,4 +34,6 @@ end
      filetype = 'grd';
  end
 
-
+ if ~isempty(strfind(filename,'pli')) || ~isempty(strfind(filename,'tim'))
+     filetype = 'DFLOWFM';
+end

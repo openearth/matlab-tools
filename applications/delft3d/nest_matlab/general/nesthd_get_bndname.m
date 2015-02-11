@@ -13,6 +13,8 @@ switch filetype
       filebnd = filename;
     case 'siminp'
        filebnd = filename;
+    case 'DFLOWFM'
+        filebnd = filename;
     otherwise
       filebnd = '';
 end

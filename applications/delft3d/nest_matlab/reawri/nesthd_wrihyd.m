@@ -9,4 +9,7 @@ switch filetype
       nesthd_wrihyd_bct(filename,bnd,nfs_inf,bndval,add_inf)
    case 'SIMONA'
       nesthd_wrihyd_timeser(filename,bnd,nfs_inf,bndval,add_inf)
+   case 'DFLOWFM'
+       % ToDo: write series file
+       nesthd_wrihyd_dflowfmtim (filename,bnd,nfs_inf,bndval,add_inf)
 end

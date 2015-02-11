@@ -42,13 +42,11 @@
          add_inf     = nesthd_additional();
       end
 
-      fid_adm     = fopen(files{2},'r')
-      files{2}
-      %
-      % Read the boundary definition
+      fid_adm     = fopen(files{2},'r');      %
+      % Read the boundary definition (use points structure!)
       %
 
-      bnd         = nesthd_get_bnd_data (files{1});
+      bnd         = nesthd_get_bnd_data (files{1},'Points',true);
       if isempty(bnd) return; end;
 
       %

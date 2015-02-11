@@ -536,7 +536,7 @@ if ~isempty(handles.files_hd2{1})
 end
 
 if ~isempty (handles.filedir); cd(handles.filedir); end
-[fin,pin] = uigetfile({'*.bnd; *.mdf; siminp*'},'Select boundary definition nested model');
+[fin,pin] = uigetfile({'*.bnd; *.mdf; siminp*; *.pli'},'Select boundary definition nested model');
 cd (handles.progdir);
 
 if fin ~= 0

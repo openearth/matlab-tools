@@ -6,7 +6,7 @@ function wrihyd_timeser(filename,bnd,nfs_inf,bndval,add_inf)
 % Set some general parameters
 %
 
-no_bnd        = length(bnd.DATA);
+no_bnd        = length(bnd.DATA)/2 ;
 notims        = length(bndval);
 kmax          = nfs_inf.nolay;
 
@@ -40,12 +40,12 @@ for ibnd = 1: no_bnd
    end
 
    for iside = 1: 2
-
+      i_pnt = (ibnd - 1)*2 + iside; 
       %
       % Set pointname
       %
       if isfield(bnd,'pntnr')
-         pntname = ['P' num2str(bnd.pntnr(ibnd,iside))];
+         pntname = ['P' num2str(bnd.pntnr(i_pnt))];
       else
          pntname  = ['P' num2str(ibnd,'%2.2i') 'A'];
          if iside == 2;  pntname  = ['P' num2str(ibnd,'%2.2i') 'B'];end
@@ -73,7 +73,7 @@ for ibnd = 1: no_bnd
          %
 
          for itim = 1: notims
-            values(itim) =bndval(itim).value(ibnd,k,1,iside);
+            values(itim) =bndval(itim).value(i_pnt,k,1);
          end
 
          fprintf(fid,' %12.6f %12.6f %12.6f %12.6f %12.6f \n',values);

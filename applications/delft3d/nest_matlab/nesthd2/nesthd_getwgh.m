@@ -62,7 +62,11 @@
 %                   varargout{1} = strread(tline(78:86),'%9.3f')*pi/180.;
 %-------------------new
                     str_temp = tline(s_equal(2) + 1: end);
-                    i_end    = strfind(lower(str_temp),'posi') - 1;
+                    if typbnd == 'c' || typbnd == 'r'
+                        i_end    = strfind(lower(str_temp),'posi') - 1;
+                    else
+                        i_end    = length(str_temp);
+                    end
                     varargout{1} = sscanf(str_temp(1:i_end),'%f')*pi/180.;
                 end
                 if typbnd == 'r'
@@ -76,9 +80,9 @@
 %
                 for iwght = 1: 4
                    switch typbnd
-                      case {'c' 'z' 'x' 'p'}
+                      case {'z' 'x' 'p'}
                          [values] = fscanf(fid,'%d %d %f',3);
-                      case {'r' 'n'}
+                      case {'c' 'r' 'n'}
                          [values] = fscanf(fid,'%d %d %f %g %g',5);
                          x(iwght) = values(4);
                          y(iwght) = values(5);

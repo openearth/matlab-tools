@@ -5,8 +5,10 @@ function wrihyd_bct(filename,bnd,nfs_inf,bndval,add_inf)
 %
 % Get some general parameters
 %
+% Modified 2/9/2015: bndval now point structured in stead of bnd
+%                    structured
 
-no_bnd        = length(bnd.DATA);
+no_bnd        = length(bnd.DATA)/2;
 notims        = length(bndval);
 kmax          = nfs_inf.nolay;
 
@@ -107,18 +109,18 @@ for ibnd = 1 : no_bnd
            Info.Table(k).Data(itim,1) = nfs_inf.tstart + (itim-1)*nfs_inf.dtmin;
            switch bnd.DATA(ibnd).bndtype
                case{'Z' 'N'}
-                  Info.Table(k).Data(itim,2) = bndval(itim).value(ibnd,1,1,1);
-                  Info.Table(k).Data(itim,3) = bndval(itim).value(ibnd,1,1,2);
+                  Info.Table(k).Data(itim,2) = bndval(itim).value((ibnd - 1)*2 + 1,1,1);
+                  Info.Table(k).Data(itim,3) = bndval(itim).value((ibnd - 1)*2 + 2,1,1);
                case{'C' 'R' 'X' 'P'}
                    for ilay = 1: kmax
-                       Info.Table(k).Data(itim,ilay+1     ) = bndval(itim).value(ibnd,ilay,1,1);
-                       Info.Table(k).Data(itim,ilay+kmax+1) = bndval(itim).value(ibnd,ilay,1,2);
+                       Info.Table(k).Data(itim,ilay+1     ) = bndval(itim).value((ibnd - 1)*2 + 1,ilay,1);
+                       Info.Table(k).Data(itim,ilay+kmax+1) = bndval(itim).value((ibnd - 1)*2 + 2,ilay,1);
                    end
                    switch bnd.DATA(ibnd).bndtype
                       case{'X' 'P'}
                          for ilay = 1: kmax
-                            Info.Table(k).Data(itim,ilay+2*kmax+1) = bndval(itim).value(ibnd,ilay+kmax,1,1);
-                            Info.Table(k).Data(itim,ilay+3*kmax+1) = bndval(itim).value(ibnd,ilay+kmax,1,2);
+                            Info.Table(k).Data(itim,ilay+2*kmax+1) = bndval(itim).value((ibnd - 1)*2 + 1,ilay+kmax,1);
+                            Info.Table(k).Data(itim,ilay+3*kmax+1) = bndval(itim).value((ibnd - 1)*2 + 2,ilay+kmax,1,2);
                           end
                    end
            end
