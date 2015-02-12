@@ -79,7 +79,7 @@
 
       nesthd_wrihyd (files{4},bnd,nfs_inf,bndval, add_inf);
 
-      clear bndval
+      clear bndval bnd
 
       %
       % Generate transport bc if avaialble on history file
@@ -87,6 +87,8 @@
 
       if lstci > 0
          if sum(add_inf.genconc) > 0
+             bnd         = nesthd_get_bnd_data (files{1});
+             if isempty(bnd) return; end;
 
              bndval      = nesthd_detcon(fid_adm,bnd,nfs_inf,add_inf,files{3});
 
