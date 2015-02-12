@@ -557,7 +557,7 @@ if ~isempty(handles.files_hd2{3}) && ~isempty(handles.files_hd2{1})
 end
 
 [handles] = nesthd_check_nesthd2(handles);
-set_nesthd2(handles,'on');  
+set_nesthd2(handles,'on');
 
 guidata(hObject, handles);
 
@@ -623,7 +623,7 @@ function get_hd2_bct_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 if ~isempty (handles.filedir); cd(handles.filedir); end
-[fin,pin] = uiputfile('*.bct; timeser*','Specify file name hydrodynamic boundary conditions');
+[fin,pin] = uiputfile('*.bct; timeser*; *.tim','Specify file name hydrodynamic boundary conditions');
 cd (handles.progdir);
 
 if strcmpi(fin(1:7),'timeser')

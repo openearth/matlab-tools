@@ -34,6 +34,6 @@ end
      filetype = 'grd';
  end
 
- if ~isempty(strfind(filename,'pli')) || ~isempty(strfind(filename,'tim'))
+ if ~isempty(strfind(filename,'pli')) || ~isempty(strfind(filename,'.tim'))
      filetype = 'DFLOWFM';
 end
