@@ -201,7 +201,11 @@ att_names2(to_ignore) = [];
 for ii = length(urls):-1:1
     for jj = 1:length(att_names)
         n = strcmp({all_info(ii).Attributes.Name},att_names{jj});
-        D.(att_names2{jj}){ii} = all_info(ii).Attributes(n).Value;
+        if any(n)
+            D.(att_names2{jj}){ii} = all_info(ii).Attributes(n).Value;
+        else
+            D.(att_names2{jj}){ii} = '';
+        end
     end
 end
 
