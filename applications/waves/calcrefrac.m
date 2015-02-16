@@ -1,4 +1,8 @@
 function [Kr,alfa]=calcrefrac(d,T,alfa0)
+% calcrefrac refraction coefficient and angle of incidence
+%
+% [Kr,alfa]=calcrefrac(d,T,alfa0)
+%
 % Calculates refraction coefficient and angle of incidence
 % (between wave crests and bottom contours)
 % for parallel, straight bottom contours
@@ -10,6 +14,8 @@ function [Kr,alfa]=calcrefrac(d,T,alfa0)
 % Kr    = refraction coefficient
 % alfa  = wave angle at shallow water site
 %
+%see also: waves, swan
+
 % Based on script by James Hu
 
 [L,e,c] = wavelength(T,d,0,0,0,1e-6);

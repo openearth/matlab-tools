@@ -32,7 +32,6 @@
 %% G.J. de Boer <gerben.deboer@deltares.nl>, <g.j.deboer@tudelft.nl>
 
 %% Input
-%% ---------------------------------------------------
 
    OPT.directory.emep  = 'D:\HOME\WL\z4351-ospar07\Data\From_IfM\AtmDeposition';
    OPT.year            = 2002;
@@ -60,13 +59,12 @@
    OPT.griddatamethod  = 'linear';
 
 %% Load FLOW/WAQ grid
-%% ---------------------------------------------------
 
    FLOW = delwaq('open',[OPT.directory.waq,filesep,OPT.files.waqgrid]);
    
-   %% Remove moronic fields of which the meaning is unclear.
-   %% due to moronic dummy rows and columns.
-   %% Only add all dummy rows and columsn when aggregatting to WAQ grid.
+   % Remove moronic fields of which the meaning is unclear.
+   % due to moronic dummy rows and columns.
+   % Only add all dummy rows and columsn when aggregatting to WAQ grid.
    
    FLOW.cor.x    = FLOW.X(1:end-1,1:end-1);
    FLOW.cor.y    = FLOW.Y(1:end-1,1:end-1);
@@ -85,7 +83,6 @@
    FLOW.flow2waqcoupling3D          = flow2waq3d_coupling(FLOW.Index       ,FLOW.NoSeg        ,'i'); % new flow2waq3d_coupling !! per 2008 May 13
    
    %% Plot FLOW/WAQ grid (debug)
-   %% ----------------------------------
 
    if OPT.plot.Segments
    figure('name','plotSegments')
@@ -106,14 +103,12 @@
    end
 
 %% Load landboundary
-%% ----------------------------------
 
    L = sdload_char('promise-utm.hdf');
    
    [L.lon,L.lat] = ctransdv(L.x,L.y,'UTM','LONLAT',1,31);
 
 %% Load EMEP data
-%% ----------------------------------
 
    [EMEP.(OPT.ncVar),OK] = nc_varget([OPT.directory.emep,filesep,OPT.files.nc],OPT.ncVar);
    [EMEP.lon        ,OK] = nc_varget([OPT.directory.emep,filesep,OPT.files.nc],'lon');
@@ -125,7 +120,6 @@
     EMEP.nt = length(EMEP.datenum);
 
    %% Plot EMEP data (debug)
-   %% ----------------------------------
 
    if OPT.plot.EMEP
    figure('name','plotEMEP')
@@ -148,13 +142,12 @@
    end %for it = 1%:size(EMEP.(OPT.ncVar),1)
 
 %% Grid EMEP data to FLOW grid
-%% ----------------------------------
 
    FLOW.cen.(OPT.ncVar) = NaN.*zeros([EMEP.nt size(FLOW.cen.lon)]);
    
-   %% make subselection of to large set of data coordinates for speed up
-   %% and allow only data within dlat or dlong Manhattan distance
-   %% from the grid to be used.
+   % make subselection of to large set of data coordinates for speed up
+   % and allow only data within dlat or dlong Manhattan distance
+   % from the grid to be used.
    
    dlat  = 0.5;
    dlong = 0.5.*cosd(52); %'real' flat distance longitude degree depends on latitude
@@ -176,8 +169,7 @@
                       
    end %for it = 1%:size(EMEP.(OPT.ncVar),1)
 
-   %% Plot EMEP data to FLOW grid (debug)
-   %% ----------------------------------
+   % Plot EMEP data to FLOW grid (debug)
 
    if OPT.plot.EMEP2FLOW
    figure('name','plotEMEP2FLOW')
@@ -198,14 +190,12 @@
    end
    end
 
-%% Aggregate FLOW data to WAQ grid
-%% and write to WAQ file
-%% ----------------------------------
+% Aggregate FLOW data to WAQ grid
+% and write to WAQ file
 
    for it = 1:size(EMEP.(OPT.ncVar),1)
 
-      %% add dummy rows and columsn to corect aggregation indexing
-      %% ----------------------------------
+      % add dummy rows and columsn to corect aggregation indexing
       
       fullmatrix = FLOW.cen.(OPT.ncVar)(it,:,:);
       
@@ -218,26 +208,24 @@
       fullmatrix(isnan(fullmatrix)) = OPT.backgroundvalue;
       
       %% Duplicate value for all KMAX layers, 
-      %% as WAQ needs all data 3D in 3D computation, 
-      %% even 2D data as bed shear stresses.
-      %% All other dummy elements are set to zero.
-      %%
-      %% The 2D > 3D below method works only if all layers in all columns are active
-      %% ----------------------
+      % as WAQ needs all data 3D in 3D computation, 
+      % even 2D data as bed shear stresses.
+      % All other dummy elements are set to zero.
+      %
+      % The 2D > 3D below method works only if all layers in all columns are active
       
       WAQ2D.(OPT.ncVar) = flow2waq3D(fullmatrix,FLOW.flow2waqcoupling2D);
 
       kmax   = FLOW.MNK(3);
       nWAQ2D = length(WAQ2D.(OPT.ncVar));
       
-      %% make 'emmty' 3D matrix
+      %% make 'empty' 3D matrix
       WAQ.(OPT.ncVar) = repmat(OPT.backgroundvalue,[1 nWAQ2D*kmax]);
       
       %% fill only one layer with 2D data 
       WAQ.(OPT.ncVar)(1,(1:nWAQ2D) + nWAQ2D.*(OPT.k-1)) = WAQ2D.(OPT.ncVar);
       
       %% Write to waq map file
-      %% ----------------------------------
 
       if (it==1)
         STRUCT    = delwaq('write',[filename(OPT.files.nc),'.map'],...

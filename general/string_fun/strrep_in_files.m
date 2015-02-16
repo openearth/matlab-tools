@@ -1,4 +1,4 @@
-function strrep_in_files(fileNames,str1,str2,varargin)
+function varargout = strrep_in_files(fileNames,str1,str2,varargin)
 %STRREP_IN_FILES  replace strings in Ascii files
 %
 %   Similar to strrep, but can search multiple files
@@ -68,6 +68,7 @@ OPT.copy        = false; % make the new files as a copy
 OPT.quiet       = false; % disable output
 
 if nargin==0
+    varargout = {OPT};
     return
 end
 
@@ -90,7 +91,9 @@ end
 
 %% replace strings
 
+if ~OPT.quiet
 fprintf('\nprocessing files');
+end
 numberOfReplacements = 0;
 changedFiles = 0;
 for ii = 1:length(fileNames)
