@@ -106,10 +106,12 @@ handles.GUIHandles.textXCoordinate = uicontrol(gcf,'Units','pixels','Parent',han
     'String',['X : ' num2str(0)],'Position',[300 655 100 15],'BackgroundColor',handles.backgroundColor,'HorizontalAlignment','left');
 handles.GUIHandles.textYCoordinate = uicontrol(gcf,'Units','pixels','Parent',handles.GUIHandles.mapPanel,'Style','text', ...
     'String',['Y : ' num2str(0)],'Position',[380 655 100 15],'BackgroundColor',handles.backgroundColor,'HorizontalAlignment','left');
+handles.GUIHandles.textZCoordinate = uicontrol(gcf,'Units','pixels','Parent',handles.GUIHandles.mapPanel,'Style','text', ...
+    'String',['Z : ' num2str(0)],'Position',[460 655 100 15],'BackgroundColor',handles.backgroundColor,'HorizontalAlignment','left');
 handles.GUIHandles.textCoordinateSystem = uicontrol(gcf,'Units','pixels','Parent',handles.GUIHandles.mapPanel,'Style','text', ...
     'String','WGS 84 - Geographic','Position',[100 655 200 15],'BackgroundColor',handles.backgroundColor,'HorizontalAlignment','left');
 handles.GUIHandles.textBathymetry = uicontrol(gcf,'Units','pixels','Parent',handles.GUIHandles.mapPanel,'Style','text', ...
-    'String','Bathymetry : GEBCO 08','Position',[550 655 400 15],'BackgroundColor',handles.backgroundColor,'HorizontalAlignment','left');
+    'String','Bathymetry : GEBCO 08','Position',[620 655 400 15],'BackgroundColor',handles.backgroundColor,'HorizontalAlignment','left');
 
 % Text box
 

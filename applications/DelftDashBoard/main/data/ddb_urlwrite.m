@@ -156,6 +156,6 @@ switch ( mv )
 
         status = 1;
     otherwise % Timeout natively supported from Matlab2012b
-        varargin={'Timeout',T};
+        varargin={'Timeout',T/1000};
         [output,status] = urlwrite(urlChar,location,varargin{:});
 end

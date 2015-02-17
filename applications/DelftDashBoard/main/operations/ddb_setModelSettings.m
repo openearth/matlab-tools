@@ -81,6 +81,9 @@ switch varargin{1}
                     
                 case{'delft3dwave'}
                     handles.model.(model).exedir=[getenv('D3D_HOME') '\' getenv('ARCH') '\wave\bin\'];
+
+%                 case{'ww3'}
+%                     handles.model.(model).exedir=[getenv('D3D_HOME') '\' getenv('ARCH') '\wave\bin\'];
                     
             end
         end

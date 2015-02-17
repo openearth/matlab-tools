@@ -73,15 +73,27 @@ ylim=get(ax,'ylim');
 if posx<=xlim(1) || posx>=xlim(2) || posy<=ylim(1) || posy>=ylim(2)
     strx='X : ';
     stry='Y : ';
+    strz='Z : ';
     set(gcf,'Pointer','arrow');
 else
-    strx=['X : ' num2str(posx,'%10.3f')];
-    stry=['Y : ' num2str(posy,'%10.3f')];
+    if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
+        strx=['X : ' num2str(posx,'%10.4f')];
+        stry=['Y : ' num2str(posy,'%10.4f')];
+    else
+        strx=['X : ' num2str(posx,'%10.0f')];
+        stry=['Y : ' num2str(posy,'%10.0f')];
+    end    
+    ix=round((posx-handles.GUIData.x(1))/(handles.GUIData.x(2)-handles.GUIData.x(1)));
+    iy=round((posy-handles.GUIData.y(1))/(handles.GUIData.y(2)-handles.GUIData.y(1)));
+    if ix>0 && ix<length(handles.GUIData.x) && iy>0 && iy<length(handles.GUIData.y)
+        strz=['Z : ' num2str(handles.GUIData.z(iy,ix),'%10.1f')];
+    end    
     setptr(gcf,pnt);
 end
 
 set(handles.GUIHandles.textXCoordinate,'String',strx);
 set(handles.GUIHandles.textYCoordinate,'String',stry);
+set(handles.GUIHandles.textZCoordinate,'String',strz);
 % set(gca,'FontSize',8);
 % grid on;
 

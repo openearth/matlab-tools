@@ -66,6 +66,7 @@ for k=1:length(toolboxnames)
     name=toolboxnames{k};
     longname=handles.toolbox.(name).longName;
     try
+        disp(['Initializing ' longname ' ...']);
         f=handles.toolbox.(name).iniFcn;
         handles=f(handles);
     catch

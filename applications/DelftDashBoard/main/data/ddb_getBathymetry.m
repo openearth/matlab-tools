@@ -377,7 +377,7 @@ switch lower(tp)
                                         mkdir(localdir);
                                     end
                                     try
-                                        urlwrite([remotedir filename],[localdir filename]);
+                                        urlwrite([remotedir filename],[localdir filename],'Timeout',1);
                                     end
                                 end
                                 ncfile=[localdir filename];
@@ -389,25 +389,36 @@ switch lower(tp)
                         end
                         
                         if ~justgettiles
+                            zzz=[];
+                            qqq=[];
+                            fv=[];
                             if exist(ncfile,'file')
-                                zzz=nc_varget(ncfile, 'depth');
-                                zzz=double(zzz);
+                                try
+                                    zzz=nc_varget(ncfile, 'depth');
+                                    zzz=double(zzz);
+                                catch
+                                    disp(['Could not read ' ncfile ' !!!']);
+                                end
                                 try
                                     qqq=nc_varget(ncfile, 'quality');
                                     qqq=double(qqq);
                                 end
-                                fv=nc_attget(ncfile,'depth','fill_value');
-                                ok=1;
+                                try
+                                    fv=nc_attget(ncfile,'depth','fill_value');
+                                     ok=1;
+                                end
                             end
                         end
                         
                     end
                     
                     if ~justgettiles
-                        if ~isnan(fv)
-                            zzz(zzz==fv)=NaN;
+                        if ~isempty(zzz)
+                            if ~isnan(fv)
+                                zzz(zzz==fv)=NaN;
+                            end
+                            z((j-iy1)*ny+1:(j-iy1+1)*ny,iStartX(i):iStartX(i)+nx-1)=zzz;
                         end
-                        z((j-iy1)*ny+1:(j-iy1+1)*ny,iStartX(i):iStartX(i)+nx-1)=zzz;
                         if ~isempty(qqq)
                             q((j-iy1)*ny+1:(j-iy1+1)*ny,iStartX(i):iStartX(i)+nx-1)=qqq;
                         end
