@@ -93,6 +93,18 @@ while 1
         data.datainputs = struct();
         for j=1:length(data.inputs.datainputs)
             item = data.inputs.datainputs(j);
+            if (iscell(item)) 
+                item = item{1};
+            end
+            if ( strcmp(item.type, 'ComplexValue') ) 
+                filename = tempname();
+                bytes = typecast(org.apache.commons.codec.binary.Base64.decodeBase64(uint8(item.value)), 'uint8');
+                fid = fopen(filename, 'w');
+                fwrite(fid, bytes);
+                fclose(fid);
+                item.value = filename;
+            end
+            
             data.datainputs.(item.identifier) = item.value;
         end
         
@@ -122,6 +134,18 @@ while 1
         else
             result = sprintf('Processing failed due to:\n%s', message);
         end
+        
+        % get info of the output
+        if (exist(result, 'file'))
+            fid = fopen(result);
+            bytes = fread(fid);
+            fclose(fid);
+            % base64 decode
+            base64 = org.apache.commons.codec.binary.Base64.encodeBase64(uint8(bytes));
+            result = char(typecast(base64, 'uint8'));
+        end
+        
+        
         
         % store the result
         data.result = result;
