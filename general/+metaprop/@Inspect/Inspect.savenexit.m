@@ -59,7 +59,7 @@ classdef Inspect < oop.handle_light
             
             % Display the properties pane onscreen
             self.Figure = figure(...
-                'Number', 'Off',... % R2105 only allows number or []
+                'Number', 'off',...
                 'Name',   sprintf('%s property inspector',class(self.Object)),...
                 'Units',  'Pixels',...
                 'Pos',    [300,200,400,500],...
@@ -72,8 +72,10 @@ classdef Inspect < oop.handle_light
             % make menu buttons
             uimenu('parent',self.Figure,'Label','&Undo'    ,'callback',{@releaseButtonAfterCallback,@self.undo},'Enable','off');
             uimenu('parent',self.Figure,'Label','&Undo all','callback',{@releaseButtonAfterCallback,@self.undoAll});
-            uimenu('parent',self.Figure,'Label','&Ok'      ,'callback',{@releaseButtonAfterCallback,@self.ok});
+            uimenu('parent',self.Figure,'Label','&Save and run','callback',{@releaseButtonAfterCallback,@self.ok_run});
+            uimenu('parent',self.Figure,'Label','&Save and exit','callback',{@releaseButtonAfterCallback,@self.ok_exit});
             uimenu('parent',self.Figure,'Label','&Cancel'  ,'callback',{@releaseButtonAfterCallback,@self.cancel});
+            
             
             % Set the figure icon & make visible
             jFrame = get(handle(self.Figure),'JavaFrame');
@@ -169,10 +171,14 @@ classdef Inspect < oop.handle_light
                 self.InitialState{2*ii  } = self.Object.(propname);
             end
         end
-        function ok(self,~,~)
-            self.Object.Inspector_LastButtonPressed = 'ok';
+        function ok_run(self,~,~)
+            self.Object.Inspector_LastButtonPressed = 'ok_run';
             self.delete;
         end
+        function ok_exit(self,~,~)
+            self.Object.Inspector_LastButtonPressed = 'ok_exit';
+            self.delete;
+        end        
         function cancel(self,~,~)
             try
                 self.undoAll();
