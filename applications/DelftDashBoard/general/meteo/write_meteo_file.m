@@ -131,6 +131,9 @@ end
 nmeteo=length(meteodir);
 
 % Add file separators to run dir
+if isempty(rundir)
+    rundir=['.' filesep];
+end
 if ~strcmpi(rundir(end),filesep)
     rundir=[rundir filesep];
 end
@@ -250,11 +253,11 @@ for imeteo=1:nmeteo
         it1=find(t>tstop-0.001&t<tstop+0.001,1,'first');
         
         if isempty(it0)
-            error(['First time ' datestr(tstart) ' not found in ' meteoname '!']);
+            error(['First time ' datestr(tstart) ' not found in ' meteoname{imeteo} '!']);
         end
         
         if isempty(it1)
-            error(['Last time ' datestr(tstop) ' not found in ' meteoname '!']);
+            error(['Last time ' datestr(tstop) ' not found in ' meteoname{imeteo} '!']);
         end
             
         nt=it1-it0+1;
