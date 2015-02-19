@@ -36,7 +36,7 @@ for i=1:hm.nrModels
 
     if isempty(nw)
 
-        % No nesting in this model
+        % No wave nesting in this model
         twok=t0(i)+hm.models(i).startTime/24;
         nested=1;
         m=i;

@@ -208,6 +208,11 @@ if isfield(xml,'dpsopt')
 else
     model.DpsOpt='MAX';
 end
+if isfield(xml,'dpuopt')
+    model.DpuOpt=xml.dpuopt;
+else
+    model.DpuOpt='MEAN';
+end
 if isfield(xml,'vicouv')
     model.VicoUV=str2double(xml.vicouv);
 else
@@ -787,6 +792,7 @@ end
 
 %% Map Datasets
 model.nrMapDatasets=0;
+model.fourier=0;
 if isfield(xml,'mapdatasets')
     model.nrMapDatasets=length(xml.mapdatasets.mapdatasets.dataset);
     for j=1:model.nrMapDatasets
@@ -794,6 +800,10 @@ if isfield(xml,'mapdatasets')
         model.mapDatasets(j).layer=[];
         if isfield(xml.mapdatasets.mapdatasets.dataset(j).dataset,'layer')
             model.mapDatasets(j).layer=str2double(xml.mapdatasets.mapdatasets.dataset(j).dataset.layer);
+        end
+        switch lower(xml.mapdatasets.mapdatasets.dataset(j).dataset.name)
+            case{'peak_water_level','peak_surge'}
+                model.fourier=1;
         end
     end
 end

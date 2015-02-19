@@ -141,6 +141,7 @@ if hm.getMeteo
     set(hm.textModelLoopStatus,'String','Status : Getting meteo data ...');drawnow;
     cosmos_getMeteoData(hm);
 end
+%hm=cosmos_download_cyclone_track_forecasts(hm);
 
 %% Ocean Model data
 if hm.getOceanModel
@@ -150,8 +151,8 @@ end
 
 %% Predictions and Observations
 if get(hm.toggleGetObservations,'Value')
-    set(hm.textModelLoopStatus,'String','Status : Getting observations ...');drawnow;
-    cosmos_getObservations(hm);
+     set(hm.textModelLoopStatus,'String','Status : Getting observations ...');drawnow;
+     cosmos_getObservations(hm);
     set(hm.textModelLoopStatus,'String','Status : Making predictions ...');drawnow;
     cosmos_getPredictions(hm);
 end

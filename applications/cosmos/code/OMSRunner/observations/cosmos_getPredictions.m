@@ -23,6 +23,9 @@ for i=1:hm.nrModels
                         iid=strmatch(prdid,hm.tideStations{idb}.IDCode,'exact');
                         if ~isempty(iid)
                             % Check if data will already be downloaded
+                            if length(iid)>1
+                                iid=iid(2);                                
+                            end
                             if sum(idbs==idb(1) & iids==iid(1))==0
                                 nobs=nobs+1;
                                 idbs(nobs)=idb(1);
