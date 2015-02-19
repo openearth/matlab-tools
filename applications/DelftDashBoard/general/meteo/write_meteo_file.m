@@ -83,6 +83,7 @@ dt=[];
 spwmergefrac=0.5;
 cs.name='WGS 84';
 cs.type='geographic';
+interpolationmethod='none';
 
 for i=1:length(varargin)
     if ischar(varargin{i})
@@ -103,6 +104,8 @@ for i=1:length(varargin)
                 cs=varargin{i+1}; % in minutes
             case{'reftime'}
                 reftime=varargin{i+1}; % in minutes
+            case{'interpolationmethod'}
+                interpolationmethod=varargin{i+1}; % in minutes
         end
     end
 end
@@ -404,6 +407,35 @@ if ~strcmpi(cs.type,'geographic')
             s.parameter(ipar).val(it,:,:)=interp2(s.parameter(ipar).x,s.parameter(ipar).y,val,xg,yg);
         end
     end
+end
+
+%% Apply spline
+switch lower(interpolationmethod)
+    case{'none'}
+    case{'linear'}
+        if isempty(dt)
+            error('Please specify interpolation time step!');
+        end
+        tt=s.parameter(ipar).time(1):dt/1440:s.parameter(ipar).time(end);
+        for ipar=1:npar
+            val=s.parameter(ipar).val;
+            val=interp1(s.parameter(ipar).time,val,tt);
+            s.parameter(ipar).val=val;
+            s.parameter(ipar).time=tt;        
+        end
+    case{'spline'}
+        if isempty(dt)
+            error('Please specify interpolation time step!');
+        end
+        tt=s.parameter(ipar).time(1):dt/1440:s.parameter(ipar).time(end);
+        for ipar=1:npar
+            val=s.parameter(ipar).val;
+            val=permute(val,[2 3 1]);
+            val=spline(s.parameter(ipar).time,val,tt);
+            val=permute(val,[3 1 2]);
+            s.parameter(ipar).val=val;
+            s.parameter(ipar).time=tt;
+        end
 end
 
 %% And write the data to model input files
