@@ -151,21 +151,20 @@ fprintf(fid,'%s\n','n_quantity       =    1                                     
 fprintf(fid,'%s\n',['quantity1        =    ' quantity '                                             # Name of quantity1']);
 fprintf(fid,'%s\n',['unit1            =    ' unit '                                              # Unit of quantity1']);
 fprintf(fid,'%s\n','### END OF HEADER');
-%fclose(fid);
 
 fmt=[repmat(fmt,1,ncols) '\n'];
 fmt=repmat(fmt,1,nrows);
 
 for it=1:length(parameter.time)
     tim=1440*(parameter.time(it)-reftime);
-    val=flipud(squeeze(parameter.val(it,:,:)));
+    val=squeeze(parameter.val(it,:,:));
+    val=val';
+    val=fliplr(val);
     val(val>1e7)=NaN;
     if ~isnan(max(max(val)))
         val(isnan(val))=-999;
-%        fid = fopen([fname '.' ext],'a');
         fprintf(fid,'%s\n',['TIME             =   ' num2str(tim,'%10.2f') '   minutes since ' datestr(reftime,'yyyy-mm-dd HH:MM:SS') ' +00:00']);
         fprintf(fid,fmt,val);
-%        dlmwrite([fname '.' ext],val,'precision','%10.2f','delimiter','','-append');
     else
         disp([quantity ' at time ' datestr(parameter.time(it)) ' contains only NaNs! Block skipped.']);
     end
