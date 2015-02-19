@@ -149,7 +149,7 @@ else
         ]);
 end
 
-fprintf(fid,'%s\n','Rhoa  = 1.0000000e+000');
+fprintf(fid,'%s\n','Rhoa  = 1.1500000e+000');
 fprintf(fid,'%s\n','Betac = 5.0000000e-001');
 fprintf(fid,'%s\n','Equili= #Y#');
 if kmax>1
@@ -198,11 +198,11 @@ fprintf(fid,'%s\n','Dryflp= #YES#');
 fprintf(fid,'%s\n',['Dpsopt= #' model.DpsOpt '#']);
 if strcmpi(model.layerType,'z')
     fprintf(fid,'%s\n','Dpuopt= #MIN#');
-else
-    fprintf(fid,'%s\n','Dpuopt= #MEAN#');
+else    
+    fprintf(fid,'%s\n',['Dpuopt= #'  model.DpuOpt '#']);
 end
 fprintf(fid,'%s\n','Dryflc= 1.0000000e-001');
-fprintf(fid,'%s\n','Dco   = -9.9900000e+002');
+fprintf(fid,'%s\n','Dco   = 1.0000000e+000');
 if ~isempty(model.flowRstFile) || model.makeIniFile
     fprintf(fid,'%s\n','Tlfsmo= 0.0000000e+000');
 else
@@ -314,6 +314,13 @@ if model.roller
     fprintf(fid,'%s\n','Thr   = 0.01');
 end
 
+if model.fourier
+    fprintf(fid,'%s\n',['Filfou= #' model.name '.fou' '#']);
+    [pathstr,name,ext]=fileparts(fname);
+    fifou=fopen([pathstr filesep model.name '.fou'],'wt');
+    fprintf(fifou,'%s      %s %s %i %f %f %s\n','wl',tout,tstop,1,1,0,'max');
+    fclose(fifou);
+end
 % %% WAQ output
 % switch(lower(model.type))
 %     case{'delft3dflowpart','delft3dflowwavepart'}

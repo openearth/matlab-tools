@@ -14,10 +14,11 @@ end
 
 %% Get nest file
 if model.waveNested
-    nr=model.waveNestNr;
+%    nr=model.waveNestNr;
     mm=model.waveNestModelNr;
     outputdir=[hm.models(mm).dir 'archive' filesep 'output' filesep hm.cycStr filesep];
-    fname=[outputdir 'nest' num2str(nr) '.ww3'];
+%    fname=[outputdir 'nest' num2str(nr) '.ww3'];
+    fname=[outputdir 'nest.' model.name '.ww3'];
     if exist(fname,'file')
         [success,message,messageid]=copyfile(fname,[tmpdir 'nest.ww3'],'f');
     end
@@ -38,7 +39,27 @@ dtrst=dtrst*86400;
 dt=3600;
 
 %% Write ww3_shel.inp
-writeWW3Shell(inpfile,model.tWaveStart,toutstart,model.tStop,dt,trststart,trststop,dtrst,nestrid,x,y);
+cosmos_write_ww3_shell(inpfile,model.tWaveStart,toutstart,model.tStop,dt,trststart,trststop,dtrst,nestrid,x,y);
+
+%% Write ww3_grid.inp
+inpfile=[hm.tempDir 'ww3_grid.inp'];
+boundary_points_file=[tmpdir model.name '.bnd'];
+% Nested WW3 models
+output_boundary_points_files=[];
+n=0;
+for i=1:hm.nrModels
+    if hm.models(i).waveNested && strcmpi(hm.models(i).type,'ww3') && strcmpi(hm.models(i).waveNestModel,model.name)
+        n=n+1;
+        output_boundary_points_files{n}=[hm.models(i).datafolder 'nesting' filesep model.name '.nst'];
+    end
+end
+% Obstructions
+includeobstructions=0;
+if exist([tmpdir model.name '.obs'],'file')
+    includeobstructions=1;
+end
+    
+cosmos_write_ww3_grid(inpfile,model,boundary_points_file,output_boundary_points_files,includeobstructions);
 
 %% Get meteo data
 
@@ -56,7 +77,7 @@ mdl='ww3';
 spwfile=[];
 dx=[];
 dy=[];
-dt=[];
+dt=60;
 if ~isempty(model.meteospw)
     spwfile=[hm.meteofolder 'spiderwebs' filesep model.meteospw];
     dx=0.1;
@@ -64,7 +85,8 @@ if ~isempty(model.meteospw)
     dt=60; % time step in minutes
 end
 
-s=write_meteo_file(meteodir, meteoname, parameter, tmpdir, fname, xlim, ylim, tstart, tstop, 'dx',dx,'dy',dy,'dt',dt,'spwfile',spwfile,'model',mdl);
+s=write_meteo_file(meteodir, meteoname, parameter, tmpdir, fname, xlim, ylim, tstart, tstop, 'dx',dx,'dy',dy,'dt',dt,'spwfile',spwfile,'model',mdl, ...
+    'interpolationmethod','spline','dt',dt);
 
 ww3_write_prep_inp([tmpdir 'ww3_prep.inp'],s.parameter(1).x,s.parameter(1).y,'WND');
 
