@@ -21,7 +21,7 @@ ExtractGrads(hm,m);
 par='windvel';
 ii=strmatch(model.meteowind,hm.meteoNames,'exact');
 dt=hm.meteo(ii).timeStep;
-data = extractMeteoData([hm.meteofolder model.meteowind filesep],model,dt,par);
+data = extractMeteoData(hm.meteofolder,model,dt,par);
 times = data.Time;
 s=[];
 s.Parameter=par;
@@ -164,6 +164,48 @@ if model.nrStations>0
             s3.Time=t;
             fname=[cycledirtimeseries filesep 'tp.' st '.mat'];
             save(fname,'-struct','s3','Parameter','Time','Val');
+
+            
+             % Wavdir
+            fname=[appendeddirtimeseries 'wavdir.' st '.mat'];
+            
+            s.Time=[];
+            s.Val=[];
+            if exist(fname,'file')
+                s=load(fname);
+                n1=find(s.Time<model.tOutputStart);
+                if ~isempty(n1)
+                    n1=n1(end);
+                    s.Time=s.Time(1:n1);
+                    s.Val=s.Val(1:n1);
+                else
+                    s.Time=[];
+                    s.Val=[];
+                end
+            end
+            
+            s2.Val=wavdir(:,istat);
+            s2.Time=t;
+            
+            n2=find(s2.Time>=model.tOutputStart);
+            n2=n2(1)+1;
+            
+            s2.Time=s2.Time(n2:end);
+            s2.Val=s2.Val(n2:end);
+            
+            s.Time=[s.Time;s2.Time];
+            s.Val=[s.Val;s2.Val];
+            
+            s.Parameter='wavdir';
+            fname=[appendeddirtimeseries 'wavdir.' st '.mat'];
+            save(fname,'-struct','s','Parameter','Time','Val');
+            
+            s3.Parameter='wavdir';
+            s3.Val=wavdir(:,istat);
+            s3.Time=t;
+            fname=[cycledirtimeseries filesep 'wavdir.' st '.mat'];
+            save(fname,'-struct','s3','Parameter','Time','Val');           
+            
             
 %        end
     end

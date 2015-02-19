@@ -7,8 +7,20 @@ inpdir=model.cycledirinput;
 outdir=model.cyclediroutput;
 restartdir=[model.dir 'restart' filesep];
 
-delete([rundir 'out_grd.ww3']);
+% Rename nest files
+n=0;
+for ii=1:hm.nrModels
+    if hm.models(ii).waveNested && strcmpi(hm.models(ii).type,'ww3') && strcmpi(hm.models(ii).waveNestModel,model.name)
+        n=n+1;
+        fname1=['nest' num2str(n) '.ww3'];
+        fname2=['nest.' hm.models(ii).name '.ww3'];
+        if exist([rundir fname1],'file')
+            movefile([rundir fname1],[rundir fname2]);
+        end
+    end
+end
 
+% Move model inputs
 [status,message,messageid]=movefile([rundir '*.inp'],inpdir,'f');
 [status,message,messageid]=movefile([rundir '*.bat'],inpdir,'f');
 [status,message,messageid]=movefile([rundir '*.sh'],inpdir,'f');
@@ -43,8 +55,10 @@ if nrst>0
     end
 end
 
-delete([rundir 'restart*']);
 [status,message,messageid]=copyfile([rundir 'mod_def.ww3'],inpdir,'f');
+
+delete([rundir 'restart*']);
+delete([rundir 'out_grd.ww3']);
 
 [status,message,messageid]=movefile([rundir '*.ww3'],outdir,'f');
 [status,message,messageid]=movefile([rundir '*.spc'],outdir,'f');
