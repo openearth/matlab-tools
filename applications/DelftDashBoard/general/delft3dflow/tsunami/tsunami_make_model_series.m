@@ -129,13 +129,15 @@ yy3=yg2+model.diston*sin(alph+0.5*pi);
 xx4=xg1+model.diston*cos(alph+0.5*pi);
 yy4=yg1+model.diston*sin(alph+0.5*pi);
 
-% Snap coordinates of grid origin to mesh with grid spacing of dx
-% First round coordinates of origin
-xx1round=roundnearest(xx1,model.dx);
-yy1round=roundnearest(yy1,model.dx);
+% Snap coordinates of cell centre of grid origin to mesh with grid spacing of dx
+% First round coordinates of cell centre of origin
+xz1=xx1+0.5*model.dx*cos(alph)-0.5*model.dy*sin(alph);
+yz1=yy1+0.5*model.dx*sin(alph)+0.5*model.dy*cos(alph);
+xz1round=roundnearest(xz1,model.dx);
+yz1round=roundnearest(yz1,model.dx);
 % Now determine difference between snapped origin and original origin
-ddxx=xx1round-xx1;
-ddyy=yy1round-yy1;
+ddxx=xz1round-xz1;
+ddyy=yz1round-yz1;
 % Now correct four corners of the grid
 xx1=xx1+ddxx;
 yy1=yy1+ddyy;
