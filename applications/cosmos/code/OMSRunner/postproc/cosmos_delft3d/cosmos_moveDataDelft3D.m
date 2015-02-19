@@ -96,6 +96,7 @@ end
 [status,message,messageid]=movefile([rundir 'tri*'],outdir,'f');
 [status,message,messageid]=movefile([rundir 'com-*.*'],outdir,'f');
 [status,message,messageid]=movefile([rundir 'wavm-*.d*'],outdir,'f');
+[status,message,messageid]=movefile([rundir 'fourier.*'],outdir,'f');
 
 % %% PART
 % [status,message,messageid]=movefile([rundir 'light_crude.csv'],outdir,'f');

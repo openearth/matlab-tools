@@ -94,6 +94,13 @@ for im=1:nmaps
                                 if ~isempty(model.mapPlots(im).datasets.colorBarDecimals)
                                     cdec=model.mapPlots(im).datasets.colorBarDecimals;
                                 end
+                                if ~isempty(model.mapPlots(im).datasets(id).cMinCutOff)
+                                    clim(1)=max(clim(1),model.mapPlots(im).datasets(id).cMinCutOff);
+                                end
+                                if ~isempty(model.mapPlots(im).datasets(id).cMaxCutOff)
+                                    clim(3)=max(clim(3),model.mapPlots(im).datasets(id).cMaxCutOff);
+                                end
+                                
                         end
                         nt=length(s(id).data.Time);
 
