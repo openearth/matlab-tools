@@ -129,6 +129,23 @@ yy3=yg2+model.diston*sin(alph+0.5*pi);
 xx4=xg1+model.diston*cos(alph+0.5*pi);
 yy4=yg1+model.diston*sin(alph+0.5*pi);
 
+% Snap coordinates of grid origin to mesh with grid spacing of dx
+% First round coordinates of origin
+xx1round=roundnearest(xx1,model.dx);
+yy1round=roundnearest(yy1,model.dx);
+% Now determine difference between snapped origin and original origin
+ddxx=xx1round-xx1;
+ddyy=yy1round-yy1;
+% Now correct four corners of the grid
+xx1=xx1+ddxx;
+yy1=yy1+ddyy;
+xx2=xx2+ddxx;
+yy2=yy2+ddyy;
+xx3=xx3+ddxx;
+yy3=yy3+ddyy;
+xx4=xx4+ddxx;
+yy4=yy4+ddyy;
+
 % ibathy is index of last (coarsest) bathymetry dataset (assuming here this is GEBCO)
 ibathy=strmatch(model.bathymetry(end).name,bathymetry.datasets,'exact');
 
@@ -415,3 +432,8 @@ fprintf(fid,'%s\n','wl         0.00      RDURKEY     1     1.00000     0.00000  
 fprintf(fid,'%s\n','uv         0.00      RDURKEY     1     1.00000     0.00000  1   max  inidryonly');
 fprintf(fid,'%s\n','eh         0.00      RDURKEY     1     1.00000     0.00000      max  inidryonly');
 fclose(fid);
+
+%%
+function val=roundnearest(a,d)
+n=round(a/d);
+val=n*d;
