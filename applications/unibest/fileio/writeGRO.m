@@ -2,23 +2,33 @@ function writeGRO(filename,GROdata,varargin)
 %write GRO : Writes a unibest groyne file
 %
 %   Syntax:
-%     function writeGRO(filename, xy, Ycross, BlockPerc, Yreference, option, xyl, ray_file1, xyr, ray_file2)
+%     function writeGRO(filename, GROdata)
 % 
 %   Input:
 %     filename             string with output filename
-%     xy                   xy values ([Nx2] matrix or string with filename), note: if xy is empty, it is not required to specify parameters below (i.e. Yoffset, BlockPerc, Yreference)
-%     Ycross               cross-shore distance of groyne ([Nx1] matrix in meters)
-%     BlockPerc            blocking percentage ([Nx1] matrix in percentages)
-%     Yreference           reference of Ycross ([Nx1] matrix with 0 = relative to shoreline (i.e. y(t)) and 1 = absolute, i.e. relative to reference line)
-%     option               type of local rays (specify either 'between&right', 'right', 'left', 'left&right' or 'between')
-%                          leave the option parameter empty ('') if you do not want to specify local rays.
+%     GROdata              Structure with fields:
+%         .Xw                   xy values ([Nx2] matrix or string with filename), note: if xy is empty, it is not required to specify parameters below (i.e. Yoffset, BlockPerc, Yreference)
+%         .Yw                   xy values ([Nx2] matrix or string with filename), note: if xy is empty, it is not required to specify parameters below (i.e. Yoffset, BlockPerc, Yreference)
+%         .Length               cross-shore distance of groyne ([Nx1] matrix in meters)
+%         .BlockPerc            blocking percentage ([Nx1] matrix in percentages)
+%         .Yreference           reference of Ycross ([Nx1] matrix with 0 = relative to shoreline (i.e. y(t)) and 1 = absolute, i.e. relative to reference line)
+%         .option               type of local rays (specify either 'between&right', 'right', 'left', 'left&right' or 'between')
+%                               leave the option parameter empty ('') if you do not want to specify local rays.
 %  
 %   Output:
 %     .gro file
 %
 %   Example:
-%     writeGRO('test.gro', [32000,56000] , 55, 3.5, 0, 1)
-%     writeGRO('test.gro', [32,56] , 55, 3.5, 2, {[31,55]},'a1',[33,57],'a2')
+%     GROdata.Yw = 32;
+%     GROdata.Length = 3.5;
+%     GROdata.BlockPerc = 100;
+%     GROdata.Yreference = 0;
+%     GROdata.option = 'left&right';
+%     GROdata.xyl         = [31,55];
+%     GROdata.ray_file1   = {'a1'};
+%     GROdata.xyr         = [33,57];
+%     GROdata.ray_file2   = {'a2'};
+%     writeGRO('test.gro', GROdata)
 %
 %   See also 
 
