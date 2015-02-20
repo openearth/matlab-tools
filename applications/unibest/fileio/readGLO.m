@@ -125,7 +125,7 @@ GLOdata.perc100 = part4(4);
 GLOdata.Xc      = part4(4);
 
 %% Close file
-fclose all;
+fclose(fid);
 end
 
 
