@@ -1,12 +1,36 @@
 function varargout = jonswap(f,varargin)
-%jonswap  jonswap spectrum
+%jonswap  1D or 2D jonswap spectrum
 %
 % jon = jonswap(f,'Hm0',Hm0,'Tp',Tp,<keyword,value>) 
 %
-% returns discretized JONSWAP spectrum at frequencies f, with energy Hm0 and peak
-% period Tp. For other keywords, call jonswap(), e.g.
-%
+% returns discretized 1D JONSWAP spectrum in [m2/Hz] at frequencies f, 
+% with energy Hm0 and peak period Tp. For other, non-required keywords, 
+% call jonswap(), e.g.
 % [jon,<factor_normalize>] = jonswap(f,..,'gamma',gamma,'normalize',1)
+%
+% jon = jonswap(f,'Hm0',Hm0,'Tp',Tp,'directions',d,'ms',ms,'pdir,pdir,'<keyword,value>) 
+%
+% returns discretized 2D JONSWAP spectrum in [m2/Hz/deg] at frequencies f 
+% and directions d, with peak direction pdir and directional spreading ms. 
+% ms can be a scalar or a vector with same length as frequencies f.
+%
+% Example: 1D spectrum
+%
+%    frq = linspace(0.03,.3,30);
+%    jn1 = jonswap(frq,'Hm0',1,'Tp',10);
+%    plot(frq,jn1);
+%    xlabel('frequency [Hz]');ylabel('Energy [m2/Hz]')
+%
+% Example: 2D spectrum
+%
+%    frq = linspace(0.03,.3,30);
+%    deg  = [0 30 55 75 90:10:180 195 215 240 270]; % linspace(0,360,24);
+%    jn2 = jonswap(frq,'Hm0',1,'Tp',10,'pdir',135,'directions',deg,'ms',6);
+%    subplot(1,2,1);pcolorcorcen(frq,deg,jn2,[.5 .5 .5]);ylim([0 360])
+%    title(4*sqrt(trapz(frq,trapz(deg,jn2))))
+%    xlabel('frequency [Hz]');ylabel('Direction [deg]');
+%    subplot(1,2,2);pcolor_spectral(frq, deg, jn2);
+%    colorbarwithhtext('Energy [m2/Hz/deg]','horiz')
 %
 %See also: swan, directional_spreading, waves
 
@@ -57,11 +81,20 @@ OPT.normalize = 1;
 OPT.sa        = 0.07;
 OPT.sb        = 0.09;
 
+OPT.pdir       = [];
+OPT.ms         = [];
+OPT.directions = [];
+
 if nargin==0
     varargout = {OPT};
     return
 end
 OPT = setproperty(OPT,varargin);
+
+%% checks
+
+if isempty(OPT.Hm0);error('Hm0 required');end
+if isempty(OPT.Tp );error('Tp  required');end
 
 %% Pierson-Moskowitz
 
@@ -79,12 +112,37 @@ OPT = setproperty(OPT,varargin);
 
     jon   = pm.*OPT.gamma.^exp(-0.5*(OPT.Tp*f-1).^2./sigma(f,1./OPT.Tp,OPT.sa,OPT.sb).^2);
 
-%% Optinally correct total energy of user-discretized spectrum to match Hm0, as above methods are only an approximation
+%% Optionally correct total energy of user-discretized spectrum to match Hm0, as above methods are only an approximation
 
     if OPT.normalize
         corr = OPT.Hm0.^2./(16*trapz(f,jon));
         jon  = jon.*corr;
     end
+
+%% 2D 
+    if     length([OPT.pdir OPT.ms OPT.directions])==0
+    elseif length([OPT.pdir length(OPT.ms) length(OPT.directions)])==3
+        if isscalar(OPT.ms)
+            OPT.ms = repmat(OPT.ms,size(f));
+        end
+        
+        jon2 = repmat(jon,[length(OPT.directions) 1]);
+        for iff=1:length(f)
+            cdir = directional_spreading(OPT.directions,OPT.pdir,OPT.ms(iff),'quiet',1);
+            jon2(:,iff) = cdir(:).*jon2(:,iff);
+        end
+
+        if OPT.normalize
+            corr = OPT.Hm0.^2./(16*trapz(f,trapz(OPT.directions,jon2)));
+            jon2  = jon2.*corr;
+        end        
+        
+        jon = jon2;
+    else            
+        error('for 2D spectrum specify (i) directions, (ii) ms , (iii) pdir for a 2D spectrum, or leave all [] for 1D spectrum')
+    end
+    
+%%
 
 varargout = {jon,corr};
 

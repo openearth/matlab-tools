@@ -49,6 +49,7 @@ function cdir = directional_spreading(directions,pdir,ms,varargin)
 
     OPT.units = 'deg';
     OPT.plot  = 0;
+    OPT.quiet = 0;
     
     if nargin==0
         varargout = {OPT};
@@ -82,7 +83,7 @@ function cdir = directional_spreading(directions,pdir,ms,varargin)
         % pass
     end
     int = trapz(directions,cdir);
-    if ~(abs(int-1)< 1e-6)
+    if ~(abs(int-1)< 1e-6) & ~(OPT.quiet)
         disp(['integral not 1 for ms=',num2str(ms),':',num2str(int)])
     end
     
