@@ -165,15 +165,14 @@ switch tp
         npar=ncols;
         dataset.selectcoordinates=1;        
         dataset.selectparameter=0;        
-        dataset.xcoordinate=columnlabels{1};
-        dataset.ycoordinate=columnlabels{2};        
+%         dataset.xcoordinate=columnlabels{1};
+%         dataset.ycoordinate=columnlabels{2};        
         for ipar=1:npar
             par=[];
             par=muppet_setDefaultParameterProperties(par);
             par.name=columnlabels{ipar};
             par.size=[0 0 0 0 0];
-            dataset.parameters(ipar).parameter=par;            
-            
+            dataset.parameters(ipar).parameter=par;                        
         end        
     case{'histogram'}
         % x and y

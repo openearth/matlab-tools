@@ -6,7 +6,7 @@ switch lower(opt)
         
         % Do as much as possible here and not in import function
         dataset.adjustname=0;
-        [pathstr,name,ext]=fileparts(dataset.filename);    
+        [pathstr,name,ext]=fileparts(dataset.filename);
         dataset.name=name;
 
         fid=fopen(dataset.filename);

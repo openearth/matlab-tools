@@ -47,7 +47,13 @@ if xtick>0.0
         st=ht;
         xticks=datenum(yt,mt,dt,ht,mit,st);
     end
-    xlabls=datestr(xticks+xback,plt.datetickformat);
+    if ~strcmpi(plt.datetickformat,'none')
+        xlabls=datestr(xticks+xback,plt.datetickformat);
+    else
+        for jj=1:length(xticks)
+            xlabls{jj}='';
+        end        
+    end
     set(gca,'xtick',xticks,'xticklabel',xlabls,'FontSize',8*fontred);
 else
     tick(gca,'x','none');
@@ -63,7 +69,9 @@ if plt.adddate
         for i=1:sz
             if xticks(i)==round(xticks(i)) && xticks(i)<=xmax && xticks(i)>=xmin;
                 datetxt(i)=text(xticks(i),ytxt,datestr(xticks(i),26));
-                set(datetxt(i),'FontSize',8*fontred,'HorizontalAlignment','center');
+                set(datetxt(i),'FontSize',plt.font.size*fontred,'HorizontalAlignment','center');
+                %% SECTION TITLE
+                % DESCRIPTIVE TEXT
             end
         end
     else
@@ -72,7 +80,7 @@ if plt.adddate
             dv=datevec(xticks(i));
             if dv(2)==1 && dv(3)==1 && xticks(i)<=xmax && xticks(i)>=xmin;
                 datetxt(i)=text(xticks(i),ytxt,datestr(xticks(i),10));
-                set(datetxt(i),'FontSize',8*fontred,'HorizontalAlignment','center');
+                set(datetxt(i),'FontSize',plt.font.size*fontred,'HorizontalAlignment','center');
             end
         end
     end

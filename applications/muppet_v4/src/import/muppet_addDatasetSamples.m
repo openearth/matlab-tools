@@ -16,7 +16,7 @@ switch lower(opt)
         dataset.y=squeeze(s(:,2));
         dataset.z=squeeze(s(:,3));
                         
-        dataset.type = 'scalar1dxy';
+        dataset.type = 'scalar1dxyz';
         dataset.tc='c';
 
 end

@@ -66,7 +66,7 @@ for ii=1:sz
         set(txt,'FontName',opt.font.name);
         set(txt,'FontWeight',opt.font.weight);
         set(txt,'FontAngle',opt.font.angle);
-        set(txt,'FontSize',opt.font.size);
+        set(txt,'FontSize',opt.font.size*handles.figures(i).figure.fontreduction);
         set(txt,'Color',colorlist('getrgb','color',opt.font.color));
     end
     

@@ -325,6 +325,13 @@ for ii=1:5
         arg{narg}=inparg{ii};    
     end
 end
+
+if ~isempty(dataset.subfields)
+    if isempty(dataset.subfields{1})
+        dataset.subfields=[];
+    end
+end
+
 % And get the data
 switch length(arg)
     case 1
@@ -354,7 +361,8 @@ switch length(arg)
         if ~isempty(dataset.subfields)
             d=qpread(fid,idomain,dataproperties,'griddata',dataset.subfieldnumber,arg{1},arg{2},arg{3});
         else
-            d=qpread(fid,idomain,dataproperties,'griddata',1,arg{1},arg{2},arg{3});
+%            d=qpread(fid,idomain,dataproperties,'griddata',1,arg{1},arg{2},arg{3});
+            d=qpread(fid,idomain,dataproperties,'griddata',arg{1},arg{2},arg{3});
         end
     case{4}
         if ~isempty(dataset.subfields)
