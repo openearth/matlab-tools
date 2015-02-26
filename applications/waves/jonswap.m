@@ -115,7 +115,7 @@ if isempty(OPT.Tp );error('Tp  required');end
 %% Optionally correct total energy of user-discretized spectrum to match Hm0, as above methods are only an approximation
 
     if OPT.normalize
-        corr = OPT.Hm0.^2./(16*trapz(f,jon));
+        corr = OPT.Hm0.^2./(16*trapz(f,jon)+eps);
         jon  = jon.*corr;
     end
 
@@ -133,7 +133,7 @@ if isempty(OPT.Tp );error('Tp  required');end
         end
 
         if OPT.normalize
-            corr = OPT.Hm0.^2./(16*trapz(f,trapz(OPT.directions,jon2)));
+            corr = OPT.Hm0.^2./(16*trapz(f,trapz(OPT.directions,jon2))+eps);
             jon2  = jon2.*corr;
         end        
         

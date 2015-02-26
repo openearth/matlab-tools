@@ -387,6 +387,7 @@ if iostat==1 %  0 when uigetfile was cancelled
 %                     extended to 5 for MUD version.
 %                        fixed at 1 for 2D spectrum.
 %                                 2 for new MUDFile.
+
             if strcmp(strtok(upper(rec)),'QUANT')
    
                rec = fgetl_no_comment_line(fid,'$');
@@ -713,7 +714,7 @@ if iostat==1 %  0 when uigetfile was cancelled
                      
                      DAT.(quantity_name)(iloc,:,:)   = data'; % note transpose
                      
-                  elseif strcmp(strtok(upper(rec)),'ZERO') % for whole blokc of zeros
+                  elseif strcmp(strtok(upper(rec)),'ZERO') % for whole block of zeros
                         
                      DAT.(quantity_name)(iloc,:,:)   = zeros([DAT.number_of_frequencies...
                                                               DAT.number_of_directions ]);
@@ -843,33 +844,33 @@ if iostat==1 %  0 when uigetfile was cancelled
                end % time
                
                if DAT.myc==1
-                  DAT.data_description = ['1st dimension = number_of_locations          ';
-                                          '2st dimension = number_of_frequencies        ';
-                                          '3rd dimension = number_of_directions         ';
-                                          'For plotting:                                ';
-                                          'd = swan_spectrum(filename);                 ';
-                                          'surf(d.frequency,d.directions,d.data)% or  ';
-                                          'pcolor(d.frequency,d.directions,d.data)    ';
-                                          'shading interp                               ';
-                                          'set(gca,''xscale'',''log'')                      ';
-                                          'xlabel(''freq [Hz]'')                          ';
-                                          'ylabel(''dir [\circ]'')                        '];
+                  DAT.data_description = char({'1st dimension = number_of_locations          ',
+                                          '2st dimension = number_of_frequencies        ',
+                                          '3rd dimension = number_of_directions         ',
+                                          'For plotting:                                ',
+                                          'd = swan_spectrum(filename);                 ',
+                                          'surf(d.frequency,d.directions,d.data)% or  ',
+                                          'pcolor(d.frequency,d.directions,d.data)    ',
+                                          'shading interp                               ',
+                                          'set(gca,''xscale'',''log'')                      ',
+                                          'xlabel(''freq [Hz]'')                          ',
+                                          'ylabel(''dir [\circ]'')                        '});
                elseif DAT.myc>1
                
                % reshape locations into 2D matrix if present
                
-                  DAT.data_description = ['1st dimension = mxc                          ';
-                                          '2nd dimension = myc                          ';
-                                          '3rd dimension = number_of_frequencies        ';
-                                          '4th dimension = number_of_directions         ';
-                                          'For plotting:                                ';
-                                          'd = swan_spectrum(filename);                 ';
-                                          'surf(d.frequency,d.directions,d.data)% or  ';
-                                          'pcolor(d.frequency,d.directions,d.data)    ';
-                                          'shading interp                               ';
-                                          'set(gca,''xscale'',''log'')                      ';
-                                          'xlabel(''freq [Hz]'')                          ';
-                                          'ylabel(''dir [\circ]'')                        '];
+                  DAT.data_description = char({'1st dimension = mxc                          ',
+                                          '2nd dimension = myc                          ',
+                                          '3rd dimension = number_of_frequencies        ',
+                                          '4th dimension = number_of_directions         ',
+                                          'For plotting:                                ',
+                                          'd = swan_spectrum(filename);                 ',
+                                          'surf(d.frequency,d.directions,d.data)% or  ',
+                                          'pcolor(d.frequency,d.directions,d.data)    ',
+                                          'shading interp                               ',
+                                          'set(gca,''xscale'',''log'')                      ',
+                                          'xlabel(''freq [Hz]'')                          ',
+                                          'ylabel(''dir [\circ]'')                        '});
 
                   DAT.(quantity_name) = reshape(DAT.(quantity_name),...
                                                [DAT.myc DAT.mxc DAT.number_of_frequencies DAT.number_of_directions]);
