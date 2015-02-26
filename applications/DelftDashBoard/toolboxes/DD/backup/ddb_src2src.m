@@ -37,7 +37,7 @@ while ~feof(fid)
     counter=counter+1;
     srcNames{counter}=deblank2(regel(1:20));
     typNames{counter}=deblank2(regel(21:22));
-    mnk=str2num(regel(23:end));
+    mnk=str2num(regel(23:47));
     srcM(counter)=mnk(1);
     srcN(counter)=mnk(2);
     srcK(counter)=mnk(3);
