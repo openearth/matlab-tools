@@ -174,6 +174,7 @@ classdef textbox < oop.inspectable
         ParentPosition
         parentBeingDestroyed
         parentPositionChanged
+        screenPixelsPerInch
     end
     
     properties
@@ -386,19 +387,24 @@ classdef textbox < oop.inspectable
             % clear old listeners
             delete(self.parentBeingDestroyed);
             delete(self.parentPositionChanged);
+            delete(self.screenPixelsPerInch);
             
             % set new listeners
             
             if verLessThan('matlab', '8.4')
                 self.parentPositionChanged = addlistener(...
-                    self.Parent,'Position','PostSet',@(varargin) self.ParentPositionChanged);
+                    self.Parent,'Position','PostSet',...
+                    @(varargin) self.ParentPositionChanged);
             else
                 self.parentPositionChanged = addlistener(...
-                    self.Parent,'LocationChanged',@(varargin) self.ParentPositionChanged);
+                    self.Parent,'LocationChanged',...
+                    @(varargin) self.ParentPositionChanged);
             end
+            self.screenPixelsPerInch = addlistener(0,'ScreenPixelsPerInch',...
+                'PostSet',@(varargin) self.ParentPositionChanged);
             
             self.parentBeingDestroyed  = addlistener(self.Parent,'ObjectBeingDestroyed',@(varargin) self.delete);
-            
+
             % store position
             self.ParentPosition = [get(self.Parent,'Position') get(0,'ScreenPixelsPerInch')];
             
@@ -412,13 +418,26 @@ classdef textbox < oop.inspectable
         end
         
         function ParentPositionChanged(self)
-          newParentPosition = [get(self.Parent,'Position') get(0,'ScreenPixelsPerInch')];
-          if ~isequal(...
-                  newParentPosition ([3 4 5]),...
-                  self.ParentPosition([3 4 5]));
-              self.update();
-              self.ParentPosition = newParentPosition;
-          end
+            self.update();
+            
+            % the code below was supposed to prevent updates when nothing was
+            % changed, but as there is a two step process in updating a
+            % figure position, (first update numbers, run callback one,
+            % then update firgure on screen, and callback second time) 
+            % the first time number change, but on screen nothing is
+            % different, so e.g. no wrapping, but second time figure
+            % properties (numbers) do not appear to have been changed, but
+            % on screen in fact they are, so there is no reliable way to
+            % know is recalculating wrapping is neccessary. 
+            % Solution: always recalculate
+            
+            % newParentPosition = [get(self.Parent,'Position') get(0,'ScreenPixelsPerInch')];
+            % if ~isequal(...
+            %       newParentPosition ([3 4 5]),...
+            %       self.ParentPosition([3 4 5]));
+            % 
+            %   self.ParentPosition = newParentPosition;
+            % end
         end
         
         %% core methods
@@ -504,6 +523,7 @@ classdef textbox < oop.inspectable
         function delete(self)
             delete(self.parentBeingDestroyed)
             delete(self.parentPositionChanged)
+            delete(self.screenPixelsPerInch)
             
             if ishghandle(self.ha)
                 delete(self.ha);
