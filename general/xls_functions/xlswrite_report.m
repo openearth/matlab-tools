@@ -43,8 +43,10 @@ for i_col = 2: size(cell_arr,2)
 end
 
 % topline allign right and bold font
-
-range = det_excel_range(1,1,1,size(cell_arr,2),'rowcol');
+range = det_excel_range(1,1,1,1,'rowcol');
+xlsallign(filename,sheetname,range,'horizontal',2);
+xlsfont  (filename,sheetname,range,'size',12,'fontstyle','bold' );
+range = det_excel_range(1,2,1,size(cell_arr,2),'rowcol');
 xlsallign(filename,sheetname,range,'horizontal',4);
 xlsfont  (filename,sheetname,range,'size',10,'fontstyle','bold' );
 
