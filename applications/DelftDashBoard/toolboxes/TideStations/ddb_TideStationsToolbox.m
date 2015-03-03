@@ -180,7 +180,7 @@ for ii=1:length(istation)
     
     wl=makeTidePrediction(tim,cmp,amp,phi,latitude, ...
         'timezone',handles.toolbox.tidestations.timeZone,'maincomponents',handles.toolbox.tidestations.usemaincomponents,'timezonestation',timezonestation, ...
-        'use_xtide',handles.toolbox.tidestations.use_xtide);
+        'saseqx',handles.toolbox.tidestations.saseqx);
     wl=wl+handles.toolbox.tidestations.verticalOffset;
     
     stationName=handles.toolbox.tidestations.database(iac).stationList{istat};
@@ -335,7 +335,7 @@ stationName=handles.toolbox.tidestations.database(iac).stationList{ii};
 
 latitude=handles.toolbox.tidestations.database(iac).y(ii);
 wl=makeTidePrediction(tim,handles.toolbox.tidestations.components,handles.toolbox.tidestations.amplitudes,handles.toolbox.tidestations.phases,latitude, ... 
-    'maincomponents',handles.toolbox.tidestations.usemaincomponents,'use_xtide',handles.toolbox.tidestations.use_xtide);
+    'maincomponents',handles.toolbox.tidestations.usemaincomponents,'saseqx',handles.toolbox.tidestations.saseqx);
 wl=wl+handles.toolbox.tidestations.verticalOffset;
 
 ddb_plotTimeSeries(tim,wl,stationName);

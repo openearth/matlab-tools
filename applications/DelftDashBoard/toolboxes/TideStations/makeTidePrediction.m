@@ -68,7 +68,7 @@ function wl = makeTidePrediction(tim, components, amplitudes, phases, latitude, 
 timeZone=0;
 timeZoneStation=0;
 maincomponents=0;
-use_xtide=0;
+saseqx=0;
 for i=1:length(varargin)
     if ischar(varargin{i})
         switch lower(varargin{i})
@@ -78,8 +78,8 @@ for i=1:length(varargin)
                 timeZoneStation=varargin{i+1};
             case{'maincomponents'}
                 maincomponents=varargin{i+1};
-            case{'use_xtide'}
-                use_xtide=varargin{i+1};
+            case{'saseqx'}
+                saseqx=varargin{i+1};
         end
     end
 end
@@ -102,21 +102,18 @@ for i=1:length(amplitudes)
             % Only use main components
             switch lower(cmp)
                 case{'m2','s2','k2','n2','k1','o1','p1','q1','mf','mm','m4','ms4','mn4'}
-%                case{'sa','ssa'}
+                    % Skip this component
+                    icont=1;
+                case{'sa','ssa'}
 %                case{'m2','s2','k2','n2','k1','o1','p1','q1'}
                     % Continue
-                    icont=1;
+                    icont=0;
                 otherwise
                     % Skip this component
                     icont=0;
             end
         end
-        
-        switch lower(cmp)
-            case{'sa'}
-            case{'ssa'}
-        end
-        
+                
         if icont
             k=k+1;
             names(k,:)=name;
@@ -129,57 +126,64 @@ for i=1:length(amplitudes)
                 phases(i)=mod(phases(i),360);
             end
             tidecon(k,3)=phases(i);
+            if saseqx
+                % Reference date SA component defined at spring equinox
+                switch lower(name)
+                    case{'sa  '}
+                        tidecon(k,3)=tidecon(k,3)+77; % Reference date SA component defined at spring equinox
+                end
+            end
             tidecon(k,4)=0;
         end
     end
 end
 
-if ~use_xtide
+%if ~use_xtide
     
     % Use t_predic.m
     
     wl=t_predic(tim,names,freq,tidecon,latitude);
     
-else
-
-    % Use t_xtide.m
-
-    xtide_struc=load('t_xtide.mat');
-    
-    xtide_struc.xharm.station='station';
-    xtide_struc.xharm.units='meters  ';
-    xtide_struc.xharm.longitude=-74;
-    xtide_struc.xharm.latitude=latitude;
-    xtide_struc.xharm.timezone=0;
-    xtide_struc.xharm.datum=0;
-    
-    xtide_struc.xharm.A=zeros(1,size(xtide_struc.xharm.A,2));
-    xtide_struc.xharm.kappa=xtide_struc.xharm.A;
-    
-    % Fill amplitudes and phases
-    for ii=1:length(freq)
-        ju=[];
-        for jj=1:size(xtide_struc.xtide.name,1)
-            if strcmpi(deblank2(xtide_struc.xtide.name(jj,:)),deblank2(names(ii,:)))
-                ju=jj;
-                break
-            end
-        end
-        if ~isempty(ju)
-            xtide_struc.xharm.A(ju)=tidecon(ii,1);
-            xtide_struc.xharm.kappa(ju)=tidecon(ii,3);
-%             disp([names(ii,:) ' ' num2str(tidecon(ii,1)) ' ' num2str(tidecon(ii,3))])
-        else
-            disp(['Component ' deblank2(names(ii,:)) ' not found!']);
-        end
-    end
-        
-    xtide_station='station';
-    info=t_xtide(xtide_station,tim,'units','metres','format','info','xtide_struc',xtide_struc);
-    wl=t_xtide(xtide_station,tim+info.timezone/24,'units','metres','xtide_struc',xtide_struc);
-    wl=wl-info.datum;
-
-end
+% else
+% 
+%     % Use t_xtide.m
+% 
+%     xtide_struc=load('t_xtide.mat');
+%     
+%     xtide_struc.xharm.station='station';
+%     xtide_struc.xharm.units='meters  ';
+%     xtide_struc.xharm.longitude=-74;
+%     xtide_struc.xharm.latitude=latitude;
+%     xtide_struc.xharm.timezone=0;
+%     xtide_struc.xharm.datum=0;
+%     
+%     xtide_struc.xharm.A=zeros(1,size(xtide_struc.xharm.A,2));
+%     xtide_struc.xharm.kappa=xtide_struc.xharm.A;
+%     
+%     % Fill amplitudes and phases
+%     for ii=1:length(freq)
+%         ju=[];
+%         for jj=1:size(xtide_struc.xtide.name,1)
+%             if strcmpi(deblank2(xtide_struc.xtide.name(jj,:)),deblank2(names(ii,:)))
+%                 ju=jj;
+%                 break
+%             end
+%         end
+%         if ~isempty(ju)
+%             xtide_struc.xharm.A(ju)=tidecon(ii,1);
+%             xtide_struc.xharm.kappa(ju)=tidecon(ii,3);
+% %             disp([names(ii,:) ' ' num2str(tidecon(ii,1)) ' ' num2str(tidecon(ii,3))])
+%         else
+%             disp(['Component ' deblank2(names(ii,:)) ' not found!']);
+%         end
+%     end
+%         
+%     xtide_station='station';
+%     info=t_xtide(xtide_station,tim,'units','metres','format','info','xtide_struc',xtide_struc);
+%     wl=t_xtide(xtide_station,tim+info.timezone/24,'units','metres','xtide_struc',xtide_struc);
+%     wl=wl-info.datum;
+% 
+% end
 
 %     xtide_station='atlantic city';
 %     info=t_xtide(xtide_station,tim,'units','metres','format','info');

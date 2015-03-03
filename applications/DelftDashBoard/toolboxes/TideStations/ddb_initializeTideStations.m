@@ -175,4 +175,4 @@ handles.toolbox.tidestations.polygonhandle=[];
 handles.toolbox.tidestations.tidesignalformat='tek';
 handles.toolbox.tidestations.tidalcomponentsformat='mat';
 
-handles.toolbox.tidestations.use_xtide=0;
+handles.toolbox.tidestations.saseqx=1;
