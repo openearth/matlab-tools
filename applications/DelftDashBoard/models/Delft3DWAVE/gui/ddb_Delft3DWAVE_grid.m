@@ -28,8 +28,25 @@ handles.model.delft3dwave.domain.nrgrids = nrgrids;
 handles.model.delft3dwave.domain.domains=ddb_initializeDelft3DWAVEDomain(handles.model.delft3dwave.domain.domains,nrgrids);
 handles.model.delft3dwave.domain.gridnames{nrgrids}=name;
 handles.activeWaveGrid=nrgrids;
-OPT.option = 'read'; OPT.filename = filename;
-handles = ddb_generateGridDelft3DWAVE(handles,nrgrids,OPT);
+id=nrgrids;
+
+[x,y,enc,coord]=ddb_wlgrid('read',filename);
+
+% handles.model.delft3dwave.domain.domains(id).coordsyst = coord;
+handles.model.delft3dwave.domain.domains(id).grid=filename;
+handles.model.delft3dwave.domain.domains(id).bedlevelgrid=filename;
+handles.model.delft3dwave.domain.domains(id).gridname=filename;
+
+handles.model.delft3dwave.domain.domains(id).gridx=x;
+handles.model.delft3dwave.domain.domains(id).gridy=y;
+
+nans=zeros(size(x));
+nans(nans==0)=NaN;
+handles.model.delft3dwave.domain.domains(id).depth=nans;
+
+handles.model.delft3dwave.domain.domains(id).mmax=size(x,1);
+handles.model.delft3dwave.domain.domains(id).nmax=size(x,2);
+
 % Set NestGrids
 if handles.model.delft3dwave.domain.nrgrids>1
    handles.model.delft3dwave.domain.domains(nrgrids).nestgrid=handles.model.delft3dwave.domain.gridnames{1};
