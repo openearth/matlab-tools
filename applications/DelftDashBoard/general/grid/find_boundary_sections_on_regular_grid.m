@@ -1,4 +1,13 @@
-function bnd=findboundarysectionsonregulargrid(xg,yg,varargin)
+function [bnd0,circ,sections]=find_boundary_sections_on_regular_grid(xg,yg,varargin)
+
+if nargin==2
+    % No depth specified
+    zg=zeros(size(xg))+1;
+    thresh=0;
+else
+    zg=varargin{1};
+    thresh=varargin{2};
+end
 
 br=0;
 % Find first boundary
@@ -90,16 +99,22 @@ while 1
     end
     switch dr
         case{'up','right'}
-            bnd(nbnd).m1=ii;
-            bnd(nbnd).n1=jj;
-            bnd(nbnd).m2=ii2;
-            bnd(nbnd).n2=jj2;
+            bnd0(nbnd).m1=ii;
+            bnd0(nbnd).n1=jj;
+            bnd0(nbnd).m2=ii2;
+            bnd0(nbnd).n2=jj2;
         case{'down','left'}
-            bnd(nbnd).m1=ii2;
-            bnd(nbnd).n1=jj2;
-            bnd(nbnd).m2=ii;
-            bnd(nbnd).n2=jj;
+            bnd0(nbnd).m1=ii2;
+            bnd0(nbnd).n1=jj2;
+            bnd0(nbnd).m2=ii;
+            bnd0(nbnd).n2=jj;
     end
+    
+    bnd(nbnd).m1=ii;
+    bnd(nbnd).n1=jj;
+    bnd(nbnd).m2=ii2;
+    bnd(nbnd).n2=jj2;
+
     ii=ii2;
     jj=jj2;
     if ii2==ii1 && jj2==jj1
@@ -142,6 +157,8 @@ end
 xb=[xb(ifirstdry+1:end) xb(1:ifirstdry)];
 yb=[yb(ifirstdry+1:end) yb(1:ifirstdry)];
 zb=[zb(ifirstdry+1:end) zb(1:ifirstdry)];
+m=[m(ifirstdry+1:end) m(1:ifirstdry)];
+n=[n(ifirstdry+1:end) n(1:ifirstdry)];
 
 % Now find sections with consecutive points that exceed thresh
 nsec=0;
@@ -149,7 +166,7 @@ sections=[];
 findnewsection=1;
 for ib=1:length(xb)
     if findnewsection
-        if zb(ib)>thresh
+        if zb(ib)<thresh
             % New section found
             findnewsection=0;
             nsec=nsec+1;
@@ -163,7 +180,7 @@ for ib=1:length(xb)
             % No new section found yet, so continue ...
         end
     else
-        if zb(ib)<thresh
+        if zb(ib)>thresh
             % End of section found
             findnewsection=1;
         else
@@ -176,3 +193,10 @@ for ib=1:length(xb)
         end        
     end    
 end
+
+circ.x=xb;
+circ.y=yb;
+circ.z=zb;
+circ.m=m;
+circ.n=n;
+
