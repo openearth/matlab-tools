@@ -112,7 +112,13 @@ end
 %%
 function tableHandle=createTable(fig,tag,parent,position,nrcolumns,nrrows,columntypes,width,data,popuptext,pushtext,enab,callbacks,fmt,includebuttons,includenumbers,columntext,callback)
 
-tableHandle=uipanel(parent,'Units','pixels','Parent',parent,'Tag',tag,'Position',[position(1) position(2) 10 10],'BorderType','none','BackgroundColor','none');
+cl=get(fig,'Color');
+
+if verLessThan('matlab', '8.4')
+    tableHandle=uipanel(parent,'Units','pixels','Parent',parent,'Tag',tag,'Position',[position(1) position(2) 10 10],'BorderType','none','BackgroundColor','none');
+else
+    tableHandle=uipanel(parent,'Units','pixels','Parent',parent,'Tag',tag,'Position',position,'BorderType','none','BackgroundColor',cl,'Clipping','off');
+end
 
 if isempty(width)
     for j=1:nrcolumns
@@ -128,17 +134,29 @@ end
 posx0=1;
 posy0=1;
 
-cl=get(fig,'Color');
-
 usd.numberHandles=[];
-if includenumbers
-    posy=posy0+nrrows*20-20;
-    for i=1:nrrows
-        h=uicontrol(parent,'Style','text','Parent',tableHandle,'String',num2str(i),'Position',[posx0-18 posy-3 15 20],'HorizontalAlignment','right');
-        set(h,'BackgroundColor',cl);
-        posy=posy-20;
-        usd.numberHandles(i)=h;
-        set(h,'Parent',tableHandle);
+if verLessThan('matlab', '8.4')
+    if includenumbers
+        posy=posy0+nrrows*20-20;
+        for i=1:nrrows
+            h=uicontrol(parent,'Style','text','Parent',tableHandle,'String',num2str(i),'Position',[posx0-20 posy-3 18 20],'HorizontalAlignment','right');
+            set(h,'BackgroundColor',cl);
+            posy=posy-20;
+            usd.numberHandles(i)=h;
+            set(h,'Parent',tableHandle);
+        end
+    end
+else
+    if includenumbers
+        posx0=posx0+18;
+        posy=posy0+nrrows*20-20;
+        for i=1:nrrows
+            h=uicontrol(parent,'Style','text','Parent',tableHandle,'String',num2str(i),'Position',[posx0-20 posy-3 20 20],'HorizontalAlignment','right');
+            set(h,'BackgroundColor',cl);
+            posy=posy-20;
+            usd.numberHandles(i)=h;
+            set(h,'Parent',tableHandle);
+        end
     end
 end
 
@@ -237,6 +255,23 @@ usd.callback=callback;
 set(tableHandle,'UserData',usd);
 refreshVerticalSlider(tableHandle);
 refreshTable(tableHandle,{'enable',enab});
+
+if verLessThan('matlab', '8.4')
+else
+    orx=position(1);
+    ory=position(2);
+    wdt=posx+25;
+    hgt=nrrows*20;
+    if includenumbers
+        orx=orx-18;
+        wdt=wdt+18;
+    end
+    if ~isempty(columntext)
+        hgt=hgt+20;
+    end
+    postab=[orx ory wdt hgt];
+    set(tableHandle,'position',postab);
+end
 
 %%
 function changeTable(tb,data)

@@ -227,7 +227,7 @@ pos=[panelPosition(1)-1 panelPosition(2)-1 panelPosition(3)+2 panelPosition(4)+2
 if verLessThan('matlab', '8.4')
     panelHandle = uipanel(fig,'Parent',parent,'Units','pixels','Position',pos,'BorderType','none','BackgroundColor','none','Tag',panelname);
 else
-    panelHandle = uipanel(fig,'Parent',parent,'Units','pixels','Position',pos,'BorderType','none','BackgroundColor','w','Tag',panelname);
+    panelHandle = uipanel(fig,'Parent',parent,'Units','pixels','Position',pos,'BorderType','none','BackgroundColor',foregroundColor,'Tag',panelname);
 end
 
 for i=1:ntabs
@@ -257,14 +257,15 @@ setappdata(panelHandle,'element',element);
 % Create new main panel
 visph = uipanel(fig,'Units','pixels','Parent',panelHandle,'Position',[1 1 panelPosition(3) panelPosition(4)],'BorderType','beveledout','BackgroundColor',foregroundColor);
 
-pos=[1 1 panelPosition(3) panelPosition(4)+20];
+%pos=[1 1 panelPosition(3) panelPosition(4)+20];
+pos=[1 1 panelPosition(3) panelPosition(4)];
 
 % Create one large tab to put elements in
 
 if verLessThan('matlab', '8.4')
     largeTab = uipanel(fig,'Parent',panelHandle,'Units','pixels','Position',pos,'Tag','largeTab','BorderType','none','BackgroundColor','none','Visible','on','HitTest','off');
 else
-    largeTab = uipanel(fig,'Parent',panelHandle,'Units','pixels','Position',pos,'Tag','largeTab','BorderType','none','BackgroundColor','w','Visible','on','HitTest','off');
+    largeTab = uipanel(fig,'Parent',panelHandle,'Units','pixels','Position',pos,'Tag','largeTab','BorderType','beveledout','BackgroundColor',foregroundColor,'Visible','on','HitTest','off');
 end
 
 % Add blank texts
@@ -384,12 +385,13 @@ function clickTab(hObject,eventdata)
 usd=get(hObject,'UserData');
 h=usd.panelHandle;
 nr=usd.nr;
-enable=get(hObject,'Enable');
-
-switch lower(enable)
-    case{'off'}
-    otherwise
-        select(h,nr,'withcallback');
+try
+    enable=get(hObject,'Enable');    
+    switch lower(enable)
+        case{'off'}
+        otherwise
+            select(h,nr,'withcallback');
+    end
 end
 
 %%
@@ -491,7 +493,11 @@ function resizeTabPanel(h,panelPosition)
 
 panel=get(h,'UserData');
 
-posInvisibleTab=[panelPosition(1)-1 panelPosition(2)-1 panelPosition(3)+2 panelPosition(4)+20];
+if verLessThan('matlab', '8.4')
+    posInvisibleTab=[panelPosition(1)-1 panelPosition(2)-1 panelPosition(3)+2 panelPosition(4)+20];
+else
+    posInvisibleTab=[panelPosition(1)-1 panelPosition(2)-1 panelPosition(3)+2 panelPosition(4)+20];
+end
 
 % Outer (invisible) panel
 set(h,'Position',posInvisibleTab);
@@ -506,7 +512,11 @@ bottomTextMargin=3;
 vertPosTabs=panelPosition(4)-1;
 vertPosText=vertPosTabs+bottomTextMargin;
 
+if verLessThan('matlab', '8.4')
 posLargeTabs=[1 1 panelPosition(3) panelPosition(4)+20];
+else
+posLargeTabs=[1 1 panelPosition(3) panelPosition(4)];
+end
 
 set(panel.largeTabHandle,'Position',posLargeTabs);
 

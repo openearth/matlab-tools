@@ -270,6 +270,7 @@ if ~isempty(x)
     set(h,'FontAngle',options.font.angle);
     set(h,'Color',options.font.color);
     set(h,'HitTest','off');
+%    set(h,'Rotation',20);
     
     setappdata(hg,'texthandle',h);
     setappdata(hg,'x',x);
