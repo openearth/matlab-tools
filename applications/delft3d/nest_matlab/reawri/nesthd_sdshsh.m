@@ -19,11 +19,11 @@
 %----------------------------------------------------------------------
 %     Get the waterlevel data
 %----------------------------------------------------------------------
-         wl = waquaio  (sds,[],'wlstat',0,istat);
+         wl = waquaio  (sds,[],'wlstat',1:nfs_inf.notims,istat);
       end
       if strcmpi(vartype,'c')  || strcmpi(vartype,'all')
 %----------------------------------------------------------------------
 %     Get the velocity data
 %----------------------------------------------------------------------
-         [uu,vv] = waquaio(sds,[],'uv-stat',0,istat);
+         [uu,vv] = waquaio(sds,[],'uv-stat',1:nfs_inf.notims,istat);
       end

@@ -23,7 +23,7 @@ for ibnd = 1 : no_bnd
     profile = 'uniform';
     if bnd.DATA(ibnd).datatype == 'T'
         k=k+1;
-        switch lower(bnd.DATA(ibnd).bndtype)
+        switch lower(bnd.DATA((ibnd - 1)*2 + 1).bndtype)
             case{'z'}
                 quant='Water elevation (Z)  ';
                 unit='[m]';
@@ -55,7 +55,7 @@ for ibnd = 1 : no_bnd
         Info.NTables=k;
         Info.Table(k).Name=['Boundary Section : ' num2str(ibnd)];
         Info.Table(k).Contents=profile;
-        Info.Table(k).Location=bnd.DATA(ibnd).name;
+        Info.Table(k).Location=bnd.DATA((ibnd - 1)*2 + 1).name;
         Info.Table(k).TimeFunction='non-equidistant';
         Info.Table(k).ReferenceTime=nfs_inf.itdate;
         Info.Table(k).TimeUnit='minutes';
