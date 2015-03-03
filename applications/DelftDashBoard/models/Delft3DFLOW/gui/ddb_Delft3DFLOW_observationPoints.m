@@ -188,14 +188,18 @@ if ~isempty(m1)
     if m1>0
         if handles.model.delft3dflow.domain(ad).changeObservationPoint
             iac=handles.model.delft3dflow.domain(ad).activeObservationPoint;
+            handles.model.delft3dflow.domain(ad).observationPoints(iac).M=m1;
+            handles.model.delft3dflow.domain(ad).observationPoints(iac).N=n1;
         else
             % Add mode
             handles.model.delft3dflow.domain(ad).nrObservationPoints=handles.model.delft3dflow.domain(ad).nrObservationPoints+1;
             iac=handles.model.delft3dflow.domain(ad).nrObservationPoints;
+            handles.model.delft3dflow.domain(ad).observationPoints(iac).M=m1;
+            handles.model.delft3dflow.domain(ad).observationPoints(iac).N=n1;
+            handles.model.delft3dflow.domain(ad).observationPoints(iac).name=['(' num2str(m1) ',' num2str(n1) ')'];
         end
-        handles.model.delft3dflow.domain(ad).observationPoints(iac).M=m1;
-        handles.model.delft3dflow.domain(ad).observationPoints(iac).N=n1;
-        handles.model.delft3dflow.domain(ad).observationPoints(iac).name=['(' num2str(m1) ',' num2str(n1) ')'];
+        handles.model.delft3dflow.domain(ad).observationPoints(iac).x=x1;
+        handles.model.delft3dflow.domain(ad).observationPoints(iac).y=y1;
         handles.model.delft3dflow.domain(ad).observationPointNames{iac}=handles.model.delft3dflow.domain(ad).observationPoints(iac).name;
         handles.model.delft3dflow.domain(ad).activeObservationPoint=iac;
         handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','observationpoints');

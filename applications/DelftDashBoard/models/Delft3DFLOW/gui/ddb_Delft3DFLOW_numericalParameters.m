@@ -88,15 +88,16 @@ else
             end
             
             if strcmpi(handles.model.delft3dflow.domain(ad).dpsOpt,'DP')
-                switch handles.model.delft3dflow.domain(ad).dpuOpt
-                    case{'min','upw'}
+                switch lower(handles.model.delft3dflow.domain(ad).dpuOpt)
+                    case{'min','upw','mean_dps'}
+                        %
                     otherwise
-                        handles.model.delft3dflow.domain(ad).dpuOptions={'MIN','UPW'};
+                        handles.model.delft3dflow.domain(ad).dpuOptions={'MIN','UPW','MEAN_DPS'};
                         handles.model.delft3dflow.domain(ad).dpuOpt='MIN';
                         setHandles(handles);
                 end
             else
-                handles.model.delft3dflow.domain(ad).dpuOptions={'MEAN','MIN','UPW','MOR'};
+                handles.model.delft3dflow.domain(ad).dpuOptions={'MEAN','MIN','UPW','MOR','MEAN_DPS'};
                 setHandles(handles);
             end
     end

@@ -104,8 +104,10 @@ if ~isempty(posx)
             istation(nrp)=istat(i);
             mm(nrp)=m(i);
             nn(nrp)=n(i);
-            posx2(nrp)=posx(i);
-            posy2(nrp)=posy(i);
+%             posx2(nrp)=posx(i);
+%             posy2(nrp)=posy(i);
+            posx2(nrp)=handles.model.delft3dflow.domain(ad).gridXZ(m(i),n(i));
+            posy2(nrp)=handles.model.delft3dflow.domain(ad).gridYZ(m(i),n(i));
         end
     end
 end
