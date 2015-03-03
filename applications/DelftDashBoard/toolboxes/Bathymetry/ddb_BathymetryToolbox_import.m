@@ -127,6 +127,9 @@ try
             s=load(handles.toolbox.bathymetry.import.dataFile);
             x0=s.x(1);
             y0=s.y(1);
+            dx=s.x(2)-s.x(1);
+            dy=s.y(2)-s.y(1);
+            
         case{'netcdf'}
             wb = waitbox('Reading data file ...');
             x=nc_varget(handles.toolbox.bathymetry.import.dataFile,'x');
