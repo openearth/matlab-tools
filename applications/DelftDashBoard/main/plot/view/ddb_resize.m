@@ -108,10 +108,17 @@ set(handles.GUIHandles.mapAxisPanel,'Position',pos);
 set(handles.GUIHandles.mapAxis,'Position',[1 1 pos(3)-5 pos(4)-5]);
 
 % Now change size of colorbar
-pos=[posp(3)-35 20 20 posp(4)-50];
-set(handles.GUIHandles.colorBarPanel,'Position',pos);
-pos=[2 2 15 posp(4)-55];
-set(handles.GUIHandles.colorBar,'Position',pos);
+if verLessThan('matlab', '8.4')
+    pos=[posp(3)-35 20 20 posp(4)-50];
+    set(handles.GUIHandles.colorBarPanel,'Position',pos);
+    pos=[2 2 15 posp(4)-55];
+    set(handles.GUIHandles.colorBar,'Position',pos);
+else
+    pos=[posp(3)-80 10 70 posp(4)-30];
+    set(handles.GUIHandles.colorBarPanel,'Position',pos);
+    pos=[55 12 15 posp(4)-55];
+    set(handles.GUIHandles.colorBar,'Position',pos);
+end
 
 % Now change size of coordinate system text
 set(handles.GUIHandles.textXCoordinate,'Position',[350 posp(4)-25 80 15]);

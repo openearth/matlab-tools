@@ -69,11 +69,10 @@ posx=pos(1,1);
 posy=pos(1,2);
 xlim=get(ax,'xlim');
 ylim=get(ax,'ylim');
-
+strx='X : ';
+stry='Y : ';
+strz='Z : ';
 if posx<=xlim(1) || posx>=xlim(2) || posy<=ylim(1) || posy>=ylim(2)
-    strx='X : ';
-    stry='Y : ';
-    strz='Z : ';
     set(gcf,'Pointer','arrow');
 else
     if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')

@@ -75,7 +75,7 @@ switch lower(opt)
         if verLessThan('matlab', '8.4')
             set(handles.GUIHandles.colorBarPanel,'BorderType','beveledout','BorderWidth',1,'BackgroundColor','none');
         else
-            set(handles.GUIHandles.colorBarPanel,'BorderType','beveledout','BorderWidth',1,'BackgroundColor','w');
+            set(handles.GUIHandles.colorBarPanel,'BorderType','none','BorderWidth',1,'BackgroundColor',handles.backgroundColor);
         end
         set(handles.GUIHandles.colorBarPanel,'Position',pos);
         clrbar=axes;

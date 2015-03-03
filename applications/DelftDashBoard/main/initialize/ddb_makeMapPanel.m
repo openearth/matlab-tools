@@ -70,7 +70,7 @@ handles=getHandles;
 if verLessThan('matlab', '8.4')
     handles.GUIHandles.mapPanel=uipanel('Units','pixels','Position',[5 175 870 440],'Parent',handles.model.delft3dflow.GUI.element(1).element.handle,'BorderType','none','BackgroundColor','none');
 else
-    handles.GUIHandles.mapPanel=uipanel('Units','pixels','Position',[5 175 870 440],'Parent',handles.model.delft3dflow.GUI.element(1).element.handle,'BorderType','none','BackgroundColor','w');
+    handles.GUIHandles.mapPanel=uipanel('Units','pixels','Position',[5 175 870 440],'Parent',handles.model.delft3dflow.GUI.element(1).element.handle,'BorderType','none','BackgroundColor',handles.backgroundColor);
 end
 
 % Add map axis

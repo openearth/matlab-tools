@@ -91,7 +91,8 @@ if exist([xmldir fname],'file')>0
             handles.toolbox.(name).formodel{1}=xml.formodel;
         end
     end
-    
+    handles.toolbox.(name).GUI.element=xml.element;
+else
+    disp([xmldir fname ' not found!']);
 end
 
-handles.toolbox.(name).GUI.element=xml.element;
