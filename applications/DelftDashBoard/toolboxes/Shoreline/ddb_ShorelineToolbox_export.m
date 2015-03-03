@@ -99,7 +99,6 @@ for i=1:length(scl)
     handles.toolbox.shoreline.scaleText{i}=['1 : ' num2str(scl(i),'%20.0f')];
 end
 setHandles(handles);
-% setUIElements('shorelinepanel.export');
 
 %%
 function exportData
@@ -138,7 +137,8 @@ if handles.shorelines.shoreline(handles.toolbox.shoreline.activeDataset).isAvail
     close(wb);
     
     % Save shoreline
-    saveLdb(filename,x,y,handles.screenParameters.coordinateSystem.type);
+    xy=[x' y'];
+    fix_ldb_from_dashboard('xy',xy,'filename_out',filename,'minarea',0,'close',1);
     
 end
 
