@@ -12,14 +12,14 @@ function varargout = delft3d_io_ann(cmd,varargin)
 %
 %    [x,y,<txt>] = DELFT3D_IO_ANN('read',filename);
 %
-%    D = DELFT3D_IO_ANN('read',filename,scale) 
+%    D = DELFT3D_IO_ANN('read',filename,scale)
 %    multiplies x and y with scale
 %
-%    D = DELFT3D_IO_ANN('read',filename,xscale,yscale) 
+%    D = DELFT3D_IO_ANN('read',filename,xscale,yscale)
 %    multiplies x and y with xscale and yscale respectively.
 %
-%    iostat = DELFT3D_IO_ANN('write',filename,D.DATA) 
-%    iostat = DELFT3D_IO_ANN('write',filename,x,y,txt) 
+%    iostat = DELFT3D_IO_ANN('write',filename,D.DATA)
+%    iostat = DELFT3D_IO_ANN('write',filename,x,y,txt)
 %
 % See also: TEKAL, LANDBOUNDARY, DELFT3D_IO_XYN
 
@@ -102,15 +102,15 @@ end;
 function [S,iostat]=Local_read(varargin)
 
    fname = varargin{1};
-   
+
    tmp               = dir(fname);
    if length(tmp)==0
       error(['Annotation file ''',fname,''' does not exist.'])
    end
    S.name  = tmp.name ;
    S.date  = tmp.date ;
-   S.bytes = tmp.bytes;   
-   
+   S.bytes = tmp.bytes;
+
    if nargin>2
        xscale = varargin{2};
        yscale = varargin{2};
@@ -123,7 +123,7 @@ function [S,iostat]=Local_read(varargin)
    end
 
    RAWDATA = tekal('open',fname);
-   
+
    if strcmp(RAWDATA.Check,'OK')
       for i=1:length(RAWDATA.Field)
          SUBSET         = tekal('read',RAWDATA,i);
@@ -138,12 +138,12 @@ function [S,iostat]=Local_read(varargin)
       S.DATA.txt = [];
       S.iostat   = 0;
    end
-   
+
    iostat = S.iostat;
-   
+
 % ------------------------------------
 
-function iostat=Local_write(varargin)   
+function iostat=Local_write(varargin)
 
 OPT.Muppet   = false;
 filename     = varargin{1};
@@ -159,7 +159,7 @@ else
    if nargin > 2
        OPT = setproperty(OPT,varargin{5:end});
    end
-       
+
 end
 
 iostat       = 1;
@@ -171,32 +171,32 @@ OS           = 'windows';
 if ~OPT.Muppet
     fprintf  (fid,'%s',['* File created on ',datestr(now),' with matlab function delft3d_io_ann.m']);
     fprinteol(fid,OS);
-    
+
     fprintf  (fid,'%s',['BLOCK01']);
     fprinteol(fid,OS);
-    
+
     fprintf  (fid,'%d ',length(S.x));
     fprintf  (fid,'%d ',3             );
     fprinteol(fid,OS);
-    
+
     %% Table
-    
+
     for istat=1:length(S.x)
-        
+
         fprintf  (fid,'%f ',S.x  (istat));
         fprintf  (fid,'%f ',S.y  (istat));
         fprintf  (fid,'%s ',S.txt{istat});
         fprinteol(fid,OS);
-        
+
     end
 else
     for istat=1:length(S.x)
-        
+
         fprintf  (fid,'%f ',S.x  (istat));
         fprintf  (fid,'%f ',S.y  (istat));
         fprintf  (fid,'%s ',['"' S.txt{istat} '"']);
         fprinteol(fid,OS);
-        
+
     end
 end
 
