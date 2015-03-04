@@ -1,6 +1,6 @@
-      function wrinst (fid,bnd,mcnes,ncnes,weight,type,varargin)
+      function nesthd_wrinst (fid,bnd,mcnes,ncnes,weight,type,varargin)
 
-      % wrinst: writes the list of nesting stations
+      % nesthd_wrinst      : writes the list of nesting stations
       %
       % subroutine         : wrinst
       % version            : v1.1
