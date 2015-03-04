@@ -33,6 +33,7 @@
       fid_obs       = fopen(files{4},'w+');
       fid_adm       = fopen(files{5},'w+');
       sphere        = false;
+
       %
       % Read overall grid; Make the icom matrix (active, inactive)
       %
@@ -68,6 +69,15 @@
 
       nesthd_wrista (fid_obs,files{4},mcnes,ncnes,length(bnd.DATA));
       nesthd_wrinst (fid_adm,bnd, mcnes , ncnes , weight,'WL ');
+
+      %
+      % TK new (suggestion for structure) not based on M,N coordinates but based upon names
+      %
+
+      string_mnbsp = nesthd_convertmn2string(bnd.m,bnd.n)
+      string_mnnes = nesthd_convertmn2string(mcnes,ncnes)
+      nesthd_wrinst (fid_adm_2,string_mnbcp,stringmnnes,weight,'WL ');
+      nesthd_wrista (fid_obs,files{4},string_mnnes,length(bnd.DATA));
 
       %
       % Same story, this time for (perpendicular) velocity boundaries
