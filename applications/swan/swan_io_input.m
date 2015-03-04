@@ -638,6 +638,10 @@ end
 % use previous rec or check whetehr rec is empty next time
             rec3 = rec(1:3); % BOUndspec
             while lower(rec3)=='bou'
+                
+               if ~exist('SHAPESPEC','var')
+                   SHAPESPEC = struct(); % BOUND not needed in case of 1d or 2d spectra at boundary, so initialize it empty
+               end
 
                if OPT.debug
                   disp('BOUN')

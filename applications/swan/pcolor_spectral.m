@@ -65,8 +65,8 @@ axis tight;
 noaxis(OPT.ax)
 
 %% ticks anf f-axis
-tick.T = [nanmin(1./frequency) 4 5 6 7 9 11 14 nanmax(1./frequency)];
-tick.T = 1./[nanmin(frequency) .1 .15 .2 .25 .3 nanmax(frequency)];
+%tick.T =    [nanmin(1./frequency) 4 5 6 7 9 11 14 nanmax(1./frequency)];
+tick.T = 1./sort([nanmin(frequency) .1 .15 .2 .25 .3 nanmax(frequency)]);
 tick.f = 1./tick.T;
 text(-tick.f,  0.*tick.f,num2str(tick.T','%0.3g s')     ,'rotation',90,'horizontal','cen')
 text( tick.f, 0.*tick.f,num2str((1./tick.T)','%0.2g Hz'),'rotation',90,'horizontal','cen')

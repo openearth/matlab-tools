@@ -120,8 +120,10 @@ if isempty(OPT.Tp );error('Tp  required');end
     end
 
 %% 2D 
-    if     length([OPT.pdir OPT.ms OPT.directions])==0
-    elseif length([OPT.pdir length(OPT.ms) length(OPT.directions)])==3
+
+    if     sum([any(OPT.pdir) any(OPT.ms) any(OPT.directions)])==0
+    elseif sum([any(OPT.pdir) any(OPT.ms) any(OPT.directions)])==3
+        
         if isscalar(OPT.ms)
             OPT.ms = repmat(OPT.ms,size(f));
         end
