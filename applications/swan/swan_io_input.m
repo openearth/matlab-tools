@@ -1454,10 +1454,14 @@ end
 
                output = strfind(rec,'OUT');
                if isempty(output)
-               DAT.table(N.tables).parameters = strtrim(rec);
+               DAT.table(N.tables).parameters  = strtrim(rec);
                else
-               DAT.table(N.tables).parameters = strtrim(rec(1:output-1));
-               DAT.table(N.tables).output     = rec(output:end);
+               DAT.table(N.tables).parameters   = strtrim(rec(1:output-1));
+              [~                          ,rec] = strtok(rec(output:end));
+              
+              [DAT.table(N.tables).tbegtbl,...
+               DAT.table(N.tables).delttbl,...
+               DAT.table(N.tables).tunits ] = swan_time(rec);
                end
                
                %  Expand table parameter info
@@ -1649,10 +1653,14 @@ end
                DAT.spec(N.specs).fullfilename = DAT.spec(N.specs).fname;
                end
 
-               if ~isempty(deblank(rec))
-               DAT.spec(N.specs).REST                        = rec;
+               output = strfind(rec,'OUT');
+               if ~isempty(output)
+              [~                        ,rec] = strtok(rec(output:end));
+              [DAT.spec(N.specs).tbeg   ,...
+               DAT.spec(N.specs).delt   ,...
+               DAT.spec(N.specs).tunits ] = swan_time(rec);
                end
-
+               
                rec             = fgetlines_no_comment_line(fid);
                foundkeyword    = true;
                
@@ -1666,7 +1674,19 @@ end
                keyword1         = upper(pad(keyword1,4,' '));
                
             if strfind(keyword1(1:4),'NEST')==1
-               DAT.nest = rec;
+               [keyword,rec]   = strtok(rec);
+               [keyword,rec]   = strtok(rec);
+                quotes         = strfind(keyword,'''');
+                DAT.nest.sname = keyword(quotes(1)+1:quotes(end)-1);
+               [keyword,rec]   = strtok(rec);
+                quotes         = strfind(keyword,'''');
+                DAT.nest.fname = keyword(quotes(1)+1:quotes(end)-1);
+               [keyword,rec]   = strtok(rec);
+               [DAT.nest.tbeg,...
+                DAT.nest.delt,...
+                DAT.nest.units] = swan_time(rec);
+               
+               
                rec             = fgetlines_no_comment_line(fid);
                foundkeyword    = true;
             end
@@ -1754,8 +1774,6 @@ end
 	  
 %% Read COMPUTE
 
-               timeformat = 'yyyymmdd.HHMMSS';
-
               [keyword1,rec1]   = strtok(rec);
                if isempty(keyword1);
                keyword1         = ' ';
@@ -1769,15 +1787,11 @@ end
                   DAT.compute.time    = keyword;
                   DAT.compute.datenum = datenum(keyword,timeformat);
                  elseif strcmp(keyword(1:5),'NONST')
-                 [tbegc,rec] = strtok(rec);tbegc = datenum(tbegc,timeformat);
-                 [deltc,rec] = strtok(rec);deltc = str2num(deltc);
-                 [units,rec] = strtok(rec);deltc = deltc*convert_units(units,'day');
-                 [tendc,rec] = strtok(rec);tendc = datenum(tendc,timeformat);
                  
-                  DAT.compute.tbegc = tbegc;
-                  DAT.compute.deltc = deltc;
-                  DAT.compute.units = units;
-                  DAT.compute.tendc = tendc;
+                 [DAT.compute.tbegc,...
+                  DAT.compute.deltc,...
+                  DAT.compute.units,...
+                  DAT.compute.tendc] = swan_time(rec);
                   DAT.compute.datenum = DAT.compute.tbegc:DAT.compute.deltc:DAT.compute.tendc;
                end
                
@@ -1906,6 +1920,18 @@ end
   
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   function [tbeg,delt,units,tend] = swan_time(rec);
+      timeformat = 'yyyymmdd.HHMMSS';
+     [tbeg ,rec] = strtok(rec);tbeg = datenum(tbeg,timeformat);
+     [delt ,rec] = strtok(rec);delt = str2num(delt);
+     [units,rec] = strtok(rec);delt = delt*convert_units(units,'day');
+     if ~isempty(rec)
+     [tend ,rec] = strtok(rec);tend = datenum(tend,timeformat);
+     else
+         tend = [];
+     end
+       
+   end
 
    end % function, so all variables above are global within the scope of this file (part bewteen 'function' and this 'end')
 

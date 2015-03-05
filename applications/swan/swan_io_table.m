@@ -1,5 +1,5 @@
 function varargout = swan_io_table(varargin)
-%SWAN_IO_TABLE            read SWAN ASCII output table        (BETA VERSION).
+%SWAN_IO_TABLE            read SWAN ASCII output table
 %
 %   TAB = swan_io_table(INP.table(i))
 %
@@ -8,7 +8,8 @@ function varargout = swan_io_table(varargin)
 %   TAB = swan_io_table(fname,fieldcolumnnames,mxyc)
 %
 % where INP.table is returned by INP = swan_io_input('INPUT.swn')
-%    for multidimensional INP.table loads all tables.
+%    for multidimensional INP.table loads all tables. It also
+%    reshapes 2D point sets, and reshapes NONSTATionary table data.
 % where fname is the table file name (e.g. *.crv or *.dat)
 % where fieldcolumnnames is a cell array or white space delimited char 
 %    with the field names for each column. By default these are
@@ -22,9 +23,13 @@ function varargout = swan_io_table(varargin)
 %    Use swan_input to get these (in case of COMPGRID).
 %    If not specified, or empty, 1D bulk vectors are returned
 %    that you have to reshape yourselves.
-% if field TIME is present, the columns are reshaped into 2D matrices [points x time]
-%    and TIME is converted to matlab datenum
-%    Example: load and plot nonstationary profiles:
+% if field TIME is present, the columns are reshaped into 2D 
+%    matrices [points x time] and TIME is converted to matlab datenum.
+%    If field TIME is absent, but INP.table(i) is passed, any TIME
+%    vector is reconstructed ans use likewise.
+%
+% Example: load and plot nonstationary transects:
+%
 %       pcolorcorcen(tab.TIME,tab.XP,tab.HS)
 %       datetick('x')
 %       tickmap('y')
@@ -121,8 +126,13 @@ function varargout = swan_io_table(varargin)
    %% Proceed SWAN_IO_TABLE for single table
 
       else
+         if ~(INP.table.mxc==0 | INP.table.myc==0)
          INP.table.mmax = INP.table.mxc + 1;
          INP.table.nmax = INP.table.myc + 1;
+         else
+         INP.table.mmax = [];
+         INP.table.nmax = [];
+         end
       end
       
    elseif ischar(varargin{1})
@@ -270,7 +280,8 @@ if isfield(INP.table,'parameter')
          
          if ~isempty(INP.table.mmax) & ...
             ~isempty(INP.table.nmax)
-            TAB.(fldname_long)(:,:,idata) = reshape(data,[INP.table.mmax INP.table.nmax]);
+            nt = prod(size(data))/INP.table.mmax/INP.table.nmax;
+            TAB.(fldname_long)(:,:,idata) = reshape(data,[nt INP.table.mmax INP.table.nmax]);
          else
             TAB.(fldname_long)(:,idata  ) = data;
          end
@@ -278,7 +289,20 @@ if isfield(INP.table,'parameter')
 
    end
    
-   %% handle TIME
+   %% reconstruct TIME, only if full INP was passed
+   
+   if ~isfield(TAB,'TIME')
+       if isfield(INP.table,'tbegtbl') & isfield(INP.table,'points')
+           nxy = length(INP.table.points.xp);
+           nt = length(TAB.(fldname_long))./nxy;
+           TAB.TIME = INP.table.tbegtbl + [0:(nt-1)]*INP.table.delttbl;
+           TAB.TIME = make1D(repmat(TAB.TIME,[nxy 1]));
+           [Y,MO,D,H,MI,S]=datevec(TAB.TIME);
+           TAB.TIME = Y.*10000+MO.*100 + D+H./100+MI./1000+S./1000000;
+       end
+   end   
+   
+   %% turn TIME into seperater dimension
    
    if isfield(TAB,'TIME')
        

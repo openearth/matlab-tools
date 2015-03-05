@@ -221,6 +221,7 @@ end
     end    
     
     for ivar=1:length(S.quantity_names)
+    disp(['processing ',num2str(ivar),': ',S.quantity_names{ivar}])
 	if OPT.swap        
         ncwrite(ncfile,S.nc_names{ivar},S.(S.quantity_names{ivar}))
     else
