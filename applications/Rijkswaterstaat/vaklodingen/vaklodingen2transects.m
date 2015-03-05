@@ -56,7 +56,7 @@ enddate   = answer{3};
 tic
 
 % read the coordinates from "myplaces"
-GE_lonlat = readGE_transects(nametrans);
+GE_lonlat = read_KMLtransects(nametrans);
 fprintf('Reading of coordinates complete\n');
 
 for j = 1:size(GE_lonlat,2)
@@ -77,8 +77,8 @@ stepsize = 5; % metres
 % ncpath = 'F:\opendap\thredds\rijkswaterstaat\DienstZeeland\'; % DienstZeeland data
 
 % Read the path from the opendap
-ncpath = 'http://opendap.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/DienstZeeland/catalog.html'; % DienstZeeland data
-% ncpath = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.html'; % Rijkswaterstaat data
+% ncpath = 'http://opendap.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/DienstZeeland/catalog.html'; % DienstZeeland data
+ncpath = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.html'; % Rijkswaterstaat data
 %ncpath = 'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/vaklodingen/catalog.html';
 ncfile = '*.nc';
 fss = opendap_catalog(ncpath);
@@ -149,7 +149,7 @@ for k = 1:length(date_KB) % Cycle of dates of measurement
         [tf_date n_year] = ismember(date_KB, date{i});
         
         if tf_date(k) % Make it if, in date_KB, the related KB (urlcross) has data.
-            Z{i} = nc_varget(urlcross{i}, 'z', [n_year(k)-1,0,0], [1,-1,-1]);
+            Z{i} = squeeze(nc_varget(urlcross{i}, 'z', [n_year(k)-1,0,0], [1,-1,-1]));
             y{i} = nc_varget(urlcross{i}, 'y');
             x{i} = nc_varget(urlcross{i}, 'x');
             [X{i} Y{i}] = meshgrid(x{i}, y{i}); % Create the grid for interp2
