@@ -118,7 +118,7 @@ c       = [ 0.008       0.0254      0.68        1.23        0.57        ];
 d       = [ 7           7           7           7           7           ];
 e       = [ 4.67        2.77        1.26        1.14        1.58        ];
     
-Hs = a+b.*h-c.*max(0, d-h).^e;
+Hs = a+b.*h-c.*max(0, d-h).^e; 
 
 %% maximum wave period
 
@@ -126,7 +126,7 @@ Hs = a+b.*h-c.*max(0, d-h).^e;
 alpha   = [ 3.86        4.67    ];
 beta    = [ 1.09        1.12    ];
     
-Tp = alpha+beta.*Hs([1 3]);
+Tp = alpha+beta.*Hs([1 3]); % This is a simplification of the actual relationship as indicated in the report. Use getTp_2Stations or getTp_2Stations2011 for a better approximation
 
 %% interpolate to specific location
 
