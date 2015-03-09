@@ -125,33 +125,40 @@ if strcmpi(extension, '.nc')
     
 elseif strcmpi(extension, '.dat')
     
+    info = dir(filename);
+    if info.bytes < 300
+        psize = 'single';
+    else
+        psize = 'double';
+    end
+    
     dims = struct();
     
     % read dimensions from dims.dat file
     fid = fopen(filename, 'r');
-    dims.nt = fread(fid, 1, 'double');
-    dims.nx = fread(fid, 1, 'double');
-    dims.ny = fread(fid, 1, 'double');
-    dims.ntheta = fread(fid, 1, 'double');
-    dims.kmax = fread(fid, 1, 'double');
-    dims.ngd = fread(fid, 1, 'double');
-    dims.nd = fread(fid, 1, 'double');
-    dims.ntp = fread(fid, 1, 'double');
-    dims.ntc = fread(fid, 1, 'double');
-    dims.ntm = fread(fid, 1, 'double');
-    dims.tsglobal = fread(fid, [dims.nt], 'double');
-    dims.tspoints = fread(fid, [dims.ntp], 'double');
-    dims.tscross = fread(fid, [dims.ntc], 'double');
-    dims.tsmean = fread(fid, [dims.ntm], 'double');
+    dims.nt = fread(fid, 1, psize);
+    dims.nx = fread(fid, 1, psize);
+    dims.ny = fread(fid, 1, psize);
+    dims.ntheta = fread(fid, 1, psize);
+    dims.kmax = fread(fid, 1, psize);
+    dims.ngd = fread(fid, 1, psize);
+    dims.nd = fread(fid, 1, psize);
+    dims.ntp = fread(fid, 1, psize);
+    dims.ntc = fread(fid, 1, psize);
+    dims.ntm = fread(fid, 1, psize);
+    dims.tsglobal = fread(fid, [dims.nt], psize);
+    dims.tspoints = fread(fid, [dims.ntp], psize);
+    dims.tscross = fread(fid, [dims.ntc], psize);
+    dims.tsmean = fread(fid, [dims.ntm], psize);
     fclose(fid);
     
     % read dimensions from xy.dat file
     xyfile = fullfile(fpath,'xy.dat');
     fidxy = fopen(xyfile ,'r');
-    dims.x = fread(fidxy, [dims.nx dims.ny] + 1, 'double');
-    dims.y = fread(fidxy, [dims.nx dims.ny] + 1, 'double');
-    dims.xc = fread(fidxy, [dims.nx dims.ny] + 1, 'double');
-    dims.yc = fread(fidxy, [dims.nx dims.ny] + 1, 'double');
+    dims.x = fread(fidxy, [dims.nx dims.ny] + 1, psize);
+    dims.y = fread(fidxy, [dims.nx dims.ny] + 1, psize);
+    dims.xc = fread(fidxy, [dims.nx dims.ny] + 1, psize);
+    dims.yc = fread(fidxy, [dims.nx dims.ny] + 1, psize);
     fclose(fidxy);
     
     XBdims = struct();
