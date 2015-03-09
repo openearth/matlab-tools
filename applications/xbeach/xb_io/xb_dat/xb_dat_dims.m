@@ -70,6 +70,25 @@ OPT = struct( ...
     'ftype', 'double' ...
 );
 
+%% Retrieve file dir and default filetype
+if ~exist(filename, 'file')
+    error(['File does not exist [' filename ']']);
+end
+
+[fdir fname fext] = fileparts(filename);
+
+if isempty(fdir); fdir = '.'; end;
+
+fid = fopen(fullfile(fdir,'dims.dat'));
+v = fread(fid,1,'double');
+fclose(fid);
+if (v > 1e8)
+    OPT.ftype = 'single';
+else
+    OPT.ftype = 'double';
+end
+
+%% Parse input
 OPT = setproperty(OPT, varargin{:});
 
 bytes = struct( ...
@@ -79,19 +98,9 @@ bytes = struct( ...
 );
 
 %% read output info
-
 xbout = xb_get_output;
 
 %% read file and model info
-
-if ~exist(filename, 'file')
-    error(['File does not exist [' filename ']']);
-end
-
-[fdir fname fext] = fileparts(filename);
-
-if isempty(fdir); fdir = '.'; end;
-
 d = xb_read_dims(fdir);
 f = dir(fullfile(filename, ''));
 
@@ -123,6 +132,7 @@ if guess
     if any(strcmpi(fname, {'wetu', 'wetv', 'wetz'}))
         OPT.ftype = 'integer';
     end
+    
     
     byt = bytes.(OPT.ftype);
 end

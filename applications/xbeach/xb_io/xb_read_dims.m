@@ -125,8 +125,10 @@ if strcmpi(extension, '.nc')
     
 elseif strcmpi(extension, '.dat')
     
-    info = dir(filename);
-    if info.bytes < 300
+    fid = fopen(filename);
+    v = fread(fid,1,'double');
+    fclose(fid);
+    if (v > 1e8)
         psize = 'single';
     else
         psize = 'double';
