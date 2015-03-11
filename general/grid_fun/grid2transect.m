@@ -70,7 +70,8 @@ function transect=grid2transect(x,y,z,xi,yi,varargin)
 OPT.nstep=100;
 OPT.dstep=[]; 
 OPT.waterlevel=0;
-OPT=setproperty(OPT,varargin); 
+OPT.ignorenans = false;
+OPT=setproperty(OPT,varargin);
 
 %output
 transect=[]; 
@@ -127,7 +128,11 @@ for k=1:length(ipoly)-1
 	%calculate the wet area (i.e. the area below water level)
 	ziA=zi-OPT.waterlevel; 
 	ziA(ziA>0)=0;
-	wetArea=-trapz(di1,ziA); 
+    if ~OPT.ignorenans
+        wetArea=-trapz(di1,ziA);
+    else
+        wetArea=-trapz(di1(~isnan(ziA)),ziA(~isnan(ziA)));
+    end
 	
 	%write output
 	transect1=struct('x',xi1,'y',yi1,'d',di1,'z',zi,'area',wetArea); 
