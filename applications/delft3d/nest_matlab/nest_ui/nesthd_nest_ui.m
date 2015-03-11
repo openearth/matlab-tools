@@ -626,8 +626,10 @@ if ~isempty (handles.filedir); cd(handles.filedir); end
 [fin,pin] = uiputfile('*.bct; timeser*; *.tim','Specify file name hydrodynamic boundary conditions');
 cd (handles.progdir);
 
-if strcmpi(fin(1:7),'timeser')
+if length(fin) >= 7 
+    if strcmpi(fin(1:7),'timeser')
     [~,fin,~] = fileparts(fin);
+    end
 end
 
 if fin ~= 0
@@ -650,8 +652,10 @@ if ~isempty (handles.filedir); cd(handles.filedir); end
 [fin,pin] = uiputfile('*.bcc; timeser*','Specify file name transport boundary conditions');
 cd (handles.progdir);
 
-if strcmpi(fin(1:7),'timeser')
-    [~,fin,~] = fileparts(fin);
+if length(fin) >= 7
+    if strcmpi(fin(1:7),'timeser')
+        [~,fin,~] = fileparts(fin);
+    end
 end
 
 if fin ~= 0
