@@ -141,7 +141,7 @@ elseif strcmpi(fext,'.pol') | strcmpi(fext,'.ldb')
 	end
 
 	%read polygon
-	pol=tekal('read',fileIn); 
+	pol=tekal('read',fileIn,'loaddata'); 
 	pol=pol.Field; 
 	
 	

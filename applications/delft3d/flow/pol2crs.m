@@ -126,7 +126,7 @@ elseif strcmpi(fext,'.pol') |strcmpi(fext,'.ldb')
 	end
 	
 	%load polygons
-	pol=tekal('read',fileIn); 
+	pol=tekal('read',fileIn,'loaddata');
 	pol=pol.Field; 
 	
 	DATA=[]; 

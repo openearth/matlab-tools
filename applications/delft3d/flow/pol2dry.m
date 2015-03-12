@@ -90,7 +90,7 @@ elseif strcmpi(fext,'.pol') || strcmpi(fext,'.ldb')
 %% Conversion .pol to dry
 
 %read polygons
-pol=tekal('read',fileIn); 
+pol=tekal('read',fileIn,'loaddata'); 
 pol=pol.Field;
 
 inpoly=zeros(size(grd.cen.x)); 
