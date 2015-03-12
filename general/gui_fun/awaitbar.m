@@ -95,6 +95,14 @@ if nargin>=2
             figTitle = varargin{2};
         end
         f = findobj(allchild(0),'flat','Tag','TMWAWaitbar');
+    elseif isobject(whichbar)
+        % Update for Matlab versions >= 2014b
+        type=1; %we are updating, given a handle
+        f=whichbar;
+        if nargin == 4
+            figTitle = varargin{2};
+        end
+        f = findobj(allchild(0),'flat','Tag','TMWAWaitbar');
     else
         error('AWaitbar:InvalidInputs', ['Input arguments of type ' class(whichbar) ' not valid.'])
     end
