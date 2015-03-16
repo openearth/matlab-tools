@@ -1,6 +1,6 @@
 function [ output_args ] = run( input_args )
 %WPS_RUNNER Function that calls matlab wps processes for which it finds
-%input. The input directory is watched and when input arrives the 
+%input. The input directory is watched and when input arrives the
 % corresponding function is called.
 %
 %See also: https://publicwiki.deltares.nl/display/OET/Matlab+WPS+convention
@@ -28,7 +28,7 @@ table = json.load(urlread(url));
 if isempty(table.rows)
     uuids = json.load(wps.runner.urlread2(sprintf('%s/_uuids', queue_url)));
     uuid = uuids.uuids{1};
-    doc = struct(... 
+    doc = struct(...
         'processes', processes, ...
         'language', 'matlab', ...
         'type', 'processes' ...
@@ -64,7 +64,7 @@ while 1
         pause(10)
         continue
     end
-    % pop  a job    
+    % pop  a job
     jsonfile = jsonfiles(1).url;
     % load metadata
     text = urlread(jsonfile);
@@ -93,12 +93,23 @@ while 1
         data.datainputs = struct();
         for j=1:length(data.inputs.datainputs)
             item = data.inputs.datainputs(j);
-            if (iscell(item)) 
+            if (iscell(item))
                 item = item{1};
             end
-            if ( strcmp(item.type, 'ComplexValue') ) 
+            if ( isfield(item, 'type') && strcmp(item.type, 'ComplexValue') )
                 filename = tempname();
-                bytes = typecast(org.apache.commons.codec.binary.Base64.decodeBase64(uint8(item.value)), 'uint8');
+                try
+                    bytes = typecast(org.apache.commons.codec.binary.Base64.decodeBase64(uint8(item.value)), 'uint8');
+                catch ME
+                    % empty
+                    if (isempty(item.value))
+                        warning(['empty bytes in item ', item.identifier])
+                    else
+                        warning(['Could not encode bytes ', item.value])
+                    end
+                    
+                    bytes = item.value;
+                end
                 fid = fopen(filename, 'w');
                 fwrite(fid, bytes);
                 fclose(fid);
@@ -136,12 +147,22 @@ while 1
         end
         
         % get info of the output
-        if (exist(result, 'file'))
+        if (ischar(result) && exist(result, 'file'))
             fid = fopen(result);
             bytes = fread(fid);
             fclose(fid);
             % base64 decode
-            base64 = org.apache.commons.codec.binary.Base64.encodeBase64(uint8(bytes));
+            
+            try
+                base64 = org.apache.commons.codec.binary.Base64.encodeBase64(uint8(bytes));
+            catch ME
+                base64 = uint8([]);
+                if (isempty(bytes))
+                    warning('empty bytes in result')
+                else
+                    warning(['Could not encode bytes ', bytes])
+                end
+            end
             result = char(typecast(base64, 'uint8'));
         end
         
@@ -153,7 +174,7 @@ while 1
         url = sprintf('%s/%s/%s', queue_url, queue_database, data.x_id);
         text = json.dump(data);
         wps.runner.urlread2(url, 'PUT', text)
-
+        
     else
         warning(['Found file ', jsonfile, ' but it has no process field.']);
         continue
