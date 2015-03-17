@@ -10,6 +10,9 @@ function varargout = scatterbin(x,y,varargin)
 % number of bins (default 25), like hist. 
 %
 % Example:
+%  x = rand([100 1]);y = rand([100 1]);
+%  EDGESx=0:.1:1
+%  EDGESy=0:.1:1
 %  scatterbin(x,y,EDGESx,EDGESy) 
 %  hold on
 %  scatter (x,y)
