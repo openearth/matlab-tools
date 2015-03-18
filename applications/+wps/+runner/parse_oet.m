@@ -14,11 +14,14 @@ function [wpsstruct] = parse_oet_wps(filename)
     
     % obtain argin, argout description from comment block
     
+    % argument matching
+    re = @(x) ['%\s*', x, '\s*\=\s*(?<type>\w+(/\w+)?)'];
+    
     inputs = struct();
     for i=1:length(argin)
         % scan for type of input arguments
         arg   = argin{i};
-        match = regexp(txt, [arg, '\s*\=\s*(?<type>\w+(/\w+)?)'], 'names');
+        match = regexp(txt, re(arg), 'names');
         inputs.(arg) = match;
     end
     
@@ -26,7 +29,7 @@ function [wpsstruct] = parse_oet_wps(filename)
     for i=1:length(argout)
         % scan for type of output arguments
         arg   = argout{i};
-        match = regexp(txt, [arg, '\s*\=\s*(?<type>\w+(/\w+)?)'], 'names');
+        match = regexp(txt, re(arg), 'names');
         outputs.(arg) = match;
     end
     
