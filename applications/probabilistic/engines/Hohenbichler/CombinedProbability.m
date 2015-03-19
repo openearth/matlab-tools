@@ -1,23 +1,25 @@
   function [alphasAND, betasAND, alphasOR, betasOR] = CombinedProbability(alphasIn,...
       betasIn, rhos, varargin)  
-%Hohenbichler routine (combined probability of failure)
+% Hohenbichler routine (combined probability of failure)
 %
-% function for combining Z-functions (different failure mechanisms)of 
-% n elements in Series and Parallel:
+% function for combining 2 Z-functions (different failure mechanisms) 
+% with n elements in Series and Parallel:
 %   P(Z2<0 AND Z1<0) = P(Z2<0 && Z1<0) = Parallel system
 %   P(Z2<0 OR Z1<0) = P(Z2<0 || Z1<0) = Series system
 % and subsequent processing of alphas and betas (i.e. replacing the old 
 % values with the new values).
 
-% Z1 and Z2 (Zn) are both described by the same n random variables 
-% u1 ... un; however, corresponing u-values of eacg Z are not fully 
+% Z1 and Z2 (Zm) are both described by the same n random variables 
+% u1 ... un; corresponde to the u-values of each Z are not fully 
 % correlated. The mutual correlation is described by random variable rho.
+% if the random variables are placed in the same location in the vector for
+% both Z-functions, there is full correlation > rho=ones(1,n);
 
 %INPUT--------------------------------------------------------------------
-% alphasIn = alphas of all Z-functions (dimension: m * n)
-% betasIn  = corresponding betas (dimension: m*1)
+% alphasIn = alphas of all Z-functions (dimension: 2 * n)
+% betasIn  = corresponding betas (dimension: 2*1)
 % rhos     = correlation coefficients of u-values (dimensions: 1*n)
-% (varargin) method   = computational method is 'Numerical'(default) or 'FORM'
+% ()varargin) method   = computational method is 'Numerical'(default) or 'FORM'
 %
 % m Z-functions and Ne random variables
 %
