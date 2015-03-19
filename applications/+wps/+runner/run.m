@@ -55,7 +55,14 @@ end
 %% Start processing
 while 1
     % watch for a while
-    jsonfiles = wps.runner.watch_couchdb(queue_url, queue_database);
+    try
+        jsonfiles = wps.runner.watch_couchdb(queue_url, queue_database);
+    catch ME
+        warning('watch failed');
+        disp(ME);
+        pause(5);
+        continue
+    end
     % select one file
     % the queue is empty
     if isempty({jsonfiles.url}) || all(cellfun(@isempty, {jsonfiles.url})) %any(isempty({jsonfiles.url}))
