@@ -74,7 +74,7 @@ function OPT = nc_cf_harvest_matrix2kml(ATT,varargin)
    OPT.logokmlName        = 'OpenEarth logo';
    OPT.overlayXY          = [0 0.00];
    OPT.screenXY           = [0 0.04];
-   OPT.imName             = [fileparts(oetlogo),filesep,'oet4GE.png'];
+   OPT.imName             = [fileparts(oetlogo),filesep,'oet4GoogleEarth.png'];
    OPT.logoName           = 'OET4GE.png';
 
    OPT.iconnormalState         = 'http://maps.google.com/mapfiles/kml/shapes/placemark_square.png';
@@ -343,13 +343,27 @@ function OPT = nc_cf_harvest_matrix2kml(ATT,varargin)
    %  http://code.google.com/apis/kml/documentation/kmlreference.html#timespan
    
       if  ~isnan(D.timeCoverage_start(ii))
+          begin = sprintf(['<begin>%s</begin>'],...
+              datestr(D.timeCoverage_start(ii),'yyyy-mm-ddTHH:MM:SS'));
+      else
+          begin = '';
+      end
+   
+      if  ~isnan(D.timeCoverage_end(ii))
+          ending = sprintf(['<begin>%s</begin>'],...
+              datestr(D.timeCoverage_end(ii),'yyyy-mm-ddTHH:MM:SS'));   
+      else
+          ending = '';
+      end
+   
+      if  ~isnan(D.timeCoverage_start(ii))
           OPT.timeSpan = sprintf([...
               '<TimeSpan>'...
               '<begin>%s</begin>'... % OPT.timeIn
               '<end>%s</end>'...     % OPT.timeOut
               '</TimeSpan>'],...
-              datestr(D.timeCoverage_start(ii),'yyyy-mm-ddTHH:MM:SS'),...
-              datestr(D.timeCoverage_end(ii),'yyyy-mm-ddTHH:MM:SS'));
+              begin,...
+              ending);
       else
           OPT.timeSpan ='';
       end

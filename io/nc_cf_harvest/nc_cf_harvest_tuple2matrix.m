@@ -1,6 +1,9 @@
 function D = nc_cf_harvest_tuple2matrix(d,varargin)
 %NC_CF_HARVEST_TUPLE2MATRIX  convert meta-data tuple-array to struct with matrices
 %
+%  matrix = nc_cf_harvest_tuple2matrix(tuple,matrix,i) adss tuple to matrix
+%  at position
+%
 %See also: nc_cf_harvest, nc_cf_harvest_matrix2tuple
 
 %% Copyright notice
@@ -51,6 +54,9 @@ OPT.platform_name = 'platform_name'; % CF-1.6, older: 'station_name', harvested 
 nextarg = 1;
 if nargin > 1
    D = varargin{1};nextarg = 2;
+   if isempty(D)
+   D = nc_cf_harvest_matrix_initialize(1);
+   end
    else
    D = nc_cf_harvest_matrix_initialize(1);
 end
@@ -66,6 +72,7 @@ OPT = setproperty(OPT,varargin{nextarg:end});
 % URL
 
         D.number_of_observations                  (i) = d.number_of_observations;
+        D.urlPath                                 {i} =                d.urlPath;
         D.dataSize                                (i) =               d.dataSize;
         D.date                                    (i) =                   d.date;
 
