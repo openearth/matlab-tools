@@ -171,7 +171,7 @@ for ii = length(urls):-1:1
                     case 'time';                     field = 'timeCoverage';
                 end
                 
-                D.(field)(ii,:) = actual_range; 
+                D.(field)(ii,:) = actual_range;
                 % collect variable attributes of interest
                 for kk = find(ismember(var_att_names,OPT.var_att))
                     M.(var_att_names{kk}).(field){ii} = var_att_values{kk};
@@ -275,6 +275,10 @@ for ii = 1:length(fields)
             M.(fields{ii}).(subfields{jj}) = char(unique_values);
         end
     end
+    % structure of structure won't create a blank fieldin lower nc
+    % functions. "standard_name", "long_name" and "units" are rather variable
+    % Attributes. Those fields will be removed for the moment
+    M = rmfield(M, fields{ii});
 end
 
 struct2nc(OPT.catalogname,D,M,'mode', OPT.mode);
