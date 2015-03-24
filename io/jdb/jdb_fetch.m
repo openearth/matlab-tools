@@ -1,4 +1,4 @@
-function data = jdb_fetch(conn, sql, varargin)
+function varargout = jdb_fetch(conn, sql, varargin)
 % Executes a SQL query and imports database data into matlab
 %
 %   Executes a SQL query with the (i) licensed Mathworks database
@@ -29,77 +29,107 @@ function data = jdb_fetch(conn, sql, varargin)
 % inspect conn object to find out whether is was created with
 % the licensed database toolbox or the JDCB driver directly.
 OPT.database_toolbox = 0;
+OPT.format = 'array';
 try %#ok<TRYNC>
     if any(strfind(char(conn.Constructor),'mathworks'))
         OPT.database_toolbox = 1;
     end
 end
 
+OPT = setproperty(OPT, varargin);
+
 if OPT.database_toolbox
+    error('Database toolbox is not supported')
     data = fetch(conn, sql);
     % does not parse time automatically to datenum
-else
-    % http://docs.oracle.com/javase/7/docs/api/java/sql/PreparedStatement.html
-    
-    pstat = conn.prepareStatement(sql);
-    rs = pstat.executeQuery();
-    
-    rsMetaData = rs.getMetaData();
-    numberOfColumns = rsMetaData.getColumnCount();
-    
-    % a large fetch size greatly improves performance of large queries
-    rs.setFetchSize(10000)
-    
-    row = 0;
-    data = {};
-    while 1
-        try
-            if ~rs.next()
-                break
-            end
-            row=row+1;
-            for col = 1:numberOfColumns
-                jtype = char(rsMetaData.getColumnClassName(col));
-                
-                % not for editing:
-                % If you are getting a JDB:DATA_FETCH_ERROR, then the
-                % datatype you get is not implemented. There are many
-                % datatypes, which are easy to implement as long as you
-                % have test data. 
-                % 
-                % Please do not remove existing cases, just add more for
-                % more cases
-                switch jtype
-                    case {'java.lang.String'}
-                        data{row,col} = char(rs.getString(col));  %#ok<*AGROW>
-                    case {'java.lang.Float','java.lang.Double','java.math.BigDecimal'}
-                        data{row,col} = rs.getDouble(col);
-                    case {'java.lang.Short','java.lang.Int','java.lang.Integer','java.lang.Long'}
-                        data{row,col} = rs.getInt(col);
-                    case {'java.sql.Timestamp','oracle.sql.TIMESTAMP'}
-                        jt = rs.getTimestamp(col);
-                        mils_since_epoch = jt.getTime() - (jt.getTimezoneOffset * 60 * 1000);
-                        epoch = datenum(1970,1,1);
-                        data{row,col} = epoch + mils_since_epoch/1000/3600/24;
-                    case {'java.lang.Boolean'}
-                        data{row,col} = logical(rs.getBoolean(col));
-                    otherwise
-                        warning('JDB:DATA_FETCH_ERROR:TYPE_NOT_IMPLEMENTED:datatype %s implemented',jtype)
-                end
-            end
-        catch ME
-            warning('JDB:DATA_FETCH_ERROR',ME.getReport())
-            break
-        end
-    end
-    
-    pstat.close();
-    rs.close();
-    
 end
 
-jdb_error(data);
+% http://docs.oracle.com/javase/7/docs/api/java/sql/PreparedStatement.html
 
+pstat = conn.prepareStatement(sql);
+rs = pstat.executeQuery();
+
+rsMetaData = rs.getMetaData();
+numberOfColumns = rsMetaData.getColumnCount();
+
+% a large fetch size greatly improves performance of large queries
+rs.setFetchSize(10000)
+
+row = 0;
+data = {};
+while 1
+    try
+        if ~rs.next()
+            break
+        end
+        row=row+1;
+        for col = 1:numberOfColumns
+            jtype = char(rsMetaData.getColumnClassName(col));
+
+            % not for editing:
+            % If you are getting a JDB:DATA_FETCH_ERROR, then the
+            % datatype you get is not implemented. There are many
+            % datatypes, which are easy to implement as long as you
+            % have test data. 
+            % 
+            % Please do not remove existing cases, just add more for
+            % more cases
+            switch jtype
+                case {'java.lang.String'}
+                    data{row,col} = char(rs.getString(col));  %#ok<*AGROW>
+                case {'java.lang.Float','java.lang.Double','java.math.BigDecimal'}
+                    data{row,col} = rs.getDouble(col);
+                case {'java.lang.Short','java.lang.Int','java.lang.Integer','java.lang.Long'}
+                    data{row,col} = rs.getInt(col);
+                case {'java.sql.Timestamp','oracle.sql.TIMESTAMP'}
+                    jt = rs.getTimestamp(col);
+                    mils_since_epoch = jt.getTime() - (jt.getTimezoneOffset * 60 * 1000);
+                    epoch = datenum(1970,1,1);
+                    data{row,col} = epoch + mils_since_epoch/1000/3600/24;
+                case {'java.lang.Boolean'}
+                    data{row,col} = logical(rs.getBoolean(col));
+                case 'org.postgresql.util.PGInterval'
+                    jt = rs.getTimestamp(col);
+                    mils_since_epoch = jt.getTime() - (jt.getTimezoneOffset * 60 * 1000);
+                    data{row,col} = mils_since_epoch * datenum(0,0,0,0,0,1/1000);
+                otherwise
+                    warning('JDB:DATA_FETCH_ERROR:TYPE_NOT_IMPLEMENTED:datatype %s implemented',jtype)
+            end
+        end
+    catch ME
+        warning('JDB:DATA_FETCH_ERROR',ME.getReport())
+        break
+    end
+end
+
+pstat.close();
+rs.close();
+
+header = arrayfun(...
+    @(x) char(rsMetaData.getColumnName(x)),...
+    (1:numberOfColumns),...
+    'UniformOutput',false);
+
+%% convert to desired output format
+switch OPT.format
+    case 'array'
+        varargout = {data,header};
+    case 'struct'
+        fieldnames = matlab.lang.makeUniqueStrings(matlab.lang.makeValidName(header));
+        data_struct = struct();
+        for ii = 1:length(fieldnames)
+            if any(ischar([data{:,ii}]))
+                data_struct.(fieldnames{ii}) = data(:,ii);
+            else
+                data_struct.(fieldnames{ii}) = [data{:,ii}]';
+            end
+        end
+        varargout = {data_struct};
+    otherwise
+        error('Unknown format %s',OPT.format) 
+end
+
+%% debug options
 prefs = getpref('postgresql');
 if isstruct(prefs) && isfield(prefs, 'verbose') && prefs.verbose
     disp(sql);
