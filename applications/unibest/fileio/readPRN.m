@@ -172,7 +172,18 @@ for ii=1:length(filenames)
         for iii=1:rijen
            tline=fgetl(fid); 
            %gridcell  X-coord.  Y-coord.   Y    Y-Y0   source[km3/y]  source[Mm3]  stored[Mm3]
-           [data1.no(iii) data1.x(iii) data1.y(iii) data1.z(iii) data1.zminz0(iii) data1.sourceyear(iii) data1.sourcetotal(iii) data1.stored(iii)]=strread(tline,'%f%f%f%f%f%f%f%f');
+           try
+               [data1.no(iii) data1.x(iii) data1.y(iii) data1.z(iii) data1.zminz0(iii) data1.sourceyear(iii) data1.sourcetotal(iii) data1.stored(iii)]=strread(tline,'%f%f%f%f%f%f%f%f');
+           catch
+               data1.no(iii)          = nan;
+               data1.x(iii)           = nan;
+               data1.y(iii)           = nan;
+               data1.z(iii)           = nan;
+               data1.zminz0(iii)      = nan;
+               data1.sourceyear(iii)  = nan;
+               data1.sourcetotal(iii) = nan;
+               data1.stored(iii)      = nan;
+           end
         end
         data.no(:,teller,ii)=data1.no(:);
         data.x(:,teller,ii)=data1.x(:);
@@ -191,7 +202,17 @@ for ii=1:length(filenames)
         for iii=1:rijen+1 
            tline=fgetl(fid); 
            %ray	X	alfa	transport	vol.passed
-           [data1.ray(iii) data1.xdist(iii) data1.alfa(iii) data1.transport(iii) data1.volume(iii)]=strread(tline,'%f%f%f%f%f');
+           try
+               [data1.ray(iii) data1.xdist(iii) data1.alfa(iii) data1.transport(iii) data1.volume(iii)]=strread(tline,'%f%f%f%f%f');
+           catch
+               data1.ray(iii)          = nan;
+               if teller==1
+               data1.xdist(iii)        = nan;
+               end
+               data1.alfa(iii)         = nan;
+               data1.transport(iii)    = nan;
+               data1.volume(iii)       = nan;
+           end
         end
         data.ray(:,teller,ii)=data1.ray(:);
         data.alfa(:,teller,ii)=data1.alfa(:);
