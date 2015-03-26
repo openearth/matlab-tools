@@ -73,6 +73,7 @@ function varargout = tickmap(varargin)
    OPT.delfirst             = 0;
    OPT.offset               = 0;
    OPT.horizontalalignment  = [];
+   OPT.axes                 = gca;
    
    if nargin==0
       varargout = {OPT};
@@ -80,6 +81,12 @@ function varargout = tickmap(varargin)
    end
    
    handles                  = []; % to store handles of texttype (optional)
+   
+%% Pre-parse varargin to llok for axes
+    n = find(strcmp(varargin,'axes'));
+    if ~isempty(n)
+        OPT.axes = varargin{n+1};
+    end
    
 %% Check for latitude/longitude
 
@@ -95,13 +102,13 @@ function varargout = tickmap(varargin)
 
    if odd(nargin)
        if any(findstr(lower(ax),'x'))
-           ticks.x = get(gca,'xtick');
+           ticks.x = get(OPT.axes,'xtick');
        end
        if any(findstr(lower(ax),'y'))
-           ticks.y = get(gca,'ytick');
+           ticks.y = get(OPT.axes,'ytick');
        end
        if any(findstr(lower(ax),'z'))
-           ticks.z = get(gca,'ztick');
+           ticks.z = get(OPT.axes,'ztick');
        end
        nextarg = 2;
    else
@@ -179,7 +186,7 @@ for ix=1:3
        
 %% Set ticks
 
-  set (gca,[AX,'tick']     ,ticks.(AX))
+  set (OPT.axes,[AX,'tick']     ,ticks.(AX))
          
 %% Set tick labels
 
@@ -219,13 +226,13 @@ for ix=1:3
    
       if     strcmp(OPT.texttype,'axes') | ...
              strcmp(OPT.texttype,'axis')
-         set (gca,[AX,'ticklabel'],ticklabels.(AX))
+         set (OPT.axes,[AX,'ticklabel'],ticklabels.(AX))
       elseif strcmp(OPT.texttype,'text')
-         set (gca,[AX,'ticklabel'],{})
+         set (OPT.axes,[AX,'ticklabel'],{})
          
          if     strcmp(lower(AX),'x')
             ylims = ylim;
-            if strcmp(get(gca,'xAxisLocation'),'bottom')
+            if strcmp(get(OPT.axes,'xAxisLocation'),'bottom')
                y_position_text       = repmat(ylims(1),size(ticks.(AX)));
                OPT.verticalalignment = 'top';
                if isempty(OPT.horizontalalignment)
@@ -243,7 +250,7 @@ for ix=1:3
                                                                          'verticalalignment'  ,OPT.verticalalignment);
          elseif strcmp(lower(AX),'y')
             xlims = xlim;
-            if strcmp(get(gca,'yAxisLocation'),'left')
+            if strcmp(get(OPT.axes,'yAxisLocation'),'left')
                x_position_text       = repmat(xlims(1),size(ticks.(AX)));
                OPT.verticalalignment = 'bottom';
                if isempty(OPT.horizontalalignment)
@@ -266,7 +273,7 @@ for ix=1:3
       end % if     strcmp(OPT.texttype,'axes') | strcmp(texttype,'axis')
 
     else
-        set(gca,[lower(ax),'ticklabel'],{})
+        set(OPT.axes,[lower(ax),'ticklabel'],{})
     end % if ~isempty(OPT.format
      
   end % if any(findstr(lower(ax),AX))
