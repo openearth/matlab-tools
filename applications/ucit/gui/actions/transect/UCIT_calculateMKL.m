@@ -45,7 +45,8 @@ datatypes = UCIT_getDatatypes;
 url = datatypes.transect.urls{find(strcmp(UCIT_getInfoFromPopup('TransectsDatatype'),datatypes.transect.names))};
 year = UCIT_getInfoFromPopup('TransectsSoundingID');
 d = jarkus_readTransectDataNetcdf(url, UCIT_getInfoFromPopup('TransectsArea'),UCIT_getInfoFromPopup('TransectsTransectID'),year(end-3:end));
-
+d.zi = squeeze(d.zi);
+d.ze = squeeze(d.ze);
 
 if ~all(isnan(d.ze))
     %% prepare plot

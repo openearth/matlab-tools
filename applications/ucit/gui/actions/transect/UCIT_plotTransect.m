@@ -47,6 +47,8 @@ if nargin==0
 
     year = UCIT_getInfoFromPopup('TransectsSoundingID');
     d = jarkus_readTransectDataNetcdf(url, UCIT_getInfoFromPopup('TransectsArea'),UCIT_getInfoFromPopup('TransectsTransectID'),year(end-3:end));
+    d.zi=squeeze(d.zi);
+    d.ze=squeeze(d.ze);
     if ~all(isnan(d.ze))
         UCIT_getPlot(d);
     else

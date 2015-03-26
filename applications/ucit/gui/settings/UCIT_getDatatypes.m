@@ -55,9 +55,9 @@ function [datatypes] = UCIT_getDatatypes;
 
    i = i + 1;
    datatypes.transect.names  {i}  =  'Jarkus Data';
-   datatypes.transect.urls   {i}  =  'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/jarkus/profiles/transect.nc';
+   datatypes.transect.urls   {i}  =  'http://opendap.deltares.nl/thredds/dodsC/opendap/rijkswaterstaat/jarkus/profiles/transect.nc';
    datatypes.transect.areas  {i}  =  ''; % set by UCIT_loadRelevantInfo2Popup(1,2)
-   datatypes.transect.catalog{i}  =  'http://opendap.deltares.nl:8080/thredds/catalog/opendap/rijkswaterstaat/jarkus/profiles/catalog.xml';
+   datatypes.transect.catalog{i}  =  'http://opendap.deltares.nl/thredds/catalog/opendap/rijkswaterstaat/jarkus/profiles/catalog.xml';
    datatypes.transect.ldbs{i}     =  'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc'; % this one is broken on opendap.deltares.nl due since TDS 4.2
    datatypes.transect.axes{i}     =  1E5*[-0.239487 2.901701 2.999500 6.787223];
    datatypes.transect.datatype{i} =  'Jarkus Data'; % defines functionality
@@ -209,6 +209,7 @@ end
 
    %% Dienst zeeland
 
+if 0 % Not working anymore
    i = i + 1;
    datatypes.grid.names{i}        =  'Dienst zeeland 20m';
    datatypes.grid.urls {i}        =  'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/DienstZeeland/';
@@ -217,9 +218,9 @@ end
    datatypes.grid.axes{i}         =  1E5*[-0.21 0.91 3.6 4.3];
    datatypes.grid.cellsize{i}     =  20;
    datatypes.grid.datatype{i}     =  'Zeeland';
-
+end
       %% Dienst zeeland (test)
-   
+  
    i = i + 1;
    datatypes.grid.names{i}        =  'Dienst zeeland 20m (test/next release)';
    datatypes.grid.urls {i}        =  'http://dtvirt5.deltares.nl:8080/thredds/dodsC/opendap/rijkswaterstaat/dienstzeeland/';
@@ -228,8 +229,8 @@ end
    datatypes.grid.axes{i}         =  1E5*[-0.21 0.91 3.6 4.3];
    datatypes.grid.cellsize{i}     =  20;
    datatypes.grid.datatype{i}     =  'Zeeland';
-   
-%    %% Western Scheldt (Dienst zeeland) (test)
+
+   %    %% Western Scheldt (Dienst zeeland) (test)
 % 
 %    i = i + 1;
 %    datatypes.grid.names{i}        =  'Westerschelde; Dienst zeeland 20m (test/next release)';
@@ -244,8 +245,8 @@ end
 
    i = i + 1;
    datatypes.grid.names{i}        =  'AHN 100m';
-   datatypes.grid.urls {i}        =  'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/tno/ahn100m/mv100.nc';
-   datatypes.grid.catalog{i}      =  'http://opendap.deltares.nl:8080/thredds/catalog/opendap/tno/ahn100m/catalog.xml';
+   datatypes.grid.urls {i}        =  'http://opendap.deltares.nl/thredds/dodsC/opendap/tno/ahn100m/mv100.nc';
+   datatypes.grid.catalog{i}      =  'http://opendap.deltares.nl/thredds/catalog/opendap/tno/ahn100m/catalog.xml';
    datatypes.grid.ldbs{i}         =  'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc'; % this one is broken on opendap.deltares.nl due since TDS 4.2
    datatypes.grid.axes{i}         =  1E5*[-0.239487 2.901701 2.999500 6.787223];
    datatypes.grid.cellsize{i}     =  100;
@@ -255,8 +256,8 @@ end
 
    i = i + 1;
    datatypes.grid.names{i}        =  'AHN 250m'; % note 250 is in 100 directory on server
-   datatypes.grid.urls {i}        =  'http://opendap.deltares.nl:8080/thredds/dodsC/opendap/tno/ahn100m/mv250.nc';
-   datatypes.grid.catalog{i}      =  'http://opendap.deltares.nl:8080/thredds/catalog/opendap/tno/ahn100m/catalog.xml';
+   datatypes.grid.urls {i}        =  'http://opendap.deltares.nl/thredds/dodsC/opendap/tno/ahn100m/mv250.nc';
+   datatypes.grid.catalog{i}      =  'http://opendap.deltares.nl/thredds/catalog/opendap/tno/ahn100m/catalog.xml';
    datatypes.grid.ldbs{i}         =  'http://opendap.deltares.nl/thredds/dodsC/opendap/deltares/landboundaries/holland_fillable.nc'; % this one is broken on opendap.deltares.nl due since TDS 4.2
    datatypes.grid.axes{i}         =  1E5*[-0.239487 2.901701 2.999500 6.787223];
    datatypes.grid.cellsize{i}     =  250;

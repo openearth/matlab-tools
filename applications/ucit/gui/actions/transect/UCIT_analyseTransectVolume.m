@@ -50,6 +50,8 @@ datatypes = UCIT_getDatatypes;
 url = datatypes.transect.urls{find(strcmp(UCIT_getInfoFromPopup('TransectsDatatype'),datatypes.transect.names))};
 year = str2double(datestr(UCIT_getInfoFromPopup('TransectsSoundingID'),10));
 d = jarkus_readTransectDataNetcdf(url, UCIT_getInfoFromPopup('TransectsArea'),UCIT_getInfoFromPopup('TransectsTransectID'),year);
+d.zi = squeeze(d.zi);
+d.ze = squeeze(d.ze);
 
 if isempty(findobj('tag','analyseTransectWindow')) % this means that there is no figure present yet
 

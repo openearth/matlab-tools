@@ -81,6 +81,8 @@ for i=1:length(years)
 
     try
         transect = jarkus_readTransectDataNetcdf(url, UCIT_getInfoFromPopup('TransectsArea'),UCIT_getInfoFromPopup('TransectsTransectID'),years(i));
+        transect.zi = squeeze(transect.zi);
+        transect.ze = squeeze(transect.ze);
     end
 
     if exist('transect')

@@ -168,7 +168,7 @@ else
         ah=axes;
         set(fh,'UserData',d);
 
-        [fh,ah] = UCIT_prepareFigureN(fh, 'UL', ah, @doNothing, [], @doNothing, []);
+        [fh,ah] = UCIT_prepareFigureN(0 ,fh, 'UL', ah, @doNothing, [], @doNothing, []);
     end
 end
 
