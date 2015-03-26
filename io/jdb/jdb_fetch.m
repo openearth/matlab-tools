@@ -102,13 +102,14 @@ while 1
     end
 end
 
-pstat.close();
-rs.close();
 
 header = arrayfun(...
     @(x) char(rsMetaData.getColumnName(x)),...
     (1:numberOfColumns),...
     'UniformOutput',false);
+
+pstat.close();
+rs.close();
 
 %% convert to desired output format
 switch OPT.format
