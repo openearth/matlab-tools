@@ -389,7 +389,7 @@ if fin ~= 0
    handles.filedir = pin;
    handles.files_hd1{1} = nesthd_get_gridname([pin fin]);
 
-   set (handles.name_hd1_grd_big,'String',handles.files_hd1{1},'FontSize',10,'Enable','on','HorizontalAlignment','left');
+   set (handles.name_hd1_grd_big,'String',nesthd_strippath(handles.files_hd1{1}),'FontSize',14,'Enable','on','HorizontalAlignment','left');
    handles = nesthd_check_nesthd1(handles);
    set_nesthd1(handles,'on' );
 end
@@ -413,8 +413,8 @@ if fin ~= 0
    if ~isempty(filename)
        handles.files_hd1{3} = filename;
    end
-   set (handles.name_hd1_grd_small,'String',handles.files_hd1{2},'FontSize',10,'Enable','on','HorizontalAlignment','left');
-   set (handles.name_hd1_bnd      ,'String',handles.files_hd1{3},'FontSize',10,'Enable','on','HorizontalAlignment','left');
+   set (handles.name_hd1_grd_small,'String',nesthd_strippath(handles.files_hd1{2}),'FontSize',14,'Enable','on','HorizontalAlignment','left');
+   set (handles.name_hd1_bnd,'String',nesthd_strippath(handles.files_hd1{3}),'FontSize',14,'Enable','on','HorizontalAlignment','left');
    handles = nesthd_check_nesthd1(handles);
    set_nesthd1(handles,'on' );
 end
@@ -435,7 +435,7 @@ if fin ~= 0
    handles.filedir = pin;
    handles.files_hd1{6} = [pin fin];
 
-   set (handles.name_hd1_enclosure,'String',handles.files_hd1{6},'FontSize',10,'HorizontalAlignment','left');
+   set (handles.name_hd1_enclosure,'String',nesthd_strippath(handles.files_hd1{6}),'FontSize',14,'HorizontalAlignment','left');
    set_nesthd1(handles,'on' );
 end
 
@@ -459,8 +459,8 @@ if fin ~= 0
        handles.files_hd1{2} = filename;
    end
    handles.files_hd1{3} = nesthd_get_bndname ([pin fin]);
-   set (handles.name_hd1_grd_small,'String',handles.files_hd1{2},'FontSize',10,'Enable','on','HorizontalAlignment','left');
-   set (handles.name_hd1_bnd      ,'String',handles.files_hd1{3},'FontSize',10,'Enable','on','HorizontalAlignment','left');
+   set (handles.name_hd1_grd_small,'String',nesthd_strippath(handles.files_hd1{2}),'FontSize',14,'Enable','on','HorizontalAlignment','left');
+   set (handles.name_hd1_bnd,'String',nesthd_strippath(handles.files_hd1{3}),'FontSize',14,'Enable','on','HorizontalAlignment','left');
    handles = nesthd_check_nesthd1(handles);
    set_nesthd1(handles,'on' );
 end
@@ -487,7 +487,7 @@ cd (handles.progdir);
 if fin ~= 0
    handles.filedir = pin;
    handles.files_hd1{4} = [pin fin];
-   set (handles.name_hd1_obs,'String',[pin fin],'FontSize',10,'Enable','on','HorizontalAlignment','left');
+   set (handles.name_hd1_obs,'String',fin,'FontSize',14,'Enable','on','HorizontalAlignment','left');
    handles = nesthd_check_nesthd1(handles);
    set_nesthd1(handles,'on' );
 end
@@ -508,7 +508,7 @@ cd (handles.progdir);
 if fin ~= 0
    handles.filedir = pin;
    handles.files_hd1{5} = [pin fin];
-   set (handles.name_hd1_adm,'String',[pin fin],'FontSize',10,'Enable','on','HorizontalAlignment','left');
+   set (handles.name_hd1_adm,'String',fin,'FontSize',14,'Enable','on','HorizontalAlignment','left');
    handles = nesthd_check_nesthd1(handles);
    set_nesthd1(handles,'on' );
 end
@@ -542,7 +542,7 @@ cd (handles.progdir);
 if fin ~= 0
    handles.filedir = pin;
    handles.files_hd2{1} = nesthd_get_bndname ([pin fin]);
-   set (handles.name_hd2_bnd,'String',handles.files_hd2{1},'FontSize',10,'Enable','on','HorizontalAlignment','left');
+   set (handles.name_hd2_bnd,'String',nesthd_strippath(handles.files_hd2{1}),'FontSize',14,'Enable','on','HorizontalAlignment','left');
 end
 
 if ~isempty(handles.files_hd2{3}) && ~isempty(handles.files_hd2{1})
@@ -550,7 +550,7 @@ if ~isempty(handles.files_hd2{3}) && ~isempty(handles.files_hd2{1})
     [handles] = nesthd_set_add_inf(handles);
     if isempty(handles.bnd)
         handles.name_hd2{1} = '';
-        set (handles.name_hd2_bnd,'String',handles.files_hd2{1},'FontSize',10,'Enable','on','HorizontalAlignment','left');
+        set (handles.name_hd2_bnd,'String',nesthd_strippath(handles.files_hd2{1}),'FontSize',14,'Enable','on','HorizontalAlignment','left');
     else
         update_additional(handles);
     end
@@ -575,7 +575,7 @@ cd (handles.progdir);
 if fin ~= 0
    handles.filedir = pin;
    handles.files_hd2{2} = [pin fin];
-   set (handles.name_hd2_adm,'String',[pin fin],'FontSize',10,'Enable','on','HorizontalAlignment','left');
+   set (handles.name_hd2_adm,'String',fin,'FontSize',14,'Enable','on','HorizontalAlignment','left');
    [handles] = nesthd_check_nesthd2(handles);
    set_nesthd2(handles,'on');
 end
@@ -596,7 +596,7 @@ cd (handles.progdir);
 if fin ~= 0
    handles.filedir = pin;
    handles.files_hd2{3} = [pin fin];
-   set (handles.name_hd2_trih,'String',[pin fin],'FontSize',10,'Enable','on','HorizontalAlignment','left');
+   set (handles.name_hd2_trih,'String',fin,'FontSize',14,'Enable','on','HorizontalAlignment','left');
    handles.nfs_inf = nesthd_get_general([pin fin]);
 end
 
@@ -605,7 +605,7 @@ if ~isempty(handles.files_hd2{3}) && ~isempty(handles.files_hd2{1})
     [handles] = nesthd_set_add_inf(handles);
     if isempty(handles.bnd)
         handles.files_hd2{1} = '';
-        set (handles.name_hd2_bnd,'String',handles.files_hd2{1},'FontSize',10,'Enable','on','HorizontalAlignment','left');
+        set (handles.name_hd2_bnd,'String',nesthd_strippath(handles.files_hd2{1}),'FontSize',14,'Enable','on','HorizontalAlignment','left');
     else
         update_additional(handles);
     end
@@ -635,7 +635,7 @@ end
 if fin ~= 0
    handles.filedir = pin;
    handles.files_hd2{4} = [pin fin];
-   set (handles.name_hd2_bct,'String',[pin fin],'FontSize',10,'Enable','on','HorizontalAlignment','left');
+   set (handles.name_hd2_bct,'String',fin,'FontSize',14,'Enable','on','HorizontalAlignment','left');
    [handles] = nesthd_check_nesthd2(handles);
    set_nesthd2(handles,'on');
 end
@@ -661,7 +661,7 @@ end
 if fin ~= 0
    handles.filedir = pin;
    handles.files_hd2{5} = [pin fin];
-   set (handles.name_hd2_bcc,'String',[pin fin],'FontSize',10,'Enable','on','HorizontalAlignment','left');
+   set (handles.name_hd2_bcc,'String',fin,'FontSize',14,'Enable','on','HorizontalAlignment','left');
    [handles] = nesthd_check_nesthd2(handles);
    set_nesthd2(handles,'on');
 end
@@ -886,12 +886,12 @@ set (handles.name_hd1_adm       ,'Visible',onoff);
 set (handles.run_nesthd1        ,'Visible',onoff);
 set (handles.additional         ,'Visible','off');
 
-set (handles.name_hd1_grd_big  ,'String',handles.files_hd1{1},'FontSize',10,'HorizontalAlignment','left');
-set (handles.name_hd1_grd_small,'String',handles.files_hd1{2},'FontSize',10,'HorizontalAlignment','left');
-set (handles.name_hd1_enclosure,'String',handles.files_hd1{6},'FontSize',10,'HorizontalAlignment','left');
-set (handles.name_hd1_bnd      ,'String',handles.files_hd1{3},'FontSize',10,'HorizontalAlignment','left');
-set (handles.name_hd1_obs      ,'String',handles.files_hd1{4},'FontSize',10,'HorizontalAlignment','left');
-set (handles.name_hd1_adm      ,'String',handles.files_hd1{5},'FontSize',10,'HorizontalAlignment','left');
+set (handles.name_hd1_grd_big  ,'String',nesthd_strippath(handles.files_hd1{1}),'FontSize',14,'HorizontalAlignment','left');
+set (handles.name_hd1_grd_small,'String',nesthd_strippath(handles.files_hd1{2}),'FontSize',14,'HorizontalAlignment','left');
+set (handles.name_hd1_enclosure,'String',nesthd_strippath(handles.files_hd1{6}),'FontSize',14,'HorizontalAlignment','left');
+set (handles.name_hd1_bnd      ,'String',nesthd_strippath(handles.files_hd1{3}),'FontSize',14,'HorizontalAlignment','left');
+set (handles.name_hd1_obs      ,'String',nesthd_strippath(handles.files_hd1{4}),'FontSize',14,'HorizontalAlignment','left');
+set (handles.name_hd1_adm      ,'String',nesthd_strippath(handles.files_hd1{5}),'FontSize',14,'HorizontalAlignment','left');
 
 function set_nesthd2(handles,onoff)
 
@@ -919,11 +919,11 @@ set (handles.name_hd2_bcc       ,'Visible',onoff);
 set (handles.run_nesthd2        ,'Visible',onoff);
 set (handles.additional         ,'Visible',onoff);
 
-set (handles.name_hd2_bnd      ,'String',handles.files_hd2{1},'FontSize',10,'HorizontalAlignment','left');
-set (handles.name_hd2_adm      ,'String',handles.files_hd2{2},'FontSize',10,'HorizontalAlignment','left');
-set (handles.name_hd2_trih     ,'String',handles.files_hd2{3},'FontSize',10,'HorizontalAlignment','left');
-set (handles.name_hd2_bct      ,'String',handles.files_hd2{4},'FontSize',10,'HorizontalAlignment','left');
-set (handles.name_hd2_bcc      ,'String',handles.files_hd2{5},'FontSize',10,'HorizontalAlignment','left');
+set (handles.name_hd2_bnd      ,'String',nesthd_strippath(handles.files_hd2{1}),'FontSize',14,'HorizontalAlignment','left');
+set (handles.name_hd2_adm      ,'String',nesthd_strippath(handles.files_hd2{2}),'FontSize',14,'HorizontalAlignment','left');
+set (handles.name_hd2_trih     ,'String',nesthd_strippath(handles.files_hd2{3}),'FontSize',14,'HorizontalAlignment','left');
+set (handles.name_hd2_bct      ,'String',nesthd_strippath(handles.files_hd2{4}),'FontSize',14,'HorizontalAlignment','left');
+set (handles.name_hd2_bcc      ,'String',nesthd_strippath(handles.files_hd2{5}),'FontSize',14,'HorizontalAlignment','left');
 
 function add_inf_off(handles)
 
