@@ -107,7 +107,7 @@ for ibnd = 1 : no_bnd
 
         for itim = 1: notims
            Info.Table(k).Data(itim,1) = nfs_inf.tstart + (itim-1)*nfs_inf.dtmin;
-           switch bnd.DATA(ibnd).bndtype
+           switch bnd.DATA((ibnd - 1)*2 + 1).bndtype
                case{'Z' 'N'}
                   Info.Table(k).Data(itim,2) = bndval(itim).value((ibnd - 1)*2 + 1,1,1);
                   Info.Table(k).Data(itim,3) = bndval(itim).value((ibnd - 1)*2 + 2,1,1);
