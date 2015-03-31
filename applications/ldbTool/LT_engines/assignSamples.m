@@ -61,8 +61,14 @@ for ii=1:length(distance)
     xi=[xi ; x(ii+1)];
     yi=[yi ; y(ii+1)];
 end
-xi=inpaint_nans(xi,2);
-yi=inpaint_nans(yi,2);
+
+if ~isempty(which('inpaint_nans'))
+    xi=inpaint_nans(xi,2);
+    yi=inpaint_nans(yi,2);
+else
+    xi=inpaintn(xi);
+    yi=inpaintn(yi);
+end    
 
 xyz=[];
 
