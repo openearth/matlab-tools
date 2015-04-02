@@ -62,10 +62,12 @@ if ~isempty(OPT.table)
 end
 
 % Fill the information
+tablefieldnames = matlab.lang.makeUniqueStrings(matlab.lang.makeValidName(tables));
+
 for ii=1:length(tables)
     table = tables{ii};
     owner = owners{ii};
-    
+    tablename = tablefieldnames{ii}; 
     try
         if isempty(OPT.column_name)
             [nams, typs, siz] = jdb_getcolumns(conn,table,owner);    
@@ -76,17 +78,19 @@ for ii=1:length(tables)
         pk_name = jdb_getpk(conn, table);
         ispk    = ismember(nams,pk_name);
 
-        info.(tables{ii}).fieldnames    = nams;
-        info.(tables{ii}).datatype      = typs;
-        info.(tables{ii}).isprimarykey  = ispk;
-        info.(tables{ii}).records       = siz;
-        info.(tables{ii}).err           = '';
+        info.(tablename).table         = table;  % The original tablename
+        info.(tablename).fieldnames    = nams;
+        info.(tablename).datatype      = typs;
+        info.(tablename).isprimarykey  = ispk;
+        info.(tablename).records       = siz;
+        info.(tablename).err           = '';
     catch ME
-        info.(tables{ii}).fieldnames    = {};
-        info.(tables{ii}).datatype      = {};
-        info.(tables{ii}).isprimarykey  = [];
-        info.(tables{ii}).records       = [];
-        info.(tables{ii}).err           = ['Error in reading table: ' ME.message];
+        info.(tablename).table         = table;
+        info.(tablename).fieldnames    = {};
+        info.(tablename).datatype      = {};
+        info.(tablename).isprimarykey  = [];
+        info.(tablename).records       = [];
+        info.(tablename).err           = ['Error in reading table: ' ME.message];
     end
 end
 info = orderfields(info);
