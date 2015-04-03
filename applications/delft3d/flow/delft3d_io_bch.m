@@ -90,8 +90,17 @@ else
    S.iostat = -1;
    i             = 0;
    
-
-   S.frequencies = str2num(fgetl(fid));
+   % READ FREQUENCIES 
+   % ALSO SUBSEQUENT LINES ARE SCANNED (SINCE DELFT3D STORES FREQUENCY AT LINE 2 ETC)
+   readFREQ=1;
+   S.frequencies = [];
+   while readFREQ
+       freq0 = str2num(fgetl(fid));
+       S.frequencies = [S.frequencies,freq0];
+       if isempty(freq0)
+          readFREQ = 0;
+       end
+   end
    S.data        = fscanf(fid,'%f');
    
    S.nof    = length(S.frequencies);
