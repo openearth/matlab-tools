@@ -1,4 +1,4 @@
-function ldb2kml(ldb)
+function ldb2kml(ldb,kmlfile,linecolour)
 %LDB2KML Converts ldb to kml-file
 %
 % Reads a landboundary file and save it to a kml-file which can be opened
@@ -55,11 +55,24 @@ if nargin==0
     ldb=landboundary('read',[pat nam]);
     ldb=ldb(:,1:2);
     [fPat fName]=fileparts([pat nam]);
+elseif ischar(ldb)
+    ldb=landboundary('read',ldb);
+    ldb=ldb(:,1:2);
+    if nargin<2
+        [fName fPat]=uiputfile('*.kml','Save kml-file to...');
+    end
 else
     [fName fPat]=uiputfile('*.kml','Save kml-file to...');
 end
-
-clr=str2num(char(inputdlg({'Red','Green','Blue'},'Specify RGB color',1,{'255','0','0'})));
+if nargin>1
+    [fPat fName]=fileparts(kmlfile);
+    if isempty(fPat);fPat=cd;end
+end
+if nargin>2
+    clr = round(linecolour(:).*255);
+else
+    clr=str2num(char(inputdlg({'Red','Green','Blue'},'Specify RGB color',1,{'255','0','0'})));
+end
 if isempty(clr)
     clrString='ffff0000';
 end
@@ -111,7 +124,8 @@ for ii=1:length(id)-1
     fprintf(fid,'%s \n','				<LinearRing>');
     fprintf(fid,'%s \n','					<coordinates>');
     for ij=1:size(data,1)
-        fprintf(fid,'%s \n',[num2str(data(ij,1),'%15.6f') ',' num2str(data(ij,2),'%15.6f') ',0']);
+        fprintf(fid,'%s \n',[num2str(data(ij,1),'%15.6f') ',' num2str(data(ij,2),'%15.6f') ' ']);
+%        fprintf(fid,'%s \n',[num2str(data(ij,1),'%15.6f') ',' num2str(data(ij,2),'%15.6f') ', 0']);
     end
     fprintf(fid,'%s \n','</coordinates>');
     fprintf(fid,'%s \n','				</LinearRing>');
