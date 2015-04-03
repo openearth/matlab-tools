@@ -91,7 +91,8 @@ switch lower(meteosource)
     case{'ncep_gfs'}
         urlstr=['http://nomads.ncdc.noaa.gov/dods/NCEP_GFS/' datestr(cycledate,'yyyymm') '/' datestr(cycledate,'yyyymmdd') '/gfs_3_' datestr(cycledate,'yyyymmdd')  '_' num2str(cyclehour,'%0.2i') '00_fff'];
     case{'gfs1p0'}
-        urlstr=['http://nomads.ncep.noaa.gov:9090/dods/gfs/gfs' datestr(cycledate,'yyyymmdd') '/gfs_' num2str(cyclehour,'%0.2i') 'z'];
+%        urlstr=['http://nomads.ncep.noaa.gov:9090/dods/gfs/gfs' datestr(cycledate,'yyyymmdd') '/gfs_' num2str(cyclehour,'%0.2i') 'z'];
+        urlstr=['http://nomads.ncep.noaa.gov:9090/dods/gfs_1p00/gfs' datestr(cycledate,'yyyymmdd') '/gfs_1p00_' num2str(cyclehour,'%0.2i') 'z'];    
     case{'gfs0p5'}
         urlstr=['http://nomads.ncep.noaa.gov:9090/dods/gfs_hd/gfs_hd' datestr(cycledate,'yyyymmdd') '/gfs_hd_' num2str(cyclehour,'%0.2i') 'z'];
     case{'nam'}
