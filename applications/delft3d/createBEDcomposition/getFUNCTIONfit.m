@@ -39,7 +39,7 @@ function [estimates,varargout] = getFUNCTIONfit(xdata,ydata,method,startvalues)
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2015 <COMPANY>
+%   Copyright (C) 2015 Deltares
 %       B.J.A. Huisman
 %
 %       bas.huisman@deltares.nl
