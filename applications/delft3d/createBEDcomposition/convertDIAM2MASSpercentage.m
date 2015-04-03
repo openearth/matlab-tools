@@ -1,7 +1,7 @@
 function [MASSprct]=convertDIAM2MASSpercentage(varargin)
-%UNTITLED  One line description goes here.
-%
-%   More detailed description goes here.
+%   The function 'convertDIAM2MASSpercentage.m' computes the mass fraction of sediment
+%   for pre-specified sieve fractions on the basis of D10, D50 and D90 values.
+%   For this purpose a log-normal distribution is fitted on the D10, D50 and D90 values.
 %
 %   Syntax:
 %       function [MASSprct]=convertDIAM2MASSpercentage(GRDfile,D10file,D50file,D90file,SIEVEsizes)
