@@ -84,19 +84,23 @@ SPWZ2   = strcmpi(Station2, 'Steunpunt Waddenzee');
 if SPWZ1 
     switch Station2
         case 'Eierlandse Gat'
-            lambda      = (1-lambda)*(1-0.57)+(1-0.43);
+            lambdaDistance      = 0.57 + (1-lambda)*0.43;
+            lambda = 1-lambdaDistance;
             Station1    = 'Borkum';
         case 'Borkum'
-            lambda      = (1-lambda)*(1-0.43)+(1-0.57);
+            lambdaDistance      = 0.43 + (1-lambda)*0.57;
+            lambda = 1-lambdaDistance;
             Station1    = 'Eierlandse Gat';
     end
 elseif SPWZ2
     switch Station1
         case 'Eierlandse Gat'
-            lambda      = 1-(1-lambda)*(1-0.57);
+            lambdaDistance      = 1 - (0.57 + lambda*0.43);
+            lambda = 1-lambdaDistance;
             Station2    = 'Borkum';
         case 'Borkum'
-            lambda      = 1-(1-lambda)*(1-0.43);
+            lambdaDistance      = 1-(0.43 + 0.57*lambda);
+            lambda = 1-lambdaDistance;
             Station2    = 'Eierlandse Gat';
     end
 end
