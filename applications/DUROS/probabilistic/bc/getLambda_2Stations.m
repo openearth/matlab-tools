@@ -124,7 +124,9 @@ if (isempty(OPT.Station1) && isempty(OPT.Station2))
     end
     [dum, distId] = sort(sqrt(([StationInfo{:,2}]-XIntersection).^2 + ([StationInfo{:,3}]-YIntersection).^2));
     station1Id = distId(1);
-    station2Id = distId(2);
+    availDistId = distId(sign(StationInfo{station1Id,2}-XIntersection) ~= sign([StationInfo{distId,2}]-XIntersection));
+    station2Id = availDistId(1);
+    
 else
     [Station1Valid, station1Id] = ismember(OPT.Station1,StationInfo(:,1));
     [Station2Valid, station2Id] = ismember(OPT.Station2,StationInfo(:,1));
