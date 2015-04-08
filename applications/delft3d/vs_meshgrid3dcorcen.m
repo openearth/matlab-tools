@@ -160,9 +160,13 @@ TimeStep       = 1;
        end
        output = char(vs_find(NFSstruct,'DPSED'));
        if strcmp(output, 'map-sed-series');
-           d3dcen.dpsed = vs_get(NFSstruct,'map-sed-series' ,{TimeStep},'DPSED',{1:G.nmax-0,1:G.mmax-0},'quiet');%' % depth is positive up here (in contrast to NEFIS files) !!!
+           d3dcen.dpsed = vs_get(NFSstruct,'map-sed-series' ,{TimeStep},'DPSED',{1:G.nmax-0,1:G.mmax-0},'quiet');% Sediment thickness at bed (zeta point)
        end
-      
+       output = char(vs_find(NFSstruct,'BODSED'));
+       if strcmp(output, 'map-sed-series');
+           d3dcen.bodsed = vs_get(NFSstruct,'map-sed-series' ,{TimeStep},'BODSED',{1:G.nmax-0,1:G.mmax-0,1},'quiet');% Available sediment at bed (zeta point)
+       end
+
   otherwise,
     error('Invalid NEFIS file for this action.');
   end; % switch vs_type(NFSstruct),
@@ -183,6 +187,9 @@ TimeStep       = 1;
      G.cen.zwl = d3dcen.zwl(2:end-1,2:end-1);
      G.cen.zwl_comment = 'Waterlevel at centers with application of time dependent velocity point masks';
      G.cen.dpsed = d3dcen.dpsed(2:end-1,2:end-1);
+     G.cen.dpsed_comment = 'Sediment thickness at bed (zeta point)';
+     G.cen.bodsed = d3dcen.bodsed(2:end-1,2:end-1);
+     G.cen.bodsed_comment = 'Available sediment at bed (zeta point)';
      G.cen.mask = d3dcen.mask(2:end-1,2:end-1);
      G.cen.mask_comment = 'wet = true; dry = false';
 
