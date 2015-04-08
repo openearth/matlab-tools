@@ -160,7 +160,7 @@ TimeStep       = 1;
        end
        output = char(vs_find(NFSstruct,'DPSED'));
        if strcmp(output, 'map-sed-series');
-           G.cor.dpsed = vs_get(NFSstruct,'map-sed-series' ,{TimeStep},'DPSED'  ,{G.ncor,G.mcor},'quiet');%' % depth is positive up here (in contrast to NEFIS files) !!!
+           d3dcen.dpsed = vs_get(NFSstruct,'map-sed-series' ,{TimeStep},'DPSED',{1:G.nmax-0,1:G.mmax-0},'quiet');%' % depth is positive up here (in contrast to NEFIS files) !!!
        end
       
   otherwise,
@@ -182,6 +182,7 @@ TimeStep       = 1;
   
      G.cen.zwl = d3dcen.zwl(2:end-1,2:end-1);
      G.cen.zwl_comment = 'Waterlevel at centers with application of time dependent velocity point masks';
+     G.cen.dpsed = d3dcen.dpsed(2:end-1,2:end-1);
      G.cen.mask = d3dcen.mask(2:end-1,2:end-1);
      G.cen.mask_comment = 'wet = true; dry = false';
 
