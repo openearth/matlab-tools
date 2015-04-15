@@ -5,30 +5,31 @@
 %    ncisatt                        - determines if an attribute is present in a netCDF file.
 %    ncisdim                        - determines if a dimension is present in a netCDF file.
 %    ncisvar                        - determines if a variable is present in a netCDF file.
-%
 %    nc_type                        - find netCDF type corresponding to Matlab types
-%
-%    nc_cf_bounds2cor               - rewrite 3D CF bounds matrix to 2D matrix of corners
-%    nc_cf_cor2bounds               - rewrite vector or matrix of corners to CF bounds matrix
 %
 %    nc2struct                      - load netCDF file with to struct (beta)
 %    struct2nc                      - save struct with 1D arrays to netCDF file (beta)
 %
-%    nc_cf_time                     - reads time variables from a netCDF file into Matlab datenumber
-%    ncread_cf_time                 - return time data from specified CF compliant time variable into matlab datenum 
-%    ncwrite_cf_time                - NCREAD_CF_TIME  Writes time data in matlab datenum to a specified cf compliant time variable in a nc file
-%    nc_cf_grid_mapping             - get CF/ADAGUC grid mapping nc attributes from epsg code
+%    ncread_cf_time                 - reads time data from specified CF compliant time variable into matlab datenum 
+%    ncwrite_cf_time                - writes time data in matlab datenum to a specified cf compliant time variable in a nc file
 %
-%    nc_actual_range                - reads or retrives actual range from contiguous netCDF variable
+%    nc_actual_range                - reads or retrieves actual range from contiguous netCDF variable
 %    nc_dimension_subset            - subset slices along 1 dimension from all nc variables
-%
 %    nc_atrname2index               - get index of attribute name from ncfile
 %    nc_varname2index               - get index of variable name from ncfile
 %    nc_varfind                     - Lookup variable name(s) in NetCDF file using attributename and -value pair
-%
 %    ncread_strict_dimension_order  - Reads the data from the netcdf file in the specified dimension order
 %    nc_nantest                     - This shows how NaNs behave in snctools
 %    netcdf_addvar                  - adds a variable to a NetCDF file using the matlab netcdf library
+%
+% CF conventions:
+%
+%    nc_cf_bounds2cor               - rewrite 3D CF bounds matrix to 2D matrix of corners
+%    nc_cf_cor2bounds               - rewrite vector or matrix of corners to CF bounds matrix
+%
+%    nc_cf_time                     - reads time variables from a netCDF file into Matlab datenumber
+%
+%    nc_cf_grid_mapping             - get CF/ADAGUC grid mapping nc attributes from epsg code
 %
 % Collection of netCDF grid files
 %
@@ -57,13 +58,15 @@
 %    nc_cf_time_range               - reads get a monotonous subset from HUGE time vector into Matlab datenumber
 %    nc_cf_time_range_test          - test for nc_cf_time_range
 %
-% Tutotrials in creating specific netCDF file types:
+% Tutotials on creating netCDF grid files:
 %
 %     ncwritetutorial_grid_lat_lon_swath       - Create netCDF-CF file of orthogonal  x-y grid
 %     ncwritetutorial_grid_lat_lon_curvilinear - Create netCDF-CF file of curvilinear lat-lon grid
 %     ncwritetutorial_grid_lat_lon_orthogonal  - Create netCDF-CF file of orthogonal  lat-lon grid
 %     ncwritetutorial_grid_x_y_curvilinear     - Create netCDF-CF file of curvilinear x-y grid
 %     ncwritetutorial_grid_x_y_orthogonal      - Create netCDF-CF file of orthogonal  x-y grid
+%
+% Functions to write special netCDF data types incl tutorial:
 %
 %     ncwrite_profile                 - write timeSeriesProfile to netCDF-CF file
 %     ncwrite_profile_tutorial        - tutorial for writing timeSeriesProfile to netCDF-CF file

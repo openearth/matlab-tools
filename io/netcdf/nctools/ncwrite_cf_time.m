@@ -1,5 +1,5 @@
 function [datenumbers,zone] = ncwrite_cf_time(ncFile, varName, datenumbers, varargin)
-%NCREAD_CF_TIME  Writes time data in matlab datenum to a specified cf compliant time variable in a nc file
+%ncwrite_cf_time  Writes time data in matlab datenum to a specified cf compliant time variable in a nc file
 %
 %   Syntax is exactly like ncwrite.
 %

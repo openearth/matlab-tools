@@ -1,5 +1,5 @@
 function actual_range = nc_actual_range(ncfile,varname)
-%NC_ACTUAL_RANGE   reads or retrives actual range from contiguous netCDF variable
+%NC_ACTUAL_RANGE   reads or retrieves actual range from contiguous netCDF variable
 %
 %  [range] = nc_actual_range(ncfile,varname);
 %
