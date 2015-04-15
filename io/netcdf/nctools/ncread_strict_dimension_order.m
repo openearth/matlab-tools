@@ -1,5 +1,5 @@
 function vardata = ncread_strict_dimension_order(ncFile, varName, dimNames, varargin)
-%NCREAD_STRICK_DIMENSION_ORDER  Reads the data from the netcdf file in the specified dimension order
+%ncread_strict_dimension_order  Reads the data from the netcdf file in the specified dimension order
 %
 %   Function is as ncread, except that you can specify the dimension order of the output
 %   This function is created tom solve the problem when reading netcdf

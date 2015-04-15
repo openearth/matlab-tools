@@ -1,5 +1,5 @@
-function varargout = ncwritetutorial_timeseries(ncfile,varargin);
-%NCWRITETUTORIAL_TIMESERIES tutorial for writing timeseries on disconnected platforms to netCDF-CF file
+function varargout = ncwrite_timeseries_tutorial(ncfile,varargin);
+%ncwrite_timeseries_tutorial tutorial for writing timeseries on disconnected platforms to netCDF-CF file
 %
 % For too legacy matlab releases, plase see instead: see nc_cf_timeseries.
 %

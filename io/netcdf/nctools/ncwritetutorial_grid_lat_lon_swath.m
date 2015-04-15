@@ -1,4 +1,4 @@
-%% Create netCDF-CF file of orthogonal x-y grid (snctools)
+%% Create netCDF-CF file of orthogonal x-y grid
 %
 %  example of how to make a netCDF file with CF conventions of a variable 
 %  that is defined on a grid that is curvilinear in a lat-lon coordinate

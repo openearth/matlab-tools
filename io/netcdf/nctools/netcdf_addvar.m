@@ -1,5 +1,5 @@
 function varid = netcdf_addvar ( ncid, varstruct )
-% NETCDF_ADDVAR:  adds a variable to a NetCDF file using the matlab netcdf library
+%netcdf_addvar  adds a variable to a NetCDF file using the matlab netcdf library
 %
 %    NOTE: almost same as private snctools function NC_ADDVAR_TMW
 % 

@@ -1,5 +1,5 @@
-function bool = nc_isatt_tmw(ncfile,varname,attrname)
-%NCISATT:  determines if an attribute is present in a netCDF file.
+function bool = ncisatt(ncfile,varname,attrname)
+%NCISATT  determines if an attribute is present in a netCDF file.
 %
 %   BOOL = NCISATT(NCFILE,VARNAME,ATTRNAME) returns true if the attribute
 %   specified by VARNAME and ATTRNAME is present in the given file.   Use

@@ -1,5 +1,5 @@
-function ncwritetutorial_trajectory(ncfile0,varargin)
-%NCWRITETUTORIAL_TRAJECTORY tutorial for writing trajectory to netCDF-CF file
+function ncwrite_trajectory_tutorial(ncfile0,varargin)
+%ncwrite_trajectory_tutorial tutorial for writing trajectory to netCDF-CF file
 %
 %  Tutorial of how to make a netCDF file with CF conventions of a 
 %  variable that is a trajectory. In this special case 

@@ -1,5 +1,5 @@
-function bool = nc_isvar_tmw(ncfile,varname)
-%NCISATT:  determines if a variable is present in a netCDF file.
+function bool = ncisvar(ncfile,varname)
+%NCISVAR  determines if a variable is present in a netCDF file.
 %
 %   BOOL = NCISVAR(NCFILE,VARNAME) returns true if the variable
 %   specified by VARNAME is present in the given file.   Use

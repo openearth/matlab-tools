@@ -7,7 +7,7 @@ function ATT = nc_cf_harvest_tuple_from_inspire(xmlname);
 
 %% Copyright notice
 %   --------------------------------------------------------------------
-%   Copyright (C) 2014 Van Oord
+%   Copyright (C) 2015 Van Oord
 %       Gerben de Boer, <gerben.deboer@vanoord.com>
 %
 %       Watermanweg 64

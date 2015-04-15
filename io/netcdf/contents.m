@@ -2,33 +2,27 @@
 %
 %   netcdf_settings     - adds all netCDF tools below to matlab path
 %                         incl. some legacies solutions and JAVA library.
-%                         Automacially uses Matlab native netcdf library (R2008b+)
+%                         Automatically uses Matlab native netcdf library (R2008b+)
 %                         for write, uses JAVA library for OPeNDAP read.
-%   snctools            - simple netCDF io (external)
-%   mexnc               - low-level netCDF io (external)
-%   nctools             - netCDF-CF tools (add-on to snctools)
 %
-% Reading netCDF files
-%
-%  http://mexcdf.sourceforge.net/tutorial - snctools basics
-%  nc_cf_time                             - read CF time variable into Matlab datenum
-%  nc_cf_grid                             - read CF grid
-%  nc_cf_stationTimeSeries                - read CF time series
-%  opendap_catalog                        - get netCDF file list from OPeNDAP server
-%  nc_cf_grid_tutorial                    - read and subset a grid
-%  nc_cf_stationTimeSeries_tutorial       - read and subset a time series
-%
-% Creating netCDF files (tutorials)
-% 
-%  nc_cf_stationTimeSeries_write_tutorial        - write time series        f(time)
-%  nc_cf_grid_write_lat_lon_orthogonal_tutorial  - write grid: orthogonal   f(lat,lon)
-%  nc_cf_grid_write_x_y_orthogonal_tutorial      - write grid: orthogonal   f(x,y)     
-%  nc_cf_grid_write_lat_lon_curvilinear_tutorial - write grid: curvi-linear f(lat,lon)
-%  nc_cf_grid_write_x_y_curvilinear_tutorial     - write grid: curvi-linear f(x,y)
+% Note that all matlab tools use a different dimension order than all other
+% netcdf libraries, so ncinfo sows soemhting different than e.g. ncbrowse.
 %
 % For more info on netCDF and the CF conventions:
+%  http://www.unidata.ucar.edu/software/netcdf/, http://cf-pcmdi.llnl.gov/
 %
-%  http://www.unidata.ucar.edu/software/netcdf/
-%  http://cf-pcmdi.llnl.gov/
+% * OFFICIAL LOW-LEVEL TOOLBOX
+%   netcdf                                       - netcdf C API
+% * OFFICIAL HIGH-LEVEL READ TOOLBOX
+%   ncread, ncreadatt                            - read
+%   nccreate, ncwriteschema, ncwrite, ncwriteatt - add
+%   ncdisp, ncinfo                               - info
+% * OPENEARTH EXTRA NETCDF-CF TOOLS
+%   nctools                                      - toolbox
+% * OBSOLETE
+%   mexnc                                        - external low-level netCDF io (OBSOLETE)
+%   snctools                                     - external simple netCDF io before R2012b (OBSOLETE)
+% * JAVA TOOLBOX
+%   njtbx                                        - external netCDF java toolbox
 %
 % See also: OpenEarthTools: general, applications, netcdf
