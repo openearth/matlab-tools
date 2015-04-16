@@ -9,6 +9,9 @@ function varargout = scatterbin(x,y,varargin)
 % Edges can be a vector with edge corners, or a scaler as the 
 % number of bins (default 25), like hist. 
 %
+% Optional output arguments are: [<h,bin,EDGESx,EDGESy,htxt>] = scatterbin(...)
+% where h is the pcolor handle, and htxt is the text handle.
+%
 % Example:
 %  x = rand([100 1]);y = rand([100 1]);
 %  EDGESx=0:.1:1
@@ -92,7 +95,7 @@ if OPT.text
     for i=ind(:)'
         txt{i} = '';
     end
-    text(xc(:),yc(:),txt,'horizontal','center')
+    htxt = text(xc(:),yc(:),txt,'horizontal','center');
 end
 
 
@@ -103,7 +106,7 @@ elseif nargout==2
 elseif nargout==4
     varargout = {h,bin,EDGESx,EDGESy};
 elseif nargout==5
-    varargout = {h,bin,EDGESx,EDGESy,txt};       
+    varargout = {h,bin,EDGESx,EDGESy,htxt};       
 end
 
 

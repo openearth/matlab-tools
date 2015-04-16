@@ -7,7 +7,7 @@ function im = oetlogo
 %
 %See also: oetsettings, oetroot
 
-im = (fullfile(first_subdir(oetroot,-1),'inkscape','logos','openearth','2011','OpenEarth-logo-blurred-white-background.png'));
+im = (fullfile(first_subdir(oetroot,-1),'graphics','logos','openearth','2011','OpenEarth-logo-blurred-white-background.png'));
 
 if ~(exist(im)==2)
    fprintf(2,'OETLOGO only available when you have the full multi-language OpenEarthTools checkout:')

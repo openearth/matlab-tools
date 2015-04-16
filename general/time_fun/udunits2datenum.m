@@ -16,7 +16,7 @@ function varargout = udunits2datenum(varargin)
 % where <zone> is optional and has the length of isounits.
 %
 %See web: <a href="http://www.unidata.ucar.edu/software/udunits/">http://www.unidata.ucar.edu/software/udunits/</a>
-%See also: NC_CF_time, DATENUM, DATESTR, ISO2DATENUM, TIME2DATENUM, XLSDATE2DATENUM
+%See also: datenum2udunits, timeZones, NC_CF_time, DATENUM, DATESTR, ISO2DATENUM, TIME2DATENUM, XLSDATE2DATENUM
 
 %% Copyright notice
 %   --------------------------------------------------------------------
