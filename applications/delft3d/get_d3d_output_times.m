@@ -102,7 +102,11 @@ if strcmp(file_type,'trim')==1;
     ref_time_datenum  = datenum(num2str(vs_get(file_ID,groupnames{1,group_ind_const},{1},'ITDATE',{1},'quiet')),'yyyymmdd');
     sim_start_datenum = ref_time_datenum+(((vs_get(file_ID,groupnames{1,group_ind_info},{1},'ITMAPC',{1},'quiet'))/(60*24))*(timestep_secs/60));
     sim_end_datenum   = ref_time_datenum+(((vs_get(file_ID,groupnames{1,group_ind_info},{group_info.SizeDim},'ITMAPC',{1},'quiet'))/(60*24))*(timestep_secs/60));
-    varargout{1} = [sim_start_datenum:(sim_end_datenum-sim_start_datenum)/(group_info.SizeDim-1):sim_end_datenum]';
+    if group_info.SizeDim > 1
+        varargout{1} = [sim_start_datenum:(sim_end_datenum-sim_start_datenum)/(group_info.SizeDim-1):sim_end_datenum]';
+    elseif group_info.SizeDim == 1
+        varargout{1} = [sim_start_datenum];
+    end
 elseif strcmp(file_type,'trih')==1;
     groupnames = vs_disp(file_ID);
     for ii=1:size(groupnames,2);
@@ -117,7 +121,12 @@ elseif strcmp(file_type,'trih')==1;
     ref_time_datenum  = datenum(num2str(vs_get(file_ID,groupnames{1,group_ind_const},{1},'ITDATE',{1},'quiet')),'yyyymmdd');
     sim_start_datenum = ref_time_datenum+(((vs_get(file_ID,groupnames{1,group_ind_info},{1},'ITHISC',{1},'quiet'))/(60*24))*(timestep_secs/60));
     sim_end_datenum   = ref_time_datenum+(((vs_get(file_ID,groupnames{1,group_ind_info},{group_info.SizeDim},'ITHISC',{1},'quiet'))/(60*24))*(timestep_secs/60));
-    varargout{1} = [sim_start_datenum:(sim_end_datenum-sim_start_datenum)/(group_info.SizeDim-1):sim_end_datenum]';
+    if group_info.SizeDim > 1
+        varargout{1} = [sim_start_datenum:(sim_end_datenum-sim_start_datenum)/(group_info.SizeDim-1):sim_end_datenum]';
+    elseif group_info.SizeDim == 1
+        varargout{1} = [sim_start_datenum];
+    end
+        
 else
     error('This filetype is not supported, please consider a trim-*.dat or trih-*.dat file');
 end
