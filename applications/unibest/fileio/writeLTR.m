@@ -85,10 +85,12 @@ elseif size(shoreline,2)==1
     locs2.angles = shoreline;
 end
 
-if isstr(locations)
-    locs = readldb(locations);
-else
-    locs = struct('x',locations(:,1),'y',locations(:,2));
+if option == 1
+    if isstr(locations)
+        locs = readldb(locations);
+    else
+        locs = struct('x',locations(:,1),'y',locations(:,2));
+    end
 end
 
 if option==1
