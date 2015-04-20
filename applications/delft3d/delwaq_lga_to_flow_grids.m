@@ -44,7 +44,7 @@ function lga_indexes = delwaq_lga_to_flow_grids(lga_file,grd_files,varargin)
 %                   in a single line character string. Can in- or exclude
 %                   the complete path. When providing this optional input
 %                   variable, the script will verify the relation between
-%                   the *.LGA and *.map file.
+%                   the *.LGA and *.map file and indicate it.
 %
 %                   Examples:
 %
@@ -101,11 +101,25 @@ function lga_indexes = delwaq_lga_to_flow_grids(lga_file,grd_files,varargin)
 lga_data = delwaq('open',lga_file);
 
 if length(varargin)>0
-    dwq_data = delwaq('open',varargin{1});
-
-    if size(unique(lga_data.Index(find(lga_data.Index>0))),1) ~= dwq_data.NumSegm
-        % Do these files match with eachother?
+    if isstr(varargin{1})
+        try
+            dwq_data = delwaq('open',varargin{1});
+            if size(unique(lga_data.Index(find(lga_data.Index>0))),1) ~= dwq_data.NumSegm
+                if (dwq_data.NumSegm / size(unique(lga_data.Index(find(lga_data.Index>0))),1)) == round((dwq_data.NumSegm / size(unique(lga_data.Index(find(lga_data.Index>0))),1)))
+                    disp(['Looks like the *.lga file matches with the output *.map file with ' num2str((dwq_data.NumSegm / size(unique(lga_data.Index(find(lga_data.Index>0))),1))) ' layers'])
+                else
+                    disp(['This *.map file does not match with the provided *.lga file'])
+                end
+            else
+                disp('Your *.map file matches well with the *.lga file');
+            end
+        catch
+            disp(['Unable to open ' varargin{1}])
+        end
+    else
+        disp('Unknown optional input provided, ignored..')
     end
+    disp(' ')
 end
 
 % Remove gridpoints outside of the grid
