@@ -74,6 +74,9 @@ function delft3d_trim2trim_ini(trim_files,varargin)
 %       +31(0)88 335 8241
 %       <freek.scheel@deltares.nl>;
 %
+%       Developed as part of the TO27 project at the Water Institute of the
+%       Gulf, Baton Rouge, Louisiana
+%
 %       Please contact me if errors occur.
 %
 %       Deltares
