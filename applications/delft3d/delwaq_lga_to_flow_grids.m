@@ -6,26 +6,59 @@ function lga_indexes = delwaq_lga_to_flow_grids(lga_file,grd_files,varargin)
 %
 % If DELWAQ results are to be plotted or referenced to the original Delft3D
 % grids, excesssive processing is required. This script is aimed at just
-% that. Therefore, it uses the combined grid DELWAQ input (*.LGA file)
+% that. Therefore, it uses the combined DELWAQ grid input (*.LGA file)
 % combined with all original Delft3D FLOW-grids (list of original files)
-% that were used to construct the *.LGA file.
+% that were used to construct this *.LGA file.
 %
-% SYNTAX:
+% SYNTAX (<> indicates optional in- or output):
 %
+% <lga_indexes> = delwaq_lga_to_flow_grids(lga_file,grid_files,<delwaq_output>)
 %
-% The DELWAQ output map file (*.map) can also be provided as input, the
-% script will then verify the relation between the *.LGA and *.map files
+% INPUT VARIABLES (REQUIRED):
 %
+% lga_file          Location of the *.lga file, specified in a single line
+%                   character string. Can in- or exclude the complete path.
+%                   Make sure that the associated *.cco file (equally
+%                   named) is also available within the same path.
 %
+%                   Examples:
 %
+%                   (1) 'file.lga'
+%                   (2) 'D:/tmp_model/some_lga_file.lga'
 %
+% grid_files        Cellstring of grid files associated with the lga_file
+%                   (the grids that were used to construct the *.lga DELWAQ
+%                   file). The cellstr can be of any shape, as long as all
+%                   used grid-files are present.
 %
+%                   Examples:
 %
+%                   (1) {'grid1.grd','grid2.grd','D:/tmp_model/grid3.grd'}
+%                   (2) grid_files (Cellstring, e.g. constructed from:
+%                       [a,b] = uigetfile('*.grd','','multiselect','on')
+%                       grid_files = cellstr([repmat(b,length(a),1) char(a')]);
 %
+% INPUT VARIABLES (OPTIONAL):
 %
+% delwaq_output     Location of the DELWAQ output (*.map file), specified
+%                   in a single line character string. Can in- or exclude
+%                   the complete path. When providing this optional input
+%                   variable, the script will verify the relation between
+%                   the *.LGA and *.map file.
 %
+%                   Examples:
 %
+%                   (1) 'file.map'
+%                   (2) 'D:/tmp_model/some_DELWAQ_output_file.map'
 %
+% OUTPUT VARIABLES (OPTIONAL):
+%
+% lga_indexes       The output of the script can be stored in an output
+%                   variable, in this case called lga_indexes. The output
+%                   variable will contain the indices of the aggregated and
+%                   vectorized DELWAQ output on each of the provided FLOW
+%                   grids, stored in a {N,1} cell, with N the number of
+%                   provided (input) FLOW grids.
 %________________________________________________________________________
 %
 %Contact Freek Scheel (freek.scheel@deltares.nl) if bugs are encountered
@@ -39,7 +72,9 @@ function lga_indexes = delwaq_lga_to_flow_grids(lga_file,grd_files,varargin)
 %       <freek.scheel@deltares.nl>;
 %
 %       Developed as part of the TO27 project at the Water Institute of the
-%       Gulf, Baton Rouge, Louisiana
+%       Gulf, Baton Rouge, Louisiana. Please do not make any functional
+%       changes to this script, as it is relied upon within this modelling
+%       framework.
 %
 %       Please contact me if errors occur.
 %

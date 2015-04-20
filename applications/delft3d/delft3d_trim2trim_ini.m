@@ -75,7 +75,9 @@ function delft3d_trim2trim_ini(trim_files,varargin)
 %       <freek.scheel@deltares.nl>;
 %
 %       Developed as part of the TO27 project at the Water Institute of the
-%       Gulf, Baton Rouge, Louisiana
+%       Gulf, Baton Rouge, Louisiana. Please do not make any functional
+%       changes to this script, as it is relied upon within this modelling
+%       framework.
 %
 %       Please contact me if errors occur.
 %
