@@ -138,14 +138,14 @@ end
 if xs_exist(xb, 'Susg')
     Susg = xs_get(xb, 'Susg');
     Szsg = Susg;
-    Szsg(:,2:end) = 0.5*(Susg(:,:,1:end-1)+Susg(:,:,2:end));
+    Szsg(:,2:end) = 0.5*(Susg(:,1:end-1)+Susg(:,2:end));
     S_s = mean(Szsg,1);
 end
 
 if xs_exist(xb, 'Subg')
     Subg = xs_get(xb, 'Subg');
     Szbg = Subg;
-    Szbg(:,2:end) = 0.5*(Subg(:,:,1:end-1)+Subg(:,:,2:end));
+    Szbg(:,2:end) = 0.5*(Subg(:,1:end-1)+Subg(:,2:end));
     S_b = mean(Szbg,1);
 end
 
