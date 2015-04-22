@@ -88,7 +88,6 @@ x       = squeeze(x(1,:));
 % determine bathymetry
 if xs_exist(xb, 'zb')
     zb      = xs_get(xb,'zb');
-    zb      = squeeze(zb(:,1,:));
 else
     error('No bathymetry data found');
 end
