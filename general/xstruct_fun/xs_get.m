@@ -115,7 +115,7 @@ for i = 1:length(vars)
             if length(out)>1 && ~isempty(inf.id) && inf.id<=length(out)
                 out = out(inf.id);
             end
-            varargout{n} = out;
+            varargout{n} = squeeze(out);
             n = n + 1;
         end
     elseif strfind(inf.var,'.')
@@ -135,7 +135,7 @@ for i = 1:length(vars)
         if xs_check(sub)
             out = cell(1,sum(strfilter({sub.data.name}, field)));
             [out{:}] = xs_get(sub, field, 'type', OPT.type);
-            varargout{n:n+length(out)-1} = out{:};
+            varargout{n:n+length(out)-1} = squeeze(out{:});
             n = n + length(out);
         else
             n = n + 1;
