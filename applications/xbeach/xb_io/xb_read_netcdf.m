@@ -87,8 +87,6 @@ OPT = setproperty(OPT, varargin{:});
 
 if ~iscell(OPT.vars); OPT.vars = {OPT.vars}; end;
 
-if ~isempty(OPT.index); error('Index reading not yet available for netCDF'); end;
-
 %% read netcdf file
 
 if isdir(fname)
