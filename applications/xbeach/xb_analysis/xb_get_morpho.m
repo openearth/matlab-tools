@@ -78,7 +78,11 @@ OPT = setproperty(OPT, varargin{:});
 xb      = xb_get_transect(xb);
 
 x       = xs_get(xb, 'DIMS.globalx_DATA');
-x       = squeeze(x(1,:));
+if size(x,2) > size(x,1)
+    x       = squeeze(x(1,:));
+else
+    x       = x';
+end
 
 % determine bathymetry
 if xs_exist(xb, 'zb')
