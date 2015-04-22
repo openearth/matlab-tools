@@ -210,6 +210,7 @@ end
 
 function addplot(data, type, sz, color, name)
 if ~isempty(data);
+    p = [];
     for i = 2:size(data,2)
         p = plot(data(:,1), data(:,i), type, ...
             'Color', color, ...
@@ -219,6 +220,8 @@ if ~isempty(data);
         hasbehavior(p,'legend',false);
     end
     
-    hasbehavior(p,'legend',true);
+    if ~isempty(p)
+        hasbehavior(p,'legend',true);
+    end
 end
 end
