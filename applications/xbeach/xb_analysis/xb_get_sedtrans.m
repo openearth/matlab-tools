@@ -82,7 +82,11 @@ xb      = xb_get_transect(xb);
 
 t       = xs_get(xb, 'DIMS.globaltime_DATA');
 x       = xs_get(xb, 'DIMS.globalx_DATA');
-x       = squeeze(x(1,:));
+if size(x,2) > size(x,1)
+    x       = squeeze(x(1,:));
+else
+    x       = x';
+end
 dx      = diff(x); dx = dx([1 1:end]);
 
 %% initialize output
