@@ -103,7 +103,11 @@ OPT = setproperty(OPT, varargin{:});
 x = xs_get(xb, 'DIMS.globalx_DATA');
 t = xs_get(xb, 'DIMS.globaltime_DATA')/3600;
 j = ceil(xs_get(xb, 'DIMS.globaly')/2);
-x = squeeze(x(j,:));
+if size(x,2) > size(x,1)
+    x       = squeeze(x(j,:));
+else
+    x       = x';
+end
 
 % determine available data
 has_m           = ~isempty(OPT.dz) || ~isempty(OPT.ero) || ~isempty(OPT.R);
