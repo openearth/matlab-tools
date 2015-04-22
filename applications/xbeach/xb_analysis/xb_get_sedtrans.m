@@ -132,7 +132,7 @@ end
 
 if xs_exist(xb, 'dzav')
     dzav = xs_get(xb, 'dzav');
-    dzav = squeeze(dzav(end,:,:));
+    dzav = dzav(end,:);
     S_av = (1-OPT.por)*flipud(cumsum(flipud(dzav))).*dx./range(t);
 end
 
