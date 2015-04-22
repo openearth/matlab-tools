@@ -126,8 +126,6 @@ j = ceil(size(x,1)/2);
 z0  = z(1,:);
 z1  = z(2:end,:);
 
-if ~isvector(z1); z1 = z1'; end;
-
 zb0 = [x(j,:)' z0'];
 zb1 = [x(j,:)' z1'];
 
