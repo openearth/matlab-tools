@@ -125,8 +125,7 @@ end
 % sediment transports
 if xs_exist(xb, 'zb')
     zb = xs_get(xb, 'zb');
-    dz = squeeze(zb(end,:)-zb(1,:));
-    dz = dz(:);
+    dz = zb(end,:)-zb(1,:);
     S_dz = (1-OPT.por)*flipud(cumsum(flipud(dz))).*dx./range(t);
 end
 
