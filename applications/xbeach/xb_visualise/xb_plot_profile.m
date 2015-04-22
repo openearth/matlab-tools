@@ -118,18 +118,18 @@ axes(ax); hold on;
 % read data
 x = xs_get(xb, 'DIMS.globalx_DATA');
 z = xs_get(xb, 'zb');
-if size(x,2) ~= size(z,3) 
+if size(x,2) ~= size(z,2) 
     x = x';
 end
 j = ceil(size(x,1)/2);
 
-z0  = squeeze(z(1,j,:));
-z1  = squeeze(z(2:end,j,:));
+z0  = z(1,:);
+z1  = z(2:end,:);
 
 if ~isvector(z1); z1 = z1'; end;
 
-zb0 = [squeeze(x(j,:))' z0];
-zb1 = [squeeze(x(j,:))' z1];
+zb0 = [x(j,:)' z0'];
+zb1 = [x(j,:)' z1'];
 
 % plot profiles
 addplot(zb0,                '-',    2,  'k',        'initial'           );
