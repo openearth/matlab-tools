@@ -171,7 +171,7 @@ if xs_exist(xb, 'H')
         if size(zs,1)>1
             rho = zeros(nx,1);
             for i = 1:nx
-                R       = corrcoef(detrend(squeeze(zs(:,1,i))),squeeze(H(:,1,i)).^2);
+                R       = corrcoef(detrend(zs(:,i)),H(:,i).^2);
                 rho(i)  = R(1,2);
             end
         end
