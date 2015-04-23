@@ -261,10 +261,8 @@ disp([' ']);
 for ii=1:size(trim_files,1)
     disp(['Creating file ' num2str(ii) ' out of ' num2str(size(trim_files,1)) ':']);
     disp([' ']);
-    pause(2);
     disp(['Hotstart time = ' datestr(model_times{ii,1}(time_inds(ii,1),1)) ' for file ' trim_files{ii,1}]);
     disp([' ']);
-    pause(4);
     
     trim_handles_new{ii,1} = vs_ini(output_files{ii,1},strrep(output_files{ii,1},'.dat','.def'));
     function_text = 'trim_handles_new{ii,1} = vs_copy(trim_handles{ii,1},trim_handles_new{ii,1}';

@@ -35,6 +35,17 @@ function delwaq_map2map_ini(map_files,varargin)
 %                (2) datenum(2015,4,25,18,0,0)
 %                (3) 730486
 %
+% num_of_subs    This <keyword,value> pair allows you to only export the
+%                substances (and not other requested output variables that
+%                are stored in the *.map file) to the new file by setting
+%                number of substances. This is actually required if you
+%                want to restart while using additional output fields. The
+%                number of substances can be found in the substances model
+%                input file (required to run your Delwaq model in the first
+%                place). When left empty, all data is transferred to the
+%                new file (and if no additional output was requested within
+%                the *.map file, this is also sufficient to restart from)
+%
 % output_folder  This <keyword,value> is used to specify the output folder
 %                in which the generated *.map files are stored. By
 %                default, this is the working directory (pwd), but can be
@@ -106,6 +117,7 @@ function delwaq_map2map_ini(map_files,varargin)
 OPT.time          = 'end';
 OPT.output_folder = pwd;
 OPT.add_text      = '_new';
+OPT.num_of_subs   = [];
 
 OPT = setproperty(OPT,varargin);
 
@@ -173,6 +185,26 @@ for ii=1:size(map_files,1)
 end
 
 %_____________________________________________
+% OPT.num_of_subs checks and modifications:
+if isnumeric(OPT.num_of_subs)
+    if min(size(OPT.num_of_subs) == [0,0]) == 1
+        % empty, fine
+    elseif min(size(OPT.num_of_subs) == [1,1]) == 1
+        % a single value, do a check:
+        if OPT.num_of_subs <= 0
+            error('Please specify a positive value for the number of substances')
+        end
+        if round(OPT.num_of_subs) ~= OPT.num_of_subs
+            error('Please specify the number of substances as an interger (whole) value')
+        end
+    else
+        error('Please specify a single value for the number of substances')
+    end
+else
+    error('Please specify a single value for the number of substances')
+end
+
+%_____________________________________________
 % OPT.time checks and modifications:
 if isstr(OPT.time)
     if ~strcmp(OPT.time,'end')
@@ -218,6 +250,9 @@ end
 %_____________________________________________
 % OPT.output_folder checks and modifications:
 if isstr(OPT.output_folder)
+    if strcmp(OPT.output_folder(1,end),filesep)
+        OPT.output_folder = OPT.output_folder(1,1:end-1);
+    end
     if exist(OPT.output_folder,'dir') ~= 7
         mkdir(OPT.output_folder)
         disp(['Output folder ''' OPT.output_folder ''' did not exist yet, created succesfully'])
@@ -262,14 +297,15 @@ disp([' ']);
 for ii=1:size(map_files,1)
     disp(['Creating file ' num2str(ii) ' out of ' num2str(size(map_files,1)) ':']);
     disp([' ']);
-    pause(2);
     disp(['Hotstart time = ' datestr(model_times{ii,1}(time_inds(ii,1),1)) ' for file ' map_files{ii,1}]);
     disp([' ']);
-    pause(4);
     
     % get the data to copy:
     [time_d,data_d] = delwaq('read',map_handles{ii,1},0,0,time_inds(ii,1));
-    map_handles_new{ii,1} = delwaq('write',output_files{ii,1},map_handles{ii,1}.Header,map_handles{ii,1}.SubsName,[map_handles{ii,1}.T0 map_handles{ii,1}.TStep*3600*24],time_d,data_d);
+    if min(size(OPT.num_of_subs) == [0,0]) == 1
+        OPT.num_of_subs = size(map_handles{ii,1}.SubsName,1);
+    end
+    map_handles_new{ii,1} = delwaq('write',output_files{ii,1},map_handles{ii,1}.Header,map_handles{ii,1}.SubsName(1:OPT.num_of_subs),[map_handles{ii,1}.T0 map_handles{ii,1}.TStep*3600*24],time_d,data_d(1:OPT.num_of_subs,:));
     disp([' ']);
 end
 
