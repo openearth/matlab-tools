@@ -118,6 +118,10 @@ axes(ax); hold on;
 % read data
 x = xs_get(xb, 'DIMS.globalx_DATA');
 z = xs_get(xb, 'zb');
+
+if numel(size(z)) > 2
+    z = squeeze(z(:,1,:));
+end
 if size(x,2) ~= size(z,2) 
     x = x';
 end
