@@ -89,12 +89,19 @@ switch lower(rawdataformat)
         nrows=length(y);
     case{'arcbinarygrid'}
         [x,y,z,m] = arc_info_binary([fileparts(fname1) filesep]);
-        z=flipud(z);
-        y=fliplr(y);
-        x00=m.X(1);
-        y00=m.Y(end);
         dx=m.X(2)-m.X(1);
         dy=m.Y(2)-m.Y(1);
+        if dy>0
+            x00=m.X(1);
+            y00=m.Y(end);
+            z=flipud(z);
+%            y=fliplr(y);
+        else
+            x00=m.X(1);
+            y00=m.Y(end);
+            dy=abs(dy);
+            z=flipud(z);
+        end
         ncols=m.nColumns;
         nrows=m.nRows;
     case{'matfile'}
