@@ -139,26 +139,21 @@ n(end+1)=bnd(end).n2;
 
 %% Now find boundary sections along which the depth exceeds threshold value
 % Find first point after dry point
-ifirstdry=[];
-for ib=1:length(xb)
-    if zb(ib)<thresh
-        ifirstdry=ib;
-        break
-    end
+%ifirstwet=[];
+ifirstwet=find(zb<thresh,1,'first');
+if isempty(ifirstwet)
+    ifirstwet=0;
 end
-if isempty(ifirstdry)
-    ifirstdry=0;
-end
-if ifirstdry==length(xb)
-    ifirstdry=0;
+if ifirstwet==length(xb)
+    ifirstwet=0;
 end
 
 % Now start looking for first wet point
-xb=[xb(ifirstdry+1:end) xb(1:ifirstdry)];
-yb=[yb(ifirstdry+1:end) yb(1:ifirstdry)];
-zb=[zb(ifirstdry+1:end) zb(1:ifirstdry)];
-m=[m(ifirstdry+1:end) m(1:ifirstdry)];
-n=[n(ifirstdry+1:end) n(1:ifirstdry)];
+xb=[xb(ifirstwet:end) xb(1:ifirstwet-1)];
+yb=[yb(ifirstwet:end) yb(1:ifirstwet-1)];
+zb=[zb(ifirstwet:end) zb(1:ifirstwet-1)];
+m=[m(ifirstwet:end) m(1:ifirstwet-1)];
+n=[n(ifirstwet:end) n(1:ifirstwet-1)];
 
 % Now find sections with consecutive points that exceed thresh
 nsec=0;
@@ -193,6 +188,47 @@ for ib=1:length(xb)
         end        
     end    
 end
+
+% Subdivide sections in case of sharp changes in orientation
+% First find the sharp changes
+
+nsec2=0;
+
+for isec=1:nsec
+    
+    n=1;
+    istart=[];
+    iend=[];
+    istart(n)=1;
+    iend(n)=length(sections(isec).x);
+
+    for ip=1:length(sections(isec).x)-1
+        x1=sections(isec).x(ip);
+        y1=sections(isec).y(ip);
+        x2=sections(isec).x(ip+1);
+        y2=sections(isec).y(ip+1);
+        angle=atan2(y2-y1,x2-x1);
+        if ip>1
+            dang=mod(angle-lastangle,2*pi);
+            if dang>pi/4 && dang<1.5*pi
+                % Sharp angle found
+                iend(n)=ip;
+                n=n+1;
+                istart(n)=ip;
+                iend(n)=length(sections(isec).x);
+            end
+        end
+        lastangle=angle;
+    end
+
+    for iisec=1:n
+        nsec2=nsec2+1;
+        sections2(nsec2).x=sections(isec).x(istart(iisec):iend(iisec));
+        sections2(nsec2).y=sections(isec).y(istart(iisec):iend(iisec));
+    end
+    
+end
+sections=sections2;
 
 circ.x=xb;
 circ.y=yb;
