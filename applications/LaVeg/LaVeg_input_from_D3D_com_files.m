@@ -131,7 +131,7 @@ function csv_data = LaVeg_input_from_D3D_com_files(com_files,varargin)
 %
 % Contact Freek Scheel (freek.scheel@deltares.nl) if bugs are encountered
 %              
-% See also: waqfil delwaq fread
+% See also: waqfil delwaq fread dlmwrite
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2015 Deltares
