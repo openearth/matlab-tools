@@ -37,10 +37,12 @@ end
 wb = waitbox('Generating grid ...');pause(0.1);
 
 xori=handles.toolbox.modelmaker.xOri;
-nx=round(handles.toolbox.modelmaker.nX*handles.toolbox.modelmaker.dX/handles.toolbox.modelmaker.wavedX);
+%nx=round(handles.toolbox.modelmaker.nX*handles.toolbox.modelmaker.dX/handles.toolbox.modelmaker.wavedX);
+nx=handles.toolbox.modelmaker.nX;
 dx=handles.toolbox.modelmaker.wavedX;
 yori=handles.toolbox.modelmaker.yOri;
-ny=round(handles.toolbox.modelmaker.nY*handles.toolbox.modelmaker.dY/handles.toolbox.modelmaker.wavedY);
+%ny=round(handles.toolbox.modelmaker.nY*handles.toolbox.modelmaker.dY/handles.toolbox.modelmaker.wavedY);
+ny=handles.toolbox.modelmaker.nY;
 dy=handles.toolbox.modelmaker.wavedY;
 rot=pi*handles.toolbox.modelmaker.rotation/180;
 zmax=handles.toolbox.modelmaker.zMax;
@@ -147,9 +149,3 @@ handles=ddb_Delft3DWAVE_plotGrid(handles,'plot','wavedomain',nrgrids,'active',1)
 
 % Refresh all domains
 ddb_plotDelft3DWAVE('update','wavedomain',0,'active',1);
-
-
-
-
-
-
