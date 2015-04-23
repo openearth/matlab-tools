@@ -52,6 +52,7 @@ function varargout = delwaq_time(Struct,varargin)
       OPT.ndigits   = ceil(log10(Struct.NTimes));
       OPT.fmt       = ['%0.',num2str(OPT.ndigits),'d'];
       OPT.datenum   = 0; 
+      OPT.quiet     = false;
       
    %% Return defaults
 
@@ -75,6 +76,7 @@ function varargout = delwaq_time(Struct,varargin)
           case 'ndigits'  ;iargin=iargin+1;OPT.ndigits = varargin{iargin};
           case 'fmt'      ;iargin=iargin+1;OPT.fmt     = varargin{iargin};
           case 'datenum'  ;iargin=iargin+1;OPT.datenum = varargin{iargin};
+          case 'quiet'    ;iargin=iargin+1;OPT.quiet   = varargin{iargin};
           otherwise
              error(['Invalid string argument: %s.',varargin{i}]);
           end
@@ -99,8 +101,10 @@ function varargout = delwaq_time(Struct,varargin)
           
          % disp([num2str(it),' ',datestr(T.datenum(it),31)])
          
-         if mod(it+1,OPT.mod)==1
-            disp(['delwaq_time progress: ',num2str(it,OPT.fmt),' / ',num2str(Struct.NTimes,OPT.fmt)])
+         if ~OPT.quiet
+             if mod(it+1,OPT.mod)==1
+                disp(['delwaq_time progress: ',num2str(it,OPT.fmt),' / ',num2str(Struct.NTimes,OPT.fmt)])
+             end
          end
       
       end % for it=1:Struct.NTimes
