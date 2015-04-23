@@ -5,8 +5,6 @@
     <position>10 110 120 20</position>
     <text>Select History File</text>
     <variable>handles.toolbox.nesting.trihFile</variable>
-    <onchange>ddb_NestingToolbox_nestHD2</onchange>
-    <option1>selecthisfile</option1>
     <showfilename>yes</showfilename>
     <extension>trih*.dat</extension>
     <selectiontext>Select Delft3D trih file</selectiontext>
@@ -17,26 +15,10 @@
     <position>10 85 120 20</position>
     <text>Select Admin File</text>
     <variable>handles.toolbox.nesting.admFile</variable>
-    <onchange>ddb_NestingToolbox_nestHD2</onchange>
-    <option1>selectadmfile</option1>
     <showfilename>yes</showfilename>
     <extension>*.adm</extension>
     <selectiontext>Select nesting administration file</selectiontext>
     <tooltipstring>Select nesting administration file</tooltipstring>
-  </element>
-  <element>
-    <style>checkbox</style>
-    <position>500 85</position>
-    <text>Hydrodynamics</text>
-    <variable>handles.toolbox.nesting.nestHydro</variable>
-    <tooltipstring>Run hydrodynamic nesting. Generates bct file.</tooltipstring>
-  </element>
-  <element>
-    <style>checkbox</style>
-    <position>500 65</position>
-    <text>Transport</text>
-    <variable>handles.toolbox.nesting.nestTransport</variable>
-    <tooltipstring>Run transport nesting. Generates bcc file.</tooltipstring>
   </element>
   <element>
     <style>edit</style>
@@ -50,8 +32,8 @@
     <style>pushbutton</style>
     <position>500 15 80 20</position>
     <text>Run Nesting</text>
-    <callback>ddb_NestingToolbox_nestHD2</callback>
-    <option1>nesthd2</option1>
+    <callback>ddb_NestingToolbox_XBeach_nest2</callback>
+    <option1>nest2</option1>
     <tooltipstring>Run Nesting</tooltipstring>
   </element>
 </root>

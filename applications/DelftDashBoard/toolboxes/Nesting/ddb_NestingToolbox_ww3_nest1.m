@@ -64,31 +64,41 @@ function nest1
 
 handles=getHandles;
 
-if isempty(handles.toolbox.nesting.ww3_grid_file)
-    ddb_giveWarning('text','Please first load ww3_shel file of nested model!');
-    return
-end
+switch lower(handles.toolbox.nesting.ww3.detailmodeltype)
 
-if handles.model.ww3.domain.nx<=0
-    ddb_giveWarning('text','Please first load or create model grid!');
-    return    
-end
+    case{'ww3'}
+        
+        if isempty(handles.toolbox.nesting.ww3.ww3_grid_file)
+            ddb_giveWarning('text','Please first load ww3_shel file of nested model!');
+            return
+        end
+        
+        if handles.model.ww3.domain.nx<=0
+            ddb_giveWarning('text','Please first load or create model grid!');
+            return
+        end
+        
+        output_boundary_points=nest1_ww3_in_ww3(handles.model.ww3.domain.output_boundary_points,handles.toolbox.nesting.ww3.ww3_grid_file);
+        handles.model.ww3.domain.output_boundary_points=output_boundary_points;
+        
+    case{'delft3dwave'}
 
-[x0,y0,dx,dy,np]=ww3_define_nesting_sections(handles.toolbox.nesting.ww3_grid_file);
-nsec=length(x0);
+        if isempty(handles.toolbox.nesting.ww3.grdFile)
+            ddb_giveWarning('text','Please first load grid file of nested model!');
+            return
+        end        
+        if isempty(handles.toolbox.nesting.ww3.depFile)
+            ddb_giveWarning('text','Please first load depth file of nested model!');
+            return
+        end
+        
+        point_output=nest1_delft3dwave_in_ww3(handles.model.ww3.domain.point_output, ...
+            handles.toolbox.nesting.ww3.grdFile,handles.toolbox.nesting.ww3.depFile,handles.toolbox.nesting.ww3.nr_cells_per_section);
+        
+        handles.model.ww3.domain.point_output=point_output;
 
-% Store in domain structure
-ww3=handles.model.ww3.domain;
-nobp=length(ww3.output_boundary_points);
-nobp=nobp+1;
-for ii=1:nsec
-    ww3.output_boundary_points(nobp).line(ii).x0=x0(ii);
-    ww3.output_boundary_points(nobp).line(ii).y0=y0(ii);
-    ww3.output_boundary_points(nobp).line(ii).dx=dx(ii);
-    ww3.output_boundary_points(nobp).line(ii).dy=dy(ii);
-    ww3.output_boundary_points(nobp).line(ii).np=np(ii);
+        handles=ddb_ww3_plot_observation_points(handles,'plot','visible',1,'active',0);
+
 end
-handles.model.ww3.domain=ww3;
 
 setHandles(handles);
-

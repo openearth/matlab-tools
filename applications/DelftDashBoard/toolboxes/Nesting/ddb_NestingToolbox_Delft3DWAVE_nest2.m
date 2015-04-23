@@ -56,6 +56,8 @@ else
     switch opt
         case{'nest2'}
             nest2;
+        case{'selectcs'}
+            
     end
 end
 
@@ -75,13 +77,12 @@ if handles.model.delft3dwave.domain.nrboundaries>0
     end
 end
 
-[filename, pathname, filterindex] = uigetfile('*.sp2', 'Select files to merge (select just one file)','');
+% [filename, pathname, filterindex] = uigetfile('*.sp2', 'Select files to merge (select just one file)','');
+fname=handles.toolbox.nesting.singleSP2file;
 
-if pathname~=0
+if ~isempty(fname)
 
-    fname=filename;
-%    dr=fileparts(fname);
-    dr=pathname;
+    [dr,fname,ext]=fileparts(fname);
 
     ii=strfind(fname,'.');
     prefix=fname(1:ii-1);
@@ -101,7 +102,25 @@ if pathname~=0
     
     fout=handles.model.delft3dwave.domain.boundaries(1).overallspecfile;
 
-    swan_io_mergesp2(dr,fout,'prefix',prefix);
+    if ~strcmpi(handles.toolbox.nesting.delft3dwave.overallmodelcsname,'unspecified')
+        cs1.name=handles.toolbox.nesting.delft3dwave.overallmodelcsname;
+        cs1.type=handles.toolbox.nesting.delft3dwave.overallmodelcstype;
+    else
+        cs1=[];
+    end
+
+    cs2=handles.screenParameters.coordinateSystem;
+    
+    wb = waitbox('Merging SP2 Files ...');
+
+    try
+        swan_io_mergesp2(dr,fout,'prefix',prefix,'CS1',cs1,'CS2',cs2);
+    catch
+        close(wb);
+        ddb_giveWarning('txt','Something went wrong while merging sp2 files!');
+    end
+    
+    close(wb);
         
     setHandles(handles);
     

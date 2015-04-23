@@ -74,17 +74,52 @@ if nargin>1
 end
 
 % Nest 1
-handles.toolbox.nesting.detailmodeltype   = 'delft3dflow';
-handles.toolbox.nesting.detailmodelcsname = 'unspecified';
-handles.toolbox.nesting.detailmodelcstype = 'unspecified';
-handles.toolbox.nesting.grdFile       = '';
-handles.toolbox.nesting.encFile       = '';
-handles.toolbox.nesting.bndFile       = '';
-handles.toolbox.nesting.depFile       = '';
-handles.toolbox.nesting.extfile       = '';
+
+% Delft3D-FLOW
+handles.toolbox.nesting.delft3dflow.detailmodeltype   = 'delft3dflow';
+handles.toolbox.nesting.delft3dflow.detailmodelcsname = 'unspecified';
+handles.toolbox.nesting.delft3dflow.detailmodelcstype = 'unspecified';
+handles.toolbox.nesting.delft3dflow.grdFile       = '';
+handles.toolbox.nesting.delft3dflow.encFile       = '';
+handles.toolbox.nesting.delft3dflow.bndFile       = '';
+handles.toolbox.nesting.delft3dflow.depFile       = '';
+handles.toolbox.nesting.delft3dflow.extfile       = '';
+handles.toolbox.nesting.delft3dflow.admFile       = 'nesting.adm';
+
+% DFlow-FM
+handles.toolbox.nesting.dflowfm.detailmodeltype   = 'delft3dflow';
+handles.toolbox.nesting.dflowfm.detailmodelcsname = 'unspecified';
+handles.toolbox.nesting.dflowfm.detailmodelcstype = 'unspecified';
+handles.toolbox.nesting.dflowfm.grdFile           = '';
+handles.toolbox.nesting.dflowfm.encFile           = '';
+handles.toolbox.nesting.dflowfm.bndFile           = '';
+handles.toolbox.nesting.dflowfm.depFile           = '';
+handles.toolbox.nesting.dflowfm.extfile           = '';
+handles.toolbox.nesting.dflowfm.admFile           = 'nesting.adm';
+
+% Delft3D-WAVE
+handles.toolbox.nesting.delft3dwave.detailmodeltype   = 'delft3dwave';
+handles.toolbox.nesting.delft3dwave.detailmodelcsname = 'unspecified';
+handles.toolbox.nesting.delft3dwave.detailmodelcstype = 'unspecified';
+handles.toolbox.nesting.delft3dwave.overallmodelcsname = 'unspecified';
+handles.toolbox.nesting.delft3dwave.overallmodelcstype = 'unspecified';
+handles.toolbox.nesting.delft3dwave.grdFile       = '';
+handles.toolbox.nesting.delft3dwave.depFile       = '';
+handles.toolbox.nesting.delft3dwave.nr_cells_per_section=10;
+handles.toolbox.nesting.delft3dwave.max_distance_per_section=10000;
+handles.toolbox.nesting.delft3dwave.spacing_method='distance'; % Can be either distance of number_of_cells
+
+% WAVEWATCH III
+handles.toolbox.nesting.ww3.detailmodeltype   = 'delft3dwave';
+handles.toolbox.nesting.ww3.detailmodelcsname = 'unspecified';
+handles.toolbox.nesting.ww3.detailmodelcstype = 'unspecified';
+handles.toolbox.nesting.ww3.grdFile       = '';
+handles.toolbox.nesting.ww3.depFile       = '';
+handles.toolbox.nesting.ww3.ww3_grid_file = '';
+handles.toolbox.nesting.ww3.nr_cells_per_section=10;
 
 % Nest 2
-handles.toolbox.nesting.admFile       = 'nesting.adm';
+% handles.toolbox.nesting.admFile       = 'nesting.adm';
 handles.toolbox.nesting.trihFile      = '';
 handles.toolbox.nesting.zCor          = 0;
 handles.toolbox.nesting.nestHydro     = 1;

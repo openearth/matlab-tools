@@ -1,4 +1,4 @@
-function ddb_NestingToolbox_DFlowFM_nestHD1(varargin)
+function ddb_NestingToolbox_DFlowFM_nest1(varargin)
 %DDB_NESTINGTOOLBOX_NESTHD1  One line description goes here.
 %
 %   More detailed description goes here.
@@ -82,106 +82,102 @@ function nestHD1
 
 handles=getHandles;
 
-switch handles.toolbox.nesting.detailmodeltype
+%% Overall model is DFLOW-FM
 
+switch handles.toolbox.nesting.dflowfm.detailmodeltype
+    
     case{'delft3dflow'}
         
-        if isempty(handles.toolbox.nesting.grdFile)
+        %% Detail model is Delft3D-FLOW
+        
+        if isempty(handles.toolbox.nesting.dflowfm.grdFile)
             ddb_giveWarning('text','Please first load grid file of nested model!');
             return
         end
         
-        if isempty(handles.toolbox.nesting.encFile)
+        if isempty(handles.toolbox.nesting.dflowfm.encFile)
             ddb_giveWarning('text','Please first load enclosure file of nested model!');
             return
         end
         
-        if isempty(handles.toolbox.nesting.bndFile)
+        if isempty(handles.toolbox.nesting.dflowfm.bndFile)
             ddb_giveWarning('text','Please first load boundary file of nested model!');
             return
         end
         
-        if isempty(handles.Model(md).Input(ad).gridX)
-            ddb_giveWarning('text','Please first load or create model grid!');
-            return
-        end
+        cs.name=handles.toolbox.nesting.dflowfm.detailmodelcsname;
+        cs.type=handles.toolbox.nesting.dflowfm.detailmodelcstype;
         
-        fid=fopen('nesthd1.inp','wt');
-        fprintf(fid,'%s\n',handles.Model(md).Input(ad).grdFile);
-        fprintf(fid,'%s\n',handles.Model(md).Input(ad).encFile);
-        fprintf(fid,'%s\n',handles.toolbox.nesting.grdFile);
-        fprintf(fid,'%s\n',handles.toolbox.nesting.encFile);
-        fprintf(fid,'%s\n',handles.toolbox.nesting.bndFile);
-        fprintf(fid,'%s\n',handles.toolbox.nesting.admFile);
-        fprintf(fid,'%s\n','ddtemp.obs');
-        fclose(fid);
+        newpoints=nest1_delft3dflow_in_dflowfm('grdfile',handles.toolbox.nesting.dflowfm.grdFile, ...
+            'encfile',handles.toolbox.nesting.dflowfm.encFile, ...
+            'bndfile',handles.toolbox.nesting.dflowfm.bndFile, ...
+            'csoverall',handles.screenParameters.coordinateSystem,'csdetail',cs);
         
-        system(['"' handles.toolbox.nesting.dataDir 'nesthd1" < nesthd1.inp']);
-        
-        [name,m,n] = textread('ddtemp.obs','%21c%f%f');
-        
-        k=handles.Model(md).Input(ad).nrObservationPoints;
-        for i=1:length(m)
-            % Check if observation point already exists
-            nm=deblank(name(i,:));
-            ii=strmatch(nm,handles.Model(md).Input(ad).observationPointNames,'exact');
-            if isempty(ii)
-                % Observation point does not yet exist
-                k=k+1;
-                handles.Model(md).Input(ad).observationPoints(k).name=nm;
-                handles.Model(md).Input(ad).observationPoints(k).M=m(i);
-                handles.Model(md).Input(ad).observationPoints(k).N=n(i);
-                handles.Model(md).Input(ad).observationPoints(k).x=handles.Model(md).Input(ad).gridXZ(m(i),n(i));
-                handles.Model(md).Input(ad).observationPoints(k).y=handles.Model(md).Input(ad).gridYZ(m(i),n(i));
-                handles.Model(md).Input(ad).observationPointNames{k}=handles.Model(md).Input(ad).observationPoints(k).name;
+        if ~isempty(newpoints)
+            
+            k=handles.model.dflowfm.domain(ad).nrobservationpoints;
+            
+            for ip=1:length(newpoints)
+                handles.model.dflowfm.domain(ad).observationpoints(ip+k).name=newpoints(ip).name;
+                handles.model.dflowfm.domain(ad).observationpoints(ip+k).x=newpoints(ip).x;
+                handles.model.dflowfm.domain(ad).observationpoints(ip+k).y=newpoints(ip).y;
+                handles.model.dflowfm.domain(ad).observationpointnames{ip+k}=newpoints(ip).name;
             end
+            
+            handles.model.dflowfm.domain(ad).nrobservationpoints=k+length(newpoints);
+            
+            [filename, pathname, filterindex] = uiputfile('*.xyn', 'Observation File Name',[handles.model.dflowfm.domain(ad).attName '.xyn']);
+            if pathname~=0
+                %                        ddb_DFlowFM_addTideStations;
+                %                        handles=getHandles;
+                handles.model.dflowfm.domain(ad).obsfile=filename;
+                ddb_DFlowFM_saveObsFile(handles,ad);
+                handles=ddb_DFlowFM_plotObservationPoints(handles,'plot','visible',1,'active',0);
+                setHandles(handles);
+            end
+            
         end
-        delete('nesthd1.inp');
-        try
-            delete('ddtemp.obs');
-        end
-        handles.Model(md).Input(ad).nrObservationPoints=length(handles.Model(md).Input(ad).observationPoints);
-        
-        handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','observationpoints','domain',ad,'visible',1,'active',0);
-        
-        setHandles(handles);
         
     case{'dflowfm'}
-
-        if isempty(handles.toolbox.nesting.extfile)
+        
+        %% Detail model is DFLOW-FM
+        
+        if isempty(handles.toolbox.nesting.dflowfm.extfile)
             ddb_giveWarning('text','Please first load external forcing file of nested model!');
             return
         end
         
-        cs.name=handles.toolbox.nesting.detailmodelcsname;
-        cs.type=handles.toolbox.nesting.detailmodelcstype;
-
-        newpoints=ddb_nesthd1_dflowfm_in_delft3dflow('admfile',handles.toolbox.nesting.admFile,'extfile',handles.toolbox.nesting.extfile, ...
-            'grdfile',handles.Model(md).Input(ad).grdFile,'encfile',handles.Model(md).Input(ad).encFile, ...
-            'csoverall',handles.screenParameters.coordinateSystem,'csdetail',cs);        
+        cs.name=handles.toolbox.nesting.dflowfm.detailmodelcsname;
+        cs.type=handles.toolbox.nesting.dflowfm.detailmodelcstype;
         
-        if ~isempty(newpoints)            
-            k=handles.Model(md).Input(ad).nrObservationPoints;
+        newpoints=nest1_dflowfm_in_dflowfm('extfile',handles.toolbox.nesting.dflowfm.extfile, ...
+            'csoverall',handles.screenParameters.coordinateSystem,'csdetail',cs);
+        
+        if ~isempty(newpoints)
+            
+            k=handles.model.dflowfm.domain(ad).nrobservationpoints;
+            
             for ip=1:length(newpoints)
-                % Check if observation point already exists
-                nm=deblank(newpoints(ip).name);
-                ii=strmatch(nm,handles.Model(md).Input(ad).observationPointNames,'exact');
-                if isempty(ii)
-                    % Observation point does not yet exist
-                    k=k+1;
-                    handles.Model(md).Input(ad).observationPoints(k).name=nm;
-                    handles.Model(md).Input(ad).observationPoints(k).M=newpoints(ip).m;
-                    handles.Model(md).Input(ad).observationPoints(k).N=newpoints(ip).n;
-                    handles.Model(md).Input(ad).observationPoints(k).x=handles.Model(md).Input(ad).gridXZ(newpoints(ip).m,newpoints(ip).n);
-                    handles.Model(md).Input(ad).observationPoints(k).y=handles.Model(md).Input(ad).gridYZ(newpoints(ip).m,newpoints(ip).n);
-                    handles.Model(md).Input(ad).observationPointNames{k}=handles.Model(md).Input(ad).observationPoints(k).name;
-                end
+                handles.model.dflowfm.domain(ad).observationpoints(ip+k).name=newpoints(ip).name;
+                handles.model.dflowfm.domain(ad).observationpoints(ip+k).x=newpoints(ip).x;
+                handles.model.dflowfm.domain(ad).observationpoints(ip+k).y=newpoints(ip).y;
+                handles.model.dflowfm.domain(ad).observationpointnames{ip+k}=newpoints(ip).name;
             end
-            handles.Model(md).Input(ad).activeObservationPoint=1;
-            handles.Model(md).Input(ad).nrObservationPoints=k;
-            handles=ddb_Delft3DFLOW_plotAttributes(handles,'plot','observationpoints','domain',ad,'visible',1,'active',0);        
-            setHandles(handles);
+            
+            handles.model.dflowfm.domain(ad).nrobservationpoints=k+length(newpoints);
+            
+            [filename, pathname, filterindex] = uiputfile('*.xyn', 'Observation File Name',[handles.model.dflowfm.domain(ad).attName '.xyn']);
+            if pathname~=0
+                %                        ddb_DFlowFM_addTideStations;
+                %                        handles=getHandles;
+                handles.model.dflowfm.domain(ad).obsfile=filename;
+                ddb_DFlowFM_saveObsFile(handles,ad);
+                handles=ddb_DFlowFM_plotObservationPoints(handles,'plot','visible',1,'active',0);
+                setHandles(handles);
+            end
+            
         end
+        
         
 end
 
@@ -195,8 +191,8 @@ handles=getHandles;
 [cs,type,nr,ok]=ddb_selectCoordinateSystem(handles.coordinateData,handles.EPSG,'default','WGS 84','type','both','defaulttype','geographic');
 
 if ok
-    handles.toolbox.nesting.detailmodelcsname=cs;
-    handles.toolbox.nesting.detailmodelcstype=type;    
+    handles.toolbox.nesting.dflowfm.detailmodelcsname=cs;
+    handles.toolbox.nesting.dflowfm.detailmodelcstype=type;    
     setHandles(handles);
 end
 

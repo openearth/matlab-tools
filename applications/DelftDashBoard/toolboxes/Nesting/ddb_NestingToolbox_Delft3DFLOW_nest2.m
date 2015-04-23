@@ -1,4 +1,4 @@
-function ddb_NestingToolbox_nestHD2(varargin)
+function ddb_NestingToolbox_Delft3DFLOW_nest2(varargin)
 %DDB_NESTINGTOOLBOX_NESTHD2  One line description goes here.
 %
 %   More detailed description goes here.
@@ -52,11 +52,11 @@ function ddb_NestingToolbox_nestHD2(varargin)
 % Created: 02 Dec 2011
 % Created with Matlab version: 7.11.0.584 (R2010b)
 
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
+% $Id: ddb_NestingToolbox_nestHD2.m 11472 2014-11-27 15:12:11Z ormondt $
+% $Date: 2014-11-27 16:12:11 +0100 (Thu, 27 Nov 2014) $
+% $Author: ormondt $
+% $Revision: 11472 $
+% $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/DelftDashBoard/toolboxes/Nesting/ddb_NestingToolbox_nestHD2.m $
 % $Keywords: $
 
 %%
@@ -87,6 +87,7 @@ end
 
 hisfile=handles.toolbox.nesting.trihFile;
 nestadm=handles.toolbox.nesting.admFile;
+%nestadm='';
 z0=handles.toolbox.nesting.zCor;
 opt='';
 if handles.toolbox.nesting.nestHydro && handles.toolbox.nesting.nestTransport
@@ -112,9 +113,44 @@ if ~isempty(opt)
 
     % Run Nesthd2
     cs=handles.screenParameters.coordinateSystem.type;
-    bnd=nesthd2('openboundaries',bnd,'vertgrid',vertGrid,'hisfile',hisfile,'admfile',nestadm,'zcor',z0,'stride',stride,'opt',opt,'coordinatesystem',cs,'save','n');
-%    bnd=nesthd2_new('openboundaries',bnd,'vertgrid',vertGrid,'hisfile',hisfile,'admfile',nestadm,'zcor',z0,'stride',stride,'opt',opt,'coordinatesystem',cs,'save','n');
     
+%    overallmodeltype='dflowfm';
+    overallmodeltype='delft3dflow';
+    
+    switch overallmodeltype
+        case{'delft3dflow'}
+            bnd=nesthd2('openboundaries',bnd,'vertgrid',vertGrid,'hisfile',hisfile,'admfile',nestadm,'zcor',z0,'stride',stride,'opt',opt,'coordinatesystem',cs,'save','n');
+        case{'dflowfm'}
+             
+            fid=qpfopen(hisfile);            
+            stations=qpread(fid,1,'Water level (points)','stations');
+            for ib=1:length(handles.model.delft3dflow.domain(ad).openBoundaries)
+
+                % A
+                istat=strmatch([handles.model.delft3dflow.domain(ad).openBoundaries(ib).name '_A'],stations,'exact');               
+                wl=qpread(fid,1,'Water level (points)','griddata',0,istat);
+                bnd(ib).timeSeriesT=wl.Time;
+                bnd(ib).timeSeriesA=wl.Val;
+                % B
+                istat=strmatch([handles.model.delft3dflow.domain(ad).openBoundaries(ib).name '_B'],stations,'exact');               
+                wl=qpread(fid,1,'Water level (points)','griddata',0,istat);
+                bnd(ib).timeSeriesB=wl.Val;
+                
+                bnd(ib).profile='Uniform';
+                bnd(ib).timeSeriesAV=[];
+                bnd(ib).timeSeriesBV=[];
+            
+            end
+            
+%             bnd=nesthd2_new('openboundaries',bnd,'vertgrid',vertGrid,'hisfile',hisfile,'admfile',nestadm, ...
+%                 'zcor',z0,'stride',stride,'opt',opt,'coordinatesystem',cs,'save','n', ...
+%                 'overallmodeltype','dflowfm');
+    end
+
+%     bnd=nesthd2_new('input',handles.model.dflowfm.domain,'openboundaries',bnd,'vertgrid',vertGrid,'hisfile',hisfile, ...
+%         'admfile',nestadm,'zcor',z0,'stride',stride,'opt',opt,'coordinatesystem',cs,'save','n','overallmodeltype','dflowfm');
+
+
     zersunif=zeros(2,1);
     
     for i=1:length(bnd)

@@ -56,6 +56,8 @@ else
     switch opt
         case{'nest1'}
             nest1;
+        case{'selectcs'}
+            selectCS;
     end
 end
 
@@ -64,28 +66,49 @@ function nest1
 
 handles=getHandles;
 
-if isempty(handles.toolbox.nesting.grdFile)
-    ddb_giveWarning('text','Please first load grid file of nested model!');
-    return
-end
-
-if isempty(handles.toolbox.nesting.depFile)
-    ddb_giveWarning('text','Please first load depth file of nested model!');
-    return
-end
-
 if isempty(handles.model.delft3dwave.domain.domains(awg).gridx)
     ddb_giveWarning('text','Please first load or create model grid!');
-    return    
+    return
 end
 
-[xg,yg,enc,cs,nodatavalue] = wlgrid('read',handles.toolbox.nesting.grdFile);
-depth = wldep('read',handles.toolbox.nesting.depFile,[size(xg,1)+1 size(xg,2)+1]);
-depth=depth(1:end-1,1:end-1);
+switch lower(handles.toolbox.nesting.delft3dwave.detailmodeltype)
+    
+    case{'delft3dwave'}
+        
+        if isempty(handles.toolbox.nesting.delft3dwave.grdFile)
+            ddb_giveWarning('text','Please first load grid file of nested model!');
+            return
+        end        
+        if isempty(handles.toolbox.nesting.delft3dwave.depFile)
+            ddb_giveWarning('text','Please first load depth file of nested model!');
+            return
+        end
+                
+        overall.cs=handles.screenParameters.coordinateSystem;
+        detail.cs.name=handles.toolbox.nesting.delft3dwave.detailmodelcsname;
+        detail.cs.type=handles.toolbox.nesting.delft3dwave.detailmodelcstype;
+        detail.grdfile=handles.toolbox.nesting.delft3dwave.grdFile;
+        detail.depfile=handles.toolbox.nesting.delft3dwave.depFile;
+        method=handles.toolbox.nesting.delft3dwave.spacing_method;
+        switch method
+            case{'distance'}
+                len=handles.toolbox.nesting.delft3dwave.max_distance_per_section;
+            case{'number_of_cells'}
+                len=handles.toolbox.nesting.delft3dwave.nr_cells_per_section;
+        end
+        
+        [xx,yy]=nest1_delft3dwave_in_delft3dwave(overall,detail,-5,method,len);
 
-bnd=findboundarysectionsonregulargrid(xg,yg);
-
-nbnd=length(bnd);
+    case{'xbeach'}
+        
+        [xg,yg,enc,cs,nodatavalue] = wlgrid('read',handles.toolbox.nesting.delft3dwave.grdFile);
+        xg1=0.5*(xg(1,1)+xg(end,1));
+        yg1=0.5*(yg(1,1)+yg(end,1));
+        sections(1).x=xg1;
+        sections(1).y=yg1;
+        sections(1).z=-100;
+        
+end
 
 nlocsets=handles.model.delft3dwave.domain.nrlocationsets;
 
@@ -112,22 +135,11 @@ end
 
 handles.model.delft3dwave.domain.locationsets=ddb_initializeDelft3DWAVELocationSet(handles.model.delft3dwave.domain.locationsets,nlocsets);
 
-np=0;
-ithin=20;
-for ibnd=1:ithin:nbnd
-    m=bnd(ibnd).m1;
-    n=bnd(ibnd).n1;
-    % Check that depth at this point is greater than 0
-    if depth(m,n)>0
-        np=np+1;
-        xp=xg(m,n);
-        yp=yg(m,n);
-        handles.model.delft3dwave.domain.locationsets(nlocsets).x(np)=xp;
-        handles.model.delft3dwave.domain.locationsets(nlocsets).y(np)=yp;
-    end
-end
-
+np=length(xx);
+handles.model.delft3dwave.domain.locationsets(nlocsets).x=xx;
+handles.model.delft3dwave.domain.locationsets(nlocsets).y=yy;
 handles.model.delft3dwave.domain.locationsets(nlocsets).nrpoints=np;
+
 for ii=1:np
     handles.model.delft3dwave.domain.locationsets(nlocsets).pointtext{ii}=num2str(ii);
 end
@@ -144,3 +156,19 @@ handles=ddb_Delft3DWAVE_plotOutputLocations(handles,'plot','visible',1,'active',
 
 setHandles(handles);
 
+%%
+function selectCS
+
+handles=getHandles;
+
+% Open GUI to select data set
+
+[cs,type,nr,ok]=ddb_selectCoordinateSystem(handles.coordinateData,handles.EPSG,'default','WGS 84','type','both','defaulttype','geographic');
+
+if ok    
+    handles.toolbox.nesting.delft3dwave.detailmodelcsname=cs;
+    handles.toolbox.nesting.delft3dwave.detailmodelcstype=type;    
+    setHandles(handles);
+end
+
+gui_updateActiveTab;
