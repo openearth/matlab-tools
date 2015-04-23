@@ -221,13 +221,19 @@ linkaxes(ax, 'x');
 
 function addplot(x, data, type, color, name)
     if ~isempty(data);
+        if size(data,2) > size(data,1)
+            data = data';
+        end
+        if size(x,2) > size(x,1)
+            x = x';
+        end
         if length(x) < size(data,1)
             data = data(1:length(x),:);
         elseif length(x) > size(data,1)
             x = linspace(min(x),max(x),size(data,1));
         end
         
-        plot(x, data, type, ...
+        plot(x', data', type, ...
             'Color', color, ...
             'LineWidth', 2, ...
             'DisplayName', name);
