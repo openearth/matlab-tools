@@ -1,33 +1,33 @@
-function delft3d_trim2trim_ini(trim_files,varargin)
-% Want to copy and use large trim files for your model hot-/restarts?
+function delwaq_map2map_ini(map_files,varargin)
+% Want to copy and use large delwaq map files for your model hot-/restarts?
 % Use this script to only copy the required field data for the specific
-% time-point of your  hot-/restart.
+% time-point of your hot-/restart.
 %
 % Syntax:
 %
-% delft3d_trim2trim_ini(trim_files,<keyword,value>)
+% delwaq_map2map_ini(map_files,<keyword,value>)
 % 
 % REQUIRED INPUT VARIABLE:
 %
-% trim_files     Cellstring of trim-files to consider, incl. or excluding
+% map_files      Cellstring of map-files to consider, incl. or excluding
 %                complete paths. Can also be a single line charcter string
 %                when considering only 1 file. When left empty ('') a
-%                dialog will appear to select trim-*.dat files.
+%                dialog will appear to select *.map files.
 %
 %                Examples:
 %                (1) ''
-%                (2) 'D:/tmp/trim-tmp.dat'
-%                (3) {'trim-tmp.dat','D:/tmp/trim-run.dat'}
-%                (4) files (from tmp=dir('trim-*.dat'); files={tmp.name}';)
+%                (2) 'D:/tmp/tmp.map'
+%                (3) {'tmp.map','D:/tmp/run.map'}
+%                (4) files (from tmp=dir('*.map'); files={tmp.name}';)
 % 
 % OPTIONAL INPUT <KEYWORD,VALUE> PAIRS:
 % 
 % time           This <keyword,value> is used to specify the time at which
 %                the hotstart is specified. This can either be a matlab
 %                datenum or the string 'end', the latter is default. When
-%                specifying 'end', the last timestep of each trim-*.dat
-%                file is used, when using a matlab datenum, the specified
-%                date and time is used (when available in the trim-*.dat
+%                specifying 'end', the last timestep of each *.map file
+%                is used, when using a matlab datenum, the specified
+%                date and time is used (when available in the *.map
 %                files, else an error is thrown).
 %
 %                Examples:
@@ -36,7 +36,7 @@ function delft3d_trim2trim_ini(trim_files,varargin)
 %                (3) 730486
 %
 % output_folder  This <keyword,value> is used to specify the output folder
-%                in which the generated trim-*.dat files are stored. By
+%                in which the generated *.map files are stored. By
 %                default, this is the working directory (pwd), but can be
 %                changed by specifying the location in a single line
 %                charcter string.
@@ -47,8 +47,8 @@ function delft3d_trim2trim_ini(trim_files,varargin)
 %
 % add_text       This <keyword,value> is used to specify the additional text
 %                used when naming new files, default, this is '_new'. This 
-%                would for instance create a trim_tmp_new.dat from the file
-%                trim_tmp.dat. If you wish to keep the original filenames,
+%                would for instance create a tmp_new.map from the file
+%                tmp.map. If you wish to keep the original filenames,
 %                simply specify add_text as ''. Do note that this could
 %                overwrite existing files if not considering the
 %                output_folder keyword, but this is checked for.
@@ -66,7 +66,7 @@ function delft3d_trim2trim_ini(trim_files,varargin)
 %
 %Contact Freek Scheel (freek.scheel@deltares.nl) if bugs are encountered
 %              
-%See also: vs_use, vs_ini, vs_copy
+%See also: delwaq
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2015 Deltares
@@ -113,62 +113,62 @@ OPT = setproperty(OPT,varargin);
 %
 
 %_____________________________________________
-% trim_files checks and modifications:
-if isstr(trim_files)
-    if size(trim_files,1) > 1
+% map_files checks and modifications:
+if isstr(map_files)
+    if size(map_files,1) > 1
         error('Expected single line character input for trim-file location')
     else
-        if strcmp(trim_files,'')
+        if strcmp(map_files,'')
             % Will be using the dialog
         else
-            % We nog have [N,1] cellstr, with N = 1:
-            trim_files = {trim_files};
+            % We now have [N,1] cellstr, with N = 1:
+            map_files = {map_files};
         end
     end
-elseif iscellstr(trim_files)
+elseif iscellstr(map_files)
     % Make sure we have a [N,1] cellstr regardless of input:
-    trim_files = trim_files(:);
+    map_files = map_files(:);
 else
-    disp('Unknown input specified for trim files, please use the dialog instead..');
-    trim_files = '';
+    disp('Unknown input specified for map files, please use the dialog instead..');
+    map_files = '';
     % Will be using the dialog
 end
 
-if isstr(trim_files) && strcmp(trim_files,'')
-    [FILENAME, PATHNAME] = uigetfile('trim-*.dat','','','MultiSelect','on');
+if isstr(map_files) && strcmp(map_files,'')
+    [FILENAME, PATHNAME] = uigetfile('*.map','','','MultiSelect','on');
     if isnumeric(FILENAME)
         disp('Aborted by user')
         return
     end
     if isstr(FILENAME)
-        trim_files           = cellstr([PATHNAME FILENAME]);
+        map_files           = cellstr([PATHNAME FILENAME]);
     elseif iscellstr(FILENAME)
-        trim_files           = cellstr([repmat(PATHNAME,size(FILENAME,2),1) char(FILENAME')]);
+        map_files           = cellstr([repmat(PATHNAME,size(FILENAME,2),1) char(FILENAME')]);
     else
         error('Unknown error, code 43574363, contact the developer')
     end
 else
-    % Trim files already specified, make sure all the paths are added as well:
-    for ii=1:size(trim_files,1)
-        if isempty(strfind(trim_files{ii,1},filesep))
+    % Map files already specified, make sure all the paths are added as well:
+    for ii=1:size(map_files,1)
+        if isempty(strfind(map_files{ii,1},filesep))
             % No folder yet:
-            trim_files{ii,1} = [pwd filesep trim_files{ii,1}];
+            map_files{ii,1} = [pwd filesep map_files{ii,1}];
         end
     end
 end
 
 % Now we also just want the names without the folders:
-for ii=1:size(trim_files,1)
-    trim_files_name_only{ii,1} = trim_files{ii,1}(1,max(strfind(trim_files{ii,1},filesep))+1:end);
+for ii=1:size(map_files,1)
+    map_files_name_only{ii,1} = map_files{ii,1}(1,max(strfind(map_files{ii,1},filesep))+1:end);
 end
 
-if length(unique(trim_files)) ~= length(trim_files)
+if length(unique(map_files)) ~= length(map_files)
     error('Double files were found, please remove these...');
 end
 
-for ii=1:size(trim_files,1)
-    if exist(trim_files{ii,1},'file') ~= 2
-        error(['Trim file does not exist: ' trim_files{ii,1}]);
+for ii=1:size(map_files,1)
+    if exist(map_files{ii,1},'file') ~= 2
+        error(['Map file does not exist: ' map_files{ii,1}]);
     end
 end
 
@@ -182,15 +182,15 @@ if isstr(OPT.time)
 elseif isnumeric(OPT.time)
     if min(size(OPT.time) == [1,1]) == 1
         % One value specified:
-        OPT.time = repmat(OPT.time,size(trim_files,1),1);
-        disp(['Using trim-file hotstart time: ' datestr(OPT.time(1,1))])
-    elseif min(size(OPT.time)) == 1 && max(size(OPT.time)) == size(trim_files,1)
+        OPT.time = repmat(OPT.time,size(map_files,1),1);
+        disp(['Using map-file hotstart time: ' datestr(OPT.time(1,1))])
+    elseif min(size(OPT.time)) == 1 && max(size(OPT.time)) == size(map_files,1)
         % Multiple values specified in correct format
         OPT.time = OPT.time(:);
         if length(unique(OPT.time))>1
-            disp(['NOTE: Using various (different) trim_file hotstart times!'])
+            disp(['NOTE: Using various (different) map-file hotstart times!'])
         else
-            disp(['Using unique trim-file hotstart time for all files: ' datestr(OPT.time(1,1))])
+            disp(['Using unique map-file hotstart time for all files: ' datestr(OPT.time(1,1))])
         end
     else
         % Incorrect time format:
@@ -204,8 +204,9 @@ end
 
 if isstr(OPT.time) && strcmp(OPT.time,'end')
     OPT.time = [];
-    for ii=1:size(trim_files,1)
-        OPT.time(ii,1) = max(get_d3d_output_times(trim_files{ii,1}));
+    for ii=1:size(map_files,1)
+        tmp_file_info  = delwaq('open',map_files{ii,1});
+        OPT.time(ii,1) = max(delwaq_time(tmp_file_info,'datenum',1,'quiet',true));
     end
 %     if length(unique(OPT.time))>1
 %         disp(['Using various trim_file hotstart times: ' datestr(OPT.time(1,1))])
@@ -226,28 +227,28 @@ else
     OPT.output_folder = pwd
 end
 
-% All the input is ok, now, lets check if all the trim-*.dat files indeed exist and have data on the requested timepoints:
+% All the input is ok, now, lets check if all the *.map files indeed exist and have data on the requested timepoints:
 
-for ii=1:size(trim_files,1)
-    if exist(trim_files{ii,1},'file') == 2
+for ii=1:size(map_files,1)
+    if exist(map_files{ii,1},'file') == 2
         try
-            trim_handles{ii,1} = vs_use(trim_files{ii,1},'quiet');
+            map_handles{ii,1} = delwaq('open',map_files{ii,1});
         catch
-            error(['Cannot load trim file: ' trim_files{ii,1}]);
+            error(['Cannot load map file: ' map_files{ii,1}]);
         end
     else
-        error(['Trim file does not exist: ' trim_files{ii,1}]);
+        error(['Map file does not exist: ' map_files{ii,1}]);
     end
     
-    model_times{ii,1}  = get_d3d_output_times(trim_handles{ii,1});
+    model_times{ii,1}  = delwaq_time(map_handles{ii,1},'datenum',1,'quiet',true)';
     % 6th time digit is not relevant for seconds:
     if ~isempty(find(round(model_times{ii,1} * 10^6) == round(OPT.time(ii,1) * 10^6)))
         time_inds(ii,1)    = find(round(model_times{ii,1} * 10^6) == round(OPT.time(ii,1) * 10^6));
     else
-        error(['Trim-file ''' trim_files{ii,1} ''' does not contain fields for the specified date: ' datestr(OPT.time(ii,1)) ', please check this...'])
+        error(['Map-file ''' map_files{ii,1} ''' does not contain fields for the specified date: ' datestr(OPT.time(ii,1)) ', please check this...'])
     end
     
-    output_files{ii,1} = [OPT.output_folder filesep strrep(trim_files_name_only{ii,1},'.dat',[OPT.add_text '.dat'])];
+    output_files{ii,1} = [OPT.output_folder filesep strrep(map_files_name_only{ii,1},'.map',[OPT.add_text '.map'])];
     if exist(output_files{ii,1},'file') == 2
         error(['The requested output file ''' output_files{ii,1} ''' already exists, this script will not overwrite any files and is thus aborted. Change your function call (''add_text'' or ''output_folder'') or delete the file(s) if needed..']);
     end
@@ -258,27 +259,21 @@ end
 
 tic;
 disp([' ']);
-for ii=1:size(trim_files,1)
-    disp(['Creating file ' num2str(ii) ' out of ' num2str(size(trim_files,1)) ':']);
+for ii=1:size(map_files,1)
+    disp(['Creating file ' num2str(ii) ' out of ' num2str(size(map_files,1)) ':']);
     disp([' ']);
     pause(2);
-    disp(['Hotstart time = ' datestr(model_times{ii,1}(time_inds(ii,1),1)) ' for file ' trim_files{ii,1}]);
+    disp(['Hotstart time = ' datestr(model_times{ii,1}(time_inds(ii,1),1)) ' for file ' map_files{ii,1}]);
     disp([' ']);
     pause(4);
     
-    trim_handles_new{ii,1} = vs_ini(output_files{ii,1},strrep(output_files{ii,1},'.dat','.def'));
-    function_text = 'trim_handles_new{ii,1} = vs_copy(trim_handles{ii,1},trim_handles_new{ii,1}';
-    for field = vs_disp(trim_handles{ii,1},[])
-        dat=vs_disp(trim_handles{ii,1},field{:},[]);
-        if ~isempty(find(dat.SizeDim == size(model_times{ii,1},1)))
-            function_text = [function_text ',''' field{:} ''',{' num2str(time_inds(ii,1)) '}'];
-        end
-    end
-    eval([function_text ');']);
+    % get the data to copy:
+    [time_d,data_d] = delwaq('read',map_handles{ii,1},0,0,time_inds(ii,1));
+    map_handles_new{ii,1} = delwaq('write',output_files{ii,1},map_handles{ii,1}.Header,map_handles{ii,1}.SubsName,[map_handles{ii,1}.T0 map_handles{ii,1}.TStep*3600*24],time_d,data_d);
     disp([' ']);
 end
 
 fclose('all');
-disp(['All files (' num2str(num2str(size(trim_files,1))) ' in total) were succesfully created in ' num2str(round(toc)) ' seconds, you can find them here:'])
+disp(['All files (' num2str(num2str(size(map_files,1))) ' in total) were succesfully created in ' num2str(round(toc)) ' seconds, you can find them here:'])
 disp([' '])
 disp([output_files])
