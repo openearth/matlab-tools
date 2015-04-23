@@ -480,6 +480,7 @@ for i=1:length(fldnames)
         value = ['[.] '];
     end
     
+    % Why is this done? It messes up this keyword...:
     if strcmpi(keyword6,'Prhis ')
         value = ['[.] [.] [.] '];
     end
