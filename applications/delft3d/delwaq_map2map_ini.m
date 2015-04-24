@@ -305,10 +305,14 @@ for ii=1:size(map_files,1)
     if min(size(OPT.num_of_subs) == [0,0]) == 1
         OPT.num_of_subs = size(map_handles{ii,1}.SubsName,1);
     end
+    
     %%%%% This is something we don't want, why are there dummy values in this data?: 
     data_d(find(data_d==-999)) = 0;
-    %%%%% This is a temporary solution, possibly a bug in the core of DELWAQ 
-    map_handles_new{ii,1} = delwaq('write',output_files{ii,1},map_handles{ii,1}.Header,map_handles{ii,1}.SubsName(1:OPT.num_of_subs),[map_handles{ii,1}.T0 map_handles{ii,1}.TStep*3600*24],time_d,data_d(1:OPT.num_of_subs,:));
+    %%%%% This is a temporary solution, possibly a bug in the core of DELWAQ
+    
+    % If the delwaq code allows (consistency), you could use this call, but we leave the header data empty, and it will be copied: 
+    % map_handles_new{ii,1} = delwaq('write',output_files{ii,1},map_handles{ii,1}.Header,map_handles{ii,1}.SubsName(1:OPT.num_of_subs),[map_handles{ii,1}.T0 map_handles{ii,1}.TStep*3600*24],time_d,data_d(1:OPT.num_of_subs,:));
+    map_handles_new{ii,1} = delwaq('write',output_files{ii,1},map_handles{ii,1}.Header,map_handles{ii,1}.SubsName(1:OPT.num_of_subs),[],time_d,data_d(1:OPT.num_of_subs,:));
     disp([' ']);
 end
 
