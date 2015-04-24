@@ -451,6 +451,9 @@ for i=1:length(fldnames)
         end
     end
     
+    % These calls below erase values from the original mdf file, I have no clue
+    % why this is done, but I've removed 3 of them that I don't agree with by using the call
+    % && isempty(value). This only sets empty values to its originals. (Freek Scheel, 2015)
     
     if strcmpi(keyword6,'MNtd  ')
         value = ['[ ] [ ] [ ] [ ] ',value];
@@ -476,12 +479,11 @@ for i=1:length(fldnames)
         value = ['[ ] [ ] [ ] [ ]'];
     end
     
-    if strcmpi(keyword6,'Prmap ')
+    if strcmpi(keyword6,'Prmap ') && isempty(value)
         value = ['[.] '];
     end
     
-    % Why is this done? It messes up this keyword...:
-    if strcmpi(keyword6,'Prhis ')
+    if strcmpi(keyword6,'Prhis ') && isempty(value)
         value = ['[.] [.] [.] '];
     end
     
@@ -497,7 +499,7 @@ for i=1:length(fldnames)
         value = ['[.]'];
     end
     
-    if strcmpi(keyword6,'Z0v   ')
+    if strcmpi(keyword6,'Z0v   ') && isempty(value)
         value = ['[.]'];
     end
     
@@ -525,6 +527,8 @@ iostat = fclose  (fid);
 
 if iostat==0
     disp(['File ',filename,' successfully written']);
+    % Set it to 1, that is what is said in the help:
+    iostat = iostat + 1;
 else
     disp(['Error: file ',filename,' NOT successfully written']);
 end
