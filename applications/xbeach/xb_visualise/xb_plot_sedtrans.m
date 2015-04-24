@@ -113,7 +113,11 @@ OPT = setproperty(OPT, varargin{:});
 % determine dimensions
 x = xs_get(xb, 'DIMS.globalx_DATA');
 j = ceil(xs_get(xb, 'DIMS.globaly')/2);
-x = squeeze(x(j,:));
+if size(x,2) > size(x,1)
+    x       = squeeze(x(j,:));
+else
+    x       = x';
+end
 
 % determine available data
 has_conc_m      = ~isempty(OPT.c);
