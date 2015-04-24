@@ -135,11 +135,11 @@ if sp(1)
     ylabel(['height [' OPT.units_dist ']']);
     
     % plot measurements
-    if ~isempty(OPT.dz);                addplot(OPT.dz(:,1),        OPT.dz(:,2),            'o',    'k',    'measured'  );  end;
+    if ~isempty(OPT.dz);                xb_addplot(OPT.dz(:,1),        OPT.dz(:,2),            'o',    'k',    'measured'  );  end;
 
     % plot computation
     dz = xs_get(xb, 'dz');
-    if ~has_m || ~isempty(OPT.dz);      addplot(x,                  dz(end,:)',             '-',    'r',    'computed'  );  end;
+    if ~has_m || ~isempty(OPT.dz);      xb_addplot(x,                  dz(end,:)',             '-',    'r',    'computed'  );  end;
     
     legend('show', 'Location', 'SouthWest');
 end
@@ -154,10 +154,10 @@ if sp(2)
     ylabel(['volume [' OPT.units_vol ']']);
     
     % plot measurements
-    if ~isempty(OPT.ero);               addplot(OPT.ero(:,1),       OPT.ero(:,2),           'o',    'k',    'measured'  );  end;
+    if ~isempty(OPT.ero);               xb_addplot(OPT.ero(:,1),       OPT.ero(:,2),           'o',    'k',    'measured'  );  end;
 
     % plot computation
-    if ~has_m || ~isempty(OPT.ero);     addplot(t,                  xs_get(xb, 'ero'),      '-',    'g',    'computed'  );  end;
+    if ~has_m || ~isempty(OPT.ero);     xb_addplot(t,                  xs_get(xb, 'ero'),      '-',    'g',    'computed'  );  end;
     
     legend('show', 'Location', 'SouthEast');
 end
@@ -172,12 +172,12 @@ if sp(3)
     ylabel(['distance [' OPT.units_dist ']']);
     
     % plot measurements
-    if ~isempty(OPT.R);                 addplot(OPT.R(:,1),         OPT.R(:,2),             'o',    'k',    'measured'  );  end;
+    if ~isempty(OPT.R);                 xb_addplot(OPT.R(:,1),         OPT.R(:,2),             'o',    'k',    'measured'  );  end;
 
     % plot computation
     R   = xs_get(xb, 'R');
     R1  = R(find(~isnan(R),1,'first'));
-    if ~has_m || ~isempty(OPT.R);       addplot(t,                  R-R1,                   '-',    'b',    'computed'  );  end;
+    if ~has_m || ~isempty(OPT.R);       xb_addplot(t,                  R-R1,                   '-',    'b',    'computed'  );  end;
     
     if sp(2); linkaxes(ax(si-2:si-1), 'x'); end;
     
@@ -191,22 +191,4 @@ for i = 1:sum(sp)
     box on;
     grid on;
 end
-
-%% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-function addplot(x, data, type, color, name)
-    if ~isempty(data);
-        if length(x) < size(data,1)
-            data = data(1:length(x),:);
-        elseif length(x) > size(data,1)
-            x = linspace(min(x),max(x),size(data,1));
-        end
-        
-        plot(x, data, type, ...
-            'Color', color, ...
-            'LineWidth', 2, ...
-            'DisplayName', name);
-    end
-end
-
 end

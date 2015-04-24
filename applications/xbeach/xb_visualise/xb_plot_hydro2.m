@@ -150,10 +150,10 @@ if sp(1)
     ylabel(['correlation \rho [' OPT.units_corr ']']);
     
     % plot measurements
-    if ~isempty(OPT.rho);               addplot(OPT.rho(:,1),   OPT.rho(:,2),           's',    'k',    'correlation HF variance/LF elevation (measured)'   );  end;
+    if ~isempty(OPT.rho);               xb_addplot(OPT.rho(:,1),   OPT.rho(:,2),           's',    'k',    'correlation HF variance/LF elevation (measured)'   );  end;
     
     % plot correlation
-    if ~has_m || ~isempty(OPT.rho);     addplot(x,              xs_get(xb, 'rho'),      '-',    'k',    'correlation HF variance/LF elevation'              );  end;
+    if ~has_m || ~isempty(OPT.rho);     xb_addplot(x,              xs_get(xb, 'rho'),      '-',    'k',    'correlation HF variance/LF elevation'              );  end;
 end
 
 % subplot 2
@@ -165,12 +165,12 @@ if sp(2)
     ylabel(['skewness & asymmetry [' OPT.units_skas ']']);
     
     % plot measurements
-    if ~isempty(OPT.SK);            addplot(OPT.SK(:,1),    OPT.SK(:,2),       '^',     'k',    'wave skewness (measured)'  );  end;
-    if ~isempty(OPT.AS);            addplot(OPT.AS(:,1),    OPT.AS(:,2),       'v',     'k',    'wave asymmetry (measured)' );  end;
+    if ~isempty(OPT.SK);            xb_addplot(OPT.SK(:,1),    OPT.SK(:,2),       '^',     'k',    'wave skewness (measured)'  );  end;
+    if ~isempty(OPT.AS);            xb_addplot(OPT.AS(:,1),    OPT.AS(:,2),       'v',     'k',    'wave asymmetry (measured)' );  end;
     
     % plot computations
-    if ~has_m || ~isempty(OPT.SK);  addplot(x,              xs_get(xb, 'SK'),  '-',     'r',    'wave skewness'             );  end;
-    if ~has_m || ~isempty(OPT.AS);  addplot(x,              xs_get(xb, 'AS'),  '--',    'r',    'wave asymmetry'            );  end;
+    if ~has_m || ~isempty(OPT.SK);  xb_addplot(x,              xs_get(xb, 'SK'),  '-',     'r',    'wave skewness'             );  end;
+    if ~has_m || ~isempty(OPT.AS);  xb_addplot(x,              xs_get(xb, 'AS'),  '--',    'r',    'wave asymmetry'            );  end;
     
 end
 
@@ -183,12 +183,12 @@ if sp(3)
     ylabel(['nonlinearity & phase [' OPT.units_b ']']);
     
     % plot measurements
-    if ~isempty(OPT.B);                 addplot(OPT.B(:,1),     OPT.B(:,2),         '^',     'k',    'wave nonlinearity (measured)' );  end;
-    if ~isempty(OPT.beta);              addplot(OPT.beta(:,1),  OPT.beta(:,2),      'v',     'k',    'wave phase (measured)'        );  end;
+    if ~isempty(OPT.B);                 xb_addplot(OPT.B(:,1),     OPT.B(:,2),         '^',     'k',    'wave nonlinearity (measured)' );  end;
+    if ~isempty(OPT.beta);              xb_addplot(OPT.beta(:,1),  OPT.beta(:,2),      'v',     'k',    'wave phase (measured)'        );  end;
     
     % plot computations
-    if ~has_m || ~isempty(OPT.B);       addplot(x,              xs_get(xb, 'B'),    '-',     'g',    'wave nonlinearity'            );  end;
-    if ~has_m || ~isempty(OPT.beta);    addplot(x,              xs_get(xb, 'beta'), '--',    'g',    'wave phase'                   );  end;
+    if ~has_m || ~isempty(OPT.B);       xb_addplot(x,              xs_get(xb, 'B'),    '-',     'g',    'wave nonlinearity'            );  end;
+    if ~has_m || ~isempty(OPT.beta);    xb_addplot(x,              xs_get(xb, 'beta'), '--',    'g',    'wave phase'                   );  end;
     
 end
 
@@ -201,18 +201,18 @@ if sp(4)
     ylabel(['velocity [' OPT.units_vel ']']);
     
     % plot measurements
-    if ~isempty(OPT.urms_hf);           addplot(OPT.urms_hf(:,1),   OPT.urms_hf(:,2),       '^',    'k',    'flow velocity (RMS,HF,measured)'   );  end;
-    if ~isempty(OPT.urms_lf);           addplot(OPT.urms_lf(:,1),   OPT.urms_lf(:,2),       'v',    'k',    'flow velocity (RMS,LF,measured)'   );  end;
-    if ~isempty(OPT.urms_t);            addplot(OPT.urms_t(:,1),    OPT.urms_t(:,2),        's',    'k',    'flow velocity (RMS,measured)'      );  end;
-    if ~isempty(OPT.uavg);              addplot(OPT.uavg(:,1),      OPT.uavg(:,2),          'o',    'k',    'undertow velocity (measured)'      );  end;
+    if ~isempty(OPT.urms_hf);           xb_addplot(OPT.urms_hf(:,1),   OPT.urms_hf(:,2),       '^',    'k',    'flow velocity (RMS,HF,measured)'   );  end;
+    if ~isempty(OPT.urms_lf);           xb_addplot(OPT.urms_lf(:,1),   OPT.urms_lf(:,2),       'v',    'k',    'flow velocity (RMS,LF,measured)'   );  end;
+    if ~isempty(OPT.urms_t);            xb_addplot(OPT.urms_t(:,1),    OPT.urms_t(:,2),        's',    'k',    'flow velocity (RMS,measured)'      );  end;
+    if ~isempty(OPT.uavg);              xb_addplot(OPT.uavg(:,1),      OPT.uavg(:,2),          'o',    'k',    'undertow velocity (measured)'      );  end;
     
     % plot orbital velocity
-    if ~has_m || ~isempty(OPT.urms_hf); addplot(x,                  xs_get(xb, 'urms_hf'),  '--',  'b',    'flow velocity (RMS,HF)'             );  end;
-    if ~has_m || ~isempty(OPT.urms_lf); addplot(x,                  xs_get(xb, 'urms_lf'),  ':',   'b',    'flow velocity (RMS,LF)'             );  end;
-    if ~has_m || ~isempty(OPT.urms_t);  addplot(x,                  xs_get(xb, 'urms_t'),   '-',   'b',    'flow velocity (RMS)'                );  end;
+    if ~has_m || ~isempty(OPT.urms_hf); xb_addplot(x,                  xs_get(xb, 'urms_hf'),  '--',  'b',    'flow velocity (RMS,HF)'             );  end;
+    if ~has_m || ~isempty(OPT.urms_lf); xb_addplot(x,                  xs_get(xb, 'urms_lf'),  ':',   'b',    'flow velocity (RMS,LF)'             );  end;
+    if ~has_m || ~isempty(OPT.urms_t);  xb_addplot(x,                  xs_get(xb, 'urms_t'),   '-',   'b',    'flow velocity (RMS)'                );  end;
     
     % plot undertow
-    if ~has_m || ~isempty(OPT.uavg);    addplot(x,                  xs_get(xb, 'uavg'),     '-.',  'b',    'undertow velocity'                  );  end;
+    if ~has_m || ~isempty(OPT.uavg);    xb_addplot(x,                  xs_get(xb, 'uavg'),     '-.',  'b',    'undertow velocity'                  );  end;
     
 end
 
@@ -230,22 +230,4 @@ for i = 1:n
 end
 
 linkaxes(ax, 'x');
-
-%% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-function addplot(x, data, type, color, name)
-    if ~isempty(data);
-        if length(x) < size(data,1)
-            data = data(1:length(x),:);
-        elseif length(x) > size(data,1)
-            x = linspace(min(x),max(x),size(data,1));
-        end
-        
-        plot(x, data, type, ...
-            'Color', color, ...
-            'LineWidth', 2, ...
-            'DisplayName', name);
-    end
-end
-
 end

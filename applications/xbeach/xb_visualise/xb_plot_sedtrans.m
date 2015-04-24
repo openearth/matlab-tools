@@ -150,10 +150,10 @@ if sp(1)
     ylabel(['concentration [' OPT.units_c ']']);
     
     % plot measurements
-    if ~isempty(OPT.c);                 addplot(OPT.c(:,1),         OPT.c(:,2),             's',    'k',    'concentration (measured)'          );  end;
+    if ~isempty(OPT.c);                 xb_addplot(OPT.c(:,1),         OPT.c(:,2),             's',    'k',    'concentration (measured)'          );  end;
 
     % plot computations
-    if ~has_m || ~isempty(OPT.c);       addplot(x,                  xs_get(xb, 'c'),        '-',    'k',    'concentration'                     );  end;
+    if ~has_m || ~isempty(OPT.c);       xb_addplot(x,                  xs_get(xb, 'c'),        '-',    'k',    'concentration'                     );  end;
     
 end
 
@@ -166,14 +166,14 @@ if sp(2)
     ylabel(['tubulence [' OPT.units_k ']']);
     
     % plot measurements
-    if ~isempty(OPT.k_wavg);            addplot(OPT.k_wavg(:,1),    OPT.k_wavg(:,2),        '^',    'k',    'wave averaged tubulence (measured)'            );  end;
-    if ~isempty(OPT.k_bavg);            addplot(OPT.k_bavg(:,1),    OPT.k_bavg(:,2),        'v',    'k',    'bore averaged tubulence (measured)'            );  end;
-    if ~isempty(OPT.k_bavg_nb);         addplot(OPT.k_bavg_nb(:,1), OPT.k_bavg_nb(:,2),     's',    'k',    'bore averaged near-bed turbulence (measured)'  );  end;
+    if ~isempty(OPT.k_wavg);            xb_addplot(OPT.k_wavg(:,1),    OPT.k_wavg(:,2),        '^',    'k',    'wave averaged tubulence (measured)'            );  end;
+    if ~isempty(OPT.k_bavg);            xb_addplot(OPT.k_bavg(:,1),    OPT.k_bavg(:,2),        'v',    'k',    'bore averaged tubulence (measured)'            );  end;
+    if ~isempty(OPT.k_bavg_nb);         xb_addplot(OPT.k_bavg_nb(:,1), OPT.k_bavg_nb(:,2),     's',    'k',    'bore averaged near-bed turbulence (measured)'  );  end;
     
     % plot tubulence
-    if ~has_m || ~isempty(OPT.k_wavg);  addplot(x,      xs_get(xb, 'k_wavg'),   '--',   'r',    'wave averaged tubulence'           );  end;
-    if ~has_m || ~isempty(OPT.k_bavg);  addplot(x,      xs_get(xb, 'k_bavg'),   ':',    'r',    'bore averaged tubulence'           );  end;
-    if ~has_m || ~isempty(OPT.k_bavg_nb); addplot(x,    xs_get(xb, 'k_bavg_nb'),'-',    'r',    'bore averaged near-bed turbulence' );  end;
+    if ~has_m || ~isempty(OPT.k_wavg);  xb_addplot(x,      xs_get(xb, 'k_wavg'),   '--',   'r',    'wave averaged tubulence'           );  end;
+    if ~has_m || ~isempty(OPT.k_bavg);  xb_addplot(x,      xs_get(xb, 'k_bavg'),   ':',    'r',    'bore averaged tubulence'           );  end;
+    if ~has_m || ~isempty(OPT.k_bavg_nb); xb_addplot(x,    xs_get(xb, 'k_bavg_nb'),'-',    'r',    'bore averaged near-bed turbulence' );  end;
     
 end
 
@@ -186,16 +186,16 @@ if sp(3)
     ylabel(['transport [' OPT.units_S ']']);
     
     % plot measurements
-    if ~isempty(OPT.S_dz);	addplot(OPT.S_dz(:,1),  OPT.S_dz(:,2),  '^',    'k',    'bed level changes (measured)'  );  end;
-    if ~isempty(OPT.S_av);  addplot(OPT.S_av(:,1),  OPT.S_av(:,2),  'v',    'k',    'avalanching (measured)'        );  end;
-    if ~isempty(OPT.S_s);   addplot(OPT.S_s(:,1),   OPT.S_s(:,2),   's',    'k',    'suspended (measured)'          );  end;
-    if ~isempty(OPT.S_b);   addplot(OPT.S_b(:,1),   OPT.S_b(:,2),   'o',    'k',    'bedload (measured)'            );  end;
+    if ~isempty(OPT.S_dz);	xb_addplot(OPT.S_dz(:,1),  OPT.S_dz(:,2),  '^',    'k',    'bed level changes (measured)'  );  end;
+    if ~isempty(OPT.S_av);  xb_addplot(OPT.S_av(:,1),  OPT.S_av(:,2),  'v',    'k',    'avalanching (measured)'        );  end;
+    if ~isempty(OPT.S_s);   xb_addplot(OPT.S_s(:,1),   OPT.S_s(:,2),   's',    'k',    'suspended (measured)'          );  end;
+    if ~isempty(OPT.S_b);   xb_addplot(OPT.S_b(:,1),   OPT.S_b(:,2),   'o',    'k',    'bedload (measured)'            );  end;
     
     % plot computations
-    if ~has_m || ~isempty(OPT.S_dz);    addplot(x, 	xs_get(xb, 'S_dz'), '--',   'g',    'bed level changes' );  end;
-    if ~has_m || ~isempty(OPT.S_av);    addplot(x,  xs_get(xb, 'S_av'), ':',    'g',    'avalanching'       );  end;
-    if ~has_m || ~isempty(OPT.S_s);     addplot(x,  xs_get(xb, 'S_s'),  '-',    'g',    'suspended'         );  end;
-    if ~has_m || ~isempty(OPT.S_b);     addplot(x,  xs_get(xb, 'S_b'),  '-.',   'g',    'bedload'           );  end;
+    if ~has_m || ~isempty(OPT.S_dz);    xb_addplot(x, 	xs_get(xb, 'S_dz'), '--',   'g',    'bed level changes' );  end;
+    if ~has_m || ~isempty(OPT.S_av);    xb_addplot(x,  xs_get(xb, 'S_av'), ':',    'g',    'avalanching'       );  end;
+    if ~has_m || ~isempty(OPT.S_s);     xb_addplot(x,  xs_get(xb, 'S_s'),  '-',    'g',    'suspended'         );  end;
+    if ~has_m || ~isempty(OPT.S_b);     xb_addplot(x,  xs_get(xb, 'S_b'),  '-.',   'g',    'bedload'           );  end;
     
 end
 
@@ -208,16 +208,16 @@ if sp(4)
     ylabel(['transport [' OPT.units_S ']']);
     
     % plot measurements
-    if ~isempty(OPT.S_s);   addplot(OPT.S_s(:,1),   OPT.S_s(:,2),   'o',    'k',    'total hydrodynamics (measured)'    );  end;
-    if ~isempty(OPT.S_lf);	addplot(OPT.S_lf(:,1),  OPT.S_lf(:,2),  '^',    'k',    'long waves (measured)'             );  end;
-    if ~isempty(OPT.S_ut);  addplot(OPT.S_ut(:,1),  OPT.S_ut(:,2),  'v',    'k',    'short wave undertow (measured)'    );  end;
-    if ~isempty(OPT.S_as);  addplot(OPT.S_as(:,1),  OPT.S_as(:,2),  's',    'k',    'wave asymmetry (measured)'         );  end;
+    if ~isempty(OPT.S_s);   xb_addplot(OPT.S_s(:,1),   OPT.S_s(:,2),   'o',    'k',    'total hydrodynamics (measured)'    );  end;
+    if ~isempty(OPT.S_lf);	xb_addplot(OPT.S_lf(:,1),  OPT.S_lf(:,2),  '^',    'k',    'long waves (measured)'             );  end;
+    if ~isempty(OPT.S_ut);  xb_addplot(OPT.S_ut(:,1),  OPT.S_ut(:,2),  'v',    'k',    'short wave undertow (measured)'    );  end;
+    if ~isempty(OPT.S_as);  xb_addplot(OPT.S_as(:,1),  OPT.S_as(:,2),  's',    'k',    'wave asymmetry (measured)'         );  end;
     
     % plot computations
-    if ~has_m || ~isempty(OPT.S_s);     addplot(x, 	xs_get(xb, 'S_s'),  '-',    'b',    'total hydrodynamics'   );  end;
-    if ~has_m || ~isempty(OPT.S_lf);    addplot(x, 	xs_get(xb, 'S_lf'), '--',   'b',    'long waves'            );  end;
-    if ~has_m || ~isempty(OPT.S_ut);    addplot(x,  xs_get(xb, 'S_ut'), ':',    'b',    'short wave undertow'   );  end;
-    if ~has_m || ~isempty(OPT.S_as);    addplot(x,  xs_get(xb, 'S_as'), '-.',   'b',    'wave asymmetry'        );  end;
+    if ~has_m || ~isempty(OPT.S_s);     xb_addplot(x, 	xs_get(xb, 'S_s'),  '-',    'b',    'total hydrodynamics'   );  end;
+    if ~has_m || ~isempty(OPT.S_lf);    xb_addplot(x, 	xs_get(xb, 'S_lf'), '--',   'b',    'long waves'            );  end;
+    if ~has_m || ~isempty(OPT.S_ut);    xb_addplot(x,  xs_get(xb, 'S_ut'), ':',    'b',    'short wave undertow'   );  end;
+    if ~has_m || ~isempty(OPT.S_as);    xb_addplot(x,  xs_get(xb, 'S_as'), '-.',   'b',    'wave asymmetry'        );  end;
     
 end
 
@@ -235,22 +235,4 @@ for i = 1:n
 end
 
 linkaxes(ax, 'x');
-
-%% private functions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-function addplot(x, data, type, color, name)
-    if ~isempty(data);
-        if length(x) < size(data,1)
-            data = data(1:length(x),:);
-        elseif length(x) > size(data,1)
-            x = linspace(min(x),max(x),size(data,1));
-        end
-        
-        plot(x, data, type, ...
-            'Color', color, ...
-            'LineWidth', 2, ...
-            'DisplayName', name);
-    end
-end
-
 end
