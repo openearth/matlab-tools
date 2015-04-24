@@ -12,7 +12,7 @@ function output = delwaq_to_flow_grids(lga_file,grd_files,varargin)
 %
 % SYNTAX (<> indicates optional in- or output):
 %
-% <output> = delwaq_lga_to_flow_grids(lga_file,grid_files,<delwaq_output>,<delwaq_variables>,<time>,<plotting>)
+% <output> = delwaq_to_flow_grids(lga_file,grid_files,<delwaq_output>,<delwaq_variables>,<time>,<plotting>)
 %
 % INPUT VARIABLES (REQUIRED):
 %
