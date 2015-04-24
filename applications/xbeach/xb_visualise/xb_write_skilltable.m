@@ -110,9 +110,13 @@ for i = 1:length(measured)
         initial  = [];
         computed = [];
         
+        if size(x,2) > size(x,1)
+            x = x';
+        end
+        
         if length(y1) == length(x)
             if size(x,2) == size(y1,2)
-                computed = [squeeze(x(j,:))    y1];
+                computed = [squeeze(x(:,j))    y1];
             else
                 computed = [squeeze(x(j,:))'    y1];
             end
