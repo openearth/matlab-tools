@@ -382,7 +382,7 @@ for ii=1:size(com_files,1)
         % Please be aware that the first indice resembles time, so we can exlude that: 
         sal_data{ii,1}     = sal_data{ii,1}(2:end,:);
         sal_tim_data{ii,1} = dat_data{ii,1} + (sal_info{ii,1}.Times)./(60*60*24);
-        sal_tim_dt{ii,1}   = unique(diff(round(sal_tim_data{ii,1}.*10^6)./10^6))*24; % in hours
+        sal_tim_dt{ii,1}   = (unique(round(diff(round(sal_tim_data{ii,1}.*10^6)./10^6)*24*3600))./3600); % in hours
         if min(size(sal_tim_dt{ii,1}) == [1,1]) == 0
             error('The time axis appears to be non-linear');
         end
@@ -407,7 +407,7 @@ for ii=1:size(com_files,1)
         % Please be aware that the first indice resembles time, so we can exlude that: 
         tem_data{ii,1}     = tem_data{ii,1}(2:end,:);
         tem_tim_data{ii,1} = dat_data{ii,1} + (tem_info{ii,1}.Times)./(60*60*24);
-        tem_tim_dt{ii,1}   = unique(diff(round(tem_tim_data{ii,1}.*10^6)./10^6))*24; % in hours
+        tem_tim_dt{ii,1}   = (unique(round(diff(round(tem_tim_data{ii,1}.*10^6)./10^6)*24*3600))./3600); % in hours
         if min(size(tem_tim_dt{ii,1}) == [1,1]) == 0
             error('The time axis appears to be non-linear');
         end
@@ -432,7 +432,7 @@ for ii=1:size(com_files,1)
         % Please be aware that the first indice resembles time, so we can exlude that: 
         vol_data{ii,1}     = vol_data{ii,1}(2:end,:);
         vol_tim_data{ii,1} = dat_data{ii,1} + (vol_info{ii,1}.Times)./(60*60*24);
-        vol_tim_dt{ii,1}   = unique(diff(round(vol_tim_data{ii,1}.*10^6)./10^6))*24; % in hours
+        vol_tim_dt{ii,1}   = (unique(round(diff(round(vol_tim_data{ii,1}.*10^6)./10^6)*24*3600))./3600); % in hours
         if min(size(vol_tim_dt{ii,1}) == [1,1]) == 0
             error('The time axis appears to be non-linear');
         end
