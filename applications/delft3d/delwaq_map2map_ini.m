@@ -57,7 +57,7 @@ function delwaq_map2map_ini(map_files,varargin)
 %                (2) [pwd filesep 'hotstart_run']
 %
 % add_text       This <keyword,value> is used to specify the additional text
-%                used when naming new files, default, this is '_new'. This 
+%                used when naming new files, default, this is '_res'. This 
 %                would for instance create a tmp_new.map from the file
 %                tmp.map. If you wish to keep the original filenames,
 %                simply specify add_text as ''. Do note that this could
@@ -66,7 +66,7 @@ function delwaq_map2map_ini(map_files,varargin)
 %
 %                Examples:
 %                (1) ''
-%                (2) '_rst'
+%                (2) '_new'
 %
 %
 % OUPUT VARIABLES:
@@ -116,7 +116,7 @@ function delwaq_map2map_ini(map_files,varargin)
 
 OPT.time          = 'end';
 OPT.output_folder = pwd;
-OPT.add_text      = '_new';
+OPT.add_text      = '_res';
 OPT.num_of_subs   = [];
 
 OPT = setproperty(OPT,varargin);

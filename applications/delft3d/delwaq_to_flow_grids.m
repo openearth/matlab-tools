@@ -184,12 +184,13 @@ if length(varargin) > 1
         end
     elseif isstr(varargin{2})
         if size(varargin{2},1) ~= 1
-            if varargin{2} > 1
+            if size(varargin{2},1) > 1
                 error(['If you wish to specify multiple DELWAQ variables, use a cellstring instead'])
             else
                 error(['Please specify some text for the DELWAQ variable you wish to consider'])
             end
-            ind = find(strcmp(dwq_info.SubsName,varargin{2}));
+        else
+            ind = find(strcmpi(dwq_info.SubsName,varargin{2}) == 1);
             if isempty(ind)
                 disp(dwq_info.SubsName)
                 error(['The variable ''' varargin{2} ''' is not found within the provided DELWAQ *.map file, choose from the list above'])
@@ -200,7 +201,7 @@ if length(varargin) > 1
     elseif iscellstr(varargin{2})
         varargin{2} = varargin{2}(:);
         for ii = 1:size(varargin{2},1)
-            ind(ii,:) = max([find(strcmp(dwq_info.SubsName,varargin{2}{ii,1})) 0]);
+            ind(ii,:) = max([find(strcmpi(dwq_info.SubsName,varargin{2}{ii,1}) == 1) 0]);
             if ind(ii,1) == 0
                 disp(dwq_info.SubsName)
                 error(['The variable ''' varargin{2}{ii,1} ''' is not found within the provided DELWAQ *.map file, choose from the list above'])
