@@ -113,8 +113,9 @@ function csv_data = LaVeg_input_from_D3D_com_files(com_files,varargin)
 %
 % 'separator'      The separator keyword can be used to alter the value
 %                  separator in the output *.csv files. By default, this is
-%                  set to ; (such that excel will generate separte columns
-%                  upon opening)
+%                  set to ',' (such that the latest versions of Excel will 
+%                  generate separte columns upon opening, some older
+%                  versions might still work with the separator ';')
 %
 % 'write_to_file'  This keyword can be set to false (default is true) when
 %                  only the data is required (and csv files don't have to 
@@ -171,7 +172,7 @@ function csv_data = LaVeg_input_from_D3D_com_files(com_files,varargin)
 OPT.output_folder = [pwd filesep 'LaVeg'];
 OPT.averaging     = 'all';
 OPT.overwrite     = false;
-OPT.separator     = ';';
+OPT.separator     = ',';
 OPT.write_to_file = true;
 
 if nargin == 0
