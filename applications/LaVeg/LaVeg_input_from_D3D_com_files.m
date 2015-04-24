@@ -381,7 +381,7 @@ for ii=1:size(com_files,1)
         fclose(csv_fid);
         % Please be aware that the first indice resembles time, so we can exlude that: 
         sal_data{ii,1}     = sal_data{ii,1}(2:end,:);
-        sal_tim_data{ii,1} = dat_data{ii,1} + (sal_info{ii,1}.Times)./(60*60*24);
+        sal_tim_data{ii,1} = round(((dat_data{ii,1} + (sal_info{ii,1}.Times)./(60*60*24))*24*60*60))./(24*60*60);
         sal_tim_dt{ii,1}   = (unique(round(diff(round(sal_tim_data{ii,1}.*10^6)./10^6)*24*3600))./3600); % in hours
         if min(size(sal_tim_dt{ii,1}) == [1,1]) == 0
             error('The time axis appears to be non-linear');
@@ -406,7 +406,7 @@ for ii=1:size(com_files,1)
         fclose(csv_fid);
         % Please be aware that the first indice resembles time, so we can exlude that: 
         tem_data{ii,1}     = tem_data{ii,1}(2:end,:);
-        tem_tim_data{ii,1} = dat_data{ii,1} + (tem_info{ii,1}.Times)./(60*60*24);
+        tem_tim_data{ii,1} = round(((dat_data{ii,1} + (tem_info{ii,1}.Times)./(60*60*24))*24*60*60))./(24*60*60);
         tem_tim_dt{ii,1}   = (unique(round(diff(round(tem_tim_data{ii,1}.*10^6)./10^6)*24*3600))./3600); % in hours
         if min(size(tem_tim_dt{ii,1}) == [1,1]) == 0
             error('The time axis appears to be non-linear');
@@ -431,7 +431,7 @@ for ii=1:size(com_files,1)
         fclose(csv_fid);
         % Please be aware that the first indice resembles time, so we can exlude that: 
         vol_data{ii,1}     = vol_data{ii,1}(2:end,:);
-        vol_tim_data{ii,1} = dat_data{ii,1} + (vol_info{ii,1}.Times)./(60*60*24);
+        vol_tim_data{ii,1} = round(((dat_data{ii,1} + (vol_info{ii,1}.Times)./(60*60*24))*24*60*60))./(24*60*60);
         vol_tim_dt{ii,1}   = (unique(round(diff(round(vol_tim_data{ii,1}.*10^6)./10^6)*24*3600))./3600); % in hours
         if min(size(vol_tim_dt{ii,1}) == [1,1]) == 0
             error('The time axis appears to be non-linear');
@@ -473,7 +473,8 @@ for ii=1:size(com_files,1)
         error('Different output timesteps found for the sal, tem and vol files, please check this')
     end
     
-    if max(max(abs(diff([sal_tim_data{ii,1} tem_tim_data{ii,1} vol_tim_data{ii,1}],2)))) > 0
+    precision = 10^-6; % sub second precision
+    if max(max(abs(diff([sal_tim_data{ii,1} tem_tim_data{ii,1} vol_tim_data{ii,1}],2)))) > precision
         error('Different time axis found for the sal, tem and vol files, please check this')
     else
         % One uniform time axis availabe:
