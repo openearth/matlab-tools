@@ -122,13 +122,23 @@ function csv_data = LaVeg_input_from_D3D_com_files(com_files,varargin)
 %                  be written). The data will be stored in the specified
 %                  output variable (or ans if not).
 %
+% 'limiter'        This keyword allows you to specify some limiters for the
+%                  data (depth, salinity & temp), the format is as follows:
+%
+%                  [min_dep max_dep min_sal max_sal min_temp max_temp]
+%
+%                  By default, this is set to [-15 11050 0 400 -90 60], but
+%                  can be changed to any value. The units are in meter, ppt 
+%                  and degrees Celcius.
+%
 % OUTPUT VARIABLES:
 %
 % csv_data         This optional output keyword (else data is send to the
 %                  default ans variable) stores all the data associated
-%                  with the csv files. Incl. data, path, number & domain
+%                  with the csv files. Incl. data, path, format, name and
+%                  location.
 %
-% Cell_ID,m,n,X,Y,mean(dep),std(dep),mean(sal),std(sal),mean(tem),std(tem)
+% Cell_ID,M,N,X,Y,mean(dep),std(dep),mean(sal),std(sal),mean(tem),std(tem)
 %
 % Contact Freek Scheel (freek.scheel@deltares.nl) if bugs are encountered
 %              
@@ -174,6 +184,7 @@ OPT.averaging     = 'all';
 OPT.overwrite     = false;
 OPT.separator     = ',';
 OPT.write_to_file = true;
+OPT.limiter       = [-15 11050 0 400 -90 60];
 
 if nargin == 0
     disp(' ')
@@ -187,6 +198,22 @@ OPT = setproperty(OPT,varargin);
 
 %% Check all the input
 %
+
+% Check the limiter:
+if isnumeric(OPT.limiter)
+    OPT.limiter = OPT.limiter(:);
+    if min(size(OPT.limiter) == [6,1]) == 1
+        if min(diff(reshape(OPT.limiter,2,3)) > 0) == 1
+            % Good, we will not check for physical limits, thats up to the user 
+        else
+            error('Please make sure the limiters have increasing values')
+        end
+    else
+        error('Please specify 6 values for the keyword ''limiter''')
+    end
+else
+    error('Please specify a vector for the keyword ''limiter''')
+end
 
 % Check the averaging keyword:
 if isstr(OPT.averaging)
@@ -208,7 +235,7 @@ if isstr(OPT.averaging)
         error('Text input for the keyword ''averaging'' should contain a single line')
     end
 elseif isnumeric(OPT.averaging)
-    OPT.averaging = OPT.averaging(:)
+    OPT.averaging = OPT.averaging(:);
     if min(size(OPT.averaging) == [2,1]) == 0
         error('The datenum input should contain 2 values, a start and end value, indicating the considered interval')
     end
@@ -378,20 +405,23 @@ for ii=1:size(com_files,1)
         % At this moment, waqfil limits some functionality and documentation
         % We need all the available data (all timepoints), which is done next: 
         csv_fid = fopen(sal_files{ii,1},'r');
-        sal_data{ii,1} = fread(csv_fid,[sal_info{ii,1}.NVals+1 sal_info{ii,1}.NTimes],'float32');
+        sal_data = fread(csv_fid,[sal_info{ii,1}.NVals+1 sal_info{ii,1}.NTimes],'float32');
         fclose(csv_fid);
         % Please be aware that the first indice resembles time, so we can exlude that: 
-        sal_data{ii,1}     = sal_data{ii,1}(2:end,:);
+        sal_data     = sal_data(2:end,:);
         sal_tim_data{ii,1} = round(((dat_data{ii,1} + (sal_info{ii,1}.Times)./(60*60*24))*24*60*60))./(24*60*60);
         sal_tim_dt{ii,1}   = (unique(round(diff(round(sal_tim_data{ii,1}.*10^6)./10^6)*24*3600))./3600); % in hours
         if min(size(sal_tim_dt{ii,1}) == [1,1]) == 0
             error('The time axis appears to be non-linear');
         end
-        sal_data_gridded{ii,1} = NaN([size(lga_data{ii,1}.X) size(sal_data{ii,1},2)]);
-        for jj=1:size(sal_data{ii,1},2)
-            sal_data_gridded{ii,1}((jj-1)*(prod(size(lga_data{ii,1}.X))) + find(lga_data{ii,1}.Index>0)) = sal_data{ii,1}(lga_data{ii,1}.Index(find(lga_data{ii,1}.Index>0)),jj);
+        % Now lets remove those limits:
+        sal_data_lims = max(OPT.limiter(3,1),min(sal_data,OPT.limiter(4,1)));
+        sal_data_lims(isnan(sal_data)) = NaN; sal_data = sal_data_lims;
+        sal_data_gridded = NaN([size(lga_data{ii,1}.X) size(sal_data,2)]);
+        for jj=1:size(sal_data,2)
+            sal_data_gridded((jj-1)*(prod(size(lga_data{ii,1}.X))) + find(lga_data{ii,1}.Index>0)) = sal_data(lga_data{ii,1}.Index(find(lga_data{ii,1}.Index>0)),jj);
             % Want to check it out?
-            % for t=1:size(sal_data{ii,1},2); pcolor(lga_data{ii,1}.X_clean,lga_data{ii,1}.Y_clean,squeeze(sal_data_gridded{ii,1}(:,:,t))); shading flat; drawnow; end
+            % for t=1:size(sal_data,2); pcolor(lga_data{ii,1}.X_clean,lga_data{ii,1}.Y_clean,squeeze(sal_data_gridded(:,:,t))); shading flat; drawnow; end
         end
     catch err
         error(['Unable to load data from sal file: ' sal_files{ii,1} ' with message: ' err.message])
@@ -403,20 +433,23 @@ for ii=1:size(com_files,1)
         % At this moment, waqfil limits some functionality and documentation
         % We need all the available data (all timepoints), which is done next: 
         csv_fid = fopen(tem_files{ii,1},'r');
-        tem_data{ii,1} = fread(csv_fid,[tem_info{ii,1}.NVals+1 tem_info{ii,1}.NTimes],'float32');
+        tem_data = fread(csv_fid,[tem_info{ii,1}.NVals+1 tem_info{ii,1}.NTimes],'float32');
         fclose(csv_fid);
         % Please be aware that the first indice resembles time, so we can exlude that: 
-        tem_data{ii,1}     = tem_data{ii,1}(2:end,:);
+        tem_data     = tem_data(2:end,:);
         tem_tim_data{ii,1} = round(((dat_data{ii,1} + (tem_info{ii,1}.Times)./(60*60*24))*24*60*60))./(24*60*60);
         tem_tim_dt{ii,1}   = (unique(round(diff(round(tem_tim_data{ii,1}.*10^6)./10^6)*24*3600))./3600); % in hours
         if min(size(tem_tim_dt{ii,1}) == [1,1]) == 0
             error('The time axis appears to be non-linear');
         end
-        tem_data_gridded{ii,1} = NaN([size(lga_data{ii,1}.X) size(tem_data{ii,1},2)]);
-        for jj=1:size(tem_data{ii,1},2)
-            tem_data_gridded{ii,1}((jj-1)*(prod(size(lga_data{ii,1}.X))) + find(lga_data{ii,1}.Index>0)) = tem_data{ii,1}(lga_data{ii,1}.Index(find(lga_data{ii,1}.Index>0)),jj);
+        % Now lets remove those limits:
+        tem_data_lims = max(OPT.limiter(5,1),min(tem_data,OPT.limiter(6,1)));
+        tem_data_lims(isnan(tem_data)) = NaN; tem_data = tem_data_lims;
+        tem_data_gridded = NaN([size(lga_data{ii,1}.X) size(tem_data,2)]);
+        for jj=1:size(tem_data,2)
+            tem_data_gridded((jj-1)*(prod(size(lga_data{ii,1}.X))) + find(lga_data{ii,1}.Index>0)) = tem_data(lga_data{ii,1}.Index(find(lga_data{ii,1}.Index>0)),jj);
             % Want to check it out?
-            % for t=1:size(tem_data{ii,1},2); pcolor(lga_data{ii,1}.X_clean,lga_data{ii,1}.Y_clean,squeeze(tem_data_gridded{ii,1}(:,:,t))); shading flat; drawnow; end
+            % for t=1:size(tem_data,2); pcolor(lga_data{ii,1}.X_clean,lga_data{ii,1}.Y_clean,squeeze(tem_data_gridded(:,:,t))); shading flat; drawnow; end
         end
     catch err
         error(['Unable to load data from tem file: ' tem_files{ii,1} ' with message: ' err.message])
@@ -428,20 +461,20 @@ for ii=1:size(com_files,1)
         % At this moment, waqfil limits some functionality and documentation
         % We need all the available data (all timepoints), which is done next: 
         csv_fid = fopen(vol_files{ii,1},'r');
-        vol_data{ii,1} = fread(csv_fid,[vol_info{ii,1}.NVals+1 vol_info{ii,1}.NTimes],'float32');
+        vol_data = fread(csv_fid,[vol_info{ii,1}.NVals+1 vol_info{ii,1}.NTimes],'float32');
         fclose(csv_fid);
         % Please be aware that the first indice resembles time, so we can exlude that: 
-        vol_data{ii,1}     = vol_data{ii,1}(2:end,:);
+        vol_data     = vol_data(2:end,:);
         vol_tim_data{ii,1} = round(((dat_data{ii,1} + (vol_info{ii,1}.Times)./(60*60*24))*24*60*60))./(24*60*60);
         vol_tim_dt{ii,1}   = (unique(round(diff(round(vol_tim_data{ii,1}.*10^6)./10^6)*24*3600))./3600); % in hours
         if min(size(vol_tim_dt{ii,1}) == [1,1]) == 0
             error('The time axis appears to be non-linear');
         end
-        vol_data_gridded{ii,1} = NaN([size(lga_data{ii,1}.X) size(vol_data{ii,1},2)]);
-        for jj=1:size(vol_data{ii,1},2)
-            vol_data_gridded{ii,1}((jj-1)*(prod(size(lga_data{ii,1}.X))) + find(lga_data{ii,1}.Index>0)) = vol_data{ii,1}(lga_data{ii,1}.Index(find(lga_data{ii,1}.Index>0)),jj);
+        vol_data_gridded = NaN([size(lga_data{ii,1}.X) size(vol_data,2)]);
+        for jj=1:size(vol_data,2)
+            vol_data_gridded((jj-1)*(prod(size(lga_data{ii,1}.X))) + find(lga_data{ii,1}.Index>0)) = vol_data(lga_data{ii,1}.Index(find(lga_data{ii,1}.Index>0)),jj);
             % Want to check it out?
-            % for t=1:size(vol_data{ii,1},2); pcolor(lga_data{ii,1}.X_clean,lga_data{ii,1}.Y_clean,squeeze(vol_data_gridded{ii,1}(:,:,t))); shading flat; drawnow; end
+            % for t=1:size(vol_data,2); pcolor(lga_data{ii,1}.X_clean,lga_data{ii,1}.Y_clean,squeeze(vol_data_gridded(:,:,t))); shading flat; drawnow; end
         end
     catch err
         error(['Unable to load data from vol file: ' vol_files{ii,1} ' with message: ' err.message])
@@ -459,9 +492,12 @@ for ii=1:size(com_files,1)
         error(['Unable to load data from srf file: ' srf_files{ii,1} ' with message: ' err.message])
     end
     
-    dep_data_gridded{ii,1} = vol_data_gridded{ii,1} ./ repmat(srf_data_gridded{ii,1},1,1,size(vol_data{ii,1},2));
+    dep_data_gridded = vol_data_gridded ./ repmat(srf_data_gridded{ii,1},1,1,size(vol_data,2));
+    % Now lets remove those limits:
+    dep_data_gridded_lims = max(OPT.limiter(1,1),min(dep_data_gridded,OPT.limiter(2,1)));
+    dep_data_gridded_lims(isnan(dep_data_gridded)) = NaN; dep_data_gridded = dep_data_gridded_lims;
     % Want to check it out?
-    % for t=1:size(vol_data{ii,1},2); pcolor(lga_data{ii,1}.X_clean,lga_data{ii,1}.Y_clean,squeeze(dep_data_gridded{ii,1}(:,:,t))); shading flat; drawnow; end
+    % for t=1:size(vol_data,2); pcolor(lga_data{ii,1}.X_clean,lga_data{ii,1}.Y_clean,squeeze(dep_data_gridded(:,:,t))); shading flat; drawnow; end
     
     disp(['srf file: Loaded succesfully'])
     disp(' ')
@@ -484,7 +520,7 @@ for ii=1:size(com_files,1)
     end
     
     % Check if all the output is of identical size:
-    if ~isempty(find(diff([size(sal_data_gridded{ii,1}); size(tem_data_gridded{ii,1}); size(vol_data_gridded{ii,1}); size(dep_data_gridded{ii,1})])~=0))
+    if ~isempty(find(diff([size(sal_data_gridded); size(tem_data_gridded); size(vol_data_gridded); size(dep_data_gridded)])~=0))
         error('Output grid appear of different sizes, strange error, please contact the developer with error code: 1553684634563');
     end
     
@@ -538,10 +574,11 @@ for ii=1:size(com_files,1)
         end
     end
     
-    csv_data.(['domain_number_' num2str(ii,'%03.0f')]).domain_name   = com_files{ii,1}(1,max(strfind(com_files{ii,1},filesep))+5:end);
+    csv_data.(['domain_number_' num2str(ii,'%03.0f')]).domain_name = com_files{ii,1}(1,max(strfind(com_files{ii,1},filesep))+5:end);
     if OPT.write_to_file
-        csv_data.(['domain_number_' num2str(ii,'%03.0f')]).location      = cur_output_folder;
+        csv_data.(['domain_number_' num2str(ii,'%03.0f')]).location = cur_output_folder;
     end
+    csv_data.(['domain_number_' num2str(ii,'%03.0f')]).format = ['Cell_ID,M,N,X,Y,mean(dep),std(dep),mean(sal),std(sal),mean(tem),std(tem)'];
     csv_data.(['domain_number_' num2str(ii,'%03.0f')]).number_of_csv = max(sep_inds);
     
     for lf = 1:max(sep_inds)
@@ -557,24 +594,24 @@ for ii=1:size(com_files,1)
         if OPT.write_to_file
             disp(['Saving csv file ' num2str(lf) '/' num2str(max(sep_inds)) ': .' filesep com_files{ii,1}(1,max(strfind(com_files{ii,1},filesep))+5:end) filesep 'LaVeg_input' output_names_time{lf,1} '.csv']);
         else
-            disp(['Saving csv data ' num2str(lf) '/' num2str(max(sep_inds)) ': .' filesep com_files{ii,1}(1,max(strfind(com_files{ii,1},filesep))+5:end) filesep 'LaVeg_input' output_names_time{lf,1} '.csv']);
+            disp(['Saving csv data (not to file) ' num2str(lf) '/' num2str(max(sep_inds)) ': .' filesep com_files{ii,1}(1,max(strfind(com_files{ii,1},filesep))+5:end) filesep 'LaVeg_input' output_names_time{lf,1}]);
         end
         
         cur_time_inds = find(sep_inds==lf);
         
-        csv_text = cellstr(repmat(' ',prod(size(lga_data{ii,1}.X)),1));
+        % csv_text = cellstr(repmat(' ',prod(size(lga_data{ii,1}.X)),1));
         
         csv_data.(['domain_number_' num2str(ii,'%03.0f')]).(['data_for_csv_file_LaVeg_input' output_names_time{lf,1}]) = NaN(prod(size(lga_data{ii,1}.X)),11);
         
         tel1 = 0; tel2 = 0;
-        for mm = 1:size(sal_data_gridded{ii,1},1)
-            for nn = 1:size(sal_data_gridded{ii,1},2)
+        for mm = 1:size(sal_data_gridded,1)
+            for nn = 1:size(sal_data_gridded,2)
                 tel1 = tel1 + 1;
                 if lga_data{ii,1}.Index(mm,nn) > 0
                     tel2 = tel2 + 1;
-                    cur_sal = squeeze(sal_data_gridded{ii,1}(mm,nn,cur_time_inds));
-                    cur_tem = squeeze(tem_data_gridded{ii,1}(mm,nn,cur_time_inds));
-                    cur_dep = squeeze(dep_data_gridded{ii,1}(mm,nn,cur_time_inds));
+                    cur_sal = squeeze(sal_data_gridded(mm,nn,cur_time_inds));
+                    cur_tem = squeeze(tem_data_gridded(mm,nn,cur_time_inds));
+                    cur_dep = squeeze(dep_data_gridded(mm,nn,cur_time_inds));
                     % Want to check it out?:
                     % figure; hold on; subplot(3,1,1); plot(time_ax(cur_time_inds),cur_sal,'k'); title(['Salinity at cell (' num2str(mm) ',' num2str(nn) ')']); axis tight; datetickzoom('x','dd-mm-''yy','keepticks','keeplimits'); grid on; subplot(3,1,2); plot(time_ax(cur_time_inds),cur_tem,'k'); title(['Temperature at cell (' num2str(mm) ',' num2str(nn) ')']); axis tight; datetickzoom('x','dd-mm-''yy','keepticks','keeplimits'); grid on; subplot(3,1,3); plot(time_ax(cur_time_inds),cur_dep,'k'); title(['Depth at cell (' num2str(mm) ',' num2str(nn) ')']); axis tight; datetickzoom('x','dd-mm-''yy','keepticks','keeplimits'); grid on; 
                     
@@ -586,7 +623,7 @@ for ii=1:size(com_files,1)
         csv_data.(['domain_number_' num2str(ii,'%03.0f')]).(['data_for_csv_file_LaVeg_input' output_names_time{lf,1}]) = csv_data.(['domain_number_' num2str(ii,'%03.0f')]).(['data_for_csv_file_LaVeg_input' output_names_time{lf,1}])(1:tel2,:);
         
         if OPT.write_to_file
-            dlmwrite(cur_file,csv_data.(['domain_number_' num2str(ii,'%03.0f')]).(['data_for_csv_file_LaVeg_input' output_names_time{lf,1}]),OPT.separator);
+            dlmwrite(cur_file,csv_data.(['domain_number_' num2str(ii,'%03.0f')]).(['data_for_csv_file_LaVeg_input' output_names_time{lf,1}]),'delimiter',OPT.separator,'precision','%20.10g');
         end
     end
     if ii < size(com_files,1)
