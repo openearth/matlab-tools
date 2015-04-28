@@ -12,7 +12,7 @@ function output = delwaq_to_flow_grids(lga_file,grd_files,varargin)
 %
 % SYNTAX (<> indicates optional in- or output):
 %
-% <output> = delwaq_to_flow_grids(lga_file,grid_files,<delwaq_output>,<delwaq_variables>,<time>,<plotting>)
+% <output> = delwaq_to_flow_grids(lga_file,grid_files,<delwaq_output>,<delwaq_variables>,<time>,<plotting>,<animate>)
 %
 % INPUT VARIABLES (REQUIRED):
 %
@@ -84,6 +84,14 @@ function output = delwaq_to_flow_grids(lga_file,grd_files,varargin)
 %                   layers), plots will be generated. If you do not wish to
 %                   specify a timepoint (which is required for plotting),
 %                   simply leave the time variable empty (which is []).
+%
+% animate           When plotting is true, and only 1 variable and layer is
+%                   considered, why not animate your results over time?
+%                   When setting animate to true, the output figures are
+%                   not generated separately, but updated, resulting in an
+%                   animation. Please note that this option will also work
+%                   when considering more variables and/or more layers, but
+%                   the resulting behavior may not be best.
 %
 % OUTPUT VARIABLES (OPTIONAL):
 %
@@ -251,6 +259,20 @@ if length(varargin) > 3
     end
 end
 
+if length(varargin) > 4
+    if islogical(varargin{5}) || isnumeric(varargin{5})
+        if varargin{5} == 1
+            varargin{5} = true;
+        else
+            varargin{5} = false;
+        end
+    else
+        error('Unknown plotting option input')
+    end
+elseif length(varargin) == 4
+    varargin{5} = false;
+end
+
 % Remove gridpoints outside of the grid (not really required..)
 lga_data.X(find(round(lga_data.X)==-1000)) = NaN;
 lga_data.Y(find(round(lga_data.Y)==-1000)) = NaN;
@@ -326,6 +348,14 @@ end
 
 if size(varargin,2) > 1
     % Now, for each of the provided variables, provide the data on the grid:
+    
+    disp(' ')
+    if no_of_layers > 1
+        disp(['Obtaining data - Grids: ' num2str(size(grd_files,1)) ' - Variables: ' num2str(length(varargin{2})) ' - Timesteps: ' num2str(length(varargin{3})) ' - Layers: ' num2str(no_of_layers)])
+    else
+        disp(['Obtaining data - Grids: ' num2str(size(grd_files,1)) ' - Variables: ' num2str(length(varargin{2})) ' - Timesteps: ' num2str(length(varargin{3}))])
+    end
+    
     for var_ind = varargin{2}'
         [var_time,var_data] = delwaq('read',dwq_info,var_ind,0,varargin{3});
         var_data            = reshape(var_data,[lga_data.NoSeg,no_of_layers,length(varargin{3})]);
@@ -340,8 +370,8 @@ if size(varargin,2) > 1
             output.(var_name{1,isvarname(var_name{1,2})+1}).gridded_data{grd_ind,1}.plot_call = ['pcolor(output.grid_info{' num2str(grd_ind) ',1}.X,output.grid_info{' num2str(grd_ind) ',1}.Y,squeeze(output.' var_name{1,isvarname(var_name{1,2})+1} '.gridded_data{' num2str(grd_ind) ',1}.cor(:,:,1,1)));'];
             output.(var_name{1,isvarname(var_name{1,2})+1}).gridded_data{grd_ind,1}.cor = NaN([size(grd_data{grd_ind,1}.X) no_of_layers size(varargin{3},1)]);
             for lay = 1:size(output.(var_name{1,isvarname(var_name{1,2})+1}).gridded_data{grd_ind,1}.cor,3)
-                cur_lay_dat = var_data(:,lay,:);
                 for t = 1:size(output.(var_name{1,isvarname(var_name{1,2})+1}).gridded_data{grd_ind,1}.cor,4)
+                    cur_lay_dat = var_data(:,lay,t);
                     to_add = output.(var_name{1,isvarname(var_name{1,2})+1}).gridded_data{grd_ind,1}.cor(:,:,lay,t);
                     to_add(output.grid_info{grd_ind,1}.DELWAQ_Index>0) = cur_lay_dat(output.grid_info{grd_ind,1}.DELWAQ_Index(output.grid_info{grd_ind,1}.DELWAQ_Index>0));
                     output.(var_name{1,isvarname(var_name{1,2})+1}).gridded_data{grd_ind,1}.cor(:,:,lay,t) = to_add;
@@ -357,7 +387,14 @@ if size(varargin,2) > 1
             if varargin{4}
                 for lay = 1:size(output.(var_name{1,isvarname(var_name{1,2})+1}).gridded_data{grd_ind,1}.cor,3)
                     for t = 1:size(output.(var_name{1,isvarname(var_name{1,2})+1}).gridded_data{grd_ind,1}.cor,4)
-                        figure; hold on;
+                        if lay == 1 && t == 1
+                            fig = figure; hold on;
+                        elseif ~varargin{5}
+                            fig = figure; hold on;
+                        else
+                            try; delete(findobj(fig,'type','surface')); end;
+                        end
+                        figure(fig);
                         for grd_ind = 1:size(grd_files,1)
                             pcolor(output.grid_info{grd_ind,1}.X,output.grid_info{grd_ind,1}.Y,squeeze(output.(var_name{1,isvarname(var_name{1,2})+1}).gridded_data{grd_ind,1}.cor(:,:,lay,t)));
                         end
@@ -368,6 +405,9 @@ if size(varargin,2) > 1
                         else
                             title([output.(var_name{1,isvarname(var_name{1,2})+1}).Substance_name ' field on ' datestr(time_ax(varargin{3}(t)),'dd-mm-''yy HH:MM:SS')])
                         end
+                        if varargin{5}
+                            drawnow;
+                        end
                     end
                 end
             end
@@ -376,12 +416,18 @@ if size(varargin,2) > 1
     if length(varargin) > 3
         if varargin{4}
             disp(' ')
-            disp(['Successfully created ' num2str(size(output.(var_name{1,isvarname(var_name{1,2})+1}).gridded_data{grd_ind,1}.cor,3) * size(output.(var_name{1,isvarname(var_name{1,2})+1}).gridded_data{grd_ind,1}.cor,4) * length(varargin{2})) ' figures']);
+            if varargin{5}
+                disp(['Successfully created ' num2str(size(output.(var_name{1,isvarname(var_name{1,2})+1}).gridded_data{grd_ind,1}.cor,3) * size(output.(var_name{1,isvarname(var_name{1,2})+1}).gridded_data{grd_ind,1}.cor,4) * length(varargin{2})) ' frames']);
+            else
+                disp(['Successfully created ' num2str(size(output.(var_name{1,isvarname(var_name{1,2})+1}).gridded_data{grd_ind,1}.cor,3) * size(output.(var_name{1,isvarname(var_name{1,2})+1}).gridded_data{grd_ind,1}.cor,4) * length(varargin{2})) ' figures']);
+            end
         end
     end
 else
     output = output.grid_info;
 end
+disp(' ');
+disp('Script completed succesfully');
 
 
 
