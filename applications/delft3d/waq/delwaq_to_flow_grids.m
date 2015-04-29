@@ -149,6 +149,41 @@ function output = delwaq_to_flow_grids(lga_file,grd_files,varargin)
 %   along with this library.  If not, see <http://www.gnu.org/licenses/>.
 %   --------------------------------------------------------------------
 
+% Check the lga_data:
+if isstr(lga_file)
+    if size(lga_file,1) == 1
+        if exist(lga_file,'file')~=2
+            error(['The *.lga file does not exist: ' lga_file]);
+        end
+    else
+        error('Please specify the *.lga file as a single line character string');
+    end
+else
+    error('Please specify the *.lga file as a character string');
+end
+
+% Check the grd_files:
+if isstr(grd_files)
+    if size(grd_files,1) == 1
+        if exist(grd_files,'file')~=2
+            error(['The specified *.grd file does not exist: ' grd_files]);
+        else
+            grd_files = {grd_files};
+        end
+    else
+        error('Please specify multiple grid files in a cell-string');
+    end
+elseif iscellstr(grd_files)
+    grd_files = grd_files(:);
+    for ii=1:size(grd_files,1)
+        if exist(grd_files{ii,1},'file')~=2
+            error(['The specified *.grd file does not exist: ' grd_files{ii,1}]);
+        end
+    end
+else
+    error('Please specify the grid files in either a single line character string, or a cell-string');
+end
+
 
 lga_data       = delwaq('open',lga_file);
 lga_data.MNK   = lga_data.MNK([2 1 3]);
