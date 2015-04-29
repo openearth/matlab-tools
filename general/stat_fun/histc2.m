@@ -21,13 +21,19 @@ function [n, bin] = histc2(x, y, x_edges, y_edges)
 %             EDGES to include all non-NaN values.
 %
 %   Output:
-%   n       =
-%   bin     = matrix with counts of x and y
+%   n       = matrix with counts of x and y
+%   bin     = indices to bins in x and y
 %
 %   Example
-%   x = randn(1000,1);
-%   y =  rand(1000,1);
-%   [n, bin] = histc2(x, y, -5:5,0:0.2:1);
+%   x = randn(100,1);
+%   y =  rand(100,1);
+%   x_edges = -5:5;
+%   y_edges = 0:0.2:1;
+%   [n, bin] = histc2(x, y, x_edges, y_edges);
+%   
+%   hold all
+%   pcolor(x_edges,y_edges,n)
+%   plot(x,y,'.c')
 %
 %   See also: histc, scatter, bin2 (for bivariate histc)
 
