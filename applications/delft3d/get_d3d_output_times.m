@@ -86,7 +86,7 @@ if isempty(file_ID)==1
     error('Please specify a trim-*.dat or trih-*.dat file');
 end
 
-file_type = file_ID.DatExt((find(file_ID.DatExt=='\',1,'last')+1):(find(file_ID.DatExt=='\',1,'last')+4));
+file_type = file_ID.DatExt((find(file_ID.DatExt==filesep,1,'last')+1):(find(file_ID.DatExt==filesep,1,'last')+4));
 
 if strcmp(file_type,'trim')==1;
     groupnames = vs_disp(file_ID);
