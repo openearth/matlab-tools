@@ -1,10 +1,10 @@
-function [ constituents ] = t_tide(noos_ascii,varargin)
+function [ constituents ] = t_tide(noos_ascii, period, format)
 %t_tide     tidal timeseries analysis from noos file
 %
 % Input:
 %   noos_ascii   = text/csv (NOOS format)
 %   period       = text/csv (NOOS format)
-%   format       = char [reserved WPS keyword]
+%   format       = string
 %
 % Output:
 %   constituents = text/html, text/plain, text/xml, application/netcdf
