@@ -125,8 +125,10 @@ classdef CrudeMonteCarlo < ProbabilisticMethod
         function PrepareCalculation(this)
         end
         
-        % Plot results
+        % Plot Crude Monte Carlo results
         function plot(this)
+            figureHandle = figure('Tag','ProbabilisticMethodResults');
+            this.LimitState.plot(figureHandle, this.EvaluationApproachesZero,class(this),this.Pf, this.NrDirectionsEvaluated, this.UNormalIndexPerEvaluation )
         end
     end
 end

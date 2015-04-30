@@ -187,7 +187,7 @@ classdef LineSearch < handle
                 this.CheckConvergence(limitState)
             end
             
-            if ~this.SearchConverged
+            if ~this.SearchConverged && ~this.HorizontalLSF
                 % if not converged just from StartBeta, call polynomial fit routine
                 this.FitPolynomial(un, limitState, randomVariables);
             end
@@ -466,9 +466,20 @@ classdef LineSearch < handle
             end
         end
         
+        %Check whether the LSF is horizontal in this direction
+        function horizontalLSF = HorizontalLSF(this)
+            if numel(this.ZValues) > 1 && numel(unique(this.ZValues)) == 1
+                % If there are multiple ZValues and they all have the same
+                % value, the LSF is horizontal and doing a polynomial fit
+                % doesn't make sense
+                horizontalLSF = true;                
+            else
+                horizontalLSF = false;
+            end
+        end
+        
         %Plot routine
         function plot(this, bs, zs)
-            %figure(1);
             plot(this.BetaValues(1:(end-1),:),this.ZValues(1:(end-1),:),'kx');
             grid on;
             hold on;
@@ -479,10 +490,9 @@ classdef LineSearch < handle
             zFit    = polyval(this.Fit,betaFit);
             plot(betaFit, zFit, '-b');
             set(gca,'XLim',[this.plotBetaLowerBound this.plotBetaUpperBound])
-            xlabel('Beta Values')
+            xlabel('\beta values')
             ylabel('Z values')
-            hold on; % here it was hold off
-            %pause
+            hold off;
         end
     end
     
@@ -500,7 +510,7 @@ classdef LineSearch < handle
             this.IterationsFit              = 0;
             this.IterationsBisection        = 0;
             this.ApproximateUsingARS        = false;
-            this.plotBetaLowerBound         = -7;
+            this.plotBetaLowerBound         = -5;
             this.plotBetaUpperBound         = 10;
             this.NrEvaluations              = 0;
             this.OriginZ                    = [];
