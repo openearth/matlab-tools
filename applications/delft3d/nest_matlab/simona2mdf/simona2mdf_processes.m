@@ -37,15 +37,18 @@ end
 % Check for wind
 %
 
-siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'GENERAL' 'WIND'});
-if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.GENERAL.WIND')
-   mdf.sub1(3) = 'w';
-end
-
+siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'GENERAL' 'SPACE_VAR_WIND'});
 if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.GENERAL.SPACE_VAR_WIND')
    warning = true;
    warntext{end+1} = 'Conversion of WIND (space varying) not implemented yet';
+else
+    siminp_struc = siminp(S,[OPT.nesthd_path filesep 'bin' filesep 'waquaref.tab'],{'GENERAL' 'WIND'});
+    if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.GENERAL.WIND')
+       mdf.sub1(3) = 'w';
+    end
 end
+    
+    
 %
 % Writes the warning
 %
