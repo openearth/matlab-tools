@@ -44,7 +44,7 @@ function dms = degrees2dms(angleInDegrees)
 %       str2angle(a{k})
 %   end
 %  
-%   See also: dms2degrees, deg2rad, degrees2dm, rad2deg.
+%   See also: dms2degrees, deg2rad, degrees2dms, rad2deg.
 
 % Copyright 2006 The MathWorks, Inc.
 % $Revision: 2594 $  $Date: 2009-11-22 00:37:39 +0100 (Sun, 22 Nov 2009) $

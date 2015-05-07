@@ -67,7 +67,6 @@ if ~(exist(directory,'dir')==7)
       %% Make subdirectory lowest in directory tree
       %  in pwd,
       %  end of recursion
-      %---------------------------------------
    
       mkdir(directory)
    
@@ -76,7 +75,6 @@ if ~(exist(directory,'dir')==7)
       %% Make subdirectory lowest in directory tree
       %  in other parent dir,
       %  end of recursion
-      %---------------------------------------
 
       dirleft   = directory(1:indices(1));
       dirright  = directory(  indices(1):end);
@@ -86,7 +84,6 @@ if ~(exist(directory,'dir')==7)
    
       %% Recursively create one level deeper
       %  in exiting path
-      %---------------------------------------
 
       for i=2:length(indices)
       

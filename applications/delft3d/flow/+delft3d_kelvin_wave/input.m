@@ -17,24 +17,26 @@ function [F, C]=input(d)
 
    F.alpha         = 0;                      % [rad] initial phase at t=0
 
-   % spring-neap
-   F.eta0          = [0.25     1.25        ];% [m] tidal amplitude in south-east
-   C.Tt            = [12*3600 (12*60+25)*60];% [s] tidal period
+%% spring-neap cases
+  
+  %F.eta0          = [0.25     1.25        ];% [m] tidal amplitude in south-east
+  %C.Tt            = [12*3600 (12*60+25)*60];% [s] tidal period
+  %F.eta0          = [0.5      1.0         ];% [m] tidal amplitude in south-east
+  %C.Tt            = [12*3600 (12*60+40)*60];% [s] tidal period
 
-   F.eta0          = [0.5      1.0         ];% [m] tidal amplitude in south-east
-   C.Tt            = [12*3600 (12*60+40)*60];% [s] tidal period
+%% spring or neap cases
+  
+  %F.eta0          = [0.90   ];  % [m] spring M2 S2 HvH tidal amplitude in south-east
+  %F.eta0          = [0.60   ];  % [m] neap   M2 S2 HvH tidal amplitude in south-east
+  %F.eta0          = [0.75   ];  % [m] neap   HvH tidal amplitude in south-east
+  %C.Tt            = [12*3600];  % [s] S2 tidal period
 
-   % spring or neap
-   F.eta0          = [0.90   ];  % [m] spring M2 S2 HvH tidal amplitude in south-east
-   F.eta0          = [0.60   ];  % [m] neap   M2 S2 HvH tidal amplitude in south-east
-   F.eta0          = [0.75   ];  % [m] neap   HvH tidal amplitude in south-east
-   C.Tt            = [12*3600];  % [s] S2 tidal period
-
-   F.eta0          = [0.25 1.00];% [m] HvH tidal amplitudes in south-east
-   F.eta0          = [1.5    ];  % [m] higher then spring HvH tidal amplitude in south-east
-   F.eta0          = [1.0    ];  % [m] mean semi-diurnal HvH tidal amplitude in south-east
-   F.eta0          = [0.5    ];  % [m] lower then neap   HvH tidal amplitude in south-east
-   F.eta0          = [1.25   ];  % [m] spring HvH tidal amplitude in south-east
+  %F.eta0          = [0.25 1.00];% [m] HvH tidal amplitudes in south-east
+  %F.eta0          = [1.5    ];  % [m] higher then spring HvH tidal amplitude in south-east
+  %F.eta0          = [1.0    ];  % [m] mean semi-diurnal HvH tidal amplitude in south-east
+  %F.eta0          = [0.5    ];  % [m] lower then neap   HvH tidal amplitude in south-east
+  %F.eta0          = [1.25   ];  % [m] spring HvH tidal amplitude in south-east
+  
    F.eta0          = [0.75   ];  % [m] neap   HvH tidal amplitude in south-east
    C.Tt            = [12*3600];  % [s] S2 tidal period
 

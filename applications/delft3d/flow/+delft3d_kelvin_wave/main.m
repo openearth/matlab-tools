@@ -47,6 +47,16 @@ function main(varargin)
    OPT.x           = [];
    OPT.y           = [];
    OPT.d_sea       = [];
+   OPT.dir         = [userpath filesep 'delft3d_kelvin_wave'];
+   
+   % use same names as example
+   OPT.mdf         = [OPT.dir filesep 'n00.mdf'];
+   OPT.grd         = [OPT.dir filesep '155x235.grd'];
+   OPT.dep         = [OPT.dir filesep '155x235.dep'];
+   OPT.dry         = [OPT.dir filesep 'longch1.dry'];
+   OPT.bnd         = [OPT.dir filesep '155x235_0.bnd'];
+   OPT.bch         = [OPT.dir filesep 'Depth_20_ks_0.125_amplitude_0.75.bch'];
+   OPT.obs         = [OPT.dir filesep '155x235_198.obs'];
 
 %% Define a delft3d grid
 

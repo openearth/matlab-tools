@@ -8,6 +8,9 @@
 % for downstream boundaries fcor numerical models with quadratic
 % friction (among which Delft3D).
 %
+% An example Delft3D input where this toolbox was used:
+% https://svn.oss.deltares.nl/repos/openearthmodels/trunk/tudelft/delft3d_kelvinwave_rhine_rofi
+%
 % For documentation of the method please refer to:
 %
 % * Jacobs, Walter, 2004. Modelling the Rhine River Plume 

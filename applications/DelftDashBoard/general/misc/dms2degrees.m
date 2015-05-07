@@ -45,7 +45,7 @@ function angleInDegrees = dms2degrees(dms)
 %     format long g
 %     angleInDegrees = dms2degrees(dms)
 %  
-%     See also: DEGREES2DMS, DEG2RAD, DM2DEGREES, STR2ANGLE.
+%     See also: DEGREES2DMS, DEG2RAD, DMs2DEGREES, STR2ANGLE.
 
 % Copyright 2006 The MathWorks, Inc.
 % $Revision: 2594 $  $Date: 2009-11-22 00:37:39 +0100 (Sun, 22 Nov 2009) $

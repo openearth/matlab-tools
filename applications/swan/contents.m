@@ -1,4 +1,4 @@
-% Contents of OpenEarth SWAN toolbox.
+% OpenEarth SWAN toolbox.
 % SWAN is the TU Delft Civil Engineering Department spectral wave model
 % Simulating Waves Near Shore, available at http://swan.tudelft.nl
 % 
