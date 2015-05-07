@@ -1,6 +1,5 @@
 function varargout = plot_google_map(varargin)
-% function h = plot_google_map(varargin)
-% Plots a google map on the current axes using the Google Static Maps API
+%plot_google_map Plots a google map on the current axes using the Google Static Maps API
 %
 % USAGE:
 % h = plot_google_map(Property, Value,...)
@@ -80,6 +79,8 @@ function varargout = plot_google_map(varargin)
 %  http://www.maptiler.org/google-maps-coordinates-tile-bounds-projection/
 %  http://developers.google.com/maps/documentation/staticmaps/
 %
+%See also: googleplot
+
 % Acknowledgements:
 %  Val Schmidt for his submission of get_google_map.m
 %
