@@ -122,9 +122,8 @@ switch upper(OPT.mpitype)
                 fprintf(fid,'cat $PE_HOSTFILE | while read line; do\n');
                 fprintf(fid,'   echo $line | awk ''{print $1 " slots=" $4}''\n');
                 fprintf(fid,'done > $hostFile\n\n');
-                fprintf(fid,'numProcesses=`awk -F= ''{sum += $2} END {print sum}'' $hostFile`\n\n');
                 xb_write_sh_scripts_xbversions(fid, 'version', OPT.version)
-                fprintf(fid,'mpirun -report-bindings -np $numProcesses -map-by core -hostfile $hostFile xbeach\n\n');
+                fprintf(fid,'mpirun -report-bindings -np %d -map-by core -hostfile $hostFile xbeach\n\n', (OPT.nodes*4+1));
                 fprintf(fid,'rm -f $hostFile\n');
         end
         fprintf(fid,'mpdallexit\n');

@@ -92,7 +92,7 @@ fprintf(fid,'for i in $subdirs\n');
 fprintf(fid,'do\n');
 fprintf(fid,'    cd $rundir/$i\n');
 fprintf(fid,'    pwd\n');
-fprintf(fid,'    xbeach > xb.log &\n');
+fprintf(fid,'    mpirun -np 2 xbeach > xb.log &\n');
 fprintf(fid,'    cd $OLDPWD\n');
 fprintf(fid,'done\n');
 fprintf(fid,'wait\n');
