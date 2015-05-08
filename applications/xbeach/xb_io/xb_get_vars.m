@@ -124,8 +124,7 @@ function vars = get_vars_netcdf(fname, filter)
     info = nc_info(fname);
     for i = 1:length({info.Dataset.Name})
         if isempty(filter) || any(strfilter(info.Dataset(i).Name, filter))
-            if ~any(strcmpi(info.Dataset(i).Name, {'parameter', 'globalx', 'globaly', 'globaltime', 'meantime', ...
-                    'pointx', 'pointy', 'pointtime', 'xpointindex', 'ypointindex', 'pointtypes'}))
+            if ~any(strcmpi(info.Dataset(i).Name, {'parameter', 'globalx', 'globaly', 'globaltime', 'meantime'}))
                 vars = [vars{:} {info.Dataset(i).Name}];
             end
         end

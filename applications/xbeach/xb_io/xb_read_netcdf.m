@@ -118,11 +118,15 @@ DIMSid = struct();
 for i = find(ismember({info.Dataset.Name}, names))
     
     [start len stride] = xb_index(info.Dataset(i).Size, OPT.start, OPT.length, OPT.stride);
-    
+   
     % read data
     variables.data(c).name = info.Dataset(i).Name;
     variables.data(c).value = nc_varget(fname, info.Dataset(i).Name, start, len, stride);
-    variables.data(c).value = reshape(variables.data(c).value, len);
+    sz = len;
+     if size(len) == 1
+        sz = [len, 1];
+    end
+    variables.data(c).value = reshape(variables.data(c).value, sz);
     
     % read units, if available
     unitsid = strcmp('units', {info.Dataset(i).Attribute.Name});
