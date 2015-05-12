@@ -140,7 +140,7 @@ end
 
 if exist(fname,'file')==2
     
-    if strcmp(OPT.overwrite,'p') || OPT.overwrite==0
+    if strcmp(OPT.overwrite,'p') || OPT.overwrite==0 || ~OPT.overwrite
         disp(['File ',fname,' alreay exists. '])
         OPT.overwrite = input('Overwrite/cancel ? (o/c): ','s');
         % for some reason input in Matlab R14 SP3 removes slashes
@@ -150,7 +150,7 @@ if exist(fname,'file')==2
         end
     end
     
-    if strcmpi(OPT.overwrite,'o') || OPT.overwrite==1
+    if strcmpi(OPT.overwrite,'o') || OPT.overwrite==1 || OPT.overwrite
         try 
             delete(fname)
         catch ME
@@ -243,7 +243,7 @@ end
 
 
 nheader = length(OPT.header);
-nextra  = nheader + 1 + (OPT.addunits==1 || iscell(OPT.addunits));
+nextra  = nheader + 1 + (OPT.addunits || OPT.addunits==1 || iscell(OPT.addunits));
 M       = cell (maxlength + nextra,nfld);
 
 %% Add header and column names
