@@ -1,4 +1,4 @@
-function d3d2dflowfm_crs_xy(filgrd,filcrs,filcrs_dflowfm)
+function LINE = d3d2dflowfm_crs_xy(filgrd,filcrs,filcrs_dflowfm)
 
 % d3d2dflowfm_crs_xy : Converts frm d3d_flow and writes cross section information to D-Flow FM file
 
@@ -58,4 +58,8 @@ if ~isempty(filgrd) && ~isempty(filcrs)
 
     dflowfm_io_xydata('write',filcrs_dflowfm,LINE);
 
+end
+
+if nargout == 1;
+    varargout{1} = LINE;
 end
