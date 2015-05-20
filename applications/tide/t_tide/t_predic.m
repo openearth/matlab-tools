@@ -1,4 +1,4 @@
-function yout=t_predic(tim,varargin);
+function [yout,centraltime]=t_predic(tim,varargin);
 % T_PREDIC Tidal prediction
 % YOUT=T_PREDIC(TIM,NAMES,FREQ,TIDECON) makes a tidal prediction
 % using the output of T_TIDE at the specified times TIM in decimal 
@@ -23,6 +23,8 @@ function yout=t_predic(tim,varargin);
 %                        DATENUM scalar), When [], no nodal corrections are 
 %                        used (default: 0, unlike t_tide).
 %       'latitude'       decimal degrees (+north) (default: none).
+%       'centraltime'    central time used in analysis, nan = automatic (default)
+%                        No central time is used if 'start time' is empty.
 %
 %    If the original analysis was >18.6 years satellites are
 %    not included and we force that here:
@@ -51,6 +53,8 @@ function yout=t_predic(tim,varargin);
 %
 %  This is in fact the recommended calling procedure (and required
 %  when the analysis results are from series>18.6 years in length)
+%
+%    [YOUT,centraltime]=T_PREDIC(...) returns automatic central time used
 %
 %See also: t_tide
 
@@ -94,6 +98,7 @@ end;
 lat   = [];
 synth = 0;
 stime = 0; % stime=[] would have meant that no nodal corrections are taken into account, but by default we want to, so we use stime=0
+centraltime = nan;
 
 k=1;
 while length(varargin)>0,
@@ -105,6 +110,8 @@ while length(varargin)>0,
          synth=varargin{2};
       case 'sta',
         stime=varargin{2};
+      case 'cen',
+         centraltime=varargin{2};
       case 'ana',
          if isstr(varargin{2}),
 	   ltype=varargin{2};
@@ -156,13 +163,14 @@ end;
 
 % Mean at central point (get rid of one point at end to take mean of
 % odd number of points if necessary).
-if ~isempty(stime)
-   centraltime=mean(tim(1:2*fix((length(tim)-1)/2)+1));
-else
-   centraltime=[];
+if isnan(centraltime)
+    if ~isempty(stime)
+       centraltime=mean(tim(1:2*fix((length(tim)-1)/2)+1));
+    else
+       centraltime=[];
+    end
 end
 %check consistency with t_tide's centraltime
-fprintf('   t_predic centraltime =  %f (%s)\n',centraltime,datestr(centraltime));
 
 if longseries,
   const=t_get18consts;

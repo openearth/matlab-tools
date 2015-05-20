@@ -43,6 +43,9 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin);
 %                        'screen'  (to screen) - default
 %                        FILENAME   (to a file)
 %
+%   Where to send the screen messages (using dprintf):
+%       'diary'          1 to screen (default), 0 ignore, > 2 to opened file
+%
 %   How to sort the component dimension in tables
 %       'sort'          '<->fre<q>' (default), '<->amp<litude>','<->snr,
 %                       '<->pha<se>' where prefix <-> means descending, or
@@ -212,6 +215,7 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin);
 ray          = 1;
 dt           = 1;
 fid          = 1;
+diary        = 1;
 sor          = 'freq';
 stime        = [];
 lat          = [];
@@ -242,6 +246,8 @@ while length(varargin)>0,
          lat=varargin{2};
       case 'out',
          filen=varargin{2};
+      case 'dia',
+         diary=varargin{2};
 	 switch filen,
 	   case 'none',
 	     fid=-1;
@@ -368,7 +374,7 @@ else
 end
 
 %check consistency with t_predic's centraltime
-fprintf('   t_tide   centraltime =  %f (%s)\n',centraltime,datestr(centraltime));
+dprintf(diary,'   t_tide   centraltime =  %f (%s)\n',centraltime,datestr(centraltime));
 
 if nobs*dt> 18.6*365.25*24,  % Long time series
   longseries=1; ltype='full';
@@ -381,6 +387,8 @@ end;
 [nameu,fu,ju,namei,fi,jinf,jref]=constituents(ray/(dt*nobsu),constitnames,...
                                            shallownames,inf.iname,inf.irefname,centraltime);
 
+dprintf(diary,['   number of standard constituents used: ',int2str(length(ju))])
+
 mu=length(fu); % # base frequencies
 mi=length(fi); % # inferred
 
@@ -389,7 +397,7 @@ mi=length(fi); % # inferred
 
 gd=find(isfinite(xin(1:nobsu)));
 ngood=length(gd);
-fprintf('   Points used: %d of %d\n',ngood,nobs)
+dprintf(diary,'   Points used: %d of %d\n',ngood,nobs)
 
 
 
@@ -492,13 +500,13 @@ xres=xin-xout; % and the residuals!
 
 if isreal(xin),    % Real time series
   varx=cov(xin(gd));varxp=cov(xout(gd));varxr=cov(xres(gd));
-  fprintf('   percent of var residual after lsqfit/var original: %5.2f %%\n',100*(varxr/varx));  
+  dprintf(diary,'   percent of var residual after lsqfit/var original: %5.2f %%\n',100*(varxr/varx));  
 else               % Complex time series
   varx=cov(real(xin(gd)));varxp=cov(real(xout(gd)));varxr=cov(real(xres(gd)));
-  fprintf('   percent of X var residual after lsqfit/var original: %5.2f %%\n',100*(varxr/varx));
+  dprintf(diary,'   percent of X var residual after lsqfit/var original: %5.2f %%\n',100*(varxr/varx));
 
   vary=cov(imag(xin(gd)));varyp=cov(imag(xout(gd)));varyr=cov(imag(xres(gd)));
-  fprintf('   percent of Y var residual after lsqfit/var original: %5.2f %%\n',100*(varyr/vary));
+  dprintf(diary,'   percent of Y var residual after lsqfit/var original: %5.2f %%\n',100*(varyr/vary));
 end;
 
 
@@ -534,7 +542,7 @@ else   % No time, no latitude
   f=ones(length(ju)+length(jinf),1);											   
    nodcor=['Phases at central time ',datestr(centraltime,' ')]; % empty central time will be error in future releases
 end															   
-fprintf(['   ',nodcor,'\n']);												   
+dprintf(diary,['   ',nodcor,'\n']);												   
 
 
 %---------------Inference Corrections----------------------------------
@@ -542,7 +550,7 @@ fprintf(['   ',nodcor,'\n']);
 % functions.
 ii=find(isfinite(jref));
 if ii,
-  fprintf('   Do inference corrections\n');
+  dprintf(diary,'   Do inference corrections\n');
   snarg=nobsu*pi*(fi(ii)   -fu(jref(ii)) )*dt;
   scarg=sin(snarg)./snarg;
  
@@ -598,7 +606,7 @@ if any(strmatch(errcalc(2:end),'boot')) && exist('dt0','var')
    % non-equidistant time series do not allow for fft
    error(['When ''dt'' is a non-equidistant vector, error estimate with ''',errcalc,''' not possible, only ''lin''.'])
 elseif any(strmatch(errcalc(2:end),'boot')) && ~exist('dt0','var')
-  fprintf('   Using nonlinear bootstrapped error estimates\n');
+  dprintf(diary,'   Using nonlinear bootstrapped error estimates\n');
   
   % "noise" matrices are created with the right covariance structure
   % to add to the analyzed components to create 'nreal' REPLICATES. 
@@ -619,7 +627,7 @@ elseif any(strmatch(errcalc(2:end),'boot')) && ~exist('dt0','var')
   ap=abs(AP);
   am=abs(AM);
 elseif any(strmatch(errcalc,'linear')) | exist('dt0','var') % non-equidistant time series do not allow for fft
-  fprintf('   Using linearized error estimates\n');
+  dprintf(diary,'   Using linearized error estimates\n');
   %
   % Uncertainties in analyzed amplitudes are computed in different
   % spectral bands. Real and imaginary parts of the residual time series
@@ -715,18 +723,20 @@ snr=(tidecon(:,1)./tidecon(:,2)).^2;  % signal to noise ratio
 xoutOLD=xout;
 if synth>=0,
  if ~isempty(lat) & ~isempty(stime),
-   fprintf('   Generating prediction with nodal corrections, SNR is %f\n',synth);
-   xout=t_predic(stime+(t(:)'-t(1))./24.0,nameu,fu,tidecon,'lat',lat,'synth',synth,'anal',ltype);
+   dprintf(diary,'   Generating prediction with nodal corrections, SNR is %f\n',synth);
+   [xout,centraltime]=t_predic(stime+(t(:)'-t(1))./24.0,nameu,fu,tidecon,'lat',lat,'synth',synth,'anal',ltype);
  elseif ~isempty(stime),
-   fprintf('   Generating prediction without nodal corrections, SNR is %f\n',synth);
-   xout=t_predic(stime+(t(:)'-t(1))./24.0,nameu,fu,tidecon,'synth',synth,'anal',ltype);
+   dprintf(diary,'   Generating prediction without nodal corrections, SNR is %f\n',synth);
+   [xout,centraltime]=t_predic(stime+(t(:)'-t(1))./24.0,nameu,fu,tidecon,'synth',synth,'anal',ltype);
  else
-   fprintf('   Generating prediction without nodal corrections, SNR is %f\n',synth);
-   xout=t_predic(t/24.0,nameu,fu,tidecon,'synth',synth,'anal',ltype,'start',stime);
+   dprintf(diary,'   Generating prediction without nodal corrections, SNR is %f\n',synth);
+   [xout,centraltime]=t_predic(t/24.0,nameu,fu,tidecon,'synth',synth,'anal',ltype,'start',stime);
  end;
 else
- fprintf('   Returning fitted prediction\n');
+ dprintf(diary,'   Returning fitted prediction\n');
 end;
+
+dprintf(diary,'   t_predic centraltime =  %f (%s)\n',centraltime,datestr(centraltime));
 
 %----------------------------------------------------------------------
 % Check variance explained (but now do this with the synthesized fit).
@@ -736,13 +746,13 @@ xres=xin(:)-xout(:); % and the residuals!
 
 if isreal(xin),    % Real time series
   varx=cov(xin(gd));varxp=cov(xout(gd));varxr=cov(xres(gd));
-  fprintf('   percent of var residual after synthesis/var original: %5.2f %%\n',100*(varxr/varx));  
+  dprintf(diary,'   percent of var residual after synthesis/var original: %5.2f %%\n',100*(varxr/varx));  
 else               % Complex time series
   varx=cov(real(xin(gd)));varxp=cov(real(xout(gd)));varxr=cov(real(xres(gd)));
-  fprintf('   percent of X var residual after synthesis/var original: %5.2f %%\n',100*(varxr/varx));
+  dprintf(diary,'   percent of X var residual after synthesis/var original: %5.2f %%\n',100*(varxr/varx));
 
   vary=cov(imag(xin(gd)));varyp=cov(imag(xout(gd)));varyr=cov(imag(xres(gd)));
-  fprintf('   percent of Y var residual after synthesis/var original: %5.2f %%\n',100*(varyr/vary));
+  dprintf(diary,'   percent of Y var residual after synthesis/var original: %5.2f %%\n',100*(varyr/vary));
 end;
 
 %-----------------Sort   results---------------------------------------
@@ -902,9 +912,6 @@ if ~isempty(constit),     % Selected if constituents are specified in input.
   ju=ju(II);
 end;
 
-
-disp(['   number of standard constituents used: ',int2str(length(ju))])
-
 if ~isempty(shallow),          % Add explictly selected shallow water constituents.
  for k=1:size(shallow,1),
    j1=strmatch(shallow(k,:),const.name);
@@ -956,7 +963,7 @@ if ~isempty(infname),
       disp(['Can''t recognize name ' infref(k,:) ' for as a reference for inference']);
     else
       jref(k)=j1;
-      fprintf(['   Inference of ' namei(k,:) ' using ' nameu(j1,:) '\n']);
+      dprintf(diary,['   Inference of ' namei(k,:) ' using ' nameu(j1,:) '\n']);
     end;
    end;
   end;    
@@ -1008,7 +1015,7 @@ if strmatch(errcalc,'cboot'),
   [fband,Pxrave,Pxiave,Pxcave]=residual_spectrum(xres,fu,dt);
   
   Pxcave=zeros(size(Pxcave));  %% For comparison with other technique!
-  %fprintf('**** Assuming no covariance between u and v errors!*******\n');
+  %dprintf(diary,'**** Assuming no covariance between u and v errors!*******\n');
 
 elseif strmatch(errcalc,'wboot'),
   fband=[0 .5];
