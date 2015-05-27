@@ -58,7 +58,7 @@ y2 = gridStruct2.cen.y;
 for it = 1:struct1.NTimes
     
     disp([it struct1.NTimes])
-    data = nan(length(substances),struct1.NumSegm);
+    data = nan(length(substances),gridStruct2.NoSeg);
     for isub = 1:length(substances)        
         [time, local1] = delwaq('read',struct1,substances(isub),0,it);
         localdata = [];
