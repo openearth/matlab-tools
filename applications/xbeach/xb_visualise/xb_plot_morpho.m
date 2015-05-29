@@ -102,11 +102,10 @@ OPT = setproperty(OPT, varargin{:});
 % determine dimensions
 x = xs_get(xb, 'DIMS.globalx_DATA');
 t = xs_get(xb, 'DIMS.globaltime_DATA')/3600;
-j = ceil(xs_get(xb, 'DIMS.globaly')/2);
-if size(x,2) > size(x,1)
-    x       = squeeze(x(j,:));
-else
-    x       = x';
+ydims = xs_get(xb, 'DIMS.globaly');
+if (ydims > 1)
+    j = ceil(ydims/2);
+    x = squeeze(x(j,:));
 end
 
 % determine available data

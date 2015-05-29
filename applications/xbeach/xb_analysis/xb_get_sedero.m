@@ -89,8 +89,13 @@ ero = zeros(1,size(z,1));
 
 dz  = z-repmat(z(1,:),size(z,1),1);
 
+if(length(x) == size(z,2) && size(x,2) ~= size(z,2))
+    x = x';
+end
+
 for i = 2:size(dz,1)
 
+    
     [xc zc] = findCrossings(x,z(1,:),x,z(i,:));
 
     xc1     = xc(zc>OPT.level);
