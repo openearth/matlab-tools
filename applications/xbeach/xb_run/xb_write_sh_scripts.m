@@ -112,9 +112,7 @@ switch upper(OPT.mpitype)
         fprintf(fid,'#$ -N %s\n', OPT.name);
         fprintf(fid,'#$ -m ea\n');
         fprintf(fid,'#$ -q %s\n', OPT.queuetype);
-        if OPT.nodes > 1
-            fprintf(fid,'#$ -pe distrib %d\n\n', OPT.nodes);
-        end
+        fprintf(fid,'#$ -pe distrib %d\n\n', OPT.nodes);
         
         switch OPT.cluster
             case 'h5'                
@@ -123,7 +121,7 @@ switch upper(OPT.mpitype)
                 fprintf(fid,'   echo $line | awk ''{print $1 " slots=" $4}''\n');
                 fprintf(fid,'done > $hostFile\n\n');
                 xb_write_sh_scripts_xbversions(fid, 'version', OPT.version)
-                fprintf(fid,'mpirun -report-bindings -np %d -map-by core -hostfile $hostFile xbeach\n\n', (OPT.nodes*4+1));
+                fprintf(fid,'mpirun -report-bindings -np %d -map-by core -hostfile $hostFile xbeach > xb.log &\n\n', (OPT.nodes*4+1));
                 fprintf(fid,'rm -f $hostFile\n');
         end
         fprintf(fid,'mpdallexit\n');
