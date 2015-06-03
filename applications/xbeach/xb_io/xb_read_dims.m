@@ -1,4 +1,4 @@
-function XBdims = xb_read_dims(filename, varargin)
+function XBdims = xb_read_dims(filename)
 %XB_READ_DIMS  read dimensions from xbeach output
 %
 %   Routine to read the dimension from either netcdf of .dat xbeach output.
@@ -8,7 +8,7 @@ function XBdims = xb_read_dims(filename, varargin)
 %   read from the "dims.dat" file inside the given directory.
 %
 %   Syntax:
-%   XBdims   = xb_read_dims(varargin)
+%   XBdims   = xb_read_dims(filename)
 %
 %   Input:
 %   filename = file name. This can either be a output folder, a dims.dat file
@@ -65,13 +65,6 @@ function XBdims = xb_read_dims(filename, varargin)
 % $Revision$
 % $HeadURL$
 % $Keywords: $
-
-%% read options
-
-OPT = struct( ...
-);
-
-OPT = setproperty(OPT, varargin{:});
 
 %% read dims
 
@@ -169,9 +162,9 @@ elseif strcmpi(extension, '.dat')
     XBdims.globalx = dims.nx+1;
     XBdims.globaly = dims.ny+1;
     XBdims.globaltime = dims.nt;
-    XBdims.sediment_classes = dims.nd;
+    XBdims.sediment_classes = dims.ngd;
     XBdims.wave_angle = dims.ntheta;
-    XBdims.bed_layers = dims.ngd;
+    XBdims.bed_layers = dims.nd;
     XBdims.inout = nan;                 % TODO: find out what this is, see ncoutput.f90
     XBdims.points = nan;
     XBdims.pointtime = dims.ntp;
