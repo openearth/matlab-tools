@@ -95,18 +95,12 @@ classdef XBeachLimitStateFunctionChecker < handle
             this.KeepChecking   = true;
             this.Abort          = false; 
             
-            % Create & start timer
-%             this.Timer  = timer('TimerFcn', @(h,e)this.StopWaiting, 'StartDelay', this.TimeOut);
-%             start(this.Timer);
             while ~this.Abort && this.KeepChecking
                 % Check if simulation is completed
                 if this.CheckLogFile(modelOutputDir)
                     % If so, trigger event
                     notify(this, 'SimulationCompleted');
                     this.KeepChecking   = false;
-%                     stop(this.Timer);
-%                     delete(this.Timer);
-%                     this.Timer = [];
                 else
                     % If not: wait for a bit
                     pause(this.Delay)
@@ -126,9 +120,6 @@ classdef XBeachLimitStateFunctionChecker < handle
         % Stop waiting for the simulation to end
         function StopWaiting(this)
             this.Abort  = true;
-%             stop(this.Timer);
-%             delete(this.Timer);
-%             this.Timer  = [];
             notify(this, 'SimulationNotCompleted')
         end
         
