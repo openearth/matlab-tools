@@ -108,7 +108,7 @@ function varargout = vs_trim2nc(vsfile,varargin)
                          'velocity','velocity_z','velocity_omega',...
                          'tke','eps','tau',...
                          'salinity','temperature','density',...
-                         'sediment',...
+                         'sediment','tracer',...
                          'viscosity_z','diffusivity_z','Ri','sedtrans'};
    OPT.var_derived    = {'pea','dpeadt','dpeads'};
    OPT.var_nefis      = {'XZ','YZ','XWAT','YWAT','XCOR','YCOR','DP','DP0',...
@@ -174,7 +174,8 @@ function varargout = vs_trim2nc(vsfile,varargin)
                                     OPT.tke            = 1;end
    if any(strcmp('R1',    OPT.var));OPT.temperature    = 1;
                                     OPT.salinity       = 1;
-                                    OPT.sediment       = 1;end
+                                    OPT.sediment       = 1;
+                                    OPT.tracer         = 1;end
    if any(strcmp('RHO',   OPT.var));OPT.density        = 1;end
    if any(strcmp('VICWW', OPT.var));OPT.viscosity_z    = 1;end
    if any(strcmp('DICWW', OPT.var));OPT.diffusivity_z  = 1;end
@@ -205,8 +206,18 @@ function varargout = vs_trim2nc(vsfile,varargin)
                               strtrim(vs_get(F,'map-version','FILE-VERSION','quiet'))];
       M.description = vs_get(F,'map-version','FLOW-RUNTXT','quiet');
 
+     [LSTSCI,OK]    = vs_let(F,'map-const','LSTCI' ,'quiet'); if OK==0;LSTSCI=0;end
+
      [LSED,OK]      = vs_let(F,'map-const','LSED'  ,'quiet'); if OK==0;LSED=0  ;end
      [LSEDBL,OK]    = vs_let(F,'map-const','LSEDBL','quiet'); if OK==0;LSEDBL=0;end
+     
+     NTRACER = LSTSCI - LSED;
+     if NTRACER>0 && isfield(I,'salinity')
+         NTRACER = NTRACER - 1;
+     end
+     if NTRACER>0 && isfield(I,'temperature')
+         NTRACER = NTRACER - 1;
+     end
       
 %% 1a Create file (add all NEFIS 'map-version' group info)
 
@@ -428,13 +439,25 @@ function varargout = vs_trim2nc(vsfile,varargin)
       ncdimlen.grid_n      = G.nmax+1;
       end
       
+      useCHAR20 = false;
       if any(strcmp('sediment',OPT.var)) && LSED > 0	     
       nc.Dimensions(end+1) = struct('Name','SuspSedimentFrac','Length',LSED);
-      nc.Dimensions(end+1) = struct('Name','CHAR20'          ,'Length',20);
       ncdimlen.SuspSedimentFrac = LSED;
-      ncdimlen.CHAR20           = 20;
-						        
       NAMSED = permute(vs_let(F,'map-const','NAMSED'  ,'quiet'),[2 3 1]);
+      useCHAR20 = true;
+      end
+
+      if any(strcmp('tracer',OPT.var)) && NTRACER > 0	     
+      nc.Dimensions(end+1) = struct('Name','Tracers','Length',NTRACER);
+      ncdimlen.Tracers = NTRACER;
+      NAMTRACERS = permute(vs_let(F,'map-const','NAMCON','quiet'),[2 3 1]);
+      NAMTRACERS(1:end-NTRACER,:) = [];
+      useCHAR20 = true;
+      end
+      
+      if useCHAR20
+      nc.Dimensions(end+1) = struct('Name','CHAR20'          ,'Length',20);
+      ncdimlen.CHAR20           = 20;
       end
 
 %% 2 Create dimension combinations
@@ -484,6 +507,14 @@ function varargout = vs_trim2nc(vsfile,varargin)
       nmkst.dims(3) = struct('Name', 'Layer'           ,'Length',ncdimlen.Layer);
       nmkst.dims(4) = struct('Name', 'SuspSedimentFrac','Length',ncdimlen.SuspSedimentFrac);
       nmkst.dims(5) = struct('Name', 'time'            ,'Length',ncdimlen.time);
+      end
+
+      if isfield(ncdimlen,'Tracers')
+      nmktt.dims(1) = struct('Name', 'n'               ,'Length',ncdimlen.n);
+      nmktt.dims(2) = struct('Name', 'm'               ,'Length',ncdimlen.m);
+      nmktt.dims(3) = struct('Name', 'Layer'           ,'Length',ncdimlen.Layer);
+      nmktt.dims(4) = struct('Name', 'Tracers'         ,'Length',ncdimlen.Tracers);
+      nmktt.dims(5) = struct('Name', 'time'            ,'Length',ncdimlen.time);
       end
 
 %% time
@@ -1494,6 +1525,44 @@ function varargout = vs_trim2nc(vsfile,varargin)
 %[Delft3D-trim:Element:HYDPRES]
 %-------------------------------------------------------------------------------
 
+%% tracers
+
+   if any(strcmp('tracer',OPT.var)) && NTRACER > 0
+   
+      ifld     = ifld + 1;clear attr dims
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'tracer names');
+      attr(end+1)  = struct('Name', 'units'        , 'Value', '-');
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-const:NAMCON');
+      dims(1)  = struct('Name', 'CHAR20'          ,'Length',ncdimlen.CHAR20);
+      dims(2)  = struct('Name', 'Tracers'         ,'Length',ncdimlen.Tracers);
+      nc.Variables(ifld) = struct('Name'       , 'TracerNames', ...
+                                  'Datatype'   , 'char', ...
+                                  'Dimensions' , dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
+
+      ifld     = ifld + 1;clear attr dims
+      attr(    1)  = struct('Name', 'long_name'    , 'Value', 'tracer concentration');
+      %attr(end+1)  = struct('Name', 'standard_name', 'Value', '<undefined>');
+      %attr(end+1)  = struct('Name', 'units'        , 'Value', '<undefined>');
+      attr(end+1)  = struct('Name', 'coordinates'  , 'Value', coordinatesLayer);
+      attr(end+1)  = struct('Name', '_FillValue'   , 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'missing_value', 'Value', NaN(OPT.type)); % this initializes at NaN rather than 9.9692e36
+      attr(end+1)  = struct('Name', 'actual_range' , 'Value', [nan nan]);R.tracerconc = [Inf -Inf];
+      attr(end+1)  = struct('Name', 'cell_methods' , 'Value', 'time: point             '); % add spaces to allow for overwriting with longest method one: standard_deviation
+      attr(end+1)  = struct('Name', 'delft3d_name' , 'Value', 'map-series:R1 map-const:KCS map-const:NAMCON map-const:LSTCI');
+      nc.Variables(ifld) = struct('Name'       , 'tracerconc', ...
+                                  'Datatype'   , OPT.type, ...
+                                  'Dimensions' , nmktt.dims, ...
+                                  'Attributes' , attr,...
+                                  'FillValue'  , []); % this doesn't do anything
+
+   else
+      ind=strcmp(OPT.var,'tracer');
+      OPT.var(ind) = [];      
+      fprintf(2,'> Variable not in trim file, skipped: tracer\n')
+   end % isfield
+
 %% sediments
 
    if any(strcmp('sediment',OPT.var)) && LSED > 0	        
@@ -1743,6 +1812,10 @@ function varargout = vs_trim2nc(vsfile,varargin)
       ncwrite   (ncfile, 'SuspSedimentFracNames',NAMSED');
       end
 
+      if any(strcmp('tracer',OPT.var)) && NTRACER > 0	        
+      ncwrite   (ncfile, 'TracerNames',NAMTRACERS');
+      end
+
       i = 0;
       
 %% add data per time slice (to save memory for laarge files)
@@ -1853,14 +1926,27 @@ if ~(OPT.empty)
 
          if any(strcmp('sediment',OPT.var)) && LSED > 0
          
-         sednames = fieldnames(I);
-         pointers = strmatch('sed',sednames);
+         substances = fieldnames(I);
+         pointers = find(ismember(substances,lower(NAMSED)));
          
          for ised = 1:length(pointers)
-          sedname = sednames{pointers(ised)};
-          matrix  = apply_mask(vs_let_scalar(F,'map-series' ,{it},'R1', {0 0 0 I.(sedname).index},'quiet'),G.cen.mask);
-          ncwrite   (ncfile,'suspsedconc', matrix,[2,2,1,ised,i]);
+          substance = substances{pointers(ised)};
+          matrix    = apply_mask(vs_let_scalar(F,'map-series' ,{it},'R1', {0 0 0 I.(substance).index},'quiet'),G.cen.mask);
+          ncwrite     (ncfile,'suspsedconc', matrix,[2,2,1,ised,i]);
           R.suspsedconc = [min(R.suspsedconc(1),min(matrix(:))) max(R.suspsedconc(2),max(matrix(:)))];
+         end
+         end
+         
+         if any(strcmp('tracer',OPT.var)) && NTRACER > 0
+         
+         substances = fieldnames(I);
+         pointers = find(ismember(substances,lower(NAMTRACERS)));
+         
+         for itrc = 1:length(pointers)
+          substance = substances{pointers(itrc)};
+          matrix    = apply_mask(vs_let_scalar(F,'map-series' ,{it},'R1', {0 0 0 I.(substance).index},'quiet'),G.cen.mask);
+          ncwrite     (ncfile,'tracerconc', matrix,[2,2,1,itrc,i]);
+          R.tracerconc = [min(R.tracerconc(1),min(matrix(:))) max(R.tracerconc(2),max(matrix(:)))];
          end
          end
          
