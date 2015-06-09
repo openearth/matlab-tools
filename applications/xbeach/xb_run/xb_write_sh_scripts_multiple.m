@@ -82,6 +82,8 @@ fprintf(fid,'#!/bin/sh\n');
 fprintf(fid,'#$ -cwd\n');
 fprintf(fid,'#$ -N %s\n\n', OPT.name);
 
+fprintf(fid,'echo $HOSTNAME \n\n');
+
 xb_write_sh_scripts_xbversions(fid, 'version', OPT.version)
 
 fprintf(fid,'rundir="%s"\n',OPT.rundir);

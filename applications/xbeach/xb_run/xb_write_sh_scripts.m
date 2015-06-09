@@ -125,26 +125,6 @@ switch upper(OPT.mpitype)
                 fprintf(fid,'rm -f $hostFile\n');
         end
         fprintf(fid,'mpdallexit\n');
-    case 'MPICH2'
-        fprintf(fid,'#!/bin/sh\n');
-        fprintf(fid,'#$ -cwd\n');
-        fprintf(fid,'#$ -N %s\n', OPT.name);
-        fprintf(fid,'#$ -m ea\n');
-        fprintf(fid,'#$ -q %s\n', OPT.queuetype);
-        fprintf(fid,'#$ -pe distrib %d\n\n', OPT.nodes);
-        fprintf(fid,'export NSLOTS=`expr $NHOSTS \\* 4`\n');
-        fprintf(fid,'export DELTAQ_NumSlots=`expr $DELTAQ_NumNodes \\* 4`\n\n');
-        
-        switch OPT.cluster
-            case 'h5'
-                fprintf(fid,'. /opt/ge/InitSGE\n\n');
-                fprintf(fid,'awk ''{print $1":"1}'' $PE_HOSTFILE > $(pwd)/machinefile\n');
-                fprintf(fid,'mpdboot -n $NHOSTS -f $(pwd)/machinefile\n');
-                xb_write_sh_scripts_xbversions(fid, 'version', OPT.version)
-                fprintf(fid,'module list\n\n');
-                fprintf(fid,'mpirun -n $NSLOTS xbeach\n');
-        end
-        fprintf(fid,'mpdallexit\n');
 otherwise
         error(['Unknown MPI type [' OPT.mpitype ']']);
 end
