@@ -1,7 +1,12 @@
 function [handles err] = ddb_generateBoundaryConditionsDelft3DFLOW(handles, id, filename)
 %DDB_GENERATEBOUNDARYCONDITIONSDELFT3DFLOW  One line description goes here.
 %
-%   More detailed description goes here.
+%   This will determine the amplitude and phases per location
+%   a) Makes on row of x's and y's
+%   b) Calculates ampltiudes and phases with readtidemodel
+%   -> this includes a diffusion if there are NaNs
+%   -> uses a linear interpolation to boundary locations
+%   c) default is a water level type, can be changed in 'boundaries'
 %
 %   Syntax:
 %   [handles err] = ddb_generateBoundaryConditionsDelft3DFLOW(handles, id, varargin)

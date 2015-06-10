@@ -1,7 +1,5 @@
 function handles = ddb_initializeModelMaker(handles, varargin)
-%DDB_INITIALIZEMODELMAKER  One line description goes here.
-%
-%   More detailed description goes here.
+%DDB_INITIALIZEMODELMAKER  start-up file for model maker
 %
 %   Syntax:
 %   handles = ddb_initializeModelMaker(handles, varargin)

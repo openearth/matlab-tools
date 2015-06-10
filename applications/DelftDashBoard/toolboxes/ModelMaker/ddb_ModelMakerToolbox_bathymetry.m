@@ -1,7 +1,11 @@
 function ddb_ModelMakerToolbox_bathymetry(varargin)
-%DDB_MODELMAKERTOOLBOX_BATHYMETRY  One line description goes here.
+%DDB_MODELMAKERTOOLBOX_BATHYMETRY master function for bathy in DDB
 %
-%   More detailed description goes here.
+%   When generateBathymetry is used first handles are loaded
+%   1) A specific 'bathy generate' per model is applied
+%   2) All these functions came back to ddb_ModelMakerToolbox_generateBathymetry
+%   3) Bathys in the order presented and interpolation to model grid
+%   4) End with diffusion and model offset
 
 %% Copyright notice
 %   --------------------------------------------------------------------

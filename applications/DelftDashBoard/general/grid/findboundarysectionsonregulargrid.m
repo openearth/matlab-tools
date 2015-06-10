@@ -1,4 +1,4 @@
-function bnd=findboundarysectionsonregulargrid(xg,yg,varargin)
+function bnd=findboundarysectionsonregulargrid(xg,yg,zg, varargin)
 
 br=0;
 % Find first boundary
@@ -124,6 +124,7 @@ n(end+1)=bnd(end).n2;
 
 %% Now find boundary sections along which the depth exceeds threshold value
 % Find first point after dry point
+thresh = 0;
 ifirstdry=[];
 for ib=1:length(xb)
     if zb(ib)<thresh

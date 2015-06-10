@@ -1,27 +1,30 @@
 function [x y z] = MakeRectangularGrid(xori, yori, nx, ny, dx, dy, rot, zmax, xb, yb, zb)
-%MAKERECTANGULARGRID  One line description goes here.
+%MAKERECTANGULARGRID  creates a rectangular grid based on the pre-defined larger grid
 %
-%   More detailed description goes here.
-%
+%   Creates a rectangular grid based on the pre-defined larger grid in xb,
+%   yb, and zb (made by ddb_ModelMakerToolbox_makeRectangularGrid)
+%   --> rotation is taken into account + above zmax cells deleted
+% 
 %   Syntax:
 %   [x y] = MakeRectangularGrid(xori, yori, nx, ny, dx, dy, rot, zmax, xb, yb, zb)
 %
 %   Input:
-%   xori =
-%   yori =
-%   nx   =
-%   ny   =
-%   dx   =
-%   dy   =
-%   rot  =
-%   zmax =
-%   xb   =
-%   yb   =
-%   zb   =
+%   xori = x coordinate of origin
+%   yori = y coordinate of origin
+%   nx   = number of cells in x
+%   ny   = number of cells in y
+%   dx   = width of a cell in x
+%   dy   = width of a cell in y
+%   rot  = rotation in radians
+%   zmax = maximum bed level for grid (above no cells)
+%   xb   = x of  original larger grid
+%   yb   = y of  original larger grid
+%   zb   = z of  original larger grid
 %
 %   Output:
-%   x    =
-%   y    =
+%   x    = x of new grid
+%   y    = y of new grid
+%   z    = z of new grid
 %
 %   Example
 %   MakeRectangularGrid
@@ -59,19 +62,7 @@ function [x y z] = MakeRectangularGrid(xori, yori, nx, ny, dx, dy, rot, zmax, xb
 % Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
-%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 27 Nov 2011
-% Created with Matlab version: 7.11.0.584 (R2010b)
-
-% $Id: $
-% $Date: $
-% $Author: $
-% $Revision: $
-% $HeadURL: $
-% $Keywords: $
-
-%%
-% Initial grid
+%% Initial grid
 
 [x0,y0]=meshgrid(0:dx:nx*dx,0:dy:ny*dy);
 
@@ -124,11 +115,17 @@ zb1(:,:,8)=zb(2:end-1,3:end);
 zb1(:,:,9)=zb(3:end  ,3:end);
 zb(2:end-1,2:end-1)=min(zb1,[],3);
 
-z=interp2(xb,yb,zb,x,y);
+try
+   z=interp2(xb,yb,zb,x,y);
+catch exception
+   z=griddata(xb,yb,zb,x,y);
+end
+
 
 clear xb yb zb
 
 nx=size(x,1);
+
 ny=size(x,2);
 for i=1:nx
     for j=1:ny

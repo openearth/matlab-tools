@@ -48,17 +48,6 @@ function ddb_ModelMakerToolbox_quickMode_XBeach(varargin)
 % Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
-%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 02 Dec 2011
-% Created with Matlab version: 7.11.0.584 (R2010b)
-
-% $Id: ddb_ModelMakerToolbox_quickMode_DFlowFM.m 9474 2013-10-23 09:45:41Z ormondt $
-% $Date: 2013-10-23 11:45:41 +0200 (Wed, 23 Oct 2013) $
-% $Author: ormondt $
-% $Revision: 9474 $
-% $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/DelftDashBoard/toolboxes/ModelMaker/ddb_ModelMakerToolbox_quickMode_DFlowFM.m $
-% $Keywords: $
-
 %%
 handles=getHandles;
 ddb_zoomOff;
@@ -199,6 +188,18 @@ setHandles(handles);
 function generateGrid
 
 handles=getHandles;
+npmax=20000000;
+if handles.toolbox.modelmaker.nX*handles.toolbox.modelmaker.nY<=npmax
+    handles=ddb_ModelMakerToolbox_XBeach_generateGrid(handles,ad);
+    setHandles(handles);
+else
+    ddb_giveWarning('Warning',['Maximum number of grid points (' num2str(npmax) ') exceeded ! Please reduce grid resolution.']);
+end
+
+
+function generateGrid_OLD
+
+handles=getHandles;
 
 npmax=20000000;
 
@@ -220,8 +221,6 @@ if handles.toolbox.modelmaker.nX*handles.toolbox.modelmaker.nY<=npmax
     if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
         dmin=dmin*111111;
     end
-    %    dmin=dmin/2;
-    %     dmin=15000;
     
     % Find coordinates of corner points
     x(1)=xori;
@@ -266,17 +265,9 @@ if handles.toolbox.modelmaker.nX*handles.toolbox.modelmaker.nY<=npmax
         yg=yy;
     end
     
-    %
-    
-    % [x,y,z]=MakeRectangularGrid(xori,yori,nx,ny,dx,dy,rot,zmax,xg,yg,zz);
-    
-    
-    [x,y,z]=makexbeachgrid(xori,yori,nx,ny,dx,dy,rot,zmax,xg,yg,zz);
+    [x y z] = ddb_ModelMakerToolbox_XBeach_generateGrid(xori,yori,nx,ny,dx,dy,rot,zmax,xg,yg,zz);
     
     close(wb);
-    
-    handles=ddb_generateGridXBeach(handles,ad,x,y,z);
-    
     setHandles(handles);
     
 else
@@ -285,12 +276,11 @@ end
 
 %%
 function generateBathymetry
-% handles=getHandles;
-% [filename, pathname, filterindex] = uiputfile('*.dep', 'Depth File Name',[handles.model.xbeach.domain(ad).attName '.dep']);
-% if pathname~=0
-%     handles=ddb_generateBathymetryDFlowFM(handles,ad,filename);
-% end
-% setHandles(handles);
+handles=getHandles;
+% Use background bathymetry data
+datasets(1).name=handles.screenParameters.backgroundBathymetry;
+handles=ddb_ModelMakerToolbox_XBeach_generateBathymetry(handles,datasets);
+setHandles(handles);
 
 %%
 function generateOpenBoundaries

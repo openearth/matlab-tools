@@ -5,6 +5,7 @@ function handles=ddb_ModelMakerToolbox_Delft3DFLOW_generateGrid(handles,id,varar
 
 filename=[];
 pathname=[];
+
 for ii=1:length(varargin)
     switch lower(varargin{ii})
         case{'filename'}
@@ -25,9 +26,7 @@ wb = waitbox('Generating grid ...');pause(0.1);
 close(wb);
 
 %% Now start putting things into the Delft3D-FLOW model
-
 ddb_plotDelft3DFLOW('delete','domain',id);
-
 handles=ddb_initializeFlowDomain(handles,'griddependentinput',ad,handles.model.delft3dflow.domain(id).runid);
 
 set(gcf,'Pointer','arrow');
@@ -62,5 +61,9 @@ handles.model.delft3dflow.domain(id).KMax=1;
 
 handles.model.delft3dflow.domain(id).kcs=determineKCS(handles.model.delft3dflow.domain(id).gridX,handles.model.delft3dflow.domain(id).gridY);
 
+% Put info back
+setHandles(handles);
+
+% Plot new domain
 handles=ddb_Delft3DFLOW_plotGrid(handles,'plot','domain',ad);
 

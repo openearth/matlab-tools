@@ -1,20 +1,19 @@
-function ddb_updateCoordinateText(pnt, dummy)
-%DDB_UPDATECOORDINATETEXT  One line description goes here.
+function handles = ddb_coordConvertModelMaker(handles)
+%DDB_COORDCONVERTMODELMAKER  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   ddb_updateCoordinateText(pnt, dummy)
+%   handles = ddb_coordConvertModelMaker(handles)
 %
 %   Input:
-%   pnt   =
-%   dummy =
+%   handles =
 %
-%
-%
+%   Output:
+%   handles =
 %
 %   Example
-%   ddb_updateCoordinateText
+%   ddb_coordConvertModelMaker
 %
 %   See also
 
@@ -50,53 +49,27 @@ function ddb_updateCoordinateText(pnt, dummy)
 % your own tools.
 
 %% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 29 Nov 2011
+% Created: 02 Dec 2011
 % Created with Matlab version: 7.11.0.584 (R2010b)
 
-% $Id: $
-% $Date: $
-% $Author: $
-% $Revision: $
-% $HeadURL: $
+% $Id: ddb_coordConvertModelMaker.m 10436 2014-03-24 22:26:17Z ormondt $
+% $Date: 2014-03-24 23:26:17 +0100 (Mon, 24 Mar 2014) $
+% $Author: ormondt $
+% $Revision: 10436 $
+% $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/DelftDashBoard/toolboxes/ModelMaker/ddb_coordConvertModelMaker.m $
 % $Keywords: $
 
 %%
-handles=getHandles;
-ax=handles.GUIHandles.mapAxis;
+ddb_plotModelMaker('delete');
 
-pos = get(ax, 'CurrentPoint');
-posx=pos(1,1);
-posy=pos(1,2);
-xlim=get(ax,'xlim');
-ylim=get(ax,'ylim');
-strx='X : ';
-stry='Y : ';
-strz='Z : ';
-strx='X : ';
-stry='Y : ';
-strz='Z : ';
-
-if posx<=xlim(1) || posx>=xlim(2) || posy<=ylim(1) || posy>=ylim(2)
-    set(gcf,'Pointer','arrow');
-else
-    if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
-        strx=['X : ' num2str(posx,'%10.4f')];
-        stry=['Y : ' num2str(posy,'%10.4f')];
-    else
-        strx=['X : ' num2str(posx,'%10.0f')];
-        stry=['Y : ' num2str(posy,'%10.0f')];
-    end    
-    ix=round((posx-handles.GUIData.x(1))/(handles.GUIData.x(2)-handles.GUIData.x(1)));
-    iy=round((posy-handles.GUIData.y(1))/(handles.GUIData.y(2)-handles.GUIData.y(1)));
-    if ix>0 && ix<length(handles.GUIData.x) && iy>0 && iy<length(handles.GUIData.y)
-        strz=['Z : ' num2str(handles.GUIData.z(iy,ix),'%10.1f')];
-    end    
-    setptr(gcf,pnt);
-end
-
-set(handles.GUIHandles.textXCoordinate,'String',strx);
-set(handles.GUIHandles.textYCoordinate,'String',stry);
-set(handles.GUIHandles.textZCoordinate,'String',strz);
-% set(gca,'FontSize',8);
-% grid on;
+handles.toolbox.modelmaker.gridOutlineHandle=[];
+handles.toolbox.modelmaker.nX=1;
+handles.toolbox.modelmaker.dX=0.1;
+handles.toolbox.modelmaker.xOri=0.0;
+handles.toolbox.modelmaker.nY=1;
+handles.toolbox.modelmaker.dY=0.1;
+handles.toolbox.modelmaker.yOri=1.0;
+handles.toolbox.modelmaker.lengthX=0.1;
+handles.toolbox.modelmaker.lengthY=0.1;
+handles.toolbox.modelmaker.rotation=0.0;
 

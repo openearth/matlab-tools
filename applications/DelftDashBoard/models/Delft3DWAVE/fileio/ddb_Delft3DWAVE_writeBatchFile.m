@@ -44,16 +44,21 @@ function ddb_Delft3DWAVE_writeBatchFile(mdwfile)
 % $Keywords: $
 
 %%
+handles=getHandles;
 
 fid=fopen('batch_wave.bat','w');
 
-if isempty(getenv('D3D_HOME'))
-    exedir=[getenv('D3D_HOME') '\' getenv('ARCH') '\wave\bin\'];
-else
-    exedir='c:\delft3d\w32\wave\bin\';
-end
+% if ~isempty(getenv('D3D_HOME'))
+%     exedir=[getenv('D3D_HOME') '\' getenv('ARCH') '\wave\bin\'];
+% else
+%     exedir='c:\delft3d\w32\wave\bin\';
+% end
 
-fprintf(fid,'%s\n','@ echo off');
-fprintf(fid,'%s\n',[exedir 'wave.exe ' mdwfile]);
+
+fprintf(fid,'%s\n',['set waveexedir="' handles.model.delft3dwave.exedir '"']);
+fprintf(fid,'%s\n',['%waveexedir%\wave.exe ' mdwfile ' 1']);
+
+
+% fprintf(fid,'%s\n','@ echo off');
 
 fclose(fid);

@@ -100,7 +100,6 @@
     <text>Make Bathymetry</text>
     <callback>ddb_ModelMakerToolbox_XBeach_quickMode</callback>
     <option1>generatebathymetry</option1>
-    <enable>0</enable>
   </element>
   <element>
     <style>pushbutton</style>

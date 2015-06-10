@@ -5,11 +5,11 @@ function ddb_plotXBeachGrid(handles,id);
 % 
 %     case{'plot'}
 
-        h=findall(gca,'Tag','XBeachGrid','UserData',id);
-        delete(h);
+        %h=findall(gca,'Tag','XBeachGrid','UserData',id);
+        %delete(h);
         
         x=handles.model.xbeach.domain(id).GridX;
-        y=handles.model.xbeach.domain(id).GridY;
+        y=handles.model.xbeach.domain(id).GridX;
         xori = handles.model.xbeach.domain(id).xori;
         yori = handles.model.xbeach.domain(id).yori;
         alfa = handles.model.xbeach.domain(id).alfa;

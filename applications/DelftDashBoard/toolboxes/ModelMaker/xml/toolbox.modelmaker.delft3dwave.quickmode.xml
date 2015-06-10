@@ -89,7 +89,7 @@
     <style>pushbutton</style>
     <position>320 110 140 20</position>
     <tooltipstring>Push to generate new model grid</tooltipstring>
-    <text>Make New Grid</text>
+    <text>Make Rectangular Grid</text>
     <callback>ddb_ModelMakerToolbox_Delft3DWAVE_quickMode</callback>
     <option1>generatenewgrid</option1>
   </element>

@@ -1,12 +1,41 @@
 function [xg,yg,zg]=ddb_ModelMakerToolbox_generateBathymetry(handles,xg,yg,zg,datasets,varargin)
+%DDB_MODELMAKERTOOLBOX_GENERATEBATHYMETRY creates actuall bathmetry for DDB
+%
+%   This routines can be called by specific model bathy routines
+%   Bathy is interpolated with the use of ddb_interpolateBathymetry2
 
-% inputs: model, domain, datasets structure, filename
-% get grid data (x,y,z,overwriteoption)
-% ddb_interpolateBathymetry (separate function with inputs: bathymetry,datasets,x,y,z,overwriteoption,gridtype)
-% adjust model inputs
+%% Copyright notice
+%   --------------------------------------------------------------------
+%   Copyright (C) 2011 Deltares
+%       Maarten van Ormondt
+%
+%       Maarten.vanOrmondt@deltares.nl
+%
+%       P.O. Box 177
+%       2600 MH Delft
+%       The Netherlands
+%
+%   This library is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This library is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this library.  If not, see <http://www.gnu.org/licenses/>.
+%   --------------------------------------------------------------------
+
+% This tool is part of <a href="http://www.OpenEarth.eu">OpenEarthTools</a>.
+% OpenEarthTools is an online collaboration to share and manage data and
+% programming tools in an open source, version controlled environment.
+% Sign up to recieve regular updates of this function, and to contribute
+% your own tools.
 
 %% Defaults
-
 overwrite=1;
 modeloffset=0;
 gridtype='structured';

@@ -500,7 +500,8 @@ end
 %%
 function moveMouse(imagefig, varargins, hg)
 
-options=getappdata(hg,'options');
+% ERROR KEES
+options=getappdata(hg,'options'); 
 
 inaxis=0;
 for iax=1:length(options.axis)

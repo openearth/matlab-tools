@@ -1,5 +1,6 @@
 function handles=ddb_ModelMakerToolbox_Delft3DFLOW_generateBathymetry(handles,datasets,varargin)
 
+%% Initial settings
 icheck=1;
 overwrite=1;
 filename=[];

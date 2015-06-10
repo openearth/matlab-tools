@@ -27,6 +27,11 @@
         <callback>ddb_saveDelft3DWAVE</callback>
         <option>saveall</option>
       </menuitem>
+      <menuitem>
+        <string>Delft3D-WAVE version ...</string>
+        <callback>ddb_setModelSettings</callback>
+        <option>selectversion</option>
+      </menuitem>
     </menusavefile>
     <menuview/>
   </menu>

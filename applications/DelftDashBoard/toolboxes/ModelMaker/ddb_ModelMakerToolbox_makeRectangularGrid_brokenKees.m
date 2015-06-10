@@ -60,13 +60,13 @@ dy=handles.toolbox.modelmaker.dY;
 rot=pi*handles.toolbox.modelmaker.rotation/180;
 zmax=handles.toolbox.modelmaker.zMax;
 
-% Find minimum grid resolution (in metres)
+%% Find minimum grid resolution (in metres)
 dmin=min(dx,dy);
 if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
     dmin=dmin*111111;
 end
 
-% Find coordinates of corner points
+%% Find coordinates of corner points
 x(1)=xori;
 y(1)=yori;
 x(2)=x(1)+nx*dx*cos(pi*handles.toolbox.modelmaker.rotation/180);
@@ -75,6 +75,36 @@ x(3)=x(2)+ny*dy*cos(pi*(handles.toolbox.modelmaker.rotation+90)/180);
 y(3)=y(2)+ny*dy*sin(pi*(handles.toolbox.modelmaker.rotation+90)/180);
 x(4)=x(3)+nx*dx*cos(pi*(handles.toolbox.modelmaker.rotation+180)/180);
 y(4)=y(3)+nx*dx*sin(pi*(handles.toolbox.modelmaker.rotation+180)/180);
+
+%% If grid is rotated and geographic - determine x and y in UTM
+if~rot==0 & strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
+
+    [xori_utm,yori_utm, utm_zone] = deg2utm(xori,yori)
+
+    [sx, azi1, azi2] = geoddistance(x(1), y(1), x(2), y(2))
+    [sy, azi1, azi2] = geoddistance(x(2), y(2), x(3), y(3))
+    
+    % Distance
+    dx_utm = sx / nx;
+    dy_utm = sy / ny;
+    
+    % UTM coordi of points in lat lon
+    x_utm(1)=   xori_utm;
+    y_utm(1)=   yori_utm;
+    [x_utm(2) y_utm(2)] =  deg2utm(x(2),y(2))
+    [x_utm(3) y_utm(3)] =  deg2utm(x(3),y(3))
+    [x_utm(4) y_utm(4)] =  deg2utm(x(4),y(4))
+    
+    % Limits
+    x_utm_l(1) = min(x_utm); x_utm_l(2) = max(x_utm);
+    y_utm_l(1) = min(y_utm); y_utm_l(2) = max(y_utm);
+    dbuf = (x_utm(2)-x_utm(1))/20;
+    x_utm_l(1) = x_utm_l(1)-dbuf;
+    x_utm_l(2) = x_utm_l(2)+dbuf;
+    y_utm_l(1) = y_utm_l(1)-dbuf;
+    y_utm_l(2) = y_utm_l(2)+dbuf;
+
+end
 
 xl(1)=min(x);
 xl(2)=max(x);
@@ -86,73 +116,52 @@ xl(2)=xl(2)+dbuf;
 yl(1)=yl(1)-dbuf;
 yl(2)=yl(2)+dbuf;
 
-coord=handles.screenParameters.coordinateSystem;
+%% Convert limits to cs of bathy data
+if ~rot==0 & strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
+    coord_utm.name = 'WGS 84 / UTM zone '
+    coord_utm.name = [coord_utm.name utm_zone.number utm_zone.NS]
+    coord_utm.type = 'Cartesian'
+    
+    coord.name = 'WGS 84'
+    coord.type = 'Geographic'
+else
+    coord=handles.screenParameters.coordinateSystem;
+end
+
 iac=strmatch(lower(handles.screenParameters.backgroundBathymetry),lower(handles.bathymetry.datasets),'exact');
 dataCoord.name=handles.bathymetry.dataset(iac).horizontalCoordinateSystem.name;
 dataCoord.type=handles.bathymetry.dataset(iac).horizontalCoordinateSystem.type;
-
 [xlb,ylb]=ddb_coordConvert(xl,yl,coord,dataCoord);
 
 % Get bathymetry in box around model grid
 [xx,yy,zz,ok]=ddb_getBathymetry(handles.bathymetry,xlb,ylb,'bathymetry',handles.screenParameters.backgroundBathymetry,'maxcellsize',dmin);
+figure; pcolor(xx,yy,zz); shading flat;
 
 % xx and yy are in coordinate system of bathymetry (usually WGS 84)
 % convert bathy grid to active coordinate system
 if ~strcmpi(dataCoord.name,coord.name) || ~strcmpi(dataCoord.type,coord.type)
-    dmin=min(dx,dy);
-    [xg,yg]=meshgrid(xl(1):dmin:xl(2),yl(1):dmin:yl(2));
-    [xgb,ygb]=ddb_coordConvert(xg,yg,coord,dataCoord);
-    zz=interp2(xx,yy,zz,xgb,ygb);
+%     dmin=min(dx,dy);
+%     [xg,yg]=meshgrid(xl(1):dmin:xl(2),yl(1):dmin:yl(2));
+%     [xgb,ygb]=ddb_coordConvert(xg,yg,coord,dataCoord);
+%     zz=interp2(xx,yy,zz,xgb,ygb);
+%       TO DO: FIX
+elseif ~rot==0 & strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
+	dmin=min(dx_utm,dy_utm);
+    [xg, yg]    = meshgrid(x_utm_l(1):dmin:x_utm_l(2),y_utm_l(1):dmin:y_utm_l(2));
+    [xgb,ygb]   = ddb_coordConvert(xg,yg,coord_utm,dataCoord);
+    zz=griddata(xx,yy,zz,ygb,xgb);   
 else
     xg=xx;
     yg=yy;
 end
-
-%%  Get coordinates of rectangular grid
-% -> different for rotated geographic grids
-if~rot==0 & strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
-
-	% Y is lat and X is lon  
-    [xori_utm,yori_utm, utmzone_total, utmzone_parts] = ddb_deg2utm(yori,xori)
-    
-    % Change coordinate system
-    coord.name = 'WGS 84 / UTM zone ';
-    s           = {coord.name, '',num2str(utmzone_parts.number), utmzone_parts.lat}
-    coord.name  = [s{:}]
-    coord.type = 'Cartesian'
-    
-    % Distance of the grid
-    [x_utm,y_utm]             = ddb_coordConvert(x,y,dataCoord,coord);
-    sx                        = ((x_utm(1) - x_utm(2)).^2 + (y_utm(1) - y_utm(2)).^2).^0.5
-    sy                        = ((x_utm(2) - x_utm(3)).^2 + (y_utm(2) - y_utm(3)).^2).^0.5
-
-    % Determine new dx and dy
-    dx_utm = sx / nx;
-    dy_utm = sy / ny;
-    
-    % Determine new x and y 
-    x_utm(1) = xori_utm;
-    y_utm(1) = yori_utm;
-    x_utm(2) = x_utm(1)+nx*dx_utm*cos(pi*handles.toolbox.modelmaker.rotation/180);
-    y_utm(2) = y_utm(1)+nx*dx_utm*sin(pi*handles.toolbox.modelmaker.rotation/180);
-    x_utm(3) = x_utm(2)+ny*dy_utm*cos(pi*(handles.toolbox.modelmaker.rotation+90)/180);
-    y_utm(3) = y_utm(2)+ny*dy_utm*sin(pi*(handles.toolbox.modelmaker.rotation+90)/180);
-    x_utm(4) = x_utm(3)+nx*dx_utm*cos(pi*(handles.toolbox.modelmaker.rotation+180)/180);
-    y_utm(4) = y_utm(3)+nx*dx_utm*sin(pi*(handles.toolbox.modelmaker.rotation+180)/180);
-    
-    % Other
-    dmin    = min(dx_utm,dy_utm);
-    x       = x_utm;
-    y       = y_utm;
-    dx      = dx_utm;
-    dy      = dy_utm;
-
-    % Finalise
-    [xg_utm,yg_utm]             = ddb_coordConvert(xg,yg,dataCoord,coord);
-    [x_grid_utm,y_grid_utm,z]   = MakeRectangularGrid(xori_utm,yori_utm,nx,ny,dx_utm,dy_utm,rot,zmax,xg_utm,yg_utm,zz);
-    [x,y]                       = ddb_coordConvert(x_grid_utm,y_grid_utm,coord,dataCoord);
-
+   
+%% Get coordinates of rectangular grid
+%% Convert limits to cs of bathy data
+if ~rot==0 & strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
+    [x,y,z]=MakeRectangularGrid(xori_utm,yori_utm,nx,ny,dx_utm,dy_utm,rot,zmax,xg,yg,zz);
 else
     [x,y,z]=MakeRectangularGrid(xori,yori,nx,ny,dx,dy,rot,zmax,xg,yg,zz);
-
 end
+
+% If rotated and geograpic: back
+[x,y]=ddb_coordConvert(x,y,coord_utm,dataCoord);

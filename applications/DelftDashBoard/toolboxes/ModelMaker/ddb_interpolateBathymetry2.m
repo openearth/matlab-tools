@@ -1,7 +1,5 @@
 function zgnew=ddb_interpolateBathymetry2(bathymetry,datasets,xg,yg,zg,modeloffset,overwrite,gridtype,internaldiff,coord)
-%z=ddb_interpolateBathymetry2(bathymetry,datasets,x,y,z,overwrite,gridtype)
-%
-%   Interpolates data from datasets onto structured or unstructured grid
+%DDB_INTERPOLATEBATHYMETRY2 interpolates data from datasets onto structured or unstructured grid
 %
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -34,18 +32,7 @@ function zgnew=ddb_interpolateBathymetry2(bathymetry,datasets,xg,yg,zg,modeloffs
 % Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
-%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 29 Nov 2011
-% Created with Matlab version: 7.11.0.584 (R2010b)
-
-% $Id: ddb_interpolateBathymetry.m 9453 2013-10-22 14:52:27Z ormondt $
-% $Date: 2013-10-22 16:52:27 +0200 (Tue, 22 Oct 2013) $
-% $Author: ormondt $
-% $Revision: 9453 $
-% $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/DelftDashBoard/models/Delft3DFLOW/toolbox/ModelMaker/ddb_interpolateBathymetry.m $
-% $Keywords: $
-
-% Generate bathymetry
+%% Generate bathymetry
 
 % If now input bathymetry is given, fill matrix with nans
 if isempty(zg)

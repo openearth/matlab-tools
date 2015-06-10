@@ -1,20 +1,18 @@
 function [x1 y1] = ddb_coordConvert(x1, y1, OldSys, NewSys)
-%DDB_COORDCONVERT  One line description goes here.
-%
-%   More detailed description goes here.
+%DDB_COORDCONVERT  coverts cooridates from 1 to new system for DDB
 %
 %   Syntax:
 %   [x1 y1] = ddb_coordConvert(x1, y1, OldSys, NewSys)
 %
 %   Input:
-%   x1     =
-%   y1     =
-%   OldSys =
-%   NewSys =
+%   x1     = old x coordinates
+%   y1     = old y coordinates
+%   OldSys = old coordinate system
+%   NewSys = new coordinate system
 %
 %   Output:
-%   x1     =
-%   y1     =
+%   x1     = new x coordinates
+%   y1     = new y coordinates
 %
 %   Example
 %   ddb_coordConvert
@@ -51,17 +49,6 @@ function [x1 y1] = ddb_coordConvert(x1, y1, OldSys, NewSys)
 % programming tools in an open source, version controlled environment.
 % Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
-
-%% Version <http://svnbook.red-bean.com/en/1.5/svn.advanced.props.special.keywords.html>
-% Created: 29 Nov 2011
-% Created with Matlab version: 7.11.0.584 (R2010b)
-
-% $Id: $
-% $Date: $
-% $Author: $
-% $Revision: $
-% $HeadURL: $
-% $Keywords: $
 
 %%
 if strcmpi(OldSys.name,NewSys.name)

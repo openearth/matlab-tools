@@ -1,22 +1,20 @@
 function [x,y,z,ok,varargout] = ddb_getBathymetry(bathymetry, xl, yl, varargin)
-%DDB_GETBATHYMETRY  One line description goes here.
-%
-%   More detailed description goes here.
+%DDB_GETBATHYMETRY  loads active bathmetry out DDB
 %
 %   Syntax:
-%   [x y z ok] = ddb_getBathymetry(handles, xl, yl, varargin)
+%   [x y z ok] = ddb_getBathymetry(handles, xl, y#l, varargin)
 %
 %   Input:
 %   handles  =
-%   xl       =
-%   yl       =
-%   varargin =
+%   xl       = x1 and x2
+%   yl       = y1 and y2
+%   varargin = 
 %
 %   Output:
-%   x        =
-%   y        =
-%   z        =
-%   ok       =
+%   x        = x coordinates of full grid
+%   y        = y coordinates of full grid
+%   z        = z coordinates of full grid
+%   ok       = check
 %
 %   Example
 %   ddb_getBathy
@@ -65,11 +63,9 @@ function [x,y,z,ok,varargout] = ddb_getBathymetry(bathymetry, xl, yl, varargin)
 % $HeadURL$
 % $Keywords: $
 
-%%
+%% Initial values
 ok              = 0;
-
 zoomlev         = 0;
-
 bathydir        = bathymetry.dir;
 bathy           = 'gebco08';
 startdate       = ceil(now);

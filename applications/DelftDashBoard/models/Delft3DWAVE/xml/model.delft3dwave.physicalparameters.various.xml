@@ -45,11 +45,6 @@
     <dependency>
       <action>enable</action>
       <checkfor>all</checkfor>
-      <check>
-        <variable>handles.model.delft3dwave.domain.windgrowth</variable>
-        <value>1</value>
-        <operator>eq</operator>
-      </check>
     </dependency>
   </element>
   <element>

@@ -1,7 +1,13 @@
 function handles = ddb_generateBoundaryLocationsDelft3DFLOW(handles, id, filename)
-%DDB_GENERATEBOUNDARYLOCATIONSDELFT3DFLOW  One line description goes here.
+%DDB_GENERATEBOUNDARYLOCATIONSDELFT3DFLOW  makes open boundaries for FLOW
 %
-%   More detailed description goes here.
+%   Steps of this function
+%   a) load information defined in Dashboard
+%   b) Determining which cross-sections are open
+%   -> findBoundarySectionsOnStructuredGrid
+%   c) Initialise boundaries with the use of 
+%   -> delft3dflow_initializeOpenBoundary
+%   d) save and update view
 %
 %   Syntax:
 %   handles = ddb_generateBoundaryLocationsDelft3DFLOW(handles, id, varargin)

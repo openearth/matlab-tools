@@ -12,16 +12,13 @@
       <callback>ddb_selectToolbox</callback>
     </tab>
     <tab>
-      <tabstring>Description</tabstring>
-      <element>model.xbeach.description.xml</element>
-    </tab>
-    <tab>
       <tabstring>Model physics</tabstring>
       <element>model.xbeach.Physics.xml</element>
     </tab>
     <tab>
       <tabstring>Model domain</tabstring>
       <element>model.xbeach.Domain.xml</element>
+      <enable>1</enable>
     </tab>
     <tab>
       <tabstring>Time input</tabstring>

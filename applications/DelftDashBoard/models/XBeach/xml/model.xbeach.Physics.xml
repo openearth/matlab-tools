@@ -18,6 +18,7 @@
       <tabstring>Physics advanced opt...</tabstring>
       <tooltipstring>Physics advanced options</tooltipstring>
       <element>model.xbeach.Physics.Advanced_1.xml</element>
+      <enable>0</enable>
     </tab>
   </element>
 </root>

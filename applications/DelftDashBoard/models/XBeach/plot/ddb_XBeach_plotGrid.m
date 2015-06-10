@@ -1,10 +1,10 @@
-function handles = ddb_Delft3DWAVE_plotGrid(handles, opt, varargin)
-%DDB_delft3dwave_PLOTGRID  One line description goes here.
+function handles = ddb_XBeach_plotGrid(handles, opt, varargin)
+%DDB_xbeach_PLOTGRID  One line description goes here.
 %
 %   More detailed description goes here.
 %
 %   Syntax:
-%   handles = ddb_delft3dwave_plotGrid(handles, opt, varargin)
+%   handles = ddb_xbeach_plotGrid(handles, opt, varargin)
 %
 %   Input:
 %   handles  =
@@ -15,7 +15,7 @@ function handles = ddb_Delft3DWAVE_plotGrid(handles, opt, varargin)
 %   handles  =
 %
 %   Example
-%   ddb_delft3dwave_plotGrid
+%   ddb_xbeach_plotGrid
 %
 %   See also
 
@@ -54,18 +54,18 @@ function handles = ddb_Delft3DWAVE_plotGrid(handles, opt, varargin)
 % Created: 29 Nov 2011
 % Created with Matlab version: 7.11.0.584 (R2010b)
 
-% $Id$
-% $Date$
-% $Author$
-% $Revision$
-% $HeadURL$
+% $Id: ddb_xbeach_plotGrid.m 10447 2014-03-26 07:06:47Z ormondt $
+% $Date: 2014-03-26 08:06:47 +0100 (Wed, 26 Mar 2014) $
+% $Author: ormondt $
+% $Revision: 10447 $
+% $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/DelftDashBoard/models/xbeach/plot/ddb_xbeach_plotGrid.m $
 % $Keywords: $
 
 %%
 
 col=[0.35 0.35 0.35];
 vis=1;
-id=awg;
+id=ad;
 
 for i=1:length(varargin)
     if ischar(varargin{i})
@@ -74,53 +74,57 @@ for i=1:length(varargin)
                 col=varargin{i+1};
             case{'visible'}
                 vis=varargin{i+1};
-            case{'wavedomain'}
+            case{'domain'}
                 id=varargin{i+1};
         end
     end
 end
+
+vis=vis*handles.model.delft3dflow.menuview.grid;
 
 switch lower(opt)
     
     case{'plot'}
         
         % First delete old grid
-        try
-            delete(handles.model.delft3dwave.domain(id).grid.plotHandles);
+        if isfield(handles.model.delft3dflow.domain(id).grid,'plotHandles')
+            if ~isempty(handles.model.delft3dflow.domain(id).grid.plotHandles)
+                try
+                    delete(handles.model.delft3dflow.domain(id).grid.plotHandles);
+                end
+            end
         end
         
         % Now plot new grid
-        x=handles.model.delft3dwave.domain(id).gridx;
-        y=handles.model.delft3dwave.domain(id).gridy;
-        handles.model.delft3dwave.domain(id).grid.plotHandles=ddb_plotCurvilinearGrid(x,y,'color',col);
+        x=handles.model.xbeach.domain(id).GridX;
+        y=handles.model.xbeach.domain(id).GridY;
+        handles.model.delft3dflow.domain(id).grid.plotHandles=ddb_plotCurvilinearGrid(x,y,'color',col);
         if vis
-            set(handles.model.delft3dwave.domain(id).grid.plotHandles,'Color',col,'Visible','on');
+            set(handles.model.delft3dflow.domain(id).grid.plotHandles,'Color',col,'Visible','on');
         else
-            set(handles.model.delft3dwave.domain(id).grid.plotHandles,'Color',col,'Visible','off');
+            set(handles.model.delft3dflow.domain(id).grid.plotHandles,'Color',col,'Visible','off');
         end
         
     case{'delete'}
         
         % Delete old grid
-        try
-            delete(handles.model.delft3dwave.domain(id).grid.plotHandles);
+        if isfield(handles.model.xbeach.domain(id).grid,'plotHandles')
+            if ~isempty(handles.model.xbeach.domain(id).grid.plotHandles)
+                try
+                    delete(handles.model.xbeach.domain(id).grid.plotHandles);
+                end
+            end
         end
-%        hh=findobj(gcf,'tag','delft3dwavegrid');
-%        if ~isempty(hh)
-%            try
-%                delete(hh);
-%            end
-%        end
         
     case{'update'}
-        if isfield(handles.model.delft3dwave.domain(id).gridplot,'plothandles')
-            if ~isempty(handles.model.delft3dwave.domain(id).gridplot.plothandles)
+        if isfield(handles.model.xbeach.domain(id).grid,'plotHandles')
+            if ~isempty(handles.model.xbeach.domain(id).grid.plotHandles)
                 try
-                    set(handles.model.delft3dwave.domain(id).gridplot.plothandles,'Color',col);
+                    set(handles.model.xbeach.domain(id).grid.plotHandles,'Color',col);
                     if vis
-                        set(handles.model.delft3dwave.domain(id).gridplot.plothandles,'Color',col,'Visible','on');
+                        set(handles.model.xbeach.domain(id).grid.plotHandles,'Color',col,'Visible','on');
                     else
-                        set(handles.model.delft3dwave.domain(id).gridplot.plothandles,'Color',col,'Visible','off');
+                        set(handles.model.xbeach.domain(id).grid.plotHandles,'Color',col,'Visible','off');
                     end
                 end
             end
