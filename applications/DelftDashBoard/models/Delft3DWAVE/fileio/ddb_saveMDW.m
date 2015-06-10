@@ -189,6 +189,8 @@ MDW.Output.WriteSpec2D.type       = 'boolean';
 %% Domains
 for i=1:ndomains
     MDW.Domain(i).Grid.value           = wave.domains(i).grid;
+    MDW.Domain(i).Grid.value           = wave.domains(i).grid;
+
     if ~isempty(wave.domains(i).bedlevelgrid)
         MDW.Domain(i).BedLevelGrid.value   = wave.domains(i).bedlevelgrid;
     end

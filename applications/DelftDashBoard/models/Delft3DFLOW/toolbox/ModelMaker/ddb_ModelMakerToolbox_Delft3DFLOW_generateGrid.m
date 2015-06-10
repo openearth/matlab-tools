@@ -30,7 +30,6 @@ ddb_plotDelft3DFLOW('delete','domain',id);
 handles=ddb_initializeFlowDomain(handles,'griddependentinput',ad,handles.model.delft3dflow.domain(id).runid);
 
 set(gcf,'Pointer','arrow');
-
 enc=ddb_enclosure('extract',x,y);
 attName=filename(1:end-4);
 
@@ -41,13 +40,10 @@ else
 end
 
 ddb_wlgrid('write','FileName',[attName '.grd'],'X',x,'Y',y,'Enclosure',enc,'CoordinateSystem',coord);
-
 handles.model.delft3dflow.domain(id).grdFile=[attName '.grd'];
 handles.model.delft3dflow.domain(id).encFile=[attName '.enc'];
-
 handles.model.delft3dflow.domain(id).gridX=x;
 handles.model.delft3dflow.domain(id).gridY=y;
-
 [handles.model.delft3dflow.domain(id).gridXZ,handles.model.delft3dflow.domain(id).gridYZ]=getXZYZ(x,y);
 
 nans=zeros(size(x));

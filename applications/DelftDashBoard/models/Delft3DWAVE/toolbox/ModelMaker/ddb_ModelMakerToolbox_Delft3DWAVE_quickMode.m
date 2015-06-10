@@ -242,24 +242,24 @@ end
 
 handles.model.delft3dwave.domain.runid=handles.model.delft3dflow.domain(1).runid;
 
-handles.model.delft3dwave.domain.domains=[];
+handles.model.delft3dwave.domain=[];
 handles.model.delft3dwave.domain.nrgrids=1;
 handles.model.delft3dwave.domain.gridnames=[];
 handles.model.delft3dwave.domain.gridnames{1}=grdfile(1:end-4);
-handles.model.delft3dwave.domain.domains=[];
-handles.model.delft3dwave.domain.domains=ddb_initializeDelft3DWAVEDomain(handles.model.delft3dwave.domain.domains,1);
+handles.model.delft3dwave.domain=[];
+handles.model.delft3dwave.domain=ddb_initializeDelft3DWAVEDomain(handles.model.delft3dwave.domain,1);
 handles.activeWaveGrid=1;
-handles.model.delft3dwave.domain.domains(1).gridx=handles.model.delft3dflow.domain(1).gridX;
-handles.model.delft3dwave.domain.domains(1).gridy=handles.model.delft3dflow.domain(1).gridY;
-handles.model.delft3dwave.domain.domains(1).depth=handles.model.delft3dflow.domain(1).depth;
-handles.model.delft3dwave.domain.domains(1).grid=grdfile;
-handles.model.delft3dwave.domain.domains(1).bedlevelgrid=grdfile;
-handles.model.delft3dwave.domain.domains(1).bedlevel=depfile;
+handles.model.delft3dwave.domain(1).gridx=handles.model.delft3dflow.domain(1).gridX;
+handles.model.delft3dwave.domain(1).gridy=handles.model.delft3dflow.domain(1).gridY;
+handles.model.delft3dwave.domain(1).depth=handles.model.delft3dflow.domain(1).depth;
+handles.model.delft3dwave.domain(1).grid=grdfile;
+handles.model.delft3dwave.domain(1).bedlevelgrid=grdfile;
+handles.model.delft3dwave.domain(1).bedlevel=depfile;
 % TODO : change coordsyst
-handles.model.delft3dwave.domain.domains(1).coordsyst = handles.screenParameters.coordinateSystem.type;
-handles.model.delft3dwave.domain.domains(1).mmax=size(handles.model.delft3dwave.domain.domains(1).gridx,1);
-handles.model.delft3dwave.domain.domains(1).nmax=size(handles.model.delft3dwave.domain.domains(1).gridx,2);
-handles.model.delft3dwave.domain.domains(1).nestgrid='';
+handles.model.delft3dwave.domain(1).coordsyst = handles.screenParameters.coordinateSystem.type;
+handles.model.delft3dwave.domain(1).mmax=size(handles.model.delft3dwave.domain(1).gridx,1);
+handles.model.delft3dwave.domain(1).nmax=size(handles.model.delft3dwave.domain(1).gridx,2);
+handles.model.delft3dwave.domain(1).nestgrid='';
 
 if couplewithflow
     handles=ddb_coupleWaveWithFlow(handles);
