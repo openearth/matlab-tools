@@ -88,9 +88,9 @@ xbModel = xb_read_input(fullfile(OPT.ModelSetupDir, 'params.txt'));
 
 %% Calculate unspecified variables
 
-[Lambda, ~] = getLambda_2Stations(OPT.Station1, OPT.Station2, 'JarkusId', OPT.JarkusID);
+[Lambda, ~, Station1, Station2] = getLambda_2Stations('JarkusId', OPT.JarkusID);
 
-[h, h1, h2, Station1, Station2, Lambda] = getWl_2Stations(norm_cdf(OPT.Ph, 0, 1), Lambda, OPT.Station1, OPT.Station2);
+[h, h1, h2, Station1, Station2, Lambda] = getWl_2Stations(norm_cdf(OPT.Ph, 0, 1), Lambda, Station1, Station2);
 [Hs, Hs1, Hs2, Station1, Station2]      = getHs_2Stations(OPT.PHm0, Lambda, h1, h2, Station1, Station2);
 [Tp, Tp1, Tp2, Station1, Station2]      = getTp_2Stations(OPT.PTp, Lambda, Hs1, Hs2, Station1, Station2);
 
