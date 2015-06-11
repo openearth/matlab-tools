@@ -64,4 +64,4 @@
 %
 % NB: calling sequence: KML*(lat,LON,...); [LON,lat] = convertCoordinates(X,y,...)
 %
-%See also: KMLengines, convertCoordinates, wms (to obtain [lat,lon] in WGS 84 (EPSG:4326))
+%See also: KMLengines, convertCoordinates, wms (to obtain [lat,lon] in WGS 84 (EPSG:4326)), plot_google_map

@@ -1,22 +1,38 @@
 function OPT = KMLcurtain(lat, lon, z, C, varargin)
 %KMLCURTAIN  Create a time animated curtain for e.g. adcp data
 %
-%   Function still in beta!
-%
 %   Syntax:
-%   OPT = KMLcurtain(lat, lon, z, C, <keyword,value>)
+%   OPT = KMLcurtain(lat, lon, z, C, 'timeIn',timeIn,'timeOut',timeOut,<keyword,value>)
 %
-%   Input:
-%   lat      = 1d vector 
-%   lon      = 1d vector
-%   z        = 1d vector
-%   C        = 2d array size(length(z)-1,length(lat)-1)
+%   where lat, lon, z, timeIn, timeOut are 1D vectors, and 
+%   Cis a 2D array size(length(z)-1,length(lat)-1). You can make this
+%   with corner2center if you have date at the (z,lat) crossings. 
 %
 %   C should be 1 shorter than z and lat/lon, because C is center data,
-%   lat/lon and z are corner data. Specify the keywords timeIn and 
-%   timeOut with the same size as C.
+%   lat/lon and z are corner data. The required keywords timeIn and 
+%   timeOut should have the same size as lat/lon.
 %
-%   See also: googlePlot
+%   Note that Google Earth shows the curtain in black when looked at from the
+%   'back' as Google considers one side the shadow side. In this case, flip
+%   the time and coordinate vectors to make the other side the shadow side.
+%
+%   Example:
+%
+%     [x z c] = peaks
+%     lon = x(1,:);lat = x(1,:);
+%     z   = 1e4*z(:,1); % stretch a bit for apprearance
+%     C   = corner2center(c);
+%     t   =  now + (1:length(lon));
+%     dt  = 1; % how many days one profile remains visible, should be
+%     larger than max(abs(diff(t))) to avoid flickering.
+% 
+%     lon = lon(end:-1:1); % make south the sunny side, north the shadow side
+%     lat = lat(end:-1:1);
+%     t   = t  (end:-1:1);
+% 
+%     KMLcurtain(lat,lon,z,C,'timeIn',t-dt/2,'timeOut',t+dt/2,'fileName','adcp.kml','cLim',[-5 5])
+%
+%   See also: googlePlot, adcp_plot
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -109,6 +125,7 @@ end
 
 %% pre-process color data
    c = C;
+   z = z(:)'; % make row vector
    
    if isempty(OPT.cLim)
       OPT.cLim         = [min(c(:)) max(c(:))];
