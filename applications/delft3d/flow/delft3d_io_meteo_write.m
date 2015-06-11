@@ -92,7 +92,6 @@ OPT.quantity         = 'x_wind';
 OPT.unit             = 'm s-1';
 
 OPT.refdatenum       = datenum(1970,1,1);
-OPT.hr               = (time - OPT.refdatenum)*24;
 OPT.timezone         = '+00:00';
 
 OPT.OS               = 'unix';
@@ -113,6 +112,8 @@ if nargin > 3
 end
 
 OPT = setproperty(OPT,varargin{nextarg:end});
+
+OPT.hr               = (time - OPT.refdatenum)*24;
 
 %% Open file
 
