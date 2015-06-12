@@ -146,7 +146,7 @@ classdef AdaptiveResponseSurface < handle
             end
             
             this.DetermineModelTerms(limitState);
-                        
+            
             if ~isempty(this.ModelTerms)
                 if this.DefaultFit
                     % default unweighted polynomial fitting
