@@ -112,15 +112,18 @@ end
 % -> different for rotated geographic grids
 if~rot==0 & strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
 
-	% Y is lat and X is lon  
-    [xori_utm,yori_utm, utmzone_total, utmzone_parts] = ddb_deg2utm(yori,xori)
+    % Determine UTM zone of the middle
+	[ans1,ans2, utmzone_total, utmzone_parts] = ddb_deg2utm(mean(y),mean(x))
     
-    % Change coordinate system
+    % Change coordinate system to UTM of the middle
     coord.name = 'WGS 84 / UTM zone ';
     s           = {coord.name, '',num2str(utmzone_parts.number), utmzone_parts.lat}
     coord.name  = [s{:}]
     coord.type = 'Cartesian'
-    
+
+    % Convert the ori
+    [xori_utm,yori_utm]             = ddb_coordConvert(xori,yori,dataCoord,coord);
+
     % Distance of the grid
     [x_utm,y_utm]             = ddb_coordConvert(x,y,dataCoord,coord);
     sx                        = ((x_utm(1) - x_utm(2)).^2 + (y_utm(1) - y_utm(2)).^2).^0.5
@@ -140,7 +143,7 @@ if~rot==0 & strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
     x_utm(4) = x_utm(3)+nx*dx_utm*cos(pi*(handles.toolbox.modelmaker.rotation+180)/180);
     y_utm(4) = y_utm(3)+nx*dx_utm*sin(pi*(handles.toolbox.modelmaker.rotation+180)/180);
     
-    % Other
+    % Other set-ups
     dmin    = min(dx_utm,dy_utm);
     x       = x_utm;
     y       = y_utm;
