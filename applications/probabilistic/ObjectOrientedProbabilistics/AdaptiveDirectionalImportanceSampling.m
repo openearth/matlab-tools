@@ -209,7 +209,7 @@ classdef AdaptiveDirectionalImportanceSampling < DirectionalSampling
             
             % If there are new exact points available: fit the
             % response surface again
-            if ~this.LineSearcher.ApproximateUsingARS || numel(this.LimitState) > 1
+            if ~this.LineSearcher.ApproximateUsingARS || isa(this.LimitState,'MultipleLimitState')
                 this.LimitState.UpdateResponseSurface
                 if this.LastIteration
                     % if ARS is updated, do one more iteration
