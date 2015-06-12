@@ -88,18 +88,31 @@ xbModel = xb_read_input(fullfile(OPT.ModelSetupDir, 'params.txt'));
 
 %% Calculate unspecified variables
 
-[Lambda, ~, Station1, Station2] = getLambda_2Stations('JarkusId', OPT.JarkusID);
+[Lambda, ~, Station1, Station2]         = getLambda_2Stations('JarkusId', OPT.JarkusID);
 
 [h, h1, h2, Station1, Station2, Lambda] = getWl_2Stations(norm_cdf(OPT.Ph, 0, 1), Lambda, Station1, Station2);
 [Hs, Hs1, Hs2, Station1, Station2]      = getHs_2Stations(OPT.PHm0, Lambda, h1, h2, Station1, Station2);
 [Tp, Tp1, Tp2, Station1, Station2]      = getTp_2Stations(OPT.PTp, Lambda, Hs1, Hs2, Station1, Station2);
+
+%% Check for impossible values
+
+if Hs < 0
+    Hs = 0;
+end
+
+if Tp < 0
+    Tp = 0;
+    fp = 0;
+else
+    fp = 1/Tp;
+end
 
 %% Change stochastic variables in XBeach model
 
 xbModel = xs_set(xbModel, 'zs0file.tide', [h -20; h -20]);
 xbModel = xs_set(xbModel, 'bcfile.Hm0', Hs);
 xbModel = xs_set(xbModel, 'bcfile.Tp', Tp);
-xbModel = xs_set(xbModel, 'bcfile.fp', 1/Tp);
+xbModel = xs_set(xbModel, 'bcfile.fp', fp);
 xbModel = xs_set(xbModel, 'D50', OPT.D50);
 xbModel = xs_set(xbModel, 'tstop', OPT.tstop);
 
