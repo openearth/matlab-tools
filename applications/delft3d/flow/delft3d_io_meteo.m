@@ -482,6 +482,7 @@ function local_meteo_curv_write(fname,DAT,reftime,timezone,fmt)
 %open stream
 fid=fopen(fname,'w+'); 
 
+DAT.keywords.grid_file = 'tst.grd'; 
 [dummy fname_grid fext_grid]=fileparts(DAT.keywords.grid_file); 
 fname_grid=[fname_grid,fext_grid]; 
 
@@ -490,17 +491,19 @@ if length(DAT.datenum)==1
 end
 
 %write header
-fprintf(fid,'%s\n','### START OF HEADER'); 
-fprintf(fid,'FileVersion      = %s\n',DAT.keywords.FileVersion); 
+fprintf(fid,'FileVersion      = %s\n',DAT.keywords.Fileversion); 
 fprintf(fid,'filetype         = %s\n',DAT.keywords.filetype); 
 fprintf(fid,'NODATA_value     = %.6f\n',DAT.keywords.NODATA_value); 
-fprintf(fid,'grid_file        = %s\n',fname_grid); 
-fprintf(fid,'first_data_value = %s\n',DAT.keywords.first_data_value); 
-fprintf(fid,'data_row         = %s\n',DAT.keywords.data_row); 
+fprintf(fid,'n_cols        = %.0f\n',DAT.keywords.n_cols); 
+fprintf(fid,'n_rows        = %.0f\n',DAT.keywords.n_rows); 
+fprintf(fid,'grid_unit        = %s\n',DAT.keywords.grid_unit); 
+fprintf(fid,'x_llcorner        = %.0f\n',DAT.keywords.x_llcorner); 
+fprintf(fid,'y_llcorner        = %.0f\n',DAT.keywords.y_llcorner); 
+fprintf(fid,'dx             = %s\n',DAT.keywords.dx); 
+fprintf(fid,'dy             = %s\n',DAT.keywords.dy); 
 fprintf(fid,'n_quantity       = %d\n',DAT.keywords.n_quantity); 
 fprintf(fid,'quantity1        = %s\n',DAT.keywords.quantity1); 
 fprintf(fid,'unit1            = %s\n',DAT.keywords.unit1); 
-fprintf(fid,'%s\n','### END OF HEADER'); 
 
 %write different time steps
 for k=1:length(DAT.datenum)
