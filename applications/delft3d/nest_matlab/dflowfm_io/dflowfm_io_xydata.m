@@ -106,7 +106,7 @@ case 'write'
 
           fprintf(fid,'%s       \n',block_name      );
           ncols = 2;
-          if size(LINE(iline).DATA,2) == 3 
+          if size(LINE(iline).DATA,2) == 3
               if isnumeric(LINE(iline).DATA{1,3})
                  ncols = 3;
               end
@@ -150,3 +150,4 @@ case 'write'
    fclose(fid);
 
 end
+
