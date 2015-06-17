@@ -9,14 +9,14 @@ function nesthd_wrihyd_dflowfmtim(filename,bnd,nfs_inf,bndval,add_inf)
 no_pnt        = length(bnd.DATA);
 no_times      = length(bndval);
 kmax          = nfs_inf.nolay;
+[path,~,~]    = fileparts(filename);
 
 %
 % cylce over boundary points
 %
 
 for i_pnt = 1: no_pnt
-    [pin,fin,~] = fileparts(filename);
-    fname       = [pin filesep fin '_' num2str(i_pnt,'%4.4i') '.tim'];
+    fname       = [path filesep bnd.Name{i_pnt} '.tim'];
 
     % Comments
 

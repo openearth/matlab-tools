@@ -6,7 +6,7 @@ function wricon_bcc(filename,bnd,nfs_inf,bndval,add_inf)
 % Get some general parameters
 %
 
-no_bnd        = length(bnd.DATA);
+no_bnd        = length(bnd.DATA)/2;
 kmax          = nfs_inf.kmax;
 lstci         = nfs_inf.lstci;
 namcon        = nfs_inf.namcon;
@@ -20,7 +20,7 @@ profile = 'uniform'; if kmax > 1 profile = '3d-profile';end
 k = 0;
 
 for ibnd = 1 : no_bnd
-    if bnd.DATA(ibnd).datatype == 'T'
+    if bnd.DATA((ibnd - 1)*2 + 1).datatype == 'T'
        for l = 1:lstci
            if add_inf.genconc(l)
                quant=namcon(l,:);
@@ -37,7 +37,7 @@ for ibnd = 1 : no_bnd
                Info.NTables=k;
                Info.Table(k).Name=['Boundary Section : ' num2str(ibnd)];
                Info.Table(k).Contents=profile;
-               Info.Table(k).Location=bnd.DATA(ibnd).name;
+               Info.Table(k).Location=bnd.DATA((ibnd - 1)*2 + 1).name;
                Info.Table(k).TimeFunction='non-equidistant';
                Info.Table(k).ReferenceTime=nfs_inf.itdate;
                Info.Table(k).TimeUnit='minutes';
@@ -72,8 +72,8 @@ for ibnd = 1 : no_bnd
                for itim = 1: notims
                    Info.Table(k).Data(itim,1) = nfs_inf.tstart + (itim-1)*nfs_inf.dtmin;
                    for ilay = 1: kmax
-                       Info.Table(k).Data(itim,ilay+1     ) = bndval(itim).value(ibnd,ilay,l,1);
-                       Info.Table(k).Data(itim,ilay+kmax+1) = bndval(itim).value(ibnd,ilay,l,2);
+                       Info.Table(k).Data(itim,ilay+1     ) = bndval(itim).value((ibnd - 1)*2 + 1,ilay,l,1);
+                       Info.Table(k).Data(itim,ilay+kmax+1) = bndval(itim).value((ibnd - 1)*2 + 2,ilay,l,1);
                    end
                end
            end

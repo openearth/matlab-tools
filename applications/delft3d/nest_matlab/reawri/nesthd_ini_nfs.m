@@ -37,6 +37,7 @@
              nostat = nostat + 1;
              nfs_inf.list_stations(nostat) = ist;
              nfs_inf.mnstat(:,nostat)      = mnstat_hulp(:,ist);
+             nfs_inf.names{ist}            = strtrim(hulpst(ist,1:20));
 %          end
       end
 

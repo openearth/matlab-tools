@@ -10,4 +10,6 @@ switch filetype
         nfs_inf     = nesthd_ini_nfs        (filename);
     case ('SIMONA')
         nfs_inf     = nesthd_ini_sds        (filename);
+    case ('DFLOWFM')
+        nfs_inf     = nesthd_ini_dflowfm     (filename);
 end

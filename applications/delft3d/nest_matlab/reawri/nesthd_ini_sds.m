@@ -40,6 +40,7 @@
                  i_start = i_stop;
                  i_stop  = findstr(stations{istat},')');
                  sds_ini.mnstat(2,iistat)= str2num(stations{istat}(i_start(end) + 1:i_stop(end) - 1));
+                 sds_ini.names{iistat}         = stations{istat};
                  sds_ini.list_stations(iistat) = istat;
                  iistat = iistat + 1;
              end

@@ -13,4 +13,6 @@
             [wl,uu,vv] = nesthd_simhsh(filename,istat,nfs_inf,vartype);
          case {'SIMONA'}
             [wl,uu,vv] = nesthd_sdshsh(filename,istat,nfs_inf,vartype);
+         case {'DFLOWFM'}
+             [wl,uu,vv] = nesthd_hisnch(filename,istat,nfs_inf,vartype); 
       end
