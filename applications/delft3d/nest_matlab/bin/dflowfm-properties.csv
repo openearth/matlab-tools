@@ -61,6 +61,7 @@ geometry,Makeorthocenters,domain,From circum- to orthocentres?,0|1,FALSE,0,1,TRU
 geometry,Dcenterinside,domain,Limit cell center (0.0 - 1.0),Double,1,0,,TRUE,,,,,,limit cell center (1.0: in cell <-> 0.0:on c/g),,,,,,,,,
 geometry,Kmx,domain,Max. nr. of vertical layers,Integer,0,0,,TRUE,,,,,,Maximum number of vertical layers,,,,,,,,,
 geometry,Layertype,domain,Vertical Layer Type,Integer,1,1,3,TRUE,,,,,,Vertical Layer type,1 = all sigma,2 = all z,3 = use VertplizFile ,,,,,,
+geometry,Floorlevtoplay,domain,Floor level of the top layer,Double,1,1,3,TRUE,,,,,,,,,,,,
 numerics,CFLMax,numerics,Max. Courant nr.,Double,0.7,0,,FALSE,,Maximum Courant number,,,,,,,,,,,,,
 numerics,AdvecType,numerics,Advection Type:None|Wenneker|Wenneker/q(uio-u)|Perot q(uio-u)|Perot q(ui-u)|Perot/q(ui-u)-without itself,0|1|2|3|4|5,3,0,5,FALSE,,,,,,Advection type, 0=no, 1= Wenneker, qu-udzt, 2=1, q(uio-u), 3=Perot q(uio-u), 4=Perot q(ui-u), 5=Perot q(ui-u), without itself
 numerics,Limtyphu,numerics,Water depth limiter type:None|MinMod|Van Leer|Kooren|Monotone Central,0|1|2|3|4,0,0,4,FALSE,,,,,,Limiter type for waterdepth in continuity eq., 0=no, 1=minmod, 2=vanLeer, 3=Kooren, 4=Monotone Central,,,,
