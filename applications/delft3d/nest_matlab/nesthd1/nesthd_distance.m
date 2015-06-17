@@ -35,3 +35,4 @@ function dist = distance(x1        ,y1        ,x2        ,y2        , sferic)
        ycrd2 = y2;
        dist  = sqrt((xcrd2 - xcrd1).^2 + (ycrd2 - ycrd1).^2);
     end
+

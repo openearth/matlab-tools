@@ -45,7 +45,7 @@
                   end
 
                   weight(i_pnt,1:3) = nesthd_triweights(x_nes(i_pnt,1:3),y_nes(i_pnt,1:3),xbsp,ybsp);
-                  
+
               else
 
                   %% Not found, find nearest stations
@@ -57,4 +57,3 @@
               end
           end
       end
-

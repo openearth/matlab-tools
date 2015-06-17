@@ -13,3 +13,4 @@
       a     = nesthd_distance(xx(1),yy(1),xx(4),yy(4),sphere);
       c     = nesthd_distance(xx(4),yy(4),xp   ,yp   ,sphere);
       rel_n = 0.5 + (b*b - c*c)/(2*a*a);
+

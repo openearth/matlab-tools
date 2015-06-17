@@ -39,8 +39,8 @@
                   grid_coarse.Ycen = G.cen.y;
                   tic
                   name_coarse{length(G.cen.x)} = [];
-                  for i_node = 1: length(G.cen.x) 
-                      name_coarse{i_node} = ['FlowNode_' num2str(i_node,'%8.8i')]; 
+                  for i_node = 1: length(G.cen.x)
+                      name_coarse{i_node} = ['FlowNode_' num2str(i_node,'%8.8i')];
                   end;
                   toc
                   if strncmpi(ncreadatt(files{1},'wgs84','grid_mapping_name'),'latitu',6) sphere = true; end;
@@ -121,6 +121,7 @@
       close  (h);
       fclose (fid_adm);
       fclose (fid_obs);
-      
-      %% Rewrite the file with stations with only unique station positions   
+
+      %% Rewrite the file with stations with only unique station positions
       nesthd_uniqfil(files{4});
+
