@@ -1,7 +1,7 @@
 function [m,n] = nesthd_convertstring2mn(string )
 
 % Gets M,N coordinates out of a string
-% 
+%
 i_start = strfind(string,'(');
 i_end   = strfind(string,')');
 i_cent  = strfind(string,',');
@@ -14,4 +14,3 @@ else
     m = nan;
     n = nan;
 end
-

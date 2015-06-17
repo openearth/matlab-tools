@@ -26,5 +26,3 @@ else
     end
     string = strtrim(string);
 end
-
-

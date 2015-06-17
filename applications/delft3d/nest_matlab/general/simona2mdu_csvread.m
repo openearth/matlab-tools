@@ -9,7 +9,7 @@ function [csv] = simona2mdu_csvread(filename,varargin)
 
 opt.skiplines = '';
 opt.delimiter = ',';
-opt.convert   = true; 
+opt.convert   = true;
 opt = setproperty(opt,varargin);
 
 irow = 0;
@@ -66,4 +66,3 @@ while ~feof(fid)
         end
     end
  end
-

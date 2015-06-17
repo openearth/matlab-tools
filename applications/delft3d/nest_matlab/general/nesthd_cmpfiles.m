@@ -49,3 +49,4 @@ end
 if ~isempty(opt.Filename)
     fclose (fid);
 end
+

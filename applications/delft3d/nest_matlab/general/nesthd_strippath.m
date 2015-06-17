@@ -7,3 +7,4 @@ if ~isempty(fullname)
     [~,fname,fext] = fileparts(fullname);
     name = [fname fext];
 end
+

@@ -11,7 +11,7 @@ function handles = set_add_inf(handles)
     if isempty(handles.bnd)
         return
     end
-    
+
     handles.no_bnd     = length(handles.bnd.DATA);
     handles.wlev       = false;
     handles.vel        = false;
@@ -42,3 +42,4 @@ function handles = set_add_inf(handles)
             handles.add_inf.min(l)     = 0.;
         end
     end
+

@@ -14,13 +14,13 @@ while ~feof(fid_inp)
     if ~isempty(line)
         for icom = 1: length(opt.comments)
             if strcmp(line(1),opt.comments{icom})
-                write = false;           
+                write = false;
             end
         end
     else
         write = false;
     end
-    
+
     if write
         for icom = 1: length(opt.comments)
             index = strfind(line,opt.comments{icom});
@@ -34,4 +34,3 @@ end
 
 fclose(fid_inp);
 fclose(fid_out);
-

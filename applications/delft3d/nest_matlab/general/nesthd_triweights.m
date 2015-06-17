@@ -17,10 +17,11 @@
 
        %% Determine weights
        det = a11*a22 - a12*a21;
-       if (abs(det)<1E-9) 
+       if (abs(det)<1E-9)
           zp(1:3) = NaN;
        else
           zp(2) = (  a22*b1 - a12*b2)/det;
           zp(3) = ( -a21*b1 + a11*b2)/det;
           zp(1) =   1d0 - zp(2) - zp(3);
        end
+

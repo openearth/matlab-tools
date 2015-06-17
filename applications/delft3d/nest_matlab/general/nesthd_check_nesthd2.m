@@ -19,4 +19,3 @@ if ~isempty(handles.files_hd2{1}) && ~isempty(handles.files_hd2{2}) && ...
       handles.bcc_onoff         = 'off';
    end
 end
-

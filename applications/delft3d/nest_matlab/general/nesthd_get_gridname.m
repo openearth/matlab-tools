@@ -15,7 +15,7 @@ switch filetype
       filegrd = [pin mdf.filcco];
     case 'mdu'
       mdu = dflowfm_io_mdu('read',filename);
-      filegrd = [pin mdu.geometry.NetFile];  
+      filegrd = [pin mdu.geometry.NetFile];
     case {'grd' 'net'}
        filegrd = filename;
     case 'siminp'
@@ -43,3 +43,4 @@ switch filetype
     otherwise
         filegrd = '';
 end
+

@@ -77,14 +77,12 @@ if ~strcmp(filetype,'ext') && ~strcmp(filetype,'pli') && ~strcmp(filetype,'mdu')
                     end
                 end
             end
-        end 
+        end
     end
     if isempty(hulp)
         simona2mdf_message({'No time series boundaries specified'},'Window','Nesthd Error','Close',true,'n_sec',10);
     end
-    
+
     clear bnd
     bnd = hulp;
 end
-
-

@@ -62,3 +62,4 @@ end
 if ~isempty(strfind(filename,'_his.nc'))
     filetype = 'DFLOWFM';
 end
+
