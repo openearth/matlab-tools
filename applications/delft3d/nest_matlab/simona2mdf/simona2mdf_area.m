@@ -17,8 +17,24 @@ if simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.MESH.GRID.CURVILINEAR.RGFFI
 elseif simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.MESH.GRID.GENERALIZED_SPHERICAL.RGFFILE')
        % CSM
     mdf.filcco    = siminp_struc.ParsedTree.MESH.GRID.GENERALIZED_SPHERICAL.RGFFILE;
+elseif simona2mdf_fieldandvalue(siminp_struc,'ParsedTree.MESH.GRID.SPHERICAL')
+       % CSMv5 Create grid!
+    mmax = siminp_struc.ParsedTree.MESH.GRID.AREA.MMAX - 1;  
+    nmax = siminp_struc.ParsedTree.MESH.GRID.AREA.NMAX - 1;
+    x0   = siminp_struc.ParsedTree.MESH.GRID.AREA.LONGITUDE;
+    y0   = siminp_struc.ParsedTree.MESH.GRID.AREA.LATITUDE;
+    dx   = siminp_struc.ParsedTree.MESH.GRID.SPHERICAL.STEPLAMBDA;
+    dy   = siminp_struc.ParsedTree.MESH.GRID.SPHERICAL.STEPFI;
+    for m = 1: mmax
+        for n= 1: nmax
+            xcoor(m,n) = x0 + (m-0.5)*dx;
+            ycoor(m,n) = y0 + (n-0.5)*dy;
+        end
+    end
+    mdf.filcco = simona2mdf_rmpath([name_mdf '.grd']);
+    wlgrid('write','Filename',[name_mdf '.grd'],'X',xcoor,'Y',ycoor,'CoordinateSystem','Spherical');
 else
-        simona2mdf_message('Recti-linear coordinates not implemented','Window','SIMONA2MDF Warning','Close',true,'n_sec',10);
+    simona2mdf_message('Recti-linear coordinates not implemented','Window','SIMONA2MDF Warning','Close',true,'n_sec',10);
 end
 
 %
