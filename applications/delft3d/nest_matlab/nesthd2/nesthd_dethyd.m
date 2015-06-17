@@ -38,7 +38,7 @@ for ipnt = 1: nopnt
     %
     %--------for water level or velocity boundaries
     %
-    
+
     waitbar(ipnt/nopnt);
     %
     %-----------first get nesting stations, weights and orientation
@@ -56,18 +56,18 @@ for ipnt = 1: nopnt
         case 'n'
             [mnes,nnes,weight,angle,ori,x,y] = nesthd_getwgh(fid_adm,mcbsp,ncbsp,'n');
     end
-    
+
     if isempty(mnes)
         error = true;
         close(h);
         simona2mdf_message({'Inconsistancy between boundary definition and' 'administration file'},'Window','Nesthd2 Error','Close',true,'n_sec',10);
         return
     end
-    
+
     %
     % Get station numbers needed; store in ines
     %
-    
+
     for iwght = 1: 4
         ines(iwght) = 0;
         if mnes(iwght) ~= 0
@@ -79,11 +79,11 @@ for ipnt = 1: nopnt
             end
         end
     end
-    
+
     %
     % Normalise weights (stations not found on history file)
     %
-    
+
     wghttot = sum(weight);
     weight = weight/wghttot;
     %
@@ -154,7 +154,7 @@ for ipnt = 1: nopnt
                 bndval(itim).value(ipnt,1,1) = NaN;
             end
     end
-    
+
     %
     %-----------Determine time series for the parallel velocity component
     %
@@ -172,14 +172,14 @@ for ipnt = 1: nopnt
                     end
                 end
             end
-            
+
             %
             % Normalise weights (stations not found on history file)
             %
-            
+
             wghttot = sum (weight);
             weight = weight/wghttot;
-            
+
             for iwght = 1: 4
                 if ines(iwght) ~=0
                     [~,uu,vv] = nesthd_getdata_hyd(filename,ines(iwght),nfs_inf,'c');
@@ -194,3 +194,4 @@ for ipnt = 1: nopnt
 end
 
 close(h);
+
