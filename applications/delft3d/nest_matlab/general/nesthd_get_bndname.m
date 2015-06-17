@@ -9,11 +9,16 @@ switch filetype
    case 'mdf'
       mdf = ddb_readMDFText(filename);
       filebnd = [pin filesep mdf.filbnd];
+    case 'mdu'
+        mdu = dflowfm_io_mdu('read',filename);
+        filebnd = [pin mdu.external_forcing.ExtForceFile];
+    case 'pli'
+      filebnd = filename;
     case 'Delft3D'
       filebnd = filename;
     case 'siminp'
        filebnd = filename;
-    case 'DFLOWFM'
+    case 'ext'
         filebnd = filename;
     otherwise
       filebnd = '';

@@ -26,14 +26,39 @@ if ~isempty(strfind(filename,'mdf'  ))
     filetype = 'mdf';
 end
 
+if ~isempty(strfind(filename,'mdu'  ))
+    filetype = 'mdu';
+end
+
+if ~isempty(strfind(filename,'ext'  ))
+    filetype = 'ext';
+end
+
 if ~isempty(strfind(filename,'siminp'))
     filetype = 'siminp';
 end
 
- if ~isempty(strfind(filename,'grd')) || ~isempty(strfind(filename,'rgf'))
+if ~isempty(strfind(filename,'grd')) || ~isempty(strfind(filename,'rgf'))
      filetype = 'grd';
- end
+end
 
- if ~isempty(strfind(filename,'pli')) || ~isempty(strfind(filename,'.tim'))
-     filetype = 'DFLOWFM';
+if ~isempty(strfind(filename,'net.nc')) || ~isempty(strfind(filename,'map.nc'))
+    filetype = 'DFLOWFM';
+end
+
+[~,~,ext] = fileparts(filename);
+if ~isempty(strfind(ext,'pli'))
+    filetype = 'pli';
+end
+
+if ~isempty(strfind(filename,'.tim'))
+    filetype = 'DFLOWFM';
+end
+
+if ~isempty(strfind(filename,'.xyn'))
+    filetype = 'DFLOWFM';
+end
+
+if ~isempty(strfind(filename,'_his.nc'))
+    filetype = 'DFLOWFM';
 end

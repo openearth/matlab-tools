@@ -9,24 +9,22 @@ if iscell(string)
     %
     for icel = 1: length(string)
         index = strfind(string{icel},char_org);
-        if ~isempty(index)
-            for ichar = 1: length(index)
-                string{icel}(index(ichar):index(ichar)) = char_replace;
-            end
-            string{icel} = strtrim(string{icel});
+        while ~isempty(index)
+            string{icel} = [string{icel}(1:index(1) - 1) char_replace string{icel}(index(1) + length(char_org):end)];
+            index = strfind(string{icel},char_org);
         end
+        string{icel} = strtrim(string{icel});
     end
 else
     %
     % Single string
     %
     index = strfind(string,char_org);
-    if ~isempty(index)
-        for ichar = 1: length(index)
-            string(index(ichar):index(ichar)) = char_replace;
-        end
-        string = strtrim(string);
+    while ~isempty(index)
+        string = [string(1:index(1) - 1) char_replace string(index(1) + length(char_org):end)];
+        index = strfind(string,char_org);
     end
+    string = strtrim(string);
 end
 
 

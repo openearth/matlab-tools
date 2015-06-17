@@ -10,10 +10,13 @@ pin = [pin filesep];
 filetype = nesthd_det_filetype(filename);
 
 switch filetype
-   case 'mdf'
+    case 'mdf'
       mdf = ddb_readMDFText(filename);
       filegrd = [pin mdf.filcco];
-    case 'grd'
+    case 'mdu'
+      mdu = dflowfm_io_mdu('read',filename);
+      filegrd = [pin mdu.geometry.NetFile];  
+    case {'grd' 'net'}
        filegrd = filename;
     case 'siminp'
 
@@ -35,6 +38,8 @@ switch filetype
        siminp_struc = siminp(S,[nesthd_dir filesep 'bin' filesep 'waquaref.tab'],{'MESH' 'GRID'});
        filegrd = siminp_struc.ParsedTree.MESH.GRID.CURVILINEAR.RGFFILE;
        filegrd = [pin filegrd];
+    case 'DFLOWFM'
+        filegrd = filename;
     otherwise
         filegrd = '';
 end
