@@ -19,8 +19,8 @@ LINE     = [];
 
 % Open the Delft3D grid file
 grid     = delft3d_io_grd('read',filgrd);
-xcoor    = grid.cen.x';
-ycoor    = grid.cen.y';
+xcoor    = grid.cend.x';
+ycoor    = grid.cend.y';
 mmax     = size(xcoor,1);
 nmax     = size(xcoor,2);
 

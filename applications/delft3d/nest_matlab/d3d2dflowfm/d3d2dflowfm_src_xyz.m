@@ -59,8 +59,8 @@ for i_src = 1: length(m_src)
 
     %% File the line struct with x an y coordinates (TODO: z-coordinate!)
     LINE.Blckname  = 'L1';
-    LINE.DATA{1,1} = NaN;
-    LINE.DATA{1,2} = NaN;
+    LINE.DATA{1,1} = -999.999;
+    LINE.DATA{1,2} = -999.999;
     LINE.DATA{2,1} = xcoor(m_src(i_src),n_src(i_src));
     LINE.DATA{2,2} = ycoor(m_src(i_src),n_src(i_src));
     if ~dav
@@ -78,7 +78,7 @@ for i_src = 1: length(m_src)
                 height(i_lay) = height(i_lay -1) + 0.5*(OPT.thick(i_lay) + OPT.thick(i_lay - 1))*dep_src;
             end
         end
-        LINE.DATA{1,3} = NaN;
+        LINE.DATA{1,3} = -999.999;
         LINE.DATA{2,3} = height(k_src(i_src));
     end
 

@@ -61,7 +61,7 @@ mdu.pathmdu = path_mdu;
 %% Read the temporary mdf file, add the path of the d3d files to allow for reading later
 tmp                         = delft3d_io_mdf('read',filmdf);
 mdf                         = tmp.keywords;
-[path_mdf,name_mdf,ext_mdf] = fileparts(filmdf);
+[path_mdf,name_mdf,ext_mdf] = fileparts(filmdf); if isempty(path_mdf); path_mdf = '.'; end
 mdf.pathd3d                 = path_mdf;
 mdf.named3d                 = [name_mdf ext_mdf];
 
