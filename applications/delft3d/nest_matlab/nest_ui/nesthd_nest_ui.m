@@ -626,7 +626,7 @@ if ~isempty (handles.filedir); cd(handles.filedir); end
 [fin,pin] = uiputfile('*.bct; timeser*; *.tim','Specify file name hydrodynamic boundary conditions');
 cd (handles.progdir);
 
-if length(fin) >= 7 
+if length(fin) >= 7
     if strcmpi(fin(1:7),'timeser')
     [~,fin,~] = fileparts(fin);
     end
@@ -1036,3 +1036,4 @@ function dav_bc_conc_no_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of dav_bc_conc_no
+
