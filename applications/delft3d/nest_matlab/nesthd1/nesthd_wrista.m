@@ -1,4 +1,4 @@
-      function wrista(fid   , filename, mcnes , ncnes , nobnd)
+      function wrista(fid   , filetype, mcnes , ncnes , nobnd)
 
 % wrista: writes nest stations to file
 
@@ -13,7 +13,6 @@
 %
 % function           : writes nest stations to file
 
-      filetype   = nesthd_det_filetype(filename);
       last_point = 1000;
 
 %
