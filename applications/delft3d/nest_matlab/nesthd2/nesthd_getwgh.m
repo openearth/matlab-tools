@@ -70,7 +70,7 @@
                     varargout{1} = sscanf(str_temp(1:i_end),'%f')*pi/180.;
                 end
                 if typbnd == 'r'
-%------------------old
+%------------------old 
 %                  varargout{2} = strread(tline(98:end),'%s');
 %------------------new
                    varargout{2} = strtrim(tline(s_equal(3) + 1: end));
@@ -99,3 +99,4 @@
           end
           tline = fgetl(fid);
       end
+

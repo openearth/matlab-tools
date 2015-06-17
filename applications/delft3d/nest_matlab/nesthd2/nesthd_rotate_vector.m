@@ -8,4 +8,3 @@ function [u_rot,v_rot] = rotate_vector(u,v,angle)
 
 u_rot  = cos(angle)*u - sin(angle)*v;
 v_rot  = sin(angle)*u + cos(angle)*v;
-

@@ -23,6 +23,7 @@
       notims = nfs_inf.notims;
       kmax   = nfs_inf.kmax;
       mnstat = nfs_inf.mnstat;
+      names  = nfs_inf.names;
 
       g = 9.81;
 
@@ -44,34 +45,40 @@ for ipnt = 1: nopnt
     %-----------first get nesting stations, weights and orientation
     %           of support point
     %
-    mcbsp = bnd.m(ipnt);
-    ncbsp = bnd.n(ipnt);
+    mnbcsp = bnd.Name{ipnt};
     switch type
         case 'z'
-            [mnes,nnes,weight] = nesthd_getwgh(fid_adm,mcbsp,ncbsp,type);
+            [mnnes,weight]               = nesthd_getwgh2 (fid_adm,mnbcsp,type);
         case {'c' 'p'}
-            [mnes,nnes,weight,angle] = nesthd_getwgh(fid_adm,mcbsp,ncbsp,'c');
+            [mnnes,weight,angle]         = nesthd_getwgh2 (fid_adm,mnbcsp,'c');
         case {'r' 'x'}
-            [mnes,nnes,weight,angle,ori] = nesthd_getwgh(fid_adm,mcbsp,ncbsp,'r');
+            [mnnes,weight,angle,ori]     = nesthd_getwgh2 (fid_adm,mnbcsp,'r');
         case 'n'
-            [mnes,nnes,weight,angle,ori,x,y] = nesthd_getwgh(fid_adm,mcbsp,ncbsp,'n');
+            [mnnes,weight,angle,ori,x,y] = nesthd_getwgh2 (fid_adm,mnbcsp,'n');
     end
 
-    if isempty(mnes)
+    if isempty(mnnes)
         error = true;
         close(h);
         simona2mdf_message({'Inconsistancy between boundary definition and' 'administration file'},'Window','Nesthd2 Error','Close',true,'n_sec',10);
         return
     end
-
+    
+    % !!!! Temporarely, for testing porposes only, remove all spavce from nfs_inf.names && mnnes
+    mnnes         = simona2mdu_replacechar(mnnes        ,' ','');
+    mnnes         = simona2mdu_replacechar(mnnes        ,'(M,N)=','');
+    nfs_inf.names = simona2mdu_replacechar(nfs_inf.names,' ','');
+    nfs_inf.names = simona2mdu_replacechar(nfs_inf.names,'(M,N)=','');
+    
+   
     %
     % Get station numbers needed; store in ines
     %
-
+        
     for iwght = 1: 4
         ines(iwght) = 0;
-        if mnes(iwght) ~= 0
-            istat       = find(mnstat(1,:) == mnes(iwght) & mnstat(2,:) == nnes(iwght),1);
+        if ~isempty(mnnes)
+            istat       =  find(strcmp(nfs_inf.names,mnnes{iwght}) == 1,1,'first');
             if ~isempty(istat)
                 ines(iwght) = nfs_inf.list_stations(istat);
             else
@@ -194,4 +201,3 @@ for ipnt = 1: nopnt
 end
 
 close(h);
-

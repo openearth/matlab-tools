@@ -83,4 +83,3 @@ if kmax > 1 && vel && (strcmpi(profile,'logarithmic') || strcmpi(profile,'unifor
 else
     nfs_inf.nolay = kmax;
 end
-

@@ -13,111 +13,119 @@
 % limitations        :
 % subroutines called : getwgh, check, getwcr
 %***********************************************************************
-      h = waitbar(0,'Generating transport boundary conditions','Color',[0.831 0.816 0.784]);
+h = waitbar(0,'Generating transport boundary conditions','Color',[0.831 0.816 0.784]);
 
 
-      nobnd  = length(bnd.DATA);
-      notims = nfs_inf.notims;
-      kmax   = nfs_inf.kmax;
-      lstci  = nfs_inf.lstci;
-      mnstat = nfs_inf.mnstat;
+no_pnt = length(bnd.DATA);
+notims = nfs_inf.notims;
+kmax   = nfs_inf.kmax;
+lstci  = nfs_inf.lstci;
+mnstat = nfs_inf.mnstat;
 
-      for itim = 1: notims
-         bndval(itim).value(1:nobnd,1:kmax,1:lstci,1:2) = 0.;
-      end
+for itim = 1: notims
+    bndval(itim).value(1:no_pnt,1:kmax,1:lstci,1:2) = 0.;
+end
 
 %
 %-----cycle over all boundary support points
 %
-      for ibnd = 1: nobnd
+for i_pnt = 1: no_pnt
+    
+    waitbar(i_pnt/no_pnt);
+    if i_pnt == 4
+        i_pnt
+    end
+    
+    %
+    %-----------first get nesting stations, weights and orientation
+    %           of support point
+    %
+  
+    mnbcsp = bnd.Name{i_pnt};
+    [mnnes,weight]               = nesthd_getwgh2 (fid_adm,mnbcsp,'z');
 
-         for isize = 1: 2
+    if isempty(mnnes)
+        error = true;
+        close(h);
+        simona2mdf_message({'Inconsistancy between boundary definition and' 'administration file'},'Window','Nesthd2 Error','Close',true,'n_sec',10);
+        return
+    end
 
-            waitbar(((ibnd-1)*2+isize)/(2*nobnd));
+    % !!!! Temporarely, for testing porposes only, remove all spavce from nfs_inf.names && mnnes
+    mnnes         = simona2mdu_replacechar(mnnes        ,' ','');
+    nfs_inf.names = simona2mdu_replacechar(nfs_inf.names,' ','');
 
-%
-%-----------first get nesting stations, weights and orientation
-%           of support point
-%
+    %
+    % Get station numbers needed; store in ines
+    %
 
-            mcbsp = bnd.m(ibnd,isize);
-            ncbsp = bnd.n(ibnd,isize);
-            [mnes,nnes,weight] = nesthd_getwgh(fid_adm,mcbsp,ncbsp,'z');
-            if isempty(mnes) return; end;
-
-            %
-            % Get station numbers needed; store in ines
-            %
-
-            for iwght = 1: 4
-                ines(iwght) = 0;
-                if mnes(iwght) ~= 0
-                   istat       = find(mnstat(1,:) == mnes(iwght) & mnstat(2,:) == nnes(iwght),1);
-                   if ~isempty(istat)
-                      ines(iwght) = nfs_inf.list_stations(istat);
-                   else
-                      weight(iwght) = 0;
-                   end
-               end
+    for iwght = 1: 4
+        ines(iwght) = 0;
+        if ~isempty(mnnes)
+            istat       =  find(strcmp(nfs_inf.names,mnnes{iwght}) == 1,1,'first');
+            if ~isempty(istat)
+                ines(iwght) = nfs_inf.list_stations(istat);
+            else
+                weight(iwght) = 0;
             end
-
-            %
-            % Normalise weights (stations not found on history file)
-            %
-
-            wghttot = sum(weight);
-            weight = weight/wghttot;
-
-            %
-            % Determine time series of the boundary conditions
-            %
-
-            for iwght = 1: 4
-               if ines(iwght) ~=0
-                  for l = 1:lstci
-
-                     %
-                     % If bc for this constituent are requested
-                     %
-
-                     if add_inf.genconc(l)
-
-                        %
-                        % Get the time series
-                        %
-
-                        conc = nesthd_getdata_tran(filename,ines(iwght),nfs_inf,l);
-
-                        %
-                        % Determine weighed value
-                        %
-
-                        for itim = 1: notims
-                           for k = 1: kmax
-                              bndval(itim).value(ibnd,k,l,isize) = bndval(itim).value(ibnd,k,l,isize) +             ...
-                                                                conc(itim,k)*weight(iwght);
-                           end
-                        end
-                     end
-                  end
-               end
-            end
-
-            %
-            % Adjust boundary conditions
-            %
-
-            for l = 1: lstci
+        end
+    end
+                                       
+    %
+    % Normalise weights (stations not found on history file)
+    %
+    
+    wghttot = sum(weight);
+    weight = weight/wghttot;
+    
+    %
+    % Determine time series of the boundary conditions
+    %
+    
+    for iwght = 1: 4
+        if ines(iwght) ~=0
+            for l = 1:lstci
+                
+                %
+                % If bc for this constituent are requested
+                %
+                
                 if add_inf.genconc(l)
-                    for itim = 1 : notims
-                        bndval(itim).value(ibnd,:,l,isize) =  bndval(itim).value(ibnd,:,l,isize) + add_inf.add(l);
-                        bndval(itim).value(ibnd,:,l,isize) =  min(bndval(itim).value(ibnd,:,l,isize),add_inf.max(l));
-                        bndval(itim).value(ibnd,:,l,isize) =  max(bndval(itim).value(ibnd,:,l,isize),add_inf.min(l));
+                    
+                    %
+                    % Get the time series
+                    %
+                    
+                    conc = nesthd_getdata_tran(filename,ines(iwght),nfs_inf,l);
+                    
+                    %
+                    % Determine weighed value
+                    %
+                    
+                    for itim = 1: notims
+                        for k = 1: kmax
+                            bndval(itim).value(i_pnt,k,l,1) = bndval(itim).value(i_pnt,k,l,1) +             ...
+                                conc(itim,k)*weight(iwght);
+                        end
                     end
                 end
             end
-         end
-      end
+        end
+    end
+    
+    %
+    % Adjust boundary conditions
+    %
+    
+    for l = 1: lstci
+        if add_inf.genconc(l)
+            for itim = 1 : notims
+                bndval(itim).value(i_pnt,:,l,1) =  bndval(itim).value(i_pnt,:,l,1) + add_inf.add(l);
+                bndval(itim).value(i_pnt,:,l,1) =  min(bndval(itim).value(i_pnt,:,l,1),add_inf.max(l));
+                bndval(itim).value(i_pnt,:,l,1) =  max(bndval(itim).value(i_pnt,:,l,1),add_inf.min(l));
+            end
+        end
+    end
+end
 
-      close(h);
-
+close(h);
