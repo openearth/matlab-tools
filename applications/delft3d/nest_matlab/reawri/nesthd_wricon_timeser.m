@@ -25,7 +25,7 @@ for l = 1: lstci
       %
       % Set pointname
       %
-         i_pnt = (1ibn -1)*2 + iside
+         i_pnt = (ibn -1)*2 + iside
          if isfield(bnd,'pntnr')
             pntname = ['P' num2str(bnd.pntnr(i_pnt))];
          else
