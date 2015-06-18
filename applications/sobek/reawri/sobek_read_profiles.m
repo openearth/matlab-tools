@@ -6,7 +6,7 @@ function prof = sobek_read_profiles(prof_fname)
 %   Syntax:
 %   prof = sobek_read_profiles(prof_fname)
 %
-%   Input: For <keyword,value> pairs call Untitled() without arguments.
+%   Input:
 %   prof_fname  = filename including path of the profile.def file
 %
 %   Output:
@@ -50,11 +50,11 @@ function prof = sobek_read_profiles(prof_fname)
 % Created: 18 Jun 2015
 % Created with Matlab version: 8.5.0.197613 (R2015a)
 
-% $Id: $
-% $Date: $
-% $Author: $
-% $Revision: $
-% $HeadURL: $
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 % $Keywords: $
 
 %%
