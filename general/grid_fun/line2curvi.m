@@ -11,15 +11,26 @@ function [xOut, yOut,midLine]=line2curvi(x,y,parStep,perStep,varargin)
 %   parStep  = parallel step
 %   perStep  = perpendicular step
 %
+%   Optional input:
+%   rmax = maximum grid distance from line
+%
 %   Output:
 %   xOut = x grid coordinate
 %   yOut = y grid coordinate
 %   midLine = coordinate of center line grid
 %
 %   Example
-%   Untitled
+%   myspl(:,1) = 1:500;
+%   myspl(:,2) = zeros(500,1);
+%   [xOut yOut]=line2curvi(myspl(:,1),myspl(:,2),50,10,'rmax',50);
 %
-%   See also
+%   Note:
+%   The grid may have the wrong grid orientation for Delft3D. In that case,
+%   read the grid with delft3d_io_grd and write it back with another
+%   filename. The delft3d_io_grd function writes the grid with the correct
+%   orientation
+%
+%   See also delft3d_io_grd
 
 
 %% Copyright notice
