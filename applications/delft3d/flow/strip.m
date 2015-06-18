@@ -13,7 +13,7 @@ kcs = nesthd_det_icom(GRID.X,default,enclosure);
 for m = 1: mmax -1
     for n = 1: nmax - 1
         if kcs(m  ,n  ) == 0 && kcs(m+1,n  ) == 0 && ...
-           kcs(m+1,n+1) == 0 && kcs(m+1,n+1) == 0
+           kcs(m  ,n+1) == 0 && kcs(m+1,n+1) == 0
             GRID.X(m,n) = default;
             GRID.Y(m,n) = default;
          end
