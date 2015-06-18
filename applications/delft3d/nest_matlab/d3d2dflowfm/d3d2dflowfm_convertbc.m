@@ -55,7 +55,7 @@ for i_pli = 1: length(filpli)
             continue
         end
         sign = str2num(LINE.DATA{i_pnt,3}(index(end-1):index(end) - 1));
-        if OPT.Salinity || OPT.Temperature 
+        if OPT.Salinity || OPT.Temperature
             b_type  = 't';
         else
             b_type = lower(strtrim(LINE.DATA{i_pnt,3}(index(2):index(3) - 1)));
@@ -187,7 +187,8 @@ for i_pli = 1: length(filpli)
                         SERIES.Values(:,2)      = sign*mean(bct.Table(nr_table).Data(:,2       :2        + (kmax - 1)),2);
                     else                                                             %end B
                         SERIES.Values(:,2)      = sign*mean(bct.Table(nr_table).Data(:,2 + kmax:2 + kmax + (kmax - 1)),2);
-                        if floor(mean(SERIES.Values(:,2))) == 999;
+                        % Total discharge boundary, side B = -999 in bct file but not used!
+                        if floor(mean(abs(SERIES.Values(:,2)))) == 999;
                             SERIES.Values(:,2)  = sign*mean(bct.Table(nr_table).Data(:,2       :2        + (kmax - 1)),2);
                         end
                     end
@@ -200,7 +201,7 @@ for i_pli = 1: length(filpli)
                             SERIES.Values  = abs(SERIES.Values);
                         end
                     end
-
+                    
                     % Fill values
                     SERIES.Values      = num2cell(SERIES.Values);
 

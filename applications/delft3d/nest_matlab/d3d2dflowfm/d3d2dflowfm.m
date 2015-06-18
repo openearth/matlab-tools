@@ -76,6 +76,11 @@ mdu.geometry.NetFile = simona2mdf_rmpath(mdu.geometry.NetFile);
 simona2mdf_message('Generating D-Flow FM Area              information','Window','D3D2DFLOWFM Message');
 mdu = d3d2dflowfm_area     (mdf,mdu,name_mdu);
 
+if strcmpi(mdf.dpsopt,'dp') % depth defined in cell centres, make xyb file
+    simona2mdf_message('Generating D-Flow FM Bathymetry         information','Window','D3D2DFLOWFM Message');
+    mdu = d3d2dflowfm_bathy(mdf,mdu,name_mdu);
+end
+
 simona2mdf_message('Generating D-Flow FM Dry Point         information','Window','D3D2DFLOWFM Message');
 mdu = d3d2dflowfm_dry      (mdf,mdu,name_mdu);
 

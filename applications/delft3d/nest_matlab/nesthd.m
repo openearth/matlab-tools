@@ -62,6 +62,22 @@ if isempty (getenv('nesthd_path'))
    uiwait(h);
 end
 
+%% Display a waring, administration file has changed
+Gen_inf    = {'Nesthd Version 2.0:'                                                                                 ;
+              ' '                                                                                                  ;
+              'In addition to nesting Delft3D-Flow models and SIMONA models,'                                      ;
+              'This version also support nesting of DFLOWFM models'                                                ;
+              'To allow for nesting of DFLOWFM models the administration file'                                     ;
+              'had to be adjusted (string based in stead of (M,N) based)'                                          ;
+              'This means that old, version 1, adminstration files do not work anymore'                            ;
+              ' '                                                                                                  ;
+              'Hence, old adminstration files will have to be re-generated'                                        ;
+              ' '                                                                                                  ;
+              'If you encounter problems, please do not hesitate to contact me'                                    ;  
+              'Theo.vanderkaaij@deltares.nl'                                                                      };
+
+simona2mdf_message(Gen_inf,'n_sec',15,'Window','NESTHD Message','Close',true);
+
 %% Initialize
 
 handles  = [];
