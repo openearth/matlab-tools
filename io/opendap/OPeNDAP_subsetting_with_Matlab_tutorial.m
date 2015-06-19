@@ -28,8 +28,8 @@ url_grid{8} = 'F:\checkouts\OpenEarthRawData\gebco\raw\gebco_1min.nc';
 url_line    = 'http://opendap.deltares.nl/thredds/dodsC/opendap/noaa/gshhs/gshhs_i.nc';
 
 %% Get line data: 1D vectors are small, so we can get all data
-L.lon    = nc_varget(url_line,'lon');
-L.lat    = nc_varget(url_line,'lat');
+L.lon    = ncread(url_line,'lon');
+L.lat    = ncread(url_line,'lat');
 
 %% Define bounding box
 boundingbox.lon = [ 0 10];
@@ -40,9 +40,9 @@ for i=1:length(url_grid)
    ncfile = url_grid{i}
 
    %% Get full lat,lon vectors: 1D vectors are small, so we can get all data
-   nc_dump(ncfile)
-   G.lon    = nc_varget(ncfile,'lon' ); % 1D
-   G.lat    = nc_varget(ncfile,'lat' ); % 1D
+   ncdisp(ncfile)
+   G.lon    = ncread(ncfile,'lon' ); % 1D
+   G.lat    = ncread(ncfile,'lat' ); % 1D
    
    %% Find the subset-indices within the bounding box
    ilon     = find(G.lon > boundingbox.lon(1) & G.lon < boundingbox.lon(2));
@@ -50,18 +50,18 @@ for i=1:length(url_grid)
    
    %% Translate subset-indices to netCDF argument: [start,count,stride]
    stride   = [1 1]; % additionally specify a stride when the subset is still too big
-   start    = [min(ilat)-1 min(ilon)-1]; % subtract one as netCDF is 0-based, whereas matlab is 1-bases
-   count    = ceil([length(ilat) length(ilon)]./stride); % use ceil to cover at least bounding box area
+   start    = [min(ilon) min(ilat)]; % matlab is 1-bases
+   count    = ceil([length(ilon) length(ilat)]./stride); % use ceil to cover at least bounding box area
    
    %% Request data subset
-   G.lat    = nc_varget(ncfile,'lat' ,start(1),count(1),stride(1)); % 1D
-   G.lon    = nc_varget(ncfile,'lon' ,start(2),count(2),stride(2)); % 1D
-   G.topo   = nc_varget(ncfile,'topo',start(:),count(:),stride(:)); % 2D
-   G.title  = nc_attget(ncfile,nc_global,'title');
+   G.lat    = ncread(ncfile,'lat' ,start(2),count(2),stride(2)); % 1D
+   G.lon    = ncread(ncfile,'lon' ,start(1),count(1),stride(1)); % 1D
+   G.topo   = ncread(ncfile,'topo',start(:),count(:),stride(:)); % 2D
+   G.title  = ncreadatt(ncfile,'/','title');
    
    %% Plot data subset
    figure(i)
-   h = pcolorcorcen(G.lon,G.lat,double(G.topo))
+   h = pcolorcorcen(G.lon,G.lat,double(G.topo)')
    hold on
    plot(L.lon,L.lat,'k')
    axis([boundingbox.lon boundingbox.lat])
@@ -76,7 +76,7 @@ for i=1:length(url_grid)
    if nc_isvar(ncfile,'SID')
    G.topo   = nc_varget(ncfile,'SID' ,start(:),count(:),stride(:)); % 2D
    delete(h)
-   h = pcolorcorcen(G.lon,G.lat,double(G.topo));
+   h = pcolorcorcen(G.lon,G.lat,double(G.topo)');
    ctick = nc_attget(ncfile,'SID','flag_values');
    colormap(colormap_cpt('Paired 12',length(ctick)))
    clim ([min(ctick) max(ctick)]+[-.5 .5])
