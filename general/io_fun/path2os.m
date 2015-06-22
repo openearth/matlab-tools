@@ -88,7 +88,10 @@ function string = path2os(string,input)
    prefix = '';
    if     length(string) > 6  
       if strcmpi(string(1:7),'http://') | strcmpi(string(1:7),'http:\\');prefix = 'http://';string = string(8:end);
-        if strcmpi(slash,'\');warning('for http:// backward \ slash is recommended');end
+        if strcmpi(slash,'\')
+            slash = '/';
+            %warning('for http:// backward \ slash is recommended');
+        end
       end
    end
    if length(string) > 1     
