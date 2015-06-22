@@ -56,6 +56,7 @@ classdef AdaptiveResponseSurface < handle
         FitFunction
         WeightFunction
         NoCrossTerms
+        AvailableEvaluationFunction
     end
     properties (SetAccess = private)
         Fit
@@ -66,6 +67,7 @@ classdef AdaptiveResponseSurface < handle
         Weights
         MinNrEvaluationsInitialFit
         MinNrEvaluationsFullFit
+        EvaluationIsAvailable
     end
     
     %% Methods
@@ -150,19 +152,19 @@ classdef AdaptiveResponseSurface < handle
             if ~isempty(this.ModelTerms)
                 if this.DefaultFit
                     % default unweighted polynomial fitting
-                    this.Fit    = feval(this.FitFunction,limitState.UValues(limitState.EvaluationIsExact,:), limitState.ZValues(limitState.EvaluationIsExact), this.ModelTerms);
+                    this.Fit    = feval(this.FitFunction,limitState.UValues(this.EvaluationIsAvailable,:), limitState.ZValues(this.EvaluationIsAvailable), this.ModelTerms);
                 else
                     if this.WeightedARS
                         % calculate weights, then do a weighted polynomial
                         % fit
-                        this.Weights    = feval(this.WeightFunction, limitState.ZValues(limitState.EvaluationIsExact));
-                        this.Fit        = feval(this.FitFunction, limitState.UValues(limitState.EvaluationIsExact,:), limitState.ZValues(limitState.EvaluationIsExact), this.Weights, this.ModelTerms);
+                        this.Weights    = feval(this.WeightFunction, limitState.ZValues(this.EvaluationIsAvailable));
+                        this.Fit        = feval(this.FitFunction, limitState.UValues(this.EvaluationIsAvailable,:), limitState.ZValues(this.EvaluationIsAvailable), this.Weights, this.ModelTerms);
                     else
                         % only use the first 2n+1 exact values for the
                         % polynomial fit
                         
-                        inputZvalues = limitState.ZValues(limitState.EvaluationIsExact);
-                        inputUvalues = limitState.UValues(limitState.EvaluationIsExact,:);
+                        inputZvalues = limitState.ZValues(this.EvaluationIsAvailable);
+                        inputUvalues = limitState.UValues(this.EvaluationIsAvailable,:);
                         
                         [uniqueZvalues, m, n] = unique(inputZvalues);
                         uniqueUvalues = inputUvalues(m,:);
@@ -210,13 +212,9 @@ classdef AdaptiveResponseSurface < handle
         
         %Determine modelterms in polynomial fit depending on number of
         %variables
-        function DetermineModelTerms(this, limitState, varargin)
-            if isempty(varargin)
-                nrAvailableEvaluations  = sum(limitState.EvaluationIsExact);
-            else
-                nrAvailableEvaluations  = varargin{:};
-            end
-                        
+        function DetermineModelTerms(this, limitState, varargin)                        
+            nrAvailableEvaluations = this.CalculateNrAvailableEvaluations(limitState);
+            
             if  nrAvailableEvaluations >= this.MinNrEvaluationsFullFit && ~this.NoCrossTerms
                 this.ModelTerms = 2;
             elseif nrAvailableEvaluations >= this.MinNrEvaluationsInitialFit 
@@ -236,18 +234,34 @@ classdef AdaptiveResponseSurface < handle
             this.MinNrEvaluationsInitialFit = 2*limitState.NumberRandomVariables + 1;
         end
         
+        %Get number of available evaluations
+        function nrAvailableEvaluations = CalculateNrAvailableEvaluations(this, limitState)
+            this.DetermineAvailableEvaluations(limitState)
+            nrAvailableEvaluations = numel(this.EvaluationIsAvailable);
+        end
+        
+        %Determine which evaluations should be used in fitting the ARS
+        function DetermineAvailableEvaluations(this, limitState)
+            if ~isempty(this.AvailableEvaluationFunction)
+                this.EvaluationIsAvailable = feval(this.AvailableEvaluationFunction, this, limitState);
+            else
+                this.EvaluationIsAvailable = limitState.EvaluationIsExact;
+            end
+        end
 
         %Set default values
         function SetDefaults(this)
-            this.GoodFit                = false;
-            this.MaxCoefficient         = 1e5;
-            this.MaxRootMeanSquareError = 1;
-            this.CheckQualityARS        = true;
-            this.DefaultFit             = true;
-            this.WeightedARS            = false;
-            this.FitFunction            = @polyfitn;
-            this.WeightFunction         = @get_weights;
-            this.NoCrossTerms           = false;
+            this.GoodFit                        = false;
+            this.MaxCoefficient                 = 1e5;
+            this.MaxRootMeanSquareError         = 1;
+            this.CheckQualityARS                = true;
+            this.DefaultFit                     = true;
+            this.WeightedARS                    = false;
+            this.FitFunction                    = @polyfitn;
+            this.WeightFunction                 = @get_weights;
+            this.NoCrossTerms                   = false;
+            this.AvailableEvaluationFunction    = [];
+            this.EvaluationIsAvailable          = [];
         end
         
         % Calculate ARS values on regular grid for plotting
