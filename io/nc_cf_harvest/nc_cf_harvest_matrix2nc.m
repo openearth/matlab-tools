@@ -123,8 +123,13 @@ function nc_cf_harvest_matrix2nc(ncname,ATT,varargin)
       M.standard_name.platform_id            = 'platform_id'; 
       M.standard_name.platform_name          = 'platform_name';       
    end
-
-      struct2nc(ncname,ATT,M);
+   
+   
+      if exist(ncname)
+          error([ncname,' already exists: skipped.'])
+      else
+          struct2nc(ncname,ATT,M);
+      end
 
       nc_attput(ncname,nc_global,'comment'    ,'catalog.nc was created offline by $$.');
       nc_attput(ncname,nc_global,'Conventions','CF-1.6');

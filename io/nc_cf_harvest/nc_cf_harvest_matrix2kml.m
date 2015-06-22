@@ -350,7 +350,7 @@ function OPT = nc_cf_harvest_matrix2kml(ATT,varargin)
       end
    
       if  ~isnan(D.timeCoverage_end(ii))
-          ending = sprintf(['<begin>%s</begin>'],...
+          ending = sprintf(['<end>%s</end>'],...
               datestr(D.timeCoverage_end(ii),'yyyy-mm-ddTHH:MM:SS'));   
       else
           ending = '';
@@ -359,8 +359,8 @@ function OPT = nc_cf_harvest_matrix2kml(ATT,varargin)
       if  ~isnan(D.timeCoverage_start(ii))
           OPT.timeSpan = sprintf([...
               '<TimeSpan>'...
-              '<begin>%s</begin>'... % OPT.timeIn
-              '<end>%s</end>'...     % OPT.timeOut
+              '%s'... % OPT.timeIn
+              '%s'...     % OPT.timeOut
               '</TimeSpan>'],...
               begin,...
               ending);
