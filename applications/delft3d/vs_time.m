@@ -24,6 +24,7 @@ function varargout = vs_time(NFSstruct,varargin),
 % - nt          # simulated timesteps
 % - nt_storage  # timesteps in NEFIS file
 % - nt_loaded   # timesteps loaded from NEFIS file
+% - morft       # morphological time (days since start of simulation)
 %
 % See also: vs_use, vs_get, vs_let, vs_disp
 
@@ -123,6 +124,13 @@ if strcmp(NFSstruct.SubType,'Delft3D-trim')
       else
          T.dt_storage       = diff(T.t(1:2));
       end
+      
+      %% 
+      output = char(vs_find(NFSstruct,'MORFT'));
+      if strcmp(output, 'map-infsed-serie');
+          T.morft = vs_let(NFSstruct,'map-infsed-serie','MORFT');
+      end
+      
 
 elseif strcmp(NFSstruct.SubType,'Delft3D-com')
 %% -------------------------------------------
