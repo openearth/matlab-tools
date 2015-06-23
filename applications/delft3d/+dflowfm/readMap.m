@@ -44,10 +44,9 @@ function varargout = readMap(ncfile,varargin)
 
 %% input
 
-   OPT.face      = 0; % whether to load face data 
    OPT.zwl       = 1; % whether to load data 
    OPT.sal       = 0; % whether to load data 
-   OPT.vel       = 0; % whether to load data 
+   OPT.vel       = 1; % whether to load data 
    OPT.spir      = 0; % whether to load data 
 
    if nargin==0
@@ -65,7 +64,7 @@ function varargout = readMap(ncfile,varargin)
    if odd(nargin)
       tmp     = nc_getvarinfo(ncfile,'s1');
       it      = tmp.Size(1);
-      cen.n   = tmp.Size(2);
+      face.FlowElemSize   = tmp.Size(2);
       nextarg = 1;
    else
       it      = varargin{1};
@@ -95,49 +94,49 @@ function varargout = readMap(ncfile,varargin)
 
 %% read cen data
 
-   cen.mask = G.cen.n; % not an index array yet as nc_varget can only handle one range
+   face.mask = G.face.FlowElemSize; % not an index array yet as nc_varget can only handle one range
 
-   if OPT.zwl & nc_isvar (ncfile, 's1');
-      D.cen.zwl  = nc_varget(ncfile, 's1' ,[it-1 0],[1 cen.mask]); % Waterlevel
+   if OPT.zwl && nc_isvar (ncfile, 's1');
+      D.face.zwl  = nc_varget(ncfile, 's1' ,[it-1 0],[1 face.mask]); % Waterlevel
    end  
-   if OPT.sal & nc_isvar (ncfile, 'sa1');
+   if OPT.sal && nc_isvar (ncfile, 'sa1');
        info=nc_getvarinfo(ncfile,'sa1');
        NDIM=length(info.Size);
        if ( NDIM==2 )
-           D.cen.sal  = nc_varget(ncfile, 'sa1',[it-1 0],[1 cen.mask]); % Salinity
+           D.face.sal  = nc_varget(ncfile, 'sa1',[it-1 0],[1 face.mask]); % Salinity
        else
            if ( NDIM==3 )
-              D.cen.sal  = nc_varget(ncfile, 'sa1',[it-1 0 0],[1 cen.mask laydim]); % Salinity
+              D.face.sal  = nc_varget(ncfile, 'sa1',[it-1 0 0],[1 face.mask laydim]); % Salinity
            end
        end
    end
    
-   if OPT.vel & nc_isvar (ncfile, 'ucx')
+   if OPT.vel && nc_isvar (ncfile, 'ucx')
       info=nc_getvarinfo(ncfile,'ucx');
       NDIM=length(info.Size);
       if ( NDIM==2 )
 %        2D          
-         D.cen.u    = nc_varget(ncfile, 'ucx',[it-1 0],[1 cen.mask]); % x velocity at cell center
+         D.face.u    = nc_varget(ncfile, 'ucx',[it-1 0],[1 face.mask]); % x velocity at cell center
          if nc_isvar (ncfile, 'ucy');
-            D.cen.v    = nc_varget(ncfile, 'ucy',[it-1 0],[1 cen.mask]); % y velocity at cell center
+            D.face.v    = nc_varget(ncfile, 'ucy',[it-1 0],[1 face.mask]); % y velocity at cell center
          end
       else
          if ( NDIM==3 )
-            D.cen.u    = nc_varget(ncfile, 'ucx',[it-1 0 0],[1 cen.mask laydim]); % x velocity at cell center
+            D.face.u    = nc_varget(ncfile, 'ucx',[it-1 0 0],[1 face.mask laydim]); % x velocity at cell center
             if nc_isvar (ncfile, 'ucy');
-               D.cen.v    = nc_varget(ncfile, 'ucy',[it-1 0 0],[1 cen.mask laydim]); % y velocity at cell center
+               D.face.v    = nc_varget(ncfile, 'ucy',[it-1 0 0],[1 face.mask laydim]); % y velocity at cell center
             end
             if nc_isvar (ncfile, 'ucz');
-               D.cen.w    = nc_varget(ncfile, 'ucz',[it-1 0 0],[1 cen.mask laydim]); % y velocity at cell center
+               D.face.w    = nc_varget(ncfile, 'ucz',[it-1 0 0],[1 face.mask laydim]); % y velocity at cell center
             end            
          end
       end
    end
-   if OPT.spir & nc_isvar (ncfile, 'spircrv');
-      D.cen.crv  = nc_varget(ncfile, 'spircrv' ,[it-1 0],[1 cen.mask]); % Curvature
+   if OPT.spir && nc_isvar (ncfile, 'spircrv');
+      D.face.crv  = nc_varget(ncfile, 'spircrv' ,[it-1 0],[1 face.mask]); % Curvature
    end  
-   if OPT.spir & nc_isvar (ncfile, 'spirint');
-      D.cen.I    = nc_varget(ncfile, 'spirint' ,[it-1 0],[1 cen.mask]); % Secondary fl;ow intensity
+   if OPT.spir && nc_isvar (ncfile, 'spirint');
+      D.face.I    = nc_varget(ncfile, 'spirint' ,[it-1 0],[1 face.mask]); % Secondary flow intensity
    end  
 
 %% < read face data >
