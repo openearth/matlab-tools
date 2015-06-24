@@ -125,7 +125,15 @@ classdef LimitState < handle
         
         % Get how many exact limit state evaluations are present
         function numberexactevaluations = get.NumberExactEvaluations(this)
-            numberexactevaluations = sum(this.EvaluationIsExact);
+            numberexactevaluations = 0;
+            
+            if isa(this,'MultipleLimitState')
+                for iLSF = 1:numel(this.LimitStates)
+                    numberexactevaluations = max(sum(this.LimitStates(iLSF).EvaluationIsExact), numberexactevaluations);
+                end
+            else
+                numberexactevaluations = sum(this.EvaluationIsExact);
+            end
         end
            
         %% Other methods       
