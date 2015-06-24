@@ -172,14 +172,17 @@ classdef AdaptiveDirectionalImportanceSampling < DirectionalSampling
             if this.LimitState.CheckAvailabilityARS
                 % if a good response surface is available, use
                 % that in the line search
+                this.LineSearcher.PerformSearch(this.UNormalVector(this.IndexQueue(index),:), this.LimitState, this.LimitState.RandomVariables, 'approximate', true);
                 if isa(this.LimitState,'MultipleLimitState')
                     for iLSF = 1:numel(this.LimitState.LimitStates)
-                        if ~this.LimitState.LimitStates(iLSF).CheckAvailabilityARS
+                        if ~this.LimitState.LimitStates(iLSF).CheckAvailabilityARS && ...
+                                none(this.LimitState.LimitStates(1).BetaValues(this.UNormalIndexPerEvaluation==this.IndexQueue(index)).* ...
+                                this.LimitState.LimitStates(1).EvaluationIsExact(this.UNormalIndexPerEvaluation==this.IndexQueue(index)) == ...
+                                this.LimitState.LimitStates(1).BetaValues(end))
                             this.NewExactEvaluation             = true;
                         end
                     end
                 end
-                this.LineSearcher.PerformSearch(this.UNormalVector(this.IndexQueue(index),:), this.LimitState, this.LimitState.RandomVariables, 'approximate', true);
             else
                 % else, perform exact line search (without use of response surface)
                 this.LineSearcher.PerformSearch(this.UNormalVector(this.IndexQueue(index),:), this.LimitState, this.LimitState.RandomVariables);
