@@ -99,7 +99,7 @@ classdef MultipleLimitState < LimitState
         end
         
         %% Getters
-         
+       
         %% Other methods
         %Evaluate multiple limit states
         function zvalue = Evaluate(this, un, beta, randomVariables, varargin)
