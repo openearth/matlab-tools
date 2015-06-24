@@ -53,6 +53,7 @@ classdef AdaptiveDirectionalImportanceSampling < DirectionalSampling
         MinNrLimitStatePoints
         MinNrApproximatedPoints
         ApproximatedCriteriumFactor
+        NewExactEvaluation
         NrExactEvaluationsBisection
         NrConvergedBisections
     end
@@ -142,6 +143,7 @@ classdef AdaptiveDirectionalImportanceSampling < DirectionalSampling
             this.StopCalculation                = false;
             this.NrDirectionsEvaluated          = 0;
             this.LastIteration                  = false;
+            this.NewExactEvaluation             = false;
             this.Abort                          = false;
             this.NrExactEvaluationsBisection    = 0;
             this.NrConvergedBisections          = 0;
@@ -170,10 +172,18 @@ classdef AdaptiveDirectionalImportanceSampling < DirectionalSampling
             if this.LimitState.CheckAvailabilityARS
                 % if a good response surface is available, use
                 % that in the line search
+                if isa(this.LimitState,'MultipleLimitState')
+                    for iLSF = 1:numel(this.LimitState.LimitStates)
+                        if ~this.LimitState.LimitStates(iLSF).CheckAvailabilityARS
+                            this.NewExactEvaluation             = true;
+                        end
+                    end
+                end
                 this.LineSearcher.PerformSearch(this.UNormalVector(this.IndexQueue(index),:), this.LimitState, this.LimitState.RandomVariables, 'approximate', true);
             else
                 % else, perform exact line search (without use of response surface)
                 this.LineSearcher.PerformSearch(this.UNormalVector(this.IndexQueue(index),:), this.LimitState, this.LimitState.RandomVariables);
+                this.NewExactEvaluation             = true;
                 this.NrExactEvaluationsBisection    = this.NrExactEvaluationsBisection + this.LineSearcher.IterationsBisection;
                 if this.LineSearcher.IterationsBisection > 0
                     this.NrConvergedBisections          = this.NrConvergedBisections + this.LineSearcher.SearchConverged;
@@ -197,6 +207,7 @@ classdef AdaptiveDirectionalImportanceSampling < DirectionalSampling
                 
                 % perform exact line search (LineSearch method)
                 this.LineSearcher.PerformSearch(this.UNormalVector(this.IndexQueue(index),:), this.LimitState, this.LimitState.RandomVariables);
+                this.NewExactEvaluation             = true;
                 this.NrExactEvaluationsBisection    = this.NrExactEvaluationsBisection + this.LineSearcher.IterationsBisection;
                 if this.LineSearcher.IterationsBisection > 0
                     this.NrConvergedBisections          = this.NrConvergedBisections + this.LineSearcher.SearchConverged;
@@ -209,8 +220,9 @@ classdef AdaptiveDirectionalImportanceSampling < DirectionalSampling
             
             % If there are new exact points available: fit the
             % response surface again
-            if ~this.LineSearcher.ApproximateUsingARS || isa(this.LimitState,'MultipleLimitState')
+            if this.NewExactEvaluation
                 this.LimitState.UpdateResponseSurface
+                this.NewExactEvaluation     = false;
                 if this.LastIteration
                     % if ARS is updated, do one more iteration
                     % (approximate points might have changed)
