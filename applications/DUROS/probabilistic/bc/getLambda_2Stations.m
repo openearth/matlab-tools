@@ -156,5 +156,10 @@ Station1 = StationInfo{station1Id,1};
 Station2 = StationInfo{station2Id,1};
     
 % Calculate both Lambdas
-Lambda1     = sqrt(sum(distance([Station2X XIntersection],[Station2Y YIntersection]).^2))/sqrt(sum(distance([Station1X Station2X],[Station1Y Station2Y]).^2));
-Lambda2     = sqrt(sum(distance([Station1X XIntersection],[Station1Y YIntersection]).^2))/sqrt(sum(distance([Station1X Station2X],[Station1Y Station2Y]).^2));
+Lambda1     = sqrt(sum(calculate_distance([Station2X XIntersection],[Station2Y YIntersection]).^2))/sqrt(sum(calculate_distance([Station1X Station2X],[Station1Y Station2Y]).^2));
+Lambda2     = sqrt(sum(calculate_distance([Station1X XIntersection],[Station1Y YIntersection]).^2))/sqrt(sum(calculate_distance([Station1X Station2X],[Station1Y Station2Y]).^2));
+end
+
+function di = calculate_distance(x,y)
+    di = sqrt(diff(x)^2 + diff(y)^2);
+end
