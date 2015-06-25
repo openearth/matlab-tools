@@ -51,6 +51,7 @@ classdef MultipleLimitState < LimitState
     properties
         LimitStates
         AggregateFunction
+        AllGoodFitARS
     end
     
     %% Methods
@@ -88,6 +89,9 @@ classdef MultipleLimitState < LimitState
             for iLS = 1:length(this.LimitStates)
                 this.LimitStates(iLS).RandomVariables   = this.RandomVariables;
             end
+            
+            % Set default values for certain properties
+            this.SetDefaults
         end
         
         %% Setters       
@@ -232,10 +236,21 @@ classdef MultipleLimitState < LimitState
         
         %Check if one or more ARS's are available
         function arsAvailable = CheckAvailabilityARS(this)
-            arsAvailable    = false;
-            for i = 1:length(this.LimitStates)
-                if this.LimitStates(i).CheckAvailabilityARS
-                    arsAvailable    = true;
+            if this.AllGoodFitARS
+                % All LSFs need a good fitting ARS
+                arsAvailable    = true;
+                for i = 1:length(this.LimitStates)
+                    if ~this.LimitStates(i).CheckAvailabilityARS
+                        arsAvailable    = false;
+                    end
+                end
+            else
+                % Only one of the LSFs needs a good fitting ARS
+                arsAvailable    = false;
+                for i = 1:length(this.LimitStates)
+                    if this.LimitStates(i).CheckAvailabilityARS
+                        arsAvailable    = true;
+                    end
                 end
             end
         end
@@ -257,6 +272,13 @@ classdef MultipleLimitState < LimitState
             if ~isempty(this.LimitStates(1).ResponseSurface)
                 nrEvals = this.LimitStates(1).ResponseSurface.MinNrEvaluationsFullFit;
             end
+        end
+        
+        %Set default values
+        function SetDefaults(this)
+            this.LimitStateFunctionAdditionalVariables  = [];
+            this.NormalizeZValues                       = true;
+            this.AllGoodFitARS                          = false;
         end
         
         %Add the ARS's of all LimitState to plot if available and only if
