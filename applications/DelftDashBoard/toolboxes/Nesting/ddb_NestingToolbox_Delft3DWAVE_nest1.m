@@ -66,7 +66,7 @@ function nest1
 
 handles=getHandles;
 
-if isempty(handles.model.delft3dwave.domain.domains(awg).gridx)
+if isempty(handles.model.delft3dwave.domain.domains(awg).gridX)
     ddb_giveWarning('text','Please first load or create model grid!');
     return
 end
@@ -110,17 +110,14 @@ switch lower(handles.toolbox.nesting.delft3dwave.detailmodeltype)
         
 end
 
-<<<<<<< .mine
-[xg,yg,enc,cs,nodatavalue] = wlgrid('read',handles.toolbox.nesting.grdFile);
-depth = wldep('read',handles.toolbox.nesting.depFile,[size(xg,1)+1 size(xg,2)+1]);
+[xg,yg,enc,cs,nodatavalue] = wlgrid('read',handles.toolbox.nesting.delft3dwave.grdFile);
+depth = wldep('read',handles.toolbox.nesting.delft3dwave.depFile,[size(xg,1)+1 size(xg,2)+1]);
 depth=depth(1:end-1,1:end-1);
 
 bnd=findboundarysectionsonregulargrid(xg,yg,depth);
 
 nbnd=length(bnd);
 
-=======
->>>>>>> .r11970
 nlocsets=handles.model.delft3dwave.domain.nrlocationsets;
 
 % File name locations file
