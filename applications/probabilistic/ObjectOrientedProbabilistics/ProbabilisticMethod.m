@@ -124,7 +124,8 @@ classdef ProbabilisticMethod < handle
                 rng(this.Seed);
             end
             
-            randomsamples   = rand(NumberSamples,NumberRandomVariables);                                    
+            tempsamples     = rand(1,NumberSamples*NumberRandomVariables);
+            randomsamples   = reshape(tempsamples,NumberRandomVariables,NumberSamples)';
         end
         
         function check = ContainsStartUpMethod(this)
