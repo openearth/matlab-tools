@@ -323,7 +323,7 @@ function [di xi yi]=local_lineInterp(x,y,dstep)
 %LOCAL_LINEINTERP Create points with a distance dstep apart along line given by (x,y)
 
 %remove double points
-d=distance(x,y); 
+d=distancepoly(x,y); 
 [d id1 id2]=unique(d); 
 x=x(id1);y=y(id1); 
 
