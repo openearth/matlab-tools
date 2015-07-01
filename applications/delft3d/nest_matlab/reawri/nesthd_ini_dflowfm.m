@@ -9,6 +9,7 @@
       sds_ini.tend   = times (end)/60.;
       refdate         = ncreadatt(filename,'time','units');
       sds_ini.itdate  = datenum(refdate(15:end),'yyyy-mm-dd HH:MM:SS');
+      sds_ini.itdate  = str2num(datestr(sds_ini.itdate,'yyyymmdd'));
 
       sds_ini.kmax    = 1;
 
