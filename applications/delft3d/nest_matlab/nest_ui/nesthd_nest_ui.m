@@ -475,7 +475,7 @@ function get_hd1_obs_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 if ~isempty (handles.filedir); cd(handles.filedir); end
-[fin,pin] = uiputfile('*.obs;points*','Specify name of the file with the nesting stations');
+[fin,pin] = uiputfile('*.obs;points*;*.xyn','Specify name of the file with the nesting stations');
 
 %% uiputfile by default puts  ".obs" to the file name. I do not want that for SIMONA files. Remove the extennsion if a name starts with points
 if length(fin) > 5 && strcmpi(fin(1:6),'points')
@@ -536,7 +536,7 @@ if ~isempty(handles.files_hd2{1})
 end
 
 if ~isempty (handles.filedir); cd(handles.filedir); end
-[fin,pin] = uigetfile({'*.bnd; *.mdf; siminp*; *.pli'},'Select boundary definition nested model');
+[fin,pin] = uigetfile({'*.bnd; *.mdf; siminp*; *.pli; *.ext; *.mdu'},'Select boundary definition nested model');
 cd (handles.progdir);
 
 if fin ~= 0
@@ -590,7 +590,7 @@ function get_hd2_trih_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 if ~isempty (handles.filedir); cd(handles.filedir); end
-[fin,pin] = uigetfile({'trih*.dat; SDS*', 'History result files (trih*, SDS*)'},'Select result history file overall model simulation');
+[fin,pin] = uigetfile({'trih*.dat; SDS*; *.nc', 'History result files (trih*, SDS*, *.nc)'},'Select result history file overall model simulation');
 cd (handles.progdir);
 
 if fin ~= 0
