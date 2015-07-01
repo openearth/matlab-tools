@@ -26,7 +26,8 @@ switch filetype
         for i_pnt = 1: no_pnt
             for iwght = 1: 4
                 itel            = itel + 1;
-                name_hulp(itel) = string_mnnes{i_pnt,iwght};
+%                 name_hulp(itel) = string_mnnes{i_pnt,iwght};
+                name_hulp(itel) = string_mnnes(i_pnt,iwght);
             end
         end
         %
@@ -36,8 +37,9 @@ switch filetype
         switch filetype
             case {'Delft3D','SIMONA'}
                 % Remove first point if m = 0
-                m = str2num(name_hulp{1}(10:13));
-                if m == 0
+%                 m = str2num(name_hulp{1}(10:13));
+                m = cellfun(@isempty,name_hulp(1));
+                if m == 1
                     name_hulp = name_hulp(2:end);
                 end
         end
