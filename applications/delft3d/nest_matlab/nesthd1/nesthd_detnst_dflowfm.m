@@ -31,14 +31,19 @@
               if i_pnt > 1
                   % create selection of neighbouring nodes
                   neigbours = [];
-                  for i_corner_1 =  1: 3
-                      for i_corner_2 = 1: 3
-                          [tmp]      = find(tri(:,i_corner_2) == tri(idualface,i_corner_1));
-                          neighbours = [neighbours tmp];
+                  points    = idualface
+                  for i_depth = 1: 3
+                      for i_corner_1 =  1: 3
+                          for i_corner_2 = 1: 3
+                              for i_pnt = 1: length(points)
+                                  [tmp]      = find(tri(:,i_corner_2) == tri(points(i_pnt),i_corner_1));
+                                  neighbours = [neighbours tmp];
+                              end
+                          end
                       end
+                      neighbours  = unique(neighbours);
+                      points      = neighbours;
                   end
-                  neighbours  = unique(neighbours);
-
                   % see if point can be found within neighbouring point
                   for i_neighbour = 1: length(neighbours)
                       inside = insidepoly(xbsp, ybsp, x(tri(neighbour(i_neighbour),1:3)), y(tri(neighbour(i_neighbour),1:3)));
