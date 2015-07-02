@@ -29,6 +29,7 @@
 
               inside = false;
               if i_pnt > 1
+                  %% First search neighbouring points
                   % create selection of neighbouring nodes
                   neigbours = [];
                   points    = idualface;
@@ -47,15 +48,20 @@
                   % see if point can be found within neighbouring point
                   for i_neighbour = 1: length(neighbours)
                       inside = insidepoly(xbsp, ybsp, x(tri(neighbour(i_neighbour),1:3)), y(tri(neighbour(i_neighbour),1:3)));
-                      if inside break; end;
+                      if inside
+                          idualface = neighbour(i_neighbour)
+                          break;
+                      end
                   end
               end
 
               %% not found within neigbouring points
-              idualface=0;
-              while idualface < size(tri,1) && inside~=1,
-                   idualface=idualface+1;
-                   inside = insidepoly(xbsp, ybsp, x(tri(idualface,1:3)), y(tri(idualface,1:3)));
+              if inside ~= 1
+                  idualface=0;
+                  while idualface < size(tri,1) && inside~=1,
+                      idualface=idualface+1;
+                      inside = insidepoly(xbsp, ybsp, x(tri(idualface,1:3)), y(tri(idualface,1:3)));
+                  end
               end
 
               %% found !!!
