@@ -19,7 +19,7 @@
 
       %% For all of the boundary support points
       for i_pnt = 1: no_pnt
-
+          toc ; display (i_pnt) ;tic ;
           waitbar(i_pnt/no_pnt*3);
           xbsp = xbnd  (i_pnt);
           ybsp = ybnd  (i_pnt);
@@ -29,6 +29,7 @@
 
               inside = false;
               if i_pnt > 1
+                  
                   %% First search neighbouring points
                   % create selection of neighbouring nodes
                   neighbours = [];
@@ -36,8 +37,8 @@
                   for i_depth = 1: 3
                       for i_corner_1 =  1: 3
                           for i_corner_2 = 1: 3
-                              for i_pnt = 1: length(points)
-                                  [tmp]      = find(tri(:,i_corner_2) == tri(points(i_pnt),i_corner_1));
+                              for i = 1: length(points)
+                                  [tmp]      = find(tri(:,i_corner_2) == tri(points(i),i_corner_1));
                                   neighbours = [neighbours; tmp];
                               end
                           end
@@ -49,7 +50,7 @@
                   for i_neighbour = 1: length(neighbours)
                       inside = insidepoly(xbsp, ybsp, x(tri(neighbours(i_neighbour),1:3)), y(tri(neighbours(i_neighbour),1:3)));
                       if inside
-                          idualface = neighbours(i_neighbour)
+                          idualface = neighbours(i_neighbour) ;
                           break;
                       end
                   end
