@@ -428,7 +428,7 @@ function get_hd1_enclosure_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 if ~isempty (handles.filedir); cd(handles.filedir); end
-[fin,pin] = uigetfile({'*.enc;comgrid*'},'Select enclosure file detailled model');
+[fin,pin] = uigetfile({'*.enc;comgrid*'},'Select enclosure file detailed model');
 cd (handles.progdir);
 
 if fin ~= 0
