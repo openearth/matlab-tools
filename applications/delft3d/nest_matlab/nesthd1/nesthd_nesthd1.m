@@ -52,7 +52,7 @@
       end
 
 
-      %% Read detailled grid; Make the icom matrix (active, inactive), not needed for DFLOWFM because all information is in the pli's
+      %% Read detailed grid; Make the icom matrix (active, inactive), not needed for DFLOWFM because all information is in the pli's
       switch type_nest
           case 'grd'
               grid_fine = wlgrid   ('read',files{2});
