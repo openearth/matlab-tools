@@ -1,4 +1,4 @@
-      function nesthd_wrinst_2 (fid,detailled,overall,weight,type,varargin)
+      function nesthd_wrinst_2 (fid,detailed,overall,weight,type,varargin)
 
       % wrinst: writes the list of nesting stations
       %
@@ -23,20 +23,20 @@
       % Writes the administration to file for each boundary support point
       %
 
-      for i_pnt = 1: length(detailled)
+      for i_pnt = 1: length(detailed)
             switch type
                case 'WL '
                    string = strcat('Nest administration for water level', ...
-                       ' support point "',char(detailled{i_pnt}),'" \n');
+                       ' support point "',char(detailed{i_pnt}),'" \n');
                    fprintf (fid,string);
                case 'UVp'
                   string = strcat('Nest administration for velocity(p)',   ...
-                                  ' support point "',char(detailled{i_pnt}),'"', ...
+                                  ' support point "',char(detailed{i_pnt}),'"', ...
                                   ' Angle = %8.3f Positive = %3s \n');
                   fprintf (fid,string,angles(i_pnt),positi{i_pnt});
                case 'UVt'
                   string = strcat('Nest administration for velocity(t)',   ...
-                                  ' support point "',char(detailled{i_pnt}),'"', ...
+                                  ' support point "',char(detailed{i_pnt}),'"', ...
                                   ' Angle = %8.3f \n');
                   fprintf (fid,string,angles(i_pnt));
             end
