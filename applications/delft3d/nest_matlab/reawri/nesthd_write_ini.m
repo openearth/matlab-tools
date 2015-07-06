@@ -37,7 +37,7 @@ end
 
 Chapter = 'Nesthd1';
 Info=inifile('set',Info,Chapter,'Overall model grid  ',handles.files_hd1{1});
-Info=inifile('set',Info,Chapter,'Detailled model grid',handles.files_hd1{2});
+Info=inifile('set',Info,Chapter,'Detailed model grid ',handles.files_hd1{2});
 Info=inifile('set',Info,Chapter,'Boundary Definition ',handles.files_hd1{3});
 Info=inifile('set',Info,Chapter,'Observation Points  ',handles.files_hd1{4});
 Info=inifile('set',Info,Chapter,'Nest Administration ',handles.files_hd1{5});
