@@ -382,7 +382,7 @@ function get_hd1_grid_big_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 if ~isempty (handles.filedir); cd(handles.filedir); end
-[fin,pin] = uigetfile({'*.grd;*rgf*;*mdf*'},'Select grid file overall model');
+[fin,pin] = uigetfile({'*.grd;*rgf*;*mdf*;*_map.nc'},'Select grid file overall model');
 cd (handles.progdir);
 
 if fin ~= 0
@@ -403,7 +403,7 @@ function get_hd1_grid_small_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 if ~isempty (handles.filedir); cd(handles.filedir); end
-[fin,pin] = uigetfile({'*.grd;*rgf*;*mdf*;siminp*'},'Select grid file nested model');
+[fin,pin] = uigetfile({'*.grd;*rgf*;*mdf*;siminp*;*_net.nc'},'Select grid file nested model');
 cd (handles.progdir);
 
 if fin ~= 0
@@ -449,7 +449,7 @@ function get_hd1_bnd_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 if ~isempty (handles.filedir); cd(handles.filedir); end
-[fin,pin] = uigetfile({'*.bnd;*.mdf;siminp*'},'Select Boundary definition nested model');
+[fin,pin] = uigetfile({'*.bnd;*.mdf;siminp*;*.mdu;*.ext'},'Select Boundary definition nested model');
 cd (handles.progdir);
 
 if fin ~= 0
