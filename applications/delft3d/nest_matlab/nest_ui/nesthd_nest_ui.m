@@ -590,7 +590,7 @@ function get_hd2_trih_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 if ~isempty (handles.filedir); cd(handles.filedir); end
-[fin,pin] = uigetfile({'trih*.dat; SDS*; *.nc', 'History result files (trih*, SDS*, *.nc)'},'Select result history file overall model simulation');
+[fin,pin] = uigetfile({'trih*.dat; SDS*; *_his.nc', 'History file (trih*, SDS*, *_his.nc)'},'Select history file overall model ');
 cd (handles.progdir);
 
 if fin ~= 0
