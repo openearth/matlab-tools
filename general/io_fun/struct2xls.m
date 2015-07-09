@@ -50,6 +50,7 @@ function varargout = struct2xls(fname,S,varargin)
 %               'c' = cancel
 %               'p' = prompt (default, after which o/a/c can be chosen) (0)
 % * commentchar character to append to start of comment (header) line (default '#')  
+% * sheet       sheetname (default '')
 %
 % [success]   = STRUCT2XLS(...)
 % [success,M] = STRUCT2XLS(...) where M is the cell array passed to XLSWRITE.
@@ -105,6 +106,7 @@ function varargout = struct2xls(fname,S,varargin)
    OPT.commentchar = '#';
    OPT.overwrite   = 'p'; % prompt
    OPT.warning     = 0;
+   OPT.sheet       = '';
  
    if nargin==0
       varargout = {OPT};
@@ -117,34 +119,41 @@ function varargout = struct2xls(fname,S,varargin)
      OPT.header = cellstr(OPT.header);
    end
    
+   assert(~isempty(strfind('oap',OPT.overwrite)),'Wrong input for ''overwrite'' use o/a/p')
+   
 %% Check if file already exists
 
    if exist(fname,'file')==2
       
-      if strcmp(OPT.overwrite,'p') | OPT.overwrite==0
+      if strcmp(OPT.overwrite,'p') || OPT.overwrite==0
          disp(['File ',fname,' alreay exists. '])
-         OPT.overwrite = input(['Overwrite/cancel ? (o/c): '],'s');
+         OPT.overwrite = input('Overwrite/cancel ? (o/a/c): ','s');
          % for some reason input in Matlab R14 SP3 removes slashes
          % OPT.overwrite = input(['File ',fname,' alreay exists. Overwrite/cancel ? (o/a/c)'],'s');
          while isempty(strfind('oac',OPT.overwrite))
-             OPT.overwrite = input(['Overwrite/cancel ? (o/c): '],'s');
+             OPT.overwrite = input('Overwrite/cancel ? (o/a/c): ','s');
          end
       end
       
-      if strcmp(lower(OPT.overwrite),'o') | OPT.overwrite==1
+      if strcmpi(OPT.overwrite,'o') || OPT.overwrite==1
          disp (['File ',fname,' overwritten as it alreay exists.'])
          delete(fname)
       end      
       
-      if strcmp(lower(OPT.overwrite),'c')
+      if strcmpi(OPT.overwrite,'c')
          if nargout==0
             error(['File ',fname,' not saved as it alreay exists.'])
          else
+            disp( ['File ',fname,' not saved as it alreay exists.'])
             success = -2;
-            disp(['File ',fname,' not saved as it alreay exists.'])
+            varargout = {success};
+            return
          end
-      end        
+      end 
       
+      if strcmpi(OPT.overwrite,'a')
+          %No action, append
+      end
    else
       OPT.overwrite = 'o'; % create
    end
@@ -161,13 +170,13 @@ function varargout = struct2xls(fname,S,varargin)
    if OPT.oned
       for ifld=1:nfld
          fldname   = char(fldnames(ifld));
-         if isnumeric(S.(fldname)) | ...
+         if isnumeric(S.(fldname)) || ...
             islogical(S.(fldname)) 
             if length(size(S.(fldname)))==2
                if (size(S.(fldname),2)==1)
                   S.(fldname) = S.(fldname)';
                   if OPT.warning
-                  fprintf(2,['warning: ' , mfilename,' field ''',fldname,''' has been transposed to fit into an Excel column.\n'])
+                    warning([mfilename,' field ''',fldname,''' has been transposed to fit into an Excel column.\n'])
                   end
                end
             end
@@ -177,7 +186,7 @@ function varargout = struct2xls(fname,S,varargin)
                if (size(S.(fldname),1)==1)
                   S.(fldname) = S.(fldname)';
                   if OPT.warning
-                  fprintf(2,['warning: ' , mfilename,' field ''',fldname,''' has been transposed to fit into an Excel column.\n'])
+                    warning([mfilename,' field ''',fldname,''' has been transposed to fit into an Excel column.\n'])
                   end
                end
             end
@@ -250,7 +259,7 @@ function varargout = struct2xls(fname,S,varargin)
          S.(fldname) = char(S.(fldname));
       end
 
-         if isnumeric(S.(fldname)) | ...
+         if isnumeric(S.(fldname)) || ...
             islogical(S.(fldname))
 
             %% uses xlswrite shipped with matlab 
@@ -282,8 +291,12 @@ function varargout = struct2xls(fname,S,varargin)
       %end
    end
    
-   success = xlswrite(path2os(fname),M); % microsoft does not like double \ in path if file does not yet exist
-
+   if isempty(OPT.sheet)
+       success = xlswrite(path2os(fname),M); % microsoft does not like double \ in path if file does not yet exist
+   else
+       success = xlswrite(path2os(fname),M,OPT.sheet);
+   end
+   
    if nargout==1
       varargout = {success};
    elseif nargout==2
