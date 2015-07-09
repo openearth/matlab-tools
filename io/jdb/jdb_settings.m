@@ -26,7 +26,7 @@ alljavaclasspath = path2os(javaclasspath('-all')); % can also be in static path 
 switch lower(OPT.dbtype)
     case 'postgresql'
         
-        if any(strfind(version('-java'),'Java 1.6')) | ...
+        if any(strfind(version('-java'),'Java 1.6')) || ...
                 any(strfind(version('-java'),'Java 1.7'))
             java2add = 'postgresql-9.3-1102.jdbc41.jar';
         else
@@ -41,22 +41,28 @@ switch lower(OPT.dbtype)
                 OK = -1;
             else
                 javaaddpath (path2os([fileparts(mfilename('fullpath')),filesep,java2add]))
-                disp(['PostgreSQL: JDBC driver added: ',java2add]);
+                if ~(OPT.quiet)
+                    disp(['PostgreSQL: JDBC driver added: ',java2add]);
+                end
                 OK = 1;
             end                        
-        elseif ~(OPT.quiet)            
+        else            
             if OPT.check
-                disp(['checked status PostgreSQL: JDBC present: ',java2add]);
+                if ~(OPT.quiet)
+                    disp(['checked status PostgreSQL: JDBC present: ',java2add]);
+                end
                 OK = 1;
             else
-                disp(['PostgreSQL: JDBC driver not added, already there: ',java2add]);
+                if ~(OPT.quiet)
+                    disp(['PostgreSQL: JDBC driver not added, already there: ',java2add]);
+                end
                 OK = 1;
             end           
         end
         
     case 'oracle'
         java2add          = which('ojdbc14.jar');
-        [~,jdbfile,jdbext]       = fileparts(java2add);
+        [~,jdbfile,jdbext]= fileparts(java2add);
         indices           = strfind(alljavaclasspath,path2os(java2add)) ;%[jdbpath,filesep,jdbfile]));
         
         if isempty(cell2mat(indices))
@@ -76,13 +82,16 @@ switch lower(OPT.dbtype)
                 end
                 cd(cwd)
             end
-        elseif ~(OPT.quiet)
-            
+        else            
             if OPT.check
-                disp(['checked status ORACLE: JDBC present: ',jdbfile]);
+                if ~(OPT.quiet)
+                    disp(['checked status ORACLE: JDBC present: ',jdbfile]);
+                end
                 OK = 1;
             else
-                disp(['ORACLE: JDBC driver not added, already there: ',jdbfile]);
+                if ~(OPT.quiet)
+                    disp(['ORACLE: JDBC driver not added, already there: ',jdbfile]);
+                end
                 OK = 1;
             end
         end

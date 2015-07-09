@@ -41,13 +41,14 @@ function conn = jdb_connectdb(db, varargin)
 
 %% read options
    OPT = struct( ...
-    'dbtype',          'postgresql',...
-    'host',            'localhost', ...
-    'port',            5432, ...
-    'user',            '', ...
-    'pass',            '', ...
-    'schema',          '', ...
-    'database_toolbox',1);
+    'dbtype',           'postgresql',...
+    'host',             'localhost', ...
+    'port',             5432, ...
+    'user',             '', ...
+    'pass',             '', ...
+    'schema',           '', ...
+    'database_toolbox', 1, ...
+    'quiet'           , 0);
 
    if nargin==0;conn = OPT;return;end
 
@@ -74,7 +75,9 @@ end
        OPT.pass, ...
        'org.postgresql.Driver', ...
        url);
-       disp('PostgreSQL: database_toolbox license used.')
+       if ~OPT.quiet
+           disp('PostgreSQL: database_toolbox license used.')
+       end
        message = conn.message;
    else
       props = java.util.Properties;
@@ -87,15 +90,17 @@ end
       else
          message = '';
       end
-      disp([db ': database_toolbox license absent, used JDC driver directly. Some features might not work yet.'])
+      if ~OPT.quiet
+        disp([db ': database_toolbox license absent, used JDC driver directly. Some features might not work yet.'])
+      end
    end
   
 %% display message on error
    if ~isempty(message)
-       if jdb_settings('check',1)<0
-       disp('run jdb_settings first')
-       end
-       error(message)
+      if jdb_settings('check',1)<0
+        disp('run jdb_settings first')
+      end
+      error(message)
    else
        
        % set default schema, if given
