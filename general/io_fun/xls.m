@@ -14,16 +14,21 @@ classdef xls < oop.handle_light
 %
 %   Example
 %     % open instance of xls
-%     excelsheet = xls('mysheet.xls')
+%     X = xls('mysheet.xls')
 %
 %     % read data from sheet1, range 'A1:B4'
-%     data = excelsheet.read('sheet1','A1:B4')
+%     data = X.read('sheet1','A1:B4')
 %
 %     % read from another file. the xls server is reused
-%     excelsheet.open('another_file.xls')
+%     X.open('another_file.xls')
 %
 %     % call read with no arguments: the first sheet is read over the used range
-%     data = excelsheet.read
+%     data = X.read
+%
+%     % read named ranges
+%     data = X.read('sheet1','table[#Data]')    % read data
+%     data = X.read('sheet1','table[#All]')     % read data + headers
+%     data = X.read('sheet1','table[#Headers]') % read only headers
 %
 %     % clearing the sheet also closes the xls server
 %     clear excelsheet

@@ -86,6 +86,7 @@ bin(bin==0)=nan;
 h = pcolorcorcen(EDGESx,EDGESy,bin);
 set(gca,'xtick',EDGESx)
 set(gca,'ytick',EDGESy)
+colormap(clrmap([.9 .9 1;1 0 0],size(colormap,1))); % make blueish white where there's no data
 
 if OPT.text
     [xc,yc] = meshgrid(corner2center1(EDGESx),corner2center1(EDGESy));

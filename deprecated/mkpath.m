@@ -9,6 +9,8 @@ function mkpath(directory)
 %See also: MKDIR,  EXIST, PATH2OS,    COPYFILE, CD, LAST_SUBDIR,
 %          DELETE, DIR,   FILEATTRIB, MOVEFILE, RMDIR.
 
+warning('deprecated in favor of mkdir that now works recursively')
+
 %   --------------------------------------------------------------------
 %   Copyright (C) 2005 Delft University of Technology
 %       Gerben J. de Boer
