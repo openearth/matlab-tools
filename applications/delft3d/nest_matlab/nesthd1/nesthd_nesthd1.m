@@ -11,8 +11,7 @@
       files  = varargin{1};
       x_nest = [];
       y_nest = [];
-      h      = waitbar(0,'Generate the nest administration','Color',[0.831 0.816 0.784]);
-
+      
       %% determine type of nesting
       type_coarse   = nesthd_det_filetype(files{1});
       type_nest     = nesthd_det_filetype(files{2});
@@ -38,11 +37,20 @@
                   grid_coarse.Xcen = G.face.FlowElem_x;
                   grid_coarse.Ycen = G.face.FlowElem_y;
                   tic
+
+                  h      = waitbar(0,'Reading DFlow-FM map-file','Color',[0.831 0.816 0.784]);
+
                   name_coarse{length(G.face.FlowElem_x)} = [];
+
                   for i_node = 1: length(G.face.FlowElem_x)
+                      if mod(i_node,1000)  == 0 
+                         waitbar(i_node/length(G.face.FlowElem_x));
+                      end
                       name_coarse{i_node} = ['FlowNode_' num2str(i_node,'%8.8i')];
                   end;
+                  
                   toc
+                  close (h);
                   if strncmpi(ncreadatt(files{1},'wgs84','grid_mapping_name'),'latitu',6) sphere = true; end;
               catch
                   %% net file
@@ -51,6 +59,7 @@
               end
       end
 
+      
 
       %% Read detailed grid; Make the icom matrix (active, inactive), not needed for DFLOWFM because all information is in the pli's
       switch type_nest
@@ -58,7 +67,6 @@
               grid_fine = wlgrid   ('read',files{2});
               icom_fine = nesthd_det_icom (grid_fine.X,grid_fine.MissingValue,files{6});
       end
-
       %% Read the boundary data
       switch type_bnd
           case {'Delft3D','siminp'}
@@ -66,10 +74,10 @@
           case {'ext','mdu','pli'}
               bnd = dflowfm_io_bnd      ('read',files{3});
       end
-
-      %% For the various types of boundary conditions
+      %% For the various types of boundary conditions      
       for i_type = 1: length(types)
-
+          txt = strcat('Generate the nest administration : ',types(i_type)) ;
+          h      = waitbar(0,txt,'Color',[0.831 0.816 0.784]);
           %% Determine world coordinates of boundary support points for type{i_type}
           switch type_bnd
               case {'Delft3D'  'siminp'}
@@ -115,10 +123,10 @@
           nesthd_wrinst_2 (fid_adm,string_mnbsp,string_mnnes,weight,types{i_type},angles,positi,x_nest,y_nest);
 
           clear X_bnd Y_bnd positi string_mnbsp string_mnnes weight angles positi x_nest y_nest
-
+          close  (h);
       end
 
-      close  (h);sphere
+      sphere
       fclose (fid_adm);
       fclose (fid_obs);
 
