@@ -208,7 +208,7 @@ if length(varargin) > 0
                 % disp('Your *.map file matches well with the *.lga file');
             end
         catch
-            disp(['Unable to open *.map file: ' varargin{1}])
+            error(['Unable to open *.map file: ' varargin{1}])
         end
     else
         disp('Unknown optional input provided, ignored..')
