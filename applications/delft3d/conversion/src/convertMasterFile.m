@@ -161,19 +161,15 @@ dpuopt         = 3;
 if isfield(mdfkeywds,'dpuopt') == 1;
     if     strcmpi(mdfkeywds.dpuopt,'mean');
         dpuopt = 3;
-    elseif strcmpi(mdfkeywds.dpuopt,'min');
-        dpuopt = 4;
     elseif strcmpi(mdfkeywds.dpuopt,'max');
+        dpuopt = 4;
+    elseif strcmpi(mdfkeywds.dpuopt,'min');
         dpuopt = 5;
     end
 else
     dpuopt     = 3;
 end
-fprintf(fid2,'%s\n'  ,['BedLevType                          = ',num2str(dpuopt,'%1.0f')                ,'                                  # 1 : Bottom levels at waterlevel cells (=flow nodes), like tiles xz, yz, bl , bob = max(bl left, bl right)']);
-fprintf(fid2,'%s\n'  ,['                                                                         # 2 : Bottom levels at velocity points  (=flow links),            xu, yu, blu, bob = blu,    bl = lowest connected link']);
-fprintf(fid2,'%s\n'  ,['                                                                         # 3 : Bottom levels at velocity points  (=flow links), using mean network levels xk, yk, zk  bl = lowest connected link']);
-fprintf(fid2,'%s\n'  ,['                                                                         # 4 : Bottom levels at velocity points  (=flow links), using min  network levels xk, yk, zk  bl = lowest connected link']);
-fprintf(fid2,'%s\n'  ,['                                                                         # 5 : Bottom levels at velocity points  (=flow links), using max  network levels xk, yk, zk  bl = lowest connected link']);
+fprintf(fid2,'%s\n'  ,['BedLevType                          = ',num2str(dpuopt,'%1.0f')                ,'                                  # 1: at cell center (tiles xz,yz,bl,bob=max(bl)), 2: at face (tiles xu,yu,blu,bob=blu), 3: at face (using mean node values), 4: at face (using min node values), 5: at face (using max node values), 6: with bl based on node values']);
 if isfield(mdfkeywds,'anglat') == 0; 
     mdfkeywds.anglat = 0;
 end
