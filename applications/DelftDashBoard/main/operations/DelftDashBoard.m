@@ -68,7 +68,7 @@ if isdeployed
     setenv('MCR_CACHE_SIZE','64M');
 end
 
-setpref('SNCTOOLS','USE_NETCDF_JAVA',true);
+%setpref('SNCTOOLS','USE_NETCDF_JAVA',true);
 
 % Turn off annoying warnings
 warning('off','all');
