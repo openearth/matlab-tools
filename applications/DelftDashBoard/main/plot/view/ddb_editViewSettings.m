@@ -64,24 +64,33 @@ h=getHandles;
 
 f=MakeNewWindow('View Settings',[210 230],'modal',[h.settingsDir filesep 'icons' filesep 'deltares.gif']);
 
+bgc=get(gcf,'Color');
+
 str={'Earth','Jet'};
 ii=strmatch(h.screenParameters.colorMap,str,'exact');
 handles.SelectColorMap = uicontrol(gcf,'Style','popupmenu','Position',[30 165 80 20],'String',str,'BackgroundColor',[1 1 1],'Tag','UIControl');
-handles.TextColorMap = uicontrol(gcf,'Style','text','String','Color Map','Position',[30 185  80 20],'Tag','UIControl');
+handles.TextColorMap = uicontrol(gcf,'Style','text','String','Color Map','Position',[30 185  80 20],'BackgroundColor',bgc,'Tag','UIControl');
 set(handles.SelectColorMap,'Value',ii);
 
 handles.EditCMin = uicontrol(gcf,'Style','edit','Position',[30 115  50 20],'HorizontalAlignment','right', 'BackgroundColor',[1 1 1],'Tag','UIControl');
 handles.EditCMax = uicontrol(gcf,'Style','edit','Position',[30 140  50 20],'HorizontalAlignment','right', 'BackgroundColor',[1 1 1],'Tag','UIControl');
 set(handles.EditCMin,'String',h.screenParameters.cMin);
 set(handles.EditCMax,'String',h.screenParameters.cMax);
-handles.TextCMin = uicontrol(gcf,'Style','text','String','CMin','Position',[85 111  50 20],'HorizontalAlignment','left','Tag','UIControl');
-handles.TextCMax = uicontrol(gcf,'Style','text','String','CMax','Position',[85 136  50 20],'HorizontalAlignment','left','Tag','UIControl');
+handles.TextCMin = uicontrol(gcf,'Style','text','String','CMin','Position',[85 111  50 20],'HorizontalAlignment','left','BackgroundColor',bgc,'Tag','UIControl');
+handles.TextCMax = uicontrol(gcf,'Style','text','String','CMax','Position',[85 136  50 20],'HorizontalAlignment','left','BackgroundColor',bgc,'Tag','UIControl');
 
-handles.ToggleAutomatic = uicontrol(gcf,'Style','checkbox','String','Automatic Color Limits','Position',[30 90  150 20],'Tag','UIControl');
+handles.ToggleAutomatic = uicontrol(gcf,'Style','checkbox','String','Automatic Color Limits','Position',[30 90  200 20],'BackgroundColor',bgc,'Tag','UIControl');
 set(handles.ToggleAutomatic,'Value',h.screenParameters.automaticColorLimits);
 
-handles.PushOK     = uicontrol(gcf,'Style','pushbutton','String','OK',    'Position',[110 30 60 30]);
-handles.PushCancel = uicontrol(gcf,'Style','pushbutton','String','Cancel','Position',[40 30 60 30]);
+handles.TextQuality = uicontrol(gcf,'Style','text','String','Quality','Position',[30 62  50 20],'BackgroundColor',bgc,'Tag','UIControl');
+str={'Low','Medium','High'};
+handles.SelectQuality = uicontrol(gcf,'Style','popupmenu','Position',[86 65 80 20],'String',str,'BackgroundColor',[1 1 1],'Tag','UIControl');
+ii=strmatch(h.screenParameters.backgroundQuality,str,'exact');
+set(handles.SelectQuality,'Value',ii);
+
+
+handles.PushOK     = uicontrol(gcf,'Style','pushbutton','String','OK',    'Position',[110 20 60 30]);
+handles.PushCancel = uicontrol(gcf,'Style','pushbutton','String','Cancel','Position',[40 20 60 30]);
 
 if h.screenParameters.automaticColorLimits
     set(handles.EditCMin,'Enable','off');
@@ -126,6 +135,9 @@ autocol=get(handles.ToggleAutomatic,'Value');
 str=get(handles.SelectColorMap,'String');
 ii=get(handles.SelectColorMap,'Value');
 clmap=str{ii};
+str=get(handles.SelectQuality,'String');
+ii=get(handles.SelectQuality,'Value');
+qual=str{ii};
 
 if cmin~=h.screenParameters.cMin || cmax~=h.screenParameters.cMax || autocol~=h.screenParameters.automaticColorLimits || ~strcmpi(h.screenParameters.colorMap,clmap)
     plotnew=1;
@@ -137,6 +149,7 @@ h.screenParameters.cMin=cmin;
 h.screenParameters.cMax=cmax;
 h.screenParameters.colorMap=clmap;
 h.screenParameters.automaticColorLimits=autocol;
+h.screenParameters.backgroundQuality=qual;
 
 setHandles(h);
 
