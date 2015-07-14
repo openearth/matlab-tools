@@ -1,33 +1,56 @@
 function subfaults = read_subfault(varargin)
-%load_subfaults - reads UCSB/NEIC subfault format models into a structure
-% Read in subfault format models produced by Chen Ji's group at UCSB,
-% downloadable from:
-% http://www.geol.ucsb.edu/faculty/ji/big_earthquakes/home.html
+%load_subfaults - reads subfault formatfiles into a matlab structure
 %
-% Syntax:  function_name(input1)
+% read_subfault(varargin)
 %
 % Inputs:
-%    path - path to .cfg file
+%   optional:
+%    'path' - path to .cfg file.  If not specified, opens uigetfile
+%    'filetype' - 'subfault' or 'generic'.  defaults to 'subfault', which
+%       reads a UCSB-type file.  'generic' reads in a subfault file with
+%       user-defined columns and a one line header, commented out with a %
+%       or #
+%    'columns' - a cell array containing the column names of the input file
+%       see line X for default values
+%    'units' - a structure containing the units used for each column
+%       see line X for default values
 %
 % Outputs:
 %    subfaults - A structure containing data for each subfault read from
-%    the .cfg file
+%    the input file
 %
 % Example:
-%    Line 1 of example
-%    Line 2 of example
-%    Line 3 of example
+%    Read in subfault format models produced by Chen Ji's group at UCSB,
+%    downloadable from:
+%    http://www.geol.ucsb.edu/faculty/ji/big_earthquakes/home.html
 %
-% Other m-files required: none
-% Subfunctions: none
-% MAT-files required: none
+%       file = 'ucsb_subfault_2011_03_11_v3.cfg'; % Tohoku, Japan 2011
+%       subfaults = read_subfault('path',file);
 %
-% See also: OTHER_FUNCTION_NAME1,  OTHER_FUNCTION_NAME2
+%    Read in a generic subfault file with user defined columns and units
+%    with coordinates specified at top-center edge
+%       file = 'generic.cfg', 
+%       columns={'latitude','longitude','depth','slip','rake',...
+%           'strike','dip','length','width'};
+%       units = struct('depth','km','slip','cm','length','km','width',...
+%           'km', 'coordinate_specification','top center');
+%       subfaults = read_subfault('path',file,'filetype','generic',...
+%           'columns',columns,'units',units);
+%
+% Other m-files required: calculate_subfault_geometry.m
+%
+% See also: plot_subfaults, okada
+%
+% This code was adapted from functions in CLawpack 5.3.0, which were 
+% written in Python for GeoClaw by Dave George and Randy LeVeque. 
+% See www.clawpack.org:
+% M. J. Berger, D. L. George, R. J. LeVeque and K. M. Mandli, 
+% The GeoClaw software for depth-averaged flows with adaptive refinement, 
+% Advances in Water Resources 34 (2011), pp. 1195-1206.
+% 
+% Written in Matlab by SeanPaul La Selle, USGS, 2015
+% Last updated 13 July, 2015
 
-% Author: SeanPaul LaSelle
-% USGS
-% email: slaselle@usgs.gov
-% June 2015; Last revision: 23-June-2015
 
 %------------- BEGIN CODE --------------
 %% OPTIONAL INPUTS

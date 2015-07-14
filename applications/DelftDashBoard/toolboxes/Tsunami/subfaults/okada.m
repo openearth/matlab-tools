@@ -16,8 +16,8 @@ function [X,Y,dZ,times] = okada(subfaults, x, y)
 %           (M,N,K)
 %       times: array of times (in seconds), corresponding to each
 %           dZ array from 1:K
-%    
-%        
+%   
+%       
 % See Okada 1985 [Okada85]_, or Okada 1992, Bull. Seism. Soc. Am.
 %         
 % This code was adapted from functions in CLawpack 5.3.0, which were 
@@ -27,7 +27,7 @@ function [X,Y,dZ,times] = okada(subfaults, x, y)
 % The GeoClaw software for depth-averaged flows with adaptive refinement, 
 % Advances in Water Resources 34 (2011), pp. 1195-1206.
 % 
-% Written in Matlab by SeanPaul La Selle, USGS
+% Written in Matlab by SeanPaul La Selle, USGS102015
 % Last updated 13 July, 2015
 
     poisson = 0.25; % poisson ratio for okada

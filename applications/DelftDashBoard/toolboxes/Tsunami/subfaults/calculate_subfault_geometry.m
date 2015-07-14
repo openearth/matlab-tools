@@ -1,40 +1,5 @@
 function subfaults_geo=calculate_subfault_geometry(subfaults, coordinate_specification, varargin)
 %calculate_subfault_geometry - locate the fault planes in 3d space
-% Basic sub-fault specification.
-% 
-%     Note that the coodinate specification is in reference to the fault 
-%         
-%     :Coordinates of Fault Plane:
-% 
-%     The attributes *centers* and *corners* are described by the figure below.
-% 
-%     *centers[0,1,2]* refer to the points labeled 0,1,2 below.
-%       In particular the centroid is given by *centers[1]*.
-%       Each will be a tuple *(x, y, depth)*.
-% 
-%     *corners[0,1,2,3]* refer to the points labeled a,b,c,d resp. below.
-%       Each will be a tuple *(x, y, depth)*.
-%     
-% 
-%     Top edge    Bottom edge
-%       a ----------- b          ^ 
-%       |             |          |         ^
-%       |             |          |         |
-%       |             |          |         | along-strike direction
-%       |             |          |         |
-%       0------1------2          | length  |
-%       |             |          |
-%       |             |          |
-%       |             |          |
-%       |             |          |
-%       d ----------- c          v
-%       <------------->
-%            width
-% 
-%       <-- up dip direction
-% 
-% 
-% Syntax:  function_name(input1)
 %
 % Inputs:
 %    subfaults - structure, containing arrays for each column read from a
@@ -47,22 +12,53 @@ function subfaults_geo=calculate_subfault_geometry(subfaults, coordinate_specifi
 %    subfaults - In the same format as the subfaults structure that was
 %    input, but contains the geometry info needed for plotting.
 %
-% Example: 
-%    Line 1 of example
-%    Line 2 of example
-%    Line 3 of example
+% Basic sub-fault specification.
+% 
+%     Note that the coodinate specification is in reference to the fault 
+%         
+%     :Coordinates of Fault Plane:
+% 
+%     The attributes *centers* and *corners* are described by the figure below.
+% 
+%     *centers(1,2,3)* refer to the points labeled 1,2,3 below.
+%       In particular the centroid is given by *centers(2)*.
+%       Each will be an array *(x, y, depth)*.
+% 
+%     *corners(1,2,3,4)* refer to the points labeled a,b,c,d resp. below.
+%       Each will be an array *(x, y, depth)*.
+%     
+% 
+%     Top edge    Bottom edge
+%       a ----------- b          ^ 
+%       |             |          |         ^
+%       |             |          |         |
+%       |             |          |         | along-strike direction
+%       |             |          |         |
+%       1------2------3          | length  |
+%       |             |          |
+%       |             |          |
+%       |             |          |
+%       |             |          |
+%       d ----------- c          v
+%       <------------->
+%            width
+% 
+%       <-- up dip direction
 %
 % Other m-files required: none
 % Subfunctions: dist_latlong2meters, deg2rad
-% MAT-files required: none
 %
-% See also: read_ucsb_fault.m
+% See also: read_subfault
 
-% ADAPTED FROM GEOCLAW 5.3 www.geoclaw.org
-% Author: SeanPaul LaSelle
-% USGS
-% email: slaselle@usgs.gov
-% June 2015; Last revision: 23-June-2015
+% This code was adapted from functions in CLawpack 5.3.0, which were 
+% written in Python for GeoClaw by Dave George and Randy LeVeque. 
+% See www.clawpack.org:
+% M. J. Berger, D. L. George, R. J. LeVeque and K. M. Mandli, 
+% The GeoClaw software for depth-averaged flows with adaptive refinement, 
+% Advances in Water Resources 34 (2011), pp. 1195-1206.
+% 
+% Written in Matlab by SeanPaul La Selle, USGS102015
+% Last updated 14 July, 2015
 
 %------------- BEGIN CODE --------------
 names = fieldnames(subfaults); 

@@ -1,33 +1,44 @@
 function plot_subfaults(subfaults, varargin)
 % plot_subfaults - plots subfault model
 %
-%
-%
-%
-%
 % Inputs:
 %    subfaults - structure containing data read in using read_ucsb_fault.m
 %    subfault_dimensions - array of [dx,dy,nx,ny], dx,dy in kilometers
-
-%   optional inputs:
-%    plot_slip - if == (1 | 0) plot the amount of slip on each subfault
-%    c_range - [start stop step], specify range of slip values to normalize colormap
-%    cmap - 'colormapname' from brewermap addon ('YlOrRd')
-%    background_color - matlab color class ('none')
-%    figure_title - ('string')
-%    cbar - (1 | 0), draw colorbar on right side of figure
-%    fontsize - number, specify fontsize for figure (14)
-%    Mw - (1 |0), compute Moment Magnitude and display on plot
-
-% Other m-files required: brewermap.m, calculate_mw.m
-% Subfunctions: none
-% MAT-files required: none
 %
+%   optional:
+%    plot_slip - (1 | 0) plot the slip on each subfault (default: 0)
+%    c_range - [start stop step], specify range of slip values to normalize colormap
+%    cmap - 'colormapname' from brewermap addon (default: 'YlOrRd')
+%    background_color - matlab color class (default: 'none')
+%    fontsize - number, specify fontsize for figure (default: 14)
+%    fontcolor - matlab color spec (default: 'k')
+%    figure_title - 'string' (default: 'subfaults')
+%    cbar - (1 | 0) draw colorbar on right side of figure (default: 0)
+%    Mw - (1 |0) compute Moment Magnitude and display on plot (default: 0)
+%
+% Outputs:
+%    None
+%
+% Example:
+%    Load and plot subfault slip from 2011 Tohoku earthquake
+%       file = 'ucsb_subfault_2011_03_11_v3.cfg'; % Tohoku, Japan 2011
+%       path = 'example';
+%       title = 'Tohoku, Japan 11-03-2011';
+%       subfaults = read_subfault('path',fullfile(path,file));
+%       plot_subfaults(subfaults,'plot_slip',1, ...
+%           'background_color','w',...
+%           'figure_title',title,...
+%           'cbar',1,...
+%           'c_range',[0 60 10],...
+%           'Mw',1);
+%
+% Other m-files required: brewermap.m, calculate_mw.m
+% 
+% See also: okada, read_subfault
+%
+% Written in Matlab by SeanPaul La Selle, USGS, 2015
+% Last updated 14 July, 2015
 
-% Author: SeanPaul LaSelle
-% USGS
-% email: slaselle@usgs.gov
-% June 2015; Last revision: 24-June-2015
 
 %------------- BEGIN CODE --------------
 %% OPTIONAL INPUTS
@@ -92,7 +103,7 @@ if any(strcmpi(varargin,'figure_title'))==1;
     ind=find(indi==1);
     title_string = varargin{ind+1};
 else
-    title_string = 'slip on subfaults';
+    title_string = 'subfaults';
 end
 
 % draw colorbar

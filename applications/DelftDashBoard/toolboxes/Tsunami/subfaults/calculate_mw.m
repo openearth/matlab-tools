@@ -1,6 +1,17 @@
 function Mw = calculate_mw(subfaults, varargin)
 %calculate_mw - Calculate the moment magnitude from subfault data
-%   Detailed explanation goes here
+%   
+%   Inputs:
+%       subfaults - subfaults structure from read_subfault.m
+%       mu (optional) - rigidity (in Pascals).  Default is 4e10.
+%   Output:
+%       Mw - moment magnitude
+%
+% See also: read_subfault, okada, plot_subfaults
+% Follows the USGS definition of Moment Magnitude 
+% see http://earthquake.usgs.gov/aboutus/docs/020204mag_policy.php
+% Written in Matlab by SeanPaul La Selle, USGS
+% Last updated 14 July, 2015
 
 % enter rigidity/shear modulus in Pascals (uniform for all subfaults)
 % Multiply by 10 to get dyne/cm^2 value.
