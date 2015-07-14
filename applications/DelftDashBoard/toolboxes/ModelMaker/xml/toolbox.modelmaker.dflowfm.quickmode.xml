@@ -100,7 +100,7 @@
     <text>Make Bathymetry</text>
     <callback>ddb_ModelMakerToolbox_DFlowFM_quickMode</callback>
     <option1>generatebathymetry</option1>
-    <enable>0</enable>
+    <enable>1</enable>
   </element>
   <element>
     <style>pushbutton</style>
