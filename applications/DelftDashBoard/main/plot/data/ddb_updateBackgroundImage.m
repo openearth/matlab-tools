@@ -107,7 +107,15 @@ clear xtmp ytmp xtmp2 ytmp2
 switch handles.GUIData.backgroundImageType
     case{'bathymetry'}
         % First get z data
-        maxcellsize=(xl0(2)-xl0(1))/600;
+        switch lower(handles.screenParameters.backgroundQuality)
+            case{'low'}
+                dxmax=300;
+            case{'medium'}
+                dxmax=600;
+            case{'high'}
+                dxmax=1500;
+        end        
+        maxcellsize=(xl0(2)-xl0(1))/dxmax;
         if strcmpi(dataCoord.type,'geographic')
             maxcellsize=maxcellsize*111111;
         end

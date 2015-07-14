@@ -102,6 +102,17 @@ else
         mxz=handles.screenParameters.cMax;
         mnz=handles.screenParameters.cMin;
     end
+
+    % Add shading
+    switch lower(handles.screenParameters.coordinateSystem.type)
+        case{'geographic'}        
+            zf=0.00004;
+        otherwise
+            zf=4;
+    end
+    hs = hillshade(zz,xx,yy,'zfactor',zf);
+    hs=hs/255;
+    hs=(hs+1)/2;
     
     zz0=zz;
     zz=min(zz,mxz);
@@ -122,11 +133,16 @@ else
         earthy=earth(:,2:4);
     end
     
+    
     if length(earthx)>1
         
         r=interp1(earthx,earthy(:,1),zz);
         g=interp1(earthx,earthy(:,2),zz);
         b=interp1(earthx,earthy(:,3),zz);
+        
+        r=r.*hs;
+        g=g.*hs;
+        b=b.*hs;
 
         r(isnan(zz))=1;
         g(isnan(zz))=1;
@@ -155,7 +171,6 @@ else
         ddb_colorBar('update',earth);
         
         set(gca,'CLim',[mnz mxz]);
-        %     disp('Plotting Image ...')
         
     end
     
