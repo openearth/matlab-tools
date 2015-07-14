@@ -81,6 +81,8 @@ for i=1:handles.shorelines.nrShorelines
     end
 end
 
+handles.screenParameters.backgroundQuality='Medium';
+
 handles.screenParameters.satelliteImageType='aerial';
 
 handles.screenParameters.coordinateSystem.name='WGS 84';
