@@ -94,7 +94,9 @@ switch lower(meteosource)
 %        urlstr=['http://nomads.ncep.noaa.gov:9090/dods/gfs/gfs' datestr(cycledate,'yyyymmdd') '/gfs_' num2str(cyclehour,'%0.2i') 'z'];
         urlstr=['http://nomads.ncep.noaa.gov:9090/dods/gfs_1p00/gfs' datestr(cycledate,'yyyymmdd') '/gfs_1p00_' num2str(cyclehour,'%0.2i') 'z'];    
     case{'gfs0p5'}
-        urlstr=['http://nomads.ncep.noaa.gov:9090/dods/gfs_hd/gfs_hd' datestr(cycledate,'yyyymmdd') '/gfs_hd_' num2str(cyclehour,'%0.2i') 'z'];
+        urlstr=['http://nomads.ncep.noaa.gov:9090/dods/gfs_0p50/gfs' datestr(cycledate,'yyyymmdd') '/gfs_0p50_' num2str(cyclehour,'%0.2i') 'z'];
+    case{'gfs0p25'}
+        urlstr=['http://nomads.ncep.noaa.gov:9090/dods/gfs_0p25/gfs' datestr(cycledate,'yyyymmdd') '/gfs_0p25_' num2str(cyclehour,'%0.2i') 'z'];
     case{'nam'}
         urlstr=['http://nomads.ncep.noaa.gov:9090/dods/nam/nam' datestr(cycledate,'yyyymmdd') '/nam_' num2str(cyclehour,'%0.2i') 'z'];
     case{'gdas'}
@@ -124,10 +126,10 @@ switch lower(meteosource)
         urlstr='http://nomads.ncdc.noaa.gov/dods/NCEP_NAM_ANALYSIS/3hr_Pcp';
     case{'ncep_gfs_analysis_precip'}
         urlstr='http://nomads.ncdc.noaa.gov/dods/NCEP_GFS_ANALYSIS/3hrPrecip';
-    case{'hirlam'}
-        url='http://matroos.deltares.nl:8080/opendap/maps/normal/knmi_hirlam_maps/';
-        ncfile=[datestr(cycledate+cyclehour/24,'yyyymmddHHMM') '.nc'];
-        urlstr=[url ncfile];
+%     case{'hirlam'}
+%         url='http://matroos.deltares.nl:8080/opendap/maps/normal/knmi_hirlam_maps/';
+%         ncfile=[datestr(cycledate+cyclehour/24,'yyyymmddHHMM') '.nc'];
+%         urlstr=[url ncfile];
     case{'ncep_narr'}
         ystr=num2str(year(cycledate));
         mstr=num2str(month(cycledate),'%0.2i');

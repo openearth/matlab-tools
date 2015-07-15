@@ -74,7 +74,10 @@ function getMeteo(meteoname, meteoloc, t0, t1, xlim, ylim, outdir, cycleInterval
 
 usertcyc=0;
 outputMeteoName=meteoname;
-tLastAnalyzed=now;
+
+% Estimate last analyzed time, assume 8 hour delay
+tLastAnalyzed=rounddown(now-8/24,0.25);
+
 includesFirstTime=1;
 
 for i=1:length(varargin)
@@ -108,6 +111,7 @@ if ~exist(outdir,'dir')
     mkdir(outdir);
 end
 
+
 if cycleInterval>1000
     % All data in one nc file
     tt=[t0 t1];            
@@ -119,7 +123,10 @@ else
     else
         firstCycle=t0-dcyc;
     end
-    
+
+    lon=[];
+    lat=[];
+
     for t=firstCycle:dcyc:t1
         
         tnext=t+dt;
@@ -148,7 +155,7 @@ else
         
 %        switch lower(meteoloc)
 %            case{'nomads'}
-                getMeteoFromNomads3(meteoname,outputMeteoName,cycledate,cyclehour,tt,xlim,ylim,outdir,pars,pr);
+                [lon,lat,err]=getMeteoFromNomads4(meteoname,outputMeteoName,cycledate,cyclehour,tt,xlim,ylim,outdir,pars,pr,'lon',lon,'lat',lat);
 %        end
         
         if tnext>tLastAnalyzed

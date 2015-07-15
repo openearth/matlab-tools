@@ -79,6 +79,8 @@ spwfile=[];
 
 dx=[];
 dy=[];
+dx=50000;
+dy=50000;
 dt=[];
 spwmergefrac=0.5;
 cs.name='WGS 84';
@@ -401,13 +403,21 @@ end
 
 %% Now interpolate onto grid in local coordinate system
 if ~strcmpi(cs.type,'geographic')
-    s.parameter(ipar).x=xlim(1):dx:xlim(2);
-    s.parameter(ipar).y=ylim(1):dy:ylim(2);    
+%     s.parameter(ipar).x=xlim(1):dx:xlim(2);
+%     s.parameter(ipar).y=ylim(1):dy:ylim(2);
+    % Convert grid to geographic coordinate system
+    [xg1,yg1]=convertCoordinates(xg,yg,'CS1.name',cs.name,'CS1.type',cs.type,'CS2.name','WGS 84','CS2.type','geographic');
     for ipar=1:npar
+        x1=s.parameter(ipar).x;
+        y1=s.parameter(ipar).y;
+        val1=s.parameter(ipar).val; % Data on original grid
         nt=length(s.parameter(ipar).time);
+        s.parameter(ipar).x=xlim(1):dx:xlim(2);
+        s.parameter(ipar).y=ylim(1):dy:ylim(2);
+        s.parameter(ipar).val=zeros(nt,size(xg,1),size(xg,2));
         for it=1:nt
-            val=squeeze(s.parameter(ipar).val(it,:,:));
-            s.parameter(ipar).val(it,:,:)=interp2(s.parameter(ipar).x,s.parameter(ipar).y,val,xg,yg);
+            val=squeeze(val1(it,:,:));
+            s.parameter(ipar).val(it,:,:)=interp2(x1,y1,val,xg1,yg1);
         end
     end
 end
