@@ -1,4 +1,4 @@
-function varargout=nesthd2(varargin)
+function varargout=nesthd2_new(varargin)
 % NESTHD2
 %
 % e.g. nesthd2('runid','tst','inputdir','d:\temp\','admfile','d:\temp\nesting.adm','hisfile','d:\run01\trih-ovr.dat','opt','hydro')
@@ -16,6 +16,7 @@ t1=[];
 isave=1;
 cs='projected';
 zcor=0;
+overallmodeltype='delft3dflow';
 
 if length(varargin)==1
     % Read input from xml file
@@ -84,6 +85,8 @@ else
                     cs=varargin{i+1};
                 case{'input'}
                     Flow=varargin{i+1};
+                case{'overallmodeltype'}
+                    overallmodeltype=varargin{i+1};
             end
         end
     end
@@ -102,13 +105,47 @@ if ~isempty(runid)
     end
 end
 
-% Read nesting administration file
-disp('Reading nesting administration file ...');
-nestadmin=readNestAdmin(admfile);
+% Create nesting administration structure
+switch overallmodeltype
+    case{'delft3dflow'}
+        % Read nesting administration file
+        disp('Reading nesting administration file ...');
+        nestadmin=readNestAdmin(admfile);
+    case{'dflowfm'}
+        flds={'wl','vel'};
+        % Loop over boundary sections
+        n=0;
+        for ibnd=1:length(openBoundaries)
+            % Loop over points
+            for ip=1:length(openBoundaries(ibnd).x)
+                n=n+1;
+                for ifld=1:length(flds)
+                    fld=flds{ifld};
+                    nestadmin(n).(fld).w=1;
+%                    nestadmin(n).(fld).name=[openBoundaries(ibnd).name '_' num2str(ip,'%0.4i')];
+                    nestadmin(n).(fld).name=[openBoundaries(ibnd).name '_' num2str(ip,'%0.4i')];
+                end
+            end
+            
+            % Loop over points
+            for ip=1:length(openBoundaries(ibnd).x)
+                n=n+1;
+                for ifld=1:length(flds)
+                    fld=flds{ifld};
+                    nestadmin(n).(fld).w=1;
+%                    nestadmin(n).(fld).name=[openBoundaries(ibnd).name '_' num2str(ip,'%0.4i')];
+                    nestadmin(n).(fld).name=[openBoundaries(ibnd).name '_' num2str(ip,'%0.4i')];
+                end
+            end
+            
+            
+            
+        end
+end
 
 % Read data for each boundary point that was found in readNestAdmin.m
 disp('Reading data overall model ...');
-[times,stations,overalldata]=getNestSeries(nestadmin,'hisfile',hisfile,'tstart',t0,'tstop',t1,'stride',stride,'overallmodeltype','delft3dflow',opt);
+[times,stations,overalldata]=getNestSeries(nestadmin,'hisfile',hisfile,'tstart',t0,'tstop',t1,'stride',stride,'overallmodeltype',overallmodeltype,opt);
 
 % % Now interpolate data over vertical of boundary support points ()
 % disp('Interpolating data onto nested model ...');
@@ -116,7 +153,8 @@ disp('Reading data overall model ...');
 nesteddata=overalldata;
 
 for ip=1:length(nestadmin)
-    nesteddatanames{ip}=nestadmin(ip).name;
+    nesteddatanames{ip}=nestadmin(ip).wl.name;
+%    nesteddatanames{ip}=nestadmin(ip).name;
 end
 
 nbnd=length(openBoundaries);
@@ -124,7 +162,9 @@ for ib=1:nbnd
     for ip=1:length(openBoundaries(ib).x)
         % Find point in nested data
         bndname=[openBoundaries(ib).name '_' num2str(ip,'%0.4i')];
+%        bndname=[openBoundaries(ib).name num2str(ip,'%0.4i')];
         ii=strmatch(bndname,nesteddatanames,'exact');
+%        bndname=[openBoundaries(ib).name '_' num2str(ip,'%0.4i')];
         openBoundaries(ib).nodes(ip).timeseriesfile=[bndname '.tim'];
         openBoundaries(ib).nodes(ip).time=times;
         openBoundaries(ib).nodes(ip).value=nesteddata(ii).waterlevel;
@@ -325,7 +365,7 @@ for k=1:length(nestadmin)
             fld='vel';
         end
         if ~isempty(nestadmin(k).(fld))
-            for ip=1:4
+            for ip=1:length(nestadmin(k).(fld))
                 name=nestadmin(k).(fld)(ip).name;
                 if isempty(strmatch(name,stationnames,'exact'))
                     istat=strmatch(name,allstations,'exact');
@@ -963,9 +1003,8 @@ end
 function varargout=readData(fid,par,isteps,istation,overallmodel,kmax)
 
 switch lower(overallmodel)
+
     case{'delft3dflow'}
-        
-        % Determine KMAX
         
         switch par
 
@@ -998,6 +1037,40 @@ switch lower(overallmodel)
                 varargout{5}=squeeze(v.YComp);
                 
         end
+
+    case{'dflowfm'}
+        
+        switch par
+
+            case{'bedlevel'}
+                % Read water levels
+                v=qpread(fid,1,'bed level','data',isteps,istation);
+                varargout{1}=0;
+                varargout{2}=squeeze(v.Val);
+
+            case{'waterlevel'}
+                % Read water levels
+                v=qpread(fid,1,'Water level (points)','data',isteps,istation);
+%                 dpt=qpread(fid,1,'water depth','data',isteps,istation);
+%                 v.Val(dpt.Val<0.01)=0.0;
+                varargout{1}=0;
+                varargout{2}=squeeze(v.Val);
+                
+            case{'velocity'}
+                % Read velocities
+                if kmax==1
+                    v=qpread(fid,1,'velocity (points)','griddata',isteps,istation);
+                    v.Z=zeros(size(v.XComp));
+                else
+                    v=qpread(fid,1,'velocity (points)','griddata',isteps,istation);
+                end
+                varargout{1}=squeeze(v.Z);
+                varargout{2}=squeeze(v.XComp);
+                varargout{3}=squeeze(v.YComp);
+                varargout{4}=squeeze(v.XComp);
+                varargout{5}=squeeze(v.YComp);
+                
+        end
         
 end
 
@@ -1007,7 +1080,7 @@ function vout=computeMean(nst,fld,stationnames,kmax,v)
 w4=[0 0 0 0];
 v4=zeros(size(v,1),4);
 
-for ip=1:4
+for ip=1:length(nst.(fld))
     istat=strmatch(nst.(fld)(ip).name,stationnames,'exact');
     if ~isempty(istat)
         if kmax==1
@@ -1043,4 +1116,11 @@ switch lower(overallmodeltype)
         times       = qpread(fid,1,'water level','times');
         vs_use(hisfile,'quiet');
         kmax=vs_get('his-const','KMAX','quiet');
+    case{'dflowfm'}
+        fid=qpfopen(hisfile);
+        allstations = qpread(fid,1,'Water level (points)','stations');
+        times       = qpread(fid,1,'Water level (points)','times');
+        kmax=1;
+%         vs_use(hisfile,'quiet');
+%         kmax=vs_get('his-const','KMAX','quiet');
 end
