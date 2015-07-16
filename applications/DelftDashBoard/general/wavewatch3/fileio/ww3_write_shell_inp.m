@@ -142,6 +142,11 @@ fprintf(fid,'%s\n','$          diffucult to use point names in data files.');
 fprintf(fid,'%s\n','$');
 if shl.point_output.nrpoints==0
     shl.point_output.time_step=0;
+else
+    if shl.point_output.time_step==0
+        shl.point_output.time_step=3600;
+        disp('Point output time step set to 3600!');
+    end
 end
 fprintf(fid,'%s\n',['   ' datestr(shl.point_output.start_time,'yyyymmdd HHMMSS') '   ' num2str(shl.point_output.time_step) '  ' datestr(shl.point_output.stop_time,'yyyymmdd HHMMSS')]);
 fprintf(fid,'%s\n','$');
