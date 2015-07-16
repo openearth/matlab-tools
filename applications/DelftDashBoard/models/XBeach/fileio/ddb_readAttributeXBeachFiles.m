@@ -1,4 +1,4 @@
-function handles=ddb_readAttributeXBeachFiles(handles,pathname)
+function handles=ddb_XBeach_readAttributeFiles(handles,pathname)
             
 id=handles.activeDomain;
 
@@ -6,16 +6,15 @@ id=handles.activeDomain;
 if handles.model.xbeach.domain(id).vardx==1
     % Irregular grid
     X=load([pathname,handles.model.xbeach.domain(id).xfile]);
-    handles.model.xbeach.domain(id).GridX=X;
+    handles.model.xbeach.domain(id).grid.x=X;
     Y=load([pathname,handles.model.xbeach.domain(id).yfile]);    
-    handles.model.xbeach.domain(id).GridY=Y;
+    handles.model.xbeach.domain(id).grid.y=Y;
     nx = size(X,2)-1;
     ny = size(X,1)-1;
 %     handles=ddb_determineKCS(handles,id);
-    nans=zeros(size(handles.model.xbeach.domain(id).GridX));
+    nans=zeros(size(handles.model.xbeach.domain(id).grid.x));
     nans(nans==0)=NaN;
-    handles.model.xbeach.domain(id).Depth=nans;
-    handles.model.xbeach.domain(id).DepthZ=nans;
+    handles.model.xbeach.domain(id).depth=nans;
 elseif handles.model.xbeach.domain(id).vardx==0
     % Regular grid
     dx = handles.model.xbeach.domain(id).dx;
@@ -25,13 +24,12 @@ elseif handles.model.xbeach.domain(id).vardx==0
     x = dx*[0:1:nx];
     y = dx*[0:1:ny];
     [X,Y] = meshgrid(x,y);
-    handles.model.xbeach.domain(id).GridX=X;
-    handles.model.xbeach.domain(id).GridY=Y;
+    handles.model.xbeach.domain(id).grid.x=X;
+    handles.model.xbeach.domain(id).grid.y=Y;
     
-    nans=zeros(size(handles.model.xbeach.domain(id).GridX));
+    nans=zeros(size(handles.model.xbeach.domain(id).gridx));
     nans(nans==0)=NaN;
-    handles.model.xbeach.domain(id).Depth=nans;
-    handles.model.xbeach.domain(id).DepthZ=nans;
+    handles.model.xbeach.domain(id).depth=nans;
 end
 
 % % Depfile
@@ -59,8 +57,8 @@ if ~strcmp(handles.model.xbeach.domain(id).zs0file,'file')
 end
 
 % Read boundarylist file and wave conditions...
-xbs = xb_read_waves([pathname handles.model.xbeach.domain(handles.activeDomain).bcfile]);
-ddb_xbmi.bcfile.filename = handles.model.xbeach.domain(handles.activeDomain).bcfile;
+xbs = xb_read_waves([pathname handles.model.xbeach.domain(ad).bcfile]);
+ddb_xbmi.bcfile.filename = handles.model.xbeach.domain(ad).bcfile;
 noCon = 0;
 for j = 1:length(xbs.data)% check how many wave conditions are specified
     noCon = max(noCon,length(xbs.data(j).value));
@@ -76,5 +74,5 @@ end
 % Replace default values with model input
 fieldNames = fieldnames(ddb_xbmi);
 for i = 1:size(fieldNames,1)
-    handles.Model(handles.activeModel.nr).Input(handles.activeDomain).(fieldNames{i}) = ddb_xbmi.(fieldNames{i});
+    handles.mode.xbeach.domain(ad).(fieldNames{i}) = ddb_xbmi.(fieldNames{i});
 end
