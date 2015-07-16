@@ -358,17 +358,24 @@ try
     
     [xb,yb]=ddb_coordConvert(xb,yb,handles.screenParameters.coordinateSystem,cs);
     
-%     waterlevelboundary=0;
-%     
-%     if waterlevelboundary
-%         
-%         [ampz,phasez,conList] = readTideModel(tidefile,'type','h','x',xb,'y',yb,'constituent','all');
-%         amp=ampz;
-%         phase=phasez;
-%         
-%     else
-%         
-%         % Riemann
+    waterlevelboundary=1;
+
+    % Set all boundaries to waterleveluxuybnd TO BE REMOVED LATER !!!
+    for ipol=1:length(boundaries)
+%        boundaries(ipol).type='uxuyadvectionvelocitybnd';
+        boundaries(ipol).type='waterlevelbnd';
+    end
+    
+    
+    if waterlevelboundary
+        
+        [ampz,phasez,conList] = readTideModel(tidefile,'type','h','x',xb,'y',yb,'constituent','all');
+        amp=ampz;
+        phase=phasez;
+        
+    else
+        
+        % Riemann
         
         [ampz,phasez,conList] = readTideModel(tidefile,'type','h','x',xb,'y',yb,'constituent','all');
         [ampu,phaseu,ampv,phasev,depth,conList] = readTideModel(tidefile,'type','vel','x',xb,'y',yb,'constituent','all','includedepth');
@@ -431,12 +438,8 @@ try
             end
         end
         
-%     end
-
-    % Set all boundaries to waterleveluxuybnd TO BE REMOVED LATER !!!
-    for ipol=1:length(boundaries)
-        boundaries(ipol).type='waterleveluxuybnd';
     end
+
     
     % Set components in boundary structure
     ip=0;    
@@ -467,14 +470,13 @@ try
         for jj=1:length(boundaries(ipol).x)
             ip=ip+1;
             switch lower(boundaries(ipol).type)
-                case{'waterleveluxuybnd'}
+                case{'uxuyadvectionvelocitybnd'}
                     % Make tim file
                     boundaries(ipol).nodes(jj).timeseries.time=tt';
                     %
-                    wl = makeTidePrediction(tt, conList, ampz(:,ip), phasez(:,ip), yb(ip));
                     uu = makeTidePrediction(tt, conList, ampu(:,ip), phaseu(:,ip), yb(ip));
                     vv = makeTidePrediction(tt, conList, ampv(:,ip), phasev(:,ip), yb(ip));
-                    boundaries(ipol).nodes(jj).timeseries.value=[wl' uu' vv'];
+                    boundaries(ipol).nodes(jj).timeseries.value=[uu' vv'];
             end
         end
     end
@@ -486,6 +488,8 @@ try
                 case{'waterlevelbnd','riemannbnd'}
                     ddb_DFlowFM_saveCmpFile(boundaries,ipol,jj);
                 case{'waterleveluxuybnd'}
+                    ddb_DFlowFM_saveTimFile(boundaries,ipol,jj,handles.model.dflowfm.domain(ad).refdate);                    
+                case{'uxuyadvectionvelocitybnd'}
                     ddb_DFlowFM_saveTimFile(boundaries,ipol,jj,handles.model.dflowfm.domain(ad).refdate);                    
             end
         end
