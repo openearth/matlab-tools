@@ -106,13 +106,14 @@ else
     % Add shading
     switch lower(handles.screenParameters.coordinateSystem.type)
         case{'geographic'}        
-            zf=0.00004;
+            zf=0.00002;
         otherwise
-            zf=4;
+            zf=2;
     end
     hs = hillshade(zz,xx,yy,'zfactor',zf);
     hs=hs/255;
-    hs=(hs+1)/2;
+    hs=hs+0.2;
+%    hs=(hs+2)/3;
     
     zz0=zz;
     zz=min(zz,mxz);
@@ -140,9 +141,9 @@ else
         g=interp1(earthx,earthy(:,2),zz);
         b=interp1(earthx,earthy(:,3),zz);
         
-        r=r.*hs;
-        g=g.*hs;
-        b=b.*hs;
+        r=min(1,r.*hs);
+        g=min(1,g.*hs);
+        b=min(1,b.*hs);
 
         r(isnan(zz))=1;
         g(isnan(zz))=1;
