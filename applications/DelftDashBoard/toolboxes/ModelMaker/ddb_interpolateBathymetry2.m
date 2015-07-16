@@ -53,6 +53,8 @@ else
     % grids
     dmin=5000;
     dmax=5000;
+    dmin=5;
+    dmax=5;
 end
 
 xg0=xg;
@@ -121,8 +123,9 @@ for id=1:length(datasets)
         
 end
 
-%internaldiffusionrange=[-20000 20000];
-internaldiffusionrange=[-2 2];
+internaldiffusionrange=[-20000 20000];
+%internaldiffusionrange=[-2 2];
+internaldiffusionrange=[-20000 -2];
 
 if strcmpi(gridtype,'structured')
     if internaldiff
@@ -130,7 +133,8 @@ if strcmpi(gridtype,'structured')
         isn=isnan(zg);              % Missing indices in depth matrix
         mask=zeros(size(zg))+1;
         mask(isnan(xg))=0;         % Missing indices in grid matrix
-        z=internaldiffusion(zg,'mask',mask);
+%        z=internaldiffusion(zg,'mask',mask);
+        zg=internaldiffusion(zg,'mask',mask);
         isn2=logical(isn.*mask);   % Matrix of values that were filled by internal diffusion
         zg(isn2)=max(zg(isn2),internaldiffusionrange(1));
         zg(isn2)=min(zg(isn2),internaldiffusionrange(2));
