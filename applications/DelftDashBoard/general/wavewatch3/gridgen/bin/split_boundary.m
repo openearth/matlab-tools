@@ -75,7 +75,10 @@ for i = 1:N
         if (isempty(bound_ingrid))
             bound_ingrid = bound(i);
         else
-            bound_ingrid(in_coord) = bound(i);
+            fldnames=fieldnames(bound(i));
+            for ifld=1:length(fldnames)
+                bound_ingrid(in_coord).(fldnames{ifld}) = bound(i).(fldnames{ifld});
+            end
         end;
         in_coord = in_coord+1;
     end;
