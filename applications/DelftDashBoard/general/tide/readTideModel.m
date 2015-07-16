@@ -196,72 +196,116 @@ end
 
 dx=(xmax-xmin)/10;
 dx=max(dx,0.5);
+dx=x(2)-x(1);
 %dx=0;
 
 iok=0;
-% Assuming global dataset
-% First check situation
-if xmin>=x(1) && xmax<=x(end)
-    % No problems
+
+iglob=0;
+if x(end)-x(1)>330
+    % Global dataset
+    iglob=1;
+end
+
+loncor=0;
+
+if iglob
+    
+    % Assuming global dataset
+    % First check situation
+    if xmin>=x(1) && xmax<=x(end)
+        % No problems
+        iok=1;
+        ix1=find(x<=xmin-dx,1,'last');
+        ix2=find(x>=xmax+dx,1,'first');
+    elseif xmin<x(1) && xmax<x(1)
+        % Both to the left of the data
+        % Check if moving the data 360 deg to the left helps
+        xtmp=x-360;
+        xutmp=xu-360;
+        xvtmp=xv-360;
+    elseif xmin>x(1) && xmax>x(1)
+        % Both to the right of the data
+        % Check if moving the data 360 deg to the right helps
+        xtmp=x+360;
+        xutmp=xu+360;
+        xvtmp=xv+360;
+    else
+        % Possibly pasting necessary
+        xtmp=x;
+    end
+    
+    if ~iok
+        % Check again
+        if xmin>=xtmp(1) && xmax<=xtmp(end)
+            % No problems now, keep new x value
+            iok=1;
+            x=xtmp;
+            xu=xutmp;
+            xv=xvtmp;
+            ix1=find(x<=xmin-dx,1,'last');
+            ix2=find(x>=xmax+dx,1,'first');
+        end
+    end
+    
+    if ~iok
+        % Needs pasting
+        
+        % Left hand side
+        if xmin<x(1)
+            xtmp=x-360;
+        else
+            xtmp=x;
+        end
+        ix1left=find(xtmp<=xmin,1,'last');
+        ix2left=length(x);
+        
+        lonleft=xtmp(ix1left:ix2left);
+        
+        % Right hand side
+        if xmax>x(end)
+            xtmp=x+360;
+        else
+            xtmp=x;
+        end
+        ix1right=1;
+        ix2right=find(xtmp>=xmax,1,'first');
+        
+        lonright=xtmp(ix1right:ix2right);
+        
+    end
+    
+else
+    % Not a global dataset
+    % First check situation
     iok=1;
     ix1=find(x<=xmin-dx,1,'last');
     ix2=find(x>=xmax+dx,1,'first');
-elseif xmin<x(1) && xmax<x(1)
-    % Both to the left of the data
-    % Check if moving the data 360 deg to the left helps
-    xtmp=x-360;
-    xutmp=xu-360;
-    xvtmp=xv-360;
-elseif xmin>x(1) && xmax>x(1)
-    % Both to the right of the data
-    % Check if moving the data 360 deg to the right helps
-    xtmp=x+360;
-    xutmp=xu+360;
-    xvtmp=xv+360;
-else
-    % Probably pasting necessary
-    xtmp=x;
-end
-
-
-if ~iok
-    % Check again
-    if xmin>=xtmp(1) && xmax<=xtmp(end)
-        % No problems now, keep new x value
-        iok=1;
-        x=xtmp;
-        xu=xutmp;
-        xv=xvtmp;
-        ix1=find(x<=xmin-dx,1,'last');
-        ix2=find(x>=xmax+dx,1,'first');
+    if ix1==length(x)
+        ix1=[];
     end
-end
-
-if ~iok
-    % Needs pasting
-    
-    % Left hand side
-    if xmin<x(1)
-        xtmp=x-360;
-    else
-        xtmp=x;
+    if ix2==1
+        ix2=[];
     end
-    ix1left=find(xtmp<=xmin,1,'last');
-    ix2left=length(x);
-    
-    lonleft=xtmp(ix1left:ix2left);
-    
-    % Right hand side
-    if xmax>x(end)
-        xtmp=x+360;
-    else
-        xtmp=x;
+    if isempty(ix1) && isempty(ix2)
+        % Possibly using WL iso EL
+        if xmin<x(1) && xmax<x(end)
+            ix1=find(x<=xmin-dx+360,1,'last');
+            ix2=find(x>=xmax+dx+360,1,'first');
+            loncor=-360;
+        else
+            ix1=find(x<=xmin-dx-360,1,'last');
+            ix2=find(x>=xmax+dx-360,1,'first');
+            loncor=360;
+        end
     end
-    ix1right=1;
-    ix2right=find(xtmp>=xmax,1,'first');
-    
-    lonright=xtmp(ix1right:ix2right);
-    
+    % Using
+    if isempty(ix1)
+        ix1=1;
+    end
+    if isempty(ix2)
+        ix2=length(x);
+    end
 end
 
 for i=1:length(gt)
@@ -319,11 +363,11 @@ for i=1:length(gt)
             depth = nc_varget(fname,'depth',[ix1-1 iy1-1],[ix2-ix1+1 iy2-iy1+1]);
             depth = depth';
         end
-        lonz=x(ix1:ix2);
+        lonz=x(ix1:ix2)+loncor;
         latz=y(iy1:iy2);
-        lonu=xu(ix1:ix2);
+        lonu=xu(ix1:ix2)+loncor;
         latu=yu(iy1:iy2);
-        lonv=xv(ix1:ix2);
+        lonv=xv(ix1:ix2)+loncor;
         latv=yv(iy1:iy2);
     end
 %    gt(i).amp(gt(i).amp>100)=NaN;
