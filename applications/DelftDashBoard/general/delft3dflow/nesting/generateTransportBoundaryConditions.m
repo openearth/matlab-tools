@@ -94,10 +94,25 @@ end
 switch opt.(par)(ii).BC.source
     
     case{4,5}
+%         % Constant or profile
+%         depths=pars(1,:);
+%         vals=pars(2,:);
+%         depths=[-100000 depths 100000];
+%         vals =[vals(1) vals vals(end)];
+%         val=interp1(depths,vals,dplayer);
+
         % Constant or profile
-        depths=pars(1,:);
+        depths=pars(1,:); % Depths must be defined positive up! I.e. at a level 1000 below the surface, depth must be -1000
         vals=pars(2,:);
-        depths=[-100000 depths 100000];
+        if length(depths)>1
+            if depths(2)>depths(1)
+                % Make sure we start at highest point
+                depths=fliplr(depths);
+                vals=fliplr(vals);
+            end
+        end
+        depths=[10000 depths -10000];
+        depths=depths*-1;
         vals =[vals(1) vals vals(end)];
         val=interp1(depths,vals,dplayer);
         
@@ -176,16 +191,16 @@ switch opt.(par)(ii).BC.source
 % If sigma coordinates, read water level from openboundaries input var
         n_child = length([t0:dt/1440:t1]);
         wl = zeros(n_child, length(openBoundaries), 2);
-        for j=1:length(openBoundaries)
-            if ~strcmpi(flow.vertCoord,'z')
-% Test if the water level field was added to open boundaries
-                if ~isfield(openBoundaries(1), 'timeSeriesWLA')
-                    error(error_id{1}, error_msg{1});
-                end
-               wl(:,j,1) = openBoundaries(j).timeSeriesWLA;
-               wl(:,j,2) = openBoundaries(j).timeSeriesWLB;
-            end
-        end
+%         for j=1:length(openBoundaries)
+%             if ~strcmpi(flow.vertCoord,'z')
+% % Test if the water level field was added to open boundaries
+%                 if ~isfield(openBoundaries(1), 'timeSeriesWLA')
+%                     error(error_id{1}, error_msg{1});
+%                 end
+%                wl(:,j,1) = openBoundaries(j).timeSeriesWLA;
+%                wl(:,j,2) = openBoundaries(j).timeSeriesWLB;
+%             end
+%         end
         
         nt=0;
         
@@ -259,6 +274,8 @@ switch opt.(par)(ii).BC.source
                 ta(:,k) = spline(openBoundaries(j).(par)(ii).timeSeriesT,openBoundaries(j).(par)(ii).timeSeriesA(:,k),t);
                 tb(:,k) = spline(openBoundaries(j).(par)(ii).timeSeriesT,openBoundaries(j).(par)(ii).timeSeriesB(:,k),t);
             end
+            ta=max(ta,1);
+            tb=max(tb,1);
             openBoundaries(j).(par)(ii).timeSeriesT = t;
             openBoundaries(j).(par)(ii).timeSeriesA = ta;
             openBoundaries(j).(par)(ii).timeSeriesB = tb;
