@@ -16,6 +16,7 @@ t1=[];
 isave=1;
 cs='projected';
 zcor=0;
+vertGrid.KMax=1;
 
 if length(varargin)==1
     % Read input from xml file
@@ -103,6 +104,7 @@ end
 s=readNestAdmin(admfile);
 
 disp('Reading data overall model ...');
+
 nest=getNestSeries(hisfile,t0,t1,s,stride,opt);
 
 switch lower(opt)
@@ -157,6 +159,7 @@ end
 
 nwl=0;
 nvel=0;
+s.vel.m=[];
 while 1
     f=fgetl(fid);
     if ~ischar(f), break, end
@@ -263,25 +266,27 @@ for k=1:length(s.wl.m)
         end
     end
 end
-for k=1:length(s.vel.m)
-    for i=1:4
-        m=s.vel.mm(k,i);
-        n=s.vel.nn(k,i);
-        if m>0
-            ii=find(mused==m&nused==n, 1);
-            if isempty(ii)
-                nrused=nrused+1;
-                mused(nrused)=m;
-                nused(nrused)=n;
-                m=[repmat(' ',1,5-length(num2str(m))) num2str(m)];
-                n=[repmat(' ',1,5-length(num2str(n))) num2str(n)];
-                st=['(M,N)=(' m ',' n ')'];
-                istat=strmatch(st,stations);
-                if isempty(istat)
-                    istation(nrused)=istation(nrused-1);
-                    % error(['Station ' st 'not found in history file']);
-                else
-                    istation(nrused)=istat;
+if ~isempty(s.vel)
+    for k=1:length(s.vel.m)
+        for i=1:4
+            m=s.vel.mm(k,i);
+            n=s.vel.nn(k,i);
+            if m>0
+                ii=find(mused==m&nused==n, 1);
+                if isempty(ii)
+                    nrused=nrused+1;
+                    mused(nrused)=m;
+                    nused(nrused)=n;
+                    m=[repmat(' ',1,5-length(num2str(m))) num2str(m)];
+                    n=[repmat(' ',1,5-length(num2str(n))) num2str(n)];
+                    st=['(M,N)=(' m ',' n ')'];
+                    istat=strmatch(st,stations);
+                    if isempty(istat)
+                        istation(nrused)=istation(nrused-1);
+                        % error(['Station ' st 'not found in history file']);
+                    else
+                        istation(nrused)=istat;
+                    end
                 end
             end
         end
@@ -666,25 +671,45 @@ for i=1:length(openBoundaries)
             openBoundaries(i).timeSeriesB=[0;0];
         case{'r'}
             openBoundaries(i).timeSeriesT=nest.t;
+            % Calibration factor for Riemann invariant (should be set to 1.0)
             calfac=1.0;
+            % Correction factors acor1 and acor2 for depth differences between overall and nested model
+            % Ensures correct volume fluxes through boundary
             acor1=-dps(1)/dp(1);
             acor1=max(min(acor1,2.0),0.5);
             acor2=-dps(2)/dp(2);
             acor2=max(min(acor2,2.0),0.5);
             acor1=acor1*calfac;
             acor2=acor2*calfac;
-            %             cr1=cr1+acor1;
-            %             cr2=cr2+acor2;
+            acor1=1;
+            acor2=1;         
+
+            usebedlevel=1;
             for k=1:vertGrid.KMax
                 switch lower(openBoundaries(i).side)
                     case{'left','bottom'}
-                        r1(:,k)=acor1*squeeze(u1(:,k,1)) + calfac*squeeze(wl(:,1))*sqrt(9.81/dp(1));
-                        r2(:,k)=acor2*squeeze(u1(:,k,2)) + calfac*squeeze(wl(:,2))*sqrt(9.81/dp(2));
+                        if usebedlevel
+                            % Using eq 9.71 from Delft3D-FLOW manual
+                            r1(:,k)=acor1*squeeze(u1(:,k,1)) + calfac*squeeze(wl(:,1))*sqrt(9.81/dp(1));
+                            r2(:,k)=acor2*squeeze(u1(:,k,2)) + calfac*squeeze(wl(:,2))*sqrt(9.81/dp(2));
+                        else
+                            % Using water depth i.s.o. bed level in eq 9.71 from Delft3D-FLOW manual
+                            r1(:,k)=acor1*squeeze(u1(:,k,1)) + calfac*squeeze(wl(:,1)).*sqrt(9.81./max(dp(1)+squeeze(wl(:,1)),0.1));
+                            r2(:,k)=acor2*squeeze(u1(:,k,2)) + calfac*squeeze(wl(:,2)).*sqrt(9.81./max(dp(2)+squeeze(wl(:,2)),0.1));
+                        end
                     case{'top','right'}
-                        r1(:,k)=acor1*squeeze(u1(:,k,1)) - calfac*squeeze(wl(:,1))*sqrt(9.81/dp(1));
-                        r2(:,k)=acor2*squeeze(u1(:,k,2)) - calfac*squeeze(wl(:,2))*sqrt(9.81/dp(2));
+                        if usebedlevel
+                            % Using eq 9.71 from Delft3D-FLOW manual
+                            r1(:,k)=acor1*squeeze(u1(:,k,1)) - calfac*squeeze(wl(:,1))*sqrt(9.81/dp(1));
+                            r2(:,k)=acor2*squeeze(u1(:,k,2)) - calfac*squeeze(wl(:,2))*sqrt(9.81/dp(2));
+                        else
+                            % Using water depth i.s.o. bed level in eq 9.71 from Delft3D-FLOW manual
+                            r1(:,k)=acor1*squeeze(u1(:,k,1)) - calfac*squeeze(wl(:,1)).*sqrt(9.81./max(dp(1)+squeeze(wl(:,1)),0.1));
+                            r2(:,k)=acor2*squeeze(u1(:,k,2)) - calfac*squeeze(wl(:,2)).*sqrt(9.81./max(dp(2)+squeeze(wl(:,2)),0.1));
+                        end
                 end
             end
+            
             openBoundaries(i).timeSeriesA=r1;
             openBoundaries(i).timeSeriesB=r2;
         case{'x'}
