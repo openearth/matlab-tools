@@ -1,12 +1,10 @@
 function handles=ddb_ModelMakerToolbox_XBeach_generateBathymetry(handles,datasets,varargin)
 
-%% Initial settings
 icheck=1;
 overwrite=1;
 filename=[];
-id=1;
+id=ad;
 modeloffset=0;
-handles=getHandles;
 
 %% Read input arguments
 for i=1:length(varargin)
@@ -26,22 +24,57 @@ for i=1:length(varargin)
     end
 end
 
+%% Check should NOT be performed when called by CSIPS toolbox
+if icheck
+    % Check if there is already a grid
+    if handles.model.xbeach.domain(id).nx==0
+        ddb_giveWarning('Warning','First generate or load a grid');
+        return
+    end
+    % File name
+    if ~strcmpi(handles.model.xbeach.domain(id).depfile,'file')
+        handles.model.xbeach.domain(id).depfile=[handles.model.xbeach.domain(id).attname '.dep'];
+    end
+    [filename,ok]=gui_uiputfile('*.dep', 'Depth File Name',handles.model.xbeach.domain(id).depfile);
+    if ~ok
+        return
+    end
+    % Check if there is already data in depth matrix
+    dmax=max(max(handles.model.xbeach.domain(id).depth));
+    if isnan(dmax)
+        overwrite=1;
+    else
+        ButtonName = questdlg('Overwrite existing bathymetry?', ...
+            'Delete existing bathymetry', ...
+            'Cancel', 'No', 'Yes', 'Yes');
+        switch ButtonName,
+            case 'Cancel',
+                return;
+            case 'No',
+                overwrite=0;
+            case 'Yes',
+                overwrite=1;
+        end
+    end
+end
 
 %% Grid coordinates and type
-xg=handles.model.xbeach.domain(id).GridX;
-yg=handles.model.xbeach.domain(id).GridY;
-zg=handles.model.xbeach.domain(id).Depth;
+xg=handles.model.xbeach.domain(id).grid.x;
+yg=handles.model.xbeach.domain(id).grid.y;
+zg=handles.model.xbeach.domain(id).depth;
 gridtype='structured';
 
 %% Generate bathymetry
 [xg,yg,zg]=ddb_ModelMakerToolbox_generateBathymetry(handles,xg,yg,zg,datasets,'filename',filename,'overwrite',overwrite,'gridtype',gridtype,'modeloffset',modeloffset);
-handles.model.xbeach.domain(id).Depth= zg;
 
 %% Update model data
-zg = zg'
-grdz = 'bed.dep';
-save(grdz,'zg', '-ascii')
+handles.model.xbeach.domain(id).depth=zg;
+% Fill borders
 
+% Depth file
+handles.model.xbeach.domain(id).depfile=filename;
+%handles.model.xbeach.domain(id).depthsource='file';
+ddb_wldep('write',filename,zg);
 %% Plot
 handles=ddb_XBeach_plotBathymetry(handles,'plot','domain',id);
 

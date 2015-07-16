@@ -4,7 +4,7 @@ handles=getHandles;
 
 switch lower(opt)
     case{'save'}
-        handles.outDirectory = handles.workingDirectory;
+%         handles.outDirectory = handles.workingDirectory;
         ddb_saveParams(handles);
     case{'saveas'}
         [filename, pathname] = uiputfile('*.txt*', 'Select directory to save model files','params.txt');

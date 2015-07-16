@@ -7,46 +7,58 @@ if ~isempty(varargin)
     end
 end
 
+%if isempty(filename)
+    [filename, pathname, filterindex] = uiputfile('*.grd', 'Grid File Name',[handles.model.xbeach.domain(ad).attname '.grd']);
+%end
+
+if pathname==0
+    return
+end
+
+attname=filename(1:end-4);
+
 ddb_plotXBeach(handles,'delete',id);
-handles=ddb_initializeXBeach(handles,'griddependentinput',id,handles.Model(handles.ActiveModel.Nr).Input(id).Runid);
+handles=ddb_initializeXBeach(handles,'griddependentinput',id,handles.model.xbeach.domain.runid);
 
 set(gcf,'Pointer','arrow');
 
-grdx='x.grd';
-grdy='y.grd';
-
-if strcmpi(handles.ScreenParameters.CoordinateSystem.Type,'geographic')
+if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
     coord='Spherical';
 else
     coord='Cartesian';
 end    
 
-fid=fopen(grdx,'wt');
-nrows=size(x,1);
-fprintf(fid,[repmat('%15.7e ',1,nrows) '\n'],x);
-fclose(fid);
+ddb_wlgrid('write','FileName',filename,'X',x,'Y',y,'Enclosure',enc,'CoordinateSystem',coord);
 
-fid=fopen(grdy,'wt');
-nrows=size(x,1);
-fprintf(fid,[repmat('%15.7e ',1,nrows) '\n'],y);
-fclose(fid);
+% fid=fopen(grdx,'wt');
+% nrows=size(x,1);
+% fprintf(fid,[repmat('%15.7e ',1,nrows) '\n'],x);
+% fclose(fid);
+% 
+% fid=fopen(grdy,'wt');
+% nrows=size(x,1);
+% fprintf(fid,[repmat('%15.7e ',1,nrows) '\n'],y);
+% fclose(fid);
 
-handles.GUIHandles.XBeachInput(id).xfile=grdx;
-handles.GUIHandles.XBeachInput(id).yfile=grdy;
+handles.model.xbeach.domain(id).xfile='file';
+handles.model.xbeach.domain(id).yfile='file';
+handles.model.xbeach.domain(id).xyfile='grid.grd';
 
-handles.GUIHandles.XBeachInput(id).GridX=x;
-handles.GUIHandles.XBeachInput(id).GridY=y;
+handles.model.xbeach.domain(id).gridx=x;
+handles.model.xbeach.domain(id).gridy=y;
 
-[handles.GUIHandles.XBeachInput(id).GridXZ,handles.GUIHandles.XBeachInput(id).GridYZ]=GetXZYZ(x,y);
+handles.model.xbeach.domain(id).gridform='delft3d';
 
 nans=zeros(size(x));
 nans(nans==0)=NaN;
-handles.GUIHandles.XBeachInput(id).Depth=nans;
-handles.GUIHandles.XBeachInput(id).DepthZ=nans;
+handles.model.xbeach.domain(id).depth=nans;
+handles.model.xbeach.domain(id).depthz=nans;
+% 
+handles.model.xbeach.domain(id).nx=size(x,1);
+handles.model.xbeach.domain(id).ny=size(x,2);
 
-handles.GUIHandles.XBeachInput(id).MMax=size(x,1)+1;
-handles.GUIHandles.XBeachInput(id).NMax=size(x,2)+1;
-handles.GUIHandles.XBeachInput(id).KMax=1;
+% handles=ddb_determineKCS(handles,id);
 
+ddb_plotXBeachGrid('plot',handles,ad);
 
-
+%ddb_plotGrid(x,y,id,'XBeachGrid','plot');

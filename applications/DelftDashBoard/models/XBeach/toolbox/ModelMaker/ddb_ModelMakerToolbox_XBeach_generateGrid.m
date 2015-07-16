@@ -1,6 +1,4 @@
 function handles=ddb_ModelMakerToolbox_XBeach_generateGrid(handles,id,varargin)
-% Function generates and plots rectangular grid can be called by
-% ddb_ModelMakerToolbox_quickMode_XBeach
 
 filename=[];
 pathname=[];
@@ -12,35 +10,49 @@ for ii=1:length(varargin)
 end
 
 if isempty(filename)
-    [filename, pathname, filterindex] = uiputfile('*.grd', 'Grid File Name','x and y.grd');
+    [filename, pathname, filterindex] = uiputfile('*.grd', 'Grid File Name',[handles.model.xbeach.domain(id).attname '.grd']);
 end
 
+if pathname==0
+    return
+end
 
 wb = waitbox('Generating grid ...');pause(0.1);
-handles.toolbox.modelmaker.zMax = 100000;                  % since XBeach doesnt takes this into account
 [x,y,z]=ddb_ModelMakerToolbox_makeRectangularGrid(handles);
-
-grdy='y.grd';
-grdx='x.grd';
-xm = x'*10000;
-ym = y'*10000;
-save(grdx,'xm', '-ascii')
-save(grdy,'ym', '-ascii')
-
 close(wb);
 
-%% Changing XBeach environment
-handles.model.xbeach.domain(id).xfile=grdx;
-handles.model.xbeach.domain(id).yfile=grdy;
-handles.model.xbeach.domain(id).GridX=x;
-handles.model.xbeach.domain(id).GridY=y;
+%% Now start putting things into the Delft3D-FLOW model
 
-[nx ny] = size(y);
-handles.model.xbeach.domain(id).Depth=z;
-handles.model.xbeach.domain(id).nx=size(x,1)-1;
-handles.model.xbeach.domain(id).ny=size(x,2)-1;
+ddb_plotXBeach('delete','domain',id);
 
-%ddb_plotXBeachGrid(handles,id);
+handles=ddb_XBeach_initializeDomain(handles,1,handles.model.xbeach.domain(id).runid);
+
+set(gcf,'Pointer','arrow');
+
+attname=filename(1:end-4);
+
+if strcmpi(handles.screenParameters.coordinateSystem.type,'geographic')
+    coord='Spherical';
+else
+    coord='Cartesian';
+end
+
+ddb_wlgrid('write','FileName',[attname '.grd'],'X',x,'Y',y,'CoordinateSystem',coord);
+
+handles.model.xbeach.domain(id).gridform='delft3d';
+handles.model.xbeach.domain(id).xyfile=filename;
+handles.model.xbeach.domain(id).xfile='file';
+handles.model.xbeach.domain(id).yfile='file';
+
+handles.model.xbeach.domain(id).grid.x=x;
+handles.model.xbeach.domain(id).grid.y=y;
+
+nans=zeros(size(x));
+nans(nans==0)=NaN;
+handles.model.xbeach.domain(id).depth=nans;
+
+handles.model.xbeach.domain(id).nx=size(x,1);
+handles.model.xbeach.domain(id).ny=size(x,2);
+
 handles=ddb_XBeach_plotGrid(handles,'plot','domain',ad);
-setHandles(handles);
 

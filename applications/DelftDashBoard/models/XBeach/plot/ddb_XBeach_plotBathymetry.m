@@ -82,44 +82,54 @@ for i=1:length(varargin)
     end
 end
 
-vis=vis*handles.model.delft3dflow.menuview.bathymetry;
+vis=vis*handles.model.xbeach.menuview.bathymetry;
 
 switch lower(option)
     
     case{'plot'}
         
         % First delete old bathy
-        if isfield(handles.model.delft3dflow.domain(id).bathy,'plotHandles')
-            if ~isempty(handles.model.delft3dflow.domain(id).bathy.plotHandles)
+        if isfield(handles.model.xbeach.domain(id).bathymetry,'plothandles')
+            if ~isempty(handles.model.xbeach.domain(id).bathymetry.plothandles)
                 try
-                    delete(handles.model.delft3dflow.domain(id).bathy.plotHandles);
+                    delete(handles.model.xbeach.domain(id).bathymetry.plothandles);
                 end
             end
         end
         
-           
-            x=handles.model.xbeach.domain(id).GridX;
-            y=handles.model.xbeach.domain(id).GridY;
-            z=handles.model.xbeach.domain(id).Depth;
-            handles.model.xbeach.domain(id).bathy.plotHandles=ddb_plotBathy(x,y,z);
+        if size(handles.model.xbeach.domain(id).depth,1)>0
+            
+            x=handles.model.xbeach.domain(id).grid.x;
+            y=handles.model.xbeach.domain(id).grid.y;
+            z=handles.model.xbeach.domain(id).depth;
+            
+            handles.model.xbeach.domain(id).bathymetry.plothandles=ddb_plotBathy(x,y,z);
+            
+            if vis
+                set(handles.model.xbeach.domain(id).bathymetry.plothandles,'Visible','on');
+            else
+                set(handles.model.xbeach.domain(id).bathymetry.plothandles,'Visible','off');
+            end
+            
+        end
         
     case{'delete'}
-        if isfield(handles.model.delft3dflow.domain(id).bathy,'plotHandles')
-            if ~isempty(handles.model.delft3dflow.domain(id).bathy.plotHandles)
+        if isfield(handles.model.xbeach.domain(id).bathymetry,'plothandles')
+            if ~isempty(handles.model.xbeach.domain(id).bathymetry.plothandles)
                 try
-                    delete(handles.model.delft3dflow.domain(id).bathy.plotHandles);
+                    delete(handles.model.xbeach.domain(id).bathymetry.plothandles);
                 end
             end
         end
         
     case{'update'}
-        if isfield(handles.model.delft3dflow.domain(id).bathy,'plotHandles')
-            if ~isempty(handles.model.delft3dflow.domain(id).bathy.plotHandles)
+        if isfield(handles.model.xbeach.domain(id).bathymetry,'plothandles')
+            if ~isempty(handles.model.xbeach.domain(id).bathymetry.plothandles)
                 try
                     if vis
-                        set(handles.model.delft3dflow.domain(id).bathy.plotHandles,'Visible','on');
+                        set(handles.model.xbeach.domain(id).bathymetry.plothandles,'Visible','on');
                     else
-                        set(handles.model.delft3dflow.domain(id).bathy.plotHandles,'Visible','off');
+                        set(handles.model.xbeach.domain(id).bathymetry.plothandles,'Visible','off');
                     end
                 end
             end

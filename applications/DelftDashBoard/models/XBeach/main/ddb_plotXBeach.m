@@ -33,46 +33,16 @@ if idomain==0 && ~act
     vis=0;
 end
 
-% if isempty(varargin)
-%     n1=1;
-%     n2=handles.GUIData.nrXBeachDomains;
-% else
-%    n1=varargin{2};
-%    n2=n1;
-% end
 n1 = 1;
 n2 = 1;
 
 for id=n1:n2
-
-%     if strcmpi(opt0,'deactivate') && strcmpi(handles.activeModel.name,'XBeach') && id==handles.activeDomain
-%         % Simply Changing Tab
-%         opt='deactivatebutkeepvisible';
-%     else
-%         opt=opt0;
-%     end
-
-try
-   ddb_plotXBeachBathymetry(handles,id);
-   ddb_plotXBeachGrid(handles,id);
-end
-   
-   % % TO DO: ZOOM TO MODEL DOMAIN
     
-   % TO DO: 
-   % - PLOT OFFSHORE BOUNDARY + ORIGIN OF MODEL
-   % - PLOT OBSERVATION POINTS
-   
-%     if handles.model.xbeach.domain(id).NrObservationPoints>0
-%         ddb_plotFlowAttributes(handles,'ObservationPoints',opt,id,0,1);
-%     end
-% 
-%     if handles.model.xbeach.domain(id).NrCrossSections>0
-%         ddb_plotFlowAttributes(handles,'CrossSections',opt,id,0,1);
-%     end
+    try
+        handles=ddb_XBeach_plotGrid(handles,option,'domain',id);
+        handles=ddb_XBeach_plotBathymetry(handles,option,'domain',id);
+    end
     
-% id = id;
-
 end
 
-
+setHandles(handles);
