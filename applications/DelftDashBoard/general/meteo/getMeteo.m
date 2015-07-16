@@ -115,7 +115,8 @@ end
 if cycleInterval>1000
     % All data in one nc file
     tt=[t0 t1];            
-    getMeteoFromNomads3(meteoname,outputMeteoName,0,0,tt,xlim,ylim,outdir,pars,pr);
+%    getMeteoFromNomads3(meteoname,outputMeteoName,0,0,tt,xlim,ylim,outdir,pars,pr);
+    [lon,lat,err]=getMeteoFromNomads4(meteoname,outputMeteoName,floor(now),0,tt,xlim,ylim,outdir,pars,pr);
 else
 
     if includesFirstTime

@@ -108,7 +108,7 @@ try
             latstr='y';
             missvalstr=[];
         otherwise
-            setpref( 'SNCTOOLS','USE_NETCDF_JAVA'   , 0); 
+%            setpref( 'SNCTOOLS','USE_NETCDF_JAVA'   , 0); 
             tminstr=nc_attget(urlstr,'time','minimum');
             tmaxstr=nc_attget(urlstr,'time','maximum');
             tminstr=deblank(strrep(tminstr,'z',''));
