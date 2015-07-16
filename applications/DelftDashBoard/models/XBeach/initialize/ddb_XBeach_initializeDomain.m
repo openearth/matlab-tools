@@ -1,4 +1,4 @@
-function handles=ddb_initializeXBeachInput(handles,id,runid,varargin)
+function handles=ddb_XBeach_initializeDomain(handles,id,runid,varargin)
 % Initialization function for DelftDashboard-XBeach
 % This function is generated automatically by ddb_xbeachsource2XML_v2
 % Last update was on 14-Nov-2013 09:29:57
@@ -8,6 +8,7 @@ function handles=ddb_initializeXBeachInput(handles,id,runid,varargin)
 % pick up defaults from autogen subfunction
 par=getdefaultpars;
 handles.model.xbeach.domain(id).grid=[];
+handles.model.xbeach.domain(id).bathymetry=[];
 handles.model.xbeach.domain(id).description={''};
 handles.model.xbeach.domain(id).runid=runid;
 handles.model.xbeach.domain(id).attname=handles.model.xbeach.domain(id).runid;
@@ -28,7 +29,7 @@ handles.model.xbeach.domain(id).q3d=0;
 handles.model.xbeach.domain(id).swrunup=0;
 handles.model.xbeach.domain(id).ships=0;
 handles.model.xbeach.domain(id).vegetation=0;
-handles.model.xbeach.domain(id).snells=0;
+handles.model.xbeach.domain(id).snells=1;
 handles.model.xbeach.domain(id).depfile= 'file';
 handles.model.xbeach.domain(id).posdwn=1;
 handles.model.xbeach.domain(id).nx=50;
