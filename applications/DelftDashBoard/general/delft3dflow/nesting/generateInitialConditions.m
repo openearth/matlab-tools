@@ -83,18 +83,16 @@ if isfield(opt,par)
         
         case{4,5}
             % Constant or profile
-            depths=pars(1,:);
+            depths=pars(1,:); % Depths must be defined positive up! I.e. at a level 1000 below the surface, depth must be -1000
             vals=pars(2,:);
             if depths(2)>depths(1)
-                depths=depths*-1;
+                % Make sure we start at highest point
+                depths=fliplr(depths);
+                vals=fliplr(vals);
             end
             depths=[10000 depths -10000];
-%            depths=depths*-1;
-            vals =[vals(1) vals vals(end)];
-            
-            depths=-fliplr(depths);
-            vals=fliplr(vals);
-            
+            depths=depths*-1;
+            vals =[vals(1) vals vals(end)];            
             data=interp1(depths,vals,dplayer);
             u=data;
             v=data;
