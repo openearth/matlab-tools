@@ -99,7 +99,7 @@ miny=min(min(y));
 maxy=max(max(y));
 
 % Find available times
-flist=dir([opt.waterLevel.BC.datafolder filesep opt.waterLevel.BC.dataname '.waterLevel.*.mat']);
+flist=dir([opt.waterLevel.BC.datafolder filesep opt.waterLevel.BC.dataname '.waterlevel.*.mat']);
 for i=1:length(flist)
     tstr=flist(i).name(end-17:end-4);
     times(i)=datenum(tstr,'yyyymmddHHMMSS');
