@@ -62,7 +62,7 @@ function ddb_initializeFigure
 %%
 handles=getHandles;
 
-handles.GUIHandles.mainWindow=MakeNewWindow('Delft Dashboard',[1100 700],[handles.settingsDir filesep 'icons' filesep 'deltares.gif']);
+handles.GUIHandles.mainWindow=MakeNewWindow('Delft Dashboard',[1300 700],[handles.settingsDir filesep 'icons' filesep 'deltares.gif']);
 h=handles.GUIHandles.mainWindow;
 
 set(h,'Tag','MainWindow','Visible','off');
