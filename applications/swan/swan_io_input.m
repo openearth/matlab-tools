@@ -1785,6 +1785,7 @@ end
                  if     strcmp(keyword(1:4),'STAT')
                  [keyword,rec] = strtok(rec);
                   DAT.compute.time    = keyword;
+                  timeformat = 'yyyymmdd.HHMMSS'; % Was missing here - Freek
                   DAT.compute.datenum = datenum(keyword,timeformat);
                  elseif strcmp(keyword(1:5),'NONST')
                  
