@@ -69,7 +69,6 @@ function delft3d_trim2trim_ini(trim_files,varargin)
 %See also: vs_use, vs_ini, vs_copy
 
 %   --------------------------------------------------------------------
-%   Copyright (C) 2015 Deltares
 %       Freek Scheel
 %       +31(0)88 335 8241
 %       <freek.scheel@deltares.nl>;

@@ -80,7 +80,6 @@ function delwaq_map2map_ini(map_files,varargin)
 %See also: delwaq
 
 %   --------------------------------------------------------------------
-%   Copyright (C) 2015 Deltares
 %       Freek Scheel
 %       +31(0)88 335 8241
 %       <freek.scheel@deltares.nl>;

@@ -118,7 +118,6 @@ function output = delwaq_to_flow_grids(lga_file,grd_files,varargin)
 %See also: delwaq, delft3d_io_grd
 
 %   --------------------------------------------------------------------
-%   Copyright (C) 2015 Deltares
 %       Freek Scheel
 %       +31(0)88 335 8241
 %       <freek.scheel@deltares.nl>;
