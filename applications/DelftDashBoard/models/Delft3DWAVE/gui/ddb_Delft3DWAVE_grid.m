@@ -33,7 +33,7 @@ id=nrgrids;
 [x,y,enc,coord]=ddb_wlgrid('read',filename);
 
 % handles.model.delft3dwave.domain.domains(id).coordsyst = coord;
-handles.model.delft3dwave.domain.domains(id).grid=filename;
+% handles.model.delft3dwave.domain.domains(id).grid=filename;
 handles.model.delft3dwave.domain.domains(id).bedlevelgrid=filename;
 handles.model.delft3dwave.domain.domains(id).gridname=filename;
 

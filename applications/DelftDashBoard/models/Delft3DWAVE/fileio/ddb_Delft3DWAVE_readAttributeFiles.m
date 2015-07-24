@@ -3,9 +3,9 @@ function handles = ddb_Delft3DWAVE_readAttributeFiles(handles)
 for ib=1:handles.model.delft3dwave.domain.nrdomains
     if ~isempty(handles.model.delft3dwave.domain.domains(ib).grid)
         [x,y,enc]=ddb_wlgrid('read',handles.model.delft3dwave.domain.domains(ib).grid);
-        handles.model.delft3dwave.domain.domains(ib).gridX=x;
-        handles.model.delft3dwave.domain.domains(ib).gridY=y;
-        nans=zeros(size(handles.model.delft3dwave.domain.domains(ib).gridX));
+        handles.model.delft3dwave.domain.domains(ib).gridx=x;
+        handles.model.delft3dwave.domain.domains(ib).gridy=y;
+        nans=zeros(size(handles.model.delft3dwave.domain.domains(ib).gridx));
         nans(nans==0)=NaN;
         handles.model.delft3dwave.domain.domains(ib).depth=nans;
         handles.model.delft3dwave.domain.domains(ib).mmax=size(x,1);

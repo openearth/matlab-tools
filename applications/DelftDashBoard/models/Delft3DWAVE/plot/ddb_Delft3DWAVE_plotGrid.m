@@ -90,8 +90,8 @@ switch lower(opt)
         end
         
         % Now plot new grid
-        x=handles.model.delft3dwave.domain.domains(id).gridX;
-        y=handles.model.delft3dwave.domain.domains(id).gridY;
+        x=handles.model.delft3dwave.domain.domains(id).gridx;
+        y=handles.model.delft3dwave.domain.domains(id).gridy;
         handles.model.delft3dwave.domain.domains(id).grid.plotHandles=ddb_plotCurvilinearGrid(x,y,'color',col);
         if vis
             set(handles.model.delft3dwave.domain.domains(id).grid.plotHandles,'Color',col,'Visible','on');

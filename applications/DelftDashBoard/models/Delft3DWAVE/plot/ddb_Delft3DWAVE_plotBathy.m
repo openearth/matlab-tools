@@ -81,8 +81,8 @@ switch lower(option)
                 
         if size(handles.model.delft3dwave.domain.domains(id).depth,1)>0
             
-            x=handles.model.delft3dwave.domain.domains(id).gridX;
-            y=handles.model.delft3dwave.domain.domains(id).gridY;
+            x=handles.model.delft3dwave.domain.domains(id).gridx;
+            y=handles.model.delft3dwave.domain.domains(id).gridy;
             z=handles.model.delft3dwave.domain.domains(id).depth;
             
             handles.model.delft3dwave.domain.domains(id).bathyplot.handle=ddb_plotBathy(x,y,z,'tag','delft3dwavebathymetry');
