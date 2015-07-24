@@ -66,7 +66,7 @@ function nest1
 
 handles=getHandles;
 
-if isempty(handles.model.delft3dwave.domain.domains(awg).gridX)
+if isempty(handles.model.delft3dwave.domain.domains(awg).gridx)
     ddb_giveWarning('text','Please first load or create model grid!');
     return
 end
