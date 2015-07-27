@@ -25,11 +25,20 @@ function varargout = KMLimage(lat,lon,im0,varargin)
 %   KMLimage([-90 90],[-180 180],url,'fileName','etopo2_v2c_local_machine.kml')
 %   KMLimage([-90 90],[-180 180],url,'fileName','etopo2_v2c_local_machine.kmz')
 %
+% For a list of keywords call: OPT = KMLimage
+%
+%   Keyword 'rotation' rotates the image (degrees in Cartesian convention)
+%   Keyword 'timespan' sets the time in which the image is shown in Google
+%                      Earth, this also adds a time axis in Google Earth.
+%                      In format: [matlab_datenum_start matlab_datenum_end]
+%                      Combine multiple KMLs for a time dependent animation
+%
 %See also: googleplot, image, wms, KMLfigure_tiler
 
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2013 Deltares.nl, gerben.deboer@deltares.nl
+%                 2015 Deltares.nl, freek.scheel@deltares.nl
 
 %   This library is free software: you can redistribute it and/or modify
 %   it under the terms of the GNU General Public License as published by
@@ -67,6 +76,7 @@ function varargout = KMLimage(lat,lon,im0,varargin)
    OPT.description   = '';
    OPT.openInGE      = false;
    OPT.rotation      = 0;
+   OPT.timespan      = [];
 
    eol = char(10);
    
@@ -156,7 +166,12 @@ function varargout = KMLimage(lat,lon,im0,varargin)
        ' <rotation>', num2str(OPT.rotation),'</rotation>' eol,...
        '</LatLonBox>' eol,...
        '</GroundOverlay>'];
-
+   
+   if ~isempty(OPT.timespan)
+       % Add timespan (Activates time slider in GE) if keyword timespan is specified 
+       output = strrep(output,'</GroundOverlay>',['<TimeSpan>' eol '<begin>' datestr(OPT.timespan(1),OPT.dateStrStyle) '</begin>' eol '<end>' datestr(OPT.timespan(2),OPT.dateStrStyle) '</end>' eol '</TimeSpan>' eol '</GroundOverlay>']);
+   end
+   
    if OPT.fid > 0
       fprintf(OPT.fid,'%s',output);
    end
