@@ -24,7 +24,8 @@ function Tout=convertWaveperiod(type_in,Tin,type_out,varargin)
 %f          = [1xm double] frequencies scaled with Tp which are used as
 %           support points in numerical integration of the momenta
 %           integrals. (default: [0:0.001:10])
-
+%
+%   See also jonswap3
 
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -82,9 +83,9 @@ T_list={'Tp','Tm01','Tm02'};
 if strcmpi(OPT.spectrum,'jonswap')
     
     %calculate powers over nondimensional frequency domain
-    m0=trapz(OPT.f,jonswap(OPT.f,'alfa',OPT.alfa,'beta',OPT.beta,'gamma',OPT.gamma)); 
-    m1=trapz(OPT.f,jonswap(OPT.f,'alfa',OPT.alfa,'beta',OPT.beta,'gamma',OPT.gamma).*OPT.f);
-    m2=trapz(OPT.f,jonswap(OPT.f,'alfa',OPT.alfa,'beta',OPT.beta,'gamma',OPT.gamma).*OPT.f.^2);
+    m0=trapz(OPT.f,jonswap3(OPT.f,'alfa',OPT.alfa,'beta',OPT.beta,'gamma',OPT.gamma)); 
+    m1=trapz(OPT.f,jonswap3(OPT.f,'alfa',OPT.alfa,'beta',OPT.beta,'gamma',OPT.gamma).*OPT.f);
+    m2=trapz(OPT.f,jonswap3(OPT.f,'alfa',OPT.alfa,'beta',OPT.beta,'gamma',OPT.gamma).*OPT.f.^2);
     
     %Calculate ratio Tx/Tp for Jonswap spectrum
     T_ratio(1)=1;
