@@ -92,9 +92,10 @@ function varargout = KMLimage(lat,lon,im0,varargin)
    if any((abs(lat)/90)>1)
        error('latitude out of range, must be within -90..90')
    end
-   lon(lon > 0) = lon(lon > 0) - 1e-12;% handle issue with [-180 180]
-   lon(lon < 0) = lon(lon < 0) + 1e-12;
-   lon = mod(lon+180, 360)-180;
+   % This is not an issue (even created issues), removed:
+%    lon(lon > 0) = lon(lon > 0) - 1e-12;% handle issue with [-180 180]
+%    lon(lon < 0) = lon(lon < 0) + 1e-12;
+%    lon = mod(lon+360, 360);
 
 %% get filename, gui for filename, if not set yet
 
