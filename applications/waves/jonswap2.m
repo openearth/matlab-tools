@@ -1,14 +1,14 @@
-function varargout = jonswap(f,varargin)
-%jonswap  1D or 2D jonswap spectrum
+function varargout = jonswap2(f,varargin)
+%jonswap2  1D or 2D jonswap spectrum
 %
-% jon = jonswap(f,'Hm0',Hm0,'Tp',Tp,<keyword,value>) 
+% jon = jonswap2(f,'Hm0',Hm0,'Tp',Tp,<keyword,value>) 
 %
 % returns discretized 1D JONSWAP spectrum in [m2/Hz] at frequencies f, 
 % with energy Hm0 and peak period Tp. For other, non-required keywords, 
-% call jonswap(), e.g.
-% [jon,<factor_normalize>] = jonswap(f,..,'gamma',gamma,'normalize',1)
+% call jonswap2(), e.g.
+% [jon,<factor_normalize>] = jonswap2(f,..,'gamma',gamma,'normalize',1)
 %
-% jon = jonswap(f,'Hm0',Hm0,'Tp',Tp,'directions',d,'ms',ms,'pdir,pdir,'<keyword,value>) 
+% jon = jonswap2(f,'Hm0',Hm0,'Tp',Tp,'directions',d,'ms',ms,'pdir,pdir,'<keyword,value>) 
 %
 % returns discretized 2D JONSWAP spectrum in [m2/Hz/deg] at frequencies f 
 % and directions d, with peak direction pdir and directional spreading ms. 
@@ -17,7 +17,7 @@ function varargout = jonswap(f,varargin)
 % Example: 1D spectrum
 %
 %    frq = linspace(0.03,.3,30);
-%    jn1 = jonswap(frq,'Hm0',1,'Tp',10);
+%    jn1 = jonswap2(frq,'Hm0',1,'Tp',10);
 %    plot(frq,jn1);
 %    xlabel('frequency [Hz]');ylabel('Energy [m2/Hz]')
 %
@@ -59,11 +59,11 @@ function varargout = jonswap(f,varargin)
 % Sign up to recieve regular updates of this function, and to contribute
 % your own tools.
 
-% $Id: $
-% $Date: $
-% $Author: $
-% $Revision: $
-% $HeadURL: $
+% $Id$
+% $Date$
+% $Author$
+% $Revision$
+% $HeadURL$
 % $Keywords: $
 
 % https://code.google.com/p/wafo/source/browse/trunk/wafo25/spec/jonswap.m?r=130
