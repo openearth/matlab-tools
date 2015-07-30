@@ -23,8 +23,9 @@ function txt = netica_write_case_file(fname, varargin)
 %   txt = string of case file contents
 %
 %   Example
-%   netica_write_case_file('testfile.cas', 'node1', rand(1,100), 'node2', rand(1,100))
-%
+%   netica_write_case_file('testfile.cas', 'node1', rand(1,100), 'node2', rand(1,100
+%   Example if doubles as well as cells are used as input:
+%   netica_write_case_file('testfile.cas', 'node1', {{'a', 'b', 'c'}}, 'node2', {rand(1,3)})
 %   See also netica
 
 %% Copyright notice
