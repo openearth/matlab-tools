@@ -1,11 +1,11 @@
-function [y] = jonswap(x, varargin)
-%JONSWAP  Create JONSWAP spectrum. 
+function [y] = jonswap3(x, varargin)
+%JONSWAP3  Create JONSWAP spectrum. 
 %
 %   Create unscaled or scaled JONSWAP spectrum.
 %
 % Syntax:
-%   y = jonswap(x,<keyword>,<value>)
-%   y = jonswap(x,gamma)
+%   y = jonswap3(x,<keyword>,<value>)
+%   y = jonswap3(x,gamma)
 %
 % Input:
 %	x		  = [nx1 double] radial frequency. Give as nondimensional frequency divided
@@ -28,8 +28,8 @@ function [y] = jonswap(x, varargin)
 %   Hp 		  = [double] significant wave height [m]. 
 %
 %   Example
-%   y = jonswap(x,'wp',4,'Hs',2.5);
-%   y = jonswap(x, 1.0);
+%   y = jonswap3(x,'wp',4,'Hs',2.5);
+%   y = jonswap3(x, 1.0);
 %
 %   See also disper
 
