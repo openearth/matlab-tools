@@ -131,8 +131,8 @@ if iostat==1
                 for ifld=1:length(fldnames)
                     fldname = fldnames{ifld};
                     if strcmpi(flds.(fldname).elementname,'GRO')
-                        ST.([fldname,'_advective'             ]) = permute(ATR(flds.(fldname).index,ST.index,:),[3 2 1]);
-                        ST.([fldname,'_dispersive'            ]) = permute(DTR(flds.(fldname).index,ST.index,:),[3 2 1]);
+                        ST.([fldname,'_advective'             ]) = permute(ATR(flds.(fldname).index,:,:),[3 2 1]);
+                        ST.([fldname,'_dispersive'            ]) = permute(DTR(flds.(fldname).index,:,:),[3 2 1]);
                         ST.([fldname,'_advective_description' ]) = ['Cumulative Advective transport of ',fldname,' through cross section (velocity points)'];
                         ST.([fldname,'_dispersive_description']) = ['Cumulative Dispersive transport of ',fldname,' through cross section (velocity points)'];
                         ST.([fldname,'_advective_units'       ]) = '-';
