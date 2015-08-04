@@ -7,7 +7,7 @@ function [ output_args ] = run( input_args )
 
 json.startup
 % TODO add while
-queue_url = 'http://54.77.21.140:5984';
+queue_url = 'http://wps.openearth.nl:5984';
 queue_database = 'wps';
 
 %% Check for the latest processes
@@ -80,6 +80,7 @@ while 1
         identifier  = data.('identifier');
         disp(['Searching for ', identifier]);
         idx = find(ismember({processes.identifier}, identifier));
+        metadata = processes(idx);
         disp(['Found ', identifier, ' at index ', idx])
         process = str2func(['wps.processes.',identifier]);
         % download attachments
@@ -104,7 +105,12 @@ while 1
                 item = item{1};
             end
             if ( isfield(item, 'type') && strcmp(item.type, 'ComplexValue') )
-                filename = tempname();
+                if (isfield(item, 'mimetype'))
+                    ext = wps.runner.mime2ext(item.mimetype);
+                else
+                    ext = '';
+                end
+                filename = [tempname()  ext];
                 try
                     bytes = typecast(org.apache.commons.codec.binary.Base64.decodeBase64(uint8(item.value)), 'uint8');
                 catch ME
@@ -148,9 +154,14 @@ while 1
         
         % now we can call the process
         if valid
-            result = process(values{:});
+            try
+                result = process(values{:});
+            catch ME
+                message = ME.message;
+                result = sprintf('Processing crashed due to:\n%s', message);
+            end
         else
-            result = sprintf('Processing failed due to:\n%s', message);
+            result = sprintf('Processing input invalid due to:\n%s', message);
         end
         
         % get info of the output
@@ -160,28 +171,46 @@ while 1
             fclose(fid);
             % base64 decode
             
-            try
-                base64 = org.apache.commons.codec.binary.Base64.encodeBase64(uint8(bytes));
-            catch ME
-                base64 = uint8([]);
-                if (isempty(bytes))
-                    warning('empty bytes in result')
-                else
-                    warning(['Could not encode bytes ', bytes])
-                end
-            end
-            result = char(typecast(base64, 'uint8'));
+%             try
+%                 base64 = org.apache.commons.codec.binary.Base64.encodeBase64(uint8(bytes));
+%             catch ME
+%                 base64 = uint8([]);
+%                 if (isempty(bytes))
+%                     warning('empty bytes in result')
+%                 else
+%                     warning(['Could not encode bytes ', bytes])
+%                 end
+%             end
+%             result = char(typecast(base64, 'uint8'));
         end
         
         
         
-        % store the result
-        data.result = result;
+        % if we have no file, embed inline
+        if ~exist(result, 'file')
+            data.result = result;
+        end
+        % store the text version
         data.type = 'output';
         url = sprintf('%s/%s/%s', queue_url, queue_database, data.x_id);
         text = json.dump(data);
         wps.runner.urlread2(url, 'PUT', text)
         
+        if exist(result, 'file')
+            [dir, name, ext] = fileparts(result);
+            url = sprintf('%s/%s/%s/%s', queue_url, queue_database, data.x_id, [name '.' ext]);
+            % upload attachment
+            % this should work, TODO cleanup.
+            outputinfo = metadata.outputs(1);
+            properties = struct2array(outputinfo);
+            content_type = properties.type;
+            try
+                response = wps.runner.urlread2(url, 'PUT', uint8(bytes)); %, 'Content-Type', content_type);
+                warning(response);
+            catch ME
+                disp(ME);
+            end
+        end
     else
         warning(['Found file ', jsonfile, ' but it has no process field.']);
         continue
