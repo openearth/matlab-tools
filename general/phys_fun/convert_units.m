@@ -1,4 +1,4 @@
-function Factor=convert_units(InUnits0,OutUnits0,varargin);
+function Factor=convert_units(InUnits0,OutUnits0,varargin)
 %CONVERT_UNITS    Unit conversion function
 %
 %    factor = convert_units(InUnits,OutUnits)
