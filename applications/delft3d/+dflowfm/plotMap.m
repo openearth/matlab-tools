@@ -107,9 +107,9 @@ function varargout = plotMap(varargin)
    OPT.axis      = []; % [x0 x1 y0 y1] or polygon OPT.axis.x, OPT.axis.y
    % arguments to plot(x,y,OPT.keyword{:})
    OPT.patch     = {'EdgeColor','none','LineStyle','-'};
-   OPT.parameter = [];
+   OPT.parameter = ['zwl'];
    OPT.quiver    = 1;
-   OPT.layout    = 0;
+   OPT.layout    = 0; % for patches
    OPT.idmn      = -1;
 
    if nargin==0
@@ -149,11 +149,12 @@ function varargout = plotMap(varargin)
    end
    
    if isempty(OPT.parameter)
-      flds = fieldnames(D.cen);
-      if length(flds)==0
-         error('D.cen has no fields')
+      flds = fieldnames(D.face);
+      if isempty(flds)
+         error('D.face has no fields')
       else
         OPT.parameter = flds{1};
+        disp('taking first')
       end
    end
    
@@ -165,7 +166,7 @@ function varargout = plotMap(varargin)
 
 %% plot centres (= flow cells = circumcenters)
 
-if ~(isfield(G,'peri') && isfield(G,'cen'))
+if ~(isfield(G,'face') && isfield(G,'edge'))
 
    error('unable to plot map: read BOTH the grid and map from *_map.nc (*_net.nc does not contain node connectivity!)')
 
@@ -173,31 +174,31 @@ else
 
    if isempty(OPT.axis)
 %       cen.mask = 1:G.cen.n; % TO DO: check whether all surrounding corners are outside, instead of centers
-      cen.mask = true(1,G.cen.n);
+      face.mask = true(1,G.face.FlowElemSize);
    else
-      cen.mask = inpolygon(G.cen.x,G.cen.y,OPT.axis.x,OPT.axis.y);
+      face.mask = inpolygon(G.face.FlowElem_x,G.face.FlowElem_y,OPT.axis.x,OPT.axis.y);
    end
    
-   if ( OPT.idmn>-1 && isfield(G.cen,'idmn') )
-       if ( length(G.cen.idmn)==G.cen.n )
-          cen.mask = (cen.mask & G.cen.idmn==OPT.idmn);
+   if ( OPT.idmn>-1 && isfield(G.face,'FlowElemDomain') )
+       if ( length(G.face.FlowElemDomain)==G.face.FlowElemSize )
+          face.mask = (face.mask & G.face.FlowElemDomain==OPT.idmn);
        end
    end
 
    % the PATCH method is slow and is superseded in favour of TRISURFCORCEN after PATCH2TRI 
    if ~(isfield(G,'tri') && isfield(G,'map3'))
    
-      peri.mask1 = find(cen.mask(G.cen.LinkType(cen.mask)==1));
-      peri.mask  = find(cen.mask(G.cen.LinkType(cen.mask)~=1)); % i.e. 0=closed or 2=between 2D elements
+      face.mask1 = find(face.mask(G.edge.FlowLinkType(face.mask)==1));
+      face.mask  = find(face.mask(G.edge.FlowLinkType(face.mask)~=1)); % i.e. 0=closed or 2=between 2D elements
       
-      peri.mask1 = cen.mask(peri.mask1);
-      peri.mask  = cen.mask(peri.mask);
+%       peri.mask1 = cen.mask(peri.mask1);
+%       peri.mask  = cen.mask(peri.mask);
       
-      if ~iscell(G.peri.x) % can also be done in readNet
-        [x,y] = dflowfm.peri2cell(G.peri.x(:,peri.mask),G.peri.y(:,peri.mask));
+      if ~iscell(G.face.FlowElemCont_x) % can also be done in readNet
+        [x,y] = dflowfm.peri2cell(G.face.FlowElemCont_x(:,face.mask),G.face.FlowElemCont_y(:,face.mask));
       else
-         x = G.peri.x(:,peri.mask);
-         y = G.peri.y(:,peri.mask);
+         x = G.face.FlowElemCont_x(:,face.mask);
+         y = G.face.FlowElemCont_y(:,face.mask);
       end
       
    end
@@ -207,14 +208,19 @@ else
    % the PATCH method is slow and is superseded in favour of TRISURFCORCEN after PATCH2TRI 
    % http://oss.deltares.nl/web/delft3d/general/-/message_boards/view_message/220151
    
-   if (isfield(G,'tri') & isfield(G,'map3'))
-      tri.mask = cen.mask(G.map3);
+   if (isfield(G,'tri') && isfield(G,'map3'))
+      tri.mask = face.mask(G.map3);
    
-      h = trisurfcorcen(G.tri(tri.mask,:),G.cor.x,G.cor.y,D.cen.(OPT.parameter)(G.map3(tri.mask)));
+      h = trisurfcorcen(G.tri(tri.mask,:),G.node.x,G.node.y,D.face.(OPT.parameter)(G.map3(tri.mask)));
+      fprintf('We are plotting: %s \n', OPT.parameter)
       set(h,'edgeColor','none'); % we do not want to see the triangle edges as they do not exist on D-Flow FM network
       % If you want to see edges, overlay the them with plotNet.
       %shading flat; % automaticcally done by trisurfcorcen, as it is the only correct option for center values
       view(0,90);
+      c=colorbar;
+      c.Label.String=OPT.parameter;
+      c.Label.FontSize = 12;
+      title(D.datestr) 
       
    else
 
@@ -223,13 +229,16 @@ else
          hold on
          axis equal
          grid on
+         c=colorbar;
+         c.Label.String=OPT.parameter;
+         c.Label.FontSize = 12;
          title(D.datestr)
       end
-
+      
       h = repmat(0,[1 length(x)]);
       for icen=1:length(x)
       % use partly trisurf
-         h(icen) = patch(x{icen},y{icen},D.cen.(OPT.parameter)(peri.mask(icen)));
+         h(icen) = patch(x{icen},y{icen},D.face.(OPT.parameter)(face.mask(icen)));
       end
       %shading flat; % not needed an slow
       set(h,OPT.patch{:});
