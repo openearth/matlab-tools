@@ -14,9 +14,8 @@ function varargout = plotNet(varargin)
 %            for axis to be be a polygon, supply a struct axis.x, axis.y.
 %    * idmn: plot grid with the specified domain number only (if available)
 %   Cells with plot() properties, e.g. {'r*'}, if [] corners are not plotted.
-%    * cor
-%    * cen
-%    * peri
+%    * node
+%    * edge
 %   Defaults values can be requested with OPT = dflowfm.plotNet().
 %
 %   Note: all flow cells are plotted as one NaN-separated line: fast.
@@ -62,11 +61,10 @@ function varargout = plotNet(varargin)
 
    OPT.axis = []; % [x0 x1 y0 y1] or polygon OPT.axis.x, OPT.axis.y
    % arguments to plot(x,y,OPT.keyword{:})
-   OPT.cen  = {'b.'};
-   OPT.cor  = {'y.','markersize',20};
-    OPT.peri = {'k-'};
-%    OPT.peri = {};
-   OPT.idmn = -1;   % domain to plot
+   OPT.face  = {'b.'};
+   OPT.node  = {'r.','markersize',10};
+   OPT.edge  = {'k-'};
+   OPT.idmn  = -1;   % domain to plot
    
    if nargin==0
       varargout = {OPT};
@@ -81,90 +79,83 @@ function varargout = plotNet(varargin)
       OPT = setproperty(OPT,varargin{2:end});
    end
    
-   if isnumeric(OPT.axis) & ~isempty(OPT.axis) % axis vector 2 polygon
-   tmp        = OPT.axis;
-   OPT.axis.x = tmp([1 2 2 1]);
-   OPT.axis.y = tmp([3 3 4 4]);clear tmp
+   if isnumeric(OPT.axis) && ~isempty(OPT.axis) % axis vector 2 polygon
+       tmp        = OPT.axis;
+       OPT.axis.x = tmp([1 2 2 1]);
+       OPT.axis.y = tmp([3 3 4 4]);
+       clear tmp
    end
 
-%% plot corners ([= nodes)
+%% plot nodes ([= corners)
 
-   if isfield(G,'cor') & ~isempty(OPT.cor)
+   if isfield(G,'node') && ~isempty(OPT.node)
    
      if isempty(OPT.axis)
-%         cor.mask = 1:G.cor.n;
-        cor.mask = true(1,G.cor.n);
+        node.mask = true(1,G.node.n);
      else
-        cor.mask = inpolygon(G.cor.x,G.cor.y,OPT.axis.x,OPT.axis.y);
+        node.mask = inpolygon(G.node.x,G.node.y,OPT.axis.x,OPT.axis.y);
      end
      
 
-     if ( isfield(G.peri, 'x') & isfield(G.peri, 'y') )
+     if ( isfield(G.face, 'FlowElemCont_x') && isfield(G.face, 'FlowElemCont_y') )
 %        plot nodes with cell mask later (to be preferred, as we don't have node domain numbers)
      else
 %        plot nodes with node mask         
-         h.cor  = plot(G.cor.x(cor.mask),G.cor.y(cor.mask),OPT.cor{:});
+         h.node  = plot(G.node.x(node.mask),G.node.y(node.mask),OPT.node{:});
          hold on
+         disp('here')
      end
 
    end
-
+   
 %% plot centres (= flow cells = circumcenters)
 
-   if isfield(G,'cen')
-     if isempty(OPT.axis)
-%         cen.mask = 1:G.cen.n;
-        cen.mask = true(1,G.cen.n);
-     else
-        cen.mask = inpolygon(G.cen.x,G.cen.y,OPT.axis.x,OPT.axis.y);
-     end
-     
-     if ( OPT.idmn>-1 && isfield(G.cen,'idmn') )
-         if ( length(G.cen.idmn)==G.cen.n )
-            cen.mask = (cen.mask & G.cen.idmn==OPT.idmn);
-         end
-     end
-   end
+%    if isfield(G,'face')
+%      if isempty(OPT.axis)
+%         face.mask = true(1,G.face.FlowElemSize);
+%      else
+%         face.mask = inpolygon(G.face.FlowElemCont_x,G.face.FlowElemCont_y,OPT.axis.x,OPT.axis.y);
+%      end
+%      
+%      if ( OPT.idmn>-1 && isfield(G.face,'FlowElemDomain') )
+%          if ( length(G.face.FlowElemDomain)==G.face.FlowElemSize )
+%             face.mask = (face.mask & G.face.FlowElemDomain==OPT.idmn);
+%          end
+%      end
+%    end
+% 
+%    if isfield(G,'face') && ~isempty(OPT.face)
+%    
+%        h.node = plot(reshape(G.face.FlowElemCont_x(:,face.mask),1,[]), reshape(G.face.FlowElemCont_y(:,face.mask),1,[]), OPT.node{:});
+%        hold on
+%        h.face = plot(G.face.FlowElemCont_x(:,face.mask),G.face.FlowElemCont_y(:,face.mask),OPT.face{:});
+%        hold on
+%    
+%    end
 
-   if isfield(G,'cen') & ~isempty(OPT.cen)
-   
-       h.cor = plot(reshape(G.peri.x(:,cen.mask),1,[]), reshape(G.peri.y(:,cen.mask),1,[]), OPT.cor{:});
-       hold on
-%      h.cen = plot(G.peri.x(:,cen.mask),G.peri.y(:,cen.mask),OPT.cen{:});
-       h.cen = plot(G.cen.x(:,cen.mask),G.cen.y(:,cen.mask),OPT.cen{:});
-       hold on
-   
-   end
-
-%% plot perimeters (= contours = flow cell faces)
-%  plot contour of all circumcenters inside axis 
+%% plot connections (network edges)
+%  plot contour of all circumcenters inside axis  
 %  Always plot entire perimeter, so perimeter is partly 
 %  outside axis for boundary flow cells. 
 %  We turn all contours into a nan-separated polygon. 
 %  After plotting this is faster than patches (only one figure child handle).
 
-   if isfield(G,'peri') && ~isempty(OPT.peri)
-% SPvdP: the following can not work
-%     peri.mask1 = find(cen.mask(G.cen.LinkType(cen.mask)==1));
-%     peri.mask  = find(cen.mask(G.cen.LinkType(cen.mask)~=1)); % i.e. 0=closed or 2=between 2D elements
-     
-     peri.mask1 = cen.mask;
-     peri.mask  = cen.mask;
-     
-     clear dummy;
-     
-     if ~iscell(G.peri.x) % can also be done in readNet
-       [x,y] = dflowfm.peri2cell(G.peri.x(:,peri.mask),G.peri.y(:,peri.mask));
-        x    = poly_join(x);
-        y    = poly_join(y);
-     else
-        x    = poly_join({G.peri.x{peri.mask}});
-        y    = poly_join({G.peri.y{peri.mask}});
-     end
-     
-     h.per = plot(x,y,OPT.peri{:});   
-     hold on
-   
+   if isfield(G,'edge') && ~isempty(OPT.edge)
+    
+    x = G.node.x(G.edge.NetLink);
+    y = G.node.y(G.edge.NetLink);    
+    
+    x(3,:)=NaN;
+    y(3,:)=NaN;
+       
+    if isempty(OPT.axis)
+        h.edge = plot(x(:),y(:),OPT.edge{:});  
+    else
+        %REQUIRES FURTHER LOOKING
+        edge.mask = inpolygon(x,y,OPT.axis.x,OPT.axis.y);
+        h.edge = plot(x(edge.mask),y(edge.mask),OPT.edge{:});
+    end        
+    hold on   
    end
    
 %% lay out
