@@ -61,9 +61,9 @@ function varargout = plotNet(varargin)
 
    OPT.axis = []; % [x0 x1 y0 y1] or polygon OPT.axis.x, OPT.axis.y
    % arguments to plot(x,y,OPT.keyword{:})
-   OPT.face  = {'b.'};
    OPT.node  = {'r.','markersize',10};
    OPT.edge  = {'k-'};
+   OPT.face  = {'b.','markersize',10};
    OPT.idmn  = -1;   % domain to plot
    
    if nargin==0
@@ -95,50 +95,34 @@ function varargout = plotNet(varargin)
      else
         node.mask = inpolygon(G.node.x,G.node.y,OPT.axis.x,OPT.axis.y);
      end
-     
 
-     if ( isfield(G.face, 'FlowElemCont_x') && isfield(G.face, 'FlowElemCont_y') )
-%        plot nodes with cell mask later (to be preferred, as we don't have node domain numbers)
-     else
 %        plot nodes with node mask         
-         h.node  = plot(G.node.x(node.mask),G.node.y(node.mask),OPT.node{:});
-         hold on
-         disp('here')
-     end
+     h.node  = plot(G.node.x(node.mask),G.node.y(node.mask),OPT.node{:});
+     hold on
+     disp('here')
 
    end
    
 %% plot centres (= flow cells = circumcenters)
 
-%    if isfield(G,'face')
-%      if isempty(OPT.axis)
-%         face.mask = true(1,G.face.FlowElemSize);
-%      else
-%         face.mask = inpolygon(G.face.FlowElemCont_x,G.face.FlowElemCont_y,OPT.axis.x,OPT.axis.y);
-%      end
-%      
-%      if ( OPT.idmn>-1 && isfield(G.face,'FlowElemDomain') )
-%          if ( length(G.face.FlowElemDomain)==G.face.FlowElemSize )
-%             face.mask = (face.mask & G.face.FlowElemDomain==OPT.idmn);
-%          end
-%      end
-%    end
-% 
-%    if isfield(G,'face') && ~isempty(OPT.face)
-%    
-%        h.node = plot(reshape(G.face.FlowElemCont_x(:,face.mask),1,[]), reshape(G.face.FlowElemCont_y(:,face.mask),1,[]), OPT.node{:});
-%        hold on
-%        h.face = plot(G.face.FlowElemCont_x(:,face.mask),G.face.FlowElemCont_y(:,face.mask),OPT.face{:});
-%        hold on
-%    
-%    end
+   if isfield(G.face,'FlowElemSize') && ~isempty(OPT.face)
+     if isempty(OPT.axis)
+        face.mask = true(1,G.face.FlowElemSize);
+     else
+        face.mask = inpolygon(G.face.FlowElem_x,G.face.FlowElem_y,OPT.axis.x,OPT.axis.y);
+     end
+     
+     if ( OPT.idmn>-1 && isfield(G.face,'FlowElemDomain'))
+         if ( length(G.face.FlowElemDomain)==G.face.FlowElemSize )
+            face.mask = (face.mask & G.face.FlowElemDomain==OPT.idmn);
+         end
+     end
+      
+     h.face = plot(G.face.FlowElem_x(:,face.mask),G.face.FlowElem_y(:,face.mask),OPT.face{:});
+     hold on   
+   end
 
 %% plot connections (network edges)
-%  plot contour of all circumcenters inside axis  
-%  Always plot entire perimeter, so perimeter is partly 
-%  outside axis for boundary flow cells. 
-%  We turn all contours into a nan-separated polygon. 
-%  After plotting this is faster than patches (only one figure child handle).
 
    if isfield(G,'edge') && ~isempty(OPT.edge)
     
@@ -151,8 +135,8 @@ function varargout = plotNet(varargin)
     if isempty(OPT.axis)
         h.edge = plot(x(:),y(:),OPT.edge{:});  
     else
-        %REQUIRES FURTHER LOOKING
-        edge.mask = inpolygon(x,y,OPT.axis.x,OPT.axis.y);
+        edge.mask = repmat(inpolygon(x(1,:),y(1,:),OPT.axis.x,OPT.axis.y) | ...
+                           inpolygon(x(2,:),y(2,:),OPT.axis.x,OPT.axis.y), 3,1);
         h.edge = plot(x(edge.mask),y(edge.mask),OPT.edge{:});
     end        
     hold on   
