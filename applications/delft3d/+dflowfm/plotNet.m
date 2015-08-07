@@ -10,12 +10,15 @@ function varargout = plotNet(varargin)
 %   optionally the handles h are returned.
 %
 %   The following optional <keyword,value> pairs have been implemented:
-%    * axis: only grid inside axis is plotted, use [] for while grid.
-%            for axis to be be a polygon, supply a struct axis.x, axis.y.
+%    * axis: only grid inside a bounding polygon is plotted.
+%            Use [] for whole grid. For axis to be be a polygon, supply a
+%            struct('x',[xmin, xmax],'y',[ymin, ymax]).
 %    * idmn: plot grid with the specified domain number only (if available)
-%   Cells with plot() properties, e.g. {'r*'}, if [] corners are not plotted.
-%    * node
-%    * edge
+%
+%   Formatting of the grid is controlled by the following options:
+%    * node: corner point style, e.g. {'r.','markersize',10}
+%    * edge: edge style, e.g., {'k-'}
+%    * face: (circum)center point style, e.g. {'b+','markersize',10}
 %   Defaults values can be requested with OPT = dflowfm.plotNet().
 %
 %   Note: all flow cells are plotted as one NaN-separated line: fast.
@@ -63,7 +66,7 @@ function varargout = plotNet(varargin)
    % arguments to plot(x,y,OPT.keyword{:})
    OPT.node  = {'r.','markersize',10};
    OPT.edge  = {'k-'};
-   OPT.face  = {'b.','markersize',10};
+   OPT.face  = {'b+','markersize',10};
    OPT.idmn  = -1;   % domain to plot
    
    if nargin==0
@@ -99,7 +102,6 @@ function varargout = plotNet(varargin)
 %        plot nodes with node mask         
      h.node  = plot(G.node.x(node.mask),G.node.y(node.mask),OPT.node{:});
      hold on
-     disp('here')
 
    end
    
@@ -144,8 +146,12 @@ function varargout = plotNet(varargin)
    
 %% lay out
 
-%    hold on
-%    axis equal
+	hold off
+    if ~isempty(OPT.axis)
+        axis([OPT.axis.x(:)' OPT.axis.y(:)'])
+    else
+        axis equal
+    end
 %    grid on
    
 %% return handles
