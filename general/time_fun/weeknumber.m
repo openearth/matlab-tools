@@ -66,7 +66,7 @@ function varargout = weeknumber(varargin)
 %   --------------------------------------------------------------------
 
 % Check the input, throw errors if needed:
-if nargin == 0; varargin{1} = now; elseif nargin == 1; if ~isnumeric(varargin{1}); error(['Unknown input type (' class(varargin{1}) '), please resort to the help and use numerical datenum-type input']); end; else; error(['Please input a single variable (and not ' num2str(nargin) ')']); end;
+if nargout > 1; error(['Please do not try to assign more than 1 (in this case ' num2str(nargout) ') output variables']); end; if nargin == 0; varargin{1} = now; elseif nargin == 1; if ~isnumeric(varargin{1}); error(['Unknown input type (' class(varargin{1}) '), please resort to the help and use numerical datenum-type input']); end; else; error(['Please input a single variable (and not ' num2str(nargin) ')']); end;
 
 % Below, we compute the week numbers, related to the first weekday of the
 % year, later corrected for weeks passing through the 1st of January
