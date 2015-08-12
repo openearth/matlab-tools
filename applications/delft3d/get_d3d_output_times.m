@@ -42,8 +42,7 @@ function varargout = get_d3d_output_times(varargin);
 warning('WarnTests:convertTest','vs_time has expanded functionality, and can handle more NEFIS types. \nOnly use this script when interested in considerable speed increase with less functionality/output.')
 
 %   --------------------------------------------------------------------
-%   Copyright (C) 2013 Deltares
-%       Freek Scheel
+%       Freek Scheel 2013
 %       +31(0)88 335 8241
 %       <freek.scheel@deltares.nl>;
 %
