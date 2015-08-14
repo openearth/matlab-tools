@@ -50,10 +50,11 @@ function varargout = KMLcurvedArrows(x,y,u0,v0,varargin)
 
    OPT                   = KML_header();
 
-   OPT.coordConvFun      = @(x,y,EPSG) convertCoordinates(x,y,EPSG,'CS1.code',28992,'CS2.code',4326); % do include epsg as we do numerous transformations
+   OPT.coordConvFun      = @(x,y,EPSG) convertCoordinates(x,y,EPSG,'CS1.code',31984,'CS2.code',4326); % do include epsg as we do numerous transformations
    OPT.colorSteps        = 9;
    OPT.colorMap          = @(m) colormap_cpt('YlOrRd 09.cpt',(m));
-   OPT.fileName          = [];
+%     OPT.colorMap          = colormap_cpt('YlOrRd 09.cpt',10);   
+    OPT.fileName          = [];
    OPT.time              = [1 1000]; % containing begin and end times of animation
    
    %% arrow properties
