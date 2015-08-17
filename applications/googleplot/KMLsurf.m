@@ -83,6 +83,7 @@ function varargout = KMLsurf(lat,lon,z,varargin)
    OPT.openInGE           = false;
    OPT.reversePoly        = false;
    OPT.extrude            = false;                                          % when true: tethered to the ground by a tail
+   OPT.clampToGround      = false;                                          % when true: ignore Z and clamp to ground
    OPT.cLim               = [];
    OPT.zScaleFun          = @(z) (z+20).*5;
    OPT.colorbar           = 1;
@@ -104,7 +105,7 @@ function varargout = KMLsurf(lat,lon,z,varargin)
    end
    
    if isempty(z)
-      z = 0.*lat; % TO DO: implement 'clampToGround'
+      z = 0.*lat;
    else
    end
 
@@ -278,7 +279,11 @@ end
                    LON = LON(end:-1:1);
                      Z =   Z(end:-1:1);
                end
-               newOutput = KML_poly(LAT(:),LON(:),OPT.zScaleFun(Z(:)),OPT_poly); % make sure that LAT(:),LON(:), Z(:) have correct dimension nx1
+               if OPT.clampToGround
+                   newOutput = KML_poly(LAT(:),LON(:),'clampToGround',OPT_poly);
+               else
+                   newOutput = KML_poly(LAT(:),LON(:),OPT.zScaleFun(Z(:)),OPT_poly); % make sure that LAT(:),LON(:), Z(:) have correct dimension nx1
+               end
                output(kk:kk+length(newOutput)-1) = newOutput;
                kk = kk+length(newOutput);
                if kk>length(output)
