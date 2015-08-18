@@ -188,9 +188,22 @@ C     Load the output into a MATLAB array.
      &                    dt,nt,nhead,hdthck,arthck,xp,yp,
      &                    xax,yax,length,iopt)
 
-      integer n2,m1,n1,nt,nhead,np,iopt
+      integer n2,m1,n1,n1u,nt,nhead,np,iopt
       integer NrIn(n2),NrX(n2),NrY(n2),iFlag(n2),Iref(4,n2)
-      
+ 
+*     This routine computes curved arrows by following particles injected in the flow. 
+*     It has been adapted to serve both curvilinear and unstructured grids
+*
+*     In case of curvilinear grid x1 and y1 are m1 by n1; u1 and v1 are given at the same points
+*     and will be interpolated by bilinear interpolation to the randomly located positions 
+*     x2, y2
+*
+*     In case of unstructured grid x1 and y1 represent m1 polygons that are all n1==4 long. They 
+*     may represent triangles or quadrilaterals; in case of triangles the 4th point equals the first.
+*     in the unstructured case no interpolation takes place but the velocities are assumed uniform 
+*     over the cell. In this case only u1(:,1) and v1(:,1) are filled; the rest of the arrays is 
+*     padded with zeros.
+ 
       integer code(m1,n1)
 
       double precision x2(n2)
@@ -232,7 +245,17 @@ C     Load the output into a MATLAB array.
 
       double precision dt,hdthck,arthck,geofac,pi,dx,dy,latfac,gfac
       double precision tfac1,tfac2
-
+      
+      logical unstruc
+   
+      if (n1==4) then
+         unstruc=.true.
+         n1u=1
+      else
+         unstruc=.false.
+         n1u=n1
+      endif
+      
       pi = 3.1416
       geofac = 111111.0
       dt = dt/(nt-1)
@@ -242,11 +265,11 @@ C     Load the output into a MATLAB array.
 
       np=m1*n1
       
-c      open(800,file='out.txt')
+c      open(800,file='out05.txt')
       
       if (iopt==1) then
          do i=1,m1
-            do j=1,n1
+            do j=1,n1u
                u1(i,j) = u1(i,j)/(cos(pi*y1(i,j)/180.0)*geofac)
                v1(i,j) = v1(i,j)/geofac
                u2t1(i,j) = u2t1(i,j)/(cos(pi*y1(i,j)/180.0)*geofac)
@@ -265,7 +288,7 @@ c      open(800,file='out.txt')
          enddo
       enddo
 
-c     First compute axis coordinate (xss and yss)
+c     First compute arrow axis coordinate (xss and yss)
       do it=1,nt
          do i=1,n2
             xss(i,it)=x2(i)
@@ -280,7 +303,7 @@ c        Interpolate in time
 
          call MKMAP(code,X1,Y1,M1,N1,X2,Y2,N2,Xs,Ys,NrX,NrY,iFlag, 
      &                  NrIn,W,Iref,iprint)
-
+     
          call GRMAP (u3,np,u2,n2,iref,w) 
          call GRMAP (v3,np,v2,n2,iref,w) 
          x2a=x2+0.5*u2*dt
@@ -575,7 +598,7 @@ c
       Integer         i,i1,i2,iin,ip,ipt,j1,lomaxx,lominx,lomnx,lomny,
      .                nin,M1,N1,M1min,M1max,N1min,N1max,N2,inout,ier,
      .                NrX(N2),NrY(N2),iFlag(N2),NrIn(N2),Iref(4,N2),
-     .                code(m1,n1),iprint
+     .                code(m1,n1),iprint,iok
       double precision X1(M1,N1),Y1(M1,N1),X2(N2),Y2(N2),Xs(N2),Ys(N2),
      .                Xp(5),Yp(5),Xpmin,Xpmax,Ypmin,Ypmax,W(4,N2),
      .                xpmean,ypmean
@@ -610,9 +633,15 @@ c
       lomnx = 1
       lomny = 1
       M1min = 1
-      M1max = M1
       N1min = 1
-      N1max = N1
+      if (N1==4) then
+*         N1max = 1
+         M1max = M1 + 1
+         N1max = 2
+      else
+         M1max = M1
+         N1max = N1
+      endif
       Do 110 i2=1,N2
              nrx(i2)   = 0
              nry(i2)   = 0
@@ -638,19 +667,38 @@ c
 *        Checken op punten met 'onzin' coordinaten in aanbodrooster 1;
 *        dit is afhankelijk van gemaakte afspraken!
 *-----------------------------------------------------------------------
+                iok = 1
+
+                If (N1.EQ.4) Then
+                    !
+                    !   unstructured grid
+                    !
+                    do ip = 1, 4
+                       Xp(ip) = X1(i1,ip)
+                       Yp(ip) = Y1(i1,ip)
+                    enddo
+
+                Else
                     If (code(i1,j1).GE.0.AND.code(i1+1,j1).GE.0.AND.
      .                  code(i1+1,j1+1).GE.0.AND.code(i1,j1+1).GE.0)
      .                                                              Then
 *        Definitie cel
 *-----------------------------------------------------------------------
-                       Xp(1) = X1(i1,j1)
+                       Xp(1) = X1(i1  ,j1)
                        Xp(2) = X1(i1+1,j1)
                        Xp(3) = X1(i1+1,j1+1)
-                       Xp(4) = X1(i1,j1+1)
-                       Yp(1) = Y1(i1,j1)
+                       Xp(4) = X1(i1  ,j1+1)
+                       Yp(1) = Y1(i1  ,j1)
                        Yp(2) = Y1(i1+1,j1)
                        Yp(3) = Y1(i1+1,j1+1)
-                       Yp(4) = Y1(i1,j1+1)
+                       Yp(4) = Y1(i1  ,j1+1)
+                   else
+                      iok = 0
+                   Endif
+                endif
+
+                if (iok==1) then
+
 *        Bepaling minimum en maximum X en Y van de cel
 *-----------------------------------------------------------------------
                        Xpmin = 1.e10
@@ -663,8 +711,8 @@ c
                               Ypmin = MIN (Yp(ip),Ypmin)
                               Ypmax = MAX (Yp(ip),Ypmax)
   200                  Continue
-                       Xpmean = .5*(Xpmin+Xpmax)
-                       Ypmean = .5*(Ypmin+Ypmax)
+                       Xpmean = 0.5*(Xpmin+Xpmax)
+                       Ypmean = 0.5*(Ypmin+Ypmax)
 *        Eerste selectie van punten verzameling 2 die binnen de cel
 *        kunnen liggen
 *-----------------------------------------------------------------------
@@ -734,13 +782,19 @@ c
                               Call IPON   (Xp,Yp,4,X2(i2),Y2(i2),inout)
 
                               If (inout.GE.0) Then
-                                 
-                                 Call BILIN5 (Xp,Yp,X2(i2),Y2(i2),
-     .                                       w(1,i2),ier)
-                                 Iref(1,i2) = i1   +(j1-1)*M1
-                                 Iref(2,i2) = i1+1 +(j1-1)*M1
-                                 Iref(3,i2) = i1+1 + j1   *M1
-                                 Iref(4,i2) = i1   + j1   *M1
+                                 If (N1.EQ.4) Then
+*                                   unstructured grid
+                                    w   (1,i2)=1.d0
+                                    w (2:4,i2)=0.d0
+                                    Iref(:,i2)=i1
+                                 Else
+                                    Call BILIN5 (Xp,Yp,X2(i2),Y2(i2),
+     .                                            w(1,i2),ier)
+                                    Iref(1,i2) = i1   +(j1-1)*M1
+                                    Iref(2,i2) = i1+1 +(j1-1)*M1
+                                    Iref(3,i2) = i1+1 + j1   *M1
+                                    Iref(4,i2) = i1   + j1   *M1
+                                 Endif
                               Endif
   500                  Continue
                     Endif
