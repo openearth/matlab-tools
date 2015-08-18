@@ -212,6 +212,13 @@ else
     nt=1;
 end
 
+% Check if data is structured or unstructured
+if size(u,1)==1 || size(u,2)==1
+    % Unstructured
+    u=repmat(u,[1 4]);
+    v=repmat(v,[1 4]);
+end
+
 for it=1:nt
     
     if nt>1
@@ -375,6 +382,19 @@ for it=1:nt
         [x1,y1]=meshgrid(x1,y1);
     end
 
+    u1=double(u1);
+    v1=double(v1);
+    u2=double(u2);
+    v2=double(v2);
+    x1(isnan(u1))=-999;
+    y1(isnan(u1))=-999;
+    u1(isnan(u1))=-999;
+    v1(isnan(v1))=-999;
+    u2(isnan(u2))=-999;
+    v2(isnan(v2))=-999;
+
+    pause(0.1);
+    
     [xar,yar,xax,yax,len]=mxcurvec(x2,y2,x1,y1,u1,v1,u2,v2,OPT.length,OPT.nrvertices,OPT.headthickness,OPT.arrowthickness,OPT.nhead,relwdt,OPT.iopt);
     
     %% Set nan values
