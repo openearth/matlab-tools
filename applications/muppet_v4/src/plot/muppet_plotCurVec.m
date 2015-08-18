@@ -63,16 +63,24 @@ else
     y1=y1';
     
     % Find cells that have more than 4 nodes and get rid of them
+    if size(x1,2)>4
     col5=x1(:,5);
     isn=find(isnan(col5));
     x1=x1(isn,1:4);
     y1=y1(isn,1:4);
+    end
     
     % Find triangles and copy first node to 4th column
+    if size(x1,2)>3
     col4=x1(:,4);
     isn=find(isnan(col4));
     x1(isn,4)=x1(isn,1);
     y1(isn,4)=y1(isn,1);
+    end
+    if size(x1,2)==3
+    x1(:,4)=x1(:,1);
+    y1(:,4)=y1(:,1);
+    end
     
 end
 
