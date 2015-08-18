@@ -11,7 +11,7 @@ opt.frame='';
 opt.outputfile='figure1.png';
 opt.format='png';
 opt.resolution=300;
-opt.renderer='zbuffer';
+opt.renderer='ZBuffer';
 opt.units='centimeters';
 opt.nrannotations=0;
 

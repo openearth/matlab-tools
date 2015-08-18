@@ -64,7 +64,7 @@ opt.maxdistance=0;
 
 opt.adddatestring=0;
 opt.adddate.position='upper-left';
-opt.adddate.prefix='Date : ';
+opt.adddate.prefix='';
 opt.adddate.suffix='';
 opt.adddate.format='dd-mmm-yyyy HH:MM:SS';
 opt.adddate.font.name='Helvetica';
