@@ -156,7 +156,7 @@ switch lower(datasets(nra).dataset.type)
             end
         end
  
-    case{'scalar1dtv','scalar1dxy'}
+    case{'scalar1dtv','scalar1dxy','scalar1dxv'}
         datasets(nr).dataset.x=datasets(nra).dataset.x;
         if m==0
             switch lower(operation)
@@ -172,6 +172,15 @@ switch lower(datasets(nra).dataset.type)
                     datasets(nr).dataset.y=max(a1*datasets(nra).dataset.y,a2*datasets(nrb).dataset.y);
                 case{'min'}
                     datasets(nr).dataset.y=min(a1*datasets(nra).dataset.y,a2*datasets(nrb).dataset.y);
+                case{'isnan(a<b)'}
+                    datasets(nr).dataset.y=datasets(nra).dataset.y;
+                    datasets(nr).dataset.y(datasets(nra).dataset.y<datasets(nrb).dataset.y)=NaN;
+                case{'isnan(a>b)'}
+                    datasets(nr).dataset.y=datasets(nra).dataset.y;
+                    datasets(nr).dataset.y(datasets(nra).dataset.y>datasets(nrb).dataset.y)=NaN;
+                case{'isnan(isnan(b))'}
+                    datasets(nr).dataset.y=datasets(nra).dataset.y;
+                    datasets(nr).dataset.y(isnan(datasets(nrb).dataset.y))=NaN;
             end
         else
             switch lower(operation)
@@ -187,6 +196,12 @@ switch lower(datasets(nra).dataset.type)
                     datasets(nr).dataset.y=max(a1*datasets(nra).dataset.y,unifval);
                 case{'min'}
                     datasets(nr).dataset.y=min(a1*datasets(nra).dataset.y,unifval);
+                case{'isnan(a<b)'}
+                    datasets(nr).dataset.y=datasets(nra).dataset.y;
+                    datasets(nr).dataset.y(datasets(nra).dataset.y<unifval)=NaN;
+                case{'isnan(a>b)'}
+                    datasets(nr).dataset.y=datasets(nra).dataset.y;
+                    datasets(nr).dataset.y(datasets(nra).dataset.y>unifval)=NaN;
             end
         end
  

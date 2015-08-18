@@ -346,7 +346,7 @@ switch length(arg)
         else
             d=qpread(fid,idomain,dataproperties,'griddata',arg{1},arg{2});
         end
-        % Fix for DFlow-FM to make water levels NaN when depth<0.1 m
+        % Fix for DFlow-FM to make water levels NaN when depth<0.2 m
         if isfield(dataproperties,'Geom')
             if strcmpi(dataproperties.Geom,'polyg')
                 if strcmpi(dataproperties.Name,'waterlevel')
@@ -357,6 +357,7 @@ switch length(arg)
                 end
             end
         end
+        
     case{3}
         if ~isempty(dataset.subfields)
             d=qpread(fid,idomain,dataproperties,'griddata',dataset.subfieldnumber,arg{1},arg{2},arg{3});
