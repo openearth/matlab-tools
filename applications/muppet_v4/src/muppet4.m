@@ -1,6 +1,6 @@
 function muppet4(varargin)
 
-handles.muppetversion='4.02';
+handles.muppetversion='4.03';
 
 warning('off','MATLAB:HandleGraphics:ObsoletedProperty:JavaFrame');
 warning('off','MATLAB:contours:DeprecatedErrorOutputArgument');
@@ -31,7 +31,14 @@ if ~isempty(varargin)
     for isub=1:length(handles.figures(1).figure.subplots)
         handles.figures(1).figure.subplots(isub).subplot=muppet_updateLimits(handles.figures(1).figure.subplots(isub).subplot,'computescale');
     end
-    muppet_exportFigure(handles,1,'export');
+    
+    if nargin==1
+        muppet_exportFigure(handles,1,'export');
+    else
+        handles.animationsettings=muppet_readAnimationSettings(varargin{2});
+        muppet_makeAnimation(handles,1);
+    end
+    
     cd(curdir);
 else
    muppet_initializegui;
