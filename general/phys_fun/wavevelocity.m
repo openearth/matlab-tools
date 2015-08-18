@@ -57,7 +57,7 @@ OPT = setproperty(OPT, varargin{:});
 
 %% determine wave speed
 
-k   = disper(2*pi/T, h, OPT.g);
-n   = .5*(1+2*k*h/sinh(2*k*h));
-c   = OPT.g*T/(2*pi)*tanh(k*h);
-cg  = n*c;
+k   = disper(2*pi./T, h, OPT.g);
+n   = .5*(1+2.*k.*h./sinh(2.*k.*h));
+c   = OPT.g.*T./(2*pi).*tanh(k.*h);
+cg  = n.*c;
