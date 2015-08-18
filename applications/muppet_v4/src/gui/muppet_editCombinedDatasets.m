@@ -45,7 +45,7 @@ h.datasetsa={''};
 h.datasetnumbersa=1;
 for id=1:length(h.datasets)
     switch h.datasets(id).dataset.type
-        case{'scalar2dxy','scalar2dxz','vector2d2dxy','scalar1dtv','scalar1dxy','scalar2dtz'}
+        case{'scalar2dxy','scalar2dxz','vector2d2dxy','scalar1dtv','scalar1dxy','scalar2dtz','scalar1dxv'}
             n=n+1;
             h.datasetsa{n}=h.datasets(id).dataset.name;
             h.datasetnumbersa(n)=id;
@@ -66,7 +66,7 @@ h.datasetnumberb=1;
 n=0;
 for id=1:length(h.datasets)
     switch h.datasets(id).dataset.type
-        case{'scalar2dxy','scalar2dxz','vector2d2dxy','scalar1dtv','scalar1dxy','scalar2dtz'}
+        case{'scalar2dxy','scalar2dxz','vector2d2dxy','scalar1dtv','scalar1dxy','scalar2dtz','scalar1dxv'}
             % Check if it is of the same type
             if strcmpi(h.datasets(id).dataset.type,h.datasets(nra).dataset.type)
                 % Check for similar size
