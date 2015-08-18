@@ -104,8 +104,15 @@ if ~isempty(animationsettings.avifilename)
             avihandle.Quality=animationsettings.quality;
             open(avihandle);
         case{'avi'}
-            avihandle = avi('initialize');
-            pause(1);
+            
+            for itry=1:10
+                avihandle = avi('initialize');
+                itry
+                pause(0.1);
+                if avihandle.CPointer>0
+                    break
+                end
+            end
             avihandle = avi('open', avihandle,animationsettings.avifilename);
             avihandle = avi('addvideo', avihandle, animationsettings.framerate, a);
     end
@@ -442,6 +449,7 @@ try
             close(h);
         case{'avi'}
             h=avi('close', h);
+            flag=avi('finalize',h) ;
         case{'gif'}
             % Try to make animated gif (not very succesful so far)
             imwrite(im,map,'test.gif','DelayTime',1/animationsettings.framerate,'LoopCount',inf,'TransparentColor',itransp-1,'DisposalMethod','restoreBG');
