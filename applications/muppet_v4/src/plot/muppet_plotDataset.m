@@ -59,8 +59,10 @@ switch handles.figures(ifig).figure.subplots(isub).subplot.type
                         switch lower(data.type)
                             case{'scalar2duxy','vector2d2duxy'}
                                 % Unstructured data
-                                data.G.cor.y=merc(data.G.cor.y);
-                                data.G.peri.y=merc(data.G.peri.y);
+%                                 data.G.cor.y=merc(data.G.cor.y);
+%                                 data.G.peri.y=merc(data.G.peri.y);
+                                data.G.node.y=merc(data.G.node.y);
+                                data.G.face.FlowElemCont_y=merc(data.G.face.FlowElemCont_y);
                             otherwise
                                 data.y=merc(data.y);
                         end

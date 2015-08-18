@@ -134,37 +134,40 @@ switch dataset.type
             % patch plots will (by definition) be shifted by half a grid cell
         end        
         
-    case{'scalar2duxy'}
+    case{'scalar2duxy','vector2d2duxy'}
         % Read net
         if isempty(dataset.G)
             dataset.G = dflowfm.readNet(dataset.filename,'quiet',1);
         end
         
-    case{'vector2d2duxy'}
-        % Read cell circumference
-        iok=0;
-        if isfield(dataset,'flowelemcontour_x')
-            if isempty(dataset.flowelemcontour_x)
-                iok=1;
-            end
-        else
-            iok=1;
-        end
-        if iok
-            x1=nc_varget(dataset.filename,'FlowElemContour_x');
-            y1=nc_varget(dataset.filename,'FlowElemContour_y');
-            if size(x1,2)>=4
-                x1=x1(:,1:4);
-                y1=y1(:,1:4);
-            end
-            m1=size(x1,1);
-            for i=1:m1;
-                if isnan(x1(i,4))
-                    x1(i,4)=x1(i,1);
-                    y1(i,4)=y1(i,1);
-                end
-            end
-            dataset.flowelemcontour_x=x1;
-            dataset.flowelemcontour_y=y1;
-        end
+%     case{'vector2d2duxy'}
+%         % Read cell circumference
+%         if isempty(dataset.G)
+%             dataset.G = dflowfm.readNet(dataset.filename,'quiet',1);
+%         end
+%         iok=0;
+%         if isfield(dataset,'flowelemcontour_x')
+%             if isempty(dataset.flowelemcontour_x)
+%                 iok=1;
+%             end
+%         else
+%             iok=1;
+%         end
+%         if iok
+%             x1=nc_varget(dataset.filename,'FlowElemContour_x');
+%             y1=nc_varget(dataset.filename,'FlowElemContour_y');
+%             if size(x1,2)>=4
+%                 x1=x1(:,1:4);
+%                 y1=y1(:,1:4);
+%             end
+%             m1=size(x1,1);
+%             for i=1:m1;
+%                 if isnan(x1(i,4))
+%                     x1(i,4)=x1(i,1);
+%                     y1(i,4)=y1(i,1);
+%                 end
+%             end
+%             dataset.flowelemcontour_x=x1;
+%             dataset.flowelemcontour_y=y1;
+%         end
 end

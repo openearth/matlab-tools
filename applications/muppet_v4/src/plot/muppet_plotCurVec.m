@@ -28,29 +28,52 @@ if exist(['curvecpos.' num2str(j,'%0.3i') '.' num2str(k,'%0.3i') '.dat'],'file')
     pos=load(['curvecpos.' num2str(j,'%0.3i') '.' num2str(k,'%0.3i') '.dat']);
 end
 
-x1=data.x;
-switch plt.projection
-    case{'mercator'}
-        % In case of geographic coordinates, data.y is are already
-        % converted to mercator. Convert them back.
-        y1=invmerc(data.y);
-    otherwise
-        y1=data.y;
-end
+% Check if this is unstructured data
+unstr=0;
 
-% Use cell circumference if available
-if isfield(data,'flowelemcontour_x')
-    if ~isempty(data.flowelemcontour_x)
-        x1=data.flowelemcontour_x;
-        switch plt.projection
-            case{'mercator'}
-                % In case of geographic coordinates, data.y is are already
-                % converted to mercator. Convert them back.
-                y1=invmerc(data.flowelemcontour_y);
-            otherwise
-                y1=data.flowelemcontour_y;
+if isfield(data,'G')
+    if isfield(data.G,'face')
+        if isfield(data.G.face,'FlowElemCont_x')
+            unstr=1;
         end
     end
+end
+
+if ~unstr
+    x1=data.x;
+    switch plt.projection
+        case{'mercator'}
+            % In case of geographic coordinates, data.y is are already
+            % converted to mercator. Convert them back.
+            y1=invmerc(data.y);
+        otherwise
+            y1=data.y;
+    end
+else    
+    x1=data.G.face.FlowElemCont_x;
+    switch plt.projection
+        case{'mercator'}
+            % In case of geographic coordinates, data.y is are already
+            % converted to mercator. Convert them back.
+            y1=invmerc(data.G.face.FlowElemCont_y);
+        otherwise
+            y1=data.G.face.FlowElemCont_y;
+    end
+    x1=x1';
+    y1=y1';
+    
+    % Find cells that have more than 4 nodes and get rid of them
+    col5=x1(:,5);
+    isn=find(isnan(col5));
+    x1=x1(isn,1:4);
+    y1=y1(isn,1:4);
+    
+    % Find triangles and copy first node to 4th column
+    col4=x1(:,4);
+    isn=find(isnan(col4));
+    x1(isn,4)=x1(isn,1);
+    y1(isn,4)=y1(isn,1);
+    
 end
 
 u=data.u;
