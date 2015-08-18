@@ -19,6 +19,7 @@ switch lower(plt.type)
             rightaxis=axes;
             muppet_setRightAxis(handles,ifig,isub);
             set(rightaxis,'NextPlot','add');
+            axes(leftaxis);
         end
     case {'map'}
         muppet_setMapPlot(handles,ifig,isub);

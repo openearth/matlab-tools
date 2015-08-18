@@ -21,11 +21,13 @@ y=data.y;
 for ii=i1:i2
     
     if ~strcmpi(opt.marker,'none')
-        sc=scatter3(x(ii),y(ii),1000,opt.markersize,opt.marker);
+%        sc=scatter3(x(ii),y(ii),1000,opt.markersize,opt.marker);
+        sc=scatter(x(ii),y(ii),opt.markersize,opt.marker);
         set(sc,'markeredgecolor',colorlist('getrgb','color',opt.markeredgecolor),'markerfacecolor',colorlist('getrgb','color',opt.markerfacecolor));
         set(sc,'Clipping','on');
     else
-        sc=scatter3(x(ii),y(ii),1000);
+%        sc=scatter3(x(ii),y(ii),1000);
+        sc=scatter(x(ii),y(ii));
         set(sc,'markeredgecolor','none','markerfacecolor','none');
     end
     

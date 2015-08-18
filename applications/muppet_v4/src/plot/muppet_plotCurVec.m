@@ -37,6 +37,22 @@ switch plt.projection
     otherwise
         y1=data.y;
 end
+
+% Use cell circumference if available
+if isfield(data,'flowelemcontour_x')
+    if ~isempty(data.flowelemcontour_x)
+        x1=data.flowelemcontour_x;
+        switch plt.projection
+            case{'mercator'}
+                % In case of geographic coordinates, data.y is are already
+                % converted to mercator. Convert them back.
+                y1=invmerc(data.flowelemcontour_y);
+            otherwise
+                y1=data.flowelemcontour_y;
+        end
+    end
+end
+
 u=data.u;
 v=data.v;
 
@@ -77,7 +93,9 @@ if strcmpi(opt.plotroutine,'colored curved arrows')
     cl(1,:,1)=r1;    
     cl(1,:,2)=g1;    
     cl(1,:,3)=b1;    
+    polz=zeros(size(polx))+100;
     fl=patch(polx,poly,cl);
+%    fl=patch(polx,poly,polz,cl);
     set(fl,'EdgeColor',edgecolor);    
 
 else

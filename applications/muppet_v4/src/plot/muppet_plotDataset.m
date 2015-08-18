@@ -129,7 +129,7 @@ handles.figures(ifig).figure.subplots(isub).subplot=plt;
 
 %% Plot dataset
 switch lower(plt.datasets(id).dataset.plotroutine)
-    case {'line','spline'}
+    case {'line','spline','area below line'}
         h=muppet_plotLine(handles,ifig,isub,id);
     case {'histogram'}
         h=muppet_plotHistogram(handles,ifig,isub,id);
@@ -238,7 +238,14 @@ if opt.adddatestring
                 [xpos,ypos]=albers(xpos,ypos,plt.labda0,plt.phi0,plt.phi1,plt.phi2);
         end
     end
-    datestring=[opt.adddate.prefix datestr(data.time,opt.adddate.format) opt.adddate.suffix];
+    tim=data.time;
+    if isempty(tim)
+        % Try to see if this dataset is a track
+        try
+            tim=opt.timemarker.time;
+        end
+    end
+    datestring=[opt.adddate.prefix datestr(tim,opt.adddate.format) opt.adddate.suffix];
     tx=text(xpos,ypos,datestring);
     set(tx,'HorizontalAlignment',horal);
     set(tx,'FontName',opt.adddate.font.name);

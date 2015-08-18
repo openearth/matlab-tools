@@ -15,8 +15,8 @@ end
 
 if ~isempty(data.georeferencefile)
     % Georeferenced image
-%     data.z=zeros(size(data.c,1),size(data.c,2))+opt.verticallevel;
-%     p=surf(data.x,data.y,data.z,double(data.c)/255);shading flat;
+%      data.z=zeros(size(data.c,1),size(data.c,2))+opt.verticallevel;
+%      p=surf(data.x,data.y,data.z,double(data.c)/255);shading flat;
      p=image(data.x,data.y,data.c);
 else
     data.z=zeros(size(data.c,1),size(data.c,2));

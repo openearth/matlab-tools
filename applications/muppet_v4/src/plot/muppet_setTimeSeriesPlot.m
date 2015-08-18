@@ -70,8 +70,6 @@ if plt.adddate
             if xticks(i)==round(xticks(i)) && xticks(i)<=xmax && xticks(i)>=xmin;
                 datetxt(i)=text(xticks(i),ytxt,datestr(xticks(i),26));
                 set(datetxt(i),'FontSize',plt.font.size*fontred,'HorizontalAlignment','center');
-                %% SECTION TITLE
-                % DESCRIPTIVE TEXT
             end
         end
     else

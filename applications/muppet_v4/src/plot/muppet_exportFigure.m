@@ -11,6 +11,8 @@ try
         wb = waitbox('Printing figure...');
     end
     
+%     mode='xhtml';
+    
     muppet_makeFigure(handles,ifig,mode);
 
     switch lower(mode)
@@ -29,15 +31,12 @@ try
                 if strcmpi(fig.orientation,'l')
                     set(gcf,'PaperOrientation','landscape');
                 end
-%                curfig=gcf;
-%                fff=myaa(2);
 
                 aafac=1;
                 if fig.antialiasing
                     aafac=2;
                 end
-                print (gcf,['-d' fig.format],['-r' num2str(fig.resolution*aafac)], ...
-                    ['-' lower(fig.renderer)],fig.outputfile);
+                print (gcf,['-d' fig.format],['-r' num2str(fig.resolution*aafac)],['-' lower(fig.renderer)],fig.outputfile);
                 if fig.antialiasing
                     aa_mvo(fig.outputfile,fig.outputfile);
                 end
@@ -52,6 +51,9 @@ try
 
             
             end
+        case{'xhtml'}
+            
+            figure2xhtml('test/example1',gcf) 
     end
 catch
     h=findobj('Tag','waitbox');
