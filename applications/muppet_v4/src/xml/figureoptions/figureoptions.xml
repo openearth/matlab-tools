@@ -257,7 +257,7 @@
   <figureoption>
     <name>renderer</name>
     <keyword>Renderer</keyword>
-    <default>zbuffer</default>
+    <default>ZBuffer</default>
     <variable>renderer</variable>
   </figureoption>
   <figureoption>

@@ -36,6 +36,9 @@
         <name>fontweight</name>
       </plotoption>
       <plotoption>
+        <name>fontcolor</name>
+      </plotoption>
+      <plotoption>
         <name>fonthorizontalalignment</name>
       </plotoption>
       <plotoption>

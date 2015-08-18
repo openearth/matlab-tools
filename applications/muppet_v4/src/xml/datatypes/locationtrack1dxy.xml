@@ -71,10 +71,41 @@
       <plotoption>
         <name>legendtext</name>
       </plotoption>
+      <plotoption>
+        <name>adddatestring</name>
+      </plotoption>
+      <plotoption>
+        <name>adddateposition</name>
+      </plotoption>
+      <plotoption>
+        <name>adddateformat</name>
+      </plotoption>
+      <plotoption>
+        <name>adddateprefix</name>
+      </plotoption>
+      <plotoption>
+        <name>adddatesuffix</name>
+      </plotoption>
+      <plotoption>
+        <name>adddatefontname</name>
+      </plotoption>
+      <plotoption>
+        <name>adddatefontsize</name>
+      </plotoption>
+      <plotoption>
+        <name>adddatefontangle</name>
+      </plotoption>
+      <plotoption>
+        <name>adddatefontweight</name>
+      </plotoption>
+      <plotoption>
+        <name>adddatefontcolor</name>
+      </plotoption>
       <elementgroup>line</elementgroup>
       <elementgroup>marker</elementgroup>
       <elementgroup>timemarker</elementgroup>
       <elementgroup>originmarker</elementgroup>
+      <elementgroup>adddate</elementgroup>
       <elementgroup>legendtext</elementgroup>
     </plotroutine>
   </plottype>

@@ -63,7 +63,7 @@
     <variable>adddate.prefix</variable>
     <type>string</type>
     <keyword>AddDatePrefix</keyword>
-    <default>Date : </default>
+    <default></default>
     <dependency>
       <action>write</action>
       <checkfor>all</checkfor>

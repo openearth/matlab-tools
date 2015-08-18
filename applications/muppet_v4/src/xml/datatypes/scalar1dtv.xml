@@ -64,6 +64,7 @@
       </plotoption>
       <elementgroup>line</elementgroup>
       <elementgroup>marker</elementgroup>
+      <elementgroup>rightaxis</elementgroup>
       <elementgroup>timebar</elementgroup>
       <elementgroup>legendtext</elementgroup>
     </plotroutine>
@@ -128,6 +129,7 @@
       </plotoption>
       <elementgroup>line</elementgroup>
       <elementgroup>marker</elementgroup>
+      <elementgroup>rightaxis</elementgroup>
       <elementgroup>timebar</elementgroup>
       <elementgroup>legendtext</elementgroup>
     </plotroutine>

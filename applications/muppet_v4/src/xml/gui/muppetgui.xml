@@ -2078,6 +2078,11 @@
         <value>timestack</value>
         <operator>eq</operator>
       </check>
+      <check>
+        <variable>handles.figures(handles.activefigure).figure.subplots(handles.activesubplot).subplot.type</variable>
+        <value>3d</value>
+        <operator>eq</operator>
+      </check>
     </dependency>
   </element>
   <element>
