@@ -33,10 +33,10 @@ classdef xls < oop.handle_light
 %     % clearing the sheet also closes the xls server
 %     clear excelsheet
 %
-%   See also: xls.open, xls.create, xls.read, xls.write, xls.save
-%             xls.clear, xls.close, xls.closeWorkbook
-%             xls.getUsedRange, xls.addsheet, xls.getWorksheets
-%             xlsread, xlswrite
+%   See also: xls.open,  xls.create, xls.read,     xls.write, 
+%             xls.clear, xls.save,   xls.close,    xls.closeWorkbook
+%             xls.getUsedRange,      xls.addsheet, xls.getWorksheets
+%             xlsread,      xlswrite
     
 %% Copyright notice
 %   --------------------------------------------------------------------
@@ -137,7 +137,7 @@ classdef xls < oop.handle_light
         function open(obj,filename)
         % xls.open only open excel object if it is not available already
         %
-        % open(obj,filename)
+        % open(filename)
         %
         % See also: xls            
             
@@ -162,7 +162,7 @@ classdef xls < oop.handle_light
         function create(obj,filename)
         % xls.create Create new workbook
         %
-        %  create(obj,filename)
+        %  create(filename)
         %
         % See also: xls                
             
@@ -193,7 +193,7 @@ classdef xls < oop.handle_light
         function newsheet = addsheet(obj,sheet)
         % xls.addsheet Add new worksheet to excel object
         %
-        %  newsheet = addsheet(obj,sheet)
+        %  newsheet = addsheet(sheet)
         %
         % See also: xls           
         
@@ -209,7 +209,7 @@ classdef xls < oop.handle_light
         function worksheets = getWorksheets(obj)
         % xls.getWorksheets get worksheets
         %
-        %  worksheets = getWorksheets(obj)
+        %  worksheets = getWorksheets()
         %
         % See also: xls                
         
@@ -224,7 +224,7 @@ classdef xls < oop.handle_light
         function usedRange = getUsedRange(obj,sheet)
         % xls.getUsedRange get used range
         %
-        %  usedRange = getUsedRange(obj,sheet)
+        %  usedRange = getUsedRange(sheet)
         %
         % See also: xls                
         
@@ -237,7 +237,7 @@ classdef xls < oop.handle_light
         function save(obj)
         % xls.save save excel object
         %
-        %  save(obj)
+        %  save()
         %
         % See also: xls      
         
@@ -250,7 +250,7 @@ classdef xls < oop.handle_light
         function close(obj)
         % xls.close close excel object
         %
-        %  close(obj)
+        %  close()
         %
         % See also: xls         
         
@@ -265,7 +265,7 @@ classdef xls < oop.handle_light
         function closeWorkbook(obj)
         % xls.closeWorkbook close workbook
         %
-        %  closeWorkbook(obj)
+        %  closeWorkbook()
         %
         % See also: xls          
         
@@ -281,7 +281,7 @@ classdef xls < oop.handle_light
         function data = read(obj,sheet,range)
         % xls.read read from excel object
         %
-        % data = read(obj,sheet,range)
+        % data = read(sheet,range)
         %
         % range can be a named range.
         %
@@ -307,9 +307,11 @@ classdef xls < oop.handle_light
         function write(obj,data,sheet,range)
         % xls.write write to excel object
         %
-        % write(obj,data,sheet,range)
+        % write(data,sheet,range)
         %
         % range can be a named range, unlike xlswrite.
+        %
+        % write needs to followed by save() and close().
         %
         % See also: xls
         
@@ -344,7 +346,7 @@ classdef xls < oop.handle_light
         function clear(obj,sheet,range)
         % xls.clear clear
         %
-        %  clear(obj,sheet,range)
+        %  clear(sheet,range)
         %
         % See also: xls           
         
@@ -362,7 +364,8 @@ classdef xls < oop.handle_light
             %Clear range
             DataRange.ClearContents;
             obj.data_written = true;
-       end
-        
-    end
+        end
+       
+    end % methods    
+
 end

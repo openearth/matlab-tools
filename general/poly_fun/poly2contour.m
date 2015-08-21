@@ -22,7 +22,7 @@ function varargout = poly2contour(varargin)
 %    L.c = poly2contour(L.x,L.y,3.141);
 %    clabel(L.c,L.h);
 %
-% See also: CONTOURC, POLYSPLIT, POLYJOIN, POLY2CONTOUR
+% See also: CONTOURC, POLYSPLIT, POLYJOIN, CONTOUR2POLY
 
 %   --------------------------------------------------------------------
 %   Copyright (C) 2008 Delft University of Technology
