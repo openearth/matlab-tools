@@ -1,6 +1,7 @@
 % Input/Output-specific commands in <a href="http://www.OpenEarth.eu">OpenEarthTools</a> 
 %
 % OpenEarthTools Input/Output toolboxes.
+%   json                - JSON - java script object notation
 %
 %   Binary Large OBjects (BLOBs):
 %   h4tools             - HDF4 tools
@@ -21,7 +22,7 @@
 %   Meta-data:
 %   inspire             - mangle EU INSPIRE meta-data
 %
-% See also: OpenEarthTools: general, applications, h5, database, arcgis, netcdf
+% See also: io_fun, general, applications, h5, database, arcgis, netcdf
 %           "Geo-DBMS" http://repository.tudelft.nl/view/ir/uuid%3A6fd7e880-eaf0-46a8-958b-c7c0976be13b/
 
 % http://earthdata.nasa.gov/our-community/esdswg/standards-process-spg/rfc
