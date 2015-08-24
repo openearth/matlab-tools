@@ -135,7 +135,7 @@ function print2a4(fname,varargin)
 
    [fileexist,action]=filecheck(fullfile(filepathstr(fname),[filename(fname),'.png']),overwrite_append);
    if strcmpi(action,'o')
-      mkpath(filepathstr(fname))
+      mkdir(filepathstr(fname))
       print('-dpng'  ,fname,resolution);
    end
 
