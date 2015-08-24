@@ -736,7 +736,9 @@ else
  dprintf(diary,'   Returning fitted prediction\n');
 end;
 
+if ~isempty(centraltime)
 dprintf(diary,'   t_predic centraltime =  %f (%s)\n',centraltime,datestr(centraltime));
+end
 
 %----------------------------------------------------------------------
 % Check variance explained (but now do this with the synthesized fit).
