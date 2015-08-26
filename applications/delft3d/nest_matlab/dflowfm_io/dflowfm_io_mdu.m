@@ -85,6 +85,7 @@ case 'write'
        pars = fieldnames(mdu.(names{igroup}));
        for ipar = 1: length(pars)
            line = tmp.Data{igroup,2}{ipar,2};
+           if isempty(line); clear line; line = ''; end
            while length(line) < maxlen + 4
                line(end + 1) = ' ';
            end
@@ -129,10 +130,10 @@ case 'new'
         for igrp = 1: length(grpnam)
             if strcmp(tmp{irow,1},grpnam{igrp})
                 if ischar(tmp{irow,6})
-                    if strcmpi(tmp{irow,6},'true')  tmp{irow,6} = 1;end
-                    if strcmpi(tmp{irow,6},'false') tmp{irow,6} = 0;end
+                    if strcmpi(tmp{irow,6},'true')  tmp{irow,7} = 1;end
+                    if strcmpi(tmp{irow,6},'false') tmp{irow,7} = 0;end
                 end
-                mdu.(grpnam{igrp}).(tmp{irow,2}) = tmp{irow,6};
+                mdu.(grpnam{igrp}).(tmp{irow,2}) = tmp{irow,7};
                 comment = '';
                 for icol = 15: size(tmp,2)
                     if ~isempty (tmp{irow,icol})
