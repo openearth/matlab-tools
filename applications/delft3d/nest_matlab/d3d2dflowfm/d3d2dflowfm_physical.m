@@ -11,7 +11,6 @@ mdu.Fileva          = '';
 mdu.physics.Ag      = mdf.ag;
 mdu.physics.Rhomean = mdf.rhow;
 mdu.wind.PavBnd     = -999;
-mdu.wind.Gapres     = -999;
 
 %% Salinity
 if strcmpi(mdf.sub1(1),'S') mdu.physics.Salinity = true; end
@@ -47,7 +46,7 @@ if strcmpi(mdf.sub1(3),'W')
     %% Rhoair and Cd
     mdu.wind.Rhoair  = mdf.rhoa;
     mdu.wind.ICdtyp  = length(mdf.wstres)/2;
-    for i_cd = 1:mdu.wind.ICdtyp 
+    for i_cd = 1:mdu.wind.ICdtyp
         mdu.wind.Cdbreakpoints(i_cd)        = mdf.wstres(i_cd*2 - 1);
         mdu.wind.Windspeedbreakpoints(i_cd) = mdf.wstres(i_cd*2    );
     end
