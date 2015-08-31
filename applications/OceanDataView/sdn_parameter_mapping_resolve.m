@@ -56,7 +56,7 @@ function description = sdn_parameter_mapping_resolve(SDNstring,varargin)
 
 %% Settings
 
-   OPT.method       = 'loc'; % 'loc' is much faster than 'web'
+   OPT.method       = 'web'; % 'loc' is much faster than 'web'
    OPT.save         = 0;
    OPT.disp         = 0;
    
