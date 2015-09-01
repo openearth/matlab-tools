@@ -53,7 +53,7 @@ X   = nc_varget(url,'cross_shore');
 [y, m, d, h, mn, s] = datevec(nc_cf_time(url,'time'));
 
 n  = find(y==year);
-z  = nc_varget(url,'altitude',[n-1,bi-1,0],[1,ei-bi+1,-1]);
+z  = squeeze(nc_varget(url,'altitude',[n-1,bi-1,0],[1,ei-bi+1,-1]));
 DL = repmat(NaN,size(as));
 
 %calculate distance (from beach pole) for each transect
