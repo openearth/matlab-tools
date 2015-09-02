@@ -497,7 +497,7 @@ end
                
               [quantity,rec1]   = strtok(rec1);
                keyword1         = strtok(rec1);
-               keyword1 = pad(keyword1,6,' ');
+               keyword1 = pad(keyword1,7,' ');
                if     strcmpi(keyword1(1:3),'REG')
                gridtype = 'REG';
               [keyword1,rec1]   = strtok(rec1);
@@ -1782,6 +1782,7 @@ end
             if strfind(keyword1(1:4),'COMP')==1
                 [keyword,rec] = strtok(rec);
                 [keyword,rec] = strtok(rec);
+                keyword = pad(keyword,5,' ');
                  if     strcmp(keyword(1:4),'STAT')
                  [keyword,rec] = strtok(rec);
                   DAT.compute.time    = keyword;
