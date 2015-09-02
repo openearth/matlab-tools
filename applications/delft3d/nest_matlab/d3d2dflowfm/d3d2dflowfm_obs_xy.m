@@ -20,7 +20,7 @@ if ~isempty(filgrd) && ~isempty(filsta)
     for ista = 1: sta.NTables
         LINE.DATA{ista,1} = xcoor(sta.m(ista),sta.n(ista));
         LINE.DATA{ista,2} = ycoor(sta.m(ista),sta.n(ista));
-        LINE.DATA{ista,3} = strtrim(sta.namst(ista,:));
+        LINE.DATA{ista,3} = ['''' strtrim(sta.namst(ista,:)) ''''];
     end
 
     % finally write to the unstruc obs file
