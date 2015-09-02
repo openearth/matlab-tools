@@ -1,15 +1,15 @@
-function writeLTR(filename, shoreline, locations, closure_depth, pro_file, cfs_file, cfe_file, sco_file, varargin)
+function writeLTR(filename, shoreline, locations, active_height, pro_file, cfs_file, cfe_file, sco_file, varargin)
 %write LTR : Writes a unibest lt-run specification file (automatically computing coast angle)
 %
 %   Syntax:
-%     function writeLTR(filename, shoreline, locations, closure_depth, pro_file, cfs_file, cfe_file, sco_file, ray_file)
+%     function writeLTR(filename, shoreline, locations, active_height, pro_file, cfs_file, cfe_file, sco_file, ray_file)
 % 
 %   Input:
 %     filename             string with output filename
 %     shoreline            Shoreline, string with filename of polygon or matrix [Nx2]
 %                          (if shoreline is [Nx1] and locations is empty -> shoreline values will be used as coast angle)
 %     locations            SCO locations, string with filename of polygon or matrix [Nx2]
-%     closure_depth        Closure depth ([Nx1] matrix or single value)
+%     active_height        Active height (closure depth + active beach crest) ([Nx1] matrix or single value)
 %     pro_file             string with name of the pro-file(s) (either {Nx1} cellstr or 1 string (then a number is added automatically))
 %     cfs_file             string with name of the cfs-file(s) (either {Nx1} cellstr or 1 string (then a number is added automatically))
 %     cfe_file             string with name of the cfe-file(s) (either {Nx1} cellstr or 1 string (then a number is added automatically))
@@ -129,8 +129,8 @@ err=0;
 if length(locs2.angles)~=number_of_rays
     locs2.angles = repmat(locs2.angles(1),[number_of_rays 1]);
 end
-if length(closure_depth)~=number_of_rays
-    closure_depth = repmat(closure_depth(1),[number_of_rays 1]);
+if length(active_height)~=number_of_rays
+    active_height = repmat(active_height(1),[number_of_rays 1]);
 end
 if length(pro_file)~=number_of_rays
     pro_file = [repmat(pro_file,[number_of_rays 1])];
@@ -173,7 +173,7 @@ if err==0
     fprintf(fid,'%s\n', num2str(number_of_rays));
     fprintf(fid,'%s\n','         ORKST     PROFH     .PRO      .CFS      .CFE      .SCO      .RAY');
     for ii=1:number_of_rays
-        fprintf(fid,'     %8.2f    %8.2f   ''%s''  ''%s''  ''%s''  ''%s''  ''%s'' \n',locs2.angles(ii), closure_depth(ii), pro_file{ii}, cfs_file{ii}, cfe_file{ii}, sco_file{ii}, ray_file{ii});
+        fprintf(fid,'     %8.2f    %8.2f   ''%s''  ''%s''  ''%s''  ''%s''  ''%s'' \n',locs2.angles(ii), active_height(ii), pro_file{ii}, cfs_file{ii}, cfe_file{ii}, sco_file{ii}, ray_file{ii});
     end
     fclose(fid);
 else
