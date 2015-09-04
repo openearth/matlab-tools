@@ -43,6 +43,7 @@ function varargout = wind_rose(D,F,varargin)
 %       - directionLabels  put the labels North, East, South, West on the
 %                   axes (default: true)
 %       - centersectors  Center sectors around 0 .. 360 (default) or not
+%       - nan       'keep' (default) or 'remove', affects radial tick scaling
 %
 %   Output:
 %      HANDLES   Handles of all lines, fills, texts
@@ -164,6 +165,7 @@ OPT.IncHiLow    = 1; % include values higher and lower than the limits of OPT.Ag
 OPT.directionLabels = true; % labels North South etc..
 OPT.centersectors   = true;% Center sectors around 0 .. 360 or not
 OPT.units           = '';
+OPT.nan             = 'keep'; % default, and backwards consistent
 OPT = setproperty(OPT, varargin{:});
 
 if nargin==0
@@ -178,7 +180,15 @@ if isempty(D)
     warning('WIND_ROSE:no data: D cannot be empty in wind_rose(D,F,varargin)');
     return
 end
-    
+
+%% remove nans from statistics/scaling
+if ~strcmp(OPT.nan,'keep')
+    remove = isnan(D) | isnan(F);
+    D(remove) = [];
+    F(remove) = [];
+end
+
+%%    
 if OPT.onAxes
       OPT.onAxesX = OPT.onAxes(2);
       OPT.onAxesY = OPT.onAxes(3);

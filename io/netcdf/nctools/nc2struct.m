@@ -82,7 +82,6 @@ OPT.exclude      = {};
 OPT.rename       = {{},{}};
 OPT.include      = {};
 OPT.structfun    = []; % apply transformation, e.g. make1D(), (:) or transpose()
-OPT.backend      = 'snctools';
 
 if nargin==0
    varargout = {OPT};
