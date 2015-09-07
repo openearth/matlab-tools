@@ -17,7 +17,7 @@ OPT = setproperty(OPT,varargin);
 if ~isempty(OPT.nesthd_path) && isempty(OPT.Logo)
     if ~isempty(strfind(lower(OPT.Window),'siminp')) || ~isempty(strfind(lower(OPT.Window),'nesthd'))
         OPT.Logo        = imread([OPT.nesthd_path filesep 'bin' filesep 'simona_logo.jpg']);
-    elseif ~isempty(strfind(lower(OPT.Window),'dflowfm')) 
+    elseif ~isempty(strfind(lower(OPT.Window),'dflowfm'))
         OPT.Logo        = imread([OPT.nesthd_path filesep 'bin' filesep 'dflowfm.jpg']    );
     end
 end
@@ -30,16 +30,17 @@ if ~isempty(OPT.nesthd_path) && isempty(OPT.Logo2)
 end
 
 %% Display the message/warning box
+
 if ~isempty(OPT.Logo)
     h_warn   = msgbox(string,OPT.Window,'Custom',OPT.Logo,[],'replace');
 else
-     h_warn   = msgbox(string,OPT.Window,'replace');
+    h_warn   = msgbox(string,OPT.Window,'replace');
 end
-
+    
 if ~isempty(OPT.Logo2)
-   simona2mdf_legalornot(h_warn,OPT.Logo2)
+    simona2mdf_legalornot(h_warn,OPT.Logo2)
 end
-
+    
 delete(findobj(h_warn,'string','OK'));
 uiwait(h_warn,OPT.n_sec);
 
