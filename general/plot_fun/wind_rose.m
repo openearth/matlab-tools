@@ -16,11 +16,13 @@ function varargout = wind_rose(D,F,varargin)
 %                   meteo:        from North |  from East 
 %                   current:      to   North |  to   East
 %                   otherwise:    to   East  |  to   North
-%       - nAngels   number of D subdivisons
-%       - Ag        intensities subdivisons,    default is automatic
-%       - ci        percentage circles to draw, default is automatic
-%       - titStr    main title
-%       - legStr    legend title
+%       - nAngles   number of D subdivisons [36]
+%       - Ag        intensity subdivisons, Ag(i:i+1), if data exists <Ag(i)
+%                   or >Ag(end), first resp. last bin will contain that
+%                   data, default is automatic []
+%       - ci        percentage circles to draw, default is automatic []
+%       - titStr    main title ['str']
+%       - legStr    legend title ['str']
 %       - cmap      colormap [jet]
 %       - colors    to use instead of colormap, for each di
 %       - quad      Quadrant to show percentages ['auto']
@@ -29,21 +31,23 @@ function varargout = wind_rose(D,F,varargin)
 %       - legType   legend type: 1, continuous, 2, separated boxes [2]
 %       - bcolor    full rectangle border color ['none']
 %       - lcolor    line colors for axes and circles ['k']
-%       - percBg    percentage labels bg ['w']
-%       - onAxes    to place wind rose on pervious axes, the input for ax
+%       - percBg    percentage labels background colour ['w']
+%       - onAxes    to place wind rose on previous axes, the input for ax
 %                   must be [theax x y width], where theax is the previous
 %                   axes, x and y are the location and width is the wind
 %                   rose width relative to theax width (default=1/5)
 %       - parent    by default a new axes is created unless parent is
-%                   given, ex, parent may be a subplot
+%                   given, parent may be a subplot [{0} axes()]
 %       - iflip     flip the intensities as they go outward radially, ie,
 %                   highest values are placed nearest the origin [{0} 1]
 %       - inorm     normalize intensities, means all angles will have 100%
 %       - IncHiLow  if 0, data outside di limits will not be used [0 {1}]
 %       - directionLabels  put the labels North, East, South, West on the
-%                   axes (default: true)
+%                   axes (default: true) [true]
 %       - centersectors  Center sectors around 0 .. 360 (default) or not
-%       - nan       'keep' (default) or 'remove', affects radial tick scaling
+%                   [true]
+%       - nan       'keep' (default) or 'remove', affects radial tick
+%                   scaling ['keep']
 %
 %   Output:
 %      HANDLES   Handles of all lines, fills, texts
@@ -177,7 +181,7 @@ end
 %% error check
 
 if isempty(D)
-    warning('WIND_ROSE:no data: D cannot be empty in wind_rose(D,F,varargin)');
+    warning('WIND_ROSE:no data: D cannot be empty in wind_rose(D,I,varargin)');
     return
 end
 
