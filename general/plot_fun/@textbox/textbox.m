@@ -326,7 +326,7 @@ classdef textbox < oop.inspectable
         
        
         %% Dependent axes related property getters
-        function value = get.Parent             (self); value = self.ha.Parent; 		     end
+        function value = get.Parent             (self); value = handle(self.ha.Parent); 	 end
         function value = get.BackgroundColor    (self); value = self.ha.Color;               end
         function value = get.Units              (self); value = self.ha.Units; 			     end
         function value = get.Visible            (self); value = self.ha.Visible; 		     end
