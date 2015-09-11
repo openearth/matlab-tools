@@ -90,7 +90,7 @@ classdef CrudeMonteCarlo < ProbabilisticMethod
             this.Seed               = seed;
             
             % We don't want the ZValues to be normalized by the value in
-            % the origin, so set thye option to false
+            % the origin, so set the option to false
             this.LimitState.NormalizeZValues    = false;
             
             this.SetDefaults
@@ -128,7 +128,7 @@ classdef CrudeMonteCarlo < ProbabilisticMethod
         % Plot Crude Monte Carlo results
         function plot(this)
             figureHandle = figure('Tag','ProbabilisticMethodResults');
-            this.LimitState.plot(figureHandle, this.EvaluationApproachesZero,class(this),this.Pf, this.NrDirectionsEvaluated, this.UNormalIndexPerEvaluation )
+            this.LimitState.plot(figureHandle, true(this.NumberSamples,1))
         end
     end
 end

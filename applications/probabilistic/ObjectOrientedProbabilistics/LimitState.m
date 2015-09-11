@@ -387,11 +387,11 @@ classdef LimitState < handle
             legend(axisHandle,'-DynamicLegend','Location','NorthWestOutside');
             legend(axisHandle,'show');
             
-            if strcmp(varargin{1},'DirectionalSampling')
+            if ~isempty(varargin) && strcmp(varargin{1},'DirectionalSampling')
                 Pf =varargin{2};
                 NrDirectionsEvaluated=varargin{3};
                 UNormalIndexPerEvaluation=varargin{4};
-            elseif strcmp(varargin{1},'AdaptiveDirectionalImportanceSampling')
+            elseif ~isempty(varargin) && strcmp(varargin{1},'AdaptiveDirectionalImportanceSampling')
                 Pf =varargin{2};
                 NrDirectionsEvaluated=varargin{3};
                 UNormalIndexPerEvaluation=varargin{4};
@@ -400,7 +400,7 @@ classdef LimitState < handle
             
             Nr_directions_Zapproaches0 = length(unique(UNormalIndexPerEvaluation(evaluationApproachesZero)));
  
-             if strcmp(varargin{1},'DirectionalSampling')
+             if ~isempty(varargin) && strcmp(varargin{1},'DirectionalSampling')
                  
                columnname   =   {'Values'};
                rowname      = {'Pf', ...
@@ -423,7 +423,7 @@ classdef LimitState < handle
                              'RowName',rowname );
             
 
-            elseif strcmp(varargin{1},'AdaptiveDirectionalImportanceSampling')
+            elseif ~isempty(varargin) && strcmp(varargin{1},'AdaptiveDirectionalImportanceSampling')
                columnname   =   {'Values'};
                rowname      = {'Pf_total', ...
                          'Pf_exact', ...
