@@ -1,4 +1,4 @@
-function PRN2kml(PRNfile,MDAfile,timesteps,reftime,vectorscale,segments,KMLfile,EPSGcode,EPSG)
+function PRN2kml(PRNfile,MDAfile,timesteps,reftime,vectorscale,segments,KMLfile,EPSGcode,EPSG,varargin)
 %function PRN2kml : Converts a UNIBEST PRN-file into a KML-file with coastlines and KML-file with bars
 %
 %   Syntax:
@@ -76,17 +76,34 @@ function PRN2kml(PRNfile,MDAfile,timesteps,reftime,vectorscale,segments,KMLfile,
 % $HeadURL: https://svn.oss.deltares.nl/repos/openearthtools/trunk/matlab/applications/unibest/postprocess/PRN2kml.m $
 % $Keywords: $
 
+    %% process varargin
+    OPT.lineWidth = 2;
+    OPT.lineAlpha = 0.8;
+    OPT.zdata = [];
+    OPT.KMLlabels = 0;
+    OPT.KMLlabeltext = {};
+    OPT.KMLheader = '';
+
+    if ~isempty(varargin) 
+       OPT = setproperty(OPT, varargin{:});
+    end
 
     %% load data
     %PRNfile,MDAfile,timesteps,reftime,vectorscale,KMLfile
-    PRNdata = readPRN(PRNfile);
-    [pthnm,filnm,extnm]=fileparts(PRNfile);
+    if ~isstruct(PRNfile)
+        PRNdata = readPRN(PRNfile);
+        [pthnm,filnm,extnm]=fileparts(PRNfile);
+    else
+        PRNdata = PRNfile;
+        [pthnm,filnm,extnm] = fileparts(PRNdata.files{1});
+    end
     if ~isempty(MDAfile);    MDAdata=readMDA(MDAfile);end
     if isempty(vectorscale); vectorscale=10; end
     if isempty(segments);    segments=100; end
     if isempty(EPSG);        EPSG=load('EPSG'); end
     if isempty(EPSGcode);    EPSGcode=28992; end
     if isempty(KMLfile);     KMLfile = [filnm,'.kml']; end
+    if isempty(OPT.KMLheader); OPT.KMLheader = filnm; end
 
     %% reference time
     reftimenum = 0;
@@ -107,23 +124,23 @@ function PRN2kml(PRNfile,MDAfile,timesteps,reftime,vectorscale,segments,KMLfile,
     %%-------------------------------------------------------------------------
     colours     = jet(length(timesteps));
     fid         = fopen(KMLfile,'wt');
-    kml         = KML_header('kmlName',filnm);
-    for tt=timesteps
-        S.name      = ['col',num2str(tt)];
-        x = PRNdata.x(:,tt);
-        y = PRNdata.y(:,tt);
-        z = PRNdata.zminz0(:,tt);
-        t1 = PRNdata.year(tt)*365.25+reftimenum; 
+    kml         = KML_header('kmlName',OPT.KMLheader);
+    for tt=1:length(timesteps)
+        S.name      = ['col',num2str(timesteps(tt))];
+        x = PRNdata.x(:,timesteps(tt));
+        y = PRNdata.y(:,timesteps(tt));
+        %z = PRNdata.zminz0(:,timesteps(tt));
+        t1 = PRNdata.year(timesteps(tt))*365.25+reftimenum; 
         if tt<length(timesteps)
-        t2 = PRNdata.year(tt+1)*365.25+reftimenum;
+        t2 = PRNdata.year(timesteps(tt)+1)*365.25+reftimenum;
         else
-        t2 = PRNdata.year(tt)*365.25+reftimenum+DT*365.25;
+        t2 = PRNdata.year(timesteps(tt))*365.25+reftimenum+DT*365.25;
         end
         tstart = datestr(t1,'yyyy-mm-ddTHH:MM:SS');
         tend   = datestr(t2,'yyyy-mm-ddTHH:MM:SS');
         S.lineColor = colours(tt,:);  % color of the lines in RGB
-        S.lineAlpha = [0.8] ;     % transparency of the line, (0..1) with 0 transparent
-        S.lineWidth = 2;        % line width, can be a fraction     
+        S.lineAlpha = OPT.lineAlpha ;     % transparency of the line, (0..1) with 0 transparent
+        S.lineWidth = OPT.lineWidth;        % line width, can be a fraction     
         S0 = S; 
         S0.name      = ['col0'];
         S0.lineColor = [0.3 0.3 0.3];
@@ -148,10 +165,14 @@ function PRN2kml(PRNfile,MDAfile,timesteps,reftime,vectorscale,segments,KMLfile,
     latpoly={};
     xpoly={};
     ypoly={};
-    for tt=timesteps
+    for tt=1:length(timesteps)
         x = PRNdata.x(:,1);
         y = PRNdata.y(:,1);
-        z = PRNdata.zminz0(:,tt);
+        if isempty(OPT.zdata)   %Default is zminz0
+            z = PRNdata.zminz0(:,timesteps(tt));
+        else                    %Optional user defined (for example wrt reference scenario)
+            z = OPT.zdata(:,timesteps(tt));
+        end
         dx = diff(PRNdata.xdist);
 
         if isempty(segments);segments=100;end
@@ -171,6 +192,10 @@ function PRN2kml(PRNfile,MDAfile,timesteps,reftime,vectorscale,segments,KMLfile,
             dybar        = 0.5*dx2*sin(ANGLEcoast(ID(jj))*pi/180);
             xpoly{tt}(jj,:)  = [x1+dxbar, xtip+dxbar, xtip-dxbar, x1-dxbar, x1+dxbar];
             ypoly{tt}(jj,:)  = [y1+dybar, ytip+dybar, ytip-dybar, y1-dybar, y1+dybar];
+            xtext{tt}(jj,:)  = xtip;
+            ytext{tt}(jj,:)  = ytip;
+            ztext{tt}{jj}  = num2str(round(z1));
+ 
     %         %% convert coordinates to lat-lon
     %         
     %         lonpoly{tt}{jj}      = lonpoly{tt}{jj}';
@@ -178,6 +203,7 @@ function PRN2kml(PRNfile,MDAfile,timesteps,reftime,vectorscale,segments,KMLfile,
            % figure(1);clf;plot(xpoly{tt}(jj,:),ypoly{tt}(jj,:),'k');hold on;plot(x1,y1,'r*');plot(xtip,ytip,'g*');
         end
         [lonpoly{tt},latpoly{tt}] = convertCoordinates(xpoly{tt},ypoly{tt},EPSG,'CS1.code',EPSGcode,'CS2.name','WGS 84','CS2.type','geo');
+        [lontext{tt},lattext{tt}] = convertCoordinates(xtext{tt},ytext{tt},EPSG,'CS1.code',EPSGcode,'CS2.name','WGS 84','CS2.type','geo');
     end
 
     %%-------------------------------------------------------------------------
@@ -192,13 +218,13 @@ function PRN2kml(PRNfile,MDAfile,timesteps,reftime,vectorscale,segments,KMLfile,
     %% write KML bar plot
     KMLfile2 = [KMLfile(1:end-4),'_bar.kml'];
     fid         = fopen(KMLfile2,'wt');
-    kml2        = KML_header('kmlName',[filnm,'BAR']);
-    for tt=timesteps
-        t1       = PRNdata.year(tt)*365.25+reftimenum; 
+    kml2        = KML_header('kmlName',[OPT.KMLheader,'BAR']);
+    for tt=1:length(timesteps)
+        t1       = PRNdata.year(timesteps(tt))*365.25+reftimenum; 
         if tt<length(timesteps)
-        t2 = PRNdata.year(tt+1)*365.25+reftimenum;
+        t2 = PRNdata.year(timesteps(tt)+1)*365.25+reftimenum;
         else
-        t2 = PRNdata.year(tt)*365.25+reftimenum+DT*365.25;
+        t2 = PRNdata.year(timesteps(tt))*365.25+reftimenum+DT*365.25;
         end
         tstart   = datestr(t1,'yyyy-mm-ddTHH:MM:SS');
         tend     = datestr(t2,'yyyy-mm-ddTHH:MM:SS');
@@ -209,10 +235,22 @@ function PRN2kml(PRNfile,MDAfile,timesteps,reftime,vectorscale,segments,KMLfile,
         for ii=1:length(IDpos) %length(S.PP(sens).settings.sgridRough)
             kmlpoly2     = [kmlpoly2,barstyle1];
             kmlpoly2     = [kmlpoly2 KMLpolytext(t1,t2,latpoly{tt}(IDpos(ii),:),lonpoly{tt}(IDpos(ii),:))];
+            if OPT.KMLlabels == 1
+                if isempty(OPT.KMLlabeltext)% Default zminz0
+                    kmlpoly2 = [kmlpoly2 KML_text(lattext{tt}(IDpos(ii),:),lontext{tt}(IDpos(ii),:),ztext{tt}{IDpos(ii)},'visible',1,'timeIn',tstart,'timeOut',tend)];
+                else % User specified
+                end
+            end            
         end
         for ii=1:length(IDneg) %length(S.PP(sens).settings.sgridRough)
             kmlpoly2     = [kmlpoly2,barstyle2];
             kmlpoly2     = [kmlpoly2 KMLpolytext(t1,t2,latpoly{tt}(IDneg(ii),:),lonpoly{tt}(IDneg(ii),:))];
+            if OPT.KMLlabels == 1
+                if isempty(OPT.KMLlabeltext)% Default zminz0
+                    kmlpoly2 = [kmlpoly2 KML_text(lattext{tt}(IDneg(ii),:),lontext{tt}(IDneg(ii),:),ztext{tt}{IDneg(ii)},'visible',1,'timeIn',tstart,'timeOut',tend)];
+                else % User specified
+                end
+            end
         end
         kml2 = [kml2 kmlpoly2];
     end
