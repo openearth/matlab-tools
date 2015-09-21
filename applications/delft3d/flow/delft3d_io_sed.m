@@ -55,7 +55,7 @@ function varargout = delft3d_io_sed(fname,varargin)
 % $Revision$
 % $HeadURL$
 % $Keywords: $
-
+% clear all; fname = 'p:\1210301-3d-zand-slib\05_simulaties\3D\coarse\run12\mond.sed';
 OPT.commentchar = '*';
 OPT.FileOption  = {{'Sediment','SdBUni'},...
                    {'Sediment','TcrSed'},...
@@ -93,8 +93,13 @@ for iChapter = 1:nChapter
          Value   = ValueLine;
          Comment = '';
       else
+        if strcmp(ValueLine(1),'#')
+            tmp = regexp(ValueLine,'#','split');
+            Value = tmp{2};
+            Comment = tmp{3};
+        else
         [Value,Comment] = strtok(ValueLine);
-        
+        end
          Value = strtrim(Value);
          
          if strcmp(Value(1),'#')
@@ -130,7 +135,7 @@ end
 
 %% optionally load spatially varying fields
 %  not yet finished
-if 1
+if 0
 for ifld=1:length(OPT.FileOption)
    Chapter = OPT.FileOption{ifld}{1};
    Keyword = OPT.FileOption{ifld}{2};
