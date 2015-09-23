@@ -23,12 +23,12 @@ if convertallstuff == 1;
         if exist(filemdf,'file')==0;
             if exist('wb'); close(wb); end;
             errordlg('The specified mdf file does not exist.','Error');
-            break;
+%             break;
         end
     else
         if exist('wb'); close(wb); end;
         errordlg('The mdf file name has not been specified.','Error');
-        break;
+%         break;
     end
 
     % Check if the mdu file name has been specified (D-Flow FM)
@@ -36,13 +36,13 @@ if convertallstuff == 1;
     if isempty(mdufile);
         if exist('wb'); close(wb); end;
         errordlg('The D-Flow FM master definition file name has not been specified.','Error');
-        break;
+%         break;
     end
     if length(mdufile) > 4;
         if strcmp(mdufile(end-3:end),'.mdu') == 0;
             if exist('wb'); close(wb); end;
             errordlg('The D-Flow FM master definition file name has an improper extension.','Error');
-            break;
+%             break;
         end
     end
 
@@ -63,12 +63,12 @@ if ~isempty(filebnd);
     if exist(filebnd,'file')==0;
         if exist('wb'); close(wb); end;
         errordlg('The specified boundary file does not exist.','Error');
-        break;
+%         break;
     end
 else
     if exist('wb'); close(wb); end;
     errordlg('The boundary file name has not been specified.','Error');
-    break;
+%     break;
 end
 
 

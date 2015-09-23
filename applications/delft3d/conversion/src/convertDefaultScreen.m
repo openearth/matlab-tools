@@ -3,7 +3,7 @@ inputdir = get(handles.edit1,'String');
 if ~isempty(inputdir);
     if ~exist(inputdir,'dir');
         errordlg('The input directory does not exist.','Error');
-        break;
+%         break;
     end
 end
 
@@ -12,7 +12,7 @@ outputdir = get(handles.edit2,'String');
 if ~isempty(outputdir);
     if ~exist(outputdir,'dir');
         errordlg('The output directory does not exist.','Error');
-        break;
+%         break;
     end
 end
 

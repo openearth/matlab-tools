@@ -18,7 +18,7 @@ filemdf     = deblank2(filemdf);
 if isempty(filemdf);
     if exist('wb'); close(wb); end;
     errordlg('The mdf file name has not been specified.','Error');
-    break;
+%     break;
 end
 
 % Check if the mdu file name has been specified (D-Flow FM)
@@ -26,7 +26,7 @@ mdufile     = get(handles.edit4,'String');
 if isempty(mdufile);
     if exist('wb'); close(wb); end;
     errordlg('The mdu file name has not been specified.','Error');
-    break;
+%     break;
 end
 
 % Check if the net file name has been specified (D-Flow FM)
@@ -34,7 +34,7 @@ netfile     = get(handles.edit8,'String');
 if isempty(netfile);
     if exist('wb'); close(wb); end;
     errordlg('The net file name has not been specified.','Error');
-    break;
+%     break;
 end
 
 % Check if the ext file name has been specified (D-Flow FM)
@@ -42,7 +42,7 @@ extfile     = get(handles.edit10,'String');
 if isempty(extfile);
     if exist('wb'); close(wb); end;
     errordlg('The external forcings file name has not been specified.','Error');
-    break;
+%     break;
 end
 
 % Check if the obs file name has been specified (D-Flow FM)

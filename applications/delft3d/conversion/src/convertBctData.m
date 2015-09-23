@@ -20,12 +20,12 @@ if ~isempty(filebct);
     if exist(filebct,'file')==0;
         if exist('wb'); close(wb); end;
         errordlg('The specified bct file does not exist.','Error');
-        break;
+%         break;
     end
 else
     if exist('wb'); close(wb); end;
     errordlg('The bct file name has not been specified.','Error');
-    break;
+%     break;
 end
 
 % Catch the polyline names for the boundary conditions

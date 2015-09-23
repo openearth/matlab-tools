@@ -21,13 +21,13 @@ if ~isempty(filesta);
         if exist('wb'); close(wb); end;
         errordlg('The specified observation points file does not exist.','Error');
         set(handles.edit22,'String','');
-        break;
+%         break;
     end
 else
     if exist('wb'); close(wb); end;
     errordlg('The observation points file name has not been specified.','Error');
     set(handles.edit22,'String','');
-    break;
+%     break;
 end
 
 % Check if the observation file name has been specified (D-Flow FM)
@@ -35,13 +35,13 @@ obsfile     = get(handles.edit22,'String');
 if isempty(obsfile);
     if exist('wb'); close(wb); end;
     errordlg('The observation points sample file name has not been specified.','Error');
-    break;
+%     break;
 end
 if length(obsfile) > 8;
     if strcmp(obsfile(end-7:end),'_obs.xyn') == 0;
         if exist('wb'); close(wb); end;
         errordlg('The observation points sample file name has an improper extension.','Error');
-        break;
+%         break;
     end
 end
 

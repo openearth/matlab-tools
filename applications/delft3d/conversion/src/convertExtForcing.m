@@ -16,13 +16,13 @@ fileext     = get(handles.edit10,'String');
 if isempty(fileext);
     if exist('wb'); close(wb); end;
     errordlg('The external forcings file name has not been specified.','Error');
-    break;
+%     break;
 end
 if length(fileext) > 4;
     if strcmp(fileext(end-3:end),'.ext') == 0;
         if exist('wb'); close(wb); end;
         errordlg('The external forcings file name has an improper extension.','Error');
-        break;
+%         break;
     end
 end
 

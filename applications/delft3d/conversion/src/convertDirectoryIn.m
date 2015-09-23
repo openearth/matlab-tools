@@ -23,5 +23,5 @@ end
 % Check if input directory does exist
 if exist(inputdir,'dir')==0;
     errordlg('The input directory does not exist.','Error');
-    break;
+%     break;
 end

@@ -28,5 +28,5 @@ if exist('mdffile','var');
     set(handles.edit3,'String',mdffile);
 else
     msgbox('No mdf-file found in the input directory.','Message');
-    break;
+%     break;
 end

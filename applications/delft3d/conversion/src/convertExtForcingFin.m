@@ -17,7 +17,7 @@ extfile     = deblank2(get(handles.edit10,'String'));
 if isempty(extfile);
     if exist('wb'); close(wb); end;
     errordlg('The external forcings file name has not been specified.','Error');
-    break;
+%     break;
 end
 
 % Check if the roughness file name has been specified (D-Flow FM)
@@ -135,5 +135,5 @@ fclose all;
 
 if jawnd == 1 & jaspw == 1;
     errordlg('Simultaneous use of unimagdir wind and spiderweb wind not supported by D-Flow FM yet. Only unimagdir wind written to .ext file.','Error');
-    continue;
+%     continue;
 end

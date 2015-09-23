@@ -7,7 +7,7 @@ mdffile               = deblank2(mdffile);
 if isempty(mdffile);
     if exist('wb'); close(wb); end;
     errordlg('No mdf-file specified.','Error');
-    break;
+%     break;
 else
     if length(mdffile) > 3;
         if ~strcmp(mdffile(end-3:end),'.mdf');
@@ -18,7 +18,7 @@ else
     mdfexist          = [inputdir,'\',mdffile];
     if exist(mdfexist,'file')==0;
         errordlg('The specified mdf file does not exist.','Error');
-        break;
+%         break;
     end
 end
 
