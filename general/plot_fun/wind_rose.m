@@ -2,11 +2,11 @@ function varargout = wind_rose(D,F,varargin)
 %WIND_ROSE   Wind rose of direction and intensity
 % 
 %   Syntax:
-%      [HANDLES,DATA] = WIND_ROSE(D,I,<keyword,value>)
+%      [HANDLES,DATA] = WIND_ROSE(D,F,<keyword,value>)
 %
 %   Inputs:
 %      D   Directions
-%      I   Intensities
+%      F   Intensities
 %
 %   Optional keywords:
 %       - dtype     type of input directions D, standard or meteo, affects:
@@ -167,7 +167,7 @@ OPT.inorm       = 0;
 OPT.parent      = 0;
 OPT.IncHiLow    = 1; % include values higher and lower than the limits of OPT.Ag.
 OPT.directionLabels = true; % labels North South etc..
-OPT.centersectors   = true;% Center sectors around 0 .. 360 or not
+OPT.centersectors   = true; % Center sectors around 0 .. 360 or not
 OPT.units           = '';
 OPT.nan             = 'keep'; % default, and backwards consistent
 OPT = setproperty(OPT, varargin{:});
@@ -181,7 +181,7 @@ end
 %% error check
 
 if isempty(D)
-    warning('WIND_ROSE:no data: D cannot be empty in wind_rose(D,I,varargin)');
+    warning('WIND_ROSE:no data: D cannot be empty in wind_rose(D,F,varargin)');
     return
 end
 
