@@ -46,8 +46,7 @@ fwidth=handles.toolbox.tsunami.segmentWidth;
 dip=handles.toolbox.tsunami.segmentDip;
 strike=handles.toolbox.tsunami.segmentStrike;
 fdtop=handles.toolbox.tsunami.segmentDepth;
-nseg=handles.toolbox.tsunami.nrSegments;
-%nseg=handles.toolbox.tsunami.Noseg;
+nseg=handles.toolbox.tsunami.NrSegments;
 userfaultL=handles.toolbox.tsunami.segmentLength;
 
 if (handles.toolbox.tsunami.Mw > 0)
