@@ -147,7 +147,7 @@ h=findall(gcf,'Tag','FaultArea');
 if length(h)>0
     delete(h);
 end
-nseg = handles.toolbox.tsunami.nrSegments;
+nseg = handles.toolbox.tsunami.NrSegments;
 if (nseg > 0 & handles.toolbox.tsunami.Mw > 0)
     handles=ddb_comp_Farea(handles);
     for i=1:nseg
