@@ -26,7 +26,22 @@ for i=1:length(varargin)
     end
 end
 
-notick=length(contours);
+notick =length(contours);
+interval=1;
+
+if (notick > 10) 
+    interval=2;
+    notick=(length(contours)-1)/interval+1; 
+end
+if (notick > 10) 
+    interval=3;
+    notick=(length(contours)-1)/interval+1; 
+end
+if (notick > 10) 
+    interval=5;
+    notick=(length(contours)-1)/interval+1; 
+end
+
 pos=[1 1 1 5];
 
 nocol=64;
@@ -62,7 +77,8 @@ set(clrbar,'YAxisLocation','right');
 
 fmt=['%0.' num2str(colorBarDecimals) 'f'];
 for i=1:notick
-    ylabls{i}=num2str(contours(i),fmt);
+    ii = (i-1)*interval+1;
+    ylabls{i}=num2str(contours(ii),fmt);
 end
 
 set(clrbar,'yticklabel',ylabls);
