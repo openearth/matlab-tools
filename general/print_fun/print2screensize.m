@@ -23,9 +23,8 @@ function print2screensize(fname,varargin)
 % make sure the SAME resolution is present in
 % the papersize and in the print resolution
 %
-% Noteh that with very low resolution (1) 
-% linewidth cannot be displayed 
-% and all lines have the same width.
+% Note that with very low resolution (1) linewidth cannot
+% be displayed and all lines have the same width.
 %
 % Creates directory if filename it doesn't exist yet.
 %
@@ -64,7 +63,7 @@ function print2screensize(fname,varargin)
 %   --------------------------------------------------------------------
 
 
-   % where overwrite_append can be 
+%% where overwrite_append can be 
    % 'o' = overwrite
    % 'c' = cancel
    % 'p' = prompt (default, after which o/a/c can be chosen)
@@ -125,7 +124,6 @@ Shortside   = (( height) + dh)./resolution;
 % end
 
    %% Paper settings
-   %% --------------
 
    set(gcf,...
        'PaperUnits'      ,'inches',...
@@ -134,7 +132,9 @@ Shortside   = (( height) + dh)./resolution;
 
    [fileexist,action]=filecheck(fullfile(filepathstr(fname),[filename(fname),'.png']));
    if strcmpi(action,'o')
+      if ~exist(filepathstr(fname),'dir')
       mkpath(filepathstr(fname))
+      end
       print(gcf,imageformat,['-r',num2str(resolution)],fname);
    end
 

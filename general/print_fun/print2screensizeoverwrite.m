@@ -1,4 +1,4 @@
-function PRINT2SCREENSIZEOVERWRITE(fname,varargin)
+function print2screensizeoverwrite(fname,varargin)
 %PRINT2SCREENSIZEOVERWRITE    Print figure to screen size (for movies!).
 %
 % PRINT2SCREENSIZEOVERWRITE(filename)
@@ -63,7 +63,7 @@ function PRINT2SCREENSIZEOVERWRITE(fname,varargin)
 %   --------------------------------------------------------------------
 
 
-   %% where overwrite_append can be 
+%% where overwrite_append can be 
    %  'o' = overwrite
    %  'c' = cancel
    %  'p' = prompt (default, after which o/a/c can be chosen)
@@ -132,7 +132,9 @@ Shortside   = (( height) + dh)./resolution;
   %[fileexist,action]=filecheck([filename(fname),'.png']);
   action = 'o';
    if strcmpi(action,'o')
+      if ~exist(filepathstr(fname),'dir')
       mkdir(filepathstr(fname))
+      end
       print(gcf,imageformat,['-r',num2str(resolution)],fname);
    end
 
