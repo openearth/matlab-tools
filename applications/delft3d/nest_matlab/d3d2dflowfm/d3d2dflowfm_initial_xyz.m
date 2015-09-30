@@ -1,4 +1,4 @@
-function mdu = d3d2dflowfm_inital_xyz(varargin)
+function mdu = d3d2dflowfm_initial_xyz(varargin)
 
 % d3d2dflowfm_initial_xyz : Writes dinitial conditions for waterlevel and salinity to D-Flow FM input files
 %

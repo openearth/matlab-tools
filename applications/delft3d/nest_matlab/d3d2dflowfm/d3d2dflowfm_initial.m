@@ -1,4 +1,4 @@
-function mdu = d3d2dflowfm_inital(mdf,mdu, name_mdu)
+function mdu = d3d2dflowfm_initial(mdf,mdu, name_mdu)
 
 % d3d2dflowfm_initial : Writes initial conditions for waterlevel and salinity to D-Flow FM input files
 
