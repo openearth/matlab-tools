@@ -29,8 +29,10 @@ function varargout = wind_rose(D,F,varargin)
 %       - ri        empty internal radius, relative to size of higher
 %                   percentage [1/30]
 %       - legType   legend type: 1, continuous, 2, separated boxes [2]
-%       - bcolor    full rectangle border color ['none']
-%       - lcolor    line colors for axes and circles ['k']
+%       - units     units of F (string) []
+%       - borderColor   full rectangle border colour ['none']
+%       - bgcolor   figure background color ['w']
+%       - lineColors    line colours for axes and circles ['k']
 %       - percBg    percentage labels background colour ['w']
 %       - onAxes    to place wind rose on previous axes, the input for ax
 %                   must be [theax x y width], where theax is the previous
@@ -38,6 +40,7 @@ function varargout = wind_rose(D,F,varargin)
 %                   rose width relative to theax width (default=1/5)
 %       - parent    by default a new axes is created unless parent is
 %                   given, parent may be a subplot [{0} axes()]
+%                   When no parent is given, wind rose uses entire figure.
 %       - iflip     flip the intensities as they go outward radially, ie,
 %                   highest values are placed nearest the origin [{0} 1]
 %       - inorm     normalize intensities, means all angles will have 100%
@@ -161,6 +164,7 @@ OPT.Ag          = []; % intensity subdivs.
 OPT.ci          = []; % percentage circles
 OPT.lineColors  = 'k';
 OPT.borderColor = 'none';
+OPT.bgcolor     = 'w';
 OPT.onAxes      = false;
 OPT.iflip       = 0;
 OPT.inorm       = 0;
@@ -193,7 +197,7 @@ if ~strcmp(OPT.nan,'keep')
 end
 
 %%    
-if OPT.onAxes
+if OPT.onAxes(1)
       OPT.onAxesX = OPT.onAxes(2);
       OPT.onAxesY = OPT.onAxes(3);
       OPT.onAxesR = OPT.onAxes(4);
@@ -204,7 +208,7 @@ end
 if ischar(OPT.quad)
     if strcmpi(OPT.quad,'auto')
       tmp = histc(mod(D,360),[0 90 180 270 360]);
-      [tmp,OPT.quad] = min(tmp(1:4));
+      [~,OPT.quad] = min(tmp(1:4));
       if OPT.quad == 3;
           OPT.quad = 1;
       elseif OPT.quad == 1;
@@ -373,22 +377,26 @@ if OPT.parent~=0
   wrAx=OPT.parent;
   set(wrAx,'units','normalized');
 else
-  wrAx=axes('units','normalized');
+  %wrAx=axes('units','normalized');
+  wrAx=axes('units','normalized','OuterPosition',[0 0 1 1],'Position',[0 0 1 1]);
+  % Let wind rose axes fit the entire figure.
 end
 OPT.ri=g*OPT.ri;
 handles(end+1)=fill([-rs*g rl*g rl*g -rs*g],[-rs*g -rs*g rs*g rs*g],'w',...
                      'EdgeColor',OPT.borderColor);
-if OPT.onAxes
+if OPT.onAxes(1)
   set(handles(end),'facecolor','none')
 end
 hold on
 handles(end+1)=plot([-g-OPT.ri -OPT.ri nan OPT.ri g+OPT.ri nan 0 0 nan 0 0],...
                     [0 0 nan 0 0 nan -g-OPT.ri -OPT.ri nan OPT.ri g+OPT.ri],':','color',OPT.lineColors);
 t0=(0:360)*pi/180;
+circles=nan(1,ncircles);
 labs=[];
 Ang=[1/4 3/4 5/4 7/4]*pi;
 Valign={'top' 'top' 'bottom' 'bottom'};
 Halign={'right' 'left' 'left' 'right'};
+
 for i=1:ncircles
   x=(OPT.ci(i)+OPT.ri)*cos(t0);
   y=(OPT.ci(i)+OPT.ri)*sin(t0);
@@ -425,11 +433,15 @@ for i=1:length(Ay)-1
       x=[r1*cos(t(1)) r2*cos(t) r1*cos(fliplr(t))];
       y=[r1*sin(t(1)) r2*sin(t) r1*sin(fliplr(t))];
 
-      if OPT.iflip, jcor=length(OPT.Ag)-1-j+1;
-      else, jcor=j;
+      if OPT.iflip
+          jcor=length(OPT.Ag)-1-j+1;
+      else
+          jcor=j;
       end
 
-      if E(i,j)>0, handles(end+1)=fill(x,y,cor{jcor}); end
+      if E(i,j)>0
+          handles(end+1)=fill(x,y,cor{jcor}); 
+      end
       r1=r2;
     end
   end
@@ -444,11 +456,13 @@ ch=get(wrAx,'children');
 if OPT.inorm
   % only bring circles up in inorm case.
   for i=1:length(circles)
-    ch(ch==circles(i))=[]; ch=[circles(i); ch];
+    ch(ch==circles(i))=[]; 
+    ch=[circles(i); ch];
   end
 end
 for i=1:length(labs)
-  ch(ch==labs(i))=[]; ch=[labs(i); ch];
+  ch(ch==labs(i))=[]; 
+  ch=[labs(i); ch];
 end
 set(wrAx,'children',ch);
 
@@ -457,8 +471,8 @@ set(wrAx,'children',ch);
 if OPT.directionLabels
     bg='none';
     args={'BackgroundColor',bg,'FontSize',8};
-    h(1)=text(-g-OPT.ri, 0,[directional_interpretation 'WEST' ], 'VerticalAlignment','top',   'HorizontalAlignment','left', args{:});
-    h(2)=text( g+OPT.ri, 0,[directional_interpretation 'EAST' ], 'VerticalAlignment','top',   'HorizontalAlignment','right',args{:});
+    h(1)=text(-g-OPT.ri, 0,[directional_interpretation 'WEST' ],'VerticalAlignment','top',   'HorizontalAlignment','left', args{:});
+    h(2)=text( g+OPT.ri, 0,[directional_interpretation 'EAST' ],'VerticalAlignment','top',   'HorizontalAlignment','right',args{:});
     h(3)=text( 0,-g-OPT.ri,[directional_interpretation 'SOUTH'],'VerticalAlignment','bottom','HorizontalAlignment','left', args{:});
     h(4)=text( 0, g+OPT.ri,[directional_interpretation 'NORTH'],'VerticalAlignment','top',   'HorizontalAlignment','left', args{:});
     handles=[handles h];
@@ -475,7 +489,7 @@ y0=-g-OPT.ri;
 
 if OPT.legType==1 % continuous.
   for j=1:length(OPT.Ag)-1
-    lab=num2str(OPT.Ag(j));
+    lab=[num2str(OPT.Ag(j)),' ',OPT.units];
     if j==1 && hasL && OPT.IncHiLow
       lab='';
     end
@@ -489,7 +503,7 @@ if OPT.legType==1 % continuous.
   end
 elseif OPT.legType==2 % separated boxes.
   for j=1:length(OPT.Ag)-1
-    lab=[num2str(OPT.Ag(j)) ' - ' num2str(OPT.Ag(j+1))];
+    lab=[num2str(OPT.Ag(j)),' - ',num2str(OPT.Ag(j+1)),' ',OPT.units];
     if j==1 && hasL && OPT.IncHiLow
       lab=['<',num2str(OPT.Ag(2)),' ',OPT.units];
     end
@@ -508,6 +522,8 @@ end
 x=mean([-g*rs,g*rl]);
 y=mean([g+OPT.ri,g*rs]);
 handles(end+1)=text(x,y,OPT.titStr,'HorizontalAlignment','center');
+axis(wrAx,'tight'); % Let the wind rose fit within current axes
+set(gcf,'Color',OPT.bgcolor);
 
 if ismember(OPT.legType,[1 2])
     x=x0;
@@ -515,7 +531,7 @@ if ismember(OPT.legType,[1 2])
     handles(end+1)=text(x,y,OPT.legStr,'HorizontalAlignment','left','VerticalAlignment','bottom');
 end
 
-if OPT.onAxes
+if OPT.onAxes(1)
   place_wr(OPT.onAxes,wrAx,OPT.onAxesX,OPT.onAxesY,OPT.onAxesR);
 end
 
@@ -527,6 +543,7 @@ if nargout>=2
 end
 varargout{3}=g;
 
+%% Positioning of Wind rose on ax
 function place_wr(ax,ax2,x,y,width)
 if nargin < 5
   width=1/5;
