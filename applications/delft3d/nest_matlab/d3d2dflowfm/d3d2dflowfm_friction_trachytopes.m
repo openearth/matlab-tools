@@ -119,13 +119,13 @@ tic
 end
 
 missing_val = -999;
-X = [xcoor_u(:),ycoor_u(:)];
-X(isnan(X)) = missing_val;
-Y = [xcoor_v(:),ycoor_v(:)];
-Y(isnan(Y)) = missing_val;
+U = [xcoor_u(:),ycoor_u(:)];
+U(union(find(isnan(xcoor_u(:))),find(isnan(ycoor_u(:)))),:) = [];
+V = [xcoor_v(:),ycoor_v(:)];
+V(union(find(isnan(xcoor_v(:))),find(isnan(ycoor_v(:)))),:) = [];
 
-tree_u = kd_buildtree(X,0);
-tree_v = kd_buildtree(Y,0);
+tree_u = createns(U,'nsmethod','kdtree');
+tree_v = createns(V,'nsmethod','kdtree');
 
 if debugmode
 toc
@@ -138,12 +138,12 @@ disp('##### Build Mapping #####');
 tic
 end
 h = waitbar(0,'Build mapping');
-for L = 1:GF.cor.nLink;
-    P = mean([GF.cor.x(GF.cor.Link(:,13034)).',GF.cor.y(GF.cor.Link(:,13034)).']);
-    idx_u = kd_closestpointgood(tree_u,P);
-    udir = sum(diff([X(idx_u,:);P]).^2)<10e-14;
-    idx_v = kd_closestpointgood(tree_v,P);
-    vdir = sum(diff([Y(idx_v,:);P]).^2)<10e-14;
+for L = 1:GF.edge.NetLinkSize;
+    P = mean([GF.node.x(GF.edge.NetLink(:,L)).',GF.node.y(GF.edge.NetLink(:,L)).']);
+    [idx_u,d_u] = knnsearch(tree_u,P,'k',1);
+    udir = d_u<10e-14;
+    [idx_v,d_v] = knnsearch(tree_v,P,'k',1);
+    vdir = d_v<10e-14;
     assert(udir~=vdir);
     if udir
         L_u(idx_u) = L;
@@ -156,7 +156,7 @@ for L = 1:GF.cor.nLink;
     %    assert(sum((P_found-P).^2)<1e-14)
     %end
     if mod(L,100) == 0;
-        waitbar(L/GF.cor.nLink,h)
+        waitbar(L/GF.edge.NetLinkSize,h)
     end
 end
 delete(h); 
