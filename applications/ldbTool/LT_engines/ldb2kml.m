@@ -1,24 +1,36 @@
-function ldb2kml(ldb,kmlfile,linecolour)
+function ldb2kml(ldb,kmlfile,linecolour,linewidth)
 %LDB2KML Converts ldb to kml-file
 %
 % Reads a landboundary file and save it to a kml-file which can be opened
 % in Google Earth.
 %
 % Syntax:
-% ldb2kml(ldb)
+% ldb2kml(<ldb>,<kmlfile>,<linecolour>,<linewidth>);
 %
-% ldb:      the landboury, which should already be specified by the 
-%           function ldb=landboundary('read','landboundary')
-%           (optional)
+% All input variables are optional
 %
-% See also: KML2LDB, LDBTOOL, LDB2SHAPE
+% <ldb>:           The landboundary, which can be specified as a filename
+%                  (in- or excluding its path) or already loaded using the
+%                  function ldb=landboundary('read','landboundary_file').
+%                  When empty a dialog appears to select a *.ldb file.
+% <kmlfile>:       Name of the output kml file (in- or excluding its path).
+%                  When empty a dialog appears to select a *.kml file or,
+%                  if the ldb was specified as a file, its original 
+%                  filename is suggested (changed the .ldb into .kml)
+% <linecolour>:    Color of the kml-line, specified in [R G B] format
+%                  (default is red), R, G and B can range from 0 to 255.
+% <linewidth>:     Linewidth (in kml format), default is 1.
+%
+% See also: kml2ldb, ldbtool, ldb2shape, landboundary
 
 %% Copyright notice
 %   --------------------------------------------------------------------
 %   Copyright (C) 2010 Deltares
 %       Arjan Mol
+%       Freek Scheel (2015)
 %
 %       arjan.mol@deltares.nl
+%       freek.scheel@deltares.nl
 %
 %       Deltares
 %       P.O. Box 177
@@ -47,54 +59,80 @@ function ldb2kml(ldb,kmlfile,linecolour)
 
 %% Code
 
-if nargin==0
+if nargin<1
     [nam pat]=uigetfile('*.ldb','Select landboundary file');
     if nam==0
+        disp('Aborted by user')
         return
     end
     ldb=landboundary('read',[pat nam]);
     ldb=ldb(:,1:2);
     [fPat fName]=fileparts([pat nam]);
-elseif ischar(ldb)
-    ldb=landboundary('read',ldb);
-    ldb=ldb(:,1:2);
-    if nargin<2
+else
+    % ldb specified
+    if ischar(ldb)
+        ldb=landboundary('read',ldb);
+        ldb=ldb(:,1:2);
+        [fPat fName]=fileparts(ldb);
+    end
+end
+if nargin < 2
+    if exist('fPat') && exist('fName')
+        [fName fPat]=uiputfile('*.kml','Save kml-file to...',[fPat filesep fName '.kml']);
+    else
         [fName fPat]=uiputfile('*.kml','Save kml-file to...');
     end
+    if fName==0
+        disp('Aborted by user')
+        return
+    end
 else
-    [fName fPat]=uiputfile('*.kml','Save kml-file to...');
-end
-if nargin>1
+    % kml specified
     [fPat fName]=fileparts(kmlfile);
     if isempty(fPat);fPat=cd;end
 end
-if nargin>2
-    clr = round(linecolour(:).*255);
-else
+if nargin<3
     clr=str2num(char(inputdlg({'Red','Green','Blue'},'Specify RGB color',1,{'255','0','0'})));
+    if isempty(clr)
+        disp('Aborted by user')
+        return
+    end
+else
+    clr = round(linecolour(:).*255);
+    if isempty(clr)
+        error('Unknown linecolor input');
+    end
 end
-if isempty(clr)
-    clrString='ffff0000';
+if nargin>3
+    try
+        linewidth = max(0,linewidth); linewidth = min(100,linewidth);
+    catch
+        error('Unknown linewidth input');
+    end
+else
+    linewidth = 1;
 end
+
 clr=[min(255,clr(1)); min(255,clr(2)); min(255,clr(3))];
 clr=[max(0,clr(1)); max(0,clr(2)); max(0,clr(3))];
 
 fid=fopen([fPat filesep fName '.kml'],'w');
 
-fprintf(fid,'%s \n','<?xml version="1.0" encoding="UTF-8"?>');
-fprintf(fid,'%s \n','<!--x=x+                  -->');
-fprintf(fid,'%s \n','<!--y=y+                  -->');
-fprintf(fid,'%s \n','<kml xmlns="http://earth.google.com/kml/2.1">');
-fprintf(fid,'%s \n','<Document>');
+fprintf(fid,'%s \n',['<?xml version="1.0" encoding="UTF-8"?>']);
+fprintf(fid,'%s \n',['<!--x=x+                  -->']);
+fprintf(fid,'%s \n',['<!--y=y+                  -->']);
+fprintf(fid,'%s \n',['<kml xmlns="http://earth.google.com/kml/2.1">']);
+fprintf(fid,'%s \n',['<Document>']);
 fprintf(fid,'%s \n',['	<name>' fName '</name>']);
-fprintf(fid,'%s \n','	<Style id="style_1">');
-fprintf(fid,'%s \n','		<LineStyle>');
+fprintf(fid,'%s \n',['	<Style id="style_1">']);
+fprintf(fid,'%s \n',['		<LineStyle>']);
 fprintf(fid,'%s \n',['			<color>FF' dec2hex(clr(3),2) dec2hex(clr(2),2) dec2hex(clr(1),2) '</color>']);
-fprintf(fid,'%s \n','		</LineStyle>');
-fprintf(fid,'%s \n','		<PolyStyle>');
-fprintf(fid,'%s \n','			<fill>0</fill>');
-fprintf(fid,'%s \n','		</PolyStyle>');
-fprintf(fid,'%s \n','	</Style>');
+fprintf(fid,'%s \n',['          <width>' num2str(linewidth) '</width>']);
+fprintf(fid,'%s \n',['		</LineStyle>']);
+fprintf(fid,'%s \n',['		<PolyStyle>']);
+fprintf(fid,'%s \n',['			<fill>0</fill>']);
+fprintf(fid,'%s \n',['		</PolyStyle>']);
+fprintf(fid,'%s \n',['	</Style>']);
 
 if ~isnan(ldb(1,1))
     ldb=[nan nan;ldb];
