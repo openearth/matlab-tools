@@ -77,6 +77,9 @@ function varargout = KMLimage(lat,lon,im0,varargin)
    OPT.openInGE      = false;
    OPT.rotation      = 0;
    OPT.timespan      = [];
+   OPT.altitude      = NaN;
+   OPT.altitudeMode  = 'absolute'; % or 'relativeToGround'
+   
 
    eol = char(10);
    
@@ -150,9 +153,18 @@ function varargout = KMLimage(lat,lon,im0,varargin)
        timestr = '';
    end
 
+   if ~isnan(OPT.altitude)
+       altitudestring = ['<altitude>', num2str(OPT.altitude), '</altitude>', eol, ...  
+                         '<altitudeMode>', num2str(OPT.altitudeMode), '</altitudeMode>', eol];
+   else
+       altitudestring = '';
+   end
+
+   
    output = [output eol ...
        '<GroundOverlay>' eol,...
        '<name>',OPT.kmlName,'</name>' eol ...
+       altitudestring, ... 
        '<description>',OPT.description,'</description>' eol,...
        timestr,...
        '<Icon>' eol,...
