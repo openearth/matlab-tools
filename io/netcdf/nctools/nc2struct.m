@@ -82,6 +82,7 @@ OPT.exclude      = {};
 OPT.rename       = {{},{}};
 OPT.include      = {};
 OPT.structfun    = []; % apply transformation, e.g. make1D(), (:) or transpose()
+OPT.disp         = 1; % 1=enabled, 0=disabled
 
 if nargin==0
    varargout = {OPT};
@@ -138,17 +139,21 @@ end
          if OPT.time2datenum
             if strcmp(fldname_nc,'time')
                try
-                  units = ncreadatt(fileinfo.Filename,'time','units')
                   D.datenum = ncread_cf_time(fileinfo.Filename,fldname);
-                  disp([mfilename,': added extra variable with Matlab datenum=f(',fldname,')'])
+                   if OPT.disp
+                        units = ncreadatt(fileinfo.Filename,'time','units')
+                        disp([mfilename,': added extra variable with Matlab datenum=f(',fldname,')'])
+                   end
                end
             else
              if ~isempty(fileinfo.Variables(idat).Attributes);
              j = strmatch('standard_name',{fileinfo.Variables(idat).Attributes.Name}, 'exact');
               if ~isempty(j)
                if strcmpi(fileinfo.Variables(idat).Attributes(j).Value,'time')
-               D.datenum = ncread_cf_time(fileinfo.Filename,fldname);
-               disp([mfilename,': added extra variable with Matlab datenum=f(',fldname,')'])
+                   D.datenum = ncread_cf_time(fileinfo.Filename,fldname);
+                     if OPT.disp
+                        disp([mfilename,': added extra variable with Matlab datenum=f(',fldname,')'])
+                     end
                end
               end
              end
