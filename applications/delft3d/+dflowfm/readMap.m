@@ -133,10 +133,13 @@ function varargout = readMap(ncfile,varargin)
       end
    end
    if OPT.spir && nc_isvar (ncfile, 'spircrv');
-      D.face.crv  = nc_varget(ncfile, 'spircrv' ,[it-1 0],[1 face.mask]); % Curvature
+      D.face.crv  = nc_varget(ncfile, 'spircrv' ,[it-1 0],[1 face.mask]); % Curvature [1/m]
    end  
    if OPT.spir && nc_isvar (ncfile, 'spirint');
-      D.face.I    = nc_varget(ncfile, 'spirint' ,[it-1 0],[1 face.mask]); % Secondary flow intensity
+      D.face.I    = nc_varget(ncfile, 'spirint' ,[it-1 0],[1 face.mask]); % Secondary flow intensity [m/s]
+   end  
+   if OPT.spir && nc_isvar (ncfile, 'spirang');
+      D.face.Iang = nc_varget(ncfile, 'spirang' ,[it-1 0],[1 face.mask]); % Secondary flow intensity [m/s]
    end  
 
 %% < read face data >
