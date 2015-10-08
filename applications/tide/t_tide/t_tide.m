@@ -1,4 +1,4 @@
-function [nameu,fu,tidecon,xout]=t_tide(xin,varargin);
+function [nameu,fu,tidecon,xout]=t_tide(xin,varargin)
 % T_TIDE Harmonic analysis of a time series
 % [NAME,FREQ,TIDECON,XOUT]=T_TIDE(XIN) computes the tidal analysis 
 % of the (possibly complex) time series XIN.
@@ -43,13 +43,13 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin);
 %                        'screen'  (to screen) - default
 %                        FILENAME   (to a file)
 %
-%   Where to send the screen messages (using dprintf):
-%       'diary'          1 to screen (default), 0 ignore, > 2 to opened file
+%   Where to send the screen messages (using fprintf):
+%       'diary'          1 to screen (default), 0 ignore, otherwise to 'output'.
 %
 %   How to sort the component dimension in tables
 %       'sort'          '<->fre<q>' (default), '<->amp<litude>','<->snr,
-%                       '<->pha<se>' where prefix <-> means descending, or
-%                        <->column_number in tidecon array (see below)
+%                       '<->pha<se>' where prefix <-> means descending.
+%                        Or <->column_number in tidecon array (see below).
 %
 %   Correction factor for prefiltering.
 %       'prefilt'        FS,CORR
@@ -215,7 +215,7 @@ function [nameu,fu,tidecon,xout]=t_tide(xin,varargin);
 ray          = 1;
 dt           = 1;
 fid          = 1;
-diary        = 1;
+diar         = 1;
 sor          = 'freq';
 stime        = [];
 lat          = [];
@@ -232,85 +232,103 @@ lsq          = 'best';
 
 k=1;
 while length(varargin)>0,
-  if ischar(varargin{1}),
-    switch lower(varargin{1}(1:3)),
-      case 'int',
-        dt=varargin{2};
-      case 'sta',
-        stime=varargin{2};
-	if length(stime)>1, 
-	  stime=[stime(:)' zeros(1,6-length(stime))]; 
-	  stime=datenum(stime(1),stime(2),stime(3),stime(4),stime(5),stime(6));
-	end;
-      case 'lat',
-         lat=varargin{2};
-      case 'out',
-         filen=varargin{2};
-      case 'dia',
-         diary=varargin{2};
-	 switch filen,
-	   case 'none',
-	     fid=-1;
-	   case 'screen',
-	     fid=1;
-	   otherwise
-	     [fid,mesg]=fopen(filen,'w');
-	     if fid==-1, error(mesg); end;
-	  end;
-      case 'ray',
-         if isnumeric(varargin{2}),
-           ray=varargin{2};
-	 else
-	   constitnames=varargin{2};
-	   if iscellstr(constitnames), constitnames=char(constitnames); end;
-	 end;
-       case 'pre',
-         corr_fs=varargin{2};
-	 corr_fac=varargin{3};
-         varargin(1)=[];
-      case 'sec',
-         secular=varargin{2};
-      case 'inf',
-         inf.iname=varargin{2};
-	 inf.irefname=varargin{3};
-	 inf.amprat=varargin{4};
-	 inf.ph=varargin{5};
-	 varargin(1:3)=[];
-      case 'sha',
-         shallownames=varargin{2};
-      case 'err',
-         errcalc=varargin{2};
-      case 'syn',
-         synth=varargin{2};
-      case 'lsq',
-         lsq=varargin{2};	 
-      case 'sor',
-         sor=varargin{2};	 
-      otherwise,
-         error(['Can''t understand property:' varargin{1}]);
+    if ischar(varargin{1}),
+        switch lower(varargin{1}(1:3)),
+            case 'int',
+                dt=varargin{2};
+            case 'sta',
+                stime=varargin{2};
+                if length(stime)>1, 
+                stime=[stime(:)' zeros(1,6-length(stime))]; 
+                stime=datenum(stime(1),stime(2),stime(3),stime(4),stime(5),stime(6));
+                end;
+            case 'lat',
+                lat=varargin{2};
+            case 'out',
+                filen=varargin{2};
+                switch filen,
+                    case 'none',
+                        fid=-1;
+                    case 'screen',
+                        fid=1;
+                    otherwise
+                        [fid,mesg]=fopen(filen,'w');
+                        if fid==-1,
+                            error(mesg); 
+                        end;
+                end;
+            case 'dia',
+                diar=varargin{2};
+                switch diar
+                    case 0
+                    case 1
+                    otherwise
+                        if ischar(diar)
+                            error('''diary'' must be scalar. 0=none, 1=screen, otherwise to ''output''')
+                        end
+                        switch filen
+                            case 'none'
+                                diar=0;
+                            otherwise
+                                diar=fid;
+                        end;
+                end;
+            case 'ray',
+                if isnumeric(varargin{2}),
+                    ray=varargin{2};
+                else
+                    constitnames=varargin{2};
+                    if iscellstr(constitnames),
+                        constitnames=char(constitnames); 
+                    end;
+                end;
+            case 'pre',
+                corr_fs=varargin{2};
+                corr_fac=varargin{3};
+                varargin(1)=[];
+            case 'sec',
+                secular=varargin{2};
+            case 'inf',
+                inf.iname=varargin{2};
+                inf.irefname=varargin{3};
+                inf.amprat=varargin{4};
+                inf.ph=varargin{5};
+                varargin(1:3)=[];
+            case 'sha',
+                shallownames=varargin{2};
+            case 'err',
+                errcalc=varargin{2};
+            case 'syn',
+                synth=varargin{2};
+            case 'lsq',
+                lsq=varargin{2};	 
+            case 'sor',
+                sor=varargin{2};	 
+        otherwise,
+            error(['Can''t understand property:' varargin{1}]);
+        end;
+            varargin([1 2])=[]; 
+    else  
+        switch k,
+            case 1,
+                dt=varargin{1};
+            case 2,
+                stime=varargin{1};
+            case 3,
+                lat=varargin{1};
+            case 4,
+                ray=varargin{1};
+            otherwise
+                error('Too many input parameters');
+        end;
+        varargin(1)=[];
     end;
-    varargin([1 2])=[]; 
-  else  
-    switch k,
-      case 1,
-        dt=varargin{1};
-      case 2,
-        stime=varargin{1};
-      case 3,
-        lat=varargin{1};
-      case 4,
-        ray=varargin{1};
-      otherwise
-        error('Too many input parameters');
-     end;
-     varargin(1)=[];
-  end;
-  k=k+1;
+    k=k+1;
 end;
- 
+
 %% checks
 [inn,inm]=size(xin);
-if ~(inn==1 | inm==1), error('Input time series is not a vector'); end;
+if ~(inn==1 || inm==1), error('Input time series is not a vector'); end;
 
 if any(strmatch(errcalc(2:end),'boot')) && exist('dt0','var')
    % non-equidistant time series do not allow for fft
@@ -374,8 +392,9 @@ else
 end
 
 %check consistency with t_predic's centraltime
-dprintf(diary,'   t_tide   centraltime =  %f (%s)\n',centraltime,datestr(centraltime));
-
+if ~diar==0
+fprintf(diar,'   t_tide   centraltime =  %f (%s)\n',centraltime,datestr(centraltime));
+end
 if nobs*dt> 18.6*365.25*24,  % Long time series
   longseries=1; ltype='full';
 else
@@ -386,9 +405,9 @@ end;
 
 [nameu,fu,ju,namei,fi,jinf,jref]=constituents(ray/(dt*nobsu),constitnames,...
                                            shallownames,inf.iname,inf.irefname,centraltime);
-
-dprintf(diary,['   number of standard constituents used: ',int2str(length(ju))])
-
+if ~diar==0
+fprintf(diar,'   number of standard constituents used: %s\n',int2str(length(ju)));
+end
 mu=length(fu); % # base frequencies
 mi=length(fi); % # inferred
 
@@ -397,8 +416,9 @@ mi=length(fi); % # inferred
 
 gd=find(isfinite(xin(1:nobsu)));
 ngood=length(gd);
-dprintf(diary,'   Points used: %d of %d\n',ngood,nobs)
-
+if ~diar==0
+fprintf(diar,'   Points used: %d of %d\n',ngood,nobs);
+end
 
 
 %----------------------------------------------------------------------
@@ -426,8 +446,8 @@ if strcmp(lsq(1:3),'dir'),
   coef=tc(gd,:)\xin(gd);
 
   z0=coef(1);
-  ap=(coef(2:(1+mu))-i*coef((2+mu):(1+2*mu)))/2;  % a+ amplitudes
-  am=(coef(2:(1+mu))+i*coef((2+mu):(1+2*mu)))/2;  % a- amplitudes
+  ap=(coef(2:(1+mu))-1i*coef((2+mu):(1+2*mu)))/2;  % a+ amplitudes
+  am=(coef(2:(1+mu))+1i*coef((2+mu):(1+2*mu)))/2;  % a- amplitudes
   if secular(1:3)=='lin',
     dz0=coef(end);
   else
@@ -466,8 +486,8 @@ else  % More complicated code required for long time series when memory may be
   coef=lhs\rhs;
   
   z0=coef(1);
-  ap=(coef(2:(1+mu))-i*coef((2+mu):(1+2*mu)))/2;  % a+ amplitudes
-  am=(coef(2:(1+mu))+i*coef((2+mu):(1+2*mu)))/2;  % a- amplitudes
+  ap=(coef(2:(1+mu))-1i*coef((2+mu):(1+2*mu)))/2;  % a+ amplitudes
+  am=(coef(2:(1+mu))+1i*coef((2+mu):(1+2*mu)))/2;  % a- amplitudes
   if secular(1:3)=='lin',
     dz0=coef(end);
   else
@@ -500,13 +520,19 @@ xres=xin-xout; % and the residuals!
 
 if isreal(xin),    % Real time series
   varx=cov(xin(gd));varxp=cov(xout(gd));varxr=cov(xres(gd));
-  dprintf(diary,'   percent of var residual after lsqfit/var original: %5.2f %%\n',100*(varxr/varx));  
+  if ~diar==0
+  fprintf(diar,'   percent of var residual after lsqfit/var original: %5.2f %%\n',100*(varxr/varx));  
+  end
 else               % Complex time series
   varx=cov(real(xin(gd)));varxp=cov(real(xout(gd)));varxr=cov(real(xres(gd)));
-  dprintf(diary,'   percent of X var residual after lsqfit/var original: %5.2f %%\n',100*(varxr/varx));
+  if ~diar==0
+  fprintf(diar,'   percent of X var residual after lsqfit/var original: %5.2f %%\n',100*(varxr/varx));
+  end
 
   vary=cov(imag(xin(gd)));varyp=cov(imag(xout(gd)));varyr=cov(imag(xres(gd)));
-  dprintf(diary,'   percent of Y var residual after lsqfit/var original: %5.2f %%\n',100*(varyr/vary));
+  if ~diar==0
+  fprintf(diar,'   percent of Y var residual after lsqfit/var original: %5.2f %%\n',100*(varyr/vary));
+  end
 end;
 
 
@@ -525,8 +551,7 @@ am=am.*conj(corrfac);
 % but is 'traditional'.  The "right" way would be to change the basis							   
 % functions used in the least-squares fit above.									   
 
-if ~isempty(lat) & ~isempty(stime),   % Time and latitude								   
-
+if ~isempty(lat) && ~isempty(stime),   % Time and latitude								   
   % Get nodal corrections at midpoint time.										   
   [v,u,f]=t_vuf(ltype,centraltime,[ju;jinf],lat);									   
 
@@ -540,32 +565,35 @@ elseif ~isempty(stime),    % Time only
 else   % No time, no latitude												   
   vu=zeros(length(ju)+length(jinf),1);  										   
   f=ones(length(ju)+length(jinf),1);											   
-   nodcor=['Phases at central time ',datestr(centraltime,' ')]; % empty central time will be error in future releases
-end															   
-dprintf(diary,['   ',nodcor,'\n']);												   
-
+  nodcor=['No nodal corrections, because of empty central time and latitude'];%['Phases at central time ',datestr(centraltime,0)]; % empty central time will be error in future releases
+end			
+if ~diar==0
+fprintf(diar,'   %s\n',nodcor);												   
+end
 
 %---------------Inference Corrections----------------------------------
 % Once again, the "right" way to do this would be to change the basis
 % functions.
 ii=find(isfinite(jref));
 if ii,
-  dprintf(diary,'   Do inference corrections\n');
-  snarg=nobsu*pi*(fi(ii)   -fu(jref(ii)) )*dt;
-  scarg=sin(snarg)./snarg;
+    if ~diar==0
+    fprintf(diar,'   Do inference corrections\n');
+    end
+    snarg=nobsu*pi*(fi(ii)   -fu(jref(ii)) )*dt;
+    scarg=sin(snarg)./snarg;
  
   if size(inf.amprat,2)==1,    % For real time series
     pearg=     2*pi*(vu(mu+ii)-vu(jref(ii))+inf.ph(ii))/360;
-    pcfac=inf.amprat(ii).*f(mu+ii)./f(jref(ii)).*exp(i*pearg);
+    pcfac=inf.amprat(ii).*f(mu+ii)./f(jref(ii)).*exp(1i*pearg);
     pcorr=1+pcfac.*scarg;
     mcfac=conj(pcfac);
     mcorr=conj(pcorr);
   else                          % For complex time series
     pearg=     2*pi*(vu(mu+ii)-vu(jref(ii))+inf.ph(ii,1))/360;
-    pcfac=inf.amprat(ii,1).*f(mu+ii)./f(jref(ii)).*exp(i*pearg);
+    pcfac=inf.amprat(ii,1).*f(mu+ii)./f(jref(ii)).*exp(1i*pearg);
     pcorr=1+pcfac.*scarg;
     mearg=    -2*pi*(vu(mu+ii)-vu(jref(ii))+inf.ph(ii,2))/360;
-    mcfac=inf.amprat(ii,2).*f(mu+ii)./f(jref(ii)).*exp(i*mearg);
+    mcfac=inf.amprat(ii,2).*f(mu+ii)./f(jref(ii)).*exp(1i*mearg);
     mcorr=1+mcfac.*scarg;
   end;
     
@@ -606,7 +634,9 @@ if any(strmatch(errcalc(2:end),'boot')) && exist('dt0','var')
    % non-equidistant time series do not allow for fft
    error(['When ''dt'' is a non-equidistant vector, error estimate with ''',errcalc,''' not possible, only ''lin''.'])
 elseif any(strmatch(errcalc(2:end),'boot')) && ~exist('dt0','var')
-  dprintf(diary,'   Using nonlinear bootstrapped error estimates\n');
+    if ~diar==0
+    fprintf(diar,'   Using nonlinear bootstrapped error estimates\n');
+    end
   
   % "noise" matrices are created with the right covariance structure
   % to add to the analyzed components to create 'nreal' REPLICATES. 
@@ -626,8 +656,10 @@ elseif any(strmatch(errcalc(2:end),'boot')) && ~exist('dt0','var')
   epsm=angle(AM)*180/pi;
   ap=abs(AP);
   am=abs(AM);
-elseif any(strmatch(errcalc,'linear')) | exist('dt0','var') % non-equidistant time series do not allow for fft
-  dprintf(diary,'   Using linearized error estimates\n');
+elseif any(strmatch(errcalc,'linear')) || exist('dt0','var') % non-equidistant time series do not allow for fft
+  if ~diar==0
+  fprintf(diar,'   Using linearized error estimates\n');
+  end
   %
   % Uncertainties in analyzed amplitudes are computed in different
   % spectral bands. Real and imaginary parts of the residual time series
@@ -643,7 +675,7 @@ elseif any(strmatch(errcalc,'linear')) | exist('dt0','var') % non-equidistant ti
   % equal, and equal to total power in the encompassing frequency bin. 
   % It seems like there should be a factor of 2 here somewhere but it 
   % only works this way! <shrug>
-  [emaj,emin,einc,epha]=errell(ap+am,i*(ap-am),ercx,ercx,eicx,eicx);
+  [emaj,emin,einc,epha]=errell(ap+am,1i*(ap-am),ercx,ercx,eicx,eicx);
 
   epsp=angle(ap)*180/pi;
   epsm=angle(am)*180/pi;
@@ -722,22 +754,32 @@ snr=(tidecon(:,1)./tidecon(:,2)).^2;  % signal to noise ratio
 %--------Generate a 'prediction' using significant constituents----------
 xoutOLD=xout;
 if synth>=0,
- if ~isempty(lat) & ~isempty(stime),
-   dprintf(diary,'   Generating prediction with nodal corrections, SNR is %f\n',synth);
+ if ~isempty(lat) && ~isempty(stime),
+     if ~diar==0
+     fprintf(diar,'   Generating prediction with nodal corrections, SNR is %f\n',synth);
+     end
    [xout,centraltime]=t_predic(stime+(t(:)'-t(1))./24.0,nameu,fu,tidecon,'lat',lat,'synth',synth,'anal',ltype);
  elseif ~isempty(stime),
-   dprintf(diary,'   Generating prediction without nodal corrections, SNR is %f\n',synth);
+     if ~diar==0
+     fprintf(diar,'   Generating prediction without nodal corrections, SNR is %f\n',synth);
+     end
    [xout,centraltime]=t_predic(stime+(t(:)'-t(1))./24.0,nameu,fu,tidecon,'synth',synth,'anal',ltype);
  else
-   dprintf(diary,'   Generating prediction without nodal corrections, SNR is %f\n',synth);
+     if ~diar==0
+     fprintf(diar,'   Generating prediction without nodal corrections, SNR is %f\n',synth);
+     end
    [xout,centraltime]=t_predic(t/24.0,nameu,fu,tidecon,'synth',synth,'anal',ltype,'start',stime);
  end;
 else
- dprintf(diary,'   Returning fitted prediction\n');
+    if ~diar==0
+    fprintf(diar,'   Returning fitted prediction\n');
+    end
 end;
 
 if ~isempty(centraltime)
-dprintf(diary,'   t_predic centraltime =  %f (%s)\n',centraltime,datestr(centraltime));
+    if ~diar==0
+    fprintf(diar,'   t_predic centraltime =  %f (%s)\n',centraltime,datestr(centraltime));
+    end
 end
 
 %----------------------------------------------------------------------
@@ -748,22 +790,28 @@ xres=xin(:)-xout(:); % and the residuals!
 
 if isreal(xin),    % Real time series
   varx=cov(xin(gd));varxp=cov(xout(gd));varxr=cov(xres(gd));
-  dprintf(diary,'   percent of var residual after synthesis/var original: %5.2f %%\n',100*(varxr/varx));  
+  if ~diar==0
+  fprintf(diar,'   percent of var residual after synthesis/var original: %5.2f %%\n',100*(varxr/varx));  
+  end
 else               % Complex time series
   varx=cov(real(xin(gd)));varxp=cov(real(xout(gd)));varxr=cov(real(xres(gd)));
-  dprintf(diary,'   percent of X var residual after synthesis/var original: %5.2f %%\n',100*(varxr/varx));
+  if ~diar==0
+  fprintf(diar,'   percent of X var residual after synthesis/var original: %5.2f %%\n',100*(varxr/varx));
+  end
 
   vary=cov(imag(xin(gd)));varyp=cov(imag(xout(gd)));varyr=cov(imag(xres(gd)));
-  dprintf(diary,'   percent of Y var residual after synthesis/var original: %5.2f %%\n',100*(varyr/vary));
+  if ~diar==0
+  fprintf(diar,'   percent of Y var residual after synthesis/var original: %5.2f %%\n',100*(varyr/vary));
+  end
 end;
 
 %-----------------Sort   results---------------------------------------
 
 if isnumeric(sor)
    if sor > 0
-   [dummy,index]=sort(tidecon(:,abs(sor)),1,'ascend' );
+   [~,index]=sort(tidecon(:,abs(sor)),1,'ascend' );
    else
-   [dummy,index]=sort(tidecon(:,abs(sor)),1,'descend');
+   [~,index]=sort(tidecon(:,abs(sor)),1,'descend');
    end
 else
 
@@ -773,11 +821,11 @@ else
       order = 'ascend' ;
    end
 
-   if      any(strfind(sor,'fre')); index = 1:size(tidecon,1);% default
-   elseif  any(strfind(sor,'amp'))|any(strfind(sor,'fma'));[dummy,index]=sort(tidecon(:,1    ),1,order);
-   elseif  any(strfind(sor,'fmi'))                        ;[dummy,index]=sort(tidecon(:,3    ),1,order);
-   elseif  any(strfind(sor,'pha'))                        ;[dummy,index]=sort(tidecon(:,end-1),1,order);
-   elseif  any(strfind(sor,'snr'))                        ;[dummy,index]=sort(snr             ,1,order);
+   if      any(strfind(sor,'fre'));                            index =1:size(tidecon,1);% default
+   elseif  any(strfind(sor,'amp'))||any(strfind(sor,'fma'));[~,index]=sort(tidecon(:,1    ),1,order);
+   elseif  any(strfind(sor,'fmi'))                         ;[~,index]=sort(tidecon(:,3    ),1,order);
+   elseif  any(strfind(sor,'pha'))                         ;[~,index]=sort(tidecon(:,end-1),1,order);
+   elseif  any(strfind(sor,'snr'))                         ;[~,index]=sort(snr             ,1,order);
    end   
 end
 
@@ -882,12 +930,12 @@ else                                                % Choose them all if > 18.6 
     end
     [const,sat,cshallow]=t_get18consts(centraltime);
     ju=[2:length(const.freq)]';  % Skip Z0
-    for ff=1:2,                  % loop twice to make sure of neightbouring pairs
+    for ff=1:2,                  % loop twice to make sure of neighbouring pairs
     jck=find(diff(const.freq(ju))<minres);
     if (length(jck)>0)
        jrm=jck;
        jrm=jrm+(abs(const.doodsonamp(ju(jck+1)))<abs(const.doodsonamp(ju(jck))));
-       disp(['  Warning! Following constituent pairs violate Rayleigh criterion']);
+       disp('  Warning! Following constituent pairs violate Rayleigh criterion');
        for ick=1:length(jck);
      disp(['     ',const.name(ju(jck(ick)),:),' vs ',const.name(ju(jck(ick)+1),:) ' - not using ',const.name(ju(jrm(ick)),:)]);
        end;
@@ -901,16 +949,16 @@ if ~isempty(constit),     % Selected if constituents are specified in input.
   for k=1:size(constit,1),
    j1=strmatch(constit(k,:),const.name);
    if isempty(j1),
-     disp(['Can''t recognize name ' constit(k,:) ' for forced search']);
+     disp(['   Can''t recognize name ' constit(k,:) ' for forced search']);
    elseif j1==1,
-     disp(['*************************************************************************']);
-     disp(['Z0 specification ignored - for non-tidal offsets see ''secular'' property']);
-     disp(['*************************************************************************']);
+     disp('*************************************************************************');
+     disp('Z0 specification ignored - for non-tidal offsets see ''secular'' property');
+     disp('*************************************************************************');
    else  
      ju=[ju;j1];
    end;
   end;
-  [dum,II]=sort(const.freq(ju)); % sort in ascending order of frequency.
+  [~,II]=sort(const.freq(ju)); % sort in ascending order of frequency.
   ju=ju(II);
 end;
 
@@ -918,10 +966,10 @@ if ~isempty(shallow),          % Add explictly selected shallow water constituen
  for k=1:size(shallow,1),
    j1=strmatch(shallow(k,:),const.name);
    if isempty(j1),
-     disp(['Can''t recognize name ' shallow(k,:) ' for forced search']);
+     disp(['   Can''t recognize name ' shallow(k,:) ' for forced search']);
    else
      if isnan(const.ishallow(j1)),
-       disp([shallow(k,:) ' Not a shallow-water constituent']);
+       disp(['   ',shallow(k,:),' Not a shallow-water constituent']);
      end;
      disp(['   Forced fit to ' shallow(k,:)]);
      ju=[ju;j1];
@@ -937,7 +985,7 @@ fu=const.freq(ju);
 % Check if neighboring chosen constituents violate Rayleigh criteria.
 jck=find(diff(fu)<minres);
 if (length(jck)>0)
-   disp(['  Warning! Following constituent pairs violate Rayleigh criterion']);
+   disp('  Warning! Following constituent pairs violate Rayleigh criterion');
    for ick=1:length(jck);
    disp(['     ',nameu(jck(ick),:),'  ',nameu(jck(ick)+1,:)]);
    end;
@@ -965,7 +1013,10 @@ if ~isempty(infname),
       disp(['Can''t recognize name ' infref(k,:) ' for as a reference for inference']);
     else
       jref(k)=j1;
-      dprintf(diary,['   Inference of ' namei(k,:) ' using ' nameu(j1,:) '\n']);
+      disp(['   Inference of %s using  %s\n',namei(k,:),nameu(j1,:)])
+%       if ~diar==0
+%       fprintf(diar,'   Inference of %s using  %s\n',namei(k,:),nameu(j1,:));
+%       end
     end;
    end;
   end;    
@@ -973,7 +1024,7 @@ if ~isempty(infname),
 end;
 
 %----------------------------------------------------------------------
-function y=fixgaps(x);
+function y=fixgaps(x)
 % FIXGAPS: Linearly interpolates gaps in a time series
 % YOUT=FIXGAPS(YIN) linearly interpolates over NaN in the input time 
 % series (may be complex), but ignores trailing and leading NaNs.
@@ -993,7 +1044,7 @@ y(bd)=interp1(gd,x(gd),find(bd));
 
 
 %----------------------------------------------------------------------
-function ain=cluster(ain,clusang);
+function ain=cluster(ain,clusang)
 % CLUSTER: Clusters angles in rows around the angles in the first 
 % column. CLUSANG is the allowable ambiguity (usually 360 degrees but
 % sometimes 180).
@@ -1005,7 +1056,7 @@ ain(ii)=ain(ii)+clusang;
 
 
 %----------------------------------------------------------------------
-function [NP,NM]=noise_realizations(xres,fu,dt,nreal,errcalc);
+function [NP,NM]=noise_realizations(xres,fu,dt,nreal,errcalc)
 % NOISE_REALIZATIONS: Generates matrices of noise (with correct
 % cross-correlation structure) for bootstrap analysis.
 %
@@ -1017,8 +1068,9 @@ if strmatch(errcalc,'cboot'),
   [fband,Pxrave,Pxiave,Pxcave]=residual_spectrum(xres,fu,dt);
   
   Pxcave=zeros(size(Pxcave));  %% For comparison with other technique!
-  %dprintf(diary,'**** Assuming no covariance between u and v errors!*******\n');
-
+  %if ~diar==0
+  %fprintf(diar,'**** Assuming no covariance between u and v errors!*******\n');
+  %end
 elseif strmatch(errcalc,'wboot'),
   fband=[0 .5];
   nx=length(xres);
@@ -1068,12 +1120,12 @@ NP=NM;
 for k=1:length(fu);
   l=find(fu(k)>fband(:,1) & fu(k)<fband(:,2));
   N=[zeros(4,1),Mat(:,:,l)*randn(4,nreal-1)];
-  NP(k,:)=N(1,:)+i*N(2,:);
-  NM(k,:)=N(3,:)+i*N(4,:);
+  NP(k,:)=N(1,:)+1i*N(2,:);
+  NM(k,:)=N(3,:)+1i*N(4,:);
 end;
 
 %----------------------------------------------------------------------
-function [ercx,eicx]=noise_stats(xres,fu,dt);
+function [ercx,eicx]=noise_stats(xres,fu,dt)
 % NOISE_STATS: Computes statistics of residual energy for all 
 % constituents (ignoring any cross-correlations between real and
 % imaginary parts).
